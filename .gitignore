@@ -1,0 +1,9 @@
+.DS_Store
+*.pyc
+__pycache__/
+.venv/
+node_modules/
+_site/
+
+# Source export gốc (Google Sheets HTML) — không publish; build chạy local
+Meta Team PK/

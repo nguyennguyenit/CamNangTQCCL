@@ -1,0 +1,1207 @@
+[
+  {
+    "groupLabel": "Cùng tồn 1",
+    "summary": "Liễu Tẩm Ôn Hầu Cung, Chu Thiệu Trương Giác Khiên, Bắc Phạt Thương, Tô Tín Tôn Quyền Kỵ, Quần Cung",
+    "teams": [
+      {
+        "teamName": "Liễu Thấm Ôn Hầu Cung",
+        "heroes": [
+          {
+            "name": "Hứa Du",
+            "tactics": [
+              "Thuyền Cỏ Mượn Tên",
+              "Lâm Nguy Cứu Chủ"
+            ],
+            "statFocus": "Nửa Trí Nửa Thống",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Rèn Luyện",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "Điêu Thuyền"
+          },
+          {
+            "name": "Lữ Bố",
+            "tactics": [
+              "Đương Phong Thôi Quyết",
+              "Thôi Phong Đoạn Nhẫn"
+            ],
+            "statFocus": "Võ Lực",
+            "books": [
+              "Đánh Bất Ngờ Thắng",
+              "Trì Trọng",
+              "Tinh Chuẩn"
+            ],
+            "advisorSkill": "Điêu Thuyền"
+          },
+          {
+            "name": "Liễu Tẩm",
+            "tactics": [
+              "Quân Cẩm Phàm",
+              "Nhạn Hình Trận"
+            ],
+            "statFocus": "Trí Lực",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Rèn Luyện",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "Điêu Thuyền"
+          }
+        ]
+      },
+      {
+        "teamName": "Chu Thiệu Trương Giác Khiên",
+        "heroes": [
+          {
+            "name": "Trương Giác",
+            "tactics": [
+              "Thái Bình Đạo Pháp",
+              "Sĩ Biệt Tam Nhật"
+            ],
+            "statFocus": "Trí Lực",
+            "books": [
+              "Tam Quân Chi Chúng/Lấy Võ Dẹp Loạn",
+              "Quy Thuận/Quỷ Mưu",
+              "Chiến Đấu Trường Kỳ/Tướng Uy"
+            ],
+            "advisorSkill": "Cao Thuận/Tào Nhân"
+          },
+          {
+            "name": "Chu Thiệu",
+            "tactics": [
+              "Phong Thi Trận",
+              "Lính Giáp Mây"
+            ],
+            "statFocus": "Thống Soái",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Rèn Luyện",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "Cao Thuận/Tào Nhân"
+          },
+          {
+            "name": "Tả Từ",
+            "tactics": [
+              "Dốc Sức Tính Kế",
+              "Cắt Xương Trị Độc"
+            ],
+            "statFocus": "Trí Lực",
+            "books": [
+              "Tấn Công Điểm Yếu",
+              "Cứu Chủ",
+              "Khích Lệ Lòng Quân"
+            ],
+            "advisorSkill": "Cao Thuận/Tào Nhân"
+          }
+        ]
+      },
+      {
+        "teamName": "Bắc Phạt Thương",
+        "heroes": [
+          {
+            "name": "SP Gia Cát Lượng",
+            "tactics": [
+              "Tạm Lánh Sóng Gió",
+              "Biết Mình Biết Ta"
+            ],
+            "statFocus": "Trí Lực(Thiên Cơ)",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Rèn Luyện",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "Đổng Trác"
+          },
+          {
+            "name": "Quan Hưng",
+            "tactics": [
+              "Gió Táp Mưa Sa/Văn Võ Song Toàn",
+              "Cưỡi Ngựa Nghìn Dặm"
+            ],
+            "statFocus": "Võ Lực",
+            "books": [
+              "Đánh Sau Trúng Trước",
+              "Tướng Uy",
+              "Quỷ Mưu"
+            ],
+            "advisorSkill": "Đổng Trác"
+          },
+          {
+            "name": "Trương Bào",
+            "tactics": [
+              "Không Đánh Mà Thắng",
+              "Nhân Lợi Chế Quyền"
+            ],
+            "statFocus": "Thống Soái",
+            "books": [
+              "Chẩm Qua Tọa Giáp",
+              "Rèn Luyện",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "Đổng Trác"
+          }
+        ]
+      },
+      {
+        "teamName": "Tô Tín Tôn Quyền Kỵ",
+        "heroes": [
+          {
+            "name": "Tôn Quyền",
+            "tactics": [
+              "Nhất Kỵ Đương Thiên",
+              "Bách Kỵ Kiếp Doanh"
+            ],
+            "statFocus": "Võ Lực",
+            "books": [
+              "Liền Mạch Một Hơi",
+              "Thắng Trận",
+              "Cầm Binh Khí"
+            ],
+            "advisorSkill": "Trương Liêu"
+          },
+          {
+            "name": "Tô Tín",
+            "tactics": [
+              "Lõa Y Huyết Chiến",
+              "Mau Giành Lợi Thế"
+            ],
+            "statFocus": "Võ LựcTốc 1",
+            "books": [
+              "Liền Mạch Một Hơi",
+              "Giấu Đao",
+              "Cầm Binh Khí"
+            ],
+            "advisorSkill": "Trương Liêu"
+          },
+          {
+            "name": "Chu Thái",
+            "tactics": [
+              "Tinh·Phong Thi Trận",
+              "Hổ Báo Kỵ"
+            ],
+            "statFocus": "Thống Soái",
+            "books": [
+              "Biết Cách Phòng Thủ",
+              "Thế Phòng Thủ",
+              "Tĩnh Tâm"
+            ],
+            "advisorSkill": "Trương Liêu"
+          }
+        ]
+      },
+      {
+        "teamName": "Quần Cung",
+        "heroes": [
+          {
+            "name": "SP Viên Thiệu",
+            "tactics": [
+              "Hoành Tảo Thiên Quân",
+              "Xế Đao Chước Địch"
+            ],
+            "statFocus": "Võ Lực",
+            "books": [
+              "Man Dũng Phi Dũng",
+              "Thắng Trận",
+              "Cầm Binh Khí"
+            ],
+            "advisorSkill": "Hạ Hầu Uyên"
+          },
+          {
+            "name": "SP Chu Tuấn",
+            "tactics": [
+              "Lửa Đuổi Gió Bay",
+              "Thái Bình Đạo Pháp/Thiêu Đốt Doanh Lũy"
+            ],
+            "statFocus": "Trí Lực",
+            "books": [
+              "Lấy Võ Dẹp Loạn",
+              "Tướng Uy",
+              "Thần Cơ"
+            ],
+            "advisorSkill": "Hạ Hầu Uyên"
+          },
+          {
+            "name": "Thư Thụ",
+            "tactics": [
+              "Vô Đương Phi Quân",
+              "Bát Môn Kim Tỏa Trận"
+            ],
+            "statFocus": "Trí Lực",
+            "books": [
+              "Kỳ Chính Tương Sinh",
+              "Văn Thao",
+              "Cầm Binh Khí"
+            ],
+            "advisorSkill": "Hạ Hầu Uyên"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "groupLabel": "Cùng tồn 2",
+    "summary": "Liễu Tẩm Khảng Khái Cung, Dương Kỳ Ngũ Mưu, Trần Dực Đào Viên Khiên, Chu Du Bạch Nhị Thương, Lữ Quách Kiều Cung",
+    "teams": [
+      {
+        "teamName": "Liễu Tẩm Khảng Khái Cung",
+        "heroes": [
+          {
+            "name": "Cam Ninh",
+            "tactics": [
+              "Thuyền Cỏ Mượn Tên",
+              "Quân Cẩm Phàm"
+            ],
+            "statFocus": "Thống Soái",
+            "books": [
+              "Thích Làm Việc Thiện",
+              "Rèn Luyện",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "Chu Thái"
+          },
+          {
+            "name": "Thái Sử Từ",
+            "tactics": [
+              "Đương Phong Thôi Quyết",
+              "Thôi Phong Đoạn Nhẫn"
+            ],
+            "statFocus": "Võ Lực",
+            "books": [
+              "Thắng Càng Mạnh",
+              "Võ Lược",
+              "Cầm Binh Khí"
+            ],
+            "advisorSkill": "Chu Thái"
+          },
+          {
+            "name": "Liễu Tẩm",
+            "tactics": [
+              "Lâm Nguy Cứu Chủ",
+              "Nhạn Hình Trận"
+            ],
+            "statFocus": "Trí Lực",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Rèn Luyện",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "Chu Thái"
+          }
+        ]
+      },
+      {
+        "teamName": "Dương Kỳ Ngũ Mưu",
+        "heroes": [
+          {
+            "name": "Dương Kỳ",
+            "tactics": [
+              "Dốc Sức Tính Kế",
+              "Cắt Xương Trị Độc"
+            ],
+            "statFocus": "Trí LựcTốc 2",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Rèn Luyện",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "Trương Liêu"
+          },
+          {
+            "name": "Giả Hủ",
+            "tactics": [
+              "Nhanh Trí Động Não",
+              "Thiêu Đốt Doanh Lũy"
+            ],
+            "statFocus": "Trí LựcTốc cuối",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Rèn Luyện",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "Trương Liêu"
+          },
+          {
+            "name": "Tuân Du",
+            "tactics": [
+              "Đoạt Hồn Hiệp Phách",
+              "Thượng Binh Phạt Mưu"
+            ],
+            "statFocus": "Trí LựcTốc 1",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Rèn Luyện",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "Trương Liêu"
+          }
+        ]
+      },
+      {
+        "teamName": "Trần Dực Đào Viên Khiên",
+        "heroes": [
+          {
+            "name": "Quan Vũ (Khiên S)",
+            "tactics": [
+              "Cưỡi Ngựa Nghìn Dặm",
+              "Tuyệt Kỳ Cấp Đạo"
+            ],
+            "statFocus": "Võ Lực",
+            "books": [
+              "Lấy Võ Dẹp Loạn",
+              "Quỷ Mưu",
+              "Tướng Uy"
+            ],
+            "advisorSkill": "Tả Từ"
+          },
+          {
+            "name": "Trần Dực",
+            "tactics": [
+              "Kế Hay Mưu Giỏi",
+              "Hãm Trận Doanh"
+            ],
+            "statFocus": "Trí Lực, Tốc Độ",
+            "books": [
+              "Hành Động Theo Thời",
+              "Rèn Luyện",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "Tả Từ"
+          },
+          {
+            "name": "Trương Phi",
+            "tactics": [
+              "Thịnh Khí Linh Địch",
+              "Hoành Tảo Thiên Quân"
+            ],
+            "statFocus": "Võ LựcThống Soái",
+            "books": [
+              "Dĩ Trực Báo Oán",
+              "Tinh Chuẩn",
+              "Thiện Chiến"
+            ],
+            "advisorSkill": "Tả Từ"
+          }
+        ]
+      },
+      {
+        "teamName": "Chu Du Bạch Nhị Thương",
+        "heroes": [
+          {
+            "name": "Chu Du (Thương S)",
+            "tactics": [
+              "Thác· Đoạt Hồn Hiệp Phách",
+              "Phong Trợ Hỏa Thế"
+            ],
+            "statFocus": "Trí Lực",
+            "books": [
+              "Kỳ Chính Tương Sinh",
+              "Thắng Trận",
+              "Văn Thao"
+            ],
+            "advisorSkill": "Đổng Trác"
+          },
+          {
+            "name": "Lữ Mông",
+            "tactics": [
+              "Thừa Địch Bất Ngu",
+              "Toàn Quân Đồng Lòng"
+            ],
+            "statFocus": "Trí Lực",
+            "books": [
+              "Đánh Sau Trúng Trước",
+              "Diệu Toán",
+              "Xem Bói"
+            ],
+            "advisorSkill": "Đổng Trác"
+          },
+          {
+            "name": "Trình Phổ",
+            "tactics": [
+              "Phong Thi Trận",
+              "Bạch Nhị Binh"
+            ],
+            "statFocus": "Thống Soái",
+            "books": [
+              "Không Chiến Mà Thắng",
+              "Thế Phòng Thủ",
+              "Phòng Bị"
+            ],
+            "advisorSkill": "Đổng Trác"
+          }
+        ]
+      },
+      {
+        "teamName": "Lữ Quách Kiều Cung",
+        "heroes": [
+          {
+            "name": "Lữ Bố",
+            "tactics": [
+              "Loan Cung Ẩm Vũ/Mau Giành Lợi Thế",
+              "Phá Giáp"
+            ],
+            "statFocus": "Võ Lực",
+            "books": [
+              "Đánh Bất Ngờ Thắng",
+              "Khai Hạp",
+              "Chia Lời"
+            ],
+            "advisorSkill": "Điêu Thuyền"
+          },
+          {
+            "name": "Quách Gia",
+            "tactics": [
+              "Lửa Lan Khắp Chốn",
+              "Tam Thế Trận"
+            ],
+            "statFocus": "Trí Lực",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Dẫn Quân",
+              "Rèn Luyện"
+            ],
+            "advisorSkill": "Điêu Thuyền"
+          },
+          {
+            "name": "Vô Song Tiểu Kiều",
+            "tactics": [
+              "Văn Võ Song Toàn",
+              "Bạch Mã Nghĩa Tòng"
+            ],
+            "statFocus": "Võ Lực",
+            "books": [
+              "Tinh Thần Sảng Khoái",
+              "Chiến Đấu Trường Kỳ",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "Điêu Thuyền"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "groupLabel": "Cùng tồn 3",
+    "summary": "Rào Cản Ngựa Cung, Hoàng Mã Thương, Pháp Quan Khiên, Ngũ Mưu Kỵ, Ngô Kỵ",
+    "teams": [
+      {
+        "teamName": "Hoàng Mã Thương",
+        "heroes": [
+          {
+            "name": "SP Mã Siêu",
+            "tactics": [
+              "Đương Phong Thôi Quyết",
+              "Thôi Phong Đoạn Nhẫn"
+            ],
+            "statFocus": "Võ Lực(Thần Uy)",
+            "books": [
+              "Tấn Công Điểm Yếu",
+              "Tốc Chiến",
+              "Khép Hờ"
+            ],
+            "advisorSkill": "Lữ Bố"
+          },
+          {
+            "name": "SP Hoàng Phổ Tung",
+            "tactics": [
+              "Thuyền Cỏ Mượn Tên",
+              "Uy Mưu Vô Địch"
+            ],
+            "statFocus": "Thống Soái(Ung Nhã)",
+            "books": [
+              "Đánh Sau Trúng Trước",
+              "Diệu Toán",
+              "Xem Bói"
+            ],
+            "advisorSkill": "Lữ Bố"
+          },
+          {
+            "name": "Hứa Du(Thương S)",
+            "tactics": [
+              "Lâm Nguy Cứu Chủ",
+              "Giải Phiền Vệ"
+            ],
+            "statFocus": "Trí Lực",
+            "books": [
+              "Yêu Lính Thương Dân",
+              "Thế Phòng Thủ",
+              "Phòng Bị"
+            ],
+            "advisorSkill": "Lữ Bố"
+          }
+        ]
+      },
+      {
+        "teamName": "Rào Cản Ngựa Cung",
+        "heroes": [
+          {
+            "name": "SP Lô Trực",
+            "tactics": [
+              "Cương Nhu Kết Hợp",
+              "Nhạn Hình Trận"
+            ],
+            "statFocus": "Thống Soái(Sức Sống)",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Chiến Đấu Trường Kỳ",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "Lỗ Túc/SP Bộ Luyện Sư"
+          },
+          {
+            "name": "Tiêu Chỉ",
+            "tactics": [
+              "Tử Sĩ Tiên Phong",
+              "Nhân Lợi Chế Quyền"
+            ],
+            "statFocus": "Thống Soái(Tốc cuối, Sức Sống)",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Chiến Đấu Trường Kỳ",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "Lỗ Túc/SP Bộ Luyện Sư"
+          },
+          {
+            "name": "SP Điêu Thuyền",
+            "tactics": [
+              "Thâm Tàng Nhược Hư/Hợp Quân Tụ Chúng",
+              "Đồng Lòng Hợp Sức"
+            ],
+            "statFocus": "Trí Lực(Giai Nhân)",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Chiến Đấu Trường Kỳ",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "Lỗ Túc/SP Bộ Luyện Sư"
+          }
+        ]
+      },
+      {
+        "teamName": "Tinh Thái Pháp Quan Khiên",
+        "heroes": [
+          {
+            "name": "SP Quan Vũ(Khiên S)",
+            "tactics": [
+              "Lấy Ít Đánh Nhiều",
+              "Kích Kỳ Nọa Quy/Gió Táp Mưa Sa"
+            ],
+            "statFocus": "Võ Lực(Võ Thánh)",
+            "books": [
+              "Chia Nhỏ Đánh Nhanh",
+              "Bách Chiến",
+              "Khép Hờ"
+            ],
+            "advisorSkill": "Đổng Trác/Ngột Đột Cốt"
+          },
+          {
+            "name": "SP Pháp Chính",
+            "tactics": [
+              "Dưỡng Sức Đợi Chiến",
+              "Không Đánh Mà Thắng"
+            ],
+            "statFocus": "Trí Lực(Kỳ Toán)",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Dẫn Quân",
+              "Rèn Luyện"
+            ],
+            "advisorSkill": "Đổng Trác/Ngột Đột Cốt"
+          },
+          {
+            "name": "Vô Song Tinh Thái",
+            "tactics": [
+              "Lính Giáp Mây",
+              "Mê Hoặc"
+            ],
+            "statFocus": "Thống Soái(Viện Trợ)",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Dẫn Quân",
+              "Rèn Luyện"
+            ],
+            "advisorSkill": "Đổng Trác/Ngột Đột Cốt"
+          }
+        ]
+      },
+      {
+        "teamName": "Ngũ Mưu Kỵ",
+        "heroes": [
+          {
+            "name": "SP Tuân Úc",
+            "tactics": [
+              "Dốc Sức Tính Kế",
+              "Cắt Xương Trị Độc"
+            ],
+            "statFocus": "Trí Lực",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Dẫn Quân",
+              "Rèn Luyện"
+            ],
+            "advisorSkill": "Tả Từ"
+          },
+          {
+            "name": "SP Quách Gia",
+            "tactics": [
+              "Đoạt Hồn Hiệp Phách",
+              "Thượng Binh Phạt Mưu"
+            ],
+            "statFocus": "Trí Lực",
+            "books": [
+              "Lấy Võ Dẹp Loạn",
+              "Quỷ Mưu",
+              "Tướng Uy"
+            ],
+            "advisorSkill": "Tả Từ"
+          },
+          {
+            "name": "Giả Hủ",
+            "tactics": [
+              "Nhanh Trí Động Não",
+              "Anh Thành Tự Thủ/Ngụy Thư Tương Gian"
+            ],
+            "statFocus": "Trí Lực",
+            "books": [
+              "Tam Quân Chi Chúng/Giả Nai Trước Địch",
+              "Dẫn Quân/Bách Chiến",
+              "Rèn Luyện/Khép Hờ"
+            ],
+            "advisorSkill": "Tả Từ"
+          }
+        ]
+      },
+      {
+        "teamName": "Ngô Kỵ",
+        "heroes": [
+          {
+            "name": "Chu Thái",
+            "tactics": [
+              "Thịnh Khí Linh Địch",
+              "Tây Lương Thiết Kỵ"
+            ],
+            "statFocus": "Thống Soái",
+            "books": [
+              "Biết Cách Phòng Thủ",
+              "Thế Phòng Thủ",
+              "Phòng Bị"
+            ],
+            "advisorSkill": "Quách Gia"
+          },
+          {
+            "name": "Tôn Thượng Hương",
+            "tactics": [
+              "Lõa Y Huyết Chiến",
+              "Hổ Cứ Ưng Dương/Bách Kỵ Kiếp Doanh"
+            ],
+            "statFocus": "Võ Lực, Tốc 1",
+            "books": [
+              "Thắng Càng Mạnh",
+              "Thắng Trận",
+              "Cầm Binh Khí/Giấu Đao"
+            ],
+            "advisorSkill": "Quách Gia"
+          },
+          {
+            "name": "Lăng Thống",
+            "tactics": [
+              "Phá Quân Uy Thắng",
+              "Nằm Gai Nếm Mật/Tị Thực Kích Hư"
+            ],
+            "statFocus": "Võ Lực, Tốc 2",
+            "books": [
+              "Thắng Càng Mạnh",
+              "Thắng Trận",
+              "Cầm Binh Khí"
+            ],
+            "advisorSkill": "Quách Gia"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "groupLabel": "Cùng tồn 4",
+    "summary": "Đô Úy Ngô Nữ Cung, Rào Cản Ngựa Cung, Mã Đại Pháp Quan Khiên, Dương Kỳ Ngũ Mưu, Nhạn Hồng Thương",
+    "teams": [
+      {
+        "teamName": "Ngô Nữ Cung(Có thể lên Đô Úy)18C/",
+        "heroes": [
+          {
+            "name": "Vô Song Đại Kiều",
+            "tactics": [
+              "Mê Hoặc",
+              "Thuyền Cỏ Mượn Tên"
+            ],
+            "statFocus": "Thống Soái",
+            "books": [
+              "Nhìn Rõ Mồn Một/Tam Quân Chi Chúng/Không Chiến Mà Thắng",
+              "Rèn Luyện/Thế Phòng Thủ",
+              "Dẫn Quân/Giáp Sắt"
+            ],
+            "advisorSkill": "Đổng Trác"
+          },
+          {
+            "name": "Tôn Thượng Hương",
+            "tactics": [
+              "Đương Phong Thôi Quyết",
+              "Mau Giành Lợi Thế/Thôi Phong Đoạn Nhẫn"
+            ],
+            "statFocus": "Võ Lực(Kinh Hồng)",
+            "books": [
+              "Thắng Càng Mạnh/Lấy Võ Dẹp Loạn",
+              "Thắng Trận/Thần Cơ",
+              "Giấu Đao/Tướng Uy"
+            ],
+            "advisorSkill": "Đổng Trác"
+          },
+          {
+            "name": "Vô Song Tiểu Kiều/Hoàng Phủ Hoành",
+            "tactics": [
+              "Tinh·Ngư Lân Trận",
+              "Lâm Nguy Cứu Chủ"
+            ],
+            "statFocus": "Võ Lực/Thống Soái",
+            "books": [
+              "Chẩm Qua Tọa Giáp/Tấn Công Điểm Yếu",
+              "Rèn Luyện/Khích Lệ Lòng Quân/Khép Hờ",
+              "Dẫn Quân/Cứu Chủ"
+            ],
+            "advisorSkill": "Đổng Trác"
+          }
+        ]
+      },
+      {
+        "teamName": "Rào Cản Ngựa Cung",
+        "heroes": [
+          {
+            "name": "SP Lô Trực",
+            "tactics": [
+              "Cương Nhu Kết Hợp",
+              "Nhạn Hình Trận"
+            ],
+            "statFocus": "Thống Soái",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Chiến Đấu Trường Kỳ",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "Lỗ Túc/SP Bộ Luyện Sư"
+          },
+          {
+            "name": "Tiêu Chỉ",
+            "tactics": [
+              "Tử Sĩ Tiên Phong",
+              "Nhân Lợi Chế Quyền"
+            ],
+            "statFocus": "Thống SoáiTốc cuối",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Chiến Đấu Trường Kỳ",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "Lỗ Túc/SP Bộ Luyện Sư"
+          },
+          {
+            "name": "SP Điêu Thuyền",
+            "tactics": [
+              "Thâm Tàng Nhược Hư/Hợp Quân Tụ Chúng",
+              "Đồng Lòng Hợp Sức"
+            ],
+            "statFocus": "Trí Lực",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Chiến Đấu Trường Kỳ",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "Lỗ Túc/SP Bộ Luyện Sư"
+          }
+        ]
+      },
+      {
+        "teamName": "Mã Đại Pháp Quan Khiên",
+        "heroes": [
+          {
+            "name": "SP Quan Vũ(Khiên S)",
+            "tactics": [
+              "Lấy Ít Đánh Nhiều",
+              "Kích Kỳ Nọa Quy/Gió Táp Mưa Sa"
+            ],
+            "statFocus": "Võ Lực(Võ Thánh)",
+            "books": [
+              "Chia Nhỏ Đánh Nhanh",
+              "Bách Chiến",
+              "Khép Hờ"
+            ],
+            "advisorSkill": "Chu Thái"
+          },
+          {
+            "name": "SP Pháp Chính",
+            "tactics": [
+              "Dưỡng Sức Đợi Chiến",
+              "Không Đánh Mà Thắng"
+            ],
+            "statFocus": "Trí Lực(Kỳ Toán)",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Dẫn Quân",
+              "Rèn Luyện"
+            ],
+            "advisorSkill": "Chu Thái"
+          },
+          {
+            "name": "Mã Đại",
+            "tactics": [
+              "Ngư Lân Trận",
+              "Lính Giáp Mây"
+            ],
+            "statFocus": "Thống Soái(Viện Trợ)",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Dẫn Quân",
+              "Rèn Luyện"
+            ],
+            "advisorSkill": "Chu Thái"
+          }
+        ]
+      },
+      {
+        "teamName": "Dương Kỳ Ngũ Mưu",
+        "heroes": [
+          {
+            "name": "Dương Kỳ",
+            "tactics": [
+              "Dốc Sức Tính Kế",
+              "Cắt Xương Trị Độc"
+            ],
+            "statFocus": "Trí LựcTốc 2",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Rèn Luyện",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "Tả Từ"
+          },
+          {
+            "name": "Giả Hủ",
+            "tactics": [
+              "Nhanh Trí Động Não",
+              "Thiêu Đốt Doanh Lũy"
+            ],
+            "statFocus": "Trí LựcTốc cuối",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Rèn Luyện",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "Tả Từ"
+          },
+          {
+            "name": "Tuân Du",
+            "tactics": [
+              "Đoạt Hồn Hiệp Phách",
+              "Thượng Binh Phạt Mưu"
+            ],
+            "statFocus": "Trí LựcTốc 1",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Rèn Luyện",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "Tả Từ"
+          }
+        ]
+      },
+      {
+        "teamName": "Trương Quan Hoàng",
+        "heroes": [
+          {
+            "name": "Trương Phi",
+            "tactics": [
+              "Lõa Y Huyết Chiến",
+              "Nhất Kỵ Đương Thiên"
+            ],
+            "statFocus": "Võ Lực",
+            "books": [
+              "Liền Mạch Một Hơi/Dĩ Trực Báo Oán",
+              "Thắng Trận/Tinh Chuẩn",
+              "Giấu Đao/Thiện Chiến"
+            ],
+            "advisorSkill": "Ngụy Diên"
+          },
+          {
+            "name": "Quan Ngân Bình",
+            "tactics": [
+              "Gió Táp Mưa Sa/Xế Đao Chước Địch",
+              "Hoành Tảo Thiên Quân"
+            ],
+            "statFocus": "Võ Lực, Tốc 1",
+            "books": [
+              "Chia Nhỏ Đánh Nhanh",
+              "Bách Chiến",
+              "Tốc Chiến"
+            ],
+            "advisorSkill": "Ngụy Diên"
+          },
+          {
+            "name": "Hoàng Nguyệt Anh",
+            "tactics": [
+              "Thịnh Khí Linh Địch",
+              "Đại Kích Sĩ"
+            ],
+            "statFocus": "Tốc Độ, Thống Soái",
+            "books": [
+              "Kế Sách Dụ Địch",
+              "Tốc Chiến",
+              "Khích Lệ Lòng Quân"
+            ],
+            "advisorSkill": "Ngụy Diên"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "groupLabel": "Cùng tồn 5",
+    "summary": "Chu Thiệu Thục Trí, Thẩm Hằng Ngũ Mưu, Tiêu Chỉ Thái Úy Khiên, Liêu Cơ Kỵ, Bắc Phạt Thương",
+    "teams": [
+      {
+        "teamName": "Thẩm Hằng Ngũ Mưu Kỵ",
+        "heroes": [
+          {
+            "name": "SP Tuân Úc",
+            "tactics": [
+              "Dốc Sức Tính Kế",
+              "Cắt Xương Trị Độc"
+            ],
+            "statFocus": "Trí Lực",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Rèn Luyện",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "Chu Thái"
+          },
+          {
+            "name": "SP Quách Gia",
+            "tactics": [
+              "Đoạt Hồn Hiệp Phách",
+              "Đương Phong Thôi Quyết"
+            ],
+            "statFocus": "Trí Lực",
+            "books": [
+              "Kỳ Chính Tương Sinh",
+              "Giấu Đao",
+              "Văn Thao"
+            ],
+            "advisorSkill": "Chu Thái"
+          },
+          {
+            "name": "Thẩm Hằng",
+            "tactics": [
+              "Nhanh Trí Động Não",
+              "Thượng Binh Phạt Mưu"
+            ],
+            "statFocus": "Trí Lực",
+            "books": [
+              "Binh Hành Quỷ Đạo",
+              "Tinh Chuẩn",
+              "Thiện Chiến"
+            ],
+            "advisorSkill": "Chu Thái"
+          }
+        ]
+      },
+      {
+        "teamName": "Chu Thiệu Thục Trí Cung",
+        "heroes": [
+          {
+            "name": "Gia Cát Lượng",
+            "tactics": [
+              "Thuyền Cỏ Mượn Tên",
+              "Nhạn Hình Trận"
+            ],
+            "statFocus": "Thống SoáiTốc 1",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Rèn Luyện",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "SP Hoàng Trung/Hoàng Trung"
+          },
+          {
+            "name": "Chu Thiệu",
+            "tactics": [
+              "Đồng Lòng Hợp Sức",
+              "Thừa Địch Bất Ngu"
+            ],
+            "statFocus": "Trí Lực",
+            "books": [
+              "Đánh Sau Trúng Trước",
+              "Diệu Toán",
+              "Xem Bói"
+            ],
+            "advisorSkill": "SP Hoàng Trung/Hoàng Trung"
+          },
+          {
+            "name": "Bàng Thống",
+            "tactics": [
+              "Thái Bình Đạo Pháp",
+              "Thiêu Đốt Doanh Lũy"
+            ],
+            "statFocus": "Trí Lực",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Quy Thuận",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "SP Hoàng Trung/Hoàng Trung"
+          }
+        ]
+      },
+      {
+        "teamName": "Thái Úy Khiên",
+        "heroes": [
+          {
+            "name": "Tư Mã Ý",
+            "tactics": [
+              "Lửa Cháy Ngùn Ngụt",
+              "Toàn Quân Đồng Lòng"
+            ],
+            "statFocus": "Trí Lực",
+            "books": [
+              "Thích Làm Việc Thiện",
+              "Chiến Đấu Trường Kỳ",
+              "Quy Thuận"
+            ],
+            "advisorSkill": "Cao Thuận/Tào Nhân"
+          },
+          {
+            "name": "Tiêu Chỉ",
+            "tactics": [
+              "Mê Hoặc",
+              "Lính Giáp Mây"
+            ],
+            "statFocus": "Thống Soái",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Dẫn Quân",
+              "Rèn Luyện"
+            ],
+            "advisorSkill": "Cao Thuận/Tào Nhân"
+          },
+          {
+            "name": "Mãn Sủng",
+            "tactics": [
+              "Dưỡng Sức Đợi Chiến",
+              "Hình Nhất Trận"
+            ],
+            "statFocus": "Trí Lực",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Dẫn Quân",
+              "Rèn Luyện"
+            ],
+            "advisorSkill": "Cao Thuận/Tào Nhân"
+          }
+        ]
+      },
+      {
+        "teamName": "Liêu Cơ Kỵ",
+        "heroes": [
+          {
+            "name": "Trương Liêu",
+            "tactics": [
+              "Nhất Kỵ Đương Thiên",
+              "Thôi Phong Đoạn Nhẫn"
+            ],
+            "statFocus": "Võ Lực",
+            "books": [
+              "Liền Mạch Một Hơi",
+              "Thắng Trận",
+              "Giấu Đao"
+            ],
+            "advisorSkill": "Đổng Trác"
+          },
+          {
+            "name": "Vương Nguyên Cơ(Kỵ S)",
+            "tactics": [
+              "Thiết Kỵ Khu Trì",
+              "Hổ Báo Kỵ"
+            ],
+            "statFocus": "Trí Lực",
+            "books": [
+              "Tấn Công Điểm Yếu",
+              "Khích Lệ Lòng Quân",
+              "Khép Hờ"
+            ],
+            "advisorSkill": "Đổng Trác"
+          },
+          {
+            "name": "Quách Gia",
+            "tactics": [
+              "Phong Thi Trận",
+              "Đánh Bại Quân Địch"
+            ],
+            "statFocus": "Trí Lực, Tốc 1",
+            "books": [
+              "Kỳ Chính Tương Sinh",
+              "Giấu Đao",
+              "Văn Thao"
+            ],
+            "advisorSkill": "Đổng Trác"
+          }
+        ]
+      },
+      {
+        "teamName": "Bắc Phạt Thương",
+        "heroes": [
+          {
+            "name": "SP Gia Cát Lượng",
+            "tactics": [
+              "Thịnh Khí Linh Địch",
+              "Biết Mình Biết Ta"
+            ],
+            "statFocus": "Trí Lực(Thiên Cơ)",
+            "books": [
+              "Tam Quân Chi Chúng",
+              "Rèn Luyện",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "Tả Từ"
+          },
+          {
+            "name": "Quan Hưng",
+            "tactics": [
+              "Gió Táp Mưa Sa/Văn Võ Song Toàn",
+              "Cưỡi Ngựa Nghìn Dặm"
+            ],
+            "statFocus": "Võ Lực",
+            "books": [
+              "Đánh Sau Trúng Trước",
+              "Tướng Uy",
+              "Quỷ Mưu"
+            ],
+            "advisorSkill": "Tả Từ"
+          },
+          {
+            "name": "Trương Bào",
+            "tactics": [
+              "Không Đánh Mà Thắng",
+              "Nhân Lợi Chế Quyền"
+            ],
+            "statFocus": "Thống Soái",
+            "books": [
+              "Chẩm Qua Tọa Giáp",
+              "Rèn Luyện",
+              "Dẫn Quân"
+            ],
+            "advisorSkill": "Tả Từ"
+          }
+        ]
+      }
+    ]
+  }
+]

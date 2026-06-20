@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cẩm Nang Team — Tam Quốc Chí Chiến Lược</title>
+  <meta name="description" content="Tổng hợp meta team, đội hình Cùng Tồn và Khai hoang game Tam Quốc Chí Chiến Lược, có đầy đủ bộ lọc theo tướng, chiến pháp, binh thư, tier." />
+  <meta property="og:title" content="Cẩm Nang Team TQCCL" />
+  <meta property="og:description" content="Tổng hợp meta team + bộ lọc đầy đủ." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%94%EF%B8%8F%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <span class="logo">⚔️</span>
+      <div>
+        <h1>Cẩm Nang Team TQCCL</h1>
+        <p class="tagline">Tổng hợp meta team · Cùng Tồn · Khai hoang</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <span id="stats" class="stats">…</span>
+      <button id="theme-toggle" class="icon-btn" title="Đổi giao diện sáng/tối" aria-label="Đổi giao diện">🌗</button>
+    </div>
+  </header>
+
+  <nav class="section-nav">
+    <button class="nav-tab active" data-section="team-pk">Team PK</button>
+    <button class="nav-tab" data-section="coexist">Cùng Tồn</button>
+    <button class="nav-tab" data-section="khaihoang">Khai hoang</button>
+    <button id="filter-toggle" class="nav-tab filter-toggle">⚙ Bộ lọc</button>
+  </nav>
+
+  <p class="disclaimer">Dữ liệu tổng hợp từ chia sẻ kinh nghiệm người chơi, mang tính tham khảo — không phải phương án duy nhất.</p>
+
+  <main class="layout">
+    <aside id="filter-panel" class="filter-panel">
+      <div class="filter-bar">
+        <input id="search" class="search" type="search" placeholder="🔍 Tìm tướng, chiến pháp, binh thư…" />
+        <button id="clear-filters" class="clear-btn" type="button">Xóa lọc</button>
+      </div>
+      <div id="filters" class="filters"></div>
+    </aside>
+
+    <div class="content">
+      <section id="section-team-pk" class="section active">
+        <div id="team-grid" class="team-grid"></div>
+      </section>
+      <section id="section-coexist" class="section"></section>
+      <section id="section-khaihoang" class="section"></section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Xây dựng từ folder <em>Meta Team PK</em> · Tĩnh, không quảng cáo · Mã nguồn mở.</p>
+  </footer>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

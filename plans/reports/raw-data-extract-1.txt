@@ -1,0 +1,473 @@
+
+############ Meta Team.html ############
+Nội dung bộ phần này được thu thập từ chia sẻ kinh nghiệm của người chơi ở các khu vực khác nhau, phương án tạo team không phải duy nhất
+STT | Type | Power | Tướng | Chiến pháp 1 | Chiến pháp 2 | Thêm
+1 | Kỵ Ngô | T0 | Tôn Thượng Hương | Hổ Cứ Ưng Dương | Lõa Y Huyết Chiến | Tôn Thượng Hương và Thái Sử Từ Kỵ ngô thuộc loại đột phá nhanh, đánh nhanh thắng nhanh với skill mới Lõa Y Huyết ChiếnThái Sử Từ ưu thế hơn Tôn Thượng Hương vì độ ổn định nhưng lại bị thiên địch là các đội mang Thịnh Khí Linh Địch. Binh Vô Thường Thế của Tôn Quyền lại mang phong cách đánh chì chạc, kéo dài với khả năng hồi phục và phòng ngự
+Lăng Thống | Nằm Gai Nếm Mật | Hoành Tảo Thiên Quân
+Chu Thái | Thịnh Khí Linh Địch | Tây Lương Thiết Kỵ
+2 | Kỵ Ngô | T0.5 | Thái Sử Từ | Nhất Kỵ Đương Thiên | Hổ Cứ Ưng Dương
+Lăng Thống | Nằm Gai Nếm Mật | Hoành Tảo Thiên Quân
+Chu Thái | Thịnh Khí Linh Địch | Tây Lương Thiết Kỵ
+3 | Kỵ Ngô | T0.5 | Tôn Quyền | Đương Phong Thôi Quyết | Binh Vô Thường Thế
+Lăm Thống | Nằm Gai Nếm Mật | Tượng Binh
+Chu Thái | Phong Thi Trận | An Ủi Quân Dân
+4 | Kỵ Ngụy | T0 | Tào Tháo | An Ủi Quân Dân | Cắt Xương Trị Độc | Khắc chế của các team đột phá, ôm bom.  Đặc biệt là các team có lữ bố. Chu Thái vẫn có thể sự dụng ổn trong team kỵ ngụy.
+Giả Hủ | Đoạt Hồn Hiệp Phách | Sợ Bóng Sợ Gió
+Trình Dục | Sĩ Biệt Tam Nhật | Ngự Địch Bình Chướng
+6 | Kỵ Ngụy | T0 | Tào Tháo | An Ủi Quân Dân | Cắt Xương Trị Độc
+Hác Chiêu | Sĩ Biệt Tam Nhật | Dụng Võ Thần Thông
+Giả Hủ | Đoạt Hồn Hiệp Phách | Sợ Bóng Sợ Gió
+7 | Cung Thục | T0 | Khương Duy | Sĩ Biệt Tam Nhật | An Ủi Quân Dân | Dựa trên ý tưởng của team thục cung cũ, GCL giờ đi support toàn diện bổ sung thêm kỹ năng hồi phục để trám vào chỗ trống hồi máu của Pháp Chính. Đây là đội hình cực kỳ ổn định do không còn phụ thuộc vào sự hên xui của Bàng Thống và Pháp Chính như mùa trước. Bộ kỹ năng hầu hết là cp chỉ huy và bị động đưa team này lên hàng T0
+Gia Cát Lượng | Chờ Đợi Xuất Phát | Cắt Xương Trị Độc
+Bàng Thống | Thái Bình Đạo Pháp | Vô Đương Phi Quân
+8 | Team Khiên ôm bom | T0.5 | Trương Phi | Vô Địch Can Trường | Tuyệt Địa Phản Kích | Với cp sự kiện mới , Vô Địch Can Trường , Trương Phi ôm bom đã mạnh hơn trước.Điểm yếu là sợ các đội trâu bò: Ngụy Kỵ, Ngụy Khiên, và các đội mang cp Lính Giáp Mây
+Tào Tháo | Tạm Lánh Sóng Gió | Hãm Trận Doanh
+Chu Thái | Phong Thi Trận | An Ủi Quân Dân
+9 | Team Kỵ ôm bom | T1 | Viên Thuật | Phá Trận Thôi Kiên | Đánh Đâu Thắng Đó | "Cũng tương tự team ôm bom Trương Phi, nhưng thiếu ổn định hơn do phụ thuộc vào độ hên xui từ cp của Viên Thuật, thiếu ổn định."
+Chu Thái | Phong Thi Trận | An Ủi Quân Dân
+Hoa Đà | Cắt Xương Trị Độc | Ngự Địch Bình Chướng
+`10 | Cung Ngô | T0.5 | Lục Tốn | Cắt Xương Trị Độc | Sĩ Biệt Tam Nhật | Tôn Quyền sẽ là core khắc chế các team tam thế có Tà Tử, do đó ở mùa này các team tam thế sẽ rất khó thở khi gặp team có Tôn Quyền đặc biệt khi giờ lại thêm cp hồi phục và tăng độ trâu chó từ Nhất Lực Cự ThủTuy nhiên các team có Thịnh Khí Linh Địch vẫn luôn là thiên địch của đội cung ngô
+Thái Sử Từ | Đương Phong Thôi Quyết | Binh Vô Thường Thế
+Trình Phổ | Nhất Lực Cự Thủ | Thiết Kỵ Khu Trì
+11 | Cung Ngô | T0.5 | Tôn Quyền | Đương Phong Thôi Quyết | Binh Vô Thường Thế
+Lục Tốn | Tạm Lánh Sóng Gió | Chờ Đợi Xuất Phát
+Trình Phổ | Nhất Lực Cự Thủ | Thiết Kỵ Khu Trì
+12 | Cung Ngô | T1 | Tôn Quyền | Đương Phong Thôi Quyết | Nhất Kỵ Đương Thiên
+Thái Sử Từ | Đánh Bại Quân Địch | Binh Vô Thường Thế
+Lỗ Túc | Bát Môn Kim Tỏa Trận | Quân Cẩm Phàm
+13 | Cung Bạch Mã Đô Đốc | T1.5 | Lục Tốn | Thái Bình Đạo Pháp | Phong Trợ Hỏa Thế | Các team đô đốc cũ đều đã out meta, team cung độc có thể được sử dụng để counter một số team khác do có sát thương cao. Ngoài ra  team cung bạch mã rất hữu dụng trong giai đoạn đánh nhau ban đầu do lượng sát thương lớn và các team khác chưa đủ trâu bò để phòng ngự.
+Chu Du | Đoạt Hồn Hiệp Phách | Trí Kế
+Lỗ Túc | Bạch Mã Nghĩa Tòng | Tỏa Nhuệ
+14 | Cung Độc Đô Đốc | T1.5 | Lục Tốn | Thái Bình Đạo Pháp | Vô Đương Phi Quân
+Chu Du | Đoạt Hồn Hiệp Phách | Tọa Thủ Cô Thành
+Lỗ Túc | Tỏa Nhuệ | Bát Môn Kim Tỏa Trận
+15 | Cung Lục Kháng | T1.5 | Lục Tốn | Thái Bình Đạo Pháp | Phong Trợ Hỏa Thế
+Chu Du | Đoạt Hồn Hiệp Phách | Trí Kế
+Lục Kháng | Tạm Lánh Sóng Gió | Ngự Địch Bình Chướng
+16 | Khiên Ngụy | T0.5 | Tào Tháo | Thần Thương Thiệt Chiến | An Ủi Quân Dân | Có độ ổn định tương đối, đầu ra sát thương trung bình với Điểm Vi và Từ Hoảng nhưng rất hữu ích để chống các đội Ngô, kể cả đội Ngô kỵ (cần thiết sử dụng Thịnh Khí Linh Địch, không nên dùng Đằng giáp mà nên dùng Hãm Trận Doanh nếu không có Hổ vệ). Vẫn bị khắc chế bởi đội Ngụy kỵ
+Điểm Vi | Quân Hổ Vệ | Thịnh Khí Linh Địch
+Hác Chiêu | Phong Thi Trận | Cắt Xương Trị Độc
+17 | Khiên Ngụy | T0.5 | Tào Tháo | Thần Thương Thiệt Chiến | An Ủi Quân Dân
+Hác Chiêu | Phong Thi Trận | Cắt Xương Trị Độc
+Từ Hoảng | Quân Hổ Vệ | Tuyệt Địa Phản Kích
+18 | Khiên Ngụy | T0.5 | Tư Mã Ý | Sĩ Biệt Tam Nhật | Dụng Võ Thần Thông
+Hác Chiêu | Hãm Trận Doanh | Cắt Xương Trị Độc
+Tào Tháo | An Ủi Quân Dân | Phong Thi Trận
+19 | Tam Thế | T0.5 | Lục Tốn | Thái Bình Đạo Pháp | Sĩ Biệt Tam Nhật | Khương Duy là sự lựa chọn tốt hơn GCL cho team tam thế kiểu này, cả 2 team này đều bị khắc chế bởi team kỵ ngô và kỵ ngụy. Thái Văn Cơ chỉ hữu dụng khi ở thế lực Viên Thiệu( Bởi có Yếu Lược Lính Kỵ) Ngoài ra các team trên cũng sẽ mạnh hơn nếu ở thế lực Viên Thiệu
+Tả Từ | Bạch Mã Nghĩa Tòng | Tam Thế Trận
+Khương Duy | Đoạt Hồn Hiệp Phách | Sợ Bóng Sợ Gió
+20 | Tam Thế | T0.5 | Lục Tốn | Thái Bình Đạo Pháp | Sĩ Biệt Tam Nhật
+Gia Cát Lượng | Đoạt Hồn Hiệp Phách | Sợ Bóng Sợ Gió
+Tả Từ | Bạch Mã Nghĩa Tòng | Tam Thế Trận
+21 | Tam Thế | T0 | Lục Tốn | Thái Bình Đạo Pháp | Sĩ Biệt Tam Nhật
+Gia Cát Lượng | Đoạt Hồn Hiệp Phách | Sợ Bóng Sợ Gió
+Thái Văn Cơ | Bạch Mã Nghĩa Tòng | Tam Thế Trận
+22 | Tam Thế | T0.5 | Giả Hủ | Ngụy Thư Tương Gian | Sĩ Biệt Tam Nhật | Hai đội đầu tiên dựa vào sự bảo vệ né tránh và độ hiệu quả của Tả Tử. Đội 3 cần bắt buộc phải theo thế lực Mã Đằng để giảm sát thương của Thái Văn Cơ. Điều kiện thắng: Bảo vệ của Thái Sử Từ + Hỗn Loạn của Giả Hủ.
+Triệu Vân | Phá Trận Thôi Kiên | Đánh Đâu Thắng Đó
+Tả Từ | Tam Thế Trận | Tượng Binh
+23 | Tam Thế | T1 | Giả Hủ | Ngụy Thư Tương Gian | Sĩ Biệt Tam Nhật
+Tôn Thượng Hương | Lỗ Mãng | Cường Công
+Tả Từ | Tam Thế Trận | Tượng Binh
+24 | Tam Thế | T0.5 | Giả Hủ | Ngụy Thư Tương Gian | Sĩ Biệt Tam Nhật
+Thái Sử Từ | Đương Phong Thôi Quyết | Bách Kỵ Kiếp Doanh
+Thái Văn Cơ | Tam Thế Trận | Ngự Địch Bình Chướng
+25 | Tam Thế | T0.5 | Lữ Bố | Nhất Kỵ Đương Thiên | Quỷ Thần Đình Uy | Ở mùa PK này, các team giảm sát thương và chống chịu xuất hiện nhiều hơn, nên đất diễn cho đội Lữ Bố ngày càng ít lại,Team Lữ Bố ôm bom giờ đây rất khó đánh nhanh thắng nhanh trong 3 hiệp đầu,Do đó để tăng tính ổn định, cần ít nhất một tướng mang Đương Phong Thôi Quyết trong team để hỗ trợ cho Lữ Bố.
+Thái Sử Từ | Đương Phong Thôi Quyết | Binh Vô Thường Thế
+Hoàng Nguyệt Anh | Hổ Báo Kỵ | Tam Thế Trận
+26 | Tam Thế | T1 | Lữ Bố | Nhất Kỵ Đương Thiên | Quỷ Thần Đình Uy
+Hoàng Nguyệt Anh | Thiết Kỵ Khu Trì | Hoành Qua Dược Mã
+Quách Gia | Hổ Báo Kỵ | Tam Thế Trận
+27 | Tam Thế | T0.5 | Lữ Bố | Nhất Kỵ Đương Thiên | Bách Kỵ Kiếp Doanh
+Trương Liêu | Đương Phong Thôi Quyết | Quỷ Thần Đình Uy
+Hoàng Nguyệt Anh | Hổ Báo Kỵ | Tam Thế Trận
+28 | Tam Thế | T0 | Viên Thuật | Phá Trận Thôi Kiên | Đánh Đâu Thắng Đó | Bị khắc chế bởi đội cung độc, đội kỵ binh đánh nhanh thắng nhanh, các đội kỵ ngụy, đội Lính Giáp Mây
+Chu Thái | An Ủi Quân Dân | Phong Thi Trận
+Lưu Bị | Tam Lánh Sóng Gió | Ngự Địch Bình Chướng
+29 | Tam Thế | T0.5 | Tôn Kiên | Vô Địch Can Trường | Tuyệt Địa Phản Kích
+Lỗ Túc(lên S) | Tạm Lánh Sóng Gió | Hãm Trận Doanh
+Chu Thái | An Ủi Quân Dân | Phong Thi Trận
+30 | Tam Thế | T1 | Trương Phi | Vô Địch Can Trường | Tuyệt Địa Phản Kích
+Hác Chiêu | Tạm Lánh Sóng Gió | Hãm Trận Doanh
+Chu Thái | An Ủi Quân Dân | Phong Thi Trận
+31 | Thương Thục | T1.5 | Triệu Vân | Phá Trận Thôi Kiên | Đánh Đâu Thắng Đó | Chuyên sử dụng để tấn công các đội tượng binh. Đội thứ 2 có thể chuyển sang Thương và bỏ Hãm Trận Doanh sử dụng để đặc trị các đội đánh nhanh thắng nhanh (kể cả kỵ Ngô, Kỵ Lữ Bố, v.v...)Bị khắc chế bởi các team gây ra dame mưu lược (Cung thục, Cung tam thiên,...)
+Quan Vũ | Lạc Phượng | Hoành Tảo Thiên Quân
+Trương Phi | Thịnh Khí Linh Địch | Lính Thanh Châu
+33 | Kỵ Thục | T0.5 | Khương Duy | Đoạt Hồn Hiệp Phách | Sợ Bóng Sợ Gió | Dựa trên ý tưởng team siêu cấp Thương mùa trước, nhưng nay thay GCL bằng Khương Duy tăng độ ổn địnhBị khắc chế bởi tất cả các team Thương và Ngụy Kỵ
+Lưu Bị | Bát Môn Kim Tỏa Trận | Tạm Lánh Sóng Gió
+Triệu Vân | Phá Trận Thôi Kiên | Nằm Gai Nếm Mật
+34 | Kỵ Ngụy ám sát | T0 | Tào Tháo | Thiết Kỵ Khu Trì | Hổ Báo Kỵ | Với bộ cp mới của mùa 4 (Skill event Lõa Y Huyết Chiến và skill event Thiết Kỵ Khu Trì, ngụy ám sát trở thành con quái vật do có độ ổn định cao, team này không bị khắc chế bởi bất cứ team nào, kể cả các team mang Hỗn Loạn hay mang Chu Thái trâu chó. Có thể thay Tào Tháo bằng Quách Gia và đưa Trương Liêu làm com nhưng sức mạnh sẽ giảm T0 xuống T0.5Team số 2 tuy cũng có độ ổn định ngang bằng nhưng không kích sát nhanh được đối thủ
+Trương Liêu | Bạo Lệ Vô Nhân | Quỷ Thần Đình Uy
+Hạ Hầu Uyên | Đương Phong Thôi Quyết | Lõa Y Huyết Chiến
+35 | Kỵ Ngụy ám sát | T1 | Tào Tháo | Thiết Kỵ Khu Trì | Hổ Báo Kỵ
+Trình Dục | Sĩ Biệt Tam Nhật | Ngự Địch Bình Chướng
+Hạ Hầu Uyên | Đương Phong Thôi Quyết | Lõa Y Huyết Chiến
+36 | Team Youtuber | T? | Viên Thuật | Lửa Lan Khắp Chốn | Phong Trợ Hỏa Thế | Team 1 ý tưởng giống như team tam thế Lục Tốn, nhưng nay thay Lục Tốn bằng Viên Thuật (cho bác nào ko có Thái Bình Đạo Pháp)
+Chu Tuấn | Trầm Sa Quyết Thủy | Khắc Địch Chế Thắng
+Tả Từ | Bạch Mã Nghĩa Tòng | Cắt Xương Trị Độc
+37 | Team Youtuber | T? | Đổng Trác | Thừa Thắng Trường Khu | Tuyệt Địa Phản Kích | Team 2 ý tưởng là team ôm bom, tham khảo team ôm bom Trương Phi ở trên
+Hoa Đà | Chờ Đợi Xuất Phát | Tạm Lánh Sóng Gió
+Ngột Đột Cốt | Phong Thi Trận | Ngự Địch Bình Chướng
+38 | Team Youtuber | T? | Chung Hội | Ngụy Thư Tương Gian | Sĩ Biệt Tam Nhật | Team 3 ý tưởng là sử dụng Chung Hội gây ra nhiều control tactics nhất có thể để Hạ Hầu Uyên và Trương Xuân Hoa gây sát thương
+Hạ Hầu Uyên | Bạo Lệ Vô Nhân | Cường Công
+Trương Xuân Hoa | Bạch Mã Nghĩa Tòng | Tạm Lánh Sóng Gió
+39 | Team Youtuber | T? | Lục Tốn | Vô Đương Phi Quân | Phơng Trợ Họa Thế | Độ hiệu quả được chứng minh qua Youtube :D chưa có điều kiện test
+Lỗ Túc | Phong Thi Trận | Bạch Nhị Binh
+Trình Phổ | Nhất Lực Cự Thủ | An Ủi Quân Dân
+40 | Team Youtuber | T? | Pháp Chính | Tam Thế Trận | Quân Cẩm Phàm
+Thái Sử Từ | Đương Phong Thôi Quyết | Binh Vô Thường Thế
+Hạ Hầu Uyên | Lõa Y Huyết Chiến | Bạo Lệ Vô Nhân
+41 | Team Youtuber | T? | Hạ Hầu Uyên | Lõa Y Huyết Chiến | Bách Kỵ Kiếp Doanh
+Hoàng Nguyệt Anh | Tam Thế Trận | Hổ Báo Kỵ
+Thái Sử Từ | Đương Phong Thôi Quyết | Bạo Lệ Vô Nhân
+42 | Team Youtuber | T? | Lục Tốn | Dũng Giả Hàng Đầu | Phong Trợ Hỏa Thế
+Tả Từ | Vô Đương Phi Quân | Tam Thế Trận
+Trương Xuân Hoa | Đoạt Hồn Hiệp Phách | Thiêu Đốt Doanh Lũy
+43 | Team Youtuber | T? | Viên Thuật | Tị Thực Kích Hư | Vạn Tiễn Tề Phát
+Trương Liêu | Thái Bình Đạo Pháp | Tứ Diện Sở Ca
+Thái Văn Cơ | Tạm Lánh Sóng Gió | Bạch Mã Nghĩa Tòng
+44 | Team Youtuber | T? | Chung Hội | Đoạt Hồn Hiệp Phách | Khắc Địch Chế Thắng
+Hạ Hầu Uyên | Cường Công | Đánh Bại Quân Địch
+Trình Dục | Thái Bình Đạo Pháp | Vô Đương Phi Quân
+45 | Team Youtuber | T? | Mã Siêu | Lõa Y Huyết Chiến | Bách Kỵ Kiếp Doanh
+Hoàng Nguyệt Anh | Hoành Qua Dược Mã | Hổ Báo Kỵ
+Quách Gia | Phong Thi Trận | Thiết Kỵ Khu Trì
+46 | Team Youtuber | T? | Hạ Hầu Uyên | Lõa Y Huyết Chiến | Bách Kỵ Kiếp Doanh
+Hoàng Nguyệt Anh | Hoành Qua Dược Mã | Hổ Báo Kỵ
+Quách Gia/Chu Thái | Phong Thi Trận | Thiết Kỵ Khu Trì
+
+############ Team giới thiệu(mới).html ############
+Hướng dẫn này dựa trên kinh nghiệm của người chơi ở các khu vực khác được biên soạn đây, có tính tham khảo nhất định nhưng không phải là duy nhất. Tất cả người xem đều có thể bổ sung
+Đánh giá những team sau thường tính không xài tuyệt kỹ, nếu xài tuyệt kỹ sẽ mạnh hơn.
+Team Giới Thiệu
+Type | Tướng | Chiến pháp 1 | Chiến pháp 2 | Binh Thư 1 | Binh Thư 2 | Binh Thư 3 | Thêm
+Thương(★★★★) | SP Tuân Úc | Thuyền Cỏ Mượn Tên | Đương Phong Thôi Quyết | Yêu Lính Thương Dân | Tĩnh Tâm | Giáp Sắt | Chạm:TMY Khiên, SP Quan Vũ Thương, Bắc Phạt ThươngTránh:Team Cung các phe
+Trương Liêu | Mau Giành Lợi Thế | Bạo Lệ Vô Nhân | Liền Mạch Một Hơi | Thắng Trận | Cầm Binh Khí
+Vương Nguyên Cơ | Tạm Lánh Sóng Gió | Không Đánh Mà Thắng | Tấn Công Điểm Yếu | Tốc Chiến | Khích Lệ Lòng Quân
+Thương(★★★★☆) | SP Mã Siêu | Đương Phong Thôi Quyết | Mau Giành Lợi Thế/Thôi Phong Đoạn Nhẫn | Tấn Công Điểm Yếu | Khép Hờ | Tốc Chiến | Chạm:TMY Khiên, Phi Hùng KỵTránh:Hổ Thần, Quần Cung
+SP Hoàng Phổ Tung | Thuyền Cỏ Mượn Tên | Uy Mưu Vô Địch/Vạn Quân Đoạt Sư/Thừa Địch Bất Ngu | Đánh Giá Tình Hình | Khai Hạp | Chia Lời
+Hứa Du (Thương S) | Lâm Nguy Cứu Chủ | Giải Phiền Vệ | Đánh Sau Trúng Trước | Diệu Toán | Xem Bói
+Thương | SP Quan Vũ | Trung Dũng Nghĩa Liệt | Xế Đao Chước Địch | Chia Nhỏ Đánh Nhanh | Khép Hờ | Bách Chiến | Chạm:Team Kỵ Ngô, Phú Quý KỵTránh:Team Cung Cam Ninh, team thương Trương Liêu
+SP Hoàng Phổ Tung | Phong Thi Trận | Thuyền Cỏ Mượn Tên | Tấn Công Điểm Yếu | Tốc Chiến | Cứu Chủ
+SP Tuân Úc | Uy Mưu Vô Địch | Không Đánh Mà Thắng | Đánh Sau Trúng Trước | Diệu Toán | Thần Cơ
+Thương | SP Quan Vũ | Trung Dũng Nghĩa Liệt | Xế Đao Chước Địch | Nhìn Rõ Mồn Một | Chiến Đấu Trường Kỳ | Mưu Kế Sâu Xa | Chạm:Quan Quan Kỵ, Phú Quý KỵTránh:Lính Giáp Mây TMY, Cung Ngô
+SP Hoàng Phổ Tung | Tam Thế Trận | Thuyền Cỏ Mượn Tên | Tấn Công Điểm Yếu | Tốc Chiến | Khích Lệ Lòng Quân
+SP Lữ Mông | Uy Mưu Vô Địch | Không Đánh Mà Thắng | Đánh Sau Trúng Trước | Diệu Toán | Thần Cơ
+Thương | SP Lữ Mông | Đương Phong Thôi Quyết | Binh Vô Thường Thế | Kỳ Chính Tương Sinh | Cầm Binh Khí | Văn Thao | Chạm: team TMY, Phú Quý Kỵ, Bắc Phạt ThươngTránh: Hổ Thần Cung, Ngô Kỵ, Quần Cung
+Lục Tốn | Tiên Thành Kỳ Lự | Cắt Xương Trị Độc | Kỳ Chính Tương Sinh | Văn Thao | Cầm Binh Khí
+Lỗ Túc | Tạm Lánh Sóng Gió | Bạch Nhị Binh | Gặp Địch Không Loạn | Khích Lệ Lòng Quân | Khép Hờ
+Thương | Trương Phi | Hoành Tảo Thiên Quân | Đại Kích Sĩ | Lấy Võ Dẹp Loạn/Dĩ Trực Báo Oán | Tướng Uy/Tinh Chuẩn | Quỷ Mưu/Trì Trọng | Chạm: các đội hình thiếu giảm thương như SP Mã SiêuTránh: đội hình Lính Giáp Mây
+Quan Ngân Bình | Thịnh Khí Lăng Địch | Gió Táp Mưa Sa | Chia Nhỏ Đánh Nhanh | Bách Chiến | Tốc Chiến
+Triệu Vân | Lõa Y Huyết Chiến | Đương Phong Thôi Quyết | Không Chiến Sẽ Chết/Liền Mạch Một Hơi | Thắng Trận | Cầm Binh Khí
+Thương | Trương Phi(tốt nhất có Hùng Liệt) | Lõa Y Huyết Chiến | Nhất Kỵ Đương Thiên/Thôi Phong Đoạn Nhẫn | Liền Mạch Một Hơi/Dĩ Trực Báo Oán | Cầm Binh Khí/Thắng Trận/Trì Trọng | Giấu Đao/Tinh Chuẩn | Chạm: Phi Hùng Kỵ, Bắc Phạt ThươngTránh: các loại khiênPhối hợp Kỹ Năng Quân Sư Ngụy Diên, tăng tỷ lệ phát động Chiến Pháp hiệp đầu tiên, đội hình này sẽ có biểu hiện tốt hơn!
+Quan Ngân Bình | Gió Táp Mưa Sa | Hoành Tảo Thiên Quân | Lấy Võ Dẹp Loạn/Chia Nhỏ Đánh Nhanh | Quỷ Mưu/Tốc Chiến | Tướng Uy/Bách Chiến
+Hoàng Nguyệt Anh | Thịnh Khí Linh Địch | Đại Kích Sĩ/Ngụy Thư Tương Gian | Kế Sách Dụ Địch | Tốc Chiến | Khích Lệ Lòng Quân
+Thương | SP Gia Cát Lượng | Bát Môn Kim Tỏa Trận | Không Đánh Mà Thắng | Tấn Công Điểm Yếu | Tốc Chiến | Khích Lệ Lòng Quân | Chạm:Giả Hủ Khiên, HH Uyên Kỵ Tránh:Team Cung các Phe
+Quan Hưng | Cưỡi Ngựa Nghìn Dặm | Vô Địch Can Trường | Thắng Càng Mạnh | Thắng Trận | Cầm Binh Khí
+Trương Bào | Lính Thanh Châu | Thuyền Cỏ Mượn Tên | Yêu Lính Thương Dân | Tĩnh Tâm | Giáp Sắt
+Thương | Trình Phổ | Tiềm Long Trận | Thuyền Cỏ Mượn Tên | Đánh Giá Tình Hình | Khai Hạp | Chia Lời | Chạm:Kỵ Ngô, TMY KhiênTránh:Các loại Cung
+SP Mã Siêu | Đương Phong Thôi Quyết | Mau Giành Lợi Thế | Tấn Công Điểm Yếu | Tốc Chiến | Khép Hờ
+SP Tuân Úc | Lâm Nguy Cứu Chủ | Giải Phiền Vệ | Yêu Lính Thương Dân | Thế Phòng Thủ | Phòng Bị
+Thương | Quan Vũ | Cưỡi Ngựa Nghìn Dặm | Uy Mưu Vô Địch | Đánh Sau Trúng Trước | Quỷ Mưu | Tướng Uy | Chạm:SP Mã Siêu Thương, Uyên KỵTránh:Các loại khiên
+Quan Ngân Bình | Gió Táp Mưa Sa | Hoành Tảo Thiên Quân | Thắng Càng Mạnh | Thắng Trận | Cầm Binh Khí
+CO Quan Bình | Lính Thanh Châu | Cơ Hình Trận | Gặp Địch Không Loạn | Tốc Chiến | Cứu Viện
+Kỵ | Tào Tháo(Gian Hùng) | Hổ Báo Kỵ | Thiết Kỵ Khu Trì | Bố Trận Chờ Đợi | Thế Phòng Thủ | Giáp Sắt | Chạm: Khiên, Kỵ Phi HùngTránh:Đô Đốc Cung,Hổ Thần CungCó Gian Hùng, Viễn Trợ-★★★★★Có Gian Hùng-★★★★☆
+Hạ Hầu Uyên | Lõa Y Huyết Chiến | Bách Kỵ Kiếp Doanh | Liền Mạch Một Hơi | Thắng Trận | Cầm Binh Khí
+Trương Liêu | Đương Phong Thôi Quyết | Mau Giành Lợi Thế | Liền Mạch Một Hơi | Thắng Trận | Cầm Binh Khí
+Kỵ/Cung(★★★★☆) | SP Tuân Úc | Dốc Sức Tính Kế | Cắt Xương Trị Độc | Tam Quân Chi Chúng | Rèn Luyền | Dẫn Quân | Chạm:các loại KhiênTránh:Team Trương Liêu, SP Mã SiêuGiả Hủ có thể xài Ngụy Thư Tương Gian
+Giả Hủ | Nhân Lợi Chế Quyền/Nhanh Trí Động Não | Đồng Lòng Hợp Sức/Anh Thành Tự Thủ | Tam Quân Chi Chúng/Giả Nai Trước Địch | Dẫn Quân/Bách Chiến | Rèn Luyện/Khép Hờ
+SP Quách Gia | Đoạt Hồn Hiệp Phách | Thượng Binh Phạt Mưu | Không Lộ Tài Năng/Lấy Võ Dẹp Loạn | Quỷ Mưu | Tướng Uy
+Kỵ(★★★★☆) | SP Tuân Úc | Dốc Sức Tính Kế | Cắt Xương Trị Độc | Tam Quân Chi Chúng | Rèn Luyền | Dẫn Quân | Chạm:Khiên các pheTránh:SP Mã Siêu Thương, Tam Thế Lữ Bố
+SP Quách Gia | Đoạt Hồn Hiệp Phách | Đương Phong Thôi Quyết | Kỳ Chính Tương Sinh | Văn Thao | Cầm Binh Khí
+Tuân Du | Thượng Binh Phạt Mưu | Anh Thành Tự Thủ | Tam Quân Chi Chúng | Chiến Đấu Trường Kỳ | Rèn Luyền
+Kỵ(★★★★☆) | Tư Mã Ý | Thượng Binh Phạt Mưu | Sĩ Biệt Tam Nhật/Toàn Quân Đồng Lòng | Yêu Lính Thương Dân | Thế Phòng Thủ | Dũng Nghĩa | Chạm:các loại khiênTránh:Phú Quý Kỵ, sp Mã Siêu Thương
+SP Tuân Úc | Phi Hùng Quân | Toàn Quân Đồng Lòng | Yêu Lính Thương Dân | Thế Phòng Thủ | Cương Nhu
+SP Tào Chân | Phong Thi Trận | Thuyền Cỏ Mượn Tên | Yêu Lính Thương Dân | Thế Phòng Thủ | Cương Nhu
+Kỵ(★★★★☆) | Trương Liêu | Mau Giành Lợi Thế | Bạo Lệ Vô Nhân | Liền Mạch Một Hơi | Thắng Trận | Cầm Binh Khí | Chạm:TMY Khiên, Phú Quý Kỵ, Tam Thế Pháp ChínhTránh:Vườn Đào
+Quách Gia | Thuyền Cỏ Mượn Tên | Phong Thi Trận | Đánh Giá Tình Hình | Khai Hạp | Chia Lời
+Vương Nguyên Cơ | Hổ Báo Kỵ | Không Đánh Mà Thắng | Tấn Công Điểm Yếu | Tốc Chiến | Khép Hờ
+Kỵ/Cung(★★★★) | SP Tuân Úc | Dốc Sức Tính Kế | Cạo Xương Trị Độc | Tam Quân Chi Chúng | Dẫn Quân | Rèn Luyện | Chạm:Thương Hoàng Mã, Khiên Quan Tinh, Thương Bắc PhạtTránh: đội hình bùng nổ như Kỵ Ngô
+Trình Dục | Thái Bình Đạo Pháp | Sĩ Biệt Tam Nhật | Lấy Võ Dẹp Loạn | Quỷ Mưu | Tướng Uy
+Giả Hư | Nhanh Trí Động Não/Ngụy Thư Tương Gian | Đoàn Quân Đồng Lòng | Tam Quân Chi Chúng/Giả Nai Trước Địch | Dẫn Quân/Bách Chiến | Chiến Đấu Trường Kỳ/Khép Hờ
+Kỵ(★★★★) | Chu Thái | Thịnh Khí | Tây Lương Thiết Kỵ | Kế Sách Dụ Địch | Khép Hờ | Khích Lệ Lòng Quân | Chạm: Bắc Phạt Thương, TMY Phi HùngTránh:  Uyên Kỵ, SP Quan Vũ thương
+Tôn Thượng Hương | Lâm Phong Quyết Địch | Bách Kỵ Kiếp Doanh | Liền Mạch Một Hơi | Thắng Trận | Cầm Binh Khí
+Lăng Thống | Phá Quân Uy Thắng | Gió Táp Mưa Sa | Thắng Càng Mạnh | Thắng Trận | Cầm Binh Khí
+Kỵ(★★★★) | Khương Duy | Thượng Binh Phạt Mưu | Sĩ Biệt Tam Nhật | Man Dũng Phi Dũng | Văn Thao | Cầm Binh Khí | Chạm: các loại khiênTránh:Kỳ Ngô, SP Mã Siêu
+Lưu Bị | Phi Hùng Quân | Cắt Xương Trị Độc | Tấn Công Điểm Yếu | Khích Lệ Lòng Quân | Khép Hờ
+Quan Ngân Bình | Phong Thi Trận | Thuyền Cỏ Mượn Tên | Yêu Lính Thương Dân | Thế Phòng Thủ | Phòng Bị
+Kỵ | SP Tuân Úc | Toàn Quân Đồng Lòng | Thượng Binh Phạt Mưu | Tam Quân Chi Chúng | Chiến Đấu Trường Kỳ | Rèn Luyện | Chạm: Tam Tiên, Vườn Đào, Kỵ NgôTránh: các loại thương, Cung Ngô
+Hạ Hầu Đôn | Chúng Động Vạn Kế | Mê Hoặc | Không Chiến Mà Thắng | Giáp Sắt | Thế Phòng Thủ
+Mãn Sủng | Cắt Xương Trị Độc | Phi Hùng Quân | Tấn Công Điểm Yếu | Khích Lệ Lòng Quân | Tốc Chiến
+Cung(★★★★★) | SP Tuân Úc | Dốc Sức Tính Kế | Cắt Xương Trị Độc | Tam Quân Chi Chúng | Rèn Luyền | Dẫn Quân | Chạm:TMY lính giáp mây, các loại thươngTránh:Vườn Đào, Cung Hổ Thần
+Giả Hủ | Ngụy Thư Tương Gian | Toàn Quân Đồng Lòng | Tam Quân Chi Chúng | Chiến Đấu Trường Kỳ | Rèn Luyền
+Vương Dị | Đoạt Hồn Hiệp Phách | Thượng Binh Phạt Mưu | Tam Quân Chi Chúng | Chiến Đấu Trường Kỳ | Rèn Luyền
+Cung(★★★★☆) | SP Chu Du | Toàn Quân Đồng Lòng | Sĩ Biệt Tam Nhật | Tránh Thế Mạnh Của Địch | Thế Phòng Thủ | Phòng Bị | Chạm:Tránh:SP Lữ Mông xài Đạp được đánh giá ★★★★★
+SP Lữ Mông | Thuyền Cỏ Mượn Tên | Đương Phong Thôi Quyết | Kỳ Chính Tương Sinh | Văn Thao | Giấu Đao
+Lỗ Túc | Tạm Lánh Sóng Gió | Thừa Địch Bất Ngu | Yêu Lính Thương Dân | Thế Phòng Thủ | Cương Nhu
+Cung(★★★★☆) | Khương Duy | Đoạt Hồn Hiệp Phách | Toàn Quân Đồng Lòng | Man Dũng Phi Dũng | Thắng Trận | Cầm Binh Khí | Chạm:các loại Thương, team TMYTránh:Team Kỵ diệt đầuChú ý: CGL tốc độ phải cao hơn Bàng Thống
+Bàng Thống | Thái Bình Đạo Pháp | Thượng Binh Phạt Mưu | Đánh Sau Trúng Trước | Tướng Uy | Xem Bói
+Gia Cát Lượng | Đương Phong Thôi Quyết | Thịnh Khí Linh Địch | Kỳ Chính Tương Sinh | Văn Thao | Giấu Đao
+Cung(★★★★) | SP Chu Du | Văn Võ Song Toàn | Toàn Quân Đồng Lòng | Kỳ Chính Tương Sinh/Lấy Võ Dẹp Loạn/Thắng Càng Mạnh | Xem Bói/Văn Thao | Tướng Uy/Thắng Trận | Chạm:Hoàng Mã Thương, các đội pháp sư hotTránh: Các đội bạo phát cao tấn công nhanh có chút thiệt thòi, vd như các đội hình Ngô Kỵ, Tam Thế Lữ, Hạch Đạn Trương
+Lục Tốn | Sĩ Biệt Tam Nhật/Thiêu Đốt Doanh Lũy | Vạn Quân Đoạt Sư | Đánh Bất Ngờ Thắng | Khai Hạp/Thận Trọng | Tinh Chuẩn
+SP Lữ Mông | Thuyền Cỏ Mượn Tên | Thâm Mưu Viễn Lược/Mê Hoặc/Đương Phong Thôi Quyết | Tam Quân Chi Chúng/Kỳ Chính Tương Sinh | Rèn Luyện/Giấu Đao | Dẫn Quân/Văn Thao
+Cung(★★★★) | Chu Du | Đoạt Hồn Hiệp Phách | Anh Thành Tự Thủ | Thuận Thiên Thuận Tời | Tướng Uy | Xem Bói | Chạm:Bắc Phạt Thương, SP Mã Siêu, SP Quan VũTránh:Trương Phi(Hùng Liệt), Phú Quý Kỵ
+Thái Sử Từ | Đương Phong Thôi Quyết | Mau Giành Lợi Thế | Man Dũng Phi Dũng | Võ Lược | Phân Hiểm
+SP Lữ Mông | An Ủi Quân Dân | Thuyền Cỏ Mượn Tên | Không Chiến Mà Thắng | Thế Phòng Thủ | Phòng Bị
+Cung(★★★★) | SP Tuân Úc(S) | Toàn Quân Đồng Lòng | Cắt Xương Trị Độc | Tấn Công Điểm Yếu | Khép Hờ | Khích Lệ Lòng Quân | Chạm:Bắc Phạt Thương, SP Quan Vũ ThươngTránh: Phú quý kỵ, Trương Liêu Kỵ
+Giả Hủ | Đoạt Hồn Hiệp Phách | Thuyền Cỏ Mượn Tên | Giả Nai Trước Địch | Khép Hờ | Bách Chiến
+Chung Hội | Công Bất Đường Quyên | Thượng Binh Phạt Mưu | Đánh Phá Vòng Vây | Quỷ Mưu | Tướng Uy
+Cung(★★★★) | SP Tuân Úc(S) | Ngụy Thư Tương Gian | Vạn Quân Đoạt Sư | Tam Quân Chi Chúng | Dẫn Quân | Rèn Luyện | Chạm:Bắc Phạt Thương, Hổ Thần CungTránh:Trương Liêu Kỵ, Vương Dị Cung
+CO Chân Cơ | Dốc Sức Tính Kế | Cắt Xương Trị Độc | Tấn Công Điểm Yếu | Khép Hờ | Tốc Chiến
+SP Quách Gia(S) | Đoạt Hồn Hiệp Phách | Thượng Binh Phạt Mưu | Lấy Võ Dẹp Loạn | Quỷ Mưu | Tướng Uy
+Cung(★★★★) | Cam Ninh | Phá Quân Uy Thắng | Hoành Tảo Thiên Quân | Thắng Càng Mạnh | Thắng Trận | Cầm Binh Khí | Chạm:các loại thươngTránh:các loại khiên
+Thái Sử Từ | Đánh Bại Quân Địch | Mau Giành Lợi Thế | Thắng Càng Mạnh | Thắng Trận | Cầm Binh Khí
+Chu Thái | Bạch Mã Nghĩa Tòng | Thịnh Khí Linh Địch | Tinh Thần Sảng Khoái | Rèn Luyền | Dẫn Quân
+Cung(★★★★) | Cam Ninh | Thuyền Cỏ Mượn Tên | Quân Cẩm Phàm | Thích Làm Việc Thiện | Chiến Đấu Trường Kỳ | Dẫn Quân | Chạm:các loại thươngTránh:các loại khiên
+Thái Sử Từ | Đương Phong Thôi Quyết | Thôi Phong Đoạn Nhẫn | Thắng Càng Mạnh | Võ Lược | Cầm Binh Khí
+SP Lữ Mông/Trình Phổ | Lâm Nguy Cứu Chủ | Nhạn Hình Trận | Tam Quân Chi Chúng/Kỳ Chính Tương Sinh | Rèn Luyện/Văn Thao | Dẫn Quân/Cầm Binh Khí
+Cung(★★★★) | SP Tuân Úc | Tạm Lánh Sóng Gió | Không Đánh Mà Thắng | Yêu Lính Thương Dân | Thế Phòng Thủ | Phòng Bị | Chạm:Bắc Phạt thương, Vườn Đào, SP Quan Vũ ThươngTránh:SP Mã Siêu, team có Đương Phong
+Giả Hủ | Thuyền Cỏ Mượn Tên | Uy Mưu Vô Địch | Chẩm Qua Tọa Giáp | Rèn Luyền | Dẫn Quân
+SP Bàng Đức | Thừa Thắng Trường Khu | Gió Táp Mưa Sa | Chẩm Qua Tọa Giáp | Chiến Đấu Trường Kỳ | Rèn Luyền
+Cung(★★★★) | SP Tuân Úc(S) | Dốc Sức Tính Kế | Cắt Xương Trị Độc | Tam Quân Chi Chúng | Dẫn Quân | Rèn Luyện | Chạm:Bắc Phạt Thương, Chu Du ThươngTránh:các loạn Khiên, Trương Liêu Kỵ
+Giả Hủ | Thiêu Đốt Doanh Lũy | Ngụy Thư Tương Gian | Giả Nai Trước Địch | Bách Chiến | Khép Hờ
+CO Tào Phi | Đoạt Hồn Hiệp Phách | Thượng Binh Phạt Mưu | Man Dũng Phi Dũng | Thắng Trận | Văn Thao
+Cung(★★★★) | CO Tào Phi | Đoạt Hồn Hiệp Phách | Thượng Binh Phạt Mưu | Man Dũng Phi Dũng | Thắng Trận | Văn Thao | Chạm:SP Quan Vũ Thương, Chu Du ThươngTránh:các loạn Khiên, Kỵ Ngô
+Giả Hủ | Đương Phong Thôi Quyết | Toàn Quân Đồng Lòng | Tam Quân Chi Chúng | Sắc Bén | Dẫn Quân
+CO Chân Cơ | Dốc Sức Tính Kế | Cắt Xương Trị Độc | Tấn Công Điểm Yếu | Cứu Chủ | Khích Lệ Lòng Quân
+Cung(★★★★) | Lữ Bố | Trung Dũng Nghĩa Liệt | Mau Giành Lợi Thế | Chia Nhỏ Đánh Nhanh | Khép Hở | Bách Chiến | Chạm:các loại ThươngTránh:các loại khiên
+SP Hoàng Phổ Tung | Thuyền Cỏ Mượn Tên | Uy Mưu Vô Địch | Đánh Sau Trúng Trước | Diệu Toán | Xem Bói
+Hứa Du | Quân Cẩm Phàm | Không Đánh Mà Thắng | Yêu Lính Thương Dân | Thế Phòng Thủ | Phòng Bị
+Cung(★★★★) | SP Điêu Thuyền | Hợp Quân Tụ Chúng/Lập Lờ Đánh Tráo | Cương Nhu Kết Hợp | Tam Quân Chi Chúng | Dẫn Quân | Chiến Đấu Trường Kỳ | Chạm:các loại đội hình đánh nhiều hiệpTránh: Đương Phong Thôi Quyết, Khiên Quan Tinh, Khiên Tam Tiên
+SP Chu Du | Thượng Binh Phạt Mưu | Văn Võ Song Toàn/Toàn Quân Đồng Lòng | Thắng Càng Mạnh | Cầm Binh Khí | Văn Thao
+Tào Tháo | Thuyền Cỏ Mượn Tên | Tiềm Long Trận | Tấn Công Điểm Yếu | Cứu Viện | Cứu Chủ
+Cung | Hứa Du | Thuyền Cỏ Mượn Tên | Võ Phong Trận | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân | Chạm:những đội hình nhiều hiệp như: Hoàng Mã Thương, Ngũ Mưu KỵTránh: Pháp Quan Khiên và Ngô Kỵ (Ắt Trúng) Đội hình này khi trong môi trường phức tạp nhiều loại đội hình, có thể sử dụng Tử Sĩ Tiên Phong
+Lữ Bố (Điêu Thuyền-Kỹ Năng Quân Sư) | Đương Phong Thôi Quyết | Thôi Phong Đoạn Nhẫn | Đánh Bất Ngờ Thắng | Thận Trọng | Chuẩn Xác
+Tả Từ | Quân Cẩm Phàm/Thiêu Đốt Doanh Lũy | Lâm Nguy Cứu Chủ/Không Đánh Mà Thắng | Tấn Công Điểm Yếu | Khích Lệ Lòng Quân | Khép Hờ
+Cung | SP Gia Cát Lượng | Thuyền Cỏ Mượn Tên | Biết Mình Biết Ta | Tấn Công Điểm Yếu | Tốc Chiến | Khích Lệ Lòng Quân | Cung cấp miễn dịch Kế Tận cho đồng đội, khiến hiệu quả Chiến Pháp liên kết chặt chẽ
+SP Hoàng Trung | Lấy Ít Đánh Nhiều | Cưỡi Ngựa Nghìn Dặm | Đánh Phá Vòng Vây | Tướng Uy | Hợp Biến
+Bàng Thống | Thiêu Đốt Doanh Lũy | Thừa Địch Bất Ngu/Uy Mưu Vô Địch | Đánh Sau Trúng Trước | Quỷ Mưu | Tướng Uy
+Cung | SP Đổng Trách | Thuyền Cỏ Mượn Tên | Tử Sĩ Tiên Phong | Tam Quân Chi Chúng | Chiến Đấu Trường Kỳ | Dẫn Quân | Chạm:Bắc Phạt Thương,  SP Quan Vũ ThươngTránh:Hổ Thần Cung, Trương Liêu Kỵ
+SP Điêu Thuyền | Cương Nhu Kết Hợp | Đồng Lòng Hợp Sức | Tam Quân Chi Chúng | Chiến Đấu Trường Kỳ | Dẫn Quân
+Lữ Bố | Đương Phong Thôi Quyết | Mau Giành Lợi Thế | Đánh Bất Ngờ Thắng | Tinh Chuẩn | Thiện Chiến
+Cung | Tôn Quyền | Đương Phong Thôi Quyết | Binh Vô Thường Thế | Thắng Càng Mạnh | Cầm Binh Khí | Văn Thao | Chạm:Bắc Phạt thương, HH Uyên KỵTránh:Hổ Thần Cung, Trương Liêu Kỵ
+Lỗ Túc | Hình Nhất Trận | Tạm Lánh Sóng Gió | Yêu Lính Thương Dân | Thế Phòng Thủ | Phòng Bị
+SP Chu Du | Sợ Bóng Sợ Gió | Thuyền Cỏ Mượn Tên | Tấn Công Điểm Yếu | Khép Hờ | Cứu Chủ
+Cung | SP Chu Du | Thượng Binh Phạt Mưu | Toàn Quân Đồng Lòng/Sĩ Biệt Tam Nhật | Kỳ Chính Tương Sinh/Hành Động Theo Thời | Văn Thao/Chiến Đấu Trường Kỳ | Thắng Trận/Dẫn Quân | Chạm:đội hình binh đao chậmTránh:đội hình tấn công nhanh sát thương bùng nổ
+Lỗ Túc | Tinh·Phong Thi Trận | Tạm Lánh Sóng Gió/Cắt Xương Trị Độc | Tam Quân Chi Chúng | Dẫn Quân | Rèn Luyện
+Lục Tốn | Vạn Quân Đoạt Sư/Thừa Địch Bất Ngu | Công Bất Đường Quyên | Đánh Bất Ngờ Thắng | Tinh Chuẩn | Thiện Chiến
+Cung | SP Viên Thiệu | Xế Đao Chước Địch | Gió Táp Mưa Sa | Man Dũng Phi Dũng | Thắng Trận | Cầm Binh Khí | Chạm:các loại thương, TMY Phi HùngTránh:các loại khiên
+SP Chu Tuấn | Lửa Đuổi Gió Bay | Thiêu Đốt Doanh Lũy | Lấy Võ Dẹp Loạn | Tướng Uy | Thần Cơ
+Thư Thụ | Bát Môn Kim Tỏa Trận | Vô Đương Phi Quân | Kỳ Chính Tương Sinh | Văn Thao | Cầm Binh Khí
+Cung | Điêu Thuyền(A) | Mê Hoặc | Võ Phong Trận | Tam Quân Chi Chúng | Rèn Luyền | Dẫn Quân | Chạm:Quan Quan Trương, Quần CungTránh:các loạn Khiên
+CO Lữ Linh Ỷ | Gió Táp Mưa Sa | Văn Võ Song Toàn | Lấy Võ Dẹp Loạn | Tướng Uy | Quỷ Mưu
+Tả Từ | Không Đánh Mà Thắng | Cắt Xương Trị Độc | Tấn Công Điểm Yếu | Tản Tiên | Cứu Chủ
+Khiên(★★★★☆) | SP Quan Vũ (S) | Lấy Ít Đánh Nhiều | Kích Kỳ Nọa Quy/Gió Táp Mưa Sa | Chia Nhỏ Đánh Nhanh | Bách Chiến | Khép Hờ | Khuyến nghị Tốc Độ của CO Tinh Thái nên chậm hơn SP Quan Vũ một chút.
+SP Pháp Chính | Dưỡng Sức Đợi Chiến | Không Đánh Mà Thắng | Tam Quân Chi Chúng | Dẫn Quân | Rèn Luyện
+CO Tinh Thái | Ngư Lân Trận | Lính Giáp Mây | Tam Quân Chi Chúng | Dẫn Quân | Rèn Luyện
+Khiên(★★★★☆) | SP Quan Vũ (S) | Lấy Ít Đánh Nhiều/Trung Dũng Nghĩa Liệt | Kích Kỳ Nọa Quy/Gió Táp Mưa Sa | Chia Nhỏ Đánh Nhanh | Bách Chiến | Khép Hờ | Chạm: các đội hình sát thương bùng nổĐề xuất phân bổ tốc: Mã Đại tốc 1, SP Quan Vũ tốc 2, CO Tinh Thái tốc 3
+Mã Đại/Lưu Bị | Thuyền Cỏ Mượn Tên | Phong Thi Trận | Tấn Công Điểm Yếu | Tốc Chiến | Cứu Chủ
+CO Tinh Thái | Không Đánh Mà Thắng | Lính Giáp Mây | Tam Quân Chi Chúng/Gặp Địch Không Loạn | Dẫn Quân/Tốc Chiến | Rèn Luyện/Bách Chiến
+Khiên(★★★★☆) | Tư Mã Ý | Sĩ Biệt Tam Nhật | Toàn Quân Đồng Lòng | Tam Quân Chi Chúng | Rèn Luyền | Dẫn Quân | Chạm:Vườn Đào, các loại ThươngTránh:Phú Quý Kỵ, Đô Đốc
+Mãn Sủng | Hình Nhất Trận | Nhân Lợi Chế Quyền/Dưỡng Sức Đợi Chiến | Tam Quân Chi Chúng | Rèn Luyền | Dẫn Quân
+Tào Tháo | Mê Hoặc | Lính Giáp Mây | Tam Quân Chi Chúng | Rèn Luyền | Dẫn Quân
+Khiên(★★★★☆) | SP Quan Vũ(S) | Trung Dũng Nghĩa Liệt | Gió Táp Mưa Sa | Chia Nhỏ Đánh Nhanh | Khép Hờ | Bách Chiến | Chạm:các loại Khiên, Cung (trừ Hổ Thần)Tránh:Trương Liêu, các loại Kỵ có khống chế
+CO Tinh Thái | Không Đánh Mà Thắng | Phong Thi Trận | Chẩm Qua Tọa Giáp | Dẫn Quân | Rèn Luyền
+Lưu Bị | Vạn Quân Đoạt Sư | Hãm Trận Doanh | Tấn Công Điểm Yếu | Khích Lệ Lòng Quân | Cứu Chủ
+Khiên(★★★★) | Tào Tháo | An Ủi Quân Dân | Thuyền Cỏ Mượn Tên | Đánh Giá Tình Hình | Khai Hạp | Chia Lời | Chạm:các loại khiên khácTránh:các loại kỵ
+Giả Hủ | Đương Phong Thôi Quyết | Binh Vô Thường Thế | Kỳ Chính Tương Sinh | Văn Thao | Cầm Binh Khí
+Hác Chiêu | Cắt Xương Trị Độc | Sĩ Biệt Tam Nhật | Man Dũng Phi Dũng | Cầm Binh Khí | Văn Thao
+Khiên(★★★★) | Lưu Bị | Hãm Trận Doanh | Tạm Lánh Sóng Gió | Tấn Công Điểm Yếu | Khích Lệ Lòng Quân | Khép Hở | Chạm:Cung Quần, Uyên Kỵ, Cung ThụcTránh:Kỵ Phi Hùng, Giả Hủ Khiên
+Quan Vũ | Cưỡi Ngựa Nghìn Dặm | Uy Mưu Vô Địch | Đánh Sau Trúng Trước | Quỷ Mưu | Hợp Biến
+Trương Phi | Cơ Hình Trận | Gió Táp Mưa Sa | Dĩ Trực Báo Oán | Tinh Chuẩn | Thiện Chiến
+Khiên(★★★★) | Trương Giác | Thái Bình Đạo Pháp | Sĩ Biệt Tam Nhật | Đánh Phá Vòng Vây | Quỷ Mưu | Tướng Uy | Chạm:Vườn Đào, Uyên KỵTránh: Phú Quý Kỵ, Kỵ Phi Hùng, SP Mã SiêuCó Thiên Công-★★★★☆
+Vũ Cát | Thuyền Cỏ Mượn Tên | Phong Thi Trận | Tam Quân Chi Chúng | Rèn Luyền | Dẫn Quân
+Tả Từ | Dốc Sức Tính Kế | Cắt Xương Trị Độc | Tấn Công Điểm Yếu | Khép Hở | Khích Lệ Lòng Quân
+Khiên | Chu Thái | Tiềm Long Trận | An Ủi Quân Dân | Tinh Thần Sảng Khoái | Rèn Luyền | Dẫn Quân | Chạm:các loại cung, thương( gồm SP Mã Siêu)Tránh:các loại khiênCó Hiệu Triệu-★★★★Có Hùng Liệt-★★★★☆
+Trương Phi | Vô Địch Can Trường | Gió Táp Mưa Sa | Lấy Võ Dẹp Loạn | Tướng Uy | Thần Cơ
+SP Viên Thiệu | Hoành Tảo Thiên Quân | Hãm Trận Doanh | Man Dũng Phi Dũng | Thắng Trận | Cầm Binh Khí
+Khiên | Tào Tháo | Thuyền Cỏ Mượn Tên | Lính Giáp Mây | Đánh Giá Tình Hình | Khai Hạp | Chia Lời | Chạm:các loại thương, Quần CungTránh:Cung Ngô, Triệu Vân Phi Hùng
+Hạ Hầu Đôn | Khí Lăng Tam Quân | Chúng Động Vạn Kế | Tam Lý Nhĩ Hoàn | Giáp Sắt | Cương Nhu
+Mãn Sủng | Không Đánh Mà Thắng | Tạm Lánh Sóng Gió | Tấn Công Điểm Yếu | Khép Hở | Tốc Chiến
+Khiên | Trương Giác | Thái Bình Đạo Pháp | Sĩ Biệt Tam Nhật | Đánh Phá Vòng Vây | Quỷ Mưu | Tướng Uy | Chạm:Vườn Đào, Uyên KỵTránh: Phú Quý Kỵ, Kỵ Phi Hùng, Trương LiêuCó Viễn Trợ(Giác), Linh Động(Bị)-★★★★
+Lưu Bị | Hãm Trận Doanh | Thuyền Cỏ Mượn Tên | Tấn Công Điểm Yếu | Khích Lệ Lòng Quân | Cứu Chủ
+Lỗ Túc | Phong Thi Trận | Tạm Lánh Sóng Gió | Yêu Lính Thương Dân | Thế Phòng Thủ | Phòng Bị
+
+############ Team Cùng Tồn.html ############
+Đội hình tiến cử cùng tồn tại chỉ mang tính chất tham khảo, xin Chủ Công vui lòng dựa vào môi trường thực tế trong khu vực thi đấu để Phối Tướng, chọn Chiến Pháp và trình tự đội hình cụ thể
+Cùng tồn 1 | Liễu Tẩm Ôn Hầu Cung, Chu Thiệu Trương Giác Khiên, Bắc Phạt Thương, Tô Tín Tôn Quyền Kỵ, Quần Cung
+Tiến cử khai hoang | Tên đội | Võ Tướng | Chiến Pháp | Thêm điểm | Binh Thư | Kỹ Năng Quân Sư
+[Võ Phong Thái Sử Từ]Gia Cát KhácThái Sử TừTả Từ[Khương Hạ Khác]Khương DuyHạ Hầu UyênGia Cát Khác | Liễu Thấm Ôn Hầu Cung19C | Hứa Du | Thuyền Cỏ Mượn Tên | Lâm Nguy Cứu Chủ | Nửa Trí Nửa Thống | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân | Điêu Thuyền
+Lữ Bố | Đương Phong Thôi Quyết | Thôi Phong Đoạn Nhẫn | Võ Lực | Đánh Bất Ngờ Thắng | Trì Trọng | Tinh Chuẩn
+Liễu Tẩm | Quân Cẩm Phàm | Nhạn Hình Trận | Trí Lực | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân
+Chu Thiệu Trương Giác Khiên17C | Trương Giác | Thái Bình Đạo Pháp | Sĩ Biệt Tam Nhật | Trí Lực | Tam Quân Chi Chúng/Lấy Võ Dẹp Loạn | Quy Thuận/Quỷ Mưu | Chiến Đấu Trường Kỳ/Tướng Uy | Cao Thuận/Tào Nhân
+Chu Thiệu | Phong Thi Trận | Lính Giáp Mây | Thống Soái | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân
+Tả Từ | Dốc Sức Tính Kế | Cắt Xương Trị Độc | Trí Lực | Tấn Công Điểm Yếu | Cứu Chủ | Khích Lệ Lòng Quân
+Bắc Phạt Thương18C | SP Gia Cát Lượng | Tạm Lánh Sóng Gió | Biết Mình Biết Ta | Trí Lực(Thiên Cơ) | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân | Đổng Trác
+Quan Hưng | Gió Táp Mưa Sa/Văn Võ Song Toàn | Cưỡi Ngựa Nghìn Dặm | Võ Lực | Đánh Sau Trúng Trước | Tướng Uy | Quỷ Mưu
+Ghi chú | Trương Bào | Không Đánh Mà Thắng | Nhân Lợi Chế Quyền | Thống Soái | Chẩm Qua Tọa Giáp | Rèn Luyện | Dẫn Quân
+Tiến cử chủ lựcLiễu Tẩm Ôn Hầu CungChu Thiệu Trương Giác Khiên | Tô Tín Tôn Quyền Kỵ18C | Tôn Quyền | Nhất Kỵ Đương Thiên | Bách Kỵ Kiếp Doanh | Võ Lực | Liền Mạch Một Hơi | Thắng Trận | Cầm Binh Khí | Trương Liêu
+Tô Tín | Lõa Y Huyết Chiến | Mau Giành Lợi Thế | Võ LựcTốc 1 | Liền Mạch Một Hơi | Giấu Đao | Cầm Binh Khí
+Chu Thái | Tinh·Phong Thi Trận | Hổ Báo Kỵ | Thống Soái | Biết Cách Phòng Thủ | Thế Phòng Thủ | Tĩnh Tâm
+Quần Cung19C | SP Viên Thiệu | Hoành Tảo Thiên Quân | Xế Đao Chước Địch | Võ Lực | Man Dũng Phi Dũng | Thắng Trận | Cầm Binh Khí | Hạ Hầu Uyên
+SP Chu Tuấn | Lửa Đuổi Gió Bay | Thái Bình Đạo Pháp/Thiêu Đốt Doanh Lũy | Trí Lực | Lấy Võ Dẹp Loạn | Tướng Uy | Thần Cơ
+Thư Thụ | Vô Đương Phi Quân | Bát Môn Kim Tỏa Trận | Trí Lực | Kỳ Chính Tương Sinh | Văn Thao | Cầm Binh Khí
+Cùng tồn 2 | Liễu Tẩm Khảng Khái Cung, Dương Kỳ Ngũ Mưu, Trần Dực Đào Viên Khiên, Chu Du Bạch Nhị Thương, Lữ Quách Kiều Cung
+Tiến cử khai hoang | Tên đội | Võ Tướng | Chiến Pháp | Thêm điểm | Binh Thư | Kỹ Năng Quân Sư
+[Võ Phong Thái Sử Từ]Gia Cát KhácThái Sử TừTả Từ[Khương Hạ Khác]Khương DuyHạ Hầu UyênGia Cát Khác | Liễu Tẩm Khảng Khái Cung18C | Cam Ninh | Thuyền Cỏ Mượn Tên | Quân Cẩm Phàm | Thống Soái | Thích Làm Việc Thiện | Rèn Luyện | Dẫn Quân | Chu Thái
+Thái Sử Từ | Đương Phong Thôi Quyết | Thôi Phong Đoạn Nhẫn | Võ Lực | Thắng Càng Mạnh | Võ Lược | Cầm Binh Khí
+Liễu Tẩm | Lâm Nguy Cứu Chủ | Nhạn Hình Trận | Trí Lực | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân
+Dương Kỳ Ngũ Mưu19C | Dương Kỳ | Dốc Sức Tính Kế | Cắt Xương Trị Độc | Trí LựcTốc 2 | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân | Trương Liêu
+Giả Hủ | Nhanh Trí Động Não | Thiêu Đốt Doanh Lũy | Trí LựcTốc cuối | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân
+Tuân Du | Đoạt Hồn Hiệp Phách | Thượng Binh Phạt Mưu | Trí LựcTốc 1 | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân
+Trần Dực Đào Viên Khiên19C | Quan Vũ (Khiên S) | Cưỡi Ngựa Nghìn Dặm | Tuyệt Kỳ Cấp Đạo | Võ Lực | Lấy Võ Dẹp Loạn | Quỷ Mưu | Tướng Uy | Tả Từ
+Trần Dực | Kế Hay Mưu Giỏi | Hãm Trận Doanh | Trí Lực, Tốc Độ | Hành Động Theo Thời | Rèn Luyện | Dẫn Quân
+Ghi chú | Trương Phi | Thịnh Khí Linh Địch | Hoành Tảo Thiên Quân | Võ LựcThống Soái | Dĩ Trực Báo Oán | Tinh Chuẩn | Thiện Chiến
+Tiến cử chủ lực Trần Dực Đào Viên KhiênLiễu Tẩm Khảng Khái CungDương Kỳ Ngũ Mưu | Chu Du Bạch Nhị Thương17C | Chu Du (Thương S) | Thác· Đoạt Hồn Hiệp Phách | Phong Trợ Hỏa Thế | Trí Lực | Kỳ Chính Tương Sinh | Thắng Trận | Văn Thao | Đổng Trác
+Lữ Mông | Thừa Địch Bất Ngu | Toàn Quân Đồng Lòng | Trí Lực | Đánh Sau Trúng Trước | Diệu Toán | Xem Bói
+Trình Phổ | Phong Thi Trận | Bạch Nhị Binh | Thống Soái | Không Chiến Mà Thắng | Thế Phòng Thủ | Phòng Bị
+Lữ Quách Kiều Cung17C | Lữ Bố | Loan Cung Ẩm Vũ/Mau Giành Lợi Thế | Phá Giáp | Võ Lực | Đánh Bất Ngờ Thắng | Khai Hạp | Chia Lời | Điêu Thuyền
+Quách Gia | Lửa Lan Khắp Chốn | Tam Thế Trận | Trí Lực | Tam Quân Chi Chúng | Dẫn Quân | Rèn Luyện
+Vô Song Tiểu Kiều | Văn Võ Song Toàn | Bạch Mã Nghĩa Tòng | Võ Lực | Tinh Thần Sảng Khoái | Chiến Đấu Trường Kỳ | Dẫn Quân
+Cùng tồn 3 | Rào Cản Ngựa Cung, Hoàng Mã Thương, Pháp Quan Khiên, Ngũ Mưu Kỵ, Ngô Kỵ
+Tiến cử khai hoang | Tên đội | Võ Tướng | Chiến Pháp | Thêm điểm | Binh Thư | Kỹ Năng Quân Sư
+[Pháp Mã Khác]Pháp ChínhSP Mã SiêuGia Cát Khác[Nguyệt Anh Mã Khác]SP Hoàng Nguyệt AnhSP Mã SiêuGia Cát Khác[Lô Trực Cung]SP Lô TrựcVương BìnhTrần Cung | Hoàng Mã Thương19C | SP Mã Siêu | Đương Phong Thôi Quyết | Thôi Phong Đoạn Nhẫn | Võ Lực(Thần Uy) | Tấn Công Điểm Yếu | Tốc Chiến | Khép Hờ | Lữ Bố
+SP Hoàng Phổ Tung | Thuyền Cỏ Mượn Tên | Uy Mưu Vô Địch | Thống Soái(Ung Nhã) | Đánh Sau Trúng Trước | Diệu Toán | Xem Bói
+Hứa Du(Thương S) | Lâm Nguy Cứu Chủ | Giải Phiền Vệ | Trí Lực | Yêu Lính Thương Dân | Thế Phòng Thủ | Phòng Bị
+Rào Cản Ngựa Cung18C | SP Lô Trực | Cương Nhu Kết Hợp | Nhạn Hình Trận | Thống Soái(Sức Sống) | Tam Quân Chi Chúng | Chiến Đấu Trường Kỳ | Dẫn Quân | Lỗ Túc/SP Bộ Luyện Sư
+Tiêu Chỉ | Tử Sĩ Tiên Phong | Nhân Lợi Chế Quyền | Thống Soái(Tốc cuối, Sức Sống) | Tam Quân Chi Chúng | Chiến Đấu Trường Kỳ | Dẫn Quân
+SP Điêu Thuyền | Thâm Tàng Nhược Hư/Hợp Quân Tụ Chúng | Đồng Lòng Hợp Sức | Trí Lực(Giai Nhân) | Tam Quân Chi Chúng | Chiến Đấu Trường Kỳ | Dẫn Quân
+Tinh Thái Pháp Quan Khiên19C | SP Quan Vũ(Khiên S) | Lấy Ít Đánh Nhiều | Kích Kỳ Nọa Quy/Gió Táp Mưa Sa | Võ Lực(Võ Thánh) | Chia Nhỏ Đánh Nhanh | Bách Chiến | Khép Hờ | Đổng Trác/Ngột Đột Cốt
+SP Pháp Chính | Dưỡng Sức Đợi Chiến | Không Đánh Mà Thắng | Trí Lực(Kỳ Toán) | Tam Quân Chi Chúng | Dẫn Quân | Rèn Luyện
+Ghi chú | Vô Song Tinh Thái | Lính Giáp Mây | Mê Hoặc | Thống Soái(Viện Trợ) | Tam Quân Chi Chúng | Dẫn Quân | Rèn Luyện
+Tiến cử chủ lựcHoàng Mã ThươngRào Cản Ngựa CungPháp Quan Khiên | Ngũ Mưu Kỵ20C | SP Tuân Úc | Dốc Sức Tính Kế | Cắt Xương Trị Độc | Trí Lực | Tam Quân Chi Chúng | Dẫn Quân | Rèn Luyện | Tả Từ
+SP Quách Gia | Đoạt Hồn Hiệp Phách | Thượng Binh Phạt Mưu | Trí Lực | Lấy Võ Dẹp Loạn | Quỷ Mưu | Tướng Uy
+Giả Hủ | Nhanh Trí Động Não | Anh Thành Tự Thủ/Ngụy Thư Tương Gian | Trí Lực | Tam Quân Chi Chúng/Giả Nai Trước Địch | Dẫn Quân/Bách Chiến | Rèn Luyện/Khép Hờ
+Ngô Kỵ19C | Chu Thái | Thịnh Khí Linh Địch | Tây Lương Thiết Kỵ | Thống Soái | Biết Cách Phòng Thủ | Thế Phòng Thủ | Phòng Bị | Quách Gia
+Tôn Thượng Hương | Lõa Y Huyết Chiến | Hổ Cứ Ưng Dương/Bách Kỵ Kiếp Doanh | Võ Lực, Tốc 1 | Thắng Càng Mạnh | Thắng Trận | Cầm Binh Khí/Giấu Đao
+Lăng Thống | Phá Quân Uy Thắng | Nằm Gai Nếm Mật/Tị Thực Kích Hư | Võ Lực, Tốc 2 | Thắng Càng Mạnh | Thắng Trận | Cầm Binh Khí
+Cùng tồn 4 | Đô Úy Ngô Nữ Cung, Rào Cản Ngựa Cung, Mã Đại Pháp Quan Khiên, Dương Kỳ Ngũ Mưu, Nhạn Hồng Thương
+Tiến cử khai hoang | Tên đội | Võ Tướng | Chiến Pháp | Thêm điểm | Binh Thư | Kỹ Năng Quân Sư
+[Pháp Mã Khác]Pháp ChínhSP Mã SiêuGia Cát Khác[Nguyệt Anh Mã Khác]SP Hoàng Nguyệt AnhSP Mã SiêuGia Cát Khác[Lô Trực Cung]SP Lô TrựcVương BìnhTrần Cung | Ngô Nữ Cung(Có thể lên Đô Úy)18C/19C | Vô Song Đại Kiều | Mê Hoặc | Thuyền Cỏ Mượn Tên | Thống Soái | Nhìn Rõ Mồn Một/Tam Quân Chi Chúng/Không Chiến Mà Thắng | Rèn Luyện/Thế Phòng Thủ | Dẫn Quân/Giáp Sắt | Đổng Trác
+Tôn Thượng Hương | Đương Phong Thôi Quyết | Mau Giành Lợi Thế/Thôi Phong Đoạn Nhẫn | Võ Lực(Kinh Hồng) | Thắng Càng Mạnh/Lấy Võ Dẹp Loạn | Thắng Trận/Thần Cơ | Giấu Đao/Tướng Uy
+Vô Song Tiểu Kiều/Hoàng Phủ Hoành | Tinh·Ngư Lân Trận | Lâm Nguy Cứu Chủ | Võ Lực/Thống Soái | Chẩm Qua Tọa Giáp/Tấn Công Điểm Yếu | Rèn Luyện/Khích Lệ Lòng Quân/Khép Hờ | Dẫn Quân/Cứu Chủ
+Rào Cản Ngựa Cung18C | SP Lô Trực | Cương Nhu Kết Hợp | Nhạn Hình Trận | Thống Soái | Tam Quân Chi Chúng | Chiến Đấu Trường Kỳ | Dẫn Quân | Lỗ Túc/SP Bộ Luyện Sư
+Tiêu Chỉ | Tử Sĩ Tiên Phong | Nhân Lợi Chế Quyền | Thống SoáiTốc cuối | Tam Quân Chi Chúng | Chiến Đấu Trường Kỳ | Dẫn Quân
+SP Điêu Thuyền | Thâm Tàng Nhược Hư/Hợp Quân Tụ Chúng | Đồng Lòng Hợp Sức | Trí Lực | Tam Quân Chi Chúng | Chiến Đấu Trường Kỳ | Dẫn Quân
+Mã Đại Pháp Quan Khiên19C | SP Quan Vũ(Khiên S) | Lấy Ít Đánh Nhiều | Kích Kỳ Nọa Quy/Gió Táp Mưa Sa | Võ Lực(Võ Thánh) | Chia Nhỏ Đánh Nhanh | Bách Chiến | Khép Hờ | Chu Thái
+SP Pháp Chính | Dưỡng Sức Đợi Chiến | Không Đánh Mà Thắng | Trí Lực(Kỳ Toán) | Tam Quân Chi Chúng | Dẫn Quân | Rèn Luyện
+Ghi chú | Mã Đại | Ngư Lân Trận | Lính Giáp Mây | Thống Soái(Viện Trợ) | Tam Quân Chi Chúng | Dẫn Quân | Rèn Luyện
+Tiến cử chủ lựcNgô Nữ CungRào Cản Ngựa CungPháp Quan Khiên | Dương Kỳ Ngũ Mưu19C | Dương Kỳ | Dốc Sức Tính Kế | Cắt Xương Trị Độc | Trí LựcTốc 2 | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân | Tả Từ
+Giả Hủ | Nhanh Trí Động Não | Thiêu Đốt Doanh Lũy | Trí LựcTốc cuối | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân
+Tuân Du | Đoạt Hồn Hiệp Phách | Thượng Binh Phạt Mưu | Trí LựcTốc 1 | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân
+Trương Quan Hoàng16C | Trương Phi | Lõa Y Huyết Chiến | Nhất Kỵ Đương Thiên | Võ Lực | Liền Mạch Một Hơi/Dĩ Trực Báo Oán | Thắng Trận/Tinh Chuẩn | Giấu Đao/Thiện Chiến | Ngụy Diên
+Quan Ngân Bình | Gió Táp Mưa Sa/Xế Đao Chước Địch | Hoành Tảo Thiên Quân | Võ Lực, Tốc 1 | Chia Nhỏ Đánh Nhanh | Bách Chiến | Tốc Chiến
+Hoàng Nguyệt Anh | Thịnh Khí Linh Địch | Đại Kích Sĩ | Tốc Độ, Thống Soái | Kế Sách Dụ Địch | Tốc Chiến | Khích Lệ Lòng Quân
+Cùng tồn 5 | Chu Thiệu Thục Trí, Thẩm Hằng Ngũ Mưu, Tiêu Chỉ Thái Úy Khiên, Liêu Cơ Kỵ, Bắc Phạt Thương
+Tiến cử khai hoang | Tên đội | Võ Tướng | Chiến Pháp | Thêm điểm | Binh Thư | Kỹ Năng Quân Sư
+[Võ Phong Thái Sử Từ]Gia Cát KhácThái Sử TừTả Từ[Khương Hạ Khác]Khương DuyHạ Hầu UyênGia Cát Khác | Thẩm Hằng Ngũ Mưu Kỵ19C | SP Tuân Úc | Dốc Sức Tính Kế | Cắt Xương Trị Độc | Trí Lực | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân | Chu Thái
+SP Quách Gia | Đoạt Hồn Hiệp Phách | Đương Phong Thôi Quyết | Trí Lực | Kỳ Chính Tương Sinh | Giấu Đao | Văn Thao
+Thẩm Hằng | Nhanh Trí Động Não | Thượng Binh Phạt Mưu | Trí Lực | Binh Hành Quỷ Đạo | Tinh Chuẩn | Thiện Chiến
+Chu Thiệu Thục Trí Cung20C | Gia Cát Lượng | Thuyền Cỏ Mượn Tên | Nhạn Hình Trận | Thống SoáiTốc 1 | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân | SP Hoàng Trung/Hoàng Trung
+Chu Thiệu | Đồng Lòng Hợp Sức | Thừa Địch Bất Ngu | Trí Lực | Đánh Sau Trúng Trước | Diệu Toán | Xem Bói
+Bàng Thống | Thái Bình Đạo Pháp | Thiêu Đốt Doanh Lũy | Trí Lực | Tam Quân Chi Chúng | Quy Thuận | Dẫn Quân
+Thái Úy Khiên18C | Tư Mã Ý | Lửa Cháy Ngùn Ngụt | Toàn Quân Đồng Lòng | Trí Lực | Thích Làm Việc Thiện | Chiến Đấu Trường Kỳ | Quy Thuận | Cao Thuận/Tào Nhân
+Tiêu Chỉ | Mê Hoặc | Lính Giáp Mây | Thống Soái | Tam Quân Chi Chúng | Dẫn Quân | Rèn Luyện
+Ghi chú | Mãn Sủng | Dưỡng Sức Đợi Chiến | Hình Nhất Trận | Trí Lực | Tam Quân Chi Chúng | Dẫn Quân | Rèn Luyện
+Tiến cử chủ lựcChu Thiệu Thục Trí CungThẩm Hằng Ngũ Mưu Kỵ | Liêu Cơ Kỵ17C | Trương Liêu | Nhất Kỵ Đương Thiên | Thôi Phong Đoạn Nhẫn | Võ Lực | Liền Mạch Một Hơi | Thắng Trận | Giấu Đao | Đổng Trác
+Vương Nguyên Cơ(Kỵ S) | Thiết Kỵ Khu Trì | Hổ Báo Kỵ | Trí Lực | Tấn Công Điểm Yếu | Khích Lệ Lòng Quân | Khép Hờ
+Quách Gia | Phong Thi Trận | Đánh Bại Quân Địch | Trí Lực, Tốc 1 | Kỳ Chính Tương Sinh | Giấu Đao | Văn Thao
+Bắc Phạt Thương18C | SP Gia Cát Lượng | Thịnh Khí Linh Địch | Biết Mình Biết Ta | Trí Lực(Thiên Cơ) | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân | Tả Từ
+Quan Hưng | Gió Táp Mưa Sa/Văn Võ Song Toàn | Cưỡi Ngựa Nghìn Dặm | Võ Lực | Đánh Sau Trúng Trước | Tướng Uy | Quỷ Mưu
+Trương Bào | Không Đánh Mà Thắng | Nhân Lợi Chế Quyền | Thống Soái | Chẩm Qua Tọa Giáp | Rèn Luyện | Dẫn Quân
+
+############ Team Đô Úy.html ############
+Hướng dẫn này dựa trên kinh nghiệm của người chơi ở các khu vực khác được biên soạn đây, có tính tham khảo nhất định nhưng không phải là duy nhất. Tất cả người xem đều có thể bổ sung
+Đánh giá những team sau thường tính không xài tuyệt kỹ, nếu xài tuyệt kỹ sẽ mạnh hơn.
+Team Giới Thiệu Đô Úy
+Type | Tướng | Chiến pháp 1 | Chiến pháp 2 | Binh Thư 1 | Binh Thư 2 | Binh Thư 3 | Thêm
+Thương | SP Mã Siêu | Đương Phong Thôi Quyết | Thôi Phong Đoạn Nhẫn | Tấn Công Điểm Yếu | Tốc Chiến | Khép Hờ | Chạm: đội hình tốc độ chậm.Tránh: Hoàng Mã Thương (SP Hoàng Phổ Tung) có độ tiến bậc cao, đội hình có hiệu quả Giao Binh Khí mạnh, như đội Nhạn Hồng Thương hoặc Hổ Thần Cung mang kỹ năng [Thịnh Khí Linh Địch]
+Chu Thiệu | Vạn Quân Đoạt Sư | Kế Hay Mưu Giỏi | Yêu Lính Thương Dân | Thế Phòng Thủ | Phòng Bị
+Hứa Du | Giải Phiền Vệ | Lâm Nguy Cứu Chủ/Cắt Xương Trị Độc | Yêu Lính Thương Dân | Thế Phòng Thủ | Phòng Bị
+Kỵ | Dương Kỳ | Dốc Sức Tính Kế | Cắt Xương Trị Độc/Anh Thành Tự Thủ | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân | Thiên Phú Chọn [Khách Quý Chật Nhà]. Chạm: Khiên Thái Úy, Khiên Pháp Quan, Khiên Tam TiênTránh: Quần Cung, Nhận Hồng Thương
+Giả Hủ | Nhanh Trí Động Não | Thiêu Đốt Doanh Lũy | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân
+Tuân Du | Đoạt Hồn Hiệp Phách | Thượng Binh Phạt Mưu | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân
+Kỵ | SP Tuân Úc | Dốc Sức Tính Kế | Cắt Xương Trị Độc | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân | Chạm: đội hình chậm như Trương Giác KhiênTránh: Hoàng Mã Thương full tiến bậc, cũng như Ngô Kỵ, Quyền Kỵ, Lữ Quách Kiều có sức bùng nổ cao
+SP Quách Gia | Đoạt Hồn Hiệp Phách | Đương Phong Thôi Quyết | Kỳ Chính Tương Sinh | Giấu Đao | Văn Thao
+Thẩm Hằng | Nhanh Trí Động Não | Thượng Binh Phạt Mưu | Binh Hành Quỷ Đạo/Nhìn Rõ Mồn Một | Tinh Chuẩn/Rèn Luyện | Thiện Chiến/Dẫn Quân
+Cung | SP Lô Trực | Cương Nhu Kết Hợp | Nhạn Hành Trận | Tam Quân Chi Chúng | Chiến Đấu Trường Kỳ | Dẫn Quân | Chạm: Hầu hết các Đội quân binh đao (bao gồm Pháp Quan Thuẫn, Ngô Nữ Cung, Bắc Phạt Thương)Tránh: Các đội hình có Trí Lực cao và khả năng bùng nổ mạnh, như Thục Trí Cung, Ngũ Mưu Kỵ, Trương Giác Khiên
+Tiêu Chỉ | Tử Sĩ Tiên Phong | Nhân Lợi Chế Quyền | Tam Quân Chi Chúng | Chiến Đấu Trường Kỳ | Dẫn Quân
+SP Điêu Thuyền | Thâm Tàng Nhược Hư/Hợp Quân Tụ Chúng | Đồng Lòng Hợp Sức | Tam Quân Chi Chúng | Chiến Đấu Trường Kỳ | Dẫn Quân
+Cung | Gia Cát Lượng | Thuyền Cỏ Mượn Tên | Nhạn Hình Trận | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân | Thiên Phú Chọn  [Trăm Phát Trăm Trúng] (nâng độ ăn ý lính Cung lên S), [Khách Quý Chật Nhà] (kích hoạt Duyên Phận Thục Trí).Chạm:đội tốc công tần suất cao như Ngô Kỵ, Quyền Kỵ, đội khắc chế Binh Chủng như Pháp Quan Khiên
+Chu Thiệu | Đương Phong Thôi Quyết | Thừa Địch Bất Ngu/Đoạt Hồn Hiệp Phách | Tam Quân Chi Chúng | Sắc Bén | Dẫn Quân
+Bàng Thống | Thái Bình Đạo Pháp | Sĩ Biệt Tam Nhật/Thiêu Đốt Doanh Lũy | Tam Quân Chi Chúng | Quy Thuận | Dẫn Quân
+Cung | Hoàng Phủ Hoành (Cung cấp S) | Tinh·Ngư Lân Trận | Lâm Nguy Cứu Chủ | Tam Quân Chi Chúng | Dẫn Quân | Rèn Luyện | Chạm: Ngũ Mưu Kỵ, Thục Trí Cung, Cung Rào Cản NgựaTránh: đội hình có ít đòn Tấn công thường, không bị ảnh hưởng bởi Chế Giễu, có nhiều lớp Chống Đỡ
+Tôn Thượng Hương | Đương Phong Thôi Quyết | Phá Phong Đoạn Nhẫn | Thắng mà càng mạnh | Thắng Chiến | Tàng Đao
+CO Đại Kiều | Mê Hoặc | Thuyền Cỏ Mượn Tên | Tam Quân Chi Chúng | Dẫn Quân | Rèn Luyện
+Cung | Chu Du | Đoạt Hồn Hiệp Phách | Phong Trợ Hỏa Thế | Thắng Càng Mạnh | Thắng Trận | Văn Thao | Chạm: Hoàng Mã Thương, Khảng Khải Cung
+Lữ Mông | Đương Phong Thôi Quyết | Toàn Quân Đồng Lòng | Kỳ Chính Tương Sinh | Văn Thao | Giấu Đao
+Tô Tín | Nhạn Hành Trận | Thuyền Cỏ Mượn Tên | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân
+Cung | Hứa Du | Quân Cẩm Phàm | Lâm Nguy Cứu Chủ | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân | Chạm: đội hình dựa vào thuộc tính để chiến đấu như Hoàng Mã Thương, Ngũ Mưu ThầnTránh: Pháp Quan Khiên, Ngô Kỵ có sức bùng nổ cao
+Lữ Bố | Đương Phong Thôi Quyết | Thôi Phong Đoạn Nhẫn | Đánh Bất Ngờ Thắng | Tinh Chuẩn | Thiện Chiến/Trì Trọng
+Liễu Tẩm | Nhạn Hành Trận | Thiêu Đốt Doanh Lũy/Thuyền Cỏ Mượn Tên | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân
+Cung | Cam Ninh | Thuyền Cỏ Mượn Tên | Quân Cẩm Phàm | Thích Làm Việc Thiện | Chiến Đấu Trường Kỳ | Dẫn Quân | Chạm: Hoàng Mã Thương, Kỳ Lân Cung, Ngũ Mưu KỵTránh: đội hình lính Khiên phổ biến như Pháp Quan Khiên
+Thái Sử Từ | Đương Phong Thôi Quyết | Thôi Phong Đoạn Nhẫn | Thắng Càng Mạnh | Võ Lược | Cầm Binh Khí
+Liễu Tẩm | Lâm Nguy Cứu Chủ | Nhạn Hành Trận | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân
+Khiên | Chu Thiệu | Võ Phong Trận | Lính Giáp Mây | Tam Quân Chi Chúng | Rèn Luyện | Dẫn Quân | Chạm: đội binh đao như Quần Cung, Hổ Thần Cung, Rào Cản Ngựa Cung, Khảng Khải CungTránh:Thái Úy Khiên có hiệu ứng Đốt Cháy, Đô Đốc Cung nước Ngô
+Trương Giác | Thái Bình Đạo Pháp | Sĩ Biệt Tam Nhật | Tam Quân Chi Chúng/Lấy Võ Dẹp Loạn | Quy Thuận/Quỷ Mưu | Chiến Đấu Trường Kỳ/Tướng Uy
+Tả Từ | Dốc Sức Tính Kế | Cắt Xương Trị Độc | Tấn Công Điểm Yếu | Tốc Chiến | Khép Hờ
+Khiên | SP Quan Vũ (Khiên S) | Lấy Ít Đánh Nhiều | Kích Kỳ Nọa Quy/Gió Táp Mưa Sa | Chia Nhỏ Đánh Nhanh | Bách Chiến | Khép Hờ | Chạm: hầu hết đội sát thương binh đaoTránh: đội hình như Quyền Kỵ, Hoàng Mã Thương mang [Đương Phong Thôi Quyết], đội đột kích bộc phát như Ngô Kỵ, Liêu Cơ Kỵ
+SP Pháp Chính | Dưỡng Sức Đợi Chiến | Không Đánh Mà Thắng | Tam Quân Chi Chúng | Dẫn Quân | Rèn Luyện
+Hoàng Phủ Hoành | Mê Hoặc | Ngư Lân Trận/Lính Giáp Mây | Tam Quân Chi Chúng | Dẫn Quân | Rèn Luyện
+Khiên | Quan Vũ (Khiên S) | Cưỡi Ngựa Nghìn Dặm | Tuyệt Kỳ Cấp Đạo | Lấy Võ Dẹp Loạn | Quỷ Mưu | Tướng Uy | Chạm: [Ôn Hầu Cung] [Khảng Khái Cung]Tránh: đội hình sát thương mưu lược có sức duy trì cao
+Trần Dực | Kế Hay Mưu Giỏi | Hãm Trận Doanh | Hành Động Theo Thời | Rèn Luyện | Dẫn Quân
+Trương Phi | Thịnh Khí Linh Địch | Hoành Tảo Thiên Quân | Dĩ Trực Báo Oán | Tinh Chuẩn | Thiện Chiến
+
+############ Meta team mùa 4.html ############
+Theo đuổi đội mạnh nhất(Những cp và binh thư ko phải duy nhất, cũng có phương án khác)
+Type | Tướng | Chiến pháp 1 | Chiến pháp 2 | Binh Thư 1 | Binh Thư 2 | Binh Thư 3 | Thêm
+Cung | Khương Duy | Sĩ Biệt Tam Nhật | An Ủi Quân Dân | Tránh Thế Mạnh Của Địch | Thế Phòng Thủ | Giáp Sắt | Team này cần cp mạnh rất nhìu, mạnh về cả tấn công và phòng thủ,Duy giảm dame chịu,Thống gây dame bùng nổ,Lượng hồi lính, độ hột càng cao càng mạnh.
+Gia Cát Lượng | Chờ Đợi Xuất Phát | Cắt Xương Trị Độc | Tấn Công Điểm Yếu | Khép Hờ | Khích Lệ Lòng Quân
+Bàng Thống | Thái Bình Đạo Pháp | Vô Đương Phi Quân | Đánh Sau Trúng Trước | Tướng Uy | Quỷ Mưu
+Kỵ | Tào Tháo | An Ủi Quân Dân | Cắt Xương Trị Độc | Tấn Công Điểm Yếu | Khích Lệ Lòng Quân | Khép Hờ | Có giảm dame chịu, hồi lính,cầm trị liệu,dame ổn; mà hơi sợ team Thương và tam thế Lữ Bố
+Giả Hủ | Đoạt Hồn Hiệp Phách | Sợ Bóng Sợ Gió | Lấy Võ Dẹp Loạn | Tướng Uy | Quỷ Mưu
+Trình Dục | Thái Bình Đạo Pháp | Sĩ Biệt Tam Nhật | Đánh Vào Chỗ Hiểm | Tướng Uy | Quỷ Mưu
+Kỵ | Lữ Bố | Nhất Kỵ Đương Thiên | Quỷ Thần Đình Uy | Liền Mạch Một Hơi | Thắng Trận | Cầm Binh Khí | TST thêm điểm tốc độ cao hơn Bố, giảm thống soái của địch trk, Lữ Bố gây sát thương bùng nổ cho tướng địch, nếu có trang bị Kích Phương Thiên Họa mang Vô Song, team này sẽ mạnh hơn nhiều, dame đủ mà chỉ nhờ Bố gây dame, ko ổn lắm.
+Thái Sử Từ | Đương Phong Thôi Quyết | Đánh Bại Quân Địch | Liền Mạch Một Hơi | Thắng Trận | Võ Lược
+Hoàng Nguyệt Anh | Hổ Báo Kỵ | Tam Thế Trận | Kế Sách Dụ Địch | Khích Lệ Lòng Quân | Cứu Chủ
+Kỵ | Trương Liêu | Đương Phong Thôi Quyết/Bạo Lệ Vô Nhân | Quỷ Thần Đình Uy | Liền Mạch Một Hơi | Thắng Trận | Cầm Binh Khí | Nếu có trang bị Kiếm Ỷ Thiên mang Gian Hùng, team Tháo-Liêu-Uyên trực tiếp đạt T0,có Quán Sát thì không sợ Thịnh Khí Linh Địch.Tốc Độ nhanh, hiệp đầu thì có dame bùng nổ.Chú ý thêm điểm Tốc độ cho Uyên nhanh hơn Liêu, Uyên giảm thống soái địch trk, còn có tăng dame của Tào Tháo,Liêu thì có dame to lớn.Điểm yếu cũng rõ ràng là sợ cp giảm dame,vd là Bát Môn Kim Tỏa Trận, hơn nữa ko có hồi lính.
+Hạ Hầu Uyên | Lõa Y Huyết Chiến | Bách Kỵ Kiếp Doanh/Đương Phong Thôi Quyết | Liền Mạch Một Hơi | Thắng Trận | Cầm Binh Khí
+Quách Gia/Tào Tháo(Chủ Tướng) | Thiết Kỵ Khu Trì | Hổ Báo Kỵ | Kế Sách Dụ Địch/Bố Trận Chờ Đợi | Khích Lệ Lòng Quân/Giáp Sắt | Khép Hờ/Thế Phòng Thủ
+Kỵ | Tôn Thượng Hương(+13 Tốc) | Lõa Y Huyết Chiến | Hổ Cứ Ưng Dương | Thắng Sẽ Càng Mạnh | Thắng Trận | Cầm Binh Khí | Mạnh về khai hoang, lên cấp rất nhanh,có Hổ Cứ Ưng Dương thì ko sợ giao binh khí.Điều quan trọng nhất là thêm điểm tốc độ cho Tôn Thượng Hương nhanh hơn Lăng Thống, như vậy, cp Cung Yêu Cơ sẽ có hiệu quả mạnh hơn, Hương thì có tăng dame binh đao.
+Chu Thái | Thịnh Khí Linh Địch | Tây Lương Thiết Kỵ | Biết Cách Phòng Thủ | Giáp Sắt | Thế Phòng Thủ
+Lăng Thống | Nằm Gai Nếm Mật | Hoành Tảo Thiên Quân | Đánh Vào Chỗ Hiểm | Tướng Uy | Quỷ Mưu
+Cung | Lục Tốn | Tạm Lánh Sóng Gió | Chờ Đợi Xuất Phát/Cắt Xương Trị Độc | Tránh Thế Mạnh Của Địch | Nghĩa Dũng | Phòng Bị | Team này có nhìu cp và binh thư được dùng,ở đây sợ Lữ Bố và Trương Liêu thì để Lục Tốn xài Tránh Thế Mạnh Của Địch có trạng thái Né Tránh, Lục Tốn mang Tạm Lánh Sóng Gió cũng có giảm dame chịu rất cao, không dễ chết.Điểm yếu là nếu Lục Tốn ko phát động cp thì dame hơi ko đủ.
+Thái Sử Từ | Đương Phong Thôi Quyết | Binh Vô Thường Thế | Man Dũng Phi Dũng | Văn Thao | Cầm Binh Khí
+Trình Phổ | Ngự Địch Bình Chướng/An Ủi Quân Dân | Quân Cẩm Phàm/Hợp Quân Tụ Chúng | Không Chiến Mà Thắng | Giáp Sắt | Thế Phòng Thủ
+
+############ nhiều Team cùng tồn tại.html ############
+Những phương án sau ko phải duy nhất, nếu cần giúp đỡ về build team có thể tư vấn CSKH thân thiết.
+8 team
+Type | Tướng | Chiến pháp 1 | Chiến pháp 2 | Binh Thư 1 | Binh Thư 2 | Binh Thư 3
+Thương | SP Mã Siêu | Đương Phong Thôi Quyết | Mau Giành Lợi Thế | Thắng Càng Mạnh | Võ Lược | Cầm Binh Khí
+SP Hoàng Phổ Tung | An Ủi Quân Dân | Lâm Nguy Cứu Chủ | Tấn Công Điểm Yếu | Tốc Chiến | Cứu Chủ
+Hứa Du | Giải Phiền Vệ | Tạm Lánh Sóng Gió | Đánh Sau Trúng Trước | Diệu Toán | Xem Bói
+Thương | Trình Phổ | Tiềm Long Trận | Thuyền Cỏ Mượn Tên | Không Chiến Mà Thắng | Giáp Sắt | Phòng Bị
+SP Quãn Vũ | Trung Dũng Nghĩa Liệt | Xế Đao Chước Địch | Chia Nhỏ Đánh Nhanh | Khép Hở | Bách Chiến
+SP Tuân Úc | Không Đánh Mà Thắng | Uy Mưu Vô Địch | Yêu Lính Thương Dân | Thế Phòng Thủ | Phòng Bị
+Khiên | Tư Mã Ý | Dụng Võ Thần Thông | Sĩ Biệt Tam Nhật | Yêu Lính Thương Dân | Thế Phòng Thủ | Dũng Nghĩa
+Tào Tháo | Mê Hoặc | Lính Giáp Mây | Gặp Địch Không Loạn | Cứu Chủ | Cứu Viện
+Mãn Sủng | Cắt Xương Trị Độc | Phong Thi Trận | Tấn Công Điểm Yếu | Khích Lệ Lòng Quân | Khép Hở
+Khiên | Chu Thái | Thịnh Khí Linh Địch | Hãm Trận Doanh | Biết Cách Phòng Thủ | Thế Phòng Thủ | Phòng Bị | Hoặc SP Viên Thiệu-SP Chu Tuấn-Thư Thụ
+Trương Phi | Vô Địch Can Trường | Hoành Tảo Thiên Quân | Lấy Võ Dẹp Loạn | Tướng Uy | Quỷ Mưu
+SP Viên Thiệu(Hiệu Triệu) | Gió Táp Mưa Sa | Nằm Gai Nếm Mật | Thắng Càng Mạnh | Thắng Trận | Cầm Binh Khí
+Cung | Khương Duy | Đoạt Hồn Hiệp Phách | Sợ Bóng Sợ Gió | Man Dũng Phi Dũng | Văn Thao | Cầm Binh Khí
+Gia Cát Lượng | Bát Môn Kim Tỏa Trận | Anh Thành Tự Thủ | Tấn Công Điểm Yếu | Khích Lệ Lòng Quân | Khép Hở
+Bàng Thống | Thái Bình Đạo Pháp | Vô Đương Phi Quân | Đánh Sau Trúng Trước | Quỷ Mưu | Tướng Uy
+Thương | Quan Vũ | Lính Thanh Châu | Cưỡi Ngựa Nghìn Dặm | Đánh Sau Trúng Trước | Hợp Biến | Xem Bói | Hoặc SP GCL-Quan Hưng-Trương Bào
+Quan Ngân Bình | Cơ Hình Trận | Cứ Thủy Đoạn Kiều | Lấy Võ Dẹp Loạn | Thần Cơ | Tướng Uy
+Ngụy Diên | Tuyệt Kỳ Cấp Đạo | Đánh Đâu Thắng Đó | Lấy Võ Dẹp Loạn | Thần Cơ | Tướng Uy
+Cung | Tuân Du | Vạn Quân Đoạt Sư | Thượng Binh Phạt Mưu | Gặp Địch Không Loạn | Tốc Chiến | Bách Chiến
+Giả Hủ | Bạch Mã Nghĩa Tòng | Lửa Đuổi Gió Bay | Thắng Càng Mạnh | Thắng Trận | Văn Thao
+SP Quách Gia | Dốc Sức Tính Kế | Ngụy Thư Tương Gian | Kỳ Chính Tương Sinh | Văn Thao | Cầm Binh Khí
+Kỵ | Trương Liêu | Bạo Lệ Vô Nhân | Quỷ Thần Đình Uy | Liền Mạch Một Hơi | Thắng Trận | Cầm Binh Khí
+Hạ Hầu Uyên | Lõa Y Huyết Chiến | Bách Kỵ Kiếp Doanh | Liền Mạch Một Hơi | Thắng Trận | Cầm Binh Khí
+Vương Nguyên Cơ | Hổ Báo Kỵ | Thiết Kỵ Khu Trì | Tấn Công Điểm Yếu | Khích Lệ Lòng Quân | Tốc Chiến

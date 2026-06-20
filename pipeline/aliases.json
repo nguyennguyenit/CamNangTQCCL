@@ -1,0 +1,32 @@
+{
+  "_note": "Bảng sửa typo review thủ công từ suggest_aliases.py. Áp deterministic lúc build. heroes áp cho baseName (đã strip SP/CO/ngoặc).",
+  "heroes": {
+    "Tôn Thương Hương": "Tôn Thượng Hương",
+    "Viên Thiẹu": "Viên Thiệu",
+    "Giả Hụ̉": "Giả Hủ",
+    "Giả Hư": "Giả Hủ",
+    "Lỗ Túc̣": "Lỗ Túc",
+    "Lăm Thống": "Lăng Thống"
+  },
+  "tactics": {
+    "Uy Mưu Vô địch": "Uy Mưu Vô Địch",
+    "Phong Thị Trận": "Phong Thi Trận",
+    "Cạo Xương Trị Độc": "Cắt Xương Trị Độc",
+    "Bạch Nhi Binh": "Bạch Nhị Binh",
+    "Thịnh Khí Lăng Địch": "Thịnh Khí Linh Địch",
+    "Bát Môn Kim Tọa Trận": "Bát Môn Kim Tỏa Trận",
+    "Tiềm Long Trần": "Tiềm Long Trận",
+    "Đoàn Quân Đồng Lòng": "Toàn Quân Đồng Lòng",
+    "Nhạn Hình Trận": "Nhạn Hành Trận",
+    "Chờ Đời Xuất Phát": "Chờ Đợi Xuất Phát",
+    "Tam Lánh Sóng Gió": "Tạm Lánh Sóng Gió",
+    "Phơng Trợ Họa Thế": "Phong Trợ Hỏa Thế",
+    "Hoành Tào Thiên Quân": "Hoành Tảo Thiên Quân"
+  },
+  "books": {
+    "Đánh Sau Trúng Trươc": "Đánh Sau Trúng Trước",
+    "Thắng Càng Mạnh": "Thắng Sẽ Càng Mạnh",
+    "Rèn Luyền": "Rèn Luyện",
+    "Khép Hở": "Khép Hờ"
+  }
+}

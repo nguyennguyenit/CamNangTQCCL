@@ -1,0 +1,187 @@
+[
+  {
+    "name": "Mỏ 4",
+    "enemies": [
+      {
+        "hero": "Quách Dĩ",
+        "unitType": "Kỵ"
+      },
+      {
+        "hero": "Trương Lương",
+        "unitType": "Thương"
+      },
+      {
+        "hero": "Tưởng Khâm",
+        "unitType": "Cung"
+      },
+      {
+        "hero": "Lăng Tháo",
+        "unitType": "Kỵ"
+      },
+      {
+        "hero": "Chu Hoàn",
+        "unitType": "Thương"
+      },
+      {
+        "hero": "Trương Dực",
+        "unitType": "Khiên"
+      },
+      {
+        "hero": "Hoàng Quyền",
+        "unitType": "Cung"
+      },
+      {
+        "hero": "Tào Chương",
+        "unitType": "Khiên"
+      }
+    ]
+  },
+  {
+    "name": "Mỏ 5",
+    "enemies": [
+      {
+        "hero": "Phan Chương",
+        "unitType": "Thương"
+      },
+      {
+        "hero": "Trương Lương",
+        "unitType": "Thương"
+      },
+      {
+        "hero": "Tưởng Khâm",
+        "unitType": "Cung"
+      },
+      {
+        "hero": "Trần Vũ",
+        "unitType": "Khiên"
+      },
+      {
+        "hero": "Tào Chân",
+        "unitType": "Kỵ"
+      },
+      {
+        "hero": "Lý Thôi",
+        "unitType": "Kỵ"
+      },
+      {
+        "hero": "Hoàng Quyền",
+        "unitType": "Cung"
+      },
+      {
+        "hero": "Trần Kiểu",
+        "unitType": "Khiên"
+      }
+    ]
+  },
+  {
+    "name": "Mỏ 6",
+    "enemies": [
+      {
+        "hero": "Chu Hoàn",
+        "unitType": "Kỵ"
+      },
+      {
+        "hero": "Giả Quỳ",
+        "unitType": "Thương"
+      },
+      {
+        "hero": "Hàn Đương",
+        "unitType": "Cung"
+      },
+      {
+        "hero": "Chu Trị",
+        "unitType": "Cung"
+      },
+      {
+        "hero": "Quách Hoài",
+        "unitType": "Khiên"
+      },
+      {
+        "hero": "Văn Sính",
+        "unitType": "Khiên"
+      },
+      {
+        "hero": "Đinh Phụng",
+        "unitType": "Thương"
+      },
+      {
+        "hero": "Tào Chương",
+        "unitType": "Kỵ"
+      }
+    ]
+  },
+  {
+    "name": "Mỏ 7",
+    "enemies": [
+      {
+        "hero": "Hạ Hầu Đôn",
+        "unitType": "Kỵ"
+      },
+      {
+        "hero": "Trương Giác",
+        "unitType": "Khiên"
+      },
+      {
+        "hero": "Trương Phi",
+        "unitType": "Khiên"
+      },
+      {
+        "hero": "Triệu Vân",
+        "unitType": "Thương"
+      },
+      {
+        "hero": "Chu Du",
+        "unitType": "Cung"
+      },
+      {
+        "hero": "Lữ Bố",
+        "unitType": "Kỵ"
+      },
+      {
+        "hero": "Trương Liêu",
+        "unitType": "Thương"
+      },
+      {
+        "hero": "Hoàng Cái",
+        "unitType": "Cung"
+      }
+    ]
+  },
+  {
+    "name": "Mỏ 8",
+    "enemies": [
+      {
+        "hero": "Viên Thuật",
+        "unitType": "Kỵ"
+      },
+      {
+        "hero": "Hạ Hầu Đôn",
+        "unitType": "Khiên"
+      },
+      {
+        "hero": "Quan Vũ",
+        "unitType": "Thương"
+      },
+      {
+        "hero": "Cam Ninh",
+        "unitType": "Thương"
+      },
+      {
+        "hero": "Trương Phi",
+        "unitType": "Khiên"
+      },
+      {
+        "hero": "Hoàng Cái",
+        "unitType": "Cung"
+      },
+      {
+        "hero": "Trình Dục",
+        "unitType": "Kỵ"
+      },
+      {
+        "hero": "SP Viên Thiệu",
+        "unitType": "Cung"
+      }
+    ]
+  }
+]
