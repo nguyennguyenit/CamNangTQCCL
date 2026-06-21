@@ -45,6 +45,8 @@ function switchSection(name) {
   document.querySelectorAll(".nav-tab").forEach((t) => t.classList.toggle("active", t.dataset.section === name));
   document.querySelectorAll(".section").forEach((s) => s.classList.toggle("active", s.id === `section-${name}`));
   $("#filter-panel").style.display = name === "team-pk" ? "" : "none";
+  // Sidebar ẩn -> layout 1 cột để content tràn full (tránh bị dồn vào track 270px).
+  document.querySelector(".layout").classList.toggle("full", name !== "team-pk");
   if (sectionFromHash() !== name) location.hash = name;
 }
 
