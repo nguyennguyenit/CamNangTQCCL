@@ -128,20 +128,24 @@ function tacticChip(name, cls = "t-tactic") {
   return name ? el("span", { class: `tag ${cls}` }, name) : null;
 }
 
-/** 1 hàng tướng trong đội hình khai hoang: Trước lv.20 → Sau lv.20. */
+/** 1 hàng tướng trong đội hình khai hoang — khối dọc giống card Team PK. */
 function khaihoangHeroRow(h) {
-  const before = el("div", { class: "kh-col kh-before" }, [
-    el("span", { class: `badge unit ${UNIT_CLASS[h.unitTypeBefore] || ""}` }, h.unitTypeBefore),
+  const name = el("div", { class: "hero-name" }, [
+    el("span", { class: "hn" }, h.name),
+  ]);
+  const before = el("div", { class: "line kh-line" }, [
+    el("span", { class: "kh-label" }, "Trước"),
+    el("span", { class: `badge unit small ${UNIT_CLASS[h.unitTypeBefore] || ""}` }, h.unitTypeBefore),
     tacticChip(h.tacticBefore),
   ].filter(Boolean));
-  const after = el("div", { class: "kh-col kh-after" }, [
-    el("span", { class: `badge unit ${UNIT_CLASS[h.unitTypeAfter] || ""}` }, h.unitTypeAfter),
+  const after = el("div", { class: "line kh-line" }, [
+    el("span", { class: "kh-label" }, "Sau"),
+    el("span", { class: `badge unit small ${UNIT_CLASS[h.unitTypeAfter] || ""}` }, h.unitTypeAfter),
     ...(h.tacticsAfter || []).map((t) => tacticChip(t)),
   ].filter(Boolean));
-  return el("div", { class: "kh-hero" }, [
-    el("div", { class: "kh-hero-name" }, h.name),
+  return el("div", { class: "hero" }, [
+    name,
     before,
-    el("span", { class: "kh-arrow" }, "→"),
     after,
     h.note ? el("div", { class: "kh-note" }, h.note) : null,
   ].filter(Boolean));
@@ -149,11 +153,13 @@ function khaihoangHeroRow(h) {
 
 /** 1 card đội hình khai hoang đề xuất. */
 function khaihoangTeamCard(t) {
-  const head = el("div", { class: "kh-head" }, [
-    el("span", { class: `badge unit ${UNIT_CLASS[t.unitType] || ""}` }, t.unitType),
+  const head = el("div", { class: "card-head" }, [
+    el("div", { class: "units" }, [
+      el("span", { class: `badge unit ${UNIT_CLASS[t.unitType] || ""}` }, t.unitType),
+    ]),
     el("h4", { class: "kh-title" }, t.title),
   ]);
-  const heroes = el("div", { class: "kh-heroes" }, (t.heroes || []).map(khaihoangHeroRow));
+  const heroes = el("div", { class: "heroes" }, (t.heroes || []).map(khaihoangHeroRow));
   const transforms = (t.transforms || []).length
     ? el("div", { class: "kh-transforms" }, [
         el("span", { class: "kh-tf-label" }, "Chuyển hình đề xuất"),
