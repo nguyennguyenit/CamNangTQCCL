@@ -43,6 +43,19 @@ test("OR within a group", () => {
   assert.equal(applyFilters(teams, s).length, 2);
 });
 
+test("filters by source (Đô úy riêng)", () => {
+  const teams = [
+    team({ source: "do-uy" }),
+    team({ source: "team-intro" }),
+    team({ source: "moi-phe" }),
+  ];
+  const s = emptyState();
+  s.sources.add("do-uy");
+  const out = applyFilters(teams, s);
+  assert.equal(out.length, 1);
+  assert.equal(out[0].source, "do-uy");
+});
+
 test("matches tactic alternatives (not just primary)", () => {
   const t = team({
     heroes: [

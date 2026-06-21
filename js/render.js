@@ -26,6 +26,12 @@ export const STATUS_LABEL = {
   "youtuber-untested": "Youtuber",
   situational: "Tình huống",
 };
+// Nhãn nguồn team (theo file gốc trong Meta Team PK).
+export const SOURCE_LABEL = {
+  "team-intro": "Giới thiệu",
+  "do-uy": "Đô úy",
+  "moi-phe": "Meta phe (cũ)",
+};
 
 function starsBadge(stars) {
   if (stars == null) return null;

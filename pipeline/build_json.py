@@ -52,7 +52,9 @@ def build_facets(teams: List[dict]) -> Dict[str, list]:
     stars: Counter = Counter()
     factions: Counter = Counter()
     statuses: Counter = Counter()
+    sources: Counter = Counter()
     for t in teams:
+        sources[t["source"]] += 1
         for u in t["unitType"]:
             unit_types[u] += 1
         if t["stars"] is not None:
@@ -82,6 +84,7 @@ def build_facets(teams: List[dict]) -> Dict[str, list]:
         "stars": to_list(stars),
         "factions": to_list(factions),
         "statuses": to_list(statuses),
+        "sources": to_list(sources),
     }
 
 

@@ -1,7 +1,7 @@
 // Điều phối: load JSON, section nav, render, filter UI, theme. Vanilla ES module.
 
 import { applyFilters, emptyState } from "./filters.js";
-import { coexistGroup, el, FACTION_CODE, khaihoangTable, STATUS_LABEL, teamCard } from "./render.js";
+import { coexistGroup, el, FACTION_CODE, khaihoangTable, SOURCE_LABEL, STATUS_LABEL, teamCard } from "./render.js";
 
 const state = emptyState();
 let TEAMS = [];
@@ -56,6 +56,7 @@ const CHIP_GROUPS = [
   { key: "stars", facet: "stars", label: "Sao" },
   { key: "statuses", facet: "statuses", label: "Trạng thái", fmt: (v) => STATUS_LABEL[v] || v },
   { key: "factions", facet: "factions", label: "Phe" },
+  { key: "sources", facet: "sources", label: "Nguồn", fmt: (v) => SOURCE_LABEL[v] || v },
 ];
 const COMBO_GROUPS = [
   { key: "heroes", facet: "heroes", label: "Tướng" },

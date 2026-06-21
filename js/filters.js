@@ -49,6 +49,7 @@ export function applyFilters(teams, state) {
     if (!matchSet(state.unitTypes, team.unitType || [])) return false;
     if (!matchSet(state.statuses, [team.status])) return false;
     if (!matchSet(state.factions, team.faction ? [team.faction] : [])) return false;
+    if (!matchSet(state.sources, team.source ? [team.source] : [])) return false;
 
     const heroNames = team.heroes.flatMap((h) => [h.baseName, ...(h.alternatives || [])]);
     if (!matchSet(state.heroes, heroNames)) return false;
@@ -71,6 +72,7 @@ export function emptyState() {
     unitTypes: new Set(),
     statuses: new Set(),
     factions: new Set(),
+    sources: new Set(),
     heroes: new Set(),
     tactics: new Set(),
     books: new Set(),
