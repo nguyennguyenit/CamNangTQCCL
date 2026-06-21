@@ -1123,10 +1123,6 @@
   ],
   "factions": [
     {
-      "value": "Quần",
-      "count": 32
-    },
-    {
       "value": "Ngô",
       "count": 27
     },
@@ -1135,8 +1131,16 @@
       "count": 26
     },
     {
+      "value": "Hỗn hợp",
+      "count": 23
+    },
+    {
       "value": "Ngụy",
       "count": 20
+    },
+    {
+      "value": "Quần",
+      "count": 16
     }
   ],
   "statuses": [

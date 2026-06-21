@@ -380,7 +380,7 @@
     "unitType": [
       "Thương"
     ],
-    "faction": null,
+    "faction": "Hỗn hợp",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -1020,7 +1020,7 @@
     "unitType": [
       "Thương"
     ],
-    "faction": null,
+    "faction": "Hỗn hợp",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -4012,7 +4012,7 @@
     "unitType": [
       "Cung"
     ],
-    "faction": null,
+    "faction": "Hỗn hợp",
     "stars": 4.0,
     "status": "meta",
     "heroes": [
@@ -5877,7 +5877,7 @@
     "unitType": [
       "Khiên"
     ],
-    "faction": null,
+    "faction": "Hỗn hợp",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -7876,7 +7876,7 @@
     "unitType": [
       "Thương"
     ],
-    "faction": null,
+    "faction": "Hỗn hợp",
     "stars": null,
     "status": "out-meta",
     "heroes": [
@@ -8112,7 +8112,7 @@
     "unitType": [
       "Thương"
     ],
-    "faction": null,
+    "faction": "Hỗn hợp",
     "stars": null,
     "status": "out-meta",
     "heroes": [
@@ -8231,7 +8231,7 @@
     "unitType": [
       "Thương"
     ],
-    "faction": null,
+    "faction": "Hỗn hợp",
     "stars": null,
     "status": "out-meta",
     "heroes": [
@@ -18469,7 +18469,7 @@
     "unitType": [
       "Khiên"
     ],
-    "faction": "Quần",
+    "faction": "Hỗn hợp",
     "stars": null,
     "status": "out-meta",
     "heroes": [
@@ -18709,7 +18709,7 @@
     "unitType": [
       "Kỵ"
     ],
-    "faction": "Quần",
+    "faction": "Hỗn hợp",
     "stars": null,
     "status": "out-meta",
     "heroes": [
@@ -18830,7 +18830,7 @@
     "unitType": [
       "Cung"
     ],
-    "faction": "Quần",
+    "faction": "Hỗn hợp",
     "stars": null,
     "status": "out-meta",
     "heroes": [
@@ -18947,7 +18947,7 @@
     "unitType": [
       "Khiên"
     ],
-    "faction": "Quần",
+    "faction": "Hỗn hợp",
     "stars": null,
     "status": "out-meta",
     "heroes": [
@@ -19066,7 +19066,7 @@
     "unitType": [
       "Khiên"
     ],
-    "faction": "Quần",
+    "faction": "Hỗn hợp",
     "stars": null,
     "status": "out-meta",
     "heroes": [
@@ -19185,7 +19185,7 @@
     "unitType": [
       "Thương"
     ],
-    "faction": "Quần",
+    "faction": "Hỗn hợp",
     "stars": null,
     "status": "out-meta",
     "heroes": [
@@ -19305,7 +19305,7 @@
     "unitType": [
       "Kỵ"
     ],
-    "faction": "Quần",
+    "faction": "Hỗn hợp",
     "stars": null,
     "status": "out-meta",
     "heroes": [
@@ -19424,7 +19424,7 @@
     "unitType": [
       "Cung"
     ],
-    "faction": "Quần",
+    "faction": "Hỗn hợp",
     "stars": null,
     "status": "out-meta",
     "heroes": [
@@ -19542,7 +19542,7 @@
       "Kỵ",
       "Cung"
     ],
-    "faction": "Quần",
+    "faction": "Hỗn hợp",
     "stars": null,
     "status": "out-meta",
     "heroes": [
@@ -19659,7 +19659,7 @@
     "unitType": [
       "Cung"
     ],
-    "faction": "Quần",
+    "faction": "Hỗn hợp",
     "stars": null,
     "status": "out-meta",
     "heroes": [
@@ -19776,7 +19776,7 @@
     "unitType": [
       "Khiên"
     ],
-    "faction": "Quần",
+    "faction": "Hỗn hợp",
     "stars": null,
     "status": "out-meta",
     "heroes": [
@@ -19893,7 +19893,7 @@
     "unitType": [
       "Khiên"
     ],
-    "faction": "Quần",
+    "faction": "Hỗn hợp",
     "stars": null,
     "status": "out-meta",
     "heroes": [
@@ -20010,7 +20010,7 @@
     "unitType": [
       "Khiên"
     ],
-    "faction": "Quần",
+    "faction": "Hỗn hợp",
     "stars": null,
     "status": "out-meta",
     "heroes": [
@@ -20129,7 +20129,7 @@
     "unitType": [
       "Khiên"
     ],
-    "faction": "Quần",
+    "faction": "Hỗn hợp",
     "stars": null,
     "status": "out-meta",
     "heroes": [
@@ -20482,7 +20482,7 @@
     "unitType": [
       "Khiên"
     ],
-    "faction": "Quần",
+    "faction": "Hỗn hợp",
     "stars": null,
     "status": "out-meta",
     "heroes": [
@@ -20601,7 +20601,7 @@
     "unitType": [
       "Khiên"
     ],
-    "faction": "Quần",
+    "faction": "Hỗn hợp",
     "stars": null,
     "status": "out-meta",
     "heroes": [

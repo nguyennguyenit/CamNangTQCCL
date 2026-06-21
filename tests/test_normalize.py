@@ -74,6 +74,33 @@ class TestNormalize(unittest.TestCase):
         v = normalize.split_variants("Thịnh Khí Lăng Địch", table["tactics"])
         self.assertEqual(v["name"], "Thịnh Khí Linh Địch")
 
+    def test_mix_formation_overrides_faction(self):
+        aliases = {"heroes": {}, "tactics": {}, "books": {}}
+        # team có banner "Quần" nhưng dùng Tam Thế Trận -> Hỗn hợp
+        raw = {
+            "source": "moi-phe",
+            "rawType": "Cung",
+            "bannerFaction": "Quần",
+            "heroesRaw": [
+                {"nameRaw": "Lữ Bố", "cp1Raw": "Tam Thế Trận", "cp2Raw": "", "booksRaw": []},
+            ],
+        }
+        team = normalize.normalize_team(raw, aliases, 0)
+        self.assertEqual(team["faction"], "Hỗn hợp")
+
+    def test_no_mix_formation_keeps_faction(self):
+        aliases = {"heroes": {}, "tactics": {}, "books": {}}
+        raw = {
+            "source": "moi-phe",
+            "rawType": "Cung",
+            "bannerFaction": "Thục",
+            "heroesRaw": [
+                {"nameRaw": "Khương Duy", "cp1Raw": "Vô Đương Phi Quân", "cp2Raw": "", "booksRaw": []},
+            ],
+        }
+        team = normalize.normalize_team(raw, aliases, 0)
+        self.assertEqual(team["faction"], "Thục")
+
 
 if __name__ == "__main__":
     unittest.main()

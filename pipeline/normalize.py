@@ -19,6 +19,9 @@ _ALIASES_PATH = os.path.join(os.path.dirname(__file__), "aliases.json")
 # Whitelist phe — tránh nhiễu "Tam Thế"/"Bạch Mã" bị nhận nhầm là phe.
 _FACTIONS = ("Ngụy", "Thục", "Ngô", "Quần")
 _UNIT_TYPES = ("Kỵ", "Cung", "Thương", "Khiên")
+# Trận pháp cho phép trộn phe -> team gắn phe "Hỗn hợp" (ưu tiên hơn banner).
+_MIX_FACTION = "Hỗn hợp"
+_MIX_FORMATIONS = ("Tam Thế Trận", "Tiềm Long Trận")
 _BOOK_PREFIX_RE = re.compile(r"^(?:Tinh|Thác)·\s*")
 # Rating điều kiện trong cột Thêm, vd "Có Gian Hùng, Viễn Trợ-★★★★★".
 _COND_RATING_RE = re.compile(r"Có[^★]*-?[★☆]{2,}")
@@ -161,6 +164,16 @@ def classify(raw_type: str, status_hint: Optional[str] = None, banner_faction: O
     }
 
 
+def _has_mix_formation(heroes: list) -> bool:
+    """True nếu bất kỳ chiến pháp (gồm biến thể) là trận trộn phe."""
+    for h in heroes:
+        for g in h.get("tactics", []):
+            names = [g["name"], *g.get("alternatives", [])]
+            if any(n in _MIX_FORMATIONS for n in names):
+                return True
+    return False
+
+
 def normalize_team(raw: dict, alias_table: dict, index: int) -> dict:
     """Team thô -> Team model cuối."""
     meta = classify(raw.get("rawType", ""), raw.get("statusHint"), raw.get("bannerFaction"))
@@ -186,12 +199,17 @@ def normalize_team(raw: dict, alias_table: dict, index: int) -> dict:
         info["note"] = None
         heroes.append(info)
 
+    # Team dùng trận trộn phe -> "Hỗn hợp" (ưu tiên hơn phe banner).
+    faction = meta["faction"]
+    if _has_mix_formation(heroes):
+        faction = _MIX_FACTION
+
     return {
         "id": f"{raw['source']}-{index}",
         "source": raw["source"],
         "rawType": meta["rawType"],
         "unitType": meta["unitType"],
-        "faction": meta["faction"],
+        "faction": faction,
         "stars": meta["stars"],
         "status": meta["status"],
         "heroes": heroes,

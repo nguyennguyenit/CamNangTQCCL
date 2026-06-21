@@ -24,6 +24,7 @@
   --f-thuc: #1f7a4d;
   --f-ngo: #b8232c;
   --f-quan: #c9962a;
+  --f-honhop: #7349a8;
 }
 :root[data-theme="dark"] {
   --bg: #14161b;
@@ -47,6 +48,7 @@
   --f-thuc: #5fce95;
   --f-ngo: #e0555d;
   --f-quan: #e0b94e;
+  --f-honhop: #a884e0;
 }
 
 * { box-sizing: border-box; }
@@ -114,10 +116,12 @@ body {
 .fchip.f-thuc::before { background: var(--f-thuc); }
 .fchip.f-ngo::before { background: var(--f-ngo); }
 .fchip.f-quan::before { background: var(--f-quan); }
+.fchip.f-honhop::before { background: var(--f-honhop); }
 .fchip.f-nguy.on { background: var(--f-nguy); border-color: transparent; color: #fff; }
 .fchip.f-thuc.on { background: var(--f-thuc); border-color: transparent; color: #fff; }
 .fchip.f-ngo.on { background: var(--f-ngo); border-color: transparent; color: #fff; }
 .fchip.f-quan.on { background: var(--f-quan); border-color: transparent; color: #3a2c00; }
+.fchip.f-honhop.on { background: var(--f-honhop); border-color: transparent; color: #fff; }
 .fchip.on[class*="f-"]::before { background: #fff; }
 .fchip.f-quan.on::before { background: #3a2c00; }
 .combo-input { width: 100%; padding: .42rem .55rem; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: .82rem; }
@@ -147,10 +151,12 @@ body {
 .badge.faction.f-thuc { background: var(--f-thuc); color: #fff; border-color: transparent; }
 .badge.faction.f-ngo { background: var(--f-ngo); color: #fff; border-color: transparent; }
 .badge.faction.f-quan { background: var(--f-quan); color: #3a2c00; border-color: transparent; }
+.badge.faction.f-honhop { background: var(--f-honhop); color: #fff; border-color: transparent; }
 .team-card.fa-nguy { border-left: 4px solid var(--f-nguy); }
 .team-card.fa-thuc { border-left: 4px solid var(--f-thuc); }
 .team-card.fa-ngo { border-left: 4px solid var(--f-ngo); }
 .team-card.fa-quan { border-left: 4px solid var(--f-quan); }
+.team-card.fa-honhop { border-left: 4px solid var(--f-honhop); }
 .badge.status { border: 1px solid var(--line); }
 .status-out-meta { background: var(--panel-2); color: var(--muted); }
 .status-youtuber-untested { background: #efe0fb; color: #6b2fb3; }

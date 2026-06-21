@@ -18,7 +18,7 @@ export function el(tag, props = {}, children = []) {
 
 const UNIT_CLASS = { "Kỵ": "u-ky", "Cung": "u-cung", "Thương": "u-thuong", "Khiên": "u-khien" };
 // Phe -> hậu tố class màu (Ngụy xanh đậm, Thục xanh lá, Ngô đỏ, Quần vàng).
-export const FACTION_CODE = { "Ngụy": "nguy", "Thục": "thuc", "Ngô": "ngo", "Quần": "quan" };
+export const FACTION_CODE = { "Ngụy": "nguy", "Thục": "thuc", "Ngô": "ngo", "Quần": "quan", "Hỗn hợp": "honhop" };
 // Nhãn trạng thái dùng chung (cũng dùng ở app.js qua export).
 export const STATUS_LABEL = {
   meta: "Meta",

@@ -8,7 +8,7 @@ Static site, 2 lớp: **pipeline build (Python)** → JSON → **frontend (vanil
 2. `parse_team_intro.py` — 3 file cùng schema (Team giới thiệu / Đô Úy / Meta mỗi phe cũ). Phân tách team theo **cột Type rowspan=3**. Layout 8 cột `[Type, Tướng, CP1, CP2, BT1, BT2, BT3, Thêm]`. → 50 + 12 + 110 = 172.
 3. `parse_coexist.py` — Team Cùng Tồn (nhóm lồng): nhóm → đội con → tướng (kèm Thêm điểm, Kỹ năng quân sư).
 4. `parse_khaihoang.py` — 2 khối: `parse_khaihoang_teams` (11 đội hình khai hoang đề xuất: Trước/Sau lv.20 + chiến pháp + chuyển hình, đội mở theo cột Type rowspan) + `parse_khaihoang` (quân thủ 5 mỏ: 8 đội thủ tướng+loại binh). → `khaihoang.json = {teams[], mines[]}`.
-5. `normalize.py` — apply alias (typo), tách biến thể `/` + tiền tố `Tinh·/Thác·`, parse tướng (SP/CO/variant), split counter `Chạm/Tránh` + tách rating-điều-kiện, classify (unitType / stars / faction-whitelist / status).
+5. `normalize.py` — apply alias (typo), tách biến thể `/` + tiền tố `Tinh·/Thác·`, parse tướng (SP/CO/variant), split counter `Chạm/Tránh` + tách rating-điều-kiện, classify (unitType / stars / faction-whitelist / status). Team có trận trộn phe (`Tam Thế Trận` / `Tiềm Long Trận`) -> phe `Hỗn hợp` (ưu tiên hơn banner).
 6. `build_json.py` — orchestrate + verify count (fail-fast) + sinh `data/*.json` deterministic (UTF-8, sort key).
 
 `aliases.json` review thủ công; `suggest_aliases.py` chỉ gợi ý cluster typo (không auto-fuzzy).
