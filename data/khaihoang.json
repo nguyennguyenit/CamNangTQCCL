@@ -1,187 +1,697 @@
-[
-  {
-    "name": "Mỏ 4",
-    "enemies": [
-      {
-        "hero": "Quách Dĩ",
-        "unitType": "Kỵ"
-      },
-      {
-        "hero": "Trương Lương",
-        "unitType": "Thương"
-      },
-      {
-        "hero": "Tưởng Khâm",
-        "unitType": "Cung"
-      },
-      {
-        "hero": "Lăng Tháo",
-        "unitType": "Kỵ"
-      },
-      {
-        "hero": "Chu Hoàn",
-        "unitType": "Thương"
-      },
-      {
-        "hero": "Trương Dực",
-        "unitType": "Khiên"
-      },
-      {
-        "hero": "Hoàng Quyền",
-        "unitType": "Cung"
-      },
-      {
-        "hero": "Tào Chương",
-        "unitType": "Khiên"
-      }
-    ]
-  },
-  {
-    "name": "Mỏ 5",
-    "enemies": [
-      {
-        "hero": "Phan Chương",
-        "unitType": "Thương"
-      },
-      {
-        "hero": "Trương Lương",
-        "unitType": "Thương"
-      },
-      {
-        "hero": "Tưởng Khâm",
-        "unitType": "Cung"
-      },
-      {
-        "hero": "Trần Vũ",
-        "unitType": "Khiên"
-      },
-      {
-        "hero": "Tào Chân",
-        "unitType": "Kỵ"
-      },
-      {
-        "hero": "Lý Thôi",
-        "unitType": "Kỵ"
-      },
-      {
-        "hero": "Hoàng Quyền",
-        "unitType": "Cung"
-      },
-      {
-        "hero": "Trần Kiểu",
-        "unitType": "Khiên"
-      }
-    ]
-  },
-  {
-    "name": "Mỏ 6",
-    "enemies": [
-      {
-        "hero": "Chu Hoàn",
-        "unitType": "Kỵ"
-      },
-      {
-        "hero": "Giả Quỳ",
-        "unitType": "Thương"
-      },
-      {
-        "hero": "Hàn Đương",
-        "unitType": "Cung"
-      },
-      {
-        "hero": "Chu Trị",
-        "unitType": "Cung"
-      },
-      {
-        "hero": "Quách Hoài",
-        "unitType": "Khiên"
-      },
-      {
-        "hero": "Văn Sính",
-        "unitType": "Khiên"
-      },
-      {
-        "hero": "Đinh Phụng",
-        "unitType": "Thương"
-      },
-      {
-        "hero": "Tào Chương",
-        "unitType": "Kỵ"
-      }
-    ]
-  },
-  {
-    "name": "Mỏ 7",
-    "enemies": [
-      {
-        "hero": "Hạ Hầu Đôn",
-        "unitType": "Kỵ"
-      },
-      {
-        "hero": "Trương Giác",
-        "unitType": "Khiên"
-      },
-      {
-        "hero": "Trương Phi",
-        "unitType": "Khiên"
-      },
-      {
-        "hero": "Triệu Vân",
-        "unitType": "Thương"
-      },
-      {
-        "hero": "Chu Du",
-        "unitType": "Cung"
-      },
-      {
-        "hero": "Lữ Bố",
-        "unitType": "Kỵ"
-      },
-      {
-        "hero": "Trương Liêu",
-        "unitType": "Thương"
-      },
-      {
-        "hero": "Hoàng Cái",
-        "unitType": "Cung"
-      }
-    ]
-  },
-  {
-    "name": "Mỏ 8",
-    "enemies": [
-      {
-        "hero": "Viên Thuật",
-        "unitType": "Kỵ"
-      },
-      {
-        "hero": "Hạ Hầu Đôn",
-        "unitType": "Khiên"
-      },
-      {
-        "hero": "Quan Vũ",
-        "unitType": "Thương"
-      },
-      {
-        "hero": "Cam Ninh",
-        "unitType": "Thương"
-      },
-      {
-        "hero": "Trương Phi",
-        "unitType": "Khiên"
-      },
-      {
-        "hero": "Hoàng Cái",
-        "unitType": "Cung"
-      },
-      {
-        "hero": "Trình Dục",
-        "unitType": "Kỵ"
-      },
-      {
-        "hero": "SP Viên Thiệu",
-        "unitType": "Cung"
-      }
-    ]
-  }
-]
+{
+  "teams": [
+    {
+      "unitType": "Thương",
+      "heroes": [
+        {
+          "name": "Gia Cát Khác",
+          "unitTypeBefore": "Thương",
+          "tacticBefore": "Giải Phiền Vệ",
+          "unitTypeAfter": "Thương",
+          "tacticsAfter": [
+            "Giải Phiền Vệ",
+            "Đánh Bại Quân Địch"
+          ],
+          "note": ""
+        },
+        {
+          "name": "SP Mã Siêu",
+          "unitTypeBefore": "Thương",
+          "tacticBefore": "Mau Giành Lợi Thế",
+          "unitTypeAfter": "Thương",
+          "tacticsAfter": [
+            "Mau Giành Lợi Thế",
+            "Bạo Lệ Vô Nhân"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Pháp Chính",
+          "unitTypeBefore": "Thương",
+          "tacticBefore": "Thịnh Khí Linh Địch",
+          "unitTypeAfter": "Thương",
+          "tacticsAfter": [
+            "Tiềm Long Trận/Tam Thế Trận",
+            "Thịnh Khí Linh Địch"
+          ],
+          "note": "Sau khi lv.20 để Pháp Chính làm chủ tướng"
+        }
+      ],
+      "transforms": [
+        {
+          "hero": "Lữ Mông",
+          "tactic": "Bạch Mã Nghĩa Tòng",
+          "alternatives": "Điêu Thuyền, Hoàng Cái, Phùng Kỷ"
+        },
+        {
+          "hero": "Giả Hủ",
+          "tactic": "Ngụy Thư Tương Gian",
+          "alternatives": "Điêu Thuyền, Hoàng Cái, Phùng Kỷ"
+        }
+      ],
+      "title": "Gia Cát Khác · SP Mã Siêu · Pháp Chính"
+    },
+    {
+      "unitType": "Cung",
+      "heroes": [
+        {
+          "name": "Gia Cát Khác",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Thịnh Khí Linh Địch",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Thịnh Khí Linh Địch",
+            "Tiềm Long Trận"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Quan Ngân Bình",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Hoành Tào Thiên Quân",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Cứ Thủy Đoạn Kiều",
+            "Hoành Tào Thiên Quân"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Nhạc Tiến",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Nhanh Chân Tranh Đất",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Nhanh Chân Tranh Đất",
+            "Lính Thanh Châu"
+          ],
+          "note": ""
+        }
+      ],
+      "transforms": [
+        {
+          "hero": "Mã Siêu",
+          "tactic": "Lõa Y Huyết Chiến",
+          "alternatives": ""
+        },
+        {
+          "hero": "Hoàng Nguyệt Anh",
+          "tactic": "Phong Thi Trận",
+          "alternatives": ""
+        }
+      ],
+      "title": "Gia Cát Khác · Quan Ngân Bình · Nhạc Tiến"
+    },
+    {
+      "unitType": "Cung",
+      "heroes": [
+        {
+          "name": "Khương Duy",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Vô Đương Phi Quân",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Vô Đương Phi Quân",
+            "Thời Cơ Chiến Thắng"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Hạ Hầu Uyên",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Lõa Y Huyết Chiến",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Lõa Y Huyết Chiến",
+            "Mau Giành Lợi Thế"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Gia Cát Khác",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Thịnh Khí Linh Địch",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Tiềm Long Trận",
+            "Thịnh Khí Linh Địch"
+          ],
+          "note": "Sau khi lv.20 để Gia Cát Khác làm chủ tướng"
+        }
+      ],
+      "transforms": [
+        {
+          "hero": "Trương Nhượng",
+          "tactic": "Văn Võ Song Toàn",
+          "alternatives": ""
+        },
+        {
+          "hero": "Hoàng Nguyệt Anh",
+          "tactic": "Phong Thi Trận",
+          "alternatives": ""
+        }
+      ],
+      "title": "Khương Duy · Hạ Hầu Uyên · Gia Cát Khác"
+    },
+    {
+      "unitType": "Cung",
+      "heroes": [
+        {
+          "name": "Lục Tốn",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Vô Đương Phi Quân",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Thái Bình Đạo Pháp",
+            "Vô Đương Phi Quân"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Tả Từ",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Thịnh Khí Linh Địch",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Thịnh Khí Linh Địch",
+            "Tam Thế Trận"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Trương Xuân Hoa",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Tam Thế Trận",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Đoạt Hồn Hiệp Phách",
+            "Sợ Bóng Sợ Gió"
+          ],
+          "note": ""
+        }
+      ],
+      "transforms": [
+        {
+          "hero": "Tôn Thượng Hương",
+          "tactic": "Lõa Y Huyết Chiến",
+          "alternatives": ""
+        },
+        {
+          "hero": "Lăng Thống",
+          "tactic": "Tây Lương Thiết Kỳ",
+          "alternatives": ""
+        }
+      ],
+      "title": "Lục Tốn · Tả Từ · Trương Xuân Hoa"
+    },
+    {
+      "unitType": "Kỵ",
+      "heroes": [
+        {
+          "name": "Hạ Hầu Uyên",
+          "unitTypeBefore": "Kỵ",
+          "tacticBefore": "Lõa Y Huyết Chiến",
+          "unitTypeAfter": "Kỵ",
+          "tacticsAfter": [
+            "Lõa Y Huyết Chiến",
+            "Nhất Kỵ Đương Thiên"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Thái Sử Từ",
+          "unitTypeBefore": "Kỵ",
+          "tacticBefore": "Bách Kỵ Kiếp Doanh",
+          "unitTypeAfter": "Kỵ",
+          "tacticsAfter": [
+            "Đánh Bại Quân Địch",
+            "Bách Kỵ Kiếp Doanh"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Hoàng Nguyệt Anh",
+          "unitTypeBefore": "Kỵ",
+          "tacticBefore": "Thịnh Khí Linh Địch",
+          "unitTypeAfter": "Kỵ",
+          "tacticsAfter": [
+            "Thịnh Khí Linh Địch",
+            "Hổ Báo Kỵ"
+          ],
+          "note": ""
+        }
+      ],
+      "transforms": [
+        {
+          "hero": "Thái Sử Từ",
+          "tactic": "Bách Kỵ Kiếp Doanh",
+          "alternatives": ""
+        },
+        {
+          "hero": "Lăng Thống",
+          "tactic": "Hổ Báo Kỳ",
+          "alternatives": ""
+        }
+      ],
+      "title": "Hạ Hầu Uyên · Thái Sử Từ · Hoàng Nguyệt Anh"
+    },
+    {
+      "unitType": "Cung",
+      "heroes": [
+        {
+          "name": "Tôn Thượng Hương",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Lõa Y Huyết Chiến",
+          "unitTypeAfter": "Kỵ",
+          "tacticsAfter": [
+            "Lõa Y Huyết Chiến",
+            "Bách Kỵ Kiếp Doanh"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Trần Cung",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Vô Đương Phi Quân",
+          "unitTypeAfter": "Kỵ",
+          "tacticsAfter": [
+            "Đoạt Hồn Hiệp Phách",
+            "Sợ Bóng Sợ Gió"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Hoàng Nguyệt Anh",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Thịnh Khí Linh Địch",
+          "unitTypeAfter": "Kỵ",
+          "tacticsAfter": [
+            "Thịnh Khí Linh Địch",
+            "Tây Lương Thiết Kỵ"
+          ],
+          "note": ""
+        }
+      ],
+      "transforms": [
+        {
+          "hero": "Hạ Hầu Uyên",
+          "tactic": "Lõa Y Huyết Chiến",
+          "alternatives": ""
+        },
+        {
+          "hero": "Tào Thuận",
+          "tactic": "Thiết Kỳ Khu Trì",
+          "alternatives": ""
+        }
+      ],
+      "title": "Tôn Thượng Hương · Trần Cung · Hoàng Nguyệt Anh"
+    },
+    {
+      "unitType": "Cung",
+      "heroes": [
+        {
+          "name": "Thái Văn Cơ",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Tam Thế Trận",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Tam Thế Trận",
+            "Sĩ Biệt Tam Nhật"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Khương Duy",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Sợ Bóng Sợ Gió",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Đoạt Hồn Hiệp Phách",
+            "Sợ Bóng Sợ Gió"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Thái Sử Từ",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Bạo Lệ Vô Nhân",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Đánh Bại Quân Địch",
+            "Bạo Lệ Vô Nhân"
+          ],
+          "note": ""
+        }
+      ],
+      "transforms": [],
+      "title": "Thái Văn Cơ · Khương Duy · Thái Sử Từ"
+    },
+    {
+      "unitType": "Cung",
+      "heroes": [
+        {
+          "name": "Khương Duy",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Đoạt Hồn Hiệp Phách",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Đoạt Hồn Hiệp Phách",
+            "Sợ Bóng Sợ Gió"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Hạ Hầu Uyên",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Lõa Y Huyết Chiến",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Lõa Y Huyết Chiến",
+            "Nhất Kỵ Đương Thiên"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Pháp Chính",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Thịnh Khí Linh Địch",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Thịnh Khí Linh Địch",
+            "Vô Đương Phi Quân"
+          ],
+          "note": ""
+        }
+      ],
+      "transforms": [],
+      "title": "Khương Duy · Hạ Hầu Uyên · Pháp Chính"
+    },
+    {
+      "unitType": "Cung",
+      "heroes": [
+        {
+          "name": "SP Viên Thiệu",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Hoành Tào Thiên Quân",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Nằm Gai Nếm Mật",
+            "Hoành Tào Thiên Quân"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Hạ Hầu Uyên",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Lõa Y Huyết Chiến",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Lõa Y Huyết Chiến",
+            "Mau Giành Lợi Thế"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Trương Xuân Hoa",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Thịnh Khí Linh Địch",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Thịnh Khí Linh Địch",
+            "Vô Đương Phi Quân"
+          ],
+          "note": ""
+        }
+      ],
+      "transforms": [],
+      "title": "SP Viên Thiệu · Hạ Hầu Uyên · Trương Xuân Hoa"
+    },
+    {
+      "unitType": "Kỵ",
+      "heroes": [
+        {
+          "name": "Khương Duy",
+          "unitTypeBefore": "Kỵ",
+          "tacticBefore": "Sợ Bóng Sợ Gió",
+          "unitTypeAfter": "Kỵ",
+          "tacticsAfter": [
+            "Đoạt Hồn Hiệp Phách",
+            "Sợ Bóng Sợ Gió"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Quan Ngân Bình",
+          "unitTypeBefore": "Kỵ",
+          "tacticBefore": "Hoành Tào Thiên Quân",
+          "unitTypeAfter": "Kỵ",
+          "tacticsAfter": [
+            "Cứ Thủy Đoạn Kiều",
+            "Hoành Tào Thiên Quân"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Thái Văn Cơ",
+          "unitTypeBefore": "Kỵ",
+          "tacticBefore": "Thịnh Khí Linh Địch",
+          "unitTypeAfter": "Kỵ",
+          "tacticsAfter": [
+            "Thịnh Khí Linh Địch",
+            "Tạm Lánh Sóng Gió"
+          ],
+          "note": ""
+        }
+      ],
+      "transforms": [],
+      "title": "Khương Duy · Quan Ngân Bình · Thái Văn Cơ"
+    },
+    {
+      "unitType": "Thương",
+      "heroes": [
+        {
+          "name": "Quan Ngân Bình",
+          "unitTypeBefore": "Thương",
+          "tacticBefore": "Hoành Tào Thiên Quân",
+          "unitTypeAfter": "Thương",
+          "tacticsAfter": [
+            "Cứ Thủy Đoạn Kiều",
+            "Hoành Tào Thiên Quân"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Nhạc Tiến",
+          "unitTypeBefore": "Thương",
+          "tacticBefore": "Nhanh Chân Tranh Đất",
+          "unitTypeAfter": "Thương",
+          "tacticsAfter": [
+            "Nhanh Chân Tranh Đất",
+            "Văn Võ Song Toàn"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Thái Văn Cơ",
+          "unitTypeBefore": "Thương",
+          "tacticBefore": "Thịnh Khí Linh Địch",
+          "unitTypeAfter": "Thương",
+          "tacticsAfter": [
+            "Thịnh Khí Linh Địch",
+            "Tam Thế Trận"
+          ],
+          "note": ""
+        }
+      ],
+      "transforms": [],
+      "title": "Quan Ngân Bình · Nhạc Tiến · Thái Văn Cơ"
+    }
+  ],
+  "mines": [
+    {
+      "name": "Mỏ 4",
+      "enemies": [
+        {
+          "hero": "Quách Dĩ",
+          "unitType": "Kỵ"
+        },
+        {
+          "hero": "Trương Lương",
+          "unitType": "Thương"
+        },
+        {
+          "hero": "Tưởng Khâm",
+          "unitType": "Cung"
+        },
+        {
+          "hero": "Lăng Tháo",
+          "unitType": "Kỵ"
+        },
+        {
+          "hero": "Chu Hoàn",
+          "unitType": "Thương"
+        },
+        {
+          "hero": "Trương Dực",
+          "unitType": "Khiên"
+        },
+        {
+          "hero": "Hoàng Quyền",
+          "unitType": "Cung"
+        },
+        {
+          "hero": "Tào Chương",
+          "unitType": "Khiên"
+        }
+      ]
+    },
+    {
+      "name": "Mỏ 5",
+      "enemies": [
+        {
+          "hero": "Phan Chương",
+          "unitType": "Thương"
+        },
+        {
+          "hero": "Trương Lương",
+          "unitType": "Thương"
+        },
+        {
+          "hero": "Tưởng Khâm",
+          "unitType": "Cung"
+        },
+        {
+          "hero": "Trần Vũ",
+          "unitType": "Khiên"
+        },
+        {
+          "hero": "Tào Chân",
+          "unitType": "Kỵ"
+        },
+        {
+          "hero": "Lý Thôi",
+          "unitType": "Kỵ"
+        },
+        {
+          "hero": "Hoàng Quyền",
+          "unitType": "Cung"
+        },
+        {
+          "hero": "Trần Kiểu",
+          "unitType": "Khiên"
+        }
+      ]
+    },
+    {
+      "name": "Mỏ 6",
+      "enemies": [
+        {
+          "hero": "Chu Hoàn",
+          "unitType": "Kỵ"
+        },
+        {
+          "hero": "Giả Quỳ",
+          "unitType": "Thương"
+        },
+        {
+          "hero": "Hàn Đương",
+          "unitType": "Cung"
+        },
+        {
+          "hero": "Chu Trị",
+          "unitType": "Cung"
+        },
+        {
+          "hero": "Quách Hoài",
+          "unitType": "Khiên"
+        },
+        {
+          "hero": "Văn Sính",
+          "unitType": "Khiên"
+        },
+        {
+          "hero": "Đinh Phụng",
+          "unitType": "Thương"
+        },
+        {
+          "hero": "Tào Chương",
+          "unitType": "Kỵ"
+        }
+      ]
+    },
+    {
+      "name": "Mỏ 7",
+      "enemies": [
+        {
+          "hero": "Hạ Hầu Đôn",
+          "unitType": "Kỵ"
+        },
+        {
+          "hero": "Trương Giác",
+          "unitType": "Khiên"
+        },
+        {
+          "hero": "Trương Phi",
+          "unitType": "Khiên"
+        },
+        {
+          "hero": "Triệu Vân",
+          "unitType": "Thương"
+        },
+        {
+          "hero": "Chu Du",
+          "unitType": "Cung"
+        },
+        {
+          "hero": "Lữ Bố",
+          "unitType": "Kỵ"
+        },
+        {
+          "hero": "Trương Liêu",
+          "unitType": "Thương"
+        },
+        {
+          "hero": "Hoàng Cái",
+          "unitType": "Cung"
+        }
+      ]
+    },
+    {
+      "name": "Mỏ 8",
+      "enemies": [
+        {
+          "hero": "Viên Thuật",
+          "unitType": "Kỵ"
+        },
+        {
+          "hero": "Hạ Hầu Đôn",
+          "unitType": "Khiên"
+        },
+        {
+          "hero": "Quan Vũ",
+          "unitType": "Thương"
+        },
+        {
+          "hero": "Cam Ninh",
+          "unitType": "Thương"
+        },
+        {
+          "hero": "Trương Phi",
+          "unitType": "Khiên"
+        },
+        {
+          "hero": "Hoàng Cái",
+          "unitType": "Cung"
+        },
+        {
+          "hero": "Trình Dục",
+          "unitType": "Kỵ"
+        },
+        {
+          "hero": "SP Viên Thiệu",
+          "unitType": "Cung"
+        }
+      ]
+    }
+  ]
+}

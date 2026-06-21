@@ -12,7 +12,7 @@ from typing import Dict, List
 
 from .normalize import load_aliases, normalize_team
 from .parse_coexist import group_coexist, parse_coexist
-from .parse_khaihoang import parse_khaihoang
+from .parse_khaihoang import parse_khaihoang, parse_khaihoang_teams
 from .parse_team_intro import parse_team_intro
 
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -97,19 +97,26 @@ def main() -> None:
     teams = build_teams()
     facets = build_facets(teams)
     coexist = group_coexist(parse_coexist(os.path.join(_SRC, "Team Cùng Tồn.html")))
-    khaihoang = parse_khaihoang(os.path.join(_SRC, "Khai hoang.html"))
+    kh_path = os.path.join(_SRC, "Khai hoang.html")
+    khaihoang = {
+        "teams": parse_khaihoang_teams(kh_path),
+        "mines": parse_khaihoang(kh_path),
+    }
 
     if not coexist:
         raise SystemExit("[build] coexist rỗng")
-    if len(khaihoang) < 1:
-        raise SystemExit("[build] khaihoang rỗng")
+    if not khaihoang["mines"] or not khaihoang["teams"]:
+        raise SystemExit("[build] khaihoang rỗng (mines hoặc teams)")
 
     _write("teams.json", teams)
     _write("facets.json", facets)
     _write("coexist.json", coexist)
     _write("khaihoang.json", khaihoang)
 
-    print(f"[build] teams={len(teams)} coexist-groups={len(coexist)} mines={len(khaihoang)}")
+    print(
+        f"[build] teams={len(teams)} coexist-groups={len(coexist)} "
+        f"khaihoang-teams={len(khaihoang['teams'])} mines={len(khaihoang['mines'])}"
+    )
     print(f"[build] facets: heroes={len(facets['heroes'])} tactics={len(facets['tactics'])} books={len(facets['books'])}")
 
 

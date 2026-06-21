@@ -123,8 +123,53 @@ export function coexistGroup(group) {
   ].filter(Boolean));
 }
 
-/** Bảng Khai hoang. */
-export function khaihoangTable(mines) {
+/** Chip chiến pháp (không bấm-search, chỉ hiển thị). */
+function tacticChip(name, cls = "t-tactic") {
+  return name ? el("span", { class: `tag ${cls}` }, name) : null;
+}
+
+/** 1 hàng tướng trong đội hình khai hoang: Trước lv.20 → Sau lv.20. */
+function khaihoangHeroRow(h) {
+  const before = el("div", { class: "kh-col kh-before" }, [
+    el("span", { class: `badge unit ${UNIT_CLASS[h.unitTypeBefore] || ""}` }, h.unitTypeBefore),
+    tacticChip(h.tacticBefore),
+  ].filter(Boolean));
+  const after = el("div", { class: "kh-col kh-after" }, [
+    el("span", { class: `badge unit ${UNIT_CLASS[h.unitTypeAfter] || ""}` }, h.unitTypeAfter),
+    ...(h.tacticsAfter || []).map((t) => tacticChip(t)),
+  ].filter(Boolean));
+  return el("div", { class: "kh-hero" }, [
+    el("div", { class: "kh-hero-name" }, h.name),
+    before,
+    el("span", { class: "kh-arrow" }, "→"),
+    after,
+    h.note ? el("div", { class: "kh-note" }, h.note) : null,
+  ].filter(Boolean));
+}
+
+/** 1 card đội hình khai hoang đề xuất. */
+function khaihoangTeamCard(t) {
+  const head = el("div", { class: "kh-head" }, [
+    el("span", { class: `badge unit ${UNIT_CLASS[t.unitType] || ""}` }, t.unitType),
+    el("h4", { class: "kh-title" }, t.title),
+  ]);
+  const heroes = el("div", { class: "kh-heroes" }, (t.heroes || []).map(khaihoangHeroRow));
+  const transforms = (t.transforms || []).length
+    ? el("div", { class: "kh-transforms" }, [
+        el("span", { class: "kh-tf-label" }, "Chuyển hình đề xuất"),
+        ...t.transforms.map((tf) =>
+          el("div", { class: "kh-tf" }, [
+            el("strong", {}, tf.hero),
+            tf.tactic ? tacticChip(tf.tactic, "t-tactic") : null,
+            tf.alternatives ? el("span", { class: "muted" }, " — " + tf.alternatives) : null,
+          ].filter(Boolean))),
+      ])
+    : null;
+  return el("article", { class: "kh-card" }, [head, heroes, transforms].filter(Boolean));
+}
+
+/** Bảng quân thủ các mỏ (PvE). */
+function minesGrid(mines) {
   return el("div", { class: "mines" }, mines.map((m) =>
     el("div", { class: "mine" }, [
       el("h3", {}, m.name),
@@ -134,4 +179,25 @@ export function khaihoangTable(mines) {
           e.unitType ? el("span", { class: "badge unit small" }, e.unitType) : null,
         ]))),
     ])));
+}
+
+/** Section Khai hoang: đội hình đề xuất + quân thủ các mỏ. */
+export function khaihoangTable(data) {
+  // Tương thích ngược: nếu nhận mảng (cấu trúc cũ) thì coi là danh sách mỏ.
+  const teams = Array.isArray(data) ? [] : (data.teams || []);
+  const mines = Array.isArray(data) ? data : (data.mines || []);
+  return el("div", { class: "khaihoang" }, [
+    teams.length
+      ? el("div", { class: "kh-block" }, [
+          el("h2", { class: "kh-section-title" }, "Đội hình khai hoang đề xuất"),
+          el("div", { class: "kh-cards" }, teams.map(khaihoangTeamCard)),
+        ])
+      : null,
+    mines.length
+      ? el("div", { class: "kh-block" }, [
+          el("h2", { class: "kh-section-title" }, "Quân thủ các mỏ"),
+          minesGrid(mines),
+        ])
+      : null,
+  ].filter(Boolean));
 }

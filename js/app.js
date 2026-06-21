@@ -28,15 +28,24 @@ function initTheme() {
 }
 
 /* ---------- Section nav ---------- */
+const SECTIONS = ["team-pk", "coexist", "khaihoang"];
 function initNav() {
   document.querySelectorAll(".nav-tab").forEach((tab) => {
     tab.addEventListener("click", () => switchSection(tab.dataset.section));
   });
+  // Deep-link: mở section theo hash (#khaihoang) + đồng bộ khi đổi hash.
+  window.addEventListener("hashchange", () => switchSection(sectionFromHash()));
+  switchSection(sectionFromHash());
+}
+function sectionFromHash() {
+  const name = (location.hash || "").replace(/^#/, "");
+  return SECTIONS.includes(name) ? name : "team-pk";
 }
 function switchSection(name) {
   document.querySelectorAll(".nav-tab").forEach((t) => t.classList.toggle("active", t.dataset.section === name));
   document.querySelectorAll(".section").forEach((s) => s.classList.toggle("active", s.id === `section-${name}`));
   $("#filter-panel").style.display = name === "team-pk" ? "" : "none";
+  if (sectionFromHash() !== name) location.hash = name;
 }
 
 /* ---------- Filter UI ---------- */
