@@ -104,21 +104,40 @@ export function teamCard(team, onTag) {
     [head, heroes, foot, notes].filter(Boolean));
 }
 
+/** 1 tướng trong đội Cùng Tồn — khối dọc giống card Team PK. */
+function coexistHeroRow(h) {
+  const tactics = (h.tactics || []).length
+    ? el("div", { class: "line" }, h.tactics.map((t) => el("span", { class: "tag t-tactic" }, t)))
+    : null;
+  const books = (h.books || []).length
+    ? el("div", { class: "line" }, h.books.map((b) => el("span", { class: "tag t-book" }, b)))
+    : null;
+  const meta = [];
+  if (h.statFocus) meta.push(el("span", { class: "ct-meta-item" }, ["Thêm: ", el("b", {}, h.statFocus)]));
+  if (h.advisorSkill) meta.push(el("span", { class: "ct-meta-item" }, ["QS: ", el("b", {}, h.advisorSkill)]));
+  return el("div", { class: "hero" }, [
+    el("div", { class: "hero-name" }, [el("span", { class: "hn" }, h.name)]),
+    tactics,
+    books,
+    meta.length ? el("div", { class: "ct-meta" }, meta) : null,
+  ].filter(Boolean));
+}
+
 /** 1 nhóm Cùng Tồn. */
 export function coexistGroup(group) {
-  const teams = el("div", { class: "coexist-teams" }, group.teams.map((t) => {
-    const heroes = el("ul", { class: "coexist-heroes" }, t.heroes.map((h) =>
-      el("li", {}, [
-        el("strong", {}, h.name),
-        el("span", { class: "muted" }, " — " + (h.tactics || []).join(" / ")),
-        h.statFocus ? el("span", { class: "stat" }, " · " + h.statFocus) : null,
-        h.advisorSkill ? el("span", { class: "advisor" }, " · QS: " + h.advisorSkill) : null,
-      ])));
-    return el("div", { class: "coexist-subteam" }, [el("h4", {}, t.teamName), heroes]);
-  }));
+  const teams = el("div", { class: "coexist-teams" }, group.teams.map((t) =>
+    el("article", { class: "coexist-subteam" }, [
+      el("h4", { class: "coexist-subteam-title" }, t.teamName),
+      el("div", { class: "heroes" }, (t.heroes || []).map(coexistHeroRow)),
+    ])));
   return el("section", { class: "coexist-group" }, [
     el("h3", {}, group.groupLabel || "Nhóm"),
-    group.summary ? el("p", { class: "coexist-summary" }, group.summary) : null,
+    group.summary
+      ? el("details", { class: "coexist-summary-box" }, [
+          el("summary", {}, "Tổng quan combo"),
+          el("p", { class: "coexist-summary" }, group.summary),
+        ])
+      : null,
     teams,
   ].filter(Boolean));
 }

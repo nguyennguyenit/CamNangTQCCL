@@ -153,14 +153,20 @@ body {
 .section { display: none; }
 .section.active { display: block; }
 
-/* Coexist */
-.coexist-group { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem; margin-bottom: 1rem; }
-.coexist-group > h3 { margin: 0 0 .6rem; font-size: .95rem; color: var(--accent); }
-.coexist-teams { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: .7rem; }
-.coexist-subteam { background: var(--bg); border-radius: 8px; padding: .6rem; }
-.coexist-subteam h4 { margin: 0 0 .35rem; font-size: .86rem; }
-.coexist-heroes { margin: 0; padding-left: 1.1rem; font-size: .8rem; }
-.coexist-heroes li { margin-bottom: .25rem; }
+/* Coexist — card lồng, tái dùng kiểu .hero + tag */
+.coexist-group { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem; margin-bottom: 1.2rem; }
+.coexist-group > h3 { margin: 0 0 .5rem; font-size: 1rem; color: var(--accent); }
+.coexist-teams { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: .8rem; }
+.coexist-subteam { background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: .6rem; }
+.coexist-subteam-title { margin: 0 0 .5rem; font-size: .88rem; padding-bottom: .35rem; border-bottom: 1px dashed var(--line); }
+/* tag chiến pháp/binh thư ở Cùng Tồn chỉ hiển thị, không bấm */
+.coexist-subteam .tag { cursor: default; }
+.ct-meta { display: flex; flex-wrap: wrap; gap: .15rem .6rem; margin-top: .25rem; font-size: .72rem; color: var(--muted); }
+.ct-meta-item b { color: var(--ink); font-weight: 600; }
+/* Tổng quan combo — thu gọn được */
+.coexist-summary-box { margin: 0 0 .8rem; font-size: .82rem; }
+.coexist-summary-box > summary { cursor: pointer; color: var(--muted); font-weight: 600; }
+.coexist-summary { margin: .4rem 0 0; color: var(--muted); line-height: 1.5; }
 .muted { color: var(--muted); } .stat { color: var(--ky); } .advisor { color: var(--khien); }
 
 /* Khaihoang */
