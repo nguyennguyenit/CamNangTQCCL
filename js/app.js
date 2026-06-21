@@ -1,7 +1,7 @@
 // Điều phối: load JSON, section nav, render, filter UI, theme. Vanilla ES module.
 
 import { applyFilters, emptyState } from "./filters.js";
-import { coexistGroup, el, khaihoangTable, STATUS_LABEL, teamCard } from "./render.js";
+import { coexistGroup, el, FACTION_CODE, khaihoangTable, STATUS_LABEL, teamCard } from "./render.js";
 
 const state = emptyState();
 let TEAMS = [];
@@ -73,7 +73,9 @@ function buildFilterUI() {
     const chips = el("div", { class: "chip-row" });
     for (const { value, count } of values) {
       const label = g.fmt ? g.fmt(value) : value;
-      const btn = el("button", { class: "fchip", type: "button" }, `${label} (${count})`);
+      // Chip Phe gắn class màu theo phe.
+      const fcls = g.key === "factions" && FACTION_CODE[value] ? ` f-${FACTION_CODE[value]}` : "";
+      const btn = el("button", { class: `fchip${fcls}`, type: "button" }, `${label} (${count})`);
       btn.addEventListener("click", () => {
         btn.classList.toggle("on");
         state[g.key].has(value) ? state[g.key].delete(value) : state[g.key].add(value);

@@ -19,6 +19,11 @@
   --cung: #1f7a4d;
   --thuong: #b8232c;
   --khien: #8a6d1f;
+  /* faction colors: Ngụy xanh đậm, Thục xanh lá, Ngô đỏ, Quần vàng */
+  --f-nguy: #1f3a93;
+  --f-thuc: #1f7a4d;
+  --f-ngo: #b8232c;
+  --f-quan: #c9962a;
 }
 :root[data-theme="dark"] {
   --bg: #14161b;
@@ -38,6 +43,10 @@
   --cung: #5fce95;
   --thuong: #e0555d;
   --khien: #d6b85a;
+  --f-nguy: #4f74d6;
+  --f-thuc: #5fce95;
+  --f-ngo: #e0555d;
+  --f-quan: #e0b94e;
 }
 
 * { box-sizing: border-box; }
@@ -99,6 +108,18 @@ body {
 .chip-row { display: flex; flex-wrap: wrap; gap: .3rem; }
 .fchip { border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 999px; padding: .22rem .6rem; font-size: .78rem; cursor: pointer; }
 .fchip.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+/* Chip Phe: chấm màu trước nhãn + nền màu phe khi chọn */
+.fchip[class*="f-"]::before { content: ""; display: inline-block; width: .55em; height: .55em; border-radius: 50%; margin-right: .35rem; vertical-align: baseline; }
+.fchip.f-nguy::before { background: var(--f-nguy); }
+.fchip.f-thuc::before { background: var(--f-thuc); }
+.fchip.f-ngo::before { background: var(--f-ngo); }
+.fchip.f-quan::before { background: var(--f-quan); }
+.fchip.f-nguy.on { background: var(--f-nguy); border-color: transparent; color: #fff; }
+.fchip.f-thuc.on { background: var(--f-thuc); border-color: transparent; color: #fff; }
+.fchip.f-ngo.on { background: var(--f-ngo); border-color: transparent; color: #fff; }
+.fchip.f-quan.on { background: var(--f-quan); border-color: transparent; color: #3a2c00; }
+.fchip.on[class*="f-"]::before { background: #fff; }
+.fchip.f-quan.on::before { background: #3a2c00; }
 .combo-input { width: 100%; padding: .42rem .55rem; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: .82rem; }
 .combo-list { display: flex; flex-direction: column; gap: 1px; margin-top: .2rem; }
 .combo-item { text-align: left; border: none; background: var(--panel-2); color: var(--ink); padding: .35rem .5rem; cursor: pointer; font-size: .8rem; border-radius: 4px; }
@@ -121,6 +142,15 @@ body {
 .u-ky { background: var(--ky); } .u-cung { background: var(--cung); } .u-thuong { background: var(--thuong); } .u-khien { background: var(--khien); }
 .badge.stars { background: #f5c542; color: #5a4500; }
 .badge.faction { background: var(--panel-2); color: var(--ink); border: 1px solid var(--line); }
+/* Phe: tô màu nhãn + viền trái card để quét nhanh */
+.badge.faction.f-nguy { background: var(--f-nguy); color: #fff; border-color: transparent; }
+.badge.faction.f-thuc { background: var(--f-thuc); color: #fff; border-color: transparent; }
+.badge.faction.f-ngo { background: var(--f-ngo); color: #fff; border-color: transparent; }
+.badge.faction.f-quan { background: var(--f-quan); color: #3a2c00; border-color: transparent; }
+.team-card.fa-nguy { border-left: 4px solid var(--f-nguy); }
+.team-card.fa-thuc { border-left: 4px solid var(--f-thuc); }
+.team-card.fa-ngo { border-left: 4px solid var(--f-ngo); }
+.team-card.fa-quan { border-left: 4px solid var(--f-quan); }
 .badge.status { border: 1px solid var(--line); }
 .status-out-meta { background: var(--panel-2); color: var(--muted); }
 .status-youtuber-untested { background: #efe0fb; color: #6b2fb3; }

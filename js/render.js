@@ -17,6 +17,8 @@ export function el(tag, props = {}, children = []) {
 }
 
 const UNIT_CLASS = { "Kỵ": "u-ky", "Cung": "u-cung", "Thương": "u-thuong", "Khiên": "u-khien" };
+// Phe -> hậu tố class màu (Ngụy xanh đậm, Thục xanh lá, Ngô đỏ, Quần vàng).
+export const FACTION_CODE = { "Ngụy": "nguy", "Thục": "thuc", "Ngô": "ngo", "Quần": "quan" };
 // Nhãn trạng thái dùng chung (cũng dùng ở app.js qua export).
 export const STATUS_LABEL = {
   meta: "Meta",
@@ -86,11 +88,12 @@ function counterChips(counters, onTag) {
 
 /** Card 1 team PK. onTag(value): callback khi bấm chip (để search). */
 export function teamCard(team, onTag) {
+  const fcode = FACTION_CODE[team.faction];
   const head = el("div", { class: "card-head" }, [
     el("div", { class: "units" }, (team.unitType || []).map((u) =>
       el("span", { class: `badge unit ${UNIT_CLASS[u] || ""}` }, u))),
     el("div", { class: "head-right" }, [
-      team.faction ? el("span", { class: "badge faction" }, team.faction) : null,
+      team.faction ? el("span", { class: `badge faction${fcode ? " f-" + fcode : ""}` }, team.faction) : null,
       starsBadge(team.stars),
       statusBadge(team.status),
     ]),
@@ -100,8 +103,9 @@ export function teamCard(team, onTag) {
   const foot = counterChips(team.counters || {}, onTag);
   const notes = team.notes ? el("div", { class: "notes" }, team.notes) : null;
 
-  return el("article", { class: `team-card${team.status === "out-meta" ? " dim" : ""}` },
-    [head, heroes, foot, notes].filter(Boolean));
+  const cls = ["team-card", team.status === "out-meta" ? "dim" : "", fcode ? "fa-" + fcode : ""]
+    .filter(Boolean).join(" ");
+  return el("article", { class: cls }, [head, heroes, foot, notes].filter(Boolean));
 }
 
 /** 1 tướng trong đội Cùng Tồn — khối dọc giống card Team PK. */
