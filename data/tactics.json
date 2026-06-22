@@ -272,8 +272,8 @@
     "hanViet": "Chiết Xung Ngự Vũ",
     "type": "Đột kích",
     "quality": "S",
-    "effect": "普通攻击之后，使随机敌军单体降低100点统率和智力，持续2回合；若自己不是主将，则额外使我军主将获得2次抵御，可免疫伤害，持续2回合",
-    "target": "敌军单体",
+    "effect": "Sau khi tấn công thường, làm cho cá thể quân địch ngẫu nhiên giảm 100 điểm Thống Soái và Trí Lực, duy trì 2 hiệp; nếu bản thân không phải là Tướng Chính, sẽ khiến Tướng Chính quân ta nhận thêm 2 lần Chống Đỡ, duy trì 2 hiệp",
+    "target": "Một quân địch",
     "troopFit": [
       "Kỵ",
       "Cung",
@@ -284,7 +284,7 @@
     "source": "Truyền thừa",
     "sourceHeroCn": "典韦、太史慈",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088191768087561.png",
-    "viet": "Chiết Xung Ngự Vũ",
+    "viet": "Đánh Bại Quân Địch",
     "linkScore": 0.0
   },
   {
@@ -1335,8 +1335,8 @@
     "hanViet": "Hợp Quân Tụ Chúng",
     "type": "Bị động",
     "quality": "S",
-    "effect": "战斗中，使自己获得休整状态，每回合恢复一定兵力（回复率62%)",
-    "target": "自己",
+    "effect": "Trong chiến đấu, bản thân mỗi hiệp hồi phục Binh Lực nhất định (tỷ lệ Trị Liệu 62%→124%, chịu ảnh hưởng thuộc tính cao hơn trong: Thống Soái hoặc Trí Lực)",
+    "target": "Tôi",
     "troopFit": [
       "Kỵ",
       "Cung",
@@ -2221,8 +2221,8 @@
     "hanViet": "Phá Trận Thôi Kiên",
     "type": "Chủ động",
     "quality": "S",
-    "effect": "准备1回合，使敌军群体（2人）统率、智力降低40点（受武力影响），持续2回合，并对其发动一次兵刃攻击（伤害率79%）",
-    "target": "敌军群体(2人)",
+    "effect": "Chuẩn bị 1 hiệp, khiến thuộc tính chiến đấu của nhóm địch (2 người) giảm 40→80 điểm (bị Võ Lực ảnh hưởng), duy trì 2 hiệp, và phát động 1 lần tấn công Binh Đao lên nhóm địch (tỷ lệ sát thương 79%→158%)",
+    "target": "Tập thể địch (2 người)",
     "troopFit": [
       "Kỵ",
       "Cung",
@@ -2477,8 +2477,8 @@
     "hanViet": "Sở Hướng Phi Mị",
     "type": "Chủ động",
     "quality": "S",
-    "effect": "准备1回合，对敌军全体发动一次兵刃攻击（伤害率123%）",
-    "target": "敌军群体(3人)",
+    "effect": "Chuẩn bị 1 hiệp, phát động 1 lần tấn công Binh Đao cho toàn thể quân địch (tỷ lệ sát thương 123%→246%)",
+    "target": "Tập thể địch (3 người)",
     "troopFit": [
       "Kỵ",
       "Thương",
@@ -2488,7 +2488,7 @@
     "source": "Truyền thừa",
     "sourceHeroCn": "马超、许褚",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088191143136260.png",
-    "viet": "Sở Hướng Phi Mị",
+    "viet": "Đánh Đâu Thắng Đó",
     "linkScore": 0.0
   },
   {
@@ -2966,8 +2966,8 @@
     "hanViet": "Thịnh Khí Lăng Địch",
     "type": "Chỉ huy",
     "quality": "S",
-    "effect": "战斗开始后前2回合，使敌军群体（2人）每回合都有45%的几率陷入缴械状态，无法进行普通攻击",
-    "target": "敌军群体(2人)",
+    "effect": "2 hiệp đầu, làm cho tập thể quân địch (2 người) mỗi hiệp đều có 45%→90% xác suất rơi vào trạng thái Giao Binh Khí, không thể tiến hành tấn công thường",
+    "target": "Tập thể địch (2 người)",
     "troopFit": [
       "Kỵ",
       "Cung",
@@ -3944,8 +3944,8 @@
     "hanViet": "Khắc Địch Chế Thắng",
     "type": "Đột kích",
     "quality": "S",
-    "effect": "普通攻击之后，对攻击目标再次造成一次谋略伤害（伤害率90%，受智力影响）；若目标处于溃逃或中毒状态，则有70%概率使目标进入虚弱（无法造成伤害）状态，持续1回合",
-    "target": "敌军单体",
+    "effect": "Sau khi tấn công thường, gây thêm cho mục tiêu tấn công 1 lần sát thương Mưu Lược (tỉ lệ sát thương 90%→180%, bị Trí Lực ảnh hưởng); Nếu mục tiêu đang mang ít nhất 1 trong 3 trạng thái: Bỏ Chạy, Trúng Độc hoặc Đốt Cháy, thì sẽ có 85% xác suất khiến mục tiêu rơi vào trạng thái Suy Nhược, duy trì 1 hiệp",
+    "target": "Một quân địch",
     "troopFit": [
       "Kỵ",
       "Cung",
@@ -3956,7 +3956,7 @@
     "source": "Truyền thừa",
     "sourceHeroCn": "程普、于禁",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088180007259144.png",
-    "viet": "Đánh Bại Quân Địch",
+    "viet": "Khắc Địch Chế Thắng",
     "linkScore": 0.9
   },
   {
