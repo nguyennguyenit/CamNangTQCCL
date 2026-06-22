@@ -2,10 +2,10 @@
 // Đổi sau khi deploy Worker (Phase 3) + tạo Turnstile.
 
 export const ANALYZE_CONFIG = {
-  // URL Worker đã deploy, vd https://tqccl-vision-proxy.<account>.workers.dev/analyze
-  workerUrl: "https://REPLACE_ME.workers.dev/analyze",
+  // URL Worker đã deploy.
+  workerUrl: "https://tqccl-vision-proxy.nguyennlt-ncc.workers.dev/analyze",
   // Turnstile site-key (public). Lấy ở Cloudflare dashboard → Turnstile.
-  turnstileSiteKey: "REPLACE_ME",
+  turnstileSiteKey: "0x4AAAAAADpP8U-ML4ZICKkv",
   // Nén ảnh client trước khi gửi (giảm token + qua giới hạn size Worker).
   maxImageDim: 1600, // cạnh dài tối đa (px)
   jpegQuality: 0.82,

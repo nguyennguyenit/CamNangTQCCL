@@ -8,11 +8,11 @@ compatibility_date = "2026-01-01"
 # rồi dán id thật vào đây.
 [[kv_namespaces]]
 binding = "RL"
-id = "REPLACE_WITH_KV_ID"
+id = "6fff7d73c885457dbb71756de99e66fa"
 
 [vars]
-# Domain site (CORS). Đổi thành GitHub Pages URL thật, vd https://user.github.io
-ALLOWED_ORIGIN = "https://example.github.io"
+# Domain site (CORS) — GitHub Pages của repo nguyennguyenit/CamNangTQCCL.
+ALLOWED_ORIGIN = "https://nguyennguyenit.github.io"
 # Qwen DashScope — chọn region: "intl" (Singapore, có free tier — khuyến nghị) | "cn" (mainland, rẻ hơn).
 # Để trống MODEL_ENDPOINT để dùng REGION; hoặc set MODEL_ENDPOINT để override hẳn.
 REGION = "intl"
