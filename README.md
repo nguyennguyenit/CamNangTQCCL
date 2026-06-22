@@ -1,59 +1,68 @@
-# Cẩm Nang Team — Tam Quốc Chí Chiến Lược
+# Cẩm Nang Team - Tam Quốc Chí Chiến Lược
 
-Website tĩnh tổng hợp **meta team** game Tam Quốc Chí Chiến Lược, đầy đủ bộ lọc, đẹp & dễ nhìn. Dữ liệu tổng hợp từ folder `Meta Team PK/` (Google Sheets export).
+Website tĩnh tra cứu meta team cho Tam Quốc Chí Chiến Lược. Chạy bằng HTML/CSS/vanilla JS, không bundler, không framework.
 
-5 section:
-- **Team PK** — 172 team, lọc theo loại binh / sao / trạng thái / phe / tướng / chiến pháp / binh thư + search toàn văn.
-- **Cùng Tồn** — đội hình cùng tồn tại (kèm Thêm điểm + Kỹ năng quân sư).
-- **Khai hoang** — đội thủ quân theo mỏ (PvE).
-- **Tra cứu chiến pháp** — từ điển 237 chiến pháp + 112 tướng (Việt/Hán-Việt/Hán), search fuzzy đa ngõ vào + lọc loại/chất. Offline, không AI.
-- **Soi đội từ ảnh** — upload screenshot → Vision LLM (Qwen qua Cloudflare Worker proxy) đọc cả đội → map về tên Việt canonical + đối chiếu 172 team. Cần deploy `worker/` + cấu hình `js/config.js`.
+## Có gì
 
-## Kiến trúc
-
-```
-Meta Team PK/*.html  ──(pipeline Python)──►  data/*.json  ──►  frontend vanilla JS
-```
-
-- `pipeline/` — build script (chỉ Python stdlib): tái dựng grid HTML (xử lý rowspan), 3 parser, normalize + alias, sinh JSON.
-- `data/` — JSON đã build (commit sẵn). **Nguồn HTML KHÔNG commit.**
-- `js/`, `css/`, `index.html` — frontend tĩnh, không framework/bundler.
-
-## Build lại dữ liệu (local)
-
-Cần folder nguồn `Meta Team PK/` + Python 3.
-
-```bash
-python3 -m pipeline.build_json        # sinh data/{teams,facets,coexist,khaihoang}.json
-python3 -m pipeline.suggest_aliases   # gợi ý typo cho pipeline/aliases.json (review thủ công)
-python3 -m pipeline.build_dict        # crawl lingxi -> data/{tactics,heroes-dict}.json (cache lại; --recrawl để gọi mạng)
-```
-
-`build_json` assert đúng số team (50 + 12 + 110 = 172), fail-fast nếu lệch. `build_dict` phiên âm Hán-Việt (fail-loud ký tự thiếu) + auto-link tên Việt; chiến pháp generic không có trong lingxi để placeholder ở `data/tactics-generic.json`.
-
-**Tên team:** mỗi team tự sinh tên từ âm tiết cuối 3 tướng (Cam Ninh + Thái Sử Từ + Chu Thái → "Ninh Từ Thái"). Muốn thêm **tên gọi khác** (vd "Hổ Thần Cung"), điền vào `pipeline/team-nicknames.json` — key = 3 tên tướng (chuẩn, sau alias) ghép bằng `|`, không phân biệt thứ tự. Card hiện tên gọi khác nếu có, ngược lại hiện tên tự sinh.
+- `Team PK`: 172 team, lọc theo loại binh / sao / trạng thái / phe / tướng / chiến pháp / binh thư, có search toàn văn.
+- `Cùng Tồn`: nhóm team cùng tồn tại, kèm `Thêm` và `Kỹ năng quân sư`.
+- `Khai hoang`: đội khai hoang và quân thủ các mỏ.
+- `Tra cứu chiến pháp`: 237 chiến pháp + 112 tướng, search fuzzy, chạy offline, không AI.
+- `Soi đội từ ảnh`: upload screenshot, đọc bằng Worker + Vision LLM, map về tên Việt canonical rồi đối chiếu với 172 team.
 
 ## Chạy local
 
-Cần HTTP server (vì `fetch` JSON):
+Frontend dùng `fetch()` JSON nên phải chạy qua HTTP server.
 
 ```bash
 python3 -m http.server 8000
-# mở http://localhost:8000
+```
+
+Mở `http://localhost:8000`.
+
+Nếu cần rebuild dữ liệu từ HTML nguồn, phải có folder `Meta Team PK/` ở root repo.
+
+```bash
+python3 -m pipeline.build_json
+python3 -m pipeline.suggest_aliases
+python3 -m pipeline.build_dict
 ```
 
 ## Test
 
 ```bash
-python3 -m unittest discover -s tests                                              # pipeline (grid, parser, normalize, build, hán-việt, crawl, link)
-node --test tests-js/filters.test.mjs tests-js/match-dict.test.mjs tests-js/analyze-map.test.mjs   # filter + fuzzy match + soi đội
-cd worker && npm test                                                              # Vision proxy worker (vitest)
+python3 -m unittest discover -s tests
+node --test tests-js/filters.test.mjs tests-js/match-dict.test.mjs tests-js/analyze-map.test.mjs
+cd worker && npm test
+cd worker && npm run typecheck
 ```
 
 ## Deploy
 
-GitHub Pages tự động qua `.github/workflows/deploy.yml` khi push `main` (publish static, không build trên CI). Bật Pages: Settings → Pages → Source = GitHub Actions.
+- Site tĩnh: `.github/workflows/deploy.yml` copy `index.html`, `css/`, `js/`, `data/` lên GitHub Pages.
+- Worker soi đội: deploy riêng trong `worker/` bằng Wrangler.
+
+## Cấu trúc chính
+
+- `index.html`, `css/styles.css`, `js/*.js`: frontend tĩnh.
+- `data/*.json`: dữ liệu đã build, commit sẵn.
+- `pipeline/*.py`: build dữ liệu từ HTML nguồn.
+- `worker/`: proxy Cloudflare cho ảnh soi đội.
+- `tests/`, `tests-js/`: test Python, JS, Worker.
+
+## Tài liệu
+
+- [Tổng quan + PDR](docs/project-overview-pdr.md)
+- [Tóm tắt codebase](docs/codebase-summary.md)
+- [Chuẩn code](docs/code-standards.md)
+- [Kiến trúc hệ thống](docs/system-architecture.md)
+- [Roadmap](docs/project-roadmap.md)
+- [Deploy](docs/deployment-guide.md)
+- [Design](docs/design-guidelines.md)
 
 ## Ghi chú
 
-Dữ liệu mang tính tham khảo từ kinh nghiệm người chơi, không phải phương án duy nhất. `Meta mỗi phe (cũ)` được gắn nhãn **Cũ**.
+- `js/config.js` đang để placeholder cho `workerUrl` và `turnstileSiteKey`, nên tab `Soi đội từ ảnh` chưa hoạt động cho tới khi cấu hình thật.
+- `data/tactics-generic.json` có 28 chiến pháp generic chờ ghép mô tả.
+- Nguồn HTML `Meta Team PK/` và cache crawl không commit, nên clone repo không tự rebuild được nếu thiếu export local.
+- `Meta mỗi phe (cũ)` được gắn nhãn `Cũ`.
