@@ -22,7 +22,7 @@ function bookNames(hero) {
 
 /** Văn bản phẳng của team để search toàn văn (đã normalize). */
 export function teamSearchBlob(team) {
-  const parts = [team.rawType, team.notes || "", team.faction || ""];
+  const parts = [team.rawType, team.notes || "", team.faction || "", team.name || "", team.nickname || ""];
   for (const h of team.heroes) {
     parts.push(h.name, ...(h.alternatives || []), ...tacticNames(h), ...bookNames(h));
   }

@@ -28,6 +28,8 @@ python3 -m pipeline.suggest_aliases   # gợi ý typo cho pipeline/aliases.json 
 
 `build_json` assert đúng số team (50 + 12 + 110 = 172), fail-fast nếu lệch.
 
+**Tên team:** mỗi team tự sinh tên từ âm tiết cuối 3 tướng (Cam Ninh + Thái Sử Từ + Chu Thái → "Ninh Từ Thái"). Muốn thêm **tên gọi khác** (vd "Hổ Thần Cung"), điền vào `pipeline/team-nicknames.json` — key = 3 tên tướng (chuẩn, sau alias) ghép bằng `|`, không phân biệt thứ tự. Card hiện tên gọi khác nếu có, ngược lại hiện tên tự sinh.
+
 ## Chạy local
 
 Cần HTTP server (vì `fetch` JSON):

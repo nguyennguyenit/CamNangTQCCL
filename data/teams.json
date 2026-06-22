@@ -2,6 +2,8 @@
   {
     "id": "team-intro-0",
     "source": "team-intro",
+    "name": "Úc Liêu Cơ",
+    "nickname": null,
     "rawType": "Thương(★★★★)",
     "unitType": [
       "Thương"
@@ -125,6 +127,8 @@
   {
     "id": "team-intro-1",
     "source": "team-intro",
+    "name": "Siêu Tung Du",
+    "nickname": null,
     "rawType": "Thương(★★★★☆)",
     "unitType": [
       "Thương"
@@ -253,6 +257,8 @@
   {
     "id": "team-intro-2",
     "source": "team-intro",
+    "name": "Vũ Tung Úc",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -376,6 +382,8 @@
   {
     "id": "team-intro-3",
     "source": "team-intro",
+    "name": "Vũ Tung Mông",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -499,6 +507,8 @@
   {
     "id": "team-intro-4",
     "source": "team-intro",
+    "name": "Mông Tốn Túc",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -624,6 +634,8 @@
   {
     "id": "team-intro-5",
     "source": "team-intro",
+    "name": "Phi Bình Vân",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -753,6 +765,8 @@
   {
     "id": "team-intro-6",
     "source": "team-intro",
+    "name": "Phi Bình Anh",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -894,6 +908,8 @@
   {
     "id": "team-intro-7",
     "source": "team-intro",
+    "name": "Lượng Hưng Bào",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -1016,6 +1032,8 @@
   {
     "id": "team-intro-8",
     "source": "team-intro",
+    "name": "Phổ Siêu Úc",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -1138,6 +1156,8 @@
   {
     "id": "team-intro-9",
     "source": "team-intro",
+    "name": "Vũ Bình Bình",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -1260,6 +1280,8 @@
   {
     "id": "team-intro-10",
     "source": "team-intro",
+    "name": "Tháo Uyên Liêu",
+    "nickname": null,
     "rawType": "Kỵ",
     "unitType": [
       "Kỵ"
@@ -1383,6 +1405,8 @@
   {
     "id": "team-intro-11",
     "source": "team-intro",
+    "name": "Úc Hủ Gia",
+    "nickname": null,
     "rawType": "Kỵ/Cung(★★★★☆)",
     "unitType": [
       "Kỵ",
@@ -1518,6 +1542,8 @@
   {
     "id": "team-intro-12",
     "source": "team-intro",
+    "name": "Úc Gia Du",
+    "nickname": null,
     "rawType": "Kỵ(★★★★☆)",
     "unitType": [
       "Kỵ"
@@ -1640,6 +1666,8 @@
   {
     "id": "team-intro-13",
     "source": "team-intro",
+    "name": "Ý Úc Chân",
+    "nickname": null,
     "rawType": "Kỵ(★★★★☆)",
     "unitType": [
       "Kỵ"
@@ -1764,6 +1792,8 @@
   {
     "id": "team-intro-14",
     "source": "team-intro",
+    "name": "Liêu Gia Cơ",
+    "nickname": null,
     "rawType": "Kỵ(★★★★☆)",
     "unitType": [
       "Kỵ"
@@ -1887,6 +1917,8 @@
   {
     "id": "team-intro-15",
     "source": "team-intro",
+    "name": "Úc Dục Hủ",
+    "nickname": null,
     "rawType": "Kỵ/Cung(★★★★)",
     "unitType": [
       "Kỵ",
@@ -2019,6 +2051,8 @@
   {
     "id": "team-intro-16",
     "source": "team-intro",
+    "name": "Thái Hương Thống",
+    "nickname": null,
     "rawType": "Kỵ(★★★★)",
     "unitType": [
       "Kỵ"
@@ -2142,6 +2176,8 @@
   {
     "id": "team-intro-17",
     "source": "team-intro",
+    "name": "Duy Bị Bình",
+    "nickname": null,
     "rawType": "Kỵ(★★★★)",
     "unitType": [
       "Kỵ"
@@ -2264,6 +2300,8 @@
   {
     "id": "team-intro-18",
     "source": "team-intro",
+    "name": "Úc Đôn Sủng",
+    "nickname": null,
     "rawType": "Kỵ",
     "unitType": [
       "Kỵ"
@@ -2388,6 +2426,8 @@
   {
     "id": "team-intro-19",
     "source": "team-intro",
+    "name": "Úc Hủ Dị",
+    "nickname": null,
     "rawType": "Cung(★★★★★)",
     "unitType": [
       "Cung"
@@ -2511,6 +2551,8 @@
   {
     "id": "team-intro-20",
     "source": "team-intro",
+    "name": "Du Mông Túc",
+    "nickname": null,
     "rawType": "Cung(★★★★☆)",
     "unitType": [
       "Cung"
@@ -2630,6 +2672,8 @@
   {
     "id": "team-intro-21",
     "source": "team-intro",
+    "name": "Duy Thống Lượng",
+    "nickname": null,
     "rawType": "Cung(★★★★☆)",
     "unitType": [
       "Cung"
@@ -2752,6 +2796,8 @@
   {
     "id": "team-intro-22",
     "source": "team-intro",
+    "name": "Du Tốn Mông",
+    "nickname": null,
     "rawType": "Cung(★★★★)",
     "unitType": [
       "Cung"
@@ -2897,6 +2943,8 @@
   {
     "id": "team-intro-23",
     "source": "team-intro",
+    "name": "Du Từ Mông",
+    "nickname": null,
     "rawType": "Cung(★★★★)",
     "unitType": [
       "Cung"
@@ -3021,6 +3069,8 @@
   {
     "id": "team-intro-24",
     "source": "team-intro",
+    "name": "Úc Hủ Hội",
+    "nickname": null,
     "rawType": "Cung(★★★★)",
     "unitType": [
       "Cung"
@@ -3144,6 +3194,8 @@
   {
     "id": "team-intro-25",
     "source": "team-intro",
+    "name": "Úc Cơ Gia",
+    "nickname": null,
     "rawType": "Cung(★★★★)",
     "unitType": [
       "Cung"
@@ -3267,6 +3319,8 @@
   {
     "id": "team-intro-26",
     "source": "team-intro",
+    "name": "Ninh Từ Thái",
+    "nickname": "Hổ Thần Cung",
     "rawType": "Cung(★★★★)",
     "unitType": [
       "Cung"
@@ -3388,6 +3442,8 @@
   {
     "id": "team-intro-27",
     "source": "team-intro",
+    "name": "Ninh Từ Mông",
+    "nickname": null,
     "rawType": "Cung(★★★★)",
     "unitType": [
       "Cung"
@@ -3517,6 +3573,8 @@
   {
     "id": "team-intro-28",
     "source": "team-intro",
+    "name": "Úc Hủ Đức",
+    "nickname": null,
     "rawType": "Cung(★★★★)",
     "unitType": [
       "Cung"
@@ -3641,6 +3699,8 @@
   {
     "id": "team-intro-29",
     "source": "team-intro",
+    "name": "Úc Hủ Phi",
+    "nickname": null,
     "rawType": "Cung(★★★★)",
     "unitType": [
       "Cung"
@@ -3764,6 +3824,8 @@
   {
     "id": "team-intro-30",
     "source": "team-intro",
+    "name": "Phi Hủ Cơ",
+    "nickname": null,
     "rawType": "Cung(★★★★)",
     "unitType": [
       "Cung"
@@ -3887,6 +3949,8 @@
   {
     "id": "team-intro-31",
     "source": "team-intro",
+    "name": "Bố Tung Du",
+    "nickname": null,
     "rawType": "Cung(★★★★)",
     "unitType": [
       "Cung"
@@ -4008,6 +4072,8 @@
   {
     "id": "team-intro-32",
     "source": "team-intro",
+    "name": "Thuyền Du Tháo",
+    "nickname": null,
     "rawType": "Cung(★★★★)",
     "unitType": [
       "Cung"
@@ -4135,6 +4201,8 @@
   {
     "id": "team-intro-33",
     "source": "team-intro",
+    "name": "Du Bố Từ",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -4262,6 +4330,8 @@
   {
     "id": "team-intro-34",
     "source": "team-intro",
+    "name": "Lượng Trung Thống",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -4381,6 +4451,8 @@
   {
     "id": "team-intro-35",
     "source": "team-intro",
+    "name": "Trách Thuyền Bố",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -4504,6 +4576,8 @@
   {
     "id": "team-intro-36",
     "source": "team-intro",
+    "name": "Quyền Túc Du",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -4627,6 +4701,8 @@
   {
     "id": "team-intro-37",
     "source": "team-intro",
+    "name": "Du Túc Tốn",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -4760,6 +4836,8 @@
   {
     "id": "team-intro-38",
     "source": "team-intro",
+    "name": "Thiệu Tuấn Thụ",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -4882,6 +4960,8 @@
   {
     "id": "team-intro-39",
     "source": "team-intro",
+    "name": "Thuyền Ỷ Từ",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -5004,6 +5084,8 @@
   {
     "id": "team-intro-40",
     "source": "team-intro",
+    "name": "Vũ Chính Thái",
+    "nickname": null,
     "rawType": "Khiên(★★★★☆)",
     "unitType": [
       "Khiên"
@@ -5123,6 +5205,8 @@
   {
     "id": "team-intro-41",
     "source": "team-intro",
+    "name": "Vũ Đại Thái",
+    "nickname": null,
     "rawType": "Khiên(★★★★☆)",
     "unitType": [
       "Khiên"
@@ -5256,6 +5340,8 @@
   {
     "id": "team-intro-42",
     "source": "team-intro",
+    "name": "Ý Sủng Tháo",
+    "nickname": null,
     "rawType": "Khiên(★★★★☆)",
     "unitType": [
       "Khiên"
@@ -5381,6 +5467,8 @@
   {
     "id": "team-intro-43",
     "source": "team-intro",
+    "name": "Vũ Thái Bị",
+    "nickname": null,
     "rawType": "Khiên(★★★★☆)",
     "unitType": [
       "Khiên"
@@ -5504,6 +5592,8 @@
   {
     "id": "team-intro-44",
     "source": "team-intro",
+    "name": "Tháo Hủ Chiêu",
+    "nickname": null,
     "rawType": "Khiên(★★★★)",
     "unitType": [
       "Khiên"
@@ -5625,6 +5715,8 @@
   {
     "id": "team-intro-45",
     "source": "team-intro",
+    "name": "Bị Vũ Phi",
+    "nickname": null,
     "rawType": "Khiên(★★★★)",
     "unitType": [
       "Khiên"
@@ -5749,6 +5841,8 @@
   {
     "id": "team-intro-46",
     "source": "team-intro",
+    "name": "Giác Cát Từ",
+    "nickname": null,
     "rawType": "Khiên(★★★★)",
     "unitType": [
       "Khiên"
@@ -5873,6 +5967,8 @@
   {
     "id": "team-intro-47",
     "source": "team-intro",
+    "name": "Thái Phi Thiệu",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -5995,6 +6091,8 @@
   {
     "id": "team-intro-48",
     "source": "team-intro",
+    "name": "Tháo Đôn Sủng",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -6118,6 +6216,8 @@
   {
     "id": "team-intro-49",
     "source": "team-intro",
+    "name": "Giác Bị Túc",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -6242,6 +6342,8 @@
   {
     "id": "do-uy-50",
     "source": "do-uy",
+    "name": "Siêu Thiệu Du",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -6367,6 +6469,8 @@
   {
     "id": "do-uy-51",
     "source": "do-uy",
+    "name": "Kỳ Hủ Du",
+    "nickname": null,
     "rawType": "Kỵ",
     "unitType": [
       "Kỵ"
@@ -6493,6 +6597,8 @@
   {
     "id": "do-uy-52",
     "source": "do-uy",
+    "name": "Úc Gia Hằng",
+    "nickname": null,
     "rawType": "Kỵ",
     "unitType": [
       "Kỵ"
@@ -6623,6 +6729,8 @@
   {
     "id": "do-uy-53",
     "source": "do-uy",
+    "name": "Trực Chỉ Thuyền",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -6751,6 +6859,8 @@
   {
     "id": "do-uy-54",
     "source": "do-uy",
+    "name": "Lượng Thiệu Thống",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -6876,6 +6986,8 @@
   {
     "id": "do-uy-55",
     "source": "do-uy",
+    "name": "Hoành Hương Kiều",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -7001,6 +7113,8 @@
   {
     "id": "do-uy-56",
     "source": "do-uy",
+    "name": "Du Mông Tín",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -7121,6 +7235,8 @@
   {
     "id": "do-uy-57",
     "source": "do-uy",
+    "name": "Du Bố Tẩm",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -7248,6 +7364,8 @@
   {
     "id": "do-uy-58",
     "source": "do-uy",
+    "name": "Ninh Từ Tẩm",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -7371,6 +7489,8 @@
   {
     "id": "do-uy-59",
     "source": "do-uy",
+    "name": "Thiệu Giác Từ",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -7502,6 +7622,8 @@
   {
     "id": "do-uy-60",
     "source": "do-uy",
+    "name": "Vũ Chính Hoành",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -7630,6 +7752,8 @@
   {
     "id": "do-uy-61",
     "source": "do-uy",
+    "name": "Vũ Dực Phi",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -7751,6 +7875,8 @@
   {
     "id": "moi-phe-62",
     "source": "moi-phe",
+    "name": "Vân Vũ Lượng",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -7872,6 +7998,8 @@
   {
     "id": "moi-phe-63",
     "source": "moi-phe",
+    "name": "Thái Vũ Tháo",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -7989,6 +8117,8 @@
   {
     "id": "moi-phe-64",
     "source": "moi-phe",
+    "name": "Úc Vũ Từ",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -8108,6 +8238,8 @@
   {
     "id": "moi-phe-65",
     "source": "moi-phe",
+    "name": "Phổ Vũ Úc",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -8227,6 +8359,8 @@
   {
     "id": "moi-phe-66",
     "source": "moi-phe",
+    "name": "Du Vũ Mông",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -8344,6 +8478,8 @@
   {
     "id": "moi-phe-67",
     "source": "moi-phe",
+    "name": "Ý Tháo Sủng",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -8465,6 +8601,8 @@
   {
     "id": "moi-phe-68",
     "source": "moi-phe",
+    "name": "Ý Tháo Sủng",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -8584,6 +8722,8 @@
   {
     "id": "moi-phe-69",
     "source": "moi-phe",
+    "name": "Ý Tháo Chiêu",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -8705,6 +8845,8 @@
   {
     "id": "moi-phe-70",
     "source": "moi-phe",
+    "name": "Tháo Ý Chiêu",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -8822,6 +8964,8 @@
   {
     "id": "moi-phe-71",
     "source": "moi-phe",
+    "name": "Ý Hoa Sủng",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -8945,6 +9089,8 @@
   {
     "id": "moi-phe-72",
     "source": "moi-phe",
+    "name": "Tháo Hụ̉ Chiêu",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -9064,6 +9210,8 @@
   {
     "id": "moi-phe-73",
     "source": "moi-phe",
+    "name": "Tháo Hủ Chiêu",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -9185,6 +9333,8 @@
   {
     "id": "moi-phe-74",
     "source": "moi-phe",
+    "name": "Tháo Tiến Chiêu",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -9304,6 +9454,8 @@
   {
     "id": "moi-phe-75",
     "source": "moi-phe",
+    "name": "Úc Hủ Gia",
+    "nickname": null,
     "rawType": "Kỵ",
     "unitType": [
       "Kỵ"
@@ -9421,6 +9573,8 @@
   {
     "id": "moi-phe-76",
     "source": "moi-phe",
+    "name": "Úc Du Gia",
+    "nickname": null,
     "rawType": "Kỵ",
     "unitType": [
       "Kỵ"
@@ -9538,6 +9692,8 @@
   {
     "id": "moi-phe-77",
     "source": "moi-phe",
+    "name": "Tháo Hủ Gia",
+    "nickname": null,
     "rawType": "Kỵ",
     "unitType": [
       "Kỵ"
@@ -9655,6 +9811,8 @@
   {
     "id": "moi-phe-78",
     "source": "moi-phe",
+    "name": "Tháo Hủ Dục",
+    "nickname": null,
     "rawType": "Kỵ",
     "unitType": [
       "Kỵ"
@@ -9774,6 +9932,8 @@
   {
     "id": "moi-phe-79",
     "source": "moi-phe",
+    "name": "Tháo Hủ Du",
+    "nickname": null,
     "rawType": "Kỵ/Cung",
     "unitType": [
       "Kỵ",
@@ -9898,6 +10058,8 @@
   {
     "id": "moi-phe-80",
     "source": "moi-phe",
+    "name": "Tháo Uyên Liêu",
+    "nickname": null,
     "rawType": "Kỵ",
     "unitType": [
       "Kỵ"
@@ -10015,6 +10177,8 @@
   {
     "id": "moi-phe-81",
     "source": "moi-phe",
+    "name": "Tháo Đôn Sủng",
+    "nickname": null,
     "rawType": "Kỵ",
     "unitType": [
       "Kỵ"
@@ -10136,6 +10300,8 @@
   {
     "id": "moi-phe-82",
     "source": "moi-phe",
+    "name": "Uyên Tháo Gia",
+    "nickname": null,
     "rawType": "Kỵ",
     "unitType": [
       "Kỵ"
@@ -10253,6 +10419,8 @@
   {
     "id": "moi-phe-83",
     "source": "moi-phe",
+    "name": "Liêu Cơ Gia",
+    "nickname": null,
     "rawType": "Kỵ",
     "unitType": [
       "Kỵ"
@@ -10372,6 +10540,8 @@
   {
     "id": "moi-phe-84",
     "source": "moi-phe",
+    "name": "Tháo Tiến Hủ",
+    "nickname": null,
     "rawType": "Kỵ",
     "unitType": [
       "Kỵ"
@@ -10491,6 +10661,8 @@
   {
     "id": "moi-phe-85",
     "source": "moi-phe",
+    "name": "Hủ Tháo Sủng",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -10610,6 +10782,8 @@
   {
     "id": "moi-phe-86",
     "source": "moi-phe",
+    "name": "Tháo Hoảng Hụ̉",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -10727,6 +10901,8 @@
   {
     "id": "moi-phe-87",
     "source": "moi-phe",
+    "name": "Duy Thống Lượng",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -10846,6 +11022,8 @@
   {
     "id": "moi-phe-88",
     "source": "moi-phe",
+    "name": "Duy Thống Lượng",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -10967,6 +11145,8 @@
   {
     "id": "moi-phe-89",
     "source": "moi-phe",
+    "name": "Duy Thống Lượng",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -11086,6 +11266,8 @@
   {
     "id": "moi-phe-90",
     "source": "moi-phe",
+    "name": "Lượng Thống Chính",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -11203,6 +11385,8 @@
   {
     "id": "moi-phe-91",
     "source": "moi-phe",
+    "name": "Duy Bị Diên",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -11320,6 +11504,8 @@
   {
     "id": "moi-phe-92",
     "source": "moi-phe",
+    "name": "Duy Bị Diên",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -11439,6 +11625,8 @@
   {
     "id": "moi-phe-93",
     "source": "moi-phe",
+    "name": "Bị Vũ Phi",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -11562,6 +11750,8 @@
   {
     "id": "moi-phe-94",
     "source": "moi-phe",
+    "name": "Bị Vũ Phi",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -11683,6 +11873,8 @@
   {
     "id": "moi-phe-95",
     "source": "moi-phe",
+    "name": "Bị Vũ Diên",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -11804,6 +11996,8 @@
   {
     "id": "moi-phe-96",
     "source": "moi-phe",
+    "name": "Bị Bình Diên",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -11921,6 +12115,8 @@
   {
     "id": "moi-phe-97",
     "source": "moi-phe",
+    "name": "Bị Vân Diên",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -12038,6 +12234,8 @@
   {
     "id": "moi-phe-98",
     "source": "moi-phe",
+    "name": "Bị Phi Diên",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -12157,6 +12355,8 @@
   {
     "id": "moi-phe-99",
     "source": "moi-phe",
+    "name": "Vân Vũ Bình",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -12276,6 +12476,8 @@
   {
     "id": "moi-phe-100",
     "source": "moi-phe",
+    "name": "Vũ Siêu Bình",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -12393,6 +12595,8 @@
   {
     "id": "moi-phe-101",
     "source": "moi-phe",
+    "name": "Vũ Phi Bình",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -12510,6 +12714,8 @@
   {
     "id": "moi-phe-102",
     "source": "moi-phe",
+    "name": "Vũ Diên Bình",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -12627,6 +12833,8 @@
   {
     "id": "moi-phe-103",
     "source": "moi-phe",
+    "name": "Vân Vũ Phi",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -12746,6 +12954,8 @@
   {
     "id": "moi-phe-104",
     "source": "moi-phe",
+    "name": "Lượng Bình Vân",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -12863,6 +13073,8 @@
   {
     "id": "moi-phe-105",
     "source": "moi-phe",
+    "name": "Lượng Vân Phi",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -12980,6 +13192,8 @@
   {
     "id": "moi-phe-106",
     "source": "moi-phe",
+    "name": "Lượng Diên Bình",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -13097,6 +13311,8 @@
   {
     "id": "moi-phe-107",
     "source": "moi-phe",
+    "name": "Lượng Hưng Bào",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -13218,6 +13434,8 @@
   {
     "id": "moi-phe-108",
     "source": "moi-phe",
+    "name": "Bào Hưng Lượng",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -13337,6 +13555,8 @@
   {
     "id": "moi-phe-109",
     "source": "moi-phe",
+    "name": "Duy Bình Lượng",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -13454,6 +13674,8 @@
   {
     "id": "moi-phe-110",
     "source": "moi-phe",
+    "name": "Lượng Thống Vũ",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -13571,6 +13793,8 @@
   {
     "id": "moi-phe-111",
     "source": "moi-phe",
+    "name": "Duy Bình Bị",
+    "nickname": null,
     "rawType": "Kỵ",
     "unitType": [
       "Kỵ"
@@ -13688,6 +13912,8 @@
   {
     "id": "moi-phe-112",
     "source": "moi-phe",
+    "name": "Duy Vũ Bị",
+    "nickname": null,
     "rawType": "Kỵ",
     "unitType": [
       "Kỵ"
@@ -13805,6 +14031,8 @@
   {
     "id": "moi-phe-113",
     "source": "moi-phe",
+    "name": "Tốṇ Túc Mông",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -13924,6 +14152,8 @@
   {
     "id": "moi-phe-114",
     "source": "moi-phe",
+    "name": "Tốṇ Túc Mông",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -14047,6 +14277,8 @@
   {
     "id": "moi-phe-115",
     "source": "moi-phe",
+    "name": "Mông Tốṇ Túc",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -14164,6 +14396,8 @@
   {
     "id": "moi-phe-116",
     "source": "moi-phe",
+    "name": "Tốṇ Ninh Phổ",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -14285,6 +14519,8 @@
   {
     "id": "moi-phe-117",
     "source": "moi-phe",
+    "name": "Quyền Túc Phổ",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -14412,6 +14648,8 @@
   {
     "id": "moi-phe-118",
     "source": "moi-phe",
+    "name": "Ninh Từ Thái",
+    "nickname": "Hổ Thần Cung",
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -14531,6 +14769,8 @@
   {
     "id": "moi-phe-119",
     "source": "moi-phe",
+    "name": "Du Tốn Mông",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -14650,6 +14890,8 @@
   {
     "id": "moi-phe-120",
     "source": "moi-phe",
+    "name": "Du Tốn Túc",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -14770,6 +15012,8 @@
   {
     "id": "moi-phe-121",
     "source": "moi-phe",
+    "name": "Du Tốn Mông",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -14889,6 +15133,8 @@
   {
     "id": "moi-phe-122",
     "source": "moi-phe",
+    "name": "Du Từ Mông",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -15010,6 +15256,8 @@
   {
     "id": "moi-phe-123",
     "source": "moi-phe",
+    "name": "Du Tốn Phổ",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -15127,6 +15375,8 @@
   {
     "id": "moi-phe-124",
     "source": "moi-phe",
+    "name": "Tốn Từ Phổ",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -15246,6 +15496,8 @@
   {
     "id": "moi-phe-125",
     "source": "moi-phe",
+    "name": "Quyền Từ Túc",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -15365,6 +15617,8 @@
   {
     "id": "moi-phe-126",
     "source": "moi-phe",
+    "name": "Quyền Từ Túc",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -15484,6 +15738,8 @@
   {
     "id": "moi-phe-127",
     "source": "moi-phe",
+    "name": "Quyền Từ Mông",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -15605,6 +15861,8 @@
   {
     "id": "moi-phe-128",
     "source": "moi-phe",
+    "name": "Quyền Tốn Phổ",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -15724,6 +15982,8 @@
   {
     "id": "moi-phe-129",
     "source": "moi-phe",
+    "name": "Du Từ Phổ",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -15848,6 +16108,8 @@
   {
     "id": "moi-phe-130",
     "source": "moi-phe",
+    "name": "Quyền Túc Du",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -15967,6 +16229,8 @@
   {
     "id": "moi-phe-131",
     "source": "moi-phe",
+    "name": "Tốn Du Kháng",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -16084,6 +16348,8 @@
   {
     "id": "moi-phe-132",
     "source": "moi-phe",
+    "name": "Du Kiên Túc",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -16203,6 +16469,8 @@
   {
     "id": "moi-phe-133",
     "source": "moi-phe",
+    "name": "Tốṇ Túc Phổ",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -16320,6 +16588,8 @@
   {
     "id": "moi-phe-134",
     "source": "moi-phe",
+    "name": "Quyền Từ Thái",
+    "nickname": null,
     "rawType": "Kỵ",
     "unitType": [
       "Kỵ"
@@ -16437,6 +16707,8 @@
   {
     "id": "moi-phe-135",
     "source": "moi-phe",
+    "name": "Quyền Từ Thái",
+    "nickname": null,
     "rawType": "Kỵ",
     "unitType": [
       "Kỵ"
@@ -16554,6 +16826,8 @@
   {
     "id": "moi-phe-136",
     "source": "moi-phe",
+    "name": "Thái Hương Thống",
+    "nickname": null,
     "rawType": "Kỵ",
     "unitType": [
       "Kỵ"
@@ -16683,6 +16957,8 @@
   {
     "id": "moi-phe-137",
     "source": "moi-phe",
+    "name": "Thái Hương Từ",
+    "nickname": null,
     "rawType": "Kỵ",
     "unitType": [
       "Kỵ"
@@ -16802,6 +17078,8 @@
   {
     "id": "moi-phe-138",
     "source": "moi-phe",
+    "name": "Thái Thống Từ",
+    "nickname": null,
     "rawType": "Kỵ",
     "unitType": [
       "Kỵ"
@@ -16921,6 +17199,8 @@
   {
     "id": "moi-phe-139",
     "source": "moi-phe",
+    "name": "Phổ Ninh Mông",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -17038,6 +17318,8 @@
   {
     "id": "moi-phe-140",
     "source": "moi-phe",
+    "name": "Thiệu Tuấn Thụ",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -17157,6 +17439,8 @@
   {
     "id": "moi-phe-141",
     "source": "moi-phe",
+    "name": "Thiệu Giác Thụ",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -17274,6 +17558,8 @@
   {
     "id": "moi-phe-142",
     "source": "moi-phe",
+    "name": "Thiệu Giác Từ",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -17397,6 +17683,8 @@
   {
     "id": "moi-phe-143",
     "source": "moi-phe",
+    "name": "Giác Cốt Từ",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -17514,6 +17802,8 @@
   {
     "id": "moi-phe-144",
     "source": "moi-phe",
+    "name": "Giác Cát Từ",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -17631,6 +17921,8 @@
   {
     "id": "moi-phe-145",
     "source": "moi-phe",
+    "name": "Thuyền Giác Thụ",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -17748,6 +18040,8 @@
   {
     "id": "moi-phe-146",
     "source": "moi-phe",
+    "name": "Du Bố Bạch",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -17865,6 +18159,8 @@
   {
     "id": "moi-phe-147",
     "source": "moi-phe",
+    "name": "Ý Túc Sủng",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -17989,6 +18285,8 @@
   {
     "id": "moi-phe-148",
     "source": "moi-phe",
+    "name": "Giác Chính Từ",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -18106,6 +18404,8 @@
   {
     "id": "moi-phe-149",
     "source": "moi-phe",
+    "name": "Quyền Úc Mông",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -18225,6 +18525,8 @@
   {
     "id": "moi-phe-150",
     "source": "moi-phe",
+    "name": "Tốn Từ Du",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -18346,6 +18648,8 @@
   {
     "id": "moi-phe-151",
     "source": "moi-phe",
+    "name": "Giác Túc Bị",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -18465,6 +18769,8 @@
   {
     "id": "moi-phe-152",
     "source": "moi-phe",
+    "name": "Giác Chính Hủ",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -18588,6 +18894,8 @@
   {
     "id": "moi-phe-153",
     "source": "moi-phe",
+    "name": "Giác Túc Cốt",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -18705,6 +19013,8 @@
   {
     "id": "moi-phe-154",
     "source": "moi-phe",
+    "name": "Bố Gia Anh",
+    "nickname": null,
     "rawType": "Kỵ",
     "unitType": [
       "Kỵ"
@@ -18826,6 +19136,8 @@
   {
     "id": "moi-phe-155",
     "source": "moi-phe",
+    "name": "Hủ Duy Tử",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -18943,6 +19255,8 @@
   {
     "id": "moi-phe-156",
     "source": "moi-phe",
+    "name": "Giác Diên Túc",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -19062,6 +19376,8 @@
   {
     "id": "moi-phe-157",
     "source": "moi-phe",
+    "name": "Thái Thiệu Tháo",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -19181,6 +19497,8 @@
   {
     "id": "moi-phe-158",
     "source": "moi-phe",
+    "name": "Vũ Phổ Thụ",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -19301,6 +19619,8 @@
   {
     "id": "moi-phe-159",
     "source": "moi-phe",
+    "name": "Cơ Bị Quyền",
+    "nickname": null,
     "rawType": "Kỵ",
     "unitType": [
       "Kỵ"
@@ -19420,6 +19740,8 @@
   {
     "id": "moi-phe-160",
     "source": "moi-phe",
+    "name": "Du Hủ Quyền",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -19537,6 +19859,8 @@
   {
     "id": "moi-phe-161",
     "source": "moi-phe",
+    "name": "Hủ Từ Du",
+    "nickname": null,
     "rawType": "Cung/Kỵ",
     "unitType": [
       "Kỵ",
@@ -19655,6 +19979,8 @@
   {
     "id": "moi-phe-162",
     "source": "moi-phe",
+    "name": "Hủ Từ Du",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -19772,6 +20098,8 @@
   {
     "id": "moi-phe-163",
     "source": "moi-phe",
+    "name": "Chính Tiến Trác",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -19889,6 +20217,8 @@
   {
     "id": "moi-phe-164",
     "source": "moi-phe",
+    "name": "Chính Giác Chiêu",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -20006,6 +20336,8 @@
   {
     "id": "moi-phe-165",
     "source": "moi-phe",
+    "name": "Chính Giác Tháo",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -20125,6 +20457,8 @@
   {
     "id": "moi-phe-166",
     "source": "moi-phe",
+    "name": "Chính Ninh Sủng",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -20244,6 +20578,8 @@
   {
     "id": "moi-phe-167",
     "source": "moi-phe",
+    "name": "Úc Giác Từ",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -20361,6 +20697,8 @@
   {
     "id": "moi-phe-168",
     "source": "moi-phe",
+    "name": "Úc Liêu Cơ",
+    "nickname": null,
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -20478,6 +20816,8 @@
   {
     "id": "moi-phe-169",
     "source": "moi-phe",
+    "name": "Chính Ninh Sủng",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -20597,6 +20937,8 @@
   {
     "id": "moi-phe-170",
     "source": "moi-phe",
+    "name": "Túc Giác Tháo",
+    "nickname": null,
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -20714,6 +21056,8 @@
   {
     "id": "moi-phe-171",
     "source": "moi-phe",
+    "name": "Vân Từ Tử",
+    "nickname": null,
     "rawType": "Cung",
     "unitType": [
       "Cung"

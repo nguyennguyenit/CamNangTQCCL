@@ -10,7 +10,7 @@ import os
 from collections import Counter
 from typing import Dict, List
 
-from .normalize import load_aliases, normalize_team
+from .normalize import load_aliases, load_nicknames, normalize_team
 from .parse_coexist import group_coexist, parse_coexist
 from .parse_khaihoang import parse_khaihoang, parse_khaihoang_teams
 from .parse_team_intro import parse_team_intro
@@ -29,6 +29,7 @@ _TEAM_FILES = [
 
 def build_teams() -> List[dict]:
     aliases = load_aliases()
+    nicknames = load_nicknames()
     teams: List[dict] = []
     idx = 0
     for fname, src, hint, expected in _TEAM_FILES:
@@ -38,7 +39,7 @@ def build_teams() -> List[dict]:
                 f"[build] COUNT MISMATCH {fname}: got {len(raw)} expected {expected}"
             )
         for r in raw:
-            teams.append(normalize_team(r, aliases, idx))
+            teams.append(normalize_team(r, aliases, idx, nicknames))
             idx += 1
     return teams
 

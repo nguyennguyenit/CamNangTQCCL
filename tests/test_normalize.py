@@ -101,6 +101,49 @@ class TestNormalize(unittest.TestCase):
         team = normalize.normalize_team(raw, aliases, 0)
         self.assertEqual(team["faction"], "Thục")
 
+    def test_auto_team_name_last_syllable(self):
+        self.assertEqual(
+            normalize.auto_team_name(["Cam Ninh", "Thái Sử Từ", "Chu Thái"]),
+            "Ninh Từ Thái",
+        )
+
+    def test_nickname_key_order_independent(self):
+        self.assertEqual(
+            normalize._nickname_key(["Cam Ninh", "Thái Sử Từ", "Chu Thái"]),
+            normalize._nickname_key(["Chu Thái", "Cam Ninh", "Thái Sử Từ"]),
+        )
+
+    def test_normalize_team_name_and_nickname(self):
+        aliases = {"heroes": {}, "tactics": {}, "books": {}}
+        nicks = normalize.load_nicknames(
+            os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "pipeline", "team-nicknames.json")
+        )
+        raw = {
+            "source": "team-intro",
+            "rawType": "Cung",
+            "heroesRaw": [
+                {"nameRaw": "Cam Ninh", "cp1Raw": "", "cp2Raw": "", "booksRaw": []},
+                {"nameRaw": "Thái Sử Từ", "cp1Raw": "", "cp2Raw": "", "booksRaw": []},
+                {"nameRaw": "Chu Thái", "cp1Raw": "", "cp2Raw": "", "booksRaw": []},
+            ],
+        }
+        team = normalize.normalize_team(raw, aliases, 0, nicks)
+        self.assertEqual(team["name"], "Ninh Từ Thái")
+        self.assertEqual(team["nickname"], "Hổ Thần Cung")
+
+    def test_normalize_team_nickname_none_when_absent(self):
+        aliases = {"heroes": {}, "tactics": {}, "books": {}}
+        raw = {
+            "source": "team-intro",
+            "rawType": "Kỵ",
+            "heroesRaw": [
+                {"nameRaw": "Quan Vũ", "cp1Raw": "", "cp2Raw": "", "booksRaw": []},
+            ],
+        }
+        team = normalize.normalize_team(raw, aliases, 0, {})
+        self.assertEqual(team["name"], "Vũ")
+        self.assertIsNone(team["nickname"])
+
 
 if __name__ == "__main__":
     unittest.main()

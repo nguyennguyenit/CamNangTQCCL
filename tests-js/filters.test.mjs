@@ -93,3 +93,13 @@ test("teamSearchBlob includes counters", () => {
   const blob = teamSearchBlob(team({ counters: { good: ["Khiên TMY"], avoid: ["Quần Cung"] } }));
   assert.ok(blob.includes("quan cung"));
 });
+
+test("search matches team name and nickname", () => {
+  const t = team({ name: "Ninh Từ Thái", nickname: "Hổ Thần Cung" });
+  const byName = emptyState();
+  byName.query = "ninh tu thai";
+  assert.equal(applyFilters([t], byName).length, 1);
+  const byNick = emptyState();
+  byNick.query = "ho than cung";
+  assert.equal(applyFilters([t], byNick).length, 1);
+});

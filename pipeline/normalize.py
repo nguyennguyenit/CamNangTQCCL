@@ -15,6 +15,7 @@ import re
 from typing import List, Optional, Tuple
 
 _ALIASES_PATH = os.path.join(os.path.dirname(__file__), "aliases.json")
+_NICKNAMES_PATH = os.path.join(os.path.dirname(__file__), "team-nicknames.json")
 
 # Whitelist phe — tránh nhiễu "Tam Thế"/"Bạch Mã" bị nhận nhầm là phe.
 _FACTIONS = ("Ngụy", "Thục", "Ngô", "Quần")
@@ -41,6 +42,31 @@ def load_aliases(path: str = _ALIASES_PATH) -> dict:
 
 def apply_alias(name: str, table: dict) -> str:
     return table.get(name.strip(), name.strip())
+
+
+def _nickname_key(base_names: List[str]) -> str:
+    """Key định danh team theo bộ tướng (không phụ thuộc thứ tự)."""
+    return "|".join(sorted(n.strip() for n in base_names if n.strip()))
+
+
+def load_nicknames(path: str = _NICKNAMES_PATH) -> dict:
+    """Map thủ công bộ-3-tướng -> tên gọi khác. Key chuẩn hóa theo _nickname_key.
+
+    File rỗng/không tồn tại -> {}. Chỉ một số team có nickname.
+    LƯU Ý: key trong file phải dùng tên tướng CHUẨN (sau alias), vì lookup so khớp
+    với baseName đã rewrite alias — nếu thêm alias cho tướng trong key, nickname sẽ
+    lặng lẽ không match.
+    """
+    if not os.path.exists(path):
+        return {}
+    with open(path, "r", encoding="utf-8") as fh:
+        data = json.load(fh)
+    return {_nickname_key(k.split("|")): v.strip() for k, v in data.items() if v and v.strip()}
+
+
+def auto_team_name(base_names: List[str]) -> str:
+    """Ghép âm tiết cuối mỗi tên tướng. Vd Cam Ninh + Thái Sử Từ + Chu Thái -> "Ninh Từ Thái"."""
+    return " ".join(n.strip().split()[-1] for n in base_names if n.strip())
 
 
 def split_variants(cell: str, alias_table: Optional[dict] = None, strip_book_prefix: bool = False) -> Optional[dict]:
@@ -174,7 +200,7 @@ def _has_mix_formation(heroes: list) -> bool:
     return False
 
 
-def normalize_team(raw: dict, alias_table: dict, index: int) -> dict:
+def normalize_team(raw: dict, alias_table: dict, index: int, nicknames: Optional[dict] = None) -> dict:
     """Team thô -> Team model cuối."""
     meta = classify(raw.get("rawType", ""), raw.get("statusHint"), raw.get("bannerFaction"))
     good, avoid, counter_notes = split_counters(raw.get("notesRaw", ""))
@@ -204,9 +230,14 @@ def normalize_team(raw: dict, alias_table: dict, index: int) -> dict:
     if _has_mix_formation(heroes):
         faction = _MIX_FACTION
 
+    base_names = [h["baseName"] for h in heroes]
+    nickname = (nicknames or {}).get(_nickname_key(base_names))
+
     return {
         "id": f"{raw['source']}-{index}",
         "source": raw["source"],
+        "name": auto_team_name(base_names),
+        "nickname": nickname,
         "rawType": meta["rawType"],
         "unitType": meta["unitType"],
         "faction": faction,

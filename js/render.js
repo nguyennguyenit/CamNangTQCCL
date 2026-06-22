@@ -95,6 +95,11 @@ function counterChips(counters, onTag) {
 /** Card 1 team PK. onTag(value): callback khi bấm chip (để search). */
 export function teamCard(team, onTag) {
   const fcode = FACTION_CODE[team.faction];
+  // Tiêu đề: ưu tiên tên gọi khác (nickname), mặc định tên ghép từ âm tiết cuối 3 tướng.
+  const title = team.nickname || team.name;
+  const titleEl = title
+    ? el("button", { class: "team-name", type: "button", title: "Tìm theo tên team", onclick: onTag ? () => onTag(title) : null }, title)
+    : null;
   const head = el("div", { class: "card-head" }, [
     el("div", { class: "units" }, (team.unitType || []).map((u) =>
       el("span", { class: `badge unit ${UNIT_CLASS[u] || ""}` }, u))),
@@ -111,7 +116,7 @@ export function teamCard(team, onTag) {
 
   const cls = ["team-card", team.status === "out-meta" ? "dim" : "", fcode ? "fa-" + fcode : ""]
     .filter(Boolean).join(" ");
-  return el("article", { class: cls }, [head, heroes, foot, notes].filter(Boolean));
+  return el("article", { class: cls }, [titleEl, head, heroes, foot, notes].filter(Boolean));
 }
 
 /** 1 tướng trong đội Cùng Tồn — khối dọc giống card Team PK. */
