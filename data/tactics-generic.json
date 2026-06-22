@@ -20,7 +20,16 @@
     { "viet": "Thượng Binh Phạt Mưu", "chinese": "上兵伐谋" },
     { "viet": "Trung Dũng Nghĩa Liệt", "chinese": "忠勇义烈" },
     { "viet": "Tị Thực Kích Hư", "chinese": "避实击虚" },
-    { "viet": "Toàn Quân Đồng Lòng", "chinese": "" },
+    {
+      "viet": "Toàn Quân Đồng Lòng",
+      "chinese": "众志成城",
+      "type": "Chỉ huy",
+      "quality": "S",
+      "effect": "战斗中，自身每回合有18%→36%概率（受我军全体智力之和影响）治疗我军兵力最低武将（治疗率48%→96%，受智力影响），并对敌军随机单体造成一次谋略伤害（伤害率48%→96%，受智力影响）",
+      "target": "我军兵力最低武将、敌军随机单体",
+      "troopFit": ["Kỵ", "Khiên", "Cung", "Thương", "Khí giới"],
+      "source": "Bổ sung thủ công"
+    },
 
     { "viet": "Gió Táp Mưa Sa", "chinese": "" },
     { "viet": "Lửa Cháy Ngùn Ngụt", "chinese": "" },

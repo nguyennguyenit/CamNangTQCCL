@@ -39,21 +39,23 @@ def _merge_generic(tactics: list) -> int:
         cn = it.get("chinese", "").strip()
         # Chữ Hán mới ngoài bảng -> giữ best-effort (placeholder), không fail-loud.
         han_viet = hanviet.to_viet(cn, set()) if cn else ""
-        tactics.append({
+        rec = {
             "chinese": cn,
             "hanViet": han_viet,
-            "type": "",
-            "quality": "",
-            "effect": "",
-            "target": "",
-            "troopFit": [],
-            "source": "Bổ sung sau",
-            "sourceHeroCn": "",
-            "iconUrl": "",
+            "type": it.get("type", ""),
+            "quality": it.get("quality", ""),
+            "effect": it.get("effect", ""),
+            "target": it.get("target", ""),
+            "troopFit": it.get("troopFit", []),
+            "source": it.get("source", "Bổ sung sau"),
+            "sourceHeroCn": it.get("sourceHeroCn", ""),
+            "iconUrl": it.get("iconUrl", ""),
             "viet": it["viet"],
-            "linkScore": 1.0,
-            "pending": True,
-        })
+            "linkScore": it.get("linkScore", 1.0),
+        }
+        if it.get("pending", not (rec["type"] or rec["quality"] or rec["effect"])):
+            rec["pending"] = True
+        tactics.append(rec)
     return len(items)
 
 

@@ -3142,6 +3142,26 @@
     "linkScore": 1.0
   },
   {
+    "chinese": "众志成城",
+    "hanViet": "Chúng Chí Thành Thành",
+    "type": "Chỉ huy",
+    "quality": "S",
+    "effect": "战斗中，自身每回合有18%→36%概率（受我军全体智力之和影响）治疗我军兵力最低武将（治疗率48%→96%，受智力影响），并对敌军随机单体造成一次谋略伤害（伤害率48%→96%，受智力影响）",
+    "target": "我军兵力最低武将、敌军随机单体",
+    "troopFit": [
+      "Kỵ",
+      "Khiên",
+      "Cung",
+      "Thương",
+      "Khí giới"
+    ],
+    "source": "Bổ sung thủ công",
+    "sourceHeroCn": "",
+    "iconUrl": "",
+    "viet": "Toàn Quân Đồng Lòng",
+    "linkScore": 1.0
+  },
+  {
     "chinese": "传檄宣威",
     "hanViet": "Truyền Hịch Tuyên Uy",
     "type": "Chủ động",
@@ -4416,21 +4436,6 @@
     "sourceHeroCn": "",
     "iconUrl": "",
     "viet": "Thượng Binh Phạt Mưu",
-    "linkScore": 1.0,
-    "pending": true
-  },
-  {
-    "chinese": "",
-    "hanViet": "",
-    "type": "",
-    "quality": "",
-    "effect": "",
-    "target": "",
-    "troopFit": [],
-    "source": "Bổ sung sau",
-    "sourceHeroCn": "",
-    "iconUrl": "",
-    "viet": "Toàn Quân Đồng Lòng",
     "linkScore": 1.0,
     "pending": true
   },
