@@ -1,0 +1,4 @@
+# Copy thành `.dev.vars` (gitignored) cho `wrangler dev`. Production dùng
+# `wrangler secret put <NAME>`. KHÔNG commit secret thật.
+QWEN_API_KEY=sk-xxxxxxxxxxxxxxxx
+TURNSTILE_SECRET=0x4xxxxxxxxxxxxxxxxxxx

@@ -1,0 +1,20 @@
+{
+  "name": "tqccl-vision-proxy",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cloudflare Worker proxy Vision LLM cho soi đội TQCCL (hạ tầng tách biệt site).",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0",
+    "wrangler": "^3.60.0",
+    "@cloudflare/workers-types": "^4.20240605.0"
+  }
+}

@@ -1,0 +1,26 @@
+# Cloudflare Worker proxy Vision LLM. Hạ tầng TÁCH BIỆT site (không deploy lên Pages).
+# Secrets đặt qua `wrangler secret put` — KHÔNG ghi ở đây.
+name = "tqccl-vision-proxy"
+main = "src/index.ts"
+compatibility_date = "2026-01-01"
+
+# KV cho rate-limit + đếm cap. Tạo: `wrangler kv namespace create RL`
+# rồi dán id thật vào đây.
+[[kv_namespaces]]
+binding = "RL"
+id = "REPLACE_WITH_KV_ID"
+
+[vars]
+# Domain site (CORS). Đổi thành GitHub Pages URL thật, vd https://user.github.io
+ALLOWED_ORIGIN = "https://example.github.io"
+# Qwen DashScope — chọn region: "intl" (Singapore, có free tier — khuyến nghị) | "cn" (mainland, rẻ hơn).
+# Để trống MODEL_ENDPOINT để dùng REGION; hoặc set MODEL_ENDPOINT để override hẳn.
+REGION = "intl"
+# MODEL_ENDPOINT = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"  # bỏ comment để ép CN
+MODEL_ID = "qwen-vl-max"
+FEATURE_ENABLED = "true"
+# Placeholder — chốt theo free tier thực (L2).
+RL_PER_HOUR = "10"
+DAILY_CAP = "500"
+MONTHLY_CAP = "8000"
+MAX_IMAGE_BYTES = "1500000"
