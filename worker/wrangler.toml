@@ -11,13 +11,15 @@ binding = "RL"
 id = "6fff7d73c885457dbb71756de99e66fa"
 
 [vars]
-# Domain site (CORS) — GitHub Pages của repo nguyennguyenit/CamNangTQCCL.
-ALLOWED_ORIGIN = "https://nguyennguyenit.github.io"
-# Qwen DashScope — chọn region: "intl" (Singapore, có free tier — khuyến nghị) | "cn" (mainland, rẻ hơn).
+# Domain site (CORS) — Cloudflare Pages (repo private nên không dùng GitHub Pages).
+ALLOWED_ORIGIN = "https://tqccl.pages.dev"
+# Qwen DashScope — chọn region: "intl" (Singapore, có free tier) | "cn" (mainland).
+# Key của user là 百炼/bailian (CN mainland) -> REGION="cn".
 # Để trống MODEL_ENDPOINT để dùng REGION; hoặc set MODEL_ENDPOINT để override hẳn.
-REGION = "intl"
-# MODEL_ENDPOINT = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"  # bỏ comment để ép CN
-MODEL_ID = "qwen-vl-max"
+REGION = "cn"
+# Base URL theo console của user (coding-intl) — override hẳn REGION.
+MODEL_ENDPOINT = "https://coding-intl.dashscope.aliyuncs.com/v1/chat/completions"
+MODEL_ID = "qwen3.7-plus"
 FEATURE_ENABLED = "true"
 # Placeholder — chốt theo free tier thực (L2).
 RL_PER_HOUR = "10"
