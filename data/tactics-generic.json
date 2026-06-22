@@ -1,0 +1,34 @@
+{
+  "_note": "Chiến pháp generic (战法书/trận pháp phổ thông) KHÔNG có trong DB lingxi (đã verify cả 4 bảng). Đây là placeholder tạm: chữ Hán (nơi chắc chắn) + tên Việt site + để trống effect/loại/chất. Gắn pending=true → UI hiện 'đang cập nhật'. Bổ sung effect/loại/chất thủ công sau. build_dict merge vào tactics.json.",
+  "tactics": [
+    { "viet": "Biết Mình Biết Ta", "chinese": "知己知彼" },
+    { "viet": "Công Bất Đường Quyên", "chinese": "功不唐捐" },
+    { "viet": "Cương Nhu Kết Hợp", "chinese": "刚柔并济" },
+    { "viet": "Giải Phiền Vệ", "chinese": "解烦卫" },
+    { "viet": "Không Đánh Mà Thắng", "chinese": "不战而胜" },
+    { "viet": "Lâm Nguy Cứu Chủ", "chinese": "临危救主" },
+    { "viet": "Lâm Phong Quyết Địch", "chinese": "临锋决敌" },
+    { "viet": "Lấy Ít Đánh Nhiều", "chinese": "以少胜多" },
+    { "viet": "Ngư Lân Trận", "chinese": "鱼鳞阵" },
+    { "viet": "Ngự Địch Bình Chướng", "chinese": "御敌屏障" },
+    { "viet": "Nhân Lợi Chế Quyền", "chinese": "因利制权" },
+    { "viet": "Nhạn Hành Trận", "chinese": "雁行阵" },
+    { "viet": "Phá Phong Đoạn Nhẫn", "chinese": "破锋断刃" },
+    { "viet": "Thâm Mưu Viễn Lược", "chinese": "深谋远略" },
+    { "viet": "Thâm Tàng Nhược Hư", "chinese": "深藏若虚" },
+    { "viet": "Thôi Phong Đoạn Nhẫn", "chinese": "摧锋断刃" },
+    { "viet": "Thượng Binh Phạt Mưu", "chinese": "上兵伐谋" },
+    { "viet": "Trung Dũng Nghĩa Liệt", "chinese": "忠勇义烈" },
+    { "viet": "Tị Thực Kích Hư", "chinese": "避实击虚" },
+    { "viet": "Toàn Quân Đồng Lòng", "chinese": "" },
+
+    { "viet": "Gió Táp Mưa Sa", "chinese": "" },
+    { "viet": "Lửa Cháy Ngùn Ngụt", "chinese": "" },
+    { "viet": "Lửa Lan Khắp Chốn", "chinese": "" },
+    { "viet": "Nhanh Chân Tranh Đất", "chinese": "" },
+    { "viet": "Phi Hùng Quân", "chinese": "" },
+    { "viet": "Tử Sĩ Tiên Phong", "chinese": "" },
+    { "viet": "Vô Địch Can Trường", "chinese": "" },
+    { "viet": "Vạn Quân Đoạt Sư", "chinese": "" }
+  ]
+}

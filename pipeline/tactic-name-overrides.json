@@ -1,0 +1,35 @@
+{
+  "_note": "Override tên canonical: chữ Hán -> tên Việt site đang dùng (dịch nghĩa, KHÔNG phải Hán-Việt nên auto-link không khớp). Review thủ công, áp deterministic lúc build_dict. conf: high|medium. Bổ sung khi review thêm.",
+  "overrides": {
+    "抚辑军民": { "viet": "An Ủi Quân Dân", "conf": "high" },
+    "整装待发": { "viet": "Chờ Đợi Xuất Phát", "conf": "high" },
+    "千里走单骑": { "viet": "Cưỡi Ngựa Nghìn Dặm", "conf": "high" },
+    "刮骨疗毒": { "viet": "Cắt Xương Trị Độc", "conf": "high" },
+    "以逸待劳": { "viet": "Dưỡng Sức Đợi Chiến", "conf": "high" },
+    "用武通神": { "viet": "Dụng Võ Thần Thông", "conf": "high" },
+    "血刃争锋": { "viet": "Huyết Đao Tranh Giành", "conf": "high" },
+    "奇计良谋": { "viet": "Kế Hay Mưu Giỏi", "conf": "high" },
+    "藤甲兵": { "viet": "Lính Giáp Mây", "conf": "high" },
+    "青州兵": { "viet": "Lính Thanh Châu", "conf": "high" },
+    "暗渡陈仓": { "viet": "Lập Lờ Đánh Tráo", "conf": "high" },
+    "焰逐风飞": { "viet": "Lửa Đuổi Gió Bay", "conf": "high" },
+    "速乘其利": { "viet": "Mau Giành Lợi Thế", "conf": "high" },
+    "魅惑": { "viet": "Mê Hoặc", "conf": "high" },
+    "卧薪尝胆": { "viet": "Nằm Gai Nếm Mật", "conf": "high" },
+    "锦帆军": { "viet": "Quân Cẩm Phàm", "conf": "high" },
+    "草船借箭": { "viet": "Thuyền Cỏ Mượn Tên", "conf": "high" },
+    "盛气凌敌": { "viet": "Thịnh Khí Linh Địch", "conf": "high" },
+    "临机制胜": { "viet": "Thời Cơ Chiến Thắng", "conf": "high" },
+    "暂避其锋": { "viet": "Tạm Lánh Sóng Gió", "conf": "high" },
+    "瞋目横矛": { "viet": "Trấn Mục Hoành Mâu", "conf": "high" },
+    "掣刀斫敌": { "viet": "Xế Đao Chước Địch", "conf": "high" },
+
+    "竭力佐谋": { "viet": "Dốc Sức Tính Kế", "conf": "medium" },
+    "才辩机捷": { "viet": "Nhanh Trí Động Não", "conf": "medium" },
+    "杯蛇鬼车": { "viet": "Sợ Bóng Sợ Gió", "conf": "medium" },
+    "焚辎营垒": { "viet": "Thiêu Đốt Doanh Lũy", "conf": "medium" },
+    "威谋靡亢": { "viet": "Uy Mưu Vô Địch", "conf": "medium" },
+    "克敌制胜": { "viet": "Đánh Bại Quân Địch", "conf": "medium" },
+    "戮力上国": { "viet": "Đồng Lòng Hợp Sức", "conf": "medium" }
+  }
+}

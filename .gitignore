@@ -7,3 +7,6 @@ _site/
 
 # Source export gốc (Google Sheets HTML) — không publish; build chạy local
 Meta Team PK/
+
+# Cache raw crawl lingxi (checkpoint, không commit) — build lại từ API
+pipeline/raw_crawl_cache.json
