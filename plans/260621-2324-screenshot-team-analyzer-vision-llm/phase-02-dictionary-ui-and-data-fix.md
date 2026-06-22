@@ -1,13 +1,14 @@
 # Phase 2 — UI Từ điển chiến pháp + sửa data team
 
 ## Context
-- Ship được độc lập, KHÔNG cần AI/proxy. Giá trị ngay: tra cứu + sửa tên lệch trong 172 team.
-- Dùng `data/tactics.json` (Phase 1). Tái dùng `normalizeText` (filters.js) + kiểu card/tag hiện có.
+- **[H2] Ship trước P3/P4, NHƯNG SAU P1** (cứng phụ thuộc `tactics.json`). Không cần AI/proxy.
+- Dùng `data/tactics.json` (Phase 1). Tái dùng `normalizeText` (filters.js).
+- **[H1] Fuzzy matcher CHƯA tồn tại trong `js/`** — phải viết mới `js/match-dict.js` (0-dep levenshtein/n-gram trên chuỗi đã normalize). Đây là logic lõi, TDD-first, định nghĩa **ngưỡng confidence** + hành vi dưới ngưỡng. Dùng chung cho Phase 4.
 
 ## Requirements
 - Section/trang mới "Tra cứu chiến pháp" (nav tab thứ 4, deep-link `#tactics`).
 - Ô search đa ngõ vào: tiếng Việt bỏ dấu, Hán-Việt, dán chữ Hán → khớp `aliases` + `chinese` + `hanViet` + `viet`.
-- Chịu typo: fuzzy (đã có pattern). Kết quả: card chiến pháp = icon + tên Việt + Hán + Hán-Việt + loại + chất lượng + mô tả + binh chủng phù hợp.
+- Chịu typo: fuzzy qua `js/match-dict.js` (viết mới, H1). Kết quả: card chiến pháp = tên Việt + Hán + Hán-Việt + loại + chất lượng + mô tả + binh chủng phù hợp (icon optional URL-only, C3).
 - Lọc theo loại (7 loại) + chất lượng (S/A/B).
 - **Sửa data**: dùng `tactics.json` làm nguồn chuẩn → cập nhật `aliases.json` để chuẩn hóa tên lệch trong 172 team (vd Trấn Mục→Sân Mục); rebuild data.
 
