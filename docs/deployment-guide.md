@@ -22,19 +22,20 @@ python3 -m pipeline.build_dict
 
 Kết quả ghi vào `data/*.json`. Các file này là artifact commit sẵn cho site tĩnh.
 
-## GitHub Pages
+## Static site
 
-Hiện deploy static site đi qua `.github/workflows/deploy.yml`.
+Site tĩnh deploy bằng Cloudflare Pages hoặc static host tương đương.
 
-- Workflow copy `index.html`, `css/`, `js/`, `data/` sang `_site`.
-- Workflow không build lại dữ liệu.
-- Workflow không deploy `worker/`.
+- Publish `index.html`, `css/`, `js/`, `data/`.
+- Không build lại dữ liệu trên host.
+- Không deploy `worker/`.
+- GitHub Pages đang tắt: repo private này không được plan hiện tại hỗ trợ Pages, nên workflow Pages cũ bị fail và đã được disable.
 
 Trước khi push `main`, phải đảm bảo `data/*.json` đã đúng.
 
 ## Cloudflare Worker cho soi đội
 
-Worker ở `worker/` là deploy riêng, không đi cùng GitHub Pages.
+Worker ở `worker/` là deploy riêng, không đi cùng static site.
 
 ### Chuẩn bị
 
@@ -55,8 +56,8 @@ wrangler secret put TURNSTILE_SECRET
 ### Vars cần khớp
 
 - Cấu hình origin allowlist trong Worker.
-- Chọn endpoint theo region hoặc endpoint override.
-- Chốt model vision đang dùng.
+- Chọn endpoint theo `REGION`; chỉ dùng `MODEL_ENDPOINT` khi cố ý đổi provider/endpoint.
+- Dùng model vision, hiện là `qwen3.7-plus`.
 - Có cờ tắt feature ngay khi cần.
 - Có các mức cap trong `worker/src/config.ts`.
 
@@ -78,9 +79,10 @@ Sau khi worker chạy thật:
 
 - Không commit secret.
 - Không giả định quota là hard limit tuyệt đối.
-- Nếu đổi origin site hoặc domain Pages, phải cập nhật allowlist origin và recheck CORS.
+- Nếu đổi origin site hoặc domain static host, phải cập nhật allowlist origin và recheck CORS.
+- Không dùng `coding-intl.dashscope.aliyuncs.com` cho Vision; endpoint đó trả lỗi Coding Plan.
 - Nếu đổi provider/model, test lại vài screenshot thật trước khi public rộng.
 
 ## Kết luận
 
-Deploy của repo chia đôi rõ: static site qua GitHub Pages, soi đội qua Worker riêng. Hai phần này phải được cấu hình và test riêng.
+Deploy của repo chia đôi rõ: static site qua Cloudflare Pages/static host, soi đội qua Worker riêng. Hai phần này phải được cấu hình và test riêng.

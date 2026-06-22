@@ -68,8 +68,9 @@ upload ảnh
 
 ## Deploy boundary
 
-- `.github/workflows/deploy.yml` chỉ publish static site.
-- Workflow này không build data, không run pipeline, không deploy Worker.
+- Static host chỉ publish `index.html`, `css/`, `js/`, `data/`.
+- Static deploy không build data, không run pipeline, không deploy Worker.
+- GitHub Pages workflow đã bỏ vì repo private không được plan hiện tại hỗ trợ Pages.
 - Worker deploy riêng bằng Wrangler trong `worker/`.
 
 ## Dữ liệu quan trọng

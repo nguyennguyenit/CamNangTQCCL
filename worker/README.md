@@ -19,7 +19,7 @@ KHÔNG lưu ảnh. Log tối thiểu (đếm, không nội dung). IP chỉ lưu 
 2. **KV namespace**: `wrangler kv namespace create RL` → dán `id` vào `wrangler.toml` (`[[kv_namespaces]] id`).
 3. **Turnstile** (Cloudflare dashboard → Turnstile): tạo site → lấy **site-key** (public, để vào site `config.js`) + **secret**.
 4. **Qwen key**: tạo trên Alibaba Model Studio / DashScope → API key.
-5. **Vars**: sửa `wrangler.toml` → `ALLOWED_ORIGIN` = URL site thật (vd `https://user.github.io`); chốt `MODEL_ID`/`MODEL_ENDPOINT` (xem §Region).
+5. **Vars**: sửa `wrangler.toml` → `ALLOWED_ORIGIN` = URL site thật (vd `https://user.github.io`); chốt `REGION`/`MODEL_ID` (xem §Region).
 6. **Secrets** (KHÔNG commit):
    ```bash
    wrangler secret put QWEN_API_KEY
@@ -64,10 +64,10 @@ npm run typecheck
 | Data residency | Singapore (luật quốc tế) | Bắc Kinh (luật TQ) |
 | Giá | đắt hơn chút | rẻ hơn ~30% |
 
-Code chọn endpoint theo `REGION` (`wrangler.toml [vars]`). Mặc định `intl` (khuyến nghị: free tier + data Singapore). Đặt `REGION = "cn"` để dùng mainland. Hoặc set `MODEL_ENDPOINT` để override hẳn (provider khác).
+Code chọn endpoint DashScope Model Studio theo `REGION` (`wrangler.toml [vars]`). Mặc định `intl` (khuyến nghị: free tier + data Singapore). Đặt `REGION = "cn"` để dùng mainland. Chỉ set `MODEL_ENDPOINT` khi cố ý đổi sang provider/endpoint khác; không dùng endpoint `coding-intl.dashscope.aliyuncs.com` cho tính năng Vision.
 
 ### Model ID
-Mặc định `qwen-vl-max`. **Xác minh id model vision hiện hành trên DashScope console** (vd `qwen-vl-max`, `qwen3-vl-plus`, hoặc `qwen3.7-plus` theo plan) trước khi ship — đặt qua `MODEL_ID`.
+Mặc định `qwen3.7-plus` theo free quota Singapore hiện dùng. **Xác minh id model vision hiện hành trên DashScope console** trước khi ship — đặt qua `MODEL_ID`.
 
 ## Chi phí / chống bill sốc (H5)
 - **KHÔNG gắn thẻ thanh toán** vào account Qwen, hoặc đặt budget alert nếu hỗ trợ. Đây là **backstop cứng thật**.

@@ -1,4 +1,6 @@
 import { describe, it, expect } from "vitest";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { resolveEndpoint, loadConfig } from "../src/config";
 
 const base: any = { QWEN_API_KEY: "k", TURNSTILE_SECRET: "s", RL: {} };
@@ -25,7 +27,24 @@ describe("loadConfig", () => {
     expect(c.featureEnabled).toBe(true);
     expect(c.dailyCap).toBeGreaterThan(0);
   });
+  it("default model là Qwen vision", () => {
+    expect(loadConfig(base).modelId).toBe("qwen3.7-plus");
+  });
   it("FEATURE_ENABLED=false -> kill-switch", () => {
     expect(loadConfig({ ...base, FEATURE_ENABLED: "false" }).featureEnabled).toBe(false);
+  });
+});
+
+describe("wrangler production vars", () => {
+  const wranglerPath = fileURLToPath(new URL("../wrangler.toml", import.meta.url));
+  const wrangler = readFileSync(wranglerPath, "utf8");
+
+  it("không trỏ sang Coding endpoint thay cho DashScope Model Studio", () => {
+    expect(wrangler).not.toContain("coding-intl.dashscope.aliyuncs.com");
+    expect(wrangler).toContain('REGION = "intl"');
+  });
+
+  it("dùng model vision cho phân tích ảnh", () => {
+    expect(wrangler).toContain('MODEL_ID = "qwen3.7-plus"');
   });
 });

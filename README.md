@@ -39,7 +39,8 @@ cd worker && npm run typecheck
 
 ## Deploy
 
-- Site tĩnh: `.github/workflows/deploy.yml` copy `index.html`, `css/`, `js/`, `data/` lên GitHub Pages.
+- Site tĩnh: deploy bằng Cloudflare Pages hoặc static host tương đương, publish `index.html`, `css/`, `js/`, `data/`.
+- GitHub Pages đang tắt vì repo private không được plan hiện tại hỗ trợ.
 - Worker soi đội: deploy riêng trong `worker/` bằng Wrangler.
 
 ## Cấu trúc chính

@@ -1,6 +1,6 @@
 // Lớp callModel() trung lập (R7/L3) — gọi Vision LLM qua endpoint OpenAI-compatible.
-// Mặc định Qwen DashScope CN. Bao cả endpoint LẪN cách truyền ảnh (base64 data URI)
-// để dễ đổi sang GPT/Gemini sau.
+// Mặc định Qwen DashScope OpenAI-compatible. Bao cả endpoint LẪN cách truyền ảnh
+// (base64 data URI) để dễ đổi sang GPT/Gemini sau.
 
 import { AnalyzeResult, parseAndValidate } from "./schema";
 

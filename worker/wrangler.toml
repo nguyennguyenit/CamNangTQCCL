@@ -14,11 +14,9 @@ id = "6fff7d73c885457dbb71756de99e66fa"
 # Domain site (CORS) — Cloudflare Pages (repo private nên không dùng GitHub Pages).
 ALLOWED_ORIGIN = "https://tqccl.pages.dev"
 # Qwen DashScope — chọn region: "intl" (Singapore, có free tier) | "cn" (mainland).
-# Key của user là 百炼/bailian (CN mainland) -> REGION="cn".
-# Để trống MODEL_ENDPOINT để dùng REGION; hoặc set MODEL_ENDPOINT để override hẳn.
-REGION = "cn"
-# Base URL theo console của user (coding-intl) — override hẳn REGION.
-MODEL_ENDPOINT = "https://coding-intl.dashscope.aliyuncs.com/v1/chat/completions"
+# Key hiện dùng tạo từ console Singapore/free quota -> REGION="intl".
+# Để trống MODEL_ENDPOINT để dùng endpoint DashScope Model Studio theo REGION.
+REGION = "intl"
 MODEL_ID = "qwen3.7-plus"
 FEATURE_ENABLED = "true"
 # Placeholder — chốt theo free tier thực (L2).

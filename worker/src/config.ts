@@ -1,5 +1,5 @@
 // Cấu hình mặc định + đọc env. Số liệu cap là placeholder, chốt theo free tier
-// thực (L2). Provider mặc định: Qwen Alibaba DashScope CN mainland.
+// thực (L2). Provider mặc định: Qwen Alibaba DashScope OpenAI-compatible.
 
 export interface Env {
   // Secrets (wrangler secret put) — KHÔNG commit.
@@ -52,7 +52,7 @@ export function loadConfig(env: Env): Config {
     allowedOrigin: env.ALLOWED_ORIGIN || "*",
     // Qwen DashScope — region chọn qua REGION (intl mặc định: có free tier + data Singapore).
     modelEndpoint: resolveEndpoint(env),
-    modelId: env.MODEL_ID || "qwen-vl-max", // model vision; đổi sau khi chốt id chính xác
+    modelId: env.MODEL_ID || "qwen3.7-plus",
     featureEnabled: (env.FEATURE_ENABLED ?? "true") !== "false",
     rlPerHour: num(env.RL_PER_HOUR, 10), // placeholder (L2)
     dailyCap: num(env.DAILY_CAP, 500), // placeholder (L2)

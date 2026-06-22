@@ -53,7 +53,7 @@
 
 - Nguồn HTML `Meta Team PK/` không commit.
 - `js/config.js` là public config, không phải secret.
-- `worker/` chỉ là proxy riêng; GitHub Pages không deploy Worker.
+- `worker/` chỉ là proxy riêng; static host không deploy Worker.
 - Quota Worker hiện là best-effort, không phải hard limit tuyệt đối.
 
 ## Tiêu chí chấp nhận
