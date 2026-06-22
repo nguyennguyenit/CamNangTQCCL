@@ -3,6 +3,7 @@
 import { applyFilters, emptyState } from "./filters.js";
 import { coexistGroup, el, FACTION_CODE, khaihoangTable, SOURCE_LABEL, STATUS_LABEL, teamCard } from "./render.js";
 import { initTactics } from "./tactics.js";
+import { initAnalyze } from "./analyze.js";
 
 const state = emptyState();
 let TEAMS = [];
@@ -29,7 +30,7 @@ function initTheme() {
 }
 
 /* ---------- Section nav ---------- */
-const SECTIONS = ["team-pk", "coexist", "khaihoang", "tactics"];
+const SECTIONS = ["team-pk", "coexist", "khaihoang", "tactics", "analyze"];
 function initNav() {
   document.querySelectorAll(".nav-tab").forEach((tab) => {
     tab.addEventListener("click", () => switchSection(tab.dataset.section));
@@ -179,12 +180,13 @@ async function main() {
   initNav();
   initDrawer();
   try {
-    const [teams, facets, coexist, khaihoang, tactics] = await Promise.all([
+    const [teams, facets, coexist, khaihoang, tactics, heroesDict] = await Promise.all([
       loadJSON("./data/teams.json"),
       loadJSON("./data/facets.json"),
       loadJSON("./data/coexist.json"),
       loadJSON("./data/khaihoang.json"),
       loadJSON("./data/tactics.json"),
+      loadJSON("./data/heroes-dict.json"),
     ]);
     TEAMS = teams;
     FACETS = facets;
@@ -193,6 +195,13 @@ async function main() {
     $("#section-coexist").append(...coexist.map(coexistGroup));
     $("#section-khaihoang").append(khaihoangTable(khaihoang));
     initTactics(tactics, $("#section-tactics"));
+    // Mở team giống từ kết quả soi đội -> về tab Team PK, search tên tướng đầu.
+    const onOpenTeam = (team) => {
+      const first = team.heroes?.[0]?.baseName;
+      switchSection("team-pk");
+      if (first) onTag(first);
+    };
+    initAnalyze({ teams, heroesDict, tacticsDict: tactics, onOpenTeam }, $("#section-analyze"));
   } catch (err) {
     $("#team-grid").append(el("p", { class: "error" }, "Lỗi tải dữ liệu: " + err.message + ". Hãy chạy qua http server (python3 -m http.server)."));
   }

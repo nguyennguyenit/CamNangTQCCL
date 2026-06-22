@@ -259,6 +259,35 @@ body {
 .tac-desc { margin: 0; font-size: .82rem; line-height: 1.45; color: var(--ink); }
 .tac-desc.pending { color: var(--muted); font-style: italic; }
 
+/* ===== Soi đội từ ảnh ===== */
+.ana-disclaimer { font-size: .8rem; color: var(--muted); background: var(--panel-2); border-radius: var(--radius); padding: .5rem .7rem; margin: 0 0 .8rem; }
+.ana-setup { padding: 1.2rem; border: 1px dashed var(--line); border-radius: var(--radius); text-align: center; color: var(--muted); }
+.ana-drop { border: 2px dashed var(--line); border-radius: var(--radius); padding: 1.4rem; text-align: center; color: var(--muted); cursor: pointer; transition: border-color .15s, background .15s; }
+.ana-drop:hover, .ana-drop.over { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); }
+.ana-file { display: none; }
+.ana-preview { display: none; max-width: 100%; max-height: 260px; margin: .7rem 0; border-radius: var(--radius); border: 1px solid var(--line); }
+.ana-preview.on { display: block; }
+.ana-turnstile { margin: .6rem 0; }
+.ana-btn { background: var(--accent); color: #fff; border: none; border-radius: var(--radius); padding: .55rem 1.1rem; font-size: .95rem; font-weight: 600; cursor: pointer; }
+.ana-btn:disabled { opacity: .5; cursor: not-allowed; }
+.ana-status { font-size: .85rem; margin: .5rem 0; }
+.ana-status.err { color: var(--avoid); }
+.ana-results { margin-top: 1rem; }
+.ana-rh { font-size: .95rem; margin: 1rem 0 .5rem; }
+.ana-heroes { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: .6rem; }
+.ana-hero { border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); padding: .55rem .7rem; }
+.ana-hero-head { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; margin-bottom: .35rem; }
+.ana-hero-name { font-weight: 700; }
+.ana-stat { font-size: .72rem; padding: .06rem .4rem; border-radius: 999px; background: var(--f-nguy); color: #fff; }
+.ana-flag { font-size: .7rem; color: var(--avoid); }
+.ana-tactics { display: flex; flex-wrap: wrap; gap: .3rem; }
+.ana-tac { font-size: .76rem; padding: .08rem .45rem; border-radius: 999px; background: var(--panel-2); }
+.ana-tac.unsure { border: 1px dashed var(--avoid); color: var(--avoid); }
+.ana-teams { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .3rem; }
+.ana-team-link { background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--radius); padding: .4rem .6rem; cursor: pointer; text-align: left; color: var(--ink); }
+.ana-team-link:hover { border-color: var(--accent); }
+.ana-note { font-size: .82rem; color: var(--muted); }
+
 /* ===== Responsive ===== */
 @media (max-width: 820px) {
   .layout { grid-template-columns: 1fr; }
