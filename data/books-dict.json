@@ -1,5 +1,9 @@
 [
   {
+    "chinese": "兵行诡道",
+    "viet": "Binh Hành Quỷ Đạo"
+  },
+  {
     "chinese": "守而有道",
     "viet": "Biết Cách Phòng Thủ"
   },
@@ -7,6 +11,15 @@
     "chinese": "百战",
     "viet": "Bách Chiến",
     "hanViet": "Bách Chiến"
+  },
+  {
+    "chinese": "严阵以待",
+    "viet": "Bố Trận Chờ Đợi",
+    "hanViet": "Nghiêm Trận Dĩ Đãi"
+  },
+  {
+    "chinese": "分而疾战",
+    "viet": "Chia Nhỏ Đánh Nhanh"
   },
   {
     "chinese": "久战",
@@ -31,13 +44,17 @@
     "hanViet": "Cứu Chủ"
   },
   {
-    "chinese": "救援",
+    "chinese": "驰援",
     "viet": "Cứu Viện"
   },
   {
     "chinese": "妙算",
     "viet": "Diệu Toán",
     "hanViet": "Diệu Toán"
+  },
+  {
+    "chinese": "以直报怨",
+    "viet": "Dĩ Trực Báo Oán"
   },
   {
     "chinese": "统军",
@@ -50,6 +67,20 @@
     "hanViet": "Thiết Giáp"
   },
   {
+    "chinese": "示敌以弱",
+    "viet": "Giả Nai Trước Địch"
+  },
+  {
+    "chinese": "藏刀",
+    "viet": "Giấu Đao",
+    "hanViet": "Tàng Đao"
+  },
+  {
+    "chinese": "临敌不乱",
+    "viet": "Gặp Địch Không Loạn",
+    "hanViet": "Lâm Địch Bất Loạn"
+  },
+  {
     "chinese": "合变",
     "viet": "Hợp Biến"
   },
@@ -58,12 +89,30 @@
     "viet": "Khai Hạp"
   },
   {
+    "chinese": "掩虚",
+    "viet": "Khép Hờ"
+  },
+  {
+    "chinese": "励军",
+    "viet": "Khích Lệ Lòng Quân"
+  },
+  {
+    "chinese": "无战而胜",
+    "viet": "Không Chiến Mà Thắng",
+    "hanViet": "Vô Chiến Nhi Thắng"
+  },
+  {
+    "chinese": "诱敌之策",
+    "viet": "Kế Sách Dụ Địch",
+    "hanViet": "Dụ Địch Chi Sách"
+  },
+  {
     "chinese": "奇正相生",
     "viet": "Kỳ Chính Tương Sinh",
     "hanViet": "Kỳ Chính Tương Sinh"
   },
   {
-    "chinese": "一气呵成",
+    "chinese": "一鼓作气",
     "viet": "Liền Mạch Một Hơi"
   },
   {
@@ -73,6 +122,11 @@
   {
     "chinese": "蛮勇非勇",
     "viet": "Man Dũng Phi Dũng"
+  },
+  {
+    "chinese": "远谋",
+    "viet": "Mưu Kế Sâu Xa",
+    "hanViet": "Viễn Mưu"
   },
   {
     "chinese": "义勇",
@@ -89,6 +143,11 @@
     "hanViet": "Phòng Bị"
   },
   {
+    "chinese": "归心",
+    "viet": "Quy Thuận",
+    "hanViet": "Quy Tâm"
+  },
+  {
     "chinese": "鬼谋",
     "viet": "Quỷ Mưu",
     "hanViet": "Quỷ Mưu"
@@ -96,6 +155,11 @@
   {
     "chinese": "锤炼",
     "viet": "Rèn Luyện"
+  },
+  {
+    "chinese": "锐利",
+    "viet": "Sắc Bén",
+    "hanViet": "Nhuệ Lợi"
   },
   {
     "chinese": "三里而还",
@@ -111,9 +175,22 @@
     "viet": "Thiện Chiến"
   },
   {
+    "chinese": "顺应天时",
+    "viet": "Thuận Thiên Thuận Tời"
+  },
+  {
     "chinese": "神机",
     "viet": "Thần Cơ",
     "hanViet": "Thần Cơ"
+  },
+  {
+    "chinese": "胜而益强",
+    "viet": "Thắng Sẽ Càng Mạnh"
+  },
+  {
+    "chinese": "胜战",
+    "viet": "Thắng Trận",
+    "hanViet": "Thắng Chiến"
   },
   {
     "chinese": "守势",
@@ -123,6 +200,11 @@
   {
     "chinese": "精准",
     "viet": "Tinh Chuẩn"
+  },
+  {
+    "chinese": "避其锐气",
+    "viet": "Tránh Thế Mạnh Của Địch",
+    "hanViet": "Tị Kỳ Nhuệ Khí"
   },
   {
     "chinese": "持重",
@@ -139,6 +221,10 @@
     "hanViet": "Tướng Uy"
   },
   {
+    "chinese": "散仙",
+    "viet": "Tản Tiên"
+  },
+  {
     "chinese": "速战",
     "viet": "Tốc Chiến",
     "hanViet": "Tốc Chiến"
@@ -153,8 +239,17 @@
     "viet": "Văn Thao"
   },
   {
+    "chinese": "占卜",
+    "viet": "Xem Bói"
+  },
+  {
     "chinese": "惜兵爱民",
     "viet": "Yêu Lính Thương Dân"
+  },
+  {
+    "chinese": "疾战突围",
+    "viet": "Đánh Phá Vòng Vây",
+    "hanViet": "Tật Chiến Đột Vi"
   },
   {
     "chinese": "后发先至",
