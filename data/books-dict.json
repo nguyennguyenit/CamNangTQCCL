@@ -225,6 +225,10 @@
     "viet": "Tản Tiên"
   },
   {
+    "chinese": "援其必攻",
+    "viet": "Tấn Công Điểm Yếu"
+  },
+  {
     "chinese": "速战",
     "viet": "Tốc Chiến",
     "hanViet": "Tốc Chiến"
@@ -254,5 +258,9 @@
   {
     "chinese": "后发先至",
     "viet": "Đánh Sau Trúng Trước"
+  },
+  {
+    "chinese": "攻其不备",
+    "viet": "Đánh Vào Chỗ Hiểm"
   }
 ]
