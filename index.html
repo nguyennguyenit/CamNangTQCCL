@@ -12,38 +12,53 @@
   <link rel="stylesheet" href="./css/styles.css" />
 </head>
 <body>
-  <header class="site-header">
-    <div class="brand">
-      <span class="logo">⚔️</span>
-      <div>
-        <h1>Cẩm Nang Team TQCCL</h1>
-        <p class="tagline">Tổng hợp meta team · Cùng Tồn · Khai hoang</p>
+  <div class="top-header">
+    <header class="site-header">
+      <div class="brand">
+        <button id="section-menu-toggle" class="section-menu-toggle" type="button" aria-controls="section-menu-items" aria-expanded="false" aria-label="Mở menu trang" data-label-mode="icon">☰</button>
+        <div>
+          <h1>Cẩm Nang Team TQCCL</h1>
+          <p class="tagline">Tổng hợp meta team · Cùng Tồn · Khai hoang</p>
+        </div>
       </div>
-    </div>
-    <div class="header-actions">
-      <span id="stats" class="stats">…</span>
-      <button id="theme-toggle" class="icon-btn" title="Đổi giao diện sáng/tối" aria-label="Đổi giao diện">🌗</button>
-    </div>
-  </header>
+      <div class="header-actions">
+        <span id="stats" class="stats">…</span>
+        <button id="theme-toggle" class="icon-btn" title="Đổi giao diện sáng/tối" aria-label="Đổi giao diện">🌗</button>
+      </div>
+    </header>
 
-  <nav class="section-nav">
-    <button class="nav-tab active" data-section="team-pk">Team PK</button>
-    <button class="nav-tab" data-section="coexist">Cùng Tồn</button>
-    <button class="nav-tab" data-section="khaihoang">Khai hoang</button>
-    <button class="nav-tab" data-section="tactics">Tra cứu chiến pháp</button>
-    <button class="nav-tab" data-section="analyze">Soi đội từ ảnh</button>
-    <button id="filter-toggle" class="nav-tab filter-toggle">⚙ Bộ lọc</button>
-  </nav>
+    <nav class="section-nav">
+      <div id="section-menu-items" class="section-menu-items">
+        <button class="nav-tab active" data-section="team-pk">Team PK</button>
+        <button class="nav-tab" data-section="coexist">Cùng Tồn</button>
+        <button class="nav-tab" data-section="khaihoang">Khai hoang</button>
+        <button class="nav-tab" data-section="tactics">Tra cứu chiến pháp</button>
+        <button class="nav-tab" data-section="analyze">Soi đội từ ảnh</button>
+      </div>
+    </nav>
+  </div>
 
   <p class="disclaimer">Dữ liệu tổng hợp từ chia sẻ kinh nghiệm người chơi, mang tính tham khảo — không phải phương án duy nhất.</p>
 
+  <div id="mobile-filter-actions" class="mobile-filter-actions">
+    <button id="filter-toggle" class="filter-toggle" type="button" aria-controls="filter-panel" aria-expanded="false">☰ Bộ lọc</button>
+  </div>
+
   <main class="layout">
+    <button id="filter-overlay" class="filter-overlay" type="button" tabindex="-1" aria-label="Đóng bộ lọc"></button>
     <aside id="filter-panel" class="filter-panel">
+      <div class="filter-drawer-head">
+        <h2>Bộ lọc Team PK</h2>
+        <button class="filter-close" type="button" aria-label="Đóng bộ lọc">✕</button>
+      </div>
       <div class="filter-bar">
         <input id="search" class="search" type="search" placeholder="🔍 Tìm tướng, chiến pháp, binh thư…" />
         <button id="clear-filters" class="clear-btn" type="button">Xóa lọc</button>
       </div>
       <div id="filters" class="filters"></div>
+      <div class="filter-drawer-foot">
+        <button class="filter-apply" type="button">Tìm / Xem kết quả</button>
+      </div>
     </aside>
 
     <div class="content">

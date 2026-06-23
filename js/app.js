@@ -4,10 +4,14 @@ import { applyFilters, emptyState } from "./filters.js";
 import { coexistGroup, el, FACTION_CODE, khaihoangTable, SOURCE_LABEL, STATUS_LABEL, teamCard } from "./render.js";
 import { initTactics } from "./tactics.js";
 import { initAnalyze } from "./analyze.js";
+import { createMobileFilterDrawer } from "./mobile-filter-drawer.js";
+import { createMobileSectionMenu } from "./mobile-section-menu.js";
 
 const state = emptyState();
 let TEAMS = [];
 let FACETS = {};
+let filterDrawer = null;
+let sectionMenu = null;
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -32,6 +36,11 @@ function initTheme() {
 /* ---------- Section nav ---------- */
 const SECTIONS = ["team-pk", "coexist", "khaihoang", "tactics", "analyze"];
 function initNav() {
+  sectionMenu = createMobileSectionMenu({
+    nav: $(".section-nav"),
+    toggle: $("#section-menu-toggle"),
+    tabs: [...document.querySelectorAll(".nav-tab")],
+  });
   document.querySelectorAll(".nav-tab").forEach((tab) => {
     tab.addEventListener("click", () => switchSection(tab.dataset.section));
   });
@@ -46,9 +55,11 @@ function sectionFromHash() {
 function switchSection(name) {
   document.querySelectorAll(".nav-tab").forEach((t) => t.classList.toggle("active", t.dataset.section === name));
   document.querySelectorAll(".section").forEach((s) => s.classList.toggle("active", s.id === `section-${name}`));
-  $("#filter-panel").style.display = name === "team-pk" ? "" : "none";
   // Sidebar ẩn -> layout 1 cột để content tràn full (tránh bị dồn vào track 270px).
   document.querySelector(".layout").classList.toggle("full", name !== "team-pk");
+  filterDrawer?.closeForSection(name, { focusTarget: $("#section-menu-toggle") });
+  $("#mobile-filter-actions").hidden = name !== "team-pk";
+  sectionMenu?.setActive(name);
   if (sectionFromHash() !== name) location.hash = name;
 }
 
@@ -171,7 +182,15 @@ function rerender() {
 
 /* ---------- Mobile drawer ---------- */
 function initDrawer() {
-  $("#filter-toggle").addEventListener("click", () => $("#filter-panel").classList.toggle("open"));
+  filterDrawer = createMobileFilterDrawer({
+    panel: $("#filter-panel"),
+    overlay: $("#filter-overlay"),
+    toggle: $("#filter-toggle"),
+    closeButtons: [...document.querySelectorAll(".filter-close, .filter-apply")],
+    backgroundElements: [...document.querySelectorAll(".site-header, .section-nav, #mobile-filter-actions, .content, .site-footer")],
+    onOpen: () => sectionMenu?.close(),
+    mobileMedia: matchMedia("(max-width: 820px)"),
+  });
 }
 
 /* ---------- Boot ---------- */
