@@ -78,6 +78,8 @@ upload ảnh
 - `data/teams.json`: 172 team.
 - `data/facets.json`: nguồn count cho chip / combo.
 - `data/tactics.json`: từ điển chiến pháp.
+  - `effect`, `target`: nội dung nguồn tiếng Trung.
+  - `effectViet`, `targetViet`: bản dịch tiếng Việt tùy chọn từ override thủ công.
 - `data/heroes-dict.json`: từ điển tướng.
 - `data/coexist.json`: nhóm cùng tồn tại.
 - `data/khaihoang.json`: đội khai hoang + mỏ.

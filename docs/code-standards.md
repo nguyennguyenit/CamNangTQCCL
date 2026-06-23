@@ -28,6 +28,7 @@ Giữ code nhỏ, rõ, test được, và bám đúng kiểu repo hiện có: st
 ## Data standards
 
 - JSON trong `data/` là artifact đã build, commit sẵn.
+- Chiến pháp dùng `effect`/`target` cho nguồn tiếng Trung; bản dịch review thủ công dùng field tùy chọn `effectViet`/`targetViet`.
 - Nếu thêm field vào data model, cập nhật:
   - `pipeline/normalize.py`
   - `pipeline/build_json.py`
