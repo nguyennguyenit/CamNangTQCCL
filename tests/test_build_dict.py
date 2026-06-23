@@ -49,5 +49,36 @@ class MergeGenericTest(unittest.TestCase):
         self.assertNotIn("pending", tactics[0])
 
 
+class ApplyOverridesTest(unittest.TestCase):
+    def test_apply_overrides_preserves_source_and_adds_vietnamese_fields(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            overrides_path = Path(tmp) / "tactic-name-overrides.json"
+            overrides_path.write_text(
+                json.dumps(
+                    {
+                        "overrides": {
+                            "所向披靡": {
+                                "viet": "Đánh Đâu Thắng Đó",
+                                "conf": "high",
+                                "effectViet": "Mô tả Việt",
+                                "targetViet": "Tập thể địch",
+                            }
+                        }
+                    },
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+            tactics = [{"chinese": "所向披靡", "effect": "中文描述", "target": "敌军全体"}]
+
+            with mock.patch.object(build_dict, "_OVERRIDES", str(overrides_path)):
+                self.assertEqual(build_dict._apply_overrides(tactics), 1)
+
+        self.assertEqual(tactics[0]["effect"], "中文描述")
+        self.assertEqual(tactics[0]["target"], "敌军全体")
+        self.assertEqual(tactics[0]["effectViet"], "Mô tả Việt")
+        self.assertEqual(tactics[0]["targetViet"], "Tập thể địch")
+
+
 if __name__ == "__main__":
     unittest.main()
