@@ -11,6 +11,12 @@ const STAT_MAP = {
   "政治": "Chính", "魅力": "Mị", "防御": "Phòng", "攻击": "Công",
 };
 
+const NON_TACTIC_TERMS = new Set([
+  "三军之众", "惜兵爱民", "统军", "锤炼", "久战", "铁甲", "防备",
+  "奇正相生", "胜战", "执锐", "文韬", "分险", "蛮勇非勇",
+]);
+const UNKNOWN_HERO_TERMS = new Set(["未知", "不详", ""]);
+
 /** Chất tướng Hán -> Việt. '全智力' -> 'Toàn Trí'; '智力' -> 'Trí'. */
 export function statFocusVn(cn) {
   let s = (cn || "").trim();
@@ -28,7 +34,11 @@ export function statFocusVn(cn) {
  * - matched: có khớp dict không (matched -> viet là canonical Việt; unmatched -> giữ Hán).
  * - sure: matched & confidence không thấp (sure=false -> UI gắn cờ "kiểm tra").
  */
-function mapName(cn, dict) {
+function mapName(cn, dict, { unknownLabel = null } = {}) {
+  const raw = (cn || "").trim();
+  if (unknownLabel && UNKNOWN_HERO_TERMS.has(raw)) {
+    return { cn: raw, viet: unknownLabel, matched: false, confidence: "low", sure: false };
+  }
   const m = matchDict(cn, dict);
   return {
     cn,
@@ -45,9 +55,12 @@ function mapName(cn, dict) {
  * @param dicts {heroesDict, tacticsDict}
  */
 export function mapRead(read, { heroesDict, tacticsDict }) {
+  const tactics = (read.tacticsCn || [])
+    .filter((t) => !NON_TACTIC_TERMS.has((t || "").trim()))
+    .map((t) => mapName(t, tacticsDict));
   return {
-    hero: mapName(read.nameCn || "", heroesDict),
-    tactics: (read.tacticsCn || []).map((t) => mapName(t, tacticsDict)),
+    hero: mapName(read.nameCn || "", heroesDict, { unknownLabel: "Chưa rõ" }),
+    tactics,
     statFocus: statFocusVn(read.statFocusCn || ""),
   };
 }

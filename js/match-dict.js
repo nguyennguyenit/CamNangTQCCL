@@ -9,6 +9,12 @@ import { normalizeText } from "./filters.js";
 
 const HAS_CJK = /[一-鿿]/;
 
+const CJK_OCR_ALIASES = {
+  // Biến thể OCR thường gặp trên screenshot overlay nét vàng/trắng.
+  "灵机": "临机",
+  "荧薙": "焚辎",
+};
+
 /** Khoảng cách Levenshtein (edit distance), quy hoạch động O(m*n). */
 export function levenshtein(a, b) {
   a = a || "";
@@ -53,8 +59,16 @@ function vietCandidates(rec) {
 /** Điểm khớp tốt nhất giữa query và 1 record (0..1). */
 function scoreRecord(query, rec, cjk) {
   if (cjk) {
-    if (!rec.chinese) return 0;
-    return rec.chinese === query ? 1 : ratio(query, rec.chinese);
+    const cn = rec.chinese || "";
+    if (!cn) return 0;
+    if (cn === query) return 1;
+    if (query.length >= 2 && cn.includes(query)) {
+      const lenRatio = query.length / cn.length;
+      const prefixBoost = cn.startsWith(query) ? 0.05 : 0;
+      return Math.min(0.96, 0.84 + 0.14 * lenRatio + prefixBoost);
+    }
+    if (cn.length >= 2 && query.includes(cn)) return 0.9;
+    return ratio(query, cn);
   }
   let best = 0;
   for (const cand of vietCandidates(rec)) {
@@ -85,7 +99,7 @@ function labelConfidence(score) {
 export function matchDict(query, dict, { threshold = DEFAULT_THRESHOLD } = {}) {
   const raw = (query || "").trim();
   const cjk = HAS_CJK.test(raw);
-  const q = cjk ? raw : normalizeText(raw);
+  const q = cjk ? (CJK_OCR_ALIASES[raw] || raw) : normalizeText(raw);
   let best = null;
   let bestScore = 0;
   for (const rec of dict) {
@@ -112,7 +126,7 @@ export function searchDict(query, dict, { threshold = 0.45, limit = 60 } = {}) {
   const raw = (query || "").trim();
   if (!raw) return dict.map((record) => ({ record, score: 0 }));
   const cjk = HAS_CJK.test(raw);
-  const q = cjk ? raw : normalizeText(raw);
+  const q = cjk ? (CJK_OCR_ALIASES[raw] || raw) : normalizeText(raw);
   const scored = [];
   for (const rec of dict) {
     const s = scoreRecord(q, rec, cjk);

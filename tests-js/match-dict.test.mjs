@@ -9,6 +9,12 @@ const DICT = [
   { chinese: "神机妙算", hanViet: "Thần Cơ Diệu Toán", viet: "Thần Cơ Diệu Toán" },
   { chinese: "草船借箭", hanViet: "Thảo Thuyền Tá Tiễn", viet: "Thuyền Cỏ Mượn Tên" },
   { chinese: "八门金锁阵", hanViet: "Bát Môn Kim Tỏa Trận", viet: "Bát Môn Kim Tỏa Trận" },
+  { chinese: "夺魂挟魄", hanViet: "Đoạt Hồn Hiệp Phách", viet: "Đoạt Hồn Hiệp Phách" },
+  { chinese: "当锋摧决", hanViet: "Đương Phong Thôi Quyết", viet: "Đương Phong Thôi Quyết" },
+  { chinese: "刮骨疗毒", hanViet: "Quát Cốt Liệu Độc", viet: "Cắt Xương Trị Độc" },
+  { chinese: "上兵伐谋", hanViet: "Thượng Binh Phạt Mưu", viet: "Thượng Binh Phạt Mưu" },
+  { chinese: "焚辎营垒", hanViet: "Phần Truy Doanh Lũy", viet: "Thiêu Đốt Doanh Lũy" },
+  { chinese: "临机制胜", hanViet: "Lâm Cơ Chế Thắng", viet: "Thời Cơ Chiến Thắng" },
 ];
 
 test("levenshtein cơ bản", () => {
@@ -35,6 +41,22 @@ test("Hán OCR-lỗi-giả -> fuzzy về đúng top", () => {
   const r = matchDict("神机刀算", DICT);
   assert.equal(r.record.viet, "Thần Cơ Diệu Toán");
   assert.ok(r.score >= 0.7 && r.score < 1, `score=${r.score}`);
+});
+
+test("Hán viết tắt trong ảnh -> khớp chiến pháp đầy đủ", () => {
+  for (const [query, expected] of [
+    ["夺魂", "Đoạt Hồn Hiệp Phách"],
+    ["当锋", "Đương Phong Thôi Quyết"],
+    ["刮骨", "Cắt Xương Trị Độc"],
+    ["上兵", "Thượng Binh Phạt Mưu"],
+    ["焚辎", "Thiêu Đốt Doanh Lũy"],
+    ["灵机", "Thời Cơ Chiến Thắng"],
+    ["荧薙", "Thiêu Đốt Doanh Lũy"],
+  ]) {
+    const r = matchDict(query, DICT);
+    assert.equal(r.matched, true, `${query} should be accepted`);
+    assert.equal(r.record.viet, expected);
+  }
 });
 
 test("Việt bỏ dấu -> khớp viet", () => {

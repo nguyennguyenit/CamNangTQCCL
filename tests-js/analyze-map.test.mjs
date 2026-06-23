@@ -11,6 +11,10 @@ const HEROES = [
 const TACTICS = [
   { chinese: "魅惑", viet: "Mê Hoặc" },
   { chinese: "神机妙算", viet: "Thần Cơ Diệu Toán" },
+  { chinese: "夺魂挟魄", viet: "Đoạt Hồn Hiệp Phách" },
+  { chinese: "当锋摧决", viet: "Đương Phong Thôi Quyết" },
+  { chinese: "焚辎营垒", viet: "Thiêu Đốt Doanh Lũy" },
+  { chinese: "临机制胜", viet: "Thời Cơ Chiến Thắng" },
 ];
 const DICTS = { heroesDict: HEROES, tacticsDict: TACTICS };
 
@@ -34,9 +38,26 @@ test("mapRead: tên lạ -> giữ Hán + cờ không chắc", () => {
   assert.equal(r.hero.viet, "陌生武将"); // giữ Hán khi không khớp
 });
 
+test("mapRead: tướng không thấy tên rõ -> hiển thị Chưa rõ", () => {
+  const r = mapRead({ nameCn: "未知", tacticsCn: [], statFocusCn: "" }, DICTS);
+  assert.equal(r.hero.sure, false);
+  assert.equal(r.hero.viet, "Chưa rõ");
+});
+
 test("mapRead: OCR sai 1 ký tự -> fuzzy về đúng", () => {
   const r = mapRead({ nameCn: "神机刀算", tacticsCn: [], statFocusCn: "" }, { heroesDict: TACTICS, tacticsDict: TACTICS });
   assert.equal(r.hero.viet, "Thần Cơ Diệu Toán");
+});
+
+test("mapRead: chỉ giữ chiến pháp, bỏ binh thư/talent đọc nhầm", () => {
+  const r = mapRead(
+    { nameCn: "曹操", tacticsCn: ["夺魂", "当锋", "荧薙", "灵机", "三军之众", "统军", "铁甲"], statFocusCn: "" },
+    DICTS,
+  );
+  assert.deepEqual(
+    r.tactics.map((t) => t.viet),
+    ["Đoạt Hồn Hiệp Phách", "Đương Phong Thôi Quyết", "Thiêu Đốt Doanh Lũy", "Thời Cơ Chiến Thắng"],
+  );
 });
 
 test("findSimilarTeams: đếm tướng trùng, lọc ngưỡng", () => {

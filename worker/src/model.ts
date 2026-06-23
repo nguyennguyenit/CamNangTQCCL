@@ -8,7 +8,11 @@ export const VISION_PROMPT =
   "Đọc screenshot đội hình game Tam Quốc Chí Chiến Lược (三国志战略版). " +
   "Trả về JSON đúng schema: " +
   '{"heroes":[{"nameCn":"tên tướng chữ Hán","tacticsCn":["chiến pháp chữ Hán"],"statFocusCn":"chất tướng vd 全智力"}]}. ' +
-  "nameCn/tacticsCn/statFocusCn PHẢI là chữ Hán gốc trong ảnh. Chỉ trả JSON, không giải thích.";
+  "nameCn/tacticsCn/statFocusCn PHẢI là chữ Hán gốc trong ảnh. " +
+  "Chỉ đọc tên tướng nếu chữ tên tướng được in rõ trong ảnh; nếu không thấy tên in rõ thì dùng 未知. " +
+  "Không dùng tên trong dòng #帅选择/#师选择/天赋选择 làm tên tướng của từng cột; không đoán tên tướng từ chân dung, icon, hoặc tên đội. " +
+  "tacticsCn chỉ gồm chiến pháp, thường là dòng trắng dạng A/B trên từng cột. Không đưa binh thư, thiên phú, quân sư, thuộc tính, hay dòng vàng như 三军之众/统军/锤炼 vào tacticsCn. " +
+  "Chỉ trả JSON, không giải thích.";
 
 export interface ModelOptions {
   endpoint: string;
