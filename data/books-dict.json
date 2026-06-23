@@ -102,6 +102,15 @@
     "hanViet": "Vô Chiến Nhi Thắng"
   },
   {
+    "chinese": "不勇则死",
+    "viet": "Không Chiến Sẽ Chết"
+  },
+  {
+    "chinese": "大谋不谋",
+    "viet": "Không Lộ Tài Năng",
+    "hanViet": "Đại Mưu Bất Mưu"
+  },
+  {
     "chinese": "诱敌之策",
     "viet": "Kế Sách Dụ Địch",
     "hanViet": "Dụ Địch Chi Sách"
@@ -129,9 +138,9 @@
     "hanViet": "Viễn Mưu"
   },
   {
-    "chinese": "义勇",
+    "chinese": "勇毅",
     "viet": "Nghĩa Dũng",
-    "hanViet": "Nghĩa Dũng"
+    "hanViet": "Dũng Nghị"
   },
   {
     "chinese": "分险",
