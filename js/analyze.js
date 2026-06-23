@@ -74,18 +74,39 @@ async function callWorker(imageDataUrl, token) {
 /* ---------- Render kết quả ---------- */
 function heroResultCard(m) {
   const flag = m.hero.sure ? null : el("span", { class: "ana-flag", title: "Độ tin thấp, kiểm tra lại" }, "⚠ kiểm tra");
+  // Icon official (hotlink) để mắt thường xác nhận; gãy/403 -> ẩn, không chặn text.
+  const icon = m.hero.icon
+    ? el("img", {
+        class: "ana-hero-icon",
+        src: m.hero.icon,
+        alt: m.hero.viet,
+        loading: "lazy",
+        referrerpolicy: "no-referrer", // tránh CDN chặn hotlink theo Referer
+        onerror: (e) => e.target.remove(),
+      })
+    : null;
   const tactics = el("div", { class: "ana-tactics" },
     m.tactics.map((t) =>
       el("span", { class: `ana-tac${t.sure ? "" : " unsure"}`, title: t.sure ? "" : "Không chắc" }, t.viet),
     ),
   );
+  // Binh thư (dòng vàng) — hiển thị, không tính điểm so khớp.
+  const books = (m.books && m.books.length)
+    ? el("div", { class: "ana-books" },
+        m.books.map((b) =>
+          el("span", { class: `ana-book${b.sure ? "" : " unsure"}`, title: b.sure ? "" : "Không chắc" }, b.viet),
+        ),
+      )
+    : null;
   return el("div", { class: "ana-hero" }, [
     el("div", { class: "ana-hero-head" }, [
+      icon,
       el("span", { class: "ana-hero-name" }, m.hero.viet),
       m.statFocus ? el("span", { class: "ana-stat" }, m.statFocus) : null,
       flag,
     ]),
     tactics,
+    books,
   ]);
 }
 

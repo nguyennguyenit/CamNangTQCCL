@@ -1,11 +1,15 @@
 // Schema kết quả vision + validate + tolerant parse (M1).
-// Model trả JSON: { heroes: [{ nameCn, tacticsCn[], statFocusCn }] }.
+// Model trả JSON: { heroes: [{ nameCn, tacticsCn[], booksCn[], statFocusCn, nameFromPortrait? }] }.
 // Site map Hán -> Việt qua dict (match-dict.js), Worker KHÔNG map.
 
 export interface HeroRead {
   nameCn: string;
   tacticsCn: string[];
+  booksCn: string[];
   statFocusCn: string;
+  // True khi model SUY ĐOÁN tên tướng từ chân dung (không có tên in rõ). Site
+  // dùng để ép confidence xuống "low" + gắn cờ kiểm tra (chống auto-accept sai).
+  nameFromPortrait?: boolean;
 }
 export interface AnalyzeResult {
   heroes: HeroRead[];
@@ -44,7 +48,7 @@ export function tolerantParse(text: string): unknown {
 
 // [M2] Chặn output phình to (model lỗi/độc): đội ≤6 tướng, cắt chuỗi/ mảng.
 const MAX_HEROES = 12;
-const MAX_TACTICS = 6;
+const MAX_LIST = 6; // trần số phần tử mảng Hán (tacticsCn / booksCn)
 const MAX_STR = 40; // tên Hán/chất tướng thực tế rất ngắn
 
 const cut = (s: string) => s.trim().slice(0, MAX_STR);
@@ -58,11 +62,14 @@ export function validateResult(parsed: unknown): AnalyzeResult {
     if (!h || typeof h !== "object") throw new TypeError(`heroes[${i}] không hợp lệ`);
     const nameCn = typeof h.nameCn === "string" ? cut(h.nameCn) : "";
     if (!nameCn) throw new TypeError(`heroes[${i}].nameCn rỗng`);
-    const tacticsCn = Array.isArray(h.tacticsCn)
-      ? h.tacticsCn.filter((t: any) => typeof t === "string" && t.trim()).slice(0, MAX_TACTICS).map(cut)
-      : [];
+    const strList = (v: any) =>
+      Array.isArray(v) ? v.filter((t: any) => typeof t === "string" && t.trim()).slice(0, MAX_LIST).map(cut) : [];
+    const tacticsCn = strList(h.tacticsCn);
+    const booksCn = strList(h.booksCn); // binh thư (field riêng; thiếu -> [] backward-compat)
     const statFocusCn = typeof h.statFocusCn === "string" ? cut(h.statFocusCn) : "";
-    return { nameCn, tacticsCn, statFocusCn };
+    const hero: HeroRead = { nameCn, tacticsCn, booksCn, statFocusCn };
+    if (h.nameFromPortrait === true) hero.nameFromPortrait = true;
+    return hero;
   });
   if (heroes.length === 0) throw new TypeError("heroes rỗng");
   return { heroes };

@@ -8,7 +8,7 @@ Website tĩnh tra cứu meta team cho Tam Quốc Chí Chiến Lược. Chạy b�
 - `Cùng Tồn`: nhóm team cùng tồn tại, kèm `Thêm` và `Kỹ năng quân sư`.
 - `Khai hoang`: đội khai hoang và quân thủ các mỏ.
 - `Tra cứu chiến pháp`: 237 chiến pháp + 112 tướng, search fuzzy, chạy offline, không AI.
-- `Soi đội từ ảnh`: upload screenshot, đọc bằng Worker + Vision LLM, map về tên Việt canonical rồi đối chiếu với 172 team.
+- `Soi đội từ ảnh`: upload screenshot, đọc bằng Worker + Vision LLM (tướng + chiến pháp + binh thư), map về tên Việt canonical, hiện icon tướng để đối chiếu, rồi so với 172 team. Tên tướng bị che thì đoán từ chân dung kèm cờ "kiểm tra".
 
 ## Chạy local
 
@@ -26,6 +26,7 @@ Nếu cần rebuild dữ liệu từ HTML nguồn, phải có folder `Meta Team 
 python3 -m pipeline.build_json
 python3 -m pipeline.suggest_aliases
 python3 -m pipeline.build_dict
+python3 -m pipeline.build_books_dict
 ```
 
 ## Test
@@ -65,5 +66,6 @@ cd worker && npm run typecheck
 
 - `js/config.js` đang để placeholder cho `workerUrl` và `turnstileSiteKey`, nên tab `Soi đội từ ảnh` chưa hoạt động cho tới khi cấu hình thật.
 - `data/tactics-generic.json` có 28 chiến pháp generic chờ ghép mô tả.
+- `data/books-dict.json` map binh thư Hán→Việt (36/74, từ bảng thủ công `pipeline/books-han-viet-map.json`); binh thư VN dùng tên dịch nghĩa nên không auto-link như chiến pháp, bổ sung dần phần còn lại.
 - Nguồn HTML `Meta Team PK/` và cache crawl không commit, nên clone repo không tự rebuild được nếu thiếu export local.
 - `Meta mỗi phe (cũ)` được gắn nhãn `Cũ`.

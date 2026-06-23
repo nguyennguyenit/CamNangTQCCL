@@ -11,6 +11,9 @@ const STAT_MAP = {
   "政治": "Chính", "魅力": "Mị", "防御": "Phòng", "攻击": "Công",
 };
 
+// Binh thư Hán: KHÔNG phải chiến pháp. Giữ làm guard phòng thủ — nếu model lỡ
+// nhét binh thư vào tacticsCn thì vẫn lọc khỏi tactics. Binh thư thật map riêng
+// qua booksCn -> booksDict (xem mapRead).
 const NON_TACTIC_TERMS = new Set([
   "三军之众", "惜兵爱民", "统军", "锤炼", "久战", "铁甲", "防备",
   "奇正相生", "胜战", "执锐", "文韬", "分险", "蛮勇非勇",
@@ -37,12 +40,13 @@ export function statFocusVn(cn) {
 function mapName(cn, dict, { unknownLabel = null } = {}) {
   const raw = (cn || "").trim();
   if (unknownLabel && UNKNOWN_HERO_TERMS.has(raw)) {
-    return { cn: raw, viet: unknownLabel, matched: false, confidence: "low", sure: false };
+    return { cn: raw, viet: unknownLabel, icon: "", matched: false, confidence: "low", sure: false };
   }
   const m = matchDict(cn, dict);
   return {
     cn,
     viet: m.matched ? m.record.viet : cn, // unmatched -> giữ Hán + cờ
+    icon: m.matched ? (m.record.iconUrl || "") : "", // icon official để mắt thường xác nhận
     matched: m.matched,
     confidence: m.confidence,
     sure: m.matched && m.confidence !== "low",
@@ -52,15 +56,20 @@ function mapName(cn, dict, { unknownLabel = null } = {}) {
 /**
  * Map 1 hero đọc được -> {hero, tactics[], statFocus} đã canonical.
  * @param read {nameCn, tacticsCn[], statFocusCn}
- * @param dicts {heroesDict, tacticsDict}
+ * @param dicts {heroesDict, tacticsDict, booksDict}
  */
-export function mapRead(read, { heroesDict, tacticsDict }) {
+export function mapRead(read, { heroesDict, tacticsDict, booksDict = [] }) {
   const tactics = (read.tacticsCn || [])
     .filter((t) => !NON_TACTIC_TERMS.has((t || "").trim()))
     .map((t) => mapName(t, tacticsDict));
+  const books = (read.booksCn || []).map((b) => mapName(b, booksDict));
+  const hero = mapName(read.nameCn || "", heroesDict, { unknownLabel: "Chưa rõ" });
+  // B0: tên đoán từ chân dung -> luôn gắn cờ kiểm tra (chống auto-accept sai).
+  if (read.nameFromPortrait && hero.matched) hero.sure = false;
   return {
-    hero: mapName(read.nameCn || "", heroesDict, { unknownLabel: "Chưa rõ" }),
+    hero,
     tactics,
+    books,
     statFocus: statFocusVn(read.statFocusCn || ""),
   };
 }

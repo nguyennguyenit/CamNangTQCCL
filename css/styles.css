@@ -291,9 +291,14 @@ body {
 .ana-hero-name { font-weight: 700; }
 .ana-stat { font-size: .72rem; padding: .06rem .4rem; border-radius: 999px; background: var(--f-nguy); color: #fff; }
 .ana-flag { font-size: .7rem; color: var(--avoid); }
+.ana-hero-icon { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex: none; }
 .ana-tactics { display: flex; flex-wrap: wrap; gap: .3rem; }
 .ana-tac { font-size: .76rem; padding: .08rem .45rem; border-radius: 999px; background: var(--panel-2); }
 .ana-tac.unsure { border: 1px dashed var(--avoid); color: var(--avoid); }
+/* Binh thư (dòng vàng) — phân biệt với chiến pháp bằng viền vàng nhạt. */
+.ana-books { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .3rem; }
+.ana-book { font-size: .72rem; padding: .08rem .45rem; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--f-quan); }
+.ana-book.unsure { border: 1px dashed var(--avoid); color: var(--avoid); }
 .ana-teams { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .3rem; }
 .ana-team-link { background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--radius); padding: .4rem .6rem; cursor: pointer; text-align: left; color: var(--ink); }
 .ana-team-link:hover { border-color: var(--accent); }

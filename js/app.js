@@ -199,13 +199,14 @@ async function main() {
   initNav();
   initDrawer();
   try {
-    const [teams, facets, coexist, khaihoang, tactics, heroesDict] = await Promise.all([
+    const [teams, facets, coexist, khaihoang, tactics, heroesDict, booksDict] = await Promise.all([
       loadJSON("./data/teams.json"),
       loadJSON("./data/facets.json"),
       loadJSON("./data/coexist.json"),
       loadJSON("./data/khaihoang.json"),
       loadJSON("./data/tactics.json"),
       loadJSON("./data/heroes-dict.json"),
+      loadJSON("./data/books-dict.json"),
     ]);
     TEAMS = teams;
     FACETS = facets;
@@ -220,7 +221,7 @@ async function main() {
       switchSection("team-pk");
       if (first) onTag(first);
     };
-    initAnalyze({ teams, heroesDict, tacticsDict: tactics, onOpenTeam }, $("#section-analyze"));
+    initAnalyze({ teams, heroesDict, tacticsDict: tactics, booksDict, onOpenTeam }, $("#section-analyze"));
   } catch (err) {
     $("#team-grid").append(el("p", { class: "error" }, "Lỗi tải dữ liệu: " + err.message + ". Hãy chạy qua http server (python3 -m http.server)."));
   }

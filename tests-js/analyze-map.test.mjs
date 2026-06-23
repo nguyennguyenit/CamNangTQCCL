@@ -4,9 +4,14 @@ import assert from "node:assert/strict";
 import { statFocusVn, mapRead, mapTeamRead, findSimilarTeams } from "../js/analyze-map.js";
 
 const HEROES = [
-  { chinese: "曹操", viet: "Tào Tháo" },
+  { chinese: "曹操", viet: "Tào Tháo", iconUrl: "https://cdn/tao.png" },
   { chinese: "关羽", viet: "Quan Vũ" },
   { chinese: "张飞", viet: "Trương Phi" },
+];
+const BOOKS = [
+  { chinese: "铁甲", viet: "Giáp Sắt" },
+  { chinese: "防备", viet: "Phòng Bị" },
+  { chinese: "三军之众", viet: "Tam Quân Chi Chúng" },
 ];
 const TACTICS = [
   { chinese: "魅惑", viet: "Mê Hoặc" },
@@ -16,7 +21,7 @@ const TACTICS = [
   { chinese: "焚辎营垒", viet: "Thiêu Đốt Doanh Lũy" },
   { chinese: "临机制胜", viet: "Thời Cơ Chiến Thắng" },
 ];
-const DICTS = { heroesDict: HEROES, tacticsDict: TACTICS };
+const DICTS = { heroesDict: HEROES, tacticsDict: TACTICS, booksDict: BOOKS };
 
 test("statFocusVn: đơn + tiền tố Toàn", () => {
   assert.equal(statFocusVn("智力"), "Trí");
@@ -58,6 +63,50 @@ test("mapRead: chỉ giữ chiến pháp, bỏ binh thư/talent đọc nhầm", 
     r.tactics.map((t) => t.viet),
     ["Đoạt Hồn Hiệp Phách", "Đương Phong Thôi Quyết", "Thiêu Đốt Doanh Lũy", "Thời Cơ Chiến Thắng"],
   );
+});
+
+test("mapRead: map binh thư booksCn -> tên Việt canonical", () => {
+  const r = mapRead({ nameCn: "曹操", tacticsCn: [], booksCn: ["铁甲", "防备"], statFocusCn: "" }, DICTS);
+  assert.deepEqual(r.books.map((b) => b.viet), ["Giáp Sắt", "Phòng Bị"]);
+  assert.equal(r.books[0].sure, true);
+});
+
+test("mapRead: binh thư lạ -> giữ Hán + cờ không chắc", () => {
+  const r = mapRead({ nameCn: "曹操", tacticsCn: [], booksCn: ["未知兵书"], statFocusCn: "" }, DICTS);
+  assert.equal(r.books[0].matched, false);
+  assert.equal(r.books[0].viet, "未知兵书");
+});
+
+test("mapRead: thiếu booksCn -> books rỗng (backward-compat)", () => {
+  const r = mapRead({ nameCn: "曹操", tacticsCn: [], statFocusCn: "" }, DICTS);
+  assert.deepEqual(r.books, []);
+});
+
+test("mapRead: gắn iconUrl của tướng khi khớp dict", () => {
+  const r = mapRead({ nameCn: "曹操", tacticsCn: [], statFocusCn: "" }, DICTS);
+  assert.equal(r.hero.icon, "https://cdn/tao.png");
+});
+
+test("mapRead: nameFromPortrait -> ép sure=false dù khớp", () => {
+  const r = mapRead({ nameCn: "曹操", tacticsCn: [], statFocusCn: "", nameFromPortrait: true }, DICTS);
+  assert.equal(r.hero.matched, true);
+  assert.equal(r.hero.sure, false); // đoán từ chân dung -> luôn cờ kiểm tra
+});
+
+test("findSimilarTeams: binh thư KHÔNG đổi điểm (giữ nguyên)", () => {
+  const teams = [{ heroes: [{ baseName: "Tào Tháo", tactics: [] }, { baseName: "Quan Vũ", tactics: [] }] }];
+  const withBooks = mapTeamRead(
+    [{ nameCn: "曹操", tacticsCn: [], booksCn: ["铁甲"], statFocusCn: "" }, { nameCn: "关羽", tacticsCn: [], booksCn: ["防备"], statFocusCn: "" }],
+    DICTS,
+  );
+  const noBooks = mapTeamRead(
+    [{ nameCn: "曹操", tacticsCn: [], statFocusCn: "" }, { nameCn: "关羽", tacticsCn: [], statFocusCn: "" }],
+    DICTS,
+  );
+  const a = findSimilarTeams(withBooks, teams, { minHeroes: 2 });
+  const b = findSimilarTeams(noBooks, teams, { minHeroes: 2 });
+  assert.equal(a[0].heroHit, b[0].heroHit);
+  assert.equal(a[0].tacticHit, b[0].tacticHit);
 });
 
 test("findSimilarTeams: đếm tướng trùng, lọc ngưỡng", () => {

@@ -7,11 +7,12 @@ import { AnalyzeResult, parseAndValidate } from "./schema";
 export const VISION_PROMPT =
   "Đọc screenshot đội hình game Tam Quốc Chí Chiến Lược (三国志战略版). " +
   "Trả về JSON đúng schema: " +
-  '{"heroes":[{"nameCn":"tên tướng chữ Hán","tacticsCn":["chiến pháp chữ Hán"],"statFocusCn":"chất tướng vd 全智力"}]}. ' +
-  "nameCn/tacticsCn/statFocusCn PHẢI là chữ Hán gốc trong ảnh. " +
-  "Chỉ đọc tên tướng nếu chữ tên tướng được in rõ trong ảnh; nếu không thấy tên in rõ thì dùng 未知. " +
-  "Không dùng tên trong dòng #帅选择/#师选择/天赋选择 làm tên tướng của từng cột; không đoán tên tướng từ chân dung, icon, hoặc tên đội. " +
-  "tacticsCn chỉ gồm chiến pháp, thường là dòng trắng dạng A/B trên từng cột. Không đưa binh thư, thiên phú, quân sư, thuộc tính, hay dòng vàng như 三军之众/统军/锤炼 vào tacticsCn. " +
+  '{"heroes":[{"nameCn":"tên tướng chữ Hán","tacticsCn":["chiến pháp chữ Hán"],"booksCn":["binh thư chữ Hán"],"statFocusCn":"chất tướng vd 全智力","nameFromPortrait":false}]}. ' +
+  "nameCn/tacticsCn/booksCn/statFocusCn PHẢI là chữ Hán gốc trong ảnh. " +
+  "Ưu tiên đọc tên tướng in rõ trong ảnh. Nếu một cột KHÔNG có tên tướng in rõ, được phép SUY ĐOÁN tướng từ chân dung và đặt nameFromPortrait=true cho cột đó; nếu không suy đoán được thì dùng 未知. Khi đọc được tên in rõ thì nameFromPortrait=false. " +
+  "Không dùng tên trong dòng #帅选择/#师选择/天赋选择 làm tên tướng của từng cột; không đoán tên tướng từ tên đội. " +
+  "tacticsCn chỉ gồm chiến pháp (thường dòng trắng dạng A/B trên từng cột). " +
+  "booksCn gồm binh thư (dòng vàng dạng A/B, vd 三军之众/统军/锤炼/铁甲/防备); KHÔNG đưa binh thư vào tacticsCn và ngược lại. KHÔNG đưa thiên phú, quân sư, thuộc tính, hay binh chủng đặc biệt (vd 象兵/虎豹骑) vào booksCn. " +
   "Chỉ trả JSON, không giải thích.";
 
 export interface ModelOptions {

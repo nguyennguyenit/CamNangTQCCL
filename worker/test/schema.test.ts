@@ -46,6 +46,25 @@ describe("validateResult", () => {
     const r = validateResult({ heroes: [{ nameCn: "曹操", tacticsCn: Array(20).fill("乱世奸雄"), statFocusCn: "" }] });
     expect(r.heroes[0].tacticsCn.length).toBe(6);
   });
+
+  it("parse booksCn (binh thư) thành mảng riêng", () => {
+    const r = validateResult({ heroes: [{ nameCn: "曹操", tacticsCn: ["乱世奸雄"], booksCn: ["铁甲", "防备"], statFocusCn: "" }] });
+    expect(r.heroes[0].booksCn).toEqual(["铁甲", "防备"]);
+  });
+  it("thiếu booksCn -> [] (backward-compat client cũ)", () => {
+    const r = validateResult({ heroes: [{ nameCn: "曹操", tacticsCn: [], statFocusCn: "" }] });
+    expect(r.heroes[0].booksCn).toEqual([]);
+  });
+  it("cắt booksCn quá nhiều (>6)", () => {
+    const r = validateResult({ heroes: [{ nameCn: "曹操", tacticsCn: [], booksCn: Array(20).fill("铁甲"), statFocusCn: "" }] });
+    expect(r.heroes[0].booksCn.length).toBe(6);
+  });
+  it("nameFromPortrait=true giữ lại; mặc định vắng", () => {
+    const r = validateResult({ heroes: [{ nameCn: "曹操", tacticsCn: [], statFocusCn: "", nameFromPortrait: true }] });
+    expect(r.heroes[0].nameFromPortrait).toBe(true);
+    const r2 = validateResult({ heroes: [{ nameCn: "曹操", tacticsCn: [], statFocusCn: "" }] });
+    expect(r2.heroes[0].nameFromPortrait).toBeUndefined();
+  });
 });
 
 describe("parseAndValidate (M1 end-to-end)", () => {
