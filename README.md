@@ -66,6 +66,6 @@ cd worker && npm run typecheck
 
 - `js/config.js` đang để placeholder cho `workerUrl` và `turnstileSiteKey`, nên tab `Soi đội từ ảnh` chưa hoạt động cho tới khi cấu hình thật.
 - `data/tactics-generic.json` có 28 chiến pháp generic chờ ghép mô tả.
-- `data/books-dict.json` map binh thư Hán→Việt (36/74, từ bảng thủ công `pipeline/books-han-viet-map.json`); binh thư VN dùng tên dịch nghĩa nên không auto-link như chiến pháp, bổ sung dần phần còn lại.
+- `data/books-dict.json` map binh thư Hán→Việt (62/74, từ bảng thủ công `pipeline/books-han-viet-map.json`); binh thư VN dùng tên dịch nghĩa nên không auto-link như chiến pháp. 12 còn lại đều count thấp (≤5 team), bổ sung khi có nguồn đối chiếu Hán↔Việt.
 - Nguồn HTML `Meta Team PK/` và cache crawl không commit, nên clone repo không tự rebuild được nếu thiếu export local.
 - `Meta mỗi phe (cũ)` được gắn nhãn `Cũ`.
