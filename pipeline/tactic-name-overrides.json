@@ -18,14 +18,40 @@
     "卧薪尝胆": { "viet": "Nằm Gai Nếm Mật", "conf": "high" },
     "锦帆军": { "viet": "Quân Cẩm Phàm", "conf": "high" },
     "草船借箭": { "viet": "Thuyền Cỏ Mượn Tên", "conf": "high" },
-    "盛气凌敌": { "viet": "Thịnh Khí Linh Địch", "conf": "high" },
+    "盛气凌敌": {
+      "viet": "Thịnh Khí Linh Địch", "conf": "high",
+      "effectViet": "2 hiệp đầu, làm cho tập thể quân địch (2 người) mỗi hiệp đều có 45%→90% xác suất rơi vào trạng thái Giao Binh Khí, không thể tiến hành tấn công thường",
+      "targetViet": "Tập thể địch (2 người)"
+    },
     "临机制胜": { "viet": "Thời Cơ Chiến Thắng", "conf": "high" },
     "暂避其锋": { "viet": "Tạm Lánh Sóng Gió", "conf": "high" },
     "瞋目横矛": { "viet": "Trấn Mục Hoành Mâu", "conf": "high" },
     "掣刀斫敌": { "viet": "Xế Đao Chước Địch", "conf": "high" },
-    "所向披靡": { "viet": "Đánh Đâu Thắng Đó", "conf": "high" },
-    "克敌制胜": { "viet": "Khắc Địch Chế Thắng", "conf": "high" },
-    "折冲御侮": { "viet": "Đánh Bại Quân Địch", "conf": "high" },
+    "所向披靡": {
+      "viet": "Đánh Đâu Thắng Đó", "conf": "high",
+      "effectViet": "Chuẩn bị 1 hiệp, phát động 1 lần tấn công Binh Đao cho toàn thể quân địch (tỷ lệ sát thương 123%→246%)",
+      "targetViet": "Tập thể địch (3 người)"
+    },
+    "克敌制胜": {
+      "viet": "Khắc Địch Chế Thắng", "conf": "high",
+      "effectViet": "Sau khi tấn công thường, gây thêm cho mục tiêu tấn công 1 lần sát thương Mưu Lược (tỉ lệ sát thương 90%→180%, bị Trí Lực ảnh hưởng); Nếu mục tiêu đang mang ít nhất 1 trong 3 trạng thái: Bỏ Chạy, Trúng Độc hoặc Đốt Cháy, thì sẽ có 85% xác suất khiến mục tiêu rơi vào trạng thái Suy Nhược, duy trì 1 hiệp",
+      "targetViet": "Một quân địch"
+    },
+    "折冲御侮": {
+      "viet": "Đánh Bại Quân Địch", "conf": "high",
+      "effectViet": "Sau khi tấn công thường, làm cho cá thể quân địch ngẫu nhiên giảm 100 điểm Thống Soái và Trí Lực, duy trì 2 hiệp; nếu bản thân không phải là Tướng Chính, sẽ khiến Tướng Chính quân ta nhận thêm 2 lần Chống Đỡ, duy trì 2 hiệp",
+      "targetViet": "Một quân địch"
+    },
+    "合军聚众": {
+      "viet": "Hợp Quân Tụ Chúng", "conf": "high",
+      "effectViet": "Trong chiến đấu, bản thân mỗi hiệp hồi phục Binh Lực nhất định (tỷ lệ Trị Liệu 62%→124%, chịu ảnh hưởng thuộc tính cao hơn trong: Thống Soái hoặc Trí Lực)",
+      "targetViet": "Tôi"
+    },
+    "破阵摧坚": {
+      "viet": "Phá Trận Thôi Kiên", "conf": "high",
+      "effectViet": "Chuẩn bị 1 hiệp, khiến thuộc tính chiến đấu của nhóm địch (2 người) giảm 40→80 điểm (bị Võ Lực ảnh hưởng), duy trì 2 hiệp, và phát động 1 lần tấn công Binh Đao lên nhóm địch (tỷ lệ sát thương 79%→158%)",
+      "targetViet": "Tập thể địch (2 người)"
+    },
 
     "竭力佐谋": { "viet": "Dốc Sức Tính Kế", "conf": "medium" },
     "才辩机捷": { "viet": "Nhanh Trí Động Não", "conf": "medium" },

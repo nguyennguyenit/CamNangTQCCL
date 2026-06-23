@@ -256,7 +256,10 @@ body {
 .tac-meta { display: flex; flex-wrap: wrap; gap: .3rem; }
 .tac-type { font-size: .72rem; padding: .08rem .45rem; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
 .tac-troop { font-size: .72rem; padding: .08rem .45rem; border-radius: 999px; background: var(--panel-2); color: var(--ink); }
+.tac-descs { display: grid; gap: .35rem; }
 .tac-desc { margin: 0; font-size: .82rem; line-height: 1.45; color: var(--ink); }
+.tac-desc-zh { color: var(--muted); }
+.tac-desc-label { color: var(--accent); font-size: .75rem; }
 .tac-desc.pending { color: var(--muted); font-style: italic; }
 
 /* ===== Soi đội từ ảnh ===== */

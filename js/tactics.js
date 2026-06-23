@@ -6,6 +6,16 @@ import { searchDict } from "./match-dict.js";
 
 const QUALITY_ORDER = ["S", "A", "B"];
 
+/** Mô tả theo thứ tự ưu tiên Việt -> Trung, hỗ trợ record cũ chỉ có effect. */
+export function tacticDescriptions(t) {
+  const descriptions = [];
+  if (t.effectViet) descriptions.push({ lang: "vi", label: "Tiếng Việt", text: t.effectViet });
+  if (t.effect && t.effect !== t.effectViet) {
+    descriptions.push({ lang: "zh", label: "中文", text: t.effect });
+  }
+  return descriptions;
+}
+
 /** Card 1 chiến pháp (DOM-safe). */
 export function tacticCard(t) {
   const head = el("div", { class: "tac-head" }, [
@@ -25,7 +35,11 @@ export function tacticCard(t) {
 
   const desc = t.pending
     ? el("p", { class: "tac-desc pending" }, "⏳ Đang cập nhật")
-    : el("p", { class: "tac-desc" }, t.effect || "");
+    : el("div", { class: "tac-descs" }, tacticDescriptions(t).map((item) =>
+        el("p", { class: `tac-desc tac-desc-${item.lang}`, lang: item.lang }, [
+          el("strong", { class: "tac-desc-label" }, `${item.label}: `),
+          item.text,
+        ])));
 
   return el("div", { class: "tac-card" }, [head, sub, meta, desc]);
 }

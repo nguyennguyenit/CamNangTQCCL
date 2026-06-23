@@ -69,6 +69,9 @@ def _apply_overrides(tactics: list) -> int:
         if ov:
             rec["viet"] = ov["viet"]
             rec["linkScore"] = 1.0 if ov.get("conf") == "high" else 0.9
+            for field in ("effectViet", "targetViet"):
+                if ov.get(field):
+                    rec[field] = ov[field]
             n += 1
     return n
 
