@@ -11,7 +11,9 @@ describe("vision prompt", () => {
     expect(text).toContain("KHÔNG đưa binh thư vào tacticsCn");
     // B0: cho phép suy đoán chân dung khi không có tên in + cờ
     expect(text).toContain("nameFromPortrait=true");
-    expect(text).toContain("dùng 未知");
+    expect(text).toContain("未知");
+    // tên IN RÕ đọc nguyên văn, không ép vào danh sách (chống map sai như 周劭->姜维)
+    expect(text).toContain("KỂ CẢ khi không có trong danh sách");
     // giữ guard chống nhầm dòng chọn tướng + binh chủng
     expect(text).toContain("Không dùng tên trong dòng #帅选择");
     expect(text).toContain("象兵");
