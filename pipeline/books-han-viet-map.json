@@ -1,5 +1,7 @@
 {
-  "_note": "Bảng map binh thư Hán -> tên Việt game (facets.json.books). Binh thư VN dùng tên DỊCH NGHĨA nên KHÔNG auto-link Hán-Việt. Tên Hán neo theo nguồn 9game (trang hiệu ứng binh thư) + Hán-Việt thuần đảo ngược. Tên Việt PHẢI khớp facets.json.books. Khi 1 Hán ứng 2 facet gần giống (vd Thắng Trận/Thắng Chiến) -> chọn mục count cao; mục dup để trống. Phần chưa map (count thấp/mơ hồ) bổ sung khi có nguồn chuẩn (game client VN).",
+  "_note": "Bảng map binh thư Hán -> tên Việt game (facets.json.books). Binh thư VN dùng tên DỊCH NGHĨA nên KHÔNG auto-link Hán-Việt. Tên Hán neo theo nguồn 9game/7724 (hiệu ứng binh thư) + đối chiếu ảnh client VN. Tên Việt PHẢI khớp facets.json.books.",
+  "_dup_facet_names": "Các tên facet là BIẾN THỂ của binh thư đã map (cùng Hán, không map lại): Chuẩn Xác=Tinh Chuẩn(精准), Dũng Nghĩa=Nghĩa Dũng(勇毅), Thận Trọng=Trì Trọng(持重), Thắng Chiến=Thắng Trận(胜战), Thắng mà càng mạnh=Thắng Sẽ Càng Mạnh(胜而益强), Tàng Đao=Giấu Đao(藏刀).",
+  "_unresolved": "Chưa rõ tên Hán (đã có hiệu ứng VN, search chưa ra): Chia Lời (chịu Binh Đao→Thống+1%/Mưu Lược→Trí+1% x5; ~分利?), Tinh Thần Sảng Khoái (tích 2 khống chế→xóa bất lợi 1 đơn vị; ~神清气爽?).",
   "books": {
     "铁甲": "Giáp Sắt",
     "防备": "Phòng Bị",
