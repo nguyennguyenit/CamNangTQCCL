@@ -9,7 +9,7 @@ export const VISION_PROMPT =
   "Trả về JSON đúng schema: " +
   '{"heroes":[{"nameCn":"tên tướng chữ Hán","tacticsCn":["chiến pháp chữ Hán"],"booksCn":["binh thư chữ Hán"],"statFocusCn":"chất tướng vd 全智力","nameFromPortrait":false}]}. ' +
   "nameCn/tacticsCn/booksCn/statFocusCn PHẢI là chữ Hán gốc trong ảnh. " +
-  "Ưu tiên đọc tên tướng in rõ trong ảnh. Nếu một cột KHÔNG có tên tướng in rõ, được phép SUY ĐOÁN tướng từ chân dung và đặt nameFromPortrait=true cho cột đó; nếu không suy đoán được thì dùng 未知. Khi đọc được tên in rõ thì nameFromPortrait=false. " +
+  "Ưu tiên đọc tên tướng in rõ trong ảnh (nameFromPortrait=false). Nếu một cột KHÔNG có tên in rõ, HÃY NHẬN DIỆN tướng từ chân dung: đây là nhân vật Tam Quốc trong game 三国志战略版, nhận qua khuôn mặt, trang phục, và bộ chiến pháp tự mang; trả tên tướng chữ Hán phổ biến (vd 司马懿, 曹操, 郭嘉, 张春华) và đặt nameFromPortrait=true. Phải cố gắng đoán; chỉ dùng 未知 khi thực sự không nhận ra khuôn mặt. " +
   "Không dùng tên trong dòng #帅选择/#师选择/天赋选择 làm tên tướng của từng cột; không đoán tên tướng từ tên đội. " +
   "tacticsCn chỉ gồm chiến pháp (thường dòng trắng dạng A/B trên từng cột). " +
   "booksCn gồm binh thư (dòng vàng dạng A/B, vd 三军之众/统军/锤炼/铁甲/防备); KHÔNG đưa binh thư vào tacticsCn và ngược lại. KHÔNG đưa thiên phú, quân sư, thuộc tính, hay binh chủng đặc biệt (vd 象兵/虎豹骑) vào booksCn. " +
