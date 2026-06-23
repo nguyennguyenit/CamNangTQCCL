@@ -15,6 +15,7 @@ from typing import Optional, Set
 
 # Bảng phiên âm Hán-Việt cấp ký tự. Mở rộng khi crawl gặp ký tự mới (giữ a→z).
 HV = {
+    "劭": "thiệu", "邵": "thiệu", "变": "biến", "變": "biến", "未": "vị", "陌": "mạch",
     "一": "nhất", "七": "thất", "万": "vạn", "三": "tam", "上": "thượng", "下": "hạ", "不": "bất", "世": "thế", "东": "đông", "中": "trung",
     "临": "lâm", "丹": "đan", "举": "cử", "义": "nghĩa", "之": "chi", "乘": "thừa", "书": "thư", "乱": "loạn", "争": "tranh", "二": "nhị",
     "云": "vân", "五": "ngũ", "亢": "kháng", "人": "nhân", "仁": "nhân", "从": "tòng", "仓": "thương", "以": "dĩ", "伏": "phục", "众": "chúng",

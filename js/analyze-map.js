@@ -4,6 +4,7 @@
 
 import { normalizeText } from "./filters.js";
 import { matchDict } from "./match-dict.js";
+import { toVietHanViet } from "./hanviet.js";
 
 // Chất tướng Hán -> Việt (mirror pipeline/hanviet.py STAT_MAP).
 const STAT_MAP = {
@@ -45,7 +46,9 @@ function mapName(cn, dict, { unknownLabel = null } = {}) {
   const m = matchDict(cn, dict);
   return {
     cn,
-    viet: m.matched ? m.record.viet : cn, // unmatched -> giữ Hán + cờ
+    // matched -> tên Việt canonical; unmatched -> PHIÊN Hán-Việt (vd 周劭->Chu Thiệu)
+    // thay vì giữ chữ Hán hoặc ép match sai. Vẫn gắn cờ sure=false để biết chưa chắc.
+    viet: m.matched ? m.record.viet : toVietHanViet(cn),
     icon: m.matched ? (m.record.iconUrl || "") : "", // icon official để mắt thường xác nhận
     matched: m.matched,
     confidence: m.confidence,

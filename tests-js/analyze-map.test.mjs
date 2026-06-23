@@ -40,7 +40,7 @@ test("mapRead: Hán exact -> canonical Việt + sure", () => {
 test("mapRead: tên lạ -> giữ Hán + cờ không chắc", () => {
   const r = mapRead({ nameCn: "陌生武将", tacticsCn: [], statFocusCn: "" }, DICTS);
   assert.equal(r.hero.sure, false);
-  assert.equal(r.hero.viet, "陌生武将"); // giữ Hán khi không khớp
+  assert.equal(r.hero.viet, "Mạch Sinh Võ Tướng"); // không khớp -> phiên Hán-Việt (không giữ Hán)
 });
 
 test("mapRead: tướng không thấy tên rõ -> hiển thị Chưa rõ", () => {
@@ -71,10 +71,10 @@ test("mapRead: map binh thư booksCn -> tên Việt canonical", () => {
   assert.equal(r.books[0].sure, true);
 });
 
-test("mapRead: binh thư lạ -> giữ Hán + cờ không chắc", () => {
+test("mapRead: binh thư lạ -> phiên Hán-Việt + cờ không chắc", () => {
   const r = mapRead({ nameCn: "曹操", tacticsCn: [], booksCn: ["未知兵书"], statFocusCn: "" }, DICTS);
   assert.equal(r.books[0].matched, false);
-  assert.equal(r.books[0].viet, "未知兵书");
+  assert.equal(r.books[0].viet, "Vị Tri Binh Thư"); // không khớp -> phiên Hán-Việt
 });
 
 test("mapRead: thiếu booksCn -> books rỗng (backward-compat)", () => {
