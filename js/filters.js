@@ -50,6 +50,10 @@ export function applyFilters(teams, state) {
     if (!matchSet(state.statuses, [team.status])) return false;
     if (!matchSet(state.factions, team.faction ? [team.faction] : [])) return false;
     if (!matchSet(state.sources, team.source ? [team.source] : [])) return false;
+    // tier (Đô Úy): team.tierBest gắn runtime; rỗng -> không lọc.
+    if (!matchSet(state.tiers, team.tierBest ? [team.tierBest] : [])) return false;
+    // Khuyến nghị: bật bộ lọc này thì chỉ giữ team có cờ recommended.
+    if (state.recommended && state.recommended.size && !team.recommended) return false;
 
     const heroNames = team.heroes.flatMap((h) => [h.baseName, ...(h.alternatives || [])]);
     if (!matchSet(state.heroes, heroNames)) return false;
@@ -76,6 +80,8 @@ export function emptyState() {
     heroes: new Set(),
     tactics: new Set(),
     books: new Set(),
+    tiers: new Set(),
+    recommended: new Set(),
     query: "",
   };
 }

@@ -1,8 +1,9 @@
 // Điều phối: load JSON, section nav, render, filter UI, theme. Vanilla ES module.
 
 import { applyFilters, emptyState } from "./filters.js";
-import { bestTier, coexistGroup, el, FACTION_CODE, khaihoangTable, SOURCE_LABEL, STATUS_LABEL, teamCard } from "./render.js";
+import { coexistGroup, el, FACTION_CODE, khaihoangTable, SOURCE_LABEL, STATUS_LABEL, teamCard } from "./render.js";
 import { initTactics } from "./tactics.js";
+import { initDoUy } from "./do-uy.js";
 import { initHeroList } from "./hero-list.js";
 import { initAnalyze } from "./analyze.js";
 import { createMobileFilterDrawer } from "./mobile-filter-drawer.js";
@@ -192,29 +193,6 @@ function rerender() {
   $("#stats").textContent = `${filtered.length} / ${PK_TEAMS.length} team`;
 }
 
-/* ---------- Đô Úy (ss24) ---------- */
-// Tab riêng cho đội nguồn "do-uy" — tách khỏi Team PK để tra theo mùa. Dùng lại
-// teamCard + tier badge; team vẫn xuất hiện ở Team PK (không loại trừ).
-function renderDoUy() {
-  // Xếp theo tier tốt nhất T0 -> T1; team chưa có tier xuống cuối.
-  const tierRank = (t) => {
-    const best = bestTier(TIER_INDEX.get(t.id));
-    return best ? parseFloat(best.slice(1)) : Infinity;
-  };
-  const teams = TEAMS.filter((t) => t.source === "do-uy")
-    .slice()
-    .sort((a, b) => tierRank(a) - tierRank(b));
-  const grid = el("div", { class: "team-grid" });
-  for (const t of teams) grid.append(teamCard(t, onTag, TIER_INDEX.get(t.id)));
-  $("#section-do-uy").replaceChildren(
-    el("div", { class: "section-intro" }, [
-      el("h2", { class: "section-intro-title" }, "Team Đô Úy (ss18)"),
-      el("p", { class: "section-intro-sub" }, `${teams.length} đội — meta đội hình Đô Úy, có gắn tier tham khảo.`),
-    ]),
-    grid,
-  );
-}
-
 /* ---------- Mobile drawer ---------- */
 function initDrawer() {
   filterDrawer = createMobileFilterDrawer({
@@ -250,7 +228,7 @@ async function main() {
     TIER_INDEX = new Map(teamTier.map((r) => [r.teamId, r.rankings]));
     buildFilterUI();
     rerender();
-    renderDoUy();
+    initDoUy({ teams: TEAMS, tierIndex: TIER_INDEX, onTag, mount: $("#section-do-uy") });
     $("#section-coexist").append(...coexist.map(coexistGroup));
     $("#section-khaihoang").append(khaihoangTable(khaihoang));
     initHeroList(heroesDict, tactics, $("#section-heroes"));

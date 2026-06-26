@@ -19650,7 +19650,7 @@
     "unitType": [
       "Thương"
     ],
-    "faction": null,
+    "faction": "Thục",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -19777,7 +19777,7 @@
     "unitType": [
       "Kỵ"
     ],
-    "faction": null,
+    "faction": "Ngụy",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -19905,7 +19905,7 @@
     "unitType": [
       "Cung"
     ],
-    "faction": null,
+    "faction": "Quần",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -20035,7 +20035,7 @@
     "unitType": [
       "Cung"
     ],
-    "faction": null,
+    "faction": "Ngô",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -20162,7 +20162,7 @@
     "unitType": [
       "Cung"
     ],
-    "faction": null,
+    "faction": "Quần",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -20291,7 +20291,7 @@
     "unitType": [
       "Cung"
     ],
-    "faction": null,
+    "faction": "Ngô",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -20416,7 +20416,7 @@
     "unitType": [
       "Cung"
     ],
-    "faction": null,
+    "faction": "Ngô",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -20498,7 +20498,7 @@
     "unitType": [
       "Cung"
     ],
-    "faction": null,
+    "faction": "Ngô",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -20578,7 +20578,7 @@
     "unitType": [
       "Cung"
     ],
-    "faction": null,
+    "faction": "Ngô",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -20658,7 +20658,7 @@
     "unitType": [
       "Cung"
     ],
-    "faction": null,
+    "faction": "Ngô",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -20738,7 +20738,7 @@
     "unitType": [
       "Cung"
     ],
-    "faction": null,
+    "faction": "Quần",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -20818,7 +20818,7 @@
     "unitType": [
       "Cung"
     ],
-    "faction": null,
+    "faction": "Hỗn hợp",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -20898,7 +20898,7 @@
     "unitType": [
       "Khiên"
     ],
-    "faction": null,
+    "faction": "Quần",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -20978,7 +20978,7 @@
     "unitType": [
       "Cung"
     ],
-    "faction": null,
+    "faction": "Ngô",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -21058,7 +21058,7 @@
     "unitType": [
       "Cung"
     ],
-    "faction": null,
+    "faction": "Ngô",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -21136,7 +21136,7 @@
     "nickname": null,
     "rawType": "",
     "unitType": [],
-    "faction": null,
+    "faction": "Thục",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -21214,7 +21214,7 @@
     "nickname": null,
     "rawType": "",
     "unitType": [],
-    "faction": null,
+    "faction": "Ngô",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -21292,7 +21292,7 @@
     "nickname": null,
     "rawType": "",
     "unitType": [],
-    "faction": null,
+    "faction": "Ngô",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -21370,7 +21370,7 @@
     "nickname": null,
     "rawType": "",
     "unitType": [],
-    "faction": null,
+    "faction": "Thục",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -21450,7 +21450,7 @@
     "unitType": [
       "Khiên"
     ],
-    "faction": null,
+    "faction": "Ngụy",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -21528,7 +21528,7 @@
     "nickname": null,
     "rawType": "",
     "unitType": [],
-    "faction": null,
+    "faction": "Ngụy",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -21606,7 +21606,7 @@
     "nickname": null,
     "rawType": "",
     "unitType": [],
-    "faction": null,
+    "faction": "Thục",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -21684,7 +21684,7 @@
     "nickname": null,
     "rawType": "",
     "unitType": [],
-    "faction": null,
+    "faction": "Ngô",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -21764,7 +21764,7 @@
     "unitType": [
       "Khiên"
     ],
-    "faction": null,
+    "faction": "Ngụy",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -21844,7 +21844,7 @@
     "unitType": [
       "Kỵ"
     ],
-    "faction": null,
+    "faction": "Ngụy",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -21956,7 +21956,7 @@
     "nickname": null,
     "rawType": "",
     "unitType": [],
-    "faction": null,
+    "faction": "Thục",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -22034,7 +22034,7 @@
     "nickname": null,
     "rawType": "",
     "unitType": [],
-    "faction": null,
+    "faction": "Ngụy",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -22114,7 +22114,7 @@
     "unitType": [
       "Khiên"
     ],
-    "faction": null,
+    "faction": "Quần",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -22240,7 +22240,7 @@
     "unitType": [
       "Cung"
     ],
-    "faction": null,
+    "faction": "Quần",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -22361,7 +22361,7 @@
     "nickname": null,
     "rawType": "",
     "unitType": [],
-    "faction": null,
+    "faction": "Quần",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -22441,7 +22441,7 @@
     "unitType": [
       "Cung"
     ],
-    "faction": null,
+    "faction": "Thục",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -22569,7 +22569,7 @@
     "unitType": [
       "Khiên"
     ],
-    "faction": null,
+    "faction": "Thục",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -22694,7 +22694,7 @@
     "unitType": [
       "Cung"
     ],
-    "faction": null,
+    "faction": "Quần",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -22774,7 +22774,7 @@
     "unitType": [
       "Cung"
     ],
-    "faction": null,
+    "faction": "Quần",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -22901,7 +22901,7 @@
     "unitType": [
       "Khiên"
     ],
-    "faction": null,
+    "faction": "Quần",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -23028,7 +23028,7 @@
     "unitType": [
       "Cung"
     ],
-    "faction": null,
+    "faction": "Thục",
     "stars": null,
     "status": "meta",
     "heroes": [
@@ -23152,7 +23152,7 @@
     "unitType": [
       "Kỵ"
     ],
-    "faction": null,
+    "faction": "Ngụy",
     "stars": null,
     "status": "meta",
     "heroes": [
