@@ -5,7 +5,7 @@ Website tĩnh tra cứu meta team cho Tam Quốc Chí Chiến Lược. Chạy b�
 ## Có gì
 
 - `Team PK`: 160 team (team-intro + meta phe cũ; team Đô Úy tách sang tab riêng), lọc theo loại binh / sao / trạng thái / phe / tướng / chiến pháp / binh thư, có search toàn văn.
-- `Đô Úy (ss18)`: tab riêng cho meta đội hình Đô Úy mùa SS18 (34 team), gắn badge tier T0–T1 (nguồn tham khảo `ss18.thanglonghoi.xyz`).
+- `Đô Úy (ss18)`: tab riêng cho meta đội hình Đô Úy mùa SS18 (37 team), filter bar inline (loại binh / phe / tier / khuyến nghị), gắn badge tier T0–T1 + badge khuyến nghị (nguồn tham khảo `ss18.thanglonghoi.xyz`).
 - `Cùng Tồn`: nhóm team cùng tồn tại, kèm `Thêm` và `Kỹ năng quân sư`.
 - `Khai hoang`: đội khai hoang và quân thủ các mỏ.
 - `Tra cứu tướng`: 112 tướng, lọc theo thích tính binh chủng (S/A) / vai trò / phe / sao, search fuzzy (Việt bỏ dấu / Hán-Việt / Hán); click card mở modal chi tiết (stats + thích tính + 2 chiến pháp tự mang/truyền thừa link sang thư viện).

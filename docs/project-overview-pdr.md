@@ -9,7 +9,7 @@
 | Hạng mục | Nội dung |
 |---|---|
 | Frontend | `index.html`, `css/styles.css`, `js/*.js` |
-| Dữ liệu | `data/teams.json`, `data/coexist.json`, `data/khaihoang.json`, `data/facets.json`, `data/tactics.json`, `data/heroes-dict.json` |
+| Dữ liệu | `data/teams.json`, `data/team-tier.json`, `data/coexist.json`, `data/khaihoang.json`, `data/facets.json`, `data/tactics.json`, `data/heroes-dict.json`, `data/books-dict.json` |
 | Build data | `pipeline/*.py` |
 | Vision proxy | `worker/` |
 | Test | `tests/`, `tests-js/`, `worker/test/` |
@@ -32,13 +32,14 @@
 
 | ID | Yêu cầu |
 |---|---|
-| FR-1 | Hiển thị 5 section: `Team PK`, `Cùng Tồn`, `Khai hoang`, `Tra cứu chiến pháp`, `Soi đội từ ảnh` |
-| FR-2 | Lọc `Team PK` theo chip và combo, search toàn văn, giữ tương tác offline sau khi JSON đã tải |
+| FR-1 | Hiển thị các section: `Team PK`, `Đô Úy (ss18)`, `Cùng Tồn`, `Khai hoang`, `Tra cứu tướng`, `Tra cứu chiến pháp`, `Soi đội từ ảnh` |
+| FR-2 | Lọc `Team PK` theo chip và combo, search toàn văn, giữ tương tác offline sau khi JSON đã tải; mobile dùng drawer lọc + hamburger menu section |
 | FR-3 | Render `Cùng Tồn` và `Khai hoang` từ JSON đã build |
-| FR-4 | Tra cứu chiến pháp bằng dữ liệu local `data/tactics.json` và `data/heroes-dict.json` |
-| FR-5 | Cho phép upload ảnh soi đội khi `js/config.js` và Worker đã cấu hình thật |
-| FR-6 | Map output Hán sang tên Việt canonical rồi đối chiếu với `data/teams.json` |
-| FR-7 | Rebuild dữ liệu từ HTML export local bằng `python3 -m pipeline.build_json` |
+| FR-4 | Tra cứu chiến pháp và tướng bằng dữ liệu local (`data/tactics.json`, `data/heroes-dict.json`), search fuzzy Việt/Hán-Việt/Hán, click tướng mở modal chi tiết |
+| FR-5 | Tab Đô Úy render team `do-uy` riêng với filter bar inline (loại binh / phe / tier / khuyến nghị), team `do-uy` ẩn khỏi Team PK |
+| FR-6 | Gắn badge tier T0–T3 theo team từ `data/team-tier.json` (multi-source, hiện bậc tốt nhất + tooltip) |
+| FR-7 | Cho phép upload ảnh soi đội khi `js/config.js` và Worker đã cấu hình thật; map output Hán sang tên Việt canonical rồi đối chiếu với `data/teams.json` |
+| FR-8 | Rebuild dữ liệu từ HTML export local bằng pipeline (`build_json`, `build_dict`, `build_books_dict`, `build_team_tier`) |
 
 ## Yêu cầu phi chức năng
 
@@ -60,9 +61,9 @@
 
 - `python3 -m http.server 8000` mở site được và load đủ JSON.
 - `python3 -m unittest discover -s tests` pass.
-- `node --test tests-js/filters.test.mjs tests-js/match-dict.test.mjs tests-js/analyze-map.test.mjs` pass.
+- `node --test tests-js/*.test.mjs` pass.
 - `cd worker && npm test` và `cd worker && npm run typecheck` pass.
-- `data/*.json` khớp số lượng hiện tại: `teams=172`, `tactics=237`, `heroes-dict=112`, `coexist=5`, `khaihoang=11/5`.
+- `data/*.json` khớp số lượng hiện tại: `teams=197` (Team PK 160 + do-uy 37), `tactics=237`, `heroes-dict=112`, `coexist=5`, `khaihoang=11/5`, `team-tier=28`.
 
 ## Rủi ro chính
 

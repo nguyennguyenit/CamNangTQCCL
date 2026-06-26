@@ -9,9 +9,10 @@ Giữ code nhỏ, rõ, test được, và bám đúng kiểu repo hiện có: st
 | Khu vực | Chuẩn hiện tại |
 |---|---|
 | `js/app.js` | Orchestrator, chỉ lo boot và wire-up |
-| `js/filters.js` | Pure function, không DOM |
-| `js/render.js` | DOM builder, dữ liệu đi qua `createElement` |
-| `js/analyze-map.js` | Logic map/testable, không phụ thuộc UI |
+| `js/filters.js` | Pure function, không DOM (dùng chung Team PK + Đô Úy) |
+| `js/render.js` | DOM builder, dữ liệu đi qua `createElement`, export `teamCard`/`bestTier` cho tab khác |
+| `js/do-uy.js`, `js/hero-list.js` | Section riêng, dùng lại helper từ `filters.js`/`render.js`, không nhân bản logic |
+| `js/match-dict.js`, `js/analyze-map.js` | Logic map/search testable, không phụ thuộc UI |
 | `pipeline/*.py` | Python stdlib, mỗi file một nhiệm vụ |
 | `worker/src/*.ts` | Module nhỏ, tách config / guard / limit / model / schema |
 
@@ -35,7 +36,8 @@ Giữ code nhỏ, rõ, test được, và bám đúng kiểu repo hiện có: st
   - `js/render.js`
   - `js/filters.js` nếu field ảnh hưởng search/filter
   - test liên quan
-- `pipeline/aliases.json`, `pipeline/team-nicknames.json`, `pipeline/tactic-name-overrides.json` là source control thủ công.
+- `pipeline/aliases.json`, `pipeline/team-nicknames.json`, `pipeline/tactic-name-overrides.json`, `pipeline/team-tier-map.json`, `pipeline/books-han-viet-map.json`, `pipeline/do-uy-ss18-source.json` là source control thủ công.
+- Tier team curate tay trong `team-tier-map.json` (`team id` → `rankings`), build bằng `build_team_tier`; tier ngoài `{T0,T0.5,T1,T1.5,T2,T3}` phải fail-loud, không tự ghi map.
 
 ## UI standards
 

@@ -26,14 +26,19 @@ Không có backend chung, không có DB, không có bundler.
 - `pipeline/normalize.py` áp alias, tách biến thể, parse tướng, chia counter, phân loại phe / sao / trạng thái / binh.
 - `pipeline/build_json.py` ghi `data/teams.json`, `data/facets.json`, `data/coexist.json`, `data/khaihoang.json`.
 - `pipeline/build_dict.py` ghi `data/tactics.json` và `data/heroes-dict.json`.
+- `pipeline/build_books_dict.py` ghi `data/books-dict.json` (map binh thư Hán→Việt từ bảng thủ công).
+- `pipeline/build_team_tier.py` ghi `data/team-tier.json` từ `pipeline/team-tier-map.json` (curate tay; fail-loud nếu tier ngoài `{T0,T0.5,T1,T1.5,T2,T3}`).
 
 ### 2. Render site
 
 - `index.html` load `css/styles.css` và `js/app.js`.
-- `js/app.js` load JSON rồi init nav, theme, filter, render.
-- `js/render.js` tạo DOM an toàn cho Team PK, Cùng Tồn, Khai hoang.
-- `js/filters.js` xử lý search / filter thuần.
-- `js/tactics.js` render tra cứu chiến pháp.
+- `js/app.js` load JSON rồi init nav, theme, filter, render, Đô Úy, tra cứu tướng.
+- `js/render.js` tạo DOM an toàn cho Team PK, Cùng Tồn, Khai hoang, kèm badge tier.
+- `js/filters.js` xử lý search / filter thuần (dùng chung Team PK + Đô Úy).
+- `js/do-uy.js` render tab Đô Úy với filter bar inline + facets riêng (team `do-uy` ẩn khỏi Team PK).
+- `js/hero-list.js` + `js/hero-detail.js` render tra cứu tướng + modal chi tiết.
+- `js/tactics.js` render tra cứu chiến pháp; `js/match-dict.js` lo search đa ngõ vào.
+- `js/mobile-section-menu.js` + `js/mobile-filter-drawer.js` lo nav + bộ lọc trên mobile.
 
 ### 3. Soi đội từ ảnh
 
@@ -59,11 +64,15 @@ upload ảnh
 | `index.html` | Shell HTML |
 | `css/styles.css` | Theme, layout, card, badge, drawer |
 | `js/app.js` | Orchestration |
-| `js/render.js` | Render DOM |
-| `js/filters.js` | Search / filter |
+| `js/render.js` | Render DOM + badge tier |
+| `js/filters.js` | Search / filter thuần |
+| `js/do-uy.js` | Tab Đô Úy (filter bar + facets riêng) |
+| `js/hero-list.js`, `js/hero-detail.js` | Tra cứu tướng + modal |
+| `js/match-dict.js` | Search Việt/Hán-Việt/Hán |
+| `js/mobile-section-menu.js`, `js/mobile-filter-drawer.js` | Nav + lọc mobile |
 | `js/analyze.js` | Flow upload ảnh |
 | `js/analyze-map.js` | Map result + team match |
-| `pipeline/*.py` | Build data |
+| `pipeline/*.py` | Build data + dict + tier |
 | `worker/src/*.ts` | Proxy Vision LLM |
 
 ## Deploy boundary
@@ -75,7 +84,8 @@ upload ảnh
 
 ## Dữ liệu quan trọng
 
-- `data/teams.json`: 172 team.
+- `data/teams.json`: 197 team (Team PK 160 = team-intro 50 + moi-phe 110; do-uy 37 ở tab riêng).
+- `data/team-tier.json`: tier T0–T3 gắn theo team (28 team), multi-source rankings.
 - `data/facets.json`: nguồn count cho chip / combo.
 - `data/tactics.json`: từ điển chiến pháp.
   - `effect`, `target`: nội dung nguồn tiếng Trung.
