@@ -6340,1539 +6340,6 @@
     "notes": "Có Viễn Trợ(Giác), Linh Động(Bị)-★★★★"
   },
   {
-    "id": "do-uy-50",
-    "source": "do-uy",
-    "name": "Siêu Thiệu Du",
-    "nickname": null,
-    "rawType": "Thương",
-    "unitType": [
-      "Thương"
-    ],
-    "faction": null,
-    "stars": null,
-    "status": "meta",
-    "heroes": [
-      {
-        "name": "SP Mã Siêu",
-        "baseName": "Mã Siêu",
-        "alternatives": [],
-        "variant": null,
-        "isSP": true,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Đương Phong Thôi Quyết",
-            "alternatives": []
-          },
-          {
-            "name": "Thôi Phong Đoạn Nhẫn",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Tấn Công Điểm Yếu",
-            "alternatives": []
-          },
-          {
-            "name": "Tốc Chiến",
-            "alternatives": []
-          },
-          {
-            "name": "Khép Hờ",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      },
-      {
-        "name": "Chu Thiệu",
-        "baseName": "Chu Thiệu",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Vạn Quân Đoạt Sư",
-            "alternatives": []
-          },
-          {
-            "name": "Kế Hay Mưu Giỏi",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Yêu Lính Thương Dân",
-            "alternatives": []
-          },
-          {
-            "name": "Thế Phòng Thủ",
-            "alternatives": []
-          },
-          {
-            "name": "Phòng Bị",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      },
-      {
-        "name": "Hứa Du",
-        "baseName": "Hứa Du",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Giải Phiền Vệ",
-            "alternatives": []
-          },
-          {
-            "name": "Lâm Nguy Cứu Chủ",
-            "alternatives": [
-              "Cắt Xương Trị Độc"
-            ]
-          }
-        ],
-        "books": [
-          {
-            "name": "Yêu Lính Thương Dân",
-            "alternatives": []
-          },
-          {
-            "name": "Thế Phòng Thủ",
-            "alternatives": []
-          },
-          {
-            "name": "Phòng Bị",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      }
-    ],
-    "counters": {
-      "good": [
-        "đội hình tốc độ chậm."
-      ],
-      "avoid": [
-        "Hoàng Mã Thương (SP Hoàng Phổ Tung) có độ tiến bậc cao",
-        "đội hình có hiệu quả Giao Binh Khí mạnh",
-        "như đội Nhạn Hồng Thương hoặc Hổ Thần Cung mang kỹ năng [Thịnh Khí Linh Địch]"
-      ]
-    },
-    "notes": null
-  },
-  {
-    "id": "do-uy-51",
-    "source": "do-uy",
-    "name": "Kỳ Hủ Du",
-    "nickname": null,
-    "rawType": "Kỵ",
-    "unitType": [
-      "Kỵ"
-    ],
-    "faction": null,
-    "stars": null,
-    "status": "meta",
-    "heroes": [
-      {
-        "name": "Dương Kỳ",
-        "baseName": "Dương Kỳ",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Dốc Sức Tính Kế",
-            "alternatives": []
-          },
-          {
-            "name": "Cắt Xương Trị Độc",
-            "alternatives": [
-              "Anh Thành Tự Thủ"
-            ]
-          }
-        ],
-        "books": [
-          {
-            "name": "Tam Quân Chi Chúng",
-            "alternatives": []
-          },
-          {
-            "name": "Rèn Luyện",
-            "alternatives": []
-          },
-          {
-            "name": "Dẫn Quân",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      },
-      {
-        "name": "Giả Hủ",
-        "baseName": "Giả Hủ",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Nhanh Trí Động Não",
-            "alternatives": []
-          },
-          {
-            "name": "Thiêu Đốt Doanh Lũy",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Tam Quân Chi Chúng",
-            "alternatives": []
-          },
-          {
-            "name": "Rèn Luyện",
-            "alternatives": []
-          },
-          {
-            "name": "Dẫn Quân",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      },
-      {
-        "name": "Tuân Du",
-        "baseName": "Tuân Du",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Đoạt Hồn Hiệp Phách",
-            "alternatives": []
-          },
-          {
-            "name": "Thượng Binh Phạt Mưu",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Tam Quân Chi Chúng",
-            "alternatives": []
-          },
-          {
-            "name": "Rèn Luyện",
-            "alternatives": []
-          },
-          {
-            "name": "Dẫn Quân",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      }
-    ],
-    "counters": {
-      "good": [
-        "Khiên Thái Úy",
-        "Khiên Pháp Quan",
-        "Khiên Tam Tiên"
-      ],
-      "avoid": [
-        "Quần Cung",
-        "Nhận Hồng Thương"
-      ]
-    },
-    "notes": "Thiên Phú Chọn [Khách Quý Chật Nhà]."
-  },
-  {
-    "id": "do-uy-52",
-    "source": "do-uy",
-    "name": "Úc Gia Hằng",
-    "nickname": null,
-    "rawType": "Kỵ",
-    "unitType": [
-      "Kỵ"
-    ],
-    "faction": null,
-    "stars": null,
-    "status": "meta",
-    "heroes": [
-      {
-        "name": "SP Tuân Úc",
-        "baseName": "Tuân Úc",
-        "alternatives": [],
-        "variant": null,
-        "isSP": true,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Dốc Sức Tính Kế",
-            "alternatives": []
-          },
-          {
-            "name": "Cắt Xương Trị Độc",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Tam Quân Chi Chúng",
-            "alternatives": []
-          },
-          {
-            "name": "Rèn Luyện",
-            "alternatives": []
-          },
-          {
-            "name": "Dẫn Quân",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      },
-      {
-        "name": "SP Quách Gia",
-        "baseName": "Quách Gia",
-        "alternatives": [],
-        "variant": null,
-        "isSP": true,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Đoạt Hồn Hiệp Phách",
-            "alternatives": []
-          },
-          {
-            "name": "Đương Phong Thôi Quyết",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Kỳ Chính Tương Sinh",
-            "alternatives": []
-          },
-          {
-            "name": "Giấu Đao",
-            "alternatives": []
-          },
-          {
-            "name": "Văn Thao",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      },
-      {
-        "name": "Thẩm Hằng",
-        "baseName": "Thẩm Hằng",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Nhanh Trí Động Não",
-            "alternatives": []
-          },
-          {
-            "name": "Thượng Binh Phạt Mưu",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Binh Hành Quỷ Đạo",
-            "alternatives": [
-              "Nhìn Rõ Mồn Một"
-            ]
-          },
-          {
-            "name": "Tinh Chuẩn",
-            "alternatives": [
-              "Rèn Luyện"
-            ]
-          },
-          {
-            "name": "Thiện Chiến",
-            "alternatives": [
-              "Dẫn Quân"
-            ]
-          }
-        ],
-        "note": null
-      }
-    ],
-    "counters": {
-      "good": [
-        "đội hình chậm như Trương Giác Khiên"
-      ],
-      "avoid": [
-        "Hoàng Mã Thương full tiến bậc",
-        "cũng như Ngô Kỵ",
-        "Quyền Kỵ",
-        "Lữ Quách Kiều có sức bùng nổ cao"
-      ]
-    },
-    "notes": null
-  },
-  {
-    "id": "do-uy-53",
-    "source": "do-uy",
-    "name": "Trực Chỉ Thuyền",
-    "nickname": null,
-    "rawType": "Cung",
-    "unitType": [
-      "Cung"
-    ],
-    "faction": null,
-    "stars": null,
-    "status": "meta",
-    "heroes": [
-      {
-        "name": "SP Lô Trực",
-        "baseName": "Lô Trực",
-        "alternatives": [],
-        "variant": null,
-        "isSP": true,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Cương Nhu Kết Hợp",
-            "alternatives": []
-          },
-          {
-            "name": "Nhạn Hành Trận",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Tam Quân Chi Chúng",
-            "alternatives": []
-          },
-          {
-            "name": "Chiến Đấu Trường Kỳ",
-            "alternatives": []
-          },
-          {
-            "name": "Dẫn Quân",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      },
-      {
-        "name": "Tiêu Chỉ",
-        "baseName": "Tiêu Chỉ",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Tử Sĩ Tiên Phong",
-            "alternatives": []
-          },
-          {
-            "name": "Nhân Lợi Chế Quyền",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Tam Quân Chi Chúng",
-            "alternatives": []
-          },
-          {
-            "name": "Chiến Đấu Trường Kỳ",
-            "alternatives": []
-          },
-          {
-            "name": "Dẫn Quân",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      },
-      {
-        "name": "SP Điêu Thuyền",
-        "baseName": "Điêu Thuyền",
-        "alternatives": [],
-        "variant": null,
-        "isSP": true,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Thâm Tàng Nhược Hư",
-            "alternatives": [
-              "Hợp Quân Tụ Chúng"
-            ]
-          },
-          {
-            "name": "Đồng Lòng Hợp Sức",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Tam Quân Chi Chúng",
-            "alternatives": []
-          },
-          {
-            "name": "Chiến Đấu Trường Kỳ",
-            "alternatives": []
-          },
-          {
-            "name": "Dẫn Quân",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      }
-    ],
-    "counters": {
-      "good": [
-        "Hầu hết các Đội quân binh đao (bao gồm Pháp Quan Thuẫn",
-        "Ngô Nữ Cung",
-        "Bắc Phạt Thương)"
-      ],
-      "avoid": [
-        "Các đội hình có Trí Lực cao và khả năng bùng nổ mạnh",
-        "như Thục Trí Cung",
-        "Ngũ Mưu Kỵ",
-        "Trương Giác Khiên"
-      ]
-    },
-    "notes": null
-  },
-  {
-    "id": "do-uy-54",
-    "source": "do-uy",
-    "name": "Lượng Thiệu Thống",
-    "nickname": null,
-    "rawType": "Cung",
-    "unitType": [
-      "Cung"
-    ],
-    "faction": null,
-    "stars": null,
-    "status": "meta",
-    "heroes": [
-      {
-        "name": "Gia Cát Lượng",
-        "baseName": "Gia Cát Lượng",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Thuyền Cỏ Mượn Tên",
-            "alternatives": []
-          },
-          {
-            "name": "Nhạn Hành Trận",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Tam Quân Chi Chúng",
-            "alternatives": []
-          },
-          {
-            "name": "Rèn Luyện",
-            "alternatives": []
-          },
-          {
-            "name": "Dẫn Quân",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      },
-      {
-        "name": "Chu Thiệu",
-        "baseName": "Chu Thiệu",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Đương Phong Thôi Quyết",
-            "alternatives": []
-          },
-          {
-            "name": "Thừa Địch Bất Ngu",
-            "alternatives": [
-              "Đoạt Hồn Hiệp Phách"
-            ]
-          }
-        ],
-        "books": [
-          {
-            "name": "Tam Quân Chi Chúng",
-            "alternatives": []
-          },
-          {
-            "name": "Sắc Bén",
-            "alternatives": []
-          },
-          {
-            "name": "Dẫn Quân",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      },
-      {
-        "name": "Bàng Thống",
-        "baseName": "Bàng Thống",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Thái Bình Đạo Pháp",
-            "alternatives": []
-          },
-          {
-            "name": "Sĩ Biệt Tam Nhật",
-            "alternatives": [
-              "Thiêu Đốt Doanh Lũy"
-            ]
-          }
-        ],
-        "books": [
-          {
-            "name": "Tam Quân Chi Chúng",
-            "alternatives": []
-          },
-          {
-            "name": "Quy Thuận",
-            "alternatives": []
-          },
-          {
-            "name": "Dẫn Quân",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      }
-    ],
-    "counters": {
-      "good": [
-        "đội tốc công tần suất cao như Ngô Kỵ",
-        "Quyền Kỵ",
-        "đội khắc chế Binh Chủng như Pháp Quan Khiên"
-      ],
-      "avoid": []
-    },
-    "notes": "Thiên Phú Chọn  [Trăm Phát Trăm Trúng] (nâng độ ăn ý lính Cung lên S), [Khách Quý Chật Nhà] (kích hoạt Duyên Phận Thục Trí)."
-  },
-  {
-    "id": "do-uy-55",
-    "source": "do-uy",
-    "name": "Hoành Hương Kiều",
-    "nickname": null,
-    "rawType": "Cung",
-    "unitType": [
-      "Cung"
-    ],
-    "faction": null,
-    "stars": null,
-    "status": "meta",
-    "heroes": [
-      {
-        "name": "Hoàng Phủ Hoành (Cung cấp S)",
-        "baseName": "Hoàng Phủ Hoành",
-        "alternatives": [],
-        "variant": "Cung cấp S",
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Tinh·Ngư Lân Trận",
-            "alternatives": []
-          },
-          {
-            "name": "Lâm Nguy Cứu Chủ",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Tam Quân Chi Chúng",
-            "alternatives": []
-          },
-          {
-            "name": "Dẫn Quân",
-            "alternatives": []
-          },
-          {
-            "name": "Rèn Luyện",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      },
-      {
-        "name": "Tôn Thượng Hương",
-        "baseName": "Tôn Thượng Hương",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Đương Phong Thôi Quyết",
-            "alternatives": []
-          },
-          {
-            "name": "Phá Phong Đoạn Nhẫn",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Thắng mà càng mạnh",
-            "alternatives": []
-          },
-          {
-            "name": "Thắng Chiến",
-            "alternatives": []
-          },
-          {
-            "name": "Tàng Đao",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      },
-      {
-        "name": "CO Đại Kiều",
-        "baseName": "Đại Kiều",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": true,
-        "tactics": [
-          {
-            "name": "Mê Hoặc",
-            "alternatives": []
-          },
-          {
-            "name": "Thuyền Cỏ Mượn Tên",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Tam Quân Chi Chúng",
-            "alternatives": []
-          },
-          {
-            "name": "Dẫn Quân",
-            "alternatives": []
-          },
-          {
-            "name": "Rèn Luyện",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      }
-    ],
-    "counters": {
-      "good": [
-        "Ngũ Mưu Kỵ",
-        "Thục Trí Cung",
-        "Cung Rào Cản Ngựa"
-      ],
-      "avoid": [
-        "đội hình có ít đòn Tấn công thường",
-        "không bị ảnh hưởng bởi Chế Giễu",
-        "có nhiều lớp Chống Đỡ"
-      ]
-    },
-    "notes": null
-  },
-  {
-    "id": "do-uy-56",
-    "source": "do-uy",
-    "name": "Du Mông Tín",
-    "nickname": null,
-    "rawType": "Cung",
-    "unitType": [
-      "Cung"
-    ],
-    "faction": null,
-    "stars": null,
-    "status": "meta",
-    "heroes": [
-      {
-        "name": "Chu Du",
-        "baseName": "Chu Du",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Đoạt Hồn Hiệp Phách",
-            "alternatives": []
-          },
-          {
-            "name": "Phong Trợ Hỏa Thế",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Thắng Sẽ Càng Mạnh",
-            "alternatives": []
-          },
-          {
-            "name": "Thắng Trận",
-            "alternatives": []
-          },
-          {
-            "name": "Văn Thao",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      },
-      {
-        "name": "Lữ Mông",
-        "baseName": "Lữ Mông",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Đương Phong Thôi Quyết",
-            "alternatives": []
-          },
-          {
-            "name": "Toàn Quân Đồng Lòng",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Kỳ Chính Tương Sinh",
-            "alternatives": []
-          },
-          {
-            "name": "Văn Thao",
-            "alternatives": []
-          },
-          {
-            "name": "Giấu Đao",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      },
-      {
-        "name": "Tô Tín",
-        "baseName": "Tô Tín",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Nhạn Hành Trận",
-            "alternatives": []
-          },
-          {
-            "name": "Thuyền Cỏ Mượn Tên",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Tam Quân Chi Chúng",
-            "alternatives": []
-          },
-          {
-            "name": "Rèn Luyện",
-            "alternatives": []
-          },
-          {
-            "name": "Dẫn Quân",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      }
-    ],
-    "counters": {
-      "good": [
-        "Hoàng Mã Thương",
-        "Khảng Khải Cung"
-      ],
-      "avoid": []
-    },
-    "notes": null
-  },
-  {
-    "id": "do-uy-57",
-    "source": "do-uy",
-    "name": "Du Bố Tẩm",
-    "nickname": null,
-    "rawType": "Cung",
-    "unitType": [
-      "Cung"
-    ],
-    "faction": null,
-    "stars": null,
-    "status": "meta",
-    "heroes": [
-      {
-        "name": "Hứa Du",
-        "baseName": "Hứa Du",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Quân Cẩm Phàm",
-            "alternatives": []
-          },
-          {
-            "name": "Lâm Nguy Cứu Chủ",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Tam Quân Chi Chúng",
-            "alternatives": []
-          },
-          {
-            "name": "Rèn Luyện",
-            "alternatives": []
-          },
-          {
-            "name": "Dẫn Quân",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      },
-      {
-        "name": "Lữ Bố",
-        "baseName": "Lữ Bố",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Đương Phong Thôi Quyết",
-            "alternatives": []
-          },
-          {
-            "name": "Thôi Phong Đoạn Nhẫn",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Đánh Bất Ngờ Thắng",
-            "alternatives": []
-          },
-          {
-            "name": "Tinh Chuẩn",
-            "alternatives": []
-          },
-          {
-            "name": "Thiện Chiến",
-            "alternatives": [
-              "Trì Trọng"
-            ]
-          }
-        ],
-        "note": null
-      },
-      {
-        "name": "Liễu Tẩm",
-        "baseName": "Liễu Tẩm",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Nhạn Hành Trận",
-            "alternatives": []
-          },
-          {
-            "name": "Thiêu Đốt Doanh Lũy",
-            "alternatives": [
-              "Thuyền Cỏ Mượn Tên"
-            ]
-          }
-        ],
-        "books": [
-          {
-            "name": "Tam Quân Chi Chúng",
-            "alternatives": []
-          },
-          {
-            "name": "Rèn Luyện",
-            "alternatives": []
-          },
-          {
-            "name": "Dẫn Quân",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      }
-    ],
-    "counters": {
-      "good": [
-        "đội hình dựa vào thuộc tính để chiến đấu như Hoàng Mã Thương",
-        "Ngũ Mưu Thần"
-      ],
-      "avoid": [
-        "Pháp Quan Khiên",
-        "Ngô Kỵ có sức bùng nổ cao"
-      ]
-    },
-    "notes": null
-  },
-  {
-    "id": "do-uy-58",
-    "source": "do-uy",
-    "name": "Ninh Từ Tẩm",
-    "nickname": null,
-    "rawType": "Cung",
-    "unitType": [
-      "Cung"
-    ],
-    "faction": null,
-    "stars": null,
-    "status": "meta",
-    "heroes": [
-      {
-        "name": "Cam Ninh",
-        "baseName": "Cam Ninh",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Thuyền Cỏ Mượn Tên",
-            "alternatives": []
-          },
-          {
-            "name": "Quân Cẩm Phàm",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Thích Làm Việc Thiện",
-            "alternatives": []
-          },
-          {
-            "name": "Chiến Đấu Trường Kỳ",
-            "alternatives": []
-          },
-          {
-            "name": "Dẫn Quân",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      },
-      {
-        "name": "Thái Sử Từ",
-        "baseName": "Thái Sử Từ",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Đương Phong Thôi Quyết",
-            "alternatives": []
-          },
-          {
-            "name": "Thôi Phong Đoạn Nhẫn",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Thắng Sẽ Càng Mạnh",
-            "alternatives": []
-          },
-          {
-            "name": "Võ Lược",
-            "alternatives": []
-          },
-          {
-            "name": "Cầm Binh Khí",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      },
-      {
-        "name": "Liễu Tẩm",
-        "baseName": "Liễu Tẩm",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Lâm Nguy Cứu Chủ",
-            "alternatives": []
-          },
-          {
-            "name": "Nhạn Hành Trận",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Tam Quân Chi Chúng",
-            "alternatives": []
-          },
-          {
-            "name": "Rèn Luyện",
-            "alternatives": []
-          },
-          {
-            "name": "Dẫn Quân",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      }
-    ],
-    "counters": {
-      "good": [
-        "Hoàng Mã Thương",
-        "Kỳ Lân Cung",
-        "Ngũ Mưu Kỵ"
-      ],
-      "avoid": [
-        "đội hình lính Khiên phổ biến như Pháp Quan Khiên"
-      ]
-    },
-    "notes": null
-  },
-  {
-    "id": "do-uy-59",
-    "source": "do-uy",
-    "name": "Thiệu Giác Từ",
-    "nickname": null,
-    "rawType": "Khiên",
-    "unitType": [
-      "Khiên"
-    ],
-    "faction": null,
-    "stars": null,
-    "status": "meta",
-    "heroes": [
-      {
-        "name": "Chu Thiệu",
-        "baseName": "Chu Thiệu",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Võ Phong Trận",
-            "alternatives": []
-          },
-          {
-            "name": "Lính Giáp Mây",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Tam Quân Chi Chúng",
-            "alternatives": []
-          },
-          {
-            "name": "Rèn Luyện",
-            "alternatives": []
-          },
-          {
-            "name": "Dẫn Quân",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      },
-      {
-        "name": "Trương Giác",
-        "baseName": "Trương Giác",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Thái Bình Đạo Pháp",
-            "alternatives": []
-          },
-          {
-            "name": "Sĩ Biệt Tam Nhật",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Tam Quân Chi Chúng",
-            "alternatives": [
-              "Lấy Võ Dẹp Loạn"
-            ]
-          },
-          {
-            "name": "Quy Thuận",
-            "alternatives": [
-              "Quỷ Mưu"
-            ]
-          },
-          {
-            "name": "Chiến Đấu Trường Kỳ",
-            "alternatives": [
-              "Tướng Uy"
-            ]
-          }
-        ],
-        "note": null
-      },
-      {
-        "name": "Tả Từ",
-        "baseName": "Tả Từ",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Dốc Sức Tính Kế",
-            "alternatives": []
-          },
-          {
-            "name": "Cắt Xương Trị Độc",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Tấn Công Điểm Yếu",
-            "alternatives": []
-          },
-          {
-            "name": "Tốc Chiến",
-            "alternatives": []
-          },
-          {
-            "name": "Khép Hờ",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      }
-    ],
-    "counters": {
-      "good": [
-        "đội binh đao như Quần Cung",
-        "Hổ Thần Cung",
-        "Rào Cản Ngựa Cung",
-        "Khảng Khải Cung"
-      ],
-      "avoid": [
-        "Thái Úy Khiên có hiệu ứng Đốt Cháy",
-        "Đô Đốc Cung nước Ngô"
-      ]
-    },
-    "notes": null
-  },
-  {
-    "id": "do-uy-60",
-    "source": "do-uy",
-    "name": "Vũ Chính Hoành",
-    "nickname": null,
-    "rawType": "Khiên",
-    "unitType": [
-      "Khiên"
-    ],
-    "faction": null,
-    "stars": null,
-    "status": "meta",
-    "heroes": [
-      {
-        "name": "SP Quan Vũ (Khiên S)",
-        "baseName": "Quan Vũ",
-        "alternatives": [],
-        "variant": "Khiên S",
-        "isSP": true,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Lấy Ít Đánh Nhiều",
-            "alternatives": []
-          },
-          {
-            "name": "Kích Kỳ Nọa Quy",
-            "alternatives": [
-              "Gió Táp Mưa Sa"
-            ]
-          }
-        ],
-        "books": [
-          {
-            "name": "Chia Nhỏ Đánh Nhanh",
-            "alternatives": []
-          },
-          {
-            "name": "Bách Chiến",
-            "alternatives": []
-          },
-          {
-            "name": "Khép Hờ",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      },
-      {
-        "name": "SP Pháp Chính",
-        "baseName": "Pháp Chính",
-        "alternatives": [],
-        "variant": null,
-        "isSP": true,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Dưỡng Sức Đợi Chiến",
-            "alternatives": []
-          },
-          {
-            "name": "Không Đánh Mà Thắng",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Tam Quân Chi Chúng",
-            "alternatives": []
-          },
-          {
-            "name": "Dẫn Quân",
-            "alternatives": []
-          },
-          {
-            "name": "Rèn Luyện",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      },
-      {
-        "name": "Hoàng Phủ Hoành",
-        "baseName": "Hoàng Phủ Hoành",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Mê Hoặc",
-            "alternatives": []
-          },
-          {
-            "name": "Ngư Lân Trận",
-            "alternatives": [
-              "Lính Giáp Mây"
-            ]
-          }
-        ],
-        "books": [
-          {
-            "name": "Tam Quân Chi Chúng",
-            "alternatives": []
-          },
-          {
-            "name": "Dẫn Quân",
-            "alternatives": []
-          },
-          {
-            "name": "Rèn Luyện",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      }
-    ],
-    "counters": {
-      "good": [
-        "hầu hết đội sát thương binh đao"
-      ],
-      "avoid": [
-        "đội hình như Quyền Kỵ",
-        "Hoàng Mã Thương mang [Đương Phong Thôi Quyết]",
-        "đội đột kích bộc phát như Ngô Kỵ",
-        "Liêu Cơ Kỵ"
-      ]
-    },
-    "notes": null
-  },
-  {
-    "id": "do-uy-61",
-    "source": "do-uy",
-    "name": "Vũ Dực Phi",
-    "nickname": null,
-    "rawType": "Khiên",
-    "unitType": [
-      "Khiên"
-    ],
-    "faction": null,
-    "stars": null,
-    "status": "meta",
-    "heroes": [
-      {
-        "name": "Quan Vũ (Khiên S)",
-        "baseName": "Quan Vũ",
-        "alternatives": [],
-        "variant": "Khiên S",
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Cưỡi Ngựa Nghìn Dặm",
-            "alternatives": []
-          },
-          {
-            "name": "Tuyệt Kỳ Cấp Đạo",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Lấy Võ Dẹp Loạn",
-            "alternatives": []
-          },
-          {
-            "name": "Quỷ Mưu",
-            "alternatives": []
-          },
-          {
-            "name": "Tướng Uy",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      },
-      {
-        "name": "Trần Dực",
-        "baseName": "Trần Dực",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Kế Hay Mưu Giỏi",
-            "alternatives": []
-          },
-          {
-            "name": "Hãm Trận Doanh",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Hành Động Theo Thời",
-            "alternatives": []
-          },
-          {
-            "name": "Rèn Luyện",
-            "alternatives": []
-          },
-          {
-            "name": "Dẫn Quân",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      },
-      {
-        "name": "Trương Phi",
-        "baseName": "Trương Phi",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Thịnh Khí Linh Địch",
-            "alternatives": []
-          },
-          {
-            "name": "Hoành Tảo Thiên Quân",
-            "alternatives": []
-          }
-        ],
-        "books": [
-          {
-            "name": "Dĩ Trực Báo Oán",
-            "alternatives": []
-          },
-          {
-            "name": "Tinh Chuẩn",
-            "alternatives": []
-          },
-          {
-            "name": "Thiện Chiến",
-            "alternatives": []
-          }
-        ],
-        "note": null
-      }
-    ],
-    "counters": {
-      "good": [
-        "[Ôn Hầu Cung] [Khảng Khái Cung]"
-      ],
-      "avoid": [
-        "đội hình sát thương mưu lược có sức duy trì cao"
-      ]
-    },
-    "notes": null
-  },
-  {
     "id": "moi-phe-62",
     "source": "moi-phe",
     "name": "Vân Vũ Lượng",
@@ -21173,5 +19640,2985 @@
       "avoid": []
     },
     "notes": "Điều Kiền tiên quyết: có Đăng Dụng Lệnh,trong cốt truyện Trận Quan Độ"
+  },
+  {
+    "id": "do-uy-50",
+    "source": "do-uy",
+    "name": "Siêu Thiệu Du",
+    "nickname": null,
+    "rawType": "Thương",
+    "unitType": [
+      "Thương"
+    ],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "SP Mã Siêu",
+        "baseName": "Mã Siêu",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Đương Phong Thôi Quyết",
+            "alternatives": []
+          },
+          {
+            "name": "Thôi Phong Đoạn Nhẫn",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Tấn Công Điểm Yếu",
+            "alternatives": []
+          },
+          {
+            "name": "Tốc Chiến",
+            "alternatives": []
+          },
+          {
+            "name": "Khép Hờ",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      },
+      {
+        "name": "Chu Thiệu",
+        "baseName": "Chu Thiệu",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Vạn Quân Đoạt Sư",
+            "alternatives": []
+          },
+          {
+            "name": "Kế Hay Mưu Giỏi",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Yêu Lính Thương Dân",
+            "alternatives": []
+          },
+          {
+            "name": "Thế Phòng Thủ",
+            "alternatives": []
+          },
+          {
+            "name": "Phòng Bị",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      },
+      {
+        "name": "Hứa Du",
+        "baseName": "Hứa Du",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Giải Phiền Vệ",
+            "alternatives": []
+          },
+          {
+            "name": "Lâm Nguy Cứu Chủ",
+            "alternatives": [
+              "Cắt Xương Trị Độc"
+            ]
+          }
+        ],
+        "books": [
+          {
+            "name": "Yêu Lính Thương Dân",
+            "alternatives": []
+          },
+          {
+            "name": "Thế Phòng Thủ",
+            "alternatives": []
+          },
+          {
+            "name": "Phòng Bị",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [
+        "đội hình tốc độ chậm."
+      ],
+      "avoid": [
+        "Hoàng Mã Thương (SP Hoàng Phổ Tung) có độ tiến bậc cao",
+        "đội hình có hiệu quả Giao Binh Khí mạnh",
+        "như đội Nhạn Hồng Thương hoặc Hổ Thần Cung mang kỹ năng [Thịnh Khí Linh Địch]"
+      ]
+    },
+    "notes": null
+  },
+  {
+    "id": "do-uy-51",
+    "source": "do-uy",
+    "name": "Kỳ Hủ Du",
+    "nickname": null,
+    "rawType": "Kỵ",
+    "unitType": [
+      "Kỵ"
+    ],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "Dương Kỳ",
+        "baseName": "Dương Kỳ",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Dốc Sức Tính Kế",
+            "alternatives": []
+          },
+          {
+            "name": "Cắt Xương Trị Độc",
+            "alternatives": [
+              "Anh Thành Tự Thủ"
+            ]
+          }
+        ],
+        "books": [
+          {
+            "name": "Tam Quân Chi Chúng",
+            "alternatives": []
+          },
+          {
+            "name": "Rèn Luyện",
+            "alternatives": []
+          },
+          {
+            "name": "Dẫn Quân",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      },
+      {
+        "name": "Giả Hủ",
+        "baseName": "Giả Hủ",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Nhanh Trí Động Não",
+            "alternatives": []
+          },
+          {
+            "name": "Thiêu Đốt Doanh Lũy",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Tam Quân Chi Chúng",
+            "alternatives": []
+          },
+          {
+            "name": "Rèn Luyện",
+            "alternatives": []
+          },
+          {
+            "name": "Dẫn Quân",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      },
+      {
+        "name": "Tuân Du",
+        "baseName": "Tuân Du",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Đoạt Hồn Hiệp Phách",
+            "alternatives": []
+          },
+          {
+            "name": "Thượng Binh Phạt Mưu",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Tam Quân Chi Chúng",
+            "alternatives": []
+          },
+          {
+            "name": "Rèn Luyện",
+            "alternatives": []
+          },
+          {
+            "name": "Dẫn Quân",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [
+        "Khiên Thái Úy",
+        "Khiên Pháp Quan",
+        "Khiên Tam Tiên"
+      ],
+      "avoid": [
+        "Quần Cung",
+        "Nhận Hồng Thương"
+      ]
+    },
+    "notes": "Thiên Phú Chọn [Khách Quý Chật Nhà]."
+  },
+  {
+    "id": "do-uy-53",
+    "source": "do-uy",
+    "name": "Trực Chỉ Thuyền",
+    "nickname": null,
+    "rawType": "Cung",
+    "unitType": [
+      "Cung"
+    ],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "SP Lô Trực",
+        "baseName": "Lô Trực",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Cương Nhu Kết Hợp",
+            "alternatives": []
+          },
+          {
+            "name": "Nhạn Hành Trận",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Tam Quân Chi Chúng",
+            "alternatives": []
+          },
+          {
+            "name": "Chiến Đấu Trường Kỳ",
+            "alternatives": []
+          },
+          {
+            "name": "Dẫn Quân",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      },
+      {
+        "name": "Tiêu Chỉ",
+        "baseName": "Tiêu Chỉ",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Tử Sĩ Tiên Phong",
+            "alternatives": []
+          },
+          {
+            "name": "Nhân Lợi Chế Quyền",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Tam Quân Chi Chúng",
+            "alternatives": []
+          },
+          {
+            "name": "Chiến Đấu Trường Kỳ",
+            "alternatives": []
+          },
+          {
+            "name": "Dẫn Quân",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      },
+      {
+        "name": "SP Điêu Thuyền",
+        "baseName": "Điêu Thuyền",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thâm Tàng Nhược Hư",
+            "alternatives": [
+              "Hợp Quân Tụ Chúng"
+            ]
+          },
+          {
+            "name": "Đồng Lòng Hợp Sức",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Tam Quân Chi Chúng",
+            "alternatives": []
+          },
+          {
+            "name": "Chiến Đấu Trường Kỳ",
+            "alternatives": []
+          },
+          {
+            "name": "Dẫn Quân",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [
+        "Hầu hết các Đội quân binh đao (bao gồm Pháp Quan Thuẫn",
+        "Ngô Nữ Cung",
+        "Bắc Phạt Thương)"
+      ],
+      "avoid": [
+        "Các đội hình có Trí Lực cao và khả năng bùng nổ mạnh",
+        "như Thục Trí Cung",
+        "Ngũ Mưu Kỵ",
+        "Trương Giác Khiên"
+      ]
+    },
+    "notes": null
+  },
+  {
+    "id": "do-uy-55",
+    "source": "do-uy",
+    "name": "Hoành Hương Kiều",
+    "nickname": null,
+    "rawType": "Cung",
+    "unitType": [
+      "Cung"
+    ],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "Hoàng Phủ Hoành (Cung cấp S)",
+        "baseName": "Hoàng Phủ Hoành",
+        "alternatives": [],
+        "variant": "Cung cấp S",
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Tinh·Ngư Lân Trận",
+            "alternatives": []
+          },
+          {
+            "name": "Lâm Nguy Cứu Chủ",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Tam Quân Chi Chúng",
+            "alternatives": []
+          },
+          {
+            "name": "Dẫn Quân",
+            "alternatives": []
+          },
+          {
+            "name": "Rèn Luyện",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      },
+      {
+        "name": "Tôn Thượng Hương",
+        "baseName": "Tôn Thượng Hương",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Đương Phong Thôi Quyết",
+            "alternatives": []
+          },
+          {
+            "name": "Phá Phong Đoạn Nhẫn",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Thắng mà càng mạnh",
+            "alternatives": []
+          },
+          {
+            "name": "Thắng Chiến",
+            "alternatives": []
+          },
+          {
+            "name": "Tàng Đao",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      },
+      {
+        "name": "CO Đại Kiều",
+        "baseName": "Đại Kiều",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": true,
+        "tactics": [
+          {
+            "name": "Mê Hoặc",
+            "alternatives": []
+          },
+          {
+            "name": "Thuyền Cỏ Mượn Tên",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Tam Quân Chi Chúng",
+            "alternatives": []
+          },
+          {
+            "name": "Dẫn Quân",
+            "alternatives": []
+          },
+          {
+            "name": "Rèn Luyện",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [
+        "Ngũ Mưu Kỵ",
+        "Thục Trí Cung",
+        "Cung Rào Cản Ngựa"
+      ],
+      "avoid": [
+        "đội hình có ít đòn Tấn công thường",
+        "không bị ảnh hưởng bởi Chế Giễu",
+        "có nhiều lớp Chống Đỡ"
+      ]
+    },
+    "notes": null
+  },
+  {
+    "id": "do-uy-57",
+    "source": "do-uy",
+    "name": "Du Bố Tẩm",
+    "nickname": null,
+    "rawType": "Cung",
+    "unitType": [
+      "Cung"
+    ],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "Hứa Du",
+        "baseName": "Hứa Du",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Quân Cẩm Phàm",
+            "alternatives": []
+          },
+          {
+            "name": "Lâm Nguy Cứu Chủ",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Tam Quân Chi Chúng",
+            "alternatives": []
+          },
+          {
+            "name": "Rèn Luyện",
+            "alternatives": []
+          },
+          {
+            "name": "Dẫn Quân",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      },
+      {
+        "name": "Lữ Bố",
+        "baseName": "Lữ Bố",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Đương Phong Thôi Quyết",
+            "alternatives": []
+          },
+          {
+            "name": "Thôi Phong Đoạn Nhẫn",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Đánh Bất Ngờ Thắng",
+            "alternatives": []
+          },
+          {
+            "name": "Tinh Chuẩn",
+            "alternatives": []
+          },
+          {
+            "name": "Thiện Chiến",
+            "alternatives": [
+              "Trì Trọng"
+            ]
+          }
+        ],
+        "note": null
+      },
+      {
+        "name": "Liễu Tẩm",
+        "baseName": "Liễu Tẩm",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Nhạn Hành Trận",
+            "alternatives": []
+          },
+          {
+            "name": "Thiêu Đốt Doanh Lũy",
+            "alternatives": [
+              "Thuyền Cỏ Mượn Tên"
+            ]
+          }
+        ],
+        "books": [
+          {
+            "name": "Tam Quân Chi Chúng",
+            "alternatives": []
+          },
+          {
+            "name": "Rèn Luyện",
+            "alternatives": []
+          },
+          {
+            "name": "Dẫn Quân",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [
+        "đội hình dựa vào thuộc tính để chiến đấu như Hoàng Mã Thương",
+        "Ngũ Mưu Thần"
+      ],
+      "avoid": [
+        "Pháp Quan Khiên",
+        "Ngô Kỵ có sức bùng nổ cao"
+      ]
+    },
+    "notes": null
+  },
+  {
+    "id": "do-uy-58",
+    "source": "do-uy",
+    "name": "Ninh Từ Tẩm",
+    "nickname": null,
+    "rawType": "Cung",
+    "unitType": [
+      "Cung"
+    ],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "Cam Ninh",
+        "baseName": "Cam Ninh",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thuyền Cỏ Mượn Tên",
+            "alternatives": []
+          },
+          {
+            "name": "Quân Cẩm Phàm",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Thích Làm Việc Thiện",
+            "alternatives": []
+          },
+          {
+            "name": "Chiến Đấu Trường Kỳ",
+            "alternatives": []
+          },
+          {
+            "name": "Dẫn Quân",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      },
+      {
+        "name": "Thái Sử Từ",
+        "baseName": "Thái Sử Từ",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Đương Phong Thôi Quyết",
+            "alternatives": []
+          },
+          {
+            "name": "Thôi Phong Đoạn Nhẫn",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Thắng Sẽ Càng Mạnh",
+            "alternatives": []
+          },
+          {
+            "name": "Võ Lược",
+            "alternatives": []
+          },
+          {
+            "name": "Cầm Binh Khí",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      },
+      {
+        "name": "Liễu Tẩm",
+        "baseName": "Liễu Tẩm",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Lâm Nguy Cứu Chủ",
+            "alternatives": []
+          },
+          {
+            "name": "Nhạn Hành Trận",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Tam Quân Chi Chúng",
+            "alternatives": []
+          },
+          {
+            "name": "Rèn Luyện",
+            "alternatives": []
+          },
+          {
+            "name": "Dẫn Quân",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [
+        "Hoàng Mã Thương",
+        "Kỳ Lân Cung",
+        "Ngũ Mưu Kỵ"
+      ],
+      "avoid": [
+        "đội hình lính Khiên phổ biến như Pháp Quan Khiên"
+      ]
+    },
+    "notes": null
+  },
+  {
+    "id": "do-uy-ss18-0",
+    "source": "do-uy",
+    "name": "Trần Dực - Đô đốc Cung",
+    "nickname": null,
+    "rawType": "Cung",
+    "unitType": [
+      "Cung"
+    ],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "Chu Du",
+        "baseName": "Chu Du",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Đoạt Hồn Hiệp Phách",
+            "alternatives": []
+          },
+          {
+            "name": "Phong Trợ Hỏa Thế",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Lỗ Túc",
+        "baseName": "Lỗ Túc",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Tinh-Phong Thi",
+            "alternatives": []
+          },
+          {
+            "name": "Toàn Quân Đồng Lòng",
+            "alternatives": [
+              "Bạch Mã Nghĩa Tòng"
+            ]
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Trần Dực",
+        "baseName": "Trần Dực",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thịnh Khí Địch Linh",
+            "alternatives": []
+          },
+          {
+            "name": "Tỏa Nhuệ",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: Chu Du + Lỗ Túc + Trần Dực"
+  },
+  {
+    "id": "do-uy-ss18-1",
+    "source": "do-uy",
+    "name": "Lục Tốn Đô Úy cung V3",
+    "nickname": null,
+    "rawType": "Cung",
+    "unitType": [
+      "Cung"
+    ],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "SP Chu Du",
+        "baseName": "Chu Du",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Toàn Quân Đồng Lòng",
+            "alternatives": []
+          },
+          {
+            "name": "Sĩ Biệt Tam Nhật",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Hoàng Phủ Hoành",
+        "baseName": "Hoàng Phủ Hoành",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Mị Hoặc",
+            "alternatives": []
+          },
+          {
+            "name": "Thuyền Cỏ Mượn Tên",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Lục Tốn",
+        "baseName": "Lục Tốn",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thái Bình Đạo Pháp",
+            "alternatives": []
+          },
+          {
+            "name": "Công Bất Đường Quyên",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: SP Chu Du + Hoàng Phủ Hoành + Lục Tốn"
+  },
+  {
+    "id": "do-uy-ss18-2",
+    "source": "do-uy",
+    "name": "Lục Tốn Đô Úy cung V2",
+    "nickname": null,
+    "rawType": "Cung",
+    "unitType": [
+      "Cung"
+    ],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "SP Chu Du",
+        "baseName": "Chu Du",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Đương Phong Thôi Quyết",
+            "alternatives": []
+          },
+          {
+            "name": "Đồng Tâm Hiệp Lực",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Chu Thiệu",
+        "baseName": "Chu Thiệu",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Mị Hoặc",
+            "alternatives": []
+          },
+          {
+            "name": "Thuyền Cỏ Mượn Tên",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Lục Tốn",
+        "baseName": "Lục Tốn",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thái Bình Đạo Pháp",
+            "alternatives": []
+          },
+          {
+            "name": "Công Bất Đường Quyên",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: SP Chu Du + Chu Thiệu + Lục Tốn"
+  },
+  {
+    "id": "do-uy-ss18-3",
+    "source": "do-uy",
+    "name": "Lục Tốn Đô Úy cung V1",
+    "nickname": null,
+    "rawType": "Cung",
+    "unitType": [
+      "Cung"
+    ],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "SP Chu Du",
+        "baseName": "Chu Du",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Toàn Quân Đồng Lòng",
+            "alternatives": []
+          },
+          {
+            "name": "Sĩ Biệt Tam Nhật",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Mã Thiền",
+        "baseName": "Mã Thiền",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Quát Cốt Liệu Độc",
+            "alternatives": []
+          },
+          {
+            "name": "Kế Hay Mưu Giỏi",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Lục Tốn",
+        "baseName": "Lục Tốn",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Vạn Quân Đoạt Suất",
+            "alternatives": []
+          },
+          {
+            "name": "Công Bất Đường Quyên",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: SP Chu Du + Mã Thiền + Lục Tốn"
+  },
+  {
+    "id": "do-uy-ss18-4",
+    "source": "do-uy",
+    "name": "Thái Sư Cung V2",
+    "nickname": null,
+    "rawType": "Cung",
+    "unitType": [
+      "Cung"
+    ],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "SP Đổng Trác",
+        "baseName": "Đổng Trác",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Nhạn Hình Trận",
+            "alternatives": []
+          },
+          {
+            "name": "Tiên Đăng Tử Sĩ",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Trần Dực",
+        "baseName": "Trần Dực",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Cương Nhu Kết Hợp",
+            "alternatives": []
+          },
+          {
+            "name": "Đồng Tâm Hiệp Lực",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "SP Điêu Thuyền",
+        "baseName": "Điêu Thuyền",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thâm Tàng Nhược Hư",
+            "alternatives": []
+          },
+          {
+            "name": "Hợp Quân Tụ Chúng",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: SP Đổng Trác + Trần Dực + SP Điêu Thuyền"
+  },
+  {
+    "id": "do-uy-ss18-5",
+    "source": "do-uy",
+    "name": "Đô Uý-Ly Hỏa Cung",
+    "nickname": null,
+    "rawType": "Cung",
+    "unitType": [
+      "Cung"
+    ],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "Chu Thiệu",
+        "baseName": "Chu Thiệu",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Tiềm Long Trận",
+            "alternatives": []
+          },
+          {
+            "name": "Cương Nhu Kết Hợp",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Lục Tốn",
+        "baseName": "Lục Tốn",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Công Bất Đường Quyên",
+            "alternatives": []
+          },
+          {
+            "name": "Sĩ Biệt Tam Nhật",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "SP Điêu Thuyền",
+        "baseName": "Điêu Thuyền",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thâm Tàng Nhược Hư",
+            "alternatives": []
+          },
+          {
+            "name": "Đồng Tâm Hiệp Lực",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: Chu Thiệu + Lục Tốn + SP Điêu Thuyền"
+  },
+  {
+    "id": "do-uy-ss18-6",
+    "source": "do-uy",
+    "name": "Đô Úy Tam Tiên thuẫn",
+    "nickname": null,
+    "rawType": "Khiên",
+    "unitType": [
+      "Khiên"
+    ],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "Chu Thiệu",
+        "baseName": "Chu Thiệu",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Võ Phong Trận",
+            "alternatives": []
+          },
+          {
+            "name": "Lính Giáp Mây",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Trương Giác",
+        "baseName": "Trương Giác",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thái Bình Đạo Pháp",
+            "alternatives": []
+          },
+          {
+            "name": "Sĩ Biệt Tam Nhật",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Tả Từ",
+        "baseName": "Tả Từ",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Dưỡng Sức Đợi Chiến",
+            "alternatives": []
+          },
+          {
+            "name": "Quát Cốt Liệu Độc",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: Chu Thiệu + Trương Giác + Tả Từ"
+  },
+  {
+    "id": "do-uy-ss18-7",
+    "source": "do-uy",
+    "name": "Đô Úy Tôn Quyền cung",
+    "nickname": null,
+    "rawType": "Cung",
+    "unitType": [
+      "Cung"
+    ],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "Tôn Quyền",
+        "baseName": "Tôn Quyền",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Đương Phong Thôi Quyết",
+            "alternatives": []
+          },
+          {
+            "name": "Binh Vô Thường Thế",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Tô Tín",
+        "baseName": "Tô Tín",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Tỏa Nhuệ",
+            "alternatives": []
+          },
+          {
+            "name": "Thịnh Khí Lăng Địch",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "SP Bộ Luyện Sư",
+        "baseName": "Bộ Luyện Sư",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thâm Mưu Viễn Lự",
+            "alternatives": []
+          },
+          {
+            "name": "Phong Thỉ Trận",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: Tôn Quyền + Tô Tín + SP Bộ Luyện Sư"
+  },
+  {
+    "id": "do-uy-ss18-8",
+    "source": "do-uy",
+    "name": "Lục Tốn Đô Úy cung",
+    "nickname": null,
+    "rawType": "Cung",
+    "unitType": [
+      "Cung"
+    ],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "SP Chu Du",
+        "baseName": "Chu Du",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Toàn Quân Đồng Lòng",
+            "alternatives": []
+          },
+          {
+            "name": "Sĩ Biệt Tam Nhật",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Mã Thiền",
+        "baseName": "Mã Thiền",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Quát Cốt Liệu Độc",
+            "alternatives": []
+          },
+          {
+            "name": "Kế Hay Mưu Giỏi",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Lục Tốn",
+        "baseName": "Lục Tốn",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Vạn Quân Đoạt Suất",
+            "alternatives": []
+          },
+          {
+            "name": "Công Bất Đường Quyên",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: SP Chu Du + Mã Thiền + Lục Tốn"
+  },
+  {
+    "id": "do-uy-ss18-9",
+    "source": "do-uy",
+    "name": "Từ Ngạn Hoàng Trung",
+    "nickname": null,
+    "rawType": "",
+    "unitType": [],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "SP Gia Cát Lượng",
+        "baseName": "Gia Cát Lượng",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Võ Phong Trận",
+            "alternatives": []
+          },
+          {
+            "name": "Dưỡng Sức Đợi Chiến",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Hoàng Trung",
+        "baseName": "Hoàng Trung",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Phá Trận Thôi Kiên",
+            "alternatives": []
+          },
+          {
+            "name": "Sở Hướng Phi Mĩ",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Từ Ngạn",
+        "baseName": "Từ Ngạn",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Quát Cốt Liệu Độc",
+            "alternatives": []
+          },
+          {
+            "name": "Tỏa Nhuệ",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: SP Gia Cát Lượng + Hoàng Trung + Từ Ngạn"
+  },
+  {
+    "id": "do-uy-ss18-10",
+    "source": "do-uy",
+    "name": "Tô Tín Đô Đốc",
+    "nickname": null,
+    "rawType": "",
+    "unitType": [],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "Chu Du",
+        "baseName": "Chu Du",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Đoạt Hồn Hiệp Phách",
+            "alternatives": []
+          },
+          {
+            "name": "Phong Trợ Hỏa Thế",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Lữ Mông",
+        "baseName": "Lữ Mông",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Đương Phong Thôi Quyết",
+            "alternatives": []
+          },
+          {
+            "name": "Toàn Quân Đồng Lòng",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Tô Tín",
+        "baseName": "Tô Tín",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thuyền Cỏ Mượn Tên",
+            "alternatives": []
+          },
+          {
+            "name": "Thâm Mưu Viễn Lự",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: Chu Du + Lữ Mông + Tô Tín"
+  },
+  {
+    "id": "do-uy-ss18-11",
+    "source": "do-uy",
+    "name": "Trần Dực Đô Đốc",
+    "nickname": null,
+    "rawType": "",
+    "unitType": [],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "Chu Du",
+        "baseName": "Chu Du",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Đoạt Hồn Hiệp Phách",
+            "alternatives": []
+          },
+          {
+            "name": "Phong Trợ Hỏa Thế",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Lục Tốn",
+        "baseName": "Lục Tốn",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thái Bình Đạo Pháp",
+            "alternatives": []
+          },
+          {
+            "name": "Toàn Quân Đồng Lòng",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Trần Dực",
+        "baseName": "Trần Dực",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thuyền Cỏ Mượn Tên",
+            "alternatives": []
+          },
+          {
+            "name": "Thâm Mưu Viễn Lự",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: Chu Du + Lục Tốn + Trần Dực"
+  },
+  {
+    "id": "do-uy-ss18-12",
+    "source": "do-uy",
+    "name": "Trần Dực Thục Trí",
+    "nickname": null,
+    "rawType": "",
+    "unitType": [],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "Gia Cát Lượng",
+        "baseName": "Gia Cát Lượng",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Nhạn Hình Trận",
+            "alternatives": []
+          },
+          {
+            "name": "Quát Cốt Liệu Độc",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Bàng Thống",
+        "baseName": "Bàng Thống",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thái Bình Đạo Pháp",
+            "alternatives": []
+          },
+          {
+            "name": "Sĩ Biệt Tam Nhật",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Trần Dực",
+        "baseName": "Trần Dực",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thừa Địch Bất Ngu",
+            "alternatives": []
+          },
+          {
+            "name": "Tỏa Nhuệ",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: Gia Cát Lượng + Bàng Thống + Trần Dực"
+  },
+  {
+    "id": "do-uy-ss18-13",
+    "source": "do-uy",
+    "name": "Thái Úy Tiêu Chỉ",
+    "nickname": null,
+    "rawType": "Khiên",
+    "unitType": [
+      "Khiên"
+    ],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "Tư Mã Ý",
+        "baseName": "Tư Mã Ý",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Toàn Quân Đồng Lòng",
+            "alternatives": []
+          },
+          {
+            "name": "Dụng Võ Thần Thông",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Tiêu Chỉ",
+        "baseName": "Tiêu Chỉ",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Mị Hoặc",
+            "alternatives": []
+          },
+          {
+            "name": "Độc Hành Phó Đấu",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Mãn Sủng",
+        "baseName": "Mãn Sủng",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Hình Nhất Trận",
+            "alternatives": []
+          },
+          {
+            "name": "Dưỡng Sức Đợi Chiến",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: Tư Mã Ý + Tiêu Chỉ + Mãn Sủng"
+  },
+  {
+    "id": "do-uy-ss18-14",
+    "source": "do-uy",
+    "name": "Thẩm Hằng Phá Trận",
+    "nickname": null,
+    "rawType": "",
+    "unitType": [],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "Thẩm Hằng",
+        "baseName": "Thẩm Hằng",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thôi Phong Đoạn Nhẫn",
+            "alternatives": []
+          },
+          {
+            "name": "Nhất Kỵ Đương Thiên",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Hạ Hầu Đôn",
+        "baseName": "Hạ Hầu Đôn",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Hổ Báo Kỵ",
+            "alternatives": []
+          },
+          {
+            "name": "Tinh - Ngư Lân Trận",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Hạ Hầu Uyên",
+        "baseName": "Hạ Hầu Uyên",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Lỏa Y Huyết Chiến",
+            "alternatives": []
+          },
+          {
+            "name": "Đương Phong Thôi Quyết",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: Thẩm Hằng + Hạ Hầu Đôn + Hạ Hầu Uyên"
+  },
+  {
+    "id": "do-uy-ss18-15",
+    "source": "do-uy",
+    "name": "Trần Dực Đào Viên",
+    "nickname": null,
+    "rawType": "",
+    "unitType": [],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "Trương Phi",
+        "baseName": "Trương Phi",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Hoành Tảo Thiên Quân",
+            "alternatives": []
+          },
+          {
+            "name": "Gió Táp Mưa Sa",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Quan Vũ",
+        "baseName": "Quan Vũ",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Cưỡi Ngựa Nghìn Dặm",
+            "alternatives": []
+          },
+          {
+            "name": "Thịnh Khí Lăng Địch",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Trần Dực",
+        "baseName": "Trần Dực",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Kế Hay Mưu Giỏi",
+            "alternatives": []
+          },
+          {
+            "name": "Tỏa Nhuệ",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: Trương Phi + Quan Vũ + Trần Dực"
+  },
+  {
+    "id": "do-uy-ss18-16",
+    "source": "do-uy",
+    "name": "Chu Thiệu Đô Đốc",
+    "nickname": null,
+    "rawType": "",
+    "unitType": [],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "Chu Du",
+        "baseName": "Chu Du",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Đoạt Hồn Hiệp Phách",
+            "alternatives": []
+          },
+          {
+            "name": "Phong Trợ Hỏa Thế",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Lục Tốn",
+        "baseName": "Lục Tốn",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thái Bình Đạo Pháp",
+            "alternatives": []
+          },
+          {
+            "name": "Toàn Quân Đồng Lòng",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Chu Thiệu",
+        "baseName": "Chu Thiệu",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thuyền Cỏ Mượn Tên",
+            "alternatives": []
+          },
+          {
+            "name": "Thâm Mưu Viễn Lự",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: Chu Du + Lục Tốn + Chu Thiệu"
+  },
+  {
+    "id": "do-uy-ss18-17",
+    "source": "do-uy",
+    "name": "Thái Úy Hoàng Phủ",
+    "nickname": null,
+    "rawType": "Khiên",
+    "unitType": [
+      "Khiên"
+    ],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "Tư Mã Ý",
+        "baseName": "Tư Mã Ý",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Toàn Quân Đồng Lòng",
+            "alternatives": []
+          },
+          {
+            "name": "Sĩ Biệt Tam Nhật",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Hoàng Phủ Hoành",
+        "baseName": "Hoàng Phủ Hoành",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Mị Hoặc",
+            "alternatives": []
+          },
+          {
+            "name": "Thuyền Cỏ Mượn Tên",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Mãn Sủng",
+        "baseName": "Mãn Sủng",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Hình Nhất Trận",
+            "alternatives": []
+          },
+          {
+            "name": "Dưỡng Sức Đợi Chiến",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: Tư Mã Ý + Hoàng Phủ Hoành + Mãn Sủng"
+  },
+  {
+    "id": "do-uy-ss18-18",
+    "source": "do-uy",
+    "name": "Chu Thiệu Ngũ Mưu",
+    "nickname": null,
+    "rawType": "",
+    "unitType": [],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "SP Tuân Úc",
+        "baseName": "Tuân Úc",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Dốc Sức Tính Kế",
+            "alternatives": []
+          },
+          {
+            "name": "Quát Cốt Liệu Độc",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "SP Quách Gia",
+        "baseName": "Quách Gia",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Đoạt Hồn Hiệp Phách",
+            "alternatives": []
+          },
+          {
+            "name": "Thượng Binh Phạt Mưu",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Chu Thiệu",
+        "baseName": "Chu Thiệu",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Nhanh Trí Động Não",
+            "alternatives": []
+          },
+          {
+            "name": "Đương Phong Thôi Quyết",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: SP Tuân Úc + SP Quách Gia + Chu Thiệu"
+  },
+  {
+    "id": "do-uy-ss18-19",
+    "source": "do-uy",
+    "name": "Pháp Quan Tiêu Chỉ",
+    "nickname": null,
+    "rawType": "",
+    "unitType": [],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "SP Quan Vũ",
+        "baseName": "Quan Vũ",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Lấy Ít Địch Nhiều",
+            "alternatives": []
+          },
+          {
+            "name": "Ngư Lân Trận",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Tiêu Chỉ",
+        "baseName": "Tiêu Chỉ",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Độc Hành Phó Đấu",
+            "alternatives": []
+          },
+          {
+            "name": "Mị Hoặc",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "SP Pháp Chính",
+        "baseName": "Pháp Chính",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Không Đánh Mà Thắng",
+            "alternatives": []
+          },
+          {
+            "name": "Dưỡng Sức Đợi Chiến",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: SP Quan Vũ + Tiêu Chỉ + SP Pháp Chính"
+  },
+  {
+    "id": "do-uy-ss18-20",
+    "source": "do-uy",
+    "name": "Thẩm Hằng Ngũ Mưu",
+    "nickname": null,
+    "rawType": "",
+    "unitType": [],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "SP Tuân Úc",
+        "baseName": "Tuân Úc",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Dốc Sức Tính Kế",
+            "alternatives": []
+          },
+          {
+            "name": "Quát Cốt Liệu Độc",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "SP Quách Gia",
+        "baseName": "Quách Gia",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Đoạt Hồn Hiệp Phách",
+            "alternatives": []
+          },
+          {
+            "name": "Đồng Lòng Hợp Sức",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Thẩm Hằng",
+        "baseName": "Thẩm Hằng",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Nhanh Trí Động Não",
+            "alternatives": []
+          },
+          {
+            "name": "Thượng Binh Phạt Mưu",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: Thẩm Hằng + SP Tuân Úc + SP Quách Gia"
+  },
+  {
+    "id": "do-uy-ss18-21",
+    "source": "do-uy",
+    "name": "Chu Thiệu Tam Tiên",
+    "nickname": null,
+    "rawType": "",
+    "unitType": [],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "Trương Giác",
+        "baseName": "Trương Giác",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thái Bình Đạo Pháp",
+            "alternatives": []
+          },
+          {
+            "name": "Sĩ Biệt Tam Nhật",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Tả Từ",
+        "baseName": "Tả Từ",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Dưỡng Sức Đợi Chiến",
+            "alternatives": []
+          },
+          {
+            "name": "Quát Cốt Liệu Độc",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Chu Thiệu",
+        "baseName": "Chu Thiệu",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Phong Thỉ Trận",
+            "alternatives": []
+          },
+          {
+            "name": "Toàn Quân Đồng Lòng",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: Trương Giác + Tả Từ + Chu Thiệu"
+  },
+  {
+    "id": "do-uy-ss18-22",
+    "source": "do-uy",
+    "name": "Ôn Hầu Cung",
+    "nickname": null,
+    "rawType": "Cung",
+    "unitType": [
+      "Cung"
+    ],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "Trần Hy",
+        "baseName": "Trần Hy",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thuyền Cỏ Mượn Tên",
+            "alternatives": []
+          },
+          {
+            "name": "Cẩm Phàm Quân",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Lữ Bố",
+        "baseName": "Lữ Bố",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Đương Phong Thôi Quyết",
+            "alternatives": []
+          },
+          {
+            "name": "Thôi Phong Đoạn Nhẫn",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Hứa Du",
+        "baseName": "Hứa Du",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Tinh - Ngư Lân Trận",
+            "alternatives": []
+          },
+          {
+            "name": "Lâm Nguy Cứu Chủ",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: Trần Hy + Lữ Bố + Hứa Du"
+  },
+  {
+    "id": "do-uy-ss18-23",
+    "source": "do-uy",
+    "name": "Từ Ngạn Trương Giác",
+    "nickname": null,
+    "rawType": "",
+    "unitType": [],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "Trương Giác",
+        "baseName": "Trương Giác",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thái Bình Đạo Pháp",
+            "alternatives": []
+          },
+          {
+            "name": "Sĩ Biệt Tam Nhật",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Từ Ngạn",
+        "baseName": "Từ Ngạn",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Dưỡng Sức Đợi Chiến",
+            "alternatives": []
+          },
+          {
+            "name": "Tỏa Nhuệ",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Tả Từ",
+        "baseName": "Tả Từ",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Phong Thỉ Trận",
+            "alternatives": []
+          },
+          {
+            "name": "Quát Cốt Liệu Độc",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: Trương Giác + Từ Ngạn + Tả Từ"
+  },
+  {
+    "id": "do-uy-ss18-24",
+    "source": "do-uy",
+    "name": "Chu Thiệu Thục Trí",
+    "nickname": null,
+    "rawType": "",
+    "unitType": [],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "Gia Cát Lượng",
+        "baseName": "Gia Cát Lượng",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Nhạn Hình Trận",
+            "alternatives": []
+          },
+          {
+            "name": "Quát Cốt Liệu Độc",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Bàng Thống",
+        "baseName": "Bàng Thống",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thái Bình Đạo Pháp",
+            "alternatives": []
+          },
+          {
+            "name": "Sĩ Biệt Tam Nhật",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Chu Thiệu",
+        "baseName": "Chu Thiệu",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Đương Phong Thôi Quyết",
+            "alternatives": []
+          },
+          {
+            "name": "Thừa Địch Bất Ngu",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: Gia Cát Lượng + Bàng Thống + Chu Thiệu"
+  },
+  {
+    "id": "do-uy-ss18-25",
+    "source": "do-uy",
+    "name": "Pháp Quan Hoàng Phủ",
+    "nickname": null,
+    "rawType": "",
+    "unitType": [],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "SP Quan Vũ",
+        "baseName": "Quan Vũ",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Lấy Ít Địch Nhiều",
+            "alternatives": []
+          },
+          {
+            "name": "Kích Kỳ Đọa Quy",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Hoàng Phủ Hoành",
+        "baseName": "Hoàng Phủ Hoành",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Mị Hoặc",
+            "alternatives": []
+          },
+          {
+            "name": "Ngư Lân Trận",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "SP Pháp Chính",
+        "baseName": "Pháp Chính",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Không Đánh Mà Thắng",
+            "alternatives": []
+          },
+          {
+            "name": "Dưỡng Sức Đợi Chiến",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: SP Quan Vũ + Hoàng Phủ Hoành + SP Pháp Chính"
+  },
+  {
+    "id": "do-uy-ss18-26",
+    "source": "do-uy",
+    "name": "Thái Sư Cung",
+    "nickname": null,
+    "rawType": "Cung",
+    "unitType": [
+      "Cung"
+    ],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "SP Đổng Trác",
+        "baseName": "Đổng Trác",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Nhạn Hình Trận",
+            "alternatives": []
+          },
+          {
+            "name": "Tiên Đăng Tử Sĩ",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "SP Điêu Thuyền",
+        "baseName": "Điêu Thuyền",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thâm Tàng Nhược Hư",
+            "alternatives": []
+          },
+          {
+            "name": "Đồng Tâm Hiệp Lực",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Tiêu Chỉ",
+        "baseName": "Tiêu Chỉ",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Cương Nhu Kết Hợp",
+            "alternatives": []
+          },
+          {
+            "name": "Nhân Lợi Chế Quyền",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: SP Đổng Trác + SP Điêu Thuyền + Tiêu Chỉ"
+  },
+  {
+    "id": "do-uy-ss18-27",
+    "source": "do-uy",
+    "name": "Cự Mã Cung",
+    "nickname": null,
+    "rawType": "Cung",
+    "unitType": [
+      "Cung"
+    ],
+    "faction": null,
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "SP Lư Thực",
+        "baseName": "Lư Thực",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Nhạn Hình Trận",
+            "alternatives": []
+          },
+          {
+            "name": "Tiên Đăng Tử Sĩ",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "SP Điêu Thuyền",
+        "baseName": "Điêu Thuyền",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thâm Tàng Nhược Hư",
+            "alternatives": []
+          },
+          {
+            "name": "Đồng Tâm Hiệp Lực",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Tiêu Chỉ",
+        "baseName": "Tiêu Chỉ",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Cương Nhu Kết Hợp",
+            "alternatives": []
+          },
+          {
+            "name": "Nhân Lợi Chế Quyền",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Core: SP Lư Thực + SP Điêu Thuyền + Tiêu Chỉ"
   }
 ]

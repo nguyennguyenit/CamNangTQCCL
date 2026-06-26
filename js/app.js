@@ -200,8 +200,8 @@ function renderDoUy() {
   for (const t of teams) grid.append(teamCard(t, onTag, TIER_INDEX.get(t.id)));
   $("#section-do-uy").replaceChildren(
     el("div", { class: "section-intro" }, [
-      el("h2", { class: "section-intro-title" }, "Team Đô Úy (ss24)"),
-      el("p", { class: "section-intro-sub" }, `${teams.length} đội — meta đội hình Đô Úy.`),
+      el("h2", { class: "section-intro-title" }, "Team Đô Úy (ss18)"),
+      el("p", { class: "section-intro-sub" }, `${teams.length} đội — meta đội hình Đô Úy, có gắn tier tham khảo.`),
     ]),
     grid,
   );

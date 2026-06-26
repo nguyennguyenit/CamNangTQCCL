@@ -1,0 +1,646 @@
+[
+ {
+  "team_name": "Trần Dực - Đô đốc Cung",
+  "tier": "T0.5",
+  "commander": "Trần Dực",
+  "core": "Chu Du + Lỗ Túc + Trần Dực",
+  "formation": [
+   {
+    "tuong": "Chu Du",
+    "cp1": "Đoạt Hồn Hiệp Phách",
+    "cp2": "Phong Trợ Hỏa Thế"
+   },
+   {
+    "tuong": "Lỗ Túc",
+    "cp1": "Tinh-Phong Thi",
+    "cp2": "Toàn Quân Đồng Lòng / Bạch Mã Nghĩa Tòng"
+   },
+   {
+    "tuong": "Trần Dực",
+    "cp1": "Thịnh Khí Địch Linh",
+    "cp2": "Tỏa Nhuệ"
+   }
+  ]
+ },
+ {
+  "team_name": "Lục Tốn Đô Úy cung V3",
+  "tier": "T1",
+  "commander": "Hoàng Phủ Hoành",
+  "core": "SP Chu Du + Hoàng Phủ Hoành + Lục Tốn",
+  "formation": [
+   {
+    "tuong": "SP Chu Du",
+    "cp1": "Toàn Quân Đồng Lòng",
+    "cp2": "Sĩ Biệt Tam Nhật"
+   },
+   {
+    "tuong": "Hoàng Phủ Hoành",
+    "cp1": "Mị Hoặc",
+    "cp2": "Thuyền Cỏ Mượn Tên"
+   },
+   {
+    "tuong": "Lục Tốn",
+    "cp1": "Thái Bình Đạo Pháp",
+    "cp2": "Công Bất Đường Quyên"
+   }
+  ]
+ },
+ {
+  "team_name": "Lục Tốn Đô Úy cung V2",
+  "tier": "T1",
+  "commander": "Chu Thiệu",
+  "core": "SP Chu Du + Chu Thiệu + Lục Tốn",
+  "formation": [
+   {
+    "tuong": "SP Chu Du",
+    "cp1": "Đương Phong Thôi Quyết",
+    "cp2": "Đồng Tâm Hiệp Lực"
+   },
+   {
+    "tuong": "Chu Thiệu",
+    "cp1": "Mị Hoặc",
+    "cp2": "Thuyền Cỏ Mượn Tên"
+   },
+   {
+    "tuong": "Lục Tốn",
+    "cp1": "Thái Bình Đạo Pháp",
+    "cp2": "Công Bất Đường Quyên"
+   }
+  ]
+ },
+ {
+  "team_name": "Lục Tốn Đô Úy cung V1",
+  "tier": "T1",
+  "commander": "Mã Thiền",
+  "core": "SP Chu Du + Mã Thiền + Lục Tốn",
+  "formation": [
+   {
+    "tuong": "SP Chu Du",
+    "cp1": "Toàn Quân Đồng Lòng",
+    "cp2": "Sĩ Biệt Tam Nhật"
+   },
+   {
+    "tuong": "Mã Thiền",
+    "cp1": "Quát Cốt Liệu Độc",
+    "cp2": "Kế Hay Mưu Giỏi"
+   },
+   {
+    "tuong": "Lục Tốn",
+    "cp1": "Vạn Quân Đoạt Suất",
+    "cp2": "Công Bất Đường Quyên"
+   }
+  ]
+ },
+ {
+  "team_name": "Thái Sư Cung V2",
+  "tier": "T0.5",
+  "commander": "Trần Dực",
+  "core": "SP Đổng Trác + Trần Dực + SP Điêu Thuyền",
+  "formation": [
+   {
+    "tuong": "SP Đổng Trác",
+    "cp1": "Nhạn Hình Trận",
+    "cp2": "Tiên Đăng Tử Sĩ"
+   },
+   {
+    "tuong": "Trần Dực",
+    "cp1": "Cương Nhu Kết Hợp",
+    "cp2": "Đồng Tâm Hiệp Lực"
+   },
+   {
+    "tuong": "SP Điêu Thuyền",
+    "cp1": "Thâm Tàng Nhược Hư",
+    "cp2": "Hợp Quân Tụ Chúng"
+   }
+  ]
+ },
+ {
+  "team_name": "Đô Uý-Ly Hỏa Cung",
+  "tier": "T0.5",
+  "commander": "Chu Thiệu",
+  "core": "Chu Thiệu + Lục Tốn + SP Điêu Thuyền",
+  "formation": [
+   {
+    "tuong": "Chu Thiệu",
+    "cp1": "Tiềm Long Trận",
+    "cp2": "Cương Nhu Kết Hợp"
+   },
+   {
+    "tuong": "Lục Tốn",
+    "cp1": "Công Bất Đường Quyên",
+    "cp2": "Sĩ Biệt Tam Nhật"
+   },
+   {
+    "tuong": "SP Điêu Thuyền",
+    "cp1": "Thâm Tàng Nhược Hư",
+    "cp2": "Đồng Tâm Hiệp Lực"
+   }
+  ]
+ },
+ {
+  "team_name": "Đô Úy Tam Tiên thuẫn",
+  "tier": "T0.5",
+  "commander": "Chu Thiệu",
+  "core": "Chu Thiệu + Trương Giác + Tả Từ",
+  "formation": [
+   {
+    "tuong": "Chu Thiệu",
+    "cp1": "Võ Phong Trận",
+    "cp2": "Lính Giáp Mây"
+   },
+   {
+    "tuong": "Trương Giác",
+    "cp1": "Thái Bình Đạo Pháp",
+    "cp2": "Sĩ Biệt Tam Nhật"
+   },
+   {
+    "tuong": "Tả Từ",
+    "cp1": "Dưỡng Sức Đợi Chiến",
+    "cp2": "Quát Cốt Liệu Độc"
+   }
+  ]
+ },
+ {
+  "team_name": "Đô Úy Tôn Quyền cung",
+  "tier": "T0.5",
+  "commander": "Tô Tín",
+  "core": "Tôn Quyền + Tô Tín + SP Bộ Luyện Sư",
+  "formation": [
+   {
+    "tuong": "Tôn Quyền",
+    "cp1": "Đương Phong Thôi Quyết",
+    "cp2": "Binh Vô Thường Thế"
+   },
+   {
+    "tuong": "Tô Tín",
+    "cp1": "Tỏa Nhuệ",
+    "cp2": "Thịnh Khí Lăng Địch"
+   },
+   {
+    "tuong": "SP Bộ Luyện Sư",
+    "cp1": "Thâm Mưu Viễn Lự",
+    "cp2": "Phong Thỉ Trận"
+   }
+  ]
+ },
+ {
+  "team_name": "Lục Tốn Đô Úy cung",
+  "tier": "T1",
+  "commander": "Mã Thiền",
+  "core": "SP Chu Du + Mã Thiền + Lục Tốn",
+  "formation": [
+   {
+    "tuong": "SP Chu Du",
+    "cp1": "Toàn Quân Đồng Lòng",
+    "cp2": "Sĩ Biệt Tam Nhật"
+   },
+   {
+    "tuong": "Mã Thiền",
+    "cp1": "Quát Cốt Liệu Độc",
+    "cp2": "Kế Hay Mưu Giỏi"
+   },
+   {
+    "tuong": "Lục Tốn",
+    "cp1": "Vạn Quân Đoạt Suất",
+    "cp2": "Công Bất Đường Quyên"
+   }
+  ]
+ },
+ {
+  "team_name": "Từ Ngạn Hoàng Trung",
+  "tier": "T1",
+  "commander": "Từ Ngạn",
+  "core": "SP Gia Cát Lượng + Hoàng Trung + Từ Ngạn",
+  "formation": [
+   {
+    "tuong": "SP Gia Cát Lượng",
+    "cp1": "Võ Phong Trận",
+    "cp2": "Dưỡng Sức Đợi Chiến"
+   },
+   {
+    "tuong": "Hoàng Trung",
+    "cp1": "Phá Trận Thôi Kiên",
+    "cp2": "Sở Hướng Phi Mĩ"
+   },
+   {
+    "tuong": "Từ Ngạn",
+    "cp1": "Quát Cốt Liệu Độc",
+    "cp2": "Tỏa Nhuệ"
+   }
+  ]
+ },
+ {
+  "team_name": "Tô Tín Đô Đốc",
+  "tier": "T1",
+  "commander": "Tô Tín",
+  "core": "Chu Du + Lữ Mông + Tô Tín",
+  "formation": [
+   {
+    "tuong": "Chu Du",
+    "cp1": "Đoạt Hồn Hiệp Phách",
+    "cp2": "Phong Trợ Hỏa Thế"
+   },
+   {
+    "tuong": "Lữ Mông",
+    "cp1": "Đương Phong Thôi Quyết",
+    "cp2": "Toàn Quân Đồng Lòng"
+   },
+   {
+    "tuong": "Tô Tín",
+    "cp1": "Thuyền Cỏ Mượn Tên",
+    "cp2": "Thâm Mưu Viễn Lự"
+   }
+  ]
+ },
+ {
+  "team_name": "Trần Dực Đô Đốc",
+  "tier": "T1",
+  "commander": "Trần Dực",
+  "core": "Chu Du + Lục Tốn + Trần Dực",
+  "formation": [
+   {
+    "tuong": "Chu Du",
+    "cp1": "Đoạt Hồn Hiệp Phách",
+    "cp2": "Phong Trợ Hỏa Thế"
+   },
+   {
+    "tuong": "Lục Tốn",
+    "cp1": "Thái Bình Đạo Pháp",
+    "cp2": "Toàn Quân Đồng Lòng"
+   },
+   {
+    "tuong": "Trần Dực",
+    "cp1": "Thuyền Cỏ Mượn Tên",
+    "cp2": "Thâm Mưu Viễn Lự"
+   }
+  ]
+ },
+ {
+  "team_name": "Trần Dực Thục Trí",
+  "tier": "T1",
+  "commander": "Trần Dực",
+  "core": "Gia Cát Lượng + Bàng Thống + Trần Dực",
+  "formation": [
+   {
+    "tuong": "Gia Cát Lượng",
+    "cp1": "Nhạn Hình Trận",
+    "cp2": "Quát Cốt Liệu Độc"
+   },
+   {
+    "tuong": "Bàng Thống",
+    "cp1": "Thái Bình Đạo Pháp",
+    "cp2": "Sĩ Biệt Tam Nhật"
+   },
+   {
+    "tuong": "Trần Dực",
+    "cp1": "Thừa Địch Bất Ngu",
+    "cp2": "Tỏa Nhuệ"
+   }
+  ]
+ },
+ {
+  "team_name": "Thái Úy Tiêu Chỉ",
+  "tier": "T1",
+  "commander": "Tiêu Chỉ",
+  "core": "Tư Mã Ý + Tiêu Chỉ + Mãn Sủng",
+  "formation": [
+   {
+    "tuong": "Tư Mã Ý",
+    "cp1": "Toàn Quân Đồng Lòng",
+    "cp2": "Dụng Võ Thần Thông"
+   },
+   {
+    "tuong": "Tiêu Chỉ",
+    "cp1": "Mị Hoặc",
+    "cp2": "Độc Hành Phó Đấu"
+   },
+   {
+    "tuong": "Mãn Sủng",
+    "cp1": "Hình Nhất Trận",
+    "cp2": "Dưỡng Sức Đợi Chiến"
+   }
+  ]
+ },
+ {
+  "team_name": "Thẩm Hằng Phá Trận",
+  "tier": "T1",
+  "commander": "Thẩm Hằng",
+  "core": "Thẩm Hằng + Hạ Hầu Đôn + Hạ Hầu Uyên",
+  "formation": [
+   {
+    "tuong": "Thẩm Hằng",
+    "cp1": "Thôi Phong Đoạn Nhẫn",
+    "cp2": "Nhất Kỵ Đương Thiên"
+   },
+   {
+    "tuong": "Hạ Hầu Đôn",
+    "cp1": "Hổ Báo Kỵ",
+    "cp2": "Tinh - Ngư Lân Trận"
+   },
+   {
+    "tuong": "Hạ Hầu Uyên",
+    "cp1": "Lỏa Y Huyết Chiến",
+    "cp2": "Đương Phong Thôi Quyết"
+   }
+  ]
+ },
+ {
+  "team_name": "Trần Dực Đào Viên",
+  "tier": "T1 cao",
+  "commander": "Trần Dực",
+  "core": "Trương Phi + Quan Vũ + Trần Dực",
+  "formation": [
+   {
+    "tuong": "Trương Phi",
+    "cp1": "Hoành Tảo Thiên Quân",
+    "cp2": "Gió Táp Mưa Sa"
+   },
+   {
+    "tuong": "Quan Vũ",
+    "cp1": "Cưỡi Ngựa Nghìn Dặm",
+    "cp2": "Thịnh Khí Lăng Địch"
+   },
+   {
+    "tuong": "Trần Dực",
+    "cp1": "Kế Hay Mưu Giỏi",
+    "cp2": "Tỏa Nhuệ"
+   }
+  ]
+ },
+ {
+  "team_name": "Chu Thiệu Đô Đốc",
+  "tier": "T1 cao",
+  "commander": "Chu Thiệu",
+  "core": "Chu Du + Lục Tốn + Chu Thiệu",
+  "formation": [
+   {
+    "tuong": "Chu Du",
+    "cp1": "Đoạt Hồn Hiệp Phách",
+    "cp2": "Phong Trợ Hỏa Thế"
+   },
+   {
+    "tuong": "Lục Tốn",
+    "cp1": "Thái Bình Đạo Pháp",
+    "cp2": "Toàn Quân Đồng Lòng"
+   },
+   {
+    "tuong": "Chu Thiệu",
+    "cp1": "Thuyền Cỏ Mượn Tên",
+    "cp2": "Thâm Mưu Viễn Lự"
+   }
+  ]
+ },
+ {
+  "team_name": "Thái Úy Hoàng Phủ",
+  "tier": "T1 cao",
+  "commander": "Hoàng Phủ Hoành",
+  "core": "Tư Mã Ý + Hoàng Phủ Hoành + Mãn Sủng",
+  "formation": [
+   {
+    "tuong": "Tư Mã Ý",
+    "cp1": "Toàn Quân Đồng Lòng",
+    "cp2": "Sĩ Biệt Tam Nhật"
+   },
+   {
+    "tuong": "Hoàng Phủ Hoành",
+    "cp1": "Mị Hoặc",
+    "cp2": "Thuyền Cỏ Mượn Tên"
+   },
+   {
+    "tuong": "Mãn Sủng",
+    "cp1": "Hình Nhất Trận",
+    "cp2": "Dưỡng Sức Đợi Chiến"
+   }
+  ]
+ },
+ {
+  "team_name": "Chu Thiệu Ngũ Mưu",
+  "tier": "T1 cao",
+  "commander": "Chu Thiệu",
+  "core": "SP Tuân Úc + SP Quách Gia + Chu Thiệu",
+  "formation": [
+   {
+    "tuong": "SP Tuân Úc",
+    "cp1": "Dốc Sức Tính Kế",
+    "cp2": "Quát Cốt Liệu Độc"
+   },
+   {
+    "tuong": "SP Quách Gia",
+    "cp1": "Đoạt Hồn Hiệp Phách",
+    "cp2": "Thượng Binh Phạt Mưu"
+   },
+   {
+    "tuong": "Chu Thiệu",
+    "cp1": "Nhanh Trí Động Não",
+    "cp2": "Đương Phong Thôi Quyết"
+   }
+  ]
+ },
+ {
+  "team_name": "Pháp Quan Tiêu Chỉ",
+  "tier": "T1 cao",
+  "commander": "Tiêu Chỉ",
+  "core": "SP Quan Vũ + Tiêu Chỉ + SP Pháp Chính",
+  "formation": [
+   {
+    "tuong": "SP Quan Vũ",
+    "cp1": "Lấy Ít Địch Nhiều",
+    "cp2": "Ngư Lân Trận"
+   },
+   {
+    "tuong": "Tiêu Chỉ",
+    "cp1": "Độc Hành Phó Đấu",
+    "cp2": "Mị Hoặc"
+   },
+   {
+    "tuong": "SP Pháp Chính",
+    "cp1": "Không Đánh Mà Thắng",
+    "cp2": "Dưỡng Sức Đợi Chiến"
+   }
+  ]
+ },
+ {
+  "team_name": "Thẩm Hằng Ngũ Mưu",
+  "tier": "T0.5",
+  "commander": "Thẩm Hằng",
+  "core": "Thẩm Hằng + SP Tuân Úc + SP Quách Gia",
+  "formation": [
+   {
+    "tuong": "SP Tuân Úc",
+    "cp1": "Dốc Sức Tính Kế",
+    "cp2": "Quát Cốt Liệu Độc"
+   },
+   {
+    "tuong": "SP Quách Gia",
+    "cp1": "Đoạt Hồn Hiệp Phách",
+    "cp2": "Đồng Lòng Hợp Sức"
+   },
+   {
+    "tuong": "Thẩm Hằng",
+    "cp1": "Nhanh Trí Động Não",
+    "cp2": "Thượng Binh Phạt Mưu"
+   }
+  ]
+ },
+ {
+  "team_name": "Chu Thiệu Tam Tiên",
+  "tier": "T0.5-T1",
+  "commander": "Chu Thiệu",
+  "core": "Trương Giác + Tả Từ + Chu Thiệu",
+  "formation": [
+   {
+    "tuong": "Trương Giác",
+    "cp1": "Thái Bình Đạo Pháp",
+    "cp2": "Sĩ Biệt Tam Nhật"
+   },
+   {
+    "tuong": "Tả Từ",
+    "cp1": "Dưỡng Sức Đợi Chiến",
+    "cp2": "Quát Cốt Liệu Độc"
+   },
+   {
+    "tuong": "Chu Thiệu",
+    "cp1": "Phong Thỉ Trận",
+    "cp2": "Toàn Quân Đồng Lòng"
+   }
+  ]
+ },
+ {
+  "team_name": "Ôn Hầu Cung",
+  "tier": "T0.5-T1",
+  "commander": "Trần Hy",
+  "core": "Trần Hy + Lữ Bố + Hứa Du",
+  "formation": [
+   {
+    "tuong": "Trần Hy",
+    "cp1": "Thuyền Cỏ Mượn Tên",
+    "cp2": "Cẩm Phàm Quân"
+   },
+   {
+    "tuong": "Lữ Bố",
+    "cp1": "Đương Phong Thôi Quyết",
+    "cp2": "Thôi Phong Đoạn Nhẫn"
+   },
+   {
+    "tuong": "Hứa Du",
+    "cp1": "Tinh - Ngư Lân Trận",
+    "cp2": "Lâm Nguy Cứu Chủ"
+   }
+  ]
+ },
+ {
+  "team_name": "Từ Ngạn Trương Giác",
+  "tier": "T0.5-T1",
+  "commander": "Từ Ngạn",
+  "core": "Trương Giác + Từ Ngạn + Tả Từ",
+  "formation": [
+   {
+    "tuong": "Trương Giác",
+    "cp1": "Thái Bình Đạo Pháp",
+    "cp2": "Sĩ Biệt Tam Nhật"
+   },
+   {
+    "tuong": "Từ Ngạn",
+    "cp1": "Dưỡng Sức Đợi Chiến",
+    "cp2": "Tỏa Nhuệ"
+   },
+   {
+    "tuong": "Tả Từ",
+    "cp1": "Phong Thỉ Trận",
+    "cp2": "Quát Cốt Liệu Độc"
+   }
+  ]
+ },
+ {
+  "team_name": "Chu Thiệu Thục Trí",
+  "tier": "T0.5",
+  "commander": "Chu Thiệu",
+  "core": "Gia Cát Lượng + Bàng Thống + Chu Thiệu",
+  "formation": [
+   {
+    "tuong": "Gia Cát Lượng",
+    "cp1": "Nhạn Hình Trận",
+    "cp2": "Quát Cốt Liệu Độc"
+   },
+   {
+    "tuong": "Bàng Thống",
+    "cp1": "Thái Bình Đạo Pháp",
+    "cp2": "Sĩ Biệt Tam Nhật"
+   },
+   {
+    "tuong": "Chu Thiệu",
+    "cp1": "Đương Phong Thôi Quyết",
+    "cp2": "Thừa Địch Bất Ngu"
+   }
+  ]
+ },
+ {
+  "team_name": "Pháp Quan Hoàng Phủ",
+  "tier": "T0.5",
+  "commander": "Hoàng Phủ Hoành",
+  "core": "SP Quan Vũ + Hoàng Phủ Hoành + SP Pháp Chính",
+  "formation": [
+   {
+    "tuong": "SP Quan Vũ",
+    "cp1": "Lấy Ít Địch Nhiều",
+    "cp2": "Kích Kỳ Đọa Quy"
+   },
+   {
+    "tuong": "Hoàng Phủ Hoành",
+    "cp1": "Mị Hoặc",
+    "cp2": "Ngư Lân Trận"
+   },
+   {
+    "tuong": "SP Pháp Chính",
+    "cp1": "Không Đánh Mà Thắng",
+    "cp2": "Dưỡng Sức Đợi Chiến"
+   }
+  ]
+ },
+ {
+  "team_name": "Thái Sư Cung",
+  "tier": "T0.5",
+  "commander": "Tiêu Chỉ",
+  "core": "SP Đổng Trác + SP Điêu Thuyền + Tiêu Chỉ",
+  "formation": [
+   {
+    "tuong": "SP Đổng Trác",
+    "cp1": "Nhạn Hình Trận",
+    "cp2": "Tiên Đăng Tử Sĩ"
+   },
+   {
+    "tuong": "SP Điêu Thuyền",
+    "cp1": "Thâm Tàng Nhược Hư",
+    "cp2": "Đồng Tâm Hiệp Lực"
+   },
+   {
+    "tuong": "Tiêu Chỉ",
+    "cp1": "Cương Nhu Kết Hợp",
+    "cp2": "Nhân Lợi Chế Quyền"
+   }
+  ]
+ },
+ {
+  "team_name": "Cự Mã Cung",
+  "tier": "T0",
+  "commander": "Tiêu Chỉ",
+  "core": "SP Lư Thực + SP Điêu Thuyền + Tiêu Chỉ",
+  "formation": [
+   {
+    "tuong": "SP Lư Thực",
+    "cp1": "Nhạn Hình Trận",
+    "cp2": "Tiên Đăng Tử Sĩ"
+   },
+   {
+    "tuong": "SP Điêu Thuyền",
+    "cp1": "Thâm Tàng Nhược Hư",
+    "cp2": "Đồng Tâm Hiệp Lực"
+   },
+   {
+    "tuong": "Tiêu Chỉ",
+    "cp1": "Cương Nhu Kết Hợp",
+    "cp2": "Nhân Lợi Chế Quyền"
+   }
+  ]
+ }
+]
