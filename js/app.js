@@ -1,7 +1,7 @@
 // Điều phối: load JSON, section nav, render, filter UI, theme. Vanilla ES module.
 
 import { applyFilters, emptyState } from "./filters.js";
-import { coexistGroup, el, FACTION_CODE, khaihoangTable, SOURCE_LABEL, STATUS_LABEL, teamCard } from "./render.js";
+import { bestTier, coexistGroup, el, FACTION_CODE, khaihoangTable, SOURCE_LABEL, STATUS_LABEL, teamCard } from "./render.js";
 import { initTactics } from "./tactics.js";
 import { initHeroList } from "./hero-list.js";
 import { initAnalyze } from "./analyze.js";
@@ -195,7 +195,14 @@ function rerender() {
 // Tab riêng cho đội nguồn "do-uy" — tách khỏi Team PK để tra theo mùa. Dùng lại
 // teamCard + tier badge; team vẫn xuất hiện ở Team PK (không loại trừ).
 function renderDoUy() {
-  const teams = TEAMS.filter((t) => t.source === "do-uy");
+  // Xếp theo tier tốt nhất T0 -> T1; team chưa có tier xuống cuối.
+  const tierRank = (t) => {
+    const best = bestTier(TIER_INDEX.get(t.id));
+    return best ? parseFloat(best.slice(1)) : Infinity;
+  };
+  const teams = TEAMS.filter((t) => t.source === "do-uy")
+    .slice()
+    .sort((a, b) => tierRank(a) - tierRank(b));
   const grid = el("div", { class: "team-grid" });
   for (const t of teams) grid.append(teamCard(t, onTag, TIER_INDEX.get(t.id)));
   $("#section-do-uy").replaceChildren(
