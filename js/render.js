@@ -68,6 +68,12 @@ function statusBadge(status) {
   return el("span", { class: `badge status status-${status}` }, STATUS_LABEL[status] || status);
 }
 
+/** Badge "Khuyến nghị" cho team được đề cử (cờ team.recommended). */
+function recommendBadge(team) {
+  if (!team.recommended) return null;
+  return el("span", { class: "badge recommend", title: "Đội được khuyến nghị" }, "★ Khuyến nghị");
+}
+
 function variantTags(g, cls, onTag) {
   // g = {name, alternatives[]}
   const wrap = el("span", { class: "vg" });
@@ -127,6 +133,7 @@ export function teamCard(team, onTag, rankings) {
     el("div", { class: "units" }, (team.unitType || []).map((u) =>
       el("span", { class: `badge unit ${UNIT_CLASS[u] || ""}` }, u))),
     el("div", { class: "head-right" }, [
+      recommendBadge(team),
       tierBadge(rankings),
       team.faction ? el("span", { class: `badge faction${fcode ? " f-" + fcode : ""}` }, team.faction) : null,
       starsBadge(team.stars),

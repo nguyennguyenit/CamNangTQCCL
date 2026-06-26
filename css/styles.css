@@ -179,6 +179,7 @@ body {
 .status-out-meta { background: var(--panel-2); color: var(--muted); }
 .status-youtuber-untested { background: #efe0fb; color: #6b2fb3; }
 .status-situational { background: #fde9d6; color: #9a5a1a; }
+.badge.recommend { background: #1e8e4e; color: #fff; letter-spacing: .01em; }
 
 .heroes { display: flex; flex-direction: column; gap: .5rem; }
 .hero { padding: .35rem .45rem; background: var(--bg); border-radius: 8px; }
