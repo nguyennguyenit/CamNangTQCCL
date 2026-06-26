@@ -155,6 +155,14 @@ body {
 .badge.unit.small { font-size: .62rem; padding: .05rem .3rem; }
 .u-ky { background: var(--ky); } .u-cung { background: var(--cung); } .u-thuong { background: var(--thuong); } .u-khien { background: var(--khien); }
 .badge.stars { background: #f5c542; color: #5a4500; }
+/* Tier team (tham khảo, multi-source): T0 mạnh -> T3 nhạt; half-tier dùng class t-05/t-15 */
+.badge.tier { color: #fff; cursor: help; letter-spacing: .02em; }
+.badge.tier.t-0 { background: #c0392b; }
+.badge.tier.t-05 { background: #d35400; }
+.badge.tier.t-1 { background: #e67e22; }
+.badge.tier.t-15 { background: #d4a017; color: #3a2c00; }
+.badge.tier.t-2 { background: #2980b9; }
+.badge.tier.t-3 { background: var(--muted); }
 .badge.faction { background: var(--panel-2); color: var(--ink); border: 1px solid var(--line); }
 /* Phe: tô màu nhãn + viền trái card để quét nhanh */
 .badge.faction.f-nguy { background: var(--f-nguy); color: #fff; border-color: transparent; }
@@ -269,6 +277,53 @@ body {
 .tac-desc-zh { color: var(--muted); }
 .tac-desc-label { color: var(--accent); font-size: .75rem; }
 .tac-desc.pending { color: var(--muted); font-style: italic; }
+
+/* ===== Section intro (Đô Úy ss24…) ===== */
+.section-intro { margin: .2rem 0 .8rem; }
+.section-intro-title { margin: 0 0 .2rem; font-size: 1.1rem; color: var(--accent); }
+.section-intro-sub { margin: 0; font-size: .82rem; color: var(--muted); }
+
+/* ===== Tra cứu tướng ===== */
+.fgroup-inline { display: flex; flex-direction: column; gap: .25rem; }
+.flabel-inline { font-size: .68rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 700; }
+.hero-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: .7rem; margin-top: .4rem; }
+.hero-card { display: flex; gap: .6rem; align-items: flex-start; text-align: left; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); box-shadow: var(--shadow); padding: .55rem .65rem; cursor: pointer; transition: transform .12s ease, box-shadow .12s ease; }
+.hero-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, .12); border-color: var(--accent); }
+.hc-icon { width: 52px; height: 52px; border-radius: 8px; object-fit: cover; background: var(--panel-2); flex-shrink: 0; }
+.hc-body { display: flex; flex-direction: column; gap: .3rem; min-width: 0; }
+.hc-name { font-weight: 700; font-size: .9rem; color: var(--ink); }
+.hc-badges { display: flex; flex-wrap: wrap; gap: .25rem; align-items: center; }
+.badge.role { background: var(--accent-soft); color: var(--accent); }
+.hc-apt { display: flex; flex-wrap: wrap; gap: .2rem; }
+.apt { display: inline-flex; gap: .2rem; font-size: .68rem; padding: .06rem .4rem; border-radius: 999px; background: var(--panel-2); color: var(--ink); }
+.apt-s { background: var(--accent); color: #fff; }
+.apt-a { background: var(--f-nguy); color: #fff; }
+.apt-troop { font-weight: 600; }
+
+/* Modal chi tiết tướng */
+.hero-overlay { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, .5); display: flex; align-items: flex-start; justify-content: center; padding: 4vh 1rem; overflow-y: auto; }
+.hero-overlay-close { position: absolute; top: 1rem; right: 1rem; width: 2.2rem; height: 2.2rem; border-radius: 50%; border: none; background: var(--panel); color: var(--ink); font-size: 1.1rem; cursor: pointer; box-shadow: var(--shadow); }
+.hero-modal { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 8px 30px rgba(0, 0, 0, .3); padding: 1rem 1.1rem; max-width: 540px; width: 100%; display: flex; flex-direction: column; gap: .85rem; }
+.hero-modal-head { display: flex; gap: .8rem; align-items: center; }
+.hero-modal-icon { width: 72px; height: 72px; border-radius: 10px; object-fit: cover; background: var(--panel-2); flex-shrink: 0; }
+.hero-modal-id { display: flex; flex-direction: column; gap: .3rem; }
+.hero-modal-name { margin: 0; font-size: 1.2rem; display: flex; gap: .4rem; align-items: center; }
+.hero-modal-badges { display: flex; flex-wrap: wrap; gap: .3rem; align-items: center; }
+.hero-modal-cn { font-size: .8rem; color: var(--muted); }
+.hero-stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: .35rem; }
+.hero-stat { display: flex; flex-direction: column; align-items: center; background: var(--panel-2); border-radius: 6px; padding: .3rem .15rem; }
+.hs-label { font-size: .66rem; color: var(--muted); }
+.hs-val { font-weight: 700; font-size: .92rem; }
+.hero-apt { display: flex; flex-wrap: wrap; gap: .3rem; }
+.hero-apt .apt { font-size: .72rem; padding: .12rem .45rem; }
+.hero-tactics { display: flex; flex-direction: column; gap: .6rem; }
+.hero-tactic { border: 1px solid var(--line); border-radius: 8px; padding: .55rem .65rem; }
+.ht-head { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; margin-bottom: .3rem; }
+.ht-slot { font-size: .68rem; font-weight: 700; text-transform: uppercase; color: var(--accent); }
+.ht-name { font-weight: 700; font-size: .9rem; }
+.ht-type { font-size: .7rem; padding: .06rem .4rem; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
+.ht-effect { margin: 0; font-size: .82rem; line-height: 1.45; color: var(--ink); }
+.ht-effect.pending { color: var(--muted); font-style: italic; }
 
 /* ===== Soi đội từ ảnh ===== */
 .ana-disclaimer { font-size: .8rem; color: var(--muted); background: var(--panel-2); border-radius: var(--radius); padding: .5rem .7rem; margin: 0 0 .8rem; }

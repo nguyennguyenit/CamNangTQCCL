@@ -33,6 +33,29 @@ export const SOURCE_LABEL = {
   "moi-phe": "Meta phe (cũ)",
 };
 
+/** Bậc tier tốt nhất (T số nhỏ nhất) trong list rankings. Rỗng -> null. */
+export function bestTier(rankings) {
+  if (!rankings || !rankings.length) return null;
+  return rankings.reduce((best, r) =>
+    parseFloat(r.tier.slice(1)) < parseFloat(best.slice(1)) ? r.tier : best,
+    rankings[0].tier);
+}
+
+/** Tier -> hậu tố class CSS (bỏ dấu chấm: T0.5 -> t-05). */
+export function tierClass(tier) {
+  return "t-" + tier.slice(1).replace(".", "");
+}
+
+/** Badge tier team + tooltip liệt kê mọi nguồn (multi-source minh bạch). */
+function tierBadge(rankings) {
+  const tier = bestTier(rankings);
+  if (!tier) return null;
+  const tip = rankings
+    .map((r) => `${r.tier} — ${r.source} (${r.updatedAt})`)
+    .join("\n");
+  return el("span", { class: `badge tier ${tierClass(tier)}`, title: `Tham khảo:\n${tip}` }, tier);
+}
+
 function starsBadge(stars) {
   if (stars == null) return null;
   const full = Math.floor(stars);
@@ -93,7 +116,7 @@ function counterChips(counters, onTag) {
 }
 
 /** Card 1 team PK. onTag(value): callback khi bấm chip (để search). */
-export function teamCard(team, onTag) {
+export function teamCard(team, onTag, rankings) {
   const fcode = FACTION_CODE[team.faction];
   // Tiêu đề: ưu tiên tên gọi khác (nickname), mặc định tên ghép từ âm tiết cuối 3 tướng.
   const title = team.nickname || team.name;
@@ -104,6 +127,7 @@ export function teamCard(team, onTag) {
     el("div", { class: "units" }, (team.unitType || []).map((u) =>
       el("span", { class: `badge unit ${UNIT_CLASS[u] || ""}` }, u))),
     el("div", { class: "head-right" }, [
+      tierBadge(rankings),
       team.faction ? el("span", { class: `badge faction${fcode ? " f-" + fcode : ""}` }, team.faction) : null,
       starsBadge(team.stars),
       statusBadge(team.status),

@@ -7,7 +7,8 @@ Website tĩnh tra cứu meta team cho Tam Quốc Chí Chiến Lược. Chạy b�
 - `Team PK`: 172 team, lọc theo loại binh / sao / trạng thái / phe / tướng / chiến pháp / binh thư, có search toàn văn.
 - `Cùng Tồn`: nhóm team cùng tồn tại, kèm `Thêm` và `Kỹ năng quân sư`.
 - `Khai hoang`: đội khai hoang và quân thủ các mỏ.
-- `Tra cứu chiến pháp`: 237 chiến pháp + 112 tướng, search fuzzy, chạy offline, không AI.
+- `Tra cứu tướng`: 112 tướng, lọc theo thích tính binh chủng (S/A) / vai trò / phe / sao, search fuzzy (Việt bỏ dấu / Hán-Việt / Hán); click card mở modal chi tiết (stats + thích tính + 2 chiến pháp tự mang/truyền thừa link sang thư viện).
+- `Tra cứu chiến pháp`: 237 chiến pháp, search fuzzy, chạy offline, không AI.
 - `Soi đội từ ảnh`: upload screenshot, đọc bằng Worker + Vision LLM (tướng + chiến pháp + binh thư), map về tên Việt canonical, hiện icon tướng để đối chiếu, rồi so với 172 team. Tên tướng bị che thì đoán từ chân dung kèm cờ "kiểm tra".
 
 ## Chạy local
@@ -27,13 +28,26 @@ python3 -m pipeline.build_json
 python3 -m pipeline.suggest_aliases
 python3 -m pipeline.build_dict
 python3 -m pipeline.build_books_dict
+python3 -m pipeline.build_team_tier
 ```
+
+### Tier team (theo mùa)
+
+Tier T0–T3 gắn vào **team** (nguồn TQ rank đội hình), lưu thủ công ở `pipeline/team-tier-map.json` (`team id` → `rankings:[{source,tier,updatedAt}]`, multi-source), build ra `data/team-tier.json` bằng `build_team_tier`. Badge hiện bậc tốt nhất + tooltip mọi nguồn; team chưa có tier vẫn render bình thường.
+
+Curate đầu mùa (suggest-only, phải duyệt tay): tải tay 1 trang xếp hạng (zhihu/taptap thường chặn anti-bot nên lưu `.html` từ browser), rồi:
+
+```bash
+python3 -m pipeline.suggest_team_tier path/to/saved-tier-list.html
+```
+
+Tool parse offline, in gợi ý `{tên đội TQ, tier, team id (khớp composition tướng)}` để chép vào `team-tier-map.json`. KHÔNG tự ghi map. Tier ngoài `{T0,T0.5,T1,T1.5,T2,T3}` sẽ bị `build_team_tier` fail-loud.
 
 ## Test
 
 ```bash
 python3 -m unittest discover -s tests
-node --test tests-js/filters.test.mjs tests-js/match-dict.test.mjs tests-js/analyze-map.test.mjs
+node --test "tests-js/*.test.mjs"
 cd worker && npm test
 cd worker && npm run typecheck
 ```

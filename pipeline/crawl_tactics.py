@@ -14,12 +14,18 @@ Chỉ Python stdlib. Hàm parse_* thuần (test bằng fixture, không gọi m�
 from __future__ import annotations
 
 import json
+import os
 import time
 import urllib.error
 import urllib.request
 from typing import Optional, Set
 
 from . import hanviet
+
+# Bảng tag vai trò Hán -> Việt (武将标签). Load 1 lần module-level [Audit A2:
+# giữ chữ ký parse_hero_detail, không thêm param]. Thiếu key -> fail-loud.
+with open(os.path.join(os.path.dirname(__file__), "role-tag-map.json"), encoding="utf-8") as _fh:
+    ROLE_TAG_MAP = json.load(_fh)
 
 API_URL = "https://galaxias-api.lingxigames.com/ds/ajax/endpoint.json"
 _HEADERS = {
@@ -159,6 +165,10 @@ def parse_hero_detail(item: dict, missing: Optional[Set[str]] = None) -> dict:
     han_viet = ("SP " + base_viet) if is_sp else base_viet
     stars_cn = dm.get("星级", "").strip()  # vd "5星"
     stars = "".join(c for c in stars_cn if c.isdigit())
+    role_tag = dm.get("武将标签", "").strip()
+    if role_tag and role_tag not in ROLE_TAG_MAP:
+        # fail-loud (giống hanviet): không lọt tag chưa map.
+        raise KeyError(f"[fail-loud] roleTag chưa map: {role_tag!r}")
     return {
         "chinese": chinese,
         "hanViet": han_viet,
@@ -175,5 +185,18 @@ def parse_hero_detail(item: dict, missing: Optional[Set[str]] = None) -> dict:
             "mi": dm.get("魅力", "").strip(),
         },
         "selfTacticCn": dm.get("自带战法", "").strip(),
+        # [Phase 1] thích tính binh chủng S/A/B (khác shape tactics.troopFit=list,
+        # cố ý dùng dict 5 key để không nhầm). Truyền thừa chỉ giữ tên Hán; tên VN
+        # + mô tả link runtime ở UI theo tactics.json (DRY, không nhân bản).
+        "troopApt": {
+            "ky": dm.get("兵种适性骑兵", "").strip(),
+            "thuan": dm.get("兵种适性盾兵", "").strip(),
+            "cung": dm.get("兵种适性弓兵", "").strip(),
+            "thuong": dm.get("兵种适性枪兵", "").strip(),
+            "khiGioi": dm.get("兵种适性器械", "").strip(),
+        },
+        "inheritTacticCn": dm.get("传承战法", "").strip(),
+        "roleTag": role_tag,
+        "roleTagViet": ROLE_TAG_MAP.get(role_tag, ""),
         "iconUrl": _icon_url(item),
     }

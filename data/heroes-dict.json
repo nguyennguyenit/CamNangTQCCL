@@ -15,6 +15,16 @@
       "mi": "82"
     },
     "selfTacticCn": "溯江摇橹",
+    "troopApt": {
+      "ky": "B",
+      "thuan": "B",
+      "cung": "A",
+      "thuong": "S",
+      "khiGioi": "S"
+    },
+    "inheritTacticCn": "益其金鼓",
+    "roleTag": "兼",
+    "roleTagViet": "Kiêm nhiệm",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/6/784810408878469120.png",
     "viet": "SP Lữ Mông",
     "linkScore": 0.857
@@ -35,6 +45,16 @@
       "mi": "93"
     },
     "selfTacticCn": "江天长焰",
+    "troopApt": {
+      "ky": "B",
+      "thuan": "A",
+      "cung": "S",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "焰逐风飞",
+    "roleTag": "谋",
+    "roleTagViet": "Mưu lược",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/6/784810303848902658.png",
     "viet": "SP Chu Du",
     "linkScore": 0.833
@@ -55,6 +75,16 @@
       "mi": "73"
     },
     "selfTacticCn": "围师必阙",
+    "troopApt": {
+      "ky": "C",
+      "thuan": "B",
+      "cung": "S",
+      "thuong": "B",
+      "khiGioi": "A"
+    },
+    "inheritTacticCn": "速乘其利",
+    "roleTag": "兼",
+    "roleTagViet": "Kiêm nhiệm",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/6/784810499345412101.png",
     "viet": "SP Chu Tuấn",
     "linkScore": 0.875
@@ -75,6 +105,16 @@
       "mi": "93"
     },
     "selfTacticCn": "机鉴先识",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "B",
+      "cung": "A",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "竭力佐谋",
+    "roleTag": "辅",
+    "roleTagViet": "Phụ trợ",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/6/784754556276502534.png",
     "viet": "SP Tuân Úc",
     "linkScore": 0.857
@@ -95,6 +135,16 @@
       "mi": "90"
     },
     "selfTacticCn": "高橹联营",
+    "troopApt": {
+      "ky": "B",
+      "thuan": "A",
+      "cung": "S",
+      "thuong": "B",
+      "khiGioi": "S"
+    },
+    "inheritTacticCn": "箕形阵",
+    "roleTag": "战",
+    "roleTagViet": "Chiến",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/8/27/483688427475199495.png",
     "viet": "SP Viên Thiệu",
     "linkScore": 0.9
@@ -115,6 +165,16 @@
       "mi": "92"
     },
     "selfTacticCn": "锦囊妙计",
+    "troopApt": {
+      "ky": "C",
+      "thuan": "B",
+      "cung": "S",
+      "thuong": "S",
+      "khiGioi": "S"
+    },
+    "inheritTacticCn": "焰逐风飞",
+    "roleTag": "辅",
+    "roleTagViet": "Phụ trợ",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/6/784809813576708100.png",
     "viet": "SP Gia Cát Lượng",
     "linkScore": 0.917
@@ -135,6 +195,16 @@
       "mi": "78"
     },
     "selfTacticCn": "经天纬地",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "A",
+      "cung": "A",
+      "thuong": "B",
+      "khiGioi": "B"
+    },
+    "inheritTacticCn": "先成其虑",
+    "roleTag": "辅",
+    "roleTagViet": "Phụ trợ",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/6/784809234725007369.png",
     "viet": "SP Quách Gia",
     "linkScore": 0.889
@@ -155,6 +225,16 @@
       "mi": "79"
     },
     "selfTacticCn": "誓守无降",
+    "troopApt": {
+      "ky": "B",
+      "thuan": "A",
+      "cung": "S",
+      "thuong": "A",
+      "khiGioi": "B"
+    },
+    "inheritTacticCn": "一力拒守",
+    "roleTag": "辅",
+    "roleTagViet": "Phụ trợ",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977751685445640.png",
     "viet": "Nghiêm Nhan",
     "linkScore": 0.0
@@ -175,6 +255,16 @@
       "mi": "65"
     },
     "selfTacticCn": "临战先登",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "A",
+      "cung": "B",
+      "thuong": "S",
+      "khiGioi": "S"
+    },
+    "inheritTacticCn": "锋矢阵",
+    "roleTag": "战",
+    "roleTagViet": "Chiến",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977755409987593.png",
     "viet": "Nhạc Tiến",
     "linkScore": 1.0
@@ -195,6 +285,16 @@
       "mi": "65"
     },
     "selfTacticCn": "兴云布雨",
+    "troopApt": {
+      "ky": "C",
+      "thuan": "B",
+      "cung": "C",
+      "thuong": "C",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "杯蛇鬼车",
+    "roleTag": "仙",
+    "roleTagViet": "Tiên",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977740729923589.png",
     "viet": "Vũ Cát",
     "linkScore": 1.0
@@ -215,6 +315,16 @@
       "mi": "53"
     },
     "selfTacticCn": "持军毅重",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "S",
+      "cung": "B",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "克敌制胜",
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977758480218120.png",
     "viet": "Vu Cấm",
     "linkScore": 0.8
@@ -235,6 +345,16 @@
       "mi": "78"
     },
     "selfTacticCn": "才辩机捷",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "B",
+      "cung": "B",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "临机制胜",
+    "roleTag": "谋",
+    "roleTagViet": "Mưu lược",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/6/784810090916671491.png",
     "viet": "Y Tịch",
     "linkScore": 0.0
@@ -255,6 +375,16 @@
       "mi": "21"
     },
     "selfTacticCn": "藤甲兵",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "S",
+      "cung": "C",
+      "thuong": "B",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "藤甲兵",
+    "roleTag": "蛮",
+    "roleTagViet": "Man tộc",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977746144770056.png",
     "viet": "Ngột Đột Cốt",
     "linkScore": 1.0
@@ -275,6 +405,16 @@
       "mi": "77"
     },
     "selfTacticCn": "白马义从",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "C",
+      "cung": "S",
+      "thuong": "C",
+      "khiGioi": "B"
+    },
+    "inheritTacticCn": "白马义从",
+    "roleTag": "辅",
+    "roleTagViet": "Phụ trợ",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977759834978312.png",
     "viet": "Công Tôn Toản",
     "linkScore": 0.0
@@ -295,6 +435,16 @@
       "mi": "75"
     },
     "selfTacticCn": "刀出如霆",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "A",
+      "cung": "B",
+      "thuong": "S",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "士争先赴",
+    "roleTag": "战",
+    "roleTagViet": "Chiến",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/6/784809981365645315.png",
     "viet": "Quan Hưng",
     "linkScore": 1.0
@@ -315,6 +465,16 @@
       "mi": "93"
     },
     "selfTacticCn": "威震华夏",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "A",
+      "cung": "C",
+      "thuong": "S",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "横扫千军",
+    "roleTag": "战",
+    "roleTagViet": "Chiến",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977747101071367.png",
     "viet": "Quan Vũ",
     "linkScore": 1.0
@@ -335,6 +495,16 @@
       "mi": "50"
     },
     "selfTacticCn": "将门虎女",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "B",
+      "cung": "C",
+      "thuong": "S",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "箕形阵",
+    "roleTag": "战",
+    "roleTagViet": "Chiến",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/8/27/483687924246799876.png",
     "viet": "Quan Ngân Bình",
     "linkScore": 1.0
@@ -355,6 +525,16 @@
       "mi": "58"
     },
     "selfTacticCn": "古之恶来",
+    "troopApt": {
+      "ky": "B",
+      "thuan": "S",
+      "cung": "C",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "折冲御侮",
+    "roleTag": "盾",
+    "roleTagViet": "Phòng thủ",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977741065467910.png",
     "viet": "Điển Vi",
     "linkScore": 0.0
@@ -375,6 +555,16 @@
       "mi": "71"
     },
     "selfTacticCn": "国士将风",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "B",
+      "cung": "C",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "横戈跃马",
+    "roleTag": "辅",
+    "roleTagViet": "Phụ trợ",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977742688663553.png",
     "viet": "Lăng Thống",
     "linkScore": 1.0
@@ -395,6 +585,16 @@
       "mi": "99"
     },
     "selfTacticCn": "仁德载世",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "S",
+      "cung": "A",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "义心昭烈",
+    "roleTag": "医",
+    "roleTagViet": "Y thuật",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977755938469896.png",
     "viet": "Lưu Bị",
     "linkScore": 1.0
@@ -415,6 +615,16 @@
       "mi": "70"
     },
     "selfTacticCn": "青囊",
+    "troopApt": {
+      "ky": "C",
+      "thuan": "C",
+      "cung": "C",
+      "thuong": "C",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "刮骨疗毒",
+    "roleTag": "仙",
+    "roleTagViet": "Tiên",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977748787181570.png",
     "viet": "Hoa Đà",
     "linkScore": 0.0
@@ -435,6 +645,16 @@
       "mi": "57"
     },
     "selfTacticCn": "搦战群雄",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "B",
+      "cung": "B",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "诱敌深入",
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977760858388487.png",
     "viet": "Hoa Hùng",
     "linkScore": 0.0
@@ -455,6 +675,16 @@
       "mi": "86"
     },
     "selfTacticCn": "水镜先生",
+    "troopApt": {
+      "ky": "C",
+      "thuan": "C",
+      "cung": "B",
+      "thuong": "C",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "诱敌深入",
+    "roleTag": "魅",
+    "roleTagViet": "Mị lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977756831856642.png",
     "viet": "Tư Mã Huy",
     "linkScore": 0.833
@@ -475,6 +705,16 @@
       "mi": "87"
     },
     "selfTacticCn": "鹰视狼顾",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "S",
+      "cung": "A",
+      "thuong": "S",
+      "khiGioi": "A"
+    },
+    "inheritTacticCn": "用武通神",
+    "roleTag": "谋",
+    "roleTagViet": "Mưu lược",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977739572295689.png",
     "viet": "Tư Mã Ý",
     "linkScore": 1.0
@@ -495,6 +735,16 @@
       "mi": "40"
     },
     "selfTacticCn": "天下无双",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "B",
+      "cung": "S",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "一骑当千",
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977755133163528.png",
     "viet": "Lữ Bố",
     "linkScore": 1.0
@@ -515,6 +765,16 @@
       "mi": "34"
     },
     "selfTacticCn": "狮子奋迅",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "B",
+      "cung": "S",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "绝地反击",
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977758211782664.png",
     "viet": "Lữ Linh Ỷ",
     "linkScore": 1.0
@@ -535,6 +795,16 @@
       "mi": "82"
     },
     "selfTacticCn": "白衣渡江",
+    "troopApt": {
+      "ky": "B",
+      "thuan": "B",
+      "cung": "A",
+      "thuong": "S",
+      "khiGioi": "S"
+    },
+    "inheritTacticCn": "士别三日",
+    "roleTag": "控",
+    "roleTagViet": "Khống chế",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977760489289732.png",
     "viet": "Lữ Mông",
     "linkScore": 1.0
@@ -555,6 +825,16 @@
       "mi": "60"
     },
     "selfTacticCn": "肉身铁壁",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "S",
+      "cung": "A",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "一力拒守",
+    "roleTag": "盾",
+    "roleTagViet": "Phòng thủ",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977737043130368.png",
     "viet": "Chu Thái",
     "linkScore": 1.0
@@ -575,6 +855,16 @@
       "mi": "93"
     },
     "selfTacticCn": "神火计",
+    "troopApt": {
+      "ky": "B",
+      "thuan": "A",
+      "cung": "S",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "风助火势",
+    "roleTag": "谋",
+    "roleTagViet": "Mưu lược",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977747671496710.png",
     "viet": "Chu Du",
     "linkScore": 1.0
@@ -595,6 +885,16 @@
       "mi": "81"
     },
     "selfTacticCn": "刚烈不屈",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "A",
+      "cung": "C",
+      "thuong": "A",
+      "khiGioi": "B"
+    },
+    "inheritTacticCn": "绝地反击",
+    "roleTag": "战",
+    "roleTagViet": "Chiến",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977738204952576.png",
     "viet": "Hạ Hầu Đôn",
     "linkScore": 1.0
@@ -615,6 +915,16 @@
       "mi": "80"
     },
     "selfTacticCn": "将行其疾",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "B",
+      "cung": "S",
+      "thuong": "B",
+      "khiGioi": "A"
+    },
+    "inheritTacticCn": "万箭齐发",
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977759570737156.png",
     "viet": "Hạ Hầu Uyên",
     "linkScore": 1.0
@@ -635,6 +945,16 @@
       "mi": "92"
     },
     "selfTacticCn": "国色",
+    "troopApt": {
+      "ky": "C",
+      "thuan": "C",
+      "cung": "B",
+      "thuong": "C",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "魅惑",
+    "roleTag": "魅",
+    "roleTagViet": "Mị lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977741598144516.png",
     "viet": "Đại Kiều",
     "linkScore": 1.0
@@ -655,6 +975,16 @@
       "mi": "79"
     },
     "selfTacticCn": "神射",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "C",
+      "cung": "S",
+      "thuong": "B",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "折冲御侮",
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977759017089031.png",
     "viet": "Thái Sử Từ",
     "linkScore": 1.0
@@ -675,6 +1005,16 @@
       "mi": "80"
     },
     "selfTacticCn": "义胆雄心",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "A",
+      "cung": "S",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "形机军略",
+    "roleTag": "兼",
+    "roleTagViet": "Kiêm nhiệm",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977747973486597.png",
     "viet": "Khương Duy",
     "linkScore": 1.0
@@ -695,6 +1035,16 @@
       "mi": "91"
     },
     "selfTacticCn": "江东猛虎",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "S",
+      "cung": "B",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "挫锐",
+    "roleTag": "盾",
+    "roleTagViet": "Phòng thủ",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977751962269697.png",
     "viet": "Tôn Kiên",
     "linkScore": 1.0
@@ -715,6 +1065,16 @@
       "mi": "86"
     },
     "selfTacticCn": "弓腰姬",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "B",
+      "cung": "S",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "结盟",
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977751077271561.png",
     "viet": "Tôn Thượng Hương",
     "linkScore": 1.0
@@ -735,6 +1095,16 @@
       "mi": "95"
     },
     "selfTacticCn": "坐断东南",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "B",
+      "cung": "S",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "卧薪尝胆",
+    "roleTag": "战",
+    "roleTagViet": "Chiến",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977753900038144.png",
     "viet": "Tôn Quyền",
     "linkScore": 1.0
@@ -755,6 +1125,16 @@
       "mi": "92"
     },
     "selfTacticCn": "江东小霸王",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "B",
+      "cung": "A",
+      "thuong": "S",
+      "khiGioi": "A"
+    },
+    "inheritTacticCn": "破阵摧坚",
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977739861702662.png",
     "viet": "Tôn Sách",
     "linkScore": 0.0
@@ -775,6 +1155,16 @@
       "mi": "80"
     },
     "selfTacticCn": "南蛮渠魁",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "S",
+      "cung": "B",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "兵锋",
+    "roleTag": "蛮",
+    "roleTagViet": "Man tộc",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977737861019655.png",
     "viet": "Mạnh Hoạch",
     "linkScore": 0.0
@@ -795,6 +1185,16 @@
       "mi": "92"
     },
     "selfTacticCn": "天香",
+    "troopApt": {
+      "ky": "C",
+      "thuan": "C",
+      "cung": "B",
+      "thuong": "C",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "夺魂挟魄",
+    "roleTag": "魅",
+    "roleTagViet": "Mị lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977750523623432.png",
     "viet": "Tiểu Kiều",
     "linkScore": 0.0
@@ -815,6 +1215,16 @@
       "mi": "1"
     },
     "selfTacticCn": "金丹秘术",
+    "troopApt": {
+      "ky": "C",
+      "thuan": "C",
+      "cung": "C",
+      "thuong": "C",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "杯蛇鬼车",
+    "roleTag": "仙",
+    "roleTagViet": "Tiên",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977743590438914.png",
     "viet": "Tả Từ",
     "linkScore": 1.0
@@ -835,6 +1245,16 @@
       "mi": "70"
     },
     "selfTacticCn": "抬棺决战",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "B",
+      "cung": "S",
+      "thuong": "B",
+      "khiGioi": "B"
+    },
+    "inheritTacticCn": "暂避其锋",
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977738481776643.png",
     "viet": "Bàng Đức",
     "linkScore": 1.0
@@ -855,6 +1275,16 @@
       "mi": "69"
     },
     "selfTacticCn": "连环计",
+    "troopApt": {
+      "ky": "C",
+      "thuan": "B",
+      "cung": "S",
+      "thuong": "A",
+      "khiGioi": "B"
+    },
+    "inheritTacticCn": "乘敌不虞",
+    "roleTag": "谋",
+    "roleTagViet": "Mưu lược",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977757658134529.png",
     "viet": "Bàng Thống",
     "linkScore": 1.0
@@ -875,6 +1305,16 @@
       "mi": "50"
     },
     "selfTacticCn": "奋矛英姿",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "B",
+      "cung": "B",
+      "thuong": "S",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "勇者得前",
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977743871457280.png",
     "viet": "Trương Cơ",
     "linkScore": 0.824
@@ -895,6 +1335,16 @@
       "mi": "68"
     },
     "selfTacticCn": "沉断机谋",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "A",
+      "cung": "A",
+      "thuong": "C",
+      "khiGioi": "B"
+    },
+    "inheritTacticCn": "运筹决算",
+    "roleTag": "谋",
+    "roleTagViet": "Mưu lược",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977746715195401.png",
     "viet": "Trương Xuân Hoa",
     "linkScore": 1.0
@@ -915,6 +1365,16 @@
       "mi": "80"
     },
     "selfTacticCn": "功勋克举",
+    "troopApt": {
+      "ky": "C",
+      "thuan": "C",
+      "cung": "C",
+      "thuong": "B",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "兵锋",
+    "roleTag": "政",
+    "roleTagViet": "Nội chính",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977752532695043.png",
     "viet": "Trương Chiêu",
     "linkScore": 0.857
@@ -935,6 +1395,16 @@
       "mi": "82"
     },
     "selfTacticCn": "奇施经略",
+    "troopApt": {
+      "ky": "C",
+      "thuan": "C",
+      "cung": "B",
+      "thuong": "C",
+      "khiGioi": "A"
+    },
+    "inheritTacticCn": "智计",
+    "roleTag": "政",
+    "roleTagViet": "Nội chính",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977742952904709.png",
     "viet": "Trương Hoành",
     "linkScore": 0.0
@@ -955,6 +1425,16 @@
       "mi": "68"
     },
     "selfTacticCn": "枪舞如风",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "A",
+      "cung": "B",
+      "thuong": "S",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "士争先赴",
+    "roleTag": "战",
+    "roleTagViet": "Chiến",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/6/784809908367978502.png",
     "viet": "Trương Bào",
     "linkScore": 1.0
@@ -975,6 +1455,16 @@
       "mi": "98"
     },
     "selfTacticCn": "五雷轰顶",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "S",
+      "cung": "S",
+      "thuong": "B",
+      "khiGioi": "A"
+    },
+    "inheritTacticCn": "黄天泰平",
+    "roleTag": "黄",
+    "roleTagViet": "Khăn Vàng",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977743259088901.png",
     "viet": "Trương Giác",
     "linkScore": 1.0
@@ -995,6 +1485,16 @@
       "mi": "33"
     },
     "selfTacticCn": "窃幸乘宠",
+    "troopApt": {
+      "ky": "C",
+      "thuan": "S",
+      "cung": "A",
+      "thuong": "B",
+      "khiGioi": "B"
+    },
+    "inheritTacticCn": "竭力佐谋",
+    "roleTag": "谋",
+    "roleTagViet": "Mưu lược",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/6/784811838985138181.png",
     "viet": "Trương Nhượng",
     "linkScore": 0.0
@@ -1015,6 +1515,16 @@
       "mi": "78"
     },
     "selfTacticCn": "陷阵突袭",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "A",
+      "cung": "B",
+      "thuong": "S",
+      "khiGioi": "B"
+    },
+    "inheritTacticCn": "勇者得前",
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977750792058889.png",
     "viet": "Trương Liêu",
     "linkScore": 1.0
@@ -1035,6 +1545,16 @@
       "mi": "71"
     },
     "selfTacticCn": "大戟士",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "S",
+      "cung": "B",
+      "thuong": "S",
+      "khiGioi": "A"
+    },
+    "inheritTacticCn": "大戟士",
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977754780841989.png",
     "viet": "Trương Cáp",
     "linkScore": 0.0
@@ -1055,6 +1575,16 @@
       "mi": "45"
     },
     "selfTacticCn": "燕人咆哮",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "S",
+      "cung": "C",
+      "thuong": "S",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "瞋目横矛",
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977741329709059.png",
     "viet": "Trương Phi",
     "linkScore": 1.0
@@ -1075,6 +1605,16 @@
       "mi": "81"
     },
     "selfTacticCn": "处兹不惑",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "B",
+      "cung": "A",
+      "thuong": "B",
+      "khiGioi": "B"
+    },
+    "inheritTacticCn": "暂避其锋",
+    "roleTag": "谋",
+    "roleTagViet": "Mưu lược",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977753094731784.png",
     "viet": "Từ Thứ",
     "linkScore": 0.909
@@ -1095,6 +1635,16 @@
       "mi": "71"
     },
     "selfTacticCn": "长驱直入",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "S",
+      "cung": "C",
+      "thuong": "A",
+      "khiGioi": "B"
+    },
+    "inheritTacticCn": "合军聚众",
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977756269819910.png",
     "viet": "Từ Hoảng",
     "linkScore": 1.0
@@ -1115,6 +1665,16 @@
       "mi": "38"
     },
     "selfTacticCn": "登锋陷阵",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "A",
+      "cung": "S",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "破阵摧坚",
+    "roleTag": "战",
+    "roleTagViet": "Chiến",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977762586441734.png",
     "viet": "Văn Sửu",
     "linkScore": 0.0
@@ -1135,6 +1695,16 @@
       "mi": "82"
     },
     "selfTacticCn": "戮力上国",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "A",
+      "cung": "S",
+      "thuong": "C",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "盛气凌敌",
+    "roleTag": "政",
+    "roleTagViet": "Nội chính",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977763161061383.png",
     "viet": "Tào Phi",
     "linkScore": 1.0
@@ -1155,6 +1725,16 @@
       "mi": "76"
     },
     "selfTacticCn": "固若金汤",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "S",
+      "cung": "B",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "八门金锁阵",
+    "roleTag": "盾",
+    "roleTagViet": "Phòng thủ",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977742407645193.png",
     "viet": "Tào Nhân",
     "linkScore": 0.857
@@ -1175,6 +1755,16 @@
       "mi": "96"
     },
     "selfTacticCn": "乱世奸雄",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "S",
+      "cung": "A",
+      "thuong": "A",
+      "khiGioi": "B"
+    },
+    "inheritTacticCn": "梦中弑臣",
+    "roleTag": "辅",
+    "roleTagViet": "Phụ trợ",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977754491435012.png",
     "viet": "Tào Tháo",
     "linkScore": 1.0
@@ -1195,6 +1785,16 @@
       "mi": "80"
     },
     "selfTacticCn": "七步成诗",
+    "troopApt": {
+      "ky": "B",
+      "thuan": "B",
+      "cung": "C",
+      "thuong": "C",
+      "khiGioi": "B"
+    },
+    "inheritTacticCn": "守而必固",
+    "roleTag": "魅",
+    "roleTagViet": "Mị lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977745880528896.png",
     "viet": "Tào Thực",
     "linkScore": 0.0
@@ -1215,6 +1815,16 @@
       "mi": "72"
     },
     "selfTacticCn": "虎豹骑",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "C",
+      "cung": "B",
+      "thuong": "B",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "虎豹骑",
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977739031230472.png",
     "viet": "Tào Thuần",
     "linkScore": 0.8
@@ -1235,6 +1845,16 @@
       "mi": "32"
     },
     "selfTacticCn": "象兵",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "C",
+      "cung": "C",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "象兵",
+    "roleTag": "蛮",
+    "roleTagViet": "Man tộc",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977760216659972.png",
     "viet": "Mộc Lộc Đại Vương",
     "linkScore": 0.0
@@ -1255,6 +1875,16 @@
       "mi": "10"
     },
     "selfTacticCn": "毒泉拒蜀",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "S",
+      "cung": "A",
+      "thuong": "C",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "临机制胜",
+    "roleTag": "蛮",
+    "roleTagViet": "Man tộc",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/6/784811687553986561.png",
     "viet": "Đóa Tư Đại Vương",
     "linkScore": 0.0
@@ -1275,6 +1905,16 @@
       "mi": "38"
     },
     "selfTacticCn": "鸩毒",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "B",
+      "cung": "A",
+      "thuong": "B",
+      "khiGioi": "B"
+    },
+    "inheritTacticCn": "四面楚歌",
+    "roleTag": "谋",
+    "roleTagViet": "Mưu lược",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977739303860231.png",
     "viet": "Lý Nho",
     "linkScore": 0.0
@@ -1295,6 +1935,16 @@
       "mi": "74"
     },
     "selfTacticCn": "监统震军",
+    "troopApt": {
+      "ky": "B",
+      "thuan": "S",
+      "cung": "S",
+      "thuong": "A",
+      "khiGioi": "A"
+    },
+    "inheritTacticCn": "威谋靡亢",
+    "roleTag": "谋",
+    "roleTagViet": "Mưu lược",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/6/784811781602865152.png",
     "viet": "Thư Thụ",
     "linkScore": 1.0
@@ -1315,6 +1965,16 @@
       "mi": "55"
     },
     "selfTacticCn": "以逸待劳",
+    "troopApt": {
+      "ky": "B",
+      "thuan": "S",
+      "cung": "A",
+      "thuong": "A",
+      "khiGioi": "A"
+    },
+    "inheritTacticCn": "沉沙决水",
+    "roleTag": "医",
+    "roleTagViet": "Y thuật",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977741883357191.png",
     "viet": "Pháp Chính",
     "linkScore": 1.0
@@ -1335,6 +1995,16 @@
       "mi": "80"
     },
     "selfTacticCn": "镇扼防拒",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "S",
+      "cung": "A",
+      "thuong": "B",
+      "khiGioi": "A"
+    },
+    "inheritTacticCn": "破军威胜",
+    "roleTag": "辅",
+    "roleTagViet": "Phụ trợ",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/6/784809490065846279.png",
     "viet": "Mãn Sủng",
     "linkScore": 1.0
@@ -1355,6 +2025,16 @@
       "mi": "50"
     },
     "selfTacticCn": "垂心万物",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "B",
+      "cung": "A",
+      "thuong": "S",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "速乘其利",
+    "roleTag": "辅",
+    "roleTagViet": "Phụ trợ",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/6/784809726624591881.png",
     "viet": "Vương Nguyên Cơ",
     "linkScore": 1.0
@@ -1375,6 +2055,16 @@
       "mi": "27"
     },
     "selfTacticCn": "震骇四境",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "S",
+      "cung": "C",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "破军威胜",
+    "roleTag": "战",
+    "roleTagViet": "Chiến",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/6/784809594680176648.png",
     "viet": "Vương Song",
     "linkScore": 0.0
@@ -1395,6 +2085,16 @@
       "mi": "51"
     },
     "selfTacticCn": "无当飞军",
+    "troopApt": {
+      "ky": "B",
+      "thuan": "B",
+      "cung": "S",
+      "thuong": "C",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "无当飞军",
+    "roleTag": "战",
+    "roleTagViet": "Chiến",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977762318006272.png",
     "viet": "Vương Bình",
     "linkScore": 0.0
@@ -1415,6 +2115,16 @@
       "mi": "94"
     },
     "selfTacticCn": "花容月貌",
+    "troopApt": {
+      "ky": "C",
+      "thuan": "C",
+      "cung": "B",
+      "thuong": "C",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "魅惑",
+    "roleTag": "魅",
+    "roleTagViet": "Mị lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977744194418693.png",
     "viet": "Chân Cơ",
     "linkScore": 1.0
@@ -1435,6 +2145,16 @@
       "mi": "58"
     },
     "selfTacticCn": "锦帆百翎",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "A",
+      "cung": "S",
+      "thuong": "S",
+      "khiGioi": "S"
+    },
+    "inheritTacticCn": "百骑劫营",
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977740130138116.png",
     "viet": "Cam Ninh",
     "linkScore": 1.0
@@ -1455,6 +2175,16 @@
       "mi": "64"
     },
     "selfTacticCn": "竭忠尽智",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "S",
+      "cung": "B",
+      "thuong": "A",
+      "khiGioi": "A"
+    },
+    "inheritTacticCn": "兵无常势",
+    "roleTag": "控",
+    "roleTagViet": "Khống chế",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977746421594115.png",
     "viet": "Điền Phong",
     "linkScore": 0.0
@@ -1475,6 +2205,16 @@
       "mi": "74"
     },
     "selfTacticCn": "火神英风",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "A",
+      "cung": "A",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "兵无常势",
+    "roleTag": "蛮",
+    "roleTagViet": "Man tộc",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977756555032583.png",
     "viet": "Chúc Dung Phu Nhân",
     "linkScore": 0.0
@@ -1495,6 +2235,16 @@
       "mi": "58"
     },
     "selfTacticCn": "十面埋伏",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "C",
+      "cung": "A",
+      "thuong": "C",
+      "khiGioi": "A"
+    },
+    "inheritTacticCn": "守而必固",
+    "roleTag": "谋",
+    "roleTagViet": "Mưu lược",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977749672179714.png",
     "viet": "Trình Dục",
     "linkScore": 1.0
@@ -1515,6 +2265,16 @@
       "mi": "85"
     },
     "selfTacticCn": "勇烈持重",
+    "troopApt": {
+      "ky": "B",
+      "thuan": "A",
+      "cung": "A",
+      "thuong": "S",
+      "khiGioi": "B"
+    },
+    "inheritTacticCn": "克敌制胜",
+    "roleTag": "盾",
+    "roleTagViet": "Phòng thủ",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977749953198080.png",
     "viet": "Trình Phổ",
     "linkScore": 1.0
@@ -1535,6 +2295,16 @@
       "mi": "93"
     },
     "selfTacticCn": "王佐之才",
+    "troopApt": {
+      "ky": "C",
+      "thuan": "C",
+      "cung": "B",
+      "thuong": "C",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "四面楚歌",
+    "roleTag": "政",
+    "roleTagViet": "Nội chính",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977738758600706.png",
     "viet": "Tuân Úc",
     "linkScore": 1.0
@@ -1555,6 +2325,16 @@
       "mi": "84"
     },
     "selfTacticCn": "十二奇策",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "B",
+      "cung": "S",
+      "thuong": "C",
+      "khiGioi": "B"
+    },
+    "inheritTacticCn": "运筹决算",
+    "roleTag": "谋",
+    "roleTagViet": "Mưu lược",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977748258699271.png",
     "viet": "Tuân Du",
     "linkScore": 1.0
@@ -1575,6 +2355,16 @@
       "mi": "37"
     },
     "selfTacticCn": "酒池肉林",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "S",
+      "cung": "S",
+      "thuong": "B",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "暴戾无仁",
+    "roleTag": "战",
+    "roleTagViet": "Chiến",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977761902770180.png",
     "viet": "Đổng Trác",
     "linkScore": 1.0
@@ -1595,6 +2385,16 @@
       "mi": "57"
     },
     "selfTacticCn": "云聚影从",
+    "troopApt": {
+      "ky": "C",
+      "thuan": "C",
+      "cung": "C",
+      "thuong": "B",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "益其金鼓",
+    "roleTag": "辅",
+    "roleTagViet": "Phụ trợ",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/6/784811996573528065.png",
     "viet": "Đổng Bạch",
     "linkScore": 1.0
@@ -1615,6 +2415,16 @@
       "mi": "81"
     },
     "selfTacticCn": "克遵画一",
+    "troopApt": {
+      "ky": "B",
+      "thuan": "C",
+      "cung": "S",
+      "thuong": "C",
+      "khiGioi": "S"
+    },
+    "inheritTacticCn": "奇计良谋",
+    "roleTag": "政",
+    "roleTagViet": "Nội chính",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977755678423047.png",
     "viet": "Tưởng Uyển",
     "linkScore": 0.824
@@ -1635,6 +2445,16 @@
       "mi": "85"
     },
     "selfTacticCn": "胡笳余音",
+    "troopApt": {
+      "ky": "B",
+      "thuan": "C",
+      "cung": "C",
+      "thuong": "C",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "夺魂挟魄",
+    "roleTag": "医",
+    "roleTagViet": "Y thuật",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977748527134729.png",
     "viet": "Thái Văn Cơ",
     "linkScore": 0.0
@@ -1655,6 +2475,16 @@
       "mi": "81"
     },
     "selfTacticCn": "晓知良木",
+    "troopApt": {
+      "ky": "C",
+      "thuan": "C",
+      "cung": "B",
+      "thuong": "C",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "经术政要",
+    "roleTag": "政",
+    "roleTagViet": "Nội chính",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/8/27/483687923940615686.png",
     "viet": "Thái Ung",
     "linkScore": 0.0
@@ -1675,6 +2505,16 @@
       "mi": "39"
     },
     "selfTacticCn": "符命自立",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "B",
+      "cung": "S",
+      "thuong": "B",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "形机军略",
+    "roleTag": "兼",
+    "roleTagViet": "Kiêm nhiệm",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977757381310467.png",
     "viet": "Viên Thuật",
     "linkScore": 0.0
@@ -1695,6 +2535,16 @@
       "mi": "90"
     },
     "selfTacticCn": "累世立名",
+    "troopApt": {
+      "ky": "B",
+      "thuan": "A",
+      "cung": "S",
+      "thuong": "B",
+      "khiGioi": "S"
+    },
+    "inheritTacticCn": "合军聚众",
+    "roleTag": "战",
+    "roleTagViet": "Chiến",
     "iconUrl": "https://cloud.lingxigames.com/2022/3/8/685821803988447240.png",
     "viet": "Viên Thiệu",
     "linkScore": 1.0
@@ -1715,6 +2565,16 @@
       "mi": "23"
     },
     "selfTacticCn": "傲睨王侯",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "A",
+      "cung": "A",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "定谋贵决",
+    "roleTag": "辅",
+    "roleTagViet": "Phụ trợ",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/6/784811574341332996.png",
     "viet": "Hứa Du",
     "linkScore": 1.0
@@ -1735,6 +2595,16 @@
       "mi": "59"
     },
     "selfTacticCn": "虎痴",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "S",
+      "cung": "B",
+      "thuong": "S",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "所向披靡",
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977745024890887.png",
     "viet": "Hứa Chử",
     "linkScore": 0.0
@@ -1755,6 +2625,16 @@
       "mi": "92"
     },
     "selfTacticCn": "神机妙算",
+    "troopApt": {
+      "ky": "C",
+      "thuan": "B",
+      "cung": "S",
+      "thuong": "S",
+      "khiGioi": "S"
+    },
+    "inheritTacticCn": "舌战群儒",
+    "roleTag": "控",
+    "roleTagViet": "Khống chế",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977752264259584.png",
     "viet": "Gia Cát Lượng",
     "linkScore": 1.0
@@ -1775,6 +2655,16 @@
       "mi": "94"
     },
     "selfTacticCn": "闭月",
+    "troopApt": {
+      "ky": "B",
+      "thuan": "C",
+      "cung": "B",
+      "thuong": "C",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "倾国倾城",
+    "roleTag": "控",
+    "roleTagViet": "Khống chế",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977750225827841.png",
     "viet": "Điêu Thuyền",
     "linkScore": 1.0
@@ -1795,6 +2685,16 @@
       "mi": "57"
     },
     "selfTacticCn": "神机莫测",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "A",
+      "cung": "S",
+      "thuong": "C",
+      "khiGioi": "A"
+    },
+    "inheritTacticCn": "伪书相间",
+    "roleTag": "控",
+    "roleTagViet": "Khống chế",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977762884237318.png",
     "viet": "Giả Hủ",
     "linkScore": 1.0
@@ -1815,6 +2715,16 @@
       "mi": "81"
     },
     "selfTacticCn": "一身是胆",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "A",
+      "cung": "A",
+      "thuong": "S",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "横扫千军",
+    "roleTag": "战",
+    "roleTagViet": "Chiến",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977745586927618.png",
     "viet": "Triệu Vân",
     "linkScore": 1.0
@@ -1835,6 +2745,16 @@
       "mi": "70"
     },
     "selfTacticCn": "暗渡陈仓",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "B",
+      "cung": "A",
+      "thuong": "S",
+      "khiGioi": "S"
+    },
+    "inheritTacticCn": "文武双全",
+    "roleTag": "控",
+    "roleTagViet": "Khống chế",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977754218805249.png",
     "viet": "Đặng Ngải",
     "linkScore": 0.0
@@ -1855,6 +2775,16 @@
       "mi": "89"
     },
     "selfTacticCn": "顾盼生姿",
+    "troopApt": {
+      "ky": "C",
+      "thuan": "B",
+      "cung": "C",
+      "thuong": "C",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "先成其虑",
+    "roleTag": "控",
+    "roleTagViet": "Khống chế",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/6/784811913274650632.png",
     "viet": "Trâu Thị",
     "linkScore": 0.0
@@ -1875,6 +2805,16 @@
       "mi": "72"
     },
     "selfTacticCn": "金城汤池",
+    "troopApt": {
+      "ky": "B",
+      "thuan": "S",
+      "cung": "A",
+      "thuong": "B",
+      "khiGioi": "S"
+    },
+    "inheritTacticCn": "横戈跃马",
+    "roleTag": "医",
+    "roleTagViet": "Y thuật",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977761143601161.png",
     "viet": "Hác Chiêu",
     "linkScore": 1.0
@@ -1895,6 +2835,16 @@
       "mi": "78"
     },
     "selfTacticCn": "十胜十败",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "A",
+      "cung": "A",
+      "thuong": "B",
+      "khiGioi": "B"
+    },
+    "inheritTacticCn": "沉沙决水",
+    "roleTag": "辅",
+    "roleTagViet": "Phụ trợ",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977757108680704.png",
     "viet": "Quách Gia",
     "linkScore": 1.0
@@ -1915,6 +2865,16 @@
       "mi": "66"
     },
     "selfTacticCn": "精练策数",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "B",
+      "cung": "S",
+      "thuong": "A",
+      "khiGioi": "A"
+    },
+    "inheritTacticCn": "文武双全",
+    "roleTag": "谋",
+    "roleTagViet": "Mưu lược",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977758744459269.png",
     "viet": "Chung Hội",
     "linkScore": 1.0
@@ -1935,6 +2895,16 @@
       "mi": "87"
     },
     "selfTacticCn": "校胜帷幄",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "B",
+      "cung": "S",
+      "thuong": "A",
+      "khiGioi": "S"
+    },
+    "inheritTacticCn": "乘胜长驱",
+    "roleTag": "辅",
+    "roleTagViet": "Phụ trợ",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977752809519111.png",
     "viet": "Lục Kháng",
     "linkScore": 1.0
@@ -1955,6 +2925,16 @@
       "mi": "90"
     },
     "selfTacticCn": "火烧连营",
+    "troopApt": {
+      "ky": "C",
+      "thuan": "B",
+      "cung": "S",
+      "thuong": "A",
+      "khiGioi": "A"
+    },
+    "inheritTacticCn": "熯天炽地",
+    "roleTag": "谋",
+    "roleTagViet": "Mưu lược",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977761634334729.png",
     "viet": "Lục Tốn",
     "linkScore": 1.0
@@ -1975,6 +2955,16 @@
       "mi": "69"
     },
     "selfTacticCn": "白毦兵",
+    "troopApt": {
+      "ky": "C",
+      "thuan": "B",
+      "cung": "B",
+      "thuong": "S",
+      "khiGioi": "B"
+    },
+    "inheritTacticCn": "白毦兵",
+    "roleTag": "战",
+    "roleTagViet": "Chiến",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977753631602693.png",
     "viet": "Trần Đáo",
     "linkScore": 0.0
@@ -1995,6 +2985,16 @@
       "mi": "68"
     },
     "selfTacticCn": "百计多谋",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "B",
+      "cung": "S",
+      "thuong": "A",
+      "khiGioi": "A"
+    },
+    "inheritTacticCn": "智计",
+    "roleTag": "谋",
+    "roleTagViet": "Mưu lược",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977753358972928.png",
     "viet": "Trần Cung",
     "linkScore": 0.0
@@ -2015,6 +3015,16 @@
       "mi": "73"
     },
     "selfTacticCn": "清流雅望",
+    "troopApt": {
+      "ky": "C",
+      "thuan": "B",
+      "cung": "B",
+      "thuong": "C",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "挫锐",
+    "roleTag": "政",
+    "roleTagViet": "Nội chính",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977747382089736.png",
     "viet": "Trần Quần",
     "linkScore": 0.0
@@ -2035,6 +3045,16 @@
       "mi": "53"
     },
     "selfTacticCn": "勇冠三军",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "A",
+      "cung": "B",
+      "thuong": "S",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "盛气凌敌",
+    "roleTag": "战",
+    "roleTagViet": "Chiến",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977744748066822.png",
     "viet": "Nhan Lương",
     "linkScore": 0.0
@@ -2055,6 +3075,16 @@
       "mi": "47"
     },
     "selfTacticCn": "鸱苕凤姿",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "C",
+      "cung": "B",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "乘敌不虞",
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977757934958596.png",
     "viet": "Mã Vân Lộc",
     "linkScore": 0.0
@@ -2075,6 +3105,16 @@
       "mi": "89"
     },
     "selfTacticCn": "西凉铁骑",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "C",
+      "cung": "B",
+      "thuong": "C",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "西凉铁骑",
+    "roleTag": "战",
+    "roleTagViet": "Chiến",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977759285524482.png",
     "viet": "Mã Đằng",
     "linkScore": 0.0
@@ -2095,6 +3135,16 @@
       "mi": "82"
     },
     "selfTacticCn": "槊血纵横",
+    "troopApt": {
+      "ky": "S",
+      "thuan": "B",
+      "cung": "B",
+      "thuong": "S",
+      "khiGioi": "B"
+    },
+    "inheritTacticCn": "所向披靡",
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977751349901314.png",
     "viet": "Mã Siêu",
     "linkScore": 1.0
@@ -2115,6 +3165,16 @@
       "mi": "62"
     },
     "selfTacticCn": "振军击营",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "A",
+      "cung": "B",
+      "thuong": "S",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "乘胜长驱",
+    "roleTag": "战",
+    "roleTagViet": "Chiến",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977744475437059.png",
     "viet": "Cao Lãm",
     "linkScore": 0.0
@@ -2135,6 +3195,16 @@
       "mi": "69"
     },
     "selfTacticCn": "陷阵营",
+    "troopApt": {
+      "ky": "C",
+      "thuan": "S",
+      "cung": "B",
+      "thuong": "C",
+      "khiGioi": "S"
+    },
+    "inheritTacticCn": "陷阵营",
+    "roleTag": "盾",
+    "roleTagViet": "Phòng thủ",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977749080782850.png",
     "viet": "Cao Thuận",
     "linkScore": 0.0
@@ -2155,6 +3225,16 @@
       "mi": "45"
     },
     "selfTacticCn": "奇兵间道",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "S",
+      "cung": "B",
+      "thuong": "S",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "威谋靡亢",
+    "roleTag": "战",
+    "roleTagViet": "Chiến",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/6/784810208352989187.png",
     "viet": "Ngụy Diên",
     "linkScore": 1.0
@@ -2175,6 +3255,16 @@
       "mi": "89"
     },
     "selfTacticCn": "济贫好施",
+    "troopApt": {
+      "ky": "B",
+      "thuan": "A",
+      "cung": "A",
+      "thuong": "A",
+      "khiGioi": "A"
+    },
+    "inheritTacticCn": "奇计良谋",
+    "roleTag": "辅",
+    "roleTagViet": "Phụ trợ",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977740432128003.png",
     "viet": "Lỗ Túc",
     "linkScore": 1.0
@@ -2195,6 +3285,16 @@
       "mi": "75"
     },
     "selfTacticCn": "百步穿杨",
+    "troopApt": {
+      "ky": "A",
+      "thuan": "S",
+      "cung": "S",
+      "thuong": "A",
+      "khiGioi": "C"
+    },
+    "inheritTacticCn": "万箭齐发",
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977749378578432.png",
     "viet": "Hoàng Trung",
     "linkScore": 1.0
@@ -2215,6 +3315,16 @@
       "mi": "79"
     },
     "selfTacticCn": "工神",
+    "troopApt": {
+      "ky": "C",
+      "thuan": "C",
+      "cung": "C",
+      "thuong": "C",
+      "khiGioi": "S"
+    },
+    "inheritTacticCn": "锋矢阵",
+    "roleTag": "辅",
+    "roleTagViet": "Phụ trợ",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977763429496840.png",
     "viet": "Hoàng Nguyệt Anh",
     "linkScore": 1.0
@@ -2235,6 +3345,16 @@
       "mi": "81"
     },
     "selfTacticCn": "苦肉计",
+    "troopApt": {
+      "ky": "B",
+      "thuan": "A",
+      "cung": "S",
+      "thuong": "A",
+      "khiGioi": "B"
+    },
+    "inheritTacticCn": "风助火势",
+    "roleTag": "控",
+    "roleTagViet": "Khống chế",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977742147598345.png",
     "viet": "Hoàng Cái",
     "linkScore": 0.0

@@ -3,6 +3,7 @@
 import { applyFilters, emptyState } from "./filters.js";
 import { coexistGroup, el, FACTION_CODE, khaihoangTable, SOURCE_LABEL, STATUS_LABEL, teamCard } from "./render.js";
 import { initTactics } from "./tactics.js";
+import { initHeroList } from "./hero-list.js";
 import { initAnalyze } from "./analyze.js";
 import { createMobileFilterDrawer } from "./mobile-filter-drawer.js";
 import { createMobileSectionMenu } from "./mobile-section-menu.js";
@@ -10,6 +11,7 @@ import { createMobileSectionMenu } from "./mobile-section-menu.js";
 const state = emptyState();
 let TEAMS = [];
 let FACETS = {};
+let TIER_INDEX = new Map(); // teamId -> rankings[]
 let filterDrawer = null;
 let sectionMenu = null;
 
@@ -19,6 +21,15 @@ async function loadJSON(path) {
   const res = await fetch(path);
   if (!res.ok) throw new Error(`${path}: ${res.status}`);
   return res.json();
+}
+
+// Tier team là tùy chọn: thiếu file không được làm vỡ site (team không tier vẫn render).
+async function loadOptionalJSON(path, fallback) {
+  try {
+    return await loadJSON(path);
+  } catch {
+    return fallback;
+  }
 }
 
 /* ---------- Theme ---------- */
@@ -34,7 +45,7 @@ function initTheme() {
 }
 
 /* ---------- Section nav ---------- */
-const SECTIONS = ["team-pk", "coexist", "khaihoang", "tactics", "analyze"];
+const SECTIONS = ["team-pk", "do-uy", "coexist", "khaihoang", "heroes", "tactics", "analyze"];
 function initNav() {
   sectionMenu = createMobileSectionMenu({
     nav: $(".section-nav"),
@@ -174,10 +185,26 @@ function rerender() {
     grid.append(el("p", { class: "empty" }, "Không có team nào khớp bộ lọc."));
   } else {
     const frag = document.createDocumentFragment();
-    for (const t of filtered) frag.append(teamCard(t, onTag));
+    for (const t of filtered) frag.append(teamCard(t, onTag, TIER_INDEX.get(t.id)));
     grid.append(frag);
   }
   $("#stats").textContent = `${filtered.length} / ${TEAMS.length} team`;
+}
+
+/* ---------- Đô Úy (ss24) ---------- */
+// Tab riêng cho đội nguồn "do-uy" — tách khỏi Team PK để tra theo mùa. Dùng lại
+// teamCard + tier badge; team vẫn xuất hiện ở Team PK (không loại trừ).
+function renderDoUy() {
+  const teams = TEAMS.filter((t) => t.source === "do-uy");
+  const grid = el("div", { class: "team-grid" });
+  for (const t of teams) grid.append(teamCard(t, onTag, TIER_INDEX.get(t.id)));
+  $("#section-do-uy").replaceChildren(
+    el("div", { class: "section-intro" }, [
+      el("h2", { class: "section-intro-title" }, "Team Đô Úy (ss24)"),
+      el("p", { class: "section-intro-sub" }, `${teams.length} đội — meta đội hình Đô Úy.`),
+    ]),
+    grid,
+  );
 }
 
 /* ---------- Mobile drawer ---------- */
@@ -210,10 +237,14 @@ async function main() {
     ]);
     TEAMS = teams;
     FACETS = facets;
+    const teamTier = await loadOptionalJSON("./data/team-tier.json", []);
+    TIER_INDEX = new Map(teamTier.map((r) => [r.teamId, r.rankings]));
     buildFilterUI();
     rerender();
+    renderDoUy();
     $("#section-coexist").append(...coexist.map(coexistGroup));
     $("#section-khaihoang").append(khaihoangTable(khaihoang));
+    initHeroList(heroesDict, tactics, $("#section-heroes"));
     initTactics(tactics, $("#section-tactics"));
     // Mở team giống từ kết quả soi đội -> về tab Team PK, search tên tướng đầu.
     const onOpenTeam = (team) => {

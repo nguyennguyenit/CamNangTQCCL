@@ -49,6 +49,25 @@ class ParseHeroTest(unittest.TestCase):
         self.assertEqual(rec["stats"]["tri"], "91")    # 智力
         self.assertTrue(rec["iconUrl"].startswith("http"))
 
+    def test_enriched_fields(self):
+        # [Phase 1] thích tính binh chủng + truyền thừa + tag vai trò.
+        rec = crawl_tactics.parse_hero_detail(self.item)
+        self.assertEqual(rec["troopApt"], {        # 兵种适性{骑/盾/弓/枪/器械}
+            "ky": "S", "thuan": "S", "cung": "A", "thuong": "A", "khiGioi": "B",
+        })
+        self.assertEqual(rec["inheritTacticCn"], "梦中弑臣")  # 传承战法 (chỉ tên Hán)
+        self.assertEqual(rec["roleTag"], "辅")                 # 武将标签
+        self.assertEqual(rec["roleTagViet"], "Phụ trợ")       # qua role-tag-map.json
+
+    def test_unknown_role_tag_fail_loud(self):
+        # Tag chưa có trong bảng map -> fail-loud (không lọt tag chưa map).
+        bad = json.loads(json.dumps(self.item))  # deep copy
+        for d in bad["details"]:
+            if d["key"] == "武将标签":
+                d["val"] = "氏"  # tag không tồn tại trong map
+        with self.assertRaises(Exception):
+            crawl_tactics.parse_hero_detail(bad)
+
 
 class DetailMapTest(unittest.TestCase):
     def test_list_fixture_shape(self):
