@@ -10,6 +10,7 @@ import { createMobileSectionMenu } from "./mobile-section-menu.js";
 
 const state = emptyState();
 let TEAMS = [];
+let PK_TEAMS = []; // Team PK = không gồm do-uy (đã tách sang tab "Đô Úy (ss18)")
 let FACETS = {};
 let TIER_INDEX = new Map(); // teamId -> rankings[]
 let filterDrawer = null;
@@ -178,7 +179,7 @@ function onTag(value) {
 }
 
 function rerender() {
-  const filtered = applyFilters(TEAMS, state);
+  const filtered = applyFilters(PK_TEAMS, state);
   const grid = $("#team-grid");
   grid.replaceChildren();
   if (!filtered.length) {
@@ -188,7 +189,7 @@ function rerender() {
     for (const t of filtered) frag.append(teamCard(t, onTag, TIER_INDEX.get(t.id)));
     grid.append(frag);
   }
-  $("#stats").textContent = `${filtered.length} / ${TEAMS.length} team`;
+  $("#stats").textContent = `${filtered.length} / ${PK_TEAMS.length} team`;
 }
 
 /* ---------- Đô Úy (ss24) ---------- */
@@ -243,6 +244,7 @@ async function main() {
       loadJSON("./data/books-dict.json"),
     ]);
     TEAMS = teams;
+    PK_TEAMS = teams.filter((t) => t.source !== "do-uy");
     FACETS = facets;
     const teamTier = await loadOptionalJSON("./data/team-tier.json", []);
     TIER_INDEX = new Map(teamTier.map((r) => [r.teamId, r.rankings]));
