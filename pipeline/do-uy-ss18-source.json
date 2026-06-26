@@ -427,14 +427,40 @@
    {
     "tuong": "SP Quách Gia",
     "cp1": "Đoạt Hồn Hiệp Phách",
-    "cp2": "Thượng Binh Phạt Mưu"
+    "cp2": "Thượng Binh Phạt Mưu",
+    "binh_thu": [
+     "Tướng Uy",
+     "Quỷ Mưu"
+    ]
    },
    {
     "tuong": "Chu Thiệu",
     "cp1": "Nhanh Trí Động Não",
-    "cp2": "Đương Phong Thôi Quyết"
+    "cp2": "Đương Phong Thôi Quyết",
+    "binh_thu": [
+     "Kỳ Chính Tương Sinh",
+     "Văn Thao",
+     "Cầm Binh Khí"
+    ]
    }
-  ]
+  ],
+  "binh_chung": "Kỵ",
+  "khac_che": {
+   "khac": [
+    "Cự Mã Cung",
+    "Pháp Quan",
+    "Tam Tiên",
+    "Lữ Bố",
+    "Thái Úy",
+    "Đội chủ lực"
+   ],
+   "bi_khac": [
+    "Hoàng Kỵ Tốc Chiến Kỳ Lợi",
+    "Tốc công bạo lực",
+    "Gia Cát Lượng siêu thần"
+   ]
+  },
+  "ghi_chu": "Ngũ Mưu binh chủng Kỵ — đội hot số 1 (T0) trong kịch bản Anh Hùng Mệnh Thế. Add điểm toàn Trí lực, tốc độ: SP Quách Gia nhất tốc, Tuân Du nhị tốc, Chu Thiệu vĩ tốc. Biến thể khác: SP Tuân Úc + Giả Hủ + SP Quách Gia, hoặc thay phó tướng bằng Tuân Du. Khắc nhiều đội chủ lực; sợ Hoàng Kỵ Tốc Chiến Kỳ Lợi, tốc công bạo lực và GCL khi siêu thần. (Nguồn: video meta SS18 China)"
  },
  {
   "team_name": "Pháp Quan Tiêu Chỉ",
@@ -491,19 +517,49 @@
    {
     "tuong": "Trương Giác",
     "cp1": "Thái Bình Đạo Pháp",
-    "cp2": "Sĩ Biệt Tam Nhật"
+    "cp2": "Sĩ Biệt Tam Nhật",
+    "binh_thu": [
+     "Tướng Uy",
+     "Quỷ Mưu"
+    ]
    },
    {
     "tuong": "Tả Từ",
     "cp1": "Dưỡng Sức Đợi Chiến",
-    "cp2": "Quát Cốt Liệu Độc"
+    "cp2": "Quát Cốt Liệu Độc",
+    "binh_thu": [
+     "Tấn Công Điểm Yếu",
+     "Tản Tiên",
+     "Khép Hờ"
+    ]
    },
    {
     "tuong": "Chu Thiệu",
     "cp1": "Phong Thỉ Trận",
-    "cp2": "Toàn Quân Đồng Lòng"
+    "cp2": "Toàn Quân Đồng Lòng",
+    "binh_thu": [
+     "Tấn Công Điểm Yếu",
+     "Khích Lệ Lòng Quân",
+     "Khép Hờ"
+    ]
    }
-  ]
+  ],
+  "binh_chung": "Khiên",
+  "khac_che": {
+   "khac": [
+    "Pháp Quan",
+    "Lữ Bố",
+    "Cự Mã Cung",
+    "Đội tạp"
+   ],
+   "bi_khac": [
+    "Kỳ Lân",
+    "Ngũ Mưu",
+    "Thái Đao Tất Trúng",
+    "Hoàng Kỵ"
+   ]
+  },
+  "ghi_chu": "Tam Tiên binh chủng Thuẫn (Chu Du dùng Võ Phong Trận + Đằng Giáp Binh). Giai đoạn đầu-giữa mùa Anh Hùng Mệnh Thế khi Ngũ Mưu chưa phổ biến thì phát huy rất tốt; khắc Pháp Quan/Lữ Bố/Cự Mã Cung và phần lớn đội tạp; yếu trước Kỳ Lân, Ngũ Mưu, Thái Đao Tất Trúng, kém hơn khi gặp Hoàng Kỵ. (Nguồn: video meta SS18 China)"
  },
  {
   "team_name": "Ôn Hầu Cung",
@@ -514,19 +570,43 @@
    {
     "tuong": "Trần Hy",
     "cp1": "Thuyền Cỏ Mượn Tên",
-    "cp2": "Cẩm Phàm Quân"
+    "cp2": "Cẩm Phàm Quân",
+    "binh_thu": [
+     "Tấn Công Điểm Yếu",
+     "Khích Lệ Lòng Quân",
+     "Khép Hờ"
+    ]
    },
    {
     "tuong": "Lữ Bố",
     "cp1": "Đương Phong Thôi Quyết",
-    "cp2": "Thôi Phong Đoạn Nhẫn"
+    "cp2": "Thôi Phong Đoạn Nhẫn",
+    "binh_thu": [
+     "Liền Mạch Một Hơi",
+     "Thắng Trận",
+     "Cầm Binh Khí"
+    ]
    },
    {
     "tuong": "Hứa Du",
     "cp1": "Tinh - Ngư Lân Trận",
-    "cp2": "Lâm Nguy Cứu Chủ"
+    "cp2": "Lâm Nguy Cứu Chủ",
+    "binh_thu": [
+     "Bố Trận Chờ Đợi",
+     "Thế Phòng Thủ",
+     "Phòng Bị"
+    ]
    }
-  ]
+  ],
+  "binh_chung": "Cung",
+  "khac_che": {
+   "khac": [],
+   "bi_khac": [
+    "Pháp Quan",
+    "Tam Tiên"
+   ]
+  },
+  "ghi_chu": "'Quỷ Thần Lữ Bố' — thần kinh đao số 1 Tam Chiến, trần rất cao, gượng 5-5 với mọi đội (thắng thua phụ thuộc Lữ Bố chém được bao nhiêu đao). Khắc tinh cứng là Pháp Quan và Tam Tiên. Cần trang bị quan chức đặc kỹ Quyết Thủ; thiếu thì sức mạnh Lữ Bố giảm thẳng một bậc. (Nguồn: video meta SS18 China)"
  },
  {
   "team_name": "Từ Ngạn Trương Giác",
@@ -560,19 +640,48 @@
    {
     "tuong": "Gia Cát Lượng",
     "cp1": "Nhạn Hình Trận",
-    "cp2": "Quát Cốt Liệu Độc"
+    "cp2": "Quát Cốt Liệu Độc",
+    "binh_thu": [
+     "Tấn Công Điểm Yếu",
+     "Khích Lệ Lòng Quân",
+     "Khép Hờ"
+    ]
    },
    {
     "tuong": "Bàng Thống",
     "cp1": "Thái Bình Đạo Pháp",
-    "cp2": "Sĩ Biệt Tam Nhật"
+    "cp2": "Sĩ Biệt Tam Nhật",
+    "binh_thu": [
+     "Đánh Sau Trúng Trước",
+     "Tướng Uy",
+     "Xem Bói"
+    ]
    },
    {
     "tuong": "Chu Thiệu",
     "cp1": "Đương Phong Thôi Quyết",
-    "cp2": "Thừa Địch Bất Ngu"
+    "cp2": "Thừa Địch Bất Ngu",
+    "binh_thu": [
+     "Kỳ Chính Tương Sinh",
+     "Văn Thao",
+     "Cầm Binh Khí"
+    ]
    }
-  ]
+  ],
+  "binh_chung": "Cung",
+  "khac_che": {
+   "khac": [
+    "Tam Tiên",
+    "Pháp Quan",
+    "Đẳng Phong Mã Siêu",
+    "Đội trung-chậm"
+   ],
+   "bi_khac": [
+    "Tốc công bạo lực",
+    "Mã Siêu Tốc Chiến Kỳ Lợi"
+   ]
+  },
+  "ghi_chu": "Đội Kỳ Lân (Nhạn Hành Trận). Nhạn Hành Trận là chiến pháp bắt buộc (cương nhu), không có kỹ năng thay thế tương đương; nếu thiếu thì không nên dùng làm đội xuất phát đầu mùa. Khắc các đội trung-chậm; sợ tốc công bạo lực và Mã Siêu Tốc Chiến Kỳ Lợi. (Nguồn: video meta SS18 China)"
  },
  {
   "team_name": "Pháp Quan Hoàng Phủ",
@@ -583,19 +692,45 @@
    {
     "tuong": "SP Quan Vũ",
     "cp1": "Lấy Ít Địch Nhiều",
-    "cp2": "Kích Kỳ Đọa Quy"
+    "cp2": "Kích Kỳ Đọa Quy",
+    "binh_thu": [
+     "Tam Lý Nhĩ Hoàn",
+     "Tĩnh Tâm",
+     "Nghĩa Dũng"
+    ]
    },
    {
     "tuong": "Hoàng Phủ Hoành",
     "cp1": "Mị Hoặc",
-    "cp2": "Ngư Lân Trận"
+    "cp2": "Ngư Lân Trận",
+    "binh_thu": [
+     "Không Chiến Mà Thắng",
+     "Tĩnh Tâm",
+     "Thế Phòng Thủ"
+    ]
    },
    {
     "tuong": "SP Pháp Chính",
     "cp1": "Không Đánh Mà Thắng",
-    "cp2": "Dưỡng Sức Đợi Chiến"
+    "cp2": "Dưỡng Sức Đợi Chiến",
+    "binh_thu": [
+     "Tấn Công Điểm Yếu",
+     "Khích Lệ Lòng Quân",
+     "Khép Hờ"
+    ]
    }
-  ]
+  ],
+  "binh_chung": "Khiên",
+  "khac_che": {
+   "khac": [
+    "Các đội Cung (trừ Cự Mã Cung & Kỳ Lân Nhạn Hành Trận)"
+   ],
+   "bi_khac": [
+    "Thái Đao Tất Trúng",
+    "Ngũ Mưu"
+   ]
+  },
+  "ghi_chu": "Pháp Quan binh chủng Thuẫn — một trong 'Tứ Huyễn Thần' SS18. Khắc gần như mọi đội Cung trừ Cự Mã Cung và Kỳ Lân Nhạn Hành Trận; sợ Thái Đao Tất Trúng và Ngũ Mưu. Với Hoàng Kỵ/Tam Tiên/Thái Úy không có khắc chế rõ ràng, thắng thua phụ thuộc số lần kích Mị Hoặc + Thủy Yêm Thất Quân. (Nguồn: video meta SS18 China)"
  },
  {
   "team_name": "Thái Sư Cung",
@@ -629,18 +764,46 @@
    {
     "tuong": "SP Lư Thực",
     "cp1": "Nhạn Hình Trận",
-    "cp2": "Tiên Đăng Tử Sĩ"
+    "cp2": "Tiên Đăng Tử Sĩ",
+    "binh_thu": [
+     "Tấn Công Điểm Yếu",
+     "Khích Lệ Lòng Quân",
+     "Khép Hờ"
+    ]
    },
    {
     "tuong": "SP Điêu Thuyền",
     "cp1": "Thâm Tàng Nhược Hư",
-    "cp2": "Đồng Tâm Hiệp Lực"
+    "cp2": "Đồng Tâm Hiệp Lực",
+    "binh_thu": [
+     "Kỳ Chính Tương Sinh",
+     "Văn Thao",
+     "Cầm Binh Khí"
+    ]
    },
    {
     "tuong": "Tiêu Chỉ",
     "cp1": "Cương Nhu Kết Hợp",
-    "cp2": "Nhân Lợi Chế Quyền"
+    "cp2": "Nhân Lợi Chế Quyền",
+    "binh_thu": [
+     "Tấn Công Điểm Yếu",
+     "Khích Lệ Lòng Quân",
+     "Khép Hờ"
+    ]
    }
-  ]
+  ],
+  "binh_chung": "Cung",
+  "khac_che": {
+   "khac": [
+    "Hoàng Kỵ (ưu thế hòa)",
+    "Pháp Quan (ưu thế hòa)",
+    "Tam Tiên (ưu thế hòa)"
+   ],
+   "bi_khac": [
+    "Ngũ Mưu",
+    "Kỳ Lân"
+   ]
+  },
+  "ghi_chu": "'Thần của phiên bản' SS18 (T0). Năng lực đánh hòa (liên hòa đả công) cực nổi bật, đặc biệt hợp server cạnh tranh cao — lựa chọn hàng đầu cho đội thứ 2 của top player. Ưu thế hòa với Hoàng Kỵ/Pháp Quan/Tam Tiên; sợ các đội bùng nổ sát thương phép như Ngũ Mưu, Kỳ Lân. (Nguồn: video meta SS18 China)"
  }
 ]

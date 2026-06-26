@@ -21840,8 +21840,10 @@
     "source": "do-uy",
     "name": "Chu Thiệu Ngũ Mưu",
     "nickname": null,
-    "rawType": "",
-    "unitType": [],
+    "rawType": "Kỵ",
+    "unitType": [
+      "Kỵ"
+    ],
     "faction": null,
     "stars": null,
     "status": "meta",
@@ -21883,7 +21885,16 @@
             "alternatives": []
           }
         ],
-        "books": [],
+        "books": [
+          {
+            "name": "Tướng Uy",
+            "alternatives": []
+          },
+          {
+            "name": "Quỷ Mưu",
+            "alternatives": []
+          }
+        ],
         "note": null
       },
       {
@@ -21903,15 +21914,39 @@
             "alternatives": []
           }
         ],
-        "books": [],
+        "books": [
+          {
+            "name": "Kỳ Chính Tương Sinh",
+            "alternatives": []
+          },
+          {
+            "name": "Văn Thao",
+            "alternatives": []
+          },
+          {
+            "name": "Cầm Binh Khí",
+            "alternatives": []
+          }
+        ],
         "note": null
       }
     ],
     "counters": {
-      "good": [],
-      "avoid": []
+      "good": [
+        "Cự Mã Cung",
+        "Pháp Quan",
+        "Tam Tiên",
+        "Lữ Bố",
+        "Thái Úy",
+        "Đội chủ lực"
+      ],
+      "avoid": [
+        "Hoàng Kỵ Tốc Chiến Kỳ Lợi",
+        "Tốc công bạo lực",
+        "Gia Cát Lượng siêu thần"
+      ]
     },
-    "notes": "Core: SP Tuân Úc + SP Quách Gia + Chu Thiệu"
+    "notes": "Ngũ Mưu binh chủng Kỵ — đội hot số 1 (T0) trong kịch bản Anh Hùng Mệnh Thế. Add điểm toàn Trí lực, tốc độ: SP Quách Gia nhất tốc, Tuân Du nhị tốc, Chu Thiệu vĩ tốc. Biến thể khác: SP Tuân Úc + Giả Hủ + SP Quách Gia, hoặc thay phó tướng bằng Tuân Du. Khắc nhiều đội chủ lực; sợ Hoàng Kỵ Tốc Chiến Kỳ Lợi, tốc công bạo lực và GCL khi siêu thần. (Nguồn: video meta SS18 China)"
   },
   {
     "id": "do-uy-ss18-19",
@@ -22074,8 +22109,10 @@
     "source": "do-uy",
     "name": "Chu Thiệu Tam Tiên",
     "nickname": null,
-    "rawType": "",
-    "unitType": [],
+    "rawType": "Khiên",
+    "unitType": [
+      "Khiên"
+    ],
     "faction": null,
     "stars": null,
     "status": "meta",
@@ -22097,7 +22134,16 @@
             "alternatives": []
           }
         ],
-        "books": [],
+        "books": [
+          {
+            "name": "Tướng Uy",
+            "alternatives": []
+          },
+          {
+            "name": "Quỷ Mưu",
+            "alternatives": []
+          }
+        ],
         "note": null
       },
       {
@@ -22117,7 +22163,20 @@
             "alternatives": []
           }
         ],
-        "books": [],
+        "books": [
+          {
+            "name": "Tấn Công Điểm Yếu",
+            "alternatives": []
+          },
+          {
+            "name": "Tản Tiên",
+            "alternatives": []
+          },
+          {
+            "name": "Khép Hờ",
+            "alternatives": []
+          }
+        ],
         "note": null
       },
       {
@@ -22137,15 +22196,38 @@
             "alternatives": []
           }
         ],
-        "books": [],
+        "books": [
+          {
+            "name": "Tấn Công Điểm Yếu",
+            "alternatives": []
+          },
+          {
+            "name": "Khích Lệ Lòng Quân",
+            "alternatives": []
+          },
+          {
+            "name": "Khép Hờ",
+            "alternatives": []
+          }
+        ],
         "note": null
       }
     ],
     "counters": {
-      "good": [],
-      "avoid": []
+      "good": [
+        "Pháp Quan",
+        "Lữ Bố",
+        "Cự Mã Cung",
+        "Đội tạp"
+      ],
+      "avoid": [
+        "Kỳ Lân",
+        "Ngũ Mưu",
+        "Thái Đao Tất Trúng",
+        "Hoàng Kỵ"
+      ]
     },
-    "notes": "Core: Trương Giác + Tả Từ + Chu Thiệu"
+    "notes": "Tam Tiên binh chủng Thuẫn (Chu Du dùng Võ Phong Trận + Đằng Giáp Binh). Giai đoạn đầu-giữa mùa Anh Hùng Mệnh Thế khi Ngũ Mưu chưa phổ biến thì phát huy rất tốt; khắc Pháp Quan/Lữ Bố/Cự Mã Cung và phần lớn đội tạp; yếu trước Kỳ Lân, Ngũ Mưu, Thái Đao Tất Trúng, kém hơn khi gặp Hoàng Kỵ. (Nguồn: video meta SS18 China)"
   },
   {
     "id": "do-uy-ss18-22",
@@ -22177,7 +22259,20 @@
             "alternatives": []
           }
         ],
-        "books": [],
+        "books": [
+          {
+            "name": "Tấn Công Điểm Yếu",
+            "alternatives": []
+          },
+          {
+            "name": "Khích Lệ Lòng Quân",
+            "alternatives": []
+          },
+          {
+            "name": "Khép Hờ",
+            "alternatives": []
+          }
+        ],
         "note": null
       },
       {
@@ -22197,7 +22292,20 @@
             "alternatives": []
           }
         ],
-        "books": [],
+        "books": [
+          {
+            "name": "Liền Mạch Một Hơi",
+            "alternatives": []
+          },
+          {
+            "name": "Thắng Trận",
+            "alternatives": []
+          },
+          {
+            "name": "Cầm Binh Khí",
+            "alternatives": []
+          }
+        ],
         "note": null
       },
       {
@@ -22217,15 +22325,31 @@
             "alternatives": []
           }
         ],
-        "books": [],
+        "books": [
+          {
+            "name": "Bố Trận Chờ Đợi",
+            "alternatives": []
+          },
+          {
+            "name": "Thế Phòng Thủ",
+            "alternatives": []
+          },
+          {
+            "name": "Phòng Bị",
+            "alternatives": []
+          }
+        ],
         "note": null
       }
     ],
     "counters": {
       "good": [],
-      "avoid": []
+      "avoid": [
+        "Pháp Quan",
+        "Tam Tiên"
+      ]
     },
-    "notes": "Core: Trần Hy + Lữ Bố + Hứa Du"
+    "notes": "'Quỷ Thần Lữ Bố' — thần kinh đao số 1 Tam Chiến, trần rất cao, gượng 5-5 với mọi đội (thắng thua phụ thuộc Lữ Bố chém được bao nhiêu đao). Khắc tinh cứng là Pháp Quan và Tam Tiên. Cần trang bị quan chức đặc kỹ Quyết Thủ; thiếu thì sức mạnh Lữ Bố giảm thẳng một bậc. (Nguồn: video meta SS18 China)"
   },
   {
     "id": "do-uy-ss18-23",
@@ -22310,8 +22434,10 @@
     "source": "do-uy",
     "name": "Chu Thiệu Thục Trí",
     "nickname": null,
-    "rawType": "",
-    "unitType": [],
+    "rawType": "Cung",
+    "unitType": [
+      "Cung"
+    ],
     "faction": null,
     "stars": null,
     "status": "meta",
@@ -22333,7 +22459,20 @@
             "alternatives": []
           }
         ],
-        "books": [],
+        "books": [
+          {
+            "name": "Tấn Công Điểm Yếu",
+            "alternatives": []
+          },
+          {
+            "name": "Khích Lệ Lòng Quân",
+            "alternatives": []
+          },
+          {
+            "name": "Khép Hờ",
+            "alternatives": []
+          }
+        ],
         "note": null
       },
       {
@@ -22353,7 +22492,20 @@
             "alternatives": []
           }
         ],
-        "books": [],
+        "books": [
+          {
+            "name": "Đánh Sau Trúng Trước",
+            "alternatives": []
+          },
+          {
+            "name": "Tướng Uy",
+            "alternatives": []
+          },
+          {
+            "name": "Xem Bói",
+            "alternatives": []
+          }
+        ],
         "note": null
       },
       {
@@ -22373,23 +22525,46 @@
             "alternatives": []
           }
         ],
-        "books": [],
+        "books": [
+          {
+            "name": "Kỳ Chính Tương Sinh",
+            "alternatives": []
+          },
+          {
+            "name": "Văn Thao",
+            "alternatives": []
+          },
+          {
+            "name": "Cầm Binh Khí",
+            "alternatives": []
+          }
+        ],
         "note": null
       }
     ],
     "counters": {
-      "good": [],
-      "avoid": []
+      "good": [
+        "Tam Tiên",
+        "Pháp Quan",
+        "Đẳng Phong Mã Siêu",
+        "Đội trung-chậm"
+      ],
+      "avoid": [
+        "Tốc công bạo lực",
+        "Mã Siêu Tốc Chiến Kỳ Lợi"
+      ]
     },
-    "notes": "Core: Gia Cát Lượng + Bàng Thống + Chu Thiệu"
+    "notes": "Đội Kỳ Lân (Nhạn Hành Trận). Nhạn Hành Trận là chiến pháp bắt buộc (cương nhu), không có kỹ năng thay thế tương đương; nếu thiếu thì không nên dùng làm đội xuất phát đầu mùa. Khắc các đội trung-chậm; sợ tốc công bạo lực và Mã Siêu Tốc Chiến Kỳ Lợi. (Nguồn: video meta SS18 China)"
   },
   {
     "id": "do-uy-ss18-25",
     "source": "do-uy",
     "name": "Pháp Quan Hoàng Phủ",
     "nickname": null,
-    "rawType": "",
-    "unitType": [],
+    "rawType": "Khiên",
+    "unitType": [
+      "Khiên"
+    ],
     "faction": null,
     "stars": null,
     "status": "meta",
@@ -22411,7 +22586,20 @@
             "alternatives": []
           }
         ],
-        "books": [],
+        "books": [
+          {
+            "name": "Tam Lý Nhĩ Hoàn",
+            "alternatives": []
+          },
+          {
+            "name": "Tĩnh Tâm",
+            "alternatives": []
+          },
+          {
+            "name": "Nghĩa Dũng",
+            "alternatives": []
+          }
+        ],
         "note": null
       },
       {
@@ -22431,7 +22619,20 @@
             "alternatives": []
           }
         ],
-        "books": [],
+        "books": [
+          {
+            "name": "Không Chiến Mà Thắng",
+            "alternatives": []
+          },
+          {
+            "name": "Tĩnh Tâm",
+            "alternatives": []
+          },
+          {
+            "name": "Thế Phòng Thủ",
+            "alternatives": []
+          }
+        ],
         "note": null
       },
       {
@@ -22451,15 +22652,33 @@
             "alternatives": []
           }
         ],
-        "books": [],
+        "books": [
+          {
+            "name": "Tấn Công Điểm Yếu",
+            "alternatives": []
+          },
+          {
+            "name": "Khích Lệ Lòng Quân",
+            "alternatives": []
+          },
+          {
+            "name": "Khép Hờ",
+            "alternatives": []
+          }
+        ],
         "note": null
       }
     ],
     "counters": {
-      "good": [],
-      "avoid": []
+      "good": [
+        "Các đội Cung (trừ Cự Mã Cung & Kỳ Lân Nhạn Hành Trận)"
+      ],
+      "avoid": [
+        "Thái Đao Tất Trúng",
+        "Ngũ Mưu"
+      ]
     },
-    "notes": "Core: SP Quan Vũ + Hoàng Phủ Hoành + SP Pháp Chính"
+    "notes": "Pháp Quan binh chủng Thuẫn — một trong 'Tứ Huyễn Thần' SS18. Khắc gần như mọi đội Cung trừ Cự Mã Cung và Kỳ Lân Nhạn Hành Trận; sợ Thái Đao Tất Trúng và Ngũ Mưu. Với Hoàng Kỵ/Tam Tiên/Thái Úy không có khắc chế rõ ràng, thắng thua phụ thuộc số lần kích Mị Hoặc + Thủy Yêm Thất Quân. (Nguồn: video meta SS18 China)"
   },
   {
     "id": "do-uy-ss18-26",
@@ -22571,7 +22790,20 @@
             "alternatives": []
           }
         ],
-        "books": [],
+        "books": [
+          {
+            "name": "Tấn Công Điểm Yếu",
+            "alternatives": []
+          },
+          {
+            "name": "Khích Lệ Lòng Quân",
+            "alternatives": []
+          },
+          {
+            "name": "Khép Hờ",
+            "alternatives": []
+          }
+        ],
         "note": null
       },
       {
@@ -22591,7 +22823,20 @@
             "alternatives": []
           }
         ],
-        "books": [],
+        "books": [
+          {
+            "name": "Kỳ Chính Tương Sinh",
+            "alternatives": []
+          },
+          {
+            "name": "Văn Thao",
+            "alternatives": []
+          },
+          {
+            "name": "Cầm Binh Khí",
+            "alternatives": []
+          }
+        ],
         "note": null
       },
       {
@@ -22611,14 +22856,34 @@
             "alternatives": []
           }
         ],
-        "books": [],
+        "books": [
+          {
+            "name": "Tấn Công Điểm Yếu",
+            "alternatives": []
+          },
+          {
+            "name": "Khích Lệ Lòng Quân",
+            "alternatives": []
+          },
+          {
+            "name": "Khép Hờ",
+            "alternatives": []
+          }
+        ],
         "note": null
       }
     ],
     "counters": {
-      "good": [],
-      "avoid": []
+      "good": [
+        "Hoàng Kỵ (ưu thế hòa)",
+        "Pháp Quan (ưu thế hòa)",
+        "Tam Tiên (ưu thế hòa)"
+      ],
+      "avoid": [
+        "Ngũ Mưu",
+        "Kỳ Lân"
+      ]
     },
-    "notes": "Core: SP Lư Thực + SP Điêu Thuyền + Tiêu Chỉ"
+    "notes": "'Thần của phiên bản' SS18 (T0). Năng lực đánh hòa (liên hòa đả công) cực nổi bật, đặc biệt hợp server cạnh tranh cao — lựa chọn hàng đầu cho đội thứ 2 của top player. Ưu thế hòa với Hoàng Kỵ/Pháp Quan/Tam Tiên; sợ các đội bùng nổ sát thương phép như Ngũ Mưu, Kỳ Lân. (Nguồn: video meta SS18 China)"
   }
 ]
