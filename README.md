@@ -4,8 +4,11 @@ Website tĩnh tra cứu meta team cho Tam Quốc Chí Chiến Lược. Chạy b�
 
 ## Có gì
 
-- `Team PK`: 160 team (team-intro + meta phe cũ; team Đô Úy tách sang tab riêng), lọc theo loại binh / sao / trạng thái / phe / tướng / chiến pháp / binh thư, có search toàn văn.
-- `Đô Úy (ss18)`: tab riêng cho meta đội hình Đô Úy mùa SS18 (37 team), filter bar inline (loại binh / phe / tier / khuyến nghị), gắn badge tier T0–T1 + badge khuyến nghị (nguồn tham khảo `ss18.thanglonghoi.xyz`).
+Ba tab team (`Team PK`, `Đô Úy`, `Meta phe (cũ)`) dùng **cùng một bộ lọc inline** từ module `js/team-filter-section.js` (ô search toàn văn + nhóm chip). Các nhóm chip nằm gọn trên 1 hàng; tướng/chiến pháp/binh thư tra bằng ô tìm kiếm (không còn combo riêng). Mỗi tab tự tính facets từ tập team của nó; nhóm chỉ còn ≤1 giá trị (không lọc được gì) thì tự ẩn. Trên điện thoại, vùng nhóm lọc thu gọn sau nút **☰ Bộ lọc**. Wrapper mỏng mỗi tab: `js/team-pk.js`, `js/do-uy.js`, `js/meta-cu.js`.
+
+- `Team PK`: 50 team giới thiệu (team Đô Úy và Meta phe cũ tách sang tab riêng), lọc theo loại binh / sao / phe, có search toàn văn. Team giới thiệu không có sẵn phe nên **quốc gia (Ngụy/Thục/Ngô/Quần/Hỗn hợp) được suy từ phe đa số của 3 tướng** (`js/derive-team-faction.js`) để gắn badge + viền màu và bật bộ lọc Phe.
+- `Đô Úy (ss18)`: tab riêng cho meta đội hình Đô Úy mùa SS18 (48 team), thêm lọc tier + khuyến nghị, gắn badge tier T0–T1 + badge khuyến nghị (nguồn tham khảo `ss18.thanglonghoi.xyz`).
+- `Meta phe (cũ)`: tab riêng cho 110 team meta phe các mùa cũ (source `moi-phe`), lọc theo loại binh / phe, có search toàn văn.
 - `Cùng Tồn`: nhóm team cùng tồn tại, kèm `Thêm` và `Kỹ năng quân sư`.
 - `Khai hoang`: đội khai hoang và quân thủ các mỏ.
 - `Tra cứu tướng`: 112 tướng, lọc theo thích tính binh chủng (S/A) / vai trò / phe / sao, search fuzzy (Việt bỏ dấu / Hán-Việt / Hán); click card mở modal chi tiết (stats + thích tính + 2 chiến pháp tự mang/truyền thừa link sang thư viện).

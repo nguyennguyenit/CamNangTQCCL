@@ -1,20 +1,16 @@
-// Điều phối: load JSON, section nav, render, filter UI, theme. Vanilla ES module.
+// Điều phối: load JSON, section nav, render, theme. Vanilla ES module.
+// Cả 3 tab team (Team PK / Đô Úy / Meta cũ) dùng chung filter inline qua
+// createTeamFilterSection — không còn sidebar drawer riêng.
 
-import { applyFilters, emptyState } from "./filters.js";
-import { coexistGroup, el, FACTION_CODE, khaihoangTable, SOURCE_LABEL, STATUS_LABEL, teamCard } from "./render.js";
+import { coexistGroup, el, khaihoangTable } from "./render.js";
 import { initTactics } from "./tactics.js";
+import { initTeamPk } from "./team-pk.js";
 import { initDoUy } from "./do-uy.js";
+import { initMetaCu } from "./meta-cu.js";
 import { initHeroList } from "./hero-list.js";
 import { initAnalyze } from "./analyze.js";
-import { createMobileFilterDrawer } from "./mobile-filter-drawer.js";
 import { createMobileSectionMenu } from "./mobile-section-menu.js";
 
-const state = emptyState();
-let TEAMS = [];
-let PK_TEAMS = []; // Team PK = không gồm do-uy (đã tách sang tab "Đô Úy (ss18)")
-let FACETS = {};
-let TIER_INDEX = new Map(); // teamId -> rankings[]
-let filterDrawer = null;
 let sectionMenu = null;
 
 const $ = (sel) => document.querySelector(sel);
@@ -47,7 +43,7 @@ function initTheme() {
 }
 
 /* ---------- Section nav ---------- */
-const SECTIONS = ["team-pk", "do-uy", "coexist", "khaihoang", "heroes", "tactics", "analyze"];
+const SECTIONS = ["team-pk", "do-uy", "meta-cu", "coexist", "khaihoang", "heroes", "tactics", "analyze"];
 function initNav() {
   sectionMenu = createMobileSectionMenu({
     nav: $(".section-nav"),
@@ -68,180 +64,49 @@ function sectionFromHash() {
 function switchSection(name) {
   document.querySelectorAll(".nav-tab").forEach((t) => t.classList.toggle("active", t.dataset.section === name));
   document.querySelectorAll(".section").forEach((s) => s.classList.toggle("active", s.id === `section-${name}`));
-  // Sidebar ẩn -> layout 1 cột để content tràn full (tránh bị dồn vào track 270px).
-  document.querySelector(".layout").classList.toggle("full", name !== "team-pk");
-  filterDrawer?.closeForSection(name, { focusTarget: $("#section-menu-toggle") });
-  $("#mobile-filter-actions").hidden = name !== "team-pk";
   sectionMenu?.setActive(name);
   if (sectionFromHash() !== name) location.hash = name;
-}
-
-/* ---------- Filter UI ---------- */
-const CHIP_GROUPS = [
-  { key: "unitTypes", facet: "unitTypes", label: "Loại binh" },
-  { key: "stars", facet: "stars", label: "Sao" },
-  { key: "statuses", facet: "statuses", label: "Trạng thái", fmt: (v) => STATUS_LABEL[v] || v },
-  { key: "factions", facet: "factions", label: "Phe" },
-  { key: "sources", facet: "sources", label: "Nguồn", fmt: (v) => SOURCE_LABEL[v] || v },
-];
-const COMBO_GROUPS = [
-  { key: "heroes", facet: "heroes", label: "Tướng" },
-  { key: "tactics", facet: "tactics", label: "Chiến pháp" },
-  { key: "books", facet: "books", label: "Binh thư" },
-];
-
-function buildFilterUI() {
-  const panel = $("#filters");
-  panel.replaceChildren();
-
-  for (const g of CHIP_GROUPS) {
-    const values = FACETS[g.facet] || [];
-    if (!values.length) continue;
-    const chips = el("div", { class: "chip-row" });
-    for (const { value, count } of values) {
-      const label = g.fmt ? g.fmt(value) : value;
-      // Chip Phe gắn class màu theo phe.
-      const fcls = g.key === "factions" && FACTION_CODE[value] ? ` f-${FACTION_CODE[value]}` : "";
-      const btn = el("button", { class: `fchip${fcls}`, type: "button" }, `${label} (${count})`);
-      btn.addEventListener("click", () => {
-        btn.classList.toggle("on");
-        state[g.key].has(value) ? state[g.key].delete(value) : state[g.key].add(value);
-        rerender();
-      });
-      chips.append(btn);
-    }
-    panel.append(el("div", { class: "fgroup" }, [el("div", { class: "flabel" }, g.label), chips]));
-  }
-
-  for (const g of COMBO_GROUPS) {
-    panel.append(buildCombo(g));
-  }
-
-  $("#clear-filters").addEventListener("click", clearAll);
-  $("#search").addEventListener("input", (e) => {
-    state.query = e.target.value;
-    rerender();
-  });
-}
-
-function buildCombo(g) {
-  const values = FACETS[g.facet] || [];
-  const input = el("input", { class: "combo-input", type: "text", placeholder: `Tìm ${g.label.toLowerCase()}…`, autocomplete: "off" });
-  const list = el("div", { class: "combo-list" });
-  const selected = el("div", { class: "combo-selected" });
-
-  function renderSelected() {
-    selected.replaceChildren();
-    for (const v of state[g.key]) {
-      const tag = el("button", { class: "sel-tag", type: "button" }, `${v} ✕`);
-      tag.addEventListener("click", () => { state[g.key].delete(v); renderSelected(); rerender(); });
-      selected.append(tag);
-    }
-  }
-  function renderList(q) {
-    list.replaceChildren();
-    const nq = q.toLowerCase();
-    const matches = values.filter((x) => x.value.toLowerCase().includes(nq)).slice(0, 12);
-    for (const { value, count } of matches) {
-      const item = el("button", { class: "combo-item", type: "button" }, `${value} (${count})`);
-      item.addEventListener("click", () => {
-        state[g.key].add(value);
-        input.value = "";
-        list.replaceChildren();
-        renderSelected();
-        rerender();
-      });
-      list.append(item);
-    }
-  }
-  input.addEventListener("input", () => renderList(input.value));
-  input.addEventListener("focus", () => renderList(input.value));
-  input.addEventListener("blur", () => setTimeout(() => list.replaceChildren(), 150));
-
-  return el("div", { class: "fgroup combo" }, [el("div", { class: "flabel" }, g.label), input, list, selected]);
-}
-
-function clearAll() {
-  for (const k of Object.keys(state)) {
-    if (state[k] instanceof Set) state[k].clear();
-  }
-  state.query = "";
-  $("#search").value = "";
-  buildFilterUI();
-  rerender();
-}
-
-/* ---------- Render ---------- */
-function onTag(value) {
-  state.query = value;
-  $("#search").value = value;
-  window.scrollTo({ top: 0, behavior: "smooth" });
-  rerender();
-}
-
-function rerender() {
-  const filtered = applyFilters(PK_TEAMS, state);
-  const grid = $("#team-grid");
-  grid.replaceChildren();
-  if (!filtered.length) {
-    grid.append(el("p", { class: "empty" }, "Không có team nào khớp bộ lọc."));
-  } else {
-    const frag = document.createDocumentFragment();
-    for (const t of filtered) frag.append(teamCard(t, onTag, TIER_INDEX.get(t.id)));
-    grid.append(frag);
-  }
-  $("#stats").textContent = `${filtered.length} / ${PK_TEAMS.length} team`;
-}
-
-/* ---------- Mobile drawer ---------- */
-function initDrawer() {
-  filterDrawer = createMobileFilterDrawer({
-    panel: $("#filter-panel"),
-    overlay: $("#filter-overlay"),
-    toggle: $("#filter-toggle"),
-    closeButtons: [...document.querySelectorAll(".filter-close, .filter-apply")],
-    backgroundElements: [...document.querySelectorAll(".site-header, .section-nav, #mobile-filter-actions, .content, .site-footer")],
-    onOpen: () => sectionMenu?.close(),
-    mobileMedia: matchMedia("(max-width: 820px)"),
-  });
 }
 
 /* ---------- Boot ---------- */
 async function main() {
   initTheme();
   initNav();
-  initDrawer();
   try {
-    const [teams, facets, coexist, khaihoang, tactics, heroesDict, booksDict] = await Promise.all([
+    const [teams, coexist, khaihoang, tactics, heroesDict, booksDict] = await Promise.all([
       loadJSON("./data/teams.json"),
-      loadJSON("./data/facets.json"),
       loadJSON("./data/coexist.json"),
       loadJSON("./data/khaihoang.json"),
       loadJSON("./data/tactics.json"),
       loadJSON("./data/heroes-dict.json"),
       loadJSON("./data/books-dict.json"),
     ]);
-    TEAMS = teams;
-    PK_TEAMS = teams.filter((t) => t.source !== "do-uy");
-    FACETS = facets;
     const teamTier = await loadOptionalJSON("./data/team-tier.json", []);
-    TIER_INDEX = new Map(teamTier.map((r) => [r.teamId, r.rankings]));
-    buildFilterUI();
-    rerender();
-    initDoUy({ teams: TEAMS, tierIndex: TIER_INDEX, onTag, mount: $("#section-do-uy") });
+    const tierIndex = new Map(teamTier.map((r) => [r.teamId, r.rankings]));
+
+    const sections = {
+      "team-pk": initTeamPk({ teams, tierIndex, heroesDict, mount: $("#section-team-pk") }),
+      "do-uy": initDoUy({ teams, tierIndex, mount: $("#section-do-uy") }),
+      "meta-cu": initMetaCu({ teams, tierIndex, mount: $("#section-meta-cu") }),
+    };
+
     $("#section-coexist").append(...coexist.map(coexistGroup));
     $("#section-khaihoang").append(khaihoangTable(khaihoang));
     initHeroList(heroesDict, tactics, $("#section-heroes"));
     initTactics(tactics, $("#section-tactics"));
-    // Mở team giống từ kết quả soi đội -> về tab Team PK, search tên tướng đầu.
+
+    // Mở team giống từ kết quả soi đội -> về đúng tab theo nguồn + search tên tướng đầu.
+    const SOURCE_SECTION = { "do-uy": "do-uy", "moi-phe": "meta-cu", "team-intro": "team-pk" };
     const onOpenTeam = (team) => {
+      const name = SOURCE_SECTION[team.source] || "team-pk";
+      switchSection(name);
       const first = team.heroes?.[0]?.baseName;
-      switchSection("team-pk");
-      if (first) onTag(first);
+      if (first) sections[name]?.setSearch(first);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     };
     initAnalyze({ teams, heroesDict, tacticsDict: tactics, booksDict, onOpenTeam }, $("#section-analyze"));
   } catch (err) {
-    $("#team-grid").append(el("p", { class: "error" }, "Lỗi tải dữ liệu: " + err.message + ". Hãy chạy qua http server (python3 -m http.server)."));
+    $("#section-team-pk").append(el("p", { class: "error" }, "Lỗi tải dữ liệu: " + err.message + ". Hãy chạy qua http server (python3 -m http.server)."));
   }
 }
 

@@ -22,7 +22,6 @@
         </div>
       </div>
       <div class="header-actions">
-        <span id="stats" class="stats">…</span>
         <button id="theme-toggle" class="icon-btn" title="Đổi giao diện sáng/tối" aria-label="Đổi giao diện">🌗</button>
       </div>
     </header>
@@ -31,6 +30,7 @@
       <div id="section-menu-items" class="section-menu-items">
         <button class="nav-tab active" data-section="team-pk">Team PK</button>
         <button class="nav-tab" data-section="do-uy">Đô Úy (ss18)</button>
+        <button class="nav-tab" data-section="meta-cu">Meta phe (cũ)</button>
         <button class="nav-tab" data-section="coexist">Cùng Tồn</button>
         <button class="nav-tab" data-section="khaihoang">Khai hoang</button>
         <button class="nav-tab" data-section="heroes">Tra cứu tướng</button>
@@ -42,32 +42,11 @@
 
   <p class="disclaimer">Dữ liệu tổng hợp từ chia sẻ kinh nghiệm người chơi, mang tính tham khảo — không phải phương án duy nhất.</p>
 
-  <div id="mobile-filter-actions" class="mobile-filter-actions">
-    <button id="filter-toggle" class="filter-toggle" type="button" aria-controls="filter-panel" aria-expanded="false">☰ Bộ lọc</button>
-  </div>
-
   <main class="layout">
-    <button id="filter-overlay" class="filter-overlay" type="button" tabindex="-1" aria-label="Đóng bộ lọc"></button>
-    <aside id="filter-panel" class="filter-panel">
-      <div class="filter-drawer-head">
-        <h2>Bộ lọc Team PK</h2>
-        <button class="filter-close" type="button" aria-label="Đóng bộ lọc">✕</button>
-      </div>
-      <div class="filter-bar">
-        <input id="search" class="search" type="search" placeholder="🔍 Tìm tướng, chiến pháp, binh thư…" />
-        <button id="clear-filters" class="clear-btn" type="button">Xóa lọc</button>
-      </div>
-      <div id="filters" class="filters"></div>
-      <div class="filter-drawer-foot">
-        <button class="filter-apply" type="button">Tìm / Xem kết quả</button>
-      </div>
-    </aside>
-
     <div class="content">
-      <section id="section-team-pk" class="section active">
-        <div id="team-grid" class="team-grid"></div>
-      </section>
+      <section id="section-team-pk" class="section active"></section>
       <section id="section-do-uy" class="section"></section>
+      <section id="section-meta-cu" class="section"></section>
       <section id="section-coexist" class="section"></section>
       <section id="section-khaihoang" class="section"></section>
       <section id="section-heroes" class="section"></section>
