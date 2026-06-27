@@ -118,12 +118,21 @@ body {
   outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft);
 }
 .clear-btn {
-  border: 1px solid var(--line); background: var(--panel-2); color: var(--ink); border-radius: 9px;
-  padding: 0 .8rem; cursor: pointer; font-size: .8rem; font-weight: 600; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: .4rem; line-height: 1;
+  border: 1px solid var(--line); background: var(--panel-2); color: var(--muted); border-radius: 9px;
+  padding: .56rem .85rem; cursor: pointer; font-size: .8rem; font-weight: 600; white-space: nowrap;
   transition: background .15s ease, border-color .15s ease, color .15s ease;
 }
-.clear-btn:hover { border-color: var(--accent); color: var(--accent); }
+/* Icon ✕ trong vòng tròn nhỏ làm affordance "xóa". */
+.clear-btn::before {
+  content: "✕"; display: inline-flex; align-items: center; justify-content: center;
+  width: 1.05em; height: 1.05em; border-radius: 50%; font-size: .82em; font-weight: 700;
+  background: var(--line); color: var(--panel); transition: background .15s ease, color .15s ease;
+}
+.clear-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.clear-btn:hover::before { background: var(--accent); color: #fff; }
 .clear-btn:active { transform: translateY(1px); }
+.clear-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--accent-soft); border-color: var(--accent); }
 /* Stats dạng pill nhẹ ở cuối hàng. */
 .team-filter-bar .stats {
   margin-left: auto; padding: .3rem .6rem; border-radius: 999px;
