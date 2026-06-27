@@ -1705,7 +1705,7 @@
             "alternatives": []
           },
           {
-            "name": "Dũng Nghĩa",
+            "name": "Nghĩa Dũng",
             "alternatives": []
           }
         ],
@@ -4271,7 +4271,7 @@
             "alternatives": []
           },
           {
-            "name": "Chuẩn Xác",
+            "name": "Tinh Chuẩn",
             "alternatives": []
           }
         ],
@@ -8702,7 +8702,7 @@
           {
             "name": "Chúng Động Vạn Kế",
             "alternatives": [
-              "Mê hoặc"
+              "Mê Hoặc"
             ]
           }
         ],
@@ -9578,7 +9578,7 @@
         "isCO": false,
         "tactics": [
           {
-            "name": "Tạm Lánh Cắt Xương",
+            "name": "Tạm Lánh Sóng Gió",
             "alternatives": []
           },
           {
@@ -13005,15 +13005,15 @@
         "isCO": false,
         "tactics": [
           {
-            "name": "Đương Phong Thôi Quyết+Binh Vô Thường Thế",
+            "name": "Đương Phong Thôi Quyết",
             "alternatives": [
-              "Huyết Đao Tranh Giành+Trấn Mục Hoành Mâu"
+              "Huyết Đao Tranh Giành"
             ]
           },
           {
-            "name": "Đương Phong Thôi Quyết+Binh Vô Thường Thế",
+            "name": "Binh Vô Thường Thế",
             "alternatives": [
-              "Huyết Đao Tranh Giành+Trấn Mục Hoành Mâu"
+              "Trấn Mục Hoành Mâu"
             ]
           }
         ],
@@ -20091,15 +20091,15 @@
         ],
         "books": [
           {
-            "name": "Thắng mà càng mạnh",
+            "name": "Thắng Sẽ Càng Mạnh",
             "alternatives": []
           },
           {
-            "name": "Thắng Chiến",
+            "name": "Thắng Trận",
             "alternatives": []
           },
           {
-            "name": "Tàng Đao",
+            "name": "Giấu Đao",
             "alternatives": []
           }
         ],
@@ -20449,7 +20449,7 @@
         "isCO": false,
         "tactics": [
           {
-            "name": "Tinh-Phong Thi",
+            "name": "Tinh·Phong Thi Trận",
             "alternatives": []
           },
           {
@@ -20471,7 +20471,7 @@
         "isCO": false,
         "tactics": [
           {
-            "name": "Thịnh Khí Địch Linh",
+            "name": "Thịnh Khí Linh Địch",
             "alternatives": []
           },
           {
@@ -20711,7 +20711,7 @@
         "isCO": false,
         "tactics": [
           {
-            "name": "Vạn Quân Đoạt Suất",
+            "name": "Vạn Quân Đoạt Sư",
             "alternatives": []
           },
           {
@@ -20890,86 +20890,6 @@
     "notes": "Core: Chu Thiệu + Lục Tốn + SP Điêu Thuyền"
   },
   {
-    "id": "do-uy-ss18-6",
-    "source": "do-uy",
-    "name": "Đô Úy Tam Tiên thuẫn",
-    "nickname": null,
-    "rawType": "Khiên",
-    "unitType": [
-      "Khiên"
-    ],
-    "faction": "Quần",
-    "stars": null,
-    "status": "meta",
-    "heroes": [
-      {
-        "name": "Chu Thiệu",
-        "baseName": "Chu Thiệu",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Võ Phong Trận",
-            "alternatives": []
-          },
-          {
-            "name": "Lính Giáp Mây",
-            "alternatives": []
-          }
-        ],
-        "books": [],
-        "note": null
-      },
-      {
-        "name": "Trương Giác",
-        "baseName": "Trương Giác",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Thái Bình Đạo Pháp",
-            "alternatives": []
-          },
-          {
-            "name": "Sĩ Biệt Tam Nhật",
-            "alternatives": []
-          }
-        ],
-        "books": [],
-        "note": null
-      },
-      {
-        "name": "Tả Từ",
-        "baseName": "Tả Từ",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Dưỡng Sức Đợi Chiến",
-            "alternatives": []
-          },
-          {
-            "name": "Cắt Xương Trị Độc",
-            "alternatives": []
-          }
-        ],
-        "books": [],
-        "note": null
-      }
-    ],
-    "counters": {
-      "good": [],
-      "avoid": []
-    },
-    "notes": "Core: Chu Thiệu + Trương Giác + Tả Từ"
-  },
-  {
     "id": "do-uy-ss18-7",
     "source": "do-uy",
     "name": "Đô Úy Tôn Quyền cung",
@@ -21048,86 +20968,6 @@
       "avoid": []
     },
     "notes": "Core: Tôn Quyền + Tô Tín + SP Bộ Luyện Sư"
-  },
-  {
-    "id": "do-uy-ss18-8",
-    "source": "do-uy",
-    "name": "Lục Tốn Đô Úy cung",
-    "nickname": null,
-    "rawType": "Cung",
-    "unitType": [
-      "Cung"
-    ],
-    "faction": "Ngô",
-    "stars": null,
-    "status": "meta",
-    "heroes": [
-      {
-        "name": "SP Chu Du",
-        "baseName": "Chu Du",
-        "alternatives": [],
-        "variant": null,
-        "isSP": true,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Toàn Quân Đồng Lòng",
-            "alternatives": []
-          },
-          {
-            "name": "Sĩ Biệt Tam Nhật",
-            "alternatives": []
-          }
-        ],
-        "books": [],
-        "note": null
-      },
-      {
-        "name": "Mã Thiền",
-        "baseName": "Mã Thiền",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Cắt Xương Trị Độc",
-            "alternatives": []
-          },
-          {
-            "name": "Kế Hay Mưu Giỏi",
-            "alternatives": []
-          }
-        ],
-        "books": [],
-        "note": null
-      },
-      {
-        "name": "Lục Tốn",
-        "baseName": "Lục Tốn",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Vạn Quân Đoạt Suất",
-            "alternatives": []
-          },
-          {
-            "name": "Công Bất Đường Quyên",
-            "alternatives": []
-          }
-        ],
-        "books": [],
-        "note": null
-      }
-    ],
-    "counters": {
-      "good": [],
-      "avoid": []
-    },
-    "notes": "Core: SP Chu Du + Mã Thiền + Lục Tốn"
   },
   {
     "id": "do-uy-ss18-9",
@@ -21533,26 +21373,6 @@
     "status": "meta",
     "heroes": [
       {
-        "name": "Thẩm Hằng",
-        "baseName": "Thẩm Hằng",
-        "alternatives": [],
-        "variant": null,
-        "isSP": false,
-        "isCO": false,
-        "tactics": [
-          {
-            "name": "Thiêu Đốt Doanh Lũy",
-            "alternatives": []
-          },
-          {
-            "name": "Thượng Binh Phạt Mưu",
-            "alternatives": []
-          }
-        ],
-        "books": [],
-        "note": null
-      },
-      {
         "name": "Hạ Hầu Đôn",
         "baseName": "Hạ Hầu Đôn",
         "alternatives": [],
@@ -21586,6 +21406,26 @@
           },
           {
             "name": "Bách Kỵ Kiếp Doanh",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Thẩm Hằng",
+        "baseName": "Thẩm Hằng",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thiêu Đốt Doanh Lũy",
+            "alternatives": []
+          },
+          {
+            "name": "Thượng Binh Phạt Mưu",
             "alternatives": []
           }
         ],
@@ -22319,7 +22159,7 @@
         "isCO": false,
         "tactics": [
           {
-            "name": "Tinh - Ngư Lân Trận",
+            "name": "Tinh·Ngư Lân Trận",
             "alternatives": []
           },
           {
@@ -23165,11 +23005,11 @@
         "isCO": false,
         "tactics": [
           {
-            "name": "Đoạt Hồn Hiếp Phách",
+            "name": "Đoạt Hồn Hiệp Phách",
             "alternatives": []
           },
           {
-            "name": "Đương Phong Tồi Quyết",
+            "name": "Đương Phong Thôi Quyết",
             "alternatives": []
           }
         ],
@@ -23227,7 +23067,7 @@
         "isCO": false,
         "tactics": [
           {
-            "name": "Linh Cơ Nhất Động",
+            "name": "Nhanh Trí Động Não",
             "alternatives": []
           },
           {
@@ -23869,9 +23709,11 @@
     ],
     "counters": {
       "good": [],
-      "avoid": []
+      "avoid": [
+        "Bất ổn ở cấp thấp (lv45)"
+      ]
     },
-    "notes": "慷慨弓 (甘太徐): đô úy Từ Ngạn (chiến pháp Hoãn Binh Chi Kế ★★★★★, 'công nghệ đen') gánh phần lớn độ mạnh. (Nguồn: ẢNH chiến báo 17173 都尉战报大赏 https://news.17173.com/content/11282025/224018547.shtml + kazten S25)",
+    "notes": "慷慨弓 (甘太徐): đô úy Từ Ngạn (chiến pháp Hoãn Binh Chi Kế ★★★★★, 'công nghệ đen') gánh phần lớn độ mạnh. (Nguồn: ẢNH chiến báo 17173 都尉战报大赏 https://news.17173.com/content/11282025/224018547.shtml + kazten S25) Rất cứng (giảm sát 54-60%) nhưng sát thương thấp → cần đội bạn dứt điểm. Lối chơi: lv45 thua-rút, lv46+ thua-thua-rút (phòng thủ câu giờ).",
     "recommended": true
   },
   {
@@ -24345,10 +24187,14 @@
       }
     ],
     "counters": {
-      "good": [],
+      "good": [
+        "Pháp kỵ",
+        "Các đội mã",
+        "Đội cung"
+      ],
       "avoid": []
     },
-    "notes": "马婵太尉盾 (verify theo ảnh chiến báo): 主将 Tư Mã Ý (司马懿, nội tại Ưng Thị Lang Cố 鹰视狼顾) + đô úy Mã Thiền (马婵, nội tại Vận Trù Duy Ác 运筹帷幄) + Mãn Sủng (满宠). Lối 太尉盾 cực ổn, cân hầu hết đội, mạnh vs pháp kỵ + cung. Trận mẫu: thắng phòng thủ trước đội Pháp-Quan/Hoàng Phủ SP. (Nguồn: ảnh chiến báo + 17173 都尉战报大赏 https://news.17173.com/content/11282025/224018547.shtml)",
+    "notes": "马婵太尉盾 (verify theo ảnh chiến báo): 主将 Tư Mã Ý (司马懿, nội tại Ưng Thị Lang Cố 鹰视狼顾) + đô úy Mã Thiền (马婵, nội tại Vận Trù Duy Ác 运筹帷幄) + Mãn Sủng (满宠). Lối 太尉盾 cực ổn, cân hầu hết đội, mạnh vs pháp kỵ + cung. Trận mẫu: thắng phòng thủ trước đội Pháp-Quan/Hoàng Phủ SP. (Nguồn: ảnh chiến báo + 17173 都尉战报大赏 https://news.17173.com/content/11282025/224018547.shtml) Điểm yếu: tốc công chậm, thiếu Tào Tháo tăng sát thương. Add toàn Trí; Tư Mã Ý trang bị Thích Làm Việc Thiện.",
     "recommended": true
   },
   {
@@ -24454,10 +24300,16 @@
       }
     ],
     "counters": {
-      "good": [],
-      "avoid": []
+      "good": [
+        "Pháp kỵ",
+        "Đội thuẫn"
+      ],
+      "avoid": [
+        "Đội giảm sát sớm (Hoàng Mã Thương)",
+        "Thuẫn Đằng Giáp (藤甲)"
+      ]
     },
-    "notes": "法师沈姮破阵骑 — biến thể Thẩm Hằng Phá Trận thay Hạ Hầu Uyên bằng (SP) Quách Gia, 'mặt tốt 1 hiệp giây'. (Nguồn: ẢNH chiến báo 17173 https://news.17173.com/content/11282025/224018547.shtml)",
+    "notes": "法师沈姮破阵骑 — biến thể Thẩm Hằng Phá Trận thay Hạ Hầu Uyên bằng (SP) Quách Gia, 'mặt tốt 1 hiệp giây'. (Nguồn: ẢNH chiến báo 17173 https://news.17173.com/content/11282025/224018547.shtml) Nuke 1 hiệp (mặt tốt giây địch). Lối chơi: tự sát Hạ Hầu Đôn (~5000 binh) để tạo nhiều lượt đánh. Phụ thuộc may.",
     "recommended": false
   },
   {
@@ -24561,10 +24413,16 @@
       }
     ],
     "counters": {
-      "good": [],
-      "avoid": []
+      "good": [
+        "Pháp kỵ",
+        "Thiên Cơ thuẫn (千机盾)",
+        "Ngũ Mưu kỵ"
+      ],
+      "avoid": [
+        "Tốc công bạo lực"
+      ]
     },
-    "notes": "孙权苏信 — biến thể đội Tôn Quyền cung, Chu Thái thay SP Bộ Luyện Sư; bạo phát cao ~1 vạn chiến công/trận. (Nguồn: ẢNH chiến báo 17173 https://news.17173.com/content/11282025/224018547.shtml)",
+    "notes": "孙权苏信 — biến thể đội Tôn Quyền cung, Chu Thái thay SP Bộ Luyện Sư; bạo phát cao ~1 vạn chiến công/trận. (Nguồn: ẢNH chiến báo 17173 https://news.17173.com/content/11282025/224018547.shtml) Chiến pháp ~3 vạn sát thương. Lối chơi: kéo đánh chậm, phản kích khi địch ra skill. Trần cao nhưng phụ thuộc may, không ổn định.",
     "recommended": false
   }
 ]
