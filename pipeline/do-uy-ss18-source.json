@@ -36,7 +36,7 @@
    },
    {
     "tuong": "Hoàng Phủ Hoành",
-    "cp1": "Mị Hoặc",
+    "cp1": "Mê Hoặc",
     "cp2": "Thuyền Cỏ Mượn Tên"
    },
    {
@@ -60,7 +60,7 @@
    },
    {
     "tuong": "Chu Thiệu",
-    "cp1": "Mị Hoặc",
+    "cp1": "Mê Hoặc",
     "cp2": "Thuyền Cỏ Mượn Tên"
    },
    {
@@ -84,7 +84,7 @@
    },
    {
     "tuong": "Mã Thiền",
-    "cp1": "Quát Cốt Liệu Độc",
+    "cp1": "Cắt Xương Trị Độc",
     "cp2": "Kế Hay Mưu Giỏi"
    },
    {
@@ -162,7 +162,7 @@
    {
     "tuong": "Tả Từ",
     "cp1": "Dưỡng Sức Đợi Chiến",
-    "cp2": "Quát Cốt Liệu Độc"
+    "cp2": "Cắt Xương Trị Độc"
    }
   ],
   "quoc_gia": "Quần"
@@ -181,12 +181,12 @@
    {
     "tuong": "Tô Tín",
     "cp1": "Tỏa Nhuệ",
-    "cp2": "Thịnh Khí Lăng Địch"
+    "cp2": "Thịnh Khí Linh Địch"
    },
    {
     "tuong": "SP Bộ Luyện Sư",
     "cp1": "Thâm Mưu Viễn Lự",
-    "cp2": "Phong Thỉ Trận"
+    "cp2": "Phong Thi Trận"
    }
   ],
   "quoc_gia": "Ngô"
@@ -204,7 +204,7 @@
    },
    {
     "tuong": "Mã Thiền",
-    "cp1": "Quát Cốt Liệu Độc",
+    "cp1": "Cắt Xương Trị Độc",
     "cp2": "Kế Hay Mưu Giỏi"
    },
    {
@@ -233,7 +233,7 @@
    },
    {
     "tuong": "Từ Ngạn",
-    "cp1": "Quát Cốt Liệu Độc",
+    "cp1": "Cắt Xương Trị Độc",
     "cp2": "Tỏa Nhuệ"
    }
   ],
@@ -296,7 +296,7 @@
    {
     "tuong": "Gia Cát Lượng",
     "cp1": "Nhạn Hình Trận",
-    "cp2": "Quát Cốt Liệu Độc"
+    "cp2": "Cắt Xương Trị Độc"
    },
    {
     "tuong": "Bàng Thống",
@@ -324,7 +324,7 @@
    },
    {
     "tuong": "Tiêu Chỉ",
-    "cp1": "Mị Hoặc",
+    "cp1": "Mê Hoặc",
     "cp2": "Độc Hành Phó Đấu"
    },
    {
@@ -343,18 +343,18 @@
   "formation": [
    {
     "tuong": "Thẩm Hằng",
-    "cp1": "Thôi Phong Đoạn Nhẫn",
-    "cp2": "Nhất Kỵ Đương Thiên"
+    "cp1": "Thiêu Đốt Doanh Lũy",
+    "cp2": "Thượng Binh Phạt Mưu"
    },
    {
     "tuong": "Hạ Hầu Đôn",
-    "cp1": "Hổ Báo Kỵ",
-    "cp2": "Tinh - Ngư Lân Trận"
+    "cp1": "Tây Lương Thiết Kỵ",
+    "cp2": "Thịnh Khí Linh Địch"
    },
    {
     "tuong": "Hạ Hầu Uyên",
-    "cp1": "Lỏa Y Huyết Chiến",
-    "cp2": "Đương Phong Thôi Quyết"
+    "cp1": "Lõa Y Huyết Chiến",
+    "cp2": "Bách Kỵ Kiếp Doanh"
    }
   ],
   "quoc_gia": "Ngụy"
@@ -373,7 +373,7 @@
    {
     "tuong": "Quan Vũ",
     "cp1": "Cưỡi Ngựa Nghìn Dặm",
-    "cp2": "Thịnh Khí Lăng Địch"
+    "cp2": "Thịnh Khí Linh Địch"
    },
    {
     "tuong": "Trần Dực",
@@ -420,7 +420,7 @@
    },
    {
     "tuong": "Hoàng Phủ Hoành",
-    "cp1": "Mị Hoặc",
+    "cp1": "Mê Hoặc",
     "cp2": "Thuyền Cỏ Mượn Tên"
    },
    {
@@ -440,7 +440,7 @@
    {
     "tuong": "SP Tuân Úc",
     "cp1": "Dốc Sức Tính Kế",
-    "cp2": "Quát Cốt Liệu Độc"
+    "cp2": "Cắt Xương Trị Độc"
    },
    {
     "tuong": "SP Quách Gia",
@@ -496,7 +496,7 @@
    {
     "tuong": "Tiêu Chỉ",
     "cp1": "Độc Hành Phó Đấu",
-    "cp2": "Mị Hoặc"
+    "cp2": "Mê Hoặc"
    },
    {
     "tuong": "SP Pháp Chính",
@@ -515,7 +515,7 @@
    {
     "tuong": "SP Tuân Úc",
     "cp1": "Dốc Sức Tính Kế",
-    "cp2": "Quát Cốt Liệu Độc"
+    "cp2": "Cắt Xương Trị Độc"
    },
    {
     "tuong": "SP Quách Gia",
@@ -548,7 +548,7 @@
    {
     "tuong": "Tả Từ",
     "cp1": "Dưỡng Sức Đợi Chiến",
-    "cp2": "Quát Cốt Liệu Độc",
+    "cp2": "Cắt Xương Trị Độc",
     "binh_thu": [
      "Tấn Công Điểm Yếu",
      "Tản Tiên",
@@ -557,7 +557,7 @@
    },
    {
     "tuong": "Chu Thiệu",
-    "cp1": "Phong Thỉ Trận",
+    "cp1": "Phong Thi Trận",
     "cp2": "Toàn Quân Đồng Lòng",
     "binh_thu": [
      "Tấn Công Điểm Yếu",
@@ -594,7 +594,7 @@
    {
     "tuong": "Trần Hy",
     "cp1": "Thuyền Cỏ Mượn Tên",
-    "cp2": "Cẩm Phàm Quân",
+    "cp2": "Quân Cẩm Phàm",
     "binh_thu": [
      "Tấn Công Điểm Yếu",
      "Khích Lệ Lòng Quân",
@@ -652,8 +652,8 @@
    },
    {
     "tuong": "Tả Từ",
-    "cp1": "Phong Thỉ Trận",
-    "cp2": "Quát Cốt Liệu Độc"
+    "cp1": "Phong Thi Trận",
+    "cp2": "Cắt Xương Trị Độc"
    }
   ],
   "quoc_gia": "Quần"
@@ -667,7 +667,7 @@
    {
     "tuong": "Gia Cát Lượng",
     "cp1": "Nhạn Hình Trận",
-    "cp2": "Quát Cốt Liệu Độc",
+    "cp2": "Cắt Xương Trị Độc",
     "binh_thu": [
      "Tấn Công Điểm Yếu",
      "Khích Lệ Lòng Quân",
@@ -730,7 +730,7 @@
    },
    {
     "tuong": "Hoàng Phủ Hoành",
-    "cp1": "Mị Hoặc",
+    "cp1": "Mê Hoặc",
     "cp2": "Ngư Lân Trận",
     "binh_thu": [
      "Không Chiến Mà Thắng",
@@ -867,7 +867,7 @@
    {
     "tuong": "Hoàng Phủ Hoành",
     "cp1": "Võ Phong Trận",
-    "cp2": "Mị Hoặc",
+    "cp2": "Mê Hoặc",
     "binh_thu": [
      "Biết Cách Phòng Thủ",
      "Cương Nhu",
@@ -885,8 +885,8 @@
    },
    {
     "tuong": "Tả Từ",
-    "cp1": "Súc Thế Đãi Phát",
-    "cp2": "Quát Cốt Liệu Độc",
+    "cp1": "Dưỡng Sức Đợi Chiến",
+    "cp2": "Cắt Xương Trị Độc",
     "binh_thu": [
      "Tấn Công Điểm Yếu",
      "Tản Tiên",
@@ -920,7 +920,7 @@
    {
     "tuong": "Bàng Thống",
     "cp1": "Thái Bình Đạo Pháp",
-    "cp2": "Bôi Xà Quỷ Xa",
+    "cp2": "Sợ Bóng Sợ Gió",
     "binh_thu": [
      "Đánh Sau Trúng Trước",
      "Tướng Uy",
@@ -939,7 +939,7 @@
    },
    {
     "tuong": "SP Pháp Chính",
-    "cp1": "Cương Nhu Tịnh Tế",
+    "cp1": "Cương Nhu Kết Hợp",
     "cp2": "Lục Lực Đồng Tâm",
     "binh_thu": [
      "Tấn Công Điểm Yếu",
@@ -984,8 +984,8 @@
    },
    {
     "tuong": "Tuân Du",
-    "cp1": "Quát Cốt Liệu Độc",
-    "cp2": "Phần Truy Doanh Lũy",
+    "cp1": "Cắt Xương Trị Độc",
+    "cp2": "Thiêu Đốt Doanh Lũy",
     "binh_thu": [
      "Tấn Công Điểm Yếu",
      "Khích Lệ Lòng Quân",
@@ -1004,5 +1004,269 @@
    }
   ],
   "quoc_gia": "Ngụy"
+ },
+ {
+  "team_name": "Chí Tôn Kiều Cung",
+  "tier": "T1",
+  "commander": "Hoàng Phủ Hoành",
+  "core": "Tôn Quyền + CO Đại Kiều + Hoàng Phủ Hoành (Cung cấp S)",
+  "formation": [
+   {
+    "tuong": "Tôn Quyền",
+    "cp1": "Đương Phong Thôi Quyết",
+    "cp2": "Binh Vô Thường Thế"
+   },
+   {
+    "tuong": "CO Đại Kiều",
+    "cp1": "Mê Hoặc",
+    "cp2": "Thuyền Cỏ Mượn Tên"
+   },
+   {
+    "tuong": "Hoàng Phủ Hoành (Cung cấp S)",
+    "cp1": "Tinh·Ngư Lân Trận",
+    "cp2": "Lâm Nguy Cứu Chủ"
+   }
+  ],
+  "quoc_gia": "Ngô"
+ },
+ {
+  "team_name": "Liêu Kiều Thương",
+  "tier": "T1",
+  "commander": "Hoàng Phủ Hoành",
+  "core": "Trương Liêu + CO Đại Kiều + Hoàng Phủ Hoành (Cung cấp S)",
+  "formation": [
+   {
+    "tuong": "Trương Liêu",
+    "cp1": "Mau Giành Lợi Thế",
+    "cp2": "Bạo Lệ Vô Nhân"
+   },
+   {
+    "tuong": "CO Đại Kiều",
+    "cp1": "Mê Hoặc",
+    "cp2": "Thuyền Cỏ Mượn Tên"
+   },
+   {
+    "tuong": "Hoàng Phủ Hoành (Cung cấp S)",
+    "cp1": "Tinh·Ngư Lân Trận",
+    "cp2": "Lâm Nguy Cứu Chủ"
+   }
+  ],
+  "quoc_gia": "Hỗn hợp"
+ },
+ {
+  "team_name": "Khương Duy Tạp Thảo",
+  "tier": "T1",
+  "commander": "Tiêu Chỉ",
+  "core": "Gia Cát Lượng + Khương Duy + Tiêu Chỉ",
+  "formation": [
+   {
+    "tuong": "Gia Cát Lượng",
+    "cp1": "Đương Phong Thôi Quyết",
+    "cp2": "Thịnh Khí Linh Địch"
+   },
+   {
+    "tuong": "Khương Duy",
+    "cp1": "Thượng Binh Phạt Mưu",
+    "cp2": "Sĩ Biệt Tam Nhật"
+   },
+   {
+    "tuong": "Tiêu Chỉ",
+    "cp1": "Tử Sĩ Tiên Phong",
+    "cp2": "Nhân Lợi Chế Quyền"
+   }
+  ],
+  "quoc_gia": "Thục"
+ },
+ {
+  "team_name": "Dương Kỳ Ngũ Mưu",
+  "tier": "T1",
+  "commander": "Dương Kỳ",
+  "core": "SP Quách Gia + Dương Kỳ + Tuân Du",
+  "formation": [
+   {
+    "tuong": "SP Quách Gia",
+    "cp1": "Đoạt Hồn Hiệp Phách",
+    "cp2": "Thượng Binh Phạt Mưu"
+   },
+   {
+    "tuong": "Dương Kỳ",
+    "cp1": "Dốc Sức Tính Kế",
+    "cp2": "Cắt Xương Trị Độc"
+   },
+   {
+    "tuong": "Tuân Du",
+    "cp1": "Thượng Binh Phạt Mưu",
+    "cp2": "Anh Thành Tự Thủ"
+   }
+  ],
+  "quoc_gia": "Ngụy"
+ },
+ {
+  "team_name": "Khảng Khái Cung",
+  "tier": "T0.5",
+  "commander": "Từ Ngạn",
+  "core": "Cam Ninh + Thái Sử Từ + Từ Ngạn",
+  "formation": [
+   {
+    "tuong": "Cam Ninh",
+    "cp1": "Thuyền Cỏ Mượn Tên",
+    "cp2": "Tinh·Ngư Lân Trận"
+   },
+   {
+    "tuong": "Thái Sử Từ",
+    "cp1": "Văn Võ Song Toàn",
+    "cp2": "Thôi Phong Đoạn Nhẫn"
+   },
+   {
+    "tuong": "Từ Ngạn",
+    "cp1": "Quân Cẩm Phàm",
+    "cp2": "Lâm Nguy Cứu Chủ"
+   }
+  ],
+  "quoc_gia": "Hỗn hợp"
+ },
+ {
+  "team_name": "Tôn Hùng Kỵ",
+  "tier": "T1",
+  "commander": "Mã Thiền",
+  "core": "Tôn Quyền + Mã Thiền + Chu Thái",
+  "formation": [
+   {
+    "tuong": "Tôn Quyền",
+    "cp1": "Đương Phong Thôi Quyết",
+    "cp2": "Binh Vô Thường Thế"
+   },
+   {
+    "tuong": "Mã Thiền",
+    "cp1": "Cắt Xương Trị Độc",
+    "cp2": "Kế Hay Mưu Giỏi"
+   },
+   {
+    "tuong": "Chu Thái",
+    "cp1": "Thịnh Khí",
+    "cp2": "Tây Lương Thiết Kỵ"
+   }
+  ],
+  "quoc_gia": "Ngô"
+ },
+ {
+  "team_name": "Đông Ngô Cung",
+  "tier": "T1",
+  "commander": "Chu Thiệu",
+  "core": "Chu Du + Chu Thiệu + SP Lữ Mông",
+  "formation": [
+   {
+    "tuong": "Chu Du",
+    "cp1": "Đoạt Hồn Hiệp Phách",
+    "cp2": "Anh Thành Tự Thủ"
+   },
+   {
+    "tuong": "Chu Thiệu",
+    "cp1": "Vạn Quân Đoạt Sư",
+    "cp2": "Kế Hay Mưu Giỏi"
+   },
+   {
+    "tuong": "SP Lữ Mông",
+    "cp1": "Uy Mưu Vô Địch",
+    "cp2": "Không Đánh Mà Thắng"
+   }
+  ],
+  "quoc_gia": "Ngô"
+ },
+ {
+  "team_name": "Tần Khê Ngũ Mưu",
+  "tier": "T0.5",
+  "commander": "Tần Khê",
+  "core": "SP Tuân Úc + SP Quách Gia + Tần Khê",
+  "formation": [
+   {
+    "tuong": "SP Tuân Úc",
+    "cp1": "Thuyền Cỏ Mượn Tên",
+    "cp2": "Đương Phong Thôi Quyết"
+   },
+   {
+    "tuong": "SP Quách Gia",
+    "cp1": "Đoạt Hồn Hiệp Phách",
+    "cp2": "Thượng Binh Phạt Mưu"
+   },
+   {
+    "tuong": "Tần Khê",
+    "cp1": "Dốc Sức Tính Kế",
+    "cp2": "Nhanh Trí Động Não"
+   }
+  ],
+  "quoc_gia": "Ngụy"
+ },
+ {
+  "team_name": "Mã Thiền Thái Úy Khiên",
+  "tier": "T0.5",
+  "commander": "Mã Thiền",
+  "core": "Tư Mã Ý + Mã Thiền + Mãn Sủng",
+  "formation": [
+   {
+    "tuong": "Tư Mã Ý",
+    "cp1": "Sĩ Biệt Tam Nhật",
+    "cp2": "Toàn Quân Đồng Lòng"
+   },
+   {
+    "tuong": "Mã Thiền",
+    "cp1": "Mê Hoặc",
+    "cp2": "Phong Thi Trận"
+   },
+   {
+    "tuong": "Mãn Sủng",
+    "cp1": "Dưỡng Sức Đợi Chiến",
+    "cp2": "Biết Mình Biết Ta"
+   }
+  ],
+  "quoc_gia": "Ngụy"
+ },
+ {
+  "team_name": "Thẩm Hằng Phá Trận (Quách Gia)",
+  "tier": "T1",
+  "commander": "Thẩm Hằng",
+  "core": "Thẩm Hằng + Hạ Hầu Đôn + SP Quách Gia",
+  "formation": [
+   {
+    "tuong": "Thẩm Hằng",
+    "cp1": "Thôi Phong Đoạn Nhẫn",
+    "cp2": "Nhất Kỵ Đương Thiên"
+   },
+   {
+    "tuong": "Hạ Hầu Đôn",
+    "cp1": "Chúng Động Vạn Kế",
+    "cp2": "Mê Hoặc"
+   },
+   {
+    "tuong": "SP Quách Gia",
+    "cp1": "Đoạt Hồn Hiệp Phách",
+    "cp2": "Thượng Binh Phạt Mưu"
+   }
+  ],
+  "quoc_gia": "Ngụy"
+ },
+ {
+  "team_name": "Tôn Quyền Tô Tín Chu Thái",
+  "tier": "T1",
+  "commander": "Tô Tín",
+  "core": "Tôn Quyền + Tô Tín + Chu Thái",
+  "formation": [
+   {
+    "tuong": "Tôn Quyền",
+    "cp1": "Văn Võ Song Toàn",
+    "cp2": "Thượng Binh Phạt Mưu"
+   },
+   {
+    "tuong": "Tô Tín",
+    "cp1": "Phong Thi Trận",
+    "cp2": "Kế Hay Mưu Giỏi"
+   },
+   {
+    "tuong": "Chu Thái",
+    "cp1": "Phi Hùng Quân",
+    "cp2": "Hợp Quân Tụ Chúng"
+   }
+  ],
+  "quoc_gia": "Ngô"
  }
 ]
