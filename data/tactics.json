@@ -723,7 +723,7 @@
     "source": "Tự mang",
     "sourceHeroCn": "法正",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088204799790080.png",
-    "viet": "Dưỡng Sức Đợi Chiến",
+    "viet": "Dưỡng Sức Chống Địch",
     "linkScore": 1.0
   },
   {
@@ -4525,5 +4525,19 @@
     "viet": "Vạn Quân Đoạt Sư",
     "linkScore": 1.0,
     "pending": true
+  },
+  {
+    "chinese": "蓄势待发",
+    "hanViet": "Súc Thế Đãi Phát",
+    "type": "Chỉ huy",
+    "quality": "S",
+    "effect": "战斗中，自身首2回合获得10%~20%统率和先攻，但无法造成伤害；每回合有17.5%~35%概率（受智力影响）使我军群体（1-2人）获得1回合10%~20%规避（受智力影响）",
+    "target": "我军群体(1-2人)",
+    "troopFit": [],
+    "source": "",
+    "sourceHeroCn": "",
+    "iconUrl": "",
+    "viet": "Dưỡng Sức Đợi Chiến",
+    "linkScore": 1.0
   }
 ]
