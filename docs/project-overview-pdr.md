@@ -63,7 +63,7 @@
 - `python3 -m unittest discover -s tests` pass.
 - `node --test tests-js/*.test.mjs` pass.
 - `cd worker && npm test` và `cd worker && npm run typecheck` pass.
-- `data/*.json` khớp số lượng hiện tại: `teams=197` (Team PK 160 + do-uy 37), `tactics=237`, `heroes-dict=112`, `coexist=5`, `khaihoang=11/5`, `team-tier=28`.
+- `data/*.json` khớp số lượng hiện tại: `teams=211` (Team PK 53 + Meta phe cũ 110 + do-uy 48), `tactics=237`, `heroes-dict=112`, `coexist=5`, `khaihoang=11/5`, `team-tier=39`.
 
 ## Rủi ro chính
 

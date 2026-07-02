@@ -1,5 +1,12 @@
 # Project Changelog
 
+## 2026-07-03
+
+### Added
+
+- Team PK thêm 3 đội SP Quan Vũ theo meta PK-S26: Pháp Quan Lưu Bị, Pháp Quan Mã Đại, Quan Quân Thương; gắn tier T0 cho 3 đội mới và Quan Tinh Khiên hiện có.
+- Team PK bổ sung nickname/tên gọi meta cho 33 đội, ví dụ Hoàng Mã Thương, Vinh Quang Thương, Hoàng Quan Thương, Kỳ Lân Cung, Thái Úy Khiên.
+
 ## 2026-06-26
 
 ### Added
@@ -11,7 +18,7 @@
 
 ### Changed
 
-- Team PK chỉ render team-intro + moi-phe (160 team); team `do-uy` ẩn khỏi Team PK.
+- Team PK render team-intro; Meta phe cũ render moi-phe; team `do-uy` ẩn khỏi Team PK.
 - Mobile: hamburger menu section (`js/mobile-section-menu.js`) + drawer bộ lọc Team PK (`js/mobile-filter-drawer.js`).
 
 ## 2026-06-23

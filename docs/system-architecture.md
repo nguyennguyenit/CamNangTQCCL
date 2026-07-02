@@ -84,8 +84,8 @@ upload ảnh
 
 ## Dữ liệu quan trọng
 
-- `data/teams.json`: 197 team (Team PK 160 = team-intro 50 + moi-phe 110; do-uy 37 ở tab riêng).
-- `data/team-tier.json`: tier T0–T3 gắn theo team (28 team), multi-source rankings.
+- `data/teams.json`: 211 team (Team PK 53 = team-intro; Meta phe cũ 110 = moi-phe; do-uy 48 ở tab riêng).
+- `data/team-tier.json`: tier T0–T3 gắn theo team (39 team), multi-source rankings.
 - `data/facets.json`: nguồn count cho chip / combo.
 - `data/tactics.json`: từ điển chiến pháp.
   - `effect`, `target`: nội dung nguồn tiếng Trung.

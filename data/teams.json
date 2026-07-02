@@ -3,13 +3,13 @@
     "id": "team-intro-0",
     "source": "team-intro",
     "name": "Úc Liêu Cơ",
-    "nickname": null,
+    "nickname": "Vinh Quang Thương",
     "rawType": "Thương(★★★★)",
     "unitType": [
       "Thương"
     ],
     "faction": null,
-    "stars": 4.0,
+    "stars": 4,
     "status": "meta",
     "heroes": [
       {
@@ -128,7 +128,7 @@
     "id": "team-intro-1",
     "source": "team-intro",
     "name": "Siêu Tung Du",
-    "nickname": null,
+    "nickname": "Hoàng Mã Thương",
     "rawType": "Thương(★★★★☆)",
     "unitType": [
       "Thương"
@@ -258,7 +258,7 @@
     "id": "team-intro-2",
     "source": "team-intro",
     "name": "Vũ Tung Úc",
-    "nickname": null,
+    "nickname": "Hoàng Quan Thương",
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -383,7 +383,7 @@
     "id": "team-intro-3",
     "source": "team-intro",
     "name": "Vũ Tung Mông",
-    "nickname": null,
+    "nickname": "Độ Giang Thương",
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -508,7 +508,7 @@
     "id": "team-intro-4",
     "source": "team-intro",
     "name": "Mông Tốn Túc",
-    "nickname": null,
+    "nickname": "Tân Ngô Thương",
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -635,7 +635,7 @@
     "id": "team-intro-5",
     "source": "team-intro",
     "name": "Phi Bình Vân",
-    "nickname": null,
+    "nickname": "Thục Thương",
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -766,7 +766,7 @@
     "id": "team-intro-6",
     "source": "team-intro",
     "name": "Phi Bình Anh",
-    "nickname": null,
+    "nickname": "Võng Hồng Thương",
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -909,7 +909,7 @@
     "id": "team-intro-7",
     "source": "team-intro",
     "name": "Lượng Hưng Bào",
-    "nickname": null,
+    "nickname": "Bắc Phạt Thương",
     "rawType": "Thương",
     "unitType": [
       "Thương"
@@ -1281,7 +1281,7 @@
     "id": "team-intro-10",
     "source": "team-intro",
     "name": "Tháo Uyên Liêu",
-    "nickname": null,
+    "nickname": "Gian Hùng Kỵ",
     "rawType": "Kỵ",
     "unitType": [
       "Kỵ"
@@ -1406,7 +1406,7 @@
     "id": "team-intro-11",
     "source": "team-intro",
     "name": "Úc Hủ Gia",
-    "nickname": null,
+    "nickname": "Phú Quý Kỵ",
     "rawType": "Kỵ/Cung(★★★★☆)",
     "unitType": [
       "Kỵ",
@@ -1667,7 +1667,7 @@
     "id": "team-intro-13",
     "source": "team-intro",
     "name": "Ý Úc Chân",
-    "nickname": null,
+    "nickname": "Ý Chân Kỵ",
     "rawType": "Kỵ(★★★★☆)",
     "unitType": [
       "Kỵ"
@@ -1793,7 +1793,7 @@
     "id": "team-intro-14",
     "source": "team-intro",
     "name": "Liêu Gia Cơ",
-    "nickname": null,
+    "nickname": "Liêu Cơ Kỵ",
     "rawType": "Kỵ(★★★★☆)",
     "unitType": [
       "Kỵ"
@@ -1925,7 +1925,7 @@
       "Cung"
     ],
     "faction": null,
-    "stars": 4.0,
+    "stars": 4,
     "status": "meta",
     "heroes": [
       {
@@ -2052,13 +2052,13 @@
     "id": "team-intro-16",
     "source": "team-intro",
     "name": "Thái Hương Thống",
-    "nickname": null,
+    "nickname": "Ngô Kỵ",
     "rawType": "Kỵ(★★★★)",
     "unitType": [
       "Kỵ"
     ],
     "faction": null,
-    "stars": 4.0,
+    "stars": 4,
     "status": "meta",
     "heroes": [
       {
@@ -2177,13 +2177,13 @@
     "id": "team-intro-17",
     "source": "team-intro",
     "name": "Duy Bị Bình",
-    "nickname": null,
+    "nickname": "Đẳng Phong Hùng",
     "rawType": "Kỵ(★★★★)",
     "unitType": [
       "Kỵ"
     ],
     "faction": null,
-    "stars": 4.0,
+    "stars": 4,
     "status": "meta",
     "heroes": [
       {
@@ -2433,7 +2433,7 @@
       "Cung"
     ],
     "faction": null,
-    "stars": 5.0,
+    "stars": 5,
     "status": "meta",
     "heroes": [
       {
@@ -2673,7 +2673,7 @@
     "id": "team-intro-21",
     "source": "team-intro",
     "name": "Duy Thống Lượng",
-    "nickname": null,
+    "nickname": "Kỳ Lân Cung",
     "rawType": "Cung(★★★★☆)",
     "unitType": [
       "Cung"
@@ -2797,13 +2797,13 @@
     "id": "team-intro-22",
     "source": "team-intro",
     "name": "Du Tốn Mông",
-    "nickname": null,
+    "nickname": "Đô Đốc Cung SP Chu Du",
     "rawType": "Cung(★★★★)",
     "unitType": [
       "Cung"
     ],
     "faction": null,
-    "stars": 4.0,
+    "stars": 4,
     "status": "meta",
     "heroes": [
       {
@@ -2950,7 +2950,7 @@
       "Cung"
     ],
     "faction": null,
-    "stars": 4.0,
+    "stars": 4,
     "status": "meta",
     "heroes": [
       {
@@ -3076,7 +3076,7 @@
       "Cung"
     ],
     "faction": null,
-    "stars": 4.0,
+    "stars": 4,
     "status": "meta",
     "heroes": [
       {
@@ -3201,7 +3201,7 @@
       "Cung"
     ],
     "faction": null,
-    "stars": 4.0,
+    "stars": 4,
     "status": "meta",
     "heroes": [
       {
@@ -3326,7 +3326,7 @@
       "Cung"
     ],
     "faction": null,
-    "stars": 4.0,
+    "stars": 4,
     "status": "meta",
     "heroes": [
       {
@@ -3443,13 +3443,13 @@
     "id": "team-intro-27",
     "source": "team-intro",
     "name": "Ninh Từ Mông",
-    "nickname": null,
+    "nickname": "Khảng Khái Cung",
     "rawType": "Cung(★★★★)",
     "unitType": [
       "Cung"
     ],
     "faction": null,
-    "stars": 4.0,
+    "stars": 4,
     "status": "meta",
     "heroes": [
       {
@@ -3580,7 +3580,7 @@
       "Cung"
     ],
     "faction": null,
-    "stars": 4.0,
+    "stars": 4,
     "status": "meta",
     "heroes": [
       {
@@ -3706,7 +3706,7 @@
       "Cung"
     ],
     "faction": null,
-    "stars": 4.0,
+    "stars": 4,
     "status": "meta",
     "heroes": [
       {
@@ -3831,7 +3831,7 @@
       "Cung"
     ],
     "faction": null,
-    "stars": 4.0,
+    "stars": 4,
     "status": "meta",
     "heroes": [
       {
@@ -3956,7 +3956,7 @@
       "Cung"
     ],
     "faction": null,
-    "stars": 4.0,
+    "stars": 4,
     "status": "meta",
     "heroes": [
       {
@@ -4073,13 +4073,13 @@
     "id": "team-intro-32",
     "source": "team-intro",
     "name": "Thuyền Du Tháo",
-    "nickname": null,
+    "nickname": "SP Chu Du Cung",
     "rawType": "Cung(★★★★)",
     "unitType": [
       "Cung"
     ],
     "faction": "Hỗn hợp",
-    "stars": 4.0,
+    "stars": 4,
     "status": "meta",
     "heroes": [
       {
@@ -4202,7 +4202,7 @@
     "id": "team-intro-33",
     "source": "team-intro",
     "name": "Du Bố Từ",
-    "nickname": null,
+    "nickname": "Ôn Hầu Cung",
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -4702,7 +4702,7 @@
     "id": "team-intro-37",
     "source": "team-intro",
     "name": "Du Túc Tốn",
-    "nickname": null,
+    "nickname": "Đô Đốc Cung",
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -4837,7 +4837,7 @@
     "id": "team-intro-38",
     "source": "team-intro",
     "name": "Thiệu Tuấn Thụ",
-    "nickname": null,
+    "nickname": "Quần Cung",
     "rawType": "Cung",
     "unitType": [
       "Cung"
@@ -5085,7 +5085,7 @@
     "id": "team-intro-40",
     "source": "team-intro",
     "name": "Vũ Chính Thái",
-    "nickname": null,
+    "nickname": "Quan Tinh Khiên",
     "rawType": "Khiên(★★★★☆)",
     "unitType": [
       "Khiên"
@@ -5341,7 +5341,7 @@
     "id": "team-intro-42",
     "source": "team-intro",
     "name": "Ý Sủng Tháo",
-    "nickname": null,
+    "nickname": "Thái Úy Khiên",
     "rawType": "Khiên(★★★★☆)",
     "unitType": [
       "Khiên"
@@ -5593,13 +5593,13 @@
     "id": "team-intro-44",
     "source": "team-intro",
     "name": "Tháo Hủ Chiêu",
-    "nickname": null,
+    "nickname": "Sơn Hà Khiên",
     "rawType": "Khiên(★★★★)",
     "unitType": [
       "Khiên"
     ],
     "faction": null,
-    "stars": 4.0,
+    "stars": 4,
     "status": "meta",
     "heroes": [
       {
@@ -5716,13 +5716,13 @@
     "id": "team-intro-45",
     "source": "team-intro",
     "name": "Bị Vũ Phi",
-    "nickname": null,
+    "nickname": "Đào Viên Khiên",
     "rawType": "Khiên(★★★★)",
     "unitType": [
       "Khiên"
     ],
     "faction": null,
-    "stars": 4.0,
+    "stars": 4,
     "status": "meta",
     "heroes": [
       {
@@ -5842,13 +5842,13 @@
     "id": "team-intro-46",
     "source": "team-intro",
     "name": "Giác Cát Từ",
-    "nickname": null,
+    "nickname": "Tam Tiên Khiên",
     "rawType": "Khiên(★★★★)",
     "unitType": [
       "Khiên"
     ],
     "faction": null,
-    "stars": 4.0,
+    "stars": 4,
     "status": "meta",
     "heroes": [
       {
@@ -5968,7 +5968,7 @@
     "id": "team-intro-47",
     "source": "team-intro",
     "name": "Thái Phi Thiệu",
-    "nickname": null,
+    "nickname": "Trương Phi Khiên (Tiềm Long)",
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -6092,7 +6092,7 @@
     "id": "team-intro-48",
     "source": "team-intro",
     "name": "Tháo Đôn Sủng",
-    "nickname": null,
+    "nickname": "Đôn Đôn Khiên",
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -6217,7 +6217,7 @@
     "id": "team-intro-49",
     "source": "team-intro",
     "name": "Giác Bị Túc",
-    "nickname": null,
+    "nickname": "Thi Thi Khiên",
     "rawType": "Khiên",
     "unitType": [
       "Khiên"
@@ -24424,5 +24424,546 @@
     },
     "notes": "孙权苏信 — biến thể đội Tôn Quyền cung, Chu Thái thay SP Bộ Luyện Sư; bạo phát cao ~1 vạn chiến công/trận. (Nguồn: ẢNH chiến báo 17173 https://news.17173.com/content/11282025/224018547.shtml) Chiến pháp ~3 vạn sát thương. Lối chơi: kéo đánh chậm, phản kích khi địch ra skill. Trần cao nhưng phụ thuộc may, không ổn định.",
     "recommended": false
+  },
+  {
+    "id": "do-uy-70",
+    "source": "do-uy",
+    "name": "Trần Hy Khiên Ngụy",
+    "nickname": null,
+    "rawType": "Khiên",
+    "unitType": [
+      "Khiên"
+    ],
+    "faction": "Ngụy",
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "Trần Hy",
+        "baseName": "Trần Hy",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Ngư Lân Trận",
+            "alternatives": []
+          },
+          {
+            "name": "Thuyền Cỏ Mượn Tên",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Trương Liêu",
+        "baseName": "Trương Liêu",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Đương Phong Thôi Quyết",
+            "alternatives": []
+          },
+          {
+            "name": "Mau Giành Lợi Thế",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "Mãn Sủng",
+        "baseName": "Mãn Sủng",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Dưỡng Sức Đợi Chiến",
+            "alternatives": []
+          },
+          {
+            "name": "Không Đánh Mà Thắng",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Đội Khiên Ngụy: chủ tướng Trần Hy (tự mang Châm Phong Tương Đối) + Trương Liêu (tự mang Hãm Trận Đột Tập) + Mãn Sủng (tự mang Trấn Ách Phòng Cự). Nguồn: chiến báo screenshot (đối đầu hòa với đội Thương Quần SP Mã Siêu)."
+  },
+  {
+    "id": "do-uy-71",
+    "source": "do-uy",
+    "name": "SP Mã Siêu Thương Quần",
+    "nickname": null,
+    "rawType": "Thương",
+    "unitType": [
+      "Thương"
+    ],
+    "faction": "Quần",
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "Tần Khê",
+        "baseName": "Tần Khê",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Lâm Nguy Cứu Chủ",
+            "alternatives": []
+          },
+          {
+            "name": "Giải Phiền Vệ",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "SP Hoàng Phủ Hoành",
+        "baseName": "Hoàng Phủ Hoành",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thuyền Cỏ Mượn Tên",
+            "alternatives": []
+          },
+          {
+            "name": "Uy Mưu Vô Địch",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      },
+      {
+        "name": "SP Mã Siêu",
+        "baseName": "Mã Siêu",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Đương Phong Thôi Quyết",
+            "alternatives": []
+          },
+          {
+            "name": "Thôi Phong Đoạn Nhẫn",
+            "alternatives": []
+          }
+        ],
+        "books": [],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "Đội Thương Quần: chủ tướng SP Mã Siêu (tự mang Uy Vũ Tịnh Chiêu) + SP Hoàng Phủ Hoành (tự mang Phù Nguy Định Khuynh) + Tần Khê (tự mang Tiên Thanh Đoạt Nhân). Nguồn: chiến báo screenshot (phòng thủ, hòa với đội Khiên Ngụy Trần Hy)."
+  },
+  {
+    "id": "team-intro-50",
+    "source": "team-intro",
+    "name": "Pháp Quan Lưu Bị",
+    "nickname": "Pháp Quan Khiên Lưu Bị",
+    "rawType": "Khiên(★★★★★)",
+    "unitType": [
+      "Khiên"
+    ],
+    "faction": null,
+    "stars": 5,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "SP Quan Vũ (S)",
+        "baseName": "Quan Vũ",
+        "alternatives": [],
+        "variant": "S",
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Lấy Ít Đánh Nhiều",
+            "alternatives": []
+          },
+          {
+            "name": "Kích Kỳ Nọa Quy",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Chia Nhỏ Đánh Nhanh",
+            "alternatives": []
+          },
+          {
+            "name": "Bách Chiến",
+            "alternatives": []
+          },
+          {
+            "name": "Khép Hờ",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      },
+      {
+        "name": "Lưu Bị",
+        "baseName": "Lưu Bị",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Ngư Lân Trận",
+            "alternatives": []
+          },
+          {
+            "name": "Lính Giáp Mây",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Tấn Công Điểm Yếu",
+            "alternatives": []
+          },
+          {
+            "name": "Khích Lệ Lòng Quân",
+            "alternatives": []
+          },
+          {
+            "name": "Khép Hờ",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      },
+      {
+        "name": "SP Pháp Chính",
+        "baseName": "Pháp Chính",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Dưỡng Sức Đợi Chiến",
+            "alternatives": []
+          },
+          {
+            "name": "Không Đánh Mà Thắng",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Tam Quân Chi Chúng",
+            "alternatives": []
+          },
+          {
+            "name": "Rèn Luyện",
+            "alternatives": []
+          },
+          {
+            "name": "Dẫn Quân",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [
+        "Đội binh đao bạo lực",
+        "Hoàng Mã/Hoàng Kỵ thiếu xuyên giảm thương"
+      ],
+      "avoid": [
+        "Ngũ Mưu",
+        "đội hỏa công mạnh",
+        "Cự Mã Cung"
+      ]
+    },
+    "notes": "法關盾(劉備) — Zeabur PK-S26 xếp T0; 17173 ghi SP Pháp Chính giúp SP Quan Vũ ổn định, cấu hình SP Quan Vũ: 以寡敌众+击其惰归, Lưu Bị: 鱼鳞阵+藤甲兵, SP Pháp Chính: 蓄势待发+非攻制胜. Nguồn: https://sangokushi.zeabur.app/recommended và https://news.17173.com/content/01142025/015701714.shtml",
+    "recommended": true
+  },
+  {
+    "id": "team-intro-51",
+    "source": "team-intro",
+    "name": "Pháp Quan Mã Đại",
+    "nickname": "Pháp Quan Khiên Mã Đại",
+    "rawType": "Khiên(★★★★★)",
+    "unitType": [
+      "Khiên"
+    ],
+    "faction": null,
+    "stars": 5,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "SP Quan Vũ (S)",
+        "baseName": "Quan Vũ",
+        "alternatives": [],
+        "variant": "S",
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Lấy Ít Đánh Nhiều",
+            "alternatives": []
+          },
+          {
+            "name": "Kích Kỳ Nọa Quy",
+            "alternatives": [
+              "Gió Táp Mưa Sa"
+            ]
+          }
+        ],
+        "books": [
+          {
+            "name": "Chia Nhỏ Đánh Nhanh",
+            "alternatives": []
+          },
+          {
+            "name": "Bách Chiến",
+            "alternatives": []
+          },
+          {
+            "name": "Khép Hờ",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      },
+      {
+        "name": "Mã Đại",
+        "baseName": "Mã Đại",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Ngư Lân Trận",
+            "alternatives": []
+          },
+          {
+            "name": "Lính Giáp Mây",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Tam Quân Chi Chúng",
+            "alternatives": []
+          },
+          {
+            "name": "Dẫn Quân",
+            "alternatives": []
+          },
+          {
+            "name": "Rèn Luyện",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      },
+      {
+        "name": "SP Pháp Chính",
+        "baseName": "Pháp Chính",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Dưỡng Sức Đợi Chiến",
+            "alternatives": []
+          },
+          {
+            "name": "Không Đánh Mà Thắng",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Tam Quân Chi Chúng",
+            "alternatives": []
+          },
+          {
+            "name": "Rèn Luyện",
+            "alternatives": []
+          },
+          {
+            "name": "Dẫn Quân",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [
+        "Đội Cung và đội binh đao kéo dài"
+      ],
+      "avoid": [
+        "Ngũ Mưu",
+        "đội tốc công có khống chế sớm"
+      ]
+    },
+    "notes": "法關盾(馬岱) — Zeabur PK-S26 xếp T0; dùng khi cần giữ Lưu Bị cho đội khác, vẫn giữ lõi SP Quan Vũ + SP Pháp Chính + Khiên S. Nguồn: https://sangokushi.zeabur.app/recommended; build tham chiếu từ dữ liệu cùng tồn Mã Đại Pháp Quan Khiên trong repo.",
+    "recommended": true
+  },
+  {
+    "id": "team-intro-52",
+    "source": "team-intro",
+    "name": "Quan Quân Thương",
+    "nickname": "Quan Quân Thương",
+    "rawType": "Thương(★★★★★)",
+    "unitType": [
+      "Thương"
+    ],
+    "faction": "Hỗn hợp",
+    "stars": 5,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "SP Quan Vũ",
+        "baseName": "Quan Vũ",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Trung Dũng Nghĩa Liệt",
+            "alternatives": []
+          },
+          {
+            "name": "Xế Đao Chước Địch",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Chia Nhỏ Đánh Nhanh",
+            "alternatives": []
+          },
+          {
+            "name": "Khép Hờ",
+            "alternatives": []
+          },
+          {
+            "name": "Bách Chiến",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      },
+      {
+        "name": "SP Tuân Úc",
+        "baseName": "Tuân Úc",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Không Đánh Mà Thắng",
+            "alternatives": []
+          },
+          {
+            "name": "Uy Mưu Vô Địch",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Đánh Sau Trúng Trước",
+            "alternatives": []
+          },
+          {
+            "name": "Diệu Toán",
+            "alternatives": []
+          },
+          {
+            "name": "Thần Cơ",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      },
+      {
+        "name": "SP Lữ Mông",
+        "baseName": "Lữ Mông",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thuyền Cỏ Mượn Tên",
+            "alternatives": []
+          },
+          {
+            "name": "Tam Thế Trận",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Tấn Công Điểm Yếu",
+            "alternatives": []
+          },
+          {
+            "name": "Tốc Chiến",
+            "alternatives": []
+          },
+          {
+            "name": "Khích Lệ Lòng Quân",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [
+        "Phú Quý Kỵ",
+        "đội Kỵ Ngô",
+        "đội thiếu giảm thương"
+      ],
+      "avoid": [
+        "Lính Giáp Mây Tư Mã Ý",
+        "Cung Ngô kiểm soát tốt"
+      ]
+    },
+    "notes": "冠軍槍 — Zeabur PK-S26 xếp T0 với core SP Quan Vũ + SP Tuân Úc + SP Lữ Mông. Bản này bổ sung đúng core còn thiếu; chiến pháp lấy theo pattern SP Quan Vũ thương hiện có trong repo. Nguồn: https://sangokushi.zeabur.app/recommended",
+    "recommended": true
   }
 ]

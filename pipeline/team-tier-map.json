@@ -1,4 +1,67 @@
 {
+  "team-intro-0": [
+    {
+      "source": "video-260701 · T0 · 荣光枪",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-1": [
+    {
+      "source": "video-260701 · T0 · 皇马枪",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-2": [
+    {
+      "source": "video-260701 · T0 · 皇冠枪",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-21": [
+    {
+      "source": "video-260701 · T0 · 麒麟弓",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-37": [
+    {
+      "source": "video-260701 · T0 · 都督弓",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-38": [
+    {
+      "source": "video-260701 · T0 · 群弓",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-42": [
+    {
+      "source": "video-260701 · T0 · 太尉盾",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-44": [
+    {
+      "source": "video-260701 · T0 · 山河盾",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-46": [
+    {
+      "source": "video-260701 · T0 · 三仙盾",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
+    }
+  ],
   "do-uy-ss18-0": [
     {
       "source": "ss18.thanglonghoi.xyz · T0.5",
@@ -41,24 +104,10 @@
       "updatedAt": "2026-06-26"
     }
   ],
-  "do-uy-ss18-6": [
-    {
-      "source": "ss18.thanglonghoi.xyz · T0.5",
-      "tier": "T0.5",
-      "updatedAt": "2026-06-26"
-    }
-  ],
   "do-uy-ss18-7": [
     {
       "source": "ss18.thanglonghoi.xyz · T0.5",
       "tier": "T0.5",
-      "updatedAt": "2026-06-26"
-    }
-  ],
-  "do-uy-ss18-8": [
-    {
-      "source": "ss18.thanglonghoi.xyz · T1",
-      "tier": "T1",
       "updatedAt": "2026-06-26"
     }
   ],
@@ -193,6 +242,34 @@
       "source": "ss18.thanglonghoi.xyz · T0",
       "tier": "T0",
       "updatedAt": "2026-06-26"
+    }
+  ],
+  "team-intro-40": [
+    {
+      "source": "sangokushi.zeabur.app PK-S26 · T0 · 關星盾",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-50": [
+    {
+      "source": "sangokushi.zeabur.app PK-S26 · T0 · 法關盾(劉備)",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-51": [
+    {
+      "source": "sangokushi.zeabur.app PK-S26 · T0 · 法關盾(馬岱)",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-52": [
+    {
+      "source": "sangokushi.zeabur.app PK-S26 · T0 · 冠軍槍",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
     }
   ]
 }
