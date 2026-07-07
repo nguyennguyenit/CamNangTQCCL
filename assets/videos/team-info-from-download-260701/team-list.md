@@ -73,5 +73,5 @@ Outputs:
 ## Open Questions
 
 - `非攻制胜` canonical VN confirmed by user as `Không Đánh Mà Thắng`; `八门金锁` is shorthand for `Bát Môn Kim Tỏa Trận`.
-- T0 labels applied to matching `team-intro-*` records in `pipeline/team-tier-map.json`; `天公盾` not applied because no matching `张角 / 曹操 / 刘备` team exists in `data/teams.json`.
+- T0 labels applied to matching `team-intro-*` records in `pipeline/team-tier-map.json`; `天公盾` added as `team-intro-55` because no exact `张角 / 曹操 / 刘备` team existed before.
 - Some hero names are inferred from portrait/common comp because the video overlays team names over portraits instead of showing each hero name.

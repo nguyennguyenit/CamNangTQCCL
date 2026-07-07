@@ -36,17 +36,17 @@ Repo trọng tâm là dữ liệu JSON và frontend tĩnh. Phần nặng nhất 
 
 | File | Quy mô |
 |---|---|
-| `data/teams.json` | 211 team (team-intro 53 + moi-phe 110 + do-uy 48) |
+| `data/teams.json` | 213 team (team-intro 55 + moi-phe 110 + do-uy 48) |
 | `data/tactics.json` | 237 chiến pháp |
 | `data/heroes-dict.json` | 112 tướng |
 | `data/coexist.json` | 5 nhóm |
 | `data/khaihoang.json` | 11 đội + 5 mỏ |
-| `data/team-tier.json` | 39 team có tier (multi-source rankings) |
-| `data/facets.json` | 91 heroes, 118 tactics, 67 books, 4 unitTypes, 3 stars, 5 factions, 2 statuses, 3 sources |
+| `data/team-tier.json` | 56 team có tier (multi-source rankings) |
+| `data/facets.json` | 91 heroes, 119 tactics, 67 books, 4 unitTypes, 3 stars, 5 factions, 2 statuses, 3 sources |
 | `data/tactics-generic.json` | 28 tactic generic placeholder |
 | `data/books-dict.json` | map binh thư Hán→Việt |
 
-`Team PK` render team-intro (53 team); `Meta phe (cũ)` render moi-phe (110 team); team `do-uy` ẩn khỏi Team PK và hiện ở tab Đô Úy riêng.
+`Team PK` render team-intro (55 team); `Meta phe (cũ)` render moi-phe (110 team); team `do-uy` ẩn khỏi Team PK và hiện ở tab Đô Úy riêng.
 
 ## Điểm vào code
 

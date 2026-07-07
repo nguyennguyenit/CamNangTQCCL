@@ -24965,5 +24965,369 @@
     },
     "notes": "冠軍槍 — Zeabur PK-S26 xếp T0 với core SP Quan Vũ + SP Tuân Úc + SP Lữ Mông. Bản này bổ sung đúng core còn thiếu; chiến pháp lấy theo pattern SP Quan Vũ thương hiện có trong repo. Nguồn: https://sangokushi.zeabur.app/recommended",
     "recommended": true
+  },
+  {
+    "id": "team-intro-53",
+    "source": "team-intro",
+    "name": "Lô Điêu Trác",
+    "nickname": "Thái Sư Cung",
+    "rawType": "Cung(★★★★★)",
+    "unitType": [
+      "Cung"
+    ],
+    "faction": "Quần",
+    "stars": 5,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "SP Lô Trực",
+        "baseName": "Lô Trực",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Nhạn Hành Trận",
+            "alternatives": []
+          },
+          {
+            "name": "Cương Nhu Kết Hợp",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Tam Quân Chi Chúng",
+            "alternatives": []
+          },
+          {
+            "name": "Chiến Đấu Trường Kỳ",
+            "alternatives": []
+          },
+          {
+            "name": "Dẫn Quân",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      },
+      {
+        "name": "SP Điêu Thuyền",
+        "baseName": "Điêu Thuyền",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Đồng Tâm Hiệp Lực",
+            "alternatives": []
+          },
+          {
+            "name": "Thâm Tàng Nhược Hư",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Tam Quân Chi Chúng",
+            "alternatives": []
+          },
+          {
+            "name": "Chiến Đấu Trường Kỳ",
+            "alternatives": []
+          },
+          {
+            "name": "Dẫn Quân",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      },
+      {
+        "name": "SP Đổng Trác",
+        "baseName": "Đổng Trác",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thượng Binh Phạt Mưu",
+            "alternatives": []
+          },
+          {
+            "name": "Hãn Thiên Sí Địa",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Tam Quân Chi Chúng",
+            "alternatives": []
+          },
+          {
+            "name": "Chiến Đấu Trường Kỳ",
+            "alternatives": []
+          },
+          {
+            "name": "Dẫn Quân",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [
+        "đội binh đao chậm",
+        "đội thiếu xuyên giảm thương"
+      ],
+      "avoid": [
+        "Ngũ Mưu",
+        "Kỳ Lân",
+        "đội pháp bạo phát cao"
+      ]
+    },
+    "notes": "太師弓 — Zeabur PK-S26 Anh Hùng Mệnh Thế xếp T0, core SP Lô Trực + SP Điêu Thuyền + SP Đổng Trác. Chiến pháp theo detail Zeabur: SP Lô Trực 雁行陣+剛柔並濟, SP Điêu Thuyền 勠力同心+深藏若虛, SP Đổng Trác 上兵伐謀+熯天熾地. Nguồn: https://sangokushi.zeabur.app/recommended/yxms-045-太師弓",
+    "recommended": true
+  },
+  {
+    "id": "team-intro-54",
+    "source": "team-intro",
+    "name": "Lô Tiêu Điêu",
+    "nickname": "Cự Mã Cung",
+    "rawType": "Cung(★★★★★)",
+    "unitType": [
+      "Cung"
+    ],
+    "faction": "Quần",
+    "stars": 5,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "SP Lô Trực",
+        "baseName": "Lô Trực",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Cương Nhu Kết Hợp",
+            "alternatives": []
+          },
+          {
+            "name": "Nhân Lợi Chế Quyền",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Tam Quân Chi Chúng",
+            "alternatives": []
+          },
+          {
+            "name": "Chiến Đấu Trường Kỳ",
+            "alternatives": []
+          },
+          {
+            "name": "Dẫn Quân",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      },
+      {
+        "name": "Tiêu Chỉ",
+        "baseName": "Tiêu Chỉ",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Tiên Đăng Tử Sĩ",
+            "alternatives": []
+          },
+          {
+            "name": "Nhạn Hành Trận",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Tam Quân Chi Chúng",
+            "alternatives": []
+          },
+          {
+            "name": "Chiến Đấu Trường Kỳ",
+            "alternatives": []
+          },
+          {
+            "name": "Dẫn Quân",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      },
+      {
+        "name": "SP Điêu Thuyền",
+        "baseName": "Điêu Thuyền",
+        "alternatives": [],
+        "variant": null,
+        "isSP": true,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thâm Tàng Nhược Hư",
+            "alternatives": []
+          },
+          {
+            "name": "Đồng Tâm Hiệp Lực",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Tam Quân Chi Chúng",
+            "alternatives": []
+          },
+          {
+            "name": "Chiến Đấu Trường Kỳ",
+            "alternatives": []
+          },
+          {
+            "name": "Dẫn Quân",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [
+        "Hoàng Kỵ",
+        "Pháp Quan",
+        "Tam Tiên",
+        "đội binh đao"
+      ],
+      "avoid": [
+        "Ngũ Mưu",
+        "Kỳ Lân",
+        "đội sát thương pháp bùng nổ"
+      ]
+    },
+    "notes": "拒馬弓 — Zeabur PK-S26 Anh Hùng Mệnh Thế xếp T0.5, core SP Lô Trực + Tiêu Chỉ + SP Điêu Thuyền. Raw local cũng ghi đội Rào Cản Ngựa/Cự Mã Cung dùng SP Lô Trực, Tiêu Chỉ, SP Điêu Thuyền. Nguồn: https://sangokushi.zeabur.app/recommended/yxms-044-拒馬弓",
+    "recommended": true
+  },
+  {
+    "id": "team-intro-55",
+    "source": "team-intro",
+    "name": "Giác Tháo Bị",
+    "nickname": "Thiên Công Khiên",
+    "rawType": "Khiên",
+    "unitType": [
+      "Khiên"
+    ],
+    "faction": "Hỗn hợp",
+    "stars": null,
+    "status": "meta",
+    "heroes": [
+      {
+        "name": "Trương Giác",
+        "baseName": "Trương Giác",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thái Bình Đạo Pháp",
+            "alternatives": []
+          },
+          {
+            "name": "Sĩ Biệt Tam Nhật",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Đánh Phá Vòng Vây",
+            "alternatives": []
+          },
+          {
+            "name": "Quỷ Mưu",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      },
+      {
+        "name": "Tào Tháo",
+        "baseName": "Tào Tháo",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Thuyền Cỏ Mượn Tên",
+            "alternatives": []
+          },
+          {
+            "name": "Lính Giáp Mây",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Bố Trận Chờ Đợi",
+            "alternatives": []
+          },
+          {
+            "name": "Phòng Bị",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      },
+      {
+        "name": "Lưu Bị",
+        "baseName": "Lưu Bị",
+        "alternatives": [],
+        "variant": null,
+        "isSP": false,
+        "isCO": false,
+        "tactics": [
+          {
+            "name": "Phong Thi Trận",
+            "alternatives": []
+          },
+          {
+            "name": "Tạm Lánh Sóng Gió",
+            "alternatives": []
+          }
+        ],
+        "books": [
+          {
+            "name": "Tấn Công Điểm Yếu",
+            "alternatives": []
+          },
+          {
+            "name": "Cứu Chủ",
+            "alternatives": []
+          }
+        ],
+        "note": null
+      }
+    ],
+    "counters": {
+      "good": [],
+      "avoid": []
+    },
+    "notes": "天公盾 — video T0 từ /Users/plateau/Downloads/0ef29f388864429384908036610b6474_14165938.mp4 ghi core 张角 + 曹操 + 刘备; Ali213/9Game ghi cấu hình 张角: 太平道法+士别三日, 刘备: 锋矢阵+暂避其锋, 曹操: 草船借箭+藤甲兵; Xiaomi cũng gọi đội này là 天公盾. Nguồn: https://m.ali213.net/news/gl2205/843063.html, https://game.xiaomi.com/viewpoint/1430123701_1682176832711_13",
+    "recommended": true
   }
 ]

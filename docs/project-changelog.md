@@ -5,7 +5,9 @@
 ### Added
 
 - Team PK thêm 3 đội SP Quan Vũ theo meta PK-S26: Pháp Quan Lưu Bị, Pháp Quan Mã Đại, Quan Quân Thương; gắn tier T0 cho 3 đội mới và Quan Tinh Khiên hiện có.
+- Team PK thêm 2 đội SP Lô Trực mùa `Anh Hùng Mệnh Thế`: Thái Sư Cung (T0) và Cự Mã Cung (T0.5).
 - Team PK bổ sung nickname/tên gọi meta cho 33 đội, ví dụ Hoàng Mã Thương, Vinh Quang Thương, Hoàng Quan Thương, Kỳ Lân Cung, Thái Úy Khiên.
+- Team PK bổ sung và verify tier PK-S26 `Anh Hùng Mệnh Thế` từ Zeabur; sau rà lại có 30/55 đội có badge tier và 19 đội T0 chắc hơn, bỏ T0 của Vinh Quang Thương và hạ Đô Đốc Cung bản Lỗ Túc về T0.5.
 
 ## 2026-06-26
 

@@ -1,14 +1,12 @@
 {
-  "team-intro-0": [
-    {
-      "source": "video-260701 · T0 · 荣光枪",
-      "tier": "T0",
-      "updatedAt": "2026-07-03"
-    }
-  ],
   "team-intro-1": [
     {
       "source": "video-260701 · T0 · 皇马枪",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
+    },
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0 · 皇馬槍",
       "tier": "T0",
       "updatedAt": "2026-07-03"
     }
@@ -18,6 +16,60 @@
       "source": "video-260701 · T0 · 皇冠枪",
       "tier": "T0",
       "updatedAt": "2026-07-03"
+    },
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0 · 皇冠槍",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-6": [
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0 · 網紅槍",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-7": [
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0.5 · 北伐槍",
+      "tier": "T0.5",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-10": [
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0.5 · 奸雄騎",
+      "tier": "T0.5",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-11": [
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0 · 富貴騎",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-14": [
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0.5 · 遼姬騎",
+      "tier": "T0.5",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-16": [
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0.5 · 吳騎",
+      "tier": "T0.5",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-17": [
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0 · 等風熊",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
     }
   ],
   "team-intro-21": [
@@ -25,18 +77,63 @@
       "source": "video-260701 · T0 · 麒麟弓",
       "tier": "T0",
       "updatedAt": "2026-07-03"
+    },
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0 · 盛氣蜀弓",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-22": [
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0 · 嘟嘟弓(sp周瑜)",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-26": [
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0.5 · 虎臣弓",
+      "tier": "T0.5",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-27": [
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0.5 · 慷慨弓",
+      "tier": "T0.5",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-32": [
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0 · sp周瑜弓",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-33": [
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0 · 溫侯弓-by大米",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
     }
   ],
   "team-intro-37": [
     {
-      "source": "video-260701 · T0 · 都督弓",
-      "tier": "T0",
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0.5 · 飛熊都督",
+      "tier": "T0.5",
       "updatedAt": "2026-07-03"
     }
   ],
   "team-intro-38": [
     {
       "source": "video-260701 · T0 · 群弓",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
+    },
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0 · 群弓",
       "tier": "T0",
       "updatedAt": "2026-07-03"
     }
@@ -46,6 +143,11 @@
       "source": "video-260701 · T0 · 太尉盾",
       "tier": "T0",
       "updatedAt": "2026-07-03"
+    },
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0 · 太尉盾",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
     }
   ],
   "team-intro-44": [
@@ -53,12 +155,55 @@
       "source": "video-260701 · T0 · 山河盾",
       "tier": "T0",
       "updatedAt": "2026-07-03"
+    },
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0 · 山河盾",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-45": [
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0.5 · 桃園盾",
+      "tier": "T0.5",
+      "updatedAt": "2026-07-03"
     }
   ],
   "team-intro-46": [
     {
       "source": "video-260701 · T0 · 三仙盾",
       "tier": "T0",
+      "updatedAt": "2026-07-03"
+    },
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0 · 仙人盾-by大米",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
+    },
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0.5 · 三仙盾",
+      "tier": "T0.5",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-47": [
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0 · 張飛盾(潛龍)",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-48": [
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0.5 · 墩墩盾",
+      "tier": "T0.5",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-49": [
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0.5 · 詩詩盾",
+      "tier": "T0.5",
       "updatedAt": "2026-07-03"
     }
   ],
@@ -246,30 +391,51 @@
   ],
   "team-intro-40": [
     {
-      "source": "sangokushi.zeabur.app PK-S26 · T0 · 關星盾",
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0 · 關星盾",
       "tier": "T0",
       "updatedAt": "2026-07-03"
     }
   ],
   "team-intro-50": [
     {
-      "source": "sangokushi.zeabur.app PK-S26 · T0 · 法關盾(劉備)",
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0 · 法關盾(劉備)",
       "tier": "T0",
       "updatedAt": "2026-07-03"
     }
   ],
   "team-intro-51": [
     {
-      "source": "sangokushi.zeabur.app PK-S26 · T0 · 法關盾(馬岱)",
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0 · 法關盾(馬岱)",
       "tier": "T0",
       "updatedAt": "2026-07-03"
     }
   ],
   "team-intro-52": [
     {
-      "source": "sangokushi.zeabur.app PK-S26 · T0 · 冠軍槍",
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0 · 冠軍槍",
       "tier": "T0",
       "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-53": [
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0 · 太師弓",
+      "tier": "T0",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-54": [
+    {
+      "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0.5 · 拒馬弓",
+      "tier": "T0.5",
+      "updatedAt": "2026-07-03"
+    }
+  ],
+  "team-intro-55": [
+    {
+      "source": "video-260701 · T0 · 天公盾",
+      "tier": "T0",
+      "updatedAt": "2026-07-07"
     }
   ]
 }
