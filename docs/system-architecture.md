@@ -38,6 +38,7 @@ Không có backend chung, không có DB, không có bundler.
 - `js/do-uy.js` render tab Đô Úy với filter bar inline + facets riêng (team `do-uy` ẩn khỏi Team PK).
 - `js/hero-list.js` + `js/hero-detail.js` render tra cứu tướng + modal chi tiết.
 - `js/tactics.js` render tra cứu chiến pháp; `js/match-dict.js` lo search đa ngõ vào.
+- `js/recruit-tracker-store.js` giữ state chiêu mộ local-first; `js/recruit-tracker.js` render tab theo dõi chiêu mộ.
 - `js/mobile-section-menu.js` + `js/mobile-filter-drawer.js` lo nav + bộ lọc trên mobile.
 
 ### 3. Soi đội từ ảnh
@@ -68,6 +69,7 @@ upload ảnh
 | `js/filters.js` | Search / filter thuần |
 | `js/do-uy.js` | Tab Đô Úy (filter bar + facets riêng) |
 | `js/hero-list.js`, `js/hero-detail.js` | Tra cứu tướng + modal |
+| `js/recruit-tracker-store.js`, `js/recruit-tracker.js` | Theo dõi chiêu mộ, pity 30, history 5★, export/import localStorage |
 | `js/match-dict.js` | Search Việt/Hán-Việt/Hán |
 | `js/mobile-section-menu.js`, `js/mobile-filter-drawer.js` | Nav + lọc mobile |
 | `js/analyze.js` | Flow upload ảnh |

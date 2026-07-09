@@ -9,6 +9,7 @@ Site đang đi theo hướng dashboard tĩnh, nhiều card và badge, ưu tiên 
 - Giữ layout rõ, ít lớp, ít nhiễu.
 - Dùng tiếng Việt ngắn cho label, button, badge.
 - Giữ các section tách bạch: `Team PK`, `Cùng Tồn`, `Khai hoang`, `Tra cứu chiến pháp`, `Soi đội từ ảnh`.
+- Với tracker cá nhân như `Theo dõi chiêu mộ`, ưu tiên form/slot/action nhỏ gọn hơn dashboard trang trí.
 - Tránh style "mặc định framework" nếu không cần.
 - Giữ khả năng đọc tốt trên mobile trước, desktop sau.
 
@@ -21,6 +22,7 @@ Site đang đi theo hướng dashboard tĩnh, nhiều card và badge, ưu tiên 
 | Combo search | Tướng, chiến pháp, binh thư |
 | Drawer filter | Mobile filter panel |
 | Theme toggle | Light / dark theo `localStorage` + system |
+| Slot tracker | Theo dõi chiêu mộ: 4 slot hằng ngày, action rõ `Không ra` / `Ra 5★` |
 
 ## Màu và nhãn
 

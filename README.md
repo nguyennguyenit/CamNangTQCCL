@@ -13,6 +13,7 @@ Ba tab team (`Team PK`, `Đô Úy`, `Meta phe (cũ)`) dùng **cùng một bộ l
 - `Khai hoang`: đội khai hoang và quân thủ các mỏ.
 - `Tra cứu tướng`: 112 tướng, lọc theo thích tính binh chủng (S/A) / vai trò / phe / sao, search fuzzy (Việt bỏ dấu / Hán-Việt / Hán); click card mở modal chi tiết (stats + thích tính + 2 chiến pháp tự mang/truyền thừa link sang thư viện).
 - `Tra cứu chiến pháp`: 237 chiến pháp, search fuzzy, chạy offline, không AI.
+- `Theo dõi chiêu mộ`: tracker localStorage cho nhiều account, theo dõi `Danh tướng PK` 4 lượt miễn phí/nửa giá mỗi ngày, banner hạn giờ tự nhập, pity 30, lịch sử tướng 5★, xuất/nhập JSON.
 - `Soi đội từ ảnh`: upload screenshot, đọc bằng Worker + Vision LLM (tướng + chiến pháp + binh thư), map về tên Việt canonical, hiện icon tướng để đối chiếu, rồi so với toàn bộ team. Tên tướng bị che thì đoán từ chân dung kèm cờ "kiểm tra".
 
 ## Chạy local
@@ -87,3 +88,4 @@ cd worker && npm run typecheck
 - `data/books-dict.json` map binh thư Hán→Việt (62/74, từ bảng thủ công `pipeline/books-han-viet-map.json`); binh thư VN dùng tên dịch nghĩa nên không auto-link như chiến pháp. 12 còn lại đều count thấp (≤5 team), bổ sung khi có nguồn đối chiếu Hán↔Việt.
 - Nguồn HTML `Meta Team PK/` và cache crawl không commit, nên clone repo không tự rebuild được nếu thiếu export local.
 - `Meta mỗi phe (cũ)` được gắn nhãn `Cũ`.
+- Dữ liệu `Theo dõi chiêu mộ` lưu trong trình duyệt hiện tại bằng `localStorage`; dùng `Xuất JSON` / `Nhập JSON` để backup hoặc chuyển giữa máy.

@@ -9,6 +9,7 @@ import { initDoUy } from "./do-uy.js";
 import { initMetaCu } from "./meta-cu.js";
 import { initHeroList } from "./hero-list.js";
 import { initAnalyze } from "./analyze.js";
+import { initRecruitTracker } from "./recruit-tracker.js";
 import { createMobileSectionMenu } from "./mobile-section-menu.js";
 
 let sectionMenu = null;
@@ -43,7 +44,7 @@ function initTheme() {
 }
 
 /* ---------- Section nav ---------- */
-const SECTIONS = ["team-pk", "do-uy", "meta-cu", "coexist", "khaihoang", "heroes", "tactics", "analyze"];
+const SECTIONS = ["team-pk", "do-uy", "meta-cu", "coexist", "khaihoang", "heroes", "tactics", "recruit-tracker", "analyze"];
 function initNav() {
   sectionMenu = createMobileSectionMenu({
     nav: $(".section-nav"),
@@ -94,6 +95,7 @@ async function main() {
     $("#section-khaihoang").append(khaihoangTable(khaihoang));
     initHeroList(heroesDict, tactics, $("#section-heroes"));
     initTactics(tactics, $("#section-tactics"));
+    initRecruitTracker({ heroesDict, mount: $("#section-recruit-tracker") });
 
     // Mở team giống từ kết quả soi đội -> về đúng tab theo nguồn + search tên tướng đầu.
     const SOURCE_SECTION = { "do-uy": "do-uy", "moi-phe": "meta-cu", "team-intro": "team-pk" };

@@ -40,11 +40,13 @@
 | FR-6 | Gắn badge tier T0–T3 theo team từ `data/team-tier.json` (multi-source, hiện bậc tốt nhất + tooltip) |
 | FR-7 | Cho phép upload ảnh soi đội khi `js/config.js` và Worker đã cấu hình thật; map output Hán sang tên Việt canonical rồi đối chiếu với `data/teams.json` |
 | FR-8 | Rebuild dữ liệu từ HTML export local bằng pipeline (`build_json`, `build_dict`, `build_books_dict`, `build_team_tier`) |
+| FR-9 | Theo dõi chiêu mộ tướng 5★ bằng `localStorage`: nhiều account, `Danh tướng PK` 4 lượt/ngày, banner hạn giờ, pity 30, lịch sử 5★, xuất/nhập JSON |
 
 ## Yêu cầu phi chức năng
 
 - Static-first, không bundler, không framework.
 - Dùng HTTP server local vì frontend gọi request JSON.
+- Tracker chiêu mộ là local-first; không có cloud sync, dùng JSON export/import để backup.
 - Dữ liệu và render phải bám đúng file thật trong repo.
 - Không để secret nằm trong frontend repo.
 - Tách rõ phần build data, phần render, phần Worker.
