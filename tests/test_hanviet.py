@@ -21,6 +21,7 @@ class TransliterateTest(unittest.TestCase):
 
     def test_title_case(self):
         self.assertEqual(hanviet.to_viet("暴戾无仁"), "Bạo Lệ Vô Nhân")
+        self.assertEqual(hanviet.to_viet("非攻制胜"), "Phi Công Chế Thắng")
         self.assertEqual(hanviet.title_case_vn("bát môn kim tỏa trận"), "Bát Môn Kim Tỏa Trận")
 
     def test_latin_passthrough(self):

@@ -79,7 +79,7 @@ HV = {
     # --- Mở rộng cho chiến pháp generic (tactics-generic.json) ---
     "主": "chủ", "伐": "phạt", "危": "nguy", "唐": "đường", "因": "nhân", "少": "thiểu", "己": "kỷ", "并": "tịnh",
     "彼": "bỉ", "捐": "quyên", "救": "cứu", "柔": "nhu", "烦": "phiền", "藏": "tàng", "虚": "hư", "解": "giải",
-    "远": "viễn", "障": "chướng", "雁": "nhạn", "鱼": "ngư", "鳞": "lân",
+    "攻": "công", "远": "viễn", "障": "chướng", "雁": "nhạn", "非": "phi", "鱼": "ngư", "鳞": "lân",
 }
 
 # Họ/cụm đọc đặc biệt (đa âm theo cụm). Áp longest-match TRƯỚC char-level.

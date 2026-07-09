@@ -20,6 +20,14 @@ test("Toàn Quân Đồng Lòng has in-game details", () => {
   assert.match(tactic.effect, /谋略伤害/);
 });
 
+test("Không Đánh Mà Thắng links to verified 非攻制胜 tactic name", () => {
+  const tactic = tactics.find((item) => item.viet === "Không Đánh Mà Thắng");
+
+  assert.ok(tactic, "missing tactic");
+  assert.equal(tactic.chinese, "非攻制胜");
+  assert.equal(tactics.filter((item) => item.chinese === "不战而胜").length, 0);
+});
+
 const inGameVietnameseTactics = [
   {
     chinese: "所向披靡",
