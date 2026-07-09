@@ -11,7 +11,7 @@ const DISCLAIMER =
   "Tránh ảnh lộ tên tài khoản; nên crop chỉ phần đội hình.";
 
 /* ---------- Nén ảnh client ---------- */
-function compressImage(file) {
+export function compressImage(file) {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file);
     const img = new Image();
@@ -36,7 +36,7 @@ function compressImage(file) {
 
 /* ---------- Turnstile (lazy) ---------- */
 let turnstileLoading = null;
-function loadTurnstile() {
+export function loadTurnstile() {
   if (turnstileLoading) return turnstileLoading;
   turnstileLoading = new Promise((resolve, reject) => {
     const s = document.createElement("script");
@@ -50,11 +50,11 @@ function loadTurnstile() {
 }
 
 /* ---------- Gọi Worker ---------- */
-async function callWorker(imageDataUrl, token) {
+export async function callWorker(imageDataUrl, token, mode = "analyzeTeamImage") {
   const res = await fetch(ANALYZE_CONFIG.workerUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ image: imageDataUrl, turnstileToken: token }),
+    body: JSON.stringify({ image: imageDataUrl, turnstileToken: token, mode }),
   });
   let data = null;
   try {

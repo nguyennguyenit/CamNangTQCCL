@@ -32,13 +32,14 @@
 
 | ID | Yêu cầu |
 |---|---|
-| FR-1 | Hiển thị các section: `Team PK`, `Đô Úy (ss18)`, `Cùng Tồn`, `Khai hoang`, `Tra cứu tướng`, `Tra cứu chiến pháp`, `Soi đội từ ảnh` |
+| FR-1 | Hiển thị các section: `Team PK`, `Đô Úy (ss18)`, `Cùng Tồn`, `Khai hoang`, `Tra cứu tướng`, `Tra cứu chiến pháp`, `Soi đội từ ảnh`, `Gợi ý đội từ kho` |
 | FR-2 | Lọc `Team PK` theo chip và combo, search toàn văn, giữ tương tác offline sau khi JSON đã tải; mobile dùng drawer lọc + hamburger menu section |
 | FR-3 | Render `Cùng Tồn` và `Khai hoang` từ JSON đã build |
 | FR-4 | Tra cứu chiến pháp và tướng bằng dữ liệu local (`data/tactics.json`, `data/heroes-dict.json`), search fuzzy Việt/Hán-Việt/Hán, click tướng mở modal chi tiết |
 | FR-5 | Tab Đô Úy render team `do-uy` riêng với filter bar inline (loại binh / phe / tier / khuyến nghị), team `do-uy` ẩn khỏi Team PK |
 | FR-6 | Gắn badge tier T0–T3 theo team từ `data/team-tier.json` (multi-source, hiện bậc tốt nhất + tooltip) |
 | FR-7 | Cho phép upload ảnh soi đội khi `js/config.js` và Worker đã cấu hình thật; map output Hán sang tên Việt canonical rồi đối chiếu với `data/teams.json` |
+| FR-8 | Cho phép scan kho tướng/chiến pháp/team đã build, review dữ liệu, rồi gợi ý portfolio 5 team bằng engine local, không để AI quyết team |
 | FR-8 | Rebuild dữ liệu từ HTML export local bằng pipeline (`build_json`, `build_dict`, `build_books_dict`, `build_team_tier`) |
 | FR-9 | Theo dõi chiêu mộ tướng 5★ bằng `localStorage`: nhiều account, `Danh tướng PK` 4 lượt/ngày, banner hạn giờ, pity 30, lịch sử 5★, xuất/nhập JSON |
 

@@ -54,10 +54,12 @@ function setup() {
     fakeElement("Team PK"),
     fakeElement("Cùng Tồn"),
     fakeElement("Khai hoang"),
+    fakeElement("Gợi ý đội từ kho"),
   ];
   tabs[0].dataset.section = "team-pk";
   tabs[1].dataset.section = "coexist";
   tabs[2].dataset.section = "khaihoang";
+  tabs[3].dataset.section = "roster-recommend";
   const doc = fakeDocument();
   const menu = createMobileSectionMenu({
     nav: fakeElement(),
@@ -90,4 +92,7 @@ test("mobile section menu label follows active section", () => {
   menu.setActive("coexist");
 
   assert.equal(menu.toggle.textContent, "☰ Cùng Tồn");
+
+  menu.setActive("roster-recommend");
+  assert.equal(menu.toggle.textContent, "☰ Gợi ý đội từ kho");
 });

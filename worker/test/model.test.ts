@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildRequestBody } from "../src/model";
+import { buildRequestBody, promptByMode } from "../src/model";
 
 describe("vision prompt", () => {
   it("đọc binh thư vào booksCn riêng + cho phép đoán tướng từ chân dung khi tên vắng", () => {
@@ -17,5 +17,33 @@ describe("vision prompt", () => {
     // giữ guard chống nhầm dòng chọn tướng + binh chủng
     expect(text).toContain("Không dùng tên trong dòng #帅选择");
     expect(text).toContain("象兵");
+  });
+});
+
+describe("scan mode prompts", () => {
+  it("buildRequestBody defaults to analyzeTeamImage for backward compatibility", () => {
+    const body = buildRequestBody("vision-model", "data:image/jpeg;base64,abc");
+    const text = (body.messages[0].content[0] as { text: string }).text;
+    expect(text).toBe(promptByMode("analyzeTeamImage"));
+  });
+
+  it("scanHeroes prompt asks for roster heroes not team tactics", () => {
+    const text = promptByMode("scanHeroes");
+    expect(text).toContain("danh sách võ tướng");
+    expect(text).toContain("redStars");
+    expect(text).not.toContain("booksCn");
+  });
+
+  it("scanTactics prompt only asks for owned tactic names", () => {
+    const text = promptByMode("scanTactics");
+    expect(text).toContain("danh sách chiến pháp");
+    expect(text).toContain("tactics");
+  });
+
+  it("scanBuiltTeams prompt asks for locked heroes and tactics", () => {
+    const text = promptByMode("scanBuiltTeams");
+    expect(text).toContain("team đã build");
+    expect(text).toContain("heroesCn");
+    expect(text).toContain("tacticsCn");
   });
 });

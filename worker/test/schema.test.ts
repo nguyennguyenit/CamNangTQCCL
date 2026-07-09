@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { tolerantParse, validateResult, parseAndValidate } from "../src/schema";
+import { parseAndValidateByMode, tolerantParse, validateResult, parseAndValidate } from "../src/schema";
 
 describe("tolerantParse", () => {
   it("parse JSON thuần", () => {
@@ -71,5 +71,27 @@ describe("parseAndValidate (M1 end-to-end)", () => {
   it("fence + validate", () => {
     const out = parseAndValidate('```json\n{"heroes":[{"nameCn":"关羽","tacticsCn":[],"statFocusCn":"武力"}]}\n```');
     expect(out.heroes[0].nameCn).toBe("关羽");
+  });
+});
+
+describe("parseAndValidateByMode", () => {
+  it("default analyzeTeamImage keeps existing analyze result shape", () => {
+    const out = parseAndValidateByMode("analyzeTeamImage", '{"heroes":[{"nameCn":"关羽","tacticsCn":[],"statFocusCn":"武力"}]}');
+    expect("heroes" in out).toBe(true);
+  });
+
+  it("validates scanHeroes mode", () => {
+    const out = parseAndValidateByMode("scanHeroes", '{"heroes":[{"nameCn":"马超","level":50,"redStars":4}]}');
+    expect(out).toEqual({ heroes: [{ nameCn: "马超", level: 50, redStars: 4 }] });
+  });
+
+  it("validates scanTactics mode", () => {
+    const out = parseAndValidateByMode("scanTactics", '{"tactics":[{"nameCn":"当锋摧决"}]}');
+    expect(out).toEqual({ tactics: [{ nameCn: "当锋摧决" }] });
+  });
+
+  it("validates scanBuiltTeams mode", () => {
+    const out = parseAndValidateByMode("scanBuiltTeams", '{"teams":[{"teamName":"旧队","heroesCn":["程普"],"tacticsCn":["抚辑军民"]}]}');
+    expect(out).toEqual({ teams: [{ teamName: "旧队", heroesCn: ["程普"], tacticsCn: ["抚辑军民"] }] });
   });
 });

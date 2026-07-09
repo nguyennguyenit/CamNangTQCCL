@@ -58,6 +58,20 @@ upload ảnh
 - Nếu chưa cấu hình thật, tab `Soi đội từ ảnh` chỉ báo setup.
 - Worker ở `worker/` không lưu ảnh; IP chỉ hash để limit.
 
+### 4. Gợi ý đội từ kho
+
+```text
+upload ảnh kho tướng/chiến pháp/team đã build
+  -> Worker /analyze với mode scanHeroes/scanTactics/scanBuiltTeams
+  -> frontend map về tên Việt canonical
+  -> user review/sửa scan result
+  -> js/team-recommend-engine.js chọn portfolio 5 team
+```
+
+- AI chỉ đọc ảnh thành dữ liệu cấu trúc, không quyết định team.
+- Engine dùng `data/teams.json` + `data/team-tier.json`; không parse trực tiếp chuỗi display trong `data/coexist.json`.
+- Scan state lưu localStorage dạng tên tướng/chiến pháp/team đã khóa; không lưu ảnh/base64.
+
 ## Thành phần chính
 
 | Thành phần | Vai trò |
@@ -74,6 +88,9 @@ upload ảnh
 | `js/mobile-section-menu.js`, `js/mobile-filter-drawer.js` | Nav + lọc mobile |
 | `js/analyze.js` | Flow upload ảnh |
 | `js/analyze-map.js` | Map result + team match |
+| `js/roster-recommend-ui.js` | Tab gợi ý đội từ kho |
+| `js/roster-scan-state.js`, `js/roster-scan-map.js` | State + canonical map cho scan kho |
+| `js/team-recommend-engine.js` | Engine local chọn portfolio team cùng tồn |
 | `pipeline/*.py` | Build data + dict + tier |
 | `worker/src/*.ts` | Proxy Vision LLM |
 

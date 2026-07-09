@@ -8,7 +8,7 @@ Site đang đi theo hướng dashboard tĩnh, nhiều card và badge, ưu tiên 
 
 - Giữ layout rõ, ít lớp, ít nhiễu.
 - Dùng tiếng Việt ngắn cho label, button, badge.
-- Giữ các section tách bạch: `Team PK`, `Cùng Tồn`, `Khai hoang`, `Tra cứu chiến pháp`, `Soi đội từ ảnh`.
+- Giữ các section tách bạch: `Team PK`, `Cùng Tồn`, `Khai hoang`, `Tra cứu chiến pháp`, `Soi đội từ ảnh`, `Gợi ý đội từ kho`.
 - Với tracker cá nhân như `Theo dõi chiêu mộ`, ưu tiên form/slot/action nhỏ gọn hơn dashboard trang trí.
 - Tránh style "mặc định framework" nếu không cần.
 - Giữ khả năng đọc tốt trên mobile trước, desktop sau.
@@ -55,6 +55,12 @@ Site đang đi theo hướng dashboard tĩnh, nhiều card và badge, ưu tiên 
 - Phải báo khi cấu hình chưa xong.
 - Kết quả nhận diện nên gắn cờ nếu độ tin thấp.
 - Danh sách team giống nên hiển thị theo mức trùng để user tự kiểm tra.
+
+## Với tính năng Gợi ý đội từ kho
+
+- Bắt buộc có bước review scan trước khi recommend.
+- Phân biệt rõ `Portfolio sau khi build` và `Nên thêm` khi user đã có team khóa.
+- Không dùng wording làm user hiểu AI đang tự nghĩ đội; chọn team là engine local dựa trên data đã curate.
 
 ## Không nên làm
 

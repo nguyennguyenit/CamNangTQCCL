@@ -10,6 +10,7 @@ import { initMetaCu } from "./meta-cu.js";
 import { initHeroList } from "./hero-list.js";
 import { initAnalyze } from "./analyze.js";
 import { initRecruitTracker } from "./recruit-tracker.js";
+import { initRosterRecommend } from "./roster-recommend-ui.js";
 import { createMobileSectionMenu } from "./mobile-section-menu.js";
 
 let sectionMenu = null;
@@ -44,7 +45,7 @@ function initTheme() {
 }
 
 /* ---------- Section nav ---------- */
-const SECTIONS = ["team-pk", "do-uy", "meta-cu", "coexist", "khaihoang", "heroes", "tactics", "recruit-tracker", "analyze"];
+const SECTIONS = ["team-pk", "do-uy", "meta-cu", "coexist", "khaihoang", "heroes", "tactics", "recruit-tracker", "analyze", "roster-recommend"];
 function initNav() {
   sectionMenu = createMobileSectionMenu({
     nav: $(".section-nav"),
@@ -107,6 +108,7 @@ async function main() {
       window.scrollTo({ top: 0, behavior: "smooth" });
     };
     initAnalyze({ teams, heroesDict, tacticsDict: tactics, booksDict, onOpenTeam }, $("#section-analyze"));
+    initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict: tactics, onOpenTeam }, $("#section-roster-recommend"));
   } catch (err) {
     $("#section-team-pk").append(el("p", { class: "error" }, "Lỗi tải dữ liệu: " + err.message + ". Hãy chạy qua http server (python3 -m http.server)."));
   }

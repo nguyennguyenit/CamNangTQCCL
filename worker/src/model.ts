@@ -2,7 +2,7 @@
 // Mặc định Qwen DashScope OpenAI-compatible. Bao cả endpoint LẪN cách truyền ảnh
 // (base64 data URI) để dễ đổi sang GPT/Gemini sau.
 
-import { AnalyzeResult, parseAndValidate } from "./schema";
+import { AnalyzeMode, AnalyzeModeResult, parseAndValidateByMode } from "./schema";
 import { HERO_NAMES_CN } from "./hero-names";
 
 export const VISION_PROMPT =
@@ -19,6 +19,34 @@ export const VISION_PROMPT =
   "booksCn gồm binh thư (dòng vàng dạng A/B, vd 三军之众/统军/锤炼/铁甲/防备); KHÔNG đưa binh thư vào tacticsCn và ngược lại. KHÔNG đưa thiên phú, quân sư, thuộc tính, hay binh chủng đặc biệt (vd 象兵/虎豹骑) vào booksCn. " +
   "Chỉ trả JSON, không giải thích.";
 
+const SCAN_HEROES_PROMPT =
+  "Đọc screenshot danh sách võ tướng game Tam Quốc Chí Chiến Lược (三国志战略版). " +
+  "Chỉ trích xuất các võ tướng nhìn thấy trong danh sách. Trả JSON đúng schema: " +
+  '{"heroes":[{"nameCn":"tên tướng chữ Hán giản thể","level":50,"redStars":4}]}. ' +
+  "nameCn PHẢI là chữ Hán giản thể. level/redStars chỉ điền khi thấy rõ; không đoán. " +
+  "Không đọc chiến pháp, binh thư, mô tả, tài nguyên hay text ngoài thẻ tướng. Chỉ trả JSON.";
+
+const SCAN_TACTICS_PROMPT =
+  "Đọc screenshot danh sách chiến pháp game Tam Quốc Chí Chiến Lược (三国志战略版). " +
+  "Chỉ cần xác định tên chiến pháp user sở hữu/đang hiển thị; không đọc 0/1, loại hình, xác suất, mô tả, có thể thiết lập. " +
+  "Trả JSON đúng schema: " +
+  '{"tactics":[{"nameCn":"tên chiến pháp chữ Hán giản thể"}]}. ' +
+  "nameCn PHẢI là chữ Hán giản thể. Chỉ trả JSON.";
+
+const SCAN_BUILT_TEAMS_PROMPT =
+  "Đọc screenshot team đã build trong game Tam Quốc Chí Chiến Lược (三国志战略版). " +
+  "Mục tiêu là khóa tướng và chiến pháp đang dùng để tránh trùng khi gợi ý team cùng tồn. " +
+  "Trả JSON đúng schema: " +
+  '{"teams":[{"teamName":"tên đội nếu thấy","heroesCn":["tướng chữ Hán giản thể"],"tacticsCn":["chiến pháp chữ Hán giản thể"]}]}. ' +
+  "Không đưa binh thư vào tacticsCn. Không đoán chiến pháp nếu không thấy rõ. Chỉ trả JSON.";
+
+export function promptByMode(mode: AnalyzeMode = "analyzeTeamImage") {
+  if (mode === "scanHeroes") return SCAN_HEROES_PROMPT;
+  if (mode === "scanTactics") return SCAN_TACTICS_PROMPT;
+  if (mode === "scanBuiltTeams") return SCAN_BUILT_TEAMS_PROMPT;
+  return VISION_PROMPT;
+}
+
 export interface ModelOptions {
   endpoint: string;
   apiKey: string;
@@ -27,14 +55,14 @@ export interface ModelOptions {
 }
 
 /** Body OpenAI-compatible chat/completions với 1 ảnh (base64 data URI). */
-export function buildRequestBody(modelId: string, imageDataUri: string) {
+export function buildRequestBody(modelId: string, imageDataUri: string, mode: AnalyzeMode = "analyzeTeamImage") {
   return {
     model: modelId,
     messages: [
       {
         role: "user",
         content: [
-          { type: "text", text: VISION_PROMPT },
+          { type: "text", text: promptByMode(mode) },
           { type: "image_url", image_url: { url: imageDataUri } },
         ],
       },
@@ -59,7 +87,7 @@ export function extractContent(data: any): string {
  * Gọi model vision -> AnalyzeResult đã validate.
  * Ném Error có .status để handler map sang HTTP (502 upstream / 422 không đọc được).
  */
-export async function callModel(imageDataUri: string, opts: ModelOptions): Promise<AnalyzeResult> {
+export async function callModel(imageDataUri: string, opts: ModelOptions, mode: AnalyzeMode = "analyzeTeamImage"): Promise<AnalyzeModeResult> {
   const fetchImpl = opts.fetchImpl || fetch;
   const resp = await fetchImpl(opts.endpoint, {
     method: "POST",
@@ -67,7 +95,7 @@ export async function callModel(imageDataUri: string, opts: ModelOptions): Promi
       Authorization: `Bearer ${opts.apiKey}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(buildRequestBody(opts.modelId, imageDataUri)),
+    body: JSON.stringify(buildRequestBody(opts.modelId, imageDataUri, mode)),
   });
   if (!resp.ok) {
     const err: any = new Error(`Model upstream lỗi ${resp.status}`);
@@ -82,7 +110,7 @@ export async function callModel(imageDataUri: string, opts: ModelOptions): Promi
     throw err;
   }
   try {
-    return parseAndValidate(content);
+    return parseAndValidateByMode(mode, content);
   } catch (e) {
     const err: any = new Error("Không đọc được đội hình từ ảnh");
     err.status = 422;

@@ -648,7 +648,114 @@ body {
   .rt-form .rt-btn {
     width: 100%;
   }
-  .tac-toolbar { top: 56px; }
+.tac-toolbar { top: 56px; }
+}
+
+.roster-recommend {
+  display: grid;
+  gap: 1rem;
+}
+
+.roster-token-row,
+.roster-scan-grid,
+.roster-review-grid {
+  display: grid;
+  gap: .75rem;
+}
+
+.roster-token-row {
+  grid-template-columns: minmax(12rem, 1fr) minmax(10rem, 14rem) auto auto;
+  align-items: center;
+}
+
+.roster-scan-grid,
+.roster-review-grid {
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+}
+
+.roster-scan-card,
+.roster-review-panel,
+.roster-locked-team,
+.roster-result-team {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: .85rem;
+}
+
+.roster-scan-card {
+  display: grid;
+  gap: .65rem;
+}
+
+.roster-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.roster-chip-list li,
+.roster-status {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: .18rem .5rem;
+  font-size: .82rem;
+  background: var(--soft);
+}
+
+.roster-chip-list li {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+}
+
+.roster-remove {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-weight: 700;
+  line-height: 1;
+  padding: .05rem .1rem;
+}
+
+.roster-add-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: .4rem;
+  margin-top: .65rem;
+}
+
+.roster-locked-list,
+.roster-results,
+.roster-results section {
+  display: grid;
+  gap: .65rem;
+}
+
+.roster-result-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+}
+
+.roster-result-team.muted {
+  opacity: .78;
+}
+
+.roster-empty {
+  color: var(--muted);
+  margin: .2rem 0 0;
+}
+
+@media (max-width: 700px) {
+  .roster-token-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 420px) {

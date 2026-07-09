@@ -16,6 +16,33 @@ export interface AnalyzeResult {
   raw?: string;
 }
 
+export type AnalyzeMode = "analyzeTeamImage" | "scanHeroes" | "scanTactics" | "scanBuiltTeams";
+export const ANALYZE_MODES: AnalyzeMode[] = ["analyzeTeamImage", "scanHeroes", "scanTactics", "scanBuiltTeams"];
+
+export interface RosterHeroRead {
+  nameCn: string;
+  level?: number;
+  redStars?: number;
+}
+export interface RosterHeroesScanResult {
+  heroes: RosterHeroRead[];
+}
+export interface TacticRead {
+  nameCn: string;
+}
+export interface TacticsScanResult {
+  tactics: TacticRead[];
+}
+export interface BuiltTeamRead {
+  teamName: string;
+  heroesCn: string[];
+  tacticsCn: string[];
+}
+export interface BuiltTeamsScanResult {
+  teams: BuiltTeamRead[];
+}
+export type AnalyzeModeResult = AnalyzeResult | RosterHeroesScanResult | TacticsScanResult | BuiltTeamsScanResult;
+
 /**
  * Tách JSON từ output model. Hỗ trợ:
  * - JSON thuần.
@@ -75,7 +102,71 @@ export function validateResult(parsed: unknown): AnalyzeResult {
   return { heroes };
 }
 
+function strList(v: any) {
+  return Array.isArray(v) ? v.filter((t: any) => typeof t === "string" && t.trim()).slice(0, MAX_LIST).map(cut) : [];
+}
+
+function numberField(v: any) {
+  return Number.isFinite(v) ? Math.max(0, Math.min(100, Math.trunc(v))) : undefined;
+}
+
+export function validateRosterHeroesResult(parsed: unknown): RosterHeroesScanResult {
+  if (!parsed || typeof parsed !== "object") throw new TypeError("Kết quả không phải object");
+  const heroesRaw = (parsed as any).heroes;
+  if (!Array.isArray(heroesRaw)) throw new TypeError("Thiếu mảng 'heroes'");
+  const heroes = heroesRaw.slice(0, 80).map((h: any, i: number) => {
+    if (!h || typeof h !== "object") throw new TypeError(`heroes[${i}] không hợp lệ`);
+    const nameCn = typeof h.nameCn === "string" ? cut(h.nameCn) : "";
+    if (!nameCn) throw new TypeError(`heroes[${i}].nameCn rỗng`);
+    const hero: RosterHeroRead = { nameCn };
+    const level = numberField(h.level);
+    const redStars = numberField(h.redStars);
+    if (level !== undefined) hero.level = level;
+    if (redStars !== undefined) hero.redStars = Math.min(6, redStars);
+    return hero;
+  });
+  if (heroes.length === 0) throw new TypeError("heroes rỗng");
+  return { heroes };
+}
+
+export function validateTacticsScanResult(parsed: unknown): TacticsScanResult {
+  if (!parsed || typeof parsed !== "object") throw new TypeError("Kết quả không phải object");
+  const tacticsRaw = (parsed as any).tactics;
+  if (!Array.isArray(tacticsRaw)) throw new TypeError("Thiếu mảng 'tactics'");
+  const tactics = tacticsRaw.slice(0, 300).map((t: any, i: number) => {
+    const raw = typeof t === "string" ? t : t?.nameCn;
+    const nameCn = typeof raw === "string" ? cut(raw) : "";
+    if (!nameCn) throw new TypeError(`tactics[${i}].nameCn rỗng`);
+    return { nameCn };
+  });
+  if (tactics.length === 0) throw new TypeError("tactics rỗng");
+  return { tactics };
+}
+
+export function validateBuiltTeamsScanResult(parsed: unknown): BuiltTeamsScanResult {
+  if (!parsed || typeof parsed !== "object") throw new TypeError("Kết quả không phải object");
+  const teamsRaw = (parsed as any).teams;
+  if (!Array.isArray(teamsRaw)) throw new TypeError("Thiếu mảng 'teams'");
+  const teams = teamsRaw.slice(0, 12).map((t: any, i: number) => {
+    if (!t || typeof t !== "object") throw new TypeError(`teams[${i}] không hợp lệ`);
+    const teamName = typeof t.teamName === "string" && t.teamName.trim() ? cut(t.teamName) : `Team ${i + 1}`;
+    const heroesCn = strList(t.heroesCn || t.heroes);
+    const tacticsCn = strList(t.tacticsCn || t.tactics);
+    return { teamName, heroesCn, tacticsCn };
+  }).filter((team) => team.heroesCn.length || team.tacticsCn.length);
+  if (teams.length === 0) throw new TypeError("teams rỗng");
+  return { teams };
+}
+
 /** parse + validate gộp; ném lỗi mô tả nếu không đọc được. */
 export function parseAndValidate(text: string): AnalyzeResult {
   return validateResult(tolerantParse(text));
+}
+
+export function parseAndValidateByMode(mode: AnalyzeMode, text: string): AnalyzeModeResult {
+  const parsed = tolerantParse(text);
+  if (mode === "scanHeroes") return validateRosterHeroesResult(parsed);
+  if (mode === "scanTactics") return validateTacticsScanResult(parsed);
+  if (mode === "scanBuiltTeams") return validateBuiltTeamsScanResult(parsed);
+  return validateResult(parsed);
 }

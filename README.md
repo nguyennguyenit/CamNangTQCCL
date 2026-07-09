@@ -15,6 +15,7 @@ Ba tab team (`Team PK`, `Đô Úy`, `Meta phe (cũ)`) dùng **cùng một bộ l
 - `Tra cứu chiến pháp`: 237 chiến pháp, search fuzzy, chạy offline, không AI.
 - `Theo dõi chiêu mộ`: tracker localStorage cho nhiều account, theo dõi `Danh tướng PK` 4 lượt miễn phí/nửa giá mỗi ngày, banner hạn giờ tự nhập, pity 30, lịch sử tướng 5★, xuất/nhập JSON.
 - `Soi đội từ ảnh`: upload screenshot, đọc bằng Worker + Vision LLM (tướng + chiến pháp + binh thư), map về tên Việt canonical, hiện icon tướng để đối chiếu, rồi so với toàn bộ team. Tên tướng bị che thì đoán từ chân dung kèm cờ "kiểm tra".
+- `Gợi ý đội từ kho`: upload ảnh kho tướng/kho chiến pháp/team đã build, review dữ liệu scan, rồi engine local gợi ý portfolio 5 team cùng tồn. AI chỉ đọc ảnh; chọn team chạy trên dữ liệu local.
 
 ## Chạy local
 
@@ -89,3 +90,4 @@ cd worker && npm run typecheck
 - Nguồn HTML `Meta Team PK/` và cache crawl không commit, nên clone repo không tự rebuild được nếu thiếu export local.
 - `Meta mỗi phe (cũ)` được gắn nhãn `Cũ`.
 - Dữ liệu `Theo dõi chiêu mộ` lưu trong trình duyệt hiện tại bằng `localStorage`; dùng `Xuất JSON` / `Nhập JSON` để backup hoặc chuyển giữa máy.
+- Dữ liệu scan `Gợi ý đội từ kho` lưu localStorage ở dạng tên tướng/chiến pháp/team đã khóa; không lưu ảnh/base64.

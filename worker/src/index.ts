@@ -7,6 +7,7 @@ import { Env, loadConfig } from "./config";
 import { corsHeaders, preflight, validateImage } from "./guard";
 import { callModel } from "./model";
 import { checkLimits, commitGlobalUsage, hashIp } from "./ratelimit";
+import { ANALYZE_MODES, AnalyzeMode } from "./schema";
 import { verifyTurnstile } from "./turnstile";
 
 function json(body: unknown, status: number, cors: Record<string, string>): Response {
@@ -14,6 +15,12 @@ function json(body: unknown, status: number, cors: Record<string, string>): Resp
     status,
     headers: { "Content-Type": "application/json", ...cors },
   });
+}
+
+export function resolveAnalyzeMode(value: unknown): AnalyzeMode {
+  if (value === undefined || value === null || value === "") return "analyzeTeamImage";
+  if (typeof value === "string" && (ANALYZE_MODES as string[]).includes(value)) return value as AnalyzeMode;
+  throw new Error("Mode không hợp lệ");
 }
 
 export default {
@@ -37,6 +44,12 @@ export default {
       payload = await request.json();
     } catch {
       return json({ error: "Body JSON không hợp lệ" }, 400, cors);
+    }
+    let mode: AnalyzeMode;
+    try {
+      mode = resolveAnalyzeMode(payload?.mode);
+    } catch (e: any) {
+      return json({ error: e?.message || "Mode không hợp lệ" }, 400, cors);
     }
 
     const ip = request.headers.get("CF-Connecting-IP") || "";
@@ -69,7 +82,7 @@ export default {
         endpoint: cfg.modelEndpoint,
         apiKey: env.QWEN_API_KEY,
         modelId: cfg.modelId,
-      });
+      }, mode);
       return json(result, 200, cors);
     } catch (e: any) {
       // Chỉ trả message khi có status đã biết (đều là chuỗi an toàn). Lỗi không
