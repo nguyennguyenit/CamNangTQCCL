@@ -14,6 +14,14 @@ Project deploy is split into two surfaces:
 - Version ID: `47bff736-95ab-4a51-88c7-514c0cb7b88b`
 - Source commit deployed from local main: `7bf5797`
 
+## Latest Static Pages Deploy
+
+- Date: 2026-07-11
+- Production URL: `https://tqccl.pages.dev`
+- Preview URL: `https://29ebe76f.tqccl.pages.dev`
+- Source commit deployed from local main: `b8c48d9`
+- Published files: `index.html`, `css/`, `js/`, `data/`
+
 ## Deploy Commands
 
 Static site is expected to deploy from `main` through Cloudflare Pages.
@@ -60,4 +68,3 @@ Expected: `204` with `access-control-allow-origin: https://tqccl.pages.dev`.
 Use Cloudflare dashboard rollback for the Worker version or deploy a known-good commit from `worker/`.
 
 For static Pages rollback, use Cloudflare Pages deployment history for `tqccl.pages.dev`.
-
