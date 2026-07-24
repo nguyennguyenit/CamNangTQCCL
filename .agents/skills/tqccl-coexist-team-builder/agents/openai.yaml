@@ -1,0 +1,4 @@
+interface:
+  display_name: "TQCCL Coexist Team Builder"
+  short_description: "Build non-overlap TQCCL coexist teams"
+  default_prompt: "Use $tqccl-coexist-team-builder to recommend a non-overlapping coexist lineup from the project team data."
