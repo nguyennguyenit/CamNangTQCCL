@@ -2003,6 +2003,25 @@
     "linkScore": 1.0
   },
   {
+    "chinese": "灵机一动",
+    "hanViet": "Linh Cơ Nhất Động",
+    "type": "Chủ động",
+    "quality": "S",
+    "effect": "使我军群体（2-3人）智力、统率、魅力提高7.5→15（受智力影响），可叠加，持续2-3回合（发动率30%→55%）",
+    "target": "我军群体（2-3人）",
+    "troopFit": [
+      "Kỵ",
+      "Khí giới"
+    ],
+    "source": "Ảnh client Việt 2026-07-11",
+    "sourceHeroCn": "",
+    "iconUrl": "",
+    "viet": "Nhanh Trí Động Não",
+    "linkScore": 1.0,
+    "effectViet": "Khiến Trí Lực, Thống Soái, Mị Lực của tập thể quân ta (2-3 người) tăng 7,5→15 (chịu ảnh hưởng bởi Trí Lực), có thể cộng dồn, duy trì 2-3 hiệp (xác suất phát động 30%→55%)",
+    "targetViet": "Tập thể quân ta (2-3 người)"
+  },
+  {
     "chinese": "才辩机捷",
     "hanViet": "Tài Biện Cơ Tiệp",
     "type": "Bị động",
@@ -2019,8 +2038,8 @@
     "source": "Tự mang",
     "sourceHeroCn": "伊籍",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/7/785177059020959750.png",
-    "viet": "Nhanh Trí Động Não",
-    "linkScore": 0.9
+    "viet": "Tài Biện Cơ Tiệp",
+    "linkScore": 0.0
   },
   {
     "chinese": "仁德载世",

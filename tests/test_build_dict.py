@@ -23,7 +23,9 @@ class MergeGenericTest(unittest.TestCase):
                                 "type": "Chỉ huy",
                                 "quality": "S",
                                 "effect": "战斗中，自身每回合有18%→36%概率",
+                                "effectViet": "Mỗi hiệp có xác suất hồi phục và gây sát thương",
                                 "target": "我军兵力最低武将、敌军随机单体",
+                                "targetViet": "Quân ta ít binh nhất và một quân địch",
                                 "troopFit": ["Kỵ", "Khiên"],
                                 "source": "Bổ sung thủ công",
                             }
@@ -43,10 +45,37 @@ class MergeGenericTest(unittest.TestCase):
         self.assertEqual(tactics[0]["type"], "Chỉ huy")
         self.assertEqual(tactics[0]["quality"], "S")
         self.assertEqual(tactics[0]["effect"], "战斗中，自身每回合有18%→36%概率")
+        self.assertEqual(tactics[0]["effectViet"], "Mỗi hiệp có xác suất hồi phục và gây sát thương")
         self.assertEqual(tactics[0]["target"], "我军兵力最低武将、敌军随机单体")
+        self.assertEqual(tactics[0]["targetViet"], "Quân ta ít binh nhất và một quân địch")
         self.assertEqual(tactics[0]["troopFit"], ["Kỵ", "Khiên"])
         self.assertEqual(tactics[0]["source"], "Bổ sung thủ công")
         self.assertNotIn("pending", tactics[0])
+
+    def test_merge_generic_preserves_reviewed_han_viet(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            generic_path = Path(tmp) / "tactics-generic.json"
+            generic_path.write_text(
+                json.dumps(
+                    {
+                        "tactics": [
+                            {
+                                "viet": "Nhanh Trí Động Não",
+                                "chinese": "灵机一动",
+                                "hanViet": "Linh Cơ Nhất Động",
+                            }
+                        ]
+                    },
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+            tactics = []
+
+            with mock.patch.object(build_dict, "_GENERIC", str(generic_path)):
+                build_dict._merge_generic(tactics)
+
+        self.assertEqual(tactics[0]["hanViet"], "Linh Cơ Nhất Động")
 
 
 class ApplyOverridesTest(unittest.TestCase):
@@ -78,6 +107,27 @@ class ApplyOverridesTest(unittest.TestCase):
         self.assertEqual(tactics[0]["target"], "敌军全体")
         self.assertEqual(tactics[0]["effectViet"], "Mô tả Việt")
         self.assertEqual(tactics[0]["targetViet"], "Tập thể địch")
+
+
+class VerifiedVietnameseMappingTest(unittest.TestCase):
+    def test_nhanh_tri_dong_nao_belongs_to_ling_ji_yi_dong(self):
+        root = Path(__file__).resolve().parents[1]
+        overrides = json.loads(
+            (root / "pipeline/tactic-name-overrides.json").read_text(encoding="utf-8")
+        )["overrides"]
+        generic = json.loads(
+            (root / "data/tactics-generic.json").read_text(encoding="utf-8")
+        )["tactics"]
+
+        self.assertNotEqual(
+            overrides.get("才辩机捷", {}).get("viet"),
+            "Nhanh Trí Động Não",
+        )
+        matches = [item for item in generic if item.get("chinese") == "灵机一动"]
+        self.assertEqual(len(matches), 1)
+        self.assertEqual(matches[0]["viet"], "Nhanh Trí Động Não")
+        self.assertEqual(matches[0]["type"], "Chủ động")
+        self.assertEqual(matches[0]["troopFit"], ["Kỵ", "Khí giới"])
 
 
 if __name__ == "__main__":

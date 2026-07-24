@@ -28,6 +28,18 @@ test("Không Đánh Mà Thắng links to verified 非攻制胜 tactic name", () 
   assert.equal(tactics.filter((item) => item.chinese === "不战而胜").length, 0);
 });
 
+test("Nhanh Trí Động Não links to verified 灵机一动 active tactic", () => {
+  const matches = tactics.filter((item) => item.viet === "Nhanh Trí Động Não");
+
+  assert.equal(matches.length, 1);
+  assert.equal(matches[0].chinese, "灵机一动");
+  assert.equal(matches[0].type, "Chủ động");
+  assert.deepEqual(matches[0].troopFit, ["Kỵ", "Khí giới"]);
+  assert.match(matches[0].effectViet, /30%→55%/);
+  assert.match(matches[0].effectViet, /Trí Lực, Thống Soái, Mị Lực/);
+  assert.notEqual(tactics.find((item) => item.chinese === "才辩机捷")?.viet, "Nhanh Trí Động Não");
+});
+
 const inGameVietnameseTactics = [
   {
     chinese: "所向披靡",

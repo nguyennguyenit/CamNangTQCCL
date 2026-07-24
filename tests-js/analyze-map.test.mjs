@@ -19,6 +19,7 @@ const TACTICS = [
   { chinese: "夺魂挟魄", viet: "Đoạt Hồn Hiệp Phách" },
   { chinese: "当锋摧决", viet: "Đương Phong Thôi Quyết" },
   { chinese: "焚辎营垒", viet: "Thiêu Đốt Doanh Lũy" },
+  { chinese: "灵机一动", viet: "Nhanh Trí Động Não" },
   { chinese: "临机制胜", viet: "Thời Cơ Chiến Thắng" },
 ];
 const DICTS = { heroesDict: HEROES, tacticsDict: TACTICS, booksDict: BOOKS };
@@ -61,7 +62,7 @@ test("mapRead: chỉ giữ chiến pháp, bỏ binh thư/talent đọc nhầm", 
   );
   assert.deepEqual(
     r.tactics.map((t) => t.viet),
-    ["Đoạt Hồn Hiệp Phách", "Đương Phong Thôi Quyết", "Thiêu Đốt Doanh Lũy", "Thời Cơ Chiến Thắng"],
+    ["Đoạt Hồn Hiệp Phách", "Đương Phong Thôi Quyết", "Thiêu Đốt Doanh Lũy", "Nhanh Trí Động Não"],
   );
 });
 

@@ -11,7 +11,6 @@ const HAS_CJK = /[一-鿿]/;
 
 const CJK_OCR_ALIASES = {
   // Biến thể OCR thường gặp trên screenshot overlay nét vàng/trắng.
-  "灵机": "临机",
   "荧薙": "焚辎",
 };
 

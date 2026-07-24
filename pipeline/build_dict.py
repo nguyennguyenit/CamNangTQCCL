@@ -38,7 +38,7 @@ def _merge_generic(tactics: list) -> int:
     for it in items:
         cn = it.get("chinese", "").strip()
         # Chữ Hán mới ngoài bảng -> giữ best-effort (placeholder), không fail-loud.
-        han_viet = hanviet.to_viet(cn, set()) if cn else ""
+        han_viet = it.get("hanViet") or (hanviet.to_viet(cn, set()) if cn else "")
         rec = {
             "chinese": cn,
             "hanViet": han_viet,
@@ -53,6 +53,9 @@ def _merge_generic(tactics: list) -> int:
             "viet": it["viet"],
             "linkScore": it.get("linkScore", 1.0),
         }
+        for field in ("effectViet", "targetViet"):
+            if it.get(field):
+                rec[field] = it[field]
         if it.get("pending", not (rec["type"] or rec["quality"] or rec["effect"])):
             rec["pending"] = True
         tactics.append(rec)
