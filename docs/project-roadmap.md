@@ -1,40 +1,69 @@
-# Project Roadmap
+# Roadmap dự án
 
-## Mục tiêu ngắn hạn
+## Tổng quan
 
-1. Giữ dữ liệu hiện tại khớp với export HTML local.
-2. Giữ site tĩnh chạy được chỉ bằng HTTP server + JSON đã commit.
-3. Chỉ bật `Soi đội từ ảnh` khi Worker và `js/config.js` đã cấu hình thật.
+Roadmap ưu tiên duy trì dữ liệu đúng và vận hành an toàn trước khi thêm feature. Trạng thái bên dưới là định hướng evergreen từ repo hiện tại, không thay đổi hoặc diễn giải lại status của các plan lịch sử trong `plans/`.
 
-## Việc nên làm sớm
+## Ưu tiên 1 — Tái lập dữ liệu
 
-- Cập nhật `pipeline/aliases.json` khi gặp typo mới.
-- Cập nhật `pipeline/team-nicknames.json` khi muốn đổi tên gọi khác cho team.
-- Cập nhật `pipeline/tactic-name-overrides.json` khi tên chiến pháp cần map lại.
-- Bổ sung mô tả cho 28 tactic generic trong `data/tactics-generic.json` nếu có nguồn chắc.
-- Giữ test Python / JS / Worker chạy qua sau mỗi lần đổi data model.
+- [ ] Hợp nhất nguồn/augmentation đã tạo 56 Team PK và 48 Đô Úy vào pipeline nhìn thấy, có test fixture rõ.
+- [ ] Quyết định vai trò `pipeline/do-uy-ss18-source.json` (40 mục) và thêm consumer hoặc loại bỏ có chủ đích.
+- [ ] Cập nhật expected count trong `build_json.py` chỉ sau khi đường nguồn đã đầy đủ; không sửa số đơn lẻ.
+- [ ] Rebuild `facets.json` từ đúng 214 team; thêm test phát hiện lệch tổng source/status.
+- [ ] Tài liệu hóa artifact nguồn cần thiết cho clean clone hoặc cung cấp source snapshot hợp lệ.
+- [ ] Xác định chiến lược cache crawl: checkpoint có checksum, export được phép commit, hoặc quy trình recrawl có kiểm soát.
+- [ ] Review 27 chiến pháp pending trong `tactics.json`; giữ provenance cho mỗi bổ sung.
 
-## Việc duy trì
+Tiêu chí hoàn thành: một checkout có các prerequisite đã mô tả có thể build lại artifact hiện tại theo deterministic diff và full test pass.
 
-- Rebuild `data/*.json` khi source HTML `Meta Team PK/` thay đổi.
-- Kiểm tra lại count sau `python3 -m pipeline.build_json`.
-- Giữ `docs/` đồng bộ với hành vi thật của code.
-- Tránh thêm framework mới nếu chưa có nhu cầu rõ.
+## Ưu tiên 2 — Accessibility và UX
 
-## Khi nào phải cập nhật docs
+- [ ] Bổ sung semantics `tablist`/`tab`/`tabpanel` và điều hướng bàn phím cho section tabs.
+- [ ] Quản lý focus khi mở/đóng modal tướng và các dialog tương lai; hỗ trợ Escape và trả focus.
+- [ ] Cho drop-zone ảnh focus/activate bằng bàn phím, không chỉ click/drop/paste.
+- [ ] Dùng live region cho trạng thái nén/upload/analyze và lỗi async.
+- [ ] Kiểm tra touch target, contrast và focus-visible của chip, clear, collapse, theme/menu.
+- [ ] Thêm test accessibility hẹp cho các contract tương tác trên.
 
-- Đổi command chạy local.
-- Đổi cấu trúc `data/*.json`.
-- Đổi flow deploy Pages hoặc Worker.
-- Đổi behavior filter, render, analyze, hoặc limit.
-- Đổi quyền / secret / config public trong `js/config.js` hoặc `worker/`.
+## Ưu tiên 3 — Privacy và security vận hành
 
-## Hướng mở rộng nếu cần
+- [ ] Làm rõ retention/policy DashScope trong UI và deployment checklist; giữ cảnh báo crop tên tài khoản.
+- [ ] Kiểm tra định kỳ `ALLOWED_ORIGIN`, Turnstile site/secret pair, model ID và endpoint theo production.
+- [ ] Đặt budget/backstop ở provider; xem KV caps là cảnh báo best-effort, không guarantee.
+- [ ] Đánh giá Durable Object nếu quota tháng phải cứng/atomic.
+- [ ] Xoay API key theo lịch; xác nhận không log payload ảnh trong Worker/provider settings.
+- [ ] Thiết lập smoke test production không chứa dữ liệu cá nhân.
 
-- Nếu cần quota cứng hơn, thay KV best-effort bằng cơ chế counter mạnh hơn.
-- Nếu cần model khác, đổi `worker/src/config.ts` và phần gọi model, rồi cập nhật docs.
-- Nếu cần thêm section mới, tách rõ dữ liệu build và render trước khi mở rộng UI.
+## Bảo trì liên tục
 
-## Kết luận
+- Chạy test hẹp sau thay đổi, full Python/JS/Worker/typecheck trước deploy.
+- Curate aliases, nickname, tactic override, books map và team tier từ nguồn kiểm chứng.
+- Review toàn bộ diff `data/*.json`; không chấp nhận count-only mà bỏ qua schema/provenance.
+- Giữ docs đồng bộ khi command, runtime behavior, deploy boundary hoặc threat model đổi.
+- Theo dõi dependency dev của Worker; không thêm dependency frontend/pipeline nếu stdlib/platform đủ dùng.
+- Backup/export local tracker trước thay đổi schema; cung cấp migration nếu bump schema version.
 
-Roadmap của repo này là bảo toàn độ đúng của dữ liệu, giữ deploy đơn giản, rồi mới mở rộng tính năng phụ trợ. Không cần phình kiến trúc khi dữ liệu và UI hiện tại vẫn còn chạy gọn.
+## Mở rộng sau khi nền tảng ổn định
+
+- Cải thiện giải thích scoring/diagnostics của recommender cho người dùng.
+- Thêm preset cùng tồn dạng dữ liệu có schema nếu cần dùng trực tiếp trong engine.
+- Hỗ trợ provider Vision khác sau khi tách contract model và có regression fixture.
+- Thêm observability tổng hợp không chứa ảnh, tên account hoặc model raw output.
+
+## Nguyên tắc quyết định
+
+- Không mở rộng kiến trúc khi có thể giải quyết bằng dữ liệu/config/helper hiện có.
+- Không để AI quyết portfolio; model chỉ đọc ảnh, engine local giữ quyền quyết định.
+- Không đánh đổi privacy, accessibility, data-loss safeguard hoặc error handling để giảm scope.
+- Kế hoạch trong `plans/` là tài liệu lịch sử; code, tests, config và artifact commit là nguồn kiểm chứng hiện tại.
+
+## Bước tiếp theo
+
+Việc đầu tiên: thiết kế đường nhập 48 Đô Úy/56 Team PK vào pipeline có test, rồi sửa facet drift trong cùng contract dữ liệu.
+
+## Tham chiếu
+
+- [PDR](project-overview-pdr.md)
+- [Codebase Summary](codebase-summary.md)
+- [Deployment Guide](deployment-guide.md)
+- [Design Guidelines](design-guidelines.md)

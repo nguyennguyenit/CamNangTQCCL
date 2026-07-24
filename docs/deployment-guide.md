@@ -1,88 +1,195 @@
-# Deployment Guide
+# Hướng dẫn triển khai
 
-## Local preview
+## Tổng quan
 
-Frontend không chạy tốt bằng `file://` vì cần request JSON. Dùng HTTP server:
+Deploy tách hai surface: static site trên Cloudflare Pages và Vision proxy trên Cloudflare Workers. Pipeline dữ liệu chạy local trước deploy, không chạy trên Pages. Bản này là hướng dẫn evergreen; phiên bản/commit/URL preview theo thời điểm nằm ở [Deployment Record](deployment.md).
+
+## Prerequisite
+
+- Python 3 để preview, pipeline và test.
+- Node.js/npm để test/deploy Worker.
+- Cloudflare account, Wrangler login, Pages project, Worker và Turnstile widget.
+- Alibaba DashScope/Qwen API key phù hợp region/model.
+- Khi rebuild: HTML export đúng tên trong `Meta Team PK/`; raw crawl cache hoặc quyền/network để recrawl.
+
+## Preview và test local
 
 ```bash
 python3 -m http.server 8000
 ```
 
-Mở `http://localhost:8000`.
+Mở `http://localhost:8000`, không dùng `file://`.
 
-## Rebuild data local
+Full verification:
 
-Chỉ làm khi có export HTML `Meta Team PK/` ở root repo.
+```bash
+python3 -m unittest discover -s tests
+node --test "tests-js/*.test.mjs"
+cd worker
+npm install
+npm test
+npm run typecheck
+```
+
+Snapshot 2026-07-11: Python 80, JS 82, Worker 53 pass; Worker typecheck pass. Đây là snapshot, không phải count acceptance cố định.
+
+## Rebuild dữ liệu có kiểm soát
+
+Các lệnh dự án:
 
 ```bash
 python3 -m pipeline.build_json
 python3 -m pipeline.suggest_aliases
 python3 -m pipeline.build_dict
+python3 -m pipeline.build_books_dict
+python3 -m pipeline.build_team_tier
 ```
 
-Kết quả ghi vào `data/*.json`. Các file này là artifact commit sẵn cho site tĩnh.
+Curate tier từ HTML xếp hạng tải tay:
 
-## Static site
+```bash
+python3 -m pipeline.suggest_team_tier path/to/saved-tier-list.html
+```
 
-Site tĩnh deploy bằng Cloudflare Pages hoặc static host tương đương.
+`suggest_team_tier` chỉ in gợi ý; maintainer review rồi cập nhật `pipeline/team-tier-map.json` trước khi chạy builder tier.
 
-- Publish `index.html`, `css/`, `js/`, `data/`.
-- Không build lại dữ liệu trên host.
-- Không deploy `worker/`.
-- GitHub Pages đang tắt: repo private này không được plan hiện tại hỗ trợ Pages, nên workflow Pages cũ bị fail và đã được disable.
+### Cảnh báo bắt buộc
 
-Trước khi push `main`, phải đảm bảo `data/*.json` đã đúng.
+Không chạy `pipeline.build_json` trực tiếp trên artifact production mà chưa backup. Code đang assert 50 Team PK + 12 Đô Úy + 110 meta cũ, trong khi `data/teams.json` commit có 56 + 48 + 110. Snapshot Đô Úy hiện gồm augmentation không có consumer Python nhìn thấy; `do-uy-ss18-source.json` có 40 record. `facets.json` cũng đang lệch một team. Một clone sạch thường thiếu HTML nguồn và raw crawl cache vì chúng bị ignore.
 
-## Cloudflare Worker cho soi đội
+Quy trình an toàn:
 
-Worker ở `worker/` là deploy riêng, không đi cùng static site.
+1. Copy/backup `data/` ngoài worktree hoặc tạo branch/worktree riêng.
+2. Xác nhận HTML/cache/map nguồn đủ và expected count đã phản ánh đường build thực.
+3. Chạy từng builder; không dùng `--recrawl` nếu chưa chấp nhận network/source drift.
+4. So sánh schema, count, ID, source distribution và nội dung diff; không chỉ nhìn test pass.
+5. Chạy full gate; chỉ commit artifact sau review.
 
-### Chuẩn bị
+## Static Pages
+
+Production origin hiện tại: `https://tqccl.pages.dev`.
+
+Publish đúng:
+
+```text
+index.html
+css/
+js/
+data/
+```
+
+Không publish `Meta Team PK/`, crawl cache, `.dev.vars`, `pipeline/`, `worker/`, tests hoặc plans. Pages không build JSON và không deploy Worker.
+
+Trước deploy:
+
+- review diff static/data;
+- xác nhận `js/config.js` trỏ đúng Worker URL và Turnstile public site key;
+- chạy HTTP preview và full gate;
+- xác nhận `worker/wrangler.toml` `ALLOWED_ORIGIN` khớp exact Pages origin.
+
+## Cloudflare Worker
+
+### Setup lần đầu
 
 ```bash
 cd worker
 npm install
-wrangler login
-wrangler kv namespace create RL
+npx wrangler login
+npx wrangler kv namespace create RL
 ```
 
-### Secret
+Gắn namespace ID vào `[[kv_namespaces]]` trong `wrangler.toml`. Dev local:
 
 ```bash
-wrangler secret put QWEN_API_KEY
-wrangler secret put TURNSTILE_SECRET
+cp .dev.vars.example .dev.vars
+npm run dev
 ```
 
-### Vars cần khớp
+`.dev.vars` không được commit.
 
-- Cấu hình origin allowlist trong Worker.
-- Chọn endpoint theo `REGION`; chỉ dùng `MODEL_ENDPOINT` khi cố ý đổi provider/endpoint.
-- Dùng model vision, hiện là `qwen3.7-plus`.
-- Có cờ tắt feature ngay khi cần.
-- Có các mức cap trong `worker/src/config.ts`.
+### Public vars và bindings
 
-### Deploy worker
+Commit trong `worker/wrangler.toml`:
+
+- `ALLOWED_ORIGIN`: exact production origin.
+- `REGION`, `MODEL_ID`, tùy chọn `MODEL_ENDPOINT`.
+- `FEATURE_ENABLED` kill-switch.
+- `RL_PER_HOUR`, `DAILY_CAP`, `MONTHLY_CAP`, `MAX_IMAGE_BYTES`.
+- KV binding `RL` và namespace ID.
+
+Frontend public config trong `js/config.js`:
+
+- `workerUrl`.
+- `turnstileSiteKey`.
+- client image compression settings.
+
+Các giá trị này công khai, không phải secret.
+
+### Secrets
 
 ```bash
+cd worker
+npx wrangler secret put QWEN_API_KEY
+npx wrangler secret put TURNSTILE_SECRET
+```
+
+Không commit API key, Turnstile secret, token, `.dev.vars` hoặc credential Cloudflare.
+
+### Deploy
+
+```bash
+cd worker
+npm test
+npm run typecheck
 npm run deploy
 ```
 
-## Kích hoạt tab Soi đội
+Config hiện dùng region `intl`, model `qwen3.7-plus`, endpoint DashScope Model Studio theo region. Chỉ đặt `MODEL_ENDPOINT` khi chủ đích đổi endpoint/provider; không dùng Coding Plan endpoint cho Vision.
 
-Sau khi worker chạy thật:
+## Verification sau deploy
 
-1. Điền URL Worker và Turnstile site key trong `js/config.js`.
-2. Kiểm tra UI báo đã cấu hình thật.
-3. Mở tab `Soi đội từ ảnh` để test upload ảnh.
+Preflight:
 
-## Lưu ý vận hành
+```bash
+curl -i -X OPTIONS \
+  https://tqccl-vision-proxy.nguyennlt-ncc.workers.dev/analyze \
+  -H 'Origin: https://tqccl.pages.dev'
+```
 
-- Không commit secret.
-- Không giả định quota là hard limit tuyệt đối.
-- Nếu đổi origin site hoặc domain static host, phải cập nhật allowlist origin và recheck CORS.
-- Không dùng `coding-intl.dashscope.aliyuncs.com` cho Vision; endpoint đó trả lỗi Coding Plan.
-- Nếu đổi provider/model, test lại vài screenshot thật trước khi public rộng.
+Kỳ vọng `204` và `access-control-allow-origin: https://tqccl.pages.dev`.
 
-## Kết luận
+Smoke checklist:
 
-Deploy của repo chia đôi rõ: static site qua Cloudflare Pages/static host, soi đội qua Worker riêng. Hai phần này phải được cấu hình và test riêng.
+1. Mở production, chuyển đủ 10 hash section và kiểm tra JSON/network không lỗi.
+2. Kiểm tra ba tab team hiển thị 56/48/110 và filter mobile collapse.
+3. Test tra cứu, theme, tracker export/import bằng dữ liệu không nhạy cảm.
+4. Upload screenshot đã crop; xác nhận Turnstile, analyze và map/team match.
+5. Test scan/review/recommend; reload và xác nhận state không chứa ảnh/token.
+6. Kiểm tra origin lạ có header bị 403 và lỗi không leak upstream detail.
+
+Lưu ý: request không có `Origin` vẫn qua app guard; CORS không phải auth. KV rate/day/month cap là best-effort do eventual consistency.
+
+## Rollback
+
+### Static Pages
+
+Chọn deployment known-good trong Cloudflare Pages deployment history và rollback/promote. Sau rollback, kiểm tra `js/config.js` còn tương thích Worker và data schema.
+
+### Worker
+
+Dùng Cloudflare dashboard rollback về version known-good hoặc checkout commit known-good rồi chạy full Worker gate và `npm run deploy`. Khi sự cố đang hoạt động, đặt `FEATURE_ENABLED="false"` và deploy để kill-switch trước khi điều tra.
+
+### Data
+
+Khôi phục trọn bộ `data/` từ commit/backup known-good; không mix artifact sinh từ các lần build khác nhau. Re-run static smoke test.
+
+## Bước tiếp theo
+
+Sau mỗi deploy, cập nhật facts có ngày/version trong [Deployment Record](deployment.md), không đóng băng chúng trong guide evergreen.
+
+## Tham chiếu
+
+- [Deployment Record](deployment.md)
+- [Worker README](../worker/README.md)
+- [System Architecture](system-architecture.md)
+- [Code Standards](code-standards.md)

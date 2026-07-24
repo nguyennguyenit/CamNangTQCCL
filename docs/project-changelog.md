@@ -1,5 +1,12 @@
 # Project Changelog
 
+## 2026-07-11
+
+### Fixed
+
+- Sửa mapping chính thức `Nhanh Trí Động Não`: `灵机一动`, Chủ động 30%→55%, chỉ Kỵ/Khí giới, tăng Trí–Thống–Mị theo ảnh client Việt; trả `才辩机捷` về tên fallback `Tài Biện Cơ Tiệp`.
+- Bỏ alias OCR `灵机 → 临机` để ảnh không còn bị map nhầm sang `Thời Cơ Chiến Thắng`; bổ sung test hồi quy pipeline, artifact và OCR.
+
 ## 2026-07-03
 
 ### Added

@@ -1,25 +1,31 @@
-# Cẩm Nang Team - Tam Quốc Chí Chiến Lược
+# Cẩm Nang Team — Tam Quốc Chí Chiến Lược
 
-Website tĩnh tra cứu meta team cho Tam Quốc Chí Chiến Lược. Chạy bằng HTML/CSS/vanilla JS, không bundler, không framework.
+## Tổng quan
 
-## Có gì
+Website tĩnh tra cứu đội hình, tướng, chiến pháp và hỗ trợ quản lý đội cho Tam Quốc Chí Chiến Lược. Frontend dùng HTML/CSS/vanilla ES modules; dữ liệu JSON được build trước bằng Python. Tính năng đọc ảnh gọi Cloudflare Worker triển khai riêng.
 
-Ba tab team (`Team PK`, `Đô Úy`, `Meta phe (cũ)`) dùng **cùng một bộ lọc inline** từ module `js/team-filter-section.js` (ô search toàn văn + nhóm chip). Các nhóm chip nằm gọn trên 1 hàng; tướng/chiến pháp/binh thư tra bằng ô tìm kiếm (không còn combo riêng). Mỗi tab tự tính facets từ tập team của nó; nhóm chỉ còn ≤1 giá trị (không lọc được gì) thì tự ẩn. Trên điện thoại, vùng nhóm lọc thu gọn sau nút **☰ Bộ lọc**. Wrapper mỏng mỗi tab: `js/team-pk.js`, `js/do-uy.js`, `js/meta-cu.js`.
+## Tính năng
 
-- `Team PK`: 55 team giới thiệu (team Đô Úy và Meta phe cũ tách sang tab riêng), lọc theo loại binh / sao / phe, có search toàn văn. Team giới thiệu không có sẵn phe nên **quốc gia (Ngụy/Thục/Ngô/Quần/Hỗn hợp) được suy từ phe đa số của 3 tướng** (`js/derive-team-faction.js`) để gắn badge + viền màu và bật bộ lọc Phe.
-- `Đô Úy (ss18)`: tab riêng cho meta đội hình Đô Úy mùa SS18 (48 team), thêm lọc tier + khuyến nghị, gắn badge tier T0–T1 + badge khuyến nghị (nguồn tham khảo `ss18.thanglonghoi.xyz`).
-- `Meta phe (cũ)`: tab riêng cho 110 team meta phe các mùa cũ (source `moi-phe`), lọc theo loại binh / phe, có search toàn văn.
-- `Cùng Tồn`: nhóm team cùng tồn tại, kèm `Thêm` và `Kỹ năng quân sư`.
-- `Khai hoang`: đội khai hoang và quân thủ các mỏ.
-- `Tra cứu tướng`: 112 tướng, lọc theo thích tính binh chủng (S/A) / vai trò / phe / sao, search fuzzy (Việt bỏ dấu / Hán-Việt / Hán); click card mở modal chi tiết (stats + thích tính + 2 chiến pháp tự mang/truyền thừa link sang thư viện).
-- `Tra cứu chiến pháp`: 237 chiến pháp, search fuzzy, chạy offline, không AI.
-- `Theo dõi chiêu mộ`: tracker localStorage cho nhiều account, theo dõi `Danh tướng PK` 4 lượt miễn phí/nửa giá mỗi ngày, banner hạn giờ tự nhập, pity 30, lịch sử tướng 5★, xuất/nhập JSON.
-- `Soi đội từ ảnh`: upload screenshot, đọc bằng Worker + Vision LLM (tướng + chiến pháp + binh thư), map về tên Việt canonical, hiện icon tướng để đối chiếu, rồi so với toàn bộ team. Tên tướng bị che thì đoán từ chân dung kèm cờ "kiểm tra".
-- `Gợi ý đội từ kho`: upload ảnh kho tướng/kho chiến pháp/team đã build, review dữ liệu scan, rồi engine local gợi ý portfolio 5 team cùng tồn. AI chỉ đọc ảnh; chọn team chạy trên dữ liệu local.
+- 10 section có deep-link bằng hash: Team PK, Đô Úy, Meta phe cũ, Cùng Tồn, Khai hoang, tướng, chiến pháp, tracker chiêu mộ, soi đội và gợi ý đội từ kho.
+- Ba tab team dùng chung bộ lọc inline: search toàn văn + chip động theo dữ liệu từng tab; mobile thu gọn vùng lọc sau nút `☰ Bộ lọc`.
+- Tra cứu 112 tướng và 239 chiến pháp bằng dữ liệu local, hỗ trợ tên Việt/Hán-Việt/Hán.
+- Tracker chiêu mộ lưu nhiều account, pity và lịch sử trong `localStorage`; có xuất/nhập JSON.
+- Soi screenshot qua Worker + DashScope Qwen; frontend map kết quả và đối chiếu 214 team local.
+- Gợi ý portfolio tối đa 5 team bằng engine local. AI chỉ trích xuất dữ liệu từ ảnh, không chọn team.
+
+Snapshot dữ liệu kiểm tra ngày 2026-07-11:
+
+| Dữ liệu | Quy mô |
+|---|---:|
+| Team | 214 = 56 Team PK + 48 Đô Úy + 110 Meta phe cũ |
+| Tier | 57 team, 65 bản xếp hạng nguồn |
+| Cùng Tồn | 5 nhóm, 25 team |
+| Khai hoang | 11 team, 5 mỏ |
+| Tướng / chiến pháp / binh thư map | 112 / 239 / 66 |
 
 ## Chạy local
 
-Frontend dùng `fetch()` JSON nên phải chạy qua HTTP server.
+Yêu cầu Python 3 và trình duyệt hiện đại. Frontend gọi `fetch()` nên phải chạy qua HTTP:
 
 ```bash
 python3 -m http.server 8000
@@ -27,7 +33,21 @@ python3 -m http.server 8000
 
 Mở `http://localhost:8000`.
 
-Nếu cần rebuild dữ liệu từ HTML nguồn, phải có folder `Meta Team PK/` ở root repo.
+## Kiểm thử
+
+```bash
+python3 -m unittest discover -s tests
+node --test "tests-js/*.test.mjs"
+cd worker && npm install
+npm test
+npm run typecheck
+```
+
+Snapshot 2026-07-11: Python 82, JS 83, Worker 53 test pass; Worker typecheck pass.
+
+## Rebuild dữ liệu
+
+Các lệnh hiện có:
 
 ```bash
 python3 -m pipeline.build_json
@@ -37,57 +57,45 @@ python3 -m pipeline.build_books_dict
 python3 -m pipeline.build_team_tier
 ```
 
-### Tier team (theo mùa)
-
-Tier T0–T3 gắn vào **team** (nguồn TQ rank đội hình), lưu thủ công ở `pipeline/team-tier-map.json` (`team id` → `rankings:[{source,tier,updatedAt}]`, multi-source), build ra `data/team-tier.json` bằng `build_team_tier`. Badge hiện bậc tốt nhất + tooltip mọi nguồn; team chưa có tier vẫn render bình thường.
-
-Curate đầu mùa (suggest-only, phải duyệt tay): tải tay 1 trang xếp hạng (zhihu/taptap thường chặn anti-bot nên lưu `.html` từ browser), rồi:
-
-```bash
-python3 -m pipeline.suggest_team_tier path/to/saved-tier-list.html
-```
-
-Tool parse offline, in gợi ý `{tên đội TQ, tier, team id (khớp composition tướng)}` để chép vào `team-tier-map.json`. KHÔNG tự ghi map. Tier ngoài `{T0,T0.5,T1,T1.5,T2,T3}` sẽ bị `build_team_tier` fail-loud.
-
-## Test
-
-```bash
-python3 -m unittest discover -s tests
-node --test "tests-js/*.test.mjs"
-cd worker && npm test
-cd worker && npm run typecheck
-```
+Không chạy máy móc trên dữ liệu đang dùng: `build_json.py` vẫn kiểm tra bộ count cũ `50 + 12 + 110`, trong khi artifact commit hiện có 56 + 48 + 110 và phần Đô Úy đã được bổ sung ngoài đường build nhìn thấy. `pipeline/do-uy-ss18-source.json` có 40 mục nhưng chưa có consumer Python hiển thị. Clone sạch thường cũng thiếu HTML nguồn và cache crawl bị ignore. Trước khi rebuild: backup `data/`, bảo đảm đủ nguồn, chạy từng bước, rồi review toàn bộ diff và test.
 
 ## Deploy
 
-- Site tĩnh: deploy bằng Cloudflare Pages hoặc static host tương đương, publish `index.html`, `css/`, `js/`, `data/`.
-- GitHub Pages đang tắt vì repo private không được plan hiện tại hỗ trợ.
-- Worker soi đội: deploy riêng trong `worker/` bằng Wrangler.
+- Site: Cloudflare Pages tại `https://tqccl.pages.dev`, publish `index.html`, `css/`, `js/`, `data/`.
+- Vision proxy: Worker tại `https://tqccl-vision-proxy.nguyennlt-ncc.workers.dev`, deploy riêng từ `worker/`.
+- `js/config.js` chứa Worker URL và Turnstile site key công khai đang hoạt động. Secret chỉ nằm trong môi trường Worker.
 
-## Cấu trúc chính
+Xem [Deployment Guide](docs/deployment-guide.md) và bản ghi triển khai có ngày tại [Deployment Record](docs/deployment.md).
 
-- `index.html`, `css/styles.css`, `js/*.js`: frontend tĩnh.
-- `data/*.json`: dữ liệu đã build, commit sẵn.
-- `pipeline/*.py`: build dữ liệu từ HTML nguồn.
-- `worker/`: proxy Cloudflare cho ảnh soi đội.
-- `tests/`, `tests-js/`: test Python, JS, Worker.
+## Cấu trúc
+
+```text
+index.html, css/, js/   # static SPA
+data/                  # JSON runtime đã commit
+pipeline/              # build/normalize dữ liệu bằng Python stdlib
+worker/                # Cloudflare Worker TypeScript
+tests/, tests-js/      # test Python và browser logic
+docs/                  # tài liệu evergreen
+plans/                 # kế hoạch/báo cáo lịch sử, không phải nguồn truth runtime
+```
 
 ## Tài liệu
 
-- [Tổng quan + PDR](docs/project-overview-pdr.md)
+- [Tổng quan và PDR](docs/project-overview-pdr.md)
 - [Tóm tắt codebase](docs/codebase-summary.md)
 - [Chuẩn code](docs/code-standards.md)
-- [Kiến trúc hệ thống](docs/system-architecture.md)
+- [Kiến trúc](docs/system-architecture.md)
 - [Roadmap](docs/project-roadmap.md)
-- [Deploy](docs/deployment-guide.md)
-- [Design](docs/design-guidelines.md)
+- [Deployment Guide](docs/deployment-guide.md)
+- [Design Guidelines](docs/design-guidelines.md)
 
-## Ghi chú
+## Ghi chú vận hành
 
-- `js/config.js` đang để placeholder cho `workerUrl` và `turnstileSiteKey`, nên tab `Soi đội từ ảnh` chưa hoạt động cho tới khi cấu hình thật.
-- `data/tactics-generic.json` có 28 chiến pháp generic chờ ghép mô tả.
-- `data/books-dict.json` map binh thư Hán→Việt (62/74, từ bảng thủ công `pipeline/books-han-viet-map.json`); binh thư VN dùng tên dịch nghĩa nên không auto-link như chiến pháp. 12 còn lại đều count thấp (≤5 team), bổ sung khi có nguồn đối chiếu Hán↔Việt.
-- Nguồn HTML `Meta Team PK/` và cache crawl không commit, nên clone repo không tự rebuild được nếu thiếu export local.
-- `Meta mỗi phe (cũ)` được gắn nhãn `Cũ`.
-- Dữ liệu `Theo dõi chiêu mộ` lưu trong trình duyệt hiện tại bằng `localStorage`; dùng `Xuất JSON` / `Nhập JSON` để backup hoặc chuyển giữa máy.
-- Dữ liệu scan `Gợi ý đội từ kho` lưu localStorage ở dạng tên tướng/chiến pháp/team đã khóa; không lưu ảnh/base64.
+- `data/facets.json` không được frontend load; các tab team tự tính facet runtime. File hiện phản ánh 213 team, lệch 1 so với `teams.json`.
+- `data/tactics-generic.json` có 29 nguồn bổ sung; 27 record đang mang trạng thái `pending` sau merge vào `tactics.json`.
+- Tracker và scan state lưu local. Scan state loại bỏ ảnh, base64, blob và Turnstile token; ảnh chỉ giữ trong bộ nhớ của phiên UI.
+- Ảnh soi đội được gửi tới Alibaba Cloud DashScope; nên crop thông tin tài khoản trước khi dùng.
+
+## Tham chiếu
+
+Nguồn truth kỹ thuật: code và JSON commit hiện tại. Tài liệu trong `plans/` chỉ dùng làm lịch sử quyết định.

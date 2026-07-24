@@ -1,75 +1,88 @@
-# Code Standards
+# Chuẩn code và dữ liệu
 
-## Mục tiêu
+## Tổng quan
 
-Giữ code nhỏ, rõ, test được, và bám đúng kiểu repo hiện có: static site + pipeline Python + Worker TypeScript.
+Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được và giữ đúng ba boundary: static frontend, pipeline offline, Worker. Bám pattern đang có trước khi tạo abstraction hoặc dependency mới.
 
-## Cấu trúc code
+## Frontend JavaScript
 
-| Khu vực | Chuẩn hiện tại |
-|---|---|
-| `js/app.js` | Orchestrator, chỉ lo boot và wire-up |
-| `js/filters.js` | Pure function, không DOM (dùng chung Team PK + Đô Úy) |
-| `js/render.js` | DOM builder, dữ liệu đi qua `createElement`, export `teamCard`/`bestTier` cho tab khác |
-| `js/do-uy.js`, `js/hero-list.js` | Section riêng, dùng lại helper từ `filters.js`/`render.js`, không nhân bản logic |
-| `js/match-dict.js`, `js/analyze-map.js` | Logic map/search testable, không phụ thuộc UI |
-| `pipeline/*.py` | Python stdlib, mỗi file một nhiệm vụ |
-| `worker/src/*.ts` | Module nhỏ, tách config / guard / limit / model / schema |
+- Dùng vanilla ES modules; không thêm framework/bundler nếu không có yêu cầu sản phẩm rõ.
+- `app.js` chỉ điều phối load/init. Behavior section đặt trong module riêng.
+- Dùng lại `createTeamFilterSection()` cho tab team; không fork filter UI theo source.
+- Ưu tiên pure function cho normalize, filter, map, score và state transition.
+- Render dữ liệu bằng DOM API/`textContent`; không đưa dữ liệu nguồn thô vào `innerHTML`.
+- Public config đặt trong `js/config.js`; không coi Worker URL hoặc Turnstile site key là secret.
+- Nếu code file vượt khoảng 200 dòng và đang tăng complexity, cân nhắc tách theo boundary thật; không tách cơ học.
 
-## Quy ước chính
+## UI và accessibility
 
-- Dùng vanilla ES modules trong `js/`.
-- Không thêm framework hay bundler nếu chưa có lý do rõ.
-- Giữ `render.js` an toàn: không bơm dữ liệu thô bằng `innerHTML`.
-- Ưu tiên pure function cho phần filter, normalize, map, parse.
-- Python pipeline chỉ dùng stdlib.
-- Secret chỉ đi qua Worker env / wrangler secret, không để trong frontend.
-- Tên file mới nên rõ nghĩa, kebab-case nếu tạo file mới theo convention repo.
+- Nhãn tiếng Việt ngắn, trạng thái rõ; mọi control dùng `button`/`input` phù hợp và có tên truy cập được.
+- Filter count phải tính từ tập dữ liệu tab hiện tại. Không phụ thuộc `data/facets.json` ở runtime.
+- Mobile dùng shared inline filter collapse và `mobile-section-menu.js`; không tham chiếu drawer module không tồn tại.
+- Không thiết kế tương tác chỉ dựa vào hover; giữ touch target đủ dùng.
+- Khi thêm dialog/upload/status async: bổ sung focus management, keyboard activation và live region, kèm test.
 
-## Data standards
+## Python pipeline
 
-- JSON trong `data/` là artifact đã build, commit sẵn.
-- Chiến pháp dùng `effect`/`target` cho nguồn tiếng Trung; bản dịch review thủ công dùng field tùy chọn `effectViet`/`targetViet`.
-- Nếu thêm field vào data model, cập nhật:
-  - `pipeline/normalize.py`
-  - `pipeline/build_json.py`
-  - `js/render.js`
-  - `js/filters.js` nếu field ảnh hưởng search/filter
-  - test liên quan
-- `pipeline/aliases.json`, `pipeline/team-nicknames.json`, `pipeline/tactic-name-overrides.json`, `pipeline/team-tier-map.json`, `pipeline/books-han-viet-map.json`, `pipeline/do-uy-ss18-source.json` là source control thủ công.
-- Tier team curate tay trong `team-tier-map.json` (`team id` → `rankings`), build bằng `build_team_tier`; tier ngoài `{T0,T0.5,T1,T1.5,T2,T3}` phải fail-loud, không tự ghi map.
+- Dùng Python stdlib theo convention hiện tại.
+- Parser, normalize và builder tách trách nhiệm; invariant dữ liệu quan trọng fail-loud.
+- JSON generated phải deterministic, UTF-8, có newline cuối file.
+- Không chạy builder ghi đè trước khi xác minh đủ nguồn, backup artifact và hiểu expected count.
+- Không thêm fake record hoặc sửa assertion chỉ để build pass; sửa đường nguồn/augmentation thực.
 
-## UI standards
+## Data contract
 
-- Từ khóa, nhãn, badge dùng tiếng Việt ngắn gọn.
-- Filter chip phải phản ánh count từ `data/facets.json`.
-- Section không nên đổi layout đột ngột giữa desktop và mobile.
-- Tính năng soi đội phải báo rõ khi chưa cấu hình `js/config.js`.
+- `data/*.json` là artifact runtime commit cùng site.
+- Team join tier bằng `team.id`; tên team không bảo đảm unique.
+- Tier hợp lệ: `T0`, `T0.5`, `T1`, `T1.5`, `T2`, `T3`; một team có thể có nhiều rankings.
+- Chiến pháp giữ field nguồn `effect`/`target`; bản dịch review dùng `effectViet`/`targetViet` tùy chọn.
+- Bảng curate nằm trong `pipeline/aliases.json`, `team-nicknames.json`, `tactic-name-overrides.json`, `team-tier-map.json`, `books-han-viet-map.json`, `role-tag-map.json` và nguồn Đô Úy.
+- Nếu đổi schema: cập nhật builder/normalizer, consumer JS, import validation và test contract liên quan.
 
-## Worker standards
+## Local state và privacy
 
-- Kiểm tra origin, method, Turnstile, input guard theo thứ tự rẻ -> đắt.
-- Không log nội dung ảnh.
-- IP chỉ dùng dạng hash cho rate-limit.
-- Response lỗi nên ngắn, không leak upstream detail.
-- Quota `KV` là best-effort, đừng ghi như hard guarantee.
+- Tracker phải giữ `schemaVersion`, validate import và có đường export/import backup.
+- Roster scan chỉ serialize dữ liệu canonical cần cho gợi ý; loại ảnh, data URL/base64, blob và Turnstile token.
+- Không log hoặc persist nội dung screenshot ngoài yêu cầu rõ của người dùng.
+- UI phải nói rõ ảnh gửi tới DashScope và khuyến nghị crop tên tài khoản.
 
-## Test standards
+## Worker TypeScript
 
-- Test pure function bằng Node test khi có thể.
-- Test pipeline Python bằng `unittest`.
-- Test Worker bằng `npm test` trong `worker/`.
-- Khi chạm contract public, chạy test hẹp trước rồi mới mở rộng.
+- Giữ thứ tự guard rẻ → đắt: route/method/origin, limit/kill-switch, Turnstile/replay, image guard, commit usage, model, schema validation.
+- Origin lạ phải bị từ chối khi header có mặt và khác `ALLOWED_ORIGIN`; hiểu rằng request không có `Origin` vẫn qua, nên không xem CORS là authentication.
+- Kiểm tra MIME, magic bytes và size server-side; không tin nén client.
+- Không leak upstream detail; lỗi ngoài dự kiến trả thông báo chung.
+- Không log ảnh; IP chỉ dùng dạng hash cho rate-limit.
+- KV quota là best-effort, không diễn đạt như giới hạn cứng. Cần quota cứng thì đổi primitive phù hợp.
+- Secret dùng `wrangler secret put`; tuyệt đối không commit `.dev.vars`, key hoặc token.
 
-## Khi sửa file lớn
+## Quy ước tên và tài liệu
 
-- Nếu file code vượt khoảng 200 LOC và phải chạm, cân nhắc tách module.
-- Chỉ tách khi nó giảm thật complexity hoặc khớp boundary đã có.
-- Không thêm abstraction chỉ để "đẹp".
+- Theo convention repo; file mới dùng tên mô tả, kebab-case nếu không có quy ước mạnh hơn.
+- Docs evergreen ở `docs/`; kế hoạch/báo cáo có thời điểm ở `plans/` và không phải runtime truth.
+- Cập nhật docs khi đổi behavior, command, schema, deploy boundary, config/security hoặc quyết định kiến trúc.
+- Commit tập trung, conventional commit, không nhắc AI và không chứa secret/dữ liệu cá nhân.
 
-## Checklist trước khi merge
+## Quality gate
 
-1. Code đúng file boundary hiện có.
-2. Test liên quan pass.
-3. Docs cập nhật nếu thay đổi behavior, command, hoặc architecture.
-4. Không đưa secret, cache, hay artifact phụ vào repo nếu không cần.
+Chạy test hẹp trước, rồi full gate khi đổi contract chung:
+
+```bash
+python3 -m unittest discover -s tests
+node --test "tests-js/*.test.mjs"
+cd worker
+npm test
+npm run typecheck
+```
+
+Không che test/lint/type error và không làm yếu assertion để hợp thức hóa regression.
+
+## Bước tiếp theo
+
+Trước merge: review diff dữ liệu, kiểm tra secret, xác nhận docs impact và chạy gate tương ứng. Với pipeline hiện tại, xem cảnh báo rebuild trong [Deployment Guide](deployment-guide.md).
+
+## Tham chiếu
+
+- [Tóm tắt codebase](codebase-summary.md)
+- [Kiến trúc](system-architecture.md)
+- [Design Guidelines](design-guidelines.md)

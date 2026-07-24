@@ -1,80 +1,99 @@
-# Project Overview PDR
+# Tổng quan sản phẩm và PDR
 
-## Tóm tắt
+## Tổng quan
 
-`Cẩm Nang Team` là site tĩnh tra cứu meta team của Tam Quốc Chí Chiến Lược. Repo gom dữ liệu từ export HTML local, build sang JSON, rồi render bằng frontend vanilla JS.
+`Cẩm Nang Team` là ứng dụng web tĩnh hỗ trợ người chơi Tam Quốc Chí Chiến Lược tra cứu đội hình và tự quản lý dữ liệu cá nhân. JSON đã build cho phép phần tra cứu chạy không cần backend ứng dụng; Cloudflare Worker chỉ phục vụ các luồng đọc screenshot.
+
+## Bối cảnh và mục tiêu
+
+- Tra cứu nhanh team, tướng, chiến pháp, Cùng Tồn và khai hoang.
+- Lọc/search trên dữ liệu curate đã commit, dùng tốt trên mobile.
+- Theo dõi chiêu mộ và kho scan theo hướng local-first.
+- Dùng Vision để đọc ảnh, nhưng giữ quyết định gợi ý team ở engine local minh bạch hơn.
+- Duy trì kiến trúc nhỏ: static SPA + pipeline offline + Worker tùy chọn.
+
+Người dùng chính: người chơi tra meta; người quản lý nhiều account; maintainer cập nhật export HTML, bảng map và tier.
 
 ## Phạm vi hiện tại
 
-| Hạng mục | Nội dung |
+| Khối | Phạm vi |
 |---|---|
-| Frontend | `index.html`, `css/styles.css`, `js/*.js` |
-| Dữ liệu | `data/teams.json`, `data/team-tier.json`, `data/coexist.json`, `data/khaihoang.json`, `data/facets.json`, `data/tactics.json`, `data/heroes-dict.json`, `data/books-dict.json` |
-| Build data | `pipeline/*.py` |
-| Vision proxy | `worker/` |
-| Test | `tests/`, `tests-js/`, `worker/test/` |
+| Static SPA | `index.html`, `css/styles.css`, `js/*.js`, 10 section hash-addressed |
+| Runtime data | `data/*.json`, commit và publish cùng site |
+| Build-time | `pipeline/*.py`, Python stdlib, nguồn HTML/cache local |
+| Vision | `worker/`, Cloudflare Worker + KV + Turnstile + DashScope Qwen |
+| Local state | theme, tracker chiêu mộ, roster scan đã chuẩn hóa |
 
-## Mục tiêu sản phẩm
-
-1. Cho người chơi xem nhanh team PK, team cùng tồn tại, khai hoang, và từ điển chiến pháp.
-2. Cho phép lọc/search theo dữ liệu thật đã build sẵn.
-3. Giữ site chạy được chỉ với static hosting.
-4. Tách riêng tính năng soi đội từ ảnh để không làm nặng site tĩnh.
-
-## Người dùng mục tiêu
-
-- Người cần tra team nhanh trên web.
-- Người cần search chiến pháp / tướng offline.
-- Người muốn soi screenshot để tìm team tương tự.
-- Người maintain dữ liệu export từ `Meta Team PK/`.
+Ngoài phạm vi: backend chung, database server, cloud sync tracker, AI tự quyết đội, bundler/framework frontend.
 
 ## Yêu cầu chức năng
 
 | ID | Yêu cầu |
 |---|---|
-| FR-1 | Hiển thị các section: `Team PK`, `Đô Úy (ss18)`, `Cùng Tồn`, `Khai hoang`, `Tra cứu tướng`, `Tra cứu chiến pháp`, `Soi đội từ ảnh`, `Gợi ý đội từ kho` |
-| FR-2 | Lọc `Team PK` theo chip và combo, search toàn văn, giữ tương tác offline sau khi JSON đã tải; mobile dùng drawer lọc + hamburger menu section |
-| FR-3 | Render `Cùng Tồn` và `Khai hoang` từ JSON đã build |
-| FR-4 | Tra cứu chiến pháp và tướng bằng dữ liệu local (`data/tactics.json`, `data/heroes-dict.json`), search fuzzy Việt/Hán-Việt/Hán, click tướng mở modal chi tiết |
-| FR-5 | Tab Đô Úy render team `do-uy` riêng với filter bar inline (loại binh / phe / tier / khuyến nghị), team `do-uy` ẩn khỏi Team PK |
-| FR-6 | Gắn badge tier T0–T3 theo team từ `data/team-tier.json` (multi-source, hiện bậc tốt nhất + tooltip) |
-| FR-7 | Cho phép upload ảnh soi đội khi `js/config.js` và Worker đã cấu hình thật; map output Hán sang tên Việt canonical rồi đối chiếu với `data/teams.json` |
-| FR-8 | Cho phép scan kho tướng/chiến pháp/team đã build, review dữ liệu, rồi gợi ý portfolio 5 team bằng engine local, không để AI quyết team |
-| FR-8 | Rebuild dữ liệu từ HTML export local bằng pipeline (`build_json`, `build_dict`, `build_books_dict`, `build_team_tier`) |
-| FR-9 | Theo dõi chiêu mộ tướng 5★ bằng `localStorage`: nhiều account, `Danh tướng PK` 4 lượt/ngày, banner hạn giờ, pity 30, lịch sử 5★, xuất/nhập JSON |
+| FR-01 | Điều hướng 10 section bằng tab và hash URL. |
+| FR-02 | Render 56 Team PK, 48 Đô Úy và 110 Meta phe cũ theo tab nguồn. |
+| FR-03 | Ba tab team dùng chung search toàn văn và chip facet tính động trong phạm vi tab. |
+| FR-04 | Trên mobile, menu section và vùng lọc team có thể thu gọn; không phụ thuộc hover. |
+| FR-05 | Render 5 nhóm/25 team Cùng Tồn và 11 team/5 mỏ khai hoang từ JSON local. |
+| FR-06 | Tra cứu 112 tướng và mở chi tiết stats, thích tính, chiến pháp liên quan. |
+| FR-07 | Tra cứu 239 chiến pháp bằng search Việt bỏ dấu, Hán-Việt và Hán. |
+| FR-08 | Hiển thị tier tốt nhất và mọi nguồn xếp hạng cho team khi có dữ liệu tier. |
+| FR-09 | Tracker hỗ trợ nhiều account, 4 slot Danh tướng PK/ngày, banner hạn giờ, pity 30, lịch sử 5★ và import/export JSON. |
+| FR-10 | Soi đội nhận ảnh, xác thực Turnstile, gọi Worker, map kết quả về canonical Việt và tìm team local tương tự. |
+| FR-11 | Scan tướng, chiến pháp và team đã build; người dùng review trước khi gợi ý. |
+| FR-12 | Engine local chọn portfolio tối đa 5 team, xét tướng/chiến pháp/tier và team đã khóa. |
+| FR-13 | Pipeline có lệnh build team/facet/Cùng Tồn/khai hoang, từ điển, binh thư và tier. |
 
 ## Yêu cầu phi chức năng
 
-- Static-first, không bundler, không framework.
-- Dùng HTTP server local vì frontend gọi request JSON.
-- Tracker chiêu mộ là local-first; không có cloud sync, dùng JSON export/import để backup.
-- Dữ liệu và render phải bám đúng file thật trong repo.
-- Không để secret nằm trong frontend repo.
-- Tách rõ phần build data, phần render, phần Worker.
-- Giữ code path testable bằng unit test nhỏ, pure function nếu được.
+| ID | Yêu cầu |
+|---|---|
+| NFR-01 | Frontend dùng vanilla ES modules, không yêu cầu build bundle. |
+| NFR-02 | Dữ liệu tra cứu cốt lõi hoạt động từ static host sau lần tải JSON. |
+| NFR-03 | Secret chỉ tồn tại trong Worker env; frontend chỉ chứa config công khai. |
+| NFR-04 | Worker kiểm tra origin khi có, Turnstile/replay, magic byte/MIME/kích thước và quota KV best-effort trước khi gọi model. |
+| NFR-05 | Ảnh không ghi vào localStorage; Worker không chủ động lưu ảnh hoặc log nội dung ảnh. |
+| NFR-06 | Logic filter/map/store/engine có test độc lập; pipeline fail-loud tại các invariant đã định nghĩa. |
+| NFR-07 | UI responsive, có nhãn/alt/ARIA cơ bản và theme sáng/tối lưu local. |
+| NFR-08 | Tài liệu evergreen bám code/data hiện tại; `plans/` chỉ là lịch sử. |
 
-## Ràng buộc
+## Dữ liệu chấp nhận
 
-- Nguồn HTML `Meta Team PK/` không commit.
-- `js/config.js` là public config, không phải secret.
-- `worker/` chỉ là proxy riêng; static host không deploy Worker.
-- Quota Worker hiện là best-effort, không phải hard limit tuyệt đối.
+Snapshot commit 2026-07-11:
+
+- 214 team: 56 `team-intro`, 48 `do-uy`, 110 `moi-phe`.
+- 57 team có tier, tổng 65 rankings; 112 tướng; 239 chiến pháp; 66 map binh thư.
+- 5 nhóm/25 team Cùng Tồn; 11 team/5 mỏ khai hoang.
+- `facets.json` đang có tổng source/status 213, lệch 1 so với `teams.json`; frontend không load file này.
 
 ## Tiêu chí chấp nhận
 
-- `python3 -m http.server 8000` mở site được và load đủ JSON.
-- `python3 -m unittest discover -s tests` pass.
-- `node --test tests-js/*.test.mjs` pass.
-- `cd worker && npm test` và `cd worker && npm run typecheck` pass.
-- `data/*.json` khớp số lượng hiện tại: `teams=213` (Team PK 55 + Meta phe cũ 110 + do-uy 48), `tactics=237`, `heroes-dict=112`, `coexist=5`, `khaihoang=11/5`, `team-tier=56`.
+| ID | Tiêu chí |
+|---|---|
+| AC-01 | Site chạy qua HTTP, tải dữ liệu và mở được cả 10 hash section. |
+| AC-02 | Ba tab team render đúng source và filter không rò dữ liệu giữa tab. |
+| AC-03 | Tracker/scan state round-trip hợp lệ; không serialize ảnh, base64, blob hoặc token. |
+| AC-04 | Vision request hợp lệ đi qua Worker; lỗi origin, token, ảnh, quota và model được trả an toàn. |
+| AC-05 | Gợi ý team do local engine tạo sau bước review, không lấy quyết định portfolio từ model. |
+| AC-06 | Các lệnh test Python, JS, Worker và Worker typecheck pass trước deploy. |
+| AC-07 | Rebuild data chỉ được chấp nhận sau khi review diff, xác nhận nguồn và xử lý drift count hiện có. |
 
-## Rủi ro chính
+## Rủi ro và giới hạn
 
-- Thiếu `Meta Team PK/` thì không rebuild được pipeline.
-- `js/config.js` placeholder làm tab soi đội bị vô hiệu hóa.
-- Quota Worker dùng KV, nên chỉ best-effort.
-- Dữ liệu chiến pháp generic còn phần mô tả chờ ghép tay.
+- `build_json.py` còn assertions `50 + 12 + 110`; artifact hiện có `56 + 48 + 110`. Chạy thẳng có thể ghi đè phần bổ sung.
+- `pipeline/do-uy-ss18-source.json` có 40 mục nhưng không thấy consumer trong Python hiện tại.
+- HTML nguồn và raw crawl cache bị ignore; clone sạch không bảo đảm rebuild đầy đủ.
+- KV không atomic, nên quota Worker là best-effort. Request không có header `Origin` vẫn được chấp nhận; Turnstile là rào chính ngoài browser.
+- Phụ thuộc dịch vụ ngoài: Cloudflare, Turnstile và Alibaba DashScope.
+- Accessibility còn thiếu tab semantics hoàn chỉnh, focus management dialog, drop-zone keyboard và live-region nhất quán.
 
-## Kết luận
+## Bước tiếp theo
 
-Repo này ưu tiên: dữ liệu đúng, render an toàn, deploy đơn giản, và có đường mở rộng cho soi đội ảnh nhưng không phụ thuộc vào backend nặng.
+Ưu tiên khôi phục đường rebuild xác định, sửa drift facet/count, rồi hoàn thiện accessibility và privacy/security vận hành. Chi tiết ở [Project Roadmap](project-roadmap.md).
+
+## Tham chiếu
+
+- [Kiến trúc hệ thống](system-architecture.md)
+- [Tóm tắt codebase](codebase-summary.md)
+- [Deployment Guide](deployment-guide.md)
+- [Design Guidelines](design-guidelines.md)

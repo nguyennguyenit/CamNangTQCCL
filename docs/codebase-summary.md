@@ -1,84 +1,90 @@
-# Codebase Summary
+# Tóm tắt codebase
 
-## Snapshot
+## Tổng quan
 
-Repo trọng tâm là dữ liệu JSON và frontend tĩnh. Phần nặng nhất nằm ở `data/teams.json`, `data/tactics.json`, và `data/heroes-dict.json`.
+Repo gồm ba boundary độc lập: static SPA chạy trong trình duyệt, pipeline Python chạy offline để sinh JSON, và Cloudflare Worker TypeScript cho Vision. Không có bundler, framework frontend, backend chung hoặc database ứng dụng.
 
 ## Cấu trúc
 
 ```text
 .
-├── index.html
-├── css/styles.css
-├── js/
-├── data/
-├── pipeline/
-├── worker/
-├── tests/
-├── tests-js/
-├── docs/
-└── plans/
+├── index.html              # shell 10 section
+├── css/styles.css          # theme, responsive, component styles
+├── js/                     # vanilla ES modules
+├── data/                   # JSON runtime đã commit
+├── pipeline/               # parser/normalizer/builder Python stdlib
+├── worker/                 # Vision proxy Cloudflare
+├── tests/                  # Python unittest
+├── tests-js/               # Node test cho logic frontend
+├── docs/                   # tài liệu evergreen
+└── plans/                  # kế hoạch/báo cáo lịch sử
 ```
 
-## Nhóm file chính
+## Điểm vào và module chính
 
-| Nhóm | Vai trò |
+| File | Vai trò |
 |---|---|
-| `index.html`, `css/styles.css`, `js/*.js` | UI tĩnh, render, filter, tra cứu, analyze |
-| `data/*.json` | Dữ liệu đã build sẵn cho site |
-| `pipeline/*.py` | Tái dựng grid HTML, parse, normalize, build JSON/dict |
-| `worker/src/*.ts` | Cloudflare Worker proxy cho ảnh soi đội |
-| `tests/`, `tests-js/`, `worker/test/` | Test Python, JS, Worker |
-| `docs/*.md` | Tài liệu dự án |
-| `plans/` | Kế hoạch, báo cáo, spike |
+| `index.html` | Khai báo 10 tab/section và nạp `js/app.js`. |
+| `js/app.js` | Load 6 JSON bắt buộc + tier tùy chọn; init nav, theme và các section. |
+| `js/team-filter-section.js` | Shared full-text search, chip động, stats, clear và mobile collapse cho 3 tab team. |
+| `js/team-pk.js`, `js/do-uy.js`, `js/meta-cu.js` | Chọn source, cấu hình filter và sort riêng từng tab. |
+| `js/render.js`, `js/filters.js` | DOM builder, team card, tier và pure filter/search. |
+| `js/hero-list.js`, `js/hero-detail.js`, `js/tactics.js` | Tra cứu tướng/chiến pháp local. |
+| `js/recruit-tracker-store.js` | State schema v1, nhiều account, banner, pity, import/export localStorage. |
+| `js/analyze.js`, `js/analyze-map.js` | Nén ảnh, Turnstile, Worker call, canonical map và team similarity. |
+| `js/roster-scan-state.js` | Serialize scan state, loại dữ liệu ảnh/token. |
+| `js/team-recommend-engine.js` | Chấm tier, kiểm tra conflict, greedy/DFS và tạo portfolio local. |
+| `pipeline/build_json.py` | Build team, facet, Cùng Tồn, khai hoang từ HTML export. |
+| `pipeline/build_dict.py` | Crawl/cache/link và merge chiến pháp generic, build tướng/chiến pháp. |
+| `pipeline/build_books_dict.py` | Validate bảng map Hán→Việt với facet binh thư. |
+| `pipeline/build_team_tier.py` | Join tier curate theo team ID, validate tier fail-loud. |
+| `worker/src/index.ts` | `POST /analyze`: origin, limits, Turnstile, image guard, model, response. |
+| `worker/src/config.ts`, `schema.ts` | Env config và schema kết quả cho 4 mode. |
 
-## Dữ liệu hiện tại
+## Dữ liệu runtime
 
-| File | Quy mô |
-|---|---|
-| `data/teams.json` | 213 team (team-intro 55 + moi-phe 110 + do-uy 48) |
-| `data/tactics.json` | 237 chiến pháp |
-| `data/heroes-dict.json` | 112 tướng |
-| `data/coexist.json` | 5 nhóm |
-| `data/khaihoang.json` | 11 đội + 5 mỏ |
-| `data/team-tier.json` | 56 team có tier (multi-source rankings) |
-| `data/facets.json` | 91 heroes, 119 tactics, 67 books, 4 unitTypes, 3 stars, 5 factions, 2 statuses, 3 sources |
-| `data/tactics-generic.json` | 28 tactic generic placeholder |
-| `data/books-dict.json` | map binh thư Hán→Việt |
+| Artifact | Snapshot 2026-07-11 |
+|---|---:|
+| `data/teams.json` | 214: 56 team-intro, 48 do-uy, 110 moi-phe |
+| `data/team-tier.json` | 57 team, 65 rankings |
+| `data/tactics.json` | 239, gồm 27 record pending sau merge generic |
+| `data/heroes-dict.json` | 112 |
+| `data/books-dict.json` | 66 |
+| `data/coexist.json` | 5 nhóm, 25 team |
+| `data/khaihoang.json` | 11 team, 5 mỏ |
+| `data/tactics-generic.json` | 29 record nguồn |
 
-`Team PK` render team-intro (55 team); `Meta phe (cũ)` render moi-phe (110 team); team `do-uy` ẩn khỏi Team PK và hiện ở tab Đô Úy riêng.
+`data/facets.json` có 91 tướng, 119 chiến pháp, 67 binh thư, 4 loại binh, 3 mức sao, 5 phe, 2 trạng thái, 3 nguồn; tổng source/status là 213. Frontend không fetch artifact này: tab team tính facet trực tiếp từ tập team runtime.
 
-## Điểm vào code
+## Local state và external state
 
-- `js/app.js`: boot app, load JSON, nav section, theme, filter, render, init analyze + Đô Úy + tra cứu tướng.
-- `js/render.js`: tạo DOM an toàn (không bơm thô vào `innerHTML`), `teamCard`, badge tier (`bestTier`).
-- `js/filters.js`: lọc và search pure function, dùng được cả browser lẫn Node test.
-- `js/do-uy.js`: tab Đô Úy — filter bar inline (loại binh / phe / tier / khuyến nghị), facets tính riêng từ tập do-uy, dùng lại `applyFilters`/`teamCard`.
-- `js/hero-list.js` + `js/hero-detail.js`: tra cứu tướng (chip lọc binh chủng/vai trò/phe/sao + search fuzzy) và modal chi tiết tướng.
-- `js/match-dict.js`: search đa ngõ vào (Việt bỏ dấu / Hán-Việt / Hán) cho tướng và chiến pháp.
-- `js/mobile-section-menu.js` + `js/mobile-filter-drawer.js`: hamburger menu section + drawer bộ lọc Team PK trên mobile.
-- `js/analyze.js`: flow upload ảnh, nén client, Turnstile, gọi Worker, render kết quả.
-- `js/analyze-map.js`: map output Hán sang Việt canonical và tìm team giống.
-- `pipeline/build_json.py`: build `teams.json`, `facets.json`, `coexist.json`, `khaihoang.json`.
-- `pipeline/build_dict.py` + `pipeline/build_books_dict.py`: build từ điển chiến pháp, tướng, binh thư.
-- `pipeline/build_team_tier.py`: build `team-tier.json` từ `team-tier-map.json` (fail-loud nếu tier ngoài tập hợp lệ).
-- `worker/src/index.ts`: route `/analyze`, check origin, limit, Turnstile, gọi model, trả JSON.
+- `theme`: light/dark trong `localStorage`.
+- `tqcclRecruitTracker`: tracker schema version 1; có export/import JSON.
+- `tqccl.rosterRecommend.scanState.v1`: tên tướng/chiến pháp/team khóa, xác nhận và timestamp; không ảnh/base64/blob/token.
+- Ảnh preview giữ trong memory/data URL của phiên UI, gửi tới Worker khi người dùng xác thực.
+- Worker dùng KV cho replay/rate/cap; secret và API key chỉ ở Worker environment.
 
-## Lệnh hay dùng
+## Kiểm thử
 
-```bash
-python3 -m http.server 8000
-python3 -m pipeline.build_json
-python3 -m pipeline.suggest_aliases
-python3 -m pipeline.build_dict
-python3 -m pipeline.build_books_dict
-python3 -m pipeline.build_team_tier
-python3 -m unittest discover -s tests
-node --test tests-js/*.test.mjs
-cd worker && npm test
-cd worker && npm run typecheck
-```
+- `tests/`: parser, normalize, build, từ điển, tier, crawl/link.
+- `tests-js/`: filter, map, hero UI, mobile menu, tracker, roster state và recommend engine.
+- `worker/test/`: config, guard, model, rate-limit, scan modes, schema.
 
-## Kết luận nhanh
+Snapshot 2026-07-11: Python 82, root JS 83, Worker 53 test pass; Worker typecheck pass.
 
-Repo này là static site trước, pipeline dữ liệu sau, Worker là phần phụ trợ tùy chọn. Không có backend chung, không có DB, không có bundler.
+## Điểm cần chú ý
+
+- Comment `50 team` trong `js/team-pk.js` đã cũ; UI dùng số runtime nên vẫn hiện 56.
+- `build_json.py` vẫn expect 50 Team PK và 12 Đô Úy; không tái tạo artifact hiện tại an toàn.
+- `facets.json` chậm hơn `teams.json` một team nhưng hiện không ảnh hưởng filter runtime.
+- `plans/` có thể chứa mô tả cũ; kiểm chứng bằng code, config và JSON commit.
+
+## Bước tiếp theo
+
+Khi sửa behavior: bắt đầu từ module section/store/engine tương ứng, chạy test hẹp, rồi mở rộng test contract. Khi sửa data: backup artifact và review diff trước khi commit.
+
+## Tham chiếu
+
+- [Chuẩn code](code-standards.md)
+- [Kiến trúc hệ thống](system-architecture.md)
+- [Roadmap](project-roadmap.md)
