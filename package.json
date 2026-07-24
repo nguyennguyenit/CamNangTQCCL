@@ -1,0 +1,27 @@
+{
+  "name": "cam-nang-tqccl",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0 <23"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "check": "astro check",
+    "preview": "astro preview",
+    "test:contracts": "node --test tests-js/frontend-shell-contract.test.mjs tests-js/runtime-asset-contract.test.mjs",
+    "test:dist": "node --experimental-strip-types --test tests-js/astro-dist-contract.test.mjs",
+    "test:dev-contract": "node --test tests-js/astro-dev-contract.test.mjs",
+    "test:node": "node --experimental-strip-types --test tests-js/*.test.mjs",
+    "verify": "node scripts/verify-astro-dist.mjs",
+    "test:e2e:legacy": "playwright test --project=legacy"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.9",
+    "@playwright/test": "1.61.1",
+    "@types/node": "22.20.1",
+    "astro": "7.1.3",
+    "typescript": "6.0.3"
+  }
+}

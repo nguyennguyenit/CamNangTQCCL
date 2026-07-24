@@ -6,6 +6,11 @@ node_modules/
 _site/
 .claude/
 .wrangler/
+.astro/
+dist/
+playwright-report/
+test-results/
+blob-report/
 
 # Source export gốc (Google Sheets HTML) — không publish; build chạy local
 Meta Team PK/

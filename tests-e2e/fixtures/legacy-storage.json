@@ -1,0 +1,46 @@
+{
+  "theme": "dark",
+  "tqcclRecruitTracker": {
+    "schemaVersion": 1,
+    "activeAccountId": "acc_sentinel",
+    "accounts": [
+      {
+        "id": "acc_sentinel",
+        "name": "Sentinel Account",
+        "createdAt": "2026-07-23T00:00:00.000Z"
+      }
+    ],
+    "banners": [],
+    "dailyStates": [],
+    "pullEvents": []
+  },
+  "tqccl.rosterRecommend.scanState.v1": {
+    "ownedHeroes": [
+      {
+        "name": "Sentinel Hero",
+        "confidence": "fixture",
+        "imageDataUrl": "data:image/png;base64,forbidden-sentinel",
+        "turnstileToken": "forbidden-sentinel"
+      }
+    ],
+    "ownedTactics": [
+      {
+        "name": "Sentinel Tactic",
+        "confidence": "fixture"
+      }
+    ],
+    "lockedTeams": [
+      {
+        "teamName": "Sentinel Team",
+        "heroes": [
+          "Sentinel Hero"
+        ],
+        "tactics": [
+          "Sentinel Tactic"
+        ]
+      }
+    ],
+    "confirmed": false,
+    "updatedAt": "2026-07-23T00:00:00.000Z"
+  }
+}
