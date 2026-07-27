@@ -193,9 +193,12 @@ test("dist verifier rejects missing, unexpected, and symlinked output", async (t
     mimeType: "application/json; charset=utf-8",
   }];
   await mkdir(join(projectDir, "data"));
+  await mkdir(join(projectDir, "public"));
   await mkdir(join(distDir, "data"));
   await writeFile(join(projectDir, "data", "fixture.json"), "{}\n");
+  await writeFile(join(projectDir, "public", "_headers"), "/\n  Cache-Control: max-age=0\n");
   await writeFile(join(distDir, "index.html"), "<!doctype html>\n");
+  await writeFile(join(distDir, "_headers"), "/\n  Cache-Control: max-age=0\n");
 
   await assert.rejects(
     verifyAstroDist({
@@ -219,6 +222,16 @@ test("dist verifier rejects missing, unexpected, and symlinked output", async (t
 
   const { rm } = await import("node:fs/promises");
   await rm(join(distDir, "unexpected.txt"));
+  await writeFile(join(distDir, "_headers"), "tampered\n");
+  await assert.rejects(
+    verifyAstroDist({
+      projectRoot: new URL(`file://${projectDir}/`),
+      distDir: new URL(`file://${distDir}/`),
+      manifest,
+    }),
+    /control artifact bytes differ/i,
+  );
+  await writeFile(join(distDir, "_headers"), "/\n  Cache-Control: max-age=0\n");
   await symlink(join(projectDir, "data", "fixture.json"), join(distDir, "fixture-link.json"));
   await assert.rejects(
     verifyAstroDist({
@@ -238,7 +251,12 @@ test("built dist is allowlisted and every emitted asset is byte-identical", asyn
 
   assert.equal(result.assetCount, PUBLIC_ARTIFACTS.length);
   assert.ok(result.files.includes("index.html"));
+  assert.ok(result.files.includes("_headers"));
   assert.equal(result.unexpectedFiles.length, 0);
+  assert.deepEqual(
+    await readFile(new URL("../dist/_headers", import.meta.url)),
+    await readFile(new URL("../public/_headers", import.meta.url)),
+  );
   const html = await readFile(new URL("../dist/index.html", import.meta.url), "utf8");
   assertFrontendShellContract(html, {
     stylesheetPattern: /<link[^>]+rel=["']stylesheet["'][^>]+href=["']\/css\/styles\.css["']/,

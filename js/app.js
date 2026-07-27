@@ -110,7 +110,7 @@ async function main() {
     initAnalyze({ teams, heroesDict, tacticsDict: tactics, booksDict, onOpenTeam }, $("#section-analyze"));
     initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict: tactics, onOpenTeam }, $("#section-roster-recommend"));
   } catch (err) {
-    $("#section-team-pk").append(el("p", { class: "error" }, "Lỗi tải dữ liệu: " + err.message + ". Hãy chạy qua http server (python3 -m http.server)."));
+    $("#section-team-pk").append(el("p", { class: "error" }, "Lỗi tải dữ liệu: " + err.message + ". Hãy tải lại trang hoặc liên hệ quản trị viên nếu lỗi tiếp diễn."));
   }
 }
 

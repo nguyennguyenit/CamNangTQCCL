@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const legacyPort = 4173;
+const astroPort = 4174;
 
 export default defineConfig({
   testDir: "./tests-e2e",
@@ -10,21 +10,21 @@ export default defineConfig({
   retries: 0,
   reporter: "line",
   use: {
-    baseURL: `http://127.0.0.1:${legacyPort}`,
     serviceWorkers: "block",
     trace: "retain-on-failure",
   },
   webServer: {
-    command: `python3 -m http.server ${legacyPort} --bind 127.0.0.1 --directory .`,
-    url: `http://127.0.0.1:${legacyPort}`,
+    command: `npm run build && npm run preview -- --host 127.0.0.1 --port ${astroPort}`,
+    url: `http://127.0.0.1:${astroPort}`,
     reuseExistingServer: false,
     timeout: 30_000,
   },
   projects: [
     {
-      name: "legacy",
+      name: "astro",
       use: {
         ...devices["Desktop Chrome"],
+        baseURL: `http://127.0.0.1:${astroPort}`,
       },
     },
   ],

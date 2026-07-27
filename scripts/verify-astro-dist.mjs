@@ -3,6 +3,10 @@ import { relative, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { PUBLIC_ARTIFACTS, validatePublicArtifactManifest } from "../src/lib/public-artifact-manifest.mjs";
 
+export const DEPLOYMENT_CONTROL_ARTIFACTS = Object.freeze([
+  Object.freeze({ sourcePath: "public/_headers", outputPath: "_headers" }),
+]);
+
 async function listFiles(directory, base = directory) {
   const files = [];
   for (const entry of await readdir(directory, { withFileTypes: true })) {
@@ -19,14 +23,18 @@ export async function verifyAstroDist({
   projectRoot = new URL("../", import.meta.url),
   distDir = new URL("../dist/", import.meta.url),
   manifest = PUBLIC_ARTIFACTS,
-  controlArtifacts = [],
+  controlArtifacts = DEPLOYMENT_CONTROL_ARTIFACTS,
 } = {}) {
   validatePublicArtifactManifest(manifest);
   const rootPath = fileURLToPath(projectRoot);
   const distPath = fileURLToPath(distDir);
   const expectedAssets = manifest.map((artifact) =>
     `${artifact.kind}/${artifact.sourceBasename}`);
-  const expectedFiles = ["index.html", ...expectedAssets, ...controlArtifacts].sort();
+  const expectedFiles = [
+    "index.html",
+    ...expectedAssets,
+    ...controlArtifacts.map((artifact) => artifact.outputPath),
+  ].sort();
   const files = await listFiles(distPath);
   const unexpectedFiles = files.filter((file) => !expectedFiles.includes(file));
   const missingFiles = expectedFiles.filter((file) => !files.includes(file));
@@ -44,6 +52,16 @@ export async function verifyAstroDist({
     ]);
     if (!sourceBytes.equals(emittedBytes)) {
       throw new Error(`Emitted artifact bytes differ from source: ${relativePath}`);
+    }
+  }
+
+  for (const artifact of controlArtifacts) {
+    const [sourceBytes, emittedBytes] = await Promise.all([
+      readFile(resolve(rootPath, artifact.sourcePath)),
+      readFile(resolve(distPath, artifact.outputPath)),
+    ]);
+    if (!sourceBytes.equals(emittedBytes)) {
+      throw new Error(`Deployment control artifact bytes differ from source: ${artifact.outputPath}`);
     }
   }
 

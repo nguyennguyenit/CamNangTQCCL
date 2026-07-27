@@ -6,9 +6,10 @@ import {
   assertFrontendShellContract,
 } from "./frontend-shell-contract-assertions.mjs";
 
-const shellPath = new URL("../index.html", import.meta.url);
+const shellPath = new URL("../src/pages/index.astro", import.meta.url);
+const legacyShellPath = new URL("../index.html", import.meta.url);
 
-async function legacyShell() {
+async function astroShell() {
   return readFile(shellPath, "utf8");
 }
 
@@ -17,17 +18,17 @@ function attributeValues(html, attribute) {
     .map((match) => match[1]);
 }
 
-test("legacy shell preserves metadata and browser entry assets", async () => {
-  const html = await legacyShell();
+test("Astro shell preserves metadata and browser entry assets", async () => {
+  const html = await astroShell();
 
   assertFrontendShellContract(html, {
-    stylesheetPattern: /<link[^>]+rel=["']stylesheet["'][^>]+href=["']\.\/css\/styles\.css["']/,
-    scriptPattern: /<script[^>]+type=["']module["'][^>]+src=["']\.\/js\/app\.js["'][^>]*><\/script>/,
+    stylesheetPattern: /<link[^>]+rel=["']stylesheet["'][^>]+href=["']\/css\/styles\.css["']/,
+    scriptPattern: /<script[^>]+type=["']module["'][^>]+src=["']\/js\/app\.js["'][^>]*><\/script>/,
   });
 });
 
-test("legacy shell has one tab and mount for every supported section", async () => {
-  const html = await legacyShell();
+test("Astro shell has one tab and mount for every supported section", async () => {
+  const html = await astroShell();
   const tabSections = attributeValues(html, "data-section");
   const ids = new Set(attributeValues(html, "id"));
 
@@ -40,12 +41,16 @@ test("legacy shell has one tab and mount for every supported section", async () 
   assert.match(html, /id=["']section-team-pk["'][^>]+class=["']section active["']/);
 });
 
-test("legacy shell retains navigation and theme accessibility hooks", async () => {
-  const html = await legacyShell();
+test("Astro shell retains navigation and theme accessibility hooks", async () => {
+  const html = await astroShell();
 
   assert.match(html, /id=["']section-menu-toggle["']/);
   assert.match(html, /aria-controls=["']section-menu-items["']/);
   assert.match(html, /aria-expanded=["']false["']/);
   assert.match(html, /id=["']section-menu-items["']/);
   assert.match(html, /id=["']theme-toggle["']/);
+});
+
+test("root legacy HTML entry no longer exists", async () => {
+  await assert.rejects(readFile(legacyShellPath), { code: "ENOENT" });
 });

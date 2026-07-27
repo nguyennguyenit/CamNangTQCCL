@@ -1,9 +1,23 @@
 import { readFile } from "node:fs/promises";
 import { expect, test } from "@playwright/test";
+import { PUBLIC_ARTIFACTS } from "../src/lib/public-artifact-manifest.mjs";
 
 const storageFixture = JSON.parse(
   await readFile(new URL("./fixtures/legacy-storage.json", import.meta.url), "utf8"),
 );
+const teamsFixture = JSON.parse(
+  await readFile(new URL("../data/teams.json", import.meta.url), "utf8"),
+);
+const distRoot = new URL("../dist/", import.meta.url);
+const publicArtifactPaths = PUBLIC_ARTIFACTS.map(
+  (artifact) => `/${artifact.kind}/${artifact.sourceBasename}`,
+);
+const privateProbePaths = [
+  "/pipeline/build_json.py",
+  "/worker/src/index.ts",
+  "/tests/test_build.py",
+  "/plans/260723-2127-migrate-static-spa-to-astro/plan.md",
+];
 const runtimeJson = [
   "teams.json",
   "coexist.json",
@@ -28,6 +42,40 @@ const transparentPng = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAEAQH/XP8W3QAAAABJRU5ErkJggg==",
   "base64",
 );
+const distContentTypes = {
+  ".html": "text/html; charset=utf-8",
+  ".css": "text/css; charset=utf-8",
+  ".js": "text/javascript; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
+};
+
+async function fulfillFromDist(route) {
+  const url = new URL(route.request().url());
+  const relativePath = decodeURIComponent(url.pathname === "/" ? "index.html" : url.pathname.slice(1));
+  if (
+    !relativePath
+    || relativePath.split("/").some((segment) => segment === ".." || segment.includes("\\"))
+  ) {
+    await route.fulfill({ status: 404, body: "Not found" });
+    return;
+  }
+  const assetUrl = new URL(relativePath, distRoot);
+  if (!assetUrl.href.startsWith(distRoot.href)) {
+    await route.fulfill({ status: 404, body: "Not found" });
+    return;
+  }
+  try {
+    const body = await readFile(assetUrl);
+    const extension = relativePath.slice(relativePath.lastIndexOf("."));
+    await route.fulfill({
+      status: 200,
+      contentType: distContentTypes[extension] || "application/octet-stream",
+      body,
+    });
+  } catch {
+    await route.fulfill({ status: 404, body: "Not found" });
+  }
+}
 
 test.beforeEach(async ({ context }) => {
   await context.route("**/*", async (route) => {
@@ -224,6 +272,8 @@ test("required JSON failure stays in Team PK and can remain hidden on another ha
   await page.goto("/#heroes");
   const error = page.locator("#section-team-pk .error");
   await expect(error).toContainText("Lỗi tải dữ liệu: ./data/teams.json: 503");
+  await expect(error).toContainText("Hãy tải lại trang hoặc liên hệ quản trị viên nếu lỗi tiếp diễn");
+  await expect(error).not.toContainText(/python3|http server|index\.html/i);
   await expectActiveSection(page, "heroes");
   await expect(error).toBeHidden();
   await expect(page.locator("#section-heroes")).toBeEmpty();
@@ -298,4 +348,97 @@ test("team search remains a local interaction", async ({ page }) => {
   await expect(section.locator(".empty")).toContainText("Không có");
   await search.fill("");
   await expect(section.locator(".team-card").first()).toBeVisible();
+});
+
+test("opening a roster recommendation selects its source tab and hero search", async ({ page }) => {
+  const seedTeams = teamsFixture.slice(0, 20);
+  const rosterState = {
+    ownedHeroes: [...new Set(seedTeams.flatMap((team) =>
+      team.heroes.map((hero) => hero.baseName || hero.name)))].map((name) => ({ name })),
+    ownedTactics: [...new Set(seedTeams.flatMap((team) =>
+      team.heroes.flatMap((hero) => hero.tactics.map((tactic) => tactic.name))))].map((name) => ({ name })),
+    lockedTeams: [],
+    confirmed: true,
+    updatedAt: "2026-07-25T00:00:00.000Z",
+  };
+  await page.addInitScript((state) => {
+    localStorage.setItem("tqccl.rosterRecommend.scanState.v1", JSON.stringify(state));
+  }, rosterState);
+  await page.addInitScript(() => {
+    window.__scrollCalls = [];
+    window.scrollTo = (...args) => window.__scrollCalls.push(args);
+  });
+
+  await page.goto("/#roster-recommend");
+  await waitForBoot(page);
+  await page.getByRole("button", { name: "Gợi ý 5 team", exact: true }).click();
+  const recommendation = page.locator(".roster-result-team").filter({
+    has: page.getByRole("button", { name: "Mở team", exact: true }),
+  }).first();
+  const selectedName = await recommendation.locator("strong").textContent();
+  const selectedTeam = teamsFixture.find((team) => team.name === selectedName);
+  expect(selectedTeam).toBeTruthy();
+
+  await recommendation.getByRole("button", { name: "Mở team", exact: true }).click();
+  const expectedSection = {
+    "do-uy": "do-uy",
+    "moi-phe": "meta-cu",
+    "team-intro": "team-pk",
+  }[selectedTeam.source] || "team-pk";
+  await expectActiveSection(page, expectedSection);
+  await expect(page.locator(`#section-${expectedSection} input[type="search"]`).first())
+    .toHaveValue(selectedTeam.heroes[0].baseName);
+  await expect.poll(() => page.evaluate(() => window.__scrollCalls.at(-1))).toEqual([
+    { top: 0, behavior: "smooth" },
+  ]);
+});
+
+test("local preview serves approved artifacts and excludes private source paths", async ({ request }) => {
+  for (const path of ["/", ...publicArtifactPaths]) {
+    const response = await request.get(path);
+    expect(response.status(), path).toBe(200);
+  }
+  for (const path of privateProbePaths) {
+    const response = await request.get(path);
+    expect(response.status(), path).toBe(404);
+  }
+});
+
+test("synthetic HTTPS serves dist locally and characterizes legacy HTTP icons", async ({ page }) => {
+  const externalImageRequests = [];
+  await page.route("https://astro.local/**", fulfillFromDist);
+  page.on("request", (request) => {
+    const url = new URL(request.url());
+    if (url.hostname !== "astro.local" && request.resourceType() === "image") {
+      externalImageRequests.push(url);
+    }
+  });
+
+  await page.goto("https://astro.local/#heroes");
+  await waitForBoot(page);
+  await expectActiveSection(page, "heroes");
+  const icon = page.locator("#section-heroes img[src^='http://']").first();
+  await expect(icon).toBeAttached();
+  await expect.poll(() => externalImageRequests.length).toBeGreaterThan(0);
+  expect(externalImageRequests.every((url) => url.protocol === "https:")).toBe(true);
+
+  const exposure = await page.evaluate(async ({ publicPaths, privatePaths }) => {
+    const probe = async (path) => {
+      const response = await fetch(path);
+      return [path, response.status, await response.text()];
+    };
+    return {
+      publicResults: await Promise.all(publicPaths.map(probe)),
+      privateResults: await Promise.all(privatePaths.map(probe)),
+    };
+  }, { publicPaths: publicArtifactPaths, privatePaths: privateProbePaths });
+  expect(exposure.publicResults.every(([, status]) => status === 200)).toBe(true);
+  expect(exposure.privateResults.every(([, status, body]) =>
+    status === 404 && body === "Not found")).toBe(true);
+
+  for (const escapedPath of ["//etc/hosts", "/%252e%252e/package.json"]) {
+    const response = await page.goto(`https://astro.local${escapedPath}`);
+    expect(response.status()).toBe(404);
+    await expect(page.locator("body")).toHaveText("Not found");
+  }
 });
