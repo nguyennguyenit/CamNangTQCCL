@@ -28,7 +28,7 @@ Add whole-system/security gates, immutable R2 publication, live MCP verification
   - Production bucket lock protects the entire release bucket for the declared rollback window. The mutable pointer bucket is separate and monitored.
   - Upload one exact Worker version without normal traffic; verify that version against exact current and candidate manifests through a non-public verifier path, then create a content-addressed promotion receipt.
   - Deploy exactly one Worker version at 100% during activation; no gradual/split deployment. After pointer CAS, a force-refresh live verifier runs and automatically CAS-restores the prior pointer on failure.
-  - Verification checks constant-time liveness plus authenticated readiness, MCP initialize/list and calls for all eight tools, exact catalog/annotations, negotiated protocol, workflow version, binding rejection, provenance, auth, limits, and truncation.
+  - Verification checks constant-time liveness plus authenticated readiness, MCP initialize/list and calls for all eight tools, exact catalog/annotations, negotiated and subsequent-request protocol headers, authenticated stateless GET/DELETE behavior, workflow version, binding rejection, provenance, managed-client auth, limits, and truncation.
   - A repository-wide release gate owns `mcp-worker` checks plus Astro root build/dist/E2E, root JS, Python fallback, and Vision Worker regressions; deploy/publish scripts refuse any failed constituent.
   - MCP runbook covers provisioning, bearer rotation, Worker/data rollback, retention, incident response, and service disable/recovery.
 - Non-functional:
@@ -36,7 +36,7 @@ Add whole-system/security gates, immutable R2 publication, live MCP verification
   - Cloudflare R2 credentials and Worker bindings are not falsely described as prefix/create-only/read-only IAM. Publisher writes only the release bucket, activator writes only the pointer bucket, and Worker code exposes bindings only through narrow reader interfaces plus bundle/import guards.
   - Production secrets come from managed secret stores, never argv/query/repository files/logs. Exceptional short-lived local files are permission-restricted, scanned including ignored/untracked paths, and cleaned.
   - Build/test jobs are credential-free and consume an explicit clean Git tree/source digest. Release credentials appear only after immutable artifacts and tests complete.
-  - `releaseId` is the full digest of the canonical release manifest and is distinct from display-oriented `dataVersion`; release ID, source digest, artifact manifest hash, Worker version, workflow version, approval evidence, and canary digest are recorded only after verified deployment.
+  - `releaseId` is the full digest of the canonical release manifest and is distinct from display-oriented `dataVersion`; it is the data component of `workflowVersion`, confirmation compatibility, and cursors. Release ID, source digest, artifact manifest hash, Worker version, workflow version, approval evidence, and canary digest are recorded only after verified deployment.
   - No consumer-platform configuration or credential is required to build, test, release, verify, or roll back MCP.
 
 ## Architecture
@@ -88,7 +88,7 @@ Data rollback first ETag-CAS repoints `current.json` to the prior release and ve
 ## Function and Interface Checklist
 
 - [ ] `buildDataRelease` consumes exactly six known local artifacts and writes no source data.
-- [ ] `dataVersion` remains the existing compact data identity; collision-safe `releaseId` is the full digest of the canonical manifest and owns R2 paths, receipts, and rollback identity.
+- [ ] `dataVersion` remains a compact display label only; collision-safe `releaseId` is the full digest of the canonical manifest and owns R2 paths, receipts, rollback, workflow compatibility, confirmation, and cursor identity.
 - [ ] `publishDataRelease` requires a clean-tree, credential-free built artifact, explicit release/pointer buckets and environment, repository gate, and separate authorization/credentials for `stage` versus `activate`.
 - [ ] Preflight requires whole release-bucket lock coverage for the approved retention window; missing/weaker lock blocks staging and activation.
 - [ ] Lock administrator is separate from release-bucket publisher and pointer-bucket activator. Worker bindings are platform write-capable but reachable only through `ArtifactReader`; import/bundle tests reject mutation calls.
@@ -98,7 +98,7 @@ Data rollback first ETag-CAS repoints `current.json` to the prior release and ve
 - [ ] `PromotionReceipt` content-addressedly binds `releaseId`, canonical manifest hash, `dataVersion`, `workflowBuildId`, exact Worker version ID, Git tree/source digest, prior pointer ETag/value, environment, evidence digest, approval reference, and bounded validity.
 - [ ] Activation accepts only a matching unexpired receipt; live failure automatically restores the prior pointer with the new pointer ETag. A rollback CAS conflict stops automation and pages/manual-incidents instead of overwriting concurrent state.
 - [ ] `verifyRelease` takes URL and expected immutable identities; bearer and control-plane credentials come from secret environment variables only.
-- [ ] Verifier checks no-I/O health, authenticated readiness, initialize/list/call for all eight names, annotations, protocol/workflow versions, binding rejection, provenance, limits, injection non-echo, invalid auth, lock policy, and account control-plane evidence.
+- [ ] Verifier checks no-I/O health, authenticated readiness, initialize/list/call for all eight names, annotations, negotiated/subsequent protocol versions, authenticated stateless GET/DELETE behavior, workflow versions, compact-version collision rejection, binding rejection, provenance, limits, injection non-echo, invalid auth, lock policy, and account control-plane evidence.
 - [ ] Repository gate proves the workflow manifest equals transitive semantic closure, regenerates `workflowBuildId`, and fails on dirty/stale/missing/unexpected identity inputs.
 - [ ] Runtime bundle/import guards reject R2 mutation and publication modules.
 - [ ] Production `/mcp` has pre-Worker rate protection plus post-auth rate/in-flight limits.
@@ -125,6 +125,7 @@ Data rollback first ETag-CAS repoints `current.json` to the prior release and ve
 | High | Data-only pointer rollback | Prior snapshot returns its recorded semantic golden under current workflow build. |
 | High | Worker code rollback under current security configuration | Retained old code passes current bearer, bindings, Origin, rate, and readiness canary without resurrecting retired secrets. |
 | High | Prior client binding reaches new workflow build | `WORKFLOW_VERSION_CHANGED`; caller restarts. |
+| Critical | Distinct full manifests share a forced compact `dataVersion` | Distinct `releaseId`/`workflowVersion`; old binding and cursor are rejected. |
 | High | Trace/log scan | No bearer, local path, image/base64, or control-plane credential. |
 | High | Edge/post-auth rate or in-flight limit exceeded | Stable `429`; no body/R2/MCP work; recovery verified. |
 | Medium | Worker cold/warm p95 and R2 read count | Confirms Phase 4 tier; release blocks on material regression. |
@@ -140,7 +141,7 @@ Data rollback first ETag-CAS repoints `current.json` to the prior release and ve
 2. Write import-boundary rules for raw media, Vision Worker, crawling/RAG/memory, mutation tools, and Node-in-Worker graph.
 3. Test release builder/publisher against missing/weakened lock/control-plane evidence, cross-bucket credential denial, fake two-bucket R2 failure, concurrent writers, repeated identical publish, mismatched key, receipt tampering/expiry, pointer CAS conflict, and rollback CAS conflict.
 4. Test exact candidate-version verification, 100%-single-version enforcement, automatic force-refresh rollback, and old-code/current-security rollback canary.
-5. Test all-eight verifier parity, injection non-echo, redaction, bearer-from-env, overlap expiry, ignored/untracked secret scanning, and no-I/O health before live use.
+5. Test all-eight verifier parity, injection non-echo, redaction, managed-client bearer-from-env, non-OAuth client-header behavior, protocol-header/GET/DELETE matrix, overlap expiry, ignored/untracked secret scanning, and no-I/O health before live use.
 6. Test that clean-source/provenance gates have no release credential during build and no GoClaw/Dewee/skill/config dependency.
 
 ## Implementation Steps
@@ -149,7 +150,7 @@ Data rollback first ETag-CAS repoints `current.json` to the prior release and ve
 2. Add failing e2e/security/import-boundary tests and make the package gate green.
 3. Implement the clean-tree credential-free release builder, full `releaseId`, source/artifact provenance, and fake two-bucket R2 failure tests.
 4. Implement release-bucket lock/control-plane preflight, bucket-separated credentials, conditional stage, promotion receipt, authorized pointer activation, automatic conditional restore, and secret-safe output.
-5. Implement all-eight live verifier with pure `/healthz`, authenticated readiness, injection non-echo, and validate it against local/workerd first.
+5. Implement all-eight live verifier with pure `/healthz`, authenticated readiness, collision-safe workflow identity, protocol-header/GET/DELETE checks, injection non-echo, and validate it against local/workerd first.
 6. Write `docs/mcp-research-server.md`; update architecture/deployment/navigation surfaces without adding another GoClaw document.
 7. Run MCP, Astro root build/dist/E2E, JS, Python, Worker, dependency, bundle, and Wrangler dry-run gates.
 8. Configure/verify release-bucket lock, pointer monitoring, pre-Worker WAF/rate control, object event notifications/alert sink, scheduled drift monitor, and their repository evidence; stage immutable objects and verify hashes.
@@ -187,7 +188,7 @@ cd ../mcp-worker && npm run check && npm run deploy:dry-run
 - [ ] Separate release/pointer R2 buckets, conditional staging, hash verification, receipt-bound pointer switch, and automatic conditional rollback rehearsal pass.
 - [ ] Release-bucket lock covers rollback window; pointer monitor, scheduled lock drift, event notification, and alert paths are tested.
 - [ ] Exact candidate Worker version passes current/candidate verification, then owns 100% traffic alone during pointer activation.
-- [ ] Worker live verifier passes no-I/O liveness, authenticated readiness, exact all-eight catalog/calls, auth, version, provenance, injection non-echo, limits, and concurrency.
+- [ ] Worker live verifier passes no-I/O liveness, authenticated readiness, exact all-eight catalog/calls, managed-client auth, protocol-header/GET/DELETE behavior, collision-safe workflow version, provenance, injection non-echo, limits, and concurrency.
 - [ ] CPU/latency/memory/R2 evidence confirms the Phase 4 tier without weakening correctness.
 - [ ] Repository control-plane artifact and live verifier prove pre-Worker rate control plus R2 monitoring/alerts; otherwise production HTTP/release activation remains disabled.
 - [ ] Old-code rollback canary passes current bearer rotation, bindings, Origin/rate policy, and limits; no retired token is restored.

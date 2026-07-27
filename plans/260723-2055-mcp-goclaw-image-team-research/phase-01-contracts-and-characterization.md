@@ -1,7 +1,7 @@
 ---
 phase: 1
 title: "Contracts and characterization"
-status: todo
+status: completed
 priority: P1
 effort: 2d
 dependencies: []
@@ -39,7 +39,7 @@ Create the strict TypeScript package and typed seam around existing pure ES doma
   - Characterize current behavior with committed artifact samples, including known defects that Phase 2 will intentionally replace.
 - Non-functional:
   - Strict ESM TypeScript; exact-pinned build/test dependencies and committed lockfile.
-  - Consume Astro’s root `.node-version` as the sole exact Node 22 pin; CI and `test:node-min` must execute the adapter import smoke under that runtime and assert `process.version`.
+  - Consume Astro’s root `.node-version` as the sole exact Node 22 pin; `engines.node` may express only a compatible range. CI and `test:node-min` must execute the adapter import smoke under the root runtime, assert `process.version`, and fail if any Node declaration excludes or duplicates a conflicting exact pin.
   - Adapter is the only untyped JS boundary. No DOM, Node filesystem, Cloudflare, MCP, image, or Vision Worker import.
   - Phase 1 contracts own internal domain types only. Phase 3 runtime schemas own public handler/tool validation and infer their public TypeScript types; later transports must not create competing schema definitions.
   - No behavior change to SPA, Python CLI, or existing Vision Worker.
@@ -65,22 +65,23 @@ The canonical contract records both `canonicalId` and `familyId`. A `HeroSlot` o
 | Create | `/Users/plateau/Project/CamNangTQCCL/mcp-worker/src/domain/legacy-domain-adapter.ts` | 120–170 | Typed wrappers over portable ES exports; clone/serialize outputs. |
 | Create | `/Users/plateau/Project/CamNangTQCCL/mcp-worker/test/domain/contracts.test.ts` | 130–180 | Identity, alternatives, JSON/privacy, invalid-shape contracts. |
 | Create | `/Users/plateau/Project/CamNangTQCCL/mcp-worker/test/domain/legacy-domain-adapter.test.ts` | 220–300 | Current behavior and real-artifact characterization. |
-| Create | `/Users/plateau/Project/CamNangTQCCL/.github/workflows/mcp-worker.yml` | 45–70 | Uses root `.node-version`; proves minimum-runtime import/test/typecheck/build independently of the developer shell. |
+| Create | `/Users/plateau/Project/CamNangTQCCL/.github/workflows/mcp-worker.yml` | 45–70 | Uses root `.node-version`; proves minimum-runtime import/test/typecheck/build independently of the developer shell; path filters include every consumed `js/**`, `data/**`, root artifact-manifest/build input, Node pin, workflow, and package input. |
 | Reuse | `/Users/plateau/Project/CamNangTQCCL/.node-version` | Astro-owned | Single exact Node 22 patch authority; MCP must not create a competing pin. |
 | Modify/Delete | None | 0 | `worker/src/schema.ts`, browser modules, tests, and Python fallback are read-only inputs. |
 
 ## Function and Interface Checklist
 
-- [ ] `CanonicalId`, `FamilyId`, `HeroIdentity`, `HeroSlot`, `CanonicalEntity`.
-- [ ] `StructuredObservation`, `ObservationEvidence`, `UnresolvedObservation`, `ConfirmationDecision`.
-- [ ] `CanonicalProjectionVersion`, `WorkflowBuildId`, `WorkflowVersion`, `NormalizationDigest`, `ConfirmationBinding`.
-- [ ] `BrowserScanConfirmation` remains a backward-compatible browser/localStorage concept and has no conversion to `ConfirmationBinding`.
-- [ ] `OwnedHero`, `OwnedTactic`, `LockedTeam`, `RosterSnapshot`; no image/path/secret fields.
-- [ ] `TierRanking`, `ProvenanceRef`, `TeamMatch`, `TacticSelection`, `ConflictDiagnostic`.
-- [ ] `RecommendationRequest`, `RecommendationResult`, `ResultPage`, `ResultLimits`, `DomainError`.
-- [ ] `LegacyDomainAdapter` methods for normalization, dictionary search, scan mapping, team matching, candidate normalization, and recommendation.
-- [ ] Source-graph guard rejects imports from `js/analyze.js`, `js/roster-recommend-ui.js`, `worker/`, MCP, filesystem, DOM, and Cloudflare packages.
-- [ ] Source-graph guard also emits the actual transitive semantic import closure from declared entrypoints so Phase 2 can prove workflow identity coverage instead of trusting a manually curated list.
+- [x] `CanonicalId`, `FamilyId`, `HeroIdentity`, `HeroSlot`, `CanonicalEntity`.
+- [x] `StructuredObservation`, `ObservationEvidence`, `UnresolvedObservation`, `ConfirmationDecision`.
+- [x] `CanonicalProjectionVersion`, `WorkflowBuildId`, `WorkflowVersion`, `NormalizationDigest`, `ConfirmationBinding`.
+- [x] `ConfirmationBinding` is exactly `{ workflowVersion, normalizationDigest, canonicalProjectionVersion }`; it never duplicates `workflowBuildId`.
+- [x] `BrowserScanConfirmation` remains a backward-compatible browser/localStorage concept and has no conversion to `ConfirmationBinding`.
+- [x] `OwnedHero`, `OwnedTactic`, `LockedTeam`, `RosterSnapshot`; no image/path/secret fields.
+- [x] `TierRanking`, `ProvenanceRef`, `TeamMatch`, `TacticSelection`, `ConflictDiagnostic`.
+- [x] `RecommendationRequest`, `RecommendationResult`, `ResultPage`, `ResultLimits`, `DomainError`.
+- [x] `LegacyDomainAdapter` methods for normalization, dictionary search, scan mapping, team matching, candidate normalization, and recommendation.
+- [x] Source-graph guard rejects imports from `js/analyze.js`, `js/roster-recommend-ui.js`, `worker/`, MCP, filesystem, DOM, and Cloudflare packages.
+- [x] Source-graph guard also emits the actual transitive semantic import closure from declared entrypoints so Phase 2 can prove workflow identity coverage instead of trusting a manually curated list.
 
 ## Dependency Map
 
@@ -128,15 +129,17 @@ Phase 1 -> Phase 2; no Phase 3/4 imports allowed yet
 
 ## Review Checklist
 
-- [ ] Every proposed symbol has one owning file and one test owner.
-- [ ] No Phase 2 behavior is implemented early.
-- [ ] Lockfile contains no floating dependency range.
-- [ ] A recorded pre-implementation status plus `git diff -- mcp-worker` shows only intended Phase 1 changes; unrelated dirty user files remain untouched.
-- [ ] Baseline counts are recorded as observations, not assertions in production code.
+- [x] Every proposed symbol has one owning file and one test owner.
+- [x] No Phase 2 behavior is implemented early.
+- [x] Lockfile contains no floating dependency range.
+- [x] Root `.node-version` is the only exact Node pin; `engines.node` remains compatible and an automated anti-drift assertion covers both declarations.
+- [x] MCP CI path filters cover committed data fixtures and every root source/config input consumed by Phase 1 tests.
+- [x] Recorded pre-implementation and review evidence includes `git status --short`, an explicit untracked-file inventory, and reviewable diffs after intentional staging or an equivalent read-only no-index inspection; plain `git diff -- mcp-worker` is never treated as evidence for untracked files.
+- [x] Baseline counts are recorded as observations, not assertions in production code.
 
 ## Implementation Steps
 
-1. Begin only after the Astro plan completes; reuse its exact root `.node-version`, artifact manifest, and browser/build authority.
+1. Confirm the completed Astro prerequisite and reuse its exact root `.node-version`, artifact manifest, and browser/build authority.
 2. Write all failing Tests Before and ensure failures are contract absence, not fixture/path mistakes.
 3. Define the canonical types and runtime assertion helpers used at the JS boundary.
 4. Add adapter wrappers one module at a time; run the focused adapter test after each.
@@ -146,13 +149,14 @@ Phase 1 -> Phase 2; no Phase 3/4 imports allowed yet
 
 ## Tests After
 
-- [ ] Invalid nested values and unknown-field tolerance.
-- [ ] Input immutability and output JSON round-trip.
-- [ ] No raw image/base64/path/Turnstile/token fields in any domain result.
-- [ ] Adapter exports are fully typed; no unguarded legacy import is public.
-- [ ] Test execution from a non-repository CWD.
-- [ ] Minimum-runtime gate fails on a different Node patch and passes only when the adapter smoke actually runs under the root pin.
-- [ ] Existing browser v1 serialized state round-trips unchanged; its boolean confirmation cannot enter MCP contracts.
+- [x] Invalid nested values and unknown-field tolerance.
+- [x] Input immutability and output JSON round-trip.
+- [x] No raw image/base64/path/Turnstile/token fields in any domain result.
+- [x] Adapter exports are fully typed; no unguarded legacy import is public.
+- [x] Test execution from a non-repository CWD.
+- [x] Minimum-runtime gate fails on a different Node patch and passes only when the adapter smoke actually runs under the root pin.
+- [x] Package engine metadata cannot drift from or compete with the root exact Node pin.
+- [x] Existing browser v1 serialized state round-trips unchanged; its boolean confirmation cannot enter MCP contracts.
 
 ## Regression Gate
 
@@ -171,11 +175,11 @@ cd worker && npm test && npm run typecheck
 
 ## Success Criteria
 
-- [ ] Strict package installs reproducibly and passes test/typecheck/build under the Astro-owned exact Node pin from a clean checkout.
-- [ ] Canonical contract represents distinct SP/CO identities, families, and combined-slot alternatives.
-- [ ] Typed adapter covers only verified portable ES exports and preserves current output.
-- [ ] Privacy/source-graph tests prove no image, path, secret, DOM, MCP, Cloudflare, or Vision Worker coupling.
-- [ ] Existing SPA, Python, and Vision Worker gates pass unchanged.
+- [x] Strict package installs reproducibly and passes test/typecheck/build under the Astro-owned exact Node pin from a clean checkout.
+- [x] Canonical contract represents distinct SP/CO identities, families, and combined-slot alternatives.
+- [x] Typed adapter covers only verified portable ES exports and preserves current output.
+- [x] Privacy/source-graph tests prove no image, path, secret, DOM, MCP, Cloudflare, or Vision Worker coupling.
+- [x] Existing SPA, Python, and Vision Worker gates pass unchanged.
 
 ## Security and Privacy
 

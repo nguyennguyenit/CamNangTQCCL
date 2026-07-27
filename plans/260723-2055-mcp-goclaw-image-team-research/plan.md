@@ -1,13 +1,13 @@
 ---
 title: "TQCCL research MCP server"
 description: "Add a read-only TypeScript research service with local CLI, stdio MCP, authenticated Cloudflare Streamable HTTP, and one future GoClaw skill handoff guide."
-status: pending
+status: in_progress
 priority: P1
 effort: 22d
 issue: null
 branch: main
 tags: [feature, backend, api, infra, tdd]
-blockedBy: [260723-2127-migrate-static-spa-to-astro]
+blockedBy: []
 blocks: []
 created: 2026-07-23
 ---
@@ -39,8 +39,9 @@ local: filesystem -> CLI/stdio       remote: R2 manifest -> fresh server/request
 ```
 
 - One handler set serves CLI and both MCP transports.
-- `workflowVersion` binds `dataVersion` to a reproducible `workflowBuildId` derived from the versioned canonical-state projection, runtime schemas, and semantic engine source hashes.
+- `releaseId` is the full collision-safe digest of the canonical data manifest; compact `dataVersion` is display-only. `workflowVersion` binds `releaseId` to a reproducible `workflowBuildId` derived from the versioned canonical-state projection, runtime schemas, and semantic engine source hashes.
 - MCP verifies `confirmationBinding` against the exact canonical projection and workflow. The external agent—not MCP—is the trusted owner of evidence that the user actually confirmed it.
+- Remote HTTP uses a managed-client pre-shared bearer header, not MCP OAuth authorization. The service makes no OAuth-conformance claim; generic clients must support explicit custom headers or use a separately owned OAuth gateway.
 - `createMcpHandler` creates a stateless request path; only validated snapshot/index cache may be isolate-scoped.
 - R2 publication builds a clean-source, content-addressed release, conditionally writes immutable objects to a locked release bucket, verifies one exact candidate Worker version against current and candidate manifests, records an immutable promotion receipt, then ETag-CAS switches `current.json` in a separate pointer bucket. A failed live verification conditionally restores the prior pointer; local source synthesizes the same snapshot contract.
 - The service exposes already-prefixed `tqccl_*` names. Consumer-specific prefixing, credentials, grants, registration, and orchestration remain outside this repository.
@@ -49,7 +50,7 @@ local: filesystem -> CLI/stdio       remote: R2 manifest -> fresh server/request
 
 | # | Phase | Status | Depends on | Effort |
 |---|---|---|---|---:|
-| 1 | [Contracts and characterization](./phase-01-contracts-and-characterization.md) | Pending | — | 2d |
+| 1 | [Contracts and characterization](./phase-01-contracts-and-characterization.md) | Completed | — | 2d |
 | 2 | [Domain recommendation and provenance](./phase-02-harden-domain-recommendation-and-provenance.md) | Pending | 1 | 4d |
 | 3 | [Research tools, data loaders, and CLI](./phase-03-build-research-tools-data-loaders-and-cli.md) | Pending | 2 | 4d |
 | 4 | [stdio and Streamable HTTP transports](./phase-04-add-stdio-and-streamable-http-transports.md) | Pending | 3 | 5d |
@@ -61,6 +62,7 @@ local: filesystem -> CLI/stdio       remote: R2 manifest -> fresh server/request
 - [ ] CLI, stdio, and HTTP call the same eight handlers and produce semantic parity from the same release.
 - [ ] Phase 3 runtime schemas are the single public schema authority; all eight tools pass table-driven success and error parity across CLI, stdio, and HTTP.
 - [ ] Multi-call flows bind `expectedWorkflowVersion` and `confirmationBinding`; data, canonical projection, schema, semantic engine, or payload changes restart normalize/review/confirm.
+- [ ] `workflowVersion`, confirmation verification, and cursors use the full collision-safe `releaseId`; compact `dataVersion` is never an authorization or compatibility identity.
 - [ ] Recommendation fails closed on material ambiguity, resource conflicts, invalid/mixed data, or unavailable MCP; no invented team/build.
 - [ ] Browser and Vision Worker regression suites remain green; no image bytes/path or Turnstile bypass enters `mcp-worker/`.
 - [ ] Remote `/mcp` is TLS-only, bearer-protected on every method, request-scoped, bounded, redacted, and read-only.
@@ -70,7 +72,7 @@ local: filesystem -> CLI/stdio       remote: R2 manifest -> fresh server/request
 
 ## Cross-Plan Dependencies
 
-- Blocked by completion of `260723-2127-migrate-static-spa-to-astro`. Do not start MCP Phase 1 early; this keeps the root Node pin, artifact manifest, preview/build/dist/E2E ownership, and documentation handoff executable through one coarse plan dependency.
+- Satisfied prerequisite: `260723-2127-migrate-static-spa-to-astro` is completed. MCP reuses its settled root Node pin, artifact manifest, preview/build/dist/E2E ownership, and documentation source of truth.
 - Reuse Astro’s root Node pin, Playwright configuration, `tests-e2e/`, build, dist, and E2E gates; do not create a second browser harness in `mcp-worker/`.
 - Astro documentation completes first; MCP Phase 6 then updates the same docs against the migrated source of truth.
 - `260723-1950-mcp-dual-transport` remains cancelled/superseded, not a dependency.
@@ -106,6 +108,9 @@ Retained corrections include the Node ESM boundary, single ownership of normaliz
 - [x] Phase 6 depends on MCP Phase 4, not the advisory GoClaw handoff; Phase 5 may run in parallel and remains required only for whole-plan completion.
 - [x] R2 privileges are described honestly: Cloudflare Worker bindings are write-capable, while two buckets, lock policy, credential separation, narrow reader interfaces, and import guards provide the planned boundary.
 - [x] Workflow identity covers the verified transitive semantic closure; Phase 3 runtime schemas are the sole public authority reused by all transports.
+- [x] Collision-safe `releaseId`, not compact display `dataVersion`, owns workflow compatibility, confirmation, and cursor identity.
+- [x] `ConfirmationBinding` uses exactly `{ workflowVersion, normalizationDigest, canonicalProjectionVersion }`; it does not duplicate `workflowBuildId`.
+- [x] Static bearer is explicitly managed-client, non-OAuth authentication; OAuth discovery and authorization-server implementation remain outside accepted scope.
 - [x] Raw/source text remains tagged untrusted structured data and never enters fixed agent-facing fallback templates.
 - [x] Promotion is exact-version, receipt-bound, single-version, source-provenanced, and conditionally auto-rolled back; old-code rollback retains current security configuration.
 - [x] `/healthz` is no-I/O liveness, stale serving has a non-extendable deadline, and authenticated verification owns readiness.
@@ -132,3 +137,14 @@ Retained corrections include the Node ESM boundary, single ownership of normaliz
 - Phase 6 now depends directly on Phase 4. The single future GoClaw handoff remains a parallel, non-executable delivery artifact and never gates MCP release.
 - Whole-plan reread, stale-contract search, `git diff --check`, and `ak plan validate --no-interactive` passed.
 - See [targeted red-team report](./reports/red-team-mcp-only-ownership-260723-2339.md).
+
+### Session 6 — 2026-07-27
+
+- Implementation-readiness audit produced eight findings: two high and six medium; all were accepted and applied to plan files.
+- Full canonical-manifest `releaseId` now owns workflow, confirmation, and cursor compatibility; compact `dataVersion` is display-only.
+- `ConfirmationBinding` is frozen as `{ workflowVersion, normalizationDigest, canonicalProjectionVersion }` with no duplicate `workflowBuildId`.
+- Existing scope decision is explicit: remote authentication is managed-client pre-shared bearer, not MCP OAuth authorization; intended clients must inject the header.
+- Added protocol-header and authenticated stateless GET/DELETE matrices, data/root-input CI triggers, untracked-file review, Node-pin anti-drift, and satisfied-Astro prerequisite wording.
+- Whole-plan reread covered `plan.md` and all six phases. Stale-contract search found no unresolved plan contradiction; `ak plan validate --no-interactive` and `git diff --check` passed.
+- In-progress `mcp-worker/test/domain/contracts.test.ts` still contains the superseded four-field binding fixture and must be corrected during implementation; no code/test file was changed by this plan-only revision.
+- See [implementation-readiness audit](../reports/audit-260727-1714-mcp-plan.md).

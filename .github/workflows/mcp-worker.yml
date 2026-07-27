@@ -1,0 +1,50 @@
+name: MCP worker
+
+on:
+  pull_request:
+    paths:
+      - ".node-version"
+      - ".github/workflows/mcp-worker.yml"
+      - "data/**"
+      - "js/**"
+      - "mcp-worker/**"
+      - "package.json"
+      - "package-lock.json"
+      - "scripts/**"
+      - "src/lib/public-artifact-manifest.mjs"
+  push:
+    branches: [main]
+    paths:
+      - ".node-version"
+      - ".github/workflows/mcp-worker.yml"
+      - "data/**"
+      - "js/**"
+      - "mcp-worker/**"
+      - "package.json"
+      - "package-lock.json"
+      - "scripts/**"
+      - "src/lib/public-artifact-manifest.mjs"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+          cache-dependency-path: mcp-worker/package-lock.json
+      - run: npm ci
+        working-directory: mcp-worker
+      - run: npm test -- --run test/domain
+        working-directory: mcp-worker
+      - run: npm run typecheck
+        working-directory: mcp-worker
+      - run: npm run build
+        working-directory: mcp-worker
+      - run: npm run test:node-min
+        working-directory: mcp-worker

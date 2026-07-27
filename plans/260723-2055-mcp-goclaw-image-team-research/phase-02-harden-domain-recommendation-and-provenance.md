@@ -111,8 +111,8 @@ Canonical state uses a versioned projection before hashing. Strings normalize to
 - [ ] Meta mode defaults to ranked T0/T0.5/T1 only; experimental opt-in labels untiered and never presents it as meta proof.
 - [ ] Per-slot selection returns holder ID, slot index, selected tactic, alternatives, reason, and downgrade.
 - [ ] `normalizeObservations`, `requiresConfirmation`, `applyConfirmedCorrections`, `recommendTeam`, `recommendCoexist`, `suggestReplacements`.
-- [ ] `createWorkflowBuildId(sourceManifest)`, `createWorkflowVersion(dataVersion, workflowBuildId)`, `projectCanonicalState`, `canonicalizeCanonicalState`, `createNormalizationDigest`, `verifyConfirmationBinding`.
-- [ ] `ConfirmationBinding` is exactly `{ workflowVersion, normalizationDigest, projectionVersion }`; normalization may issue the binding, but only the external caller records the later human confirmation action before echoing it to a recommendation call.
+- [ ] `createWorkflowBuildId(sourceManifest)`, `createWorkflowVersion(releaseId, workflowBuildId)`, `projectCanonicalState`, `canonicalizeCanonicalState`, `createNormalizationDigest`, `verifyConfirmationBinding`.
+- [ ] `ConfirmationBinding` is exactly `{ workflowVersion, normalizationDigest, canonicalProjectionVersion }`; it does not duplicate `workflowBuildId`. Normalization may issue the binding, but only the external caller records the later human confirmation action before echoing it to a recommendation call.
 - [ ] Digest domain separator and projection version are fixed; semantically irrelevant display/provenance fields are excluded by the projection.
 - [ ] CI regenerates `workflow-build.ts` and fails when schema/semantic source changes without a matching generated build identity.
 - [ ] The closure gate includes all transitively reachable semantic inputs—at minimum `filters.js`, `hanviet.js`, canonicalization/runtime validators, public runtime schemas, and behavior-affecting compile/build/lock inputs—and fails on missing or unexpected semantic files.
@@ -250,4 +250,4 @@ cd worker && npm test && npm run typecheck
 
 ## Next Steps
 
-Phase 3 consumes only the pure services. It must not recreate normalization, ranking, canonical projection/digest verification, source precedence, or replacement logic. The MCP plan begins only after the full Astro plan completes.
+Phase 3 consumes only the pure services. It must not recreate normalization, ranking, canonical projection/digest verification, source precedence, or replacement logic. The completed Astro plan supplies the settled Node, manifest, preview, build, dist, and E2E contracts.

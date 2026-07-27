@@ -24,11 +24,11 @@ Build the transport-neutral data contract, local and R2 sources, immutable relea
 
 - Functional:
   - Load six artifacts: teams, team-tier, coexist, heroes dictionary, tactics, books dictionary.
-  - Local source reads the repository filesystem from any CWD and synthesizes a content-addressed version.
+  - Local source reads the repository filesystem from any CWD and synthesizes the same full canonical-manifest `releaseId` plus compact display `dataVersion` used by remote snapshots.
   - R2 source reads `current.json` from a pointer bucket, then an immutable manifest and only manifest-declared keys from a separate locked release bucket; activate a snapshot after all schema/hash/cross-reference checks pass.
   - Expose eight handler names exactly: `tqccl_get_data_version`, `tqccl_normalize_entities`, `tqccl_search`, `tqccl_get_team`, `tqccl_match_team`, `tqccl_recommend_team`, `tqccl_recommend_coexist`, `tqccl_suggest_replacements`.
   - CLI subcommands map one-to-one to those handlers and emit one JSON document.
-  - Every request derived from prior normalization/detail/match output carries `expectedWorkflowVersion` and, for recommendations, `confirmationBinding`; mismatch returns `WORKFLOW_VERSION_CHANGED` or `CONFIRMATION_REQUIRED` before domain work.
+  - Every request derived from prior normalization/detail/match output carries `expectedWorkflowVersion` and, for recommendations, `confirmationBinding`; mismatch returns `WORKFLOW_VERSION_CHANGED` or `CONFIRMATION_REQUIRED` before domain work. Workflow identity uses full `releaseId`, never compact `dataVersion`.
 - Non-functional:
   - Deterministic, read-only, stateless handler behavior with bounded inputs/results, pagination/truncation, version, provenance, warnings, and typed errors.
   - Counts are observed diagnostics, not schema constants.
@@ -76,16 +76,16 @@ Local and remote share `DataManifest` and `DataSnapshot`. `coexist.json` is load
 
 - [ ] `ArtifactName` is a closed six-name union; `ArtifactDescriptor`, `ReleasePointer`, `DataManifest`, `DataSnapshot`.
 - [ ] Narrow `PointerReader.readCurrent`, `ReleaseReader.readKnownObject`, `DataSource.load`, `validateManifest`, `parseArtifact`, `validateCrossReferences`; no mutation method exists in application-facing interfaces.
-- [ ] Hashing verifies exact bytes before parse; manifest version/key/hash/count metadata is returned without fabrication.
+- [ ] Hashing verifies exact bytes before parse; `releaseId` is the full digest of the canonical manifest, while compact `dataVersion` is display-only; manifest version/key/hash/count metadata is returned without fabrication.
 - [ ] `FilesystemDataSource` resolves an explicitly configured data root; never uses request/query text.
 - [ ] `R2DataSource` accepts separate injected pointer/release readers and validates prefix/key traversal, object absence, size, hash, version, and mixed release.
 - [ ] `SnapshotCachePolicy` separates `refreshAfter` from `serveStaleUntil = lastSuccessfulActivationMonotonic + maxStaleAge`; failed refreshes never move that deadline, and expiry returns `DATA_UNAVAILABLE`.
 - [ ] Cache has single-flight refresh, pointer version/ETag capture, compare-and-swap activation, and a verifier-only force-refresh path.
 - [ ] `buildSnapshotIndex` precomputes canonical IDs and deterministic search/team/tier maps once per version.
 - [ ] Eight handler functions exactly match the frozen upstream catalog names; their request/result types are inferred from the runtime schemas in `research-contracts.ts`.
-- [ ] Every handler loads one snapshot and returns `dataVersion`, `workflowVersion`, provenance, warnings, `truncated`, and `nextCursor` where applicable.
+- [ ] Every handler loads one snapshot and returns `releaseId`, display `dataVersion`, `workflowVersion`, provenance, warnings, `truncated`, and `nextCursor` where applicable.
 - [ ] Dependent handlers validate `expectedWorkflowVersion`; recommendation handlers project/canonicalize submitted state and verify its `confirmationBinding` before domain work.
-- [ ] `workflowVersion` uses the generated content-derived `workflowBuildId`; no manually bumped engine/schema constant is authoritative.
+- [ ] `workflowVersion` binds full collision-safe `releaseId` to the generated content-derived `workflowBuildId`; no compact display identity or manually bumped engine/schema constant is authoritative.
 - [ ] `tqccl_match_team` retrieves matches only; `tqccl_recommend_team` performs one build; coexist tool performs portfolio allocation.
 - [ ] Replacement handler uses curated alternatives from team records only and labels unsupported mechanics.
 - [ ] `parseCliArgs`, `runCli`, `main`; handler-name subcommands plus compact aliases documented by `--help`.
@@ -121,6 +121,7 @@ handlers -> Phase 4 tool definitions
 | Medium | Repeated warm load and simulated eviction | Same result; cache changes read count only. |
 | Critical | Normalize under workflow W1, then data/contract/engine changes to W2 | Typed `WORKFLOW_VERSION_CHANGED`; no reinterpretation or candidate output. |
 | Critical | Canonical payload differs by one nested field from the confirmed binding | Typed `CONFIRMATION_REQUIRED`; no candidate output. |
+| Critical | Two fixtures are forced to share one compact `dataVersion` | Their full `releaseId` and `workflowVersion` remain distinct; cursor/binding reuse is rejected. |
 | High | Slow V1 refresh completes after fast V2; pointer rolls V1→V2→V1 | CAS prevents stale overwrite and cache follows pointer within declared max age. |
 | High | Candidate pointer stays corrupt beyond `serveStaleUntil` | Cached prior snapshot stops serving and returns `DATA_UNAVAILABLE`. |
 | High | Repeated refresh failures occur before stale expiry | The absolute deadline is unchanged; no retry extends stale serving. |
@@ -163,6 +164,7 @@ handlers -> Phase 4 tool definitions
 - [ ] Manifest rejects duplicate/missing/unknown required artifact descriptors.
 - [ ] Maximum input string/list/page/result-byte policies have boundary tests.
 - [ ] Cursor is opaque, workflow-bound, and rejected after data, contract, or engine change.
+- [ ] Cursor and confirmation compatibility depend on full `releaseId`; a compact `dataVersion` collision cannot preserve compatibility.
 - [ ] All multi-call dependent inputs are workflow-bound, not only cursors.
 - [ ] Errors never include local paths, R2 keys beyond safe artifact labels, or raw input blobs.
 - [ ] CLI/handler result parity holds for all eight operations.
@@ -187,6 +189,7 @@ cd worker && npm test && npm run typecheck
 ## Success Criteria
 
 - [ ] Six artifacts load through both sources under one validated snapshot contract.
+- [ ] Local and R2 sources derive the same full `releaseId`; compact `dataVersion` is display-only.
 - [ ] Incomplete/mixed/corrupt releases never activate.
 - [ ] Eight exact handlers are deterministic, bounded, read-only, versioned, and provenance-rich.
 - [ ] Dependent calls cannot cross workflow versions or reuse a confirmation binding against a changed payload.

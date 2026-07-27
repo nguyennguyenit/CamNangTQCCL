@@ -24,6 +24,7 @@ Publish exactly one non-executable Markdown guide that lets a future GoClaw owne
 - Functional:
   - Create only `docs/goclaw-mcp-skill-handoff.md` for future skill integration.
   - Document the exact eight already-prefixed `tqccl_*` tool names and their intended call order.
+  - State that remote HTTP currently requires an explicitly injected managed-client pre-shared bearer header and does not implement MCP OAuth discovery; a future consumer must prove custom-header support or own a separate OAuth gateway.
   - Explain structured-observation input, normalization, review, caller-owned human confirmation, `ConfirmationBinding`, and workflow restart behavior.
   - Require future consumers to treat raw/source structured fields as untrusted data, never concatenate them into system/developer prompts, and rely only on MCP fixed-template text for human-readable fallback.
   - Link to MCP-owned schemas, generated catalog/contract tests, endpoint/auth documentation, and typed error definitions instead of duplicating those contracts.
@@ -60,7 +61,7 @@ The guide may recommend that the future skill omit an additional prefix because 
 ## Required Guide Outline
 
 1. Purpose and ownership boundary.
-2. MCP endpoint/transports and authentication contract.
+2. MCP endpoint/transports and managed-client pre-shared authentication contract, including the explicit non-OAuth interoperability boundary.
 3. Exact eight tool names:
    - `tqccl_get_data_version`
    - `tqccl_normalize_entities`
@@ -98,6 +99,7 @@ The guide may recommend that the future skill omit an additional prefix because 
 - [ ] Exactly one GoClaw-related implementation document is created.
 - [ ] The guide lists exactly the eight MCP-owned names with no obsolete alias.
 - [ ] The guide never claims MCP processes images or proves the human action.
+- [ ] The guide never describes the pre-shared bearer as OAuth, and tells future consumers to verify explicit custom-header support.
 - [ ] The guide marks all skill/GoClaw work as future external ownership.
 - [ ] The guide forbids prompt concatenation of untrusted structured fields and does not copy a raw-text fallback example.
 - [ ] No skill source, package, fixture, portability test, GoClaw configuration, or staging artifact is created.
