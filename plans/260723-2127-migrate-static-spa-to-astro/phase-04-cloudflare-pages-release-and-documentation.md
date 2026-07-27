@@ -1,7 +1,7 @@
 ---
 phase: 4
 title: "Cloudflare Pages release and documentation"
-status: pending
+status: completed
 priority: P1
 effort: "1d"
 dependencies: [3]
@@ -50,14 +50,14 @@ release failure -> purge affected cache and promote prior known-good deployment
 
 ## Function and Interface Checklist
 
-- [ ] Local previews serve `/`, `/js/app.js`, `/css/styles.css`, and every manifest-approved `/data/*.json`.
-- [ ] Representative `/pipeline/`, `/worker/`, `/tests/`, and `/plans/` paths never return private/source bytes. Local Astro preview may return 404; a later Pages preview may preserve its SPA-shell fallback.
-- [ ] The separate release runbook states that production-origin POST must be allowed, mismatched-origin POST rejected, and OPTIONS returns configured CORS headers without authenticating callers.
-- [ ] Production storage origin is unchanged.
-- [ ] The separate release runbook requires recording the prior deployment ID/version before promotion.
-- [ ] `_headers` syntax and path coverage model `Cache-Control: public, max-age=0, must-revalidate` for mutable shell/JS/CSS/JSON. The release runbook requires observing real Pages response headers before promotion.
-- [ ] The shared artifact verifier accepts exact `dist/_headers`, rejects unapproved output, and remains the only dist-policy implementation.
-- [ ] The release runbook forbids adding deployment records until evidence exists.
+- [x] Local previews serve `/`, `/js/app.js`, `/css/styles.css`, and every manifest-approved `/data/*.json`.
+- [x] Representative `/pipeline/`, `/worker/`, `/tests/`, and `/plans/` paths never return private/source bytes. Local Astro preview may return 404; a later Pages preview may preserve its SPA-shell fallback.
+- [x] The separate release runbook states that production-origin POST must be allowed, mismatched-origin POST rejected, and OPTIONS returns configured CORS headers without authenticating callers.
+- [x] Production storage origin is unchanged.
+- [x] The separate release runbook requires recording the prior deployment ID/version before promotion.
+- [x] `_headers` syntax and path coverage model `Cache-Control: public, max-age=0, must-revalidate` for mutable shell/JS/CSS/JSON. The release runbook requires observing real Pages response headers before promotion.
+- [x] The shared artifact verifier accepts exact `dist/_headers`, rejects unapproved output, and remains the only dist-policy implementation.
+- [x] The release runbook forbids adding deployment records until evidence exists.
 
 ## Test Scenario Matrix
 
@@ -102,11 +102,43 @@ Update only owning documentation surfaces. Document the later release procedure 
 
 ## Success Criteria
 
-- [ ] Repo is locally deploy-ready with `npm run build` → `dist`, pending Pages response-header verification during a separately authorized release.
-- [ ] Docs and commands match actual source/build boundaries.
-- [ ] No unverified production claim is written.
-- [ ] Artifact and docs identify the same base commit, scoped-source digest, and `dist/` digest; no commit is created.
-- [ ] No Pages setting, preview, production deployment, or Vision request occurs under this plan.
+- [x] Repo is locally deploy-ready with `npm run build` → `dist`, pending Pages response-header verification during a separately authorized release.
+- [x] Docs and commands match actual source/build boundaries.
+- [x] No unverified production claim is written.
+- [x] Artifact and docs identify the same base commit, scoped-source digest, and `dist/` digest; no commit is created.
+- [x] No Pages setting, preview, production deployment, or Vision request occurs under this plan.
+
+## Verification Results — 2026-07-27
+
+- Added `public/_headers` with five exact mutable-asset rules for `/`,
+  `/index.html`, `/js/*`, `/css/*`, and `/data/*`. Contracts validate syntax,
+  complete manifest coverage, private-path non-matching, and fresh/cached
+  rollback behavior.
+- The shared verifier owns deployment-control policy, requires exact
+  `public/_headers` → `dist/_headers` bytes, and continues to reject missing,
+  unexpected, symlinked, private, and secret-like output. Result: `35` files,
+  including `33` raw assets.
+- Local Astro preview and routed `https://astro.local` probes cover `/` plus
+  every manifest asset (`200`) and representative pipeline/Worker/test/plan
+  paths (`404` locally, no private bytes). Third-party traffic remains
+  stubbed/blocked; no live Vision request occurred.
+- Full gate under pinned Node `22.16.0`: Astro diagnostics `0`; dist/header
+  contracts `9/9`; Playwright `12/12`; aggregate Node `102/102`; Python
+  `82/82`; Worker `53/53` plus typecheck. Root audit: `0` vulnerabilities.
+  Existing Worker audit remains `11` findings and is unchanged by this phase.
+- Evidence identity is consistent across artifact, plan, and deployment guide:
+  base commit `d40722789452bc66f5f2a6b91d6fddb67c84f3af`;
+  46-file scoped-source digest
+  `c55cd6a06477e92d665922c208fcfa98c42931e4577b1b1071976429c3a8c3ca`;
+  35-file `dist/` digest
+  `0d09cadc24fdb49c1b76a14c38f9936f47b079fe119cb2808c565d047f74bdd8`.
+- README, architecture, deployment, standards, codebase summary, and PDR were
+  updated and independently audited. The runbook separates future authorized
+  Pages inspection/promotion/rollback from local evidence and preserves the
+  production storage origin.
+- Independent tester, debugger, code reviewer, and docs manager found no
+  remaining Phase 4 blocker. No commit, Pages mutation/deployment, production
+  canary, or Vision call was performed.
 
 ## Regression Gate
 
@@ -118,7 +150,7 @@ npm run build
 npm run test:dist
 npm run verify
 npm run test:e2e
-node --test "tests-js/*.test.mjs"
+npm run test:node
 python3 -m unittest discover -s tests
 (cd worker && npm ci && npm test && npm run typecheck)
 ```

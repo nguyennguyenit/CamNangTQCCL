@@ -1,7 +1,7 @@
 ---
 phase: 3
 title: "Browser parity and legacy cutover"
-status: pending
+status: completed
 priority: P1
 effort: "1.5d"
 dependencies: [2]
@@ -45,16 +45,16 @@ parity green -> delete root index.html -> Astro becomes sole document authority
 
 ## Function and Interface Checklist
 
-- [ ] `main()` initializes once with all required data.
-- [ ] `sectionFromHash()` covers valid, empty, invalid, and history navigation.
-- [ ] `loadOptionalJSON()` failure stays non-fatal.
-- [ ] Theme/tracker/roster keys survive reload on unchanged origin.
-- [ ] Roster serialization still strips forbidden fields.
-- [ ] `loadTurnstile()` remains de-duplicated; third-party failure is isolated.
-- [ ] All third-party requests are denied unless explicitly stubbed; icon rendering uses deterministic stubs.
-- [ ] Artifact has one app module tag; boot instrumentation proves one init and one handler effect per interaction.
-- [ ] `onOpenTeam()` still changes tab/search and scrolls.
-- [ ] Required-data failure retains placement/visibility semantics while its recovery message no longer assumes root `index.html` or a Python server.
+- [x] `main()` initializes once with all required data.
+- [x] `sectionFromHash()` covers valid, empty, invalid, and history navigation.
+- [x] `loadOptionalJSON()` failure stays non-fatal.
+- [x] Theme/tracker/roster keys survive reload on unchanged origin.
+- [x] Roster serialization still strips forbidden fields.
+- [x] `loadTurnstile()` remains de-duplicated; third-party failure is isolated.
+- [x] All third-party requests are denied unless explicitly stubbed; icon rendering uses deterministic stubs.
+- [x] Artifact has one app module tag; boot instrumentation proves one init and one handler effect per interaction.
+- [x] `onOpenTeam()` still changes tab/search and scrolls.
+- [x] Required-data failure retains placement/visibility semantics while its recovery message no longer assumes root `index.html` or a Python server.
 
 ## Test Scenario Matrix
 
@@ -101,9 +101,37 @@ Fix Astro shell/endpoint integration only. If a test reveals a pre-existing prod
 
 ## Success Criteria
 
-- [ ] Same E2E spec passes both targets before deletion and Astro after deletion.
-- [ ] No root JS/data/CSS behavior or public URL changed.
-- [ ] One document authority remains.
+- [x] Same E2E spec passes both targets before deletion and Astro after deletion.
+- [x] No root JS/data/CSS behavior or public URL changed.
+- [x] One document authority remains.
+
+## Verification Results — 2026-07-25
+
+- Before cutover, the same expanded Playwright spec passed legacy and Astro:
+  `22/22`. The only intentional runtime-copy change was host-neutral required-data
+  recovery guidance, first observed red on legacy and then green on both targets.
+- After deleting root `index.html`, Playwright runs only the `astro` project and
+  passes `11/11`. The source contract passes `8/8` and explicitly requires the
+  legacy entry to remain absent.
+- Browser coverage preserves ten hashes, Back/Forward, storage schema-v1 reload,
+  required/optional/hanging JSON behavior, Turnstile isolation, mobile menu,
+  local search, and roster `onOpenTeam()` tab/search/scroll behavior.
+- The synthetic HTTPS origin is fulfilled from `dist/`; external images are
+  deterministically stubbed, Chromium upgrades legacy HTTP icon requests to
+  HTTPS, and normalized paths outside `dist/` are rejected with regression
+  cases for absolute and encoded parent paths.
+- Full root/Python/Worker gates passed twice: Astro diagnostics `0`; dist
+  contract `6/6`; verifier `34` files (`33` raw assets); Node `99/99`; Python
+  `82/82`; Worker `53/53` plus typecheck. The pinned Node `22.16.0` root gate
+  separately passed check, build, dist/verifier, Playwright `11/11`, and Node
+  `99/99`.
+- Consecutive Node 24 builds and the pinned Node 22 build produced the same
+  deterministic `dist/` digest:
+  `5c91f2798bbf2fa1e6172ad492a5eb1d140e1560515107ce14befd7fc80dd987`.
+  No Astro dev/preview process remained after the gates.
+- Independent tester, debugger, and code-review passes found no remaining Phase
+  3 blocker after the synthetic-origin containment and browser assertions were
+  strengthened.
 
 ## Regression Gate
 
@@ -113,7 +141,7 @@ npm run build
 npm run test:dist
 npm run verify
 npm run test:e2e
-node --test "tests-js/*.test.mjs"
+npm run test:node
 python3 -m unittest discover -s tests
 (cd worker && npm ci && npm test && npm run typecheck)
 ```

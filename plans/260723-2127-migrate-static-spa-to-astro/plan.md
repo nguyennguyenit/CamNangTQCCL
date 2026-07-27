@@ -1,7 +1,7 @@
 ---
 title: "Migrate static SPA to Astro"
 description: "Replace the root HTML publish with an adapter-free Astro static shell while preserving every browser, data, state, and Worker contract."
-status: in_progress
+status: completed
 priority: P1
 effort: "6d"
 issue: null
@@ -32,8 +32,8 @@ Migrate the single-page shell and Pages build to Astro static output. Keep `js/`
 |---|---|---|---|
 | 1 | [Freeze browser and asset contracts](./phase-01-start.md) | Completed | — |
 | 2 | [Build Astro static shell and passthrough assets](./phase-02-astro-static-shell-and-passthrough-assets.md) | Completed | 1 |
-| 3 | [Prove browser parity and cut over](./phase-03-browser-parity-and-legacy-cutover.md) | Pending | 2 |
-| 4 | [Prepare Cloudflare Pages release and documentation](./phase-04-cloudflare-pages-release-and-documentation.md) | Pending | 3 |
+| 3 | [Prove browser parity and cut over](./phase-03-browser-parity-and-legacy-cutover.md) | Completed | 2 |
+| 4 | [Prepare Cloudflare Pages release and documentation](./phase-04-cloudflare-pages-release-and-documentation.md) | Completed | 3 |
 
 ## Dependencies
 
@@ -44,15 +44,15 @@ Migrate the single-page shell and Pages build to Astro static output. Keep `js/`
 
 ## Success Criteria
 
-- [ ] One Chromium spec passes unchanged against legacy and built Astro targets before legacy removal.
-- [ ] `npm ci && npm run build` emits static `dist/`; root assets and emitted `/js`, `/css`, `/data` bytes match.
-- [ ] Manifest entries separate extensionless route params from exact source basenames and classify every currently published JSON as runtime or legacy-public/build-input.
-- [ ] Ten hash sections, required/optional JSON semantics, existing storage payloads, responsive menu, and local-only features remain compatible.
-- [ ] No `pipeline/`, `worker/`, tests, plans, ignored sources, credentials, or server output enters `dist/`.
-- [ ] Existing Python, Node, Worker Vitest, and Worker typecheck gates stay green; baseline is 82/83/53 plus typecheck.
-- [ ] The artifact is locally Pages-ready with `npm run build` → `dist`, subject to response-header verification in a separately authorized Pages preview; that release runbook preserves the prior deployment as the atomic rollback target.
-- [ ] E2E is hermetic by default, HTTPS mixed-content behavior is characterized locally, and `_headers` syntax/coverage explicitly models `public, max-age=0, must-revalidate` for mutable shell/assets.
-- [ ] Evidence records the base commit, deterministic scoped-source digest, and `dist/` digest without requiring a release commit.
+- [x] One Chromium spec passes unchanged against legacy and built Astro targets before legacy removal.
+- [x] `npm ci && npm run build` emits static `dist/`; root assets and emitted `/js`, `/css`, `/data` bytes match.
+- [x] Manifest entries separate extensionless route params from exact source basenames and classify every currently published JSON as runtime or legacy-public/build-input.
+- [x] Ten hash sections, required/optional JSON semantics, existing storage payloads, responsive menu, and local-only features remain compatible.
+- [x] No `pipeline/`, `worker/`, tests, plans, ignored sources, credentials, or server output enters `dist/`.
+- [x] Existing Python, Node, Worker Vitest, and Worker typecheck gates stay green; baseline is 82/83/53 plus typecheck.
+- [x] The artifact is locally Pages-ready with `npm run build` → `dist`, subject to response-header verification in a separately authorized Pages preview; that release runbook preserves the prior deployment as the atomic rollback target.
+- [x] E2E is hermetic by default, HTTPS mixed-content behavior is characterized locally, and `_headers` syntax/coverage explicitly models `public, max-age=0, must-revalidate` for mutable shell/assets.
+- [x] Evidence records the base commit, deterministic scoped-source digest, and `dist/` digest without requiring a release commit.
 
 ## Open Questions
 
