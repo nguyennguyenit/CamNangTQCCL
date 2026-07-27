@@ -2,20 +2,22 @@
 
 ## Tổng quan
 
-Repo gồm ba boundary độc lập: static SPA chạy trong trình duyệt, pipeline Python chạy offline để sinh JSON, và Cloudflare Worker TypeScript cho Vision. Không có bundler, framework frontend, backend chung hoặc database ứng dụng.
+Repo gồm ba boundary độc lập: Astro static build + SPA vanilla chạy trong trình duyệt, pipeline Python chạy offline để sinh JSON, và Cloudflare Worker TypeScript cho Vision. Không có renderer frontend, SSR, backend chung hoặc database ứng dụng.
 
 ## Cấu trúc
 
 ```text
 .
-├── index.html              # shell 10 section
-├── css/styles.css          # theme, responsive, component styles
-├── js/                     # vanilla ES modules
-├── data/                   # JSON runtime đã commit
+├── src/pages/index.astro   # document shell 10 section
+├── src/lib/                # manifest và safe raw-artifact reader
+├── src/pages/{js,css,data} # Astro static endpoints
+├── css/, js/, data/        # source runtime canonical
+├── public/_headers         # Pages cache policy source
+├── scripts/                # shared dist verifier
 ├── pipeline/               # parser/normalizer/builder Python stdlib
 ├── worker/                 # Vision proxy Cloudflare
 ├── tests/                  # Python unittest
-├── tests-js/               # Node test cho logic frontend
+├── tests-js/, tests-e2e/   # Node contracts + Playwright parity
 ├── docs/                   # tài liệu evergreen
 └── plans/                  # kế hoạch/báo cáo lịch sử
 ```
@@ -24,7 +26,10 @@ Repo gồm ba boundary độc lập: static SPA chạy trong trình duyệt, pip
 
 | File | Vai trò |
 |---|---|
-| `index.html` | Khai báo 10 tab/section và nạp `js/app.js`. |
+| `src/pages/index.astro` | Khai báo 10 tab/section và nạp raw `/js/app.js`; build thành `dist/index.html`. |
+| `src/lib/public-artifact-manifest.mjs` | Allowlist route/source/class cho mọi JS/CSS/JSON public. |
+| `src/lib/root-static-artifacts.ts` | Đọc raw artifact an toàn và trả bytes/MIME cho static endpoint. |
+| `scripts/verify-astro-dist.mjs` | Kiểm toàn bộ `dist/`, byte parity và deployment-control artifact. |
 | `js/app.js` | Load 6 JSON bắt buộc + tier tùy chọn; init nav, theme và các section. |
 | `js/team-filter-section.js` | Shared full-text search, chip động, stats, clear và mobile collapse cho 3 tab team. |
 | `js/team-pk.js`, `js/do-uy.js`, `js/meta-cu.js` | Chọn source, cấu hình filter và sort riêng từng tab. |
@@ -67,10 +72,11 @@ Repo gồm ba boundary độc lập: static SPA chạy trong trình duyệt, pip
 ## Kiểm thử
 
 - `tests/`: parser, normalize, build, từ điển, tier, crawl/link.
-- `tests-js/`: filter, map, hero UI, mobile menu, tracker, roster state và recommend engine.
+- `tests-js/`: Astro/dist/header contracts, filter, map, hero UI, mobile menu, tracker, roster state và recommend engine.
+- `tests-e2e/`: Chromium parity, storage, JSON failure, exposure local/routed HTTPS và mixed-content.
 - `worker/test/`: config, guard, model, rate-limit, scan modes, schema.
 
-Snapshot 2026-07-11: Python 82, root JS 83, Worker 53 test pass; Worker typecheck pass.
+Gate sau Astro cutover: Python 82, root Node 102, Playwright 12, Worker 53; Worker typecheck pass.
 
 ## Điểm cần chú ý
 

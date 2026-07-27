@@ -6,8 +6,8 @@ Deploy tách hai surface: static site trên Cloudflare Pages và Vision proxy tr
 
 ## Prerequisite
 
-- Python 3 để preview, pipeline và test.
-- Node.js/npm để test/deploy Worker.
+- Node `22.16.0` theo `.node-version`, npm và Chromium cho Astro build/E2E.
+- Python 3 cho pipeline và test dữ liệu.
 - Cloudflare account, Wrangler login, Pages project, Worker và Turnstile widget.
 - Alibaba DashScope/Qwen API key phù hợp region/model.
 - Khi rebuild: HTML export đúng tên trong `Meta Team PK/`; raw crawl cache hoặc quyền/network để recrawl.
@@ -15,23 +15,31 @@ Deploy tách hai surface: static site trên Cloudflare Pages và Vision proxy tr
 ## Preview và test local
 
 ```bash
-python3 -m http.server 8000
+npm ci
+npm run dev
 ```
 
-Mở `http://localhost:8000`, không dùng `file://`.
-
-Full verification:
+Mở URL Astro in ra terminal, không dùng `file://`. Kiểm tra artifact deploy:
 
 ```bash
-python3 -m unittest discover -s tests
-node --test "tests-js/*.test.mjs"
-cd worker
-npm install
-npm test
-npm run typecheck
+npm run build
+npm run preview
 ```
 
-Snapshot 2026-07-11: Python 80, JS 82, Worker 53 pass; Worker typecheck pass. Đây là snapshot, không phải count acceptance cố định.
+Full verification tại repository root:
+
+```bash
+npm run check
+npm run build
+npm run test:dist
+npm run verify
+npm run test:e2e
+npm run test:node
+python3 -m unittest discover -s tests
+(cd worker && npm ci && npm test && npm run typecheck)
+```
+
+Cài Chromium một lần bằng `npx playwright install chromium`. Test Node/E2E cũng kiểm tra local HTTP preview, routed HTTPS, private-path exclusion và mixed-content mà không gọi live third-party.
 
 ## Rebuild dữ liệu có kiểm soát
 
@@ -69,23 +77,46 @@ Quy trình an toàn:
 
 Production origin hiện tại: `https://tqccl.pages.dev`.
 
-Publish đúng:
+Build contract:
 
 ```text
-index.html
-css/
-js/
-data/
+Root directory: repository root
+Build command: npm run build
+Build output: dist
+Node: 22.16.0
 ```
 
-Không publish `Meta Team PK/`, crawl cache, `.dev.vars`, `pipeline/`, `worker/`, tests hoặc plans. Pages không build JSON và không deploy Worker.
+Astro dùng static output, không adapter và không Pages Functions. `dist/` phải chỉ chứa `index.html`, manifest-approved `js/`, `css/`, `data/` và `_headers`. Shared verifier đối chiếu raw bytes với source và từ chối `pipeline/`, `worker/`, tests, plans, symlink, secret-like hoặc file lạ.
+
+`public/_headers` quy định:
+
+```text
+Cache-Control: public, max-age=0, must-revalidate
+```
+
+cho `/`, `/index.html`, `/js/*`, `/css/*`, `/data/*`. Local test chỉ xác nhận syntax, coverage và exact copy vào `dist/_headers`; phải quan sát header response thật trên Pages preview trước promotion. Pages parse `_headers` như deployment control, không phục vụ file này như static asset.
 
 Trước deploy:
 
-- review diff static/data;
+- có ủy quyền release riêng; review diff source/artifact/docs;
+- ghi base commit, scoped-source digest và `dist/` digest;
 - xác nhận `js/config.js` trỏ đúng Worker URL và Turnstile public site key;
-- chạy HTTP preview và full gate;
+- chạy local HTTP/routed-HTTPS exposure probe và full gate;
 - xác nhận `worker/wrangler.toml` `ALLOWED_ORIGIN` khớp exact Pages origin.
+
+### Preview, promotion và canary
+
+Không thực hiện các bước sau trong build/local verification. Khi release được ủy quyền:
+
+1. Tạo release commit tập trung; không deploy từ worktree dirty.
+2. Ghi deployment ID/version production known-good hiện tại trước khi tạo preview.
+3. Kiểm tra Pages settings khớp root/build/output/Node ở trên.
+4. Trên preview, xác nhận `/`, JS/CSS và mọi JSON public trả đúng artifact; với path private, chỉ cần body không chứa source/private bytes vì Pages có thể dùng SPA fallback khi không có top-level `404.html`.
+5. Quan sát `Cache-Control` thật cho shell/JS/CSS/JSON và xác nhận `_headers` không được phục vụ như asset.
+6. Preview origin khác production nên Vision POST bị Worker từ chối theo exact `ALLOWED_ORIGIN`; không nới origin để làm preview canary.
+7. Sau phê duyệt promotion, kiểm tra production-origin `POST /analyze` được phép, origin lạ bị từ chối, và `OPTIONS` trả CORS headers đã cấu hình. Preflight chỉ là CORS transport, không xác thực caller.
+8. Giữ production origin `https://tqccl.pages.dev`, nên origin của localStorage production không đổi; preview có storage origin riêng.
+9. Kiểm tra client mới và client đã cache đều nhận cùng deployment sau revalidation. Chỉ ghi facts vào Deployment Record sau khi có bằng chứng thực.
 
 ## Cloudflare Worker
 
@@ -158,7 +189,7 @@ curl -i -X OPTIONS \
 
 Kỳ vọng `204` và `access-control-allow-origin: https://tqccl.pages.dev`.
 
-Smoke checklist:
+Smoke checklist sau promotion được ủy quyền:
 
 1. Mở production, chuyển đủ 10 hash section và kiểm tra JSON/network không lỗi.
 2. Kiểm tra ba tab team hiển thị 56/48/110 và filter mobile collapse.
@@ -173,7 +204,10 @@ Lưu ý: request không có `Origin` vẫn qua app guard; CORS không phải aut
 
 ### Static Pages
 
-Chọn deployment known-good trong Cloudflare Pages deployment history và rollback/promote. Sau rollback, kiểm tra `js/config.js` còn tương thích Worker và data schema.
+1. Promote deployment ID/version known-good đã ghi trước release; rollback toàn artifact, không mix HTML/JS/data giữa hai build.
+2. Purge cache bị ảnh hưởng nếu client còn nhận asset của deployment lỗi.
+3. Kiểm tra lại header/fallback body, `js/config.js`, data schema, client mới và client đã cache.
+4. Chỉ cập nhật Deployment Record bằng ID/URL/thời gian đã quan sát.
 
 ### Worker
 
@@ -187,9 +221,25 @@ Khôi phục trọn bộ `data/` từ commit/backup known-good; không mix artif
 
 Sau mỗi deploy, cập nhật facts có ngày/version trong [Deployment Record](deployment.md), không đóng băng chúng trong guide evergreen.
 
+## Bằng chứng local hiện tại
+
+Evidence migration được tạo trên macOS; không diễn đạt như Linux/Pages runtime proof:
+
+| Evidence | Giá trị |
+|---|---|
+| Base commit | `d40722789452bc66f5f2a6b91d6fddb67c84f3af` |
+| Scoped-source inventory | `.node-version`, `package.json`, `package-lock.json`, `astro.config.mjs`, `tsconfig.json`, cùng mọi file dưới `src/`, `js/`, `css/`, `data/`, `public/` (46 files) |
+| Scoped-source SHA-256 | `c55cd6a06477e92d665922c208fcfa98c42931e4577b1b1071976429c3a8c3ca` |
+| `dist/` SHA-256 | `0d09cadc24fdb49c1b76a14c38f9936f47b079fe119cb2808c565d047f74bdd8` |
+
+Digest dùng danh sách path đã sort, mỗi path và file bytes được phân cách bằng byte NUL. Recompute cho từng release candidate; các giá trị trên không phải deployment ID và không chứng minh Pages đã phục vụ artifact.
+
 ## Tham chiếu
 
 - [Deployment Record](deployment.md)
 - [Worker README](../worker/README.md)
 - [System Architecture](system-architecture.md)
 - [Code Standards](code-standards.md)
+- [Cloudflare Pages custom headers](https://developers.cloudflare.com/pages/configuration/headers/)
+- [Cloudflare Pages serving và SPA fallback](https://developers.cloudflare.com/pages/configuration/serving-pages/)
+- [Cloudflare Pages rollbacks](https://developers.cloudflare.com/pages/configuration/rollbacks/)

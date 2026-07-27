@@ -10,7 +10,7 @@
 - Lọc/search trên dữ liệu curate đã commit, dùng tốt trên mobile.
 - Theo dõi chiêu mộ và kho scan theo hướng local-first.
 - Dùng Vision để đọc ảnh, nhưng giữ quyết định gợi ý team ở engine local minh bạch hơn.
-- Duy trì kiến trúc nhỏ: static SPA + pipeline offline + Worker tùy chọn.
+- Duy trì kiến trúc nhỏ: Astro static shell + SPA vanilla + pipeline offline + Worker tùy chọn.
 
 Người dùng chính: người chơi tra meta; người quản lý nhiều account; maintainer cập nhật export HTML, bảng map và tier.
 
@@ -18,8 +18,9 @@ Người dùng chính: người chơi tra meta; người quản lý nhiều acco
 
 | Khối | Phạm vi |
 |---|---|
-| Static SPA | `index.html`, `css/styles.css`, `js/*.js`, 10 section hash-addressed |
+| Static SPA | `src/pages/index.astro` build ra `dist/index.html`; root `css/*.css`, `js/*.js`, 10 section hash-addressed |
 | Runtime data | `data/*.json`, commit và publish cùng site |
+| Public artifact | Astro static endpoints theo manifest; `public/_headers` là cache deployment-control |
 | Build-time | `pipeline/*.py`, Python stdlib, nguồn HTML/cache local |
 | Vision | `worker/`, Cloudflare Worker + KV + Turnstile + DashScope Qwen |
 | Local state | theme, tracker chiêu mộ, roster scan đã chuẩn hóa |
@@ -48,7 +49,7 @@ Ngoài phạm vi: backend chung, database server, cloud sync tracker, AI tự qu
 
 | ID | Yêu cầu |
 |---|---|
-| NFR-01 | Frontend dùng vanilla ES modules, không yêu cầu build bundle. |
+| NFR-01 | Astro tạo static shell/artifact; behavior frontend dùng vanilla ES modules, không có SSR/UI renderer. |
 | NFR-02 | Dữ liệu tra cứu cốt lõi hoạt động từ static host sau lần tải JSON. |
 | NFR-03 | Secret chỉ tồn tại trong Worker env; frontend chỉ chứa config công khai. |
 | NFR-04 | Worker kiểm tra origin khi có, Turnstile/replay, magic byte/MIME/kích thước và quota KV best-effort trước khi gọi model. |
@@ -70,13 +71,14 @@ Snapshot commit 2026-07-11:
 
 | ID | Tiêu chí |
 |---|---|
-| AC-01 | Site chạy qua HTTP, tải dữ liệu và mở được cả 10 hash section. |
+| AC-01 | `npm run build` tạo `dist/`; preview HTTP tải dữ liệu và mở được cả 10 hash section. |
 | AC-02 | Ba tab team render đúng source và filter không rò dữ liệu giữa tab. |
 | AC-03 | Tracker/scan state round-trip hợp lệ; không serialize ảnh, base64, blob hoặc token. |
 | AC-04 | Vision request hợp lệ đi qua Worker; lỗi origin, token, ảnh, quota và model được trả an toàn. |
 | AC-05 | Gợi ý team do local engine tạo sau bước review, không lấy quyết định portfolio từ model. |
 | AC-06 | Các lệnh test Python, JS, Worker và Worker typecheck pass trước deploy. |
 | AC-07 | Rebuild data chỉ được chấp nhận sau khi review diff, xác nhận nguồn và xử lý drift count hiện có. |
+| AC-08 | Shared verifier chấp nhận đúng shell/raw assets/`_headers`, từ chối private output và giữ byte parity. |
 
 ## Rủi ro và giới hạn
 

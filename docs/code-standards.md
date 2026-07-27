@@ -6,6 +6,8 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
 
 ## Frontend JavaScript
 
+- `src/pages/index.astro` sở hữu document shell; không tạo lại root `index.html`.
+- Astro chỉ làm static build. Không thêm SSR, adapter, renderer UI hoặc Pages Functions khi chưa có yêu cầu riêng.
 - Dùng vanilla ES modules; không thêm framework/bundler nếu không có yêu cầu sản phẩm rõ.
 - `app.js` chỉ điều phối load/init. Behavior section đặt trong module riêng.
 - Dùng lại `createTeamFilterSection()` cho tab team; không fork filter UI theo source.
@@ -13,6 +15,15 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
 - Render dữ liệu bằng DOM API/`textContent`; không đưa dữ liệu nguồn thô vào `innerHTML`.
 - Public config đặt trong `js/config.js`; không coi Worker URL hoặc Turnstile site key là secret.
 - Nếu code file vượt khoảng 200 dòng và đang tăng complexity, cân nhắc tách theo boundary thật; không tách cơ học.
+
+## Astro và public artifact
+
+- `js/`, `css/`, `data/` ở repository root là source canonical; không tạo bản copy editable trong `public/`.
+- Mọi raw asset public phải có entry explicit trong `src/lib/public-artifact-manifest.mjs`; route param không extension và source basename exact.
+- Static endpoint phải trả raw bytes/MIME đúng; từ chối file lạ, symlink, non-regular file và realpath thoát root.
+- `public/` chỉ chứa deployment-control/static file do Astro copy; hiện `public/_headers` phải byte-equal với `dist/_headers`.
+- `scripts/verify-astro-dist.mjs` là output policy duy nhất. Test và CLI phải gọi cùng verifier, không nhân đôi allowlist.
+- Shell/JS/CSS/JSON mutable dùng `Cache-Control: public, max-age=0, must-revalidate`; Pages response thật vẫn phải được kiểm tra trước promotion.
 
 ## UI và accessibility
 
@@ -68,11 +79,14 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
 Chạy test hẹp trước, rồi full gate khi đổi contract chung:
 
 ```bash
+npm run check
+npm run build
+npm run test:dist
+npm run verify
+npm run test:e2e
+npm run test:node
 python3 -m unittest discover -s tests
-node --test "tests-js/*.test.mjs"
-cd worker
-npm test
-npm run typecheck
+(cd worker && npm ci && npm test && npm run typecheck)
 ```
 
 Không che test/lint/type error và không làm yếu assertion để hợp thức hóa regression.

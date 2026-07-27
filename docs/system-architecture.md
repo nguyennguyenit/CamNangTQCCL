@@ -2,17 +2,17 @@
 
 ## Tổng quan
 
-Hệ thống có ba boundary triển khai: pipeline build-time chạy local, static SPA chạy trong browser, và Vision Worker tùy chọn. Browser đọc JSON đã commit; không gọi pipeline và không có backend/database chung.
+Hệ thống có ba boundary triển khai: pipeline dữ liệu chạy local, Astro static build tạo artifact Pages, và Vision Worker tùy chọn. Browser đọc JSON đã commit; không gọi pipeline và không có backend/database chung.
 
 ```text
-BUILD-TIME (local)                 STATIC RUNTIME (Pages)
-HTML export + curate maps         index.html + CSS + ES modules
-raw crawl cache (tùy có)          │
-          │                       ├── fetch data/*.json
-          ▼                       ├── filter/render/search local
-pipeline Python stdlib ─────────► data/*.json
-          │                       ├── localStorage: theme/tracker/scan
-          └── review diff         └── local team recommendation
+DATA BUILD (local)                 SITE BUILD (local)               STATIC RUNTIME (Pages)
+HTML export + curate maps         src/pages/index.astro             dist/index.html
+raw crawl cache (tùy có)          root js|css|data                   dist/js|css|data
+          │                              │                                │
+          ▼                              ▼                                ├── fetch data/*.json
+pipeline Python stdlib ───────► committed JSON ── Astro static ───────────┤
+          │                              │                                ├── localStorage
+          └── review diff                └── public/_headers ─► dist       └── local recommendation
 
 OPTIONAL EXTERNAL VISION PATH
 Browser image + Turnstile ──POST /analyze──► Cloudflare Worker
@@ -38,7 +38,7 @@ Browser canonical mapping + local matching/recommendation
 
 ## Static runtime
 
-`index.html` khai báo 10 section. `app.js`:
+`src/pages/index.astro` là document authority duy nhất và khai báo 10 section. Astro build phát shell thành `dist/index.html`; `app.js` vẫn là ES module browser canonical tại root và:
 
 - khởi tạo theme và hash navigation;
 - fetch `teams`, `coexist`, `khaihoang`, `tactics`, `heroes-dict`, `books-dict` song song;
@@ -90,18 +90,22 @@ Worker không chủ động lưu ảnh; log tối thiểu. KV eventual consisten
 
 | Surface | Artifact | Config |
 |---|---|---|
-| Cloudflare Pages | `index.html`, `css/`, `js/`, `data/` | public Worker URL + Turnstile site key trong `js/config.js` |
+| Cloudflare Pages | `dist/` từ `npm run build` | `public/_headers`, public Worker URL + Turnstile site key |
 | Cloudflare Worker | `worker/src/*.ts` | vars trong `wrangler.toml`, KV binding, secrets trong Worker env |
 | Maintainer local | `pipeline/*.py`, HTML/cache/maps | không publish nguồn/cache riêng tư |
 
 Config commit hiện trỏ Pages `https://tqccl.pages.dev` tới Worker `https://tqccl-vision-proxy.nguyennlt-ncc.workers.dev/analyze`. Đây là public config hoạt động, không phải placeholder.
 
+Astro dùng `output: "static"` và không có Cloudflare adapter/Pages Functions. Manifest explicit trong `src/lib/public-artifact-manifest.mjs` cho phép đúng các route JS/CSS/JSON; helper từ chối file lạ, symlink và path thoát root. `scripts/verify-astro-dist.mjs` là policy output duy nhất: kiểm allowlist, byte parity của raw asset và `public/_headers` → `dist/_headers`, đồng thời từ chối source/private/secret-like output.
+
+`_headers` yêu cầu browser revalidate shell, JS, CSS và JSON (`public, max-age=0, must-revalidate`). Đây là local deployment contract; response header thật và SPA fallback body chỉ được xác nhận trên Pages preview có ủy quyền.
+
 ## Failure và fallback
 
 - Thiếu `team-tier.json`: site vẫn render team không badge tier.
-- Lỗi JSON bắt buộc: Team PK hiển thị lỗi tải; các init sau không hoàn tất.
+- Lỗi JSON bắt buộc: Team PK hiển thị hướng dẫn tải lại/liên hệ quản trị; các init sau không hoàn tất.
 - Vision lỗi: tra cứu local và tracker vẫn độc lập; UI trả status theo lỗi Worker.
-- Worker có `FEATURE_ENABLED` kill-switch; rollback Worker/Pages độc lập.
+- Worker có `FEATURE_ENABLED` kill-switch; rollback Worker/Pages độc lập. Pages rollback phải promote toàn artifact known-good, purge cache bị ảnh hưởng và kiểm tra client mới/cũ.
 - Mất localStorage: tracker/scan mất nếu người dùng chưa export backup.
 
 ## Bước tiếp theo
