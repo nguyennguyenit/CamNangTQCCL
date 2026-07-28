@@ -2,7 +2,7 @@
 
 ## Tổng quan
 
-Repo có ba boundary triển khai hiện hữu: Astro static build + SPA vanilla chạy trong trình duyệt, pipeline Python chạy offline để sinh JSON, và Cloudflare Worker TypeScript cho Vision. `mcp-worker/` là package nghiên cứu MCP đang phát triển; hiện mới có contract và pure domain services, chưa có data loader, CLI hoặc transport runtime. Không có renderer frontend, SSR, backend chung hoặc database ứng dụng.
+Repo có ba boundary triển khai hiện hữu: Astro static build + SPA vanilla chạy trong trình duyệt, pipeline Python chạy offline để sinh JSON, và Cloudflare Worker TypeScript cho Vision. `mcp-worker/` là package nghiên cứu riêng với domain services, snapshot loader read-only, tám shared handler và JSON CLI local; stdio/HTTP transport chưa được triển khai. Không có renderer frontend, SSR, backend chung hoặc database ứng dụng.
 
 ## Cấu trúc
 
@@ -16,7 +16,7 @@ Repo có ba boundary triển khai hiện hữu: Astro static build + SPA vanilla
 ├── scripts/                # shared dist verifier
 ├── pipeline/               # parser/normalizer/builder Python stdlib
 ├── worker/                 # Vision proxy Cloudflare
-├── mcp-worker/             # contract + pure domain services cho research MCP
+├── mcp-worker/             # data/domain/research handlers + JSON CLI; chưa có MCP transport
 ├── tests/                  # Python unittest
 ├── tests-js/, tests-e2e/   # Node contracts + Playwright parity
 ├── docs/                   # tài liệu evergreen
@@ -41,8 +41,12 @@ Repo có ba boundary triển khai hiện hữu: Astro static build + SPA vanilla
 | `js/hero-identity.js` | Canonical identity tướng: SP/CO/base tách biệt, `familyId` riêng và combined slot là alternatives. |
 | `js/roster-scan-state.js` | Serialize scan state, loại dữ liệu ảnh/token. |
 | `js/team-recommend-engine.js` | Chấm tier, kiểm tra conflict, greedy/DFS và tạo portfolio local. |
-| `mcp-worker/src/domain/{contracts,canonical-state,normalization-service,recommendation-service}.ts` | Contract và luồng pure normalize → xác nhận binding → recommend; chưa phải public API/transport. |
-| `mcp-worker/workflow-source-manifest.json`, `mcp-worker/scripts/generate-workflow-build.ts` | Owner của semantic closure và workflow build identity; manifest là inventory machine-readable. |
+| [`mcp-worker/src/data/artifact-contracts.ts`](../mcp-worker/src/data/artifact-contracts.ts) | Owner của canonical manifest/snapshot gồm đúng sáu artifact và full `releaseId`. |
+| [`mcp-worker/src/data/{filesystem-data-source,r2-data-source,data-source}.ts`](../mcp-worker/src/data/) | Nguồn FS/R2 read-only và cache snapshot atomic, stale có deadline tuyệt đối. |
+| `mcp-worker/src/domain/{contracts,canonical-state,normalization-service,recommendation-service}.ts` | Luồng pure normalize → xác nhận binding → recommend. |
+| [`mcp-worker/src/research/{research-contracts,research-handlers}.ts`](../mcp-worker/src/research/) | Schema authority và dispatch dùng chung cho tám research operation; kết quả có workflow identity/provenance/bounds. |
+| [`mcp-worker/src/cli.ts`](../mcp-worker/src/cli.ts), [`package.json`](../mcp-worker/package.json) | `npm run cli -- <lệnh>` gọi trực tiếp shared handler qua filesystem snapshot và xuất một JSON document. |
+| [`mcp-worker/workflow-source-manifest.json`](../mcp-worker/workflow-source-manifest.json), [`generate-workflow-build.ts`](../mcp-worker/scripts/generate-workflow-build.ts) | Owner của semantic closure và `workflowBuildId`; `workflowVersion` ghép identity này với full `releaseId`. |
 | `pipeline/build_json.py` | Build team, facet, Cùng Tồn, khai hoang từ HTML export. |
 | `pipeline/build_dict.py` | Crawl/cache/link và merge chiến pháp generic, build tướng/chiến pháp. |
 | `pipeline/build_books_dict.py` | Validate bảng map Hán→Việt với facet binh thư. |
@@ -79,8 +83,9 @@ Repo có ba boundary triển khai hiện hữu: Astro static build + SPA vanilla
 - `tests-js/`: Astro/dist/header contracts, filter, map, hero UI, mobile menu, tracker, roster state và recommend engine.
 - `tests-e2e/`: Chromium parity, storage, JSON failure, exposure local/routed HTTPS và mixed-content.
 - `worker/test/`: config, guard, model, rate-limit, scan modes, schema.
+- `mcp-worker/test/`: snapshot/FS/R2/cache, tám handler, workflow identity, CLI parity, bounds và performance proxy.
 
-Gate sau Astro cutover: Python 82, root Node 102, Playwright 12, Worker 53; Worker typecheck pass.
+Gate hiện được kiểm bằng script trong root, `worker/package.json` và [`mcp-worker/package.json`](../mcp-worker/package.json); lần xác minh hiện tại: MCP 131, root Node 133, Python 82, Worker 53.
 
 ## Điểm cần chú ý
 

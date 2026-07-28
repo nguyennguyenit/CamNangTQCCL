@@ -1,0 +1,22 @@
+[
+  {
+    "id": "team-a",
+    "name": "Đội A",
+    "heroes": [
+      {
+        "name": "Tướng A",
+        "tactics": [
+          {
+            "name": "Chiến Pháp A",
+            "alternatives": ["Chiến Pháp B"]
+          }
+        ],
+        "books": [
+          {
+            "name": "Binh Thư A"
+          }
+        ]
+      }
+    ]
+  }
+]

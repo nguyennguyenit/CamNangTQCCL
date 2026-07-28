@@ -2,7 +2,8 @@
   "version": 1,
   "entrypoints": [
     "mcp-worker/src/domain/normalization-service.ts",
-    "mcp-worker/src/domain/recommendation-service.ts"
+    "mcp-worker/src/domain/recommendation-service.ts",
+    "mcp-worker/src/research/research-handlers.ts"
   ],
   "semanticFiles": [
     "js/analyze-map.js",
@@ -13,11 +14,17 @@
     "js/roster-scan-map.js",
     "js/roster-scan-state.js",
     "js/team-recommend-engine.js",
+    "mcp-worker/src/data/artifact-contracts.ts",
+    "mcp-worker/src/data/data-source.ts",
+    "mcp-worker/src/data/entity-identity.ts",
+    "mcp-worker/src/data/snapshot-index.ts",
     "mcp-worker/src/domain/canonical-state.ts",
     "mcp-worker/src/domain/contracts.ts",
     "mcp-worker/src/domain/legacy-domain-adapter.ts",
     "mcp-worker/src/domain/normalization-service.ts",
-    "mcp-worker/src/domain/recommendation-service.ts"
+    "mcp-worker/src/domain/recommendation-service.ts",
+    "mcp-worker/src/research/research-contracts.ts",
+    "mcp-worker/src/research/research-handlers.ts"
   ],
   "buildInputs": [
     ".node-version",

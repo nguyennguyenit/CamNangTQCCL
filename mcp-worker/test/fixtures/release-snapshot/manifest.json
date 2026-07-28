@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "releaseId": "sha256:016ad90c0a00b6b3fa122494d0e8c1b5d754a8b5ae2c4cce617be41f70fa823d",
+  "dataVersion": "data:016ad90c0a00",
+  "artifacts": [
+    {
+      "name": "teams",
+      "key": "teams.json",
+      "sha256": "sha256:b3f6c40aee00795e036bf82befed6059942626b9049225cd9271679c9a4ea7de",
+      "byteLength": 354,
+      "count": 1
+    },
+    {
+      "name": "team-tier",
+      "key": "team-tier.json",
+      "sha256": "sha256:5b0f985e7fad28d80ac0c577dbc27a3921c2b8dea80ef858fdc90abb255fc7fa",
+      "byteLength": 161,
+      "count": 1
+    },
+    {
+      "name": "coexist",
+      "key": "coexist.json",
+      "sha256": "sha256:26caba96af971687cfe04134b8e34896dd57824b793e1e39f10b87730837aa34",
+      "byteLength": 291,
+      "count": 1
+    },
+    {
+      "name": "heroes-dict",
+      "key": "heroes-dict.json",
+      "sha256": "sha256:4dfd0b469aff0eccbdf22d38953779370ded186413ca8be439d191029e1f6379",
+      "byteLength": 95,
+      "count": 1
+    },
+    {
+      "name": "tactics",
+      "key": "tactics.json",
+      "sha256": "sha256:40be43ba515c9567ad92b27c3d25d3fd68b3aebdaf4b0dd41f5bcaee644d2584",
+      "byteLength": 212,
+      "count": 2
+    },
+    {
+      "name": "books-dict",
+      "key": "books-dict.json",
+      "sha256": "sha256:a9633bbefbedcfabc2bb152cbddb7728f0f946acd4bab2df568bb4a68f5bd010",
+      "byteLength": 66,
+      "count": 1
+    }
+  ]
+}

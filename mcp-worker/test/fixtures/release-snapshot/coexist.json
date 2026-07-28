@@ -1,0 +1,17 @@
+[
+  {
+    "groupLabel": "Cùng tồn fixture",
+    "teams": [
+      {
+        "teamName": "Đội A",
+        "heroes": [
+          {
+            "name": "Tướng A",
+            "tactics": ["Chiến Pháp A"],
+            "books": ["Binh Thư A"]
+          }
+        ]
+      }
+    ]
+  }
+]

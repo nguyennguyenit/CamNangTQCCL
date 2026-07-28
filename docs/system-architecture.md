@@ -24,7 +24,7 @@ Browser image + Turnstile ──POST /analyze──► Cloudflare Worker
 Browser canonical mapping + local matching/recommendation
 ```
 
-`mcp-worker/` hiện là boundary phát triển riêng, chưa tham gia các đường triển khai trên. Phase hiện tại chỉ cung cấp contract và pure domain services; data loader, CLI, stdio và HTTP transport chưa được triển khai.
+`mcp-worker/` là boundary nghiên cứu riêng, chưa tham gia các đường triển khai trên. Package đã có snapshot dữ liệu read-only, các research handler dùng chung và JSON CLI local; stdio và Streamable HTTP transport vẫn chưa có.
 
 ## Build-time data flow
 
@@ -57,21 +57,28 @@ Tra cứu và gợi ý cốt lõi chạy local:
 - `team-recommend-engine.js`: xét ownership, conflict tướng/chiến pháp, alternatives, tier/red stars và portfolio tối đa 5 team.
 - `coexist.json` chỉ render nhóm tham khảo; recommender dùng `teams.json` + `team-tier.json`, không parse display string Cùng Tồn.
 
-## Research MCP domain boundary
+## Research MCP boundary
 
-Pure domain flow hiện có:
+Luồng dùng chung hiện có:
 
 ```text
+snapshot sáu artifact (filesystem hoặc R2)
+  → validate manifest/hash/cross-reference và dựng index
 structured observations
   → normalize thành canonical state
   → caller rà soát/xác nhận
   → binding state + workflow
-  → recommendation trên snapshot được inject
+  → tám research handler
+  → JSON CLI local
 ```
 
-`mcp-worker/src/domain/normalization-service.ts` sở hữu chuẩn hóa và source precedence; ambiguity, identity/family conflict hoặc locked-resource conflict đặt trạng thái cần review. `canonical-state.ts` sở hữu projection/digest và xác minh binding. `recommendation-service.ts` chỉ gọi engine sau khi workflow, canonical state và binding khớp; trạng thái chưa phân giải hoặc binding cũ bị từ chối. Bằng chứng người dùng thật sự đã xác nhận vẫn thuộc caller, không phải điều MCP tự chứng minh.
+Snapshot gồm đúng sáu artifact được khai báo tại [`artifact-contracts.ts`](../mcp-worker/src/data/artifact-contracts.ts). [`FilesystemDataSource`](../mcp-worker/src/data/filesystem-data-source.ts) đọc JSON local và tự tạo canonical manifest; [`R2DataSource`](../mcp-worker/src/data/r2-data-source.ts) chỉ đọc pointer, manifest và object key đã được release khai báo qua hai reader capability hẹp. Cả hai dùng cache trong [`data-source.ts`](../mcp-worker/src/data/data-source.ts): chỉ đổi snapshot sau khi candidate hoàn chỉnh hợp lệ, dùng single-flight cho refresh thường và chỉ phục vụ stale đến deadline tuyệt đối không gia hạn.
 
-Workflow build identity được sinh từ semantic import closure. Inventory chính xác thuộc `mcp-worker/workflow-source-manifest.json`; `mcp-worker/scripts/generate-workflow-build.ts` kiểm closure bằng TypeScript AST, từ chối dynamic import không thể đóng và fail khi manifest/generated identity bị lệch. Dữ liệu release được định danh riêng; việc ghép trusted release identity vào workflow runtime thuộc bước triển khai sau, chưa có trong boundary này.
+`mcp-worker/src/domain/normalization-service.ts` sở hữu chuẩn hóa và source precedence; ambiguity, identity/family conflict hoặc locked-resource conflict đặt trạng thái cần review. `canonical-state.ts` sở hữu projection/digest và xác minh binding. `recommendation-service.ts` chỉ gọi engine sau khi workflow, canonical state và binding khớp; trạng thái chưa phân giải hoặc binding cũ bị từ chối. Bằng chứng người dùng thật sự đã xác nhận vẫn thuộc caller, không phải điều research handler tự chứng minh.
+
+Tám tên handler cùng schema request/result thuộc [`research-contracts.ts`](../mcp-worker/src/research/research-contracts.ts); dispatch và version/provenance/error behavior thuộc [`research-handlers.ts`](../mcp-worker/src/research/research-handlers.ts). CLI `npm run cli -- <lệnh> [--input '<JSON>'] [--data-root <thư-mục>]` chỉ ánh xạ lệnh vào cùng handler qua [`src/cli.ts`](../mcp-worker/src/cli.ts), không tạo contract riêng. Đây chưa phải MCP server có thể kết nối: stdio và HTTP transport thuộc boundary triển khai sau.
+
+`workflowVersion` ghép full `releaseId` của canonical data manifest với `workflowBuildId` của semantic import closure; compact `dataVersion` chỉ để hiển thị. Inventory build chính xác thuộc [`workflow-source-manifest.json`](../mcp-worker/workflow-source-manifest.json); [`generate-workflow-build.ts`](../mcp-worker/scripts/generate-workflow-build.ts) kiểm closure bằng TypeScript AST, từ chối dynamic import không thể đóng và fail khi manifest/generated identity bị lệch.
 
 Boundary này fail closed và có bounds trước xử lý: chuỗi/control characters và collection được giới hạn, ambiguity hay xung đột material chặn recommendation, output/corpus được clamp. Observation và corpus text được coi là dữ liệu không tin cậy; state/result không nhận hoặc giữ ảnh, base64, path, bearer/provider secret hay token. `coexist.json` chỉ là metadata tham khảo, không tham gia chấm điểm.
 

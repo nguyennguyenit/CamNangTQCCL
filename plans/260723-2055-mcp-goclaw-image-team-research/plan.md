@@ -52,7 +52,7 @@ local: filesystem -> CLI/stdio       remote: R2 manifest -> fresh server/request
 |---|---|---|---|---:|
 | 1 | [Contracts and characterization](./phase-01-contracts-and-characterization.md) | Completed | — | 2d |
 | 2 | [Domain recommendation and provenance](./phase-02-harden-domain-recommendation-and-provenance.md) | Completed | 1 | 4d |
-| 3 | [Research tools, data loaders, and CLI](./phase-03-build-research-tools-data-loaders-and-cli.md) | Pending | 2 | 4d |
+| 3 | [Research tools, data loaders, and CLI](./phase-03-build-research-tools-data-loaders-and-cli.md) | Completed | 2 | 4d |
 | 4 | [stdio and Streamable HTTP transports](./phase-04-add-stdio-and-streamable-http-transports.md) | Pending | 3 | 5d |
 | 5 | [Publish GoClaw consumer handoff guide](./phase-05-publish-goclaw-consumer-handoff.md) | Pending | 4 | 1d |
 | 6 | [Secure MCP release and operations](./phase-06-validate-secure-release-and-operations.md) | Pending | 4 | 6d |
@@ -148,3 +148,10 @@ Retained corrections include the Node ESM boundary, single ownership of normaliz
 - Whole-plan reread covered `plan.md` and all six phases. Stale-contract search found no unresolved plan contradiction; `ak plan validate --no-interactive` and `git diff --check` passed.
 - In-progress `mcp-worker/test/domain/contracts.test.ts` still contains the superseded four-field binding fixture and must be corrected during implementation; no code/test file was changed by this plan-only revision.
 - See [implementation-readiness audit](../reports/audit-260727-1714-mcp-plan.md).
+
+### Session 7 — 2026-07-28
+
+- Phase 3 hoàn tất trên Node `22.16`: MCP `131/131`, root Node `133/133`, Python `82/82`, Vision Worker `53/53`; typecheck, build, workflow-build và CLI đều PASS.
+- CPU proxy quan sát trên `693` records / `60` observations: cold `11.56ms`, index `21.87ms`, warm recommendation `25.92ms`; các timing này là proxy quan sát, không phải SLA.
+- Reviewer cuối: **PASS**. Phase 3 không thêm transport; Phase 4 vẫn `Pending` và toàn kế hoạch vẫn `in_progress`.
+- Báo cáo: [Phase 3 completion](./reports/phase-03-completion-260728.md).

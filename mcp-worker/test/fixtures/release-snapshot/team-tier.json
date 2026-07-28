@@ -1,0 +1,12 @@
+[
+  {
+    "teamId": "team-a",
+    "rankings": [
+      {
+        "tier": "T0",
+        "source": "fixture",
+        "updatedAt": "2026-07-28"
+      }
+    ]
+  }
+]

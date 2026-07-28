@@ -1,7 +1,7 @@
 ---
 phase: 3
 title: "Build research tools, data loaders, and CLI"
-status: todo
+status: completed
 priority: P1
 effort: 4d
 dependencies: [2]
@@ -74,22 +74,22 @@ Local and remote share `DataManifest` and `DataSnapshot`. `coexist.json` is load
 
 ## Function and Interface Checklist
 
-- [ ] `ArtifactName` is a closed six-name union; `ArtifactDescriptor`, `ReleasePointer`, `DataManifest`, `DataSnapshot`.
-- [ ] Narrow `PointerReader.readCurrent`, `ReleaseReader.readKnownObject`, `DataSource.load`, `validateManifest`, `parseArtifact`, `validateCrossReferences`; no mutation method exists in application-facing interfaces.
-- [ ] Hashing verifies exact bytes before parse; `releaseId` is the full digest of the canonical manifest, while compact `dataVersion` is display-only; manifest version/key/hash/count metadata is returned without fabrication.
-- [ ] `FilesystemDataSource` resolves an explicitly configured data root; never uses request/query text.
-- [ ] `R2DataSource` accepts separate injected pointer/release readers and validates prefix/key traversal, object absence, size, hash, version, and mixed release.
-- [ ] `SnapshotCachePolicy` separates `refreshAfter` from `serveStaleUntil = lastSuccessfulActivationMonotonic + maxStaleAge`; failed refreshes never move that deadline, and expiry returns `DATA_UNAVAILABLE`.
-- [ ] Cache has single-flight refresh, pointer version/ETag capture, compare-and-swap activation, and a verifier-only force-refresh path.
-- [ ] `buildSnapshotIndex` precomputes canonical IDs and deterministic search/team/tier maps once per version.
-- [ ] Eight handler functions exactly match the frozen upstream catalog names; their request/result types are inferred from the runtime schemas in `research-contracts.ts`.
-- [ ] Every handler loads one snapshot and returns `releaseId`, display `dataVersion`, `workflowVersion`, provenance, warnings, `truncated`, and `nextCursor` where applicable.
-- [ ] Dependent handlers validate `expectedWorkflowVersion`; recommendation handlers project/canonicalize submitted state and verify its `confirmationBinding` before domain work.
-- [ ] `workflowVersion` binds full collision-safe `releaseId` to the generated content-derived `workflowBuildId`; no compact display identity or manually bumped engine/schema constant is authoritative.
-- [ ] `tqccl_match_team` retrieves matches only; `tqccl_recommend_team` performs one build; coexist tool performs portfolio allocation.
-- [ ] Replacement handler uses curated alternatives from team records only and labels unsupported mechanics.
-- [ ] `parseCliArgs`, `runCli`, `main`; handler-name subcommands plus compact aliases documented by `--help`.
-- [ ] CLI stdout contains exactly one JSON result/error; diagnostics only on stderr; exits 0 success, 1 runtime/data, 2 usage.
+- [x] `ArtifactName` is a closed six-name union; `ArtifactDescriptor`, `ReleasePointer`, `DataManifest`, `DataSnapshot`.
+- [x] Narrow `PointerReader.readCurrent`, `ReleaseReader.readKnownObject`, `DataSource.load`, `validateManifest`, `parseArtifact`, `validateCrossReferences`; no mutation method exists in application-facing interfaces.
+- [x] Hashing verifies exact bytes before parse; `releaseId` is the full digest of the canonical manifest, while compact `dataVersion` is display-only; manifest version/key/hash/count metadata is returned without fabrication.
+- [x] `FilesystemDataSource` resolves an explicitly configured data root; never uses request/query text.
+- [x] `R2DataSource` accepts separate injected pointer/release readers and validates prefix/key traversal, object absence, size, hash, version, and mixed release.
+- [x] `SnapshotCachePolicy` separates `refreshAfter` from `serveStaleUntil = lastSuccessfulActivationMonotonic + maxStaleAge`; failed refreshes never move that deadline, and expiry returns `DATA_UNAVAILABLE`.
+- [x] Cache has single-flight refresh, pointer version/ETag capture, compare-and-swap activation, and a verifier-only force-refresh path.
+- [x] `buildSnapshotIndex` precomputes canonical IDs and deterministic search/team/tier maps once per version.
+- [x] Eight handler functions exactly match the frozen upstream catalog names; their request/result types are inferred from the runtime schemas in `research-contracts.ts`.
+- [x] Every handler loads one snapshot and returns `releaseId`, display `dataVersion`, `workflowVersion`, provenance, warnings, `truncated`, and `nextCursor` where applicable.
+- [x] Dependent handlers validate `expectedWorkflowVersion`; recommendation handlers project/canonicalize submitted state and verify its `confirmationBinding` before domain work.
+- [x] `workflowVersion` binds full collision-safe `releaseId` to the generated content-derived `workflowBuildId`; no compact display identity or manually bumped engine/schema constant is authoritative.
+- [x] `tqccl_match_team` retrieves matches only; `tqccl_recommend_team` performs one build; coexist tool performs portfolio allocation.
+- [x] Replacement handler uses curated alternatives from team records only and labels unsupported mechanics.
+- [x] `parseCliArgs`, `runCli`, `main`; handler-name subcommands plus compact aliases documented by `--help`.
+- [x] CLI stdout contains exactly one JSON result/error; diagnostics only on stderr; exits 0 success, 1 runtime/data, 2 usage.
 
 ## Dependency Map
 
@@ -161,15 +161,15 @@ handlers -> Phase 4 tool definitions
 
 ## Tests After
 
-- [ ] Manifest rejects duplicate/missing/unknown required artifact descriptors.
-- [ ] Maximum input string/list/page/result-byte policies have boundary tests.
-- [ ] Cursor is opaque, workflow-bound, and rejected after data, contract, or engine change.
-- [ ] Cursor and confirmation compatibility depend on full `releaseId`; a compact `dataVersion` collision cannot preserve compatibility.
-- [ ] All multi-call dependent inputs are workflow-bound, not only cursors.
-- [ ] Errors never include local paths, R2 keys beyond safe artifact labels, or raw input blobs.
-- [ ] CLI/handler result parity holds for all eight operations.
-- [ ] Runtime schema identity is reused—not copied—by CLI dispatch and is ready for Phase 4 tool registration.
-- [ ] Frozen Python utility still runs its existing smoke path but receives no feature additions.
+- [x] Manifest rejects duplicate/missing/unknown required artifact descriptors.
+- [x] Maximum input string/list/page/result-byte policies have boundary tests.
+- [x] Cursor is opaque, workflow-bound, and rejected after data, contract, or engine change.
+- [x] Cursor and confirmation compatibility depend on full `releaseId`; a compact `dataVersion` collision cannot preserve compatibility.
+- [x] All multi-call dependent inputs are workflow-bound, not only cursors.
+- [x] Errors never include local paths, R2 keys beyond safe artifact labels, or raw input blobs.
+- [x] CLI/handler result parity holds for all eight operations.
+- [x] Runtime schema identity is reused—not copied—by CLI dispatch and is ready for Phase 4 tool registration.
+- [x] Frozen Python utility still runs its existing smoke path but receives no feature additions.
 
 ## Regression Gate
 
@@ -181,22 +181,29 @@ npm run typecheck
 npm run build
 npm run cli -- tqccl_get_data_version
 cd /Users/plateau/Project/CamNangTQCCL
-node --test "tests-js/*.test.mjs"
+npm run test:node
 python3 -m unittest discover -s tests
 cd worker && npm test && npm run typecheck
 ```
 
 ## Success Criteria
 
-- [ ] Six artifacts load through both sources under one validated snapshot contract.
-- [ ] Local and R2 sources derive the same full `releaseId`; compact `dataVersion` is display-only.
-- [ ] Incomplete/mixed/corrupt releases never activate.
-- [ ] Eight exact handlers are deterministic, bounded, read-only, versioned, and provenance-rich.
-- [ ] Dependent calls cannot cross workflow versions or reuse a confirmation binding against a changed payload.
-- [ ] Workflow source regeneration is clean and a semantic source mutation changes `workflowBuildId`.
-- [ ] CLI calls only shared dispatch/handlers and behaves correctly from any CWD.
-- [ ] FS/R2/CLI semantic parity, typecheck, build, and all inherited regressions pass.
-- [ ] No transport, MCP SDK, image, Vision Worker, or publication behavior is introduced.
+- [x] Six artifacts load through both sources under one validated snapshot contract.
+- [x] Local and R2 sources derive the same full `releaseId`; compact `dataVersion` is display-only.
+- [x] Incomplete/mixed/corrupt releases never activate.
+- [x] Eight exact handlers are deterministic, bounded, read-only, versioned, and provenance-rich.
+- [x] Dependent calls cannot cross workflow versions or reuse a confirmation binding against a changed payload.
+- [x] Workflow source regeneration is clean and a semantic source mutation changes `workflowBuildId`.
+- [x] CLI calls only shared dispatch/handlers and behaves correctly from any CWD.
+- [x] FS/R2/CLI semantic parity, typecheck, build, and all inherited regressions pass.
+- [x] No transport, MCP SDK, image, Vision Worker, or publication behavior is introduced.
+
+## Completion Validation — 2026-07-28
+
+- Môi trường cuối: Node `22.16`; MCP `131/131`, root Node `133/133`, Python `82/82`, Vision Worker `53/53`.
+- `typecheck`, `build`, `check:workflow-build` và smoke CLI đều **PASS**.
+- CPU proxy quan sát: `693` records / `60` observations; cold `11.56ms`, index `21.87ms`, warm recommendation `25.92ms`. Đây là timing proxy quan sát, không phải SLA.
+- Reviewer cuối: **PASS**. Không thêm stdio/HTTP transport hoặc MCP SDK; Phase 4 chưa bắt đầu.
 
 ## Security and Privacy
 

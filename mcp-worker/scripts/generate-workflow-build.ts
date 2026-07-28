@@ -98,21 +98,33 @@ function sourceImports(filename: string, source: string): string[] {
 export function collectSemanticClosure(
   repositoryRoot: string,
   entrypoints: readonly string[],
+  exclusions: readonly string[] = [],
 ): string[] {
   const pending = entrypoints.map((entrypoint) => resolve(repositoryRoot, entrypoint));
   const visited = new Set<string>();
   while (pending.length > 0) {
     const filename = pending.pop();
     if (!filename || visited.has(filename)) continue;
+    const path = repositoryPath(repositoryRoot, filename);
+    if (
+      exclusions.some(
+        (excluded) => path === excluded || path.startsWith(`${excluded}/`),
+      )
+    ) {
+      continue;
+    }
     if (!existsSync(filename)) {
-      throw new Error(`Semantic source does not exist: ${repositoryPath(repositoryRoot, filename)}`);
+      throw new Error(`Semantic source does not exist: ${path}`);
     }
     visited.add(filename);
     const source = readFileSync(filename, "utf8");
     for (const specifier of sourceImports(
-      repositoryPath(repositoryRoot, filename),
+      path,
       source,
     )) {
+      if (!specifier.startsWith(".")) {
+        continue;
+      }
       pending.push(resolveSourceImport(filename, specifier));
     }
   }
@@ -138,7 +150,11 @@ export function validateWorkflowSourceManifest(
   if (manifest.exclusions.some(({ path, reason }) => !path || !reason.trim())) {
     throw new Error("Every workflow exclusion needs a path and rationale");
   }
-  const actual = collectSemanticClosure(repositoryRoot, manifest.entrypoints);
+  const actual = collectSemanticClosure(
+    repositoryRoot,
+    manifest.entrypoints,
+    manifest.exclusions.map(({ path }) => path),
+  );
   const declared = sortedUnique(manifest.semanticFiles, "semanticFiles");
   if (JSON.stringify(actual) !== JSON.stringify(declared)) {
     throw new Error(

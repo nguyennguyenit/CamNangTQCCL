@@ -9,6 +9,7 @@
   "scripts": {
     "generate:workflow-build": "node --experimental-strip-types scripts/generate-workflow-build.ts",
     "check:workflow-build": "node --experimental-strip-types scripts/generate-workflow-build.ts --check",
+    "cli": "node --import tsx src/cli.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "build": "tsc -p tsconfig.build.json",
@@ -16,7 +17,11 @@
   },
   "devDependencies": {
     "@types/node": "22.20.1",
+    "tsx": "4.23.1",
     "typescript": "6.0.3",
     "vitest": "4.1.10"
+  },
+  "dependencies": {
+    "zod": "4.4.3"
   }
 }

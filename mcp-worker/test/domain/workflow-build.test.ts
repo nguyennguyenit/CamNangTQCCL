@@ -68,6 +68,32 @@ describe("workflow build identity", () => {
     ]);
   });
 
+  it("để package import cho lockfile định danh thay vì đưa vào source closure", () => {
+    const { root } = fixture();
+    writeFileSync(
+      join(root, "src/entry.ts"),
+      [
+        'import "external-runtime";',
+        'import { value } from "./semantic.js";',
+        "export { value };",
+        "",
+      ].join("\n"),
+    );
+
+    expect(collectSemanticClosure(root, ["src/entry.ts"])).toEqual([
+      "src/entry.ts",
+      "src/semantic.ts",
+    ]);
+  });
+
+  it("loại đầu ra sinh tự động đã được khai báo khỏi closure", () => {
+    const { root } = fixture();
+
+    expect(
+      collectSemanticClosure(root, ["src/entry.ts"], ["src/semantic.ts"]),
+    ).toEqual(["src/entry.ts"]);
+  });
+
   it("từ chối manifest thiếu hoặc thừa nguồn ngữ nghĩa", () => {
     const { root, manifest } = fixture();
 
