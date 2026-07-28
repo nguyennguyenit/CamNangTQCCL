@@ -4,8 +4,11 @@ import { toVietHanViet } from "../../../js/hanviet.js";
 import { matchDict, searchDict } from "../../../js/match-dict.js";
 import {
   mapBuiltTeamsScan,
+  mapBuiltTeamsScanRich,
   mapHeroesScan,
+  mapHeroesScanRich,
   mapTacticsScan,
+  mapTacticsScanRich,
 } from "../../../js/roster-scan-map.js";
 import {
   deserializeRosterScanState,
@@ -37,6 +40,11 @@ export interface LegacyMatchResult {
   score: number;
   confidence: Confidence;
   matched: boolean;
+  secondRecord: LegacyRecord | null;
+  secondScore: number;
+  margin: number;
+  ambiguous: boolean;
+  reviewRequired: boolean;
 }
 
 export interface LegacySearchResult {
@@ -61,13 +69,22 @@ export interface LegacyBuiltTeamsScanResult {
   teams: Array<{ teamName: string; heroes: string[]; tactics: string[] }>;
 }
 
+export interface LegacyRichScanResult extends LegacyRecord {
+  heroes?: LegacyRecord[];
+  tactics?: LegacyRecord[];
+  teams?: LegacyRecord[];
+}
+
 export interface LegacyTeamCandidate extends LegacyRecord {
   requiredHeroes: string[];
+  heroSlots: LegacyRecord[];
 }
 
 export interface LegacyRecommendationEntry extends LegacyRecord {
+  team: LegacyRecord;
+  tierRankings: LegacyRecord[];
   selectedTactics: string[];
-  tacticSelections?: unknown;
+  tacticSelections: LegacyRecord[];
 }
 
 export interface LegacyRecommendationResult extends LegacyRecord {
@@ -147,6 +164,19 @@ function matchResult(value: unknown): LegacyMatchResult {
     throw new Error("match result.confidence is invalid");
   }
   if (typeof result.matched !== "boolean") throw new Error("match result.matched is invalid");
+  if (result.secondRecord !== null) {
+    outputRecord(result.secondRecord, "match result.secondRecord");
+  }
+  for (const key of ["secondScore", "margin"] as const) {
+    if (typeof result[key] !== "number" || !Number.isFinite(result[key])) {
+      throw new Error(`match result.${key} must be finite`);
+    }
+  }
+  for (const key of ["ambiguous", "reviewRequired"] as const) {
+    if (typeof result[key] !== "boolean") {
+      throw new Error(`match result.${key} must be a boolean`);
+    }
+  }
   return result as unknown as LegacyMatchResult;
 }
 
@@ -197,20 +227,145 @@ function builtTeamsScanResult(value: unknown): LegacyBuiltTeamsScanResult {
   return { teams };
 }
 
+function richEntity(value: unknown, label: string): LegacyRecord {
+  const entity = outputRecord(value, label);
+  outputString(entity.name, `${label}.name`);
+  outputString(entity.canonicalId, `${label}.canonicalId`);
+  outputConfidence(entity.confidence, `${label}.confidence`);
+  outputString(entity.rawChinese, `${label}.rawChinese`);
+  if (entity.rawTextTrust !== "untrusted") {
+    throw new Error(`${label}.rawTextTrust must mark raw text as untrusted`);
+  }
+  outputString(entity.normalizedText, `${label}.normalizedText`);
+  for (const key of ["score", "secondScore", "margin"] as const) {
+    if (typeof entity[key] !== "number" || !Number.isFinite(entity[key])) {
+      throw new Error(`${label}.${key} must be finite`);
+    }
+  }
+  for (const key of ["ambiguous", "reviewRequired"] as const) {
+    if (typeof entity[key] !== "boolean") {
+      throw new Error(`${label}.${key} must be a boolean`);
+    }
+  }
+  const evidence = outputRecord(entity.evidence, `${label}.evidence`);
+  if (evidence.trust !== "untrusted") {
+    throw new Error(`${label}.evidence.trust must be untrusted`);
+  }
+  return entity;
+}
+
+function richHeroesScanResult(value: unknown): LegacyRichScanResult {
+  const result = outputRecord(value, "rich heroes scan");
+  return {
+    heroes: outputRecordArray(result.heroes, "rich heroes scan.heroes").map(
+      (hero, index) => richEntity(hero, `rich heroes scan.heroes[${index}]`),
+    ),
+  };
+}
+
+function richTacticsScanResult(value: unknown): LegacyRichScanResult {
+  const result = outputRecord(value, "rich tactics scan");
+  return {
+    tactics: outputRecordArray(result.tactics, "rich tactics scan.tactics").map(
+      (tactic, index) => richEntity(tactic, `rich tactics scan.tactics[${index}]`),
+    ),
+  };
+}
+
+function richBuiltTeamsScanResult(value: unknown): LegacyRichScanResult {
+  const result = outputRecord(value, "rich built teams scan");
+  const teams = outputRecordArray(result.teams, "rich built teams scan.teams").map(
+    (team, teamIndex) => {
+      outputString(team.teamName, `rich built teams scan.teams[${teamIndex}].teamName`);
+      outputRecord(team.evidence, `rich built teams scan.teams[${teamIndex}].evidence`);
+      outputRecordArray(
+        team.heroSlots,
+        `rich built teams scan.teams[${teamIndex}].heroSlots`,
+      ).forEach((slot, slotIndex) => {
+        richEntity(
+          slot.hero,
+          `rich built teams scan.teams[${teamIndex}].heroSlots[${slotIndex}].hero`,
+        );
+        outputRecordArray(
+          slot.tactics,
+          `rich built teams scan.teams[${teamIndex}].heroSlots[${slotIndex}].tactics`,
+        ).forEach((tactic, tacticIndex) =>
+          richEntity(
+            tactic,
+            `rich built teams scan.teams[${teamIndex}].heroSlots[${slotIndex}].tactics[${tacticIndex}]`,
+          ),
+        );
+      });
+      return team;
+    },
+  );
+  return { teams };
+}
+
 function teamCandidateResult(value: unknown): LegacyTeamCandidate {
   const result = outputRecord(value, "team candidate");
   outputStringArray(result.requiredHeroes, "team candidate.requiredHeroes");
+  outputRecordArray(result.heroSlots, "team candidate.heroSlots").forEach(
+    (slot, slotIndex) => {
+      outputString(slot.slotId, `team candidate.heroSlots[${slotIndex}].slotId`);
+      outputRecordArray(
+        slot.alternatives,
+        `team candidate.heroSlots[${slotIndex}].alternatives`,
+      ).forEach((alternative, alternativeIndex) => {
+        outputString(
+          alternative.canonicalId,
+          `team candidate.heroSlots[${slotIndex}].alternatives[${alternativeIndex}].canonicalId`,
+        );
+        outputString(
+          alternative.displayName,
+          `team candidate.heroSlots[${slotIndex}].alternatives[${alternativeIndex}].displayName`,
+        );
+      });
+    },
+  );
   return result as LegacyTeamCandidate;
 }
 
 function recommendationResult(value: unknown): LegacyRecommendationResult {
   const result = outputRecord(value, "recommendation");
   outputRecordArray(result.portfolioTeams, "recommendation.portfolioTeams").forEach(
-    (entry) =>
+    (entry, entryIndex) => {
+      outputRecord(
+        entry.team,
+        `recommendation.portfolioTeams[${entryIndex}].team`,
+      );
+      outputRecordArray(
+        entry.tierRankings,
+        `recommendation.portfolioTeams[${entryIndex}].tierRankings`,
+      );
       outputStringArray(
         entry.selectedTactics,
         "recommendation.portfolioTeams.selectedTactics",
-      ),
+      );
+      outputRecordArray(
+        entry.tacticSelections,
+        `recommendation.portfolioTeams[${entryIndex}].tacticSelections`,
+      ).forEach((selection, selectionIndex) => {
+        outputString(
+          selection.holderId,
+          `recommendation.portfolioTeams[${entryIndex}].tacticSelections[${selectionIndex}].holderId`,
+        );
+        if (
+          !Number.isInteger(selection.slotIndex) ||
+          (selection.slotIndex as number) < 0
+        ) {
+          throw new Error("recommendation tactic slot index must be non-negative");
+        }
+        outputString(
+          selection.selectedTactic,
+          `recommendation.portfolioTeams[${entryIndex}].tacticSelections[${selectionIndex}].selectedTactic`,
+        );
+        outputString(
+          selection.selectedTacticId,
+          `recommendation.portfolioTeams[${entryIndex}].tacticSelections[${selectionIndex}].selectedTacticId`,
+        );
+      });
+    },
   );
   return result as LegacyRecommendationResult;
 }
@@ -221,7 +376,7 @@ export interface LegacyDomainAdapter {
   matchDictionary(
     query: string,
     dictionary: LegacyDictionary,
-    options?: { threshold?: number },
+    options?: { threshold?: number; ambiguityMargin?: number },
   ): LegacyMatchResult;
   searchDictionary(
     query: string,
@@ -242,14 +397,20 @@ export interface LegacyDomainAdapter {
     result: LegacyRecord,
     dictionaries: HeroDictionaries,
   ): LegacyHeroesScanResult;
+  mapHeroesScanRich(result: LegacyRecord, context: LegacyRecord): LegacyRichScanResult;
   mapTacticsScan(
     result: LegacyRecord,
     dictionaries: TacticDictionaries,
   ): LegacyTacticsScanResult;
+  mapTacticsScanRich(result: LegacyRecord, context: LegacyRecord): LegacyRichScanResult;
   mapBuiltTeamsScan(
     result: LegacyRecord,
     dictionaries: HeroDictionaries & TacticDictionaries,
   ): LegacyBuiltTeamsScanResult;
+  mapBuiltTeamsScanRich(
+    result: LegacyRecord,
+    context: LegacyRecord,
+  ): LegacyRichScanResult;
   serializeBrowserScanState(state: LegacyRecord): LegacyRecord;
   deserializeBrowserScanState(value: unknown): LegacyRecord;
   normalizeTeamCandidate(
@@ -325,6 +486,14 @@ const adapter: LegacyDomainAdapter = {
     );
   },
 
+  mapHeroesScanRich(result, context) {
+    return safeResult(
+      "mapHeroesScanRich",
+      () => mapHeroesScanRich(cloneInput(result), cloneInput(context)),
+      richHeroesScanResult,
+    );
+  },
+
   mapTacticsScan(result, dictionaries) {
     return safeResult(
       "mapTacticsScan",
@@ -333,11 +502,27 @@ const adapter: LegacyDomainAdapter = {
     );
   },
 
+  mapTacticsScanRich(result, context) {
+    return safeResult(
+      "mapTacticsScanRich",
+      () => mapTacticsScanRich(cloneInput(result), cloneInput(context)),
+      richTacticsScanResult,
+    );
+  },
+
   mapBuiltTeamsScan(result, dictionaries) {
     return safeResult(
       "mapBuiltTeamsScan",
       () => mapBuiltTeamsScan(cloneInput(result), cloneInput(dictionaries)),
       builtTeamsScanResult,
+    );
+  },
+
+  mapBuiltTeamsScanRich(result, context) {
+    return safeResult(
+      "mapBuiltTeamsScanRich",
+      () => mapBuiltTeamsScanRich(cloneInput(result), cloneInput(context)),
+      richBuiltTeamsScanResult,
     );
   },
 

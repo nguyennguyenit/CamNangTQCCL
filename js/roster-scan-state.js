@@ -1,6 +1,76 @@
 export const ROSTER_SCAN_STORAGE_KEY = "tqccl.rosterRecommend.scanState.v1";
 
-const FORBIDDEN_KEYS = new Set(["image", "imageDataUrl", "base64", "blob", "turnstileToken"]);
+const FORBIDDEN_KEYS = new Set([
+  "image",
+  "screenshot",
+  "imagedataurl",
+  "imageurl",
+  "base64",
+  "blob",
+  "bytes",
+  "turnstiletoken",
+  "token",
+  "apikey",
+  "credential",
+  "authorization",
+  "secret",
+  "providersecret",
+  "path",
+]);
+
+const FORBIDDEN_KEY_SUFFIXES = [
+  "image",
+  "screenshot",
+  "imagedataurl",
+  "imageurl",
+  "base64",
+  "blob",
+  "bytes",
+  "token",
+  "apikey",
+  "credential",
+  "authorization",
+  "secret",
+  "path",
+];
+
+const ITEM_KEYS = new Set([
+  "name",
+  "canonicalId",
+  "familyId",
+  "confidence",
+  "redStars",
+  "level",
+  "rawChinese",
+  "rawTextTrust",
+  "normalizedText",
+  "score",
+  "secondScore",
+  "margin",
+  "ambiguous",
+  "reviewRequired",
+  "runnerUp",
+  "dictionaryLinkScore",
+  "imageOrdinal",
+  "evidence",
+]);
+
+const EVIDENCE_KEYS = new Set([
+  "observationId",
+  "batchId",
+  "sourceScope",
+  "trust",
+  "imageOrdinal",
+  "fieldPresence",
+]);
+
+function isForbiddenKey(key) {
+  const normalized = key.toLowerCase().replace(/[^a-z0-9]/g, "");
+  return (
+    FORBIDDEN_KEYS.has(normalized) ||
+    FORBIDDEN_KEY_SUFFIXES.some((suffix) => normalized.endsWith(suffix))
+  );
+}
 
 export function createInitialRosterScanState() {
   return {
@@ -12,25 +82,77 @@ export function createInitialRosterScanState() {
   };
 }
 
-function cleanItem(item) {
-  const out = {};
-  for (const [key, value] of Object.entries(item || {})) {
-    if (FORBIDDEN_KEYS.has(key)) continue;
-    if (value === undefined || value === null || value === "") continue;
-    out[key] = value;
+function cleanValue(value) {
+  if (Array.isArray(value)) return value.map(cleanValue);
+  if (value && typeof value === "object") {
+    const out = {};
+    for (const [key, nested] of Object.entries(value)) {
+      if (isForbiddenKey(key)) continue;
+      if (nested === undefined || nested === null || nested === "") continue;
+      out[key] = cleanValue(nested);
+    }
+    return out;
   }
-  return out;
+  return value;
+}
+
+function cleanEvidence(evidence) {
+  return Object.fromEntries(
+    Object.entries(cleanValue(evidence || {})).filter(([key]) =>
+      EVIDENCE_KEYS.has(key),
+    ),
+  );
+}
+
+function cleanItem(item) {
+  const projected = Object.fromEntries(
+    Object.entries(item || {}).filter(([key]) => ITEM_KEYS.has(key)),
+  );
+  if (Array.isArray(projected.evidence)) {
+    projected.evidence = projected.evidence.map(cleanEvidence);
+  }
+  return cleanValue(projected);
+}
+
+function evidenceKey(evidence) {
+  return JSON.stringify(evidence);
+}
+
+function mergeItems(current, next) {
+  const evidence = [];
+  const seenEvidence = new Set();
+  for (const item of [...(current.evidence || []), ...(next.evidence || [])]) {
+    const clean = cleanEvidence(item);
+    const key = evidenceKey(clean);
+    if (!seenEvidence.has(key)) {
+      seenEvidence.add(key);
+      evidence.push(clean);
+    }
+  }
+  const merged = { ...current, ...next };
+  for (const field of ["redStars", "level"]) {
+    const values = [current[field], next[field]].filter(Number.isFinite);
+    if (values.length) merged[field] = Math.max(...values);
+  }
+  if (evidence.length) merged.evidence = evidence;
+  return merged;
 }
 
 function uniqByName(items) {
-  const seen = new Set();
+  const positions = new Map();
   const out = [];
   for (const item of items || []) {
     const clean = cleanItem(item);
     const name = String(clean.name || "").trim();
-    if (!name || seen.has(name)) continue;
-    seen.add(name);
-    out.push({ ...clean, name });
+    if (!name) continue;
+    const key = String(clean.canonicalId || name).trim();
+    const position = positions.get(key);
+    if (position === undefined) {
+      positions.set(key, out.length);
+      out.push({ ...clean, name });
+    } else {
+      out[position] = mergeItems(out[position], { ...clean, name });
+    }
   }
   return out;
 }

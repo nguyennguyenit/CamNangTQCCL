@@ -33,15 +33,35 @@ export interface CanonicalEntity {
 }
 
 export interface ObservationEvidence {
-  sourceScope: string;
-  batchId?: string;
+  sourceScope: "currentTurnImage" | "priorConfirmedNote" | "manualCorrection";
+  batchId: string;
+  imageOrdinal?: number;
   fieldPresence?: readonly string[];
+  trust?: "untrusted";
 }
 
 export interface StructuredObservation {
   observationId: string;
   entityKind: CanonicalEntity["kind"];
-  observedText: string;
+  observedText?: string;
+  canonicalId?: CanonicalId;
+  familyId?: FamilyId;
+  displayName?: string;
+  redStars?: number | null;
+  level?: number | null;
+  reviewRequired?: boolean;
+  candidates?: readonly CanonicalId[];
+  replacesCanonicalId?: CanonicalId;
+  heroIds?: readonly HeroCanonicalId[] | null;
+  tacticIds?: readonly TacticCanonicalId[] | null;
+  tacticAssignments?:
+    | readonly {
+        holderId: HeroCanonicalId;
+        tacticId: TacticCanonicalId;
+        slotIndex?: number;
+      }[]
+    | null;
+  trust?: "untrusted";
   evidence: ObservationEvidence;
 }
 

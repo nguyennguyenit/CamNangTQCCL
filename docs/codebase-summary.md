@@ -2,7 +2,7 @@
 
 ## Tổng quan
 
-Repo gồm ba boundary độc lập: Astro static build + SPA vanilla chạy trong trình duyệt, pipeline Python chạy offline để sinh JSON, và Cloudflare Worker TypeScript cho Vision. Không có renderer frontend, SSR, backend chung hoặc database ứng dụng.
+Repo có ba boundary triển khai hiện hữu: Astro static build + SPA vanilla chạy trong trình duyệt, pipeline Python chạy offline để sinh JSON, và Cloudflare Worker TypeScript cho Vision. `mcp-worker/` là package nghiên cứu MCP đang phát triển; hiện mới có contract và pure domain services, chưa có data loader, CLI hoặc transport runtime. Không có renderer frontend, SSR, backend chung hoặc database ứng dụng.
 
 ## Cấu trúc
 
@@ -16,6 +16,7 @@ Repo gồm ba boundary độc lập: Astro static build + SPA vanilla chạy tro
 ├── scripts/                # shared dist verifier
 ├── pipeline/               # parser/normalizer/builder Python stdlib
 ├── worker/                 # Vision proxy Cloudflare
+├── mcp-worker/             # contract + pure domain services cho research MCP
 ├── tests/                  # Python unittest
 ├── tests-js/, tests-e2e/   # Node contracts + Playwright parity
 ├── docs/                   # tài liệu evergreen
@@ -37,8 +38,11 @@ Repo gồm ba boundary độc lập: Astro static build + SPA vanilla chạy tro
 | `js/hero-list.js`, `js/hero-detail.js`, `js/tactics.js` | Tra cứu tướng/chiến pháp local. |
 | `js/recruit-tracker-store.js` | State schema v1, nhiều account, banner, pity, import/export localStorage. |
 | `js/analyze.js`, `js/analyze-map.js` | Nén ảnh, Turnstile, Worker call, canonical map và team similarity. |
+| `js/hero-identity.js` | Canonical identity tướng: SP/CO/base tách biệt, `familyId` riêng và combined slot là alternatives. |
 | `js/roster-scan-state.js` | Serialize scan state, loại dữ liệu ảnh/token. |
 | `js/team-recommend-engine.js` | Chấm tier, kiểm tra conflict, greedy/DFS và tạo portfolio local. |
+| `mcp-worker/src/domain/{contracts,canonical-state,normalization-service,recommendation-service}.ts` | Contract và luồng pure normalize → xác nhận binding → recommend; chưa phải public API/transport. |
+| `mcp-worker/workflow-source-manifest.json`, `mcp-worker/scripts/generate-workflow-build.ts` | Owner của semantic closure và workflow build identity; manifest là inventory machine-readable. |
 | `pipeline/build_json.py` | Build team, facet, Cùng Tồn, khai hoang từ HTML export. |
 | `pipeline/build_dict.py` | Crawl/cache/link và merge chiến pháp generic, build tướng/chiến pháp. |
 | `pipeline/build_books_dict.py` | Validate bảng map Hán→Việt với facet binh thư. |

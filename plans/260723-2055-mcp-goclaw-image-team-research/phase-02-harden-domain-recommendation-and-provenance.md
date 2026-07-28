@@ -1,7 +1,7 @@
 ---
 phase: 2
 title: "Harden domain recommendation and provenance"
-status: todo
+status: completed
 priority: P1
 effort: 4d
 dependencies: [1]
@@ -100,26 +100,26 @@ Canonical state uses a versioned projection before hashing. Strings normalize to
 
 ## Function and Interface Checklist
 
-- [ ] `canonicalHeroId`, `heroFamilyId`, `heroIdentityKey`, `heroSlotAlternatives`, `normalizeHeroSlot`.
-- [ ] Prefix parsing applies to the named alternative only; never spreads SP/CO across slash-separated alternatives.
-- [ ] `matchDict` keeps existing return fields and adds `secondScore`, `margin`, `ambiguous`, `reviewRequired`.
-- [ ] Evidence-rich mapping exports preserve raw Chinese, normalized text, score, runner-up, dictionary link score, and image ordinal.
-- [ ] `findSimilarTeams` matches full IDs, counts tactics on the correct holder, and ties by stable team ID.
-- [ ] `normalizeTeamCandidate` exposes hero slots while retaining compatible `requiredHeroes`.
-- [ ] `recommendTeams` uses the full owned tactic set at every greedy/DFS branch.
-- [ ] Ranking tuple: eligible tier rank, hard-conflict count, missing count, red-copy preference, stable ID.
-- [ ] Meta mode defaults to ranked T0/T0.5/T1 only; experimental opt-in labels untiered and never presents it as meta proof.
-- [ ] Per-slot selection returns holder ID, slot index, selected tactic, alternatives, reason, and downgrade.
-- [ ] `normalizeObservations`, `requiresConfirmation`, `applyConfirmedCorrections`, `recommendTeam`, `recommendCoexist`, `suggestReplacements`.
-- [ ] `createWorkflowBuildId(sourceManifest)`, `createWorkflowVersion(releaseId, workflowBuildId)`, `projectCanonicalState`, `canonicalizeCanonicalState`, `createNormalizationDigest`, `verifyConfirmationBinding`.
-- [ ] `ConfirmationBinding` is exactly `{ workflowVersion, normalizationDigest, canonicalProjectionVersion }`; it does not duplicate `workflowBuildId`. Normalization may issue the binding, but only the external caller records the later human confirmation action before echoing it to a recommendation call.
-- [ ] Digest domain separator and projection version are fixed; semantically irrelevant display/provenance fields are excluded by the projection.
-- [ ] CI regenerates `workflow-build.ts` and fails when schema/semantic source changes without a matching generated build identity.
-- [ ] The closure gate includes all transitively reachable semantic inputs—at minimum `filters.js`, `hanviet.js`, canonicalization/runtime validators, public runtime schemas, and behavior-affecting compile/build/lock inputs—and fails on missing or unexpected semantic files.
-- [ ] Files excluded from identity are explicit, non-semantic, and justified; an unresolved/dynamic import fails closed.
-- [ ] Evidence distinguishes `currentTurnImage`, `priorConfirmedNote`, and `manualCorrection`; per-field presence decides precedence without caller-side merge logic.
-- [ ] Browser `confirmed:boolean` remains local-only and cannot satisfy or deserialize into MCP confirmation.
-- [ ] Provenance retains artifact name, record ID, all tier rankings, source labels/dates present in artifacts, and injected data version.
+- [x] `canonicalHeroId`, `heroFamilyId`, `heroIdentityKey`, `heroSlotAlternatives`, `normalizeHeroSlot`.
+- [x] Prefix parsing applies to the named alternative only; never spreads SP/CO across slash-separated alternatives.
+- [x] `matchDict` keeps existing return fields and adds `secondScore`, `margin`, `ambiguous`, `reviewRequired`.
+- [x] Evidence-rich mapping exports preserve raw Chinese, normalized text, score, runner-up, dictionary link score, and image ordinal.
+- [x] `findSimilarTeams` matches full IDs, counts tactics on the correct holder, and ties by stable team ID.
+- [x] `normalizeTeamCandidate` exposes hero slots while retaining compatible `requiredHeroes`.
+- [x] `recommendTeams` uses the full owned tactic set at every greedy/DFS branch.
+- [x] Ranking tuple: eligible tier rank, hard-conflict count, missing count, red-copy preference, stable ID.
+- [x] Meta mode defaults to ranked T0/T0.5/T1 only; experimental opt-in labels untiered and never presents it as meta proof.
+- [x] Per-slot selection returns holder ID, slot index, selected tactic, alternatives, reason, and downgrade.
+- [x] `normalizeObservations`, `requiresConfirmation`, `applyConfirmedCorrections`, `recommendTeam`, `recommendCoexist`, `suggestReplacements`.
+- [x] `createWorkflowBuildId(sourceManifest)`, `createWorkflowVersion(releaseId, workflowBuildId)`, `projectCanonicalState`, `canonicalizeCanonicalState`, `createNormalizationDigest`, `verifyConfirmationBinding`.
+- [x] `ConfirmationBinding` is exactly `{ workflowVersion, normalizationDigest, canonicalProjectionVersion }`; it does not duplicate `workflowBuildId`. Normalization may issue the binding, but only the external caller records the later human confirmation action before echoing it to a recommendation call.
+- [x] Digest domain separator and projection version are fixed; semantically irrelevant display/provenance fields are excluded by the projection.
+- [x] CI regenerates `workflow-build.ts` and fails when schema/semantic source changes without a matching generated build identity.
+- [x] The closure gate includes all transitively reachable semantic inputs—at minimum `filters.js`, `hanviet.js`, canonicalization/runtime validators, public runtime schemas, and behavior-affecting compile/build/lock inputs—and fails on missing or unexpected semantic files.
+- [x] Files excluded from identity are explicit, non-semantic, and justified; an unresolved/dynamic import fails closed.
+- [x] Evidence distinguishes `currentTurnImage`, `priorConfirmedNote`, and `manualCorrection`; per-field presence decides precedence without caller-side merge logic.
+- [x] Browser `confirmed:boolean` remains local-only and cannot satisfy or deserialize into MCP confirmation.
+- [x] Provenance retains artifact name, record ID, all tier rankings, source labels/dates present in artifacts, and injected data version.
 
 ## Dependency Map
 
@@ -198,14 +198,14 @@ Shared JS edits are sequential; do not parallel-edit these files. TypeScript ser
 
 ## Tests After
 
-- [ ] Multiple observations dedupe by canonical ID while retaining all evidence ordinals.
-- [ ] Highest supported level/red-copy value retains conflict provenance.
-- [ ] Manual correction creates auditable `manual` confidence and invalidates stale match evidence.
-- [ ] Confirmation binding cannot be replayed against modified state or a different workflow version; it is not described as proof of human action.
-- [ ] Invalid or unconfirmed inputs never reach the recommendation engine.
-- [ ] Result is bounded, JSON-serializable, deterministic, and free of image/secret fields.
-- [ ] Existing SPA callers accept additive outputs without UI regression.
-- [ ] Adversarial raw/source strings remain bounded structured data and are absent from every fixed agent-facing fallback template.
+- [x] Multiple observations dedupe by canonical ID while retaining all evidence ordinals.
+- [x] Highest supported level/red-copy value retains conflict provenance.
+- [x] Manual correction creates auditable `manual` confidence and invalidates stale match evidence.
+- [x] Confirmation binding cannot be replayed against modified state or a different workflow version; it is not described as proof of human action.
+- [x] Invalid or unconfirmed inputs never reach the recommendation engine.
+- [x] Result is bounded, JSON-serializable, deterministic, and free of image/secret fields.
+- [x] Existing SPA callers accept additive outputs without UI regression.
+- [x] Adversarial raw/source strings remain bounded structured data and are absent from every fixed agent-facing fallback template.
 
 ## Regression Gate
 
@@ -215,22 +215,22 @@ node --test tests-js/{hero-identity,match-dict,analyze-map,roster-scan-map,roste
 cd mcp-worker && npm run check:workflow-build && npm test -- --run test/domain && npm run typecheck && npm run build
 cd .. && npm run build && npm run verify && npm run test:dist
 npm run test:e2e -- tests-e2e/mcp-domain-compatibility.spec.mjs
-node --test "tests-js/*.test.mjs"
+npm run test:node
 python3 -m unittest discover -s tests
 cd worker && npm test && npm run typecheck
 ```
 
 ## Success Criteria
 
-- [ ] SP/CO/base identity and combined alternatives behave exactly as accepted.
-- [ ] Material ambiguity blocks recommendation until explicit confirmation.
-- [ ] Meta ranking is tier-first; untiered policy is enforced and visible.
-- [ ] Portfolio contains no duplicate hero/tactic and returns per-slot builds.
-- [ ] Every recommendation includes actual artifact/tier provenance and data-version slot.
-- [ ] Every recommendation verifies the exact confirmation binding and workflow version without claiming proof of human action.
-- [ ] `coexist.json` never influences scoring or claims an unverified join.
-- [ ] Browser, Python, Vision Worker, package typecheck/build, and all tests pass.
-- [ ] `hero-identity.js` is present byte-for-byte in Astro `dist/js/`, and the focused browser smoke uses the Astro preview server.
+- [x] SP/CO/base identity and combined alternatives behave exactly as accepted.
+- [x] Material ambiguity blocks recommendation until explicit confirmation.
+- [x] Meta ranking is tier-first; untiered policy is enforced and visible.
+- [x] Portfolio contains no duplicate hero/tactic and returns per-slot builds.
+- [x] Every recommendation includes actual artifact/tier provenance and data-version slot.
+- [x] Every recommendation verifies the exact confirmation binding and workflow version without claiming proof of human action.
+- [x] `coexist.json` never influences scoring or claims an unverified join.
+- [x] Browser, Python, Vision Worker, package typecheck/build, and all tests pass.
+- [x] `hero-identity.js` is present byte-for-byte in Astro `dist/js/`, and the focused browser smoke uses the Astro preview server.
 
 ## Security and Privacy
 

@@ -54,7 +54,15 @@ test("serialize strips image and token fields", () => {
     imageDataUrl: "data:image/png;base64,abc",
     base64: "abc",
     turnstileToken: "secret-token",
-    ownedHeroes: [{ name: "Mã Siêu", imageDataUrl: "data:image/png;base64,def" }],
+    ownedHeroes: [
+      {
+        name: "Mã Siêu",
+        imageDataUrl: "data:image/png;base64,def",
+        screenshotPath: "/tmp/private.png",
+        imageBytes: [1, 2, 3],
+        apiToken: "private-api-token",
+      },
+    ],
   };
   const serialized = serializeRosterScanState(state);
   const text = JSON.stringify(serialized);
@@ -62,5 +70,76 @@ test("serialize strips image and token fields", () => {
   assert.equal(text.includes("base64"), false);
   assert.equal(text.includes("data:image"), false);
   assert.equal(text.includes("secret-token"), false);
+  assert.equal(text.includes("/tmp/private.png"), false);
+  assert.equal(text.includes("private-api-token"), false);
+  assert.equal(text.includes("imageBytes"), false);
   assert.deepEqual(serialized.ownedHeroes, [{ name: "Mã Siêu" }]);
+});
+
+test("dedupe theo canonical ID giữ mọi evidence ordinal và numeric max", () => {
+  let state = createInitialRosterScanState();
+  state = applyScanResult(state, "heroes", {
+    heroes: [
+      {
+        name: "SP Mã Siêu",
+        canonicalId: "hero:sp-ma-sieu",
+        redStars: 2,
+        level: 45,
+        evidence: [{ imageOrdinal: 1, sourceScope: "priorConfirmedNote" }],
+      },
+      {
+        name: "SP Mã Siêu",
+        canonicalId: "hero:sp-ma-sieu",
+        redStars: 4,
+        level: 50,
+        evidence: [{ imageOrdinal: 3, sourceScope: "currentTurnImage" }],
+      },
+    ],
+  });
+
+  assert.equal(state.ownedHeroes.length, 1);
+  assert.equal(state.ownedHeroes[0].redStars, 4);
+  assert.equal(state.ownedHeroes[0].level, 50);
+  assert.deepEqual(
+    state.ownedHeroes[0].evidence.map(({ imageOrdinal }) => imageOrdinal),
+    [1, 3],
+  );
+  assert.equal(state.confirmed, false);
+});
+
+test("base và SP cùng family không bị dedupe thành một hero", () => {
+  const state = applyScanResult(createInitialRosterScanState(), "heroes", {
+    heroes: [
+      { name: "Mã Siêu", canonicalId: "hero:ma-sieu", familyId: "hero-family:ma-sieu" },
+      { name: "SP Mã Siêu", canonicalId: "hero:sp-ma-sieu", familyId: "hero-family:ma-sieu" },
+    ],
+  });
+
+  assert.deepEqual(
+    state.ownedHeroes.map(({ canonicalId }) => canonicalId),
+    ["hero:ma-sieu", "hero:sp-ma-sieu"],
+  );
+});
+
+test("serialize loại secret lồng trong evidence nhưng giữ provenance an toàn", () => {
+  const serialized = serializeRosterScanState({
+    ...createInitialRosterScanState(),
+    ownedHeroes: [
+      {
+        name: "Mã Siêu",
+        canonicalId: "hero:ma-sieu",
+        evidence: [
+          {
+            imageOrdinal: 1,
+            sourceScope: "currentTurnImage",
+            token: "khong-duoc-giu",
+          },
+        ],
+      },
+    ],
+  });
+  const text = JSON.stringify(serialized);
+
+  assert.equal(text.includes("khong-duoc-giu"), false);
+  assert.equal(serialized.ownedHeroes[0].evidence[0].sourceScope, "currentTurnImage");
 });

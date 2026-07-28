@@ -95,25 +95,45 @@ function labelConfidence(score) {
  * Khớp 1 query về record tốt nhất trong dict.
  * @returns {{record, score, confidence, matched}}
  */
-export function matchDict(query, dict, { threshold = DEFAULT_THRESHOLD } = {}) {
+export function matchDict(
+  query,
+  dict,
+  { threshold = DEFAULT_THRESHOLD, ambiguityMargin = 0.05 } = {},
+) {
   const raw = (query || "").trim();
   const cjk = HAS_CJK.test(raw);
   const q = cjk ? (CJK_OCR_ALIASES[raw] || raw) : normalizeText(raw);
   let best = null;
   let bestScore = 0;
+  let second = null;
+  let secondScore = 0;
   for (const rec of dict) {
     const s = scoreRecord(q, rec, cjk);
     if (s > bestScore) {
+      second = best;
+      secondScore = bestScore;
       bestScore = s;
       best = rec;
+    } else if (s > secondScore) {
+      second = rec;
+      secondScore = s;
     }
   }
   const matched = best != null && bestScore >= threshold;
+  const confidence = matched ? labelConfidence(bestScore) : "low";
+  const margin = Math.max(0, bestScore - secondScore);
+  const ambiguous =
+    matched && second != null && secondScore >= threshold && margin <= ambiguityMargin;
   return {
     record: best,
     score: bestScore,
-    confidence: matched ? labelConfidence(bestScore) : "low",
+    confidence,
     matched,
+    secondRecord: second,
+    secondScore,
+    margin,
+    ambiguous,
+    reviewRequired: !matched || confidence === "low" || ambiguous,
   };
 }
 

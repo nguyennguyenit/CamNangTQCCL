@@ -3,6 +3,7 @@
 // Chống hallucination: mọi tên qua matchDict; dưới ngưỡng -> cờ "không chắc".
 
 import { normalizeText } from "./filters.js";
+import { canonicalHeroId, normalizeHeroSlot } from "./hero-identity.js";
 import { matchDict } from "./match-dict.js";
 import { toVietHanViet } from "./hanviet.js";
 
@@ -38,21 +39,46 @@ export function statFocusVn(cn) {
  * - matched: có khớp dict không (matched -> viet là canonical Việt; unmatched -> giữ Hán).
  * - sure: matched & confidence không thấp (sure=false -> UI gắn cờ "kiểm tra").
  */
-function mapName(cn, dict, { unknownLabel = null } = {}) {
+function canonicalTacticId(name) {
+  return `tactic:${normalizeText(name).replace(/[^a-z0-9]+/gu, "-").replace(/^-+|-+$/gu, "")}`;
+}
+
+function mapName(cn, dict, { unknownLabel = null, kind = "tactic" } = {}) {
   const raw = (cn || "").trim();
   if (unknownLabel && UNKNOWN_HERO_TERMS.has(raw)) {
-    return { cn: raw, viet: unknownLabel, icon: "", matched: false, confidence: "low", sure: false };
+    return {
+      cn: raw,
+      viet: unknownLabel,
+      icon: "",
+      matched: false,
+      confidence: "low",
+      sure: false,
+      reviewRequired: true,
+      canonicalId: null,
+    };
   }
   const m = matchDict(cn, dict);
+  const viet = m.matched ? m.record.viet : toVietHanViet(cn);
   return {
     cn,
     // matched -> tên Việt canonical; unmatched -> PHIÊN Hán-Việt (vd 周劭->Chu Thiệu)
     // thay vì giữ chữ Hán hoặc ép match sai. Vẫn gắn cờ sure=false để biết chưa chắc.
-    viet: m.matched ? m.record.viet : toVietHanViet(cn),
+    viet,
     icon: m.matched ? (m.record.iconUrl || "") : "", // icon official để mắt thường xác nhận
     matched: m.matched,
     confidence: m.confidence,
-    sure: m.matched && m.confidence !== "low",
+    sure: m.matched && !m.reviewRequired,
+    score: m.score,
+    secondScore: m.secondScore,
+    margin: m.margin,
+    ambiguous: m.ambiguous,
+    reviewRequired: m.reviewRequired,
+    canonicalId:
+      m.matched && kind === "hero"
+        ? canonicalHeroId(viet)
+        : m.matched
+          ? canonicalTacticId(viet)
+          : null,
   };
 }
 
@@ -64,9 +90,12 @@ function mapName(cn, dict, { unknownLabel = null } = {}) {
 export function mapRead(read, { heroesDict, tacticsDict, booksDict = [] }) {
   const tactics = (read.tacticsCn || [])
     .filter((t) => !NON_TACTIC_TERMS.has((t || "").trim()))
-    .map((t) => mapName(t, tacticsDict));
-  const books = (read.booksCn || []).map((b) => mapName(b, booksDict));
-  const hero = mapName(read.nameCn || "", heroesDict, { unknownLabel: "Chưa rõ" });
+    .map((t) => mapName(t, tacticsDict, { kind: "tactic" }));
+  const books = (read.booksCn || []).map((b) => mapName(b, booksDict, { kind: "book" }));
+  const hero = mapName(read.nameCn || "", heroesDict, {
+    unknownLabel: "Chưa rõ",
+    kind: "hero",
+  });
   // B0: tên đoán từ chân dung -> luôn gắn cờ kiểm tra (chống auto-accept sai).
   if (read.nameFromPortrait && hero.matched) hero.sure = false;
   return {
@@ -83,13 +112,40 @@ export function mapTeamRead(heroes, dicts) {
 }
 
 /** Tên tướng (normalize) của 1 team trong teams.json. */
-function teamHeroNames(team) {
-  const out = [];
-  for (const h of team.heroes || []) {
-    out.push(normalizeText(h.baseName || ""));
-    for (const a of h.alternatives || []) out.push(normalizeText(a));
+function teamHeroSlots(team) {
+  return (team.heroes || []).map(normalizeHeroSlot);
+}
+
+function matchReadHeroesToSlots(readHeroes, slots) {
+  const heroes = [...readHeroes];
+  let best = [];
+  function visit(heroIndex, usedSlots, matches) {
+    if (heroIndex >= heroes.length) {
+      if (matches.length > best.length) best = matches;
+      return;
+    }
+    visit(heroIndex + 1, usedSlots, matches);
+    for (let slotIndex = 0; slotIndex < slots.length; slotIndex++) {
+      if (usedSlots.has(slotIndex)) continue;
+      if (
+        !slots[slotIndex].alternatives.some(
+          ({ canonicalId }) => canonicalId === heroes[heroIndex],
+        )
+      ) {
+        continue;
+      }
+      visit(
+        heroIndex + 1,
+        new Set([...usedSlots, slotIndex]),
+        [
+          ...matches,
+          { readHeroId: heroes[heroIndex], slotIndex },
+        ],
+      );
+    }
   }
-  return out.filter(Boolean);
+  visit(0, new Set(), []);
+  return best;
 }
 
 /**
@@ -99,31 +155,57 @@ function teamHeroNames(team) {
  */
 export function findSimilarTeams(mapped, teams, { minHeroes = 2, limit = 5 } = {}) {
   // [M1] CHỈ tính tướng đã nhận diện (matched) — tên Hán không khớp không vào mẫu số.
-  const readHeroes = new Set(
-    mapped.filter((m) => m.hero.matched).map((m) => normalizeText(m.hero.viet)).filter(Boolean),
+  const identified = mapped.filter(
+    (item) =>
+      item.hero.matched &&
+      item.hero.canonicalId &&
+      item.hero.reviewRequired !== true,
   );
-  const readTactics = new Set(
-    mapped.flatMap((m) => m.tactics.filter((t) => t.matched).map((t) => normalizeText(t.viet))).filter(Boolean),
+  const readHeroes = new Set(identified.map((item) => item.hero.canonicalId));
+  const readTacticsByHolder = new Set(
+    identified.flatMap((item) =>
+      item.tactics
+        .filter(
+          (tactic) =>
+            tactic.matched &&
+            tactic.canonicalId &&
+            tactic.reviewRequired !== true,
+        )
+        .map((tactic) => `${item.hero.canonicalId}|${tactic.canonicalId}`),
+    ),
   );
   if (readHeroes.size === 0) return [];
 
   const scored = [];
   for (const team of teams) {
-    const tHeroes = new Set(teamHeroNames(team));
-    let heroHit = 0;
-    for (const h of readHeroes) if (tHeroes.has(h)) heroHit++;
+    const slots = teamHeroSlots(team);
+    const heroMatches = matchReadHeroesToSlots(readHeroes, slots);
+    const heroHit = heroMatches.length;
     if (heroHit < minHeroes) continue;
 
-    const tTactics = new Set(
-      (team.heroes || []).flatMap((h) =>
-        (h.tactics || []).flatMap((g) => [normalizeText(g.name), ...(g.alternatives || []).map(normalizeText)]),
+    const tTacticsByHolder = new Set(
+      (team.heroes || []).flatMap((hero, index) =>
+        (hero.tactics || []).flatMap((tactic) => {
+          const holder = heroMatches.find(({ slotIndex }) => slotIndex === index);
+          if (!holder) return [];
+          return [tactic.name, ...(tactic.alternatives || [])].map(
+            (name) => `${holder.readHeroId}|${canonicalTacticId(name)}`,
+          );
+        }),
       ),
     );
     let tacticHit = 0;
-    for (const t of readTactics) if (tTactics.has(t)) tacticHit++;
+    for (const tactic of readTacticsByHolder) {
+      if (tTacticsByHolder.has(tactic)) tacticHit++;
+    }
 
     scored.push({ team, heroHit, tacticHit, total: readHeroes.size });
   }
-  scored.sort((a, b) => b.heroHit - a.heroHit || b.tacticHit - a.tacticHit);
+  scored.sort(
+    (a, b) =>
+      b.heroHit - a.heroHit ||
+      b.tacticHit - a.tacticHit ||
+      String(a.team.id || "").localeCompare(String(b.team.id || "")),
+  );
   return scored.slice(0, limit);
 }

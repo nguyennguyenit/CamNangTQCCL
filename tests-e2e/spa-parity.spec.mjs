@@ -354,7 +354,7 @@ test("opening a roster recommendation selects its source tab and hero search", a
   const seedTeams = teamsFixture.slice(0, 20);
   const rosterState = {
     ownedHeroes: [...new Set(seedTeams.flatMap((team) =>
-      team.heroes.map((hero) => hero.baseName || hero.name)))].map((name) => ({ name })),
+      team.heroes.map((hero) => hero.name || hero.baseName)))].map((name) => ({ name })),
     ownedTactics: [...new Set(seedTeams.flatMap((team) =>
       team.heroes.flatMap((hero) => hero.tactics.map((tactic) => tactic.name))))].map((name) => ({ name })),
     lockedTeams: [],

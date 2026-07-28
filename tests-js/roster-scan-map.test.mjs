@@ -1,6 +1,13 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mapBuiltTeamsScan, mapHeroesScan, mapTacticsScan } from "../js/roster-scan-map.js";
+import {
+  mapBuiltTeamsScan,
+  mapBuiltTeamsScanRich,
+  mapHeroesScan,
+  mapHeroesScanRich,
+  mapTacticsScan,
+  mapTacticsScanRich,
+} from "../js/roster-scan-map.js";
 
 const heroesDict = [
   { chinese: "马超", viet: "Mã Siêu" },
@@ -30,4 +37,77 @@ test("mapBuiltTeamsScan maps locked team heroes and tactics", () => {
   }, dicts);
 
   assert.deepEqual(result.teams, [{ teamName: "Đội cũ", heroes: ["Trình Phổ"], tactics: ["An Ủi Quân Dân"] }]);
+});
+
+test("rich mapper giữ evidence, runner-up và image ordinal", () => {
+  const ambiguousHeroes = [
+    { chinese: "马超", viet: "SP Mã Siêu", linkScore: 0.91 },
+    { chinese: "马超", viet: "Mã Siêu", linkScore: 0.9 },
+  ];
+  const result = mapHeroesScanRich(
+    {
+      heroes: [
+        {
+          nameCn: "马超",
+          redStars: 4,
+          imageOrdinal: 2,
+          fieldPresence: ["nameCn", "redStars"],
+        },
+      ],
+    },
+    {
+      heroesDict: ambiguousHeroes,
+      observationBatchId: "batch-1",
+      sourceScope: "currentTurnImage",
+    },
+  );
+  const [hero] = result.heroes;
+
+  assert.equal(hero.rawChinese, "马超");
+  assert.equal(hero.normalizedText, "sp ma sieu");
+  assert.equal(hero.canonicalId, "hero:sp-ma-sieu");
+  assert.equal(hero.secondScore, 1);
+  assert.equal(hero.margin, 0);
+  assert.equal(hero.reviewRequired, true);
+  assert.equal(hero.dictionaryLinkScore, 0.91);
+  assert.equal(hero.imageOrdinal, 2);
+  assert.deepEqual(hero.evidence, {
+    batchId: "batch-1",
+    sourceScope: "currentTurnImage",
+    trust: "untrusted",
+    imageOrdinal: 2,
+    fieldPresence: ["nameCn", "redStars"],
+  });
+});
+
+test("rich tactic và built-team mapper giữ holder thay vì làm phẳng evidence", () => {
+  const tactic = mapTacticsScanRich(
+    { tactics: [{ nameCn: "当锋摧决", imageOrdinal: 1 }] },
+    { tacticsDict, observationBatchId: "batch-2", sourceScope: "currentTurnImage" },
+  );
+  const built = mapBuiltTeamsScanRich(
+    {
+      teams: [
+        {
+          teamName: "Đội cũ",
+          heroes: [
+            {
+              nameCn: "程普",
+              tacticsCn: ["抚辑军民"],
+              imageOrdinal: 3,
+            },
+          ],
+        },
+      ],
+    },
+    { ...dicts, observationBatchId: "batch-3", sourceScope: "priorConfirmedNote" },
+  );
+
+  assert.equal(tactic.tactics[0].canonicalId, "tactic:duong-phong-thoi-quyet");
+  assert.equal(built.teams[0].heroSlots[0].hero.canonicalId, "hero:trinh-pho");
+  assert.equal(
+    built.teams[0].heroSlots[0].tactics[0].canonicalId,
+    "tactic:an-ui-quan-dan",
+  );
+  assert.equal(built.teams[0].heroSlots[0].imageOrdinal, 3);
 });

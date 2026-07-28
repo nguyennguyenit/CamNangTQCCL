@@ -51,7 +51,7 @@ local: filesystem -> CLI/stdio       remote: R2 manifest -> fresh server/request
 | # | Phase | Status | Depends on | Effort |
 |---|---|---|---|---:|
 | 1 | [Contracts and characterization](./phase-01-contracts-and-characterization.md) | Completed | — | 2d |
-| 2 | [Domain recommendation and provenance](./phase-02-harden-domain-recommendation-and-provenance.md) | Pending | 1 | 4d |
+| 2 | [Domain recommendation and provenance](./phase-02-harden-domain-recommendation-and-provenance.md) | Completed | 1 | 4d |
 | 3 | [Research tools, data loaders, and CLI](./phase-03-build-research-tools-data-loaders-and-cli.md) | Pending | 2 | 4d |
 | 4 | [stdio and Streamable HTTP transports](./phase-04-add-stdio-and-streamable-http-transports.md) | Pending | 3 | 5d |
 | 5 | [Publish GoClaw consumer handoff guide](./phase-05-publish-goclaw-consumer-handoff.md) | Pending | 4 | 1d |

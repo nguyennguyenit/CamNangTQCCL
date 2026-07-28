@@ -35,6 +35,9 @@ test("Hán exact -> high confidence", () => {
   assert.equal(r.matched, true);
   assert.equal(r.record.viet, "Mê Hoặc");
   assert.equal(r.confidence, "high");
+  assert.equal(r.secondScore < r.score, true);
+  assert.equal(r.ambiguous, false);
+  assert.equal(r.reviewRequired, false);
 });
 
 test("Hán OCR-lỗi-giả -> fuzzy về đúng top", () => {
@@ -73,6 +76,29 @@ test("tên lạ -> không khớp, confidence thấp", () => {
   const r = matchDict("xyzkhongtontai", DICT);
   assert.equal(r.matched, false);
   assert.equal(r.confidence, "low");
+  assert.equal(r.reviewRequired, true);
+});
+
+test("runner-up sát điểm buộc review thay vì tự chọn", () => {
+  const ambiguous = [
+    { chinese: "荀彧", viet: "SP Tuân Úc" },
+    { chinese: "荀彧", viet: "Tuân Úc" },
+  ];
+  const r = matchDict("荀彧", ambiguous);
+
+  assert.equal(r.score, 1);
+  assert.equal(r.secondScore, 1);
+  assert.equal(r.margin, 0);
+  assert.equal(r.ambiguous, true);
+  assert.equal(r.reviewRequired, true);
+});
+
+test("fuzzy margin đủ rộng không buộc review", () => {
+  const r = matchDict("神机", DICT);
+
+  assert.ok(r.margin > 0.05);
+  assert.equal(r.ambiguous, false);
+  assert.equal(r.reviewRequired, false);
 });
 
 test("searchDict trả nhiều kết quả xếp hạng", () => {

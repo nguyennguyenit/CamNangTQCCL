@@ -33,9 +33,12 @@ describe("legacy domain adapter characterization", () => {
       "deserializeBrowserScanState",
       "findSimilarTeams",
       "mapBuiltTeamsScan",
+      "mapBuiltTeamsScanRich",
       "mapHeroesScan",
+      "mapHeroesScanRich",
       "mapRead",
       "mapTacticsScan",
+      "mapTacticsScanRich",
       "mapTeamRead",
       "matchDictionary",
       "normalizeTeamCandidate",
@@ -76,18 +79,61 @@ describe("legacy domain adapter characterization", () => {
     expect(result.heroes[0]?.name).toBeTruthy();
   });
 
-  it("captures the temporary SP/base collapse for Phase 2 replacement", () => {
-    const candidate = legacyDomainAdapter.normalizeTeamCandidate(team("team-intro-0"));
+  it("exposes evidence-rich scan mappings without removing the browser shape", () => {
+    const result = legacyDomainAdapter.mapHeroesScanRich(
+      {
+        heroes: [
+          {
+            nameCn: "SP荀彧",
+            redStars: 3,
+            imageOrdinal: 2,
+            fieldPresence: ["canonicalId", "redStars"],
+          },
+        ],
+      },
+      {
+        heroesDict: heroes,
+        sourceScope: "currentTurnImage",
+        batchId: "batch-1",
+      },
+    );
 
-    expect(candidate.requiredHeroes).toContain("Tuân Úc");
-    expect(candidate.requiredHeroes).not.toContain("SP Tuân Úc");
+    expect(result.heroes?.[0]).toMatchObject({
+      canonicalId: "hero:sp-tuan-uc",
+      familyId: "hero-family:tuan-uc",
+      reviewRequired: false,
+      rawTextTrust: "untrusted",
+      imageOrdinal: 2,
+      evidence: {
+        sourceScope: "currentTurnImage",
+        batchId: "batch-1",
+        imageOrdinal: 2,
+        trust: "untrusted",
+      },
+    });
   });
 
-  it("captures the temporary combined-slot mismatch for Phase 2 replacement", () => {
-    const candidate = legacyDomainAdapter.normalizeTeamCandidate(team("team-intro-27"));
+  it("preserves SP identity instead of collapsing to the base hero", () => {
+    const candidate = legacyDomainAdapter.normalizeTeamCandidate(team("team-intro-0"));
 
-    expect(candidate.requiredHeroes).toContain("Lữ Mông");
-    expect(candidate.requiredHeroes).not.toContain("Trình Phổ");
+    expect(candidate.requiredHeroes).toContain("SP Tuân Úc");
+    expect(candidate.requiredHeroes).not.toContain("Tuân Úc");
+  });
+
+  it("represents a combined hero slot as alternatives", () => {
+    const candidate = legacyDomainAdapter.normalizeTeamCandidate(team("team-intro-27"));
+    const combined = candidate.heroSlots.find((slot) =>
+      (slot.alternatives as Array<Record<string, unknown>>).some(
+        (alternative) => alternative.displayName === "SP Lữ Mông",
+      ),
+    );
+
+    expect(combined?.alternatives).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ displayName: "SP Lữ Mông" }),
+        expect.objectContaining({ displayName: "Trình Phổ" }),
+      ]),
+    );
   });
 
   it("characterizes CO, multi-ranking, and untiered committed artifacts", () => {
@@ -107,16 +153,16 @@ describe("legacy domain adapter characterization", () => {
       tierByTeam,
     );
 
-    expect(coCandidate.requiredHeroes).toContain("Chân Cơ");
-    expect(coCandidate.requiredHeroes).not.toContain("CO Chân Cơ");
+    expect(coCandidate.requiredHeroes).toContain("CO Chân Cơ");
+    expect(coCandidate.requiredHeroes).not.toContain("Chân Cơ");
     expect(rankedCandidate.tier).toBe("T0");
     expect(untieredCandidate.tier).toBe("");
   });
 
-  it("keeps current recommendation tactics flat for Phase 2 replacement", () => {
+  it("returns per-holder tactic selections while retaining the flat compatibility field", () => {
     const source = team("team-intro-0");
-    const sourceHeroes = (source.heroes as Array<{ baseName: string }>).map(
-      ({ baseName }) => baseName,
+    const sourceHeroes = (source.heroes as Array<{ name: string }>).map(
+      ({ name }) => name,
     );
     const sourceTactics = (
       source.heroes as Array<{ tactics: Array<{ name: string }> }>
@@ -127,16 +173,17 @@ describe("legacy domain adapter characterization", () => {
       ownedHeroes: sourceHeroes,
       ownedTactics: sourceTactics,
       maxTeams: 1,
+      mode: "all",
     });
 
     expect(result.portfolioTeams[0]?.selectedTactics).toEqual(sourceTactics);
-    expect(result.portfolioTeams[0]?.tacticSelections).toBeUndefined();
+    expect(result.portfolioTeams[0]?.tacticSelections).toHaveLength(sourceTactics.length);
   });
 
   it("maps current team reads and returns defensive JSON output", () => {
     const input = [
       {
-        nameCn: "荀彧",
+        nameCn: "SP荀彧",
         tacticsCn: ["草船借箭"],
         booksCn: [],
         statFocusCn: "全智力",
@@ -156,7 +203,7 @@ describe("legacy domain adapter characterization", () => {
 
   it("executes single-read and similar-team mapping", () => {
     const read = {
-      nameCn: "荀彧",
+      nameCn: "SP荀彧",
       tacticsCn: ["草船借箭"],
       booksCn: [],
       statFocusCn: "全智力",
@@ -173,7 +220,7 @@ describe("legacy domain adapter characterization", () => {
       { minHeroes: 1, limit: 3 },
     );
 
-    expect((mapped.hero as Record<string, unknown>).viet).toBe("Tuân Úc");
+    expect((mapped.hero as Record<string, unknown>).viet).toBe("SP Tuân Úc");
     expect(similar.length).toBeGreaterThan(0);
   });
 

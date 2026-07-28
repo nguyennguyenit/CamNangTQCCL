@@ -24,6 +24,8 @@ Browser image + Turnstile ──POST /analyze──► Cloudflare Worker
 Browser canonical mapping + local matching/recommendation
 ```
 
+`mcp-worker/` hiện là boundary phát triển riêng, chưa tham gia các đường triển khai trên. Phase hiện tại chỉ cung cấp contract và pure domain services; data loader, CLI, stdio và HTTP transport chưa được triển khai.
+
 ## Build-time data flow
 
 1. HTML export trong `Meta Team PK/` được parser grid/team/Cùng Tồn/khai hoang đọc.
@@ -50,9 +52,28 @@ Ba tab team đều gọi `team-filter-section.js`. Module này tính facet trự
 Tra cứu và gợi ý cốt lõi chạy local:
 
 - `match-dict.js`: match Việt bỏ dấu/Hán-Việt/Hán.
+- `hero-identity.js`: SP, CO và bản thường có canonical ID riêng; `familyId` chỉ biểu diễn quan hệ cùng họ, không thay thế identity khi xét sở hữu. Mỗi combined slot là một tập alternatives và chỉ cần đúng một alternative để thỏa slot.
 - `filters.js`: search/filter team.
 - `team-recommend-engine.js`: xét ownership, conflict tướng/chiến pháp, alternatives, tier/red stars và portfolio tối đa 5 team.
 - `coexist.json` chỉ render nhóm tham khảo; recommender dùng `teams.json` + `team-tier.json`, không parse display string Cùng Tồn.
+
+## Research MCP domain boundary
+
+Pure domain flow hiện có:
+
+```text
+structured observations
+  → normalize thành canonical state
+  → caller rà soát/xác nhận
+  → binding state + workflow
+  → recommendation trên snapshot được inject
+```
+
+`mcp-worker/src/domain/normalization-service.ts` sở hữu chuẩn hóa và source precedence; ambiguity, identity/family conflict hoặc locked-resource conflict đặt trạng thái cần review. `canonical-state.ts` sở hữu projection/digest và xác minh binding. `recommendation-service.ts` chỉ gọi engine sau khi workflow, canonical state và binding khớp; trạng thái chưa phân giải hoặc binding cũ bị từ chối. Bằng chứng người dùng thật sự đã xác nhận vẫn thuộc caller, không phải điều MCP tự chứng minh.
+
+Workflow build identity được sinh từ semantic import closure. Inventory chính xác thuộc `mcp-worker/workflow-source-manifest.json`; `mcp-worker/scripts/generate-workflow-build.ts` kiểm closure bằng TypeScript AST, từ chối dynamic import không thể đóng và fail khi manifest/generated identity bị lệch. Dữ liệu release được định danh riêng; việc ghép trusted release identity vào workflow runtime thuộc bước triển khai sau, chưa có trong boundary này.
+
+Boundary này fail closed và có bounds trước xử lý: chuỗi/control characters và collection được giới hạn, ambiguity hay xung đột material chặn recommendation, output/corpus được clamp. Observation và corpus text được coi là dữ liệu không tin cậy; state/result không nhận hoặc giữ ảnh, base64, path, bearer/provider secret hay token. `coexist.json` chỉ là metadata tham khảo, không tham gia chấm điểm.
 
 ## Local state boundary
 

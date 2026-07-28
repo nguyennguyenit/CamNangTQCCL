@@ -94,6 +94,28 @@ test("mapRead: nameFromPortrait -> ép sure=false dù khớp", () => {
   assert.equal(r.hero.sure, false); // đoán từ chân dung -> luôn cờ kiểm tra
 });
 
+test("mapRead: ambiguity không được báo sure dù top match có confidence cao", () => {
+  const ambiguousHeroes = [
+    { viet: "Tào Tháo A", chinese: "曹操" },
+    { viet: "Tào Tháo B", chinese: "曹操" },
+  ];
+  const r = mapRead(
+    { nameCn: "曹操", tacticsCn: [], statFocusCn: "" },
+    { ...DICTS, heroesDict: ambiguousHeroes },
+  );
+
+  assert.equal(r.hero.reviewRequired, true);
+  assert.equal(r.hero.sure, false);
+  assert.deepEqual(
+    findSimilarTeams(
+      [r],
+      [{ id: "ambiguous-team", heroes: [{ name: "Tào Tháo A", tactics: [] }] }],
+      { minHeroes: 1 },
+    ),
+    [],
+  );
+});
+
 test("findSimilarTeams: binh thư KHÔNG đổi điểm (giữ nguyên)", () => {
   const teams = [{ heroes: [{ baseName: "Tào Tháo", tactics: [] }, { baseName: "Quan Vũ", tactics: [] }] }];
   const withBooks = mapTeamRead(
@@ -151,4 +173,95 @@ test("findSimilarTeams: tie-break theo chiến pháp trùng", () => {
   );
   const res = findSimilarTeams(mapped, teams, { minHeroes: 2 });
   assert.equal(res[0].tacticHit, 1); // team có chiến pháp trùng xếp trên
+});
+
+test("findSimilarTeams phân biệt SP với base theo canonical ID", () => {
+  const heroes = [
+    { chinese: "荀彧", viet: "SP Tuân Úc" },
+    { chinese: "曹操", viet: "Tào Tháo" },
+  ];
+  const mapped = mapTeamRead(
+    [
+      { nameCn: "荀彧", tacticsCn: [], statFocusCn: "" },
+      { nameCn: "曹操", tacticsCn: [], statFocusCn: "" },
+    ],
+    { heroesDict: heroes, tacticsDict: [], booksDict: [] },
+  );
+  const teams = [
+    {
+      id: "base",
+      heroes: [
+        { name: "Tuân Úc", baseName: "Tuân Úc", tactics: [] },
+        { name: "Tào Tháo", baseName: "Tào Tháo", tactics: [] },
+      ],
+    },
+    {
+      id: "sp",
+      heroes: [
+        { name: "SP Tuân Úc", baseName: "Tuân Úc", isSP: true, tactics: [] },
+        { name: "Tào Tháo", baseName: "Tào Tháo", tactics: [] },
+      ],
+    },
+  ];
+
+  const result = findSimilarTeams(mapped, teams, { minHeroes: 2 });
+  assert.deepEqual(result.map(({ team }) => team.id), ["sp"]);
+});
+
+test("một combined slot không được tính thành hai hero hits", () => {
+  const mapped = [
+    { hero: { matched: true, canonicalId: "hero:a" }, tactics: [] },
+    { hero: { matched: true, canonicalId: "hero:b" }, tactics: [] },
+  ];
+  const teams = [
+    {
+      id: "combined",
+      heroes: [{ name: "A/B", tactics: [] }],
+    },
+  ];
+
+  assert.deepEqual(findSimilarTeams(mapped, teams, { minHeroes: 2 }), []);
+});
+
+test("findSimilarTeams chỉ tính tactic khi đúng holder và tie theo team ID", () => {
+  const mapped = mapTeamRead(
+    [
+      { nameCn: "曹操", tacticsCn: ["魅惑"], statFocusCn: "" },
+      { nameCn: "关羽", tacticsCn: [], statFocusCn: "" },
+    ],
+    DICTS,
+  );
+  const teams = [
+    {
+      id: "team-z-wrong-holder",
+      heroes: [
+        { name: "Tào Tháo", baseName: "Tào Tháo", tactics: [] },
+        { name: "Quan Vũ", baseName: "Quan Vũ", tactics: [{ name: "Mê Hoặc" }] },
+      ],
+    },
+    {
+      id: "team-b-right-holder",
+      heroes: [
+        { name: "Tào Tháo", baseName: "Tào Tháo", tactics: [{ name: "Mê Hoặc" }] },
+        { name: "Quan Vũ", baseName: "Quan Vũ", tactics: [] },
+      ],
+    },
+    {
+      id: "team-a-right-holder",
+      heroes: [
+        { name: "Tào Tháo", baseName: "Tào Tháo", tactics: [{ name: "Mê Hoặc" }] },
+        { name: "Quan Vũ", baseName: "Quan Vũ", tactics: [] },
+      ],
+    },
+  ];
+
+  const result = findSimilarTeams(mapped, teams, { minHeroes: 2 });
+  assert.deepEqual(
+    result.map(({ team, tacticHit }) => [team.id, tacticHit]),
+    [
+      ["team-a-right-holder", 1],
+      ["team-b-right-holder", 1],
+      ["team-z-wrong-holder", 0],
+    ],
+  );
 });

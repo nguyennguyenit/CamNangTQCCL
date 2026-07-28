@@ -40,6 +40,8 @@ jobs:
           cache-dependency-path: mcp-worker/package-lock.json
       - run: npm ci
         working-directory: mcp-worker
+      - run: npm run check:workflow-build
+        working-directory: mcp-worker
       - run: npm test -- --run test/domain
         working-directory: mcp-worker
       - run: npm run typecheck

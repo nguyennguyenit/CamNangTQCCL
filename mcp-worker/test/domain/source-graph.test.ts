@@ -20,8 +20,8 @@ const forbidden = [
   /(?:^|\/)worker\//u,
   /@modelcontextprotocol/u,
   /cloudflare|wrangler/u,
-  /node:(?:fs|path)|["'](?:fs|path)["']/u,
 ];
+const forbiddenImports = /^(?:node:)?(?:fs|path)$/u;
 
 function semanticClosure(): string[] {
   const visited = new Set<string>();
@@ -55,6 +55,7 @@ describe("legacy semantic source graph", () => {
       "js/analyze-map.js",
       "js/filters.js",
       "js/hanviet.js",
+      "js/hero-identity.js",
       "js/match-dict.js",
       "js/roster-scan-map.js",
       "js/roster-scan-state.js",
@@ -71,6 +72,13 @@ describe("legacy semantic source graph", () => {
           `${relativePath} matched forbidden ${pattern}`,
         ).toBe(false);
       }
+      const specifiers = [
+        ...source.matchAll(/^\s*import\s+(?:[^"']+\s+from\s+)?["']([^"']+)["']/gmu),
+      ].map((match) => match[1]);
+      expect(
+        specifiers.some((specifier) => specifier && forbiddenImports.test(specifier)),
+        `${relativePath} imports filesystem/path primitives`,
+      ).toBe(false);
     }
   });
 });
