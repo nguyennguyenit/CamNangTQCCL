@@ -54,7 +54,7 @@ local: filesystem -> CLI/stdio       remote: R2 manifest -> fresh server/request
 | 2 | [Domain recommendation and provenance](./phase-02-harden-domain-recommendation-and-provenance.md) | Completed | 1 | 4d |
 | 3 | [Research tools, data loaders, and CLI](./phase-03-build-research-tools-data-loaders-and-cli.md) | Completed | 2 | 4d |
 | 4 | [stdio and Streamable HTTP transports](./phase-04-add-stdio-and-streamable-http-transports.md) | Completed | 3 | 5d |
-| 5 | [Publish GoClaw consumer handoff guide](./phase-05-publish-goclaw-consumer-handoff.md) | Pending | 4 | 1d |
+| 5 | [Publish GoClaw consumer handoff guide](./phase-05-publish-goclaw-consumer-handoff.md) | Completed | 4 | 1d |
 | 6 | [Secure MCP release and operations](./phase-06-validate-secure-release-and-operations.md) | Pending | 4 | 6d |
 
 ## Acceptance Criteria
@@ -163,3 +163,11 @@ Retained corrections include the Node ESM boundary, single ownership of normaliz
 - Gate Phase 4: Node `165/165` + workerd `2/2` = `167/167`; bundle Wrangler `1347.44 KiB`, gzip `237.82 KiB`; typecheck, build, workflow identity, Wrangler types/dry-run và audit đều PASS.
 - Sweep sáu phase: Phase 1–4 `Completed`; Phase 5–6 `Pending`; toàn kế hoạch giữ `in_progress` (`143/191`, `74%`). Live control-plane/deployment verification vẫn là release gate Phase 6.
 - Báo cáo: [Phase 4 completion](./reports/phase-04-completion-260728.md).
+
+### Session 9 — 2026-07-28
+
+- Phase 5 hoàn tất với đúng một guide handoff không thực thi tại `docs/goclaw-mcp-skill-handoff.md`; không thêm skill, GoClaw/Dewee config, grant, channel, media hoặc staging artifact.
+- Tester: `7/7` kiểm thử tập trung, `8/8` tool names, `10/10` links; secret scan và `git diff --check` sạch.
+- Reviewer ban đầu nêu lỗi **Medium** về pagination; guide đã giới hạn cursor pagination cho `tqccl_search`, sau đó reviewer cuối **PASS**.
+- Sweep sáu phase: Phase 1–5 `Completed`; Phase 6 `Pending`; kế hoạch giữ `in_progress` (`154/191`, `80%`). Toàn bộ live control-plane, secure release, deploy và rollback gate của Phase 6 vẫn mở.
+- Báo cáo: [Phase 5 completion](./reports/phase-05-completion-260728.md) và [PM progress](./reports/pm-260728-2303-phase-05-progress.md).

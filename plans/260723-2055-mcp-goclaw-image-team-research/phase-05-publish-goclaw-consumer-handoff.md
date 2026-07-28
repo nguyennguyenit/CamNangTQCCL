@@ -1,7 +1,7 @@
 ---
 phase: 5
 title: "Publish GoClaw consumer handoff guide"
-status: todo
+status: completed
 priority: P2
 effort: 1d
 dependencies: [4]
@@ -96,20 +96,27 @@ The guide may recommend that the future skill omit an additional prefix because 
 
 ## Validation
 
-- [ ] Exactly one GoClaw-related implementation document is created.
-- [ ] The guide lists exactly the eight MCP-owned names with no obsolete alias.
-- [ ] The guide never claims MCP processes images or proves the human action.
-- [ ] The guide never describes the pre-shared bearer as OAuth, and tells future consumers to verify explicit custom-header support.
-- [ ] The guide marks all skill/GoClaw work as future external ownership.
-- [ ] The guide forbids prompt concatenation of untrusted structured fields and does not copy a raw-text fallback example.
-- [ ] No skill source, package, fixture, portability test, GoClaw configuration, or staging artifact is created.
-- [ ] Links resolve and no secret/live-environment value appears.
+- [x] Exactly one GoClaw-related implementation document is created.
+- [x] The guide lists exactly the eight MCP-owned names with no obsolete alias.
+- [x] The guide never claims MCP processes images or proves the human action.
+- [x] The guide never describes the pre-shared bearer as OAuth, and tells future consumers to verify explicit custom-header support.
+- [x] The guide marks all skill/GoClaw work as future external ownership.
+- [x] The guide forbids prompt concatenation of untrusted structured fields and does not copy a raw-text fallback example.
+- [x] No skill source, package, fixture, portability test, GoClaw configuration, or staging artifact is created.
+- [x] Links resolve and no secret/live-environment value appears.
 
 ## Success Criteria
 
-- [ ] A future GoClaw implementer can discover the MCP contract and required orchestration without reading plan history.
-- [ ] This repository remains independently complete and releasable as MCP without GoClaw.
-- [ ] Removal or absence of GoClaw has no effect on MCP build, tests, deployment, or release acceptance.
+- [x] A future GoClaw implementer can discover the MCP contract and required orchestration without reading plan history.
+- [x] This repository remains independently complete and releasable as MCP without GoClaw.
+- [x] Removal or absence of GoClaw has no effect on MCP build, tests, deployment, or release acceptance.
+
+## Completion Validation — 2026-07-28
+
+- Tester: **7/7** kiểm thử tập trung PASS; catalog **8/8** tên chính xác; Markdown link **10/10** resolve; secret scan và `git diff --check` sạch.
+- Reviewer ban đầu nêu một lỗi **Medium**: mô tả pagination áp dụng quá rộng. Guide đã giới hạn cursor pagination cho `tqccl_search`; `truncated: true` ở tool khác không được hiểu là có trang kế tiếp. Reviewer cuối: **PASS**.
+- Diff triển khai chỉ tạo đúng [`docs/goclaw-mcp-skill-handoff.md`](../../docs/goclaw-mcp-skill-handoff.md); không có skill source/package, `.agents/skills/`, GoClaw/Dewee config, grant, channel, media hoặc staging artifact.
+- Báo cáo: [Phase 5 completion](./reports/phase-05-completion-260728.md) và [PM progress](./reports/pm-260728-2303-phase-05-progress.md).
 
 ## Risks and Rollback
 
