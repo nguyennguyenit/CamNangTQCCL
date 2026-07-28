@@ -42,7 +42,7 @@ local: filesystem -> CLI/stdio       remote: R2 manifest -> fresh server/request
 - `releaseId` is the full collision-safe digest of the canonical data manifest; compact `dataVersion` is display-only. `workflowVersion` binds `releaseId` to a reproducible `workflowBuildId` derived from the versioned canonical-state projection, runtime schemas, and semantic engine source hashes.
 - MCP verifies `confirmationBinding` against the exact canonical projection and workflow. The external agent—not MCP—is the trusted owner of evidence that the user actually confirmed it.
 - Remote HTTP uses a managed-client pre-shared bearer header, not MCP OAuth authorization. The service makes no OAuth-conformance claim; generic clients must support explicit custom headers or use a separately owned OAuth gateway.
-- `createMcpHandler` creates a stateless request path; only validated snapshot/index cache may be isolate-scoped.
+- Raw Web-standard `WebStandardStreamableHTTPServerTransport` tạo đường xử lý stateless với server/transport mới cho từng POST; chỉ validated snapshot/index cache được phép ở isolate scope.
 - R2 publication builds a clean-source, content-addressed release, conditionally writes immutable objects to a locked release bucket, verifies one exact candidate Worker version against current and candidate manifests, records an immutable promotion receipt, then ETag-CAS switches `current.json` in a separate pointer bucket. A failed live verification conditionally restores the prior pointer; local source synthesizes the same snapshot contract.
 - The service exposes already-prefixed `tqccl_*` names. Consumer-specific prefixing, credentials, grants, registration, and orchestration remain outside this repository.
 
@@ -53,7 +53,7 @@ local: filesystem -> CLI/stdio       remote: R2 manifest -> fresh server/request
 | 1 | [Contracts and characterization](./phase-01-contracts-and-characterization.md) | Completed | — | 2d |
 | 2 | [Domain recommendation and provenance](./phase-02-harden-domain-recommendation-and-provenance.md) | Completed | 1 | 4d |
 | 3 | [Research tools, data loaders, and CLI](./phase-03-build-research-tools-data-loaders-and-cli.md) | Completed | 2 | 4d |
-| 4 | [stdio and Streamable HTTP transports](./phase-04-add-stdio-and-streamable-http-transports.md) | Pending | 3 | 5d |
+| 4 | [stdio and Streamable HTTP transports](./phase-04-add-stdio-and-streamable-http-transports.md) | Completed | 3 | 5d |
 | 5 | [Publish GoClaw consumer handoff guide](./phase-05-publish-goclaw-consumer-handoff.md) | Pending | 4 | 1d |
 | 6 | [Secure MCP release and operations](./phase-06-validate-secure-release-and-operations.md) | Pending | 4 | 6d |
 
@@ -155,3 +155,11 @@ Retained corrections include the Node ESM boundary, single ownership of normaliz
 - CPU proxy quan sát trên `693` records / `60` observations: cold `11.56ms`, index `21.87ms`, warm recommendation `25.92ms`; các timing này là proxy quan sát, không phải SLA.
 - Reviewer cuối: **PASS**. Phase 3 không thêm transport; Phase 4 vẫn `Pending` và toàn kế hoạch vẫn `in_progress`.
 - Báo cáo: [Phase 3 completion](./reports/phase-03-completion-260728.md).
+
+### Session 8 — 2026-07-28
+
+- Phase 4 hoàn tất với raw Web-standard Streamable HTTP SDK v1 sau khi compatibility gate của Cloudflare `agents` không đạt; không giữ `agents` trong dependency graph và không dùng `createMcpHandler`.
+- Reviewer cuối: **PASS** sau bản sửa khóa protocol cho cả JSON-RPC scalar và batch.
+- Gate Phase 4: Node `165/165` + workerd `2/2` = `167/167`; bundle Wrangler `1347.44 KiB`, gzip `237.82 KiB`; typecheck, build, workflow identity, Wrangler types/dry-run và audit đều PASS.
+- Sweep sáu phase: Phase 1–4 `Completed`; Phase 5–6 `Pending`; toàn kế hoạch giữ `in_progress` (`143/191`, `74%`). Live control-plane/deployment verification vẫn là release gate Phase 6.
+- Báo cáo: [Phase 4 completion](./reports/phase-04-completion-260728.md).

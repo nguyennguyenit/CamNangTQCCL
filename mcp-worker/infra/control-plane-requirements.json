@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "productionEnabledOnlyWhenVerified": true,
+  "controls": [
+    {
+      "id": "edge-mcp-rate-limit",
+      "owner": "Cloudflare zone security administrator",
+      "evidenceOwner": "Phase 6 release verifier",
+      "endpoint": "/zones/{zone_id}/rulesets/phases/http_ratelimit/entrypoint",
+      "expected": {
+        "ruleDescription": "tqccl-mcp-rate-limit",
+        "enabled": true,
+        "expression": "http.request.uri.path eq \"/mcp\"",
+        "action": "block",
+        "maximumRequests": 60,
+        "periodSeconds": 60
+      },
+      "failureBehavior": "Chặn phát hành HTTP production.",
+      "rollbackBehavior": "Tắt route MCP nếu không thể khôi phục rule."
+    },
+    {
+      "id": "release-bucket-lock",
+      "owner": "R2 lock administrator",
+      "evidenceOwner": "Phase 6 release verifier",
+      "endpoint": "/accounts/{account_id}/r2/buckets/{release_bucket}/lock",
+      "expected": {
+        "enabled": true,
+        "prefix": "",
+        "minimumRetentionSeconds": 2592000
+      },
+      "failureBehavior": "Chặn stage và activate release.",
+      "rollbackBehavior": "Giữ pointer hiện tại; không ghi release mới."
+    },
+    {
+      "id": "release-bucket-events",
+      "owner": "R2 monitoring administrator",
+      "evidenceOwner": "Phase 6 release verifier",
+      "endpoint": "/accounts/{account_id}/event_notifications/r2/{release_bucket}/configuration",
+      "expected": {
+        "queueNamePrefix": "tqccl-",
+        "actions": [
+          "PutObject",
+          "CopyObject",
+          "DeleteObject",
+          "CompleteMultipartUpload"
+        ]
+      },
+      "failureBehavior": "Chặn activate release.",
+      "rollbackBehavior": "Giữ release và pointer hiện tại để điều tra."
+    },
+    {
+      "id": "pointer-bucket-events",
+      "owner": "R2 monitoring administrator",
+      "evidenceOwner": "Phase 6 release verifier",
+      "endpoint": "/accounts/{account_id}/event_notifications/r2/{pointer_bucket}/configuration",
+      "expected": {
+        "queueNamePrefix": "tqccl-",
+        "actions": [
+          "PutObject",
+          "CopyObject",
+          "DeleteObject"
+        ]
+      },
+      "failureBehavior": "Chặn activate pointer.",
+      "rollbackBehavior": "Tắt route MCP nếu thay đổi pointer không có bằng chứng."
+    }
+  ]
+}

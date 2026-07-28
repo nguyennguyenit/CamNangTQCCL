@@ -174,7 +174,7 @@ function fitResultSize(
 
 async function fingerprint(value: unknown): Promise<string> {
   const bytes = new TextEncoder().encode(JSON.stringify(value));
-  const digest = await globalThis.crypto.subtle.digest(
+  const digest = await crypto.subtle.digest(
     "SHA-256",
     bytes as Uint8Array<ArrayBuffer>,
   );

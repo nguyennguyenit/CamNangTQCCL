@@ -68,7 +68,10 @@ export class ArtifactContractError extends Error {
 }
 
 const ARTIFACT_SET = new Set<string>(ARTIFACT_NAMES);
-const textDecoder = new TextDecoder("utf-8", { fatal: true });
+const textDecoder = new TextDecoder("utf-8", {
+  fatal: true,
+  ignoreBOM: false,
+});
 
 function record(value: unknown, label: string): ArtifactRecord {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
@@ -270,7 +273,7 @@ export function parseArtifact(
 }
 
 async function sha256(bytes: Uint8Array): Promise<`sha256:${string}`> {
-  const digest = await globalThis.crypto.subtle.digest(
+  const digest = await crypto.subtle.digest(
     "SHA-256",
     bytes as Uint8Array<ArrayBuffer>,
   );

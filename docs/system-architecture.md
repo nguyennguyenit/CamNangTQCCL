@@ -2,7 +2,7 @@
 
 ## Tổng quan
 
-Hệ thống có ba boundary triển khai: pipeline dữ liệu chạy local, Astro static build tạo artifact Pages, và Vision Worker tùy chọn. Browser đọc JSON đã commit; không gọi pipeline và không có backend/database chung.
+Hệ thống có bốn boundary triển khai: pipeline dữ liệu chạy local, Astro static build tạo artifact Pages, Vision Worker tùy chọn và Research MCP read-only. Browser đọc JSON đã commit; không gọi pipeline và không có backend/database chung.
 
 ```text
 DATA BUILD (local)                 SITE BUILD (local)               STATIC RUNTIME (Pages)
@@ -22,9 +22,14 @@ Browser image + Turnstile ──POST /analyze──► Cloudflare Worker
                                              │ structured Chinese JSON
                                              ▼
 Browser canonical mapping + local matching/recommendation
+
+RESEARCH MCP PATH
+managed client ──Bearer + Streamable HTTP──► Cloudflare Worker ──► pointer/release R2
+local MCP client ───────────stdio──────────► filesystem snapshot
+                                     cả hai ──► cùng 8 schema/handler read-only
 ```
 
-`mcp-worker/` là boundary nghiên cứu riêng, chưa tham gia các đường triển khai trên. Package đã có snapshot dữ liệu read-only, các research handler dùng chung và JSON CLI local; stdio và Streamable HTTP transport vẫn chưa có.
+`mcp-worker/` là boundary nghiên cứu riêng, không nằm trong browser/Vision flow. Package có snapshot dữ liệu read-only, JSON CLI, stdio MCP và Cloudflare Streamable HTTP dùng chung registry/handler.
 
 ## Build-time data flow
 
@@ -69,14 +74,18 @@ structured observations
   → caller rà soát/xác nhận
   → binding state + workflow
   → tám research handler
-  → JSON CLI local
+  → JSON CLI hoặc MCP stdio/Streamable HTTP
 ```
 
 Snapshot gồm đúng sáu artifact được khai báo tại [`artifact-contracts.ts`](../mcp-worker/src/data/artifact-contracts.ts). [`FilesystemDataSource`](../mcp-worker/src/data/filesystem-data-source.ts) đọc JSON local và tự tạo canonical manifest; [`R2DataSource`](../mcp-worker/src/data/r2-data-source.ts) chỉ đọc pointer, manifest và object key đã được release khai báo qua hai reader capability hẹp. Cả hai dùng cache trong [`data-source.ts`](../mcp-worker/src/data/data-source.ts): chỉ đổi snapshot sau khi candidate hoàn chỉnh hợp lệ, dùng single-flight cho refresh thường và chỉ phục vụ stale đến deadline tuyệt đối không gia hạn.
 
 `mcp-worker/src/domain/normalization-service.ts` sở hữu chuẩn hóa và source precedence; ambiguity, identity/family conflict hoặc locked-resource conflict đặt trạng thái cần review. `canonical-state.ts` sở hữu projection/digest và xác minh binding. `recommendation-service.ts` chỉ gọi engine sau khi workflow, canonical state và binding khớp; trạng thái chưa phân giải hoặc binding cũ bị từ chối. Bằng chứng người dùng thật sự đã xác nhận vẫn thuộc caller, không phải điều research handler tự chứng minh.
 
-Tám tên handler cùng schema request/result thuộc [`research-contracts.ts`](../mcp-worker/src/research/research-contracts.ts); dispatch và version/provenance/error behavior thuộc [`research-handlers.ts`](../mcp-worker/src/research/research-handlers.ts). CLI `npm run cli -- <lệnh> [--input '<JSON>'] [--data-root <thư-mục>]` chỉ ánh xạ lệnh vào cùng handler qua [`src/cli.ts`](../mcp-worker/src/cli.ts), không tạo contract riêng. Đây chưa phải MCP server có thể kết nối: stdio và HTTP transport thuộc boundary triển khai sau.
+Tám tên handler cùng schema request/result thuộc [`research-contracts.ts`](../mcp-worker/src/research/research-contracts.ts); dispatch và version/provenance/error behavior thuộc [`research-handlers.ts`](../mcp-worker/src/research/research-handlers.ts). CLI `npm run cli -- <lệnh>`, stdio `npm run stdio` và HTTP đều gọi cùng handler/schema. [`tool-definitions.ts`](../mcp-worker/src/mcp/tool-definitions.ts) chỉ thêm mô tả và annotation read-only; mỗi factory tạo `McpServer` mới.
+
+Stdio dùng official SDK transport, giữ stdout chỉ cho protocol và ghi diagnostic cố định vào stderr. Remote Worker dùng raw Web-standard Streamable HTTP transport của SDK v1 ở chế độ JSON stateless; protocol `2025-11-25` được pin cho cả `initialize` đơn lẻ và trong batch. Trình tự `/mcp` là header guard rẻ → managed-client pre-shared bearer → rate/in-flight → đọc JSON theo byte thực tế và kiểm protocol → R2/server; `/healthz` là liveness no-I/O. Origin hiện diện phải khớp chính xác và result cũng có trần. Bearer này không phải OAuth; không có OAuth server/discovery, client phải tự gắn `Authorization` header.
+
+Remote data đi qua hai R2 binding: pointer bucket mutable và release bucket content-addressed. Application chỉ đưa binding qua `PointerReader`/`ReleaseReader`; đây là giới hạn capability trong code, không phải tuyên bố R2 binding có IAM read-only. Server/transport luôn theo request; module scope chỉ giữ snapshot cache đã validate và limiter isolate-local.
 
 `workflowVersion` ghép full `releaseId` của canonical data manifest với `workflowBuildId` của semantic import closure; compact `dataVersion` chỉ để hiển thị. Inventory build chính xác thuộc [`workflow-source-manifest.json`](../mcp-worker/workflow-source-manifest.json); [`generate-workflow-build.ts`](../mcp-worker/scripts/generate-workflow-build.ts) kiểm closure bằng TypeScript AST, từ chối dynamic import không thể đóng và fail khi manifest/generated identity bị lệch.
 
@@ -120,6 +129,8 @@ Worker không chủ động lưu ảnh; log tối thiểu. KV eventual consisten
 |---|---|---|
 | Cloudflare Pages | `dist/` từ `npm run build` | `public/_headers`, public Worker URL + Turnstile site key |
 | Cloudflare Worker | `worker/src/*.ts` | vars trong `wrangler.toml`, KV binding, secrets trong Worker env |
+| Research MCP Worker | `mcp-worker/src/worker.ts` | `wrangler.jsonc`, hai R2 binding, managed bearer secret, Origin/limit vars |
+| Research MCP local | `mcp-worker/src/stdio.ts` | filesystem snapshot; stdout protocol-only |
 | Maintainer local | `pipeline/*.py`, HTML/cache/maps | không publish nguồn/cache riêng tư |
 
 Config commit hiện trỏ Pages `https://tqccl.pages.dev` tới Worker `https://tqccl-vision-proxy.nguyennlt-ncc.workers.dev/analyze`. Đây là public config hoạt động, không phải placeholder.
@@ -133,6 +144,8 @@ Astro dùng `output: "static"` và không có Cloudflare adapter/Pages Functions
 - Thiếu `team-tier.json`: site vẫn render team không badge tier.
 - Lỗi JSON bắt buộc: Team PK hiển thị hướng dẫn tải lại/liên hệ quản trị; các init sau không hoàn tất.
 - Vision lỗi: tra cứu local và tracker vẫn độc lập; UI trả status theo lỗi Worker.
+- Research MCP HTTP lỗi: CLI/stdio local vẫn độc lập; recommendation fail closed, không tự bịa đội hình.
+- Research MCP trả `401/429/503` trước dữ liệu khi bearer, quota hoặc cấu hình không hợp lệ; `/healthz` không đại diện data readiness.
 - Worker có `FEATURE_ENABLED` kill-switch; rollback Worker/Pages độc lập. Pages rollback phải promote toàn artifact known-good, purge cache bị ảnh hưởng và kiểm tra client mới/cũ.
 - Mất localStorage: tracker/scan mất nếu người dùng chưa export backup.
 

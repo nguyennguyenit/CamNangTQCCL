@@ -6,6 +6,7 @@ node_modules/
 _site/
 .claude/
 .wrangler/
+.wrangler-dist/
 .astro/
 dist/
 playwright-report/

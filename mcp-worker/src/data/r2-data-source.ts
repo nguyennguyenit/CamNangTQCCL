@@ -35,7 +35,10 @@ export interface R2DataSourceOptions {
 
 const MAX_POINTER_BYTES = 64 * 1024;
 const MAX_MANIFEST_BYTES = 1024 * 1024;
-const decoder = new TextDecoder("utf-8", { fatal: true });
+const decoder = new TextDecoder("utf-8", {
+  fatal: true,
+  ignoreBOM: false,
+});
 
 function parseJsonObject(bytes: Uint8Array, label: string): Record<string, unknown> {
   try {

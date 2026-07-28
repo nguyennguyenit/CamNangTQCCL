@@ -1,7 +1,7 @@
 ---
 phase: 4
 title: "Add stdio and Streamable HTTP transports"
-status: todo
+status: completed
 priority: P1
 effort: 5d
 dependencies: [3]
@@ -25,13 +25,13 @@ Expose the exact eight-handler catalog through one MCP registry, local stdio, an
 - Functional:
   - Exact upstream names already include `tqccl_`; no registry alias or transport-specific name.
   - Local entrypoint uses filesystem source and official stdio transport.
-  - Remote Worker uses separate pointer/release R2 bindings through Phase 3’s narrow reader interfaces, managed-client pre-shared bearer authentication, Origin policy, body/result limits, and `createMcpHandler`.
+  - Remote Worker uses separate pointer/release R2 bindings through Phase 3’s narrow reader interfaces, managed-client pre-shared bearer authentication, Origin policy, body/result limits, and raw Web-standard `WebStandardStreamableHTTPServerTransport`.
   - Post-auth rate limiting and an isolate-local in-flight ceiling run before R2/server construction; production also requires a pre-Worker edge/WAF rule with repository-owned requirement artifact and live read-only verification.
   - `/mcp` supports protocol-required methods; every method is authenticated before parsing/handling.
   - The pre-shared bearer is explicitly not MCP OAuth authorization: no OAuth discovery/conformance claim, authorization server, user grant, or protected-resource metadata. Intended clients must inject the managed header explicitly; OAuth interop requires a separately owned gateway or later scope decision.
   - Public `/healthz` is constant-time, no-I/O liveness only and exposes no secret, corpus, bucket, readiness, or tenant detail. Authenticated `tqccl_get_data_version` plus the release verifier owns data readiness.
 - Non-functional:
-  - Pin a production-supported MCP SDK v1, negotiated MCP protocol version, and mutually compatible stable Cloudflare `agents` version; no automatic v2/spec upgrade during delivery.
+  - Pin a production-supported MCP SDK v1 and negotiated MCP protocol version; the accepted compatibility fallback excludes Cloudflare `agents` because its stable line requires a Node engine above the repository pin while its legacy line locks an older SDK with an advisory.
   - Stateless remote behavior, no Durable Object/session/user state, no singleton server/transport.
   - Stdio stdout is protocol-only; logs/errors go to redacted stderr.
   - Separate Node and Worker import graphs; Wrangler dry-run proves no Node built-ins.
@@ -44,16 +44,16 @@ Expose the exact eight-handler catalog through one MCP registry, local stdio, an
 TOOL_DEFINITIONS -> createMcpServer(deps) -> fresh registry/server
 filesystem source -----------------------> stdio process
 R2 source/cache + bearer + guards -------> Worker request
-                                            -> createMcpHandler(..., /mcp)
+                                            -> raw Web-standard transport
 ```
 
-The request-scoped Worker server prevents cross-client transport leakage. Warm snapshot caching is optional and keyed by validated data version. If `createMcpHandler` compatibility fails, the rollback path is a raw Web-standard Streamable HTTP adapter without changing registry or handlers.
+The request-scoped Worker server and raw Web-standard transport prevent cross-client transport leakage. Warm snapshot caching is optional and keyed by validated data version. This accepted fallback keeps the registry and handlers unchanged without retaining Cloudflare `agents` or `createMcpHandler`.
 
 ## File Inventory
 
 | Action | Absolute path | Rough delta | Purpose / test impact |
 |---|---|---:|---|
-| Modify | `/Users/plateau/Project/CamNangTQCCL/mcp-worker/package.json` | +30–45 | Exact SDK/Agents/Zod/Workers test and transport scripts. |
+| Modify | `/Users/plateau/Project/CamNangTQCCL/mcp-worker/package.json` | +30–45 | Exact SDK/Zod/Workers test and transport scripts; không giữ `agents` sau compatibility gate. |
 | Modify | `/Users/plateau/Project/CamNangTQCCL/mcp-worker/package-lock.json` | generated | Compatible, reproducible graph. |
 | Modify | `/Users/plateau/Project/CamNangTQCCL/mcp-worker/tsconfig.json` | +8–15 | Separate Node/Worker entry settings. |
 | Create | `/Users/plateau/Project/CamNangTQCCL/mcp-worker/src/mcp/tool-definitions.ts` | 220–290 | Import/reuse Phase 3 schema objects; add exact metadata, annotations, and adapters without redefining schemas. |
@@ -81,27 +81,27 @@ The request-scoped Worker server prevents cross-client transport leakage. Warm s
 
 ## Function and Interface Checklist
 
-- [ ] `ToolDefinition`, `TOOL_DEFINITIONS`, `registerTools`, `createMcpServer`.
-- [ ] Catalog exactly: `tqccl_get_data_version`, `tqccl_normalize_entities`, `tqccl_search`, `tqccl_get_team`, `tqccl_match_team`, `tqccl_recommend_team`, `tqccl_recommend_coexist`, `tqccl_suggest_replacements`.
-- [ ] Tool definitions import the exact Phase 3 runtime schema objects; no second input/output schema authority exists.
-- [ ] Annotations: `readOnlyHint: true`, `destructiveHint: false`, `idempotentHint: true`, `openWorldHint: false`.
-- [ ] Results expose bounded `structuredContent`, version/provenance/truncation, and explicit untrusted raw/source-field metadata.
-- [ ] Text fallback uses fixed templates containing only safe canonical IDs, counts, versions, truncation flags, and error codes; it never interpolates observations, source labels, artifact prose, or other untrusted corpus text.
-- [ ] `runStdio` creates one server, connects once, logs only to stderr, and closes on signals.
-- [ ] `parseBearer`, `authenticateBearer`, constant-work digest/full-byte comparison, optional next token.
-- [ ] Controlled generator/managed secret store creates tokens; runtime honestly validates only base64url format and at least 256 decoded bits, not entropy provenance.
-- [ ] Rotation state is current -> dual current/next with required `NEXT_TOKEN_NOT_AFTER` (maximum 15 minutes) -> promote next -> remove old; expired/missing overlap state fails closed and cannot remain valid indefinitely.
-- [ ] Operational/rate-limit identity uses only a safely truncated SHA-256 fingerprint; token never enters keys, logs, traces, or records.
-- [ ] Missing configured secret fails closed; `WWW-Authenticate: Bearer`; no token echo.
-- [ ] Documentation and tests label the bearer as managed-client pre-shared authentication, not OAuth access-token issuance or MCP authorization conformance; the intended SDK client connects with an explicit custom `Authorization` header.
-- [ ] Worker `Env` includes separate pointer/release R2 bindings, current/next bearer secrets, `NEXT_TOKEN_NOT_AFTER`, allowed Origins, and non-secret limits. The runtime bundle exposes bindings only through `ArtifactReader`; platform write capability is explicitly application-constrained, not mislabeled IAM.
-- [ ] Request order: edge/WAF -> route/method plus cheap Origin/header/declared-length checks -> bearer -> post-auth rate/in-flight limit -> streaming actual-byte/content checks and body parse -> dependencies -> fresh server -> handler.
-- [ ] Absent Origin is allowed for authenticated server-to-server clients; present Origin must exactly match the allowlist.
-- [ ] `createMcpHandler(server, { route: "/mcp", enableJsonResponse: true })` uses a fresh server/request.
-- [ ] Initialize result and tests assert the selected negotiated protocol version; incompatible client negotiation fails explicitly rather than auto-upgrading.
-- [ ] Subsequent HTTP requests validate `MCP-Protocol-Version`; direct tests cover valid, missing, malformed, older-supported, and unsupported values and freeze the selected missing-header fallback.
-- [ ] Authenticated stateless `GET /mcp` and sessionless `DELETE /mcp` behavior is frozen explicitly for `enableJsonResponse: true`—expected `405` when no SSE/session termination is offered.
-- [ ] `control-plane-requirements.json` assigns every pre-Worker WAF/rate and R2 event/alert control an artifact/evidence owner, expected live state, failure behavior, and rollback; live verification is a Phase 6 release prerequisite.
+- [x] `ToolDefinition`, `TOOL_DEFINITIONS`, `registerTools`, `createMcpServer`.
+- [x] Catalog exactly: `tqccl_get_data_version`, `tqccl_normalize_entities`, `tqccl_search`, `tqccl_get_team`, `tqccl_match_team`, `tqccl_recommend_team`, `tqccl_recommend_coexist`, `tqccl_suggest_replacements`.
+- [x] Tool definitions import the exact Phase 3 runtime schema objects; no second input/output schema authority exists.
+- [x] Annotations: `readOnlyHint: true`, `destructiveHint: false`, `idempotentHint: true`, `openWorldHint: false`.
+- [x] Results expose bounded `structuredContent`, version/provenance/truncation, and explicit untrusted raw/source-field metadata.
+- [x] Text fallback uses fixed templates containing only safe canonical IDs, counts, versions, truncation flags, and error codes; it never interpolates observations, source labels, artifact prose, or other untrusted corpus text.
+- [x] `runStdio` creates one server, connects once, logs only to stderr, and closes on signals.
+- [x] `parseBearer`, `authenticateBearer`, constant-work digest/full-byte comparison, optional next token.
+- [x] Controlled generator/managed secret store creates tokens; runtime honestly validates only base64url format and at least 256 decoded bits, not entropy provenance.
+- [x] Rotation state is current -> dual current/next with required `NEXT_TOKEN_NOT_AFTER` (maximum 15 minutes) -> promote next -> remove old; expired/missing overlap state fails closed and cannot remain valid indefinitely.
+- [x] Operational/rate-limit identity uses only a safely truncated SHA-256 fingerprint; token never enters keys, logs, traces, or records.
+- [x] Missing configured secret fails closed; `WWW-Authenticate: Bearer`; no token echo.
+- [x] Documentation and tests label the bearer as managed-client pre-shared authentication, not OAuth access-token issuance or MCP authorization conformance; the intended SDK client connects with an explicit custom `Authorization` header.
+- [x] Worker `Env` includes separate pointer/release R2 bindings, current/next bearer secrets, `NEXT_TOKEN_NOT_AFTER`, allowed Origins, and non-secret limits. The runtime bundle exposes bindings only through `PointerReader`/`ReleaseReader`; platform write capability is explicitly application-constrained, not mislabeled IAM.
+- [x] Request order: edge/WAF -> route/method plus cheap Origin/header/declared-length checks -> bearer -> post-auth rate/in-flight limit -> streaming actual-byte/content checks and body parse -> dependencies -> fresh server -> handler.
+- [x] Absent Origin is allowed for authenticated server-to-server clients; present Origin must exactly match the allowlist.
+- [x] Raw Web-standard `WebStandardStreamableHTTPServerTransport` uses a fresh server/transport per handled POST; this is the accepted rollback path after the Agents compatibility gate failed.
+- [x] Initialize result and tests assert the selected negotiated protocol version; incompatible client negotiation fails explicitly rather than auto-upgrading.
+- [x] Subsequent HTTP requests validate `MCP-Protocol-Version`; direct tests cover valid, missing, malformed, older-supported, and unsupported values and freeze the selected missing-header fallback.
+- [x] Authenticated stateless `GET /mcp` and sessionless `DELETE /mcp` behavior is frozen explicitly for JSON-response mode—expected `405` when no SSE/session termination is offered.
+- [x] `control-plane-requirements.json` assigns every pre-Worker WAF/rate and R2 event/alert control an artifact/evidence owner, expected live state, failure behavior, and rollback; live verification is a Phase 6 release prerequisite.
 
 ## Dependency Map
 
@@ -109,7 +109,7 @@ The request-scoped Worker server prevents cross-client transport leakage. Warm s
 Phase 3 handlers -> TOOL_DEFINITIONS -> createMcpServer
 FilesystemDataSource ---------------------------> stdio
 R2DataSource/cache + auth/guards ---------------> worker
-worker -> fresh createMcpServer -> createMcpHandler
+worker -> fresh createMcpServer -> raw Web-standard transport
 ```
 
 No transport imports flow inward to handlers/domain. No `McpServer` or connected transport is module-global.
@@ -176,17 +176,17 @@ No transport imports flow inward to handlers/domain. No `McpServer` or connected
 
 ## Tests After
 
-- [ ] Duplicate/missing tool names fail catalog test.
-- [ ] Handler thrown errors are sanitized and protocol-valid.
-- [ ] All methods and content negotiation paths preserve authentication.
-- [ ] Managed-client bearer documentation, challenge, and SDK custom-header test never imply OAuth discovery, grants, scopes, or authorization-server ownership.
-- [ ] Valid/missing/invalid `MCP-Protocol-Version` and authenticated stateless GET/DELETE behavior remain frozen across SDK upgrades.
-- [ ] Rate-limited requests return stable `429` without body consumption, R2 reads, or MCP construction.
-- [ ] Cache module stores only validated snapshot/index, never request/server/user state.
-- [ ] Worker response never includes bearer, bindings, stack, local path, or raw input.
-- [ ] Fixed text fallback never includes untrusted observation/source/corpus strings; control characters are normalized before structured output.
-- [ ] Token generator emits correctly sized base64url material, overlap expiry is mandatory/bounded, and retired tokens never return during code rollback.
-- [ ] SDK Inspector smoke is documented as manual evidence, not the automated gate.
+- [x] Duplicate/missing tool names fail catalog test.
+- [x] Handler thrown errors are sanitized and protocol-valid.
+- [x] All methods and content negotiation paths preserve authentication.
+- [x] Managed-client bearer documentation, challenge, and SDK custom-header test never imply OAuth discovery, grants, scopes, or authorization-server ownership.
+- [x] Valid/missing/invalid `MCP-Protocol-Version` and authenticated stateless GET/DELETE behavior remain frozen across SDK upgrades.
+- [x] Rate-limited requests return stable `429` without body consumption, R2 reads, or MCP construction.
+- [x] Cache module stores only validated snapshot/index, never request/server/user state.
+- [x] Worker response never includes bearer, bindings, stack, local path, or raw input.
+- [x] Fixed text fallback never includes untrusted observation/source/corpus strings; control characters are normalized before structured output.
+- [x] Token generator emits correctly sized base64url material, overlap expiry is mandatory/bounded, and retired tokens never return during code rollback.
+- [x] SDK Inspector smoke is documented as optional manual evidence, not the automated gate.
 
 ## Regression Gate
 
@@ -207,15 +207,23 @@ cd worker && npm test && npm run typecheck
 
 ## Success Criteria
 
-- [ ] Registry lists exactly eight already-prefixed upstream tools with correct read-only annotations.
-- [ ] CLI, stdio, and HTTP reuse one runtime-schema authority and pass table-driven all-eight semantic/error parity.
-- [ ] Stdio stdout is protocol-clean; Worker has no Node dependency.
-- [ ] Every remote MCP method is bearer-protected, protocol-pinned, rate/in-flight limited, and Origin/body/result bounded.
-- [ ] Remote auth is explicitly managed-client pre-shared bearer authentication; generic OAuth discovery is neither claimed nor accidentally required.
-- [ ] Fresh-server/request and parallel-client tests prove stateless isolation.
-- [ ] Pinned build, typecheck, workerd tests, Wrangler dry-run, and project regressions pass.
-- [ ] Production-shaped workerd evidence records the selected Free/Paid tier before external consumer integration.
-- [ ] Existing Vision Worker is unchanged.
+- [x] Registry lists exactly eight already-prefixed upstream tools with correct read-only annotations.
+- [x] CLI, stdio, and HTTP reuse one runtime-schema authority and pass table-driven all-eight semantic/error parity.
+- [x] Stdio stdout is protocol-clean; Worker has no Node dependency.
+- [x] Every remote MCP method is bearer-protected, protocol-pinned, rate/in-flight limited, and Origin/body/result bounded.
+- [x] Remote auth is explicitly managed-client pre-shared bearer authentication; generic OAuth discovery is neither claimed nor accidentally required.
+- [x] Fresh-server/request and parallel-client tests prove stateless isolation.
+- [x] Pinned build, typecheck, workerd tests, Wrangler dry-run, and project regressions pass.
+- [x] Production-shaped workerd evidence records the selected **Paid** tier before external consumer integration.
+- [x] Existing Vision Worker is unchanged.
+
+## Completion Validation — 2026-07-28
+
+- Reviewer cuối: **PASS** sau bản sửa khóa protocol cho cả JSON-RPC scalar và batch.
+- Node `165/165` + workerd `2/2` = `167/167`; Node/Worker typecheck, build, workflow identity, Wrangler types/dry-run và `npm audit` đều **PASS**.
+- Wrangler dry-run: upload `1347.44 KiB`, gzip `237.82 KiB`; không cần Node compatibility flag.
+- Raw Web-standard `WebStandardStreamableHTTPServerTransport` là transport HTTP được chấp nhận; Cloudflare `agents` và `createMcpHandler` không thuộc dependency/runtime path.
+- Live WAF/rate, release-bucket lock, R2 event queue/alert và route TLS chưa được xác minh; đây vẫn là release gate Phase 6.
 
 ## Security and Privacy
 
@@ -228,7 +236,7 @@ cd worker && npm test && npm run typecheck
 
 | Risk | Mitigation | Rollback |
 |---|---|---|
-| SDK/Agents incompatibility | Exact pair plus protocol/build tests. | Swap only transport adapter to raw Web-standard transport. |
+| SDK/Agents incompatibility | Exact SDK/protocol/build tests; compatibility gate loại `agents`. | Giữ raw Web-standard transport đã được chấp nhận. |
 | Cross-client state leak | Fresh server/request and two-client regression. | Disable remote route; stdio/CLI remain usable. |
 | Free Worker CPU too low | Measure in Phase 3 proxy and Phase 4 workerd; choose Paid before integration if needed. | Change plan tier, not validation/correctness. |
 | Bearer compromise | Managed generation, bounded dual-token overlap, revoke, and pool-eviction staging test. | Remove compromised token, promote a fresh current token, and never restore retired secret state with old code. |
