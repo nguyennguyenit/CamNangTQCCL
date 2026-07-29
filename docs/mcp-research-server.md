@@ -15,6 +15,23 @@ Tám tool public:
 - `tqccl_recommend_coexist`
 - `tqccl_suggest_replacements`
 
+Catalog MCP lấy input schema và output schema trực tiếp từ `RESEARCH_CONTRACTS`; tool description được ghép tại `src/mcp/tool-definitions.ts`. Mỗi tool mô tả khi nên dùng, kết quả và failure modes; mọi public field có description để agent không phải suy đoán ý nghĩa của workflow binding, cursor hoặc provenance.
+
+Tool error luôn được redaction theo mã cố định:
+
+```json
+{
+  "error": {
+    "code": "WORKFLOW_VERSION_CHANGED",
+    "message": "Phiên bản dữ liệu hoặc quy trình đã thay đổi.",
+    "nextAction": "Gọi tqccl_get_data_version, chuẩn hóa và xác nhận lại trước khi tiếp tục.",
+    "retryable": true
+  }
+}
+```
+
+`message` và `nextAction` đến từ allowlist theo error code, không lấy từ exception, input, path hoặc upstream body.
+
 `releaseId` là SHA-256 đầy đủ của canonical manifest sáu artifact. `dataVersion` rút gọn chỉ dùng hiển thị. `workflowVersion` ghép `releaseId` với `workflowBuildId`; binding hoặc cursor cũ phải bị từ chối khi một trong hai identity đổi.
 
 ## Chạy local
@@ -27,6 +44,7 @@ npm ci
 npm run cli -- version
 npm run cli -- search --input '{"query":"Lữ Mông","limit":2}'
 npm run stdio
+npm run test:coverage
 ```
 
 Đặt `TQCCL_DATA_ROOT` khi cần dùng snapshot filesystem khác. Stdout của stdio dành riêng cho protocol; diagnostic cố định đi qua stderr.
@@ -39,7 +57,7 @@ npm run check
 npm run check:repository
 ```
 
-`check` không gọi mạng live hay deploy. `check:repository` từ chối release credential trong environment, rồi chạy MCP, Astro build/dist/E2E, root JS, Python fallback, Vision Worker và Wrangler dry-run.
+`test:coverage` và `check` áp dụng threshold cho `src/data`, `src/domain`, `src/research`: statements/lines/functions tối thiểu 80%, branches tối thiểu 70%. `check` không gọi mạng live hay deploy. `check:repository` từ chối release credential trong environment, rồi chạy MCP coverage, Astro build/dist/E2E, root JS, Python fallback, Vision Worker và Wrangler dry-run.
 
 ## HTTP và trust boundary
 

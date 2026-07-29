@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { afterEach, describe, expect, it } from "vitest";
+import { toJSONSchema } from "zod";
 
 import { FilesystemDataSource } from "../../src/data/filesystem-data-source.js";
 import {
@@ -15,7 +16,10 @@ import {
   type ResearchHandlers,
 } from "../../src/research/research-handlers.js";
 import { createMcpServer } from "../../src/mcp/create-mcp-server.js";
-import { formatToolResult } from "../../src/mcp/format-result.js";
+import {
+  formatToolError,
+  formatToolResult,
+} from "../../src/mcp/format-result.js";
 import { TOOL_DEFINITIONS } from "../../src/mcp/tool-definitions.js";
 
 const fixtureRoot = fileURLToPath(
@@ -53,6 +57,59 @@ async function connect(handlers: ResearchHandlers) {
   return { client, server };
 }
 
+function fieldsWithoutDescriptions(
+  value: unknown,
+  path = "$",
+): string[] {
+  if (
+    typeof value !== "object" ||
+    value === null ||
+    Array.isArray(value)
+  ) {
+    return [];
+  }
+  const schema = value as Record<string, unknown>;
+  const missing: string[] = [];
+  if (
+    typeof schema.properties === "object" &&
+    schema.properties !== null &&
+    !Array.isArray(schema.properties)
+  ) {
+    for (const [name, property] of Object.entries(
+      schema.properties as Record<string, unknown>,
+    )) {
+      const propertyPath = `${path}.${name}`;
+      if (
+        typeof property !== "object" ||
+        property === null ||
+        Array.isArray(property) ||
+        typeof (property as Record<string, unknown>).description !==
+          "string"
+      ) {
+        missing.push(propertyPath);
+      }
+      missing.push(...fieldsWithoutDescriptions(property, propertyPath));
+    }
+  }
+  if (schema.items !== undefined) {
+    missing.push(...fieldsWithoutDescriptions(schema.items, `${path}[]`));
+  }
+  for (const keyword of ["allOf", "anyOf", "oneOf"] as const) {
+    const variants = schema[keyword];
+    if (Array.isArray(variants)) {
+      variants.forEach((variant, index) => {
+        missing.push(
+          ...fieldsWithoutDescriptions(
+            variant,
+            `${path}.${keyword}[${index}]`,
+          ),
+        );
+      });
+    }
+  }
+  return missing;
+}
+
 describe("registry công cụ MCP", () => {
   it("dùng lại đúng tám schema object Phase 3 và annotation cố định", () => {
     expect(TOOL_DEFINITIONS.map(({ name }) => name)).toEqual(
@@ -73,6 +130,33 @@ describe("registry công cụ MCP", () => {
         idempotentHint: true,
         openWorldHint: false,
       });
+    }
+  });
+
+  it("mô tả đầy đủ cách dùng, kết quả, lỗi và mọi field public", () => {
+    for (const definition of TOOL_DEFINITIONS) {
+      expect(definition.description).toContain("Khi dùng:");
+      expect(definition.description).toContain("Trả về:");
+      expect(definition.description).toContain("Có thể lỗi:");
+
+      const input = toJSONSchema(definition.inputSchema, {
+        target: "draft-7",
+      });
+      const output = toJSONSchema(definition.outputSchema, {
+        target: "draft-7",
+      });
+      expect(
+        fieldsWithoutDescriptions(
+          input,
+          `${definition.name}.input`,
+        ),
+      ).toEqual([]);
+      expect(
+        fieldsWithoutDescriptions(
+          output,
+          `${definition.name}.output`,
+        ),
+      ).toEqual([]);
     }
   });
 
@@ -155,11 +239,123 @@ describe("registry công cụ MCP", () => {
     expect(result.structuredContent).toEqual({
       error: {
         code: "DATA_UNAVAILABLE",
+        message: "Dữ liệu nghiên cứu hiện không khả dụng.",
+        nextAction:
+          "Thử lại sau; nếu lỗi tiếp diễn, kiểm tra readiness và release hiện hành.",
         retryable: true,
       },
     });
     expect(JSON.stringify(result.content)).toContain("DATA_UNAVAILABLE");
+    expect(JSON.stringify(result.content)).toContain("Thử lại sau");
     expect(JSON.stringify(result)).not.toContain("/tmp/secret");
     expect(JSON.stringify(result)).not.toContain("source payload");
+  });
+
+  it("làm sạch lỗi input bị SDK chặn trước handler", async () => {
+    const handlers = createResearchHandlers({
+      dataSource: new FilesystemDataSource({ dataRoot: fixtureRoot }),
+    });
+    const { client } = await connect(handlers);
+
+    const result = await client.callTool({
+      name: "tqccl_search",
+      arguments: {
+        query: 123,
+        secret: "TOP_SECRET_TOKEN",
+      },
+    });
+
+    expect(result).toMatchObject({
+      isError: true,
+      structuredContent: {
+        error: {
+          code: "INVALID_REQUEST",
+          message: "Yêu cầu không hợp lệ.",
+          nextAction: "Kiểm tra input theo schema công cụ rồi thử lại.",
+          retryable: false,
+        },
+      },
+    });
+    expect(JSON.stringify(result)).not.toContain("TOP_SECRET_TOKEN");
+    expect(JSON.stringify(result)).not.toContain("secret");
+    expect(JSON.stringify(result)).not.toContain("expected string");
+  });
+
+  it("làm sạch lỗi SDK không thuộc validation", async () => {
+    const handlers = createResearchHandlers({
+      dataSource: new FilesystemDataSource({ dataRoot: fixtureRoot }),
+    });
+    const { client } = await connect(handlers);
+
+    const result = await client.callTool({
+      name: "PRIVATE_UNKNOWN_TOOL",
+      arguments: {},
+    });
+
+    expect(result).toMatchObject({
+      isError: true,
+      structuredContent: {
+        error: {
+          code: "INTERNAL_ERROR",
+          message: "Không thể hoàn tất yêu cầu.",
+          nextAction:
+            "Thử lại một lần; nếu lỗi tiếp diễn, báo mã INTERNAL_ERROR cho vận hành.",
+          retryable: false,
+        },
+      },
+    });
+    expect(JSON.stringify(result)).not.toContain("PRIVATE_UNKNOWN_TOOL");
+    expect(JSON.stringify(result)).not.toContain("not found");
+  });
+
+  it("cung cấp recovery action cố định cho mọi mã lỗi mà không dùng private message", () => {
+    const codes = [
+      "INVALID_REQUEST",
+      "DATA_UNAVAILABLE",
+      "WORKFLOW_VERSION_CHANGED",
+      "CONFIRMATION_REQUIRED",
+      "CURSOR_INVALID",
+      "TEAM_NOT_FOUND",
+      "TACTIC_NOT_FOUND",
+      "RESULT_TOO_LARGE",
+      "INTERNAL_ERROR",
+    ] as const;
+
+    for (const code of codes) {
+      const result = formatToolError(
+        new ResearchHandlerError(
+          code,
+          `private-${code}-payload`,
+          code === "DATA_UNAVAILABLE",
+        ),
+      );
+      const document = result.structuredContent as {
+        error: {
+          code: string;
+          message: string;
+          nextAction: string;
+          retryable: boolean;
+        };
+      };
+      expect(document.error).toMatchObject({
+        code,
+        retryable: code === "DATA_UNAVAILABLE",
+      });
+      expect(document.error.message.length).toBeGreaterThan(0);
+      expect(document.error.nextAction.length).toBeGreaterThan(0);
+      expect(JSON.stringify(result)).not.toContain(`private-${code}`);
+    }
+
+    expect(formatToolError(new Error("private-unknown"))).toMatchObject({
+      structuredContent: {
+        error: {
+          code: "INTERNAL_ERROR",
+          retryable: false,
+        },
+      },
+    });
+    expect(
+      JSON.stringify(formatToolError(new Error("private-unknown"))),
+    ).not.toContain("private-unknown");
   });
 });

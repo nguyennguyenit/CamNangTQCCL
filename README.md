@@ -51,7 +51,7 @@ npm run test:e2e
 npm run test:node
 python3 -m unittest discover -s tests
 (cd worker && npm ci && npm test && npm run typecheck)
-(cd mcp-worker && npm ci && npm run check:repository)
+(cd mcp-worker && npm ci && npm run test:coverage && npm run check:repository)
 ```
 
 Playwright cần Chromium cài một lần bằng `npx playwright install chromium`.

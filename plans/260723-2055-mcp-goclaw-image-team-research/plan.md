@@ -176,3 +176,10 @@ Retained corrections include the Node ESM boundary, single ownership of normaliz
 
 - Phase 6 local implementation và whole-repository gate PASS; immutable release/CAS/receipt/verifier/monitor/runbook đã có test (`212/212` MCP, `41/41` release).
 - Production control-plane, staging, exact Worker upload/deploy, live verification và rollback canary chưa chạy vì chưa có ủy quyền external mutation; Phase 6 và toàn plan giữ `in_progress`.
+
+### Session 11 — 2026-07-30
+
+- Agentize hardening bổ sung description cho mọi public schema field, rich description cho tám tool và safe actionable MCP errors; schema change tạo workflow identity mới.
+- Coverage trở thành gate bắt buộc của `npm run check`: statements `89.08%`, branches `81.84%`, functions `95.37%`, lines `89.56%`; MCP `216/216`, workerd `2/2`.
+- SDK-level validation và protocol errors được đưa qua fixed safe envelope; integration test bằng official MCP Client chặn phản chiếu field, type, value và tool name.
+- Không thêm npm publishing, SSE, Docker hoặc companion skill; live production gates tiếp tục để mở.

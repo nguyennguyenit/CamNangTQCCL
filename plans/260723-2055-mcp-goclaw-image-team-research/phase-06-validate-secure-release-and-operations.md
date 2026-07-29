@@ -222,6 +222,14 @@ cd ../mcp-worker && npm run check && npm run deploy:dry-run
 - `npm audit` báo `0` vulnerability. Bundle dry-run hiện tại `1347.86 KiB`, gzip `237.93 KiB`.
 - Tạo runbook tiếng Việt và workflow monitor control-plane chỉ đọc. Không gọi Cloudflare/R2 live, không deploy Worker và không đổi pointer; các checkbox live/staging/authorization tiếp tục để mở.
 
+### Session 11 — 2026-07-30
+
+- Agent-facing contract hardening: mọi public schema field có description; tám tool mô tả khi dùng, kết quả và failure modes.
+- MCP error envelope thêm safe `message` và `nextAction` theo allowlist code; redaction test chặn exception message, input và private path. SDK-level input/protocol errors cũng đi qua fixed envelope, được kiểm chứng bằng official MCP Client.
+- `@vitest/coverage-v8` được pin cùng Vitest `4.1.10`; `npm run check` bắt buộc statements/lines/functions `>=80%`, branches `>=70%` trên `src/data`, `src/domain`, `src/research`.
+- Kết quả hiện tại: MCP `216/216`, workerd `2/2`; coverage statements `89.08%`, branches `81.84%`, functions `95.37%`, lines `89.56%`.
+- Schema authority đổi nên `workflowBuildId` được regenerate; staging/live release phải dùng identity mới. Không gọi Cloudflare/R2 live.
+
 ## Security and Privacy
 
 - Use separate bucket-scoped credentials for release publication and pointer activation plus separate lock/control-plane administration and MCP bearer. Document that Worker R2 bindings are platform write-capable; narrow reader interfaces/import guards are application enforcement, not IAM.
