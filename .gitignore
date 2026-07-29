@@ -12,6 +12,8 @@ dist/
 playwright-report/
 test-results/
 blob-report/
+mcp-worker/.release-secrets/
+mcp-worker/*.release-secret
 
 # Source export gốc (Google Sheets HTML) — không publish; build chạy local
 Meta Team PK/

@@ -118,6 +118,23 @@ Không thực hiện các bước sau trong build/local verification. Khi releas
 8. Giữ production origin `https://tqccl.pages.dev`, nên origin của localStorage production không đổi; preview có storage origin riêng.
 9. Kiểm tra client mới và client đã cache đều nhận cùng deployment sau revalidation. Chỉ ghi facts vào Deployment Record sau khi có bằng chứng thực.
 
+## Research MCP Worker
+
+Research MCP có release boundary riêng với Vision Worker. Không deploy hoặc đổi R2 pointer trong local verification. Gate credential-free:
+
+```bash
+cd mcp-worker
+npm ci
+npm run check
+npm run check:repository
+```
+
+Production cần hai R2 Standard bucket tách biệt, release bucket lock tối thiểu 30 ngày, credential publisher/activator tách nhau, edge rate control và event notification cho cả release lẫn pointer bucket. Candidate Worker phải được kiểm với current/candidate manifest trước khi nhận traffic; activate chỉ dùng receipt còn hạn và đúng một version ở 100%.
+
+Live verifier lấy bearer từ `TQCCL_MCP_BEARER_CURRENT`; activator còn bắt buộc `TQCCL_APPROVED_MCP_ENDPOINT` khớp tuyệt đối với HTTPS `/mcp` trên argv trước khi dùng bearer. Cloudflare control-plane verifier lấy token chỉ đọc từ environment. Không đặt secret trong argv/query. Force-refresh chỉ chạy sau auth, rồi activator đọc lại deployment để chứng minh đúng một candidate version ở 100%. Nếu hậu kiểm fail sau pointer CAS, activator CAS-restore pointer cũ; rollback ETag conflict phải mở incident thay vì overwrite.
+
+Thứ tự, command, rotation và incident runbook đầy đủ ở [Research MCP server](mcp-research-server.md). Chỉ cập nhật [Deployment Record](deployment.md) sau khi có release ID, Worker version, workflow identity, approval và canary evidence thực tế.
+
 ## Cloudflare Worker
 
 ### Setup lần đầu

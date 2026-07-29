@@ -1,0 +1,171 @@
+import { fileURLToPath } from "node:url";
+
+import { describe, expect, it } from "vitest";
+import { toJSONSchema } from "zod";
+
+import { FilesystemDataSource } from "../../src/data/filesystem-data-source.js";
+import { WORKFLOW_BUILD_ID } from "../../src/generated/workflow-build.js";
+import { createWorker, type WorkerEnvironment } from "../../src/worker.js";
+import {
+  matchesExpectedToolCatalog,
+  parseVerifyReleaseArguments,
+  verifyRelease,
+  type ReleaseVerificationFixture,
+} from "../../scripts/verify-release.js";
+import { TOOL_DEFINITIONS } from "../../src/mcp/tool-definitions.js";
+
+const fixtureRoot = fileURLToPath(
+  new URL("../fixtures/release-snapshot", import.meta.url),
+);
+const bearer = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+const env = {
+  TQCCL_MCP_BEARER_CURRENT: bearer,
+  TQCCL_MCP_ALLOWED_ORIGINS: "",
+  TQCCL_MCP_MAX_BODY_BYTES: "65536",
+  TQCCL_MCP_MAX_RESULT_BYTES: "98304",
+  TQCCL_MCP_RATE_MAX: "100",
+  TQCCL_MCP_RATE_WINDOW_MS: "60000",
+  TQCCL_MCP_MAX_IN_FLIGHT: "4",
+} as WorkerEnvironment;
+
+const fixture: ReleaseVerificationFixture = {
+  observations: [
+    {
+      observationId: "hero",
+      entityKind: "hero",
+      canonicalId: "hero:tuong-a",
+      familyId: "hero-family:tuong-a",
+      displayName: "Tướng A",
+      evidence: {
+        sourceScope: "currentTurnImage",
+        batchId: "release-verifier",
+      },
+    },
+    {
+      observationId: "tactic",
+      entityKind: "tactic",
+      canonicalId: "tactic:chien-phap-a",
+      displayName: "Chiến Pháp A",
+      evidence: {
+        sourceScope: "currentTurnImage",
+        batchId: "release-verifier",
+      },
+    },
+  ],
+  teamId: "team-a",
+  tacticName: "Chiến Pháp A",
+};
+
+describe("verifyRelease", () => {
+  it("từ chối endpoint có userinfo, query hoặc fragment", () => {
+    for (const endpoint of [
+      "https://user@mcp.example/mcp",
+      "https://mcp.example/mcp?target=other",
+      "https://mcp.example/mcp#fragment",
+    ]) {
+      expect(() =>
+        parseVerifyReleaseArguments([
+          "--endpoint",
+          endpoint,
+          "--release-id",
+          "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "--workflow-build-id",
+          WORKFLOW_BUILD_ID,
+          "--fixture",
+          "/tmp/fixture.json",
+        ]),
+      ).toThrow();
+    }
+  });
+
+  it("đối chiếu chính xác mô tả, schema và annotation của đủ tám tool", () => {
+    const catalog = TOOL_DEFINITIONS.map((definition) => ({
+      name: definition.name,
+      description: definition.description,
+      inputSchema: toJSONSchema(definition.inputSchema, { target: "draft-7" }),
+      outputSchema: toJSONSchema(definition.outputSchema, { target: "draft-7" }),
+      annotations: definition.annotations,
+    }));
+
+    expect(matchesExpectedToolCatalog(catalog)).toBe(true);
+    expect(
+      matchesExpectedToolCatalog([
+        {
+          ...catalog[0],
+          inputSchema: {
+            type: "object",
+            properties: { injected: { type: "string" } },
+          },
+        },
+        ...catalog.slice(1),
+      ]),
+    ).toBe(false);
+  });
+
+  it("xác minh health/auth/protocol/catalog và đủ tám tool", async () => {
+    const steps: string[] = [];
+    const source = new FilesystemDataSource({ dataRoot: fixtureRoot });
+    const snapshot = await source.load();
+    const loadOptions: unknown[] = [];
+    const worker = createWorker({
+      createDataSource: () => ({
+        load: async (options) => {
+          loadOptions.push(options);
+          return source.load(options);
+        },
+      }),
+      now: () => Date.parse("2026-07-29T00:00:00.000Z"),
+    });
+    const fetcher: typeof fetch = async (input, init) =>
+      worker.fetch(new Request(input, init), env);
+
+    try {
+      const result = await verifyRelease({
+        endpoint: new URL("https://mcp.example/mcp"),
+        bearer,
+        expectedReleaseId: snapshot.releaseId,
+        expectedWorkflowBuildId: WORKFLOW_BUILD_ID,
+        fixture,
+        forceRefresh: true,
+        fetcher,
+        onStep: (step) => steps.push(step),
+      });
+      expect(result).toMatchObject({
+        verified: true,
+        releaseId: snapshot.releaseId,
+        tools: 8,
+        protocolVersion: "2025-11-25",
+      });
+      expect(loadOptions.length).toBeGreaterThan(0);
+      expect(loadOptions).toEqual(
+        Array.from({ length: loadOptions.length }, () => ({
+          forceRefresh: true,
+        })),
+      );
+    } catch (error) {
+      throw new Error(`Verifier trace: ${steps.slice(-5).join(" > ")}`, {
+        cause: error,
+      });
+    }
+  });
+
+  it("không phản chiếu bearer khi xác minh thất bại", async () => {
+    const privateBearer = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
+
+    try {
+      await verifyRelease({
+        endpoint: new URL("https://mcp.example/mcp"),
+        bearer: privateBearer,
+        expectedReleaseId:
+          "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        expectedWorkflowBuildId: WORKFLOW_BUILD_ID,
+        fixture,
+        fetcher: async () => new Response("private upstream body", { status: 500 }),
+      });
+      throw new Error("expected failure");
+    } catch (error) {
+      expect(String(error)).not.toContain(privateBearer);
+      expect(String(error)).not.toContain("private upstream body");
+    }
+  });
+});

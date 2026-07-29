@@ -67,6 +67,15 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
 - KV quota là best-effort, không diễn đạt như giới hạn cứng. Cần quota cứng thì đổi primitive phù hợp.
 - Secret dùng `wrangler secret put`; tuyệt đối không commit `.dev.vars`, key hoặc token.
 
+## Research MCP
+
+- Tám public schema/handler trong `mcp-worker/src/research/` là authority dùng chung cho CLI, stdio và HTTP.
+- `releaseId` đầy đủ sở hữu workflow/binding/cursor compatibility; không dùng compact `dataVersion` làm identity bảo mật.
+- HTTP giữ thứ tự guard rẻ → đắt, server/transport theo request và chỉ đọc R2 qua reader interface hẹp.
+- Release phải build từ Git tree sạch không credential, conditional-stage vào bucket đã lock và activate pointer bằng receipt + ETag CAS.
+- Bearer, R2 key và Cloudflare token chỉ đi qua managed environment; không argv/query/log/artifact. Gate phải từ chối file secret tạm chưa dọn.
+- `npm run check` không được gọi live deploy. `npm run check:repository` phải bao phủ MCP, Astro/dist/E2E, JS, Python, Vision Worker và Wrangler dry-run.
+
 ## Quy ước tên và tài liệu
 
 - Theo convention repo; file mới dùng tên mô tả, kebab-case nếu không có quy ước mạnh hơn.
@@ -87,6 +96,7 @@ npm run test:e2e
 npm run test:node
 python3 -m unittest discover -s tests
 (cd worker && npm ci && npm test && npm run typecheck)
+(cd mcp-worker && npm ci && npm run check:repository)
 ```
 
 Không che test/lint/type error và không làm yếu assertion để hợp thức hóa regression.

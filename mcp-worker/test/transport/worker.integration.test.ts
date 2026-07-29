@@ -113,6 +113,30 @@ describe("transport Streamable HTTP Worker", () => {
     expect(dataSources()).toBe(0);
   });
 
+  it("chỉ xử lý force-refresh sau bearer auth và từ chối giá trị lạ", async () => {
+    const { worker, dataSources } = workerWithCounters();
+    const unauthorized = rpcRequest(initializeRequest(), {
+      Authorization: "Bearer wrong",
+      "TQCCL-MCP-Force-Refresh": "unexpected",
+    });
+    const denied = await worker.fetch(unauthorized, ENV);
+
+    expect(denied.status).toBe(401);
+    expect(dataSources()).toBe(0);
+
+    const malformed = await worker.fetch(
+      rpcRequest(initializeRequest(), {
+        "TQCCL-MCP-Force-Refresh": "unexpected",
+      }),
+      ENV,
+    );
+    expect(malformed.status).toBe(400);
+    expect(await malformed.json()).toEqual({
+      error: { code: "INVALID_FORCE_REFRESH" },
+    });
+    expect(dataSources()).toBe(0);
+  });
+
   it("đàm phán protocol cố định rồi liệt kê đủ tám tool ở request độc lập", async () => {
     const { worker } = workerWithCounters();
     const initialized = await worker.fetch(rpcRequest(initializeRequest()), ENV);

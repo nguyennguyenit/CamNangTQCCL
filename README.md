@@ -12,6 +12,7 @@ Website tĩnh tra cứu đội hình, tướng, chiến pháp và hỗ trợ qu�
 - Tracker chiêu mộ lưu nhiều account, pity và lịch sử trong `localStorage`; có xuất/nhập JSON.
 - Soi screenshot qua Worker + DashScope Qwen; frontend map kết quả và đối chiếu 214 team local.
 - Gợi ý portfolio tối đa 5 team bằng engine local. AI chỉ trích xuất dữ liệu từ ảnh, không chọn team.
+- Research MCP chỉ đọc có JSON CLI, stdio và authenticated Streamable HTTP dùng chung tám tool.
 
 Snapshot dữ liệu kiểm tra ngày 2026-07-11:
 
@@ -50,6 +51,7 @@ npm run test:e2e
 npm run test:node
 python3 -m unittest discover -s tests
 (cd worker && npm ci && npm test && npm run typecheck)
+(cd mcp-worker && npm ci && npm run check:repository)
 ```
 
 Playwright cần Chromium cài một lần bằng `npx playwright install chromium`.
@@ -73,6 +75,7 @@ Không chạy máy móc trên dữ liệu đang dùng: `build_json.py` vẫn ki�
 - Site production hiện tại: `https://tqccl.pages.dev`. Contract cho lần release được ủy quyền tiếp theo: repository root, `npm run build`, output `dist/`; settings thật phải được kiểm tra trước promotion.
 - `public/_headers` được Astro đưa vào `dist/_headers`; shared verifier yêu cầu byte parity và cache revalidation cho shell/JS/CSS/JSON.
 - Vision proxy: Worker tại `https://tqccl-vision-proxy.nguyennlt-ncc.workers.dev`, deploy riêng từ `worker/`.
+- Research MCP nằm trong `mcp-worker/`; production release chưa được ghi nhận cho đến khi control-plane, immutable R2 release và live verifier đạt với ủy quyền riêng.
 - `js/config.js` chứa Worker URL và Turnstile site key công khai đang hoạt động. Secret chỉ nằm trong môi trường Worker.
 - Preview/promotion/rollback là quy trình có ủy quyền riêng; build local không tạo deployment.
 
@@ -88,6 +91,7 @@ public/_headers        # Pages deployment-control source
 scripts/               # shared dist verifier
 pipeline/              # build/normalize dữ liệu bằng Python stdlib
 worker/                # Cloudflare Worker TypeScript, deploy riêng
+mcp-worker/            # Research MCP CLI/stdio/HTTP và release tooling
 tests/, tests-js/, tests-e2e/
 docs/                  # tài liệu evergreen
 plans/                 # kế hoạch/báo cáo lịch sử, không phải runtime truth
@@ -101,6 +105,7 @@ plans/                 # kế hoạch/báo cáo lịch sử, không phải runti
 - [Kiến trúc](docs/system-architecture.md)
 - [Roadmap](docs/project-roadmap.md)
 - [Deployment Guide](docs/deployment-guide.md)
+- [Research MCP server](docs/mcp-research-server.md)
 - [Design Guidelines](docs/design-guidelines.md)
 
 ## Ghi chú vận hành

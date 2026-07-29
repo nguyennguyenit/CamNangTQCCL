@@ -51,6 +51,7 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | [`mcp-worker/src/worker.ts`](../mcp-worker/src/worker.ts), [`wrangler.jsonc`](../mcp-worker/wrangler.jsonc) | Stateless Streamable HTTP `/mcp`, managed bearer, Origin/body/result/rate/in-flight guards và hai R2 binding. |
 | [`mcp-worker/src/security/`](../mcp-worker/src/security/) | Bearer rotation tối đa 15 phút, digest/fingerprint, request guards và isolate-local limits. |
 | [`mcp-worker/workflow-source-manifest.json`](../mcp-worker/workflow-source-manifest.json), [`generate-workflow-build.ts`](../mcp-worker/scripts/generate-workflow-build.ts) | Owner của semantic closure và `workflowBuildId`; `workflowVersion` ghép identity này với full `releaseId`. |
+| [`mcp-worker/scripts/`](../mcp-worker/scripts/) | Build/stage/activate release, R2 CAS adapter, live/control-plane verifier và repository gate credential-free. |
 | `pipeline/build_json.py` | Build team, facet, Cùng Tồn, khai hoang từ HTML export. |
 | `pipeline/build_dict.py` | Crawl/cache/link và merge chiến pháp generic, build tướng/chiến pháp. |
 | `pipeline/build_books_dict.py` | Validate bảng map Hán→Việt với facet binh thư. |
@@ -87,7 +88,7 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 - `tests-js/`: Astro/dist/header contracts, filter, map, hero UI, mobile menu, tracker, roster state và recommend engine.
 - `tests-e2e/`: Chromium parity, storage, JSON failure, exposure local/routed HTTPS và mixed-content.
 - `worker/test/`: config, guard, model, rate-limit, scan modes, schema.
-- `mcp-worker/test/`: snapshot/FS/R2/cache, tám handler, CLI/stdio/HTTP parity, bearer/limits/protocol, workerd R2 và production-shaped budget.
+- `mcp-worker/test/`: snapshot/FS/R2/cache, tám handler, CLI/stdio/HTTP parity, bearer/limits/protocol, release/CAS/rollback, verifier, import guard, workerd R2 và production-shaped budget.
 
 Gate hiện được kiểm bằng script trong root, `worker/package.json` và [`mcp-worker/package.json`](../mcp-worker/package.json); lần xác minh Phase 4 trên Node `22.16.0`: MCP `167/167` (Node `165/165`, workerd `2/2`), root Node `133`, Python `82`, Vision Worker `53`.
 

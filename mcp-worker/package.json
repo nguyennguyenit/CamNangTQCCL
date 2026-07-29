@@ -12,16 +12,24 @@
     "cli": "node --import tsx src/cli.ts",
     "stdio": "node --import tsx src/stdio.ts",
     "provision:bearer": "node --import tsx scripts/provision-bearer-token.ts",
+    "build:data-release": "node --import tsx scripts/build-data-release.ts",
+    "stage:data-release": "node --import tsx scripts/stage-data-release.ts",
+    "activate:data-release": "node --import tsx scripts/activate-data-release.ts",
     "test": "vitest run",
+    "test:release": "vitest run test/release",
     "test:stdio": "vitest run test/transport/stdio.integration.test.ts",
     "test:worker": "vitest run --config vitest.worker.config.ts",
     "typecheck": "tsc --noEmit",
     "typecheck:worker": "tsc --noEmit -p test/tsconfig.json",
     "wrangler:types": "wrangler types src/worker-configuration.d.ts",
     "verify:control-plane": "node --import tsx scripts/verify-control-plane.ts --artifact-only",
+    "verify:release": "node --import tsx scripts/verify-release.ts",
+    "check:local-secrets": "node --import tsx scripts/check-local-secret-files.ts",
     "deploy:dry-run": "wrangler deploy --dry-run --outdir .wrangler-dist",
     "build": "tsc -p tsconfig.build.json",
-    "test:node-min": "node test/node-min-smoke.mjs"
+    "test:node-min": "node test/node-min-smoke.mjs",
+    "check": "npm run check:workflow-build && npm run check:local-secrets && npm test && npm run typecheck && npm run typecheck:worker && npm run build && npm run test:node-min && npm run verify:control-plane",
+    "check:repository": "node --import tsx scripts/check-repository.ts"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "0.18.8",
@@ -33,6 +41,7 @@
     "wrangler": "4.114.0"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "3.1096.0",
     "@modelcontextprotocol/sdk": "1.30.0",
     "zod": "4.4.3"
   }

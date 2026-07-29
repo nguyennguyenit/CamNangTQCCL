@@ -87,6 +87,8 @@ Stdio dùng official SDK transport, giữ stdout chỉ cho protocol và ghi diag
 
 Remote data đi qua hai R2 binding: pointer bucket mutable và release bucket content-addressed. Application chỉ đưa binding qua `PointerReader`/`ReleaseReader`; đây là giới hạn capability trong code, không phải tuyên bố R2 binding có IAM read-only. Server/transport luôn theo request; module scope chỉ giữ snapshot cache đã validate và limiter isolate-local.
 
+Release builder tạo đúng sáu object và canonical manifest từ Git tree sạch, không credential. Publisher conditional-create object trong release bucket đã lock; activator chỉ CAS `current.json` sau candidate-version verification và promotion receipt content-addressed. Force-refresh live failure tự CAS-restore pointer cũ, còn rollback conflict dừng automation. Chi tiết vận hành nằm ở [Research MCP server](mcp-research-server.md).
+
 `workflowVersion` ghép full `releaseId` của canonical data manifest với `workflowBuildId` của semantic import closure; compact `dataVersion` chỉ để hiển thị. Inventory build chính xác thuộc [`workflow-source-manifest.json`](../mcp-worker/workflow-source-manifest.json); [`generate-workflow-build.ts`](../mcp-worker/scripts/generate-workflow-build.ts) kiểm closure bằng TypeScript AST, từ chối dynamic import không thể đóng và fail khi manifest/generated identity bị lệch.
 
 Boundary này fail closed và có bounds trước xử lý: chuỗi/control characters và collection được giới hạn, ambiguity hay xung đột material chặn recommendation, output/corpus được clamp. Observation và corpus text được coi là dữ liệu không tin cậy; state/result không nhận hoặc giữ ảnh, base64, path, bearer/provider secret hay token. `coexist.json` chỉ là metadata tham khảo, không tham gia chấm điểm.

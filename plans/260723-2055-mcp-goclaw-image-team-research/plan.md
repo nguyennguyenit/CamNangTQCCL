@@ -55,19 +55,19 @@ local: filesystem -> CLI/stdio       remote: R2 manifest -> fresh server/request
 | 3 | [Research tools, data loaders, and CLI](./phase-03-build-research-tools-data-loaders-and-cli.md) | Completed | 2 | 4d |
 | 4 | [stdio and Streamable HTTP transports](./phase-04-add-stdio-and-streamable-http-transports.md) | Completed | 3 | 5d |
 | 5 | [Publish GoClaw consumer handoff guide](./phase-05-publish-goclaw-consumer-handoff.md) | Completed | 4 | 1d |
-| 6 | [Secure MCP release and operations](./phase-06-validate-secure-release-and-operations.md) | Pending | 4 | 6d |
+| 6 | [Secure MCP release and operations](./phase-06-validate-secure-release-and-operations.md) | In progress | 4 | 6d |
 
 ## Acceptance Criteria
 
-- [ ] CLI, stdio, and HTTP call the same eight handlers and produce semantic parity from the same release.
-- [ ] Phase 3 runtime schemas are the single public schema authority; all eight tools pass table-driven success and error parity across CLI, stdio, and HTTP.
-- [ ] Multi-call flows bind `expectedWorkflowVersion` and `confirmationBinding`; data, canonical projection, schema, semantic engine, or payload changes restart normalize/review/confirm.
-- [ ] `workflowVersion`, confirmation verification, and cursors use the full collision-safe `releaseId`; compact `dataVersion` is never an authorization or compatibility identity.
-- [ ] Recommendation fails closed on material ambiguity, resource conflicts, invalid/mixed data, or unavailable MCP; no invented team/build.
-- [ ] Browser and Vision Worker regression suites remain green; no image bytes/path or Turnstile bypass enters `mcp-worker/`.
-- [ ] Remote `/mcp` is TLS-only, bearer-protected on every method, request-scoped, bounded, redacted, and read-only.
-- [ ] Tool discovery exposes exactly eight `tqccl_*` names and schemas through both MCP transports.
-- [ ] Exactly one implementation artifact documents the future GoClaw skill contract; this repo neither builds nor configures that skill.
+- [x] CLI, stdio, and HTTP call the same eight handlers and produce semantic parity from the same release.
+- [x] Phase 3 runtime schemas are the single public schema authority; all eight tools pass table-driven success and error parity across CLI, stdio, and HTTP.
+- [x] Multi-call flows bind `expectedWorkflowVersion` and `confirmationBinding`; data, canonical projection, schema, semantic engine, or payload changes restart normalize/review/confirm.
+- [x] `workflowVersion`, confirmation verification, and cursors use the full collision-safe `releaseId`; compact `dataVersion` is never an authorization or compatibility identity.
+- [x] Recommendation fails closed on material ambiguity, resource conflicts, invalid/mixed data, or unavailable MCP; no invented team/build.
+- [x] Browser and Vision Worker regression suites remain green; no image bytes/path or Turnstile bypass enters `mcp-worker/`.
+- [x] Remote `/mcp` is TLS-only, bearer-protected on every method, request-scoped, bounded, redacted, and read-only.
+- [x] Tool discovery exposes exactly eight `tqccl_*` names and schemas through both MCP transports.
+- [x] Exactly one implementation artifact documents the future GoClaw skill contract; this repo neither builds nor configures that skill.
 - [ ] Immutable R2 release, receipt-bound promotion, current-security-compatible rollback, retention, control-plane evidence, and MCP deployment evidence are documented and verified independently of any consumer platform.
 
 ## Cross-Plan Dependencies
@@ -171,3 +171,8 @@ Retained corrections include the Node ESM boundary, single ownership of normaliz
 - Reviewer ban đầu nêu lỗi **Medium** về pagination; guide đã giới hạn cursor pagination cho `tqccl_search`, sau đó reviewer cuối **PASS**.
 - Sweep sáu phase: Phase 1–5 `Completed`; Phase 6 `Pending`; kế hoạch giữ `in_progress` (`154/191`, `80%`). Toàn bộ live control-plane, secure release, deploy và rollback gate của Phase 6 vẫn mở.
 - Báo cáo: [Phase 5 completion](./reports/phase-05-completion-260728.md) và [PM progress](./reports/pm-260728-2303-phase-05-progress.md).
+
+### Session 10 — 2026-07-29
+
+- Phase 6 local implementation và whole-repository gate PASS; immutable release/CAS/receipt/verifier/monitor/runbook đã có test (`212/212` MCP, `41/41` release).
+- Production control-plane, staging, exact Worker upload/deploy, live verification và rollback canary chưa chạy vì chưa có ủy quyền external mutation; Phase 6 và toàn plan giữ `in_progress`.

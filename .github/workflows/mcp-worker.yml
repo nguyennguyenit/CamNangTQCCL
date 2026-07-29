@@ -1,52 +1,82 @@
 name: MCP worker
 
 on:
+  workflow_dispatch:
   pull_request:
     paths:
       - ".node-version"
       - ".github/workflows/mcp-worker.yml"
+      - ".github/workflows/mcp-r2-lock-monitor.yml"
       - "data/**"
       - "js/**"
       - "mcp-worker/**"
       - "package.json"
       - "package-lock.json"
+      - "playwright.config.*"
       - "scripts/**"
       - "src/lib/public-artifact-manifest.mjs"
+      - "tests/**"
+      - "tests-e2e/**"
+      - "tests-js/**"
+      - "worker/**"
   push:
     branches: [main]
     paths:
       - ".node-version"
       - ".github/workflows/mcp-worker.yml"
+      - ".github/workflows/mcp-r2-lock-monitor.yml"
       - "data/**"
       - "js/**"
       - "mcp-worker/**"
       - "package.json"
       - "package-lock.json"
+      - "playwright.config.*"
       - "scripts/**"
       - "src/lib/public-artifact-manifest.mjs"
+      - "tests/**"
+      - "tests-e2e/**"
+      - "tests-js/**"
+      - "worker/**"
 
 permissions:
   contents: read
 
 jobs:
-  test:
+  credential-free-release-gate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       - uses: actions/setup-node@v4
         with:
           node-version-file: .node-version
           cache: npm
-          cache-dependency-path: mcp-worker/package-lock.json
+          cache-dependency-path: |
+            package-lock.json
+            mcp-worker/package-lock.json
+            worker/package-lock.json
+      - run: npm ci
+      - run: npm ci
+        working-directory: worker
       - run: npm ci
         working-directory: mcp-worker
-      - run: npm run check:workflow-build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run check:repository
         working-directory: mcp-worker
-      - run: npm test -- --run test/domain
+      - name: Build immutable data release
+        env:
+          TQCCL_RELEASE_OUTPUT: ${{ runner.temp }}/tqccl-data-release
+        run: npm run build:data-release > "${RUNNER_TEMP}/release-metadata.json"
         working-directory: mcp-worker
-      - run: npm run typecheck
-        working-directory: mcp-worker
-      - run: npm run build
-        working-directory: mcp-worker
-      - run: npm run test:node-min
-        working-directory: mcp-worker
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tqccl-mcp-release-${{ github.sha }}
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            ${{ runner.temp }}/release-metadata.json
+            ${{ runner.temp }}/tqccl-data-release/

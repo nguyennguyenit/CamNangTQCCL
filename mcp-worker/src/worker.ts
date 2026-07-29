@@ -62,6 +62,8 @@ interface RuntimeConfiguration {
   maxInFlight: number;
 }
 
+const FORCE_REFRESH_HEADER = "TQCCL-MCP-Force-Refresh";
+
 function jsonResponse(
   status: number,
   code: string,
@@ -304,8 +306,18 @@ export function createWorker(options: WorkerRuntimeOptions = {}) {
           configuration.maxBodyBytes,
         );
         validateInitializeProtocol(parsedBody);
+        const forceRefreshHeader = request.headers.get(
+          FORCE_REFRESH_HEADER,
+        );
+        if (
+          forceRefreshHeader !== null &&
+          forceRefreshHeader !== "1"
+        ) {
+          return jsonResponse(400, "INVALID_FORCE_REFRESH");
+        }
         const handlers = createResearchHandlers({
           dataSource: dataSource(environment),
+          forceRefresh: forceRefreshHeader === "1",
         });
         const server = createMcpServer({ handlers });
         const transport =
