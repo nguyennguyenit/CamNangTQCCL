@@ -1,13 +1,13 @@
 ---
 title: "TQCCL research MCP server"
 description: "Add a read-only TypeScript research service with local CLI, stdio MCP, authenticated Cloudflare Streamable HTTP, and one future GoClaw skill handoff guide."
-status: in_progress
+status: completed
 priority: P1
 effort: 22d
 issue: null
 branch: main
 tags: [feature, backend, api, infra, tdd]
-blockedBy: [260731-0237-thay-r2-bng-worker-static-assets]
+blockedBy: []
 blocks: []
 created: 2026-07-23
 ---
@@ -16,7 +16,7 @@ created: 2026-07-23
 
 ## Overview
 
-Build a separate `mcp-worker/` package with one deterministic research core, local filesystem source, CLI, stdio MCP, and stateless Cloudflare Streamable HTTP. Phases 1–5 và local Phase 6 implementation đã hoàn tất. Quyết định ngày 2026-07-31 supersede R2 release path bằng code+data atomic Worker Static Assets trong `260731-0237-thay-r2-bng-worker-static-assets`; plan hiện block chờ migration và live evidence đó. This repository owns only the MCP service and its operational documentation. GoClaw, Dewee, skills, image handling, grants, and channel orchestration are external consumers.
+Build a separate `mcp-worker/` package with one deterministic research core, local filesystem source, CLI, stdio MCP, and stateless Cloudflare Streamable HTTP. Phases 1–5 và local Phase 6 implementation đã hoàn tất. Quyết định ngày 2026-07-31 supersede R2 release path bằng code+data atomic Worker Static Assets trong `260731-0237-thay-r2-bng-worker-static-assets`; migration và live evidence hoàn tất ngày 2026-08-01. This repository owns only the MCP service and its operational documentation. GoClaw, Dewee, skills, image handling, grants, and channel orchestration are external consumers.
 
 ## Scope Contract
 
@@ -55,7 +55,7 @@ local: filesystem -> CLI/stdio       remote: Worker Static Assets -> fresh serve
 | 3 | [Research tools, data loaders, and CLI](./phase-03-build-research-tools-data-loaders-and-cli.md) | Completed | 2 | 4d |
 | 4 | [stdio and Streamable HTTP transports](./phase-04-add-stdio-and-streamable-http-transports.md) | Completed | 3 | 5d |
 | 5 | [Publish GoClaw consumer handoff guide](./phase-05-publish-goclaw-consumer-handoff.md) | Completed | 4 | 1d |
-| 6 | [Secure MCP release and operations](./phase-06-validate-secure-release-and-operations.md) | In progress | 4 | 6d |
+| 6 | [Secure MCP release and operations](./phase-06-validate-secure-release-and-operations.md) | Superseded (replacement completed) | 4 | 6d |
 
 ## Acceptance Criteria
 
@@ -68,7 +68,7 @@ local: filesystem -> CLI/stdio       remote: Worker Static Assets -> fresh serve
 - [x] Remote `/mcp` is TLS-only, bearer-protected on every method, request-scoped, bounded, redacted, and read-only.
 - [x] Tool discovery exposes exactly eight `tqccl_*` names and schemas through both MCP transports.
 - [x] Exactly one implementation artifact documents the future GoClaw skill contract; this repo neither builds nor configures that skill.
-- [ ] Worker Static Assets release, exact-version promotion, whole-version rollback, retained HTTP security controls, and MCP deployment evidence are documented and verified independently of any consumer platform through `260731-0237-thay-r2-bng-worker-static-assets`.
+- [x] Worker Static Assets release, exact-version promotion, whole-version rollback, retained HTTP security controls, and MCP deployment evidence are documented and verified independently of any consumer platform through `260731-0237-thay-r2-bng-worker-static-assets`.
 
 ## Cross-Plan Dependencies
 
@@ -76,11 +76,11 @@ local: filesystem -> CLI/stdio       remote: Worker Static Assets -> fresh serve
 - Reuse Astro’s root Node pin, Playwright configuration, `tests-e2e/`, build, dist, and E2E gates; do not create a second browser harness in `mcp-worker/`.
 - Astro documentation completes first; MCP Phase 6 then updates the same docs against the migrated source of truth.
 - `260723-1950-mcp-dual-transport` remains cancelled/superseded, not a dependency.
-- Blocking replacement: `260731-0237-thay-r2-bng-worker-static-assets` supersedes only Phase 6 R2 release/operations; Phases 1–5 remain authoritative.
+- Satisfied replacement: `260731-0237-thay-r2-bng-worker-static-assets` supersedes only Phase 6 R2 release/operations và đã hoàn tất live verification ngày 2026-08-01; Phases 1–5 remain authoritative.
 
 ## Unresolved Questions
 
-None blocking implementation planning. Exact runtime/protocol pins, result/rate/CPU limits, and R2 rollback-retention window are explicit evidence-based implementation/staging gates. Consumer-platform capabilities are intentionally outside scope.
+Không còn câu hỏi blocking. Consumer-platform capabilities vẫn intentionally outside scope.
 
 ## Red Team Review
 
@@ -190,3 +190,9 @@ Retained corrections include the Node ESM boundary, single ownership of normaliz
 - User quyết định bỏ R2 sau khi xác nhận data thay đổi theo mùa khoảng ba tháng một lần; lợi ích publish data độc lập không còn đủ để biện minh cho hai bucket, pointer CAS, lock, receipt và credentials.
 - `260731-0237-thay-r2-bng-worker-static-assets` trở thành blocking replacement cho phần release/operations của Phase 6. Public MCP/GoClaw contract, tám tools và kết quả Phases 1–5 không đổi.
 - Kế hoạch này vẫn `in_progress`; không coi các live R2 gates cũ là việc phải chạy và không tự ý retire external R2 resources nếu chúng tồn tại.
+
+### Session 13 — 2026-08-01
+
+- Replacement plan hoàn tất qua [GitHub Actions run 30708870542](https://github.com/nguyennguyenit/CamNangTQCCL/actions/runs/30708870542) tại exact SHA [`080c514064e4d9f37618f154e0c4bec09771164c`](https://github.com/nguyennguyenit/CamNangTQCCL/commit/080c514064e4d9f37618f154e0c4bec09771164c); cả hai job đều pass.
+- Live evidence xác nhận candidate `0%` trước promotion, traffic prior `[100]` → smoke `[100,0]` → rollback `[100]` → final `[100]`, cùng `rollbackRehearsal: true` và rollback known-good toàn bộ code + data.
+- `/healthz` public trả `200`, `/mcp` không bearer trả `401`, asset manifest/team trả `404`; edge rate rule và authorized gates đã được xác minh. Blocking dependency được gỡ và plan hoàn tất; các checklist R2 chi tiết trong Phase 6 là lịch sử đã bị replacement plan supersede.

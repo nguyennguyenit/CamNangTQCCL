@@ -1,7 +1,7 @@
 ---
 phase: 6
 title: "Validate, secure, release, and operate MCP"
-status: in_progress
+status: superseded
 priority: P1
 effort: 6d
 dependencies: [4]
@@ -19,6 +19,8 @@ dependencies: [4]
 ## Overview
 
 Add whole-system/security gates, immutable R2 publication, live MCP verification, evergreen service/operations documentation, and a staged release/rollback sequence. MCP release acceptance is independent of GoClaw, Dewee, skills, media providers, grants, and channels.
+
+> **Superseded ngày 2026-08-01.** Các yêu cầu và checklist R2 bên dưới được giữ làm lịch sử thiết kế, không phải việc còn mở. Plan [Worker Static Assets](../260731-0237-thay-r2-bng-worker-static-assets/plan.md) đã thay thế release plane này và hoàn tất live exact-version promotion/rollback tại [run 30708870542](https://github.com/nguyennguyenit/CamNangTQCCL/actions/runs/30708870542).
 
 ## Requirements
 
@@ -89,20 +91,20 @@ Data rollback first ETag-CAS repoints `current.json` to the prior release and ve
 
 - [x] `buildDataRelease` consumes exactly six known local artifacts and writes no source data.
 - [x] `dataVersion` remains a compact display label only; collision-safe `releaseId` is the full digest of the canonical manifest and owns R2 paths, receipts, rollback, workflow compatibility, confirmation, and cursor identity.
-- [ ] `publishDataRelease` requires a clean-tree, credential-free built artifact, explicit release/pointer buckets and environment, repository gate, and separate authorization/credentials for `stage` versus `activate`.
-- [ ] Preflight requires whole release-bucket lock coverage for the approved retention window; missing/weaker lock blocks staging and activation.
+- [x] **Superseded:** `publishDataRelease` và cặp release/pointer bucket không còn thuộc runtime; replacement workflow dùng clean-tree Worker Static Assets artifact và manual exact-SHA authorization.
+- [x] **Superseded:** release-bucket lock preflight không còn áp dụng vì production release không dùng R2.
 - [x] Lock administrator is separate from release-bucket publisher and pointer-bucket activator. Worker bindings are platform write-capable but reachable only through `ArtifactReader`; import/bundle tests reject mutation calls.
-- [ ] Live credential tests prove the release publisher cannot access the pointer bucket and the pointer activator cannot access the release bucket; no claim of prefix-scoped or create-only IAM remains.
-- [ ] Upload order: clean-source gate -> lock/control-plane check -> conditional release objects/manifest -> exact no-traffic Worker version -> exact current/candidate verification -> immutable promotion receipt -> one Worker version at 100% -> authorized pointer ETag CAS -> force-refresh live verify.
+- [x] **Superseded:** live credential separation giữa hai R2 bucket không được chạy và không còn cần thiết; inventory xác nhận R2 không hiện diện.
+- [x] **Hoàn tất qua replacement:** clean-source gate → exact Worker version candidate `0%` → authenticated verification → một version `100%` → whole-version rollback/re-promotion; không có R2 pointer hoặc receipt.
 - [x] Existing versioned keys are accepted only when bytes/hash are identical; mismatch or pointer conflict aborts without overwrite.
 - [x] `PromotionReceipt` content-addressedly binds `releaseId`, canonical manifest hash, `dataVersion`, `workflowBuildId`, exact Worker version ID, Git tree/source digest, prior pointer ETag/value, environment, evidence digest, approval reference, and bounded validity.
 - [x] Activation accepts only a matching unexpired receipt; live failure automatically restores the prior pointer with the new pointer ETag. A rollback CAS conflict stops automation and pages/manual-incidents instead of overwriting concurrent state.
 - [x] `verifyRelease` takes URL and expected immutable identities; bearer and control-plane credentials come from secret environment variables only.
-- [ ] Verifier checks no-I/O health, authenticated readiness, initialize/list/call for all eight names, annotations, negotiated/subsequent protocol versions, authenticated stateless GET/DELETE behavior, workflow versions, compact-version collision rejection, binding rejection, provenance, limits, injection non-echo, invalid auth, lock policy, and account control-plane evidence.
-- [ ] Repository gate proves the workflow manifest equals transitive semantic closure, regenerates `workflowBuildId`, and fails on dirty/stale/missing/unexpected identity inputs.
+- [x] **Hoàn tất qua replacement:** repository/live verifiers giữ các gate MCP, identity, auth, limits và provenance còn hiệu lực; R2 lock-policy check đã bị supersede. Live probes xác nhận health `200`, unauthenticated MCP `401` và private assets `404`.
+- [x] Repository gate và workflow identity gate pass trong production run của replacement plan trên exact SHA được phê duyệt.
 - [x] Runtime bundle/import guards reject R2 mutation and publication modules.
-- [ ] Production `/mcp` has pre-Worker rate protection plus post-auth rate/in-flight limits.
-- [ ] Pre-release rollback canary runs retained old code with current bearer rotation state, bindings, Origin policy, limits, and control-plane policy; full old-configuration rollback is a separate authorized procedure.
+- [x] Production `/mcp` có edge rate rule đã xác minh và Worker vẫn giữ post-auth rate/in-flight limits.
+- [x] **Hoàn tất qua replacement:** rehearsal rollback phục hồi prior known-good code + data rồi re-promote candidate; bearer không bị rollback.
 - [x] Secret scanning covers tracked, untracked, and ignored exceptional local secret files; cleanup and current -> bounded dual -> promote -> retire transitions are tested.
 - [x] `npm run check` is deterministic, contains no live deploy, and requires no GoClaw/Dewee environment.
 
@@ -184,23 +186,23 @@ cd ../mcp-worker && npm run check && npm run deploy:dry-run
 ## Release Gates
 
 - [x] Exact dependency/compatibility-date pins and clean package audit.
-- [ ] Clean Git tree/source digest, credential-free build/test, immutable artifact manifest, and approval evidence match the promotion receipt.
-- [ ] Separate release/pointer R2 buckets, conditional staging, hash verification, receipt-bound pointer switch, and automatic conditional rollback rehearsal pass.
-- [ ] Release-bucket lock covers rollback window; pointer monitor, scheduled lock drift, event notification, and alert paths are tested.
-- [ ] Exact candidate Worker version passes current/candidate verification, then owns 100% traffic alone during pointer activation.
-- [ ] Worker live verifier passes no-I/O liveness, authenticated readiness, exact all-eight catalog/calls, managed-client auth, protocol-header/GET/DELETE behavior, collision-safe workflow version, provenance, injection non-echo, limits, and concurrency.
+- [x] **Hoàn tất qua replacement:** clean Git tree/source evidence, credential-free gates, immutable code+assets artifact và manual exact-SHA approval khớp production run; R2 promotion receipt không còn áp dụng.
+- [x] **Superseded:** separate release/pointer R2 buckets, conditional staging, receipt-bound pointer switch và R2 rollback không được chạy; replacement rollback toàn Worker version đã pass.
+- [x] **Superseded:** release-bucket lock, pointer monitor và R2 event/alert paths không còn áp dụng vì inventory xác nhận R2 không hiện diện.
+- [x] Exact candidate Worker version pass current/candidate verification ở `0%`, sau đó là version duy nhất nhận `100%` traffic.
+- [x] Worker live verifier và full repository gates pass trong replacement run; public liveness/auth/private-asset probes đúng contract.
 - [x] CPU/latency/memory/R2 evidence confirms the Phase 4 tier without weakening correctness.
-- [ ] Repository control-plane artifact and live verifier prove pre-Worker rate control plus R2 monitoring/alerts; otherwise production HTTP/release activation remains disabled.
-- [ ] Old-code rollback canary passes current bearer rotation, bindings, Origin/rate policy, and limits; no retired token is restored.
-- [ ] Production secrets are managed-only; exceptional local secret files were permission-checked, scanned including ignored/untracked state, and removed.
+- [x] **Hoàn tất qua replacement:** pre-Worker edge rate control đã được xác minh; phần R2 monitoring/alerts bị supersede và không được tuyên bố đã chạy.
+- [x] Known-good whole-version rollback pass với security boundary hiện tại; bearer cũ không được phục hồi.
+- [x] Authorized replacement workflow giữ production secrets ngoài argv/repository/artifact; evidence được redacted và không chứa raw logs.
 - [x] No GoClaw/Dewee/skill/media/channel dependency exists in build, test, deploy, verification, or rollback.
-- [ ] Explicit production deployment authorization is present before external mutation.
+- [x] Explicit manual production confirmation và exact-SHA authorization đã được kiểm tra trước external mutation.
 
 ## Success Criteria
 
-- [ ] Whole-system golden and security gates pass locally and in staging.
-- [ ] R2 releases are content-addressed, conditionally written to a locked release bucket, activated through a separate pointer bucket and immutable receipt, drift-monitored, and rollback-tested.
-- [ ] Live Worker is stateless, authenticated, bounded, versioned, and independently verified.
+- [x] Whole-system golden, security, repository và authorized production gates pass qua replacement plan.
+- [x] **Superseded:** R2 content-addressed release/pointer/receipt design không được triển khai live; Worker Static Assets exact-version release thay thế contract này.
+- [x] Live Worker là stateless, authenticated, bounded, versioned và independently verified.
 - [x] Operations docs cover MCP local use, deployment, rotation, retention, incident response, and rollback.
 - [x] Production records contain only actual verified MCP versions and dates.
 - [x] Vision Worker remains separate/unchanged; no image/raw path or new mutation/crawler/RAG/memory tool exists.
@@ -230,6 +232,13 @@ cd ../mcp-worker && npm run check && npm run deploy:dry-run
 - Kết quả hiện tại: MCP `216/216`, workerd `2/2`; coverage statements `89.08%`, branches `81.84%`, functions `95.37%`, lines `89.56%`.
 - Schema authority đổi nên `workflowBuildId` được regenerate; staging/live release phải dùng identity mới. Không gọi Cloudflare/R2 live.
 
+### Session 12 — 2026-08-01
+
+- Phase R2 này được đóng bằng replacement plan, không phải bằng cách chạy các gate R2 lịch sử. Inventory xác nhận R2 không hiện diện; không có bucket, pointer, receipt hay R2 credential nào được tạo hoặc retire.
+- [GitHub Actions run 30708870542](https://github.com/nguyennguyenit/CamNangTQCCL/actions/runs/30708870542) pass cả hai job tại exact SHA [`080c514064e4d9f37618f154e0c4bec09771164c`](https://github.com/nguyennguyenit/CamNangTQCCL/commit/080c514064e4d9f37618f154e0c4bec09771164c).
+- Replacement evidence xác nhận traffic prior `[100]`, candidate smoke `[100,0]`, rollback `[100]`, final `[100]`, `rollbackRehearsal: true`; `/healthz` trả `200`, `/mcp` không bearer trả `401`, public manifest/team assets trả `404`, và edge rate rule đạt.
+- Yêu cầu release/operations được replacement plan hoàn tất qua Worker Static Assets exact-version promotion và whole-version rollback; Phase R2 này giữ trạng thái superseded, không npm publish và không rollback bearer.
+
 ## Security and Privacy
 
 - Use separate bucket-scoped credentials for release publication and pointer activation plus separate lock/control-plane administration and MCP bearer. Document that Worker R2 bindings are platform write-capable; narrow reader interfaces/import guards are application enforcement, not IAM.
@@ -254,4 +263,4 @@ cd ../mcp-worker && npm run check && npm run deploy:dry-run
 
 ## Final Handoff
 
-Delivery is complete after automated MCP gates, authorized release gates, documentation verification, and whole-plan acceptance criteria pass. Building or attaching a GoClaw skill is a separate future plan.
+Delivery đã hoàn tất qua replacement plan sau automated MCP gates, authorized release gates, documentation verification và whole-plan acceptance. Building or attaching a GoClaw skill vẫn là một future plan riêng.

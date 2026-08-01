@@ -1,7 +1,7 @@
 ---
 date: 2026-08-01
 session: worker-static-assets-implementation
-status: in-progress
+status: completed
 plan: ../260731-0237-thay-r2-bng-worker-static-assets/plan.md
 ---
 
@@ -9,7 +9,7 @@ plan: ../260731-0237-thay-r2-bng-worker-static-assets/plan.md
 
 ## Context
 
-Phiên Cook thay production data path từ R2 sang private Worker Static Assets, đóng gói code, manifest và sáu JSON trong cùng một Worker version. Phạm vi giữ nguyên filesystem source cho CLI/stdio, tám tool MCP, bearer và GoClaw handoff. Production hostname đã chốt là `mcp.tqccl.com` trong zone active `tqccl.com`; chưa deploy Worker production, publish npm hoặc đóng plan khi chưa đủ live evidence.
+Phiên Cook thay production data path từ R2 sang private Worker Static Assets, đóng gói code, manifest và sáu JSON trong cùng một Worker version. Phạm vi giữ nguyên filesystem source cho CLI/stdio, tám tool MCP, bearer và GoClaw handoff. Khi bắt đầu, production hostname đã chốt là `mcp.tqccl.com` nhưng Worker chưa được deploy; phiên chỉ đóng sau khi đủ live evidence và không publish npm.
 
 ## What Happened
 
@@ -21,11 +21,11 @@ Phiên Cook thay production data path từ R2 sang private Worker Static Assets,
 - Kiểm kê live chỉ đọc xác nhận R2 chưa được enable và Worker chưa tồn tại; bổ sung nhánh bootstrap one-time manual, chỉ chấp nhận trạng thái không có deployment và không thể ghi đè Worker đang hoạt động.
 - Khóa bearer bằng `secrets.required`; bootstrap đưa secret vào version qua file tạm quyền hạn chế, xóa bằng trap và mở incident nếu first-version verification fail do chưa có prior rollback.
 - Xác minh live Free edge rule cho `/mcp` trên `tqccl.com`: đếm theo IP, `10 request/10 giây`, action `Block`, timeout `10 giây`, trạng thái `Active`; Worker limiter `60 request/60 giây` vẫn là lớp thứ hai.
-- Đồng bộ runbook, architecture và project docs; plan vẫn `in-progress` vì bootstrap, normal candidate flow và rollback rehearsal chưa chạy.
+- Đồng bộ runbook, architecture và project docs; sau đó hoàn tất bootstrap, normal candidate flow và rollback rehearsal trên production.
 
 ## Reflection
 
-Việc gom code và data vào cùng Worker version đã loại bỏ phần lớn mutable release state và giảm mạnh bề mặt vận hành. Local coverage tốt, các contract quan trọng đã được khóa bằng test và edge rate control đã có live evidence. Rủi ro còn lại nằm ở first-release bootstrap và deployment state: Cloudflare Create Deployment không cung cấp CAS/precondition nguyên tử, nên test không thể thay thế kỷ luật độc quyền vận hành trong release window.
+Việc gom code và data vào cùng Worker version đã loại bỏ phần lớn mutable release state và giảm mạnh bề mặt vận hành. Local coverage tốt, các contract quan trọng đã được khóa bằng test và edge rate control đã có live evidence. Bootstrap và rollback rehearsal đã hoàn tất; rủi ro vận hành lâu dài còn lại là Cloudflare Create Deployment không cung cấp CAS/precondition nguyên tử, nên test không thể thay thế kỷ luật độc quyền trong release window.
 
 ## Decisions Made
 
@@ -42,15 +42,15 @@ Việc gom code và data vào cùng Worker version đã loại bỏ phần lớn
 
 ## Verification
 
-- MCP `npm run check`: `217/217`; coverage `89.72%` statements, `82.42%` branches, `95.34%` functions, `90.20%` lines; typecheck/build/Node-min/offline control-plane pass.
-- Release suite `40/40`; bootstrap/config targeted suite `23/23`.
+- MCP full gate: `229/229`; coverage `89.72%` statements, `82.42%` branches, `95.34%` functions, `90.20%` lines; typecheck/build/Node-min/offline control-plane pass.
+- Release suite `52/52`.
 - Clean-tree exact candidate build, evidence verifier, full repository gate và Wrangler dry-run với bảy assets pass trong clone tạm.
 - Workerd: functional `2/2`, production corpus `1/1`.
 - Root: dist `9/9`, browser E2E `14/14`, Node `133/133`, Python `82/82`.
 - Vision Worker: `53/53`, typecheck pass.
-- `git diff --check`: pass. Current tracked diff summary: 54 files, 614 insertions, 4,936 deletions; untracked implementation/tests/docs evidence remain part of the shared worktree.
-- Project sync hiện tại: `60/63` checks (`95%`); Phase 3 completed, Phase 4 vẫn `in-progress` với ba live/closure checks.
-- Live Cloudflare inventory: R2 `not present`, Worker/version chưa tồn tại; edge rule Free cho `/mcp` đạt `10 request/10 giây`, `Block` `10 giây`, `Active`.
+- `git diff --check`: pass.
+- Phase 4 và cross-plan dependency đã đóng sau live evidence.
+- Live Cloudflare inventory: R2 `not present`; Worker Static Assets đã release; edge rule Free cho `/mcp` đạt `10 request/10 giây`, `Block` `10 giây`, `Active`.
 
 ## Impact
 
@@ -59,14 +59,23 @@ Việc gom code và data vào cùng Worker version đã loại bỏ phần lớn
 - Security boundary remains bearer authentication plus live edge rate control; asset bytes are not publicly routable.
 - AgentWiki publishing skipped because neither AgentWiki CLI nor MCP capability is available in this environment.
 
-## Next Steps
+## Maintenance
 
-- Provision các repository secrets còn thiếu và dedicated deploy token theo runbook, không ghi identifiers hoặc values vào journal/evidence.
-- Chạy manual exact-SHA bootstrap để tạo first known-good Worker trên `mcp.tqccl.com`; nhánh phải từ chối nếu deployment đã tồn tại.
-- Chạy normal prior `100%` + candidate `0%` Version Override, xác minh exact runtime/release/workflow identity và account-specific performance, rồi promote một version `100%`.
-- Rehearse ownership-safe whole-version rollback về known-good version.
-- Close this plan and the cross-plan dependency only after all live evidence passes.
+- Mỗi mùa tiếp tục dùng manual exact-SHA workflow, candidate `0%` Version Override, whole-version rollback rehearsal và managed-secret rotation theo runbook.
+- Không thêm lại R2 hoặc npm publishing nếu chưa có quyết định kiến trúc mới.
 
 ## Unresolved Questions
 
-- Không còn product/hostname decision mở; repository secrets, bootstrap và normal `100/0`/rollback live evidence vẫn là prerequisites bên ngoài.
+- Không còn câu hỏi hoặc prerequisite blocking cho plan này.
+
+## Final Production Completion
+
+- Dedicated production tokens đã được lưu trong GitHub Secrets; không ghi tên hoặc giá trị credential vào journal. Deploy token được sửa quyền `Workers Routes` và lần chạy lại đã vượt qua bước route mutation.
+- Bootstrap cho thấy release đầu tiên phải hỗ trợ phục hồi từ trạng thái tạo dở: kiểm kê/read-back live state trước khi tiếp tục, tái sử dụng tài nguyên hợp lệ và không giả định một lần chạy thất bại đồng nghĩa chưa có mutation.
+- Deployment payload đã bỏ trường client-supplied `workers/triggered_by`, đưa request về đúng contract thực tế của Wrangler.
+- Exact source `080c514064e4d9f37618f154e0c4bec09771164c` được triển khai thành công bởi workflow run `30708870542`.
+- Live rehearsal đã chứng minh prior `100%` + candidate `0%`, rollback toàn version về known-good, rồi promotion cuối về đúng một version `100%`.
+- Các public probes sau promotion đều pass, gồm khả dụng endpoint, bearer boundary và việc asset path không bị public trực tiếp.
+- Không publish npm; phạm vi production completion chỉ gồm Worker Static Assets và release/rollback evidence.
+
+Phiên triển khai production hoàn tất; các prerequisite live nêu ở phần trước đã được đóng bằng evidence của workflow thành công và kiểm tra công khai sau promotion.

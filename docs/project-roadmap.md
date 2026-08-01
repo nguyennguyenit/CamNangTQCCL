@@ -33,7 +33,7 @@ Tiêu chí hoàn thành: một checkout có các prerequisite đã mô tả có 
 - [ ] Đánh giá Durable Object nếu quota tháng phải cứng/atomic.
 - [ ] Xoay API key theo lịch; xác nhận không log payload ảnh trong Worker/provider settings.
 - [ ] Thiết lập smoke test production không chứa dữ liệu cá nhân.
-- [ ] Hoàn tất ủy quyền và bằng chứng live cho Research MCP: private Worker Static Assets, edge rate rule, candidate `0%` Version Override, exact Worker version và ownership-safe whole-version rollback.
+- [x] Hoàn tất ủy quyền và bằng chứng live cho Research MCP ngày 2026-08-01: private Worker Static Assets, edge rate rule, candidate `0%` Version Override, exact Worker version và ownership-safe whole-version rollback tại [run 30708870542](https://github.com/nguyennguyenit/CamNangTQCCL/actions/runs/30708870542), exact SHA [`080c514064e4d9f37618f154e0c4bec09771164c`](https://github.com/nguyennguyenit/CamNangTQCCL/commit/080c514064e4d9f37618f154e0c4bec09771164c).
 
 ## Bảo trì liên tục
 

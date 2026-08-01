@@ -1,6 +1,6 @@
 ---
 title: "Phase 4: Tài liệu, full verification và đóng migration"
-status: in-progress
+status: completed
 ---
 
 # Phase 4: Tài liệu, full verification và đóng migration
@@ -25,7 +25,7 @@ status: in-progress
 - GoClaw URL, bearer và tám tool contract không đổi; không cần npm/R2.
 - Full local/repository gates xanh trước external mutation.
 - Live evidence đóng override routing, performance, exact identity, edge control, conditional R2 inventory/revocation và rollback ownership.
-- Live inventory 2026-08-01 xác nhận Worker chưa tồn tại. Production hostname đã chốt là `mcp.tqccl.com` trong zone active `tqccl.com`; phải chạy first-release bootstrap để tạo prior known-good trước normal `100/0` rehearsal.
+- Live inventory ban đầu ngày 2026-08-01 xác nhận Worker chưa tồn tại. First-release bootstrap sau đó đã tạo prior known-good trên production hostname `mcp.tqccl.com`, trước normal `100/0` rehearsal thành công.
 - GitHub live audit xác nhận repo private không hỗ trợ required-reviewer environment ở plan hiện tại. Owner đã chọn manual exact-SHA approval: full SHA phải khớp `HEAD`, `GITHUB_SHA` và current `origin/main`, đồng thời checkbox production phải bật trước Cloudflare access.
 - Cloudflare zone dùng Free plan nên owner đã chấp thuận edge rule `10 request/10 giây`; Worker limiter vẫn `60 request/60 giây` để giữ defense-in-depth và cùng tốc độ trung bình.
 
@@ -122,25 +122,33 @@ Clean-checkout production workflow separately runs `build:worker-assets` before 
 - [x] Chạy full local/repository validation.
 - [x] Triển khai và test nhánh first-release bootstrap opt-in, fail-closed; không chạy live khi chưa chốt hostname/authorization.
 - [x] Chốt production hostname `mcp.tqccl.com` trong zone `tqccl.com` và khóa Worker Custom Domain trong Wrangler config.
-- [ ] Chạy first-release bootstrap, rồi chạy 0%-override/live/rollback gates khi có authorization.
+- [x] Chạy first-release bootstrap, rồi chạy 0%-override/live/rollback gates khi có authorization.
 - [x] Thay `mcp-production` không khả dụng bằng manual exact-SHA approval đã được owner chấp thuận và khóa bằng workflow test.
 - [x] Cập nhật implementation/local verification evidence.
-- [ ] Đóng cross-plan dependency sau khi có live evidence.
+- [x] Đóng cross-plan dependency sau khi có live evidence.
 
 ## Success Criteria
 
 - [x] Docs, commands, architecture và code cùng nói một Static Assets contract.
 - [x] Full gates xanh trên Node `22.16.0`.
-- [ ] Live override/production/rollback hoàn tất; R2 inventory ghi `not present` hoặc revocation evidence nếu resource/key tồn tại.
+- [x] Live override/production/rollback hoàn tất; R2 inventory ghi `not present` hoặc revocation evidence nếu resource/key tồn tại.
 - [x] Original MCP plan không còn gate R2 lỗi thời.
 
 ## Risks and Rollback
 
 - **Risk:** Docs đi trước implementation. **Mitigation:** chỉ cập nhật sau Phase 3, verify từng claim.
-- **Risk:** Chưa có authorization/credential cho live Worker release. **Mitigation:** chỉ edge rate rule đã được owner duyệt và deploy; giữ plan pending, không giả mạo production completion.
+- **Risk:** Live claim có thể lệch artifact. **Mitigation:** khóa claim vào run thành công, exact SHA và evidence redacted đã xác minh ngày 2026-08-01.
 - **Rollback:** Revert docs/config/code cùng Worker version; external asset/resource retirement là thao tác riêng có approval.
 
 ## Security Considerations
 
 - Redact bearer, account/token IDs và raw logs khỏi reports.
 - Kill route/rollback version khi live verification fail; không phục hồi secret cũ.
+
+## Validation Log
+
+### Session 3 — 2026-08-01
+
+- [GitHub Actions run 30708870542](https://github.com/nguyennguyenit/CamNangTQCCL/actions/runs/30708870542) pass cả hai job tại exact SHA [`080c514064e4d9f37618f154e0c4bec09771164c`](https://github.com/nguyennguyenit/CamNangTQCCL/commit/080c514064e4d9f37618f154e0c4bec09771164c).
+- Evidence artifact có trạng thái hợp lệ và `rollbackRehearsal: true`: prior `[100]`, candidate smoke `[100,0]`, rollback `[100]`, final `[100]`.
+- Live probes xác nhận `/healthz` `200`, `/mcp` không bearer `401`, manifest/team asset `404`; edge rate rule đạt. Authorized gates, first-release bootstrap, exact candidate verification, rollback known-good và cross-plan closure đều hoàn tất.

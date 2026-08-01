@@ -1,7 +1,7 @@
 ---
 title: "Thay R2 bằng Worker Static Assets"
 description: "Đóng gói code và sáu data artifacts trong cùng một Cloudflare Worker version, loại bỏ R2 release pipeline."
-status: in-progress
+status: completed
 priority: P1
 effort: "8d"
 issue: null
@@ -45,12 +45,12 @@ Worker luôn chạy trước assets. Public HTTP chỉ có `/healthz` và `/mcp`
 | 1 | [Khóa asset contract và deterministic builder](./phase-01-lock-asset-contract-and-builder.md) | Completed | — |
 | 2 | [Triển khai Static Assets DataSource và Worker wiring](./phase-02-implement-static-assets-data-source.md) | Completed | 1 |
 | 3 | [Thay R2 release và control plane](./phase-03-replace-r2-release-and-control-plane.md) | Completed | 2 |
-| 4 | [Tài liệu, full verification và đóng migration](./phase-04-document-verify-and-close-migration.md) | In progress | 3 |
+| 4 | [Tài liệu, full verification và đóng migration](./phase-04-document-verify-and-close-migration.md) | Completed | 3 |
 
 ## Cross-Plan Dependencies
 
-- Plan này block và supersede phần R2 release/operations của Phase 6 trong `260723-2055-mcp-goclaw-image-team-research`.
-- Plan cũ giữ nguyên kết quả Phases 1–5 và public MCP contract; chỉ đóng khi live Static Assets/rollback evidence đạt.
+- Plan này đã supersede phần R2 release/operations của Phase 6 trong `260723-2055-mcp-goclaw-image-team-research`.
+- Live Static Assets/rollback evidence ngày 2026-08-01 đã đạt; dependency được gỡ và plan MCP gốc được đóng mà không đổi kết quả Phases 1–5 hay public MCP contract.
 
 ## Acceptance Criteria
 
@@ -58,20 +58,20 @@ Worker luôn chạy trước assets. Public HTTP chỉ có `/healthz` và `/mcp`
 - [x] Production Worker dùng `ASSETS`, `run_worker_first: true` và version metadata; không có R2 binding.
 - [x] Filesystem/Static Assets parity và tám tools/GoClaw contract không đổi.
 - [x] Public asset URLs luôn `404`; loader fail closed thành safe `DATA_UNAVAILABLE`.
-- [ ] Candidate `0%` được verify trên production route bằng version override + authenticated version header trước khi promote duy nhất `100%`.
+- [x] Candidate `0%` được verify trên production route bằng version override + authenticated version header trước khi promote duy nhất `100%`.
 - [x] Repo private dùng manual exact-SHA approval đã được owner chấp thuận: production job yêu cầu SHA đủ 40 ký tự khớp `HEAD`, `GITHUB_SHA` và current `origin/main`, cùng checkbox xác nhận production, trước mọi Cloudflare access.
 - [x] Override failure phục hồi prior single-version deployment; cleanup cũng dùng expected-current guard và không ghi đè deployment khác.
 - [x] Production releases được tuần tự hóa; rollback chỉ chạy nếu current version vẫn thuộc run đang xử lý.
-- [ ] Rollback known-good Worker version phục hồi đồng thời code + data; bearer không bị rollback.
+- [x] Rollback known-good Worker version phục hồi đồng thời code + data; bearer không bị rollback.
 - [x] Không còn pointer/CAS/lock/receipt/AWS SDK/R2 credential hoặc npm publishing path.
 - [x] Full Node `22.16.0`, Workerd, repository và docs gates pass.
-- [ ] Authorized live Cloudflare, rollback và conditional R2 inventory gates pass.
+- [x] Authorized live Cloudflare, rollback và conditional R2 inventory gates pass.
 
 ## Empirical Gates
 
 - Version override/private paths và exact authenticated runtime version metadata.
 - Cold parse/validation/memory với corpus thật trên Cloudflare account mục tiêu.
-- Deploy token/repository secrets còn thiếu; edge rate rule live đã pass với `/mcp`, theo IP, `10 request/10 giây`, Block `10 giây`, Active.
+- Authorized production workflow đã pass; edge rate rule live đã pass với `/mcp`, theo IP, `10 request/10 giây`, Block `10 giây`, Active.
 - Zone `tqccl.com` dùng Free plan: owner chấp thuận edge `10 request/10 giây`; Worker limiter giữ `60 request/60 giây`.
 - Inventory chứng minh R2 resource/key không tồn tại, hoặc revoke/retire có evidence nếu thực sự tồn tại; rollback rehearsal diễn ra trước resource retirement.
 
@@ -85,6 +85,14 @@ Worker luôn chạy trước assets. Public HTTP chỉ có `/healthz` và `/mcp`
 - Chi tiết và code evidence: [Red-team adjudication](./reports/red-team-adjudication.md).
 
 ## Validation Log
+
+### Session 3 — 2026-08-01
+
+- [GitHub Actions run 30708870542](https://github.com/nguyennguyenit/CamNangTQCCL/actions/runs/30708870542) thành công ở cả hai job với exact SHA [`080c514064e4d9f37618f154e0c4bec09771164c`](https://github.com/nguyennguyenit/CamNangTQCCL/commit/080c514064e4d9f37618f154e0c4bec09771164c).
+- Artifact evidence được xác minh hợp lệ: normal flow có `rollbackRehearsal: true`; traffic lần lượt prior `[100]`, candidate smoke `[100,0]`, rollback `[100]`, và final `[100]`.
+- Public probes đạt contract: `/healthz` trả `200`, `/mcp` không bearer trả `401`, các đường manifest/team asset trả `404`; edge rate rule đã được xác minh live.
+- First-release bootstrap tạo prior known-good; normal candidate override, authenticated verification, promotion, whole-version rollback và re-promotion đều hoàn tất. Rollback chỉ phục hồi code + data, không phục hồi bearer.
+- Conditional R2 inventory gate xác nhận không có resource/key cần retire; không thực hiện npm publish. Phase 4 và toàn plan hoàn tất, đồng thời gỡ blocking dependency của plan MCP gốc.
 
 ### Session 1 — 2026-07-31
 
