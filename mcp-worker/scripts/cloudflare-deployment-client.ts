@@ -116,7 +116,8 @@ export class CloudflareDeploymentClient {
   async #request(
     method: "GET" | "POST",
     body?: Record<string, unknown>,
-  ): Promise<unknown> {
+    allowMissingWorker = false,
+  ): Promise<unknown | null> {
     try {
       const response = await this.#fetcher(
         new Request(this.#endpoint, {
@@ -131,6 +132,7 @@ export class CloudflareDeploymentClient {
           ...(body === undefined ? {} : { body: JSON.stringify(body) }),
         }),
       );
+      if (allowMissingWorker && response.status === 404) return null;
       if (!response.ok) throw new Error("request failed");
       const envelope = record(await response.json());
       if (envelope.success !== true || envelope.result === undefined) {
@@ -144,7 +146,9 @@ export class CloudflareDeploymentClient {
 
   async readCurrentOptional(): Promise<WorkerDeploymentSnapshot | null> {
     try {
-      const result = record(await this.#request("GET"));
+      const response = await this.#request("GET", undefined, true);
+      if (response === null) return null;
+      const result = record(response);
       if (!Array.isArray(result.deployments)) {
         throw new Error("invalid deployments");
       }

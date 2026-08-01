@@ -25,8 +25,9 @@ status: in-progress
 - GoClaw URL, bearer và tám tool contract không đổi; không cần npm/R2.
 - Full local/repository gates xanh trước external mutation.
 - Live evidence đóng override routing, performance, exact identity, edge control, conditional R2 inventory/revocation và rollback ownership.
-- Live inventory 2026-08-01 xác nhận Worker chưa tồn tại; phải chốt hostname/zone và chạy first-release bootstrap để tạo prior known-good trước normal `100/0` rehearsal.
-- GitHub live audit xác nhận repo private hiện chưa có `mcp-production`; production workflow phải fail closed nếu environment không có `required_reviewers`. Owner cần chọn public repo hoặc gói GitHub hỗ trợ protection phù hợp; không hạ cấp sang environment rỗng.
+- Live inventory 2026-08-01 xác nhận Worker chưa tồn tại. Production hostname đã chốt là `mcp.tqccl.com` trong zone active `tqccl.com`; phải chạy first-release bootstrap để tạo prior known-good trước normal `100/0` rehearsal.
+- GitHub live audit xác nhận repo private không hỗ trợ required-reviewer environment ở plan hiện tại. Owner đã chọn manual exact-SHA approval: full SHA phải khớp `HEAD`, `GITHUB_SHA` và current `origin/main`, đồng thời checkbox production phải bật trước Cloudflare access.
+- Cloudflare zone dùng Free plan nên owner đã chấp thuận edge rule `10 request/10 giây`; Worker limiter vẫn `60 request/60 giây` để giữ defense-in-depth và cùng tốc độ trung bình.
 
 ## File Inventory
 
@@ -120,8 +121,9 @@ Clean-checkout production workflow separately runs `build:worker-assets` before 
 - [x] Đồng bộ docs và quarterly workflow.
 - [x] Chạy full local/repository validation.
 - [x] Triển khai và test nhánh first-release bootstrap opt-in, fail-closed; không chạy live khi chưa chốt hostname/authorization.
-- [ ] Chốt production hostname/zone, chạy first-release bootstrap, rồi chạy 0%-override/live/rollback gates khi có authorization.
-- [ ] Provision `mcp-production` với required reviewer trên GitHub plan/repository visibility hỗ trợ; live preflight phải pass trước Cloudflare access.
+- [x] Chốt production hostname `mcp.tqccl.com` trong zone `tqccl.com` và khóa Worker Custom Domain trong Wrangler config.
+- [ ] Chạy first-release bootstrap, rồi chạy 0%-override/live/rollback gates khi có authorization.
+- [x] Thay `mcp-production` không khả dụng bằng manual exact-SHA approval đã được owner chấp thuận và khóa bằng workflow test.
 - [x] Cập nhật implementation/local verification evidence.
 - [ ] Đóng cross-plan dependency sau khi có live evidence.
 
@@ -135,7 +137,7 @@ Clean-checkout production workflow separately runs `build:worker-assets` before 
 ## Risks and Rollback
 
 - **Risk:** Docs đi trước implementation. **Mitigation:** chỉ cập nhật sau Phase 3, verify từng claim.
-- **Risk:** Live state chưa được phép thay đổi. **Mitigation:** giữ plan pending; local completion không giả mạo production completion.
+- **Risk:** Chưa có authorization/credential cho live Worker release. **Mitigation:** chỉ edge rate rule đã được owner duyệt và deploy; giữ plan pending, không giả mạo production completion.
 - **Rollback:** Revert docs/config/code cùng Worker version; external asset/resource retirement là thao tác riêng có approval.
 
 ## Security Considerations

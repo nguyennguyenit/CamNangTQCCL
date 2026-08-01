@@ -12,8 +12,8 @@
         "enabled": true,
         "expression": "http.request.uri.path eq \"/mcp\"",
         "action": "block",
-        "maximumRequests": 60,
-        "periodSeconds": 60
+        "maximumRequests": 10,
+        "periodSeconds": 10
       },
       "failureBehavior": "Chặn phát hành HTTP production.",
       "rollbackBehavior": "Tắt route MCP nếu không thể khôi phục rule."

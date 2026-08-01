@@ -4,6 +4,12 @@
   "main": "src/worker.ts",
   "compatibility_date": "2026-07-28",
   "workers_dev": false,
+  "routes": [
+    {
+      "pattern": "mcp.tqccl.com",
+      "custom_domain": true
+    }
+  ],
   "assets": {
     "directory": "./.worker-assets",
     "binding": "ASSETS",

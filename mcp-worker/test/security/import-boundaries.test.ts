@@ -111,7 +111,16 @@ describe("Worker import boundaries", () => {
 
     const production = JSON.parse(
       readFileSync(resolve(packageRoot, "wrangler.jsonc"), "utf8"),
-    ) as { secrets?: { required?: unknown } };
+    ) as {
+      routes?: unknown;
+      secrets?: { required?: unknown };
+    };
+    expect(production.routes).toEqual([
+      {
+        pattern: "mcp.tqccl.com",
+        custom_domain: true,
+      },
+    ]);
     expect(production.secrets?.required).toEqual([
       "TQCCL_MCP_BEARER_CURRENT",
     ]);

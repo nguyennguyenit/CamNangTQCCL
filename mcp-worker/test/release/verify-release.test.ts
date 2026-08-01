@@ -9,6 +9,7 @@ import { createWorker, type WorkerEnvironment } from "../../src/worker.js";
 import {
   matchesExpectedToolCatalog,
   parseVerifyReleaseArguments,
+  readReleaseIdentity,
   verifyRelease,
   type ReleaseVerificationFixture,
 } from "../../scripts/verify-release.js";
@@ -149,6 +150,33 @@ describe("verifyRelease", () => {
         cause: error,
       });
     }
+  });
+
+  it("đóng dấu exact Worker version và data identity cho rollback rehearsal", async () => {
+    const source = new FilesystemDataSource({ dataRoot: fixtureRoot });
+    const worker = createWorker({
+      createDataSource: () => source,
+      now: () => Date.parse("2026-07-29T00:00:00.000Z"),
+    });
+    const fetcher: typeof fetch = async (input, init) =>
+      worker.fetch(new Request(input, init), env);
+
+    const first = await readReleaseIdentity({
+      endpoint: new URL("https://mcp.example/mcp"),
+      bearer,
+      expectedWorkerVersionId: workerVersionId,
+      fetcher,
+    });
+    const second = await readReleaseIdentity({
+      endpoint: new URL("https://mcp.example/mcp"),
+      bearer,
+      expectedWorkerVersionId: workerVersionId,
+      fetcher,
+    });
+
+    expect(second).toEqual(first);
+    expect(first.snapshotDigest).toMatch(/^sha256:[a-f0-9]{64}$/u);
+    expect(first.workflowVersion).toContain(first.releaseId);
   });
 
   it("không phản chiếu bearer khi xác minh thất bại", async () => {

@@ -10,7 +10,7 @@ status: completed
 - **Ưu tiên:** P1
 - **Phụ thuộc:** Phase 2 full gate
 - **Mục tiêu:** Chuyển CI/release sang exact Worker version, giữ security gates không phụ thuộc R2, rồi xóa dead R2 code.
-- **Release contract:** Protected approval → exact-SHA build/gates → upload candidate → add candidate at 0% → authenticated version-override verification → single-version 100% promotion → production verification → ownership-safe restore/rollback.
+- **Release contract:** Manual exact-SHA approval → exact-SHA build/gates → upload candidate → add candidate at 0% → authenticated version-override verification → single-version 100% promotion → production verification → ownership-safe restore/rollback.
 
 ## Context Links
 
@@ -23,7 +23,7 @@ status: completed
 - Asset build, dry-run, upload và evidence dùng cùng exact commit SHA.
 - Candidate verification assert expected Worker version, `releaseId` và `workflowBuildId`.
 - Không có nonzero traffic split giữa hai workflow versions; temporary deployment duy nhất được phép là prior `100%` + candidate `0%` trong smoke gate.
-- Protected production environment approval phải xảy ra trước upload version hoặc tạo deployment `100/0`.
+- Manual dispatch phải có SHA đủ 40 ký tự khớp `HEAD`, `GITHUB_SHA` và current `origin/main`, cùng xác nhận production, trước mọi Cloudflare access.
 - Nếu override/smoke fail, controller phục hồi prior single-version deployment dưới expected-current guard; drift thì mở incident, không overwrite.
 - Production workflow dùng một concurrency group, `cancel-in-progress: false`; controller re-read current deployment before mutation.
 - Rollback chỉ được phép nếu production vẫn là candidate version do chính run đó vừa promote.
@@ -54,14 +54,14 @@ status: completed
 
 1. Add failing workflow/static assertions: same checkout, exact asset inventory, no R2/npm secrets or commands.
 2. Add verifier tests for authenticated expected-version header, release/workflow identities and public asset `404`.
-3. Add workflow tests proving production job only runs on manual dispatch of `main`, uses a protected environment, and obtains secrets only after approval.
+3. Add workflow tests proving production job only runs on confirmed manual dispatch of exact current `main` SHA and keeps secrets step-scoped.
 4. Add deployment-state tests for 100/0 candidate override, failed-smoke restoration, one version at `100%`, drift and concurrent runs.
 5. Add rollback contract capturing prior deployment immediately before mutation and rejecting stale ownership.
 
 ## Refactor
 
-1. Keep PR/push jobs credential-free. Add a separate production job guarded by `github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'`, with protected environment and job-level production concurrency (`cancel-in-progress: false`).
-2. After approval, checkout the exact SHA, build assets, validate evidence, run Workerd/coverage/type/build and Wrangler dry-run before upload; do not map environment secrets into these gate steps, and never rely on an ignored pre-existing directory or artifact filename.
+1. Keep PR/push jobs credential-free. Add a separate production job guarded by manual dispatch on `main`, explicit production confirmation, exact current-main SHA checks and job-level production concurrency (`cancel-in-progress: false`).
+2. After manual exact-SHA approval, build assets, validate evidence, run Workerd/coverage/type/build and Wrangler dry-run before upload; do not map release secrets into these gate steps, and never rely on an ignored pre-existing directory or artifact filename.
 3. Serialize production with a small deployment controller that performs expected-current read/compare/test-deploy/promote/restore/rollback.
 4. Capture prior exclusive deployment immediately before mutation; upload candidate, create prior `100%` + candidate `0%`, call production route with Version Override, and require authenticated runtime version header equality.
 5. On override failure, restore prior exclusive deployment only if current state still equals this run's test deployment; otherwise open incident without mutation.
@@ -84,7 +84,7 @@ status: completed
 |---|---|---|
 | Critical | 0%-override verifier fails | No production promotion |
 | Critical | Override fails after `100/0` mutation | Restore prior exclusive deployment, or incident on drift |
-| Critical | PR/push workflow | Never enters production environment or reads deploy secrets |
+| Critical | PR/push workflow | Never enters production job or reads deploy secrets |
 | Critical | Credential-free gate after approval | No release secret mapped into gate subprocess environment |
 | Critical | Wrong version/release/workflow identity | Fail gate |
 | Critical | Post-promotion verifier fails | Rollback known-good whole version |
@@ -110,7 +110,7 @@ status: completed
 ```text
 Phase 2 static runtime PASS
  -> credential-free CI
- -> manual main dispatch + protected approval
+ -> manual main dispatch + exact-SHA confirmation
  -> exact-SHA asset build + full gate + dry-run
  -> capture prior deployment + upload candidate
  -> candidate 0% + version-override verify
@@ -163,6 +163,6 @@ Không chạy clean-source builder từ dirty Cook worktree.
 
 ## Security Considerations
 
-- Production mutation chỉ từ protected environment với least-privilege token.
-- Environment approval grants access, but secrets remain step-scoped; repository gate stays credential-free.
+- Production mutation chỉ từ confirmed exact-current-main dispatch với least-privilege token.
+- Repository secrets remain step-scoped; repository gate stays credential-free.
 - Override `/mcp` vẫn bearer-protected và đi qua production edge controls; asset paths vẫn `404`.

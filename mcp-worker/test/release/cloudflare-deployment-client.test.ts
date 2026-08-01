@@ -29,6 +29,15 @@ describe("CloudflareDeploymentClient", () => {
     });
     await expect(noDeployment.readCurrentOptional()).resolves.toBeNull();
 
+    const missingWorker = new CloudflareDeploymentClient({
+      accountId,
+      workerName,
+      apiToken: "private-token",
+      runId,
+      fetcher: async () => response(null, 404),
+    });
+    await expect(missingWorker.readCurrentOptional()).resolves.toBeNull();
+
     const apiFailure = new CloudflareDeploymentClient({
       accountId,
       workerName,

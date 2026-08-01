@@ -3,8 +3,10 @@ import { resolve } from "node:path";
 
 import { CloudflareDeploymentClient } from "./cloudflare-deployment-client.js";
 import type { WorkerDeploymentSnapshot } from "./cloudflare-deployment-client.js";
+import { createPacedMcpFetcher } from "./paced-mcp-fetch.js";
 import {
   parseReleaseVerificationFixture,
+  readReleaseIdentity,
   verifyRelease,
 } from "./verify-release.js";
 import {
@@ -22,11 +24,15 @@ function required(name: string): string {
   return value;
 }
 
-function overrideFetcher(workerName: string, versionId: string): typeof fetch {
+function overrideFetcher(
+  workerName: string,
+  versionId: string,
+  fetcher: typeof fetch,
+): typeof fetch {
   return async (input, init) => {
     const request = new Request(input, init);
     request.headers.set(OVERRIDE_HEADER, `${workerName}="${versionId}"`);
-    return fetch(request);
+    return fetcher(request);
   };
 }
 
@@ -52,7 +58,8 @@ async function main(): Promise<void> {
     const fixture = parseReleaseVerificationFixture(
       JSON.parse(await readFile(resolve(fixturePath), "utf8")),
     );
-    const verify = (versionId: string, fetcher?: typeof fetch) =>
+    const pacedFetcher = createPacedMcpFetcher({ minimumIntervalMs: 1_100 });
+    const verify = (versionId: string, fetcher: typeof fetch = pacedFetcher) =>
       verifyRelease({
         endpoint,
         bearer,
@@ -69,7 +76,14 @@ async function main(): Promise<void> {
       runId,
     });
     const bootstrap = process.env["TQCCL_FIRST_RELEASE_BOOTSTRAP"] ?? "false";
-    if (bootstrap !== "true" && bootstrap !== "false") throw new Error();
+    const rehearseRollback = process.env["TQCCL_REHEARSE_ROLLBACK"] ?? "false";
+    if (
+      (bootstrap !== "true" && bootstrap !== "false") ||
+      (rehearseRollback !== "true" && rehearseRollback !== "false") ||
+      (bootstrap === "true" && rehearseRollback === "true")
+    ) {
+      throw new Error();
+    }
     const shared = {
       candidateVersionId,
       runId,
@@ -89,13 +103,46 @@ async function main(): Promise<void> {
         : await releaseWorkerVersion({
             ...shared,
             verifyCandidate: (versionId) =>
-              verify(versionId, overrideFetcher(workerName, versionId)),
+              verify(
+                versionId,
+                overrideFetcher(workerName, versionId, pacedFetcher),
+              ),
+            ...(rehearseRollback === "true"
+              ? {
+                  prepareRollbackVerification: async (
+                    priorVersionId: string,
+                  ) => {
+                    const expected = await readReleaseIdentity({
+                      endpoint,
+                      bearer,
+                      expectedWorkerVersionId: priorVersionId,
+                      fetcher: pacedFetcher,
+                    });
+                    return async () => {
+                      const observed = await readReleaseIdentity({
+                        endpoint,
+                        bearer,
+                        expectedWorkerVersionId: priorVersionId,
+                        fetcher: pacedFetcher,
+                      });
+                      if (
+                        observed.releaseId !== expected.releaseId ||
+                        observed.workflowVersion !== expected.workflowVersion ||
+                        observed.snapshotDigest !== expected.snapshotDigest
+                      ) {
+                        throw new Error();
+                      }
+                    };
+                  },
+                }
+              : {}),
           });
     status = "verified";
     const output = {
       ...evidence,
       workerVersionId: candidateVersionId,
       releaseMode: bootstrap === "true" ? "bootstrap" : "normal",
+      rollbackRehearsal: rehearseRollback === "true",
       status,
       deployments: result,
     };

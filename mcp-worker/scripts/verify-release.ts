@@ -1,4 +1,5 @@
 import { readFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
@@ -40,6 +41,13 @@ export class ReleaseVerificationError extends Error {
     super("Xác minh MCP release thất bại.");
     this.name = "ReleaseVerificationError";
   }
+}
+
+export interface ReleaseIdentity {
+  workerVersionId: string;
+  releaseId: string;
+  workflowVersion: string;
+  snapshotDigest: string;
 }
 
 function isSafeMcpEndpoint(endpoint: URL): boolean {
@@ -89,6 +97,81 @@ export function matchesExpectedToolCatalog(catalog: unknown): boolean {
         stableStringify(definition.annotations)
     );
   });
+}
+
+export async function readReleaseIdentity(options: {
+  endpoint: URL;
+  bearer: string;
+  expectedWorkerVersionId: string;
+  fetcher?: typeof fetch;
+}): Promise<ReleaseIdentity> {
+  if (
+    !isSafeMcpEndpoint(options.endpoint) ||
+    options.bearer === "" ||
+    !isWorkerVersionId(options.expectedWorkerVersionId)
+  ) {
+    throw new ReleaseVerificationError();
+  }
+  const fetcher = options.fetcher ?? fetch;
+  const versionCheckingFetcher: typeof fetch = async (input, init) => {
+    const response = await fetcher(new Request(input, init));
+    if (
+      response.headers.get(WORKER_VERSION_HEADER) !==
+      options.expectedWorkerVersionId
+    ) {
+      throw new ReleaseVerificationError();
+    }
+    return response;
+  };
+  const client = new Client({
+    name: "tqccl-rollback-verifier",
+    version: "1.0.0",
+  });
+  const transport = new StreamableHTTPClientTransport(options.endpoint, {
+    requestInit: { headers: { Authorization: `Bearer ${options.bearer}` } },
+    fetch: versionCheckingFetcher,
+  });
+  let connected = false;
+  try {
+    await client.connect(transport as unknown as Transport);
+    connected = true;
+    if (transport.protocolVersion !== "2025-11-25") {
+      throw new ReleaseVerificationError();
+    }
+    const catalog = await client.listTools();
+    if (!matchesExpectedToolCatalog(catalog.tools)) {
+      throw new ReleaseVerificationError();
+    }
+    const result = await client.callTool({
+      name: "tqccl_get_data_version",
+      arguments: {},
+    });
+    if (result.isError === true) throw new ReleaseVerificationError();
+    const version = record(result.structuredContent);
+    if (
+      typeof version.releaseId !== "string" ||
+      !/^sha256:[a-f0-9]{64}$/u.test(version.releaseId) ||
+      typeof version.workflowVersion !== "string" ||
+      !version.workflowVersion.startsWith(`workflow:${version.releaseId}:`) ||
+      !Array.isArray(version.artifacts) ||
+      version.artifacts.length !== 6
+    ) {
+      throw new ReleaseVerificationError();
+    }
+    const snapshotDigest = `sha256:${createHash("sha256")
+      .update(stableStringify(version))
+      .digest("hex")}`;
+    return {
+      workerVersionId: options.expectedWorkerVersionId,
+      releaseId: version.releaseId,
+      workflowVersion: version.workflowVersion,
+      snapshotDigest,
+    };
+  } catch {
+    throw new ReleaseVerificationError();
+  } finally {
+    if (connected) await client.close().catch(() => undefined);
+  }
 }
 
 async function requireStatus(

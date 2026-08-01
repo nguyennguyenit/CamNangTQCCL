@@ -59,7 +59,7 @@ Worker luôn chạy trước assets. Public HTTP chỉ có `/healthz` và `/mcp`
 - [x] Filesystem/Static Assets parity và tám tools/GoClaw contract không đổi.
 - [x] Public asset URLs luôn `404`; loader fail closed thành safe `DATA_UNAVAILABLE`.
 - [ ] Candidate `0%` được verify trên production route bằng version override + authenticated version header trước khi promote duy nhất `100%`.
-- [ ] Protected environment approval xảy ra trước mọi Cloudflare upload/deployment mutation; production job chỉ chạy bằng manual dispatch trên exact `main` SHA. Workflow đã fail closed nếu thiếu required reviewer, nhưng repo private hiện chưa có environment/protection rule khả dụng.
+- [x] Repo private dùng manual exact-SHA approval đã được owner chấp thuận: production job yêu cầu SHA đủ 40 ký tự khớp `HEAD`, `GITHUB_SHA` và current `origin/main`, cùng checkbox xác nhận production, trước mọi Cloudflare access.
 - [x] Override failure phục hồi prior single-version deployment; cleanup cũng dùng expected-current guard và không ghi đè deployment khác.
 - [x] Production releases được tuần tự hóa; rollback chỉ chạy nếu current version vẫn thuộc run đang xử lý.
 - [ ] Rollback known-good Worker version phục hồi đồng thời code + data; bearer không bị rollback.
@@ -71,7 +71,8 @@ Worker luôn chạy trước assets. Public HTTP chỉ có `/healthz` và `/mcp`
 
 - Version override/private paths và exact authenticated runtime version metadata.
 - Cold parse/validation/memory với corpus thật trên Cloudflare account mục tiêu.
-- Deploy token/protected environment và edge rate rule live state.
+- Deploy token/repository secrets còn thiếu; edge rate rule live đã pass với `/mcp`, theo IP, `10 request/10 giây`, Block `10 giây`, Active.
+- Zone `tqccl.com` dùng Free plan: owner chấp thuận edge `10 request/10 giây`; Worker limiter giữ `60 request/60 giây`.
 - Inventory chứng minh R2 resource/key không tồn tại, hoặc revoke/retire có evidence nếu thực sự tồn tại; rollback rehearsal diễn ra trước resource retirement.
 
 ## Red Team Review

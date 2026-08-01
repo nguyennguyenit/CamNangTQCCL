@@ -27,7 +27,7 @@ Một Worker Version là đơn vị release duy nhất gồm code + static asset
 
 1. Curate dữ liệu trên branch/worktree và review evidence/diff.
 2. CI build đúng bảy file: `manifest.json` + sáu JSON.
-3. Merge exact commit; protected environment duyệt production.
+3. Merge exact commit; owner nhập full SHA và xác nhận production trên manual dispatch.
 4. Upload version, add candidate ở `0%`, verify bằng Version Override + bearer + expected identities.
 5. Promote duy nhất version đó lên `100%`, rồi verify production.
 6. Nếu fail sau promote, rollback known-good Worker version; không rollback bearer.

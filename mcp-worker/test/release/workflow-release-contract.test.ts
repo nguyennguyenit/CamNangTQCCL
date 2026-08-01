@@ -12,28 +12,34 @@ const monitorUrl = new URL(
 );
 
 describe("production Worker release workflow", () => {
-  it("chỉ release khi manual dispatch main, sau protected approval và tuần tự", async () => {
+  it("chỉ release khi manual dispatch xác nhận exact main SHA và tuần tự", async () => {
     const workflow = await readFile(workflowUrl, "utf8");
     expect(workflow).toContain("github.event_name == 'workflow_dispatch'");
     expect(workflow).toContain("github.ref == 'refs/heads/main'");
-    expect(workflow).toContain("environment: mcp-production");
+    expect(workflow).toContain("production_sha:");
+    expect(workflow).toContain("confirm_production:");
+    expect(workflow).toContain("inputs.confirm_production == true");
     expect(workflow).toContain("group: tqccl-mcp-production-release");
     expect(workflow).toContain("cancel-in-progress: false");
     expect(workflow).toContain('test "$(git rev-parse HEAD)" = "$GITHUB_SHA"');
-    expect(workflow).toContain("deployments: read");
-    const production = workflow.slice(workflow.indexOf("production-release:"));
-    const protectedEnvironment = production.indexOf(
-      "Verify protected production environment",
+    expect(workflow).toContain('test "$TQCCL_APPROVED_SHA" = "$GITHUB_SHA"');
+    expect(workflow).toContain(
+      'test "$TQCCL_APPROVED_SHA" = "$(git rev-parse origin/main)"',
     );
+    expect(workflow).toContain(
+      '[[ "$TQCCL_APPROVED_SHA" =~ ^[0-9a-f]{40}$ ]]',
+    );
+    expect(workflow).not.toContain("environment: mcp-production");
+    expect(workflow).not.toContain("deployments: read");
+    const production = workflow.slice(workflow.indexOf("production-release:"));
+    const manualApproval = production.indexOf("Verify manual exact-SHA approval");
     const edgeControl = production.indexOf("Verify live edge control");
     const upload = production.indexOf("Upload immutable Worker version");
-    expect(protectedEnvironment).toBeGreaterThan(-1);
-    expect(protectedEnvironment).toBeLessThan(edgeControl);
-    expect(protectedEnvironment).toBeLessThan(upload);
-    const protectionStep = production.slice(protectedEnvironment, edgeControl);
-    expect(protectionStep).toContain("required_reviewers");
-    expect(protectionStep).toContain("GH_TOKEN: ${{ github.token }}");
-    expect(protectionStep).not.toContain("secrets.");
+    expect(manualApproval).toBeGreaterThan(-1);
+    expect(manualApproval).toBeLessThan(edgeControl);
+    expect(manualApproval).toBeLessThan(upload);
+    const approvalStep = production.slice(manualApproval, edgeControl);
+    expect(approvalStep).not.toContain("secrets.");
   });
 
   it("bootstrap lần đầu là opt-in và secret file tạm luôn được xóa", async () => {
@@ -47,6 +53,24 @@ describe("production Worker release workflow", () => {
     expect(production).toContain("umask 077");
     expect(production).toContain("trap cleanup EXIT");
     expect(production).not.toContain("echo $TQCCL_MCP_BEARER_CURRENT");
+  });
+
+  it("áp dụng Custom Domain và rehearsal rollback là opt-in normal-only", async () => {
+    const workflow = await readFile(workflowUrl, "utf8");
+    const production = workflow.slice(workflow.indexOf("production-release:"));
+    const preflight = production.indexOf("preflight:worker-release");
+    const upload = production.indexOf("wrangler versions upload");
+    const triggers = production.indexOf("wrangler triggers deploy");
+    const release = production.indexOf("release:worker");
+    expect(workflow).toContain("rehearse_rollback:");
+    expect(production).toContain("TQCCL_REHEARSE_ROLLBACK:");
+    expect(production).toContain(
+      'test "${{ inputs.rehearse_rollback }}" = "false"',
+    );
+    expect(preflight).toBeGreaterThan(-1);
+    expect(preflight).toBeLessThan(upload);
+    expect(triggers).toBeGreaterThan(upload);
+    expect(triggers).toBeLessThan(release);
   });
 
   it("build/verify/gate/dry-run trước upload và release không dùng npm/R2", async () => {

@@ -4,6 +4,7 @@ import type { WorkerDeploymentSnapshot } from "../../scripts/cloudflare-deployme
 import {
   bootstrapWorkerVersion,
   DeploymentOwnershipError,
+  preflightWorkerRelease,
   releaseWorkerVersion,
 } from "../../scripts/worker-deployment-controller.js";
 
@@ -54,6 +55,24 @@ function gateway(reads: WorkerDeploymentSnapshot[]) {
 }
 
 describe("Worker deployment controller", () => {
+  it("preflight bootstrap dừng trước upload nếu deployment đã tồn tại", async () => {
+    const deployment = gateway([]);
+    deployment.readCurrentOptional.mockResolvedValueOnce(prior);
+
+    await expect(
+      preflightWorkerRelease({ bootstrap: true, deployment }),
+    ).rejects.toBeInstanceOf(DeploymentOwnershipError);
+  });
+
+  it("preflight normal yêu cầu prior duy nhất ở 100%", async () => {
+    const deployment = gateway([]);
+    deployment.readCurrentOptional.mockResolvedValueOnce(prior);
+
+    await expect(
+      preflightWorkerRelease({ bootstrap: false, deployment }),
+    ).resolves.toEqual({ mode: "normal", priorVersionId });
+  });
+
   it("bootstrap chỉ tạo deployment đầu tiên khi chưa có current deployment", async () => {
     const deployment = gateway([promoted]);
     deployment.readCurrentOptional.mockResolvedValueOnce(null);
@@ -130,6 +149,162 @@ describe("Worker deployment controller", () => {
     expect(deployment.deployExclusive).toHaveBeenCalledWith(
       candidateVersionId,
       "promote",
+    );
+  });
+
+  it("rehearsal rollback xác minh prior rồi re-promote candidate", async () => {
+    const rehearsalRollback: WorkerDeploymentSnapshot = {
+      ...restored,
+      deploymentId: "deployment-rehearsal-rollback",
+    };
+    const rehearsalPromoted: WorkerDeploymentSnapshot = {
+      ...promoted,
+      deploymentId: "deployment-rehearsal-promoted",
+    };
+    const deployment = gateway([
+      prior,
+      smoke,
+      promoted,
+      promoted,
+      rehearsalRollback,
+      rehearsalRollback,
+      rehearsalPromoted,
+    ]);
+    deployment.deployExclusive
+      .mockResolvedValueOnce(promoted)
+      .mockResolvedValueOnce(rehearsalRollback)
+      .mockResolvedValueOnce(rehearsalPromoted);
+    const verifyProduction = vi.fn(async () => undefined);
+    const verifyRolledBack = vi.fn(async () => undefined);
+    const prepareRollbackVerification = vi.fn(async () => verifyRolledBack);
+    const onState = vi.fn();
+
+    await expect(
+      releaseWorkerVersion({
+        runId,
+        candidateVersionId,
+        deployment,
+        verifyCandidate: async () => undefined,
+        verifyProduction,
+        prepareRollbackVerification,
+        onState,
+      }),
+    ).resolves.toEqual({
+      prior,
+      smoke,
+      rollbackRehearsal: { rolledBack: rehearsalRollback },
+      final: rehearsalPromoted,
+    });
+    expect(prepareRollbackVerification).toHaveBeenCalledWith(priorVersionId);
+    expect(verifyRolledBack).toHaveBeenCalledOnce();
+    expect(verifyProduction).toHaveBeenCalledTimes(2);
+    expect(deployment.deployExclusive.mock.calls).toEqual([
+      [candidateVersionId, "promote"],
+      [priorVersionId, "rollback"],
+      [candidateVersionId, "promote"],
+    ]);
+    expect(onState).toHaveBeenCalledWith(
+      "rehearsal-rolled-back",
+      rehearsalRollback,
+    );
+    expect(onState).toHaveBeenCalledWith(
+      "rehearsal-promoted",
+      rehearsalPromoted,
+    );
+  });
+
+  it("rehearsal prior fail phục hồi candidate rồi dừng release", async () => {
+    const rehearsalRollback = {
+      ...restored,
+      deploymentId: "deployment-rehearsal-rollback",
+    };
+    const rehearsalPromoted = {
+      ...promoted,
+      deploymentId: "deployment-rehearsal-promoted",
+    };
+    const deployment = gateway([
+      prior,
+      smoke,
+      promoted,
+      promoted,
+      rehearsalRollback,
+      rehearsalRollback,
+      rehearsalPromoted,
+    ]);
+    deployment.deployExclusive
+      .mockResolvedValueOnce(promoted)
+      .mockResolvedValueOnce(rehearsalRollback)
+      .mockResolvedValueOnce(rehearsalPromoted);
+    const verifyProduction = vi.fn(async () => undefined);
+
+    await expect(
+      releaseWorkerVersion({
+        runId,
+        candidateVersionId,
+        deployment,
+        verifyCandidate: async () => undefined,
+        verifyProduction,
+        prepareRollbackVerification: async () => async () => {
+          throw new Error("prior mismatch");
+        },
+      }),
+    ).rejects.toThrow("candidate đã được phục hồi");
+    expect(verifyProduction).toHaveBeenCalledTimes(2);
+    expect(deployment.deployExclusive).toHaveBeenLastCalledWith(
+      candidateVersionId,
+      "promote",
+    );
+  });
+
+  it("re-promote verify fail rollback lại prior đã xác minh", async () => {
+    const rehearsalRollback = {
+      ...restored,
+      deploymentId: "deployment-rehearsal-rollback",
+    };
+    const rehearsalPromoted = {
+      ...promoted,
+      deploymentId: "deployment-rehearsal-promoted",
+    };
+    const finalRollback = {
+      ...restored,
+      deploymentId: "deployment-final-rollback",
+    };
+    const deployment = gateway([
+      prior,
+      smoke,
+      promoted,
+      promoted,
+      rehearsalRollback,
+      rehearsalRollback,
+      rehearsalPromoted,
+      rehearsalPromoted,
+      finalRollback,
+    ]);
+    deployment.deployExclusive
+      .mockResolvedValueOnce(promoted)
+      .mockResolvedValueOnce(rehearsalRollback)
+      .mockResolvedValueOnce(rehearsalPromoted)
+      .mockResolvedValueOnce(finalRollback);
+    const verifyProduction = vi
+      .fn(async () => undefined)
+      .mockResolvedValueOnce(undefined)
+      .mockRejectedValueOnce(new Error("candidate mismatch"));
+    const verifyRolledBack = vi.fn(async () => undefined);
+
+    await expect(
+      releaseWorkerVersion({
+        runId,
+        candidateVersionId,
+        deployment,
+        verifyCandidate: async () => undefined,
+        verifyProduction,
+        prepareRollbackVerification: async () => verifyRolledBack,
+      }),
+    ).rejects.toThrow("prior đã được phục hồi");
+    expect(verifyRolledBack).toHaveBeenCalledTimes(2);
+    expect(deployment.deployExclusive).toHaveBeenLastCalledWith(
+      priorVersionId,
+      "rollback",
     );
   });
 

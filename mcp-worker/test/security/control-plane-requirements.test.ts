@@ -25,6 +25,10 @@ describe("hợp đồng control plane chỉ đọc", () => {
       "edge-mcp-rate-limit",
     ]);
     expect(validated.productionEnabledOnlyWhenVerified).toBe(true);
+    expect(validated.controls[0]?.expected).toMatchObject({
+      maximumRequests: 10,
+      periodSeconds: 10,
+    });
   });
 
   it("xác minh live state bằng GET và không gửi credential trong URL", async () => {
@@ -48,8 +52,8 @@ describe("hợp đồng control plane chỉ đọc", () => {
                 action: "block",
                 expression: 'http.request.uri.path eq "/mcp"',
                 ratelimit: {
-                  requests_per_period: 60,
-                  period: 60,
+                  requests_per_period: 10,
+                  period: 10,
                 },
               },
             ],
@@ -83,7 +87,7 @@ describe("hợp đồng control plane chỉ đọc", () => {
         enabled: true,
         action: "block",
         expression: 'http.request.uri.path ne "/mcp"',
-        ratelimit: { requests_per_period: 60, period: 60 },
+        ratelimit: { requests_per_period: 10, period: 10 },
       }] },
     });
 
