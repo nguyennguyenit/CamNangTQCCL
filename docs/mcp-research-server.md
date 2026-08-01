@@ -86,7 +86,7 @@ Thứ tự bắt buộc:
 2. Build/verify bundle, chạy full repository gate và Wrangler dry-run không credential.
 3. Xác minh live edge rate control bằng token chỉ-read.
 4. Preflight read-only yêu cầu bootstrap chưa có deployment hoặc normal có đúng một prior `100%`; controller vẫn read-back exact deployment trước khi xác minh hoặc mutation tiếp theo.
-5. Bootstrap tạo Worker/version đầu bằng `wrangler deploy`; normal release upload immutable version bằng `wrangler versions upload`. Cả hai đọc candidate UUID từ Wrangler NDJSON evidence rồi bảo đảm Custom Domain bằng `wrangler triggers deploy`.
+5. Bootstrap tạo Worker/version đầu bằng `wrangler deploy`; normal release upload immutable version bằng `wrangler versions upload`. Cả hai đọc candidate UUID từ Wrangler NDJSON evidence, bảo đảm Custom Domain bằng `wrangler triggers deploy` và chờ `/healthz` sẵn sàng tối đa 120 giây trước controller.
 6. Tạo temporary deployment prior `100%` + candidate `0%`.
 7. Gọi production `/mcp` bằng Cloudflare Version Override và bearer; header runtime `TQCCL-MCP-Worker-Version` phải đúng candidate, đồng thời `releaseId`, `workflowBuildId`, catalog và tám tool đều phải đạt.
 8. Re-read đúng deployment do run sở hữu, promote candidate thành version duy nhất `100%`, rồi verify production không override.

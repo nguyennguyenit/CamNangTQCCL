@@ -204,6 +204,27 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.TQCCL_WORKER_DEPLOY_API_TOKEN }}
         run: npx wrangler triggers deploy
         working-directory: mcp-worker
+      - name: Wait for Worker Custom Domain readiness
+        env:
+          TQCCL_MCP_ENDPOINT: ${{ vars.TQCCL_MCP_ENDPOINT }}
+        run: |
+          health_url="${TQCCL_MCP_ENDPOINT%/mcp}/healthz"
+          deadline=$((SECONDS + 120))
+          while ((SECONDS < deadline)); do
+            remaining=$((deadline - SECONDS))
+            request_timeout=$((remaining < 5 ? remaining : 5))
+            status="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' --max-time "$request_timeout" "$health_url" || true)"
+            if [[ "$status" == "200" ]]; then
+              exit 0
+            fi
+            remaining=$((deadline - SECONDS))
+            if ((remaining > 0)); then
+              sleep_for=$((remaining < 5 ? remaining : 5))
+              sleep "$sleep_for"
+            fi
+          done
+          echo "Worker Custom Domain chưa sẵn sàng sau 120 giây." >&2
+          exit 1
       - name: Verify candidate, promote, and verify production
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}

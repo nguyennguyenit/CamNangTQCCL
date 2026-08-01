@@ -75,6 +75,7 @@ describe("production Worker release workflow", () => {
     const preflight = production.indexOf("preflight:worker-release");
     const upload = production.indexOf("wrangler versions upload");
     const triggers = production.indexOf("wrangler triggers deploy");
+    const readiness = production.indexOf("Wait for Worker Custom Domain readiness");
     const release = production.indexOf("release:worker");
     expect(workflow).toContain("rehearse_rollback:");
     expect(production).toContain("TQCCL_REHEARSE_ROLLBACK:");
@@ -84,6 +85,12 @@ describe("production Worker release workflow", () => {
     expect(preflight).toBeGreaterThan(-1);
     expect(preflight).toBeLessThan(upload);
     expect(triggers).toBeGreaterThan(upload);
+    expect(readiness).toBeGreaterThan(triggers);
+    expect(production).toContain("deadline=$((SECONDS + 120))");
+    expect(production).toContain("while ((SECONDS < deadline))");
+    expect(production).toContain("--write-out '%{http_code}'");
+    expect(production).toContain('if [[ "$status" == "200" ]]');
+    expect(readiness).toBeLessThan(release);
     expect(triggers).toBeLessThan(release);
   });
 
