@@ -59,7 +59,7 @@ Worker luôn chạy trước assets. Public HTTP chỉ có `/healthz` và `/mcp`
 - [x] Filesystem/Static Assets parity và tám tools/GoClaw contract không đổi.
 - [x] Public asset URLs luôn `404`; loader fail closed thành safe `DATA_UNAVAILABLE`.
 - [ ] Candidate `0%` được verify trên production route bằng version override + authenticated version header trước khi promote duy nhất `100%`.
-- [x] Protected environment approval xảy ra trước mọi Cloudflare upload/deployment mutation; production job chỉ chạy bằng manual dispatch trên exact `main` SHA.
+- [ ] Protected environment approval xảy ra trước mọi Cloudflare upload/deployment mutation; production job chỉ chạy bằng manual dispatch trên exact `main` SHA. Workflow đã fail closed nếu thiếu required reviewer, nhưng repo private hiện chưa có environment/protection rule khả dụng.
 - [x] Override failure phục hồi prior single-version deployment; cleanup cũng dùng expected-current guard và không ghi đè deployment khác.
 - [x] Production releases được tuần tự hóa; rollback chỉ chạy nếu current version vẫn thuộc run đang xử lý.
 - [ ] Rollback known-good Worker version phục hồi đồng thời code + data; bearer không bị rollback.

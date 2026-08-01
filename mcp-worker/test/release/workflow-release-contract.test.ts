@@ -20,6 +20,20 @@ describe("production Worker release workflow", () => {
     expect(workflow).toContain("group: tqccl-mcp-production-release");
     expect(workflow).toContain("cancel-in-progress: false");
     expect(workflow).toContain('test "$(git rev-parse HEAD)" = "$GITHUB_SHA"');
+    expect(workflow).toContain("deployments: read");
+    const production = workflow.slice(workflow.indexOf("production-release:"));
+    const protectedEnvironment = production.indexOf(
+      "Verify protected production environment",
+    );
+    const edgeControl = production.indexOf("Verify live edge control");
+    const upload = production.indexOf("Upload immutable Worker version");
+    expect(protectedEnvironment).toBeGreaterThan(-1);
+    expect(protectedEnvironment).toBeLessThan(edgeControl);
+    expect(protectedEnvironment).toBeLessThan(upload);
+    const protectionStep = production.slice(protectedEnvironment, edgeControl);
+    expect(protectionStep).toContain("required_reviewers");
+    expect(protectionStep).toContain("GH_TOKEN: ${{ github.token }}");
+    expect(protectionStep).not.toContain("secrets.");
   });
 
   it("bootstrap lần đầu là opt-in và secret file tạm luôn được xóa", async () => {

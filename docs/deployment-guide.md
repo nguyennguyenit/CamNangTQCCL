@@ -131,7 +131,7 @@ npm run check
 npm run check:repository
 ```
 
-Production dùng `ASSETS` private binding với `run_worker_first: true`; bundle gồm manifest và sáu JSON, đi cùng code trong một Worker version. Workflow production chỉ chạy bằng manual dispatch trên exact `main` SHA sau approval của environment `mcp-production`. Candidate được thêm ở `0%`, kiểm qua Version Override và exact runtime version header trước khi trở thành version duy nhất ở `100%`.
+Production dùng `ASSETS` private binding với `run_worker_first: true`; bundle gồm manifest và sáu JSON, đi cùng code trong một Worker version. Workflow production chỉ chạy bằng manual dispatch trên exact `main` SHA sau approval của environment `mcp-production`. Một preflight đọc GitHub API và fail closed nếu environment không có required reviewer trước khi dùng bất kỳ Cloudflare credential nào. Candidate được thêm ở `0%`, kiểm qua Version Override và exact runtime version header trước khi trở thành version duy nhất ở `100%`.
 
 Nếu live inventory xác nhận Worker chưa có deployment, lần chạy đầu phải bật manual input `bootstrap_first_release`. Nhánh one-time chỉ chấp nhận trạng thái không có current deployment, upload bearer qua secret file tạm mode `0600` và xác minh version đầu ở `100%`; nếu verify fail thì mở incident vì chưa có prior để rollback. Sau đó bắt buộc chạy lần hai với input tắt để chứng minh normal `100/0`, promotion và rollback rehearsal. Không dùng bootstrap để ghi đè Worker đã hoạt động.
 

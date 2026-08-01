@@ -46,7 +46,7 @@ Việc gom code và data vào cùng Worker version đã loại bỏ phần lớn
 - Root: dist `9/9`, browser E2E `14/14`, Node `133/133`, Python `82/82`.
 - Vision Worker: `53/53`, typecheck pass.
 - `git diff --check`: pass. Current tracked diff summary: 54 files, 614 insertions, 4,936 deletions; untracked implementation/tests/docs evidence remain part of the shared worktree.
-- Project sync: `57/60` checks (`95%`); Phase 3 completed, Phase 4 vẫn `in-progress` vì ba live/closure checks.
+- Project sync sau live GitHub audit: `56/60` checks (`93%`); Phase 3 completed, Phase 4 vẫn `in-progress` vì protected approval và ba live/closure checks. Workflow mới fail closed khi environment không có required reviewer.
 
 ## Impact
 

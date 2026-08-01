@@ -12,6 +12,7 @@ Node: `22.16.0`
 - Production workflow manual-main + protected environment, exact SHA, credential-free gates, Workerd trước upload, candidate `0%` Version Override, single-version promotion và durable evidence artifact.
 - Deployment controller có run annotation, re-read trước mutation, reconciliation cho POST đã commit nhưng response bị mất, read-back restore/rollback và drift incident. Cloudflare không cung cấp atomic precondition cho Create Deployment; dedicated deploy token và cấm mutation ngoài workflow trong release window là precondition vận hành bắt buộc.
 - First-release bootstrap là manual opt-in, chỉ chấp nhận trạng thái chưa có deployment, upload bearer qua file tạm quyền hạn chế và fail closed nếu Worker đã có current deployment. Vì chưa có prior, verify fail mở incident; normal `100/0` run thứ hai vẫn là gate bắt buộc.
+- Production workflow có live GitHub preflight yêu cầu `mcp-production.protection_rules` chứa required reviewer trước Cloudflare access. Repo hiện private và API chưa có environment; preflight thực tế trả fail closed, nên protected approval vẫn là live gate chưa đạt.
 
 ## Bằng chứng test
 
@@ -29,7 +30,7 @@ Node: `22.16.0`
 
 Không có production authorization/credential trong phiên implementation nên không upload hoặc mutate Cloudflare.
 
-- Protected environment approval và exact-SHA workflow run.
+- Protected environment approval và exact-SHA workflow run. GitHub account/repo hiện không cung cấp environment protection; cần đổi visibility hoặc plan theo quyết định owner.
 - Live edge rate-rule verification.
 - Candidate `0%` Version Override, exact runtime version/release/workflow identity và performance observation trên account mục tiêu.
 - Promotion + known-good whole-version rollback rehearsal.

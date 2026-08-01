@@ -9,8 +9,8 @@ Ngày: 2026-08-01
 | 1 — Asset contract/builder | 13/13 | Completed | — |
 | 2 — Static Assets runtime | 16/16 | Completed | — |
 | 3 — Release/control plane | 16/16 | Completed | — |
-| 4 — Docs/verification | 12/15 | In progress | Live override/rollback; cross-plan closure |
-| **Tổng** | **57/60 (95%)** | **In progress** | **3 live/closure checks** |
+| 4 — Docs/verification | 11/15 | In progress | Protected approval; live override/rollback; cross-plan closure |
+| **Tổng** | **56/60 (93%)** | **In progress** | **4 live/closure checks** |
 
 ## Evidence reconciled
 
@@ -23,9 +23,11 @@ Ngày: 2026-08-01
 - Protected live run: candidate `0%` Version Override, exact identity/performance, promote and known-good rollback rehearsal.
 - Live edge rate-rule state.
 - First-release bootstrap vì Worker chưa tồn tại; sau đó live candidate/rollback flow.
+- GitHub `mcp-production` required reviewer: repo private hiện không có environment/protection capability; workflow preflight fail closed trước Cloudflare access.
 - Close cross-plan dependency only after those gates pass.
 
 ## Quyết định/live prerequisite còn mở
 
-- Chọn production hostname/zone (`mcp.nguyennlt.com` được khuyến nghị hoặc hostname khác do owner phê duyệt).
-- Phê duyệt ngoại lệ bootstrap one-time và khôi phục GitHub CLI authentication trước commit/push/workflow run.
+- Chọn production hostname/zone (`mcp.<domain-moi>` nếu owner mua domain riêng, hoặc hostname hiện có).
+- Phê duyệt ngoại lệ bootstrap one-time trước workflow run; GitHub CLI authentication đã được khôi phục và migration commit đã push.
+- Chọn public repo hoặc GitHub plan hỗ trợ required-reviewer protection cho repo private; không thể coi manual dispatch/environment rỗng là protected approval.
