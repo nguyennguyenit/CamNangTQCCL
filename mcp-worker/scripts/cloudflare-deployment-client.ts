@@ -178,7 +178,6 @@ export class CloudflareDeploymentClient {
         })),
         annotations: {
           "workers/message": `TQCCL_RUN:${this.#runId}:${purpose}`,
-          "workers/triggered_by": "deployment",
         },
       }),
     );

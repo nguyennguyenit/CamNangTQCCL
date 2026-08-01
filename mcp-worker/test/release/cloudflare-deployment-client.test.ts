@@ -110,7 +110,6 @@ describe("CloudflareDeploymentClient", () => {
       versions: [{ version_id: candidateVersionId, percentage: 100 }],
       annotations: {
         "workers/message": `TQCCL_RUN:${runId}:promote`,
-        "workers/triggered_by": "deployment",
       },
     });
   });
