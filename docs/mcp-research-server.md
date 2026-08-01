@@ -85,8 +85,8 @@ Thứ tự bắt buộc:
 1. Checkout và assert exact `GITHUB_SHA` trên `main`.
 2. Build/verify bundle, chạy full repository gate và Wrangler dry-run không credential.
 3. Xác minh live edge rate control bằng token chỉ-read.
-4. Preflight read-only yêu cầu bootstrap chưa có deployment hoặc normal có đúng một prior `100%`; controller vẫn re-check để chặn race.
-5. Upload immutable Worker version, đọc candidate UUID từ Wrangler NDJSON evidence rồi áp dụng Custom Domain bằng `wrangler triggers deploy`.
+4. Preflight read-only yêu cầu bootstrap chưa có deployment hoặc normal có đúng một prior `100%`; controller vẫn read-back exact deployment trước khi xác minh hoặc mutation tiếp theo.
+5. Bootstrap tạo Worker/version đầu bằng `wrangler deploy`; normal release upload immutable version bằng `wrangler versions upload`. Cả hai đọc candidate UUID từ Wrangler NDJSON evidence rồi bảo đảm Custom Domain bằng `wrangler triggers deploy`.
 6. Tạo temporary deployment prior `100%` + candidate `0%`.
 7. Gọi production `/mcp` bằng Cloudflare Version Override và bearer; header runtime `TQCCL-MCP-Worker-Version` phải đúng candidate, đồng thời `releaseId`, `workflowBuildId`, catalog và tám tool đều phải đạt.
 8. Re-read đúng deployment do run sở hữu, promote candidate thành version duy nhất `100%`, rồi verify production không override.
@@ -96,7 +96,7 @@ Thứ tự bắt buộc:
 
 Normal release bắt buộc có một prior version duy nhất ở `100%`. Khi live inventory chứng minh Worker chưa có deployment, người vận hành phải chọn manual input `bootstrap_first_release: true` trong exact-SHA dispatch đã xác nhận. Nhánh này fail closed nếu API quan sát thấy bất kỳ deployment hiện tại nào; không được dùng nó để thay normal promotion.
 
-Workflow tạo file dotenv tạm với mode theo `umask 077`, truyền file đó cho `wrangler versions upload --secrets-file`, rồi xóa bằng `trap` và không đưa file vào artifact. `wrangler.jsonc` khai báo bearer current là secret bắt buộc, nên cả bootstrap lẫn normal upload đều dừng trước mutation khi secret không đáp ứng. Controller gắn annotation `bootstrap`, tạo candidate đầu tiên ở `100%`, read-back exact owner/version và xác minh endpoint bằng bearer. Đây là ngoại lệ one-time: chưa có prior nên verification fail sẽ mở incident và phải tắt route/khắc phục trực tiếp, không thể tự rollback.
+Workflow tạo file dotenv tạm với mode theo `umask 077`, truyền file đó cho `wrangler deploy --secrets-file`, rồi xóa bằng `trap` và không đưa file vào artifact. `wrangler.jsonc` khai báo bearer current là secret bắt buộc nên bootstrap dừng trước mutation khi secret không đáp ứng; normal upload kế thừa secret của Worker đang hoạt động. `wrangler deploy` tạo version/deployment đầu ở `100%`; controller chỉ read-back đúng candidate duy nhất rồi xác minh endpoint bằng bearer, không tạo deployment lần hai. Đây là ngoại lệ one-time: chưa có prior nên verification fail sẽ mở incident và phải tắt route/khắc phục trực tiếp, không thể tự rollback.
 
 Sau bootstrap xanh, chạy lại workflow với `bootstrap_first_release: false` và `rehearse_rollback: true` để tạo version thứ hai, thực hiện normal prior `100%` + candidate `0%` Version Override, promotion, rollback rehearsal và re-promotion. Hai input không được cùng `true`. Chỉ khi vòng thứ hai đạt mới xem first-release gate hoàn tất.
 

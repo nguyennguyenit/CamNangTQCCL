@@ -4,7 +4,10 @@ import { pathToFileURL } from "node:url";
 
 import { isWorkerVersionId } from "../src/transport/worker-version-header.js";
 
-export function parseWranglerVersionUpload(output: string): string {
+export function parseWranglerVersionUpload(
+  output: string,
+  expectedType: "deploy" | "version-upload" = "version-upload",
+): string {
   const records = output
     .split(/\r?\n/u)
     .filter((line) => line.trim() !== "")
@@ -13,7 +16,7 @@ export function parseWranglerVersionUpload(output: string): string {
       (value): value is Record<string, unknown> =>
         typeof value === "object" && value !== null && !Array.isArray(value),
     )
-    .filter((record) => record.type === "version-upload");
+    .filter((record) => record.type === expectedType);
   if (
     records.length !== 1 ||
     typeof records[0]?.version_id !== "string" ||
@@ -27,10 +30,18 @@ export function parseWranglerVersionUpload(output: string): string {
 async function main(): Promise<void> {
   try {
     const outputPath = process.argv[2];
+    const expectedType = process.argv[3] ?? "version-upload";
     const githubOutput = process.env["GITHUB_OUTPUT"];
-    if (outputPath === undefined || githubOutput === undefined) throw new Error();
+    if (
+      outputPath === undefined ||
+      githubOutput === undefined ||
+      (expectedType !== "deploy" && expectedType !== "version-upload")
+    ) {
+      throw new Error();
+    }
     const versionId = parseWranglerVersionUpload(
       await readFile(resolve(outputPath), "utf8"),
+      expectedType,
     );
     await appendFile(githubOutput, `candidate_version_id=${versionId}\n`);
     process.stderr.write("Đã đọc Worker version ID từ Wrangler output.\n");

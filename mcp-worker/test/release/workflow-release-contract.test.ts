@@ -50,9 +50,23 @@ describe("production Worker release workflow", () => {
     expect(workflow).toContain("default: false");
     expect(production).toContain("TQCCL_FIRST_RELEASE_BOOTSTRAP:");
     expect(production).toContain("--secrets-file");
+    expect(production).toContain("id: bootstrap_upload");
+    expect(production).toContain("id: version_upload");
+    expect(production).toContain("if: inputs.bootstrap_first_release");
+    expect(production).toContain("if: ${{ !inputs.bootstrap_first_release }}");
+    expect(production).toContain("npx wrangler deploy --strict");
+    expect(production).toContain("npx wrangler versions upload --strict");
+    expect(production).toContain(
+      'npm run read:worker-version-upload -- "$WRANGLER_OUTPUT_FILE_PATH" deploy',
+    );
     expect(production).toContain("umask 077");
     expect(production).toContain("trap cleanup EXIT");
     expect(production).not.toContain("echo $TQCCL_MCP_BEARER_CURRENT");
+    const normalUpload = production.slice(
+      production.indexOf("id: version_upload"),
+      production.indexOf("Apply Worker Custom Domain"),
+    );
+    expect(normalUpload).not.toContain("TQCCL_MCP_BEARER_CURRENT");
   });
 
   it("áp dụng Custom Domain và rehearsal rollback là opt-in normal-only", async () => {

@@ -159,43 +159,17 @@ async function deployExclusiveAndConfirm(options: {
   return observed;
 }
 
-export async function bootstrapWorkerVersion(options: {
-  runId: string;
+export async function verifyBootstrapWorkerVersion(options: {
   candidateVersionId: string;
   deployment: WorkerDeploymentGateway;
   verifyProduction(versionId: string): Promise<void>;
   incident?: () => Promise<void>;
   onState?: (name: string, snapshot: WorkerDeploymentSnapshot) => void;
 }): Promise<WorkerBootstrapEvidence> {
-  if (
-    !/^[A-Za-z0-9._:-]{1,128}$/u.test(options.runId) ||
-    (await options.deployment.readCurrentOptional()) !== null
-  ) {
+  const observed = await options.deployment.readCurrent();
+  if (exclusiveVersion(observed) !== options.candidateVersionId) {
+    await options.incident?.();
     throw new DeploymentOwnershipError();
-  }
-
-  let response: WorkerDeploymentSnapshot | undefined;
-  try {
-    response = await options.deployment.deployExclusive(
-      options.candidateVersionId,
-      "bootstrap",
-    );
-  } catch {
-    // The first deployment can commit even if its response is lost. Reconcile
-    // only against the run annotation before treating the mutation as failed.
-  }
-  const observed = await readAfterMutation(
-    options.deployment,
-    options.incident,
-  );
-  const expectedVersions = [
-    { versionId: options.candidateVersionId, percentage: 100 },
-  ];
-  if (
-    !ownedShape(observed, options.runId, expectedVersions) ||
-    (response !== undefined && !sameDeployment(observed, response))
-  ) {
-    return reportDrift(options.incident);
   }
   options.onState?.("bootstrapped", observed);
 

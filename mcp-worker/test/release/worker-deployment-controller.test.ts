@@ -2,10 +2,10 @@ import { describe, expect, it, vi } from "vitest";
 
 import type { WorkerDeploymentSnapshot } from "../../scripts/cloudflare-deployment-client.js";
 import {
-  bootstrapWorkerVersion,
   DeploymentOwnershipError,
   preflightWorkerRelease,
   releaseWorkerVersion,
+  verifyBootstrapWorkerVersion,
 } from "../../scripts/worker-deployment-controller.js";
 
 const priorVersionId = "11111111-2222-4333-8444-555555555555";
@@ -73,49 +73,43 @@ describe("Worker deployment controller", () => {
     ).resolves.toEqual({ mode: "normal", priorVersionId });
   });
 
-  it("bootstrap chỉ tạo deployment đầu tiên khi chưa có current deployment", async () => {
+  it("bootstrap read-back exact deployment do Wrangler vừa tạo", async () => {
     const deployment = gateway([promoted]);
-    deployment.readCurrentOptional.mockResolvedValueOnce(null);
     const verifyProduction = vi.fn(async () => undefined);
 
     await expect(
-      bootstrapWorkerVersion({
-        runId,
+      verifyBootstrapWorkerVersion({
         candidateVersionId,
         deployment,
         verifyProduction,
       }),
     ).resolves.toEqual({ final: promoted });
-    expect(deployment.deployExclusive).toHaveBeenCalledWith(
-      candidateVersionId,
-      "bootstrap",
-    );
+    expect(deployment.deployExclusive).not.toHaveBeenCalled();
     expect(verifyProduction).toHaveBeenCalledWith(candidateVersionId);
   });
 
-  it("bootstrap từ chối ghi đè deployment đã tồn tại", async () => {
-    const deployment = gateway([]);
-    deployment.readCurrentOptional.mockResolvedValueOnce(prior);
-
-    await expect(
-      bootstrapWorkerVersion({
-        runId,
-        candidateVersionId,
-        deployment,
-        verifyProduction: async () => undefined,
-      }),
-    ).rejects.toBeInstanceOf(DeploymentOwnershipError);
-    expect(deployment.deployExclusive).not.toHaveBeenCalled();
-  });
-
-  it("bootstrap verify fail mở incident vì chưa có version để rollback", async () => {
-    const deployment = gateway([promoted]);
-    deployment.readCurrentOptional.mockResolvedValueOnce(null);
+  it("bootstrap từ chối deployment không trỏ exact candidate", async () => {
+    const deployment = gateway([prior]);
     const incident = vi.fn(async () => undefined);
 
     await expect(
-      bootstrapWorkerVersion({
-        runId,
+      verifyBootstrapWorkerVersion({
+        candidateVersionId,
+        deployment,
+        verifyProduction: async () => undefined,
+        incident,
+      }),
+    ).rejects.toBeInstanceOf(DeploymentOwnershipError);
+    expect(deployment.deployExclusive).not.toHaveBeenCalled();
+    expect(incident).toHaveBeenCalledOnce();
+  });
+
+  it("bootstrap verify fail mở incident vì chưa có prior để rollback", async () => {
+    const deployment = gateway([promoted]);
+    const incident = vi.fn(async () => undefined);
+
+    await expect(
+      verifyBootstrapWorkerVersion({
         candidateVersionId,
         deployment,
         verifyProduction: async () => {

@@ -10,8 +10,8 @@ import {
   verifyRelease,
 } from "./verify-release.js";
 import {
-  bootstrapWorkerVersion,
   releaseWorkerVersion,
+  verifyBootstrapWorkerVersion,
 } from "./worker-deployment-controller.js";
 import { parseWorkerReleaseEvidence } from "../src/release/worker-release-evidence.js";
 import { isWorkerVersionId } from "../src/transport/worker-version-header.js";
@@ -99,7 +99,7 @@ async function main(): Promise<void> {
     };
     const result =
       bootstrap === "true"
-        ? await bootstrapWorkerVersion(shared)
+        ? await verifyBootstrapWorkerVersion(shared)
         : await releaseWorkerVersion({
             ...shared,
             verifyCandidate: (versionId) =>

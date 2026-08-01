@@ -13,6 +13,20 @@ describe("Wrangler version upload output", () => {
     ).toBe(versionId);
   });
 
+  it("đọc deploy record riêng cho bootstrap đầu tiên", () => {
+    expect(
+      parseWranglerVersionUpload(
+        JSON.stringify({ type: "deploy", version_id: versionId }),
+        "deploy",
+      ),
+    ).toBe(versionId);
+    expect(() =>
+      parseWranglerVersionUpload(
+        JSON.stringify({ type: "deploy", version_id: versionId }),
+      ),
+    ).toThrow();
+  });
+
   it("từ chối thiếu, trùng hoặc malformed version ID", () => {
     expect(() => parseWranglerVersionUpload("{}\n")).toThrow();
     expect(() =>
