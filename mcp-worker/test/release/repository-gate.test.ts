@@ -2,11 +2,15 @@ import { describe, expect, it, vi } from "vitest";
 
 import {
   assertCredentialFreeEnvironment,
+  assertNoRetiredReleaseResidue,
   REPOSITORY_GATE_COMMANDS,
   runRepositoryGate,
 } from "../../scripts/check-repository.js";
 
 describe("repository release gate", () => {
+  it("không còn AWS/R2 release consumer hoặc npm publishing path", () => {
+    expect(() => assertNoRetiredReleaseResidue()).not.toThrow();
+  });
   it("bao phủ MCP, Astro/dist/E2E, JS, Python, Vision Worker và dry-run", () => {
     expect(REPOSITORY_GATE_COMMANDS.map(({ label }) => label)).toEqual([
       "mcp-worker",

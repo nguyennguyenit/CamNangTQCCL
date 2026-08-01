@@ -12,14 +12,15 @@
     "cli": "node --import tsx src/cli.ts",
     "stdio": "node --import tsx src/stdio.ts",
     "provision:bearer": "node --import tsx scripts/provision-bearer-token.ts",
-    "build:data-release": "node --import tsx scripts/build-data-release.ts",
-    "stage:data-release": "node --import tsx scripts/stage-data-release.ts",
-    "activate:data-release": "node --import tsx scripts/activate-data-release.ts",
+    "build:worker-assets": "node --import tsx scripts/build-worker-assets.ts",
+    "verify:worker-assets": "node --import tsx scripts/verify-worker-assets.ts",
+    "read:worker-version-upload": "node --import tsx scripts/read-wrangler-version-upload.ts",
+    "release:worker": "node --import tsx scripts/release-worker-version.ts",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:release": "vitest run test/release",
     "test:stdio": "vitest run test/transport/stdio.integration.test.ts",
-    "test:worker": "vitest run --config vitest.worker.config.ts",
+    "test:worker": "vitest run --config vitest.worker.config.ts && vitest run --config vitest.worker-production.config.ts",
     "typecheck": "tsc --noEmit",
     "typecheck:worker": "tsc --noEmit -p test/tsconfig.json",
     "wrangler:types": "wrangler types src/worker-configuration.d.ts",
@@ -43,7 +44,6 @@
     "wrangler": "4.114.0"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.1096.0",
     "@modelcontextprotocol/sdk": "1.30.0",
     "zod": "4.4.3"
   }

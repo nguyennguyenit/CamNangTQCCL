@@ -66,14 +66,27 @@ async function listExceptionalFiles(): Promise<string[]> {
   ]);
 }
 
+export function excludeDeletedReviewableFiles(
+  files: readonly string[],
+  deletedFiles: readonly string[],
+): string[] {
+  const deleted = new Set(deletedFiles);
+  return files.filter((file) => !deleted.has(file));
+}
+
 async function listReviewableFiles(): Promise<string[]> {
-  return gitFiles([
-    "--cached",
-    "--others",
-    "--exclude-standard",
-    "--",
-    ".",
+  const [files, deleted] = await Promise.all([
+    gitFiles([
+      "--cached",
+      "--others",
+      "--exclude-standard",
+      "--deduplicate",
+      "--",
+      ".",
+    ]),
+    gitFiles(["--deleted", "--", "."]),
   ]);
+  return excludeDeletedReviewableFiles(files, deleted);
 }
 
 async function readRepositoryFile(path: string): Promise<Uint8Array> {

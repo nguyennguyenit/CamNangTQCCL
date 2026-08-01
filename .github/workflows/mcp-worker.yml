@@ -2,11 +2,17 @@ name: MCP worker
 
 on:
   workflow_dispatch:
+    inputs:
+      bootstrap_first_release:
+        description: "Tạo deployment đầu tiên khi Worker chưa có deployment"
+        required: true
+        type: boolean
+        default: false
   pull_request:
     paths:
       - ".node-version"
       - ".github/workflows/mcp-worker.yml"
-      - ".github/workflows/mcp-r2-lock-monitor.yml"
+      - ".github/workflows/mcp-edge-security-monitor.yml"
       - "data/**"
       - "js/**"
       - "mcp-worker/**"
@@ -24,7 +30,7 @@ on:
     paths:
       - ".node-version"
       - ".github/workflows/mcp-worker.yml"
-      - ".github/workflows/mcp-r2-lock-monitor.yml"
+      - ".github/workflows/mcp-edge-security-monitor.yml"
       - "data/**"
       - "js/**"
       - "mcp-worker/**"
@@ -65,12 +71,10 @@ jobs:
       - run: npm ci
         working-directory: mcp-worker
       - run: npx playwright install --with-deps chromium
-      - run: npm run check:repository
+      - name: Build immutable Worker assets
+        run: npm run --silent build:worker-assets > "${RUNNER_TEMP}/worker-release-evidence.json"
         working-directory: mcp-worker
-      - name: Build immutable data release
-        env:
-          TQCCL_RELEASE_OUTPUT: ${{ runner.temp }}/tqccl-data-release
-        run: npm run build:data-release > "${RUNNER_TEMP}/release-metadata.json"
+      - run: npm run check:repository
         working-directory: mcp-worker
       - uses: actions/upload-artifact@v4
         with:
@@ -78,5 +82,103 @@ jobs:
           if-no-files-found: error
           retention-days: 30
           path: |
-            ${{ runner.temp }}/release-metadata.json
-            ${{ runner.temp }}/tqccl-data-release/
+            ${{ runner.temp }}/worker-release-evidence.json
+            mcp-worker/.worker-assets/
+
+  production-release:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: mcp-production
+    concurrency:
+      group: tqccl-mcp-production-release
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.sha }}
+      - name: Assert exact main SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            mcp-worker/package-lock.json
+            worker/package-lock.json
+      - run: npm ci
+      - run: npm ci
+        working-directory: worker
+      - run: npm ci
+        working-directory: mcp-worker
+      - run: npx playwright install --with-deps chromium
+      - name: Build exact-SHA Worker assets
+        run: npm run --silent build:worker-assets > "${RUNNER_TEMP}/worker-release-evidence.json"
+        working-directory: mcp-worker
+      - name: Verify exact-SHA Worker asset evidence
+        run: npm run verify:worker-assets -- "${RUNNER_TEMP}/worker-release-evidence.json"
+        working-directory: mcp-worker
+      - name: Run Workerd runtime gates
+        run: npm run test:worker
+        working-directory: mcp-worker
+      - name: Run credential-free repository gate and Wrangler dry-run
+        run: npm run check:repository
+        working-directory: mcp-worker
+      - name: Verify live edge control
+        env:
+          CLOUDFLARE_ZONE_ID: ${{ vars.CLOUDFLARE_ZONE_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_READ_API_TOKEN }}
+        run: node --import tsx scripts/verify-control-plane.ts --live
+        working-directory: mcp-worker
+      - name: Upload immutable Worker version
+        id: upload
+        shell: bash
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.TQCCL_WORKER_DEPLOY_API_TOKEN }}
+          TQCCL_FIRST_RELEASE_BOOTSTRAP: ${{ inputs.bootstrap_first_release }}
+          TQCCL_MCP_BEARER_CURRENT: ${{ secrets.TQCCL_MCP_BEARER_CURRENT }}
+          WRANGLER_OUTPUT_FILE_PATH: ${{ runner.temp }}/wrangler-output.ndjson
+        run: |
+          secret_file="${RUNNER_TEMP}/mcp-first-release-secrets.env"
+          cleanup() { rm -f -- "$secret_file"; }
+          trap cleanup EXIT
+          upload_args=()
+          if [[ "$TQCCL_FIRST_RELEASE_BOOTSTRAP" == "true" ]]; then
+            test -n "$TQCCL_MCP_BEARER_CURRENT"
+            umask 077
+            printf 'TQCCL_MCP_BEARER_CURRENT=%s\n' "$TQCCL_MCP_BEARER_CURRENT" > "$secret_file"
+            upload_args+=(--secrets-file "$secret_file")
+          fi
+          npx wrangler versions upload --strict --tag "$GITHUB_SHA" --message "TQCCL MCP $GITHUB_SHA" "${upload_args[@]}"
+          npm run read:worker-version-upload -- "$WRANGLER_OUTPUT_FILE_PATH"
+        working-directory: mcp-worker
+      - name: Verify candidate, promote, and verify production
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          TQCCL_WORKER_NAME: ${{ vars.TQCCL_WORKER_NAME }}
+          TQCCL_MCP_ENDPOINT: ${{ vars.TQCCL_MCP_ENDPOINT }}
+          TQCCL_RELEASE_RUN_ID: github-${{ github.run_id }}-${{ github.run_attempt }}
+          TQCCL_FIRST_RELEASE_BOOTSTRAP: ${{ inputs.bootstrap_first_release }}
+          TQCCL_DEPLOYMENT_EVIDENCE_PATH: ${{ runner.temp }}/worker-deployment-evidence.json
+          TQCCL_WORKER_DEPLOY_API_TOKEN: ${{ secrets.TQCCL_WORKER_DEPLOY_API_TOKEN }}
+          TQCCL_MCP_BEARER_CURRENT: ${{ secrets.TQCCL_MCP_BEARER_CURRENT }}
+        run: |
+          npm run --silent release:worker -- \
+            "${{ steps.upload.outputs.candidate_version_id }}" \
+            "${RUNNER_TEMP}/worker-release-evidence.json" \
+            "test/fixtures/release-verification.json"
+        working-directory: mcp-worker
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tqccl-mcp-production-${{ github.sha }}
+          if-no-files-found: error
+          retention-days: 90
+          path: |
+            ${{ runner.temp }}/worker-release-evidence.json
+            ${{ runner.temp }}/worker-deployment-evidence.json

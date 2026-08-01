@@ -1,4 +1,4 @@
-name: MCP R2 control-plane monitor
+name: MCP edge security monitor
 
 on:
   schedule:
@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: mcp-r2-control-plane-monitor
+  group: mcp-edge-security-monitor
   cancel-in-progress: false
 
 jobs:
@@ -27,12 +27,9 @@ jobs:
         working-directory: mcp-worker
       - run: npm run verify:control-plane
         working-directory: mcp-worker
-      - name: Verify live read-only controls
+      - name: Verify live read-only edge control
         env:
-          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_ZONE_ID: ${{ vars.CLOUDFLARE_ZONE_ID }}
-          TQCCL_RELEASE_BUCKET_NAME: ${{ vars.TQCCL_RELEASE_BUCKET_NAME }}
-          TQCCL_POINTER_BUCKET_NAME: ${{ vars.TQCCL_POINTER_BUCKET_NAME }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_READ_API_TOKEN }}
         run: node --import tsx scripts/verify-control-plane.ts --live
         working-directory: mcp-worker

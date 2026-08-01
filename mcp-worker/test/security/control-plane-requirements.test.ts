@@ -17,15 +17,12 @@ async function requirements() {
 }
 
 describe("hợp đồng control plane chỉ đọc", () => {
-  it("khóa đủ owner, evidence, failure và rollback cho bốn control", async () => {
+  it("chỉ giữ edge rate limit sau khi bỏ R2", async () => {
     const validated = validateControlPlaneRequirements(
       await requirements(),
     );
     expect(validated.controls.map(({ id }) => id)).toEqual([
       "edge-mcp-rate-limit",
-      "release-bucket-lock",
-      "release-bucket-events",
-      "pointer-bucket-events",
     ]);
     expect(validated.productionEnabledOnlyWhenVerified).toBe(true);
   });
@@ -59,52 +56,16 @@ describe("hợp đồng control plane chỉ đọc", () => {
           },
         });
       }
-      if (url.endsWith("/lock")) {
-        return Response.json({
-          success: true,
-          result: {
-            rules: [
-              {
-                enabled: true,
-                prefix: "",
-                condition: { type: "Age", maxAgeSeconds: 2592000 },
-              },
-            ],
-          },
-        });
-      }
-      return Response.json({
-        success: true,
-        result: {
-          queues: [
-            {
-              queueName: "tqccl-security-events",
-              rules: [
-                {
-                  actions: [
-                    "PutObject",
-                    "CopyObject",
-                    "DeleteObject",
-                    "CompleteMultipartUpload",
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      });
+      throw new Error("unexpected endpoint");
     };
 
     await expect(
       verifyControlPlaneLive(await requirements(), {
-        accountId: "account-id",
         zoneId: "zone-id",
-        releaseBucket: "release-bucket",
-        pointerBucket: "pointer-bucket",
         apiToken: "private-token",
         fetcher,
       }),
-    ).resolves.toEqual({ verified: true, controls: 4 });
+    ).resolves.toEqual({ verified: true, controls: 1 });
     expect(seen.every(({ method }) => method === "GET")).toBe(true);
     expect(seen.every(({ url }) => !url.includes("private-token"))).toBe(true);
     expect(
@@ -114,71 +75,21 @@ describe("hợp đồng control plane chỉ đọc", () => {
     ).toBe(true);
   });
 
-  it("không ghép nhầm expression hoặc actions từ queue không liên quan", async () => {
-    const fetcher: typeof fetch = async (input) => {
-      const url = String(input);
-      if (url.includes("http_ratelimit")) {
-        return Response.json({
-          success: true,
-          result: {
-            rules: [
-              {
-                description: "tqccl-mcp-rate-limit",
-                enabled: true,
-                action: "block",
-                expression: 'http.request.uri.path ne "/mcp"',
-                ratelimit: {
-                  requests_per_period: 60,
-                  period: 60,
-                },
-              },
-            ],
-          },
-        });
-      }
-      if (url.endsWith("/lock")) {
-        return Response.json({
-          success: true,
-          result: {
-            rules: [
-              {
-                enabled: true,
-                prefix: "",
-                condition: { type: "Age", maxAgeSeconds: 2592000 },
-              },
-            ],
-          },
-        });
-      }
-      return Response.json({
-        success: true,
-        result: {
-          queues: [
-            { queueName: "tqccl-security-events", rules: [] },
-            {
-              queueName: "unrelated",
-              rules: [
-                {
-                  actions: [
-                    "PutObject",
-                    "CopyObject",
-                    "DeleteObject",
-                    "CompleteMultipartUpload",
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      });
-    };
+  it("từ chối edge expression sai", async () => {
+    const fetcher: typeof fetch = async () => Response.json({
+      success: true,
+      result: { rules: [{
+        description: "tqccl-mcp-rate-limit",
+        enabled: true,
+        action: "block",
+        expression: 'http.request.uri.path ne "/mcp"',
+        ratelimit: { requests_per_period: 60, period: 60 },
+      }] },
+    });
 
     await expect(
       verifyControlPlaneLive(await requirements(), {
-        accountId: "account-id",
         zoneId: "zone-id",
-        releaseBucket: "release-bucket",
-        pointerBucket: "pointer-bucket",
         apiToken: "private-token",
         fetcher,
       }),

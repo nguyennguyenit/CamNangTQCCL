@@ -1,10 +1,9 @@
-import type { DeploymentState } from "./publish-data-release.js";
-
 const VERSION_ID_PATTERN =
   /^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/iu;
 
 export interface WorkerDeploymentSnapshot {
   deploymentId: string;
+  ownerTag: string | null;
   versions: Array<{
     versionId: string;
     percentage: number;
@@ -22,6 +21,7 @@ interface CloudflareDeploymentClientOptions {
   accountId: string;
   workerName: string;
   apiToken: string;
+  runId: string;
   fetcher?: typeof fetch;
 }
 
@@ -51,7 +51,7 @@ function parseDeployment(value: unknown): WorkerDeploymentSnapshot {
       !VERSION_ID_PATTERN.test(version.version_id) ||
       typeof version.percentage !== "number" ||
       !Number.isFinite(version.percentage) ||
-      version.percentage <= 0 ||
+      version.percentage < 0 ||
       version.percentage > 100
     ) {
       throw new CloudflareDeploymentError();
@@ -68,18 +68,38 @@ function parseDeployment(value: unknown): WorkerDeploymentSnapshot {
   if (Math.abs(total - 100) > Number.EPSILON) {
     throw new CloudflareDeploymentError();
   }
-  return { deploymentId: deployment.id, versions };
+  const annotations =
+    deployment.annotations === undefined
+      ? null
+      : record(deployment.annotations);
+  const message = annotations?.["workers/message"];
+  if (message !== undefined && typeof message !== "string") {
+    throw new CloudflareDeploymentError();
+  }
+  const ownerTag =
+    typeof message === "string"
+      ? /^TQCCL_RUN:([A-Za-z0-9._:-]{1,128}):(?:bootstrap|smoke|promote|restore|rollback)$/u.exec(
+          message,
+        )?.[1] ?? null
+      : null;
+  return {
+    deploymentId: deployment.id,
+    ownerTag,
+    versions,
+  };
 }
 
 export class CloudflareDeploymentClient {
   readonly #endpoint: URL;
   readonly #apiToken: string;
   readonly #fetcher: typeof fetch;
+  readonly #runId: string;
 
   constructor(options: CloudflareDeploymentClientOptions) {
     if (
       !/^[a-f0-9]{32}$/u.test(options.accountId) ||
       !/^[a-z0-9][a-z0-9_-]{0,62}$/u.test(options.workerName) ||
+      !/^[A-Za-z0-9._:-]{1,128}$/u.test(options.runId) ||
       options.apiToken === ""
     ) {
       throw new CloudflareDeploymentError();
@@ -89,6 +109,7 @@ export class CloudflareDeploymentClient {
       "https://api.cloudflare.com",
     );
     this.#apiToken = options.apiToken;
+    this.#runId = options.runId;
     this.#fetcher = options.fetcher ?? fetch;
   }
 
@@ -121,21 +142,28 @@ export class CloudflareDeploymentClient {
     }
   }
 
-  async readCurrent(): Promise<WorkerDeploymentSnapshot> {
+  async readCurrentOptional(): Promise<WorkerDeploymentSnapshot | null> {
     try {
       const result = record(await this.#request("GET"));
-      if (!Array.isArray(result.deployments) || result.deployments.length < 1) {
-        throw new Error("missing deployment");
+      if (!Array.isArray(result.deployments)) {
+        throw new Error("invalid deployments");
       }
+      if (result.deployments.length === 0) return null;
       return parseDeployment(result.deployments[0]);
     } catch {
       throw new CloudflareDeploymentError();
     }
   }
 
+  async readCurrent(): Promise<WorkerDeploymentSnapshot> {
+    const current = await this.readCurrentOptional();
+    if (current === null) throw new CloudflareDeploymentError();
+    return current;
+  }
+
   async #deploy(
     versions: WorkerDeploymentSnapshot["versions"],
-    message: string,
+    purpose: "bootstrap" | "smoke" | "promote" | "restore" | "rollback",
   ): Promise<WorkerDeploymentSnapshot> {
     return parseDeployment(
       await this.#request("POST", {
@@ -145,33 +173,64 @@ export class CloudflareDeploymentClient {
           percentage: version.percentage,
         })),
         annotations: {
-          "workers/message": message,
+          "workers/message": `TQCCL_RUN:${this.#runId}:${purpose}`,
           "workers/triggered_by": "deployment",
         },
       }),
     );
   }
 
-  async deployExclusive(versionId: string): Promise<DeploymentState> {
+  async deployExclusive(
+    versionId: string,
+    purpose: "bootstrap" | "promote" | "restore" | "rollback" = "promote",
+  ): Promise<WorkerDeploymentSnapshot> {
     if (!VERSION_ID_PATTERN.test(versionId)) {
       throw new CloudflareDeploymentError();
     }
     const deployed = await this.#deploy(
       [{ versionId, percentage: 100 }],
-      "Activate immutable TQCCL MCP release",
+      purpose,
     );
     if (
       deployed.versions.length !== 1 ||
       deployed.versions[0]?.versionId !== versionId ||
-      deployed.versions[0].percentage !== 100
+      deployed.versions[0].percentage !== 100 ||
+      deployed.ownerTag !== this.#runId
     ) {
       throw new CloudflareDeploymentError();
     }
-    return {
-      versionId,
-      percentage: 100,
-      activeVersions: 1,
-    };
+    return deployed;
+  }
+
+  async deployTest(
+    priorVersionId: string,
+    candidateVersionId: string,
+  ): Promise<WorkerDeploymentSnapshot> {
+    if (
+      !VERSION_ID_PATTERN.test(priorVersionId) ||
+      !VERSION_ID_PATTERN.test(candidateVersionId) ||
+      priorVersionId === candidateVersionId
+    ) {
+      throw new CloudflareDeploymentError();
+    }
+    const deployed = await this.#deploy(
+      [
+        { versionId: priorVersionId, percentage: 100 },
+        { versionId: candidateVersionId, percentage: 0 },
+      ],
+      "smoke",
+    );
+    if (
+      deployed.versions.length !== 2 ||
+      deployed.versions[0]?.versionId !== priorVersionId ||
+      deployed.versions[0].percentage !== 100 ||
+      deployed.versions[1]?.versionId !== candidateVersionId ||
+      deployed.versions[1].percentage !== 0 ||
+      deployed.ownerTag !== this.#runId
+    ) {
+      throw new CloudflareDeploymentError();
+    }
+    return deployed;
   }
 
 }

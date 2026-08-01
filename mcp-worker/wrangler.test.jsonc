@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "tqccl-research-mcp-test",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-07-28",
+  "workers_dev": false,
+  "assets": {
+    "directory": "./test/fixtures/release-snapshot",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "version_metadata": {
+    "binding": "CF_VERSION_METADATA"
+  },
+  "vars": {
+    "TQCCL_MCP_ALLOWED_ORIGINS": "",
+    "TQCCL_MCP_MAX_BODY_BYTES": "65536",
+    "TQCCL_MCP_MAX_RESULT_BYTES": "98304",
+    "TQCCL_MCP_RATE_MAX": "60",
+    "TQCCL_MCP_RATE_WINDOW_MS": "60000",
+    "TQCCL_MCP_MAX_IN_FLIGHT": "4"
+  }
+}

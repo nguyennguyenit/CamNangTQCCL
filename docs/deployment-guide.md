@@ -120,18 +120,22 @@ Không thực hiện các bước sau trong build/local verification. Khi releas
 
 ## Research MCP Worker
 
-Research MCP có release boundary riêng với Vision Worker. Không deploy hoặc đổi R2 pointer trong local verification. Gate credential-free:
+Research MCP có release boundary riêng với Vision Worker. Local verification không upload hoặc tạo deployment. Gate credential-free trong clean checkout:
 
 ```bash
 cd mcp-worker
 npm ci
+npm run --silent build:worker-assets > /secure/artifact/worker-release-evidence.json
+npm run verify:worker-assets -- /secure/artifact/worker-release-evidence.json
 npm run check
 npm run check:repository
 ```
 
-Production cần hai R2 Standard bucket tách biệt, release bucket lock tối thiểu 30 ngày, credential publisher/activator tách nhau, edge rate control và event notification cho cả release lẫn pointer bucket. Candidate Worker phải được kiểm với current/candidate manifest trước khi nhận traffic; activate chỉ dùng receipt còn hạn và đúng một version ở 100%.
+Production dùng `ASSETS` private binding với `run_worker_first: true`; bundle gồm manifest và sáu JSON, đi cùng code trong một Worker version. Workflow production chỉ chạy bằng manual dispatch trên exact `main` SHA sau approval của environment `mcp-production`. Candidate được thêm ở `0%`, kiểm qua Version Override và exact runtime version header trước khi trở thành version duy nhất ở `100%`.
 
-Live verifier lấy bearer từ `TQCCL_MCP_BEARER_CURRENT`; activator còn bắt buộc `TQCCL_APPROVED_MCP_ENDPOINT` khớp tuyệt đối với HTTPS `/mcp` trên argv trước khi dùng bearer. Cloudflare control-plane verifier lấy token chỉ đọc từ environment. Không đặt secret trong argv/query. Force-refresh chỉ chạy sau auth, rồi activator đọc lại deployment để chứng minh đúng một candidate version ở 100%. Nếu hậu kiểm fail sau pointer CAS, activator CAS-restore pointer cũ; rollback ETag conflict phải mở incident thay vì overwrite.
+Nếu live inventory xác nhận Worker chưa có deployment, lần chạy đầu phải bật manual input `bootstrap_first_release`. Nhánh one-time chỉ chấp nhận trạng thái không có current deployment, upload bearer qua secret file tạm mode `0600` và xác minh version đầu ở `100%`; nếu verify fail thì mở incident vì chưa có prior để rollback. Sau đó bắt buộc chạy lần hai với input tắt để chứng minh normal `100/0`, promotion và rollback rehearsal. Không dùng bootstrap để ghi đè Worker đã hoạt động.
+
+Live verifier lấy bearer từ `TQCCL_MCP_BEARER_CURRENT`; Cloudflare control-plane verifier lấy token chỉ đọc từ environment. Không đặt secret trong argv/query/artifact. Controller re-read exact deployment trước promote và rollback: nếu current drift khỏi deployment do run sở hữu thì mở incident, không overwrite release khác. Mỗi mùa khoảng ba tháng tạo một reviewed code+data Worker version; GoClaw URL/bearer/tool contract không đổi.
 
 Thứ tự, command, rotation và incident runbook đầy đủ ở [Research MCP server](mcp-research-server.md). Chỉ cập nhật [Deployment Record](deployment.md) sau khi có release ID, Worker version, workflow identity, approval và canary evidence thực tế.
 

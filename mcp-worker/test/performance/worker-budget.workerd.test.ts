@@ -1,8 +1,6 @@
 import { exports } from "cloudflare:workers";
 import { beforeAll, describe, expect, it } from "vitest";
 
-import { seedProductionR2 } from "../fixtures/seed-production-r2.workerd.js";
-
 const TOKEN = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
 function rpcRequest(id: number, method: string, params: unknown): Request {
@@ -40,7 +38,6 @@ async function callTool(
 }
 
 beforeAll(async () => {
-  await seedProductionR2();
   const initialized = await exports.default.fetch(
     rpcRequest(1, "initialize", {
       protocolVersion: "2025-11-25",

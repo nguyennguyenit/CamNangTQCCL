@@ -1,5 +1,13 @@
 # Project Changelog
 
+## 2026-08-01
+
+### Changed
+
+- Research MCP đóng code, canonical manifest và sáu data artifact trong cùng một private Worker Static Assets version; CLI/stdio vẫn đọc filesystem và tám tool không đổi.
+- Release production chuyển sang manual exact-SHA Worker Versions: candidate `0%` được xác minh bằng Version Override trước khi promote duy nhất `100%`, với reconciliation response mơ hồ và ownership-safe rollback.
+- Bỏ runtime/release/control-plane R2, AWS SDK và npm release path; giữ edge rate control, managed bearer và denylist credential cũ.
+
 ## 2026-07-11
 
 ### Fixed

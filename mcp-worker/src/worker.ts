@@ -2,9 +2,9 @@ import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/
 
 import type { DataSource } from "./data/data-source.js";
 import {
-  R2DataSource,
-  type ReadObject,
-} from "./data/r2-data-source.js";
+  StaticAssetsDataSource,
+  type AssetFetcher,
+} from "./data/static-assets-data-source.js";
 import { createMcpServer } from "./mcp/create-mcp-server.js";
 import { createResearchHandlers } from "./research/research-handlers.js";
 import {
@@ -22,19 +22,22 @@ import {
   InFlightLimiter,
   TokenRateLimiter,
 } from "./security/request-limits.js";
+import {
+  isWorkerVersionId,
+  WORKER_VERSION_HEADER,
+} from "./transport/worker-version-header.js";
 
-interface R2ObjectBodyReader {
-  readonly etag?: string;
-  arrayBuffer(): Promise<ArrayBuffer>;
-}
+export { WORKER_VERSION_HEADER } from "./transport/worker-version-header.js";
 
-export interface R2BucketReader {
-  get(key: string): Promise<R2ObjectBodyReader | null>;
+export interface WorkerVersionMetadata {
+  id: string;
+  tag?: string;
+  timestamp?: string;
 }
 
 export interface WorkerEnvironment {
-  TQCCL_POINTER_BUCKET?: R2BucketReader;
-  TQCCL_RELEASE_BUCKET?: R2BucketReader;
+  ASSETS?: AssetFetcher;
+  CF_VERSION_METADATA?: WorkerVersionMetadata;
   TQCCL_MCP_BEARER_CURRENT?: string;
   TQCCL_MCP_BEARER_NEXT?: string;
   TQCCL_MCP_NEXT_TOKEN_NOT_AFTER?: string;
@@ -61,8 +64,6 @@ interface RuntimeConfiguration {
   rateWindowMs: number;
   maxInFlight: number;
 }
-
-const FORCE_REFRESH_HEADER = "TQCCL-MCP-Force-Refresh";
 
 function jsonResponse(
   status: number,
@@ -106,31 +107,13 @@ function runtimeConfiguration(
   };
 }
 
-async function readR2Object(
-  bucket: R2BucketReader,
-  key: string,
-): Promise<ReadObject | null> {
-  const object = await bucket.get(key);
-  if (object === null) return null;
-  return {
-    bytes: new Uint8Array(await object.arrayBuffer()),
-    ...(object.etag === undefined ? {} : { etag: object.etag }),
-  };
-}
-
-function createR2DataSource(environment: WorkerEnvironment): DataSource {
-  const pointerBucket = environment.TQCCL_POINTER_BUCKET;
-  const releaseBucket = environment.TQCCL_RELEASE_BUCKET;
-  if (pointerBucket === undefined || releaseBucket === undefined) {
-    throw new Error("Thiếu R2 binding.");
-  }
-  return new R2DataSource({
-    pointerReader: {
-      readCurrent: () => readR2Object(pointerBucket, "current.json"),
-    },
-    releaseReader: {
-      readKnownObject: (key) => readR2Object(releaseBucket, key),
-    },
+function authenticatedResponse(response: Response, versionId: string): Response {
+  const headers = new Headers(response.headers);
+  headers.set(WORKER_VERSION_HEADER, versionId);
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
   });
 }
 
@@ -153,8 +136,7 @@ export function createWorker(options: WorkerRuntimeOptions = {}) {
   const now = options.now ?? Date.now;
   let defaultDataSource:
     | {
-        pointer: R2BucketReader;
-        release: R2BucketReader;
+        assets: AssetFetcher;
         source: DataSource;
       }
     | undefined;
@@ -170,20 +152,17 @@ export function createWorker(options: WorkerRuntimeOptions = {}) {
     if (options.createDataSource !== undefined) {
       return options.createDataSource(environment);
     }
-    const pointer = environment.TQCCL_POINTER_BUCKET;
-    const release = environment.TQCCL_RELEASE_BUCKET;
-    if (pointer === undefined || release === undefined) {
-      throw new Error("Thiếu R2 binding.");
+    const assets = environment.ASSETS;
+    if (assets === undefined) {
+      throw new Error("Thiếu Static Assets binding.");
     }
     if (
       defaultDataSource === undefined ||
-      defaultDataSource.pointer !== pointer ||
-      defaultDataSource.release !== release
+      defaultDataSource.assets !== assets
     ) {
       defaultDataSource = {
-        pointer,
-        release,
-        source: createR2DataSource(environment),
+        assets,
+        source: new StaticAssetsDataSource({ fetcher: assets }),
       };
     }
     return defaultDataSource.source;
@@ -280,44 +259,41 @@ export function createWorker(options: WorkerRuntimeOptions = {}) {
         return jsonResponse(503, "SERVICE_MISCONFIGURED");
       }
 
+      const versionId = environment.CF_VERSION_METADATA?.id;
+      if (!isWorkerVersionId(versionId)) {
+        return jsonResponse(503, "SERVICE_MISCONFIGURED");
+      }
+      const respond = (response: Response) =>
+        authenticatedResponse(response, versionId);
+
       const requestLimits = limits(configuration);
       const rate = requestLimits.rate.consume(
         authenticated.fingerprint,
         now(),
       );
       if (!rate.allowed) {
-        return jsonResponse(429, "RATE_LIMITED", {
+        return respond(jsonResponse(429, "RATE_LIMITED", {
           "Retry-After": String(rate.retryAfterSeconds),
-        });
+        }));
       }
       const release = requestLimits.inFlight.acquire();
       if (release === null) {
-        return jsonResponse(429, "TOO_MANY_IN_FLIGHT", {
+        return respond(jsonResponse(429, "TOO_MANY_IN_FLIGHT", {
           "Retry-After": "1",
-        });
+        }));
       }
 
       try {
         if (request.method === "GET" || request.method === "DELETE") {
-          return jsonResponse(405, "METHOD_NOT_ALLOWED");
+          return respond(jsonResponse(405, "METHOD_NOT_ALLOWED"));
         }
         const parsedBody = await readBoundedJson(
           request,
           configuration.maxBodyBytes,
         );
         validateInitializeProtocol(parsedBody);
-        const forceRefreshHeader = request.headers.get(
-          FORCE_REFRESH_HEADER,
-        );
-        if (
-          forceRefreshHeader !== null &&
-          forceRefreshHeader !== "1"
-        ) {
-          return jsonResponse(400, "INVALID_FORCE_REFRESH");
-        }
         const handlers = createResearchHandlers({
           dataSource: dataSource(environment),
-          forceRefresh: forceRefreshHeader === "1",
         });
         const server = createMcpServer({ handlers });
         const transport =
@@ -329,18 +305,17 @@ export function createWorker(options: WorkerRuntimeOptions = {}) {
           const response = await transport.handleRequest(request, {
             parsedBody,
           });
-          return await boundedResponse(
-            response,
-            configuration.maxResultBytes,
+          return respond(
+            await boundedResponse(response, configuration.maxResultBytes),
           );
         } finally {
           await server.close();
         }
       } catch (error) {
         if (error instanceof RequestGuardError) {
-          return jsonResponse(error.status, error.code);
+          return respond(jsonResponse(error.status, error.code));
         }
-        return jsonResponse(500, "INTERNAL_ERROR");
+        return respond(jsonResponse(500, "INTERNAL_ERROR"));
       } finally {
         release();
       }

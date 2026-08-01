@@ -1,11 +1,20 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  excludeDeletedReviewableFiles,
   verifyExceptionalSecretFilesRemoved,
   verifyRepositoryHasNoHighConfidenceSecrets,
 } from "../../scripts/check-local-secret-files.js";
 
 describe("exceptional local secret files", () => {
+  it("không đọc tracked file đã bị xóa trong migration worktree", () => {
+    expect(
+      excludeDeletedReviewableFiles(
+        ["kept.ts", "deleted.ts", "untracked.txt"],
+        ["deleted.ts"],
+      ),
+    ).toEqual(["kept.ts", "untracked.txt"]);
+  });
   it("quét cả đường dẫn ignored và chặn release khi còn file", async () => {
     const listFiles = async () => [
       "mcp-worker/.release-secrets/pointer-token",

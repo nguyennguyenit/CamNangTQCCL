@@ -89,4 +89,31 @@ describe("Worker import boundaries", () => {
       );
     }
   });
+
+  it("khóa production Static Assets routing giống config đã test", () => {
+    for (const filename of ["wrangler.jsonc", "wrangler.test.jsonc"]) {
+      const configuration = JSON.parse(
+        readFileSync(resolve(packageRoot, filename), "utf8"),
+      ) as {
+        assets?: Record<string, unknown>;
+        version_metadata?: Record<string, unknown>;
+        r2_buckets?: unknown;
+      };
+      expect(configuration.assets).toMatchObject({
+        binding: "ASSETS",
+        run_worker_first: true,
+      });
+      expect(configuration.version_metadata).toEqual({
+        binding: "CF_VERSION_METADATA",
+      });
+      expect(configuration.r2_buckets).toBeUndefined();
+    }
+
+    const production = JSON.parse(
+      readFileSync(resolve(packageRoot, "wrangler.jsonc"), "utf8"),
+    ) as { secrets?: { required?: unknown } };
+    expect(production.secrets?.required).toEqual([
+      "TQCCL_MCP_BEARER_CURRENT",
+    ]);
+  });
 });

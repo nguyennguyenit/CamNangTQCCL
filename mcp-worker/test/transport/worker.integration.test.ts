@@ -9,6 +9,7 @@ import { FilesystemDataSource } from "../../src/data/filesystem-data-source.js";
 import { InFlightLimiter, TokenRateLimiter } from "../../src/security/request-limits.js";
 import {
   createWorker,
+  WORKER_VERSION_HEADER,
   type WorkerEnvironment,
 } from "../../src/worker.js";
 
@@ -16,7 +17,11 @@ const fixtureRoot = fileURLToPath(
   new URL("../fixtures/release-snapshot", import.meta.url),
 );
 const TOKEN = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+const VERSION_ID = "11111111-2222-4333-8444-555555555555";
 const ENV = {
+  CF_VERSION_METADATA: {
+    id: VERSION_ID,
+  },
   TQCCL_MCP_BEARER_CURRENT: TOKEN,
   TQCCL_MCP_ALLOWED_ORIGINS: "https://agent.example",
   TQCCL_MCP_MAX_BODY_BYTES: "65536",
@@ -82,12 +87,14 @@ describe("transport Streamable HTTP Worker", () => {
     );
     expect(health.status).toBe(200);
     expect(await health.json()).toEqual({ status: "ok" });
+    expect(health.headers.has(WORKER_VERSION_HEADER)).toBe(false);
 
     const missing = await worker.fetch(
       new Request("https://mcp.example/other"),
       ENV,
     );
     expect(missing.status).toBe(404);
+    expect(missing.headers.has(WORKER_VERSION_HEADER)).toBe(false);
     expect(dataSources()).toBe(0);
   });
 
@@ -107,13 +114,14 @@ describe("transport Streamable HTTP Worker", () => {
 
       expect(response.status).toBe(401);
       expect(response.headers.get("WWW-Authenticate")).toBe("Bearer");
+      expect(response.headers.has(WORKER_VERSION_HEADER)).toBe(false);
       expect(denied.bodyUsed).toBe(false);
       expect(JSON.stringify(await response.json())).not.toContain("private");
     }
     expect(dataSources()).toBe(0);
   });
 
-  it("chỉ xử lý force-refresh sau bearer auth và từ chối giá trị lạ", async () => {
+  it("bỏ qua force-refresh header và chỉ lộ version sau bearer auth", async () => {
     const { worker, dataSources } = workerWithCounters();
     const unauthorized = rpcRequest(initializeRequest(), {
       Authorization: "Bearer wrong",
@@ -124,17 +132,17 @@ describe("transport Streamable HTTP Worker", () => {
     expect(denied.status).toBe(401);
     expect(dataSources()).toBe(0);
 
-    const malformed = await worker.fetch(
+    const accepted = await worker.fetch(
       rpcRequest(initializeRequest(), {
         "TQCCL-MCP-Force-Refresh": "unexpected",
       }),
       ENV,
     );
-    expect(malformed.status).toBe(400);
-    expect(await malformed.json()).toEqual({
-      error: { code: "INVALID_FORCE_REFRESH" },
-    });
-    expect(dataSources()).toBe(0);
+    expect(accepted.status).toBe(200);
+    expect(accepted.headers.get(WORKER_VERSION_HEADER)).toBe(
+      VERSION_ID,
+    );
+    expect(dataSources()).toBe(1);
   });
 
   it("đàm phán protocol cố định rồi liệt kê đủ tám tool ở request độc lập", async () => {

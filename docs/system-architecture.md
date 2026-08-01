@@ -24,7 +24,7 @@ Browser image + Turnstile ──POST /analyze──► Cloudflare Worker
 Browser canonical mapping + local matching/recommendation
 
 RESEARCH MCP PATH
-managed client ──Bearer + Streamable HTTP──► Cloudflare Worker ──► pointer/release R2
+managed client ──Bearer + Streamable HTTP──► Cloudflare Worker + private Static Assets
 local MCP client ───────────stdio──────────► filesystem snapshot
                                      cả hai ──► cùng 8 schema/handler read-only
 ```
@@ -67,7 +67,7 @@ Tra cứu và gợi ý cốt lõi chạy local:
 Luồng dùng chung hiện có:
 
 ```text
-snapshot sáu artifact (filesystem hoặc R2)
+snapshot sáu artifact (filesystem hoặc Worker Static Assets)
   → validate manifest/hash/cross-reference và dựng index
 structured observations
   → normalize thành canonical state
@@ -77,17 +77,15 @@ structured observations
   → JSON CLI hoặc MCP stdio/Streamable HTTP
 ```
 
-Snapshot gồm đúng sáu artifact được khai báo tại [`artifact-contracts.ts`](../mcp-worker/src/data/artifact-contracts.ts). [`FilesystemDataSource`](../mcp-worker/src/data/filesystem-data-source.ts) đọc JSON local và tự tạo canonical manifest; [`R2DataSource`](../mcp-worker/src/data/r2-data-source.ts) chỉ đọc pointer, manifest và object key đã được release khai báo qua hai reader capability hẹp. Cả hai dùng cache trong [`data-source.ts`](../mcp-worker/src/data/data-source.ts): chỉ đổi snapshot sau khi candidate hoàn chỉnh hợp lệ, dùng single-flight cho refresh thường và chỉ phục vụ stale đến deadline tuyệt đối không gia hạn.
+Snapshot gồm đúng sáu artifact được khai báo tại [`artifact-contracts.ts`](../mcp-worker/src/data/artifact-contracts.ts). [`FilesystemDataSource`](../mcp-worker/src/data/filesystem-data-source.ts) đọc JSON local và tự tạo canonical manifest; [`StaticAssetsDataSource`](../mcp-worker/src/data/static-assets-data-source.ts) đọc đúng bảy private asset path rồi dùng cùng validator. [`data-source.ts`](../mcp-worker/src/data/data-source.ts) single-flight cold load và giữ snapshot immutable trong suốt process/isolate.
 
 `mcp-worker/src/domain/normalization-service.ts` sở hữu chuẩn hóa và source precedence; ambiguity, identity/family conflict hoặc locked-resource conflict đặt trạng thái cần review. `canonical-state.ts` sở hữu projection/digest và xác minh binding. `recommendation-service.ts` chỉ gọi engine sau khi workflow, canonical state và binding khớp; trạng thái chưa phân giải hoặc binding cũ bị từ chối. Bằng chứng người dùng thật sự đã xác nhận vẫn thuộc caller, không phải điều research handler tự chứng minh.
 
 Tám tên handler cùng schema request/result thuộc [`research-contracts.ts`](../mcp-worker/src/research/research-contracts.ts); dispatch và version/provenance/error behavior thuộc [`research-handlers.ts`](../mcp-worker/src/research/research-handlers.ts). CLI `npm run cli -- <lệnh>`, stdio `npm run stdio` và HTTP đều gọi cùng handler/schema. [`tool-definitions.ts`](../mcp-worker/src/mcp/tool-definitions.ts) chỉ thêm mô tả và annotation read-only; mỗi factory tạo `McpServer` mới.
 
-Stdio dùng official SDK transport, giữ stdout chỉ cho protocol và ghi diagnostic cố định vào stderr. Remote Worker dùng raw Web-standard Streamable HTTP transport của SDK v1 ở chế độ JSON stateless; protocol `2025-11-25` được pin cho cả `initialize` đơn lẻ và trong batch. Trình tự `/mcp` là header guard rẻ → managed-client pre-shared bearer → rate/in-flight → đọc JSON theo byte thực tế và kiểm protocol → R2/server; `/healthz` là liveness no-I/O. Origin hiện diện phải khớp chính xác và result cũng có trần. Bearer này không phải OAuth; không có OAuth server/discovery, client phải tự gắn `Authorization` header.
+Stdio dùng official SDK transport, giữ stdout chỉ cho protocol và ghi diagnostic cố định vào stderr. Remote Worker dùng raw Web-standard Streamable HTTP transport của SDK v1 ở chế độ JSON stateless; protocol `2025-11-25` được pin cho cả `initialize` đơn lẻ và trong batch. Trình tự `/mcp` là header guard rẻ → managed-client pre-shared bearer → rate/in-flight → đọc JSON theo byte thực tế và kiểm protocol → Static Assets/server; `/healthz` là liveness no-I/O. Origin hiện diện phải khớp chính xác và result cũng có trần. Bearer này không phải OAuth; không có OAuth server/discovery, client phải tự gắn `Authorization` header.
 
-Remote data đi qua hai R2 binding: pointer bucket mutable và release bucket content-addressed. Application chỉ đưa binding qua `PointerReader`/`ReleaseReader`; đây là giới hạn capability trong code, không phải tuyên bố R2 binding có IAM read-only. Server/transport luôn theo request; module scope chỉ giữ snapshot cache đã validate và limiter isolate-local.
-
-Release builder tạo đúng sáu object và canonical manifest từ Git tree sạch, không credential. Publisher conditional-create object trong release bucket đã lock; activator chỉ CAS `current.json` sau candidate-version verification và promotion receipt content-addressed. Force-refresh live failure tự CAS-restore pointer cũ, còn rollback conflict dừng automation. Chi tiết vận hành nằm ở [Research MCP server](mcp-research-server.md).
+Remote data nằm trong cùng immutable Worker version với code. Worker chạy trước asset routing nên chỉ application code được gọi; public asset URL luôn `404`. Release builder tạo deterministic manifest + sáu JSON từ Git tree sạch. Controller dùng prior `100%` + candidate `0%`, Version Override và exact deployment ownership trước khi promote/rollback. Chi tiết vận hành nằm ở [Research MCP server](mcp-research-server.md).
 
 `workflowVersion` ghép full `releaseId` của canonical data manifest với `workflowBuildId` của semantic import closure; compact `dataVersion` chỉ để hiển thị. Inventory build chính xác thuộc [`workflow-source-manifest.json`](../mcp-worker/workflow-source-manifest.json); [`generate-workflow-build.ts`](../mcp-worker/scripts/generate-workflow-build.ts) kiểm closure bằng TypeScript AST, từ chối dynamic import không thể đóng và fail khi manifest/generated identity bị lệch.
 
@@ -131,7 +129,7 @@ Worker không chủ động lưu ảnh; log tối thiểu. KV eventual consisten
 |---|---|---|
 | Cloudflare Pages | `dist/` từ `npm run build` | `public/_headers`, public Worker URL + Turnstile site key |
 | Cloudflare Worker | `worker/src/*.ts` | vars trong `wrangler.toml`, KV binding, secrets trong Worker env |
-| Research MCP Worker | `mcp-worker/src/worker.ts` | `wrangler.jsonc`, hai R2 binding, managed bearer secret, Origin/limit vars |
+| Research MCP Worker | `mcp-worker/src/worker.ts` | `wrangler.jsonc`, `ASSETS`, version metadata, managed bearer secret, Origin/limit vars |
 | Research MCP local | `mcp-worker/src/stdio.ts` | filesystem snapshot; stdout protocol-only |
 | Maintainer local | `pipeline/*.py`, HTML/cache/maps | không publish nguồn/cache riêng tư |
 

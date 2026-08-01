@@ -33,7 +33,7 @@ Tiêu chí hoàn thành: một checkout có các prerequisite đã mô tả có 
 - [ ] Đánh giá Durable Object nếu quota tháng phải cứng/atomic.
 - [ ] Xoay API key theo lịch; xác nhận không log payload ảnh trong Worker/provider settings.
 - [ ] Thiết lập smoke test production không chứa dữ liệu cá nhân.
-- [ ] Hoàn tất ủy quyền và bằng chứng live cho Research MCP: R2 lock/events, edge rate rule, immutable release, exact Worker version, pointer CAS và rollback canary.
+- [ ] Hoàn tất ủy quyền và bằng chứng live cho Research MCP: private Worker Static Assets, edge rate rule, candidate `0%` Version Override, exact Worker version và ownership-safe whole-version rollback.
 
 ## Bảo trì liên tục
 

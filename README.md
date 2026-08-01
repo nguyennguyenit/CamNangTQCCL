@@ -75,7 +75,7 @@ Không chạy máy móc trên dữ liệu đang dùng: `build_json.py` vẫn ki�
 - Site production hiện tại: `https://tqccl.pages.dev`. Contract cho lần release được ủy quyền tiếp theo: repository root, `npm run build`, output `dist/`; settings thật phải được kiểm tra trước promotion.
 - `public/_headers` được Astro đưa vào `dist/_headers`; shared verifier yêu cầu byte parity và cache revalidation cho shell/JS/CSS/JSON.
 - Vision proxy: Worker tại `https://tqccl-vision-proxy.nguyennlt-ncc.workers.dev`, deploy riêng từ `worker/`.
-- Research MCP nằm trong `mcp-worker/`; production release chưa được ghi nhận cho đến khi control-plane, immutable R2 release và live verifier đạt với ủy quyền riêng.
+- Research MCP nằm trong `mcp-worker/`; code và sáu data artifact được đóng trong cùng Worker Static Assets version. Production release chưa được ghi nhận cho đến khi exact-version smoke, edge control và rollback rehearsal đạt với ủy quyền riêng.
 - `js/config.js` chứa Worker URL và Turnstile site key công khai đang hoạt động. Secret chỉ nằm trong môi trường Worker.
 - Preview/promotion/rollback là quy trình có ủy quyền riêng; build local không tạo deployment.
 

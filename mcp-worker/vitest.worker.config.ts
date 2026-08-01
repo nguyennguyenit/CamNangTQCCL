@@ -6,7 +6,7 @@ const TEST_BEARER = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 export default defineConfig({
   plugins: [
     cloudflareTest({
-      wrangler: { configPath: "./wrangler.jsonc" },
+      wrangler: { configPath: "./wrangler.test.jsonc" },
       miniflare: {
         bindings: {
           TQCCL_MCP_BEARER_CURRENT: TEST_BEARER,
@@ -15,7 +15,6 @@ export default defineConfig({
     }),
   ],
   test: {
-    include: ["test/**/*.workerd.test.ts"],
+    include: ["test/transport/**/*.workerd.test.ts"],
   },
 });
-

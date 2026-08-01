@@ -13,6 +13,10 @@ import {
   RESEARCH_CONTRACTS,
   type ResearchInput,
 } from "../src/research/research-contracts.js";
+import {
+  isWorkerVersionId,
+  WORKER_VERSION_HEADER,
+} from "../src/transport/worker-version-header.js";
 
 export interface ReleaseVerificationFixture {
   observations: ResearchInput<"tqccl_normalize_entities">["observations"];
@@ -25,8 +29,8 @@ export interface VerifyReleaseOptions {
   bearer: string;
   expectedReleaseId: string;
   expectedWorkflowBuildId: string;
+  expectedWorkerVersionId: string;
   fixture: ReleaseVerificationFixture;
-  forceRefresh?: boolean;
   fetcher?: typeof fetch;
   onStep?: (step: string) => void;
 }
@@ -91,15 +95,23 @@ async function requireStatus(
   fetcher: typeof fetch,
   request: Request,
   expected: number,
+  expectedWorkerVersionId?: string,
 ): Promise<void> {
   const response = await fetcher(request);
-  if (response.status !== expected) throw new ReleaseVerificationError();
+  if (
+    response.status !== expected ||
+    response.headers.get(WORKER_VERSION_HEADER) !==
+      (expectedWorkerVersionId ?? null)
+  ) {
+    throw new ReleaseVerificationError();
+  }
 }
 
 export async function verifyRelease(
   options: VerifyReleaseOptions,
 ): Promise<{
   verified: true;
+  workerVersionId: string;
   releaseId: string;
   workflowVersion: string;
   protocolVersion: string;
@@ -110,16 +122,12 @@ export async function verifyRelease(
     !isSafeMcpEndpoint(options.endpoint) ||
     !/^sha256:[a-f0-9]{64}$/u.test(options.expectedReleaseId) ||
     !/^build:sha256:[a-f0-9]{64}$/u.test(options.expectedWorkflowBuildId) ||
+    !isWorkerVersionId(options.expectedWorkerVersionId) ||
     options.bearer === ""
   ) {
     throw new ReleaseVerificationError();
   }
-  const authHeaders = {
-    Authorization: `Bearer ${options.bearer}`,
-    ...(options.forceRefresh === true
-      ? { "TQCCL-MCP-Force-Refresh": "1" }
-      : {}),
-  };
+  const authHeaders = { Authorization: `Bearer ${options.bearer}` };
   let negotiatedProtocol: string | undefined;
   let subsequentProtocolRequests = 0;
   const protocolCheckingFetcher: typeof fetch = async (input, init) => {
@@ -132,7 +140,14 @@ export async function verifyRelease(
       }
       subsequentProtocolRequests += 1;
     }
-    return fetcher(request);
+    const response = await fetcher(request);
+    if (
+      response.headers.get(WORKER_VERSION_HEADER) !==
+      options.expectedWorkerVersionId
+    ) {
+      throw new ReleaseVerificationError();
+    }
+    return response;
   };
   const client = new Client({
     name: "tqccl-release-verifier",
@@ -198,6 +213,7 @@ export async function verifyRelease(
         }),
       }),
       400,
+      options.expectedWorkerVersionId,
     );
     for (const method of ["GET", "DELETE"]) {
       step(`stateless-${method.toLowerCase()}`);
@@ -208,6 +224,7 @@ export async function verifyRelease(
           headers: authHeaders,
         }),
         405,
+        options.expectedWorkerVersionId,
       );
     }
     step("connect");
@@ -376,6 +393,7 @@ export async function verifyRelease(
     step("complete");
     return {
       verified: true,
+      workerVersionId: options.expectedWorkerVersionId,
       releaseId: options.expectedReleaseId,
       workflowVersion: version.workflowVersion,
       protocolVersion: transport.protocolVersion,
@@ -404,6 +422,7 @@ export interface VerifyReleaseCliArguments {
   endpoint: URL;
   expectedReleaseId: string;
   expectedWorkflowBuildId: string;
+  expectedWorkerVersionId: string;
   fixturePath: string;
 }
 
@@ -411,11 +430,12 @@ export function parseVerifyReleaseArguments(
   args: readonly string[],
 ): VerifyReleaseCliArguments {
   if (
-    args.length !== 8 ||
+    args.length !== 10 ||
     args[0] !== "--endpoint" ||
     args[2] !== "--release-id" ||
     args[4] !== "--workflow-build-id" ||
-    args[6] !== "--fixture"
+    args[6] !== "--worker-version-id" ||
+    args[8] !== "--fixture"
   ) {
     throw new ReleaseVerificationError();
   }
@@ -424,7 +444,8 @@ export function parseVerifyReleaseArguments(
     !isSafeMcpEndpoint(endpoint) ||
     !/^sha256:[a-f0-9]{64}$/u.test(args[3]!) ||
     !/^build:sha256:[a-f0-9]{64}$/u.test(args[5]!) ||
-    args[7] === ""
+    !isWorkerVersionId(args[7]!) ||
+    args[9] === ""
   ) {
     throw new ReleaseVerificationError();
   }
@@ -432,7 +453,8 @@ export function parseVerifyReleaseArguments(
     endpoint,
     expectedReleaseId: args[3]!,
     expectedWorkflowBuildId: args[5]!,
-    fixturePath: resolve(args[7]!),
+    expectedWorkerVersionId: args[7]!,
+    fixturePath: resolve(args[9]!),
   };
 }
 

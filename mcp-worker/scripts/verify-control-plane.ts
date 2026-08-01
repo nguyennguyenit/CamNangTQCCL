@@ -2,12 +2,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
-const CONTROL_IDS = [
-  "edge-mcp-rate-limit",
-  "release-bucket-lock",
-  "release-bucket-events",
-  "pointer-bucket-events",
-] as const;
+const CONTROL_IDS = ["edge-mcp-rate-limit"] as const;
 
 interface ControlRequirement {
   id: (typeof CONTROL_IDS)[number];
@@ -26,10 +21,7 @@ export interface ControlPlaneRequirements {
 }
 
 export interface LiveVerificationOptions {
-  accountId: string;
   zoneId: string;
-  releaseBucket: string;
-  pointerBucket: string;
   apiToken: string;
   fetcher?: typeof fetch;
 }
@@ -97,10 +89,7 @@ function substituteEndpoint(
   options: LiveVerificationOptions,
 ): string {
   const values: Record<string, string> = {
-    account_id: options.accountId,
     zone_id: options.zoneId,
-    release_bucket: options.releaseBucket,
-    pointer_bucket: options.pointerBucket,
   };
   return endpoint.replace(/\{([a-z_]+)\}/gu, (_, key: string) => {
     const value = values[key];
@@ -154,57 +143,6 @@ function verifyRate(
   });
 }
 
-function verifyLock(
-  result: Record<string, unknown>,
-  expected: Record<string, unknown>,
-): boolean {
-  if (!Array.isArray(result.rules)) return false;
-  return result.rules.some((value) => {
-    const rule = record(value);
-    const condition = record(rule?.condition);
-    return (
-      rule?.enabled === true &&
-      rule.prefix === expected.prefix &&
-      condition?.type === "Age" &&
-      typeof condition.maxAgeSeconds === "number" &&
-      typeof expected.minimumRetentionSeconds === "number" &&
-      condition.maxAgeSeconds >= expected.minimumRetentionSeconds
-    );
-  });
-}
-
-function verifyEvents(
-  result: Record<string, unknown>,
-  expected: Record<string, unknown>,
-): boolean {
-  const expectedActions = expected.actions;
-  if (!Array.isArray(result.queues) || !Array.isArray(expectedActions)) {
-    return false;
-  }
-  return result.queues.some((queueValue) => {
-    const queue = record(queueValue);
-    if (
-      typeof queue?.queueName !== "string" ||
-      typeof expected.queueNamePrefix !== "string" ||
-      !queue.queueName.startsWith(expected.queueNamePrefix) ||
-      !Array.isArray(queue.rules)
-    ) {
-      return false;
-    }
-    const observed = new Set<string>();
-    for (const ruleValue of queue.rules) {
-      const rule = record(ruleValue);
-      if (!Array.isArray(rule?.actions)) continue;
-      for (const action of rule.actions) {
-        if (typeof action === "string") observed.add(action);
-      }
-    }
-    return expectedActions.every(
-      (action) => typeof action === "string" && observed.has(action),
-    );
-  });
-}
-
 export async function verifyControlPlaneLive(
   input: unknown,
   options: LiveVerificationOptions,
@@ -215,12 +153,7 @@ export async function verifyControlPlaneLive(
   }
   for (const control of requirements.controls) {
     const result = await getResult(control.endpoint, options);
-    const verified =
-      control.id === "edge-mcp-rate-limit"
-        ? verifyRate(result, control.expected)
-        : control.id === "release-bucket-lock"
-          ? verifyLock(result, control.expected)
-          : verifyEvents(result, control.expected);
+    const verified = verifyRate(result, control.expected);
     if (!verified) {
       throw new Error(`Control ${control.id} không đạt trạng thái yêu cầu.`);
     }
@@ -239,10 +172,7 @@ async function main(): Promise<void> {
     validateControlPlaneRequirements(requirements);
     if (process.argv[2] === "--live") {
       await verifyControlPlaneLive(requirements, {
-        accountId: process.env["CLOUDFLARE_ACCOUNT_ID"] ?? "",
         zoneId: process.env["CLOUDFLARE_ZONE_ID"] ?? "",
-        releaseBucket: process.env["TQCCL_RELEASE_BUCKET_NAME"] ?? "",
-        pointerBucket: process.env["TQCCL_POINTER_BUCKET_NAME"] ?? "",
         apiToken: process.env["CLOUDFLARE_API_TOKEN"] ?? "",
       });
       process.stderr.write("Control plane live đã được xác minh.\n");

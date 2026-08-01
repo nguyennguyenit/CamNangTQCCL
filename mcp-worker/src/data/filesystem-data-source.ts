@@ -12,14 +12,10 @@ import {
   DataSourceError,
   createCachedDataSource,
   type DataSource,
-  type DataSourceLoadOptions,
-  type SnapshotCachePolicy,
 } from "./data-source.js";
 
 export interface FilesystemDataSourceOptions {
   dataRoot: string;
-  cachePolicy?: SnapshotCachePolicy;
-  monotonicNow?: () => number;
 }
 
 export class FilesystemDataSource implements DataSource {
@@ -63,12 +59,10 @@ export class FilesystemDataSource implements DataSource {
           }
         },
       },
-      options.cachePolicy,
-      options.monotonicNow,
     );
   }
 
-  load(options?: DataSourceLoadOptions) {
-    return this.#source.load(options);
+  load() {
+    return this.#source.load();
   }
 }

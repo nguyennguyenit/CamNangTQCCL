@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
@@ -91,6 +92,34 @@ const FORBIDDEN_CREDENTIALS = [
   "TQCCL_WORKER_DEPLOY_API_TOKEN",
 ] as const;
 
+const RETIRED_RELEASE_PATTERN =
+  /@aws-sdk\/client-s3|stage:data-release|activate:data-release|publish-data-release|r2-release-store|promotion-receipt|TQCCL_(?:RELEASE|POINTER)_BUCKET|TQCCL_R2_|npm\s+publish/iu;
+
+export function assertNoRetiredReleaseResidue(): void {
+  const roots = [
+    resolve(packageRoot, "src"),
+    resolve(packageRoot, "scripts"),
+    resolve(packageRoot, "infra"),
+    resolve(repositoryRoot, ".github/workflows"),
+  ];
+  const files = [
+    resolve(packageRoot, "package.json"),
+    resolve(packageRoot, "wrangler.jsonc"),
+    ...roots.flatMap((root) =>
+      readdirSync(root, { recursive: true, withFileTypes: true })
+        .filter((entry) => entry.isFile())
+        .map((entry) => resolve(entry.parentPath, entry.name)),
+    ),
+  ].filter((filename) => filename !== import.meta.filename);
+  if (
+    files.some((filename) =>
+      RETIRED_RELEASE_PATTERN.test(readFileSync(filename, "utf8")),
+    )
+  ) {
+    throw new Error("Repository còn release consumer đã retire.");
+  }
+}
+
 export function assertCredentialFreeEnvironment(
   environment: NodeJS.ProcessEnv,
 ): void {
@@ -131,6 +160,7 @@ export async function runRepositoryGate(options: {
 } = {}): Promise<void> {
   const environment = options.environment ?? process.env;
   assertCredentialFreeEnvironment(environment);
+  assertNoRetiredReleaseResidue();
   const runner = options.runner ?? runCommand;
   for (const command of REPOSITORY_GATE_COMMANDS) {
     await runner(command, environment);

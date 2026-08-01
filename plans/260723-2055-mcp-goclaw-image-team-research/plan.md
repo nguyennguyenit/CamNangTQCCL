@@ -7,7 +7,7 @@ effort: 22d
 issue: null
 branch: main
 tags: [feature, backend, api, infra, tdd]
-blockedBy: []
+blockedBy: [260731-0237-thay-r2-bng-worker-static-assets]
 blocks: []
 created: 2026-07-23
 ---
@@ -16,12 +16,12 @@ created: 2026-07-23
 
 ## Overview
 
-Build a separate `mcp-worker/` package with one deterministic research core, local filesystem source, immutable R2 Standard releases, CLI, stdio MCP, and stateless Cloudflare Streamable HTTP. Release data uses separate locked release and mutable pointer buckets so the stage/activate boundary matches capabilities Cloudflare can enforce. This repository owns only the MCP service and its operational documentation. GoClaw, Dewee, skills, image handling, grants, and channel orchestration are external consumers.
+Build a separate `mcp-worker/` package with one deterministic research core, local filesystem source, CLI, stdio MCP, and stateless Cloudflare Streamable HTTP. Phases 1–5 và local Phase 6 implementation đã hoàn tất. Quyết định ngày 2026-07-31 supersede R2 release path bằng code+data atomic Worker Static Assets trong `260731-0237-thay-r2-bng-worker-static-assets`; plan hiện block chờ migration và live evidence đó. This repository owns only the MCP service and its operational documentation. GoClaw, Dewee, skills, image handling, grants, and channel orchestration are external consumers.
 
 ## Scope Contract
 
 - **Mode:** HOLD. Deliver the accepted MCP service; no adjacent RAG, memory, crawler, image tool, mutation API, or consumer-platform implementation.
-- **In:** eight read-only tools, TypeScript CLI, stdio, authenticated remote MCP, local/R2 parity, Cloudflare/R2 release gates, MCP operations docs, and exactly one non-executable GoClaw skill handoff guide.
+- **In:** eight read-only tools, TypeScript CLI, stdio, authenticated remote MCP, filesystem/Worker Static Assets parity, atomic Worker version release gates, MCP operations docs, and exactly one non-executable GoClaw skill handoff guide.
 - **Out:** implementing or packaging a skill; modifying `.agents/skills/`; GoClaw/Dewee registration, configuration, grants, media, confirmation UI, channels, or canaries; raw image/base64/path in MCP; Vision Worker changes/Turnstile bypass; `worker/src/schema.ts` extraction; `coexist.json` scoring; Python CLI removal.
 - **Identity:** SP/CO IDs remain distinct; `familyId` is separate; combined slots are alternatives. Low-confidence or material ambiguity blocks recommendation until confirmed.
 - **Ranking:** `T0 > T0.5 > T1`; untiered excluded from meta mode by default and available only with explicit experimental opt-in.
@@ -35,7 +35,7 @@ external agent/skill -> ordered structured observations
  -> external agent records user confirmation -> confirmationBinding
  -> workflow-version-bound tqccl_* calls
  -> research handlers -> typed ES-domain adapters -> data snapshot
-local: filesystem -> CLI/stdio       remote: R2 manifest -> fresh server/request
+local: filesystem -> CLI/stdio       remote: Worker Static Assets -> fresh server/request
 ```
 
 - One handler set serves CLI and both MCP transports.
@@ -43,7 +43,7 @@ local: filesystem -> CLI/stdio       remote: R2 manifest -> fresh server/request
 - MCP verifies `confirmationBinding` against the exact canonical projection and workflow. The external agent—not MCP—is the trusted owner of evidence that the user actually confirmed it.
 - Remote HTTP uses a managed-client pre-shared bearer header, not MCP OAuth authorization. The service makes no OAuth-conformance claim; generic clients must support explicit custom headers or use a separately owned OAuth gateway.
 - Raw Web-standard `WebStandardStreamableHTTPServerTransport` tạo đường xử lý stateless với server/transport mới cho từng POST; chỉ validated snapshot/index cache được phép ở isolate scope.
-- R2 publication builds a clean-source, content-addressed release, conditionally writes immutable objects to a locked release bucket, verifies one exact candidate Worker version against current and candidate manifests, records an immutable promotion receipt, then ETag-CAS switches `current.json` in a separate pointer bucket. A failed live verification conditionally restores the prior pointer; local source synthesizes the same snapshot contract.
+- R2 publication design is superseded. The replacement plan builds a clean-source seven-file asset bundle, uploads one code+data Worker version, verifies the exact candidate before traffic, promotes it alone to 100%, and rolls back the whole prior version if live verification fails.
 - The service exposes already-prefixed `tqccl_*` names. Consumer-specific prefixing, credentials, grants, registration, and orchestration remain outside this repository.
 
 ## Phases and Dependencies
@@ -68,7 +68,7 @@ local: filesystem -> CLI/stdio       remote: R2 manifest -> fresh server/request
 - [x] Remote `/mcp` is TLS-only, bearer-protected on every method, request-scoped, bounded, redacted, and read-only.
 - [x] Tool discovery exposes exactly eight `tqccl_*` names and schemas through both MCP transports.
 - [x] Exactly one implementation artifact documents the future GoClaw skill contract; this repo neither builds nor configures that skill.
-- [ ] Immutable R2 release, receipt-bound promotion, current-security-compatible rollback, retention, control-plane evidence, and MCP deployment evidence are documented and verified independently of any consumer platform.
+- [ ] Worker Static Assets release, exact-version promotion, whole-version rollback, retained HTTP security controls, and MCP deployment evidence are documented and verified independently of any consumer platform through `260731-0237-thay-r2-bng-worker-static-assets`.
 
 ## Cross-Plan Dependencies
 
@@ -76,6 +76,7 @@ local: filesystem -> CLI/stdio       remote: R2 manifest -> fresh server/request
 - Reuse Astro’s root Node pin, Playwright configuration, `tests-e2e/`, build, dist, and E2E gates; do not create a second browser harness in `mcp-worker/`.
 - Astro documentation completes first; MCP Phase 6 then updates the same docs against the migrated source of truth.
 - `260723-1950-mcp-dual-transport` remains cancelled/superseded, not a dependency.
+- Blocking replacement: `260731-0237-thay-r2-bng-worker-static-assets` supersedes only Phase 6 R2 release/operations; Phases 1–5 remain authoritative.
 
 ## Unresolved Questions
 
@@ -106,13 +107,13 @@ Retained corrections include the Node ESM boundary, single ownership of normaliz
 - [x] Implementation creates exactly one GoClaw-related Markdown guide under `docs/` and no skill-package files.
 - [x] Astro owns and completes the root Node/browser harness before MCP Phase 1 begins.
 - [x] Phase 6 depends on MCP Phase 4, not the advisory GoClaw handoff; Phase 5 may run in parallel and remains required only for whole-plan completion.
-- [x] R2 privileges are described honestly: Cloudflare Worker bindings are write-capable, while two buckets, lock policy, credential separation, narrow reader interfaces, and import guards provide the planned boundary.
+- [x] Historical R2 privilege analysis remains evidence only; the accepted replacement removes R2 bindings and credentials after Static Assets parity passes.
 - [x] Workflow identity covers the verified transitive semantic closure; Phase 3 runtime schemas are the sole public authority reused by all transports.
 - [x] Collision-safe `releaseId`, not compact display `dataVersion`, owns workflow compatibility, confirmation, and cursor identity.
 - [x] `ConfirmationBinding` uses exactly `{ workflowVersion, normalizationDigest, canonicalProjectionVersion }`; it does not duplicate `workflowBuildId`.
 - [x] Static bearer is explicitly managed-client, non-OAuth authentication; OAuth discovery and authorization-server implementation remain outside accepted scope.
 - [x] Raw/source text remains tagged untrusted structured data and never enters fixed agent-facing fallback templates.
-- [x] Promotion is exact-version, receipt-bound, single-version, source-provenanced, and conditionally auto-rolled back; old-code rollback retains current security configuration.
+- [x] Historical receipt/pointer promotion is superseded by exact-version code+assets promotion and whole-version rollback in the blocking replacement plan.
 - [x] `/healthz` is no-I/O liveness, stale serving has a non-extendable deadline, and authenticated verification owns readiness.
 - [x] Account controls and token rotation have explicit artifacts, live evidence, expiry/transitions, managed-secret policy, and failure behavior.
 
@@ -183,3 +184,9 @@ Retained corrections include the Node ESM boundary, single ownership of normaliz
 - Coverage trở thành gate bắt buộc của `npm run check`: statements `89.08%`, branches `81.84%`, functions `95.37%`, lines `89.56%`; MCP `216/216`, workerd `2/2`.
 - SDK-level validation và protocol errors được đưa qua fixed safe envelope; integration test bằng official MCP Client chặn phản chiếu field, type, value và tool name.
 - Không thêm npm publishing, SSE, Docker hoặc companion skill; live production gates tiếp tục để mở.
+
+### Session 12 — 2026-07-31
+
+- User quyết định bỏ R2 sau khi xác nhận data thay đổi theo mùa khoảng ba tháng một lần; lợi ích publish data độc lập không còn đủ để biện minh cho hai bucket, pointer CAS, lock, receipt và credentials.
+- `260731-0237-thay-r2-bng-worker-static-assets` trở thành blocking replacement cho phần release/operations của Phase 6. Public MCP/GoClaw contract, tám tools và kết quả Phases 1–5 không đổi.
+- Kế hoạch này vẫn `in_progress`; không coi các live R2 gates cũ là việc phải chạy và không tự ý retire external R2 resources nếu chúng tồn tại.

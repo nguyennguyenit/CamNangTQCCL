@@ -73,9 +73,9 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
 - Public schema field phải có agent-facing description; tool description nêu khi dùng, kết quả và failure modes.
 - MCP error chỉ dùng safe allowlist theo code cho `message`/`nextAction`; không chuyển exception message, input, path hoặc upstream body ra transport.
 - `releaseId` đầy đủ sở hữu workflow/binding/cursor compatibility; không dùng compact `dataVersion` làm identity bảo mật.
-- HTTP giữ thứ tự guard rẻ → đắt, server/transport theo request và chỉ đọc R2 qua reader interface hẹp.
-- Release phải build từ Git tree sạch không credential, conditional-stage vào bucket đã lock và activate pointer bằng receipt + ETag CAS.
-- Bearer, R2 key và Cloudflare token chỉ đi qua managed environment; không argv/query/log/artifact. Gate phải từ chối file secret tạm chưa dọn.
+- HTTP giữ thứ tự guard rẻ → đắt, server/transport theo request và chỉ đọc allowlisted Worker Static Assets qua `DataSource`.
+- Release phải build deterministic manifest + sáu JSON từ exact Git tree sạch, verify candidate `0%` bằng Version Override, rồi promote duy nhất `100%` dưới expected-current guard.
+- Bearer và Cloudflare token chỉ đi qua managed environment ở đúng step tiêu thụ; không argv/query/log/artifact. Gate phải từ chối file secret tạm chưa dọn.
 - `npm run check` không được gọi live deploy. `npm run check:repository` phải bao phủ MCP, Astro/dist/E2E, JS, Python, Vision Worker và Wrangler dry-run.
 - MCP core coverage (`src/data`, `src/domain`, `src/research`) phải đạt statements/lines/functions 80% và branches 70%; không hạ threshold để né regression.
 

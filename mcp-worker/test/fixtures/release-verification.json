@@ -1,0 +1,27 @@
+{
+  "observations": [
+    {
+      "observationId": "release-hero-sp-tuan-uc",
+      "entityKind": "hero",
+      "canonicalId": "hero:sp-tuan-uc",
+      "familyId": "hero-family:tuan-uc",
+      "displayName": "SP Tuân Úc",
+      "evidence": {
+        "sourceScope": "currentTurnImage",
+        "batchId": "production-release"
+      }
+    },
+    {
+      "observationId": "release-tactic-thuyen-co-muon-ten",
+      "entityKind": "tactic",
+      "canonicalId": "tactic:thuyen-co-muon-ten",
+      "displayName": "Thuyền Cỏ Mượn Tên",
+      "evidence": {
+        "sourceScope": "currentTurnImage",
+        "batchId": "production-release"
+      }
+    }
+  ],
+  "teamId": "team-intro-0",
+  "tacticName": "Thuyền Cỏ Mượn Tên"
+}

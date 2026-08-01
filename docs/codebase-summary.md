@@ -42,16 +42,16 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | `js/roster-scan-state.js` | Serialize scan state, loại dữ liệu ảnh/token. |
 | `js/team-recommend-engine.js` | Chấm tier, kiểm tra conflict, greedy/DFS và tạo portfolio local. |
 | [`mcp-worker/src/data/artifact-contracts.ts`](../mcp-worker/src/data/artifact-contracts.ts) | Owner của canonical manifest/snapshot gồm đúng sáu artifact và full `releaseId`. |
-| [`mcp-worker/src/data/{filesystem-data-source,r2-data-source,data-source}.ts`](../mcp-worker/src/data/) | Nguồn FS/R2 read-only và cache snapshot atomic, stale có deadline tuyệt đối. |
+| [`mcp-worker/src/data/{filesystem-data-source,static-assets-data-source,data-source}.ts`](../mcp-worker/src/data/) | Nguồn filesystem/Static Assets read-only và cache snapshot immutable. |
 | `mcp-worker/src/domain/{contracts,canonical-state,normalization-service,recommendation-service}.ts` | Luồng pure normalize → xác nhận binding → recommend. |
 | [`mcp-worker/src/research/{research-contracts,research-handlers}.ts`](../mcp-worker/src/research/) | Schema authority và dispatch dùng chung cho tám research operation; kết quả có workflow identity/provenance/bounds. |
 | [`mcp-worker/src/cli.ts`](../mcp-worker/src/cli.ts), [`package.json`](../mcp-worker/package.json) | `npm run cli -- <lệnh>` gọi trực tiếp shared handler qua filesystem snapshot và xuất một JSON document. |
 | [`mcp-worker/src/mcp/`](../mcp-worker/src/mcp/) | Registry dùng đúng tám schema object Phase 3, annotation read-only, factory server mới và formatter non-echo. |
 | [`mcp-worker/src/stdio.ts`](../mcp-worker/src/stdio.ts) | Official stdio transport; stdout chỉ chứa MCP protocol, diagnostic vào stderr. |
-| [`mcp-worker/src/worker.ts`](../mcp-worker/src/worker.ts), [`wrangler.jsonc`](../mcp-worker/wrangler.jsonc) | Stateless Streamable HTTP `/mcp`, managed bearer, Origin/body/result/rate/in-flight guards và hai R2 binding. |
+| [`mcp-worker/src/worker.ts`](../mcp-worker/src/worker.ts), [`wrangler.jsonc`](../mcp-worker/wrangler.jsonc) | Stateless Streamable HTTP `/mcp`, managed bearer, guards, private Static Assets và version metadata. |
 | [`mcp-worker/src/security/`](../mcp-worker/src/security/) | Bearer rotation tối đa 15 phút, digest/fingerprint, request guards và isolate-local limits. |
 | [`mcp-worker/workflow-source-manifest.json`](../mcp-worker/workflow-source-manifest.json), [`generate-workflow-build.ts`](../mcp-worker/scripts/generate-workflow-build.ts) | Owner của semantic closure và `workflowBuildId`; `workflowVersion` ghép identity này với full `releaseId`. |
-| [`mcp-worker/scripts/`](../mcp-worker/scripts/) | Build/stage/activate release, R2 CAS adapter, live/control-plane verifier và repository gate credential-free. |
+| [`mcp-worker/scripts/`](../mcp-worker/scripts/) | Deterministic asset build/evidence, exact-version deployment controller, live/edge verifier và repository gate credential-free. |
 | `pipeline/build_json.py` | Build team, facet, Cùng Tồn, khai hoang từ HTML export. |
 | `pipeline/build_dict.py` | Crawl/cache/link và merge chiến pháp generic, build tướng/chiến pháp. |
 | `pipeline/build_books_dict.py` | Validate bảng map Hán→Việt với facet binh thư. |
@@ -88,9 +88,9 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 - `tests-js/`: Astro/dist/header contracts, filter, map, hero UI, mobile menu, tracker, roster state và recommend engine.
 - `tests-e2e/`: Chromium parity, storage, JSON failure, exposure local/routed HTTPS và mixed-content.
 - `worker/test/`: config, guard, model, rate-limit, scan modes, schema.
-- `mcp-worker/test/`: snapshot/FS/R2/cache, tám handler, CLI/stdio/HTTP parity, bearer/limits/protocol, release/CAS/rollback, verifier, import guard, workerd R2 và production-shaped budget.
+- `mcp-worker/test/`: snapshot/filesystem/Static Assets/cache, tám handler, CLI/stdio/HTTP parity, bearer/limits/protocol, ownership-safe release/rollback, verifier, import guard và production-shaped Workerd budget.
 
-Gate hiện được kiểm bằng script trong root, `worker/package.json` và [`mcp-worker/package.json`](../mcp-worker/package.json); lần xác minh Phase 4 trên Node `22.16.0`: MCP `167/167` (Node `165/165`, workerd `2/2`), root Node `133`, Python `82`, Vision Worker `53`.
+Gate hiện được kiểm bằng script trong root, `worker/package.json` và [`mcp-worker/package.json`](../mcp-worker/package.json). Kết quả có thời điểm của migration Worker Static Assets nằm trong [`implementation-verification.md`](../plans/260731-0237-thay-r2-bng-worker-static-assets/reports/implementation-verification.md); đây là bằng chứng local, không phải bằng chứng production.
 
 ## Điểm cần chú ý
 
@@ -98,7 +98,7 @@ Gate hiện được kiểm bằng script trong root, `worker/package.json` và 
 - `build_json.py` vẫn expect 50 Team PK và 12 Đô Úy; không tái tạo artifact hiện tại an toàn.
 - `facets.json` chậm hơn `teams.json` một team nhưng hiện không ảnh hưởng filter runtime.
 - `plans/` có thể chứa mô tả cũ; kiểm chứng bằng code, config và JSON commit.
-- Remote MCP bearer là pre-shared credential cho managed client, không phải OAuth access token. Production HTTP chỉ được bật khi Phase 6 xác minh live edge rate, bucket lock và R2 event controls.
+- Remote MCP bearer là pre-shared credential cho managed client, không phải OAuth access token. Production release chỉ tiếp tục khi live edge rate control, exact candidate identity và ownership-safe rollback gate đạt.
 
 ## Bước tiếp theo
 

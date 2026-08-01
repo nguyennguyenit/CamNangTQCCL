@@ -18,7 +18,11 @@ const fixtureRoot = fileURLToPath(
   new URL("../fixtures/release-snapshot", import.meta.url),
 );
 const bearer = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+const workerVersionId = "11111111-2222-4333-8444-555555555555";
 const env = {
+  CF_VERSION_METADATA: {
+    id: workerVersionId,
+  },
   TQCCL_MCP_BEARER_CURRENT: bearer,
   TQCCL_MCP_ALLOWED_ORIGINS: "",
   TQCCL_MCP_MAX_BODY_BYTES: "65536",
@@ -71,6 +75,8 @@ describe("verifyRelease", () => {
           "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           "--workflow-build-id",
           WORKFLOW_BUILD_ID,
+          "--worker-version-id",
+          workerVersionId,
           "--fixture",
           "/tmp/fixture.json",
         ]),
@@ -106,12 +112,12 @@ describe("verifyRelease", () => {
     const steps: string[] = [];
     const source = new FilesystemDataSource({ dataRoot: fixtureRoot });
     const snapshot = await source.load();
-    const loadOptions: unknown[] = [];
+    let loads = 0;
     const worker = createWorker({
       createDataSource: () => ({
-        load: async (options) => {
-          loadOptions.push(options);
-          return source.load(options);
+        load: async () => {
+          loads += 1;
+          return source.load();
         },
       }),
       now: () => Date.parse("2026-07-29T00:00:00.000Z"),
@@ -125,23 +131,19 @@ describe("verifyRelease", () => {
         bearer,
         expectedReleaseId: snapshot.releaseId,
         expectedWorkflowBuildId: WORKFLOW_BUILD_ID,
+        expectedWorkerVersionId: workerVersionId,
         fixture,
-        forceRefresh: true,
         fetcher,
         onStep: (step) => steps.push(step),
       });
       expect(result).toMatchObject({
         verified: true,
         releaseId: snapshot.releaseId,
+        workerVersionId,
         tools: 8,
         protocolVersion: "2025-11-25",
       });
-      expect(loadOptions.length).toBeGreaterThan(0);
-      expect(loadOptions).toEqual(
-        Array.from({ length: loadOptions.length }, () => ({
-          forceRefresh: true,
-        })),
-      );
+      expect(loads).toBeGreaterThan(0);
     } catch (error) {
       throw new Error(`Verifier trace: ${steps.slice(-5).join(" > ")}`, {
         cause: error,
@@ -159,6 +161,7 @@ describe("verifyRelease", () => {
         expectedReleaseId:
           "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         expectedWorkflowBuildId: WORKFLOW_BUILD_ID,
+        expectedWorkerVersionId: workerVersionId,
         fixture,
         fetcher: async () => new Response("private upstream body", { status: 500 }),
       });

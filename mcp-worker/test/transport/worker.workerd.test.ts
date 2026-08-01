@@ -1,7 +1,7 @@
 import { exports } from "cloudflare:workers";
-import { beforeAll, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
-import { seedFixtureR2 } from "../fixtures/seed-r2.workerd.js";
+import { WORKER_VERSION_HEADER } from "../../src/worker.js";
 
 const TOKEN = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
@@ -17,10 +17,8 @@ function rpcRequest(body: unknown): Request {
   });
 }
 
-beforeAll(seedFixtureR2);
-
 describe("Worker trong runtime workerd", () => {
-  it("khởi tạo MCP và đọc snapshot từ hai R2 binding", async () => {
+  it("khởi tạo MCP và đọc snapshot từ Static Assets binding", async () => {
     const initialized = await exports.default.fetch(
       rpcRequest({
         jsonrpc: "2.0",
@@ -34,6 +32,9 @@ describe("Worker trong runtime workerd", () => {
       }),
     );
     expect(initialized.status).toBe(200);
+    expect(initialized.headers.get(WORKER_VERSION_HEADER)).toMatch(
+      /^[a-f0-9-]{36}$/iu,
+    );
 
     const version = await exports.default.fetch(
       rpcRequest({
@@ -53,5 +54,29 @@ describe("Worker trong runtime workerd", () => {
     expect(body.result.structuredContent.releaseId).toMatch(
       /^sha256:[a-f0-9]{64}$/u,
     );
+  });
+
+  it("mọi public asset path đều 404 và không lộ version header", async () => {
+    for (const path of [
+      "/manifest.json",
+      "/teams.json",
+      "/data/teams.json",
+      "/unknown",
+    ]) {
+      for (const method of ["GET", "HEAD"]) {
+        for (const authorization of [undefined, `Bearer ${TOKEN}`]) {
+          const response = await exports.default.fetch(
+            new Request(`https://mcp.example${path}`, {
+              method,
+              ...(authorization === undefined
+                ? {}
+                : { headers: { Authorization: authorization } }),
+            }),
+          );
+          expect(response.status).toBe(404);
+          expect(response.headers.has(WORKER_VERSION_HEADER)).toBe(false);
+        }
+      }
+    }
   });
 });

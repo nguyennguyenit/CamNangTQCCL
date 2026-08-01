@@ -9,6 +9,7 @@ const accountId = "0123456789abcdef0123456789abcdef";
 const workerName = "tqccl-mcp";
 const priorVersionId = "11111111-2222-4333-8444-555555555555";
 const candidateVersionId = "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee";
+const runId = "github-123-1";
 
 function response(result: unknown, status = 200): Response {
   return Response.json(
@@ -18,6 +19,28 @@ function response(result: unknown, status = 200): Response {
 }
 
 describe("CloudflareDeploymentClient", () => {
+  it("phân biệt Worker chưa có deployment với lỗi API", async () => {
+    const noDeployment = new CloudflareDeploymentClient({
+      accountId,
+      workerName,
+      apiToken: "private-token",
+      runId,
+      fetcher: async () => response({ deployments: [] }),
+    });
+    await expect(noDeployment.readCurrentOptional()).resolves.toBeNull();
+
+    const apiFailure = new CloudflareDeploymentClient({
+      accountId,
+      workerName,
+      apiToken: "private-token",
+      runId,
+      fetcher: async () => response(null, 500),
+    });
+    await expect(apiFailure.readCurrentOptional()).rejects.toBeInstanceOf(
+      CloudflareDeploymentError,
+    );
+  });
+
   it("đọc deployment hiện tại và deploy đúng một version ở 100%", async () => {
     const fetcher = vi
       .fn<typeof fetch>()
@@ -38,6 +61,7 @@ describe("CloudflareDeploymentClient", () => {
         response({
           id: "deployment-candidate",
           strategy: "percentage",
+          annotations: { "workers/message": `TQCCL_RUN:${runId}:promote` },
           versions: [
             { version_id: candidateVersionId, percentage: 100 },
           ],
@@ -47,6 +71,7 @@ describe("CloudflareDeploymentClient", () => {
       accountId,
       workerName,
       apiToken: "private-token",
+      runId,
       fetcher,
     });
 
@@ -55,12 +80,13 @@ describe("CloudflareDeploymentClient", () => {
 
     expect(prior).toEqual({
       deploymentId: "deployment-prior",
+      ownerTag: null,
       versions: [{ versionId: priorVersionId, percentage: 100 }],
     });
     expect(deployed).toEqual({
-      versionId: candidateVersionId,
-      percentage: 100,
-      activeVersions: 1,
+      deploymentId: "deployment-candidate",
+      ownerTag: runId,
+      versions: [{ versionId: candidateVersionId, percentage: 100 }],
     });
     const deployRequest = fetcher.mock.calls[1]![0] as Request;
     expect(deployRequest.method).toBe("POST");
@@ -74,8 +100,66 @@ describe("CloudflareDeploymentClient", () => {
       strategy: "percentage",
       versions: [{ version_id: candidateVersionId, percentage: 100 }],
       annotations: {
-        "workers/message": "Activate immutable TQCCL MCP release",
+        "workers/message": `TQCCL_RUN:${runId}:promote`,
         "workers/triggered_by": "deployment",
+      },
+    });
+  });
+
+  it("tạo deployment smoke prior 100% và candidate 0%", async () => {
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      response({
+        id: "deployment-smoke",
+        strategy: "percentage",
+        annotations: { "workers/message": `TQCCL_RUN:${runId}:smoke` },
+        versions: [
+          { version_id: priorVersionId, percentage: 100 },
+          { version_id: candidateVersionId, percentage: 0 },
+        ],
+      }),
+    );
+    const client = new CloudflareDeploymentClient({
+      accountId,
+      workerName,
+      apiToken: "private-token",
+      runId,
+      fetcher,
+    });
+
+    await expect(
+      client.deployTest(priorVersionId, candidateVersionId),
+    ).resolves.toEqual({
+      deploymentId: "deployment-smoke",
+      ownerTag: runId,
+      versions: [
+        { versionId: priorVersionId, percentage: 100 },
+        { versionId: candidateVersionId, percentage: 0 },
+      ],
+    });
+  });
+
+  it("gắn annotation bootstrap riêng cho deployment đầu tiên", async () => {
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValueOnce(
+      response({
+        id: "deployment-bootstrap",
+        strategy: "percentage",
+        annotations: { "workers/message": `TQCCL_RUN:${runId}:bootstrap` },
+        versions: [{ version_id: candidateVersionId, percentage: 100 }],
+      }),
+    );
+    const client = new CloudflareDeploymentClient({
+      accountId,
+      workerName,
+      apiToken: "private-token",
+      runId,
+      fetcher,
+    });
+
+    await client.deployExclusive(candidateVersionId, "bootstrap");
+    const request = fetcher.mock.calls[0]![0] as Request;
+    expect(await request.json()).toMatchObject({
+      annotations: {
+        "workers/message": `TQCCL_RUN:${runId}:bootstrap`,
       },
     });
   });
@@ -85,6 +169,7 @@ describe("CloudflareDeploymentClient", () => {
       response({
         id: "deployment-split",
         strategy: "percentage",
+        annotations: { "workers/message": `TQCCL_RUN:${runId}:promote` },
         versions: [
           { version_id: priorVersionId, percentage: 50 },
           { version_id: candidateVersionId, percentage: 50 },
@@ -95,6 +180,7 @@ describe("CloudflareDeploymentClient", () => {
       accountId,
       workerName,
       apiToken: "private-token",
+      runId,
       fetcher,
     });
 
@@ -109,6 +195,7 @@ describe("CloudflareDeploymentClient", () => {
       accountId,
       workerName,
       apiToken: token,
+      runId,
       fetcher: async () =>
         new Response(`upstream includes ${token}`, { status: 500 }),
     });

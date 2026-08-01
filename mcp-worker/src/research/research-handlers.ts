@@ -49,7 +49,6 @@ export class ResearchHandlerError extends Error {
 
 export interface ResearchHandlerDependencies {
   dataSource: DataSource;
-  forceRefresh?: boolean;
 }
 
 export interface ResearchHandlers {
@@ -270,11 +269,7 @@ export function createResearchHandlers(
   async function context(): Promise<RequestContext> {
     let snapshot: DataSnapshot;
     try {
-      snapshot = await dependencies.dataSource.load(
-        dependencies.forceRefresh === true
-          ? { forceRefresh: true }
-          : undefined,
-      );
+      snapshot = await dependencies.dataSource.load();
     } catch {
       throw new ResearchHandlerError(
         "DATA_UNAVAILABLE",
