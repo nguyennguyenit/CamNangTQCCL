@@ -25,6 +25,34 @@ export interface ReleaseVerificationFixture {
   tacticName: string;
 }
 
+export type ReleaseVerificationStep =
+  | "connect"
+  | "worker-version-missing"
+  | "worker-version-mismatch"
+  | "protocol"
+  | "catalog"
+  | "data-version"
+  | "identity-shape"
+  | "verified"
+  | "health"
+  | "missing-auth"
+  | "wrong-auth"
+  | "invalid-protocol"
+  | "stateless-get"
+  | "stateless-delete"
+  | "version"
+  | "search-page"
+  | "search-injection"
+  | "get-team"
+  | "normalize"
+  | "match-team"
+  | "suggest-replacements"
+  | "recommend-coexist"
+  | "recommend-team"
+  | "reject-tampered-binding"
+  | "reject-tampered-binding-response"
+  | "complete";
+
 export interface VerifyReleaseOptions {
   endpoint: URL;
   bearer: string;
@@ -33,7 +61,7 @@ export interface VerifyReleaseOptions {
   expectedWorkerVersionId: string;
   fixture: ReleaseVerificationFixture;
   fetcher?: typeof fetch;
-  onStep?: (step: string) => void;
+  onStep?: (step: ReleaseVerificationStep) => void;
 }
 
 export class ReleaseVerificationError extends Error {
@@ -104,6 +132,7 @@ export async function readReleaseIdentity(options: {
   bearer: string;
   expectedWorkerVersionId: string;
   fetcher?: typeof fetch;
+  onStep?: (step: ReleaseVerificationStep) => void;
 }): Promise<ReleaseIdentity> {
   if (
     !isSafeMcpEndpoint(options.endpoint) ||
@@ -113,12 +142,16 @@ export async function readReleaseIdentity(options: {
     throw new ReleaseVerificationError();
   }
   const fetcher = options.fetcher ?? fetch;
+  const step = (name: ReleaseVerificationStep) => options.onStep?.(name);
   const versionCheckingFetcher: typeof fetch = async (input, init) => {
     const response = await fetcher(new Request(input, init));
-    if (
-      response.headers.get(WORKER_VERSION_HEADER) !==
-      options.expectedWorkerVersionId
-    ) {
+    const observedVersion = response.headers.get(WORKER_VERSION_HEADER);
+    if (observedVersion !== options.expectedWorkerVersionId) {
+      step(
+        observedVersion === null
+          ? "worker-version-missing"
+          : "worker-version-mismatch",
+      );
       throw new ReleaseVerificationError();
     }
     return response;
@@ -133,21 +166,26 @@ export async function readReleaseIdentity(options: {
   });
   let connected = false;
   try {
+    step("connect");
     await client.connect(transport as unknown as Transport);
     connected = true;
+    step("protocol");
     if (transport.protocolVersion !== "2025-11-25") {
       throw new ReleaseVerificationError();
     }
+    step("catalog");
     const catalog = await client.listTools();
     if (!matchesExpectedToolCatalog(catalog.tools)) {
       throw new ReleaseVerificationError();
     }
+    step("data-version");
     const result = await client.callTool({
       name: "tqccl_get_data_version",
       arguments: {},
     });
     if (result.isError === true) throw new ReleaseVerificationError();
     const version = record(result.structuredContent);
+    step("identity-shape");
     if (
       typeof version.releaseId !== "string" ||
       !/^sha256:[a-f0-9]{64}$/u.test(version.releaseId) ||
@@ -161,6 +199,7 @@ export async function readReleaseIdentity(options: {
     const snapshotDigest = `sha256:${createHash("sha256")
       .update(stableStringify(version))
       .digest("hex")}`;
+    step("verified");
     return {
       workerVersionId: options.expectedWorkerVersionId,
       releaseId: version.releaseId,
@@ -211,6 +250,7 @@ export async function verifyRelease(
     throw new ReleaseVerificationError();
   }
   const authHeaders = { Authorization: `Bearer ${options.bearer}` };
+  const step = (name: ReleaseVerificationStep) => options.onStep?.(name);
   let negotiatedProtocol: string | undefined;
   let subsequentProtocolRequests = 0;
   const protocolCheckingFetcher: typeof fetch = async (input, init) => {
@@ -224,10 +264,13 @@ export async function verifyRelease(
       subsequentProtocolRequests += 1;
     }
     const response = await fetcher(request);
-    if (
-      response.headers.get(WORKER_VERSION_HEADER) !==
-      options.expectedWorkerVersionId
-    ) {
+    const observedVersion = response.headers.get(WORKER_VERSION_HEADER);
+    if (observedVersion !== options.expectedWorkerVersionId) {
+      step(
+        observedVersion === null
+          ? "worker-version-missing"
+          : "worker-version-mismatch",
+      );
       throw new ReleaseVerificationError();
     }
     return response;
@@ -242,7 +285,6 @@ export async function verifyRelease(
   });
   let connected = false;
   try {
-    const step = (name: string) => options.onStep?.(name);
     const healthUrl = new URL("/healthz", options.endpoint);
     step("health");
     await requireStatus(fetcher, new Request(healthUrl), 200);
@@ -298,8 +340,11 @@ export async function verifyRelease(
       400,
       options.expectedWorkerVersionId,
     );
-    for (const method of ["GET", "DELETE"]) {
-      step(`stateless-${method.toLowerCase()}`);
+    for (const [method, methodStep] of [
+      ["GET", "stateless-get"],
+      ["DELETE", "stateless-delete"],
+    ] as const) {
+      step(methodStep);
       await requireStatus(
         fetcher,
         new Request(options.endpoint, {
@@ -482,19 +527,7 @@ export async function verifyRelease(
       protocolVersion: transport.protocolVersion,
       tools: 8,
     };
-  } catch (error) {
-    const errorCode =
-      typeof error === "object" &&
-      error !== null &&
-      "code" in error &&
-      typeof error.code === "number"
-        ? `:${error.code}`
-        : "";
-    options.onStep?.(
-      error instanceof Error
-        ? `failed:${error.name}${errorCode}`
-        : "failed:unknown",
-    );
+  } catch {
     throw new ReleaseVerificationError();
   } finally {
     if (connected) await client.close().catch(() => undefined);

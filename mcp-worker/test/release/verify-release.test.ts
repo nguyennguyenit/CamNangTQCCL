@@ -10,6 +10,7 @@ import {
   matchesExpectedToolCatalog,
   parseVerifyReleaseArguments,
   readReleaseIdentity,
+  ReleaseVerificationError,
   verifyRelease,
   type ReleaseVerificationFixture,
 } from "../../scripts/verify-release.js";
@@ -161,11 +162,13 @@ describe("verifyRelease", () => {
     const fetcher: typeof fetch = async (input, init) =>
       worker.fetch(new Request(input, init), env);
 
+    const steps: string[] = [];
     const first = await readReleaseIdentity({
       endpoint: new URL("https://mcp.example/mcp"),
       bearer,
       expectedWorkerVersionId: workerVersionId,
       fetcher,
+      onStep: (step) => steps.push(step),
     });
     const second = await readReleaseIdentity({
       endpoint: new URL("https://mcp.example/mcp"),
@@ -177,6 +180,24 @@ describe("verifyRelease", () => {
     expect(second).toEqual(first);
     expect(first.snapshotDigest).toMatch(/^sha256:[a-f0-9]{64}$/u);
     expect(first.workflowVersion).toContain(first.releaseId);
+    expect(steps).toContain("protocol");
+    expect(steps).toContain("catalog");
+    expect(steps).toContain("data-version");
+    expect(steps.at(-1)).toBe("verified");
+  });
+
+  it("ghi stage an toàn khi runtime Worker version không khớp", async () => {
+    const steps: string[] = [];
+    await expect(
+      readReleaseIdentity({
+        endpoint: new URL("https://mcp.example/mcp"),
+        bearer,
+        expectedWorkerVersionId: workerVersionId,
+        fetcher: async () => new Response(null, { status: 200 }),
+        onStep: (step) => steps.push(step),
+      }),
+    ).rejects.toBeInstanceOf(ReleaseVerificationError);
+    expect(steps.at(-1)).toBe("worker-version-missing");
   });
 
   it("không phản chiếu bearer khi xác minh thất bại", async () => {

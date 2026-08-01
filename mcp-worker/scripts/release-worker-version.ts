@@ -8,6 +8,7 @@ import {
   parseReleaseVerificationFixture,
   readReleaseIdentity,
   verifyRelease,
+  type ReleaseVerificationStep,
 } from "./verify-release.js";
 import {
   releaseWorkerVersion,
@@ -17,6 +18,13 @@ import { parseWorkerReleaseEvidence } from "../src/release/worker-release-eviden
 import { isWorkerVersionId } from "../src/transport/worker-version-header.js";
 
 const OVERRIDE_HEADER = "Cloudflare-Workers-Version-Overrides";
+
+type ReleaseFailureStage =
+  | "initializing"
+  | `release:${ReleaseVerificationStep}`
+  | `rollback-prior:${ReleaseVerificationStep | "starting"}`
+  | `rollback-observed:${ReleaseVerificationStep | "starting"}`
+  | "rollback-comparison";
 
 function required(name: string): string {
   const value = process.env[name];
@@ -39,6 +47,7 @@ function overrideFetcher(
 async function main(): Promise<void> {
   const states: Record<string, unknown> = {};
   let status = "failed";
+  let failureStage: ReleaseFailureStage = "initializing";
   const deploymentEvidencePath = process.env["TQCCL_DEPLOYMENT_EVIDENCE_PATH"];
   const candidateArgument = process.argv[2] ?? null;
   try {
@@ -67,6 +76,9 @@ async function main(): Promise<void> {
         expectedWorkflowBuildId: evidence.workflowBuildId,
         expectedWorkerVersionId: versionId,
         fixture,
+        onStep: (step) => {
+          failureStage = `release:${step}`;
+        },
         ...(fetcher === undefined ? {} : { fetcher }),
       }).then(() => undefined);
     const deployment = new CloudflareDeploymentClient({
@@ -112,19 +124,28 @@ async function main(): Promise<void> {
                   prepareRollbackVerification: async (
                     priorVersionId: string,
                   ) => {
+                    failureStage = "rollback-prior:starting";
                     const expected = await readReleaseIdentity({
                       endpoint,
                       bearer,
                       expectedWorkerVersionId: priorVersionId,
                       fetcher: pacedFetcher,
+                      onStep: (step) => {
+                        failureStage = `rollback-prior:${step}`;
+                      },
                     });
                     return async () => {
+                      failureStage = "rollback-observed:starting";
                       const observed = await readReleaseIdentity({
                         endpoint,
                         bearer,
                         expectedWorkerVersionId: priorVersionId,
                         fetcher: pacedFetcher,
+                        onStep: (step) => {
+                          failureStage = `rollback-observed:${step}`;
+                        },
                       });
+                      failureStage = "rollback-comparison";
                       if (
                         observed.releaseId !== expected.releaseId ||
                         observed.workflowVersion !== expected.workflowVersion ||
@@ -155,7 +176,7 @@ async function main(): Promise<void> {
     if (deploymentEvidencePath !== undefined) {
       await writeFile(
         deploymentEvidencePath,
-        `${JSON.stringify({ schemaVersion: 1, status, candidateVersionId: candidateArgument, states })}\n`,
+        `${JSON.stringify({ schemaVersion: 1, status, failureStage, candidateVersionId: candidateArgument, states })}\n`,
         { flag: "wx" },
       ).catch(() => undefined);
     }
