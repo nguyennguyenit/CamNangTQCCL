@@ -91,7 +91,7 @@ afterAll(async () => {
 });
 
 describe("parity của tám công cụ qua stdio và HTTP", () => {
-  it("trả structuredContent giống handler dùng chung cho mọi success case", async () => {
+  it("trả content fallback và structuredContent cho mọi success case", async () => {
     const handlers = createResearchHandlers({
       dataSource: new FilesystemDataSource({ dataRoot: fixtureRoot }),
     });
@@ -172,6 +172,14 @@ describe("parity của tám công cụ qua stdio và HTTP", () => {
       ]);
       expect(stdio.isError).not.toBe(true);
       expect(http.isError).not.toBe(true);
+      const expectedContent = [
+        {
+          type: "text",
+          text: `Công cụ ${name} đã hoàn tất; xem structuredContent để đọc kết quả.`,
+        },
+      ];
+      expect(stdio.content).toEqual(expectedContent);
+      expect(http.content).toEqual(expectedContent);
       expect(stdio.structuredContent).toEqual(expected);
       expect(http.structuredContent).toEqual(expected);
     }
@@ -191,6 +199,23 @@ describe("parity của tám công cụ qua stdio và HTTP", () => {
       expect(JSON.stringify(stdio)).not.toContain(privateValue);
       expect(JSON.stringify(http)).not.toContain(privateValue);
       expect(stdio.content).toEqual(http.content);
+      expect(stdio.content).toEqual([
+        {
+          type: "text",
+          text:
+            "TQCCL_ERROR:INVALID_REQUEST. Yêu cầu không hợp lệ. " +
+            "Kiểm tra input theo schema công cụ rồi thử lại.",
+        },
+      ]);
+      expect(stdio.structuredContent).toEqual(http.structuredContent);
+      expect(stdio.structuredContent).toEqual({
+        error: {
+          code: "INVALID_REQUEST",
+          message: "Yêu cầu không hợp lệ.",
+          nextAction: "Kiểm tra input theo schema công cụ rồi thử lại.",
+          retryable: false,
+        },
+      });
     }
   });
 });
