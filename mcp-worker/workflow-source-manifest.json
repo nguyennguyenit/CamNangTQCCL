@@ -25,7 +25,8 @@
     "mcp-worker/src/domain/normalization-service.ts",
     "mcp-worker/src/domain/recommendation-service.ts",
     "mcp-worker/src/research/research-contracts.ts",
-    "mcp-worker/src/research/research-handlers.ts"
+    "mcp-worker/src/research/research-handlers.ts",
+    "mcp-worker/src/research/validation-fields.ts"
   ],
   "buildInputs": [
     ".node-version",

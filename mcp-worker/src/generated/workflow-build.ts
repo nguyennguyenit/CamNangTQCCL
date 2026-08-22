@@ -1,5 +1,5 @@
 // Tệp được sinh bởi scripts/generate-workflow-build.ts. Không sửa thủ công.
-export const WORKFLOW_BUILD_ID = "build:sha256b64:Y4_R9VLW8IyiCqKBCYS-0m2Kut5rQJVf4afxG4a8owg" as const;
+export const WORKFLOW_BUILD_ID = "build:sha256b64:CW7zIsLU_8H7MpjlxwhI8MnwrOfJ_6oPllu1vgmyjHE" as const;
 export const WORKFLOW_SEMANTIC_FILES = [
   "js/analyze-map.js",
   "js/filters.js",
@@ -20,7 +20,8 @@ export const WORKFLOW_SEMANTIC_FILES = [
   "mcp-worker/src/domain/normalization-service.ts",
   "mcp-worker/src/domain/recommendation-service.ts",
   "mcp-worker/src/research/research-contracts.ts",
-  "mcp-worker/src/research/research-handlers.ts"
+  "mcp-worker/src/research/research-handlers.ts",
+  "mcp-worker/src/research/validation-fields.ts"
 ] as const;
 export const WORKFLOW_BUILD_INPUTS = [
   ".node-version",

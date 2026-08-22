@@ -14,6 +14,10 @@ import { WORKFLOW_BUILD_ID } from "../generated/workflow-build.js";
 import type { DataSnapshot } from "../data/artifact-contracts.js";
 import type { DataSource } from "../data/data-source.js";
 import {
+  invalidRequestFields,
+  withFieldNames,
+} from "./validation-fields.js";
+import {
   buildSnapshotIndex,
   type SearchKind,
   type SnapshotIndex,
@@ -51,29 +55,6 @@ export class ResearchHandlerError extends Error {
     super(message);
     this.name = "ResearchHandlerError";
   }
-}
-
-/** Số field tối đa nêu trong một lỗi, để response không phình khi input sai hàng loạt. */
-const MAX_REPORTED_FIELDS = 5;
-
-/** `["heroes", 0, "tacticIds"]` -> `heroes[0].tacticIds`. */
-function formatIssuePath(path: readonly PropertyKey[]): string {
-  return path.reduce<string>((rendered, segment) => {
-    if (typeof segment === "number") return `${rendered}[${segment}]`;
-    const key = String(segment);
-    return rendered === "" ? key : `${rendered}.${key}`;
-  }, "");
-}
-
-/** Tên field duy nhất, giữ thứ tự zod báo cáo, chặn trần. */
-function invalidRequestFields(error: ZodError): string[] {
-  const fields = new Set<string>();
-  for (const issue of error.issues) {
-    const rendered = formatIssuePath(issue.path);
-    if (rendered !== "") fields.add(rendered);
-    if (fields.size >= MAX_REPORTED_FIELDS) break;
-  }
-  return [...fields];
 }
 
 export interface ResearchHandlerDependencies {
@@ -334,9 +315,7 @@ export function createResearchHandlers(
         const fields = invalidRequestFields(error);
         throw new ResearchHandlerError(
           "INVALID_REQUEST",
-          fields.length === 0
-            ? publicMessage("INVALID_REQUEST")
-            : `${publicMessage("INVALID_REQUEST")} Trường sai: ${fields.join(", ")}.`,
+          withFieldNames(publicMessage("INVALID_REQUEST"), fields),
           false,
           fields,
         );

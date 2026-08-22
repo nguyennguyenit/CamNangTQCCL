@@ -270,7 +270,7 @@ describe("registry công cụ MCP", () => {
       structuredContent: {
         error: {
           code: "INVALID_REQUEST",
-          message: "Yêu cầu không hợp lệ.",
+          message: "Yêu cầu không hợp lệ. Trường sai: query.",
           nextAction: "Kiểm tra input theo schema công cụ rồi thử lại.",
           retryable: false,
         },
@@ -279,6 +279,60 @@ describe("registry công cụ MCP", () => {
     expect(JSON.stringify(result)).not.toContain("TOP_SECRET_TOKEN");
     expect(JSON.stringify(result)).not.toContain("secret");
     expect(JSON.stringify(result)).not.toContain("expected string");
+  });
+
+  it("nêu field sai khi SDK từ chối input trước handler", async () => {
+    const handlers = createResearchHandlers({
+      dataSource: new FilesystemDataSource({ dataRoot: fixtureRoot }),
+    });
+    const { client } = await connect(handlers);
+
+    const result = await client.callTool({
+      name: "tqccl_search",
+      arguments: { query: "x", limit: "abc" },
+    });
+    const document = result.structuredContent as {
+      error: { code: string; message: string; fields?: string[] };
+    };
+
+    expect(document.error.code).toBe("INVALID_REQUEST");
+    expect(document.error.fields).toEqual(["limit"]);
+    expect(document.error.message).toContain("limit");
+  });
+
+  it("nêu field lồng nhau khi SDK từ chối input trước handler", async () => {
+    const handlers = createResearchHandlers({
+      dataSource: new FilesystemDataSource({ dataRoot: fixtureRoot }),
+    });
+    const { client } = await connect(handlers);
+
+    const result = await client.callTool({
+      name: "tqccl_match_team",
+      arguments: {
+        expectedWorkflowVersion: "workflow:whatever",
+        heroes: [{ canonicalId: "hero:tuong-a", tacticIds: "khong-phai-mang" }],
+      },
+    });
+    const document = result.structuredContent as {
+      error: { fields?: string[] };
+    };
+
+    expect(document.error.fields).toContain("heroes[0].tacticIds");
+  });
+
+  it("không rò giá trị hay khoá lạ qua danh sách field", async () => {
+    const handlers = createResearchHandlers({
+      dataSource: new FilesystemDataSource({ dataRoot: fixtureRoot }),
+    });
+    const { client } = await connect(handlers);
+
+    const result = await client.callTool({
+      name: "tqccl_search",
+      arguments: { query: 123, secret: "TOP_SECRET_TOKEN" },
+    });
+
+    expect(JSON.stringify(result)).not.toContain("TOP_SECRET_TOKEN");
+    expect(JSON.stringify(result)).not.toContain("secret");
   });
 
   it("làm sạch lỗi SDK không thuộc validation", async () => {
