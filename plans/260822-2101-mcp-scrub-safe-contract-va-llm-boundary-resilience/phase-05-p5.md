@@ -42,7 +42,7 @@ Hai test là **neo bắt buộc xanh**, đỏ là dấu hiệu sai thiết kế 
 2. `npm run typecheck && npm run typecheck:worker`.
 3. `npm run check:workflow-build` — file generated phải khớp, không diff.
 4. `npm run test:worker` — cả 2 config.
-5. `npm run verify:release` và `npm run build:worker-assets` — xác nhận `releaseId` vẫn `sha256:<64hex>` và integrity check không đổi.
+5. Chạy test `test/release/verify-release.test.ts` và `npm run build:worker-assets` — xác nhận `releaseId` vẫn `sha256:<64hex>` và integrity check không đổi. Chỉ chạy `npm run verify:release` khi có endpoint và bearer live.
 6. `npm run check` — chạy trọn chuỗi.
 7. Black-box CLI, ghi lại output làm bằng chứng:
    - `version` → `workflowVersion` không chứa hex ≥64
@@ -55,7 +55,7 @@ Hai test là **neo bắt buộc xanh**, đỏ là dấu hiệu sai thiết kế 
 
 - [x] `npm run check` exit 0
 - [x] `npm run test:worker` xanh cả 2 config
-- [x] `verify:release` xanh, `releaseId` vẫn hex 64
+- [x] Logic `verify:release` xanh qua test, `releaseId` vẫn hex 64; lệnh live chưa chạy vì cần endpoint và bearer
 - [x] 4 lệnh CLI black-box cho đúng kết quả kỳ vọng
 - [x] Guard test Phase 1 vẫn xanh sau khi mọi phase đã merge
 - [x] Không test nào bị sửa để cho qua mà không có lý do ghi trong commit

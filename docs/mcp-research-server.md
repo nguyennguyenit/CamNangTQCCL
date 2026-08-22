@@ -121,7 +121,7 @@ TQCCL_MCP_BEARER_CURRENT='<managed value>' \
 npm run verify:release -- \
   --endpoint https://mcp.tqccl.com/mcp \
   --release-id sha256:<64-hex> \
-  --workflow-build-id build:sha256:<64-hex> \
+  --workflow-build-id build:sha256b64:<43-base64url> \
   --worker-version-id <worker-version-uuid> \
   --fixture test/fixtures/release-verification.json
 ```

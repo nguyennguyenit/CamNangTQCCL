@@ -9,10 +9,13 @@ import { canonicalDictionaryId } from "./entity-identity.js";
 
 export type SearchKind = "hero" | "tactic" | "team" | "book";
 
+const MAX_MATCHED_TERM_LENGTH = 256;
+
 /**
- * Một chuỗi có thể tìm được, giữ cả bản nguyên văn lẫn bản đã chuẩn hoá. Bản
- * chuẩn hoá để so khớp; bản nguyên văn để nói cho người đọc biết vì sao khớp —
- * "Hoàng Quan Thương" dễ hiểu hơn nhiều so với "hoang quan thuong".
+ * Một chuỗi có thể tìm được, giữ cả bản trình bày lẫn bản đã chuẩn hoá. Bản
+ * chuẩn hoá đầy đủ để so khớp; bản trình bày được giới hạn theo output contract
+ * để nói cho người đọc biết vì sao khớp — "Hoàng Quan Thương" dễ hiểu hơn
+ * nhiều so với "hoang quan thuong".
  */
 export interface SearchTerm {
   raw: string;
@@ -72,7 +75,10 @@ function searchTerms(values: readonly unknown[]): SearchTerm[] {
     if (typeof value !== "string") continue;
     const normalized = normalizeText(value);
     if (!normalized || terms.has(normalized)) continue;
-    terms.set(normalized, { raw: value.trim(), normalized });
+    terms.set(normalized, {
+      raw: value.trim().slice(0, MAX_MATCHED_TERM_LENGTH),
+      normalized,
+    });
   }
   return [...terms.values()];
 }

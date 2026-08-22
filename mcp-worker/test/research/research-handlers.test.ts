@@ -715,4 +715,34 @@ describe("tqccl_search explains why a result matched", () => {
       RESEARCH_CONTRACTS.tqccl_search.output.parse(result),
     ).not.toThrow();
   });
+
+  it("bounds a long matched term without turning a valid search into an internal error", async () => {
+    const base = await fixtureSource().load();
+    const longNickname = `Needle ${"x".repeat(300)}`;
+    const source: DataSource = {
+      async load() {
+        return {
+          ...base,
+          artifacts: {
+            ...base.artifacts,
+            teams: [
+              {
+                ...base.artifacts.teams[0],
+                nickname: longNickname,
+              },
+            ],
+          },
+        };
+      },
+    };
+    const result = await createResearchHandlers({ dataSource: source }).call(
+      "tqccl_search",
+      { query: "Needle", kinds: ["team"], limit: 1 },
+    );
+
+    expect(result.items[0]?.matchedTerm).toBe(longNickname.slice(0, 256));
+    expect(() =>
+      RESEARCH_CONTRACTS.tqccl_search.output.parse(result),
+    ).not.toThrow();
+  });
 });

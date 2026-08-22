@@ -78,7 +78,7 @@ Phase 2/3/4 độc lập về logic với Phase 1 nhưng cùng đụng `research
 ## Success Criteria
 
 - [x] Guard test: không response nào của 8 tool chứa chuỗi khớp `[a-fA-F0-9]{64,}` ở trường client-echo
-- [x] `releaseId` vẫn là `sha256:<64hex>` đầy đủ; `verify:release` và `build:worker-assets` xanh
+- [x] `releaseId` vẫn là `sha256:<64hex>` đầy đủ; logic `verify:release` được phủ bởi test và `build:worker-assets` xanh
 - [x] `tqccl_search` nhận `{"kinds":"[\"team\"]","limit":"5"}` và trả kết quả đúng
 - [x] Lỗi `INVALID_REQUEST` nêu tên field sai, không lộ giá trị
 - [x] Search item có `matchedTerm`; query "Hoàng Quan Thương" trả `Vũ Tung Úc` kèm `matchedTerm` là nickname
@@ -109,7 +109,7 @@ Branch `feat/mcp-scrub-safe-contract`, worktree `../worktrees/mcp-scrub-safe-con
 | `npm run check` | exit 0 (Node 22.16.0, đúng pin `.node-version`) |
 | `npm run test:worker` | xanh cả 2 config |
 | `npm run build:worker-assets` | xanh, `releaseId` vẫn `sha256:<64hex>` |
-| Test suite | 302 test / 37 file, xanh |
+| Test suite | 304 test / 37 file, xanh |
 
 Bằng chứng black-box qua MCP Client thật (`InMemoryTransport`):
 
@@ -118,7 +118,7 @@ Bằng chứng black-box qua MCP Client thật (`InMemoryTransport`):
 - `tqccl_search` với `{"kinds":"[\"team\"]","limit":"5"}` → `team:team-intro-2`, `matchedTerm: "Hoàng Quan Thương"`
 - `limit: "abc"` → `INVALID_REQUEST`, `fields: ["limit"]`, không rò khoá/giá trị client gửi
 
-`npm run verify:release` cần endpoint và bearer live nên không chạy được cục bộ; nó thất bại y hệt trên `main`, không phải hồi quy. Logic đã đổi của nó do `test/release/verify-release.test.ts` phủ.
+`npm run verify:release` cần endpoint và bearer live nên chưa chạy cục bộ. Logic đã đổi của nó do `test/release/verify-release.test.ts` phủ.
 
 ### Sai lệch so với plan
 
@@ -136,6 +136,12 @@ Bằng chứng black-box qua MCP Client thật (`InMemoryTransport`):
 Không test nào bắt được vì không file nào giao hai điều kiện cần: `all-tools-parity.test.ts` chạy đường lỗi mà không `listTools()`, `stdio.integration.test.ts` có `listTools()` nhưng chỉ chạy đường thành công.
 
 Hướng sửa đã chốt là công bố union thành công-hoặc-lỗi. **Union không công bố được**: MCP bắt `outputSchema` phải kiểu object và SDK bỏ im lặng mọi schema không phải `ZodObject` — đã kiểm chứng, `outputSchema` biến mất khỏi `listTools`; JSON Schema thô thì bị từ chối thẳng. Hiện thực khả thi giữ nguyên ý định: hợp nhất hai nhánh vào một object schema, field nghiệp vụ thành optional cộng `error` optional. Đánh đổi: schema công bố không còn nêu field nào bắt buộc khi thành công. Bản strict chỉ-thành-công vẫn là thẩm quyền nội bộ (`research-handlers.ts` validate mọi kết quả thành công bằng nó), nên kiểm tra output thật không bị nới.
+
+### Bổ sung sau review PR
+
+- Giới hạn bản trình bày của `matchedTerm` ở 256 ký tự theo output contract, nhưng vẫn dùng toàn bộ term đã chuẩn hoá để so khớp. Regression test chứng minh nickname dài không còn biến kết quả hợp lệ thành `INTERNAL_ERROR`.
+- Test ổn định ranking giờ so với danh sách canonical ID cụ thể thay vì gọi cùng một implementation hai lần.
+- Cập nhật ví dụ verifier sang `build:sha256b64:<43-base64url>` và sửa bằng chứng `verify:release`: logic đã được test, còn lệnh live chưa chạy vì cần endpoint và bearer.
 
 ### Câu hỏi chưa giải quyết
 
