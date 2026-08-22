@@ -647,3 +647,72 @@ describe("validation errors name the offending fields", () => {
     });
   });
 });
+
+describe("tqccl_search explains why a result matched", () => {
+  const realDataRoot = fileURLToPath(new URL("../../../data", import.meta.url));
+
+  async function searchReal(input: Record<string, unknown>) {
+    const handlers = createResearchHandlers({
+      dataSource: new FilesystemDataSource({ dataRoot: realDataRoot }),
+    });
+    return handlers.call(
+      "tqccl_search",
+      input as Parameters<typeof handlers.call<"tqccl_search">>[1],
+    );
+  }
+
+  it("returns the nickname that matched, not just the display name", async () => {
+    const result = await searchReal({
+      query: "Hoàng Quan Thương",
+      kinds: ["team"],
+      limit: 5,
+    });
+
+    expect(result.items[0]).toMatchObject({
+      canonicalId: "team:team-intro-2",
+      displayName: "Vũ Tung Úc",
+      matchedTerm: "Hoàng Quan Thương",
+    });
+  });
+
+  it("handles a second nickname the same way", async () => {
+    const result = await searchReal({
+      query: "Độ Giang Thương",
+      kinds: ["team"],
+      limit: 5,
+    });
+
+    expect(result.items[0]).toMatchObject({
+      canonicalId: "team:team-intro-3",
+      displayName: "Vũ Tung Mông",
+      matchedTerm: "Độ Giang Thương",
+    });
+  });
+
+  it("echoes the display name when the primary name matched", async () => {
+    const result = await searchReal({
+      query: "Vũ Tung Mông",
+      kinds: ["team"],
+      limit: 1,
+    });
+
+    expect(result.items[0]?.matchedTerm).toBe(result.items[0]?.displayName);
+  });
+
+  it("omits matchedTerm when browsing the corpus", async () => {
+    const result = await searchReal({ query: "", limit: 3 });
+
+    expect(result.items).toHaveLength(3);
+    for (const item of result.items) {
+      expect(item).not.toHaveProperty("matchedTerm");
+    }
+  });
+
+  it("survives its own output schema", async () => {
+    const result = await searchReal({ query: "Hoàng Quan Thương", limit: 5 });
+
+    expect(() =>
+      RESEARCH_CONTRACTS.tqccl_search.output.parse(result),
+    ).not.toThrow();
+  });
+});

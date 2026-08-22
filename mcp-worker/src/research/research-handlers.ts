@@ -409,6 +409,9 @@ export function createResearchHandlers(
         canonicalId: entry.canonicalId,
         recordId: entry.recordId,
         displayName: entry.displayName,
+        ...(entry.matchedTerm === undefined
+          ? {}
+          : { matchedTerm: entry.matchedTerm }),
         artifact: entry.artifact,
         trust: "untrusted" as const,
       }));

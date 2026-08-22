@@ -567,6 +567,11 @@ const searchOutputSchema = commonResultSchema.extend({
           displayName: boundedText.describe(
             "Tên ngắn gọn để trình bày kết quả tìm kiếm.",
           ),
+          matchedTerm: boundedText
+            .optional()
+            .describe(
+              "Chuỗi trong record đã khớp truy vấn — biệt danh, tên Hán-Việt hay nguồn — để biết vì sao kết quả này khớp dù displayName khác hẳn. Vắng mặt khi duyệt corpus không truy vấn.",
+            ),
           artifact: z
             .enum([
               "teams",
