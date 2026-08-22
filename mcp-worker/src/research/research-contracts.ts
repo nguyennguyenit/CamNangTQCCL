@@ -85,6 +85,38 @@ const boundedUnknown = z
   .refine((value) => isBoundedJson(value))
   .describe("Giá trị JSON bị giới hạn độ sâu, số node và độ dài.");
 
+/**
+ * Model đôi khi serialize mảng thành chuỗi JSON trước khi gửi tool call — cùng
+ * một model, cùng một tool, không tất định. Parse lại ở biên rồi giao cho schema
+ * chặt bên trong, nên input rác vẫn bị từ chối thay vì bị nuốt thành mảng rỗng.
+ *
+ * Chỉ áp ở nơi đã quan sát được lỗi thật; xem ghi chú tại các schema khác.
+ */
+function jsonArrayish<T extends z.ZodType>(inner: T) {
+  return z.preprocess((value) => {
+    if (typeof value !== "string") return value;
+    try {
+      return JSON.parse(value) as unknown;
+    } catch {
+      // Trả nguyên chuỗi để schema bên trong báo lỗi kiểu, không nuốt lỗi.
+      return value;
+    }
+  }, inner);
+}
+
+/**
+ * Cùng lý do với {@link jsonArrayish} cho số. Không dùng `z.coerce.number()`:
+ * nó nhận cả `true`, `["3"]`, `"0x10"` và `"1e1"`, biến input rác thành kết quả
+ * hợp lệ trông có vẻ đúng thay vì một lỗi rõ ràng mà agent có thể sửa.
+ */
+function decimalNumberish<T extends z.ZodType>(inner: T) {
+  return z.preprocess(
+    (value) =>
+      typeof value === "string" && /^\d+$/u.test(value) ? Number(value) : value,
+    inner,
+  );
+}
+
 function boundedRequest<T extends z.ZodType>(
   schema: T,
   maxBytes = MAX_REQUEST_BYTES,
@@ -420,6 +452,10 @@ const requiredWorkflowSchema = z.object({
   expectedWorkflowVersion: workflowVersion,
 });
 
+// Chưa quan sát được model stringify args ở đây, nên giữ schema chặt: nới lỏng
+// phòng xa sẽ làm yếu chính lớp kiểm tra đang bắt được lỗi thật. Nếu trace mới
+// cho thấy INVALID_REQUEST vì kiểu bị stringify, áp jsonArrayish cho đúng field
+// đó (mẫu ở searchInputSchema), không mở rộng đại trà.
 const recommendationInputSchema = z
   .object({
     expectedWorkflowVersion: workflowVersion,
@@ -500,18 +536,12 @@ const searchInputSchema = expectedWorkflowSchema
       .string()
       .max(256)
       .describe("Chuỗi tìm kiếm; chuỗi rỗng dùng để duyệt corpus có phân trang."),
-    kinds: z
-      .array(z.enum(["hero", "tactic", "team", "book"]))
-      .max(4)
-      .optional()
-      .describe("Giới hạn loại thực thể cần tìm; bỏ trống để tìm mọi loại."),
-    limit: z
-      .number()
-      .int()
-      .min(1)
-      .max(50)
-      .optional()
-      .describe("Số kết quả tối đa của trang, từ 1 đến 50."),
+    kinds: jsonArrayish(
+      z.array(z.enum(["hero", "tactic", "team", "book"])).max(4).optional(),
+    ).describe("Giới hạn loại thực thể cần tìm; bỏ trống để tìm mọi loại."),
+    limit: decimalNumberish(
+      z.number().int().min(1).max(50).optional(),
+    ).describe("Số kết quả tối đa của trang, từ 1 đến 50."),
     cursor: z
       .string()
       .max(2_048)
@@ -571,6 +601,10 @@ const teamOutputSchema = commonResultSchema.extend({
     .describe("Các xếp hạng tier liên kết với team."),
 });
 
+// Chưa quan sát được model stringify args ở đây, nên giữ schema chặt: nới lỏng
+// phòng xa sẽ làm yếu chính lớp kiểm tra đang bắt được lỗi thật. Nếu trace mới
+// cho thấy INVALID_REQUEST vì kiểu bị stringify, áp jsonArrayish cho đúng field
+// đó (mẫu ở searchInputSchema), không mở rộng đại trà.
 const matchInputSchema = requiredWorkflowSchema
   .extend({
     heroes: z
