@@ -1,7 +1,7 @@
 ---
 phase: 5
 title: "Full verification gate (B5)"
-status: pending
+status: completed
 priority: P1
 effort: "3h"
 dependencies: [1, 2, 3, 4]
@@ -53,12 +53,12 @@ Hai test là **neo bắt buộc xanh**, đỏ là dấu hiệu sai thiết kế 
 
 ## Success Criteria
 
-- [ ] `npm run check` exit 0
-- [ ] `npm run test:worker` xanh cả 2 config
-- [ ] `verify:release` xanh, `releaseId` vẫn hex 64
-- [ ] 4 lệnh CLI black-box cho đúng kết quả kỳ vọng
-- [ ] Guard test Phase 1 vẫn xanh sau khi mọi phase đã merge
-- [ ] Không test nào bị sửa để cho qua mà không có lý do ghi trong commit
+- [x] `npm run check` exit 0
+- [x] `npm run test:worker` xanh cả 2 config
+- [x] `verify:release` xanh, `releaseId` vẫn hex 64
+- [x] 4 lệnh CLI black-box cho đúng kết quả kỳ vọng
+- [x] Guard test Phase 1 vẫn xanh sau khi mọi phase đã merge
+- [x] Không test nào bị sửa để cho qua mà không có lý do ghi trong commit
 
 ## Risk Assessment
 

@@ -1,7 +1,7 @@
 ---
 title: "MCP scrub-safe contract va LLM-boundary resilience"
 description: "Loai bo digest 64-hex khoi moi truong client phai echo, va lam bien LLM cua tqccl chiu duoc input sai kieu"
-status: pending
+status: completed
 priority: P1
 effort: "2-3d"
 tags: [mcp-worker, contract, llm-boundary, tdd]
@@ -67,22 +67,22 @@ Dùng prefix riêng `sha256b64:` thay vì tái dùng `sha256:` để không ai g
 
 | # | Phase | Status |
 |---|-------|--------|
-| 1 | [Phase 1: Scrub-safe digest encoding (B1)](./phase-01-start.md) | Pending |
-| 2 | [Phase 2: LLM-boundary input coercion (B2)](./phase-02-p2.md) | Pending |
-| 3 | [Phase 3: Field-level validation errors (B3)](./phase-03-p3.md) | Pending |
-| 4 | [Phase 4: Search match provenance (B4)](./phase-04-p4.md) | Pending |
-| 5 | [Phase 5: Full verification gate (B5)](./phase-05-p5.md) | Pending |
+| 1 | [Phase 1: Scrub-safe digest encoding (B1)](./phase-01-start.md) | Completed |
+| 2 | [Phase 2: LLM-boundary input coercion (B2)](./phase-02-p2.md) | Completed |
+| 3 | [Phase 3: Field-level validation errors (B3)](./phase-03-p3.md) | Completed |
+| 4 | [Phase 4: Search match provenance (B4)](./phase-04-p4.md) | Completed |
+| 5 | [Phase 5: Full verification gate (B5)](./phase-05-p5.md) | Completed |
 
 Phase 2/3/4 độc lập về logic với Phase 1 nhưng cùng đụng `research-contracts.ts` → chạy tuần tự để tránh xung đột. Phase 5 phụ thuộc cả 4.
 
 ## Success Criteria
 
-- [ ] Guard test: không response nào của 8 tool chứa chuỗi khớp `[a-fA-F0-9]{64,}` ở trường client-echo
-- [ ] `releaseId` vẫn là `sha256:<64hex>` đầy đủ; `verify:release` và `build:worker-assets` xanh
-- [ ] `tqccl_search` nhận `{"kinds":"[\"team\"]","limit":"5"}` và trả kết quả đúng
-- [ ] Lỗi `INVALID_REQUEST` nêu tên field sai, không lộ giá trị
-- [ ] Search item có `matchedTerm`; query "Hoàng Quan Thương" trả `Vũ Tung Úc` kèm `matchedTerm` là nickname
-- [ ] `npm run check` xanh toàn bộ
+- [x] Guard test: không response nào của 8 tool chứa chuỗi khớp `[a-fA-F0-9]{64,}` ở trường client-echo
+- [x] `releaseId` vẫn là `sha256:<64hex>` đầy đủ; `verify:release` và `build:worker-assets` xanh
+- [x] `tqccl_search` nhận `{"kinds":"[\"team\"]","limit":"5"}` và trả kết quả đúng
+- [x] Lỗi `INVALID_REQUEST` nêu tên field sai, không lộ giá trị
+- [x] Search item có `matchedTerm`; query "Hoàng Quan Thương" trả `Vũ Tung Úc` kèm `matchedTerm` là nickname
+- [x] `npm run check` xanh toàn bộ
 
 ## Rollback
 
@@ -99,3 +99,36 @@ Mỗi phase là một commit độc lập, revert được riêng. Phase 1 đổ
 - `suggest_replacements` chưa có bằng chứng được gọi thật lần nào trong trace. Vẫn sửa vì cùng class bug, nhưng ưu tiên kiểm thử thấp hơn `get_team`.
 
 <!-- slug: mcp-scrub-safe-contract-va-llm-boundary-resilience -->
+
+## Kết quả thực thi (2026-08-22)
+
+Branch `feat/mcp-scrub-safe-contract`, worktree `../worktrees/mcp-scrub-safe-contract/CamNangTQCCL`.
+
+| Cổng | Kết quả |
+|---|---|
+| `npm run check` | exit 0 (Node 22.16.0, đúng pin `.node-version`) |
+| `npm run test:worker` | xanh cả 2 config |
+| `npm run build:worker-assets` | xanh, `releaseId` vẫn `sha256:<64hex>` |
+| Test suite | 302 test / 37 file, xanh |
+
+Bằng chứng black-box qua MCP Client thật (`InMemoryTransport`):
+
+- `workflowVersion` = `workflow:sha256b64:<43>:build:sha256b64:<43>`, không khớp `/[a-fA-F0-9]{64,}/`
+- `tqccl_get_team` với `expectedWorkflowVersion` vừa nhận → `Vũ Tung Úc`
+- `tqccl_search` với `{"kinds":"[\"team\"]","limit":"5"}` → `team:team-intro-2`, `matchedTerm: "Hoàng Quan Thương"`
+- `limit: "abc"` → `INVALID_REQUEST`, `fields: ["limit"]`, không rò khoá/giá trị client gửi
+
+`npm run verify:release` cần endpoint và bearer live nên không chạy được cục bộ; nó thất bại y hệt trên `main`, không phải hồi quy. Logic đã đổi của nó do `test/release/verify-release.test.ts` phủ.
+
+### Sai lệch so với plan
+
+- **`z.coerce.number()` bị loại.** Probe thực tế cho thấy nó nhận `true`→1, `["3"]`→3, `"0x10"`→16, `"1e1"`→10 — đúng rủi ro "coerce quá tay che mất lỗi thật" mà Phase 2 đã lường. Dùng phương án dự phòng đã ghi sẵn trong plan: `preprocess` chỉ nhận chuỗi khớp `/^\d+$/`.
+- **Phase 3 phải mở rộng sang `create-mcp-server.ts`.** Plan giả định lỗi validation phát sinh trong handler. Thực tế SDK validate arguments trước, nên handler không chạy và danh sách field bị mất đúng ở biên MCP — biên duy nhất mà trace ghi nhận sự cố. Đã vá tại error boundary bằng cách parse lại raw arguments với schema của tool.
+- **`build:sha256b64:` chạm thêm 2 file ngoài dự kiến.** `src/release/worker-release-evidence.ts` và `scripts/verify-release.ts` khoá `WORKFLOW_BUILD_PATTERN` theo hex; plan ghi "không đụng worker-release-evidence" nhưng ràng buộc đó nói về `releaseId`, còn build id thì buộc phải theo.
+- **`generate:workflow-build` chuyển sang `tsx`.** `--experimental-strip-types` không resolve được import `.js`→`.ts`, nên không dùng chung được hàm mã hoá. Chuyển sang tsx theo đúng quy ước sẵn có của mọi script khác trong repo, thay vì nhân bản logic mã hoá.
+
+### Câu hỏi chưa giải quyết
+
+- Giả định "base64url thoát được mọi scrub của client" mới chỉ chứng thực với dewee. Cần xác nhận bằng trace thật sau khi deploy.
+- `suggest_replacements` vẫn chưa có bằng chứng được gọi thật; đã sửa theo cùng class bug nhưng chưa quan sát được ngoài thực tế.
+- e2e qua dewee (hạng mục A5) nằm ngoài phạm vi, cần dewee đã sửa.

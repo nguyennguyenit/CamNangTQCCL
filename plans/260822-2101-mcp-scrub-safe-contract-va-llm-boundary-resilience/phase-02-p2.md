@@ -1,7 +1,7 @@
 ---
 phase: 2
 title: "LLM-boundary input coercion (B2)"
-status: pending
+status: completed
 priority: P1
 effort: "3h"
 dependencies: [1]
@@ -75,10 +75,10 @@ Hai điểm quan trọng đã được chứng thực, không cần đoán:
 
 ## Success Criteria
 
-- [ ] Bảng test coercion xanh, gồm cả nhánh từ chối
-- [ ] Input đúng kiểu: kết quả không đổi
-- [ ] CLI black-box với args stringify trả đúng `Vũ Tung Úc`
-- [ ] Không kiểu lỏng nào lọt vào `src/domain/` (kiểm bằng `npm run typecheck`)
+- [x] Bảng test coercion xanh, gồm cả nhánh từ chối
+- [x] Input đúng kiểu: kết quả không đổi
+- [x] CLI black-box với args stringify trả đúng `Vũ Tung Úc`
+- [x] Không kiểu lỏng nào lọt vào `src/domain/` (kiểm bằng `npm run typecheck`)
 
 ## Risk Assessment
 

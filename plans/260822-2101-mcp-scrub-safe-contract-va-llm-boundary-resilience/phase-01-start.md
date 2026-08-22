@@ -1,7 +1,7 @@
 ---
 phase: 1
 title: "Scrub-safe digest encoding (B1)"
-status: pending
+status: completed
 priority: P1
 effort: "1d"
 dependencies: []
@@ -85,12 +85,12 @@ Luồng đổi:
 
 ## Success Criteria
 
-- [ ] `test/domain/digest-encoding.test.ts` xanh, phủ cả nhánh lỗi
-- [ ] Guard test `no-long-hex-in-echoed-fields` xanh và **fail được** khi cố tình revert 1 trường về hex (kiểm bằng cách sửa tạm rồi hoàn lại)
-- [ ] `verifyConfirmationBinding` giữ nguyên ngữ nghĩa: true khi khớp, false khi state đổi
-- [ ] `releaseId` trong mọi response vẫn `sha256:<64hex>`
-- [ ] `npm run check:workflow-build` exit 0
-- [ ] `npm run typecheck` xanh
+- [x] `test/domain/digest-encoding.test.ts` xanh, phủ cả nhánh lỗi
+- [x] Guard test `no-long-hex-in-echoed-fields` xanh và **fail được** khi cố tình revert 1 trường về hex (kiểm bằng cách sửa tạm rồi hoàn lại)
+- [x] `verifyConfirmationBinding` giữ nguyên ngữ nghĩa: true khi khớp, false khi state đổi
+- [x] `releaseId` trong mọi response vẫn `sha256:<64hex>`
+- [x] `npm run check:workflow-build` exit 0
+- [x] `npm run typecheck` xanh
 
 ## Risk Assessment
 

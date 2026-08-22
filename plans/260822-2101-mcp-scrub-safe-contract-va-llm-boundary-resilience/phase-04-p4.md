@@ -1,7 +1,7 @@
 ---
 phase: 4
 title: "Search match provenance (B4)"
-status: pending
+status: completed
 priority: P2
 effort: "4h"
 dependencies: [3]
@@ -56,11 +56,11 @@ Chọn **(a)**: mục đích của trường này là để agent và người �
 
 ## Success Criteria
 
-- [ ] "Hoàng Quan Thương" → `Vũ Tung Úc` kèm `matchedTerm` là nickname
-- [ ] "Độ Giang Thương" → `Vũ Tung Mông` kèm `matchedTerm` là nickname
-- [ ] Match qua tên chính → `matchedTerm === displayName`
-- [ ] Query rỗng → không có `matchedTerm`
-- [ ] Thứ tự xếp hạng không đổi
+- [x] "Hoàng Quan Thương" → `Vũ Tung Úc` kèm `matchedTerm` là nickname
+- [x] "Độ Giang Thương" → `Vũ Tung Mông` kèm `matchedTerm` là nickname
+- [x] Match qua tên chính → `matchedTerm === displayName`
+- [x] Query rỗng → không có `matchedTerm`
+- [x] Thứ tự xếp hạng không đổi
 
 ## Risk Assessment
 

@@ -1,7 +1,7 @@
 ---
 phase: 3
 title: "Field-level validation errors (B3)"
-status: pending
+status: completed
 priority: P2
 effort: "3h"
 dependencies: [2]
@@ -51,10 +51,10 @@ Lý do không lộ giá trị: response đi thẳng vào context LLM và vào tr
 
 ## Success Criteria
 
-- [ ] Lỗi nêu đúng field cho ít nhất 3 tool khác nhau
-- [ ] Test mốc: không giá trị input nào rò vào response
-- [ ] Message các mã lỗi khác không đổi
-- [ ] Số field liệt kê bị chặn trần
+- [x] Lỗi nêu đúng field cho ít nhất 3 tool khác nhau
+- [x] Test mốc: không giá trị input nào rò vào response
+- [x] Message các mã lỗi khác không đổi
+- [x] Số field liệt kê bị chặn trần
 
 ## Risk Assessment
 
