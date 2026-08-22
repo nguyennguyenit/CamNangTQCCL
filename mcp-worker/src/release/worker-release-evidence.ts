@@ -12,7 +12,7 @@ import { stableStringify } from "../domain/contracts.js";
 const COMMIT_PATTERN = /^[a-f0-9]{40}(?:[a-f0-9]{24})?$/u;
 const SOURCE_TREE_PATTERN = /^git-tree:[a-f0-9]{40}(?:[a-f0-9]{24})?$/u;
 const SHA256_PATTERN = /^sha256:[a-f0-9]{64}$/u;
-const WORKFLOW_BUILD_PATTERN = /^build:sha256:[a-f0-9]{64}$/u;
+const WORKFLOW_BUILD_PATTERN = /^build:sha256b64:[A-Za-z0-9_-]{43}$/u;
 const EVIDENCE_KEYS = [
   "assetInventoryDigest",
   "commitSha",
@@ -53,7 +53,7 @@ export interface WorkerReleaseEvidence {
   sourceTree: `git-tree:${string}`;
   manifestSha256: `sha256:${string}`;
   releaseId: `sha256:${string}`;
-  workflowBuildId: `build:sha256:${string}`;
+  workflowBuildId: `build:sha256b64:${string}`;
   assetInventoryDigest: `sha256:${string}`;
 }
 

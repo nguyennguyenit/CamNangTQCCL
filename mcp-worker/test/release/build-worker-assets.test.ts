@@ -30,7 +30,7 @@ const fixtureRoot = new URL("../fixtures/release-snapshot/", import.meta.url);
 const repositoryRoot = new URL("../../../", import.meta.url);
 const commitSha = "a".repeat(40);
 const sourceTree = `git-tree:${"b".repeat(40)}`;
-const workflowBuildId = `build:sha256:${"c".repeat(64)}`;
+const workflowBuildId = `build:sha256b64:${"c".repeat(43)}`;
 const expectedNames = [
   "books-dict.json",
   "coexist.json",
@@ -191,7 +191,7 @@ describe("buildWorkerAssets", () => {
         sourceTree: `git-tree:${"d".repeat(40)}`,
         manifestSha256: `sha256:${"d".repeat(64)}`,
         releaseId: `sha256:${"d".repeat(64)}`,
-        workflowBuildId: `build:sha256:${"d".repeat(64)}`,
+        workflowBuildId: `build:sha256b64:${"d".repeat(43)}`,
         assetInventoryDigest: `sha256:${"d".repeat(64)}`,
       } satisfies Record<typeof field, string>;
       const mismatched = {

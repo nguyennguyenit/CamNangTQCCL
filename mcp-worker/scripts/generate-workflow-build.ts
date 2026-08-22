@@ -15,6 +15,8 @@ import {
 import { fileURLToPath } from "node:url";
 import * as ts from "typescript";
 
+import { toScrubSafeDigest } from "../src/domain/digest-encoding.js";
+
 export interface WorkflowSourceManifest {
   version: 1;
   entrypoints: string[];
@@ -172,7 +174,7 @@ export function validateWorkflowSourceManifest(
 export function createWorkflowBuildId(
   repositoryRoot: string,
   manifest: WorkflowSourceManifest,
-): `build:sha256:${string}` {
+): `build:sha256b64:${string}` {
   const semanticFiles = validateWorkflowSourceManifest(repositoryRoot, manifest);
   const inputs = sortedUnique(
     [...semanticFiles, ...manifest.buildInputs],
@@ -186,7 +188,10 @@ export function createWorkflowBuildId(
     hash.update(`\u0000${path}\u0000${contents.byteLength}\u0000`);
     hash.update(contents);
   }
-  return `build:sha256:${hash.digest("hex")}`;
+  // Hash giữ nguyên; chỉ đổi cách mã hoá đầu ra sang dạng bộ lọc bí mật của
+  // client không nhận nhầm là credential (build id đi kèm workflowVersion mà
+  // client phải gửi lại).
+  return `build:${toScrubSafeDigest(`sha256:${hash.digest("hex")}`)}`;
 }
 
 function renderGeneratedSource(

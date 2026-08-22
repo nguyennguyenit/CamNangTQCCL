@@ -15,6 +15,7 @@ import {
   type ReleaseVerificationFixture,
 } from "../../scripts/verify-release.js";
 import { TOOL_DEFINITIONS } from "../../src/mcp/tool-definitions.js";
+import { toScrubSafeDigest } from "../../src/domain/digest-encoding.js";
 
 const fixtureRoot = fileURLToPath(
   new URL("../fixtures/release-snapshot", import.meta.url),
@@ -179,7 +180,8 @@ describe("verifyRelease", () => {
 
     expect(second).toEqual(first);
     expect(first.snapshotDigest).toMatch(/^sha256:[a-f0-9]{64}$/u);
-    expect(first.workflowVersion).toContain(first.releaseId);
+    // workflowVersion nhúng bản mã hoá scrub-safe của cùng releaseId đó.
+    expect(first.workflowVersion).toContain(toScrubSafeDigest(first.releaseId));
     expect(steps).toContain("protocol");
     expect(steps).toContain("catalog");
     expect(steps).toContain("data-version");

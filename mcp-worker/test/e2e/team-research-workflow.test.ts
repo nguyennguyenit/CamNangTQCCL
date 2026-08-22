@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import { FilesystemDataSource } from "../../src/data/filesystem-data-source.js";
 import { createResearchHandlers } from "../../src/research/research-handlers.js";
+import { toScrubSafeDigest } from "../../src/domain/digest-encoding.js";
 
 const fixtureRoot = fileURLToPath(
   new URL("../fixtures/release-snapshot", import.meta.url),
@@ -54,7 +55,9 @@ describe("golden team research workflow", () => {
 
     expect(second).toEqual(first);
     expect(first.releaseId).toMatch(/^sha256:[a-f0-9]{64}$/u);
-    expect(first.workflowVersion).toContain(first.releaseId);
+    // workflowVersion nhúng bản mã hoá scrub-safe của cùng releaseId đó.
+    expect(first.workflowVersion).toContain(toScrubSafeDigest(first.releaseId));
+    expect(first.workflowVersion).not.toMatch(/[a-fA-F0-9]{64,}/u);
     expect(first.truncated).toBe(false);
     expect(first.provenance.length).toBeGreaterThan(0);
     await expect(

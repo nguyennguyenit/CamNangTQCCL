@@ -16,7 +16,7 @@ const workflowVersion = z
   .startsWith("workflow:")
   .max(512)
   .describe(
-    "Workflow version đầy đủ từ lần đọc hoặc chuẩn hóa gần nhất; dùng để chặn dữ liệu stale.",
+    "Workflow version đầy đủ từ lần đọc hoặc chuẩn hóa gần nhất; dùng để chặn dữ liệu stale. Sao chép nguyên văn, không rút gọn hay sửa đổi.",
   );
 const canonicalId = z
   .union([
@@ -114,9 +114,11 @@ export const confirmationBindingSchema = z
     workflowVersion,
     normalizationDigest: z
       .string()
-      .startsWith("sha256:")
+      .startsWith("sha256b64:")
       .max(80)
-      .describe("Digest SHA-256 ràng buộc chính xác canonical state đã rà soát."),
+      .describe(
+        "Digest SHA-256 mã hoá base64url (`sha256b64:` + 43 ký tự) ràng buộc chính xác canonical state đã rà soát; sao chép nguyên văn từ kết quả chuẩn hóa.",
+      ),
     canonicalProjectionVersion: z
       .string()
       .startsWith("projection:")

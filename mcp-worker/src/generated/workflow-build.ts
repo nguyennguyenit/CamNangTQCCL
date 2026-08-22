@@ -1,5 +1,5 @@
 // Tệp được sinh bởi scripts/generate-workflow-build.ts. Không sửa thủ công.
-export const WORKFLOW_BUILD_ID = "build:sha256:f2161b8ade98276c532316b11cd771e861fbbc5355fb3e07553495050d9acd15" as const;
+export const WORKFLOW_BUILD_ID = "build:sha256b64:tffOxsYdRhtiu28XxLUU-2dSyqQ77s6Ljf7K4dDqAcY" as const;
 export const WORKFLOW_SEMANTIC_FILES = [
   "js/analyze-map.js",
   "js/filters.js",
@@ -15,6 +15,7 @@ export const WORKFLOW_SEMANTIC_FILES = [
   "mcp-worker/src/data/snapshot-index.ts",
   "mcp-worker/src/domain/canonical-state.ts",
   "mcp-worker/src/domain/contracts.ts",
+  "mcp-worker/src/domain/digest-encoding.ts",
   "mcp-worker/src/domain/legacy-domain-adapter.ts",
   "mcp-worker/src/domain/normalization-service.ts",
   "mcp-worker/src/domain/recommendation-service.ts",

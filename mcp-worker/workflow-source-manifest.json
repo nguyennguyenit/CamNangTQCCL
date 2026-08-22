@@ -20,6 +20,7 @@
     "mcp-worker/src/data/snapshot-index.ts",
     "mcp-worker/src/domain/canonical-state.ts",
     "mcp-worker/src/domain/contracts.ts",
+    "mcp-worker/src/domain/digest-encoding.ts",
     "mcp-worker/src/domain/legacy-domain-adapter.ts",
     "mcp-worker/src/domain/normalization-service.ts",
     "mcp-worker/src/domain/recommendation-service.ts",

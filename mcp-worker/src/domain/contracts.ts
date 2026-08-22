@@ -11,7 +11,7 @@ export type FamilyId = HeroFamilyId | TacticFamilyId;
 export type CanonicalProjectionVersion = `projection:${string}`;
 export type WorkflowBuildId = `build:${string}`;
 export type WorkflowVersion = `workflow:${string}`;
-export type NormalizationDigest = `sha256:${string}`;
+export type NormalizationDigest = `sha256b64:${string}`;
 
 export interface HeroIdentity {
   canonicalId: HeroCanonicalId;

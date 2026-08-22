@@ -13,6 +13,7 @@ import {
   ResearchHandlerError,
   createResearchHandlers,
 } from "../../src/research/research-handlers.js";
+import { toScrubSafeDigest } from "../../src/domain/digest-encoding.js";
 
 const fixtureRoot = fileURLToPath(
   new URL("../fixtures/release-snapshot", import.meta.url),
@@ -77,7 +78,9 @@ describe("research runtime contracts", () => {
 
     expect(result.releaseId).toMatch(/^sha256:[a-f0-9]{64}$/);
     expect(result.dataVersion).toMatch(/^data:[a-f0-9]{12}$/);
-    expect(result.workflowVersion).toContain(result.releaseId);
+    // workflowVersion nhúng bản mã hoá scrub-safe của cùng releaseId đó.
+    expect(result.workflowVersion).toContain(toScrubSafeDigest(result.releaseId));
+    expect(result.workflowVersion).not.toMatch(/[a-fA-F0-9]{64,}/u);
     expect(result.artifacts.map(({ name }) => name)).toEqual([
       "teams",
       "team-tier",

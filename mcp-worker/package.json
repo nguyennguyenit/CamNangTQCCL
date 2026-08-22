@@ -7,8 +7,8 @@
     "node": ">=22.16.0 <23"
   },
   "scripts": {
-    "generate:workflow-build": "node --experimental-strip-types scripts/generate-workflow-build.ts",
-    "check:workflow-build": "node --experimental-strip-types scripts/generate-workflow-build.ts --check",
+    "generate:workflow-build": "node --import tsx scripts/generate-workflow-build.ts",
+    "check:workflow-build": "node --import tsx scripts/generate-workflow-build.ts --check",
     "cli": "node --import tsx src/cli.ts",
     "stdio": "node --import tsx src/stdio.ts",
     "provision:bearer": "node --import tsx scripts/provision-bearer-token.ts",
