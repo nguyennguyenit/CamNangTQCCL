@@ -136,12 +136,42 @@ describe("canonical state projection", () => {
   });
 });
 
+const RELEASE_ID =
+  "sha256:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08";
+const BUILD_ID = "build:sha256b64:n4bQgYhMfWWaL-qgxVrQFaO_TxsrC4Is0V1sFbDwCgg";
+
+describe("client-echoed tokens carry no long hex run", () => {
+  it("emits the normalization digest as a base64url token", async () => {
+    const digest = await createNormalizationDigest(state);
+
+    expect(digest.startsWith("sha256b64:")).toBe(true);
+    expect(digest).not.toMatch(/[a-fA-F0-9]{64,}/u);
+  });
+
+  it("encodes the release digest inside the workflow version", () => {
+    const workflowVersion = createWorkflowVersion(RELEASE_ID, BUILD_ID);
+
+    expect(workflowVersion).not.toMatch(/[a-fA-F0-9]{64,}/u);
+    expect(workflowVersion).toBe(
+      "workflow:sha256b64:n4bQgYhMfWWaL-qgxVrQFaO_TxsrC4Is0V1sFbDwCgg:" + BUILD_ID,
+    );
+  });
+
+  it("rejects a release id that is not a full sha256 hex digest", () => {
+    expect(() => createWorkflowVersion("sha256:release-full", BUILD_ID)).toThrow(
+      TypeError,
+    );
+  });
+
+  it("still rejects empty inputs", () => {
+    expect(() => createWorkflowVersion("", BUILD_ID)).toThrow(TypeError);
+    expect(() => createWorkflowVersion(RELEASE_ID, "")).toThrow(TypeError);
+  });
+});
+
 describe("confirmation binding", () => {
   it("binds exact workflow, digest, and projection", async () => {
-    const workflowVersion = createWorkflowVersion(
-      "sha256:release-full",
-      "build:workflow-full",
-    );
+    const workflowVersion = createWorkflowVersion(RELEASE_ID, BUILD_ID);
     const normalizationDigest = await createNormalizationDigest(state);
     const binding = {
       workflowVersion,
@@ -155,10 +185,7 @@ describe("confirmation binding", () => {
   });
 
   it("rejects replay after nested state or workflow changes", async () => {
-    const workflowVersion = createWorkflowVersion(
-      "sha256:release-full",
-      "build:workflow-full",
-    );
+    const workflowVersion = createWorkflowVersion(RELEASE_ID, BUILD_ID);
     const binding = {
       workflowVersion,
       normalizationDigest: await createNormalizationDigest(state),

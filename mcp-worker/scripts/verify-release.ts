@@ -10,6 +10,7 @@ import { toJSONSchema } from "zod";
 
 import { TOOL_DEFINITIONS } from "../src/mcp/tool-definitions.js";
 import { stableStringify } from "../src/domain/contracts.js";
+import { toScrubSafeDigest } from "../src/domain/digest-encoding.js";
 import {
   RESEARCH_CONTRACTS,
   type ResearchInput,
@@ -190,7 +191,9 @@ export async function readReleaseIdentity(options: {
       typeof version.releaseId !== "string" ||
       !/^sha256:[a-f0-9]{64}$/u.test(version.releaseId) ||
       typeof version.workflowVersion !== "string" ||
-      !version.workflowVersion.startsWith(`workflow:${version.releaseId}:`) ||
+      !version.workflowVersion.startsWith(
+        `workflow:${toScrubSafeDigest(version.releaseId)}:`,
+      ) ||
       !Array.isArray(version.artifacts) ||
       version.artifacts.length !== 6
     ) {
@@ -243,7 +246,7 @@ export async function verifyRelease(
   if (
     !isSafeMcpEndpoint(options.endpoint) ||
     !/^sha256:[a-f0-9]{64}$/u.test(options.expectedReleaseId) ||
-    !/^build:sha256:[a-f0-9]{64}$/u.test(options.expectedWorkflowBuildId) ||
+    !/^build:sha256b64:[A-Za-z0-9_-]{43}$/u.test(options.expectedWorkflowBuildId) ||
     !isWorkerVersionId(options.expectedWorkerVersionId) ||
     options.bearer === ""
   ) {
@@ -379,7 +382,7 @@ export async function verifyRelease(
       version.releaseId !== options.expectedReleaseId ||
       typeof version.workflowVersion !== "string" ||
       version.workflowVersion !==
-        `workflow:${options.expectedReleaseId}:${options.expectedWorkflowBuildId}` ||
+        `workflow:${toScrubSafeDigest(options.expectedReleaseId)}:${options.expectedWorkflowBuildId}` ||
       !Array.isArray(version.provenance) ||
       !Array.isArray(version.artifacts) ||
       version.artifacts.length !== 6 ||
@@ -493,8 +496,9 @@ export async function verifyRelease(
           ...recommendationInput,
           confirmationBinding: {
             ...binding,
-            normalizationDigest:
+            normalizationDigest: toScrubSafeDigest(
               "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            ),
           },
         },
       });
@@ -559,7 +563,7 @@ export function parseVerifyReleaseArguments(
   if (
     !isSafeMcpEndpoint(endpoint) ||
     !/^sha256:[a-f0-9]{64}$/u.test(args[3]!) ||
-    !/^build:sha256:[a-f0-9]{64}$/u.test(args[5]!) ||
+    !/^build:sha256b64:[A-Za-z0-9_-]{43}$/u.test(args[5]!) ||
     !isWorkerVersionId(args[7]!) ||
     args[9] === ""
   ) {

@@ -16,7 +16,7 @@ const workflowVersion = z
   .startsWith("workflow:")
   .max(512)
   .describe(
-    "Workflow version đầy đủ từ lần đọc hoặc chuẩn hóa gần nhất; dùng để chặn dữ liệu stale.",
+    "Workflow version đầy đủ từ lần đọc hoặc chuẩn hóa gần nhất; dùng để chặn dữ liệu stale. Sao chép nguyên văn, không rút gọn hay sửa đổi.",
   );
 const canonicalId = z
   .union([
@@ -85,6 +85,38 @@ const boundedUnknown = z
   .refine((value) => isBoundedJson(value))
   .describe("Giá trị JSON bị giới hạn độ sâu, số node và độ dài.");
 
+/**
+ * Model đôi khi serialize mảng thành chuỗi JSON trước khi gửi tool call — cùng
+ * một model, cùng một tool, không tất định. Parse lại ở biên rồi giao cho schema
+ * chặt bên trong, nên input rác vẫn bị từ chối thay vì bị nuốt thành mảng rỗng.
+ *
+ * Chỉ áp ở nơi đã quan sát được lỗi thật; xem ghi chú tại các schema khác.
+ */
+function jsonArrayish<T extends z.ZodType>(inner: T) {
+  return z.preprocess((value) => {
+    if (typeof value !== "string") return value;
+    try {
+      return JSON.parse(value) as unknown;
+    } catch {
+      // Trả nguyên chuỗi để schema bên trong báo lỗi kiểu, không nuốt lỗi.
+      return value;
+    }
+  }, inner);
+}
+
+/**
+ * Cùng lý do với {@link jsonArrayish} cho số. Không dùng `z.coerce.number()`:
+ * nó nhận cả `true`, `["3"]`, `"0x10"` và `"1e1"`, biến input rác thành kết quả
+ * hợp lệ trông có vẻ đúng thay vì một lỗi rõ ràng mà agent có thể sửa.
+ */
+function decimalNumberish<T extends z.ZodType>(inner: T) {
+  return z.preprocess(
+    (value) =>
+      typeof value === "string" && /^\d+$/u.test(value) ? Number(value) : value,
+    inner,
+  );
+}
+
 function boundedRequest<T extends z.ZodType>(
   schema: T,
   maxBytes = MAX_REQUEST_BYTES,
@@ -114,9 +146,11 @@ export const confirmationBindingSchema = z
     workflowVersion,
     normalizationDigest: z
       .string()
-      .startsWith("sha256:")
+      .startsWith("sha256b64:")
       .max(80)
-      .describe("Digest SHA-256 ràng buộc chính xác canonical state đã rà soát."),
+      .describe(
+        "Digest SHA-256 mã hoá base64url (`sha256b64:` + 43 ký tự) ràng buộc chính xác canonical state đã rà soát; sao chép nguyên văn từ kết quả chuẩn hóa.",
+      ),
     canonicalProjectionVersion: z
       .string()
       .startsWith("projection:")
@@ -418,6 +452,10 @@ const requiredWorkflowSchema = z.object({
   expectedWorkflowVersion: workflowVersion,
 });
 
+// Chưa quan sát được model stringify args ở đây, nên giữ schema chặt: nới lỏng
+// phòng xa sẽ làm yếu chính lớp kiểm tra đang bắt được lỗi thật. Nếu trace mới
+// cho thấy INVALID_REQUEST vì kiểu bị stringify, áp jsonArrayish cho đúng field
+// đó (mẫu ở searchInputSchema), không mở rộng đại trà.
 const recommendationInputSchema = z
   .object({
     expectedWorkflowVersion: workflowVersion,
@@ -498,18 +536,12 @@ const searchInputSchema = expectedWorkflowSchema
       .string()
       .max(256)
       .describe("Chuỗi tìm kiếm; chuỗi rỗng dùng để duyệt corpus có phân trang."),
-    kinds: z
-      .array(z.enum(["hero", "tactic", "team", "book"]))
-      .max(4)
-      .optional()
-      .describe("Giới hạn loại thực thể cần tìm; bỏ trống để tìm mọi loại."),
-    limit: z
-      .number()
-      .int()
-      .min(1)
-      .max(50)
-      .optional()
-      .describe("Số kết quả tối đa của trang, từ 1 đến 50."),
+    kinds: jsonArrayish(
+      z.array(z.enum(["hero", "tactic", "team", "book"])).max(4).optional(),
+    ).describe("Giới hạn loại thực thể cần tìm; bỏ trống để tìm mọi loại."),
+    limit: decimalNumberish(
+      z.number().int().min(1).max(50).optional(),
+    ).describe("Số kết quả tối đa của trang, từ 1 đến 50."),
     cursor: z
       .string()
       .max(2_048)
@@ -535,6 +567,11 @@ const searchOutputSchema = commonResultSchema.extend({
           displayName: boundedText.describe(
             "Tên ngắn gọn để trình bày kết quả tìm kiếm.",
           ),
+          matchedTerm: boundedText
+            .optional()
+            .describe(
+              "Chuỗi trong record đã khớp truy vấn — biệt danh, tên Hán-Việt hay nguồn — để biết vì sao kết quả này khớp dù displayName khác hẳn. Vắng mặt khi duyệt corpus không truy vấn.",
+            ),
           artifact: z
             .enum([
               "teams",
@@ -569,6 +606,10 @@ const teamOutputSchema = commonResultSchema.extend({
     .describe("Các xếp hạng tier liên kết với team."),
 });
 
+// Chưa quan sát được model stringify args ở đây, nên giữ schema chặt: nới lỏng
+// phòng xa sẽ làm yếu chính lớp kiểm tra đang bắt được lỗi thật. Nếu trace mới
+// cho thấy INVALID_REQUEST vì kiểu bị stringify, áp jsonArrayish cho đúng field
+// đó (mẫu ở searchInputSchema), không mở rộng đại trà.
 const matchInputSchema = requiredWorkflowSchema
   .extend({
     heroes: z
@@ -681,6 +722,66 @@ export const RESEARCH_TOOL_NAMES = [
 ] as const;
 
 export type ResearchToolName = (typeof RESEARCH_TOOL_NAMES)[number];
+
+/**
+ * Envelope lỗi công khai, đúng shape mà `formatToolError` phát ra.
+ *
+ * Client MCP cache `outputSchema` từ `listTools` rồi validate `structuredContent`
+ * của MỌI kết quả, kể cả khi `isError` là true. Nếu schema công bố chỉ mô tả
+ * trường hợp thành công thì mọi lỗi có cấu trúc sẽ bị client ném thành lỗi giao
+ * thức trước khi agent kịp đọc — chính là mất kênh máy đọc được mà `fields`
+ * sinh ra để phục vụ.
+ */
+export const errorEnvelopeSchema = z
+  .object({
+    error: z
+      .object({
+        code: z
+          .string()
+          .describe("Mã lỗi ổn định để agent phân nhánh xử lý."),
+        message: z
+          .string()
+          .describe("Thông báo công khai đã làm sạch, an toàn để hiển thị."),
+        nextAction: z
+          .string()
+          .describe("Việc nên làm tiếp để thoát khỏi lỗi này."),
+        retryable: z
+          .boolean()
+          .describe("True nếu thử lại nguyên yêu cầu có thể thành công."),
+        fields: z
+          .array(z.string())
+          .optional()
+          .describe(
+            "Đường dẫn các field input vi phạm, chỉ tên field và không bao giờ kèm giá trị đã gửi.",
+          ),
+      })
+      .strict()
+      .describe("Chi tiết lỗi công khai."),
+  })
+  .strict()
+  .describe("Kết quả lỗi; đi kèm isError true.");
+
+/**
+ * Schema công bố cho một tool: thành công HOẶC lỗi.
+ *
+ * MCP bắt `outputSchema` phải là schema kiểu object, và SDK bỏ luôn schema nào
+ * không phải ZodObject — `z.union([success, error])` bị loại im lặng, khiến
+ * outputSchema biến mất khỏi `listTools`. Nên hợp nhất hai nhánh thành một
+ * object: field của nhánh thành công thành optional, cộng thêm `error` optional.
+ *
+ * Bản strict chỉ-thành-công vẫn là thẩm quyền nội bộ — handler validate mọi kết
+ * quả thành công bằng nó (`research-handlers.ts`), nên nới lỏng ở đây không làm
+ * yếu kiểm tra output thật; nó chỉ nới đúng phần hợp đồng trên dây.
+ */
+export function publishedOutputSchema<T extends z.ZodObject>(success: T) {
+  return success
+    .partial()
+    .extend({ error: errorEnvelopeSchema.shape.error.optional() })
+    .strict()
+    .describe(
+      "Kết quả của công cụ: các field nghiệp vụ khi thành công, hoặc `error` khi thất bại (kèm isError true).",
+    );
+}
 
 export const RESEARCH_CONTRACTS = {
   tqccl_get_data_version: {

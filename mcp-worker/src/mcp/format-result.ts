@@ -2,6 +2,7 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 
 import type { ResearchToolName } from "../research/research-contracts.js";
 import { ResearchHandlerError } from "../research/research-handlers.js";
+import { withFieldNames } from "../research/validation-fields.js";
 
 const PUBLIC_ERRORS = {
   INVALID_REQUEST: {
@@ -72,23 +73,27 @@ export function formatToolError(error: unknown): CallToolResult {
   const retryable =
     error instanceof ResearchHandlerError ? error.retryable : false;
   const publicError = PUBLIC_ERRORS[code];
+  // Chỉ tên field, không kèm giá trị: payload này đi thẳng vào context LLM.
+  const fields =
+    error instanceof ResearchHandlerError ? error.fields : ([] as const);
+  const message = withFieldNames(publicError.message, fields);
 
   return {
     isError: true,
     structuredContent: {
       error: {
         code,
-        message: publicError.message,
+        message,
         nextAction: publicError.nextAction,
         retryable,
+        ...(fields.length === 0 ? {} : { fields: [...fields] }),
       },
     },
     content: [
       {
         type: "text",
         text:
-          `TQCCL_ERROR:${code}. ${publicError.message} ` +
-          publicError.nextAction,
+          `TQCCL_ERROR:${code}. ${message} ` + publicError.nextAction,
       },
     ],
   };

@@ -14,6 +14,10 @@ import { WORKFLOW_BUILD_ID } from "../generated/workflow-build.js";
 import type { DataSnapshot } from "../data/artifact-contracts.js";
 import type { DataSource } from "../data/data-source.js";
 import {
+  invalidRequestFields,
+  withFieldNames,
+} from "./validation-fields.js";
+import {
   buildSnapshotIndex,
   type SearchKind,
   type SnapshotIndex,
@@ -41,6 +45,12 @@ export class ResearchHandlerError extends Error {
       | "INTERNAL_ERROR",
     message: string,
     readonly retryable = false,
+    /**
+     * Đường dẫn các field vi phạm, để agent tự sửa request thay vì bỏ cuộc.
+     * Chỉ tên field — không bao giờ chứa giá trị người dùng gửi lên, vì lỗi này
+     * đi thẳng vào context LLM và vào trace.
+     */
+    readonly fields: readonly string[] = [],
   ) {
     super(message);
     this.name = "ResearchHandlerError";
@@ -302,9 +312,12 @@ export function createResearchHandlers(
       ).parse(rawInput);
     } catch (error) {
       if (error instanceof ZodError) {
+        const fields = invalidRequestFields(error);
         throw new ResearchHandlerError(
           "INVALID_REQUEST",
-          publicMessage("INVALID_REQUEST"),
+          withFieldNames(publicMessage("INVALID_REQUEST"), fields),
+          false,
+          fields,
         );
       }
       throw error;
@@ -375,6 +388,9 @@ export function createResearchHandlers(
         canonicalId: entry.canonicalId,
         recordId: entry.recordId,
         displayName: entry.displayName,
+        ...(entry.matchedTerm === undefined
+          ? {}
+          : { matchedTerm: entry.matchedTerm }),
         artifact: entry.artifact,
         trust: "untrusted" as const,
       }));

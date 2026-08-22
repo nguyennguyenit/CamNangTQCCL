@@ -1,6 +1,7 @@
 import type { ToolAnnotations } from "@modelcontextprotocol/sdk/types.js";
 
 import {
+  publishedOutputSchema,
   RESEARCH_CONTRACTS,
   RESEARCH_TOOL_NAMES,
   type ResearchToolName,
@@ -37,8 +38,11 @@ export interface ToolDefinition {
   description: string;
   inputSchema:
     (typeof RESEARCH_CONTRACTS)[ResearchToolName]["input"];
-  outputSchema:
-    (typeof RESEARCH_CONTRACTS)[ResearchToolName]["output"];
+  outputSchema: ReturnType<
+    typeof publishedOutputSchema<
+      (typeof RESEARCH_CONTRACTS)[ResearchToolName]["output"]
+    >
+  >;
   annotations: typeof READ_ONLY_ANNOTATIONS;
 }
 
@@ -47,6 +51,7 @@ export const TOOL_DEFINITIONS: readonly ToolDefinition[] =
     name,
     description: DESCRIPTIONS[name],
     inputSchema: RESEARCH_CONTRACTS[name].input,
-    outputSchema: RESEARCH_CONTRACTS[name].output,
+    // Công bố cả nhánh lỗi: client validate structuredContent kể cả khi isError.
+    outputSchema: publishedOutputSchema(RESEARCH_CONTRACTS[name].output),
     annotations: READ_ONLY_ANNOTATIONS,
   }));

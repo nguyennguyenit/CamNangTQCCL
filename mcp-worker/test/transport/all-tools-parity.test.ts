@@ -84,6 +84,12 @@ beforeAll(async () => {
   });
   await httpClient.connect(httpTransport as unknown as Transport);
   clients.push(stdioClient, httpClient);
+
+  // Host thật luôn liệt kê tool trước khi gọi. Việc này khiến client cache
+  // outputSchema và validate structuredContent của MỌI kết quả, kể cả isError.
+  // Không liệt kê ở đây thì đường lỗi chạy qua một client không validate và
+  // hợp đồng thật không hề được kiểm.
+  await Promise.all([stdioClient.listTools(), httpClient.listTools()]);
 });
 
 afterAll(async () => {
@@ -199,23 +205,32 @@ describe("parity của tám công cụ qua stdio và HTTP", () => {
       expect(JSON.stringify(stdio)).not.toContain(privateValue);
       expect(JSON.stringify(http)).not.toContain(privateValue);
       expect(stdio.content).toEqual(http.content);
-      expect(stdio.content).toEqual([
-        {
-          type: "text",
-          text:
-            "TQCCL_ERROR:INVALID_REQUEST. Yêu cầu không hợp lệ. " +
-            "Kiểm tra input theo schema công cụ rồi thử lại.",
-        },
-      ]);
+      const [block] = stdio.content as Array<{ type: string; text: string }>;
+      expect(block?.type).toBe("text");
+      expect(block?.text).toMatch(
+        /^TQCCL_ERROR:INVALID_REQUEST\. Yêu cầu không hợp lệ\.( Trường sai: [^.]+\.)? Kiểm tra input theo schema công cụ rồi thử lại\.$/u,
+      );
       expect(stdio.structuredContent).toEqual(http.structuredContent);
-      expect(stdio.structuredContent).toEqual({
-        error: {
-          code: "INVALID_REQUEST",
-          message: "Yêu cầu không hợp lệ.",
-          nextAction: "Kiểm tra input theo schema công cụ rồi thử lại.",
-          retryable: false,
-        },
+      // Danh sách field khác nhau giữa các tool vì schema khác nhau; phần còn
+      // lại của payload phải giống hệt.
+      const { fields, message, ...invariant } = (
+        stdio.structuredContent as {
+          error: Record<string, unknown>;
+        }
+      ).error;
+      expect(invariant).toEqual({
+        code: "INVALID_REQUEST",
+        nextAction: "Kiểm tra input theo schema công cụ rồi thử lại.",
+        retryable: false,
       });
+      expect(message).toMatch(
+        /^Yêu cầu không hợp lệ\.( Trường sai: [^.]+\.)?$/u,
+      );
+      for (const field of (fields ?? []) as string[]) {
+        // Tên field do schema định nghĩa, không bao giờ là khoá client gửi lên.
+        expect(field).toMatch(/^[A-Za-z0-9_]+(\[\d+\]|\.[A-Za-z0-9_]+)*$/u);
+        expect(field).not.toBe("unexpected");
+      }
     }
   });
 });

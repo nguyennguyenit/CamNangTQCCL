@@ -9,6 +9,19 @@ import { canonicalDictionaryId } from "./entity-identity.js";
 
 export type SearchKind = "hero" | "tactic" | "team" | "book";
 
+const MAX_MATCHED_TERM_LENGTH = 256;
+
+/**
+ * Một chuỗi có thể tìm được, giữ cả bản trình bày lẫn bản đã chuẩn hoá. Bản
+ * chuẩn hoá đầy đủ để so khớp; bản trình bày được giới hạn theo output contract
+ * để nói cho người đọc biết vì sao khớp — "Hoàng Quan Thương" dễ hiểu hơn
+ * nhiều so với "hoang quan thuong".
+ */
+export interface SearchTerm {
+  raw: string;
+  normalized: string;
+}
+
 export interface SearchEntry {
   kind: SearchKind;
   canonicalId: string;
@@ -16,7 +29,12 @@ export interface SearchEntry {
   displayName: string;
   artifact: ArtifactName;
   record: ArtifactRecord;
-  normalizedTerms: readonly string[];
+  terms: readonly SearchTerm[];
+}
+
+/** Kết quả tìm kiếm kèm term đã làm nên match, nếu có truy vấn. */
+export interface SearchMatch extends SearchEntry {
+  matchedTerm?: string;
 }
 
 export interface SearchOptions {
@@ -33,7 +51,7 @@ export interface SnapshotIndex {
   tacticsById: ReadonlyMap<string, ArtifactRecord>;
   booksById: ReadonlyMap<string, ArtifactRecord>;
   searchEntries: readonly SearchEntry[];
-  search(query: string, options?: SearchOptions): SearchEntry[];
+  search(query: string, options?: SearchOptions): SearchMatch[];
 }
 
 export class SnapshotIndexError extends Error {
@@ -47,18 +65,22 @@ function text(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
-function normalizedTerms(values: readonly unknown[]): string[] {
-  return [
-    ...new Set(
-      values
-        .flatMap((value) =>
-          Array.isArray(value) ? value : [value],
-        )
-        .filter((value): value is string => typeof value === "string")
-        .map((value) => normalizeText(value))
-        .filter(Boolean),
-    ),
-  ];
+function searchTerms(values: readonly unknown[]): SearchTerm[] {
+  // Dedupe theo bản chuẩn hoá, giữ lần khai báo đầu tiên: thứ tự khai báo là
+  // thứ tự ưu tiên tất định khi nhiều term cùng điểm cao nhất.
+  const terms = new Map<string, SearchTerm>();
+  for (const value of values.flatMap((entry) =>
+    Array.isArray(entry) ? entry : [entry],
+  )) {
+    if (typeof value !== "string") continue;
+    const normalized = normalizeText(value);
+    if (!normalized || terms.has(normalized)) continue;
+    terms.set(normalized, {
+      raw: value.trim().slice(0, MAX_MATCHED_TERM_LENGTH),
+      normalized,
+    });
+  }
+  return [...terms.values()];
 }
 
 function uniqueMap(
@@ -92,7 +114,7 @@ function dictionaryEntries(
       displayName,
       artifact,
       record,
-      normalizedTerms: normalizedTerms([
+      terms: searchTerms([
         displayName,
         record.chinese,
         record.hanViet,
@@ -112,7 +134,7 @@ function teamEntries(records: readonly ArtifactRecord[]): SearchEntry[] {
       displayName: text(record.name),
       artifact: "teams",
       record,
-      normalizedTerms: normalizedTerms([
+      terms: searchTerms([
         record.id,
         record.name,
         record.nickname,
@@ -130,15 +152,32 @@ function compareEntries(left: SearchEntry, right: SearchEntry): number {
   );
 }
 
-function matchScore(entry: SearchEntry, query: string): number {
-  if (!query) return 0;
+/**
+ * Điểm khớp cao nhất kèm term đã đạt điểm đó. Khi nhiều term cùng điểm cao
+ * nhất, term khai báo trước thắng.
+ */
+function matchScore(
+  entry: SearchEntry,
+  query: string,
+): { score: number; matchedTerm?: string } {
+  if (!query) return { score: 0 };
   let score = -1;
-  for (const term of entry.normalizedTerms) {
-    if (term === query) score = Math.max(score, 3);
-    else if (term.startsWith(query)) score = Math.max(score, 2);
-    else if (term.includes(query)) score = Math.max(score, 1);
+  let matchedTerm: string | undefined;
+  for (const term of entry.terms) {
+    const termScore =
+      term.normalized === query
+        ? 3
+        : term.normalized.startsWith(query)
+          ? 2
+          : term.normalized.includes(query)
+            ? 1
+            : -1;
+    if (termScore > score) {
+      score = termScore;
+      matchedTerm = termScore >= 1 ? term.raw : undefined;
+    }
   }
-  return score;
+  return matchedTerm === undefined ? { score } : { score, matchedTerm };
 }
 
 export function buildSnapshotIndex(snapshot: DataSnapshot): SnapshotIndex {
@@ -208,7 +247,7 @@ export function buildSnapshotIndex(snapshot: DataSnapshot): SnapshotIndex {
       );
       return searchEntries
         .filter((entry) => kindSet === null || kindSet.has(entry.kind))
-        .map((entry) => ({ entry, score: matchScore(entry, normalizedQuery) }))
+        .map((entry) => ({ entry, ...matchScore(entry, normalizedQuery) }))
         .filter(({ score }) => !normalizedQuery || score >= 0)
         .sort(
           (left, right) =>
@@ -216,7 +255,9 @@ export function buildSnapshotIndex(snapshot: DataSnapshot): SnapshotIndex {
             compareEntries(left.entry, right.entry),
         )
         .slice(offset, offset + limit)
-        .map(({ entry }) => entry);
+        .map(({ entry, matchedTerm }) =>
+          matchedTerm === undefined ? entry : { ...entry, matchedTerm },
+        );
     },
   };
 }

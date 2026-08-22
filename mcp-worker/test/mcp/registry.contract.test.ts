@@ -121,8 +121,24 @@ describe("registry công cụ MCP", () => {
       expect(definition.inputSchema).toBe(
         RESEARCH_CONTRACTS[definition.name].input,
       );
-      expect(definition.outputSchema).toBe(
+      // Schema công bố hợp nhất nhánh thành công và nhánh lỗi vào một object,
+      // vì MCP bắt outputSchema phải kiểu object và SDK bỏ im lặng mọi union.
+      expect(definition.outputSchema).not.toBe(
         RESEARCH_CONTRACTS[definition.name].output,
+      );
+      expect(
+        definition.outputSchema.safeParse({
+          error: {
+            code: "INVALID_REQUEST",
+            message: "Yêu cầu không hợp lệ.",
+            nextAction: "Kiểm tra input theo schema công cụ rồi thử lại.",
+            retryable: false,
+            fields: ["limit"],
+          },
+        }).success,
+      ).toBe(true);
+      expect(definition.outputSchema.safeParse({ lac: "de" }).success).toBe(
+        false,
       );
       expect(definition.annotations).toEqual({
         readOnlyHint: true,
@@ -270,7 +286,7 @@ describe("registry công cụ MCP", () => {
       structuredContent: {
         error: {
           code: "INVALID_REQUEST",
-          message: "Yêu cầu không hợp lệ.",
+          message: "Yêu cầu không hợp lệ. Trường sai: query.",
           nextAction: "Kiểm tra input theo schema công cụ rồi thử lại.",
           retryable: false,
         },
@@ -279,6 +295,98 @@ describe("registry công cụ MCP", () => {
     expect(JSON.stringify(result)).not.toContain("TOP_SECRET_TOKEN");
     expect(JSON.stringify(result)).not.toContain("secret");
     expect(JSON.stringify(result)).not.toContain("expected string");
+  });
+
+  it("giao được envelope lỗi cho client đã cache outputSchema", async () => {
+    const handlers = createResearchHandlers({
+      dataSource: new FilesystemDataSource({ dataRoot: fixtureRoot }),
+    });
+    const { client } = await connect(handlers);
+
+    // Host thật luôn liệt kê tool trước. Bước này bật validator phía client cho
+    // structuredContent của MỌI kết quả, kể cả isError — bỏ qua nó thì đường
+    // lỗi chạy qua một client không validate và hợp đồng thật không được kiểm.
+    const { tools } = await client.listTools();
+    expect(tools).toHaveLength(8);
+    expect(tools.every(({ outputSchema }) => outputSchema !== undefined)).toBe(
+      true,
+    );
+
+    for (const { name } of tools) {
+      const result = await client.callTool({
+        name,
+        arguments: { khong_ton_tai: "x" },
+      });
+
+      expect(result.isError).toBe(true);
+      expect(
+        (result.structuredContent as { error?: { code?: string } }).error?.code,
+      ).toBe("INVALID_REQUEST");
+    }
+
+    // Đường thành công vẫn qua đúng validator đó.
+    const ok = await client.callTool({
+      name: "tqccl_get_data_version",
+      arguments: {},
+    });
+    expect(ok.isError).not.toBe(true);
+    expect(
+      (ok.structuredContent as { releaseId: string }).releaseId,
+    ).toMatch(/^sha256:[a-f0-9]{64}$/u);
+  });
+
+  it("nêu field sai khi SDK từ chối input trước handler", async () => {
+    const handlers = createResearchHandlers({
+      dataSource: new FilesystemDataSource({ dataRoot: fixtureRoot }),
+    });
+    const { client } = await connect(handlers);
+
+    const result = await client.callTool({
+      name: "tqccl_search",
+      arguments: { query: "x", limit: "abc" },
+    });
+    const document = result.structuredContent as {
+      error: { code: string; message: string; fields?: string[] };
+    };
+
+    expect(document.error.code).toBe("INVALID_REQUEST");
+    expect(document.error.fields).toEqual(["limit"]);
+    expect(document.error.message).toContain("limit");
+  });
+
+  it("nêu field lồng nhau khi SDK từ chối input trước handler", async () => {
+    const handlers = createResearchHandlers({
+      dataSource: new FilesystemDataSource({ dataRoot: fixtureRoot }),
+    });
+    const { client } = await connect(handlers);
+
+    const result = await client.callTool({
+      name: "tqccl_match_team",
+      arguments: {
+        expectedWorkflowVersion: "workflow:whatever",
+        heroes: [{ canonicalId: "hero:tuong-a", tacticIds: "khong-phai-mang" }],
+      },
+    });
+    const document = result.structuredContent as {
+      error: { fields?: string[] };
+    };
+
+    expect(document.error.fields).toContain("heroes[0].tacticIds");
+  });
+
+  it("không rò giá trị hay khoá lạ qua danh sách field", async () => {
+    const handlers = createResearchHandlers({
+      dataSource: new FilesystemDataSource({ dataRoot: fixtureRoot }),
+    });
+    const { client } = await connect(handlers);
+
+    const result = await client.callTool({
+      name: "tqccl_search",
+      arguments: { query: 123, secret: "TOP_SECRET_TOKEN" },
+    });
+
+    expect(JSON.stringify(result)).not.toContain("TOP_SECRET_TOKEN");
+    expect(JSON.stringify(result)).not.toContain("secret");
   });
 
   it("làm sạch lỗi SDK không thuộc validation", async () => {
@@ -357,5 +465,36 @@ describe("registry công cụ MCP", () => {
     expect(
       JSON.stringify(formatToolError(new Error("private-unknown"))),
     ).not.toContain("private-unknown");
+  });
+
+  it("surfaces offending field paths without leaking submitted values", () => {
+    const result = formatToolError(
+      new ResearchHandlerError("INVALID_REQUEST", "private-payload", false, [
+        "limit",
+        "heroes[0].tacticIds",
+      ]),
+    );
+    const document = result.structuredContent as {
+      error: { code: string; fields?: string[] };
+    };
+
+    expect(document.error.fields).toEqual(["limit", "heroes[0].tacticIds"]);
+    expect(JSON.stringify(result)).toContain("heroes[0].tacticIds");
+    expect(JSON.stringify(result)).not.toContain("private-payload");
+    expect(result.content[0]?.type).toBe("text");
+    expect(String((result.content[0] as { text: string }).text)).toContain(
+      "limit",
+    );
+  });
+
+  it("omits the fields key when no field is implicated", () => {
+    const result = formatToolError(
+      new ResearchHandlerError("TEAM_NOT_FOUND", "private-payload"),
+    );
+    const document = result.structuredContent as {
+      error: Record<string, unknown>;
+    };
+
+    expect(document.error).not.toHaveProperty("fields");
   });
 });

@@ -9,6 +9,7 @@ import type {
   WorkflowBuildId,
   WorkflowVersion,
 } from "./contracts.js";
+import { toScrubSafeDigest } from "./digest-encoding.js";
 
 export const CANONICAL_PROJECTION_VERSION =
   "projection:v1" satisfies CanonicalProjectionVersion;
@@ -198,7 +199,9 @@ export async function createNormalizationDigest(
   const hex = [...new Uint8Array(digest)]
     .map((value) => value.toString(16).padStart(2, "0"))
     .join("");
-  return `sha256:${hex}`;
+  // Client phải gửi digest này lại trong confirmationBinding, nên nó không được
+  // mang chuỗi hex dài mà bộ lọc bí mật của client sẽ che.
+  return toScrubSafeDigest(`sha256:${hex}`);
 }
 
 export function createWorkflowVersion(
@@ -208,7 +211,9 @@ export function createWorkflowVersion(
   if (!releaseId || !workflowBuildId) {
     throw new TypeError("Workflow version inputs must be non-empty");
   }
-  return `workflow:${releaseId}:${workflowBuildId}`;
+  // releaseId giữ nguyên hex đầy đủ ở nơi khác (nó là digest toàn vẹn), nhưng
+  // bản sao nhúng trong workflow version thì client phải echo lại.
+  return `workflow:${toScrubSafeDigest(releaseId)}:${workflowBuildId}`;
 }
 
 export async function verifyConfirmationBinding(
