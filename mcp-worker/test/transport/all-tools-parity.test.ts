@@ -84,6 +84,12 @@ beforeAll(async () => {
   });
   await httpClient.connect(httpTransport as unknown as Transport);
   clients.push(stdioClient, httpClient);
+
+  // Host thật luôn liệt kê tool trước khi gọi. Việc này khiến client cache
+  // outputSchema và validate structuredContent của MỌI kết quả, kể cả isError.
+  // Không liệt kê ở đây thì đường lỗi chạy qua một client không validate và
+  // hợp đồng thật không hề được kiểm.
+  await Promise.all([stdioClient.listTools(), httpClient.listTools()]);
 });
 
 afterAll(async () => {

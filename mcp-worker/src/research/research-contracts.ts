@@ -723,6 +723,66 @@ export const RESEARCH_TOOL_NAMES = [
 
 export type ResearchToolName = (typeof RESEARCH_TOOL_NAMES)[number];
 
+/**
+ * Envelope lỗi công khai, đúng shape mà `formatToolError` phát ra.
+ *
+ * Client MCP cache `outputSchema` từ `listTools` rồi validate `structuredContent`
+ * của MỌI kết quả, kể cả khi `isError` là true. Nếu schema công bố chỉ mô tả
+ * trường hợp thành công thì mọi lỗi có cấu trúc sẽ bị client ném thành lỗi giao
+ * thức trước khi agent kịp đọc — chính là mất kênh máy đọc được mà `fields`
+ * sinh ra để phục vụ.
+ */
+export const errorEnvelopeSchema = z
+  .object({
+    error: z
+      .object({
+        code: z
+          .string()
+          .describe("Mã lỗi ổn định để agent phân nhánh xử lý."),
+        message: z
+          .string()
+          .describe("Thông báo công khai đã làm sạch, an toàn để hiển thị."),
+        nextAction: z
+          .string()
+          .describe("Việc nên làm tiếp để thoát khỏi lỗi này."),
+        retryable: z
+          .boolean()
+          .describe("True nếu thử lại nguyên yêu cầu có thể thành công."),
+        fields: z
+          .array(z.string())
+          .optional()
+          .describe(
+            "Đường dẫn các field input vi phạm, chỉ tên field và không bao giờ kèm giá trị đã gửi.",
+          ),
+      })
+      .strict()
+      .describe("Chi tiết lỗi công khai."),
+  })
+  .strict()
+  .describe("Kết quả lỗi; đi kèm isError true.");
+
+/**
+ * Schema công bố cho một tool: thành công HOẶC lỗi.
+ *
+ * MCP bắt `outputSchema` phải là schema kiểu object, và SDK bỏ luôn schema nào
+ * không phải ZodObject — `z.union([success, error])` bị loại im lặng, khiến
+ * outputSchema biến mất khỏi `listTools`. Nên hợp nhất hai nhánh thành một
+ * object: field của nhánh thành công thành optional, cộng thêm `error` optional.
+ *
+ * Bản strict chỉ-thành-công vẫn là thẩm quyền nội bộ — handler validate mọi kết
+ * quả thành công bằng nó (`research-handlers.ts`), nên nới lỏng ở đây không làm
+ * yếu kiểm tra output thật; nó chỉ nới đúng phần hợp đồng trên dây.
+ */
+export function publishedOutputSchema<T extends z.ZodObject>(success: T) {
+  return success
+    .partial()
+    .extend({ error: errorEnvelopeSchema.shape.error.optional() })
+    .strict()
+    .describe(
+      "Kết quả của công cụ: các field nghiệp vụ khi thành công, hoặc `error` khi thất bại (kèm isError true).",
+    );
+}
+
 export const RESEARCH_CONTRACTS = {
   tqccl_get_data_version: {
     input: boundedRequest(z.object({}).strict()),

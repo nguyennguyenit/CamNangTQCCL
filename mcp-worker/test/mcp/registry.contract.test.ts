@@ -121,8 +121,24 @@ describe("registry công cụ MCP", () => {
       expect(definition.inputSchema).toBe(
         RESEARCH_CONTRACTS[definition.name].input,
       );
-      expect(definition.outputSchema).toBe(
+      // Schema công bố hợp nhất nhánh thành công và nhánh lỗi vào một object,
+      // vì MCP bắt outputSchema phải kiểu object và SDK bỏ im lặng mọi union.
+      expect(definition.outputSchema).not.toBe(
         RESEARCH_CONTRACTS[definition.name].output,
+      );
+      expect(
+        definition.outputSchema.safeParse({
+          error: {
+            code: "INVALID_REQUEST",
+            message: "Yêu cầu không hợp lệ.",
+            nextAction: "Kiểm tra input theo schema công cụ rồi thử lại.",
+            retryable: false,
+            fields: ["limit"],
+          },
+        }).success,
+      ).toBe(true);
+      expect(definition.outputSchema.safeParse({ lac: "de" }).success).toBe(
+        false,
       );
       expect(definition.annotations).toEqual({
         readOnlyHint: true,
@@ -279,6 +295,44 @@ describe("registry công cụ MCP", () => {
     expect(JSON.stringify(result)).not.toContain("TOP_SECRET_TOKEN");
     expect(JSON.stringify(result)).not.toContain("secret");
     expect(JSON.stringify(result)).not.toContain("expected string");
+  });
+
+  it("giao được envelope lỗi cho client đã cache outputSchema", async () => {
+    const handlers = createResearchHandlers({
+      dataSource: new FilesystemDataSource({ dataRoot: fixtureRoot }),
+    });
+    const { client } = await connect(handlers);
+
+    // Host thật luôn liệt kê tool trước. Bước này bật validator phía client cho
+    // structuredContent của MỌI kết quả, kể cả isError — bỏ qua nó thì đường
+    // lỗi chạy qua một client không validate và hợp đồng thật không được kiểm.
+    const { tools } = await client.listTools();
+    expect(tools).toHaveLength(8);
+    expect(tools.every(({ outputSchema }) => outputSchema !== undefined)).toBe(
+      true,
+    );
+
+    for (const { name } of tools) {
+      const result = await client.callTool({
+        name,
+        arguments: { khong_ton_tai: "x" },
+      });
+
+      expect(result.isError).toBe(true);
+      expect(
+        (result.structuredContent as { error?: { code?: string } }).error?.code,
+      ).toBe("INVALID_REQUEST");
+    }
+
+    // Đường thành công vẫn qua đúng validator đó.
+    const ok = await client.callTool({
+      name: "tqccl_get_data_version",
+      arguments: {},
+    });
+    expect(ok.isError).not.toBe(true);
+    expect(
+      (ok.structuredContent as { releaseId: string }).releaseId,
+    ).toMatch(/^sha256:[a-f0-9]{64}$/u);
   });
 
   it("nêu field sai khi SDK từ chối input trước handler", async () => {
