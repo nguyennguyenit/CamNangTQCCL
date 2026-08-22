@@ -41,10 +41,39 @@ export class ResearchHandlerError extends Error {
       | "INTERNAL_ERROR",
     message: string,
     readonly retryable = false,
+    /**
+     * Đường dẫn các field vi phạm, để agent tự sửa request thay vì bỏ cuộc.
+     * Chỉ tên field — không bao giờ chứa giá trị người dùng gửi lên, vì lỗi này
+     * đi thẳng vào context LLM và vào trace.
+     */
+    readonly fields: readonly string[] = [],
   ) {
     super(message);
     this.name = "ResearchHandlerError";
   }
+}
+
+/** Số field tối đa nêu trong một lỗi, để response không phình khi input sai hàng loạt. */
+const MAX_REPORTED_FIELDS = 5;
+
+/** `["heroes", 0, "tacticIds"]` -> `heroes[0].tacticIds`. */
+function formatIssuePath(path: readonly PropertyKey[]): string {
+  return path.reduce<string>((rendered, segment) => {
+    if (typeof segment === "number") return `${rendered}[${segment}]`;
+    const key = String(segment);
+    return rendered === "" ? key : `${rendered}.${key}`;
+  }, "");
+}
+
+/** Tên field duy nhất, giữ thứ tự zod báo cáo, chặn trần. */
+function invalidRequestFields(error: ZodError): string[] {
+  const fields = new Set<string>();
+  for (const issue of error.issues) {
+    const rendered = formatIssuePath(issue.path);
+    if (rendered !== "") fields.add(rendered);
+    if (fields.size >= MAX_REPORTED_FIELDS) break;
+  }
+  return [...fields];
 }
 
 export interface ResearchHandlerDependencies {
@@ -302,9 +331,14 @@ export function createResearchHandlers(
       ).parse(rawInput);
     } catch (error) {
       if (error instanceof ZodError) {
+        const fields = invalidRequestFields(error);
         throw new ResearchHandlerError(
           "INVALID_REQUEST",
-          publicMessage("INVALID_REQUEST"),
+          fields.length === 0
+            ? publicMessage("INVALID_REQUEST")
+            : `${publicMessage("INVALID_REQUEST")} Trường sai: ${fields.join(", ")}.`,
+          false,
+          fields,
         );
       }
       throw error;

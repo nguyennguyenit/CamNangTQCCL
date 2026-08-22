@@ -72,6 +72,11 @@ export function formatToolError(error: unknown): CallToolResult {
   const retryable =
     error instanceof ResearchHandlerError ? error.retryable : false;
   const publicError = PUBLIC_ERRORS[code];
+  // Chỉ tên field, không kèm giá trị: payload này đi thẳng vào context LLM.
+  const fields =
+    error instanceof ResearchHandlerError ? error.fields : ([] as const);
+  const fieldSuffix =
+    fields.length === 0 ? "" : ` Trường sai: ${fields.join(", ")}.`;
 
   return {
     isError: true,
@@ -81,13 +86,14 @@ export function formatToolError(error: unknown): CallToolResult {
         message: publicError.message,
         nextAction: publicError.nextAction,
         retryable,
+        ...(fields.length === 0 ? {} : { fields: [...fields] }),
       },
     },
     content: [
       {
         type: "text",
         text:
-          `TQCCL_ERROR:${code}. ${publicError.message} ` +
+          `TQCCL_ERROR:${code}. ${publicError.message}${fieldSuffix} ` +
           publicError.nextAction,
       },
     ],

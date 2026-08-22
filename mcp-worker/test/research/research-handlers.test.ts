@@ -544,3 +544,106 @@ describe("tqccl_search coercion stays narrow", () => {
     }
   });
 });
+
+describe("validation errors name the offending fields", () => {
+  async function invalid(name: ResearchToolName, input: unknown) {
+    const handlers = createResearchHandlers({ dataSource: fixtureSource() });
+    const call = handlers.call as (
+      name: ResearchToolName,
+      input: unknown,
+    ) => Promise<unknown>;
+    try {
+      await call(name, input);
+    } catch (error) {
+      return error as ResearchHandlerError;
+    }
+    throw new Error(`${name} unexpectedly accepted the input`);
+  }
+
+  it("names a top-level field", async () => {
+    const error = await invalid("tqccl_search", { query: "x", limit: "abc" });
+
+    expect(error.code).toBe("INVALID_REQUEST");
+    expect(error.fields).toContain("limit");
+  });
+
+  it("names a missing required field", async () => {
+    const error = await invalid("tqccl_get_team", {
+      expectedWorkflowVersion: "workflow:whatever",
+    });
+
+    expect(error.fields).toContain("teamId");
+  });
+
+  it("formats nested array paths readably", async () => {
+    const error = await invalid("tqccl_match_team", {
+      expectedWorkflowVersion: "workflow:whatever",
+      heroes: [{ canonicalId: "hero:tuong-a", tacticIds: "not-an-array" }],
+    });
+
+    expect(error.fields).toContain("heroes[0].tacticIds");
+  });
+
+  it("caps the reported field list", async () => {
+    const error = await invalid("tqccl_match_team", {
+      expectedWorkflowVersion: 1,
+      minHeroes: "abc",
+      heroes: [
+        { canonicalId: 1, tacticIds: 2 },
+        { canonicalId: 3, tacticIds: 4 },
+        { canonicalId: 5, tacticIds: 6 },
+      ],
+    });
+
+    expect(error.fields.length).toBeLessThanOrEqual(5);
+    expect(error.fields.length).toBeGreaterThan(1);
+    expect(new Set(error.fields).size).toBe(error.fields.length);
+  });
+
+  it("mentions the fields in the public message", async () => {
+    const error = await invalid("tqccl_search", { query: "x", limit: "abc" });
+
+    expect(error.message).toContain("limit");
+  });
+
+  it("never echoes the submitted value", async () => {
+    const sentinel = "SENTINEL_VALUE_XYZ";
+    const error = await invalid("tqccl_search", {
+      query: "x",
+      limit: sentinel,
+      cursor: sentinel,
+    });
+
+    expect(JSON.stringify({ ...error, message: error.message })).not.toContain(
+      sentinel,
+    );
+    expect(error.message).not.toContain(sentinel);
+    expect(error.fields.join(",")).not.toContain(sentinel);
+  });
+
+  it("leaves other error codes untouched", async () => {
+    const handlers = createResearchHandlers({ dataSource: fixtureSource() });
+    const version = await handlers.call("tqccl_get_data_version", {});
+
+    await expect(
+      handlers.call("tqccl_get_team", {
+        teamId: "team-a",
+        expectedWorkflowVersion: "workflow:stale",
+      }),
+    ).rejects.toMatchObject({
+      code: "WORKFLOW_VERSION_CHANGED",
+      message: "Phiên bản dữ liệu hoặc quy trình đã thay đổi.",
+      fields: [],
+    });
+    await expect(
+      handlers.call("tqccl_get_team", {
+        teamId: "khong-ton-tai",
+        expectedWorkflowVersion: version.workflowVersion,
+      }),
+    ).rejects.toMatchObject({
+      code: "TEAM_NOT_FOUND",
+      message: "Không tìm thấy đội hình.",
+      fields: [],
+    });
+  });
+});

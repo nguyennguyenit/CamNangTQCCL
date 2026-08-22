@@ -358,4 +358,35 @@ describe("registry công cụ MCP", () => {
       JSON.stringify(formatToolError(new Error("private-unknown"))),
     ).not.toContain("private-unknown");
   });
+
+  it("surfaces offending field paths without leaking submitted values", () => {
+    const result = formatToolError(
+      new ResearchHandlerError("INVALID_REQUEST", "private-payload", false, [
+        "limit",
+        "heroes[0].tacticIds",
+      ]),
+    );
+    const document = result.structuredContent as {
+      error: { code: string; fields?: string[] };
+    };
+
+    expect(document.error.fields).toEqual(["limit", "heroes[0].tacticIds"]);
+    expect(JSON.stringify(result)).toContain("heroes[0].tacticIds");
+    expect(JSON.stringify(result)).not.toContain("private-payload");
+    expect(result.content[0]?.type).toBe("text");
+    expect(String((result.content[0] as { text: string }).text)).toContain(
+      "limit",
+    );
+  });
+
+  it("omits the fields key when no field is implicated", () => {
+    const result = formatToolError(
+      new ResearchHandlerError("TEAM_NOT_FOUND", "private-payload"),
+    );
+    const document = result.structuredContent as {
+      error: Record<string, unknown>;
+    };
+
+    expect(document.error).not.toHaveProperty("fields");
+  });
 });
