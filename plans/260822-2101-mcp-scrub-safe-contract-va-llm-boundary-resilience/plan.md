@@ -127,8 +127,19 @@ Bằng chứng black-box qua MCP Client thật (`InMemoryTransport`):
 - **`build:sha256b64:` chạm thêm 2 file ngoài dự kiến.** `src/release/worker-release-evidence.ts` và `scripts/verify-release.ts` khoá `WORKFLOW_BUILD_PATTERN` theo hex; plan ghi "không đụng worker-release-evidence" nhưng ràng buộc đó nói về `releaseId`, còn build id thì buộc phải theo.
 - **`generate:workflow-build` chuyển sang `tsx`.** `--experimental-strip-types` không resolve được import `.js`→`.ts`, nên không dùng chung được hàm mã hoá. Chuyển sang tsx theo đúng quy ước sẵn có của mọi script khác trong repo, thay vì nhân bản logic mã hoá.
 
+### Lỗi có sẵn phát hiện khi review, đã sửa trong branch này
+
+`outputSchema` công bố chỉ mô tả nhánh thành công. Client MCP cache schema đó từ `listTools` rồi validate `structuredContent` của **mọi** kết quả, kể cả khi `isError` true — nên mọi lỗi có cấu trúc bị client ném thành `McpError -32602` trước khi agent kịp đọc. Host thật luôn liệt kê tool trước khi gọi, nên toàn bộ đường lỗi không dùng được qua cả stdio lẫn HTTP.
+
+Đã kiểm chứng lỗi này tồn tại y hệt trên `main`, không phải hồi quy của plan này. Nhưng nó làm Phase 3 vô dụng đúng ở biên mà trace ghi nhận agent bỏ cuộc, nên sửa luôn.
+
+Không test nào bắt được vì không file nào giao hai điều kiện cần: `all-tools-parity.test.ts` chạy đường lỗi mà không `listTools()`, `stdio.integration.test.ts` có `listTools()` nhưng chỉ chạy đường thành công.
+
+Hướng sửa đã chốt là công bố union thành công-hoặc-lỗi. **Union không công bố được**: MCP bắt `outputSchema` phải kiểu object và SDK bỏ im lặng mọi schema không phải `ZodObject` — đã kiểm chứng, `outputSchema` biến mất khỏi `listTools`; JSON Schema thô thì bị từ chối thẳng. Hiện thực khả thi giữ nguyên ý định: hợp nhất hai nhánh vào một object schema, field nghiệp vụ thành optional cộng `error` optional. Đánh đổi: schema công bố không còn nêu field nào bắt buộc khi thành công. Bản strict chỉ-thành-công vẫn là thẩm quyền nội bộ (`research-handlers.ts` validate mọi kết quả thành công bằng nó), nên kiểm tra output thật không bị nới.
+
 ### Câu hỏi chưa giải quyết
 
 - Giả định "base64url thoát được mọi scrub của client" mới chỉ chứng thực với dewee. Cần xác nhận bằng trace thật sau khi deploy.
 - `suggest_replacements` vẫn chưa có bằng chứng được gọi thật; đã sửa theo cùng class bug nhưng chưa quan sát được ngoài thực tế.
 - e2e qua dewee (hạng mục A5) nằm ngoài phạm vi, cần dewee đã sửa.
+- Schema công bố mất thông tin "field nào bắt buộc khi thành công". Chưa rõ điều này có làm model đoán sai hình dạng kết quả hay không; cần quan sát trace thật sau deploy. Nếu có, hướng thay thế là bỏ `structuredContent` khỏi kết quả lỗi và chuyển `fields` sang một dòng text ổn định.
