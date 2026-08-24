@@ -6,20 +6,20 @@ Website tĩnh tra cứu đội hình, tướng, chiến pháp và hỗ trợ qu�
 
 ## Tính năng
 
-- 10 section có deep-link bằng hash: Team PK, Đô Úy, Meta phe cũ, Cùng Tồn, Khai hoang, tướng, chiến pháp, tracker chiêu mộ, soi đội và gợi ý đội từ kho.
-- Ba tab team dùng chung bộ lọc inline: search toàn văn + chip động theo dữ liệu từng tab; mobile thu gọn vùng lọc sau nút `☰ Bộ lọc`.
+- 9 section có deep-link bằng hash: Team PK, Meta phe cũ, Cùng Tồn, Khai hoang, tướng, chiến pháp, tracker chiêu mộ, soi đội và gợi ý đội từ kho.
+- Hai tab team dùng chung bộ lọc inline: search toàn văn + chip động theo dữ liệu từng tab; mobile thu gọn vùng lọc sau nút `☰ Bộ lọc`.
 - Tra cứu 112 tướng và 239 chiến pháp bằng dữ liệu local, hỗ trợ tên Việt/Hán-Việt/Hán.
 - Tracker chiêu mộ lưu nhiều account, pity và lịch sử trong `localStorage`; có xuất/nhập JSON.
-- Soi screenshot qua Worker + DashScope Qwen; frontend map kết quả và đối chiếu 214 team local.
+- Soi screenshot qua Worker + DashScope Qwen; frontend map kết quả và đối chiếu 166 team local.
 - Gợi ý portfolio tối đa 5 team bằng engine local. AI chỉ trích xuất dữ liệu từ ảnh, không chọn team.
 - Research MCP chỉ đọc có JSON CLI, stdio và authenticated Streamable HTTP dùng chung tám tool.
 
-Snapshot dữ liệu kiểm tra ngày 2026-07-11:
+Snapshot dữ liệu công khai kiểm tra ngày 2026-08-25:
 
 | Dữ liệu | Quy mô |
 |---|---:|
-| Team | 214 = 56 Team PK + 48 Đô Úy + 110 Meta phe cũ |
-| Tier | 57 team, 65 bản xếp hạng nguồn |
+| Team | 166 = 56 Team PK + 110 Meta phe cũ |
+| Tier | 31 team, 39 bản xếp hạng nguồn |
 | Cùng Tồn | 5 nhóm, 25 team |
 | Khai hoang | 11 team, 5 mỏ |
 | Tướng / chiến pháp / binh thư map | 112 / 239 / 66 |
@@ -68,7 +68,7 @@ python3 -m pipeline.build_books_dict
 python3 -m pipeline.build_team_tier
 ```
 
-Không chạy máy móc trên dữ liệu đang dùng: `build_json.py` vẫn kiểm tra bộ count cũ `50 + 12 + 110`, trong khi artifact commit hiện có 56 + 48 + 110 và phần Đô Úy đã được bổ sung ngoài đường build nhìn thấy. `pipeline/do-uy-ss18-source.json` có 40 mục nhưng chưa có consumer Python hiển thị. Clone sạch thường cũng thiếu HTML nguồn và cache crawl bị ignore. Trước khi rebuild: backup `data/`, bảo đảm đủ nguồn, chạy từng bước, rồi review toàn bộ diff và test.
+Không chạy máy móc trên dữ liệu đang dùng: `build_json.py` cố ý loại nguồn Đô Úy nhưng hiện chỉ dựng `50 + 110`, trong khi artifact công khai có `56 + 110`. `pipeline/do-uy-ss18-source.json` giữ 40 mục làm archive nguồn thô và không tham gia publication. Clone sạch thường cũng thiếu HTML nguồn và cache crawl bị ignore. Trước khi rebuild: backup `data/`, bảo đảm đủ nguồn, chạy từng bước, rồi review toàn bộ diff và test.
 
 ## Deploy
 
@@ -110,7 +110,7 @@ plans/                 # kế hoạch/báo cáo lịch sử, không phải runti
 
 ## Ghi chú vận hành
 
-- `data/facets.json` không được frontend load; các tab team tự tính facet runtime. File hiện phản ánh 213 team, lệch 1 so với `teams.json`.
+- `data/facets.json` không được frontend load; các tab team tự tính facet runtime. File hiện phản ánh 165 team, lệch 1 so với `teams.json`.
 - `data/tactics-generic.json` có 29 nguồn bổ sung; 27 record đang mang trạng thái `pending` sau merge vào `tactics.json`.
 - Tracker và scan state lưu local. Scan state loại bỏ ảnh, base64, blob và Turnstile token; ảnh chỉ giữ trong bộ nhớ của phiên UI.
 - Ảnh soi đội được gửi tới Alibaba Cloud DashScope; nên crop thông tin tài khoản trước khi dùng.

@@ -1,5 +1,12 @@
 # Project Changelog
 
+## 2026-08-25
+
+### Changed
+
+- Retire 48 team Đô Úy khỏi artifact công khai, tab/hash/module website và toàn bộ kết quả Research MCP; website còn 9 section và dữ liệu public còn 166 team (56 Team PK, 110 Meta phe cũ) cùng 31 tier row.
+- Giữ `pipeline/do-uy-ss18-source.json` làm archive nguồn thô, loại `Team Đô Úy.html` khỏi pipeline build và thêm lớp lọc MCP để snapshot cũ không tái công khai source `do-uy`.
+
 ## 2026-08-01
 
 ### Changed

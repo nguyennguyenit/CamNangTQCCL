@@ -63,7 +63,7 @@ python3 -m pipeline.suggest_team_tier path/to/saved-tier-list.html
 
 ### Cảnh báo bắt buộc
 
-Không chạy `pipeline.build_json` trực tiếp trên artifact production mà chưa backup. Code đang assert 50 Team PK + 12 Đô Úy + 110 meta cũ, trong khi `data/teams.json` commit có 56 + 48 + 110. Snapshot Đô Úy hiện gồm augmentation không có consumer Python nhìn thấy; `do-uy-ss18-source.json` có 40 record. `facets.json` cũng đang lệch một team. Một clone sạch thường thiếu HTML nguồn và raw crawl cache vì chúng bị ignore.
+Không chạy `pipeline.build_json` trực tiếp trên artifact production mà chưa backup. Builder cố ý loại `Team Đô Úy.html` và hiện dựng 50 Team PK + 110 meta cũ, trong khi `data/teams.json` công khai có 56 + 110. `pipeline/do-uy-ss18-source.json` giữ 40 record nguồn thô làm archive và không được publish. `facets.json` vẫn lệch một team. Một clone sạch thường thiếu HTML nguồn và raw crawl cache vì chúng bị ignore.
 
 Quy trình an toàn:
 
@@ -214,8 +214,8 @@ Kỳ vọng `204` và `access-control-allow-origin: https://tqccl.pages.dev`.
 
 Smoke checklist sau promotion được ủy quyền:
 
-1. Mở production, chuyển đủ 10 hash section và kiểm tra JSON/network không lỗi.
-2. Kiểm tra ba tab team hiển thị 56/48/110 và filter mobile collapse.
+1. Mở production, chuyển đủ 9 hash section và kiểm tra JSON/network không lỗi.
+2. Kiểm tra hai tab team hiển thị 56/110, không có tab/asset/team Đô Úy và filter mobile collapse.
 3. Test tra cứu, theme, tracker export/import bằng dữ liệu không nhạy cảm.
 4. Upload screenshot đã crop; xác nhận Turnstile, analyze và map/team match.
 5. Test scan/review/recommend; reload và xác nhận state không chứa ảnh/token.

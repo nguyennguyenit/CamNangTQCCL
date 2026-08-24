@@ -8,7 +8,7 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 
 ```text
 .
-├── src/pages/index.astro   # document shell 10 section
+├── src/pages/index.astro   # document shell 9 section
 ├── src/lib/                # manifest và safe raw-artifact reader
 ├── src/pages/{js,css,data} # Astro static endpoints
 ├── css/, js/, data/        # source runtime canonical
@@ -27,13 +27,13 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 
 | File | Vai trò |
 |---|---|
-| `src/pages/index.astro` | Khai báo 10 tab/section và nạp raw `/js/app.js`; build thành `dist/index.html`. |
+| `src/pages/index.astro` | Khai báo 9 tab/section và nạp raw `/js/app.js`; build thành `dist/index.html`. |
 | `src/lib/public-artifact-manifest.mjs` | Allowlist route/source/class cho mọi JS/CSS/JSON public. |
 | `src/lib/root-static-artifacts.ts` | Đọc raw artifact an toàn và trả bytes/MIME cho static endpoint. |
 | `scripts/verify-astro-dist.mjs` | Kiểm toàn bộ `dist/`, byte parity và deployment-control artifact. |
 | `js/app.js` | Load 6 JSON bắt buộc + tier tùy chọn; init nav, theme và các section. |
-| `js/team-filter-section.js` | Shared full-text search, chip động, stats, clear và mobile collapse cho 3 tab team. |
-| `js/team-pk.js`, `js/do-uy.js`, `js/meta-cu.js` | Chọn source, cấu hình filter và sort riêng từng tab. |
+| `js/team-filter-section.js` | Shared full-text search, chip động, stats, clear và mobile collapse cho 2 tab team. |
+| `js/team-pk.js`, `js/meta-cu.js` | Chọn source, cấu hình filter và sort riêng từng tab. |
 | `js/render.js`, `js/filters.js` | DOM builder, team card, tier và pure filter/search. |
 | `js/hero-list.js`, `js/hero-detail.js`, `js/tactics.js` | Tra cứu tướng/chiến pháp local. |
 | `js/recruit-tracker-store.js` | State schema v1, nhiều account, banner, pity, import/export localStorage. |
@@ -61,10 +61,10 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 
 ## Dữ liệu runtime
 
-| Artifact | Snapshot 2026-07-11 |
+| Artifact | Snapshot công khai 2026-08-25 |
 |---|---:|
-| `data/teams.json` | 214: 56 team-intro, 48 do-uy, 110 moi-phe |
-| `data/team-tier.json` | 57 team, 65 rankings |
+| `data/teams.json` | 166: 56 team-intro, 110 moi-phe |
+| `data/team-tier.json` | 31 team, 39 rankings |
 | `data/tactics.json` | 239, gồm 27 record pending sau merge generic |
 | `data/heroes-dict.json` | 112 |
 | `data/books-dict.json` | 66 |
@@ -72,7 +72,7 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | `data/khaihoang.json` | 11 team, 5 mỏ |
 | `data/tactics-generic.json` | 29 record nguồn |
 
-`data/facets.json` có 91 tướng, 119 chiến pháp, 67 binh thư, 4 loại binh, 3 mức sao, 5 phe, 2 trạng thái, 3 nguồn; tổng source/status là 213. Frontend không fetch artifact này: tab team tính facet trực tiếp từ tập team runtime.
+`data/facets.json` có 91 tướng, 119 chiến pháp, 67 binh thư, 4 loại binh, 3 mức sao, 5 phe, 2 trạng thái, 2 nguồn; tổng source là 165. Frontend không fetch artifact này: tab team tính facet trực tiếp từ tập team runtime.
 
 ## Local state và external state
 
@@ -95,7 +95,8 @@ Gate hiện được kiểm bằng script trong root, `worker/package.json` và 
 ## Điểm cần chú ý
 
 - Comment `50 team` trong `js/team-pk.js` đã cũ; UI dùng số runtime nên vẫn hiện 56.
-- `build_json.py` vẫn expect 50 Team PK và 12 Đô Úy; không tái tạo artifact hiện tại an toàn.
+- `build_json.py` cố ý loại Đô Úy nhưng chỉ dựng 50 Team PK + 110 meta cũ; chưa tái tạo đủ artifact 56 + 110 an toàn.
+- 48 team Đô Úy từng công khai đã được retire; chỉ còn nguồn thô/archive 40 record tại `pipeline/do-uy-ss18-source.json`, không tham gia build/publication.
 - `facets.json` chậm hơn `teams.json` một team nhưng hiện không ảnh hưởng filter runtime.
 - `plans/` có thể chứa mô tả cũ; kiểm chứng bằng code, config và JSON commit.
 - Remote MCP bearer là pre-shared credential cho managed client, không phải OAuth access token. Production release chỉ tiếp tục khi live edge rate control, exact candidate identity và ownership-safe rollback gate đạt.

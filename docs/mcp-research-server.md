@@ -15,6 +15,8 @@
 
 Dịch vụ không nhận ảnh, không crawl, không ghi dữ liệu game và không sở hữu GoClaw/Dewee hay skill của consumer. Tool error dùng mã/message/next-action cố định, không phản chiếu exception, input, path, credential hoặc upstream body.
 
+Corpus team công khai loại source `do-uy`. Artifact hiện tại đã bỏ 48 team từng công khai; handler còn lọc lại snapshot trước khi dựng index và gọi match/recommend để snapshot cũ không tái xuất hiện qua bất kỳ transport nào.
+
 `releaseId` là SHA-256 đầy đủ của canonical manifest sáu artifact. `dataVersion` rút gọn chỉ dùng hiển thị. `workflowVersion` ghép `releaseId` với `workflowBuildId`; binding hoặc cursor cũ bị từ chối khi một identity đổi.
 
 ## Chạy local

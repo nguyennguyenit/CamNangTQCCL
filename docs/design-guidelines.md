@@ -6,11 +6,11 @@ Giao diện là dashboard dữ liệu tĩnh: nhanh, rõ, gọn. Card, badge và 
 
 ## Cấu trúc trải nghiệm
 
-10 section cùng một shell header/navigation. Hash URL giữ deep-link. Mỗi section nên có intro ngắn, control chính và nội dung ngay sau đó; tránh dashboard trang trí không phục vụ quyết định.
+9 section cùng một shell header/navigation. Hash URL giữ deep-link. Mỗi section nên có intro ngắn, control chính và nội dung ngay sau đó; tránh dashboard trang trí không phục vụ quyết định.
 
 | Nhóm | Pattern hiện tại |
 |---|---|
-| Team PK / Đô Úy / Meta cũ | Shared inline search + dynamic chip groups + card grid |
+| Team PK / Meta cũ | Shared inline search + dynamic chip groups + card grid |
 | Cùng Tồn / Khai hoang | Nhóm card và bảng dữ liệu local |
 | Tướng / chiến pháp | Search/filter local, modal chi tiết tướng |
 | Tracker | Account/banner/slot/action nhỏ gọn, lịch sử và import/export |
@@ -19,7 +19,7 @@ Giao diện là dashboard dữ liệu tĩnh: nhanh, rõ, gọn. Card, badge và 
 
 ## Shared team filter
 
-- Dùng `team-filter-section.js` cho cả ba tab; wrapper chỉ chọn source, groups và sort.
+- Dùng `team-filter-section.js` cho cả hai tab; wrapper chỉ chọn source, groups và sort.
 - Search toàn văn bao phủ tướng, chiến pháp và binh thư. Không thêm combo trùng chức năng nếu search đủ.
 - Chip count được tính từ tập team của tab; nhóm có dưới hai giá trị tự ẩn.
 - `Xóa lọc` phải reset query, sets, chip state và selected tags.
@@ -32,7 +32,7 @@ Giao diện là dashboard dữ liệu tĩnh: nhanh, rõ, gọn. Card, badge và 
 - Giữ palette phe và badge status/tier hiện có để người dùng nhận diện nhanh.
 - Không dùng màu là tín hiệu duy nhất: badge phải có text/tier/status.
 - Label, button, error và empty state dùng tiếng Việt ngắn, cụ thể.
-- Spacing giữa intro, filter và grid phải ổn định giữa ba tab team.
+- Spacing giữa intro, filter và grid phải ổn định giữa hai tab team.
 - Motion tối thiểu; tôn trọng `prefers-reduced-motion` khi thêm animation.
 
 ## Responsive và touch
@@ -91,7 +91,7 @@ Không tuyên bố accessibility hoàn chỉnh trước khi các contract trên 
 ## Không nên làm
 
 - Không thêm framework-looking component chỉ để đổi thẩm mỹ.
-- Không tạo filter UI khác nhau cho ba tab cùng contract.
+- Không tạo filter UI khác nhau cho hai tab cùng contract.
 - Không tham chiếu `facets.json` như runtime source hoặc module mobile drawer không tồn tại.
 - Không giấu privacy notice, scan review hoặc conflict diagnostics.
 - Không để AI wording khiến người dùng hiểu model tự sáng tạo đội.

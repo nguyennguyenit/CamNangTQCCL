@@ -41,18 +41,18 @@ local MCP client ───────────stdio────────�
 6. `build_team_tier.py` join bảng tier curate vào team ID.
 7. Maintainer review diff và chạy test trước khi publish artifact.
 
-Đường build hiện không tái tạo đầy đủ snapshot: assertions trong `build_json.py` là 50 Team PK + 12 Đô Úy + 110 meta cũ, trong khi artifact là 56 + 48 + 110. Nguồn JSON Đô Úy 40 mục chưa có consumer Python thấy được. HTML/cache còn bị ignore. Vì vậy pipeline là công cụ bảo trì có điều kiện, chưa phải clean-clone reproducible build.
+Đường build cố ý không đưa `Team Đô Úy.html` vào artifact và hiện tạo 50 Team PK + 110 meta cũ, trong khi artifact công khai có 56 + 110. Sáu Team PK bổ sung vẫn chưa có đường tái tạo nhìn thấy. `pipeline/do-uy-ss18-source.json` giữ 40 record nguồn thô làm archive, không phải input publication. HTML/cache còn bị ignore. Vì vậy pipeline là công cụ bảo trì có điều kiện, chưa phải clean-clone reproducible build.
 
 ## Static runtime
 
-`src/pages/index.astro` là document authority duy nhất và khai báo 10 section. Astro build phát shell thành `dist/index.html`; `app.js` vẫn là ES module browser canonical tại root và:
+`src/pages/index.astro` là document authority duy nhất và khai báo 9 section. Astro build phát shell thành `dist/index.html`; `app.js` vẫn là ES module browser canonical tại root và:
 
 - khởi tạo theme và hash navigation;
 - fetch `teams`, `coexist`, `khaihoang`, `tactics`, `heroes-dict`, `books-dict` song song;
 - fetch `team-tier` theo kiểu optional;
-- init ba tab team, tra cứu, tracker, analyze và roster recommender.
+- init hai tab team, tra cứu, tracker, analyze và roster recommender.
 
-Ba tab team đều gọi `team-filter-section.js`. Module này tính facet trực tiếp từ tập source, tạo search/chip, thu gọn bộ lọc trên mobile và render card. `data/facets.json` không được load runtime.
+Hai tab team đều gọi `team-filter-section.js`. Module này tính facet trực tiếp từ tập source, tạo search/chip, thu gọn bộ lọc trên mobile và render card. `data/facets.json` không được load runtime.
 
 Tra cứu và gợi ý cốt lõi chạy local:
 
@@ -82,6 +82,8 @@ Snapshot gồm đúng sáu artifact được khai báo tại [`artifact-contract
 `mcp-worker/src/domain/normalization-service.ts` sở hữu chuẩn hóa và source precedence; ambiguity, identity/family conflict hoặc locked-resource conflict đặt trạng thái cần review. `canonical-state.ts` sở hữu projection/digest và xác minh binding. `recommendation-service.ts` chỉ gọi engine sau khi workflow, canonical state và binding khớp; trạng thái chưa phân giải hoặc binding cũ bị từ chối. Bằng chứng người dùng thật sự đã xác nhận vẫn thuộc caller, không phải điều research handler tự chứng minh.
 
 Tám tên handler cùng schema request/result thuộc [`research-contracts.ts`](../mcp-worker/src/research/research-contracts.ts); dispatch và version/provenance/error behavior thuộc [`research-handlers.ts`](../mcp-worker/src/research/research-handlers.ts). CLI `npm run cli -- <lệnh>`, stdio `npm run stdio` và HTTP đều gọi cùng handler/schema. [`tool-definitions.ts`](../mcp-worker/src/mcp/tool-definitions.ts) chỉ thêm mô tả và annotation read-only; mỗi factory tạo `McpServer` mới.
+
+Corpus team công khai không gồm source `do-uy`. Ngoài việc artifact hiện tại đã loại source này, request context trong `research-handlers.ts` còn chiếu snapshot về tập public trước khi dựng index và gọi match/recommend, để snapshot cũ không thể tái công khai team hoặc tier Đô Úy.
 
 Stdio dùng official SDK transport, giữ stdout chỉ cho protocol và ghi diagnostic cố định vào stderr. Remote Worker dùng raw Web-standard Streamable HTTP transport của SDK v1 ở chế độ JSON stateless; protocol `2025-11-25` được pin cho cả `initialize` đơn lẻ và trong batch. Trình tự `/mcp` là header guard rẻ → managed-client pre-shared bearer → rate/in-flight → đọc JSON theo byte thực tế và kiểm protocol → Static Assets/server; `/healthz` là liveness no-I/O. Origin hiện diện phải khớp chính xác và result cũng có trần. Bearer này không phải OAuth; không có OAuth server/discovery, client phải tự gắn `Authorization` header.
 
