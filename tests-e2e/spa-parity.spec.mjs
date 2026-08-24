@@ -28,7 +28,6 @@ const runtimeJson = [
 ];
 const sections = [
   "team-pk",
-  "do-uy",
   "meta-cu",
   "coexist",
   "khaihoang",
@@ -156,8 +155,8 @@ test("boots once with clean first-party requests and stable metadata", async ({ 
   const appModule = page.locator('script[type="module"]');
   await expect(appModule).toHaveCount(1);
   await expect(appModule).toHaveAttribute("src", /^(?:\.\/|\/)js\/app\.js$/);
-  await expect(page.locator(".nav-tab")).toHaveCount(10);
-  await expect(page.locator(".section")).toHaveCount(10);
+  await expect(page.locator(".nav-tab")).toHaveCount(9);
+  await expect(page.locator(".section")).toHaveCount(9);
   await expectActiveSection(page, "team-pk");
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);
@@ -381,7 +380,6 @@ test("opening a roster recommendation selects its source tab and hero search", a
 
   await recommendation.getByRole("button", { name: "Mở team", exact: true }).click();
   const expectedSection = {
-    "do-uy": "do-uy",
     "moi-phe": "meta-cu",
     "team-intro": "team-pk",
   }[selectedTeam.source] || "team-pk";

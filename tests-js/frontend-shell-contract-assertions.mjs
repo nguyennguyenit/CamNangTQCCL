@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 
 export const FRONTEND_SECTIONS = [
   "team-pk",
-  "do-uy",
   "meta-cu",
   "coexist",
   "khaihoang",

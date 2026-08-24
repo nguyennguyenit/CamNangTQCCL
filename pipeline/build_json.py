@@ -22,7 +22,6 @@ _OUT = os.path.join(_ROOT, "data")
 # (file, source-tag, status-hint, expected-count)
 _TEAM_FILES = [
     ("Team giới thiệu(mới).html", "team-intro", None, 50),
-    ("Team Đô Úy.html", "do-uy", None, 12),
     ("Meta mỗi phe (cũ).html", "moi-phe", "out-meta", 110),
 ]
 

@@ -244,6 +244,25 @@ function ensureExpectedWorkflow(
   }
 }
 
+function publicTeamSnapshot(snapshot: DataSnapshot): DataSnapshot {
+  const teams = snapshot.artifacts.teams.filter(
+    (team) => team.source !== "do-uy",
+  );
+  if (teams.length === snapshot.artifacts.teams.length) return snapshot;
+
+  const visibleTeamIds = new Set(teams.map((team) => team.id));
+  return {
+    ...snapshot,
+    artifacts: {
+      ...snapshot.artifacts,
+      teams,
+      "team-tier": snapshot.artifacts["team-tier"].filter((row) =>
+        visibleTeamIds.has(row.teamId),
+      ),
+    },
+  };
+}
+
 function domainSnapshot(snapshot: DataSnapshot) {
   return {
     releaseId: snapshot.releaseId,
@@ -279,7 +298,7 @@ export function createResearchHandlers(
   async function context(): Promise<RequestContext> {
     let snapshot: DataSnapshot;
     try {
-      snapshot = await dependencies.dataSource.load();
+      snapshot = publicTeamSnapshot(await dependencies.dataSource.load());
     } catch {
       throw new ResearchHandlerError(
         "DATA_UNAVAILABLE",

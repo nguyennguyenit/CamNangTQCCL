@@ -1,11 +1,10 @@
 // Điều phối: load JSON, section nav, render, theme. Vanilla ES module.
-// Cả 3 tab team (Team PK / Đô Úy / Meta cũ) dùng chung filter inline qua
+// Cả 2 tab team (Team PK / Meta cũ) dùng chung filter inline qua
 // createTeamFilterSection — không còn sidebar drawer riêng.
 
 import { coexistGroup, el, khaihoangTable } from "./render.js";
 import { initTactics } from "./tactics.js";
 import { initTeamPk } from "./team-pk.js";
-import { initDoUy } from "./do-uy.js";
 import { initMetaCu } from "./meta-cu.js";
 import { initHeroList } from "./hero-list.js";
 import { initAnalyze } from "./analyze.js";
@@ -45,7 +44,7 @@ function initTheme() {
 }
 
 /* ---------- Section nav ---------- */
-const SECTIONS = ["team-pk", "do-uy", "meta-cu", "coexist", "khaihoang", "heroes", "tactics", "recruit-tracker", "analyze", "roster-recommend"];
+const SECTIONS = ["team-pk", "meta-cu", "coexist", "khaihoang", "heroes", "tactics", "recruit-tracker", "analyze", "roster-recommend"];
 function initNav() {
   sectionMenu = createMobileSectionMenu({
     nav: $(".section-nav"),
@@ -88,7 +87,6 @@ async function main() {
 
     const sections = {
       "team-pk": initTeamPk({ teams, tierIndex, heroesDict, mount: $("#section-team-pk") }),
-      "do-uy": initDoUy({ teams, tierIndex, mount: $("#section-do-uy") }),
       "meta-cu": initMetaCu({ teams, tierIndex, mount: $("#section-meta-cu") }),
     };
 
@@ -99,7 +97,7 @@ async function main() {
     initRecruitTracker({ heroesDict, mount: $("#section-recruit-tracker") });
 
     // Mở team giống từ kết quả soi đội -> về đúng tab theo nguồn + search tên tướng đầu.
-    const SOURCE_SECTION = { "do-uy": "do-uy", "moi-phe": "meta-cu", "team-intro": "team-pk" };
+    const SOURCE_SECTION = { "moi-phe": "meta-cu", "team-intro": "team-pk" };
     const onOpenTeam = (team) => {
       const name = SOURCE_SECTION[team.source] || "team-pk";
       switchSection(name);

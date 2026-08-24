@@ -22,7 +22,10 @@ class TestBuild(unittest.TestCase):
         cls.teams = build_json.build_teams()
 
     def test_total_count(self):
-        self.assertEqual(len(self.teams), 172)
+        self.assertEqual(len(self.teams), 160)
+
+    def test_published_sources_exclude_do_uy(self):
+        self.assertEqual({t["source"] for t in self.teams}, {"team-intro", "moi-phe"})
 
     def test_team_shape(self):
         t = self.teams[0]

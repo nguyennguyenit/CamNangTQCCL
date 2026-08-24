@@ -233,6 +233,110 @@ describe("research runtime contracts", () => {
     expect(matches.matches[0]?.team.id).toBe("team-a");
   });
 
+  it("hides retired Đô Úy teams from every team-returning workflow", async () => {
+    const base = await fixtureSource().load();
+    const hiddenTeam = {
+      id: "do-uy-hidden",
+      source: "do-uy",
+      name: "Đội Đô Úy ẩn",
+      heroes: [
+        {
+          name: "Tướng A",
+          tactics: [
+            {
+              name: "Chiến Pháp A",
+              alternatives: ["Chiến Pháp B"],
+            },
+          ],
+          books: [{ name: "Binh Thư A" }],
+        },
+      ],
+    };
+    const source: DataSource = {
+      async load() {
+        return {
+          ...base,
+          artifacts: {
+            ...base.artifacts,
+            teams: [...base.artifacts.teams, hiddenTeam],
+            "team-tier": [
+              ...base.artifacts["team-tier"],
+              {
+                teamId: hiddenTeam.id,
+                rankings: [
+                  {
+                    tier: "T0",
+                    source: "retired-season",
+                    updatedAt: "2026-08-25",
+                  },
+                ],
+              },
+            ],
+          },
+        };
+      },
+    };
+    const { handlers, normalized } = await confirmedFixtureFlow(source);
+    const expectedWorkflowVersion = normalized.workflowVersion;
+    const canonicalRequest = {
+      expectedWorkflowVersion,
+      canonicalState: normalized.canonicalState,
+      confirmationBinding: normalized.confirmationBinding,
+    };
+
+    const search = await handlers.call("tqccl_search", {
+      query: "",
+      kinds: ["team"],
+      limit: 10,
+    });
+    expect(search.items.map(({ recordId }) => recordId)).toEqual(["team-a"]);
+    await expect(
+      handlers.call("tqccl_get_team", {
+        teamId: hiddenTeam.id,
+        expectedWorkflowVersion,
+      }),
+    ).rejects.toMatchObject({ code: "TEAM_NOT_FOUND" });
+
+    const matches = await handlers.call("tqccl_match_team", {
+      expectedWorkflowVersion,
+      heroes: [
+        {
+          canonicalId: "hero:tuong-a",
+          tacticIds: ["tactic:chien-phap-a"],
+        },
+      ],
+      minHeroes: 1,
+      limit: 10,
+    });
+    expect(matches.matches.map(({ team }) => team.id)).toEqual(["team-a"]);
+
+    const recommendation = await handlers.call(
+      "tqccl_recommend_team",
+      canonicalRequest,
+    );
+    const coexist = await handlers.call(
+      "tqccl_recommend_coexist",
+      canonicalRequest,
+    );
+    expect(
+      recommendation.teams.every(
+        ({ team }) => (team as { id?: unknown }).id !== hiddenTeam.id,
+      ),
+    ).toBe(true);
+    expect(
+      coexist.teams.every(
+        ({ team }) => (team as { id?: unknown }).id !== hiddenTeam.id,
+      ),
+    ).toBe(true);
+    await expect(
+      handlers.call("tqccl_suggest_replacements", {
+        ...canonicalRequest,
+        teamId: hiddenTeam.id,
+        tacticName: "Chiến Pháp A",
+      }),
+    ).rejects.toMatchObject({ code: "TEAM_NOT_FOUND" });
+  });
+
   it("truncates a future-field-heavy team deterministically below the byte ceiling", async () => {
     const base = await fixtureSource().load();
     const largeTeam = {

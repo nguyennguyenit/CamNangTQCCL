@@ -41,11 +41,20 @@ test("team identifiers are unique and every tier row joins a team", async () => 
 
   assert.equal(idSet.size, ids.length, "team.id values must be unique");
   assert.ok(teams.every((team) => Array.isArray(team.heroes) && team.heroes.length > 0));
+  assert.ok(teams.every((team) => team.source !== "do-uy"), "Đô Úy teams must stay hidden");
   for (const row of teamTier) {
     assert.equal(typeof row.teamId, "string");
     assert.ok(idSet.has(row.teamId), `unknown team-tier teamId: ${row.teamId}`);
     assert.ok(Array.isArray(row.rankings));
   }
+});
+
+test("published facets and modules do not expose the retired Đô Úy season", async () => {
+  const facets = await jsonAsset("facets.json");
+  assert.ok(facets.sources.every(({ value }) => value !== "do-uy"));
+
+  const manifestSource = await readFile(new URL("src/lib/public-artifact-manifest.mjs", root), "utf8");
+  assert.doesNotMatch(manifestSource, /entry\(["']js["'],\s*["']do-uy["']\)/);
 });
 
 test("app keeps six required JSON requests and team tier optional", async () => {
@@ -66,11 +75,10 @@ test("app keeps six required JSON requests and team tier optional", async () => 
   assert.match(source, /loadOptionalJSON\(["']\.\/data\/team-tier\.json["'], \[\]\)/);
 });
 
-test("app preserves the ten-section hash contract and cross-section search seam", async () => {
+test("app preserves the nine-section hash contract and cross-section search seam", async () => {
   const source = await readFile(new URL("js/app.js", root), "utf8");
   const expectedSections = [
     "team-pk",
-    "do-uy",
     "meta-cu",
     "coexist",
     "khaihoang",
