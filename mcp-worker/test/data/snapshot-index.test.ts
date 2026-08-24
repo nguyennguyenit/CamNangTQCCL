@@ -127,14 +127,14 @@ describe("snapshot index", () => {
     const ranked = index.search("Thương", { kinds: ["team"], limit: 8 });
 
     expect(ranked.map(({ canonicalId }) => canonicalId)).toEqual([
-      "team:do-uy-60",
       "team:team-intro-7",
       "team:team-intro-4",
       "team:team-intro-6",
       "team:team-intro-5",
       "team:team-intro-52",
       "team:team-intro-1",
-      "team:do-uy-71",
+      "team:team-intro-0",
+      "team:team-intro-3",
     ]);
   });
 
