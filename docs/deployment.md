@@ -2,9 +2,10 @@
 
 ## Platform: Cloudflare
 
-Project deploy is split into two surfaces:
+Project deploy is split into three surfaces:
 
 - Static site: Cloudflare Pages project at `https://tqccl.pages.dev`.
+- Research MCP Worker: `https://mcp.tqccl.com`.
 - Vision proxy Worker: `https://tqccl-vision-proxy.nguyennlt-ncc.workers.dev`.
 
 ## Latest Worker Deploy
@@ -16,15 +17,32 @@ Project deploy is split into two surfaces:
 
 ## Latest Static Pages Deploy
 
-- Date: 2026-07-11
+- Date: 2026-08-25
 - Production URL: `https://tqccl.pages.dev`
-- Preview URL: `https://29ebe76f.tqccl.pages.dev`
-- Source commit deployed from local main: `b8c48d9`
+- Deployment URL: `https://239d7027.tqccl.pages.dev`
+- Deployment ID: `239d7027-a7d4-42cf-aa02-358e9b4abfcb`
+- Source commit: `2a754f5a4508695dd7871bf72fd348117f9aeba3`
 - Published files: `index.html`, `css/`, `js/`, `data/`
+
+## Latest Research MCP Deploy
+
+- Date: 2026-08-25
+- Production URL: `https://mcp.tqccl.com`
+- GitHub Actions run: `32772255629`
+- Source commit: `2a754f5a4508695dd7871bf72fd348117f9aeba3`
+- Release ID: `sha256:a3db20b188b1e8d03b5815301de6d7b9633fc441af103276539dfc9611ba42fa`
+- Workflow build ID: `build:sha256b64:9Y0VOcHk5jF71B_4OkFKQny0b6FVXlU1PS8-5ypWJik`
+- Worker version ID: `8264ea76-efc2-4cd5-b446-49a03a89184d`
+- Production deployment ID: `44f7d0c4-1b4f-487d-acb1-00596400843b`
+- Status: verified at 100% traffic
 
 ## Deploy Commands
 
 Static site is expected to deploy from `main` through Cloudflare Pages.
+
+Research MCP production deploys only through the manual exact-SHA workflow in
+`.github/workflows/mcp-worker.yml`. A push to `main` runs the credential-free
+release gate but does not deploy production.
 
 Worker deploy:
 
@@ -68,3 +86,6 @@ Expected: `204` with `access-control-allow-origin: https://tqccl.pages.dev`.
 Use Cloudflare dashboard rollback for the Worker version or deploy a known-good commit from `worker/`.
 
 For static Pages rollback, use Cloudflare Pages deployment history for `tqccl.pages.dev`.
+
+For Research MCP rollback, use the verified deployment evidence from the exact-SHA
+workflow and restore the prior Worker version through the same controlled release path.
