@@ -6,6 +6,21 @@ import { tacticDescriptions } from "../js/tactics.js";
 
 const tactics = JSON.parse(await readFile(new URL("../data/tactics.json", import.meta.url), "utf8"));
 
+test("Đồng Lòng Hợp Sức resolves to the event heal instead of Cao Pi's domestic tactic", () => {
+  const matches = tactics.filter((item) => item.viet === "Đồng Lòng Hợp Sức");
+  assert.equal(matches.length, 1);
+  const tactic = matches[0];
+  assert.equal(tactic.chinese, "勠力同心");
+  assert.equal(tactic.type, "Chủ động");
+  assert.match(tactic.effectViet, /50%/);
+  assert.match(tactic.effectViet, /1–4/);
+  assert.match(tactic.effectViet, /51%→102%/);
+  assert.match(tactic.effectViet, /8→16/);
+  assert.equal(tactic.targetViet, "Một quân ta");
+  assert.equal(tactic.pending, undefined);
+  assert.equal(tactics.find((item) => item.chinese === "戮力上国").type, "Nội chính");
+});
+
 test("Toàn Quân Đồng Lòng has in-game details", () => {
   const tactic = tactics.find((item) => item.viet === "Toàn Quân Đồng Lòng");
 

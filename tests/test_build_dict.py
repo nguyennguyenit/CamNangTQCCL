@@ -10,6 +10,17 @@ from pipeline import build_dict
 
 
 class MergeGenericTest(unittest.TestCase):
+    def test_event_heal_and_domestic_tactic_keep_distinct_names_after_merge(self):
+        tactics = [{"chinese": "戮力上国", "viet": "Đồng Lòng Hợp Sức", "type": "Nội chính"}]
+        build_dict._apply_overrides(tactics)
+        build_dict._merge_generic(tactics)
+        matches = [t for t in tactics if t["viet"] == "Đồng Lòng Hợp Sức"]
+        self.assertEqual(len(matches), 1)
+        self.assertEqual(matches[0]["chinese"], "勠力同心")
+        self.assertEqual(matches[0]["type"], "Chủ động")
+        self.assertIn("51%→102%", matches[0]["effectViet"])
+        self.assertEqual(tactics[0]["viet"], "Lục Lực Thượng Quốc")
+
     def test_merge_generic_preserves_optional_reviewed_fields(self):
         with tempfile.TemporaryDirectory() as tmp:
             generic_path = Path(tmp) / "tactics-generic.json"

@@ -51,6 +51,25 @@
     { "viet": "Phi Hùng Quân", "chinese": "" },
     { "viet": "Tử Sĩ Tiên Phong", "chinese": "" },
     { "viet": "Vô Địch Can Trường", "chinese": "" },
-    { "viet": "Vạn Quân Đoạt Sư", "chinese": "" }
+    { "viet": "Vạn Quân Đoạt Sư", "chinese": "" },
+    {
+      "viet": "Đồng Lòng Hợp Sức",
+      "chinese": "勠力同心",
+      "hanViet": "Lục Lực Đồng Tâm",
+      "type": "Chủ động",
+      "quality": "S",
+      "effect": "随机执行1-4次：治疗我军单体（治疗率102%，受智力影响），并使目标统率提升16（受智力影响），可叠加，持续2回合",
+      "effectViet": "Xác suất phát động 50%. Thực hiện ngẫu nhiên 1–4 lần: trị liệu một quân ta (tỷ lệ Trị Liệu 51%→102%, chịu ảnh hưởng bởi Trí Lực), đồng thời khiến mục tiêu tăng 8→16 Thống Soái (chịu ảnh hưởng bởi Trí Lực), có thể cộng dồn, duy trì 2 hiệp.",
+      "target": "我军单体",
+      "targetViet": "Một quân ta",
+      "troopFit": [
+        "Kỵ",
+        "Khiên",
+        "Cung",
+        "Thương",
+        "Khí giới"
+      ],
+      "source": "Chiến pháp sự kiện — Ép buộc thiên tử lệnh chư hầu. Ảnh client Việt do người dùng cung cấp 2026-09-06; đối chiếu 勠力同心: https://sanzhan.slgsim.com/zh-hans/tactics/"
+    }
   ]
 }

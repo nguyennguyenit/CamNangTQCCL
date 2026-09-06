@@ -57,6 +57,7 @@
     "杯蛇鬼车": { "viet": "Sợ Bóng Sợ Gió", "conf": "medium" },
     "焚辎营垒": { "viet": "Thiêu Đốt Doanh Lũy", "conf": "medium" },
     "威谋靡亢": { "viet": "Uy Mưu Vô Địch", "conf": "medium" },
-    "戮力上国": { "viet": "Đồng Lòng Hợp Sức", "conf": "medium" }
+    "戮力上国": { "viet": "Lục Lực Thượng Quốc", "conf": "high" },
+    "勠力同心": { "viet": "Đồng Lòng Hợp Sức", "conf": "high" }
   }
 }
