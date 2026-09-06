@@ -210,21 +210,62 @@ function khaihoangHeroRow(h) {
   ].filter(Boolean));
   return el("div", { class: "hero" }, [
     name,
-    before,
-    after,
+    h.tacticBefore ? before : null,
+    h.tacticsAfter?.length ? after : null,
     h.note ? el("div", { class: "kh-note" }, h.note) : null,
   ].filter(Boolean));
 }
 
 /** 1 card đội hình khai hoang đề xuất. */
 function khaihoangTeamCard(t) {
+  const unit = el("span", { class: `badge unit ${UNIT_CLASS[t.unitType] || ""}` }, t.unitType);
   const head = el("div", { class: "card-head" }, [
-    el("div", { class: "units" }, [
-      el("span", { class: `badge unit ${UNIT_CLASS[t.unitType] || ""}` }, t.unitType),
-    ]),
+    el("div", { class: "units" }, [unit]),
     el("h4", { class: "kh-title" }, t.title),
   ]);
-  const heroes = el("div", { class: "heroes" }, (t.heroes || []).map(khaihoangHeroRow));
+  const content = el("div", { class: "kh-build", "aria-live": "polite" });
+  const variants = t.variants || [];
+  const selector = variants.length ? el("select", {
+    class: "kh-variant-select", "aria-label": `Cấu hình ${t.title}`,
+    onchange: (event) => showBuild(variants.find((v) => v.id === event.target.value) || t),
+  }, [
+    el("option", { value: "" }, "Cấu hình mặc định"),
+    ...variants.map((v) => el("option", { value: v.id }, v.label)),
+  ]) : null;
+
+  function showBuild(build) {
+    unit.textContent = build.unitType;
+    unit.className = `badge unit ${UNIT_CLASS[build.unitType] || ""}`;
+    content.replaceChildren(...[
+      build.period ? el("p", { class: "kh-build-context" }, `${build.region} · ${build.period}`) : null,
+      build.context ? el("p", { class: "kh-build-context" }, build.context) : null,
+      build.note ? el("p", { class: "kh-build-note" }, build.note) : null,
+      build.commanderBefore ? el("p", { class: "kh-commander" }, `Chủ tướng trước cấp 20: ${build.commanderBefore}`) : null,
+      build.commanderAfter ? el("p", { class: "kh-commander" }, `Chủ tướng sau cấp 20: ${build.commanderAfter}`) : null,
+      el("div", { class: "heroes" }, (build.heroes || []).map(khaihoangHeroRow)),
+      khaihoangSources(build.sources),
+      build === t ? khaihoangTransforms(t) : null,
+    ].filter(Boolean));
+  }
+  showBuild(t);
+  return el("article", { class: "kh-card" }, [
+    head,
+    selector ? el("label", { class: "kh-variant-control" }, ["Chọn cấu hình", selector]) : null,
+    content,
+  ].filter(Boolean));
+}
+
+function khaihoangSources(sources = []) {
+  const links = sources.filter((source) => /^https:\/\//.test(source.url || ""));
+  return links.length ? el("div", { class: "kh-sources" }, [
+    el("span", {}, "Nguồn: "),
+    ...links.map((source) => el("a", {
+      href: source.url, target: "_blank", rel: "noopener noreferrer",
+    }, source.label)),
+  ]) : null;
+}
+
+function khaihoangTransforms(t) {
   const transforms = (t.transforms || []).length
     ? el("div", { class: "kh-transforms" }, [
         el("span", { class: "kh-tf-label" }, "Chuyển hình đề xuất"),
@@ -236,7 +277,7 @@ function khaihoangTeamCard(t) {
           ].filter(Boolean))),
       ])
     : null;
-  return el("article", { class: "kh-card" }, [head, heroes, transforms].filter(Boolean));
+  return transforms;
 }
 
 /** Bảng quân thủ các mỏ (PvE). */
@@ -258,6 +299,10 @@ export function khaihoangTable(data) {
   const teams = Array.isArray(data) ? [] : (data.teams || []);
   const mines = Array.isArray(data) ? data : (data.mines || []);
   return el("div", { class: "khaihoang" }, [
+    data.season ? el("p", { class: "kh-season-context" }, [
+      el("strong", {}, `Mùa đang chơi: ${data.season}. `),
+      data.seasonNote || "",
+    ]) : null,
     teams.length
       ? el("div", { class: "kh-block" }, [
           el("h2", { class: "kh-section-title" }, "Đội hình khai hoang đề xuất"),

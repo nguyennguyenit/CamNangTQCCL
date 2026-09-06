@@ -302,6 +302,13 @@ body {
 /* Nhãn Trước/Sau đứng đầu mỗi dòng chiến pháp. */
 .kh-line .kh-label { font-size: .66rem; font-weight: 700; color: var(--muted); text-transform: uppercase; min-width: 2.6rem; }
 .kh-note { font-size: .73rem; color: var(--muted); font-style: italic; margin-top: .15rem; }
+.kh-variant-control { display: grid; gap: .35rem; margin: .75rem 0; font-size: .8rem; color: var(--muted); }
+.kh-variant-select { width: 100%; min-width: 0; min-height: 44px; padding: .45rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: inherit; }
+.kh-season-context { padding: .75rem; border-left: 3px solid var(--accent); background: var(--panel); font-size: .85rem; line-height: 1.6; }
+.kh-build-context, .kh-build-note, .kh-commander { margin: .4rem 0; font-size: .78rem; line-height: 1.5; overflow-wrap: anywhere; }
+.kh-build-context { color: var(--muted); }
+.kh-sources { display: flex; flex-wrap: wrap; gap: .3rem .5rem; margin-top: .6rem; font-size: .75rem; overflow-wrap: anywhere; }
+.kh-sources a { color: var(--accent); text-decoration: underline; }
 /* Tag chiến pháp ở khai hoang chỉ để hiển thị, không bấm. */
 .kh-card .tag, .kh-tf .tag { cursor: default; }
 .kh-transforms { margin-top: .6rem; padding-top: .5rem; border-top: 1px dashed var(--line); }

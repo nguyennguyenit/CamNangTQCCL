@@ -49,16 +49,114 @@
           "alternatives": "Điêu Thuyền, Hoàng Cái, Phùng Kỷ"
         }
       ],
-      "title": "Gia Cát Khác · SP Mã Siêu · Pháp Chính"
+      "title": "Gia Cát Khác · SP Mã Siêu · Pháp Chính",
+      "variants": [
+        {
+          "id": "cn-thoi-phong",
+          "label": "CN · Thôi Phong",
+          "region": "Trung Quốc",
+          "period": "Trước và sau cấp 20 · 22/04/2026",
+          "unitType": "Thương",
+          "heroes": [
+            {
+              "name": "Gia Cát Khác",
+              "unitTypeBefore": "Thương",
+              "tacticBefore": "Giải Phiền Vệ",
+              "unitTypeAfter": "Thương",
+              "tacticsAfter": [
+                "Giải Phiền Vệ",
+                "Thời Cơ Chiến Thắng"
+              ]
+            },
+            {
+              "name": "SP Mã Siêu",
+              "unitTypeBefore": "Thương",
+              "tacticBefore": "Thôi Phong Đoạn Nhẫn",
+              "unitTypeAfter": "Thương",
+              "tacticsAfter": [
+                "Thôi Phong Đoạn Nhẫn",
+                "Mau Giành Lợi Thế"
+              ]
+            },
+            {
+              "name": "Pháp Chính",
+              "unitTypeBefore": "Thương",
+              "tacticBefore": "Tiềm Long Trận",
+              "unitTypeAfter": "Thương",
+              "tacticsAfter": [
+                "Tiềm Long Trận",
+                "Thịnh Khí Linh Địch"
+              ]
+            }
+          ],
+          "note": "Pháp Chính mang Tiềm Long từ đầu; cần có Thôi Phong. Nguồn hướng tới tài khoản nhiều hột, không suy các mốc mở đất cho mọi tài khoản.",
+          "sources": [
+            {
+              "label": "CNBlogs — hướng dẫn SP Mã Siêu",
+              "url": "https://www.cnblogs.com/walj/articles/19910985"
+            }
+          ],
+          "commanderBefore": "Pháp Chính",
+          "commanderAfter": "Pháp Chính"
+        },
+        {
+          "id": "jp-s23",
+          "label": "Nhật S23 · Nhất Kỵ / Bạo Lệ",
+          "region": "Nhật",
+          "period": "Trước và sau cấp 20 · S23, 25/01/2026",
+          "unitType": "Thương",
+          "heroes": [
+            {
+              "name": "Gia Cát Khác",
+              "unitTypeBefore": "Thương",
+              "tacticBefore": "Thịnh Khí Linh Địch",
+              "unitTypeAfter": "Thương",
+              "tacticsAfter": [
+                "Thịnh Khí Linh Địch",
+                "Thời Cơ Chiến Thắng"
+              ]
+            },
+            {
+              "name": "SP Mã Siêu",
+              "unitTypeBefore": "Thương",
+              "tacticBefore": "Nhất Kỵ Đương Thiên",
+              "unitTypeAfter": "Thương",
+              "tacticsAfter": [
+                "Bạo Lệ Vô Nhân",
+                "Mau Giành Lợi Thế"
+              ]
+            },
+            {
+              "name": "Pháp Chính",
+              "unitTypeBefore": "Thương",
+              "tacticBefore": "Giải Phiền Vệ",
+              "unitTypeAfter": "Thương",
+              "tacticsAfter": [
+                "Giải Phiền Vệ",
+                "Tiềm Long Trận"
+              ]
+            }
+          ],
+          "note": "Đổi vị trí Giải Phiền và Thịnh Khí; sau 20 SP Mã Siêu dùng Bạo Lệ + Mau Giành. Nguồn mùa S23.",
+          "sources": [
+            {
+              "label": "貂蝉 — hướng dẫn S23",
+              "url": "https://sangokushi-shinsen.info/2026/01/25/520%E3%80%90%E8%B2%82%E8%9D%89%E3%81%AE%E4%B8%89%E5%9B%BD%E5%BF%97%E7%9C%9F%E6%88%A6%E3%80%91%E3%80%80s23%E3%80%80%E3%82%B9%E3%82%BF%E3%83%80%E3%82%AC%E3%82%A4%E3%83%89%E3%80%80%E3%82%B9%E3%82%BF/"
+            }
+          ],
+          "commanderBefore": "Pháp Chính",
+          "commanderAfter": "Pháp Chính"
+        }
+      ]
     },
     {
-      "unitType": "Cung",
+      "unitType": "Thương",
       "heroes": [
         {
           "name": "Gia Cát Khác",
-          "unitTypeBefore": "Cung",
+          "unitTypeBefore": "Thương",
           "tacticBefore": "Thịnh Khí Linh Địch",
-          "unitTypeAfter": "Cung",
+          "unitTypeAfter": "Thương",
           "tacticsAfter": [
             "Thịnh Khí Linh Địch",
             "Tiềm Long Trận"
@@ -67,9 +165,9 @@
         },
         {
           "name": "Quan Ngân Bình",
-          "unitTypeBefore": "Cung",
+          "unitTypeBefore": "Thương",
           "tacticBefore": "Hoành Tào Thiên Quân",
-          "unitTypeAfter": "Cung",
+          "unitTypeAfter": "Thương",
           "tacticsAfter": [
             "Cứ Thủy Đoạn Kiều",
             "Hoành Tào Thiên Quân"
@@ -78,9 +176,9 @@
         },
         {
           "name": "Nhạc Tiến",
-          "unitTypeBefore": "Cung",
+          "unitTypeBefore": "Thương",
           "tacticBefore": "Nhanh Chân Tranh Đất",
-          "unitTypeAfter": "Cung",
+          "unitTypeAfter": "Thương",
           "tacticsAfter": [
             "Nhanh Chân Tranh Đất",
             "Lính Thanh Châu"
@@ -100,7 +198,57 @@
           "alternatives": ""
         }
       ],
-      "title": "Gia Cát Khác · Quan Ngân Bình · Nhạc Tiến"
+      "title": "Gia Cát Khác · Quan Ngân Bình · Nhạc Tiến",
+      "variants": [
+        {
+          "id": "jp-s13",
+          "label": "Nhật S13 · Quan Ngân Bình chủ tướng",
+          "region": "Nhật",
+          "period": "Trước và sau cấp 20 · S13 (2023)",
+          "unitType": "Thương",
+          "heroes": [
+            {
+              "name": "Gia Cát Khác",
+              "unitTypeBefore": "Thương",
+              "tacticBefore": "Thịnh Khí Linh Địch",
+              "unitTypeAfter": "Thương",
+              "tacticsAfter": [
+                "Tam Thế Trận",
+                "Tạm Lánh Sóng Gió"
+              ]
+            },
+            {
+              "name": "Quan Ngân Bình",
+              "unitTypeBefore": "Thương",
+              "tacticBefore": "Hoành Tảo Thiên Quân",
+              "unitTypeAfter": "Thương",
+              "tacticsAfter": [
+                "Cứ Thủy Đoạn Kiều",
+                "Lính Thanh Châu"
+              ]
+            },
+            {
+              "name": "Nhạc Tiến",
+              "unitTypeBefore": "Thương",
+              "tacticBefore": "Sĩ Tranh Tiên Phó",
+              "unitTypeAfter": "Thương",
+              "tacticsAfter": [
+                "Sĩ Tranh Tiên Phó",
+                "Văn Võ Song Toàn"
+              ]
+            }
+          ],
+          "note": "Sau 20 chuyển chủ tướng sang Quan Ngân Bình, Thanh Châu đặt trên Quan. Chỉnh Võ Lực Quan cao hơn Nhạc theo nguồn. Nguồn dùng 士争先赴 (Sĩ Tranh Tiên Phó); chưa xác nhận là alias của Nhanh Chân Tranh Đất.",
+          "sources": [
+            {
+              "label": "リーレ — hướng dẫn S13",
+              "url": "https://sanngokusinnsenn.com/seazon13-sutada/"
+            }
+          ],
+          "commanderBefore": "Gia Cát Khác",
+          "commanderAfter": "Quan Ngân Bình"
+        }
+      ]
     },
     {
       "unitType": "Cung",
@@ -151,7 +299,57 @@
           "alternatives": ""
         }
       ],
-      "title": "Khương Duy · Hạ Hầu Uyên · Gia Cát Khác"
+      "title": "Khương Duy · Hạ Hầu Uyên · Gia Cát Khác",
+      "variants": [
+        {
+          "id": "jp-s23-bat-mon",
+          "label": "Nhật S23 · Bát Môn",
+          "region": "Nhật",
+          "period": "Trước và sau cấp 20 · S23, 25/01/2026",
+          "unitType": "Cung",
+          "heroes": [
+            {
+              "name": "Khương Duy",
+              "unitTypeBefore": "Cung",
+              "tacticBefore": "Vô Đương Phi Quân",
+              "unitTypeAfter": "Cung",
+              "tacticsAfter": [
+                "Vô Đương Phi Quân",
+                "Thời Cơ Chiến Thắng"
+              ]
+            },
+            {
+              "name": "Hạ Hầu Uyên",
+              "unitTypeBefore": "Cung",
+              "tacticBefore": "Lõa Y Huyết Chiến",
+              "unitTypeAfter": "Cung",
+              "tacticsAfter": [
+                "Lõa Y Huyết Chiến",
+                "Mau Giành Lợi Thế"
+              ]
+            },
+            {
+              "name": "Gia Cát Khác",
+              "unitTypeBefore": "Cung",
+              "tacticBefore": "Thịnh Khí Linh Địch",
+              "unitTypeAfter": "Cung",
+              "tacticsAfter": [
+                "Thịnh Khí Linh Địch",
+                "Bát Môn Kim Tỏa Trận"
+              ]
+            }
+          ],
+          "note": "Sau 20 dùng Bát Môn thay Tiềm Long trên Gia Cát Khác. Cấu hình Cung trong nguồn; không đổi sang Kỵ mà vẫn giữ Vô Đương.",
+          "sources": [
+            {
+              "label": "貂蝉 — hướng dẫn S23",
+              "url": "https://sangokushi-shinsen.info/2026/01/25/520%E3%80%90%E8%B2%82%E8%9D%89%E3%81%AE%E4%B8%89%E5%9B%BD%E5%BF%97%E7%9C%9F%E6%88%A6%E3%80%91%E3%80%80s23%E3%80%80%E3%82%B9%E3%82%BF%E3%83%80%E3%82%AC%E3%82%A4%E3%83%89%E3%80%80%E3%82%B9%E3%82%BF/"
+            }
+          ],
+          "commanderBefore": "Khương Duy",
+          "commanderAfter": "Gia Cát Khác"
+        }
+      ]
     },
     {
       "unitType": "Cung",
@@ -202,7 +400,50 @@
           "alternatives": ""
         }
       ],
-      "title": "Lục Tốn · Tả Từ · Trương Xuân Hoa"
+      "title": "Lục Tốn · Tả Từ · Trương Xuân Hoa",
+      "variants": [
+        {
+          "id": "jp-s23-si-biet",
+          "label": "Nhật S23 · Sĩ Biệt trên Tả Từ",
+          "region": "Nhật",
+          "period": "Sau cấp 20 / đã thức tỉnh · S23, 01/2026",
+          "unitType": "Cung",
+          "heroes": [
+            {
+              "name": "Lục Tốn",
+              "unitTypeAfter": "Cung",
+              "tacticsAfter": [
+                "Thái Bình Đạo Pháp",
+                "Vô Đương Phi Quân"
+              ]
+            },
+            {
+              "name": "Tả Từ",
+              "unitTypeAfter": "Cung",
+              "tacticsAfter": [
+                "Thịnh Khí Linh Địch",
+                "Sĩ Biệt Tam Nhật"
+              ]
+            },
+            {
+              "name": "Trương Xuân Hoa",
+              "unitTypeAfter": "Cung",
+              "tacticsAfter": [
+                "Tam Thế Trận",
+                "Đoạt Hồn Hiệp Phách"
+              ]
+            }
+          ],
+          "note": "Tam Thế chuyển sang Trương Xuân Hoa; Tả Từ dùng Thịnh Khí + Sĩ Biệt. Bài chỉ liệt kê bộ hai chiêu, không chốt cấu hình trước 20.",
+          "sources": [
+            {
+              "label": "Dengeki/Qookka — khai hoang S23",
+              "url": "https://dengekionline.com/article/202601/61284"
+            }
+          ],
+          "commanderAfter": "Lục Tốn"
+        }
+      ]
     },
     {
       "unitType": "Kỵ",
@@ -253,7 +494,57 @@
           "alternatives": ""
         }
       ],
-      "title": "Hạ Hầu Uyên · Thái Sử Từ · Hoàng Nguyệt Anh"
+      "title": "Hạ Hầu Uyên · Thái Sử Từ · Hoàng Nguyệt Anh",
+      "variants": [
+        {
+          "id": "jp-tam-the",
+          "label": "Nhật · Hạ Hầu Uyên Tam Thế",
+          "region": "Nhật",
+          "period": "Trước và sau cấp 20 · hướng dẫn PK, cập nhật 02/01/2025",
+          "unitType": "Kỵ",
+          "heroes": [
+            {
+              "name": "Hạ Hầu Uyên",
+              "unitTypeBefore": "Kỵ",
+              "tacticBefore": "Lõa Y Huyết Chiến",
+              "unitTypeAfter": "Kỵ",
+              "tacticsAfter": [
+                "Lõa Y Huyết Chiến",
+                "Bách Kỵ Kiếp Doanh"
+              ]
+            },
+            {
+              "name": "Thái Sử Từ",
+              "unitTypeBefore": "Kỵ",
+              "tacticBefore": "Nhất Kỵ Đương Thiên",
+              "unitTypeAfter": "Kỵ",
+              "tacticsAfter": [
+                "Đánh Bại Quân Địch",
+                "Bạo Lệ Vô Nhân"
+              ]
+            },
+            {
+              "name": "Hoàng Nguyệt Anh",
+              "unitTypeBefore": "Kỵ",
+              "tacticBefore": "Hổ Báo Kỵ",
+              "unitTypeAfter": "Kỵ",
+              "tacticsAfter": [
+                "Hổ Báo Kỵ",
+                "Tam Thế Trận"
+              ]
+            }
+          ],
+          "note": "Chọn nhánh Bạo Lệ được nguồn liệt kê. Bách Kỵ đặt trên Hạ Hầu Uyên; Hoàng Nguyệt Anh mang Hổ Báo + Tam Thế. Đây là cấu hình Kỵ.",
+          "sources": [
+            {
+              "label": "真戦ナビ — 6 đội khai hoang PK",
+              "url": "https://sangokushi-shinsen.com/sutada-hensei/"
+            }
+          ],
+          "commanderBefore": "Hạ Hầu Uyên",
+          "commanderAfter": "Hạ Hầu Uyên"
+        }
+      ]
     },
     {
       "unitType": "Cung",
@@ -304,7 +595,50 @@
           "alternatives": ""
         }
       ],
-      "title": "Tôn Thượng Hương · Trần Cung · Hoàng Nguyệt Anh"
+      "title": "Tôn Thượng Hương · Trần Cung · Hoàng Nguyệt Anh",
+      "variants": [
+        {
+          "id": "cn-s4-cung",
+          "label": "CN S4+ · Cung sau thức tỉnh",
+          "region": "Trung Quốc",
+          "period": "Sau thức tỉnh · hướng dẫn lịch sử 07/01/2021",
+          "unitType": "Cung",
+          "heroes": [
+            {
+              "name": "Tôn Thượng Hương",
+              "unitTypeAfter": "Cung",
+              "tacticsAfter": [
+                "Lõa Y Huyết Chiến",
+                "Nhất Kỵ Đương Thiên"
+              ]
+            },
+            {
+              "name": "Trần Cung",
+              "unitTypeAfter": "Cung",
+              "tacticsAfter": [
+                "Vô Đương Phi Quân",
+                "Bát Môn Kim Tỏa Trận"
+              ]
+            },
+            {
+              "name": "Hoàng Nguyệt Anh",
+              "unitTypeAfter": "Cung",
+              "tacticsAfter": [
+                "Thịnh Khí Linh Địch",
+                "Kế Hay Mưu Giỏi"
+              ]
+            }
+          ],
+          "note": "Chọn nhánh Cung: giữ Vô Đương ở Trần Cung; khác bản mặc định chuyển Kỵ. Nguồn cũ, chưa xác nhận vị trí meta hiện tại.",
+          "sources": [
+            {
+              "label": "九游研究所 trên Bilibili — Tôn Thượng Hương",
+              "url": "https://www.bilibili.com/read/cv9175015/"
+            }
+          ],
+          "commanderAfter": "Tôn Thượng Hương"
+        }
+      ]
     },
     {
       "unitType": "Cung",
@@ -384,7 +718,57 @@
         }
       ],
       "transforms": [],
-      "title": "Khương Duy · Hạ Hầu Uyên · Pháp Chính"
+      "title": "Khương Duy · Hạ Hầu Uyên · Pháp Chính",
+      "variants": [
+        {
+          "id": "cn-vo-duong",
+          "label": "CN · Vô Đương từ đầu",
+          "region": "Trung Quốc",
+          "period": "Trước và sau cấp 20 · 29/11/2024",
+          "unitType": "Cung",
+          "heroes": [
+            {
+              "name": "Khương Duy",
+              "unitTypeBefore": "Cung",
+              "tacticBefore": "Vô Đương Phi Quân",
+              "unitTypeAfter": "Cung",
+              "tacticsAfter": [
+                "Đoạt Hồn Hiệp Phách",
+                "Sợ Bóng Sợ Gió"
+              ]
+            },
+            {
+              "name": "Hạ Hầu Uyên",
+              "unitTypeBefore": "Cung",
+              "tacticBefore": "Lõa Y Huyết Chiến",
+              "unitTypeAfter": "Cung",
+              "tacticsAfter": [
+                "Lõa Y Huyết Chiến",
+                "Mau Giành Lợi Thế"
+              ]
+            },
+            {
+              "name": "Pháp Chính",
+              "unitTypeBefore": "Cung",
+              "tacticBefore": "Thịnh Khí Linh Địch",
+              "unitTypeAfter": "Cung",
+              "tacticsAfter": [
+                "Thịnh Khí Linh Địch",
+                "Vô Đương Phi Quân"
+              ]
+            }
+          ],
+          "note": "Khương Duy mang Vô Đương trước 20; sau 20 Hạ Hầu Uyên dùng Mau Giành thay Nhất Kỵ. Chọn nhánh Cung của nguồn.",
+          "sources": [
+            {
+              "label": "18183 — mục 姜夏法",
+              "url": "https://www.18183.com/sg/5540906.html"
+            }
+          ],
+          "commanderBefore": "Khương Duy",
+          "commanderAfter": "Khương Duy"
+        }
+      ]
     },
     {
       "unitType": "Cung",
@@ -424,7 +808,50 @@
         }
       ],
       "transforms": [],
-      "title": "SP Viên Thiệu · Hạ Hầu Uyên · Trương Xuân Hoa"
+      "title": "SP Viên Thiệu · Hạ Hầu Uyên · Trương Xuân Hoa",
+      "variants": [
+        {
+          "id": "jp-s23-xe-dao",
+          "label": "Nhật S23 · Xế Đao / Thời Cơ",
+          "region": "Nhật",
+          "period": "Sau cấp 20 / đã thức tỉnh · S23, 01/2026",
+          "unitType": "Cung",
+          "heroes": [
+            {
+              "name": "SP Viên Thiệu",
+              "unitTypeAfter": "Cung",
+              "tacticsAfter": [
+                "Hoành Tảo Thiên Quân",
+                "Xế Đao Chước Địch"
+              ]
+            },
+            {
+              "name": "Hạ Hầu Uyên",
+              "unitTypeAfter": "Cung",
+              "tacticsAfter": [
+                "Lõa Y Huyết Chiến",
+                "Mau Giành Lợi Thế"
+              ]
+            },
+            {
+              "name": "Trương Xuân Hoa",
+              "unitTypeAfter": "Cung",
+              "tacticsAfter": [
+                "Vô Đương Phi Quân",
+                "Thời Cơ Chiến Thắng"
+              ]
+            }
+          ],
+          "note": "SP Viên Thiệu đổi Nằm Gai sang Xế Đao; Trương Xuân Hoa đổi Thịnh Khí sang Thời Cơ. Nguồn chỉ cho bộ hai chiêu.",
+          "sources": [
+            {
+              "label": "Dengeki/Qookka — khai hoang S23",
+              "url": "https://dengekionline.com/article/202601/61284"
+            }
+          ],
+          "commanderAfter": "SP Viên Thiệu"
+        }
+      ]
     },
     {
       "unitType": "Kỵ",
@@ -504,7 +931,282 @@
         }
       ],
       "transforms": [],
-      "title": "Quan Ngân Bình · Nhạc Tiến · Thái Văn Cơ"
+      "title": "Quan Ngân Bình · Nhạc Tiến · Thái Văn Cơ",
+      "variants": [
+        {
+          "id": "cn-thanh-chau",
+          "label": "CN · Thanh Châu / Cắt Xương",
+          "region": "Trung Quốc",
+          "period": "Trước và sau cấp 20 · 29/11/2024",
+          "unitType": "Thương",
+          "heroes": [
+            {
+              "name": "Quan Ngân Bình",
+              "unitTypeBefore": "Thương",
+              "tacticBefore": "Hoành Tảo Thiên Quân",
+              "unitTypeAfter": "Thương",
+              "tacticsAfter": [
+                "Hoành Tảo Thiên Quân",
+                "Cứ Thủy Đoạn Kiều"
+              ]
+            },
+            {
+              "name": "Nhạc Tiến",
+              "unitTypeBefore": "Thương",
+              "tacticBefore": "Sĩ Tranh Tiên Phó",
+              "unitTypeAfter": "Thương",
+              "tacticsAfter": [
+                "Sĩ Tranh Tiên Phó",
+                "Lính Thanh Châu"
+              ]
+            },
+            {
+              "name": "Thái Văn Cơ",
+              "unitTypeBefore": "Thương",
+              "tacticBefore": "Thịnh Khí Linh Địch",
+              "unitTypeAfter": "Thương",
+              "tacticsAfter": [
+                "Tạm Lánh Sóng Gió",
+                "Cắt Xương Trị Độc"
+              ]
+            }
+          ],
+          "note": "Sau 20 Nhạc Tiến mang Thanh Châu; Thái Văn Cơ mang Tạm Lánh + Cắt Xương. Nguồn dùng 士争先赴 (Sĩ Tranh Tiên Phó); chưa xác nhận là alias của Nhanh Chân Tranh Đất.",
+          "sources": [
+            {
+              "label": "18183 — mục 机关枪",
+              "url": "https://www.18183.com/sg/5540906.html"
+            }
+          ],
+          "commanderBefore": "Quan Ngân Bình",
+          "commanderAfter": "Quan Ngân Bình"
+        }
+      ]
+    },
+    {
+      "unitType": "Cung",
+      "heroes": [
+        {
+          "name": "Gia Cát Khác",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Võ Phong Trận",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Võ Phong Trận",
+            "Thịnh Khí Linh Địch"
+          ],
+          "note": "Chủ tướng trước và sau lv.20; cộng toàn Thống Soái. Sau lv.20 cần thức tỉnh. Giữ ba mức thích tính khác nhau để Võ Phong Trận hoạt động. Sau điện 7, có thể luyện Trình Phổ đến lv.20 để thay làm chủ tướng, giữ Võ Phong và đổi Thịnh Khí sang Lâm Nguy Cứu Chủ."
+        },
+        {
+          "name": "Thái Sử Từ",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Thôi Phong Đoạn Nhẫn",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Thôi Phong Đoạn Nhẫn",
+            "Mau Giành Lợi Thế"
+          ],
+          "note": "Cộng khoảng 15 điểm Tốc Độ, còn lại Võ Lực; chỉnh tốc theo thủ quân. Cần có Thôi Phong Đoạn Nhẫn; không nhầm với Phá Phong Đoạn Nhẫn. Ưu tiên đất thương, tránh đội tất trúng hoặc hỗn loạn."
+        },
+        {
+          "name": "Tả Từ",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Vô Đương Phi Quân",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Vô Đương Phi Quân",
+            "Thời Cơ Chiến Thắng"
+          ],
+          "note": "Cộng toàn Thống Soái trong giai đoạn đầu; khi chuyển Trình Phổ đánh đất cao, đổi sang toàn Trí Lực. Build tham khảo CN/KR và cộng đồng Hoa ngữ; đối chiếu phiên bản chiến pháp, hột tướng và thủ quân của mùa đang chơi."
+        }
+      ],
+      "transforms": [
+        {
+          "hero": "Trình Phổ",
+          "tactic": "Lâm Nguy Cứu Chủ",
+          "alternatives": ""
+        }
+      ],
+      "title": "Gia Cát Khác · Thái Sử Từ · Tả Từ",
+      "variants": [
+        {
+          "id": "tw-dat-6",
+          "label": "Bahamut · chuẩn bị đất 6",
+          "region": "Cộng đồng phồn thể (Bahamut)",
+          "period": "Sau cấp 20 / đã thức tỉnh · chuẩn bị đất 6, 2026",
+          "unitType": "Cung",
+          "heroes": [
+            {
+              "name": "Gia Cát Khác",
+              "unitTypeAfter": "Cung",
+              "tacticsAfter": [
+                "Võ Phong Trận",
+                "Sĩ Biệt Tam Nhật"
+              ]
+            },
+            {
+              "name": "Thái Sử Từ",
+              "unitTypeAfter": "Cung",
+              "tacticsAfter": [
+                "Thôi Phong Đoạn Nhẫn",
+                "Mau Giành Lợi Thế"
+              ]
+            },
+            {
+              "name": "Tả Từ",
+              "unitTypeAfter": "Cung",
+              "tacticsAfter": [
+                "Vô Đương Phi Quân",
+                "Thời Cơ Chiến Thắng"
+              ]
+            }
+          ],
+          "note": "Thay Thịnh Khí bằng Sĩ Biệt khi chuẩn bị đất 6. Bản mặc định giữ Thịnh Khí để quét đất 5; đối chiếu thủ quân trước khi đánh.",
+          "sources": [
+            {
+              "label": "凱獃 — Võ Phong Thái Sử Từ",
+              "url": "https://forum.gamer.com.tw/Co.php?bsn=36815&sn=70069"
+            }
+          ],
+          "commanderAfter": "Gia Cát Khác"
+        },
+        {
+          "id": "kr-sau-20",
+          "label": "Hàn · Sĩ Biệt sau cấp 20",
+          "region": "Hàn",
+          "period": "Sau cấp 20 / đã thức tỉnh · 13/04/2026",
+          "unitType": "Cung",
+          "heroes": [
+            {
+              "name": "Gia Cát Khác",
+              "unitTypeAfter": "Cung",
+              "tacticsAfter": [
+                "Võ Phong Trận",
+                "Sĩ Biệt Tam Nhật"
+              ]
+            },
+            {
+              "name": "Thái Sử Từ",
+              "unitTypeAfter": "Cung",
+              "tacticsAfter": [
+                "Thôi Phong Đoạn Nhẫn",
+                "Mau Giành Lợi Thế"
+              ]
+            },
+            {
+              "name": "Tả Từ",
+              "unitTypeAfter": "Cung",
+              "tacticsAfter": [
+                "Vô Đương Phi Quân",
+                "Thời Cơ Chiến Thắng"
+              ]
+            }
+          ],
+          "note": "Cùng bộ chiêu với lựa chọn đất 6 Bahamut, nhưng tác giả Hàn dùng ngay sau cấp 20. Giữ ba mức thích tính khác nhau để Võ Phong hoạt động.",
+          "sources": [
+            {
+              "label": "DCInside — trải nghiệm 제태좌",
+              "url": "https://gall.dcinside.com/mgallery/board/view/?id=3kingdoms&no=355794"
+            }
+          ],
+          "commanderAfter": "Gia Cát Khác"
+        }
+      ],
+      "sources": [
+        {
+          "label": "Bahamut — cấu hình quét đất 5 sau thức tỉnh",
+          "url": "https://forum.gamer.com.tw/Co.php?bsn=36815&sn=70069"
+        }
+      ],
+      "context": "Trước cấp 20 và sau thức tỉnh quét đất 5. Xem lựa chọn riêng khi chuẩn bị đất 6."
+    },
+    {
+      "unitType": "Cung",
+      "heroes": [
+        {
+          "name": "SP Lô Trực",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Thịnh Khí Linh Địch",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Tiềm Long Trận",
+            "Thịnh Khí Linh Địch"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Thái Sử Từ",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Thôi Phong Đoạn Nhẫn",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Thôi Phong Đoạn Nhẫn",
+            "Mau Giành Lợi Thế"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Trương Xuân Hoa",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Vô Đương Phi Quân",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Vô Đương Phi Quân",
+            "Đồng Lòng Hợp Sức"
+          ],
+          "note": "Đồng Lòng Hợp Sức (勠力同心): chiến pháp sự kiện Chủ động, xác suất 50%, trị liệu và tăng Thống Soái; đã đối chiếu ảnh client Việt ngày 06/09/2026."
+        }
+      ],
+      "transforms": [],
+      "title": "SP Lô Trực · Thái Sử Từ · Trương Xuân Hoa",
+      "context": "Build từ Google Sheet; đã xác nhận Đồng Lòng Hợp Sức bằng ảnh client Việt. Chưa đủ nguồn độc lập để xếp hạng meta Global.",
+      "sources": [
+        {
+          "label": "Google Sheet — danh sách khai hoang",
+          "url": "https://docs.google.com/spreadsheets/d/1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw/edit#gid=562317106"
+        }
+      ]
+    },
+    {
+      "unitType": "Thương",
+      "heroes": [
+        {
+          "name": "SP Hoàng Nguyệt Anh",
+          "unitTypeBefore": "Thương",
+          "tacticBefore": "Tiềm Long Trận",
+          "unitTypeAfter": "Thương",
+          "tacticsAfter": [
+            "Tiềm Long Trận",
+            "Giải Phiền Vệ"
+          ],
+          "note": "Sheet cho phép thay bằng Pháp Chính; đội Gia Cát Khác · SP Mã Siêu · Pháp Chính đã có riêng. Chiến pháp sau lv.20 dùng khi đã thức tỉnh."
+        },
+        {
+          "name": "SP Mã Siêu",
+          "unitTypeBefore": "Thương",
+          "tacticBefore": "Thôi Phong Đoạn Nhẫn",
+          "unitTypeAfter": "Thương",
+          "tacticsAfter": [
+            "Mau Giành Lợi Thế",
+            "Thôi Phong Đoạn Nhẫn"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Gia Cát Khác",
+          "unitTypeBefore": "Thương",
+          "tacticBefore": "Giải Phiền Vệ/Thịnh Khí Linh Địch",
+          "unitTypeAfter": "Thương",
+          "tacticsAfter": [
+            "Thịnh Khí Linh Địch",
+            "Thời Cơ Chiến Thắng"
+          ],
+          "note": ""
+        }
+      ],
+      "transforms": [],
+      "title": "SP Hoàng Nguyệt Anh · SP Mã Siêu · Gia Cát Khác",
+      "context": "Nhánh trước 20 có căn cứ CN; khác biệt sau 20 chưa đủ dữ liệu xác minh để thêm thành cấu hình lựa chọn."
     }
   ],
   "mines": [
@@ -693,5 +1395,7 @@
         }
       ]
     }
-  ]
+  ],
+  "season": "Binh Diễn Xuân Thu",
+  "seasonNote": "Các lựa chọn ghi rõ khu vực, mùa và giai đoạn của nguồn; bản CN hoặc mùa trước là cấu hình tham khảo, chưa phải xác nhận meta Binh Diễn Xuân Thu. Các build dưới đây dùng chiến pháp binh chủng thường, chưa mô tả nhánh binh chủng tùy chỉnh của mùa."
 }
