@@ -53,3 +53,33 @@ test("sourced options are complete for each declared phase and preserve the rost
     }
   }
 });
+
+test("Chạm Sứ groups match the separate sheet table without opening-team linkage", () => {
+  // Google Sheet snapshot: tests/fixtures/khaihoang-cham-su-source.csv (2026-09-06).
+  const expected = [
+    [["Lữ Mông", "Bạch Mã Nghĩa Tòng"], ["Giả Hủ", "Ngụy Thư Tương Gian"]],
+    [["Mã Siêu", "Lõa Y Huyết Chiến"], ["Hoàng Nguyệt Anh", "Phong Thi Trận"]],
+    [["Trương Nhượng", "Văn Võ Song Toàn"], ["Hoàng Nguyệt Anh", "Phong Thi Trận"]],
+    [["Tôn Thượng Hương", "Lõa Y Huyết Chiến"], ["Lăng Thống", "Phong Thi Trận"]],
+    [["Thái Sử Từ", "Bách Kỵ Kiếp Doanh"], ["Lăng Thống", "Hổ Báo Kỳ"]],
+    [["Hạ Hầu Uyên", "Lõa Y Huyết Chiến"], ["Tào Thuận", "Thiết Kỳ Khu Trì"]],
+    [["Mã Siêu", "Lõa Y Huyết Chiến"], ["Lăng Thống", "Phong Thi Trận"]],
+    [["Cam Ninh", "Phá Quân Uy Thắng"], ["Lăng Thống", "Phong Thi Trận"]],
+  ];
+  assert.ok(Array.isArray(data.chamSuTeams), "missing independent Chạm Sứ table");
+  assert.deepEqual(data.chamSuTeams.map((t) => t.heroes.map((h) => [h.name, h.tactic])), expected);
+  assert.equal(new Set(data.chamSuTeams.map((t) => t.id)).size, expected.length);
+  for (const group of data.chamSuTeams) {
+    assert.ok(group.id);
+    assert.equal(group.title, group.heroes.map((h) => h.name).join(" · "));
+    assert.match(group.note, /mang 1 lính/i);
+    assert.equal(group.unitType, undefined);
+    assert.ok(group.sources.length);
+    for (const source of group.sources) {
+      assert.ok(source.label);
+      assert.equal(new URL(source.url).protocol, "https:");
+    }
+  }
+  assert.match(data.chamSuTeams[0].note, /Điêu Thuyền, Hoàng Cái, Phùng Kỷ/);
+  for (const team of data.teams) assert.equal(Object.hasOwn(team, "transforms"), false);
+});

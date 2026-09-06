@@ -37,18 +37,6 @@
           "note": "Sau khi lv.20 để Pháp Chính làm chủ tướng"
         }
       ],
-      "transforms": [
-        {
-          "hero": "Lữ Mông",
-          "tactic": "Bạch Mã Nghĩa Tòng",
-          "alternatives": "Điêu Thuyền, Hoàng Cái, Phùng Kỷ"
-        },
-        {
-          "hero": "Giả Hủ",
-          "tactic": "Ngụy Thư Tương Gian",
-          "alternatives": "Điêu Thuyền, Hoàng Cái, Phùng Kỷ"
-        }
-      ],
       "title": "Gia Cát Khác · SP Mã Siêu · Pháp Chính",
       "variants": [
         {
@@ -186,18 +174,6 @@
           "note": ""
         }
       ],
-      "transforms": [
-        {
-          "hero": "Mã Siêu",
-          "tactic": "Lõa Y Huyết Chiến",
-          "alternatives": ""
-        },
-        {
-          "hero": "Hoàng Nguyệt Anh",
-          "tactic": "Phong Thi Trận",
-          "alternatives": ""
-        }
-      ],
       "title": "Gia Cát Khác · Quan Ngân Bình · Nhạc Tiến",
       "variants": [
         {
@@ -287,18 +263,6 @@
           "note": "Sau khi lv.20 để Gia Cát Khác làm chủ tướng"
         }
       ],
-      "transforms": [
-        {
-          "hero": "Trương Nhượng",
-          "tactic": "Văn Võ Song Toàn",
-          "alternatives": ""
-        },
-        {
-          "hero": "Hoàng Nguyệt Anh",
-          "tactic": "Phong Thi Trận",
-          "alternatives": ""
-        }
-      ],
       "title": "Khương Duy · Hạ Hầu Uyên · Gia Cát Khác",
       "variants": [
         {
@@ -386,18 +350,6 @@
             "Sợ Bóng Sợ Gió"
           ],
           "note": "Chỉnh Tốc Độ để hành động trước Lục Tốn, còn lại cộng Trí Lực; không có số điểm tốc cố định cho mọi tài khoản. Sau thức tỉnh chuyển Tam Thế sang Tả Từ, dùng Đoạt Hồn Hiệp Phách + Sợ Bóng Sợ Gió."
-        }
-      ],
-      "transforms": [
-        {
-          "hero": "Tôn Thượng Hương",
-          "tactic": "Lõa Y Huyết Chiến",
-          "alternatives": ""
-        },
-        {
-          "hero": "Lăng Thống",
-          "tactic": "Tây Lương Thiết Kỳ",
-          "alternatives": ""
         }
       ],
       "title": "Lục Tốn · Tả Từ · Trương Xuân Hoa",
@@ -500,18 +452,6 @@
           "note": ""
         }
       ],
-      "transforms": [
-        {
-          "hero": "Thái Sử Từ",
-          "tactic": "Bách Kỵ Kiếp Doanh",
-          "alternatives": ""
-        },
-        {
-          "hero": "Lăng Thống",
-          "tactic": "Hổ Báo Kỳ",
-          "alternatives": ""
-        }
-      ],
       "title": "Hạ Hầu Uyên · Thái Sử Từ · Hoàng Nguyệt Anh",
       "variants": [
         {
@@ -601,18 +541,6 @@
           "note": ""
         }
       ],
-      "transforms": [
-        {
-          "hero": "Hạ Hầu Uyên",
-          "tactic": "Lõa Y Huyết Chiến",
-          "alternatives": ""
-        },
-        {
-          "hero": "Tào Thuận",
-          "tactic": "Thiết Kỳ Khu Trì",
-          "alternatives": ""
-        }
-      ],
       "title": "Tôn Thượng Hương · Trần Cung · Hoàng Nguyệt Anh",
       "variants": [
         {
@@ -695,7 +623,6 @@
           "note": ""
         }
       ],
-      "transforms": [],
       "title": "Thái Văn Cơ · Khương Duy · Thái Sử Từ"
     },
     {
@@ -735,7 +662,6 @@
           "note": ""
         }
       ],
-      "transforms": [],
       "title": "Khương Duy · Hạ Hầu Uyên · Pháp Chính",
       "variants": [
         {
@@ -825,7 +751,6 @@
           "note": ""
         }
       ],
-      "transforms": [],
       "title": "SP Viên Thiệu · Hạ Hầu Uyên · Trương Xuân Hoa",
       "variants": [
         {
@@ -908,7 +833,6 @@
           "note": ""
         }
       ],
-      "transforms": [],
       "title": "Khương Duy · Quan Ngân Bình · Thái Văn Cơ"
     },
     {
@@ -948,7 +872,6 @@
           "note": ""
         }
       ],
-      "transforms": [],
       "title": "Quan Ngân Bình · Nhạc Tiến · Thái Văn Cơ",
       "variants": [
         {
@@ -1036,13 +959,6 @@
             "Thời Cơ Chiến Thắng"
           ],
           "note": "Cộng toàn Thống Soái trong giai đoạn đầu; khi chuyển Trình Phổ đánh đất cao, đổi sang toàn Trí Lực. Build tham khảo CN/KR và cộng đồng Hoa ngữ; đối chiếu phiên bản chiến pháp, hột tướng và thủ quân của mùa đang chơi."
-        }
-      ],
-      "transforms": [
-        {
-          "hero": "Trình Phổ",
-          "tactic": "Lâm Nguy Cứu Chủ",
-          "alternatives": ""
         }
       ],
       "title": "Gia Cát Khác · Thái Sử Từ · Tả Từ",
@@ -1175,7 +1091,6 @@
           "note": "Đồng Lòng Hợp Sức (勠力同心): chiến pháp sự kiện Chủ động, xác suất 50%, trị liệu và tăng Thống Soái; đã đối chiếu ảnh client Việt ngày 06/09/2026."
         }
       ],
-      "transforms": [],
       "title": "SP Lô Trực · Thái Sử Từ · Trương Xuân Hoa",
       "context": "Build từ Google Sheet; đã xác nhận Đồng Lòng Hợp Sức bằng ảnh client Việt. Chưa đủ nguồn độc lập để xếp hạng meta Global.",
       "sources": [
@@ -1222,7 +1137,6 @@
           "note": ""
         }
       ],
-      "transforms": [],
       "title": "SP Hoàng Nguyệt Anh · SP Mã Siêu · Gia Cát Khác",
       "context": "Nhánh trước 20 có căn cứ CN; khác biệt sau 20 chưa đủ dữ liệu xác minh để thêm thành cấu hình lựa chọn."
     },
@@ -1263,7 +1177,6 @@
           "note": "Cộng Trí Lực theo bản Kazten."
         }
       ],
-      "transforms": [],
       "title": "Chu Thái · Trương Phi · Trương Xuân Hoa",
       "region": "Nhật Global",
       "period": "Trước cấp 20 và sau thức tỉnh · Kazten, 20/11/2025",
@@ -1479,5 +1392,175 @@
     }
   ],
   "season": "Binh Diễn Xuân Thu",
-  "seasonNote": "Các lựa chọn ghi rõ khu vực, mùa và giai đoạn của nguồn; bản CN hoặc mùa trước là cấu hình tham khảo, chưa phải xác nhận meta Binh Diễn Xuân Thu. Các build dưới đây dùng chiến pháp binh chủng thường, chưa mô tả nhánh binh chủng tùy chỉnh của mùa."
+  "seasonNote": "Các lựa chọn ghi rõ khu vực, mùa và giai đoạn của nguồn; bản CN hoặc mùa trước là cấu hình tham khảo, chưa phải xác nhận meta Binh Diễn Xuân Thu. Các build dưới đây dùng chiến pháp binh chủng thường, chưa mô tả nhánh binh chủng tùy chỉnh của mùa.",
+  "chamSuTeams": [
+    {
+      "id": "lu-mong-gia-hu",
+      "title": "Lữ Mông · Giả Hủ",
+      "heroes": [
+        {
+          "name": "Lữ Mông",
+          "tactic": "Bạch Mã Nghĩa Tòng"
+        },
+        {
+          "name": "Giả Hủ",
+          "tactic": "Ngụy Thư Tương Gian"
+        }
+      ],
+      "note": "Mang 1 lính. Tướng thay thế: Điêu Thuyền, Hoàng Cái, Phùng Kỷ.",
+      "sources": [
+        {
+          "label": "Google Sheet · Chạm Sứ · bản lưu 06/09/2026",
+          "url": "https://docs.google.com/spreadsheets/d/1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw/edit?gid=562317106#gid=562317106"
+        }
+      ]
+    },
+    {
+      "id": "ma-sieu-hoang-nguyet-anh",
+      "title": "Mã Siêu · Hoàng Nguyệt Anh",
+      "heroes": [
+        {
+          "name": "Mã Siêu",
+          "tactic": "Lõa Y Huyết Chiến"
+        },
+        {
+          "name": "Hoàng Nguyệt Anh",
+          "tactic": "Phong Thi Trận"
+        }
+      ],
+      "note": "Mang 1 lính.",
+      "sources": [
+        {
+          "label": "Google Sheet · Chạm Sứ · bản lưu 06/09/2026",
+          "url": "https://docs.google.com/spreadsheets/d/1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw/edit?gid=562317106#gid=562317106"
+        }
+      ]
+    },
+    {
+      "id": "truong-nhuong-hoang-nguyet-anh",
+      "title": "Trương Nhượng · Hoàng Nguyệt Anh",
+      "heroes": [
+        {
+          "name": "Trương Nhượng",
+          "tactic": "Văn Võ Song Toàn"
+        },
+        {
+          "name": "Hoàng Nguyệt Anh",
+          "tactic": "Phong Thi Trận"
+        }
+      ],
+      "note": "Mang 1 lính.",
+      "sources": [
+        {
+          "label": "Google Sheet · Chạm Sứ · bản lưu 06/09/2026",
+          "url": "https://docs.google.com/spreadsheets/d/1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw/edit?gid=562317106#gid=562317106"
+        }
+      ]
+    },
+    {
+      "id": "ton-thuong-huong-lang-thong",
+      "title": "Tôn Thượng Hương · Lăng Thống",
+      "heroes": [
+        {
+          "name": "Tôn Thượng Hương",
+          "tactic": "Lõa Y Huyết Chiến"
+        },
+        {
+          "name": "Lăng Thống",
+          "tactic": "Phong Thi Trận"
+        }
+      ],
+      "note": "Mang 1 lính.",
+      "sources": [
+        {
+          "label": "Google Sheet · Chạm Sứ · bản lưu 06/09/2026",
+          "url": "https://docs.google.com/spreadsheets/d/1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw/edit?gid=562317106#gid=562317106"
+        }
+      ]
+    },
+    {
+      "id": "thai-su-tu-lang-thong",
+      "title": "Thái Sử Từ · Lăng Thống",
+      "heroes": [
+        {
+          "name": "Thái Sử Từ",
+          "tactic": "Bách Kỵ Kiếp Doanh"
+        },
+        {
+          "name": "Lăng Thống",
+          "tactic": "Hổ Báo Kỳ"
+        }
+      ],
+      "note": "Mang 1 lính.",
+      "sources": [
+        {
+          "label": "Google Sheet · Chạm Sứ · bản lưu 06/09/2026",
+          "url": "https://docs.google.com/spreadsheets/d/1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw/edit?gid=562317106#gid=562317106"
+        }
+      ]
+    },
+    {
+      "id": "ha-hau-uyen-tao-thuan",
+      "title": "Hạ Hầu Uyên · Tào Thuận",
+      "heroes": [
+        {
+          "name": "Hạ Hầu Uyên",
+          "tactic": "Lõa Y Huyết Chiến"
+        },
+        {
+          "name": "Tào Thuận",
+          "tactic": "Thiết Kỳ Khu Trì"
+        }
+      ],
+      "note": "Mang 1 lính.",
+      "sources": [
+        {
+          "label": "Google Sheet · Chạm Sứ · bản lưu 06/09/2026",
+          "url": "https://docs.google.com/spreadsheets/d/1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw/edit?gid=562317106#gid=562317106"
+        }
+      ]
+    },
+    {
+      "id": "ma-sieu-lang-thong",
+      "title": "Mã Siêu · Lăng Thống",
+      "heroes": [
+        {
+          "name": "Mã Siêu",
+          "tactic": "Lõa Y Huyết Chiến"
+        },
+        {
+          "name": "Lăng Thống",
+          "tactic": "Phong Thi Trận"
+        }
+      ],
+      "note": "Mang 1 lính.",
+      "sources": [
+        {
+          "label": "Google Sheet · Chạm Sứ · bản lưu 06/09/2026",
+          "url": "https://docs.google.com/spreadsheets/d/1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw/edit?gid=562317106#gid=562317106"
+        }
+      ]
+    },
+    {
+      "id": "cam-ninh-lang-thong",
+      "title": "Cam Ninh · Lăng Thống",
+      "heroes": [
+        {
+          "name": "Cam Ninh",
+          "tactic": "Phá Quân Uy Thắng"
+        },
+        {
+          "name": "Lăng Thống",
+          "tactic": "Phong Thi Trận"
+        }
+      ],
+      "note": "Mang 1 lính.",
+      "sources": [
+        {
+          "label": "Google Sheet · Chạm Sứ · bản lưu 06/09/2026",
+          "url": "https://docs.google.com/spreadsheets/d/1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw/edit?gid=562317106#gid=562317106"
+        }
+      ]
+    }
+  ]
 }

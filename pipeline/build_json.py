@@ -12,7 +12,7 @@ from typing import Dict, List
 
 from .normalize import load_aliases, load_nicknames, normalize_team
 from .parse_coexist import group_coexist, parse_coexist
-from .parse_khaihoang import parse_khaihoang, parse_khaihoang_teams
+from .parse_khaihoang import parse_cham_su_teams, parse_khaihoang, parse_khaihoang_teams
 from .parse_team_intro import parse_team_intro
 
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -96,15 +96,21 @@ def _write(name: str, data) -> None:
         fh.write("\n")
 
 
+def build_khaihoang_payload(html_path: str) -> dict:
+    """Build this HTML snapshot only, without other inputs or output writes."""
+    return {
+        "teams": parse_khaihoang_teams(html_path),
+        "mines": parse_khaihoang(html_path),
+        "chamSuTeams": parse_cham_su_teams(html_path),
+    }
+
+
 def main() -> None:
     teams = build_teams()
     facets = build_facets(teams)
     coexist = group_coexist(parse_coexist(os.path.join(_SRC, "Team Cùng Tồn.html")))
     kh_path = os.path.join(_SRC, "Khai hoang.html")
-    khaihoang = {
-        "teams": parse_khaihoang_teams(kh_path),
-        "mines": parse_khaihoang(kh_path),
-    }
+    khaihoang = build_khaihoang_payload(kh_path)
 
     if not coexist:
         raise SystemExit("[build] coexist rỗng")

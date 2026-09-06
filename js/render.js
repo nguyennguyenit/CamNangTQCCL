@@ -244,7 +244,6 @@ function khaihoangTeamCard(t) {
       build.commanderAfter ? el("p", { class: "kh-commander" }, `Chủ tướng sau cấp 20: ${build.commanderAfter}`) : null,
       el("div", { class: "heroes" }, (build.heroes || []).map(khaihoangHeroRow)),
       khaihoangSources(build.sources),
-      build === t ? khaihoangTransforms(t) : null,
     ].filter(Boolean));
   }
   showBuild(t);
@@ -265,19 +264,18 @@ function khaihoangSources(sources = []) {
   ]) : null;
 }
 
-function khaihoangTransforms(t) {
-  const transforms = (t.transforms || []).length
-    ? el("div", { class: "kh-transforms" }, [
-        el("span", { class: "kh-tf-label" }, "Chuyển hình đề xuất"),
-        ...t.transforms.map((tf) =>
-          el("div", { class: "kh-tf" }, [
-            el("strong", {}, tf.hero),
-            tf.tactic ? tacticChip(tf.tactic, "t-tactic") : null,
-            tf.alternatives ? el("span", { class: "muted" }, " — " + tf.alternatives) : null,
-          ].filter(Boolean))),
-      ])
-    : null;
-  return transforms;
+/** Nhóm Chạm Sứ độc lập, giữ nguyên tướng và chiến pháp từ nguồn. */
+function chamSuTeamCard(team) {
+  return el("article", { class: "cham-su-card" }, [
+    el("h3", { class: "cham-su-title" }, team.title),
+    el("div", { class: "heroes" }, (team.heroes || []).map((hero) =>
+      el("div", { class: "hero" }, [
+        el("div", { class: "hero-name" }, [el("span", { class: "hn" }, hero.name)]),
+        tacticChip(hero.tactic),
+      ].filter(Boolean)))),
+    team.note ? el("p", { class: "kh-build-note" }, team.note) : null,
+    khaihoangSources(team.sources),
+  ].filter(Boolean));
 }
 
 /** Bảng quân thủ các mỏ (PvE). */
@@ -293,11 +291,12 @@ function minesGrid(mines) {
     ])));
 }
 
-/** Section Khai hoang: đội hình đề xuất + quân thủ các mỏ. */
+/** Section Khai hoang: đội hình đề xuất, Chạm Sứ và quân thủ các mỏ. */
 export function khaihoangTable(data) {
   // Tương thích ngược: nếu nhận mảng (cấu trúc cũ) thì coi là danh sách mỏ.
   const teams = Array.isArray(data) ? [] : (data.teams || []);
   const mines = Array.isArray(data) ? data : (data.mines || []);
+  const chamSuTeams = Array.isArray(data) ? [] : (data.chamSuTeams || []);
   return el("div", { class: "khaihoang" }, [
     data.season ? el("p", { class: "kh-season-context" }, [
       el("strong", {}, `Mùa đang chơi: ${data.season}. `),
@@ -307,6 +306,12 @@ export function khaihoangTable(data) {
       ? el("div", { class: "kh-block" }, [
           el("h2", { class: "kh-section-title" }, "Đội hình khai hoang đề xuất"),
           el("div", { class: "kh-cards" }, teams.map(khaihoangTeamCard)),
+        ])
+      : null,
+    chamSuTeams.length
+      ? el("div", { class: "kh-block" }, [
+          el("h2", { class: "kh-section-title" }, "Team Chạm Sứ / Ăn vạ"),
+          el("div", { class: "cham-su-cards" }, chamSuTeams.map(chamSuTeamCard)),
         ])
       : null,
     mines.length
