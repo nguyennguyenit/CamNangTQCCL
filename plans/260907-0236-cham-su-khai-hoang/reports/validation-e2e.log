@@ -1,0 +1,47 @@
+
+> test:e2e:astro
+> playwright test --project=astro
+
+
+[WebServer] (node:34610) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] (node:34666) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 21 tests using 3 workers
+
+
+(node:34670) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:34669) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:34671) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/21] [astro] › tests-e2e/mcp-domain-compatibility.spec.mjs:7:1 › scan được lưu/hiển thị và recommendation giữ assignment theo holder
+[2/21] [astro] › tests-e2e/khaihoang-options.spec.mjs:11:1 › every source option replaces only its card and restores the default
+[3/21] [astro] › tests-e2e/spa-parity.spec.mjs:114:1 › boots once with clean first-party requests and stable metadata
+[4/21] [astro] › tests-e2e/spa-parity.spec.mjs:187:1 › all hash sections support direct links, clicks, back, and forward
+[5/21] [astro] › tests-e2e/mcp-domain-compatibility.spec.mjs:76:1 › analyze-map chạy trong Astro preview và đối chiếu đúng full hero identity
+[6/21] [astro] › tests-e2e/spa-parity.spec.mjs:208:1 › legacy storage payloads survive load and sanitize forbidden roster fields on save
+[7/21] [astro] › tests-e2e/spa-parity.spec.mjs:267:1 › required JSON failure stays in Team PK and can remain hidden on another hash
+[8/21] [astro] › tests-e2e/spa-parity.spec.mjs:281:1 › optional tier failure is non-fatal
+[9/21] [astro] › tests-e2e/spa-parity.spec.mjs:290:1 › a hanging optional tier request retains the legacy blocked-render behavior
+[10/21] [astro] › tests-e2e/spa-parity.spec.mjs:307:1 › Turnstile failure does not break local sections or duplicate its script
+[11/21] [astro] › tests-e2e/spa-parity.spec.mjs:320:1 › mobile section menu closes after selection and Escape
+[12/21] [astro] › tests-e2e/khaihoang-options.spec.mjs:48:1 › source selection works with keyboard on mobile without overflow
+[13/21] [astro] › tests-e2e/spa-parity.spec.mjs:340:1 › team search remains a local interaction
+[14/21] [astro] › tests-e2e/khaihoang-options.spec.mjs:85:3 › standalone Chạm Sứ groups preserve source content and order at 1280px
+[15/21] [astro] › tests-e2e/spa-parity.spec.mjs:352:1 › opening a roster recommendation selects its source tab and hero search
+[16/21] [astro] › tests-e2e/khaihoang-options.spec.mjs:85:3 › standalone Chạm Sứ groups preserve source content and order at 375px
+[17/21] [astro] › tests-e2e/spa-parity.spec.mjs:394:1 › local preview serves approved artifacts and excludes private source paths
+[18/21] [astro] › tests-e2e/spa-parity.spec.mjs:405:1 › synthetic HTTPS serves dist locally and characterizes legacy HTTP icons
+[19/21] [astro] › tests-e2e/khaihoang-options.spec.mjs:113:3 › Khai hoang supports missing Chạm Sứ data
+[20/21] [astro] › tests-e2e/khaihoang-options.spec.mjs:113:3 › Khai hoang supports empty Chạm Sứ data
+[21/21] [astro] › tests-e2e/khaihoang-options.spec.mjs:113:3 › Khai hoang supports legacy Chạm Sứ data
+  21 passed (22.4s)

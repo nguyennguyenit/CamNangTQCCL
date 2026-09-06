@@ -1,0 +1,56 @@
+
+> build
+> astro build
+
+03:11:38 [vite] Re-optimizing dependencies because vite config has changed
+03:11:38 [types] Generated 83ms
+03:11:38 [build] output: "static"
+03:11:38 [build] mode: "static"
+03:11:38 [build] directory: /Users/plateau/Project/CamNangTQCCL/dist/
+03:11:38 [build] Collecting build info...
+03:11:38 [build] ✓ Completed in 125ms.
+03:11:38 [build] Building static entrypoints...
+03:11:38 [vite] ✓ built in 256ms
+03:11:38 [vite] ✓ built in 24ms
+03:11:38 [build] Rearranging server assets...
+
+ generating static routes 
+03:11:38   ├─ /css/styles.css (+7ms) 
+03:11:38   ├─ /data/books-dict.json (+3ms) 
+03:11:38   ├─ /data/coexist.json (+2ms) 
+03:11:38   ├─ /data/facets.json (+1ms) 
+03:11:38   ├─ /data/heroes-dict.json (+2ms) 
+03:11:38   ├─ /data/khaihoang.json (+2ms) 
+03:11:38   ├─ /data/tactics-generic.json (+2ms) 
+03:11:38   ├─ /data/tactics.json (+2ms) 
+03:11:38   ├─ /data/team-tier.json (+1ms) 
+03:11:38   ├─ /data/teams.json (+2ms) 
+03:11:38   ├─ /js/analyze-map.js (+2ms) 
+03:11:38   ├─ /js/analyze.js (+1ms) 
+03:11:38   ├─ /js/app.js (+3ms) 
+03:11:38   ├─ /js/config.js (+1ms) 
+03:11:38   ├─ /js/derive-team-faction.js (+1ms) 
+03:11:38   ├─ /js/filters.js (+1ms) 
+03:11:38   ├─ /js/hanviet.js (+1ms) 
+03:11:38   ├─ /js/hero-detail.js (+1ms) 
+03:11:38   ├─ /js/hero-identity.js (+2ms) 
+03:11:38   ├─ /js/hero-list.js (+2ms) 
+03:11:38   ├─ /js/match-dict.js (+2ms) 
+03:11:38   ├─ /js/meta-cu.js (+3ms) 
+03:11:38   ├─ /js/mobile-section-menu.js (+5ms) 
+03:11:38   ├─ /js/recruit-tracker-store.js (+2ms) 
+03:11:38   ├─ /js/recruit-tracker.js (+2ms) 
+03:11:38   ├─ /js/render.js (+2ms) 
+03:11:38   ├─ /js/roster-recommend-ui.js (+1ms) 
+03:11:38   ├─ /js/roster-scan-map.js (+2ms) 
+03:11:38   ├─ /js/roster-scan-state.js (+2ms) 
+03:11:38   ├─ /js/tactics.js (+1ms) 
+03:11:38   ├─ /js/team-filter-section.js (+1ms) 
+03:11:38   ├─ /js/team-pk.js (+1ms) 
+03:11:38   ├─ /js/team-recommend-engine.js (+2ms) 
+03:11:38   ├─ /index.html (+4ms) 
+03:11:38 ✓ Completed in 89ms.
+
+03:11:38 [build] ✓ Completed in 415ms.
+03:11:38 [build] 1 page(s) built in 547ms
+03:11:38 [build] Complete!

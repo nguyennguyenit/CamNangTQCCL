@@ -1,0 +1,11 @@
+✔ Khác Bình Tiến uses spears in both opening phases (0.328042ms)
+✔ sourced options are complete for each declared phase and preserve the roster (1.211459ms)
+✔ Chạm Sứ groups match the separate sheet table without opening-team linkage (0.641417ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 45.214917

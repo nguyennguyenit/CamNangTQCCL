@@ -62,6 +62,14 @@ Tra cứu và gợi ý cốt lõi chạy local:
 - `team-recommend-engine.js`: xét ownership, conflict tướng/chiến pháp, alternatives, tier/red stars và portfolio tối đa 5 team.
 - `coexist.json` chỉ render nhóm tham khảo; recommender dùng `teams.json` + `team-tier.json`, không parse display string Cùng Tồn.
 
+### Hợp đồng dữ liệu khai hoang
+
+Trong [`data/khaihoang.json`](../data/khaihoang.json), `chamSuTeams` là trường top-level bổ sung cho bảng nguồn “Team Chạm Sứ------mang 1 lính”, độc lập với đội khai hoang chính. Bỏ `teams[].transforms` để sửa liên kết sai do trước đây ghép hai bảng theo hàng: consumer đọc trường cũ cần chuyển sang danh sách độc lập, không coi đây là phương án chuyển hình của từng đội. Mỗi nhóm giữ `id`, `title`, `heroes: [{name, tactic}]`, `note` và `sources: [{label, url}]`; ghi chú tướng thay thế thuộc cả nhóm khi ô nguồn phủ nhiều tướng. Không suy diễn tướng thứ ba, chủ tướng, binh chủng, tier hoặc cơ chế từ nhãn “mang 1 lính”.
+
+Owner hiển thị là [`khaihoangTable` trong `js/render.js`](../js/render.js): thứ tự ba khối là đội chính (`teams`) → **Team Chạm Sứ / Ăn vạ** (`chamSuTeams`) → quân thủ mỏ (`mines`). Contract tương thích giữ object thiếu/rỗng `chamSuTeams` và input mảng mỏ legacy; chỉ ẩn khối Chạm Sứ khi không có dữ liệu. Kiểm chứng nằm ở [`tests-e2e/khaihoang-options.spec.mjs`](../tests-e2e/khaihoang-options.spec.mjs).
+
+JSON đã curate là dữ liệu runtime cần bảo toàn. [`build_khaihoang_payload` trong `pipeline/build_json.py`](../pipeline/build_json.py) chỉ phản ánh HTML đầu vào: HTML cũ có sáu nhóm Chạm Sứ, còn bản CSV được đối chiếu có tám nhóm và một chiến pháp đã đổi. CSV chưa phải input tự động của pipeline HTML; không chạy full rebuild để nhập phần này vì có thể mất đội bổ sung, variants/options, mùa và mỏ đã curate. [Báo cáo đối chiếu nguồn](../plans/260907-0236-cham-su-khai-hoang/reports/source-reconciliation.md) giữ chi tiết khác biệt và bằng chứng bảo toàn; [fixture parser](../tests/fixtures/khaihoang-cham-su-source.html) giữ boundary kiểm thử không phụ thuộc HTML local bị ignore.
+
 ## Research MCP boundary
 
 Luồng dùng chung hiện có:
