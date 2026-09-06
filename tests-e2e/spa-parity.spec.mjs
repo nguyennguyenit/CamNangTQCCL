@@ -149,7 +149,7 @@ test("boots once with clean first-party requests and stable metadata", async ({ 
   await page.goto("/");
   await waitForBoot(page);
 
-  await expect(page).toHaveTitle("Cẩm Nang Team — Tam Quốc Chí Chiến Lược");
+  await expect(page).toHaveTitle("Cẩm Nang Game Tam Quốc Chí - Chiến Lược");
   await expect(page.locator("html")).toHaveAttribute("lang", "vi");
   await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /Tổng hợp meta team/);
   const appModule = page.locator('script[type="module"]');

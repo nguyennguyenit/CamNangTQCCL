@@ -5,7 +5,7 @@ import { PUBLIC_ARTIFACTS } from "../src/lib/public-artifact-manifest.mjs";
 
 const headersPath = new URL("../public/_headers", import.meta.url);
 const cachePolicy = "public, max-age=0, must-revalidate";
-const expectedRules = ["/", "/index.html", "/js/*", "/css/*", "/data/*"];
+const expectedRules = ["/", "/index.html", "/js/*", "/css/*", "/data/*", "/favicon.png"];
 
 function parseHeaders(source) {
   const rules = new Map();
@@ -65,6 +65,7 @@ test("_headers covers every published shell and mutable raw asset", async () => 
   const publicPaths = [
     "/",
     "/index.html",
+    "/favicon.png",
     ...PUBLIC_ARTIFACTS.map((artifact) => `/${artifact.kind}/${artifact.sourceBasename}`),
   ];
   for (const path of publicPaths) {

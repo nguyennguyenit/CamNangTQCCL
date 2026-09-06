@@ -7,6 +7,10 @@ export const DEPLOYMENT_CONTROL_ARTIFACTS = Object.freeze([
   Object.freeze({ sourcePath: "public/_headers", outputPath: "_headers" }),
 ]);
 
+export const STATIC_PUBLIC_ARTIFACTS = Object.freeze([
+  Object.freeze({ sourcePath: "public/favicon.png", outputPath: "favicon.png" }),
+]);
+
 async function listFiles(directory, base = directory) {
   const files = [];
   for (const entry of await readdir(directory, { withFileTypes: true })) {
@@ -24,6 +28,7 @@ export async function verifyAstroDist({
   distDir = new URL("../dist/", import.meta.url),
   manifest = PUBLIC_ARTIFACTS,
   controlArtifacts = DEPLOYMENT_CONTROL_ARTIFACTS,
+  staticArtifacts = STATIC_PUBLIC_ARTIFACTS,
 } = {}) {
   validatePublicArtifactManifest(manifest);
   const rootPath = fileURLToPath(projectRoot);
@@ -34,6 +39,7 @@ export async function verifyAstroDist({
     "index.html",
     ...expectedAssets,
     ...controlArtifacts.map((artifact) => artifact.outputPath),
+    ...staticArtifacts.map((artifact) => artifact.outputPath),
   ].sort();
   const files = await listFiles(distPath);
   const unexpectedFiles = files.filter((file) => !expectedFiles.includes(file));
@@ -55,7 +61,7 @@ export async function verifyAstroDist({
     }
   }
 
-  for (const artifact of controlArtifacts) {
+  for (const artifact of [...controlArtifacts, ...staticArtifacts]) {
     const [sourceBytes, emittedBytes] = await Promise.all([
       readFile(resolve(rootPath, artifact.sourcePath)),
       readFile(resolve(distPath, artifact.outputPath)),

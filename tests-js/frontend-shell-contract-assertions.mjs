@@ -22,7 +22,8 @@ export function assertFrontendShellContract(html, {
   scriptPattern,
 } = {}) {
   assert.match(html, /<html[^>]+lang=["']vi["']/);
-  assert.match(html, /<title>Cẩm Nang Team — Tam Quốc Chí Chiến Lược<\/title>/);
+  assert.match(html, /<title>Cẩm Nang Game Tam Quốc Chí - Chiến Lược<\/title>/);
+  assert.match(html, /<link[^>]+rel=["']icon["'][^>]+href=["']\/favicon\.png["']/);
   assert.match(html, /<meta[^>]+name=["']description["'][^>]+content=["'][^"']+["']/);
   assert.match(html, stylesheetPattern);
   assert.match(html, scriptPattern);

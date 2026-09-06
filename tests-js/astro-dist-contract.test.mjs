@@ -199,6 +199,9 @@ test("dist verifier rejects missing, unexpected, and symlinked output", async (t
   await writeFile(join(projectDir, "public", "_headers"), "/\n  Cache-Control: max-age=0\n");
   await writeFile(join(distDir, "index.html"), "<!doctype html>\n");
   await writeFile(join(distDir, "_headers"), "/\n  Cache-Control: max-age=0\n");
+  const favicon = await readFile(new URL("public/favicon.png", projectRoot));
+  await writeFile(join(projectDir, "public", "favicon.png"), favicon);
+  await writeFile(join(distDir, "favicon.png"), favicon);
 
   await assert.rejects(
     verifyAstroDist({
