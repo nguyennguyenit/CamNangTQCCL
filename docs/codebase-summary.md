@@ -29,6 +29,7 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 |---|---|
 | `src/pages/index.astro` | Khai báo 9 tab/section và nạp raw `/js/app.js`; build thành `dist/index.html`. |
 | `src/lib/public-artifact-manifest.mjs` | Allowlist route/source/class cho mọi JS/CSS/JSON public. |
+| `public/favicon.png` | Logo PNG 128×128, góc trong suốt; ảnh gốc từ [Thiên Thượng Hỏa](https://thienthuonghoa.com/assets/uploads/images/tqccl-logo.jpg). `STATIC_PUBLIC_ARTIFACTS` trong dist verifier kiểm byte parity; `/favicon.png` phải revalidate. |
 | `src/lib/root-static-artifacts.ts` | Đọc raw artifact an toàn và trả bytes/MIME cho static endpoint. |
 | `scripts/verify-astro-dist.mjs` | Kiểm toàn bộ `dist/`, byte parity và deployment-control artifact. |
 | `js/app.js` | Load 6 JSON bắt buộc + tier tùy chọn; init nav, theme và các section. |
@@ -71,6 +72,14 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | `data/coexist.json` | 5 nhóm, 25 team |
 | `data/khaihoang.json` | 11 team, 5 mỏ |
 | `data/tactics-generic.json` | 29 record nguồn |
+
+Ngày 2026-09-06, `data/khaihoang.json` trong repository có **14 team, 5 mỏ**: thêm Gia Cát Khác · Thái Sử Từ · Tả Từ theo [research](../plans/reports/research-260906-1347-gia-cat-khac-thai-su-tu-ta-tu.md), rồi thêm hai bộ ba còn thiếu theo [đối chiếu Google Sheet](../plans/reports/import-260906-1413-khaihoang-google-sheet.md). Ba đội bổ sung được curate trực tiếp trong JSON canonical; khi chạy lại pipeline HTML phải giữ lại vì nguồn HTML cũ chưa chứa các đội này. Đây là trạng thái local, không xác nhận đã deploy.
+
+Tab Khai hoang hỗ trợ `variants[]` tùy chọn trên từng đội: cấu hình độc lập với `id`, `label`, `region`, `period`, `unitType`, `heroes`, `note`, `sources[{label,url}]` và chủ tướng trước/sau cấp 20 khi đã xác minh. Native select đổi cả bộ chiêu và nguồn; không kế thừa giai đoạn hoặc chuyển hình chưa được nguồn xác nhận. Không có `variants` thì giữ card cũ. Lựa chọn chỉ có hiệu lực trong phiên trang, không lưu vào kho tướng. Snapshot local có 12 lựa chọn trên 10 đội; Khác–Bình–Tiến dùng Thương ở cả hai giai đoạn. Pipeline HTML là importer nguồn cũ, chưa sở hữu phần curate này: khi rebuild phải bảo toàn `variants`, `context`, `sources` và các sửa tay, không dùng output HTML ghi đè trực tiếp runtime. Contract được kiểm bởi `tests-js/khaihoang-data.test.mjs` và `tests-e2e/khaihoang-options.spec.mjs`.
+
+`season`/`seasonNote` ở root khai hoang ghi mùa mục tiêu Binh Diễn Xuân Thu theo xác nhận người dùng; nguồn mùa khác vẫn được ghi riêng, không tự nâng thành tier mùa hiện tại. Các cấu hình chưa mô tả nhánh binh chủng tùy chỉnh.
+
+Đồng Lòng Hợp Sức được xác minh bằng ảnh client Việt 06/09/2026 là 勠力同心, chiến pháp sự kiện Chủ động trị liệu/tăng Thống Soái; nguồn chi tiết nằm trong `data/tactics-generic.json` để `build_dict` merge lại. 戮力上国 giữ nguyên hiệu ứng Nội chính và tên Hán-Việt Lục Lực Thượng Quốc; override cũ gán Đồng Lòng Hợp Sức đã được sửa.
 
 `data/facets.json` có 91 tướng, 119 chiến pháp, 67 binh thư, 4 loại binh, 3 mức sao, 5 phe, 2 trạng thái, 2 nguồn; tổng source là 165. Frontend không fetch artifact này: tab team tính facet trực tiếp từ tập team runtime.
 
