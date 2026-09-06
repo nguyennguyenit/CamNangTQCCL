@@ -209,6 +209,7 @@ body {
 .head-right { display: flex; gap: .3rem; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
 
 .badge { font-size: .72rem; padding: .15rem .5rem; border-radius: 6px; font-weight: 600; white-space: nowrap; }
+.badge.beta { display: inline-block; margin-left: .2rem; background: var(--accent-soft); color: var(--accent); font-size: .65rem; vertical-align: middle; }
 .badge.unit { color: #fff; }
 .badge.unit.small { font-size: .62rem; padding: .05rem .3rem; }
 .u-ky { background: var(--ky); } .u-cung { background: var(--cung); } .u-thuong { background: var(--thuong); } .u-khien { background: var(--khien); }

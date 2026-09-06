@@ -8,6 +8,8 @@ Giao diện là dashboard dữ liệu tĩnh: nhanh, rõ, gọn. Card, badge và 
 
 9 section cùng một shell header/navigation. Hash URL giữ deep-link. Mỗi section nên có intro ngắn, control chính và nội dung ngay sau đó; tránh dashboard trang trí không phục vụ quyết định.
 
+Các tab Theo dõi chiêu mộ, Soi đội từ ảnh và Gợi ý đội từ kho hiển thị nhãn `Beta` cạnh tên trong navigation desktop và menu mobile.
+
 | Nhóm | Pattern hiện tại |
 |---|---|
 | Team PK / Meta cũ | Shared inline search + dynamic chip groups + card grid |
