@@ -295,7 +295,7 @@ body {
 /* Khai hoang — đội hình đề xuất (tái dùng kiểu card Team PK) */
 .kh-block { margin-bottom: 1.6rem; }
 .kh-section-title { font-size: 1rem; color: var(--accent); margin: 0 0 .8rem; padding-bottom: .35rem; border-bottom: 2px solid var(--line); }
-.kh-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; }
+.kh-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 1rem; }
 .kh-card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: .8rem; box-shadow: var(--shadow); transition: transform .12s ease, box-shadow .12s ease; }
 .kh-card:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0, 0, 0, .12); }
 .kh-title { margin: 0; font-size: .9rem; text-align: right; }
@@ -311,6 +311,16 @@ body {
 .kh-sources a { color: var(--accent); text-decoration: underline; }
 /* Tag chiến pháp ở khai hoang chỉ để hiển thị, không bấm. */
 .kh-card .tag, .cham-su-card .tag { cursor: default; }
+.kh-guide { margin: .7rem 0; padding: .65rem; border: 1px solid var(--line); border-radius: .5rem; background: color-mix(in srgb, var(--panel) 88%, var(--accent)); min-width: 0; overflow-wrap: anywhere; }
+.kh-guide-overview, .kh-guide-scope, .kh-guide-red, .kh-guide-warning, .kh-guide-note { margin: .35rem 0; font-size: .8rem; line-height: 1.5; }
+.kh-guide-scope { color: var(--muted); }
+.kh-guide-warning { color: var(--danger, #a33); }
+.kh-guide-ratings { display: flex; flex-wrap: wrap; gap: .35rem; }
+.kh-guide-rating { padding: .15rem .35rem; border-radius: .3rem; background: var(--bg); font-size: .76rem; }
+.kh-guide-details { margin-top: .5rem; }
+.kh-guide-details summary { cursor: pointer; font-weight: 600; }
+.kh-guide-list { margin-top: .55rem; }
+.kh-guide-list ol, .kh-guide-list ul { margin: .25rem 0; padding-left: 1.2rem; }
 .cham-su-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 1rem; }
 .cham-su-card { min-width: 0; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: .8rem; box-shadow: var(--shadow); overflow-wrap: anywhere; }
 .cham-su-title { margin: 0 0 .65rem; font-size: .9rem; }

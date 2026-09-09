@@ -212,7 +212,74 @@ function khaihoangHeroRow(h) {
     name,
     h.tacticBefore ? before : null,
     h.tacticsAfter?.length ? after : null,
-    h.note ? el("div", { class: "kh-note" }, h.note) : null,
+    h.displayNote ? el("div", { class: "kh-note" }, h.displayNote) : null,
+  ].filter(Boolean));
+}
+
+function guideRatings(ratings = {}) {
+  const labels = [["land4", "Đất 4"], ["land5", "Đất 5"], ["land6", "Đất 6"], ["land7to8", "Đất 7–8"], ["transition", "Chuyển"], ["overall", "Tổng"]];
+  const values = labels.filter(([key]) => ratings[key] !== undefined && ratings[key] !== null)
+    .map(([key, label]) => el("span", { class: "kh-guide-rating" }, `${label}: ${ratings[key]}`));
+  return values.length ? el("div", { class: "kh-guide-ratings" }, values) : null;
+}
+
+function guideDefenders(defenders = {}) {
+  const ordered = (title, rows) => rows?.length ? el("div", { class: "kh-guide-list" }, [
+    el("strong", {}, title),
+    el("ol", {}, rows.map((row) => el("li", {}, `${row.hero}${row.unitType ? ` ${row.unitType}` : ""}`))),
+  ]) : null;
+  return [ordered("Đất 4 · dễ → khó", defenders.land4), ordered("Đất 5 · dễ → khó", defenders.land5),
+    defenders.warning ? el("p", { class: "kh-guide-warning" }, defenders.warning) : null].filter(Boolean);
+}
+
+function khaihoangGuide(guide) {
+  if (!guide || !Object.keys(guide).length) return null;
+  const red = (guide.redRequirements || []).map((item) => [
+    item.hero,
+    item.minimum !== undefined ? `từ ${item.minimum} đỏ` : null,
+    item.recommended !== undefined ? `khuyến nghị ${item.recommended} đỏ` : null,
+    item.note,
+  ].filter(Boolean).join(" · "));
+  const split = guide.splitTeams;
+  const transitions = (guide.transitions || []).map((item) => el("li", {}, [
+    el("strong", {}, item.target),
+    item.note ? el("p", { class: "kh-guide-note" }, item.note) : null,
+    el("ol", {}, (item.steps || []).map((step) => el("li", {}, [
+      step.mainCityLevel ? `Thành chính ${step.mainCityLevel}` : null,
+      step.commandCost ? `${step.commandCost} thống ngự` : null,
+      step.timing,
+      step.trainHeroes?.length ? `Luyện ${step.trainHeroes.join(" + ")}` : null,
+      step.note,
+    ].filter(Boolean).join(" · ")))),
+  ]));
+  const splitTeams = split?.teams?.length ? el("div", { class: "kh-guide-list" }, [
+    el("strong", {}, "Tách đội đánh đất"),
+    el("ul", {}, split.teams.map((item) => el("li", {}, [
+      item.target ? el("strong", {}, item.target) : null,
+      item.heroes?.length ? el("ul", {}, item.heroes.map((hero) => el("li", {}, [
+        hero.name,
+        hero.tactics?.length ? ` (${hero.tactics.join(" / ")})` : null,
+      ].filter(Boolean).join("")))) : null,
+      item.note ? el("p", { class: "kh-guide-note" }, item.note) : null,
+    ].filter(Boolean)))),
+  ]) : null;
+  const details = [
+    ...guideDefenders(guide.defenders),
+    split?.note ? el("p", { class: "kh-guide-note" }, split.note) : null,
+    splitTeams,
+    transitions.length ? el("div", { class: "kh-guide-list" }, [el("strong", {}, "Chuyển hình"), el("ul", {}, transitions)]) : null,
+  ].filter(Boolean);
+  const hasContent = guide.overview || guideRatings(guide.ratings) || red.length || details.length;
+  if (!hasContent) return null;
+  return el("section", { class: "kh-guide" }, [
+    guide.overview ? el("p", { class: "kh-guide-overview" }, guide.overview) : null,
+    guideRatings(guide.ratings),
+    el("p", { class: "kh-guide-scope" }, "Đánh giá chung cho bộ ba tướng; chưa chấm riêng từng bộ chiến pháp."),
+    red.length ? el("p", { class: "kh-guide-red" }, [el("strong", {}, "Yêu cầu đỏ: "), red.join("; ")]) : null,
+    details.length ? el("details", { class: "kh-guide-details" }, [
+      el("summary", {}, "Hướng dẫn đánh đất và chuyển hình"),
+      ...details,
+    ]) : null,
   ].filter(Boolean));
 }
 
@@ -230,26 +297,24 @@ function khaihoangTeamCard(t) {
     onchange: (event) => showBuild(variants.find((v) => v.id === event.target.value) || t),
   }, [
     el("option", { value: "" }, "Cấu hình mặc định"),
-    ...variants.map((v) => el("option", { value: v.id }, v.label)),
+    ...variants.map((v, index) => el("option", { value: v.id }, v.displayLabel || `Cấu hình ${index + 1}`)),
   ]) : null;
 
   function showBuild(build) {
     unit.textContent = build.unitType;
     unit.className = `badge unit ${UNIT_CLASS[build.unitType] || ""}`;
     content.replaceChildren(...[
-      build.period ? el("p", { class: "kh-build-context" }, `${build.region} · ${build.period}`) : null,
-      build.context ? el("p", { class: "kh-build-context" }, build.context) : null,
-      build.note ? el("p", { class: "kh-build-note" }, build.note) : null,
+      build.displayNote ? el("p", { class: "kh-build-note" }, build.displayNote) : null,
       build.commanderBefore ? el("p", { class: "kh-commander" }, `Chủ tướng trước cấp 20: ${build.commanderBefore}`) : null,
       build.commanderAfter ? el("p", { class: "kh-commander" }, `Chủ tướng sau cấp 20: ${build.commanderAfter}`) : null,
       el("div", { class: "heroes" }, (build.heroes || []).map(khaihoangHeroRow)),
-      khaihoangSources(build.sources),
     ].filter(Boolean));
   }
   showBuild(t);
   return el("article", { class: "kh-card" }, [
     head,
     selector ? el("label", { class: "kh-variant-control" }, ["Chọn cấu hình", selector]) : null,
+    khaihoangGuide(t.guide),
     content,
   ].filter(Boolean));
 }
@@ -298,10 +363,6 @@ export function khaihoangTable(data) {
   const mines = Array.isArray(data) ? data : (data.mines || []);
   const chamSuTeams = Array.isArray(data) ? [] : (data.chamSuTeams || []);
   return el("div", { class: "khaihoang" }, [
-    data.season ? el("p", { class: "kh-season-context" }, [
-      el("strong", {}, `Mùa đang chơi: ${data.season}. `),
-      data.seasonNote || "",
-    ]) : null,
     teams.length
       ? el("div", { class: "kh-block" }, [
           el("h2", { class: "kh-section-title" }, "Đội hình khai hoang đề xuất"),

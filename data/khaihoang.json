@@ -34,14 +34,16 @@
             "Tiềm Long Trận/Tam Thế Trận",
             "Thịnh Khí Linh Địch"
           ],
-          "note": "Sau khi lv.20 để Pháp Chính làm chủ tướng"
+          "note": "Sau khi lv.20 để Pháp Chính làm chủ tướng",
+          "displayNote": "Sau cấp 20 để Pháp Chính làm chủ tướng."
         }
       ],
       "title": "Gia Cát Khác · SP Mã Siêu · Pháp Chính",
       "variants": [
         {
           "id": "cn-thoi-phong",
-          "label": "CN · Thôi Phong",
+      "label": "CN · Thôi Phong",
+      "displayLabel": "Thôi Phong · Tiềm Long",
           "region": "Trung Quốc",
           "period": "Trước và sau cấp 20 · 22/04/2026",
           "unitType": "Thương",
@@ -78,6 +80,7 @@
             }
           ],
           "note": "Pháp Chính mang Tiềm Long từ đầu; cần có Thôi Phong. Nguồn hướng tới tài khoản nhiều hột, không suy các mốc mở đất cho mọi tài khoản.",
+          "displayNote": "Pháp Chính mang Tiềm Long từ đầu; cần có Thôi Phong. Cấu hình hướng tới tài khoản nhiều hột; không suy các mốc mở đất cho mọi tài khoản.",
           "sources": [
             {
               "label": "CNBlogs — hướng dẫn SP Mã Siêu",
@@ -89,7 +92,8 @@
         },
         {
           "id": "jp-s23",
-          "label": "Nhật S23 · Nhất Kỵ / Bạo Lệ",
+      "label": "Nhật S23 · Nhất Kỵ / Bạo Lệ",
+      "displayLabel": "Nhất Kỵ · Bạo Lệ",
           "region": "Nhật",
           "period": "Trước và sau cấp 20 · S23, 25/01/2026",
           "unitType": "Thương",
@@ -126,6 +130,7 @@
             }
           ],
           "note": "Đổi vị trí Giải Phiền và Thịnh Khí; sau 20 SP Mã Siêu dùng Bạo Lệ + Mau Giành. Nguồn mùa S23.",
+          "displayNote": "Đổi vị trí Giải Phiền và Thịnh Khí; sau cấp 20 SP Mã Siêu dùng Bạo Lệ + Mau Giành.",
           "sources": [
             {
               "label": "貂蝉 — hướng dẫn S23",
@@ -175,10 +180,23 @@
         }
       ],
       "title": "Gia Cát Khác · Quan Ngân Bình · Nhạc Tiến",
+      "guide": {
+        "overview": "Đội khai hoang chuyên đánh đất, chuyển mượt sang một đội Ngũ Hồng Thương.",
+        "ratings": {"land4": 7, "land5": 8, "land6": 8.5, "land7to8": 9, "transition": 7, "overall": 7.9},
+        "redRequirements": [{"note": "Tướng trắng vẫn dùng được; càng nhiều đỏ càng tốt."}],
+        "defenders": {
+          "land4": [{"hero":"Lăng Tháo","unitType":"Kỵ"},{"hero":"Quách Dĩ","unitType":"Kỵ"},{"hero":"Trương Dực","unitType":"Khiên"},{"hero":"Chu Hoàn","unitType":"Thương"},{"hero":"Trương Lương","unitType":"Thương"},{"hero":"Tào Chương","unitType":"Khiên"},{"hero":"Hoàng Quyền","unitType":"Cung"},{"hero":"Tưởng Khâm","unitType":"Cung"}],
+          "land5": [{"hero":"Tào Chân","unitType":"Kỵ"},{"hero":"Lý Thôi","unitType":"Kỵ"},{"hero":"Trần Vũ","unitType":"Khiên"},{"hero":"Trương Lương","unitType":"Thương"},{"hero":"Phan Chương","unitType":"Thương"},{"hero":"Trần Kiểu","unitType":"Khiên"},{"hero":"Hoàng Quyền","unitType":"Cung"},{"hero":"Tưởng Khâm","unitType":"Cung"}],
+          "warning": "Tào Chương Khiên, Hoàng Quyền Cung và Trần Kiểu Khiên nên tránh: dễ gây hỗn loạn, hao binh khó kiểm soát. Càng về cuối danh sách càng khó."
+        },
+        "splitTeams": {"teams": [{"target":"Các đội Kỵ","note":"Quan Ngân Bình (Trung Dũng Nghĩa Liệt / Tật Phong) + Gia Cát Khác (Thịnh Khí / Lâm Cơ) + Lữ Mông (Thanh Châu)."},{"target":"Đất 5 Khiên","note":"Quan Ngân Bình (Phá Quân / Hoành Tảo) + Lữ Mông (Hổ Báo / Tây Lương) + Hoàng Nguyệt Anh (Phong Thi)."},{"target":"Các đội Kỵ","note":"Nhạc Tiến (Sĩ Tranh / Hoành Tảo) + Gia Cát Khác (Thịnh Khí / Lâm Cơ) + Lữ Mông (Thanh Châu)."}]},
+        "transitions": [{"target":"Ngũ Hồng Thương","steps":[{"mainCityLevel":7,"trainHeroes":["Trương Phi"],"note":"Hoàng Nguyệt Anh vào trận trực tiếp."}]},{"target":"Quan Quan Trương","steps":[{"mainCityLevel":7,"trainHeroes":["Quan Ngân Bình"],"note":"Luyện tiếp Quan Vũ, chuyển ở thành chính cấp 8."}]},{"target":"Chuyển trần","steps":[{"timing":"48 giờ","note":"Tháo chiến pháp để tích thống ngự."}]}]
+      },
       "variants": [
         {
           "id": "jp-s13",
-          "label": "Nhật S13 · Quan Ngân Bình chủ tướng",
+      "label": "Nhật S13 · Quan Ngân Bình chủ tướng",
+      "displayLabel": "Quan Ngân Bình chủ tướng",
           "region": "Nhật",
           "period": "Trước và sau cấp 20 · S13 (2023)",
           "unitType": "Thương",
@@ -215,6 +233,7 @@
             }
           ],
           "note": "Sau 20 chuyển chủ tướng sang Quan Ngân Bình, Thanh Châu đặt trên Quan. Chỉnh Võ Lực Quan cao hơn Nhạc theo nguồn. Nguồn dùng 士争先赴 (Sĩ Tranh Tiên Phó); chưa xác nhận là alias của Nhanh Chân Tranh Đất.",
+          "displayNote": "Sau cấp 20 chuyển chủ tướng sang Quan Ngân Bình, Thanh Châu đặt trên Quan. Chỉnh Võ Lực Quan cao hơn Nhạc. Sĩ Tranh Tiên Phó chưa được xác nhận là alias của Nhanh Chân Tranh Đất.",
           "sources": [
             {
               "label": "リーレ — hướng dẫn S13",
@@ -260,14 +279,24 @@
             "Tiềm Long Trận",
             "Thịnh Khí Linh Địch"
           ],
-          "note": "Sau khi lv.20 để Gia Cát Khác làm chủ tướng"
+          "note": "Sau khi lv.20 để Gia Cát Khác làm chủ tướng",
+          "displayNote": "Sau cấp 20 để Gia Cát Khác làm chủ tướng."
         }
       ],
       "title": "Khương Duy · Hạ Hầu Uyên · Gia Cát Khác",
+      "guide": {
+        "overview": "Một trong các đội khai hoang mạnh nhất khi không dùng Thái Sử Từ, Mã Siêu hoặc SP Lô Trực.",
+        "ratings": {"land4": 8, "land5": 9, "land6": 8.5, "land7to8": 7, "transition": 8, "overall": 8.1},
+        "redRequirements": [{"note": "Tướng trắng vẫn dùng được; càng nhiều đỏ càng tốt."}],
+        "defenders": {"land4": [{"hero":"Lăng Tháo","unitType":"Kỵ"},{"hero":"Quách Dĩ","unitType":"Kỵ"},{"hero":"Trương Dực","unitType":"Khiên"},{"hero":"Chu Hoàn","unitType":"Thương"},{"hero":"Trương Lương","unitType":"Thương"},{"hero":"Tào Chương","unitType":"Khiên"},{"hero":"Hoàng Quyền","unitType":"Cung"},{"hero":"Tưởng Khâm","unitType":"Cung"}], "land5": [{"hero":"Trương Lương","unitType":"Thương"},{"hero":"Phan Chương","unitType":"Thương"},{"hero":"Trần Vũ","unitType":"Khiên"},{"hero":"Tào Chân","unitType":"Kỵ"},{"hero":"Lý Thôi","unitType":"Kỵ"},{"hero":"Hoàng Quyền","unitType":"Cung"},{"hero":"Tưởng Khâm","unitType":"Cung"},{"hero":"Trần Kiểu","unitType":"Khiên"}], "warning":"Tào Chương Khiên, Hoàng Quyền Cung và Trần Kiểu Khiên nên tránh: dễ gây hỗn loạn, hao binh khó kiểm soát. Càng về cuối danh sách càng khó."},
+        "splitTeams": {"teams": [{"target":"Đánh các đội Thương (ưu tiên Phan Chương)","note":"Khương Duy (Yên Trục Phong Phi / Thượng Binh Phạt Mưu) + Gia Cát Khác (Thịnh Khí / Lâm Cơ) + Lữ Mông hoặc Hoàng Nguyệt Anh (Vô Đương Phi Quân)."},{"target":"Chỉ Trần Kiểu Khiên cấp 5","note":"Hạ Hầu Uyên (Lõa Y / Bách Kỵ) + Lữ Mông (Hổ Báo) + Hoàng Nguyệt Anh (Phong Thi)."}]},
+        "transitions": [{"target":"Uyên Kỵ","steps":[{"mainCityLevel":7,"trainHeroes":["Quách Gia"],"note":"Sau đó luyện Tào Tháo và chuyển Hạ Hầu Uyên + Tào Tháo + Quách Gia."}]},{"target":"Đẳng Phong Kỵ","steps":[{"mainCityLevel":7,"trainHeroes":["Quan Ngân Bình"],"note":"Luyện tiếp Lưu Bị rồi chuyển ở thành chính cấp 8."}]},{"target":"Kỳ Lân Cung","steps":[{"mainCityLevel":7,"trainHeroes":["Bàng Thống"],"note":"Luyện tiếp Gia Cát Lượng rồi chuyển ở thành chính cấp 8."}]},{"target":"Chuyển trần","steps":[{"timing":"48 giờ","note":"Tháo chiến pháp để tích thống ngự."}]}]
+      },
       "variants": [
         {
           "id": "jp-s23-bat-mon",
-          "label": "Nhật S23 · Bát Môn",
+      "label": "Nhật S23 · Bát Môn",
+      "displayLabel": "Bát Môn Kim Tỏa",
           "region": "Nhật",
           "period": "Trước và sau cấp 20 · S23, 25/01/2026",
           "unitType": "Cung",
@@ -304,6 +333,7 @@
             }
           ],
           "note": "Sau 20 dùng Bát Môn thay Tiềm Long trên Gia Cát Khác. Cấu hình Cung trong nguồn; không đổi sang Kỵ mà vẫn giữ Vô Đương.",
+          "displayNote": "Sau cấp 20 dùng Bát Môn thay Tiềm Long trên Gia Cát Khác. Giữ cấu hình Cung và Vô Đương, không đổi sang Kỵ.",
           "sources": [
             {
               "label": "貂蝉 — hướng dẫn S23",
@@ -327,7 +357,8 @@
             "Thái Bình Đạo Pháp",
             "Vô Đương Phi Quân"
           ],
-          "note": "Cộng Trí Lực. Nguồn sát thương chính của đội; ưu tiên Lục Tốn nhiều hột, kết quả phụ thuộc khả năng phát động chiến pháp."
+          "note": "Cộng Trí Lực. Nguồn sát thương chính của đội; ưu tiên Lục Tốn nhiều hột, kết quả phụ thuộc khả năng phát động chiến pháp.",
+          "displayNote": "Cộng Trí Lực. Là nguồn sát thương chính của đội; ưu tiên Lục Tốn nhiều hột, kết quả phụ thuộc khả năng phát động chiến pháp."
         },
         {
           "name": "Tả Từ",
@@ -338,7 +369,8 @@
             "Thịnh Khí Linh Địch",
             "Tam Thế Trận"
           ],
-          "note": "Cộng Trí Lực theo bản Kazten. Có thể thay Thịnh Khí Linh Địch bằng Sĩ Biệt Tam Nhật tùy thủ quân và độ đỏ; chọn một trong hai. Sau cấp 20 và thức tỉnh, nhận Tam Thế Trận từ Trương Xuân Hoa."
+          "note": "Cộng Trí Lực theo bản Kazten. Có thể thay Thịnh Khí Linh Địch bằng Sĩ Biệt Tam Nhật tùy thủ quân và độ đỏ; chọn một trong hai. Sau cấp 20 và thức tỉnh, nhận Tam Thế Trận từ Trương Xuân Hoa.",
+          "displayNote": "Cộng Trí Lực. Có thể thay Thịnh Khí Linh Địch bằng Sĩ Biệt Tam Nhật tùy thủ quân và độ đỏ; chọn một trong hai. Sau cấp 20 và thức tỉnh, nhận Tam Thế Trận từ Trương Xuân Hoa."
         },
         {
           "name": "Trương Xuân Hoa",
@@ -349,14 +381,24 @@
             "Đoạt Hồn Hiệp Phách",
             "Sợ Bóng Sợ Gió"
           ],
-          "note": "Chỉnh Tốc Độ để hành động trước Lục Tốn, còn lại cộng Trí Lực; không có số điểm tốc cố định cho mọi tài khoản. Sau thức tỉnh chuyển Tam Thế sang Tả Từ, dùng Đoạt Hồn Hiệp Phách + Sợ Bóng Sợ Gió."
+          "note": "Chỉnh Tốc Độ để hành động trước Lục Tốn, còn lại cộng Trí Lực; không có số điểm tốc cố định cho mọi tài khoản. Sau thức tỉnh chuyển Tam Thế sang Tả Từ, dùng Đoạt Hồn Hiệp Phách + Sợ Bóng Sợ Gió.",
+          "displayNote": "Chỉnh Tốc Độ để hành động trước Lục Tốn, còn lại cộng Trí Lực; không có số điểm tốc cố định cho mọi tài khoản. Sau thức tỉnh chuyển Tam Thế sang Tả Từ, dùng Đoạt Hồn Hiệp Phách + Sợ Bóng Sợ Gió."
         }
       ],
       "title": "Lục Tốn · Tả Từ · Trương Xuân Hoa",
+      "guide": {
+        "overview": "Đội khai hoang dành cho hướng chuyển hình đội Ngô.",
+        "ratings": {"land4": 6.8, "land5": 7, "land6": 7, "land7to8": 7, "transition": 7, "overall": 6.96},
+        "redRequirements": [{"note": "Tướng trắng vẫn dùng được; càng nhiều đỏ càng tốt."}],
+        "defenders": {"land4": [{"hero":"Trương Lương","unitType":"Thương"},{"hero":"Lăng Tháo","unitType":"Kỵ"},{"hero":"Chu Hoàn","unitType":"Thương"},{"hero":"Quách Dĩ","unitType":"Kỵ"},{"hero":"Hoàng Quyền","unitType":"Cung"},{"hero":"Tưởng Khâm","unitType":"Cung"},{"hero":"Trương Dực","unitType":"Khiên"},{"hero":"Tào Chương","unitType":"Khiên"}], "land5": [{"hero":"Phan Chương","unitType":"Thương"},{"hero":"Tào Chân","unitType":"Kỵ"},{"hero":"Trương Lương","unitType":"Thương"},{"hero":"Lý Thôi","unitType":"Kỵ"},{"hero":"Hoàng Quyền","unitType":"Cung"},{"hero":"Tưởng Khâm","unitType":"Cung"},{"hero":"Trần Vũ","unitType":"Khiên"},{"hero":"Trần Kiểu","unitType":"Khiên"}], "warning":"Tào Chương Khiên, Hoàng Quyền Cung và Trần Kiểu Khiên nên tránh: dễ gây hỗn loạn, hao binh khó kiểm soát. Càng về cuối danh sách càng khó."},
+        "splitTeams": {"teams": [{"target":"Đánh các đội Thương","note":"Lục Tốn (Thái Bình / Phong Trợ) + Tả Từ (Thịnh Khí / Lâm Cơ) + Hoàng Nguyệt Anh (Tam Thế)."},{"target":"Đánh các đội Thương","note":"Lục Tốn (Thái Bình / Phong Trợ) + Trương Xuân Hoa (Thịnh Khí / Lâm Cơ) + Hoàng Nguyệt Anh (Tam Thế)."},{"target":"Đánh các đội Thương","note":"Tả Từ (Yên Trục Phong Phi / Lâm Cơ) + Trương Xuân Hoa (Thịnh Khí / Phần Trại) + Hoàng Nguyệt Anh (Vô Đương Phi Quân)."}]},
+        "transitions": [{"target":"Nhục Cung","steps":[{"mainCityLevel":7,"trainHeroes":["Thái Sử Từ"],"note":"Chuyển ở thành chính cấp 8."}]},{"target":"Xã Tắc Cung","steps":[{"mainCityLevel":7,"trainHeroes":["SP Chu Du"],"note":"Chuyển ở thành chính cấp 8."}]},{"target":"Đô Đốc Cung","steps":[{"mainCityLevel":7,"trainHeroes":["Chu Du"],"note":"Chuyển ở thành chính cấp 8."}]},{"target":"Tam Tiên","steps":[{"mainCityLevel":7,"trainHeroes":["Trương Giác"],"note":"Chuyển ở thành chính cấp 8."}]},{"target":"Chuyển trần","steps":[{"timing":"48 giờ","note":"Tháo chiến pháp để tích thống ngự."}]}]
+      },
       "variants": [
         {
           "id": "jp-s23-si-biet",
-          "label": "Nhật S23 · Sĩ Biệt trên Tả Từ",
+      "label": "Nhật S23 · Sĩ Biệt trên Tả Từ",
+      "displayLabel": "Sĩ Biệt trên Tả Từ",
           "region": "Nhật",
           "period": "Sau cấp 20 / đã thức tỉnh · S23, 01/2026",
           "unitType": "Cung",
@@ -387,6 +429,7 @@
             }
           ],
           "note": "Biến thể Dengeki: Tam Thế ở Trương Xuân Hoa, bỏ Sợ Bóng Sợ Gió để Tả Từ mang cả Thịnh Khí + Sĩ Biệt. Khác với bản mặc định cho Tả Từ mang Tam Thế + một trong Thịnh Khí/Sĩ Biệt; không trộn hai cấu hình. Nguồn chỉ liệt kê bộ hai chiêu, không chốt trước cấp 20 hoặc chứng minh mạnh hơn bản mặc định.",
+          "displayNote": "Tam Thế ở Trương Xuân Hoa; Tả Từ mang cả Thịnh Khí + Sĩ Biệt thay Sợ Bóng Sợ Gió. Không trộn hai cấu hình. Chỉ có bộ hai chiêu, chưa chốt trước cấp 20 hoặc mạnh hơn mặc định.",
           "sources": [
             {
               "label": "Dengeki/Qookka — khai hoang S23",
@@ -400,6 +443,7 @@
       "commanderAfter": "Lục Tốn",
       "context": "Tam Thế Lục · Cung · có nguồn Nhật Global. Cấu hình mặc định theo nhánh Thịnh Khí trong hướng dẫn Kazten.",
       "note": "Thận trọng với thủ quân có tất trúng vì làm giảm lợi thế né tránh của Tả Từ. Mốc mở đất phụ thuộc hột tướng, trang bị, thủ quân và đội đánh hao; chưa đủ căn cứ xếp hạng meta Binh Diễn Xuân Thu hiện tại.",
+      "displayNote": "Thận trọng với thủ quân có tất trúng vì làm giảm lợi thế né tránh của Tả Từ. Mốc mở đất phụ thuộc hột tướng, trang bị, thủ quân và đội đánh hao.",
       "sources": [
         {
           "label": "Kazten — cấu hình và cộng điểm, 20/11/2025",
@@ -453,10 +497,19 @@
         }
       ],
       "title": "Hạ Hầu Uyên · Thái Sử Từ · Hoàng Nguyệt Anh",
+      "guide": {
+        "overview": "Ưu tiên khai hoang bằng đội碰瓷.",
+        "ratings": {"land4": 6, "land5": 7, "land6": 6.8, "land7to8": 6, "transition": 8, "overall": 6.76},
+        "redRequirements": [{"note": "Tướng trắng vẫn dùng được; càng nhiều đỏ càng tốt."}],
+        "defenders": {"land4": [{"hero":"Trương Dực","unitType":"Khiên"},{"hero":"Trương Lương","unitType":"Thương"},{"hero":"Quách Dĩ","unitType":"Kỵ"},{"hero":"Chu Hoàn","unitType":"Thương"},{"hero":"Lăng Tháo","unitType":"Kỵ"},{"hero":"Tào Chương","unitType":"Khiên"},{"hero":"Hoàng Quyền","unitType":"Cung"},{"hero":"Tưởng Khâm","unitType":"Cung"}], "land5": [{"hero":"Phan Chương","unitType":"Thương"},{"hero":"Trần Vũ","unitType":"Khiên"},{"hero":"Trương Lương","unitType":"Thương"},{"hero":"Tào Chân","unitType":"Kỵ"},{"hero":"Lý Thôi","unitType":"Kỵ"},{"hero":"Trần Kiểu","unitType":"Khiên"},{"hero":"Hoàng Quyền","unitType":"Cung"},{"hero":"Tưởng Khâm","unitType":"Cung"}], "warning":"Tào Chương Khiên, Hoàng Quyền Cung và Trần Kiểu Khiên nên tránh: dễ gây hỗn loạn, hao binh khó kiểm soát. Càng về cuối danh sách càng khó."},
+        "splitTeams": {"teams": [{"target":"Đất 5 không phải Thương","note":"Thái Sử Từ (Bách Kỵ / Tốc Thừa) + Lữ Mông (Hổ Báo) + Hoàng Nguyệt Anh (Phong Thi / Thịnh Khí)."},{"target":"Đất 5 không phải Thương","note":"Hạ Hầu Uyên (Lõa Y / Bách Kỵ) + Lữ Mông (Hổ Báo) + Hoàng Nguyệt Anh (Phong Thi / Thịnh Khí)."}]},
+        "transitions": [{"target":"Uyên Kỵ","steps":[{"mainCityLevel":7,"trainHeroes":["Quách Gia"],"note":"Quá độ; thành chính cấp 8 luyện Tào Tháo để chuyển Hạ Hầu Uyên + Tào Tháo + Quách Gia."}]},{"target":"Hổ Thần Cung","steps":[{"mainCityLevel":7,"trainHeroes":["Cam Ninh"],"note":"Quá độ rồi chuyển ở thành chính cấp 8."}]},{"target":"Chuyển trần","steps":[{"timing":"48 giờ","note":"Tháo chiến pháp để tích thống ngự."}]}]
+      },
       "variants": [
         {
           "id": "jp-tam-the",
-          "label": "Nhật · Hạ Hầu Uyên Tam Thế",
+      "label": "Nhật · Hạ Hầu Uyên Tam Thế",
+      "displayLabel": "Tam Thế · Bách Kỵ",
           "region": "Nhật",
           "period": "Trước và sau cấp 20 · hướng dẫn PK, cập nhật 02/01/2025",
           "unitType": "Kỵ",
@@ -493,6 +546,7 @@
             }
           ],
           "note": "Chọn nhánh Bạo Lệ được nguồn liệt kê. Bách Kỵ đặt trên Hạ Hầu Uyên; Hoàng Nguyệt Anh mang Hổ Báo + Tam Thế. Đây là cấu hình Kỵ.",
+          "displayNote": "Chọn nhánh Bạo Lệ. Bách Kỵ đặt trên Hạ Hầu Uyên; Hoàng Nguyệt Anh mang Hổ Báo + Tam Thế. Đây là cấu hình Kỵ.",
           "sources": [
             {
               "label": "真戦ナビ — 6 đội khai hoang PK",
@@ -545,7 +599,8 @@
       "variants": [
         {
           "id": "cn-s4-cung",
-          "label": "CN S4+ · Cung sau thức tỉnh",
+      "label": "CN S4+ · Cung sau thức tỉnh",
+      "displayLabel": "Cung sau thức tỉnh",
           "region": "Trung Quốc",
           "period": "Sau thức tỉnh · hướng dẫn lịch sử 07/01/2021",
           "unitType": "Cung",
@@ -576,6 +631,7 @@
             }
           ],
           "note": "Chọn nhánh Cung: giữ Vô Đương ở Trần Cung; khác bản mặc định chuyển Kỵ. Nguồn cũ, chưa xác nhận vị trí meta hiện tại.",
+          "displayNote": "Chọn nhánh Cung: giữ Vô Đương ở Trần Cung, khác bản mặc định chuyển Kỵ.",
           "sources": [
             {
               "label": "九游研究所 trên Bilibili — Tôn Thượng Hương",
@@ -663,10 +719,19 @@
         }
       ],
       "title": "Khương Duy · Hạ Hầu Uyên · Pháp Chính",
+      "guide": {
+        "overview": "Đội khai hoang quá độ hệ Thục.",
+        "ratings": {"land4": 7, "land5": 7.5, "land6": 7, "land7to8": 6.5, "transition": 7.5, "overall": 7.1},
+        "redRequirements": [{"note": "Tướng trắng vẫn dùng được; càng nhiều đỏ càng tốt."}],
+        "defenders": {"land4": [{"hero":"Lăng Tháo","unitType":"Kỵ"},{"hero":"Quách Dĩ","unitType":"Kỵ"},{"hero":"Trương Dực","unitType":"Khiên"},{"hero":"Chu Hoàn","unitType":"Thương"},{"hero":"Trương Lương","unitType":"Thương"},{"hero":"Tào Chương","unitType":"Khiên"},{"hero":"Hoàng Quyền","unitType":"Cung"},{"hero":"Tưởng Khâm","unitType":"Cung"}], "land5": [{"hero":"Trương Lương","unitType":"Thương"},{"hero":"Phan Chương","unitType":"Thương"},{"hero":"Trần Vũ","unitType":"Khiên"},{"hero":"Tào Chân","unitType":"Kỵ"},{"hero":"Lý Thôi","unitType":"Kỵ"},{"hero":"Hoàng Quyền","unitType":"Cung"},{"hero":"Tưởng Khâm","unitType":"Cung"},{"hero":"Trần Kiểu","unitType":"Khiên"}], "warning":"Tào Chương Khiên, Hoàng Quyền Cung và Trần Kiểu Khiên nên tránh: dễ gây hỗn loạn, hao binh khó kiểm soát. Càng về cuối danh sách càng khó."},
+        "splitTeams": {"teams": [{"target":"Đất 5 không phải Khiên","note":"Khương Duy (Phá Quân / Hoành Tảo) + Pháp Chính (Thượng Binh / Lâm Cơ) + Lữ Mông (Vô Đương)."},{"target":"Đất 5 Khiên","note":"Hạ Hầu Uyên (Lõa Y / Bách Kỵ) + Lữ Mông (Hổ Báo) + Hoàng Nguyệt Anh (Phong Thi); khuyến nghị Trần Kiểu."}]},
+        "transitions": [{"target":"Đẳng Phong Kỵ","steps":[{"mainCityLevel":7,"trainHeroes":["Lưu Bị"]}]},{"target":"Thục Kỵ","steps":[{"mainCityLevel":7,"trainHeroes":["Triệu Vân"]}]},{"target":"Kỳ Lân Cung","steps":[{"mainCityLevel":7,"trainHeroes":["Bàng Thống"],"note":"Quá độ."}]},{"target":"Tam Thế Trương Giác","steps":[{"mainCityLevel":7,"trainHeroes":["Trương Giác","Trình Phổ"]}]},{"target":"Chuyển trần","steps":[{"timing":"48 giờ","note":"Tháo chiến pháp để tích thống ngự."}]}]
+      },
       "variants": [
         {
           "id": "cn-vo-duong",
-          "label": "CN · Vô Đương từ đầu",
+      "label": "CN · Vô Đương từ đầu",
+      "displayLabel": "Vô Đương từ đầu",
           "region": "Trung Quốc",
           "period": "Trước và sau cấp 20 · 29/11/2024",
           "unitType": "Cung",
@@ -703,6 +768,7 @@
             }
           ],
           "note": "Khương Duy mang Vô Đương trước 20; sau 20 Hạ Hầu Uyên dùng Mau Giành thay Nhất Kỵ. Chọn nhánh Cung của nguồn.",
+          "displayNote": "Khương Duy mang Vô Đương trước cấp 20; sau cấp 20 Hạ Hầu Uyên dùng Mau Giành thay Nhất Kỵ. Đây là nhánh Cung.",
           "sources": [
             {
               "label": "18183 — mục 姜夏法",
@@ -752,10 +818,19 @@
         }
       ],
       "title": "SP Viên Thiệu · Hạ Hầu Uyên · Trương Xuân Hoa",
+      "guide": {
+        "overview": "Một trong các đội khai hoang khởi đầu, đặc biệt hợp hướng Quần Cung 19 thống ngự.",
+        "ratings": {"land4": 7.5, "land5": 7.8, "land6": 7.5, "land7to8": 7, "transition": 8.5, "overall": 7.66},
+        "redRequirements": [{"note": "Tướng trắng vẫn dùng được; càng nhiều đỏ càng tốt."}],
+        "defenders": {"land4": [{"hero":"Trương Lương","unitType":"Thương"},{"hero":"Chu Hoàn","unitType":"Thương"},{"hero":"Quách Dĩ","unitType":"Kỵ"},{"hero":"Lăng Tháo","unitType":"Kỵ"},{"hero":"Hoàng Quyền","unitType":"Cung"},{"hero":"Tưởng Khâm","unitType":"Cung"},{"hero":"Trương Dực","unitType":"Khiên"},{"hero":"Tào Chương","unitType":"Khiên"}],"land5":[{"hero":"Trương Lương","unitType":"Thương"},{"hero":"Phan Chương","unitType":"Thương"},{"hero":"Tào Chân","unitType":"Kỵ"},{"hero":"Lý Thôi","unitType":"Kỵ"},{"hero":"Hoàng Quyền","unitType":"Cung"},{"hero":"Tưởng Khâm","unitType":"Cung"},{"hero":"Trần Vũ","unitType":"Khiên"},{"hero":"Trần Kiểu","unitType":"Khiên"}],"warning":"Tào Chương Khiên, Hoàng Quyền Cung và Trần Kiểu Khiên nên tránh: dễ gây hỗn loạn, hao binh khó kiểm soát. Càng về cuối danh sách càng khó."},
+        "splitTeams":{"teams":[{"target":"Các đội Khiên","note":"Hạ Hầu Uyên (Lõa Y / Bách Kỵ) + Hoàng Nguyệt Anh (Hổ Báo) + Lý Điển (Phong Thi); khuyến nghị Trần Kiểu."},{"target":"Các đội Thương","note":"Trương Xuân Hoa (Thịnh Khí / Lâm Cơ) + SP Viên Thiệu (Tật Phong / Hoành Tảo) + Hoàng Nguyệt Anh."}]},
+        "transitions":[{"target":"Uyên Kỵ","steps":[{"mainCityLevel":7,"trainHeroes":["Quách Gia"],"note":"Luyện tiếp Tào Tháo và chuyển ở thành chính cấp 8."}]},{"target":"Hạch Bạo Cung","steps":[{"mainCityLevel":7,"trainHeroes":["SP Viên Thiệu","Chu Thái"],"note":"Chuyển khi đủ thống ngự."}]},{"target":"Quần Cung","steps":[{"mainCityLevel":7,"trainHeroes":["SP Viên Thiệu","Tự Thụ"],"note":"Chuyển khi đủ thống ngự."}]},{"target":"Chuyển trần","steps":[{"timing":"48 giờ","note":"Tháo chiến pháp để tích thống ngự."}]}]
+      },
       "variants": [
         {
           "id": "jp-s23-xe-dao",
-          "label": "Nhật S23 · Xế Đao / Thời Cơ",
+      "label": "Nhật S23 · Xế Đao / Thời Cơ",
+      "displayLabel": "Xế Đao · Thời Cơ",
           "region": "Nhật",
           "period": "Sau cấp 20 / đã thức tỉnh · S23, 01/2026",
           "unitType": "Cung",
@@ -786,6 +861,7 @@
             }
           ],
           "note": "SP Viên Thiệu đổi Nằm Gai sang Xế Đao; Trương Xuân Hoa đổi Thịnh Khí sang Thời Cơ. Nguồn chỉ cho bộ hai chiêu.",
+          "displayNote": "SP Viên Thiệu đổi Nằm Gai sang Xế Đao; Trương Xuân Hoa đổi Thịnh Khí sang Thời Cơ. Chỉ có bộ hai chiêu.",
           "sources": [
             {
               "label": "Dengeki/Qookka — khai hoang S23",
@@ -833,7 +909,15 @@
           "note": ""
         }
       ],
-      "title": "Khương Duy · Quan Ngân Bình · Thái Văn Cơ"
+      "title": "Khương Duy · Quan Ngân Bình · Thái Văn Cơ",
+      "guide": {
+        "overview": "Từng là trần sức mạnh khai hoang; là phương án thay thế khi không có Gia Cát Khác.",
+        "ratings": {"land4": 7.5, "land5": 7.5, "land6": 7.8, "land7to8": 8, "transition": 7, "overall": 7.56},
+        "redRequirements": [{"note": "Tướng trắng vẫn dùng được; càng nhiều đỏ càng tốt."}],
+        "defenders": {"land4":[{"hero":"Trương Dực","unitType":"Khiên"},{"hero":"Lăng Tháo","unitType":"Kỵ"},{"hero":"Quách Dĩ","unitType":"Kỵ"},{"hero":"Tào Chương","unitType":"Khiên"},{"hero":"Chu Hoàn","unitType":"Thương"},{"hero":"Trương Lương","unitType":"Thương"},{"hero":"Hoàng Quyền","unitType":"Cung"},{"hero":"Tưởng Khâm","unitType":"Cung"}],"land5":[{"hero":"Trần Vũ","unitType":"Khiên"},{"hero":"Trần Kiểu","unitType":"Khiên"},{"hero":"Tào Chân","unitType":"Kỵ"},{"hero":"Lý Thôi","unitType":"Kỵ"},{"hero":"Phan Chương","unitType":"Thương"},{"hero":"Trương Lương","unitType":"Thương"},{"hero":"Hoàng Quyền","unitType":"Cung"},{"hero":"Tưởng Khâm","unitType":"Cung"}],"warning":"Tào Chương Khiên, Hoàng Quyền Cung và Trần Kiểu Khiên nên tránh: dễ gây hỗn loạn, hao binh khó kiểm soát. Càng về cuối danh sách càng khó."},
+        "splitTeams":{"teams":[{"target":"Đất 5 không phải Khiên","note":"Khương Duy (Phá Quân / Hoành Tảo) + Thái Văn Cơ (Thịnh Khí / Lâm Cơ) hoặc Hoàng Nguyệt Anh (Thịnh Khí) + Lữ Mông (Vô Đương)."},{"target":"Đất 5 Khiên","note":"Quan Ngân Bình (Phá Quân / Hoành Tảo) + Lữ Mông (Hổ Báo / Tây Lương) + Hoàng Nguyệt Anh (Phong Thi)."}]},
+        "transitions":[{"target":"Đẳng Phong Kỵ","steps":[{"mainCityLevel":7,"trainHeroes":["Lưu Bị"]}]},{"target":"Thục Kỵ","steps":[{"mainCityLevel":7,"trainHeroes":["Triệu Vân"]}]},{"target":"Kỳ Lân Cung","steps":[{"mainCityLevel":7,"trainHeroes":["Bàng Thống"],"note":"Quá độ."}]},{"target":"Quan Quan Trương","steps":[{"mainCityLevel":7,"trainHeroes":["Trương Phi"],"note":"Quá độ."}]},{"target":"Ngũ Hồng Thương","steps":[{"mainCityLevel":7,"trainHeroes":["Trương Phi","Hoàng Nguyệt Anh"]}]},{"target":"Chuyển trần","steps":[{"timing":"48 giờ","note":"Tháo chiến pháp để tích thống ngự."}]}]
+      }
     },
     {
       "unitType": "Thương",
@@ -873,10 +957,19 @@
         }
       ],
       "title": "Quan Ngân Bình · Nhạc Tiến · Thái Văn Cơ",
+      "guide": {
+        "overview":"Phương án thấp hơn Quan–Nhạc–Gia Cát Khác; lên Tả Từ sẽ mạnh hơn ở đất 6 và đất 7–8.",
+        "ratings":{"land4":6,"land5":7,"land6":8.5,"land7to8":8,"transition":5,"overall":6.9},
+        "redRequirements":[{"note":"Tướng trắng vẫn dùng được; càng nhiều đỏ càng tốt."}],
+        "defenders":{"land4":[{"hero":"Lăng Tháo","unitType":"Kỵ"},{"hero":"Quách Dĩ","unitType":"Kỵ"},{"hero":"Trương Dực","unitType":"Khiên"},{"hero":"Chu Hoàn","unitType":"Thương"},{"hero":"Trương Lương","unitType":"Thương"},{"hero":"Tào Chương","unitType":"Khiên"},{"hero":"Hoàng Quyền","unitType":"Cung"},{"hero":"Tưởng Khâm","unitType":"Cung"}],"land5":[{"hero":"Tào Chân","unitType":"Kỵ"},{"hero":"Lý Thôi","unitType":"Kỵ"},{"hero":"Trần Vũ","unitType":"Khiên"},{"hero":"Trương Lương","unitType":"Thương"},{"hero":"Phan Chương","unitType":"Thương"},{"hero":"Trần Kiểu","unitType":"Khiên"},{"hero":"Hoàng Quyền","unitType":"Cung"},{"hero":"Tưởng Khâm","unitType":"Cung"}],"warning":"Tào Chương Khiên, Hoàng Quyền Cung và Trần Kiểu Khiên nên tránh: dễ gây hỗn loạn, hao binh khó kiểm soát. Càng về cuối danh sách càng khó."},
+        "splitTeams":{"note":"Không khuyến nghị tách đội.","teams":[]},
+        "transitions":[{"target":"Ngũ Hồng Thương","steps":[{"mainCityLevel":7,"trainHeroes":["Hoàng Nguyệt Anh","Quan Ngân Bình"],"note":"Chuyển trực tiếp."}]},{"target":"Quan Quan Trương","steps":[{"mainCityLevel":7,"trainHeroes":["Quan Ngân Bình"],"note":"Luyện tiếp Quan Vũ, chuyển ở thành chính cấp 8."}]},{"target":"Chuyển trần","steps":[{"timing":"48 giờ","note":"Tháo chiến pháp để tích thống ngự."}]}]
+      },
       "variants": [
         {
           "id": "cn-thanh-chau",
-          "label": "CN · Thanh Châu / Cắt Xương",
+      "label": "CN · Thanh Châu / Cắt Xương",
+      "displayLabel": "Thanh Châu · Cắt Xương",
           "region": "Trung Quốc",
           "period": "Trước và sau cấp 20 · 29/11/2024",
           "unitType": "Thương",
@@ -913,6 +1006,7 @@
             }
           ],
           "note": "Sau 20 Nhạc Tiến mang Thanh Châu; Thái Văn Cơ mang Tạm Lánh + Cắt Xương. Nguồn dùng 士争先赴 (Sĩ Tranh Tiên Phó); chưa xác nhận là alias của Nhanh Chân Tranh Đất.",
+          "displayNote": "Sau cấp 20 Nhạc Tiến mang Thanh Châu; Thái Văn Cơ mang Tạm Lánh + Cắt Xương. Sĩ Tranh Tiên Phó chưa được xác nhận là alias của Nhanh Chân Tranh Đất.",
           "sources": [
             {
               "label": "18183 — mục 机关枪",
@@ -936,7 +1030,8 @@
             "Võ Phong Trận",
             "Thịnh Khí Linh Địch"
           ],
-          "note": "Chủ tướng trước và sau lv.20; cộng toàn Thống Soái. Sau lv.20 cần thức tỉnh. Giữ ba mức thích tính khác nhau để Võ Phong Trận hoạt động. Sau điện 7, có thể luyện Trình Phổ đến lv.20 để thay làm chủ tướng, giữ Võ Phong và đổi Thịnh Khí sang Lâm Nguy Cứu Chủ."
+          "note": "Chủ tướng trước và sau lv.20; cộng toàn Thống Soái. Sau lv.20 cần thức tỉnh. Giữ ba mức thích tính khác nhau để Võ Phong Trận hoạt động. Sau điện 7, có thể luyện Trình Phổ đến lv.20 để thay làm chủ tướng, giữ Võ Phong và đổi Thịnh Khí sang Lâm Nguy Cứu Chủ.",
+          "displayNote": "Chủ tướng trước và sau cấp 20; cộng toàn Thống Soái. Sau cấp 20 cần thức tỉnh. Giữ ba mức thích tính khác nhau để Võ Phong Trận hoạt động. Sau điện 7, có thể luyện Trình Phổ đến cấp 20 để thay làm chủ tướng, giữ Võ Phong và đổi Thịnh Khí sang Lâm Nguy Cứu Chủ."
         },
         {
           "name": "Thái Sử Từ",
@@ -947,7 +1042,8 @@
             "Thôi Phong Đoạn Nhẫn",
             "Mau Giành Lợi Thế"
           ],
-          "note": "Cộng khoảng 15 điểm Tốc Độ, còn lại Võ Lực; chỉnh tốc theo thủ quân. Cần có Thôi Phong Đoạn Nhẫn; không nhầm với Phá Phong Đoạn Nhẫn. Ưu tiên đất thương, tránh đội tất trúng hoặc hỗn loạn."
+          "note": "Cộng khoảng 15 điểm Tốc Độ, còn lại Võ Lực; chỉnh tốc theo thủ quân. Cần có Thôi Phong Đoạn Nhẫn; không nhầm với Phá Phong Đoạn Nhẫn. Ưu tiên đất thương, tránh đội tất trúng hoặc hỗn loạn.",
+          "displayNote": "Cộng khoảng 15 điểm Tốc Độ, còn lại Võ Lực; chỉnh tốc theo thủ quân. Cần có Thôi Phong Đoạn Nhẫn; không nhầm với Phá Phong Đoạn Nhẫn. Ưu tiên đất Thương, tránh đội tất trúng hoặc hỗn loạn."
         },
         {
           "name": "Tả Từ",
@@ -958,14 +1054,24 @@
             "Vô Đương Phi Quân",
             "Thời Cơ Chiến Thắng"
           ],
-          "note": "Cộng toàn Thống Soái trong giai đoạn đầu; khi chuyển Trình Phổ đánh đất cao, đổi sang toàn Trí Lực. Build tham khảo CN/KR và cộng đồng Hoa ngữ; đối chiếu phiên bản chiến pháp, hột tướng và thủ quân của mùa đang chơi."
+          "note": "Cộng toàn Thống Soái trong giai đoạn đầu; khi chuyển Trình Phổ đánh đất cao, đổi sang toàn Trí Lực. Build tham khảo CN/KR và cộng đồng Hoa ngữ; đối chiếu phiên bản chiến pháp, hột tướng và thủ quân của mùa đang chơi.",
+          "displayNote": "Cộng toàn Thống Soái trong giai đoạn đầu; khi chuyển Trình Phổ đánh đất cao, đổi sang toàn Trí Lực. Đối chiếu phiên bản chiến pháp, hột tướng và thủ quân của mùa đang chơi."
         }
       ],
       "title": "Gia Cát Khác · Thái Sử Từ · Tả Từ",
+      "guide": {
+        "overview":"Đội khai hoang mạnh nhất cho người chơi không full đỏ.",
+        "ratings":{"land4":9,"land5":10,"land6":10,"land7to8":8.5,"transition":8.5,"overall":9.2},
+        "redRequirements":[{"hero":"Thái Sử Từ","minimum":3,"note":"Thái Sử Từ cần từ 3 đỏ; Gia Cát Khác và Tả Từ trắng vẫn dùng được, càng nhiều đỏ càng tốt."}],
+        "defenders":{"land4":[{"hero":"Chu Hoàn","unitType":"Thương"},{"hero":"Trương Lương","unitType":"Thương"},{"hero":"Lăng Tháo","unitType":"Kỵ"},{"hero":"Quách Dĩ","unitType":"Kỵ"},{"hero":"Trương Dực","unitType":"Khiên"},{"hero":"Tưởng Khâm","unitType":"Cung"},{"hero":"Hoàng Quyền","unitType":"Cung"},{"hero":"Tào Chương","unitType":"Khiên"}],"land5":[{"hero":"Trương Lương","unitType":"Thương"},{"hero":"Phan Chương","unitType":"Thương"},{"hero":"Tào Chân","unitType":"Kỵ"},{"hero":"Lý Thôi","unitType":"Kỵ"},{"hero":"Hoàng Quyền","unitType":"Cung"},{"hero":"Tưởng Khâm","unitType":"Cung"},{"hero":"Trần Kiểu","unitType":"Khiên"},{"hero":"Trần Vũ","unitType":"Khiên"}],"warning":"Tào Chương Khiên, Hoàng Quyền Cung và Trần Kiểu Khiên nên tránh: dễ gây hỗn loạn, hao binh khó kiểm soát. Càng về cuối danh sách càng khó."},
+        "splitTeams":{"teams":[{"target":"Chỉ Trần Kiểu Khiên cấp 5","note":"Thái Sử Từ (Nhất Kỵ / Bách Kỵ) + Lý Điển + Hoàng Nguyệt Anh (Phong Thi) + Hổ Báo."},{"target":"Các đội Thương/Kỵ (ưu tiên Phan Chương)","note":"Gia Cát Khác (Yên Trục Phong Phi / Lâm Cơ) + Tả Từ (Thịnh Khí / Phần Trại / Thượng Binh) + Hoàng Nguyệt Anh (Vô Đương / Bạch Nhĩ)."}]},
+        "transitions":[{"target":"Hổ Thần","steps":[{"mainCityLevel":7,"trainHeroes":["Cam Ninh"],"timing":"Sau 48 giờ","note":"Cam Ninh + Thái Sử Từ + Gia Cát Khác tiếp tục đánh đất; luyện tiếp Chu Thái và chuyển ở thành chính cấp 8."}]},{"target":"Khảng Khái Cung","steps":[{"mainCityLevel":7,"trainHeroes":["Trình Phổ"],"note":"Thay Gia Cát Khác; luyện tiếp Cam Ninh rồi chuyển ở thành chính cấp 8."}]},{"target":"Chuyển trần","steps":[{"timing":"48 giờ","note":"Tháo chiến pháp để tích thống ngự."}]}]
+      },
       "variants": [
         {
           "id": "tw-dat-6",
-          "label": "Bahamut · chuẩn bị đất 6",
+      "label": "Bahamut · chuẩn bị đất 6",
+      "displayLabel": "Võ Phong · Sĩ Biệt (đất 6)",
           "region": "Cộng đồng phồn thể (Bahamut)",
           "period": "Sau cấp 20 / đã thức tỉnh · chuẩn bị đất 6, 2026",
           "unitType": "Cung",
@@ -996,6 +1102,7 @@
             }
           ],
           "note": "Thay Thịnh Khí bằng Sĩ Biệt khi chuẩn bị đất 6. Bản mặc định giữ Thịnh Khí để quét đất 5; đối chiếu thủ quân trước khi đánh.",
+          "displayNote": "Thay Thịnh Khí bằng Sĩ Biệt khi chuẩn bị đất 6. Bản mặc định giữ Thịnh Khí để quét đất 5; đối chiếu thủ quân trước khi đánh.",
           "sources": [
             {
               "label": "凱獃 — Võ Phong Thái Sử Từ",
@@ -1006,7 +1113,8 @@
         },
         {
           "id": "kr-sau-20",
-          "label": "Hàn · Sĩ Biệt sau cấp 20",
+      "label": "Hàn · Sĩ Biệt sau cấp 20",
+      "displayLabel": "Võ Phong · Sĩ Biệt (sau cấp 20)",
           "region": "Hàn",
           "period": "Sau cấp 20 / đã thức tỉnh · 13/04/2026",
           "unitType": "Cung",
@@ -1037,6 +1145,7 @@
             }
           ],
           "note": "Cùng bộ chiêu với lựa chọn đất 6 Bahamut, nhưng tác giả Hàn dùng ngay sau cấp 20. Giữ ba mức thích tính khác nhau để Võ Phong hoạt động.",
+          "displayNote": "Dùng bộ chiêu này ngay sau cấp 20. Giữ ba mức thích tính khác nhau để Võ Phong hoạt động.",
           "sources": [
             {
               "label": "DCInside — trải nghiệm 제태좌",
@@ -1088,7 +1197,8 @@
             "Vô Đương Phi Quân",
             "Đồng Lòng Hợp Sức"
           ],
-          "note": "Đồng Lòng Hợp Sức (勠力同心): chiến pháp sự kiện Chủ động, xác suất 50%, trị liệu và tăng Thống Soái; đã đối chiếu ảnh client Việt ngày 06/09/2026."
+          "note": "Đồng Lòng Hợp Sức (勠力同心): chiến pháp sự kiện Chủ động, xác suất 50%, trị liệu và tăng Thống Soái; đã đối chiếu ảnh client Việt ngày 06/09/2026.",
+          "displayNote": "Đồng Lòng Hợp Sức (勠力同心): chiến pháp sự kiện Chủ động, xác suất 50%, trị liệu và tăng Thống Soái."
         }
       ],
       "title": "SP Lô Trực · Thái Sử Từ · Trương Xuân Hoa",
@@ -1112,7 +1222,8 @@
             "Tiềm Long Trận",
             "Giải Phiền Vệ"
           ],
-          "note": "Sheet cho phép thay bằng Pháp Chính; đội Gia Cát Khác · SP Mã Siêu · Pháp Chính đã có riêng. Chiến pháp sau lv.20 dùng khi đã thức tỉnh."
+          "note": "Sheet cho phép thay bằng Pháp Chính; đội Gia Cát Khác · SP Mã Siêu · Pháp Chính đã có riêng. Chiến pháp sau lv.20 dùng khi đã thức tỉnh.",
+          "displayNote": "Có thể thay bằng Pháp Chính; đội Gia Cát Khác · SP Mã Siêu · Pháp Chính đã có riêng. Chiến pháp sau cấp 20 dùng khi đã thức tỉnh."
         },
         {
           "name": "SP Mã Siêu",
@@ -1152,7 +1263,8 @@
             "Thịnh Khí Linh Địch",
             "Phong Thi Trận"
           ],
-          "note": "Cộng Thống Soái."
+          "note": "Cộng Thống Soái.",
+          "displayNote": "Cộng Thống Soái."
         },
         {
           "name": "Trương Phi",
@@ -1163,7 +1275,8 @@
             "Kích Kỳ Nọa Quy",
             "Hoành Tảo Thiên Quân"
           ],
-          "note": "Chủ tướng trước và sau cấp 20; cộng Võ Lực. Nguồn sát thương chính của đội, ưu tiên Trương Phi nhiều hột. Theo Kazten, có thể thay Kích Kỳ Nọa Quy bằng Phá Quân Uy Thắng."
+          "note": "Chủ tướng trước và sau cấp 20; cộng Võ Lực. Nguồn sát thương chính của đội, ưu tiên Trương Phi nhiều hột. Theo Kazten, có thể thay Kích Kỳ Nọa Quy bằng Phá Quân Uy Thắng.",
+          "displayNote": "Chủ tướng trước và sau cấp 20; cộng Võ Lực. Là nguồn sát thương chính của đội, ưu tiên Trương Phi nhiều hột. Có thể thay Kích Kỳ Nọa Quy bằng Phá Quân Uy Thắng."
         },
         {
           "name": "Trương Xuân Hoa",
@@ -1174,7 +1287,8 @@
             "Hãm Trận Doanh",
             "Tạm Lánh Sóng Gió"
           ],
-          "note": "Cộng Trí Lực theo bản Kazten."
+          "note": "Cộng Trí Lực theo bản Kazten.",
+          "displayNote": "Cộng Trí Lực."
         }
       ],
       "title": "Chu Thái · Trương Phi · Trương Xuân Hoa",
@@ -1182,6 +1296,7 @@
       "period": "Trước cấp 20 và sau thức tỉnh · Kazten, 20/11/2025",
       "context": "Đội khai hoang khiên 張周春盾, hướng chuyển sang Hạt Nhân Trương Phi. Có hướng dẫn và ghi nhận người chơi Nhật Global; chưa đủ căn cứ xếp hạng meta cho mùa Binh Diễn Xuân Thu.",
       "note": "Bản S20 ngày 25/05/2025 giữ cùng bộ chiêu nhưng thay Kích Kỳ Nọa Quy bằng 疾風豪雨 (chưa xác nhận tên Việt); Trương Xuân Hoa cộng Thống Soái trước cấp 20, Trí Lực sau cấp 20. Mốc mở đất phụ thuộc hột tướng, trang bị, thủ quân và đội đánh hao; không áp mốc nhanh nhất cho mọi tài khoản.",
+      "displayNote": "Ở cấu hình mặc định, Trương Xuân Hoa cộng Trí Lực. Phương án thay Kích Kỳ Nọa Quy bằng 疾風豪雨 (chưa xác nhận tên Việt) có cách cộng điểm riêng: Trương Xuân Hoa cộng Thống Soái trước cấp 20, Trí Lực sau cấp 20. Mốc mở đất phụ thuộc hột tướng, trang bị, thủ quân và đội đánh hao; không áp mốc nhanh nhất cho mọi tài khoản.",
       "commanderBefore": "Trương Phi",
       "commanderAfter": "Trương Phi",
       "sources": [
@@ -1202,6 +1317,43 @@
           "url": "https://note.com/3iro_day/n/ndf7313f21101"
         }
       ]
+    },
+    {
+      "unitType": "Cung",
+      "heroes": [
+        {"name":"Trương Xuân Hoa","unitTypeAfter":"Cung","tacticsAfter":["Thịnh Khí Linh Địch","Võ Phong Trận"],"note":"Cấu hình cấp 32 đã đối chiếu; không suy ra bộ trước cấp 20.","displayNote":"Chỉ có dữ liệu sau cấp 20; không suy ra bộ trước cấp 20."},
+        {"name":"Lữ Bố","unitTypeAfter":"Cung","tacticsAfter":["Thôi Phong Đoạn Nhẫn","Mau Giành Lợi Thế"],"note":"Cấu hình cấp 32 đã đối chiếu; không suy ra bộ trước cấp 20.","displayNote":"Chỉ có dữ liệu sau cấp 20; không suy ra bộ trước cấp 20."},
+        {"name":"Tả Từ","unitTypeAfter":"Cung","tacticsAfter":["Lâm Nguy Cứu Chủ","Tạm Lánh Sóng Gió"],"note":"Cấu hình cấp 32 đã đối chiếu; không suy ra bộ trước cấp 20.","displayNote":"Chỉ có dữ liệu sau cấp 20; không suy ra bộ trước cấp 20."}
+      ],
+      "title":"Trương Xuân Hoa · Lữ Bố · Tả Từ",
+      "commanderAfter":"Trương Xuân Hoa",
+      "guide":{
+        "overview":"Đội khai hoang bình dân, chuyển nhanh sang Ôn Hầu Cung.",
+        "ratings":{"land4":7.5,"land5":8,"land6":8.5,"land7to8":7.5,"transition":8.5,"overall":8},
+        "redRequirements":[{"note":"Tướng trắng vẫn dùng được; càng nhiều đỏ càng tốt."}],
+        "defenders":{"land4":[{"hero":"Trương Dực","unitType":"Khiên"},{"hero":"Trương Lương","unitType":"Thương"},{"hero":"Quách Dĩ","unitType":"Kỵ"},{"hero":"Chu Hoàn","unitType":"Thương"},{"hero":"Lăng Tháo","unitType":"Kỵ"},{"hero":"Hoàng Quyền","unitType":"Cung"},{"hero":"Tưởng Khâm","unitType":"Cung"},{"hero":"Tào Chương","unitType":"Khiên"}],"land5":[{"hero":"Phan Chương","unitType":"Thương"},{"hero":"Trần Vũ","unitType":"Khiên"},{"hero":"Trương Lương","unitType":"Thương"},{"hero":"Tào Chân","unitType":"Kỵ"},{"hero":"Lý Thôi","unitType":"Kỵ"},{"hero":"Trần Kiểu","unitType":"Khiên"},{"hero":"Hoàng Quyền","unitType":"Cung"},{"hero":"Tưởng Khâm","unitType":"Cung"}],"warning":"Tào Chương Khiên, Hoàng Quyền Cung và Trần Kiểu Khiên nên tránh: dễ gây hỗn loạn, hao binh khó kiểm soát. Càng về cuối danh sách càng khó."},
+        "splitTeams":{"teams":[{"target":"Các đội Khiên (khuyến nghị Trần Kiểu)","note":"Lữ Bố (Lõa Y / Bách Kỵ) + Hoàng Nguyệt Anh (Hổ Báo) + Lý Điển (Phong Thi)."},{"target":"Các đội Thương","note":"Tả Từ (Thịnh Khí / Lâm Cơ) + Trương Xuân Hoa (Yên Trục Phong Phi / Phần Trại) + Hoàng Nguyệt Anh."}]},
+        "transitions":[{"target":"Ôn Hầu Cung","steps":[{"mainCityLevel":7,"trainHeroes":["Hứa Du"]},{"mainCityLevel":8,"commandCost":18,"note":"Đủ 18 thống ngự thì thêm Hứa Du."}]},{"target":"Bế Nguyệt Cung","steps":[{"mainCityLevel":7,"trainHeroes":["Trương Giác"],"note":"Chuyển trực tiếp."}]},{"target":"Lữ Bố碰瓷","steps":[{"mainCityLevel":7,"trainHeroes":["Hoàng Nguyệt Anh","Quách Gia"],"note":"Chuyển trực tiếp."}]},{"target":"Chuyển trần","steps":[{"timing":"48 giờ","note":"Tháo chiến pháp để tích thống ngự."}]}]
+      }
+    },
+    {
+      "unitType":"Cung",
+      "heroes":[
+        {"name":"SP Chu Tuấn","unitTypeBefore":"Cung","tacticBefore":"Vô Đương Phi Quân","unitTypeAfter":"Cung","tacticsAfter":["Vô Đương Phi Quân","Sợ Bóng Sợ Gió"]},
+        {"name":"Hạ Hầu Uyên","unitTypeBefore":"Cung","tacticBefore":"Lõa Y Huyết Chiến","unitTypeAfter":"Cung","tacticsAfter":["Lõa Y Huyết Chiến","Thôi Phong Đoạn Nhẫn"]},
+        {"name":"Gia Cát Khác","unitTypeBefore":"Cung","tacticBefore":"Thịnh Khí Linh Địch","unitTypeAfter":"Cung","tacticsAfter":["Thịnh Khí Linh Địch","Tiềm Long Trận"]}
+      ],
+      "title":"SP Chu Tuấn · Hạ Hầu Uyên · Gia Cát Khác",
+      "commanderBefore":"SP Chu Tuấn",
+      "commanderAfter":"Gia Cát Khác",
+      "guide":{
+        "overview":"Đội mở đầu chuyên hướng chuyển Quần Cung.",
+        "ratings":{"land4":8,"land5":8,"land6":8,"land7to8":7,"transition":8,"overall":7.8},
+        "redRequirements":[{"note":"Tướng trắng vẫn dùng được; càng nhiều đỏ càng tốt."}],
+        "defenders":{"land4":[{"hero":"Trương Lương","unitType":"Thương"},{"hero":"Lăng Tháo","unitType":"Kỵ"},{"hero":"Chu Hoàn","unitType":"Thương"},{"hero":"Quách Dĩ","unitType":"Kỵ"},{"hero":"Hoàng Quyền","unitType":"Cung"},{"hero":"Tưởng Khâm","unitType":"Cung"},{"hero":"Trương Dực","unitType":"Khiên"},{"hero":"Tào Chương","unitType":"Khiên"}],"land5":[{"hero":"Phan Chương","unitType":"Thương"},{"hero":"Tào Chân","unitType":"Kỵ"},{"hero":"Trương Lương","unitType":"Thương"},{"hero":"Lý Thôi","unitType":"Kỵ"},{"hero":"Hoàng Quyền","unitType":"Cung"},{"hero":"Tưởng Khâm","unitType":"Cung"},{"hero":"Trần Vũ","unitType":"Khiên"},{"hero":"Trần Kiểu","unitType":"Khiên"}],"warning":"Tào Chương Khiên, Hoàng Quyền Cung và Trần Kiểu Khiên nên tránh: dễ gây hỗn loạn, hao binh khó kiểm soát. Càng về cuối danh sách càng khó."},
+        "splitTeams":{"teams":[{"target":"Các đội Khiên (khuyến nghị Trần Kiểu)","note":"Hạ Hầu Uyên (Lõa Y / Bách Kỵ) + Hoàng Nguyệt Anh (Hổ Báo) + Lý Điển (Phong Thi)."},{"target":"Các đội Thương","note":"Gia Cát Khác (Thịnh Khí / Lâm Cơ) + SP Chu Tuấn (Yên Trục Phong Phi / Phần Trại) + Hoàng Nguyệt Anh."}]},
+        "transitions":[{"target":"Uyên Kỵ","steps":[{"mainCityLevel":7,"trainHeroes":["Quách Gia"],"note":"Luyện tiếp Tào Tháo và chuyển ở thành chính cấp 8."}]},{"target":"Hạch Bạo Cung","steps":[{"mainCityLevel":7,"trainHeroes":["SP Viên Thiệu","Chu Thái"],"note":"Chuyển khi đủ thống ngự."}]},{"target":"Quần Cung","steps":[{"mainCityLevel":7,"trainHeroes":["SP Viên Thiệu","Tự Thụ"],"note":"Chuyển khi đủ thống ngự."}]},{"target":"Chuyển trần","steps":[{"timing":"48 giờ","note":"Tháo chiến pháp để tích thống ngự."}]}]
+      }
     }
   ],
   "mines": [
