@@ -45,7 +45,7 @@ local MCP client ───────────stdio────────�
 
 ## Static runtime
 
-`src/pages/index.astro` là document authority duy nhất và khai báo 9 section. Astro build phát shell thành `dist/index.html`; `app.js` vẫn là ES module browser canonical tại root và:
+`src/pages/index.astro` là document authority duy nhất và khai báo 9 section. Astro build phát shell thành `dist/index.html`; `js/app.js` vẫn là ES module browser canonical và:
 
 - khởi tạo theme và hash navigation;
 - fetch `teams`, `coexist`, `khaihoang`, `tactics`, `heroes-dict`, `books-dict` song song;
@@ -65,6 +65,8 @@ Tra cứu và gợi ý cốt lõi chạy local:
 ### Hợp đồng dữ liệu khai hoang
 
 Trong [`data/khaihoang.json`](../data/khaihoang.json), `chamSuTeams` là trường top-level bổ sung cho bảng nguồn “Team Chạm Sứ------mang 1 lính”, độc lập với đội khai hoang chính. Bỏ `teams[].transforms` để sửa liên kết sai do trước đây ghép hai bảng theo hàng: consumer đọc trường cũ cần chuyển sang danh sách độc lập, không coi đây là phương án chuyển hình của từng đội. Mỗi nhóm giữ `id`, `title`, `heroes: [{name, tactic}]`, `note` và `sources: [{label, url}]`; ghi chú tướng thay thế thuộc cả nhóm khi ô nguồn phủ nhiều tướng. Không suy diễn tướng thứ ba, chủ tướng, binh chủng, tier hoặc cơ chế từ nhãn “mang 1 lính”.
+
+Hướng dẫn khai hoang curate thuộc tùy chọn `teams[].guide`, sở hữu bởi đúng bộ ba tướng và không thuộc `variants[]`. Guide có thể chứa tổng quan, điểm mở đất/chuyển đội, yêu cầu đỏ, thứ tự quân thủ đất 4/5, cảnh báo, tách đội và các bước chuyển hình. Renderer đặt guide ngoài `.kh-build`, nên đổi variant chỉ đổi chiến pháp/chủ tướng; nội dung và trạng thái mở của guide giữ nguyên. UI Khai hoang không trình bày mùa, khu vực hoặc link nguồn của đội chính; các dữ liệu đó vẫn có thể tồn tại nội bộ. Nguồn Chạm Sứ tiếp tục hiển thị theo contract riêng.
 
 Owner hiển thị là [`khaihoangTable` trong `js/render.js`](../js/render.js): thứ tự ba khối là đội chính (`teams`) → **Team Chạm Sứ / Ăn vạ** (`chamSuTeams`) → quân thủ mỏ (`mines`). Contract tương thích giữ object thiếu/rỗng `chamSuTeams` và input mảng mỏ legacy; chỉ ẩn khối Chạm Sứ khi không có dữ liệu. Kiểm chứng nằm ở [`tests-e2e/khaihoang-options.spec.mjs`](../tests-e2e/khaihoang-options.spec.mjs).
 
