@@ -1,0 +1,56 @@
+
+> tqccl-mcp-server@0.1.0 test:worker
+> vitest run --config vitest.worker.config.ts && vitest run --config vitest.worker-production.config.ts
+
+
+ RUN  v4.1.10 /Users/plateau/Project/CamNangTQCCL/mcp-worker
+
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/server/webStandardStreamableHttp.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/mediaType.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/server/sseKeepAlive.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/types.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/server/mcp.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/server/index.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/protocol.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-compat.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/interfaces.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-json-schema-compat.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/validation/ajv-provider.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/server.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/helpers.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/server/completable.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/uriTemplate.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/toolNameValidation.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/mcp-server.js" points to missing source files
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  03:17:14
+   Duration  1.66s (transform 288ms, setup 0ms, import 667ms, tests 26ms, environment 0ms)
+
+
+ RUN  v4.1.10 /Users/plateau/Project/CamNangTQCCL/mcp-worker
+
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/server/webStandardStreamableHttp.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/mediaType.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/server/sseKeepAlive.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/types.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/server/mcp.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/server/index.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/protocol.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-compat.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/interfaces.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-json-schema-compat.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/validation/ajv-provider.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/server.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/helpers.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/server/completable.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/uriTemplate.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/toolNameValidation.js" points to missing source files
+Sourcemap for "/Users/plateau/Project/CamNangTQCCL/mcp-worker/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/mcp-server.js" points to missing source files
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  03:17:17
+   Duration  869ms (transform 258ms, setup 0ms, import 11ms, tests 654ms, environment 0ms)
+

@@ -1,0 +1,5 @@
+
+> tqccl-mcp-server@0.1.0 build:worker-assets
+> node --import tsx scripts/build-worker-assets.ts
+
+Build Worker static assets thất bại (SOURCE_NOT_CLEAN).

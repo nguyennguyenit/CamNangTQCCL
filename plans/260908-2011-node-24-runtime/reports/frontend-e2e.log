@@ -1,0 +1,52 @@
+
+> test:e2e
+> playwright test
+
+
+[WebServer] (node:8947) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] (node:8993) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 26 tests using 3 workers
+
+
+(node:9070) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:9069) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:9071) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/26] [astro] › tests-e2e/mcp-domain-compatibility.spec.mjs:7:1 › scan được lưu/hiển thị và recommendation giữ assignment theo holder
+[2/26] [astro] › tests-e2e/khaihoang-options.spec.mjs:11:1 › every source option replaces only its card and restores the default
+[3/26] [astro] › tests-e2e/spa-parity.spec.mjs:114:1 › boots once with clean first-party requests and stable metadata
+[4/26] [astro] › tests-e2e/mcp-domain-compatibility.spec.mjs:76:1 › analyze-map chạy trong Astro preview và đối chiếu đúng full hero identity
+[5/26] [astro] › tests-e2e/spa-parity.spec.mjs:187:1 › all hash sections support direct links, clicks, back, and forward
+[6/26] [astro] › tests-e2e/spa-parity.spec.mjs:208:1 › legacy storage payloads survive load and sanitize forbidden roster fields on save
+[7/26] [astro] › tests-e2e/spa-parity.spec.mjs:267:1 › required JSON failure stays in Team PK and can remain hidden on another hash
+[8/26] [astro] › tests-e2e/spa-parity.spec.mjs:281:1 › optional tier failure is non-fatal
+[9/26] [astro] › tests-e2e/spa-parity.spec.mjs:290:1 › a hanging optional tier request retains the legacy blocked-render behavior
+[10/26] [astro] › tests-e2e/spa-parity.spec.mjs:307:1 › Turnstile failure does not break local sections or duplicate its script
+[11/26] [astro] › tests-e2e/spa-parity.spec.mjs:320:1 › mobile section menu closes after selection and Escape
+[12/26] [astro] › tests-e2e/spa-parity.spec.mjs:340:1 › team search remains a local interaction
+[13/26] [astro] › tests-e2e/khaihoang-options.spec.mjs:45:1 › source selection works with keyboard on mobile without overflow
+[14/26] [astro] › tests-e2e/spa-parity.spec.mjs:352:1 › opening a roster recommendation selects its source tab and hero search
+[15/26] [astro] › tests-e2e/khaihoang-options.spec.mjs:59:1 › roster guide persists while a tactic variant changes
+[16/26] [astro] › tests-e2e/spa-parity.spec.mjs:394:1 › local preview serves approved artifacts and excludes private source paths
+[17/26] [astro] › tests-e2e/spa-parity.spec.mjs:405:1 › synthetic HTTPS serves dist locally and characterizes legacy HTTP icons
+[18/26] [astro] › tests-e2e/khaihoang-options.spec.mjs:75:1 › main Khai hoang cards keep current-only wording and ordered transition steps
+[19/26] [astro] › tests-e2e/khaihoang-options.spec.mjs:94:1 › long guides fit the 320px boundary
+[20/26] [astro] › tests-e2e/khaihoang-options.spec.mjs:103:1 › researched root builds render their stage-specific leaders, units, and tactic slots
+[21/26] [astro] › tests-e2e/khaihoang-options.spec.mjs:166:1 › empty parent guides and variant-only guides do not create a roster guide
+[22/26] [astro] › tests-e2e/khaihoang-options.spec.mjs:177:3 › standalone Chạm Sứ groups preserve source content and order at 1280px
+[23/26] [astro] › tests-e2e/khaihoang-options.spec.mjs:177:3 › standalone Chạm Sứ groups preserve source content and order at 375px
+[24/26] [astro] › tests-e2e/khaihoang-options.spec.mjs:205:3 › Khai hoang supports missing Chạm Sứ data
+[25/26] [astro] › tests-e2e/khaihoang-options.spec.mjs:205:3 › Khai hoang supports empty Chạm Sứ data
+[26/26] [astro] › tests-e2e/khaihoang-options.spec.mjs:205:3 › Khai hoang supports legacy Chạm Sứ data
+  26 passed (16.8s)

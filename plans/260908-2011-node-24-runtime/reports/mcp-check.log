@@ -1,0 +1,20 @@
+
+> tqccl-mcp-server@0.1.0 check
+> npm run check:workflow-build && npm run check:local-secrets && npm run test:coverage && npm run typecheck && npm run typecheck:worker && npm run build && npm run test:node-min && npm run verify:control-plane
+
+
+> tqccl-mcp-server@0.1.0 check:workflow-build
+> node --import tsx scripts/generate-workflow-build.ts --check
+
+/Users/plateau/Project/CamNangTQCCL/mcp-worker/scripts/generate-workflow-build.ts:224
+      throw new Error(
+            ^
+
+Error: workflow-build.ts is stale; run npm run generate:workflow-build
+    at main (/Users/plateau/Project/CamNangTQCCL/mcp-worker/scripts/generate-workflow-build.ts:224:13)
+    at <anonymous> (/Users/plateau/Project/CamNangTQCCL/mcp-worker/scripts/generate-workflow-build.ts:235:53)
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.20.0

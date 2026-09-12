@@ -1,0 +1,55 @@
+
+> build
+> astro build
+
+03:14:53 [types] Generated 24ms
+03:14:53 [build] output: "static"
+03:14:53 [build] mode: "static"
+03:14:53 [build] directory: /Users/plateau/Project/CamNangTQCCL/dist/
+03:14:53 [build] Collecting build info...
+03:14:53 [build] ✓ Completed in 46ms.
+03:14:53 [build] Building static entrypoints...
+03:14:53 [vite] ✓ built in 116ms
+03:14:53 [vite] ✓ built in 7ms
+03:14:53 [build] Rearranging server assets...
+
+ generating static routes 
+03:14:53   ├─ /css/styles.css (+3ms) 
+03:14:53   ├─ /data/books-dict.json (+1ms) 
+03:14:53   ├─ /data/coexist.json (+1ms) 
+03:14:53   ├─ /data/facets.json (+1ms) 
+03:14:53   ├─ /data/heroes-dict.json (+1ms) 
+03:14:53   ├─ /data/khaihoang.json (+1ms) 
+03:14:53   ├─ /data/tactics-generic.json (+1ms) 
+03:14:53   ├─ /data/tactics.json (+1ms) 
+03:14:53   ├─ /data/team-tier.json (+1ms) 
+03:14:53   ├─ /data/teams.json (+1ms) 
+03:14:53   ├─ /js/analyze-map.js (+1ms) 
+03:14:53   ├─ /js/analyze.js (+1ms) 
+03:14:53   ├─ /js/app.js (+0ms) 
+03:14:53   ├─ /js/config.js (+1ms) 
+03:14:53   ├─ /js/derive-team-faction.js (+0ms) 
+03:14:53   ├─ /js/filters.js (+0ms) 
+03:14:53   ├─ /js/hanviet.js (+0ms) 
+03:14:53   ├─ /js/hero-detail.js (+0ms) 
+03:14:53   ├─ /js/hero-identity.js (+0ms) 
+03:14:53   ├─ /js/hero-list.js (+0ms) 
+03:14:53   ├─ /js/match-dict.js (+0ms) 
+03:14:53   ├─ /js/meta-cu.js (+0ms) 
+03:14:54   ├─ /js/mobile-section-menu.js (+0ms) 
+03:14:54   ├─ /js/recruit-tracker-store.js (+1ms) 
+03:14:54   ├─ /js/recruit-tracker.js (+1ms) 
+03:14:54   ├─ /js/render.js (+0ms) 
+03:14:54   ├─ /js/roster-recommend-ui.js (+0ms) 
+03:14:54   ├─ /js/roster-scan-map.js (+0ms) 
+03:14:54   ├─ /js/roster-scan-state.js (+2ms) 
+03:14:54   ├─ /js/tactics.js (+0ms) 
+03:14:54   ├─ /js/team-filter-section.js (+1ms) 
+03:14:54   ├─ /js/team-pk.js (+0ms) 
+03:14:54   ├─ /js/team-recommend-engine.js (+0ms) 
+03:14:54   ├─ /index.html (+5ms) 
+03:14:54 ✓ Completed in 37ms.
+
+03:14:54 [build] ✓ Completed in 172ms.
+03:14:54 [build] 1 page(s) built in 220ms
+03:14:54 [build] Complete!

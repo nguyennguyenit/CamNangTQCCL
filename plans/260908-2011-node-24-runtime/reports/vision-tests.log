@@ -1,0 +1,19 @@
+
+> tqccl-vision-proxy@0.1.0 test
+> vitest run
+
+
+ RUN  v2.1.9 /Users/plateau/Project/CamNangTQCCL/worker
+
+ ✓ test/ratelimit.test.ts (7 tests) 3ms
+ ✓ test/config.test.ts (9 tests) 2ms
+ ✓ test/guard.test.ts (9 tests) 4ms
+ ✓ test/schema.test.ts (20 tests) 4ms
+ ✓ test/model.test.ts (5 tests) 2ms
+ ✓ test/scan-modes.test.ts (3 tests) 3ms
+
+ Test Files  6 passed (6)
+      Tests  53 passed (53)
+   Start at  03:15:51
+   Duration  254ms (transform 346ms, setup 0ms, collect 433ms, tests 18ms, environment 0ms, prepare 304ms)
+

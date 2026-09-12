@@ -1,0 +1,78 @@
+
+> tqccl-mcp-server@0.1.0 check
+> npm run check:workflow-build && npm run check:local-secrets && npm run test:coverage && npm run typecheck && npm run typecheck:worker && npm run build && npm run test:node-min && npm run verify:control-plane
+
+
+> tqccl-mcp-server@0.1.0 check:workflow-build
+> node --import tsx scripts/generate-workflow-build.ts --check
+
+
+> tqccl-mcp-server@0.1.0 check:local-secrets
+> node --import tsx scripts/check-local-secret-files.ts
+
+Không phát hiện local secret files hoặc credential.
+
+> tqccl-mcp-server@0.1.0 test:coverage
+> vitest run --coverage
+
+
+ RUN  v4.1.10 /Users/plateau/Project/CamNangTQCCL/mcp-worker
+      Coverage enabled with v8
+
+
+ Test Files  37 passed (37)
+      Tests  305 passed (305)
+   Start at  03:16:34
+   Duration  2.39s (transform 1.43s, setup 0ms, import 3.87s, tests 6.65s, environment 5ms)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   90.36 |    83.45 |    95.5 |   90.87 |                   
+ data              |   93.93 |     85.1 |     100 |   93.96 |                   
+  ...-contracts.ts |    91.9 |    81.52 |     100 |   91.66 | ...91,432,444,519 
+  data-source.ts   |   95.45 |    88.88 |     100 |      95 | 48                
+  ...ata-source.ts |    87.5 |    66.66 |     100 |    87.5 | 29,42             
+  ...shot-index.ts |     100 |    89.79 |     100 |     100 | 65-73,177,206,238 
+  ...ata-source.ts |   94.44 |    89.28 |     100 |   95.91 | 95,126            
+ domain            |   88.83 |     82.7 |   93.17 |   89.21 |                   
+  ...ical-state.ts |   92.59 |    82.35 |     100 |      92 | 119,121,145,151   
+  contracts.ts     |   83.69 |    78.26 |   86.95 |   83.52 | ...24,389-396,440 
+  ...t-encoding.ts |   96.55 |       90 |     100 |   96.29 | 59                
+  ...in-adapter.ts |   79.04 |    69.35 |   85.52 |      80 | ...06-508,522-524 
+  ...on-service.ts |   94.76 |    88.77 |     100 |   94.97 | ...42,347,370,528 
+  ...on-service.ts |   95.45 |    80.95 |     100 |   96.61 | 38,253            
+ research          |   89.47 |    83.64 |   97.87 |    90.8 |                   
+  ...-contracts.ts |   95.71 |    93.93 |     100 |   97.01 | 80,136            
+  ...h-handlers.ts |   86.28 |    79.82 |   96.96 |   87.27 | ...87,634-640,653 
+  ...ion-fields.ts |   95.23 |    91.66 |     100 |     100 | 32                
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 90.36% ( 1097/1214 )
+Branches     : 83.45% ( 666/798 )
+Functions    : 95.5% ( 319/334 )
+Lines        : 90.87% ( 1036/1140 )
+================================================================================
+
+> tqccl-mcp-server@0.1.0 typecheck
+> tsc --noEmit
+
+
+> tqccl-mcp-server@0.1.0 typecheck:worker
+> tsc --noEmit -p test/tsconfig.json
+
+
+> tqccl-mcp-server@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> tqccl-mcp-server@0.1.0 test:node-min
+> node test/node-min-smoke.mjs
+
+
+> tqccl-mcp-server@0.1.0 verify:control-plane
+> node --import tsx scripts/verify-control-plane.ts --artifact-only
+
+Control plane artifact hợp lệ.
