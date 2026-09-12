@@ -64,22 +64,23 @@ function initNav() {
   });
   // Deep-link: mở section theo hash (#khaihoang) + đồng bộ khi đổi hash.
   window.addEventListener("hashchange", () => {
-    canonicalizeLegacySection();
+    canonicalizeSectionHash();
     const target = sectionFromHash();
     if (restoringHistory) { restoringHistory = false; switchSection(target); }
     else if (activeSection !== target && !history.state?.referenceAlias) onSectionRequest(target,{replace:true});
     else switchSection(target);
   });
-  canonicalizeLegacySection();
+  canonicalizeSectionHash();
   switchSection(sectionFromHash());
 }
-function canonicalizeLegacySection() {
-  const legacy = (location.hash || '').slice(1);
-  if (!LEGACY_SECTIONS[legacy]) return;
+function canonicalizeSectionHash() {
+  const name = (location.hash || '').slice(1);
+  if (!name || SECTIONS.includes(name)) return;
+  const legacy = LEGACY_SECTIONS[name];
   const url = new URL(location.href);
-  url.hash = '#team-khac';
-  url.searchParams.set('source', legacy === 'team-pk' ? 'team-intro' : 'moi-phe');
-  history.replaceState({...history.state,referenceAlias:legacy}, '', url);
+  url.hash = legacy ? `#${legacy}` : '#team-chuan';
+  if (legacy) url.searchParams.set('source', name === 'team-pk' ? 'team-intro' : 'moi-phe');
+  history.replaceState({...history.state,referenceAlias:legacy ? name : null}, '', url);
 }
 function sectionFromHash() {
   const name = (location.hash || "").replace(/^#/, "");
