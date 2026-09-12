@@ -72,7 +72,7 @@ Text gợi ý khai hoang trong nguồn Cùng Tồn không tự thêm đội ho�
 chuyển hình vào dữ liệu Khai hoang.
 
 Recommended có [adapter riêng](../pipeline/sgsdeck_recommended.py), ngoài sáu
-nhóm của catalog SGSDeck (tài liệu ngoài nhánh: `sgsdeck-catalog.md`). Adapter đọc cache đã checksum,
+nhóm của [catalog SGSDeck](sgsdeck-catalog.md). Adapter đọc cache đã checksum,
 không tự gọi mạng:
 
 ```bash
