@@ -9,6 +9,7 @@
   "records": [
     {
       "canonicalRef": null,
+      "factionRaw": "群",
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -71,6 +72,7 @@
       },
       "sourceSnapshotHash": "sha256:b78f04e704a65a2aa99fac4748b65b2d19ec6158f27ec7f3a1f06af0b6b03d59",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-b",
+      "tierRaw": "T0",
       "unitTypesRaw": [
         "弓"
       ],
@@ -78,6 +80,7 @@
     },
     {
       "canonicalRef": null,
+      "factionRaw": "群",
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -140,6 +143,7 @@
       },
       "sourceSnapshotHash": "sha256:f5c3fcd73968e3aff0b28117ad6fca4db54fdd4002bb2d09bccbb17c69e31be6",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-xiandeng",
+      "tierRaw": "T0",
       "unitTypesRaw": [
         "弓"
       ],
@@ -147,6 +151,7 @@
     },
     {
       "canonicalRef": null,
+      "factionRaw": "群",
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -209,6 +214,7 @@
       },
       "sourceSnapshotHash": "sha256:9c94dc56cfd274677f5fc9efe8402966c7da1397fc5c223e91fca9602a605725",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-d",
+      "tierRaw": "T0",
       "unitTypesRaw": [
         "弓"
       ],
@@ -216,6 +222,7 @@
     },
     {
       "canonicalRef": null,
+      "factionRaw": "群",
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -278,6 +285,7 @@
       },
       "sourceSnapshotHash": "sha256:b13bf2fa045e3842411adc4d88ca2de758bf7923285c727a70d95c277a56576c",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-a",
+      "tierRaw": "T0",
       "unitTypesRaw": [
         "弓"
       ],
@@ -285,6 +293,7 @@
     },
     {
       "canonicalRef": null,
+      "factionRaw": "魏",
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -347,6 +356,7 @@
       },
       "sourceSnapshotHash": "sha256:188275fc6fd86a6263b7ff5ccff5a82c5f007843946ae23422c561ba7e24674c",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-wumou-bow-baimaobing",
+      "tierRaw": "T0",
       "unitTypesRaw": [
         "弓"
       ],
@@ -354,6 +364,7 @@
     },
     {
       "canonicalRef": null,
+      "factionRaw": "吳",
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -416,6 +427,7 @@
       },
       "sourceSnapshotHash": "sha256:e2701eb21b0d97342253f52381ab57321ffd55d446567213ca35af6a5744d40f",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-wunv-cavalry-hubaoqi",
+      "tierRaw": "T0",
       "unitTypesRaw": [
         "騎"
       ],
@@ -423,6 +435,7 @@
     },
     {
       "canonicalRef": null,
+      "factionRaw": "群",
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -485,6 +498,7 @@
       },
       "sourceSnapshotHash": "sha256:34cbe6f0b06f819163392856d75a4c22186bd872d1f9d8902e172e9b55e34d08",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-taishi-bow-feixiong",
+      "tierRaw": "T0",
       "unitTypesRaw": [
         "弓"
       ],
@@ -492,6 +506,7 @@
     },
     {
       "canonicalRef": null,
+      "factionRaw": "蜀",
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -554,6 +569,7 @@
       },
       "sourceSnapshotHash": "sha256:88c3698f0add6f54815a2ffdfc97b5d8596327cfa147bfdd74ff98f34552a57a",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-zhangfei-nuke-bow",
+      "tierRaw": "T0",
       "unitTypesRaw": [
         "弓"
       ],
@@ -561,6 +577,7 @@
     },
     {
       "canonicalRef": null,
+      "factionRaw": "蜀",
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -623,6 +640,7 @@
       },
       "sourceSnapshotHash": "sha256:7e2429b28fd91987ce51960bf6bddd0582f44402868b1f2a0457ce9cbd08f2f0",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-faguan-shield-tengjia",
+      "tierRaw": "T0",
       "unitTypesRaw": [
         "盾"
       ],
@@ -630,6 +648,7 @@
     },
     {
       "canonicalRef": null,
+      "factionRaw": null,
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -692,6 +711,7 @@
       },
       "sourceSnapshotHash": "sha256:2fcd8bb0978d60e2fad205a436fb4172fedc5f02ef961533404761aa18ba93ad",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-huangma-spear-jiefanwei",
+      "tierRaw": "T0",
       "unitTypesRaw": [
         "槍"
       ],
@@ -699,6 +719,7 @@
     },
     {
       "canonicalRef": null,
+      "factionRaw": "群",
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -761,6 +782,7 @@
       },
       "sourceSnapshotHash": "sha256:249589dec87152641958c27cd82f83b44eb11546acbe950ebd8eede80e1c3d0f",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-dongzhuo-bow-xiandeng",
+      "tierRaw": "T0",
       "unitTypesRaw": [
         "弓"
       ],
@@ -768,6 +790,7 @@
     },
     {
       "canonicalRef": null,
+      "factionRaw": "魏",
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -830,6 +853,7 @@
       },
       "sourceSnapshotHash": "sha256:56c691fd00bf0e5e14449699243759c2b977d21cc1190d3b06318f94a5802c80",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-xuyou-spmachao-cavalry",
+      "tierRaw": "T0",
       "unitTypesRaw": [
         "騎"
       ],
@@ -837,6 +861,7 @@
     },
     {
       "canonicalRef": null,
+      "factionRaw": "蜀",
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -899,6 +924,7 @@
       },
       "sourceSnapshotHash": "sha256:83281bd61224e96719e553ba062975feaeee4564075ca87fbcd3ca683c64c480",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-taoyuan-shield-huijun",
+      "tierRaw": "T0.5",
       "unitTypesRaw": [
         "盾"
       ],
@@ -906,6 +932,7 @@
     },
     {
       "canonicalRef": null,
+      "factionRaw": "群",
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -968,6 +995,7 @@
       },
       "sourceSnapshotHash": "sha256:118cab1b05c46d310eb01af87393593a681669c3eff13ea73462ad4b62bbdf86",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-c",
+      "tierRaw": "T1",
       "unitTypesRaw": [
         "弓"
       ],
@@ -975,6 +1003,7 @@
     },
     {
       "canonicalRef": null,
+      "factionRaw": "群",
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -1037,6 +1066,7 @@
       },
       "sourceSnapshotHash": "sha256:3196445dc557070ebf2939cad163dd573ce27881395aabf138e69b05fcf67018",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-qun-bow-jinfan",
+      "tierRaw": "T1",
       "unitTypesRaw": [
         "弓"
       ],
@@ -1044,6 +1074,7 @@
     },
     {
       "canonicalRef": null,
+      "factionRaw": "蜀",
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -1106,6 +1137,7 @@
       },
       "sourceSnapshotHash": "sha256:1840d177b188f9a815b79cf9f062283b181aa6bb05ad835f5c0e1216aacd2f77",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-beifa-shield-huweijun",
+      "tierRaw": "T1",
       "unitTypesRaw": [
         "盾"
       ],
@@ -1113,6 +1145,7 @@
     },
     {
       "canonicalRef": null,
+      "factionRaw": null,
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -1175,6 +1208,7 @@
       },
       "sourceSnapshotHash": "sha256:8ece1d62b8d60ae75b8e103a154d6131031600c55a8aabf28ed28f55838910fc",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-lvbu-zhouyu-bow",
+      "tierRaw": "T1",
       "unitTypesRaw": [
         "弓"
       ],
@@ -1182,6 +1216,7 @@
     },
     {
       "canonicalRef": null,
+      "factionRaw": null,
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -1244,11 +1279,13 @@
       },
       "sourceSnapshotHash": "sha256:fc60327693e1faa0cdfc1daef0e16a0593f14df594bc038588fab68bb37c5739",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-lvguoqiao-baima",
+      "tierRaw": "T1",
       "unitTypesRaw": [],
       "value": 98
     },
     {
       "canonicalRef": null,
+      "factionRaw": null,
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -1311,6 +1348,7 @@
       },
       "sourceSnapshotHash": "sha256:7a9878410c42009f6fa9684ea6fb347b312ea7332b946b139cc0db3e666e4056",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-taishici-bow",
+      "tierRaw": "T1",
       "unitTypesRaw": [
         "弓"
       ],
@@ -1318,6 +1356,7 @@
     },
     {
       "canonicalRef": null,
+      "factionRaw": "魏",
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -1380,6 +1419,7 @@
       },
       "sourceSnapshotHash": "sha256:27608e9a06187496c795f1b7b650a77ce7a8fb98a1f2ff3d8212e35f76b4d31b",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-jiangwei-feixiong-cavalry",
+      "tierRaw": "T1",
       "unitTypesRaw": [
         "騎"
       ],
@@ -1387,6 +1427,7 @@
     },
     {
       "canonicalRef": null,
+      "factionRaw": "群",
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -1449,6 +1490,7 @@
       },
       "sourceSnapshotHash": "sha256:0d950a86bb1ca29aa369c6165f1eff80b5bf93ee64a384ed37e166c3eec9d8e4",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-zhangjiao-yuji-cavalry",
+      "tierRaw": "T1",
       "unitTypesRaw": [
         "騎"
       ],
@@ -1456,6 +1498,7 @@
     },
     {
       "canonicalRef": null,
+      "factionRaw": "吳",
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -1518,6 +1561,7 @@
       },
       "sourceSnapshotHash": "sha256:1f42010951ac0966717ef6a84f2cfe969ca2b2e820fdfe414ea99d742d5bd97d",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-kangkai-bow-jinfan",
+      "tierRaw": "T1",
       "unitTypesRaw": [
         "弓"
       ],
@@ -1525,6 +1569,7 @@
     },
     {
       "canonicalRef": null,
+      "factionRaw": "吳",
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -1587,6 +1632,7 @@
       },
       "sourceSnapshotHash": "sha256:6fbaa4bfe80ae6404c171b1c17cd7df4504cf85d822ad29d34a1936525f4df1d",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-quan-cavalry-hubaoqi",
+      "tierRaw": "T1",
       "unitTypesRaw": [
         "騎"
       ],
@@ -1594,6 +1640,7 @@
     },
     {
       "canonicalRef": null,
+      "factionRaw": "吳",
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -1656,6 +1703,7 @@
       },
       "sourceSnapshotHash": "sha256:57cbf6334cd733907f9c8679f1b657743014354cbea88c9d01c7818b039a266c",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-dudu-bow-baimaobing",
+      "tierRaw": "T1",
       "unitTypesRaw": [
         "弓"
       ],
@@ -1663,6 +1711,7 @@
     },
     {
       "canonicalRef": null,
+      "factionRaw": "蜀",
       "heroes": [
         {
           "bookSlotsRaw": [
@@ -1725,6 +1774,7 @@
       },
       "sourceSnapshotHash": "sha256:4db2a07f06873f64adf3ed09821f1a0d9d3b19334fccebb5b870d58a8d42adf7",
       "sourceUrl": "https://sgsdeck.com/recommended/og-bingyan-guanyu-weiyan-fazheng-shield",
+      "tierRaw": "T1",
       "unitTypesRaw": [
         "盾"
       ],

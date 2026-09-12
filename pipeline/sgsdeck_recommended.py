@@ -130,6 +130,18 @@ def parse_recommended_list(html):
     season = next((node.attrs.get("value") for node in root.walk("input") if node.attrs.get("name") == "season"), None)
     if count is None or not season or len(season) > 128 or next(root.walk("h1"), Node()).text != "推薦隊伍 Tier List":
         raise ValueError("Recommended list structure changed")
+    tiers = {}
+    for section in root.walk("section"):
+        heading = next((child for child in section.children if isinstance(child, Node) and child.tag == "div"), None)
+        if heading is None:
+            continue
+        label = next((node.text for node in heading.walk("span") if re.fullmatch(r"T(?:0|0\.5|1|1\.5|2|3)|功能隊", node.text)), None)
+        if label is not None:
+            for link in section.walk("a"):
+                href = link.attrs.get("href", "")
+                if href in tiers:
+                    raise ValueError("Conflicting Recommended tier grouping")
+                tiers[href] = label
     records = []
     for link in root.walk("a"):
         href = link.attrs.get("href", "")
@@ -141,7 +153,7 @@ def parse_recommended_list(html):
         score = next((node.text for node in link.walk("span") if node.attrs.get("title", "").startswith("來源評分")), "")
         heroes = [node.text for node in link.walk("span") if "rounded-full" in node.attrs.get("class", "")]
         url = validate_source_url(urljoin("https://sgsdeck.com", href))
-        records.append({"sourceConfigId": href.rsplit("/", 1)[-1], "sourceUrl": url, "nameZh": title.text, "value": _number(score), "heroNames": heroes})
+        records.append({"sourceConfigId": href.rsplit("/", 1)[-1], "sourceUrl": url, "nameZh": title.text, "value": _number(score), "heroNames": heroes, "tierRaw": tiers.get(href), "factionRaw": next((node.text.removeprefix("陣營：").strip() for node in link.walk("p") if node.text.startswith("陣營：")), None)})
     if len(records) != int(count.group(1)) or len({row["sourceConfigId"] for row in records}) != len(records):
         raise ValueError("Recommended list count or identity changed")
     return {"expectedCount": int(count.group(1)) if count else 0, "sourceSeason": {"label": season}, "records": records}
@@ -206,6 +218,7 @@ def join_recommended_evidence(listing, details):
             raise ValueError("Recommended list/detail mismatch")
         if row["heroNames"] and row["heroNames"] != [hero["nameRaw"] for hero in detail["heroes"]]:
             raise ValueError("Recommended holder mismatch")
+    details = [{**detail, "tierRaw": by_id[detail["sourceConfigId"]].get("tierRaw"), "factionRaw": by_id[detail["sourceConfigId"]].get("factionRaw")} for detail in details]
     return {"schemaVersion": 1, "provider": "sgsdeck", "inventory": {"expected": listing["expectedCount"], "extracted": len(details), "missingDetails": listing["expectedCount"] - len(details)}, "sourceSeason": listing["sourceSeason"], "records": details}
 
 
