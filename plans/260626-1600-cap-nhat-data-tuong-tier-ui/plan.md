@@ -37,7 +37,11 @@ Làm giàu data 112 tướng từ field lingxi đã crawl sẵn (parse thêm, kh
 
 ## Dependencies
 
-- Không có plan dở dang overlap. Các plan tiền đề (`260620-2010-meta-team-tqccl-website`, `260623-1440-soi-doi-binhthu-portrait`, `260623-0330-bilingual-tactic-details`) đều `completed` → prerequisite đã thỏa.
+Liên kết 2026-09-12: [plan tra cứu thống nhất](../260912-0607-unified-lookup/plan.md) tái sử dụng UI tướng/chiến pháp đã có và sở hữu việc hợp nhất sáu danh mục, Việt hóa, ưu tiên thông số SGSDeck. Không chạy lại migration cũ, không tự đóng plan lịch sử này và không đổi dữ liệu đội/tier trong phạm vi hợp nhất.
+
+Ghi chú đối chiếu 2026-09-07: UI tướng và badge tier hiện đã có trong source, dù index kế hoạch này còn pending. Hai kế hoạch mới [catalog SGSDeck](../260907-0228-sgsdeck-catalog/plan.md) và [tra cứu theo mùa](../260907-0233-season-team-lookup/plan.md) tái sử dụng các module hiện có. Không tự chạy lại migration hoặc đổi trạng thái toàn bộ kế hoạch cũ; đối chiếu từng phase với code/tests trước khi thực hiện phần còn lại. Hai plan mới không phụ thuộc việc đóng index lịch sử này.
+
+- Tại thời điểm lập plan ban đầu chưa ghi nhận overlap. Các plan tiền đề (`260620-2010-meta-team-tqccl-website`, `260623-1440-soi-doi-binhthu-portrait`, `260623-0330-bilingual-tactic-details`) được ghi nhận `completed`; xem ghi chú 2026-09-07 phía trên cho phạm vi mới.
 - Thứ tự nội bộ: P1 → P2 (UI cần field mới). P3 độc lập P1/P2 (gắn team). P4 phụ thuộc P3 (feed map), **optional**.
 
 ## Acceptance (toàn plan)
