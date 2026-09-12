@@ -47,9 +47,9 @@ cả activation code checkpoint.
 
 | # | Phase | Status |
 |---|-------|--------|
-| 1 | [Danh tính và baseline](./phase-01-start.md) | Pending |
-| 2 | [Hợp nhất và Việt hóa](./phase-02-merge-and-vietnamese-content.md) | Pending |
-| 3 | [Giao diện và tích hợp generation](./phase-03-unified-lookup-interface.md) | Pending |
+| 1 | [Danh tính và baseline](./phase-01-start.md) | Completed |
+| 2 | [Hợp nhất và Việt hóa](./phase-02-merge-and-vietnamese-content.md) | Completed |
+| 3 | [Giao diện và tích hợp generation](./phase-03-unified-lookup-interface.md) | In progress |
 | 4 | [Tương thích và bàn giao](./phase-04-compatibility-and-handoff.md) | Pending |
 
 Thứ tự: **1 → 2 → 3 → 4**. TDD trong từng phase: ghi assertion Red đúng
@@ -73,16 +73,16 @@ nguyên nhân trước implementation, rồi Green và kiểm lại sau Refactor
 
 ## Acceptance criteria
 
-- [ ] Kiểm kê 100% baseline/source/children; mỗi record matched/new/unresolved có chứng cứ.
-- [ ] Giữ 112 tên/ID tướng và 240 tên/ID chiến pháp cũ; base/SP/CO/40Y không nhập nhầm.
-- [ ] Cả 11 khác biệt ra đúng trường/ID, kể cả Hạ Hầu Đôn Khiên S; 0/false hợp lệ còn nguyên.
-- [ ] Nội dung có được ở sáu nhóm được Việt hóa/review; bản dịch stale chặn promotion.
-- [ ] Đủ 90 đặc kỹ, 192 lựa chọn, 426 cấp theo snapshot; quan hệ thiếu giữ null có trạng thái.
-- [ ] Một search/nav/profile, `#heroes`/`#tactics` tương thích, mobile/keyboard hoạt động.
-- [ ] Catalog không public provenance; browser/Astro/Worker/MCP từ chối bundle trộn; local readers từ chối giao dịch dở dang.
-- [ ] Soi đội, kho, tracker, đội cũ, MCP và build/check đạt; không suy availability/tier từ catalog.
-- [ ] Có Red → Green → Refactor thực chạy từng phase, rollback/rebuild tái lập được.
-- [ ] Combined publication giữ nguyên Team chuẩn/Team khác selector, scoped bytes,
+- [x] Kiểm kê 100% baseline/source/children; mỗi record matched/new/unresolved có chứng cứ.
+- [x] Giữ 112 tên/ID tướng và 240 tên/ID chiến pháp cũ; base/SP/CO/40Y không nhập nhầm.
+- [x] Cả 11 khác biệt ra đúng trường/ID, kể cả Hạ Hầu Đôn Khiên S; 0/false hợp lệ còn nguyên.
+- [x] Nội dung có được ở sáu nhóm được Việt hóa/review; bản dịch stale chặn promotion.
+- [x] Đủ 90 đặc kỹ, 192 lựa chọn, 426 cấp theo snapshot; quan hệ thiếu giữ null có trạng thái.
+- [x] Một search/nav/profile, `#heroes`/`#tactics` tương thích, mobile/keyboard hoạt động.
+- [x] Catalog không public provenance; browser/Astro/Worker/MCP từ chối bundle trộn; local readers từ chối giao dịch dở dang.
+- [x] Soi đội, kho, tracker, đội cũ, MCP và build/check đạt; không suy availability/tier từ catalog.
+- [x] Có Red → Green → Refactor thực chạy từng phase, rollback/rebuild tái lập được.
+- [x] Combined publication giữ nguyên Team chuẩn/Team khác selector, scoped bytes,
   source attribution và history/legacy aliases; lookup + season hashes cùng một
   build snapshot.
 

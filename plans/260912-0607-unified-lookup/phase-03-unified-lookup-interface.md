@@ -1,13 +1,13 @@
 ---
 title: "Phase 3: Giao diện thống nhất và tích hợp generation"
-status: todo
+status: in-progress
 ---
 
 # Phase 3: Giao diện thống nhất và tích hợp generation
 
 ## Overview
 
-Trạng thái **pending**; sau [Phase 2](phase-02-merge-and-vietnamese-content.md);
+Trạng thái **in-progress**; sau [Phase 2](phase-02-merge-and-vietnamese-content.md);
 effort 2–3 ngày. Giao diện sáu nhóm dùng một bundle đã verify; checkpoint này
 sở hữu loader, manifest/preflight, promotion đầu tiên và compatibility canaries.
 [Plan](plan.md), [consumer research](reports/research-consumers.md),

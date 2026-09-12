@@ -26,3 +26,4 @@ pipeline/raw_crawl_cache.json
 
 # Cache/export nguồn SGSDeck; normalized catalog trong data/sgsdeck không ignore
 pipeline/sgsdeck-cache/
+pipeline/lookup-output/.*.build.lock
