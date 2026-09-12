@@ -1,5 +1,19 @@
 import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { test, expect } from '@playwright/test';
+
+const repositoryRoot = fileURLToPath(new URL('../', import.meta.url));
+function trackedScreenshotHashes() {
+  const files = execFileSync('git', ['ls-files', '-z', '--', '*.png'], {cwd:repositoryRoot,encoding:'utf8'}).split('\0').filter(Boolean);
+  return Object.fromEntries(files.map(path => [path, createHash('sha256').update(readFileSync(join(repositoryRoot, path))).digest('hex')]));
+}
+let originalScreenshotHashes;
+test.beforeAll(() => { originalScreenshotHashes = trackedScreenshotHashes(); });
+test.afterAll(() => {
+  expect(trackedScreenshotHashes(), 'Browser tests must preserve committed screenshot evidence').toEqual(originalScreenshotHashes);
+});
 
 test.beforeEach(async ({page}) => {
   await page.route('https://challenges.cloudflare.com/**', route => route.fulfill({contentType:'application/javascript',body:'window.turnstile={render(){},reset(){}};'}));
@@ -146,7 +160,7 @@ for (const width of [320,375,768,1024]) test(`season controls and details remain
     expect(styles.height).toBeGreaterThanOrEqual(44);
     expect(styles.background).not.toBe('rgba(0, 0, 0, 0)');
     await page.locator('#season-controls').screenshot({path:testInfo.outputPath(`scope-${width}-${theme}.png`)});
-    if ([375,1024].includes(width)) await page.screenshot({fullPage:true,path:fileURLToPath(new URL(`../plans/260907-0233-season-team-lookup/reports/ui-detail-${width}-${theme}.png`,import.meta.url))});
+    if ([375,1024].includes(width)) await page.screenshot({fullPage:true,path:testInfo.outputPath(`ui-detail-${width}-${theme}.png`)});
   }
 });
 test('closing details after a search preserves current filters and returns keyboard focus',async({page})=>{
@@ -249,12 +263,12 @@ test('unavailable season bundle keeps no-context legacy gameplay with an ordinar
   await expect(page.getByRole('button',{name:'Xác nhận dữ liệu scan'})).toBeEnabled();
 });
 
-for(const width of [375,1280]) test(`real Binh Dien review screenshot at ${width}px`,async({page})=>{
+for(const width of [375,1280]) test(`real Binh Dien review screenshot at ${width}px`,async({page},testInfo)=>{
   await page.setViewportSize({width,height:900});await page.goto('/?scenario=binh-dien-xuan-thu#coexist');
   await expect(page.locator('#section-coexist .coexist-subteam')).toHaveCount(25);
   await page.locator('#season-scenario').focus();await expect(page.locator('#season-scenario')).toBeFocused();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.screenshot({path:fileURLToPath(new URL(`../plans/260907-0233-season-team-lookup/reports/ui-real-binh-dien-${width}.png`,import.meta.url))});
+  await page.screenshot({path:testInfo.outputPath(`ui-real-binh-dien-${width}.png`)});
 });
 test('legacy Team PK retains derived faction facets without mutating the validated bundle',async({page})=>{
   await page.goto('/#team-pk');
