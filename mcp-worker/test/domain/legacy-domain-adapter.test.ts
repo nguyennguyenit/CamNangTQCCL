@@ -1,5 +1,6 @@
+import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
@@ -9,7 +10,8 @@ import {
   legacyDomainAdapter,
 } from "../../src/domain/legacy-domain-adapter.js";
 
-const repositoryRoot = resolve(fileURLToPath(new URL("../../..", import.meta.url)));
+const adapterModuleUrl = new URL("../../src/domain/legacy-domain-adapter.ts", import.meta.url).href;
+const tsxLoaderPath = fileURLToPath(import.meta.resolve("tsx"));
 
 function loadJson(relativePath: string): unknown {
   return JSON.parse(readFileSync(new URL(`../../../${relativePath}`, import.meta.url), "utf8"));
@@ -28,8 +30,14 @@ function team(id: string): Record<string, unknown> {
 
 describe("legacy domain adapter characterization", () => {
   it("loads independently of process.cwd and exposes only the typed adapter", () => {
-    expect(repositoryRoot).toMatch(/CamNangTQCCL$/);
-    expect(Object.keys(legacyDomainAdapter).sort()).toEqual([
+    const stdout = execFileSync(process.execPath, [
+      "--import", tsxLoaderPath,
+      "--input-type=module",
+      "--eval",
+      `const { legacyDomainAdapter } = await import(${JSON.stringify(adapterModuleUrl)});
+       process.stdout.write(JSON.stringify(Object.keys(legacyDomainAdapter).sort()));`,
+    ], { cwd: tmpdir(), encoding: "utf8", timeout: 5_000, stdio: ["ignore", "pipe", "pipe"] });
+    expect(JSON.parse(stdout)).toEqual([
       "deserializeBrowserScanState",
       "findSimilarTeams",
       "mapBuiltTeamsScan",
@@ -48,7 +56,7 @@ describe("legacy domain adapter characterization", () => {
       "serializeBrowserScanState",
       "toVietHanViet",
     ]);
-  });
+  }, 10_000);
 
   it("maps a committed dictionary record without mutating input", () => {
     const dictionary = structuredClone(heroes);
