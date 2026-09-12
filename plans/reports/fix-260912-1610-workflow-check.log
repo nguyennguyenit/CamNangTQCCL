@@ -1,0 +1,6 @@
+
+> tqccl-mcp-server@0.1.0 check:workflow-build
+> node --import tsx scripts/generate-workflow-build.ts --check
+
+
+EXIT_CODE=0

@@ -1,0 +1,7 @@
+
+> tqccl-mcp-server@0.1.0 verify:worker-assets
+> node --import tsx scripts/verify-worker-assets.ts /Users/plateau/Project/CamNangTQCCL/plans/260907-0233-season-team-lookup/reports/isolated-fixed-worker-evidence.json
+
+Worker asset evidence hợp lệ.
+
+EXIT_CODE=0

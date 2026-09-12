@@ -1,0 +1,57 @@
+[
+  {
+    "file": "docs/season-team-data.md",
+    "label": "catalog SGSDeck",
+    "target": "sgsdeck-catalog.md"
+  },
+  {
+    "file": "plans/260907-0233-season-team-lookup/phase-02-season-team-configurations.md",
+    "label": "danh mục thống nhất",
+    "target": "../reports/analysis-260912-1142-unified-lookup.md"
+  },
+  {
+    "file": "plans/260907-0233-season-team-lookup/phase-03-season-lookup-interface.md",
+    "label": "Session bàn giao",
+    "target": "../reports/analysis-260912-1142-unified-lookup.md"
+  },
+  {
+    "file": "plans/260907-0233-season-team-lookup/plan.md",
+    "label": "Catalog SGSDeck",
+    "target": "../260907-0228-sgsdeck-catalog/plan.md"
+  },
+  {
+    "file": "plans/260907-0233-season-team-lookup/plan.md",
+    "label": "Đối chiếu danh mục",
+    "target": "../reports/analysis-260912-1142-unified-lookup.md"
+  },
+  {
+    "file": "plans/260907-0233-season-team-lookup/plan.md",
+    "label": "Tra cứu thống nhất",
+    "target": "../260912-0607-unified-lookup/plan.md"
+  },
+  {
+    "file": "plans/260907-0233-season-team-lookup/plan.md",
+    "label": "brainstorm",
+    "target": "../reports/brainstorm-260912-1203-unified-lookup.md"
+  },
+  {
+    "file": "plans/260907-0233-season-team-lookup/plan.md",
+    "label": "Research skill",
+    "target": "../260907-2333-project-research-skill/plan.md"
+  },
+  {
+    "file": "plans/260907-0233-season-team-lookup/plan.md",
+    "label": "audit liên plan",
+    "target": "../reports/audit-260907-0310-season-catalog-plans.md"
+  },
+  {
+    "file": "plans/260907-0233-season-team-lookup/reports/audit-260912-1144-season-team-lookup.md",
+    "label": "đối chiếu thống nhất",
+    "target": "../../reports/analysis-260912-1142-unified-lookup.md"
+  },
+  {
+    "file": "plans/260907-0233-season-team-lookup/reports/audit-260912-1144-season-team-lookup.md",
+    "label": "JSON tái lập",
+    "target": "../../reports/analysis-260912-1142-unified-lookup.json"
+  }
+]

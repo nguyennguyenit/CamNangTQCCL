@@ -1,0 +1,515 @@
+
+> tqccl-mcp-server@0.1.0 check:repository
+> node --import tsx scripts/check-repository.ts
+
+
+> tqccl-mcp-server@0.1.0 check
+> npm run check:workflow-build && npm run check:local-secrets && npm run test:coverage && npm run typecheck && npm run typecheck:worker && npm run build && npm run test:node-min && npm run verify:control-plane
+
+
+> tqccl-mcp-server@0.1.0 check:workflow-build
+> node --import tsx scripts/generate-workflow-build.ts --check
+
+
+> tqccl-mcp-server@0.1.0 check:local-secrets
+> node --import tsx scripts/check-local-secret-files.ts
+
+Không phát hiện local secret files hoặc credential.
+
+> tqccl-mcp-server@0.1.0 test:coverage
+> vitest run --coverage
+
+
+ RUN  v4.1.10 /Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/mcp-worker
+      Coverage enabled with v8
+
+
+ Test Files  43 passed (43)
+      Tests  351 passed (351)
+   Start at  16:23:41
+   Duration  4.01s (transform 2.22s, setup 0ms, import 6.37s, tests 16.95s, environment 6ms)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   91.08 |     85.3 |    95.9 |   91.75 |                   
+ data              |   94.72 |    87.95 |   99.01 |   94.82 |                   
+  ...-contracts.ts |    92.7 |    83.63 |     100 |   92.47 | ...13,454,466,541 
+  data-source.ts   |   95.45 |    88.88 |     100 |      95 | 48                
+  ...ata-source.ts |    90.9 |    83.33 |     100 |      90 | 31,48             
+  ...pshot-view.ts |   97.67 |    97.29 |   94.11 |     100 | 10                
+  ...shot-index.ts |     100 |    89.79 |     100 |     100 | 65-73,177,206,238 
+  ...ata-source.ts |   94.44 |    89.28 |     100 |   95.91 | 95,126            
+ domain            |   89.39 |    83.54 |   93.83 |   89.79 |                   
+  ...ical-state.ts |   92.85 |    85.96 |     100 |    92.3 | 126,128,152,158   
+  contracts.ts     |   83.69 |    78.26 |   86.95 |   83.52 | ...24,389-396,440 
+  ...t-encoding.ts |   96.55 |       90 |     100 |   96.29 | 59                
+  ...in-adapter.ts |   79.04 |    69.35 |   85.52 |      80 | ...06-508,522-524 
+  ...on-service.ts |   94.76 |       89 |     100 |   94.97 | ...44,349,372,531 
+  ...on-service.ts |   94.94 |    83.05 |     100 |    97.5 | 43,279            
+  ...projection.ts |   93.02 |    83.72 |     100 |   91.89 | 76-78             
+ research          |   90.22 |    86.63 |   98.38 |   92.19 |                   
+  ...-contracts.ts |   95.65 |    95.45 |     100 |    97.5 | 83,139            
+  ...h-handlers.ts |   87.25 |    84.29 |   97.56 |   89.13 | ...53,685-691,704 
+  ...ion-fields.ts |   95.23 |    91.66 |     100 |     100 | 32                
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 91.08% ( 1287/1413 )
+Branches     : 85.3% ( 900/1055 )
+Functions    : 95.9% ( 375/391 )
+Lines        : 91.75% ( 1180/1286 )
+================================================================================
+
+> tqccl-mcp-server@0.1.0 typecheck
+> tsc --noEmit
+
+
+> tqccl-mcp-server@0.1.0 typecheck:worker
+> tsc --noEmit -p test/tsconfig.json
+
+
+> tqccl-mcp-server@0.1.0 build
+> tsc -p tsconfig.build.json
+
+
+> tqccl-mcp-server@0.1.0 test:node-min
+> node test/node-min-smoke.mjs
+
+
+> tqccl-mcp-server@0.1.0 verify:control-plane
+> node --import tsx scripts/verify-control-plane.ts --artifact-only
+
+Control plane artifact hợp lệ.
+
+> build
+> astro build
+
+16:23:49 [vite] Re-optimizing dependencies because vite config has changed
+16:23:49 [types] Generated 92ms
+16:23:49 [build] output: "static"
+16:23:49 [build] mode: "static"
+16:23:49 [build] directory: /Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/dist/
+16:23:49 [build] Collecting build info...
+16:23:49 [build] ✓ Completed in 111ms.
+16:23:49 [build] Building static entrypoints...
+16:23:49 [vite] ✓ built in 72ms
+16:23:49 [vite] ✓ built in 7ms
+16:23:49 [build] Rearranging server assets...
+
+ generating static routes 
+16:23:49   ├─ /css/styles.css (+3ms) 
+16:23:49   ├─ /data/books-dict.json (+1ms) 
+16:23:49   ├─ /data/coexist.json (+1ms) 
+16:23:49   ├─ /data/facets.json (+1ms) 
+16:23:49   ├─ /data/heroes-dict.json (+0ms) 
+16:23:49   ├─ /data/khaihoang.json (+1ms) 
+16:23:49   ├─ /data/season-content-links.json (+1ms) 
+16:23:49   ├─ /data/season-evidence.json (+0ms) 
+16:23:49   ├─ /data/season-registry.json (+0ms) 
+16:23:49   ├─ /data/season-team-configs.json (+0ms) 
+16:23:49   ├─ /data/season-team-evaluations.json (+0ms) 
+16:23:49   ├─ /data/tactics-generic.json (+0ms) 
+16:23:49   ├─ /data/tactics.json (+0ms) 
+16:23:49   ├─ /data/team-tier.json (+1ms) 
+16:23:49   ├─ /data/teams.json (+1ms) 
+16:23:49   ├─ /js/analyze-map.js (+1ms) 
+16:23:49   ├─ /js/analyze.js (+1ms) 
+16:23:49   ├─ /js/app.js (+1ms) 
+16:23:49   ├─ /js/config.js (+0ms) 
+16:23:49   ├─ /js/derive-team-faction.js (+4ms) 
+16:23:49   ├─ /js/filters.js (+14ms) 
+16:23:49   ├─ /js/hanviet.js (+1ms) 
+16:23:49   ├─ /js/hero-detail.js (+0ms) 
+16:23:49   ├─ /js/hero-identity.js (+0ms) 
+16:23:49   ├─ /js/hero-list.js (+1ms) 
+16:23:49   ├─ /js/match-dict.js (+24ms) 
+16:23:49   ├─ /js/meta-cu.js (+2ms) 
+16:23:49   ├─ /js/mobile-section-menu.js (+1ms) 
+16:23:49   ├─ /js/recruit-tracker-store.js (+1ms) 
+16:23:49   ├─ /js/recruit-tracker.js (+1ms) 
+16:23:49   ├─ /js/render.js (+1ms) 
+16:23:49   ├─ /js/roster-recommend-ui.js (+0ms) 
+16:23:49   ├─ /js/roster-scan-map.js (+0ms) 
+16:23:49   ├─ /js/roster-scan-state.js (+0ms) 
+16:23:49   ├─ /js/season-context.js (+0ms) 
+16:23:49   ├─ /js/season-ui-state.js (+0ms) 
+16:23:49   ├─ /js/tactics.js (+0ms) 
+16:23:49   ├─ /js/team-filter-section.js (+0ms) 
+16:23:49   ├─ /js/team-pk.js (+0ms) 
+16:23:49   ├─ /js/team-recommend-engine.js (+0ms) 
+16:23:49   ├─ /index.html (+3ms) 
+16:23:49 ✓ Completed in 77ms.
+
+16:23:49 [build] ✓ Completed in 169ms.
+16:23:49 [build] 1 page(s) built in 285ms
+16:23:49 [build] Complete!
+
+> test:dist
+> node --experimental-strip-types --test tests-js/astro-dist-contract.test.mjs tests-js/pages-headers-contract.test.mjs
+
+✔ season bundle publishes exactly five sidecars with the shared resolver (0.778875ms)
+✔ seasonal registry and evidence routes are explicit runtime artifacts (1.992ms)
+✔ season sidecars without manifest entries reject source inventory (2.287791ms)
+✔ manifest explicitly classifies every published root artifact (0.553375ms)
+✔ manifest rejects route collisions, extension mistakes, and unknown kinds (0.173292ms)
+✔ artifact reader returns exact bytes and rejects unknown, missing, and symlink sources (1.70875ms)
+✔ artifact tree rejects symlinked directories and source-set drift (2.178667ms)
+✔ artifact tree accepts only the optional private SGSDeck data subtree (2.229375ms)
+✔ dist verifier rejects missing, unexpected, and symlinked output (3.04675ms)
+✔ built dist is allowlisted and every emitted asset is byte-identical (4.589958ms)
+✔ _headers has exact mutable-asset revalidation rules (2.38325ms)
+✔ _headers covers every published shell and mutable raw asset (0.619916ms)
+✔ cache policy models fresh clients and whole-artifact rollback (0.708542ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 88.344458
+
+> test:e2e
+> playwright test
+
+
+[WebServer] (node:87593) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] (node:87716) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 55 tests using 4 workers
+
+
+(node:87759) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:87757) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:87758) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+(node:87756) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/55] [astro] › tests-e2e/mcp-domain-compatibility.spec.mjs:7:1 › scan được lưu/hiển thị và recommendation giữ assignment theo holder
+[2/55] [astro] › tests-e2e/season-lookup.spec.mjs:21:1 › real scenario-only scope remains reference and preserves Khai hoang
+[3/55] [astro] › tests-e2e/khaihoang-options.spec.mjs:11:1 › every source option replaces only its card and restores the default
+[4/55] [astro] › tests-e2e/spa-parity.spec.mjs:114:1 › boots once with clean first-party requests and stable metadata
+[5/55] [astro] › tests-e2e/mcp-domain-compatibility.spec.mjs:76:1 › analyze-map chạy trong Astro preview và đối chiếu đúng full hero identity
+[6/55] [astro] › tests-e2e/season-lookup.spec.mjs:55:1 › verified fixture displays separate config cards, ordered detail and exact source score
+[7/55] [astro] › tests-e2e/spa-parity.spec.mjs:187:1 › all hash sections support direct links, clicks, back, and forward
+[8/55] [astro] › tests-e2e/season-lookup.spec.mjs:73:1 › detail compares real inventory and changing a selected tactic removes its source score
+[9/55] [astro] › tests-e2e/season-lookup.spec.mjs:86:1 › roster runs exact configs, then scope change clears portfolio and confirmation while retaining inventory
+[10/55] [astro] › tests-e2e/season-lookup.spec.mjs:102:1 › scenario-only analysis blocks matching and offers explicit out-of-scope reference choice
+[11/55] [astro] › tests-e2e/season-lookup.spec.mjs:109:1 › coexist search uses scoped raw text, retains query and escapes source markup
+[12/55] [astro] › tests-e2e/season-lookup.spec.mjs:121:1 › invalid scope and mixed bundle never activate scoped cards or gameplay
+[13/55] [astro] › tests-e2e/season-lookup.spec.mjs:131:1 › late roster scan response cannot restore scope confirmation or inventory changes
+[14/55] [astro] › tests-e2e/season-lookup.spec.mjs:150:41 › season controls and details remain usable at 320px in both themes
+[15/55] [astro] › tests-e2e/season-lookup.spec.mjs:150:41 › season controls and details remain usable at 375px in both themes
+[16/55] [astro] › tests-e2e/season-lookup.spec.mjs:150:41 › season controls and details remain usable at 768px in both themes
+[17/55] [astro] › tests-e2e/season-lookup.spec.mjs:150:41 › season controls and details remain usable at 1024px in both themes
+[18/55] [astro] › tests-e2e/season-lookup.spec.mjs:166:1 › closing details after a search preserves current filters and returns keyboard focus
+[19/55] [astro] › tests-e2e/spa-parity.spec.mjs:208:1 › legacy storage payloads survive load and sanitize forbidden roster fields on save
+[20/55] [astro] › tests-e2e/season-lookup.spec.mjs:179:32 › roster enforces scoped candidate boundary 500
+[21/55] [astro] › tests-e2e/season-lookup.spec.mjs:179:32 › roster enforces scoped candidate boundary 501
+[22/55] [astro] › tests-e2e/spa-parity.spec.mjs:267:1 › required JSON failure stays in Team PK and can remain hidden on another hash
+[23/55] [astro] › tests-e2e/spa-parity.spec.mjs:281:1 › optional tier failure is non-fatal
+[24/55] [astro] › tests-e2e/season-lookup.spec.mjs:196:1 › all-reference keeps historical tiers separately from executable configuration tiers
+[25/55] [astro] › tests-e2e/spa-parity.spec.mjs:290:1 › a hanging optional tier request retains the legacy blocked-render behavior
+[26/55] [astro] › tests-e2e/spa-parity.spec.mjs:307:1 › Turnstile failure does not break local sections or duplicate its script
+[27/55] [astro] › tests-e2e/season-lookup.spec.mjs:211:1 › scoped recommendation exposes usable add-team actions and original source score
+[28/55] [astro] › tests-e2e/season-lookup.spec.mjs:225:1 › card score follows its displayed hero selection rather than another valid scored alternative
+[29/55] [astro] › tests-e2e/khaihoang-options.spec.mjs:45:1 › source selection works with keyboard on mobile without overflow
+[30/55] [astro] › tests-e2e/season-lookup.spec.mjs:242:1 › configuration details retain raw effect labels, multiline mechanics and required conditions
+[31/55] [astro] › tests-e2e/spa-parity.spec.mjs:320:1 › mobile section menu closes after selection and Escape
+[32/55] [astro] › tests-e2e/season-lookup.spec.mjs:252:1 › validated source score with unknown upstream season still opens its exact configuration
+[33/55] [astro] › tests-e2e/season-lookup.spec.mjs:259:1 › unavailable season bundle keeps no-context legacy gameplay with an ordinary search query
+[34/55] [astro] › tests-e2e/season-lookup.spec.mjs:266:32 › real Binh Dien review screenshot at 375px
+[35/55] [astro] › tests-e2e/khaihoang-options.spec.mjs:59:1 › roster guide persists while a tactic variant changes
+[36/55] [astro] › tests-e2e/season-lookup.spec.mjs:266:32 › real Binh Dien review screenshot at 1280px
+[37/55] [astro] › tests-e2e/spa-parity.spec.mjs:340:1 › team search remains a local interaction
+[38/55] [astro] › tests-e2e/season-lookup.spec.mjs:273:1 › legacy Team PK retains derived faction facets without mutating the validated bundle
+[39/55] [astro] › tests-e2e/khaihoang-options.spec.mjs:75:1 › curated tactical build notes stay visible without source provenance
+[40/55] [astro] › tests-e2e/season-lookup.spec.mjs:280:1 › opening detail keeps its close control below the sticky navigation
+[41/55] [astro] › tests-e2e/spa-parity.spec.mjs:352:1 › opening a roster recommendation selects its source tab and hero search
+[42/55] [astro] › tests-e2e/season-lookup.spec.mjs:287:1 › coexist distinguishes exact-pair applicable groups from scenario-only reference counts
+[43/55] [astro] › tests-e2e/khaihoang-options.spec.mjs:103:1 › main Khai hoang cards keep current-only wording and ordered transition steps
+[44/55] [astro] › tests-e2e/season-lookup.spec.mjs:301:1 › optional unverified conditions remain informational in inventory comparison
+[45/55] [astro] › tests-e2e/season-lookup.spec.mjs:310:1 › keyboard facet and source toggles preserve focus and pressed state after filtering
+[46/55] [astro] › tests-e2e/spa-parity.spec.mjs:394:1 › local preview serves approved artifacts and excludes private source paths
+[47/55] [astro] › tests-e2e/khaihoang-options.spec.mjs:122:1 › long guides fit the 320px boundary
+[48/55] [astro] › tests-e2e/spa-parity.spec.mjs:405:1 › synthetic HTTPS serves dist locally and characterizes legacy HTTP icons
+[49/55] [astro] › tests-e2e/khaihoang-options.spec.mjs:131:1 › researched root builds render their stage-specific leaders, units, and tactic slots
+[50/55] [astro] › tests-e2e/khaihoang-options.spec.mjs:194:1 › empty parent guides and variant-only guides do not create a roster guide
+[51/55] [astro] › tests-e2e/khaihoang-options.spec.mjs:205:3 › standalone Chạm Sứ groups preserve source content and order at 1280px
+[52/55] [astro] › tests-e2e/khaihoang-options.spec.mjs:205:3 › standalone Chạm Sứ groups preserve source content and order at 375px
+[53/55] [astro] › tests-e2e/khaihoang-options.spec.mjs:233:3 › Khai hoang supports missing Chạm Sứ data
+[54/55] [astro] › tests-e2e/khaihoang-options.spec.mjs:233:3 › Khai hoang supports empty Chạm Sứ data
+[55/55] [astro] › tests-e2e/khaihoang-options.spec.mjs:233:3 › Khai hoang supports legacy Chạm Sứ data
+  55 passed (22.9s)
+
+> test:node
+> node --experimental-strip-types --test tests-js/*.test.mjs
+
+✔ statFocusVn: đơn + tiền tố Toàn (0.430917ms)
+✔ mapRead: Hán exact -> canonical Việt + sure (1.24825ms)
+✔ mapRead: tên lạ -> giữ Hán + cờ không chắc (0.145292ms)
+✔ mapRead: tướng không thấy tên rõ -> hiển thị Chưa rõ (0.058958ms)
+✔ mapRead: OCR sai 1 ký tự -> fuzzy về đúng (0.17525ms)
+✔ mapRead: chỉ giữ chiến pháp, bỏ binh thư/talent đọc nhầm (0.465834ms)
+✔ mapRead: map binh thư booksCn -> tên Việt canonical (1.608834ms)
+✔ mapRead: binh thư lạ -> phiên Hán-Việt + cờ không chắc (0.2715ms)
+✔ mapRead: thiếu booksCn -> books rỗng (backward-compat) (0.202584ms)
+✔ mapRead: gắn iconUrl của tướng khi khớp dict (0.109042ms)
+✔ mapRead: nameFromPortrait -> ép sure=false dù khớp (0.065625ms)
+✔ mapRead: ambiguity không được báo sure dù top match có confidence cao (0.13825ms)
+✔ findSimilarTeams: binh thư KHÔNG đổi điểm (giữ nguyên) (0.281166ms)
+✔ findSimilarTeams: đếm tướng trùng, lọc ngưỡng (0.107042ms)
+✔ [M1] tướng Hán không khớp KHÔNG vào mẫu số total (0.090917ms)
+✔ findSimilarTeams: tie-break theo chiến pháp trùng (0.140917ms)
+✔ findSimilarTeams phân biệt SP với base theo canonical ID (0.099709ms)
+✔ một combined slot không được tính thành hai hero hits (0.073333ms)
+✔ findSimilarTeams chỉ tính tactic khi đúng holder và tie theo team ID (5.275208ms)
+✔ Astro dev preserves module resolution, MIME types, refresh, and exact JSON bytes (1731.1385ms)
+✔ Astro preview serves exact built assets with browser MIME types (389.708042ms)
+✔ season bundle publishes exactly five sidecars with the shared resolver (0.823375ms)
+✔ seasonal registry and evidence routes are explicit runtime artifacts (6.264041ms)
+✔ season sidecars without manifest entries reject source inventory (11.551625ms)
+✔ manifest explicitly classifies every published root artifact (1.5685ms)
+✔ manifest rejects route collisions, extension mistakes, and unknown kinds (0.44175ms)
+✔ artifact reader returns exact bytes and rejects unknown, missing, and symlink sources (12.226333ms)
+✔ artifact tree rejects symlinked directories and source-set drift (9.073666ms)
+✔ artifact tree accepts only the optional private SGSDeck data subtree (10.372833ms)
+✔ dist verifier rejects missing, unexpected, and symlinked output (16.353958ms)
+✔ built dist is allowlisted and every emitted asset is byte-identical (41.324416ms)
+✔ index map gồm viet/hanViet/chinese, bỏ tướng không phe (0.355791ms)
+✔ đa số quá bán -> phe đó (0.089875ms)
+✔ không quá bán (mỗi tướng 1 phe) -> Hỗn hợp (0.057ms)
+✔ không khớp tướng nào -> null (0.045125ms)
+✔ assignDerivedFactions chỉ gán cho team chưa có phe (0.126625ms)
+✔ empty state returns all (0.52425ms)
+✔ AND between groups (1.332917ms)
+✔ OR within a group (0.2435ms)
+✔ filters by source (Đô úy riêng) (0.160583ms)
+✔ matches tactic alternatives (not just primary) (0.155875ms)
+✔ full-text search is diacritic-insensitive (0.232583ms)
+✔ search miss returns empty (0.432292ms)
+✔ normalizeText strips Vietnamese diacritics and đ (0.0635ms)
+✔ teamSearchBlob includes counters (0.109917ms)
+✔ search matches team name and nickname (0.128041ms)
+✔ Astro shell preserves metadata and browser entry assets (5.343959ms)
+✔ Astro shell has one tab and mount for every supported section (1.83025ms)
+✔ Astro shell retains navigation and theme accessibility hooks (3.313709ms)
+✔ root legacy HTML entry no longer exists (0.786292ms)
+✔ link 2 chiến pháp theo chinese -> tên VN + effect (0.431958ms)
+✔ không khớp tactics -> fallback tên Hán, linked=false (0.079791ms)
+✔ thiếu tên chiến pháp -> bỏ slot (0.056167ms)
+✔ SP, CO và bản thường có canonical ID riêng nhưng chung family (1.506542ms)
+✔ prefix chỉ áp dụng cho alternative được ghi tên (0.417542ms)
+✔ artifact flags khôi phục identity đầy đủ mà không đổi baseName browser (0.135667ms)
+✔ combined slot được thỏa bởi đúng một alternative (0.070459ms)
+✔ control characters và annotation bị loại khỏi canonical identity (0.062625ms)
+✔ không lọc -> trả hết (0.933375ms)
+✔ lọc phe (OR trong nhóm) (0.884833ms)
+✔ lọc sao (0.165458ms)
+✔ lọc vai trò (0.079834ms)
+✔ lọc thích tính binh chủng (S/A) — kỵ (0.593792ms)
+✔ nhiều troop OR; AND giữa các nhóm (0.057959ms)
+✔ Khác Bình Tiến uses spears in both opening phases (1.112ms)
+✔ sourced options are complete for each declared phase and preserve the roster (2.032083ms)
+✔ Chạm Sứ groups match the separate sheet table without opening-team linkage (0.483375ms)
+✔ Yaojing opening guides stay on their three-hero roster, not on a tactic variant (0.7455ms)
+✔ opening-guide fields stay finite, curated, and separate from build variants (0.366875ms)
+✔ every retained build note has a curated public counterpart (0.091958ms)
+✔ new guide hero references are the reviewed canonical set (0.097166ms)
+✔ Yaojing guide details preserve named minimums and note-only split advice (0.092167ms)
+✔ researched opening builds retain their observed stage-specific commanders and tactics (0.119375ms)
+✔ levenshtein cơ bản (1.3305ms)
+✔ ratio đối xứng + biên (0.764167ms)
+✔ Hán exact -> high confidence (0.482541ms)
+✔ Hán OCR-lỗi-giả -> fuzzy về đúng top (0.263583ms)
+✔ Hán viết tắt trong ảnh -> khớp chiến pháp đầy đủ (0.694791ms)
+✔ Việt bỏ dấu -> khớp viet (1.529541ms)
+✔ Hán-Việt -> khớp hanViet (1.147917ms)
+✔ tên lạ -> không khớp, confidence thấp (0.336875ms)
+✔ runner-up sát điểm buộc review thay vì tự chọn (0.156459ms)
+✔ fuzzy margin đủ rộng không buộc review (0.187042ms)
+✔ searchDict trả nhiều kết quả xếp hạng (0.170208ms)
+✔ mobile section menu opens and closes from toggle, tab, and Escape (0.450209ms)
+✔ mobile section menu label follows active section (0.096291ms)
+✔ _headers has exact mutable-asset revalidation rules (4.109125ms)
+✔ _headers covers every published shell and mutable raw asset (1.03525ms)
+✔ cache policy models fresh clients and whole-artifact rollback (2.118459ms)
+✔ default state has one account, Danh tướng PK, and four pending daily slots (0.915916ms)
+✔ account CRUD keeps active account valid (2.818584ms)
+✔ daily miss increments pity and five-star resets only that account banner (1.284ms)
+✔ limited banner miss and five-star are tracked separately from daily banner (0.706166ms)
+✔ over-30 pity is retained and flagged instead of capped (0.1465ms)
+✔ history is newest first and import validates before overwrite (5.903125ms)
+✔ localStorage adapter falls back on corrupt data and saves valid JSON (0.147583ms)
+✔ recruit tracker view model exposes compact daily, limited, history, and hero options (11.592208ms)
+✔ mapHeroesScan maps Chinese hero names to canonical Vietnamese (0.894125ms)
+✔ mapTacticsScan maps tactic names (0.124833ms)
+✔ mapBuiltTeamsScan maps locked team heroes and tactics (0.122459ms)
+✔ rich mapper giữ evidence, runner-up và image ordinal (0.384666ms)
+✔ rich tactic và built-team mapper giữ holder thay vì làm phẳng evidence (0.282292ms)
+✔ storage key is stable (0.382583ms)
+✔ applyScanResult merges heroes tactics and built teams (2.217584ms)
+✔ remove and add canonical items (0.319583ms)
+✔ lockedConstraints flattens locked team heroes and tactics (0.236458ms)
+✔ serialize strips image and token fields (0.188084ms)
+✔ dedupe theo canonical ID giữ mọi evidence ordinal và numeric max (0.33575ms)
+✔ base và SP cùng family không bị dedupe thành một hero (0.167541ms)
+✔ serialize loại secret lồng trong evidence nhưng giữ provenance an toàn (0.156083ms)
+✔ season attribution is versioned and cannot imply an unverified ruleset (8.343709ms)
+✔ all runtime JSON assets exist, parse, and retain top-level shapes (17.442041ms)
+✔ team identifiers are unique and every tier row joins a team (3.488ms)
+✔ published facets and modules do not expose the retired Đô Úy season (2.111959ms)
+✔ app keeps required datasets byte-cached for season validation and team tier optional (0.538916ms)
+✔ app preserves the nine-section hash contract and cross-section search seam (0.459792ms)
+✔ bundle activates independently, immutable, and strict missing or extra artifacts fail safely (11.913334ms)
+✔ context restoration distinguishes no context, scenario only, exact pair and invalid pair (0.78725ms)
+✔ reviewed scenario attribution never authorizes rulesets or unreviewed configs (1.606083ms)
+✔ references resolve actual dictionary identity and ordered slots, not prefixes (3.116333ms)
+✔ unresolved default tier stays null and opt-in cannot bypass mandatory requirements (2.81175ms)
+✔ candidate cap counts eligible configs after scope and policy, never truncates executable input (92.515459ms)
+✔ exact lookup rejects ambiguity and wrong context instead of selecting first team config (0.676209ms)
+✔ canonical fingerprint bytes preserve Unicode and array order, reject unsafe numbers (0.184542ms)
+✔ score validates exact hashes and invalidates changed, missing and wrong-holder selections (1.0685ms)
+✔ final portfolio alternative does not inherit original source score (1.606625ms)
+✔ current real registry without reviewed rules remains valid scenario reference (0.803916ms)
+✔ source reference stays out of applicable counts, preserves raw text, and unknown stays all-reference only (0.778958ms)
+✔ source discriminator, nested slots, unsafe URLs and stale content hashes reject the whole bundle (1.653792ms)
+✔ reference requires both same-source scenario attribution and matching snapshot observation (0.801083ms)
+✔ legacy locator resolves only one fingerprint match and rejects mismatched position or duplicate content (0.808208ms)
+✔ config review cannot be reused after fingerprinted content changes (0.251458ms)
+✔ Python-generated canonical and configuration golden vectors match JavaScript (0.431208ms)
+✔ ambiguous configuration choices are sorted, bounded twenty, and report total omitted count (1.872958ms)
+✔ score evidence source season cannot be borrowed from another source season (0.406875ms)
+✔ Unicode canonical key ordering uses code points matching Python, including supplementary characters (0.051125ms)
+✔ tier cannot borrow generic ruleset evidence that does not bind the exact config fingerprint (0.264375ms)
+✔ complete scored selections reject duplicate heroes, duplicate tactics and unreviewed conditions (1.135875ms)
+✔ locked context warning depends on applicability, not recommendation tier filtering (0.260417ms)
+✔ provenance rejects browser-normalized non-authority URLs and invalid clock times (0.210833ms)
+✔ exact config lookup requires an explicit valid team or config identity (0.27325ms)
+✔ seasonal feasibility reaches the last of 61 configs with missing heros (fullBox=false) (5.651917ms)
+✔ seasonal feasibility reaches the last of 81 configs with missing heros (fullBox=true) (8.061959ms)
+✔ seasonal feasibility reaches the last of 61 configs with missing tactics (fullBox=false) (5.598084ms)
+✔ seasonal feasibility reaches the last of 81 configs with missing tactics (fullBox=true) (7.279791ms)
+✔ seasonal feasibility reaches the last of 500 configs with missing heros (fullBox=false) (44.013625ms)
+✔ seasonal feasibility reaches the last of 500 configs with missing heros (fullBox=true) (44.056125ms)
+✔ seasonal same-team configs do not crowd out a compatible team (fullBox=false) (6.324416ms)
+✔ seasonal same-team configs do not crowd out a compatible team (fullBox=true) (6.10675ms)
+✔ serialized inventory retains locked configuration identity across scope changes (0.713792ms)
+✔ hash activation rejects changed referenced bytes and allows only the full bundle (16.782708ms)
+✔ restored scenario URL stays reference while duplicate context stays invalid (4.184917ms)
+✔ filter query preserves OR groups, ignores obsolete stars and sorts original unbounded score (4.890417ms)
+✔ inventory comparison keeps SP distinct, detects duplicate holders and retained locked resources (0.248333ms)
+✔ repeated or empty scalar filter/config values are discarded with a notice (2.818375ms)
+✔ Đồng Lòng Hợp Sức resolves to the event heal instead of Cao Pi's domestic tactic (0.478667ms)
+✔ Toàn Quân Đồng Lòng has in-game details (0.088875ms)
+✔ Không Đánh Mà Thắng links to verified 非攻制胜 tactic name (0.064959ms)
+✔ Nhanh Trí Động Não links to verified 灵机一动 active tactic (0.875417ms)
+✔ six tactics match Vietnamese in-game screenshots (0.345708ms)
+✔ tacticDescriptions returns Vietnamese then Chinese with fallback (0.175167ms)
+✔ generated data keeps Đánh Bại Quân Địch references (4.978833ms)
+✔ missing any required hero excludes team from main recommendations (7.601583ms)
+✔ locked teams seed portfolio and only add enough teams to reach five total (0.450958ms)
+✔ locked canonical IDs giữ nguyên namespace và chặn tái sử dụng resource (0.128042ms)
+✔ locked team giữ canonical team ID và tactic assignment theo holder (0.367916ms)
+✔ locked assignments thiếu slotIndex được suy ra ổn định theo từng holder (0.079833ms)
+✔ locked assignments suy slot không đè slot tường minh xuất hiện sau (0.068541ms)
+✔ hai locked teams trùng resource đều bị loại thay vì chọn đội đầu (0.06725ms)
+✔ selected portfolio never duplicates tactics silently (0.29525ms)
+✔ một candidate không được dùng cùng tướng cho hai slot (0.100625ms)
+✔ một candidate không được dùng cùng chiến pháp cho hai slot (0.112583ms)
+✔ assignment backtrack để tránh false-negative ở slot ít lựa chọn (0.103375ms)
+✔ variant appears only when an explicit alternative tactic is available (0.887625ms)
+✔ no implicit alternative is generated from tactic type or name similarity (0.708542ms)
+✔ full-box search can skip the individually best team for stronger portfolio (2.033083ms)
+✔ result includes preset slots even before coexist sets exist (0.569416ms)
+✔ base hero không thỏa team cần SP cùng family (0.230792ms)
+✔ combined slot được thỏa bởi alternative thứ hai đúng một lần (0.217375ms)
+✔ tier xếp trước red copies trong meta mode (0.218333ms)
+✔ full-box vẫn xếp tier trước số tactic alternative (0.284959ms)
+✔ untiered bị loại mặc định và chỉ vào bằng experimental opt-in (0.185292ms)
+✔ late conflict dùng lại full owned alternatives và trả assignment theo holder (0.251709ms)
+✔ semantic tie được quyết định bằng stable team ID (0.222375ms)
+✔ seasonal configurations retain canonical team identity and distinct tier indexes (0.911625ms)
+✔ seasonal semantic ties use stable config ID independent of input order (0.504ms)
+✔ seasonal locks retain resources and exclude same canonical team configurations (0.384375ms)
+✔ no-context recommendations retain exact legacy output shape (2.89875ms)
+✔ seasonal repeated alternative lists keep ordered holders distinct (0.254834ms)
+✔ seasonal ID bounds count Unicode characters consistently with the bundle validator (0.256042ms)
+✔ nhiều nguồn lệch -> bậc tốt nhất (T số nhỏ nhất) (0.342458ms)
+✔ 1 nguồn -> chính nó (0.05075ms)
+✔ rỗng / null -> null (không badge) (0.043334ms)
+✔ tierClass: chấm -> gạch (T0.5 -> t-05) (0.052916ms)
+ℹ tests 194
+ℹ suites 0
+ℹ pass 194
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2169.090333
+sssssss........................................................................................................................sss...ss................
+----------------------------------------------------------------------
+Ran 151 tests in 0.240s
+
+OK (skipped=12)
+
+> tqccl-vision-proxy@0.1.0 test
+> vitest run
+
+
+ RUN  v2.1.9 /Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/worker
+
+ ✓ test/config.test.ts (9 tests) 2ms
+ ✓ test/ratelimit.test.ts (7 tests) 3ms
+ ✓ test/schema.test.ts (20 tests) 3ms
+ ✓ test/guard.test.ts (9 tests) 4ms
+ ✓ test/model.test.ts (5 tests) 2ms
+ ✓ test/scan-modes.test.ts (3 tests) 2ms
+
+ Test Files  6 passed (6)
+      Tests  53 passed (53)
+   Start at  16:24:16
+   Duration  317ms (transform 441ms, setup 0ms, collect 544ms, tests 16ms, environment 0ms, prepare 357ms)
+
+
+> tqccl-vision-proxy@0.1.0 typecheck
+> tsc --noEmit
+
+
+> tqccl-mcp-server@0.1.0 deploy:dry-run
+> wrangler deploy --dry-run --outdir .wrangler-dist
+
+
+ ⛅️ wrangler 4.114.0 (update available 4.131.1)
+───────────────────────────────────────────────
+✨ Read 12 files from the assets directory /Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/mcp-worker/.worker-assets
+Total Upload: 1430.00 KiB / gzip: 257.36 KiB
+Your Worker has access to the following bindings:
+Binding                                       Resource                     
+env.ASSETS                                    Assets                       
+env.CF_VERSION_METADATA                       Worker Version Metadata      
+env.TQCCL_MCP_ALLOWED_ORIGINS ("")            Environment Variable         
+env.TQCCL_MCP_MAX_BODY_BYTES ("65536")        Environment Variable         
+env.TQCCL_MCP_MAX_RESULT_BYTES ("98304")      Environment Variable         
+env.TQCCL_MCP_RATE_MAX ("60")                 Environment Variable         
+env.TQCCL_MCP_RATE_WINDOW_MS ("60000")        Environment Variable         
+env.TQCCL_MCP_MAX_IN_FLIGHT ("4")             Environment Variable         
+
+--dry-run: exiting now.
+Repository release gate đã đạt.
+
+EXIT_CODE=0

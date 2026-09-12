@@ -1,0 +1,7 @@
+
+> tqccl-mcp-server@0.1.0 verify:worker-assets
+> node --import tsx scripts/verify-worker-assets.ts /Users/plateau/Project/CamNangTQCCL/plans/reports/fix-260912-1610-worker-evidence.json
+
+Worker asset evidence hợp lệ.
+
+EXIT_CODE=0

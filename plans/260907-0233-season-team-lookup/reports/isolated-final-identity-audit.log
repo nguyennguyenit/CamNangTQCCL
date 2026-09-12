@@ -1,0 +1,20 @@
+2026-09-12T15:44:45.911070
+Changed evidence keys: ['commitSha', 'sourceTree']
+assetInventoryDigest sha256:0d05d58859a1af9600109230f24c03f0be7b63263654e8bee5caff8c8607f94f
+commitSha 4eb7f19b2f97e78f3d336b8f32762f492c7bb2e0
+manifestSha256 sha256:0190d006ec6e7718a481b94baa3d1e581b14043976406d80d5f90a4db0c4fe55
+releaseId sha256:9acbe1a58ec3cc439a0b87870f658a1c0d331285b5457e6f001dd24ffcbe33cf
+schemaVersion 1
+sourceTree git-tree:c012f1ae0f0d19ef056e29fab45da61e3947661d
+workflowBuildId build:sha256b64:ybUy68D9Sj9XSxdr4Uxf8YDBJz6D7GKM9u8Zp8Z9Th8
+Git status clean: ''
+Documentation-only changed files: 10 ['plans/260907-0233-season-team-lookup/phase-04-mcp-and-release-validation.md', 'plans/260907-0233-season-team-lookup/plan.md', 'plans/260907-0233-season-team-lookup/reports/isolated-fixed-final-assets-verify.log', 'plans/260907-0233-season-team-lookup/reports/isolated-fixed-python-scope.log', 'plans/260907-0233-season-team-lookup/reports/isolated-fixed-repository-gate.log', 'plans/260907-0233-season-team-lookup/reports/isolated-fixed-worker-evidence.json', 'plans/260907-0233-season-team-lookup/reports/isolated-fixed-workerd.log', 'plans/260907-0233-season-team-lookup/reports/isolated-release-closure.md', 'plans/260907-0233-season-team-lookup/reports/release-preparation.md', 'plans/journals/2026-09-12-season-lookup-implementation-and-release-gate.md']
+Asset inventory: 12 ['books-dict.json', 'coexist.json', 'heroes-dict.json', 'manifest.json', 'season-content-links.json', 'season-evidence.json', 'season-registry.json', 'season-team-configs.json', 'season-team-evaluations.json', 'tactics.json', 'team-tier.json', 'teams.json']
+Private catalog absent
+Port 4174 lsof exit 1 
+Port 4321 lsof exit 0 COMMAND   PID    USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+node    77549 plateau   32u  IPv6 0x1ea980d63f9ef318      0t0  TCP [::1]:4321 (LISTEN)
+
+Owned test processes remaining: []
+
+EXIT_CODE=0

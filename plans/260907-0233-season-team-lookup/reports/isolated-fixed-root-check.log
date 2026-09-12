@@ -1,0 +1,13 @@
+
+> check
+> astro check
+
+15:35:20 [types] Generated 56ms
+15:35:20 [check] Getting diagnostics for Astro files in /Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup...
+Result (9 files): 
+- 0 errors
+- 0 warnings
+- 0 hints
+
+
+EXIT_CODE=0

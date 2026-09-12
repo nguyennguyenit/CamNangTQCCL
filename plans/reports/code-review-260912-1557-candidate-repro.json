@@ -1,0 +1,25 @@
+{
+  "validBundle": true,
+  "projectedCount": 61,
+  "projectedLimits": {
+    "maxCandidates": 500,
+    "candidateCount": 61
+  },
+  "false": {
+    "portfolio": [],
+    "missingHeroes": 60,
+    "searchedCandidates": 0
+  },
+  "true": {
+    "portfolio": [
+      "config-060"
+    ],
+    "missingHeroes": 60,
+    "searchedCandidates": 3
+  },
+  "onlyBuildableCandidate": {
+    "portfolio": [
+      "config-060"
+    ]
+  }
+}

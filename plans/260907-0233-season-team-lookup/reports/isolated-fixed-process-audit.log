@@ -1,0 +1,10 @@
+2026-09-12T15:37:21.198753
+Worktree: /Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup
+Repository gate harness31800; runnerPID11875; managed previewPID12792 parent12763 port4174; completed
+Root check harness63747 completed; Workerd harness59091 completed
+Port 4174 lsof exit 1 
+Port 4321 lsof exit 0 COMMAND   PID    USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+node    77549 plateau   32u  IPv6 0x1ea980d63f9ef318      0t0  TCP [::1]:4321 (LISTEN)
+
+Git HEAD: f2741f5d1ca83ae6c9eb93783b85514767d91f41
+Git status: ''

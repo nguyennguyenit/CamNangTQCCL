@@ -1,0 +1,46 @@
+
+> test:e2e
+> playwright test tests-e2e/season-lookup.spec.mjs
+
+
+[WebServer] (node:72887) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] (node:73013) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 28 tests using 1 worker
+
+
+(node:73047) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/28] [astro] › tests-e2e/season-lookup.spec.mjs:21:1 › real scenario-only scope remains reference and preserves Khai hoang
+[2/28] [astro] › tests-e2e/season-lookup.spec.mjs:55:1 › verified fixture displays separate config cards, ordered detail and exact source score
+[3/28] [astro] › tests-e2e/season-lookup.spec.mjs:73:1 › detail compares real inventory and changing a selected tactic removes its source score
+[4/28] [astro] › tests-e2e/season-lookup.spec.mjs:86:1 › roster runs exact configs, then scope change clears portfolio and confirmation while retaining inventory
+[5/28] [astro] › tests-e2e/season-lookup.spec.mjs:102:1 › scenario-only analysis blocks matching and offers explicit out-of-scope reference choice
+[6/28] [astro] › tests-e2e/season-lookup.spec.mjs:109:1 › coexist search uses scoped raw text, retains query and escapes source markup
+[7/28] [astro] › tests-e2e/season-lookup.spec.mjs:121:1 › invalid scope and mixed bundle never activate scoped cards or gameplay
+[8/28] [astro] › tests-e2e/season-lookup.spec.mjs:131:1 › late roster scan response cannot restore scope confirmation or inventory changes
+[9/28] [astro] › tests-e2e/season-lookup.spec.mjs:150:41 › season controls and details remain usable at 320px in both themes
+[10/28] [astro] › tests-e2e/season-lookup.spec.mjs:150:41 › season controls and details remain usable at 375px in both themes
+[11/28] [astro] › tests-e2e/season-lookup.spec.mjs:150:41 › season controls and details remain usable at 768px in both themes
+[12/28] [astro] › tests-e2e/season-lookup.spec.mjs:150:41 › season controls and details remain usable at 1024px in both themes
+[13/28] [astro] › tests-e2e/season-lookup.spec.mjs:166:1 › closing details after a search preserves current filters and returns keyboard focus
+[14/28] [astro] › tests-e2e/season-lookup.spec.mjs:179:32 › roster enforces scoped candidate boundary 500
+[15/28] [astro] › tests-e2e/season-lookup.spec.mjs:179:32 › roster enforces scoped candidate boundary 501
+[16/28] [astro] › tests-e2e/season-lookup.spec.mjs:196:1 › all-reference keeps historical tiers separately from executable configuration tiers
+[17/28] [astro] › tests-e2e/season-lookup.spec.mjs:211:1 › scoped recommendation exposes usable add-team actions and original source score
+[18/28] [astro] › tests-e2e/season-lookup.spec.mjs:225:1 › card score follows its displayed hero selection rather than another valid scored alternative
+[19/28] [astro] › tests-e2e/season-lookup.spec.mjs:242:1 › configuration details retain raw effect labels, multiline mechanics and required conditions
+[20/28] [astro] › tests-e2e/season-lookup.spec.mjs:252:1 › validated source score with unknown upstream season still opens its exact configuration
+[21/28] [astro] › tests-e2e/season-lookup.spec.mjs:259:1 › unavailable season bundle keeps no-context legacy gameplay with an ordinary search query
+[22/28] [astro] › tests-e2e/season-lookup.spec.mjs:266:32 › real Binh Dien review screenshot at 375px
+[23/28] [astro] › tests-e2e/season-lookup.spec.mjs:266:32 › real Binh Dien review screenshot at 1280px
+[24/28] [astro] › tests-e2e/season-lookup.spec.mjs:273:1 › legacy Team PK retains derived faction facets without mutating the validated bundle
+[25/28] [astro] › tests-e2e/season-lookup.spec.mjs:280:1 › opening detail keeps its close control below the sticky navigation
+[26/28] [astro] › tests-e2e/season-lookup.spec.mjs:287:1 › coexist distinguishes exact-pair applicable groups from scenario-only reference counts
+[27/28] [astro] › tests-e2e/season-lookup.spec.mjs:301:1 › optional unverified conditions remain informational in inventory comparison
+[28/28] [astro] › tests-e2e/season-lookup.spec.mjs:310:1 › keyboard facet and source toggles preserve focus and pressed state after filtering
+  28 passed (12.6s)

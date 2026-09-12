@@ -1,0 +1,186 @@
+✖ seasonal feasibility reaches the last of 61 configs with missing heros (fullBox=false) (14.237167ms)
+✖ seasonal feasibility reaches the last of 81 configs with missing heros (fullBox=true) (9.639917ms)
+✖ seasonal feasibility reaches the last of 61 configs with missing tactics (fullBox=false) (7.315666ms)
+✖ seasonal feasibility reaches the last of 81 configs with missing tactics (fullBox=true) (10.999708ms)
+✖ seasonal feasibility reaches the last of 500 configs with missing heros (fullBox=false) (51.516875ms)
+✖ seasonal feasibility reaches the last of 500 configs with missing heros (fullBox=true) (41.852458ms)
+✖ seasonal same-team configs do not crowd out a compatible team (fullBox=false) (5.740792ms)
+✖ seasonal same-team configs do not crowd out a compatible team (fullBox=true) (5.938125ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 0
+ℹ fail 8
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 186.635292
+
+✖ failing tests:
+
+test at tests-js/season-context.test.mjs:247:3
+✖ seasonal feasibility reaches the last of 61 configs with missing heros (fullBox=false) (14.237167ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + []
+  - [
+  -   'config-060'
+  - ]
+  
+      at TestContext.<anonymous> (file:///Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests-js/season-context.test.mjs:273:12)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ 'config-060' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests-js/season-context.test.mjs:247:3
+✖ seasonal feasibility reaches the last of 81 configs with missing heros (fullBox=true) (9.639917ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + []
+  - [
+  -   'config-080'
+  - ]
+  
+      at TestContext.<anonymous> (file:///Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests-js/season-context.test.mjs:273:12)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ 'config-080' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests-js/season-context.test.mjs:247:3
+✖ seasonal feasibility reaches the last of 61 configs with missing tactics (fullBox=false) (7.315666ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + []
+  - [
+  -   'config-060'
+  - ]
+  
+      at TestContext.<anonymous> (file:///Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests-js/season-context.test.mjs:273:12)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ 'config-060' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests-js/season-context.test.mjs:247:3
+✖ seasonal feasibility reaches the last of 81 configs with missing tactics (fullBox=true) (10.999708ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + []
+  - [
+  -   'config-080'
+  - ]
+  
+      at TestContext.<anonymous> (file:///Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests-js/season-context.test.mjs:273:12)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ 'config-080' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests-js/season-context.test.mjs:247:3
+✖ seasonal feasibility reaches the last of 500 configs with missing heros (fullBox=false) (51.516875ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + []
+  - [
+  -   'config-499'
+  - ]
+  
+      at TestContext.<anonymous> (file:///Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests-js/season-context.test.mjs:273:12)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ 'config-499' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests-js/season-context.test.mjs:247:3
+✖ seasonal feasibility reaches the last of 500 configs with missing heros (fullBox=true) (41.852458ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + []
+  - [
+  -   'config-499'
+  - ]
+  
+      at TestContext.<anonymous> (file:///Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests-js/season-context.test.mjs:273:12)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ 'config-499' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests-js/season-context.test.mjs:278:3
+✖ seasonal same-team configs do not crowd out a compatible team (fullBox=false) (5.740792ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      'config-000',
+  -   'config-060'
+    ]
+  
+      at TestContext.<anonymous> (file:///Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests-js/season-context.test.mjs:307:12)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'config-000' ],
+    expected: [ 'config-000', 'config-060' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests-js/season-context.test.mjs:278:3
+✖ seasonal same-team configs do not crowd out a compatible team (fullBox=true) (5.938125ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      'config-000',
+  -   'config-060'
+    ]
+  
+      at TestContext.<anonymous> (file:///Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests-js/season-context.test.mjs:307:12)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'config-000' ],
+    expected: [ 'config-000', 'config-060' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

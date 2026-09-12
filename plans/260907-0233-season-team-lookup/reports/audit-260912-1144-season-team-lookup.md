@@ -85,7 +85,7 @@ Bổ sung ba contract và owners/tests vào phase liên quan, cập nhật index
 
 ## Bổ sung sau khi đọc session 01a093e5-69d8-7213-83bd-0f1f1ee79195
 
-Đã đọc các lượt người dùng, phản hồi và báo cáo bàn giao của session ngày 2026-09-12, theo yêu cầu bổ sung ngữ cảnh. Bằng chứng hiện có tại đối chiếu thống nhất (tài liệu ngoài nhánh: `../../reports/analysis-260912-1142-unified-lookup.md`) và JSON tái lập (tài liệu ngoài nhánh: `../../reports/analysis-260912-1142-unified-lookup.json`). Kiểm lại cả **9 input hashes**, tất cả khớp file hiện tại; không cần chạy lại phép ghép tên chỉ để lấy cùng kết quả.
+Đã đọc các lượt người dùng, phản hồi và báo cáo bàn giao của session ngày 2026-09-12, theo yêu cầu bổ sung ngữ cảnh. Bằng chứng hiện có tại [đối chiếu thống nhất](../../reports/analysis-260912-1142-unified-lookup.md) và [JSON tái lập](../../reports/analysis-260912-1142-unified-lookup.json). Kiểm lại cả **9 input hashes**, tất cả khớp file hiện tại; không cần chạy lại phép ghép tên chỉ để lấy cùng kết quả.
 
 - **Quyết định sản phẩm đã xác nhận:** người dùng muốn “Một bộ tra cứu thống nhất, không cần ghi nguồn đến từ đâu vì user cũng không quan tâm”, rồi yêu cầu tiếp tục. Nguồn giữ nội bộ; giữ ID/tên Việt và các variant; chỉ hiện mùa/điều kiện khi ảnh hưởng cách chơi. Không mở lại quyết định ẩn nguồn cho danh mục thống nhất.
 - **Mức hoàn thành đối chiếu:** 112/112 tướng và 226/240 chiến pháp có cặp tên; 79 liên kết reviewed, 259 ứng viên mới; 11 khác biệt chỉ số/thích tính. Chưa đối chiếu toàn bộ mô tả, Việt hóa hoặc hợp nhất bốn danh mục mới. Không biến kết quả ghép tên thành mapping đã review hay xác nhận áp dụng VN.
