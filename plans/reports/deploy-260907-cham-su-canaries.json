@@ -1,0 +1,14 @@
+[
+  {
+    "name": "preflight",
+    "status": 204
+  },
+  {
+    "name": "invalid-json",
+    "status": 400
+  },
+  {
+    "name": "alien-origin",
+    "status": 403
+  }
+]

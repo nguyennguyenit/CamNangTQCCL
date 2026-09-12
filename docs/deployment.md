@@ -17,12 +17,17 @@ Project deploy is split into three surfaces:
 
 ## Latest Static Pages Deploy
 
-- Date: 2026-08-25
+- Date: 2026-09-07
 - Production URL: `https://tqccl.pages.dev`
-- Deployment URL: `https://239d7027.tqccl.pages.dev`
-- Deployment ID: `239d7027-a7d4-42cf-aa02-358e9b4abfcb`
-- Source commit: `2a754f5a4508695dd7871bf72fd348117f9aeba3`
-- Published files: `index.html`, `css/`, `js/`, `data/`
+- Deployment URL: `https://4e35bd85.tqccl.pages.dev`
+- Deployment ID: `4e35bd85-0759-4e39-ae20-e785300c9757`
+- Source commit: `0a5780155d7aa3fcb1869b4f5bb11912ead3db2f` (clean detached checkout of local main)
+- Method: Wrangler direct upload; no Git provider integration or Git push required.
+- Published files: 35 public assets plus deployment header control.
+- Preview verified: `https://505fb655.tqccl.pages.dev`
+- Previous production / rollback target: `cc23dd7a-c1ad-4bc0-b920-634fa7436e23`
+- Verification: all public bytes and cache headers matched; 8 standalone Cham Su groups, 15 opening teams, 9 sections, reload and 375px layout passed. Vision canaries returned 204/400/403 without model requests.
+- Release evidence and checksums: [Pages release report](../plans/reports/deploy-260907-cham-su-pages.md).
 
 ## Latest Research MCP Deploy
 
@@ -38,7 +43,9 @@ Project deploy is split into three surfaces:
 
 ## Deploy Commands
 
-Static site is expected to deploy from `main` through Cloudflare Pages.
+Static site uses Cloudflare Pages direct upload from a verified, clean `main` checkout.
+Follow the preview and production checks in [the deployment guide](deployment-guide.md).
+After verification, upload `dist/` with `wrangler pages deploy dist --project-name tqccl --branch main --commit-hash <verified-sha>`.
 
 Research MCP production deploys only through the manual exact-SHA workflow in
 `.github/workflows/mcp-worker.yml`. A push to `main` runs the credential-free
