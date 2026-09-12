@@ -1,0 +1,5991 @@
+{
+  "admitted": [
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Ngô",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Kỳ Chính Tương Sinh",
+            "Cầm Binh Khí",
+            "Văn Thao"
+          ],
+          "displayNameVi": "SP Lữ Mông",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:e351aaeb0ddd2d6aab11bf2f",
+          "nameRaw": "SP Lữ Mông",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:c6f7f51b6bf1df01ac4f48b8",
+            "tactic:5a3330204c026f7ca0eb4247"
+          ],
+          "tacticSlotsRaw": [
+            "Đương Phong Thôi Quyết",
+            "Binh Vô Thường Thế"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Kỳ Chính Tương Sinh",
+            "Văn Thao",
+            "Cầm Binh Khí"
+          ],
+          "displayNameVi": "Lục Tốn",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:f88e20a568d008a29c2de19b",
+          "nameRaw": "Lục Tốn",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:93eee8cd629e425e57230f0b",
+            "tactic:6db4c47073e9e3772afd2f5a"
+          ],
+          "tacticSlotsRaw": [
+            "Tiên Thành Kỳ Lự",
+            "Cắt Xương Trị Độc"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Gặp Địch Không Loạn",
+            "Khích Lệ Lòng Quân",
+            "Khép Hờ"
+          ],
+          "displayNameVi": "Lỗ Túc",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:8dc0bfe19c5d81dc129c8549",
+          "nameRaw": "Lỗ Túc",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:4317628fd1df0a24a366bb98",
+            "tactic:a4a3776833b44770b1a8cee1"
+          ],
+          "tacticSlotsRaw": [
+            "Tạm Lánh Sóng Gió",
+            "Bạch Nhị Binh"
+          ]
+        }
+      ],
+      "legacyTeamId": "team-intro-4",
+      "legacyVariantId": "v-5aa993f59e12b9667e9def2d781c0bd2384d6804b2939f0ebb09c40397c460db",
+      "name": "Mông Tốn Túc",
+      "nickname": "Tân Ngô Thương",
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "team-intro",
+      "sourceLabel": "team-intro",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Thương"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Ngụy",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Tam Quân Chi Chúng",
+            "Rèn Luyện",
+            "Dẫn Quân"
+          ],
+          "displayNameVi": "SP Tuân Úc",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:e288f937bcc749ff9f52c29c",
+          "nameRaw": "SP Tuân Úc",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:6e4941073328cf7f29a20d1c",
+            "tactic:6db4c47073e9e3772afd2f5a"
+          ],
+          "tacticSlotsRaw": [
+            "Dốc Sức Tính Kế",
+            "Cắt Xương Trị Độc"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Kỳ Chính Tương Sinh",
+            "Văn Thao",
+            "Cầm Binh Khí"
+          ],
+          "displayNameVi": "SP Quách Gia",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:85476f55ae3a1af73cc539e4",
+          "nameRaw": "SP Quách Gia",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:2b52cf9439f3dd4913ba022b",
+            "tactic:c6f7f51b6bf1df01ac4f48b8"
+          ],
+          "tacticSlotsRaw": [
+            "Đoạt Hồn Hiệp Phách",
+            "Đương Phong Thôi Quyết"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Tam Quân Chi Chúng",
+            "Chiến Đấu Trường Kỳ",
+            "Rèn Luyện"
+          ],
+          "displayNameVi": "Tuân Du",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:9f7272bc767cfa4ad9cdca1f",
+          "nameRaw": "Tuân Du",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:86e16d1572182950b52b68a4",
+            "tactic:4e2a3a01d301a88145fc358c"
+          ],
+          "tacticSlotsRaw": [
+            "Thượng Binh Phạt Mưu",
+            "Anh Thành Tự Thủ"
+          ]
+        }
+      ],
+      "legacyTeamId": "team-intro-12",
+      "legacyVariantId": "v-a8a2c8fd5e8a798a34a971206874f1f910e9740f17b0b848b836c9edba8e1843",
+      "name": "Úc Gia Du",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "team-intro",
+      "sourceLabel": "team-intro",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Kỵ"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Ngụy",
+      "historicalRankings": [
+        {
+          "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0.5 · 遼姬騎",
+          "tier": "T0.5",
+          "updatedAt": "2026-07-03"
+        }
+      ],
+      "historicalTier": "T0.5",
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Liền Mạch Một Hơi",
+            "Thắng Trận",
+            "Cầm Binh Khí"
+          ],
+          "displayNameVi": "Trương Liêu",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:a5b74013147e47af899b97e2",
+          "nameRaw": "Trương Liêu",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:33b07e59ae742d654310b502",
+            "tactic:c89330bdd98175d9fff21310"
+          ],
+          "tacticSlotsRaw": [
+            "Mau Giành Lợi Thế",
+            "Bạo Lệ Vô Nhân"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Đánh Giá Tình Hình",
+            "Khai Hạp",
+            "Chia Lời"
+          ],
+          "displayNameVi": "Quách Gia",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:525276a9bc4a7162be8f9589",
+          "nameRaw": "Quách Gia",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:b8b9d6c27fedfd90f8d9bc1c",
+            "tactic:33f19eeeabf7ea2691a0e63f"
+          ],
+          "tacticSlotsRaw": [
+            "Thuyền Cỏ Mượn Tên",
+            "Phong Thi Trận"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Tốc Chiến",
+            "Khép Hờ"
+          ],
+          "displayNameVi": "Vương Nguyên Cơ",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:822cbf22feb0736b2622316e",
+          "nameRaw": "Vương Nguyên Cơ",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:d0893d3b14d3cdc7ab2e24d4",
+            "tactic:642057bf9b5ab5072e02331a"
+          ],
+          "tacticSlotsRaw": [
+            "Hổ Báo Kỵ",
+            "Không Đánh Mà Thắng"
+          ]
+        }
+      ],
+      "legacyTeamId": "team-intro-14",
+      "legacyVariantId": "v-97fdbcb4a85ffcb7416c2b48f7b0909931b05e4242889c3c9a3c478a9df9569e",
+      "name": "Liêu Gia Cơ",
+      "nickname": "Liêu Cơ Kỵ",
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "team-intro",
+      "sourceLabel": "team-intro",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Kỵ"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Ngô",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Tránh Thế Mạnh Của Địch",
+            "Thế Phòng Thủ",
+            "Phòng Bị"
+          ],
+          "displayNameVi": "SP Chu Du",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:6e4895ff6d12ab9636cec0cf",
+          "nameRaw": "SP Chu Du",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:41c42919908588ff170a415a",
+            "tactic:2e59c28ff5dff77e4ec1c8c7"
+          ],
+          "tacticSlotsRaw": [
+            "Toàn Quân Đồng Lòng",
+            "Sĩ Biệt Tam Nhật"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Kỳ Chính Tương Sinh",
+            "Văn Thao",
+            "Giấu Đao"
+          ],
+          "displayNameVi": "SP Lữ Mông",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:e351aaeb0ddd2d6aab11bf2f",
+          "nameRaw": "SP Lữ Mông",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:b8b9d6c27fedfd90f8d9bc1c",
+            "tactic:c6f7f51b6bf1df01ac4f48b8"
+          ],
+          "tacticSlotsRaw": [
+            "Thuyền Cỏ Mượn Tên",
+            "Đương Phong Thôi Quyết"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Yêu Lính Thương Dân",
+            "Thế Phòng Thủ",
+            "Cương Nhu"
+          ],
+          "displayNameVi": "Lỗ Túc",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:8dc0bfe19c5d81dc129c8549",
+          "nameRaw": "Lỗ Túc",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:4317628fd1df0a24a366bb98",
+            "tactic:5c36f116aabf47051ccdc7c8"
+          ],
+          "tacticSlotsRaw": [
+            "Tạm Lánh Sóng Gió",
+            "Thừa Địch Bất Ngu"
+          ]
+        }
+      ],
+      "legacyTeamId": "team-intro-20",
+      "legacyVariantId": "v-bbdc4d26abbb973b65f49e432b4d49d348a6629467dee6aa9fd4717680b1f899",
+      "name": "Du Mông Túc",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "team-intro",
+      "sourceLabel": "team-intro",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Cung"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Ngô",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Thuận Thiên Thuận Tời",
+            "Tướng Uy",
+            "Xem Bói"
+          ],
+          "displayNameVi": "Chu Du",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:ff0ae9c2a3b32145b872335e",
+          "nameRaw": "Chu Du",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:2b52cf9439f3dd4913ba022b",
+            "tactic:4e2a3a01d301a88145fc358c"
+          ],
+          "tacticSlotsRaw": [
+            "Đoạt Hồn Hiệp Phách",
+            "Anh Thành Tự Thủ"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Man Dũng Phi Dũng",
+            "Võ Lược",
+            "Phân Hiểm"
+          ],
+          "displayNameVi": "Thái Sử Từ",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:5ba7e78c435dbbbe3d6692fd",
+          "nameRaw": "Thái Sử Từ",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:c6f7f51b6bf1df01ac4f48b8",
+            "tactic:33b07e59ae742d654310b502"
+          ],
+          "tacticSlotsRaw": [
+            "Đương Phong Thôi Quyết",
+            "Mau Giành Lợi Thế"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Không Chiến Mà Thắng",
+            "Thế Phòng Thủ",
+            "Phòng Bị"
+          ],
+          "displayNameVi": "SP Lữ Mông",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:e351aaeb0ddd2d6aab11bf2f",
+          "nameRaw": "SP Lữ Mông",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:ab563cec35b374d818db011c",
+            "tactic:b8b9d6c27fedfd90f8d9bc1c"
+          ],
+          "tacticSlotsRaw": [
+            "An Ủi Quân Dân",
+            "Thuyền Cỏ Mượn Tên"
+          ]
+        }
+      ],
+      "legacyTeamId": "team-intro-23",
+      "legacyVariantId": "v-ebe0e8e3ee668a19edf4cbcd97bc0dbf15a1b1f084ffa81d3161c5aa5766f032",
+      "name": "Du Từ Mông",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "team-intro",
+      "sourceLabel": "team-intro",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Cung"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Ngô",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Thắng Sẽ Càng Mạnh",
+            "Cầm Binh Khí",
+            "Văn Thao"
+          ],
+          "displayNameVi": "Tôn Quyền",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:2d0b5eef6609451091610e38",
+          "nameRaw": "Tôn Quyền",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:c6f7f51b6bf1df01ac4f48b8",
+            "tactic:5a3330204c026f7ca0eb4247"
+          ],
+          "tacticSlotsRaw": [
+            "Đương Phong Thôi Quyết",
+            "Binh Vô Thường Thế"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Yêu Lính Thương Dân",
+            "Thế Phòng Thủ",
+            "Phòng Bị"
+          ],
+          "displayNameVi": "Lỗ Túc",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:8dc0bfe19c5d81dc129c8549",
+          "nameRaw": "Lỗ Túc",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:22b1c8027866a834bf3c859d",
+            "tactic:4317628fd1df0a24a366bb98"
+          ],
+          "tacticSlotsRaw": [
+            "Hình Nhất Trận",
+            "Tạm Lánh Sóng Gió"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Khép Hờ",
+            "Cứu Chủ"
+          ],
+          "displayNameVi": "SP Chu Du",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:6e4895ff6d12ab9636cec0cf",
+          "nameRaw": "SP Chu Du",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:e9ef6360c4ba122bfa3a0d8a",
+            "tactic:b8b9d6c27fedfd90f8d9bc1c"
+          ],
+          "tacticSlotsRaw": [
+            "Sợ Bóng Sợ Gió",
+            "Thuyền Cỏ Mượn Tên"
+          ]
+        }
+      ],
+      "legacyTeamId": "team-intro-36",
+      "legacyVariantId": "v-9645ea24f3d11a9bbd0bf54567c5b7049ab8a9d03aa253d29560928400a4a344",
+      "name": "Quyền Túc Du",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "team-intro",
+      "sourceLabel": "team-intro",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Cung"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Ngụy",
+      "historicalRankings": [
+        {
+          "source": "video-260701 · T0 · 太尉盾",
+          "tier": "T0",
+          "updatedAt": "2026-07-03"
+        },
+        {
+          "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0 · 太尉盾",
+          "tier": "T0",
+          "updatedAt": "2026-07-03"
+        }
+      ],
+      "historicalTier": "T0",
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Tam Quân Chi Chúng",
+            "Rèn Luyện",
+            "Dẫn Quân"
+          ],
+          "displayNameVi": "Tư Mã Ý",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:32ae32453c0b8b8c5e3ab54e",
+          "nameRaw": "Tư Mã Ý",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:2e59c28ff5dff77e4ec1c8c7",
+            "tactic:41c42919908588ff170a415a"
+          ],
+          "tacticSlotsRaw": [
+            "Sĩ Biệt Tam Nhật",
+            "Toàn Quân Đồng Lòng"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Tam Quân Chi Chúng",
+            "Rèn Luyện",
+            "Dẫn Quân"
+          ],
+          "displayNameVi": "Mãn Sủng",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:f672875f4c888aacfd702df3",
+          "nameRaw": "Mãn Sủng",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:22b1c8027866a834bf3c859d",
+            "tactic:137819a989550e809568d197"
+          ],
+          "tacticSlotsRaw": [
+            "Hình Nhất Trận",
+            "Nhân Lợi Chế Quyền"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Tam Quân Chi Chúng",
+            "Rèn Luyện",
+            "Dẫn Quân"
+          ],
+          "displayNameVi": "Tào Tháo",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:4fbe01ab8d14bc669b3e036b",
+          "nameRaw": "Tào Tháo",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:a8f1eb789e2d4ddebe7d7338",
+            "tactic:20c50776d74518445de1ba51"
+          ],
+          "tacticSlotsRaw": [
+            "Mê Hoặc",
+            "Lính Giáp Mây"
+          ]
+        }
+      ],
+      "legacyTeamId": "team-intro-42",
+      "legacyVariantId": "v-45818ab3ba08c9fbac6d97083345f15fb830c6a8d779dcc3667bec1fabc73988",
+      "name": "Ý Sủng Tháo",
+      "nickname": "Thái Úy Khiên",
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "team-intro",
+      "sourceLabel": "team-intro",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Khiên"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Ngụy",
+      "historicalRankings": [
+        {
+          "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0.5 · 墩墩盾",
+          "tier": "T0.5",
+          "updatedAt": "2026-07-03"
+        }
+      ],
+      "historicalTier": "T0.5",
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Đánh Giá Tình Hình",
+            "Khai Hạp",
+            "Chia Lời"
+          ],
+          "displayNameVi": "Tào Tháo",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:4fbe01ab8d14bc669b3e036b",
+          "nameRaw": "Tào Tháo",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:b8b9d6c27fedfd90f8d9bc1c",
+            "tactic:20c50776d74518445de1ba51"
+          ],
+          "tacticSlotsRaw": [
+            "Thuyền Cỏ Mượn Tên",
+            "Lính Giáp Mây"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Tam Lý Nhĩ Hoàn",
+            "Giáp Sắt",
+            "Cương Nhu"
+          ],
+          "displayNameVi": "Hạ Hầu Đôn",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:2a7e68aa7262c5da7f9fcbf1",
+          "nameRaw": "Hạ Hầu Đôn",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:1486da80003b91a6a2d624e6",
+            "tactic:33520b045a7c014d77354a7e"
+          ],
+          "tacticSlotsRaw": [
+            "Khí Lăng Tam Quân",
+            "Chúng Động Vạn Kế"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Khép Hờ",
+            "Tốc Chiến"
+          ],
+          "displayNameVi": "Mãn Sủng",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:f672875f4c888aacfd702df3",
+          "nameRaw": "Mãn Sủng",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:642057bf9b5ab5072e02331a",
+            "tactic:4317628fd1df0a24a366bb98"
+          ],
+          "tacticSlotsRaw": [
+            "Không Đánh Mà Thắng",
+            "Tạm Lánh Sóng Gió"
+          ]
+        }
+      ],
+      "legacyTeamId": "team-intro-48",
+      "legacyVariantId": "v-f21b3cd97b0a3fadf2b26298834eb63147b8e26e522bede8d13a4f631db5d117",
+      "name": "Tháo Đôn Sủng",
+      "nickname": "Đôn Đôn Khiên",
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "team-intro",
+      "sourceLabel": "team-intro",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Khiên"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Hỗn hợp",
+      "historicalRankings": [
+        {
+          "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0.5 · 詩詩盾",
+          "tier": "T0.5",
+          "updatedAt": "2026-07-03"
+        }
+      ],
+      "historicalTier": "T0.5",
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Đánh Phá Vòng Vây",
+            "Quỷ Mưu",
+            "Tướng Uy"
+          ],
+          "displayNameVi": "Trương Giác",
+          "faction": "Quần",
+          "heroIdentityId": "hero:5508fa98c2d6421d3e3c62ef",
+          "nameRaw": "Trương Giác",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:f7b8cbb1d2c08f57b4b800cc",
+            "tactic:2e59c28ff5dff77e4ec1c8c7"
+          ],
+          "tacticSlotsRaw": [
+            "Thái Bình Đạo Pháp",
+            "Sĩ Biệt Tam Nhật"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Khích Lệ Lòng Quân",
+            "Cứu Chủ"
+          ],
+          "displayNameVi": "Lưu Bị",
+          "faction": "Thục",
+          "heroIdentityId": "hero:daf7b56cd3aea44f7fdfd23d",
+          "nameRaw": "Lưu Bị",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:6af79c1f49fc0b716837f40e",
+            "tactic:b8b9d6c27fedfd90f8d9bc1c"
+          ],
+          "tacticSlotsRaw": [
+            "Hãm Trận Doanh",
+            "Thuyền Cỏ Mượn Tên"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Yêu Lính Thương Dân",
+            "Thế Phòng Thủ",
+            "Phòng Bị"
+          ],
+          "displayNameVi": "Lỗ Túc",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:8dc0bfe19c5d81dc129c8549",
+          "nameRaw": "Lỗ Túc",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:33f19eeeabf7ea2691a0e63f",
+            "tactic:4317628fd1df0a24a366bb98"
+          ],
+          "tacticSlotsRaw": [
+            "Phong Thi Trận",
+            "Tạm Lánh Sóng Gió"
+          ]
+        }
+      ],
+      "legacyTeamId": "team-intro-49",
+      "legacyVariantId": "v-c4fffaedd2546424dbb8029547118dbd5e046a14b0fe0fde7f653d8ced839686",
+      "name": "Giác Bị Túc",
+      "nickname": "Thi Thi Khiên",
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "team-intro",
+      "sourceLabel": "team-intro",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Khiên"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Ngụy",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Yêu Lính Thương Dân",
+            "Nghĩa Dũng",
+            "Thế Phòng Thủ"
+          ],
+          "displayNameVi": "Tư Mã Ý",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:32ae32453c0b8b8c5e3ab54e",
+          "nameRaw": "Tư Mã Ý",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:68df29a22ef08b5391a8a176",
+            "tactic:2e59c28ff5dff77e4ec1c8c7"
+          ],
+          "tacticSlotsRaw": [
+            "Dụng Võ Thần Thông",
+            "Sĩ Biệt Tam Nhật"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Yêu Lính Thương Dân",
+            "Giáp Sắt",
+            "Thế Phòng Thủ"
+          ],
+          "displayNameVi": "Trương Xuân Hoa",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:66476632eb31ce501972f221",
+          "nameRaw": "Trương Xuân Hoa",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:33f19eeeabf7ea2691a0e63f",
+            "tactic:a8f1eb789e2d4ddebe7d7338"
+          ],
+          "tacticSlotsRaw": [
+            "Phong Thi Trận",
+            "Mê Hoặc"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Khép Hờ",
+            "Khích Lệ Lòng Quân"
+          ],
+          "displayNameVi": "Mãn Sủng",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:f672875f4c888aacfd702df3",
+          "nameRaw": "Mãn Sủng",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:ab563cec35b374d818db011c",
+            "tactic:b8b9d6c27fedfd90f8d9bc1c"
+          ],
+          "tacticSlotsRaw": [
+            "An Ủi Quân Dân",
+            "Thuyền Cỏ Mượn Tên"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-71",
+      "legacyVariantId": "v-d78dd5f030ca2a1c2c81bb1306faf89c4b24e7bbf77113ea9ada4027dd943d0e",
+      "name": "Ý Hoa Sủng",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Khiên"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Ngụy",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Khích Lệ Lòng Quân",
+            "Tốc Chiến"
+          ],
+          "displayNameVi": "SP Tuân Úc",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:e288f937bcc749ff9f52c29c",
+          "nameRaw": "SP Tuân Úc",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:6e4941073328cf7f29a20d1c",
+            "tactic:6db4c47073e9e3772afd2f5a"
+          ],
+          "tacticSlotsRaw": [
+            "Dốc Sức Tính Kế",
+            "Cắt Xương Trị Độc"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Giả Nai Trước Địch",
+            "Bách Chiến",
+            "Khép Hờ"
+          ],
+          "displayNameVi": "Tuân Du",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:9f7272bc767cfa4ad9cdca1f",
+          "nameRaw": "Tuân Du",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:4317628fd1df0a24a366bb98",
+            "tactic:6ced0644b4b499b37c28d4eb"
+          ],
+          "tacticSlotsRaw": [
+            "Tạm Lánh Sóng Gió",
+            "Lửa Đuổi Gió Bay"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Kỳ Chính Tương Sinh",
+            "Văn Thao",
+            "Cầm Binh Khí"
+          ],
+          "displayNameVi": "SP Quách Gia",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:85476f55ae3a1af73cc539e4",
+          "nameRaw": "SP Quách Gia",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:2b52cf9439f3dd4913ba022b",
+            "tactic:c6f7f51b6bf1df01ac4f48b8"
+          ],
+          "tacticSlotsRaw": [
+            "Đoạt Hồn Hiệp Phách",
+            "Đương Phong Thôi Quyết"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-76",
+      "legacyVariantId": "v-ab9e58741fb31e6f8fbe81ddad1b16873e3f40b2f024016bca32ec15a905682a",
+      "name": "Úc Du Gia",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Kỵ"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Ngụy",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Khích Lệ Lòng Quân",
+            "Tốc Chiến"
+          ],
+          "displayNameVi": "Tào Tháo",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:4fbe01ab8d14bc669b3e036b",
+          "nameRaw": "Tào Tháo",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:ab563cec35b374d818db011c",
+            "tactic:b8b9d6c27fedfd90f8d9bc1c"
+          ],
+          "tacticSlotsRaw": [
+            "An Ủi Quân Dân",
+            "Thuyền Cỏ Mượn Tên"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Yêu Lính Thương Dân",
+            "Thế Phòng Thủ",
+            "Phòng Bị"
+          ],
+          "displayNameVi": "Giả Hủ",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:397edec8b12ae66acf2c14bf",
+          "nameRaw": "Giả Hủ",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:e9ef6360c4ba122bfa3a0d8a",
+            "tactic:e9ef6360c4ba122bfa3a0d8a"
+          ],
+          "tacticSlotsRaw": [
+            "Sợ Bóng Sợ Gió",
+            "Sợ Bóng Sợ Gió"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Yêu Lính Thương Dân",
+            "Thế Phòng Thủ",
+            "Phòng Bị"
+          ],
+          "displayNameVi": "Tuân Du",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:9f7272bc767cfa4ad9cdca1f",
+          "nameRaw": "Tuân Du",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:2b52cf9439f3dd4913ba022b",
+            "tactic:6db4c47073e9e3772afd2f5a"
+          ],
+          "tacticSlotsRaw": [
+            "Đoạt Hồn Hiệp Phách",
+            "Cắt Xương Trị Độc"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-79",
+      "legacyVariantId": "v-8593dfe966a369fcb85cfd4ecc751260c84e1d973b96ab447933ffec95ef5c71",
+      "name": "Tháo Hủ Du",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Kỵ",
+        "Cung"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Ngụy",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Khép Hờ",
+            "Tốc Chiến"
+          ],
+          "displayNameVi": "Tào Tháo",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:4fbe01ab8d14bc669b3e036b",
+          "nameRaw": "Tào Tháo",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:20c50776d74518445de1ba51",
+            "tactic:b8b9d6c27fedfd90f8d9bc1c"
+          ],
+          "tacticSlotsRaw": [
+            "Lính Giáp Mây",
+            "Thuyền Cỏ Mượn Tên"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Tam Lý Nhĩ Hoàn",
+            "Giáp Sắt",
+            "Cương Nhu"
+          ],
+          "displayNameVi": "Hạ Hầu Đôn",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:2a7e68aa7262c5da7f9fcbf1",
+          "nameRaw": "Hạ Hầu Đôn",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:1486da80003b91a6a2d624e6",
+            "tactic:33520b045a7c014d77354a7e"
+          ],
+          "tacticSlotsRaw": [
+            "Khí Lăng Tam Quân",
+            "Chúng Động Vạn Kế"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Khép Hờ",
+            "Tốc Chiến"
+          ],
+          "displayNameVi": "Mãn Sủng",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:f672875f4c888aacfd702df3",
+          "nameRaw": "Mãn Sủng",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:6db4c47073e9e3772afd2f5a",
+            "tactic:4317628fd1df0a24a366bb98"
+          ],
+          "tacticSlotsRaw": [
+            "Cắt Xương Trị Độc",
+            "Tạm Lánh Sóng Gió"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-81",
+      "legacyVariantId": "v-4ee135f4f9f22df413d51bb33430773223bd6748da16f59184ab3c6e4e9d30b8",
+      "name": "Tháo Đôn Sủng",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Kỵ"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Thục",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Man Dũng Phi Dũng",
+            "Thắng Trận",
+            "Cầm Binh Khí"
+          ],
+          "displayNameVi": "Khương Duy",
+          "faction": "Thục",
+          "heroIdentityId": "hero:0c61d8ccd98726c3e4fd4861",
+          "nameRaw": "Khương Duy",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:2b52cf9439f3dd4913ba022b",
+            "tactic:4317628fd1df0a24a366bb98"
+          ],
+          "tacticSlotsRaw": [
+            "Đoạt Hồn Hiệp Phách",
+            "Tạm Lánh Sóng Gió"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Đánh Sau Trúng Trước",
+            "Quỷ Mưu",
+            "Xem Bói"
+          ],
+          "displayNameVi": "Bàng Thống",
+          "faction": "Thục",
+          "heroIdentityId": "hero:d04269a972ec14e0c95efdec",
+          "nameRaw": "Bàng Thống",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:f7b8cbb1d2c08f57b4b800cc",
+            "tactic:0d642d0266749441f22546d6"
+          ],
+          "tacticSlotsRaw": [
+            "Thái Bình Đạo Pháp",
+            "Vô Đương Phi Quân"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Khích Lệ Lòng Quân",
+            "Khép Hờ"
+          ],
+          "displayNameVi": "Gia Cát Lượng",
+          "faction": "Thục",
+          "heroIdentityId": "hero:53081486f9dbff9359d80832",
+          "nameRaw": "Gia Cát Lượng",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:6e4941073328cf7f29a20d1c",
+            "tactic:6db4c47073e9e3772afd2f5a"
+          ],
+          "tacticSlotsRaw": [
+            "Dốc Sức Tính Kế",
+            "Cắt Xương Trị Độc"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-89",
+      "legacyVariantId": "v-bbdfb327990e8db243d7d8d94a703d778b917f8fcd4d36d449d7a9c7b4070445",
+      "name": "Duy Thống Lượng",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Cung"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Thục",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Khích Lệ Lòng Quân",
+            "Khép Hờ"
+          ],
+          "displayNameVi": "Lưu Bị",
+          "faction": "Thục",
+          "heroIdentityId": "hero:daf7b56cd3aea44f7fdfd23d",
+          "nameRaw": "Lưu Bị",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:a3a5a1e8340ca9e23501b480",
+            "tactic:6af79c1f49fc0b716837f40e"
+          ],
+          "tacticSlotsRaw": [
+            "Thịnh Khí Linh Địch",
+            "Hãm Trận Doanh"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Lấy Võ Dẹp Loạn",
+            "Quỷ Mưu",
+            "Thần Cơ"
+          ],
+          "displayNameVi": "Trương Phi",
+          "faction": "Thục",
+          "heroIdentityId": "hero:95264f699dc478478eef8b90",
+          "nameRaw": "Trương Phi",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:7218b1f17abddf956fb945ff",
+            "tactic:c737dd6eca594efc9c5c4fcd"
+          ],
+          "tacticSlotsRaw": [
+            "Kích Kỳ Nọa Quy",
+            "Hoành Tảo Thiên Quân"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Lấy Võ Dẹp Loạn",
+            "Quỷ Mưu",
+            "Thần Cơ"
+          ],
+          "displayNameVi": "Ngụy Diên",
+          "faction": "Thục",
+          "heroIdentityId": "hero:9001e293139ffd6b077e10e7",
+          "nameRaw": "Ngụy Diên",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:5cb4ffd9c61749965c01e427",
+            "tactic:6c220d34bb421cd61d8d8d90"
+          ],
+          "tacticSlotsRaw": [
+            "Uy Mưu Vô Địch",
+            "Tuyệt Kỳ Cấp Đạo"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-98",
+      "legacyVariantId": "v-9648825595e20e6a3c34aaf3b78251f03ac09e3d40ef415f5adae1d385962111",
+      "name": "Bị Phi Diên",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Khiên"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Thục",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Khích Lệ Lòng Quân",
+            "Khép Hờ"
+          ],
+          "displayNameVi": "Triệu Vân",
+          "faction": "Thục",
+          "heroIdentityId": "hero:d949c9c8d528498c7bc16bd9",
+          "nameRaw": "Triệu Vân",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:b8b9d6c27fedfd90f8d9bc1c",
+            "tactic:5cb4ffd9c61749965c01e427"
+          ],
+          "tacticSlotsRaw": [
+            "Thuyền Cỏ Mượn Tên",
+            "Uy Mưu Vô Địch"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Đánh Sau Trúng Trước",
+            "Quỷ Mưu",
+            "Tướng Uy"
+          ],
+          "displayNameVi": "Quan Vũ",
+          "faction": "Thục",
+          "heroIdentityId": "hero:4b97cac39000f1c8f17e9e86",
+          "nameRaw": "Quan Vũ",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:9d5d732710143000f6b42e5d",
+            "tactic:6c220d34bb421cd61d8d8d90"
+          ],
+          "tacticSlotsRaw": [
+            "Cưỡi Ngựa Nghìn Dặm",
+            "Tuyệt Kỳ Cấp Đạo"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Chia Nhỏ Đánh Nhanh",
+            "Tốc Chiến",
+            "Bách Chiến"
+          ],
+          "displayNameVi": "Quan Ngân Bình",
+          "faction": "Thục",
+          "heroIdentityId": "hero:230b319340cc67b6f4025cce",
+          "nameRaw": "Quan Ngân Bình",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:6d9e69827822c50fb1ce1537",
+            "tactic:cb4b6a0408672e3d29f1bebf"
+          ],
+          "tacticSlotsRaw": [
+            "Cơ Hình Trận",
+            "Lính Thanh Châu"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-99",
+      "legacyVariantId": "v-8a61919a5405aa457e6ec36c85f085b711650998c27e17b3bb019f0d8b236238",
+      "name": "Vân Vũ Bình",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Thương"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Thục",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Đánh Sau Trúng Trước",
+            "Quỷ Mưu",
+            "Hợp Biến"
+          ],
+          "displayNameVi": "Quan Vũ",
+          "faction": "Thục",
+          "heroIdentityId": "hero:4b97cac39000f1c8f17e9e86",
+          "nameRaw": "Quan Vũ",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:6d9e69827822c50fb1ce1537",
+            "tactic:5cb4ffd9c61749965c01e427"
+          ],
+          "tacticSlotsRaw": [
+            "Cơ Hình Trận",
+            "Uy Mưu Vô Địch"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Thắng Sẽ Càng Mạnh",
+            "Thắng Trận",
+            "Cầm Binh Khí"
+          ],
+          "displayNameVi": "Mã Siêu",
+          "faction": "Thục",
+          "heroIdentityId": "hero:63655267babca9c136c22348",
+          "nameRaw": "Mã Siêu",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:0744143b4be4741efab0a397",
+            "tactic:f989f58a582859e3fe3a5dd8"
+          ],
+          "tacticSlotsRaw": [
+            "Lõa Y Huyết Chiến",
+            "Huyết Đao Tranh Giành"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Lấy Võ Dẹp Loạn",
+            "Quỷ Mưu",
+            "Thần Cơ"
+          ],
+          "displayNameVi": "Quan Ngân Bình",
+          "faction": "Thục",
+          "heroIdentityId": "hero:230b319340cc67b6f4025cce",
+          "nameRaw": "Quan Ngân Bình",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:cb4b6a0408672e3d29f1bebf",
+            "tactic:0b19db68e064c195b58d1899"
+          ],
+          "tacticSlotsRaw": [
+            "Lính Thanh Châu",
+            "Cứ Thủy Đoạn Kiều"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-100",
+      "legacyVariantId": "v-ee99728f36ad0726e5b4860f8a4bee1b8d09f03f2e8f5fe8771b3acb722b4962",
+      "name": "Vũ Siêu Bình",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Thương"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Thục",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Đánh Sau Trúng Trước",
+            "Quỷ Mưu",
+            "Hợp Biến"
+          ],
+          "displayNameVi": "Quan Vũ",
+          "faction": "Thục",
+          "heroIdentityId": "hero:4b97cac39000f1c8f17e9e86",
+          "nameRaw": "Quan Vũ",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:cb4b6a0408672e3d29f1bebf",
+            "tactic:5cb4ffd9c61749965c01e427"
+          ],
+          "tacticSlotsRaw": [
+            "Lính Thanh Châu",
+            "Uy Mưu Vô Địch"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Lấy Võ Dẹp Loạn",
+            "Quỷ Mưu",
+            "Thần Cơ"
+          ],
+          "displayNameVi": "Trương Phi",
+          "faction": "Thục",
+          "heroIdentityId": "hero:95264f699dc478478eef8b90",
+          "nameRaw": "Trương Phi",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:6d9e69827822c50fb1ce1537",
+            "tactic:c737dd6eca594efc9c5c4fcd"
+          ],
+          "tacticSlotsRaw": [
+            "Cơ Hình Trận",
+            "Hoành Tảo Thiên Quân"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Lấy Võ Dẹp Loạn",
+            "Quỷ Mưu",
+            "Thần Cơ"
+          ],
+          "displayNameVi": "Quan Ngân Bình",
+          "faction": "Thục",
+          "heroIdentityId": "hero:230b319340cc67b6f4025cce",
+          "nameRaw": "Quan Ngân Bình",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:a3a5a1e8340ca9e23501b480",
+            "tactic:0b19db68e064c195b58d1899"
+          ],
+          "tacticSlotsRaw": [
+            "Thịnh Khí Linh Địch",
+            "Cứ Thủy Đoạn Kiều"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-101",
+      "legacyVariantId": "v-561a9f3671957f45cea0fc12f92137123f78732d8c7a60885074957f60665b31",
+      "name": "Vũ Phi Bình",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Thương"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Thục",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Cứu Viện",
+            "Khép Hờ"
+          ],
+          "displayNameVi": "Triệu Vân",
+          "faction": "Thục",
+          "heroIdentityId": "hero:d949c9c8d528498c7bc16bd9",
+          "nameRaw": "Triệu Vân",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:b8b9d6c27fedfd90f8d9bc1c",
+            "tactic:5cb4ffd9c61749965c01e427"
+          ],
+          "tacticSlotsRaw": [
+            "Thuyền Cỏ Mượn Tên",
+            "Uy Mưu Vô Địch"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Đánh Sau Trúng Trước",
+            "Quỷ Mưu",
+            "Xem Bói"
+          ],
+          "displayNameVi": "Quan Vũ",
+          "faction": "Thục",
+          "heroIdentityId": "hero:4b97cac39000f1c8f17e9e86",
+          "nameRaw": "Quan Vũ",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:9d5d732710143000f6b42e5d",
+            "tactic:6c220d34bb421cd61d8d8d90"
+          ],
+          "tacticSlotsRaw": [
+            "Cưỡi Ngựa Nghìn Dặm",
+            "Tuyệt Kỳ Cấp Đạo"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Thắng Sẽ Càng Mạnh",
+            "Thắng Trận",
+            "Cầm Binh Khí"
+          ],
+          "displayNameVi": "Trương Phi",
+          "faction": "Thục",
+          "heroIdentityId": "hero:95264f699dc478478eef8b90",
+          "nameRaw": "Trương Phi",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:6d9e69827822c50fb1ce1537",
+            "tactic:cb4b6a0408672e3d29f1bebf"
+          ],
+          "tacticSlotsRaw": [
+            "Cơ Hình Trận",
+            "Lính Thanh Châu"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-103",
+      "legacyVariantId": "v-31e0896225acf71413c9f1ad9093ed3316861be08caf137435491f17bc44f0b4",
+      "name": "Vân Vũ Phi",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Thương"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Thục",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Khích Lệ Lòng Quân",
+            "Khép Hờ"
+          ],
+          "displayNameVi": "Gia Cát Lượng",
+          "faction": "Thục",
+          "heroIdentityId": "hero:53081486f9dbff9359d80832",
+          "nameRaw": "Gia Cát Lượng",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:4317628fd1df0a24a366bb98",
+            "tactic:6db4c47073e9e3772afd2f5a"
+          ],
+          "tacticSlotsRaw": [
+            "Tạm Lánh Sóng Gió",
+            "Cắt Xương Trị Độc"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Lấy Võ Dẹp Loạn",
+            "Quỷ Mưu",
+            "Thần Cơ"
+          ],
+          "displayNameVi": "Ngụy Diên",
+          "faction": "Thục",
+          "heroIdentityId": "hero:9001e293139ffd6b077e10e7",
+          "nameRaw": "Ngụy Diên",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:5cb4ffd9c61749965c01e427",
+            "tactic:6c220d34bb421cd61d8d8d90"
+          ],
+          "tacticSlotsRaw": [
+            "Uy Mưu Vô Địch",
+            "Tuyệt Kỳ Cấp Đạo"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Lấy Võ Dẹp Loạn",
+            "Quỷ Mưu",
+            "Thần Cơ"
+          ],
+          "displayNameVi": "Quan Ngân Bình",
+          "faction": "Thục",
+          "heroIdentityId": "hero:230b319340cc67b6f4025cce",
+          "nameRaw": "Quan Ngân Bình",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:cb4b6a0408672e3d29f1bebf",
+            "tactic:0b19db68e064c195b58d1899"
+          ],
+          "tacticSlotsRaw": [
+            "Lính Thanh Châu",
+            "Cứ Thủy Đoạn Kiều"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-106",
+      "legacyVariantId": "v-069881f4d70281d93ccd5705935619ea337f7d9a86f90ec7d229b4da6a1f3ef6",
+      "name": "Lượng Diên Bình",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Thương"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Thục",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Khích Lệ Lòng Quân",
+            "Tốc Chiến"
+          ],
+          "displayNameVi": "SP Gia Cát Lượng",
+          "faction": "Thục",
+          "heroIdentityId": "hero:aa37575d24772c943be8fb1e",
+          "nameRaw": "SP Gia Cát Lượng",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:4317628fd1df0a24a366bb98",
+            "tactic:b8b9d6c27fedfd90f8d9bc1c"
+          ],
+          "tacticSlotsRaw": [
+            "Tạm Lánh Sóng Gió",
+            "Thuyền Cỏ Mượn Tên"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Đánh Sau Trúng Trước",
+            "Quỷ Mưu",
+            "Tướng Uy"
+          ],
+          "displayNameVi": "Quan Hưng",
+          "faction": "Thục",
+          "heroIdentityId": "hero:67bb9c38b4396802f1111ca0",
+          "nameRaw": "Quan Hưng",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:9d5d732710143000f6b42e5d",
+            "tactic:5cb4ffd9c61749965c01e427"
+          ],
+          "tacticSlotsRaw": [
+            "Cưỡi Ngựa Nghìn Dặm",
+            "Uy Mưu Vô Địch"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Yêu Lính Thương Dân",
+            "Tĩnh Tâm",
+            "Thế Phòng Thủ"
+          ],
+          "displayNameVi": "Trương Bào",
+          "faction": "Thục",
+          "heroIdentityId": "hero:7223baeb0e72d49e4cdd712e",
+          "nameRaw": "Trương Bào",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:6d9e69827822c50fb1ce1537",
+            "tactic:cb4b6a0408672e3d29f1bebf"
+          ],
+          "tacticSlotsRaw": [
+            "Cơ Hình Trận",
+            "Lính Thanh Châu"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-107",
+      "legacyVariantId": "v-04cc955cd2e78b07d2956076be942fa5547c01a14486c802bfd632491523db70",
+      "name": "Lượng Hưng Bào",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Thương"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Thục",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Khích Lệ Lòng Quân",
+            "Tốc Chiến"
+          ],
+          "displayNameVi": "SP Gia Cát Lượng",
+          "faction": "Thục",
+          "heroIdentityId": "hero:aa37575d24772c943be8fb1e",
+          "nameRaw": "SP Gia Cát Lượng",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:4317628fd1df0a24a366bb98",
+            "tactic:6db4c47073e9e3772afd2f5a"
+          ],
+          "tacticSlotsRaw": [
+            "Tạm Lánh Sóng Gió",
+            "Cắt Xương Trị Độc"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Đánh Sau Trúng Trước",
+            "Quỷ Mưu",
+            "Tướng Uy"
+          ],
+          "displayNameVi": "Bàng Thống",
+          "faction": "Thục",
+          "heroIdentityId": "hero:d04269a972ec14e0c95efdec",
+          "nameRaw": "Bàng Thống",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:2b52cf9439f3dd4913ba022b",
+            "tactic:e9ef6360c4ba122bfa3a0d8a"
+          ],
+          "tacticSlotsRaw": [
+            "Đoạt Hồn Hiệp Phách",
+            "Sợ Bóng Sợ Gió"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Đánh Sau Trúng Trước",
+            "Quỷ Mưu",
+            "Hợp Biến"
+          ],
+          "displayNameVi": "Quan Vũ",
+          "faction": "Thục",
+          "heroIdentityId": "hero:4b97cac39000f1c8f17e9e86",
+          "nameRaw": "Quan Vũ",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:5cb4ffd9c61749965c01e427",
+            "tactic:cb4b6a0408672e3d29f1bebf"
+          ],
+          "tacticSlotsRaw": [
+            "Uy Mưu Vô Địch",
+            "Lính Thanh Châu"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-110",
+      "legacyVariantId": "v-281b17b6884fd7cf698108bc009d177542bec0b321b703d75e25082ebb2329a3",
+      "name": "Lượng Thống Vũ",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Thương"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Thục",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Man Dũng Phi Dũng",
+            "Văn Thao",
+            "Cầm Binh Khí"
+          ],
+          "displayNameVi": "Khương Duy",
+          "faction": "Thục",
+          "heroIdentityId": "hero:0c61d8ccd98726c3e4fd4861",
+          "nameRaw": "Khương Duy",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:68df29a22ef08b5391a8a176",
+            "tactic:2e59c28ff5dff77e4ec1c8c7"
+          ],
+          "tacticSlotsRaw": [
+            "Dụng Võ Thần Thông",
+            "Sĩ Biệt Tam Nhật"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Yêu Lính Thương Dân",
+            "Thế Phòng Thủ",
+            "Phòng Bị"
+          ],
+          "displayNameVi": "Quan Ngân Bình",
+          "faction": "Thục",
+          "heroIdentityId": "hero:230b319340cc67b6f4025cce",
+          "nameRaw": "Quan Ngân Bình",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:33f19eeeabf7ea2691a0e63f",
+            "tactic:b8b9d6c27fedfd90f8d9bc1c"
+          ],
+          "tacticSlotsRaw": [
+            "Phong Thi Trận",
+            "Thuyền Cỏ Mượn Tên"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Khích Lệ Lòng Quân",
+            "Khép Hờ"
+          ],
+          "displayNameVi": "Lưu Bị",
+          "faction": "Thục",
+          "heroIdentityId": "hero:daf7b56cd3aea44f7fdfd23d",
+          "nameRaw": "Lưu Bị",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:4317628fd1df0a24a366bb98",
+            "tactic:6db4c47073e9e3772afd2f5a"
+          ],
+          "tacticSlotsRaw": [
+            "Tạm Lánh Sóng Gió",
+            "Cắt Xương Trị Độc"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-111",
+      "legacyVariantId": "v-6c5ff21633facc39efb9c3736be6946bec029f45fb1c93bef04989bfee81a3e2",
+      "name": "Duy Bình Bị",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Kỵ"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Thục",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Man Dũng Phi Dũng",
+            "Văn Thao",
+            "Cầm Binh Khí"
+          ],
+          "displayNameVi": "Khương Duy",
+          "faction": "Thục",
+          "heroIdentityId": "hero:0c61d8ccd98726c3e4fd4861",
+          "nameRaw": "Khương Duy",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:2b52cf9439f3dd4913ba022b",
+            "tactic:4ae2b34496cc6b3240dd8fd2"
+          ],
+          "tacticSlotsRaw": [
+            "Đoạt Hồn Hiệp Phách",
+            "Hình Cơ Quân Lược"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Đánh Sau Trúng Trước",
+            "Quỷ Mưu",
+            "Hợp Biến"
+          ],
+          "displayNameVi": "Quan Vũ",
+          "faction": "Thục",
+          "heroIdentityId": "hero:4b97cac39000f1c8f17e9e86",
+          "nameRaw": "Quan Vũ",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:9d5d732710143000f6b42e5d",
+            "tactic:5cb4ffd9c61749965c01e427"
+          ],
+          "tacticSlotsRaw": [
+            "Cưỡi Ngựa Nghìn Dặm",
+            "Uy Mưu Vô Địch"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Tốc Chiến",
+            "Khép Hờ"
+          ],
+          "displayNameVi": "Lưu Bị",
+          "faction": "Thục",
+          "heroIdentityId": "hero:daf7b56cd3aea44f7fdfd23d",
+          "nameRaw": "Lưu Bị",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:4317628fd1df0a24a366bb98",
+            "tactic:6db4c47073e9e3772afd2f5a"
+          ],
+          "tacticSlotsRaw": [
+            "Tạm Lánh Sóng Gió",
+            "Cắt Xương Trị Độc"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-112",
+      "legacyVariantId": "v-357d86dea8d879f42357337f5d702fbdb2d5915ffad67dd8615bda0a08e11488",
+      "name": "Duy Vũ Bị",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Kỵ"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Ngô",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Tránh Thế Mạnh Của Địch",
+            "Thế Phòng Thủ",
+            "Giáp Sắt"
+          ],
+          "displayNameVi": "SP Chu Du",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:6e4895ff6d12ab9636cec0cf",
+          "nameRaw": "SP Chu Du",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:2b52cf9439f3dd4913ba022b",
+            "tactic:6db4c47073e9e3772afd2f5a"
+          ],
+          "tacticSlotsRaw": [
+            "Đoạt Hồn Hiệp Phách",
+            "Cắt Xương Trị Độc"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Kỳ Chính Tương Sinh",
+            "Văn Thao",
+            "Cầm Binh Khí"
+          ],
+          "displayNameVi": "Lục Tốn",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:f88e20a568d008a29c2de19b",
+          "nameRaw": "Lục Tốn",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:c6f7f51b6bf1df01ac4f48b8",
+            "tactic:5a3330204c026f7ca0eb4247"
+          ],
+          "tacticSlotsRaw": [
+            "Đương Phong Thôi Quyết",
+            "Binh Vô Thường Thế"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Không Chiến Mà Thắng",
+            "Thế Phòng Thủ",
+            "Phòng Bị"
+          ],
+          "displayNameVi": "SP Lữ Mông",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:e351aaeb0ddd2d6aab11bf2f",
+          "nameRaw": "SP Lữ Mông",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:ab563cec35b374d818db011c",
+            "tactic:b8b9d6c27fedfd90f8d9bc1c"
+          ],
+          "tacticSlotsRaw": [
+            "An Ủi Quân Dân",
+            "Thuyền Cỏ Mượn Tên"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-119",
+      "legacyVariantId": "v-ed3ee3a2aa5dc700387d6743e96a54c7e34058f94e1ae56994088733a9f94fdc",
+      "name": "Du Tốn Mông",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Cung"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Ngô",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Khích Lệ Lòng Quân",
+            "Khép Hờ"
+          ],
+          "displayNameVi": "Chu Du",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:ff0ae9c2a3b32145b872335e",
+          "nameRaw": "Chu Du",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:2b52cf9439f3dd4913ba022b",
+            "tactic:6db4c47073e9e3772afd2f5a"
+          ],
+          "tacticSlotsRaw": [
+            "Đoạt Hồn Hiệp Phách",
+            "Cắt Xương Trị Độc"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Kỳ Chính Tương Sinh",
+            "Văn Thao",
+            "Cầm Binh Khí"
+          ],
+          "displayNameVi": "Lục Tốn",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:f88e20a568d008a29c2de19b",
+          "nameRaw": "Lục Tốn",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:c6f7f51b6bf1df01ac4f48b8",
+            "tactic:5a3330204c026f7ca0eb4247"
+          ],
+          "tacticSlotsRaw": [
+            "Đương Phong Thôi Quyết",
+            "Binh Vô Thường Thế"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Không Chiến Mà Thắng",
+            "Thế Phòng Thủ",
+            "Phòng Bị"
+          ],
+          "displayNameVi": "SP Lữ Mông",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:e351aaeb0ddd2d6aab11bf2f",
+          "nameRaw": "SP Lữ Mông",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:ab563cec35b374d818db011c",
+            "tactic:b8b9d6c27fedfd90f8d9bc1c"
+          ],
+          "tacticSlotsRaw": [
+            "An Ủi Quân Dân",
+            "Thuyền Cỏ Mượn Tên"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-121",
+      "legacyVariantId": "v-5a860c7b58f923b02ecba449e25a7df5c48ab212d3a8e6dfd61c7345acafa2c2",
+      "name": "Du Tốn Mông",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Cung"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Ngô",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Tránh Thế Mạnh Của Địch",
+            "Thế Phòng Thủ",
+            "Phòng Bị"
+          ],
+          "displayNameVi": "Chu Du",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:ff0ae9c2a3b32145b872335e",
+          "nameRaw": "Chu Du",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:2b52cf9439f3dd4913ba022b",
+            "tactic:6db4c47073e9e3772afd2f5a"
+          ],
+          "tacticSlotsRaw": [
+            "Đoạt Hồn Hiệp Phách",
+            "Cắt Xương Trị Độc"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Man Dũng Phi Dũng",
+            "Võ Lược",
+            "Phân Hiểm"
+          ],
+          "displayNameVi": "Thái Sử Từ",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:5ba7e78c435dbbbe3d6692fd",
+          "nameRaw": "Thái Sử Từ",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:c6f7f51b6bf1df01ac4f48b8",
+            "tactic:5a3330204c026f7ca0eb4247"
+          ],
+          "tacticSlotsRaw": [
+            "Đương Phong Thôi Quyết",
+            "Binh Vô Thường Thế"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Không Chiến Mà Thắng",
+            "Thế Phòng Thủ",
+            "Phòng Bị"
+          ],
+          "displayNameVi": "SP Lữ Mông",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:e351aaeb0ddd2d6aab11bf2f",
+          "nameRaw": "SP Lữ Mông",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:ab563cec35b374d818db011c",
+            "tactic:b8b9d6c27fedfd90f8d9bc1c"
+          ],
+          "tacticSlotsRaw": [
+            "An Ủi Quân Dân",
+            "Thuyền Cỏ Mượn Tên"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-122",
+      "legacyVariantId": "v-d23889e6f7df69bf10ad631443a6cca53669e4380c0553852e6f47342fedfa38",
+      "name": "Du Từ Mông",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Cung"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Ngô",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Thắng Sẽ Càng Mạnh",
+            "Võ Lược",
+            "Cầm Binh Khí"
+          ],
+          "displayNameVi": "Tôn Quyền",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:2d0b5eef6609451091610e38",
+          "nameRaw": "Tôn Quyền",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:c6f7f51b6bf1df01ac4f48b8",
+            "tactic:c89330bdd98175d9fff21310"
+          ],
+          "tacticSlotsRaw": [
+            "Đương Phong Thôi Quyết",
+            "Bạo Lệ Vô Nhân"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Man Dũng Phi Dũng",
+            "Võ Lược",
+            "Phân Hiểm"
+          ],
+          "displayNameVi": "Thái Sử Từ",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:5ba7e78c435dbbbe3d6692fd",
+          "nameRaw": "Thái Sử Từ",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:14dfb8e6574492c0e05ab927",
+            "tactic:5a3330204c026f7ca0eb4247"
+          ],
+          "tacticSlotsRaw": [
+            "Đánh Bại Quân Địch",
+            "Binh Vô Thường Thế"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Không Chiến Mà Thắng",
+            "Thế Phòng Thủ",
+            "Giáp Sắt"
+          ],
+          "displayNameVi": "SP Lữ Mông",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:e351aaeb0ddd2d6aab11bf2f",
+          "nameRaw": "SP Lữ Mông",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:ab563cec35b374d818db011c",
+            "tactic:6d41f8d611d256db386dc0c7"
+          ],
+          "tacticSlotsRaw": [
+            "An Ủi Quân Dân",
+            "Quân Cẩm Phàm"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-127",
+      "legacyVariantId": "v-7b97fe780c3bad52d2767405012a57829e94cea87df189bec3d64a54de5fda2a",
+      "name": "Quyền Từ Mông",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Cung"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Ngô",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Tránh Thế Mạnh Của Địch",
+            "Thế Phòng Thủ",
+            "Phòng Bị"
+          ],
+          "displayNameVi": "Lục Tốn",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:f88e20a568d008a29c2de19b",
+          "nameRaw": "Lục Tốn",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:68df29a22ef08b5391a8a176",
+            "tactic:2e59c28ff5dff77e4ec1c8c7"
+          ],
+          "tacticSlotsRaw": [
+            "Dụng Võ Thần Thông",
+            "Sĩ Biệt Tam Nhật"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Khích Lệ Lòng Quân",
+            "Khép Hờ"
+          ],
+          "displayNameVi": "SP Chu Du",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:6e4895ff6d12ab9636cec0cf",
+          "nameRaw": "SP Chu Du",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:4317628fd1df0a24a366bb98",
+            "tactic:6db4c47073e9e3772afd2f5a"
+          ],
+          "tacticSlotsRaw": [
+            "Tạm Lánh Sóng Gió",
+            "Cắt Xương Trị Độc"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Gặp Địch Không Loạn",
+            "Khép Hờ",
+            "Cứu Chủ"
+          ],
+          "displayNameVi": "Lục Kháng",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:745dc71ccc2c607d55d4103a",
+          "nameRaw": "Lục Kháng",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:ab563cec35b374d818db011c",
+            "tactic:b8b9d6c27fedfd90f8d9bc1c"
+          ],
+          "tacticSlotsRaw": [
+            "An Ủi Quân Dân",
+            "Thuyền Cỏ Mượn Tên"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-131",
+      "legacyVariantId": "v-49b9d1aa902b63de5449f152cecafc7d88833b8fe75e5849ac56d6f03289189d",
+      "name": "Tốn Du Kháng",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Cung"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Ngô",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Lấy Võ Dẹp Loạn",
+            "Quỷ Mưu",
+            "Tướng Uy"
+          ],
+          "displayNameVi": "Chu Du",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:ff0ae9c2a3b32145b872335e",
+          "nameRaw": "Chu Du",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:2b52cf9439f3dd4913ba022b",
+            "tactic:4ae2b34496cc6b3240dd8fd2"
+          ],
+          "tacticSlotsRaw": [
+            "Đoạt Hồn Hiệp Phách",
+            "Hình Cơ Quân Lược"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Không Chiến Mà Thắng",
+            "Giáp Sắt",
+            "Nghĩa Dũng"
+          ],
+          "displayNameVi": "Tôn Kiên",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:1fbb0e34373c3146b8514bd4",
+          "nameRaw": "Tôn Kiên",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:20c50776d74518445de1ba51",
+            "tactic:b8b9d6c27fedfd90f8d9bc1c"
+          ],
+          "tacticSlotsRaw": [
+            "Lính Giáp Mây",
+            "Thuyền Cỏ Mượn Tên"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Yêu Lính Thương Dân",
+            "Cương Nhu",
+            "Thế Phòng Thủ"
+          ],
+          "displayNameVi": "Lỗ Túc",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:8dc0bfe19c5d81dc129c8549",
+          "nameRaw": "Lỗ Túc",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:4317628fd1df0a24a366bb98",
+            "tactic:33f19eeeabf7ea2691a0e63f"
+          ],
+          "tacticSlotsRaw": [
+            "Tạm Lánh Sóng Gió",
+            "Phong Thi Trận"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-132",
+      "legacyVariantId": "v-1043cc1d2d581925e29745ecbe1db56cbe28e7771257429f4a10da4950693013",
+      "name": "Du Kiên Túc",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Khiên"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Ngô",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Thắng Sẽ Càng Mạnh",
+            "Võ Lược",
+            "Thắng Trận"
+          ],
+          "displayNameVi": "Tôn Quyền",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:2d0b5eef6609451091610e38",
+          "nameRaw": "Tôn Quyền",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:f989f58a582859e3fe3a5dd8",
+            "tactic:1a4751354afa22e326e46c54"
+          ],
+          "tacticSlotsRaw": [
+            "Huyết Đao Tranh Giành",
+            "Trấn Mục Hoành Mâu"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Đánh Vào Chỗ Hiểm",
+            "Diệu Toán",
+            "Thần Cơ"
+          ],
+          "displayNameVi": "Thái Sử Từ",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:5ba7e78c435dbbbe3d6692fd",
+          "nameRaw": "Thái Sử Từ",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:14dfb8e6574492c0e05ab927",
+            "tactic:c6f7f51b6bf1df01ac4f48b8"
+          ],
+          "tacticSlotsRaw": [
+            "Đánh Bại Quân Địch",
+            "Đương Phong Thôi Quyết"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Yêu Lính Thương Dân",
+            "Thế Phòng Thủ",
+            "Phòng Bị"
+          ],
+          "displayNameVi": "Chu Thái",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:97faa2c456a914aded58ee89",
+          "nameRaw": "Chu Thái",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:ab563cec35b374d818db011c",
+            "tactic:33f19eeeabf7ea2691a0e63f"
+          ],
+          "tacticSlotsRaw": [
+            "An Ủi Quân Dân",
+            "Phong Thi Trận"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-134",
+      "legacyVariantId": "v-3d5f4013551c951920994e42a7126a972a42725cae379a4fb991a350ed09724a",
+      "name": "Quyền Từ Thái",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Kỵ"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Ngô",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Không Chiến Sẽ Chết",
+            "Văn Thao",
+            "Cầm Binh Khí"
+          ],
+          "displayNameVi": "Tôn Quyền",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:2d0b5eef6609451091610e38",
+          "nameRaw": "Tôn Quyền",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:c6f7f51b6bf1df01ac4f48b8",
+            "tactic:5a3330204c026f7ca0eb4247"
+          ],
+          "tacticSlotsRaw": [
+            "Đương Phong Thôi Quyết",
+            "Binh Vô Thường Thế"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Đánh Vào Chỗ Hiểm",
+            "Diệu Toán",
+            "Thần Cơ"
+          ],
+          "displayNameVi": "Thái Sử Từ",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:5ba7e78c435dbbbe3d6692fd",
+          "nameRaw": "Thái Sử Từ",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:14dfb8e6574492c0e05ab927",
+            "tactic:33f19eeeabf7ea2691a0e63f"
+          ],
+          "tacticSlotsRaw": [
+            "Đánh Bại Quân Địch",
+            "Phong Thi Trận"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Biết Cách Phòng Thủ",
+            "Thế Phòng Thủ",
+            "Phòng Bị"
+          ],
+          "displayNameVi": "Chu Thái",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:97faa2c456a914aded58ee89",
+          "nameRaw": "Chu Thái",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:ab563cec35b374d818db011c",
+            "tactic:e8945257f9f83babe35330c8"
+          ],
+          "tacticSlotsRaw": [
+            "An Ủi Quân Dân",
+            "Nhất Lực Cự Thủ"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-135",
+      "legacyVariantId": "v-7dea864bc4d1eb857b929eb4b1c8cbe419e01f36aa2c4c576abe0496ffe86081",
+      "name": "Quyền Từ Thái",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Kỵ"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Ngô",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Kế Sách Dụ Địch",
+            "Khích Lệ Lòng Quân",
+            "Khép Hờ"
+          ],
+          "displayNameVi": "Chu Thái",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:97faa2c456a914aded58ee89",
+          "nameRaw": "Chu Thái",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:d0893d3b14d3cdc7ab2e24d4",
+            "tactic:d14b68bb7266d8b214b54cb8"
+          ],
+          "tacticSlotsRaw": [
+            "Hổ Báo Kỵ",
+            "Thiết Kỵ Khu Trì"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Không Chiến Sẽ Chết",
+            "Thắng Trận",
+            "Cầm Binh Khí"
+          ],
+          "displayNameVi": "Lăng Thống",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:91b50644508b1fb5097288fc",
+          "nameRaw": "Lăng Thống",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:0744143b4be4741efab0a397",
+            "tactic:c6f7f51b6bf1df01ac4f48b8"
+          ],
+          "tacticSlotsRaw": [
+            "Lõa Y Huyết Chiến",
+            "Đương Phong Thôi Quyết"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Liền Mạch Một Hơi",
+            "Thắng Trận",
+            "Cầm Binh Khí"
+          ],
+          "displayNameVi": "Thái Sử Từ",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:5ba7e78c435dbbbe3d6692fd",
+          "nameRaw": "Thái Sử Từ",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:587e7f200e2d05a6ae88157c",
+            "tactic:c89330bdd98175d9fff21310"
+          ],
+          "tacticSlotsRaw": [
+            "Bách Kỵ Kiếp Doanh",
+            "Bạo Lệ Vô Nhân"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-138",
+      "legacyVariantId": "v-8285029cda8ed85885a1cf96da3102d64e36241805ec5a384e4b88b547d3ddf8",
+      "name": "Thái Thống Từ",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Kỵ"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Quần",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Đánh Sau Trúng Trước",
+            "Thần Cơ",
+            "Xem Bói"
+          ],
+          "displayNameVi": "SP Viên Thiệu",
+          "faction": "Quần",
+          "heroIdentityId": "hero:4f2bc9ff8e340441fd1f7450",
+          "nameRaw": "SP Viên Thiệu",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:ab563cec35b374d818db011c",
+            "tactic:ab563cec35b374d818db011c"
+          ],
+          "tacticSlotsRaw": [
+            "An Ủi Quân Dân",
+            "An Ủi Quân Dân"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Đánh Phá Vòng Vây",
+            "Quỷ Mưu",
+            "Tướng Uy"
+          ],
+          "displayNameVi": "Trương Giác",
+          "faction": "Quần",
+          "heroIdentityId": "hero:5508fa98c2d6421d3e3c62ef",
+          "nameRaw": "Trương Giác",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:f7b8cbb1d2c08f57b4b800cc",
+            "tactic:2e59c28ff5dff77e4ec1c8c7"
+          ],
+          "tacticSlotsRaw": [
+            "Thái Bình Đạo Pháp",
+            "Sĩ Biệt Tam Nhật"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Kỳ Chính Tương Sinh",
+            "Văn Thao",
+            "Cầm Binh Khí"
+          ],
+          "displayNameVi": "Tả Từ",
+          "faction": "Quần",
+          "heroIdentityId": "hero:ceb3333e1809f65f075970d4",
+          "nameRaw": "Tả Từ",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:a5d89fa56dbb13c37e152360",
+            "tactic:6db4c47073e9e3772afd2f5a"
+          ],
+          "tacticSlotsRaw": [
+            "Võ Phong Trận",
+            "Cắt Xương Trị Độc"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-142",
+      "legacyVariantId": "v-ba8e841262b6eb41bed469a7061d6071e1f01438e890b1087bdbb9e8488dcdef",
+      "name": "Thiệu Giác Từ",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Khiên"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Quần",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Tránh Thế Mạnh Của Địch",
+            "Tĩnh Tâm",
+            "Thế Phòng Thủ"
+          ],
+          "displayNameVi": "Hứa Du",
+          "faction": "Quần",
+          "heroIdentityId": "hero:ce49b0d3c7eb45af987430bd",
+          "nameRaw": "Hứa Du",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:a5d89fa56dbb13c37e152360",
+            "tactic:b8b9d6c27fedfd90f8d9bc1c"
+          ],
+          "tacticSlotsRaw": [
+            "Võ Phong Trận",
+            "Thuyền Cỏ Mượn Tên"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Tam Lý Nhĩ Hoàn",
+            "Thế Phòng Thủ",
+            "Giáp Sắt"
+          ],
+          "displayNameVi": "Lữ Bố",
+          "faction": "Quần",
+          "heroIdentityId": "hero:990961b2ffc3e6140e015852",
+          "nameRaw": "Lữ Bố",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:1486da80003b91a6a2d624e6",
+            "tactic:33520b045a7c014d77354a7e"
+          ],
+          "tacticSlotsRaw": [
+            "Khí Lăng Tam Quân",
+            "Chúng Động Vạn Kế"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Khích Lệ Lòng Quân",
+            "Khép Hờ"
+          ],
+          "displayNameVi": "Đổng Bạch",
+          "faction": "Quần",
+          "heroIdentityId": "hero:82afb18baef57bfe4c918554",
+          "nameRaw": "Đổng Bạch",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:ea4784b0f9a8b9840219d130",
+            "tactic:6d41f8d611d256db386dc0c7"
+          ],
+          "tacticSlotsRaw": [
+            "Chờ Đợi Xuất Phát",
+            "Quân Cẩm Phàm"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-146",
+      "legacyVariantId": "v-619b1ddf44702ae8e5ad13ef622168b409c776b3f4414c284d793a87b1d0410b",
+      "name": "Du Bố Bạch",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Cung"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Hỗn hợp",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Khép Hờ",
+            "Bách Chiến"
+          ],
+          "displayNameVi": "Pháp Chính",
+          "faction": "Thục",
+          "heroIdentityId": "hero:12d700a23b775c08623f316f",
+          "nameRaw": "Pháp Chính",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:ab563cec35b374d818db011c",
+            "tactic:20c50776d74518445de1ba51"
+          ],
+          "tacticSlotsRaw": [
+            "An Ủi Quân Dân",
+            "Lính Giáp Mây"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Đánh Phá Vòng Vây",
+            "Quỷ Mưu",
+            "Tướng Uy"
+          ],
+          "displayNameVi": "Trương Giác",
+          "faction": "Quần",
+          "heroIdentityId": "hero:5508fa98c2d6421d3e3c62ef",
+          "nameRaw": "Trương Giác",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:f7b8cbb1d2c08f57b4b800cc",
+            "tactic:2e59c28ff5dff77e4ec1c8c7"
+          ],
+          "tacticSlotsRaw": [
+            "Thái Bình Đạo Pháp",
+            "Sĩ Biệt Tam Nhật"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Man Dũng Phi Dũng",
+            "Văn Thao",
+            "Cầm Binh Khí"
+          ],
+          "displayNameVi": "Hác Chiêu",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:3db6ab6fdbba6fddc423a3ad",
+          "nameRaw": "Hác Chiêu",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:bed3520d7172295d59362ab1",
+            "tactic:6db4c47073e9e3772afd2f5a"
+          ],
+          "tacticSlotsRaw": [
+            "Tam Thế Trận",
+            "Cắt Xương Trị Độc"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-164",
+      "legacyVariantId": "v-53374d3c1d98c2d9b538e58df9e6449503b6ef6a7951b9c6da89050bc1b1cab2",
+      "name": "Chính Giác Chiêu",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Khiên"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Quần",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Yêu Lính Thương Dân",
+            "Thế Phòng Thủ",
+            "Giáp Sắt"
+          ],
+          "displayNameVi": "SP Tuân Úc",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:e288f937bcc749ff9f52c29c",
+          "nameRaw": "SP Tuân Úc",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:5cb4ffd9c61749965c01e427",
+            "tactic:a5d89fa56dbb13c37e152360"
+          ],
+          "tacticSlotsRaw": [
+            "Uy Mưu Vô Địch",
+            "Võ Phong Trận"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Đánh Phá Vòng Vây",
+            "Quỷ Mưu",
+            "Tướng Uy"
+          ],
+          "displayNameVi": "Trương Giác",
+          "faction": "Quần",
+          "heroIdentityId": "hero:5508fa98c2d6421d3e3c62ef",
+          "nameRaw": "Trương Giác",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:f7b8cbb1d2c08f57b4b800cc",
+            "tactic:2e59c28ff5dff77e4ec1c8c7"
+          ],
+          "tacticSlotsRaw": [
+            "Thái Bình Đạo Pháp",
+            "Sĩ Biệt Tam Nhật"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Tản Tiên",
+            "Khép Hờ"
+          ],
+          "displayNameVi": "Tả Từ",
+          "faction": "Quần",
+          "heroIdentityId": "hero:ceb3333e1809f65f075970d4",
+          "nameRaw": "Tả Từ",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:6e4941073328cf7f29a20d1c",
+            "tactic:6db4c47073e9e3772afd2f5a"
+          ],
+          "tacticSlotsRaw": [
+            "Dốc Sức Tính Kế",
+            "Cắt Xương Trị Độc"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-167",
+      "legacyVariantId": "v-3712c71a0a6f2a9f418cf82c7ac3f696379672e305d63375dcf8c38b6c6f5439",
+      "name": "Úc Giác Từ",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Khiên"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Quần",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Yêu Lính Thương Dân",
+            "Tĩnh Tâm",
+            "Giáp Sắt"
+          ],
+          "displayNameVi": "SP Tuân Úc",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:e288f937bcc749ff9f52c29c",
+          "nameRaw": "SP Tuân Úc",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:b8b9d6c27fedfd90f8d9bc1c",
+            "tactic:c6f7f51b6bf1df01ac4f48b8"
+          ],
+          "tacticSlotsRaw": [
+            "Thuyền Cỏ Mượn Tên",
+            "Đương Phong Thôi Quyết"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Liền Mạch Một Hơi",
+            "Thắng Trận",
+            "Cầm Binh Khí"
+          ],
+          "displayNameVi": "Trương Liêu",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:a5b74013147e47af899b97e2",
+          "nameRaw": "Trương Liêu",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:33b07e59ae742d654310b502",
+            "tactic:c89330bdd98175d9fff21310"
+          ],
+          "tacticSlotsRaw": [
+            "Mau Giành Lợi Thế",
+            "Bạo Lệ Vô Nhân"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Tốc Chiến",
+            "Khích Lệ Lòng Quân"
+          ],
+          "displayNameVi": "Vương Nguyên Cơ",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:822cbf22feb0736b2622316e",
+          "nameRaw": "Vương Nguyên Cơ",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:6db4c47073e9e3772afd2f5a",
+            "tactic:4317628fd1df0a24a366bb98"
+          ],
+          "tacticSlotsRaw": [
+            "Cắt Xương Trị Độc",
+            "Tạm Lánh Sóng Gió"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-168",
+      "legacyVariantId": "v-4a45377a5f3bf5f34242ac9da98637e17d49659c91789daf8f809847eaeb9a8a",
+      "name": "Úc Liêu Cơ",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Thương"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Hỗn hợp",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Yêu Lính Thương Dân",
+            "Thế Phòng Thủ",
+            "Giáp Sắt"
+          ],
+          "displayNameVi": "Lỗ Túc",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:8dc0bfe19c5d81dc129c8549",
+          "nameRaw": "Lỗ Túc",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:4317628fd1df0a24a366bb98",
+            "tactic:a4247cdd7d6ecd282bd8c426"
+          ],
+          "tacticSlotsRaw": [
+            "Tạm Lánh Sóng Gió",
+            "Tiềm Long Trận"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Đánh Phá Vòng Vây",
+            "Quỷ Mưu",
+            "Tướng Uy"
+          ],
+          "displayNameVi": "Trương Giác",
+          "faction": "Quần",
+          "heroIdentityId": "hero:5508fa98c2d6421d3e3c62ef",
+          "nameRaw": "Trương Giác",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:f7b8cbb1d2c08f57b4b800cc",
+            "tactic:2e59c28ff5dff77e4ec1c8c7"
+          ],
+          "tacticSlotsRaw": [
+            "Thái Bình Đạo Pháp",
+            "Sĩ Biệt Tam Nhật"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Cứu Chủ",
+            "Khép Hờ"
+          ],
+          "displayNameVi": "Tào Tháo",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:4fbe01ab8d14bc669b3e036b",
+          "nameRaw": "Tào Tháo",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:20c50776d74518445de1ba51",
+            "tactic:b8b9d6c27fedfd90f8d9bc1c"
+          ],
+          "tacticSlotsRaw": [
+            "Lính Giáp Mây",
+            "Thuyền Cỏ Mượn Tên"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-170",
+      "legacyVariantId": "v-2bbdfc74952d9b93636d0d2b2af891ee8be9faf28a0c3f174565f1d6b2c1934d",
+      "name": "Túc Giác Tháo",
+      "nickname": null,
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Khiên"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Hỗn hợp",
+      "historicalRankings": [
+        {
+          "source": "video-260701 · T0 · 天公盾",
+          "tier": "T0",
+          "updatedAt": "2026-07-07"
+        }
+      ],
+      "historicalTier": "T0",
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Đánh Phá Vòng Vây",
+            "Quỷ Mưu"
+          ],
+          "displayNameVi": "Trương Giác",
+          "faction": "Quần",
+          "heroIdentityId": "hero:5508fa98c2d6421d3e3c62ef",
+          "nameRaw": "Trương Giác",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:f7b8cbb1d2c08f57b4b800cc",
+            "tactic:2e59c28ff5dff77e4ec1c8c7"
+          ],
+          "tacticSlotsRaw": [
+            "Thái Bình Đạo Pháp",
+            "Sĩ Biệt Tam Nhật"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Bố Trận Chờ Đợi",
+            "Phòng Bị"
+          ],
+          "displayNameVi": "Tào Tháo",
+          "faction": "Ngụy",
+          "heroIdentityId": "hero:4fbe01ab8d14bc669b3e036b",
+          "nameRaw": "Tào Tháo",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:b8b9d6c27fedfd90f8d9bc1c",
+            "tactic:20c50776d74518445de1ba51"
+          ],
+          "tacticSlotsRaw": [
+            "Thuyền Cỏ Mượn Tên",
+            "Lính Giáp Mây"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Tấn Công Điểm Yếu",
+            "Cứu Chủ"
+          ],
+          "displayNameVi": "Lưu Bị",
+          "faction": "Thục",
+          "heroIdentityId": "hero:daf7b56cd3aea44f7fdfd23d",
+          "nameRaw": "Lưu Bị",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:33f19eeeabf7ea2691a0e63f",
+            "tactic:4317628fd1df0a24a366bb98"
+          ],
+          "tacticSlotsRaw": [
+            "Phong Thi Trận",
+            "Tạm Lánh Sóng Gió"
+          ]
+        }
+      ],
+      "legacyTeamId": "team-intro-55",
+      "legacyVariantId": "v-77d1d16398ead8c4fa75fbd7261cba1926a1217e6da794c0237628e8b1a03ac5",
+      "name": "Giác Tháo Bị",
+      "nickname": "Thiên Công Khiên",
+      "origin": "existing-local",
+      "seasonAttribution": [],
+      "source": "team-intro",
+      "sourceLabel": "team-intro",
+      "sourceSeasonIds": null,
+      "sourceState": "known",
+      "unit": [
+        "Khiên"
+      ]
+    }
+  ],
+  "counts": {
+    "distinct": 40,
+    "duplicate": 19,
+    "pendingIdentity": 107,
+    "pendingSource": 0
+  },
+  "decisions": [
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:522edfed36a1dea0ba51bd716590c5c000a69bc817df9b811d68762dcd20d54b",
+      "legacyTeamId": "moi-phe-100",
+      "legacyVariantId": "v-ee99728f36ad0726e5b4860f8a4bee1b8d09f03f2e8f5fe8771b3acb722b4962"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:4682af22f4efcbde55ecdba171abac37a64cc01c3fb1c4a10c0c62ac008cf812",
+      "legacyTeamId": "moi-phe-101",
+      "legacyVariantId": "v-561a9f3671957f45cea0fc12f92137123f78732d8c7a60885074957f60665b31"
+    },
+    {
+      "classification": "duplicate",
+      "dedupKey": "sha256:d3334cabd90cb5f976839ad0ece30cc0b9f5032b2b38c41e838248d9a2c102ed",
+      "legacyTeamId": "moi-phe-102",
+      "legacyVariantId": "v-c838e8b1e4c98b00c9909ab96f1b4e13c00ff160ba7e8fb19e46f96a7e656a1f",
+      "matchingRecommended": [
+        "s13-weiyan-shu-qiang",
+        "s14-guan-guan-wei",
+        "s16-guanguanwei",
+        "s17-guanguanwei",
+        "s18-guanguanwei",
+        "s22-guan-guan-wei",
+        "s28-guanguanwei"
+      ]
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:95287f410c3cbd06f3868fad38696d8560c89892557a62c8e65e5c30445cc041",
+      "legacyTeamId": "moi-phe-103",
+      "legacyVariantId": "v-31e0896225acf71413c9f1ad9093ed3316861be08caf137435491f17bc44f0b4"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-104",
+      "legacyVariantId": "v-1102c89fce0b4a3dd211d40ef016ada0eaa9c162cbc5c086dfbf8d901aa67878",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "duplicate",
+      "dedupKey": "sha256:d5b908a5726f33c149cd9fbdfbe91e0fb5b830860dae4d1ae63767f002fd0683",
+      "legacyTeamId": "moi-phe-105",
+      "legacyVariantId": "v-f0a4cf49874f147a9fd7ed35d8b4086e25e586d0d9f11357b3c1cf58d1a8d2a5",
+      "matchingRecommended": [
+        "s1-shu-da-shu-qiang",
+        "s2-shu-da-shu-qiang",
+        "s3-shu-da-shu-qiang"
+      ]
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:5a431c2f87763f6ebdbb8708eb8539b08996b491bddd786955ebbf3341463bae",
+      "legacyTeamId": "moi-phe-106",
+      "legacyVariantId": "v-069881f4d70281d93ccd5705935619ea337f7d9a86f90ec7d229b4da6a1f3ef6"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:16b018c0d79b075202923649561dc7b820a9da790dcc31d02300797635c0615f",
+      "legacyTeamId": "moi-phe-107",
+      "legacyVariantId": "v-04cc955cd2e78b07d2956076be942fa5547c01a14486c802bfd632491523db70"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-108",
+      "legacyVariantId": "v-33b46e0554e407c44eae2503530f4eb7685cededfd06545bf4914a7817ac11af",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-109",
+      "legacyVariantId": "v-30aa4f124044576e4c0ec4a925a70aedbffbe87eec3b28024ce295f5b82887ed",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:437ca48761079184261cf21994957c63243601f9093bb349781591fb7b4c893c",
+      "legacyTeamId": "moi-phe-110",
+      "legacyVariantId": "v-281b17b6884fd7cf698108bc009d177542bec0b321b703d75e25082ebb2329a3"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:12b61a188fb3cfb61a4076276910b3708f2010f33d917dcaad85987bd25adb4b",
+      "legacyTeamId": "moi-phe-111",
+      "legacyVariantId": "v-6c5ff21633facc39efb9c3736be6946bec029f45fb1c93bef04989bfee81a3e2"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:34389b4ee21b2b10df4ffe68daacebe0db4ee51e6b8bac1c336f40397b7d114c",
+      "legacyTeamId": "moi-phe-112",
+      "legacyVariantId": "v-357d86dea8d879f42357337f5d702fbdb2d5915ffad67dd8615bda0a08e11488"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-113",
+      "legacyVariantId": "v-571637afbeb9586fbf792f0a3330dd0b045ed776b2d3f982cc5315efb2aac7dc",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-114",
+      "legacyVariantId": "v-08005de3867a8a72b67cdc29e9f3193dcc8dcb7b6d9f4a831f5c4d8a1539d0bd",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-115",
+      "legacyVariantId": "v-3404ee07eaef86fd5149836a066faabb26716eac682f520c4a1ef3b35c06eee8",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-116",
+      "legacyVariantId": "v-54d85e736fb9a1a2530fdc5c0a1323aef4cd174f4af0503bb682ca003e03bff6",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-117",
+      "legacyVariantId": "v-cd722083ac76a69113726ac62dd32cfc1b3b1c6be6d2d56c1bc65f87939e466c",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "dedupKey": "sha256:48a884fa31aee85a37fab228d9ed8dce41332c38af3be0e9ecd5df8c782547c0",
+      "legacyTeamId": "moi-phe-118",
+      "legacyVariantId": "v-094cb7266b9672293927e3f9b0b975cca7ea7039da87d8bc8885bc04be0ac2f9",
+      "possibleRecommended": [
+        "yxms-007-甘寧周泰"
+      ],
+      "reason": "possibly-matches-unresolved-recommended"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:54092665c8caae7e9aaf073d48da5293c29d8e8c3afbb5998897adbfa4b4a13b",
+      "legacyTeamId": "moi-phe-119",
+      "legacyVariantId": "v-ed3ee3a2aa5dc700387d6743e96a54c7e34058f94e1ae56994088733a9f94fdc"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-120",
+      "legacyVariantId": "v-81125e707d4dcf04b1597ea0e492b80c70334ba9800a02b8c24377e5b8b235a2",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:e8af85b358ea4cff31e43002ff05360ac7e1e4303a0608cd3eafe4be310468b5",
+      "legacyTeamId": "moi-phe-121",
+      "legacyVariantId": "v-5a860c7b58f923b02ecba449e25a7df5c48ab212d3a8e6dfd61c7345acafa2c2"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:4f11d71c8ae11869b4e066667938877e567067db4fc61900a57a757b2cf2a333",
+      "legacyTeamId": "moi-phe-122",
+      "legacyVariantId": "v-d23889e6f7df69bf10ad631443a6cca53669e4380c0553852e6f47342fedfa38"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-123",
+      "legacyVariantId": "v-decb07fb9cd4c17f05cea21339d95ff76fbec3e4bb4b6c12c9dadcf2207d165e",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-124",
+      "legacyVariantId": "v-24f3580cc681733b5a7cc8dbc83780ffbf5908622870b54174e4d32bceea1826",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-125",
+      "legacyVariantId": "v-7536ff3eb490725a2f709bd7afd78736e34e25b3b36bc153cc2e5666114701b4",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-126",
+      "legacyVariantId": "v-0c35ae1a812f5ee9929ae4f50d361379070c048102da2113e895fa63ac76249c",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:ed4071cb05b6a46874a3715c3db64dc7409c97578c208a101b960f5aad791dcf",
+      "legacyTeamId": "moi-phe-127",
+      "legacyVariantId": "v-7b97fe780c3bad52d2767405012a57829e94cea87df189bec3d64a54de5fda2a"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-128",
+      "legacyVariantId": "v-10ff20d598bef781fe69a80b01979562efb666f2b060e923ba5f0d6b29203df8",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-129",
+      "legacyVariantId": "v-fa064bc2eb2e92d5379c35c009054411773687fb74353f21b57986439e5db43d",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-130",
+      "legacyVariantId": "v-42dd4bd01caaebf615e8537889299e384d36b466da6531c50322a903ede8fb1f",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:c24f9fd6b19d06450c7f8a2922f919e1d6bf540e394faee4b8e72f1deab8924b",
+      "legacyTeamId": "moi-phe-131",
+      "legacyVariantId": "v-49b9d1aa902b63de5449f152cecafc7d88833b8fe75e5849ac56d6f03289189d"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:f5abe922bbab37294594448045604436e1c0e677c4f3e843a9b1cfed29e2d5e3",
+      "legacyTeamId": "moi-phe-132",
+      "legacyVariantId": "v-1043cc1d2d581925e29745ecbe1db56cbe28e7771257429f4a10da4950693013"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-133",
+      "legacyVariantId": "v-9fb3258d100daac58c4a58c6f855e717b19e5ceb74710be9c4a54487e3dc5638",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:36fe607f2f97aa3a3ec2669524f5651337f09905a80dc150b933ab669bd6ee28",
+      "legacyTeamId": "moi-phe-134",
+      "legacyVariantId": "v-3d5f4013551c951920994e42a7126a972a42725cae379a4fb991a350ed09724a"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:cc20f669ff97d21c742a5dee8d5c8ebb5305141a4dd8a3add65e6badf3459a94",
+      "legacyTeamId": "moi-phe-135",
+      "legacyVariantId": "v-7dea864bc4d1eb857b929eb4b1c8cbe419e01f36aa2c4c576abe0496ffe86081"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-136",
+      "legacyVariantId": "v-08da72aff02f89b3a62b6aa9d55d564356473a0237343a87b42a4e17e349ceae",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-137",
+      "legacyVariantId": "v-76313414f70af0a8b0474597d8f7b1af3d9f86e678677bc935dbba0c66fcd54f",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:17af5c6fd563583bf2653dd9a972d3f7f4319070474488fb303a385f311aeda3",
+      "legacyTeamId": "moi-phe-138",
+      "legacyVariantId": "v-8285029cda8ed85885a1cf96da3102d64e36241805ec5a384e4b88b547d3ddf8"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-139",
+      "legacyVariantId": "v-fbf89bd63b06bd9c355facb03d39e66747422b67682029ddf69ad17bc4823ac8",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "duplicate",
+      "dedupKey": "sha256:7396c17ac740660aab1b3369c07d4d1168f4b1dee607c8f2bcab6cfca6c8b062",
+      "legacyTeamId": "moi-phe-140",
+      "legacyVariantId": "v-369d775e10a4c878709a58afa4d24303e8c415f146e8a1609f8051ba77478ddf",
+      "matchingRecommended": [
+        "s16-sp-qun-gong",
+        "s17-sp-qun-gong",
+        "s18-sp-qun-gong"
+      ]
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-141",
+      "legacyVariantId": "v-0171e56d5db04040de123cfea206b543494ef15efd52696eb7a420e7b2770a77",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:87e8912bf9ff4cb1597f258972a6c54bf32bbde9b2360151b12a992f6f250fb6",
+      "legacyTeamId": "moi-phe-142",
+      "legacyVariantId": "v-ba8e841262b6eb41bed469a7061d6071e1f01438e890b1087bdbb9e8488dcdef"
+    },
+    {
+      "classification": "duplicate",
+      "dedupKey": "sha256:c2058a42e129cc9d8b1c95c6aab9f32cbd729a85de6a53c1cc0b253d310a4517",
+      "legacyTeamId": "moi-phe-143",
+      "legacyVariantId": "v-8539f2662876983bd1b26cb51e590405730bd8c1df862b37881def9393cf9e2c",
+      "matchingRecommended": [
+        "s13-wutugu-dun",
+        "s16-gutou-dun",
+        "s17-gutou-dun",
+        "s18-gutou-dun"
+      ]
+    },
+    {
+      "classification": "pendingIdentity",
+      "dedupKey": "sha256:7896aa034c03bd3eee5a2e844a18b4858b490c65472d2ad01938085c7eaccae2",
+      "legacyTeamId": "moi-phe-144",
+      "legacyVariantId": "v-6862882937c563f329bff983a0cc28f0505a8bc9e6b6a7eddb8c4d96844048f1",
+      "possibleRecommended": [
+        "s18-feixiong-yaoxian",
+        "s17-feixiong-yaoxian",
+        "s16-feixiong-yaoxian"
+      ],
+      "reason": "possibly-matches-unresolved-recommended"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-145",
+      "legacyVariantId": "v-6072cf2cb9dcc0bf06acb9ea98bc3ab768a0f0a7a2a68eb08cbd40b7210aaf03",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:df553deb4353628d72b0a6b107a9e419efc721f0ac9680266cb4dce275b03ded",
+      "legacyTeamId": "moi-phe-146",
+      "legacyVariantId": "v-619b1ddf44702ae8e5ad13ef622168b409c776b3f4414c284d793a87b1d0410b"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-147",
+      "legacyVariantId": "v-9dfc2a47f081f095249eb708df283a92cedb94231842f900558607d55c0de572",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-148",
+      "legacyVariantId": "v-50d2cb7238fdd3808249921adc9684ee8cccde857d6062a32b7994972ae984a0",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-149",
+      "legacyVariantId": "v-c5c27e0f55a8fe93a93c9ade7aae865005a667a06f086db913493b793ed14a2e",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-150",
+      "legacyVariantId": "v-6f90f268ea9c066f0e4048e4c3606b86ca76f37771e945927ffacc2fc84f3015",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-151",
+      "legacyVariantId": "v-ae6834b8e5768c0305051358c11cf54908e0a7ccce1e9cae10dd8655bce606a0",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-152",
+      "legacyVariantId": "v-c92b45efb05bea560603f83ba2c0d621c045cfc0eaa71f2aca1807d6b69b477b",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-153",
+      "legacyVariantId": "v-7d8997051d7f4d0cf4bd59ae48f4c2a4885d2102a5d577d872ba7e6a6c51e047",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "duplicate",
+      "dedupKey": "sha256:5c9246bc72e99dee40a690bce31b34f26fe7baa8b2b5ba2876265c3798f91ff0",
+      "legacyTeamId": "moi-phe-154",
+      "legacyVariantId": "v-5ce3709b17635e54770ec26c6dd799072f926c642c605fb8008014404d9dd7ee",
+      "matchingRecommended": [
+        "s14-san-shi-lv"
+      ]
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-155",
+      "legacyVariantId": "v-636016a1f2b622a777fd84faf246d1ce52204363c6557c59c5abc5c91c8dea58",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-156",
+      "legacyVariantId": "v-695baf193d1e34b4adffddeb7c0cde91a0eebae940a8f9cd77d22e46fd2c7591",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-157",
+      "legacyVariantId": "v-efed847a720a11ba92d4af813852255b2e98d876bb7bf3590958bad820d4771b",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-158",
+      "legacyVariantId": "v-dbeb86032e1787a8495ee4569511df1b4eaa6188073ed0bcd4e9c8ee39fd1269",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-159",
+      "legacyVariantId": "v-2faa2b95fc57f5279bc3563d3f99702eefb8b84dcd2c9e8f913ff52a767b1f32",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-160",
+      "legacyVariantId": "v-e9d4f76368c285d4fc13311568345024ca233d6e38e6ab11505f289283ceec66",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-161",
+      "legacyVariantId": "v-a97f4752501021587e405ac0442cba5b603195f84910e11f95f627ef2d6461a4",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-162",
+      "legacyVariantId": "v-b9188988e1e02ce1669f455419508304d5e12669fcf3e9f5c74d1f16f1ca1d81",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-163",
+      "legacyVariantId": "v-567364f1b611c86f41d20f26f18088cbd78c92f26628dd76d331033bf1fdd91e",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:878c0033f23d3ce8f18038b1b256ef3ff5717c82dc149655fd0fce82c4e295a7",
+      "legacyTeamId": "moi-phe-164",
+      "legacyVariantId": "v-53374d3c1d98c2d9b538e58df9e6449503b6ef6a7951b9c6da89050bc1b1cab2"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-165",
+      "legacyVariantId": "v-6fa3738710894780dd7c426acbde2030f2a9acc52e120c6f8a9d22659fbbace1",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-166",
+      "legacyVariantId": "v-252bd7e64d340e45c94806cf4ede1d200a77e2c57ec4a2a4641da96e29a8db79",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:216551f7a44197f811e584d7b79edb5b0655c3d77088f6389971fdd422d332e1",
+      "legacyTeamId": "moi-phe-167",
+      "legacyVariantId": "v-3712c71a0a6f2a9f418cf82c7ac3f696379672e305d63375dcf8c38b6c6f5439"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:7b256d87fb7ff3b32bfb25d40ab5c619c87c485f53452bb47958626fac158091",
+      "legacyTeamId": "moi-phe-168",
+      "legacyVariantId": "v-4a45377a5f3bf5f34242ac9da98637e17d49659c91789daf8f809847eaeb9a8a"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-169",
+      "legacyVariantId": "v-3ed407bbbbde1c4e790cbac4f5cebfe03bdca4f49b3de4194823a50da8af5ae6",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:9fb107c83d2d4ff7d67543f4b2e1778fd6bf4fa03d42f0664118fc085fb8862c",
+      "legacyTeamId": "moi-phe-170",
+      "legacyVariantId": "v-2bbdfc74952d9b93636d0d2b2af891ee8be9faf28a0c3f174565f1d6b2c1934d"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-171",
+      "legacyVariantId": "v-41ec4256aeebd1b852c0f1d2052fcf913685ecf227742f59f8bdbc2de0c376b6",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-62",
+      "legacyVariantId": "v-0c97cdb9efab6b66287764d76d62da8c0a21fdbc39d6c83813be8c06c6df0e7f",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-63",
+      "legacyVariantId": "v-1ac7755b669f2df494361cf9f8f8e137a6d4ab72abd51d82b10a927578c2ff49",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-64",
+      "legacyVariantId": "v-8cc6c1d97d841219a88641c8fe92f61c0d71cb29a882bf090e47b684bb72b0cd",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-65",
+      "legacyVariantId": "v-e66f3b056009ee3ed4b9f4be0d7e680f3161ff3b386d6e83db9cbb09b621c6e8",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-66",
+      "legacyVariantId": "v-abd9a52666601dbc1576b997b2b3955989a65d342946fb3dfe01898dc85e5361",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "duplicate",
+      "dedupKey": "sha256:2480c29e5d71e9097bd05842643a3f5c6fc5ecfe274738c072e9c165312160b9",
+      "legacyTeamId": "moi-phe-67",
+      "legacyVariantId": "v-68b8a86f8d34cec8a5f049f1fd2b8fc50d4f0203a776531ccfa31d8d6534aa61",
+      "matchingRecommended": [
+        "s12-wei-taiwei-dun",
+        "s14-taiwei-dun-junmin",
+        "s16-jingdian-taiwei",
+        "s17-jingdian-taiwei",
+        "s18-jingdian-taiwei",
+        "s22-sima-dun",
+        "s28-taiwei-dun"
+      ]
+    },
+    {
+      "classification": "duplicate",
+      "dedupKey": "sha256:dc25323e309e7fb18acc7ed0368d70b852813ddb3747886a1fd5f8eb59999326",
+      "legacyTeamId": "moi-phe-68",
+      "legacyVariantId": "v-4a4232ba093b0fda72b371d2f29b4f83d92a114568d638a4b3bd5a878e0a2107",
+      "matchingRecommended": [
+        "s16-xingyi-taiwei",
+        "s17-xingyi-taiwei",
+        "s18-xingyi-taiwei"
+      ]
+    },
+    {
+      "classification": "duplicate",
+      "dedupKey": "sha256:c8b30ee60a7573bb756136ab2dcf73b9a05d05d5662ef3d8186b40b705bb0936",
+      "legacyTeamId": "moi-phe-69",
+      "legacyVariantId": "v-0e5320c700b503d03ca20c6c56ddcc9927b5ecdd78333eef527574e488805491",
+      "matchingRecommended": [
+        "s16-sima-dun",
+        "s17-sima-dun",
+        "s18-sima-dun",
+        "s19-sima-dun-basic"
+      ]
+    },
+    {
+      "classification": "duplicate",
+      "dedupKey": "sha256:84af9fc5eed08a62b3fa8fe7666b063baf711500f1297e83fd752c3c13b6864c",
+      "legacyTeamId": "moi-phe-70",
+      "legacyVariantId": "v-f79b9644d00344473daf21131037fc9846a3a9eb33772cde5e44e38565a55f35",
+      "matchingRecommended": [
+        "s16-xingyi-hao-sima",
+        "s17-xingyi-hao-sima",
+        "s18-xingyi-hao-sima"
+      ]
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:651523b48972fd5799e547dfc1ba0c826ff32215158a19570e37758413c186b7",
+      "legacyTeamId": "moi-phe-71",
+      "legacyVariantId": "v-d78dd5f030ca2a1c2c81bb1306faf89c4b24e7bbf77113ea9ada4027dd943d0e"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-72",
+      "legacyVariantId": "v-83b02479cfc839d4d9fbb19555f5725d511ab5ec0e1689a64a2df809f3b17730",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-73",
+      "legacyVariantId": "v-1830d0401e264239e56eaae259345b3db5d99f4858c21affab8db6ad7c84ce8b",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-74",
+      "legacyVariantId": "v-381b3798c0f84d97621b0d4d9bafcdd64493bc2895d1d1937aacb2381631340f",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "dedupKey": "sha256:36143257664bb1236af70be00888a66eedb2b265cba8ebbc4b401dd1d5e1b38d",
+      "legacyTeamId": "moi-phe-75",
+      "legacyVariantId": "v-a6fe2ebfb50e9859d69ed21a0b1237f98cd4400fcd9de2658e1d61023c899d03",
+      "possibleRecommended": [
+        "team-j1byl",
+        "s18-feixiong-wu-mou",
+        "s17-feixiong-wu-mou",
+        "s16-feixiong-wu-mou",
+        "s9-xiong-5mou-qi"
+      ],
+      "reason": "possibly-matches-unresolved-recommended"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:2674f9fbf93bd926f41eefe502bfd2930880477010279914f866a4f7309c1d88",
+      "legacyTeamId": "moi-phe-76",
+      "legacyVariantId": "v-ab9e58741fb31e6f8fbe81ddad1b16873e3f40b2f024016bca32ec15a905682a"
+    },
+    {
+      "classification": "duplicate",
+      "dedupKey": "sha256:7dfe35f1c297eb64a4622906d56f0c363f273564f6a69daae9b3b22adda58fea",
+      "legacyTeamId": "moi-phe-77",
+      "legacyVariantId": "v-8b4414445ea95a4e913323298286869759a36951511aca70832c79fa6bd725bd",
+      "matchingRecommended": [
+        "s9-xin-wei-fa-qi"
+      ]
+    },
+    {
+      "classification": "duplicate",
+      "dedupKey": "sha256:6d2d4ecc78fc768c3d2e0eb841fceac541bc0764c5db48651663558e4c8c9745",
+      "legacyTeamId": "moi-phe-78",
+      "legacyVariantId": "v-90bea3ed5dbdbfd5aaaf594cef08f7573352f2e9051b53c7f6aa3c49f41c5116",
+      "matchingRecommended": [
+        "s16-chengyu-wei-fa-tradition",
+        "s17-chengyu-wei-fa-tradition",
+        "s18-chengyu-wei-fa-tradition"
+      ]
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:72c1ba3c404edc5f3f6207b1d61906819c7fb002b7a41370e192a67bb03bbb78",
+      "legacyTeamId": "moi-phe-79",
+      "legacyVariantId": "v-8593dfe966a369fcb85cfd4ecc751260c84e1d973b96ab447933ffec95ef5c71"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-80",
+      "legacyVariantId": "v-cd0ee92e850dd9cd3b085cc2db3b76002dcad23827f2247c0a205d3f07f34339",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:eca7cfd407cc11c32a6677125adf7f018e63bf57312a09430072ab05da4f8279",
+      "legacyTeamId": "moi-phe-81",
+      "legacyVariantId": "v-4ee135f4f9f22df413d51bb33430773223bd6748da16f59184ab3c6e4e9d30b8"
+    },
+    {
+      "classification": "duplicate",
+      "dedupKey": "sha256:369cd083d030e059bb94ed83745364fbe3c9708c0b43ed9cd495218bfd00cfe9",
+      "legacyTeamId": "moi-phe-82",
+      "legacyVariantId": "v-671bc2bfcd26af4d547d3e0917ec19ae23318cf213e4096f2d7167f8831317de",
+      "matchingRecommended": [
+        "s19-yuan-qi"
+      ]
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-83",
+      "legacyVariantId": "v-2ecf84129b238999fa70bd88aece5c0ad88e793840d577715fe187fdc5b6a602",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-84",
+      "legacyVariantId": "v-8f3530e95b639a4d32509ea4b1167b41b689804b2c2a8f21e8ad2e724e7b3320",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-85",
+      "legacyVariantId": "v-92af87109d7bf502083e6555fc12938e03c3488ff8366692bef6f7141795c0fd",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-86",
+      "legacyVariantId": "v-30b131d5212e0f0b4cf1bed4b1e9cf49e4e6b96dd265b124d0596f39d13682ae",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "duplicate",
+      "dedupKey": "sha256:44e60cd41b1fa231ff5b4db2871a5959d6e24ad1f173880427e19bfa904ec9ec",
+      "legacyTeamId": "moi-phe-87",
+      "legacyVariantId": "v-4eafa9bf77aa2277c4804c62a777cd9a40b19b10ecdaaac3599e079918aa9cf1",
+      "matchingRecommended": [
+        "s11-shu-qilin-gong",
+        "s12-shu-bamen-shu-gong",
+        "s13-bamen-shu-gong",
+        "s14-dingpei-qilin-gong",
+        "s16-bamen-shu-gong",
+        "s17-bamen-shu-gong",
+        "s18-bamen-shu-gong",
+        "s22-qilin-gong",
+        "s25-qilin-gong",
+        "s26-qilin-gong",
+        "s27-qilin-gong",
+        "s28-dingpei-shu-gong"
+      ]
+    },
+    {
+      "classification": "duplicate",
+      "dedupKey": "sha256:fe410be07db93c31b8c165a00250db037df1d92e44eece7a8a037883bdf45b84",
+      "legacyTeamId": "moi-phe-88",
+      "legacyVariantId": "v-0fbded1ef7bcd9f567a04b7b80d087678f8b23f9ac13839f30837051acae7d09",
+      "matchingRecommended": [
+        "s25-zanbi-shu-gong"
+      ]
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:ca78f48ec80f8ff08ffe37d4ba110dafc50789ae2a82709e40bf57cea582110d",
+      "legacyTeamId": "moi-phe-89",
+      "legacyVariantId": "v-bbdfb327990e8db243d7d8d94a703d778b917f8fcd4d36d449d7a9c7b4070445"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-90",
+      "legacyVariantId": "v-eafc9377f9fb64ea046770ae127450df753f5ba73d3dee39bdb33d9fe989b141",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-91",
+      "legacyVariantId": "v-76e2b0678c5cae1b73de803b200623f585d0801b5992299524c5b1b4cdb6208c",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-92",
+      "legacyVariantId": "v-566a0a81da5a32ee57b1aa80caf5d3aa9392acd6d75600beed8907c455c62d83",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-93",
+      "legacyVariantId": "v-fc34e93ff81b3ec5cc9163598b898c52f8cfe82f5393de7345d96e1c40bae66f",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-94",
+      "legacyVariantId": "v-e67fdfd5ffb2940c4c0eeb38e66fec75f44fb54314e952189d9f5d7141830f36",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-95",
+      "legacyVariantId": "v-957043b3b5ead82e38c2241d0b9dc06894558a6769acb6bc454004d50dac3183",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-96",
+      "legacyVariantId": "v-d47b6eacc83b3764df57efc0696a28f758e0294b0252395e4b571053538c6ea1",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "duplicate",
+      "dedupKey": "sha256:b1f666d3072f88d37159f02365075d28a2297b3e1fcfb6a308a04b0cc927e436",
+      "legacyTeamId": "moi-phe-97",
+      "legacyVariantId": "v-0fafdfe6e3a88da9760922148b91c412001d07e3923fcab062412a45637962f4",
+      "matchingRecommended": [
+        "s12-shu-baobiao-dun",
+        "s13-baobiao-dun",
+        "s16-baobiao-dun",
+        "s17-baobiao-dun",
+        "s18-baobiao-dun"
+      ]
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:ac90d73e610a0611589ece49c9b693b1f90902dd7874ba07d6a1170d3d17de67",
+      "legacyTeamId": "moi-phe-98",
+      "legacyVariantId": "v-9648825595e20e6a3c34aaf3b78251f03ac09e3d40ef415f5adae1d385962111"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:024d27fdcffa68aae9acebb1460ff8704cd42afe29d4b71a0714936943d19932",
+      "legacyTeamId": "moi-phe-99",
+      "legacyVariantId": "v-8a61919a5405aa457e6ec36c85f085b711650998c27e17b3bb019f0d8b236238"
+    },
+    {
+      "classification": "duplicate",
+      "dedupKey": "sha256:deb414e8d33e457dd168101b29bb501aa3221d15fb97424e77db57bf0c51888f",
+      "legacyTeamId": "team-intro-0",
+      "legacyVariantId": "v-89b8e67c76029d649868e21c415b26ae0f596ead45c4ec4fb709329864e47443",
+      "matchingRecommended": [
+        "s16-rongguang-qiang",
+        "s17-rongguang-qiang",
+        "s18-rongguang-qiang",
+        "s19-rongguang-qiang",
+        "s9-qi-rongguang-qiang"
+      ]
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-1",
+      "legacyVariantId": "v-b026042ce9fa4e6e660d1def96b9683ade999e6703a86e1ae9981b4ad7efbda7",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-10",
+      "legacyVariantId": "v-ceb7c6151dbf3177ac3d6c7bc94f551feb7064d63848ec0321f75a6892382d84",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "dedupKey": "sha256:b775502f76630398b9d6d1e005310cbd09ab562b1d3dfd44b5716a490eaad6b9",
+      "legacyTeamId": "team-intro-11",
+      "legacyVariantId": "v-43027746b4c6dec786aa83555a8119636154cd5b54aebacddff722b1bf63b65b",
+      "possibleRecommended": [
+        "team-j1byl",
+        "s23-diyu-fugui-2"
+      ],
+      "reason": "possibly-matches-unresolved-recommended"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:bfdc88be16826415882b5cb8188a1cd7ebcd4acf05a013053a2c1e8dca539f22",
+      "legacyTeamId": "team-intro-12",
+      "legacyVariantId": "v-a8a2c8fd5e8a798a34a971206874f1f910e9740f17b0b848b836c9edba8e1843"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-13",
+      "legacyVariantId": "v-4aef7d1e6d0ad38d31ccd210fd439fb480fbc74cb5b5491c25dd77c9401e6a0d",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:9ea6ca1de5d15b9194cff7e8862e0cd65672e76e96205bdc9f44df47bc3addb2",
+      "legacyTeamId": "team-intro-14",
+      "legacyVariantId": "v-97fdbcb4a85ffcb7416c2b48f7b0909931b05e4242889c3c9a3c478a9df9569e"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-15",
+      "legacyVariantId": "v-0b1090bee984b7ada700155d17e514f35cc7c1d25e2967427dae76aefa70b6ac",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-16",
+      "legacyVariantId": "v-261c8b9465c93a564f27397dd8cd2f16734e0048b422f82a4e3ff96f128bbe9c",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-17",
+      "legacyVariantId": "v-3a31a6e37ca940e0e5323dc3424994ea42511e60b2c40b8fa8d7961344301c67",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-18",
+      "legacyVariantId": "v-da0d584f79fdfede00016b165a5d21834e8a0a0f71a989cbe07e757af0192a24",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-19",
+      "legacyVariantId": "v-808a79ef06c3ce918ccc4540beb21873375f9ef93c9ca3c1df0ec85d7acff74f",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-2",
+      "legacyVariantId": "v-8c136a6011d9cded8f004bea34b1d9824637c4078e2b5cc865d4eb653dd67258",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:1d4b690ac81150409ae6f3dd9a1f0a8434d8d07b7689a75d767979d65a3aab54",
+      "legacyTeamId": "team-intro-20",
+      "legacyVariantId": "v-bbdc4d26abbb973b65f49e432b4d49d348a6629467dee6aa9fd4717680b1f899"
+    },
+    {
+      "classification": "duplicate",
+      "dedupKey": "sha256:b77cbb023bb0ab5a77cf8bc41085c25f1854f8bc21e923f805be8176d314e339",
+      "legacyTeamId": "team-intro-21",
+      "legacyVariantId": "v-776634185102d4e935af8bfcc21b5aa436adba78073fb4587074e0f4e205ffe8",
+      "matchingRecommended": [
+        "team-1y79psn"
+      ]
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-22",
+      "legacyVariantId": "v-4dd06ab0ae50ef59a551982fceb899c95311d329f9e772df418d2d049e2514c6",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:69d9f2e4028dd50ad8c1bf26ec0b62b97ba4dc30770fb0b18c1dfe10344694f3",
+      "legacyTeamId": "team-intro-23",
+      "legacyVariantId": "v-ebe0e8e3ee668a19edf4cbcd97bc0dbf15a1b1f084ffa81d3161c5aa5766f032"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-24",
+      "legacyVariantId": "v-ba0bc8eac20e80a41f67e34ade366e53ddb360aa6718daf6dd0d44e284dc7d3d",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-25",
+      "legacyVariantId": "v-81088ada541e74b7188134e5a0c1e793ff8649557d0223d7a97c153601560979",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "dedupKey": "sha256:48a884fa31aee85a37fab228d9ed8dce41332c38af3be0e9ecd5df8c782547c0",
+      "legacyTeamId": "team-intro-26",
+      "legacyVariantId": "v-efb34131e118e18f51d63f992879a889b89b7ffde97e93e7a58ccfe453077143",
+      "possibleRecommended": [
+        "yxms-007-甘寧周泰"
+      ],
+      "reason": "possibly-matches-unresolved-recommended"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-27",
+      "legacyVariantId": "v-118e7a84226ea85cb9a1dd9c1b89b9d3516ea77960a961fae5ff7e985b3e2ca8",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-28",
+      "legacyVariantId": "v-6be045bd128e1f0a3e5e8eabab2ebc7f5cf545bb858306796e6b797da0cd9ede",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-29",
+      "legacyVariantId": "v-c1a8bd3432c3a5ed0f792c094e39f1548f6e4b877dda2fb6d77e1eaff94d4e97",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-3",
+      "legacyVariantId": "v-bf3e141fc7c817ae15383cc1280dfb2da2d36eb33dd1872d248693e9bceedc86",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-30",
+      "legacyVariantId": "v-c3435c0162090d5113782d8353d59664fbc595756b1105e7e5d09f857fb1146c",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-31",
+      "legacyVariantId": "v-3ec6702f7ee73eafb67039e232577d9f49de5191e9b69c2b4ca6a59984407eb0",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-32",
+      "legacyVariantId": "v-37e88e63d78bab330f348f75bfd10d537337391583c46514c15d3bb52bd0373a",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-33",
+      "legacyVariantId": "v-d320c96af7093444f41c74be72b3a0a13d028087b164966aa6ba05ee9a465711",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-34",
+      "legacyVariantId": "v-440429e55d9b3b8cd3002796291111e7716edfecf038ea075d6ea3f1ab84fd47",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-35",
+      "legacyVariantId": "v-a29cb1ae5655cb533e9f52cd0d623b144af0553ee8e6cf5bdbb21153cd8d5ad5",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:a6fb0a3cd66bf5caa8259c2d124acee492d7a11923f9d73aee1d7fbc6f99e668",
+      "legacyTeamId": "team-intro-36",
+      "legacyVariantId": "v-9645ea24f3d11a9bbd0bf54567c5b7049ab8a9d03aa253d29560928400a4a344"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-37",
+      "legacyVariantId": "v-96d797622b3b3b826107202c849ab5c09a6421405d5ab5bb180bc221026c8f66",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-38",
+      "legacyVariantId": "v-02c9c1ff580497d5b1c2668b74a01d5c153717024760ea92044c89c30c928b5b",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-39",
+      "legacyVariantId": "v-a18a41efc26e064b38153c9a319abe1d7b2a35e6e615188adcd2995e23046b30",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:bdc19646b5f53e6404c3bcb7e76d8e56e98bc29d545de5682dea68d805578cc9",
+      "legacyTeamId": "team-intro-4",
+      "legacyVariantId": "v-5aa993f59e12b9667e9def2d781c0bd2384d6804b2939f0ebb09c40397c460db"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-40",
+      "legacyVariantId": "v-e897f2c55e3056b8722cd5e793dcd879411c956aab6f6a2e9be843fb3f6d533f",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-41",
+      "legacyVariantId": "v-45e03aedab3ed4e153f234daf6795e4e0724e969663e57c5374ea8365a17f27e",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:223992b64ce7576801851962424c952d130471afca4d1f81f5accfb3133d7a2f",
+      "legacyTeamId": "team-intro-42",
+      "legacyVariantId": "v-45818ab3ba08c9fbac6d97083345f15fb830c6a8d779dcc3667bec1fabc73988"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-43",
+      "legacyVariantId": "v-502742450664cf09004804df0f1e42b3b1464f363327fa2ab56ea94c20778f86",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "duplicate",
+      "dedupKey": "sha256:9b8d3b369e4d3f1166595fa41ade8668f71af5fe650fde6e89cc8b1889467bcf",
+      "legacyTeamId": "team-intro-44",
+      "legacyVariantId": "v-05e5b0fcf13677bcaf032f41a3187cf44ead4fbd0d8d69ccf8d18971f389a855",
+      "matchingRecommended": [
+        "s10-wei-fa-qi-haozhao",
+        "s9-shanhe-dun"
+      ]
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-45",
+      "legacyVariantId": "v-a7562f3691ee94c277c27592d902c9c4f3349c3fea986a63e1e756b7262a8ab0",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "duplicate",
+      "dedupKey": "sha256:f84c3a61590b9e09d94197811012a83ddaf620ce17c7c113e5575ee0ef3a7dc3",
+      "legacyTeamId": "team-intro-46",
+      "legacyVariantId": "v-3e446ad671ed128dd02257f671d7113a4f3f0d1c08df8e3f9fcb0228272e8b5e",
+      "matchingRecommended": [
+        "yxms-049-仙人盾-by大米"
+      ]
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-47",
+      "legacyVariantId": "v-00a7cd074170e6b0661f59ec85ed5fe9be65b3236eaf27c0c16a8714e631f6f4",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:fe13e03db1d64854e1060302d47edf8ba6e2a3ba1a90ae8493acce1a24051467",
+      "legacyTeamId": "team-intro-48",
+      "legacyVariantId": "v-f21b3cd97b0a3fadf2b26298834eb63147b8e26e522bede8d13a4f631db5d117"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:f3428fef39692e83727e8e33486089f701add55a7a03ee74bd63510f9e81bdbd",
+      "legacyTeamId": "team-intro-49",
+      "legacyVariantId": "v-c4fffaedd2546424dbb8029547118dbd5e046a14b0fe0fde7f653d8ced839686"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-5",
+      "legacyVariantId": "v-6294c06b161448cc5e37b07257d3ba0c4a41bb8b16a0db966d099ff98b805e59",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-50",
+      "legacyVariantId": "v-0fa7a27238af95b6b0f7aef5b82f56cb6b8462b4ea99176de574e770a7bc9de6",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-51",
+      "legacyVariantId": "v-7cb33812a3260274ab6db1f43b3416d42b2b46dbadff819aab8b084f2d051355",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-52",
+      "legacyVariantId": "v-f9a12c23d8f2142b956779b64501963e4af3b0cdfdaf43ae09c628492efa0737",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-53",
+      "legacyVariantId": "v-0ef26ff4bad60000b3abaf10ebf4ce4eea393fcc3e920bb0035f340ebe0ef345",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-54",
+      "legacyVariantId": "v-dfdab6169a05e5c1636aaeb20789d0a099ac8ee2556c2633c54b8a3b0e7e4d1c",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "distinct",
+      "dedupKey": "sha256:b303460bec6fc7eecd7e587e7e5a4ce2bfa4dce240f40f8e8d2e8855d9d61785",
+      "legacyTeamId": "team-intro-55",
+      "legacyVariantId": "v-77d1d16398ead8c4fa75fbd7261cba1926a1217e6da794c0237628e8b1a03ac5"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-6",
+      "legacyVariantId": "v-115dd4126fc16fba4f13def5253870d05d04ef3f7385545f38e0777d0dcc9dda",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-7",
+      "legacyVariantId": "v-13d387877081599635d5262f09734ba8468086d083a0a6901d07d3489cf2b32f",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-8",
+      "legacyVariantId": "v-690900d82cb42a8321bdfd382eb186e576aeaee956882181c14ed80879d450e8",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-9",
+      "legacyVariantId": "v-793ca4cfda3f07d81c6993422fb642b1064539b02ae9e4cd306f6d44a5d4f976",
+      "reason": "unresolved-local-primary"
+    }
+  ],
+  "dedupKeyVersion": 1,
+  "inputTeamRows": 166,
+  "localTeamsSha256": "sha256:b937a6ee1d71fc4176eda0efb1e4e8a5c9bcf4ca4775d53a5a21b84b33f973ac",
+  "mappingFileSha256": "sha256:fe428aa00fa18d9e5c42270f4ebc44f2f1ef240960060ce77947d75af42873de",
+  "pending": [
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-104",
+      "legacyVariantId": "v-1102c89fce0b4a3dd211d40ef016ada0eaa9c162cbc5c086dfbf8d901aa67878",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-108",
+      "legacyVariantId": "v-33b46e0554e407c44eae2503530f4eb7685cededfd06545bf4914a7817ac11af",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-109",
+      "legacyVariantId": "v-30aa4f124044576e4c0ec4a925a70aedbffbe87eec3b28024ce295f5b82887ed",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-113",
+      "legacyVariantId": "v-571637afbeb9586fbf792f0a3330dd0b045ed776b2d3f982cc5315efb2aac7dc",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-114",
+      "legacyVariantId": "v-08005de3867a8a72b67cdc29e9f3193dcc8dcb7b6d9f4a831f5c4d8a1539d0bd",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-115",
+      "legacyVariantId": "v-3404ee07eaef86fd5149836a066faabb26716eac682f520c4a1ef3b35c06eee8",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-116",
+      "legacyVariantId": "v-54d85e736fb9a1a2530fdc5c0a1323aef4cd174f4af0503bb682ca003e03bff6",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-117",
+      "legacyVariantId": "v-cd722083ac76a69113726ac62dd32cfc1b3b1c6be6d2d56c1bc65f87939e466c",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "dedupKey": "sha256:48a884fa31aee85a37fab228d9ed8dce41332c38af3be0e9ecd5df8c782547c0",
+      "legacyTeamId": "moi-phe-118",
+      "legacyVariantId": "v-094cb7266b9672293927e3f9b0b975cca7ea7039da87d8bc8885bc04be0ac2f9",
+      "possibleRecommended": [
+        "yxms-007-甘寧周泰"
+      ],
+      "reason": "possibly-matches-unresolved-recommended"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-120",
+      "legacyVariantId": "v-81125e707d4dcf04b1597ea0e492b80c70334ba9800a02b8c24377e5b8b235a2",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-123",
+      "legacyVariantId": "v-decb07fb9cd4c17f05cea21339d95ff76fbec3e4bb4b6c12c9dadcf2207d165e",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-124",
+      "legacyVariantId": "v-24f3580cc681733b5a7cc8dbc83780ffbf5908622870b54174e4d32bceea1826",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-125",
+      "legacyVariantId": "v-7536ff3eb490725a2f709bd7afd78736e34e25b3b36bc153cc2e5666114701b4",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-126",
+      "legacyVariantId": "v-0c35ae1a812f5ee9929ae4f50d361379070c048102da2113e895fa63ac76249c",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-128",
+      "legacyVariantId": "v-10ff20d598bef781fe69a80b01979562efb666f2b060e923ba5f0d6b29203df8",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-129",
+      "legacyVariantId": "v-fa064bc2eb2e92d5379c35c009054411773687fb74353f21b57986439e5db43d",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-130",
+      "legacyVariantId": "v-42dd4bd01caaebf615e8537889299e384d36b466da6531c50322a903ede8fb1f",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-133",
+      "legacyVariantId": "v-9fb3258d100daac58c4a58c6f855e717b19e5ceb74710be9c4a54487e3dc5638",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-136",
+      "legacyVariantId": "v-08da72aff02f89b3a62b6aa9d55d564356473a0237343a87b42a4e17e349ceae",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-137",
+      "legacyVariantId": "v-76313414f70af0a8b0474597d8f7b1af3d9f86e678677bc935dbba0c66fcd54f",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-139",
+      "legacyVariantId": "v-fbf89bd63b06bd9c355facb03d39e66747422b67682029ddf69ad17bc4823ac8",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-141",
+      "legacyVariantId": "v-0171e56d5db04040de123cfea206b543494ef15efd52696eb7a420e7b2770a77",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "dedupKey": "sha256:7896aa034c03bd3eee5a2e844a18b4858b490c65472d2ad01938085c7eaccae2",
+      "legacyTeamId": "moi-phe-144",
+      "legacyVariantId": "v-6862882937c563f329bff983a0cc28f0505a8bc9e6b6a7eddb8c4d96844048f1",
+      "possibleRecommended": [
+        "s18-feixiong-yaoxian",
+        "s17-feixiong-yaoxian",
+        "s16-feixiong-yaoxian"
+      ],
+      "reason": "possibly-matches-unresolved-recommended"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-145",
+      "legacyVariantId": "v-6072cf2cb9dcc0bf06acb9ea98bc3ab768a0f0a7a2a68eb08cbd40b7210aaf03",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-147",
+      "legacyVariantId": "v-9dfc2a47f081f095249eb708df283a92cedb94231842f900558607d55c0de572",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-148",
+      "legacyVariantId": "v-50d2cb7238fdd3808249921adc9684ee8cccde857d6062a32b7994972ae984a0",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-149",
+      "legacyVariantId": "v-c5c27e0f55a8fe93a93c9ade7aae865005a667a06f086db913493b793ed14a2e",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-150",
+      "legacyVariantId": "v-6f90f268ea9c066f0e4048e4c3606b86ca76f37771e945927ffacc2fc84f3015",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-151",
+      "legacyVariantId": "v-ae6834b8e5768c0305051358c11cf54908e0a7ccce1e9cae10dd8655bce606a0",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-152",
+      "legacyVariantId": "v-c92b45efb05bea560603f83ba2c0d621c045cfc0eaa71f2aca1807d6b69b477b",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-153",
+      "legacyVariantId": "v-7d8997051d7f4d0cf4bd59ae48f4c2a4885d2102a5d577d872ba7e6a6c51e047",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-155",
+      "legacyVariantId": "v-636016a1f2b622a777fd84faf246d1ce52204363c6557c59c5abc5c91c8dea58",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-156",
+      "legacyVariantId": "v-695baf193d1e34b4adffddeb7c0cde91a0eebae940a8f9cd77d22e46fd2c7591",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-157",
+      "legacyVariantId": "v-efed847a720a11ba92d4af813852255b2e98d876bb7bf3590958bad820d4771b",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-158",
+      "legacyVariantId": "v-dbeb86032e1787a8495ee4569511df1b4eaa6188073ed0bcd4e9c8ee39fd1269",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-159",
+      "legacyVariantId": "v-2faa2b95fc57f5279bc3563d3f99702eefb8b84dcd2c9e8f913ff52a767b1f32",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-160",
+      "legacyVariantId": "v-e9d4f76368c285d4fc13311568345024ca233d6e38e6ab11505f289283ceec66",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-161",
+      "legacyVariantId": "v-a97f4752501021587e405ac0442cba5b603195f84910e11f95f627ef2d6461a4",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-162",
+      "legacyVariantId": "v-b9188988e1e02ce1669f455419508304d5e12669fcf3e9f5c74d1f16f1ca1d81",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-163",
+      "legacyVariantId": "v-567364f1b611c86f41d20f26f18088cbd78c92f26628dd76d331033bf1fdd91e",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-165",
+      "legacyVariantId": "v-6fa3738710894780dd7c426acbde2030f2a9acc52e120c6f8a9d22659fbbace1",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-166",
+      "legacyVariantId": "v-252bd7e64d340e45c94806cf4ede1d200a77e2c57ec4a2a4641da96e29a8db79",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-169",
+      "legacyVariantId": "v-3ed407bbbbde1c4e790cbac4f5cebfe03bdca4f49b3de4194823a50da8af5ae6",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-171",
+      "legacyVariantId": "v-41ec4256aeebd1b852c0f1d2052fcf913685ecf227742f59f8bdbc2de0c376b6",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-62",
+      "legacyVariantId": "v-0c97cdb9efab6b66287764d76d62da8c0a21fdbc39d6c83813be8c06c6df0e7f",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-63",
+      "legacyVariantId": "v-1ac7755b669f2df494361cf9f8f8e137a6d4ab72abd51d82b10a927578c2ff49",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-64",
+      "legacyVariantId": "v-8cc6c1d97d841219a88641c8fe92f61c0d71cb29a882bf090e47b684bb72b0cd",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-65",
+      "legacyVariantId": "v-e66f3b056009ee3ed4b9f4be0d7e680f3161ff3b386d6e83db9cbb09b621c6e8",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-66",
+      "legacyVariantId": "v-abd9a52666601dbc1576b997b2b3955989a65d342946fb3dfe01898dc85e5361",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-72",
+      "legacyVariantId": "v-83b02479cfc839d4d9fbb19555f5725d511ab5ec0e1689a64a2df809f3b17730",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-73",
+      "legacyVariantId": "v-1830d0401e264239e56eaae259345b3db5d99f4858c21affab8db6ad7c84ce8b",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-74",
+      "legacyVariantId": "v-381b3798c0f84d97621b0d4d9bafcdd64493bc2895d1d1937aacb2381631340f",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "dedupKey": "sha256:36143257664bb1236af70be00888a66eedb2b265cba8ebbc4b401dd1d5e1b38d",
+      "legacyTeamId": "moi-phe-75",
+      "legacyVariantId": "v-a6fe2ebfb50e9859d69ed21a0b1237f98cd4400fcd9de2658e1d61023c899d03",
+      "possibleRecommended": [
+        "team-j1byl",
+        "s18-feixiong-wu-mou",
+        "s17-feixiong-wu-mou",
+        "s16-feixiong-wu-mou",
+        "s9-xiong-5mou-qi"
+      ],
+      "reason": "possibly-matches-unresolved-recommended"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-80",
+      "legacyVariantId": "v-cd0ee92e850dd9cd3b085cc2db3b76002dcad23827f2247c0a205d3f07f34339",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-83",
+      "legacyVariantId": "v-2ecf84129b238999fa70bd88aece5c0ad88e793840d577715fe187fdc5b6a602",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-84",
+      "legacyVariantId": "v-8f3530e95b639a4d32509ea4b1167b41b689804b2c2a8f21e8ad2e724e7b3320",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-85",
+      "legacyVariantId": "v-92af87109d7bf502083e6555fc12938e03c3488ff8366692bef6f7141795c0fd",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-86",
+      "legacyVariantId": "v-30b131d5212e0f0b4cf1bed4b1e9cf49e4e6b96dd265b124d0596f39d13682ae",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-90",
+      "legacyVariantId": "v-eafc9377f9fb64ea046770ae127450df753f5ba73d3dee39bdb33d9fe989b141",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-91",
+      "legacyVariantId": "v-76e2b0678c5cae1b73de803b200623f585d0801b5992299524c5b1b4cdb6208c",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-92",
+      "legacyVariantId": "v-566a0a81da5a32ee57b1aa80caf5d3aa9392acd6d75600beed8907c455c62d83",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-93",
+      "legacyVariantId": "v-fc34e93ff81b3ec5cc9163598b898c52f8cfe82f5393de7345d96e1c40bae66f",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-94",
+      "legacyVariantId": "v-e67fdfd5ffb2940c4c0eeb38e66fec75f44fb54314e952189d9f5d7141830f36",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-95",
+      "legacyVariantId": "v-957043b3b5ead82e38c2241d0b9dc06894558a6769acb6bc454004d50dac3183",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "moi-phe-96",
+      "legacyVariantId": "v-d47b6eacc83b3764df57efc0696a28f758e0294b0252395e4b571053538c6ea1",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-1",
+      "legacyVariantId": "v-b026042ce9fa4e6e660d1def96b9683ade999e6703a86e1ae9981b4ad7efbda7",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-10",
+      "legacyVariantId": "v-ceb7c6151dbf3177ac3d6c7bc94f551feb7064d63848ec0321f75a6892382d84",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "dedupKey": "sha256:b775502f76630398b9d6d1e005310cbd09ab562b1d3dfd44b5716a490eaad6b9",
+      "legacyTeamId": "team-intro-11",
+      "legacyVariantId": "v-43027746b4c6dec786aa83555a8119636154cd5b54aebacddff722b1bf63b65b",
+      "possibleRecommended": [
+        "team-j1byl",
+        "s23-diyu-fugui-2"
+      ],
+      "reason": "possibly-matches-unresolved-recommended"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-13",
+      "legacyVariantId": "v-4aef7d1e6d0ad38d31ccd210fd439fb480fbc74cb5b5491c25dd77c9401e6a0d",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-15",
+      "legacyVariantId": "v-0b1090bee984b7ada700155d17e514f35cc7c1d25e2967427dae76aefa70b6ac",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-16",
+      "legacyVariantId": "v-261c8b9465c93a564f27397dd8cd2f16734e0048b422f82a4e3ff96f128bbe9c",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-17",
+      "legacyVariantId": "v-3a31a6e37ca940e0e5323dc3424994ea42511e60b2c40b8fa8d7961344301c67",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-18",
+      "legacyVariantId": "v-da0d584f79fdfede00016b165a5d21834e8a0a0f71a989cbe07e757af0192a24",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-19",
+      "legacyVariantId": "v-808a79ef06c3ce918ccc4540beb21873375f9ef93c9ca3c1df0ec85d7acff74f",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-2",
+      "legacyVariantId": "v-8c136a6011d9cded8f004bea34b1d9824637c4078e2b5cc865d4eb653dd67258",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-22",
+      "legacyVariantId": "v-4dd06ab0ae50ef59a551982fceb899c95311d329f9e772df418d2d049e2514c6",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-24",
+      "legacyVariantId": "v-ba0bc8eac20e80a41f67e34ade366e53ddb360aa6718daf6dd0d44e284dc7d3d",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-25",
+      "legacyVariantId": "v-81088ada541e74b7188134e5a0c1e793ff8649557d0223d7a97c153601560979",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "dedupKey": "sha256:48a884fa31aee85a37fab228d9ed8dce41332c38af3be0e9ecd5df8c782547c0",
+      "legacyTeamId": "team-intro-26",
+      "legacyVariantId": "v-efb34131e118e18f51d63f992879a889b89b7ffde97e93e7a58ccfe453077143",
+      "possibleRecommended": [
+        "yxms-007-甘寧周泰"
+      ],
+      "reason": "possibly-matches-unresolved-recommended"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-27",
+      "legacyVariantId": "v-118e7a84226ea85cb9a1dd9c1b89b9d3516ea77960a961fae5ff7e985b3e2ca8",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-28",
+      "legacyVariantId": "v-6be045bd128e1f0a3e5e8eabab2ebc7f5cf545bb858306796e6b797da0cd9ede",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-29",
+      "legacyVariantId": "v-c1a8bd3432c3a5ed0f792c094e39f1548f6e4b877dda2fb6d77e1eaff94d4e97",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-3",
+      "legacyVariantId": "v-bf3e141fc7c817ae15383cc1280dfb2da2d36eb33dd1872d248693e9bceedc86",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-30",
+      "legacyVariantId": "v-c3435c0162090d5113782d8353d59664fbc595756b1105e7e5d09f857fb1146c",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-31",
+      "legacyVariantId": "v-3ec6702f7ee73eafb67039e232577d9f49de5191e9b69c2b4ca6a59984407eb0",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-32",
+      "legacyVariantId": "v-37e88e63d78bab330f348f75bfd10d537337391583c46514c15d3bb52bd0373a",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-33",
+      "legacyVariantId": "v-d320c96af7093444f41c74be72b3a0a13d028087b164966aa6ba05ee9a465711",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-34",
+      "legacyVariantId": "v-440429e55d9b3b8cd3002796291111e7716edfecf038ea075d6ea3f1ab84fd47",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-35",
+      "legacyVariantId": "v-a29cb1ae5655cb533e9f52cd0d623b144af0553ee8e6cf5bdbb21153cd8d5ad5",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-37",
+      "legacyVariantId": "v-96d797622b3b3b826107202c849ab5c09a6421405d5ab5bb180bc221026c8f66",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-38",
+      "legacyVariantId": "v-02c9c1ff580497d5b1c2668b74a01d5c153717024760ea92044c89c30c928b5b",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-39",
+      "legacyVariantId": "v-a18a41efc26e064b38153c9a319abe1d7b2a35e6e615188adcd2995e23046b30",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-40",
+      "legacyVariantId": "v-e897f2c55e3056b8722cd5e793dcd879411c956aab6f6a2e9be843fb3f6d533f",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-41",
+      "legacyVariantId": "v-45e03aedab3ed4e153f234daf6795e4e0724e969663e57c5374ea8365a17f27e",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-43",
+      "legacyVariantId": "v-502742450664cf09004804df0f1e42b3b1464f363327fa2ab56ea94c20778f86",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-45",
+      "legacyVariantId": "v-a7562f3691ee94c277c27592d902c9c4f3349c3fea986a63e1e756b7262a8ab0",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-47",
+      "legacyVariantId": "v-00a7cd074170e6b0661f59ec85ed5fe9be65b3236eaf27c0c16a8714e631f6f4",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-5",
+      "legacyVariantId": "v-6294c06b161448cc5e37b07257d3ba0c4a41bb8b16a0db966d099ff98b805e59",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-50",
+      "legacyVariantId": "v-0fa7a27238af95b6b0f7aef5b82f56cb6b8462b4ea99176de574e770a7bc9de6",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-51",
+      "legacyVariantId": "v-7cb33812a3260274ab6db1f43b3416d42b2b46dbadff819aab8b084f2d051355",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-52",
+      "legacyVariantId": "v-f9a12c23d8f2142b956779b64501963e4af3b0cdfdaf43ae09c628492efa0737",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-53",
+      "legacyVariantId": "v-0ef26ff4bad60000b3abaf10ebf4ce4eea393fcc3e920bb0035f340ebe0ef345",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-54",
+      "legacyVariantId": "v-dfdab6169a05e5c1636aaeb20789d0a099ac8ee2556c2633c54b8a3b0e7e4d1c",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-6",
+      "legacyVariantId": "v-115dd4126fc16fba4f13def5253870d05d04ef3f7385545f38e0777d0dcc9dda",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-7",
+      "legacyVariantId": "v-13d387877081599635d5262f09734ba8468086d083a0a6901d07d3489cf2b32f",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-8",
+      "legacyVariantId": "v-690900d82cb42a8321bdfd382eb186e576aeaee956882181c14ed80879d450e8",
+      "reason": "unresolved-local-primary"
+    },
+    {
+      "classification": "pendingIdentity",
+      "legacyTeamId": "team-intro-9",
+      "legacyVariantId": "v-793ca4cfda3f07d81c6993422fb642b1064539b02ae9e4cd306f6d44a5d4f976",
+      "reason": "unresolved-local-primary"
+    }
+  ],
+  "pendingBranches": [
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "team-intro-1",
+      "legacyVariantId": "v-b026042ce9fa4e6e660d1def96b9683ade999e6703a86e1ae9981b4ad7efbda7"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "team-intro-6",
+      "legacyVariantId": "v-115dd4126fc16fba4f13def5253870d05d04ef3f7385545f38e0777d0dcc9dda"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "team-intro-11",
+      "legacyVariantId": "v-43027746b4c6dec786aa83555a8119636154cd5b54aebacddff722b1bf63b65b"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "team-intro-13",
+      "legacyVariantId": "v-4aef7d1e6d0ad38d31ccd210fd439fb480fbc74cb5b5491c25dd77c9401e6a0d"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "team-intro-15",
+      "legacyVariantId": "v-0b1090bee984b7ada700155d17e514f35cc7c1d25e2967427dae76aefa70b6ac"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "team-intro-22",
+      "legacyVariantId": "v-4dd06ab0ae50ef59a551982fceb899c95311d329f9e772df418d2d049e2514c6"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "team-intro-27",
+      "legacyVariantId": "v-118e7a84226ea85cb9a1dd9c1b89b9d3516ea77960a961fae5ff7e985b3e2ca8"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "team-intro-32",
+      "legacyVariantId": "v-37e88e63d78bab330f348f75bfd10d537337391583c46514c15d3bb52bd0373a"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "team-intro-33",
+      "legacyVariantId": "v-d320c96af7093444f41c74be72b3a0a13d028087b164966aa6ba05ee9a465711"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "team-intro-34",
+      "legacyVariantId": "v-440429e55d9b3b8cd3002796291111e7716edfecf038ea075d6ea3f1ab84fd47"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "team-intro-37",
+      "legacyVariantId": "v-96d797622b3b3b826107202c849ab5c09a6421405d5ab5bb180bc221026c8f66"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "team-intro-40",
+      "legacyVariantId": "v-e897f2c55e3056b8722cd5e793dcd879411c956aab6f6a2e9be843fb3f6d533f"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "team-intro-41",
+      "legacyVariantId": "v-45e03aedab3ed4e153f234daf6795e4e0724e969663e57c5374ea8365a17f27e"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "team-intro-42",
+      "legacyVariantId": "v-45818ab3ba08c9fbac6d97083345f15fb830c6a8d779dcc3667bec1fabc73988"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-62",
+      "legacyVariantId": "v-0c97cdb9efab6b66287764d76d62da8c0a21fdbc39d6c83813be8c06c6df0e7f"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-64",
+      "legacyVariantId": "v-8cc6c1d97d841219a88641c8fe92f61c0d71cb29a882bf090e47b684bb72b0cd"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-65",
+      "legacyVariantId": "v-e66f3b056009ee3ed4b9f4be0d7e680f3161ff3b386d6e83db9cbb09b621c6e8"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-67",
+      "legacyVariantId": "v-68b8a86f8d34cec8a5f049f1fd2b8fc50d4f0203a776531ccfa31d8d6534aa61"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-68",
+      "legacyVariantId": "v-4a4232ba093b0fda72b371d2f29b4f83d92a114568d638a4b3bd5a878e0a2107"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-69",
+      "legacyVariantId": "v-0e5320c700b503d03ca20c6c56ddcc9927b5ecdd78333eef527574e488805491"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-71",
+      "legacyVariantId": "v-d78dd5f030ca2a1c2c81bb1306faf89c4b24e7bbf77113ea9ada4027dd943d0e"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-72",
+      "legacyVariantId": "v-83b02479cfc839d4d9fbb19555f5725d511ab5ec0e1689a64a2df809f3b17730"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-73",
+      "legacyVariantId": "v-1830d0401e264239e56eaae259345b3db5d99f4858c21affab8db6ad7c84ce8b"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-74",
+      "legacyVariantId": "v-381b3798c0f84d97621b0d4d9bafcdd64493bc2895d1d1937aacb2381631340f"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-78",
+      "legacyVariantId": "v-90bea3ed5dbdbfd5aaaf594cef08f7573352f2e9051b53c7f6aa3c49f41c5116"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-79",
+      "legacyVariantId": "v-8593dfe966a369fcb85cfd4ecc751260c84e1d973b96ab447933ffec95ef5c71"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-81",
+      "legacyVariantId": "v-4ee135f4f9f22df413d51bb33430773223bd6748da16f59184ab3c6e4e9d30b8"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-83",
+      "legacyVariantId": "v-2ecf84129b238999fa70bd88aece5c0ad88e793840d577715fe187fdc5b6a602"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-84",
+      "legacyVariantId": "v-8f3530e95b639a4d32509ea4b1167b41b689804b2c2a8f21e8ad2e724e7b3320"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-85",
+      "legacyVariantId": "v-92af87109d7bf502083e6555fc12938e03c3488ff8366692bef6f7141795c0fd"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-87",
+      "legacyVariantId": "v-4eafa9bf77aa2277c4804c62a777cd9a40b19b10ecdaaac3599e079918aa9cf1"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-88",
+      "legacyVariantId": "v-0fbded1ef7bcd9f567a04b7b80d087678f8b23f9ac13839f30837051acae7d09"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-89",
+      "legacyVariantId": "v-bbdfb327990e8db243d7d8d94a703d778b917f8fcd4d36d449d7a9c7b4070445"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-92",
+      "legacyVariantId": "v-566a0a81da5a32ee57b1aa80caf5d3aa9392acd6d75600beed8907c455c62d83"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-93",
+      "legacyVariantId": "v-fc34e93ff81b3ec5cc9163598b898c52f8cfe82f5393de7345d96e1c40bae66f"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-94",
+      "legacyVariantId": "v-e67fdfd5ffb2940c4c0eeb38e66fec75f44fb54314e952189d9f5d7141830f36"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-95",
+      "legacyVariantId": "v-957043b3b5ead82e38c2241d0b9dc06894558a6769acb6bc454004d50dac3183"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-98",
+      "legacyVariantId": "v-9648825595e20e6a3c34aaf3b78251f03ac09e3d40ef415f5adae1d385962111"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-99",
+      "legacyVariantId": "v-8a61919a5405aa457e6ec36c85f085b711650998c27e17b3bb019f0d8b236238"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-103",
+      "legacyVariantId": "v-31e0896225acf71413c9f1ad9093ed3316861be08caf137435491f17bc44f0b4"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-107",
+      "legacyVariantId": "v-04cc955cd2e78b07d2956076be942fa5547c01a14486c802bfd632491523db70"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-108",
+      "legacyVariantId": "v-33b46e0554e407c44eae2503530f4eb7685cededfd06545bf4914a7817ac11af"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-113",
+      "legacyVariantId": "v-571637afbeb9586fbf792f0a3330dd0b045ed776b2d3f982cc5315efb2aac7dc"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-114",
+      "legacyVariantId": "v-08005de3867a8a72b67cdc29e9f3193dcc8dcb7b6d9f4a831f5c4d8a1539d0bd"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-116",
+      "legacyVariantId": "v-54d85e736fb9a1a2530fdc5c0a1323aef4cd174f4af0503bb682ca003e03bff6"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-117",
+      "legacyVariantId": "v-cd722083ac76a69113726ac62dd32cfc1b3b1c6be6d2d56c1bc65f87939e466c"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-118",
+      "legacyVariantId": "v-094cb7266b9672293927e3f9b0b975cca7ea7039da87d8bc8885bc04be0ac2f9"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-119",
+      "legacyVariantId": "v-ed3ee3a2aa5dc700387d6743e96a54c7e34058f94e1ae56994088733a9f94fdc"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-120",
+      "legacyVariantId": "v-81125e707d4dcf04b1597ea0e492b80c70334ba9800a02b8c24377e5b8b235a2"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-121",
+      "legacyVariantId": "v-5a860c7b58f923b02ecba449e25a7df5c48ab212d3a8e6dfd61c7345acafa2c2"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-122",
+      "legacyVariantId": "v-d23889e6f7df69bf10ad631443a6cca53669e4380c0553852e6f47342fedfa38"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-124",
+      "legacyVariantId": "v-24f3580cc681733b5a7cc8dbc83780ffbf5908622870b54174e4d32bceea1826"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-125",
+      "legacyVariantId": "v-7536ff3eb490725a2f709bd7afd78736e34e25b3b36bc153cc2e5666114701b4"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-126",
+      "legacyVariantId": "v-0c35ae1a812f5ee9929ae4f50d361379070c048102da2113e895fa63ac76249c"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-127",
+      "legacyVariantId": "v-7b97fe780c3bad52d2767405012a57829e94cea87df189bec3d64a54de5fda2a"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-128",
+      "legacyVariantId": "v-10ff20d598bef781fe69a80b01979562efb666f2b060e923ba5f0d6b29203df8"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-129",
+      "legacyVariantId": "v-fa064bc2eb2e92d5379c35c009054411773687fb74353f21b57986439e5db43d"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-130",
+      "legacyVariantId": "v-42dd4bd01caaebf615e8537889299e384d36b466da6531c50322a903ede8fb1f"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-132",
+      "legacyVariantId": "v-1043cc1d2d581925e29745ecbe1db56cbe28e7771257429f4a10da4950693013"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-136",
+      "legacyVariantId": "v-08da72aff02f89b3a62b6aa9d55d564356473a0237343a87b42a4e17e349ceae"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-137",
+      "legacyVariantId": "v-76313414f70af0a8b0474597d8f7b1af3d9f86e678677bc935dbba0c66fcd54f"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-138",
+      "legacyVariantId": "v-8285029cda8ed85885a1cf96da3102d64e36241805ec5a384e4b88b547d3ddf8"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-140",
+      "legacyVariantId": "v-369d775e10a4c878709a58afa4d24303e8c415f146e8a1609f8051ba77478ddf"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-142",
+      "legacyVariantId": "v-ba8e841262b6eb41bed469a7061d6071e1f01438e890b1087bdbb9e8488dcdef"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-147",
+      "legacyVariantId": "v-9dfc2a47f081f095249eb708df283a92cedb94231842f900558607d55c0de572"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-149",
+      "legacyVariantId": "v-c5c27e0f55a8fe93a93c9ade7aae865005a667a06f086db913493b793ed14a2e"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-150",
+      "legacyVariantId": "v-6f90f268ea9c066f0e4048e4c3606b86ca76f37771e945927ffacc2fc84f3015"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-151",
+      "legacyVariantId": "v-ae6834b8e5768c0305051358c11cf54908e0a7ccce1e9cae10dd8655bce606a0"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-152",
+      "legacyVariantId": "v-c92b45efb05bea560603f83ba2c0d621c045cfc0eaa71f2aca1807d6b69b477b"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-154",
+      "legacyVariantId": "v-5ce3709b17635e54770ec26c6dd799072f926c642c605fb8008014404d9dd7ee"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-156",
+      "legacyVariantId": "v-695baf193d1e34b4adffddeb7c0cde91a0eebae940a8f9cd77d22e46fd2c7591"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-157",
+      "legacyVariantId": "v-efed847a720a11ba92d4af813852255b2e98d876bb7bf3590958bad820d4771b"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-158",
+      "legacyVariantId": "v-dbeb86032e1787a8495ee4569511df1b4eaa6188073ed0bcd4e9c8ee39fd1269"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-159",
+      "legacyVariantId": "v-2faa2b95fc57f5279bc3563d3f99702eefb8b84dcd2c9e8f913ff52a767b1f32"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-165",
+      "legacyVariantId": "v-6fa3738710894780dd7c426acbde2030f2a9acc52e120c6f8a9d22659fbbace1"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-166",
+      "legacyVariantId": "v-252bd7e64d340e45c94806cf4ede1d200a77e2c57ec4a2a4641da96e29a8db79"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-169",
+      "legacyVariantId": "v-3ed407bbbbde1c4e790cbac4f5cebfe03bdca4f49b3de4194823a50da8af5ae6"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "moi-phe-171",
+      "legacyVariantId": "v-41ec4256aeebd1b852c0f1d2052fcf913685ecf227742f59f8bdbc2de0c376b6"
+    },
+    {
+      "classification": "pendingAlternative",
+      "legacyTeamId": "team-intro-51",
+      "legacyVariantId": "v-7cb33812a3260274ab6db1f43b3416d42b2b46dbadff819aab8b084f2d051355"
+    }
+  ],
+  "recommendedCorpusHash": "sha256:f50833b3e201ecabc29fc1c88fd87b1b2ecc0d376805bf1d35cc20d929b772db",
+  "schemaVersion": 1,
+  "sourceInventoryHash": "sha256:591857173405450f9972faad1b6ce3b1abbd9641608a8c1a8ea8e843fba15ff5",
+  "teamTierSha256": "sha256:056c58b16ba195ee1491c053cfbb5ddd020bb7d89ea13a5554f38df42e1795ca",
+  "unresolvedRecommended": [
+    "2-1nsjj7f",
+    "2-jh7wzr",
+    "2-txb6ye",
+    "og-bingyan-40y-lvbu-a",
+    "og-bingyan-40y-lvbu-b",
+    "og-bingyan-40y-lvbu-c",
+    "og-bingyan-40y-lvbu-d",
+    "og-bingyan-40y-lvbu-qun-bow-jinfan",
+    "og-bingyan-40y-lvbu-xiandeng",
+    "og-bingyan-beifa-shield-huweijun",
+    "og-bingyan-dongzhuo-bow-xiandeng",
+    "og-bingyan-faguan-shield-tengjia",
+    "og-bingyan-guanyu-weiyan-fazheng-shield",
+    "og-bingyan-huangma-spear-jiefanwei",
+    "og-bingyan-jiangwei-feixiong-cavalry",
+    "og-bingyan-lvguoqiao-baima",
+    "og-bingyan-taishi-bow-feixiong",
+    "og-bingyan-taoyuan-shield-huijun",
+    "og-bingyan-wunv-cavalry-hubaoqi",
+    "og-bingyan-xuyou-spmachao-cavalry",
+    "og-bingyan-zhangfei-nuke-bow",
+    "og-bingyan-zhangjiao-yuji-cavalry",
+    "s1-qun-huaxialv",
+    "s1-qun-lv-tai-guo",
+    "s1-qun-lv-tai-zuo",
+    "s1-qun-lvbu-baima",
+    "s1-qun-taishi-qi",
+    "s1-qun-yuanshao-baima",
+    "s1-qun-yuanshao-bapi",
+    "s1-qun-yuanshao-wudang",
+    "s1-shu-da-wuhu",
+    "s1-shu-machao-wuhu",
+    "s1-shu-taoyuan",
+    "s1-shu-tianxiadiyi-qiang",
+    "s1-shu-wei-taoyuan",
+    "s1-shu-xiao-wuhu",
+    "s1-wei-da-wei-qi",
+    "s1-wei-huwei-dun",
+    "s1-wei-qihu-dun",
+    "s1-wei-yuejin-qi",
+    "s1-wu-da-dudu",
+    "s1-wu-gan-tai-cheng",
+    "s1-wu-huanggai-gong",
+    "s1-wu-luxun-gong",
+    "s10-shu-diandian-gong",
+    "s10-shu-nai-gong",
+    "s10-shu-shudun-guanyu",
+    "s10-wei-sima-dun-traditional",
+    "s10-wei-sima-dun-xingyizhen",
+    "s11-qun-qun-gong-zhujun",
+    "s11-qun-wufeng-qun-dun",
+    "s11-shu-wuhu-qiang",
+    "s11-wei-traditional-dun",
+    "s13-kz-hanzhong-dun",
+    "s13-kz-qun-gong",
+    "s13-kz-san-xian",
+    "s13-kz-shu-gong",
+    "s13-kz-shu-qi",
+    "s13-kz-wu-qi",
+    "s14-manchong-wei-dun",
+    "s14-sp-qun-gong",
+    "s16-daming-dun",
+    "s16-dingpei-feixiong-wu-mou",
+    "s16-feixiong-jia-taiwei",
+    "s16-feixiong-san-huang",
+    "s16-feixiong-sima",
+    "s16-feixiong-wu-mou",
+    "s16-feixiong-yaoxian",
+    "s16-gou-guan-zhao",
+    "s16-guanjun-guanmei",
+    "s16-guanjun-zhaoyun",
+    "s16-huchen-taishi-gong",
+    "s16-longhu-dun-wufeng",
+    "s16-qianlong-gou-guan",
+    "s16-sp-pangde-gong",
+    "s16-sp-taoyuan",
+    "s16-wu-mou-xunyou",
+    "s16-wugui-lvbu",
+    "s17-daming-dun",
+    "s17-dingpei-feixiong-wu-mou",
+    "s17-feixiong-jia-taiwei",
+    "s17-feixiong-san-huang",
+    "s17-feixiong-sima",
+    "s17-feixiong-wu-mou",
+    "s17-feixiong-yaoxian",
+    "s17-gou-guan-zhao",
+    "s17-huangguan-qiang-xunyu",
+    "s17-huchen-taishi-gong",
+    "s17-junwang-shu-qiang-21c",
+    "s17-longhu-dun-wufeng",
+    "s17-qianlong-gou-guan",
+    "s17-qianlong-gouguan-21c",
+    "s17-sp-pangde-gong",
+    "s17-sp-taoyuan",
+    "s17-wu-mou-xunyou",
+    "s17-wugui-lvbu",
+    "s18-daming-dun",
+    "s18-dingpei-feixiong-wu-mou",
+    "s18-fahuang-gong",
+    "s18-feixiong-jia-taiwei",
+    "s18-feixiong-san-huang",
+    "s18-feixiong-sima",
+    "s18-feixiong-wu-mou",
+    "s18-feixiong-yaoxian",
+    "s18-gou-guan-zhao",
+    "s18-huchen-taishi-gong",
+    "s18-longhu-dun-wufeng",
+    "s18-qianlong-gou-guan",
+    "s18-sp-pangde-gong",
+    "s18-sp-taoyuan",
+    "s18-wu-mou-xunyou",
+    "s18-wugui-lvbu",
+    "s19-chaoji-qiang",
+    "s19-deng-feng-xiong",
+    "s19-dongcha-qiang-sp-guan",
+    "s19-dujiang-qiang",
+    "s19-feixiong-fugui-qi",
+    "s19-gouguan-qiang",
+    "s19-gouma-qiang",
+    "s19-guanma-qiang",
+    "s19-huangguan-qiang",
+    "s19-huchen-gong-mantai",
+    "s19-pengci-ma",
+    "s19-shu-qi-guanmei",
+    "s19-shu-qiang-zhuge",
+    "s19-yiye-qiang",
+    "s2-qun-chen-gong-qun-gong",
+    "s2-qun-huaxialv",
+    "s2-qun-lvmei-gong",
+    "s2-shu-da-wuhu",
+    "s2-shu-machao-wuhu",
+    "s2-shu-taoyuan",
+    "s2-shu-tianxiadiyi-qiang",
+    "s2-shu-wei-taoyuan",
+    "s2-shu-xiao-wuhu",
+    "s2-wei-baotou-qi",
+    "s2-wei-da-wei-qi",
+    "s2-wei-huwei-dun",
+    "s2-wei-qihu-dun",
+    "s2-wei-yuejin-qi",
+    "s2-wu-chibi-gong",
+    "s2-wu-gan-tai-cheng",
+    "s2-wu-lu-tai-cheng",
+    "s2-wu-luxun-gong",
+    "s2-wu-sunquan-qi",
+    "s2-wu-xiangxiang-gong",
+    "s22-bei-fa-qiang",
+    "s22-feixiong-wu-mou",
+    "s22-funv-qiang",
+    "s22-qun-gong",
+    "s23-diyu-fugui-1",
+    "s23-diyu-fugui-2",
+    "s23-gou-ma",
+    "s23-huangma-baiban",
+    "s23-juncao-huangma-1",
+    "s23-juncao-huangma-2",
+    "s23-juncao-huangma-baiban-1",
+    "s23-juncao-huangma-baiban-2",
+    "s23-qianlong-dun-tongguan",
+    "s23-sanding-gong",
+    "s23-sp-xunyu-shanhe-gong-3",
+    "s23-wanfa-qi-1",
+    "s23-wanfa-qi-2",
+    "s23-wei-juncao-wanjun-huangma",
+    "s23-weicao-huangma-baiban-1",
+    "s23-weicao-huangma-baoli",
+    "s23-weicao-huangma-fangkong",
+    "s23-weicao-huangma-no-linwei",
+    "s23-weicao-huangma-tt-1",
+    "s23-weicao-huangma-weimou-huangfu",
+    "s23-weicao-zuoci",
+    "s23-weiyan-huangma-1",
+    "s23-weiyan-huangma-2",
+    "s23-yuan-ma-gong-dingjun",
+    "s23-yuan-ma-gong-tongguan",
+    "s23-zijin-gong",
+    "s23-zuo-ma",
+    "s25-dundun-fanji-qiang",
+    "s25-feixiong-dudu-gong",
+    "s25-feixiong-sima-qi",
+    "s25-feixiong-sunquan-gong",
+    "s25-feixiong-weifa-qi",
+    "s25-feixiong-wumou",
+    "s25-gouguan-qi",
+    "s25-gouguan-qiang",
+    "s25-guanguanzhang",
+    "s25-guanjun-qiang",
+    "s25-guohuai-taiwei",
+    "s25-huangfu-qun-nei",
+    "s25-huangguan-qiang",
+    "s25-huangjin-dun",
+    "s25-huangma-bianzhong",
+    "s25-huangma-hun",
+    "s25-huangma-qiang",
+    "s25-huangma-qun",
+    "s25-lao-wei-dun",
+    "s25-qun-gong",
+    "s25-qun-gong-bianzhong",
+    "s25-shishi-dudu-gong",
+    "s25-wutugu-huangma",
+    "s25-xin-zhouyu-dudu",
+    "s26-feixiong-dudu",
+    "s26-feixiong-sima-qi",
+    "s26-feixiong-wei-fa-qi",
+    "s26-feixiong-wu-mou",
+    "s26-gouguan-qi",
+    "s26-gouguan-qiang",
+    "s26-guanguanzhang",
+    "s26-guanjun-qiang",
+    "s26-huangguan-qiang",
+    "s26-huangjin-dun",
+    "s26-huangma-mix",
+    "s26-huangma-qun",
+    "s26-qun-gong",
+    "s27-feixiong-dudu-gong",
+    "s27-feixiong-sima-qi",
+    "s27-feixiong-weifa-qi",
+    "s27-feixiong-wumou",
+    "s27-gouguan-qi",
+    "s27-gouguan-qiang",
+    "s27-guanguanzhang",
+    "s27-guanjun-qiang",
+    "s27-han-hanshi-gong-1",
+    "s27-han-hanshi-gong-2",
+    "s27-han-huangma-qiang",
+    "s27-han-jiaxu-rou-gong",
+    "s27-han-luxun-hanshi-gong",
+    "s27-han-luzhi-taishi-gong",
+    "s27-han-meiren-lianhuan-gong",
+    "s27-han-xunyu-rou-gong",
+    "s27-han-yuanshao-rou-gong",
+    "s27-han-yuanshu-feixiong-qi",
+    "s27-han-zhangjiao-rou-gong",
+    "s27-han-zhangrang-rou-gong",
+    "s27-han-zhujun-rou-gong",
+    "s27-huangguan-qiang",
+    "s27-huangjin-dun",
+    "s27-huangma-hun",
+    "s27-huangma-qiang-shu",
+    "s27-huangma-qun",
+    "s27-qun-gong",
+    "s28-bianzhong-feixiong",
+    "s28-feixiong-deng-feng-qi",
+    "s28-feixiong-dudu-gong",
+    "s28-feixiong-sunquan-gong",
+    "s28-feixiong-tai-wei-qi",
+    "s28-feixiong-weifa",
+    "s28-guanguanzhang",
+    "s28-huangfu-qun-nei",
+    "s28-huangjin-dun",
+    "s28-huangma-bianzhong",
+    "s28-huangma-hun",
+    "s28-huangma-qun",
+    "s28-qun-gong",
+    "s28-qun-gong-bianzhong",
+    "s28-shishi-dudu-gong",
+    "s28-shu-qi",
+    "s28-wutugu-huangma",
+    "s28-xin-zhouyu-dudu",
+    "s3-shu-da-wuhu",
+    "s3-shu-taoyuan",
+    "s3-shu-tianxiadiyi-qiang",
+    "s3-shu-xiao-wuhu",
+    "s3-wei-baotou-qi",
+    "s3-wei-chuan-tong-wei-qi",
+    "s3-wu-gan-tai-cheng",
+    "s4-shu-wuhu-qiang",
+    "s6-wu-wu-qiang",
+    "s7-wu-wu-qiang",
+    "s8-wu-wu-qiang",
+    "s9-gui-hunluan-gong",
+    "s9-jiedun-jiao-qi",
+    "s9-jingjie-qiang-guandu",
+    "s9-mou-gong-tongguan",
+    "s9-sima-feixiong-qi-1c-tianshi",
+    "s9-sima-feixiong-qi-2",
+    "s9-wangyi-fa-qi",
+    "s9-xiong-5mou-qi",
+    "s9-xiong-wangzuo-qi",
+    "s9-yi-wei-gong-1",
+    "s9-yi-wei-gong-2",
+    "sp-1w1vm5",
+    "sp-1x2jr4j",
+    "sp-6mj5pb",
+    "sp2-1mlm83p",
+    "team-1imndp3",
+    "team-1kb6eqf",
+    "team-1tfma2f",
+    "team-1x19qnl",
+    "team-5oila3",
+    "team-637f3n",
+    "team-831163",
+    "team-b8ink3",
+    "team-bucj3",
+    "team-c8mq0",
+    "team-c981ox",
+    "team-ck5qs",
+    "team-dip6a",
+    "team-dwruc",
+    "team-e4tk6",
+    "team-epoddo",
+    "team-ew6thb",
+    "team-exczs1",
+    "team-fmber",
+    "team-fp79c",
+    "team-fp8dr",
+    "team-fq9t1",
+    "team-girbv",
+    "team-gj94j",
+    "team-gnpyn",
+    "team-h9pho",
+    "team-hrgfo",
+    "team-i3pm0",
+    "team-i3pyf",
+    "team-j1byl",
+    "team-js3xyy",
+    "team-jyspt",
+    "team-ltcjx",
+    "team-mo7ud",
+    "team-moxa5",
+    "team-naanc",
+    "team-nhg3",
+    "team-nvalu",
+    "team-o0szh",
+    "team-qxom5v",
+    "team-rq89p3",
+    "team-t4ncrp",
+    "yxms-001-賈詡太史慈死士",
+    "yxms-002-賈詡呂蒙",
+    "yxms-003-張讓黃月英周泰",
+    "yxms-004-張讓黃月英",
+    "yxms-005-孫尚香凌統",
+    "yxms-006-馬超黃月英",
+    "yxms-007-甘寧周泰",
+    "yxms-008-逢紀八門",
+    "yxms-010-周劭蜀弓",
+    "yxms-011-法關盾馬岱",
+    "yxms-012-法關盾劉備",
+    "yxms-013-關星盾",
+    "yxms-014-皇甫法關盾",
+    "yxms-015-等風熊",
+    "yxms-016-西風騎",
+    "yxms-017-馬嬋等風熊",
+    "yxms-018-網紅槍",
+    "yxms-019-關關張-by大米",
+    "yxms-020-陳翊盾",
+    "yxms-021-陳翊槍",
+    "yxms-024-蕭芷太尉盾",
+    "yxms-027-周劭富貴騎",
+    "yxms-028-沈姮富貴騎",
+    "yxms-029-楊琪五謀臣",
+    "yxms-035-蘇信孫權騎",
+    "yxms-037-陳翊神火弓",
+    "yxms-038-蘇信神火弓",
+    "yxms-041-大小喬香",
+    "yxms-042-皇馬槍",
+    "yxms-043-皇甫宏皇馬槍",
+    "yxms-044-拒馬弓",
+    "yxms-045-太師弓",
+    "yxms-046-sp周瑜弓",
+    "yxms-047-群弓-by大米",
+    "yxms-048-張飛盾潛龍",
+    "yxms-050-千機盾",
+    "yxms-051-徐彥張角盾",
+    "yxms-052-溫侯弓-by大米",
+    "yxms-053-陳熙溫侯弓",
+    "yxms-054-法馬恪",
+    "yxms-055-黃馬恪",
+    "yxms-056-諸太左",
+    "yxms-057-姜夏諸",
+    "yxms-058-群弓開荒",
+    "yxms-059-蜀騎開荒",
+    "yxms-060-武鋒蜀槍",
+    "yxms-061-張呂左",
+    "yxms-062-關樂諸",
+    "yxms-063-夏太黃",
+    "yxms-064-關太蔡",
+    "yxms-065-三勢陸",
+    "yxms-066-潛龍張飛開荒",
+    "yxms-067-張關蔡"
+  ]
+}

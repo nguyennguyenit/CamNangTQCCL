@@ -1,0 +1,6235 @@
+{
+  "entries": [
+    {
+      "aliases": [
+        "Cứu Viện",
+        "驰援"
+      ],
+      "displayNameVi": "Cứu Viện",
+      "evidenceRef": "books-dict.json#10",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:1046275cdfce9f5dc107e514",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tản Tiên",
+        "散仙"
+      ],
+      "displayNameVi": "Tản Tiên",
+      "evidenceRef": "books-dict.json#54",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:16d3b7ee5c6d3e64b9056490",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thích Làm Việc Thiện",
+        "乐善好施"
+      ],
+      "displayNameVi": "Thích Làm Việc Thiện",
+      "evidenceRef": "books-dict.json#44",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:18ee87c2b765022ab30dab19",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Lấy Võ Dẹp Loạn",
+        "以武止戈"
+      ],
+      "displayNameVi": "Lấy Võ Dẹp Loạn",
+      "evidenceRef": "books-dict.json#29",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:1a19c8cd94d14cb12b2b6753",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Cầm Binh Khí",
+        "执锐"
+      ],
+      "displayNameVi": "Cầm Binh Khí",
+      "evidenceRef": "books-dict.json#8",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:1e74bffee018a1b7c998c598",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tam Lý Nhĩ Hoàn",
+        "三里而还"
+      ],
+      "displayNameVi": "Tam Lý Nhĩ Hoàn",
+      "evidenceRef": "books-dict.json#40",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:210d45e3baf02eb426447c52",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Cứu Chủ",
+        "救主"
+      ],
+      "displayNameVi": "Cứu Chủ",
+      "evidenceRef": "books-dict.json#9",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:2397c1a8d791f5ae3786d84a",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tướng Uy",
+        "将威"
+      ],
+      "displayNameVi": "Tướng Uy",
+      "evidenceRef": "books-dict.json#53",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:239b6fd179f9bbf8e60fba5c",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Khai Hạp",
+        "开合"
+      ],
+      "displayNameVi": "Khai Hạp",
+      "evidenceRef": "books-dict.json#20",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:2592ccac4b52eaa2ccc5e937",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Bố Trận Chờ Đợi",
+        "Nghiêm Trận Dĩ Đãi",
+        "严阵以待"
+      ],
+      "displayNameVi": "Bố Trận Chờ Đợi",
+      "evidenceRef": "books-dict.json#3",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:29cb74e2133c39873ed0f892",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Chia Nhỏ Đánh Nhanh",
+        "分而疾战"
+      ],
+      "displayNameVi": "Chia Nhỏ Đánh Nhanh",
+      "evidenceRef": "books-dict.json#4",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:2aaeb10c2e3d652b3bffa0c1",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Cương Nhu",
+        "刚柔"
+      ],
+      "displayNameVi": "Cương Nhu",
+      "evidenceRef": "books-dict.json#7",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:31a8ebcd858cbe74046f8887",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Liền Mạch Một Hơi",
+        "一鼓作气"
+      ],
+      "displayNameVi": "Liền Mạch Một Hơi",
+      "evidenceRef": "books-dict.json#28",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:362a9cdd80a809ecfef80009",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Không Chiến Sẽ Chết",
+        "不勇则死"
+      ],
+      "displayNameVi": "Không Chiến Sẽ Chết",
+      "evidenceRef": "books-dict.json#24",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:37a65f9c7f21e504935f5413",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Hợp Biến",
+        "合变"
+      ],
+      "displayNameVi": "Hợp Biến",
+      "evidenceRef": "books-dict.json#19",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:38f585bc7a278df56a54fac0",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tam Quân Chi Chúng",
+        "三军之众"
+      ],
+      "displayNameVi": "Tam Quân Chi Chúng",
+      "evidenceRef": "books-dict.json#41",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:391f9c8e693401517778d69e",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Bách Chiến",
+        "百战"
+      ],
+      "displayNameVi": "Bách Chiến",
+      "evidenceRef": "books-dict.json#2",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:3e43094e4636fe70dc928353",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Giả Nai Trước Địch",
+        "示敌以弱"
+      ],
+      "displayNameVi": "Giả Nai Trước Địch",
+      "evidenceRef": "books-dict.json#15",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:49dc2ed8b14fdefa121c207f",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tấn Công Điểm Yếu",
+        "援其必攻"
+      ],
+      "displayNameVi": "Tấn Công Điểm Yếu",
+      "evidenceRef": "books-dict.json#55",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:4e89e6cba598558ff0d4767f",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Giáp Sắt",
+        "Thiết Giáp",
+        "铁甲"
+      ],
+      "displayNameVi": "Giáp Sắt",
+      "evidenceRef": "books-dict.json#14",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:4ed006dae585d4dbb2764481",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Đánh Sau Trúng Trước",
+        "后发先至"
+      ],
+      "displayNameVi": "Đánh Sau Trúng Trước",
+      "evidenceRef": "books-dict.json#64",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:500089bd69d227bd06d52735",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Man Dũng Phi Dũng",
+        "蛮勇非勇"
+      ],
+      "displayNameVi": "Man Dũng Phi Dũng",
+      "evidenceRef": "books-dict.json#30",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:50de0811b842b6bae8c2867e",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tật Chiến Đột Vi",
+        "Đánh Phá Vòng Vây",
+        "疾战突围"
+      ],
+      "displayNameVi": "Đánh Phá Vòng Vây",
+      "evidenceRef": "books-dict.json#63",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:5415fa4d17e05c4fa6bd87ca",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tránh Thế Mạnh Của Địch",
+        "Tị Kỳ Nhuệ Khí",
+        "避其锐气"
+      ],
+      "displayNameVi": "Tránh Thế Mạnh Của Địch",
+      "evidenceRef": "books-dict.json#50",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:569140a6f79a8df6a042b3dd",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Không Chiến Mà Thắng",
+        "Vô Chiến Nhi Thắng",
+        "无战而胜"
+      ],
+      "displayNameVi": "Không Chiến Mà Thắng",
+      "evidenceRef": "books-dict.json#23",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:5c29d036f2ac9e0f786a5c61",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thuận Thiên Thuận Tời",
+        "顺应天时"
+      ],
+      "displayNameVi": "Thuận Thiên Thuận Tời",
+      "evidenceRef": "books-dict.json#43",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:61a50f3fc663049047bc1fce",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Đánh Vào Chỗ Hiểm",
+        "攻其不备"
+      ],
+      "displayNameVi": "Đánh Vào Chỗ Hiểm",
+      "evidenceRef": "books-dict.json#65",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:63c0f875b84aefef8bc4e32b",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thắng Chiến",
+        "Thắng Trận",
+        "胜战"
+      ],
+      "displayNameVi": "Thắng Trận",
+      "evidenceRef": "books-dict.json#47",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:658ec780e6911178c3daa47d",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thiện Chiến",
+        "善战"
+      ],
+      "displayNameVi": "Thiện Chiến",
+      "evidenceRef": "books-dict.json#42",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:66c3ec1e9c6bd57e246b59b0",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Chẩm Qua Tọa Giáp",
+        "枕戈坐甲"
+      ],
+      "displayNameVi": "Chẩm Qua Tọa Giáp",
+      "evidenceRef": "books-dict.json#6",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:67659f12dae6da0972c24467",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Hành Động Theo Thời",
+        "应机立断"
+      ],
+      "displayNameVi": "Hành Động Theo Thời",
+      "evidenceRef": "books-dict.json#18",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:6927b91f457fa344533c7844",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Xem Bói",
+        "占卜"
+      ],
+      "displayNameVi": "Xem Bói",
+      "evidenceRef": "books-dict.json#59",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:696fd835fbb99033c9d036cf",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tĩnh Tâm",
+        "静心"
+      ],
+      "displayNameVi": "Tĩnh Tâm",
+      "evidenceRef": "books-dict.json#52",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:69c3f8a8032e3b7dbf7faa0d",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Mưu Kế Sâu Xa",
+        "Viễn Mưu",
+        "远谋"
+      ],
+      "displayNameVi": "Mưu Kế Sâu Xa",
+      "evidenceRef": "books-dict.json#31",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:6ab54b9f894812f927e274a3",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Kỳ Chính Tương Sinh",
+        "奇正相生"
+      ],
+      "displayNameVi": "Kỳ Chính Tương Sinh",
+      "evidenceRef": "books-dict.json#27",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:789a1412ef5a010da75e4db5",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Trì Trọng",
+        "持重"
+      ],
+      "displayNameVi": "Trì Trọng",
+      "evidenceRef": "books-dict.json#51",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:7cd602ab2bf90714b8df476b",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Giấu Đao",
+        "Tàng Đao",
+        "藏刀"
+      ],
+      "displayNameVi": "Giấu Đao",
+      "evidenceRef": "books-dict.json#16",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:7edd311c17ecb914acb3e00a",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tinh Chuẩn",
+        "精准"
+      ],
+      "displayNameVi": "Tinh Chuẩn",
+      "evidenceRef": "books-dict.json#49",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:815e5f6dcb3dac1354247244",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Dũng Nghị",
+        "Nghĩa Dũng",
+        "勇毅"
+      ],
+      "displayNameVi": "Nghĩa Dũng",
+      "evidenceRef": "books-dict.json#32",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:846223617dca3ff05e6d2741",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Đánh Giá Tình Hình",
+        "审时度势"
+      ],
+      "displayNameVi": "Đánh Giá Tình Hình",
+      "evidenceRef": "books-dict.json#62",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:8607b42cd3d2f7fa0ae5bc36",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Dụ Địch Chi Sách",
+        "Kế Sách Dụ Địch",
+        "诱敌之策"
+      ],
+      "displayNameVi": "Kế Sách Dụ Địch",
+      "evidenceRef": "books-dict.json#26",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:8a0e11f121ff7f1b0da23389",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Võ Lược",
+        "武略"
+      ],
+      "displayNameVi": "Võ Lược",
+      "evidenceRef": "books-dict.json#57",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:8bfe6bd9ae85f9417e65c30b",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Dĩ Trực Báo Oán",
+        "以直报怨"
+      ],
+      "displayNameVi": "Dĩ Trực Báo Oán",
+      "evidenceRef": "books-dict.json#12",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:9741219dd364d5048edb632f",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Văn Thao",
+        "文韬"
+      ],
+      "displayNameVi": "Văn Thao",
+      "evidenceRef": "books-dict.json#58",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:977c8d415333318c6c1c2466",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Chiến Đấu Trường Kỳ",
+        "久战"
+      ],
+      "displayNameVi": "Chiến Đấu Trường Kỳ",
+      "evidenceRef": "books-dict.json#5",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:9af5117c4838c3ad15e88467",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Diệu Toán",
+        "妙算"
+      ],
+      "displayNameVi": "Diệu Toán",
+      "evidenceRef": "books-dict.json#11",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:9bf74995a48926900afe1c3e",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Yêu Lính Thương Dân",
+        "惜兵爱民"
+      ],
+      "displayNameVi": "Yêu Lính Thương Dân",
+      "evidenceRef": "books-dict.json#60",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:a26700b2025ddb17d97ed0c1",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Gặp Địch Không Loạn",
+        "Lâm Địch Bất Loạn",
+        "临敌不乱"
+      ],
+      "displayNameVi": "Gặp Địch Không Loạn",
+      "evidenceRef": "books-dict.json#17",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:a26dde00b5c65bbde2bb314a",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Khép Hờ",
+        "掩虚"
+      ],
+      "displayNameVi": "Khép Hờ",
+      "evidenceRef": "books-dict.json#21",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:a2e484d81c1333f1a47e726d",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Biết Cách Phòng Thủ",
+        "守而有道"
+      ],
+      "displayNameVi": "Biết Cách Phòng Thủ",
+      "evidenceRef": "books-dict.json#1",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:a39b8483c213dcc5796c720f",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Quy Thuận",
+        "Quy Tâm",
+        "归心"
+      ],
+      "displayNameVi": "Quy Thuận",
+      "evidenceRef": "books-dict.json#36",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:a5002daaee42c23ebd3ac575",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thần Cơ",
+        "神机"
+      ],
+      "displayNameVi": "Thần Cơ",
+      "evidenceRef": "books-dict.json#45",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:a581dff93e15794ebaeb4f7a",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tốc Chiến",
+        "速战"
+      ],
+      "displayNameVi": "Tốc Chiến",
+      "evidenceRef": "books-dict.json#56",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:a58d6670a64a43fd31baa325",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Đánh Bất Ngờ Thắng",
+        "出其不意"
+      ],
+      "displayNameVi": "Đánh Bất Ngờ Thắng",
+      "evidenceRef": "books-dict.json#61",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:a608c3a5e036b6527224fa05",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thắng Sẽ Càng Mạnh",
+        "胜而益强"
+      ],
+      "displayNameVi": "Thắng Sẽ Càng Mạnh",
+      "evidenceRef": "books-dict.json#46",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:b01dcdd9d1ad156f3baac3c7",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Nhìn Rõ Mồn Một",
+        "洞若观火"
+      ],
+      "displayNameVi": "Nhìn Rõ Mồn Một",
+      "evidenceRef": "books-dict.json#33",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:b26097af47c57064a4aeefb6",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Phòng Bị",
+        "防备"
+      ],
+      "displayNameVi": "Phòng Bị",
+      "evidenceRef": "books-dict.json#35",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:b34b711a111de83d36fcf817",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Rèn Luyện",
+        "锤炼"
+      ],
+      "displayNameVi": "Rèn Luyện",
+      "evidenceRef": "books-dict.json#38",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:bc117c70f640daf10e987064",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Phân Hiểm",
+        "分险"
+      ],
+      "displayNameVi": "Phân Hiểm",
+      "evidenceRef": "books-dict.json#34",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:c10c07a3d8c82b17fda69944",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thế Phòng Thủ",
+        "Thủ Thế",
+        "守势"
+      ],
+      "displayNameVi": "Thế Phòng Thủ",
+      "evidenceRef": "books-dict.json#48",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:c6d76ab94bf213c5b6531b90",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Nhuệ Lợi",
+        "Sắc Bén",
+        "锐利"
+      ],
+      "displayNameVi": "Sắc Bén",
+      "evidenceRef": "books-dict.json#39",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:d69d31797f9c9148ded996e4",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Quỷ Mưu",
+        "鬼谋"
+      ],
+      "displayNameVi": "Quỷ Mưu",
+      "evidenceRef": "books-dict.json#37",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:d6bb9855b6db086d6e96d29c",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Không Lộ Tài Năng",
+        "Đại Mưu Bất Mưu",
+        "大谋不谋"
+      ],
+      "displayNameVi": "Không Lộ Tài Năng",
+      "evidenceRef": "books-dict.json#25",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:f7b60c532d649e0108c59317",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Binh Hành Quỷ Đạo",
+        "兵行诡道"
+      ],
+      "displayNameVi": "Binh Hành Quỷ Đạo",
+      "evidenceRef": "books-dict.json#0",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:f95fec3f3cd7c2874c7441d3",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Dẫn Quân",
+        "Thống Quân",
+        "统军"
+      ],
+      "displayNameVi": "Dẫn Quân",
+      "evidenceRef": "books-dict.json#13",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:faa15d9ed96ed3d8c784c0ee",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Khích Lệ Lòng Quân",
+        "励军"
+      ],
+      "displayNameVi": "Khích Lệ Lòng Quân",
+      "evidenceRef": "books-dict.json#22",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:fb4a69161679738b52e221c4",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tôn Sách",
+        "孙策"
+      ],
+      "displayNameVi": "Tôn Sách",
+      "evidenceRef": "heroes-dict.json#37",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:0278350322db68c0fb7aae4d",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Tuân Úc",
+        "荀彧"
+      ],
+      "displayNameVi": "Tuân Úc",
+      "evidenceRef": "heroes-dict.json#76",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:035be51454baa21b0e7bda5d",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Bàng Đức",
+        "庞德"
+      ],
+      "displayNameVi": "Bàng Đức",
+      "evidenceRef": "heroes-dict.json#41",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:083b612aff32ed77fda8e06c",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "華佗": [
+          "https://sgsdeck.com/recommended/s1-qun-huaxialv",
+          "https://sgsdeck.com/recommended/s2-qun-huaxialv",
+          "https://sgsdeck.com/recommended/s2-wei-sima-huatuo-dun"
+        ]
+      },
+      "aliases": [
+        "Hoa Đà",
+        "华佗",
+        "華佗"
+      ],
+      "displayNameVi": "Hoa Đà",
+      "evidenceRef": "heroes-dict.json#20",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:084a5bb9b1c318048a030bc9",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "姜維": [
+          "https://sgsdeck.com/recommended/og-bingyan-jiangwei-feixiong-cavalry",
+          "https://sgsdeck.com/recommended/s10-shu-diandian-gong",
+          "https://sgsdeck.com/recommended/s10-shu-shuqi-liubei"
+        ]
+      },
+      "aliases": [
+        "Khương Duy",
+        "姜維",
+        "姜维"
+      ],
+      "displayNameVi": "Khương Duy",
+      "evidenceRef": "heroes-dict.json#33",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:0c61d8ccd98726c3e4fd4861",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Mộc Lộc Đại Vương",
+        "木鹿大王"
+      ],
+      "displayNameVi": "Mộc Lộc Đại Vương",
+      "evidenceRef": "heroes-dict.json#61",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:0f40f23b662bac06c3b78b7b",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Văn Sửu",
+        "文丑"
+      ],
+      "displayNameVi": "Văn Sửu",
+      "evidenceRef": "heroes-dict.json#55",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:0f4c4105c1f5bc1b73e73d47",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Vương Song",
+        "王双"
+      ],
+      "displayNameVi": "Vương Song",
+      "evidenceRef": "heroes-dict.json#68",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:11f66bd3d8003f05b2653f7c",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Tào Nhân",
+        "曹仁"
+      ],
+      "displayNameVi": "Tào Nhân",
+      "evidenceRef": "heroes-dict.json#57",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:121d406fe7d172e7f8ea5815",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Pháp Chính",
+        "法正"
+      ],
+      "displayNameVi": "Pháp Chính",
+      "evidenceRef": "heroes-dict.json#65",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:12d700a23b775c08623f316f",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Trâu Thị",
+        "邹氏"
+      ],
+      "displayNameVi": "Trâu Thị",
+      "evidenceRef": "heroes-dict.json#92",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:13144b0dc85fccd26d2c11b5",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Trình Dục",
+        "程昱"
+      ],
+      "displayNameVi": "Trình Dục",
+      "evidenceRef": "heroes-dict.json#74",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:16e9b12b026f2d40d0fc5400",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "孫堅": [
+          "https://sgsdeck.com/recommended/s10-wu-wudun-zhouyu",
+          "https://sgsdeck.com/recommended/s18-shenhuo-dun",
+          "https://sgsdeck.com/recommended/s25-goutou-dun"
+        ]
+      },
+      "aliases": [
+        "Tôn Kiên",
+        "孙坚",
+        "孫堅"
+      ],
+      "displayNameVi": "Tôn Kiên",
+      "evidenceRef": "heroes-dict.json#34",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:1fbb0e34373c3146b8514bd4",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Vu Cấm",
+        "于禁"
+      ],
+      "displayNameVi": "Vu Cấm",
+      "evidenceRef": "heroes-dict.json#10",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:21556222ec2ac1e89ba2736b",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "典韋": [
+          "https://sgsdeck.com/recommended/s1-wei-huwei-dun",
+          "https://sgsdeck.com/recommended/s1-wei-qihu-dun",
+          "https://sgsdeck.com/recommended/s11-wei-traditional-dun"
+        ]
+      },
+      "aliases": [
+        "Điển Vi",
+        "典韋",
+        "典韦"
+      ],
+      "displayNameVi": "Điển Vi",
+      "evidenceRef": "heroes-dict.json#17",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:2157ac6b1d85220f6eeecd04",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Ngột Đột Cốt",
+        "兀突骨"
+      ],
+      "displayNameVi": "Ngột Đột Cốt",
+      "evidenceRef": "heroes-dict.json#12",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:21f342cefd70daa13eca4eff",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "關銀屏": [
+          "https://sgsdeck.com/recommended/s10-qun-san-shi-le-jin",
+          "https://sgsdeck.com/recommended/s10-qun-san-shi-lv-guanmei",
+          "https://sgsdeck.com/recommended/s10-shu-dongcha-qiang"
+        ]
+      },
+      "aliases": [
+        "Quan Ngân Bình",
+        "关银屏",
+        "關銀屏"
+      ],
+      "displayNameVi": "Quan Ngân Bình",
+      "evidenceRef": "heroes-dict.json#16",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:230b319340cc67b6f4025cce",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "田豐": [
+          "https://sgsdeck.com/recommended/s25-xianren-dun",
+          "https://sgsdeck.com/recommended/s26-xianren-dun",
+          "https://sgsdeck.com/recommended/s27-xianren-dun"
+        ]
+      },
+      "aliases": [
+        "Điền Phong",
+        "田丰",
+        "田豐"
+      ],
+      "displayNameVi": "Điền Phong",
+      "evidenceRef": "heroes-dict.json#72",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:25fc0bde1163ca42219ae1bc",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "甘寧": [
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-c",
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-qun-bow-jinfan",
+          "https://sgsdeck.com/recommended/og-bingyan-kangkai-bow-jinfan"
+        ]
+      },
+      "aliases": [
+        "Cam Ninh",
+        "甘宁",
+        "甘寧"
+      ],
+      "displayNameVi": "Cam Ninh",
+      "evidenceRef": "heroes-dict.json#71",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:2665384131699d31ae0de21b",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Hạ Hầu Đôn",
+        "夏侯惇"
+      ],
+      "displayNameVi": "Hạ Hầu Đôn",
+      "evidenceRef": "heroes-dict.json#29",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:2a7e68aa7262c5da7f9fcbf1",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "孫權": [
+          "https://sgsdeck.com/recommended/og-bingyan-quan-cavalry-hubaoqi",
+          "https://sgsdeck.com/recommended/s1-wu-da-wu-gong",
+          "https://sgsdeck.com/recommended/s10-wu-tianwang-gong"
+        ]
+      },
+      "aliases": [
+        "Tôn Quyền",
+        "孙权",
+        "孫權"
+      ],
+      "displayNameVi": "Tôn Quyền",
+      "evidenceRef": "heroes-dict.json#36",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:2d0b5eef6609451091610e38",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Mạnh Hoạch",
+        "孟获"
+      ],
+      "displayNameVi": "Mạnh Hoạch",
+      "evidenceRef": "heroes-dict.json#38",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:305ba64ecb159614094394ab",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "司馬懿": [
+          "https://sgsdeck.com/recommended/s10-wei-sima-dun-traditional",
+          "https://sgsdeck.com/recommended/s10-wei-sima-dun-xingyizhen",
+          "https://sgsdeck.com/recommended/s10-wei-taiwei-dun-traditional"
+        ]
+      },
+      "aliases": [
+        "Tư Mã Ý",
+        "司馬懿",
+        "司马懿"
+      ],
+      "displayNameVi": "Tư Mã Ý",
+      "evidenceRef": "heroes-dict.json#23",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:32ae32453c0b8b8c5e3ab54e",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Đóa Tư Đại Vương",
+        "朵思大王"
+      ],
+      "displayNameVi": "Đóa Tư Đại Vương",
+      "evidenceRef": "heroes-dict.json#62",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:33208f73e6fd019755c68cd6",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "袁術": [
+          "https://sgsdeck.com/recommended/s27-han-yuanshu-feixiong-qi"
+        ]
+      },
+      "aliases": [
+        "Viên Thuật",
+        "袁术",
+        "袁術"
+      ],
+      "displayNameVi": "Viên Thuật",
+      "evidenceRef": "heroes-dict.json#83",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:375995287c1b6f3453ff94a8",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "賈詡": [
+          "https://sgsdeck.com/recommended/og-bingyan-wumou-bow-baimaobing",
+          "https://sgsdeck.com/recommended/s10-wei-fa-dun",
+          "https://sgsdeck.com/recommended/s10-wei-fa-gong"
+        ]
+      },
+      "aliases": [
+        "Giả Hủ",
+        "賈詡",
+        "贾诩"
+      ],
+      "displayNameVi": "Giả Hủ",
+      "evidenceRef": "heroes-dict.json#89",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:397edec8b12ae66acf2c14bf",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Trương Cơ",
+        "张姬"
+      ],
+      "displayNameVi": "Trương Cơ",
+      "evidenceRef": "heroes-dict.json#43",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:3d03ef8bc9d073e749af97af",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Hác Chiêu",
+        "郝昭"
+      ],
+      "displayNameVi": "Hác Chiêu",
+      "evidenceRef": "heroes-dict.json#93",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:3db6ab6fdbba6fddc423a3ad",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Tưởng Uyển",
+        "蒋琬"
+      ],
+      "displayNameVi": "Tưởng Uyển",
+      "evidenceRef": "heroes-dict.json#80",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:3e8b5e20a6938a260467f30f",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "呂玲綺": [
+          "https://sgsdeck.com/recommended/s11-qun-wufeng-qun-dun",
+          "https://sgsdeck.com/recommended/s19-lv-fu-nv",
+          "https://sgsdeck.com/recommended/s2-qun-lvmei-gong"
+        ]
+      },
+      "aliases": [
+        "Lữ Linh Ỷ",
+        "吕玲绮",
+        "呂玲綺"
+      ],
+      "displayNameVi": "Lữ Linh Ỷ",
+      "evidenceRef": "heroes-dict.json#25",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:472e3cbe446e1b84c0ab9400",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "關羽": [
+          "https://sgsdeck.com/recommended/og-bingyan-guanyu-weiyan-fazheng-shield",
+          "https://sgsdeck.com/recommended/og-bingyan-taoyuan-shield-huijun",
+          "https://sgsdeck.com/recommended/s1-shu-da-wuhu"
+        ]
+      },
+      "aliases": [
+        "Quan Vũ",
+        "关羽",
+        "關羽"
+      ],
+      "displayNameVi": "Quan Vũ",
+      "evidenceRef": "heroes-dict.json#15",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:4b97cac39000f1c8f17e9e86",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "SP 袁紹": [
+          "https://sgsdeck.com/recommended/s10-qun-qun-dun",
+          "https://sgsdeck.com/recommended/s10-qun-qun-gong",
+          "https://sgsdeck.com/recommended/s12-qun-qun-gong"
+        ],
+        "SP袁紹": [
+          "https://sgsdeck.com/recommended/team-c981ox",
+          "https://sgsdeck.com/recommended/team-fq9t1",
+          "https://sgsdeck.com/recommended/team-js3xyy"
+        ]
+      },
+      "aliases": [
+        "SP Viên Thiệu",
+        "SP 袁紹",
+        "SP袁紹",
+        "SP袁绍"
+      ],
+      "displayNameVi": "SP Viên Thiệu",
+      "evidenceRef": "heroes-dict.json#4",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:4f2bc9ff8e340441fd1f7450",
+      "variant": "SP"
+    },
+    {
+      "aliases": [
+        "Đặng Ngải",
+        "邓艾"
+      ],
+      "displayNameVi": "Đặng Ngải",
+      "evidenceRef": "heroes-dict.json#91",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:4f57385c8b1cd7e417b7121c",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Tào Tháo",
+        "曹操"
+      ],
+      "displayNameVi": "Tào Tháo",
+      "evidenceRef": "heroes-dict.json#58",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:4fbe01ab8d14bc669b3e036b",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Quách Gia",
+        "郭嘉"
+      ],
+      "displayNameVi": "Quách Gia",
+      "evidenceRef": "heroes-dict.json#94",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:525276a9bc4a7162be8f9589",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "諸葛亮": [
+          "https://sgsdeck.com/recommended/s1-shu-da-shu-qiang",
+          "https://sgsdeck.com/recommended/s1-shu-gong",
+          "https://sgsdeck.com/recommended/s1-shu-machao-shu-qiang"
+        ]
+      },
+      "aliases": [
+        "Gia Cát Lượng",
+        "諸葛亮",
+        "诸葛亮"
+      ],
+      "displayNameVi": "Gia Cát Lượng",
+      "evidenceRef": "heroes-dict.json#87",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:53081486f9dbff9359d80832",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "張角": [
+          "https://sgsdeck.com/recommended/og-bingyan-zhangjiao-yuji-cavalry",
+          "https://sgsdeck.com/recommended/s1-qun-yaoxing-dun",
+          "https://sgsdeck.com/recommended/s10-qun-qun-dun"
+        ]
+      },
+      "aliases": [
+        "Trương Giác",
+        "张角",
+        "張角"
+      ],
+      "displayNameVi": "Trương Giác",
+      "evidenceRef": "heroes-dict.json#48",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:5508fa98c2d6421d3e3c62ef",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Từ Hoảng",
+        "徐晃"
+      ],
+      "displayNameVi": "Từ Hoảng",
+      "evidenceRef": "heroes-dict.json#54",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:58b6c02e43ff0623a55f740b",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Thư Thụ",
+        "沮授"
+      ],
+      "displayNameVi": "Thư Thụ",
+      "evidenceRef": "heroes-dict.json#64",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:5905fa7d9ae38c58c1d921f8",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Lý Nho",
+        "李儒"
+      ],
+      "displayNameVi": "Lý Nho",
+      "evidenceRef": "heroes-dict.json#63",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:593ee96e11ce91cde8eac58e",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Thái Sử Từ",
+        "太史慈"
+      ],
+      "displayNameVi": "Thái Sử Từ",
+      "evidenceRef": "heroes-dict.json#32",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:5ba7e78c435dbbbe3d6692fd",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "貂蟬": [
+          "https://sgsdeck.com/recommended/s11-qun-wufeng-qun-dun",
+          "https://sgsdeck.com/recommended/s13-diaochan-wufeng-dun",
+          "https://sgsdeck.com/recommended/s14-diaochan-qun-dun"
+        ]
+      },
+      "aliases": [
+        "Điêu Thuyền",
+        "貂蝉",
+        "貂蟬"
+      ],
+      "displayNameVi": "Điêu Thuyền",
+      "evidenceRef": "heroes-dict.json#88",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:5d3f27adabcf2be8a310875b",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Mã Đằng",
+        "马腾"
+      ],
+      "displayNameVi": "Mã Đằng",
+      "evidenceRef": "heroes-dict.json#103",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:5eeb463fc63a880ad0d89652",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "馬超": [
+          "https://sgsdeck.com/recommended/s1-shu-machao-shu-qiang",
+          "https://sgsdeck.com/recommended/s1-shu-machao-wuhu",
+          "https://sgsdeck.com/recommended/s1-shu-xiao-wuhu"
+        ]
+      },
+      "aliases": [
+        "Mã Siêu",
+        "馬超",
+        "马超"
+      ],
+      "displayNameVi": "Mã Siêu",
+      "evidenceRef": "heroes-dict.json#104",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:63655267babca9c136c22348",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Chân Cơ",
+        "甄姬"
+      ],
+      "displayNameVi": "Chân Cơ",
+      "evidenceRef": "heroes-dict.json#70",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:63a09249bbb5c22a34ebae5e",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "袁紹": [
+          "https://sgsdeck.com/recommended/s1-qun-yuanshao-baima",
+          "https://sgsdeck.com/recommended/s1-qun-yuanshao-bapi",
+          "https://sgsdeck.com/recommended/s1-qun-yuanshao-wudang"
+        ]
+      },
+      "aliases": [
+        "Viên Thiệu",
+        "袁紹",
+        "袁绍"
+      ],
+      "displayNameVi": "Viên Thiệu",
+      "evidenceRef": "heroes-dict.json#84",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:653eea8eb9c64a51bd60dd8d",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "張春華": [
+          "https://sgsdeck.com/recommended/s13-kz-qun-gong",
+          "https://sgsdeck.com/recommended/s13-kz-san-xian",
+          "https://sgsdeck.com/recommended/s13-kz-wu-qi"
+        ]
+      },
+      "aliases": [
+        "Trương Xuân Hoa",
+        "张春华",
+        "張春華"
+      ],
+      "displayNameVi": "Trương Xuân Hoa",
+      "evidenceRef": "heroes-dict.json#44",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:66476632eb31ce501972f221",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "關興": [
+          "https://sgsdeck.com/recommended/og-bingyan-beifa-shield-huweijun",
+          "https://sgsdeck.com/recommended/s10-shu-xiao-guan-zhang",
+          "https://sgsdeck.com/recommended/s14-sp-zhuge-shu-qiang"
+        ]
+      },
+      "aliases": [
+        "Quan Hưng",
+        "关兴",
+        "關興"
+      ],
+      "displayNameVi": "Quan Hưng",
+      "evidenceRef": "heroes-dict.json#14",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:67bb9c38b4396802f1111ca0",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Tiểu Kiều",
+        "小乔"
+      ],
+      "displayNameVi": "Tiểu Kiều",
+      "evidenceRef": "heroes-dict.json#39",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:67e210997dbbf243095598a2",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Trương Hoành",
+        "张纮"
+      ],
+      "displayNameVi": "Trương Hoành",
+      "evidenceRef": "heroes-dict.json#46",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:6893b1c8247a4d3c5f55f4d0",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Tào Thực",
+        "曹植"
+      ],
+      "displayNameVi": "Tào Thực",
+      "evidenceRef": "heroes-dict.json#59",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:69501a8ca5accf2760d57f8a",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "SP Chu Du",
+        "SP周瑜"
+      ],
+      "displayNameVi": "SP Chu Du",
+      "evidenceRef": "heroes-dict.json#1",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:6e4895ff6d12ab9636cec0cf",
+      "variant": "SP"
+    },
+    {
+      "aliasEvidence": {
+        "張苞": [
+          "https://sgsdeck.com/recommended/og-bingyan-beifa-shield-huweijun",
+          "https://sgsdeck.com/recommended/s10-shu-xiao-guan-zhang",
+          "https://sgsdeck.com/recommended/s14-sp-zhuge-shu-qiang"
+        ]
+      },
+      "aliases": [
+        "Trương Bao",
+        "Trương Bào",
+        "张苞",
+        "張苞"
+      ],
+      "displayNameVi": "Trương Bào",
+      "evidenceRef": "heroes-dict.json#47",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:7223baeb0e72d49e4cdd712e",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "夏侯淵": [
+          "https://sgsdeck.com/recommended/s1-qun-huaxialv",
+          "https://sgsdeck.com/recommended/s10-wei-baotou-qi-xiahouyuan",
+          "https://sgsdeck.com/recommended/s10-wei-jianxiong-qi"
+        ]
+      },
+      "aliases": [
+        "Hạ Hầu Uyên",
+        "夏侯淵",
+        "夏侯渊"
+      ],
+      "displayNameVi": "Hạ Hầu Uyên",
+      "evidenceRef": "heroes-dict.json#30",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:727dbb61cc174f1035db9ca0",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Lục Kháng",
+        "陆抗"
+      ],
+      "displayNameVi": "Lục Kháng",
+      "evidenceRef": "heroes-dict.json#96",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:745dc71ccc2c607d55d4103a",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Tào Phi",
+        "曹丕"
+      ],
+      "displayNameVi": "Tào Phi",
+      "evidenceRef": "heroes-dict.json#56",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:7e056ff12a2f1de0d05907c9",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "許褚": [
+          "https://sgsdeck.com/recommended/s1-wei-huwei-dun",
+          "https://sgsdeck.com/recommended/s2-wei-huwei-dun",
+          "https://sgsdeck.com/recommended/s25-lao-wei-dun"
+        ]
+      },
+      "aliases": [
+        "Hứa Chử",
+        "許褚",
+        "许褚"
+      ],
+      "displayNameVi": "Hứa Chử",
+      "evidenceRef": "heroes-dict.json#86",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:7e6ebaf83b5273507779bc05",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Trương Chiêu",
+        "张昭"
+      ],
+      "displayNameVi": "Trương Chiêu",
+      "evidenceRef": "heroes-dict.json#45",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:7ec989f15850757bb4a30fc8",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Vương Nguyên Cơ",
+        "王元姬"
+      ],
+      "displayNameVi": "Vương Nguyên Cơ",
+      "evidenceRef": "heroes-dict.json#67",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:822cbf22feb0736b2622316e",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "孫尚香": [
+          "https://sgsdeck.com/recommended/og-bingyan-wunv-cavalry-hubaoqi",
+          "https://sgsdeck.com/recommended/s10-wu-wu-qi",
+          "https://sgsdeck.com/recommended/s11-wu-sunshangxiang-wugong"
+        ]
+      },
+      "aliases": [
+        "Tôn Thượng Hương",
+        "孙尚香",
+        "孫尚香"
+      ],
+      "displayNameVi": "Tôn Thượng Hương",
+      "evidenceRef": "heroes-dict.json#35",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:823d59e4b1f09b9214700201",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Đổng Bạch",
+        "董白"
+      ],
+      "displayNameVi": "Đổng Bạch",
+      "evidenceRef": "heroes-dict.json#79",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:82afb18baef57bfe4c918554",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Từ Thứ",
+        "徐庶"
+      ],
+      "displayNameVi": "Từ Thứ",
+      "evidenceRef": "heroes-dict.json#53",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:8321c989883724cb13b215ba",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Trình Phổ",
+        "程普"
+      ],
+      "displayNameVi": "Trình Phổ",
+      "evidenceRef": "heroes-dict.json#75",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:83f68b3328def1bac222bd10",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "SP Quách Gia",
+        "SP郭嘉"
+      ],
+      "displayNameVi": "SP Quách Gia",
+      "evidenceRef": "heroes-dict.json#6",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:85476f55ae3a1af73cc539e4",
+      "variant": "SP"
+    },
+    {
+      "aliasEvidence": {
+        "陳宮": [
+          "https://sgsdeck.com/recommended/s11-qun-qun-gong-zhujun",
+          "https://sgsdeck.com/recommended/s2-qun-chen-gong-qun-gong",
+          "https://sgsdeck.com/recommended/s2-qun-lvmei-gong"
+        ]
+      },
+      "aliases": [
+        "Trần Cung",
+        "陈宫",
+        "陳宮"
+      ],
+      "displayNameVi": "Trần Cung",
+      "evidenceRef": "heroes-dict.json#99",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:87a4a65f88e7b38b51908e10",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Đại Kiều",
+        "大乔"
+      ],
+      "displayNameVi": "Đại Kiều",
+      "evidenceRef": "heroes-dict.json#31",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:8ac44a43f06673d6272efa65",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "魯肅": [
+          "https://sgsdeck.com/recommended/s10-wu-wudun-luxun",
+          "https://sgsdeck.com/recommended/s10-wu-wudun-zhouyu",
+          "https://sgsdeck.com/recommended/s10-wu-wuqiang-luxun"
+        ]
+      },
+      "aliases": [
+        "Lỗ Túc",
+        "魯肅",
+        "鲁肃"
+      ],
+      "displayNameVi": "Lỗ Túc",
+      "evidenceRef": "heroes-dict.json#108",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:8dc0bfe19c5d81dc129c8549",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Thái Văn Cơ",
+        "蔡文姬"
+      ],
+      "displayNameVi": "Thái Văn Cơ",
+      "evidenceRef": "heroes-dict.json#81",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:8e64b2b30407372497979332",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Ngụy Diên",
+        "魏延"
+      ],
+      "displayNameVi": "Ngụy Diên",
+      "evidenceRef": "heroes-dict.json#107",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:9001e293139ffd6b077e10e7",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "鍾會": [
+          "https://sgsdeck.com/recommended/s19-xuhui-gong",
+          "https://sgsdeck.com/recommended/s23-xuhui-gong",
+          "https://sgsdeck.com/recommended/team-fmber"
+        ]
+      },
+      "aliases": [
+        "Chung Hội",
+        "鍾會",
+        "钟会"
+      ],
+      "displayNameVi": "Chung Hội",
+      "evidenceRef": "heroes-dict.json#95",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:90a894dfd67b7ab639627540",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "凌統": [
+          "https://sgsdeck.com/recommended/og-bingyan-quan-cavalry-hubaoqi",
+          "https://sgsdeck.com/recommended/s10-wu-wu-qi",
+          "https://sgsdeck.com/recommended/s11-wu-jinfan-zei"
+        ]
+      },
+      "aliases": [
+        "Lăng Thống",
+        "凌統",
+        "凌统"
+      ],
+      "displayNameVi": "Lăng Thống",
+      "evidenceRef": "heroes-dict.json#18",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:91b50644508b1fb5097288fc",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Mã Vân Lộc",
+        "马云禄"
+      ],
+      "displayNameVi": "Mã Vân Lộc",
+      "evidenceRef": "heroes-dict.json#102",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:943b7a7b14597aba4a9f8478",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "張飛": [
+          "https://sgsdeck.com/recommended/og-bingyan-taoyuan-shield-huijun",
+          "https://sgsdeck.com/recommended/og-bingyan-zhangfei-nuke-bow",
+          "https://sgsdeck.com/recommended/s1-shu-da-shu-qiang"
+        ]
+      },
+      "aliases": [
+        "Trương Phi",
+        "张飞",
+        "張飛"
+      ],
+      "displayNameVi": "Trương Phi",
+      "evidenceRef": "heroes-dict.json#52",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:95264f699dc478478eef8b90",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Trần Đáo",
+        "陈到"
+      ],
+      "displayNameVi": "Trần Đáo",
+      "evidenceRef": "heroes-dict.json#98",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:95cb0509c0b2d696713f189e",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Đổng Trác",
+        "董卓"
+      ],
+      "displayNameVi": "Đổng Trác",
+      "evidenceRef": "heroes-dict.json#78",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:96633bbf689f585f17ef397c",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "黃月英": [
+          "https://sgsdeck.com/recommended/s10-qun-san-shi-lv-taishici",
+          "https://sgsdeck.com/recommended/s11-qun-san-shi-lv",
+          "https://sgsdeck.com/recommended/s14-san-shi-lv"
+        ]
+      },
+      "aliases": [
+        "Hoàng Nguyệt Anh",
+        "黃月英",
+        "黄月英"
+      ],
+      "displayNameVi": "Hoàng Nguyệt Anh",
+      "evidenceRef": "heroes-dict.json#110",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:979781ac090cb71634a278c5",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Chu Thái",
+        "周泰"
+      ],
+      "displayNameVi": "Chu Thái",
+      "evidenceRef": "heroes-dict.json#27",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:97faa2c456a914aded58ee89",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "呂布": [
+          "https://sgsdeck.com/recommended/og-bingyan-lvbu-zhouyu-bow",
+          "https://sgsdeck.com/recommended/og-bingyan-lvguoqiao-baima",
+          "https://sgsdeck.com/recommended/s1-qun-huaxialv"
+        ]
+      },
+      "aliases": [
+        "Lữ Bố",
+        "吕布",
+        "呂布"
+      ],
+      "displayNameVi": "Lữ Bố",
+      "evidenceRef": "heroes-dict.json#24",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:990961b2ffc3e6140e015852",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "華雄": [
+          "https://sgsdeck.com/recommended/s1-qun-taishi-qi"
+        ]
+      },
+      "aliases": [
+        "Hoa Hùng",
+        "华雄",
+        "華雄"
+      ],
+      "displayNameVi": "Hoa Hùng",
+      "evidenceRef": "heroes-dict.json#21",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:9ebe9a7cec93ffc5d3b4ccd1",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Tuân Du",
+        "荀攸"
+      ],
+      "displayNameVi": "Tuân Du",
+      "evidenceRef": "heroes-dict.json#77",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:9f7272bc767cfa4ad9cdca1f",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "公孫瓚": [
+          "https://sgsdeck.com/recommended/s1-qun-lvbu-baima",
+          "https://sgsdeck.com/recommended/s1-qun-yuanshao-baima"
+        ]
+      },
+      "aliases": [
+        "Công Tôn Toản",
+        "公孙瓒",
+        "公孫瓚"
+      ],
+      "displayNameVi": "Công Tôn Toản",
+      "evidenceRef": "heroes-dict.json#13",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:a02cbd2e268c2c5650ffe3fc",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Trương Cáp",
+        "张郃"
+      ],
+      "displayNameVi": "Trương Cáp",
+      "evidenceRef": "heroes-dict.json#51",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:a03830e035dfa5932ce6d658",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Y Tịch",
+        "伊籍"
+      ],
+      "displayNameVi": "Y Tịch",
+      "evidenceRef": "heroes-dict.json#11",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:a41499471e3f02460bcde24e",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "張遼": [
+          "https://sgsdeck.com/recommended/2-do995s",
+          "https://sgsdeck.com/recommended/s10-wei-jianxiong-qi",
+          "https://sgsdeck.com/recommended/s11-wei-baotou-qi"
+        ]
+      },
+      "aliases": [
+        "Trương Liêu",
+        "张辽",
+        "張遼"
+      ],
+      "displayNameVi": "Trương Liêu",
+      "evidenceRef": "heroes-dict.json#50",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:a5b74013147e47af899b97e2",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Trần Quần",
+        "陈群"
+      ],
+      "displayNameVi": "Trần Quần",
+      "evidenceRef": "heroes-dict.json#100",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:a80a9d39a6e9c745d28f964e",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "SP 諸葛亮": [
+          "https://sgsdeck.com/recommended/og-bingyan-beifa-shield-huweijun",
+          "https://sgsdeck.com/recommended/s10-shu-sp-zhuge-yingzhi",
+          "https://sgsdeck.com/recommended/s10-shu-xiao-guan-zhang"
+        ],
+        "SP諸葛亮": [
+          "https://sgsdeck.com/recommended/sp-1w1vm5",
+          "https://sgsdeck.com/recommended/sp2-1mlm83p",
+          "https://sgsdeck.com/recommended/team-ck5qs"
+        ]
+      },
+      "aliases": [
+        "SP Gia Cát Lượng",
+        "SP 諸葛亮",
+        "SP諸葛亮",
+        "SP诸葛亮"
+      ],
+      "displayNameVi": "SP Gia Cát Lượng",
+      "evidenceRef": "heroes-dict.json#5",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:aa37575d24772c943be8fb1e",
+      "variant": "SP"
+    },
+    {
+      "aliasEvidence": {
+        "黃蓋": [
+          "https://sgsdeck.com/recommended/s1-wu-chibi-gong",
+          "https://sgsdeck.com/recommended/s1-wu-huanggai-gong",
+          "https://sgsdeck.com/recommended/s2-wu-chibi-gong"
+        ]
+      },
+      "aliases": [
+        "Hoàng Cái",
+        "黃蓋",
+        "黄盖"
+      ],
+      "displayNameVi": "Hoàng Cái",
+      "evidenceRef": "heroes-dict.json#111",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:af28979bd438c204232cb38f",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Thái Ung",
+        "蔡邕"
+      ],
+      "displayNameVi": "Thái Ung",
+      "evidenceRef": "heroes-dict.json#82",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:b3a9a26413c03aaafd817d8a",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Chúc Dung Phu Nhân",
+        "祝融夫人"
+      ],
+      "displayNameVi": "Chúc Dung Phu Nhân",
+      "evidenceRef": "heroes-dict.json#73",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:b3b9237f88457d7a6edd9d8b",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Cao Lãm",
+        "高览"
+      ],
+      "displayNameVi": "Cao Lãm",
+      "evidenceRef": "heroes-dict.json#105",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:b8dfdc7e78916c5b3dfb7910",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Tư Mã Huy",
+        "司马徽"
+      ],
+      "displayNameVi": "Tư Mã Huy",
+      "evidenceRef": "heroes-dict.json#22",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:bbb1de31fd843669fe0e7410",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "SP Chu Tuấn",
+        "SP朱儁"
+      ],
+      "displayNameVi": "SP Chu Tuấn",
+      "evidenceRef": "heroes-dict.json#2",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:bdfb7eb74a696a372b7c095d",
+      "variant": "SP"
+    },
+    {
+      "aliasEvidence": {
+        "黃忠": [
+          "https://sgsdeck.com/recommended/s1-shu-gong",
+          "https://sgsdeck.com/recommended/s1-shu-shun",
+          "https://sgsdeck.com/recommended/s19-wufeng-huangzhong"
+        ]
+      },
+      "aliases": [
+        "Hoàng Trung",
+        "黃忠",
+        "黄忠"
+      ],
+      "displayNameVi": "Hoàng Trung",
+      "evidenceRef": "heroes-dict.json#109",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:c9065395c9a7298a3331e498",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "許攸": [
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-c",
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-qun-bow-jinfan",
+          "https://sgsdeck.com/recommended/og-bingyan-huangma-spear-jiefanwei"
+        ]
+      },
+      "aliases": [
+        "Hứa Du",
+        "許攸",
+        "许攸"
+      ],
+      "displayNameVi": "Hứa Du",
+      "evidenceRef": "heroes-dict.json#85",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:ce49b0d3c7eb45af987430bd",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Tả Từ",
+        "左慈"
+      ],
+      "displayNameVi": "Tả Từ",
+      "evidenceRef": "heroes-dict.json#40",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:ceb3333e1809f65f075970d4",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Cao Thuận",
+        "高顺"
+      ],
+      "displayNameVi": "Cao Thuận",
+      "evidenceRef": "heroes-dict.json#106",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:ced9a805145ed4c2bbfb411f",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "龐統": [
+          "https://sgsdeck.com/recommended/s10-shu-diandian-gong",
+          "https://sgsdeck.com/recommended/s10-shu-sp-zhuge-yingzhi",
+          "https://sgsdeck.com/recommended/s11-shu-qilin-gong"
+        ]
+      },
+      "aliases": [
+        "Bàng Thống",
+        "庞统",
+        "龐統"
+      ],
+      "displayNameVi": "Bàng Thống",
+      "evidenceRef": "heroes-dict.json#42",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:d04269a972ec14e0c95efdec",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Nghiêm Nhan",
+        "严颜"
+      ],
+      "displayNameVi": "Nghiêm Nhan",
+      "evidenceRef": "heroes-dict.json#7",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:d0723784da53e861b917553e",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "呂蒙": [
+          "https://sgsdeck.com/recommended/2-e85j93",
+          "https://sgsdeck.com/recommended/s1-wu-da-dudu",
+          "https://sgsdeck.com/recommended/s11-wu-dudu-gong"
+        ]
+      },
+      "aliases": [
+        "Lữ Mông",
+        "吕蒙",
+        "呂蒙"
+      ],
+      "displayNameVi": "Lữ Mông",
+      "evidenceRef": "heroes-dict.json#26",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:d09edc72e62e34cdb2dac5a0",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "曹純": [
+          "https://sgsdeck.com/recommended/s28-caochun-yuan-qi"
+        ]
+      },
+      "aliases": [
+        "Tào Thuần",
+        "曹純",
+        "曹纯"
+      ],
+      "displayNameVi": "Tào Thuần",
+      "evidenceRef": "heroes-dict.json#60",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:d4e07c3461a25a5da3c895fc",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "趙雲": [
+          "https://sgsdeck.com/recommended/2-jh7wzr",
+          "https://sgsdeck.com/recommended/s1-shu-da-shu-qiang",
+          "https://sgsdeck.com/recommended/s1-shu-da-wuhu"
+        ]
+      },
+      "aliases": [
+        "Triệu Vân",
+        "赵云",
+        "趙雲"
+      ],
+      "displayNameVi": "Triệu Vân",
+      "evidenceRef": "heroes-dict.json#90",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:d949c9c8d528498c7bc16bd9",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "樂進": [
+          "https://sgsdeck.com/recommended/s1-wei-yuejin-qi",
+          "https://sgsdeck.com/recommended/s10-qun-san-shi-le-jin",
+          "https://sgsdeck.com/recommended/s10-wei-da-wei-qi"
+        ]
+      },
+      "aliases": [
+        "Nhạc Tiến",
+        "乐进",
+        "樂進"
+      ],
+      "displayNameVi": "Nhạc Tiến",
+      "evidenceRef": "heroes-dict.json#8",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:da92b2d00992af2ab4fe0f50",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "劉備": [
+          "https://sgsdeck.com/recommended/og-bingyan-taoyuan-shield-huijun",
+          "https://sgsdeck.com/recommended/s1-shu-shun",
+          "https://sgsdeck.com/recommended/s1-shu-taoyuan"
+        ]
+      },
+      "aliases": [
+        "Lưu Bị",
+        "刘备",
+        "劉備"
+      ],
+      "displayNameVi": "Lưu Bị",
+      "evidenceRef": "heroes-dict.json#19",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:daf7b56cd3aea44f7fdfd23d",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "於吉": [
+          "https://sgsdeck.com/recommended/team-bxt0d"
+        ]
+      },
+      "aliases": [
+        "Vu Cát",
+        "Vũ Cát",
+        "于吉",
+        "於吉"
+      ],
+      "displayNameVi": "Vũ Cát",
+      "evidenceRef": "heroes-dict.json#9",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:deb8aed434adbe9bbd2162cd",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "SP Tuân Úc",
+        "SP荀彧"
+      ],
+      "displayNameVi": "SP Tuân Úc",
+      "evidenceRef": "heroes-dict.json#3",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:e288f937bcc749ff9f52c29c",
+      "variant": "SP"
+    },
+    {
+      "aliasEvidence": {
+        "SP 呂蒙": [
+          "https://sgsdeck.com/recommended/og-bingyan-dudu-bow-baimaobing",
+          "https://sgsdeck.com/recommended/og-bingyan-kangkai-bow-jinfan",
+          "https://sgsdeck.com/recommended/og-bingyan-taishici-bow"
+        ],
+        "SP呂蒙": [
+          "https://sgsdeck.com/recommended/2-is9t6t",
+          "https://sgsdeck.com/recommended/sp-6mj5pb",
+          "https://sgsdeck.com/recommended/team-1kb6eqf"
+        ]
+      },
+      "aliases": [
+        "SP Lữ Mông",
+        "SP 呂蒙",
+        "SP吕蒙",
+        "SP呂蒙"
+      ],
+      "displayNameVi": "SP Lữ Mông",
+      "evidenceRef": "heroes-dict.json#0",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:e351aaeb0ddd2d6aab11bf2f",
+      "variant": "SP"
+    },
+    {
+      "aliasEvidence": {
+        "張讓": [
+          "https://sgsdeck.com/recommended/s27-han-zhangrang-rou-gong",
+          "https://sgsdeck.com/recommended/yxms-003-張讓黃月英周泰",
+          "https://sgsdeck.com/recommended/yxms-004-張讓黃月英"
+        ]
+      },
+      "aliases": [
+        "Trương Nhượng",
+        "张让",
+        "張讓"
+      ],
+      "displayNameVi": "Trương Nhượng",
+      "evidenceRef": "heroes-dict.json#49",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:e6730460f052dedb856f26f0",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Nhan Lương",
+        "颜良"
+      ],
+      "displayNameVi": "Nhan Lương",
+      "evidenceRef": "heroes-dict.json#101",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:f2f34af1e7f4489676786919",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "滿寵": [
+          "https://sgsdeck.com/recommended/og-bingyan-jiangwei-feixiong-cavalry",
+          "https://sgsdeck.com/recommended/s10-wei-taiwei-dun-traditional",
+          "https://sgsdeck.com/recommended/s10-wei-taiwei-dun-xingyizhen"
+        ]
+      },
+      "aliases": [
+        "Mãn Sủng",
+        "满宠",
+        "滿寵"
+      ],
+      "displayNameVi": "Mãn Sủng",
+      "evidenceRef": "heroes-dict.json#66",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:f672875f4c888aacfd702df3",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Vương Bình",
+        "王平"
+      ],
+      "displayNameVi": "Vương Bình",
+      "evidenceRef": "heroes-dict.json#69",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:f81e945890ebb0eb56bfa0c9",
+      "variant": "base"
+    },
+    {
+      "aliasEvidence": {
+        "陸遜": [
+          "https://sgsdeck.com/recommended/2-is9t6t",
+          "https://sgsdeck.com/recommended/og-bingyan-dudu-bow-baimaobing",
+          "https://sgsdeck.com/recommended/s1-wu-da-dudu"
+        ]
+      },
+      "aliases": [
+        "Lục Tốn",
+        "陆逊",
+        "陸遜"
+      ],
+      "displayNameVi": "Lục Tốn",
+      "evidenceRef": "heroes-dict.json#97",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:f88e20a568d008a29c2de19b",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Chu Du",
+        "周瑜"
+      ],
+      "displayNameVi": "Chu Du",
+      "evidenceRef": "heroes-dict.json#28",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:ff0ae9c2a3b32145b872335e",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Thiết Hạnh Thừa Sủng",
+        "窃幸乘宠"
+      ],
+      "displayNameVi": "Thiết Hạnh Thừa Sủng",
+      "evidenceRef": "tactics.json#134",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:01197033d6a5817709f6e7ce",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Hưng Vân Bố Vũ",
+        "兴云布雨"
+      ],
+      "displayNameVi": "Hưng Vân Bố Vũ",
+      "evidenceRef": "tactics.json#58",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:01bb1372d445c4ead02493a5",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Cung Yêu Cơ",
+        "弓腰姬"
+      ],
+      "displayNameVi": "Cung Yêu Cơ",
+      "evidenceRef": "tactics.json#18",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:0475f8f709a8935bd4d1f3fd",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Cố Phán Sinh Tư",
+        "顾盼生姿"
+      ],
+      "displayNameVi": "Cố Phán Sinh Tư",
+      "evidenceRef": "tactics.json#30",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:05832cb1bbc6506e24f5dc34",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Hiểu Tri Lương Mộc",
+        "晓知良木"
+      ],
+      "displayNameVi": "Hiểu Tri Lương Mộc",
+      "evidenceRef": "tactics.json#45",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:0597518a52142eb229a81b4f",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Xử Tư Bất Hoặc",
+        "处兹不惑"
+      ],
+      "displayNameVi": "Xử Tư Bất Hoặc",
+      "evidenceRef": "tactics.json#195",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:061a8fccd7538ba75ca3b812",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thủ Nhi Tất Cố",
+        "守而必固"
+      ],
+      "displayNameVi": "Thủ Nhi Tất Cố",
+      "evidenceRef": "tactics.json#153",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:06fd3ddcec8b700691c17d91",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "獅子奮迅": [
+          "https://sgsdeck.com/recommended/s27-han-yuanshu-feixiong-qi"
+        ]
+      },
+      "aliases": [
+        "Sư Tử Phấn Tấn",
+        "狮子奋迅",
+        "獅子奮迅"
+      ],
+      "displayNameVi": "Sư Tử Phấn Tấn",
+      "evidenceRef": "tactics.json#126",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:074025817c7dfac98f5dbf44",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "裸衣血戰": [
+          "https://sgsdeck.com/recommended/og-bingyan-quan-cavalry-hubaoqi",
+          "https://sgsdeck.com/recommended/s10-wei-baotou-qi-xiahouyuan",
+          "https://sgsdeck.com/recommended/s10-wei-jianxiong-qi"
+        ]
+      },
+      "aliases": [
+        "Lõa Y Huyết Chiến",
+        "裸衣血战",
+        "裸衣血戰"
+      ],
+      "displayNameVi": "Lõa Y Huyết Chiến",
+      "evidenceRef": "tactics.json#89",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:0744143b4be4741efab0a397",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thâm Mưu Viễn Lược",
+        "深谋远略"
+      ],
+      "displayNameVi": "Thâm Mưu Viễn Lược",
+      "evidenceRef": "tactics.json#229",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:07ee7110b08ab5e64ce9008f",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Kinh Thuật Chính Yếu",
+        "经术政要"
+      ],
+      "displayNameVi": "Kinh Thuật Chính Yếu",
+      "evidenceRef": "tactics.json#76",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:096d2b972bdf8f37c88c2c0b",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thương Lẫm Nhi Thực",
+        "仓廪而实"
+      ],
+      "displayNameVi": "Thương Lẫm Nhi Thực",
+      "evidenceRef": "tactics.json#140",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:0adb399626c1468f31041b9e",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "據水斷橋": [
+          "https://sgsdeck.com/recommended/s10-shu-dongcha-qiang",
+          "https://sgsdeck.com/recommended/s10-shu-funu-qiang",
+          "https://sgsdeck.com/recommended/s10-shu-shuqi-liubei"
+        ]
+      },
+      "aliases": [
+        "Cứ Thủy Đoạn Kiều",
+        "据水断桥",
+        "據水斷橋"
+      ],
+      "displayNameVi": "Cứ Thủy Đoạn Kiều",
+      "evidenceRef": "tactics.json#32",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:0b19db68e064c195b58d1899",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thiệt Chiến Quần Nho",
+        "舌战群儒"
+      ],
+      "displayNameVi": "Thiệt Chiến Quần Nho",
+      "evidenceRef": "tactics.json#136",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:0c3c088114c729626659eac0",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "摧鋒斷刃": [
+          "https://sgsdeck.com/recommended/2-do995s",
+          "https://sgsdeck.com/recommended/2-jh7wzr",
+          "https://sgsdeck.com/recommended/og-bingyan-huangma-spear-jiefanwei"
+        ]
+      },
+      "aliases": [
+        "Thôi Phong Đoạn Nhẫn",
+        "Thôi Phong Đoạn Nhận",
+        "摧鋒斷刃",
+        "摧锋断刃"
+      ],
+      "displayNameVi": "Thôi Phong Đoạn Nhẫn",
+      "evidenceRef": "tactics.json#231",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:0c50062fa9760734890e18c2",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thập Thắng Thập Bại",
+        "十胜十败"
+      ],
+      "displayNameVi": "Thập Thắng Thập Bại",
+      "evidenceRef": "tactics.json#149",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:0cb00381beff901337f29c13",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "無當飛軍": [
+          "https://sgsdeck.com/recommended/og-bingyan-zhangfei-nuke-bow",
+          "https://sgsdeck.com/recommended/s1-qun-yuanshao-bapi",
+          "https://sgsdeck.com/recommended/s1-qun-yuanshao-wudang"
+        ]
+      },
+      "aliases": [
+        "Vô Đương Phi Quân",
+        "无当飞军",
+        "無當飛軍"
+      ],
+      "displayNameVi": "Vô Đương Phi Quân",
+      "evidenceRef": "tactics.json#188",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:0d642d0266749441f22546d6",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Loạn Thế Gian Hùng",
+        "乱世奸雄"
+      ],
+      "displayNameVi": "Loạn Thế Gian Hùng",
+      "evidenceRef": "tactics.json#85",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:0da02b61e0c8c8ec13b50370",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "御敵屏障": [
+          "https://sgsdeck.com/recommended/s25-dongzhuo-fanji-dun",
+          "https://sgsdeck.com/recommended/s25-wutugu-huangma",
+          "https://sgsdeck.com/recommended/s25-xianren-dun"
+        ]
+      },
+      "aliases": [
+        "Ngự Địch Bình Chướng",
+        "御敌屏障",
+        "御敵屏障"
+      ],
+      "displayNameVi": "Ngự Địch Bình Chướng",
+      "evidenceRef": "tactics.json#223",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:0e1bf672f2aa07a4fc16d4ef",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Giám Thống Chấn Quân",
+        "监统震军"
+      ],
+      "displayNameVi": "Giám Thống Chấn Quân",
+      "evidenceRef": "tactics.json#44",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:11110aa4bf5d88b3895d5958",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thần Xạ",
+        "神射"
+      ],
+      "displayNameVi": "Thần Xạ",
+      "evidenceRef": "tactics.json#146",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:11803c4b8851c3d99e76660c",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thùy Tâm Vạn Vật",
+        "垂心万物"
+      ],
+      "displayNameVi": "Thùy Tâm Vạn Vật",
+      "evidenceRef": "tactics.json#139",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:12d03874f5be655269a0e779",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Hãm Trận Đột Tập",
+        "陷阵突袭"
+      ],
+      "displayNameVi": "Hãm Trận Đột Tập",
+      "evidenceRef": "tactics.json#54",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:13478a580da40746a5703b2d",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "因利制權": [
+          "https://sgsdeck.com/recommended/team-637f3n",
+          "https://sgsdeck.com/recommended/team-ck5qs",
+          "https://sgsdeck.com/recommended/team-o0szh"
+        ]
+      },
+      "aliases": [
+        "Nhân Lợi Chế Quyền",
+        "因利制权",
+        "因利制權"
+      ],
+      "displayNameVi": "Nhân Lợi Chế Quyền",
+      "evidenceRef": "tactics.json#225",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:137819a989550e809568d197",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "氣凌三軍": [
+          "https://sgsdeck.com/recommended/s11-wei-traditional-dun",
+          "https://sgsdeck.com/recommended/s16-fanji-dun-dundun",
+          "https://sgsdeck.com/recommended/s17-fanji-dun-dundun"
+        ]
+      },
+      "aliases": [
+        "Khí Lăng Tam Quân",
+        "气凌三军",
+        "氣凌三軍"
+      ],
+      "displayNameVi": "Khí Lăng Tam Quân",
+      "evidenceRef": "tactics.json#69",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:1486da80003b91a6a2d624e6",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Hiệp Thế Lộng Quyền",
+        "挟势弄权"
+      ],
+      "displayNameVi": "Hiệp Thế Lộng Quyền",
+      "evidenceRef": "tactics.json#46",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:14de186cbecbfe46b9cf0908",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "折衝禦侮": [
+          "https://sgsdeck.com/recommended/s1-qun-lv-tai-guo",
+          "https://sgsdeck.com/recommended/s1-qun-lv-tai-zuo",
+          "https://sgsdeck.com/recommended/s1-qun-lvbu-baima"
+        ]
+      },
+      "aliases": [
+        "Chiết Xung Ngự Vũ",
+        "Đánh Bại Quân Địch",
+        "折冲御侮",
+        "折衝禦侮"
+      ],
+      "displayNameVi": "Đánh Bại Quân Địch",
+      "evidenceRef": "tactics.json#201",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:14dfb8e6574492c0e05ab927",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Trầm Sa Quyết Thủy",
+        "沉沙决水"
+      ],
+      "displayNameVi": "Trầm Sa Quyết Thủy",
+      "evidenceRef": "tactics.json#167",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:14e61bffd5ca3686800aa0f1",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Cương Liệt Bất Khuất",
+        "刚烈不屈"
+      ],
+      "displayNameVi": "Cương Liệt Bất Khuất",
+      "evidenceRef": "tactics.json#24",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:1572c12e0055bc651ab8a539",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thần Hỏa Kế",
+        "神火计"
+      ],
+      "displayNameVi": "Thần Hỏa Kế",
+      "evidenceRef": "tactics.json#145",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:16c2415923de8364f28202d0",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "兵鋒": [
+          "https://sgsdeck.com/recommended/s1-qun-huaxialv",
+          "https://sgsdeck.com/recommended/s1-shu-machao-shu-qiang",
+          "https://sgsdeck.com/recommended/s2-qun-huaxialv"
+        ]
+      },
+      "aliases": [
+        "Binh Phong",
+        "兵鋒",
+        "兵锋"
+      ],
+      "displayNameVi": "Binh Phong",
+      "evidenceRef": "tactics.json#2",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:17dee0a215ee1c27406aa7f8",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Trì Quân Nghị Trọng",
+        "持军毅重"
+      ],
+      "displayNameVi": "Trì Quân Nghị Trọng",
+      "evidenceRef": "tactics.json#162",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:194f38c5990aac42cfe0799b",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Vi Sư Tất Khuyết",
+        "围师必阙"
+      ],
+      "displayNameVi": "Vi Sư Tất Khuyết",
+      "evidenceRef": "tactics.json#185",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:1950a40b5444d20d1e060067",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "瞋目橫矛": [
+          "https://sgsdeck.com/recommended/s16-sunquan-wuqiang-wu",
+          "https://sgsdeck.com/recommended/s17-sunquan-wuqiang-wu",
+          "https://sgsdeck.com/recommended/s18-sunquan-wuqiang-wu"
+        ]
+      },
+      "aliases": [
+        "Sân Mục Hoành Mâu",
+        "Trấn Mục Hoành Mâu",
+        "瞋目横矛",
+        "瞋目橫矛"
+      ],
+      "displayNameVi": "Trấn Mục Hoành Mâu",
+      "evidenceRef": "tactics.json#165",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:1a4751354afa22e326e46c54",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "傾國傾城": [
+          "https://sgsdeck.com/recommended/s11-qun-wufeng-qun-dun"
+        ]
+      },
+      "aliases": [
+        "Khuynh Quốc Khuynh Thành",
+        "倾国倾城",
+        "傾國傾城"
+      ],
+      "displayNameVi": "Khuynh Quốc Khuynh Thành",
+      "evidenceRef": "tactics.json#68",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:1aa7656cabf8b8b7429e603f",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tửu Trì Nhục Lâm",
+        "酒池肉林"
+      ],
+      "displayNameVi": "Tửu Trì Nhục Lâm",
+      "evidenceRef": "tactics.json#182",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:1bd24b67dcbae1c98f1df367",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "文武雙全": [
+          "https://sgsdeck.com/recommended/2-txb6ye",
+          "https://sgsdeck.com/recommended/og-bingyan-beifa-shield-huweijun",
+          "https://sgsdeck.com/recommended/og-bingyan-lvguoqiao-baima"
+        ]
+      },
+      "aliases": [
+        "Văn Võ Song Toàn",
+        "文武双全",
+        "文武雙全"
+      ],
+      "displayNameVi": "Văn Võ Song Toàn",
+      "evidenceRef": "tactics.json#190",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:1d43e8aca6fd102380f435a0",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "西涼鐵騎": [
+          "https://sgsdeck.com/recommended/s1-qun-taishi-qi",
+          "https://sgsdeck.com/recommended/s10-wu-wu-qi",
+          "https://sgsdeck.com/recommended/s11-wu-wuqi-sunshangxiang"
+        ]
+      },
+      "aliases": [
+        "Tây Lương Thiết Kỵ",
+        "西凉铁骑",
+        "西涼鐵騎"
+      ],
+      "displayNameVi": "Tây Lương Thiết Kỵ",
+      "evidenceRef": "tactics.json#172",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:1dfddff6fea82651b5a3e9b6",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "虎踞鷹揚": [
+          "https://sgsdeck.com/recommended/s10-wu-wu-qi",
+          "https://sgsdeck.com/recommended/s11-wu-wuqi-sunshangxiang",
+          "https://sgsdeck.com/recommended/s12-wu-zongbing-wuqi"
+        ]
+      },
+      "aliases": [
+        "Hổ Cứ Ưng Dương",
+        "虎踞鷹揚",
+        "虎踞鹰扬"
+      ],
+      "displayNameVi": "Hổ Cứ Ưng Dương",
+      "evidenceRef": "tactics.json#64",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:20ac6742b23c26042a8d9487",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Lính Giáp Mây",
+        "Đằng Giáp Binh",
+        "藤甲兵"
+      ],
+      "displayNameVi": "Lính Giáp Mây",
+      "evidenceRef": "tactics.json#87",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:20c50776d74518445de1ba51",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "解煩衛": [
+          "https://sgsdeck.com/recommended/og-bingyan-huangma-spear-jiefanwei",
+          "https://sgsdeck.com/recommended/s19-chaoji-qiang",
+          "https://sgsdeck.com/recommended/s19-guanma-qiang"
+        ]
+      },
+      "aliases": [
+        "Giải Phiền Vệ",
+        "解烦卫",
+        "解煩衛"
+      ],
+      "displayNameVi": "Giải Phiền Vệ",
+      "evidenceRef": "tactics.json#215",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:21f3b6510793e7fee5bb907a",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "形一陣": [
+          "https://sgsdeck.com/recommended/s10-wei-sima-dun-xingyizhen",
+          "https://sgsdeck.com/recommended/s10-wei-taiwei-dun-xingyizhen",
+          "https://sgsdeck.com/recommended/s12-wu-xingyi-sunquan-gong"
+        ]
+      },
+      "aliases": [
+        "Hình Nhất Trận",
+        "形一阵",
+        "形一陣"
+      ],
+      "displayNameVi": "Hình Nhất Trận",
+      "evidenceRef": "tactics.json#57",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:22b1c8027866a834bf3c859d",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "臨機制勝": [
+          "https://sgsdeck.com/recommended/s16-bamen-shu-gong-no-taiping",
+          "https://sgsdeck.com/recommended/s16-deng-feng-lei",
+          "https://sgsdeck.com/recommended/s16-sp-shu-zhi-no-taiping"
+        ]
+      },
+      "aliases": [
+        "Lâm Cơ Chế Thắng",
+        "Thời Cơ Chiến Thắng",
+        "临机制胜",
+        "臨機制勝"
+      ],
+      "displayNameVi": "Thời Cơ Chiến Thắng",
+      "evidenceRef": "tactics.json#152",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:26898f87a110d6840900f7ad",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thiên Hạ Vô Song",
+        "天下无双"
+      ],
+      "displayNameVi": "Thiên Hạ Vô Song",
+      "evidenceRef": "tactics.json#132",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:2712a32ef1eea4d899277f50",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Nghĩa Đảm Hùng Tâm",
+        "义胆雄心"
+      ],
+      "displayNameVi": "Nghĩa Đảm Hùng Tâm",
+      "evidenceRef": "tactics.json#98",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:274b215a071255720279ce56",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "臨危救主": [
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-b",
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-c",
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-qun-bow-jinfan"
+        ]
+      },
+      "aliases": [
+        "Lâm Nguy Cứu Chủ",
+        "临危救主",
+        "臨危救主"
+      ],
+      "displayNameVi": "Lâm Nguy Cứu Chủ",
+      "evidenceRef": "tactics.json#217",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:275ed7024f3738ad74aa2589",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Uy Chấn Hoa Hạ",
+        "威震华夏"
+      ],
+      "displayNameVi": "Uy Chấn Hoa Hạ",
+      "evidenceRef": "tactics.json#183",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:28e8cb7ce49a30f7488b2887",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "奪魂挾魄": [
+          "https://sgsdeck.com/recommended/2-e85j93",
+          "https://sgsdeck.com/recommended/2-is9t6t",
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-b"
+        ]
+      },
+      "aliases": [
+        "Đoạt Hồn Hiệp Phách",
+        "夺魂挟魄",
+        "奪魂挾魄"
+      ],
+      "displayNameVi": "Đoạt Hồn Hiệp Phách",
+      "evidenceRef": "tactics.json#199",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:2b52cf9439f3dd4913ba022b",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Đao Xuất Như Đình",
+        "刀出如霆"
+      ],
+      "displayNameVi": "Đao Xuất Như Đình",
+      "evidenceRef": "tactics.json#198",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:2baa51d2864f91277b517f7a",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "挫銳": [
+          "https://sgsdeck.com/recommended/yxms-021-陳翊槍"
+        ]
+      },
+      "aliases": [
+        "Tỏa Nhuệ",
+        "挫銳",
+        "挫锐"
+      ],
+      "displayNameVi": "Tỏa Nhuệ",
+      "evidenceRef": "tactics.json#179",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:2ce0bcf082107ba60c62931e",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Công Bất Đường Quyên",
+        "功不唐捐"
+      ],
+      "displayNameVi": "Công Bất Đường Quyên",
+      "evidenceRef": "tactics.json#212",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:2ce3f81b2a995276184925a6",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "士別三日": [
+          "https://sgsdeck.com/recommended/s1-qun-yaoxing-dun",
+          "https://sgsdeck.com/recommended/s1-wei-da-wei-qi",
+          "https://sgsdeck.com/recommended/s1-wei-yuejin-qi"
+        ]
+      },
+      "aliases": [
+        "Sĩ Biệt Tam Nhật",
+        "士別三日",
+        "士别三日"
+      ],
+      "displayNameVi": "Sĩ Biệt Tam Nhật",
+      "evidenceRef": "tactics.json#124",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:2e59c28ff5dff77e4ec1c8c7",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "眾動萬計": [
+          "https://sgsdeck.com/recommended/s19-dundun-dun",
+          "https://sgsdeck.com/recommended/s22-dundun-dun",
+          "https://sgsdeck.com/recommended/s25-dongzhuo-fanji-dun"
+        ]
+      },
+      "aliases": [
+        "Chúng Động Vạn Kế",
+        "众动万计",
+        "眾動萬計"
+      ],
+      "displayNameVi": "Chúng Động Vạn Kế",
+      "evidenceRef": "tactics.json#14",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:33520b045a7c014d77354a7e",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Mau Giành Lợi Thế",
+        "Tốc Thừa Kỳ Lợi",
+        "速乘其利"
+      ],
+      "displayNameVi": "Mau Giành Lợi Thế",
+      "evidenceRef": "tactics.json#93",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:33b07e59ae742d654310b502",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "鋒矢陣": [
+          "https://sgsdeck.com/recommended/og-bingyan-jiangwei-feixiong-cavalry",
+          "https://sgsdeck.com/recommended/og-bingyan-quan-cavalry-hubaoqi",
+          "https://sgsdeck.com/recommended/og-bingyan-zhangjiao-yuji-cavalry"
+        ]
+      },
+      "aliases": [
+        "Phong Thi Trận",
+        "Phong Thỉ Trận",
+        "鋒矢陣",
+        "锋矢阵"
+      ],
+      "displayNameVi": "Phong Thi Trận",
+      "evidenceRef": "tactics.json#111",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:33f19eeeabf7ea2691a0e63f",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Cố Nhược Kim Thang",
+        "固若金汤"
+      ],
+      "displayNameVi": "Cố Nhược Kim Thang",
+      "evidenceRef": "tactics.json#29",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:343749cab32d242b4147f67d",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Cơ Giám Tiên Thức",
+        "机鉴先识"
+      ],
+      "displayNameVi": "Cơ Giám Tiên Thức",
+      "evidenceRef": "tactics.json#21",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:34410119b61c7e529c7e5eb2",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "萬箭齊發": [
+          "https://sgsdeck.com/recommended/s1-qun-yuanshao-baima",
+          "https://sgsdeck.com/recommended/s1-qun-yuanshao-bapi",
+          "https://sgsdeck.com/recommended/s1-qun-yuanshao-wudang"
+        ]
+      },
+      "aliases": [
+        "Vạn Tiễn Tề Phát",
+        "万箭齐发",
+        "萬箭齊發"
+      ],
+      "displayNameVi": "Vạn Tiễn Tề Phát",
+      "evidenceRef": "tactics.json#192",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:34ce9c56c9e55a4a3674f0e5",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Cao Lỗ Liên Doanh",
+        "高橹连营"
+      ],
+      "displayNameVi": "Cao Lỗ Liên Doanh",
+      "evidenceRef": "tactics.json#13",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:35469de708a373c2d489f18d",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Trường Khu Trực Nhập",
+        "长驱直入"
+      ],
+      "displayNameVi": "Trường Khu Trực Nhập",
+      "evidenceRef": "tactics.json#164",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:35b204762e467be39bda1bf4",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tứ Diện Sở Ca",
+        "四面楚歌"
+      ],
+      "displayNameVi": "Tứ Diện Sở Ca",
+      "evidenceRef": "tactics.json#181",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:36721cfaf0b0c6d1d8a006b3",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Sóc Huyết Túng Hoành",
+        "槊血纵横"
+      ],
+      "displayNameVi": "Sóc Huyết Túng Hoành",
+      "evidenceRef": "tactics.json#123",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:375d12fd3d5354b4c38623cc",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Hỏa Thần Anh Phong",
+        "火神英风"
+      ],
+      "displayNameVi": "Hỏa Thần Anh Phong",
+      "evidenceRef": "tactics.json#61",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:38780a8fcfa10b59e96d8f3a",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Cổ Chi Ác Lai",
+        "古之恶来"
+      ],
+      "displayNameVi": "Cổ Chi Ác Lai",
+      "evidenceRef": "tactics.json#31",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:3bdcc8a776b965de5b425954",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thập Diện Mai Phục",
+        "十面埋伏"
+      ],
+      "displayNameVi": "Thập Diện Mai Phục",
+      "evidenceRef": "tactics.json#147",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:3e7e88b5306cfa4598ce03e2",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "克敵制勝": [
+          "https://sgsdeck.com/recommended/s11-wu-jinfan-zei",
+          "https://sgsdeck.com/recommended/s3-wu-sunquan-fa-dao-gong",
+          "https://sgsdeck.com/recommended/s4-wu-sun-fa-gong"
+        ]
+      },
+      "aliases": [
+        "Khắc Địch Chế Thắng",
+        "克敌制胜",
+        "克敵制勝"
+      ],
+      "displayNameVi": "Khắc Địch Chế Thắng",
+      "evidenceRef": "tactics.json#71",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:3ec04a5eea7956b75852d43a",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "剛勇無前": [
+          "https://sgsdeck.com/recommended/og-bingyan-taoyuan-shield-huijun",
+          "https://sgsdeck.com/recommended/og-bingyan-zhangfei-nuke-bow",
+          "https://sgsdeck.com/recommended/s10-shu-taoyuan-dun"
+        ]
+      },
+      "aliases": [
+        "Cương Dũng Vô Tiền",
+        "刚勇无前",
+        "剛勇無前"
+      ],
+      "displayNameVi": "Cương Dũng Vô Tiền",
+      "evidenceRef": "tactics.json#23",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:3f5c42f540704e0ab129d12f",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thập Nhị Kỳ Sách",
+        "十二奇策"
+      ],
+      "displayNameVi": "Thập Nhị Kỳ Sách",
+      "evidenceRef": "tactics.json#148",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:3fb1e6e9d56208e9d7d1e65b",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Nhân Đức Tải Thế",
+        "仁德载世"
+      ],
+      "displayNameVi": "Nhân Đức Tải Thế",
+      "evidenceRef": "tactics.json#104",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:403787f56648a4b491894686",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "眾志成城": [
+          "https://sgsdeck.com/recommended/2-e85j93",
+          "https://sgsdeck.com/recommended/2-is9t6t",
+          "https://sgsdeck.com/recommended/s23-jinliao-shanhe-dun-2"
+        ]
+      },
+      "aliases": [
+        "Chúng Chí Thành Thành",
+        "Toàn Quân Đồng Lòng",
+        "众志成城",
+        "眾志成城"
+      ],
+      "displayNameVi": "Toàn Quân Đồng Lòng",
+      "evidenceRef": "tactics.json#160",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:41c42919908588ff170a415a",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "暫避其鋒": [
+          "https://sgsdeck.com/recommended/2-do995s",
+          "https://sgsdeck.com/recommended/2-is9t6t",
+          "https://sgsdeck.com/recommended/s1-qun-huaxialv"
+        ]
+      },
+      "aliases": [
+        "Tạm Lánh Sóng Gió",
+        "Tạm Tị Kỳ Phong",
+        "暂避其锋",
+        "暫避其鋒"
+      ],
+      "displayNameVi": "Tạm Lánh Sóng Gió",
+      "evidenceRef": "tactics.json#176",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:4317628fd1df0a24a366bb98",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thanh Lưu Nhã Vọng",
+        "清流雅望"
+      ],
+      "displayNameVi": "Thanh Lưu Nhã Vọng",
+      "evidenceRef": "tactics.json#129",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:4383140edccb26dc73c7ea79",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Vô Song Thượng Tướng",
+        "无双上将"
+      ],
+      "displayNameVi": "Vô Song Thượng Tướng",
+      "evidenceRef": "tactics.json#187",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:439e639c09402d79a9dc0159",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Quyết Thủy Hội Thành",
+        "决水溃城"
+      ],
+      "displayNameVi": "Quyết Thủy Hội Thành",
+      "evidenceRef": "tactics.json#117",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:4547c94289044c256cea3904",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "結盟": [
+          "https://sgsdeck.com/recommended/s11-wu-sunshangxiang-wugong",
+          "https://sgsdeck.com/recommended/team-c8mq0"
+        ]
+      },
+      "aliases": [
+        "Kết Minh",
+        "結盟",
+        "结盟"
+      ],
+      "displayNameVi": "Kết Minh",
+      "evidenceRef": "tactics.json#80",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:45e7a9a2d6f8645856be9174",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "一騎當千": [
+          "https://sgsdeck.com/recommended/og-bingyan-quan-cavalry-hubaoqi",
+          "https://sgsdeck.com/recommended/s1-qun-huaxialv",
+          "https://sgsdeck.com/recommended/s1-qun-lv-tai-guo"
+        ]
+      },
+      "aliases": [
+        "Nhất Kỵ Đương Thiên",
+        "一騎當千",
+        "一骑当千"
+      ],
+      "displayNameVi": "Nhất Kỵ Đương Thiên",
+      "evidenceRef": "tactics.json#105",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:467a1dc28e429b222c80032c",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "魚鱗陣": [
+          "https://sgsdeck.com/recommended/2-1nsjj7f",
+          "https://sgsdeck.com/recommended/2-jh7wzr",
+          "https://sgsdeck.com/recommended/og-bingyan-faguan-shield-tengjia"
+        ]
+      },
+      "aliases": [
+        "Ngư Lân Trận",
+        "魚鱗陣",
+        "鱼鳞阵"
+      ],
+      "displayNameVi": "Ngư Lân Trận",
+      "evidenceRef": "tactics.json#222",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:46a2ce64d98cbe00c3d93035",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Hoa Dung Nguyệt Mạo",
+        "花容月貌"
+      ],
+      "displayNameVi": "Hoa Dung Nguyệt Mạo",
+      "evidenceRef": "tactics.json#48",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:486efebb7bb110c9389b0953",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Hỏa Thiêu Liên Doanh",
+        "火烧连营"
+      ],
+      "displayNameVi": "Hỏa Thiêu Liên Doanh",
+      "evidenceRef": "tactics.json#60",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:49b98e1bf703c8853a545376",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tượng Binh",
+        "象兵"
+      ],
+      "displayNameVi": "Tượng Binh",
+      "evidenceRef": "tactics.json#175",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:4a512d679f006ca027b3a1ad",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Ngạo Nghễ Vương Hầu",
+        "傲睨王侯"
+      ],
+      "displayNameVi": "Ngạo Nghễ Vương Hầu",
+      "evidenceRef": "tactics.json#100",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:4aaf92b48ef3047c4711e068",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "形機軍略": [
+          "https://sgsdeck.com/recommended/s10-wu-wudun-zhouyu",
+          "https://sgsdeck.com/recommended/s18-shenhuo-dun",
+          "https://sgsdeck.com/recommended/s18-shenhuo-gong"
+        ]
+      },
+      "aliases": [
+        "Hình Cơ Quân Lược",
+        "形机军略",
+        "形機軍略"
+      ],
+      "displayNameVi": "Hình Cơ Quân Lược",
+      "evidenceRef": "tactics.json#56",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:4ae2b34496cc6b3240dd8fd2",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Phá Phong Đoạn Nhẫn",
+        "Phá Phong Đoạn Nhận",
+        "破锋断刃"
+      ],
+      "displayNameVi": "Phá Phong Đoạn Nhẫn",
+      "evidenceRef": "tactics.json#228",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:4af81d80a4d48c544fd6b8a1",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Dĩ Thiểu Thắng Đa",
+        "Lấy Ít Đánh Nhiều",
+        "以少胜多"
+      ],
+      "displayNameVi": "Lấy Ít Đánh Nhiều",
+      "evidenceRef": "tactics.json#219",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:4c57cbd1b7a99df2616456d2",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thanh Nang",
+        "青囊"
+      ],
+      "displayNameVi": "Thanh Nang",
+      "evidenceRef": "tactics.json#130",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:4dd8f4b5bde816de0cdd6235",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "嬰城自守": [
+          "https://sgsdeck.com/recommended/s10-shu-diandian-gong",
+          "https://sgsdeck.com/recommended/s10-shu-shuqi-zhaoyun",
+          "https://sgsdeck.com/recommended/s10-shu-xinnai-qiang"
+        ]
+      },
+      "aliases": [
+        "Anh Thành Tự Thủ",
+        "婴城自守",
+        "嬰城自守"
+      ],
+      "displayNameVi": "Anh Thành Tự Thủ",
+      "evidenceRef": "tactics.json#1",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:4e2a3a01d301a88145fc358c",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Ngũ Lôi Oanh Đỉnh",
+        "五雷轰顶"
+      ],
+      "displayNameVi": "Ngũ Lôi Oanh Đỉnh",
+      "evidenceRef": "tactics.json#99",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:4f37cca376b8b2bc4c66e666",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Lũy Thế Lập Danh",
+        "累世立名"
+      ],
+      "displayNameVi": "Lũy Thế Lập Danh",
+      "evidenceRef": "tactics.json#90",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:50214728fad8104bd5d5c849",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Bế Nguyệt",
+        "闭月"
+      ],
+      "displayNameVi": "Bế Nguyệt",
+      "evidenceRef": "tactics.json#12",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:51ea5c7a755c12e24942b733",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Vương Tá Chi Tài",
+        "王佐之才"
+      ],
+      "displayNameVi": "Vương Tá Chi Tài",
+      "evidenceRef": "tactics.json#191",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:53e18266b512159d87e83ed1",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "百騎劫營": [
+          "https://sgsdeck.com/recommended/og-bingyan-quan-cavalry-hubaoqi",
+          "https://sgsdeck.com/recommended/s10-wei-jianxiong-qi",
+          "https://sgsdeck.com/recommended/s11-wei-baotou-qi"
+        ]
+      },
+      "aliases": [
+        "Bách Kỵ Kiếp Doanh",
+        "百騎劫營",
+        "百骑劫营"
+      ],
+      "displayNameVi": "Bách Kỵ Kiếp Doanh",
+      "evidenceRef": "tactics.json#6",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:587e7f200e2d05a6ae88157c",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "兵無常勢": [
+          "https://sgsdeck.com/recommended/s10-wei-fa-dun",
+          "https://sgsdeck.com/recommended/s10-wei-fa-qi",
+          "https://sgsdeck.com/recommended/s10-wei-fa-qi-haozhao"
+        ]
+      },
+      "aliases": [
+        "Binh Vô Thường Thế",
+        "兵无常势",
+        "兵無常勢"
+      ],
+      "displayNameVi": "Binh Vô Thường Thế",
+      "evidenceRef": "tactics.json#3",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:5a3330204c026f7ca0eb4247",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Kim Thành Thang Trì",
+        "金城汤池"
+      ],
+      "displayNameVi": "Kim Thành Thang Trì",
+      "evidenceRef": "tactics.json#73",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:5af9fae1be615dc4674a2d71",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "乘敵不虞": [
+          "https://sgsdeck.com/recommended/s11-qun-qun-gong-zhujun",
+          "https://sgsdeck.com/recommended/s27-han-huangma-qiang",
+          "https://sgsdeck.com/recommended/team-gj94j"
+        ]
+      },
+      "aliases": [
+        "Thừa Địch Bất Ngu",
+        "乘敌不虞",
+        "乘敵不虞"
+      ],
+      "displayNameVi": "Thừa Địch Bất Ngu",
+      "evidenceRef": "tactics.json#156",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:5c36f116aabf47051ccdc7c8",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "焚輜營壘": [
+          "https://sgsdeck.com/recommended/og-bingyan-dudu-bow-baimaobing",
+          "https://sgsdeck.com/recommended/og-bingyan-lvbu-zhouyu-bow",
+          "https://sgsdeck.com/recommended/s19-qun-gong"
+        ]
+      },
+      "aliases": [
+        "Phần Truy Doanh Lũy",
+        "Thiêu Đốt Doanh Lũy",
+        "焚輜營壘",
+        "焚辎营垒"
+      ],
+      "displayNameVi": "Thiêu Đốt Doanh Lũy",
+      "evidenceRef": "tactics.json#133",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:5c9683130f32b76b4050d08e",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "威謀靡亢": [
+          "https://sgsdeck.com/recommended/og-bingyan-taoyuan-shield-huijun",
+          "https://sgsdeck.com/recommended/s10-qun-qun-gong",
+          "https://sgsdeck.com/recommended/s10-shu-dongcha-qiang"
+        ]
+      },
+      "aliases": [
+        "Uy Mưu Mị Kháng",
+        "Uy Mưu Vô Địch",
+        "威謀靡亢",
+        "威谋靡亢"
+      ],
+      "displayNameVi": "Uy Mưu Vô Địch",
+      "evidenceRef": "tactics.json#184",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:5cb4ffd9c61749965c01e427",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "熯天熾地": [
+          "https://sgsdeck.com/recommended/s19-caoren-taiwei-dun",
+          "https://sgsdeck.com/recommended/s19-sima-taiwei-dun",
+          "https://sgsdeck.com/recommended/s2-shu-shu-zhi"
+        ]
+      },
+      "aliases": [
+        "Hãn Thiên Sí Địa",
+        "熯天炽地",
+        "熯天熾地"
+      ],
+      "displayNameVi": "Hãn Thiên Sí Địa",
+      "evidenceRef": "tactics.json#55",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:5cc6a9717ca3ae4f1b51256d",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Cẩm Nang Diệu Kế",
+        "锦囊妙计"
+      ],
+      "displayNameVi": "Cẩm Nang Diệu Kế",
+      "evidenceRef": "tactics.json#26",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:5d26055e4b56a2ddf576c623",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thần Cơ Mạc Trắc",
+        "神机莫测"
+      ],
+      "displayNameVi": "Thần Cơ Mạc Trắc",
+      "evidenceRef": "tactics.json#144",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:5ec217b087c362644d75ce91",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Biết Mình Biết Ta",
+        "Tri Kỷ Tri Bỉ",
+        "知己知彼"
+      ],
+      "displayNameVi": "Biết Mình Biết Ta",
+      "evidenceRef": "tactics.json#211",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:6023d054f594ba5c98f357a2",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "蓄勢待發": [
+          "https://sgsdeck.com/recommended/2-1nsjj7f",
+          "https://sgsdeck.com/recommended/2-jh7wzr",
+          "https://sgsdeck.com/recommended/og-bingyan-beifa-shield-huweijun"
+        ]
+      },
+      "aliases": [
+        "Dưỡng Sức Đợi Chiến",
+        "Súc Thế Đãi Phát",
+        "蓄势待发",
+        "蓄勢待發"
+      ],
+      "displayNameVi": "Dưỡng Sức Đợi Chiến",
+      "evidenceRef": "tactics.json#238",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:62bbd903f61b9c8f919fdca7",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "非攻制勝": [
+          "https://sgsdeck.com/recommended/2-do995s",
+          "https://sgsdeck.com/recommended/og-bingyan-beifa-shield-huweijun",
+          "https://sgsdeck.com/recommended/og-bingyan-faguan-shield-tengjia"
+        ]
+      },
+      "aliases": [
+        "Không Đánh Mà Thắng",
+        "Phi Công Chế Thắng",
+        "非攻制勝",
+        "非攻制胜"
+      ],
+      "displayNameVi": "Không Đánh Mà Thắng",
+      "evidenceRef": "tactics.json#216",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:642057bf9b5ab5072e02331a",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "深藏若虛": [
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-a",
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-d",
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-xiandeng"
+        ]
+      },
+      "aliases": [
+        "Thâm Tàng Nhược Hư",
+        "深藏若虚",
+        "深藏若虛"
+      ],
+      "displayNameVi": "Thâm Tàng Nhược Hư",
+      "evidenceRef": "tactics.json#230",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:66a501de912eb9d243c09968",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Dĩ Dật Đãi Lao",
+        "Dưỡng Sức Chống Địch",
+        "以逸待劳"
+      ],
+      "displayNameVi": "Dưỡng Sức Chống Địch",
+      "evidenceRef": "tactics.json#36",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:6894cd249035684537fd2ebb",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Dụng Võ Thông Thần",
+        "Dụng Võ Thần Thông",
+        "用武通神"
+      ],
+      "displayNameVi": "Dụng Võ Thần Thông",
+      "evidenceRef": "tactics.json#40",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:68df29a22ef08b5391a8a176",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "陷陣營": [
+          "https://sgsdeck.com/recommended/og-bingyan-guanyu-weiyan-fazheng-shield",
+          "https://sgsdeck.com/recommended/og-bingyan-taoyuan-shield-huijun",
+          "https://sgsdeck.com/recommended/s1-shu-shun"
+        ]
+      },
+      "aliases": [
+        "Hãm Trận Doanh",
+        "陷阵营",
+        "陷陣營"
+      ],
+      "displayNameVi": "Hãm Trận Doanh",
+      "evidenceRef": "tactics.json#53",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:6af79c1f49fc0b716837f40e",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "絕其汲道": [
+          "https://sgsdeck.com/recommended/og-bingyan-guanyu-weiyan-fazheng-shield",
+          "https://sgsdeck.com/recommended/s10-shu-dongcha-qiang",
+          "https://sgsdeck.com/recommended/s10-shu-funu-qiang"
+        ]
+      },
+      "aliases": [
+        "Tuyệt Kỳ Cấp Đạo",
+        "絕其汲道",
+        "绝其汲道"
+      ],
+      "displayNameVi": "Tuyệt Kỳ Cấp Đạo",
+      "evidenceRef": "tactics.json#170",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:6c220d34bb421cd61d8d8d90",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Nam Man Cừ Khôi",
+        "南蛮渠魁"
+      ],
+      "displayNameVi": "Nam Man Cừ Khôi",
+      "evidenceRef": "tactics.json#96",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:6c7ec2578e080e6c41dbd39a",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "偽書相間": [
+          "https://sgsdeck.com/recommended/s11-qun-san-shi-jia",
+          "https://sgsdeck.com/recommended/s11-wei-fa-dun",
+          "https://sgsdeck.com/recommended/s13-jiaxu-dun"
+        ]
+      },
+      "aliases": [
+        "Ngụy Thư Tương Gian",
+        "伪书相间",
+        "偽書相間"
+      ],
+      "displayNameVi": "Ngụy Thư Tương Gian",
+      "evidenceRef": "tactics.json#101",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:6cc1b800a91efaf6ae165bea",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "焰逐風飛": [
+          "https://sgsdeck.com/recommended/s10-qun-qun-gong",
+          "https://sgsdeck.com/recommended/s12-qun-qun-gong",
+          "https://sgsdeck.com/recommended/s12-wu-luxun-rou-gong"
+        ]
+      },
+      "aliases": [
+        "Diễm Trục Phong Phi",
+        "Lửa Đuổi Gió Bay",
+        "焰逐風飛",
+        "焰逐风飞"
+      ],
+      "displayNameVi": "Lửa Đuổi Gió Bay",
+      "evidenceRef": "tactics.json#92",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:6ced0644b4b499b37c28d4eb",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "錦帆軍": [
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-c",
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-qun-bow-jinfan",
+          "https://sgsdeck.com/recommended/og-bingyan-kangkai-bow-jinfan"
+        ]
+      },
+      "aliases": [
+        "Cẩm Phàm Quân",
+        "Quân Cẩm Phàm",
+        "錦帆軍",
+        "锦帆军"
+      ],
+      "displayNameVi": "Quân Cẩm Phàm",
+      "evidenceRef": "tactics.json#118",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:6d41f8d611d256db386dc0c7",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Ích Kỳ Kim Cổ",
+        "益其金鼓"
+      ],
+      "displayNameVi": "Ích Kỳ Kim Cổ",
+      "evidenceRef": "tactics.json#197",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:6d605df26c5a7c37e5e17e9f",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "箕形陣": [
+          "https://sgsdeck.com/recommended/s10-shu-dongcha-qiang",
+          "https://sgsdeck.com/recommended/s10-shu-funu-qiang",
+          "https://sgsdeck.com/recommended/s10-shu-shuqi-liubei"
+        ]
+      },
+      "aliases": [
+        "Cơ Hình Trận",
+        "箕形阵",
+        "箕形陣"
+      ],
+      "displayNameVi": "Cơ Hình Trận",
+      "evidenceRef": "tactics.json#22",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:6d9e69827822c50fb1ce1537",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "刮骨療毒": [
+          "https://sgsdeck.com/recommended/og-bingyan-taoyuan-shield-huijun",
+          "https://sgsdeck.com/recommended/og-bingyan-wumou-bow-baimaobing",
+          "https://sgsdeck.com/recommended/og-bingyan-zhangjiao-yuji-cavalry"
+        ]
+      },
+      "aliases": [
+        "Cắt Xương Trị Độc",
+        "Quát Cốt Liệu Độc",
+        "刮骨疗毒",
+        "刮骨療毒"
+      ],
+      "displayNameVi": "Cắt Xương Trị Độc",
+      "evidenceRef": "tactics.json#28",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:6db4c47073e9e3772afd2f5a",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "竭力佐謀": [
+          "https://sgsdeck.com/recommended/s14-xunyu-wu-mou-chen",
+          "https://sgsdeck.com/recommended/s16-chengyu-wei-fa-jieli",
+          "https://sgsdeck.com/recommended/s16-dingpei-feixiong-wu-mou"
+        ]
+      },
+      "aliases": [
+        "Dốc Sức Tính Kế",
+        "Kiệt Lực Tá Mưu",
+        "竭力佐謀",
+        "竭力佐谋"
+      ],
+      "displayNameVi": "Dốc Sức Tính Kế",
+      "evidenceRef": "tactics.json#38",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:6e4941073328cf7f29a20d1c",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Kỳ Binh Gian Đạo",
+        "奇兵间道"
+      ],
+      "displayNameVi": "Kỳ Binh Gian Đạo",
+      "evidenceRef": "tactics.json#81",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:6f5568358b7e2a80971cc1fc",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tướng Môn Hổ Nữ",
+        "将门虎女"
+      ],
+      "displayNameVi": "Tướng Môn Hổ Nữ",
+      "evidenceRef": "tactics.json#174",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:6fcd40bf0f4f00b34821f18a",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Yến Nhân Bào Hao",
+        "燕人咆哮"
+      ],
+      "displayNameVi": "Yến Nhân Bào Hao",
+      "evidenceRef": "tactics.json#196",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:7008033a8e9643f52953867a",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Bạch Y Độ Giang",
+        "白衣渡江"
+      ],
+      "displayNameVi": "Bạch Y Độ Giang",
+      "evidenceRef": "tactics.json#10",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:70815a597e8173927431841e",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "擊其惰歸": [
+          "https://sgsdeck.com/recommended/2-1nsjj7f",
+          "https://sgsdeck.com/recommended/og-bingyan-taoyuan-shield-huijun",
+          "https://sgsdeck.com/recommended/s10-shu-shudun-guanyu"
+        ]
+      },
+      "aliases": [
+        "Kích Kỳ Nọa Quy",
+        "击其惰归",
+        "擊其惰歸"
+      ],
+      "displayNameVi": "Kích Kỳ Nọa Quy",
+      "evidenceRef": "tactics.json#78",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:7218b1f17abddf956fb945ff",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Kinh Thiên Vĩ Địa",
+        "经天纬地"
+      ],
+      "displayNameVi": "Kinh Thiên Vĩ Địa",
+      "evidenceRef": "tactics.json#75",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:72f1a4c5ca14a463cf861fa4",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thiên Hương",
+        "天香"
+      ],
+      "displayNameVi": "Thiên Hương",
+      "evidenceRef": "tactics.json#131",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:73cf3b5b3043f61ea88b23f9",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thệ Thủ Vô Hàng",
+        "誓守无降"
+      ],
+      "displayNameVi": "Thệ Thủ Vô Hàng",
+      "evidenceRef": "tactics.json#150",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:73f1b0ee0056cf22647b0597",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Định Mưu Quý Quyết",
+        "定谋贵决"
+      ],
+      "displayNameVi": "Định Mưu Quý Quyết",
+      "evidenceRef": "tactics.json#206",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:74324c69fc6ad103266d03bf",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "獨行赴鬥": [
+          "https://sgsdeck.com/recommended/og-bingyan-xuyou-spmachao-cavalry",
+          "https://sgsdeck.com/recommended/team-dwruc",
+          "https://sgsdeck.com/recommended/yxms-024-蕭芷太尉盾"
+        ]
+      },
+      "aliases": [
+        "Độc Hành Phó Đấu",
+        "独行赴斗",
+        "獨行赴鬥"
+      ],
+      "displayNameVi": "Độc Hành Phó Đấu",
+      "evidenceRef": "tactics.json#208",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:7488e22dcbadd4661e657c7b",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Nghĩa Tâm Chiêu Liệt",
+        "义心昭烈"
+      ],
+      "displayNameVi": "Nghĩa Tâm Chiêu Liệt",
+      "evidenceRef": "tactics.json#97",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:76535df936a26f69f8fc8953",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "避實擊虛": [
+          "https://sgsdeck.com/recommended/s1-shu-gong",
+          "https://sgsdeck.com/recommended/s1-shu-shun",
+          "https://sgsdeck.com/recommended/s1-wu-chibi-gong"
+        ]
+      },
+      "aliases": [
+        "Tị Thực Kích Hư",
+        "避实击虚",
+        "避實擊虛"
+      ],
+      "displayNameVi": "Tị Thực Kích Hư",
+      "evidenceRef": "tactics.json#234",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:79269255c530c17539038b8d",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Bách Bộ Xuyên Dương",
+        "百步穿杨"
+      ],
+      "displayNameVi": "Bách Bộ Xuyên Dương",
+      "evidenceRef": "tactics.json#4",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:7950de01c238c245d66e02a2",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "引弦力戰": [
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-a",
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-b",
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-c"
+        ]
+      },
+      "aliases": [
+        "Dẫn Huyền Lực Chiến",
+        "引弦力战",
+        "引弦力戰"
+      ],
+      "displayNameVi": "Dẫn Huyền Lực Chiến",
+      "evidenceRef": "tactics.json#37",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:7a6075254bee33e925860be2",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Hoàng Thiên Thái Bình",
+        "黄天泰平"
+      ],
+      "displayNameVi": "Hoàng Thiên Thái Bình",
+      "evidenceRef": "tactics.json#49",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:7bd500258acd6f7f304b45a9",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tinh Luyện Sách Số",
+        "精练策数"
+      ],
+      "displayNameVi": "Tinh Luyện Sách Số",
+      "evidenceRef": "tactics.json#157",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:7be83b2e351fa664b627d4d5",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Chấn Hãi Tứ Cảnh",
+        "震骇四境"
+      ],
+      "displayNameVi": "Chấn Hãi Tứ Cảnh",
+      "evidenceRef": "tactics.json#15",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:7d9162da1ce124360008e8f4",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "虎衛軍": [
+          "https://sgsdeck.com/recommended/og-bingyan-beifa-shield-huweijun"
+        ]
+      },
+      "aliases": [
+        "Hổ Vệ Quân",
+        "虎卫军",
+        "虎衛軍"
+      ],
+      "displayNameVi": "Hổ Vệ Quân",
+      "evidenceRef": "tactics.json#66",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:7eacd19c9a27a8f5d8c0866c",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Đài Quan Quyết Chiến",
+        "抬棺决战"
+      ],
+      "displayNameVi": "Đài Quan Quyết Chiến",
+      "evidenceRef": "tactics.json#200",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:80df44f314d03f87779e3034",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Lâm Chiến Tiên Đăng",
+        "临战先登"
+      ],
+      "displayNameVi": "Lâm Chiến Tiên Đăng",
+      "evidenceRef": "tactics.json#86",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:81159ac818326cb13c434a55",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Trậm Độc",
+        "鸩毒"
+      ],
+      "displayNameVi": "Trậm Độc",
+      "evidenceRef": "tactics.json#169",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:8686a5467d487929e4965b28",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Truyền Hịch Tuyên Uy",
+        "传檄宣威"
+      ],
+      "displayNameVi": "Truyền Hịch Tuyên Uy",
+      "evidenceRef": "tactics.json#161",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:86a466f9347c57ebdc90a41f",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "上兵伐謀": [
+          "https://sgsdeck.com/recommended/2-txb6ye",
+          "https://sgsdeck.com/recommended/og-bingyan-jiangwei-feixiong-cavalry",
+          "https://sgsdeck.com/recommended/og-bingyan-taishi-bow-feixiong"
+        ]
+      },
+      "aliases": [
+        "Thượng Binh Phạt Mưu",
+        "上兵伐謀",
+        "上兵伐谋"
+      ],
+      "displayNameVi": "Thượng Binh Phạt Mưu",
+      "evidenceRef": "tactics.json#232",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:86e16d1572182950b52b68a4",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Khắc Tuân Họa Nhất",
+        "克遵画一"
+      ],
+      "displayNameVi": "Khắc Tuân Họa Nhất",
+      "evidenceRef": "tactics.json#70",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:87681c1d77fabbae69fac6cc",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Giang Đông Tiểu Bá Vương",
+        "江东小霸王"
+      ],
+      "displayNameVi": "Giang Đông Tiểu Bá Vương",
+      "evidenceRef": "tactics.json#43",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:8773a75c702b84a270e7d7e2",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Dũng Giả Đắc Tiền",
+        "勇者得前"
+      ],
+      "displayNameVi": "Dũng Giả Đắc Tiền",
+      "evidenceRef": "tactics.json#33",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:8b98fc14ce10aedc0361a080",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Lục Lực Đồng Tâm",
+        "Đồng Lòng Hợp Sức",
+        "勠力同心"
+      ],
+      "displayNameVi": "Đồng Lòng Hợp Sức",
+      "evidenceRef": "tactics.json#239",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:8ee390eb6462055833f43efd",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Kỳ Thi Kinh Lược",
+        "奇施经略"
+      ],
+      "displayNameVi": "Kỳ Thi Kinh Lược",
+      "evidenceRef": "tactics.json#82",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:8f91ed01d4f8de0c8f15311c",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "智計": [
+          "https://sgsdeck.com/recommended/s11-wu-dudu-gong",
+          "https://sgsdeck.com/recommended/s2-wu-da-dudu"
+        ]
+      },
+      "aliases": [
+        "Trí Kế",
+        "智計",
+        "智计"
+      ],
+      "displayNameVi": "Trí Kế",
+      "evidenceRef": "tactics.json#163",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:8fda30a6f5dd841e7bc3823d",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Dũng Quan Tam Quân",
+        "勇冠三军"
+      ],
+      "displayNameVi": "Dũng Quan Tam Quân",
+      "evidenceRef": "tactics.json#35",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:9208631e88171e5b097722dd",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "先成其慮": [
+          "https://sgsdeck.com/recommended/s16-duliu-wei-fa-dun",
+          "https://sgsdeck.com/recommended/s19-shuanghe-fugui-qi",
+          "https://sgsdeck.com/recommended/s19-xuhui-gong"
+        ]
+      },
+      "aliases": [
+        "Tiên Thành Kỳ Lự",
+        "先成其慮",
+        "先成其虑"
+      ],
+      "displayNameVi": "Tiên Thành Kỳ Lự",
+      "evidenceRef": "tactics.json#158",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:93eee8cd629e425e57230f0b",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "臥薪嘗膽": [
+          "https://sgsdeck.com/recommended/s1-shu-da-shu-qiang",
+          "https://sgsdeck.com/recommended/s1-shu-da-wuhu",
+          "https://sgsdeck.com/recommended/s1-shu-fazheng-qiang"
+        ]
+      },
+      "aliases": [
+        "Ngọa Tân Thường Đảm",
+        "Nằm Gai Nếm Mật",
+        "卧薪尝胆",
+        "臥薪嘗膽"
+      ],
+      "displayNameVi": "Nằm Gai Nếm Mật",
+      "evidenceRef": "tactics.json#110",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:98d7d2be34b5784144619de5",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tố Giang Dao Lỗ",
+        "溯江摇橹"
+      ],
+      "displayNameVi": "Tố Giang Dao Lỗ",
+      "evidenceRef": "tactics.json#180",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:9c8accc7c3998ae29e647f07",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "千里走單騎": [
+          "https://sgsdeck.com/recommended/og-bingyan-beifa-shield-huweijun",
+          "https://sgsdeck.com/recommended/s13-lvmao-qi",
+          "https://sgsdeck.com/recommended/s14-sp-zhuge-shu-qiang"
+        ]
+      },
+      "aliases": [
+        "Cưỡi Ngựa Nghìn Dặm",
+        "Thiên Lý Tẩu Đan Kỵ",
+        "千里走单骑",
+        "千里走單騎"
+      ],
+      "displayNameVi": "Cưỡi Ngựa Nghìn Dặm",
+      "evidenceRef": "tactics.json#25",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:9d5d732710143000f6b42e5d",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thương Vũ Như Phong",
+        "枪舞如风"
+      ],
+      "displayNameVi": "Thương Vũ Như Phong",
+      "evidenceRef": "tactics.json#141",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:9db04929869ff26afa981133",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "白馬義從": [
+          "https://sgsdeck.com/recommended/og-bingyan-lvguoqiao-baima",
+          "https://sgsdeck.com/recommended/s1-qun-lv-tai-guo",
+          "https://sgsdeck.com/recommended/s1-qun-lv-tai-zuo"
+        ]
+      },
+      "aliases": [
+        "Bạch Mã Nghĩa Tòng",
+        "白馬義從",
+        "白马义从"
+      ],
+      "displayNameVi": "Bạch Mã Nghĩa Tòng",
+      "evidenceRef": "tactics.json#8",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a1487f4f5d64dead9febe533",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Công Huân Khắc Cử",
+        "功勋克举"
+      ],
+      "displayNameVi": "Công Huân Khắc Cử",
+      "evidenceRef": "tactics.json#19",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a290a2626c6bbf0652374136",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Sở Hướng Phi Mị",
+        "Đánh Đâu Thắng Đó",
+        "所向披靡"
+      ],
+      "displayNameVi": "Đánh Đâu Thắng Đó",
+      "evidenceRef": "tactics.json#202",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a2dd1159c8fb6924635aa1b6",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "破軍威勝": [
+          "https://sgsdeck.com/recommended/s10-wu-hujiang-gong",
+          "https://sgsdeck.com/recommended/s11-wu-huchen-gong",
+          "https://sgsdeck.com/recommended/s12-wu-zongbing-wuqi"
+        ]
+      },
+      "aliases": [
+        "Phá Quân Uy Thắng",
+        "破军威胜",
+        "破軍威勝"
+      ],
+      "displayNameVi": "Phá Quân Uy Thắng",
+      "evidenceRef": "tactics.json#113",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a36489312087f247e62d57dc",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Mộng Trung Thí Thần",
+        "梦中弑臣"
+      ],
+      "displayNameVi": "Mộng Trung Thí Thần",
+      "evidenceRef": "tactics.json#95",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a3829829fff03b50e24d7486",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tướng Hành Kỳ Tật",
+        "将行其疾"
+      ],
+      "displayNameVi": "Tướng Hành Kỳ Tật",
+      "evidenceRef": "tactics.json#173",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a3a245d8d51a27ecf673291e",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "盛氣凌敵": [
+          "https://sgsdeck.com/recommended/og-bingyan-zhangfei-nuke-bow",
+          "https://sgsdeck.com/recommended/s1-shu-da-shu-qiang",
+          "https://sgsdeck.com/recommended/s1-shu-da-wuhu"
+        ]
+      },
+      "aliases": [
+        "Thịnh Khí Linh Địch",
+        "Thịnh Khí Lăng Địch",
+        "盛气凌敌",
+        "盛氣凌敵"
+      ],
+      "displayNameVi": "Thịnh Khí Linh Địch",
+      "evidenceRef": "tactics.json#151",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a3a5a1e8340ca9e23501b480",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "潛龍陣": [
+          "https://sgsdeck.com/recommended/2-txb6ye",
+          "https://sgsdeck.com/recommended/og-bingyan-lvbu-zhouyu-bow",
+          "https://sgsdeck.com/recommended/og-bingyan-xuyou-spmachao-cavalry"
+        ]
+      },
+      "aliases": [
+        "Tiềm Long Trận",
+        "潛龍陣",
+        "潜龙阵"
+      ],
+      "displayNameVi": "Tiềm Long Trận",
+      "evidenceRef": "tactics.json#159",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a4247cdd7d6ecd282bd8c426",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Vận Trù Quyết Toán",
+        "运筹决算"
+      ],
+      "displayNameVi": "Vận Trù Quyết Toán",
+      "evidenceRef": "tactics.json#193",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a4718707f4908aef2629e37b",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Bạch Nhị Binh",
+        "白毦兵"
+      ],
+      "displayNameVi": "Bạch Nhị Binh",
+      "evidenceRef": "tactics.json#9",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a4a3776833b44770b1a8cee1",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "武鋒陣": [
+          "https://sgsdeck.com/recommended/s10-qun-xianren-dun-zhangjiao",
+          "https://sgsdeck.com/recommended/s11-qun-wufeng-qun-dun",
+          "https://sgsdeck.com/recommended/s12-qun-wufeng-zhangjiao"
+        ]
+      },
+      "aliases": [
+        "Võ Phong Trận",
+        "武鋒陣",
+        "武锋阵"
+      ],
+      "displayNameVi": "Võ Phong Trận",
+      "evidenceRef": "tactics.json#189",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a5d89fa56dbb13c37e152360",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Nhất Thân Thị Đảm",
+        "一身是胆"
+      ],
+      "displayNameVi": "Nhất Thân Thị Đảm",
+      "evidenceRef": "tactics.json#107",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a7db6813d5e9a65ba8287871",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Mê Hoặc",
+        "Mị Hoặc",
+        "魅惑"
+      ],
+      "displayNameVi": "Mê Hoặc",
+      "evidenceRef": "tactics.json#94",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a8f1eb789e2d4ddebe7d7338",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "奇計良謀": [
+          "https://sgsdeck.com/recommended/s11-shu-wuhu-qiang",
+          "https://sgsdeck.com/recommended/s3-qun-pengci-lv",
+          "https://sgsdeck.com/recommended/yxms-021-陳翊槍"
+        ]
+      },
+      "aliases": [
+        "Kế Hay Mưu Giỏi",
+        "Kỳ Kế Lương Mưu",
+        "奇計良謀",
+        "奇计良谋"
+      ],
+      "displayNameVi": "Kế Hay Mưu Giỏi",
+      "evidenceRef": "tactics.json#79",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a9af8522d9d2e80bb7241688",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thần Cơ Diệu Toán",
+        "神机妙算"
+      ],
+      "displayNameVi": "Thần Cơ Diệu Toán",
+      "evidenceRef": "tactics.json#143",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:ab38e6109228536dc7936114",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "撫輯軍民": [
+          "https://sgsdeck.com/recommended/s10-qun-xianren-dun-yuji",
+          "https://sgsdeck.com/recommended/s10-qun-xianren-dun-zhangjiao",
+          "https://sgsdeck.com/recommended/s10-wei-da-wei-qi"
+        ]
+      },
+      "aliases": [
+        "An Ủi Quân Dân",
+        "Phủ Tập Quân Dân",
+        "抚辑军民",
+        "撫輯軍民"
+      ],
+      "displayNameVi": "An Ủi Quân Dân",
+      "evidenceRef": "tactics.json#0",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:ab563cec35b374d818db011c",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Ưng Thị Lang Cố",
+        "鹰视狼顾"
+      ],
+      "displayNameVi": "Ưng Thị Lang Cố",
+      "evidenceRef": "tactics.json#210",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:afcf5c193f1c1e95500a366d",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Nhục Thân Thiết Bích",
+        "肉身铁壁"
+      ],
+      "displayNameVi": "Nhục Thân Thiết Bích",
+      "evidenceRef": "tactics.json#108",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:b045af7d2efbbe92aa614652",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Trầm Đoạn Cơ Mưu",
+        "沉断机谋"
+      ],
+      "displayNameVi": "Trầm Đoạn Cơ Mưu",
+      "evidenceRef": "tactics.json#168",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:b1a81f09dfedb25e9607bb9b",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Hổ Si",
+        "虎痴"
+      ],
+      "displayNameVi": "Hổ Si",
+      "evidenceRef": "tactics.json#65",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:b25b320175e82743cef4a0e3",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "忠勇義烈": [
+          "https://sgsdeck.com/recommended/s16-gou-guan-zhao",
+          "https://sgsdeck.com/recommended/s16-guanjun-guanmei",
+          "https://sgsdeck.com/recommended/s16-guanjun-zhaoyun"
+        ]
+      },
+      "aliases": [
+        "Trung Dũng Nghĩa Liệt",
+        "忠勇义烈",
+        "忠勇義烈"
+      ],
+      "displayNameVi": "Trung Dũng Nghĩa Liệt",
+      "evidenceRef": "tactics.json#233",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:b43e8fb228297905a9437097",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thuyền Cỏ Mượn Tên",
+        "Thảo Thuyền Tá Tiễn",
+        "草船借箭"
+      ],
+      "displayNameVi": "Thuyền Cỏ Mượn Tên",
+      "evidenceRef": "tactics.json#137",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:b8b9d6c27fedfd90f8d9bc1c",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "士爭先赴": [
+          "https://sgsdeck.com/recommended/s10-qun-san-shi-le-jin",
+          "https://sgsdeck.com/recommended/s10-shu-xiao-guan-zhang",
+          "https://sgsdeck.com/recommended/s10-wei-da-wei-qi"
+        ]
+      },
+      "aliases": [
+        "Sĩ Tranh Tiên Phó",
+        "士争先赴",
+        "士爭先赴"
+      ],
+      "displayNameVi": "Sĩ Tranh Tiên Phó",
+      "evidenceRef": "tactics.json#125",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:ba5430f1769bb82f368f0e40",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Cẩm Phàm Bách Linh",
+        "锦帆百翎"
+      ],
+      "displayNameVi": "Cẩm Phàm Bách Linh",
+      "evidenceRef": "tactics.json#27",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:bb48f70631a335fa590d8339",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Bách Kế Đa Mưu",
+        "百计多谋"
+      ],
+      "displayNameVi": "Bách Kế Đa Mưu",
+      "evidenceRef": "tactics.json#5",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:bc26d8c0f873152b0ecd554c",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Giang Đông Mãnh Hổ",
+        "江东猛虎"
+      ],
+      "displayNameVi": "Giang Đông Mãnh Hổ",
+      "evidenceRef": "tactics.json#42",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:be49b0174b9fe2205659e1c0",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "風助火勢": [
+          "https://sgsdeck.com/recommended/2-e85j93",
+          "https://sgsdeck.com/recommended/2-is9t6t",
+          "https://sgsdeck.com/recommended/s1-wu-chibi-gong"
+        ]
+      },
+      "aliases": [
+        "Phong Trợ Hỏa Thế",
+        "風助火勢",
+        "风助火势"
+      ],
+      "displayNameVi": "Phong Trợ Hỏa Thế",
+      "evidenceRef": "tactics.json#112",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:bea3f75f9ced763cf4045642",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "三勢陣": [
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-b",
+          "https://sgsdeck.com/recommended/og-bingyan-lvguoqiao-baima",
+          "https://sgsdeck.com/recommended/s10-qun-san-shi-le-jin"
+        ]
+      },
+      "aliases": [
+        "Tam Thế Trận",
+        "三势阵",
+        "三勢陣"
+      ],
+      "displayNameVi": "Tam Thế Trận",
+      "evidenceRef": "tactics.json#128",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:bed3520d7172295d59362ab1",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Dụ Địch Thâm Nhập",
+        "诱敌深入"
+      ],
+      "displayNameVi": "Dụ Địch Thâm Nhập",
+      "evidenceRef": "tactics.json#39",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:c263a9d0366017bccc9816fe",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "火熾原燎": [
+          "https://sgsdeck.com/recommended/og-bingyan-lvguoqiao-baima",
+          "https://sgsdeck.com/recommended/s14-caijun-qiang",
+          "https://sgsdeck.com/recommended/s16-bamen-shu-gong-no-taiping"
+        ]
+      },
+      "aliases": [
+        "Hỏa Sí Nguyên Liệu",
+        "火炽原燎",
+        "火熾原燎"
+      ],
+      "displayNameVi": "Hỏa Sí Nguyên Liệu",
+      "evidenceRef": "tactics.json#59",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:c2ccff15b5ac83624cfeb2c4",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Lâm Phong Quyết Địch",
+        "临锋决敌"
+      ],
+      "displayNameVi": "Lâm Phong Quyết Địch",
+      "evidenceRef": "tactics.json#218",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:c3451d5511ebb0c2c58dfc9e",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Quốc Sắc",
+        "国色"
+      ],
+      "displayNameVi": "Quốc Sắc",
+      "evidenceRef": "tactics.json#120",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:c4dfeba590f054f2992879f3",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "橫戈躍馬": [
+          "https://sgsdeck.com/recommended/s10-qun-san-shi-lv-guanmei",
+          "https://sgsdeck.com/recommended/s10-qun-san-shi-lv-zhoutai",
+          "https://sgsdeck.com/recommended/s11-qun-san-shi-lv"
+        ]
+      },
+      "aliases": [
+        "Hoành Qua Dược Mã",
+        "横戈跃马",
+        "橫戈躍馬"
+      ],
+      "displayNameVi": "Hoành Qua Dược Mã",
+      "evidenceRef": "tactics.json#50",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:c66b5a70d6b23815a1f29f41",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "當鋒摧決": [
+          "https://sgsdeck.com/recommended/2-do995s",
+          "https://sgsdeck.com/recommended/2-e85j93",
+          "https://sgsdeck.com/recommended/2-is9t6t"
+        ]
+      },
+      "aliases": [
+        "Đương Phong Thôi Quyết",
+        "当锋摧决",
+        "當鋒摧決"
+      ],
+      "displayNameVi": "Đương Phong Thôi Quyết",
+      "evidenceRef": "tactics.json#204",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:c6f7f51b6bf1df01ac4f48b8",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "橫掃千軍": [
+          "https://sgsdeck.com/recommended/s1-shu-da-shu-qiang",
+          "https://sgsdeck.com/recommended/s1-shu-da-wuhu",
+          "https://sgsdeck.com/recommended/s1-shu-fazheng-qiang"
+        ]
+      },
+      "aliases": [
+        "Hoành Tảo Thiên Quân",
+        "横扫千军",
+        "橫掃千軍"
+      ],
+      "displayNameVi": "Hoành Tảo Thiên Quân",
+      "evidenceRef": "tactics.json#51",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:c737dd6eca594efc9c5c4fcd",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "暴戾無仁": [
+          "https://sgsdeck.com/recommended/s1-qun-huaxialv",
+          "https://sgsdeck.com/recommended/s1-qun-lv-tai-guo",
+          "https://sgsdeck.com/recommended/s1-qun-lv-tai-zuo"
+        ]
+      },
+      "aliases": [
+        "Bạo Lệ Vô Nhân",
+        "暴戾无仁",
+        "暴戾無仁"
+      ],
+      "displayNameVi": "Bạo Lệ Vô Nhân",
+      "evidenceRef": "tactics.json#11",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:c89330bdd98175d9fff21310",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Lính Thanh Châu",
+        "Thanh Châu Binh",
+        "青州兵"
+      ],
+      "displayNameVi": "Lính Thanh Châu",
+      "evidenceRef": "tactics.json#88",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:cb4b6a0408672e3d29f1bebf",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "掣刀斫敵": [
+          "https://sgsdeck.com/recommended/s16-gou-guan-zhao",
+          "https://sgsdeck.com/recommended/s16-guanjun-guanmei",
+          "https://sgsdeck.com/recommended/s16-guanjun-zhaoyun"
+        ]
+      },
+      "aliases": [
+        "Xiết Đao Chước Địch",
+        "Xế Đao Chước Địch",
+        "掣刀斫敌",
+        "掣刀斫敵"
+      ],
+      "displayNameVi": "Xế Đao Chước Địch",
+      "evidenceRef": "tactics.json#194",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:cd4d11831c92e12e6f101526",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thất Bộ Thành Thi",
+        "七步成诗"
+      ],
+      "displayNameVi": "Thất Bộ Thành Thi",
+      "evidenceRef": "tactics.json#142",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:d06ec6c5ac122aaef7d1e909",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "虎豹騎": [
+          "https://sgsdeck.com/recommended/og-bingyan-quan-cavalry-hubaoqi",
+          "https://sgsdeck.com/recommended/og-bingyan-wunv-cavalry-hubaoqi",
+          "https://sgsdeck.com/recommended/og-bingyan-xuyou-spmachao-cavalry"
+        ]
+      },
+      "aliases": [
+        "Hổ Báo Kỵ",
+        "虎豹騎",
+        "虎豹骑"
+      ],
+      "displayNameVi": "Hổ Báo Kỵ",
+      "evidenceRef": "tactics.json#63",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:d0893d3b14d3cdc7ab2e24d4",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "鐵騎驅馳": [
+          "https://sgsdeck.com/recommended/s10-qun-san-shi-lv-guanmei",
+          "https://sgsdeck.com/recommended/s10-qun-san-shi-lv-zhoutai",
+          "https://sgsdeck.com/recommended/s10-wei-baotou-qi-xiahouyuan"
+        ]
+      },
+      "aliases": [
+        "Thiết Kỵ Khu Trì",
+        "鐵騎驅馳",
+        "铁骑驱驰"
+      ],
+      "displayNameVi": "Thiết Kỵ Khu Trì",
+      "evidenceRef": "tactics.json#135",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:d14b68bb7266d8b214b54cb8",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Quốc Sĩ Tướng Phong",
+        "国士将风"
+      ],
+      "displayNameVi": "Quốc Sĩ Tướng Phong",
+      "evidenceRef": "tactics.json#119",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:d17793d9dd134dcf566b3d27",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Liên Hoàn Kế",
+        "连环计"
+      ],
+      "displayNameVi": "Liên Hoàn Kế",
+      "evidenceRef": "tactics.json#83",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:d198911d4713ef1831bfc887",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "靈機一動": [
+          "https://sgsdeck.com/recommended/og-bingyan-jiangwei-feixiong-cavalry",
+          "https://sgsdeck.com/recommended/og-bingyan-wumou-bow-baimaobing",
+          "https://sgsdeck.com/recommended/s23-lingji-fugui"
+        ]
+      },
+      "aliases": [
+        "Linh Cơ Nhất Động",
+        "Nhanh Trí Động Não",
+        "灵机一动",
+        "靈機一動"
+      ],
+      "displayNameVi": "Nhanh Trí Động Não",
+      "evidenceRef": "tactics.json#102",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:d28847734d6e006cf8b736fc",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Si Điều Phượng Tư",
+        "鸱苕凤姿"
+      ],
+      "displayNameVi": "Si Điều Phượng Tư",
+      "evidenceRef": "tactics.json#122",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:d409303ba7fd5b62752959d4",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Khổ Nhục Kế",
+        "苦肉计"
+      ],
+      "displayNameVi": "Khổ Nhục Kế",
+      "evidenceRef": "tactics.json#72",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:d4152f5e5c9c76136fc3875b",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "絕地反擊": [
+          "https://sgsdeck.com/recommended/s11-shu-hedan-zhang",
+          "https://sgsdeck.com/recommended/s16-daming-dun",
+          "https://sgsdeck.com/recommended/s17-daming-dun"
+        ]
+      },
+      "aliases": [
+        "Tuyệt Địa Phản Kích",
+        "絕地反擊",
+        "绝地反击"
+      ],
+      "displayNameVi": "Tuyệt Địa Phản Kích",
+      "evidenceRef": "tactics.json#171",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:d4912ae3a457461dff44243b",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "振軍擊營": [
+          "https://sgsdeck.com/recommended/s27-han-huangma-qiang"
+        ]
+      },
+      "aliases": [
+        "Chấn Quân Kích Doanh",
+        "振军击营",
+        "振軍擊營"
+      ],
+      "displayNameVi": "Chấn Quân Kích Doanh",
+      "evidenceRef": "tactics.json#16",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:df193b2e081fd158ab2e930a",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Lục Lực Thượng Quốc",
+        "戮力上国"
+      ],
+      "displayNameVi": "Lục Lực Thượng Quốc",
+      "evidenceRef": "tactics.json#207",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:e0033973ba83c8231d3db859",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tế Bần Hảo Thi",
+        "济贫好施"
+      ],
+      "displayNameVi": "Tế Bần Hảo Thi",
+      "evidenceRef": "tactics.json#177",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:e17e5ea1fd521e3f6f1ffe92",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Nạch Chiến Quần Hùng",
+        "搦战群雄"
+      ],
+      "displayNameVi": "Nạch Chiến Quần Hùng",
+      "evidenceRef": "tactics.json#109",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:e190b6062774fa91e3852145",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Giang Thiên Trường Diễm",
+        "江天长焰"
+      ],
+      "displayNameVi": "Giang Thiên Trường Diễm",
+      "evidenceRef": "tactics.json#41",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:e2168109aa2c23663954e1ac",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "乘勝長驅": [
+          "https://sgsdeck.com/recommended/s16-wei-fa-dun-yuejin",
+          "https://sgsdeck.com/recommended/s17-wei-fa-dun-yuejin",
+          "https://sgsdeck.com/recommended/s18-wei-fa-dun-yuejin"
+        ]
+      },
+      "aliases": [
+        "Thừa Thắng Trường Khu",
+        "乘勝長驅",
+        "乘胜长驱"
+      ],
+      "displayNameVi": "Thừa Thắng Trường Khu",
+      "evidenceRef": "tactics.json#155",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:e36676342d7b28395ea3f120",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Đại Kích Sĩ",
+        "大戟士"
+      ],
+      "displayNameVi": "Đại Kích Sĩ",
+      "evidenceRef": "tactics.json#205",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:e37094383d18ac422d5a9485",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "鎮扼防拒": [
+          "https://sgsdeck.com/recommended/2-1nsjj7f",
+          "https://sgsdeck.com/recommended/2-jh7wzr",
+          "https://sgsdeck.com/recommended/team-1imndp3"
+        ]
+      },
+      "aliases": [
+        "Trấn Ách Phòng Cự",
+        "鎮扼防拒",
+        "镇扼防拒"
+      ],
+      "displayNameVi": "Trấn Ách Phòng Cự",
+      "evidenceRef": "tactics.json#166",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:e3be64e5b4c62eb41f865c84",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Phù Mệnh Tự Lập",
+        "符命自立"
+      ],
+      "displayNameVi": "Phù Mệnh Tự Lập",
+      "evidenceRef": "tactics.json#115",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:e5aac43904a3912348b48544",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tọa Đoạn Đông Nam",
+        "坐断东南"
+      ],
+      "displayNameVi": "Tọa Đoạn Đông Nam",
+      "evidenceRef": "tactics.json#178",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:e824a85c2560b4ea8212b709",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Độc Tuyền Cự Thục",
+        "毒泉拒蜀"
+      ],
+      "displayNameVi": "Độc Tuyền Cự Thục",
+      "evidenceRef": "tactics.json#209",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:e85155f0a7bd0fdde5bf6cee",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Nhất Lực Cự Thủ",
+        "一力拒守"
+      ],
+      "displayNameVi": "Nhất Lực Cự Thủ",
+      "evidenceRef": "tactics.json#106",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:e8945257f9f83babe35330c8",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Kim Đan Bí Thuật",
+        "金丹秘术"
+      ],
+      "displayNameVi": "Kim Đan Bí Thuật",
+      "evidenceRef": "tactics.json#74",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:e89fc5b3333fbad3cd77fd19",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "杯蛇鬼車": [
+          "https://sgsdeck.com/recommended/s1-qun-yuanshao-wudang",
+          "https://sgsdeck.com/recommended/s1-shu-da-shu-qiang",
+          "https://sgsdeck.com/recommended/s1-shu-fazheng-qiang"
+        ]
+      },
+      "aliases": [
+        "Bôi Xà Quỷ Xa",
+        "Sợ Bóng Sợ Gió",
+        "杯蛇鬼車",
+        "杯蛇鬼车"
+      ],
+      "displayNameVi": "Sợ Bóng Sợ Gió",
+      "evidenceRef": "tactics.json#127",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:e9ef6360c4ba122bfa3a0d8a",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Chỉnh Trang Đãi Phát",
+        "Chờ Đợi Xuất Phát",
+        "整装待发"
+      ],
+      "displayNameVi": "Chờ Đợi Xuất Phát",
+      "evidenceRef": "tactics.json#17",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:ea4784b0f9a8b9840219d130",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Liễm Chúng Nhi Kích",
+        "敛众而击"
+      ],
+      "displayNameVi": "Liễm Chúng Nhi Kích",
+      "evidenceRef": "tactics.json#84",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:ea8f32f972330a44eba29926",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Hồ Già Dư Âm",
+        "胡笳余音"
+      ],
+      "displayNameVi": "Hồ Già Dư Âm",
+      "evidenceRef": "tactics.json#62",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:ec06f6068bd96192957abe94",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Hiệu Thắng Duy Ác",
+        "校胜帷幄"
+      ],
+      "displayNameVi": "Hiệu Thắng Duy Ác",
+      "evidenceRef": "tactics.json#47",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:ec7b79548a5706f9bf5a5a69",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "合軍聚眾": [
+          "https://sgsdeck.com/recommended/2-txb6ye",
+          "https://sgsdeck.com/recommended/team-dip6a",
+          "https://sgsdeck.com/recommended/team-epoddo"
+        ]
+      },
+      "aliases": [
+        "Hợp Quân Tụ Chúng",
+        "合军聚众",
+        "合軍聚眾"
+      ],
+      "displayNameVi": "Hợp Quân Tụ Chúng",
+      "evidenceRef": "tactics.json#67",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:edfe3edbc6ba6cb5b0bcc7ca",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Đăng Phong Hãm Trận",
+        "登锋陷阵"
+      ],
+      "displayNameVi": "Đăng Phong Hãm Trận",
+      "evidenceRef": "tactics.json#203",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:efaa69fceee165ff726e502a",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Quỷ Thần Đình Uy",
+        "鬼神霆威"
+      ],
+      "displayNameVi": "Quỷ Thần Đình Uy",
+      "evidenceRef": "tactics.json#121",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:f01dfac1b2f98f2de5c2a024",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tài Biện Cơ Tiệp",
+        "才辩机捷"
+      ],
+      "displayNameVi": "Tài Biện Cơ Tiệp",
+      "evidenceRef": "tactics.json#103",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:f24c41c925a4251a606eda0a",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "剛柔並濟": [
+          "https://sgsdeck.com/recommended/2-txb6ye",
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-a",
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-d"
+        ]
+      },
+      "aliases": [
+        "Cương Nhu Kết Hợp",
+        "Cương Nhu Tịnh Tế",
+        "刚柔并济",
+        "剛柔並濟"
+      ],
+      "displayNameVi": "Cương Nhu Kết Hợp",
+      "evidenceRef": "tactics.json#213",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:f32f82467a018442ce7b835c",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Lập Lờ Đánh Tráo",
+        "Ám Độ Trần Thương",
+        "暗渡陈仓"
+      ],
+      "displayNameVi": "Lập Lờ Đánh Tráo",
+      "evidenceRef": "tactics.json#91",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:f393c19cb8aa8c0964af69cb",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Kiệt Trung Tận Trí",
+        "竭忠尽智"
+      ],
+      "displayNameVi": "Kiệt Trung Tận Trí",
+      "evidenceRef": "tactics.json#77",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:f3d9290e11f4c6b2df2f5fe5",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "破陣摧堅": [
+          "https://sgsdeck.com/recommended/og-bingyan-guanyu-weiyan-fazheng-shield",
+          "https://sgsdeck.com/recommended/s1-qun-taishi-qi",
+          "https://sgsdeck.com/recommended/s1-shu-da-shu-qiang"
+        ]
+      },
+      "aliases": [
+        "Phá Trận Thôi Kiên",
+        "破阵摧坚",
+        "破陣摧堅"
+      ],
+      "displayNameVi": "Phá Trận Thôi Kiên",
+      "evidenceRef": "tactics.json#114",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:f4683de8d1b513ceace67037",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Dũng Liệt Trì Trọng",
+        "勇烈持重"
+      ],
+      "displayNameVi": "Dũng Liệt Trì Trọng",
+      "evidenceRef": "tactics.json#34",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:f620af2e5e3df8404d3cac7d",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thủy Kính Tiên Sinh",
+        "水镜先生"
+      ],
+      "displayNameVi": "Thủy Kính Tiên Sinh",
+      "evidenceRef": "tactics.json#154",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:f653deef404f03f0ef8843b6",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Vân Tụ Ảnh Tòng",
+        "云聚影从"
+      ],
+      "displayNameVi": "Vân Tụ Ảnh Tòng",
+      "evidenceRef": "tactics.json#186",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:f74b0d1f7e83895d0de390ea",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Phấn Mâu Anh Tư",
+        "奋矛英姿"
+      ],
+      "displayNameVi": "Phấn Mâu Anh Tư",
+      "evidenceRef": "tactics.json#116",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:f754e205f648ad12427c6d72",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thái Bình Đạo Pháp",
+        "太平道法"
+      ],
+      "displayNameVi": "Thái Bình Đạo Pháp",
+      "evidenceRef": "tactics.json#138",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:f7b8cbb1d2c08f57b4b800cc",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "八門金鎖陣": [
+          "https://sgsdeck.com/recommended/s1-shu-tianxiadiyi-qiang",
+          "https://sgsdeck.com/recommended/s1-wu-da-dudu",
+          "https://sgsdeck.com/recommended/s10-qun-qun-gong"
+        ]
+      },
+      "aliases": [
+        "Bát Môn Kim Tỏa Trận",
+        "八門金鎖陣",
+        "八门金锁阵"
+      ],
+      "displayNameVi": "Bát Môn Kim Tỏa Trận",
+      "evidenceRef": "tactics.json#7",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:f8147b3024d68a86ca78c8fb",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "血刃爭鋒": [
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-a",
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-b",
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-c"
+        ]
+      },
+      "aliases": [
+        "Huyết Nhận Tranh Phong",
+        "Huyết Đao Tranh Giành",
+        "血刃争锋",
+        "血刃爭鋒"
+      ],
+      "displayNameVi": "Huyết Đao Tranh Giành",
+      "evidenceRef": "tactics.json#52",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:f989f58a582859e3fe3a5dd8",
+      "variant": null
+    },
+    {
+      "aliasEvidence": {
+        "雁行陣": [
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-a",
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-c",
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-d"
+        ]
+      },
+      "aliases": [
+        "Nhạn Hành Trận",
+        "雁行阵",
+        "雁行陣"
+      ],
+      "displayNameVi": "Nhạn Hành Trận",
+      "evidenceRef": "tactics.json#226",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:fc66487406f2cd3e162768ee",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Công Thần",
+        "工神"
+      ],
+      "displayNameVi": "Công Thần",
+      "evidenceRef": "tactics.json#20",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:fe677e5d632ab5595da3f0b0",
+      "variant": null
+    }
+  ],
+  "evidenceInputs": {
+    "books-dict.json": "sha256:c863effdb9be5fec035f0bee03350459ddd2d3d25981693a809b9a81a849579d",
+    "heroes-dict.json": "sha256:8c99a159c144000897025b98590617bfd9735d543ac4d458821dbc3e11029813",
+    "tactics.json": "sha256:f0e9be17bd1f36e8aba1e1ad3217504c42395aca57efdb3b2a1a7ee967e29834"
+  },
+  "mappingHash": "sha256:83a769038706d0c840b57c909ab6f99ee8a173b27065e32ba94090fbb1df8453",
+  "schemaVersion": 1,
+  "sourceAliasMethod": "Exact source raw alias; macOS Foundation Traditional-Simplified transform matched one reviewed curated Chinese alias without collision.",
+  "sourceInventoryHash": "sha256:591857173405450f9972faad1b6ce3b1abbd9641608a8c1a8ea8e843fba15ff5"
+}
