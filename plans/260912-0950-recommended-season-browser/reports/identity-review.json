@@ -1,0 +1,10 @@
+{
+  "mappingHash": "sha256:83a769038706d0c840b57c909ab6f99ee8a173b27065e32ba94090fbb1df8453",
+  "method": "Exact source raw alias; macOS Foundation Traditional-Simplified transform matched one reviewed curated Chinese alias without collision.",
+  "reviewedEntries": 410,
+  "reviewedSourceAliases": 145,
+  "schemaVersion": 1,
+  "sourceInventoryHash": "sha256:591857173405450f9972faad1b6ce3b1abbd9641608a8c1a8ea8e843fba15ff5",
+  "unresolvedDistinctSourceTokens": 87,
+  "unresolvedRecommendedConfigurations": 380
+}

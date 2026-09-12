@@ -1,0 +1,15 @@
+{
+  "cachedPages": 1444,
+  "frozenScopes": 87,
+  "inventoryHash": "sha256:591857173405450f9972faad1b6ce3b1abbd9641608a8c1a8ea8e843fba15ff5",
+  "manifestSha256": "6724f7a5c7523a59d0fe35778cf32909ba168260536abd8a970142d22db5462d",
+  "recommendedConfigurations": 1366,
+  "schemaVersion": 1,
+  "seasonOptions": 29,
+  "selectedGenerationId": "996d7b36b9954e64d24358cbb0fb1371a18a39e72748c8ceb1a837add76f88e5",
+  "scopeStates": {
+    "complete": 29,
+    "empty-category": 49,
+    "uncollected-season": 9
+  }
+}
