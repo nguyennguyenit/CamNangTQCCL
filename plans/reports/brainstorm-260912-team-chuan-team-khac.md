@@ -125,7 +125,7 @@ Team chuẩn dùng tên Việt quen thuộc, nhất quán với Meta cũ và t�
 - Chọn cùng một giá trị trước/sau Việt hóa trả về cùng tập đội. URL cũ và thao tác quay lại/tiến tới vẫn khôi phục đúng bộ lọc; tìm lựa chọn mùa bằng tên Việt hoặc Trung vẫn chọn đúng mã mùa.
 - Mọi tên mùa/kịch bản có trong dữ liệu thuộc phạm vi đều có tên Việt đã đối chiếu, dùng nhất quán ở bộ lọc, thẻ và chi tiết; không bỏ sót mùa cũ hoặc mùa chưa có đội. Mã mùa và tên Trung gốc vẫn được giữ; tìm bằng tên Việt có dấu/không dấu, tên Trung hoặc mã mùa đều nhận ra đúng mùa.
 
-Các yêu cầu bổ sung về danh sách thiếu bản Việt, quản lý bản dịch dùng chung, danh tính độc lập ngôn ngữ, Việt hóa bộ lọc và dịch đầy đủ tên mùa/kịch bản đã được người dùng chấp thuận. Đây là tiêu chí đã chốt, không phải xác nhận toàn bộ đã được triển khai và kiểm chứng.
+Các yêu cầu bổ sung về danh sách thiếu bản Việt, quản lý bản dịch dùng chung, danh tính độc lập ngôn ngữ, Việt hóa bộ lọc và dịch đầy đủ tên mùa/kịch bản đã được người dùng chấp thuận. Trạng thái triển khai và bằng chứng kiểm chứng nằm ở phần cuối tài liệu.
 ## Giới hạn và những phần không làm trong phạm vi này
 
 - Tab Khai hoang hiện có vẫn duy trì dữ liệu mới nhất như trước. Khai hoang trong Recommended là nội dung tham khảo theo mùa nguồn riêng.
@@ -150,4 +150,8 @@ Các yêu cầu bổ sung về danh sách thiếu bản Việt, quản lý bản
 - Phác thảo UI cũ đã được xóa theo yêu cầu ngày 2026-09-12; chỉ dùng plan chính ở trên.
 - [Báo cáo browser](../260912-0950-recommended-season-browser/reports/browser-research.md) lưu các quan sát và ảnh nguồn đã kiểm tra ngày 2026-09-12; [bản rà soát quyết định](../260912-0950-recommended-season-browser/reports/decision-review.md) ghi cách áp dụng tư vấn Kongming và thay đổi yêu cầu đầu vào Team khác.
 
-Chưa có câu hỏi sản phẩm cần chốt lại. Plan chính và [báo cáo kiểm chứng triển khai](../260912-0950-recommended-season-browser/reports/validation.md) sở hữu trạng thái của hai tab; nhận định cũ “các phase vẫn pending” không còn áp dụng. Phần Việt hóa dùng dữ liệu sẵn có đã được triển khai và kiểm chứng cục bộ trong worktree `CamNangTQCCL-season-team-lookup` ở phiên cập nhật này, chưa commit hoặc deploy. Hướng dẫn bảo trì bản dịch nằm tại `docs/season-team-data.md` trong worktree đó. Bản brainstorm ghi quyết định và tiêu chí, không thay thế bằng chứng phát hành.
+Chưa có câu hỏi sản phẩm cần chốt lại. Plan chính và [báo cáo kiểm chứng triển khai](../260912-0950-recommended-season-browser/reports/validation.md) sở hữu trạng thái của hai tab; nhận định cũ “các phase vẫn pending” không còn áp dụng.
+
+Phần Việt hóa đã triển khai và kiểm chứng trong worktree `CamNangTQCCL-season-team-lookup`: dùng tên tướng/chiến pháp/binh thư sẵn có, nhãn lọc theo main, đủ 29 tên mùa, tìm kiếm hai ngôn ngữ và danh sách 85 tên còn thiếu bản Việt. So sánh toàn bộ 90 payload xác nhận dữ liệu nguồn và kết quả xét trùng không đổi. Hướng dẫn bảo trì nằm tại `docs/season-team-data.md`.
+
+Đã commit/push phần Việt hóa ban đầu và mở [Draft PR #3](https://github.com/nguyennguyenit/CamNangTQCCL/pull/3); các phần bổ sung tiếp tục trên cùng nhánh `feat/season-team-lookup`. Chưa merge vào main hoặc deploy. Bản brainstorm ghi quyết định và tiêu chí, không thay thế bằng chứng phát hành.

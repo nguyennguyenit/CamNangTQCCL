@@ -15,6 +15,8 @@ from pipeline.sgsdeck_recommended import join_recommended_evidence, parse_recomm
 SCHEMA_VERSION = 1
 SAFE_SCOPE = re.compile(r"s-[0-9a-f]{64}$")
 TIER_ORDER = {"T0": 0, "T0.5": 1, "T1": 2, "T1.5": 3, "T2": 4, "T3": 5, "FUNC": 6, "功能隊": 6}
+DISPLAY_SCHEMA_VERSION = 1
+TRANSLATION_STATUSES = ("existing-project-name", "reference-translation")
 
 
 def canonical_bytes(value):
@@ -66,6 +68,8 @@ def _build_generation_locked(inputs, output):
     inventory = inputs["inventory"]
     records = sorted(inputs.get("records", []), key=_rank)
     seasons = {"schemaVersion": SCHEMA_VERSION, "defaultSourceSeasonId": next((x["sourceSeasonId"] for x in inventory.get("seasonOptions", []) if x.get("status") == "available"), None), "seasonOptions": inventory.get("seasonOptions", []), "scopes": inventory["scopes"]}
+    if inventory.get("displayLabels") is not None:
+        seasons["displayLabels"] = inventory["displayLabels"]
     index = {"schemaVersion": SCHEMA_VERSION, "records": records}
     other = {"schemaVersion": SCHEMA_VERSION, "note": "Các đội có sẵn, đã đối chiếu với Team chuẩn.", "records": inputs.get("otherTeams", [])}
     details = inputs.get("details", {})
@@ -154,7 +158,76 @@ def localize_rows(rows, mapping, cache=None, shared=None):
             for row in rows]
 
 
-def inputs_from_cache(cache, identity_map=None, other_ledger=None):
+def load_display_map(path):
+    """Validated display-only label and season name map; never a source of raw data."""
+    display = json.loads(Path(path).read_bytes())
+    if display.get("schemaVersion") != DISPLAY_SCHEMA_VERSION:
+        raise ValueError("Unsupported Recommended display map schema")
+    labels = display.get("labels")
+    if not isinstance(labels, dict) or set(labels) != {"faction", "unit", "category", "subcategory"}:
+        raise ValueError("Recommended display map needs faction, unit, category and subcategory labels")
+    for group in labels.values():
+        if not isinstance(group, dict) or any(not isinstance(raw, str) or not raw.strip() or not isinstance(vi, str) or not vi.strip()
+                                              for raw, vi in group.items()):
+            raise ValueError("Recommended display label is not a raw to Vietnamese pair")
+    entries = display.get("seasons")
+    if not isinstance(entries, list) or not entries:
+        raise ValueError("Recommended display map needs season entries")
+    seasons = {}
+    for entry in entries:
+        if any(not isinstance(entry.get(name), str) or not entry[name].strip()
+               for name in ("sourceSeasonId", "nameRaw", "displayNameVi", "displayCode", "evidenceRef")):
+            raise ValueError("Recommended display season entry is incomplete")
+        if entry.get("translationStatus") not in TRANSLATION_STATUSES:
+            raise ValueError("Unsupported Recommended season translation status: " + str(entry.get("translationStatus")))
+        if entry["sourceSeasonId"] in seasons:
+            raise ValueError("Duplicate Recommended display season id: " + entry["sourceSeasonId"])
+        seasons[entry["sourceSeasonId"]] = entry
+    return {"labels": labels, "seasons": seasons}
+
+
+def _display_season_options(options, display):
+    """Season options with display-only names added; every published season needs a mapping."""
+    missing = sorted(option["sourceSeasonId"] for option in options if option["sourceSeasonId"] not in display["seasons"])
+    if missing:
+        raise ValueError("Recommended display map is missing seasons: " + ", ".join(missing))
+    enriched = []
+    for option in options:
+        entry = display["seasons"][option["sourceSeasonId"]]
+        if entry["nameRaw"] != option.get("nameRaw"):
+            raise ValueError("Recommended display season name differs from source: " + option["sourceSeasonId"])
+        enriched.append({**option, "displayNameVi": entry["displayNameVi"], "displayCode": entry["displayCode"],
+                         "translationStatus": entry["translationStatus"]})
+    return enriched
+
+
+def apply_display_map(inputs, display):
+    """Publish display-only Vietnamese metadata on inventory, index and detail rows."""
+    inventory = inputs["inventory"]
+    options = _display_season_options(inventory.get("seasonOptions", []), display)
+    by_season = {option["sourceSeasonId"]: option for option in options}
+    categories = display["labels"]["category"]
+    by_scope = {}
+    for scope in inventory.get("scopes", []):
+        option = by_season.get(scope.get("sourceSeasonId"))
+        if option is None:
+            raise ValueError("Recommended scope season is absent from source inventory: " + str(scope.get("sourceScopeId")))
+        by_scope[scope["safeScopeKey"]] = {
+            "sourceSeasonNameVi": option["displayNameVi"],
+            "sourceSeasonCode": option["displayCode"],
+            "sourceSeasonTranslationStatus": option["translationStatus"],
+            "sourceCategoryNameVi": categories.get(scope.get("sourceCategoryId")),
+        }
+    inputs["inventory"] = {**inventory, "seasonOptions": options, "displayLabels": display["labels"]}
+    inputs["records"] = [{**row, **by_scope[row["safeScopeKey"]]} for row in inputs.get("records", [])]
+    inputs["details"] = {key: [{**row, **by_scope[key]} for row in rows] for key, rows in inputs.get("details", {}).items()}
+    return inputs
+
+
+DISPLAY_MAP_PATH = Path(__file__).resolve().parent / "recommended-display-map.json"
+
+
+def inputs_from_cache(cache, identity_map=None, other_ledger=None, display_map=None):
     cache = Path(cache)
     frozen = json.loads((cache / "scope-inventory.json").read_text())
     manifest = json.loads((cache / "manifest.json").read_text())
@@ -254,6 +327,8 @@ def inputs_from_cache(cache, identity_map=None, other_ledger=None):
             "decisionSnapshotHash": "sha256:" + sha(ledger_bytes),
             "dedupKeyVersion": ledger["dedupKeyVersion"],
         })
+    if display_map is not None:
+        apply_display_map(result, load_display_map(display_map))
     return result
 
 
@@ -264,12 +339,13 @@ def main():
     parser.add_argument("--cache", type=Path)
     parser.add_argument("--identity-map", type=Path)
     parser.add_argument("--other-ledger", type=Path)
+    parser.add_argument("--display-map", type=Path, default=DISPLAY_MAP_PATH)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     if args.input:
         inputs = json.loads(args.input.read_text())
     elif args.cache and args.identity_map and args.other_ledger:
-        inputs = inputs_from_cache(args.cache, args.identity_map, args.other_ledger)
+        inputs = inputs_from_cache(args.cache, args.identity_map, args.other_ledger, args.display_map)
     else:
         parser.error("use --input or all of --cache, --identity-map and --other-ledger")
     build_generation(inputs, args.output)

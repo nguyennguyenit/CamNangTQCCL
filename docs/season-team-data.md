@@ -111,9 +111,10 @@ mở không trộn hai lần cập nhật.
 
 ### Tên Việt và dữ liệu Trung nguyên bản
 
-Team chuẩn chỉ dùng bản Việt đã có trong `recommended-identity-map.json`, được
-đối chiếu từ từ điển của dự án; không tự dịch tên mới. Alias phồn thể/giản thể
-được ghi cùng bằng chứng nguồn để tái sử dụng đúng tên Việt hiện có.
+Tên tướng, chiến pháp và binh thư trong Team chuẩn chỉ dùng bản Việt đã có
+trong `pipeline/recommended-identity-map.json`, đối chiếu từ từ điển của dự án;
+không tự dịch tên mới. Alias phồn thể/giản thể được ghi cùng bằng chứng nguồn
+để tái sử dụng đúng tên Việt hiện có.
 
 Builder bổ sung `displayNameVi`, `tacticSlotsVi`, `bookSlotsVi` cho tướng chính
 và các cấu hình thay thế, sau khi kiểm tra hash corpus gốc với ledger Team khác.
@@ -129,6 +130,40 @@ Khi bổ sung bản dịch đã xác minh, cập nhật entry/alias tương ứn
 `pipeline/recommended-identity-map.json` và bằng chứng đối chiếu. Chạy lại lệnh
 dedup rồi builder ở trên vì ledger kiểm tra hash file mapping; không sửa trực
 tiếp generation đã xuất. Sau đó build và verify lại website.
+
+Tên mùa và nhãn bộ lọc dùng chung từ `pipeline/recommended-display-map.json`.
+Phe, loại binh và nguồn tái sử dụng thuật ngữ trên main. Toàn bộ 29 mùa nguồn,
+kể cả mùa cũ/chưa thu thập, có tên Việt riêng; tên đã có trong dự án được ưu
+tiên, tên bổ sung mang trạng thái `reference-translation`. Đây không phải xác
+nhận tên chính thức hoặc quy đổi mùa nguồn sang máy chủ Việt Nam.
+
+Builder giữ nguyên tên Trung, mã mùa, ID, giá trị lọc và thứ tự nguồn; chỉ thêm
+metadata hiển thị sau khi kiểm tra corpus. Bộ chọn, thẻ và chi tiết dùng cùng
+tên mùa; tìm mùa nhận tên Việt có/không dấu, tên Trung và mã nguồn. Tìm kiếm
+không tự đổi mùa đang chọn. Chỉnh display map chỉ cần chạy lại builder; mùa
+mới hoặc tên nguồn đổi phải được đối chiếu trong map trước khi xuất bản.
+
+### Danh sách tên còn thiếu bản Việt
+
+Xuất worksheet nội bộ từ generation đã công bố, không cần crawler hoặc mạng:
+
+```sh
+python3 -m pipeline.report_recommended_translations \
+  --reference-dir src/data/recommended-reference \
+  --identity-map pipeline/recommended-identity-map.json \
+  --output pipeline/recommended-missing-translations.json
+```
+
+Report hiện có 85 tên: 42 tướng, 36 chiến pháp, 7 binh thư. Mỗi mục giữ các
+biến thể chữ Trung, số lần xuất hiện, tối đa ba ngữ cảnh đội/URL nguồn và
+`displayNameVi: null` để người dùng ghi bản dịch. Nhóm theo khóa alias đã
+chuẩn hóa và loại thực thể; không tự gộp danh tính mơ hồ. Report ghi hash map
+và generation để nhận biết dữ liệu cũ; không được xuất ra website.
+
+Worksheet không phải nguồn dịch tự động. Sau khi người dùng xác nhận, chuyển
+bản dịch và bằng chứng vào identity map dùng chung, chạy lại dedup → builder
+→ report. Việc tạo lại report sẽ ghi đè worksheet; lưu bản dịch được duyệt
+vào map trước. Không đổi stable ID chỉ vì sửa cách viết tên Việt.
 
 Quyền lưu và hiển thị cấu hình/điểm Recommended đã được người dùng xác nhận
 ngày 2026-09-12. Dữ liệu này là tham khảo nguồn, không tự trở thành điểm,

@@ -29,6 +29,17 @@ function detailedHolder(holder) {
   ]);
 }
 
+// Dòng phạm vi nguồn: mã/tên mùa và danh mục tiếng Việt khi có, raw vẫn là dữ liệu gốc.
+const sourceScopeText=row=>row.sourceLabel
+  || [row.sourceSeasonCode || row.sourceSeasonLabel || row.sourceSeasonId,row.sourceSeasonNameVi,row.sourceCategoryNameVi || row.sourceCategoryId].filter(Boolean).join(' · ')
+  || 'Nguồn chưa xác định';
+const sourceScopeTitle=row=>[
+  row.sourceSeasonId,
+  row.sourceCategoryId,
+  row.sourceSeasonTranslationStatus === 'reference-translation' ? 'Tên mùa là bản dịch tham khảo, không phải tên mùa chính thức' : null,
+].filter(Boolean).join(' · ') || null;
+const sourceScopeNote=row=>el('p',{class:'scope-note',title:sourceScopeTitle(row)},sourceScopeText(row));
+
 export function recommendedTeamCard(row,{onTag,onOpen}={}) {
   const card=el('article',{class:'team-card reference-team-card',tabindex:'0',dataset:{sourceConfigId:row.sourceConfigId || '',legacyTeamId:row.legacyTeamId || '',faction:row.factionRaw || row.faction || ''}},[
     el('div',{class:'team-head'},[
@@ -36,7 +47,7 @@ export function recommendedTeamCard(row,{onTag,onOpen}={}) {
       row.tierRaw ? el('span',{class:`badge tier ${/^T[0-9.]+$/.test(row.tierRaw)?tierClass(row.tierRaw):'t-func'}`},row.tierRaw === '功能隊' ? 'FUNC' : row.tierRaw) : row.historicalTier != null ? el('span',{class:'badge tier historical-tier'},`Tier lịch sử — tham khảo: ${row.historicalTier}`) : null,
     ]),
     el('div',{class:'heroes'},(row.heroes || row.holders || []).map(holder=>holderView(holder,onTag))),
-    el('p',{class:'scope-note'},row.sourceLabel || [row.sourceSeasonLabel || row.sourceSeasonId,row.sourceCategoryId].filter(Boolean).join(' · ') || 'Nguồn chưa xác định'),
+    sourceScopeNote(row),
     row.value != null ? el('p',{class:'sgsdeck-score'},`Điểm nguồn: ${row.value}`) : null,
     el('button',{type:'button',class:'ana-link-btn',onClick:()=>onOpen?.(row)},'Chi tiết'),
   ]);
@@ -49,6 +60,7 @@ export function recommendedTeamDetail(row,{onClose}={}) {
   const source=validateReferenceSourceUrl(family,row,row.sourceUrl);
   const detail=el('article',{class:'season-config-detail reference-detail',id:'recommended-team-detail',tabindex:'-1'},[
     el('div',{class:'team-head'},[el('h2',{},text(row.displayNameVi || row.nameZh || row.name)),el('button',{type:'button',class:'clear-btn',onClick:onClose,'aria-label':'Đóng chi tiết'},'Đóng')]),
+    sourceScopeNote(row),
     ...(row.heroes || row.holders || []).map(detailedHolder),
     ...Array.from({length:Math.ceil((row.alternativeHoldersRaw || []).length / 3)},(_,index)=>{
       const holders=row.alternativeHoldersRaw.slice(index*3,index*3+3);

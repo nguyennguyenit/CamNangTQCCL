@@ -817,7 +817,7 @@ body {
 .season-config-detail summary,.season-config-detail button,.season-team-groups .ana-link-btn,.season-team-groups .team-name,#section-coexist .fchip,#section-coexist .clear-btn,#section-coexist .search { min-height:44px; }
 .season-config-detail summary { display:list-item; padding-block:10px; }
 @media (max-width:680px) { .season-controls select,.season-slot select,#section-coexist .search { font-size:16px; } }
-.reference-scope-controls { display:grid; grid-template-columns:minmax(180px,1fr) repeat(2,minmax(150px,220px)); gap:10px; margin:10px 0; }
+.reference-scope-controls { display:grid; grid-template-columns:repeat(2,minmax(180px,1fr)) minmax(150px,220px); gap:10px; margin:10px 0; }
 .reference-scope-controls label { display:flex; flex-direction:column; gap:4px; color:var(--muted); font-size:.85rem; }
 .reference-scope-controls input,.reference-scope-controls select { width:100%; min-height:44px; padding:8px; color:var(--ink); background:var(--panel); border:1px solid var(--line); border-radius:8px; }
 .reference-holder .line { display:flex; flex-wrap:wrap; gap:6px; }

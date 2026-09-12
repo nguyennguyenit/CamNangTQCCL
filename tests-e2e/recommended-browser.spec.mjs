@@ -166,3 +166,79 @@ test('Back and Forward restore URL-owned reference snapshots without rewriting h
   await expect(page).toHaveURL(/#team-khac/);
   await expect(page.getByRole('button',{name:'Team khác',exact:true})).toHaveClass(/active/);
 });
+
+const unaccent=value=>(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase();
+const referenceData=async request=>{
+  const pin=await (await request.get('/data/recommended/current.json')).json();
+  const load=async name=>(await request.get(`/data/recommended/${pin.generationId}/${name}`)).json();
+  const [seasons,index,other]=await Promise.all([load('seasons.json'),load('index.json'),load('other-teams.json')]);
+  return {seasons,index,other};
+};
+
+test('localized facet chips filter with raw values and keep the same card membership',async({page,request})=>{
+  const {seasons}=await referenceData(request);
+  await page.setViewportSize({width:375,height:812});
+  await page.goto('/#team-chuan');
+  const section=page.locator('#section-team-chuan');
+  await expect(section.locator('.reference-team-card').first()).toBeVisible();
+  await section.getByRole('button',{name:'Bộ lọc'}).click();
+  const chip=section.locator('.fchip[data-focus-key^="faction:"]').first();
+  const raw=(await chip.getAttribute('data-focus-key')).slice('faction:'.length);
+  await expect(chip).toHaveText(seasons.displayLabels?.faction?.[raw] || raw);
+  if (seasons.displayLabels?.faction?.[raw]) {
+    expect(await chip.textContent()).not.toMatch(/[\u3400-\u9fff]/);
+    await expect(chip).toHaveAttribute('title',raw);
+  }
+  const matching=await section.locator(`.reference-team-card[data-faction="${raw}"]`).count();
+  expect(matching).toBeGreaterThan(0);
+  await chip.click();
+  expect(await page.evaluate(()=>new URL(location.href).searchParams.get('faction'))).toBe(raw);
+  await expect(section.locator('.reference-team-card')).toHaveCount(matching);
+  await expect(section.locator(`.reference-team-card[data-faction="${raw}"]`)).toHaveCount(matching);
+});
+
+test('season search matches Chinese and Vietnamese while the active season stays selected',async({page,request})=>{
+  const {seasons}=await referenceData(request);
+  const options=seasons.seasonOptions || [];
+  const active=options.find(item=>item.sourceSeasonId===seasons.defaultSourceSeasonId) || options[0];
+  const target=options.find(item=>item.sourceSeasonId!==active.sourceSeasonId && item.nameRaw);
+  await page.goto('/#team-chuan');
+  const section=page.locator('#section-team-chuan');
+  const season=section.getByLabel('Mùa nguồn',{exact:true});
+  const seasonSearch=section.getByLabel('Tìm mùa nguồn');
+  await expect(season).toHaveValue(active.sourceSeasonId);
+  const activeOption=season.locator(`option[value="${active.sourceSeasonId}"]`);
+  if (active.displayNameVi) await expect(activeOption).toContainText(active.displayNameVi);
+  else await expect(activeOption).toContainText(active.nameRaw);
+  const untranslated=options.find(item=>!item.displayNameVi && item.nameRaw);
+  if (untranslated) await expect(season.locator(`option[value="${untranslated.sourceSeasonId}"]`)).toContainText(untranslated.nameRaw);
+  const terms=[target.nameRaw,target.displayCode,target.displayNameVi && unaccent(target.displayNameVi)].filter(Boolean);
+  for (const term of terms) {
+    await seasonSearch.fill(term);
+    await expect(season.locator(`option[value="${target.sourceSeasonId}"]`)).toHaveCount(1);
+    await expect(season).toHaveValue(active.sourceSeasonId);
+  }
+  await seasonSearch.fill('');
+  await season.selectOption(target.sourceSeasonId);
+  expect(await page.evaluate(()=>new URL(location.href).searchParams.get('season'))).toBe(target.sourceSeasonId);
+  await expect(season).toHaveValue(target.sourceSeasonId);
+});
+
+test('card and detail name the same source season while Team khác keeps its raw source label',async({page,request})=>{
+  const {seasons,index,other}=await referenceData(request);
+  const row=index.records.find(item=>item.sourceSeasonId===seasons.defaultSourceSeasonId && item.sourceConfigId);
+  const option=(seasons.seasonOptions || []).find(item=>item.sourceSeasonId===row.sourceSeasonId);
+  const expectedCode=option?.displayCode || row.sourceSeasonLabel || row.sourceSeasonId;
+  const expectedCategory=seasons.displayLabels?.category?.[row.sourceCategoryId] || row.sourceCategoryId;
+  await page.goto(`/?detail=${row.sourceConfigId}#team-chuan`);
+  const cardNote=page.locator(`#section-team-chuan .reference-team-card[data-source-config-id="${row.sourceConfigId}"] .scope-note`).first();
+  await expect(cardNote).toContainText(expectedCode);
+  await expect(cardNote).toContainText(expectedCategory);
+  if (option?.displayNameVi) await expect(cardNote).toContainText(option.displayNameVi);
+  const detailNote=page.locator('#recommended-team-detail .scope-note').first();
+  await expect(detailNote).toHaveText((await cardNote.textContent()).trim());
+  const legacy=other.records.find(item=>item.sourceLabel);
+  await page.goto('/#team-khac');
+  const legacyNote=page.locator(`#section-team-khac .reference-team-card[data-legacy-team-id="${legacy.legacyTeamId}"] .scope-note`).first();
+  await expect(legacyNote).toHaveText(legacy.sourceLabel);
+});

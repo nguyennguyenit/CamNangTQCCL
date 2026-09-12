@@ -3,8 +3,24 @@
 Date: 2026-09-12  
 Worktree: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup`  
 Branch: `feat/season-team-lookup`  
-Selected generation: `996d7b36b9954e64d24358cbb0fb1371a18a39e72748c8ceb1a837add76f88e5`  
-Manifest SHA-256: `6724f7a5c7523a59d0fe35778cf32909ba168260536abd8a970142d22db5462d`
+Selected generation: `20d85cbbc63d16b40a2b952c9a0ffad79ebfbd61c1bcf64495c0f0bb36206e5a`  
+Manifest SHA-256: `2ae1257f40b7cacf7c0ad9d1d42a7b80ff08e067dc3f511e25c7dc421efafea1`
+
+## Localization follow-up — 2026-09-12
+
+- Initial Vietnamese holder names were committed/pushed before continuing, as requested; [Draft PR #3](https://github.com/nguyennguyenit/CamNangTQCCL/pull/3) targets main. No merge or production deployment.
+- Shared display map now covers 29 source seasons (including all uncollected seasons), faction/unit/category labels, and distinguishes existing project names from reference season translations. Raw identity, Chinese names, scope/filter values and URLs remain separate.
+- Missing-translation worksheet: 85 alias groups (42 hero, 36 tactic, 7 book), 898 occurrences, zero ambiguous groups. Includes original variants and source context; unknown names remain Chinese. User-approved translations must enter the shared identity map, not individual rows.
+- All 90 publication payloads were compared against the preceding generation after removing display-only fields: raw source data, IDs, ranking and scores match. Team khác dedup ledger is byte-identical.
+- `python3 -m unittest discover -s tests`: 213 tests run, 12 skipped, no failures.
+- `npm run test:node`: 200 passed. `npm run test:e2e`: 77 passed, including translated facets/raw URL values, bilingual season search with stable selection, consistent card/detail names, and existing Back/Forward/gameplay navigation.
+- `npm run build`, `npm run verify` and `npm run check` passed: 137 files, 42 raw assets, zero Astro diagnostics.
+- PR CI initially caught invalid hashes displaying Team chuẩn without normalizing the URL. Canonicalization now handles both old aliases and invalid hashes; the existing failing SPA navigation test passes unchanged.
+- Actual preview exercised at 1280×900 and 375×812: 29 season labels, Chinese/accented/plain Vietnamese/code lookup, raw URL filters, card/detail consistency, mobile filtering, no horizontal overflow, uncollected-season notice and invalid-hash normalization retaining query parameters. Desktop season control widened after visual inspection to avoid unnecessary truncation.
+- Local preview emitted only the existing Cloudflare Turnstile hostname error `110200` on localhost; no application page errors. Turnstile production operation was not tested or changed.
+- Screenshots `/tmp/team-chuan-final-vi-desktop.png` and `/tmp/team-chuan-final-vi-mobile.png` are transient review artifacts; preview server and browser were closed.
+
+The sections below retain the original browser implementation evidence from generation `996d7b36b9954e64d24358cbb0fb1371a18a39e72748c8ceb1a837add76f88e5`.
 
 ## Source and admission evidence
 

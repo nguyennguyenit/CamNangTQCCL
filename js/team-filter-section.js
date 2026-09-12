@@ -281,14 +281,31 @@ export function createRecommendedSection({mount,title,family,onQuery,onOpen}) {
     filters,
   ]),notice,grid);
 
+  // Nhãn hiển thị dùng chung từ dữ liệu nguồn; thiếu nhãn thì giữ nguyên giá trị raw.
+  const displayLabel=(kind,value)=>registry.displayLabels?.[kind]?.[value] || value;
+  const seasonOptionText=item=>{
+    const vi=item.displayCode && item.displayNameVi ? `${item.displayCode} · ${item.displayNameVi}` : null;
+    const base=vi || [item.label,item.nameRaw].filter(Boolean).join(' · ') || item.sourceSeasonId;
+    return `${base}${item.advertisedCountRaw != null ? ` (${item.advertisedCountRaw})` : ''}`;
+  };
+  const seasonOptionTitle=item=>[
+    item.nameRaw,
+    item.label,
+    item.translationStatus === 'reference-translation' ? 'Tên dịch tham khảo, không phải tên mùa chính thức' : null,
+  ].filter(Boolean).join(' · ') || null;
+  const seasonHaystack=item=>normalizeText([item.label,item.nameRaw,item.displayNameVi,item.displayCode,item.sourceSeasonId].filter(Boolean).join(' '));
+
   function renderSeasonOptions(query='') {
     const normalized=normalizeText(query);
     const current=state.season || (family==='other'?'all':registry.defaultSourceSeasonId);
     const options=registry.seasonOptions || [];
-    const visible=options.filter(item=>!normalized || normalizeText(`${item.label} ${item.nameRaw}`).includes(normalized));
+    const visible=options.filter(item=>!normalized || seasonHaystack(item).includes(normalized));
+    // Từ khóa loại mùa đang chọn thì vẫn giữ nó trong danh sách, không tự đổi lựa chọn.
+    const active=options.find(item=>item.sourceSeasonId===current);
+    if (active && !visible.includes(active)) visible.unshift(active);
     season.replaceChildren(
       ...(family==='other'?[el('option',{value:'all'},'Tất cả'),el('option',{value:'unknown'},'Chưa rõ mùa')]:[]),
-      ...visible.map(item=>el('option',{value:item.sourceSeasonId},`${item.label} · ${item.nameRaw || ''}${item.advertisedCountRaw != null ? ` (${item.advertisedCountRaw})` : ''}`)),
+      ...visible.map(item=>el('option',{value:item.sourceSeasonId,title:seasonOptionTitle(item)},seasonOptionText(item))),
     );
     if ([...season.options].some(option=>option.value===current)) season.value=current;
   }
@@ -299,7 +316,8 @@ export function createRecommendedSection({mount,title,family,onQuery,onOpen}) {
       const values=[...new Set(scopeRows.flatMap(pick))].sort();
       if (!values.length) return null;
       const selected=state.filters?.[key] || [];
-      return el('div',{class:'fgroup'},[el('div',{class:'flabel'},{faction:'Phe',unit:'Binh chủng',tier:'Tier',subcategory:'Nhóm',source:'Nguồn'}[key]),el('div',{class:'chip-row'},values.map(value=>el('button',{type:'button',class:`fchip${selected.includes(value)?' on':''}`,'aria-pressed':String(selected.includes(value)),dataset:{focusKey:`${key}:${value}`},onClick:()=>onQuery({[key]:selected.includes(value)?selected.filter(item=>item!==value):[...selected,value]})},value)))]);
+      const chipText=value=>key==='source'?(SOURCE_LABEL[value] || value):key==='tier'?value:displayLabel(key,value);
+      return el('div',{class:'fgroup'},[el('div',{class:'flabel'},{faction:'Phe',unit:'Loại binh',tier:'Tier',subcategory:'Nhóm',source:'Nguồn'}[key]),el('div',{class:'chip-row'},values.map(value=>el('button',{type:'button',class:`fchip${selected.includes(value)?' on':''}`,'aria-pressed':String(selected.includes(value)),title:chipText(value)===value?null:value,dataset:{focusKey:`${key}:${value}`},onClick:()=>onQuery({[key]:selected.includes(value)?selected.filter(item=>item!==value):[...selected,value]})},chipText(value))))]);
     }).filter(Boolean));
   }
 
@@ -309,7 +327,7 @@ export function createRecommendedSection({mount,title,family,onQuery,onOpen}) {
     const categories=family==='other'
       ? ['all','unknown',...new Set(rows.flatMap(row=>row.sourceCategoryIds || []))]
       : ['all',...new Set(rows.map(row=>row.sourceCategoryId).filter(Boolean))];
-    category.replaceChildren(...categories.map(value=>el('option',{value},value==='all'?'Tất cả danh mục':value==='unknown'?'Chưa rõ danh mục':value)));
+    category.replaceChildren(...categories.map(value=>el('option',{value,title:value==='all'||value==='unknown'||displayLabel('category',value)===value?null:value},value==='all'?'Tất cả danh mục':value==='unknown'?'Chưa rõ danh mục':displayLabel('category',value))));
     category.value=categories.includes(state.category)?state.category:'all';
     const scopeRows=projectRecommendedRows(rows,{...state,query:'',filters:{}});
     renderFacets(scopeRows);

@@ -1,0 +1,262 @@
+{
+  "schemaVersion": 1,
+  "labels": {
+    "faction": {
+      "魏": "Ngụy",
+      "蜀": "Thục",
+      "吳": "Ngô",
+      "群": "Quần",
+      "混": "Hỗn hợp"
+    },
+    "unit": {
+      "騎": "Kỵ",
+      "弓": "Cung",
+      "槍": "Thương",
+      "盾": "Khiên"
+    },
+    "category": {
+      "交戰": "Giao chiến",
+      "器械": "Khí giới",
+      "開荒": "Khai hoang"
+    },
+    "subcategory": {}
+  },
+  "labelEvidence": [
+    "js/render.js",
+    "js/team-filter-section.js"
+  ],
+  "seasons": [
+    {
+      "sourceSeasonId": "og-兵演春秋",
+      "nameRaw": "兵演春秋",
+      "displayNameVi": "Binh Diễn Xuân Thu",
+      "displayCode": "OG",
+      "translationStatus": "existing-project-name",
+      "evidenceRef": "data/season-registry.json"
+    },
+    {
+      "sourceSeasonId": "pk-s28",
+      "nameRaw": "九州兵興",
+      "displayNameVi": "Cửu Châu Binh Hưng",
+      "displayCode": "PK-S28",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "pk-s27",
+      "nameRaw": "漢焰長明",
+      "displayNameVi": "Hán Diễm Trường Minh",
+      "displayCode": "PK-S27",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "pk-s26",
+      "nameRaw": "英雄命世",
+      "displayNameVi": "Anh Hùng Mệnh Thế",
+      "displayCode": "PK-S26",
+      "translationStatus": "existing-project-name",
+      "evidenceRef": "data/team-tier.json"
+    },
+    {
+      "sourceSeasonId": "pk-s25",
+      "nameRaw": "長安之亂",
+      "displayNameVi": "Loạn Trường An",
+      "displayCode": "PK-S25",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "pk-s24",
+      "nameRaw": "霸王討逆",
+      "displayNameVi": "Bá Vương Thảo Nghịch",
+      "displayCode": "PK-S24",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "pk-s23",
+      "nameRaw": "定軍山之戰",
+      "displayNameVi": "Trận Định Quân Sơn",
+      "displayCode": "PK-S23",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "pk-s22",
+      "nameRaw": "兗州之戰",
+      "displayNameVi": "Trận Duyện Châu",
+      "displayCode": "PK-S22",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "pk-s21",
+      "nameRaw": "亂世烽煙",
+      "displayNameVi": "Loạn Thế Phong Yên",
+      "displayCode": "PK-S21",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "pk-s20",
+      "nameRaw": "奇兵八陣",
+      "displayNameVi": "Kỳ Binh Bát Trận",
+      "displayCode": "PK-S20",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "pk-s19",
+      "nameRaw": "潼關之戰",
+      "displayNameVi": "Trận Đồng Quan",
+      "displayCode": "PK-S19",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "pk-s18",
+      "nameRaw": "陳倉之戰",
+      "displayNameVi": "Trận Trần Thương",
+      "displayCode": "PK-S18",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "pk-s17",
+      "nameRaw": "天師舉義",
+      "displayNameVi": "Thiên Sư Cử Nghĩa",
+      "displayCode": "PK-S17",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "pk-s16",
+      "nameRaw": "雲起龍襄",
+      "displayNameVi": "Vân Khởi Long Tương",
+      "displayCode": "PK-S16",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "pk-s15",
+      "nameRaw": "襄樊之戰",
+      "displayNameVi": "Trận Tương Phàn",
+      "displayCode": "PK-S15",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "pk-s14",
+      "nameRaw": "兵戰四時",
+      "displayNameVi": "Binh Chiến Tứ Thời",
+      "displayCode": "PK-S14",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "pk-s13",
+      "nameRaw": "英雄集結",
+      "displayNameVi": "Anh Hùng Tập Kết",
+      "displayCode": "PK-S13",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "pk-s12",
+      "nameRaw": "王師秉節",
+      "displayNameVi": "Vương Sư Bỉnh Tiết",
+      "displayCode": "PK-S12",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "pk-s11",
+      "nameRaw": "官渡之戰",
+      "displayNameVi": "Trận Quan Độ",
+      "displayCode": "PK-S11",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "pk-s10",
+      "nameRaw": "北定中原",
+      "displayNameVi": "Bắc Định Trung Nguyên",
+      "displayCode": "PK-S10",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "pk-s9",
+      "nameRaw": "興師伐亂",
+      "displayNameVi": "Hưng Sư Phạt Loạn",
+      "displayCode": "PK-S9",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "pk-s8",
+      "nameRaw": "軍爭地利",
+      "displayNameVi": "Quân Tranh Địa Lợi",
+      "displayCode": "PK-S8",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "pk-s7",
+      "nameRaw": "赤壁之戰",
+      "displayNameVi": "Trận Xích Bích",
+      "displayCode": "PK-S7",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "pk-s6",
+      "nameRaw": "英雄露穎",
+      "displayNameVi": "Anh Hùng Lộ Dĩnh",
+      "displayCode": "PK-S6",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "pk-s5",
+      "nameRaw": "天下爭鋒",
+      "displayNameVi": "Thiên Hạ Tranh Phong",
+      "displayCode": "PK-S5",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "pk-s4",
+      "nameRaw": "群雄割據",
+      "displayNameVi": "Quần Hùng Chiếm Giữ",
+      "displayCode": "PK-S4",
+      "translationStatus": "existing-project-name",
+      "evidenceRef": "data/teams.json"
+    },
+    {
+      "sourceSeasonId": "s3",
+      "nameRaw": "赤壁之戰",
+      "displayNameVi": "Trận Xích Bích",
+      "displayCode": "S3",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "s2",
+      "nameRaw": "中原爭霸",
+      "displayNameVi": "Trung Nguyên Tranh Bá",
+      "displayCode": "S2",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    },
+    {
+      "sourceSeasonId": "s1",
+      "nameRaw": "群雄討董",
+      "displayNameVi": "Quần Hùng Thảo Đổng",
+      "displayCode": "S1",
+      "translationStatus": "reference-translation",
+      "evidenceRef": ".cache/sgsdeck-recommended/scope-inventory.json"
+    }
+  ]
+}
