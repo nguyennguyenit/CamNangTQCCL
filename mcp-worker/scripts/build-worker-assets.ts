@@ -24,6 +24,7 @@ import {
   validateDataSnapshot,
   type ArtifactName,
 } from "../src/data/artifact-contracts.js";
+import { observeLookupRoot, validateLookupRoot } from "../src/data/filesystem-data-source.js";
 import { stableStringify } from "../src/domain/contracts.js";
 import { WORKFLOW_BUILD_ID } from "../src/generated/workflow-build.js";
 import {
@@ -239,6 +240,7 @@ export async function buildWorkerAssets(
     resolve(dirname(outputDirectory), `.${basename(outputDirectory)}.tmp-`),
   );
   try {
+    const initialLookupRoot = await observeLookupRoot(dataRoot);
     const entries = await Promise.all(
       artifactNames.map(async (name) => [
         name,
@@ -254,6 +256,22 @@ export async function buildWorkerAssets(
       throw new WorkerAssetBuildError("SOURCE_IDENTITY_CHANGED");
     }
     const objects = new Map<ArtifactName, Uint8Array>(entries);
+    const lookupSidecars = ["lookup-catalog.json", "lookup-manifest.json"];
+    const lookupCount = lookupSidecars.filter((name) => options.allowedSourceFiles?.includes(name)).length;
+    if (lookupCount !== 0 && lookupCount !== lookupSidecars.length) {
+      throw new WorkerAssetBuildError("INVALID_SOURCE_ASSET");
+    }
+    if (lookupCount === lookupSidecars.length) {
+      try {
+        await validateLookupRoot(dataRoot, objects);
+      } catch {
+        throw new WorkerAssetBuildError("INVALID_SOURCE_ASSET");
+      }
+    }
+    const finalLookupRoot = await observeLookupRoot(dataRoot);
+    if (finalLookupRoot.token !== initialLookupRoot.token) {
+      throw new WorkerAssetBuildError("INVALID_SOURCE_ASSET");
+    }
     let manifest;
     try {
       manifest = await createDataManifest(objects);

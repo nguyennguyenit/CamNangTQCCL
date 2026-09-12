@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { readdir, readFile } from "node:fs/promises";
 import { relative, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -88,6 +89,39 @@ export async function verifyAstroDist({
     throw new Error("Built HTML Recommended pin differs from emitted generation");
   }
 
+  let lookupGenerationId = null;
+  const lookupRoutes = new Set(manifest.filter((artifact) => artifact.kind === "data").map((artifact) => artifact.routeParam));
+  if (lookupRoutes.has("lookup-manifest")) {
+    let lookupManifest;
+    try {
+      lookupManifest = JSON.parse(await readFile(resolve(distPath, "data/lookup-manifest.json"), "utf8"));
+    } catch {
+      throw new Error("Emitted lookup manifest is invalid");
+    }
+    const payloadNames = ["heroes-dict.json", "tactics.json", "lookup-catalog.json"];
+    if (
+      lookupManifest?.schemaVersion !== 1
+      || Object.keys(lookupManifest.files ?? {}).sort().join(",") !== [...payloadNames].sort().join(",")
+    ) throw new Error("Emitted lookup manifest shape is invalid");
+    for (const name of payloadNames) {
+      const bytes = await readFile(resolve(distPath, `data/${name}`));
+      const actual = createHash("sha256").update(bytes).digest("hex");
+      if (lookupManifest.files[name] !== actual) throw new Error(`Emitted ${name} leaves lookup manifest generation`);
+    }
+    const ordered = Object.fromEntries(Object.keys(lookupManifest.files).sort().map((name) => [name, lookupManifest.files[name]]));
+    const derived = "lookup:" + createHash("sha256").update(`${JSON.stringify(ordered)}\n`).digest("hex");
+    if (lookupManifest.generationId !== derived) throw new Error("Emitted lookup generation is invalid");
+    const seasonMarker = html.match(/id="season-artifact-hashes"[^>]*>([^<]+)<\/script>/);
+    if (!seasonMarker) throw new Error("Built HTML lacks season-artifact-hashes generation pin");
+    const seasonHashes = JSON.parse(seasonMarker[1]);
+    for (const name of ["heroes-dict", "tactics"]) {
+      if (seasonHashes[name] !== `sha256:${lookupManifest.files[`${name}.json`]}`) {
+        throw new Error("Built HTML season-artifact-hashes differs from lookup generation");
+      }
+    }
+    lookupGenerationId = lookupManifest.generationId;
+  }
+
   for (const artifact of [...controlArtifacts, ...staticArtifacts]) {
     const [sourceBytes, emittedBytes] = await Promise.all([
       readFile(resolve(rootPath, artifact.sourcePath)),
@@ -121,6 +155,7 @@ export async function verifyAstroDist({
     files,
     unexpectedFiles,
     missingFiles,
+    lookupGenerationId,
   };
 }
 

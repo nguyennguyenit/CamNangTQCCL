@@ -14,24 +14,25 @@ const TROOP_LABELS = [
 ];
 
 /**
- * Resolve 2 chiến pháp của tướng về record tactics.json theo `chinese`.
- * Hàm thuần (test riêng). Slot không có tên -> bỏ. Không khớp tactics ->
- * linked=false, viet="" (UI fallback hiện chinese / hanViet).
+ * Resolve 2 chiến pháp bằng canonical ID; chỉ fallback chữ Hán khi dữ liệu cũ
+ * chưa có ID và tên Hán khớp duy nhất.
  * @returns {Array<{slot,chinese,viet,hanViet,type,quality,effect,linked}>}
  */
 export function resolveHeroTactics(hero, tacticsDict) {
-  const byCn = new Map((tacticsDict || []).map((t) => [t.chinese, t]));
+  const tactics = tacticsDict || [];
+  const byId = new Map(tactics.map((t) => [t.id, t]));
   const slots = [
-    ["Tự mang", hero.selfTacticCn],
-    ["Truyền thừa", hero.inheritTacticCn],
+    ["Tự mang", hero.lookup?.selfTacticId, hero.selfTacticCn],
+    ["Truyền thừa", hero.lookup?.inheritTacticId, hero.inheritTacticCn],
   ];
   const out = [];
-  for (const [slot, cn] of slots) {
-    if (!cn) continue;
-    const t = byCn.get(cn);
+  for (const [slot, id, cn] of slots) {
+    if (!id && !cn) continue;
+    const matches = id ? [] : tactics.filter((t) => t.chinese === cn);
+    const t = id ? byId.get(id) : matches.length === 1 ? matches[0] : null;
     out.push(t
-      ? { slot, chinese: cn, viet: t.viet || "", hanViet: t.hanViet || "", type: t.type || "", quality: t.quality || "", effect: t.effect || "", linked: true }
-      : { slot, chinese: cn, viet: "", hanViet: "", type: "", quality: "", effect: "", linked: false });
+      ? { slot, chinese: t.chinese || cn || "", viet: t.viet || "", hanViet: t.hanViet || "", type: t.type || "", quality: t.quality || "", effect: t.effect || "", linked: true }
+      : { slot, chinese: cn || "", viet: "", hanViet: "", type: "", quality: "", effect: "", linked: false });
   }
   return out;
 }
@@ -40,14 +41,14 @@ function statGrid(stats) {
   return el("div", { class: "hero-stats" }, STAT_LABELS.map(([k, label]) =>
     el("div", { class: "hero-stat" }, [
       el("span", { class: "hs-label" }, label),
-      el("span", { class: "hs-val" }, stats?.[k] || "—"),
+      el("span", { class: "hs-val" }, stats?.[k] ?? "—"),
     ])));
 }
 
 function troopAptRow(apt) {
   return el("div", { class: "hero-apt" }, TROOP_LABELS.map(([k, label]) => {
-    const v = apt?.[k] || "—";
-    return el("span", { class: `apt apt-${(v || "").toLowerCase()}` }, [
+    const v = apt?.[k] ?? "—";
+    return el("span", { class: `apt apt-${String(v).toLowerCase()}` }, [
       el("span", { class: "apt-troop" }, label),
       el("span", { class: "apt-grade" }, v),
     ]);

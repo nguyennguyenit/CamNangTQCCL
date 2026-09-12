@@ -371,5 +371,72 @@ class DictionaryAmbiguityTest(unittest.TestCase):
         with self.assertRaises(ValueError):self.build(bundle)
 
 
+class LookupGenerationGateTest(unittest.TestCase):
+    """The season publisher shares the lookup writer exclusion across its window."""
+
+    def recorder(self, events):
+        class Exclusion:
+            def __init__(self, *args, **options):
+                pass
+
+            def __enter__(self):
+                events.append("enter")
+                return self
+
+            def __exit__(self, *error):
+                events.append("exit")
+                return False
+
+        return Exclusion
+
+    def replace_recorder(self, events):
+        import os
+        replace = os.replace
+
+        def record(source, destination):
+            events.append("replace")
+            return replace(source, destination)
+
+        return record
+
+    def test_exclusion_is_held_from_dictionary_validation_through_the_final_recheck(self):
+        registry, evidence = fixtures()
+        events = []
+
+        def generation(*args, **options):
+            events.append("generation")
+            return "lookup:" + "1" * 64
+
+        with tempfile.TemporaryDirectory() as directory:
+            with patch.object(seasons, "dictionary_exclusion", self.recorder(events)), \
+                    patch.object(seasons, "lookup_generation", generation), \
+                    patch.object(seasons.os, "replace", self.replace_recorder(events)):
+                seasons.publish_season_data(registry, evidence, Path(directory))
+
+        self.assertEqual(events[0], "enter")
+        self.assertEqual(events[1], "generation")
+        self.assertEqual(events[-2:], ["generation", "exit"])
+        self.assertEqual(events.count("generation"), 2)
+        self.assertLess(events.index("replace"), len(events) - 2)
+
+    def test_lookup_generation_change_before_the_final_replacement_preserves_outputs(self):
+        registry, evidence = fixtures()
+        events = []
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory)
+            with patch.object(seasons, "dictionary_exclusion", self.recorder(events)), \
+                    patch.object(seasons, "lookup_generation", side_effect=["lookup:" + "1" * 64] * 2):
+                seasons.publish_season_data(registry, evidence, output)
+            (output / "coexist.json").write_bytes(b'[{"legacy":true}]\n')
+            before = {path.name: path.read_bytes() for path in output.iterdir()}
+            registry[0]["labelVi"] = "Nhãn mùa mới"
+            with patch.object(seasons, "dictionary_exclusion", self.recorder(events)), \
+                    patch.object(seasons, "lookup_generation", side_effect=["lookup:" + "1" * 64, "lookup:" + "0" * 64]):
+                with self.assertRaises(ValueError):
+                    seasons.publish_season_data(registry, evidence, output)
+            self.assertEqual(before, {path.name: path.read_bytes() for path in output.iterdir()})
+        self.assertEqual(events[-1], "exit")
+
+
 if __name__ == "__main__":
     unittest.main()

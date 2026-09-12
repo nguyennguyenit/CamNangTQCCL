@@ -1,7 +1,7 @@
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 
 import {
   CLI_ALIASES,
@@ -10,6 +10,12 @@ import {
 import { FilesystemDataSource } from "../src/data/filesystem-data-source.js";
 import { RESEARCH_TOOL_NAMES } from "../src/research/research-contracts.js";
 import { createResearchHandlers } from "../src/research/research-handlers.js";
+import {
+  createActivatedRoot,
+  createPackagedRoot,
+  encodeJson,
+  removeCreatedRoots,
+} from "./fixtures/lookup-roots.js";
 
 const cliPath = fileURLToPath(new URL("../src/cli.ts", import.meta.url));
 const tsxLoaderPath = fileURLToPath(import.meta.resolve("tsx"));
@@ -233,6 +239,49 @@ describe("JSON CLI integration", () => {
       expect(result.code).toBe(0);
       expect(result.stderr).toBe("");
       expect(JSON.parse(result.stdout)).toEqual(expected);
+    }
+  });
+});
+
+describe("CLI filesystem root formats", () => {
+  afterEach(removeCreatedRoots);
+
+  it("dùng được cả packaged MCP release root và activated raw root", async () => {
+    const packagedRoot = await createPackagedRoot();
+    const activated = await createActivatedRoot();
+
+    for (const dataRoot of [packagedRoot, activated.dataRoot]) {
+      const result = await runCli(["version", "--data-root", dataRoot]);
+
+      expect(result.stderr).toBe("");
+      expect(result.code).toBe(0);
+      expect(JSON.parse(result.stdout).releaseId).toMatch(
+        /^sha256:[a-f0-9]{64}$/,
+      );
+    }
+  });
+
+  it("trả DATA_UNAVAILABLE đã redact cho root trộn, lookup sai hoặc transaction dở dang", async () => {
+    const mixed = await createPackagedRoot({ withSidecars: true });
+    const tampered = await createActivatedRoot({
+      payloadOverrides: { "tactics.json": encodeJson([]) },
+    });
+    const interrupted = await createActivatedRoot({
+      transaction: { state: "writing" },
+    });
+
+    for (const dataRoot of [mixed, tampered.dataRoot, interrupted.dataRoot]) {
+      const result = await runCli(["version", "--data-root", dataRoot]);
+
+      expect(result.code).toBe(1);
+      expect(JSON.parse(result.stdout)).toMatchObject({
+        error: {
+          code: "DATA_UNAVAILABLE",
+          message: "Dữ liệu nghiên cứu hiện không khả dụng.",
+        },
+      });
+      expect(result.stdout).not.toContain(dataRoot);
+      expect(result.stdout).not.toContain("lookup");
     }
   });
 });
