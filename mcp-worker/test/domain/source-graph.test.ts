@@ -59,6 +59,7 @@ describe("legacy semantic source graph", () => {
       "js/match-dict.js",
       "js/roster-scan-map.js",
       "js/roster-scan-state.js",
+      "js/season-context.js",
       "js/team-recommend-engine.js",
     ]);
   });

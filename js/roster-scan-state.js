@@ -159,6 +159,9 @@ function uniqByName(items) {
 
 function normalizeLockedTeam(team) {
   return {
+    ...(typeof team?.teamId === 'string' && team.teamId ? {teamId:team.teamId} : {}),
+    ...(typeof team?.configId === 'string' && team.configId ? {configId:team.configId} : {}),
+    ...(typeof team?.seasonContext?.scenarioId === 'string' && typeof team?.seasonContext?.rulesetId === 'string' ? {seasonContext:{scenarioId:team.seasonContext.scenarioId,rulesetId:team.seasonContext.rulesetId}} : {}),
     teamName: String(team?.teamName || team?.name || "Team đã build").trim(),
     heroes: [...new Set((team?.heroes || []).map((h) => String(h).trim()).filter(Boolean))],
     tactics: [...new Set((team?.tactics || []).map((t) => String(t).trim()).filter(Boolean))],

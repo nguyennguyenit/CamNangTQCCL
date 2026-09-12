@@ -28,6 +28,34 @@ Các tab Theo dõi chiêu mộ, Soi đội từ ảnh và Gợi ý đội từ k
 - Trên mobile, `.team-filters.collapsed` ẩn nhóm sau nút `☰ Bộ lọc`; đây là inline collapse, không phải drawer/module riêng.
 - Menu section mobile do `mobile-section-menu.js` quản lý, tách khỏi filter collapse.
 
+## Tra cứu theo kịch bản
+
+Chọn kịch bản và phiên bản luật ở control dùng chung; Khai hoang giữ bản bảo trì
+mới nhất. Chỉ chọn kịch bản là đọc tham khảo, chưa đủ để gợi ý hoặc so đội theo
+luật. Phân biệt vùng áp dụng đúng luật, tham khảo cùng kịch bản và chưa rõ kịch
+bản; mỗi vùng có số lượng riêng. Phạm vi rỗng không lấy dữ liệu mùa khác thay thế.
+
+URL giữ phạm vi, search/filter và cấu hình đang mở; back/forward phải phục hồi
+đúng trạng thái. Mở lại URL chỉ có kịch bản không tự chọn luật. Đổi phạm vi giữ
+kho nhưng yêu cầu xác nhận lại và bỏ kết quả cũ. Khi bộ dữ liệu mùa không xác
+thực được, hiển thị thông báo tham khảo legacy và khóa thao tác theo mùa.
+
+Card và chi tiết thuộc đúng cấu hình; chi tiết giữ thứ tự holder, chiến pháp,
+binh thư, điều kiện và nguồn. “Điểm SGSDeck” là điểm nguồn của lựa chọn khớp,
+có thể lớn hơn 100; thiếu bằng chứng ghi “Chưa có điểm SGSDeck”. Tier legacy
+ghi “Tier lịch sử — tham khảo”, không coi là tier mùa đang chọn. Bỏ sao đánh
+giá đội; sao phẩm chất tướng vẫn có ý nghĩa riêng.
+
+Cùng Tồn giữ ghi chú nhiều dòng và các slot nguồn dưới dạng text. So kho nêu
+tài nguyên thiếu/đang khóa và điều kiện chưa xác minh; đủ tướng/chiến pháp
+không chứng minh binh thư hoặc điều kiện đặc biệt đã thỏa. Điều kiện tùy chọn
+chưa xác minh chỉ là thông tin, không được diễn đạt như điều kiện chặn bắt buộc.
+
+Control phải có focus rõ, giữ focus khi toggle filter và khi đóng chi tiết;
+chi tiết không bị header che. Nguồn hành vi nằm ở
+[state adapter](../js/season-ui-state.js), [renderer](../js/render.js) và
+[kiểm thử trình duyệt](../tests-e2e/season-lookup.spec.mjs).
+
 ## Hierarchy, màu và typography
 
 - Tiêu đề section rõ hơn subtitle; stats/filter là secondary; nội dung card là primary.

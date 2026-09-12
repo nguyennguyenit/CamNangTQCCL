@@ -1,0 +1,51 @@
+
+> tqccl-mcp-server@0.1.0 test
+> vitest run test/release/season-worker-assets.test.ts
+
+
+ RUN  v4.1.10 /Users/plateau/Project/CamNangTQCCL/mcp-worker
+
+ ❯ test/release/season-worker-assets.test.ts (3 tests | 2 failed) 17ms
+   × builds deterministic twelve-file seasonal assets and verifies their exact source evidence 7ms
+   × inventory digest supports exact v2 inventory while rejecting partial or arbitrary extensions 6ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/release/season-worker-assets.test.ts > builds deterministic twelve-file seasonal assets and verifies their exact source evidence
+WorkerAssetBuildError: Không thể build Worker static assets.
+ ❯ validateSourceRoot scripts/build-worker-assets.ts:125:11
+    123|     )
+    124|   ) {
+    125|     throw new WorkerAssetBuildError("INVALID_SOURCE_ASSET");
+       |           ^
+    126|   }
+    127| }
+ ❯ buildWorkerAssets scripts/build-worker-assets.ts:201:3
+ ❯ test/release/season-worker-assets.test.ts:28:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  test/release/season-worker-assets.test.ts > inventory digest supports exact v2 inventory while rejecting partial or arbitrary extensions
+AssertionError: promise rejected "WorkerAssetBuildError: Không thể build Wo… { code: '…' }" instead of resolving
+ ❯ test/release/season-worker-assets.test.ts:48:60
+     46|   const assets = new Map([...objects].map(([name, bytes]) => [`${name}…
+     47|   assets.set('manifest.json', new TextEncoder().encode(`${stableString…
+     48|   await expect(calculateWorkerAssetInventoryDigest(assets)).resolves.t…
+       |                                                            ^
+     49|   assets.delete('season-evidence.json');
+     50|   await expect(calculateWorkerAssetInventoryDigest(assets)).rejects.to…
+
+Caused by: WorkerAssetBuildError: Không thể build Worker static assets.
+ ❯ requireExactAssets src/release/worker-release-evidence.ts:78:11
+ ❯ calculateWorkerAssetInventoryDigest src/release/worker-release-evidence.ts:92:3
+ ❯ test/release/season-worker-assets.test.ts:48:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'INVALID_RELEASE_EVIDENCE' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  13:43:22
+   Duration  153ms (transform 56ms, setup 0ms, import 72ms, tests 17ms, environment 0ms)

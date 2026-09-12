@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "coexist-binh-dien-sheet",
+  "reviewStatus": "reviewed",
+  "groups": [
+    {
+      "recordId": "coexist-bdx-group-0fb69f7aa19a",
+      "contentFingerprint": "sha256:7d795838591e52018f9b00382d3fccace7be9a21a17f63cf034c1636c3872d5d",
+      "teams": [
+        {
+          "recordId": "coexist-bdx-team-812399d9aa5f",
+          "contentFingerprint": "sha256:28311321bc9d1d2112f08859427b6ec4282522c694360c6fc2505c621338a1c0"
+        },
+        {
+          "recordId": "coexist-bdx-team-6eb6c71f7c01",
+          "contentFingerprint": "sha256:263e00b1a20a76db08eb3dac8682a29d7cc7e62c1e48b038aa68d871b01952fb"
+        },
+        {
+          "recordId": "coexist-bdx-team-3143cd908240",
+          "contentFingerprint": "sha256:47c30003b81c993e2c32ce33d293f2f5399f1704fe826fe23bbfea4dd06664d1"
+        },
+        {
+          "recordId": "coexist-bdx-team-7f93f0abf96b",
+          "contentFingerprint": "sha256:22c27ef97f64fb888688978b21283f73746491efe1ad25d5e194cdabeb215647"
+        },
+        {
+          "recordId": "coexist-bdx-team-0ffb705acb30",
+          "contentFingerprint": "sha256:75df253a5f274e4d6edbd32c22915572fe6afed00d2d4912b095e4b20bb4f664"
+        }
+      ]
+    },
+    {
+      "recordId": "coexist-bdx-group-f2abf392d119",
+      "contentFingerprint": "sha256:c054ce80ba4437afc20a57a2039903a7cbad26c3bd87e96f43c2fbee2e14e24d",
+      "teams": [
+        {
+          "recordId": "coexist-bdx-team-42e02a0cdbf8",
+          "contentFingerprint": "sha256:38bbf9055a2148ee6ed2b1965fa262a4741fa72946279408b84c71916d825413"
+        },
+        {
+          "recordId": "coexist-bdx-team-c38baeff86ee",
+          "contentFingerprint": "sha256:6190a55264f50c2e032426886969c18d7a53705f93da2564683725d70b956a35"
+        },
+        {
+          "recordId": "coexist-bdx-team-abc3404b54b8",
+          "contentFingerprint": "sha256:1ddecaa7706499523e132ab811e04ecaebc1a590a21da0ba6198ce22f2dd148e"
+        },
+        {
+          "recordId": "coexist-bdx-team-bd7dd2caf602",
+          "contentFingerprint": "sha256:eac26824f00728c3c52d70243903f36740715babfa01fc6de620a5cdbb50cfd8"
+        },
+        {
+          "recordId": "coexist-bdx-team-e33c6a7c1f2a",
+          "contentFingerprint": "sha256:e1d75546f2faa8e705915bd9d38e8135408a392539064cbea847c8659a6be3db"
+        }
+      ]
+    },
+    {
+      "recordId": "coexist-bdx-group-ae3513c11638",
+      "contentFingerprint": "sha256:512cd378df25412227159573ddde3d8baa8b3cf0e6c9406647d9213fc39d41f0",
+      "teams": [
+        {
+          "recordId": "coexist-bdx-team-7ed160068b76",
+          "contentFingerprint": "sha256:474a564281550dd33c371f569966a28497455ccdbbe51c22aa0f827eede32836"
+        },
+        {
+          "recordId": "coexist-bdx-team-a82493b2368b",
+          "contentFingerprint": "sha256:9668fecd4050777f0cc2e61915b5278a7bca519d038d6502d5878d78177b1464"
+        },
+        {
+          "recordId": "coexist-bdx-team-dbda5f0edca7",
+          "contentFingerprint": "sha256:7910d3bd55183e1d0996957cd193d9cc6732fe9ff42f38e7d47d7bd2405c61cf"
+        },
+        {
+          "recordId": "coexist-bdx-team-67350de20f8d",
+          "contentFingerprint": "sha256:987a29c2b3426e52562f7d5621dbbfb1474baddba10feb646c360e93ca06b1ba"
+        },
+        {
+          "recordId": "coexist-bdx-team-c2a441543089",
+          "contentFingerprint": "sha256:c4517f5a06769976c9db8027115446ef3a7b31489468c56a7f5672ff061ea860"
+        }
+      ]
+    },
+    {
+      "recordId": "coexist-bdx-group-c7b4aae4a475",
+      "contentFingerprint": "sha256:c0e2dcf618368349c9660ad97c75d0a4cd532b35986b85be5956ab98e8a5cdc7",
+      "teams": [
+        {
+          "recordId": "coexist-bdx-team-771245d888b6",
+          "contentFingerprint": "sha256:46c51d2a3973ab48d075d289c01f3973dc68022644c250457ab211f9675706bf"
+        },
+        {
+          "recordId": "coexist-bdx-team-ed01d0bd3f2f",
+          "contentFingerprint": "sha256:83da2feec878c9a22956138115b18eb6d3e3c2bde7daee752baec20330a277c6"
+        },
+        {
+          "recordId": "coexist-bdx-team-f59e614967ac",
+          "contentFingerprint": "sha256:a5d62f74740004137528e5d5058ee06f853277eb89408c0a520f4789712e4367"
+        },
+        {
+          "recordId": "coexist-bdx-team-023c064a2244",
+          "contentFingerprint": "sha256:97b5659a133f554cbd4a2275fbb2177b86af92112e71b45b49cd7790448e4404"
+        },
+        {
+          "recordId": "coexist-bdx-team-3b30045c3639",
+          "contentFingerprint": "sha256:6098db96ad389ac791f0c77dddc85afb4fdffa45d1d2d963ad66974e36b4e73f"
+        }
+      ]
+    },
+    {
+      "recordId": "coexist-bdx-group-bd8b6515eab6",
+      "contentFingerprint": "sha256:7f44037ef6d656449cfee814170418ea0fbf57fcfdb3b8b4f27ceede92e790ca",
+      "teams": [
+        {
+          "recordId": "coexist-bdx-team-3addf4cb98be",
+          "contentFingerprint": "sha256:b0edfe83ab65da2e986a4c44584a38af902dbc65ab4331c785b72e123a0a7d5d"
+        },
+        {
+          "recordId": "coexist-bdx-team-3da33aede25f",
+          "contentFingerprint": "sha256:1156b98474003c21a5abc8dfdd8f640eb72ff131ddd583aae6d4120aecc85b2d"
+        },
+        {
+          "recordId": "coexist-bdx-team-c2b6bd792653",
+          "contentFingerprint": "sha256:130e32c5d5f7cf884d1a285b6127d23624e58f2643f666c22c35de45f555c264"
+        },
+        {
+          "recordId": "coexist-bdx-team-f783f33d8655",
+          "contentFingerprint": "sha256:53e3d1d7be90ac3012b9041c957b2ba5c30721e571509d2af251b0d300d81b39"
+        },
+        {
+          "recordId": "coexist-bdx-team-e583a9594edc",
+          "contentFingerprint": "sha256:1b1f9832564c4800ed862c506fc9614a8192626addce74616f1ff305739b56a0"
+        }
+      ]
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import { validateSeasonBundle } from "../../../js/season-context.js";
 import { stableStringify } from "../domain/contracts.js";
 import { canonicalDictionaryId } from "./entity-identity.js";
 
@@ -10,7 +11,14 @@ export const ARTIFACT_NAMES = [
   "books-dict",
 ] as const;
 
-export type ArtifactName = (typeof ARTIFACT_NAMES)[number];
+export const SEASON_ARTIFACT_NAMES = ["season-registry", "season-evidence", "season-team-configs", "season-team-evaluations", "season-content-links"] as const;
+export const V2_ARTIFACT_NAMES = [...ARTIFACT_NAMES, ...SEASON_ARTIFACT_NAMES] as const;
+export type ManifestVersion = 1 | 2;
+export function artifactNamesForVersion(version: ManifestVersion) {
+  return version === 1 ? ARTIFACT_NAMES : V2_ARTIFACT_NAMES;
+}
+export type ArtifactName = (typeof V2_ARTIFACT_NAMES)[number];
+export type SeasonModel = Awaited<ReturnType<typeof validateSeasonBundle>>;
 export type ArtifactRecord = Record<string, unknown>;
 export type ParsedArtifact = readonly ArtifactRecord[];
 export type ArtifactBytes = ReadonlyMap<ArtifactName, Uint8Array>;
@@ -24,12 +32,15 @@ export interface ArtifactDescriptor {
   count: number;
 }
 
-export interface DataManifest {
-  schemaVersion: 1;
+interface DataManifestBase {
   releaseId: `sha256:${string}`;
   dataVersion: `data:${string}`;
   artifacts: readonly ArtifactDescriptor[];
 }
+
+export interface DataManifestV1 extends DataManifestBase { schemaVersion: 1 }
+export interface DataManifestV2 extends DataManifestBase { schemaVersion: 2 }
+export type DataManifest = DataManifestV1 | DataManifestV2;
 
 export interface ReleasePointer {
   schemaVersion: 1;
@@ -44,6 +55,11 @@ export interface SnapshotArtifacts {
   "heroes-dict": ParsedArtifact;
   tactics: ParsedArtifact;
   "books-dict": ParsedArtifact;
+  "season-registry"?: ParsedArtifact;
+  "season-evidence"?: ParsedArtifact;
+  "season-team-configs"?: ParsedArtifact;
+  "season-team-evaluations"?: ParsedArtifact;
+  "season-content-links"?: ParsedArtifact;
 }
 
 export interface DataSnapshot {
@@ -52,6 +68,7 @@ export interface DataSnapshot {
   manifest: DataManifest;
   artifacts: SnapshotArtifacts;
   warnings: readonly string[];
+  seasonModel?: SeasonModel;
 }
 
 export class ArtifactContractError extends Error {
@@ -67,7 +84,6 @@ export class ArtifactContractError extends Error {
   }
 }
 
-const ARTIFACT_SET = new Set<string>(ARTIFACT_NAMES);
 const textDecoder = new TextDecoder("utf-8", {
   fatal: true,
   ignoreBOM: false,
@@ -202,7 +218,7 @@ function validateArtifactRecords(
           ),
         );
       });
-    } else {
+    } else if (!(SEASON_ARTIFACT_NAMES as readonly string[]).includes(name)) {
       nonEmptyString(item.viet, `${label}.viet`);
       optionalString(item.chinese, `${label}.chinese`);
       optionalString(item.hanViet, `${label}.hanViet`);
@@ -284,9 +300,10 @@ async function sha256(bytes: Uint8Array): Promise<`sha256:${string}`> {
 
 function canonicalManifestPayload(
   artifacts: readonly ArtifactDescriptor[],
+  schemaVersion: ManifestVersion,
 ): unknown {
   return {
-    schemaVersion: 1,
+    schemaVersion,
     artifacts: artifacts.map(
       ({ name, key, sha256: digest, byteLength, count }) => ({
         name,
@@ -301,13 +318,14 @@ function canonicalManifestPayload(
 
 async function manifestIdentity(
   artifacts: readonly ArtifactDescriptor[],
+  schemaVersion: ManifestVersion,
 ): Promise<{
   releaseId: DataManifest["releaseId"];
   dataVersion: DataManifest["dataVersion"];
 }> {
   const releaseId = await sha256(
     new TextEncoder().encode(
-      stableStringify(canonicalManifestPayload(artifacts)),
+      stableStringify(canonicalManifestPayload(artifacts, schemaVersion)),
     ),
   );
   return {
@@ -316,16 +334,17 @@ async function manifestIdentity(
   };
 }
 
-function requireExactArtifactBytes(objects: ArtifactBytes): void {
+function requireExactArtifactBytes(objects: ArtifactBytes, schemaVersion: ManifestVersion): void {
+  const expectedNames = artifactNamesForVersion(schemaVersion);
   const keys = [...objects.keys()] as string[];
-  const unknown = keys.find((name) => !ARTIFACT_SET.has(name));
+  const unknown = keys.find((name) => !(expectedNames as readonly string[]).includes(name));
   if (unknown) {
     throw new ArtifactContractError(
       "INVALID_MANIFEST",
       `unknown artifact: ${unknown}`,
     );
   }
-  const missing = ARTIFACT_NAMES.find((name) => !objects.has(name));
+  const missing = expectedNames.find((name) => !objects.has(name));
   if (missing) {
     throw new ArtifactContractError(
       "INVALID_MANIFEST",
@@ -337,9 +356,10 @@ function requireExactArtifactBytes(objects: ArtifactBytes): void {
 export async function createDataManifest(
   objects: ArtifactBytes,
 ): Promise<DataManifest> {
-  requireExactArtifactBytes(objects);
+  const schemaVersion = SEASON_ARTIFACT_NAMES.some(name => objects.has(name)) ? 2 : 1;
+  requireExactArtifactBytes(objects, schemaVersion);
   const artifacts = await Promise.all(
-    ARTIFACT_NAMES.map(async (name): Promise<ArtifactDescriptor> => {
+    artifactNamesForVersion(schemaVersion).map(async (name): Promise<ArtifactDescriptor> => {
       const bytes = objects.get(name)!;
       const parsed = parseArtifact(name, bytes);
       return {
@@ -351,9 +371,9 @@ export async function createDataManifest(
       };
     }),
   );
-  const identity = await manifestIdentity(artifacts);
+  const identity = await manifestIdentity(artifacts, schemaVersion);
   return {
-    schemaVersion: 1,
+    schemaVersion,
     ...identity,
     artifacts,
   };
@@ -381,12 +401,14 @@ function manifestString(value: unknown, label: string): string {
 
 export async function validateManifest(value: unknown): Promise<DataManifest> {
   const input = manifestRecord(value);
-  if (input.schemaVersion !== 1) {
+  if (input.schemaVersion !== 1 && input.schemaVersion !== 2) {
     throw new ArtifactContractError(
       "INVALID_MANIFEST",
-      "manifest schemaVersion must be 1",
+      "manifest schemaVersion must be 1 or 2",
     );
   }
+  const schemaVersion = input.schemaVersion;
+  const expectedNames = artifactNamesForVersion(schemaVersion);
   if (!Array.isArray(input.artifacts)) {
     throw new ArtifactContractError(
       "INVALID_MANIFEST",
@@ -400,7 +422,7 @@ export async function validateManifest(value: unknown): Promise<DataManifest> {
       descriptor.name,
       `manifest artifacts[${index}].name`,
     );
-    if (!ARTIFACT_SET.has(name)) {
+    if (!(expectedNames as readonly string[]).includes(name)) {
       throw new ArtifactContractError(
         "INVALID_MANIFEST",
         `unknown artifact: ${name}`,
@@ -455,7 +477,7 @@ export async function validateManifest(value: unknown): Promise<DataManifest> {
       count: descriptor.count as number,
     };
   });
-  const missing = ARTIFACT_NAMES.find((name) => !seen.has(name));
+  const missing = expectedNames.find((name) => !seen.has(name));
   if (missing) {
     throw new ArtifactContractError(
       "INVALID_MANIFEST",
@@ -463,8 +485,8 @@ export async function validateManifest(value: unknown): Promise<DataManifest> {
     );
   }
   const byName = new Map(descriptors.map((item) => [item.name, item]));
-  const artifacts = ARTIFACT_NAMES.map((name) => byName.get(name)!);
-  const expected = await manifestIdentity(artifacts);
+  const artifacts = expectedNames.map((name) => byName.get(name)!);
+  const expected = await manifestIdentity(artifacts, schemaVersion);
   const releaseId = manifestString(input.releaseId, "manifest releaseId");
   const dataVersion = manifestString(input.dataVersion, "manifest dataVersion");
   if (
@@ -477,7 +499,7 @@ export async function validateManifest(value: unknown): Promise<DataManifest> {
     );
   }
   return {
-    schemaVersion: 1,
+    schemaVersion,
     releaseId: releaseId as DataManifest["releaseId"],
     dataVersion: dataVersion as DataManifest["dataVersion"],
     artifacts,
@@ -501,7 +523,7 @@ export async function validateDataSnapshot(
   objects: ArtifactBytes,
 ): Promise<DataSnapshot> {
   const manifest = await validateManifest(manifestValue);
-  requireExactArtifactBytes(objects);
+  requireExactArtifactBytes(objects, manifest.schemaVersion);
   const parsedEntries = await Promise.all(
     manifest.artifacts.map(async (descriptor) => {
       const bytes = objects.get(descriptor.name)!;
@@ -525,11 +547,30 @@ export async function validateDataSnapshot(
     }),
   );
   const artifacts = Object.fromEntries(parsedEntries) as unknown as SnapshotArtifacts;
+  let seasonModel: SeasonModel | undefined;
+  if (manifest.schemaVersion === 2) {
+    try {
+      const { "team-tier": _tiers, ...bundle } = artifacts;
+      seasonModel = await validateSeasonBundle(bundle);
+      for (const link of artifacts["season-content-links"] ?? []) {
+        const target = link.target as ArtifactRecord;
+        if (target.type === "source-owned-coexist") {
+          const payload = target.payload as ArtifactRecord;
+          if ((payload.teams as unknown[]).length > 10) {
+            throw new ArtifactContractError("INVALID_ARTIFACT", "source group exceeds the MCP team limit");
+          }
+        }
+      }
+    } catch {
+      throw new ArtifactContractError("INVALID_ARTIFACT", "seasonal artifact contracts are invalid");
+    }
+  }
   return {
     releaseId: manifest.releaseId,
     dataVersion: manifest.dataVersion,
     manifest,
     artifacts,
     warnings: validateCrossReferences(artifacts),
+    ...(seasonModel === undefined ? {} : { seasonModel }),
   };
 }

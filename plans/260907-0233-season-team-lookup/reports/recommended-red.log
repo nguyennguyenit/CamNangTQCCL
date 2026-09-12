@@ -1,0 +1,150 @@
+test_detail_keeps_holder_tactics_books_and_source_conditions (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_detail_keeps_holder_tactics_books_and_source_conditions) ... FAIL
+test_duplicate_list_identity_is_rejected (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_duplicate_list_identity_is_rejected) ... FAIL
+test_incomplete_detail_or_wrong_canonical_url_is_rejected (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_incomplete_detail_or_wrong_canonical_url_is_rejected) ...
+  test_incomplete_detail_or_wrong_canonical_url_is_rejected (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_incomplete_detail_or_wrong_canonical_url_is_rejected) (html='<div hidden=""><!--$?--><template id="B:0"></templ') ... FAIL
+  test_incomplete_detail_or_wrong_canonical_url_is_rejected (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_incomplete_detail_or_wrong_canonical_url_is_rejected) (html='<div hidden=""><!--$?--><template id="B:0"></templ') ... FAIL
+test_list_count_drift_and_login_html_are_rejected (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_list_count_drift_and_login_html_are_rejected) ...
+  test_list_count_drift_and_login_html_are_rejected (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_list_count_drift_and_login_html_are_rejected) (html='<div hidden=""><!--$--><!--/$--></div><div class="') ... FAIL
+  test_list_count_drift_and_login_html_are_rejected (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_list_count_drift_and_login_html_are_rejected) (html='<h1>登入</h1>') ... FAIL
+test_matching_list_detail_is_required_for_score_evidence (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_matching_list_detail_is_required_for_score_evidence) ... FAIL
+test_missing_score_is_null_not_zero (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_missing_score_is_null_not_zero) ... ok
+test_offline_cache_checksums_and_failed_publish_preserve_evidence (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_offline_cache_checksums_and_failed_publish_preserve_evidence) ... FAIL
+test_pinned_list_keeps_all_25_source_scores_without_vn_mapping (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_pinned_list_keeps_all_25_source_scores_without_vn_mapping) ... ok
+test_urls_cannot_leave_recommended_public_scope (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_urls_cannot_leave_recommended_public_scope) ...
+  test_urls_cannot_leave_recommended_public_scope (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_urls_cannot_leave_recommended_public_scope) (url='https://evil.test/recommended') ... FAIL
+  test_urls_cannot_leave_recommended_public_scope (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_urls_cannot_leave_recommended_public_scope) (url='http://sgsdeck.com/recommended') ... FAIL
+  test_urls_cannot_leave_recommended_public_scope (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_urls_cannot_leave_recommended_public_scope) (url='https://sgsdeck.com/login') ... FAIL
+  test_urls_cannot_leave_recommended_public_scope (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_urls_cannot_leave_recommended_public_scope) (url='https://user@sgsdeck.com/recommended') ... FAIL
+  test_urls_cannot_leave_recommended_public_scope (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_urls_cannot_leave_recommended_public_scope) (url='https://sgsdeck.com/recommended/../login') ... FAIL
+  test_urls_cannot_leave_recommended_public_scope (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_urls_cannot_leave_recommended_public_scope) (url='https://sgsdeck.com/recommended?token=secret') ... FAIL
+
+======================================================================
+FAIL: test_detail_keeps_holder_tactics_books_and_source_conditions (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_detail_keeps_holder_tactics_books_and_source_conditions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/plateau/Project/CamNangTQCCL/tests/test_sgsdeck_recommended.py", line 28, in test_detail_keeps_holder_tactics_books_and_source_conditions
+    self.assertEqual(result["value"], 113)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: None != 113
+
+======================================================================
+FAIL: test_duplicate_list_identity_is_rejected (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_duplicate_list_identity_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/plateau/Project/CamNangTQCCL/tests/test_sgsdeck_recommended.py", line 40, in test_duplicate_list_identity_is_rejected
+    with self.assertRaises(ValueError):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_incomplete_detail_or_wrong_canonical_url_is_rejected (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_incomplete_detail_or_wrong_canonical_url_is_rejected) (html='<div hidden=""><!--$?--><template id="B:0"></templ')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/plateau/Project/CamNangTQCCL/tests/test_sgsdeck_recommended.py", line 50, in test_incomplete_detail_or_wrong_canonical_url_is_rejected
+    with self.subTest(html=html[:50]), self.assertRaises(ValueError):
+                                       ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_incomplete_detail_or_wrong_canonical_url_is_rejected (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_incomplete_detail_or_wrong_canonical_url_is_rejected) (html='<div hidden=""><!--$?--><template id="B:0"></templ')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/plateau/Project/CamNangTQCCL/tests/test_sgsdeck_recommended.py", line 50, in test_incomplete_detail_or_wrong_canonical_url_is_rejected
+    with self.subTest(html=html[:50]), self.assertRaises(ValueError):
+                                       ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_list_count_drift_and_login_html_are_rejected (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_list_count_drift_and_login_html_are_rejected) (html='<div hidden=""><!--$--><!--/$--></div><div class="')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/plateau/Project/CamNangTQCCL/tests/test_sgsdeck_recommended.py", line 45, in test_list_count_drift_and_login_html_are_rejected
+    with self.subTest(html=html[:50]), self.assertRaises(ValueError):
+                                       ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_list_count_drift_and_login_html_are_rejected (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_list_count_drift_and_login_html_are_rejected) (html='<h1>登入</h1>')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/plateau/Project/CamNangTQCCL/tests/test_sgsdeck_recommended.py", line 45, in test_list_count_drift_and_login_html_are_rejected
+    with self.subTest(html=html[:50]), self.assertRaises(ValueError):
+                                       ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_matching_list_detail_is_required_for_score_evidence (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_matching_list_detail_is_required_for_score_evidence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/plateau/Project/CamNangTQCCL/tests/test_sgsdeck_recommended.py", line 65, in test_matching_list_detail_is_required_for_score_evidence
+    self.assertEqual(accepted["records"][0]["value"], 113)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: None != 113
+
+======================================================================
+FAIL: test_offline_cache_checksums_and_failed_publish_preserve_evidence (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_offline_cache_checksums_and_failed_publish_preserve_evidence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/plateau/Project/CamNangTQCCL/tests/test_sgsdeck_recommended.py", line 87, in test_offline_cache_checksums_and_failed_publish_preserve_evidence
+    with self.assertRaises(ValueError):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_urls_cannot_leave_recommended_public_scope (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_urls_cannot_leave_recommended_public_scope) (url='https://evil.test/recommended')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/plateau/Project/CamNangTQCCL/tests/test_sgsdeck_recommended.py", line 55, in test_urls_cannot_leave_recommended_public_scope
+    with self.subTest(url=url), self.assertRaises(ValueError):
+                                ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_urls_cannot_leave_recommended_public_scope (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_urls_cannot_leave_recommended_public_scope) (url='http://sgsdeck.com/recommended')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/plateau/Project/CamNangTQCCL/tests/test_sgsdeck_recommended.py", line 55, in test_urls_cannot_leave_recommended_public_scope
+    with self.subTest(url=url), self.assertRaises(ValueError):
+                                ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_urls_cannot_leave_recommended_public_scope (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_urls_cannot_leave_recommended_public_scope) (url='https://sgsdeck.com/login')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/plateau/Project/CamNangTQCCL/tests/test_sgsdeck_recommended.py", line 55, in test_urls_cannot_leave_recommended_public_scope
+    with self.subTest(url=url), self.assertRaises(ValueError):
+                                ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_urls_cannot_leave_recommended_public_scope (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_urls_cannot_leave_recommended_public_scope) (url='https://user@sgsdeck.com/recommended')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/plateau/Project/CamNangTQCCL/tests/test_sgsdeck_recommended.py", line 55, in test_urls_cannot_leave_recommended_public_scope
+    with self.subTest(url=url), self.assertRaises(ValueError):
+                                ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_urls_cannot_leave_recommended_public_scope (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_urls_cannot_leave_recommended_public_scope) (url='https://sgsdeck.com/recommended/../login')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/plateau/Project/CamNangTQCCL/tests/test_sgsdeck_recommended.py", line 55, in test_urls_cannot_leave_recommended_public_scope
+    with self.subTest(url=url), self.assertRaises(ValueError):
+                                ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_urls_cannot_leave_recommended_public_scope (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_urls_cannot_leave_recommended_public_scope) (url='https://sgsdeck.com/recommended?token=secret')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/plateau/Project/CamNangTQCCL/tests/test_sgsdeck_recommended.py", line 55, in test_urls_cannot_leave_recommended_public_scope
+    with self.subTest(url=url), self.assertRaises(ValueError):
+                                ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.025s
+
+FAILED (failures=14)

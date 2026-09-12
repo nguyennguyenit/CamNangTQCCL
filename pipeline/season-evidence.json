@@ -1,0 +1,41 @@
+[
+  {
+    "canonicalRef": null,
+    "claim": {
+      "kind": "scenario-attribution",
+      "rulesetId": null,
+      "scenarioId": "binh-dien-xuan-thu"
+    },
+    "id": "coexist-binh-dien-scenario-confirmation",
+    "note": "Người dùng xác nhận sheet gid=190730430 thuộc Binh Diễn Xuân Thu ngày 2026-09-07. Đây là xác nhận kịch bản của nguồn, không phải bằng chứng phiên bản luật từ CSV.",
+    "provenance": {
+      "fetchedAt": "2026-09-07",
+      "provider": "google-sheets",
+      "region": "VN",
+      "sourceUrl": "https://docs.google.com/spreadsheets/d/1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw/edit?gid=190730430#gid=190730430"
+    },
+    "reviewStatus": "reviewed",
+    "schemaVersion": 1,
+    "sourceSeason": null
+  },
+  {
+    "canonicalRef": null,
+    "claim": {
+      "kind": "source-observation",
+      "rulesetId": null,
+      "scenarioId": null
+    },
+    "id": "coexist-binh-dien-source-snapshot",
+    "note": "Snapshot CSV kiểm chứng ngày 2026-09-07: 94 records, 220 dòng vật lý, 10 cột, 5 nhóm, 25 đội, 75 vị trí tướng. Nguồn không xác lập ruleset hay số mùa; dữ liệu Cùng Tồn cũ vẫn chưa rõ kịch bản và luật.",
+    "provenance": {
+      "fetchedAt": "2026-09-07",
+      "provider": "google-sheets",
+      "region": "VN",
+      "sourceUrl": "https://docs.google.com/spreadsheets/d/1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw/edit?gid=190730430#gid=190730430"
+    },
+    "reviewStatus": "reviewed",
+    "schemaVersion": 1,
+    "snapshotHash": "sha256:838c9b639d42aef67d270a8813edd13bf0b364efaa85ae80e1fa8efda9b829bb",
+    "sourceSeason": null
+  }
+]

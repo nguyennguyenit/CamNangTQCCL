@@ -15,9 +15,54 @@
 
 Dịch vụ không nhận ảnh, không crawl, không ghi dữ liệu game và không sở hữu GoClaw/Dewee hay skill của consumer. Tool error dùng mã/message/next-action cố định, không phản chiếu exception, input, path, credential hoặc upstream body.
 
-Corpus team công khai loại source `do-uy`. Artifact hiện tại đã bỏ 48 team từng công khai; handler còn lọc lại snapshot trước khi dựng index và gọi match/recommend để snapshot cũ không tái xuất hiện qua bất kỳ transport nào.
+Corpus công khai loại source `do-uy`. [Public snapshot view](../mcp-worker/src/data/public-snapshot-view.ts)
+còn loại các cấu hình, evaluation, liên kết và bằng chứng chỉ thuộc phần bị ẩn
+trước khi index/projector chạy, để snapshot cũ không tái công khai dữ liệu đó.
+Bằng chứng dùng chung với record còn hiển thị được giữ; identity raw release
+không đổi vì bước lọc public.
 
-`releaseId` là SHA-256 đầy đủ của canonical manifest sáu artifact. `dataVersion` rút gọn chỉ dùng hiển thị. `workflowVersion` ghép `releaseId` với `workflowBuildId`; binding hoặc cursor cũ bị từ chối khi một identity đổi.
+`releaseId` là SHA-256 đầy đủ của canonical manifest theo version. `dataVersion` rút gọn chỉ dùng hiển thị. `workflowVersion` ghép `releaseId` với `workflowBuildId`; binding hoặc cursor cũ bị từ chối khi một identity đổi.
+
+## Consumer theo kịch bản
+
+Gọi `tqccl_get_data_version` để đọc `manifestVersion`, capability và registry
+đã review. Các tool còn lại nhận `seasonContext` tùy chọn, nhưng khi có phải là
+cặp `scenarioId`/`rulesetId` đã review. Scenario-only là chế độ đọc của website;
+MCP không bỏ scope thiếu/sai rồi chạy legacy. Snapshot v1 không hỗ trợ seasonal
+request. Dữ liệu hiện chưa có cặp luật VN đã review; xem
+[phạm vi dữ liệu](season-team-data.md).
+
+Tám tên tool và input bắt buộc cũ giữ nguyên. Đây vẫn là migration output:
+client dùng schema output v1 strict phải refresh tool discovery/schema trước
+khi nhận output mới. Input không có context giữ nhánh legacy; không tự thêm
+source-owned reference mới vào kết quả legacy.
+
+Context tham gia confirmation và cursor cùng data/workflow identity. Đổi
+scope hoặc canonical state cần normalize/review/xác nhận lại; không dùng
+binding legacy cho request theo mùa. Search trả `configId` để mở đúng cấu hình.
+Detail/replacement thiếu selector chỉ resolve khi có đúng một cấu hình hợp lệ;
+khi chiến pháp trùng nhiều vị trí, caller phải chọn holder/slot hợp lệ.
+
+- `CONFIG_AMBIGUOUS` trả tối đa 20 ID đã validate cùng tổng số và số bị lược;
+  dùng search đúng context và cursor để tìm phần còn lại, rồi gửi `configId`.
+- `CANDIDATE_LIMIT_EXCEEDED` trả giới hạn 500 và số cấu hình thực sau lọc
+  scope/review/điều kiện/tier. Lỗi không retryable và không có portfolio một phần;
+  giảm số đội output không giải quyết giới hạn đầu vào này.
+
+Điểm SGSDeck giữ điểm gốc của đúng config/context/lựa chọn; không thay điểm
+nội bộ của engine. Phương án thay thế không thừa hưởng điểm nguồn. Điều kiện
+bắt buộc chưa được kho hỗ trợ vẫn chặn cấu hình có thể gợi ý, kể cả khi bật đội
+chưa có tier. Schema và selector/error bounds thuộc
+[research contracts](../mcp-worker/src/research/research-contracts.ts).
+
+Cùng Tồn theo mùa phân biệt áp dụng đúng luật với tham khảo cùng kịch bản;
+không trả legacy unknown hay kịch bản khác. Đây là nội dung untrusted, chưa
+được engine chấm. [Projection](../mcp-worker/src/domain/season-reference-projection.ts)
+giữ thứ tự slot, ID, nguồn và summary; giới hạn 50 nhóm, 10 đội/nhóm và 64 KiB
+mỗi tool result. Bộ nguồn 5 nhóm/25 đội/75 vị trí đã có kiểm chứng projection
+trong [bounds tests](../mcp-worker/test/research/season-bounds.test.ts), nhưng không
+bảo đảm mọi response đều giữ đủ chi tiết: text/detail có thể rút với cờ
+truncation, summary-only và omitted counts. Website vẫn là nơi đọc nguồn đầy đủ.
 
 ## Chạy local
 
@@ -59,7 +104,14 @@ Observation và corpus là dữ liệu không tin cậy. Consumer phải normali
 
 ## Worker Static Assets
 
-Production dùng một private Worker Static Assets collection có binding `ASSETS`, `run_worker_first: true`, gồm đúng `manifest.json` và sáu JSON canonical. `StaticAssetsDataSource` chỉ gọi bảy path allowlist qua binding, validate bytes/hash/cross-reference rồi cache một snapshot immutable trong suốt isolate. CLI/stdio tiếp tục dùng `FilesystemDataSource` với cùng validator và semantic contract.
+Worker dùng một private Static Assets collection có binding `ASSETS`,
+`run_worker_first: true`. Inventory chính xác thuộc
+[artifact contracts](../mcp-worker/src/data/artifact-contracts.ts): manifest v1
+có sáu JSON legacy cộng `manifest.json` (bảy file); v2 có thêm đủ năm sidecar
+mùa, thành 11 JSON cộng manifest (12 file). Không chấp nhận bộ sidecar một phần.
+V1 giữ nguyên thuật toán identity và fixture lịch sử. `StaticAssetsDataSource`
+chọn allowlist từ manifest rồi validate bytes/hash/cross-reference trước khi
+cache snapshot immutable; filesystem dùng cùng validator.
 
 Mỗi Worker version chứa cả code và data nên promotion/rollback là nguyên tử. Không cần storage release rời. Nhịp vận hành mặc định là một release theo mùa, khoảng ba tháng: curate data diff, review, build deterministic bundle, chạy full gate rồi phát hành exact Worker version. GoClaw URL, bearer và tám tool không đổi khi chỉ cập nhật dữ liệu mùa.
 
@@ -73,6 +125,14 @@ npm run check:repository
 ```
 
 Bundle chỉ hợp lệ khi evidence khớp commit, Git tree, `releaseId`, manifest digest, asset inventory digest và `workflowBuildId`. Builder từ chối source dirty, symlink, file thừa, bytes/schema sai và source identity thay đổi giữa hai lần đọc.
+
+[Builder](../mcp-worker/scripts/build-worker-assets.ts) nhận diện riêng thư mục
+private tùy chọn `data/sgsdeck/`: phải là thư mục thật, không phải symlink và
+nằm trực tiếp trong data root. Builder loại nó khỏi inventory, không duyệt,
+đọc hoặc copy nội dung con. Ngoại lệ này không nới kiểm sạch Git, không đưa
+catalog private vào Worker assets/public routes và không cho phép thư mục lạ.
+`SOURCE_NOT_CLEAN` yêu cầu xử lý checkout/release scope trước khi build; không
+tạo asset giả hoặc bỏ guard để chạy dry-run.
 
 ## Production release
 

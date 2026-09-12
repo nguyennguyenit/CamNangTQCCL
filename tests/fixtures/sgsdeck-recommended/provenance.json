@@ -1,0 +1,21 @@
+{
+  "note": "Actual rendered streaming chunks; scripts, layout skeleton, navigation, footer and decorative SVG omitted. Original source hashes recorded, not fixture hashes.",
+  "sources": [
+    {
+      "key": "list",
+      "url": "https://sgsdeck.com/recommended",
+      "path": "list.html",
+      "sha256": "3316ca6cd031df133724d5f833edb37a86f2f1b30a4784155688386aa31b8880",
+      "fetchedAt": "2026-09-12T06:07:25.799676+00:00",
+      "bytes": 146077
+    },
+    {
+      "key": "detail-sample",
+      "url": "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-b",
+      "path": "detail-sample.html",
+      "sha256": "b78f04e704a65a2aa99fac4748b65b2d19ec6158f27ec7f3a1f06af0b6b03d59",
+      "fetchedAt": "2026-09-12T06:07:26.275373+00:00",
+      "bytes": 79174
+    }
+  ]
+}

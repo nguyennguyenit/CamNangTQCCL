@@ -1,0 +1,1622 @@
+[
+  {
+    "configIds": [],
+    "evidenceRefs": [
+      "coexist-binh-dien-scenario-confirmation",
+      "coexist-binh-dien-source-snapshot"
+    ],
+    "id": "link:coexist-bdx-group-0fb69f7aa19a",
+    "kind": "coexist",
+    "recordId": "coexist-bdx-group-0fb69f7aa19a",
+    "reviewStatus": "reviewed",
+    "rulesetId": null,
+    "scenarioId": "binh-dien-xuan-thu",
+    "schemaVersion": 1,
+    "target": {
+      "contentFingerprint": "sha256:7d795838591e52018f9b00382d3fccace7be9a21a17f63cf034c1636c3872d5d",
+      "payload": {
+        "groupLabel": "Cùng tồn 1",
+        "notesRaw": "Ghi chú\nTiến cử chủ lực\nHoàng Mã Thương\n40 Lữ Điêu Lô\nTinh Thái Pháp Quan Khiên",
+        "openingSuggestionsRaw": "[Pháp Mã Khác]\nPháp Chính\nSP Mã Siêu\nGia Cát Khác\n\n[Nguyệt Anh Mã Khác]\nSP Hoàng Nguyệt Anh\nSP Mã Siêu\nGia Cát Khác\n\n[Lô Trực Cung]\nSP Lô Trực\nVương Bình\nTrần Cung",
+        "summaryRaw": "40 Lữ Điêu Lô, Hoàng Mã Thương, Pháp Quan Khiên, Ngũ Mưu Kỵ, Ngô Kỵ",
+        "teams": [
+          {
+            "contentFingerprint": "sha256:28311321bc9d1d2112f08859427b6ec4282522c694360c6fc2505c621338a1c0",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Tấn Công Điểm Yếu",
+                  "Tốc Chiến",
+                  "Khép Hờ"
+                ],
+                "nameRaw": "SP Mã Siêu",
+                "statFocusRaw": "Võ Lực",
+                "tacticSlotsRaw": [
+                  "Đương Phong Thôi Quyết",
+                  "Thôi Phong Đoạn Nhẫn"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Đánh Sau Trúng Trước",
+                  "Diệu Toán",
+                  "Xem Bói"
+                ],
+                "nameRaw": "SP Hoàng Phổ Tung",
+                "statFocusRaw": "Thống Soái",
+                "tacticSlotsRaw": [
+                  "Thuyền Cỏ Mượn Tên",
+                  "Uy Mưu Vô Địch"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Yêu Lính Thương Dân",
+                  "Thế Phòng Thủ",
+                  "Phòng Bị"
+                ],
+                "nameRaw": "Hứa Du\n(Thương S)",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Lâm Nguy Cứu Chủ",
+                  "Tinh·Giải Phiền Vệ"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-812399d9aa5f",
+            "sourceLocator": {
+              "csvRecordEnd": 8,
+              "csvRecordStart": 6,
+              "lineEnd": 23,
+              "lineStart": 6
+            },
+            "teamName": "Hoàng Mã Thương",
+            "teamNameRaw": "Hoàng Mã Thương\n19C",
+            "unitTacticEffectsRaw": "[Tinh Nghiên] + [Võ Khôi] + [Cứu Viện] + [Quân Tâm]"
+          },
+          {
+            "contentFingerprint": "sha256:263e00b1a20a76db08eb3dac8682a29d7cc7e62c1e48b038aa68d871b01952fb",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Thắng Càng Mạnh",
+                  "Cầm Binh Khí",
+                  "Võ Lược"
+                ],
+                "nameRaw": "Lữ Bố 40th",
+                "statFocusRaw": "Võ Lực",
+                "tacticSlotsRaw": [
+                  "Huyết Đao Tranh Giành",
+                  "Dẫn Huyền Lực Chiến"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Cửu Chiến",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "SP Lô Trực",
+                "statFocusRaw": "Thống Soái",
+                "tacticSlotsRaw": [
+                  "Tinh·Tử Sĩ Tiên Phong",
+                  "Nhạn Hành Trận"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Cửu Chiến",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "SP Điêu Thuyền",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Thâm Tàng Nhược Hư",
+                  "Cương Nhu Kết Hợp"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-6eb6c71f7c01",
+            "sourceLocator": {
+              "csvRecordEnd": 11,
+              "csvRecordStart": 9,
+              "lineEnd": 27,
+              "lineStart": 24
+            },
+            "teamName": "40 Lữ Điêu Lô",
+            "teamNameRaw": "40 Lữ Điêu Lô\n19C",
+            "unitTacticEffectsRaw": "[Kháng Cự] + [Ức Thế] + [Đoạt Chí] + [Cộng Dồn]"
+          },
+          {
+            "contentFingerprint": "sha256:47c30003b81c993e2c32ce33d293f2f5399f1704fe826fe23bbfea4dd06664d1",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Chia Nhỏ Đánh Nhanh",
+                  "Trăm Trận",
+                  "Khép Hờ"
+                ],
+                "nameRaw": "SP Quan Vũ\n(Khiên S)",
+                "statFocusRaw": "Võ Lực",
+                "tacticSlotsRaw": [
+                  "Lấy Ít Đánh Nhiều",
+                  "Kích Kỳ Nọa Quy/\nGió Táp Mưa Sa"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Dẫn Quân",
+                  "Rèn Luyện"
+                ],
+                "nameRaw": "SP Pháp Chính",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Dưỡng Sức Đợi Chiến",
+                  "Không Đánh Mà Thắng"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Dẫn Quân",
+                  "Rèn Luyện"
+                ],
+                "nameRaw": "CO Tinh Thái",
+                "statFocusRaw": "Thống Soái",
+                "tacticSlotsRaw": [
+                  "Tinh·Lính Đan Dương",
+                  "Mê Hoặc"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-3143cd908240",
+            "sourceLocator": {
+              "csvRecordEnd": 14,
+              "csvRecordStart": 12,
+              "lineEnd": 33,
+              "lineStart": 28
+            },
+            "teamName": "Tinh Thái Pháp Quan Khiên",
+            "teamNameRaw": "Tinh Thái Pháp Quan Khiên\n19C",
+            "unitTacticEffectsRaw": "[Kháng Cự] + [Cường Thân] + [Chỉnh Quân] + [Mộ Quân]"
+          },
+          {
+            "contentFingerprint": "sha256:22c27ef97f64fb888688978b21283f73746491efe1ad25d5e194cdabeb215647",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Dẫn Quân",
+                  "Rèn Luyện"
+                ],
+                "nameRaw": "SP Tuân Úc",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Tinh·Phi Hùng Quân",
+                  "Cắt Xương Trị Độc"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Lấy Võ Dẹp Loạn",
+                  "Quỷ Mưu",
+                  "Tướng Uy"
+                ],
+                "nameRaw": "SP Quách Gia",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Đoạt Hồn Hiệp Phách",
+                  "Thượng Binh Phạt Mưu"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Dẫn Quân",
+                  "Rèn Luyện"
+                ],
+                "nameRaw": "Giả Hủ",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Nhanh Trí Động Não",
+                  "Đồng Lòng Hợp Sức"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-7f93f0abf96b",
+            "sourceLocator": {
+              "csvRecordEnd": 17,
+              "csvRecordStart": 15,
+              "lineEnd": 40,
+              "lineStart": 34
+            },
+            "teamName": "Ngũ Mưu Kỵ",
+            "teamNameRaw": "Ngũ Mưu Kỵ\n20C",
+            "unitTacticEffectsRaw": "[Tập Trí] + [Phá Địch] + [Phò Thương] + [Quần Lực]"
+          },
+          {
+            "contentFingerprint": "sha256:75df253a5f274e4d6edbd32c22915572fe6afed00d2d4912b095e4b20bb4f664",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Biết Cách Phòng Thủ",
+                  "Thế Phòng Thủ",
+                  "Phòng Bị"
+                ],
+                "nameRaw": "Chu Thái",
+                "statFocusRaw": "Thống Soái",
+                "tacticSlotsRaw": [
+                  "Thịnh Khí Linh Địch",
+                  "Tây Lương Thiết Kỵ"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Thắng Càng Mạnh",
+                  "Thắng Trận",
+                  "Cầm Binh Khí/Giấu Đao"
+                ],
+                "nameRaw": "Tôn Thượng Hương",
+                "statFocusRaw": "Võ Lực, Tốc 1",
+                "tacticSlotsRaw": [
+                  "Lõa Y Huyết Chiến",
+                  "Hổ Cứ Ưng Dương/\nBách Kỵ Kiếp Doanh"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Thắng Càng Mạnh",
+                  "Thắng Trận",
+                  "Cầm Binh Khí"
+                ],
+                "nameRaw": "Lăng Thống",
+                "statFocusRaw": "Võ Lực, Tốc 2",
+                "tacticSlotsRaw": [
+                  "Phá Quân Uy Thắng",
+                  "Nằm Gai Nếm Mật/\nTị Thực Kích Hư"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-0ffb705acb30",
+            "sourceLocator": {
+              "csvRecordEnd": 20,
+              "csvRecordStart": 18,
+              "lineEnd": 46,
+              "lineStart": 41
+            },
+            "teamName": "Ngô Kỵ",
+            "teamNameRaw": "Ngô Kỵ\n19C",
+            "unitTacticEffectsRaw": ""
+          }
+        ]
+      },
+      "source": {
+        "disclaimerRaw": "Đội hình tiến cử cùng tồn tại chỉ mang tính chất tham khảo, xin Chủ Công vui lòng dựa vào môi trường thực tế trong khu vực thi đấu để Phối Tướng, chọn Chiến Pháp và trình tự đội hình cụ thể",
+        "format": "csv",
+        "gid": "190730430",
+        "id": "coexist-binh-dien-sheet",
+        "sheetId": "1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw",
+        "snapshotHash": "sha256:838c9b639d42aef67d270a8813edd13bf0b364efaa85ae80e1fa8efda9b829bb",
+        "url": "https://docs.google.com/spreadsheets/d/1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw/edit?gid=190730430#gid=190730430"
+      },
+      "type": "source-owned-coexist"
+    }
+  },
+  {
+    "configIds": [],
+    "evidenceRefs": [
+      "coexist-binh-dien-scenario-confirmation",
+      "coexist-binh-dien-source-snapshot"
+    ],
+    "id": "link:coexist-bdx-group-f2abf392d119",
+    "kind": "coexist",
+    "recordId": "coexist-bdx-group-f2abf392d119",
+    "reviewStatus": "reviewed",
+    "rulesetId": null,
+    "scenarioId": "binh-dien-xuan-thu",
+    "schemaVersion": 1,
+    "target": {
+      "contentFingerprint": "sha256:c054ce80ba4437afc20a57a2039903a7cbad26c3bd87e96f43c2fbee2e14e24d",
+      "payload": {
+        "groupLabel": "Cùng tồn 2",
+        "notesRaw": "Ghi chú\nTiến cử chủ lực\nThái Sư Cung\nNgô Nữ Kỵ\nPháp Quan Khiên",
+        "openingSuggestionsRaw": "[Pháp Mã Khác]\nPháp Chính\nSP Mã Siêu\nGia Cát Khác\n\n[Nguyệt Anh Mã Khác]\nSP Hoàng Nguyệt Anh\nSP Mã Siêu\nGia Cát Khác\n\n[Lô Trực Cung]\nSP Lô Trực\nVương Bình\nTrần Cung",
+        "summaryRaw": "Thái Sư Cung, Ngô Nữ Kỵ, Pháp Quan Khiên, Đô Đốc Cung, Trương Quan Hoàng ",
+        "teams": [
+          {
+            "contentFingerprint": "sha256:38bbf9055a2148ee6ed2b1965fa262a4741fa72946279408b84c71916d825413",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Cửu Chiến",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "SPĐổng Trác",
+                "statFocusRaw": "Thống Soái",
+                "tacticSlotsRaw": [
+                  "Chuyển·Phi Hùng Quân",
+                  "Thượng Binh Phạt Mưu"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Cửu Chiến",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "SP Lô Trực",
+                "statFocusRaw": "Thống Soái",
+                "tacticSlotsRaw": [
+                  "Cương Nhu Kết Hợp",
+                  "Nhạn Hành Trận"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Cửu Chiến",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "SP Điêu Thuyền",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Thâm Tàng Nhược Hư",
+                  "Đồng Lòng Hợp Sức"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-42e02a0cdbf8",
+            "sourceLocator": {
+              "csvRecordEnd": 27,
+              "csvRecordStart": 25,
+              "lineEnd": 67,
+              "lineStart": 51
+            },
+            "teamName": "Thái Sư Cung",
+            "teamNameRaw": "Thái Sư Cung\n18C",
+            "unitTacticEffectsRaw": "[Chuyển Cung] + [Phá Địch] + [Phò Thương] + [Quần Lực]"
+          },
+          {
+            "contentFingerprint": "sha256:6190a55264f50c2e032426886969c18d7a53705f93da2564683725d70b956a35",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Nhìn Rõ Mồn Một/\nTam Quân Chi Chúng",
+                  "Rèn Luyện",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "CO Đại Kiều\n(Kỵ S)",
+                "statFocusRaw": "Thống Soái",
+                "tacticSlotsRaw": [
+                  "Mê Hoặc",
+                  "Thuyền Cỏ Mượn Tên"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Thắng Càng Mạnh/\nLấy Võ Dẹp Loạn",
+                  "Thắng Trận/\nThần Cơ",
+                  "Giấu Đao/\nTướng Uy"
+                ],
+                "nameRaw": "Tôn Thượng Hương",
+                "statFocusRaw": "Võ Lực",
+                "tacticSlotsRaw": [
+                  "Đương Phong Thôi Quyết",
+                  "Mau Giành Lợi Thế"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Chẩm Qua Tọa Giáp",
+                  "Rèn Luyện",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "CO Tiểu Kiều",
+                "statFocusRaw": "Võ Lực/Thống Soái",
+                "tacticSlotsRaw": [
+                  "Tinh·Hổ Báo Kỵ",
+                  "Lâm Nguy Cứu Chủ"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-c38baeff86ee",
+            "sourceLocator": {
+              "csvRecordEnd": 30,
+              "csvRecordStart": 28,
+              "lineEnd": 76,
+              "lineStart": 68
+            },
+            "teamName": "Ngô Nữ Kỵ",
+            "teamNameRaw": "Ngô Nữ Kỵ\n18C",
+            "unitTacticEffectsRaw": "[Thần Hành] + [Thao Luyện] + [Diên Ích] + [Trọng Thương]"
+          },
+          {
+            "contentFingerprint": "sha256:1ddecaa7706499523e132ab811e04ecaebc1a590a21da0ba6198ce22f2dd148e",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Chia Nhỏ Đánh Nhanh",
+                  "Trăm Trận",
+                  "Khép Hờ"
+                ],
+                "nameRaw": "SP Quan Vũ\n(Khiên S)",
+                "statFocusRaw": "Võ Lực",
+                "tacticSlotsRaw": [
+                  "Lấy Ít Đánh Nhiều",
+                  "Kích Kỳ Nọa Quy"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Dẫn Quân",
+                  "Rèn Luyện"
+                ],
+                "nameRaw": "SP Pháp Chính",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Dưỡng Sức Đợi Chiến",
+                  "Không Đánh Mà Thắng"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Dẫn Quân",
+                  "Rèn Luyện"
+                ],
+                "nameRaw": "Mã Đại",
+                "statFocusRaw": "Thống Soái",
+                "tacticSlotsRaw": [
+                  "Ngư Lân Trận",
+                  "Lính Giáp Mây"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-abc3404b54b8",
+            "sourceLocator": {
+              "csvRecordEnd": 33,
+              "csvRecordStart": 31,
+              "lineEnd": 81,
+              "lineStart": 77
+            },
+            "teamName": "Mã Đại Pháp Quan Khiên",
+            "teamNameRaw": "Mã Đại Pháp Quan Khiên\n19C",
+            "unitTacticEffectsRaw": ""
+          },
+          {
+            "contentFingerprint": "sha256:eac26824f00728c3c52d70243903f36740715babfa01fc6de620a5cdbb50cfd8",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Kỳ Chính Tương Sinh",
+                  "Thắng Trận",
+                  "Văn Thao"
+                ],
+                "nameRaw": "Chu Du",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Đoạt Hồn Hiệp Phách",
+                  "Thiêu Đốt Doanh Lũy"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Đánh Bất Ngờ Thắng",
+                  "Tinh Chuẩn",
+                  "Khai Hạp"
+                ],
+                "nameRaw": "Lục Tốn",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Công Bất Đường Quyên",
+                  "Vạn Quân Đoạt Sư"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Rèn Luyện",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "SP Lữ Mông",
+                "statFocusRaw": "Thống Soái",
+                "tacticSlotsRaw": [
+                  "Chuyển·Bạch Nhị Binh",
+                  "Thác·Thuyền Cỏ Mượn Tên"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-bd7dd2caf602",
+            "sourceLocator": {
+              "csvRecordEnd": 36,
+              "csvRecordStart": 34,
+              "lineEnd": 88,
+              "lineStart": 82
+            },
+            "teamName": "Đô Đốc Cung",
+            "teamNameRaw": "Đô Đốc Cung\n20C",
+            "unitTacticEffectsRaw": "[Chuyển Cung] + [Sách Tập] + [Thành Thạo] + [Bút Đao]"
+          },
+          {
+            "contentFingerprint": "sha256:e1d75546f2faa8e705915bd9d38e8135408a392539064cbea847c8659a6be3db",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Dĩ Trực Báo Oán",
+                  "Tinh Chuẩn",
+                  "Thiện Chiến"
+                ],
+                "nameRaw": "Trương Phi",
+                "statFocusRaw": "Võ Lực",
+                "tacticSlotsRaw": [
+                  "Gió Táp Mưa Sa",
+                  "Tinh·Lính Thanh Châu"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Lấy Võ Dẹp Loạn",
+                  "Tướng Uy",
+                  "Quỷ Mưu"
+                ],
+                "nameRaw": "Quan Ngân Bình",
+                "statFocusRaw": "Võ Lực, Tốc 1",
+                "tacticSlotsRaw": [
+                  "Huy Quân Kết Trận",
+                  "Hoành Tảo Thiên Quân"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Kế Sách Dụ Địch",
+                  "Khích Lệ Lòng Quân",
+                  "Khép Hờ"
+                ],
+                "nameRaw": "Hoàng Nguyệt Anh",
+                "statFocusRaw": "Tốc Độ, Thống Soái",
+                "tacticSlotsRaw": [
+                  "Thịnh Khí Linh Địch",
+                  "Phong Thi Trận"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-e33c6a7c1f2a",
+            "sourceLocator": {
+              "csvRecordEnd": 39,
+              "csvRecordStart": 37,
+              "lineEnd": 92,
+              "lineStart": 89
+            },
+            "teamName": "Trương Quan Hoàng",
+            "teamNameRaw": "Trương Quan Hoàng \n16C",
+            "unitTacticEffectsRaw": "[Thiện Chiến] + [Quần Hùng] + [Thao Luyện] + [Tiên Cơ]"
+          }
+        ]
+      },
+      "source": {
+        "disclaimerRaw": "Đội hình tiến cử cùng tồn tại chỉ mang tính chất tham khảo, xin Chủ Công vui lòng dựa vào môi trường thực tế trong khu vực thi đấu để Phối Tướng, chọn Chiến Pháp và trình tự đội hình cụ thể",
+        "format": "csv",
+        "gid": "190730430",
+        "id": "coexist-binh-dien-sheet",
+        "sheetId": "1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw",
+        "snapshotHash": "sha256:838c9b639d42aef67d270a8813edd13bf0b364efaa85ae80e1fa8efda9b829bb",
+        "url": "https://docs.google.com/spreadsheets/d/1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw/edit?gid=190730430#gid=190730430"
+      },
+      "type": "source-owned-coexist"
+    }
+  },
+  {
+    "configIds": [],
+    "evidenceRefs": [
+      "coexist-binh-dien-scenario-confirmation",
+      "coexist-binh-dien-source-snapshot"
+    ],
+    "id": "link:coexist-bdx-group-ae3513c11638",
+    "kind": "coexist",
+    "recordId": "coexist-bdx-group-ae3513c11638",
+    "reviewStatus": "reviewed",
+    "rulesetId": null,
+    "scenarioId": "binh-dien-xuan-thu",
+    "schemaVersion": 1,
+    "target": {
+      "contentFingerprint": "sha256:512cd378df25412227159573ddde3d8baa8b3cf0e6c9406647d9213fc39d41f0",
+      "payload": {
+        "groupLabel": "Cùng tồn 3",
+        "notesRaw": "Ghi chú\nTiến cử chủ lực\n40 Lữ Đổng Điêu\nThục Trí Cung\nThái Úy Khiên",
+        "openingSuggestionsRaw": "[Võ Phong Thái Sử Từ]\nGia Cát Khác\nThái Sử Từ\nTả Từ\n\n[Khương Hạ Khác]\nKhương Duy\nHạ Hầu Uyên\nGia Cát Khác",
+        "summaryRaw": "40 Lữ Đổng Điêu, Thục Trí Cung, Thái Úy Khiên, Bắc Phạt Thương, Quyền Kỵ",
+        "teams": [
+          {
+            "contentFingerprint": "sha256:474a564281550dd33c371f569966a28497455ccdbbe51c22aa0f827eede32836",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Quy Thuận",
+                  "Mưu Kế Sâu Xa"
+                ],
+                "nameRaw": "Bàng Thống",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Thái Bình Đạo Pháp",
+                  "Thiêu Đốt Doanh Lũy"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Rèn Luyện",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "SP Pháp Chính\n(Cung S)",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Tinh·Nhanh Trí Động Não",
+                  "Chuyển·Bạch Nhị Binh"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Kỳ Chính Tương Sinh",
+                  "Giấu Đao",
+                  "Văn Thao"
+                ],
+                "nameRaw": "Gia Cát Lượng",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Đương Phong Thôi Quyết",
+                  "Đồng Lòng Hợp Sức"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-7ed160068b76",
+            "sourceLocator": {
+              "csvRecordEnd": 46,
+              "csvRecordStart": 44,
+              "lineEnd": 109,
+              "lineStart": 97
+            },
+            "teamName": "Thục Trí Cung",
+            "teamNameRaw": "Thục Trí Cung\n20C",
+            "unitTacticEffectsRaw": "[Chuyển Cung] + [Phá Địch] + [Lưỡng Nghi] + [Bút Đao]"
+          },
+          {
+            "contentFingerprint": "sha256:9668fecd4050777f0cc2e61915b5278a7bca519d038d6502d5878d78177b1464",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Thắng Càng Mạnh",
+                  "Cầm Binh Khí",
+                  "Võ Lược"
+                ],
+                "nameRaw": "Lữ Bố 40th",
+                "statFocusRaw": "Võ Lực",
+                "tacticSlotsRaw": [
+                  "Huyết Đao Tranh Giành",
+                  "Dẫn Huyền Lực Chiến"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Cửu Chiến",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "Đổng Trác/\nSP Đổng Trác",
+                "statFocusRaw": "Thống Soái",
+                "tacticSlotsRaw": [
+                  "Tinh·Tử Sĩ Tiên Phong",
+                  "Nhạn Hành Trận"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Cửu Chiến",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "SP Điêu Thuyền",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Thâm Tàng Nhược Hư",
+                  "Cương Nhu Kết Hợp"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-a82493b2368b",
+            "sourceLocator": {
+              "csvRecordEnd": 49,
+              "csvRecordStart": 47,
+              "lineEnd": 114,
+              "lineStart": 110
+            },
+            "teamName": "40 Lữ Đổng Điêu",
+            "teamNameRaw": "40 Lữ Đổng Điêu\n19C",
+            "unitTacticEffectsRaw": "[Kháng Cự] + [Ức Thế] + [Đoạt Chí] + [Cộng Dồn]"
+          },
+          {
+            "contentFingerprint": "sha256:7910d3bd55183e1d0996957cd193d9cc6732fe9ff42f38e7d47d7bd2405c61cf",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Thích Làm Việc Thiện",
+                  "Cửu Chiến",
+                  "Quy Thuận"
+                ],
+                "nameRaw": "Tư Mã Ý",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Lửa Cháy Ngùn Ngụt",
+                  "Toàn Quân Đồng Lòng"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Dẫn Quân",
+                  "Rèn Luyện"
+                ],
+                "nameRaw": "Tào Tháo",
+                "statFocusRaw": "Thống Soái",
+                "tacticSlotsRaw": [
+                  "Mê Hoặc",
+                  "Tinh·Lính Giáp Mây"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Dẫn Quân",
+                  "Rèn Luyện"
+                ],
+                "nameRaw": "Mãn Sủng",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Dưỡng Sức Đợi Chiến",
+                  "Hình Nhất Trận"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-dbda5f0edca7",
+            "sourceLocator": {
+              "csvRecordEnd": 52,
+              "csvRecordStart": 50,
+              "lineEnd": 118,
+              "lineStart": 115
+            },
+            "teamName": "Thái Úy Khiên",
+            "teamNameRaw": "Thái Úy Khiên\n19C",
+            "unitTacticEffectsRaw": "[Nhẫn Nhịn] + [Hùng Chủ] + [Tịnh Hóa] + [Rắn Chắc]"
+          },
+          {
+            "contentFingerprint": "sha256:987a29c2b3426e52562f7d5621dbbfb1474baddba10feb646c360e93ca06b1ba",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Rèn Luyện",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "SP Gia Cát Lượng",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Thuyền Cỏ Mượn Tên",
+                  "Biết Mình Biết Ta"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Đánh Sau Trúng Trước",
+                  "Tướng Uy",
+                  "Quỷ Mưu"
+                ],
+                "nameRaw": "Quan Hưng",
+                "statFocusRaw": "Võ Lực",
+                "tacticSlotsRaw": [
+                  "Gió Táp Mưa Sa/\nVăn Võ Song Toàn",
+                  "Cưỡi Ngựa Nghìn Dặm"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Chẩm Qua Tọa Giáp",
+                  "Rèn Luyện",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "Trương Bào",
+                "statFocusRaw": "Thống Soái",
+                "tacticSlotsRaw": [
+                  "Không Đánh Mà Thắng",
+                  "Nhân Lợi Chế Quyền"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-67350de20f8d",
+            "sourceLocator": {
+              "csvRecordEnd": 55,
+              "csvRecordStart": 53,
+              "lineEnd": 126,
+              "lineStart": 119
+            },
+            "teamName": "Bắc Phạt Thương",
+            "teamNameRaw": "Bắc Phạt Thương\n18C",
+            "unitTacticEffectsRaw": ""
+          },
+          {
+            "contentFingerprint": "sha256:c4517f5a06769976c9db8027115446ef3a7b31489468c56a7f5672ff061ea860",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Liền Mạch Một Hơi",
+                  "Thắng Trận",
+                  "Cầm Binh Khí"
+                ],
+                "nameRaw": "Tôn Quyền",
+                "statFocusRaw": "Võ Lực",
+                "tacticSlotsRaw": [
+                  "Nhất Kỵ Đương Thiên",
+                  "Bách Kỵ Kiếp Doanh"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Liền Mạch Một Hơi",
+                  "Giấu Đao",
+                  "Cầm Binh Khí"
+                ],
+                "nameRaw": "Lăng Thống",
+                "statFocusRaw": "Võ Lực,\nTốc 1",
+                "tacticSlotsRaw": [
+                  "Lõa Y Huyết Chiến",
+                  "Mau Giành Lợi Thế"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Biết Cách Phòng Thủ",
+                  "Thế Phòng Thủ",
+                  "Tĩnh Tâm"
+                ],
+                "nameRaw": "Chu Thái",
+                "statFocusRaw": "Thống Soái",
+                "tacticSlotsRaw": [
+                  "Phong Thi Trận",
+                  "Tinh·Hổ Báo Kỵ"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-c2a441543089",
+            "sourceLocator": {
+              "csvRecordEnd": 58,
+              "csvRecordStart": 56,
+              "lineEnd": 131,
+              "lineStart": 127
+            },
+            "teamName": "Quyền Kỵ",
+            "teamNameRaw": "Quyền Kỵ\n18C",
+            "unitTacticEffectsRaw": "[Thần Hành] + [Thao Luyện] + [Diên Ích] + [Trọng Thương]"
+          }
+        ]
+      },
+      "source": {
+        "disclaimerRaw": "Đội hình tiến cử cùng tồn tại chỉ mang tính chất tham khảo, xin Chủ Công vui lòng dựa vào môi trường thực tế trong khu vực thi đấu để Phối Tướng, chọn Chiến Pháp và trình tự đội hình cụ thể",
+        "format": "csv",
+        "gid": "190730430",
+        "id": "coexist-binh-dien-sheet",
+        "sheetId": "1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw",
+        "snapshotHash": "sha256:838c9b639d42aef67d270a8813edd13bf0b364efaa85ae80e1fa8efda9b829bb",
+        "url": "https://docs.google.com/spreadsheets/d/1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw/edit?gid=190730430#gid=190730430"
+      },
+      "type": "source-owned-coexist"
+    }
+  },
+  {
+    "configIds": [],
+    "evidenceRefs": [
+      "coexist-binh-dien-scenario-confirmation",
+      "coexist-binh-dien-source-snapshot"
+    ],
+    "id": "link:coexist-bdx-group-c7b4aae4a475",
+    "kind": "coexist",
+    "recordId": "coexist-bdx-group-c7b4aae4a475",
+    "reviewStatus": "reviewed",
+    "rulesetId": null,
+    "scenarioId": "binh-dien-xuan-thu",
+    "schemaVersion": 1,
+    "target": {
+      "contentFingerprint": "sha256:c0e2dcf618368349c9660ad97c75d0a4cd532b35986b85be5956ab98e8a5cdc7",
+      "payload": {
+        "groupLabel": "Cùng tồn 4",
+        "notesRaw": "Ghi chú\nTiến cử chủ lực\nNgũ Mưu Bạch Nhị Cung/\r\nHổ Báo Kỵ\nHạch Đạn Trương Phi Cung\nÔn Hầu Quần Cung",
+        "openingSuggestionsRaw": "[Võ Phong Thái Sử Từ]\nGia Cát Khác\nThái Sử Từ\nTả Từ\n\n[Khương Hạ Khác]\nKhương Duy\nHạ Hầu Uyên\nGia Cát Khác",
+        "summaryRaw": "Hạch Đạn Trương Cung, Bắc Phạt Khiên, Cam Ninh Ôn Hầu Cung, Ngũ Mưu Cung/Kỵ, Thái Úy Khiên",
+        "teams": [
+          {
+            "contentFingerprint": "sha256:46c51d2a3973ab48d075d289c01f3973dc68022644c250457ab211f9675706bf",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Biết Cách Phòng Thủ/\nKế Sách Dụ Địch",
+                  "Thế Phòng Thủ/\nKhép Hờ",
+                  "Phòng Bị/\nKhích Lệ Lòng Quân"
+                ],
+                "nameRaw": "Chu Thái",
+                "statFocusRaw": "Thống Soái",
+                "tacticSlotsRaw": [
+                  "Tiềm Long Trận",
+                  "Thịnh Khí Linh Địch"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Lấy Lùi Làm Tiến",
+                  "Tinh Chuẩn",
+                  "Trì Trọng"
+                ],
+                "nameRaw": "Trương Phi\n(Chính Lệnh-Cung S)",
+                "statFocusRaw": "Võ Lực",
+                "tacticSlotsRaw": [
+                  "Gió Táp Mưa Sa/\nHoành Tảo Thiên Quân",
+                  "Vô Địch Can Trường"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Lấy Lùi Làm Tiến",
+                  "Tinh Chuẩn",
+                  "Trì Trọng"
+                ],
+                "nameRaw": "SP Chu Tuấn",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Tinh·Vô Đương Phi Quân",
+                  "Thái Bình Đạo Pháp/\nThiêu Đốt Doanh Lũy"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-771245d888b6",
+            "sourceLocator": {
+              "csvRecordEnd": 64,
+              "csvRecordStart": 62,
+              "lineEnd": 152,
+              "lineStart": 135
+            },
+            "teamName": "Hạch Đạn Trương Phi Cung",
+            "teamNameRaw": "Hạch Đạn Trương Phi Cung\n18C",
+            "unitTacticEffectsRaw": "[Kiêm Tu] + [Mùi Định] + [Phá Quân] + [Trí Tuyệt]"
+          },
+          {
+            "contentFingerprint": "sha256:83da2feec878c9a22956138115b18eb6d3e3c2bde7daee752baec20330a277c6",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Rèn Luyện",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "SP Gia Cát Lượng\n（Chính Lệnh-Khiên S)",
+                "statFocusRaw": "Thống Soái",
+                "tacticSlotsRaw": [
+                  "Tinh·Quân Hổ Vệ",
+                  "Dưỡng Sức Đợi Chiến"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Đánh Sau Trúng Trước",
+                  "Quỷ Mưu",
+                  "Tướng Uy"
+                ],
+                "nameRaw": "Quan Hưng/\nQuan Vũ",
+                "statFocusRaw": "Võ Lực",
+                "tacticSlotsRaw": [
+                  "Cưỡi Ngựa Nghìn Dặm",
+                  "Văn Võ Song Toàn/\nTuyệt Kỳ Cấp Đạo"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Chẩm Qua Tọa Giáp",
+                  "Dẫn Quân",
+                  "Rèn Luyện"
+                ],
+                "nameRaw": "Trương Bào",
+                "statFocusRaw": "Thống Soái",
+                "tacticSlotsRaw": [
+                  "Xông Pha Khói Lửa",
+                  "Không Đánh Mà Thắng"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-ed01d0bd3f2f",
+            "sourceLocator": {
+              "csvRecordEnd": 67,
+              "csvRecordStart": 65,
+              "lineEnd": 159,
+              "lineStart": 153
+            },
+            "teamName": "Bắc Phạt Khiên",
+            "teamNameRaw": "Bắc Phạt Khiên\n18C",
+            "unitTacticEffectsRaw": "[Đồng Lòng] + [Thiện Chiến] + [Làm Phản] + [Võ Khôi]"
+          },
+          {
+            "contentFingerprint": "sha256:a5d62f74740004137528e5d5058ee06f853277eb89408c0a520f4789712e4367",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Thích Làm Việc Thiện",
+                  "Rèn Luyện",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "Cam Ninh\n(Quần)",
+                "statFocusRaw": "Nửa Trí, nửa Thống",
+                "tacticSlotsRaw": [
+                  "Thuyền Cỏ Mượn Tên",
+                  "Tinh·Quân Cẩm Phàm"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Lấy Lùi Làm Tiến",
+                  "Trì Trọng",
+                  "Tinh Chuẩn"
+                ],
+                "nameRaw": "Lữ Bố 40th",
+                "statFocusRaw": "Võ Lực",
+                "tacticSlotsRaw": [
+                  "Dẫn Huyền Lực Chiến",
+                  "Huyết Đao Tranh Giành"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Rèn Luyện",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "Hứa Du",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Lâm Nguy Cứu Chủ",
+                  "Nhạn Hành Trận"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-f59e614967ac",
+            "sourceLocator": {
+              "csvRecordEnd": 70,
+              "csvRecordStart": 68,
+              "lineEnd": 164,
+              "lineStart": 160
+            },
+            "teamName": "Ôn Hầu Quần Cung",
+            "teamNameRaw": "Ôn Hầu Quần Cung\n19C",
+            "unitTacticEffectsRaw": "[Thần Xạ] + [Dũng Võ] + [Ngăn Chặn] + [Doanh Khiếu]"
+          },
+          {
+            "contentFingerprint": "sha256:97b5659a133f554cbd4a2275fbb2177b86af92112e71b45b49cd7790448e4404",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Rèn Luyện",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "SP Tuân Úc\n(Cung S)",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Tinh·Nhanh Trí Động Não",
+                  "Chuyển·Bạch Nhị Cung/\nTinh·Hổ Báo Kỵ"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Kỳ Chính Tương Sinh",
+                  "Văn Thao",
+                  "Giấu Đao"
+                ],
+                "nameRaw": "SP Quách Gia\n(Cung S)",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Đoạt Hồn Hiệp Phách",
+                  "Đương Phong Thôi Quyết"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Rèn Luyện",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "Giả Hủ",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Cắt Xương Trị Độc",
+                  "Thượng Binh Phạt Mưu"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-023c064a2244",
+            "sourceLocator": {
+              "csvRecordEnd": 73,
+              "csvRecordStart": 71,
+              "lineEnd": 178,
+              "lineStart": 165
+            },
+            "teamName": "Ngũ Mưu Bạch Nhị Cung/ Hổ Báo Kỵ",
+            "teamNameRaw": "Ngũ Mưu Bạch Nhị Cung/\n\nHổ Báo Kỵ\n20C",
+            "unitTacticEffectsRaw": "[Chuyển Cung] + [Thành Thạo] + [Sách Tập] + [Bút Đao]/\n[Tập Trí] + [Mưu Công] + [Cửu Chiến] + [Trí Kế]"
+          },
+          {
+            "contentFingerprint": "sha256:6098db96ad389ac791f0c77dddc85afb4fdffa45d1d2d963ad66974e36b4e73f",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Thích Làm Việc Thiện",
+                  "Cửu Chiến",
+                  "Quy Thuận"
+                ],
+                "nameRaw": "Tư Mã Ý",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Lửa Cháy Ngùn Ngụt",
+                  "Toàn Quân Đồng Lòng"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Dẫn Quân",
+                  "Rèn Luyện"
+                ],
+                "nameRaw": "Tào Tháo",
+                "statFocusRaw": "Thống Soái",
+                "tacticSlotsRaw": [
+                  "Mê Hoặc",
+                  "Lính Giáp Mây"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Dẫn Quân",
+                  "Rèn Luyện"
+                ],
+                "nameRaw": "Mãn Sủng",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Thác·Dưỡng Sức Đợi Chiến",
+                  "Hình Nhất Trận"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-3b30045c3639",
+            "sourceLocator": {
+              "csvRecordEnd": 76,
+              "csvRecordStart": 74,
+              "lineEnd": 182,
+              "lineStart": 179
+            },
+            "teamName": "Thái Úy Khiên",
+            "teamNameRaw": "Thái Úy Khiên\n19C",
+            "unitTacticEffectsRaw": ""
+          }
+        ]
+      },
+      "source": {
+        "disclaimerRaw": "Đội hình tiến cử cùng tồn tại chỉ mang tính chất tham khảo, xin Chủ Công vui lòng dựa vào môi trường thực tế trong khu vực thi đấu để Phối Tướng, chọn Chiến Pháp và trình tự đội hình cụ thể",
+        "format": "csv",
+        "gid": "190730430",
+        "id": "coexist-binh-dien-sheet",
+        "sheetId": "1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw",
+        "snapshotHash": "sha256:838c9b639d42aef67d270a8813edd13bf0b364efaa85ae80e1fa8efda9b829bb",
+        "url": "https://docs.google.com/spreadsheets/d/1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw/edit?gid=190730430#gid=190730430"
+      },
+      "type": "source-owned-coexist"
+    }
+  },
+  {
+    "configIds": [],
+    "evidenceRefs": [
+      "coexist-binh-dien-scenario-confirmation",
+      "coexist-binh-dien-source-snapshot"
+    ],
+    "id": "link:coexist-bdx-group-bd8b6515eab6",
+    "kind": "coexist",
+    "recordId": "coexist-bdx-group-bd8b6515eab6",
+    "reviewStatus": "reviewed",
+    "rulesetId": null,
+    "scenarioId": "binh-dien-xuan-thu",
+    "schemaVersion": 1,
+    "target": {
+      "contentFingerprint": "sha256:7f44037ef6d656449cfee814170418ea0fbf57fcfdb3b8b4f27ceede92e790ca",
+      "payload": {
+        "groupLabel": "Cùng tồn 5",
+        "notesRaw": "Ghi chú\nTiến cử chủ lực\nKhảng Khái Cung\nLữ Quách Kiều Cung\nTuân Du Ngũ Mưu Kỵ",
+        "openingSuggestionsRaw": "[Võ Phong Thái Sử Từ]\nGia Cát Khác\nThái Sử Từ\nTả Từ\n\n[Khương Hạ Khác]\nKhương Duy\nHạ Hầu Uyên\nGia Cát Khác",
+        "summaryRaw": "Khảng Khái Cung, Lữ Quách Kiều Cung, Tuân Du Ngũ Mưu, Đào Viên Khiên, Liêu Kiều Thương",
+        "teams": [
+          {
+            "contentFingerprint": "sha256:b0edfe83ab65da2e986a4c44584a38af902dbc65ab4331c785b72e123a0a7d5d",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Thích Làm Việc Thiện",
+                  "Rèn Luyện",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "Cam Ninh",
+                "statFocusRaw": "Thống Soái",
+                "tacticSlotsRaw": [
+                  "Thuyền Cỏ Mượn Tên",
+                  "Tinh·Quân Cẩm Phàm"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Thắng Càng Mạnh",
+                  "Võ Lược",
+                  "Cầm Binh Khí"
+                ],
+                "nameRaw": "Thái Sử Từ",
+                "statFocusRaw": "Võ Lực",
+                "tacticSlotsRaw": [
+                  "Đương Phong Thôi Quyết",
+                  "Thôi Phong Đoạn Nhẫn"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Rèn Luyện",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "SP Lữ Mông",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Lâm Nguy Cứu Chủ",
+                  "Nhạn Hành Trận"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-3addf4cb98be",
+            "sourceLocator": {
+              "csvRecordEnd": 82,
+              "csvRecordStart": 80,
+              "lineEnd": 197,
+              "lineStart": 186
+            },
+            "teamName": "Khảng Khái Cung",
+            "teamNameRaw": "Khảng Khái Cung\n19C",
+            "unitTacticEffectsRaw": "[Thần Xạ] + [Dũng Võ] + [Ngăn Chặn] + [Doanh Khiếu]"
+          },
+          {
+            "contentFingerprint": "sha256:1156b98474003c21a5abc8dfdd8f640eb72ff131ddd583aae6d4120aecc85b2d",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Đánh Bất Ngờ Thắng",
+                  "Trì Trọng",
+                  "Tinh Chuẩn"
+                ],
+                "nameRaw": "Lữ Bố\n(Kỹ Năng Quân Sư Điêu Thuyền)",
+                "statFocusRaw": "Võ Lực",
+                "tacticSlotsRaw": [
+                  "Loan Cung Ẩm Vũ",
+                  "Phá Giáp"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Rèn Luyện",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "Quách Gia\n(Cung S)",
+                "statFocusRaw": "Nửa Trí, nửa Thống",
+                "tacticSlotsRaw": [
+                  "Tam Thế Trận",
+                  "Lửa Lan Khắp Chốn"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Lấy Lùi Làm Tiến",
+                  "Tinh Chuẩn",
+                  "Trì Trọng"
+                ],
+                "nameRaw": "CO Tiểu Kiều",
+                "statFocusRaw": "Võ Lực",
+                "tacticSlotsRaw": [
+                  "Văn Võ Song Toàn",
+                  "Tinh·Bạch Mã Nghĩa Tòng"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-3da33aede25f",
+            "sourceLocator": {
+              "csvRecordEnd": 85,
+              "csvRecordStart": 83,
+              "lineEnd": 203,
+              "lineStart": 198
+            },
+            "teamName": "Lữ Quách Kiều Cung",
+            "teamNameRaw": "Lữ Quách Kiều Cung\n17C",
+            "unitTacticEffectsRaw": "[Tật Trì] + [Tập Võ] + [Linh Quang] + [Tĩnh Tâm]"
+          },
+          {
+            "contentFingerprint": "sha256:130e32c5d5f7cf884d1a285b6127d23624e58f2643f666c22c35de45f555c264",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Rèn Luyện",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "CO Đại Kiều",
+                "statFocusRaw": "Thống Soái",
+                "tacticSlotsRaw": [
+                  "Mê Hoặc",
+                  "Độc Hành Phó Đấu"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Không Chiến Sẽ Chết",
+                  "Cầm Binh Khí",
+                  "Thắng Trận"
+                ],
+                "nameRaw": "Trương Liêu",
+                "statFocusRaw": "Võ Lực, Tốc 1",
+                "tacticSlotsRaw": [
+                  "Mau Giành Lợi Thế",
+                  "Bạo Lệ Vô Nhân"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Tấn Công Điểm Yếu",
+                  "Khích Lệ Lòng Quân",
+                  "Khép Hờ"
+                ],
+                "nameRaw": "Tả Từ",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Võ Phong Trận",
+                  "Tinh·Đại Kích Sĩ"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-c2b6bd792653",
+            "sourceLocator": {
+              "csvRecordEnd": 88,
+              "csvRecordStart": 86,
+              "lineEnd": 207,
+              "lineStart": 204
+            },
+            "teamName": "Liêu Kiều Thương",
+            "teamNameRaw": "Liêu Kiều Thương\n18C",
+            "unitTacticEffectsRaw": "[Liên Kích] + [Phá Địch] + [Khám Hư] + [Phá Trận]"
+          },
+          {
+            "contentFingerprint": "sha256:53e3d1d7be90ac3012b9041c957b2ba5c30721e571509d2af251b0d300d81b39",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Rèn Luyện",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "SP Tuân Úc",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Dốc Sức Tính Kế",
+                  "Cắt Xương Trị Độc"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Rèn Luyện",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "SP Quách Gia",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Đoạt Hồn Hiệp Phách",
+                  "Thượng Binh Phạt Mưu"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Tam Quân Chi Chúng",
+                  "Rèn Luyện",
+                  "Dẫn Quân"
+                ],
+                "nameRaw": "Tuân Du",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Nhanh Trí Động Não",
+                  "Thiêu Đốt Doanh Lũy/\nĐồng Lòng Hợp Sức"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-f783f33d8655",
+            "sourceLocator": {
+              "csvRecordEnd": 91,
+              "csvRecordStart": 89,
+              "lineEnd": 215,
+              "lineStart": 208
+            },
+            "teamName": "Tuân Du Ngũ Mưu Kỵ",
+            "teamNameRaw": "Tuân Du Ngũ Mưu Kỵ\n19C",
+            "unitTacticEffectsRaw": ""
+          },
+          {
+            "contentFingerprint": "sha256:1b1f9832564c4800ed862c506fc9614a8192626addce74616f1ff305739b56a0",
+            "heroes": [
+              {
+                "bookSlotsRaw": [
+                  "Tấn Công Điểm Yếu",
+                  "Khích Lệ Lòng Quân",
+                  "Khép Hờ"
+                ],
+                "nameRaw": "Lưu Bị",
+                "statFocusRaw": "Trí Lực",
+                "tacticSlotsRaw": [
+                  "Tinh·Hãm Trận Doanh",
+                  "Dưỡng Sức Đợi Chiến"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Đánh Sau Trúng Trước",
+                  "Quỷ Mưu",
+                  "Tướng Uy"
+                ],
+                "nameRaw": "Quan Vũ\n(Kỹ Năng Quân Sư Quan Hưng)",
+                "statFocusRaw": "Võ Lực",
+                "tacticSlotsRaw": [
+                  "Huy Quân Kết Trận",
+                  "Uy Mưu Vô Địch"
+                ]
+              },
+              {
+                "bookSlotsRaw": [
+                  "Dĩ Trực Báo Oán",
+                  "Tinh Chuẩn",
+                  "Trì Trọng"
+                ],
+                "nameRaw": "Trương Phi",
+                "statFocusRaw": "Võ Lực",
+                "tacticSlotsRaw": [
+                  "Vô Địch Can Trường",
+                  "Gió Táp Mưa Sa"
+                ]
+              }
+            ],
+            "recordId": "coexist-bdx-team-e583a9594edc",
+            "sourceLocator": {
+              "csvRecordEnd": 94,
+              "csvRecordStart": 92,
+              "lineEnd": 220,
+              "lineStart": 216
+            },
+            "teamName": "Đào Viên Khiên",
+            "teamNameRaw": "Đào Viên Khiên\n20C",
+            "unitTacticEffectsRaw": "[Mưu Công] + [Trị Liệu] + [Nghỉ Ngơi] + [Chống Đỡ]"
+          }
+        ]
+      },
+      "source": {
+        "disclaimerRaw": "Đội hình tiến cử cùng tồn tại chỉ mang tính chất tham khảo, xin Chủ Công vui lòng dựa vào môi trường thực tế trong khu vực thi đấu để Phối Tướng, chọn Chiến Pháp và trình tự đội hình cụ thể",
+        "format": "csv",
+        "gid": "190730430",
+        "id": "coexist-binh-dien-sheet",
+        "sheetId": "1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw",
+        "snapshotHash": "sha256:838c9b639d42aef67d270a8813edd13bf0b364efaa85ae80e1fa8efda9b829bb",
+        "url": "https://docs.google.com/spreadsheets/d/1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw/edit?gid=190730430#gid=190730430"
+      },
+      "type": "source-owned-coexist"
+    }
+  },
+  {
+    "configIds": [],
+    "evidenceRefs": [],
+    "id": "link:coexist-legacy-group-c62cde93620f",
+    "kind": "coexist",
+    "recordId": "coexist-legacy-group-c62cde93620f",
+    "reviewStatus": "pending",
+    "rulesetId": null,
+    "scenarioId": null,
+    "schemaVersion": 1,
+    "target": {
+      "contentFingerprint": "sha256:92cfb10a127be7a2f2ca0744a5ba8084585ea67983c6367b11b41f9cde54ec28",
+      "dataset": "coexist",
+      "locator": {
+        "groupIndex": 0
+      },
+      "type": "legacy-locator"
+    }
+  },
+  {
+    "configIds": [],
+    "evidenceRefs": [],
+    "id": "link:coexist-legacy-group-7ca78ac0417f",
+    "kind": "coexist",
+    "recordId": "coexist-legacy-group-7ca78ac0417f",
+    "reviewStatus": "pending",
+    "rulesetId": null,
+    "scenarioId": null,
+    "schemaVersion": 1,
+    "target": {
+      "contentFingerprint": "sha256:1621e16d3370c330a673e5996bb9508b4deb44ddf896a5aad8c8496ef989bdba",
+      "dataset": "coexist",
+      "locator": {
+        "groupIndex": 1
+      },
+      "type": "legacy-locator"
+    }
+  },
+  {
+    "configIds": [],
+    "evidenceRefs": [],
+    "id": "link:coexist-legacy-group-6cfa058cec1a",
+    "kind": "coexist",
+    "recordId": "coexist-legacy-group-6cfa058cec1a",
+    "reviewStatus": "pending",
+    "rulesetId": null,
+    "scenarioId": null,
+    "schemaVersion": 1,
+    "target": {
+      "contentFingerprint": "sha256:b4415018bf1ac1dd0602a4620d7863c444e90c1f5416df99d2686834ad8dcde5",
+      "dataset": "coexist",
+      "locator": {
+        "groupIndex": 2
+      },
+      "type": "legacy-locator"
+    }
+  },
+  {
+    "configIds": [],
+    "evidenceRefs": [],
+    "id": "link:coexist-legacy-group-f5e839013060",
+    "kind": "coexist",
+    "recordId": "coexist-legacy-group-f5e839013060",
+    "reviewStatus": "pending",
+    "rulesetId": null,
+    "scenarioId": null,
+    "schemaVersion": 1,
+    "target": {
+      "contentFingerprint": "sha256:db08a9fa085976d8ab2e99cc6f11841f5bf16ecf2fc6d18cfcb4f32a17c710ab",
+      "dataset": "coexist",
+      "locator": {
+        "groupIndex": 3
+      },
+      "type": "legacy-locator"
+    }
+  },
+  {
+    "configIds": [],
+    "evidenceRefs": [],
+    "id": "link:coexist-legacy-group-7f693e27576d",
+    "kind": "coexist",
+    "recordId": "coexist-legacy-group-7f693e27576d",
+    "reviewStatus": "pending",
+    "rulesetId": null,
+    "scenarioId": null,
+    "schemaVersion": 1,
+    "target": {
+      "contentFingerprint": "sha256:eab8f334dc5bfd8e8e8f825b6dcd30f4296246dccdb5e0c0ac5f4c6664ceceb5",
+      "dataset": "coexist",
+      "locator": {
+        "groupIndex": 4
+      },
+      "type": "legacy-locator"
+    }
+  }
+]

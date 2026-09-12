@@ -1,0 +1,14 @@
+...F........
+======================================================================
+FAIL: test_incomplete_scope_cannot_publish_canonical_evidence (tests.test_sgsdeck_recommended.RecommendedSourceTest.test_incomplete_scope_cannot_publish_canonical_evidence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/plateau/Project/CamNangTQCCL/tests/test_sgsdeck_recommended.py", line 96, in test_incomplete_scope_cannot_publish_canonical_evidence
+    with self.assertRaisesRegex(ValueError, "incomplete"):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.031s
+
+FAILED (failures=1)

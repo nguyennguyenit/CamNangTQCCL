@@ -1,3 +1,9 @@
+import { fitSeasonResult } from "../domain/season-reference-projection.js";
+import { seasonDomain } from "../domain/season-domain-adapter.js";
+import { normalizeText, teamSearchBlob } from "../../../js/filters.js";
+import { resolveSeasonContext } from "../../../js/season-context.js";
+import { publicSnapshotView } from "../data/public-snapshot-view.js";
+import type { SeasonContext } from "../domain/canonical-state.js";
 import { ZodError, type ZodType } from "zod";
 
 import { createWorkflowVersion, type CanonicalState } from "../domain/canonical-state.js";
@@ -42,7 +48,8 @@ export class ResearchHandlerError extends Error {
       | "TEAM_NOT_FOUND"
       | "TACTIC_NOT_FOUND"
       | "RESULT_TOO_LARGE"
-      | "INTERNAL_ERROR",
+      | "INTERNAL_ERROR"
+      | "SEASON_CONTEXT_INVALID" | "CONFIG_NOT_FOUND" | "CONFIG_AMBIGUOUS" | "CANDIDATE_LIMIT_EXCEEDED",
     message: string,
     readonly retryable = false,
     /**
@@ -51,6 +58,8 @@ export class ResearchHandlerError extends Error {
      * đi thẳng vào context LLM và vào trace.
      */
     readonly fields: readonly string[] = [],
+    readonly choices?: {kind:"team-config";teamId:string;configIds:string[];totalCount:number;omittedCount:number},
+    readonly limits?: {maxCandidates:500;candidateCount:number},
   ) {
     super(message);
     this.name = "ResearchHandlerError";
@@ -82,6 +91,10 @@ interface CursorPayload {
 
 function publicMessage(code: ResearchHandlerError["code"]): string {
   const messages: Record<ResearchHandlerError["code"], string> = {
+    SEASON_CONTEXT_INVALID: "Cặp kịch bản và luật chưa được xác minh.",
+    CONFIG_NOT_FOUND: "Không tìm thấy cấu hình phù hợp.",
+    CONFIG_AMBIGUOUS: "Cần chọn cấu hình đội hình cụ thể.",
+    CANDIDATE_LIMIT_EXCEEDED: "Số cấu hình vượt giới hạn xử lý.",
     INVALID_REQUEST: "Yêu cầu không hợp lệ.",
     DATA_UNAVAILABLE: "Dữ liệu nghiên cứu hiện không khả dụng.",
     WORKFLOW_VERSION_CHANGED: "Phiên bản dữ liệu hoặc quy trình đã thay đổi.",
@@ -244,23 +257,19 @@ function ensureExpectedWorkflow(
   }
 }
 
-function publicTeamSnapshot(snapshot: DataSnapshot): DataSnapshot {
-  const teams = snapshot.artifacts.teams.filter(
-    (team) => team.source !== "do-uy",
-  );
-  if (teams.length === snapshot.artifacts.teams.length) return snapshot;
+function allDictionaryMatches(index: SnapshotIndex, query: string, kinds: SearchKind[]) {
+  const entries = [];
+  for (let offset = 0; ; offset += 100) {
+    const page = index.search(query, { kinds, limit: 100, offset });
+    entries.push(...page);
+    if (page.length < 100) return entries;
+  }
+}
 
-  const visibleTeamIds = new Set(teams.map((team) => team.id));
-  return {
-    ...snapshot,
-    artifacts: {
-      ...snapshot.artifacts,
-      teams,
-      "team-tier": snapshot.artifacts["team-tier"].filter((row) =>
-        visibleTeamIds.has(row.teamId),
-      ),
-    },
-  };
+function seasonalCandidates(snapshot: DataSnapshot, context: SeasonContext) {
+ const projected = seasonDomain.candidates(snapshot.seasonModel!,context,{});
+ if (!projected.ok) throw new ResearchHandlerError(projected.code as ResearchHandlerError["code"],publicMessage(projected.code as ResearchHandlerError["code"]),false,[],undefined,projected.limits);
+ return projected;
 }
 
 function domainSnapshot(snapshot: DataSnapshot) {
@@ -270,6 +279,7 @@ function domainSnapshot(snapshot: DataSnapshot) {
     teams: snapshot.artifacts.teams,
     teamTier: snapshot.artifacts["team-tier"],
     coexist: snapshot.artifacts.coexist,
+    ...(snapshot.seasonModel ? {seasonModel:snapshot.seasonModel} : {}),
   };
 }
 
@@ -284,6 +294,7 @@ function mapDomainError(error: unknown): never {
       code,
       publicMessage(code),
       code === "WORKFLOW_VERSION_CHANGED",
+      [], error.choices, error.limits,
     );
   }
   throw new ResearchHandlerError("INTERNAL_ERROR", publicMessage("INTERNAL_ERROR"));
@@ -298,7 +309,7 @@ export function createResearchHandlers(
   async function context(): Promise<RequestContext> {
     let snapshot: DataSnapshot;
     try {
-      snapshot = publicTeamSnapshot(await dependencies.dataSource.load());
+      snapshot = await publicSnapshotView(await dependencies.dataSource.load());
     } catch {
       throw new ResearchHandlerError(
         "DATA_UNAVAILABLE",
@@ -342,11 +353,17 @@ export function createResearchHandlers(
       throw error;
     }
     const request = await context();
+    const seasonContext = input.seasonContext as SeasonContext | undefined;
+    if (seasonContext && (!request.snapshot.seasonModel || !resolveSeasonContext(request.snapshot.seasonModel,seasonContext).ok)) throw new ResearchHandlerError("SEASON_CONTEXT_INVALID",publicMessage("SEASON_CONTEXT_INVALID"));
+    if (!seasonContext && (input.configId !== undefined || input.holderId !== undefined || input.slotIndex !== undefined)) throw new ResearchHandlerError("INVALID_REQUEST",publicMessage("INVALID_REQUEST"));
     let result: unknown;
 
     if (name === "tqccl_get_data_version") {
       result = {
         ...commonResult(request),
+        manifestVersion: request.snapshot.manifest.schemaVersion,
+        capabilities: {legacy:true,seasonContext:Boolean(request.snapshot.seasonModel)},
+        ...(request.snapshot.seasonModel ? {seasonRegistry:(request.snapshot.artifacts["season-registry"] ?? []).filter(row=>row.reviewStatus === "reviewed").map(row=>({scenarioId:row.id,label:String(row.labelVi).slice(0,256),rulesets:(row.rulesets as Array<Record<string,unknown>>).filter(rule=>rule.reviewStatus === "reviewed").map(rule=>({rulesetId:rule.id,label:String(rule.label).slice(0,256)}))}))} : {}),
         artifacts: request.snapshot.manifest.artifacts.map((descriptor) => ({
           ...descriptor,
         })),
@@ -355,6 +372,7 @@ export function createResearchHandlers(
       const normalized = await normalizeObservations({
         workflowVersion: request.workflowVersion,
         observations: input.observations as never,
+        ...(seasonContext ? {seasonContext} : {}),
       });
       result = {
         ...commonResult(request, [
@@ -369,7 +387,7 @@ export function createResearchHandlers(
       const query = input.query as string;
       const kinds = input.kinds as SearchKind[] | undefined;
       const limit = (input.limit as number | undefined) ?? 20;
-      const queryIdentity = await fingerprint({ query, kinds: kinds ?? [] });
+      const queryIdentity = await fingerprint({ query, kinds: kinds ?? [], ...(seasonContext ? {seasonContext,releaseId:request.snapshot.releaseId} : {}) });
       let offset = 0;
       if (typeof input.cursor === "string") {
         const cursor = decodeCursor(input.cursor);
@@ -396,18 +414,37 @@ export function createResearchHandlers(
           request.workflowVersion,
         );
       }
-      const entries = request.index.search(query, {
-        ...(kinds === undefined ? {} : { kinds }),
-        limit: limit + 1,
-        offset,
-      });
+      const seasonEntries = seasonContext
+        ? seasonDomain.browse(request.snapshot.seasonModel!, seasonContext).applicable
+          .filter(() => !kinds || kinds.includes("team"))
+          .filter(entry => `${teamSearchBlob(entry.team)} ${normalizeText(entry.teamId)} ${normalizeText(entry.configId)}`.includes(normalizeText(query)))
+          .map(entry => ({
+            kind: "team" as const,
+            canonicalId: `team:${entry.teamId}`,
+            recordId: entry.teamId,
+            displayName: entry.team.name,
+            configId: entry.configId,
+            artifact: "season-team-configs" as const,
+          }))
+        : null;
+      const dictionaryKinds = (kinds ?? ["hero", "tactic", "team", "book"] as SearchKind[])
+        .filter(kind => kind !== "team");
+      const entries = seasonEntries
+        ? [...allDictionaryMatches(request.index, query, dictionaryKinds), ...seasonEntries]
+          .slice(offset, offset + limit + 1)
+        : request.index.search(query, {
+          ...(kinds === undefined ? {} : { kinds }),
+          limit: limit + 1,
+          offset,
+        });
       const truncated = entries.length > limit;
       const items = entries.slice(0, limit).map((entry) => ({
+        ...("configId" in entry ? {configId:entry.configId} : {}),
         kind: entry.kind,
         canonicalId: entry.canonicalId,
         recordId: entry.recordId,
         displayName: entry.displayName,
-        ...(entry.matchedTerm === undefined
+        ...(!("matchedTerm" in entry) || entry.matchedTerm === undefined
           ? {}
           : { matchedTerm: entry.matchedTerm }),
         artifact: entry.artifact,
@@ -441,6 +478,11 @@ export function createResearchHandlers(
       const teamId = requestedId.startsWith("team:")
         ? requestedId.slice("team:".length)
         : requestedId;
+      if (seasonContext) {
+        const resolved = seasonDomain.config(request.snapshot.seasonModel!,{teamId,configId:input.configId as string | undefined,context:seasonContext});
+        if (!resolved.ok) throw new ResearchHandlerError(resolved.code as ResearchHandlerError["code"],publicMessage(resolved.code as ResearchHandlerError["code"]),false,[],resolved.choices);
+        result = {...commonResult(request,[{artifact:"season-team-configs",recordId:resolved.config.id,trust:"untrusted"},{artifact:"season-team-evaluations",recordId:resolved.evaluation?.id,trust:"untrusted"}]),seasonContext,team:{...resolved.team,trust:"untrusted"},configId:resolved.config.id,config:resolved.config,tierRankings:resolved.evaluation?.rankings ?? [],sourceScore:resolved.evaluation?.sourceScore ?? null};
+      } else {
       const team = request.index.teamsById.get(teamId);
       if (!team) {
         throw new ResearchHandlerError(
@@ -486,6 +528,7 @@ export function createResearchHandlers(
         tierRankings,
         truncated: projectionState.truncated,
       };
+      }
     } else if (name === "tqccl_match_team") {
       ensureExpectedWorkflow(
         input.expectedWorkflowVersion as string | undefined,
@@ -507,7 +550,7 @@ export function createResearchHandlers(
       }));
       const matches = legacyDomainAdapter.findSimilarTeams(
         mapped,
-        request.snapshot.artifacts.teams,
+        seasonContext ? seasonalCandidates(request.snapshot,seasonContext).teams : request.snapshot.artifacts.teams,
         {
           minHeroes: (input.minHeroes as number | undefined) ?? 2,
           limit: (input.limit as number | undefined) ?? 5,
@@ -522,6 +565,7 @@ export function createResearchHandlers(
           return {
             team: {
               id: team.id,
+              ...(seasonContext ? {configId:team.configId,seasonContext} : {}),
               name: team.name,
               trust: "untrusted",
             },
@@ -539,6 +583,7 @@ export function createResearchHandlers(
       );
       const serviceRequest = {
         snapshot: domainSnapshot(request.snapshot),
+        ...(seasonContext ? {seasonContext} : {}),
         canonicalState: input.canonicalState as unknown as CanonicalState,
         confirmationBinding: input.confirmationBinding as never,
         expectedWorkflowVersion,
@@ -554,13 +599,13 @@ export function createResearchHandlers(
         if (name === "tqccl_recommend_team") {
           const recommendation = await recommendTeam(serviceRequest);
           const projectionState = { truncated: false };
-          result = fitResultSize({
+          result = (seasonContext ? (value:Record<string,unknown>)=>fitSeasonResult(value) : fitResultSize)({
             ...commonResult(request, [
               { artifact: "teams", trust: "untrusted" },
               { artifact: "team-tier", trust: "untrusted" },
               { artifact: "canonical-state" },
             ]),
-            teams: boundedJson(recommendation.teams, projectionState),
+            teams: seasonContext ? recommendation.teams : boundedJson(recommendation.teams, projectionState),
             diagnostics: boundedJson(
               recommendation.diagnostics,
               projectionState,
@@ -574,15 +619,16 @@ export function createResearchHandlers(
         } else if (name === "tqccl_recommend_coexist") {
           const recommendation = await recommendCoexist(serviceRequest);
           const projectionState = { truncated: false };
-          result = fitResultSize({
+          result = (seasonContext ? (value:Record<string,unknown>)=>fitSeasonResult(value) : fitResultSize)({
             ...commonResult(request, [
               { artifact: "teams", trust: "untrusted" },
               { artifact: "team-tier", trust: "untrusted" },
               { artifact: "coexist", trust: "untrusted" },
               { artifact: "canonical-state" },
             ]),
-            teams: boundedJson(recommendation.teams, projectionState),
-            coexistReference: boundedJson(
+            teams: seasonContext ? recommendation.teams : boundedJson(recommendation.teams, projectionState),
+            ...(seasonContext ? {omittedReferences:recommendation.omittedReferences ?? 0} : {}),
+            coexistReference: seasonContext ? recommendation.coexistReference : boundedJson(
               recommendation.coexistReference,
               projectionState,
             ),
@@ -594,13 +640,16 @@ export function createResearchHandlers(
               ...request.snapshot.warnings,
               ...recommendation.warnings,
             ],
-            truncated: projectionState.truncated,
+            truncated: projectionState.truncated || recommendation.referenceTruncated === true,
           }, ["coexistReference", "teams"]);
         } else {
           const replacement = await suggestReplacements({
             ...serviceRequest,
             teamId: input.teamId as string,
             tacticName: input.tacticName as string,
+            ...(input.configId === undefined ? {} : {configId:input.configId as string}),
+            ...(input.holderId === undefined ? {} : {holderId:input.holderId as string}),
+            ...(input.slotIndex === undefined ? {} : {slotIndex:input.slotIndex as number}),
           });
           result = {
             ...commonResult(request, [
@@ -611,6 +660,7 @@ export function createResearchHandlers(
               },
               { artifact: "canonical-state" },
             ]),
+            ...(seasonContext && "configId" in replacement ? {configId:replacement.configId,holderId:replacement.holderId,slotIndex:replacement.slotIndex,sourceScore:replacement.sourceScore} : {}),
             teamId: replacement.teamId,
             tacticName: replacement.tacticName,
             replacements: replacement.replacements,
@@ -625,6 +675,7 @@ export function createResearchHandlers(
       }
     }
 
+    if (seasonContext) result = {...result as Record<string,unknown>,seasonContext};
     enforceResultSize(result);
     try {
       return (

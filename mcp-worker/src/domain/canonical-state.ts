@@ -42,7 +42,12 @@ export interface CanonicalLockedTeamState {
   }[];
 }
 
+export interface SeasonContext { scenarioId: string; rulesetId: string; }
+export const SEASON_CANONICAL_PROJECTION_VERSION = "projection:v2-season" satisfies CanonicalProjectionVersion;
+export function projectionVersion(state: {seasonContext?: SeasonContext}) { return state.seasonContext ? SEASON_CANONICAL_PROJECTION_VERSION : CANONICAL_PROJECTION_VERSION; }
+
 export interface CanonicalState {
+  seasonContext?: SeasonContext;
   heroes: readonly CanonicalHeroState[];
   tactics: readonly CanonicalTacticState[];
   lockedTeams: readonly CanonicalLockedTeamState[];
@@ -51,6 +56,7 @@ export interface CanonicalState {
 }
 
 export interface CanonicalStateInput {
+  seasonContext?: SeasonContext;
   heroes: ReadonlyArray<{
     canonicalId: string;
     familyId: string;
@@ -81,7 +87,8 @@ export interface CanonicalStateInput {
 }
 
 interface CanonicalProjection {
-  canonicalProjectionVersion: typeof CANONICAL_PROJECTION_VERSION;
+  canonicalProjectionVersion: CanonicalProjectionVersion;
+  seasonContext?: SeasonContext;
   reviewRequired: boolean;
   heroes: Array<{
     canonicalId: string;
@@ -157,7 +164,8 @@ export function canonicalizeCanonicalState(value: unknown): string {
 
 export function projectCanonicalState(state: CanonicalStateInput): CanonicalProjection {
   return {
-    canonicalProjectionVersion: CANONICAL_PROJECTION_VERSION,
+    canonicalProjectionVersion: projectionVersion(state),
+    ...(state.seasonContext ? {seasonContext: {...state.seasonContext}} : {}),
     reviewRequired: (state.unresolved?.length ?? 0) > 0,
     heroes: state.heroes
       .map((hero) => ({
@@ -193,7 +201,7 @@ export async function createNormalizationDigest(
   state: CanonicalStateInput,
 ): Promise<NormalizationDigest> {
   const input = new TextEncoder().encode(
-    `${DIGEST_DOMAIN}${canonicalizeCanonicalState(projectCanonicalState(state))}`,
+    `${state.seasonContext ? "tqccl:canonical-state:v2-season\u0000" : DIGEST_DOMAIN}${canonicalizeCanonicalState(projectCanonicalState(state))}`,
   );
   const digest = await crypto.subtle.digest("SHA-256", input);
   const hex = [...new Uint8Array(digest)]
@@ -227,7 +235,7 @@ export async function verifyConfirmationBinding(
 ): Promise<boolean> {
   if (
     binding.workflowVersion !== workflowVersion ||
-    binding.canonicalProjectionVersion !== CANONICAL_PROJECTION_VERSION
+    binding.canonicalProjectionVersion !== projectionVersion(state)
   ) {
     return false;
   }

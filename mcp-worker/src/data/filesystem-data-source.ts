@@ -1,8 +1,10 @@
-import { readFile, stat } from "node:fs/promises";
+import { readFile, stat, readdir } from "node:fs/promises";
 import { resolve } from "node:path";
 
 import {
   ARTIFACT_NAMES,
+  V2_ARTIFACT_NAMES,
+  SEASON_ARTIFACT_NAMES,
   MAX_ARTIFACT_BYTES,
   createDataManifest,
   validateDataSnapshot,
@@ -33,8 +35,12 @@ export class FilesystemDataSource implements DataSource {
       {
         async loadCandidate() {
           try {
+            const files = await readdir(dataRoot);
+            const seasonalCount = SEASON_ARTIFACT_NAMES.filter(name => files.includes(`${name}.json`)).length;
+            if (seasonalCount !== 0 && seasonalCount !== SEASON_ARTIFACT_NAMES.length) throw new Error("partial seasonal inventory");
+            const names = seasonalCount === 0 ? ARTIFACT_NAMES : V2_ARTIFACT_NAMES;
             const entries = await Promise.all(
-              ARTIFACT_NAMES.map(async (name) => [
+              names.map(async (name) => [
                 name,
                 await (async () => {
                   const path = resolve(dataRoot, `${name}.json`);

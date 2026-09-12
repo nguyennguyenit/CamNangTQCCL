@@ -1,3 +1,4 @@
+import { projectSeasonCandidates } from "./season-context.js";
 // Section "Soi đội từ ảnh" (Phase 4): upload/paste ảnh -> nén client -> Turnstile
 // (lazy-load) -> gọi Worker -> map 3 trục (analyze-map) -> render + đối chiếu team.
 // Giữ 3 section cũ offline: Turnstile script CHỈ nạp khi mở tab này.
@@ -148,8 +149,14 @@ export function initAnalyze(deps, mount) {
     return;
   }
 
+  let scope = null;
+  let generation = 0;
+  let showOutside = false;
+  const gameplayAllowed = () => !scope || scope.browse?.kind === 'all-reference' || scope.browse?.kind === 'verified-pair';
+  const scopeNotice = el('p',{class:'season-gameplay-notice',role:'status'});
+  const outside = el('input',{type:'checkbox','aria-label':'Xem đội ngoài phạm vi để tham khảo',onChange:event=>{showOutside=event.target.checked;results.replaceChildren();}});
   const state = { imageDataUrl: null, token: null, busy: false };
-  const drop = el("div", { class: "ana-drop" }, "📷 Kéo-thả ảnh, dán (Ctrl+V), hoặc bấm chọn");
+  const drop = el("button", { type:"button", class: "ana-drop" }, "📷 Kéo-thả ảnh, dán (Ctrl+V), hoặc bấm chọn");
   const fileInput = el("input", { type: "file", accept: "image/*", class: "ana-file" });
   const preview = el("img", { class: "ana-preview", alt: "Ảnh đã chọn" });
   const tsBox = el("div", { class: "ana-turnstile" });
@@ -162,14 +169,18 @@ export function initAnalyze(deps, mount) {
     status.textContent = msg || "";
   }
   function refreshBtn() {
-    analyzeBtn.disabled = !(state.imageDataUrl && state.token && !state.busy);
+    analyzeBtn.disabled = !(state.imageDataUrl && state.token && !state.busy && gameplayAllowed());
   }
 
   async function pickFile(file) {
     if (!file || !file.type.startsWith("image/")) return;
+    const started = ++generation;
+    results.replaceChildren();
     setStatus("Đang nén ảnh…");
     try {
-      state.imageDataUrl = await compressImage(file);
+      const compressed = await compressImage(file);
+      if (started !== generation) return;
+      state.imageDataUrl = compressed;
       preview.src = state.imageDataUrl;
       preview.classList.add("on");
       setStatus("");
@@ -223,18 +234,30 @@ export function initAnalyze(deps, mount) {
   });
 
   analyzeBtn.addEventListener("click", async () => {
-    if (state.busy) return;
+    if (state.busy || !gameplayAllowed() || !state.imageDataUrl || !state.token) return;
+    const projected = scope?.browse?.kind === 'verified-pair' ? projectSeasonCandidates(scope.model,scope.browse.seasonContext,{mode:'all',experimentalUntiered:true}) : {ok:true,teams:deps.teams};
+    if (!projected.ok) { results.replaceChildren();setStatus(projected.message,'err');return; }
+    const started = generation;
     state.busy = true;
     refreshBtn();
     setStatus("Đang soi đội…");
     try {
       const result = await callWorker(state.imageDataUrl, state.token);
-      renderResults(results, result, deps);
+      if (started !== generation) return;
+      renderResults(results, result, {...deps,teams:projected.teams});
+      if (showOutside && scope?.browse?.kind === 'verified-pair') {
+        const outsideTeams = deps.teams.filter(team=>!projected.teams.some(candidate=>candidate.id === team.id));
+        const mapped = mapTeamRead(result.heroes,deps);
+        const references = findSimilarTeams(mapped,outsideTeams,{minHeroes:2});
+        results.append(el('h3',{},'Ngoài phạm vi — chỉ tham khảo'),el('ul',{},references.map(item=>el('li',{},`${item.team.name || item.team.id} · ${item.heroHit} tướng trùng · Không áp dụng cho luật đang chọn`))));
+      }
       setStatus("");
     } catch (e) {
+      if (started !== generation) return;
       const m = e.status === 429 ? "Hết lượt hôm nay, thử lại sau." : e.status === 422 ? "Không đọc được đội từ ảnh, thử ảnh rõ hơn." : e.message;
       setStatus(m, "err");
     } finally {
+      if (started !== generation) return;
       // Turnstile token dùng 1 lần -> reset, yêu cầu xác thực lại.
       state.token = null;
       state.busy = false;
@@ -244,6 +267,8 @@ export function initAnalyze(deps, mount) {
   });
 
   mount.replaceChildren(
+    scopeNotice,
+    el("label",{class:"season-opt-in"},[outside,"Xem đội ngoài phạm vi để tham khảo"]),
     el("p", { class: "ana-disclaimer" }, DISCLAIMER),
     drop,
     fileInput,
@@ -254,4 +279,13 @@ export function initAnalyze(deps, mount) {
     results,
   );
   ensureTurnstile();
+  return {
+    setSeasonScope(next) {
+      scope=next;generation++;
+      state.busy=false;state.token=null;
+      results.replaceChildren();setStatus('');
+      scopeNotice.textContent=gameplayAllowed() ? (next.browse?.kind === 'verified-pair' ? 'Đối chiếu đội theo phiên bản luật đang chọn.' : 'Dữ liệu cũ — tham khảo, chưa xác định kịch bản.') : 'Chọn phiên bản luật đã xác minh để soi và đối chiếu đội.';
+      refreshBtn();
+    },
+  };
 }

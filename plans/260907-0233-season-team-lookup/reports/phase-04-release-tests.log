@@ -1,0 +1,12 @@
+
+> tqccl-mcp-server@0.1.0 test
+> vitest run test/release
+
+
+ RUN  v4.1.10 /Users/plateau/Project/CamNangTQCCL/mcp-worker
+
+
+ Test Files  10 passed (10)
+      Tests  72 passed (72)
+   Start at  13:51:37
+   Duration  761ms (transform 626ms, setup 0ms, import 1.05s, tests 630ms, environment 1ms)

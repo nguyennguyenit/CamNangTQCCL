@@ -1,0 +1,16 @@
+2026-09-12T14:21:24.799055
+Integrated gate session 37207; repository /Users/plateau/Project/CamNangTQCCL
+lsof port 4174 exit 1
+
+lsof port 4321 exit 0
+COMMAND   PID    USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+node    77549 plateau   32u  IPv6 0x1ea980d63f9ef318      0t0  TCP [::1]:4321 (LISTEN)
+
+Final: 2026-09-12T14:21:47.593021
+lsof port 4174 exit 1
+
+lsof port 4321 exit 0
+COMMAND   PID    USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+node    77549 plateau   32u  IPv6 0x1ea980d63f9ef318      0t0  TCP [::1]:4321 (LISTEN)
+
+  141  3689 /bin/zsh -c python3 - <<'PY' >> plans/260907-0233-season-team-lookup/reports/final-process-audit.log\012import datetime,subprocess\012print('Final:',datetime.datetime.now().isoformat())\012for port in ['4174','4321']:\012    result=subprocess.run(['lsof','-nP',f'-iTCP:{port}','-sTCP:LISTEN'],capture_output=True,text=True)\012    print('lsof port',port,'exit',result.returncode)\012    print(result.stdout)\012result=subprocess.run(['ps','-Ao','pid,ppid,command'],capture_output=True,text=True)\012for line in result.stdout.splitlines():\012    if '/Users/plateau/Project/CamNangTQCCL/' in line and any(s in line for s in ['astro preview','workerd','vitest','check-repository']):\012        print(line)\012PY\012cat plans/260907-0233-season-team-lookup/reports/final-process-audit.log

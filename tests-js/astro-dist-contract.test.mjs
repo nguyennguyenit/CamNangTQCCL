@@ -17,13 +17,43 @@ import { assertFrontendShellContract } from "./frontend-shell-contract-assertion
 
 const projectRoot = new URL("../", import.meta.url);
 
+test("season bundle publishes exactly five sidecars with the shared resolver", async () => {
+  assert.deepEqual(artifactEntriesFor("data").filter((entry) => entry.routeParam.startsWith("season-")).map((entry) => entry.routeParam).sort(), ["season-content-links", "season-evidence", "season-registry", "season-team-configs", "season-team-evaluations"]);
+  assert.ok(artifactEntriesFor("js").some((entry) => entry.routeParam === "season-context"));
+});
+
+test("seasonal registry and evidence routes are explicit runtime artifacts", async () => {
+  const seasonal = artifactEntriesFor("data").filter((entry) =>
+    ["season-registry", "season-evidence"].includes(entry.routeParam));
+  assert.deepEqual(seasonal.map((entry) => entry.routeParam).sort(), ["season-evidence", "season-registry"]);
+  for (const entry of seasonal) {
+    assert.equal(entry.publicationClass, "runtime");
+    assert.equal(entry.mimeType, "application/json; charset=utf-8");
+    assert.ok(Array.isArray(JSON.parse(await readFile(new URL(`data/${entry.sourceBasename}`, projectRoot), "utf8"))));
+  }
+});
+
+test("season sidecars without manifest entries reject source inventory", async (t) => {
+  const rootDir = await mkdtemp(join(tmpdir(), "tqccl-season-inventory-"));
+  t.after(async () => {
+    await import("node:fs/promises").then(({ rm }) => rm(rootDir, { recursive: true, force: true }));
+  });
+  await mkdir(join(rootDir, "data"));
+  for (const name of ["season-registry", "season-evidence"]) {
+    await writeFile(join(rootDir, "data", `${name}.json`), "[]\n");
+  }
+  await assert.rejects(validatePublicArtifactTree({ rootDir, manifest: [], kinds: ["data"] }), /source set mismatch/i);
+});
+
 test("manifest explicitly classifies every published root artifact", async () => {
   const expectedByKind = {};
   for (const kind of ["js", "css", "data"]) {
     const directory = new URL(`${kind}/`, projectRoot);
     const names = (await import("node:fs/promises"))
       .readdir(directory)
-      .then((entries) => entries.sort());
+      .then((entries) => entries
+        .filter((entry) => kind !== "data" || entry !== "sgsdeck")
+        .sort());
     expectedByKind[kind] = await names;
   }
 
@@ -172,6 +202,54 @@ test("artifact tree rejects symlinked directories and source-set drift", async (
   await assert.rejects(
     validatePublicArtifactTree({ rootDir: driftRoot, manifest, kinds: ["data"] }),
     /source set mismatch/i,
+  );
+});
+
+test("artifact tree accepts only the optional private SGSDeck data subtree", async (t) => {
+  const rootDir = await mkdtemp(join(tmpdir(), "tqccl-astro-private-data-"));
+  const outsideDir = await mkdtemp(join(tmpdir(), "tqccl-astro-private-outside-"));
+  t.after(async () => {
+    const { rm } = await import("node:fs/promises");
+    await Promise.all([
+      rm(rootDir, { recursive: true, force: true }),
+      rm(outsideDir, { recursive: true, force: true }),
+    ]);
+  });
+  await mkdir(join(rootDir, "data"));
+  await writeFile(join(rootDir, "data", "fixture.json"), "{}\n");
+  const manifest = [{
+    kind: "data",
+    routeParam: "fixture",
+    sourceBasename: "fixture.json",
+    publicationClass: "runtime",
+    mimeType: "application/json; charset=utf-8",
+  }];
+
+  await mkdir(join(rootDir, "data", "sgsdeck"));
+  await writeFile(join(rootDir, "data", "sgsdeck", "manifest.json"), "{}\n");
+  await validatePublicArtifactTree({ rootDir, manifest, kinds: ["data"] });
+
+  await mkdir(join(rootDir, "data", "other-private"));
+  await assert.rejects(
+    validatePublicArtifactTree({ rootDir, manifest, kinds: ["data"] }),
+    /source set mismatch/i,
+  );
+  await import("node:fs/promises").then(({ rm }) =>
+    rm(join(rootDir, "data", "other-private"), { recursive: true, force: true }));
+
+  await import("node:fs/promises").then(({ rm }) =>
+    rm(join(rootDir, "data", "sgsdeck"), { recursive: true, force: true }));
+  await writeFile(join(rootDir, "data", "sgsdeck"), "not a directory\n");
+  await assert.rejects(
+    validatePublicArtifactTree({ rootDir, manifest, kinds: ["data"] }),
+    /private artifact subtree|real directory/i,
+  );
+
+  await import("node:fs/promises").then(({ rm }) => rm(join(rootDir, "data", "sgsdeck")));
+  await symlink(outsideDir, join(rootDir, "data", "sgsdeck"), "dir");
+  await assert.rejects(
+    validatePublicArtifactTree({ rootDir, manifest, kinds: ["data"] }),
+    /private artifact subtree|real directory|escapes/i,
   );
 });
 

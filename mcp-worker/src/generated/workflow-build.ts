@@ -1,5 +1,5 @@
 // Tệp được sinh bởi scripts/generate-workflow-build.ts. Không sửa thủ công.
-export const WORKFLOW_BUILD_ID = "build:sha256b64:7PcD15EbCj0Djf6Who5uS1DAvcC0PH6BL1mhGeAM_ok" as const;
+export const WORKFLOW_BUILD_ID = "build:sha256b64:ybUy68D9Sj9XSxdr4Uxf8YDBJz6D7GKM9u8Zp8Z9Th8" as const;
 export const WORKFLOW_SEMANTIC_FILES = [
   "js/analyze-map.js",
   "js/filters.js",
@@ -8,10 +8,12 @@ export const WORKFLOW_SEMANTIC_FILES = [
   "js/match-dict.js",
   "js/roster-scan-map.js",
   "js/roster-scan-state.js",
+  "js/season-context.js",
   "js/team-recommend-engine.js",
   "mcp-worker/src/data/artifact-contracts.ts",
   "mcp-worker/src/data/data-source.ts",
   "mcp-worker/src/data/entity-identity.ts",
+  "mcp-worker/src/data/public-snapshot-view.ts",
   "mcp-worker/src/data/snapshot-index.ts",
   "mcp-worker/src/domain/canonical-state.ts",
   "mcp-worker/src/domain/contracts.ts",
@@ -19,6 +21,8 @@ export const WORKFLOW_SEMANTIC_FILES = [
   "mcp-worker/src/domain/legacy-domain-adapter.ts",
   "mcp-worker/src/domain/normalization-service.ts",
   "mcp-worker/src/domain/recommendation-service.ts",
+  "mcp-worker/src/domain/season-domain-adapter.ts",
+  "mcp-worker/src/domain/season-reference-projection.ts",
   "mcp-worker/src/research/research-contracts.ts",
   "mcp-worker/src/research/research-handlers.ts",
   "mcp-worker/src/research/validation-fields.ts"

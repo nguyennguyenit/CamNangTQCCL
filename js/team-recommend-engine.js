@@ -1,5 +1,6 @@
 import { normalizeText } from "./filters.js";
 import { canonicalHeroId, normalizeHeroSlot } from "./hero-identity.js";
+import { compareSeasonIds } from "./season-context.js";
 
 const TIER_RANK = new Map([
   ["T0", 0],
@@ -43,9 +44,9 @@ function canonicalOwnedTactic(item) {
   return canonicalTacticId(displayName(item));
 }
 
-function tierIndex(teamTier) {
+function tierIndex(teamTier, seasonal = false) {
   if (teamTier instanceof Map) return teamTier;
-  return new Map((teamTier || []).map((entry) => [entry.teamId, entry.rankings || []]));
+  return new Map((teamTier || []).map((entry) => [seasonal ? entry.candidateKey : entry.teamId, entry.rankings || []]));
 }
 
 function bestTier(rankings) {
@@ -87,13 +88,19 @@ export function normalizeTeamCandidate(
   team,
   tierByTeam = new Map(),
   redByHero = new Map(),
+  seasonContext = null,
 ) {
-  const rankings = tierByTeam.get(team.id) || [];
+  const key = seasonContext ? team.candidateKey : team.id;
+  const rankings = tierByTeam.get(key) || [];
   const tier = bestTier(rankings);
-  const heroSlots = (team.heroes || []).map(normalizeHeroSlot);
+  const heroSlots = (team.heroes || []).map((hero, index) => {
+    const slot = normalizeHeroSlot(hero);
+    return seasonContext ? { ...slot, slotId: `slot:${key}:${index}` } : slot;
+  });
   const redCopyScore = redStarBonus(heroSlots, redByHero);
   return {
     team,
+    ...(seasonContext ? { candidateKey: key, configId: team.configId, seasonContext } : {}),
     tier,
     tierRankings: [...rankings],
     heroSlots,
@@ -106,7 +113,7 @@ export function normalizeTeamCandidate(
       0,
       0,
       -redCopyScore,
-      String(team.id || ""),
+      String(key || ""),
     ],
   };
 }
@@ -116,7 +123,7 @@ function compareCandidates(a, b) {
     (TIER_RANK.get(a.tier) ?? Number.MAX_SAFE_INTEGER) -
       (TIER_RANK.get(b.tier) ?? Number.MAX_SAFE_INTEGER) ||
     b.redCopyScore - a.redCopyScore ||
-    String(a.team.id || "").localeCompare(String(b.team.id || ""))
+    (a.seasonContext ? compareSeasonIds(a.candidateKey, b.candidateKey) : String(a.team.id || "").localeCompare(String(b.team.id || "")))
   );
 }
 
@@ -259,9 +266,14 @@ function selectTactics(candidate, heroAssignments, ownedTactics, usedTactics) {
   };
 }
 
+function candidateMetadata(candidate) {
+  return candidate.seasonContext ? { candidateKey: candidate.candidateKey, configId: candidate.configId, seasonContext: candidate.seasonContext } : {};
+}
+
 function makeEntry(candidate, heroUse, tacticUse, experimentalUntiered) {
   return {
     team: candidate.team,
+    ...candidateMetadata(candidate),
     tier: candidate.tier,
     tierRankings: candidate.tierRankings,
     status: tacticUse.status,
@@ -386,6 +398,7 @@ function greedy(
   const usedTactics = new Set(seed.usedTactics);
   for (const candidate of candidates) {
     if (portfolio.length >= maxTeams) break;
+    if (candidate.seasonContext && portfolio.some((entry) => entry.team.id === candidate.team.id)) continue;
     const built = buildCandidate(
       candidate,
       ownedHeroes,
@@ -420,6 +433,7 @@ function searchPortfolio(
       if (a === b) continue;
       if (a === undefined) return -1;
       if (b === undefined) return 1;
+      if (candidates[0]?.seasonContext && typeof a === "string" && typeof b === "string") return compareSeasonIds(a, b);
       return a < b ? -1 : 1;
     }
     return 0;
@@ -455,7 +469,8 @@ function searchPortfolio(
     }
     if (portfolio.length + limited.length - index < best.length) return;
 
-    const built = buildCandidate(
+    const alreadySelected = limited[index].seasonContext && portfolio.some((entry) => entry.team.id === limited[index].team.id);
+    const built = alreadySelected ? { entry: null } : buildCandidate(
       limited[index],
       ownedHeroes,
       ownedTactics,
@@ -497,9 +512,19 @@ export function recommendTeams({
   maxTeams = 5,
   fullBox = false,
   experimentalUntiered = false,
+  seasonContext = null,
 } = {}) {
   const diagnostics = DEFAULT_DIAGNOSTICS();
-  const tierByTeam = tierIndex(teamTier);
+  if (seasonContext) {
+    const validId = (value) => typeof value === "string" && value.length > 0 && [...value].length <= 128 && value.trim() === value && !/[\p{C}]/u.test(value);
+    if (!validId(seasonContext.scenarioId) || !validId(seasonContext.rulesetId) || Object.keys(seasonContext).some((key) => !["scenarioId", "rulesetId"].includes(key))) throw new TypeError("Invalid seasonal context");
+    const keys = new Set();
+    for (const team of teams) {
+      if (!validId(team.candidateKey) || team.configId !== team.candidateKey || keys.has(team.candidateKey)) throw new TypeError("Invalid seasonal candidate identity");
+      keys.add(team.candidateKey);
+    }
+  }
+  const tierByTeam = tierIndex(teamTier, Boolean(seasonContext));
   const redByHero = new Map(
     ownedHeroes
       .filter((hero) => typeof hero === "object" && Number.isFinite(hero.redStars))
@@ -552,7 +577,7 @@ export function recommendTeams({
   }
 
   const candidates = candidatePool(
-    teams.map((team) => normalizeTeamCandidate(team, tierByTeam, redByHero)),
+    teams.map((team) => normalizeTeamCandidate(team, tierByTeam, redByHero, seasonContext)),
     { mode, fullBox, experimentalUntiered },
   );
 
@@ -569,9 +594,10 @@ export function recommendTeams({
     );
     if (built.heroUse.missingHeroSlots.length) {
       const missing = built.heroUse.missingHeroSlots.flat();
-      diagnostics.missingHeroes.push({ teamId: candidate.team.id, heroes: missing });
+      diagnostics.missingHeroes.push({ teamId: candidate.team.id, ...candidateMetadata(candidate), heroes: missing });
       blockedStrongTeams.push({
         team: candidate.team,
+        ...candidateMetadata(candidate),
         tier: candidate.tier,
         status: "missing-hero",
         missingHeroes: missing,
@@ -582,6 +608,7 @@ export function recommendTeams({
     if (built.heroUse.conflictingHeroSlots.length) {
       diagnostics.heroConflicts.push({
         teamId: candidate.team.id,
+        ...candidateMetadata(candidate),
         heroSlots: built.heroUse.conflictingHeroSlots,
       });
       continue;
@@ -590,10 +617,12 @@ export function recommendTeams({
       if (built.tacticUse.missing.length) {
         diagnostics.missingTactics.push({
           teamId: candidate.team.id,
+          ...candidateMetadata(candidate),
           tactics: built.tacticUse.missing,
         });
         blockedStrongTeams.push({
           team: candidate.team,
+          ...candidateMetadata(candidate),
           tier: candidate.tier,
           status: "missing-tactic",
           missingTactics: built.tacticUse.missing,
@@ -601,6 +630,7 @@ export function recommendTeams({
       } else {
         diagnostics.tacticConflicts.push({
           teamId: candidate.team.id,
+          ...candidateMetadata(candidate),
           tactics: built.tacticUse.conflicts,
         });
       }
@@ -636,11 +666,12 @@ export function recommendTeams({
   diagnostics.prunedCandidates = candidates
     .filter(
       (candidate) =>
-        !portfolio.some((entry) => entry.team?.id === candidate.team.id),
+        !portfolio.some((entry) => candidate.seasonContext ? entry.candidateKey === candidate.candidateKey : entry.team?.id === candidate.team.id),
     )
     .slice(0, 20)
     .map((candidate) => ({
       teamId: candidate.team.id,
+      ...candidateMetadata(candidate),
       reason: "conflict-or-lower-rank",
     }));
 

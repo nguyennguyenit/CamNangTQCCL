@@ -11,6 +11,7 @@ import { toJSONSchema } from "zod";
 import { TOOL_DEFINITIONS } from "../src/mcp/tool-definitions.js";
 import { stableStringify } from "../src/domain/contracts.js";
 import { toScrubSafeDigest } from "../src/domain/digest-encoding.js";
+import { artifactNamesForVersion } from "../src/data/artifact-contracts.js";
 import {
   RESEARCH_CONTRACTS,
   type ResearchInput,
@@ -24,6 +25,20 @@ export interface ReleaseVerificationFixture {
   observations: ResearchInput<"tqccl_normalize_entities">["observations"];
   teamId: string;
   tacticName: string;
+}
+
+export function hasExpectedArtifactInventory(version: Record<string, unknown>): boolean {
+  if (version.manifestVersion !== 1 && version.manifestVersion !== 2) return false;
+  if (!Array.isArray(version.artifacts)) return false;
+  const expected = [...artifactNamesForVersion(version.manifestVersion)].sort();
+  const names: string[] = [];
+  for (const value of version.artifacts) {
+    if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
+    const descriptor = value as Record<string, unknown>;
+    if (typeof descriptor.name !== "string" || typeof descriptor.sha256 !== "string" || !/^sha256:[a-f0-9]{64}$/u.test(descriptor.sha256)) return false;
+    names.push(descriptor.name);
+  }
+  return names.sort().join("\0") === expected.join("\0");
 }
 
 export type ReleaseVerificationStep =
@@ -194,8 +209,7 @@ export async function readReleaseIdentity(options: {
       !version.workflowVersion.startsWith(
         `workflow:${toScrubSafeDigest(version.releaseId)}:`,
       ) ||
-      !Array.isArray(version.artifacts) ||
-      version.artifacts.length !== 6
+      !hasExpectedArtifactInventory(version)
     ) {
       throw new ReleaseVerificationError();
     }
@@ -384,16 +398,7 @@ export async function verifyRelease(
       version.workflowVersion !==
         `workflow:${toScrubSafeDigest(options.expectedReleaseId)}:${options.expectedWorkflowBuildId}` ||
       !Array.isArray(version.provenance) ||
-      !Array.isArray(version.artifacts) ||
-      version.artifacts.length !== 6 ||
-      version.artifacts.some((artifact) => {
-        const descriptor = record(artifact);
-        return (
-          typeof descriptor.name !== "string" ||
-          typeof descriptor.sha256 !== "string" ||
-          !/^sha256:[a-f0-9]{64}$/u.test(descriptor.sha256)
-        );
-      })
+      !hasExpectedArtifactInventory(version)
     ) {
       throw new ReleaseVerificationError();
     }

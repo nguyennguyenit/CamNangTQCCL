@@ -1,0 +1,107 @@
+# Dữ liệu đội theo kịch bản
+
+Năm sidecar `data/season-*.json` bổ sung phạm vi kịch bản, phiên bản luật,
+cấu hình và bằng chứng cho dữ liệu đội hiện có. Các file gốc `teams.json`,
+`team-tier.json`, `coexist.json` và `khaihoang.json` vẫn giữ vai trò riêng.
+Không chạy `pipeline.build_json` để cập nhật sidecar mùa.
+
+## Bảo trì và kiểm chứng
+
+Nguồn curate nằm trong năm file cùng tên dưới `pipeline/`. Builder độc lập
+kiểm cả bộ trước khi ghi, không suy mùa VN từ số mùa, nhãn nguồn hoặc ngày:
+
+```bash
+python3 -m pipeline.build_season_data --output-dir /tmp/tqccl-season-candidate
+python3 -m unittest tests.test_build_season_data tests.test_parse_coexist_csv
+node --test tests-js/season-context.test.mjs
+```
+
+Review candidate và các bằng chứng liên quan trước khi chạy builder không có
+`--output-dir` để ghi năm file vào `data/`. Publisher có rollback khi một lần
+thay file phát sinh lỗi được xử lý; đây không phải transaction chống mất điện
+giữa các lần thay file. Triển khai và rollback website phải dùng nguyên bộ
+shell/JS/JSON tương thích, theo [deployment guide](deployment-guide.md).
+
+Schema và cross-reference do [builder](../pipeline/build_season_data.py),
+[validator](../pipeline/season_validation.py) và
+[resolver dùng chung](../js/season-context.js) sở hữu. Hash dùng JSON canonical
+UTF-8, khóa sắp theo code point, giữ thứ tự mảng và ký tự Unicode nguyên bản.
+Các [golden vectors](../tests/fixtures/season-fingerprint-vectors.json) kiểm
+parity Python/JavaScript; không tự viết một quy tắc hash khác trong consumer.
+
+## Phạm vi, cấu hình và điểm
+
+Xác nhận một nguồn thuộc kịch bản chỉ cho phép phân loại tham khảo. Để dùng
+cấu hình trong gợi ý, cần bằng chứng đã review cho đúng cặp kịch bản/luật và
+fingerprint cấu hình. `teamId` là đội; `configId` là cấu hình cụ thể. Hai cấu
+hình của cùng đội không được chọn thành hai đội trong một portfolio.
+
+Tier mặc định phải được review đúng cấu hình. Xung đột chưa giải quyết hoặc
+thiếu tier giữ `null`; không lấy tier tốt nhất từ lịch sử. Điều kiện quân sư,
+độ thuần thục, thứ tự hoặc cải tạo chưa được kho hỗ trợ vẫn chặn cấu hình dùng
+ngay, kể cả khi bật gợi ý đội chưa có tier.
+
+“Điểm SGSDeck” giữ giá trị gốc, kể cả lớn hơn 100. Điểm chỉ hợp lệ khi cấu hình,
+cặp kịch bản/luật, nguồn/snapshot và lựa chọn thực tế khớp bằng chứng. Đổi tướng,
+holder, chiến pháp, binh thư hoặc lựa chọn khác làm điểm trở về `null`; không
+quy đổi sao đánh giá cũ thành điểm.
+
+Projector dùng chung lọc phạm vi, review, điều kiện và tier trước giới hạn
+500 cấu hình có thể xét. Vượt giới hạn trả `CANDIDATE_LIMIT_EXCEEDED` với số
+lượng thực, không lấy im lặng 500 cấu hình đầu. Tra cứu một đội có nhiều cấu
+hình mà thiếu `configId` trả `CONFIG_AMBIGUOUS`, tối đa 20 ID cùng tổng số và
+số bị lược. Contract và các giới hạn này được kiểm tại
+[resolver tests](../tests-js/season-context.test.mjs).
+Consumer MCP dùng search đúng context và cursor để duyệt các `configId` còn lại;
+xem [hợp đồng consumer](mcp-research-server.md).
+
+## Cùng Tồn và nguồn Recommended
+
+[Parser CSV](../pipeline/parse_coexist_csv.py) giữ nhóm, ba vị trí tướng, các
+slot có thứ tự, dòng ghi chú và điều kiện nguồn. Cột J thuộc “Cải tạo chiến
+pháp binh chủng”; không tự chuyển thành quân sư. Payload nguồn mới nằm trong
+`season-content-links.json`. [Bản đồ record](../pipeline/coexist-source-record-map.json)
+tách ID ổn định khỏi fingerprint nội dung và tọa độ dòng; thay nội dung cần
+review mapping, không đổi ID theo vị trí CSV.
+
+Khai hoang dùng hướng dẫn được bảo trì mới nhất và không thuộc sidecar mùa.
+Text gợi ý khai hoang trong nguồn Cùng Tồn không tự thêm đội hoặc liên kết
+chuyển hình vào dữ liệu Khai hoang.
+
+Recommended có [adapter riêng](../pipeline/sgsdeck_recommended.py), ngoài sáu
+nhóm của catalog SGSDeck (tài liệu ngoài nhánh: `sgsdeck-catalog.md`). Adapter đọc cache đã checksum,
+không tự gọi mạng:
+
+```bash
+python3 -m pipeline.sgsdeck_recommended --cache /path/to/recommended-cache
+python3 -m unittest tests.test_sgsdeck_recommended
+```
+
+Người dùng xác nhận ngày 2026-09-12 phạm vi sử dụng bao gồm lưu và hiển thị
+cấu hình/điểm Recommended trên website; [xác nhận thực thi](../plans/260907-0233-season-team-lookup/reports/execution-decisions.md)
+đã đóng câu hỏi quyền nguồn. Điều kiện đối chiếu dữ liệu bên dưới vẫn áp dụng.
+
+Canonical evidence chỉ được ghi khi đủ mọi chi tiết của scope đã chọn và
+list/detail khớp. Các trường HTML streaming phải trở về đúng holder trước
+khi trích xuất. `pipeline/sgsdeck-recommended-evidence.json` là bằng chứng
+nguồn nội bộ, không nằm trong public routes và không tự trở thành điểm VN.
+
+## Kiểm tra phạm vi đã có dữ liệu
+
+[Registry](../data/season-registry.json) và
+[cấu hình đã curate](../data/season-team-configs.json) là nơi kiểm tra scope
+hiện có. Một kịch bản xuất hiện trong registry không bảo đảm đã có luật hoặc
+cấu hình đủ bằng chứng. Tập rỗng phải được giữ nguyên cho đến khi đủ bằng
+chứng, không điền bằng dữ liệu mùa khác.
+
+Registry hiện chỉ có Binh Diễn Xuân Thu, chưa có luật đã review;
+configs/evaluations rỗng nên chưa có tier hay điểm VN theo luật. Nguồn Cùng Tồn
+mới thuộc kịch bản này ở mức tham khảo; nhóm legacy chưa xác định kịch bản vẫn
+nằm riêng. Website cho phép đọc nguồn khi chỉ chọn kịch bản; request gameplay
+theo mùa của MCP cần cặp kịch bản/luật đã review, vì vậy dữ liệu hiện tại chưa
+cung cấp cặp hợp lệ cho nhánh đó.
+
+[Báo cáo intake Cùng Tồn](../plans/260907-0233-season-team-lookup/reports/phase-02-data-validation.md)
+và [inventory Recommended](../plans/260907-0233-season-team-lookup/reports/recommended-score-inventory.md)
+ghi phạm vi nguồn đã kiểm ở thời điểm nhập. Chúng là bằng chứng lịch sử,
+không phải quy tắc chọn mùa mới nhất hoặc xác nhận các scope khác không tồn tại.

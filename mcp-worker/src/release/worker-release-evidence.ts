@@ -1,5 +1,5 @@
 import {
-  ARTIFACT_NAMES,
+  artifactNamesForVersion,
   ArtifactContractError,
   createDataManifest,
   validateDataSnapshot,
@@ -22,10 +22,6 @@ const EVIDENCE_KEYS = [
   "sourceTree",
   "workflowBuildId",
 ] as const;
-const ASSET_NAMES = [
-  ...ARTIFACT_NAMES.map((name) => `${name}.json`),
-  "manifest.json",
-].sort();
 const textDecoder = new TextDecoder("utf-8", {
   fatal: true,
   ignoreBOM: false,
@@ -70,9 +66,18 @@ async function sha256(bytes: Uint8Array): Promise<`sha256:${string}`> {
 function requireExactAssets(
   assets: ReadonlyMap<string, Uint8Array>,
 ): void {
+  let artifactNames;
+  try {
+    const manifest = JSON.parse(textDecoder.decode(assets.get("manifest.json")));
+    if (manifest?.schemaVersion !== 1 && manifest?.schemaVersion !== 2) throw new Error();
+    artifactNames = artifactNamesForVersion(manifest.schemaVersion);
+  } catch {
+    throw new WorkerAssetBuildError("INVALID_RELEASE_EVIDENCE");
+  }
+  const expected = [...artifactNames.map(name => `${name}.json`), "manifest.json"].sort();
   const names = [...assets.keys()].sort();
   if (
-    names.join("\0") !== ASSET_NAMES.join("\0") ||
+    names.join("\0") !== expected.join("\0") ||
     [...assets.values()].some((bytes) => !(bytes instanceof Uint8Array))
   ) {
     throw new WorkerAssetBuildError("INVALID_RELEASE_EVIDENCE");
@@ -187,7 +192,7 @@ export async function verifyWorkerReleaseEvidence(
       JSON.parse(textDecoder.decode(manifestBytes)),
     );
     const artifacts: ArtifactBytes = new Map(
-      ARTIFACT_NAMES.map((name) => [
+      artifactNamesForVersion(manifest.schemaVersion).map((name) => [
         name,
         options.assets.get(`${name}.json`),
       ] as [ArtifactName, Uint8Array]),

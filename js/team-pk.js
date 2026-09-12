@@ -17,11 +17,10 @@ export function initTeamPk({ teams, tierIndex, heroesDict, mount }) {
     unitWord: "team",
     intro: {
       title: "Team PK",
-      sub: (n) => `${n} team giới thiệu — lọc theo loại binh / sao / phe (tìm tướng, chiến pháp, binh thư bằng ô tìm kiếm).`,
+      sub: (n) => `${n} team giới thiệu — lọc theo loại binh / phe (tìm tướng, chiến pháp, binh thư bằng ô tìm kiếm).`,
     },
     groups: [
       { type: "chip", label: "Loại binh", key: "unitTypes", pick: (t) => t.unitType || [] },
-      { type: "chip", label: "Sao", key: "stars", pick: (t) => (t.stars != null ? [String(t.stars)] : []), sortValues: (a, b) => parseFloat(a.value) - parseFloat(b.value) },
       { type: "chip", label: "Phe", key: "factions", pick: (t) => (t.faction ? [t.faction] : []), fcls: (v) => (FACTION_CODE[v] ? ` f-${FACTION_CODE[v]}` : "") },
       { type: "chip", label: "Trạng thái", key: "statuses", pick: (t) => (t.status ? [t.status] : []), fmt: (v) => STATUS_LABEL[v] || v },
       { type: "chip", label: "Nguồn", key: "sources", pick: (t) => (t.source ? [t.source] : []), fmt: (v) => SOURCE_LABEL[v] || v },

@@ -43,14 +43,39 @@ local MCP client ───────────stdio────────�
 
 Đường build cố ý không đưa `Team Đô Úy.html` vào artifact và hiện tạo 50 Team PK + 110 meta cũ, trong khi artifact công khai có 56 + 110. Sáu Team PK bổ sung vẫn chưa có đường tái tạo nhìn thấy. `pipeline/do-uy-ss18-source.json` giữ 40 record nguồn thô làm archive, không phải input publication. HTML/cache còn bị ignore. Vì vậy pipeline là công cụ bảo trì có điều kiện, chưa phải clean-clone reproducible build.
 
+### Dữ liệu đội theo kịch bản
+
+[Builder sidecar](../pipeline/build_season_data.py) sở hữu đường build độc lập từ
+nguồn curate `pipeline/season-*.json`. Việc xác nhận kịch bản không đồng nghĩa
+với xác nhận luật VN; dữ liệu chỉ có attribution vẫn là tham khảo. `scenarioId`
+giữ identity kịch bản qua các lần mở lại, còn `rulesetId` phân biệt bộ luật.
+Không suy hai identity này từ số mùa hoặc ngày của nguồn nước ngoài.
+
+[Resolver dùng chung](../js/season-context.js) sở hữu scope, cấu hình, tier và
+điểm gắn với lựa chọn; [engine](../js/team-recommend-engine.js) sở hữu đối chiếu
+tài nguyên và portfolio. `teamId` giữ identity đội, `configId` phân biệt cấu
+hình để nhiều cấu hình cùng đội không trở thành nhiều đội trong portfolio.
+Raw Cùng Tồn chỉ cung cấp nội dung tham khảo; dữ liệu nguồn chưa review không
+tự trở thành cấu hình có thể gợi ý. Khai hoang tiếp tục dùng bản bảo trì mới
+nhất, ngoài phạm vi sidecar mùa.
+
+Xem [bảo trì dữ liệu đội theo kịch bản](season-team-data.md) cho đường cập nhật,
+nguồn Recommended, điều kiện promote và kiểm chứng. Danh sách public artifact
+thuộc [manifest của site](../src/lib/public-artifact-manifest.mjs).
+
 ## Static runtime
 
-`src/pages/index.astro` là document authority duy nhất và khai báo 9 section. Astro build phát shell thành `dist/index.html`; `js/app.js` vẫn là ES module browser canonical và:
+[`src/pages/index.astro`](../src/pages/index.astro) là document authority của
+chín section và hash dữ liệu mùa. [`js/app.js`](../js/app.js) sở hữu khởi tạo
+runtime; [`season-ui-state.js`](../js/season-ui-state.js) sở hữu query và kiểm
+hash toàn bộ dữ liệu tham chiếu trước activation. Bộ sidecar thiếu hoặc trộn
+generation chỉ cho phép fallback legacy có thông báo; `team-tier` legacy vẫn
+là dữ liệu optional.
 
-- khởi tạo theme và hash navigation;
-- fetch `teams`, `coexist`, `khaihoang`, `tactics`, `heroes-dict`, `books-dict` song song;
-- fetch `team-tier` theo kiểu optional;
-- init hai tab team, tra cứu, tracker, analyze và roster recommender.
+Scope, filter/search và chi tiết cấu hình cùng đi qua query owner; hash xác
+định section đang áp dụng. Restore scenario-only không tự nâng sang luật đã
+review. Đổi scope vô hiệu confirmation, portfolio và kết quả scan đến muộn,
+đồng thời giữ kho để người dùng review lại. UI không dùng MCP để suy thêm luật.
 
 Hai tab team đều gọi `team-filter-section.js`. Module này tính facet trực tiếp từ tập source, tạo search/chip, thu gọn bộ lọc trên mobile và render card. `data/facets.json` không được load runtime.
 
@@ -60,7 +85,7 @@ Tra cứu và gợi ý cốt lõi chạy local:
 - `hero-identity.js`: SP, CO và bản thường có canonical ID riêng; `familyId` chỉ biểu diễn quan hệ cùng họ, không thay thế identity khi xét sở hữu. Mỗi combined slot là một tập alternatives và chỉ cần đúng một alternative để thỏa slot.
 - `filters.js`: search/filter team.
 - `team-recommend-engine.js`: xét ownership, conflict tướng/chiến pháp, alternatives, tier/red stars và portfolio tối đa 5 team.
-- `coexist.json` chỉ render nhóm tham khảo; recommender dùng `teams.json` + `team-tier.json`, không parse display string Cùng Tồn.
+- `coexist.json` và source-owned Cùng Tồn chỉ render tham khảo; recommender dùng dữ liệu legacy khi không có context hoặc cấu hình từ shared projector khi có cặp luật hợp lệ, không parse display string Cùng Tồn.
 
 ### Hợp đồng dữ liệu khai hoang
 
@@ -77,7 +102,7 @@ JSON đã curate là dữ liệu runtime cần bảo toàn. [`build_khaihoang_pa
 Luồng dùng chung hiện có:
 
 ```text
-snapshot sáu artifact (filesystem hoặc Worker Static Assets)
+snapshot theo manifest v1/v2 (filesystem hoặc Worker Static Assets)
   → validate manifest/hash/cross-reference và dựng index
 structured observations
   → normalize thành canonical state
@@ -87,17 +112,32 @@ structured observations
   → JSON CLI hoặc MCP stdio/Streamable HTTP
 ```
 
-Snapshot gồm đúng sáu artifact được khai báo tại [`artifact-contracts.ts`](../mcp-worker/src/data/artifact-contracts.ts). [`FilesystemDataSource`](../mcp-worker/src/data/filesystem-data-source.ts) đọc JSON local và tự tạo canonical manifest; [`StaticAssetsDataSource`](../mcp-worker/src/data/static-assets-data-source.ts) đọc đúng bảy private asset path rồi dùng cùng validator. [`data-source.ts`](../mcp-worker/src/data/data-source.ts) single-flight cold load và giữ snapshot immutable trong suốt process/isolate.
+Inventory theo version thuộc [`artifact-contracts.ts`](../mcp-worker/src/data/artifact-contracts.ts):
+v1 giữ sáu artifact legacy; v2 có thêm toàn bộ năm sidecar mùa.
+[`FilesystemDataSource`](../mcp-worker/src/data/filesystem-data-source.ts) từ chối
+sidecar chỉ có một phần; [`StaticAssetsDataSource`](../mcp-worker/src/data/static-assets-data-source.ts)
+dùng manifest để chọn exact inventory. Cả hai validate trước khi
+[`data-source.ts`](../mcp-worker/src/data/data-source.ts) giữ snapshot immutable.
 
 `mcp-worker/src/domain/normalization-service.ts` sở hữu chuẩn hóa và source precedence; ambiguity, identity/family conflict hoặc locked-resource conflict đặt trạng thái cần review. `canonical-state.ts` sở hữu projection/digest và xác minh binding. `recommendation-service.ts` chỉ gọi engine sau khi workflow, canonical state và binding khớp; trạng thái chưa phân giải hoặc binding cũ bị từ chối. Bằng chứng người dùng thật sự đã xác nhận vẫn thuộc caller, không phải điều research handler tự chứng minh.
 
 Tám tên handler cùng schema request/result thuộc [`research-contracts.ts`](../mcp-worker/src/research/research-contracts.ts); dispatch và version/provenance/error behavior thuộc [`research-handlers.ts`](../mcp-worker/src/research/research-handlers.ts). CLI `npm run cli -- <lệnh>`, stdio `npm run stdio` và HTTP đều gọi cùng handler/schema. [`tool-definitions.ts`](../mcp-worker/src/mcp/tool-definitions.ts) chỉ thêm mô tả và annotation read-only; mỗi factory tạo `McpServer` mới.
 
-Corpus team công khai không gồm source `do-uy`. Ngoài việc artifact hiện tại đã loại source này, request context trong `research-handlers.ts` còn chiếu snapshot về tập public trước khi dựng index và gọi match/recommend, để snapshot cũ không thể tái công khai team hoặc tier Đô Úy.
+[`public-snapshot-view.ts`](../mcp-worker/src/data/public-snapshot-view.ts) loại
+Đô Úy và các cấu hình, evaluation, liên kết cùng bằng chứng chỉ thuộc phần bị
+ẩn trước khi dựng index/projector; bằng chứng dùng chung còn được giữ. Public
+view vẫn mang identity của raw release để không tạo một version dữ liệu khác.
+
+Nhánh seasonal bind đúng cặp luật vào canonical confirmation và cursor.
+[`season-domain-adapter.ts`](../mcp-worker/src/domain/season-domain-adapter.ts)
+gọi shared projector; [`season-reference-projection.ts`](../mcp-worker/src/domain/season-reference-projection.ts)
+sở hữu projection tham khảo có giới hạn. Client cần refresh output schema;
+input không có context tiếp tục dùng nhánh legacy. Chi tiết hợp đồng consumer
+nằm ở [Research MCP server](mcp-research-server.md).
 
 Stdio dùng official SDK transport, giữ stdout chỉ cho protocol và ghi diagnostic cố định vào stderr. Remote Worker dùng raw Web-standard Streamable HTTP transport của SDK v1 ở chế độ JSON stateless; protocol `2025-11-25` được pin cho cả `initialize` đơn lẻ và trong batch. Trình tự `/mcp` là header guard rẻ → managed-client pre-shared bearer → rate/in-flight → đọc JSON theo byte thực tế và kiểm protocol → Static Assets/server; `/healthz` là liveness no-I/O. Origin hiện diện phải khớp chính xác và result cũng có trần. Bearer này không phải OAuth; không có OAuth server/discovery, client phải tự gắn `Authorization` header.
 
-Remote data nằm trong cùng immutable Worker version với code. Worker chạy trước asset routing nên chỉ application code được gọi; public asset URL luôn `404`. Release builder tạo deterministic manifest + sáu JSON từ Git tree sạch. Controller dùng prior `100%` + candidate `0%`, Version Override và exact deployment ownership trước khi promote/rollback. Chi tiết vận hành nằm ở [Research MCP server](mcp-research-server.md).
+Remote data nằm trong cùng immutable Worker version với code. Worker chạy trước asset routing nên chỉ application code được gọi; public asset URL luôn `404`. Release builder tạo deterministic manifest và inventory đúng version từ Git tree sạch. Controller dùng prior `100%` + candidate `0%`, Version Override và exact deployment ownership trước khi promote/rollback. Chi tiết vận hành nằm ở [Research MCP server](mcp-research-server.md).
 
 `workflowVersion` ghép full `releaseId` của canonical data manifest với `workflowBuildId` của semantic import closure; compact `dataVersion` chỉ để hiển thị. Inventory build chính xác thuộc [`workflow-source-manifest.json`](../mcp-worker/workflow-source-manifest.json); [`generate-workflow-build.ts`](../mcp-worker/scripts/generate-workflow-build.ts) kiểm closure bằng TypeScript AST, từ chối dynamic import không thể đóng và fail khi manifest/generated identity bị lệch.
 

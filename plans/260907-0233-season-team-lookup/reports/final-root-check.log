@@ -1,0 +1,13 @@
+
+> check
+> astro check
+
+14:20:14 [types] Generated 29ms
+14:20:14 [check] Getting diagnostics for Astro files in /Users/plateau/Project/CamNangTQCCL...
+Result (9 files):
+- 0 errors
+- 0 warnings
+- 0 hints
+
+
+EXIT_CODE=0

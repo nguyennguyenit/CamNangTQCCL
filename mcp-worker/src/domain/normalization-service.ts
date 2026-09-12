@@ -1,5 +1,6 @@
 import {
-  CANONICAL_PROJECTION_VERSION,
+  projectionVersion,
+  type SeasonContext,
   createNormalizationDigest,
   type CanonicalHeroState,
   type CanonicalLockedTeamState,
@@ -44,6 +45,7 @@ export interface NormalizationResult {
 }
 
 export interface NormalizeObservationsRequest {
+  seasonContext?: SeasonContext;
   workflowVersion: WorkflowVersion | string;
   observations: readonly NormalizationObservation[];
 }
@@ -452,6 +454,7 @@ function sanitizeObservation(
 export async function normalizeObservations({
   workflowVersion,
   observations,
+  seasonContext,
 }: NormalizeObservationsRequest): Promise<NormalizationResult> {
   if (observations.length > MAX_OBSERVATIONS) {
     throw new RangeError(
@@ -618,6 +621,7 @@ export async function normalizeObservations({
     ({ teamId }) => !overlappingTeamIds.has(teamId),
   );
   const canonicalState: CanonicalState = {
+    ...(seasonContext ? {seasonContext: {...seasonContext}} : {}),
     heroes,
     tactics,
     lockedTeams,
@@ -627,7 +631,7 @@ export async function normalizeObservations({
   const confirmationBinding: ConfirmationBinding = {
     workflowVersion: workflowVersion as WorkflowVersion,
     normalizationDigest: await createNormalizationDigest(canonicalState),
-    canonicalProjectionVersion: CANONICAL_PROJECTION_VERSION,
+    canonicalProjectionVersion: projectionVersion(canonicalState),
   };
   return {
     canonicalState,
@@ -649,5 +653,6 @@ export async function applyConfirmedCorrections(
   return normalizeObservations({
     workflowVersion: result.confirmationBinding.workflowVersion,
     observations: [...result.observations, ...corrections],
+    ...(result.canonicalState.seasonContext ? {seasonContext: result.canonicalState.seasonContext} : {}),
   });
 }

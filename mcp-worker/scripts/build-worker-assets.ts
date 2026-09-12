@@ -17,6 +17,8 @@ import { promisify } from "node:util";
 
 import {
   ARTIFACT_NAMES,
+  SEASON_ARTIFACT_NAMES,
+  V2_ARTIFACT_NAMES,
   ArtifactContractError,
   createDataManifest,
   validateDataSnapshot,
@@ -48,7 +50,7 @@ export interface BuildWorkerAssetsOptions {
 }
 
 export interface WorkerAssetBuild {
-  artifactNames: typeof ARTIFACT_NAMES;
+  artifactNames: readonly ArtifactName[];
   outputDirectory: string;
   evidence: WorkerReleaseEvidence;
 }
@@ -96,7 +98,7 @@ async function readRegularFile(path: string): Promise<Uint8Array> {
 async function validateSourceRoot(
   dataRoot: string,
   allowedSourceFiles: readonly string[],
-): Promise<void> {
+): Promise<readonly ArtifactName[]> {
   const root = await lstat(dataRoot).catch(() => null);
   if (root === null || !root.isDirectory() || root.isSymbolicLink()) {
     throw new WorkerAssetBuildError("INVALID_SOURCE_ASSET");
@@ -108,11 +110,29 @@ async function validateSourceRoot(
   ) {
     throw new WorkerAssetBuildError("INVALID_SOURCE_ASSET");
   }
+  let entries = await readdir(dataRoot, { withFileTypes: true });
+  if (entries.some(entry => entry.name === "sgsdeck")) {
+    const privatePath = resolve(dataRoot, "sgsdeck");
+    const privateStat = await lstat(privatePath);
+    if (!privateStat.isDirectory() || privateStat.isSymbolicLink()) {
+      throw new WorkerAssetBuildError("INVALID_SOURCE_ASSET");
+    }
+    const [rootRealpath, privateRealpath] = await Promise.all([realpath(dataRoot), realpath(privatePath)]);
+    if (!isWithin(rootRealpath, privateRealpath) || dirname(privateRealpath) !== rootRealpath) {
+      throw new WorkerAssetBuildError("INVALID_SOURCE_ASSET");
+    }
+    // This established private source subtree never participates in artifact collection.
+    entries = entries.filter(entry => entry.name !== "sgsdeck");
+  }
+  const seasonalCount = SEASON_ARTIFACT_NAMES.filter(name => entries.some(entry => entry.name === `${name}.json`)).length;
+  if (seasonalCount !== 0 && seasonalCount !== SEASON_ARTIFACT_NAMES.length) {
+    throw new WorkerAssetBuildError("INVALID_SOURCE_ASSET");
+  }
+  const artifactNames = seasonalCount === 0 ? ARTIFACT_NAMES : V2_ARTIFACT_NAMES;
   const expected = new Set([
-    ...ARTIFACT_NAMES.map((name) => `${name}.json`),
+    ...artifactNames.map((name) => `${name}.json`),
     ...allowedSourceFiles,
   ]);
-  const entries = await readdir(dataRoot, { withFileTypes: true });
   if (
     entries.length !== expected.size ||
     entries.some(
@@ -124,6 +144,7 @@ async function validateSourceRoot(
   ) {
     throw new WorkerAssetBuildError("INVALID_SOURCE_ASSET");
   }
+  return artifactNames;
 }
 
 export async function replaceWorkerAssetDirectory(
@@ -198,7 +219,7 @@ export async function buildWorkerAssets(
   ) {
     throw new WorkerAssetBuildError("INVALID_OUTPUT_PATH");
   }
-  await validateSourceRoot(dataRoot, options.allowedSourceFiles ?? []);
+  const artifactNames = await validateSourceRoot(dataRoot, options.allowedSourceFiles ?? []);
   await mkdir(dirname(outputDirectory), { recursive: true });
   const [realDataRoot, realOutputParent] = await Promise.all([
     realpath(dataRoot),
@@ -219,7 +240,7 @@ export async function buildWorkerAssets(
   );
   try {
     const entries = await Promise.all(
-      ARTIFACT_NAMES.map(async (name) => [
+      artifactNames.map(async (name) => [
         name,
         await readRegularFile(resolve(dataRoot, `${name}.json`)),
       ] as const),
@@ -265,7 +286,7 @@ export async function buildWorkerAssets(
       assetInventoryDigest: await calculateWorkerAssetInventoryDigest(assets),
     };
     await replaceWorkerAssetDirectory(temporaryDirectory, outputDirectory);
-    return { artifactNames: ARTIFACT_NAMES, outputDirectory, evidence };
+    return { artifactNames, outputDirectory, evidence };
   } catch (error) {
     await rm(temporaryDirectory, { recursive: true, force: true }).catch(
       () => undefined,

@@ -1,3 +1,8 @@
+import { seasonDomain, type ConfigChoices, type CandidateLimits } from "./season-domain-adapter.js";
+import { projectSeasonReferences, seasonReferenceMetadata } from "./season-reference-projection.js";
+import type { SeasonContext } from "./canonical-state.js";
+import type { SeasonModel } from "../data/artifact-contracts.js";
+import { canonicalDictionaryId } from "../data/entity-identity.js";
 import {
   verifyConfirmationBinding,
   type CanonicalState,
@@ -48,6 +53,7 @@ function boundedRecords(
 }
 
 export interface DomainSnapshot {
+  seasonModel?: SeasonModel;
   releaseId: string;
   dataVersion: string;
   teams: readonly ArtifactRecord[];
@@ -56,6 +62,7 @@ export interface DomainSnapshot {
 }
 
 interface RecommendationServiceRequest {
+  seasonContext?: SeasonContext;
   snapshot: DomainSnapshot;
   canonicalState: CanonicalState;
   confirmationBinding: ConfirmationBinding;
@@ -68,6 +75,9 @@ interface RecommendationServiceRequest {
 interface ReplacementRequest extends RecommendationServiceRequest {
   teamId: string;
   tacticName: string;
+  configId?: string;
+  holderId?: string;
+  slotIndex?: number;
 }
 
 export class DomainServiceError extends Error {
@@ -76,8 +86,11 @@ export class DomainServiceError extends Error {
       | "WORKFLOW_VERSION_MISMATCH"
       | "CONFIRMATION_REQUIRED"
       | "TEAM_NOT_FOUND"
-      | "TACTIC_NOT_FOUND",
+      | "TACTIC_NOT_FOUND"
+      | "INVALID_REQUEST" | "SEASON_CONTEXT_INVALID" | "CONFIG_NOT_FOUND" | "CONFIG_AMBIGUOUS" | "CANDIDATE_LIMIT_EXCEEDED",
     message: string,
+    readonly choices?: ConfigChoices,
+    readonly limits?: CandidateLimits,
   ) {
     super(message);
     this.name = "DomainServiceError";
@@ -93,6 +106,7 @@ async function assertConfirmed(
       "Phiên bản quy trình dự kiến không khớp với dữ liệu hiện tại.",
     );
   }
+  if (request.seasonContext?.scenarioId !== request.canonicalState.seasonContext?.scenarioId || request.seasonContext?.rulesetId !== request.canonicalState.seasonContext?.rulesetId) throw new DomainServiceError("CONFIRMATION_REQUIRED","Cần xác nhận lại kịch bản và luật.");
   if ((request.canonicalState.unresolved?.length ?? 0) > 0) {
     throw new DomainServiceError(
       "CONFIRMATION_REQUIRED",
@@ -115,9 +129,13 @@ async function assertConfirmed(
 
 function engineRequest(request: RecommendationServiceRequest): ArtifactRecord {
   const requestedMax = Number.isInteger(request.maxTeams) ? request.maxTeams! : 5;
+  const projected = request.seasonContext ? seasonDomain.candidates(request.snapshot.seasonModel!,request.seasonContext,{experimentalUntiered:request.experimentalUntiered}) : null;
+  if (projected && !projected.ok) throw new DomainServiceError(projected.code,"Không thể chiếu cấu hình.",projected.choices,projected.limits);
   return {
-    teams: boundedRecords(request.snapshot.teams, 500),
-    teamTier: boundedRecords(request.snapshot.teamTier, 1_000),
+    ...(request.seasonContext ? {seasonContext:request.seasonContext} : {}),
+    ...(projected ? {seasonDiagnostics:projected.diagnostics} : {}),
+    teams: projected ? projected.teams : boundedRecords(request.snapshot.teams, 500),
+    teamTier: projected ? projected.teamTier : boundedRecords(request.snapshot.teamTier, 1_000),
     ownedHeroes: request.canonicalState.heroes.slice(0, 500).map((hero) => ({
       name: hero.displayName,
       canonicalId: hero.canonicalId,
@@ -163,7 +181,10 @@ function baseResult(
       updatedAt: boundedText(ranking.updatedAt),
       trust: "untrusted" as const,
     }));
+    const configId = entry.team.configId as string | undefined;
+    const selection = request.seasonContext && configId ? seasonDomain.selection(request.snapshot.seasonModel!,entry) : null;
     return {
+      ...(request.seasonContext ? {configId,teamId,seasonContext:request.seasonContext,sourceScore:selection ? seasonDomain.score(request.snapshot.seasonModel!,configId,selection) : null} : {}),
       team: {
         id: teamId,
         name: boundedText(entry.team.name),
@@ -195,20 +216,24 @@ function baseResult(
 
 export async function recommendTeam(request: RecommendationServiceRequest) {
   await assertConfirmed(request);
-  const recommendation = legacyDomainAdapter.recommendTeams(engineRequest(request));
+  const engineInput = engineRequest(request);
+  const recommendation = legacyDomainAdapter.recommendTeams(engineInput);
   return {
     ...baseResult(request, recommendation.portfolioTeams),
-    diagnostics: boundedJson(recommendation.diagnostics),
+    diagnostics: boundedJson(request.seasonContext ? {...(recommendation.diagnostics as ArtifactRecord),season:engineInput.seasonDiagnostics} : recommendation.diagnostics),
     warnings: [] as string[],
   };
 }
 
 export async function recommendCoexist(request: RecommendationServiceRequest) {
   await assertConfirmed(request);
-  const recommendation = legacyDomainAdapter.recommendTeams(engineRequest(request));
+  const references = request.seasonContext ? Object.values(seasonDomain.browse(request.snapshot.seasonModel!,request.seasonContext).coexist).flat() : null;
+  const engineInput = engineRequest(request);
+  const recommendation = legacyDomainAdapter.recommendTeams(engineInput);
   return {
     ...baseResult(request, recommendation.portfolioTeams),
-    coexistReference: [...(request.snapshot.coexist ?? [])]
+    ...(references ? seasonReferenceMetadata(references) : {}),
+    coexistReference: references ? projectSeasonReferences(references) : [...(request.snapshot.coexist ?? [])]
       .slice(0, 50)
       .map((entry) => ({
         ...(entry.id === undefined ? {} : { id: boundedText(entry.id) }),
@@ -219,7 +244,7 @@ export async function recommendCoexist(request: RecommendationServiceRequest) {
         ...(entry.note === undefined ? {} : { note: boundedText(entry.note) }),
         trust: "untrusted" as const,
       })),
-    diagnostics: boundedJson(recommendation.diagnostics),
+    diagnostics: boundedJson(request.seasonContext ? {...(recommendation.diagnostics as ArtifactRecord),season:engineInput.seasonDiagnostics} : recommendation.diagnostics),
     warnings: ["coexist-reference-not-scored"],
   };
 }
@@ -240,6 +265,7 @@ function teamTacticSlots(team: ArtifactRecord): ArtifactRecord[] {
 
 export async function suggestReplacements(request: ReplacementRequest) {
   await assertConfirmed(request);
+  if (request.seasonContext) return seasonalReplacements(request);
   const team = request.snapshot.teams.find(
     (candidate) => candidate.id === request.teamId,
   );
@@ -266,4 +292,17 @@ export async function suggestReplacements(request: ReplacementRequest) {
     replacements: replacements.slice(0, 20).map(boundedText),
     warnings: ["mechanics-not-evaluated"],
   };
+}
+
+function seasonalReplacements(request: ReplacementRequest) {
+ const model=request.snapshot.seasonModel!;
+ const teamId=request.teamId.replace(/^team:/u,'');
+ const resolved=seasonDomain.config(model,{teamId,configId:request.configId,context:request.seasonContext!});
+ if(!resolved.ok)throw new DomainServiceError(resolved.code,"Chưa chọn cấu hình.",resolved.choices,resolved.limits);
+ const tacticId=request.tacticName.startsWith('tactic:')?request.tacticName:canonicalDictionaryId('tactics',request.tacticName);
+ const slots=resolved.config.heroSlots.flatMap(hero=>hero.tacticSlots.map((slot,slotIndex)=>({hero,slot,slotIndex}))).filter(({hero,slot,slotIndex})=>slot.tacticRefs.includes(tacticId) && (request.holderId===undefined || hero.heroRefs.includes(request.holderId)) && (request.slotIndex===undefined || slotIndex===request.slotIndex));
+ if(slots.length!==1)throw new DomainServiceError(slots.length?'INVALID_REQUEST':'TACTIC_NOT_FOUND','Cần chọn đúng holder và slot.');
+ const chosen=slots[0]!; const dict=model.data.tactics as Array<Record<string,unknown>>;
+ const replacements=chosen.slot.tacticRefs.filter(ref=>ref!==tacticId).slice(0,20).map(ref=>boundedText(dict.find(row=>canonicalDictionaryId('tactics',String(row.viet))===ref)?.viet ?? ref));
+ return {releaseId:request.snapshot.releaseId,dataVersion:request.snapshot.dataVersion,workflowVersion:request.workflowVersion,teamId,configId:resolved.config.id,tacticName:boundedText(request.tacticName),holderId:request.holderId ?? chosen.hero.heroRefs[0],slotIndex:chosen.slotIndex,replacements,sourceScore:null,warnings:['mechanics-not-evaluated']};
 }

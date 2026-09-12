@@ -1,3 +1,4 @@
+import { publicErrorDetails } from "./mcp/format-result.js";
 import { access } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -135,8 +136,9 @@ function errorDocument(
   code: string,
   message: string,
   retryable: boolean,
+  details: object = {},
 ): unknown {
-  return { error: { code, message, retryable } };
+  return { error: { code, message, retryable, ...details } };
 }
 
 export async function runCli(
@@ -178,7 +180,7 @@ export async function runCli(
     if (error instanceof ResearchHandlerError) {
       writeJson(
         io,
-        errorDocument(error.code, error.message, error.retryable),
+        errorDocument(error.code, error.message, error.retryable, publicErrorDetails(error)),
       );
     } else {
       writeJson(

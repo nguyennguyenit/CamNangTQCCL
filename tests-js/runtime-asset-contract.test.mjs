@@ -11,20 +11,42 @@ const runtimeAssets = [
   ["heroes-dict.json", "array"],
   ["books-dict.json", "array"],
   ["team-tier.json", "array"],
+  ["season-registry.json", "array"],
+  ["season-evidence.json", "array"],
+  ["season-team-configs.json", "array", true],
+  ["season-team-evaluations.json", "array", true],
+  ["season-content-links.json", "array"],
 ];
 
 async function jsonAsset(name) {
   return JSON.parse(await readFile(new URL(`data/${name}`, root), "utf8"));
 }
 
+test("season attribution is versioned and cannot imply an unverified ruleset", async () => {
+  const registry = await jsonAsset("season-registry.json");
+  const evidence = await jsonAsset("season-evidence.json");
+  const proofById = new Map(evidence.map((proof) => [proof.id, proof]));
+  assert.equal(proofById.size, evidence.length);
+  for (const row of [...registry, ...evidence]) assert.equal(row.schemaVersion, 1);
+  const scenario = registry.find((row) => row.id === "binh-dien-xuan-thu");
+  assert.equal(scenario.reviewStatus, "reviewed");
+  assert.deepEqual(scenario.rulesets, []);
+  assert.ok(scenario.sourceMappings.every((mapping) => mapping.rulesetId === null));
+  for (const ref of scenario.evidenceRefs) {
+    assert.equal(proofById.get(ref)?.reviewStatus, "reviewed");
+    assert.equal(proofById.get(ref)?.claim.kind, "scenario-attribution");
+    assert.equal(proofById.get(ref)?.claim.rulesetId, null);
+  }
+});
+
 test("all runtime JSON assets exist, parse, and retain top-level shapes", async () => {
-  for (const [name, shape] of runtimeAssets) {
+  for (const [name, shape, allowEmpty = false] of runtimeAssets) {
     const url = new URL(`data/${name}`, root);
     assert.ok((await stat(url)).isFile(), `${name} must be a regular file`);
     const value = await jsonAsset(name);
     if (shape === "array") {
       assert.ok(Array.isArray(value), `${name} must contain an array`);
-      assert.ok(value.length > 0, `${name} must not be empty`);
+      if (!allowEmpty) assert.ok(value.length > 0, `${name} must not be empty`);
     } else {
       assert.equal(Array.isArray(value), false, `${name} must contain an object`);
       assert.equal(typeof value, "object");
@@ -57,7 +79,7 @@ test("published facets and modules do not expose the retired Đô Úy season", a
   assert.doesNotMatch(manifestSource, /entry\(["']js["'],\s*["']do-uy["']\)/);
 });
 
-test("app keeps six required JSON requests and team tier optional", async () => {
+test("app keeps required datasets byte-cached for season validation and team tier optional", async () => {
   const source = await readFile(new URL("js/app.js", root), "utf8");
   const required = [
     "teams.json",
@@ -69,9 +91,12 @@ test("app keeps six required JSON requests and team tier optional", async () => 
   ];
 
   for (const name of required) {
-    assert.match(source, new RegExp(`loadJSON\\(["']\\.\\/data\\/${name.replace(".", "\\.")}["']\\)`));
+    if (name === 'khaihoang.json') assert.match(source, /loadJSON\(["']\.\/data\/khaihoang\.json["']\)/);
+    else assert.ok(source.includes(`loadData("${name.replace('.json','')}")`));
     assert.doesNotMatch(source, new RegExp(`loadOptionalJSON\\(["']\\.\\/data\\/${name.replace(".", "\\.")}["']`));
   }
+  assert.match(source, /byteRequests\.has\(name\)/);
+  assert.match(source, /loadSeasonModel\(/);
   assert.match(source, /loadOptionalJSON\(["']\.\/data\/team-tier\.json["'], \[\]\)/);
 });
 

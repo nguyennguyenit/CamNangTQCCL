@@ -1,0 +1,62 @@
+
+> tqccl-mcp-server@0.1.0 test
+> vitest run test/release/season-worker-assets.test.ts
+
+
+ RUN  v4.1.10 /Users/plateau/Project/CamNangTQCCL/mcp-worker
+
+ ❯ test/release/season-worker-assets.test.ts (11 tests | 5 failed) 61ms
+   × release verifier accepts the exact declared v1 and v2 inventories 2ms
+   × release verifier rejects mismatched, duplicate or unsupported inventory 0 0ms
+   × release verifier rejects mismatched, duplicate or unsupported inventory 1 0ms
+   × release verifier rejects mismatched, duplicate or unsupported inventory 2 0ms
+   × release verifier rejects mismatched, duplicate or unsupported inventory 3 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/release/season-worker-assets.test.ts > release verifier accepts the exact declared v1 and v2 inventories
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ test/release/season-worker-assets.test.ts:77:73
+     75| it('release verifier accepts the exact declared v1 and v2 inventories'…
+     76|   expect(hasExpectedArtifactInventory(discovery(1, ARTIFACT_NAMES))).t…
+     77|   expect(hasExpectedArtifactInventory(discovery(2, V2_ARTIFACT_NAMES))…
+       |                                                                         ^
+     78| });
+     79| it.each([
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  test/release/season-worker-assets.test.ts > release verifier rejects mismatched, duplicate or unsupported inventory 0
+ FAIL  test/release/season-worker-assets.test.ts > release verifier rejects mismatched, duplicate or unsupported inventory 1
+ FAIL  test/release/season-worker-assets.test.ts > release verifier rejects mismatched, duplicate or unsupported inventory 2
+ FAIL  test/release/season-worker-assets.test.ts > release verifier rejects mismatched, duplicate or unsupported inventory 3
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ test/release/season-worker-assets.test.ts:85:47
+     83|   discovery(3, ARTIFACT_NAMES),
+     84| ])('release verifier rejects mismatched, duplicate or unsupported inve…
+     85|   expect(hasExpectedArtifactInventory(value)).toBe(false);
+       |                                               ^
+     86| });
+     87|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 6 passed (11)
+   Start at  13:46:37
+   Duration  364ms (transform 91ms, setup 0ms, import 222ms, tests 61ms, environment 0ms)

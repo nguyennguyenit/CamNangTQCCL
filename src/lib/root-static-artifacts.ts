@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { lstat, readFile, readdir, realpath } from "node:fs/promises";
 import { dirname, isAbsolute, join, relative, sep } from "node:path";
 import {
@@ -15,10 +16,32 @@ type ArtifactOptions = {
 };
 
 export const DEFAULT_PROJECT_ROOT = process.cwd();
+const PRIVATE_DATA_SUBTREE = "sgsdeck";
 
 function withinRoot(candidate: string, root: string) {
   const path = relative(root, candidate);
   return path === "" || (path !== ".." && !path.startsWith(`..${sep}`) && !isAbsolute(path));
+}
+
+async function publicSourceEntries(
+  kind: ArtifactKind,
+  directory: string,
+  directoryRealpath: string,
+  rootRealpath: string,
+) {
+  const entries = await readdir(directory);
+  if (kind !== "data" || !entries.includes(PRIVATE_DATA_SUBTREE)) return entries;
+
+  const privatePath = join(directory, PRIVATE_DATA_SUBTREE);
+  const privateStat = await lstat(privatePath);
+  if (privateStat.isSymbolicLink() || !privateStat.isDirectory()) {
+    throw new Error(`Private artifact subtree must be a real directory: data/${PRIVATE_DATA_SUBTREE}`);
+  }
+  const privateRealpath = await realpath(privatePath);
+  if (!withinRoot(privateRealpath, rootRealpath) || dirname(privateRealpath) !== directoryRealpath) {
+    throw new Error(`Private artifact subtree escapes project root: data/${PRIVATE_DATA_SUBTREE}`);
+  }
+  return entries.filter((entry) => entry !== PRIVATE_DATA_SUBTREE);
 }
 
 export async function validatePublicArtifactTree({
@@ -41,7 +64,7 @@ export async function validatePublicArtifactTree({
     const expected = artifactEntriesFor(kind, manifest)
       .map((artifact) => artifact.sourceBasename)
       .sort();
-    const actual = (await readdir(directory)).sort();
+    const actual = (await publicSourceEntries(kind, directory, directoryRealpath, rootRealpath)).sort();
     if (JSON.stringify(actual) !== JSON.stringify(expected)) {
       throw new Error(
         `Public artifact source set mismatch for ${kind}: expected ${expected.join(", ")}, got ${actual.join(", ")}`,
@@ -93,4 +116,13 @@ export async function staticPathsFor(kind: ArtifactKind, options: ArtifactOption
       params: { file: artifact.routeParam },
       props: { routeParam: artifact.routeParam },
     }));
+}
+
+/** Byte hashes pin the browser season model to this exact static publication. */
+export async function seasonArtifactHashes(options: ArtifactOptions = {}) {
+  const names = ['season-registry', 'season-evidence', 'season-team-configs', 'season-team-evaluations', 'season-content-links', 'teams', 'coexist', 'heroes-dict', 'tactics', 'books-dict'];
+  return Object.fromEntries(await Promise.all(names.map(async name => {
+    const { bytes } = await readPublicArtifact({ ...options, kind: 'data', routeParam: name });
+    return [name, 'sha256:' + createHash('sha256').update(bytes).digest('hex')];
+  })));
 }

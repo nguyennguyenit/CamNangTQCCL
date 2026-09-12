@@ -101,7 +101,8 @@ describe("JSON CLI integration", () => {
     expect(result.stderr).toBe("");
     const output = JSON.parse(result.stdout);
     expect(output.releaseId).toMatch(/^sha256:[a-f0-9]{64}$/);
-    expect(output.artifacts).toHaveLength(6);
+    expect(output.manifestVersion).toBe(2);
+    expect(output.artifacts).toHaveLength(11);
   });
 
   it("emits exactly one JSON success document with no diagnostics on stdout", async () => {

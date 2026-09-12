@@ -1,4 +1,5 @@
 import { fileURLToPath } from "node:url";
+import { readFile } from "node:fs/promises";
 
 import { describe, expect, it } from "vitest";
 import { toJSONSchema } from "zod";
@@ -16,6 +17,7 @@ import {
 } from "../../scripts/verify-release.js";
 import { TOOL_DEFINITIONS } from "../../src/mcp/tool-definitions.js";
 import { toScrubSafeDigest } from "../../src/domain/digest-encoding.js";
+import { ARTIFACT_NAMES, SEASON_ARTIFACT_NAMES, createDataManifest, validateDataSnapshot, type ArtifactName } from "../../src/data/artifact-contracts.js";
 
 const fixtureRoot = fileURLToPath(
   new URL("../fixtures/release-snapshot", import.meta.url),
@@ -63,6 +65,15 @@ const fixture: ReleaseVerificationFixture = {
   tacticName: "Chiến Pháp A",
 };
 
+async function releaseSource(version: number) {
+  const legacy = new FilesystemDataSource({ dataRoot: fixtureRoot });
+  if (version === 1) return legacy;
+  const objects = new Map<ArtifactName, Uint8Array>(await Promise.all(ARTIFACT_NAMES.map(async name => [name, new Uint8Array(await readFile(`${fixtureRoot}/${name}.json`))] as const)));
+  for (const name of SEASON_ARTIFACT_NAMES) objects.set(name, new TextEncoder().encode('[]'));
+  const snapshot = await validateDataSnapshot(await createDataManifest(objects), objects);
+  return { load: async () => snapshot };
+}
+
 describe("verifyRelease", () => {
   it("từ chối endpoint có userinfo, query hoặc fragment", () => {
     for (const endpoint of [
@@ -109,11 +120,21 @@ describe("verifyRelease", () => {
         ...catalog.slice(1),
       ]),
     ).toBe(false);
+    const changed = structuredClone(catalog);
+    function changeNestedLimit(value: unknown): boolean {
+      if (!value || typeof value !== 'object') return false;
+      const node = value as Record<string, unknown>;
+      const properties = node.properties as Record<string, Record<string, unknown>> | undefined;
+      if (properties?.maxCandidates) { properties.maxCandidates.const = 501; return true; }
+      return Object.values(node).some(changeNestedLimit);
+    }
+    expect(changeNestedLimit(changed[0]!.outputSchema)).toBe(true);
+    expect(matchesExpectedToolCatalog(changed)).toBe(false);
   });
 
-  it("xác minh health/auth/protocol/catalog và đủ tám tool", async () => {
+  it.each([1, 2])("xác minh health/auth/protocol/catalog và đủ tám tool trên manifest v%i", async version => {
     const steps: string[] = [];
-    const source = new FilesystemDataSource({ dataRoot: fixtureRoot });
+    const source = await releaseSource(version);
     const snapshot = await source.load();
     let loads = 0;
     const worker = createWorker({
@@ -154,8 +175,8 @@ describe("verifyRelease", () => {
     }
   });
 
-  it("đóng dấu exact Worker version và data identity cho rollback rehearsal", async () => {
-    const source = new FilesystemDataSource({ dataRoot: fixtureRoot });
+  it.each([1, 2])("đóng dấu exact Worker version và data identity v%i cho rollback rehearsal", async version => {
+    const source = await releaseSource(version);
     const worker = createWorker({
       createDataSource: () => source,
       now: () => Date.parse("2026-07-29T00:00:00.000Z"),

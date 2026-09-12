@@ -1,0 +1,31 @@
+[
+  {
+    "aliases": [],
+    "evidenceRefs": [
+      "coexist-binh-dien-scenario-confirmation"
+    ],
+    "id": "binh-dien-xuan-thu",
+    "kind": "scenario",
+    "labelVi": "Binh Diễn Xuân Thu",
+    "region": "VN",
+    "reviewStatus": "reviewed",
+    "rulesets": [],
+    "schemaVersion": 1,
+    "sourceMappings": [
+      {
+        "evidenceRefs": [
+          "coexist-binh-dien-scenario-confirmation"
+        ],
+        "provenance": {
+          "fetchedAt": "2026-09-07",
+          "provider": "google-sheets",
+          "region": "VN",
+          "sourceUrl": "https://docs.google.com/spreadsheets/d/1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw/edit?gid=190730430#gid=190730430"
+        },
+        "reviewStatus": "reviewed",
+        "rulesetId": null,
+        "sourceSeason": null
+      }
+    ]
+  }
+]

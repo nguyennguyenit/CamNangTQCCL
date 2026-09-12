@@ -547,3 +547,51 @@ test("semantic tie được quyết định bằng stable team ID", () => {
 
   assert.equal(result.portfolioTeams[0].team.id, "team-a");
 });
+
+test("seasonal configurations retain canonical team identity and distinct tier indexes", () => {
+  const teams = ["a", "b"].map((key) => ({ id: "same-team", candidateKey: `config-${key}`, configId: `config-${key}`, name: key, heroes: [{ name: `Hero ${key}`, tactics: [] }] }));
+  for (const fullBox of [false, true]) {
+    const result = recommendTeams({ teams, teamTier: [{ teamId: "same-team", candidateKey: "config-a", rankings: [{ tier: "T0" }] }, { teamId: "same-team", candidateKey: "config-b", rankings: [{ tier: "T1" }] }], seasonContext: { scenarioId: "s", rulesetId: "r" }, ownedHeroes: ["Hero a", "Hero b"], maxTeams: 2, fullBox });
+    assert.equal(result.portfolioTeams.length, 1);
+    assert.equal(result.portfolioTeams[0].team.id, "same-team");
+    assert.equal(result.portfolioTeams[0].configId, "config-a");
+    assert.equal(result.portfolioTeams[0].tier, "T0");
+    assert.ok(result.diagnostics.prunedCandidates.some(d => d.teamId === "same-team" && d.configId === "config-b"));
+  }
+});
+
+test("seasonal semantic ties use stable config ID independent of input order", () => {
+  const teams = ["b", "a"].map(key => ({ id: "same-team", candidateKey: `config-${key}`, configId: `config-${key}`, heroes: [{ name: key, tactics: [] }] }));
+  for(const fullBox of [false,true]) {
+    const result=recommendTeams({teams,teamTier:teams.map(t=>({teamId:t.id,candidateKey:t.candidateKey,rankings:[{tier:"T0"}]})),seasonContext:{scenarioId:"s",rulesetId:"r"},ownedHeroes:["a","b"],fullBox,maxTeams:1});
+    assert.equal(result.portfolioTeams[0].configId,"config-a");
+  }
+});
+
+test("seasonal locks retain resources and exclude same canonical team configurations", () => {
+  const team={id:"already-built",candidateKey:"new-config",configId:"new-config",heroes:[{name:"Other Hero",tactics:[]}]};
+  const result=recommendTeams({teams:[team],teamTier:[{teamId:team.id,candidateKey:team.candidateKey,rankings:[{tier:"T0"}]}],seasonContext:{scenarioId:"s",rulesetId:"r"},ownedHeroes:["Other Hero"],lockedTeams:[{teamId:team.id,heroes:["Locked Hero"],tactics:["Locked Tactic"]}],maxTeams:2});
+  assert.equal(result.portfolioTeams.length,1);assert.equal(result.portfolioTeams[0].locked,true);
+  assert.equal(result.addTeams.length,0);
+  assert.ok(result.diagnostics.prunedCandidates.some(d=>d.configId===team.configId));
+});
+
+test("no-context recommendations retain exact legacy output shape", () => {
+  const baseline=run();
+  assert.deepEqual(run({seasonContext:null}),baseline);
+  assert.deepEqual(run({seasonContext:undefined}),baseline);
+  assert.equal(Object.hasOwn(baseline.portfolioTeams[0],'configId'),false);
+  assert.equal(Object.hasOwn(baseline.portfolioTeams[0],'seasonContext'),false);
+});
+
+test("seasonal repeated alternative lists keep ordered holders distinct", () => {
+  const team={id:'ordered-team',configId:'ordered-config',candidateKey:'ordered-config',heroes:[{name:'Anh',alternatives:['Bình'],tactics:[{name:'Một'}]},{name:'Anh',alternatives:['Bình'],tactics:[{name:'Hai'}]}]};
+  const result=recommendTeams({teams:[team],teamTier:[{teamId:team.id,candidateKey:team.candidateKey,rankings:[{tier:'T0'}]}],seasonContext:{scenarioId:'s',rulesetId:'r'},ownedHeroes:['Anh','Bình'],ownedTactics:['Một','Hai']});
+  assert.deepEqual(result.portfolioTeams[0].tacticSelections.map(s=>s.holderId),['hero:anh','hero:binh']);
+});
+
+test("seasonal ID bounds count Unicode characters consistently with the bundle validator", () => {
+  const configId='𐀀'.repeat(128),team={id:'unicode-team',configId,candidateKey:configId,heroes:[{name:'Anh',tactics:[]}]};
+  const result=recommendTeams({teams:[team],teamTier:[{teamId:team.id,candidateKey:configId,rankings:[{tier:'T0'}]}],seasonContext:{scenarioId:'s',rulesetId:'r'},ownedHeroes:['Anh']});
+  assert.equal(result.portfolioTeams[0].configId,configId);
+});

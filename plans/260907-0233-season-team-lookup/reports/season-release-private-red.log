@@ -1,0 +1,33 @@
+
+> tqccl-mcp-server@0.1.0 test
+> vitest run test/release/season-worker-assets.test.ts
+
+
+ RUN  v4.1.10 /Users/plateau/Project/CamNangTQCCL/mcp-worker
+
+ ❯ test/release/season-worker-assets.test.ts (18 tests | 2 failed) 78ms
+   × private SGSDeck subtree does not change bundled v1 artifacts or get read 7ms
+   × private SGSDeck subtree does not change bundled v2 artifacts or get read 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/release/season-worker-assets.test.ts > private SGSDeck subtree does not change bundled v1 artifacts or get read
+ FAIL  test/release/season-worker-assets.test.ts > private SGSDeck subtree does not change bundled v2 artifacts or get read
+WorkerAssetBuildError: Không thể build Worker static assets.
+ ❯ validateSourceRoot scripts/build-worker-assets.ts:132:11
+    130|     )
+    131|   ) {
+    132|     throw new WorkerAssetBuildError("INVALID_SOURCE_ASSET");
+       |           ^
+    133|   }
+    134|   return artifactNames;
+ ❯ buildWorkerAssets scripts/build-worker-assets.ts:209:25
+ ❯ test/release/season-worker-assets.test.ts:94:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 16 passed (18)
+   Start at  13:51:21
+   Duration  357ms (transform 86ms, setup 0ms, import 208ms, tests 78ms, environment 0ms)

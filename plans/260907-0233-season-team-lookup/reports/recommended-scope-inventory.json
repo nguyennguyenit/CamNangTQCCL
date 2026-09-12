@@ -1,0 +1,267 @@
+{
+  "sourceUrl": "https://sgsdeck.com/recommended",
+  "sourceSnapshotHash": "sha256:3316ca6cd031df133724d5f833edb37a86f2f1b30a4784155688386aa31b8880",
+  "scopes": [
+    {
+      "code": "og-兵演春秋",
+      "name": "兵演春秋",
+      "kind": "ORIGINAL",
+      "isActive": true,
+      "sortOrder": 27,
+      "count": 25,
+      "intakeStatus": "collected-list-and-details"
+    },
+    {
+      "code": "s1",
+      "name": "群雄討董",
+      "kind": "NORMAL",
+      "isActive": false,
+      "sortOrder": 1,
+      "count": 30,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "s2",
+      "name": "中原爭霸",
+      "kind": "NORMAL",
+      "isActive": false,
+      "sortOrder": 2,
+      "count": 31,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "s3",
+      "name": "赤壁之戰",
+      "kind": "NORMAL",
+      "isActive": false,
+      "sortOrder": 3,
+      "count": 29,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s4",
+      "name": "群雄割據",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 4,
+      "count": 14,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s5",
+      "name": "天下爭鋒",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 5,
+      "count": 15,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s6",
+      "name": "英雄露穎",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 6,
+      "count": 17,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s7",
+      "name": "赤壁之戰",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 7,
+      "count": 17,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s8",
+      "name": "軍爭地利",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 8,
+      "count": 17,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s9",
+      "name": "興師伐亂",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 9,
+      "count": 36,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s10",
+      "name": "北定中原",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 10,
+      "count": 45,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s11",
+      "name": "官渡之戰",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 11,
+      "count": 33,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s12",
+      "name": "王師秉節",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 12,
+      "count": 19,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s13",
+      "name": "英雄集結",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 13,
+      "count": 38,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s14",
+      "name": "兵戰四時",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 14,
+      "count": 34,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s15",
+      "name": "襄樊之戰",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 15,
+      "count": 0,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s16",
+      "name": "雲起龍襄",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 16,
+      "count": 111,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s17",
+      "name": "天師舉義",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 17,
+      "count": 107,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s18",
+      "name": "陳倉之戰",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 18,
+      "count": 110,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s19",
+      "name": "潼關之戰",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 19,
+      "count": 88,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s20",
+      "name": "奇兵八陣",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 20,
+      "count": 0,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s21",
+      "name": "亂世烽煙",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 21,
+      "count": 0,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s22",
+      "name": "兗州之戰",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 22,
+      "count": 27,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s23",
+      "name": "定軍山之戰",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 23,
+      "count": 39,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s24",
+      "name": "霸王討逆",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 24,
+      "count": 82,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s25",
+      "name": "長安之亂",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 25,
+      "count": 107,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s26",
+      "name": "英雄命世",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 26,
+      "count": 130,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s27",
+      "name": "漢焰長明",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 28,
+      "count": 76,
+      "intakeStatus": "not-collected"
+    },
+    {
+      "code": "pk-s28",
+      "name": "九州兵興",
+      "kind": "PK",
+      "isActive": false,
+      "sortOrder": 29,
+      "count": 93,
+      "intakeStatus": "not-collected"
+    }
+  ]
+}

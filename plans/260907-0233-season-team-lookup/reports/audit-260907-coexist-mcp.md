@@ -1,0 +1,23 @@
+# Season plan audit — MCP contract and bounds
+
+Scope: plan-only Security Adversary + Contract Verifier, 2026-09-07. Read plan index and all four phases against MCP artifact, index, research, canonical-state, recommendation and asset-builder owners. No implementation or test/build/lint execution. Khai hoang remains excluded by the latest user decision. Previously accepted reference node-budget and mandatory-condition findings are not repeated.
+
+## 1. Medium — Ambiguity recovery has no transport contract for candidate IDs
+
+- Plan: `plans/260907-0233-season-team-lookup/phase-04-mcp-and-release-validation.md:61` requires an ambiguity **error with a bounded list of config IDs**. The owner inventory at line 85 names research contracts/handlers/tool definitions, but omits error serialization.
+- Source: `mcp-worker/src/research/research-contracts.ts:735` defines a strict error envelope with code/message/nextAction/retryable/field names only. `mcp-worker/src/research/research-handlers.ts:276` replaces domain messages with public static messages. `mcp-worker/src/mcp/format-result.ts:70` serializes only those existing error fields and uses `PUBLIC_ERRORS`; `mcp-worker/src/cli.ts:178` has a separate error serializer.
+- Failure: a valid team has two reviewed configs in the same pair and the client omits configId. A service-level ambiguity error can be rejected correctly yet lose both selectable IDs before reaching the client. Adding IDs only to a message does not survive MCP formatting; putting them in `fields` violates its explicit field-name-only contract. Adding a new code without the public error mapping also breaks formatting. The planned recovery cannot be verified by service/handler-only assertions.
+- Minimal fix: specify one bounded machine-readable ambiguity payload for v2, including truncation/count if IDs are omitted; explicitly include domain-to-handler mapping, public error schema, `PUBLIC_ERRORS`/`formatToolError`, and CLI serialization owners. Keep existing error shapes unchanged when that payload is absent. Add a planned transport assertion that the same two validated config IDs survive CLI, stdio and HTTP error formatting and validate against published outputSchema. Do not echo arbitrary request/source text into that payload.
+
+## 2. Medium — Config expansion can silently exceed the MCP engine-input cap
+
+- Plan: `plans/260907-0233-season-team-lookup/phase-02-season-team-configurations.md:86` expands one canonical team into multiple independently indexed config candidates; phase 4 line 20 requires UI/MCP projector agreement. Its explicit cap/rejection policy at `phase-04-mcp-and-release-validation.md:73` covers reference groups, nested detail and output bytes, without defining a seasonal candidate-input bound.
+- Source: `mcp-worker/src/domain/recommendation-service.ts:116` sends only the first 500 team records and first 1,000 tier records to the engine through `boundedRecords`; the slice does not signal omission. The shared engine entry at `js/team-recommend-engine.js:489` receives whatever candidate list its caller supplies, so the MCP-only pre-slice is independent of the UI candidate set.
+- Failure: a valid seasonal projection has 501 configs, and the sole roster-compatible config is number 501. Reusing the current service adapter silently drops it before ranking, while browser recommendations can see it; no response truncation flag or config diagnostic explains the difference. Multiple configurations make this limit reachable independently of the legacy team count. Applying the cap before scope filtering is even worse: unrelated seasons consume the budget.
+- Minimal fix: define the seasonal engine-input contract separately from reference-output truncation. Filter/project the selected scope before enforcing its cap; either reject an over-cap scoped candidate set with an explicit bounded error, or make a documented deterministic bounded selection shared by UI/MCP with omission diagnostics. Preserve the legacy no-context slice. Add planned boundary cases at 500/501 configs, with the only eligible candidate last and with many irrelevant-scope configs preceding it.
+
+No additional substantiated snapshot cross-reference or confirmation bypass finding beyond the plan's existing reject-before-activation and scope-bound confirmation requirements.
+
+Status: DONE_WITH_CONCERNS
+Summary: Two concrete MCP plan gaps: ambiguity IDs cannot traverse the existing strict error serializers, and config expansion has no policy for the existing silent engine-input cap.
+Concerns: Resolve both contracts before implementation; no code or plan files changed.

@@ -1,0 +1,2 @@
+# Preserve the checksum-bound export's CRLF and spaces inside quoted multiline cells.
+plans/260907-0233-season-team-lookup/research/coexist-binh-dien-xuan-thu.csv -text whitespace=-blank-at-eol,cr-at-eol

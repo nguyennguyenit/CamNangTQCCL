@@ -56,12 +56,6 @@ function tierBadge(rankings) {
   return el("span", { class: `badge tier ${tierClass(tier)}`, title: `Tham khảo:\n${tip}` }, tier);
 }
 
-function starsBadge(stars) {
-  if (stars == null) return null;
-  const full = Math.floor(stars);
-  const half = stars % 1 >= 0.5;
-  return el("span", { class: "badge stars", title: `${stars} sao` }, "★".repeat(full) + (half ? "½" : ""));
-}
 
 function statusBadge(status) {
   if (status === "meta") return null;
@@ -71,7 +65,7 @@ function statusBadge(status) {
 /** Badge "Khuyến nghị" cho team được đề cử (cờ team.recommended). */
 function recommendBadge(team) {
   if (!team.recommended) return null;
-  return el("span", { class: "badge recommend", title: "Đội được khuyến nghị" }, "★ Khuyến nghị");
+  return el("span", { class: "badge recommend", title: "Đội được khuyến nghị" }, "Khuyến nghị");
 }
 
 function variantTags(g, cls, onTag) {
@@ -136,7 +130,7 @@ export function teamCard(team, onTag, rankings) {
       recommendBadge(team),
       tierBadge(rankings),
       team.faction ? el("span", { class: `badge faction${fcode ? " f-" + fcode : ""}` }, team.faction) : null,
-      starsBadge(team.stars),
+
       statusBadge(team.status),
     ]),
   ]);
@@ -382,4 +376,118 @@ export function khaihoangTable(data) {
         ])
       : null,
   ].filter(Boolean));
+}
+
+/** Source-owned coexist payload keeps every original slot and multiline condition. */
+export function seasonCoexistGroup(reference) {
+  if (!reference.source) return coexistGroup(reference.content);
+  const {content, source} = reference;
+  const raw = (label, value) => value ? el('p', {class:'season-raw'}, [el('strong', {}, label + ': '), value]) : null;
+  return el('section', {class:'coexist-group', dataset:{recordId:reference.recordId}}, [
+    el('h3', {}, content.groupLabel),
+    el('p', {class:'scope-note'}, reference.classification === 'applicable' ? 'Áp dụng theo phiên bản luật đã chọn' : 'Tham khảo kịch bản — chưa xác nhận theo phiên bản luật'),
+    raw('Tổng quan', content.summaryRaw), raw('Gợi ý khai hoang', content.openingSuggestionsRaw), raw('Ghi chú', content.notesRaw),
+    el('a', {href:source.url, target:'_blank', rel:'noopener noreferrer'}, 'Nguồn Cùng Tồn'), raw('Lưu ý nguồn', source.disclaimerRaw),
+    el('div', {class:'coexist-teams'}, content.teams.map(team => el('article', {class:'coexist-subteam'}, [
+      el('h4', {class:'coexist-subteam-title'}, team.teamNameRaw), raw('Cải tạo chiến pháp binh chủng', team.unitTacticEffectsRaw),
+      ...team.heroes.map(hero => el('div', {class:'hero'}, [el('h5', {}, hero.nameRaw),
+        ...hero.tacticSlotsRaw.map((value, index) => raw(`Chiến pháp ${index + 1}`, value || 'Chưa có dữ liệu')),
+        raw('Cộng điểm', hero.statFocusRaw || 'Chưa có dữ liệu'),
+        ...hero.bookSlotsRaw.map((value, index) => raw(`Binh thư ${index + 1}`, value || 'Chưa có dữ liệu')),
+      ])),
+    ]))),
+  ]);
+}
+
+export function seasonTeamCard(row, onTag, onOpen) {
+  const shownTeam = row.configId ? {...row.team,heroes:row.team.heroes.map(hero=>({...hero,alternatives:[]}))} : row.team;
+  const card = teamCard(shownTeam, onTag, row.classification === 'applicable' && row.tier ? [{tier:row.tier,source:'Cấu hình đã xác minh',updatedAt:''}] : row.legacyRankings);
+  if (row.configId) {
+    card.dataset.configId = row.configId;
+    card.querySelectorAll('.heroes .line,.counters,.notes').forEach(node=>node.remove());
+  }
+  card.append(el('p',{class:'scope-note'},row.classification === 'applicable' ? 'Áp dụng theo phiên bản luật đã chọn' : row.classification === 'unknown' ? 'Chưa rõ mùa — tham khảo' : 'Tham khảo kịch bản'));
+  if (row.legacyRankings?.length) card.append(el('details',{class:'legacy-tier-sources'},[el('summary',{},'Tier lịch sử — tham khảo'),...row.legacyRankings.map(rank=>el('p',{},`${rank.tier} · ${rank.source} · ${rank.updatedAt}`))]));
+  if (row.contextLabel) card.append(el('p',{class:'scope-note'},row.contextLabel));
+  card.append(el('p',{class:'sgsdeck-score'},row.sourceScore ? `Điểm SGSDeck: ${row.sourceScore.value}` : 'Chưa có điểm SGSDeck'));
+  card.append(el('p',{class:'scope-note'},`Nguồn: ${SOURCE_LABEL[row.team.source] || row.team.source || 'Chưa có dữ liệu'}`));
+  if (row.sourceScore) card.append(el('a',{href:row.sourceScore.provenance.sourceUrl,target:'_blank',rel:'noopener noreferrer'},'Nguồn điểm SGSDeck'));
+  if (row.config?.requirements.some(item=>item.mandatory)) card.append(el('p',{class:'scope-note'},'Có điều kiện bắt buộc chưa xác minh.'));
+  if (row.configId) card.append(el('button',{type:'button',class:'ana-link-btn',onClick:onOpen},'Chi tiết cấu hình'));
+  return card;
+}
+
+import { resolveSelectionScore } from './season-context.js';
+import { compareSeasonInventory, defaultSeasonSelection } from './season-ui-state.js';
+import { ROSTER_SCAN_STORAGE_KEY, deserializeRosterScanState } from './roster-scan-state.js';
+import { canonicalHeroId } from './hero-identity.js';
+import { normalizeText } from './filters.js';
+
+/** Ordered configuration details use explicit selections; inventory facts never become tiers. */
+export function seasonConfigDetail(row, model, {onClose,onImport}) {
+  const {config,team} = row;
+  const names = new Map();
+  for (const [dataset,kind] of [['heroes-dict','hero'],['tactics','tactic'],['books-dict','book']]) for (const item of model.data[dataset]) {
+    const ref = kind === 'hero' ? canonicalHeroId(item.viet) : kind + ':' + normalizeText(item.viet).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    names.set(ref,item.viet);
+  }
+  const selection = defaultSeasonSelection(config);
+  const score = el('p',{class:'sgsdeck-score'});
+  const comparison = el('div',{class:'season-inventory-comparison',role:'status'});
+  function refreshScore() {
+    const value = resolveSelectionScore(model,config.id,selection);
+    score.textContent = value ? `Điểm SGSDeck: ${value.value}` : 'Chưa có điểm SGSDeck';
+    comparison.replaceChildren();
+  }
+  function chooser(label,refs,change) {
+    const select = el('select',{'aria-label':label},refs.length ? refs.map(ref=>el('option',{value:ref},names.get(ref) || ref)) : [el('option',{value:''},'Chưa có dữ liệu')]);
+    const selectedLabel = el('span',{},label.split(' · ').at(-1)+': '+(names.get(refs[0]) || (refs[0] ?? 'Chưa có dữ liệu')));
+    select.addEventListener('change',()=>{change(select.value);selectedLabel.textContent=label.split(' · ').at(-1)+': '+select.selectedOptions[0].textContent;refreshScore();});
+    return el('label',{class:'season-slot'},[selectedLabel,select]);
+  }
+  const compare = el('button',{type:'button',class:'ana-btn',onClick:()=>{
+    const inventory = deserializeRosterScanState(localStorage.getItem(ROSTER_SCAN_STORAGE_KEY));
+    if (!inventory.ownedHeroes.length && !inventory.ownedTactics.length) {
+      comparison.replaceChildren(el('p',{},'Chưa có kho để đối chiếu.'),el('button',{type:'button',class:'ana-link-btn',onClick:onImport},'Mở scan / nhập kho'));
+      return;
+    }
+    const result = compareSeasonInventory(selection,inventory);
+    const lines = [];
+    for (const [key,label] of [['missingHeroes','Thiếu tướng'],['missingTactics','Thiếu chiến pháp'],['lockedHeroes','Tướng đang khóa'],['lockedTactics','Chiến pháp đang khóa']]) if (result[key].length) lines.push(`${label}: ${result[key].map(ref=>names.get(ref) || ref).join(', ')}`);
+    if (result.duplicateHeroes) lines.push('Trùng tướng giữa các vị trí.');
+    if (result.duplicateTactics) lines.push('Trùng chiến pháp giữa các vị trí.');
+    if (!lines.length) lines.push('Đủ tướng và chiến pháp cho lựa chọn này.');
+    lines.push('Binh thư: chưa kiểm chứng từ kho hiện tại.');
+    if (result.requirementsUnknown) lines.push(config.requirements.some(requirement=>requirement.mandatory) ? 'Điều kiện bắt buộc: chưa kiểm chứng; chưa thể đề xuất build.' : 'Điều kiện / hiệu ứng bổ sung: chưa kiểm chứng; thông tin tham khảo, không phải điều kiện bắt buộc để gợi ý đội.');
+    comparison.replaceChildren(...lines.map(line=>el('p',{},line)));
+  }},'Đối chiếu kho của tôi');
+  const detail = el('div',{id:'season-config-detail',class:'season-config-detail',role:'region','aria-label':'Chi tiết cấu hình',tabindex:'-1'},[
+    el('button',{type:'button',class:'ana-link-btn',onClick:onClose},'Đóng chi tiết'),
+    el('h3',{},team.name), el('p',{class:'scope-note'},`Cấu hình: ${config.id} · ${config.scenarioId} · ${config.rulesetId || 'Tham khảo kịch bản'}`),score,
+    row.evaluation?.sourceScore ? el('p',{},[el('a',{href:row.evaluation.sourceScore.provenance.sourceUrl,target:'_blank',rel:'noopener noreferrer'},'Nguồn điểm SGSDeck'),` · ${row.evaluation.sourceScore.provenance.region} · ${row.evaluation.sourceScore.sourceSeason?.label || 'Chưa rõ mùa tại nguồn'}`]) : null,
+    chooser('Loại binh',config.unitTypes,value=>{selection.unitType=value;}),
+    ...config.heroSlots.map((slot,index)=>el('fieldset',{class:'season-hero-slot'},[
+      el('legend',{},`Tướng ${index+1} · ${index === 0 ? 'Chủ tướng' : 'Phó tướng ' + index}`),chooser(`Tướng ${index+1} · Tướng`,slot.heroRefs,value=>{selection.heroSlots[index].heroRef=value;}),
+      ...slot.tacticSlots.map((value,i)=>chooser(`Tướng ${index+1} · Chiến pháp ${i+1}`,value.tacticRefs,ref=>{selection.heroSlots[index].tacticRefs[i]=ref;})),
+      ...slot.bookSlots.map((value,i)=>chooser(`Tướng ${index+1} · Binh thư ${i+1}`,value.bookRefs,ref=>{selection.heroSlots[index].bookRefs[i]=ref;})),
+      el('p',{class:'season-raw'},`Cộng điểm: ${slot.statFocusRaw || 'Chưa có dữ liệu'}`),
+    ])),
+    el('details',{},[
+      el('summary',{},'Nguồn và đánh giá cấu hình'),
+      ...model.data['season-evidence'].filter(proof=>[...config.evidenceRefs,...(row.evaluation?.rankings.flatMap(rank=>rank.evidenceRefs) || [])].includes(proof.id)).map(proof=>el('p',{},[el('a',{href:proof.provenance.sourceUrl,target:'_blank',rel:'noopener noreferrer'},proof.provenance.provider),` · ${proof.provenance.region} · ${proof.provenance.fetchedAt} · ${proof.note}`])),
+      el('p',{},row.evaluation?.reviewNote || 'Chưa có đánh giá cấu hình.'),
+      ...(row.evaluation?.rankings || []).map(rank=>el('p',{},`${rank.tier}${rank.id === row.evaluation.defaultRankingId ? ' · Đánh giá được chọn' : ' · Tham khảo nguồn khác'}`)),
+    ]),
+    el('h4',{},'Điều kiện và hiệu ứng'),
+    ...config.requirements.map(item=>el('p',{class:'season-raw'},`${item.descriptionRaw} · Chưa xác minh điều kiện${item.mandatory ? ' · Bắt buộc' : ''}`)),
+    ...config.effectBundles.map(item=>el('div',{class:'season-effect'},[
+      el('h5',{},item.labelRaw),el('p',{class:'season-raw'},item.effectsRaw),
+      ...item.requirementIds.map(id=>el('p',{class:'season-raw'},`Điều kiện: ${config.requirements.find(requirement=>requirement.id === id).descriptionRaw}`)),
+      el('p',{class:'scope-note'},'Chưa xác minh điều kiện và hiệu ứng từ kho hiện tại.'),
+    ])),
+    !config.requirements.length && !config.effectBundles.length ? el('p',{},'Không có điều kiện đặc biệt được ghi trong cấu hình.') : null,
+    el('p',{class:'season-raw'},config.notes || 'Ghi chú: chưa có dữ liệu'),compare,comparison,
+  ]);
+  refreshScore();
+  return detail;
 }

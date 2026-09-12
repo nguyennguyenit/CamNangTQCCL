@@ -1,10 +1,15 @@
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 
+import { configChoicesSchema, candidateLimitsSchema } from "../research/research-contracts.js";
 import type { ResearchToolName } from "../research/research-contracts.js";
 import { ResearchHandlerError } from "../research/research-handlers.js";
 import { withFieldNames } from "../research/validation-fields.js";
 
 const PUBLIC_ERRORS = {
+  SEASON_CONTEXT_INVALID: {message:"Cặp kịch bản và luật chưa được xác minh.",nextAction:"Đọc registry và chọn cặp đã xác minh."},
+  CONFIG_NOT_FOUND: {message:"Không tìm thấy cấu hình phù hợp.",nextAction:"Tìm cấu hình trong đúng kịch bản và luật."},
+  CONFIG_AMBIGUOUS: {message:"Cần chọn cấu hình đội hình cụ thể.",nextAction:"Chọn configId từ choices hoặc tìm kiếm có phân trang."},
+  CANDIDATE_LIMIT_EXCEEDED: {message:"Số cấu hình vượt giới hạn xử lý.",nextAction:"Thu hẹp dữ liệu cấu hình trước khi thử lại."},
   INVALID_REQUEST: {
     message: "Yêu cầu không hợp lệ.",
     nextAction: "Kiểm tra input theo schema công cụ rồi thử lại.",
@@ -86,6 +91,7 @@ export function formatToolError(error: unknown): CallToolResult {
         message,
         nextAction: publicError.nextAction,
         retryable,
+        ...publicErrorDetails(error),
         ...(fields.length === 0 ? {} : { fields: [...fields] }),
       },
     },
@@ -97,4 +103,11 @@ export function formatToolError(error: unknown): CallToolResult {
       },
     ],
   };
+}
+
+export function publicErrorDetails(error: unknown) {
+ if (!(error instanceof ResearchHandlerError)) return {};
+ if(error.code === "CONFIG_AMBIGUOUS") {const result=configChoicesSchema.safeParse(error.choices);return result.success?{choices:result.data}:{};}
+ if(error.code === "CANDIDATE_LIMIT_EXCEEDED") {const result=candidateLimitsSchema.safeParse(error.limits);return result.success?{limits:result.data}:{};}
+ return {};
 }

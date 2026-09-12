@@ -498,3 +498,15 @@ describe("registry công cụ MCP", () => {
     expect(document.error).not.toHaveProperty("fields");
   });
 });
+
+it('keeps complete discovery below budget and validates correlated errors in every advertised JSON schema',async()=>{
+ const {Ajv}=await import('ajv');const ajv=new Ajv({strict:false,allErrors:true});
+ const {client}=await connect(createResearchHandlers({dataSource:new FilesystemDataSource({dataRoot:fixtureRoot})}));
+ const catalog=await client.listTools();
+ expect(Buffer.byteLength(JSON.stringify({jsonrpc:'2.0',id:1,result:catalog}))).toBeLessThan(88000);
+ const common={message:'Safe',nextAction:'Choose',retryable:false};
+ const choices={kind:'team-config',teamId:'team-a',configIds:['config-a','config-b'],totalCount:2,omittedCount:0};
+ const valid=[{error:{...common,code:'INVALID_REQUEST'}},{error:{...common,code:'CONFIG_AMBIGUOUS',choices}},{error:{...common,code:'CANDIDATE_LIMIT_EXCEEDED',limits:{maxCandidates:500,candidateCount:501}}}];
+ const invalid=[{error:{...common,code:'CONFIG_AMBIGUOUS'}},{error:{...common,code:'CANDIDATE_LIMIT_EXCEEDED'}},{error:{...common,code:'INVALID_REQUEST',choices}},{error:{...common,code:'CONFIG_AMBIGUOUS',choices,limits:{maxCandidates:500,candidateCount:501}}},{error:{...common,code:'CANDIDATE_LIMIT_EXCEEDED',retryable:true,limits:{maxCandidates:500,candidateCount:501}}},{error:{...common,code:'INVALID_REQUEST',extra:'not allowed'}}];
+ for(const tool of catalog.tools){ajv.compile(tool.inputSchema);const validate=ajv.compile(tool.outputSchema!);for(const value of valid)expect(validate(value),`${tool.name}: ${JSON.stringify(validate.errors)}`).toBe(true);for(const value of invalid)expect(validate(value),`${tool.name} accepted invalid error`).toBe(false);}
+});

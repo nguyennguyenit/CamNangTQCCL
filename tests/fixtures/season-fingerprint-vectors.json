@@ -1,0 +1,258 @@
+{
+  "schemaVersion": 1,
+  "config": {
+    "schemaVersion": 1,
+    "id": "config-a",
+    "teamId": "team-a",
+    "scenarioId": "binh-dien-xuan-thu",
+    "rulesetId": "reviewed-rules",
+    "reviewStatus": "reviewed",
+    "evidenceRefs": [
+      "rules-proof"
+    ],
+    "unitTypes": [
+      "Thương"
+    ],
+    "heroSlots": [
+      {
+        "heroRefs": [
+          "hero:a"
+        ],
+        "tacticSlots": [
+          {
+            "tacticRefs": [
+              "tactic:a"
+            ]
+          },
+          {
+            "tacticRefs": [
+              "tactic:b"
+            ]
+          }
+        ],
+        "bookSlots": [
+          {
+            "bookRefs": [
+              "book:a"
+            ]
+          },
+          {
+            "bookRefs": [
+              "book:b"
+            ]
+          },
+          {
+            "bookRefs": [
+              "book:c"
+            ]
+          }
+        ],
+        "statFocusRaw": "Trí Lực"
+      },
+      {
+        "heroRefs": [
+          "hero:b"
+        ],
+        "tacticSlots": [
+          {
+            "tacticRefs": [
+              "tactic:c"
+            ]
+          },
+          {
+            "tacticRefs": [
+              "tactic:d"
+            ]
+          }
+        ],
+        "bookSlots": [
+          {
+            "bookRefs": [
+              "book:a"
+            ]
+          },
+          {
+            "bookRefs": [
+              "book:b"
+            ]
+          },
+          {
+            "bookRefs": [
+              "book:c"
+            ]
+          }
+        ],
+        "statFocusRaw": "Trí Lực"
+      },
+      {
+        "heroRefs": [
+          "hero:c"
+        ],
+        "tacticSlots": [
+          {
+            "tacticRefs": [
+              "tactic:e"
+            ]
+          },
+          {
+            "tacticRefs": [
+              "tactic:f"
+            ]
+          }
+        ],
+        "bookSlots": [
+          {
+            "bookRefs": [
+              "book:a"
+            ]
+          },
+          {
+            "bookRefs": [
+              "book:b"
+            ]
+          },
+          {
+            "bookRefs": [
+              "book:c"
+            ]
+          }
+        ],
+        "statFocusRaw": "Trí Lực"
+      }
+    ],
+    "requirements": [],
+    "effectBundles": [],
+    "notes": ""
+  },
+  "configProjection": {
+    "schemaVersion": 1,
+    "id": "config-a",
+    "teamId": "team-a",
+    "scenarioId": "binh-dien-xuan-thu",
+    "rulesetId": "reviewed-rules",
+    "unitTypes": [
+      "Thương"
+    ],
+    "heroSlots": [
+      {
+        "heroRefs": [
+          "hero:a"
+        ],
+        "tacticSlots": [
+          {
+            "tacticRefs": [
+              "tactic:a"
+            ]
+          },
+          {
+            "tacticRefs": [
+              "tactic:b"
+            ]
+          }
+        ],
+        "bookSlots": [
+          {
+            "bookRefs": [
+              "book:a"
+            ]
+          },
+          {
+            "bookRefs": [
+              "book:b"
+            ]
+          },
+          {
+            "bookRefs": [
+              "book:c"
+            ]
+          }
+        ],
+        "statFocusRaw": "Trí Lực"
+      },
+      {
+        "heroRefs": [
+          "hero:b"
+        ],
+        "tacticSlots": [
+          {
+            "tacticRefs": [
+              "tactic:c"
+            ]
+          },
+          {
+            "tacticRefs": [
+              "tactic:d"
+            ]
+          }
+        ],
+        "bookSlots": [
+          {
+            "bookRefs": [
+              "book:a"
+            ]
+          },
+          {
+            "bookRefs": [
+              "book:b"
+            ]
+          },
+          {
+            "bookRefs": [
+              "book:c"
+            ]
+          }
+        ],
+        "statFocusRaw": "Trí Lực"
+      },
+      {
+        "heroRefs": [
+          "hero:c"
+        ],
+        "tacticSlots": [
+          {
+            "tacticRefs": [
+              "tactic:e"
+            ]
+          },
+          {
+            "tacticRefs": [
+              "tactic:f"
+            ]
+          }
+        ],
+        "bookSlots": [
+          {
+            "bookRefs": [
+              "book:a"
+            ]
+          },
+          {
+            "bookRefs": [
+              "book:b"
+            ]
+          },
+          {
+            "bookRefs": [
+              "book:c"
+            ]
+          }
+        ],
+        "statFocusRaw": "Trí Lực"
+      }
+    ],
+    "requirements": [],
+    "effectBundles": []
+  },
+  "configCanonical": "{\"effectBundles\":[],\"heroSlots\":[{\"bookSlots\":[{\"bookRefs\":[\"book:a\"]},{\"bookRefs\":[\"book:b\"]},{\"bookRefs\":[\"book:c\"]}],\"heroRefs\":[\"hero:a\"],\"statFocusRaw\":\"Trí Lực\",\"tacticSlots\":[{\"tacticRefs\":[\"tactic:a\"]},{\"tacticRefs\":[\"tactic:b\"]}]},{\"bookSlots\":[{\"bookRefs\":[\"book:a\"]},{\"bookRefs\":[\"book:b\"]},{\"bookRefs\":[\"book:c\"]}],\"heroRefs\":[\"hero:b\"],\"statFocusRaw\":\"Trí Lực\",\"tacticSlots\":[{\"tacticRefs\":[\"tactic:c\"]},{\"tacticRefs\":[\"tactic:d\"]}]},{\"bookSlots\":[{\"bookRefs\":[\"book:a\"]},{\"bookRefs\":[\"book:b\"]},{\"bookRefs\":[\"book:c\"]}],\"heroRefs\":[\"hero:c\"],\"statFocusRaw\":\"Trí Lực\",\"tacticSlots\":[{\"tacticRefs\":[\"tactic:e\"]},{\"tacticRefs\":[\"tactic:f\"]}]}],\"id\":\"config-a\",\"requirements\":[],\"rulesetId\":\"reviewed-rules\",\"scenarioId\":\"binh-dien-xuan-thu\",\"schemaVersion\":1,\"teamId\":\"team-a\",\"unitTypes\":[\"Thương\"]}",
+  "configFingerprint": "sha256:8caadce04f2cb8cc3caedbd3b9ab042741234721e086931c784a5694d05f323b",
+  "unicodeValue": {
+    "z": "Binh Diễn Xuân Thu",
+    "a": [
+      1,
+      true,
+      null,
+      "Hứa Du\n(Thương S)"
+    ]
+  },
+  "unicodeFingerprint": "sha256:f715f9eae5b46c5f9df6e42a7b1791965f1f26d4e9bd8ac53f49cd30c7f3431c"
+}
