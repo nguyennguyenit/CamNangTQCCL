@@ -1,13 +1,13 @@
 ---
 title: "Phase 3: Giao diện thống nhất và tích hợp generation"
-status: in-progress
+status: completed
 ---
 
 # Phase 3: Giao diện thống nhất và tích hợp generation
 
 ## Overview
 
-Trạng thái **in-progress**; sau [Phase 2](phase-02-merge-and-vietnamese-content.md);
+Trạng thái **completed**; sau [Phase 2](phase-02-merge-and-vietnamese-content.md);
 effort 2–3 ngày. Giao diện sáu nhóm dùng một bundle đã verify; checkpoint này
 sở hữu loader, manifest/preflight, promotion đầu tiên và compatibility canaries.
 [Plan](plan.md), [consumer research](reports/research-consumers.md),
@@ -234,21 +234,21 @@ activation-prepared/writing states.
 
 ## Implementation Steps and gates
 
-1. [ ] Integrate/rebase onto completed `feat/season-team-lookup` baseline; pin
+1. [x] Integrate/rebase onto completed `feat/season-team-lookup` baseline; pin
    reviewed commit, combined router/publication preimages and owner coordination.
-2. [ ] In task worktree, add loader/promotion/allowlist/navigation Reds; add the
+2. [x] In task worktree, add loader/promotion/allowlist/navigation Reds; add the
    completed route/pin/scoped-inventory preservation cases before implementation.
-3. [ ] Implement build-scoped byte snapshot, browser shared-byte ingress, exact
+3. [x] Implement build-scoped byte snapshot, browser shared-byte ingress, exact
    raw-versus-packaged MCP branches and guarded legacy writer.
-4. [ ] Implement composed lookup coordinator/profiles/routes/accessibility without
+4. [x] Implement composed lookup coordinator/profiles/routes/accessibility without
    changing Team chuẩn default, aliases, source attribution or history snapshots.
-5. [ ] Finalize activation postimages; fence old writers and season publisher;
+5. [x] Finalize activation postimages; fence old writers and season publisher;
    create durable activation journal before first active shared-path mutation.
-6. [ ] Use candidate in isolated fixture/root; run dictionary/season/Recommended/
+6. [x] Use candidate in isolated fixture/root; run dictionary/season/Recommended/
    soi/kho/tracker/MCP canaries before promotion.
-7. [ ] Promote locally only after canaries; test all interruption/recovery and
+7. [x] Promote locally only after canaries; test all interruption/recovery and
    HTML(G0)→promotion(G1)→route rejection boundaries.
-8. [ ] Run focused E2E on real candidate, record screenshots/cases/hashes;
+8. [x] Run focused E2E on real candidate, record screenshots/cases/hashes;
    Phase 4 broad certification follows, backups retained.
 
 ## TDD Red → Green → Refactor
@@ -291,15 +291,24 @@ power-loss thực tế nếu chưa có thử nghiệm tương ứng.
 
 ## Success Criteria, risks and rollback
 
-- [ ] One source-hidden VI lookup covers six groups and every retained child.
-- [ ] Deep links, shared app dictionary objects/season-identical bytes, canaries and error boundaries pass.
-- [ ] Every new root file allowlisted; private provenance never routed or emitted.
-- [ ] Mixed/incomplete generation rejected, rollback conflict-safe and tested.
-- [ ] Team chuẩn/Team khác routes, pin, source links, aliases and history remain exact.
-- [ ] Season HTML hashes, lookup bundle and emitted dictionaries share one build generation.
-- [ ] Valid packaged MCP release roots remain usable by CLI/stdio.
+- [x] One source-hidden VI lookup covers six groups and every retained child.
+- [x] Deep links, shared app dictionary objects/season-identical bytes, canaries and error boundaries pass.
+- [x] Every new root file allowlisted; private provenance never routed or emitted.
+- [x] Mixed/incomplete generation rejected, rollback conflict-safe and tested.
+- [x] Team chuẩn/Team khác routes, pin, source links, aliases and history remain exact.
+- [x] Season HTML hashes, lookup bundle and emitted dictionaries share one build generation.
+- [x] Valid packaged MCP release roots remain usable by CLI/stdio.
 
 Reuse deterministic project test port; inspect existing listeners before starting
 server, track PID/port/CWD, stop only task-owned processes. Candidate failure leaves
 public bytes untouched; after promotion failure restore full owned checkpoint via
 journal, not individual dictionary. No new season availability or team/tier edits.
+
+## Completion evidence — 2026-09-13
+
+- Activated generation `lookup:de73c4ca235de9b4ba6dbc5679573a3bab623a93ea6b061f0d30ad5f12c101e8`.
+- Promotion/recovery, dictionary and season focused suites: 85 Python tests passed; lookup/model suites: 66 Node tests passed.
+- Unified lookup plus integrated navigation: 36 E2E cases passed before final hardening; the final focused lookup matrix passed 25 cases at 320/375/768/1280 in both themes.
+- MCP full check passed 367 tests plus coverage, typecheck, build, node-min and control-plane verification; final capture-race tests passed 27 focused cases.
+- Genuine Phase 2 preimages were used in an isolated first-activation crash/recovery rehearsal; the rolled-back evidence is retained under `pipeline/lookup-output/transactions/phase3-certified-first-activation`. `phase3-final` records the current committed generation.
+- The dedicated debugger agent was invoked twice and a diagnostic fallback once; all three were blocked before execution by the provider's HTTP 429 rate limit. Focused reproductions and independent reviewer/Kongming gates remain the behavioral evidence.

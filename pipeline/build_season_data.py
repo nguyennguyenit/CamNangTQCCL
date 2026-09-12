@@ -5,6 +5,7 @@ scenario claim authorizes attribution only; applicability needs a reviewed
 ruleset claim for the exact pair. Source numbers and dates never infer scope.
 """
 import argparse
+import contextlib
 import copy
 from datetime import date, datetime
 import json
@@ -17,6 +18,37 @@ from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_VERSION = 1
+
+def lookup_generation(output_dir):
+    manifest_path = Path(output_dir) / "lookup-manifest.json"
+    if not manifest_path.exists():
+        return "legacy"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    generation = manifest.get("generationId")
+    if not isinstance(generation, str) or not generation.startswith("lookup:"):
+        raise ValueError("lookup generation is invalid")
+    return generation
+
+
+@contextlib.contextmanager
+def dictionary_exclusion(output_dir):
+    output_dir = Path(output_dir)
+    if not (output_dir / "lookup-manifest.json").exists():
+        yield
+        return
+    lock = output_dir.parent / "pipeline/lookup-output/promotion.lock"
+    lock.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        descriptor = os.open(lock, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    except FileExistsError as error:
+        raise RuntimeError("lookup dictionaries are locked") from error
+    with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
+        json.dump({"pid": os.getpid(), "transaction": f"season-writer-{os.getpid()}"}, handle)
+        handle.write("\n")
+    try:
+        yield
+    finally:
+        lock.unlink()
 
 
 def record(value, required, optional=()):
@@ -251,36 +283,40 @@ def encode_payloads(payloads):
 
 
 def publish_season_data(registry, evidence, output_dir, **options):
-    """Validate all candidates, stage complete bytes, then replace scoped outputs."""
-    payloads = build_season_data(registry, evidence, **options)
-    encoded = encode_payloads(payloads)
+    """Validate and publish sidecars while the lookup generation is excluded."""
     output_dir = Path(output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    for name in encoded:
-        path = output_dir / name
-        if path.is_symlink() or (path.exists() and not path.is_file()):
-            raise ValueError("output must be a regular file")
-    with tempfile.TemporaryDirectory(prefix=".season-candidate-", dir=output_dir) as staging:
-        backups = {}
-        for name, contents in encoded.items():
-            (Path(staging) / name).write_bytes(contents)
+    with dictionary_exclusion(output_dir):
+        generation = lookup_generation(output_dir)
+        payloads = build_season_data(registry, evidence, **options)
+        encoded = encode_payloads(payloads)
+        output_dir.mkdir(parents=True, exist_ok=True)
+        for name in encoded:
             path = output_dir / name
-            if path.exists():
-                backup = Path(staging) / (name + ".previous")
-                backup.write_bytes(path.read_bytes())
-                backups[name] = backup
-        replaced = []
-        try:
-            for name in encoded:
-                os.replace(Path(staging) / name, output_dir / name)
-                replaced.append(name)
-        except OSError:
-            for name in reversed(replaced):
-                if name in backups:
-                    os.replace(backups[name], output_dir / name)
-                else:
-                    (output_dir / name).unlink()
-            raise
+            if path.is_symlink() or (path.exists() and not path.is_file()):
+                raise ValueError("output must be a regular file")
+        with tempfile.TemporaryDirectory(prefix=".season-candidate-", dir=output_dir) as staging:
+            backups = {}
+            for name, contents in encoded.items():
+                (Path(staging) / name).write_bytes(contents)
+                path = output_dir / name
+                if path.exists():
+                    backup = Path(staging) / (name + ".previous")
+                    backup.write_bytes(path.read_bytes())
+                    backups[name] = backup
+            replaced = []
+            try:
+                for name in encoded:
+                    os.replace(Path(staging) / name, output_dir / name)
+                    replaced.append(name)
+                if lookup_generation(output_dir) != generation:
+                    raise ValueError("lookup generation changed during season publication")
+            except Exception:
+                for name in reversed(replaced):
+                    if name in backups:
+                        os.replace(backups[name], output_dir / name)
+                    else:
+                        (output_dir / name).unlink()
+                raise
     return payloads
 
 
