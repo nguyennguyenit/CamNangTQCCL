@@ -56,16 +56,18 @@ Người dùng đã trả lời **YES**, quyền nguồn bao gồm Recommended t
 
 ## Phụ thuộc và ranh giới
 
-Catalog SGSDeck (tài liệu ngoài nhánh: `../260907-0228-sgsdeck-catalog/plan.md`) sở hữu sáu danh mục/identity nguồn; plan mùa sở hữu scenario/ruleset/config/evaluation và Recommended evidence. Chỉ config dùng thực thể mới cần identity reviewed; không chặn toàn plan hoặc tạo vòng phụ thuộc. Đối chiếu danh mục (tài liệu ngoài nhánh: `../reports/analysis-260912-1142-unified-lookup.md`) và metadata owner `docs/sgsdeck-catalog.md` giữ nguồn riêng.
+[Catalog SGSDeck](../260907-0228-sgsdeck-catalog/plan.md) sở hữu sáu danh mục/identity nguồn; plan mùa sở hữu scenario/ruleset/config/evaluation và Recommended evidence. Chỉ config dùng thực thể mới cần identity reviewed; không chặn toàn plan hoặc tạo vòng phụ thuộc. [Đối chiếu danh mục](../reports/analysis-260912-1142-unified-lookup.md) và metadata owner `docs/sgsdeck-catalog.md` giữ nguồn riêng.
 
-Tra cứu thống nhất (tài liệu ngoài nhánh: `../260912-0607-unified-lookup/plan.md`) sở hữu hợp nhất sáu danh mục, Việt hóa và UI danh mục; brainstorm (tài liệu ngoài nhánh: `../reports/brainstorm-260912-1203-unified-lookup.md`) giữ policy nguồn. Serialize owner edits ở app/render/identity/manifest/Worker packaging. Lookup rollback phải kiểm refs mùa trước khi bỏ IDs; orphan cần phối hợp owner rollback dependency hoặc fix forward, không tự revert season files. SGSDeck priority danh mục không đổi policy tier/score mùa.
+[Tra cứu thống nhất](../260912-0607-unified-lookup/plan.md) sở hữu hợp nhất sáu danh mục, Việt hóa và UI danh mục; [brainstorm](../reports/brainstorm-260912-1203-unified-lookup.md) giữ policy nguồn. Serialize owner edits ở app/render/identity/manifest/Worker packaging. Lookup rollback phải kiểm refs mùa trước khi bỏ IDs; orphan cần phối hợp owner rollback dependency hoặc fix forward, không tự revert season files. SGSDeck priority danh mục không đổi policy tier/score mùa.
 
-[Tách Chạm Sứ](../260907-0236-cham-su-khai-hoang/plan.md) và [hướng dẫn Khai hoang](../260907-0353-khai-hoang-team-details/plan.md) giữ owners riêng; không khôi phục liên kết chuyển hình sai hoặc season-split Khai hoang. Research skill (tài liệu ngoài nhánh: `../260907-2333-project-research-skill/plan.md`) là scope khác; không phải điều kiện đóng implementation này.
+[Tách Chạm Sứ](../260907-0236-cham-su-khai-hoang/plan.md) và [hướng dẫn Khai hoang](../260907-0353-khai-hoang-team-details/plan.md) giữ owners riêng; không khôi phục liên kết chuyển hình sai hoặc season-split Khai hoang. [Research skill](../260907-2333-project-research-skill/plan.md) là scope khác; không phải điều kiện đóng implementation này.
 
-Lịch sử plan/audit được giữ tại [prior index](reports/pm-260912-1419-season-plan-sync.md), [audit 2026-09-12](reports/audit-260912-1144-season-team-lookup.md), audit liên plan (tài liệu ngoài nhánh: `../reports/audit-260907-0310-season-catalog-plans.md`), [planning validation](reports/coexist-plan-validation.md). Các status pending/proposed trong tài liệu lịch sử không thay trạng thái thực thi hiện tại.
+Lịch sử plan/audit được giữ tại [prior index](reports/pm-260912-1419-season-plan-sync.md), [audit 2026-09-12](reports/audit-260912-1144-season-team-lookup.md), [audit liên plan](../reports/audit-260907-0310-season-catalog-plans.md), [planning validation](reports/coexist-plan-validation.md). Các status pending/proposed trong tài liệu lịch sử không thay trạng thái thực thi hiện tại.
 
 ## Kết quả đóng
 
-Worktree `feat/season-team-lookup` đã đạt gate trên source identity sạch, bảo toàn WIP gốc. Commit tài liệu chốt cần rebuild/verify assets và dry-run theo HEAD mới; attestation cuối lưu ngoài worktree để không tạo vòng SHA tự tham chiếu. Không cần deploy để đóng plan. Bằng chứng luật VN/config/điểm áp dụng vẫn unknown, không được điền suy đoán.
+Worktree `feat/season-team-lookup` đã đạt gate trên source identity sạch, bảo toàn WIP gốc. Commit chốt `4eb7f19` đã đạt workflow check, real asset build/verify và Wrangler dry-run; [attestation cuối](reports/isolated-final-release-attestation.md) lưu ngoài worktree để không tạo vòng SHA tự tham chiếu. Không cần deploy để đóng plan. Bằng chứng luật VN/config/điểm áp dụng vẫn unknown, không được điền suy đoán.
+
+Sau code review, hai lỗi P2 đã được sửa tại `920a98f`/`e39db07`. [Kiểm chứng bản sửa](../reports/fix-260912-1610-season-review-findings.md): full gate và real asset rebuild sau E2E đều đạt; source sạch, Node194/MCP351/E2E55/Workerd3.
 
 <!-- slug: season-team-lookup -->

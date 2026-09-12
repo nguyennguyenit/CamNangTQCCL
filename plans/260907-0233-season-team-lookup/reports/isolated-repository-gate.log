@@ -1,0 +1,62 @@
+v24.20.0
+11.19.0
+Python 3.12.13
+b3b26a3df5f1a00166eb01a4bfdf5134d15a02f5
+
+> tqccl-mcp-server@0.1.0 check:repository
+> node --import tsx scripts/check-repository.ts
+
+
+> tqccl-mcp-server@0.1.0 check
+> npm run check:workflow-build && npm run check:local-secrets && npm run test:coverage && npm run typecheck && npm run typecheck:worker && npm run build && npm run test:node-min && npm run verify:control-plane
+
+
+> tqccl-mcp-server@0.1.0 check:workflow-build
+> node --import tsx scripts/generate-workflow-build.ts --check
+
+
+> tqccl-mcp-server@0.1.0 check:local-secrets
+> node --import tsx scripts/check-local-secret-files.ts
+
+Không phát hiện local secret files hoặc credential.
+
+> tqccl-mcp-server@0.1.0 test:coverage
+> vitest run --coverage
+
+
+ RUN  v4.1.10 /Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/mcp-worker
+      Coverage enabled with v8
+
+ ❯ test/domain/legacy-domain-adapter.test.ts (16 tests | 1 failed) 51ms
+     × loads independently of process.cwd and exposes only the typed adapter 5ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/domain/legacy-domain-adapter.test.ts > legacy domain adapter characterization > loads independently of process.cwd and exposes only the typed adapter
+AssertionError: expected '/Users/plateau/Project/worktrees/CamN…' to match /CamNangTQCCL$/
+
+- Expected:
+/CamNangTQCCL$/
+
++ Received:
+"/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup"
+
+ ❯ test/domain/legacy-domain-adapter.test.ts:31:28
+     29| describe("legacy domain adapter characterization", () => {
+     30|   it("loads independently of process.cwd and exposes only the typed ad…
+     31|     expect(repositoryRoot).toMatch(/CamNangTQCCL$/);
+       |                            ^
+     32|     expect(Object.keys(legacyDomainAdapter).sort()).toEqual([
+     33|       "deserializeBrowserScanState",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 42 passed (43)
+      Tests  1 failed | 350 passed (351)
+   Start at  15:27:35
+   Duration  3.90s (transform 1.83s, setup 0ms, import 5.87s, tests 14.30s, environment 3ms)
+
+Repository release gate thất bại.
+
+EXIT_CODE=1

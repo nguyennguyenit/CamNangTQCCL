@@ -1,0 +1,25 @@
+2026-09-12T15:28:02.619850
+HEAD: b3b26a3df5f1a00166eb01a4bfdf5134d15a02f5 TREE: e2f3121d51d3bcdf5aba8b9985c02fa153f06607
+Asset files: 12 ['books-dict.json', 'coexist.json', 'heroes-dict.json', 'manifest.json', 'season-content-links.json', 'season-evidence.json', 'season-registry.json', 'season-team-configs.json', 'season-team-evaluations.json', 'tactics.json', 'team-tier.json', 'teams.json']
+Manifest version: 2
+assetInventoryDigest sha256:0d05d58859a1af9600109230f24c03f0be7b63263654e8bee5caff8c8607f94f
+commitSha b3b26a3df5f1a00166eb01a4bfdf5134d15a02f5
+manifestSha256 sha256:0190d006ec6e7718a481b94baa3d1e581b14043976406d80d5f90a4db0c4fe55
+releaseId sha256:9acbe1a58ec3cc439a0b87870f658a1c0d331285b5457e6f001dd24ffcbe33cf
+schemaVersion 1
+sourceTree git-tree:e2f3121d51d3bcdf5aba8b9985c02fa153f06607
+workflowBuildId build:sha256b64:ybUy68D9Sj9XSxdr4Uxf8YDBJz6D7GKM9u8Zp8Z9Th8
+MATCH data/books-dict.json c863effdb9be5fec035f0bee03350459ddd2d3d25981693a809b9a81a849579d
+MATCH data/coexist.json 100a07fa66dde885bd8e528443335540baebd09045c3a393cefc046f80eb7e57
+MATCH data/facets.json b599a702ed3a3207a17a5b69741a9ad020147f3835a52d19550d075e85ad950c
+MATCH data/heroes-dict.json 8c99a159c144000897025b98590617bfd9735d543ac4d458821dbc3e11029813
+MATCH data/khaihoang.json d2bd885cf1d1b247fd89a583255de68de3c5a54c804b3b88e8c04245c67567d9
+MATCH data/tactics-generic.json 0920eb8edbdd13f038f43856bd945031172f34667e9bbc4133d2a10fc18d2adf
+MATCH data/tactics.json f0e9be17bd1f36e8aba1e1ad3217504c42395aca57efdb3b2a1a7ee967e29834
+MATCH data/team-tier.json 056c58b16ba195ee1491c053cfbb5ddd020bb7d89ea13a5554f38df42e1795ca
+MATCH data/teams.json b937a6ee1d71fc4176eda0efb1e4e8a5c9bcf4ca4775d53a5a21b84b33f973ac
+All9legacy hashes unchanged
+Private catalog present: False
+git status: ''
+
+EXIT_CODE=0

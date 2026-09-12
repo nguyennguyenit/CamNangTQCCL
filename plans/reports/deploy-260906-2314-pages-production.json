@@ -1,0 +1,242 @@
+{
+  "base": "https://tqccl.pages.dev",
+  "checkedAt": "2026-09-06T16:10:37.575Z",
+  "assets": [
+    {
+      "path": "css/styles.css",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "data/facets.json",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "data/coexist.json",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "data/heroes-dict.json",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "data/books-dict.json",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "data/khaihoang.json",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "data/team-tier.json",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "data/tactics.json",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "data/teams.json",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "data/tactics-generic.json",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "favicon.png",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "js/analyze-map.js",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "js/analyze.js",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "js/app.js",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "index.html",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "js/filters.js",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "js/config.js",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "js/hero-detail.js",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "js/hanviet.js",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "js/derive-team-faction.js",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "js/hero-identity.js",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "js/meta-cu.js",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "js/match-dict.js",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "js/hero-list.js",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "js/mobile-section-menu.js",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "js/recruit-tracker-store.js",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "js/roster-recommend-ui.js",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "js/render.js",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "js/recruit-tracker.js",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "js/roster-scan-map.js",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "js/team-filter-section.js",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "js/team-pk.js",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "js/roster-scan-state.js",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "js/tactics.js",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "js/team-recommend-engine.js",
+      "status": 200,
+      "cache": "public, max-age=0, must-revalidate"
+    }
+  ],
+  "privatePaths": [
+    {
+      "path": "_headers",
+      "status": 200,
+      "indexFallback": true
+    },
+    {
+      "path": "package.json",
+      "status": 200,
+      "indexFallback": true
+    },
+    {
+      "path": "worker/wrangler.toml",
+      "status": 200,
+      "indexFallback": true
+    },
+    {
+      "path": "pipeline/build_json.py",
+      "status": 200,
+      "indexFallback": true
+    },
+    {
+      "path": "plans/reports/research-260906-1554-luc-ton-ta-tu-truong-xuan-hoa-global.md",
+      "status": 200,
+      "indexFallback": true
+    },
+    {
+      "path": ".git/config",
+      "status": 200,
+      "indexFallback": true
+    }
+  ],
+  "browser": {
+    "sections": 9,
+    "teams": 15,
+    "betaLabels": 3,
+    "notesMatch": true,
+    "pageErrors": [],
+    "firstPartyFailures": [],
+    "reloadPassed": true
+  },
+  "canaries": [
+    {
+      "origin": "https://tqccl.pages.dev",
+      "method": "OPTIONS",
+      "status": 204,
+      "body": ""
+    },
+    {
+      "origin": "https://tqccl.pages.dev",
+      "method": "POST",
+      "status": 400,
+      "body": "{\"error\":\"Body JSON không hợp lệ\"}"
+    },
+    {
+      "origin": "https://example.invalid",
+      "method": "POST",
+      "status": 403,
+      "body": "{\"error\":\"Origin không được phép\"}"
+    }
+  ]
+}

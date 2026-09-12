@@ -1,0 +1,1692 @@
+{
+  "fetchedAt": "2026-09-12T02:18:58+07:00",
+  "inventory": {
+    "childCount": 192,
+    "recordCount": 16
+  },
+  "provider": "sgsdeck",
+  "records": [
+    {
+      "attributes": {
+        "appliesTo": "法關盾、吳女丹陽槍等",
+        "effectText": "2024-08-28 更新（增強） / 將盾兵進階為勇猛無畏的丹陽兵：我軍全體統率提升 18→36，且每回合開始前，根據上一回合我軍全體造成的兵刃傷害獲得一定比例丹陽兵，可疊加（我軍受到謀略傷害時，將消耗丹陽兵可抵擋其中 18%→36% 謀略傷害，丹陽兵數量每回合衰減 10%）；若陶謙統領，則抵擋比例提升至 20%→40% /  / 原始版本 / 將盾兵進階為勇猛無畏的丹陽兵：每回合開始前，根據上一回合我軍全體造成的兵刃傷害獲得一定比例丹陽兵，可疊加（我軍受到謀略傷害時，將消耗丹陽兵可抵擋其中 18%→36% 謀略傷害，丹陽兵數量每回合衰減 10%）；若陶謙統領，則抵擋比例提升至 20%→40%",
+        "options": [
+          {
+            "convertsTo": "SPEAR",
+            "description": "將槍兵進階為勇猛無畏的丹陽兵",
+            "tier": "SPECIAL",
+            "traitName": "轉·持槍"
+          },
+          {
+            "convertsTo": null,
+            "description": "攜帶者盾兵兵種適性提升1級",
+            "tier": "SPECIAL",
+            "traitName": "舉盾"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍受到的兵種剋制效果減半",
+            "tier": "SPECIAL",
+            "traitName": "抵抗"
+          },
+          {
+            "convertsTo": null,
+            "description": "由提升統率改為提升智力",
+            "tier": "BASIC",
+            "traitName": "集智"
+          },
+          {
+            "convertsTo": null,
+            "description": "由提升統率改為提升武力",
+            "tier": "BASIC",
+            "traitName": "習武"
+          },
+          {
+            "convertsTo": null,
+            "description": "統率額外提升8點",
+            "tier": "BASIC",
+            "traitName": "強身"
+          },
+          {
+            "convertsTo": null,
+            "description": "獲得的丹陽兵不再每回合衰減，且額外獲得25%",
+            "tier": "INTERMEDIATE",
+            "traitName": "整軍"
+          },
+          {
+            "convertsTo": null,
+            "description": "丹陽兵抵擋傷害的比例提升36%",
+            "tier": "INTERMEDIATE",
+            "traitName": "磐石"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍武將行動後對隨機敵軍單體造成傷害",
+            "tier": "INTERMEDIATE",
+            "traitName": "後發"
+          },
+          {
+            "convertsTo": null,
+            "description": "丹陽兵可抵擋任意種類傷害",
+            "tier": "ADVANCED",
+            "traitName": "募軍"
+          },
+          {
+            "convertsTo": null,
+            "description": "造成的任意種類傷害均可獲得丹陽兵",
+            "tier": "ADVANCED",
+            "traitName": "涉獵"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍全體獲得150鄉勇（該鄉勇在部隊受到傷害時，抵擋其中50%傷害。當前總兵力≥最大兵力的65%時生效）",
+            "tier": "ADVANCED",
+            "traitName": "鄉勇"
+          }
+        ],
+        "suggestedBuild": "【轉·持槍】+【習武】+【整軍】+【募軍】→ 吳女丹陽槍；讓丹陽兵在面對各類型陣容時都可生效，適用面更廣",
+        "troopLimit": [
+          "SHIELD"
+        ]
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:troop-mods:丹陽兵",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "丹陽兵",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/troop-mods"
+      },
+      "sourceId": "丹陽兵",
+      "sourceSeason": {
+        "label": "og-兵演春秋",
+        "number": null,
+        "scenarioName": "兵演春秋"
+      },
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "appliesTo": "40Y呂布群弓、吳女弓、法關盾等陣容",
+        "effectText": "2024-08-28 更新（增強） / 將弓兵進階為悍不畏死的先登死士：戰鬥中，我軍全體免疫遇襲狀態，且受到傷害時有 30%→60% 機率（受攜帶者統率影響）觸發以下效果：若兵力百分比低於攻擊者則偷取其 10.5→21 點統率（受攜帶者統率影響），否則降低其 1.5%→3% 主動戰法發動率，持續 2 回合，可疊加 4 次；若麴義統領，則可疊加 5 次 /  / 原始版本 / 將弓兵進階為悍不畏死的先登死士：戰鬥中，我軍全體免疫遇襲狀態，且受到傷害時有 20→40% 機率（受攜帶者統率影響）觸發以下效果：若兵力百分比低於攻擊者則偷取其 10.5→21 點統率，否則降低其 1.5%→3% 主動戰法發動率，持續 2 回合，可疊加 4 次；若麴義統領，則可疊加 5 次",
+        "options": [
+          {
+            "convertsTo": null,
+            "description": "攜帶者弓兵兵種適性提升1級",
+            "tier": "SPECIAL",
+            "traitName": "彎弓"
+          },
+          {
+            "convertsTo": "SHIELD",
+            "description": "將盾兵進階為悍不畏死的先登死士",
+            "tier": "SPECIAL",
+            "traitName": "轉·舉盾"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍受到的兵種剋制效果減半",
+            "tier": "SPECIAL",
+            "traitName": "抵抗"
+          },
+          {
+            "convertsTo": null,
+            "description": "可同時降低突擊戰法發動率，但每次降低效果下降1%",
+            "tier": "BASIC",
+            "traitName": "抑勢"
+          },
+          {
+            "convertsTo": null,
+            "description": "改為受攜帶者武力影響",
+            "tier": "BASIC",
+            "traitName": "操演"
+          },
+          {
+            "convertsTo": null,
+            "description": "改為受攜帶者智力影響",
+            "tier": "BASIC",
+            "traitName": "謀攻"
+          },
+          {
+            "convertsTo": null,
+            "description": "每次可額外偷取7點統率",
+            "tier": "INTERMEDIATE",
+            "traitName": "豪奪"
+          },
+          {
+            "convertsTo": null,
+            "description": "會額外根據傷害類型偷取武力或智力，但偷取效果下降11點",
+            "tier": "INTERMEDIATE",
+            "traitName": "奪志"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍全體獲得5%減傷",
+            "tier": "INTERMEDIATE",
+            "traitName": "百戰"
+          },
+          {
+            "convertsTo": null,
+            "description": "額外延長1回合",
+            "tier": "ADVANCED",
+            "traitName": "久戰"
+          },
+          {
+            "convertsTo": null,
+            "description": "最大疊加次數+1",
+            "tier": "ADVANCED",
+            "traitName": "疊加"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍全體獲得150鄉勇（該鄉勇在部隊受到傷害時，抵擋其中50%傷害。當前總兵力≥最大兵力的65%時生效）",
+            "tier": "ADVANCED",
+            "traitName": "鄉勇"
+          }
+        ],
+        "suggestedBuild": "【抵抗】+【抑勢】+【奪志】+【疊加】→ 40Y呂布群弓；擴大對敵軍造成的減益效果，搭配面較廣，還可轉盾兵探索新的適用陣容",
+        "troopLimit": [
+          "BOW"
+        ]
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:troop-mods:先登死士",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "先登死士",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/troop-mods"
+      },
+      "sourceId": "先登死士",
+      "sourceSeason": {
+        "label": "og-兵演春秋",
+        "number": null,
+        "scenarioName": "兵演春秋"
+      },
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "appliesTo": "張關黃、皇馬槍等陣容",
+        "effectText": "2024-04-17 更新（增強） / 將槍兵進階為橫衝直撞的大戟士：我軍全體武力提高 7→14 點，進行普通攻擊時，有 35% 機率對敵軍單體造成兵刃傷害（傷害率 61%→122%）；若張郃統領，則發動機率提高為 40% 且張郃獲得 22.5%→45% 連擊 /  / 2021-06-09 更新（增強） / 將槍兵進階為橫衝直撞的大戟士：我軍全體武力提高 7→14 點，進行普通攻擊時，有 35% 機率對敵軍單體造成兵刃傷害（傷害率 61%→122%）；若張郃統領，則發動機率提高為 40% /  / 原始版本 / 將槍兵進階為橫衝直撞的大戟士：我軍全體進行普通攻擊時有 35% 機率對其他敵軍單體造成兵刃傷害（傷害率 61%→122%）；若張郃統領，則發動機率提高為 40%",
+        "options": [
+          {
+            "convertsTo": null,
+            "description": "攜帶者槍兵兵種適性提升1級",
+            "tier": "SPECIAL",
+            "traitName": "持槍"
+          },
+          {
+            "convertsTo": null,
+            "description": "獲得15%連擊",
+            "tier": "SPECIAL",
+            "traitName": "連擊"
+          },
+          {
+            "convertsTo": null,
+            "description": "獲得15%倒戈",
+            "tier": "SPECIAL",
+            "traitName": "倒戈"
+          },
+          {
+            "convertsTo": null,
+            "description": "觸發機率額外提高5%",
+            "tier": "BASIC",
+            "traitName": "熟練"
+          },
+          {
+            "convertsTo": null,
+            "description": "傷害率額外提高11%",
+            "tier": "BASIC",
+            "traitName": "破敵"
+          },
+          {
+            "convertsTo": null,
+            "description": "武力額外提高6點",
+            "tier": "BASIC",
+            "traitName": "習武"
+          },
+          {
+            "convertsTo": null,
+            "description": "改為僅我軍主將有機率發起，同時觸發機率提升25%",
+            "tier": "INTERMEDIATE",
+            "traitName": "將威"
+          },
+          {
+            "convertsTo": null,
+            "description": "目標改為敵軍群體2人但傷害率下降62%",
+            "tier": "INTERMEDIATE",
+            "traitName": "互搏"
+          },
+          {
+            "convertsTo": null,
+            "description": "目標將隨機鎖定對方兵力最低或統率最低武將",
+            "tier": "INTERMEDIATE",
+            "traitName": "勘虛"
+          },
+          {
+            "convertsTo": null,
+            "description": "大戟士造成的兵刃傷害附帶25%破陣效果",
+            "tier": "ADVANCED",
+            "traitName": "破陣"
+          },
+          {
+            "convertsTo": null,
+            "description": "未生效則為我軍單體回復一定兵力（治療率36%，受武力影響）",
+            "tier": "ADVANCED",
+            "traitName": "治癒"
+          },
+          {
+            "convertsTo": null,
+            "description": "由普通攻擊後改為發動主動戰法後",
+            "tier": "ADVANCED",
+            "traitName": "策襲"
+          }
+        ],
+        "suggestedBuild": "【連擊】+【熟練】+【勘虛】+【破陣】→ 張關黃；增強傷害率，兵刃爆發的槍兵更強",
+        "troopLimit": [
+          "SPEAR"
+        ]
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:troop-mods:大戟士",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "大戟士",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/troop-mods"
+      },
+      "sourceId": "大戟士",
+      "sourceSeason": {
+        "label": "og-兵演春秋",
+        "number": null,
+        "scenarioName": "兵演春秋"
+      },
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "appliesTo": "群弓、三仙盾等陣容",
+        "effectText": "將弓兵進階為矢不虛發的無當飛軍：我軍全體統率、速度提高 11→22 點，首回合對敵軍群體（2 人）施加中毒狀態，每回合持續造成傷害（傷害率 40%→80%，受智力影響），持續 3 回合；若王平統領，對敵軍全體施加中毒狀態，但傷害率降低（傷害率 33%→66%，受智力影響）",
+        "options": [
+          {
+            "convertsTo": null,
+            "description": "攜帶者弓兵兵種適性提升1級",
+            "tier": "SPECIAL",
+            "traitName": "彎弓"
+          },
+          {
+            "convertsTo": "SHIELD",
+            "description": "將盾兵進階為矢不虛發的無當飛軍",
+            "tier": "SPECIAL",
+            "traitName": "轉·舉盾"
+          },
+          {
+            "convertsTo": null,
+            "description": "統率和速度額外提升11點",
+            "tier": "SPECIAL",
+            "traitName": "兼修"
+          },
+          {
+            "convertsTo": null,
+            "description": "改為我軍智力最高武將施加",
+            "tier": "BASIC",
+            "traitName": "智絕"
+          },
+          {
+            "convertsTo": null,
+            "description": "額外施加沙暴狀態，但傷害率下降15%",
+            "tier": "BASIC",
+            "traitName": "沙暴"
+          },
+          {
+            "convertsTo": null,
+            "description": "傷害率提高40%",
+            "tier": "BASIC",
+            "traitName": "破敵"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍全體獲得5%減傷",
+            "tier": "INTERMEDIATE",
+            "traitName": "百戰"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍造成的持續傷害效果無視40%防禦屬性",
+            "tier": "INTERMEDIATE",
+            "traitName": "破軍"
+          },
+          {
+            "convertsTo": null,
+            "description": "持續回合改為4回合",
+            "tier": "INTERMEDIATE",
+            "traitName": "久戰"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍全體獲得150鄉勇（該鄉勇在部隊受到傷害時，抵擋其中50%傷害。當前總兵力≥最大兵力的65%時生效）",
+            "tier": "ADVANCED",
+            "traitName": "鄉勇"
+          },
+          {
+            "convertsTo": null,
+            "description": "目標在無當飛軍施加傷害期間，造成的傷害降低（5%*存在的負面狀態數量）",
+            "tier": "ADVANCED",
+            "traitName": "未定"
+          },
+          {
+            "convertsTo": null,
+            "description": "對存在持續性狀態的武將造成傷害時，恢復我軍兵力最低（5%*目標存在的負面狀態數量）傷害量",
+            "tier": "ADVANCED",
+            "traitName": "奪魂"
+          }
+        ],
+        "suggestedBuild": "【兼修】+【破敵】+【破軍】+【未定】→ 群弓；提高傷害率，讓隊伍爆發輸出更高",
+        "troopLimit": [
+          "BOW"
+        ]
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:troop-mods:無當飛軍",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "無當飛軍",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/troop-mods"
+      },
+      "sourceId": "無當飛軍",
+      "sourceSeason": {
+        "label": "og-兵演春秋",
+        "number": null,
+        "scenarioName": "兵演春秋"
+      },
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "appliesTo": "蜀智弓、都督隊等陣容",
+        "effectText": "2024-09-11 更新（增強） / 將槍兵進階為攻無不破的白毦兵：我軍全體獲得 12% 攻心，且普通攻擊後有 20%→45% 機率對攻擊目標再次發起一次謀略攻擊（傷害率 55%→110%，受智力影響）；若陳到統領，則謀略攻擊更為強力（傷害率 65%→130%，受智力影響） /  / 原始版本 / 將槍兵進階為攻無不破的白毦兵：我軍全體戰鬥中普通攻擊後有 20%→40% 機率對攻擊目標再次發起一次謀略傷害（傷害率 55%→110%，受智力影響）；若陳到統領，則謀略攻擊更為強力（傷害率 65%→130%，受智力影響）",
+        "options": [
+          {
+            "convertsTo": null,
+            "description": "未生效則為我軍單體回復一定兵力（治療率36%，受智力影響）",
+            "tier": "ADVANCED",
+            "traitName": "治癒"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍全體獲得150鄉勇（該鄉勇在部隊受到傷害時，抵擋其中50%傷害。當前總兵力≥最大兵力的65%時生效）",
+            "tier": "ADVANCED",
+            "traitName": "鄉勇"
+          },
+          {
+            "convertsTo": null,
+            "description": "改為僅我軍主將有機率發起，同時觸發機率提升35%",
+            "tier": "INTERMEDIATE",
+            "traitName": "將威"
+          },
+          {
+            "convertsTo": null,
+            "description": "由普通攻擊後改為發動主動戰法後",
+            "tier": "INTERMEDIATE",
+            "traitName": "策襲"
+          },
+          {
+            "convertsTo": null,
+            "description": "攜帶者槍兵兵種適性提升1級",
+            "tier": "SPECIAL",
+            "traitName": "持槍"
+          },
+          {
+            "convertsTo": "BOW",
+            "description": "將弓兵進階為勇猛無畏的白毦兵",
+            "tier": "SPECIAL",
+            "traitName": "轉·彎弓"
+          },
+          {
+            "convertsTo": null,
+            "description": "獲得14點智力",
+            "tier": "SPECIAL",
+            "traitName": "集智"
+          },
+          {
+            "convertsTo": null,
+            "description": "觸發概率額外增加10%",
+            "tier": "BASIC",
+            "traitName": "熟練"
+          },
+          {
+            "convertsTo": null,
+            "description": "傷害率額外增加20%",
+            "tier": "BASIC",
+            "traitName": "破敵"
+          },
+          {
+            "convertsTo": null,
+            "description": "攻心效果額外提升3%",
+            "tier": "BASIC",
+            "traitName": "攻心"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍全體普攻轉化為謀略傷害，但傷害率改為75%",
+            "tier": "ADVANCED",
+            "traitName": "筆刀"
+          },
+          {
+            "convertsTo": null,
+            "description": "進行普通攻擊後，下回合主動戰法傷害提高15%。發動主動戰法後，下回合普通攻擊傷害提高15%",
+            "tier": "INTERMEDIATE",
+            "traitName": "兩儀"
+          }
+        ],
+        "suggestedBuild": "【轉·彎弓】+【熟練】+【兩儀】+【筆刀】；放大輸出能力，並支持轉為弓兵，讓陣容嘗試新的兵種搭配",
+        "troopLimit": [
+          "SPEAR"
+        ]
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:troop-mods:白毦兵",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "白毦兵",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/troop-mods"
+      },
+      "sourceId": "白毦兵",
+      "sourceSeason": {
+        "label": "og-兵演春秋",
+        "number": null,
+        "scenarioName": "兵演春秋"
+      },
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "appliesTo": "呂郭喬、五謀弓、群弓等以主動戰法輸出為主的陣容",
+        "effectText": "將弓兵進階為弓馬嫻熟的白馬義從：部隊行軍速度提高 25%→50%，我軍全體戰鬥前 2 回合獲得先攻（優先行動）並提高 5%→10% 主動戰法發動率；若公孫瓚統領，提高發動率受速度影響",
+        "options": [
+          {
+            "convertsTo": null,
+            "description": "攜帶者弓兵兵種適性提升1級",
+            "tier": "SPECIAL",
+            "traitName": "彎弓"
+          },
+          {
+            "convertsTo": null,
+            "description": "行軍速度額外提高25%",
+            "tier": "SPECIAL",
+            "traitName": "輕足"
+          },
+          {
+            "convertsTo": null,
+            "description": "發動率提升受速度影響",
+            "tier": "SPECIAL",
+            "traitName": "疾馳"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍全體獲得14點武力",
+            "tier": "BASIC",
+            "traitName": "習武"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍全體獲得14點智力",
+            "tier": "BASIC",
+            "traitName": "集智"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍全體獲得14點速度",
+            "tier": "BASIC",
+            "traitName": "神行"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍全體獲得5%減傷",
+            "tier": "INTERMEDIATE",
+            "traitName": "百戰"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍被計窮時有25%機率免疫",
+            "tier": "INTERMEDIATE",
+            "traitName": "無懼"
+          },
+          {
+            "convertsTo": null,
+            "description": "主動戰法發動率額外提升3%",
+            "tier": "INTERMEDIATE",
+            "traitName": "靈光"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍全體獲得150鄉勇（該鄉勇在部隊受到傷害時，抵擋其中50%傷害。當前總兵力≥最大兵力的65%時生效）",
+            "tier": "ADVANCED",
+            "traitName": "鄉勇"
+          },
+          {
+            "convertsTo": null,
+            "description": "回合結束時，若本回合自身未發動主動戰法，則下回合主動戰法發動率提高10%",
+            "tier": "ADVANCED",
+            "traitName": "靜心"
+          },
+          {
+            "convertsTo": null,
+            "description": "取消回合限制，但發動率提升效果降低7%",
+            "tier": "ADVANCED",
+            "traitName": "久戰"
+          }
+        ],
+        "suggestedBuild": "【疾馳】+【集智】+【靈光】+【靜心】→ 五謀白馬弓；改造效果側重提高主動戰法發動率，陣容表現更穩定且上限更高",
+        "troopLimit": [
+          "BOW"
+        ]
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:troop-mods:白馬義從",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "白馬義從",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/troop-mods"
+      },
+      "sourceId": "白馬義從",
+      "sourceSeason": {
+        "label": "og-兵演春秋",
+        "number": null,
+        "scenarioName": "兵演春秋"
+      },
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "appliesTo": "法關盾、三仙盾、太尉盾等",
+        "effectText": "將盾兵進階為刀槍不入的藤甲兵：我軍全體受到兵刃傷害降低 12%→24%（受統率影響），但處於灼燒狀態時每回合額外損失兵力（傷害率 300%）；若兀突骨統領，則處於灼燒狀態時的損失兵力降低（傷害率 250%）",
+        "options": [
+          {
+            "convertsTo": null,
+            "description": "攜帶者盾兵兵種適性提升1級",
+            "tier": "SPECIAL",
+            "traitName": "舉盾"
+          },
+          {
+            "convertsTo": null,
+            "description": "灼燒狀態損失的兵力受統率影響降低",
+            "tier": "SPECIAL",
+            "traitName": "忍耐"
+          },
+          {
+            "convertsTo": null,
+            "description": "將騎兵進階為刀槍不入，橫行無忌的藤甲象",
+            "tier": "SPECIAL",
+            "traitName": "轉·象兵"
+          },
+          {
+            "convertsTo": null,
+            "description": "兵刃傷害降低效果提高8%",
+            "tier": "BASIC",
+            "traitName": "藤甲"
+          },
+          {
+            "convertsTo": null,
+            "description": "副將可觸發主將效果，且提高3%戰鬥屬性",
+            "tier": "BASIC",
+            "traitName": "雄主"
+          },
+          {
+            "convertsTo": null,
+            "description": "部隊基礎攻城值提高25%但行軍速度降低50%（進行象兵改造後可選）",
+            "tier": "BASIC",
+            "traitName": "重裝"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍全體受到屬性降低效果時，有25%機率免疫",
+            "tier": "INTERMEDIATE",
+            "traitName": "免疫"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍全體受到持續傷害效果時，有25%淨化自身",
+            "tier": "INTERMEDIATE",
+            "traitName": "淨化"
+          },
+          {
+            "convertsTo": null,
+            "description": "將受到傷害的50%延後於3回合內逐步結算，自身灼燒時，獲得50%群攻及混亂（進行象兵、重裝改造後可選）",
+            "tier": "INTERMEDIATE",
+            "traitName": "遲鈍"
+          },
+          {
+            "convertsTo": null,
+            "description": "受到兵刃傷害後，該武將本回合受到的兵刃傷害降低3%，回合結束時重置",
+            "tier": "ADVANCED",
+            "traitName": "堅韌"
+          },
+          {
+            "convertsTo": null,
+            "description": "戰鬥前2回合，主將受到兵刃傷害時，有50%概率獲得1次抵禦（每回合最多觸發2次）",
+            "tier": "ADVANCED",
+            "traitName": "抵禦"
+          },
+          {
+            "convertsTo": null,
+            "description": "逐步結算的傷害降低20%（進行象兵、重裝、遲鈍改造後可選）",
+            "tier": "ADVANCED",
+            "traitName": "無視"
+          }
+        ],
+        "suggestedBuild": "【忍耐】+【藤甲】+【堅韌】+【淨化】→ 藤甲法關盾；顯著提高應對灼燒的能力和減傷效果，彌補了藤甲兵怕灼燒的缺點",
+        "troopLimit": [
+          "SHIELD"
+        ]
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:troop-mods:藤甲兵",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "藤甲兵",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/troop-mods"
+      },
+      "sourceId": "藤甲兵",
+      "sourceSeason": {
+        "label": "og-兵演春秋",
+        "number": null,
+        "scenarioName": "兵演春秋"
+      },
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "appliesTo": "核彈張、惇惇盾等",
+        "effectText": "將盾兵進階為善固疆場的虎衛軍：戰鬥中，我軍主將即將受到普攻時，副將提高 6→12 武力，最多提高 5 次，並會分別對攻擊者造成兵刃傷害（傷害率 36%→72%，受各自損失兵力影響，最多提高 20%→40%），每回合最多觸發 1 次，若典韋或許褚統領，自身統率提高 25→50",
+        "options": [
+          {
+            "convertsTo": null,
+            "description": "虎衛軍造成的傷害改為謀略傷害",
+            "tier": "SPECIAL",
+            "traitName": "謀略"
+          },
+          {
+            "convertsTo": null,
+            "description": "傷害率提升36%",
+            "tier": "BASIC",
+            "traitName": "善戰"
+          },
+          {
+            "convertsTo": null,
+            "description": "傷害影響上限提升20%",
+            "tier": "BASIC",
+            "traitName": "突破"
+          },
+          {
+            "convertsTo": null,
+            "description": "由武力提升改為智力提升",
+            "tier": "BASIC",
+            "traitName": "集智"
+          },
+          {
+            "convertsTo": null,
+            "description": "傷害率額外受目標損失兵力影響",
+            "tier": "INTERMEDIATE",
+            "traitName": "窮追"
+          },
+          {
+            "convertsTo": null,
+            "description": "虎衛軍屬性提升效果達5層時，獲得15%倒戈",
+            "tier": "INTERMEDIATE",
+            "traitName": "倒戈"
+          },
+          {
+            "convertsTo": null,
+            "description": "虎衛軍屬性提升效果達5層時，獲得15%攻心",
+            "tier": "INTERMEDIATE",
+            "traitName": "攻心"
+          },
+          {
+            "convertsTo": null,
+            "description": "每回合觸發次數改為2次",
+            "tier": "ADVANCED",
+            "traitName": "再演"
+          },
+          {
+            "convertsTo": null,
+            "description": "觸發武將由副將改為武力最高副將，傷害目標改為敵軍全體",
+            "tier": "ADVANCED",
+            "traitName": "武魁"
+          },
+          {
+            "convertsTo": null,
+            "description": "觸發武將由副將改為智力最高副將，傷害目標改為敵軍全體",
+            "tier": "ADVANCED",
+            "traitName": "智絕"
+          },
+          {
+            "convertsTo": null,
+            "description": "攜帶者盾兵兵種適性提升1級",
+            "tier": "SPECIAL",
+            "traitName": "舉盾"
+          },
+          {
+            "convertsTo": null,
+            "description": "觸發條件改為我軍全體即將受到普攻時",
+            "tier": "SPECIAL",
+            "traitName": "眾志"
+          }
+        ],
+        "suggestedBuild": "【眾志】+【善戰】+【窮追】+【武魁】→ 核彈張；擴大戰法判定範圍，並反擊更多敵人，適合以副將為輸出核心的兵刃陣容",
+        "troopLimit": [
+          "SHIELD"
+        ]
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:troop-mods:虎衛軍",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "虎衛軍",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/troop-mods"
+      },
+      "sourceId": "虎衛軍",
+      "sourceSeason": {
+        "label": "og-兵演春秋",
+        "number": null,
+        "scenarioName": "兵演春秋"
+      },
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "appliesTo": null,
+        "effectText": "2020-04-01 更新（重做） / 將騎兵進階為天下驍銳的虎豹騎：我軍全體提高 20→40 武力，戰鬥前 3 回合，我軍全體突擊戰法發動率提高 5%→10%，若曹純統領時，提升的發動機率額外受武力影響 /  / 2019-12-04 更新（增強） / 將騎兵進階為天下驍銳的虎豹騎：我軍全體戰鬥中普通攻擊後有 45%→90% 機率使目標造成兵刃傷害降低 7%→14%，持續 1 回合，最多疊加 3 次；若曹純統領，則造成兵刃傷害降低（受統率影響） /  / 原始版本 / 將騎兵進階為天下驍銳的虎豹騎：我軍全體戰鬥中普通攻擊後有 45%→90% 機率使目標造成兵刃傷害降低 7%→14%，持續 1 回合，最多疊加 3 次",
+        "options": [
+          {
+            "convertsTo": null,
+            "description": "攜帶者騎兵兵種適性提升1級",
+            "tier": "SPECIAL",
+            "traitName": "騎術"
+          },
+          {
+            "convertsTo": null,
+            "description": "額外獲得40點速度",
+            "tier": "SPECIAL",
+            "traitName": "神行"
+          },
+          {
+            "convertsTo": null,
+            "description": "獲得武力改為獲得智力",
+            "tier": "SPECIAL",
+            "traitName": "集智"
+          },
+          {
+            "convertsTo": null,
+            "description": "突擊戰法傷害提高10%（受武力和智力較高一項影響）",
+            "tier": "BASIC",
+            "traitName": "衝鋒"
+          },
+          {
+            "convertsTo": null,
+            "description": "提高的突擊戰法發動率受攜帶者武力影響",
+            "tier": "BASIC",
+            "traitName": "操演"
+          },
+          {
+            "convertsTo": null,
+            "description": "提高的突擊戰法發動率受攜帶者智力影響",
+            "tier": "BASIC",
+            "traitName": "謀攻"
+          },
+          {
+            "convertsTo": null,
+            "description": "突擊戰法發動率額外提高5%",
+            "tier": "INTERMEDIATE",
+            "traitName": "搶攻"
+          },
+          {
+            "convertsTo": null,
+            "description": "生效回合變為前3~4回合",
+            "tier": "INTERMEDIATE",
+            "traitName": "久戰"
+          },
+          {
+            "convertsTo": null,
+            "description": "獲得增益效果有25%機率延長1回合",
+            "tier": "INTERMEDIATE",
+            "traitName": "延益"
+          },
+          {
+            "convertsTo": null,
+            "description": "發動突擊戰法後，有25%機率獲得1層抵禦，持續1回合",
+            "tier": "ADVANCED",
+            "traitName": "抵禦"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍全體普攻轉化為謀略傷害",
+            "tier": "ADVANCED",
+            "traitName": "智計"
+          },
+          {
+            "convertsTo": null,
+            "description": "發動突擊戰法後，有25%機率對目標隨機造成以下效果之一（震懾、技窮、繳械…；遊戲畫面此處文字被截斷，待補全）",
+            "tier": "ADVANCED",
+            "traitName": "重創"
+          }
+        ],
+        "suggestedBuild": null,
+        "troopLimit": [
+          "CAVALRY"
+        ]
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:troop-mods:虎豹騎",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "虎豹騎",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/troop-mods"
+      },
+      "sourceId": "虎豹騎",
+      "sourceSeason": {
+        "label": "og-兵演春秋",
+        "number": null,
+        "scenarioName": "兵演春秋"
+      },
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "appliesTo": null,
+        "effectText": "2019-12-04 更新（增強） / 將騎兵進階為橫行天下的西涼鐵騎：戰鬥前 3 回合，提高我軍全體 12.5%→25% 會心機率（觸發時兵刃傷害提高 100%）；若馬騰統領，則提高會心機率受速度影響 /  / 原始版本 / 將騎兵進階為橫行天下的西涼鐵騎：戰鬥前 3 回合，提高我軍全體 12.5%→25% 會心機率（觸發時兵刃傷害提高 100%）",
+        "options": [
+          {
+            "convertsTo": null,
+            "description": "攜帶者騎兵兵種適性提升1級",
+            "tier": "SPECIAL",
+            "traitName": "騎術"
+          },
+          {
+            "convertsTo": null,
+            "description": "首回合敵軍全體進入遇襲狀態",
+            "tier": "SPECIAL",
+            "traitName": "亂陣"
+          },
+          {
+            "convertsTo": null,
+            "description": "改為獲得奇謀",
+            "tier": "SPECIAL",
+            "traitName": "奇謀"
+          },
+          {
+            "convertsTo": null,
+            "description": "獲得的會心/奇謀受速度影響",
+            "tier": "BASIC",
+            "traitName": "飛馳"
+          },
+          {
+            "convertsTo": null,
+            "description": "獲得的會心/奇謀受武力影響",
+            "tier": "BASIC",
+            "traitName": "操演"
+          },
+          {
+            "convertsTo": null,
+            "description": "獲得的會心/奇謀受智力影響",
+            "tier": "BASIC",
+            "traitName": "謀攻"
+          },
+          {
+            "convertsTo": null,
+            "description": "會心/奇謀額外提升5%",
+            "tier": "INTERMEDIATE",
+            "traitName": "領悟"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍全體獲得40武力",
+            "tier": "INTERMEDIATE",
+            "traitName": "武力"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍全體獲得40智力",
+            "tier": "INTERMEDIATE",
+            "traitName": "集智"
+          },
+          {
+            "convertsTo": null,
+            "description": "會心/奇謀傷害有30%機率無視抵禦與規避效果",
+            "tier": "ADVANCED",
+            "traitName": "必中"
+          },
+          {
+            "convertsTo": null,
+            "description": "會心/奇謀提升取消回合限制，但提升效果降低10%",
+            "tier": "ADVANCED",
+            "traitName": "久戰"
+          },
+          {
+            "convertsTo": null,
+            "description": "造成會心/奇謀傷害時，為我軍兵力最低單體恢復傷害量的25%",
+            "tier": "ADVANCED",
+            "traitName": "救援"
+          }
+        ],
+        "suggestedBuild": null,
+        "troopLimit": [
+          "CAVALRY"
+        ]
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:troop-mods:西涼鐵騎",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "西涼鐵騎",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/troop-mods"
+      },
+      "sourceId": "西涼鐵騎",
+      "sourceSeason": {
+        "label": "og-兵演春秋",
+        "number": null,
+        "scenarioName": "兵演春秋"
+      },
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "appliesTo": "皇馬槍、皇馬騎等陣容",
+        "effectText": "槍兵專屬。全體提速；速度最快者普攻時機率發動兵刃攻擊或轉化為治療效果，目標隨機。",
+        "options": [
+          {
+            "convertsTo": null,
+            "description": "我軍全體獲得5%減傷",
+            "tier": "INTERMEDIATE",
+            "traitName": "百戰"
+          },
+          {
+            "convertsTo": null,
+            "description": "攜帶者槍兵兵種適性提升1級",
+            "tier": "SPECIAL",
+            "traitName": "持槍"
+          },
+          {
+            "convertsTo": "CAVALRY",
+            "description": "將騎兵進階為戰無不勝的解煩衛",
+            "tier": "SPECIAL",
+            "traitName": "轉·騎術"
+          },
+          {
+            "convertsTo": null,
+            "description": "傷害觸發機率受攜帶者最高屬性影響",
+            "tier": "SPECIAL",
+            "traitName": "精研"
+          },
+          {
+            "convertsTo": null,
+            "description": "傷害率提高6%",
+            "tier": "BASIC",
+            "traitName": "破敵"
+          },
+          {
+            "convertsTo": null,
+            "description": "改為我軍武力最高武將觸發",
+            "tier": "BASIC",
+            "traitName": "武魁"
+          },
+          {
+            "convertsTo": null,
+            "description": "改為我軍智力最高武將觸發",
+            "tier": "BASIC",
+            "traitName": "智絕"
+          },
+          {
+            "convertsTo": null,
+            "description": "根據傷害類型，傷害目標鎖定敵軍統率最低或智力最低單體",
+            "tier": "INTERMEDIATE",
+            "traitName": "勘虛"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍全體獲得150鄉勇（該鄉勇在部隊受到傷害時，抵擋其中50%傷害。當前總兵力≥最大兵力的65%時生效）",
+            "tier": "ADVANCED",
+            "traitName": "鄉勇"
+          },
+          {
+            "convertsTo": null,
+            "description": "改為必定觸發回復效果，額外判定傷害效果",
+            "tier": "ADVANCED",
+            "traitName": "軍心"
+          },
+          {
+            "convertsTo": null,
+            "description": "由普通攻擊後改為發動主動戰法後",
+            "tier": "ADVANCED",
+            "traitName": "策襲"
+          },
+          {
+            "convertsTo": null,
+            "description": "治療目標鎖定為我軍兵力最低單體",
+            "tier": "INTERMEDIATE",
+            "traitName": "救護"
+          }
+        ],
+        "suggestedBuild": "【精研】+【破敵】+【勘虛】+【軍心】→ 皇馬槍；提高傷害和回復效果，陣容更穩定",
+        "troopLimit": [
+          "SPEAR"
+        ]
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:troop-mods:解煩衛",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "解煩衛",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/troop-mods"
+      },
+      "sourceId": "解煩衛",
+      "sourceSeason": {
+        "label": "og-兵演春秋",
+        "number": null,
+        "scenarioName": "兵演春秋"
+      },
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "appliesTo": null,
+        "effectText": "2020-02-19 更新 / 將騎兵進階為象兵：部隊基礎攻城值提高 25% 但行軍速度降低 50%，戰鬥中受到傷害時，將傷害的 25%→50% 延後於 3 回合內逐步結算，並使結算傷害降低 10%→20%，自身有灼燒狀態時，獲得 50% 群攻及混亂狀態；若統領為蠻族，部隊每多 1 名蠻族武將結算的傷害額外降低 5%→10% /  / 原始版本 / 將騎兵進階為橫行無忌的象兵：部隊基礎攻城值提高 25% 但行軍速度降低 50%，將受到傷害的 25%→50% 延後於 3 回合內逐步結算，且結算傷害降低 10%→20%，自身灼燒時，獲得 50% 群攻及混亂；若蠻族統領，部隊每多 1 名蠻族武將結算的傷害額外降低 5%→10%",
+        "options": [
+          {
+            "convertsTo": null,
+            "description": "攜帶者騎兵兵種適性提升1級",
+            "tier": "SPECIAL",
+            "traitName": "騎術"
+          },
+          {
+            "convertsTo": null,
+            "description": "攜帶者獲得蠻族標籤",
+            "tier": "SPECIAL",
+            "traitName": "蠻族"
+          },
+          {
+            "convertsTo": null,
+            "description": "不再降低行軍速度",
+            "tier": "SPECIAL",
+            "traitName": "疾行"
+          },
+          {
+            "convertsTo": null,
+            "description": "額外延後結算25%受到的傷害",
+            "tier": "BASIC",
+            "traitName": "披甲"
+          },
+          {
+            "convertsTo": null,
+            "description": "結算傷害額外降低30%",
+            "tier": "BASIC",
+            "traitName": "緩和"
+          },
+          {
+            "convertsTo": null,
+            "description": "部隊不會被拒馬阻擋",
+            "tier": "BASIC",
+            "traitName": "厚重"
+          },
+          {
+            "convertsTo": null,
+            "description": "自身灼燒時，額外獲得50%群攻",
+            "tier": "INTERMEDIATE",
+            "traitName": "暴怒"
+          },
+          {
+            "convertsTo": null,
+            "description": "攜帶者免疫混亂狀態",
+            "tier": "INTERMEDIATE",
+            "traitName": "堅定"
+          },
+          {
+            "convertsTo": null,
+            "description": "戰鬥將在第七回合結束",
+            "tier": "INTERMEDIATE",
+            "traitName": "速戰"
+          },
+          {
+            "convertsTo": null,
+            "description": "部隊受到持續傷害降低25%",
+            "tier": "ADVANCED",
+            "traitName": "禦敵"
+          },
+          {
+            "convertsTo": null,
+            "description": "戰平後立刻恢復所有傷兵",
+            "tier": "ADVANCED",
+            "traitName": "修養"
+          },
+          {
+            "convertsTo": null,
+            "description": "逐步結算的傷害改為延後4回合",
+            "tier": "ADVANCED",
+            "traitName": "皮糙"
+          }
+        ],
+        "suggestedBuild": null,
+        "troopLimit": [
+          "CAVALRY"
+        ]
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:troop-mods:象兵",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "象兵",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/troop-mods"
+      },
+      "sourceId": "象兵",
+      "sourceSeason": {
+        "label": "og-兵演春秋",
+        "number": null,
+        "scenarioName": "兵演春秋"
+      },
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "appliesTo": "溫候弓、慷慨弓等陣容",
+        "effectText": "2023-05-09 更新（增強） / 將弓兵進階為氣蓋千夫的錦帆軍：部隊普通攻擊時，有 45% 機率使目標進入潰逃狀態（傷害率 32%→64%，受武力影響），持續 2 回合；若目標已經潰逃則造成兵刃攻擊（傷害率 55%→110%）並恢復傷害量的 30% 兵力；若甘寧統領，提高友軍 3%→6% 會心 /  / 原始版本 / 將弓兵進階為氣蓋千夫的錦帆軍：部隊普通攻擊時，有 40% 機率使目標進入潰逃狀態（傷害率 32%→64%，受武力影響），持續 2 回合；若目標已經潰逃則造成兵刃攻擊（傷害率 55%→110%）並恢復傷害量的 30% 兵力；若甘寧統領，提高友軍 3%→6% 會心",
+        "options": [
+          {
+            "convertsTo": null,
+            "description": "攜帶者弓兵兵種適性提升1級",
+            "tier": "SPECIAL",
+            "traitName": "彎弓"
+          },
+          {
+            "convertsTo": null,
+            "description": "觸發機率提高5%",
+            "tier": "SPECIAL",
+            "traitName": "神射"
+          },
+          {
+            "convertsTo": null,
+            "description": "錦帆軍施加的潰逃效果改為謀略傷害，受智力影響",
+            "tier": "SPECIAL",
+            "traitName": "智取"
+          },
+          {
+            "convertsTo": null,
+            "description": "若目標已潰逃，造成的兵刃傷害提高20%",
+            "tier": "BASIC",
+            "traitName": "勇武"
+          },
+          {
+            "convertsTo": null,
+            "description": "若目標已潰逃，造成兵刃傷害並恢復傷害量的兵力提高40%",
+            "tier": "BASIC",
+            "traitName": "醫治"
+          },
+          {
+            "convertsTo": null,
+            "description": "對已潰逃目標，由造成兵刃傷害改為造成謀略傷害",
+            "tier": "BASIC",
+            "traitName": "謀略"
+          },
+          {
+            "convertsTo": null,
+            "description": "對處於持續性狀態的武將造成的傷害提升10%",
+            "tier": "INTERMEDIATE",
+            "traitName": "趁危"
+          },
+          {
+            "convertsTo": null,
+            "description": "受到處於持續性狀態的武將的傷害降低10%",
+            "tier": "INTERMEDIATE",
+            "traitName": "招架"
+          },
+          {
+            "convertsTo": null,
+            "description": "戰鬥首回合對敵軍主將施加潰逃狀態（傷害率64%，持續2回合）",
+            "tier": "INTERMEDIATE",
+            "traitName": "威嚇"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍全體獲得150鄉勇（該鄉勇在部隊受到傷害時，抵擋其中50%傷害。當前總兵力≥最大兵力的65%時生效）",
+            "tier": "ADVANCED",
+            "traitName": "鄉勇"
+          },
+          {
+            "convertsTo": null,
+            "description": "若目標已潰逃，45%機率使目標進入叛逃狀態（傷害率55%，受武力或智力最高一項影響，無視防禦），持續1回合",
+            "tier": "ADVANCED",
+            "traitName": "營嘯"
+          },
+          {
+            "convertsTo": null,
+            "description": "若目標已潰逃，造成兵刃傷害並恢復傷害量的兵力，回復目標改為我軍兵力最低單體",
+            "tier": "ADVANCED",
+            "traitName": "救護"
+          }
+        ],
+        "suggestedBuild": "【神射】+【勇武】+【趁危】+【營嘯】→ 慷慨弓；增強傷害和叛逃效果，戰法輸出更直接",
+        "troopLimit": [
+          "BOW"
+        ]
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:troop-mods:錦帆軍",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "錦帆軍",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/troop-mods"
+      },
+      "sourceId": "錦帆軍",
+      "sourceSeason": {
+        "label": "og-兵演春秋",
+        "number": null,
+        "scenarioName": "兵演春秋"
+      },
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "appliesTo": "核彈張、桃園盾等",
+        "effectText": "2024-04-09 更新（增強） / 將盾兵進階為無往不利的陷陣營：我軍全體武力、統率提高 11→22 點，戰鬥前 3 回合獲得急救狀態，受到傷害時有 40% 機率獲得治療（治療率 30%→60%，受智力影響）；若高順統領，則觸發率和治療率將額外受統率影響 /  / 原始版本 / 將盾兵進階為無往不利的陷陣營：我軍全體武力、統率提高 11→22 點，戰鬥前 3 回合獲得急救狀態，受到傷害時有 30% 機率獲得治療（治療率 30%→60%，受智力影響）；若高順統領，則治療率將額外受統率影響",
+        "options": [
+          {
+            "convertsTo": null,
+            "description": "治療率額外提升40%",
+            "tier": "BASIC",
+            "traitName": "治療"
+          },
+          {
+            "convertsTo": null,
+            "description": "攜帶者盾兵兵種適性提升1級",
+            "tier": "SPECIAL",
+            "traitName": "舉盾"
+          },
+          {
+            "convertsTo": null,
+            "description": "急救觸發機率額外受攜帶者統率影響",
+            "tier": "SPECIAL",
+            "traitName": "統軍"
+          },
+          {
+            "convertsTo": null,
+            "description": "急救觸發機率額外受攜帶者智力影響",
+            "tier": "SPECIAL",
+            "traitName": "謀攻"
+          },
+          {
+            "convertsTo": null,
+            "description": "武力與統率額外提高11點",
+            "tier": "BASIC",
+            "traitName": "兼修"
+          },
+          {
+            "convertsTo": null,
+            "description": "觸發急救時，有20%機率驅散自身負面狀態",
+            "tier": "INTERMEDIATE",
+            "traitName": "驅散"
+          },
+          {
+            "convertsTo": null,
+            "description": "觸發急救時，有20%機率獲得1層抵禦",
+            "tier": "ADVANCED",
+            "traitName": "抵禦"
+          },
+          {
+            "convertsTo": null,
+            "description": "觸發急救時，有25%機率偷取傷害來源5點戰鬥屬性，可疊加，持續2回合",
+            "tier": "ADVANCED",
+            "traitName": "奪志"
+          },
+          {
+            "convertsTo": null,
+            "description": "改為前4回合獲得急救狀態",
+            "tier": "INTERMEDIATE",
+            "traitName": "久戰"
+          },
+          {
+            "convertsTo": null,
+            "description": "額外獲得休整狀態（治療率60%）",
+            "tier": "INTERMEDIATE",
+            "traitName": "休整"
+          },
+          {
+            "convertsTo": null,
+            "description": "改為獲得智力與統率",
+            "tier": "BASIC",
+            "traitName": "強身"
+          },
+          {
+            "convertsTo": null,
+            "description": "戰鬥中，我軍每損失5000總兵力，受到的急救效果提高25%",
+            "tier": "ADVANCED",
+            "traitName": "急救"
+          }
+        ],
+        "suggestedBuild": "【統軍】+【兼修】+【驅散】+【奪志】→ 桃園盾；提高治療率和屬性，在戰鬥前期回合有效保證隊伍的兵力狀態",
+        "troopLimit": [
+          "SHIELD"
+        ]
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:troop-mods:陷陣營",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "陷陣營",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/troop-mods"
+      },
+      "sourceId": "陷陣營",
+      "sourceSeason": {
+        "label": "og-兵演春秋",
+        "number": null,
+        "scenarioName": "兵演春秋"
+      },
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "appliesTo": "關關張、北伐槍等陣容",
+        "effectText": "2021-09-29 更新（重做） / 將槍兵進階為沖堅毀銳的青州兵：戰鬥前 2 回合，使我軍群體（2 人）受到普通攻擊時對攻擊者進行一次反擊（傷害率 36%→72%），第三回合回合開始時依次為我軍全體恢復兵力，優先完全恢復我軍兵力最低單體，再恢復我軍其他單體（總治療率 90%→180%，受武力影響，額外受敵軍造成傷害影響）；若曹操統領，治療額外受統率影響 /  / 2020-07-29 更新（增強） / 將槍兵進階為沖堅毀銳的青州兵：部隊造成傷害時，有 28% 機率使本次傷害提升 15%→30%，並使攻擊目標下次造成的傷害降低 15%→30%，若曹操統領，則造成傷害降低效果受統率影響 /  / 原始版本 / 將槍兵進階為沖堅毀銳的青州兵：部隊造成傷害時，有 25% 機率使本次傷害提升 15%→30%，並使攻擊目標下次造成的傷害降低 11%→22%，若曹操統領，則造成傷害降低效果受統率影響",
+        "options": [
+          {
+            "convertsTo": null,
+            "description": "反擊傷害率提高36%",
+            "tier": "SPECIAL",
+            "traitName": "善戰"
+          },
+          {
+            "convertsTo": null,
+            "description": "第5回合額外觸發1次治療（總治療率120%，受武力或智力影響，額外受敵軍造成傷害影響）",
+            "tier": "INTERMEDIATE",
+            "traitName": "不屈"
+          },
+          {
+            "convertsTo": null,
+            "description": "反擊傷害受武力影響",
+            "tier": "INTERMEDIATE",
+            "traitName": "操演"
+          },
+          {
+            "convertsTo": null,
+            "description": "我軍全體獲得150鄉勇（該鄉勇在部隊受到傷害時，抵擋其中50%傷害。當前總兵力≥最大兵力的65%時生效）",
+            "tier": "ADVANCED",
+            "traitName": "鄉勇"
+          },
+          {
+            "convertsTo": null,
+            "description": "攜帶者槍兵兵種適性提升1級",
+            "tier": "SPECIAL",
+            "traitName": "持槍"
+          },
+          {
+            "convertsTo": null,
+            "description": "反擊改為謀略傷害",
+            "tier": "SPECIAL",
+            "traitName": "謀略"
+          },
+          {
+            "convertsTo": null,
+            "description": "改為我軍群體（2~3人）獲得反擊",
+            "tier": "BASIC",
+            "traitName": "群雄"
+          },
+          {
+            "convertsTo": null,
+            "description": "總治療率提高60%",
+            "tier": "BASIC",
+            "traitName": "醫治"
+          },
+          {
+            "convertsTo": null,
+            "description": "總治療率改為受智力影響",
+            "tier": "BASIC",
+            "traitName": "回復"
+          },
+          {
+            "convertsTo": null,
+            "description": "反擊傷害受智力影響",
+            "tier": "INTERMEDIATE",
+            "traitName": "謀攻"
+          },
+          {
+            "convertsTo": null,
+            "description": "額外獲得36%規避效果",
+            "tier": "ADVANCED",
+            "traitName": "迂迴"
+          },
+          {
+            "convertsTo": null,
+            "description": "戰鬥前2回合開始時，攜帶者對所有處於控制狀態的敵軍造成傷害（傷害率100%，受武力或智力更高一項影響）",
+            "tier": "ADVANCED",
+            "traitName": "先機"
+          }
+        ],
+        "suggestedBuild": "【善戰】+【醫治】+【不屈】+【迂迴】→ 北伐槍；增加反擊傷害、治療量和規避效果，戰法效果全面提升",
+        "troopLimit": [
+          "SPEAR"
+        ]
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:troop-mods:青州兵",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "青州兵",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/troop-mods"
+      },
+      "sourceId": "青州兵",
+      "sourceSeason": {
+        "label": "og-兵演春秋",
+        "number": null,
+        "scenarioName": "兵演春秋"
+      },
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "appliesTo": null,
+        "effectText": "騎兵專屬。提升全隊治療效果；並使主將有機率依據累積治療量觸發額外謀略傷害。",
+        "options": [
+          {
+            "convertsTo": "BOW",
+            "description": "將弓兵進階為勇不可擋的飛熊軍",
+            "tier": "SPECIAL",
+            "traitName": "轉·彎弓"
+          },
+          {
+            "convertsTo": null,
+            "description": "攜帶者騎兵兵種適性提升1級",
+            "tier": "SPECIAL",
+            "traitName": "騎術"
+          },
+          {
+            "convertsTo": null,
+            "description": "造成傷害的武將行動時獲得3%智力，可疊加",
+            "tier": "SPECIAL",
+            "traitName": "集智"
+          },
+          {
+            "convertsTo": null,
+            "description": "影響傷害量的目標由我軍改為戰場全體",
+            "tier": "ADVANCED",
+            "traitName": "群力"
+          },
+          {
+            "convertsTo": null,
+            "description": "飛熊軍的治療效果額外提升14%",
+            "tier": "BASIC",
+            "traitName": "再生"
+          },
+          {
+            "convertsTo": null,
+            "description": "觸發武將由主將改為智力最高武將",
+            "tier": "BASIC",
+            "traitName": "智絕"
+          },
+          {
+            "convertsTo": null,
+            "description": "觸發飛熊軍傷害後，為我軍兵力最低單體恢復傷害量的60%兵力",
+            "tier": "INTERMEDIATE",
+            "traitName": "扶傷"
+          },
+          {
+            "convertsTo": null,
+            "description": "敵軍受到治療時，有50%機率同時治療我軍隨機單體（每回合最多觸發3）",
+            "tier": "INTERMEDIATE",
+            "traitName": "濟眾"
+          },
+          {
+            "convertsTo": null,
+            "description": "傷害率改為受我軍累計減免傷害量影響",
+            "tier": "INTERMEDIATE",
+            "traitName": "披堅"
+          },
+          {
+            "convertsTo": null,
+            "description": "由重置全部累計進度，改為重置50%累計進度",
+            "tier": "ADVANCED",
+            "traitName": "餘威"
+          },
+          {
+            "convertsTo": null,
+            "description": "傷害目標改為敵軍群體（2~3人）",
+            "tier": "ADVANCED",
+            "traitName": "傾瀉"
+          },
+          {
+            "convertsTo": null,
+            "description": "飛熊軍的傷害率額外提升36%",
+            "tier": "BASIC",
+            "traitName": "破敵"
+          }
+        ],
+        "suggestedBuild": null,
+        "troopLimit": [
+          "CAVALRY"
+        ]
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:troop-mods:飛熊軍",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "飛熊軍",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/troop-mods"
+      },
+      "sourceId": "飛熊軍",
+      "sourceSeason": {
+        "label": "og-兵演春秋",
+        "number": null,
+        "scenarioName": "兵演春秋"
+      },
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    }
+  ],
+  "region": "TW",
+  "schemaVersion": 1
+}

@@ -25,3 +25,9 @@ The original dirty-source gate failures remain historical evidence. The user sub
 > Historical work record — not durable authority. Prefer docs/specs/ADRs for current decisions.
 
 Storage note: created with `ak journal create` in the repository cwd; the CLI matched enclosing registry `plateau`. The same file was relocated without overwrite into this repository's `plans/journals/`; no duplicate or registry edit.
+
+## Post-review repairs
+
+Fixed both reproduced P2 issues in local commits `920a98f` and `e39db07`. Seasonal feasibility now reaches admitted tail configurations; full-box keeps its bounded DFS with a whole-pool greedy incumbent. Browser screenshots use per-test outputs, with a tracked-PNG hash guard. Eight engine regressions and the screenshot guard failed before the repair, then passed. Independent review found no critical/important defects; its9/10 score was retained and Kongming explicitly approved under user delegation.
+
+Final clean-SHA repository gate passed: MCP351, Node194, E2E55, dist13, Vision53, Workerd3; Python139 passed and12 existing source-dependent skips. Real assets rebuilt successfully immediately after E2E, then verified and dry-run packaged; no manual screenshot restoration needed. Nine legacy data hashes unchanged. [Evidence](../reports/fix-260912-1610-season-review-findings.md). No push, merge or deployment. AgentWiki publish skipped.

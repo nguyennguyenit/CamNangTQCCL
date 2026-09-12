@@ -1,0 +1,14 @@
+{
+  "testExit": 0,
+  "modifiedFiles": [
+    " M plans/260907-0233-season-team-lookup/reports/ui-detail-375-dark.png"
+  ],
+  "changedScreenshotHashes": {
+    "plans/260907-0233-season-team-lookup/reports/ui-detail-375-dark.png": {
+      "before": "d0c5e4d527c929d234b3a1b7729d672e3c55812d7cbd4b28d98a4d2e1e9d461c",
+      "after": "a51dbc0aa52aff1697ab347cbf286df1e0fcc9163a1be556f9ec0e6fb8614a84"
+    }
+  },
+  "assetBuildExitAfterTest": 1,
+  "finalStatus": []
+}

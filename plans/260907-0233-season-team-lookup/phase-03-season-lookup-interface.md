@@ -17,7 +17,7 @@ Prerequisite artifact checkpoint: phase 1 đã khai báo hai sidecars; phase 2 t
 
 ## Ranh giới với bộ tra cứu thống nhất — 2026-09-12
 
-Session bàn giao (tài liệu ngoài nhánh: `../reports/analysis-260912-1142-unified-lookup.md`) đã chốt danh mục thống nhất dùng tên Việt, không hiện tên/URL nguồn hoặc màn hình chọn nguồn; provenance giữ nội bộ. Plan mùa không triển khai thêm bốn danh mục mới hay khôi phục nhãn nguồn trên các hồ sơ thống nhất; giữ ID/variant và đọc lại owner dictionary trước tích hợp.
+[Session bàn giao](../reports/analysis-260912-1142-unified-lookup.md) đã chốt danh mục thống nhất dùng tên Việt, không hiện tên/URL nguồn hoặc màn hình chọn nguồn; provenance giữ nội bộ. Plan mùa không triển khai thêm bốn danh mục mới hay khôi phục nhãn nguồn trên các hồ sơ thống nhất; giữ ID/variant và đọc lại owner dictionary trước tích hợp.
 
 Người dùng xác nhận lúc 12:47 ngày 2026-09-12: **giữ nhãn “Điểm SGSDeck” cho đội; chỉ ẩn nguồn ở danh mục thống nhất**. Giữ filter/source links, query `source` và nhãn điểm của Team PK/Meta phe cũ/Cùng Tồn theo contract bên dưới; không đổi thành “Điểm đánh giá” hoặc bỏ nguồn ở phần đội vì policy danh mục. Cùng Tồn reference không tự có điểm; Khai hoang vẫn không hiển thị nguồn theo quyết định riêng. Giữ giá trị điểm, context/selection matching và provenance nội bộ/MCP. Câu hỏi ranh giới UI đã đóng.
 

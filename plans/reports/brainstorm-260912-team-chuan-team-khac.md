@@ -126,7 +126,6 @@ Team chuẩn dùng tên Việt quen thuộc, nhất quán với Meta cũ và t�
 - Mọi tên mùa/kịch bản có trong dữ liệu thuộc phạm vi đều có tên Việt đã đối chiếu, dùng nhất quán ở bộ lọc, thẻ và chi tiết; không bỏ sót mùa cũ hoặc mùa chưa có đội. Mã mùa và tên Trung gốc vẫn được giữ; tìm bằng tên Việt có dấu/không dấu, tên Trung hoặc mã mùa đều nhận ra đúng mùa.
 
 Các yêu cầu bổ sung về danh sách thiếu bản Việt, quản lý bản dịch dùng chung, danh tính độc lập ngôn ngữ, Việt hóa bộ lọc và dịch đầy đủ tên mùa/kịch bản đã được người dùng chấp thuận. Đây là tiêu chí đã chốt, không phải xác nhận toàn bộ đã được triển khai và kiểm chứng.
-
 ## Giới hạn và những phần không làm trong phạm vi này
 
 - Tab Khai hoang hiện có vẫn duy trì dữ liệu mới nhất như trước. Khai hoang trong Recommended là nội dung tham khảo theo mùa nguồn riêng.

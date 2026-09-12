@@ -76,6 +76,23 @@ python3 -m pipeline.build_books_dict
 python3 -m pipeline.build_team_tier
 ```
 
+Catalog SGSDeck có private snapshot tại `data/sgsdeck/`, với đường rebuild
+offline từ cache đã checksum. Cache hiện gồm sáu list, 176 detail tướng, 41
+detail công trình và equipment specials; lệnh build không tự gọi mạng:
+
+```bash
+python3 -m pipeline.build_sgsdeck_catalog --cache pipeline/sgsdeck-cache
+python3 -m pipeline.query_sgsdeck_catalog validate
+python3 -m pipeline.query_sgsdeck_catalog query --group generals --name "趙雲"
+```
+
+Xem contract nguồn, cache và private/public boundary tại
+[docs/sgsdeck-catalog.md](docs/sgsdeck-catalog.md). Chủ project xác nhận quyền
+import trong phạm vi sáu catalog ngày 2026-09-12; đây không phải open license.
+Snapshot hiện validate đủ 202 generals, 393 tactics, 114 equipment + 90 specials,
+39 advisors, 16 troop-mods + 192 options và 41 buildings + 426 levels. Catalog
+vẫn private, không nằm trong public routes hoặc `dist`.
+
 Không chạy máy móc trên dữ liệu đang dùng: `build_json.py` cố ý loại nguồn Đô Úy nhưng hiện chỉ dựng `50 + 110`, trong khi artifact công khai có `56 + 110`. `pipeline/do-uy-ss18-source.json` giữ 40 mục làm archive nguồn thô và không tham gia publication. Clone sạch thường cũng thiếu HTML nguồn và cache crawl bị ignore. Trước khi rebuild: backup `data/`, bảo đảm đủ nguồn, chạy từng bước, rồi review toàn bộ diff và test.
 
 ## Deploy
@@ -115,6 +132,8 @@ plans/                 # kế hoạch/báo cáo lịch sử, không phải runti
 - [Deployment Guide](docs/deployment-guide.md)
 - [Research MCP server](docs/mcp-research-server.md)
 - [Bảo trì dữ liệu đội theo kịch bản](docs/season-team-data.md)
+- [SGSDeck catalog kỹ thuật (private)](docs/sgsdeck-catalog.md)
+- [Phân loại nguồn research đội hình](docs/research-sources.md)
 - [Design Guidelines](docs/design-guidelines.md)
 
 ## Ghi chú vận hành

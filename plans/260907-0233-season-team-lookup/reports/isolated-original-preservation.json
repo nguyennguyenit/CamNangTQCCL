@@ -1,0 +1,19 @@
+{
+  "recordedFiles": 416,
+  "unchangedFiles": 413,
+  "authorizedStatusRecordsChanged": [
+    "plans/260907-0233-season-team-lookup/phase-04-mcp-and-release-validation.md",
+    "plans/260907-0233-season-team-lookup/plan.md",
+    "plans/journals/2026-09-12-season-lookup-implementation-and-release-gate.md"
+  ],
+  "unexpectedChanges": [],
+  "originalHead": "f221c2f55b9f16d857e5785b7fcb7d25a19b705e",
+  "originalIndex": [],
+  "phases": {
+    "phase-02-season-team-configurations.md": "completed",
+    "phase-01-start.md": "completed",
+    "phase-04-mcp-and-release-validation.md": "completed",
+    "phase-03-season-lookup-interface.md": "completed"
+  },
+  "checkedLinksMissing": []
+}

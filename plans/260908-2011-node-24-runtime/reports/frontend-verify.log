@@ -1,0 +1,5 @@
+
+> verify
+> node scripts/verify-astro-dist.mjs
+
+Verified 36 dist files (33 raw assets).

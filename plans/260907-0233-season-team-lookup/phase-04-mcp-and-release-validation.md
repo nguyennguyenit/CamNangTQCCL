@@ -7,6 +7,8 @@ status: completed
 
 ## Overview
 
+Bản sửa hậu review `e39db07` đã chạy lại toàn bộ gate và build assets sau E2E mà source vẫn sạch. [Bằng chứng cập nhật](../reports/fix-260912-1610-season-review-findings.md); Node194, MCP351, E2E55, Workerd3.
+
 Trạng thái 2026-09-12: **completed** — implementation/reviews và real clean-source release gate đã đạt trên `f2741f5`. MCP 351, Workerd 3, E2E 55 và Wrangler dry-run pass; [closure](reports/isolated-release-closure.md) ghi counts, Python skips và ranh giới final-HEAD verification. Các lỗi `SOURCE_NOT_CLEAN`/thiếu assets trong [final gate cũ](reports/final-validation.md) là lịch sử trước worktree được cho phép.
 
 TDD có Red cho inventory/context/schema/bounds và lỗi audit; transport/score-alternative/5-group snapshot cùng một số release tests là regression sau implementation. Không nhận lỗi import/setup là Red. Checkbox đối chiếu bằng chứng thực; baseline bên dưới là lịch sử trước implementation.

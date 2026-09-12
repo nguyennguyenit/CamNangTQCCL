@@ -1,0 +1,14 @@
+
+> check
+> astro check
+
+16:24:18 [vite] Re-optimizing dependencies because vite config has changed
+16:24:18 [types] Generated 40ms
+16:24:18 [check] Getting diagnostics for Astro files in /Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup...
+Result (9 files): 
+- 0 errors
+- 0 warnings
+- 0 hints
+
+
+EXIT_CODE=0

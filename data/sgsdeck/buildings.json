@@ -1,0 +1,5338 @@
+{
+  "fetchedAt": "2026-09-12T02:18:58+07:00",
+  "inventory": {
+    "childCount": 426,
+    "recordCount": 41
+  },
+  "provider": "sgsdeck",
+  "records": [
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 16000,
+              "stone": 32000,
+              "wood": 32000
+            },
+            "duration": "2小時",
+            "effect": "降低兵刃傷害+3%，降低謀略傷害+3%",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 40000,
+              "stone": 80000,
+              "wood": 80000
+            },
+            "duration": "6小時",
+            "effect": "降低兵刃傷害+6%，降低謀略傷害+6%",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 72000,
+              "stone": 144000,
+              "wood": 144000
+            },
+            "duration": "12小時",
+            "effect": "降低兵刃傷害+9%，降低謀略傷害+9%",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 144000,
+              "stone": 288000,
+              "wood": 288000
+            },
+            "duration": "24小時",
+            "effect": "降低兵刃傷害+12%，降低謀略傷害+12%",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 240000,
+              "stone": 480000,
+              "wood": 480000
+            },
+            "duration": "48小時",
+            "effect": "降低兵刃傷害+15%，降低謀略傷害+15%",
+            "level": 5
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 5,
+        "summary": null
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:ba-zhen-tu",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "八陣圖",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/ba-zhen-tu"
+      },
+      "sourceId": "ba-zhen-tu",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 3200,
+              "stone": 3200,
+              "wood": 1600
+            },
+            "duration": "1分",
+            "effect": "部隊統率+2",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 4000,
+              "stone": 4000,
+              "wood": 2000
+            },
+            "duration": "5分",
+            "effect": "部隊統率+4",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 4800,
+              "stone": 4800,
+              "wood": 2400
+            },
+            "duration": "10分",
+            "effect": "部隊統率+6",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 5600,
+              "stone": 5600,
+              "wood": 2800
+            },
+            "duration": "20分",
+            "effect": "部隊統率+8",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 9600,
+              "stone": 9600,
+              "wood": 4800
+            },
+            "duration": "30分",
+            "effect": "部隊統率+10",
+            "level": 5
+          },
+          {
+            "costs": {
+              "iron": 19200,
+              "stone": 19200,
+              "wood": 9600
+            },
+            "duration": "2小時",
+            "effect": "部隊統率+12",
+            "level": 6
+          },
+          {
+            "costs": {
+              "iron": 28800,
+              "stone": 28800,
+              "wood": 14400
+            },
+            "duration": "4小時",
+            "effect": "部隊統率+14",
+            "level": 7
+          },
+          {
+            "costs": {
+              "iron": 44000,
+              "stone": 44000,
+              "wood": 22000
+            },
+            "duration": "8小時",
+            "effect": "部隊統率+16",
+            "level": 8
+          },
+          {
+            "costs": {
+              "iron": 88000,
+              "stone": 88000,
+              "wood": 44000
+            },
+            "duration": "16小時",
+            "effect": "部隊統率+18",
+            "level": 9
+          },
+          {
+            "costs": {
+              "iron": 176000,
+              "stone": 176000,
+              "wood": 88000
+            },
+            "duration": "32小時",
+            "effect": "部隊統率+20",
+            "level": 10
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 10,
+        "summary": null
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:bing-zhan-fang",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "兵戰－防",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/bing-zhan-fang"
+      },
+      "sourceId": "bing-zhan-fang",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 1600,
+              "stone": 3200,
+              "wood": 3200
+            },
+            "duration": "1分",
+            "effect": "部隊智力+2",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 2000,
+              "stone": 4000,
+              "wood": 4000
+            },
+            "duration": "5分",
+            "effect": "部隊智力+4",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 2400,
+              "stone": 4800,
+              "wood": 4800
+            },
+            "duration": "10分",
+            "effect": "部隊智力+6",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 2800,
+              "stone": 5600,
+              "wood": 5600
+            },
+            "duration": "20分",
+            "effect": "部隊智力+8",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 4800,
+              "stone": 9600,
+              "wood": 9600
+            },
+            "duration": "30分",
+            "effect": "部隊智力+10",
+            "level": 5
+          },
+          {
+            "costs": {
+              "iron": 9600,
+              "stone": 19200,
+              "wood": 19200
+            },
+            "duration": "2小時",
+            "effect": "部隊智力+12",
+            "level": 6
+          },
+          {
+            "costs": {
+              "iron": 14400,
+              "stone": 28800,
+              "wood": 28800
+            },
+            "duration": "4小時",
+            "effect": "部隊智力+14",
+            "level": 7
+          },
+          {
+            "costs": {
+              "iron": 22000,
+              "stone": 44000,
+              "wood": 44000
+            },
+            "duration": "8小時",
+            "effect": "部隊智力+16",
+            "level": 8
+          },
+          {
+            "costs": {
+              "iron": 44000,
+              "stone": 88000,
+              "wood": 88000
+            },
+            "duration": "16小時",
+            "effect": "部隊智力+18",
+            "level": 9
+          },
+          {
+            "costs": {
+              "iron": 88000,
+              "stone": 176000,
+              "wood": 176000
+            },
+            "duration": "32小時",
+            "effect": "部隊智力+20",
+            "level": 10
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 10,
+        "summary": null
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:bing-zhan-mou",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "兵戰－謀",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/bing-zhan-mou"
+      },
+      "sourceId": "bing-zhan-mou",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 1600,
+              "stone": 3200,
+              "wood": 3200
+            },
+            "duration": "1分",
+            "effect": "部隊速度+2",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 2000,
+              "stone": 4000,
+              "wood": 4000
+            },
+            "duration": "5分",
+            "effect": "部隊速度+4",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 2400,
+              "stone": 4800,
+              "wood": 4800
+            },
+            "duration": "10分",
+            "effect": "部隊速度+6",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 2800,
+              "stone": 5600,
+              "wood": 5600
+            },
+            "duration": "20分",
+            "effect": "部隊速度+8",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 4800,
+              "stone": 9600,
+              "wood": 9600
+            },
+            "duration": "30分",
+            "effect": "部隊速度+10",
+            "level": 5
+          },
+          {
+            "costs": {
+              "iron": 9600,
+              "stone": 19200,
+              "wood": 19200
+            },
+            "duration": "2小時",
+            "effect": "部隊速度+12",
+            "level": 6
+          },
+          {
+            "costs": {
+              "iron": 14400,
+              "stone": 28800,
+              "wood": 28800
+            },
+            "duration": "4小時",
+            "effect": "部隊速度+14",
+            "level": 7
+          },
+          {
+            "costs": {
+              "iron": 22000,
+              "stone": 44000,
+              "wood": 44000
+            },
+            "duration": "8小時",
+            "effect": "部隊速度+16",
+            "level": 8
+          },
+          {
+            "costs": {
+              "iron": 44000,
+              "stone": 88000,
+              "wood": 88000
+            },
+            "duration": "16小時",
+            "effect": "部隊速度+18",
+            "level": 9
+          },
+          {
+            "costs": {
+              "iron": 88000,
+              "stone": 176000,
+              "wood": 176000
+            },
+            "duration": "32小時",
+            "effect": "部隊速度+20",
+            "level": 10
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 10,
+        "summary": null
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:bing-zhan-su",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "兵戰－速",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/bing-zhan-su"
+      },
+      "sourceId": "bing-zhan-su",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 3200,
+              "stone": 3200,
+              "wood": 1600
+            },
+            "duration": "1分",
+            "effect": "部隊武力+2",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 4000,
+              "stone": 4000,
+              "wood": 2000
+            },
+            "duration": "5分",
+            "effect": "部隊武力+4",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 4800,
+              "stone": 4800,
+              "wood": 2400
+            },
+            "duration": "10分",
+            "effect": "部隊武力+6",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 5600,
+              "stone": 5600,
+              "wood": 2800
+            },
+            "duration": "20分",
+            "effect": "部隊武力+8",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 9600,
+              "stone": 9600,
+              "wood": 4800
+            },
+            "duration": "30分",
+            "effect": "部隊武力+10",
+            "level": 5
+          },
+          {
+            "costs": {
+              "iron": 19200,
+              "stone": 19200,
+              "wood": 9600
+            },
+            "duration": "2小時",
+            "effect": "部隊武力+12",
+            "level": 6
+          },
+          {
+            "costs": {
+              "iron": 28800,
+              "stone": 28800,
+              "wood": 14400
+            },
+            "duration": "4小時",
+            "effect": "部隊武力+14",
+            "level": 7
+          },
+          {
+            "costs": {
+              "iron": 44000,
+              "stone": 44000,
+              "wood": 22000
+            },
+            "duration": "8小時",
+            "effect": "部隊武力+16",
+            "level": 8
+          },
+          {
+            "costs": {
+              "iron": 88000,
+              "stone": 88000,
+              "wood": 44000
+            },
+            "duration": "16小時",
+            "effect": "部隊武力+18",
+            "level": 9
+          },
+          {
+            "costs": {
+              "iron": 176000,
+              "stone": 176000,
+              "wood": 88000
+            },
+            "duration": "32小時",
+            "effect": "部隊武力+20",
+            "level": 10
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 10,
+        "summary": null
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:bing-zhan-wu",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "兵戰－武",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/bing-zhan-wu"
+      },
+      "sourceId": "bing-zhan-wu",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 180,
+              "stone": null,
+              "wood": 180
+            },
+            "duration": "1分",
+            "effect": "石材產量+100/小時",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 360,
+              "stone": null,
+              "wood": 360
+            },
+            "duration": "1分",
+            "effect": "石材產量+200/小時",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 540,
+              "stone": null,
+              "wood": 540
+            },
+            "duration": "3分",
+            "effect": "石材產量+300/小時",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 720,
+              "stone": null,
+              "wood": 720
+            },
+            "duration": "10分",
+            "effect": "石材產量+400/小時",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 900,
+              "stone": null,
+              "wood": 900
+            },
+            "duration": "20分",
+            "effect": "石材產量+500/小時",
+            "level": 5
+          },
+          {
+            "costs": {
+              "iron": 2160,
+              "stone": null,
+              "wood": 2160
+            },
+            "duration": "30分",
+            "effect": "石材產量+700/小時",
+            "level": 6
+          },
+          {
+            "costs": {
+              "iron": 2520,
+              "stone": null,
+              "wood": 2520
+            },
+            "duration": "40分",
+            "effect": "石材產量+900/小時",
+            "level": 7
+          },
+          {
+            "costs": {
+              "iron": 2880,
+              "stone": null,
+              "wood": 2880
+            },
+            "duration": "1小時",
+            "effect": "石材產量+1100/小時",
+            "level": 8
+          },
+          {
+            "costs": {
+              "iron": 3240,
+              "stone": null,
+              "wood": 3240
+            },
+            "duration": "1小時20分",
+            "effect": "石材產量+1300/小時",
+            "level": 9
+          },
+          {
+            "costs": {
+              "iron": 3600,
+              "stone": null,
+              "wood": 3600
+            },
+            "duration": "1小時40分",
+            "effect": "石材產量+1500/小時，採石官",
+            "level": 10
+          },
+          {
+            "costs": {
+              "iron": 9900,
+              "stone": null,
+              "wood": 9900
+            },
+            "duration": "4小時50分",
+            "effect": "石材產量+2000/小時",
+            "level": 11
+          },
+          {
+            "costs": {
+              "iron": 10800,
+              "stone": null,
+              "wood": 10800
+            },
+            "duration": "5小時45分",
+            "effect": "石材產量+2500/小時",
+            "level": 12
+          },
+          {
+            "costs": {
+              "iron": 11700,
+              "stone": null,
+              "wood": 11700
+            },
+            "duration": "6小時45分",
+            "effect": "石材產量+3000/小時",
+            "level": 13
+          },
+          {
+            "costs": {
+              "iron": 12600,
+              "stone": null,
+              "wood": 12600
+            },
+            "duration": "7小時50分",
+            "effect": "石材產量+3500/小時",
+            "level": 14
+          },
+          {
+            "costs": {
+              "iron": 13500,
+              "stone": null,
+              "wood": 13500
+            },
+            "duration": "9小時",
+            "effect": "石材產量+4000/小時",
+            "level": 15
+          },
+          {
+            "costs": {
+              "iron": 17280,
+              "stone": null,
+              "wood": 17280
+            },
+            "duration": "10小時14分",
+            "effect": "石材產量+4600/小時",
+            "level": 16
+          },
+          {
+            "costs": {
+              "iron": 18360,
+              "stone": null,
+              "wood": 18360
+            },
+            "duration": "11小時33分",
+            "effect": "石材產量+5200/小時",
+            "level": 17
+          },
+          {
+            "costs": {
+              "iron": 19440,
+              "stone": null,
+              "wood": 19440
+            },
+            "duration": "12小時57分",
+            "effect": "石材產量+5800/小時",
+            "level": 18
+          },
+          {
+            "costs": {
+              "iron": 20520,
+              "stone": null,
+              "wood": 20520
+            },
+            "duration": "14小時26分",
+            "effect": "石材產量+6400/小時",
+            "level": 19
+          },
+          {
+            "costs": {
+              "iron": 21600,
+              "stone": null,
+              "wood": 21600
+            },
+            "duration": "16小時",
+            "effect": "石材產量+7000/小時，屯田石材產量+50%",
+            "level": 20
+          },
+          {
+            "costs": {
+              "iron": 31680,
+              "stone": null,
+              "wood": 31680
+            },
+            "duration": "18小時28分",
+            "effect": "石材產量+7800/小時",
+            "level": 21
+          },
+          {
+            "costs": {
+              "iron": 34560,
+              "stone": null,
+              "wood": 34560
+            },
+            "duration": "21小時7分",
+            "effect": "石材產量+8600/小時",
+            "level": 22
+          },
+          {
+            "costs": {
+              "iron": 37440,
+              "stone": null,
+              "wood": 37440
+            },
+            "duration": "23小時55分",
+            "effect": "石材產量+9400/小時",
+            "level": 23
+          },
+          {
+            "costs": {
+              "iron": 40320,
+              "stone": null,
+              "wood": 40320
+            },
+            "duration": "26小時52分",
+            "effect": "石材產量+10200/小時",
+            "level": 24
+          },
+          {
+            "costs": {
+              "iron": 43200,
+              "stone": null,
+              "wood": 43200
+            },
+            "duration": "30小時",
+            "effect": "石材產量+11000/小時",
+            "level": 25
+          },
+          {
+            "costs": {
+              "iron": 57600,
+              "stone": null,
+              "wood": 57600
+            },
+            "duration": "33小時16分",
+            "effect": "石材產量+11800/小時",
+            "level": 26
+          },
+          {
+            "costs": {
+              "iron": 61200,
+              "stone": null,
+              "wood": 61200
+            },
+            "duration": "36小時43分",
+            "effect": "石材產量+12600/小時",
+            "level": 27
+          },
+          {
+            "costs": {
+              "iron": 64800,
+              "stone": null,
+              "wood": 64800
+            },
+            "duration": "40小時19分",
+            "effect": "石材產量+13400/小時",
+            "level": 28
+          },
+          {
+            "costs": {
+              "iron": 68400,
+              "stone": null,
+              "wood": 68400
+            },
+            "duration": "44小時4分",
+            "effect": "石材產量+14200/小時",
+            "level": 29
+          },
+          {
+            "costs": {
+              "iron": 72000,
+              "stone": null,
+              "wood": 72000
+            },
+            "duration": "48小時",
+            "effect": "石材產量+15000/小時",
+            "level": 30
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 30,
+        "summary": "生產石材；Lv10 解鎖採石官，Lv20 屯田石材 +50%"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:cai-shi-chu",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "採石處",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/cai-shi-chu"
+      },
+      "sourceId": "cai-shi-chu",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 300,
+              "stone": 400,
+              "wood": 300
+            },
+            "duration": "15秒",
+            "effect": "資源上限+20000解鎖：君王殿1級",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 600,
+              "stone": 800,
+              "wood": 600
+            },
+            "duration": "3分",
+            "effect": "資源上限+30000",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 1200,
+              "stone": 1600,
+              "wood": 1200
+            },
+            "duration": "5分",
+            "effect": "資源上限+50000",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 3000,
+              "stone": 4000,
+              "wood": 3000
+            },
+            "duration": "10分",
+            "effect": "資源上限+80000",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 6000,
+              "stone": 8000,
+              "wood": 6000
+            },
+            "duration": "15分",
+            "effect": "資源上限+100000",
+            "level": 5
+          },
+          {
+            "costs": {
+              "iron": 12000,
+              "stone": 16000,
+              "wood": 12000
+            },
+            "duration": "1小時",
+            "effect": "資源上限+150000",
+            "level": 6
+          },
+          {
+            "costs": {
+              "iron": 18000,
+              "stone": 24000,
+              "wood": 18000
+            },
+            "duration": "2小時",
+            "effect": "資源上限+200000",
+            "level": 7
+          },
+          {
+            "costs": {
+              "iron": 24000,
+              "stone": 32000,
+              "wood": 24000
+            },
+            "duration": "8小時",
+            "effect": "資源上限+250000",
+            "level": 8
+          },
+          {
+            "costs": {
+              "iron": 30000,
+              "stone": 40000,
+              "wood": 30000
+            },
+            "duration": "12小時",
+            "effect": "資源上限+300000",
+            "level": 9
+          },
+          {
+            "costs": {
+              "iron": 36000,
+              "stone": 48000,
+              "wood": 36000
+            },
+            "duration": "20小時",
+            "effect": "資源上限+350000",
+            "level": 10
+          },
+          {
+            "costs": {
+              "iron": 45000,
+              "stone": 60000,
+              "wood": 45000
+            },
+            "duration": "24小時",
+            "effect": "資源上限+450000",
+            "level": 11
+          },
+          {
+            "costs": {
+              "iron": 54000,
+              "stone": 72000,
+              "wood": 54000
+            },
+            "duration": "28小時",
+            "effect": "資源上限+550000",
+            "level": 12
+          },
+          {
+            "costs": {
+              "iron": 69000,
+              "stone": 92000,
+              "wood": 69000
+            },
+            "duration": "32小時",
+            "effect": "資源上限+700000",
+            "level": 13
+          },
+          {
+            "costs": {
+              "iron": 84000,
+              "stone": 112000,
+              "wood": 84000
+            },
+            "duration": "36小時",
+            "effect": "資源上限+850000",
+            "level": 14
+          },
+          {
+            "costs": {
+              "iron": 99000,
+              "stone": 132000,
+              "wood": 99000
+            },
+            "duration": "40小時",
+            "effect": "資源上限+1000000",
+            "level": 15
+          },
+          {
+            "costs": {
+              "iron": 117000,
+              "stone": 156000,
+              "wood": 117000
+            },
+            "duration": "44小時",
+            "effect": "資源上限+1200000",
+            "level": 16
+          },
+          {
+            "costs": {
+              "iron": 135000,
+              "stone": 180000,
+              "wood": 135000
+            },
+            "duration": "48小時",
+            "effect": "資源上限+1600000",
+            "level": 17
+          },
+          {
+            "costs": {
+              "iron": 165000,
+              "stone": 220000,
+              "wood": 165000
+            },
+            "duration": "52小時",
+            "effect": "資源上限+2000000",
+            "level": 18
+          },
+          {
+            "costs": {
+              "iron": 210000,
+              "stone": 280000,
+              "wood": 210000
+            },
+            "duration": "56小時",
+            "effect": "資源上限+2500000",
+            "level": 19
+          },
+          {
+            "costs": {
+              "iron": 255000,
+              "stone": 340000,
+              "wood": 255000
+            },
+            "duration": "60小時",
+            "effect": "資源上限+3000000",
+            "level": 20
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 20,
+        "summary": "提升資源（木/鐵/石）儲存上限"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:cang-ku",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "倉庫",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/cang-ku"
+      },
+      "sourceId": "cang-ku",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 7500,
+              "stone": 15000,
+              "wood": 7500
+            },
+            "duration": "1小時",
+            "effect": "守軍武將兵力300",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 15000,
+              "stone": 30000,
+              "wood": 15000
+            },
+            "duration": "2小時",
+            "effect": "守軍武將兵力600",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 30000,
+              "stone": 60000,
+              "wood": 30000
+            },
+            "duration": "4小時",
+            "effect": "守軍武將兵力900",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 50000,
+              "stone": 100000,
+              "wood": 50000
+            },
+            "duration": "6小時",
+            "effect": "守軍武將兵力1200",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 100000,
+              "stone": 200000,
+              "wood": 100000
+            },
+            "duration": "12小時",
+            "effect": "守軍武將兵力1500",
+            "level": 5
+          },
+          {
+            "costs": {
+              "iron": 150000,
+              "stone": 300000,
+              "wood": 150000
+            },
+            "duration": "18小時",
+            "effect": "守軍武將兵力1800",
+            "level": 6
+          },
+          {
+            "costs": {
+              "iron": 200000,
+              "stone": 400000,
+              "wood": 200000
+            },
+            "duration": "24小時",
+            "effect": "守軍武將兵力2100",
+            "level": 7
+          },
+          {
+            "costs": {
+              "iron": 250000,
+              "stone": 500000,
+              "wood": 250000
+            },
+            "duration": "30小時",
+            "effect": "守軍武將兵力2400",
+            "level": 8
+          },
+          {
+            "costs": {
+              "iron": 300000,
+              "stone": 600000,
+              "wood": 300000
+            },
+            "duration": "36小時",
+            "effect": "守軍武將兵力2700",
+            "level": 9
+          },
+          {
+            "costs": {
+              "iron": 350000,
+              "stone": 700000,
+              "wood": 350000
+            },
+            "duration": "42小時",
+            "effect": "守軍武將兵力3000",
+            "level": 10
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 10,
+        "summary": null
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:cheng-fang-jun",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "城防軍",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/cheng-fang-jun"
+      },
+      "sourceId": "cheng-fang-jun",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 10000,
+              "stone": 20000,
+              "wood": 10000
+            },
+            "duration": "1小時",
+            "effect": "城池耐久+200",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 20000,
+              "stone": 40000,
+              "wood": 20000
+            },
+            "duration": "2小時",
+            "effect": "城池耐久+400",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 30000,
+              "stone": 60000,
+              "wood": 30000
+            },
+            "duration": "4小時",
+            "effect": "城池耐久+600",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 45000,
+              "stone": 90000,
+              "wood": 45000
+            },
+            "duration": "6小時",
+            "effect": "城池耐久+800",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 50000,
+              "stone": 100000,
+              "wood": 50000
+            },
+            "duration": "10小時",
+            "effect": "城池耐久+1000",
+            "level": 5
+          },
+          {
+            "costs": {
+              "iron": 65000,
+              "stone": 130000,
+              "wood": 65000
+            },
+            "duration": "14小時",
+            "effect": "城池耐久+1200",
+            "level": 6
+          },
+          {
+            "costs": {
+              "iron": 80000,
+              "stone": 160000,
+              "wood": 80000
+            },
+            "duration": "18小時",
+            "effect": "城池耐久+1400",
+            "level": 7
+          },
+          {
+            "costs": {
+              "iron": 105000,
+              "stone": 210000,
+              "wood": 105000
+            },
+            "duration": "24小時",
+            "effect": "城池耐久+1600",
+            "level": 8
+          },
+          {
+            "costs": {
+              "iron": 150000,
+              "stone": 300000,
+              "wood": 150000
+            },
+            "duration": "32小時",
+            "effect": "城池耐久+1800",
+            "level": 9
+          },
+          {
+            "costs": {
+              "iron": 215000,
+              "stone": 430000,
+              "wood": 215000
+            },
+            "duration": "40小時",
+            "effect": "城池耐久+2000",
+            "level": 10
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 10,
+        "summary": "增加主城耐久（守城基礎建築）"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:cheng-qiang",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "城牆",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/cheng-qiang"
+      },
+      "sourceId": "cheng-qiang",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 6000,
+              "stone": 8000,
+              "wood": 6000
+            },
+            "duration": "15分",
+            "effect": "1部隊有第二副將",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 24000,
+              "stone": 32000,
+              "wood": 24000
+            },
+            "duration": "4小時",
+            "effect": "2部隊有第二副將",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 54000,
+              "stone": 72000,
+              "wood": 54000
+            },
+            "duration": "8小時",
+            "effect": "3部隊有第二副將",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 144000,
+              "stone": 192000,
+              "wood": 144000
+            },
+            "duration": "16小時",
+            "effect": "4部隊有第二副將",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 216000,
+              "stone": 288000,
+              "wood": 216000
+            },
+            "duration": "32小時",
+            "effect": "5部隊有第二副將",
+            "level": 5
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 5,
+        "summary": "解鎖部隊副將位（最高 5 部隊全有副將）"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:dian-jiang-tai",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "點將臺",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/dian-jiang-tai"
+      },
+      "sourceId": "dian-jiang-tai",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 20000,
+              "stone": 40000,
+              "wood": 40000
+            },
+            "duration": "30分",
+            "effect": "盾兵受到傷害-0.25%",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 30000,
+              "stone": 60000,
+              "wood": 60000
+            },
+            "duration": "2小時",
+            "effect": "盾兵受到傷害-0.5%",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 44000,
+              "stone": 88000,
+              "wood": 88000
+            },
+            "duration": "4小時",
+            "effect": "盾兵受到傷害-0.75%",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 56000,
+              "stone": 112000,
+              "wood": 112000
+            },
+            "duration": "8小時",
+            "effect": "盾兵受到傷害-1%",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 70000,
+              "stone": 140000,
+              "wood": 140000
+            },
+            "duration": "12小時",
+            "effect": "盾兵受到傷害-1.25%",
+            "level": 5
+          },
+          {
+            "costs": {
+              "iron": 96000,
+              "stone": 192000,
+              "wood": 192000
+            },
+            "duration": "18小時",
+            "effect": "盾兵受到傷害-1.5%",
+            "level": 6
+          },
+          {
+            "costs": {
+              "iron": 184000,
+              "stone": 368000,
+              "wood": 368000
+            },
+            "duration": "24小時",
+            "effect": "盾兵受到傷害-1.75%",
+            "level": 7
+          },
+          {
+            "costs": {
+              "iron": 260000,
+              "stone": 520000,
+              "wood": 520000
+            },
+            "duration": "36小時",
+            "effect": "盾兵受到傷害-2%",
+            "level": 8
+          },
+          {
+            "costs": {
+              "iron": 420000,
+              "stone": 840000,
+              "wood": 840000
+            },
+            "duration": "48小時",
+            "effect": "盾兵受到傷害-2.25%",
+            "level": 9
+          },
+          {
+            "costs": {
+              "iron": 600000,
+              "stone": 1200000,
+              "wood": 1200000
+            },
+            "duration": "60小時",
+            "effect": "盾兵受到傷害-2.5%，戰鬥開始第5回合恢復兵力",
+            "level": 10
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 10,
+        "summary": null
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:dun-bing-ying",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "盾兵營",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/dun-bing-ying"
+      },
+      "sourceId": "dun-bing-ying",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 180,
+              "stone": null,
+              "wood": 180
+            },
+            "duration": "1分",
+            "effect": "木材產量+100/小時",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 360,
+              "stone": null,
+              "wood": 360
+            },
+            "duration": "1分",
+            "effect": "木材產量+200/小時",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 540,
+              "stone": null,
+              "wood": 540
+            },
+            "duration": "3分",
+            "effect": "木材產量+300/小時",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 720,
+              "stone": null,
+              "wood": 720
+            },
+            "duration": "10分",
+            "effect": "木材產量+400/小時",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 900,
+              "stone": null,
+              "wood": 900
+            },
+            "duration": "20分",
+            "effect": "木材產量+500/小時",
+            "level": 5
+          },
+          {
+            "costs": {
+              "iron": 2160,
+              "stone": null,
+              "wood": 2160
+            },
+            "duration": "30分",
+            "effect": "木材產量+700/小時",
+            "level": 6
+          },
+          {
+            "costs": {
+              "iron": 2520,
+              "stone": null,
+              "wood": 2520
+            },
+            "duration": "40分",
+            "effect": "木材產量+900/小時",
+            "level": 7
+          },
+          {
+            "costs": {
+              "iron": 2880,
+              "stone": null,
+              "wood": 2880
+            },
+            "duration": "1小時",
+            "effect": "木材產量+1100/小時",
+            "level": 8
+          },
+          {
+            "costs": {
+              "iron": 3240,
+              "stone": null,
+              "wood": 3240
+            },
+            "duration": "1小時20分",
+            "effect": "木材產量+1300/小時",
+            "level": 9
+          },
+          {
+            "costs": {
+              "iron": 3600,
+              "stone": null,
+              "wood": 3600
+            },
+            "duration": "1小時40分",
+            "effect": "木材產量+1500/小時，木材官",
+            "level": 10
+          },
+          {
+            "costs": {
+              "iron": 9900,
+              "stone": null,
+              "wood": 9900
+            },
+            "duration": "4小時50分",
+            "effect": "木材產量+2000/小時",
+            "level": 11
+          },
+          {
+            "costs": {
+              "iron": 10800,
+              "stone": null,
+              "wood": 10800
+            },
+            "duration": "5小時45分",
+            "effect": "木材產量+2500/小時",
+            "level": 12
+          },
+          {
+            "costs": {
+              "iron": 11700,
+              "stone": null,
+              "wood": 11700
+            },
+            "duration": "6小時45分",
+            "effect": "木材產量+3000/小時",
+            "level": 13
+          },
+          {
+            "costs": {
+              "iron": 12600,
+              "stone": null,
+              "wood": 12600
+            },
+            "duration": "7小時50分",
+            "effect": "木材產量+3500/小時",
+            "level": 14
+          },
+          {
+            "costs": {
+              "iron": 13500,
+              "stone": null,
+              "wood": 13500
+            },
+            "duration": "9小時",
+            "effect": "木材產量+4000/小時",
+            "level": 15
+          },
+          {
+            "costs": {
+              "iron": 17280,
+              "stone": null,
+              "wood": 17280
+            },
+            "duration": "10小時14分",
+            "effect": "木材產量+4600/小時",
+            "level": 16
+          },
+          {
+            "costs": {
+              "iron": 18360,
+              "stone": null,
+              "wood": 18360
+            },
+            "duration": "11小時33分",
+            "effect": "木材產量+5200/小時",
+            "level": 17
+          },
+          {
+            "costs": {
+              "iron": 19440,
+              "stone": null,
+              "wood": 19440
+            },
+            "duration": "12小時57分",
+            "effect": "木材產量+5800/小時",
+            "level": 18
+          },
+          {
+            "costs": {
+              "iron": 20520,
+              "stone": null,
+              "wood": 20520
+            },
+            "duration": "14小時26分",
+            "effect": "木材產量+6400/小時",
+            "level": 19
+          },
+          {
+            "costs": {
+              "iron": 21600,
+              "stone": null,
+              "wood": 21600
+            },
+            "duration": "16小時",
+            "effect": "木材產量+7000/小時，屯田木材產量+50%",
+            "level": 20
+          },
+          {
+            "costs": {
+              "iron": 31680,
+              "stone": null,
+              "wood": 31680
+            },
+            "duration": "18小時28分",
+            "effect": "木材產量+7800/小時",
+            "level": 21
+          },
+          {
+            "costs": {
+              "iron": 34560,
+              "stone": null,
+              "wood": 34560
+            },
+            "duration": "21小時7分",
+            "effect": "木材產量+8600/小時",
+            "level": 22
+          },
+          {
+            "costs": {
+              "iron": 37440,
+              "stone": null,
+              "wood": 37440
+            },
+            "duration": "23小時55分",
+            "effect": "木材產量+9400/小時",
+            "level": 23
+          },
+          {
+            "costs": {
+              "iron": 40320,
+              "stone": null,
+              "wood": 40320
+            },
+            "duration": "26小時52分",
+            "effect": "木材產量+10200/小時",
+            "level": 24
+          },
+          {
+            "costs": {
+              "iron": 43200,
+              "stone": null,
+              "wood": 43200
+            },
+            "duration": "30小時",
+            "effect": "木材產量+11000/小時",
+            "level": 25
+          },
+          {
+            "costs": {
+              "iron": 57600,
+              "stone": null,
+              "wood": 57600
+            },
+            "duration": "33小時16分",
+            "effect": "木材產量+11800/小時",
+            "level": 26
+          },
+          {
+            "costs": {
+              "iron": 61200,
+              "stone": null,
+              "wood": 61200
+            },
+            "duration": "36小時43分",
+            "effect": "木材產量+12600/小時",
+            "level": 27
+          },
+          {
+            "costs": {
+              "iron": 64800,
+              "stone": null,
+              "wood": 64800
+            },
+            "duration": "40小時19分",
+            "effect": "木材產量+13400/小時",
+            "level": 28
+          },
+          {
+            "costs": {
+              "iron": 68400,
+              "stone": null,
+              "wood": 68400
+            },
+            "duration": "44小時4分",
+            "effect": "木材產量+14200/小時",
+            "level": 29
+          },
+          {
+            "costs": {
+              "iron": 72000,
+              "stone": null,
+              "wood": 72000
+            },
+            "duration": "48小時",
+            "effect": "木材產量+15000/小時",
+            "level": 30
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 30,
+        "summary": "生產木材；Lv10 解鎖木材官，Lv20 屯田木材 +50%"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:fa-mu-chang",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "伐木場",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/fa-mu-chang"
+      },
+      "sourceId": "fa-mu-chang",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 30000,
+              "stone": 40000,
+              "wood": 30000
+            },
+            "duration": "2小時",
+            "effect": "視野範圍+1",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 60000,
+              "stone": 80000,
+              "wood": 60000
+            },
+            "duration": "6小時",
+            "effect": "視野範圍+2",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 120000,
+              "stone": 160000,
+              "wood": 120000
+            },
+            "duration": "24小時",
+            "effect": "視野範圍+3",
+            "level": 3
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 3,
+        "summary": null
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:feng-huo-tai",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "烽火臺",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/feng-huo-tai"
+      },
+      "sourceId": "feng-huo-tai",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 20000,
+              "stone": 40000,
+              "wood": 40000
+            },
+            "duration": "30分",
+            "effect": "弓兵武將全屬性+1",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 30000,
+              "stone": 60000,
+              "wood": 60000
+            },
+            "duration": "2小時",
+            "effect": "弓兵武將全屬性+2",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 44000,
+              "stone": 88000,
+              "wood": 88000
+            },
+            "duration": "4小時",
+            "effect": "弓兵武將全屬性+3",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 56000,
+              "stone": 112000,
+              "wood": 112000
+            },
+            "duration": "8小時",
+            "effect": "弓兵武將全屬性+4",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 70000,
+              "stone": 140000,
+              "wood": 140000
+            },
+            "duration": "12小時",
+            "effect": "弓兵武將全屬性+5",
+            "level": 5
+          },
+          {
+            "costs": {
+              "iron": 96000,
+              "stone": 192000,
+              "wood": 192000
+            },
+            "duration": "18小時",
+            "effect": "弓兵武將全屬性+6",
+            "level": 6
+          },
+          {
+            "costs": {
+              "iron": 184000,
+              "stone": 368000,
+              "wood": 368000
+            },
+            "duration": "24小時",
+            "effect": "弓兵武將全屬性+7",
+            "level": 7
+          },
+          {
+            "costs": {
+              "iron": 260000,
+              "stone": 520000,
+              "wood": 520000
+            },
+            "duration": "36小時",
+            "effect": "弓兵武將全屬性+8",
+            "level": 8
+          },
+          {
+            "costs": {
+              "iron": 420000,
+              "stone": 840000,
+              "wood": 840000
+            },
+            "duration": "48小時",
+            "effect": "弓兵武將全屬性+9",
+            "level": 9
+          },
+          {
+            "costs": {
+              "iron": 600000,
+              "stone": 1200000,
+              "wood": 1200000
+            },
+            "duration": "60小時",
+            "effect": "弓兵武將全屬性+10，駐守首回合隨機攻擊敵軍",
+            "level": 10
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 10,
+        "summary": null
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:gong-bing-ying",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "弓兵營",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/gong-bing-ying"
+      },
+      "sourceId": "gong-bing-ying",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 5000,
+              "stone": 10000,
+              "wood": 5000
+            },
+            "duration": "1小時",
+            "effect": "戰略建築建造等級1",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 10000,
+              "stone": 20000,
+              "wood": 10000
+            },
+            "duration": "3小時",
+            "effect": "戰略建築建造等級2",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 20000,
+              "stone": 40000,
+              "wood": 20000
+            },
+            "duration": "6小時",
+            "effect": "戰略建築建造等級3",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 80000,
+              "stone": 160000,
+              "wood": 80000
+            },
+            "duration": "10小時",
+            "effect": "戰略建築建造等級4",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 160000,
+              "stone": 320000,
+              "wood": 160000
+            },
+            "duration": "30小時",
+            "effect": "戰略建築建造等級5",
+            "level": 5
+          }
+        ],
+        "mainCityOnly": true,
+        "maxLevel": 5,
+        "summary": "提升戰略建築（軍機營/工事營）建造等級上限"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:gong-cheng-ying",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "工程營",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/gong-cheng-ying"
+      },
+      "sourceId": "gong-cheng-ying",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 10000,
+              "stone": 20000,
+              "wood": 10000
+            },
+            "duration": "2小時",
+            "effect": "箭塔建造上限1，拒馬建造上限2",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 40000,
+              "stone": 80000,
+              "wood": 40000
+            },
+            "duration": "8小時",
+            "effect": "箭塔建造上限2，拒馬建造上限4",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 80000,
+              "stone": 160000,
+              "wood": 80000
+            },
+            "duration": "16小時",
+            "effect": "箭塔建造上限3，拒馬建造上限6",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 160000,
+              "stone": 320000,
+              "wood": 160000
+            },
+            "duration": "24小時",
+            "effect": "箭塔建造上限4，拒馬建造上限8",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 320000,
+              "stone": 640000,
+              "wood": 320000
+            },
+            "duration": "48小時",
+            "effect": "箭塔建造上限5，拒馬建造上限10",
+            "level": 5
+          }
+        ],
+        "mainCityOnly": true,
+        "maxLevel": 5,
+        "summary": "提升箭塔、拒馬建造上限"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:gong-shi-ying",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "工事營",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/gong-shi-ying"
+      },
+      "sourceId": "gong-shi-ying",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 15000,
+              "stone": 15000,
+              "wood": 15000
+            },
+            "duration": "1小時",
+            "effect": "貿易比例40%，貿易官",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 60000,
+              "stone": 60000,
+              "wood": 60000
+            },
+            "duration": "3小時",
+            "effect": "貿易比例50%",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 90000,
+              "stone": 90000,
+              "wood": 90000
+            },
+            "duration": "6小時",
+            "effect": "貿易比例60%",
+            "level": 3
+          }
+        ],
+        "mainCityOnly": true,
+        "maxLevel": 3,
+        "summary": "貿易功能，提升資源兌換比例"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:ji-shi",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "集市",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/ji-shi"
+      },
+      "sourceId": "ji-shi",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 32000,
+              "stone": 32000,
+              "wood": 16000
+            },
+            "duration": "2小時",
+            "effect": "兵刃傷害+3%，謀略傷害+3%",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 80000,
+              "stone": 80000,
+              "wood": 40000
+            },
+            "duration": "6小時",
+            "effect": "兵刃傷害+6%，謀略傷害+6%",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 144000,
+              "stone": 144000,
+              "wood": 72000
+            },
+            "duration": "12小時",
+            "effect": "兵刃傷害+9%，謀略傷害+9%",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 288000,
+              "stone": 288000,
+              "wood": 144000
+            },
+            "duration": "24小時",
+            "effect": "兵刃傷害+12%，謀略傷害+12%",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 480000,
+              "stone": 480000,
+              "wood": 240000
+            },
+            "duration": "48小時",
+            "effect": "兵刃傷害+15%，謀略傷害+15%",
+            "level": 5
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 5,
+        "summary": null
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:jiu-gong-tu",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "九宮圖",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/jiu-gong-tu"
+      },
+      "sourceId": "jiu-gong-tu",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 5000,
+              "stone": 10000,
+              "wood": 5000
+            },
+            "duration": "2小時",
+            "effect": "營帳建造上限4",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 20000,
+              "stone": 40000,
+              "wood": 20000
+            },
+            "duration": "8小時",
+            "effect": "營帳建造上限8",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 40000,
+              "stone": 80000,
+              "wood": 40000
+            },
+            "duration": "16小時",
+            "effect": "營帳建造上限12",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 80000,
+              "stone": 160000,
+              "wood": 80000
+            },
+            "duration": "24小時",
+            "effect": "營帳建造上限16",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 160000,
+              "stone": 320000,
+              "wood": 160000
+            },
+            "duration": "48小時",
+            "effect": "營帳建造上限20",
+            "level": 5
+          }
+        ],
+        "mainCityOnly": true,
+        "maxLevel": 5,
+        "summary": "擴充野外駐軍營帳數量上限"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:jun-ji-ying",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "軍機營",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/jun-ji-ying"
+      },
+      "sourceId": "jun-ji-ying",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": null,
+              "stone": null,
+              "wood": null
+            },
+            "duration": null,
+            "effect": "可配置1部隊",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": null,
+              "stone": null,
+              "wood": null
+            },
+            "duration": null,
+            "effect": "可配置2部隊",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 7200,
+              "stone": 9600,
+              "wood": 7200
+            },
+            "duration": "20分",
+            "effect": "可配置3部隊",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 24000,
+              "stone": 32000,
+              "wood": 24000
+            },
+            "duration": "8小時",
+            "effect": "可配置4部隊",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 54000,
+              "stone": 72000,
+              "wood": 54000
+            },
+            "duration": "12小時",
+            "effect": "可配置5部隊",
+            "level": 5
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 5,
+        "summary": "可配置部隊數量（每升一級多 1 支隊伍）"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:jun-she",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "軍舍",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/jun-she"
+      },
+      "sourceId": "jun-she",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": null,
+              "stone": null,
+              "wood": null
+            },
+            "duration": null,
+            "effect": "COST+10，城池耐久+100",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 2400,
+              "stone": 7200,
+              "wood": 2400
+            },
+            "duration": "30秒",
+            "effect": "COST+11，城池耐久+200",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 6000,
+              "stone": 18000,
+              "wood": 6000
+            },
+            "duration": "5分",
+            "effect": "COST+12，城池耐久+300",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 16000,
+              "stone": 48000,
+              "wood": 16000
+            },
+            "duration": "30分",
+            "effect": "COST+13，城池耐久+400",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 24000,
+              "stone": 72000,
+              "wood": 24000
+            },
+            "duration": "3小時",
+            "effect": "COST+14，城池耐久+500",
+            "level": 5
+          },
+          {
+            "costs": {
+              "iron": 48000,
+              "stone": 144000,
+              "wood": 48000
+            },
+            "duration": "8小時",
+            "effect": "COST+15，城池耐久+600",
+            "level": 6
+          },
+          {
+            "costs": {
+              "iron": 96000,
+              "stone": 288000,
+              "wood": 96000
+            },
+            "duration": "12小時",
+            "effect": "COST+16，城池耐久+700",
+            "level": 7
+          },
+          {
+            "costs": {
+              "iron": 192000,
+              "stone": 576000,
+              "wood": 192000
+            },
+            "duration": "24小時",
+            "effect": "COST+17，城池耐久+800",
+            "level": 8
+          },
+          {
+            "costs": {
+              "iron": 288000,
+              "stone": 864000,
+              "wood": 288000
+            },
+            "duration": "36小時",
+            "effect": "COST+17，城池耐久+900",
+            "level": 9
+          },
+          {
+            "costs": {
+              "iron": 432000,
+              "stone": 1296000,
+              "wood": 432000
+            },
+            "duration": "48小時",
+            "effect": "COST+17，城池耐久+1000",
+            "level": 10
+          }
+        ],
+        "mainCityOnly": true,
+        "maxLevel": 10,
+        "summary": "主城核心建築，決定 COST 上限與耐久；其他建築升級皆需君王殿前置"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:jun-wang-dian",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "君王殿",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/jun-wang-dian"
+      },
+      "sourceId": "jun-wang-dian",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 20000,
+              "stone": 40000,
+              "wood": 20000
+            },
+            "duration": "2小時",
+            "effect": "武將帶兵+200解鎖：君王殿7級",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 22500,
+              "stone": 45000,
+              "wood": 22500
+            },
+            "duration": "3小時",
+            "effect": "武將帶兵+400",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 25000,
+              "stone": 50000,
+              "wood": 25000
+            },
+            "duration": "4小時",
+            "effect": "武將帶兵+600",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 27500,
+              "stone": 55000,
+              "wood": 27500
+            },
+            "duration": "5小時",
+            "effect": "武將帶兵+800",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 30000,
+              "stone": 60000,
+              "wood": 30000
+            },
+            "duration": "6小時",
+            "effect": "武將帶兵+1000",
+            "level": 5
+          },
+          {
+            "costs": {
+              "iron": 32500,
+              "stone": 65000,
+              "wood": 32500
+            },
+            "duration": "8小時",
+            "effect": "武將帶兵+1200",
+            "level": 6
+          },
+          {
+            "costs": {
+              "iron": 35000,
+              "stone": 70000,
+              "wood": 35000
+            },
+            "duration": "9小時",
+            "effect": "武將帶兵+1400",
+            "level": 7
+          },
+          {
+            "costs": {
+              "iron": 37500,
+              "stone": 75000,
+              "wood": 37500
+            },
+            "duration": "10小時",
+            "effect": "武將帶兵+1600",
+            "level": 8
+          },
+          {
+            "costs": {
+              "iron": 42500,
+              "stone": 85000,
+              "wood": 42500
+            },
+            "duration": "11小時",
+            "effect": "武將帶兵+1800",
+            "level": 9
+          },
+          {
+            "costs": {
+              "iron": 47500,
+              "stone": 95000,
+              "wood": 47500
+            },
+            "duration": "12小時",
+            "effect": "武將帶兵+2000",
+            "level": 10
+          },
+          {
+            "costs": {
+              "iron": 50000,
+              "stone": 100000,
+              "wood": 50000
+            },
+            "duration": "14小時",
+            "effect": "武將帶兵+2300",
+            "level": 11
+          },
+          {
+            "costs": {
+              "iron": 52500,
+              "stone": 105000,
+              "wood": 52500
+            },
+            "duration": "16小時",
+            "effect": "武將帶兵+2600",
+            "level": 12
+          },
+          {
+            "costs": {
+              "iron": 60000,
+              "stone": 120000,
+              "wood": 60000
+            },
+            "duration": "18小時",
+            "effect": "武將帶兵+2900",
+            "level": 13
+          },
+          {
+            "costs": {
+              "iron": 90000,
+              "stone": 180000,
+              "wood": 90000
+            },
+            "duration": "20小時",
+            "effect": "武將帶兵+3200",
+            "level": 14
+          },
+          {
+            "costs": {
+              "iron": 130000,
+              "stone": 260000,
+              "wood": 130000
+            },
+            "duration": "22小時",
+            "effect": "武將帶兵+3500",
+            "level": 15
+          },
+          {
+            "costs": {
+              "iron": 187500,
+              "stone": 375000,
+              "wood": 187500
+            },
+            "duration": "26小時",
+            "effect": "武將帶兵+3800",
+            "level": 16
+          },
+          {
+            "costs": {
+              "iron": 245000,
+              "stone": 490000,
+              "wood": 245000
+            },
+            "duration": "30小時",
+            "effect": "武將帶兵+4100",
+            "level": 17
+          },
+          {
+            "costs": {
+              "iron": 290000,
+              "stone": 580000,
+              "wood": 290000
+            },
+            "duration": "34小時",
+            "effect": "武將帶兵+4400",
+            "level": 18
+          },
+          {
+            "costs": {
+              "iron": 345000,
+              "stone": 690000,
+              "wood": 345000
+            },
+            "duration": "38小時",
+            "effect": "武將帶兵+4700",
+            "level": 19
+          },
+          {
+            "costs": {
+              "iron": 415000,
+              "stone": 830000,
+              "wood": 415000
+            },
+            "duration": "42小時",
+            "effect": "武將帶兵+5000",
+            "level": 20
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 20,
+        "summary": "提升每位武將帶兵上限（與武將等級加總成戰場兵力，Lv20 + 武將 50 級 = 10000）"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:jun-ying",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "軍營",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/jun-ying"
+      },
+      "sourceId": "jun-ying",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 500,
+              "stone": 500,
+              "wood": 500
+            },
+            "duration": "1分",
+            "effect": "銅幣產量+100/小時",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 1000,
+              "stone": 1000,
+              "wood": 1000
+            },
+            "duration": "1分",
+            "effect": "銅幣產量+200/小時",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 1600,
+              "stone": 1600,
+              "wood": 1600
+            },
+            "duration": "3分",
+            "effect": "銅幣產量+300/小時",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 2100,
+              "stone": 2100,
+              "wood": 2100
+            },
+            "duration": "10分",
+            "effect": "銅幣產量+400/小時",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 2600,
+              "stone": 2600,
+              "wood": 2600
+            },
+            "duration": "20分",
+            "effect": "銅幣產量+500/小時",
+            "level": 5
+          },
+          {
+            "costs": {
+              "iron": 4200,
+              "stone": 4200,
+              "wood": 4200
+            },
+            "duration": "30分",
+            "effect": "銅幣產量+600/小時",
+            "level": 6
+          },
+          {
+            "costs": {
+              "iron": 5800,
+              "stone": 5800,
+              "wood": 5800
+            },
+            "duration": "40分",
+            "effect": "銅幣產量+700/小時",
+            "level": 7
+          },
+          {
+            "costs": {
+              "iron": 7400,
+              "stone": 7400,
+              "wood": 7400
+            },
+            "duration": "1小時",
+            "effect": "銅幣產量+800/小時",
+            "level": 8
+          },
+          {
+            "costs": {
+              "iron": 9000,
+              "stone": 9000,
+              "wood": 9000
+            },
+            "duration": "1小時20分",
+            "effect": "銅幣產量+900/小時",
+            "level": 9
+          },
+          {
+            "costs": {
+              "iron": 10000,
+              "stone": 10000,
+              "wood": 10000
+            },
+            "duration": "1小時40分",
+            "effect": "銅幣產量+1000/小時，稅務官",
+            "level": 10
+          },
+          {
+            "costs": {
+              "iron": 16000,
+              "stone": 16000,
+              "wood": 16000
+            },
+            "duration": "13小時12分",
+            "effect": "銅幣產量+1100/小時",
+            "level": 11
+          },
+          {
+            "costs": {
+              "iron": 21000,
+              "stone": 21000,
+              "wood": 21000
+            },
+            "duration": "19小時12分",
+            "effect": "銅幣產量+1200/小時",
+            "level": 12
+          },
+          {
+            "costs": {
+              "iron": 32000,
+              "stone": 32000,
+              "wood": 32000
+            },
+            "duration": "31小時12分",
+            "effect": "銅幣產量+1300/小時",
+            "level": 13
+          },
+          {
+            "costs": {
+              "iron": 42000,
+              "stone": 42000,
+              "wood": 42000
+            },
+            "duration": "44小時48分",
+            "effect": "銅幣產量+1400/小時",
+            "level": 14
+          },
+          {
+            "costs": {
+              "iron": 53000,
+              "stone": 53000,
+              "wood": 53000
+            },
+            "duration": "48小時",
+            "effect": "銅幣產量+1500/小時",
+            "level": 15
+          },
+          {
+            "costs": {
+              "iron": 80000,
+              "stone": 80000,
+              "wood": 80000
+            },
+            "duration": "51小時12分",
+            "effect": "銅幣產量+1700/小時",
+            "level": 16
+          },
+          {
+            "costs": {
+              "iron": 100000,
+              "stone": 100000,
+              "wood": 100000
+            },
+            "duration": "54小時24分",
+            "effect": "銅幣產量+1900/小時",
+            "level": 17
+          },
+          {
+            "costs": {
+              "iron": 160000,
+              "stone": 160000,
+              "wood": 160000
+            },
+            "duration": "57小時36分",
+            "effect": "銅幣產量+2100/小時",
+            "level": 18
+          },
+          {
+            "costs": {
+              "iron": 210000,
+              "stone": 210000,
+              "wood": 210000
+            },
+            "duration": "60小時48分",
+            "effect": "銅幣產量+2300/小時",
+            "level": 19
+          },
+          {
+            "costs": {
+              "iron": 260000,
+              "stone": 260000,
+              "wood": 260000
+            },
+            "duration": "64小時",
+            "effect": "銅幣產量+2500/小時，每次稅收獲得銅幣+2000解鎖：君王殿4級",
+            "level": 20
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 20,
+        "summary": "生產銅幣；Lv10 解鎖稅務官，Lv20 稅收 +2000"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:min-ju",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "民居",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/min-ju"
+      },
+      "sourceId": "min-ju",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 180,
+              "stone": 360,
+              "wood": 180
+            },
+            "duration": "1分",
+            "effect": "糧食產量+100/小時",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 360,
+              "stone": 720,
+              "wood": 360
+            },
+            "duration": "1分",
+            "effect": "糧食產量+200/小時",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 540,
+              "stone": 1080,
+              "wood": 540
+            },
+            "duration": "3分",
+            "effect": "糧食產量+300/小時",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 720,
+              "stone": 1440,
+              "wood": 720
+            },
+            "duration": "10分",
+            "effect": "糧食產量+400/小時",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 900,
+              "stone": 1800,
+              "wood": 900
+            },
+            "duration": "20分",
+            "effect": "糧食產量+500/小時",
+            "level": 5
+          },
+          {
+            "costs": {
+              "iron": 2160,
+              "stone": 4320,
+              "wood": 2160
+            },
+            "duration": "30分",
+            "effect": "糧食產量+700/小時",
+            "level": 6
+          },
+          {
+            "costs": {
+              "iron": 2520,
+              "stone": 5040,
+              "wood": 2520
+            },
+            "duration": "40分",
+            "effect": "糧食產量+900/小時",
+            "level": 7
+          },
+          {
+            "costs": {
+              "iron": 2880,
+              "stone": 5760,
+              "wood": 2880
+            },
+            "duration": "1小時",
+            "effect": "糧食產量+1100/小時",
+            "level": 8
+          },
+          {
+            "costs": {
+              "iron": 3240,
+              "stone": 6480,
+              "wood": 3240
+            },
+            "duration": "1小時20分",
+            "effect": "糧食產量+1300/小時",
+            "level": 9
+          },
+          {
+            "costs": {
+              "iron": 3600,
+              "stone": 7200,
+              "wood": 3600
+            },
+            "duration": "1小時40分",
+            "effect": "糧食產量+1500/小時，糧草官",
+            "level": 10
+          },
+          {
+            "costs": {
+              "iron": 9900,
+              "stone": 19800,
+              "wood": 9900
+            },
+            "duration": "4小時50分",
+            "effect": "糧食產量+2000/小時",
+            "level": 11
+          },
+          {
+            "costs": {
+              "iron": 10800,
+              "stone": 21600,
+              "wood": 10800
+            },
+            "duration": "5小時45分",
+            "effect": "糧食產量+2500/小時",
+            "level": 12
+          },
+          {
+            "costs": {
+              "iron": 11700,
+              "stone": 23400,
+              "wood": 11700
+            },
+            "duration": "6小時45分",
+            "effect": "糧食產量+3000/小時",
+            "level": 13
+          },
+          {
+            "costs": {
+              "iron": 12600,
+              "stone": 25200,
+              "wood": 12600
+            },
+            "duration": "7小時50分",
+            "effect": "糧食產量+3500/小時",
+            "level": 14
+          },
+          {
+            "costs": {
+              "iron": 13500,
+              "stone": 27000,
+              "wood": 13500
+            },
+            "duration": "9小時",
+            "effect": "糧食產量+4000/小時",
+            "level": 15
+          },
+          {
+            "costs": {
+              "iron": 17280,
+              "stone": 34560,
+              "wood": 17280
+            },
+            "duration": "10小時14分",
+            "effect": "糧食產量+4600/小時",
+            "level": 16
+          },
+          {
+            "costs": {
+              "iron": 18360,
+              "stone": 36720,
+              "wood": 18360
+            },
+            "duration": "11小時33分",
+            "effect": "糧食產量+5200/小時",
+            "level": 17
+          },
+          {
+            "costs": {
+              "iron": 19440,
+              "stone": 38880,
+              "wood": 19440
+            },
+            "duration": "12小時57分",
+            "effect": "糧食產量+5800/小時",
+            "level": 18
+          },
+          {
+            "costs": {
+              "iron": 20520,
+              "stone": 41040,
+              "wood": 20520
+            },
+            "duration": "14小時26分",
+            "effect": "糧食產量+6400/小時",
+            "level": 19
+          },
+          {
+            "costs": {
+              "iron": 21600,
+              "stone": 43200,
+              "wood": 21600
+            },
+            "duration": "16小時",
+            "effect": "糧食產量+7000/小時，屯田糧食產量+50%",
+            "level": 20
+          },
+          {
+            "costs": {
+              "iron": 31680,
+              "stone": 63360,
+              "wood": 31680
+            },
+            "duration": "18小時28分",
+            "effect": "糧食產量+7800/小時",
+            "level": 21
+          },
+          {
+            "costs": {
+              "iron": 34560,
+              "stone": 69120,
+              "wood": 34560
+            },
+            "duration": "21小時7分",
+            "effect": "糧食產量+8600/小時",
+            "level": 22
+          },
+          {
+            "costs": {
+              "iron": 37440,
+              "stone": 74880,
+              "wood": 37440
+            },
+            "duration": "23小時55分",
+            "effect": "糧食產量+9400/小時",
+            "level": 23
+          },
+          {
+            "costs": {
+              "iron": 40320,
+              "stone": 80640,
+              "wood": 40320
+            },
+            "duration": "26小時52分",
+            "effect": "糧食產量+10200/小時",
+            "level": 24
+          },
+          {
+            "costs": {
+              "iron": 43200,
+              "stone": 86400,
+              "wood": 43200
+            },
+            "duration": "30小時",
+            "effect": "糧食產量+11000/小時",
+            "level": 25
+          },
+          {
+            "costs": {
+              "iron": 57600,
+              "stone": 115200,
+              "wood": 57600
+            },
+            "duration": "33小時16分",
+            "effect": "糧食產量+11800/小時",
+            "level": 26
+          },
+          {
+            "costs": {
+              "iron": 61200,
+              "stone": 122400,
+              "wood": 61200
+            },
+            "duration": "36小時43分",
+            "effect": "糧食產量+12600/小時",
+            "level": 27
+          },
+          {
+            "costs": {
+              "iron": 64800,
+              "stone": 129600,
+              "wood": 64800
+            },
+            "duration": "40小時19分",
+            "effect": "糧食產量+13400/小時",
+            "level": 28
+          },
+          {
+            "costs": {
+              "iron": 68400,
+              "stone": 136800,
+              "wood": 68400
+            },
+            "duration": "44小時4分",
+            "effect": "糧食產量+14200/小時",
+            "level": 29
+          },
+          {
+            "costs": {
+              "iron": 72000,
+              "stone": 144000,
+              "wood": 72000
+            },
+            "duration": "48小時",
+            "effect": "糧食產量+15000/小時",
+            "level": 30
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 30,
+        "summary": "生產糧食；Lv10 解鎖糧草官，Lv20 屯田糧食 +50%"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:nong-chang",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "農場",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/nong-chang"
+      },
+      "sourceId": "nong-chang",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 40000,
+              "stone": 40000,
+              "wood": 20000
+            },
+            "duration": "30分",
+            "effect": "騎兵移動速度+5%",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 60000,
+              "stone": 60000,
+              "wood": 30000
+            },
+            "duration": "2小時",
+            "effect": "騎兵移動速度+10%",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 88000,
+              "stone": 88000,
+              "wood": 44000
+            },
+            "duration": "4小時",
+            "effect": "騎兵移動速度+15%",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 112000,
+              "stone": 112000,
+              "wood": 56000
+            },
+            "duration": "8小時",
+            "effect": "騎兵移動速度+20%",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 140000,
+              "stone": 140000,
+              "wood": 70000
+            },
+            "duration": "12小時",
+            "effect": "騎兵移動速度+25%",
+            "level": 5
+          },
+          {
+            "costs": {
+              "iron": 192000,
+              "stone": 192000,
+              "wood": 96000
+            },
+            "duration": "18小時",
+            "effect": "騎兵移動速度+30%",
+            "level": 6
+          },
+          {
+            "costs": {
+              "iron": 368000,
+              "stone": 368000,
+              "wood": 184000
+            },
+            "duration": "24小時",
+            "effect": "騎兵移動速度+35%",
+            "level": 7
+          },
+          {
+            "costs": {
+              "iron": 520000,
+              "stone": 520000,
+              "wood": 260000
+            },
+            "duration": "36小時",
+            "effect": "騎兵移動速度+40%",
+            "level": 8
+          },
+          {
+            "costs": {
+              "iron": 840000,
+              "stone": 840000,
+              "wood": 420000
+            },
+            "duration": "48小時",
+            "effect": "騎兵移動速度+45%",
+            "level": 9
+          },
+          {
+            "costs": {
+              "iron": 1200000,
+              "stone": 1200000,
+              "wood": 600000
+            },
+            "duration": "60小時",
+            "effect": "騎兵移動速度+45%，首回合騎兵速度+20",
+            "level": 10
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 10,
+        "summary": null
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:qi-bing-ying",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "騎兵營",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/qi-bing-ying"
+      },
+      "sourceId": "qi-bing-ying",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 20000,
+              "stone": 40000,
+              "wood": 40000
+            },
+            "duration": "30分",
+            "effect": "器械攻城值+2",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 30000,
+              "stone": 60000,
+              "wood": 60000
+            },
+            "duration": "2小時",
+            "effect": "器械攻城值+4",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 44000,
+              "stone": 88000,
+              "wood": 88000
+            },
+            "duration": "4小時",
+            "effect": "器械攻城值+6",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 56000,
+              "stone": 112000,
+              "wood": 112000
+            },
+            "duration": "8小時",
+            "effect": "器械攻城值+8",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 70000,
+              "stone": 140000,
+              "wood": 140000
+            },
+            "duration": "12小時",
+            "effect": "器械攻城值+10",
+            "level": 5
+          },
+          {
+            "costs": {
+              "iron": 96000,
+              "stone": 192000,
+              "wood": 192000
+            },
+            "duration": "18小時",
+            "effect": "器械攻城值+12",
+            "level": 6
+          },
+          {
+            "costs": {
+              "iron": 184000,
+              "stone": 368000,
+              "wood": 368000
+            },
+            "duration": "24小時",
+            "effect": "器械攻城值+14",
+            "level": 7
+          },
+          {
+            "costs": {
+              "iron": 260000,
+              "stone": 520000,
+              "wood": 520000
+            },
+            "duration": "36小時",
+            "effect": "器械攻城值+16",
+            "level": 8
+          },
+          {
+            "costs": {
+              "iron": 420000,
+              "stone": 840000,
+              "wood": 840000
+            },
+            "duration": "48小時",
+            "effect": "器械攻城值+18",
+            "level": 9
+          },
+          {
+            "costs": {
+              "iron": 600000,
+              "stone": 1200000,
+              "wood": 1200000
+            },
+            "duration": "60小時",
+            "effect": "器械攻城值+20，器械移動速度+25",
+            "level": 10
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 10,
+        "summary": null
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:qi-xie-ying",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "器械營",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/qi-xie-ying"
+      },
+      "sourceId": "qi-xie-ying",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 40000,
+              "stone": 40000,
+              "wood": 20000
+            },
+            "duration": "30分",
+            "effect": "槍兵造成傷害+0.25%",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 60000,
+              "stone": 60000,
+              "wood": 30000
+            },
+            "duration": "2小時",
+            "effect": "槍兵造成傷害+0.5%",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 88000,
+              "stone": 88000,
+              "wood": 44000
+            },
+            "duration": "4小時",
+            "effect": "槍兵造成傷害+0.75%",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 112000,
+              "stone": 112000,
+              "wood": 56000
+            },
+            "duration": "8小時",
+            "effect": "槍兵造成傷害+1%",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 140000,
+              "stone": 140000,
+              "wood": 70000
+            },
+            "duration": "12小時",
+            "effect": "槍兵造成傷害+1.25%",
+            "level": 5
+          },
+          {
+            "costs": {
+              "iron": 192000,
+              "stone": 192000,
+              "wood": 96000
+            },
+            "duration": "18小時",
+            "effect": "槍兵造成傷害+1.5%",
+            "level": 6
+          },
+          {
+            "costs": {
+              "iron": 368000,
+              "stone": 368000,
+              "wood": 184000
+            },
+            "duration": "24小時",
+            "effect": "槍兵造成傷害+1.75%",
+            "level": 7
+          },
+          {
+            "costs": {
+              "iron": 520000,
+              "stone": 520000,
+              "wood": 260000
+            },
+            "duration": "36小時",
+            "effect": "槍兵造成傷害+2%",
+            "level": 8
+          },
+          {
+            "costs": {
+              "iron": 840000,
+              "stone": 840000,
+              "wood": 420000
+            },
+            "duration": "48小時",
+            "effect": "槍兵造成傷害+2.25%",
+            "level": 9
+          },
+          {
+            "costs": {
+              "iron": 1200000,
+              "stone": 1200000,
+              "wood": 600000
+            },
+            "duration": "60小時",
+            "effect": "槍兵造成傷害+2.5%，第3回合獲得破陣",
+            "level": 10
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 10,
+        "summary": null
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:qiang-bing-ying",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "槍兵營",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/qiang-bing-ying"
+      },
+      "sourceId": "qiang-bing-ying",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 60000,
+              "stone": 80000,
+              "wood": 60000
+            },
+            "duration": "5小時",
+            "effect": "士氣上限+4",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 120000,
+              "stone": 160000,
+              "wood": 120000
+            },
+            "duration": "10小時",
+            "effect": "士氣上限+8",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 240000,
+              "stone": 320000,
+              "wood": 240000
+            },
+            "duration": "20小時",
+            "effect": "士氣上限+12",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 480000,
+              "stone": 640000,
+              "wood": 480000
+            },
+            "duration": "30小時",
+            "effect": "士氣上限+16",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 960000,
+              "stone": 1280000,
+              "wood": 960000
+            },
+            "duration": "40小時",
+            "effect": "士氣上限+20",
+            "level": 5
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 5,
+        "summary": null
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:shi-qi-tan",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "士氣壇",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/shi-qi-tan"
+      },
+      "sourceId": "shi-qi-tan",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 50000,
+              "stone": 150000,
+              "wood": 50000
+            },
+            "duration": "5小時",
+            "effect": "部隊COST上限+1",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 100000,
+              "stone": 300000,
+              "wood": 100000
+            },
+            "duration": "15小時",
+            "effect": "部隊COST上限+2",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 300000,
+              "stone": 900000,
+              "wood": 300000
+            },
+            "duration": "50小時",
+            "effect": "部隊COST上限+3",
+            "level": 3
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 3,
+        "summary": "增加部隊 COST 上限"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:shuai-ling-tan",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "帥令壇",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/shuai-ling-tan"
+      },
+      "sourceId": "shuai-ling-tan",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 15000,
+              "stone": 15000,
+              "wood": 15000
+            },
+            "duration": "3小時",
+            "effect": "解鎖初級鍛造，鍛造官",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 60000,
+              "stone": 60000,
+              "wood": 60000
+            },
+            "duration": "6小時",
+            "effect": "解鎖中級鍛造",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 120000,
+              "stone": 120000,
+              "wood": 120000
+            },
+            "duration": "12小時",
+            "effect": "解鎖高級鍛造",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 250000,
+              "stone": 250000,
+              "wood": 250000
+            },
+            "duration": "24小時",
+            "effect": "解鎖頂級鍛造",
+            "level": 4
+          }
+        ],
+        "mainCityOnly": true,
+        "maxLevel": 4,
+        "summary": "解鎖鍛造功能（初級→中級→高級→頂級）"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:tie-jiang-pu",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "鐵匠鋪",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/tie-jiang-pu"
+      },
+      "sourceId": "tie-jiang-pu",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 60000,
+              "stone": 180000,
+              "wood": 60000
+            },
+            "duration": "10小時",
+            "effect": "提升城防守軍將領強度",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 120000,
+              "stone": 360000,
+              "wood": 120000
+            },
+            "duration": "20小時",
+            "effect": "提升城防守軍將領強度",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 240000,
+              "stone": 720000,
+              "wood": 240000
+            },
+            "duration": "30小時",
+            "effect": "提升城防守軍將領強度",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 480000,
+              "stone": 1440000,
+              "wood": 480000
+            },
+            "duration": "40小時",
+            "effect": "提升城防守軍將領強度",
+            "level": 4
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 4,
+        "summary": "提升城防守軍將領強度"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:xiao-wei-fu",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "校尉府",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/xiao-wei-fu"
+      },
+      "sourceId": "xiao-wei-fu",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 6000,
+              "stone": 8000,
+              "wood": 6000
+            },
+            "duration": "10分",
+            "effect": "群陣營屬性+1%",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 12000,
+              "stone": 16000,
+              "wood": 12000
+            },
+            "duration": "30分",
+            "effect": "群陣營屬性+2%",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 18000,
+              "stone": 24000,
+              "wood": 18000
+            },
+            "duration": "1小時",
+            "effect": "群陣營屬性+3%",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 24000,
+              "stone": 32000,
+              "wood": 24000
+            },
+            "duration": "2小時",
+            "effect": "群陣營屬性+4%",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 36000,
+              "stone": 48000,
+              "wood": 36000
+            },
+            "duration": "3小時",
+            "effect": "群陣營屬性+5%",
+            "level": 5
+          },
+          {
+            "costs": {
+              "iron": 60000,
+              "stone": 80000,
+              "wood": 60000
+            },
+            "duration": "5小時",
+            "effect": "群陣營屬性+6%",
+            "level": 6
+          },
+          {
+            "costs": {
+              "iron": 90000,
+              "stone": 120000,
+              "wood": 90000
+            },
+            "duration": "8小時",
+            "effect": "群陣營屬性+7%",
+            "level": 7
+          },
+          {
+            "costs": {
+              "iron": 126000,
+              "stone": 168000,
+              "wood": 126000
+            },
+            "duration": "10小時",
+            "effect": "群陣營屬性+8%",
+            "level": 8
+          },
+          {
+            "costs": {
+              "iron": 192000,
+              "stone": 256000,
+              "wood": 192000
+            },
+            "duration": "12小時",
+            "effect": "群陣營屬性+9%",
+            "level": 9
+          },
+          {
+            "costs": {
+              "iron": 252000,
+              "stone": 336000,
+              "wood": 252000
+            },
+            "duration": "15小時",
+            "effect": "群陣營屬性+10%，群陣營戰鬥獲得經驗+10%",
+            "level": 10
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 10,
+        "summary": "增加群陣營武將屬性；Lv10 解鎖戰鬥經驗 +10%"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:xie-li-qun",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "協力－群",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/xie-li-qun"
+      },
+      "sourceId": "xie-li-qun",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 6000,
+              "stone": 8000,
+              "wood": 6000
+            },
+            "duration": "10分",
+            "effect": "蜀陣營屬性+1%",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 12000,
+              "stone": 16000,
+              "wood": 12000
+            },
+            "duration": "30分",
+            "effect": "蜀陣營屬性+2%",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 18000,
+              "stone": 24000,
+              "wood": 18000
+            },
+            "duration": "1小時",
+            "effect": "蜀陣營屬性+3%",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 24000,
+              "stone": 32000,
+              "wood": 24000
+            },
+            "duration": "2小時",
+            "effect": "蜀陣營屬性+4%",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 36000,
+              "stone": 48000,
+              "wood": 36000
+            },
+            "duration": "3小時",
+            "effect": "蜀陣營屬性+5%",
+            "level": 5
+          },
+          {
+            "costs": {
+              "iron": 60000,
+              "stone": 80000,
+              "wood": 60000
+            },
+            "duration": "5小時",
+            "effect": "蜀陣營屬性+6%",
+            "level": 6
+          },
+          {
+            "costs": {
+              "iron": 90000,
+              "stone": 120000,
+              "wood": 90000
+            },
+            "duration": "8小時",
+            "effect": "蜀陣營屬性+7%",
+            "level": 7
+          },
+          {
+            "costs": {
+              "iron": 126000,
+              "stone": 168000,
+              "wood": 126000
+            },
+            "duration": "10小時",
+            "effect": "蜀陣營屬性+8%",
+            "level": 8
+          },
+          {
+            "costs": {
+              "iron": 192000,
+              "stone": 256000,
+              "wood": 192000
+            },
+            "duration": "12小時",
+            "effect": "蜀陣營屬性+9%",
+            "level": 9
+          },
+          {
+            "costs": {
+              "iron": 252000,
+              "stone": 336000,
+              "wood": 252000
+            },
+            "duration": "15小時",
+            "effect": "蜀陣營屬性+10%，蜀陣營戰鬥獲得經驗+10%",
+            "level": 10
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 10,
+        "summary": "增加蜀陣營武將屬性；Lv10 解鎖戰鬥經驗 +10%"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:xie-li-shu",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "協力－蜀",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/xie-li-shu"
+      },
+      "sourceId": "xie-li-shu",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 6000,
+              "stone": 8000,
+              "wood": 6000
+            },
+            "duration": "10分",
+            "effect": "魏陣營屬性+1%",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 12000,
+              "stone": 16000,
+              "wood": 12000
+            },
+            "duration": "30分",
+            "effect": "魏陣營屬性+2%",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 18000,
+              "stone": 24000,
+              "wood": 18000
+            },
+            "duration": "1小時",
+            "effect": "魏陣營屬性+3%",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 24000,
+              "stone": 32000,
+              "wood": 24000
+            },
+            "duration": "2小時",
+            "effect": "魏陣營屬性+4%",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 36000,
+              "stone": 48000,
+              "wood": 36000
+            },
+            "duration": "3小時",
+            "effect": "魏陣營屬性+5%",
+            "level": 5
+          },
+          {
+            "costs": {
+              "iron": 60000,
+              "stone": 80000,
+              "wood": 60000
+            },
+            "duration": "5小時",
+            "effect": "魏陣營屬性+6%",
+            "level": 6
+          },
+          {
+            "costs": {
+              "iron": 90000,
+              "stone": 120000,
+              "wood": 90000
+            },
+            "duration": "8小時",
+            "effect": "魏陣營屬性+7%",
+            "level": 7
+          },
+          {
+            "costs": {
+              "iron": 126000,
+              "stone": 168000,
+              "wood": 126000
+            },
+            "duration": "10小時",
+            "effect": "魏陣營屬性+8%",
+            "level": 8
+          },
+          {
+            "costs": {
+              "iron": 192000,
+              "stone": 256000,
+              "wood": 192000
+            },
+            "duration": "12小時",
+            "effect": "魏陣營屬性+9%",
+            "level": 9
+          },
+          {
+            "costs": {
+              "iron": 252000,
+              "stone": 336000,
+              "wood": 252000
+            },
+            "duration": "15小時",
+            "effect": "魏陣營屬性+10%，魏陣營戰鬥獲得經驗+10%",
+            "level": 10
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 10,
+        "summary": "增加魏陣營武將屬性；Lv10 解鎖戰鬥經驗 +10%"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:xie-li-wei",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "協力－魏",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/xie-li-wei"
+      },
+      "sourceId": "xie-li-wei",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 6000,
+              "stone": 8000,
+              "wood": 6000
+            },
+            "duration": "10分",
+            "effect": "吳陣營屬性+1%",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 12000,
+              "stone": 16000,
+              "wood": 12000
+            },
+            "duration": "30分",
+            "effect": "吳陣營屬性+2%",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 18000,
+              "stone": 24000,
+              "wood": 18000
+            },
+            "duration": "1小時",
+            "effect": "吳陣營屬性+3%",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 24000,
+              "stone": 32000,
+              "wood": 24000
+            },
+            "duration": "2小時",
+            "effect": "吳陣營屬性+4%",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 36000,
+              "stone": 48000,
+              "wood": 36000
+            },
+            "duration": "3小時",
+            "effect": "吳陣營屬性+5%",
+            "level": 5
+          },
+          {
+            "costs": {
+              "iron": 60000,
+              "stone": 80000,
+              "wood": 60000
+            },
+            "duration": "5小時",
+            "effect": "吳陣營屬性+6%",
+            "level": 6
+          },
+          {
+            "costs": {
+              "iron": 90000,
+              "stone": 120000,
+              "wood": 90000
+            },
+            "duration": "8小時",
+            "effect": "吳陣營屬性+7%",
+            "level": 7
+          },
+          {
+            "costs": {
+              "iron": 126000,
+              "stone": 168000,
+              "wood": 126000
+            },
+            "duration": "10小時",
+            "effect": "吳陣營屬性+8%",
+            "level": 8
+          },
+          {
+            "costs": {
+              "iron": 192000,
+              "stone": 256000,
+              "wood": 192000
+            },
+            "duration": "12小時",
+            "effect": "吳陣營屬性+9%",
+            "level": 9
+          },
+          {
+            "costs": {
+              "iron": 252000,
+              "stone": 336000,
+              "wood": 252000
+            },
+            "duration": "15小時",
+            "effect": "吳陣營屬性+10%，吳陣營戰鬥獲得經驗+10%",
+            "level": 10
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 10,
+        "summary": "增加吳陣營武將屬性；Lv10 解鎖戰鬥經驗 +10%"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:xie-li-wu",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "協力－吳",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/xie-li-wu"
+      },
+      "sourceId": "xie-li-wu",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 12000,
+              "stone": 16000,
+              "wood": 12000
+            },
+            "duration": "2小時",
+            "effect": "每日可尋訪4次，尋訪使",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 48000,
+              "stone": 64000,
+              "wood": 48000
+            },
+            "duration": "4小時",
+            "effect": "每日可尋訪8次",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 96000,
+              "stone": 128000,
+              "wood": 96000
+            },
+            "duration": "8小時",
+            "effect": "每日可尋訪12次",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 144000,
+              "stone": 192000,
+              "wood": 144000
+            },
+            "duration": "12小時",
+            "effect": "每日可尋訪16次",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 192000,
+              "stone": 256000,
+              "wood": 192000
+            },
+            "duration": "16小時",
+            "effect": "每日可尋訪20次",
+            "level": 5
+          }
+        ],
+        "mainCityOnly": true,
+        "maxLevel": 5,
+        "summary": "增加每日尋訪武將次數"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:xun-fang-tai",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "尋訪臺",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/xun-fang-tai"
+      },
+      "sourceId": "xun-fang-tai",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 35000,
+              "stone": 35000,
+              "wood": 35000
+            },
+            "duration": "4小時",
+            "effect": "解鎖初級馴馬，馴馬官",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 140000,
+              "stone": 140000,
+              "wood": 140000
+            },
+            "duration": "8小時",
+            "effect": "解鎖中級馴馬",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 280000,
+              "stone": 280000,
+              "wood": 280000
+            },
+            "duration": "16小時",
+            "effect": "解鎖高級馴馬",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 560000,
+              "stone": 560000,
+              "wood": 560000
+            },
+            "duration": "32小時",
+            "effect": "解鎖頂級馴馬",
+            "level": 4
+          }
+        ],
+        "mainCityOnly": true,
+        "maxLevel": 4,
+        "summary": "馬匹養成（初級→頂級）"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:xun-ma-chang",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "馴馬場",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/xun-ma-chang"
+      },
+      "sourceId": "xun-ma-chang",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 10000,
+              "stone": 30000,
+              "wood": 10000
+            },
+            "duration": "5小時",
+            "effect": "武將練兵經驗80000，練兵使",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 40000,
+              "stone": 120000,
+              "wood": 40000
+            },
+            "duration": "10小時",
+            "effect": "武將練兵經驗100000",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 80000,
+              "stone": 240000,
+              "wood": 80000
+            },
+            "duration": "20小時",
+            "effect": "武將練兵經驗120000",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 120000,
+              "stone": 360000,
+              "wood": 120000
+            },
+            "duration": "30小時",
+            "effect": "武將練兵經驗160000",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 180000,
+              "stone": 540000,
+              "wood": 180000
+            },
+            "duration": "40小時",
+            "effect": "武將練兵經驗200000",
+            "level": 5
+          }
+        ],
+        "mainCityOnly": true,
+        "maxLevel": 5,
+        "summary": "武將練兵（提升經驗）"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:yan-wu-chang",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "演武場",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/yan-wu-chang"
+      },
+      "sourceId": "yan-wu-chang",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 180,
+              "stone": null,
+              "wood": 180
+            },
+            "duration": "1分",
+            "effect": "鐵礦產量+100/小時",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 360,
+              "stone": null,
+              "wood": 360
+            },
+            "duration": "1分",
+            "effect": "鐵礦產量+200/小時",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 540,
+              "stone": null,
+              "wood": 540
+            },
+            "duration": "3分",
+            "effect": "鐵礦產量+300/小時",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 720,
+              "stone": null,
+              "wood": 720
+            },
+            "duration": "10分",
+            "effect": "鐵礦產量+400/小時",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 900,
+              "stone": null,
+              "wood": 900
+            },
+            "duration": "20分",
+            "effect": "鐵礦產量+500/小時",
+            "level": 5
+          },
+          {
+            "costs": {
+              "iron": 2160,
+              "stone": null,
+              "wood": 2160
+            },
+            "duration": "30分",
+            "effect": "鐵礦產量+700/小時",
+            "level": 6
+          },
+          {
+            "costs": {
+              "iron": 2520,
+              "stone": null,
+              "wood": 2520
+            },
+            "duration": "40分",
+            "effect": "鐵礦產量+900/小時",
+            "level": 7
+          },
+          {
+            "costs": {
+              "iron": 2880,
+              "stone": null,
+              "wood": 2880
+            },
+            "duration": "1小時",
+            "effect": "鐵礦產量+1100/小時",
+            "level": 8
+          },
+          {
+            "costs": {
+              "iron": 3240,
+              "stone": null,
+              "wood": 3240
+            },
+            "duration": "1小時20分",
+            "effect": "鐵礦產量+1300/小時",
+            "level": 9
+          },
+          {
+            "costs": {
+              "iron": 3600,
+              "stone": null,
+              "wood": 3600
+            },
+            "duration": "1小時40分",
+            "effect": "鐵礦產量+1500/小時，冶鐵官",
+            "level": 10
+          },
+          {
+            "costs": {
+              "iron": 9900,
+              "stone": null,
+              "wood": 9900
+            },
+            "duration": "4小時50分",
+            "effect": "鐵礦產量+2000/小時",
+            "level": 11
+          },
+          {
+            "costs": {
+              "iron": 10800,
+              "stone": null,
+              "wood": 10800
+            },
+            "duration": "5小時45分",
+            "effect": "鐵礦產量+2500/小時",
+            "level": 12
+          },
+          {
+            "costs": {
+              "iron": 11700,
+              "stone": null,
+              "wood": 11700
+            },
+            "duration": "6小時45分",
+            "effect": "鐵礦產量+3000/小時",
+            "level": 13
+          },
+          {
+            "costs": {
+              "iron": 12600,
+              "stone": null,
+              "wood": 12600
+            },
+            "duration": "7小時50分",
+            "effect": "鐵礦產量+3500/小時",
+            "level": 14
+          },
+          {
+            "costs": {
+              "iron": 13500,
+              "stone": null,
+              "wood": 13500
+            },
+            "duration": "9小時",
+            "effect": "鐵礦產量+4000/小時",
+            "level": 15
+          },
+          {
+            "costs": {
+              "iron": 17280,
+              "stone": null,
+              "wood": 17280
+            },
+            "duration": "10小時14分",
+            "effect": "鐵礦產量+4600/小時",
+            "level": 16
+          },
+          {
+            "costs": {
+              "iron": 18360,
+              "stone": null,
+              "wood": 18360
+            },
+            "duration": "11小時33分",
+            "effect": "鐵礦產量+5200/小時",
+            "level": 17
+          },
+          {
+            "costs": {
+              "iron": 19440,
+              "stone": null,
+              "wood": 19440
+            },
+            "duration": "12小時57分",
+            "effect": "鐵礦產量+5800/小時",
+            "level": 18
+          },
+          {
+            "costs": {
+              "iron": 20520,
+              "stone": null,
+              "wood": 20520
+            },
+            "duration": "14小時26分",
+            "effect": "鐵礦產量+6400/小時",
+            "level": 19
+          },
+          {
+            "costs": {
+              "iron": 21600,
+              "stone": null,
+              "wood": 21600
+            },
+            "duration": "16小時",
+            "effect": "鐵礦產量+7000/小時，屯田鐵礦產量+50%",
+            "level": 20
+          },
+          {
+            "costs": {
+              "iron": 31680,
+              "stone": null,
+              "wood": 31680
+            },
+            "duration": "18小時28分",
+            "effect": "鐵礦產量+7800/小時",
+            "level": 21
+          },
+          {
+            "costs": {
+              "iron": 34560,
+              "stone": null,
+              "wood": 34560
+            },
+            "duration": "21小時7分",
+            "effect": "鐵礦產量+8600/小時",
+            "level": 22
+          },
+          {
+            "costs": {
+              "iron": 37440,
+              "stone": null,
+              "wood": 37440
+            },
+            "duration": "23小時55分",
+            "effect": "鐵礦產量+9400/小時",
+            "level": 23
+          },
+          {
+            "costs": {
+              "iron": 40320,
+              "stone": null,
+              "wood": 40320
+            },
+            "duration": "26小時52分",
+            "effect": "鐵礦產量+10200/小時",
+            "level": 24
+          },
+          {
+            "costs": {
+              "iron": 43200,
+              "stone": null,
+              "wood": 43200
+            },
+            "duration": "30小時",
+            "effect": "鐵礦產量+11000/小時",
+            "level": 25
+          },
+          {
+            "costs": {
+              "iron": 57600,
+              "stone": null,
+              "wood": 57600
+            },
+            "duration": "33小時16分",
+            "effect": "鐵礦產量+11800/小時",
+            "level": 26
+          },
+          {
+            "costs": {
+              "iron": 61200,
+              "stone": null,
+              "wood": 61200
+            },
+            "duration": "36小時43分",
+            "effect": "鐵礦產量+12600/小時",
+            "level": 27
+          },
+          {
+            "costs": {
+              "iron": 64800,
+              "stone": null,
+              "wood": 64800
+            },
+            "duration": "40小時19分",
+            "effect": "鐵礦產量+13400/小時",
+            "level": 28
+          },
+          {
+            "costs": {
+              "iron": 68400,
+              "stone": null,
+              "wood": 68400
+            },
+            "duration": "44小時4分",
+            "effect": "鐵礦產量+14200/小時",
+            "level": 29
+          },
+          {
+            "costs": {
+              "iron": 72000,
+              "stone": null,
+              "wood": 72000
+            },
+            "duration": "48小時",
+            "effect": "鐵礦產量+15000/小時",
+            "level": 30
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 30,
+        "summary": "生產鐵礦；Lv10 解鎖冶鐵官，Lv20 屯田鐵礦 +50%"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:ye-tie-tai",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "冶鐵臺",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/ye-tie-tai"
+      },
+      "sourceId": "ye-tie-tai",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 30000,
+              "stone": 90000,
+              "wood": 30000
+            },
+            "duration": "5小時",
+            "effect": "名聲上限+500",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 60000,
+              "stone": 180000,
+              "wood": 60000
+            },
+            "duration": "10小時",
+            "effect": "名聲上限+1000",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 120000,
+              "stone": 360000,
+              "wood": 120000
+            },
+            "duration": "20小時",
+            "effect": "名聲上限+1500",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 240000,
+              "stone": 720000,
+              "wood": 240000
+            },
+            "duration": "30小時",
+            "effect": "名聲上限+2000",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 480000,
+              "stone": 1440000,
+              "wood": 480000
+            },
+            "duration": "40小時",
+            "effect": "名聲上限+2500",
+            "level": 5
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 5,
+        "summary": null
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:yuan-qiu-tan",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "圓丘壇",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/yuan-qiu-tan"
+      },
+      "sourceId": "yuan-qiu-tan",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "levels": [
+          {
+            "costs": {
+              "iron": 2000,
+              "stone": 2000,
+              "wood": 2000
+            },
+            "duration": "10分",
+            "effect": "預備兵上限+2000，徵召時間-10%",
+            "level": 1
+          },
+          {
+            "costs": {
+              "iron": 7500,
+              "stone": 7500,
+              "wood": 7500
+            },
+            "duration": "30分",
+            "effect": "預備兵上限+4000，徵召時間-20%",
+            "level": 2
+          },
+          {
+            "costs": {
+              "iron": 15000,
+              "stone": 15000,
+              "wood": 15000
+            },
+            "duration": "1小時",
+            "effect": "預備兵上限+6000，徵召時間-30%",
+            "level": 3
+          },
+          {
+            "costs": {
+              "iron": 30000,
+              "stone": 30000,
+              "wood": 30000
+            },
+            "duration": "2小時",
+            "effect": "預備兵上限+8000，徵召時間-40%",
+            "level": 4
+          },
+          {
+            "costs": {
+              "iron": 45000,
+              "stone": 45000,
+              "wood": 45000
+            },
+            "duration": "8小時",
+            "effect": "預備兵上限+10000，徵召時間-50%",
+            "level": 5
+          },
+          {
+            "costs": {
+              "iron": 80000,
+              "stone": 80000,
+              "wood": 80000
+            },
+            "duration": "12小時",
+            "effect": "預備兵上限+12000，徵召時間-56%",
+            "level": 6
+          },
+          {
+            "costs": {
+              "iron": 120000,
+              "stone": 120000,
+              "wood": 120000
+            },
+            "duration": "24小時",
+            "effect": "預備兵上限+14000，徵召時間-62%",
+            "level": 7
+          },
+          {
+            "costs": {
+              "iron": 180000,
+              "stone": 180000,
+              "wood": 180000
+            },
+            "duration": "30小時",
+            "effect": "預備兵上限+16000，徵召時間-68%",
+            "level": 8
+          },
+          {
+            "costs": {
+              "iron": 270000,
+              "stone": 270000,
+              "wood": 270000
+            },
+            "duration": "36小時",
+            "effect": "預備兵上限+18000，徵召時間-74%",
+            "level": 9
+          },
+          {
+            "costs": {
+              "iron": 390000,
+              "stone": 390000,
+              "wood": 390000
+            },
+            "duration": "40小時",
+            "effect": "預備兵上限+23000，徵召時間-80%",
+            "level": 10
+          }
+        ],
+        "mainCityOnly": false,
+        "maxLevel": 10,
+        "summary": "增加預備兵上限、加速徵召；Lv10 預備兵+23000、徵召-80%"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:buildings:zheng-bing-chu",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "徵兵處",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/buildings/zheng-bing-chu"
+      },
+      "sourceId": "zheng-bing-chu",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    }
+  ],
+  "region": "TW",
+  "schemaVersion": 1
+}

@@ -1,0 +1,1353 @@
+{
+  "fetchedAt": "2026-09-12T02:18:58+07:00",
+  "inventory": {
+    "childCount": 0,
+    "recordCount": 39
+  },
+  "provider": "sgsdeck",
+  "records": [
+    {
+      "attributes": {
+        "description": "魯肅軍師技的用法是裝在分城，另外再用 2 個隊伍斯巴達或是器械任命風類軍師，徵兵加速最高不會超過 80%。風類軍師：樂進、公孫瓚、趙雲、馬超、胡車兒。\n注意！魯肅軍師技對虎賁營無效，只有城外營帳、要塞、軍陣徵兵有效。",
+        "effectText": "被動：已任命的風類軍師不多於 3 名時，每有 1 支任命風類軍師的部隊，所有部隊的城外徵兵速度提升 3%（受熟練度影響，至多提升 4.5%）。\n動員：使得自身被動的徵兵加速效果提升 100%（受熟練度影響，至多提升 200%），持續 2 小時（魯肅卸任軍師後效果立刻結束）（每日限定使用 2 次）。",
+        "element": "風",
+        "generals": [
+          {
+            "faction": "WU",
+            "id": "cmnzwhi7x002u94f8ajrjyibm",
+            "nameZh": "魯肅",
+            "slug": "魯肅",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 12
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumf8n00008wf8l698k8md",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "恩服兵心",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumf8n00008wf8l698k8md",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "趙雲專屬軍師技，常見搭配天水弓 / 蜀槍體系。",
+        "effectText": "被動：使得部隊內趙雲獲得增益：統率、速度提升 20 點且弓兵適性 +1，武力、智力下降 15 點且槍兵適性 -1。\n衝鋒：若所在隊伍有趙雲，則與玩家部隊交戰時，我方部隊前 4 回合主動戰法發動率提升 5%（受熟練度影響，至多提升 10%）。",
+        "element": "風",
+        "generals": [
+          {
+            "faction": "QUN",
+            "id": "cmnzwinq8004694f8rfu1dukx",
+            "nameZh": "公孫瓚",
+            "slug": "公孫瓚",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 10
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumfn700018wf8i2430zfc",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "白馬將軍",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumfn700018wf8i2430zfc",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "趕路用，行軍時減少體力消耗。",
+        "effectText": "動員：使部隊行軍、駐守指令的體力消耗降低為 2 點，且行軍速度提升 20%，持續 17 分鐘（受熟練度影響，至多持續 30 分鐘）。",
+        "element": "風",
+        "generals": [
+          {
+            "faction": "WEI",
+            "id": "cmnzwgn9p001694f8jamqocpw",
+            "nameZh": "樂進",
+            "slug": "樂進",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 10
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumft100028wf85dura3py",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "果敢樂戰",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumft100028wf85dura3py",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "類似樂進軍師技，但無降低體力，持續時間較長。",
+        "effectText": "動員：部隊行軍速度提升 20%（受熟練度影響，至多提升 40%），持續 2 小時。",
+        "element": "風",
+        "generals": [
+          {
+            "faction": "QUN",
+            "id": "cmnzya40k001i7wf8e230pbip",
+            "nameZh": "胡車兒",
+            "slug": "胡車兒",
+            "stars": 4
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 9
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumfyx00038wf8mnubln9k",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "行疾如飛",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumfyx00038wf8mnubln9k",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "攻城搶大龍 / 打器械可用，可不受地形限制跳躍戰鬥。",
+        "effectText": "選擇 4 格內的非自身所在地塊，準備 15 秒後快速衝鋒到目標地塊，過程中無視阻擋且不發生交戰，3 分鐘後返回原地，期間無法主動撤退。衝鋒後部隊行軍速度提升 20%（受熟練度影響，至多提升 40%），體力消耗降低 40%。",
+        "element": "風",
+        "generals": [
+          {
+            "faction": "SHU",
+            "id": "cmnzuqiy4000v3wf8k9wzqbv9",
+            "nameZh": "趙雲",
+            "slug": "趙雲",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 8
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumg4r00048wf8d5vg9x21",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "單騎沖陣",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumg4r00048wf8d5vg9x21",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": null,
+        "effectText": "選擇 4 格內可行軍到達地塊，突襲至該地塊，中途不發生交戰。到達目的地後，部隊將進入持續 60 分鐘（受熟練度影響，至少持續 30 分鐘）的疲乏狀態：部隊攻佔地塊時間增加 25 分鐘（撤退後狀態清除）。",
+        "element": "風",
+        "generals": [
+          {
+            "faction": "SHU",
+            "id": "cmnzwh45o002494f8xjywvt77",
+            "nameZh": "魏延",
+            "slug": "魏延",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 8
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumgai00058wf8vagiecko",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "子午奇謀",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumgai00058wf8vagiecko",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": null,
+        "effectText": "部隊行軍速度提升 20%（受熟練度影響，至多提升 40%），持續 2 小時；距離目的地 15 格內時，行軍速度額外提升 20%。",
+        "element": "風",
+        "generals": [
+          {
+            "faction": "QUN",
+            "id": "cmnzwisun004h94f8ip8ydc2t",
+            "nameZh": "馬騰",
+            "slug": "馬騰",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 10
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumgg800068wf8ruf8k0ud",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "鐵騎長驅",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumgg800068wf8ruf8k0ud",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "兵刃主力可用。",
+        "effectText": "部隊獲得疾戰突襲狀態：第 5 回合將結束戰鬥，前 4 回合我軍全體受到傷害提升 25%（受熟練度影響，至少提升 10%）。",
+        "element": "風",
+        "generals": [
+          {
+            "faction": "WEI",
+            "id": "cmnzwgp56001a94f89713a3b3",
+            "nameZh": "夏侯淵",
+            "slug": "夏侯淵",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 12
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumglz00078wf8hglkbolj",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "疾戰突襲",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumglz00078wf8hglkbolj",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "掃蕩練等 2-3 隊好用。",
+        "effectText": "消耗 30 點體力進行 1 次掃蕩，獲得的經驗提高 100%（受熟練度影響，至多提升 150%）。\n注：無法對 9、10 級地使用，增益最多持續 3 場戰鬥。",
+        "element": "風",
+        "generals": [
+          {
+            "faction": "SHU",
+            "id": "cmo4dvzle0000u4f8f3f0fole",
+            "nameZh": "馬超",
+            "slug": "馬超",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 5
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumgrp00088wf8mgjfu6ei",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "席捲西涼",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumgrp00088wf8mgjfu6ei",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": null,
+        "effectText": "選擇 3 格內地塊，準備 1 分鐘後在目標地塊半徑 1 格內召喚雲雨：澆滅燃燒地塊並有 50% 概率留下水窪（目標地塊與糧食地塊 100% 獲得水窪），持續 3 小時。水窪地塊發生交戰時敵我雙方造成的灼燒傷害降低 5%，水攻傷害提升 5%；若水窪處於糧食地塊上，則使得產量提升 300%（受熟練度影響，至多提升 600%）。\n每名主公最多 7 塊土地受到產量加成。",
+        "element": "風",
+        "generals": [
+          {
+            "faction": "QUN",
+            "id": "cmnzwiegy003q94f84ko25pj2",
+            "nameZh": "于吉",
+            "slug": "于吉",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 15
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumgxd00098wf8eqnx49nl",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "祈風禱雨",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumgxd00098wf8eqnx49nl",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "前期攻城神技。1 兵武將上陣 → 召喚 35 級器械 → 攻城時叫出來，省下器械行軍時間。",
+        "effectText": "召喚出一支精於攻城的機關獸部隊，其攻城值初始為 60 點（受熟練度影響，至多提高至 660 點）。已強化機關獸對戰城防守軍能力。\n注：主動脫離俘虜將清除機關獸（避免被用來連環救俘虜）。",
+        "element": "林",
+        "generals": [
+          {
+            "faction": "SHU",
+            "id": "cmo4dwlcp000bu4f8v51ct8sg",
+            "nameZh": "黃月英",
+            "slug": "黃月英",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 20
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumh34000a8wf88yvw4b13",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "奇工巧藝",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumh34000a8wf88yvw4b13",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "11/27 削弱：原本恢復 30 點 + 持續 2 小時，現在減半。",
+        "effectText": "為所在部隊全體武將恢復 15 點體力（受熟練度影響，至多恢復 30 點），並使其體力恢復速度提升 50%，持續 1 小時（鍾會卸任軍師後效果立即結束）。",
+        "element": "林",
+        "generals": [
+          {
+            "faction": "WEI",
+            "id": "cmnzwgilh000v94f82huzrc0n",
+            "nameZh": "鍾會",
+            "slug": "鍾會",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 15
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumh8t000b8wf88yjm443h",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "威震西土",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumh8t000b8wf88yjm443h",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "11/27 削弱：原本恢復 30/60 點，現在減半。紫將平民可用回體力。",
+        "effectText": "為所在部隊全體武將恢復 15 點體力（受熟練度影響，至多恢復 30 點）。",
+        "element": "林",
+        "generals": [],
+        "releaseSeason": null,
+        "tacticPoints": 12
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumhej000c8wf8yt489sl3",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "統軍再戰",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumhej000c8wf8yt489sl3",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "替代文醜軍師技。",
+        "effectText": "向目的地行軍，到達目的地後恢復 25 點士氣（受熟練度影響，至多恢復 50 點）。",
+        "element": "林",
+        "generals": [],
+        "releaseSeason": null,
+        "tacticPoints": 14
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumhid000d8wf82eje7bqc",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "振奮昂揚",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumhid000d8wf82eje7bqc",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "11/27 改版：原本按傷害量回糧，現改為按殺敵數回糧。",
+        "effectText": "選擇地塊發起進攻且獲得增益：在河道附近 3 格內與玩家部隊戰鬥時獲得 25 點士氣提升，戰鬥中我方每殺敵 10 可獲得 20 糧食（受熟練度影響，至多 40），每日上限 40 萬。",
+        "element": "林",
+        "generals": [
+          {
+            "faction": "WU",
+            "id": "cmnzuqmlk00103wf8gr8qtl0s",
+            "nameZh": "甘寧",
+            "slug": "甘寧",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 10
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumhm6000e8wf8tzi3w7fw",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "錦帆遊俠",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumhm6000e8wf8tzi3w7fw",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "盾兵兵刃減傷，確認沒火的情況下使用。",
+        "effectText": "盾兵專屬，消耗 3000 木材為隊伍打造簡易藤甲：使我方部隊受到的兵刃傷害降低 8%（受熟練度影響，至多降低 12%），隊伍行軍速度降低 10%，處於灼燒時額外損失兵力（傷害率 300%），並燒毀該簡易藤甲。藤甲兵無法使用該軍師技；撤退後效果立刻結束。",
+        "element": "林",
+        "generals": [
+          {
+            "faction": "QUN",
+            "id": "cmnzwinmj004594f8wj56c4rf",
+            "nameZh": "兀突骨",
+            "slug": "兀突骨",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 10
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumhrx000f8wf895f7zrht",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "藤甲禦敵",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumhrx000f8wf895f7zrht",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": null,
+        "effectText": "將部隊偽裝為同一兵種的常規形態，持續 2 小時，下次與玩家部隊戰鬥時結束偽裝並使敵方全體首回合處於遇襲狀態（行動滯後）。計略點消耗量受熟練度影響，至少消耗 6 點。",
+        "element": "林",
+        "generals": [
+          {
+            "faction": "WU",
+            "id": "cmnzwhr9s003194f8x4c1mk4r",
+            "nameZh": "呂蒙",
+            "slug": "呂蒙",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 12
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumhxo000g8wf8scd726jv",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "偽伏暗渡",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumhxo000g8wf8scd726jv",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "前期第一次接戰時非常實用的軍師技。",
+        "effectText": "蓄勢：朝目的地行軍，到達後恢復 25 點士氣（受熟練度影響，至多恢復 50 點），且士氣低於 75/50/25 點時，士氣恢復量額外提升 15/30/45 點。",
+        "element": "林",
+        "generals": [
+          {
+            "faction": "QUN",
+            "id": "cmnzwitr5004j94f8k8kfh4g4",
+            "nameZh": "文醜",
+            "slug": "文醜",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 15
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumi3d000h8wf88ofq83qa",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "踔厲奮發",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumi3d000h8wf88ofq83qa",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "11/27 削弱：原本還有 +40 體力，現拿掉。",
+        "effectText": "被動：所在部隊獲得戰功時將額外獲得戰意值，戰意值達到 100 時釋放軍師技將清除全部戰意值並降低 30% 釋放消耗（受熟練度影響，至多降低 50%）。\n動員：部隊武將立即移除重傷狀態、恢復 100% 傷兵並獲得 3000 兵力。",
+        "element": "林",
+        "generals": [
+          {
+            "faction": "WU",
+            "id": "cmnzwhoii002z94f81xcw2tg2",
+            "nameZh": "周泰",
+            "slug": "周泰",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 20
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumi91000i8wf8gpnuj41s",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "戰意昂揚",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumi91000i8wf8gpnuj41s",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "10/30 改版：原本立即獲得屯田收益，現改為按基礎產量。",
+        "effectText": "對盟友地塊（除銅礦外）使用，使該地塊產量提升 50%，持續 3 小時；並使自身立即獲得該地塊 50（受熟練度影響，至多獲得 100）小時基礎產量的資源，每日最多使用 2 次。\n每名主公最多 7 塊土地受到產量加成。",
+        "element": "林",
+        "generals": [
+          {
+            "faction": "WU",
+            "id": "cmnzuqg8t000t3wf8cw4axtco",
+            "nameZh": "孫尚香",
+            "slug": "孫尚香",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 12
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumies000j8wf8zzllenc9",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "姻親之禮",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumies000j8wf8zzllenc9",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "適合法系隊伍。注意是主將提升。",
+        "effectText": "動員：與玩家部隊戰鬥時，主將提升 5 點智力和 5% 攻心（受熟練度影響，至多提升 15% 攻心），每戰勝兵力大於 15000 的部隊智力加成提升 1 點（上限 30 點，賽季結束重置），效果持續 30 分鐘，撤退後立即結束。",
+        "element": "火",
+        "generals": [
+          {
+            "faction": "WEI",
+            "id": "cmnzuqkzd000y3wf8gs3jluj6",
+            "nameZh": "司馬懿",
+            "slug": "司馬懿",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 15
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumikh000k8wf8c2aoq9gn",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "隱忍奪權",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumikh000k8wf8c2aoq9gn",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": null,
+        "effectText": "使部隊獲得無雙上將狀態：下次與玩家部隊交戰時，使得隊伍內的良將提升 10% 全屬性（受熟練度影響，至多提升 20%）。",
+        "element": "火",
+        "generals": [],
+        "releaseSeason": null,
+        "tacticPoints": 10
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumiq7000l8wf8e3n8e8dt",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "上將威名",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumiq7000l8wf8e3n8e8dt",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": null,
+        "effectText": "騎兵專屬，向目的地發起行軍並獲得與玩家部隊戰鬥增益：首回合，我方全體各自對隨機敵方單體造成 20% 兵刃傷害（受自身速度與熟練度影響，至多造成 40%）。",
+        "element": "火",
+        "generals": [
+          {
+            "faction": "QUN",
+            "id": "cmnzyaadf001u7wf889e9wgb7",
+            "nameZh": "李傕",
+            "slug": "李傕",
+            "stars": 4
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 10
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumiu1000m8wf8wy2bajuz",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "奇兵突襲",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumiu1000m8wf8wy2bajuz",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "適合雙核心呂布隊伍。實測：呂布從單砍 3 次改成 3 人各砍 1 次，發動率變高但攻擊散掉。",
+        "effectText": "被動：將部隊內呂布自帶戰法替換為無雙飛將（呂布對敵軍三人輪流發起決鬥輪流普攻 1 次，雙方不受繳械和震懾影響，呂布率先出手，且敵方無法發動突擊戰法；發動機率 25→35%）。\n衝鋒：釋放後行軍過程中與玩家隊伍交戰時，隊伍中呂布自帶戰法發動率提升 10%（受熟練度影響，至多 20%），持續 1 場戰鬥。",
+        "element": "火",
+        "generals": [
+          {
+            "faction": "QUN",
+            "id": "cmo4dwm41000eu4f8zf9w5clv",
+            "nameZh": "貂蟬",
+            "slug": "貂蟬",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 12
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumizr000n8wf8qfxo7hx7",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "紅顏惑心",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumizr000n8wf8qfxo7hx7",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "碰瓷減少損兵用。",
+        "effectText": "部隊獲得增益狀態：下一場戰鬥我方部隊死兵數減少 30%（受熟練度影響，至多減少 60%），且戰敗時，副將不會因主將死亡額外損失兵力。",
+        "element": "火",
+        "generals": [
+          {
+            "faction": "WEI",
+            "id": "cmnzwgpy0001c94f8t2prs0ve",
+            "nameZh": "郭嘉",
+            "slug": "郭嘉",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 10
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumj5g000o8wf8kg0hbcer",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "臨敵制變",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumj5g000o8wf8kg0hbcer",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "2 格戰鬥，弓兵搶關搶碼頭可用。",
+        "effectText": "弓兵專屬，選擇 2 格內非自身所在地塊，準備 15 秒後，與該地塊上的玩家部隊依次發生交戰，若敵方部隊為盾兵，則進入戰鬥時獲得減益：首回合我方全體造成傷害降低 5%（受熟練度影響，至少降低 0%）。\n注：無法選中免戰建築釋放。",
+        "element": "火",
+        "generals": [
+          {
+            "faction": "WU",
+            "id": "cmnzy9f2r00127wf8h1qdodtl",
+            "nameZh": "韓當",
+            "slug": "韓當",
+            "stars": 4
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 8
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumjb6000p8wf8x0tqhy9l",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "引弓伏射",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumjb6000p8wf8x0tqhy9l",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": null,
+        "effectText": "與玩家部隊戰鬥時，主將武力提升 5 點（受熟練度影響，至多因熟練度提升 15 點），每戰勝兵力大於 15000 的部隊額外提升 5 點（群雄陣營主將為 6 點，上限 20 點）；且每額外提升 5 點武力，本賽季釋放時武力提升 1 點（上限 40 點，賽季結束重置），效果持續 10 分鐘，撤退後立即結束。",
+        "element": "火",
+        "generals": [
+          {
+            "faction": "QUN",
+            "id": "cmnzuqecj000r3wf8srm86cdk",
+            "nameZh": "呂布",
+            "slug": "呂布",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 15
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumjgw000q8wf8zpsf5h85",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "善戰無前",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumjgw000q8wf8zpsf5h85",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": null,
+        "effectText": "弓兵專屬，選擇 3 格內非自身所在地塊（非建築地塊或符合連地規則的建築地塊），準備 15 秒後，與該地塊上的玩家部隊依次發生交戰並附帶戰鬥增益：首回合我軍全體對敵軍隨機單體造成 50% 傷害（主將武力和智力中較高的一項影響，傷害率受對應屬性和熟練度影響，至多造成 75%）；若我軍主將為蜀陣營，則傷害率額外提升 10%。\n若釋放後未發生交戰，返還 80% 計略點和策力消耗。\n注：無法選中免戰建築釋放。",
+        "element": "火",
+        "generals": [
+          {
+            "faction": "SHU",
+            "id": "cmo4dw92e0009u4f8ijttaffh",
+            "nameZh": "黃忠",
+            "slug": "黃忠",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 10
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumjml000r8wf8a2nuqeyq",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "定軍奇襲",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumjml000r8wf8a2nuqeyq",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "11/27 削弱：傷害 70%→60%，群陣營加成 +20%→+10%，撤退/回調動點後立即結束。適合 SP 馬超軍師技。",
+        "effectText": "動員：槍兵專屬，與行軍中的玩家部隊交戰時獲得戰鬥增益：首回合我軍全體行動前對敵方隨機單體造成 60% 傷害（傷害類型受主將武力和智力中較高的一項，傷害率受熟練度影響，至多 90%）；若我軍主將為群陣營，則傷害率額外提升 10%，持續 5 小時或回到調動點後效果清除。",
+        "element": "火",
+        "generals": [
+          {
+            "faction": "QUN",
+            "id": "cmnzwivmn004n94f8zkoh7u4b",
+            "nameZh": "顏良",
+            "slug": "顏良",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 12
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumjsg000s8wf8w7f4q4uh",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "先鋒截擊",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumjsg000s8wf8w7f4q4uh",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": null,
+        "effectText": "騎兵專屬，釋放後行軍過程中，部隊獲得與玩家部隊戰鬥增益：首回合我軍主將向敵軍群體（2 人）施加灼燒效果（傷害率 50%，受我軍主將智力和熟練度影響，至多 75%），持續 2 回合；每行軍一格提升 1% 傷害率，最多提升 20% 傷害率；若我軍主將為蠻族，則傷害率額外提升 20%。",
+        "element": "火",
+        "generals": [
+          {
+            "faction": "QUN",
+            "id": "cmnzwin1v004494f8eubzjf9e",
+            "nameZh": "祝融夫人",
+            "slug": "祝融夫人",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 12
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumjy6000t8wf8woxwtc44",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "赤帝餘烈",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumjy6000t8wf8woxwtc44",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": null,
+        "effectText": "發動後使得部隊獲得掠奪狀態，持續 2 小時：成功攻佔敵方領地時，立即獲得該地塊 30 小時資源產量的資源（受熟練度影響，至多獲得 50 小時產量），並使得該地塊進入遭掠狀態：資源產量降低 80%，持續 10 小時。",
+        "element": "火",
+        "generals": [
+          {
+            "faction": "QUN",
+            "id": "cmnzwisg2004f94f8iwvsdc4g",
+            "nameZh": "李儒",
+            "slug": "李儒",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 12
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumk3w000u8wf8k9yu8oig",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "計掠萬民",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumk3w000u8wf8k9yu8oig",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": null,
+        "effectText": "文醜的速度、武力提升 30 點；釋放後行軍過程中，部隊內的文醜的自帶戰法有 70% 概率（受熟練度影響，至多 100% 概率）額外對隨機敵方單體生效 1 次。",
+        "element": "火",
+        "generals": [
+          {
+            "faction": "QUN",
+            "id": "cmnzwiokc004894f869uerwly",
+            "nameZh": "袁紹",
+            "slug": "袁紹",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 10
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumk9m000v8wf813vnr49x",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "威震河朔",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumk9m000v8wf813vnr49x",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "享受騎兵 +20 屬性的效果。",
+        "effectText": "我方所有騎兵部隊行軍速度高於 50 點時，每 10 點（受熟練度影響，最低 5 點）行軍速度將使我方主將最高屬性額外提升 1 點，上限 25 點；騎兵專屬，戰鬥第 3 回合我方隨機單體獲得破陣狀態，持續 1 回合。",
+        "element": "火",
+        "generals": [
+          {
+            "faction": "WEI",
+            "id": "cmnzuqjmm000w3wf8659958sv",
+            "nameZh": "張遼",
+            "slug": "張遼",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 10
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumkfb000w8wf8t636qj1q",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "兵貴神速",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumkfb000w8wf8t636qj1q",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "關門放狗軍師技，要準備 6 分鐘，主要是防守用。",
+        "effectText": "選擇 3 格內的地塊，準備 1 分鐘後布下石兵八陣（佈陣失敗時不消耗計略點與策力）。進入石兵八陣的敵方部隊行軍速度降低 50%（受熟練度影響，至多降低 80%）；繼續準備 5 分鐘後，額外使處於石兵八陣內的敵方部隊獲得持續 10 分鐘的不可撤退狀態。\n同一地塊 12 小時內只可被石兵八陣影響 1 次。",
+        "element": "山",
+        "generals": [
+          {
+            "faction": "SHU",
+            "id": "cmnzuqi9h000u3wf8rowbv3y4",
+            "nameZh": "諸葛亮",
+            "slug": "諸葛亮",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 30
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumkl3000x8wf8u8kiqqxn",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "石兵八陣",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumkl3000x8wf8u8kiqqxn",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "11/13 調整：原 30 糧/兵，改為 40 糧/兵（最低 25）。打地補兵神技。",
+        "effectText": "為部隊立即徵召 6000 兵力（受熟練度影響，至多提高至 10000 兵力），每 1 兵力消耗 40 糧食（受熟練度影響，至少消耗 25 糧食）。",
+        "element": "山",
+        "generals": [
+          {
+            "faction": "QUN",
+            "id": "cmo4dw21v0002u4f8z2ig608e",
+            "nameZh": "董卓",
+            "slug": "董卓",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 13
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumkqt000y8wf858vsqjhm",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "橫徵暴斂",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumkqt000y8wf858vsqjhm",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "類似鼓舞效果，小號可用。",
+        "effectText": "選擇 2 格內的地塊，對該地塊停留的至多 5 支同盟部隊施加持續 30 分鐘的援助效果：每名武將獲得 350 樊城鄉勇，與玩家部隊戰鬥受到傷害時，將由樊城鄉勇抵擋其中 50% 傷害（與玩家部隊戰鬥 3 場後失效）；受到援助的同盟部隊獲得戰功時，將贈予主公 10% 戰功（受熟練度影響，至多贈予 20% 戰功），每日至多可獲取 15000 戰功。",
+        "element": "山",
+        "generals": [
+          {
+            "faction": "SHU",
+            "id": "cmnzwgrnb001h94f8y73q37sw",
+            "nameZh": "劉備",
+            "slug": "劉備",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 8
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumkwi000z8wf8ucqfvoev",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "仁心得眾",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumkwi000z8wf8ucqfvoev",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": null,
+        "effectText": "使部隊獲得隨機增益，若部隊附近 2 格範圍內有山或水，則有概率獲得特殊卦象增益，持續 10 分鐘（受熟練度影響，至多持續 30 分鐘）。\n特殊卦象：\n金：我方部隊中隨機單體武力提升 15 點，隨機單體智力提升 15 點\n木：我方全體武將經驗獲取提升 20%\n水：戰鬥後根據我方部隊的傷害量獲得糧食，每日上限 30 萬\n火：戰鬥前三回合，我方全體造成傷害提升 8%\n土：與敵方戰平後敵方無法撤退，且我方可獲得後續與該戰平部隊交戰部隊戰功的 30%",
+        "element": "山",
+        "generals": [
+          {
+            "faction": "QUN",
+            "id": "cmnzwixig004r94f8qmn64v26",
+            "nameZh": "左慈",
+            "slug": "左慈",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 8
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmoguml2900108wf86lyraz78",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "占星卜卦",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmoguml2900108wf86lyraz78",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "駐守增益防守用，與其他急救效果（如陷陣營）衝突。守 89 用。",
+        "effectText": "蓄勢：盾兵專屬，到達目的地後進入駐守狀態並獲得戰鬥增益：與玩家部隊戰鬥時，首回合我方全體獲得 10% 急救（受熟練度影響，至多 20%），且每持續駐守 30 分鐘治療率提升 5%（最多提升 2 次）；若我軍主將為魏陣營，則治療率額外提升 5%。",
+        "element": "山",
+        "generals": [
+          {
+            "faction": "WEI",
+            "id": "cmnzwgcv9000h94f8ueaojpr9",
+            "nameZh": "曹仁",
+            "slug": "曹仁",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 12
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmoguml7z00118wf8pkhoewqp",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "明誓守禦",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmoguml7z00118wf8pkhoewqp",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "description": "修城防用。",
+        "effectText": "駐守在友方城池上並緩慢恢復該城池耐久（每 1 分鐘恢復 100 耐久，受熟練度影響，至多恢復 200），持續 1 小時，同一城池至多存在 5 支部隊進行耐久恢復。",
+        "element": "山",
+        "generals": [
+          {
+            "faction": "WEI",
+            "id": "cmnzwgc3s000f94f8pdpoc3i3",
+            "nameZh": "郝昭",
+            "slug": "郝昭",
+            "stars": 5
+          }
+        ],
+        "releaseSeason": null,
+        "tacticPoints": 5
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:advisors:cmogumldq00128wf8k8lofa4t",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "嚴陣守禦",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/advisors"
+      },
+      "sourceId": "cmogumldq00128wf8k8lofa4t",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    }
+  ],
+  "region": "TW",
+  "schemaVersion": 1
+}

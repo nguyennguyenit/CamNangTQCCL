@@ -1,0 +1,38 @@
+{
+  "commit": "e39db07a7cc3fb51738d952c89cab1fda515f067",
+  "tree": "36d2219821969d72813027686f63730f645324e2",
+  "checks": {
+    "workflow-check": 0,
+    "assets-build": 0,
+    "assets-verify": 0,
+    "repository-gate": 0,
+    "root-check": 0,
+    "root-verify": 0,
+    "workerd": 0,
+    "post-test-assets-build": 0,
+    "post-test-assets-verify": 0,
+    "final-dry-run": 0
+  },
+  "evidence": {
+    "assetInventoryDigest": "sha256:0d05d58859a1af9600109230f24c03f0be7b63263654e8bee5caff8c8607f94f",
+    "commitSha": "e39db07a7cc3fb51738d952c89cab1fda515f067",
+    "manifestSha256": "sha256:0190d006ec6e7718a481b94baa3d1e581b14043976406d80d5f90a4db0c4fe55",
+    "releaseId": "sha256:9acbe1a58ec3cc439a0b87870f658a1c0d331285b5457e6f001dd24ffcbe33cf",
+    "schemaVersion": 1,
+    "sourceTree": "git-tree:36d2219821969d72813027686f63730f645324e2",
+    "workflowBuildId": "build:sha256b64:7rueBxDRmXb6VrSFWE4hlBs1r25UIw6COBmcO9KsAIQ"
+  },
+  "legacyHashes": {
+    "books-dict": "c863effdb9be5fec035f0bee03350459ddd2d3d25981693a809b9a81a849579d",
+    "coexist": "100a07fa66dde885bd8e528443335540baebd09045c3a393cefc046f80eb7e57",
+    "facets": "b599a702ed3a3207a17a5b69741a9ad020147f3835a52d19550d075e85ad950c",
+    "heroes-dict": "8c99a159c144000897025b98590617bfd9735d543ac4d458821dbc3e11029813",
+    "khaihoang": "d2bd885cf1d1b247fd89a583255de68de3c5a54c804b3b88e8c04245c67567d9",
+    "tactics-generic": "0920eb8edbdd13f038f43856bd945031172f34667e9bbc4133d2a10fc18d2adf",
+    "tactics": "f0e9be17bd1f36e8aba1e1ad3217504c42395aca57efdb3b2a1a7ee967e29834",
+    "team-tier": "056c58b16ba195ee1491c053cfbb5ddd020bb7d89ea13a5554f38df42e1795ca",
+    "teams": "b937a6ee1d71fc4176eda0efb1e4e8a5c9bcf4ca4775d53a5a21b84b33f973ac"
+  },
+  "gitStatus": [],
+  "port4174": "closed"
+}

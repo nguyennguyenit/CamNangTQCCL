@@ -1,0 +1,61 @@
+
+> test:e2e
+> playwright test tests-e2e/season-lookup.spec.mjs --grep usable at 375px
+
+
+[WebServer] (node:69797) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] (node:69864) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+
+(node:69915) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/1] [astro] › tests-e2e/season-lookup.spec.mjs:149:41 › season controls and details remain usable at 375px in both themes
+  1) [astro] › tests-e2e/season-lookup.spec.mjs:149:41 › season controls and details remain usable at 375px in both themes 
+
+    Error: Browser tests must preserve committed screenshot evidence
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+    @@ -1,9 +1,9 @@
+      Object {
+        "plans/260907-0233-season-team-lookup/reports/ui-detail-1024-dark.png": "a3093848f838f66d54d7ea89422efa35b39e7929f65f5fb0f52a4b063657051e",
+        "plans/260907-0233-season-team-lookup/reports/ui-detail-1024-light.png": "c0d2a28dbdd7750bb2db28bca38b442251aec255c9542d65173a100036312ef8",
+    -   "plans/260907-0233-season-team-lookup/reports/ui-detail-375-dark.png": "d0c5e4d527c929d234b3a1b7729d672e3c55812d7cbd4b28d98a4d2e1e9d461c",
+    +   "plans/260907-0233-season-team-lookup/reports/ui-detail-375-dark.png": "f00c2958db356ae6b3283ae49816e7a1e81c29fb9a3b03de137563392b51a037",
+        "plans/260907-0233-season-team-lookup/reports/ui-detail-375-light.png": "bbdcc6a210d3e6b7e9f1036c1dca2fecc35602c591a54fb6703763790c36f4bd",
+        "plans/260907-0233-season-team-lookup/reports/ui-real-binh-dien-1280.png": "546cd10be67c5d13ca4bec26658aadc6b828a6e36529bbaced7a418ead624779",
+        "plans/260907-0233-season-team-lookup/reports/ui-real-binh-dien-375.png": "d337aaf5005468796c536694dc1c6964899db2796cad6d894e2906b9b493e9fb",
+        "plans/260907-0236-cham-su-khai-hoang/reports/cham-su-1280.png": "9f94f6cbdba0e20605b4f1fc0ae0448e6e898bd4b76dd18e3387ad21902a535a",
+        "plans/260907-0236-cham-su-khai-hoang/reports/cham-su-375.png": "e75ef73498554ed4970f8f6abe76f5e7c741525f14ca9d0f037dae7378aa9b91",
+
+      12 | test.beforeAll(() => { originalScreenshotHashes = trackedScreenshotHashes(); });
+      13 | test.afterAll(() => {
+    > 14 |   expect(trackedScreenshotHashes(), 'Browser tests must preserve committed screenshot evidence').toEqual(originalScreenshotHashes);
+         |                                                                                                  ^
+      15 | });
+      16 |
+      17 | test.beforeEach(async ({page}) => {
+        at /Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests-e2e/season-lookup.spec.mjs:14:98
+
+    Error Context: test-results/season-lookup-season-contr-c23ea-ble-at-375px-in-both-themes-astro/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/season-lookup-season-contr-c23ea-ble-at-375px-in-both-themes-astro/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/season-lookup-season-contr-c23ea-ble-at-375px-in-both-themes-astro/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  1 failed
+    [astro] › tests-e2e/season-lookup.spec.mjs:149:41 › season controls and details remain usable at 375px in both themes 

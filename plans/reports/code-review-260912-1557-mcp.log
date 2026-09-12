@@ -1,0 +1,13 @@
+
+> tqccl-mcp-server@0.1.0 test
+> vitest run test/data/season-snapshot.test.ts test/research/season-research.test.ts test/research/season-bounds.test.ts test/research/season-errors.test.ts test/transport/season-tools-parity.test.ts test/release/season-worker-assets.test.ts test/release/verify-release.test.ts
+
+
+ RUN  v4.1.10 /Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/mcp-worker
+
+
+ Test Files  7 passed (7)
+      Tests  51 passed (51)
+   Start at  16:07:12
+   Duration  1.10s (transform 701ms, setup 0ms, import 1.37s, tests 1.69s, environment 0ms)
+

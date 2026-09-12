@@ -1,0 +1,4682 @@
+{
+  "children": [
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造"
+        ],
+        "description": "倚天劍專屬，曹操裝備時，戰鬥首回合我軍群體（2-3 人）行動前獲得洞察狀態，行動後洞察消失",
+        "exclusiveEquipmentName": "倚天劍",
+        "exclusiveGeneralName": "曹操",
+        "slot": "WEAPON",
+        "tier": "T0"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5xdk0000t0f8sc9gsp9l",
+      "nameZh": "奸雄",
+      "parentSourceId": "cmo29ex6c0000l4f8ur3a821x",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5xdk0000t0f8sc9gsp9l"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造"
+        ],
+        "description": "月牙戟專屬，張遼裝備時，戰鬥前 2 回合，自身免疫繳械（無法進行普通攻擊）狀態",
+        "exclusiveEquipmentName": "月牙戟",
+        "exclusiveGeneralName": "張遼",
+        "slot": "WEAPON",
+        "tier": "T0"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5xo10001t0f8mjg30rny",
+      "nameZh": "無懼",
+      "parentSourceId": "cmo29eytq000cl4f8t6bj1cwz",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5xo10001t0f8mjg30rny"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "限定封賞"
+        ],
+        "description": "金絲軟甲專屬，戰鬥首回合自己獲得 1 次抵禦",
+        "exclusiveEquipmentName": "金絲軟甲",
+        "exclusiveGeneralName": null,
+        "slot": "ARMOR",
+        "tier": "T0"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5xq30002t0f8ru44xynk",
+      "nameZh": "靈動",
+      "parentSourceId": "cmo29f084000nl4f8xhn9f5dh",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5xq30002t0f8ru44xynk"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "霸業限定封賞"
+        ],
+        "description": "八寶夜明鎧專屬，戰鬥首回合自己會援護所有友軍",
+        "exclusiveEquipmentName": "八寶夜明鎧",
+        "exclusiveGeneralName": null,
+        "slot": "ARMOR",
+        "tier": "T0"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5xs50003t0f8vm6927oq",
+      "nameZh": "援助",
+      "parentSourceId": "cmo29f0ox000pl4f8jo2hixmt",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5xs50003t0f8vm6927oq"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "馴馬",
+          "霸業限定封賞"
+        ],
+        "description": "爪黃飛電專屬，戰鬥前 2 回合自己獲得 25 點智力",
+        "exclusiveEquipmentName": "爪黃飛電",
+        "exclusiveGeneralName": null,
+        "slot": "MOUNT",
+        "tier": "T0"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5xu70004t0f8sit43krq",
+      "nameZh": "出奇",
+      "parentSourceId": "cmo29f2sh0014l4f8o8a3ego2",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5xu70004t0f8sit43krq"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "貨布商店"
+        ],
+        "description": "四輪車專屬，諸葛亮裝備時，自帶戰法的觸發幾率增加 4%",
+        "exclusiveEquipmentName": "四輪車",
+        "exclusiveGeneralName": "諸葛亮",
+        "slot": "MOUNT",
+        "tier": "T0"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5xw80005t0f8js1dj5mw",
+      "nameZh": "天機",
+      "parentSourceId": "cmo29f3um001dl4f8s235704v",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5xw80005t0f8js1dj5mw"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "尋訪",
+          "貨布商店"
+        ],
+        "description": "青囊書專屬，戰鬥首回合，己方全體獲得急救效果，每次受到傷害時回覆一定兵力（治療率 10%，受智力影響）",
+        "exclusiveEquipmentName": "青囊書",
+        "exclusiveGeneralName": null,
+        "slot": "TREASURE",
+        "tier": "T0"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5xya0006t0f8xb4ynvlm",
+      "nameZh": "長健",
+      "parentSourceId": "cmocgbqj40007w0f8vztisosg",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5xya0006t0f8xb4ynvlm"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "尋訪"
+        ],
+        "description": "和氏璧專屬，戰鬥前 2 回合，提高自身 20% 會心（觸發時兵刃傷害提高 100%）和奇謀（觸發時謀略傷害提高 100%）幾率",
+        "exclusiveEquipmentName": "和氏璧",
+        "exclusiveGeneralName": null,
+        "slot": "TREASURE",
+        "tier": "T0"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5y0c0007t0f8rgqoerih",
+      "nameZh": "王道",
+      "parentSourceId": "cmo29f4k9001hl4f8frmtp7go",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5y0c0007t0f8rgqoerih"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "霸業限定封賞"
+        ],
+        "description": "思召刀專屬，SP 袁紹裝備時，箭樓發射時機由自身行動時改為回合開始時",
+        "exclusiveEquipmentName": "思召刀",
+        "exclusiveGeneralName": "SP 袁紹",
+        "slot": "WEAPON",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5y2e0008t0f87svmj2w9",
+      "nameZh": "號令",
+      "parentSourceId": "cmo29ez24000el4f8faat7m07",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5y2e0008t0f87svmj2w9"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造"
+        ],
+        "description": "提高 8 點智力",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": null,
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5y4f0009t0f8sgu02kxx",
+      "nameZh": "符咒",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5y4f0009t0f8sgu02kxx"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造"
+        ],
+        "description": "普通攻擊後，恢復自身兵力（回覆率 10%）",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": null,
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5y6f000at0f8fh0tvn57",
+      "nameZh": "妖氣",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5y6f000at0f8fh0tvn57"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "限定封賞"
+        ],
+        "description": "九節杖專屬，張角裝備時，自帶戰法發動時有 70% 幾率會額外施放一次謀略攻擊",
+        "exclusiveEquipmentName": "九節杖",
+        "exclusiveGeneralName": "張角",
+        "slot": "WEAPON",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5y8k000bt0f8uridx49t",
+      "nameZh": "天公",
+      "parentSourceId": "cmo29eycq000al4f89dl9gb15",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5y8k000bt0f8uridx49t"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "限定封賞"
+        ],
+        "description": "方天畫戟專屬，呂布裝備時，戰鬥首回合自己獲得連擊狀態",
+        "exclusiveEquipmentName": "方天畫戟",
+        "exclusiveGeneralName": "呂布",
+        "slot": "WEAPON",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5yaj000ct0f8dzkb2lrx",
+      "nameZh": "無雙",
+      "parentSourceId": "cmnzuqncm00133wf87iwf2km7",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5yaj000ct0f8dzkb2lrx"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "貨布商店"
+        ],
+        "description": "丈八蛇矛專屬，張飛裝備時，戰鬥前 2 回合自身獲得破陣（造成傷害時無視目標的統率和智力）狀態",
+        "exclusiveEquipmentName": "丈八蛇矛",
+        "exclusiveGeneralName": "張飛",
+        "slot": "WEAPON",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5yck000dt0f8raficww8",
+      "nameZh": "雄烈",
+      "parentSourceId": "cmnzuqn9400123wf8odfbvoju",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5yck000dt0f8raficww8"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "限定封賞"
+        ],
+        "description": "青龍偃月刀專屬，關羽裝備時，自身戰法發動率增加 5%",
+        "exclusiveEquipmentName": "青龍偃月刀",
+        "exclusiveGeneralName": "關羽",
+        "slot": "WEAPON",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5yel000et0f8h20uf0py",
+      "nameZh": "武聖",
+      "parentSourceId": "cmnzuqmw100113wf8171jbuw9",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5yel000et0f8h20uf0py"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "貨布商店"
+        ],
+        "description": "玄甲專屬，使自身受到的兵刃傷害降低 5%",
+        "exclusiveEquipmentName": "玄甲",
+        "exclusiveGeneralName": null,
+        "slot": "ARMOR",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5ygl000ft0f8cpyoud07",
+      "nameZh": "精銳",
+      "parentSourceId": "cmo29f1z10010l4f8ih7hrkfh",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5ygl000ft0f8cpyoud07"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "貨布商店"
+        ],
+        "description": "深衣專屬，自身速度降低 20%，智力提升 3%",
+        "exclusiveEquipmentName": "深衣",
+        "exclusiveGeneralName": null,
+        "slot": "ARMOR",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5yik000gt0f8f505mfp6",
+      "nameZh": "雍雅",
+      "parentSourceId": "cmo29f2380011l4f8ixukwmq4",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5yik000gt0f8f505mfp6"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造"
+        ],
+        "description": "提升 15 點統率，降低 5 速度",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": null,
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5ykk000ht0f8wbhyms7l",
+      "nameZh": "沉重",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5ykk000ht0f8wbhyms7l"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "貨布商店"
+        ],
+        "description": "行商白衣專屬，呂蒙裝備時，自帶戰法造成控制的概率提高 6%，戰鬥第 2 回合，使敵軍全群體（1-2 人）處於遇襲狀態",
+        "exclusiveEquipmentName": "行商白衣",
+        "exclusiveGeneralName": "呂蒙",
+        "slot": "ARMOR",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5ymk000it0f836iixst3",
+      "nameZh": "喬裝",
+      "parentSourceId": "cmo29f1mh000xl4f8rd67hlen",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5ymk000it0f836iixst3"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "貨布商店"
+        ],
+        "description": "文繡披專屬，甘寧裝備時，提高 12% 會心傷害",
+        "exclusiveEquipmentName": "文繡披",
+        "exclusiveGeneralName": "甘寧",
+        "slot": "ARMOR",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5yok000jt0f8hvmt60o0",
+      "nameZh": "華服",
+      "parentSourceId": "cmo29f1ia000wl4f8ueqir6r9",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5yok000jt0f8hvmt60o0"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "貨布商店"
+        ],
+        "description": "吞天麒麟甲專屬，提高 5% 統率",
+        "exclusiveEquipmentName": "吞天麒麟甲",
+        "exclusiveGeneralName": null,
+        "slot": "ARMOR",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5yqk000kt0f8hib690jq",
+      "nameZh": "活力",
+      "parentSourceId": "cmo29f15o000tl4f88vjwjxh8",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5yqk000kt0f8hib690jq"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "貨布商店"
+        ],
+        "description": "玄鐵連環甲專屬，戰鬥首回合自己獲得反擊效果（傷害率 125%），該效果最多生效 2 次",
+        "exclusiveEquipmentName": "玄鐵連環甲",
+        "exclusiveGeneralName": null,
+        "slot": "ARMOR",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5ysj000lt0f8dqfk0j09",
+      "nameZh": "灼裂",
+      "parentSourceId": "cmo29f0cc000ol4f8dgmi4tuq",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5ysj000lt0f8dqfk0j09"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "貨布商店"
+        ],
+        "description": "鎏金盔專屬，司馬懿裝備時，戰鬥前 4 回合，受到傷害降低 4%",
+        "exclusiveEquipmentName": "鎏金盔",
+        "exclusiveGeneralName": "司馬懿",
+        "slot": "ARMOR",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5yuj000mt0f8hx2zn7e4",
+      "nameZh": "擐甲",
+      "parentSourceId": "cmo29f1qo000yl4f8sjuwpp6p",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5yuj000mt0f8hx2zn7e4"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "貨布商店"
+        ],
+        "description": "巾幗女衣專屬，司馬懿裝備時，提高 10% 奇謀傷害，並使自身獲得攻心的效果提高 30%",
+        "exclusiveEquipmentName": "巾幗女衣",
+        "exclusiveGeneralName": "司馬懿",
+        "slot": null,
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5ywi000nt0f8g7371lft",
+      "nameZh": "長慮",
+      "parentSourceId": "cmocge1sx000094f8gwpipsvw",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5ywi000nt0f8g7371lft"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "馴馬",
+          "霸業限定封賞"
+        ],
+        "description": "白鵠專屬，自身造成的恢復效果提升 6%",
+        "exclusiveEquipmentName": "白鵠",
+        "exclusiveGeneralName": null,
+        "slot": "MOUNT",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5z4m000ot0f89s6supdt",
+      "nameZh": "扶危",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5z4m000ot0f89s6supdt"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "馴馬",
+          "霸業限定封賞"
+        ],
+        "description": "普通攻擊之後，使目標損失兵力（損失量為速度的 35%）",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": "MOUNT",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5z6n000pt0f8n56qc3i9",
+      "nameZh": "踩踏",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5z6n000pt0f8n56qc3i9"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "馴馬"
+        ],
+        "description": "絕影專屬，戰鬥前 2 回合自己獲得 25 點武力",
+        "exclusiveEquipmentName": "絕影",
+        "exclusiveGeneralName": null,
+        "slot": "MOUNT",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5z8o000qt0f84jq3gaxr",
+      "nameZh": "突進",
+      "parentSourceId": "cmnzuqnud00183wf8alomv94p",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5z8o000qt0f84jq3gaxr"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "馴馬",
+          "限定封賞"
+        ],
+        "description": "的盧專屬，戰鬥前 2 回合自己獲得 25 點統率",
+        "exclusiveEquipmentName": "的盧",
+        "exclusiveGeneralName": null,
+        "slot": "MOUNT",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5zan000rt0f83clsqf07",
+      "nameZh": "護主",
+      "parentSourceId": "cmnzuqnxx00193wf8gbv5kf0x",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5zan000rt0f83clsqf07"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "馴馬",
+          "限定封賞"
+        ],
+        "description": "赤兔專屬，戰鬥前 2 回合自己獲得 25 點速度",
+        "exclusiveEquipmentName": "赤兔",
+        "exclusiveGeneralName": null,
+        "slot": "MOUNT",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5zcn000st0f8npyk0yox",
+      "nameZh": "疾馳",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5zcn000st0f8npyk0yox"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "馴馬",
+          "霸業限定封賞"
+        ],
+        "description": "烏雲踏雪專屬，張飛攜帶時，第 4 回合行動前有 50% 的幾率使敵軍群體（1-2 人）陷入繳械狀態，無法進行普通攻擊，持續 1 回合",
+        "exclusiveEquipmentName": "烏雲踏雪",
+        "exclusiveGeneralName": "張飛",
+        "slot": "MOUNT",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5zen000tt0f8pv81lw4v",
+      "nameZh": "赳螑",
+      "parentSourceId": "cmo29f3570017l4f86r1tfytg",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5zen000tt0f8pv81lw4v"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "尋訪"
+        ],
+        "description": "鈴毦專屬，戰鬥首回合，普通攻擊後使隨機敵軍單體進入禁療狀態，持續 1 回合",
+        "exclusiveEquipmentName": "鈴毦",
+        "exclusiveGeneralName": null,
+        "slot": "TREASURE",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5zgm000ut0f8ysldhth8",
+      "nameZh": "風聲",
+      "parentSourceId": "cmocge1x0000294f8eferktd0",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5zgm000ut0f8ysldhth8"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "尋訪",
+          "貨布商店"
+        ],
+        "description": "孟德新書專屬，戰鬥第 3 回合開始時，對敵軍單體造成混亂（攻擊和戰法無差別選擇目標）效果，持續 1 回合",
+        "exclusiveEquipmentName": "孟德新書",
+        "exclusiveGeneralName": null,
+        "slot": "TREASURE",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5zik000vt0f8nulxiz16",
+      "nameZh": "反間",
+      "parentSourceId": "cmo29f4sr001jl4f8s9lnq3na",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5zik000vt0f8nulxiz16"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "尋訪",
+          "貨布商店"
+        ],
+        "description": "孫子兵法專屬，戰鬥第 3 回合開始時，對敵軍單體造成計窮（無法發動主動戰法）效果，持續 1 回合",
+        "exclusiveEquipmentName": "孫子兵法",
+        "exclusiveGeneralName": null,
+        "slot": "TREASURE",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5zkk000wt0f8cprm39cg",
+      "nameZh": "謀攻",
+      "parentSourceId": "cmocgbpwi0000w0f86yupdg0q",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5zkk000wt0f8cprm39cg"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "霸業限定封賞"
+        ],
+        "description": "遁甲天書專屬，左慈攜帶時，我方仙人獲得金丹秘術的規避時，額外獲得 10% 規避",
+        "exclusiveEquipmentName": "遁甲天書",
+        "exclusiveGeneralName": "左慈",
+        "slot": "TREASURE",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5zmj000xt0f8chf565bz",
+      "nameZh": "奇門",
+      "parentSourceId": "cmo29f519001ll4f84dhe0z2n",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5zmj000xt0f8chf565bz"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "霸業限定封賞"
+        ],
+        "description": "思召刀專屬，袁紹裝備時，與袁紹陣營相同的我軍武將造成傷害提升 2.5%",
+        "exclusiveEquipmentName": "思召刀",
+        "exclusiveGeneralName": "袁紹",
+        "slot": "WEAPON",
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5zoj000yt0f8x98ikqbm",
+      "nameZh": "天命",
+      "parentSourceId": "cmo29ez24000el4f8faat7m07",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5zoj000yt0f8x98ikqbm"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "貨布商店"
+        ],
+        "description": "七星寶刀專屬，提高 1.5% 主動戰法發動幾率",
+        "exclusiveEquipmentName": "七星寶刀",
+        "exclusiveGeneralName": null,
+        "slot": "WEAPON",
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5zqi000zt0f8nsuzw60b",
+      "nameZh": "迴響",
+      "parentSourceId": "cmo29exak0001l4f8vsoaydvt",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5zqi000zt0f8nsuzw60b"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "限定封賞"
+        ],
+        "description": "丈八蛇矛專屬，張苞裝備時，首回合提高自帶戰法 15% 發動率",
+        "exclusiveEquipmentName": "丈八蛇矛",
+        "exclusiveGeneralName": "張苞",
+        "slot": "WEAPON",
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5zsh0010t0f8lg0wsvbk",
+      "nameZh": "虎峙",
+      "parentSourceId": "cmnzuqn9400123wf8odfbvoju",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5zsh0010t0f8lg0wsvbk"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造"
+        ],
+        "description": "提高 8 點統率",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": null,
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5zug0011t0f8mk44noj9",
+      "nameZh": "石膚",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5zug0011t0f8mk44noj9"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造"
+        ],
+        "description": "提高 8 點速度",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": null,
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5zwf0012t0f8f501qdww",
+      "nameZh": "幽影",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5zwf0012t0f8f501qdww"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造"
+        ],
+        "description": "提高 8 點武力",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": null,
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k5zye0013t0f8gobauj3m",
+      "nameZh": "蠻力",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k5zye0013t0f8gobauj3m"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "限定封賞"
+        ],
+        "description": "提高 2% 會心幾率（觸發時兵刃傷害提高 100%）",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": null,
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k600e0014t0f843s7e7c4",
+      "nameZh": "凝神",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k600e0014t0f843s7e7c4"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "貨布商店"
+        ],
+        "description": "頌瑟專屬，周瑜裝備時，提高 3% 主動戰法發動幾率",
+        "exclusiveEquipmentName": "頌瑟",
+        "exclusiveGeneralName": "周瑜",
+        "slot": "WEAPON",
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k602d0015t0f8rtmk24kf",
+      "nameZh": "樂奏",
+      "parentSourceId": "cmo29eypi000bl4f80twzeqzv",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k602d0015t0f8rtmk24kf"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "限定封賞"
+        ],
+        "description": "養由基弓專屬，黃忠裝備時，戰鬥前 2 回合自己獲得必中狀態（無視規避和抵禦狀態命中目標）",
+        "exclusiveEquipmentName": "養由基弓",
+        "exclusiveGeneralName": "黃忠",
+        "slot": "WEAPON",
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k604c0016t0f80lketp62",
+      "nameZh": "弓神",
+      "parentSourceId": "cmo29ey4c0008l4f88mwie4k0",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k604c0016t0f80lketp62"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "貨布商店"
+        ],
+        "description": "白羽扇專屬，諸葛亮裝備時，戰鬥首回合，我軍群體受到謀略攻擊的傷害降低 7%（受智力影響）",
+        "exclusiveEquipmentName": "白羽扇",
+        "exclusiveGeneralName": "諸葛亮",
+        "slot": "WEAPON",
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k606b0017t0f8x6hbk0wq",
+      "nameZh": "神算",
+      "parentSourceId": "cmo29ey8j0009l4f8e437odwc",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k606b0017t0f8x6hbk0wq"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "貨布商店"
+        ],
+        "description": "青釭劍專屬，趙雲裝備時，提高自身 5% 會心幾率（觸發時兵刃傷害提高 100%）",
+        "exclusiveEquipmentName": "青釭劍",
+        "exclusiveGeneralName": "趙雲",
+        "slot": "WEAPON",
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k608b0018t0f81rqk2cqc",
+      "nameZh": "膽略",
+      "parentSourceId": "cmo29exeu0002l4f8yxiss89n",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k608b0018t0f81rqk2cqc"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "限定封賞"
+        ],
+        "description": "雌雄雙股劍專屬，劉備裝備時，戰鬥中普通攻擊有 12% 概率使目標繳械（無法進行普通攻擊），持續 1 回合",
+        "exclusiveEquipmentName": "雌雄雙股劍",
+        "exclusiveGeneralName": "劉備",
+        "slot": "WEAPON",
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k60aa0019t0f8yovlnvlu",
+      "nameZh": "昭烈",
+      "parentSourceId": "cmo29exnc0004l4f874iwbw7v",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k60aa0019t0f8yovlnvlu"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "限定封賞"
+        ],
+        "description": "古錠刀專屬，孫堅、孫策、孫權裝備時，戰鬥首回合自己獲得 70% 群攻（普通攻擊時對目標同部隊其他武將造成傷害）",
+        "exclusiveEquipmentName": "古錠刀",
+        "exclusiveGeneralName": "孫權",
+        "slot": "WEAPON",
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k60c9001at0f8sj6tk38u",
+      "nameZh": "雄才",
+      "parentSourceId": "cmo29exrl0005l4f878st9tz4",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k60c9001at0f8sj6tk38u"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "貨布商店"
+        ],
+        "description": "法正裝備時，自帶戰法發動率及效果判定成功機率提升 3%",
+        "exclusiveEquipmentName": "蠶叢錦衣",
+        "exclusiveGeneralName": "法正",
+        "slot": "ARMOR",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k60e9001bt0f8y79dizm6",
+      "nameZh": "奇算",
+      "parentSourceId": "cmo29f1uv000zl4f80ze1flld",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k60e9001bt0f8y79dizm6"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "貨布商店",
+          "限定封賞"
+        ],
+        "description": "受到普通攻擊時，反彈 5% 傷害",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": null,
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k60g9001ct0f8nfi3cco9",
+      "nameZh": "荊棘",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k60g9001ct0f8nfi3cco9"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "霸業限定封賞"
+        ],
+        "description": "降低 5% 受到謀略傷害",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": null,
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k60r1001dt0f88slu0n3e",
+      "nameZh": "精神",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k60r1001dt0f88slu0n3e"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "限定封賞"
+        ],
+        "description": "亮金龍鱗甲專屬，受到傷害時，有 3% 幾率獲得 10% 會心，持續 2 回合，可疊加 2 次",
+        "exclusiveEquipmentName": "亮金龍鱗甲",
+        "exclusiveGeneralName": null,
+        "slot": "ARMOR",
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k60sz001et0f82c5crqa4",
+      "nameZh": "逆鱗",
+      "parentSourceId": "cmo29f19w000ul4f8wviy0dk7",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k60sz001et0f82c5crqa4"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "限定封賞"
+        ],
+        "description": "錦貂裘專屬，貂蟬裝備時，每回合有 25% 幾率恢復一定兵力（回覆率 100%）",
+        "exclusiveEquipmentName": "錦貂裘",
+        "exclusiveGeneralName": "貂蟬",
+        "slot": "ARMOR",
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k60uy001ft0f8ziparo9d",
+      "nameZh": "佳人",
+      "parentSourceId": "cmo29f1e2000vl4f8snht2i4l",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k60uy001ft0f8ziparo9d"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "霸業限定封賞"
+        ],
+        "description": "紫金狻猊甲專屬，自身兵力首次低於 70% 時，使自己獲得 9% 倒戈（造成兵刃傷害時，恢復自身基於傷害量的一定兵力），持續 2 回合",
+        "exclusiveEquipmentName": "紫金狻猊甲",
+        "exclusiveGeneralName": null,
+        "slot": "ARMOR",
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k60wx001gt0f8e2ni0k1r",
+      "nameZh": "周旋",
+      "parentSourceId": "cmo29f0t4000ql4f80852i4vt",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k60wx001gt0f8e2ni0k1r"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "馴馬",
+          "貨布商店"
+        ],
+        "description": "提升 8 點智力",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": "MOUNT",
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k60yx001ht0f8l2hyrpqh",
+      "nameZh": "雄姿",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k60yx001ht0f8l2hyrpqh"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "馴馬",
+          "貨布商店"
+        ],
+        "description": "提升 8 點速度",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": "MOUNT",
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k610w001it0f87zloffww",
+      "nameZh": "迅疾",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k610w001it0f87zloffww"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "馴馬"
+        ],
+        "description": "首次造成傷害時使目標損失兵力（損失量為速度的 280%）",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": "MOUNT",
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k612w001jt0f8rd7z4x5b",
+      "nameZh": "衝陣",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k612w001jt0f8rd7z4x5b"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "馴馬",
+          "貨布商店"
+        ],
+        "description": "提升 8 點統率",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": "MOUNT",
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k614v001kt0f8q4hzidin",
+      "nameZh": "倔強",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k614v001kt0f8q4hzidin"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "馴馬",
+          "貨布商店"
+        ],
+        "description": "提升 8 點武力",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": "MOUNT",
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k616v001lt0f81cnqa3w0",
+      "nameZh": "嘶風",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k616v001lt0f81cnqa3w0"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "霸業限定封賞"
+        ],
+        "description": "自身施加的負面狀態有 6% 的幾率變為不可驅散狀態",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": null,
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k618v001mt0f804kxhgb0",
+      "nameZh": "機謀",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k618v001mt0f804kxhgb0"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "尋訪",
+          "霸業限定封賞"
+        ],
+        "description": "降低 3% 受到傷害",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": "TREASURE",
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k61av001nt0f8yz3ubypj",
+      "nameZh": "剛體",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k61av001nt0f8yz3ubypj"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "尋訪",
+          "霸業限定封賞"
+        ],
+        "description": "提升 3% 造成傷害",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": "TREASURE",
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k61cu001ot0f8xgd5z70e",
+      "nameZh": "暴躁",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k61cu001ot0f8xgd5z70e"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "尋訪",
+          "限定封賞"
+        ],
+        "description": "戰鬥後獲得經驗提高 10%",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": "TREASURE",
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k61ev001pt0f8rfaln44g",
+      "nameZh": "好學",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k61ev001pt0f8rfaln44g"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "霸業限定封賞"
+        ],
+        "description": "青囊書專屬，華佗攜帶時，自帶戰法施加目標數量 20% 概率變為我軍全體",
+        "exclusiveEquipmentName": "青囊書",
+        "exclusiveGeneralName": "華佗",
+        "slot": null,
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k61gu001qt0f85mudobw9",
+      "nameZh": "濟世",
+      "parentSourceId": "cmocgbqj40007w0f8vztisosg",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k61gu001qt0f85mudobw9"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "霸業限定封賞"
+        ],
+        "description": "太平要術專屬，張角攜帶時，我方黃巾軍和仙人統率屬性會增加自身智力屬性的 6%",
+        "exclusiveEquipmentName": "太平要術",
+        "exclusiveGeneralName": "張角",
+        "slot": "TREASURE",
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k61it001rt0f8s0xyxig3",
+      "nameZh": "道綱",
+      "parentSourceId": "cmo29f4x0001kl4f8lelhtn4f",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k61it001rt0f8s0xyxig3"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "霸業限定封賞"
+        ],
+        "description": "太平清領道專屬，于吉攜帶時，興雲佈雨的持續回合增加 1-2 回合",
+        "exclusiveEquipmentName": "太平清領道",
+        "exclusiveGeneralName": "于吉",
+        "slot": null,
+        "tier": "T2"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k61ks001st0f8rap6hzzk",
+      "nameZh": "行雨",
+      "parentSourceId": "cmocgbql50008w0f8cystvxmc",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k61ks001st0f8rap6hzzk"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "霸業限定封賞"
+        ],
+        "description": "雕弓長箭專屬，夏侯淵裝備時，自帶戰法對已有技窮狀態的敵軍額外造成一次兵刃傷害（傷害率 30%）",
+        "exclusiveEquipmentName": "雕弓長箭",
+        "exclusiveGeneralName": "夏侯淵",
+        "slot": null,
+        "tier": "T3"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k61mr001tt0f8wo33tozb",
+      "nameZh": "奇襲",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k61mr001tt0f8wo33tozb"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造"
+        ],
+        "description": "銀尖刀專屬，華佗裝備時，戰鬥第 5-8 回合自身獲得急救效果（治療率 30%，受智力影響）",
+        "exclusiveEquipmentName": "銀尖刀",
+        "exclusiveGeneralName": "華佗",
+        "slot": "WEAPON",
+        "tier": "T3"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k61or001ut0f8uyjwg4xp",
+      "nameZh": "神醫",
+      "parentSourceId": "cmo29ezeo000hl4f8yqvqm48z",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k61or001ut0f8uyjwg4xp"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "貨布商店",
+          "霸業限定封賞"
+        ],
+        "description": "湛金槍專屬，馬超裝備時，自身武力提升 18 點（受速度影響）",
+        "exclusiveEquipmentName": "湛金槍",
+        "exclusiveGeneralName": "馬超",
+        "slot": "WEAPON",
+        "tier": "T3"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k61qr001vt0f8jwbr76dw",
+      "nameZh": "神威",
+      "parentSourceId": "cmo29ezah000gl4f85o1tfu01",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k61qr001vt0f8jwbr76dw"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造"
+        ],
+        "description": "雕金劍專屬，陸遜裝備時，首次釋放火燒連營有 30% 概率額外施加 1 次灼燒狀態",
+        "exclusiveEquipmentName": "雕金劍",
+        "exclusiveGeneralName": "陸遜",
+        "slot": "WEAPON",
+        "tier": "T3"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k61sq001wt0f8tyv5s38h",
+      "nameZh": "連營",
+      "parentSourceId": "cmo29eyxx000dl4f89tgts7tl",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k61sq001wt0f8tyv5s38h"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "限定封賞"
+        ],
+        "description": "提高 3 點武力、智力、統率、速度",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": null,
+        "tier": "T3"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k61ur001xt0f88d5e57g9",
+      "nameZh": "平衡",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k61ur001xt0f88d5e57g9"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "限定封賞"
+        ],
+        "description": "青龍偃月刀專屬，關興裝備時，標記首次對我軍主將造成傷害的目標，自身對該目標造成傷害提高 10%",
+        "exclusiveEquipmentName": "青龍偃月刀",
+        "exclusiveGeneralName": "關興",
+        "slot": "WEAPON",
+        "tier": "T3"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k61wq001yt0f81rdeawxa",
+      "nameZh": "龍驤",
+      "parentSourceId": "cmnzuqmw100113wf8171jbuw9",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k61wq001yt0f81rdeawxa"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造"
+        ],
+        "description": "受到普通攻擊時，減少 10 點傷害",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": null,
+        "tier": "T3"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k61yp001zt0f8jlp2wrr7",
+      "nameZh": "祝福",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k61yp001zt0f8jlp2wrr7"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造"
+        ],
+        "description": "受到普通攻擊時，提高 3 點統率，持續 1 回合，最多疊加 3 次",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": null,
+        "tier": "T3"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k62950020t0f8pd6d41w8",
+      "nameZh": "忍讓",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k62950020t0f8pd6d41w8"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造"
+        ],
+        "description": "有 1% 概率不受負面狀態影響",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": null,
+        "tier": "T3"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k62b40021t0f8cojsax5o",
+      "nameZh": "剛毅",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k62b40021t0f8cojsax5o"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "限定封賞"
+        ],
+        "description": "每回合有 4% 概率獲得 1 次抵禦",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": null,
+        "tier": "T3"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k62d30022t0f8i0krmnj0",
+      "nameZh": "躲閃",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k62d30022t0f8i0krmnj0"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "貨布商店"
+        ],
+        "description": "鳳翅黃金甲專屬，受到謀略傷害時，有 4% 概率免疫此次傷害",
+        "exclusiveEquipmentName": "鳳翅黃金甲",
+        "exclusiveGeneralName": null,
+        "slot": "ARMOR",
+        "tier": "T3"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k62f30023t0f8wg8hztis",
+      "nameZh": "榮光",
+      "parentSourceId": "cmo29f11h000sl4f8ocdavlbj",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k62f30023t0f8wg8hztis"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "馴馬"
+        ],
+        "description": "兵力低於 30% 時，提高 10 點統率、速度",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": "MOUNT",
+        "tier": "T3"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k62h20024t0f8j4nd4f5p",
+      "nameZh": "忠誠",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k62h20024t0f8j4nd4f5p"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "尋訪",
+          "霸業限定封賞"
+        ],
+        "description": "機關獸專屬，黃月英裝備時，工神第 4 回合傷害降低效果改為我軍單體",
+        "exclusiveEquipmentName": "機關獸",
+        "exclusiveGeneralName": "黃月英",
+        "slot": "TREASURE",
+        "tier": "T3"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k62j10025t0f80isjbbsi",
+      "nameZh": "機巧",
+      "parentSourceId": "cmocge1z1000394f8t090dxbw",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k62j10025t0f80isjbbsi"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "尋訪",
+          "霸業限定封賞"
+        ],
+        "description": "袁氏家譜專屬，袁術裝備時，首回合獲得玉璽的概率提升至 65%",
+        "exclusiveEquipmentName": "袁氏家譜",
+        "exclusiveGeneralName": "袁術",
+        "slot": "TREASURE",
+        "tier": "T3"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k62l00026t0f8niu6tbs8",
+      "nameZh": "望族",
+      "parentSourceId": "cmocge1uz000194f8xl8dmdtd",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k62l00026t0f8niu6tbs8"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "尋訪",
+          "貨布商店"
+        ],
+        "description": "受到治療時，提高 8% 治療效果",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": "TREASURE",
+        "tier": "T3"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k62n00027t0f86s4wpvta",
+      "nameZh": "祈禱",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k62n00027t0f86s4wpvta"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "尋訪",
+          "貨布商店"
+        ],
+        "description": "斬蛇劍專屬，戰鬥第 3 回合，淨化我軍隨機單體",
+        "exclusiveEquipmentName": "斬蛇劍",
+        "exclusiveGeneralName": null,
+        "slot": "WEAPON",
+        "tier": "T3"
+      },
+      "id": "sgsdeck:equipment-special:cmo3k62p00028t0f8hpcx007u",
+      "nameZh": "賢明",
+      "parentSourceId": "cmo29exj30003l4f8tbsj6adb",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmo3k62p00028t0f8hpcx007u"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "馴馬",
+          "尋訪"
+        ],
+        "description": "提高 5 點武力",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": null,
+        "tier": "T3"
+      },
+      "id": "sgsdeck:equipment-special:cmocg6ff10000zwf809z6u4ix",
+      "nameZh": "利爪",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmocg6ff10000zwf809z6u4ix"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "馴馬",
+          "尋訪"
+        ],
+        "description": "提高 5 點速度",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": null,
+        "tier": "T3"
+      },
+      "id": "sgsdeck:equipment-special:cmocg6ff20001zwf892jz5lyw",
+      "nameZh": "輕盈",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmocg6ff20001zwf892jz5lyw"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "馴馬",
+          "尋訪"
+        ],
+        "description": "提高 5 點速度",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": null,
+        "tier": "T3"
+      },
+      "id": "sgsdeck:equipment-special:cmocg6ff20002zwf8kf07yb7k",
+      "nameZh": "無畏",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmocg6ff20002zwf8kf07yb7k"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "鍛造",
+          "馴馬",
+          "尋訪"
+        ],
+        "description": "提高 5 點智力",
+        "exclusiveEquipmentName": null,
+        "exclusiveGeneralName": null,
+        "slot": null,
+        "tier": "T3"
+      },
+      "id": "sgsdeck:equipment-special:cmocg6ff20003zwf8cvqubcve",
+      "nameZh": "明朗",
+      "parentSourceId": null,
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmocg6ff20003zwf8cvqubcve"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "PK 尋訪"
+        ],
+        "description": "赤兔馬專屬，關羽、呂布裝備時，戰鬥前 2 回合自身統率提升 15%",
+        "exclusiveEquipmentName": "赤兔馬",
+        "exclusiveGeneralName": null,
+        "slot": "MOUNT",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmoitxpss0003i0f8g9ulhvwu",
+      "nameZh": "破勢",
+      "parentSourceId": "cmnzuqnqu00173wf8okk3yqfh",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmoitxpss0003i0f8g9ulhvwu"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "PK 尋訪"
+        ],
+        "description": "香雪簪專屬，孫尚香裝備時，自身魅力屬性的 10%-50% 轉化為統率和速度",
+        "exclusiveEquipmentName": "香雪簪",
+        "exclusiveGeneralName": "孫尚香",
+        "slot": "TREASURE",
+        "tier": "T0"
+      },
+      "id": "sgsdeck:equipment-special:cmoitxpxb0004i0f8bplfzu6b",
+      "nameZh": "梟姬",
+      "parentSourceId": "cmocge234000594f8asa68n0h",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmoitxpxb0004i0f8bplfzu6b"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "PK 尋訪"
+        ],
+        "description": "綠沈槍專屬，姜維裝備時，自身武力提高，提升值為智力屬性的 10%",
+        "exclusiveEquipmentName": "綠沈槍",
+        "exclusiveGeneralName": "姜維",
+        "slot": "WEAPON",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmoitxq1q0005i0f8d9dahjo1",
+      "nameZh": "興師",
+      "parentSourceId": "cmoitxpf60000i0f8u204i9wd",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmoitxq1q0005i0f8d9dahjo1"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "PK 尋訪"
+        ],
+        "description": "青懶衣專屬，左慈裝備時，自身規避成功後有 60% 概率治療我軍單體（治療率 50%）",
+        "exclusiveEquipmentName": "青懶衣",
+        "exclusiveGeneralName": "左慈",
+        "slot": "ARMOR",
+        "tier": "T1"
+      },
+      "id": "sgsdeck:equipment-special:cmoitxq690006i0f82eg9p3a7",
+      "nameZh": "玄妙",
+      "parentSourceId": "cmoitxpjr0001i0f83hqf70tw",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmoitxq690006i0f82eg9p3a7"
+    },
+    {
+      "attributes": {
+        "acquisitionSources": [
+          "PK 尋訪"
+        ],
+        "description": "黑羽扇專屬，司馬懿裝備時，戰鬥第 4 回合，自身獲得 7% 攻心或奇謀，持續到戰鬥結束",
+        "exclusiveEquipmentName": "黑羽扇",
+        "exclusiveGeneralName": "司馬懿",
+        "slot": "WEAPON",
+        "tier": "T0"
+      },
+      "id": "sgsdeck:equipment-special:cmoitxqao0007i0f88hwcg4yk",
+      "nameZh": "明略",
+      "parentSourceId": "cmoitxpo60002i0f8bqlluv46",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment?tab=specials"
+      },
+      "sourceId": "cmoitxqao0007i0f88hwcg4yk"
+    }
+  ],
+  "fetchedAt": "2026-09-12T02:18:58+07:00",
+  "inventory": {
+    "childCount": 90,
+    "recordCount": 114
+  },
+  "provider": "sgsdeck",
+  "records": [
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmnzuqmw100113wf8171jbuw9",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "青龍偃月刀",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmnzuqmw100113wf8171jbuw9",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmnzuqn9400123wf8odfbvoju",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "丈八蛇矛",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmnzuqn9400123wf8odfbvoju",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmnzuqncm00133wf87iwf2km7",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "方天畫戟",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmnzuqncm00133wf87iwf2km7",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "坐騎"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmnzuqnqu00173wf8okk3yqfh",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "赤兔馬",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmnzuqnqu00173wf8okk3yqfh",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "坐騎"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmnzuqnud00183wf8alomv94p",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "絕影",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmnzuqnud00183wf8alomv94p",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "坐騎"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmnzuqnxx00193wf8gbv5kf0x",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "的盧",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmnzuqnxx00193wf8gbv5kf0x",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29ex6c0000l4f8ur3a821x",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "倚天劍",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29ex6c0000l4f8ur3a821x",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29exak0001l4f8vsoaydvt",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "七星寶刀",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29exak0001l4f8vsoaydvt",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29exeu0002l4f8yxiss89n",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "青釭劍",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29exeu0002l4f8yxiss89n",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29exj30003l4f8tbsj6adb",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "斬蛇劍",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29exj30003l4f8tbsj6adb",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29exnc0004l4f874iwbw7v",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "雌雄雙股劍",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29exnc0004l4f874iwbw7v",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29exrl0005l4f878st9tz4",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "古錠刀",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29exrl0005l4f878st9tz4",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29exvu0006l4f844xlxt7l",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "鐵脊蛇矛",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29exvu0006l4f844xlxt7l",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29ey030007l4f8qvrizs3l",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "雙鐵戟",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29ey030007l4f8qvrizs3l",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29ey4c0008l4f88mwie4k0",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "養由基弓",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29ey4c0008l4f88mwie4k0",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29ey8j0009l4f8e437odwc",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "白羽扇",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29ey8j0009l4f8e437odwc",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29eycq000al4f89dl9gb15",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "九節杖",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29eycq000al4f89dl9gb15",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29eypi000bl4f80twzeqzv",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "頌瑟",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29eypi000bl4f80twzeqzv",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29eytq000cl4f8t6bj1cwz",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "月牙戟",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29eytq000cl4f8t6bj1cwz",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29eyxx000dl4f89tgts7tl",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "雕金劍",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29eyxx000dl4f89tgts7tl",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29ez24000el4f8faat7m07",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "思召刀",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29ez24000el4f8faat7m07",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29ez6b000fl4f8f6xwaha5",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "雕弓長劍",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29ez6b000fl4f8f6xwaha5",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29ezah000gl4f85o1tfu01",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "湛金槍",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29ezah000gl4f85o1tfu01",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29ezeo000hl4f8yqvqm48z",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "銀尖刀",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29ezeo000hl4f8yqvqm48z",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29eziw000il4f8jzlieoa5",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "射日弓",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29eziw000il4f8jzlieoa5",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29ezn1000jl4f8i73j1gjk",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "斬馬刀",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29ezn1000jl4f8i73j1gjk",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "防具"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f084000nl4f8xhn9f5dh",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "金絲軟甲",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f084000nl4f8xhn9f5dh",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "防具"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f0cc000ol4f8dgmi4tuq",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "玄鐵連環甲",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f0cc000ol4f8dgmi4tuq",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "防具"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f0ox000pl4f8jo2hixmt",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "八寶夜明鎧",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f0ox000pl4f8jo2hixmt",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "防具"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f0t4000ql4f80852i4vt",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "紫金狻猊甲",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f0t4000ql4f80852i4vt",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "防具"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f0xb000rl4f8sxak59dp",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "獸面連環鎧",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f0xb000rl4f8sxak59dp",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "防具"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f11h000sl4f8ocdavlbj",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "鳳翅黃金甲",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f11h000sl4f8ocdavlbj",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "防具"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f15o000tl4f88vjwjxh8",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "吞天麒麟甲",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f15o000tl4f88vjwjxh8",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "防具"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f19w000ul4f8wviy0dk7",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "亮金龍鱗甲",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f19w000ul4f8wviy0dk7",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "防具"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f1e2000vl4f8snht2i4l",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "錦貂裘",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f1e2000vl4f8snht2i4l",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "防具"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f1ia000wl4f8ueqir6r9",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "文繡披",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f1ia000wl4f8ueqir6r9",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "防具"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f1mh000xl4f8rd67hlen",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "行商白衣",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f1mh000xl4f8rd67hlen",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "防具"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f1qo000yl4f8sjuwpp6p",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "鎏金盔",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f1qo000yl4f8sjuwpp6p",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "防具"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f1uv000zl4f80ze1flld",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "蠶叢錦衣",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f1uv000zl4f80ze1flld",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "防具"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f1z10010l4f8ih7hrkfh",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "玄甲",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f1z10010l4f8ih7hrkfh",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "防具"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f2380011l4f8ixukwmq4",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "深衣",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f2380011l4f8ixukwmq4",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "坐騎"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f2sh0014l4f8o8a3ego2",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "爪黃飛電",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f2sh0014l4f8o8a3ego2",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "坐騎"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f2wq0015l4f8d74hq1ob",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "白鵲",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f2wq0015l4f8d74hq1ob",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "坐騎"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f30y0016l4f8ipdj6gqu",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "捲毛赤兔",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f30y0016l4f8ipdj6gqu",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "坐騎"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f3570017l4f86r1tfytg",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "烏雲踏雪",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f3570017l4f86r1tfytg",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "坐騎"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f39h0018l4f8aogsu3xi",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "追電",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f39h0018l4f8aogsu3xi",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "坐騎"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f3dp0019l4f8r3ga8cbc",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "烏駰",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f3dp0019l4f8r3ga8cbc",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "坐騎"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f3hx001al4f8hk3adasj",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "蹑景",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f3hx001al4f8hk3adasj",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "坐騎"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f3m5001bl4f8jp5ji28w",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "翻羽",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f3m5001bl4f8jp5ji28w",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "坐騎"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f3qe001cl4f8ophoh62t",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "快航",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f3qe001cl4f8ophoh62t",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "坐騎"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f3um001dl4f8s235704v",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "四輪車",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f3um001dl4f8s235704v",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f4g0001gl4f82p18gfm8",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "銅雀",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f4g0001gl4f82p18gfm8",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f4k9001hl4f8frmtp7go",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "和氏璧",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f4k9001hl4f8frmtp7go",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f4oh001il4f8le0m6ec7",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "鳳凰羽衣",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f4oh001il4f8le0m6ec7",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f4sr001jl4f8s9lnq3na",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "孟德新書",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f4sr001jl4f8s9lnq3na",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f4x0001kl4f8lelhtn4f",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "太平要術",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f4x0001kl4f8lelhtn4f",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo29f519001ll4f84dhe0z2n",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "遁甲天書",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo29f519001ll4f84dhe0z2n",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82whzg0000rof8q95n1ox1",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "東胡飛弓",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82whzg0000rof8q95n1ox1",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wi3k0001rof8rumez05f",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "百辟刀",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wi3k0001rof8rumez05f",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wi7n0002rof8b78i3nkp",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "地瓜錘",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wi7n0002rof8b78i3nkp",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wibr0003rof8i1zk4353",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "檀弓",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wibr0003rof8i1zk4353",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wift0004rof8pfmyydmb",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "鋸齒刀",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wift0004rof8pfmyydmb",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wik00005rof8v7a6rf9z",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "金馬槊",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wik00005rof8v7a6rf9z",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "防具"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wio60006rof8hakrp5ue",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "黑光鎧",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wio60006rof8hakrp5ue",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "防具"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wis80007rof8f8q0an1s",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "赤銅甲",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wis80007rof8f8q0an1s",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "防具"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wiwc0008rof800y315fe",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "寒鐵鎧",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wiwc0008rof800y315fe",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "防具"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wj0d0009rof8q73qg00m",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "大葉青銅甲",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wj0d0009rof8q73qg00m",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "防具"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wj4f000arof8n9n6ugma",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "銀龍甲",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wj4f000arof8n9n6ugma",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "防具"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wj8i000brof84xon0dg5",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "鑌鐵重甲",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wj8i000brof84xon0dg5",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "坐騎"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wjcm000crof8360c5i0s",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "赤電",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wjcm000crof8360c5i0s",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "坐騎"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wjgn000drof81h2b3i8q",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "白龍",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wjgn000drof81h2b3i8q",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "坐騎"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wjkp000erof82ipe6zys",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "宛天馬",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wjkp000erof82ipe6zys",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "坐騎"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wjoq000frof8jww48n9n",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "汗血寶馬",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wjoq000frof8jww48n9n",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "坐騎"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wjss000grof89eze9n5n",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "驚帆",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wjss000grof89eze9n5n",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "坐騎"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wjwt000hrof856iy4gtp",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "黃驃馬",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wjwt000hrof856iy4gtp",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wk0w000irof8ko5l7ohu",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "六韜",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wk0w000irof8ko5l7ohu",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wk4z000jrof8a3c4nfcc",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "三略",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wk4z000jrof8a3c4nfcc",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wk91000krof8jkqjeu2o",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "孫臏兵法",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wk91000krof8jkqjeu2o",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wkd2000lrof8ncuz2syy",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "墨子",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wkd2000lrof8ncuz2syy",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wkh3000mrof8u70i6vjk",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "魏公子兵法",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wkh3000mrof8u70i6vjk",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wkl5000nrof8qloukr77",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "商君書",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wkl5000nrof8qloukr77",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wkp6000orof8a96ihzer",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "周書陰符",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wkp6000orof8a96ihzer",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wkt8000prof8hobxa66w",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "春秋左氏傳",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wkt8000prof8hobxa66w",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wkx9000qrof8v7dxd0lo",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "羅綺香囊",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wkx9000qrof8v7dxd0lo",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wl1a000rrof87ca828h2",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "太玄生符",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wl1a000rrof87ca828h2",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wl5b000srof8jome8y0r",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "老君入山符",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wl5b000srof8jome8y0r",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wl9d000trof8t06yf9bg",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "玉龍文璧",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wl9d000trof8t06yf9bg",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wlde000urof88n8t6tdh",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "錯金博山爐",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wlde000urof88n8t6tdh",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wlhg000vrof8875pv3b2",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "九鼎神丹經",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wlhg000vrof8875pv3b2",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wllh000wrof8s8ofi8ii",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "父己角",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wllh000wrof8s8ofi8ii",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wlpi000xrof80edpaa1i",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "饕餮文鼎",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wlpi000xrof80edpaa1i",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "紫",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmo82wltl000yrof8p2idbtg8",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "青銅博山爐",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmo82wltl000yrof8p2idbtg8",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmocgbpwi0000w0f86yupdg0q",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "孫子兵法",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmocgbpwi0000w0f86yupdg0q",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmocgbpyl0001w0f83plyuxrg",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "戰國策",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmocgbpyl0001w0f83plyuxrg",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmocgbq0m0002w0f8rasf4rif",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "史記",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmocgbq0m0002w0f8rasf4rif",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmocgbq2n0003w0f8azx5lqfl",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "易經",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmocgbq2n0003w0f8azx5lqfl",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmocgbq4p0004w0f8v9gqs1qk",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "莊子",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmocgbq4p0004w0f8v9gqs1qk",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmocgbq6q0005w0f89xkxi7yz",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "詩經",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmocgbq6q0005w0f89xkxi7yz",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmocgbq8r0006w0f8ajyq9uy0",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "禮記",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmocgbq8r0006w0f8ajyq9uy0",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmocgbqj40007w0f8vztisosg",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "青囊書",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmocgbqj40007w0f8vztisosg",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmocgbql50008w0f8cystvxmc",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "太平清領道",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmocgbql50008w0f8cystvxmc",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmocgbqn90009w0f8g6bt87bs",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "傷寒雜病論",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmocgbqn90009w0f8g6bt87bs",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmocgbqpb000aw0f8girapvuh",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "五嶽真形圖",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmocgbqpb000aw0f8girapvuh",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmocgbqrb000bw0f88erne4q2",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "三皇內文",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmocgbqrb000bw0f88erne4q2",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmocgbqtc000cw0f8pvqn8blk",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "長生鏡",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmocgbqtc000cw0f8pvqn8blk",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmocge1sx000094f8gwpipsvw",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "巾幗女衣",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmocge1sx000094f8gwpipsvw",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmocge1uz000194f8xl8dmdtd",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "袁氏家譜",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmocge1uz000194f8xl8dmdtd",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmocge1x0000294f8eferktd0",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "鈴毦",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmocge1x0000294f8eferktd0",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmocge1z1000394f8t090dxbw",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "機關獸",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmocge1z1000394f8t090dxbw",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmocge213000494f8ftyrfm4d",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "吳起兵法",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmocge213000494f8ftyrfm4d",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "寶物"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmocge234000594f8asa68n0h",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "香雪簪",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmocge234000594f8asa68n0h",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmoitxpf60000i0f8u204i9wd",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "綠沈槍",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmoitxpf60000i0f8u204i9wd",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "防具"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmoitxpjr0001i0f83hqf70tw",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "青懶衣",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmoitxpjr0001i0f83hqf70tw",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    },
+    {
+      "attributes": {
+        "quality": "橙",
+        "slot": "武器"
+      },
+      "canonicalRef": null,
+      "id": "sgsdeck:equipment:cmoitxpo60002i0f8bqlluv46",
+      "missingFields": [],
+      "nameVi": null,
+      "nameZh": "黑羽扇",
+      "provenance": {
+        "fetchedAt": "2026-09-12T02:18:58+07:00",
+        "provider": "sgsdeck",
+        "region": "TW",
+        "sourceUrl": "https://sgsdeck.com/equipment"
+      },
+      "sourceId": "cmoitxpo60002i0f8bqlluv46",
+      "sourceSeason": null,
+      "verification": {
+        "identity": "unmapped",
+        "vnAvailability": "unverified"
+      }
+    }
+  ],
+  "region": "TW",
+  "schemaVersion": 1
+}

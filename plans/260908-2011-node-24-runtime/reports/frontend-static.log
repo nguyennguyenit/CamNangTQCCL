@@ -1,0 +1,21 @@
+
+> test:dist
+> node --experimental-strip-types --test tests-js/astro-dist-contract.test.mjs tests-js/pages-headers-contract.test.mjs
+
+✔ manifest explicitly classifies every published root artifact (2.310708ms)
+✔ manifest rejects route collisions, extension mistakes, and unknown kinds (0.253875ms)
+✔ artifact reader returns exact bytes and rejects unknown, missing, and symlink sources (2.664667ms)
+✔ artifact tree rejects symlinked directories and source-set drift (2.437417ms)
+✔ dist verifier rejects missing, unexpected, and symlinked output (3.276084ms)
+✔ built dist is allowlisted and every emitted asset is byte-identical (4.052125ms)
+✔ _headers has exact mutable-asset revalidation rules (2.097125ms)
+✔ _headers covers every published shell and mutable raw asset (0.522083ms)
+✔ cache policy models fresh clients and whole-artifact rollback (0.384458ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 75.498708
