@@ -109,6 +109,27 @@ Manifest khai báo hash và kích thước của `seasons.json`, `index.json`,
 `/data/recommended/<generationId>/`; HTML pin generation đó nên một trang đang
 mở không trộn hai lần cập nhật.
 
+### Tên Việt và dữ liệu Trung nguyên bản
+
+Team chuẩn chỉ dùng bản Việt đã có trong `recommended-identity-map.json`, được
+đối chiếu từ từ điển của dự án; không tự dịch tên mới. Alias phồn thể/giản thể
+được ghi cùng bằng chứng nguồn để tái sử dụng đúng tên Việt hiện có.
+
+Builder bổ sung `displayNameVi`, `tacticSlotsVi`, `bookSlotsVi` cho tướng chính
+và các cấu hình thay thế, sau khi kiểm tra hash corpus gốc với ledger Team khác.
+Hai mảng tên Việt giữ đúng vị trí slot nguồn; tên chưa đối chiếu được là `null`.
+Thẻ đội và chi tiết ưu tiên bản Việt từng slot, thiếu thì hiển thị tiếng Trung.
+Tìm kiếm hỗ trợ cả tên Việt có dấu/không dấu và tên Trung gốc.
+
+Các trường `nameRaw`, `tacticSlotsRaw`, `bookSlotsRaw`, `nameZh` và ghi chú nguồn
+không bị ghi đè, giữ dữ liệu cho giao diện hai ngôn ngữ sau này. Chưa có bộ chọn
+ngôn ngữ; tên đội và nội dung chưa có bản Việt vẫn giữ nguyên nguồn.
+
+Khi bổ sung bản dịch đã xác minh, cập nhật entry/alias tương ứng trong
+`pipeline/recommended-identity-map.json` và bằng chứng đối chiếu. Chạy lại lệnh
+dedup rồi builder ở trên vì ledger kiểm tra hash file mapping; không sửa trực
+tiếp generation đã xuất. Sau đó build và verify lại website.
+
 Quyền lưu và hiển thị cấu hình/điểm Recommended đã được người dùng xác nhận
 ngày 2026-09-12. Dữ liệu này là tham khảo nguồn, không tự trở thành điểm,
 tier hoặc eligibility gameplay VN. Khai hoang hiện tại vẫn dùng dữ liệu bảo
