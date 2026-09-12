@@ -6,7 +6,7 @@ Deploy tách hai surface: static site trên Cloudflare Pages và Vision proxy tr
 
 ## Prerequisite
 
-- Node `22.16.0` theo `.node-version`, npm và Chromium cho Astro build/E2E.
+- Node `24.20.0` theo `.node-version`, npm và Chromium cho Astro build/E2E.
 - Python 3 cho pipeline và test dữ liệu.
 - Cloudflare account, Wrangler login, Pages project, Worker và Turnstile widget.
 - Alibaba DashScope/Qwen API key phù hợp region/model.
@@ -83,7 +83,7 @@ Build contract:
 Root directory: repository root
 Build command: npm run build
 Build output: dist
-Node: 22.16.0
+Node: 24.20.0
 ```
 
 Astro dùng static output, không adapter và không Pages Functions. `dist/` phải chỉ chứa `index.html`, manifest-approved `js/`, `css/`, `data/` và `_headers`. Shared verifier đối chiếu raw bytes với source và từ chối `pipeline/`, `worker/`, tests, plans, symlink, secret-like hoặc file lạ.

@@ -26,7 +26,7 @@ Snapshot dữ liệu công khai kiểm tra ngày 2026-08-25:
 
 ## Chạy local
 
-Yêu cầu Node `22.16.0` (xem `.node-version`), npm và trình duyệt hiện đại:
+Yêu cầu Node `24.20.0` (xem `.node-version`), npm và trình duyệt hiện đại:
 
 ```bash
 npm ci
