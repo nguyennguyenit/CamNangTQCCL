@@ -127,13 +127,15 @@ function compareCandidates(a, b) {
   );
 }
 
-function candidatePool(candidates, { mode, fullBox, experimentalUntiered }) {
+function candidatePool(candidates, { mode, fullBox, experimentalUntiered, seasonContext }) {
   const eligible = candidates.filter((candidate) => {
     if (mode !== "meta") return true;
     if (META_TIERS.has(candidate.tier)) return true;
     return experimentalUntiered === true && candidate.tier === "";
   });
-  return eligible.sort(compareCandidates).slice(0, fullBox ? 80 : 60);
+  const sorted = eligible.sort(compareCandidates);
+  // Seasonal configs are already bounded by the shared projector; check resources before search limits.
+  return seasonContext ? sorted : sorted.slice(0, fullBox ? 80 : 60);
 }
 
 function assignHeroes(candidate, ownedHeroes, usedHeroes) {
@@ -421,8 +423,12 @@ function searchPortfolio(
   ownedTactics,
   maxTeams,
   experimentalUntiered,
+  seasonContext,
 ) {
-  let best = [...seed.portfolio];
+  // Keep a feasible whole-pool result even when DFS only explores its bounded prefix.
+  let best = seasonContext
+    ? greedy(candidates, seed, ownedHeroes, ownedTactics, maxTeams, experimentalUntiered)
+    : [...seed.portfolio];
   let searched = 0;
   const limited = candidates.slice(0, 60);
 
@@ -578,7 +584,7 @@ export function recommendTeams({
 
   const candidates = candidatePool(
     teams.map((team) => normalizeTeamCandidate(team, tierByTeam, redByHero, seasonContext)),
-    { mode, fullBox, experimentalUntiered },
+    { mode, fullBox, experimentalUntiered, seasonContext },
   );
 
   const eligible = [];
@@ -648,6 +654,7 @@ export function recommendTeams({
       ownedTacticSet,
       maxTeams,
       experimentalUntiered,
+      seasonContext,
     );
     portfolio = searched.portfolio;
     diagnostics.searchedCandidates = searched.searched;

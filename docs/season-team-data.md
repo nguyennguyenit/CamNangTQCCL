@@ -48,8 +48,11 @@ quy đổi sao đánh giá cũ thành điểm.
 
 Projector dùng chung lọc phạm vi, review, điều kiện và tier trước giới hạn
 500 cấu hình có thể xét. Vượt giới hạn trả `CANDIDATE_LIMIT_EXCEEDED` với số
-lượng thực, không lấy im lặng 500 cấu hình đầu. Tra cứu một đội có nhiều cấu
-hình mà thiếu `configId` trả `CONFIG_AMBIGUOUS`, tối đa 20 ID cùng tổng số và
+lượng thực, không lấy im lặng 500 cấu hình đầu. Engine theo mùa đối chiếu kho trên toàn
+bộ tập đã được projector chấp nhận, trước giới hạn tìm kiếm. Greedy xét toàn
+bộ cấu hình khả thi; full-box giữ ngân sách tìm kiếm hiện có và dùng kết quả
+greedy làm phương án ban đầu, không bảo đảm tối ưu toàn cục. Tra cứu một đội
+có nhiều cấu hình mà thiếu `configId` trả `CONFIG_AMBIGUOUS`, tối đa 20 ID cùng tổng số và
 số bị lược. Contract và các giới hạn này được kiểm tại
 [resolver tests](../tests-js/season-context.test.mjs).
 Consumer MCP dùng search đúng context và cursor để duyệt các `configId` còn lại;

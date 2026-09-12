@@ -238,3 +238,73 @@ test('exact config lookup requires an explicit valid team or config identity',as
     assert.equal(resolveTeamConfig(model,request).ok,false);
   }
 });
+
+for (const [count, fullBox, missingResource] of [
+  [61, false, 'hero'], [81, true, 'hero'],
+  [61, false, 'tactic'], [81, true, 'tactic'],
+  [500, false, 'hero'], [500, true, 'hero'],
+]) {
+  test(`seasonal feasibility reaches the last of ${count} configs with missing ${missingResource}s (fullBox=${fullBox})`, async () => {
+    const data = seasonFixture();
+    const original = data['season-team-configs'][0];
+    const evaluation = data['season-team-evaluations'][0];
+    data.teams.push({ ...structuredClone(data.teams[0]), id: 'team-owned', name: 'Owned team' });
+    data['season-team-configs'] = Array.from({ length: count }, (_, index) => {
+      const config = structuredClone(original);
+      config.id = `config-${String(index).padStart(3, '0')}`;
+      if (index === count - 1) config.teamId = 'team-owned';
+      else if (missingResource === 'hero') config.heroSlots.forEach((slot, i) => {
+        slot.heroRefs = [['hero:dung', 'hero:em', 'hero:giang'][i]];
+      });
+      else config.heroSlots[0].tacticSlots[0].tacticRefs = ['tactic:bay'];
+      return config;
+    });
+    data['season-team-evaluations'] = data['season-team-configs'].map(config => ({
+      ...structuredClone(evaluation), id: `eval-${config.id}`, configId: config.id,
+    }));
+    const model = await validateSeasonBundle(refreshConfigProofs(data));
+    const projected = projectSeasonCandidates(model, context);
+    assert.equal(projected.ok, true);
+    assert.equal(projected.limits.candidateCount, count);
+    const result = recommendTeams({
+      ...projected, ownedHeroes: ['Anh', 'Bình', 'Cường'],
+      ownedTactics: ['Một', 'Hai', 'Ba', 'Bốn', 'Năm', 'Sáu'], fullBox, maxTeams: 1,
+    });
+    assert.deepEqual(result.portfolioTeams.map(entry => entry.configId), [`config-${String(count - 1).padStart(3, '0')}`]);
+  });
+}
+
+for (const fullBox of [false, true]) {
+  test(`seasonal same-team configs do not crowd out a compatible team (fullBox=${fullBox})`, async () => {
+    const data = seasonFixture();
+    const original = data['season-team-configs'][0];
+    const evaluation = data['season-team-evaluations'][0];
+    data.teams.push({ ...structuredClone(data.teams[0]), id: 'team-second', name: 'Second team' });
+    const extraTactics = Array.from({ length: 6 }, (_, i) => ({ viet: `Extra ${i + 1}`, chinese: `Extra ${i + 1}` }));
+    data.tactics.push(...extraTactics);
+    data['season-team-configs'] = Array.from({ length: 61 }, (_, index) => {
+      const config = structuredClone(original);
+      config.id = `config-${String(index).padStart(3, '0')}`;
+      if (index === 60) {
+        config.teamId = 'team-second';
+        config.heroSlots.forEach((slot, i) => {
+          slot.heroRefs = [['hero:dung', 'hero:em', 'hero:giang'][i]];
+          slot.tacticSlots.forEach((tactic, j) => { tactic.tacticRefs = [`tactic:extra-${i * 2 + j + 1}`]; });
+        });
+      }
+      return config;
+    });
+    data['season-team-evaluations'] = data['season-team-configs'].map(config => ({
+      ...structuredClone(evaluation), id: `eval-${config.id}`, configId: config.id,
+    }));
+    const model = await validateSeasonBundle(refreshConfigProofs(data));
+    const projected = projectSeasonCandidates(model, context);
+    assert.equal(projected.ok, true);
+    const result = recommendTeams({
+      ...projected, ownedHeroes: data['heroes-dict'].map(hero => hero.viet),
+      ownedTactics: data.tactics.map(tactic => tactic.viet), fullBox, maxTeams: 2,
+    });
+    assert.deepEqual(result.portfolioTeams.map(entry => entry.configId), ['config-000', 'config-060']);
+    assert.equal(new Set(result.portfolioTeams.map(entry => entry.team.id)).size, 2);
+  });
+}
