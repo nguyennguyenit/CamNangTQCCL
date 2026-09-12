@@ -20,7 +20,7 @@ The original workspace resolved Python 3.14.6; the isolated shell resolved Apple
 
 A direct regression produced two real errors before the fix. Kongming approved explicitly mapping an absent query to an empty list while preserving strict parsing for nonempty queries. The new case also checks valid allowlisted queries, malformed fields/separators, blank values, duplicate/unknown keys and detail-query rejection.
 
-After the one-line fix, **62 focused Python tests passed on each of Python 3.9.6, 3.12 and 3.14.6**. The direct pre-fix case already passed on 3.12; that run is not claimed as Red. Shared UI/context Node tests passed 31 cases. This is the only executable change introduced by release isolation, and exists only in the isolated branch.
+After the one-line fix, **62 focused Python tests passed on each of Python 3.9.6, 3.12 and 3.14.6**. The direct pre-fix case already passed on 3.12; that run is not claimed as Red. Shared UI/context Node tests passed 31 cases. This is the only production-code change introduced by release isolation, and exists only in the isolated branch. The subsequent full gate exposed a test-only checkout-basename assumption; its committed correction checks the same 17-method adapter API in a fresh Node process with a temporary working directory. No test was removed.
 
 ## Verification sequence
 
@@ -28,4 +28,4 @@ Commit the selected feature, then build real assets and preserve emitted evidenc
 
 Do not put the final commit's own SHA into a tracked report in that commit. Final attestation belongs to the original workspace's report directory. Full behavioral gates on the feature commit and identity-sensitive checks on the documentation-only final commit must be distinguished.
 
-Unresolved questions: none. Real packaging and isolated integrated validation have not run yet at this checkpoint.
+Unresolved questions: none. The preparation checkpoint is superseded by [completed validation](isolated-release-closure.md); failed-run evidence remains in the original workspace reports.

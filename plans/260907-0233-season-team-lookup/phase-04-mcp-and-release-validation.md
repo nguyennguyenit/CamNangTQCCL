@@ -1,13 +1,13 @@
 ---
 title: "Phase 4: MCP and release validation"
-status: in-progress
+status: completed
 ---
 
 # Phase 4: MCP and release validation
 
 ## Overview
 
-Trạng thái 2026-09-12: implementation/reviews hoàn thành; **release validation ENVIRONMENT_BLOCKED**, không đóng phase/full plan. [Kongming closure](reports/final-advisory.md), [MCP validation](reports/phase-04-mcp-validation.md), [release tooling](reports/phase-04-release-tooling.md), [final gate](reports/final-validation.md). MCP 351 + Workerd 3 pass. Actual asset builder exit 1 `SOURCE_NOT_CLEAN`; repository gate exit 1 ở Wrangler thiếu `.worker-assets`.
+Trạng thái 2026-09-12: **completed** — implementation/reviews và real clean-source release gate đã đạt trên `f2741f5`. MCP 351, Workerd 3, E2E 55 và Wrangler dry-run pass; [closure](reports/isolated-release-closure.md) ghi counts, Python skips và ranh giới final-HEAD verification. Các lỗi `SOURCE_NOT_CLEAN`/thiếu assets trong [final gate cũ](reports/final-validation.md) là lịch sử trước worktree được cho phép.
 
 TDD có Red cho inventory/context/schema/bounds và lỗi audit; transport/score-alternative/5-group snapshot cùng một số release tests là regression sau implementation. Không nhận lỗi import/setup là Red. Checkbox đối chiếu bằng chứng thực; baseline bên dưới là lịch sử trước implementation.
 
@@ -47,8 +47,8 @@ Optional request `seasonContext={scenarioId,rulesetId}` cho search/detail/match/
 ## Todo
 
 - [x] Focused Vitest data/schema/handlers/canonical-state/workflow/release: v1/v2 missing/extra/hash/count/cross-ref, replacement đúng/sai config/context, migration output client v1 sang v2, stale binding/cursor, legacy input parity và Đô Úy exclusion.
-- [x] All-tools CLI/stdio/HTTP parity, workflow E2E, root Node/Python, Astro build/dist/verify và UI E2E đạt. Actual `check:repository` đã chạy, ghi cả exit 1 ở bước cuối trong `reports/validation.md`.
-- [ ] Release gate: từ source identity sạch được cho phép, chạy thành công real `build:worker-assets`, `verify:worker-assets`, và `check:repository` gồm Wrangler dry-run trên cùng data/workflow generation. Hiện `SOURCE_NOT_CLEAN` / thiếu `.worker-assets`; không fake assets, stash, commit tạm hoặc bypass guard. Không yêu cầu deploy để đóng plan.
+- [x] All-tools CLI/stdio/HTTP parity, workflow E2E, root Node/Python, Astro build/dist/verify và UI E2E đạt. `check:repository` đã đạt exit 0 trong worktree; lần exit 1 trước đây được giữ trong `reports/validation.md`.
+- [x] Release gate: real `build:worker-assets`, `verify:worker-assets`, và `check:repository` gồm Wrangler dry-run đạt trên cùng data/workflow generation tại clean `f2741f5`. Bảo toàn WIP; không fake assets, stash, commit tạm hoặc bypass guard. Commit tài liệu chốt được kiểm lại identity-sensitive packaging theo closure; không cần deploy.
 
 ## Success Criteria
 
@@ -117,7 +117,7 @@ Interface checklist:
 - [x] Thiếu ruleset reject, không bypass confirmation.
 - [x] Cùng resolved IDs/categories UI/MCP; engine không chấm raw refs.
 - [x] Bounded nested shape/truncation; unchanged no-context projection.
-- [x] Schema/builder/controlled verifier thống nhất 5 sidecar/11 artifact/12 files; fixture v1 nguyên bytes. Real asset bundle của checkout hiện tại thuộc release gate còn mở.
+- [x] Schema/builder/controlled verifier thống nhất 5 sidecar/11 artifact/12 files; fixture v1 nguyên bytes. Real asset bundle đã đạt release gate; commit tài liệu chốt được rebuild/verify theo HEAD mới.
 - [x] CONFIG_AMBIGUOUS có đường choices tới CLI/stdio/HTTP; tìm đủ configs qua search/cursor.
 - [x] Scope/eligibility trước cap 500, một tier row/config; CANDIDATE_LIMIT_EXCEEDED không tạo portfolio một phần.
 

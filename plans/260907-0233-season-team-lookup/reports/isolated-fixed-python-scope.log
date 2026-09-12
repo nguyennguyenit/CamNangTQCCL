@@ -1,0 +1,10 @@
+Excluded test module: test_build_sgsdeck_catalog.py test methods: 9
+Excluded test module: test_query_sgsdeck_catalog.py test methods: 7
+Excluded test module: test_sgsdeck_identity.py test methods: 6
+Excluded test module: test_sgsdeck_source.py test methods: 15
+Excluded private-catalog test methods: 37
+Original187 minus excluded37 plus empty-query regression1 = isolated151
+12 existing missing-source skips: test_build.TestBuild7; test_parse_secondary3; test_parse_team_intro2
+Meta Team PK/Team giới thiệu(mới).html exists: False
+Meta Team PK/Khai hoang.html exists: False
+Meta Team PK/Team Cùng Tồn.html exists: False

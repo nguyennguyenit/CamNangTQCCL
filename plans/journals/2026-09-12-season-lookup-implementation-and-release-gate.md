@@ -1,7 +1,7 @@
 ---
 title: Season lookup implementation and release gate
 date: 2026-09-12
-summary: Season implementation delivered; release validation blocked by clean-source gate.
+summary: Season implementation and isolated clean-source release validation completed.
 ---
 
 # Season lookup implementation and release gate
@@ -18,9 +18,9 @@ User subsequently answered the optional rights question YES, including Recommend
 
 Final checks: MCP 351, Workerd 3, Node 186, Python 187, Vision 53, dist 13, E2E 55 pass; verify 43 files and 40 raw assets. See ../260907-0233-season-team-lookup/reports/final-validation.md. Initial 11 resolver cases and supplementary regression cases did not have pre-code Red; this gap remains disclosed.
 
-## Next steps
+## Release closure
 
-Actual asset builder exits 1 SOURCE_NOT_CLEAN; repository gate exits 1 at Wrangler for missing .worker-assets. Preserve WIP, prepare authorized clean source identity, then run real asset build, verification and matching packaging gates. Plan remains in-progress. No deploy, commit, stash, fake assets or guard bypass. AgentWiki publish skipped; local history only.
+The original dirty-source gate failures remain historical evidence. The user subsequently authorized an isolated worktree and durable local commits. Full repository gate, real asset build/verification, Wrangler dry-run and Workerd passed at `f2741f5`; Python ran 151 cases: 139 passed and 12 existing real-HTML cases skipped. See [closure](../260907-0233-season-team-lookup/reports/isolated-release-closure.md). Both checkout portability defects were repaired with their evidence preserved. All four phases are complete. The documentation-only closure commit requires a fresh asset identity and dry-run; final attestation is stored externally. Original code WIP is preserved. No push, merge, deploy, stash, fake assets or guard bypass. AgentWiki publish skipped; local history only.
 
 > Historical work record — not durable authority. Prefer docs/specs/ADRs for current decisions.
 

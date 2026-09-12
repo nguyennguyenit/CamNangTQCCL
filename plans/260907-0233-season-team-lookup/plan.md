@@ -1,7 +1,7 @@
 ---
 title: "Tra cứu đội hình theo mùa và kịch bản"
 description: "Tra cứu đội theo kịch bản và phiên bản luật đã xác minh"
-status: in-progress
+status: completed
 priority: P1
 effort: ""
 tags: [frontend, database, api]
@@ -15,7 +15,7 @@ created: 2026-09-07
 
 ## Trạng thái — 2026-09-12
 
-**In progress: phase 1–3 hoàn thành; phase 4 implementation/reviews đã giao, release validation ENVIRONMENT_BLOCKED.** Invocation `--auto --advice --tdd`; Kongming được giao quyền quyết định và [cho phép đóng phase 3](reports/final-advisory.md). Không deploy, commit hoặc bypass release guard.
+**Completed: cả bốn phase đã hoàn thành, gồm real clean-source release validation.** Invocation `--auto --advice --tdd`; Kongming được giao quyền quyết định. Người dùng đã cho phép worktree riêng và commit local bền vững để đóng gate; không push, merge, deploy hoặc bypass guard. [Bằng chứng đóng release](reports/isolated-release-closure.md).
 
 Outcome: chọn kịch bản/ruleset → lọc đội → nhóm tier → cấu hình cụ thể → đối chiếu kho. Phạm vi Team PK, Meta phe cũ, Cùng Tồn, soi đội, gợi ý kho và Research MCP. Giữ ID/hash/no-context cũ; không thêm backend, hợp nhất danh mục hoặc suy luật/tier/lịch phát hành. Strict clients phải refresh discovery/schema output v2.
 
@@ -28,7 +28,7 @@ Dữ liệu hiện tại: một kịch bản VN Binh Diễn Xuân Thu; **0 rules
 | 1 | [Registry và phiên bản luật](phase-01-start.md) | Completed |
 | 2 | [Cấu hình và đánh giá đội](phase-02-season-team-configurations.md) | Completed |
 | 3 | [Tra cứu trên giao diện](phase-03-season-lookup-interface.md) | Completed |
-| 4 | [MCP và kiểm chứng](phase-04-mcp-and-release-validation.md) | In progress — release gate blocked |
+| 4 | [MCP và kiểm chứng](phase-04-mcp-and-release-validation.md) | Completed |
 
 Thứ tự checkpoint 1 → 2 → UI/MCP consumers → parity/release closure. Năm sidecars/resolver đã được khai báo cùng outputs; shell kiểm nguyên generation trước activation. Không tự promote dữ kiện game từ test fixtures.
 
@@ -40,7 +40,7 @@ Thứ tự checkpoint 1 → 2 → UI/MCP consumers → parity/release closure. N
 - [x] Legacy hashes, scan state, IDs, MCP input no-context và fixture release v1 giữ parity; migration output schema v2 đã kiểm chứng.
 - [x] Public manifest, snapshot/schema v2, workflow bindings/cursor đồng bộ; local behavioral/build/type/artifact checks đạt.
 - [x] Ambiguity choices bounded xuyên CLI/stdio/HTTP; shared cap 500 sau scope/eligibility, không silent slice.
-- [ ] Real clean-source asset build/verification và repository gate gồm Wrangler dry-run thành công trên cùng generation. Actual builder exit 1 `SOURCE_NOT_CLEAN`; actual repository gate exit 1 vì thiếu `.worker-assets`.
+- [x] Real clean-source asset build/verification và toàn bộ repository gate gồm Wrangler dry-run đạt trên commit `f2741f5`; [closure](reports/isolated-release-closure.md) phân biệt full behavioral gate với final-HEAD packaging. Các lỗi `SOURCE_NOT_CLEAN`/thiếu assets trước đây được giữ trong lịch sử.
 
 [Final validation](reports/final-validation.md): MCP351, Workerd3, Node186, Python187, Vision53, dist13, E2E55; check/build/typechecks pass, verify43 files/40raw assets,9legacy hashes unchanged. [Validation timeline](reports/validation.md) phân biệt checkpoint và full gate. Không coi guard rejection là release Green.
 
@@ -64,8 +64,8 @@ Tra cứu thống nhất (tài liệu ngoài nhánh: `../260912-0607-unified-loo
 
 Lịch sử plan/audit được giữ tại [prior index](reports/pm-260912-1419-season-plan-sync.md), [audit 2026-09-12](reports/audit-260912-1144-season-team-lookup.md), audit liên plan (tài liệu ngoài nhánh: `../reports/audit-260907-0310-season-catalog-plans.md`), [planning validation](reports/coexist-plan-validation.md). Các status pending/proposed trong tài liệu lịch sử không thay trạng thái thực thi hiện tại.
 
-## Bước đóng còn lại
+## Kết quả đóng
 
-Chuẩn bị source identity sạch theo phạm vi được cho phép, bảo toàn WIP; chạy real asset builder/verifier và prescribed repository/packaging gates trên cùng data/workflow generation. Chỉ khi đạt mới đóng phase 4/full plan; không cần deploy. Không fake assets, stash, commit tạm hoặc nới cleanliness checks để đổi kết quả. Bằng chứng luật VN/config/điểm áp dụng vẫn unknown, không được điền suy đoán.
+Worktree `feat/season-team-lookup` đã đạt gate trên source identity sạch, bảo toàn WIP gốc. Commit tài liệu chốt cần rebuild/verify assets và dry-run theo HEAD mới; attestation cuối lưu ngoài worktree để không tạo vòng SHA tự tham chiếu. Không cần deploy để đóng plan. Bằng chứng luật VN/config/điểm áp dụng vẫn unknown, không được điền suy đoán.
 
 <!-- slug: season-team-lookup -->
