@@ -103,6 +103,14 @@ class RecommendedSourceTest(unittest.TestCase):
             with self.subTest(key=key), self.assertRaises(ValueError):
                 source.join_recommended_evidence(listing, [other])
 
+    def test_requested_scope_must_match_rendered_season_and_category(self):
+        accepted = source.parse_recommended_list(LIST, requested_scope={"season": "og-兵演春秋", "category": "交戰"})
+        self.assertEqual(accepted["sourceCategoryId"], "交戰")
+        with self.assertRaisesRegex(ValueError, "requested scope"):
+            source.parse_recommended_list(LIST, requested_scope={"season": "pk-s28", "category": "交戰"})
+        with self.assertRaisesRegex(ValueError, "requested scope"):
+            source.parse_recommended_list(LIST, requested_scope={"sourceSeasonId": "og-兵演春秋", "sourceCategoryId": "器械"})
+
     def _cache(self, root, listing):
         items = []
         for key, html, url in [("list", listing, "https://sgsdeck.com/recommended"), ("detail", DETAIL, URL)]:

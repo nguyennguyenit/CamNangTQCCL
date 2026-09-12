@@ -30,6 +30,8 @@ export const PUBLIC_ARTIFACTS = Object.freeze([
   entry("js", "mobile-section-menu"),
   entry("js", "recruit-tracker-store"),
   entry("js", "recruit-tracker"),
+  entry("js", "recommended-reference-render"),
+  entry("js", "recommended-reference-state"),
   entry("js", "render"),
   entry("js", "roster-recommend-ui"),
   entry("js", "roster-scan-map"),

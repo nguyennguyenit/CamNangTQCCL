@@ -809,7 +809,7 @@ body {
 @media (max-width:480px) { .season-controls label { flex-basis:100%; max-width:none; } .season-hero-slot { grid-template-columns:1fr; } .season-config-detail { padding:10px; } .filter-bar select { flex:1 1 100%; } }
 
 .season-team-groups .team-grid { grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr)); }
-#section-team-pk > .stats,#section-meta-cu > .stats { white-space:normal; }
+#section-team-chuan > .stats,#section-team-khac > .stats { white-space:normal; }
 .season-opt-in { display:flex; align-items:center; gap:8px; min-height:44px; line-height:1.5; }
 .season-config-detail,.season-tier-group { overflow-wrap:anywhere; }
 
@@ -817,3 +817,13 @@ body {
 .season-config-detail summary,.season-config-detail button,.season-team-groups .ana-link-btn,.season-team-groups .team-name,#section-coexist .fchip,#section-coexist .clear-btn,#section-coexist .search { min-height:44px; }
 .season-config-detail summary { display:list-item; padding-block:10px; }
 @media (max-width:680px) { .season-controls select,.season-slot select,#section-coexist .search { font-size:16px; } }
+.reference-scope-controls { display:grid; grid-template-columns:minmax(180px,1fr) repeat(2,minmax(150px,220px)); gap:10px; margin:10px 0; }
+.reference-scope-controls label { display:flex; flex-direction:column; gap:4px; color:var(--muted); font-size:.85rem; }
+.reference-scope-controls input,.reference-scope-controls select { width:100%; min-height:44px; padding:8px; color:var(--ink); background:var(--panel); border:1px solid var(--line); border-radius:8px; }
+.reference-holder .line { display:flex; flex-wrap:wrap; gap:6px; }
+.reference-team-card { min-width:0; overflow-wrap:anywhere; }
+.reference-detail-holder { border-top:1px solid var(--line); padding-block:10px; }
+@media (max-width:680px) {
+  .reference-scope-controls { grid-template-columns:1fr; }
+  .reference-scope-controls input,.reference-scope-controls select { font-size:16px; }
+}

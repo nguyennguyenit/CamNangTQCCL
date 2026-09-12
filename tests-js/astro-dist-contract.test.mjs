@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { mkdtemp, mkdir, readFile, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -16,6 +17,39 @@ import { verifyAstroDist } from "../scripts/verify-astro-dist.mjs";
 import { assertFrontendShellContract } from "./frontend-shell-contract-assertions.mjs";
 
 const projectRoot = new URL("../", import.meta.url);
+
+const jsonBytes = (value) => Buffer.from(`${JSON.stringify(value)}\n`);
+const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
+
+async function writeRecommendedFixture(projectDir, distDir) {
+  const generationId = "1".repeat(64);
+  const scope = `s-${"2".repeat(64)}`;
+  const sourceRoot = join(projectDir, "src", "data", "recommended-reference");
+  const generation = join(sourceRoot, generationId);
+  const output = join(distDir, "data", "recommended", generationId);
+  await mkdir(generation, { recursive: true });
+  await mkdir(output, { recursive: true });
+  const payloads = {
+    "seasons.json": jsonBytes({ schemaVersion: 1, seasonOptions: [], scopes: [] }),
+    "index.json": jsonBytes({ schemaVersion: 1, records: [] }),
+    "other-teams.json": jsonBytes({ schemaVersion: 1, records: [] }),
+    [`details-${scope}.json`]: jsonBytes({ schemaVersion: 1, records: [] }),
+  };
+  const files = Object.fromEntries(Object.entries(payloads).map(([name, bytes]) => [name, { sha256: sha256(bytes), bytes: bytes.length }]));
+  for (const [name, bytes] of Object.entries(payloads)) {
+    await writeFile(join(generation, name), bytes);
+    await writeFile(join(output, name), bytes);
+  }
+  const manifest = jsonBytes({ schemaVersion: 1, generationId, dedupKeyVersion: 1, allowedScopeKeys: [scope], files });
+  await writeFile(join(generation, "manifest.json"), manifest);
+  await writeFile(join(output, "manifest.json"), manifest);
+  const current = jsonBytes({ schemaVersion: 1, generationId, manifestSha256: sha256(manifest) });
+  await writeFile(join(sourceRoot, "current.json"), current);
+  await mkdir(join(distDir, "data", "recommended"), { recursive: true });
+  await writeFile(join(distDir, "data", "recommended", "current.json"), current);
+  const pin = { schemaVersion: 1, generationId, manifestSha256: sha256(manifest) };
+  await writeFile(join(distDir, "index.html"), `<!doctype html><script id="recommended-publication" type="application/json">${JSON.stringify(pin)}</script>\n`);
+}
 
 test("season bundle publishes exactly five sidecars with the shared resolver", async () => {
   assert.deepEqual(artifactEntriesFor("data").filter((entry) => entry.routeParam.startsWith("season-")).map((entry) => entry.routeParam).sort(), ["season-content-links", "season-evidence", "season-registry", "season-team-configs", "season-team-evaluations"]);
@@ -280,6 +314,7 @@ test("dist verifier rejects missing, unexpected, and symlinked output", async (t
   const favicon = await readFile(new URL("public/favicon.png", projectRoot));
   await writeFile(join(projectDir, "public", "favicon.png"), favicon);
   await writeFile(join(distDir, "favicon.png"), favicon);
+  await writeRecommendedFixture(projectDir, distDir);
 
   await assert.rejects(
     verifyAstroDist({

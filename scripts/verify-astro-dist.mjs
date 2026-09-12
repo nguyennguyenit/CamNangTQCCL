@@ -2,6 +2,7 @@ import { readdir, readFile } from "node:fs/promises";
 import { relative, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { PUBLIC_ARTIFACTS, validatePublicArtifactManifest } from "../src/lib/public-artifact-manifest.mjs";
+import { recommendedPublicationSnapshot } from "../src/lib/recommended-reference-artifacts.ts";
 
 export const DEPLOYMENT_CONTROL_ARTIFACTS = Object.freeze([
   Object.freeze({ sourcePath: "public/_headers", outputPath: "_headers" }),
@@ -33,11 +34,17 @@ export async function verifyAstroDist({
   validatePublicArtifactManifest(manifest);
   const rootPath = fileURLToPath(projectRoot);
   const distPath = fileURLToPath(distDir);
+  const recommended = await recommendedPublicationSnapshot(resolve(rootPath, "src/data/recommended-reference"));
+  const recommendedFiles = [
+    "data/recommended/current.json",
+    ...Object.keys(recommended.files).map((name) => `data/recommended/${recommended.pin.generationId}/${name}`),
+  ];
   const expectedAssets = manifest.map((artifact) =>
     `${artifact.kind}/${artifact.sourceBasename}`);
   const expectedFiles = [
     "index.html",
     ...expectedAssets,
+    ...recommendedFiles,
     ...controlArtifacts.map((artifact) => artifact.outputPath),
     ...staticArtifacts.map((artifact) => artifact.outputPath),
   ].sort();
@@ -59,6 +66,26 @@ export async function verifyAstroDist({
     if (!sourceBytes.equals(emittedBytes)) {
       throw new Error(`Emitted artifact bytes differ from source: ${relativePath}`);
     }
+  }
+
+  const currentOutput = await readFile(resolve(distPath, "data/recommended/current.json"));
+  if (!currentOutput.equals(recommended.currentBytes)) {
+    throw new Error("Emitted Recommended current selector differs from source");
+  }
+  for (const [name, bytes] of Object.entries(recommended.files)) {
+    const emitted = await readFile(resolve(distPath, `data/recommended/${recommended.pin.generationId}/${name}`));
+    if (!emitted.equals(bytes)) throw new Error(`Emitted Recommended artifact differs from source: ${name}`);
+  }
+  const html = await readFile(resolve(distPath, "index.html"), "utf8");
+  const embedded = html.match(/id="recommended-publication"[^>]*>([^<]+)<\/script>/);
+  if (!embedded) throw new Error("Built HTML lacks the Recommended publication pin");
+  const embeddedPin = JSON.parse(embedded[1]);
+  if (
+    embeddedPin.schemaVersion !== recommended.pin.schemaVersion
+    || embeddedPin.generationId !== recommended.pin.generationId
+    || embeddedPin.manifestSha256 !== recommended.pin.manifestSha256
+  ) {
+    throw new Error("Built HTML Recommended pin differs from emitted generation");
   }
 
   for (const artifact of [...controlArtifacts, ...staticArtifacts]) {

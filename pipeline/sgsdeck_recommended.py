@@ -103,7 +103,7 @@ def validate_source_url(url):
     if parsed.scheme != "https" or parsed.netloc != "sgsdeck.com" or parsed.fragment:
         raise ValueError("Recommended source must use its public HTTPS origin")
     path = unquote(parsed.path)
-    if not re.fullmatch(r"/recommended(?:/[a-z0-9][a-z0-9-]{0,127})?", path):
+    if not re.fullmatch(r"/recommended(?:/[^/?#\\\\]{1,128})?", path) or "/../" in path or path.endswith("/.."):
         raise ValueError("URL is outside Recommended")
     query = parse_qsl(parsed.query, keep_blank_values=True, strict_parsing=True) if parsed.query else []
     if len({key for key, _ in query}) != len(query) or any(key not in {"season", "category"} or not value or len(value) > 128 for key, value in query):
@@ -124,11 +124,12 @@ def _number(text):
     return int(number) if number.is_integer() else number
 
 
-def parse_recommended_list(html):
+def parse_recommended_list(html, requested_scope=None):
     root = RenderedPage(html).root
     count = re.search(r"(\d+)\s*套[^。]*?配置", root.text)
     season = next((node.attrs.get("value") for node in root.walk("input") if node.attrs.get("name") == "season"), None)
-    if count is None or not season or len(season) > 128 or next(root.walk("h1"), Node()).text != "推薦隊伍 Tier List":
+    category = next((node.attrs.get("value") for node in root.walk("input") if node.attrs.get("name") == "category"), None)
+    if count is None or not season or not category or len(season) > 128 or next(root.walk("h1"), Node()).text != "推薦隊伍 Tier List":
         raise ValueError("Recommended list structure changed")
     tiers = {}
     for section in root.walk("section"):
@@ -152,11 +153,20 @@ def parse_recommended_list(html):
             continue
         score = next((node.text for node in link.walk("span") if node.attrs.get("title", "").startswith("來源評分")), "")
         heroes = [node.text for node in link.walk("span") if "rounded-full" in node.attrs.get("class", "")]
+        if len(heroes) > 3 and len(heroes) % 3:
+            raise ValueError("Recommended list alternative holder structure changed")
+        hero_sets = [heroes[index:index + 3] for index in range(0, len(heroes), 3)]
         url = validate_source_url(urljoin("https://sgsdeck.com", href))
-        records.append({"sourceConfigId": href.rsplit("/", 1)[-1], "sourceUrl": url, "nameZh": title.text, "value": _number(score), "heroNames": heroes, "tierRaw": tiers.get(href), "factionRaw": next((node.text.removeprefix("陣營：").strip() for node in link.walk("p") if node.text.startswith("陣營：")), None)})
+        records.append({"sourceConfigId": href.rsplit("/", 1)[-1], "sourceUrl": url, "nameZh": title.text, "value": _number(score), "heroNames": hero_sets[0] if hero_sets else [], "alternativeHeroSetsRaw": hero_sets[1:], "tierRaw": tiers.get(href), "factionRaw": next((node.text.removeprefix("陣營：").strip() for node in link.walk("p") if node.text.startswith("陣營：")), None)})
     if len(records) != int(count.group(1)) or len({row["sourceConfigId"] for row in records}) != len(records):
         raise ValueError("Recommended list count or identity changed")
-    return {"expectedCount": int(count.group(1)) if count else 0, "sourceSeason": {"label": season}, "records": records}
+    result = {"expectedCount": int(count.group(1)) if count else 0, "sourceSeason": {"label": season}, "sourceCategoryId": category, "records": records}
+    if requested_scope:
+        requested_season = requested_scope.get("sourceSeasonId", requested_scope.get("season"))
+        requested_category = requested_scope.get("sourceCategoryId", requested_scope.get("category"))
+        if season != requested_season or category != requested_category:
+            raise ValueError("Recommended list does not match requested scope")
+    return result
 
 
 def _field(card, label):
@@ -172,7 +182,7 @@ def parse_recommended_detail(html, url):
     root = RenderedPage(html).root
     title = next(root.walk("h1"), Node()).text
     canonical = [node.attrs.get("href") for node in root.walk("link") if node.attrs.get("rel") == "canonical"]
-    if canonical != [url] or not title:
+    if len(canonical) != 1 or unquote(canonical[0]) != unquote(url) or not title:
         raise ValueError("Recommended detail identity mismatch")
     header = next((node for node in root.walk("header") if next(node.walk("h1"), None)), Node())
     score = next((node.text for node in header.walk("span") if "font-mono" in node.attrs.get("class", "")), "")
@@ -192,17 +202,24 @@ def parse_recommended_detail(html, url):
             continue
         tactics = [re.sub(r"\[[A-Z]\]", "", "".join(node.text for node in _field(card, f"戰法 {index}"))).strip() for index in (1, 2)]
         books = [book.text for node in _field(card, "兵書") for book in node.walk("button")]
-        role = next((node.text for node in card.walk("span") if node.text in {"主將", "副將 1", "副將 2"}), "")
+        role = next((node.text for node in card.walk("span") if re.fullmatch(r"主將|副將 \d+", node.text)), "")
         notes = "\n".join(node.text for node in card.walk("p") if "text-xl" not in node.attrs.get("class", ""))
         heroes.append({"roleRaw": role, "nameRaw": hero, "tacticSlotsRaw": tactics, "bookSlotsRaw": books, "statFocusRaw": "".join(node.text for node in _field(card, "加點")), "notesRaw": notes})
-    if [hero["roleRaw"] for hero in heroes] != ["主將", "副將 1", "副將 2"]:
-        raise ValueError("Recommended detail must preserve three ordered holders")
+    expected_roles = ["主將"] + [f"副將 {index}" for index in range(1, len(heroes))]
+    if len(heroes) < 2 or [hero["roleRaw"] for hero in heroes] != expected_roles:
+        raise ValueError("Recommended detail must preserve source holder order")
     if any(not all(hero["tacticSlotsRaw"]) or len(hero["bookSlotsRaw"]) > 3 for hero in heroes):
         raise ValueError("Recommended detail slot structure changed")
     for hero in heroes:
         hero["bookSlotsRaw"] += [""] * (3 - len(hero["bookSlotsRaw"]))
+    alternatives = heroes[3:]
+    heroes = heroes[:3]
+    if len(heroes) == 2:
+        heroes.append({"roleRaw": "副將 2", "nameRaw": "", "tacticSlotsRaw": ["", ""],
+                       "bookSlotsRaw": ["", "", ""], "statFocusRaw": "", "notesRaw": "",
+                       "slotState": "source-empty"})
     unit_types = [node.text[1:] for node in root.walk("span") if node.text in {"#弓", "#騎", "#盾", "#槍", "#器械"}]
-    return {"sourceConfigId": url.rsplit("/", 1)[-1], "sourceUrl": url, "nameZh": title, "value": _number(score), "sourceSeason": {"label": label}, "heroes": heroes, "unitTypesRaw": unit_types, "notesRaw": "\n".join(node.text for node in root.walk("p") if "text-xl" not in node.attrs.get("class", ""))}
+    return {"sourceConfigId": url.rsplit("/", 1)[-1], "sourceUrl": url, "nameZh": title, "value": _number(score), "sourceSeason": {"label": label}, "heroes": heroes, "alternativeHoldersRaw": alternatives, "unitTypesRaw": unit_types, "notesRaw": "\n".join(node.text for node in root.walk("p") if "text-xl" not in node.attrs.get("class", ""))}
 
 
 def join_recommended_evidence(listing, details):
@@ -216,7 +233,7 @@ def join_recommended_evidence(listing, details):
         seen.add(identifier)
         if any(detail[key] != row[key] for key in ["sourceUrl", "nameZh", "value"]) or detail["sourceSeason"] != listing["sourceSeason"]:
             raise ValueError("Recommended list/detail mismatch")
-        if row["heroNames"] and row["heroNames"] != [hero["nameRaw"] for hero in detail["heroes"]]:
+        if row["heroNames"] and row["heroNames"] != [hero["nameRaw"] for hero in detail["heroes"] if hero["nameRaw"]]:
             raise ValueError("Recommended holder mismatch")
     details = [{**detail, "tierRaw": by_id[detail["sourceConfigId"]].get("tierRaw"), "factionRaw": by_id[detail["sourceConfigId"]].get("factionRaw")} for detail in details]
     return {"schemaVersion": 1, "provider": "sgsdeck", "inventory": {"expected": listing["expectedCount"], "extracted": len(details), "missingDetails": listing["expectedCount"] - len(details)}, "sourceSeason": listing["sourceSeason"], "records": details}

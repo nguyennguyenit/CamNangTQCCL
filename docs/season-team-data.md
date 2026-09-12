@@ -71,23 +71,48 @@ Khai hoang dùng hướng dẫn được bảo trì mới nhất và không thu�
 Text gợi ý khai hoang trong nguồn Cùng Tồn không tự thêm đội hoặc liên kết
 chuyển hình vào dữ liệu Khai hoang.
 
-Recommended có [adapter riêng](../pipeline/sgsdeck_recommended.py), ngoài sáu
-nhóm của catalog SGSDeck (tài liệu ngoài nhánh: `sgsdeck-catalog.md`). Adapter đọc cache đã checksum,
-không tự gọi mạng:
+Recommended có adapter/parser offline trong
+[`pipeline/sgsdeck_recommended.py`](../pipeline/sgsdeck_recommended.py) và crawler
+có cache/checkpoint trong
+[`pipeline/crawl_sgsdeck_recommended.py`](../pipeline/crawl_sgsdeck_recommended.py).
+Crawler chỉ nhận URL `https://sgsdeck.com/recommended`, kiểm tra redirect trước
+khi theo, đóng băng danh sách mùa/danh mục và lưu checksum từng trang. Chạy lại
+với `--resume`; scope chỉ được xuất bản khi có trạng thái `complete`,
+`empty-category` hoặc `uncollected-season`.
 
 ```bash
-python3 -m pipeline.sgsdeck_recommended --cache /path/to/recommended-cache
-python3 -m unittest tests.test_sgsdeck_recommended
+python3 -m pipeline.crawl_sgsdeck_recommended \
+  --cache .cache/sgsdeck-recommended --all-source-scopes --resume
+python3 -m pipeline.recommended_team_dedup \
+  --teams data/teams.json --team-tier data/team-tier.json \
+  --cache .cache/sgsdeck-recommended \
+  --identity-map pipeline/recommended-identity-map.json \
+  --output pipeline/recommended-other-teams.json
+python3 -m pipeline.build_recommended_reference \
+  --cache .cache/sgsdeck-recommended \
+  --identity-map pipeline/recommended-identity-map.json \
+  --other-ledger pipeline/recommended-other-teams.json \
+  --output src/data/recommended-reference
 ```
 
-Người dùng xác nhận ngày 2026-09-12 phạm vi sử dụng bao gồm lưu và hiển thị
-cấu hình/điểm Recommended trên website; [xác nhận thực thi](../plans/260907-0233-season-team-lookup/reports/execution-decisions.md)
-đã đóng câu hỏi quyền nguồn. Điều kiện đối chiếu dữ liệu bên dưới vẫn áp dụng.
+`recommended-identity-map.json` là ledger alias đã review. Identity nguồn chưa
+giải quyết được luôn là wildcard khi đối chiếu, không phải bằng chứng rằng một
+đội khác Team chuẩn. Team có alternatives chưa tách thành cấu hình cụ thể cũng
+ở trạng thái pending. Chỉ các row `admitted` trong
+`recommended-other-teams.json` được ghi vào `other-teams.json`; duplicate và
+pending không đi vào public artifact.
 
-Canonical evidence chỉ được ghi khi đủ mọi chi tiết của scope đã chọn và
-list/detail khớp. Các trường HTML streaming phải trở về đúng holder trước
-khi trích xuất. `pipeline/sgsdeck-recommended-evidence.json` là bằng chứng
-nguồn nội bộ, không nằm trong public routes và không tự trở thành điểm VN.
+`src/data/recommended-reference/current.json` chọn đúng một generation bất biến.
+Manifest khai báo hash và kích thước của `seasons.json`, `index.json`,
+`other-teams.json` và từng `details-<safeScopeKey>.json`. Astro chỉ xuất
+`/data/recommended/current.json` cùng các byte đã khai báo dưới
+`/data/recommended/<generationId>/`; HTML pin generation đó nên một trang đang
+mở không trộn hai lần cập nhật.
+
+Quyền lưu và hiển thị cấu hình/điểm Recommended đã được người dùng xác nhận
+ngày 2026-09-12. Dữ liệu này là tham khảo nguồn, không tự trở thành điểm,
+tier hoặc eligibility gameplay VN. Khai hoang hiện tại vẫn dùng dữ liệu bảo
+trì riêng; danh mục Khaihoang của Recommended chỉ nằm trong Team chuẩn.
 
 ## Kiểm tra phạm vi đã có dữ liệu
 

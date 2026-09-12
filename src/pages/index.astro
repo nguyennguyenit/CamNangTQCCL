@@ -1,6 +1,8 @@
 ---
 import { seasonArtifactHashes } from '../lib/root-static-artifacts';
+import { recommendedPublicationSnapshot } from '../lib/recommended-reference-artifacts';
 const seasonHashes = await seasonArtifactHashes();
+const recommended = await recommendedPublicationSnapshot();
 ---
 <!doctype html>
 <html lang="vi" data-theme="light">
@@ -32,8 +34,8 @@ const seasonHashes = await seasonArtifactHashes();
 
       <nav class="section-nav">
         <div id="section-menu-items" class="section-menu-items">
-          <button class="nav-tab active" data-section="team-pk">Team PK</button>
-          <button class="nav-tab" data-section="meta-cu">Meta phe (cũ)</button>
+          <button class="nav-tab active" data-section="team-chuan">Team chuẩn</button>
+          <button class="nav-tab" data-section="team-khac">Team khác</button>
           <button class="nav-tab" data-section="coexist">Cùng Tồn</button>
           <button class="nav-tab" data-section="khaihoang">Khai hoang</button>
           <button class="nav-tab" data-section="heroes">Tra cứu tướng</button>
@@ -50,8 +52,8 @@ const seasonHashes = await seasonArtifactHashes();
     <main class="layout">
       <div class="content">
         <div id="season-controls" class="season-controls" aria-label="Phạm vi đội hình"></div>
-        <section id="section-team-pk" class="section active"></section>
-        <section id="section-meta-cu" class="section"></section>
+        <section id="section-team-chuan" class="section active"></section>
+        <section id="section-team-khac" class="section"></section>
         <section id="section-coexist" class="section"></section>
         <section id="section-khaihoang" class="section"></section>
         <section id="section-heroes" class="section"></section>
@@ -67,6 +69,7 @@ const seasonHashes = await seasonArtifactHashes();
     </footer>
 
     <script is:inline type="application/json" id="season-artifact-hashes" set:html={JSON.stringify(seasonHashes)}></script>
+    <script is:inline type="application/json" id="recommended-publication" set:html={JSON.stringify(recommended.pin)}></script>
     <script is:inline type="module" src="/js/app.js"></script>
   </body>
 </html>
