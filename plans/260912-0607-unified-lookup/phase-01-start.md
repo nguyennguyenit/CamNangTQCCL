@@ -1,18 +1,20 @@
 ---
 title: "Phase 1: Danh tính và baseline bất biến"
-status: todo
+status: completed
 ---
 
 # Phase 1: Danh tính và baseline bất biến
 
 ## Overview
 
-Trạng thái **pending**; dependency: không; effort 2–3 ngày công. Đóng contract
+Trạng thái **completed**; dependency: không; effort 2–3 ngày công. Đóng contract
 input/danh tính và review corpus trước merge. Output là baseline/review riêng
 cùng helper tương thích đã kiểm; chưa thay public data hoặc snapshot SGSDeck.
 
 Context: [plan](plan.md), [brainstorm](../reports/brainstorm-260912-1203-unified-lookup.md),
 [data research](reports/research-data.md), [controller scout](reports/controller-scout.md).
+
+<!-- Updated: Audit Session 2 - privacy boundary precedes private artifacts -->
 
 ## Bằng chứng scout đã đọc
 
@@ -45,6 +47,16 @@ Context: [plan](plan.md), [brainstorm](../reports/brainstorm-260912-1203-unified
   Original 79 refs validate với baseline; new refs validate với candidate corpus.
 - Hash khác reconciliation: dừng freeze, đọc diff với owner WIP, tái đối chiếu;
   không tự “refresh” evidence hoặc lấy output hợp nhất làm fallback mới.
+
+### Private artifact boundary trước materialization
+
+Trước khi tạo `pipeline/lookup-inputs`, identity registry hoặc review report,
+thêm dev-server deny contract cho `pipeline/lookup-*`, `pipeline/lookup-inputs/**`
+và `pipeline/lookup-output/**`. Fixture phải tạo sentinel thật rồi chứng minh
+direct path, `/@fs`, raw/module query và traversal không trả bytes; public root
+artifacts và scoped Recommended routes vẫn hoạt động. Không dựa vào root artifact
+allowlist vì Vite filesystem serving là đường khác. Gate này thuộc Phase 1 và
+phải Green trước private bytes đầu tiên; Phase 3 chỉ rerun regression.
 
 ### Registry private duy nhất
 
@@ -118,30 +130,35 @@ review riêng. Không re-slug ID khi chỉnh nhãn của bốn nhóm mới.
 `pipeline/lookup-identity.json`, `pipeline/unified_lookup_identity.py`,
 `tests/test_unified_lookup_identity.py`.
 
-**Modify/planned:** `js/hero-identity.js`, `tests-js/hero-identity.test.mjs`,
+**Modify/planned:** `astro.config.mjs`, `tests-js/astro-dev-contract.test.mjs`
+cho private filesystem deny gate; `js/hero-identity.js`,
+`tests-js/hero-identity.test.mjs`,
 `mcp-worker/test/domain/legacy-domain-adapter.test.ts`; regenerate
 `mcp-worker/src/generated/workflow-build.ts` after shared semantic change.
 Existing Python/source mapping remain read-only. No root JSON/JS file added,
 so public manifest inventory does not grow. **Delete:** none.
+Preserve completed Recommended scoped routes while denying internal evidence.
 Serialize shared helper edits with owner mùa; không chỉnh `build_season_data.py`.
 
 ## Implementation Steps
 
 1. [ ] Inspect branch/worktree/diff, pin approved hashes, coordinate owner mùa;
    current tests là baseline, không phải Red của feature mới.
-2. [ ] Add actual-inventory identity tests và minimal API scaffolding; Red phải
+2. [ ] Create present private sentinels and add dev filesystem privacy Red; implement
+   exact deny boundary and reach Green before any registry/baseline materialization.
+3. [ ] Add actual-inventory identity tests and minimal API scaffolding; Red phải
    là assertion hành vi, không phải import/setup failure.
-3. [ ] Freeze baseline exclusive-create; refuse overwrite khi hash khác.
+4. [ ] Freeze baseline exclusive-create; refuse overwrite khi hash khác.
    Không invoke `build_dict`, `build_json`, crawler hoặc source rebuild.
-4. [ ] Review 259 candidates, 90/167 source unmatched, all 14 local unmatched;
+5. [ ] Review 259 candidates, 90/167 source unmatched, all 14 local unmatched;
    đối chiếu variants/relations/Chinese facts trước cấp tên mới. Agent làm review.
-5. [ ] Review extra-category/child identities; account 805 parents +708 children,
+6. [ ] Review extra-category/child identities; account 805 parents +708 children,
    không lấy unmatched counts làm confirmed-new totals.
-6. [ ] Implement strict validation/import of 79 refs, reverse uniqueness và
+7. [ ] Implement strict validation/import of 79 refs, reverse uniqueness và
    fingerprints; mỗi source/local row có disposition trong inventory riêng.
-7. [ ] Implement 40Y bridge, golden parity, workflow fingerprint regeneration;
+8. [ ] Implement 40Y bridge, golden parity, workflow fingerprint regeneration;
    kiểm old team/family corpus canaries không đổi behavior.
-8. [ ] Save private inventory/evidence report; Green và Refactor trước bàn giao
+9. [ ] Save private inventory/evidence report; Green và Refactor trước bàn giao
    exact baseline/registry hashes cùng unresolved list sang Phase 2.
 
 ## TDD Red → Green → Refactor
@@ -155,6 +172,7 @@ Serialize shared helper edits with owner mùa; không chỉnh `build_season_data
 | Child registry | Reorder cấp lại IDs | Stable reviewed keys | Children conserved by identity |
 | Source compatibility | Original refs không resolve | Unchanged source + frozen inputs | Không remap snapshot |
 | Legacy review adapter | Actual 79 rows bị reject vì thiếu new metadata | Hash-bound legacy origin, new decisions vẫn strict | Không bịa reviewer/date |
+| Dev private boundary | Present registry/sentinel served qua `/@fs`/raw query | Exact deny trước materialization | Public root + Recommended scoped routes unchanged |
 
 Narrow commands (root CWD trừ `--prefix`):
 
@@ -165,6 +183,7 @@ npm --prefix mcp-worker test -- test/domain/legacy-domain-adapter.test.ts
 python3 -m unittest tests.test_sgsdeck_identity tests.test_query_sgsdeck_catalog tests.test_build_dict
 npm --prefix mcp-worker run generate:workflow-build
 npm --prefix mcp-worker run check:workflow-build
+npm run test:dev-contract
 ```
 
 Lưu command/failing assertion, Green và rerun sau Refactor. New tests chưa chạy;
@@ -172,10 +191,11 @@ baseline controller là 13 Python +26 JS narrow tests, không broad release proo
 
 ## Success Criteria, risks và rollback
 
-- [ ] Inventory đầy đủ với unresolved trung thực, không silent drop/forced link.
-- [ ] 79 source/map bytes unchanged, old IDs/names exact, bốn variants tách đúng.
-- [ ] Fingerprints/child IDs stable; helper và MCP parity Green.
-- [ ] Phase 2 có exact hashes/evidence, không fabricated links.
+- [x] Inventory đầy đủ với unresolved trung thực, không silent drop/forced link.
+- [x] 79 source/map bytes unchanged, old IDs/names exact, bốn variants tách đúng.
+- [x] Fingerprints/child IDs stable; helper và MCP parity Green.
+- [x] Phase 2 có exact hashes/evidence, không fabricated links.
+- [x] Private registry/baseline/review bytes không thể đọc qua ordinary Astro dev routes.
 
 Fact game chưa biết: exhaust snapshot trước, giữ unresolved tiếng Việt; chỉ hỏi
 nếu bằng chứng game cần thiết thật sự không thể tìm được. Concurrent input
