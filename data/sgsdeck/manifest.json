@@ -1,0 +1,46 @@
+{
+  "fetchedAt": "2026-09-12T02:18:58+07:00",
+  "files": {
+    "advisors": "434426d1f6bcedddfa7c7c65c5a08a200c21051b69ab3ba0b05e21bd637f0510",
+    "buildings": "9d9f67dec69c739d49f2a74c787519441e67fe63155a238027cc2ca0c27241f8",
+    "equipment": "f4710374b65cc22893a3149e588924b6d9f97f628344554546f44aeb9cebfc0c",
+    "generals": "11c02fea0e6225d7d449b93adeeac8a47203c52c1c36d7502316fb1ff159bc3c",
+    "tactics": "12efcce7170fd7c8a7b5c78d7550e6075c7296407a2f7905b6e96a2a1f5a1ae9",
+    "troop-mods": "4e49ab32ea1d4f37e40c8df7bb3964cc2727079b827ca0482655892eaef74ceb"
+  },
+  "inputHashes": {
+    "heroes": "8c99a159c144000897025b98590617bfd9735d543ac4d458821dbc3e11029813",
+    "mapping": "0d178ea02ec9a58bbb35382fe6d0c4d93ab8f1952658b60fe61c87b787eb15cc",
+    "tactics": "f0e9be17bd1f36e8aba1e1ad3217504c42395aca57efdb3b2a1a7ee967e29834"
+  },
+  "inventory": {
+    "advisors": {
+      "childCount": 0,
+      "recordCount": 39
+    },
+    "buildings": {
+      "childCount": 426,
+      "recordCount": 41
+    },
+    "equipment": {
+      "childCount": 90,
+      "recordCount": 114
+    },
+    "generals": {
+      "childCount": 0,
+      "recordCount": 202
+    },
+    "tactics": {
+      "childCount": 0,
+      "recordCount": 393
+    },
+    "troop-mods": {
+      "childCount": 192,
+      "recordCount": 16
+    }
+  },
+  "provider": "sgsdeck",
+  "region": "TW",
+  "schemaVersion": 1,
+  "sourceManifestHash": "c3fecb51b938df08362d5c011286cdc9483485947258fdd2a3dd296c93f71b1f"
+}
