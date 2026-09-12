@@ -1,8 +1,16 @@
 {
   "entries": [
     {
+      "aliasEvidence": {
+        "馳援": [
+          "https://sgsdeck.com/recommended/s11-shu-qilin-gong",
+          "https://sgsdeck.com/recommended/s12-shu-bamen-shu-gong",
+          "https://sgsdeck.com/recommended/s13-bamen-shu-gong"
+        ]
+      },
       "aliases": [
         "Cứu Viện",
+        "馳援",
         "驰援"
       ],
       "displayNameVi": "Cứu Viện",
@@ -25,9 +33,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "樂善好施": [
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-c",
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-qun-bow-jinfan",
+          "https://sgsdeck.com/recommended/og-bingyan-kangkai-bow-jinfan"
+        ]
+      },
       "aliases": [
         "Thích Làm Việc Thiện",
-        "乐善好施"
+        "乐善好施",
+        "樂善好施"
       ],
       "displayNameVi": "Thích Làm Việc Thiện",
       "evidenceRef": "books-dict.json#44",
@@ -49,8 +65,16 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "執銳": [
+          "https://sgsdeck.com/recommended/2-do995s",
+          "https://sgsdeck.com/recommended/2-e85j93",
+          "https://sgsdeck.com/recommended/2-is9t6t"
+        ]
+      },
       "aliases": [
         "Cầm Binh Khí",
+        "執銳",
         "执锐"
       ],
       "displayNameVi": "Cầm Binh Khí",
@@ -61,9 +85,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "三里而還": [
+          "https://sgsdeck.com/recommended/s11-wei-traditional-dun",
+          "https://sgsdeck.com/recommended/s16-fanji-dun-dundun",
+          "https://sgsdeck.com/recommended/s17-fanji-dun-dundun"
+        ]
+      },
       "aliases": [
         "Tam Lý Nhĩ Hoàn",
-        "三里而还"
+        "三里而还",
+        "三里而還"
       ],
       "displayNameVi": "Tam Lý Nhĩ Hoàn",
       "evidenceRef": "books-dict.json#40",
@@ -85,9 +117,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "將威": [
+          "https://sgsdeck.com/recommended/og-bingyan-beifa-shield-huweijun",
+          "https://sgsdeck.com/recommended/og-bingyan-guanyu-weiyan-fazheng-shield",
+          "https://sgsdeck.com/recommended/og-bingyan-taoyuan-shield-huijun"
+        ]
+      },
       "aliases": [
         "Tướng Uy",
-        "将威"
+        "将威",
+        "將威"
       ],
       "displayNameVi": "Tướng Uy",
       "evidenceRef": "books-dict.json#53",
@@ -109,10 +149,18 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "嚴陣以待": [
+          "https://sgsdeck.com/recommended/s10-wei-jianxiong-qi",
+          "https://sgsdeck.com/recommended/s11-shu-hedan-zhang",
+          "https://sgsdeck.com/recommended/s11-wei-fa-dun"
+        ]
+      },
       "aliases": [
         "Bố Trận Chờ Đợi",
         "Nghiêm Trận Dĩ Đãi",
-        "严阵以待"
+        "严阵以待",
+        "嚴陣以待"
       ],
       "displayNameVi": "Bố Trận Chờ Đợi",
       "evidenceRef": "books-dict.json#3",
@@ -122,9 +170,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "分而疾戰": [
+          "https://sgsdeck.com/recommended/og-bingyan-faguan-shield-tengjia",
+          "https://sgsdeck.com/recommended/s16-gou-guan-zhao",
+          "https://sgsdeck.com/recommended/s16-guanjun-guanmei"
+        ]
+      },
       "aliases": [
         "Chia Nhỏ Đánh Nhanh",
-        "分而疾战"
+        "分而疾战",
+        "分而疾戰"
       ],
       "displayNameVi": "Chia Nhỏ Đánh Nhanh",
       "evidenceRef": "books-dict.json#4",
@@ -134,9 +190,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "剛柔": [
+          "https://sgsdeck.com/recommended/s16-fanji-dun-dundun",
+          "https://sgsdeck.com/recommended/s16-ren-taiwei",
+          "https://sgsdeck.com/recommended/s17-fanji-dun-dundun"
+        ]
+      },
       "aliases": [
         "Cương Nhu",
-        "刚柔"
+        "刚柔",
+        "剛柔"
       ],
       "displayNameVi": "Cương Nhu",
       "evidenceRef": "books-dict.json#7",
@@ -146,9 +210,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "一鼓作氣": [
+          "https://sgsdeck.com/recommended/2-do995s",
+          "https://sgsdeck.com/recommended/og-bingyan-quan-cavalry-hubaoqi",
+          "https://sgsdeck.com/recommended/s10-qun-san-shi-lv-taishici"
+        ]
+      },
       "aliases": [
         "Liền Mạch Một Hơi",
-        "一鼓作气"
+        "一鼓作气",
+        "一鼓作氣"
       ],
       "displayNameVi": "Liền Mạch Một Hơi",
       "evidenceRef": "books-dict.json#28",
@@ -158,9 +230,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "不勇則死": [
+          "https://sgsdeck.com/recommended/og-bingyan-quan-cavalry-hubaoqi",
+          "https://sgsdeck.com/recommended/s16-feixiong-san-huang",
+          "https://sgsdeck.com/recommended/s16-sp-quan-qiang"
+        ]
+      },
       "aliases": [
         "Không Chiến Sẽ Chết",
-        "不勇则死"
+        "不勇则死",
+        "不勇則死"
       ],
       "displayNameVi": "Không Chiến Sẽ Chết",
       "evidenceRef": "books-dict.json#24",
@@ -170,9 +250,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "合變": [
+          "https://sgsdeck.com/recommended/s13-weiyan-shu-qiang",
+          "https://sgsdeck.com/recommended/s16-guanguanwei",
+          "https://sgsdeck.com/recommended/s16-guanguanzhang"
+        ]
+      },
       "aliases": [
         "Hợp Biến",
-        "合变"
+        "合变",
+        "合變"
       ],
       "displayNameVi": "Hợp Biến",
       "evidenceRef": "books-dict.json#19",
@@ -182,9 +270,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "三軍之眾": [
+          "https://sgsdeck.com/recommended/2-is9t6t",
+          "https://sgsdeck.com/recommended/2-txb6ye",
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-a"
+        ]
+      },
       "aliases": [
         "Tam Quân Chi Chúng",
-        "三军之众"
+        "三军之众",
+        "三軍之眾"
       ],
       "displayNameVi": "Tam Quân Chi Chúng",
       "evidenceRef": "books-dict.json#41",
@@ -194,9 +290,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "百戰": [
+          "https://sgsdeck.com/recommended/og-bingyan-faguan-shield-tengjia",
+          "https://sgsdeck.com/recommended/s10-shu-sp-zhuge-yingzhi",
+          "https://sgsdeck.com/recommended/s11-qun-wufeng-qun-dun"
+        ]
+      },
       "aliases": [
         "Bách Chiến",
-        "百战"
+        "百战",
+        "百戰"
       ],
       "displayNameVi": "Bách Chiến",
       "evidenceRef": "books-dict.json#2",
@@ -206,9 +310,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "示敵以弱": [
+          "https://sgsdeck.com/recommended/s11-qun-wufeng-qun-dun",
+          "https://sgsdeck.com/recommended/s14-diaochan-qun-dun",
+          "https://sgsdeck.com/recommended/s16-daming-dun"
+        ]
+      },
       "aliases": [
         "Giả Nai Trước Địch",
-        "示敌以弱"
+        "示敌以弱",
+        "示敵以弱"
       ],
       "displayNameVi": "Giả Nai Trước Địch",
       "evidenceRef": "books-dict.json#15",
@@ -230,9 +342,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "鐵甲": [
+          "https://sgsdeck.com/recommended/s10-qun-san-shi-lv-zhoutai",
+          "https://sgsdeck.com/recommended/s10-qun-xianren-dun-yuji",
+          "https://sgsdeck.com/recommended/s10-shu-sp-zhuge-yingzhi"
+        ]
+      },
       "aliases": [
         "Giáp Sắt",
         "Thiết Giáp",
+        "鐵甲",
         "铁甲"
       ],
       "displayNameVi": "Giáp Sắt",
@@ -243,9 +363,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "後發先至": [
+          "https://sgsdeck.com/recommended/og-bingyan-beifa-shield-huweijun",
+          "https://sgsdeck.com/recommended/og-bingyan-guanyu-weiyan-fazheng-shield",
+          "https://sgsdeck.com/recommended/og-bingyan-taoyuan-shield-huijun"
+        ]
+      },
       "aliases": [
         "Đánh Sau Trúng Trước",
-        "后发先至"
+        "后发先至",
+        "後發先至"
       ],
       "displayNameVi": "Đánh Sau Trúng Trước",
       "evidenceRef": "books-dict.json#64",
@@ -255,9 +383,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "蠻勇非勇": [
+          "https://sgsdeck.com/recommended/og-bingyan-jiangwei-feixiong-cavalry",
+          "https://sgsdeck.com/recommended/s10-qun-san-shi-nu",
+          "https://sgsdeck.com/recommended/s10-shu-diandian-gong"
+        ]
+      },
       "aliases": [
         "Man Dũng Phi Dũng",
-        "蛮勇非勇"
+        "蛮勇非勇",
+        "蠻勇非勇"
       ],
       "displayNameVi": "Man Dũng Phi Dũng",
       "evidenceRef": "books-dict.json#30",
@@ -267,10 +403,18 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "疾戰突圍": [
+          "https://sgsdeck.com/recommended/og-bingyan-zhangjiao-yuji-cavalry",
+          "https://sgsdeck.com/recommended/s10-qun-xianren-dun-zhangjiao",
+          "https://sgsdeck.com/recommended/s11-qun-qun-gong-zhujun"
+        ]
+      },
       "aliases": [
         "Tật Chiến Đột Vi",
         "Đánh Phá Vòng Vây",
-        "疾战突围"
+        "疾战突围",
+        "疾戰突圍"
       ],
       "displayNameVi": "Đánh Phá Vòng Vây",
       "evidenceRef": "books-dict.json#63",
@@ -280,9 +424,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "避其銳氣": [
+          "https://sgsdeck.com/recommended/s10-qun-xianren-dun-yuji",
+          "https://sgsdeck.com/recommended/s10-shu-sp-zhuge-yingzhi",
+          "https://sgsdeck.com/recommended/s10-wu-sheji-gong"
+        ]
+      },
       "aliases": [
         "Tránh Thế Mạnh Của Địch",
         "Tị Kỳ Nhuệ Khí",
+        "避其銳氣",
         "避其锐气"
       ],
       "displayNameVi": "Tránh Thế Mạnh Của Địch",
@@ -293,10 +445,18 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "無戰而勝": [
+          "https://sgsdeck.com/recommended/2-e85j93",
+          "https://sgsdeck.com/recommended/s10-wei-fa-dun",
+          "https://sgsdeck.com/recommended/s10-wu-rougong-luxun"
+        ]
+      },
       "aliases": [
         "Không Chiến Mà Thắng",
         "Vô Chiến Nhi Thắng",
-        "无战而胜"
+        "无战而胜",
+        "無戰而勝"
       ],
       "displayNameVi": "Không Chiến Mà Thắng",
       "evidenceRef": "books-dict.json#23",
@@ -318,8 +478,16 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "攻其不備": [
+          "https://sgsdeck.com/recommended/s10-qun-san-shi-le-jin",
+          "https://sgsdeck.com/recommended/s10-qun-xianren-dun-yuji",
+          "https://sgsdeck.com/recommended/s10-shu-nai-gong"
+        ]
+      },
       "aliases": [
         "Đánh Vào Chỗ Hiểm",
+        "攻其不備",
         "攻其不备"
       ],
       "displayNameVi": "Đánh Vào Chỗ Hiểm",
@@ -330,9 +498,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "勝戰": [
+          "https://sgsdeck.com/recommended/2-do995s",
+          "https://sgsdeck.com/recommended/og-bingyan-quan-cavalry-hubaoqi",
+          "https://sgsdeck.com/recommended/og-bingyan-wunv-cavalry-hubaoqi"
+        ]
+      },
       "aliases": [
         "Thắng Chiến",
         "Thắng Trận",
+        "勝戰",
         "胜战"
       ],
       "displayNameVi": "Thắng Trận",
@@ -343,9 +519,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "善戰": [
+          "https://sgsdeck.com/recommended/og-bingyan-taoyuan-shield-huijun",
+          "https://sgsdeck.com/recommended/s27-han-luxun-hanshi-gong",
+          "https://sgsdeck.com/recommended/s27-han-meiren-lianhuan-gong"
+        ]
+      },
       "aliases": [
         "Thiện Chiến",
-        "善战"
+        "善战",
+        "善戰"
       ],
       "displayNameVi": "Thiện Chiến",
       "evidenceRef": "books-dict.json#42",
@@ -367,9 +551,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "應機立斷": [
+          "https://sgsdeck.com/recommended/s23-weiyan-huangma-1",
+          "https://sgsdeck.com/recommended/s23-weiyan-huangma-2",
+          "https://sgsdeck.com/recommended/yxms-033-嘟嘟弓sp周瑜"
+        ]
+      },
       "aliases": [
         "Hành Động Theo Thời",
-        "应机立断"
+        "应机立断",
+        "應機立斷"
       ],
       "displayNameVi": "Hành Động Theo Thời",
       "evidenceRef": "books-dict.json#18",
@@ -391,9 +583,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "靜心": [
+          "https://sgsdeck.com/recommended/og-bingyan-quan-cavalry-hubaoqi",
+          "https://sgsdeck.com/recommended/s10-wu-hujiang-gong",
+          "https://sgsdeck.com/recommended/s10-wu-wudun-zhouyu"
+        ]
+      },
       "aliases": [
         "Tĩnh Tâm",
-        "静心"
+        "静心",
+        "靜心"
       ],
       "displayNameVi": "Tĩnh Tâm",
       "evidenceRef": "books-dict.json#52",
@@ -403,10 +603,18 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "遠謀": [
+          "https://sgsdeck.com/recommended/og-bingyan-dudu-bow-baimaobing",
+          "https://sgsdeck.com/recommended/s27-han-jiaxu-rou-gong",
+          "https://sgsdeck.com/recommended/s27-han-zhangrang-rou-gong"
+        ]
+      },
       "aliases": [
         "Mưu Kế Sâu Xa",
         "Viễn Mưu",
-        "远谋"
+        "远谋",
+        "遠謀"
       ],
       "displayNameVi": "Mưu Kế Sâu Xa",
       "evidenceRef": "books-dict.json#31",
@@ -453,9 +661,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "精準": [
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-b",
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-c",
+          "https://sgsdeck.com/recommended/og-bingyan-dudu-bow-baimaobing"
+        ]
+      },
       "aliases": [
         "Tinh Chuẩn",
-        "精准"
+        "精准",
+        "精準"
       ],
       "displayNameVi": "Tinh Chuẩn",
       "evidenceRef": "books-dict.json#49",
@@ -478,9 +694,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "審時度勢": [
+          "https://sgsdeck.com/recommended/og-bingyan-huangma-spear-jiefanwei",
+          "https://sgsdeck.com/recommended/s27-han-huangma-qiang",
+          "https://sgsdeck.com/recommended/sp-1x2jr4j"
+        ]
+      },
       "aliases": [
         "Đánh Giá Tình Hình",
-        "审时度势"
+        "审时度势",
+        "審時度勢"
       ],
       "displayNameVi": "Đánh Giá Tình Hình",
       "evidenceRef": "books-dict.json#62",
@@ -490,9 +714,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "誘敵之策": [
+          "https://sgsdeck.com/recommended/s10-qun-san-shi-lv-guanmei",
+          "https://sgsdeck.com/recommended/s10-qun-san-shi-lv-zhoutai",
+          "https://sgsdeck.com/recommended/s10-wei-baotou-qi-xiahouyuan"
+        ]
+      },
       "aliases": [
         "Dụ Địch Chi Sách",
         "Kế Sách Dụ Địch",
+        "誘敵之策",
         "诱敌之策"
       ],
       "displayNameVi": "Kế Sách Dụ Địch",
@@ -515,8 +747,16 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "以直報怨": [
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-c",
+          "https://sgsdeck.com/recommended/og-bingyan-taoyuan-shield-huijun",
+          "https://sgsdeck.com/recommended/team-fq9t1"
+        ]
+      },
       "aliases": [
         "Dĩ Trực Báo Oán",
+        "以直報怨",
         "以直报怨"
       ],
       "displayNameVi": "Dĩ Trực Báo Oán",
@@ -527,8 +767,16 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "文韜": [
+          "https://sgsdeck.com/recommended/2-e85j93",
+          "https://sgsdeck.com/recommended/2-is9t6t",
+          "https://sgsdeck.com/recommended/2-txb6ye"
+        ]
+      },
       "aliases": [
         "Văn Thao",
+        "文韜",
         "文韬"
       ],
       "displayNameVi": "Văn Thao",
@@ -539,9 +787,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "久戰": [
+          "https://sgsdeck.com/recommended/2-is9t6t",
+          "https://sgsdeck.com/recommended/2-txb6ye",
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-a"
+        ]
+      },
       "aliases": [
         "Chiến Đấu Trường Kỳ",
-        "久战"
+        "久战",
+        "久戰"
       ],
       "displayNameVi": "Chiến Đấu Trường Kỳ",
       "evidenceRef": "books-dict.json#5",
@@ -563,8 +819,16 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "惜兵愛民": [
+          "https://sgsdeck.com/recommended/og-bingyan-huangma-spear-jiefanwei",
+          "https://sgsdeck.com/recommended/s10-wu-wudun-luxun",
+          "https://sgsdeck.com/recommended/s10-wu-wudun-zhouyu"
+        ]
+      },
       "aliases": [
         "Yêu Lính Thương Dân",
+        "惜兵愛民",
         "惜兵爱民"
       ],
       "displayNameVi": "Yêu Lính Thương Dân",
@@ -575,10 +839,18 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "臨敵不亂": [
+          "https://sgsdeck.com/recommended/s10-qun-san-shi-le-jin",
+          "https://sgsdeck.com/recommended/s10-wei-sima-dun-traditional",
+          "https://sgsdeck.com/recommended/s10-wei-sima-dun-xingyizhen"
+        ]
+      },
       "aliases": [
         "Gặp Địch Không Loạn",
         "Lâm Địch Bất Loạn",
-        "临敌不乱"
+        "临敌不乱",
+        "臨敵不亂"
       ],
       "displayNameVi": "Gặp Địch Không Loạn",
       "evidenceRef": "books-dict.json#17",
@@ -588,9 +860,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "掩虛": [
+          "https://sgsdeck.com/recommended/2-do995s",
+          "https://sgsdeck.com/recommended/og-bingyan-faguan-shield-tengjia",
+          "https://sgsdeck.com/recommended/og-bingyan-huangma-spear-jiefanwei"
+        ]
+      },
       "aliases": [
         "Khép Hờ",
-        "掩虚"
+        "掩虚",
+        "掩虛"
       ],
       "displayNameVi": "Khép Hờ",
       "evidenceRef": "books-dict.json#21",
@@ -612,10 +892,18 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "歸心": [
+          "https://sgsdeck.com/recommended/s23-weiyan-huangma-1",
+          "https://sgsdeck.com/recommended/s23-weiyan-huangma-2",
+          "https://sgsdeck.com/recommended/team-dl2dk"
+        ]
+      },
       "aliases": [
         "Quy Thuận",
         "Quy Tâm",
-        "归心"
+        "归心",
+        "歸心"
       ],
       "displayNameVi": "Quy Thuận",
       "evidenceRef": "books-dict.json#36",
@@ -625,9 +913,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "神機": [
+          "https://sgsdeck.com/recommended/s10-qun-qun-dun",
+          "https://sgsdeck.com/recommended/s10-qun-san-shi-lv-guanmei",
+          "https://sgsdeck.com/recommended/s10-shu-dongcha-qiang"
+        ]
+      },
       "aliases": [
         "Thần Cơ",
-        "神机"
+        "神机",
+        "神機"
       ],
       "displayNameVi": "Thần Cơ",
       "evidenceRef": "books-dict.json#45",
@@ -637,9 +933,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "速戰": [
+          "https://sgsdeck.com/recommended/2-do995s",
+          "https://sgsdeck.com/recommended/og-bingyan-huangma-spear-jiefanwei",
+          "https://sgsdeck.com/recommended/og-bingyan-xuyou-spmachao-cavalry"
+        ]
+      },
       "aliases": [
         "Tốc Chiến",
-        "速战"
+        "速战",
+        "速戰"
       ],
       "displayNameVi": "Tốc Chiến",
       "evidenceRef": "books-dict.json#56",
@@ -661,8 +965,16 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "勝而益強": [
+          "https://sgsdeck.com/recommended/2-is9t6t",
+          "https://sgsdeck.com/recommended/2-txb6ye",
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-a"
+        ]
+      },
       "aliases": [
         "Thắng Sẽ Càng Mạnh",
+        "勝而益強",
         "胜而益强"
       ],
       "displayNameVi": "Thắng Sẽ Càng Mạnh",
@@ -673,8 +985,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "洞若觀火": [
+          "https://sgsdeck.com/recommended/og-bingyan-wunv-cavalry-hubaoqi",
+          "https://sgsdeck.com/recommended/yxms-041-大小喬香"
+        ]
+      },
       "aliases": [
         "Nhìn Rõ Mồn Một",
+        "洞若觀火",
         "洞若观火"
       ],
       "displayNameVi": "Nhìn Rõ Mồn Một",
@@ -685,8 +1004,16 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "防備": [
+          "https://sgsdeck.com/recommended/2-e85j93",
+          "https://sgsdeck.com/recommended/og-bingyan-huangma-spear-jiefanwei",
+          "https://sgsdeck.com/recommended/og-bingyan-zhangfei-nuke-bow"
+        ]
+      },
       "aliases": [
         "Phòng Bị",
+        "防備",
         "防备"
       ],
       "displayNameVi": "Phòng Bị",
@@ -697,8 +1024,16 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "錘煉": [
+          "https://sgsdeck.com/recommended/2-txb6ye",
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-b",
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-c"
+        ]
+      },
       "aliases": [
         "Rèn Luyện",
+        "錘煉",
         "锤炼"
       ],
       "displayNameVi": "Rèn Luyện",
@@ -709,9 +1044,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "分險": [
+          "https://sgsdeck.com/recommended/2-do995s",
+          "https://sgsdeck.com/recommended/og-bingyan-quan-cavalry-hubaoqi",
+          "https://sgsdeck.com/recommended/s19-rongguang-qiang"
+        ]
+      },
       "aliases": [
         "Phân Hiểm",
-        "分险"
+        "分险",
+        "分險"
       ],
       "displayNameVi": "Phân Hiểm",
       "evidenceRef": "books-dict.json#34",
@@ -721,10 +1064,18 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "守勢": [
+          "https://sgsdeck.com/recommended/2-e85j93",
+          "https://sgsdeck.com/recommended/og-bingyan-huangma-spear-jiefanwei",
+          "https://sgsdeck.com/recommended/og-bingyan-quan-cavalry-hubaoqi"
+        ]
+      },
       "aliases": [
         "Thế Phòng Thủ",
         "Thủ Thế",
-        "守势"
+        "守势",
+        "守勢"
       ],
       "displayNameVi": "Thế Phòng Thủ",
       "evidenceRef": "books-dict.json#48",
@@ -734,9 +1085,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "銳利": [
+          "https://sgsdeck.com/recommended/yxms-010-周劭蜀弓"
+        ]
+      },
       "aliases": [
         "Nhuệ Lợi",
         "Sắc Bén",
+        "銳利",
         "锐利"
       ],
       "displayNameVi": "Sắc Bén",
@@ -747,8 +1104,16 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "鬼謀": [
+          "https://sgsdeck.com/recommended/og-bingyan-beifa-shield-huweijun",
+          "https://sgsdeck.com/recommended/og-bingyan-guanyu-weiyan-fazheng-shield",
+          "https://sgsdeck.com/recommended/og-bingyan-taoyuan-shield-huijun"
+        ]
+      },
       "aliases": [
         "Quỷ Mưu",
+        "鬼謀",
         "鬼谋"
       ],
       "displayNameVi": "Quỷ Mưu",
@@ -759,9 +1124,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "大謀不謀": [
+          "https://sgsdeck.com/recommended/s11-qun-san-shi-lu",
+          "https://sgsdeck.com/recommended/s11-qun-wufeng-qun-dun",
+          "https://sgsdeck.com/recommended/s11-wu-dudu-gong"
+        ]
+      },
       "aliases": [
         "Không Lộ Tài Năng",
         "Đại Mưu Bất Mưu",
+        "大謀不謀",
         "大谋不谋"
       ],
       "displayNameVi": "Không Lộ Tài Năng",
@@ -784,9 +1157,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "統軍": [
+          "https://sgsdeck.com/recommended/2-is9t6t",
+          "https://sgsdeck.com/recommended/2-txb6ye",
+          "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-a"
+        ]
+      },
       "aliases": [
         "Dẫn Quân",
         "Thống Quân",
+        "統軍",
         "统军"
       ],
       "displayNameVi": "Dẫn Quân",
@@ -797,9 +1178,17 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "勵軍": [
+          "https://sgsdeck.com/recommended/og-bingyan-taoyuan-shield-huijun",
+          "https://sgsdeck.com/recommended/s10-qun-qun-dun",
+          "https://sgsdeck.com/recommended/s10-qun-san-shi-le-jin"
+        ]
+      },
       "aliases": [
         "Khích Lệ Lòng Quân",
-        "励军"
+        "励军",
+        "勵軍"
       ],
       "displayNameVi": "Khích Lệ Lòng Quân",
       "evidenceRef": "books-dict.json#22",
@@ -6228,7 +6617,7 @@
     "heroes-dict.json": "sha256:8c99a159c144000897025b98590617bfd9735d543ac4d458821dbc3e11029813",
     "tactics.json": "sha256:f0e9be17bd1f36e8aba1e1ad3217504c42395aca57efdb3b2a1a7ee967e29834"
   },
-  "mappingHash": "sha256:83a769038706d0c840b57c909ab6f99ee8a173b27065e32ba94090fbb1df8453",
+  "mappingHash": "sha256:f751637829ba52258e40cc5e8e64129fff1a6fd7775bb121c262cd41081945b7",
   "schemaVersion": 1,
   "sourceAliasMethod": "Exact source raw alias; macOS Foundation Traditional-Simplified transform matched one reviewed curated Chinese alias without collision.",
   "sourceInventoryHash": "sha256:591857173405450f9972faad1b6ce3b1abbd9641608a8c1a8ea8e843fba15ff5"

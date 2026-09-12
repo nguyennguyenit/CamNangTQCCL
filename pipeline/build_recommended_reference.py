@@ -8,6 +8,7 @@ import os
 import re
 import tempfile
 from pathlib import Path
+from pipeline.recommended_identity import build_mapping, resolve_identity
 from pipeline.sgsdeck_recommended import join_recommended_evidence, parse_recommended_detail, parse_recommended_list
 
 
@@ -114,6 +115,45 @@ def build_generation(inputs, output):
     finally:
         lock.rmdir()
 
+def _display_name(kind, raw, mapping, cache):
+    """Reviewed Vietnamese display name for one raw source name, else None."""
+    if not isinstance(raw, str) or not raw.strip():
+        return None
+    key = (kind, raw)
+    if key not in cache:
+        resolved = resolve_identity(kind, raw, mapping)
+        cache[key] = resolved.get("displayNameVi") if resolved.get("status") == "resolved" else None
+    return cache[key]
+
+
+def _localized_holder(holder, mapping, cache):
+    return {
+        **holder,
+        "displayNameVi": _display_name("hero", holder.get("nameRaw"), mapping, cache),
+        "tacticSlotsVi": [_display_name("tactic", raw, mapping, cache) for raw in holder.get("tacticSlotsRaw") or []],
+        "bookSlotsVi": [_display_name("book", raw, mapping, cache) for raw in holder.get("bookSlotsRaw") or []],
+    }
+
+
+def _localized_holders(holders, mapping, cache, shared):
+    """Enrich a holder list once; index and detail rows share the same list object."""
+    holders = holders or []
+    key = id(holders)
+    if key not in shared:
+        shared[key] = (holders, [_localized_holder(holder, mapping, cache) for holder in holders])
+    return shared[key][1]
+
+
+def localize_rows(rows, mapping, cache=None, shared=None):
+    """Return copies of Recommended rows with display-only Vietnamese sidecars."""
+    cache = {} if cache is None else cache
+    shared = {} if shared is None else shared
+    return [{**row,
+             "heroes": _localized_holders(row.get("heroes"), mapping, cache, shared),
+             "alternativeHoldersRaw": _localized_holders(row.get("alternativeHoldersRaw"), mapping, cache, shared)}
+            for row in rows]
+
+
 def inputs_from_cache(cache, identity_map=None, other_ledger=None):
     cache = Path(cache)
     frozen = json.loads((cache / "scope-inventory.json").read_text())
@@ -204,6 +244,10 @@ def inputs_from_cache(cache, identity_map=None, other_ledger=None):
                   for name in ("distinct", "duplicate", "pendingIdentity", "pendingSource")}
         if counts != ledger.get("counts") or len(ledger.get("admitted", [])) != counts["distinct"]:
             raise ValueError("Team khác ledger counts differ")
+        mapping = build_mapping(json.loads(map_bytes).get("entries", []))
+        names, shared = {}, {}
+        result["records"] = localize_rows(records, mapping, names, shared)
+        result["details"] = {key: localize_rows(rows, mapping, names, shared) for key, rows in details.items()}
         result.update({
             "otherTeams": ledger["admitted"],
             "mappingHash": "sha256:" + sha(map_bytes),

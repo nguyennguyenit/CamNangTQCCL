@@ -4,24 +4,26 @@ import { validateReferenceSourceUrl } from './recommended-reference-state.js';
 const text = value => value || 'Chưa có dữ liệu';
 
 function holderView(holder,onTag) {
-  const slots=(values,count,cls)=>Array.from({length:count},(_,index)=>{
-    const value=values?.[index];
+  const slots=(values,viValues,count,cls)=>Array.from({length:count},(_,index)=>{
+    const value=viValues?.[index] || values?.[index];
     return value
       ? el('button',{type:'button',class:`tag ${cls}`,onClick:event=>{event.stopPropagation();onTag?.(value);}},text(value))
       : el('span',{class:`tag ${cls} missing-slot`},'Chưa có dữ liệu');
   });
   return el('div',{class:'hero reference-holder'},[
     el('div',{class:'hero-name'},[el('span',{class:'hn'},text(holder.displayNameVi || holder.nameRaw))]),
-    el('div',{class:'line tactics'},slots(holder.tacticSlotsRaw,2,'t-tactic')),
-    el('div',{class:'line books'},slots(holder.bookSlotsRaw,3,'t-book')),
+    el('div',{class:'line tactics'},slots(holder.tacticSlotsRaw,holder.tacticSlotsVi,2,'t-tactic')),
+    el('div',{class:'line books'},slots(holder.bookSlotsRaw,holder.bookSlotsVi,3,'t-book')),
   ]);
 }
+
+const slotLine=(raw,vi)=>(raw || []).map((value,index)=>text(vi?.[index] || value)).join(' · ');
 
 function detailedHolder(holder) {
   return el('section',{class:'reference-detail-holder'},[
     el('h3',{},text(holder.displayNameVi || holder.nameRaw)),
-    el('p',{},`Chiến pháp: ${(holder.tacticSlotsRaw || []).map(text).join(' · ')}`),
-    el('p',{},`Binh thư: ${(holder.bookSlotsRaw || []).map(text).join(' · ')}`),
+    el('p',{},`Chiến pháp: ${slotLine(holder.tacticSlotsRaw,holder.tacticSlotsVi)}`),
+    el('p',{},`Binh thư: ${slotLine(holder.bookSlotsRaw,holder.bookSlotsVi)}`),
     el('p',{},`Cộng điểm: ${text(holder.statFocusRaw)}`),
     holder.notesRaw ? el('p',{},holder.notesRaw) : null,
   ]);

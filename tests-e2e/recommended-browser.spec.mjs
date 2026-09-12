@@ -138,10 +138,22 @@ test('gameplay navigation invalidates a delayed Recommended detail',async({page}
   await expect(page.locator('#recommended-team-detail')).toHaveCount(0);
 });
 
-test('source detail renders every captured alternative holder group',async({page})=>{
+test('source detail preserves alternative holders and prefers available Vietnamese names',async({page,request})=>{
+  const pin=await (await request.get('/data/recommended/current.json')).json();
+  const index=await (await request.get(`/data/recommended/${pin.generationId}/index.json`)).json();
+  const row=index.records.find(row=>row.sourceConfigId==='team-b8ink3');
+  const alternatives=row.alternativeHoldersRaw;
   await page.goto('/?detail=team-b8ink3#team-chuan');
-  await expect(page.locator('#recommended-team-detail .reference-alternative-group')).toBeVisible();
-  await expect(page.locator('#recommended-team-detail .reference-alternative-group')).toContainText('眾志成城');
+  const groups=page.locator('#recommended-team-detail .reference-alternative-group');
+  await expect(groups).toHaveCount(Math.ceil(alternatives.length/3));
+  const holders=groups.locator('.reference-detail-holder');
+  await expect(holders).toHaveCount(alternatives.length);
+  for (const [index,holder] of alternatives.entries()) {
+    await expect(holders.nth(index).locator('h3')).toHaveText(holder.displayNameVi || holder.nameRaw);
+    for (const [slot,raw] of holder.tacticSlotsRaw.entries()) {
+      if (raw) await expect(holders.nth(index)).toContainText(holder.tacticSlotsVi?.[slot] || raw);
+    }
+  }
 });
 
 test('Back and Forward restore URL-owned reference snapshots without rewriting history',async({page})=>{

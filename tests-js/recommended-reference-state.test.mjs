@@ -41,3 +41,22 @@ test('source URL policy rejects wrong hosts and credentials', () => {
   assert.equal(validateReferenceSourceUrl('recommended',{sourceConfigId:'呂布'},'https://sgsdeck.com/recommended/%E5%91%82%E5%B8%83'), 'https://sgsdeck.com/recommended/%E5%91%82%E5%B8%83');
   assert.equal(validateReferenceSourceUrl('other',{},'javascript:alert(1)'), null);
 });
+
+test('query matches enriched rows by Vietnamese with or without accents and by original Chinese', () => {
+  const enriched = [
+    {sourceConfigId:'vi',sourceSeasonId:'s28',sourceCategoryId:'交戰',tierOrder:2,listIndex:0,heroes:[
+      {nameRaw:'呂布',displayNameVi:'Lữ Bố',tacticSlotsRaw:['神兵天降','暴戾無仁'],tacticSlotsVi:['Thần Binh Thiên Giáng',null],bookSlotsRaw:['破陣'],bookSlotsVi:[null]},
+    ]},
+    {sourceConfigId:'other',sourceSeasonId:'s28',sourceCategoryId:'交戰',tierOrder:2,listIndex:1,heroes:[
+      {nameRaw:'張飛',displayNameVi:'Trương Phi',tacticSlotsRaw:['橫掃千軍'],tacticSlotsVi:[null],bookSlotsRaw:[],bookSlotsVi:[]},
+    ]},
+  ];
+  const state = query => ({season:'s28',category:'交戰',query,filters:{faction:[],unit:[],tier:[],subcategory:[],source:[]}});
+  const ids = query => projectRecommendedRows(enriched,state(query)).map(row=>row.sourceConfigId);
+  assert.deepEqual(ids('Lữ Bố'), ['vi']);
+  assert.deepEqual(ids('lu bo'), ['vi']);
+  assert.deepEqual(ids('呂布'), ['vi']);
+  assert.deepEqual(ids('than binh thien giang'), ['vi']);
+  assert.deepEqual(ids('暴戾無仁'), ['vi']);
+  assert.deepEqual(ids('truong phi'), ['other']);
+});
