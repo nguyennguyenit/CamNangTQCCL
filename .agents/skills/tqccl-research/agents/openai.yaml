@@ -1,0 +1,5 @@
+interface:
+  display_name: "TQCCL Research"
+  short_description: "Verify TQCCL builds, mechanics, and sources"
+  default_prompt: >-
+    Use $tqccl-research to investigate this TQCCL claim, resolve or mark unknown its season and server scope, preserve exact source configurations, and report claim-level evidence and budget usage.
