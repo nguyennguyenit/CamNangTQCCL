@@ -4,6 +4,7 @@ import { relative, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { PUBLIC_ARTIFACTS, validatePublicArtifactManifest } from "../src/lib/public-artifact-manifest.mjs";
 import { recommendedPublicationSnapshot } from "../src/lib/recommended-reference-artifacts.ts";
+import { teamDetailCatalog } from "../src/lib/team-detail-routes.ts";
 
 export const DEPLOYMENT_CONTROL_ARTIFACTS = Object.freeze([
   Object.freeze({ sourcePath: "public/_headers", outputPath: "_headers" }),
@@ -36,6 +37,13 @@ export async function verifyAstroDist({
   const rootPath = fileURLToPath(projectRoot);
   const distPath = fileURLToPath(distDir);
   const recommended = await recommendedPublicationSnapshot(resolve(rootPath, "src/data/recommended-reference"));
+  const catalog = await teamDetailCatalog({
+    recommendedRoot: resolve(rootPath, "src/data/recommended-reference"),
+    teamsPath: resolve(rootPath, "data/teams.json"),
+  });
+  if (catalog.generationId !== recommended.pin.generationId) {
+    throw new Error("Team detail catalog and emitted Recommended generation differ");
+  }
   const recommendedFiles = [
     "data/recommended/current.json",
     ...Object.keys(recommended.files).map((name) => `data/recommended/${recommended.pin.generationId}/${name}`),
@@ -44,19 +52,31 @@ export async function verifyAstroDist({
     `${artifact.kind}/${artifact.sourceBasename}`);
   const expectedFiles = [
     "index.html",
+    "404.html",
+    ...catalog.htmlPaths,
     ...expectedAssets,
     ...recommendedFiles,
     ...controlArtifacts.map((artifact) => artifact.outputPath),
     ...staticArtifacts.map((artifact) => artifact.outputPath),
   ].sort();
   const files = await listFiles(distPath);
-  const unexpectedFiles = files.filter((file) => !expectedFiles.includes(file));
-  const missingFiles = expectedFiles.filter((file) => !files.includes(file));
+  // Route segments may be emitted percent-encoded; identity is the decoded path.
+  const decodePath = (file) => {
+    try {
+      return decodeURIComponent(file);
+    } catch {
+      return file;
+    }
+  };
+  const emittedByDecodedPath = new Map(files.map((file) => [decodePath(file), file]));
+  const unexpectedFiles = files.filter((file) => !expectedFiles.includes(decodePath(file)));
+  const missingFiles = expectedFiles.filter((file) => !emittedByDecodedPath.has(file));
   if (unexpectedFiles.length || missingFiles.length) {
     throw new Error(
       `dist allowlist mismatch; unexpected: ${unexpectedFiles.join(", ") || "none"}; missing: ${missingFiles.join(", ") || "none"}`,
     );
   }
+  if (emittedByDecodedPath.size !== files.length) throw new Error("dist contains colliding team detail paths");
 
   for (const artifact of manifest) {
     const relativePath = `${artifact.kind}/${artifact.sourceBasename}`;
@@ -89,6 +109,42 @@ export async function verifyAstroDist({
     throw new Error("Built HTML Recommended pin differs from emitted generation");
   }
 
+  // Mỗi trang chi tiết phải pin đúng identity đã validate, và không nạp app gốc.
+  const readPage = async (decodedPath) => readFile(resolve(distPath, emittedByDecodedPath.get(decodedPath)), "utf8");
+  const pages = [
+    ...catalog.recommended.map((entry) => ({
+      path: entry.htmlPath,
+      pins: [
+        `data-source-config-id="${entry.sourceConfigId}"`,
+        `data-scope-key="${entry.safeScopeKey}"`,
+        `data-generation-id="${catalog.generationId}"`,
+        `data-manifest-sha256="${catalog.manifestSha256}"`,
+      ],
+    })),
+    ...catalog.legacy.map((entry) => ({
+      path: entry.htmlPath,
+      pins: [
+        `data-legacy-team-id="${entry.legacyTeamId}"`,
+        `data-legacy-teams-sha256="${catalog.legacyTeamsSha256}"`,
+        `data-generation-id="${catalog.generationId}"`,
+        `data-manifest-sha256="${catalog.manifestSha256}"`,
+      ],
+    })),
+  ];
+  for (let start = 0; start < pages.length; start += 64) {
+    await Promise.all(pages.slice(start, start + 64).map(async ({ path, pins }) => {
+      const page = await readPage(path);
+      for (const pin of pins) {
+        if (!page.includes(pin)) throw new Error(`Team detail page lacks its validated pin: ${path} (${pin})`);
+      }
+      if (page.includes('src="/js/app.js"')) throw new Error(`Team detail page boots the root application: ${path}`);
+    }));
+  }
+  const notFound = await readPage("404.html");
+  if (!notFound.includes('id="not-found-title"')) throw new Error("Static 404 page lacks its not-found heading");
+  if (notFound.includes('src="/js/app.js"') || notFound.includes('src="/js/team-detail.js"')) {
+    throw new Error("Static 404 page must not boot application entries");
+  }
   let lookupGenerationId = null;
   const lookupRoutes = new Set(manifest.filter((artifact) => artifact.kind === "data").map((artifact) => artifact.routeParam));
   if (lookupRoutes.has("lookup-manifest")) {
@@ -120,6 +176,7 @@ export async function verifyAstroDist({
       }
     }
     lookupGenerationId = lookupManifest.generationId;
+
   }
 
   for (const artifact of [...controlArtifacts, ...staticArtifacts]) {

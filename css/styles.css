@@ -78,7 +78,8 @@ body {
   background: var(--panel); border-bottom: 2px solid var(--accent);
 }
 .brand { display: flex; align-items: center; gap: .7rem; }
-.site-header h1 { font-size: 1.15rem; margin: 0; }
+.site-header h1,.site-title { font-size: 1.15rem; margin: 0; }
+.site-title { display: block; color: inherit; text-decoration: none; font-weight: 700; }
 .tagline { margin: 0; font-size: .78rem; color: var(--muted); }
 .header-actions { display: flex; align-items: center; gap: .8rem; }
 .stats { font-size: .82rem; color: var(--muted); white-space: nowrap; }
@@ -536,7 +537,7 @@ body {
   }
   .brand { gap: .45rem; min-width: 0; }
   .brand > div { min-width: 0; }
-  .site-header h1 {
+  .site-header h1,.site-title {
     font-size: .98rem;
     line-height: 1.15;
     overflow: hidden;
@@ -808,7 +809,8 @@ body {
 .season-config-detail :focus-visible,.season-controls :focus-visible,.team-filter-bar :focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
 @media (max-width:480px) { .season-controls label { flex-basis:100%; max-width:none; } .season-hero-slot { grid-template-columns:1fr; } .season-config-detail { padding:10px; } .filter-bar select { flex:1 1 100%; } }
 
-.season-team-groups .team-grid { grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr)); }
+/* Bốn cột đọc được ở 1440, tự rớt 3/2/1 theo bề rộng; không khóa chiều cao thẻ. */
+.season-team-groups .team-grid { grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr)); }
 #section-team-chuan > .stats,#section-team-khac > .stats { white-space:normal; }
 .season-opt-in { display:flex; align-items:center; gap:8px; min-height:44px; line-height:1.5; }
 .season-config-detail,.season-tier-group { overflow-wrap:anywhere; }
@@ -817,17 +819,70 @@ body {
 .season-config-detail summary,.season-config-detail button,.season-team-groups .ana-link-btn,.season-team-groups .team-name,#section-coexist .fchip,#section-coexist .clear-btn,#section-coexist .search { min-height:44px; }
 .season-config-detail summary { display:list-item; padding-block:10px; }
 @media (max-width:680px) { .season-controls select,.season-slot select,#section-coexist .search { font-size:16px; } }
-.reference-scope-controls { display:grid; grid-template-columns:repeat(2,minmax(180px,1fr)) minmax(150px,220px); gap:10px; margin:10px 0; }
+.reference-scope-controls { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; margin:10px 0; }
 .reference-scope-controls label { display:flex; flex-direction:column; gap:4px; color:var(--muted); font-size:.85rem; }
 .reference-scope-controls input,.reference-scope-controls select { width:100%; min-height:44px; padding:8px; color:var(--ink); background:var(--panel); border:1px solid var(--line); border-radius:8px; }
 .reference-holder .line { display:flex; flex-wrap:wrap; gap:6px; }
 .reference-team-card { min-width:0; overflow-wrap:anywhere; }
+.reference-team-card .team-head { display:flex; align-items:flex-start; justify-content:space-between; gap:.5rem; }
+.reference-team-card .team-name { margin:0; flex:1 1 auto; min-width:0; font-size:.95rem; line-height:1.35; overflow-wrap:anywhere; }
+.reference-team-card .reference-score { flex:0 0 auto; align-self:flex-start; }
+.badge.score { background:var(--accent-soft); color:var(--accent); font-variant-numeric:tabular-nums; }
+.reference-score.missing-score { font-size:.72rem; color:var(--muted); }
+.reference-team-card .card-head { margin-bottom:.5rem; }
+.reference-alternatives { margin-top:.5rem; border-top:1px dashed var(--line); padding-top:.4rem; }
+.reference-alternatives > summary { cursor:pointer; min-height:44px; display:list-item; padding-block:10px; font-size:.8rem; color:var(--muted); }
+.reference-alternatives .alternative-line { margin:.25rem 0; font-size:.76rem; color:var(--muted); overflow-wrap:anywhere; }
+.reference-alternatives .reference-holder { margin-top:.35rem; }
+/* Nhóm điểm: chip số và nút mở rộng chỉ đổi trình bày. */
+.fgroup.score-group .chip-row { align-items:center; }
+.fgroup.score-group .fchip { font-variant-numeric:tabular-nums; }
+.score-toggle { margin-top:.35rem; min-height:44px; padding:.3rem .6rem; background:none; border:1px solid var(--line); border-radius:8px; color:var(--accent); cursor:pointer; font-size:.8rem; }
+.score-toggle:hover { border-color:var(--accent); }
+.team-filters .fgroup.secondary { opacity:.95; }
 .reference-detail-holder { border-top:1px solid var(--line); padding-block:10px; }
+/* Badge biến thể 40Y dùng chung style .pre với SP/CO. */
+.pre.y40 { background:var(--f-quan); color:#3a2c00; }
+/* Duyên phận không phải chiến pháp: màu khác và không bấm được để lọc. */
+.t-bond { background:var(--panel-2); color:var(--f-honhop); cursor:default; }
+.slot-label { font-size:.72rem; color:var(--muted); }
 @media (max-width:680px) {
   .reference-scope-controls { grid-template-columns:1fr; }
   .reference-scope-controls input,.reference-scope-controls select { font-size:16px; }
 }
 
+/* ===== Vỏ dùng chung + trang chi tiết riêng (phase 2) ===== */
+.skip-link { position:absolute; left:-9999px; top:0; z-index:20; padding:10px 14px; background:var(--panel); color:var(--ink); border:1px solid var(--accent); border-radius:0 0 8px 0; }
+.skip-link:focus,.skip-link:focus-visible { left:0; }
+.icon-btn:focus-visible,.section-menu-toggle:focus-visible,.nav-tab:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+.detail-content { max-width:64rem; margin-inline:auto; }
+.detail-back-row { margin:10px 0; }
+.detail-link,.detail-action { display:inline-flex; align-items:center; min-height:44px; padding:8px 12px; border-radius:8px; color:var(--accent); text-decoration:none; border:1px solid var(--line); background:var(--panel); }
+.detail-action { border-color:var(--accent); }
+.detail-link:hover,.detail-action:hover { background:var(--panel-2); }
+.detail-link:focus-visible,.detail-action:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+.detail-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.detail-header { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:10px; align-items:start; }
+.detail-title { margin:0; font-size:1.35rem; overflow-wrap:anywhere; }
+.detail-source-title { margin:2px 0 0; }
+.detail-score { margin:0; white-space:nowrap; font-variant-numeric:tabular-nums; font-weight:600; }
+.detail-section { margin-top:18px; }
+.detail-section > h2 { margin:0 0 8px; font-size:1.05rem; }
+.detail-facts { display:grid; gap:6px; margin:8px 0 0; }
+.detail-facts > div { display:grid; grid-template-columns:minmax(120px,auto) minmax(0,1fr); gap:8px; }
+.detail-facts dt { color:var(--muted); font-size:.82rem; }
+.detail-facts dd { margin:0; min-width:0; overflow-wrap:anywhere; }
+.detail-note { white-space:pre-wrap; overflow-wrap:anywhere; line-height:1.55; }
+.reference-detail .tag,.reference-detail .chip { cursor:default; white-space:normal; overflow-wrap:anywhere; }
+.reference-detail .counters { list-style:none; margin:6px 0 0; padding:0; }
+/* Title và CTA của card là link thật, giữ nguyên nhịp chữ hiện có. */
+.reference-team-card .team-name > a { display:block; color:inherit; text-decoration:inherit; }
+.reference-team-card > .ana-link-btn { display:inline-flex; align-items:center; min-height:44px; }
+@media (max-width:480px) {
+  .detail-header { grid-template-columns:1fr; }
+  .detail-facts > div { grid-template-columns:1fr; }
+  .detail-score { text-align:left; }
+}
 /* Unified lookup */
 .lookup-chips { display:flex; flex-wrap:wrap; gap:.5rem; margin:.75rem 0; }
 .lookup-chip { min-height:44px; }
@@ -847,3 +902,4 @@ body {
 .lookup-profile button { min-height:44px; text-align:left; color:var(--accent); background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:.5rem; }
 .lookup-dialog :focus-visible,.lookup-card button:focus-visible,.lookup-chip:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
 @media (max-width:680px) { .lookup-search { font-size:16px; } .lookup-backdrop { padding:1rem .5rem; } .lookup-dialog { max-height:calc(100vh - 2rem); } }
+
