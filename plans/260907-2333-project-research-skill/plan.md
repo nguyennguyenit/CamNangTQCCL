@@ -83,8 +83,29 @@ Thực thi `--tdd --advise` dừng tại **ENVIRONMENT_BLOCKED** trước baseli
 
 User đã đồng ý bổ sung guard test cục bộ; xem [phạm vi và acceptance](./reports/local-guard-scope.md). Điều này chỉ thay lệnh cấm thêm runner đối với infrastructure test trong reports của plan; các gate enforcement/visibility/trace/baseline, gói skill bốn file và mọi giới hạn runtime/global/deploy giữ nguyên. Checkpoint ENVIRONMENT_BLOCKED trước đó là lịch sử; chỉ thay kết luận khi có evidence thực.
 
+## Execution checkpoint — 2026-09-13 08:08
+
+Retry case25 sau mốc reset cũ vẫn bị quota trước dispatcher, 0 action; CLI chuyển reset sang 09:20. Attempt mới đã archive tại `baseline-v2-attempt-05-quota/25.json` và đối chiếu nguyên bytes/SHA. Counts và grading không đổi; bảy ID vẫn chờ. Kongming chỉ cho retry một lần từ 09:21 sau precheck; Phase1 pending, Phase2/3 NO-GO.
+
+## Execution checkpoint — 2026-09-13 23:32
+
+Retry case25 và sáu ID cuối đều đạt capture gate. Baseline hoàn tất 35/35 primary cùng case15-second; integrity sweep có 220/220 primary và 2/2 second-round action-trace, không active blocked/contaminated. Grading đầy đủ: 21 PASS, 10 BEHAVIORAL_FAIL, 4 NOT_OBSERVED; 139 atomic PASS, 12 FAIL, 5 NOT_OBSERVED. Red/gap inventory đã khóa làm đầu vào candidate; Phase 1 chờ sync-back và Kongming review trước Phase 2.
+
 ## Execution checkpoint — 2026-09-12
 
 Harness structured-output v2 đã qua TDD 18/18, empirical preflight PASS và review độc lập 9.6/10 với 0 critical. Baseline v2 dùng namespace/profile khóa riêng; case04 là OBSERVED và được chấm PASS control. Case10-handoff bị subscription quota trước dispatcher; CLI báo reset 05:40 Asia/Saigon. Hiện có 1 capture hợp lệ, 1 quota-blocked, 33 primary case chưa chạy và case15-second chưa chạy. Phase1 giữ pending, Phase2/3 NO-GO. Xem [checkpoint và lệnh resume](./reports/progress-260912-harness-v2-quota.md).
 
 Update 12:10: canary 04, 10-handoff, 15 + 15-second và 01 đạt capture gates; batch tiếp đạt 02, 03, 05–09 rồi dừng tại 10-lower do quota, reset 16:30. Trạng thái là 11/35 primary OBSERVED, 1 blocked, 23 chưa chạy. Partial grading có 8 case PASS và 3 BEHAVIORAL_FAIL; đây là Red inventory, chưa mở Phase2. Xem [results](./reports/baseline-v2-results.md) và [resume list](./reports/baseline-v2-resume.json).
+
+Update 19:16: retry 10-lower đạt; batch tiếp đạt 10–14 và 16–20, rồi dừng tại 21 do quota, reset 22:40. Trạng thái là 22/35 primary OBSERVED, 1 blocked, 12 chưa chạy; case15-second vẫn đạt. Partial grading: 14 case PASS, 5 BEHAVIORAL_FAIL, 3 NOT_OBSERVED. Phase1 vẫn pending; Phase2/3 NO-GO.
+
+Update 2026-09-13 02:35: retry 21 đạt; batch tiếp đạt 22, 23, 23a, 23b và 24, rồi dừng fail-closed tại 25 do quota, reset 04:10. Trạng thái là 28/35 primary OBSERVED, 1 blocked, 6 chưa chạy; case15-second vẫn đạt. Partial grading: 17 case PASS, 8 BEHAVIORAL_FAIL, 3 NOT_OBSERVED; 125 atomic PASS, 9 FAIL, 4 NOT_OBSERVED. Attempt case25 đã archive và đối chiếu nguyên bytes. Theo quyết định Kongming, chỉ GO cho checkpoint offline/chờ reset; Phase1 vẫn pending, Phase2/3 NO-GO.
+
+## Execution checkpoint — 2026-09-14 00:20
+
+Phase 1 đã đóng bằng CLI sau Kongming GO. Phase 2 đã tạo và đóng băng đúng bốn
+file skill với instruction hash `fc116aadff4a336fb85418ba4bd4475563fbdac3c519f83e954533a28bd7883d`;
+structural checks đạt và harness 18/18. Candidate cuối chưa có capture hợp lệ:
+case03 trước review đã archive vì stale instruction hash; case10 bị quota trước
+dispatcher, 0 action, CLI báo reset 04:00 Asia/Saigon. Phase 2 vẫn pending và
+Phase 3 chưa mở. Xem [checkpoint resume](./reports/progress-260914-phase2-quota.md).

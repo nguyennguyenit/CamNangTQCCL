@@ -188,15 +188,15 @@ profiles. Confirmed parents/children remain published even with null relations.
 **Modify:** Phase 1 private identity registry only as reviewed facts resolve.
 **Delete:** none. No root JSON/JS introduced: no public allowlist edits yet.
 
-1. [x] Add failing precedence/translation/relationship/DAG tests from real excerpts.
-2. [x] Implement offline builder with explicit input paths; reject input/output
+1. [ ] Add failing precedence/translation/relationship/DAG tests from real excerpts.
+2. [ ] Implement offline builder with explicit input paths; reject input/output
    aliases/symlinks, capture all raw bytes once, validate snapshot/schema/hashes
    against those buffers, then derive model and generation evidence without reopen.
-3. [x] Apply field merge, review all obtainable names/prose/labels across six groups;
+3. [ ] Apply field merge, review all obtainable names/prose/labels across six groups;
    reconcile children by IDs, not just equal counts; never manufacture team builds.
 4. [x] Validate whitelist, old IDs/types, all 11 deltas, no stale translations,
    complete ledger, semantic samples and null associations.
-5. [x] Run twice from same captured inputs to different private candidates; identical
+5. [ ] Run twice from same captured inputs to different private candidates; identical
    bytes. Inject source A→B→A replacement between validation/build and prove output
    is derived from captured A or the build aborts—final pathname hash alone không đủ.
    Existing candidate is never overwritten before full staged validation succeeds.
@@ -229,11 +229,11 @@ pipeline/lookup-translations.json --output pipeline/lookup-output/candidate`.
 
 ## Success Criteria, risks and rollback
 
-- [x] Full reviewed candidate, all IDs/deltas/child relationships verified.
-- [x] Same inputs repeat same bytes, no source mutation/network/self-feeding.
-- [x] Source missing distinguished from untranslated; stale translations block.
-- [x] Public projection source-free; existing raw effect retained only for compatibility.
-- [x] Generation evidence hashes exactly the captured bytes used to build every output.
+- [ ] Full reviewed candidate, all IDs/deltas/child relationships verified.
+- [ ] Same inputs repeat same bytes, no source mutation/network/self-feeding.
+- [ ] Source missing distinguished from untranslated; stale translations block.
+- [ ] Public projection source-free; existing raw effect retained only for compatibility.
+- [ ] Generation evidence hashes exactly the captured bytes used to build every output.
 
 Invalid source/fingerprint fails before candidate replacement; keep last valid
 candidate and input evidence. No root output touched, so rollback requires only

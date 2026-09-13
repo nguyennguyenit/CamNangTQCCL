@@ -125,30 +125,30 @@ season plan files, scores hoặc project changelog chỉ để ghi phase complet
 
 ## Implementation Steps
 
-1. [x] Pin integrated completed Team baseline, actual manifests, lookup generation,
+1. [ ] Pin integrated completed Team baseline, actual manifests, lookup generation,
    Recommended selected generation/map hashes, code/data preimages and known WIP.
-2. [x] Add missing consumer, packaged-MCP, stale-binding, combined-publication,
+2. [ ] Add missing consumer, packaged-MCP, stale-binding, combined-publication,
    paused-season-publisher and public-leak Reds; fix narrow owner seams.
-3. [x] Before changing tactic expectations, split historical screenshot assertions
+3. [ ] Before changing tactic expectations, split historical screenshot assertions
    onto Phase 1 frozen tactics input; current assertions read promoted data and
    change only with exact selected-source/translation evidence.
-4. [x] Run focused closure then full root/Python/MCP checks. Capture commands,
+4. [ ] Run focused closure then full root/Python/MCP checks. Capture commands,
    counts and failures; environmental block is not Red or validation pass.
-5. [x] Rehearse interrupted activation/promotion/recovery with old-code writer
+5. [ ] Rehearse interrupted activation/promotion/recovery with old-code writer
    already running; verify data + code/config/tests restored and unrelated WIP
    untouched. Exercise lock-without-journal explicit recovery.
-6. [x] Rehearse certified G1 → season publisher validates G1 and pauses → lookup
+6. [ ] Rehearse certified G1 → season publisher validates G1 and pauses → lookup
    rollback G0 → publisher resumes; final generation check must abort before write.
-7. [x] Compare Recommended bridge semantics/hashes. Preserve frozen evidence or
+7. [ ] Compare Recommended bridge semantics/hashes. Preserve frozen evidence or
    coordinate re-review/rebuild; prove selected scoped bytes/pin/source links and
    Team khác membership do not silently drift.
-8. [x] Build with injected HTML(G0) → complete promotion(G1) → data routes(G1);
+8. [ ] Build with injected HTML(G0) → complete promotion(G1) → data routes(G1);
    verifier rejects. Build stable generation and prove root + scoped exact inventory.
-9. [x] Inspect real six-group UI plus Team chuẩn/Team khác desktop/mobile/light/dark,
+9. [ ] Inspect real six-group UI plus Team chuẩn/Team khác desktop/mobile/light/dark,
    last children, keyboard, aliases, Back/Forward and source links.
-10. [x] Update owning docs, add compatibility/handoff evidence and baseline→candidate
+10. [ ] Update owning docs, add compatibility/handoff evidence and baseline→candidate
     semantic diff; link machine-owned validators/manifests instead of duplicating.
-11. [x] After all gates, mark generation accepted locally, retain rollback artifacts
+11. [ ] After all gates, mark generation accepted locally, retain rollback artifacts
     per policy and hand season/Recommended owners certified generation/ID/evidence
     disposition. No deployment/commit performed implicitly.
 
@@ -205,16 +205,16 @@ Không `release:worker`/deploy; publication cần scope/authorization riêng.
 
 ## Success Criteria and handoff
 
-- [x] All six groups + reviewed children complete, no misleading pending/links.
-- [x] ID/name/storage/engine/MCP canaries and broad tests pass with saved evidence.
-- [x] No source leakage, generation recovery and exact inventories verified.
-- [x] Docs cover real commands, regeneration triggers, baseline/source ownership.
-- [x] Handoff lists tested hashes, intentional deltas, unresolved identity reasons,
-  translation coverage, rollback location, season-owner dependency and release block.
-- [x] Completed Team browser selected generation, source attribution, aliases and history preserved.
-- [x] Recommended bridge evidence disposition and season publisher exclusion recorded.
-- [x] Stable Astro build pins season/lookup/Recommended generations; interleaving build rejects.
-- [x] CLI/stdio load a valid packaged MCP release and reject mixed raw lookup roots.
+- [ ] All six groups + reviewed children complete, no misleading pending/links.
+- [ ] ID/name/storage/engine/MCP canaries and broad tests pass with saved evidence.
+- [ ] No source leakage, generation recovery and exact inventories verified.
+- [ ] Docs cover real commands, regeneration triggers, baseline/source ownership.
+- [ ] Handoff lists tested hashes, intentional deltas, unresolved identity reasons,
+  translation coverage, rollback location, season-owner dependency and any release block.
+- [ ] Completed Team browser selected generation, source attribution, aliases and history preserved.
+- [ ] Recommended bridge evidence disposition and season publisher exclusion recorded.
+- [ ] Stable Astro build pins season/lookup/Recommended generations; interleaving build rejects.
+- [ ] CLI/stdio load a valid packaged MCP release and reject mixed raw lookup roots.
 
 Unexpected broad regression after promotion: stop acceptance, restore previous
 generation/code checkpoint **chỉ sau full WIP/dependent-ref preflight**; conflict

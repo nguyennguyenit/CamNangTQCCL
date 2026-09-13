@@ -234,21 +234,21 @@ activation-prepared/writing states.
 
 ## Implementation Steps and gates
 
-1. [x] Integrate/rebase onto completed `feat/season-team-lookup` baseline; pin
+1. [ ] Integrate/rebase onto completed `feat/season-team-lookup` baseline; pin
    reviewed commit, combined router/publication preimages and owner coordination.
-2. [x] In task worktree, add loader/promotion/allowlist/navigation Reds; add the
+2. [ ] In task worktree, add loader/promotion/allowlist/navigation Reds; add the
    completed route/pin/scoped-inventory preservation cases before implementation.
-3. [x] Implement build-scoped byte snapshot, browser shared-byte ingress, exact
+3. [ ] Implement build-scoped byte snapshot, browser shared-byte ingress, exact
    raw-versus-packaged MCP branches and guarded legacy writer.
-4. [x] Implement composed lookup coordinator/profiles/routes/accessibility without
+4. [ ] Implement composed lookup coordinator/profiles/routes/accessibility without
    changing Team chuẩn default, aliases, source attribution or history snapshots.
-5. [x] Finalize activation postimages; fence old writers and season publisher;
+5. [ ] Finalize activation postimages; fence old writers and season publisher;
    create durable activation journal before first active shared-path mutation.
-6. [x] Use candidate in isolated fixture/root; run dictionary/season/Recommended/
+6. [ ] Use candidate in isolated fixture/root; run dictionary/season/Recommended/
    soi/kho/tracker/MCP canaries before promotion.
-7. [x] Promote locally only after canaries; test all interruption/recovery and
+7. [ ] Promote locally only after canaries; test all interruption/recovery and
    HTML(G0)→promotion(G1)→route rejection boundaries.
-8. [x] Run focused E2E on real candidate, record screenshots/cases/hashes;
+8. [ ] Run focused E2E on real candidate, record screenshots/cases/hashes;
    Phase 4 broad certification follows, backups retained.
 
 ## TDD Red → Green → Refactor
@@ -291,13 +291,13 @@ power-loss thực tế nếu chưa có thử nghiệm tương ứng.
 
 ## Success Criteria, risks and rollback
 
-- [x] One source-hidden VI lookup covers six groups and every retained child.
-- [x] Deep links, shared app dictionary objects/season-identical bytes, canaries and error boundaries pass.
-- [x] Every new root file allowlisted; private provenance never routed or emitted.
-- [x] Mixed/incomplete generation rejected, rollback conflict-safe and tested.
-- [x] Team chuẩn/Team khác routes, pin, source links, aliases and history remain exact.
-- [x] Season HTML hashes, lookup bundle and emitted dictionaries share one build generation.
-- [x] Valid packaged MCP release roots remain usable by CLI/stdio.
+- [ ] One source-hidden VI lookup covers six groups and every retained child.
+- [ ] Deep links, shared app dictionary objects/season-identical bytes, canaries and error boundaries pass.
+- [ ] Every new root file allowlisted; private provenance never routed or emitted.
+- [ ] Mixed/incomplete generation rejected, rollback conflict-safe and tested.
+- [ ] Team chuẩn/Team khác routes, pin, source links, aliases and history remain exact.
+- [ ] Season HTML hashes, lookup bundle and emitted dictionaries share one build generation.
+- [ ] Valid packaged MCP release roots remain usable by CLI/stdio.
 
 Reuse deterministic project test port; inspect existing listeners before starting
 server, track PID/port/CWD, stop only task-owned processes. Candidate failure leaves

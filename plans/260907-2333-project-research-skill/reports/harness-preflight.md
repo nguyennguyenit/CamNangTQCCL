@@ -1,5 +1,7 @@
 # Harness preflight — 2026-09-08
 
+> Current v2 status (2026-09-13): preflight đạt theo `empirical-preflight-v2-attempt-03.json`; execution profile và 7 hash khóa ở `baseline-v2-experiment.json`; harness 18/18; baseline integrity/closure ở `phase-01-closure-evidence.md`. Các kết luận blocked bên dưới là lịch sử pre-v2, không phải trạng thái hiện hành.
+
 **Result: ENVIRONMENT_BLOCKED.** Metadata inspection completed; no existing configuration has been demonstrated to satisfy all required enforcement, visibility and attempted-action gates. Baseline and Phase 2 must remain unstarted. This is a bounded finding about the inspected environment and evidence, not a claim that these CLIs can never support the contract.
 
 ## Scope and evidence

@@ -73,16 +73,16 @@ nguyên nhân trước implementation, rồi Green và kiểm lại sau Refactor
 
 ## Acceptance criteria
 
-- [x] Kiểm kê 100% baseline/source/children; mỗi record matched/new/unresolved có chứng cứ.
-- [x] Giữ 112 tên/ID tướng và 240 tên/ID chiến pháp cũ; base/SP/CO/40Y không nhập nhầm.
-- [x] Cả 11 khác biệt ra đúng trường/ID, kể cả Hạ Hầu Đôn Khiên S; 0/false hợp lệ còn nguyên.
-- [x] Nội dung có được ở sáu nhóm được Việt hóa/review; bản dịch stale chặn promotion.
-- [x] Đủ 90 đặc kỹ, 192 lựa chọn, 426 cấp theo snapshot; quan hệ thiếu giữ null có trạng thái.
-- [x] Một search/nav/profile, `#heroes`/`#tactics` tương thích, mobile/keyboard hoạt động.
-- [x] Catalog không public provenance; browser/Astro/Worker/MCP từ chối bundle trộn; local readers từ chối giao dịch dở dang.
-- [x] Soi đội, kho, tracker, đội cũ, MCP và build/check đạt; không suy availability/tier từ catalog.
-- [x] Có Red → Green → Refactor thực chạy từng phase, rollback/rebuild tái lập được.
-- [x] Combined publication giữ nguyên Team chuẩn/Team khác selector, scoped bytes,
+- [ ] Kiểm kê 100% baseline/source/children; mỗi record matched/new/unresolved có chứng cứ.
+- [ ] Giữ 112 tên/ID tướng và 240 tên/ID chiến pháp cũ; base/SP/CO/40Y không nhập nhầm.
+- [ ] Cả 11 khác biệt ra đúng trường/ID, kể cả Hạ Hầu Đôn Khiên S; 0/false hợp lệ còn nguyên.
+- [ ] Nội dung có được ở sáu nhóm được Việt hóa/review; bản dịch stale chặn promotion.
+- [ ] Đủ 90 đặc kỹ, 192 lựa chọn, 426 cấp theo snapshot; quan hệ thiếu giữ null có trạng thái.
+- [ ] Một search/nav/profile, `#heroes`/`#tactics` tương thích, mobile/keyboard hoạt động.
+- [ ] Catalog không public provenance; browser/Astro/Worker/MCP từ chối bundle trộn; local readers từ chối giao dịch dở dang.
+- [ ] Soi đội, kho, tracker, đội cũ, MCP và build/check đạt; không suy availability/tier từ catalog.
+- [ ] Có Red → Green → Refactor thực chạy từng phase, rollback/rebuild tái lập được.
+- [ ] Combined publication giữ nguyên Team chuẩn/Team khác selector, scoped bytes,
   source attribution và history/legacy aliases; lookup + season hashes cùng một
   build snapshot.
 
@@ -174,18 +174,3 @@ filesystem threat boundary. Phase files carry every accepted delta.
 Audit disposition after propagation: **proceed eligible**. Runtime feature tests,
 translation review, candidate generation and promotion remain future execution
 gates; structural validation is not implementation proof.
-
-## Maintenance fix — 2026-09-13
-
-Closed three post-review defects without changing routes, IDs, season state or
-Recommended behavior: lookup profiles now expose all reviewed public fields;
-the shared browser/MCP loader rejects malformed nested DTOs before consumers;
-and failed promotion preparation atomically detaches unpublished transactions
-outside the reader-scanned transaction directory. If atomic detach itself fails,
-the original lock and complete journal evidence remain available to `recover`.
-
-Fresh evidence: Python 286 passed/12 skipped; Node 264 passed; MCP 373 passed;
-focused lookup E2E 25 passed; Astro check 0 diagnostics; build, dist contracts
-and distribution verification passed. The active production generation validated
-with 202 heroes and 406 tactics. Independent code review passed after the
-cleanup-failure recovery path and retained-journal scanner interaction were fixed.

@@ -1,6 +1,6 @@
 # Brainstorm: nâng cấp danh sách và trang chi tiết đội
 
-**Trạng thái:** đã chốt hướng sản phẩm, làm đầu vào cho một plan triển khai mới. Tài liệu này thay thế các quyết định giao diện cũ trong chính bản brainstorm; không phải bằng chứng đã sửa code, hoàn thành plan mới hoặc deploy.
+Ngày: 2026-09-12. Trạng thái: đã chốt hướng sản phẩm, bổ sung quyết định Việt hóa Team chuẩn. Trạng thái triển khai và bằng chứng xem plan cùng tài liệu thực hiện bên dưới; không đồng nghĩa đã deploy.
 
 **Quyết định cốt lõi:** giữ độ gọn và cách sử dụng của tqccl.com; bổ sung duyệt theo mùa, điểm số và trang chi tiết riêng. Không thiết kế lại toàn bộ chỉ để giống SGSDeck, không làm mất dữ liệu cũ để làm giao diện ngắn hơn.
 
@@ -63,7 +63,63 @@ Hai tab đội dùng tên đã chốt **Team chuẩn** và **Team khác**. “Gi
 - Giữ các lựa chọn mùa hợp lệ của từng tab; không tự gán mùa cho đội chưa rõ mùa. Mùa nguồn không tự quy đổi thành mùa máy chủ Việt Nam.
 - Mùa chưa thu thập, danh mục rỗng và không có kết quả lọc phải có thông báo đúng nguyên nhân. Không lấp chỗ trống bằng đội mùa khác.
 
-### Các nhóm lọc
+## Việt hóa Team chuẩn và giữ dữ liệu hai ngôn ngữ
+
+**Quyết định mới nhất của người dùng:** “Cứ dịch theo dữ liệu đã có sẵn, thiếu chiến pháp nào chưa Việt hóa thì anh tự dịch lại bổ sung sau, vẫn giữ tiếng Trung để sau này còn làm 2 ngôn ngữ cho site.”
+
+### Kết quả mong muốn
+
+Team chuẩn dùng tên Việt quen thuộc, nhất quán với Meta cũ và từ điển hiện có của dự án. Nội dung chưa có bản Việt vẫn đọc được bằng tiếng Trung; người dùng sẽ bổ sung bản dịch sau. Giữ đồng thời dữ liệu Trung và Việt để hỗ trợ hai ngôn ngữ về sau.
+
+### Cách làm đã chốt
+
+- Chiến pháp trùng với Meta cũ dùng nguyên tên Việt đã có, sau khi đối chiếu đúng danh tính qua tên Trung; không dịch lại thành cách gọi khác.
+- Tướng và binh thư cũng dùng bản Việt sẵn có trong dữ liệu dự án. Giữ đúng biến thể thường/SP/CO/40Y; không suy tên từ đội hình hoặc vị trí trang bị.
+- Đối chiếu chữ phồn thể/giản thể khi xác nhận đó là cùng tên nguồn; đây là nhận diện tên đã có bản Việt, không phải sáng tác bản dịch mới.
+- Có bản Việt thì ưu tiên hiển thị trên thẻ đội, chi tiết và cấu hình thay thế. Chưa có hoặc chưa xác định chắc thì giữ tiếng Trung; không giấu mục đó hoặc thay bằng tên gần giống.
+- Giữ nguyên tên và nội dung Trung gốc; bản Việt lưu riêng. Tên đội, ghi chú, cộng điểm và mô tả chưa có bản dịch sẵn vẫn giữ nguyên nguồn.
+- Tìm kiếm bằng tên Việt có dấu/không dấu và tên Trung gốc đều phải tìm được đúng đội.
+- Có danh sách tên còn thiếu bản Việt, chia theo tướng / chiến pháp / binh thư, loại trùng theo đúng danh tính đã xác định và kèm tên Trung cùng đội hoặc liên kết nguồn làm ngữ cảnh. Không gộp tên chưa chắc là cùng một thực thể. Đây là đầu vào để người dùng dịch bổ sung, không phải yêu cầu xây màn hình quản trị.
+- Quản lý bản dịch tại một nơi dùng chung; không sửa riêng trên từng đội. Khi người dùng bổ sung hoặc sửa tên Việt, cùng bản dịch được áp dụng cho mọi đội liên quan, thẻ đội, chi tiết và tìm kiếm.
+- Tách bản dịch hiển thị khỏi danh tính: đổi cách viết tên Việt hoặc ngôn ngữ hiển thị không đổi ID, liên kết đội hay kết quả xét trùng.
+- Lấy nhãn, thuật ngữ và bộ lọc đã có trên `main` làm chuẩn, tái sử dụng cho Team chuẩn; không dịch lại hoặc thiết kế thêm một bộ lọc khác. Điểm đối chiếu hiện có: `js/team-filter-section.js` (nhãn và cách dựng bộ lọc), `js/render.js` (tên phe, binh chủng và nhãn nguồn), cùng dữ liệu tương ứng trên main.
+- Việt hóa cả nhãn và giá trị hiển thị trong bộ lọc Team chuẩn: phe, binh chủng, mùa/kịch bản, danh mục nguồn, nhóm đội và các lựa chọn liên quan. Chip đang chọn, danh sách lựa chọn và ô tìm kiếm trong bộ lọc dùng cùng thuật ngữ đã có trên main. Chỉ giữ tiếng Trung cho giá trị thực sự chưa có bản Việt sau khi đối chiếu main; giữ nguyên ký hiệu Tier như T0/T1.
+- Bản dịch bộ lọc chỉ thay phần hiển thị, không đổi mã giá trị, tham số URL hoặc quy tắc lọc. Tìm lựa chọn bằng tên Việt có dấu/không dấu hoặc tên Trung gốc đều phải nhận ra đúng lựa chọn khi có dữ liệu tương ứng.
+- Việt hóa đầy đủ tên mùa/kịch bản trong bộ chọn mùa, kết quả tìm mùa, nhãn đang chọn, thẻ đội và chi tiết. Ưu tiên tên đã có trên main; tên mùa chưa có bản Việt thì đối chiếu nguồn và bổ sung bản dịch tên mùa, không áp dụng quy tắc “để người dùng dịch sau” dành cho chiến pháp còn thiếu.
+- Giữ riêng tên Trung gốc và mã mùa nguồn như S1/S28/PK/OG. Dịch tên hiển thị không đồng nghĩa quy đổi mùa nguồn sang mùa máy chủ Việt Nam; không tự khẳng định bản dịch bổ sung là tên chính thức trong game.
+
+### Ràng buộc và phần không làm
+
+- Không tự dịch bổ sung chiến pháp còn thiếu; người dùng chịu trách nhiệm cung cấp bản dịch sau.
+- Không dùng dịch tự động lúc mở trang, không phiên âm Hán–Việt hàng loạt và không ghi đè tiếng Trung bằng tiếng Việt.
+- Không thay tướng, chiến pháp, binh thư, thứ tự slot, tier, điểm, mùa hoặc thứ tự xếp đội vì Việt hóa.
+- Chưa thêm nút chuyển ngôn ngữ hoặc triển khai toàn bộ site song ngữ. Đợt này chỉ giữ dữ liệu đủ để làm việc đó sau.
+- Chưa xây màn hình quản trị bản dịch. Danh sách thiếu bản Việt phục vụ rà soát và bổ sung dữ liệu, không mở thêm luồng quản trị.
+- Không mở rộng đợt Việt hóa này sang Team khác hoặc thay đổi cơ chế xét trùng/gợi ý đội.
+
+### Các phương án đã loại
+
+- Dịch lại toàn bộ, kể cả tên đã có: không chọn vì dễ lệch thuật ngữ Meta cũ và vượt yêu cầu.
+- Chỉ thay vài nhãn giao diện: không chọn vì chiến pháp, tướng và binh thư vẫn chưa dùng bản Việt đã có.
+- Chỉ giữ bản Việt: không chọn vì mất dữ liệu gốc phục vụ đối chiếu và site hai ngôn ngữ.
+
+### Tiêu chí nghiệm thu Việt hóa
+
+- Tên có bản Việt được dùng nhất quán ở thẻ, chi tiết và cấu hình thay thế; từng slot thiếu bản Việt vẫn hiển thị đúng tiếng Trung của slot đó.
+- Dữ liệu Trung gốc còn nguyên; các tên mới chưa được dịch không bị đoán hoặc bỏ khỏi đội.
+- Tra tên Việt có dấu, không dấu và tên Trung trả về đúng cùng cấu hình tương ứng.
+- Toàn bộ cấu hình, tier, điểm, thứ tự nguồn và kết quả xét trùng không đổi.
+- Kiểm tra giao diện desktop/mobile và các luồng mở chi tiết, chọn thẻ tên để tìm kiếm.
+- Danh sách thiếu bản Việt bao phủ dữ liệu Team chuẩn đang xét, phân nhóm rõ, không lặp cùng danh tính và có ngữ cảnh nguồn để người dùng đối chiếu.
+- Một bản dịch được bổ sung hoặc sửa tại nơi quản lý chung phải áp dụng nhất quán cho mọi đội liên quan sau khi cập nhật dữ liệu; không cần sửa từng đội.
+- Kiểm tra việc sửa tên Việt không thay ID, liên kết, cấu hình hoặc kết quả xét trùng; tên Trung nguyên bản vẫn được giữ.
+- Bộ lọc dùng lại nhãn và thuật ngữ trên main, nhất quán ở nhãn, lựa chọn và chip đang chọn. Không để tiếng Trung ở giá trị đã có tên Việt tương ứng trên main; giá trị thực sự chưa dịch vẫn hiện tiếng Trung, không bị ẩn hoặc mất lựa chọn.
+- Chọn cùng một giá trị trước/sau Việt hóa trả về cùng tập đội. URL cũ và thao tác quay lại/tiến tới vẫn khôi phục đúng bộ lọc; tìm lựa chọn mùa bằng tên Việt hoặc Trung vẫn chọn đúng mã mùa.
+- Mọi tên mùa/kịch bản có trong dữ liệu thuộc phạm vi đều có tên Việt đã đối chiếu, dùng nhất quán ở bộ lọc, thẻ và chi tiết; không bỏ sót mùa cũ hoặc mùa chưa có đội. Mã mùa và tên Trung gốc vẫn được giữ; tìm bằng tên Việt có dấu/không dấu, tên Trung hoặc mã mùa đều nhận ra đúng mùa.
+
+Các yêu cầu bổ sung về danh sách thiếu bản Việt, quản lý bản dịch dùng chung, danh tính độc lập ngôn ngữ, Việt hóa bộ lọc và dịch đầy đủ tên mùa/kịch bản đã được người dùng chấp thuận. Đây là tiêu chí đã chốt, không phải xác nhận toàn bộ đã được triển khai và kiểm chứng.
+
+## Giới hạn và những phần không làm trong phạm vi này
 
 - Giữ kiểu chip, màu phe, số lượng, cách chọn và nút **Xóa lọc** của bản cũ.
 - Thứ tự nhóm: **Loại binh → Điểm → Phe**. Nhóm **Điểm** thay **Sao**; không giữ mức sao 4/4.5/5 và không thay bằng bộ lọc Tier.
@@ -80,113 +136,4 @@ Hai tab đội dùng tên đã chốt **Team chuẩn** và **Team khác**. “Gi
 
 Thẻ phục vụ **so sánh nhanh**, không thay thế trang hướng dẫn:
 
-- Tên đội Việt bên trái; **điểm số ở góc trên bên phải**, ví dụ **113 điểm**. Tên dài được xuống dòng, không đè điểm.
-- Giữ nhãn loại binh/phe, ba khối tướng, chiến pháp, binh thư, phương án thay thế dạng ngắn và chip khắc chế/bị khắc chế đã có.
-- SP/CO/40Y là tag đầu tên tướng. Giữ đầy đủ **CO Vô Song Đại Kiều / Tiểu Kiều / Tinh Thái** và các tên Việt đã được duyệt.
-- Bỏ sao, dạng 4.5★, badge T0/Tier và dòng dưới thẻ như **OG · Binh Diễn Xuân Thu · Giao chiến**. Áp dụng cho mọi dòng mùa/danh mục cùng vai trò; không thay bằng một dòng mùa rút gọn.
-- Giữ tên đội và liên kết **Xem chi tiết** cùng dẫn tới một trang riêng. Chip tướng/chiến pháp/binh thư giữ chức năng riêng, không vô tình kích hoạt mở đội.
-- Không đưa thêm mô tả dài vào thẻ. Giữ các thông tin ngắn cần so sánh; giải thích đầy đủ ở chi tiết.
-
-Điểm phải có bằng chứng cho **đúng cấu hình**. Không quy đổi 4.5 sao thành 90/113 điểm, không suy điểm từ Tier, không lấy điểm của đội cùng tên hoặc gần giống. Thiếu điểm ghi **Chưa có điểm**, không dùng 0 thay cho thiếu dữ liệu. Điểm nguồn không tự trở thành đánh giá Global/VN hoặc điểm áp dụng mọi mùa.
-
-Bỏ sao/Tier khỏi giao diện không xóa đánh giá lịch sử hoặc metadata nguồn khỏi dữ liệu đối chiếu.
-
-## 7. Trang chi tiết riêng
-
-### Điều hướng
-
-- Bấm tên đội hoặc **Xem chi tiết** mở cùng URL riêng trong tab hiện tại; hỗ trợ mở tab mới bằng thao tác trình duyệt.
-- Không còn khung chi tiết chen trong danh sách. Đây là thay đổi có chủ đích so với cả hành vi tìm theo tên trên production lẫn khung chi tiết trong worktree.
-- URL mở trực tiếp, tải lại và chia sẻ được; ID/URL không phụ thuộc bản dịch tên đội.
-- Quay lại danh sách, Back/Forward giữ tab, mùa, từ khóa, chip đã chọn và vị trí cuộn. Giữ hệ điều hướng chính trên trang chi tiết.
-- Chuyển các liên kết chi tiết hiện có của luồng này sang đường dẫn mới; không làm hỏng luồng gameplay, so kho hoặc gợi ý đội khác.
-
-### Nội dung
-
-Trình tự đọc đề xuất: **quay lại danh sách → tên đội và điểm → tướng/cấu hình/cộng điểm → mô tả, cách vận hành → khắc chế/bị khắc chế → phương án thay thế → nguồn**.
-
-- Giữ mô tả đội, ghi chú từng tướng, thứ tự/tốc độ, điều kiện sử dụng, lựa chọn chiến pháp/binh thư và cấu hình thay thế đã có.
-- Giữ cả **đội khắc chế** và **đội bị khắc chế/cần tránh**, cùng phần giải thích. Không chỉ dựng trang từ dữ liệu Recommended rồi bỏ nội dung của đội cũ.
-- Phân chia ghi chú chung và ghi chú từng tướng để tránh lặp cùng đoạn; không cắt nội dung nhằm rút ngắn trang.
-- Thông tin nguồn, mùa và danh mục được giữ trong phần nguồn của chi tiết, không lặp thành dòng dưới từng thẻ danh sách.
-- Mục chưa có nội dung không được bịa thêm. Nêu rõ thiếu dữ liệu khi cần để tránh người đọc hiểu nhầm.
-
-**Ràng buộc liên kết nội dung cũ:** đối chiếu đúng cấu hình và xuất xứ trước khi gắn mô tả/khắc chế vào đội nguồn. Không ghép chỉ vì cùng tên, cùng ba tướng hoặc cùng nhóm xét trùng. Nội dung chưa đủ căn cứ liên kết phải được giữ với cấu hình gốc để truy xuất, không bị xóa hoặc trình bày như hướng dẫn đã xác nhận cho cấu hình khác.
-
-## 8. Việt hóa và danh tính độc lập ngôn ngữ
-
-- Bổ sung bản Việt cho **tên đội**, giữ các phần phân biệt biến thể/cấu hình; không đặt một tên chung khiến nhiều cấu hình không phân biệt được.
-- Dùng lại tên tướng, chiến pháp, binh thư và mùa đã được duyệt. Nguồn quản lý chung là [identity map](../../pipeline/recommended-identity-map.json); không sửa riêng từng dòng đội hoặc tự dịch lại thuật ngữ đã thống nhất.
-- Giữ mô tả Việt cũ và bản Trung gốc. Khi bổ sung bản dịch mô tả, lưu riêng; mục chưa có bản Việt vẫn đọc được bằng bản nguồn, không bị giấu.
-- Tách ID thực thể/cấu hình khỏi nhãn Việt/Trung và nhãn tiếng Anh về sau. Đổi tên hiển thị không đổi ID, URL, biến thể hoặc kết quả xét trùng; không gộp bản thường với SP/CO/40Y.
-- Phê duyệt bản dịch không tự xác nhận danh tính. Từ còn thiếu `戮力上心` vẫn giữ nguyên cho đến khi đủ bằng chứng; không tự coi là `勠力同心` — Đồng Lòng Hợp Sức.
-- `桃園結義` là **Kết Nghĩa Vườn Đào**, hiển thị dưới **Duyên phận**, không phải chiến pháp có thể chọn. Giữ ô nguồn nguyên bản và phân loại hiển thị riêng.
-- Giữ worksheet tên thiếu cùng chữ Trung, biến thể và ngữ cảnh nguồn để người dùng duyệt. Không dịch tự động lúc mở trang hoặc âm thầm phiên âm tên chưa xác minh.
-- Chưa triển khai từ điển tiếng Anh, bộ chuyển ngôn ngữ hoặc trang quản trị bản dịch trong đợt này. [Tài liệu dữ liệu theo mùa](../../docs/season-team-data.md) ghi cách duy trì bản dịch hiện có.
-
-## 9. Các bất biến dữ liệu phải giữ
-
-### Xét trùng và cấu hình
-
-- Tiêu chí phân nhóm là **ba danh tính tướng đúng biến thể + chiến pháp gắn với từng tướng**. Đổi tướng, đổi chiến pháp hoặc chuyển chiến pháp sang tướng khác là cấu hình khác.
-- Chỉ đổi thứ tự hiển thị tướng hoặc thứ tự hai ô chiến pháp trên cùng tướng không tạo đội khác theo quy tắc xét trùng hiện có.
-- Chỉ khác binh thư, cộng điểm, trang bị, chủ tướng, mô tả, mùa, điểm hoặc Tier không chứng minh đội khác theo tiêu chí phân nhóm; vẫn giữ nguyên từng cấu hình nguồn và chi tiết tương ứng. Quy tắc xét trùng này không đủ để chuyển hướng dẫn/điểm giữa các cấu hình.
-- Đối chiếu trên toàn bộ tập Recommended đã xác nhận trước khi lọc mùa. Đổi bộ lọc không làm đội trùng trở thành Team khác.
-- Với đội nhiều phương án, giữ các phương án xác định không trùng; thiếu danh tính hoặc liên kết phương án thì giữ trạng thái chờ đối chiếu. Không tự sinh tích các phương án thành đội mới.
-- Không xóa raw, ID, thứ tự slot, vai trò, điểm, mùa, nguồn, dữ liệu cũ hoặc WIP vì đổi giao diện.
-
-### Thu thập và xuất bản
-
-- Tái sử dụng pipeline Python và cache hiện có: thu danh sách/chi tiết, lưu URL/thời điểm/checksum, parse offline, đối chiếu rồi xuất bản dữ liệu đồng bộ. Browser dùng khi cần xác minh; không crawl lúc người dùng mở website.
-- Giữ cơ chế tiếp tục sau gián đoạn, giới hạn tốc độ và kiểm tra publication. Không làm lại crawler hoặc coi thử nghiệm trên vài trang là chứng minh đủ mọi mùa.
-- Quyền lưu/hiển thị cấu hình và điểm Recommended đã được người dùng xác nhận. Team khác không bị chặn chỉ vì chưa có chiến báo mới.
-
-## 10. Phần không làm
-
-- Không thiết kế lại toàn site, thay hệ tab khác, thêm tài khoản, bình chọn, đăng bài hoặc upload chiến báo.
-- Không tạo thang điểm, tự chấm đội, quy đổi sao sang điểm hoặc coi đội có điểm nguồn là dùng được trong mọi mùa VN.
-- Không thay engine xét trùng, gợi ý đội, luật gameplay, MCP hoặc dữ liệu Khai hoang hiện có chỉ vì sửa luồng duyệt.
-- Không thu gọn bằng cách bỏ chiến pháp/binh thư, mất mô tả hay xóa khắc chế. Thu gọn nhóm lọc trên mobile là giữ thao tác bản cũ, không loại bỏ khả năng lọc.
-- Không tự commit, push, merge hoặc deploy trong bước viết brainstorm. Việc tạo plan triển khai mới là bước kế tiếp, không phải phần đã hoàn thành ở đây.
-
-## 11. Tiêu chí nghiệm thu cho plan mới
-
-Các mục dưới đây là yêu cầu phải được chứng minh sau triển khai, không phải danh sách đã hoàn thành:
-
-- [ ] Team chuẩn / Team khác đúng phạm vi dữ liệu; các tab/chức năng khác giữ nguyên hành vi.
-- [ ] Desktop ở độ rộng phù hợp giữ mật độ 4 cột như bản live; các màn hẹp giảm cột mà không ép chữ hoặc tràn ngang.
-- [ ] Mobile 375px có tìm kiếm và chọn mùa luôn hiện; các nhóm chip mở/đóng qua Bộ lọc, thẻ một cột. Kiểm tra thêm biên 320px.
-- [ ] Chọn mùa hoàn toàn bằng bấm/chạm/bàn phím; không còn ô Tìm mùa riêng. Phân biệt đúng chưa có dữ liệu, không khớp bộ lọc và đội chưa rõ mùa.
-- [ ] Chip Loại binh / Điểm / Phe giữ màu, số lượng, cách chọn và Xóa lọc như cũ; đội thiếu điểm vẫn tìm được.
-- [ ] Điểm ở góc trên phải đúng cấu hình; không có sao, badge/tiêu đề nhóm Tier hoặc dòng mùa/danh mục dưới thẻ.
-- [ ] Thẻ giữ ba tướng, chiến pháp, binh thư, tag biến thể, phương án ngắn và chip khắc chế đã có; tên dài không đè điểm.
-- [ ] Tên đội Việt nhất quán giữa thẻ, tìm kiếm và chi tiết; tên Trung, ID và các tên đã duyệt được giữ. Duyên phận không trở thành chiến pháp.
-- [ ] Tên đội và Xem chi tiết mở cùng URL riêng; mở trực tiếp, tải lại, chia sẻ và mở tab mới hoạt động. Không còn khung chi tiết trong danh sách.
-- [ ] Back/Forward và quay lại giữ tab, mùa, từ khóa, lựa chọn lọc, vị trí cuộn; chip chiến pháp không vô tình mở trang đội.
-- [ ] Chi tiết giữ mô tả, cộng điểm, điều kiện, khắc chế/bị khắc chế và phương án thay thế cũ; không lặp ghi chú hoặc ghép nhầm cấu hình. Nội dung chưa liên kết vẫn truy xuất được ở cấu hình gốc.
-- [ ] Đối chiếu dữ liệu trước/sau chứng minh raw, ID, cấu hình, nguồn, điểm và quyết định xét trùng không bị sửa bởi việc dịch hoặc đổi giao diện.
-- [ ] Kiểm tra bản chạy thật trên desktop/mobile, sáng/tối, bằng bàn phím/chạm; dùng tên dài, nhiều phương án, nhiều mức điểm và dữ liệu thiếu. Không đánh giá độ gọn chỉ từ mã nguồn hoặc bố cục mô tả.
-
-## 12. Đầu vào cho plan triển khai mới
-
-**Lập một plan riêng cho đợt nâng cấp này.** Giữ [plan ban đầu](../260912-0950-recommended-season-browser/plan.md) cùng bằng chứng lịch sử; không mở lại toàn bộ pipeline hoặc dùng trạng thái done cũ cho yêu cầu mới.
-
-Plan mới cần bao phủ bốn phần:
-
-1. **Dữ liệu và bản dịch:** tên đội, bảo toàn/liên kết mô tả và khắc chế, điểm đúng cấu hình, danh tính độc lập ngôn ngữ.
-2. **Danh sách đội:** tái sử dụng thẻ/bộ lọc production; chọn mùa, điểm số, mật độ desktop và thu gọn mobile; bỏ những nhãn đã chốt.
-3. **Trang chi tiết:** URL riêng, dữ liệu đầy đủ, chuyển các điểm mở chi tiết và bảo toàn trạng thái quay lại.
-4. **Kiểm chứng:** dữ liệu trước/sau, các luồng liên quan và giao diện thực tế; chỉ đánh dấu hoàn thành theo bằng chứng mới.
-
-Các điểm bắt đầu đã biết: [render thẻ cũ](../../js/render.js), [bộ lọc dùng chung](../../js/team-filter-section.js), [render Recommended hiện tại](../../js/recommended-reference-render.js), [tài liệu dữ liệu](../../docs/season-team-data.md) và [báo cáo kiểm chứng](../260912-0950-recommended-season-browser/reports/validation.md). Đây là điểm khảo sát, không phải danh sách đầy đủ file cần sửa.
-
-## 13. Rủi ro và điểm cần giải quyết khi lập plan
-
-Không cần hỏi lại các lựa chọn sản phẩm đã chốt. Plan phải làm rõ bằng dữ liệu và mã nguồn:
-
-- Cấu hình cũ nào liên kết chắc chắn với Recommended, cấu hình nào chỉ cùng nhóm xét trùng; bảo toàn mô tả/khắc chế mà không gán sai hướng dẫn.
-- Đội nào có điểm xác thực, đội nào chỉ có sao lịch sử; nhiều mức điểm có làm hàng chip quá dài hay không. Không giải quyết bằng quy đổi điểm hoặc bỏ các đội thiếu điểm.
-- Các nơi đang mở chi tiết, liên kết cũ và trạng thái điều hướng cần chuyển; không làm mất luồng gameplay ngoài phạm vi.
-- Tên đội dài, nhiều phương án và nhiều chip khắc chế ảnh hưởng đến độ gọn thực tế. Chỉ chốt khoảng cách, cách xuống dòng và breakpoint sau khi xem bản chạy; không cắt dữ liệu để đạt kích thước thẻ tùy ý.
-
-Riêng `戮力上心` vẫn là tên chưa xác thực, không phải lý do chặn toàn bộ nâng cấp. Giữ chữ nguồn và không tự đồng nhất với một chiến pháp khác.
+Chưa có câu hỏi sản phẩm cần chốt lại. Plan chính và [báo cáo kiểm chứng triển khai](../260912-0950-recommended-season-browser/reports/validation.md) sở hữu trạng thái của hai tab; nhận định cũ “các phase vẫn pending” không còn áp dụng. Phần Việt hóa dùng dữ liệu sẵn có đã được triển khai và kiểm chứng cục bộ trong worktree `CamNangTQCCL-season-team-lookup` ở phiên cập nhật này, chưa commit hoặc deploy. Hướng dẫn bảo trì bản dịch nằm tại `docs/season-team-data.md` trong worktree đó. Bản brainstorm ghi quyết định và tiêu chí, không thay thế bằng chứng phát hành.
