@@ -189,6 +189,14 @@ class BuildRecommendedReferenceTest(unittest.TestCase):
         payload = {
             "schemaVersion": 1,
             "labels": {"faction": {"魏": "Ngụy"}, "unit": {"騎": "Kỵ"}, "category": {"交戰": "Giao chiến"}, "subcategory": {}},
+            "statFocus": {
+                "evidenceRef": "user-confirmed:fixture",
+                "translations": {
+                    "全武": "Toàn Võ Lực",
+                    "S盾": "Khiên bậc S",
+                },
+                "noteValues": ["S盾"],
+            },
             "labelEvidence": ["js/render.js"],
             "seasons": [
                 {"sourceSeasonId": "pk-s28", "nameRaw": "九州兵興", "displayNameVi": "Cửu Châu Binh Hưng", "displayCode": "PK-S28",
@@ -233,6 +241,38 @@ class BuildRecommendedReferenceTest(unittest.TestCase):
         self.assertEqual(empty["records"], [])
         self.assertEqual(other["records"][0]["legacyTeamId"], "legacy-z")
         self.assertEqual(other["records"][0]["legacyContent"]["id"], "legacy-z")
+
+    def test_display_map_localizes_stat_focus_and_rejects_unmapped_chinese(self):
+        inputs, scope_key, _ = self._display_inputs()
+        holders = [
+            {"statFocusRaw": "全武"},
+            {"statFocusRaw": "Võ Lực"},
+        ]
+        alternatives = [{"statFocusRaw": "S盾"}]
+        inputs["records"][0]["heroes"] = copy.deepcopy(holders)
+        inputs["records"][0]["alternativeHoldersRaw"] = copy.deepcopy(alternatives)
+        inputs["details"][scope_key][0]["heroes"] = copy.deepcopy(holders)
+        inputs["details"][scope_key][0]["alternativeHoldersRaw"] = copy.deepcopy(alternatives)
+
+        apply_display_map(inputs, self._loaded(self._display_map()))
+
+        published = inputs["records"][0]
+        self.assertEqual(published["heroes"][0]["statFocusRaw"], "全武")
+        self.assertEqual(published["heroes"][0]["statFocusVi"], "Toàn Võ Lực")
+        self.assertEqual(published["heroes"][0]["statFocusKind"], "stat")
+        self.assertEqual(published["heroes"][1]["statFocusVi"], "Võ Lực")
+        self.assertEqual(published["alternativeHoldersRaw"][0]["statFocusVi"], "Khiên bậc S")
+        self.assertEqual(published["alternativeHoldersRaw"][0]["statFocusKind"], "note")
+        self.assertEqual(
+            inputs["details"][scope_key][0]["heroes"],
+            published["heroes"],
+        )
+        self.assertNotIn("statFocusVi", raw_source_record(published)["heroes"][0])
+
+        missing, _, _ = self._display_inputs()
+        missing["records"][0]["heroes"] = [{"statFocusRaw": "未知加點"}]
+        with self.assertRaisesRegex(ValueError, "missing stat focus"):
+            apply_display_map(missing, self._loaded(self._display_map()))
 
     def test_display_map_rejects_duplicate_mismatched_and_missing_seasons(self):
         payload = self._display_map()

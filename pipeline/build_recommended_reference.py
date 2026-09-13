@@ -25,6 +25,7 @@ from pipeline.sgsdeck_recommended import (
 
 SCHEMA_VERSION = 1
 SAFE_SCOPE = re.compile(r"s-[0-9a-f]{64}$")
+CJK = re.compile(r"[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]")
 TIER_ORDER = {"T0": 0, "T0.5": 1, "T1": 2, "T1.5": 3, "T2": 4, "T3": 5, "FUNC": 6, "功能隊": 6}
 DISPLAY_SCHEMA_VERSION = 1
 TRANSLATION_STATUSES = ("existing-project-name", "reference-translation")
@@ -60,7 +61,14 @@ def raw_source_record(row):
         "tierOrder",
         "subcategoryRaw",
     }
-    holder_display_fields = {"displayNameVi", "tacticSlotsVi", "tacticSlotKinds", "bookSlotsVi"}
+    holder_display_fields = {
+        "displayNameVi",
+        "tacticSlotsVi",
+        "tacticSlotKinds",
+        "bookSlotsVi",
+        "statFocusVi",
+        "statFocusKind",
+    }
     raw = {key: copy.deepcopy(value) for key, value in row.items() if key not in display_fields}
     for field in ("heroes", "alternativeHoldersRaw"):
         if isinstance(raw.get(field), list):
@@ -461,6 +469,24 @@ def load_display_map(path):
         if not isinstance(group, dict) or any(not isinstance(raw, str) or not raw.strip() or not isinstance(vi, str) or not vi.strip()
                                               for raw, vi in group.items()):
             raise ValueError("Recommended display label is not a raw to Vietnamese pair")
+    stat_focus = display.get("statFocus")
+    if not isinstance(stat_focus, dict) or set(stat_focus) != {"evidenceRef", "translations", "noteValues"}:
+        raise ValueError("Recommended display map needs stat focus translations")
+    if not isinstance(stat_focus["evidenceRef"], str) or not stat_focus["evidenceRef"].strip():
+        raise ValueError("Recommended stat focus evidence is missing")
+    translations = stat_focus["translations"]
+    if not isinstance(translations, dict) or any(
+        not isinstance(raw, str) or not raw.strip() or not isinstance(vi, str) or not vi.strip()
+        for raw, vi in translations.items()
+    ):
+        raise ValueError("Recommended stat focus translation is not a raw to Vietnamese pair")
+    note_values = stat_focus["noteValues"]
+    if (
+        not isinstance(note_values, list)
+        or len(note_values) != len(set(note_values))
+        or any(not isinstance(raw, str) or raw not in translations for raw in note_values)
+    ):
+        raise ValueError("Recommended stat focus note values are invalid")
     entries = display.get("seasons")
     if not isinstance(entries, list) or not entries:
         raise ValueError("Recommended display map needs season entries")
@@ -474,7 +500,14 @@ def load_display_map(path):
         if entry["sourceSeasonId"] in seasons:
             raise ValueError("Duplicate Recommended display season id: " + entry["sourceSeasonId"])
         seasons[entry["sourceSeasonId"]] = entry
-    return {"labels": labels, "seasons": seasons}
+    return {
+        "labels": labels,
+        "seasons": seasons,
+        "statFocus": {
+            "translations": translations,
+            "noteValues": set(note_values),
+        },
+    }
 
 
 def _display_season_options(options, display):
@@ -490,6 +523,33 @@ def _display_season_options(options, display):
         enriched.append({**option, "displayNameVi": entry["displayNameVi"], "displayCode": entry["displayCode"],
                          "translationStatus": entry["translationStatus"]})
     return enriched
+
+
+def _display_stat_focus_holder(holder, display):
+    """Add a Vietnamese stat instruction while preserving the exact source text."""
+    raw = holder.get("statFocusRaw")
+    value = raw.strip() if isinstance(raw, str) else ""
+    if not value:
+        return {**holder, "statFocusVi": None, "statFocusKind": "stat"}
+    if CJK.search(value):
+        translated = display["statFocus"]["translations"].get(value)
+        if translated is None:
+            raise ValueError("Recommended display map is missing stat focus: " + value)
+    else:
+        translated = value
+    kind = "note" if value in display["statFocus"]["noteValues"] else "stat"
+    return {**holder, "statFocusVi": translated, "statFocusKind": kind}
+
+
+def _display_stat_focus_row(row, display):
+    return {
+        **row,
+        "heroes": [_display_stat_focus_holder(holder, display) for holder in row.get("heroes") or []],
+        "alternativeHoldersRaw": [
+            _display_stat_focus_holder(holder, display)
+            for holder in row.get("alternativeHoldersRaw") or []
+        ],
+    }
 
 
 def apply_display_map(inputs, display):
@@ -510,8 +570,14 @@ def apply_display_map(inputs, display):
             "sourceCategoryNameVi": categories.get(scope.get("sourceCategoryId")),
         }
     inputs["inventory"] = {**inventory, "seasonOptions": options, "displayLabels": display["labels"]}
-    inputs["records"] = [{**row, **by_scope[row["safeScopeKey"]]} for row in inputs.get("records", [])]
-    inputs["details"] = {key: [{**row, **by_scope[key]} for row in rows] for key, rows in inputs.get("details", {}).items()}
+    inputs["records"] = [
+        _display_stat_focus_row({**row, **by_scope[row["safeScopeKey"]]}, display)
+        for row in inputs.get("records", [])
+    ]
+    inputs["details"] = {
+        key: [_display_stat_focus_row({**row, **by_scope[key]}, display) for row in rows]
+        for key, rows in inputs.get("details", {}).items()
+    }
     return inputs
 
 

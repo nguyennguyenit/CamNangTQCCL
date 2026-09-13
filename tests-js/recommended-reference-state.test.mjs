@@ -45,7 +45,7 @@ test('source URL policy rejects wrong hosts and credentials', () => {
 test('query matches enriched rows by Vietnamese with or without accents and by original Chinese', () => {
   const enriched = [
     {sourceConfigId:'vi',sourceSeasonId:'s28',sourceCategoryId:'交戰',tierOrder:2,listIndex:0,heroes:[
-      {nameRaw:'呂布',displayNameVi:'Lữ Bố',tacticSlotsRaw:['神兵天降','暴戾無仁'],tacticSlotsVi:['Thần Binh Thiên Giáng',null],bookSlotsRaw:['破陣'],bookSlotsVi:[null]},
+      {nameRaw:'呂布',displayNameVi:'Lữ Bố',statFocusRaw:'全武',statFocusVi:'Toàn Võ Lực',tacticSlotsRaw:['神兵天降','暴戾無仁'],tacticSlotsVi:['Thần Binh Thiên Giáng',null],bookSlotsRaw:['破陣'],bookSlotsVi:[null]},
     ]},
     {sourceConfigId:'other',sourceSeasonId:'s28',sourceCategoryId:'交戰',tierOrder:2,listIndex:1,heroes:[
       {nameRaw:'張飛',displayNameVi:'Trương Phi',tacticSlotsRaw:['橫掃千軍'],tacticSlotsVi:[null],bookSlotsRaw:[],bookSlotsVi:[]},
@@ -58,6 +58,7 @@ test('query matches enriched rows by Vietnamese with or without accents and by o
   assert.deepEqual(ids('呂布'), ['vi']);
   assert.deepEqual(ids('than binh thien giang'), ['vi']);
   assert.deepEqual(ids('暴戾無仁'), ['vi']);
+  assert.deepEqual(ids('toan vo luc'), ['vi']);
   assert.deepEqual(ids('truong phi'), ['other']);
 });
 

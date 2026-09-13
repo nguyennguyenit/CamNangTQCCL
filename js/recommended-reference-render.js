@@ -68,7 +68,11 @@ function detailHolder(holder,{level='h3',notes=[],isMain=false}={}) {
       fact('holder-tactics','Chiến pháp',text(entryLine(entries.filter(entry=>!entry.bond)))),
       bonds.length ? fact('holder-bonds','Duyên phận',entryLine(bonds)) : null,
       fact('holder-books','Binh thư',text(slotLine(holder.bookSlotsRaw,holder.bookSlotsVi))),
-      fact('holder-stat','Cộng điểm',text(holder.statFocusRaw)),
+      fact(
+        holder.statFocusKind === 'note' ? 'holder-stat-note' : 'holder-stat',
+        holder.statFocusKind === 'note' ? 'Lưu ý' : 'Cộng điểm',
+        text(holder.statFocusVi),
+      ),
     ].filter(Boolean)),
     ...notes.map(noteParagraph),
   ]);

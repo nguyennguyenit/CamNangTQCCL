@@ -90,7 +90,7 @@ function categoryMatches(row, category) {
 
 function holderTerms(holder) {
   return [
-    holder.displayNameVi,holder.nameRaw,holder.roleRaw,holder.statFocusRaw,holder.notesRaw,
+    holder.displayNameVi,holder.nameRaw,holder.roleRaw,holder.statFocusVi,holder.statFocusRaw,holder.notesRaw,
     ...(holder.tacticSlotsRaw || []),...(holder.tacticSlotsVi || []),
     ...(holder.bookSlotsRaw || []),...(holder.bookSlotsVi || []),
     ...(holder.alternatives || []),

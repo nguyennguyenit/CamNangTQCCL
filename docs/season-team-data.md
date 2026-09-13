@@ -137,15 +137,22 @@ trong `pipeline/recommended-identity-map.json`, đối chiếu từ từ điển
 không tự dịch tên mới. Alias phồn thể/giản thể được ghi cùng bằng chứng nguồn
 để tái sử dụng đúng tên Việt hiện có.
 
-Builder bổ sung `displayNameVi`, `tacticSlotsVi`, `bookSlotsVi` cho tướng chính
-và các cấu hình thay thế, sau khi kiểm tra hash corpus gốc với ledger Team khác.
-Hai mảng tên Việt giữ đúng vị trí slot nguồn; tên chưa đối chiếu được là `null`.
-Thẻ đội và chi tiết ưu tiên bản Việt từng slot, thiếu thì hiển thị tiếng Trung.
-Tìm kiếm hỗ trợ cả tên Việt có dấu/không dấu và tên Trung gốc.
+Builder bổ sung `displayNameVi`, `tacticSlotsVi`, `bookSlotsVi` và
+`statFocusVi` cho tướng chính lẫn các cấu hình thay thế, sau khi kiểm tra hash
+corpus gốc với ledger Team khác. Hai mảng tên Việt giữ đúng vị trí slot nguồn;
+tên chưa đối chiếu được là `null`. Tìm kiếm hỗ trợ cả tên Việt có dấu/không dấu
+và tên Trung gốc.
 
-Các trường `nameRaw`, `tacticSlotsRaw`, `bookSlotsRaw`, `nameZh` và ghi chú nguồn
-không bị ghi đè, giữ dữ liệu cho giao diện hai ngôn ngữ sau này. Chưa có bộ chọn
-ngôn ngữ; tên đội và nội dung chưa có bản Việt vẫn giữ nguyên nguồn.
+Chỉ dẫn cộng điểm được dịch bằng bảng `statFocus` đã duyệt trong
+`pipeline/recommended-display-map.json`. Builder giữ nguyên `statFocusRaw`, xuất
+`statFocusVi`, và dừng publication nếu gặp mẫu chữ Hán chưa có mapping.
+`statFocusKind: "note"` chuyển các giá trị thực chất là ghi chú trang bị hoặc
+binh thư sang nhãn **Lưu ý** thay vì **Cộng điểm**.
+
+Các trường `nameRaw`, `tacticSlotsRaw`, `bookSlotsRaw`, `statFocusRaw`,
+`nameZh` và ghi chú nguồn không bị ghi đè, giữ dữ liệu để truy nguyên và cho
+giao diện hai ngôn ngữ sau này. Chưa có bộ chọn ngôn ngữ; tên đội và nội dung
+chưa có bản Việt vẫn giữ nguyên nguồn.
 
 Khi bổ sung bản dịch đã xác minh, cập nhật entry/alias tương ứng trong
 `pipeline/recommended-identity-map.json` và bằng chứng đối chiếu. Chạy lại lệnh
