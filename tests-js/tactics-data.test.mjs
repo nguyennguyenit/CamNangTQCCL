@@ -3,8 +3,29 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { tacticDescriptions } from "../js/tactics.js";
+import { matchDict } from "../js/match-dict.js";
 
 const tactics = JSON.parse(await readFile(new URL("../pipeline/lookup-inputs/tactics.json", import.meta.url), "utf8"));
+
+test("Vô Địch Can Trường has one complete record and retains its Han-Viet lookup", async () => {
+  const matches = tactics.filter((item) => item.viet === "Vô Địch Can Trường");
+  assert.equal(matches.length, 1);
+  const tactic = matches[0];
+  assert.equal(tactic.chinese, "刚勇无前");
+  assert.equal(tactic.hanViet, "Cương Dũng Vô Tiền");
+  assert.equal(tactic.type, "Bị động");
+  assert.equal(tactic.quality, "S");
+  assert.ok(tactic.effect);
+  assert.ok(tactic.iconUrl);
+  assert.equal(tactic.pending, undefined);
+  for (const query of ["Vô Địch Can Trường", "vo dich can truong", "Cương Dũng Vô Tiền", "刚勇无前"]) {
+    assert.equal(matchDict(query, tactics).record, tactic, query);
+  }
+  const overrides = JSON.parse(await readFile(new URL("../pipeline/tactic-name-overrides.json", import.meta.url), "utf8"));
+  assert.equal(overrides.overrides["刚勇无前"].viet, tactic.viet);
+  const generic = JSON.parse(await readFile(new URL("../data/tactics-generic.json", import.meta.url), "utf8"));
+  assert.equal(generic.tactics.some((item) => item.viet === tactic.viet), false);
+});
 
 test("Đồng Lòng Hợp Sức resolves to the event heal instead of Cao Pi's domestic tactic", () => {
   const matches = tactics.filter((item) => item.viet === "Đồng Lòng Hợp Sức");

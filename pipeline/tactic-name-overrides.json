@@ -1,6 +1,7 @@
 {
   "_note": "Override tên canonical: chữ Hán -> tên Việt site đang dùng (dịch nghĩa, KHÔNG phải Hán-Việt nên auto-link không khớp). Review thủ công, áp deterministic lúc build_dict. conf: high|medium. Bổ sung khi review thêm.",
   "overrides": {
+    "刚勇无前": { "viet": "Vô Địch Can Trường", "conf": "high" },
     "抚辑军民": { "viet": "An Ủi Quân Dân", "conf": "high" },
     "整装待发": { "viet": "Chờ Đợi Xuất Phát", "conf": "high" },
     "千里走单骑": { "viet": "Cưỡi Ngựa Nghìn Dặm", "conf": "high" },
