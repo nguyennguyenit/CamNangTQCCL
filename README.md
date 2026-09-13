@@ -6,8 +6,9 @@ Website tĩnh tra cứu đội hình, tướng, chiến pháp và hỗ trợ qu�
 
 ## Tính năng
 
-- 9 section có deep-link bằng hash: Team PK, Meta phe cũ, Cùng Tồn, Khai hoang, tướng, chiến pháp, tracker chiêu mộ, soi đội và gợi ý đội từ kho.
-- Hai tab team dùng chung bộ lọc inline: search toàn văn + chip động theo dữ liệu từng tab; mobile thu gọn vùng lọc sau nút `☰ Bộ lọc`.
+- 9 section có deep-link bằng hash: Team chuẩn, Team khác, Cùng Tồn, Khai hoang, tướng, chiến pháp, tracker chiêu mộ, soi đội và gợi ý đội từ kho. Hash cũ `#team-pk`/`#meta-cu` được chuẩn hóa về `#team-khac`.
+- Hai tab team dùng chung một browser: search toàn văn, select mùa/danh mục nguồn và chip facet (loại binh, điểm, phe, nhóm, nguồn) đếm theo phạm vi đang chọn; mobile thu gọn vùng lọc sau nút `Bộ lọc`.
+- Mỗi đội có trang chi tiết tĩnh riêng dưới `/teams/recommended/<sourceConfigId>/` hoặc `/teams/legacy/<legacyTeamId>/`; URL ngoài danh sách sinh sẵn trả trang 404 tĩnh.
 - Chọn kịch bản/phiên bản luật dùng chung cho tra cứu, Cùng Tồn và gợi ý; URL giữ phạm vi, bộ lọc và cấu hình đang mở. Khai hoang dùng bản bảo trì mới nhất.
 - Tra cứu 112 tướng và 239 chiến pháp bằng dữ liệu local, hỗ trợ tên Việt/Hán-Việt/Hán.
 - Tracker chiêu mộ lưu nhiều account, pity và lịch sử trong `localStorage`; có xuất/nhập JSON.
@@ -98,7 +99,7 @@ Không chạy máy móc trên dữ liệu đang dùng: `build_json.py` cố ý l
 ## Deploy
 
 - Site production hiện tại: `https://tqccl.pages.dev`. Contract cho lần release được ủy quyền tiếp theo: repository root, `npm run build`, output `dist/`; settings thật phải được kiểm tra trước promotion.
-- `public/_headers` được Astro đưa vào `dist/_headers`; shared verifier yêu cầu byte parity và cache revalidation cho shell/JS/CSS/JSON.
+- `public/_headers` được Astro đưa vào `dist/_headers`; shared verifier yêu cầu byte parity và cache revalidation cho shell, trang chi tiết đội, `404.html`, JS/CSS/JSON.
 - Vision proxy: Worker tại `https://tqccl-vision-proxy.nguyennlt-ncc.workers.dev`, deploy riêng từ `worker/`.
 - Research MCP nằm trong `mcp-worker/`; code và data theo [manifest v1/v2](docs/mcp-research-server.md) được đóng trong cùng Worker Static Assets version. Production release chưa được ghi nhận cho đến khi exact-version smoke, edge control và rollback rehearsal đạt với ủy quyền riêng.
 - `js/config.js` chứa Worker URL và Turnstile site key công khai đang hoạt động. Secret chỉ nằm trong môi trường Worker.
@@ -109,7 +110,9 @@ Xem [Deployment Guide](docs/deployment-guide.md) và bản ghi triển khai có 
 ## Cấu trúc
 
 ```text
-src/pages/index.astro   # document shell Astro
+src/pages/index.astro  # document shell Astro
+src/pages/404.astro    # trang 404 top-level
+src/pages/teams/       # trang chi tiết đội sinh từ catalog
 src/lib/, src/pages/   # manifest + static endpoints byte-exact
 css/, js/, data/       # source runtime canonical
 public/_headers        # Pages deployment-control source

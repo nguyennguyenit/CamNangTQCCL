@@ -1,9 +1,10 @@
 import json
+import hashlib
 import tempfile
 import unittest
 from pathlib import Path
 
-from pipeline.build_recommended_reference import build_generation
+from pipeline.build_recommended_reference import build_generation, canonical_object_hash, raw_source_record
 from pipeline.report_recommended_translations import build_report, read_generation
 
 
@@ -18,6 +19,14 @@ REVIEWED = [
     {"kind": "hero", "stableId": "hero:8", "variant": "SP", "aliases": ["SP貂蟬"], "displayNameVi": "Điêu Thuyền khác",
      "reviewStatus": "reviewed", "evidenceRef": "heroes-dict.json#8"},
 ]
+SCOPED_TEAM = {
+    "kind": "team",
+    "aliases": ["同名隊"],
+    "sourceConfigId": "team-a",
+    "displayNameVi": "Đội A",
+    "reviewStatus": "translation-reviewed",
+    "evidenceRef": "fixture:team-a",
+}
 
 
 def _row(config_id, name_zh, heroes, alternatives=()):
@@ -32,13 +41,50 @@ def _holder(name, tactics=(), books=()):
 
 class ReportRecommendedTranslationsTest(unittest.TestCase):
     def _generation(self, root, records):
+        details = [{**row, "listIndex": index} for index, row in enumerate(records)]
+        index_records = [{
+            **row,
+            "safeScopeKey": SCOPE,
+            "sourceScopeId": "s|交戰",
+            "sourceSeasonId": "s",
+            "sourceSeasonLabel": "S",
+            "sourceCategoryId": "交戰",
+        } for row in details]
         inputs = {
-            "inventory": {"inventoryHash": "a", "seasonOptions": [{"sourceSeasonId": "s", "status": "available"}],
-                          "scopes": [{"safeScopeKey": SCOPE, "sourceScopeId": "s|交戰", "state": "complete"}]},
-            "records": records, "details": {SCOPE: list(records)}, "otherTeams": [],
-            "mappingHash": "b", "decisionSnapshotHash": "c", "dedupKeyVersion": 1,
+            "inventory": {
+                "inventoryHash": "a",
+                "seasonOptions": [{"sourceSeasonId": "s", "label": "S", "status": "available"}],
+                "scopes": [{"safeScopeKey": SCOPE, "sourceScopeId": "s|交戰", "sourceSeasonId": "s",
+                            "sourceCategoryId": "交戰", "state": "complete"}],
+            },
+            "records": index_records,
+            "details": {SCOPE: details},
+            "otherTeams": [],
+            "mappingHash": "b",
+            "decisionSnapshotHash": "c",
+            "dedupKeyVersion": 1,
         }
-        return build_generation(inputs, root)
+        teams_bytes = b"[]"
+        ledger = {
+            "dedupKeyVersion": 1,
+            "sourceInventoryHash": "a",
+            "mappingFileSha256": "b",
+            "recommendedCorpusHash": canonical_object_hash([raw_source_record(row) for row in records]),
+            "localTeamsSha256": "sha256:" + hashlib.sha256(teams_bytes).hexdigest(),
+            "inputTeamRows": 0,
+            "counts": {"distinct": 0, "duplicate": 0, "pendingIdentity": 0, "pendingSource": 0},
+            "admitted": [],
+            "decisions": [],
+        }
+        ledger_bytes = json.dumps(ledger).encode()
+        inputs["decisionSnapshotHash"] = "sha256:" + hashlib.sha256(ledger_bytes).hexdigest()
+        return build_generation(
+            inputs,
+            root,
+            teams_bytes=teams_bytes,
+            content_links_bytes=b'{"schemaVersion":1,"entries":[]}',
+            ledger_bytes=ledger_bytes,
+        )
 
     def _map(self, root, entries):
         path = root / "identity-map.json"
@@ -58,7 +104,8 @@ class ReportRecommendedTranslationsTest(unittest.TestCase):
             self._generation(reference, records)
             report = build_report(reference, self._map(root, REVIEWED[:2]))
 
-            keys = [(item["kind"], item["aliasKey"]) for item in report["items"]]
+            non_team = [item for item in report["items"] if item["kind"] != "team"]
+            keys = [(item["kind"], item["aliasKey"]) for item in non_team]
             self.assertEqual(keys, [("book", "執銳"), ("hero", "未知甲"), ("tactic", "當鋒摧決")])
             self.assertNotIn(("hero", "張遼"), keys)
             self.assertNotIn(("tactic", "盛氣淩敵"), keys)
@@ -77,7 +124,7 @@ class ReportRecommendedTranslationsTest(unittest.TestCase):
             self.assertEqual(tactic["occurrences"], 4)
             self.assertEqual(report["counts"]["hero"], {"missingNames": 1, "occurrences": 3})
             self.assertEqual(report["counts"]["book"], {"missingNames": 1, "occurrences": 1})
-            self.assertEqual(report["counts"]["total"], 3)
+            self.assertEqual(len(non_team), 3)
             self.assertEqual(report["sourceGeneration"]["records"], 4)
 
     def test_alternative_holders_and_ambiguous_variants_stay_unmerged(self):
@@ -113,13 +160,32 @@ class ReportRecommendedTranslationsTest(unittest.TestCase):
                                           "evidenceRef": "heroes-dict.json#5"}]
             after = build_report(reference, self._map(root, translated))
 
-            self.assertEqual([item["aliasKey"] for item in before["items"]], ["未知甲", "當鋒摧決"])
-            self.assertEqual([item["aliasKey"] for item in after["items"]], ["當鋒摧決"])
-            ids = {item["aliasKey"]: item["itemId"] for item in before["items"]}
-            self.assertEqual(after["items"][0]["itemId"], ids["當鋒摧決"])
+            before_non_team = [item for item in before["items"] if item["kind"] != "team"]
+            after_non_team = [item for item in after["items"] if item["kind"] != "team"]
+            self.assertEqual([item["aliasKey"] for item in before_non_team], ["未知甲", "當鋒摧決"])
+            self.assertEqual([item["aliasKey"] for item in after_non_team], ["當鋒摧決"])
+            ids = {item["aliasKey"]: item["itemId"] for item in before_non_team}
+            self.assertEqual(after_non_team[0]["itemId"], ids["當鋒摧決"])
             self.assertNotEqual(after["mappingHash"], before["mappingHash"])
             self.assertEqual(after["sourceGeneration"], before["sourceGeneration"])
             self.assertEqual((reference / selector["generationId"] / "index.json").read_bytes(), source_bytes)
+
+    def test_reviewed_bond_is_not_reported_as_an_untranslated_tactic(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            reference = root / "reference"
+            records = [_row("team-bond", "隊一", [_holder("張遼", ["桃園結義", "戮力上心"])])]
+            self._generation(reference, records)
+            entries = REVIEWED[:2] + [
+                {"kind": "bond", "aliases": ["桃園結義"], "displayNameVi": "Kết Nghĩa Vườn Đào",
+                 "reviewStatus": "translation-reviewed", "evidenceRef": "user:bond"},
+            ]
+            report = build_report(reference, self._map(root, entries))
+            self.assertEqual(
+                [(item["kind"], item["aliasKey"]) for item in report["items"] if item["kind"] != "team"],
+                [("tactic", "戮力上心")],
+            )
+            self.assertEqual(report["counts"]["tactic"]["missingNames"], 1)
 
     def test_unreviewed_entries_and_empty_vietnamese_names_remain_missing(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -134,8 +200,27 @@ class ReportRecommendedTranslationsTest(unittest.TestCase):
             ]
             report = build_report(reference, self._map(root, entries))
 
-            statuses = {item["aliasKey"]: item["rawVariants"][0]["reason"] for item in report["items"]}
+            statuses = {
+                item["aliasKey"]: item["rawVariants"][0]["reason"]
+                for item in report["items"]
+                if item["kind"] != "team"
+            }
             self.assertEqual(statuses, {"未知甲": "no-reviewed-exact-alias", "未錄": "no-reviewed-vietnamese-name"})
+
+    def test_team_title_report_respects_source_scoped_translation(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            reference = root / "reference"
+            self._generation(reference, [
+                _row("team-a", "同名隊", []),
+                _row("team-b", "同名隊", []),
+            ])
+            report = build_report(reference, self._map(root, [*REVIEWED, SCOPED_TEAM]))
+            team_items = [item for item in report["items"] if item["kind"] == "team"]
+            self.assertEqual(report["counts"]["team"], {"missingNames": 1, "occurrences": 1})
+            self.assertEqual(len(team_items), 1)
+            self.assertEqual(team_items[0]["sourceConfigId"], "team-b")
+            self.assertEqual(team_items[0]["aliasKey"], "同名隊")
 
     def test_tampered_generation_payload_is_refused(self):
         with tempfile.TemporaryDirectory() as folder:

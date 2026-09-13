@@ -5,7 +5,17 @@ import { PUBLIC_ARTIFACTS } from "../src/lib/public-artifact-manifest.mjs";
 
 const headersPath = new URL("../public/_headers", import.meta.url);
 const cachePolicy = "public, max-age=0, must-revalidate";
-const expectedRules = ["/", "/index.html", "/js/*", "/css/*", "/data/*", "/favicon.png"];
+const expectedRules = [
+  "/",
+  "/index.html",
+  "/teams/recommended/*",
+  "/teams/legacy/*",
+  "/404.html",
+  "/js/*",
+  "/css/*",
+  "/data/*",
+  "/favicon.png",
+];
 
 function parseHeaders(source) {
   const rules = new Map();
@@ -70,6 +80,11 @@ test("_headers covers every published shell and mutable raw asset", async () => 
     "/data/recommended/current.json",
     `/data/recommended/${"1".repeat(64)}/manifest.json`,
     `/data/recommended/${"1".repeat(64)}/details-s-${"2".repeat(64)}.json`,
+    "/404.html",
+    "/teams/recommended/team-epoddo/",
+    "/teams/recommended/team-epoddo/index.html",
+    "/teams/legacy/team-intro-4/",
+    "/teams/legacy/team-intro-4/index.html",
   ];
   for (const path of publicPaths) {
     assert.equal(policyFor(rules, path), cachePolicy, `${path} must revalidate`);

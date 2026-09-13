@@ -363,11 +363,6 @@ test("opening a roster recommendation preserves its tab and opens the exact orig
   await page.addInitScript((state) => {
     localStorage.setItem("tqccl.rosterRecommend.scanState.v1", JSON.stringify(state));
   }, rosterState);
-  await page.addInitScript(() => {
-    window.__scrollCalls = [];
-    window.scrollTo = (...args) => window.__scrollCalls.push(args);
-  });
-
   await page.goto("/#roster-recommend");
   await waitForBoot(page);
   await page.getByRole("button", { name: "Gợi ý 5 team", exact: true }).click();
@@ -379,13 +374,11 @@ test("opening a roster recommendation preserves its tab and opens the exact orig
   expect(selectedTeam).toBeTruthy();
 
   await recommendation.getByRole("button", { name: "Mở team", exact: true }).click();
-  await expectActiveSection(page, "roster-recommend");
-  await expect(page).toHaveURL(new RegExp(`legacyTeam=${selectedTeam.id}`));
-  await expect(page.locator("#legacy-team-detail")).toBeVisible();
-  await expect(page.locator("#legacy-team-detail h2")).toHaveText(selectedTeam.name);
-  await expect.poll(() => page.evaluate(() => window.__scrollCalls.at(-1))).toEqual([
-    { top: 0, behavior: "smooth" },
-  ]);
+  await expect(page).toHaveURL(new RegExp(`/teams/legacy/${selectedTeam.id}/`));
+  await expect(page.locator("#team-detail-body")).toBeVisible();
+  await expect(page.locator("h1#team-detail-title")).toHaveText(selectedTeam.nickname || selectedTeam.name);
+  // Người dùng quay lại đúng tab gợi ý đã mở đội.
+  await expect(page.locator("#team-return-link")).toHaveAttribute("href", /#roster-recommend$/);
 });
 
 test("local preview serves approved artifacts and excludes private source paths", async ({ request }) => {

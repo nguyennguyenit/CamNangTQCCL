@@ -92,6 +92,8 @@ python3 -m pipeline.build_recommended_reference \
   --cache .cache/sgsdeck-recommended \
   --identity-map pipeline/recommended-identity-map.json \
   --other-ledger pipeline/recommended-other-teams.json \
+  --teams data/teams.json \
+  --content-links pipeline/recommended-content-links.json \
   --output src/data/recommended-reference
 ```
 
@@ -108,6 +110,25 @@ Manifest khai báo hash và kích thước của `seasons.json`, `index.json`,
 `/data/recommended/current.json` cùng các byte đã khai báo dưới
 `/data/recommended/<generationId>/`; HTML pin generation đó nên một trang đang
 mở không trộn hai lần cập nhật.
+
+Builder bắt buộc `--teams` và `--content-links`. `data/teams.json` là bản đội gốc
+duy nhất được đối chiếu; [`pipeline/recommended-content-links.json`](../pipeline/recommended-content-links.json)
+là ledger liên kết nội dung đã review và hiện có `entries` rỗng. Mỗi entry phải đủ
+`sourceConfigId`, `legacyTeamId`, `sourceContentSha256`, `legacyContentSha256` và
+`evidenceRef`; builder tính lại hai fingerprint từ record nguồn và từ đội gốc, một
+fingerprint cũ làm builder dừng thay vì xuất bản. Hàng `admitted` của Team khác phải
+trỏ đúng một cặp `legacyTeamId`/`legacyVariantId` đã được phân loại `distinct` và
+mang `legacyContent` khớp hash của chính nó.
+
+Generation descriptor pin thêm `legacyTeamsHash` và `contentLinksHash`, nên đổi
+`data/teams.json` hoặc ledger liên kết sẽ sinh generation mới. Trước khi ghi, builder
+đối chiếu index với detail của cùng `sourceConfigId`: `displayNameVi`,
+`legacyReferences` và `displayNotes` phải trùng nhau.
+
+`displayNotes` là projection `schemaVersion: 1` gồm các block có `id` duy nhất,
+`owner` thuộc `team`, `primary` hoặc `alternative`, `holderIndex` nằm trong số holder
+tương ứng và `textRaw` không rỗng. Bản ghi chưa có projection giữ nguyên ghi chú
+aggregate `notesRaw`; renderer không tự suy ownership cho ghi chú cũ.
 
 ### Tên Việt và dữ liệu Trung nguyên bản
 
@@ -131,6 +152,18 @@ Khi bổ sung bản dịch đã xác minh, cập nhật entry/alias tương ứn
 dedup rồi builder ở trên vì ledger kiểm tra hash file mapping; không sửa trực
 tiếp generation đã xuất. Sau đó build và verify lại website.
 
+Kiểm chứng generation mới bằng lệnh thật:
+
+```bash
+python3 -m unittest tests.test_build_recommended_reference
+npm run build
+npm run verify
+npm run test:dist
+```
+
+Publication đã chọn cũng là inventory của route chi tiết đội; phần route tĩnh và
+trang 404 nằm ở [deployment guide](deployment-guide.md).
+
 Tên mùa và nhãn bộ lọc dùng chung từ `pipeline/recommended-display-map.json`.
 Phe, loại binh và nguồn tái sử dụng thuật ngữ trên main. Toàn bộ 29 mùa nguồn,
 kể cả mùa cũ/chưa thu thập, có tên Việt riêng; tên đã có trong dự án được ưu
@@ -139,8 +172,8 @@ nhận tên chính thức hoặc quy đổi mùa nguồn sang máy chủ Việt 
 
 Builder giữ nguyên tên Trung, mã mùa, ID, giá trị lọc và thứ tự nguồn; chỉ thêm
 metadata hiển thị sau khi kiểm tra corpus. Bộ chọn, thẻ và chi tiết dùng cùng
-tên mùa; tìm mùa nhận tên Việt có/không dấu, tên Trung và mã nguồn. Tìm kiếm
-không tự đổi mùa đang chọn. Chỉnh display map chỉ cần chạy lại builder; mùa
+tên mùa. Mùa được chọn trực tiếp bằng bộ chọn; không có ô tìm mùa riêng và lựa
+chọn không tự đổi. Chỉnh display map chỉ cần chạy lại builder; mùa
 mới hoặc tên nguồn đổi phải được đối chiếu trong map trước khi xuất bản.
 
 ### Danh sách tên còn thiếu bản Việt
@@ -154,8 +187,9 @@ python3 -m pipeline.report_recommended_translations \
   --output pipeline/recommended-missing-translations.json
 ```
 
-Report hiện có 85 tên: 42 tướng, 36 chiến pháp, 7 binh thư. Mỗi mục giữ các
-biến thể chữ Trung, số lần xuất hiện, tối đa ba ngữ cảnh đội/URL nguồn và
+Report hiện còn một chiến pháp chưa xác thực: `戮力上心` (11 lần xuất hiện);
+không còn tên tướng hoặc binh thư thiếu bản dịch. Mỗi mục giữ các biến thể chữ
+Trung, số lần xuất hiện, tối đa ba ngữ cảnh đội/URL nguồn và
 `displayNameVi: null` để người dùng ghi bản dịch. Nhóm theo khóa alias đã
 chuẩn hóa và loại thực thể; không tự gộp danh tính mơ hồ. Report ghi hash map
 và generation để nhận biết dữ liệu cũ; không được xuất ra website.
@@ -164,6 +198,33 @@ Worksheet không phải nguồn dịch tự động. Sau khi người dùng xác
 bản dịch và bằng chứng vào identity map dùng chung, chạy lại dedup → builder
 → report. Việc tạo lại report sẽ ghi đè worksheet; lưu bản dịch được duyệt
 vào map trước. Không đổi stable ID chỉ vì sửa cách viết tên Việt.
+
+Nếu người dùng chỉ xác nhận tên Việt, chưa xác minh danh tính để xét trùng,
+thêm entry `reviewStatus: "translation-reviewed"` với `kind`, `aliases`,
+`displayNameVi`, `evidenceRef` và tiền tố biến thể tương ứng. Không gán stable
+ID hoặc chuyển alias của bản SP/CO/40Y vào bản thường. Builder và report dùng
+bản dịch này; bộ xét trùng chỉ nhận danh tính có trạng thái `reviewed`.
+Ví dụ đã được người dùng duyệt: `40Y 呂布` → `40Y Lữ Bố`, `王異` → `Vương Dị`,
+`SP 法正` → `SP Pháp Chính`, `SP 盧植` → `SP Lư Thực`, `SP 貂蟬` → `SP Điêu Thuyền`.
+
+Tên tướng đầy đủ vẫn giữ tiền tố trong dữ liệu; renderer tách SP/CO/40Y thành
+tag dùng kiểu cũ trên thẻ đội, chi tiết và tướng thay thế. Ba tên Vô Song đã
+duyệt đều có CO: Đại Kiều, Tiểu Kiều, Tinh Thái; không bỏ chữ “Vô Song”.
+
+`桃園結義` được duyệt là **Kết Nghĩa Vườn Đào**, loại `bond` (duyên phận).
+Nguồn đặt tên này trong ô chiến pháp; builder giữ nguyên `tacticSlotsRaw`,
+thêm `tacticSlotKinds` theo đúng vị trí và bản dịch trong `tacticSlotsVi`.
+UI tách dòng **Duyên phận**, không tạo nút chọn chiến pháp cho mục này.
+Phân loại hiển thị không sửa bằng chứng nguồn hay quyết định xét trùng.
+
+Không tự đổi `戮力上心` thành `勠力同心` (**Đồng Lòng Hợp Sức**).
+[Trang nguồn S27](https://sgsdeck.com/recommended/s27-han-hanshi-gong-1)
+ghi tên đầu nhưng chưa có đối chiếu hiệu ứng đủ để xác nhận hai tên là một.
+Từ điển hiện có `勠力同心`; [bài mô tả chiến pháp](https://m.51nacs.com/article/1040.html)
+cũng dùng tên này, không chứng minh lỗi chữ của trang nguồn.
+
+Sau khi đổi generation trong lúc chạy `npm run dev`, khởi động lại dev server
+để nạp publication mới; server đang chạy có thể vẫn giữ generation cũ.
 
 Quyền lưu và hiển thị cấu hình/điểm Recommended đã được người dùng xác nhận
 ngày 2026-09-12. Dữ liệu này là tham khảo nguồn, không tự trở thành điểm,

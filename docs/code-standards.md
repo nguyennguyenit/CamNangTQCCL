@@ -6,11 +6,14 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
 
 ## Frontend JavaScript
 
-- `src/pages/index.astro` sở hữu document shell; không tạo lại root `index.html`.
+- `src/layouts/SiteLayout.astro` sở hữu document shell; `src/pages/index.astro` là trang root và không tạo lại root `index.html`.
 - Astro chỉ làm static build. Không thêm SSR, adapter, renderer UI hoặc Pages Functions khi chưa có yêu cầu riêng.
 - Dùng vanilla ES modules; không thêm framework/bundler nếu không có yêu cầu sản phẩm rõ.
 - `app.js` chỉ điều phối load/init. Behavior section đặt trong module riêng.
-- Dùng lại `createTeamFilterSection()` cho tab team; không fork filter UI theo source.
+- Hai tab Team chuẩn/Team khác dùng cùng `createRecommendedSection()` trong `js/team-filter-section.js`; không fork filter UI theo family.
+- Thẻ đội và nội dung chi tiết dùng chung `js/recommended-reference-render.js`; trang chi tiết không dựng lại markup thẻ hay style riêng.
+- Href, snapshot quay lại và migrate URL tham chiếu cũ thuộc `js/team-detail-navigation.js`; không tự nối path `/teams/...` ở chỗ khác.
+- Liên kết sang trang chi tiết là anchor thật: chỉ ghi snapshot ở click primary không modifier, không `preventDefault` và không router tự viết.
 - Ưu tiên pure function cho normalize, filter, map, score và state transition.
 - Render dữ liệu bằng DOM API/`textContent`; không đưa dữ liệu nguồn thô vào `innerHTML`.
 - Public config đặt trong `js/config.js`; không coi Worker URL hoặc Turnstile site key là secret.
@@ -24,11 +27,19 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
 - `public/` chỉ chứa deployment-control/static file do Astro copy; hiện `public/_headers` phải byte-equal với `dist/_headers`.
 - `scripts/verify-astro-dist.mjs` là output policy duy nhất. Test và CLI phải gọi cùng verifier, không nhân đôi allowlist.
 - Shell/JS/CSS/JSON mutable dùng `Cache-Control: public, max-age=0, must-revalidate`; Pages response thật vẫn phải được kiểm tra trước promotion.
+- `src/pages/404.astro` là trang 404 top-level; không dựa vào SPA fallback và không boot `app.js`/`team-detail.js` trong trang đó.
+- Route `/teams/recommended/<sourceConfigId>/` và `/teams/legacy/<legacyTeamId>/` sinh từ `src/lib/team-detail-routes.ts`; inventory HTML này dùng chung cho build và verifier, ID không routable bị loại.
+- `public/_headers` phải phủ cả `/teams/recommended/*`, `/teams/legacy/*`, `/404.html` và `/favicon.png`.
+- Root và trang con dùng chung `src/layouts/SiteLayout.astro` cùng một `/css/styles.css`; không thêm stylesheet hoặc shell riêng cho trang chi tiết.
 
 ## UI và accessibility
 
 - Nhãn tiếng Việt ngắn, trạng thái rõ; mọi control dùng `button`/`input` phù hợp và có tên truy cập được.
 - Filter count phải tính từ tập dữ liệu tab hiện tại. Không phụ thuộc `data/facets.json` ở runtime.
+- URL sở hữu bộ lọc Team: `season`, `category`, `q`, `faction`, `unit`, `score`, `subcategory`, `source`. Selector cũ `tier`, `stars`, `sort`, `point` đã nghỉ; gặp thì báo notice và bỏ, không map sang điểm nguồn và không đổi thứ tự nguồn.
+- Query gameplay (`config`, `tier`, `sort`, `stars`) thuộc Cùng Tồn/soi đội/gợi ý kho; snapshot theo từng surface, không rò giữa hai nhóm.
+- Thu gọn là trình bày: mức điểm đang chọn vẫn hiển thị và vẫn lọc dù nằm ngoài tám mức đầu.
+- Disclosure phục hồi (`filters`, `score`, `alternatives`) chỉ nhận snapshot khớp đúng một URL root; storage lỗi không được chặn điều hướng.
 - Mobile dùng shared inline filter collapse và `mobile-section-menu.js`; không tham chiếu drawer module không tồn tại.
 - Không thiết kế tương tác chỉ dựa vào hover; giữ touch target đủ dùng.
 - Khi thêm dialog/upload/status async: bổ sung focus management, keyboard activation và live region, kèm test.

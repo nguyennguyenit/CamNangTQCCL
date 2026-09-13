@@ -21,7 +21,9 @@ const projectRoot = new URL("../", import.meta.url);
 const jsonBytes = (value) => Buffer.from(`${JSON.stringify(value)}\n`);
 const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
 
-async function writeRecommendedFixture(projectDir, distDir) {
+const LEGACY_TEAM_ID = "team-intro-0";
+
+async function writeRecommendedFixture(projectDir, distDir, { legacyTeamsHash } = {}) {
   const generationId = "1".repeat(64);
   const scope = `s-${"2".repeat(64)}`;
   const sourceRoot = join(projectDir, "src", "data", "recommended-reference");
@@ -29,6 +31,17 @@ async function writeRecommendedFixture(projectDir, distDir) {
   const output = join(distDir, "data", "recommended", generationId);
   await mkdir(generation, { recursive: true });
   await mkdir(output, { recursive: true });
+  const teamsBytes = jsonBytes([{
+    id: LEGACY_TEAM_ID,
+    source: "team-intro",
+    name: "Đội gốc",
+    nickname: null,
+    heroes: [{ name: "Tuân Úc", tactics: [], books: [], alternatives: [], note: null }],
+    counters: { good: [], avoid: [] },
+    notes: null,
+  }]);
+  await mkdir(join(projectDir, "data"), { recursive: true });
+  await writeFile(join(projectDir, "data", "teams.json"), teamsBytes);
   const payloads = {
     "seasons.json": jsonBytes({ schemaVersion: 1, seasonOptions: [], scopes: [] }),
     "index.json": jsonBytes({ schemaVersion: 1, records: [] }),
@@ -40,7 +53,14 @@ async function writeRecommendedFixture(projectDir, distDir) {
     await writeFile(join(generation, name), bytes);
     await writeFile(join(output, name), bytes);
   }
-  const manifest = jsonBytes({ schemaVersion: 1, generationId, dedupKeyVersion: 1, allowedScopeKeys: [scope], files });
+  const manifest = jsonBytes({
+    schemaVersion: 1,
+    generationId,
+    dedupKeyVersion: 1,
+    allowedScopeKeys: [scope],
+    files,
+    legacyTeamsHash: legacyTeamsHash ?? `sha256:${sha256(teamsBytes)}`,
+  });
   await writeFile(join(generation, "manifest.json"), manifest);
   await writeFile(join(output, "manifest.json"), manifest);
   const current = jsonBytes({ schemaVersion: 1, generationId, manifestSha256: sha256(manifest) });
@@ -49,6 +69,12 @@ async function writeRecommendedFixture(projectDir, distDir) {
   await writeFile(join(distDir, "data", "recommended", "current.json"), current);
   const pin = { schemaVersion: 1, generationId, manifestSha256: sha256(manifest) };
   await writeFile(join(distDir, "index.html"), `<!doctype html><script id="recommended-publication" type="application/json">${JSON.stringify(pin)}</script>\n`);
+  await writeFile(join(distDir, "404.html"), '<!doctype html><h1 id="not-found-title">Không tìm thấy trang</h1>\n');
+  await mkdir(join(distDir, "teams", "legacy", LEGACY_TEAM_ID), { recursive: true });
+  await writeFile(
+    join(distDir, "teams", "legacy", LEGACY_TEAM_ID, "index.html"),
+    `<!doctype html><article id="team-detail-root" data-legacy-team-id="${LEGACY_TEAM_ID}" data-legacy-teams-sha256="sha256:${sha256(teamsBytes)}" data-generation-id="${generationId}" data-manifest-sha256="${sha256(manifest)}"></article>\n`,
+  );
 }
 
 test("season bundle publishes exactly five sidecars with the shared resolver", async () => {
@@ -356,6 +382,74 @@ test("dist verifier rejects missing, unexpected, and symlinked output", async (t
       manifest,
     }),
     /must not contain symlinks/i,
+  );
+});
+
+test("dist verifier admits exactly the catalog team pages, the 404 and no stale publication", async (t) => {
+  const { rm } = await import("node:fs/promises");
+  const projectDir = await mkdtemp(join(tmpdir(), "tqccl-astro-teams-source-"));
+  const distDir = await mkdtemp(join(tmpdir(), "tqccl-astro-teams-dist-"));
+  t.after(async () => {
+    await Promise.all([
+      rm(projectDir, { recursive: true, force: true }),
+      rm(distDir, { recursive: true, force: true }),
+    ]);
+  });
+  const manifest = [];
+  await mkdir(join(projectDir, "public"), { recursive: true });
+  await writeFile(join(projectDir, "public", "_headers"), "/\n  Cache-Control: max-age=0\n");
+  await writeFile(join(distDir, "_headers"), "/\n  Cache-Control: max-age=0\n");
+  const favicon = await readFile(new URL("public/favicon.png", projectRoot));
+  await writeFile(join(projectDir, "public", "favicon.png"), favicon);
+  await writeFile(join(distDir, "favicon.png"), favicon);
+  await writeRecommendedFixture(projectDir, distDir);
+  const verify = () => verifyAstroDist({
+    projectRoot: new URL(`file://${projectDir}/`),
+    distDir: new URL(`file://${distDir}/`),
+    manifest,
+  });
+
+  const result = await verify();
+  assert.ok(result.files.includes(`teams/legacy/${LEGACY_TEAM_ID}/index.html`));
+  assert.ok(result.files.includes("404.html"));
+
+  await rm(join(distDir, "404.html"));
+  await assert.rejects(verify(), /missing: 404\.html/i);
+  await writeFile(join(distDir, "404.html"), '<!doctype html><h1 id="not-found-title">Không tìm thấy trang</h1>\n');
+
+  await mkdir(join(distDir, "teams", "legacy", "team-khong-co"), { recursive: true });
+  await writeFile(join(distDir, "teams", "legacy", "team-khong-co", "index.html"), "<!doctype html>\n");
+  await assert.rejects(verify(), /unexpected: teams\/legacy\/team-khong-co\/index\.html/i);
+  await rm(join(distDir, "teams", "legacy", "team-khong-co"), { recursive: true });
+
+  // Each legacy publication pin is independently enforced while identity/raw pins remain valid.
+  const legacyPagePath = join(distDir, "teams", "legacy", LEGACY_TEAM_ID, "index.html");
+  const validLegacyPage = await readFile(legacyPagePath, "utf8");
+  await writeFile(legacyPagePath, validLegacyPage.replace(/\sdata-generation-id="[^"]+"/, ""));
+  await assert.rejects(verify(), /lacks its validated pin/i);
+  await writeFile(
+    legacyPagePath,
+    validLegacyPage.replace(/data-manifest-sha256="[^"]+"/, `data-manifest-sha256="${"0".repeat(64)}"`),
+  );
+  await assert.rejects(verify(), /lacks its validated pin/i);
+
+  // A selected publication built from different raw originals must fail the build.
+  const stale = await mkdtemp(join(tmpdir(), "tqccl-astro-teams-stale-"));
+  const staleDist = await mkdtemp(join(tmpdir(), "tqccl-astro-teams-stale-dist-"));
+  t.after(async () => {
+    await Promise.all([
+      rm(stale, { recursive: true, force: true }),
+      rm(staleDist, { recursive: true, force: true }),
+    ]);
+  });
+  await writeRecommendedFixture(stale, staleDist, { legacyTeamsHash: `sha256:${"9".repeat(64)}` });
+  await assert.rejects(
+    verifyAstroDist({
+      projectRoot: new URL(`file://${stale}/`),
+      distDir: new URL(`file://${staleDist}/`),
+      manifest,
+    }),
+    /legacy teams hash/i,
   );
 });
 

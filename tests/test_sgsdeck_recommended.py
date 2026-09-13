@@ -55,6 +55,50 @@ class RecommendedSourceTest(unittest.TestCase):
         self.assertEqual(result["heroes"][1]["tacticSlotsRaw"], ["奪魂挾魄", "當鋒摧決"])
         self.assertIn("升級為 S", result["notesRaw"])
 
+    def test_display_notes_assign_each_source_occurrence_once_without_changing_raw(self):
+        raw, projection = source.parse_recommended_detail_with_display_notes(DETAIL, URL)
+        self.assertEqual(raw, source.parse_recommended_detail(DETAIL, URL))
+        blocks = projection["blocks"]
+        self.assertEqual(projection["schemaVersion"], 1)
+        self.assertEqual(len({block["id"] for block in blocks}), len(blocks))
+        self.assertEqual([block["id"] for block in blocks], [f"p-{index}" for index in range(1, len(blocks) + 1)])
+        self.assertIn("team", {block["owner"] for block in blocks})
+        self.assertIn("primary", {block["owner"] for block in blocks})
+        self.assertTrue(all("holderIndex" not in block for block in blocks if block["owner"] == "team"))
+
+    def test_display_notes_keep_equal_text_occurrences_across_all_owners(self):
+        def card(role, name, note):
+            return (
+                '<div class="sm:p-5 p-4 space-y-2">'
+                f'<span>{role}</span><p class="text-xl">{name}</p>'
+                '<div><span>戰法 1</span><span>A</span></div>'
+                '<div><span>戰法 2</span><span>B</span></div>'
+                '<div><span>兵書</span><button>C</button></div>'
+                '<div><span>加點</span><span>智力</span></div>'
+                f'<p>{note}</p></div>'
+            )
+
+        url = "https://sgsdeck.com/recommended/ownership-fixture"
+        html = (
+            f'<link rel="canonical" href="{url}">'
+            '<header><h1>測試隊</h1><span class="font-mono">105</span><span>OG-Test · 交戰</span></header>'
+            '<p>同文</p>'
+            + card("主將", "甲", "同文")
+            + card("副將 1", "乙", "同文")
+            + card("副將 2", "丙", "同文")
+            + card("副將 3", "丁", "同文")
+            + '<span>#弓</span>'
+        )
+        raw, projection = source.parse_recommended_detail_with_display_notes(html, url)
+        self.assertEqual(raw, source.parse_recommended_detail(html, url))
+        equal_blocks = [block for block in projection["blocks"] if block["textRaw"] == "同文"]
+        self.assertEqual(len(equal_blocks), 5)
+        self.assertEqual([block["owner"] for block in equal_blocks], [
+            "team", "primary", "primary", "primary", "alternative",
+        ])
+        self.assertEqual(len({block["id"] for block in equal_blocks}), 5)
+        self.assertEqual(len(raw["alternativeHoldersRaw"]), 1)
+
     def test_missing_score_is_null_not_zero(self):
         changed = LIST.replace('title="來源評分，僅供同賽季內比較">113', 'title="來源評分，僅供同賽季內比較">')
         self.assertIsNone(source.parse_recommended_list(changed)["records"][0]["value"])

@@ -48,6 +48,92 @@ def resolve_identity(kind, raw, mapping):
     return {"status": "resolved", "stableId": item["stableId"], "variant": item.get("variant"),
             "displayNameVi": item.get("displayNameVi"), "faction": item.get("faction"), "evidenceRef": item["evidenceRef"]}
 
+
+def build_display_mapping(entries):
+    """Accept reviewed translations without promoting them to resolved identities."""
+    mapping = build_mapping(entries)
+    names = {}
+    team_names = {}
+    scoped_team_names = {}
+    scoped_team_aliases = {}
+    translations = []
+    for entry in entries:
+        if entry.get("reviewStatus") != "translation-reviewed":
+            continue
+        if (entry.get("kind") not in ("hero", "tactic", "book", "bond", "team") or not entry.get("evidenceRef")
+                or not isinstance(entry.get("displayNameVi"), str) or not entry["displayNameVi"].strip()
+                or not entry.get("aliases")):
+            raise ValueError("Reviewed translation needs a kind, name, aliases and evidence")
+        for alias in entry["aliases"]:
+            if not isinstance(alias, str) or not alias.strip():
+                raise ValueError("Reviewed translation alias must be non-empty")
+            alias = alias_key(alias)
+            if entry["kind"] == "team":
+                if entry.get("stableId") is not None:
+                    raise ValueError("Team translations must not define stableId")
+                source_config_id = entry.get("sourceConfigId")
+                if source_config_id is not None and (not isinstance(source_config_id, str) or not source_config_id.strip()):
+                    raise ValueError("Scoped team translation needs a non-empty sourceConfigId")
+                target = scoped_team_names if source_config_id is not None else team_names
+                key = (source_config_id, alias) if source_config_id is not None else alias
+                if source_config_id is not None and key in target:
+                    raise ValueError("Duplicate scoped team translation: " + source_config_id + " / " + alias)
+                if key in target and target[key] != entry["displayNameVi"]:
+                    raise ValueError("Conflicting reviewed team translations: " + alias)
+                target[key] = entry["displayNameVi"]
+                if source_config_id is not None:
+                    scoped_team_aliases.setdefault(source_config_id, set()).add(alias)
+                continue
+            key = (entry["kind"], alias)
+            if key in names and names[key] != entry["displayNameVi"]:
+                raise ValueError("Conflicting reviewed translations: " + alias)
+            names[key] = entry["displayNameVi"]
+        translations.append(entry)
+    mapping["displayNames"] = names
+    mapping["teamDisplayNames"] = team_names
+    mapping["scopedTeamDisplayNames"] = scoped_team_names
+    mapping["scopedTeamAliases"] = scoped_team_aliases
+    if translations:
+        mapping["mappingHash"] = "sha256:" + hashlib.sha256(canonical_json({
+            "identities": mapping["entries"], "translations": translations,
+        }).encode()).hexdigest()
+    return mapping
+
+
+def resolve_display_name(kind, raw, mapping):
+    """Display approval is independent from the identity evidence required by dedup."""
+    if not isinstance(raw, str) or not raw.strip():
+        return None
+    translated = mapping.get("displayNames", {}).get((kind, alias_key(raw)))
+    if translated:
+        return translated
+    identity = resolve_identity(kind, raw, mapping)
+    return identity.get("displayNameVi") if identity["status"] == "resolved" else None
+
+def resolve_team_display_name(row, mapping):
+    """Resolve a reviewed team title without changing source identity."""
+    if not isinstance(row, dict):
+        return None
+    raw = row.get("nameZh")
+    if not isinstance(raw, str) or not raw.strip():
+        return None
+    alias = alias_key(raw)
+    source_config_id = row.get("sourceConfigId")
+    if isinstance(source_config_id, str):
+        translated = mapping.get("scopedTeamDisplayNames", {}).get((source_config_id, alias))
+        if translated:
+            return translated
+        if source_config_id in mapping.get("scopedTeamAliases", {}):
+            raise ValueError("Scoped team translation source title mismatch: " + source_config_id)
+    return mapping.get("teamDisplayNames", {}).get(alias)
+
+
+def resolve_display_kind(kind, raw, mapping):
+    """Correct reviewed source-slot classifications without rewriting source evidence."""
+    if kind == "tactic" and resolve_display_name("bond", raw, mapping):
+        return "bond"
+    return kind
+
 def descriptor_from_dictionaries(heroes_path, tactics_path, books_path):
     inputs = {}
     entries = []

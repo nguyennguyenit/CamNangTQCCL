@@ -1,0 +1,20 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+export const prerender = true;
+---
+<SiteLayout
+  title="Không tìm thấy trang — Cẩm Nang Game Tam Quốc Chí - Chiến Lược"
+  description="Đường dẫn không tồn tại trên Cẩm Nang Game Tam Quốc Chí - Chiến Lược."
+  pageKind="not-found"
+  tagline="Không tìm thấy trang"
+>
+  <section class="season-config-detail detail-state" aria-labelledby="not-found-title">
+    <h1 id="not-found-title" class="detail-title">Không tìm thấy trang</h1>
+    <p>Đường dẫn này không có trong cẩm nang. Đội hình có thể đã đổi mã nguồn hoặc liên kết bị sao chép thiếu.</p>
+    <div class="detail-actions">
+      <a class="detail-action" href="/">Về trang chủ</a>
+      <a class="detail-link" href="/#team-chuan">Danh sách Team chuẩn</a>
+      <a class="detail-link" href="/#team-khac">Danh sách Team khác</a>
+    </div>
+  </section>
+</SiteLayout>

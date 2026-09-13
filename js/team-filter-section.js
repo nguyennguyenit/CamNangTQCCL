@@ -168,7 +168,7 @@ export function createTeamFilterSection(opts) {
 }
 
 import { QUERY_FILTERS, rowFacet, validateTeamFilters, filterSeasonRows } from './season-ui-state.js';
-import { SOURCE_LABEL, seasonTeamCard } from './render.js';
+import { FACTION_CODE, SOURCE_LABEL, seasonTeamCard } from './render.js';
 
 function replaceFilterButtons(container, children) {
   const focusedKey = container.contains(document.activeElement) ? document.activeElement.dataset.focusKey : null;
@@ -252,32 +252,41 @@ export function createSeasonCoexistSection({mount,onQuery}) {
   }};
 }
 
-import { projectRecommendedRows } from './recommended-reference-state.js';
+import { projectRecommendedRows, referenceFacetValues, SCORE_UNKNOWN } from './recommended-reference-state.js';
 import { recommendedTeamCard } from './recommended-reference-render.js';
 
-/** Shared-style Team chuẩn/Team khác browser; fixed ranking, no score/sort controls. */
-export function createRecommendedSection({mount,title,family,onQuery,onOpen}) {
-  let rows=[], state={query:'',filters:{}}, registry={seasonOptions:[]};
+// Nhóm chính Loại binh → Điểm → Phe; nhóm phụ vẫn nằm trong vùng Bộ lọc.
+const PRIMARY_FACETS=['unit','score','faction'];
+const SECONDARY_FACETS=['subcategory','source'];
+const FACET_LABEL={unit:'Loại binh',score:'Điểm',faction:'Phe',subcategory:'Nhóm',source:'Nguồn'};
+const SCORE_CHIP_LIMIT=8;
+
+/** Shared-style Team chuẩn/Team khác browser; điểm nguồn chỉ lọc, không đổi thứ tự nguồn. */
+export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onNavigate}) {
+  let rows=[], state={query:'',filters:{}}, registry={seasonOptions:[]}, scoreExpanded=false, currentScopeRows=[];
   const heading=el('h2',{tabindex:'-1'},title);
   const intro=el('p',{class:'section-intro-sub'},family==='other'?'Các đội có sẵn, đã đối chiếu với Team chuẩn.':'Dữ liệu SGSDeck Recommended theo mùa nguồn.');
   const search=el('input',{type:'search',class:'search','aria-label':`Tìm ${title}`,placeholder:'Tìm tướng, chiến pháp, binh thư…'});
-  const seasonSearch=el('input',{type:'search',class:'combo-input','aria-label':'Tìm mùa nguồn',placeholder:'Tìm mùa…'});
   const season=el('select',{'aria-label':'Mùa nguồn'});
   const category=el('select',{'aria-label':'Danh mục nguồn'});
   const filters=el('div',{class:'team-filters collapsed',id:`${mount.id}-filters`});
   const notice=el('p',{class:'scope-note',role:'status'});
   const counts=el('p',{class:'stats','aria-live':'polite'});
   const grid=el('div',{class:'season-team-groups'});
+  // Title/CTA là link thật: chỉ ghi snapshot, không chặn hành vi trình duyệt.
+  grid.addEventListener('click',event=>{
+    const link=event.target.closest?.('a[href^="/teams/"]');
+    if (link) onNavigate?.(event,link);
+  });
   const toggle=el('button',{type:'button',class:'filter-collapse-toggle','aria-controls':filters.id,'aria-expanded':'false'},'Bộ lọc');
   toggle.addEventListener('click',()=>toggle.setAttribute('aria-expanded',String(!filters.classList.toggle('collapsed'))));
   search.addEventListener('input',()=>onQuery({q:search.value || null}));
   season.addEventListener('change',()=>onQuery({season:season.value,detail:null,legacyTeam:null,legacyVariant:null},true));
   category.addEventListener('change',()=>onQuery({category:category.value,detail:null,legacyTeam:null,legacyVariant:null},true));
-  seasonSearch.addEventListener('input',()=>renderSeasonOptions(seasonSearch.value));
-  const clear=el('button',{type:'button',class:'clear-btn',onClick:()=>onQuery({q:null,faction:null,unit:null,tier:null,subcategory:null,source:null})},'Xóa lọc');
+  const clear=el('button',{type:'button',class:'clear-btn',onClick:()=>onQuery({q:null,faction:null,unit:null,score:null,subcategory:null,source:null})},'Xóa lọc');
   mount.replaceChildren(el('div',{class:'section-intro'},[heading,intro]),el('div',{class:'team-filter-bar'},[
     el('div',{class:'filter-bar'},[search,clear,toggle,counts]),
-    el('div',{class:'reference-scope-controls'},[el('label',{},['Tìm mùa',seasonSearch]),el('label',{},['Mùa',season]),el('label',{},['Danh mục',category])]),
+    el('div',{class:'reference-scope-controls'},[el('label',{},['Mùa',season]),el('label',{},['Danh mục',category])]),
     filters,
   ]),notice,grid);
 
@@ -293,57 +302,105 @@ export function createRecommendedSection({mount,title,family,onQuery,onOpen}) {
     item.label,
     item.translationStatus === 'reference-translation' ? 'Tên dịch tham khảo, không phải tên mùa chính thức' : null,
   ].filter(Boolean).join(' · ') || null;
-  const seasonHaystack=item=>normalizeText([item.label,item.nameRaw,item.displayNameVi,item.displayCode,item.sourceSeasonId].filter(Boolean).join(' '));
 
-  function renderSeasonOptions(query='') {
-    const normalized=normalizeText(query);
+  function renderSeasonOptions() {
     const current=state.season || (family==='other'?'all':registry.defaultSourceSeasonId);
     const options=registry.seasonOptions || [];
-    const visible=options.filter(item=>!normalized || seasonHaystack(item).includes(normalized));
-    // Từ khóa loại mùa đang chọn thì vẫn giữ nó trong danh sách, không tự đổi lựa chọn.
-    const active=options.find(item=>item.sourceSeasonId===current);
-    if (active && !visible.includes(active)) visible.unshift(active);
     season.replaceChildren(
       ...(family==='other'?[el('option',{value:'all'},'Tất cả'),el('option',{value:'unknown'},'Chưa rõ mùa')]:[]),
-      ...visible.map(item=>el('option',{value:item.sourceSeasonId,title:seasonOptionTitle(item)},seasonOptionText(item))),
+      ...options.map(item=>el('option',{value:item.sourceSeasonId,title:seasonOptionTitle(item)},seasonOptionText(item))),
     );
     if ([...season.options].some(option=>option.value===current)) season.value=current;
   }
 
+  // Điểm hiển thị giảm dần, chưa có điểm xuống cuối; các facet khác giữ thứ tự chữ.
+  const facetEntries=(scopeRows,key)=>{
+    const counts=new Map();
+    for (const row of scopeRows) for (const value of referenceFacetValues(row,key)) counts.set(value,(counts.get(value) || 0)+1);
+    for (const value of state.filters?.[key] || []) if (!counts.has(value)) counts.set(value,0);
+    const entries=[...counts];
+    return key==='score'
+      ? entries.sort(([a],[b])=>a===SCORE_UNKNOWN?1:b===SCORE_UNKNOWN?-1:Number(b)-Number(a))
+      : entries.sort(([a],[b])=>a.localeCompare(b));
+  };
+  const chipText=(key,value)=>key==='source'?(SOURCE_LABEL[value] || value):key==='score'?(value===SCORE_UNKNOWN?'Chưa có điểm nguồn':value):displayLabel(key,value);
+
+  function facetGroup(key,entries) {
+    const selected=state.filters?.[key] || [];
+    const chip=([value,count])=>{
+      const factionCode=key==='faction' ? FACTION_CODE[displayLabel(key,value)] : null;
+      return el('button',{
+        type:'button',class:`fchip${factionCode?` f-${factionCode}`:''}${selected.includes(value)?' on':''}`,'aria-pressed':String(selected.includes(value)),
+        title:key==='score' || chipText(key,value)===value?null:value,dataset:{focusKey:`${key}:${value}`},
+        onClick:()=>onQuery({[key]:selected.includes(value)?selected.filter(item=>item!==value):[...selected,value]}),
+      },`${chipText(key,value)} (${count})`);
+    };
+    const label=el('div',{class:'flabel'},FACET_LABEL[key]);
+    if (key!=='score' || entries.length<=SCORE_CHIP_LIMIT) {
+      return el('div',{class:`fgroup ${key}-group${SECONDARY_FACETS.includes(key)?' secondary':''}`},[label,el('div',{class:'chip-row'},entries.map(chip))]);
+    }
+    // Thu gọn chỉ là trình bày: mức đang chọn ngoài 8 mức đầu vẫn hiện và vẫn lọc.
+    const visible=scoreExpanded?entries:entries.filter(([value],index)=>index<SCORE_CHIP_LIMIT || selected.includes(value));
+    const chipRow=el('div',{class:'chip-row',id:`${mount.id}-score-values`},visible.map(chip));
+    return el('div',{class:'fgroup score-group'},[label,chipRow,el('button',{
+      type:'button',class:'score-toggle','aria-expanded':String(scoreExpanded),'aria-controls':chipRow.id,
+      dataset:{focusKey:'score:toggle'},onClick:()=>{scoreExpanded=!scoreExpanded;renderFacets(currentScopeRows);},
+    },scoreExpanded?'Thu gọn':`Xem tất cả mức điểm (${entries.length})`)]);
+  }
+
   function renderFacets(scopeRows) {
-    replaceFilterButtons(filters,['faction','unit','tier','subcategory','source'].map(key=>{
-      const pick=row=>key==='faction'?([row.factionRaw ?? row.faction].filter(Boolean)):key==='unit'?(row.unitTypesRaw || row.unit || []):key==='tier'?([row.tierRaw ?? row.historicalTier].filter(value=>value !== null && value !== undefined).map(String)):key==='subcategory'?([row.subcategoryRaw].filter(Boolean)):([row.source].filter(Boolean));
-      const values=[...new Set(scopeRows.flatMap(pick))].sort();
-      if (!values.length) return null;
-      const selected=state.filters?.[key] || [];
-      const chipText=value=>key==='source'?(SOURCE_LABEL[value] || value):key==='tier'?value:displayLabel(key,value);
-      return el('div',{class:'fgroup'},[el('div',{class:'flabel'},{faction:'Phe',unit:'Loại binh',tier:'Tier',subcategory:'Nhóm',source:'Nguồn'}[key]),el('div',{class:'chip-row'},values.map(value=>el('button',{type:'button',class:`fchip${selected.includes(value)?' on':''}`,'aria-pressed':String(selected.includes(value)),title:chipText(value)===value?null:value,dataset:{focusKey:`${key}:${value}`},onClick:()=>onQuery({[key]:selected.includes(value)?selected.filter(item=>item!==value):[...selected,value]})},chipText(value))))]);
+    replaceFilterButtons(filters,[...PRIMARY_FACETS,...SECONDARY_FACETS].map(key=>{
+      const entries=facetEntries(scopeRows,key);
+      return entries.length?facetGroup(key,entries):null;
     }).filter(Boolean));
   }
 
   function render() {
     if (search.value!==state.query) search.value=state.query || '';
-    renderSeasonOptions(seasonSearch.value);
+    renderSeasonOptions();
     const categories=family==='other'
       ? ['all','unknown',...new Set(rows.flatMap(row=>row.sourceCategoryIds || []))]
       : ['all',...new Set(rows.map(row=>row.sourceCategoryId).filter(Boolean))];
     category.replaceChildren(...categories.map(value=>el('option',{value,title:value==='all'||value==='unknown'||displayLabel('category',value)===value?null:value},value==='all'?'Tất cả danh mục':value==='unknown'?'Chưa rõ danh mục':displayLabel('category',value))));
     category.value=categories.includes(state.category)?state.category:'all';
-    const scopeRows=projectRecommendedRows(rows,{...state,query:'',filters:{}});
+    const labels=registry.displayLabels || {};
+    const scopeRows=projectRecommendedRows(rows,{...state,query:'',filters:{}},labels);
+    currentScopeRows=scopeRows;
     renderFacets(scopeRows);
-    const filtered=projectRecommendedRows(rows,state);
+    const filtered=projectRecommendedRows(rows,state,labels);
     counts.textContent=`${filtered.length} / ${scopeRows.length} đội`;
     const sourceScope=family==='recommended' ? registry.scopes?.find(scope=>scope.sourceSeasonId===state.season && scope.sourceCategoryId===state.category) : null;
     const scopeNotice=sourceScope?.state==='uncollected-season'?'Mùa nguồn chưa được thu thập.':sourceScope?.state==='empty-category'?'Nguồn xác nhận danh mục này hiện không có đội.':'';
     notice.textContent=[...(state.notices || []),scopeNotice].filter(Boolean).join(' ');
-    const groups=new Map();
-    for (const row of filtered) {
-      const key=family==='recommended'?(row.tierRaw || 'Chưa có Tier'):'Team khác';
-      if (!groups.has(key)) groups.set(key,[]);
-      groups.get(key).push(row);
-    }
-    grid.replaceChildren(...[...groups].map(([label,items])=>el('section',{class:'season-tier-group'},[el('h3',{},`${label} (${items.length})`),el('div',{class:'team-grid'},items.map(row=>recommendedTeamCard(row,{onTag:value=>onQuery({q:value}),onOpen})))])));
+    grid.replaceChildren(el('div',{class:'team-grid'},filtered.map(row=>recommendedTeamCard(row,{onTag:value=>onQuery({q:value}),href:hrefFor?.(row),labels}))));
     if (!filtered.length) grid.append(el('p',{class:'empty'},scopeRows.length?'Không có đội khớp bộ lọc.':sourceScope?.state==='uncollected-season'?'Mùa nguồn chưa được thu thập.':sourceScope?.state==='empty-category'?'Nguồn xác nhận danh mục này hiện không có đội.':family==='other' && (state.season==='unknown' || state.category==='unknown')?'Không có đội có thuộc tính nguồn chưa rõ trong phạm vi này.':'Mùa hoặc danh mục này chưa có dữ liệu.'));
   }
-  return {update(nextRows,nextState,nextRegistry){rows=nextRows;state=nextState;registry=nextRegistry;render();},focus(){heading.focus();},setSearch(value){onQuery({q:value || null});}};
+  return {
+    update(nextRows,nextState,nextRegistry){rows=nextRows;state=nextState;registry=nextRegistry;render();},
+    focus(){heading.focus();},
+    setSearch(value){onQuery({q:value || null});},
+    setFiltersExpanded(expanded){
+      const open=expanded === true;
+      filters.classList.toggle('collapsed',!open);
+      toggle.setAttribute('aria-expanded',String(open));
+    },
+    getDisclosureState(){
+      return {
+        filters:filters.classList.contains('collapsed') === false,
+        score:scoreExpanded,
+        alternatives:[...grid.querySelectorAll('.reference-team-card[data-reference-key] > details.reference-alternatives[open]')]
+          .map(details=>details.parentElement.dataset.referenceKey).filter(Boolean).slice(0,12),
+      };
+    },
+    setDisclosureState(disclosures={}){
+      this.setFiltersExpanded(disclosures.filters);
+      scoreExpanded=disclosures.score === true;
+      renderFacets(currentScopeRows);
+      const open=new Set(disclosures.alternatives || []);
+      for (const card of grid.querySelectorAll('.reference-team-card[data-reference-key]')) {
+        const details=card.querySelector(':scope > details.reference-alternatives');
+        if (details) details.open=open.has(card.dataset.referenceKey);
+      }
+    },
+  };
 }

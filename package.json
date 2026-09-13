@@ -10,7 +10,7 @@
     "build": "astro build",
     "check": "astro check",
     "preview": "astro preview",
-    "test:contracts": "node --test tests-js/frontend-shell-contract.test.mjs tests-js/runtime-asset-contract.test.mjs",
+    "test:contracts": "node --test tests-js/runtime-asset-contract.test.mjs",
     "test:dist": "node --experimental-strip-types --test tests-js/astro-dist-contract.test.mjs tests-js/pages-headers-contract.test.mjs",
     "test:dev-contract": "node --test tests-js/astro-dev-contract.test.mjs",
     "test:node": "node --experimental-strip-types --test tests-js/*.test.mjs",
