@@ -39,8 +39,35 @@ import { seasonConsumerFixture } from '../tests-js/fixtures/season-fixtures.mjs'
 async function controlledBundle(page, data = null) {
   data ||= await seasonConsumerFixture();
   const slug = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  data['heroes-dict'] = data['heroes-dict'].map(row => ({ ...row, id: `hero:${slug(row.viet)}` }));
-  data.tactics = data.tactics.map(row => ({ ...row, id: `tactic:${slug(row.viet)}` }));
+  data['heroes-dict'] = data['heroes-dict'].map(row => ({
+    id: `hero:${slug(row.viet)}`, chinese: row.chinese, hanViet: row.hanViet ?? row.viet, viet: row.viet,
+    aliases: [], faction: row.faction ?? null, stars: null, cost: null,
+    stats: { luc: '', tri: '', thong: '', toc: '', chinh: '', mi: '' },
+    troopApt: { ky: null, thuan: null, cung: null, thuong: null, khiGioi: null },
+    selfTacticCn: null, inheritTacticCn: null, roleTag: null, roleTagViet: null,
+    iconUrl: null, isSP: false, linkScore: null, pending: false,
+    lookup: {
+      conditions: [], missingFields: [], revisions: [], variant: 'base',
+      selfTacticId: null, inheritTacticId: null, advisorId: null,
+      growth: { luc: null, tri: null, thong: null, toc: null, chinh: null, mi: null },
+      otherAptitudes: { infantry: null, navy: null },
+      categoryVi: null, exclusiveTitleVi: null,
+      civil: { roleVi: null, bonusVi: null, specialtyVi: null, tacticBonusVi: null },
+      civilInnatePoints: null, collectibleBonusVi: null, redRulesVi: null,
+      flags: { isCollectible: null, isDynamicOpen: null, isMusou: null, isCO: null, isSp: null },
+    },
+  }));
+  data.tactics = data.tactics.map(row => ({
+    id: `tactic:${slug(row.viet)}`, chinese: row.chinese, hanViet: row.hanViet ?? row.viet, viet: row.viet,
+    aliases: [], type: null, quality: null, effect: null, effectViet: null,
+    target: null, targetViet: null, troopFit: [], source: null, sourceHeroCn: null,
+    iconUrl: null, linkScore: null, pending: true,
+    lookup: {
+      conditions: [], missingFields: [], revisions: [], activationRate: null,
+      cooldown: null, maxUsers: null, pointCost: null, effectTypeVi: null,
+      exchangeConditionVi: null, acquiredFromVi: [], inheritedFromIds: [], conflictsVi: null,
+    },
+  }));
   const lookupCatalog = { schemaVersion: 1, advisors: [], buildings: [], equipment: [], specials: [], troopMods: [] };
   const lookupPayloads = {
     'heroes-dict.json': JSON.stringify(data['heroes-dict']),
