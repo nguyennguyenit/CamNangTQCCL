@@ -21,6 +21,23 @@ test("SP, CO và bản thường có canonical ID riêng nhưng chung family", (
   assert.equal(heroIdentityKey("SP Tuân Úc"), canonicalHeroId("SP Tuân Úc"));
 });
 
+test("40Y có ID riêng, chung family và map sang variant other", () => {
+  assert.equal(canonicalHeroId("40Y Lữ Bố"), "hero:40y-lu-bo");
+  assert.equal(heroFamilyId("40Y Lữ Bố"), "hero-family:lu-bo");
+  assert.equal(heroSlotAlternatives("40Y Lữ Bố")[0].variant, "other");
+
+  const slot = normalizeHeroSlot({
+    name: "Lữ Bố",
+    baseName: "Lữ Bố",
+    is40Y: true,
+    isSP: false,
+    isCO: false,
+  });
+  assert.equal(slot.alternatives[0].displayName, "40Y Lữ Bố");
+  assert.equal(slot.alternatives[0].canonicalId, "hero:40y-lu-bo");
+  assert.equal(slot.alternatives[0].variant, "other");
+});
+
 test("prefix chỉ áp dụng cho alternative được ghi tên", () => {
   const alternatives = heroSlotAlternatives("SP Lữ Mông/Trình Phổ");
 

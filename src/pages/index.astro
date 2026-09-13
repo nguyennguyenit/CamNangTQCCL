@@ -1,31 +1,73 @@
 ---
-import SiteLayout from '../layouts/SiteLayout.astro';
 import { seasonArtifactHashes } from '../lib/root-static-artifacts';
 import { recommendedPublicationSnapshot } from '../lib/recommended-reference-artifacts';
 const seasonHashes = await seasonArtifactHashes();
 const recommended = await recommendedPublicationSnapshot();
 ---
-<SiteLayout
-  title="Cẩm Nang Game Tam Quốc Chí - Chiến Lược"
-  description="Tổng hợp meta team, đội hình Cùng Tồn và Khai hoang game Tam Quốc Chí Chiến Lược, có đầy đủ bộ lọc theo tướng, chiến pháp, binh thư, tier."
-  pageKind="root"
->
-  <p slot="notice" class="disclaimer">Dữ liệu tổng hợp từ chia sẻ kinh nghiệm người chơi, mang tính tham khảo — không phải phương án duy nhất.</p>
+<!doctype html>
+<html lang="vi" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cẩm Nang Game Tam Quốc Chí - Chiến Lược</title>
+    <meta name="description" content="Tổng hợp meta team, đội hình Cùng Tồn và Khai hoang game Tam Quốc Chí Chiến Lược, có đầy đủ bộ lọc theo tướng, chiến pháp, binh thư, tier." />
+    <meta property="og:title" content="Cẩm Nang Game Tam Quốc Chí - Chiến Lược" />
+    <meta property="og:description" content="Tổng hợp meta team + bộ lọc đầy đủ." />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/png" sizes="128x128" href="/favicon.png" />
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div class="top-header">
+      <header class="site-header">
+        <div class="brand">
+          <button id="section-menu-toggle" class="section-menu-toggle" type="button" aria-controls="section-menu-items" aria-expanded="false" aria-label="Mở menu trang" data-label-mode="icon">☰</button>
+          <div>
+            <h1>Cẩm Nang Game Tam Quốc Chí - Chiến Lược</h1>
+            <p class="tagline">Tất cả — tham khảo</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="theme-toggle" class="icon-btn" title="Đổi giao diện sáng/tối" aria-label="Đổi giao diện">🌗</button>
+        </div>
+      </header>
 
-  <div id="season-controls" class="season-controls" aria-label="Phạm vi đội hình"></div>
-  <section id="section-team-chuan" class="section active"></section>
-  <section id="section-team-khac" class="section"></section>
-  <section id="section-coexist" class="section"></section>
-  <section id="section-khaihoang" class="section"></section>
-  <section id="section-heroes" class="section"></section>
-  <section id="section-tactics" class="section"></section>
-  <section id="section-recruit-tracker" class="section"></section>
-  <section id="section-analyze" class="section"></section>
-  <section id="section-roster-recommend" class="section"></section>
+      <nav class="section-nav" role="tablist" aria-label="Mục chính">
+        <div id="section-menu-items" class="section-menu-items">
+          <button class="nav-tab active" role="tab" aria-selected="true" data-section="team-chuan">Team chuẩn</button>
+          <button class="nav-tab" role="tab" aria-selected="false" data-section="team-khac">Team khác</button>
+          <button class="nav-tab" role="tab" aria-selected="false" data-section="coexist">Cùng Tồn</button>
+          <button class="nav-tab" role="tab" aria-selected="false" data-section="khaihoang">Khai hoang</button>
+          <button class="nav-tab" role="tab" aria-selected="false" data-section="lookup">Tra cứu</button>
+          <button class="nav-tab" role="tab" aria-selected="false" data-section="recruit-tracker">Theo dõi chiêu mộ <span class="badge beta">Beta</span></button>
+          <button class="nav-tab" role="tab" aria-selected="false" data-section="analyze">Soi đội từ ảnh <span class="badge beta">Beta</span></button>
+          <button class="nav-tab" role="tab" aria-selected="false" data-section="roster-recommend">Gợi ý đội từ kho <span class="badge beta">Beta</span></button>
+        </div>
+      </nav>
+    </div>
 
-  <Fragment slot="scripts">
+    <p class="disclaimer">Dữ liệu tổng hợp từ chia sẻ kinh nghiệm người chơi, mang tính tham khảo — không phải phương án duy nhất.</p>
+
+    <main class="layout">
+      <div class="content">
+        <div id="season-controls" class="season-controls" aria-label="Phạm vi đội hình"></div>
+        <section id="section-team-chuan" class="section active" role="tabpanel"></section>
+        <section id="section-team-khac" class="section" role="tabpanel"></section>
+        <section id="section-coexist" class="section" role="tabpanel"></section>
+        <section id="section-khaihoang" class="section" role="tabpanel"></section>
+        <section id="section-lookup" class="section" role="tabpanel"></section>
+        <section id="section-recruit-tracker" class="section" role="tabpanel"></section>
+        <section id="section-analyze" class="section" role="tabpanel"></section>
+        <section id="section-roster-recommend" class="section" role="tabpanel"></section>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <p class="credit">Build bởi <strong>Nguyễn Nguyên</strong> · HLxThanos · Team 2 bang Huynh Đệ</p>
+    </footer>
+
     <script is:inline type="application/json" id="season-artifact-hashes" set:html={JSON.stringify(seasonHashes)}></script>
     <script is:inline type="application/json" id="recommended-publication" set:html={JSON.stringify(recommended.pin)}></script>
     <script is:inline type="module" src="/js/app.js"></script>
-  </Fragment>
-</SiteLayout>
+  </body>
+</html>

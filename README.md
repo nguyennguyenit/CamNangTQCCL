@@ -6,11 +6,10 @@ Website tĩnh tra cứu đội hình, tướng, chiến pháp và hỗ trợ qu�
 
 ## Tính năng
 
-- 9 section có deep-link bằng hash: Team chuẩn, Team khác, Cùng Tồn, Khai hoang, tướng, chiến pháp, tracker chiêu mộ, soi đội và gợi ý đội từ kho. Hash cũ `#team-pk`/`#meta-cu` được chuẩn hóa về `#team-khac`.
-- Hai tab team dùng chung một browser: search toàn văn, select mùa/danh mục nguồn và chip facet (loại binh, điểm, phe, nhóm, nguồn) đếm theo phạm vi đang chọn; mobile thu gọn vùng lọc sau nút `Bộ lọc`.
-- Mỗi đội có trang chi tiết tĩnh riêng dưới `/teams/recommended/<sourceConfigId>/` hoặc `/teams/legacy/<legacyTeamId>/`; URL ngoài danh sách sinh sẵn trả trang 404 tĩnh.
-- Chọn kịch bản/phiên bản luật dùng chung cho tra cứu, Cùng Tồn và gợi ý; URL giữ phạm vi, bộ lọc và cấu hình đang mở. Khai hoang dùng bản bảo trì mới nhất.
-- Tra cứu 112 tướng và 239 chiến pháp bằng dữ liệu local, hỗ trợ tên Việt/Hán-Việt/Hán.
+- 8 section có deep-link bằng hash: Team chuẩn, Team khác, Cùng Tồn, Khai hoang, Tra cứu, tracker chiêu mộ, soi đội và gợi ý đội từ kho.
+- Hai tab team dùng chung bộ lọc inline: search toàn văn + chip động theo dữ liệu từng tab; mobile thu gọn vùng lọc sau nút `☰ Bộ lọc`.
+- Chọn kịch bản/phiên bản luật dùng chung cho Team chuẩn, Team khác, Cùng Tồn và gợi ý; URL giữ phạm vi, bộ lọc và cấu hình đang mở. Khai hoang dùng bản bảo trì mới nhất.
+- Tra cứu local thống nhất 202 tướng, 406 chiến pháp và bốn nhóm catalog bổ sung; hỗ trợ tên Việt/Hán-Việt/Hán, deep-link và hồ sơ liên quan.
 - Tracker chiêu mộ lưu nhiều account, pity và lịch sử trong `localStorage`; có xuất/nhập JSON.
 - Soi screenshot qua Worker + DashScope Qwen; frontend map kết quả và đối chiếu 166 team local.
 - Gợi ý portfolio tối đa 5 team bằng engine local. AI chỉ trích xuất dữ liệu từ ảnh, không chọn team.
@@ -20,15 +19,16 @@ Dữ liệu theo kịch bản hiện có Binh Diễn Xuân Thu ở mức tham kh
 cấu hình hoặc điểm VN được xác minh để gợi ý theo mùa. Xem
 [phạm vi dữ liệu và điều kiện promote](docs/season-team-data.md).
 
-Snapshot dữ liệu công khai kiểm tra ngày 2026-08-25:
+Snapshot dữ liệu công khai được chứng nhận local ngày 2026-09-13:
 
 | Dữ liệu | Quy mô |
 |---|---:|
-| Team | 166 = 56 Team PK + 110 Meta phe cũ |
+| Đội legacy | 166 = 56 Team PK + 110 Meta phe cũ |
 | Tier | 31 team, 39 bản xếp hạng nguồn |
 | Cùng Tồn | 5 nhóm, 25 team |
 | Khai hoang | 11 team, 5 mỏ |
-| Tướng / chiến pháp / binh thư map | 112 / 239 / 66 |
+| Tra cứu | 202 tướng / 406 chiến pháp / 114 trang bị / 39 quân sư / 16 cải tạo / 41 công trình |
+| Binh thư map | 66 |
 
 ## Chạy local
 
@@ -77,9 +77,9 @@ python3 -m pipeline.build_books_dict
 python3 -m pipeline.build_team_tier
 ```
 
-Catalog SGSDeck có private snapshot tại `data/sgsdeck/`, với đường rebuild
-offline từ cache đã checksum. Cache hiện gồm sáu list, 176 detail tướng, 41
-detail công trình và equipment specials; lệnh build không tự gọi mạng:
+Nguồn SGSDeck có private snapshot tại `data/sgsdeck/`, với đường rebuild offline
+từ cache đã checksum. Cache hiện gồm sáu list, 176 detail tướng, 41 detail công
+trình và equipment specials; lệnh build không tự gọi mạng:
 
 ```bash
 python3 -m pipeline.build_sgsdeck_catalog --cache pipeline/sgsdeck-cache
@@ -87,19 +87,20 @@ python3 -m pipeline.query_sgsdeck_catalog validate
 python3 -m pipeline.query_sgsdeck_catalog query --group generals --name "趙雲"
 ```
 
-Xem contract nguồn, cache và private/public boundary tại
-[docs/sgsdeck-catalog.md](docs/sgsdeck-catalog.md). Chủ project xác nhận quyền
-import trong phạm vi sáu catalog ngày 2026-09-12; đây không phải open license.
-Snapshot hiện validate đủ 202 generals, 393 tactics, 114 equipment + 90 specials,
-39 advisors, 16 troop-mods + 192 options và 41 buildings + 426 levels. Catalog
-vẫn private, không nằm trong public routes hoặc `dist`.
+Snapshot nguồn validate đủ 202 generals, 393 tactics, 114 equipment + 90
+specials, 39 advisors, 16 troop-mods + 192 options và 41 buildings + 426 levels.
+Nguồn, provenance và review evidence vẫn private; website chỉ publish projection
+tiếng Việt đã review: 202 tướng, 406 chiến pháp và catalog bổ sung. Xem
+[quy trình Tra cứu thống nhất](docs/unified-lookup.md) và
+[contract SGSDeck private/public](docs/sgsdeck-catalog.md). Chủ project xác nhận
+quyền import trong phạm vi sáu catalog ngày 2026-09-12; đây không phải open license.
 
 Không chạy máy móc trên dữ liệu đang dùng: `build_json.py` cố ý loại nguồn Đô Úy nhưng hiện chỉ dựng `50 + 110`, trong khi artifact công khai có `56 + 110`. `pipeline/do-uy-ss18-source.json` giữ 40 mục làm archive nguồn thô và không tham gia publication. Clone sạch thường cũng thiếu HTML nguồn và cache crawl bị ignore. Trước khi rebuild: backup `data/`, bảo đảm đủ nguồn, chạy từng bước, rồi review toàn bộ diff và test.
 
 ## Deploy
 
 - Site production hiện tại: `https://tqccl.pages.dev`. Contract cho lần release được ủy quyền tiếp theo: repository root, `npm run build`, output `dist/`; settings thật phải được kiểm tra trước promotion.
-- `public/_headers` được Astro đưa vào `dist/_headers`; shared verifier yêu cầu byte parity và cache revalidation cho shell, trang chi tiết đội, `404.html`, JS/CSS/JSON.
+- `public/_headers` được Astro đưa vào `dist/_headers`; shared verifier yêu cầu byte parity và cache revalidation cho shell/JS/CSS/JSON.
 - Vision proxy: Worker tại `https://tqccl-vision-proxy.nguyennlt-ncc.workers.dev`, deploy riêng từ `worker/`.
 - Research MCP nằm trong `mcp-worker/`; code và data theo [manifest v1/v2](docs/mcp-research-server.md) được đóng trong cùng Worker Static Assets version. Production release chưa được ghi nhận cho đến khi exact-version smoke, edge control và rollback rehearsal đạt với ủy quyền riêng.
 - `js/config.js` chứa Worker URL và Turnstile site key công khai đang hoạt động. Secret chỉ nằm trong môi trường Worker.
@@ -110,9 +111,7 @@ Xem [Deployment Guide](docs/deployment-guide.md) và bản ghi triển khai có 
 ## Cấu trúc
 
 ```text
-src/pages/index.astro  # document shell Astro
-src/pages/404.astro    # trang 404 top-level
-src/pages/teams/       # trang chi tiết đội sinh từ catalog
+src/pages/index.astro   # document shell Astro
 src/lib/, src/pages/   # manifest + static endpoints byte-exact
 css/, js/, data/       # source runtime canonical
 public/_headers        # Pages deployment-control source

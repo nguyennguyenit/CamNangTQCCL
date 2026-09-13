@@ -6,32 +6,48 @@ Giao diện là dashboard dữ liệu tĩnh: nhanh, rõ, gọn. Card, badge và 
 
 ## Cấu trúc trải nghiệm
 
-9 section cùng một shell header/navigation. Hash URL giữ deep-link. Mỗi section nên có intro ngắn, control chính và nội dung ngay sau đó; tránh dashboard trang trí không phục vụ quyết định.
-
-Trang chi tiết đội và trang 404 dùng chung shell đó nhưng là trang riêng, không phải hash section: navigation của chúng là link về `/#<section>`.
+8 section cùng một shell header/navigation. Hash URL giữ deep-link. Mỗi section nên có intro ngắn, control chính và nội dung ngay sau đó; tránh dashboard trang trí không phục vụ quyết định.
 
 Các tab Theo dõi chiêu mộ, Soi đội từ ảnh và Gợi ý đội từ kho hiển thị nhãn `Beta` cạnh tên trong navigation desktop và menu mobile.
 
 | Nhóm | Pattern hiện tại |
 |---|---|
-| Team chuẩn / Team khác | Cùng một browser: search + select mùa/danh mục + chip facet + card grid |
+| Team chuẩn / Team khác | Shared inline search + dynamic chip groups + card grid |
 | Cùng Tồn / Khai hoang | Nhóm card và bảng dữ liệu local |
-| Tướng / chiến pháp | Search/filter local, modal chi tiết tướng |
+| Tra cứu | Một search, sáu chip nhóm, card grid có paging và dialog hồ sơ |
 | Tracker | Account/banner/slot/action nhỏ gọn, lịch sử và import/export |
 | Soi đội | Drop-zone, preview, Turnstile, trạng thái, kết quả match |
 | Gợi ý kho | Scan theo loại, review canonical data, portfolio và diagnostics |
 
-## Browser Team chuẩn và Team khác
+## Shared team filter
 
-- Hai tab dùng cùng một factory và cùng bộ style; wrapper chỉ chọn family, nguồn dữ liệu và nhãn.
-- Hàng control gồm search, `Xóa lọc`, nút `Bộ lọc` và số đếm `n / m đội`; select mùa nguồn và danh mục luôn nằm ngoài vùng thu gọn.
-- Nhóm chính trong vùng lọc là Loại binh → Điểm → Phe; Nhóm và Nguồn là nhóm phụ. Chip đếm theo phạm vi mùa/danh mục đang chọn, không theo toàn bộ dữ liệu.
-- Điểm chỉ lọc, không sắp xếp: thứ tự thẻ luôn là thứ tự nguồn. Nhóm Điểm hiện tám mức đầu; mức đang chọn nằm ngoài tám mức vẫn hiển thị và vẫn lọc, phần còn lại mở bằng `Xem tất cả mức điểm (n)`.
-- `Xóa lọc` reset query và toàn bộ facet nhưng giữ mùa/danh mục đang xem.
-- Thẻ giữ dạng gọn và vẫn đủ nội dung nguồn: tên đội + điểm nguồn, badge loại binh/phe, các holder với chiến pháp và binh thư, disclosure `Phương án thay thế (n)`, chip khắc chế và CTA `Xem chi tiết`. Không đặt caption Tier hoặc caption mùa/danh mục lên thẻ; caption phạm vi chỉ thuộc trang chi tiết.
-- Chip khắc chế và tag trong holder là hành vi tìm kiếm, không điều hướng; chỉ tên đội và CTA là link.
-- Trên mobile, `.team-filters.collapsed` ẩn nhóm sau nút `Bộ lọc`; đây là inline collapse, không phải drawer/module riêng.
+- Dùng `team-filter-section.js` cho cả hai tab; wrapper chỉ chọn source, groups và sort.
+- Search toàn văn bao phủ tướng, chiến pháp và binh thư. Không thêm combo trùng chức năng nếu search đủ.
+- Chip count được tính từ tập team của tab; nhóm có dưới hai giá trị tự ẩn.
+- `Xóa lọc` phải reset query, sets, chip state và selected tags.
+- Trên mobile, `.team-filters.collapsed` ẩn nhóm sau nút `☰ Bộ lọc`; đây là inline collapse, không phải drawer/module riêng.
 - Menu section mobile do `mobile-section-menu.js` quản lý, tách khỏi filter collapse.
+
+## Tra cứu thống nhất
+
+`Tra cứu` là một tab cho sáu nhóm; không tạo lại tab tướng/chiến pháp riêng.
+`#heroes` và `#tactics` là alias tương thích, còn link canonical dùng `#lookup`
+với `group`, `q` và `id` khi cần. Search chạy toàn corpus, bỏ dấu tiếng Việt và
+đọc alias Hán đã review. Sáu chip nhóm là button có `aria-pressed`; navigation
+chính là `tablist`/`tab` điều khiển được bằng phím mũi tên.
+
+Grid hiển thị tối đa 60 kết quả mỗi lượt và phải có `Xem thêm` để tới record
+cuối. Card mở dialog hồ sơ theo canonical ID; dialog trap focus, đóng bằng
+Escape/nền/nút đóng và trả focus về trigger. Quan hệ tướng–chiến pháp cùng
+equipment special, troop option và building level phải đi qua ID đã validate,
+không ghép theo text. Trường thiếu hiển thị “Đang cập nhật”; không biến `0` hoặc
+`false` thành dấu gạch.
+
+Lỗi lookup phải cụ thể trong đúng section và khóa các feature thật sự phụ thuộc,
+không làm mất Team chuẩn hay nội dung local độc lập. Catalog không hiển thị
+provenance/source nội bộ. Team chuẩn/Team khác vẫn giữ link nguồn và điểm đã
+review theo contract riêng. Ma trận hành vi nằm ở
+[`tests-e2e/unified-lookup.spec.mjs`](../tests-e2e/unified-lookup.spec.mjs).
 
 ## Tra cứu theo kịch bản
 
@@ -45,13 +61,11 @@ URL giữ phạm vi, search/filter và cấu hình đang mở; back/forward ph�
 kho nhưng yêu cầu xác nhận lại và bỏ kết quả cũ. Khi bộ dữ liệu mùa không xác
 thực được, hiển thị thông báo tham khảo legacy và khóa thao tác theo mùa.
 
-Card và chi tiết cấu hình gameplay thuộc đúng cấu hình; chi tiết giữ thứ tự
-holder, chiến pháp, binh thư, điều kiện và nguồn. Ở các surface gameplay này,
-“Điểm SGSDeck” là điểm nguồn của lựa chọn khớp, có thể lớn hơn 100; thiếu bằng
-chứng ghi “Chưa có điểm SGSDeck”, còn Tier legacy ghi “Tier lịch sử — tham
-khảo” và không được coi là tier của mùa đang chọn. Browser Team chuẩn/Team khác
-dùng nhãn “Điểm nguồn”/“Chưa có điểm nguồn” và không có Tier. Bỏ sao đánh giá
-đội; sao phẩm chất tướng vẫn có ý nghĩa riêng.
+Card và chi tiết thuộc đúng cấu hình; chi tiết giữ thứ tự holder, chiến pháp,
+binh thư, điều kiện và nguồn. “Điểm SGSDeck” là điểm nguồn của lựa chọn khớp,
+có thể lớn hơn 100; thiếu bằng chứng ghi “Chưa có điểm SGSDeck”. Tier legacy
+ghi “Tier lịch sử — tham khảo”, không coi là tier mùa đang chọn. Bỏ sao đánh
+giá đội; sao phẩm chất tướng vẫn có ý nghĩa riêng.
 
 Cùng Tồn giữ ghi chú nhiều dòng và các slot nguồn dưới dạng text. So kho nêu
 tài nguyên thiếu/đang khóa và điều kiện chưa xác minh; đủ tướng/chiến pháp
@@ -62,16 +76,6 @@ Control phải có focus rõ, giữ focus khi toggle filter và khi đóng chi t
 chi tiết không bị header che. Nguồn hành vi nằm ở
 [state adapter](../js/season-ui-state.js), [renderer](../js/render.js) và
 [kiểm thử trình duyệt](../tests-e2e/season-lookup.spec.mjs).
-
-## Trang chi tiết đội và 404
-
-- Mỗi đội có route tĩnh riêng. Tên đội và CTA trên thẻ là cùng một anchor thật, nên middle-click hoặc Cmd/Ctrl-click mở tab mới đúng hành vi trình duyệt.
-- Trang chi tiết dùng chung shell, navigation và stylesheet với root; nav trên trang con là link `/#<section>` và đánh dấu section đang thuộc.
-- Luôn có link quay lại: mặc định về `/#team-chuan` hoặc `/#team-khac`, và dùng `from` khi giá trị đó là một trạng thái root hợp lệ. Link chia sẻ không có `from` vẫn về đúng family.
-- Quay lại bằng back hoặc bằng link phục hồi query, tab, vị trí cuộn và disclosure đã mở — chỉ khi snapshot khớp đúng URL đó. Snapshot không được ghi đè history và không phục hồi cho URL khác.
-- Trạng thái tải/lỗi nằm trong live region; không có JavaScript thì trang vẫn còn tiêu đề, điểm nguồn và link quay lại.
-- URL đội không tồn tại dẫn tới trang 404 tĩnh có tiêu đề rõ và link về trang chủ/danh sách, không phải shell rỗng hay danh sách sai phạm vi.
-- Nguồn hành vi: [browser](../js/team-filter-section.js), [renderer thẻ/chi tiết](../js/recommended-reference-render.js), [điều hướng](../js/team-detail-navigation.js), cùng kiểm thử trình duyệt [recommended-browser](../tests-e2e/recommended-browser.spec.mjs) và [team-detail-pages](../tests-e2e/team-detail-pages.spec.mjs).
 
 ## Hierarchy, màu và typography
 
@@ -140,8 +144,6 @@ Không tuyên bố accessibility hoàn chỉnh trước khi các contract trên 
 - Không thêm framework-looking component chỉ để đổi thẩm mỹ.
 - Không tạo filter UI khác nhau cho hai tab cùng contract.
 - Không tham chiếu `facets.json` như runtime source hoặc module mobile drawer không tồn tại.
-- Không đặt caption Tier hoặc caption mùa/danh mục lên thẻ đội của hai tab Team.
-- Không biến tên đội/CTA thành button, không chặn click có modifier và không tự viết router cho trang chi tiết.
 - Không giấu privacy notice, scan review hoặc conflict diagnostics.
 - Không để AI wording khiến người dùng hiểu model tự sáng tạo đội.
 

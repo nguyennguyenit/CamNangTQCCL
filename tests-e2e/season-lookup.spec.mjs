@@ -23,7 +23,7 @@ test('real scenario-only scope remains reference and preserves Khai hoang', asyn
   await expect(page.getByLabel('Kịch bản đang chơi', {exact:true})).toBeVisible();
   await expect(page.locator('#season-summary')).toContainText('Tất cả — tham khảo');
   await expect(page.locator('#section-coexist .sgsdeck-score, #section-coexist .badge.tier')).toHaveCount(0);
-  await expect(page.locator('#section-heroes .badge.stars').first()).toBeAttached();
+  await expect(page.locator('#section-lookup [data-lookup-id^="hero:"]').first()).toBeAttached();
   const values = await page.locator('#season-scenario option').evaluateAll(nodes => nodes.map(n=>n.value).filter(Boolean));
   await page.locator('#season-scenario').selectOption(values.find(v=>v.includes('binh')) || values.at(-1));
   await expect(page.locator('#season-summary')).toContainText('tham khảo');
@@ -38,10 +38,53 @@ import { createHash } from 'node:crypto';
 import { seasonConsumerFixture } from '../tests-js/fixtures/season-fixtures.mjs';
 async function controlledBundle(page, data = null) {
   data ||= await seasonConsumerFixture();
+  const slug = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  data['heroes-dict'] = data['heroes-dict'].map(row => ({
+    id: `hero:${slug(row.viet)}`, chinese: row.chinese, hanViet: row.hanViet ?? row.viet, viet: row.viet,
+    aliases: [], faction: row.faction ?? null, stars: null, cost: null,
+    stats: { luc: '', tri: '', thong: '', toc: '', chinh: '', mi: '' },
+    troopApt: { ky: null, thuan: null, cung: null, thuong: null, khiGioi: null },
+    selfTacticCn: null, inheritTacticCn: null, roleTag: null, roleTagViet: null,
+    iconUrl: null, isSP: false, linkScore: null, pending: false,
+    lookup: {
+      conditions: [], missingFields: [], revisions: [], variant: 'base',
+      selfTacticId: null, inheritTacticId: null, advisorId: null,
+      growth: { luc: null, tri: null, thong: null, toc: null, chinh: null, mi: null },
+      otherAptitudes: { infantry: null, navy: null },
+      categoryVi: null, exclusiveTitleVi: null,
+      civil: { roleVi: null, bonusVi: null, specialtyVi: null, tacticBonusVi: null },
+      civilInnatePoints: null, collectibleBonusVi: null, redRulesVi: null,
+      flags: { isCollectible: null, isDynamicOpen: null, isMusou: null, isCO: null, isSp: null },
+    },
+  }));
+  data.tactics = data.tactics.map(row => ({
+    id: `tactic:${slug(row.viet)}`, chinese: row.chinese, hanViet: row.hanViet ?? row.viet, viet: row.viet,
+    aliases: [], type: null, quality: null, effect: null, effectViet: null,
+    target: null, targetViet: null, troopFit: [], source: null, sourceHeroCn: null,
+    iconUrl: null, linkScore: null, pending: true,
+    lookup: {
+      conditions: [], missingFields: [], revisions: [], activationRate: null,
+      cooldown: null, maxUsers: null, pointCost: null, effectTypeVi: null,
+      exchangeConditionVi: null, acquiredFromVi: [], inheritedFromIds: [], conflictsVi: null,
+    },
+  }));
+  const lookupCatalog = { schemaVersion: 1, advisors: [], buildings: [], equipment: [], specials: [], troopMods: [] };
+  const lookupPayloads = {
+    'heroes-dict.json': JSON.stringify(data['heroes-dict']),
+    'tactics.json': JSON.stringify(data.tactics),
+    'lookup-catalog.json': JSON.stringify(lookupCatalog),
+  };
+  const lookupFiles = Object.fromEntries(Object.entries(lookupPayloads).sort(([left], [right]) => left.localeCompare(right)).map(([name, body]) => [name, createHash('sha256').update(body).digest('hex')]));
+  const lookupManifest = {
+    schemaVersion: 1,
+    generationId: `lookup:${createHash('sha256').update(`${JSON.stringify(lookupFiles)}\n`).digest('hex')}`,
+    files: lookupFiles,
+  };
+  const routeData = { ...data, 'lookup-catalog': lookupCatalog, 'lookup-manifest': lookupManifest };
   const hashes = Object.fromEntries(Object.entries(data).map(([key,value]) => [key, 'sha256:' + createHash('sha256').update(JSON.stringify(value)).digest('hex')]));
   await page.route('**/data/*.json', async route => {
     const key = new URL(route.request().url()).pathname.split('/').at(-1).replace('.json','');
-    if (key in data) return route.fulfill({contentType:'application/json',body:JSON.stringify(data[key])});
+    if (key in routeData) return route.fulfill({contentType:'application/json',body:JSON.stringify(routeData[key])});
     return route.continue();
   });
   await page.route(/^http:\/\/(?:localhost|127\.0\.0\.1):\d+\/(?:\?.*)?$/, async route => {

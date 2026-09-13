@@ -1,10 +1,11 @@
 // Tệp được sinh bởi scripts/generate-workflow-build.ts. Không sửa thủ công.
-export const WORKFLOW_BUILD_ID = "build:sha256b64:7rueBxDRmXb6VrSFWE4hlBs1r25UIw6COBmcO9KsAIQ" as const;
+export const WORKFLOW_BUILD_ID = "build:sha256b64:F1ciM0RhALornGn7BTpkfGiF0OpTD0QNbWhjC22e7Q4" as const;
 export const WORKFLOW_SEMANTIC_FILES = [
   "js/analyze-map.js",
   "js/filters.js",
   "js/hanviet.js",
   "js/hero-identity.js",
+  "js/lookup-data.js",
   "js/match-dict.js",
   "js/roster-scan-map.js",
   "js/roster-scan-state.js",
@@ -13,6 +14,8 @@ export const WORKFLOW_SEMANTIC_FILES = [
   "mcp-worker/src/data/artifact-contracts.ts",
   "mcp-worker/src/data/data-source.ts",
   "mcp-worker/src/data/entity-identity.ts",
+  "mcp-worker/src/data/filesystem-data-source.ts",
+  "mcp-worker/src/data/lookup-bundle.ts",
   "mcp-worker/src/data/public-snapshot-view.ts",
   "mcp-worker/src/data/snapshot-index.ts",
   "mcp-worker/src/domain/canonical-state.ts",

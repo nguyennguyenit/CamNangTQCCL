@@ -1,12 +1,29 @@
-"""TDD pipeline/build_dict.py — generic tactics can carry reviewed details."""
+"""TDD pipeline/build_dict.py — generic tactics plus the lookup activation fence."""
 
+import hashlib
 import json
+import os
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
 from unittest import mock
 
 from pipeline import build_dict
+from pipeline.lookup_translations import canonical_json_bytes
+
+REPO = Path(__file__).resolve().parents[1]
+LOCK_RELATIVE = "pipeline/lookup-output/promotion.lock"
+LEGACY_HEROES = b'[\n  {\n    "chinese": "\\u5f20\\u98de",\n    "viet": "Tr\\u01b0\\u01a1ng Phi"\n  }\n]\n'
+LEGACY_TACTICS = b'[\n  {\n    "chinese": "\\u4f17\\u5fd7\\u6210\\u57ce",\n    "viet": "To\\u00e0n Qu\\u00e2n \\u0110\\u1ed3ng L\\u00f2ng"\n  }\n]\n'
+
+
+def sha(payload):
+    return hashlib.sha256(payload).hexdigest()
+
+
+def encode(value):
+    return (json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode("utf-8")
 
 
 class MergeGenericTest(unittest.TestCase):
@@ -139,6 +156,119 @@ class VerifiedVietnameseMappingTest(unittest.TestCase):
         self.assertEqual(matches[0]["viet"], "Nhanh Trí Động Não")
         self.assertEqual(matches[0]["type"], "Chủ động")
         self.assertEqual(matches[0]["troopFit"], ["Kỵ", "Khí giới"])
+
+
+class LookupActivationFenceTest(unittest.TestCase):
+    """The legacy writer must never overwrite or desync an activated lookup bundle."""
+
+    def project(self):
+        directory = tempfile.TemporaryDirectory(prefix="tqccl-build-dict-")
+        self.addCleanup(directory.cleanup)
+        root = Path(directory.name)
+        (root / "data").mkdir()
+        (root / "pipeline" / "lookup-output" / "transactions").mkdir(parents=True)
+        shutil.copy(REPO / "data" / "facets.json", root / "data" / "facets.json")
+        (root / "data" / "heroes-dict.json").write_bytes(LEGACY_HEROES)
+        (root / "data" / "tactics.json").write_bytes(LEGACY_TACTICS)
+        (root / "pipeline" / "raw_crawl_cache.json").write_bytes(b"{ this cache must never be read")
+        return root
+
+    def activate(self, root):
+        payloads = {
+            "heroes-dict.json": encode([{"id": "hero:a", "viet": "Tướng A"}]),
+            "tactics.json": encode([{"id": "tactic:a", "viet": "Chiến pháp A"}]),
+            "lookup-catalog.json": encode({"schemaVersion": 1, "equipment": []}),
+        }
+        files = {name: sha(payload) for name, payload in payloads.items()}
+        payloads["lookup-manifest.json"] = encode({
+            "schemaVersion": 1,
+            "generationId": "lookup:" + sha(canonical_json_bytes(files)),
+            "files": files,
+        })
+        for name, payload in payloads.items():
+            (root / "data" / name).write_bytes(payload)
+
+    def journal(self, root, state):
+        transaction = root / "pipeline/lookup-output/transactions/t1"
+        transaction.mkdir(parents=True, exist_ok=True)
+        (transaction / "journal.json").write_bytes(encode({
+            "schemaVersion": 1, "id": "t1", "state": state,
+            "generationId": "lookup:" + "0" * 64, "inputHashes": {},
+            "activationCodeManifestHash": "0" * 64, "paths": [],
+        }))
+
+    def lock(self, root):
+        (root / LOCK_RELATIVE).write_bytes(encode({"pid": os.getpid(), "transaction": "t1"}))
+
+    def empty_raw(self, *args, **kwargs):
+        return {"tactics": [], "heroes": []}
+
+    def test_activation_state_blocks_the_build_before_any_cache_or_network_read(self):
+        for label in ("activated bundle", "promotion lock", "activation-prepared journal", "writing journal"):
+            with self.subTest(label):
+                root = self.project()
+                if label == "activated bundle":
+                    self.activate(root)
+                elif label == "promotion lock":
+                    self.lock(root)
+                else:
+                    self.journal(root, "activation-prepared" if "prepared" in label else "writing")
+                before = {path.name: path.read_bytes() for path in sorted((root / "data").iterdir())}
+
+                with mock.patch.object(build_dict.ct, "crawl_list") as crawl, \
+                        mock.patch.object(build_dict.ct, "fetch_detail") as detail, \
+                        mock.patch.object(build_dict, "_write_json") as write:
+                    with self.assertRaises(RuntimeError):
+                        build_dict.build(root=root)
+
+                crawl.assert_not_called()
+                detail.assert_not_called()
+                write.assert_not_called()
+                self.assertEqual({path.name: path.read_bytes() for path in sorted((root / "data").iterdir())}, before)
+
+    def test_genuine_legacy_root_still_publishes_both_dictionaries(self):
+        root = self.project()
+        self.journal(root, "rolled-back")
+
+        with mock.patch.object(build_dict, "load_raw", self.empty_raw):
+            build_dict.build(root=root)
+
+        self.assertEqual(json.loads((root / "data" / "heroes-dict.json").read_bytes()), [])
+        self.assertTrue(json.loads((root / "data" / "tactics.json").read_bytes()))
+
+    def test_activation_after_the_guard_aborts_at_the_write_fence(self):
+        root = self.project()
+        before = {path.name: path.read_bytes() for path in sorted((root / "data").iterdir())}
+
+        def promote_then_return(*args, **kwargs):
+            self.activate(root)
+            return self.empty_raw()
+
+        with mock.patch.object(build_dict, "load_raw", promote_then_return), \
+                mock.patch.object(build_dict, "_write_json") as write:
+            with self.assertRaises(RuntimeError):
+                build_dict.build(root=root)
+
+        write.assert_not_called()
+        self.assertNotEqual({path.name: path.read_bytes() for path in sorted((root / "data").iterdir())}, before)
+        self.assertEqual((root / "data" / "heroes-dict.json").read_bytes(),
+                         encode([{"id": "hero:a", "viet": "Tướng A"}]))
+
+    def test_dictionary_writes_hold_the_promotion_lock_and_release_it(self):
+        root = self.project()
+        owners = []
+        real_write = build_dict._write_json
+
+        def recording_write(path, payload):
+            owners.append(json.loads((root / LOCK_RELATIVE).read_bytes())["pid"])
+            return real_write(path, payload)
+
+        with mock.patch.object(build_dict, "load_raw", self.empty_raw), \
+                mock.patch.object(build_dict, "_write_json", recording_write):
+            build_dict.build(root=root)
+
+        self.assertEqual(owners, [os.getpid(), os.getpid()])
+        self.assertFalse((root / LOCK_RELATIVE).exists())
 
 
 if __name__ == "__main__":

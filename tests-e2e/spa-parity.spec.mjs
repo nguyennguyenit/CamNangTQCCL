@@ -31,8 +31,7 @@ const sections = [
   "team-khac",
   "coexist",
   "khaihoang",
-  "heroes",
-  "tactics",
+  "lookup",
   "recruit-tracker",
   "analyze",
   "roster-recommend",
@@ -155,8 +154,8 @@ test("boots once with clean first-party requests and stable metadata", async ({ 
   const appModule = page.locator('script[type="module"]');
   await expect(appModule).toHaveCount(1);
   await expect(appModule).toHaveAttribute("src", /^(?:\.\/|\/)js\/app\.js$/);
-  await expect(page.locator(".nav-tab")).toHaveCount(9);
-  await expect(page.locator(".section")).toHaveCount(9);
+  await expect(page.locator(".nav-tab")).toHaveCount(sections.length);
+  await expect(page.locator(".section")).toHaveCount(sections.length);
   await expectActiveSection(page, "team-chuan");
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);
@@ -268,14 +267,14 @@ test("required JSON failure stays in Team chuẩn and can remain hidden on anoth
   await page.route("**/data/teams.json", (route) =>
     route.fulfill({ status: 503, contentType: "application/json", body: "{}" }));
 
-  await page.goto("/#heroes");
+  await page.goto("/#lookup");
   const error = page.locator("#section-team-chuan .error");
   await expect(error).toContainText("Lỗi tải dữ liệu: ./data/teams.json: 503");
   await expect(error).toContainText("Hãy tải lại trang hoặc liên hệ quản trị viên nếu lỗi tiếp diễn");
   await expect(error).not.toContainText(/python3|http server|index\.html/i);
-  await expectActiveSection(page, "heroes");
+  await expectActiveSection(page, "lookup");
   await expect(error).toBeHidden();
-  await expect(page.locator("#section-heroes")).toBeEmpty();
+  await expect(page.locator("#section-lookup")).toBeEmpty();
 });
 
 test("optional tier failure is non-fatal", async ({ page }) => {
@@ -313,8 +312,8 @@ test("Turnstile failure does not break local sections or duplicate its script", 
   await expect(page.locator("#section-roster-recommend .ana-turnstile")).toContainText("Không tải được Turnstile");
   await expect(page.locator("script[src*='turnstile']")).toHaveCount(1);
 
-  await page.locator('.nav-tab[data-section="heroes"]').click();
-  await expect(page.locator("#section-heroes")).not.toBeEmpty();
+  await page.locator('.nav-tab[data-section="lookup"]').click();
+  await expect(page.locator("#section-lookup")).not.toBeEmpty();
 });
 
 test("mobile section menu closes after selection and Escape", async ({ page }) => {
@@ -402,10 +401,10 @@ test("synthetic HTTPS serves dist locally and characterizes legacy HTTP icons", 
     }
   });
 
-  await page.goto("https://astro.local/#heroes");
+  await page.goto("https://astro.local/#lookup?group=heroes");
   await waitForBoot(page);
-  await expectActiveSection(page, "heroes");
-  const icon = page.locator("#section-heroes img[src^='http://']").first();
+  await expectActiveSection(page, "lookup");
+  const icon = page.locator("#section-lookup img[src^='http://']").first();
   await expect(icon).toBeAttached();
   await expect.poll(() => externalImageRequests.length).toBeGreaterThan(0);
   expect(externalImageRequests.every((url) => url.protocol === "https:")).toBe(true);

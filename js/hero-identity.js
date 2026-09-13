@@ -2,7 +2,7 @@ import { normalizeText } from "./filters.js";
 
 const CONTROL_CHARACTERS = /[\u0000-\u001f\u007f]/gu;
 const TRAILING_ANNOTATION = /\s*[\(（][^()（）]*[\)）]\s*$/u;
-const VARIANT_PREFIX = /^(SP|CO)\s+/iu;
+const VARIANT_PREFIX = /^(40Y|SP|CO)\s+/iu;
 
 function cleanDisplayName(value) {
   if (typeof value !== "string") {
@@ -28,6 +28,7 @@ function slug(value) {
 
 function variantOf(displayName) {
   const prefix = displayName.match(VARIANT_PREFIX)?.[1]?.toUpperCase();
+  if (prefix === "40Y") return "other";
   if (prefix === "SP") return "sp";
   if (prefix === "CO") return "co";
   return "base";
@@ -60,6 +61,7 @@ function primaryDisplayName(hero) {
   const named = cleanDisplayName(hero?.name || hero?.baseName || "");
   if (VARIANT_PREFIX.test(named)) return named;
   const baseName = cleanDisplayName(hero?.baseName || named);
+  if (hero?.is40Y) return `40Y ${baseName}`;
   if (hero?.isSP) return `SP ${baseName}`;
   if (hero?.isCO) return `CO ${baseName}`;
   return named;

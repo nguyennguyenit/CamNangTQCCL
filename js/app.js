@@ -1,8 +1,8 @@
 // Điều phối dữ liệu tĩnh, section navigation, theme và hai browser đội theo mùa.
 
 import { seasonConfigDetail, bestTier, el, khaihoangTable } from "./render.js";
-import { initTactics } from "./tactics.js";
-import { initHeroList } from "./hero-list.js";
+import { loadLookupBundle } from "./lookup-data.js";
+import { initUnifiedLookup, parseLookupRoute } from "./unified-lookup.js";
 import { initAnalyze } from "./analyze.js";
 import { initRecruitTracker } from "./recruit-tracker.js";
 import { initRosterRecommend } from "./roster-recommend-ui.js";
@@ -47,13 +47,21 @@ async function loadOptionalJSON(path, fallback) {
 }
 
 /* ---------- Section nav ---------- */
-const SECTIONS = ["team-chuan", "team-khac", "coexist", "khaihoang", "heroes", "tactics", "recruit-tracker", "analyze", "roster-recommend"];
+const SECTIONS = ["team-chuan", "team-khac", "coexist", "khaihoang", "lookup", "recruit-tracker", "analyze", "roster-recommend"];
 const LEGACY_SECTIONS = {"team-pk":"team-khac","meta-cu":"team-khac"};
 function initNav() {
   sectionMenu = initSiteChrome().menu;
   document.querySelectorAll(".nav-tab").forEach((tab) => {
     tab.addEventListener("click", () => onSectionRequest(tab.dataset.section));
   });
+  const tabs = [...document.querySelectorAll(".nav-tab")];
+  tabs.forEach((tab, index) => tab.addEventListener("keydown", (event) => {
+    if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+    event.preventDefault();
+    const offset = event.key === "ArrowRight" ? 1 : -1;
+    tabs[(index + offset + tabs.length) % tabs.length].focus();
+    onSectionRequest(tabs[(index + offset + tabs.length) % tabs.length].dataset.section);
+  }));
   // Deep-link: mở section theo hash (#khaihoang) + đồng bộ khi đổi hash.
   window.addEventListener("hashchange", () => {
     canonicalizeSectionHash();
@@ -66,8 +74,9 @@ function initNav() {
   switchSection(sectionFromHash());
 }
 function canonicalizeSectionHash() {
-  const name = (location.hash || '').slice(1);
-  if (!name || SECTIONS.includes(name)) return;
+  const hash = location.hash || '';
+  const name = hash.slice(1);
+  if (!name || SECTIONS.includes(name) || parseLookupRoute(hash)) return;
   const legacy = LEGACY_SECTIONS[name];
   const url = new URL(location.href);
   url.hash = legacy ? `#${legacy}` : '#team-chuan';
@@ -75,18 +84,26 @@ function canonicalizeSectionHash() {
   history.replaceState({...history.state,referenceAlias:legacy ? name : null}, '', url);
 }
 function sectionFromHash() {
-  const name = (location.hash || "").replace(/^#/, "");
+  const hash = location.hash || "";
+  const lookup = parseLookupRoute(hash);
+  if (lookup) return "lookup";
+  const name = hash.replace(/^#/, "");
   return LEGACY_SECTIONS[name] || (SECTIONS.includes(name) ? name : "team-chuan");
 }
 function switchSection(name) {
-  document.querySelectorAll(".nav-tab").forEach((t) => t.classList.toggle("active", t.dataset.section === name));
+  document.querySelectorAll(".nav-tab").forEach((t) => {
+    const active = t.dataset.section === name;
+    t.classList.toggle("active", active);
+    t.setAttribute("aria-selected", String(active));
+    t.tabIndex = active ? 0 : -1;
+  });
   document.querySelectorAll(".section").forEach((s) => s.classList.toggle("active", s.id === `section-${name}`));
   sectionMenu?.setActive(name);
   const controls = $('#season-controls');
   if (controls) controls.hidden = !['coexist','analyze','roster-recommend'].includes(name);
   $('.tagline').textContent = name === 'khaihoang' ? 'Khai hoang — dữ liệu mới nhất' : name === 'team-chuan' || name === 'team-khac' ? 'Duyệt đội hình theo mùa nguồn' : 'Tra cứu đội hình theo kịch bản';
   activeSection = name;
-  if (sectionFromHash() !== name) location.hash = name;
+  if (sectionFromHash() !== name) location.hash = name === "lookup" ? "lookup" : name;
   onNavigation();
 }
 
@@ -96,21 +113,28 @@ async function main() {
   try {
     const byteRequests = new Map();
     const loadBytes = (name) => {
-      if (!byteRequests.has(name)) byteRequests.set(name, fetch(`./data/${name}.json`).then(response => {
+      if (!byteRequests.has(name)) byteRequests.set(name, fetch(`./data/${name}.json`).then(async response => {
         if (!response.ok) throw new Error(`./data/${name}.json: ${response.status}`);
-        return response.arrayBuffer();
+        return new Uint8Array(await response.arrayBuffer());
       }));
       return byteRequests.get(name);
     };
     const loadData = name => loadBytes(name).then(bytes => JSON.parse(new TextDecoder().decode(bytes)));
-    const [teams, coexist, khaihoang, tactics, heroesDict, booksDict] = await Promise.all([
+    const [teams, coexist, khaihoang, booksDict] = await Promise.all([
       loadData("teams"),
       loadData("coexist"),
       loadJSON("./data/khaihoang.json"),
-      loadData("tactics"),
-      loadData("heroes-dict"),
       loadData("books-dict"),
     ]);
+    let lookupBundle = null;
+    try {
+      lookupBundle = await loadLookupBundle(name => loadBytes(name.replace(/\.json$/, "")));
+    } catch {
+      $("#section-lookup").append(el("p", { class: "error", role: "alert" }, "Dữ liệu Tra cứu hiện không khả dụng. Các mục đội hình vẫn hoạt động."));
+    }
+    const heroesDict = lookupBundle?.heroes ?? [];
+    const tactics = lookupBundle?.tactics ?? [];
+    const catalog = lookupBundle?.catalog ?? null;
     const teamTier = await loadOptionalJSON("./data/team-tier.json", []);
     const tierIndex = new Map(teamTier.map((r) => [r.teamId, r.rankings]));
 
@@ -311,11 +335,13 @@ async function main() {
       $('#section-team-chuan').append(el('p',{class:'error',role:'status'},'Dữ liệu Team chuẩn hiện không khả dụng. Các mục khác vẫn hoạt động.'));
       $('#section-team-khac').append(el('p',{class:'error',role:'status'},'Dữ liệu Team khác hiện không khả dụng. Các mục khác vẫn hoạt động.'));
     }
+    let lookupUI = null;
     onNavigation = () => {
       const params = new URL(location.href).searchParams;
       detailMount.hidden = !params.has('config') && !['team-chuan','team-khac'].includes(sectionFromHash());
       renderScope();
       renderReference();
+      if (sectionFromHash() === "lookup") lookupUI?.render();
     };
     onNavigation();
     renderScope();
@@ -328,9 +354,7 @@ async function main() {
     });
     window.addEventListener('pageshow', event => { if (event.persisted) restoreReturnState(); });
     $("#section-khaihoang").append(khaihoangTable(khaihoang));
-    initHeroList(heroesDict, tactics, $("#section-heroes"));
-    initTactics(tactics, $("#section-tactics"));
-    initRecruitTracker({ heroesDict, mount: $("#section-recruit-tracker") });
+    if (catalog) lookupUI = initUnifiedLookup({ heroes: heroesDict, tactics, catalog }, $("#section-lookup"));
 
     // Kết quả gameplay giữ nguyên tab người dùng: config mở detail dùng chung, đội gốc đi trang riêng.
     const onOpenTeam = (team) => {
@@ -340,8 +364,15 @@ async function main() {
       rememberReturn();
       location.assign(href);
     };
-    consumers.push(initAnalyze({ teams, heroesDict, tacticsDict: tactics, booksDict, onOpenTeam }, $("#section-analyze")));
-    consumers.push(initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict: tactics, onOpenTeam }, $("#section-roster-recommend")));
+    if (lookupBundle) {
+      initRecruitTracker({ heroesDict, mount: $("#section-recruit-tracker") });
+      consumers.push(initAnalyze({ teams, heroesDict, tacticsDict: tactics, booksDict, onOpenTeam }, $("#section-analyze")));
+      consumers.push(initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict: tactics, onOpenTeam }, $("#section-roster-recommend")));
+    } else {
+      for (const id of ["section-recruit-tracker", "section-analyze", "section-roster-recommend"]) {
+        $(`#${id}`).append(el("p", { class: "error", role: "status" }, "Tính năng này cần dữ liệu Tra cứu đang không khả dụng."));
+      }
+    }
     consumers.forEach(consumer=>consumer?.setSeasonScope?.({model:seasonModel,browse:browse || {kind:["scenario","ruleset"].some(key=>new URL(location.href).searchParams.has(key)) ? "invalid" : "all-reference"}}, {initial:true}));
   } catch (err) {
     const mount = $("#section-team-chuan");

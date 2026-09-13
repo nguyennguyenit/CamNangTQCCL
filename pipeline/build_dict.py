@@ -19,6 +19,7 @@ import time
 from . import crawl_tactics as ct
 from . import hanviet
 from . import link_tactics as lt
+from pathlib import Path
 
 _DIR = os.path.dirname(__file__)
 _DATA = os.path.join(_DIR, "..", "data")
@@ -114,28 +115,69 @@ def _write_json(path: str, obj) -> None:
         json.dump(obj, fh, ensure_ascii=False, indent=2)
         fh.write("\n")
 
+def _assert_legacy_writable(root: Path, *, own_lock: bool = False) -> None:
+    output = root / "pipeline/lookup-output"
+    if (root / "data/lookup-manifest.json").exists():
+        raise RuntimeError("unified lookup is activated; legacy dictionary writer is disabled")
+    if not own_lock and (output / "promotion.lock").exists():
+        raise RuntimeError("lookup dictionaries are locked")
+    transactions = output / "transactions"
+    if transactions.exists():
+        for journal_path in transactions.glob("*/journal.json"):
+            try:
+                state = json.loads(journal_path.read_text(encoding="utf-8")).get("state")
+            except (OSError, json.JSONDecodeError):
+                raise RuntimeError("lookup transaction state is unreadable")
+            if state in {"activation-prepared", "writing"}:
+                raise RuntimeError("lookup activation is incomplete")
 
-def build(recrawl: bool = False) -> dict:
-    raw = load_raw(recrawl)
-    facets = json.load(open(_FACETS, encoding="utf-8"))
-    facet_tactics = [t["value"] for t in facets["tactics"]]
-    facet_heroes = [h["value"] for h in facets["heroes"]]
 
-    missing: set = set()
-    tactics = [ct.parse_tactic_detail(it, missing) for it in raw["tactics"]]
-    heroes = [ct.parse_hero_detail(it, missing) for it in raw["heroes"]]
-    if missing:
-        raise hanviet.MissingCharError(f"[fail-loud] {len(missing)} ký tự thiếu: {sorted(missing)}")
+def _acquire_writer_lock(root: Path) -> Path:
+    path = root / "pipeline/lookup-output/promotion.lock"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    except FileExistsError as error:
+        raise RuntimeError("lookup dictionaries are locked") from error
+    with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
+        json.dump({"pid": os.getpid(), "transaction": f"legacy-writer-{os.getpid()}"}, handle)
+        handle.write("\n")
+    return path
 
-    rep_t = lt.link_records(tactics, facet_tactics, "hanViet")
-    rep_h = lt.link_records(heroes, facet_heroes, "hanViet")
-    n_override = _apply_overrides(tactics)
-    n_generic = _merge_generic(tactics)
 
-    tactics.sort(key=lambda r: (r.get("pending", False), r["viet"]))
-    heroes.sort(key=lambda r: r["chinese"])
-    _write_json(os.path.join(_DATA, "tactics.json"), tactics)
-    _write_json(os.path.join(_DATA, "heroes-dict.json"), heroes)
+def build(recrawl: bool = False, *, root=None) -> dict:
+    project_root = Path(root).absolute() if root is not None else Path(_DIR).parent.absolute()
+    data_dir = project_root / "data"
+    _assert_legacy_writable(project_root)
+    lock = _acquire_writer_lock(project_root)
+    try:
+        raw = load_raw(recrawl)
+        with open(data_dir / "facets.json", encoding="utf-8") as facets_file:
+            facets = json.load(facets_file)
+        facet_tactics = [t["value"] for t in facets["tactics"]]
+        facet_heroes = [h["value"] for h in facets["heroes"]]
+
+        missing: set = set()
+        tactics = [ct.parse_tactic_detail(it, missing) for it in raw["tactics"]]
+        heroes = [ct.parse_hero_detail(it, missing) for it in raw["heroes"]]
+        if missing:
+            raise hanviet.MissingCharError(f"[fail-loud] {len(missing)} ký tự thiếu: {sorted(missing)}")
+
+        rep_t = lt.link_records(tactics, facet_tactics, "hanViet")
+        rep_h = lt.link_records(heroes, facet_heroes, "hanViet")
+        n_override = _apply_overrides(tactics)
+        n_generic = _merge_generic(tactics)
+
+        tactics.sort(key=lambda r: (r.get("pending", False), r["viet"]))
+        heroes.sort(key=lambda r: r["chinese"])
+        _assert_legacy_writable(project_root, own_lock=True)
+        _write_json(str(data_dir / "tactics.json"), tactics)
+        _write_json(str(data_dir / "heroes-dict.json"), heroes)
+    finally:
+        try:
+            lock.unlink()
+        except FileNotFoundError:
+            pass
 
     summary = {
         "tactics": {k: len(v) for k, v in rep_t.items()},
