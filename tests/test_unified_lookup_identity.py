@@ -95,12 +95,18 @@ class UnifiedLookupIdentityTest(unittest.TestCase):
 
     def test_freeze_baseline_is_exact_and_refuses_tampered_overwrite(self):
         with tempfile.TemporaryDirectory() as directory:
-            output = Path(directory) / "lookup-inputs"
-            manifest = freeze_baseline(PROJECT_ROOT, output)
+            directory = Path(directory)
+            source = directory / "historical-source"
+            (source / "data").mkdir(parents=True)
+            frozen = PROJECT_ROOT / "pipeline" / "lookup-inputs"
+            for name in ("heroes-dict.json", "tactics.json"):
+                (source / "data" / name).write_bytes((frozen / name).read_bytes())
+            output = directory / "lookup-inputs"
+            manifest = freeze_baseline(source, output)
             self.assertEqual(manifest["counts"], {"heroes": 112, "tactics": 240})
             self.assertEqual(
                 (output / "heroes-dict.json").read_bytes(),
-                (PROJECT_ROOT / "data" / "heroes-dict.json").read_bytes(),
+                (frozen / "heroes-dict.json").read_bytes(),
             )
             (output / "heroes-dict.json").write_text("tampered", encoding="utf-8")
             with self.assertRaisesRegex(FileExistsError, "frozen baseline differs"):

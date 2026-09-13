@@ -1,15 +1,16 @@
 ---
 title: "Phase 4: Tương thích, chứng nhận và bàn giao"
-status: todo
+status: completed
 ---
 
 # Phase 4: Tương thích, chứng nhận và bàn giao
 
 ## Overview
 
-Trạng thái **pending**; sau [Phase 3](phase-03-unified-lookup-interface.md);
-effort 1–2 ngày. Kiểm toàn bộ consumer/release contracts, cập nhật docs đúng owner,
-đóng evidence và rollback rehearsal. Không thêm MCP tools/kinds, không deploy.
+Trạng thái **completed**; [Phase 3](phase-03-unified-lookup-interface.md) đã
+hoàn tất. Phase này đã kiểm toàn bộ consumer/release contracts, cập nhật docs
+đúng owner, đóng evidence và rollback rehearsal. Không thêm MCP tools/kinds,
+không deploy.
 [Plan](plan.md), [consumer research](reports/research-consumers.md),
 [data research](reports/research-data.md), [plan mùa](../260907-0233-season-team-lookup/plan.md).
 
@@ -124,30 +125,30 @@ season plan files, scores hoặc project changelog chỉ để ghi phase complet
 
 ## Implementation Steps
 
-1. [ ] Pin integrated completed Team baseline, actual manifests, lookup generation,
+1. [x] Pin integrated completed Team baseline, actual manifests, lookup generation,
    Recommended selected generation/map hashes, code/data preimages and known WIP.
-2. [ ] Add missing consumer, packaged-MCP, stale-binding, combined-publication,
+2. [x] Add missing consumer, packaged-MCP, stale-binding, combined-publication,
    paused-season-publisher and public-leak Reds; fix narrow owner seams.
-3. [ ] Before changing tactic expectations, split historical screenshot assertions
+3. [x] Before changing tactic expectations, split historical screenshot assertions
    onto Phase 1 frozen tactics input; current assertions read promoted data and
    change only with exact selected-source/translation evidence.
-4. [ ] Run focused closure then full root/Python/MCP checks. Capture commands,
+4. [x] Run focused closure then full root/Python/MCP checks. Capture commands,
    counts and failures; environmental block is not Red or validation pass.
-5. [ ] Rehearse interrupted activation/promotion/recovery with old-code writer
+5. [x] Rehearse interrupted activation/promotion/recovery with old-code writer
    already running; verify data + code/config/tests restored and unrelated WIP
    untouched. Exercise lock-without-journal explicit recovery.
-6. [ ] Rehearse certified G1 → season publisher validates G1 and pauses → lookup
+6. [x] Rehearse certified G1 → season publisher validates G1 and pauses → lookup
    rollback G0 → publisher resumes; final generation check must abort before write.
-7. [ ] Compare Recommended bridge semantics/hashes. Preserve frozen evidence or
+7. [x] Compare Recommended bridge semantics/hashes. Preserve frozen evidence or
    coordinate re-review/rebuild; prove selected scoped bytes/pin/source links and
    Team khác membership do not silently drift.
-8. [ ] Build with injected HTML(G0) → complete promotion(G1) → data routes(G1);
+8. [x] Build with injected HTML(G0) → complete promotion(G1) → data routes(G1);
    verifier rejects. Build stable generation and prove root + scoped exact inventory.
-9. [ ] Inspect real six-group UI plus Team chuẩn/Team khác desktop/mobile/light/dark,
+9. [x] Inspect real six-group UI plus Team chuẩn/Team khác desktop/mobile/light/dark,
    last children, keyboard, aliases, Back/Forward and source links.
-10. [ ] Update owning docs, add compatibility/handoff evidence and baseline→candidate
+10. [x] Update owning docs, add compatibility/handoff evidence and baseline→candidate
     semantic diff; link machine-owned validators/manifests instead of duplicating.
-11. [ ] After all gates, mark generation accepted locally, retain rollback artifacts
+11. [x] After all gates, mark generation accepted locally, retain rollback artifacts
     per policy and hand season/Recommended owners certified generation/ID/evidence
     disposition. No deployment/commit performed implicitly.
 
@@ -204,16 +205,16 @@ Không `release:worker`/deploy; publication cần scope/authorization riêng.
 
 ## Success Criteria and handoff
 
-- [ ] All six groups + reviewed children complete, no misleading pending/links.
-- [ ] ID/name/storage/engine/MCP canaries and broad tests pass with saved evidence.
-- [ ] No source leakage, generation recovery and exact inventories verified.
-- [ ] Docs cover real commands, regeneration triggers, baseline/source ownership.
-- [ ] Handoff lists tested hashes, intentional deltas, unresolved identity reasons,
-  translation coverage, rollback location, season-owner dependency and any release block.
-- [ ] Completed Team browser selected generation, source attribution, aliases and history preserved.
-- [ ] Recommended bridge evidence disposition and season publisher exclusion recorded.
-- [ ] Stable Astro build pins season/lookup/Recommended generations; interleaving build rejects.
-- [ ] CLI/stdio load a valid packaged MCP release and reject mixed raw lookup roots.
+- [x] All six groups + reviewed children complete, no misleading pending/links.
+- [x] ID/name/storage/engine/MCP canaries and broad tests pass with saved evidence.
+- [x] No source leakage, generation recovery and exact inventories verified.
+- [x] Docs cover real commands, regeneration triggers, baseline/source ownership.
+- [x] Handoff lists tested hashes, intentional deltas, unresolved identity reasons,
+  translation coverage, rollback location, season-owner dependency and release block.
+- [x] Completed Team browser selected generation, source attribution, aliases and history preserved.
+- [x] Recommended bridge evidence disposition and season publisher exclusion recorded.
+- [x] Stable Astro build pins season/lookup/Recommended generations; interleaving build rejects.
+- [x] CLI/stdio load a valid packaged MCP release and reject mixed raw lookup roots.
 
 Unexpected broad regression after promotion: stop acceptance, restore previous
 generation/code checkpoint **chỉ sau full WIP/dependent-ref preflight**; conflict
@@ -222,3 +223,25 @@ gates. Do not claim complete while required behavioral checks remain unresolved.
 Clean-source release blocks are reported separately from feature test evidence.
 No open product decision; genuine unavailable game evidence explained in Vietnamese.
 Stop all task-owned servers/runners; preserve user/other-session processes and WIP.
+
+## Completion evidence — 2026-09-13
+
+- Accepted local generation `lookup:de73c4ca235de9b4ba6dbc5679573a3bab623a93ea6b061f0d30ad5f12c101e8`;
+  exact hashes, counts, bridge disposition and rollback location are in
+  [compatibility validation](reports/compatibility-validation.md) and
+  [handoff](reports/lookup-handoff.md).
+- Broad results: Python 283 passed/12 skipped; Node 261 passed; Astro
+  check/build/dist/verify/dev contract Green; Chromium E2E 102 passed; MCP check
+  373 passed plus coverage/typecheck/build/control-plane; Worker suites 2 + 1 passed.
+- Phase 4 Reds found and closed Worker sidecar allowlists, strict MCP filesystem
+  ingress, prewrite season generation ordering, first-activation exclusion and
+  first-activation dependent-reference recovery. Website sidecars remain excluded
+  from emitted MCP inventory.
+- Actual preview inspection confirmed 908 searchable parent records at desktop;
+  the 320px building view had 41 results, no horizontal overflow and a usable
+  level-detail dialog. Automated matrix covers both themes and four viewports.
+- Concurrent initial broad runs hit process contention; isolated reruns passed
+  without timeout changes. Debugger and docs-manager agent invocations were blocked
+  before execution by provider HTTP 429; direct reproductions, code review, tester
+  and advisory gates supply the recorded evidence.
+- No deploy, Worker release or production promotion was performed or authorized.

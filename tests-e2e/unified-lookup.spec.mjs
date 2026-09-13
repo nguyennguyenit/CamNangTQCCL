@@ -225,16 +225,21 @@ for (const width of [320, 375, 768, 1280]) {
     test(`Tra cứu dùng được ở ${width}px trong nền ${theme}`, async ({ page }) => {
       await page.setViewportSize({ width, height: 800 });
       await page.addInitScript((value) => localStorage.setItem('theme', value), theme);
-      await page.goto('/#lookup?group=buildings');
+      await page.goto('/#lookup');
       if (width <= 820) await page.locator('#section-menu-toggle').click();
       await expect(page.getByRole('tab', { name: 'Tra cứu', exact: true })).toBeVisible();
       if (width <= 820) await page.locator('#section-menu-toggle').click();
-      await expect(chip(page, 'buildings')).toBeVisible();
-      await expect(cards(page).first()).toBeVisible();
-      expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
-      await cards(page).first().getByRole('button').first().click();
-      await expect(page.getByRole('dialog')).toBeVisible();
-      expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+      for (const group of GROUPS) {
+        await chip(page, group).click();
+        await expect(chip(page, group)).toHaveAttribute('aria-pressed', 'true');
+        await expect(cards(page).first()).toBeVisible();
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+        await cards(page).first().getByRole('button').first().click();
+        await expect(page.getByRole('dialog')).toBeVisible();
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+        await page.keyboard.press('Escape');
+        await expect(page.getByRole('dialog')).toHaveCount(0);
+      }
     });
   }
 }

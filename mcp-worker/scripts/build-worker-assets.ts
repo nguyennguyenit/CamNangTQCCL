@@ -333,6 +333,8 @@ async function main(): Promise<void> {
         "facets.json",
         "khaihoang.json",
         "tactics-generic.json",
+        "lookup-catalog.json",
+        "lookup-manifest.json",
       ],
       readSourceState: async () => {
         const commitSha = await gitOutput(repositoryRoot, [

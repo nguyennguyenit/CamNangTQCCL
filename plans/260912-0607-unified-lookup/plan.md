@@ -1,7 +1,7 @@
 ---
 title: "Bộ tra cứu thống nhất"
 description: "Tra cứu tiếng Việt thống nhất sáu nhóm; giữ ID cũ, ưu tiên SGSDeck, TDD trước tích hợp."
-status: in-progress
+status: completed
 priority: P1
 effort: "8–13 ngày công, gồm review danh tính và Việt hóa corpus"
 tags: [data, lookup, vietnamese, tdd]
@@ -49,8 +49,8 @@ cả activation code checkpoint.
 |---|-------|--------|
 | 1 | [Danh tính và baseline](./phase-01-start.md) | Completed |
 | 2 | [Hợp nhất và Việt hóa](./phase-02-merge-and-vietnamese-content.md) | Completed |
-| 3 | [Giao diện và tích hợp generation](./phase-03-unified-lookup-interface.md) | In progress |
-| 4 | [Tương thích và bàn giao](./phase-04-compatibility-and-handoff.md) | Pending |
+| 3 | [Giao diện và tích hợp generation](./phase-03-unified-lookup-interface.md) | Completed |
+| 4 | [Tương thích và bàn giao](./phase-04-compatibility-and-handoff.md) | Completed |
 
 Thứ tự: **1 → 2 → 3 → 4**. TDD trong từng phase: ghi assertion Red đúng
 nguyên nhân trước implementation, rồi Green và kiểm lại sau Refactor.
@@ -89,13 +89,13 @@ nguyên nhân trước implementation, rồi Green và kiểm lại sau Refactor
 ## Evidence và trạng thái kiểm chứng
 
 [Controller scout](reports/controller-scout.md), [data research](reports/research-data.md),
-[consumer research](reports/research-consumers.md). Node hiện 24.20.0.
-Baseline hiện có: 13 Python + 26 JS narrow tests pass; snapshot validate pass.
-Đây không phải bằng chứng feature mới; test mới/translation/review/promotion
-vẫn chưa chạy. Tất cả phase pending (`todo` là trạng thái stub CLI).
+[consumer research](reports/research-consumers.md), [compatibility validation](reports/compatibility-validation.md)
+và [certified handoff](reports/lookup-handoff.md) giữ evidence.
 
-Câu hỏi sản phẩm còn mở: không. Dependency kỹ thuật có owner/gate trong phase;
-không giả định clean release hoặc quyền deploy từ structural plan validation.
+Generation `lookup:de73c4ca235de9b4ba6dbc5679573a3bab623a93ea6b061f0d30ad5f12c101e8`
+đã accepted local. Final gates: Python 283 passed/12 skipped; Node 261 passed;
+Astro check/build/dist/verify/dev Green; E2E 102 passed; MCP 373 passed cùng
+typecheck/build/control-plane; Worker suites 2 + 1 passed. Không deploy/release.
 
 <!-- slug: unified-lookup -->
 

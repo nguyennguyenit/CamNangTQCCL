@@ -33,9 +33,6 @@ def lookup_generation(output_dir):
 @contextlib.contextmanager
 def dictionary_exclusion(output_dir):
     output_dir = Path(output_dir)
-    if not (output_dir / "lookup-manifest.json").exists():
-        yield
-        return
     lock = output_dir.parent / "pipeline/lookup-output/promotion.lock"
     lock.parent.mkdir(parents=True, exist_ok=True)
     try:
@@ -303,13 +300,13 @@ def publish_season_data(registry, evidence, output_dir, **options):
                     backup = Path(staging) / (name + ".previous")
                     backup.write_bytes(path.read_bytes())
                     backups[name] = backup
+            if lookup_generation(output_dir) != generation:
+                raise ValueError("lookup generation changed during season publication")
             replaced = []
             try:
                 for name in encoded:
                     os.replace(Path(staging) / name, output_dir / name)
                     replaced.append(name)
-                if lookup_generation(output_dir) != generation:
-                    raise ValueError("lookup generation changed during season publication")
             except Exception:
                 for name in reversed(replaced):
                     if name in backups:

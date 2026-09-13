@@ -121,7 +121,7 @@ class PromotionCase(unittest.TestCase):
         self.addCleanup(directory.cleanup)
         return Path(directory.name)
 
-    def scenario(self, activated=None, season_refs=("hero:a", "tactic:a"), payloads=None, **activation):
+    def scenario(self, activated=None, season_refs=("hero:legacy", "tactic:legacy"), payloads=None, **activation):
         root = write_project(self.temp_dir("tqccl-promote-root-"), activated=activated, season_refs=season_refs)
         candidate = write_candidate(self.temp_dir("tqccl-promote-candidate-") / "candidate", payloads or bundle())
         manifest = write_activation(self.temp_dir("tqccl-promote-stage-"), root, **activation)
@@ -537,7 +537,10 @@ class CrashRecoveryTest(PromotionCase):
         self.assertTrue(self.lock_path(root).exists())
 
     def test_first_activation_rollback_deletes_new_files_only_when_bytes_match_candidate(self):
-        root, candidate, before = self.crash_at("data/lookup-manifest.json")
+        root, candidate, before = self.crash_at(
+            "data/lookup-manifest.json",
+            season_refs=("hero:legacy", "tactic:legacy"),
+        )
         self.assertTrue((root / "data" / "lookup-catalog.json").exists())
         (root / "data" / "lookup-catalog.json").write_bytes(encode({"schemaVersion": 1, "equipment": [{"id": "eq:x"}]}))
         conflicted = snapshot(root)
@@ -553,6 +556,23 @@ class CrashRecoveryTest(PromotionCase):
 
         self.assertEqual(snapshot(root), before)
         self.assertFalse((root / "data" / "lookup-catalog.json").exists())
+
+    def test_first_activation_rollback_rejects_incompatible_dependent_season_refs(self):
+        root, candidate, _before = self.crash_at(
+            "data/lookup-manifest.json",
+            season_refs=("hero:a", "tactic:a"),
+        )
+        current = snapshot(root)
+
+        with self.assertRaises(promotion.ConflictError):
+            promotion.recover(transaction_id="t1", root=root)
+
+        self.assertEqual(snapshot(root), current)
+        self.assertEqual(
+            (root / "data" / "heroes-dict.json").read_bytes(),
+            (candidate / "heroes-dict.json").read_bytes(),
+        )
+        self.assertTrue(self.lock_path(root).exists())
 
     def test_rollback_checks_dependent_season_refs_against_the_target_dictionaries(self):
         activated = bundle(heroes=("hero:b",), tactics=("tactic:a",))
@@ -576,7 +596,11 @@ class CrashRecoveryTest(PromotionCase):
         activated["lookup-manifest.json"] = encode({
             "schemaVersion": 1, "generationId": "lookup:" + sha(canonical_json_bytes(files)), "files": files,
         })
-        root, _candidate, before = self.crash_at("data/lookup-manifest.json", activated=activated)
+        root, _candidate, before = self.crash_at(
+            "data/lookup-manifest.json",
+            activated=activated,
+            season_refs=("hero:a", "tactic:a"),
+        )
         seasons = (root / "data" / "season-team-configs.json").read_bytes()
 
         journal = promotion.recover(transaction_id="t1", root=root)

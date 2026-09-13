@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, symlink, unlink, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -243,6 +243,16 @@ describe("filesystem root formats", () => {
     }
   });
 
+  it("từ chối dictionary lookup đã promote khi thiếu cả hai sidecar", async () => {
+    const { dataRoot } = await createActivatedRoot({
+      omitSidecars: [LOOKUP_CATALOG_NAME, LOOKUP_MANIFEST_NAME],
+    });
+
+    await expect(
+      new FilesystemDataSource({ dataRoot }).load(),
+    ).rejects.toMatchObject({ code: "DATA_UNAVAILABLE" });
+  });
+
   it("từ chối activated root khi transaction promotion còn dở dang", async () => {
     for (const transaction of [
       { state: "activation-prepared" },
@@ -332,6 +342,34 @@ describe("filesystem root formats", () => {
     await expect(
       new FilesystemDataSource({ dataRoot }).load(),
     ).rejects.toMatchObject({ code: "DATA_UNAVAILABLE" });
+  });
+
+  it("từ chối packaged root có file thừa hoặc artifact symlink", async () => {
+    const extra = await createPackagedRoot();
+    await writeFile(join(extra, "rogue.json"), "{}");
+    await expect(
+      new FilesystemDataSource({ dataRoot: extra }).load(),
+    ).rejects.toMatchObject({ code: "DATA_UNAVAILABLE" });
+
+    const linked = await createPackagedRoot();
+    await unlink(join(linked, "teams.json"));
+    await symlink(join(releaseSnapshotRoot, "teams.json"), join(linked, "teams.json"));
+    await expect(
+      new FilesystemDataSource({ dataRoot: linked }).load(),
+    ).rejects.toMatchObject({ code: "DATA_UNAVAILABLE" });
+  });
+
+  it("từ chối data root là symlink dù package đích hợp lệ", async () => {
+    const target = await createPackagedRoot();
+    const linked = `${target}-link`;
+    await symlink(target, linked);
+    try {
+      await expect(
+        new FilesystemDataSource({ dataRoot: linked }).load(),
+      ).rejects.toMatchObject({ code: "DATA_UNAVAILABLE" });
+    } finally {
+      await unlink(linked);
+    }
   });
 
   it("giữ nhánh legacy cho raw root không marker và vẫn chặn inventory mùa dở dang", async () => {

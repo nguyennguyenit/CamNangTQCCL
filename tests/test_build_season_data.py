@@ -415,11 +415,26 @@ class LookupGenerationGateTest(unittest.TestCase):
 
         self.assertEqual(events[0], "enter")
         self.assertEqual(events[1], "generation")
-        self.assertEqual(events[-2:], ["generation", "exit"])
         self.assertEqual(events.count("generation"), 2)
-        self.assertLess(events.index("replace"), len(events) - 2)
+        generation_events = [index for index, event in enumerate(events) if event == "generation"]
+        self.assertLess(generation_events[-1], events.index("replace"))
 
-    def test_lookup_generation_change_before_the_final_replacement_preserves_outputs(self):
+    def test_first_activation_lock_blocks_legacy_season_publication_before_write(self):
+        registry, evidence = fixtures()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            output = root / "data"
+            output.mkdir()
+            lock = root / "pipeline/lookup-output/promotion.lock"
+            lock.parent.mkdir(parents=True)
+            lock.write_text('{"transaction":"lookup-first-activation"}\n', encoding="utf-8")
+
+            with self.assertRaises(RuntimeError):
+                seasons.publish_season_data(registry, evidence, output)
+
+            self.assertFalse((output / "season-registry.json").exists())
+
+    def test_lookup_generation_change_before_replacement_preserves_outputs_without_replace(self):
         registry, evidence = fixtures()
         events = []
         with tempfile.TemporaryDirectory() as directory:
@@ -430,12 +445,16 @@ class LookupGenerationGateTest(unittest.TestCase):
             (output / "coexist.json").write_bytes(b'[{"legacy":true}]\n')
             before = {path.name: path.read_bytes() for path in output.iterdir()}
             registry[0]["labelVi"] = "Nhãn mùa mới"
+            events.clear()
             with patch.object(seasons, "dictionary_exclusion", self.recorder(events)), \
-                    patch.object(seasons, "lookup_generation", side_effect=["lookup:" + "1" * 64, "lookup:" + "0" * 64]):
+                    patch.object(seasons, "lookup_generation", side_effect=["lookup:" + "1" * 64, "lookup:" + "0" * 64]) as generation_gate, \
+                    patch.object(seasons.os, "replace", self.replace_recorder(events)):
                 with self.assertRaises(ValueError):
                     seasons.publish_season_data(registry, evidence, output)
             self.assertEqual(before, {path.name: path.read_bytes() for path in output.iterdir()})
-        self.assertEqual(events[-1], "exit")
+        self.assertEqual(generation_gate.call_count, 2)
+        self.assertNotIn("replace", events)
+        self.assertEqual(events, ["enter", "exit"])
 
 
 if __name__ == "__main__":

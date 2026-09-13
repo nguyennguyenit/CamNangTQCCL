@@ -1,4 +1,4 @@
-import { readFile, stat, readdir, lstat } from "node:fs/promises";
+import { readFile, readdir, lstat } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 
 import {
@@ -24,15 +24,40 @@ import {
 
 const LOOKUP_SIDECARS = [LOOKUP_CATALOG_FILE, LOOKUP_MANIFEST_FILE] as const;
 
+async function readRegularFile(path: string) {
+  const info = await lstat(path);
+  if (!info.isFile() || info.isSymbolicLink() || info.size > MAX_ARTIFACT_BYTES) {
+    throw new Error("invalid data artifact");
+  }
+  return new Uint8Array(await readFile(path));
+}
+
+async function assertExactPackageRoot(dataRoot: string, names: readonly ArtifactName[]) {
+  const expected = new Set(["manifest.json", ...names.map(name => `${name}.json`)]);
+  const entries = await readdir(dataRoot, { withFileTypes: true });
+  if (
+    entries.length !== expected.size
+    || entries.some(entry => !expected.has(entry.name) || !entry.isFile() || entry.isSymbolicLink())
+  ) {
+    throw new Error("invalid packaged inventory");
+  }
+}
+
+function containsLookupIdentities(objects: Map<ArtifactName, Uint8Array>) {
+  const decoder = new TextDecoder("utf-8", { fatal: true, ignoreBOM: false });
+  return (["heroes-dict", "tactics"] as const).some(name => {
+    const records = JSON.parse(decoder.decode(objects.get(name)!));
+    return Array.isArray(records) && records.some(record =>
+      record !== null
+      && typeof record === "object"
+      && (Object.hasOwn(record, "id") || Object.hasOwn(record, "lookup"))
+    );
+  });
+}
+
 export async function validateLookupRoot(dataRoot: string, objects: Map<ArtifactName, Uint8Array>) {
-  const readSidecar = async (name: string) => {
-    const path = resolve(dataRoot, name);
-    const info = await lstat(path);
-    if (!info.isFile() || info.isSymbolicLink() || info.size > MAX_ARTIFACT_BYTES) {
-      throw new Error("invalid lookup sidecar");
-    }
-    return new Uint8Array(await readFile(path));
-  };
+  const readSidecar = async (name: string) =>
+    readRegularFile(resolve(dataRoot, name));
   const [catalogBytes, manifestBytes] = await Promise.all([
     readSidecar(LOOKUP_CATALOG_FILE),
     readSidecar(LOOKUP_MANIFEST_FILE),
@@ -97,6 +122,10 @@ export class FilesystemDataSource implements DataSource {
       {
         async loadCandidate() {
           try {
+            const rootInfo = await lstat(dataRoot);
+            if (!rootInfo.isDirectory() || rootInfo.isSymbolicLink()) {
+              throw new Error("invalid data root");
+            }
             const initial = await observeLookupRoot(dataRoot);
             const files = initial.files;
             const hasPackage = files.includes("manifest.json");
@@ -108,20 +137,24 @@ export class FilesystemDataSource implements DataSource {
             const entries = await Promise.all(
               names.map(async (name) => [
                 name,
-                await (async () => {
-                  const path = resolve(dataRoot, `${name}.json`);
-                  if ((await stat(path)).size > MAX_ARTIFACT_BYTES) throw new Error("artifact too large");
-                  return new Uint8Array(await readFile(path));
-                })(),
+                await readRegularFile(resolve(dataRoot, `${name}.json`)),
               ] as const),
             );
             const objects = new Map<ArtifactName, Uint8Array>(entries);
+            if (!hasPackage && sidecarCount === 0 && containsLookupIdentities(objects)) {
+              throw new Error("lookup sidecars are required");
+            }
             if (sidecarCount === LOOKUP_SIDECARS.length) {
               await validateLookupRoot(dataRoot, objects);
             }
-            const manifest = hasPackage
-              ? await validateManifest(JSON.parse(await readFile(resolve(dataRoot, "manifest.json"), "utf8")))
-              : await createDataManifest(objects);
+            let manifest;
+            if (hasPackage) {
+              await assertExactPackageRoot(dataRoot, names);
+              const manifestBytes = await readRegularFile(resolve(dataRoot, "manifest.json"));
+              manifest = await validateManifest(JSON.parse(new TextDecoder("utf-8", { fatal: true, ignoreBOM: false }).decode(manifestBytes)));
+            } else {
+              manifest = await createDataManifest(objects);
+            }
             const final = await observeLookupRoot(dataRoot);
             if (final.token !== initial.token) throw new Error("data root changed during capture");
             return {

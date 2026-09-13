@@ -6,15 +6,15 @@ Giao diện là dashboard dữ liệu tĩnh: nhanh, rõ, gọn. Card, badge và 
 
 ## Cấu trúc trải nghiệm
 
-9 section cùng một shell header/navigation. Hash URL giữ deep-link. Mỗi section nên có intro ngắn, control chính và nội dung ngay sau đó; tránh dashboard trang trí không phục vụ quyết định.
+8 section cùng một shell header/navigation. Hash URL giữ deep-link. Mỗi section nên có intro ngắn, control chính và nội dung ngay sau đó; tránh dashboard trang trí không phục vụ quyết định.
 
 Các tab Theo dõi chiêu mộ, Soi đội từ ảnh và Gợi ý đội từ kho hiển thị nhãn `Beta` cạnh tên trong navigation desktop và menu mobile.
 
 | Nhóm | Pattern hiện tại |
 |---|---|
-| Team PK / Meta cũ | Shared inline search + dynamic chip groups + card grid |
+| Team chuẩn / Team khác | Shared inline search + dynamic chip groups + card grid |
 | Cùng Tồn / Khai hoang | Nhóm card và bảng dữ liệu local |
-| Tướng / chiến pháp | Search/filter local, modal chi tiết tướng |
+| Tra cứu | Một search, sáu chip nhóm, card grid có paging và dialog hồ sơ |
 | Tracker | Account/banner/slot/action nhỏ gọn, lịch sử và import/export |
 | Soi đội | Drop-zone, preview, Turnstile, trạng thái, kết quả match |
 | Gợi ý kho | Scan theo loại, review canonical data, portfolio và diagnostics |
@@ -27,6 +27,27 @@ Các tab Theo dõi chiêu mộ, Soi đội từ ảnh và Gợi ý đội từ k
 - `Xóa lọc` phải reset query, sets, chip state và selected tags.
 - Trên mobile, `.team-filters.collapsed` ẩn nhóm sau nút `☰ Bộ lọc`; đây là inline collapse, không phải drawer/module riêng.
 - Menu section mobile do `mobile-section-menu.js` quản lý, tách khỏi filter collapse.
+
+## Tra cứu thống nhất
+
+`Tra cứu` là một tab cho sáu nhóm; không tạo lại tab tướng/chiến pháp riêng.
+`#heroes` và `#tactics` là alias tương thích, còn link canonical dùng `#lookup`
+với `group`, `q` và `id` khi cần. Search chạy toàn corpus, bỏ dấu tiếng Việt và
+đọc alias Hán đã review. Sáu chip nhóm là button có `aria-pressed`; navigation
+chính là `tablist`/`tab` điều khiển được bằng phím mũi tên.
+
+Grid hiển thị tối đa 60 kết quả mỗi lượt và phải có `Xem thêm` để tới record
+cuối. Card mở dialog hồ sơ theo canonical ID; dialog trap focus, đóng bằng
+Escape/nền/nút đóng và trả focus về trigger. Quan hệ tướng–chiến pháp cùng
+equipment special, troop option và building level phải đi qua ID đã validate,
+không ghép theo text. Trường thiếu hiển thị “Đang cập nhật”; không biến `0` hoặc
+`false` thành dấu gạch.
+
+Lỗi lookup phải cụ thể trong đúng section và khóa các feature thật sự phụ thuộc,
+không làm mất Team chuẩn hay nội dung local độc lập. Catalog không hiển thị
+provenance/source nội bộ. Team chuẩn/Team khác vẫn giữ link nguồn và điểm đã
+review theo contract riêng. Ma trận hành vi nằm ở
+[`tests-e2e/unified-lookup.spec.mjs`](../tests-e2e/unified-lookup.spec.mjs).
 
 ## Tra cứu theo kịch bản
 

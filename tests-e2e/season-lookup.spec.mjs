@@ -23,7 +23,7 @@ test('real scenario-only scope remains reference and preserves Khai hoang', asyn
   await expect(page.getByLabel('Kịch bản đang chơi', {exact:true})).toBeVisible();
   await expect(page.locator('#season-summary')).toContainText('Tất cả — tham khảo');
   await expect(page.locator('#section-coexist .sgsdeck-score, #section-coexist .badge.tier')).toHaveCount(0);
-  await expect(page.locator('#section-heroes .badge.stars').first()).toBeAttached();
+  await expect(page.locator('#section-lookup [data-lookup-id^="hero:"]').first()).toBeAttached();
   const values = await page.locator('#season-scenario option').evaluateAll(nodes => nodes.map(n=>n.value).filter(Boolean));
   await page.locator('#season-scenario').selectOption(values.find(v=>v.includes('binh')) || values.at(-1));
   await expect(page.locator('#season-summary')).toContainText('tham khảo');
@@ -38,10 +38,26 @@ import { createHash } from 'node:crypto';
 import { seasonConsumerFixture } from '../tests-js/fixtures/season-fixtures.mjs';
 async function controlledBundle(page, data = null) {
   data ||= await seasonConsumerFixture();
+  const slug = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  data['heroes-dict'] = data['heroes-dict'].map(row => ({ ...row, id: `hero:${slug(row.viet)}` }));
+  data.tactics = data.tactics.map(row => ({ ...row, id: `tactic:${slug(row.viet)}` }));
+  const lookupCatalog = { schemaVersion: 1, advisors: [], buildings: [], equipment: [], specials: [], troopMods: [] };
+  const lookupPayloads = {
+    'heroes-dict.json': JSON.stringify(data['heroes-dict']),
+    'tactics.json': JSON.stringify(data.tactics),
+    'lookup-catalog.json': JSON.stringify(lookupCatalog),
+  };
+  const lookupFiles = Object.fromEntries(Object.entries(lookupPayloads).sort(([left], [right]) => left.localeCompare(right)).map(([name, body]) => [name, createHash('sha256').update(body).digest('hex')]));
+  const lookupManifest = {
+    schemaVersion: 1,
+    generationId: `lookup:${createHash('sha256').update(`${JSON.stringify(lookupFiles)}\n`).digest('hex')}`,
+    files: lookupFiles,
+  };
+  const routeData = { ...data, 'lookup-catalog': lookupCatalog, 'lookup-manifest': lookupManifest };
   const hashes = Object.fromEntries(Object.entries(data).map(([key,value]) => [key, 'sha256:' + createHash('sha256').update(JSON.stringify(value)).digest('hex')]));
   await page.route('**/data/*.json', async route => {
     const key = new URL(route.request().url()).pathname.split('/').at(-1).replace('.json','');
-    if (key in data) return route.fulfill({contentType:'application/json',body:JSON.stringify(data[key])});
+    if (key in routeData) return route.fulfill({contentType:'application/json',body:JSON.stringify(routeData[key])});
     return route.continue();
   });
   await page.route(/^http:\/\/(?:localhost|127\.0\.0\.1):\d+\/(?:\?.*)?$/, async route => {

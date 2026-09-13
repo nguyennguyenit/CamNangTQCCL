@@ -7,8 +7,8 @@ for (const width of [320,375,768,1280]) {
       await page.addInitScript(value=>localStorage.setItem('theme',value),theme);
       await page.goto('/#team-chuan');
       if (width <= 820) await page.locator('#section-menu-toggle').click();
-      await expect(page.getByRole('button',{name:'Team chuẩn',exact:true})).toBeVisible();
-      await expect(page.getByRole('button',{name:'Team khác',exact:true})).toBeVisible();
+      await expect(page.getByRole('tab',{name:'Team chuẩn',exact:true})).toBeVisible();
+      await expect(page.getByRole('tab',{name:'Team khác',exact:true})).toBeVisible();
       if (width <= 820) await page.locator('#section-menu-toggle').click();
       await expect(page.getByLabel('Phiên bản luật')).toBeHidden();
       await expect(page.locator('#section-team-chuan').getByLabel('Mùa nguồn',{exact:true})).toBeVisible();
@@ -22,7 +22,7 @@ for (const width of [320,375,768,1280]) {
 test('historical hashes canonicalize to Team khác source views',async({page})=>{
   await page.goto('/#team-pk');
   await expect(page).toHaveURL(/source=team-intro.*#team-khac|#team-khac.*source=team-intro/);
-  await expect(page.getByRole('button',{name:'Team khác',exact:true})).toHaveClass(/active/);
+  await expect(page.getByRole('tab',{name:'Team khác',exact:true})).toHaveClass(/active/);
   await page.goto('/#meta-cu');
   await expect(page).toHaveURL(/source=moi-phe.*#team-khac|#team-khac.*source=moi-phe/);
 });
@@ -41,10 +41,10 @@ test('cards expose holders tactics books and readable detail',async({page})=>{
 test('Team khác honors explicit seasons and does not leak facets into Team chuẩn',async({page})=>{
   await page.goto('/?faction=Thục#team-khac');
   await expect(page.locator('#section-team-khac .reference-team-card').first()).toBeVisible();
-  await page.getByRole('button',{name:'Team chuẩn',exact:true}).click();
+  await page.getByRole('tab',{name:'Team chuẩn',exact:true}).click();
   await expect(page).not.toHaveURL(/faction=/);
   await expect(page.locator('#section-team-chuan .reference-team-card').first()).toBeVisible();
-  await page.getByRole('button',{name:'Team khác',exact:true}).click();
+  await page.getByRole('tab',{name:'Team khác',exact:true}).click();
   const season=page.locator('#section-team-khac').getByLabel('Mùa nguồn',{exact:true});
   const known=await season.locator('option').evaluateAll(options=>options.map(option=>option.value).find(value=>value!=='all'&&value!=='unknown'));
   await season.selectOption(known);
@@ -85,7 +85,7 @@ test('leaving reference tabs clears detail state and gameplay config takes prece
   await page.goto('/#team-chuan');
   await page.locator('#section-team-chuan .reference-team-card').first().getByRole('button',{name:'Chi tiết'}).click();
   await expect(page.locator('#recommended-team-detail')).toBeVisible();
-  await page.getByRole('button',{name:'Cùng Tồn',exact:true}).click();
+  await page.getByRole('tab',{name:'Cùng Tồn',exact:true}).click();
   await expect(page).not.toHaveURL(/detail=/);
   await expect(page.locator('#recommended-team-detail')).toHaveCount(0);
   await page.goto('/?config=missing&legacyTeam=team-intro-14#analyze');
@@ -96,15 +96,15 @@ test('leaving reference tabs clears detail state and gameplay config takes prece
 test('surface snapshots restore gameplay queries without leaking them into Team chuẩn',async({page})=>{
   await page.goto('/?scenario=binh-dien-xuan-thu&q=quan+su#coexist');
   await expect(page.getByLabel('Tìm Cùng Tồn')).toHaveValue('quan su');
-  await page.getByRole('button',{name:'Team chuẩn',exact:true}).click();
+  await page.getByRole('tab',{name:'Team chuẩn',exact:true}).click();
   await expect(page).not.toHaveURL(/q=/);
   await expect(page).toHaveURL(/scenario=binh-dien-xuan-thu/);
-  await page.getByRole('button',{name:'Cùng Tồn',exact:true}).click();
+  await page.getByRole('tab',{name:'Cùng Tồn',exact:true}).click();
   await expect(page).toHaveURL(/q=quan\+su/);
   await expect(page.getByLabel('Tìm Cùng Tồn')).toHaveValue('quan su');
   await page.getByLabel('Tìm Cùng Tồn').fill('cap nhat');
-  await page.getByRole('button',{name:'Team chuẩn',exact:true}).click();
-  await page.getByRole('button',{name:'Cùng Tồn',exact:true}).click();
+  await page.getByRole('tab',{name:'Team chuẩn',exact:true}).click();
+  await page.getByRole('tab',{name:'Cùng Tồn',exact:true}).click();
   await expect(page.getByLabel('Tìm Cùng Tồn')).toHaveValue('cap nhat');
 });
 
@@ -132,7 +132,7 @@ test('gameplay navigation invalidates a delayed Recommended detail',async({page}
   await page.goto('/#team-chuan');
   await page.locator('#section-team-chuan .reference-team-card').first().getByRole('button',{name:'Chi tiết'}).click();
   await started;
-  await page.getByRole('button',{name:'Cùng Tồn',exact:true}).click();
+  await page.getByRole('tab',{name:'Cùng Tồn',exact:true}).click();
   release();
   await expect(page).not.toHaveURL(/detail=/);
   await expect(page.locator('#recommended-team-detail')).toHaveCount(0);
@@ -158,13 +158,13 @@ test('source detail preserves alternative holders and prefers available Vietname
 
 test('Back and Forward restore URL-owned reference snapshots without rewriting history',async({page})=>{
   await page.goto('/?q=sentinel#team-chuan');
-  await page.getByRole('button',{name:'Team khác',exact:true}).click();
+  await page.getByRole('tab',{name:'Team khác',exact:true}).click();
   await page.goBack();
   await expect(page).toHaveURL(/q=sentinel.*#team-chuan/);
   await expect(page.locator('#section-team-chuan').getByLabel('Tìm Team chuẩn')).toHaveValue('sentinel');
   await page.goForward();
   await expect(page).toHaveURL(/#team-khac/);
-  await expect(page.getByRole('button',{name:'Team khác',exact:true})).toHaveClass(/active/);
+  await expect(page.getByRole('tab',{name:'Team khác',exact:true})).toHaveClass(/active/);
 });
 
 const unaccent=value=>(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase();

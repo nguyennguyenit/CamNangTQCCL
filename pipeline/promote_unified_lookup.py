@@ -267,16 +267,23 @@ def _current_hash(path):
 
 
 def _season_refs_are_compatible(root, journal, transaction):
-    if not any(row["path"] == "data/lookup-manifest.json" and row["backupPath"] is not None for row in journal["paths"]):
-        return True
     target_ids = set()
+    catalog = {"heroes-dict": [], "tactics": [], "books-dict": []}
     for row in journal["paths"]:
         if row["path"] not in {"data/heroes-dict.json", "data/tactics.json"}:
             continue
         if row["backupPath"] is None:
             continue
         records = json.loads((transaction / row["backupPath"]).read_bytes())
-        target_ids.update(item.get("id") for item in records if isinstance(item, dict))
+        dataset = Path(row["path"]).stem
+        catalog[dataset] = records
+        target_ids.update(
+            item.get("id") for item in records
+            if isinstance(item, dict) and isinstance(item.get("id"), str)
+        )
+    from .season_validation import dictionary_ids
+    for identities in dictionary_ids(catalog).values():
+        target_ids.update(identities)
     season = root / "data" / "season-team-configs.json"
     if not season.exists():
         return True
