@@ -11,7 +11,9 @@ import os
 import re
 import tempfile
 import stat
+import shutil
 import subprocess
+import uuid
 from pathlib import Path
 
 from pipeline.build_unified_lookup import validate_candidate
@@ -33,6 +35,10 @@ class ConflictError(PromotionError):
 
 
 class LockedError(PromotionError):
+    pass
+
+
+class PreparationCleanupError(PromotionError):
     pass
 
 
@@ -233,6 +239,33 @@ def _candidate_rows(root, candidate):
     return rows, manifest
 
 
+def _fsync_directory(path):
+    descriptor = os.open(path, os.O_RDONLY | os.O_DIRECTORY)
+    try:
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
+
+
+def _discard_unpublished_transaction(transaction, transactions):
+    aborted = transactions.parent / "aborted-transactions"
+    if aborted.exists():
+        if aborted.is_symlink() or not aborted.is_dir():
+            raise PromotionError("aborted transaction parent is unsafe")
+    else:
+        aborted.mkdir()
+        _fsync_directory(aborted.parent)
+    tombstone = aborted / f"{transaction.name}-{uuid.uuid4().hex}"
+    os.replace(transaction, tombstone)
+    _fsync_directory(transactions)
+    _fsync_directory(aborted)
+    try:
+        shutil.rmtree(tombstone)
+    except OSError:
+        return
+    _fsync_directory(aborted)
+
+
 def _prepare_transaction(root, transaction_id, activation_bytes, rows, generation_id, input_hashes, hooks):
     transactions = root / TRANSACTIONS_RELATIVE
     _validate_destination(root, transactions)
@@ -241,24 +274,31 @@ def _prepare_transaction(root, transaction_id, activation_bytes, rows, generatio
     if transaction.exists():
         raise ConflictError("transaction already exists")
     transaction.mkdir()
-    _replace_bytes(transaction / "activation-code.json", activation_bytes)
-    _write_durable(transaction / "preimages.json", {path: before_hash for path, _after, _before, before_hash, _after_hash in rows})
-    hooks.get("activation-code-written", lambda _ctx: None)({"transaction": transaction_id})
-    journal_rows = []
-    for index, (path, _after, before, before_hash, after_hash) in enumerate(rows):
-        backup_name = None
-        if before is not None:
-            backup_name = f"backup-{index:03d}.bin"
-            _replace_bytes(transaction / backup_name, before)
-        journal_rows.append({"path": path, "beforeHash": before_hash, "afterHash": after_hash, "backupPath": backup_name})
-    journal = {
-        "schemaVersion": 1, "id": transaction_id, "state": "activation-prepared",
-        "generationId": generation_id, "inputHashes": input_hashes,
-        "activationCodeManifestHash": _sha(activation_bytes), "paths": journal_rows,
-    }
-    _write_durable(transaction / "journal.json", journal)
-    hooks.get("journal-prepared", lambda _ctx: None)({"transaction": transaction_id})
-    return transaction, journal
+    try:
+        _replace_bytes(transaction / "activation-code.json", activation_bytes)
+        _write_durable(transaction / "preimages.json", {path: before_hash for path, _after, _before, before_hash, _after_hash in rows})
+        hooks.get("activation-code-written", lambda _ctx: None)({"transaction": transaction_id})
+        journal_rows = []
+        for index, (path, _after, before, before_hash, after_hash) in enumerate(rows):
+            backup_name = None
+            if before is not None:
+                backup_name = f"backup-{index:03d}.bin"
+                _replace_bytes(transaction / backup_name, before)
+            journal_rows.append({"path": path, "beforeHash": before_hash, "afterHash": after_hash, "backupPath": backup_name})
+        journal = {
+            "schemaVersion": 1, "id": transaction_id, "state": "activation-prepared",
+            "generationId": generation_id, "inputHashes": input_hashes,
+            "activationCodeManifestHash": _sha(activation_bytes), "paths": journal_rows,
+        }
+        _write_durable(transaction / "journal.json", journal)
+        hooks.get("journal-prepared", lambda _ctx: None)({"transaction": transaction_id})
+        return transaction, journal
+    except Exception:
+        try:
+            _discard_unpublished_transaction(transaction, transactions)
+        except Exception as cleanup_error:
+            raise PreparationCleanupError("failed to clean unpublished transaction") from cleanup_error
+        raise
 
 
 def _current_hash(path):
@@ -445,9 +485,11 @@ def promote(*, candidate, root, activation, transaction_id, validate=None, hooks
             journal["state"] = "committed"
             _write_durable(transaction / "journal.json", journal)
             hooks.get("committed", lambda _ctx: None)({"transaction": transaction_id})
-    except Exception:
+    except Exception as error:
         if transaction is not None and journal is not None:
             _restore(root, transaction, journal, hooks, strict=True)
+        if isinstance(error, PreparationCleanupError):
+            raise
         try:
             lock.unlink()
         except FileNotFoundError:

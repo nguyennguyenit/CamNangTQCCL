@@ -92,19 +92,44 @@ export function withLookupIdentity(dictionaries: {
   heroes: readonly JsonRecord[];
   tactics: readonly JsonRecord[];
 }): LookupBundle {
+  const common = (id: string, nameVi: string) => ({
+    id, nameVi, aliasesVi: [], aliasesZh: [], conditions: [], missingFields: [],
+  });
   const tactics = dictionaries.tactics.map((row) => ({
-    ...row,
     id: canonicalDictionaryId("tactics", String(row.viet)),
-    lookup: {},
+    chinese: String(row.chinese ?? ""), hanViet: String(row.hanViet ?? row.viet), viet: String(row.viet),
+    aliases: [], type: null, quality: null, effect: null, effectViet: null, target: null, targetViet: null,
+    troopFit: [], source: null, sourceHeroCn: null, iconUrl: null, linkScore: null, pending: true,
+    lookup: {
+      conditions: [], missingFields: [], revisions: [], activationRate: null, cooldown: null,
+      maxUsers: null, pointCost: null, effectTypeVi: null, exchangeConditionVi: null,
+      acquiredFromVi: [], inheritedFromIds: [], conflictsVi: null,
+    },
   }));
   const advisorId = "advisor:co-van-a";
   const heroes = dictionaries.heroes.map((row) => ({
-    ...row,
     id: canonicalDictionaryId("heroes-dict", String(row.viet)),
+    chinese: String(row.chinese ?? ""), hanViet: String(row.hanViet ?? row.viet), viet: String(row.viet),
+    aliases: [], faction: null, stars: null, cost: null,
+    stats: Object.fromEntries(
+      ["luc", "tri", "thong", "toc", "chinh", "mi"].map((key) => [key, String((row.stats as JsonRecord | undefined)?.[key] ?? "")]),
+    ),
+    troopApt: Object.fromEntries(
+      ["ky", "thuan", "cung", "thuong", "khiGioi"].map((key) => {
+        const value = (row.troopApt as JsonRecord | undefined)?.[key];
+        return [key, typeof value === "string" ? value : null];
+      }),
+    ),
+    selfTacticCn: null, inheritTacticCn: null, roleTag: null, roleTagViet: null, iconUrl: null,
+    isSP: false, linkScore: null, pending: false,
     lookup: {
-      selfTacticId: tactics[0]?.id ?? null,
-      inheritTacticId: tactics[1]?.id ?? null,
-      advisorId,
+      conditions: [], missingFields: [], revisions: [], variant: "base",
+      selfTacticId: tactics[0]?.id ?? null, inheritTacticId: tactics[1]?.id ?? null, advisorId,
+      growth: { luc: null, tri: null, thong: null, toc: null, chinh: null, mi: null },
+      otherAptitudes: { infantry: null, navy: null }, categoryVi: null, exclusiveTitleVi: null,
+      civil: { roleVi: null, bonusVi: null, specialtyVi: null, tacticBonusVi: null },
+      civilInnatePoints: null, collectibleBonusVi: null, redRulesVi: null,
+      flags: { isCollectible: null, isDynamicOpen: null, isMusou: null, isCO: null, isSp: null },
     },
   }));
   const equipmentId = "equipment:bao-giap";
@@ -113,28 +138,33 @@ export function withLookupIdentity(dictionaries: {
     tactics,
     catalog: {
       schemaVersion: 1,
-      equipment: [{ id: equipmentId, nameVi: "Bảo Giáp" }],
-      specials: [
-        {
-          id: "equipment-special:cuong-hoa",
-          equipmentId,
-          exclusiveHeroId: heroes[0]?.id ?? null,
-        },
-      ],
-      advisors: [{ id: advisorId, heroIds: heroes.map((hero) => hero.id) }],
-      troopMods: [
-        {
-          id: "troop-mod:ky-binh",
-          options: [{ id: "troop-option:ky-binh:tang-cong", nameVi: "Tăng công" }],
-          revisions: [],
-        },
-      ],
-      buildings: [
-        {
-          id: "building:doanh-trai",
-          levels: [{ id: "building-level:doanh-trai:1", level: 1, costVi: "100 lương", timeVi: "5 phút" }],
-        },
-      ],
+      equipment: [{ ...common(equipmentId, "Bảo Giáp"), qualityVi: null, slotVi: null }],
+      specials: [{
+        ...common("equipment-special:cuong-hoa", "Cường Hóa"),
+        tierVi: null, slotVi: null, descriptionVi: null, acquisitionVi: [],
+        equipmentId, exclusiveHeroId: heroes[0]?.id ?? null,
+      }],
+      advisors: [{
+        ...common(advisorId, "Cố Vấn A"),
+        elementVi: null, effectVi: null, usageVi: null, tacticPoints: null,
+        heroIds: heroes.map((hero) => hero.id),
+      }],
+      troopMods: [{
+        ...common("troop-mod:ky-binh", "Kỵ Binh"),
+        effectVi: null, appliesToVi: null, suggestedBuildVi: null, troopLimitVi: [], revisions: [],
+        options: [{
+          id: "troop-option:ky-binh:tang-cong", tierVi: null, nameVi: "Tăng công",
+          descriptionVi: null, convertsToVi: null,
+        }],
+      }],
+      buildings: [{
+        ...common("building:doanh-trai", "Doanh Trại"),
+        summaryVi: null, mainCityOnly: false, maxLevel: 1,
+        levels: [{
+          id: "building-level:doanh-trai:1", level: 1,
+          costs: { wood: 100, iron: null, stone: null }, durationVi: "5 phút", effectVi: null,
+        }],
+      }],
     },
   };
 }

@@ -174,3 +174,18 @@ filesystem threat boundary. Phase files carry every accepted delta.
 Audit disposition after propagation: **proceed eligible**. Runtime feature tests,
 translation review, candidate generation and promotion remain future execution
 gates; structural validation is not implementation proof.
+
+## Maintenance fix — 2026-09-13
+
+Closed three post-review defects without changing routes, IDs, season state or
+Recommended behavior: lookup profiles now expose all reviewed public fields;
+the shared browser/MCP loader rejects malformed nested DTOs before consumers;
+and failed promotion preparation atomically detaches unpublished transactions
+outside the reader-scanned transaction directory. If atomic detach itself fails,
+the original lock and complete journal evidence remain available to `recover`.
+
+Fresh evidence: Python 286 passed/12 skipped; Node 264 passed; MCP 373 passed;
+focused lookup E2E 25 passed; Astro check 0 diagnostics; build, dist contracts
+and distribution verification passed. The active production generation validated
+with 202 heroes and 406 tactics. Independent code review passed after the
+cleanup-failure recovery path and retained-journal scanner interaction were fixed.

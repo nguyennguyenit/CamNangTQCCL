@@ -4,6 +4,115 @@ const HEX256 = /^[0-9a-f]{64}$/;
 const decoder = new TextDecoder();
 const encoder = new TextEncoder();
 const loads = new WeakMap();
+const HERO_KEYS = ["id", "chinese", "hanViet", "viet", "aliases", "faction", "stars", "cost", "stats", "troopApt", "selfTacticCn", "inheritTacticCn", "roleTag", "roleTagViet", "iconUrl", "isSP", "linkScore", "pending", "lookup"];
+const TACTIC_KEYS = ["id", "chinese", "hanViet", "viet", "aliases", "type", "quality", "effect", "effectViet", "target", "targetViet", "troopFit", "source", "sourceHeroCn", "iconUrl", "linkScore", "pending", "lookup"];
+const COMMON_KEYS = ["id", "nameVi", "aliasesVi", "aliasesZh", "conditions", "missingFields"];
+const HERO_LOOKUP_KEYS = ["conditions", "missingFields", "revisions", "variant", "selfTacticId", "inheritTacticId", "advisorId", "growth", "otherAptitudes", "categoryVi", "exclusiveTitleVi", "civil", "civilInnatePoints", "collectibleBonusVi", "redRulesVi", "flags"];
+const TACTIC_LOOKUP_KEYS = ["conditions", "missingFields", "revisions", "activationRate", "cooldown", "maxUsers", "pointCost", "effectTypeVi", "exchangeConditionVi", "acquiredFromVi", "inheritedFromIds", "conflictsVi"];
+const CONDITION_KINDS = new Set(["season", "scenario", "requirement"]);
+const HERO_VARIANTS = new Set(["base", "sp", "co", "40y"]);
+
+const isPlainObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+const isOptionalString = (value) => value === null || typeof value === "string";
+const isOptionalNumber = (value) => value === null || (typeof value === "number" && Number.isFinite(value));
+const isStringList = (value) => Array.isArray(value) && value.every((item) => typeof item === "string");
+
+function requireShape(owner, value, keys) {
+  if (!isPlainObject(value) || !keysEqual(value, keys)) throw new Error(`${owner} có shape không hợp lệ`);
+}
+
+function requireConditions(owner, rows) {
+  if (!Array.isArray(rows)) throw new Error(`${owner}.conditions phải là mảng`);
+  for (const row of rows) {
+    requireShape(`${owner}.conditions`, row, ["kind", "textVi"]);
+    if (!CONDITION_KINDS.has(row.kind) || typeof row.textVi !== "string") throw new Error(`${owner}.conditions không hợp lệ`);
+  }
+}
+
+function requireRevisions(owner, rows) {
+  if (!Array.isArray(rows)) throw new Error(`${owner}.revisions phải là mảng`);
+  for (const row of rows) {
+    requireShape(`${owner}.revisions`, row, ["labelVi", "effectiveDate", "textVi", "isCurrent"]);
+    if (typeof row.labelVi !== "string" || !isOptionalString(row.effectiveDate) || typeof row.textVi !== "string" || typeof row.isCurrent !== "boolean") {
+      throw new Error(`${owner}.revisions không hợp lệ`);
+    }
+  }
+  if (rows.length && rows.filter((row) => row.isCurrent).length !== 1) throw new Error(`${owner}.revisions thiếu bản hiện hành duy nhất`);
+}
+
+function requireCommon(owner, record, keys) {
+  requireShape(owner, record, keys);
+  if (typeof record.id !== "string" || typeof record.nameVi !== "string" || !isStringList(record.aliasesVi)
+    || !isStringList(record.aliasesZh) || !isStringList(record.missingFields)) {
+    throw new Error(`${owner} có scalar không hợp lệ`);
+  }
+  requireConditions(owner, record.conditions);
+}
+
+function requireUniqueId(owner, record, prefix, allIds) {
+  const id = record?.id;
+  if (typeof id !== "string" || !id.startsWith(prefix)) throw new Error(`${owner} có id yêu cầu ${prefix}; nhận ${String(id)}`);
+  if (allIds.has(id)) throw new Error(`ID trùng: ${id}`);
+  allIds.add(id);
+}
+
+function validateHero(record) {
+  const owner = record?.id ?? "heroes-dict.json";
+  requireShape(owner, record, HERO_KEYS);
+  if (![record.chinese, record.hanViet, record.viet].every((value) => typeof value === "string")
+    || !isStringList(record.aliases) || ![record.faction, record.cost, record.selfTacticCn, record.inheritTacticCn, record.roleTag, record.roleTagViet, record.iconUrl].every(isOptionalString)
+    || (record.stars !== null && !Number.isInteger(record.stars)) || !isOptionalNumber(record.linkScore)
+    || typeof record.pending !== "boolean" || typeof record.isSP !== "boolean") {
+    throw new Error(`${owner} có scalar không hợp lệ`);
+  }
+  requireShape(`${owner}.stats`, record.stats, ["luc", "tri", "thong", "toc", "chinh", "mi"]);
+  if (!Object.values(record.stats).every((value) => typeof value === "string")) throw new Error(`${owner}.stats không hợp lệ`);
+  requireShape(`${owner}.troopApt`, record.troopApt, ["ky", "thuan", "cung", "thuong", "khiGioi"]);
+  if (!Object.values(record.troopApt).every(isOptionalString)) throw new Error(`${owner}.troopApt không hợp lệ`);
+  const lookup = record.lookup;
+  requireShape(`${owner}.lookup`, lookup, HERO_LOOKUP_KEYS);
+  requireShape(`${owner}.lookup.growth`, lookup.growth, ["luc", "tri", "thong", "toc", "chinh", "mi"]);
+  requireShape(`${owner}.lookup.otherAptitudes`, lookup.otherAptitudes, ["infantry", "navy"]);
+  requireShape(`${owner}.lookup.civil`, lookup.civil, ["roleVi", "bonusVi", "specialtyVi", "tacticBonusVi"]);
+  requireShape(`${owner}.lookup.flags`, lookup.flags, ["isCollectible", "isDynamicOpen", "isMusou", "isCO", "isSp"]);
+  if (!HERO_VARIANTS.has(lookup.variant) || ![lookup.selfTacticId, lookup.inheritTacticId, lookup.advisorId, lookup.categoryVi, lookup.exclusiveTitleVi, lookup.collectibleBonusVi, lookup.redRulesVi].every(isOptionalString)
+    || !isOptionalNumber(lookup.civilInnatePoints) || !Object.values(lookup.growth).every(isOptionalNumber)
+    || !Object.values(lookup.otherAptitudes).every(isOptionalString) || !Object.values(lookup.civil).every(isOptionalString)
+    || !Object.values(lookup.flags).every((value) => value === null || typeof value === "boolean")
+    || !isStringList(lookup.missingFields)) {
+    throw new Error(`${owner}.lookup có scalar không hợp lệ`);
+  }
+  requireConditions(`${owner}.lookup`, lookup.conditions);
+  requireRevisions(`${owner}.lookup`, lookup.revisions);
+}
+
+function validateTactic(record) {
+  const owner = record?.id ?? "tactics.json";
+  requireShape(owner, record, TACTIC_KEYS);
+  if (![record.chinese, record.hanViet, record.viet].every((value) => typeof value === "string")
+    || !isStringList(record.aliases) || !isStringList(record.troopFit)
+    || ![record.type, record.quality, record.effect, record.effectViet, record.target, record.targetViet, record.source, record.sourceHeroCn, record.iconUrl].every(isOptionalString)
+    || !isOptionalNumber(record.linkScore) || typeof record.pending !== "boolean") {
+    throw new Error(`${owner} có scalar không hợp lệ`);
+  }
+  const lookup = record.lookup;
+  requireShape(`${owner}.lookup`, lookup, TACTIC_LOOKUP_KEYS);
+  if (![lookup.activationRate, lookup.cooldown, lookup.maxUsers, lookup.pointCost].every(isOptionalNumber)
+    || ![lookup.effectTypeVi, lookup.exchangeConditionVi, lookup.conflictsVi].every(isOptionalString)
+    || !isStringList(lookup.acquiredFromVi) || !isStringList(lookup.inheritedFromIds) || !isStringList(lookup.missingFields)) {
+    throw new Error(`${owner}.lookup có scalar không hợp lệ`);
+  }
+  requireConditions(`${owner}.lookup`, lookup.conditions);
+  requireRevisions(`${owner}.lookup`, lookup.revisions);
+}
+
+function requireRecords(name, records, prefix, allIds, validate) {
+  if (!Array.isArray(records) || records.length === 0) throw new Error(`${name} phải là mảng không rỗng`);
+  for (const record of records) {
+    requireUniqueId(name, record, prefix, allIds);
+    validate(record);
+  }
+}
 
 function keysEqual(value, expected) {
   return value && typeof value === "object" && !Array.isArray(value)
@@ -23,43 +132,70 @@ function parseJson(name, bytes) {
   }
 }
 
-function requireRecords(name, records, prefix, allIds) {
-  if (!Array.isArray(records) || records.length === 0) throw new Error(`${name} phải là mảng không rỗng`);
-  for (const record of records) {
-    const id = record?.id;
-    if (typeof id !== "string" || !id.startsWith(prefix)) throw new Error(`${name} có id yêu cầu ${prefix}; nhận ${String(id)}`);
-    if (allIds.has(id)) throw new Error(`ID trùng: ${id}`);
-    allIds.add(id);
-  }
-}
-
 function validateDocuments(heroes, tactics, catalog) {
   const allIds = new Set();
-  requireRecords("heroes-dict.json", heroes, "hero:", allIds);
-  requireRecords("tactics.json", tactics, "tactic:", allIds);
+  requireRecords("heroes-dict.json", heroes, "hero:", allIds, validateHero);
+  requireRecords("tactics.json", tactics, "tactic:", allIds, validateTactic);
   const catalogKeys = ["schemaVersion", "equipment", "specials", "advisors", "troopMods", "buildings"];
-  if (!catalog || typeof catalog !== "object" || Array.isArray(catalog)) throw new Error("lookup-catalog.json không hợp lệ");
-  if (catalog.schemaVersion !== 1) throw new Error("lookup-catalog.json schemaVersion không hợp lệ");
+  if (!isPlainObject(catalog)) throw new Error("lookup-catalog.json có shape không hợp lệ");
   if (!keysEqual(catalog, catalogKeys)) {
     const differing = catalogKeys.find((key) => !(key in catalog))
       ?? Object.keys(catalog).find((key) => !catalogKeys.includes(key))
       ?? "lookup-catalog.json";
     throw new Error(`lookup-catalog.json có nhóm không hợp lệ: ${differing}`);
   }
+  if (catalog.schemaVersion !== 1) throw new Error("lookup-catalog.json schemaVersion không hợp lệ");
   const groups = [
-    ["equipment", "equipment:"],
-    ["specials", "equipment-special:"],
-    ["advisors", "advisor:"],
-    ["troopMods", "troop-mod:"],
-    ["buildings", "building:"],
+    ["equipment", "equipment:", [...COMMON_KEYS, "qualityVi", "slotVi"]],
+    ["specials", "equipment-special:", [...COMMON_KEYS, "tierVi", "slotVi", "descriptionVi", "acquisitionVi", "equipmentId", "exclusiveHeroId"]],
+    ["advisors", "advisor:", [...COMMON_KEYS, "elementVi", "effectVi", "usageVi", "tacticPoints", "heroIds"]],
+    ["troopMods", "troop-mod:", [...COMMON_KEYS, "effectVi", "appliesToVi", "suggestedBuildVi", "troopLimitVi", "revisions", "options"]],
+    ["buildings", "building:", [...COMMON_KEYS, "summaryVi", "mainCityOnly", "maxLevel", "levels"]],
   ];
-  for (const [key, prefix] of groups) {
+  for (const [key, prefix, keys] of groups) {
     if (!Array.isArray(catalog[key])) throw new Error(`lookup-catalog.json thiếu ${key}`);
     for (const record of catalog[key]) {
-      const id = record?.id;
-      if (typeof id !== "string" || !id.startsWith(prefix)) throw new Error(`${key} có id không hợp lệ`);
-      if (allIds.has(id)) throw new Error(`ID trùng: ${id}`);
-      allIds.add(id);
+      requireUniqueId(key, record, prefix, allIds);
+      requireCommon(record.id, record, keys);
+    }
+  }
+  for (const row of catalog.equipment) {
+    if (![row.qualityVi, row.slotVi].every(isOptionalString)) throw new Error(`${row.id} có scalar không hợp lệ`);
+  }
+  for (const row of catalog.specials) {
+    if (![row.tierVi, row.slotVi, row.descriptionVi, row.equipmentId, row.exclusiveHeroId].every(isOptionalString) || !isStringList(row.acquisitionVi)) {
+      throw new Error(`${row.id} có scalar không hợp lệ`);
+    }
+  }
+  for (const row of catalog.advisors) {
+    if (![row.elementVi, row.effectVi, row.usageVi].every(isOptionalString) || !isOptionalNumber(row.tacticPoints) || !isStringList(row.heroIds)) {
+      throw new Error(`${row.id} có scalar không hợp lệ`);
+    }
+  }
+  for (const row of catalog.troopMods) {
+    if (![row.effectVi, row.appliesToVi, row.suggestedBuildVi].every(isOptionalString) || !isStringList(row.troopLimitVi) || !Array.isArray(row.options)) {
+      throw new Error(`${row.id} có scalar không hợp lệ`);
+    }
+    requireRevisions(row.id, row.revisions);
+    for (const option of row.options) {
+      requireShape(`${row.id}.options`, option, ["id", "tierVi", "nameVi", "descriptionVi", "convertsToVi"]);
+      requireUniqueId(`${row.id}.options`, option, "troop-option:", allIds);
+      if (typeof option.nameVi !== "string" || ![option.tierVi, option.descriptionVi, option.convertsToVi].every(isOptionalString)) {
+        throw new Error(`${row.id}.options có scalar không hợp lệ`);
+      }
+    }
+  }
+  for (const row of catalog.buildings) {
+    if (!isOptionalString(row.summaryVi) || typeof row.mainCityOnly !== "boolean" || !Number.isInteger(row.maxLevel) || !Array.isArray(row.levels)) {
+      throw new Error(`${row.id} có scalar không hợp lệ`);
+    }
+    for (const level of row.levels) {
+      requireShape(`${row.id}.levels`, level, ["id", "level", "costs", "durationVi", "effectVi"]);
+      requireUniqueId(`${row.id}.levels`, level, "building-level:", allIds);
+      requireShape(`${row.id}.levels.costs`, level.costs, ["wood", "iron", "stone"]);
+      if (!Number.isInteger(level.level) || !Object.values(level.costs).every(isOptionalNumber) || ![level.durationVi, level.effectVi].every(isOptionalString)) {
+        throw new Error(`${row.id}.levels có scalar không hợp lệ`);
+      }
     }
   }
   const heroIds = new Set(heroes.map((row) => row.id));
@@ -68,27 +204,19 @@ function validateDocuments(heroes, tactics, catalog) {
   const equipmentIds = new Set(catalog.equipment.map((row) => row.id));
   for (const hero of heroes) {
     for (const [field, allowed] of [["selfTacticId", tacticIds], ["inheritTacticId", tacticIds], ["advisorId", advisorIds]]) {
-      const id = hero.lookup?.[field];
+      const id = hero.lookup[field];
       if (id != null && !allowed.has(id)) throw new Error(`Tham chiếu treo: ${id}`);
     }
   }
   for (const tactic of tactics) {
-    for (const id of tactic.lookup?.inheritedFromIds ?? []) if (!heroIds.has(id)) throw new Error(`Tham chiếu treo: ${id}`);
+    for (const id of tactic.lookup.inheritedFromIds) if (!heroIds.has(id)) throw new Error(`Tham chiếu treo: ${id}`);
   }
   for (const advisor of catalog.advisors) {
-    for (const id of advisor.heroIds ?? []) if (!heroIds.has(id)) throw new Error(`Tham chiếu treo: ${id}`);
+    for (const id of advisor.heroIds) if (!heroIds.has(id)) throw new Error(`Tham chiếu treo: ${id}`);
   }
   for (const special of catalog.specials) {
     if (special.equipmentId != null && !equipmentIds.has(special.equipmentId)) throw new Error(`Tham chiếu treo: ${special.equipmentId}`);
     if (special.exclusiveHeroId != null && !heroIds.has(special.exclusiveHeroId)) throw new Error(`Tham chiếu treo: ${special.exclusiveHeroId}`);
-  }
-  for (const troop of catalog.troopMods) {
-    if (!Array.isArray(troop.options) || !Array.isArray(troop.revisions)) throw new Error(`${troop.id} thiếu options hoặc revisions`);
-    for (const option of troop.options) if (typeof option?.id !== "string" || !option.id.startsWith("troop-option:")) throw new Error(`${troop.id} có option không hợp lệ`);
-  }
-  for (const building of catalog.buildings) {
-    if (!Array.isArray(building.levels)) throw new Error(`${building.id} thiếu levels`);
-    for (const level of building.levels) if (!Number.isInteger(level?.level) || typeof level?.id !== "string") throw new Error(`${building.id} có level không hợp lệ`);
   }
 }
 

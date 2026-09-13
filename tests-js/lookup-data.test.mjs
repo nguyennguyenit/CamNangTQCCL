@@ -25,14 +25,20 @@ function manifestFor(rawFiles, overrides = {}) {
 function heroesDoc(over = []) {
   return [
     {
-      id: "hero:luu-bi", chinese: "劉備", viet: "Lưu Bị", hanViet: "Lưu Bị", faction: "Thục", stars: 5,
-      aliases: ["劉備", "刘备"], stats: { luc: 71, tri: 81, thong: 79, toc: 62, chinh: 92, mi: 95 },
+      id: "hero:luu-bi", chinese: "劉備", viet: "Lưu Bị", hanViet: "Lưu Bị", faction: "Thục", stars: 5, cost: "7",
+      aliases: ["劉備", "刘备"], stats: { luc: "71", tri: "81", thong: "79", toc: "62", chinh: "92", mi: "95" },
       troopApt: { ky: "S", thuan: "S", cung: "A", thuong: "A", khiGioi: "B" },
-      selfTacticCn: "仁德載世", inheritTacticCn: "",
+      selfTacticCn: "仁德載世", inheritTacticCn: "", roleTag: "support", roleTagViet: "Phụ trợ",
+      iconUrl: null, isSP: false, linkScore: null, pending: false,
       lookup: {
         selfTacticId: "tactic:nhan-duc", inheritTacticId: null, advisorId: "advisor:an-phuc-binh-tam",
-        categoryVi: "Quân sự", conditions: [], flags: { isSp: false, isCO: false },
-        growth: { luc: 0.98, tri: 1.71 }, civil: { roleVi: null }, revisions: [], missingFields: [],
+        variant: "base", categoryVi: "Quân sự", exclusiveTitleVi: null,
+        conditions: [], flags: { isCollectible: false, isDynamicOpen: false, isMusou: false, isCO: false, isSp: false },
+        growth: { luc: 0.98, tri: 1.71, thong: null, toc: null, chinh: null, mi: null },
+        otherAptitudes: { infantry: null, navy: null },
+        civil: { roleVi: null, bonusVi: null, specialtyVi: null, tacticBonusVi: null },
+        civilInnatePoints: null, collectibleBonusVi: null, redRulesVi: null,
+        revisions: [], missingFields: [],
       },
     },
     ...over,
@@ -43,8 +49,14 @@ function tacticsDoc(over = []) {
   return [
     {
       id: "tactic:nhan-duc", chinese: "仁德載世", viet: "Nhân Đức Tải Thế", hanViet: "Nhân Đức Tải Thế",
-      type: "Bị động", quality: "S", effect: "戰鬥中", effectViet: "Trong trận đấu", target: "友軍", targetViet: "Quân ta",
-      lookup: { activationRate: 1, conditions: [], revisions: [], inheritedFromIds: [], missingFields: [] },
+      aliases: [], type: "Bị động", quality: "S", effect: "戰鬥中", effectViet: "Trong trận đấu",
+      target: "友軍", targetViet: "Quân ta", troopFit: [], source: null, sourceHeroCn: null,
+      iconUrl: null, linkScore: null, pending: false,
+      lookup: {
+        activationRate: 1, cooldown: null, maxUsers: 1, pointCost: null,
+        effectTypeVi: null, exchangeConditionVi: null, acquiredFromVi: [], conflictsVi: null,
+        conditions: [], revisions: [], inheritedFromIds: [], missingFields: [],
+      },
     },
     ...over,
   ];
@@ -63,7 +75,7 @@ function catalogDoc(over = {}) {
       id: "troop-mod:dan-duong-binh", nameVi: "Đan Dương Binh", appliesToVi: "Thuẫn binh", effectVi: "Hiệu ứng",
       options: [{ id: "troop-option:dan-duong-binh:a", nameVi: "Xoay", convertsToVi: "Thương binh", descriptionVi: "Mô tả", tierVi: "Đặc biệt" }],
       revisions: [{ effectiveDate: "2024-08-28", isCurrent: true, labelVi: "Bản hiện hành", textVi: "Nội dung" }],
-      suggestedBuildVi: "Gợi ý", troopLimitVi: "Không", aliasesVi: [], aliasesZh: ["丹陽兵"], conditions: [], missingFields: [],
+      suggestedBuildVi: "Gợi ý", troopLimitVi: [], aliasesVi: [], aliasesZh: ["丹陽兵"], conditions: [], missingFields: [],
     }],
     buildings: [{
       id: "building:bat-tran-do", nameVi: "Bát Trận Đồ", summaryVi: "Tóm tắt", mainCityOnly: false, maxLevel: 1,
@@ -305,6 +317,31 @@ test("con của troop mod và building phải là mảng có ID/level dùng đư
     buildings: catalogDoc().buildings.map((b) => ({ ...b, levels: b.levels.map((l) => ({ ...l, level: "1" })) })),
   }));
   await assert.rejects(validateLookupBundle(badLevel.manifest, badLevel.rawFiles), /level|building:bat-tran-do/);
+});
+
+test("nested DTO sai shape bị từ chối trước khi tới profile renderer", async () => {
+  const malformedHero = heroesDoc().map((hero) => ({
+    ...hero,
+    lookup: { ...hero.lookup, revisions: { length: 1 } },
+  }));
+  const heroBundle = withRaw("heroes-dict.json", malformedHero);
+  await assert.rejects(validateLookupBundle(heroBundle.manifest, heroBundle.rawFiles), /revisions|hero:luu-bi/);
+
+  const malformedTactic = tacticsDoc().map((tactic) => ({
+    ...tactic,
+    lookup: { ...tactic.lookup, activationRate: {} },
+  }));
+  const tacticBundle = withRaw("tactics.json", malformedTactic);
+  await assert.rejects(validateLookupBundle(tacticBundle.manifest, tacticBundle.rawFiles), /activationRate|tactic:nhan-duc/);
+
+  const malformedCatalog = catalogDoc({
+    buildings: catalogDoc().buildings.map((building) => ({
+      ...building,
+      levels: building.levels.map((level) => ({ ...level, costs: { wood: "32000", stone: 32000, iron: 16000 } })),
+    })),
+  });
+  const catalogBundle = withRaw("lookup-catalog.json", malformedCatalog);
+  await assert.rejects(validateLookupBundle(catalogBundle.manifest, catalogBundle.rawFiles), /costs|building:bat-tran-do/);
 });
 
 function fetchFnFor(source = bundleFixture()) {

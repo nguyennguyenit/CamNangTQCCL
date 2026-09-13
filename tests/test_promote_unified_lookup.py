@@ -433,6 +433,73 @@ class CaughtFailureTest(PromotionCase):
         self.assertEqual(self.journal(root)["state"], "rolled-back")
         self.assertFalse(self.lock_path(root).exists())
 
+    def test_caught_preparation_failure_removes_the_unpublished_transaction(self):
+        for event in ("activation-code-written", "journal-prepared"):
+            with self.subTest(event=event):
+                root, candidate, activation = self.scenario()
+                before = snapshot(root)
+
+                def fail(_ctx):
+                    raise OSError(f"injected {event} failure")
+
+                with self.assertRaisesRegex(OSError, event):
+                    self.promote(root, candidate, activation, hooks={event: fail})
+
+                self.assertEqual(snapshot(root), before)
+                self.assertFalse(self.transaction(root).exists())
+                self.assertFalse(self.lock_path(root).exists())
+                retried = self.promote(root, candidate, activation)
+                self.assertEqual(retried["state"], "committed")
+
+    def test_partial_recursive_cleanup_is_detached_before_lock_release(self):
+        root, candidate, activation = self.scenario()
+
+        def fail(_ctx):
+            raise OSError("injected journal preparation failure")
+
+        def fail_recursive_cleanup(_path):
+            raise OSError("injected recursive cleanup failure")
+
+        with mock.patch.object(promotion.shutil, "rmtree", fail_recursive_cleanup):
+            with self.assertRaisesRegex(OSError, "journal preparation"):
+                self.promote(root, candidate, activation, hooks={"journal-prepared": fail})
+
+        self.assertFalse(self.transaction(root).exists())
+        self.assertFalse(self.lock_path(root).exists())
+        transactions = root / promotion.TRANSACTIONS_RELATIVE
+        self.assertEqual(list(transactions.iterdir()), [])
+        tombstones = list((transactions.parent / "aborted-transactions").iterdir())
+        self.assertEqual(len(tombstones), 1)
+        self.assertTrue((tombstones[0] / "journal.json").exists())
+        retried = self.promote(root, candidate, activation)
+        self.assertEqual(retried["state"], "committed")
+
+    def test_failed_transaction_detach_preserves_complete_recovery_evidence(self):
+        root, candidate, activation = self.scenario()
+        transaction = self.transaction(root)
+        real_replace = promotion.os.replace
+
+        def fail(_ctx):
+            raise OSError("injected journal preparation failure")
+
+        def fail_transaction_detach(source, destination):
+            if Path(source) == transaction and Path(destination).parent.name == "aborted-transactions" and Path(destination).name.startswith("t1-"):
+                raise OSError("injected transaction detach failure")
+            return real_replace(source, destination)
+
+        with mock.patch.object(promotion.os, "replace", fail_transaction_detach):
+            with self.assertRaisesRegex(promotion.PreparationCleanupError, "failed to clean"):
+                self.promote(root, candidate, activation, hooks={"journal-prepared": fail})
+
+        self.assertTrue(transaction.exists())
+        self.assertTrue(self.lock_path(root).exists())
+        with mock.patch.object(promotion, "_pid_alive", return_value=False):
+            recovered = promotion.recover(transaction_id="t1", root=root)
+        self.assertEqual(recovered["state"], "rolled-back")
+        self.assertFalse(self.lock_path(root).exists())
+        retried = self.promote(root, candidate, activation, transaction_id="t2")
+        self.assertEqual(retried["state"], "committed")
+
     def test_post_write_bundle_verification_conflict_preserves_intervening_bytes(self):
         root, candidate, activation = self.scenario()
 

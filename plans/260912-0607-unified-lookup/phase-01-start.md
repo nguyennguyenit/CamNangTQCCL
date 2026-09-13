@@ -142,23 +142,23 @@ Serialize shared helper edits with owner mùa; không chỉnh `build_season_data
 
 ## Implementation Steps
 
-1. [ ] Inspect branch/worktree/diff, pin approved hashes, coordinate owner mùa;
+1. [x] Inspect branch/worktree/diff, pin approved hashes, coordinate owner mùa;
    current tests là baseline, không phải Red của feature mới.
-2. [ ] Create present private sentinels and add dev filesystem privacy Red; implement
+2. [x] Create present private sentinels and add dev filesystem privacy Red; implement
    exact deny boundary and reach Green before any registry/baseline materialization.
-3. [ ] Add actual-inventory identity tests and minimal API scaffolding; Red phải
+3. [x] Add actual-inventory identity tests and minimal API scaffolding; Red phải
    là assertion hành vi, không phải import/setup failure.
-4. [ ] Freeze baseline exclusive-create; refuse overwrite khi hash khác.
+4. [x] Freeze baseline exclusive-create; refuse overwrite khi hash khác.
    Không invoke `build_dict`, `build_json`, crawler hoặc source rebuild.
-5. [ ] Review 259 candidates, 90/167 source unmatched, all 14 local unmatched;
+5. [x] Review 259 candidates, 90/167 source unmatched, all 14 local unmatched;
    đối chiếu variants/relations/Chinese facts trước cấp tên mới. Agent làm review.
-6. [ ] Review extra-category/child identities; account 805 parents +708 children,
+6. [x] Review extra-category/child identities; account 805 parents +708 children,
    không lấy unmatched counts làm confirmed-new totals.
-7. [ ] Implement strict validation/import of 79 refs, reverse uniqueness và
+7. [x] Implement strict validation/import of 79 refs, reverse uniqueness và
    fingerprints; mỗi source/local row có disposition trong inventory riêng.
-8. [ ] Implement 40Y bridge, golden parity, workflow fingerprint regeneration;
+8. [x] Implement 40Y bridge, golden parity, workflow fingerprint regeneration;
    kiểm old team/family corpus canaries không đổi behavior.
-9. [ ] Save private inventory/evidence report; Green và Refactor trước bàn giao
+9. [x] Save private inventory/evidence report; Green và Refactor trước bàn giao
    exact baseline/registry hashes cùng unresolved list sang Phase 2.
 
 ## TDD Red → Green → Refactor

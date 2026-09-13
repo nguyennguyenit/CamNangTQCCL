@@ -29,9 +29,12 @@ function hero(id, viet, over = {}) {
     troopApt: { ky: "S", thuan: "S", cung: "A", thuong: "A", khiGioi: "B" },
     selfTacticCn: "", inheritTacticCn: "", ...sourceNoise(),
     lookup: {
-      selfTacticId: null, inheritTacticId: null, advisorId: null, categoryVi: "Quân sự",
-      conditions: [], flags: { isSp: false, isCO: false }, growth: { luc: 1.98, tri: 0.71 },
-      civil: { roleVi: null, specialtyVi: null }, otherAptitudes: {}, revisions: [], missingFields: [],
+      selfTacticId: null, inheritTacticId: null, advisorId: null, variant: "base",
+      categoryVi: "Quân sự", exclusiveTitleVi: "Hoàng thúc", civilInnatePoints: 2,
+      collectibleBonusVi: "Tăng thuộc tính", redRulesVi: "Mỗi điểm đỏ tăng hiệu quả",
+      conditions: [], flags: { isCollectible: true, isDynamicOpen: false, isMusou: false, isCO: false, isSp: false },
+      growth: { luc: 1.98, tri: 0.71 }, civil: { roleVi: null, bonusVi: null, specialtyVi: null, tacticBonusVi: null },
+      otherAptitudes: { infantry: "C", navy: "S" }, revisions: [], missingFields: [],
       ...lookup,
     },
     ...rest,
@@ -45,8 +48,10 @@ function tactic(id, viet, over = {}) {
     effect: "戰鬥中，使我軍", effectViet: "Trong trận, quân ta", target: "友軍", targetViet: "Quân ta",
     aliases: [], ...sourceNoise(),
     lookup: {
-      activationRate: 0.35, conditions: [], revisions: [], inheritedFromIds: [],
-      effectTypeVi: "Tăng ích", acquiredFromVi: [], missingFields: [], ...lookup,
+      activationRate: 0.35, cooldown: 0, maxUsers: 3, pointCost: 0,
+      conditions: [], revisions: [], inheritedFromIds: [],
+      effectTypeVi: "Tăng ích", exchangeConditionVi: null,
+      acquiredFromVi: ["Truyền thừa"], conflictsVi: "Không cộng dồn", missingFields: [], ...lookup,
     },
     ...rest,
   };
@@ -98,7 +103,7 @@ const CATALOG = {
   troopMods: [
     {
       id: "troop-mod:dan-duong-binh", nameVi: "Đan Dương Binh", appliesToVi: "Thuẫn binh",
-      effectVi: "Hiệu ứng cải tiến", suggestedBuildVi: "Gợi ý", troopLimitVi: "Không",
+      effectVi: "Hiệu ứng cải tiến", suggestedBuildVi: "Gợi ý", troopLimitVi: ["Thuẫn binh"],
       options: [
         { id: "troop-option:dan-duong-binh:a", nameVi: "Xoay", convertsToVi: "Thương binh", descriptionVi: "Mô tả A", tierVi: "Đặc biệt" },
         { id: "troop-option:dan-duong-binh:b", nameVi: "Cầm", convertsToVi: "Thuẫn binh", descriptionVi: "Mô tả B", tierVi: "Cao cấp" },
@@ -113,7 +118,7 @@ const CATALOG = {
   ],
   buildings: [
     {
-      id: "building:bat-tran-do", nameVi: "Bát Trận Đồ", summaryVi: "Tóm tắt", mainCityOnly: false, maxLevel: 5,
+      id: "building:bat-tran-do", nameVi: "Bát Trận Đồ", summaryVi: "Tóm tắt", mainCityOnly: true, maxLevel: 5,
       levels: [3, 1, 5, 2, 4].map((level) => ({
         id: `building-level:bat-tran-do:${level}`, level,
         effectVi: `Hiệu ứng cấp ${level}`, durationVi: `${level} giờ`,
@@ -418,12 +423,12 @@ test("giá trị 0 hợp lệ hiển thị là 0, không thành gạch ngang", (
   assert.notEqual(rate.textVi, "—");
 });
 
-test("hồ sơ tướng có đủ chỉ số, thích tính, tăng trưởng và nội chính", () => {
+test("hồ sơ tướng có đủ chỉ số, thích tính và metadata đã duyệt", () => {
   const profile = profileFor("hero:luu-bi");
-  for (const key of ["luc", "tri", "thong", "toc", "chinh", "mi"]) {
-    assert.ok(fieldByKey(profile, key), `thiếu chỉ số ${key}`);
+  for (const key of ["variant", "categoryVi", "exclusiveTitleVi", "civilInnatePoints", "collectibleBonusVi", "redRulesVi", "flags", "luc", "tri", "thong", "toc", "chinh", "mi"]) {
+    assert.ok(fieldByKey(profile, key), `thiếu trường tướng ${key}`);
   }
-  for (const key of ["ky", "thuan", "cung", "thuong", "khiGioi"]) {
+  for (const key of ["ky", "thuan", "cung", "thuong", "khiGioi", "infantry", "navy"]) {
     assert.ok(profile.aptitudes.some((apt) => apt.key === key), `thiếu thích tính ${key}`);
   }
   assert.ok(profile.sections.some((section) => section.key === "growth"), "thiếu khối tăng trưởng");
@@ -445,6 +450,16 @@ test("hồ sơ chiến pháp dùng bản Việt, không mượn effect gốc đ�
   assert.deepEqual(pending.conditions, []);
 });
 
+test("hồ sơ chiến pháp hiện đầy đủ giới hạn và cách nhận đã duyệt", () => {
+  const profile = profileFor("tactic:nhan-duc");
+  for (const key of ["cooldown", "maxUsers", "pointCost", "acquiredFromVi", "conflictsVi"]) {
+    assert.ok(fieldByKey(profile, key), `thiếu trường chiến pháp ${key}`);
+  }
+  assert.equal(fieldByKey(profile, "cooldown").textVi, "0");
+  assert.equal(fieldByKey(profile, "pointCost").textVi, "0");
+  assert.equal(fieldByKey(profile, "acquiredFromVi").textVi, "Truyền thừa");
+});
+
 test("hồ sơ trang bị mở đủ đặc hiệu con và đặc hiệu mồ côi vẫn có hồ sơ riêng", () => {
   const equipment = profileFor("equipment:y-thien-kiem");
   const specials = equipment.children.find((child) => child.key === "specials");
@@ -462,26 +477,34 @@ test("hồ sơ trang bị mở đủ đặc hiệu con và đặc hiệu mồ c�
   assert.ok(parent.statusVi.length > 0);
 });
 
-test("hồ sơ quân sư liên kết ngược về tướng", () => {
+test("hồ sơ đặc kỹ hiện cách nhận đã duyệt", () => {
+  const special = profileFor("equipment-special:gian-hung");
+  assert.equal(fieldByKey(special, "acquisitionVi").textVi, "Rèn");
+});
+
+test("hồ sơ quân sư liên kết ngược về tướng và hiện nguyên tố", () => {
   const advisor = profileFor("advisor:an-phuc-binh-tam");
   const heroes = advisor.children.find((child) => child.key === "heroes");
   assert.deepEqual(heroes.items.map((item) => item.id), ["hero:luu-bi"]);
   assert.deepEqual(heroes.items.map((item) => item.titleVi), ["Lưu Bị"]);
+  assert.equal(fieldByKey(advisor, "elementVi").textVi, "Phong");
 });
 
-test("cải tiến binh chủng giữ đủ tùy chọn và bản sửa", () => {
+test("cải tiến binh chủng giữ đủ tùy chọn, bản sửa và giới hạn binh chủng", () => {
   const profile = profileFor("troop-mod:dan-duong-binh");
   const options = profile.children.find((child) => child.key === "options");
   assert.equal(options.items.length, 3);
   assert.deepEqual(options.items.map((item) => item.id), CATALOG.troopMods[0].options.map((option) => option.id));
   assert.equal(profile.revisions.length, 2);
   assert.equal(profile.revisions[0].isCurrent, true);
+  assert.equal(fieldByKey(profile, "troopLimitVi").textVi, "Thuẫn binh");
 });
 
-test("công trình mở đủ cấp theo thứ tự kèm chi phí và thời gian", () => {
+test("công trình mở đủ cấp, chi phí, thời gian và phạm vi thành", () => {
   const profile = profileFor("building:bat-tran-do");
   const levels = profile.children.find((child) => child.key === "levels");
   assert.deepEqual(levels.items.map((item) => item.level), [1, 2, 3, 4, 5]);
+  assert.equal(fieldByKey(profile, "mainCityOnly").textVi, "Chỉ thành chính");
   for (const item of levels.items) {
     assert.ok(item.durationVi.length > 0, `cấp ${item.level} thiếu thời gian`);
     assert.equal(typeof item.costs.wood, "number");
