@@ -5,11 +5,11 @@ local. Ngày 2026-09-12, chủ project xác nhận quyền import trong đúng p
 catalog này; đây là căn cứ riêng cho project, không phải open license hoặc quyền
 tái phân phối không giới hạn. Xem [source inventory](../plans/260907-0228-sgsdeck-catalog/reports/source-inventory.md#reuse-gate).
 
-`data/sgsdeck/` là private source subtree: không thay dữ liệu Việt hiện có,
-không tự tạo team/tier, không có route Astro và không được đưa vào `dist`.
-Boundary thực thi nằm tại
-`src/lib/root-static-artifacts.ts`; `PUBLIC_ARTIFACTS` và public manifest không
-chứa catalog này.
+`data/sgsdeck/` là private source subtree: không có route Astro và không được
+đưa vào `dist`. Boundary thực thi nằm tại
+`src/lib/root-static-artifacts.ts`. Website chỉ publish projection tiếng Việt
+đã review ở `data/heroes-dict.json`, `data/tactics.json` và
+`data/lookup-catalog.json`; public DTO không mang provenance/source object.
 
 ## Snapshot hiện tại
 
@@ -27,6 +27,19 @@ Mapping đã review gồm 79 exact-Chinese matches: 39 generals và 40 tactics. 
 được resolve thành `quality: 橙` và `slot: 武器`. Trong 90 equipment specials,
 57 record nối được với equipment parent và 33 record giữ `parentSourceId: null`;
 không suy đoán liên kết còn thiếu.
+
+## Projection Tra cứu công khai
+
+Generation public được chứng nhận local ngày 2026-09-13 có 202 tướng, 406 chiến
+pháp và toàn bộ 114/90, 39, 16/192, 41/426 parent/child catalog kể trên. Số chiến
+pháp public lớn hơn snapshot SGSDeck vì union còn giữ 240 identity baseline và
+các nguồn local đã review; không phải 13 record SGSDeck bị tạo thêm.
+
+Builder [`build_unified_lookup.py`](../pipeline/build_unified_lookup.py) merge
+baseline + nguồn theo registry/translation fingerprint, chỉ emit allowlisted DTO.
+Manifest [`lookup-manifest.json`](../data/lookup-manifest.json) bind exact ba
+payload. [Quy trình build/promote/recover](unified-lookup.md) là owner publication;
+private catalog builder này không ghi trực tiếp public lookup.
 
 ## Contract
 
@@ -79,12 +92,16 @@ cần raw cache. Query giới hạn 1–100 kết quả, hỗ trợ tên Hán v�
 mapping, và trả record cùng provenance.
 
 Reviewed mapping nằm tại `pipeline/sgsdeck-name-map.json`. Chỉ thêm mapping có
-evidence, đúng variant và đúng record canonical. Thay mapping hoặc dictionary là
-thay input có chủ ý; review diff/hash trước khi promote snapshot.
+evidence, đúng variant và đúng record canonical. Thay mapping, dictionary,
+identity registry hoặc translation là thay input có chủ ý; build candidate mới,
+review diff/hash rồi promote cả generation, không chép riêng một file.
 
-## Rollback
+## Recovery và chuyển generation
 
-Importer validate trọn staged set rồi mới thay `data/sgsdeck/`. Nếu fetch, parse,
-checksum hoặc canonical reference lỗi, cache/snapshot cũ được giữ hoặc phục hồi.
-Khi rollback private source-tree policy, gỡ hoặc di chuyển `data/sgsdeck/` trong
-cùng thay đổi; không thêm catalog vào public manifest để né validator.
+Importer private validate trọn staged set rồi mới thay `data/sgsdeck/`; lỗi
+fetch/parse/checksum/canonical reference giữ snapshot cũ.
+`promote_unified_lookup.py recover` chỉ sửa transaction public bị gián đoạn,
+kiểm pre/postimage, shared WIP và dependent season refs trước restore. Nó không
+rollback activation đã commit; chuyển khỏi generation hiện tại cần candidate và
+activation mới đã review. Không đưa private source vào public manifest để né
+validator.

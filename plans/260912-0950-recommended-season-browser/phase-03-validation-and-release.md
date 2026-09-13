@@ -1,7 +1,7 @@
 ---
 phase: 3
 title: "Validation and release readiness"
-status: pending
+status: completed
 priority: P1
 effort: "1–2d"
 dependencies: [1, 2]
@@ -74,13 +74,13 @@ Counts are source inventories, not claims that new tests have run. The list belo
 
 ### Interface and consumer checklist
 
-- [ ] `verifyAstroDist()` (`scripts/verify-astro-dist.mjs:26`): direct CLI and dist tests consume the same scoped inventory as Astro routes; enforce exact bytes, missing/unexpected/symlink rejection.
-- [ ] Root `PUBLIC_ARTIFACTS`, `root-static-artifacts.ts` readers and root data routes retain basename-only/exact inventory; scoped helper never becomes an arbitrary file reader.
-- [ ] Root HTML pins one generation; index, details and Team khác validate against it, with no independent mutable-current advance between fetches.
-- [ ] `onOpenTeam()` preserves Recommended source, legacy original and reviewed gameplay config destinations independently of browse admission.
-- [ ] `REPOSITORY_GATE_COMMANDS` (`mcp-worker/scripts/check-repository.ts:21`) keeps broad suites and dry-run; failures remain visible.
-- [ ] MCP loaders retain existing approved gameplay artifacts; browser source scores cannot enter recommendation by proximity.
-- [ ] Header test at `tests-js/pages-headers-contract.test.mjs:69` enumerates scoped routes; existing `/data/*` revalidation policy remains sufficient.
+- [x] `verifyAstroDist()` (`scripts/verify-astro-dist.mjs:26`): direct CLI and dist tests consume the same scoped inventory as Astro routes; enforce exact bytes, missing/unexpected/symlink rejection.
+- [x] Root `PUBLIC_ARTIFACTS`, `root-static-artifacts.ts` readers and root data routes retain basename-only/exact inventory; scoped helper never becomes an arbitrary file reader.
+- [x] Root HTML pins one generation; index, details and Team khác validate against it, with no independent mutable-current advance between fetches.
+- [x] `onOpenTeam()` preserves Recommended source, legacy original and reviewed gameplay config destinations independently of browse admission.
+- [x] `REPOSITORY_GATE_COMMANDS` (`mcp-worker/scripts/check-repository.ts:21`) keeps broad suites and dry-run; failures remain visible.
+- [x] MCP loaders retain existing approved gameplay artifacts; browser source scores cannot enter recommendation by proximity.
+- [x] Header test at `tests-js/pages-headers-contract.test.mjs:69` enumerates scoped routes; existing `/data/*` revalidation policy remains sufficient.
 
 ## Integration test scenario matrix
 
@@ -161,16 +161,16 @@ These are planned behavioral checks, not test results. Record actual Red failure
 
 ## Success Criteria
 
-- [ ] Python source/projection/dedup tests pass, including 29-season, S28 mixed faction, score>100, T2 82/72, detail holder/tactic/book cases and Team khác dedup.
-- [ ] JS state/artifact tests pass with duplicate query rejection, facet preservation, Team chuẩn/Team khác separation and fixed ranking.
-- [ ] Browser E2E passes across required widths/themes with screenshots saved to reports.
-- [ ] Astro check/build and public artifact validation pass.
-- [ ] MCP/release tests prove no accidental Team chuẩn-to-gameplay expansion and no SGSDeck score assignment to Team khác rows.
-- [ ] Team khác public artifact contains admitted rows only; duplicate/review-pending counts and links remain internal.
-- [ ] Docs reflect changed navigation/maintenance boundaries only if the implementation changed them.
-- [ ] Validation report includes commands, evidence paths, hashes, rollback and unresolved limits.
-- [ ] Source inventory, admitted/duplicate/pending counts and generation hash are recorded; 29 labels alone never establish full corpus coverage.
-- [ ] Feature validation and release packaging outcomes are reported separately; no unrun gate is marked complete.
+- [x] Python source/projection/dedup tests pass, including 29-season, S28 mixed faction, score>100, T2 82/72, detail holder/tactic/book cases and Team khác dedup.
+- [x] JS state/artifact tests pass with duplicate query rejection, facet preservation, Team chuẩn/Team khác separation and fixed ranking.
+- [x] Browser E2E passes across required widths/themes with screenshots saved to reports.
+- [x] Astro check/build and public artifact validation pass.
+- [x] MCP/release tests prove no accidental Team chuẩn-to-gameplay expansion and no SGSDeck score assignment to Team khác rows.
+- [x] Team khác public artifact contains admitted rows only; duplicate/review-pending counts and links remain internal.
+- [x] Docs reflect changed navigation/maintenance boundaries only if the implementation changed them.
+- [x] Validation report includes commands, evidence paths, hashes, rollback and unresolved limits.
+- [x] Source inventory, admitted/duplicate/pending counts and generation hash are recorded; 29 labels alone never establish full corpus coverage.
+- [x] Feature validation and release packaging outcomes are reported separately; no unrun gate is marked complete.
 
 ## Risk Assessment
 

@@ -36,6 +36,17 @@ class RecommendedSourceTest(unittest.TestCase):
         self.assertEqual(result["sourceSeason"]["label"], "og-兵演春秋")
         self.assertNotIn("rulesetId", result)
 
+    def test_source_tier_and_faction_come_from_list_not_score(self):
+        listing = source.parse_recommended_list(LIST)
+        self.assertEqual([sum(row.get("tierRaw") == tier for row in listing["records"]) for tier in ["T0", "T0.5", "T1"]], [12, 1, 12])
+        self.assertEqual(listing["records"][0].get("factionRaw"), "群")
+        changed = LIST.replace('title="來源評分，僅供同賽季內比較">113', 'title="來源評分，僅供同賽季內比較">97')
+        self.assertEqual(source.parse_recommended_list(changed)["records"][0]["tierRaw"], "T0")
+        detail = source.parse_recommended_detail(DETAIL, URL)
+        joined = source.join_recommended_evidence(listing, [detail])
+        self.assertEqual(joined["records"][0]["tierRaw"], "T0")
+        self.assertEqual(joined["records"][0]["factionRaw"], "群")
+
     def test_detail_keeps_holder_tactics_books_and_source_conditions(self):
         result = source.parse_recommended_detail(DETAIL, URL)
         self.assertEqual(result["value"], 113)
@@ -91,6 +102,14 @@ class RecommendedSourceTest(unittest.TestCase):
             other[key] = value
             with self.subTest(key=key), self.assertRaises(ValueError):
                 source.join_recommended_evidence(listing, [other])
+
+    def test_requested_scope_must_match_rendered_season_and_category(self):
+        accepted = source.parse_recommended_list(LIST, requested_scope={"season": "og-兵演春秋", "category": "交戰"})
+        self.assertEqual(accepted["sourceCategoryId"], "交戰")
+        with self.assertRaisesRegex(ValueError, "requested scope"):
+            source.parse_recommended_list(LIST, requested_scope={"season": "pk-s28", "category": "交戰"})
+        with self.assertRaisesRegex(ValueError, "requested scope"):
+            source.parse_recommended_list(LIST, requested_scope={"sourceSeasonId": "og-兵演春秋", "sourceCategoryId": "器械"})
 
     def _cache(self, root, listing):
         items = []

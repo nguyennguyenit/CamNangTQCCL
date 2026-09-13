@@ -27,12 +27,11 @@ const runtimeJson = [
   "books-dict.json",
 ];
 const sections = [
-  "team-pk",
-  "meta-cu",
+  "team-chuan",
+  "team-khac",
   "coexist",
   "khaihoang",
-  "heroes",
-  "tactics",
+  "lookup",
   "recruit-tracker",
   "analyze",
   "roster-recommend",
@@ -100,7 +99,7 @@ test.beforeEach(async ({ context }) => {
 });
 
 async function waitForBoot(page) {
-  await expect(page.locator("#section-team-pk .team-card").first()).toBeAttached();
+  await expect(page.locator("#season-scenario")).toBeAttached();
   await expect(page.locator("script[src*='turnstile']")).toHaveCount(1);
 }
 
@@ -155,9 +154,9 @@ test("boots once with clean first-party requests and stable metadata", async ({ 
   const appModule = page.locator('script[type="module"]');
   await expect(appModule).toHaveCount(1);
   await expect(appModule).toHaveAttribute("src", /^(?:\.\/|\/)js\/app\.js$/);
-  await expect(page.locator(".nav-tab")).toHaveCount(9);
-  await expect(page.locator(".section")).toHaveCount(9);
-  await expectActiveSection(page, "team-pk");
+  await expect(page.locator(".nav-tab")).toHaveCount(sections.length);
+  await expect(page.locator(".section")).toHaveCount(sections.length);
+  await expectActiveSection(page, "team-chuan");
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);
   expect(firstPartyFailures).toEqual([]);
@@ -201,8 +200,8 @@ test("all hash sections support direct links, clicks, back, and forward", async 
   await expectActiveSection(page, "roster-recommend");
 
   await page.goto("/#not-a-section");
-  await expectActiveSection(page, "team-pk");
-  await expect(page).toHaveURL(/#not-a-section$/);
+  await expectActiveSection(page, "team-chuan");
+  await expect(page).toHaveURL(/#team-chuan$/);
 });
 
 test("legacy storage payloads survive load and sanitize forbidden roster fields on save", async ({ page }) => {
@@ -264,18 +263,18 @@ test("legacy storage payloads survive load and sanitize forbidden roster fields 
   expect(reloadedStorage.roster.ownedHeroes.map((hero) => hero.name)).toContain("Sentinel Hero Two");
 });
 
-test("required JSON failure stays in Team PK and can remain hidden on another hash", async ({ page }) => {
+test("required JSON failure stays in Team chuẩn and can remain hidden on another hash", async ({ page }) => {
   await page.route("**/data/teams.json", (route) =>
     route.fulfill({ status: 503, contentType: "application/json", body: "{}" }));
 
-  await page.goto("/#heroes");
-  const error = page.locator("#section-team-pk .error");
+  await page.goto("/#lookup");
+  const error = page.locator("#section-team-chuan .error");
   await expect(error).toContainText("Lỗi tải dữ liệu: ./data/teams.json: 503");
   await expect(error).toContainText("Hãy tải lại trang hoặc liên hệ quản trị viên nếu lỗi tiếp diễn");
   await expect(error).not.toContainText(/python3|http server|index\.html/i);
-  await expectActiveSection(page, "heroes");
+  await expectActiveSection(page, "lookup");
   await expect(error).toBeHidden();
-  await expect(page.locator("#section-heroes")).toBeEmpty();
+  await expect(page.locator("#section-lookup")).toBeEmpty();
 });
 
 test("optional tier failure is non-fatal", async ({ page }) => {
@@ -283,8 +282,8 @@ test("optional tier failure is non-fatal", async ({ page }) => {
     route.fulfill({ status: 404, contentType: "application/json", body: "{}" }));
 
   await page.goto("/");
-  await expect(page.locator("#section-team-pk .team-card").first()).toBeVisible();
-  await expect(page.locator("#section-team-pk .error")).toHaveCount(0);
+  await expect(page.locator("#section-team-chuan .team-card").first()).toBeVisible();
+  await expect(page.locator("#section-team-chuan .error")).toHaveCount(0);
 });
 
 test("a hanging optional tier request retains the legacy blocked-render behavior", async ({ page }) => {
@@ -298,23 +297,23 @@ test("a hanging optional tier request retains the legacy blocked-render behavior
   });
 
   await page.goto("/");
-  await expect(page.locator("#section-team-pk .team-card")).toHaveCount(0);
-  await expect(page.locator("#section-team-pk .error")).toHaveCount(0);
+  await expect(page.locator("#section-team-chuan .team-card")).toHaveCount(0);
+  await expect(page.locator("#section-team-chuan .error")).toHaveCount(0);
   releaseTier();
-  await expect(page.locator("#section-team-pk .team-card").first()).toBeVisible();
+  await expect(page.locator("#section-team-chuan .team-card").first()).toBeVisible();
 });
 
 test("Turnstile failure does not break local sections or duplicate its script", async ({ page }) => {
   await page.route("https://challenges.cloudflare.com/**", (route) => route.abort("blockedbyclient"));
 
   await page.goto("/#analyze");
-  await expect(page.locator("#section-team-pk .team-card").first()).toBeAttached();
+  await expect(page.locator("#section-team-chuan .team-card").first()).toBeAttached();
   await expect(page.locator("#section-analyze .ana-status")).toContainText("Không tải được Turnstile");
   await expect(page.locator("#section-roster-recommend .ana-turnstile")).toContainText("Không tải được Turnstile");
   await expect(page.locator("script[src*='turnstile']")).toHaveCount(1);
 
-  await page.locator('.nav-tab[data-section="heroes"]').click();
-  await expect(page.locator("#section-heroes")).not.toBeEmpty();
+  await page.locator('.nav-tab[data-section="lookup"]').click();
+  await expect(page.locator("#section-lookup")).not.toBeEmpty();
 });
 
 test("mobile section menu closes after selection and Escape", async ({ page }) => {
@@ -337,19 +336,19 @@ test("mobile section menu closes after selection and Escape", async ({ page }) =
   await expect(nav).not.toHaveClass(/\bopen\b/);
 });
 
-test("team search remains a local interaction", async ({ page }) => {
-  await page.goto("/#team-pk");
+test("Team chuẩn search remains URL-backed and filterable", async ({ page }) => {
+  await page.goto("/#team-chuan");
   await waitForBoot(page);
-  const section = page.locator("#section-team-pk");
+  const section = page.locator("#section-team-chuan");
   const search = section.locator('input[type="search"]').first();
-
   await search.fill("sentinel-no-match");
+  await expect(page).toHaveURL(/q=sentinel-no-match/);
   await expect(section.locator(".empty")).toContainText("Không có");
   await search.fill("");
   await expect(section.locator(".team-card").first()).toBeVisible();
 });
 
-test("opening a roster recommendation selects its source tab and hero search", async ({ page }) => {
+test("opening a roster recommendation preserves its tab and opens the exact original", async ({ page }) => {
   const seedTeams = teamsFixture.slice(0, 20);
   const rosterState = {
     ownedHeroes: [...new Set(seedTeams.flatMap((team) =>
@@ -379,13 +378,10 @@ test("opening a roster recommendation selects its source tab and hero search", a
   expect(selectedTeam).toBeTruthy();
 
   await recommendation.getByRole("button", { name: "Mở team", exact: true }).click();
-  const expectedSection = {
-    "moi-phe": "meta-cu",
-    "team-intro": "team-pk",
-  }[selectedTeam.source] || "team-pk";
-  await expectActiveSection(page, expectedSection);
-  await expect(page.locator(`#section-${expectedSection} input[type="search"]`).first())
-    .toHaveValue(selectedTeam.heroes[0].baseName);
+  await expectActiveSection(page, "roster-recommend");
+  await expect(page).toHaveURL(new RegExp(`legacyTeam=${selectedTeam.id}`));
+  await expect(page.locator("#legacy-team-detail")).toBeVisible();
+  await expect(page.locator("#legacy-team-detail h2")).toHaveText(selectedTeam.name);
   await expect.poll(() => page.evaluate(() => window.__scrollCalls.at(-1))).toEqual([
     { top: 0, behavior: "smooth" },
   ]);
@@ -412,10 +408,10 @@ test("synthetic HTTPS serves dist locally and characterizes legacy HTTP icons", 
     }
   });
 
-  await page.goto("https://astro.local/#heroes");
+  await page.goto("https://astro.local/#lookup?group=heroes");
   await waitForBoot(page);
-  await expectActiveSection(page, "heroes");
-  const icon = page.locator("#section-heroes img[src^='http://']").first();
+  await expectActiveSection(page, "lookup");
+  const icon = page.locator("#section-lookup img[src^='http://']").first();
   await expect(icon).toBeAttached();
   await expect.poll(() => externalImageRequests.length).toBeGreaterThan(0);
   expect(externalImageRequests.every((url) => url.protocol === "https:")).toBe(true);

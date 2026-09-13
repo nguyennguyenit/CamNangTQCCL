@@ -1,12 +1,11 @@
 import assert from "node:assert/strict";
 
 export const FRONTEND_SECTIONS = [
-  "team-pk",
-  "meta-cu",
+  "team-chuan",
+  "team-khac",
   "coexist",
   "khaihoang",
-  "heroes",
-  "tactics",
+  "lookup",
   "recruit-tracker",
   "analyze",
   "roster-recommend",
@@ -35,8 +34,8 @@ export function assertFrontendShellContract(html, {
   for (const section of FRONTEND_SECTIONS) {
     assert.ok(ids.has(`section-${section}`), `missing mount for ${section}`);
   }
-  assert.match(html, /class=["']nav-tab active["'][^>]+data-section=["']team-pk["']/);
-  assert.match(html, /id=["']section-team-pk["'][^>]+class=["']section active["']/);
+  assert.match(html, /class=["']nav-tab active["'][^>]+data-section=["']team-chuan["']/);
+  assert.match(html, /id=["']section-team-chuan["'][^>]+class=["']section active["']/);
 
   assert.match(html, /id=["']section-menu-toggle["']/);
   assert.match(html, /aria-controls=["']section-menu-items["']/);

@@ -50,7 +50,10 @@ test("sourced options are complete for each declared phase and preserve the rost
             const tactic = tactics.find((t) => t.viet === name);
             assert.ok(tactic, `${key}: unknown ${name}`);
             assert.notEqual(tactic.type, "Nội chính", key);
-            if (tactic.troopFit.length) assert.ok(tactic.troopFit.includes(variant.unitType), `${key}: ${name}`);
+            if (tactic.troopFit.length) {
+              const compatibleUnits = tactic.troopFit.map((unit) => unit.replace(/ binh$/u, ""));
+              assert.ok(compatibleUnits.includes(variant.unitType), `${key}: ${name}`);
+            }
             names.push(name);
           }
         }

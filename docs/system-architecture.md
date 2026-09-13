@@ -41,6 +41,12 @@ local MCP client ───────────stdio────────�
 6. `build_team_tier.py` join bảng tier curate vào team ID.
 7. Maintainer review diff và chạy test trước khi publish artifact.
 
+Đường Tra cứu thống nhất tách khỏi legacy builder. `build_unified_lookup.py` đọc
+baseline bất biến, snapshot SGSDeck đã checksum, registry danh tính và bản dịch
+đã review từ một lần capture bytes; nó chỉ tạo candidate private. Promotion qua
+`promote_unified_lookup.py` giữ shared lock và durable journal để thay bốn file
+generation công khai có thể recover. Xem [quy trình vận hành](unified-lookup.md).
+
 Đường build cố ý không đưa `Team Đô Úy.html` vào artifact và hiện tạo 50 Team PK + 110 meta cũ, trong khi artifact công khai có 56 + 110. Sáu Team PK bổ sung vẫn chưa có đường tái tạo nhìn thấy. `pipeline/do-uy-ss18-source.json` giữ 40 record nguồn thô làm archive, không phải input publication. HTML/cache còn bị ignore. Vì vậy pipeline là công cụ bảo trì có điều kiện, chưa phải clean-clone reproducible build.
 
 ### Dữ liệu đội theo kịch bản
@@ -66,11 +72,12 @@ thuộc [manifest của site](../src/lib/public-artifact-manifest.mjs).
 ## Static runtime
 
 [`src/pages/index.astro`](../src/pages/index.astro) là document authority của
-chín section và hash dữ liệu mùa. [`js/app.js`](../js/app.js) sở hữu khởi tạo
-runtime; [`season-ui-state.js`](../js/season-ui-state.js) sở hữu query và kiểm
-hash toàn bộ dữ liệu tham chiếu trước activation. Bộ sidecar thiếu hoặc trộn
-generation chỉ cho phép fallback legacy có thông báo; `team-tier` legacy vẫn
-là dữ liệu optional.
+tám section cùng hash dữ liệu mùa, lookup và pin Recommended. [`js/app.js`](../js/app.js)
+sở hữu khởi tạo runtime; [`season-ui-state.js`](../js/season-ui-state.js) sở hữu
+query và kiểm hash toàn bộ dữ liệu tham chiếu trước activation. [`lookup-data.js`](../js/lookup-data.js)
+kiểm inventory/hash/generation của ba payload Tra cứu trước khi chia sẻ đúng
+bytes tướng/chiến pháp cho các consumer. Bundle thiếu hoặc trộn chỉ khóa feature
+phụ thuộc với thông báo; Team chuẩn và các feature local độc lập vẫn hoạt động.
 
 Scope, filter/search và chi tiết cấu hình cùng đi qua query owner; hash xác
 định section đang áp dụng. Restore scenario-only không tự nâng sang luật đã
@@ -81,6 +88,8 @@ Hai tab team đều gọi `team-filter-section.js`. Module này tính facet tr�
 
 Tra cứu và gợi ý cốt lõi chạy local:
 
+- `lookup-data.js`: load một snapshot bốn file đã xác minh; không chấp nhận partial/mixed generation.
+- `unified-lookup.js` và `lookup-detail.js`: một search/profile cho sáu nhóm, paging và quan hệ theo ID; không suy team/tier/availability từ catalog.
 - `match-dict.js`: match Việt bỏ dấu/Hán-Việt/Hán.
 - `hero-identity.js`: SP, CO và bản thường có canonical ID riêng; `familyId` chỉ biểu diễn quan hệ cùng họ, không thay thế identity khi xét sở hữu. Mỗi combined slot là một tập alternatives và chỉ cần đúng một alternative để thỏa slot.
 - `filters.js`: search/filter team.
@@ -114,9 +123,12 @@ structured observations
 
 Inventory theo version thuộc [`artifact-contracts.ts`](../mcp-worker/src/data/artifact-contracts.ts):
 v1 giữ sáu artifact legacy; v2 có thêm toàn bộ năm sidecar mùa.
-[`FilesystemDataSource`](../mcp-worker/src/data/filesystem-data-source.ts) từ chối
-sidecar chỉ có một phần; [`StaticAssetsDataSource`](../mcp-worker/src/data/static-assets-data-source.ts)
-dùng manifest để chọn exact inventory. Cả hai validate trước khi
+[`FilesystemDataSource`](../mcp-worker/src/data/filesystem-data-source.ts) phân
+biệt ba format: raw legacy, raw lookup có đúng cả hai website sidecar, và packaged
+MCP có manifest cùng exact inventory. Mixed/partial root bị từ chối. Lookup
+sidecars chỉ xác minh raw dictionary generation, không được emit thành MCP
+artifact/tool kind. [`StaticAssetsDataSource`](../mcp-worker/src/data/static-assets-data-source.ts)
+dùng manifest package để chọn exact inventory. Cả hai validate trước khi
 [`data-source.ts`](../mcp-worker/src/data/data-source.ts) giữ snapshot immutable.
 
 `mcp-worker/src/domain/normalization-service.ts` sở hữu chuẩn hóa và source precedence; ambiguity, identity/family conflict hoặc locked-resource conflict đặt trạng thái cần review. `canonical-state.ts` sở hữu projection/digest và xác minh binding. `recommendation-service.ts` chỉ gọi engine sau khi workflow, canonical state và binding khớp; trạng thái chưa phân giải hoặc binding cũ bị từ chối. Bằng chứng người dùng thật sự đã xác nhận vẫn thuộc caller, không phải điều research handler tự chứng minh.

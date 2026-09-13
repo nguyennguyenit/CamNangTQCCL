@@ -50,7 +50,7 @@ export const DEFAULT_THRESHOLD = 0.7;
 
 /** Các chuỗi tìm kiếm phía Việt của 1 record (đã normalize). */
 function vietCandidates(rec) {
-  return [rec.viet, rec.hanViet, ...(rec.aliases || [])]
+  return [rec.viet, rec.hanViet, ...(rec.aliases || []), ...(rec.aliasesZh || [])]
     .filter(Boolean)
     .map(normalizeText);
 }
@@ -58,7 +58,7 @@ function vietCandidates(rec) {
 /** Điểm khớp tốt nhất giữa query và 1 record (0..1). */
 function scoreRecord(query, rec, cjk) {
   if (cjk) {
-    const cn = rec.chinese || "";
+    const cn = (rec.chinese || "").replace(/\s+/g, "");
     if (!cn) return 0;
     if (cn === query) return 1;
     if (query.length >= 2 && cn.includes(query)) {
@@ -102,7 +102,7 @@ export function matchDict(
 ) {
   const raw = (query || "").trim();
   const cjk = HAS_CJK.test(raw);
-  const q = cjk ? (CJK_OCR_ALIASES[raw] || raw) : normalizeText(raw);
+  const q = cjk ? (CJK_OCR_ALIASES[raw] || raw).replace(/\s+/g, "") : normalizeText(raw);
   let best = null;
   let bestScore = 0;
   let second = null;
@@ -145,7 +145,7 @@ export function searchDict(query, dict, { threshold = 0.45, limit = 60 } = {}) {
   const raw = (query || "").trim();
   if (!raw) return dict.map((record) => ({ record, score: 0 }));
   const cjk = HAS_CJK.test(raw);
-  const q = cjk ? (CJK_OCR_ALIASES[raw] || raw) : normalizeText(raw);
+  const q = cjk ? (CJK_OCR_ALIASES[raw] || raw).replace(/\s+/g, "") : normalizeText(raw);
   const scored = [];
   for (const rec of dict) {
     const s = scoreRecord(q, rec, cjk);

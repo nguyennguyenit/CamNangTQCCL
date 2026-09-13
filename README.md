@@ -6,10 +6,10 @@ Website tĩnh tra cứu đội hình, tướng, chiến pháp và hỗ trợ qu�
 
 ## Tính năng
 
-- 9 section có deep-link bằng hash: Team PK, Meta phe cũ, Cùng Tồn, Khai hoang, tướng, chiến pháp, tracker chiêu mộ, soi đội và gợi ý đội từ kho.
+- 8 section có deep-link bằng hash: Team chuẩn, Team khác, Cùng Tồn, Khai hoang, Tra cứu, tracker chiêu mộ, soi đội và gợi ý đội từ kho.
 - Hai tab team dùng chung bộ lọc inline: search toàn văn + chip động theo dữ liệu từng tab; mobile thu gọn vùng lọc sau nút `☰ Bộ lọc`.
-- Chọn kịch bản/phiên bản luật dùng chung cho tra cứu, Cùng Tồn và gợi ý; URL giữ phạm vi, bộ lọc và cấu hình đang mở. Khai hoang dùng bản bảo trì mới nhất.
-- Tra cứu 112 tướng và 239 chiến pháp bằng dữ liệu local, hỗ trợ tên Việt/Hán-Việt/Hán.
+- Chọn kịch bản/phiên bản luật dùng chung cho Team chuẩn, Team khác, Cùng Tồn và gợi ý; URL giữ phạm vi, bộ lọc và cấu hình đang mở. Khai hoang dùng bản bảo trì mới nhất.
+- Tra cứu local thống nhất 202 tướng, 406 chiến pháp và bốn nhóm catalog bổ sung; hỗ trợ tên Việt/Hán-Việt/Hán, deep-link và hồ sơ liên quan.
 - Tracker chiêu mộ lưu nhiều account, pity và lịch sử trong `localStorage`; có xuất/nhập JSON.
 - Soi screenshot qua Worker + DashScope Qwen; frontend map kết quả và đối chiếu 166 team local.
 - Gợi ý portfolio tối đa 5 team bằng engine local. AI chỉ trích xuất dữ liệu từ ảnh, không chọn team.
@@ -19,15 +19,16 @@ Dữ liệu theo kịch bản hiện có Binh Diễn Xuân Thu ở mức tham kh
 cấu hình hoặc điểm VN được xác minh để gợi ý theo mùa. Xem
 [phạm vi dữ liệu và điều kiện promote](docs/season-team-data.md).
 
-Snapshot dữ liệu công khai kiểm tra ngày 2026-08-25:
+Snapshot dữ liệu công khai được chứng nhận local ngày 2026-09-13:
 
 | Dữ liệu | Quy mô |
 |---|---:|
-| Team | 166 = 56 Team PK + 110 Meta phe cũ |
+| Đội legacy | 166 = 56 Team PK + 110 Meta phe cũ |
 | Tier | 31 team, 39 bản xếp hạng nguồn |
 | Cùng Tồn | 5 nhóm, 25 team |
 | Khai hoang | 11 team, 5 mỏ |
-| Tướng / chiến pháp / binh thư map | 112 / 239 / 66 |
+| Tra cứu | 202 tướng / 406 chiến pháp / 114 trang bị / 39 quân sư / 16 cải tạo / 41 công trình |
+| Binh thư map | 66 |
 
 ## Chạy local
 
@@ -76,9 +77,9 @@ python3 -m pipeline.build_books_dict
 python3 -m pipeline.build_team_tier
 ```
 
-Catalog SGSDeck có private snapshot tại `data/sgsdeck/`, với đường rebuild
-offline từ cache đã checksum. Cache hiện gồm sáu list, 176 detail tướng, 41
-detail công trình và equipment specials; lệnh build không tự gọi mạng:
+Nguồn SGSDeck có private snapshot tại `data/sgsdeck/`, với đường rebuild offline
+từ cache đã checksum. Cache hiện gồm sáu list, 176 detail tướng, 41 detail công
+trình và equipment specials; lệnh build không tự gọi mạng:
 
 ```bash
 python3 -m pipeline.build_sgsdeck_catalog --cache pipeline/sgsdeck-cache
@@ -86,12 +87,13 @@ python3 -m pipeline.query_sgsdeck_catalog validate
 python3 -m pipeline.query_sgsdeck_catalog query --group generals --name "趙雲"
 ```
 
-Xem contract nguồn, cache và private/public boundary tại
-[docs/sgsdeck-catalog.md](docs/sgsdeck-catalog.md). Chủ project xác nhận quyền
-import trong phạm vi sáu catalog ngày 2026-09-12; đây không phải open license.
-Snapshot hiện validate đủ 202 generals, 393 tactics, 114 equipment + 90 specials,
-39 advisors, 16 troop-mods + 192 options và 41 buildings + 426 levels. Catalog
-vẫn private, không nằm trong public routes hoặc `dist`.
+Snapshot nguồn validate đủ 202 generals, 393 tactics, 114 equipment + 90
+specials, 39 advisors, 16 troop-mods + 192 options và 41 buildings + 426 levels.
+Nguồn, provenance và review evidence vẫn private; website chỉ publish projection
+tiếng Việt đã review: 202 tướng, 406 chiến pháp và catalog bổ sung. Xem
+[quy trình Tra cứu thống nhất](docs/unified-lookup.md) và
+[contract SGSDeck private/public](docs/sgsdeck-catalog.md). Chủ project xác nhận
+quyền import trong phạm vi sáu catalog ngày 2026-09-12; đây không phải open license.
 
 Không chạy máy móc trên dữ liệu đang dùng: `build_json.py` cố ý loại nguồn Đô Úy nhưng hiện chỉ dựng `50 + 110`, trong khi artifact công khai có `56 + 110`. `pipeline/do-uy-ss18-source.json` giữ 40 mục làm archive nguồn thô và không tham gia publication. Clone sạch thường cũng thiếu HTML nguồn và cache crawl bị ignore. Trước khi rebuild: backup `data/`, bảo đảm đủ nguồn, chạy từng bước, rồi review toàn bộ diff và test.
 

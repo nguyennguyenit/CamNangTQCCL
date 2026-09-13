@@ -1,7 +1,7 @@
 ---
 phase: 2
 title: "Browser and details"
-status: pending
+status: completed
 priority: P1
 effort: "3d"
 dependencies: [1]
@@ -178,11 +178,11 @@ C4 uses `W/playwright.config.mjs` only: it builds and manages preview on port 41
 
 ## Success Criteria
 
-- [ ] HTML/current/manifest/output bytes identify one valid generation; unknown output fails and source failures remain isolated.
-- [ ] Canonical tabs/aliases, every consumer destination and local all/unknown/known season scopes follow the tables; excluded variants never appear as Team khác.
-- [ ] Appropriate existing filters/style survive; searchable seasons/fixed tiers/exact cards/full details work without browse ruleset/score controls.
-- [ ] Behavioral Reds become green; gameplay/header/private-artifact invariants retain explicit coverage and migration evidence.
-- [ ] Mobile/keyboard/light/dark/stale-response cases pass; gameplay/Khaihoang/coexist/catalog remain available.
+- [x] HTML/current/manifest/output bytes identify one valid generation; unknown output fails and source failures remain isolated.
+- [x] Canonical tabs/aliases, every consumer destination and local all/unknown/known season scopes follow the tables; excluded variants never appear as Team khác.
+- [x] Appropriate existing filters/style survive; searchable seasons/fixed tiers/exact cards/full details work without browse ruleset/score controls.
+- [x] Behavioral Reds became green; gameplay/header/private-artifact invariants retain explicit coverage and migration evidence.
+- [x] Mobile/keyboard/light/dark/stale-response cases pass; gameplay/Khaihoang/coexist/catalog remain available.
 
 ## Risk Assessment and Rollback
 

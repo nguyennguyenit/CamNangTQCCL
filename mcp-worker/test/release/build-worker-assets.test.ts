@@ -11,9 +11,13 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 
-import { ARTIFACT_NAMES, validateManifest } from "../../src/data/artifact-contracts.js";
+import {
+  ARTIFACT_NAMES,
+  V2_ARTIFACT_NAMES,
+  validateManifest,
+} from "../../src/data/artifact-contracts.js";
 import {
   calculateWorkerAssetInventoryDigest,
   parseWorkerReleaseEvidence,
@@ -25,6 +29,14 @@ import {
   replaceWorkerAssetDirectory,
   WorkerAssetBuildError,
 } from "../../scripts/build-worker-assets.js";
+import {
+  createLookupSourceRoot,
+  encodeJson,
+  LOOKUP_SIDECAR_NAMES,
+  releaseSnapshotBundle,
+  removeCreatedRoots,
+  type RawRootOptions,
+} from "../fixtures/lookup-roots.js";
 
 const fixtureRoot = new URL("../fixtures/release-snapshot/", import.meta.url);
 const repositoryRoot = new URL("../../../", import.meta.url);
@@ -308,6 +320,23 @@ describe("buildWorkerAssets", () => {
     expect(await outputBytes(outputDirectory)).toEqual(before);
   });
 
+  it("từ chối inventory lookup xuất hiện giữa lúc capture raw root", async () => {
+    const parent = await mkdtemp(join(tmpdir(), "tqccl-worker-assets-"));
+    const outputDirectory = join(parent, ".worker-assets");
+    const source = await createSource();
+    let cleanChecks = 0;
+
+    await expect(buildWorkerAssets({
+      ...buildOptions(source, outputDirectory),
+      assertCleanSource: async () => {
+        cleanChecks += 1;
+        if (cleanChecks === 2) {
+          await writeFile(join(source, "lookup-manifest.json"), encodeJson({ schemaVersion: 1 }));
+        }
+      },
+    })).rejects.toMatchObject({ code: "INVALID_SOURCE_ASSET" });
+  });
+
   it("package và CI chỉ gọi builder mới, đồng thời giữ package private", async () => {
     const packageJson = JSON.parse(
       await readFile(new URL("mcp-worker/package.json", repositoryRoot), "utf8"),
@@ -350,5 +379,117 @@ describe("buildWorkerAssets", () => {
         name.startsWith(".worker-assets.previous-"),
       ),
     ).toBe(true);
+  });
+});
+
+describe("buildWorkerAssets với lookup sidecar", () => {
+  afterEach(removeCreatedRoots);
+
+  const withSidecars = (dataRoot: string, outputDirectory: string) => ({
+    ...buildOptions(dataRoot, outputDirectory),
+    allowedSourceFiles: [...LOOKUP_SIDECAR_NAMES],
+  });
+
+  it("nhận hai sidecar website hợp lệ nhưng không emit chúng và giữ đúng inventory 6/11", async () => {
+    for (const seasonal of [false, true]) {
+      const parent = await mkdtemp(join(tmpdir(), "tqccl-worker-assets-"));
+      const outputDirectory = join(parent, ".worker-assets");
+      const dataRoot = await createLookupSourceRoot({ seasonal });
+
+      const built = await buildWorkerAssets(
+        withSidecars(dataRoot, outputDirectory),
+      );
+
+      const names = (await readdir(outputDirectory)).sort();
+      const artifactNames: readonly string[] = seasonal
+        ? V2_ARTIFACT_NAMES
+        : ARTIFACT_NAMES;
+      expect(built.artifactNames).toEqual(artifactNames);
+      expect(names).toEqual(
+        [...artifactNames.map((name) => `${name}.json`), "manifest.json"].sort(),
+      );
+      for (const sidecar of LOOKUP_SIDECAR_NAMES) {
+        expect(names).not.toContain(sidecar);
+      }
+      expect(
+        JSON.parse(
+          await readFile(join(outputDirectory, "manifest.json"), "utf8"),
+        ).schemaVersion,
+      ).toBe(seasonal ? 2 : 1);
+    }
+  });
+
+  it("validate raw lookup bundle trước khi chọn heroes/tactics cho MCP snapshot", async () => {
+    const bundle = await releaseSnapshotBundle();
+    const brokenCatalog = { ...bundle.catalog };
+    delete brokenCatalog.specials;
+    const cases: Record<string, RawRootOptions> = {
+      "payload bị sửa sau khi manifest chốt": {
+        payloadOverrides: { "tactics.json": encodeJson(bundle.tactics.slice(1)) },
+      },
+      "digest manifest không khớp bytes": {
+        manifest: (manifest) => ({
+          ...manifest,
+          files: { ...manifest.files, "heroes-dict.json": "0".repeat(64) },
+        }),
+      },
+      "generationId không dẫn xuất": {
+        manifest: (manifest) => ({
+          ...manifest,
+          generationId: `lookup:${"1".repeat(64)}`,
+        }),
+      },
+      "manifest sai schemaVersion": {
+        manifest: (manifest) => ({ ...manifest, schemaVersion: 2 }),
+      },
+      "catalog thiếu nhóm": { bundle: { ...bundle, catalog: brokenCatalog } },
+      "cross-ID chiến pháp treo": {
+        bundle: {
+          ...bundle,
+          heroes: bundle.heroes.map((hero) => ({
+            ...hero,
+            lookup: {
+              ...(hero.lookup as object),
+              inheritTacticId: "tactic:khong-co",
+            },
+          })),
+        },
+      },
+    };
+
+    for (const [label, options] of Object.entries(cases)) {
+      const parent = await mkdtemp(join(tmpdir(), "tqccl-worker-assets-"));
+      const outputDirectory = join(parent, ".worker-assets");
+      const dataRoot = await createLookupSourceRoot(options);
+
+      await expect(
+        buildWorkerAssets(withSidecars(dataRoot, outputDirectory)),
+        label,
+      ).rejects.toMatchObject({ code: "INVALID_SOURCE_ASSET" });
+      await expect(readdir(outputDirectory)).rejects.toMatchObject({
+        code: "ENOENT",
+      });
+    }
+  });
+
+  it("vẫn từ chối sidecar chưa được allowlist hoặc bundle chỉ có một nửa", async () => {
+    const parent = await mkdtemp(join(tmpdir(), "tqccl-worker-assets-"));
+    const outputDirectory = join(parent, ".worker-assets");
+
+    await expect(
+      buildWorkerAssets(
+        buildOptions(await createLookupSourceRoot(), outputDirectory),
+      ),
+    ).rejects.toMatchObject({ code: "INVALID_SOURCE_ASSET" });
+
+    for (const omitted of LOOKUP_SIDECAR_NAMES) {
+      const dataRoot = await createLookupSourceRoot({
+        omitSidecars: [omitted],
+      });
+      await expect(
+        buildWorkerAssets(withSidecars(dataRoot, outputDirectory)),
+        omitted,
+      ).rejects.toMatchObject({ code: "INVALID_SOURCE_ASSET" });
+    }
   });
 });

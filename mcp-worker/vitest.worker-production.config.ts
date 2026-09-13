@@ -17,6 +17,8 @@ export default defineConfig({
           "facets.json",
           "khaihoang.json",
           "tactics-generic.json",
+          "lookup-catalog.json",
+          "lookup-manifest.json",
         ],
         readSourceState: async () => ({
           commitSha: "0".repeat(40),

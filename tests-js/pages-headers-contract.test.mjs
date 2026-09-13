@@ -67,6 +67,9 @@ test("_headers covers every published shell and mutable raw asset", async () => 
     "/index.html",
     "/favicon.png",
     ...PUBLIC_ARTIFACTS.map((artifact) => `/${artifact.kind}/${artifact.sourceBasename}`),
+    "/data/recommended/current.json",
+    `/data/recommended/${"1".repeat(64)}/manifest.json`,
+    `/data/recommended/${"1".repeat(64)}/details-s-${"2".repeat(64)}.json`,
   ];
   for (const path of publicPaths) {
     assert.equal(policyFor(rules, path), cachePolicy, `${path} must revalidate`);

@@ -79,47 +79,4 @@ test("published facets and modules do not expose the retired Đô Úy season", a
   assert.doesNotMatch(manifestSource, /entry\(["']js["'],\s*["']do-uy["']\)/);
 });
 
-test("app keeps required datasets byte-cached for season validation and team tier optional", async () => {
-  const source = await readFile(new URL("js/app.js", root), "utf8");
-  const required = [
-    "teams.json",
-    "coexist.json",
-    "khaihoang.json",
-    "tactics.json",
-    "heroes-dict.json",
-    "books-dict.json",
-  ];
 
-  for (const name of required) {
-    if (name === 'khaihoang.json') assert.match(source, /loadJSON\(["']\.\/data\/khaihoang\.json["']\)/);
-    else assert.ok(source.includes(`loadData("${name.replace('.json','')}")`));
-    assert.doesNotMatch(source, new RegExp(`loadOptionalJSON\\(["']\\.\\/data\\/${name.replace(".", "\\.")}["']`));
-  }
-  assert.match(source, /byteRequests\.has\(name\)/);
-  assert.match(source, /loadSeasonModel\(/);
-  assert.match(source, /loadOptionalJSON\(["']\.\/data\/team-tier\.json["'], \[\]\)/);
-});
-
-test("app preserves the nine-section hash contract and cross-section search seam", async () => {
-  const source = await readFile(new URL("js/app.js", root), "utf8");
-  const expectedSections = [
-    "team-pk",
-    "meta-cu",
-    "coexist",
-    "khaihoang",
-    "heroes",
-    "tactics",
-    "recruit-tracker",
-    "analyze",
-    "roster-recommend",
-  ];
-  const sectionMatch = source.match(/const SECTIONS\s*=\s*\[([\s\S]*?)\]\s*;/);
-  const actualSections = sectionMatch
-    ? [...sectionMatch[1].matchAll(/["']([^"']+)["']/g)].map((match) => match[1])
-    : [];
-
-  assert.ok(sectionMatch, "SECTIONS array must remain observable");
-  assert.deepEqual(actualSections, expectedSections);
-  assert.match(source, /return SECTIONS\.includes\(name\) \? name : ["']team-pk["']/);
-  assert.match(source, /sections\[name\]\?\.setSearch\(first\)/);
-});

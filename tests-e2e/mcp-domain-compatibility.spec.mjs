@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 async function waitForBoot(page) {
-  await expect(page.locator("#section-team-pk .team-card").first()).toBeAttached();
+  await expect(page.locator("#season-scenario")).toBeAttached();
 }
 
 test("scan được lưu/hiển thị và recommendation giữ assignment theo holder", async ({

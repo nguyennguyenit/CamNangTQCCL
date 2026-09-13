@@ -1,7 +1,7 @@
 ---
 title: "Team chuẩn và Team khác theo mùa"
 description: "Python thu thập SGSDeck Recommended; đối chiếu team có sẵn và hiển thị hai tab theo mùa, với deep/TDD."
-status: pending
+status: completed
 priority: P1
 effort: "7–8d dự kiến; điều chỉnh theo corpus và mapping thực"
 branch: "feat/season-team-lookup"
@@ -42,9 +42,9 @@ Generation output is under `src/data/recommended-reference/<generationId>/`. One
 
 | # | Phase | Status | Depends |
 |---|-------|--------|---------|
-| 1 | [Source coverage and dedup contract](./phase-01-start.md) | Pending | none |
-| 2 | [Browser and details](./phase-02-browser-and-details.md) | Pending | Phase 1 |
-| 3 | [Validation and release readiness](./phase-03-validation-and-release.md) | Pending | Phase 2 |
+| 1 | [Source coverage and dedup contract](./phase-01-start.md) | Completed | none |
+| 2 | [Browser and details](./phase-02-browser-and-details.md) | Completed | Phase 1 |
+| 3 | [Validation and release readiness](./phase-03-validation-and-release.md) | Completed | Phase 2 |
 
 ## Dependencies and Ownership
 
@@ -58,20 +58,20 @@ Each phase includes a file inventory, interface/caller checklist, dependency map
 
 ## Acceptance Criteria
 
-- [ ] Python acquisition reconciles the complete frozen source scope inventory, resumes interrupted work, and records hashes/empty/uncollected states; browser is fallback/verification.
-- [ ] Identity mapping and explicit legacy variant extraction have evidence; unknown identity never proves distinctness and no unsupported combinations are synthesized.
-- [ ] HTML/index/details/Team khác use one validated generation; failed writes retain last-good and every public byte has a declared owner.
-- [ ] Visible nav names are exactly `Team chuẩn` and `Team khác`; old hashes remain compatible aliases.
-- [ ] 29 advertised seasons are represented with accurate empty/available states; counts are source-advertised, not summed across categories blindly.
-- [ ] Source season/category/faction/unit/tier/subcategory facets are preserved, but local facets do not collapse incoherently after a selection.
-- [ ] Ranking is fixed: source tier group order, then source score descending inside the same tier, then source list order/sourceConfigId; no point filter or sort control.
-- [ ] Cards show three holders plus tactics/books; detail opens full source descriptions, stat focus, special traits, author, source URL and unknown fields explicitly.
-- [ ] Initial `Team khác` includes existing local teams that are not duplicates of Team chuẩn; missing provenance is labeled honestly, not fabricated.
-- [ ] Future external `Team khác` admits only builds with research/chiến báo source attribution and a dedup key different from Team chuẩn.
-- [ ] Duplicate comparisons use three hero identity variants plus tactics assigned to each hero; holder display order and tactic slot order do not create a new build, but moving tactics between heroes does.
-- [ ] Khai hoang remains latest-maintained in its current tab/data; source Recommended Khaihoang category, if present, stays Recommended reference content.
-- [ ] Public artifacts are declared and validated; internal evidence/provenance is not exposed beyond allowed source reference fields.
-- [ ] Existing TeamPK/MetaCu legacy corpus, IDs, hashes, MCP contracts and old links remain backward compatible; records with unresolved identity/alternatives stay internal pending review and counts are disclosed.
+- [x] Python acquisition reconciles the complete frozen source scope inventory, resumes interrupted work, and records hashes/empty/uncollected states; browser is fallback/verification.
+- [x] Identity mapping and explicit legacy variant extraction have evidence; unknown identity never proves distinctness and no unsupported combinations are synthesized.
+- [x] HTML/index/details/Team khác use one validated generation; failed writes retain last-good and every public byte has a declared owner.
+- [x] Visible nav names are exactly `Team chuẩn` and `Team khác`; old hashes remain compatible aliases.
+- [x] 29 advertised seasons are represented with accurate empty/available states; counts are source-advertised, not summed across categories blindly.
+- [x] Source season/category/faction/unit/tier/subcategory facets are preserved, but local facets do not collapse incoherently after a selection.
+- [x] Ranking is fixed: source tier group order, then source score descending inside the same tier, then source list order/sourceConfigId; no point filter or sort control.
+- [x] Cards show three holders plus tactics/books; detail opens full source descriptions, stat focus, special traits, author, source URL and unknown fields explicitly.
+- [x] Initial `Team khác` includes existing local teams that are not duplicates of Team chuẩn; missing provenance is labeled honestly, not fabricated.
+- [x] Future external `Team khác` admits only builds with research/chiến báo source attribution and a dedup key different from Team chuẩn.
+- [x] Duplicate comparisons use three hero identity variants plus tactics assigned to each hero; holder display order and tactic slot order do not create a new build, but moving tactics between heroes does.
+- [x] Khai hoang remains latest-maintained in its current tab/data; source Recommended Khaihoang category, if present, stays Recommended reference content.
+- [x] Public artifacts are declared and validated; internal evidence/provenance is not exposed beyond allowed source reference fields.
+- [x] Existing TeamPK/MetaCu legacy corpus, IDs, hashes, MCP contracts and old links remain backward compatible; records with unresolved identity/alternatives stay internal pending review and counts are disclosed.
 
 ## Unresolved
 
@@ -79,6 +79,6 @@ Each phase includes a file inventory, interface/caller checklist, dependency map
 
 ## Readiness review
 
-2026-09-12: **Ready for Phase 1 implementation.** [Initial deep/TDD audit](./reports/audit-deep-tdd.md) records the earlier draft's gaps. This revision adds acquisition/browser capture import, reviewed identity evidence, explicit variants/counts, coherent publication, source URL validation, consumer/state and test-migration contracts. [Final review and adjudication](./reports/plan-validation.md) records three review lenses, 30 claim checks and seven finding dispositions. No product interview is pending; actual corpus/mapping counts and behavioral test evidence are execution outputs. All phases remain pending.
+2026-09-12: **Completed and release-gated.** Published generation `996d7b36b9954e64d24358cbb0fb1371a18a39e72748c8ceb1a837add76f88e5` covers all 87 advertised scopes with explicit complete/empty/uncollected states. [Validation evidence](./reports/validation.md) records corpus counts, hashes, rollback, automated checks and browser proof. Mandatory final review and Kongming phase gates returned GO; unresolved identities and alternative branches remain internal review state rather than guessed public data.
 
 <!-- slug: recommended-season-browser -->

@@ -77,7 +77,12 @@ npm run stdio
 npm run test:coverage
 ```
 
-CLI/stdio đọc filesystem qua `TQCCL_DATA_ROOT` tùy chọn. Stdout của stdio dành riêng cho protocol; diagnostic cố định đi qua stderr.
+CLI/stdio đọc filesystem qua `TQCCL_DATA_ROOT` tùy chọn. Nó phân biệt raw legacy,
+raw project có đúng cặp `lookup-catalog.json` + `lookup-manifest.json`, và
+packaged MCP root có `manifest.json` cùng exact inventory. Cặp lookup được kiểm
+hash/generation nhưng không trở thành MCP artifact hay kind. Root partial/mixed,
+transaction đang active hoặc bytes sai trả `DATA_UNAVAILABLE` đã redact. Stdout
+của stdio dành riêng cho protocol; diagnostic cố định đi qua stderr.
 
 Gate package và toàn repository:
 
@@ -109,9 +114,11 @@ Worker dùng một private Static Assets collection có binding `ASSETS`,
 [artifact contracts](../mcp-worker/src/data/artifact-contracts.ts): manifest v1
 có sáu JSON legacy cộng `manifest.json` (bảy file); v2 có thêm đủ năm sidecar
 mùa, thành 11 JSON cộng manifest (12 file). Không chấp nhận bộ sidecar một phần.
-V1 giữ nguyên thuật toán identity và fixture lịch sử. `StaticAssetsDataSource`
-chọn allowlist từ manifest rồi validate bytes/hash/cross-reference trước khi
-cache snapshot immutable; filesystem dùng cùng validator.
+V1 giữ nguyên thuật toán identity và fixture lịch sử. `build-worker-assets`
+cho phép đúng hai lookup sidecar ở source root để xác minh dictionary generation,
+nhưng loại cả hai khỏi output package. `StaticAssetsDataSource` chọn allowlist
+từ manifest rồi validate bytes/hash/cross-reference trước khi cache snapshot
+immutable; filesystem dùng cùng artifact validator.
 
 Mỗi Worker version chứa cả code và data nên promotion/rollback là nguyên tử. Không cần storage release rời. Nhịp vận hành mặc định là một release theo mùa, khoảng ba tháng: curate data diff, review, build deterministic bundle, chạy full gate rồi phát hành exact Worker version. GoClaw URL, bearer và tám tool không đổi khi chỉ cập nhật dữ liệu mùa.
 

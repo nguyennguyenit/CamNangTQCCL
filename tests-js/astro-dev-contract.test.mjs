@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { cp, mkdtemp, readFile, symlink, writeFile } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, readFile, symlink, writeFile } from "node:fs/promises";
 import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -88,6 +88,19 @@ test("Astro dev preserves module resolution, MIME types, refresh, and exact JSON
     await cp(new URL(`../${path}`, import.meta.url), new URL(path, fixtureUrl));
   }
   await symlink(new URL("../node_modules/", import.meta.url), new URL("node_modules", fixtureUrl), "dir");
+  const privateSentinel = "lookup-private-sentinel";
+  const privateFiles = [
+    "pipeline/lookup-identity.json",
+    "pipeline/lookup-translations.json",
+    "pipeline/lookup-inputs/sentinel.txt",
+    "pipeline/lookup-output/sentinel.txt",
+    "data/sgsdeck/sentinel.txt",
+  ];
+  for (const privateFile of privateFiles) {
+    const target = new URL(privateFile, fixtureUrl);
+    await mkdir(new URL(".", target), { recursive: true });
+    await writeFile(target, privateSentinel);
+  }
 
   const port = await availablePort();
   const output = [];
@@ -151,6 +164,23 @@ test("Astro dev preserves module resolution, MIME types, refresh, and exact JSON
     Buffer.from(await jsonResponse.arrayBuffer()),
     await readFile(new URL("data/teams.json", fixtureUrl)),
   );
+  const privateUrls = [
+    "/pipeline/lookup-identity.json",
+    "/pipeline/lookup-translations.json?raw",
+    "/pipeline/lookup-inputs/sentinel.txt?import",
+    "/pipeline/lookup-output/sentinel.txt",
+    "/data/sgsdeck/sentinel.txt",
+    `/@fs/${fixtureRoot}/pipeline/lookup-inputs/sentinel.txt?raw`,
+    `/@fs/${fixtureRoot}/pipeline/LOOKUP-identity.json?raw`,
+    `/@fs/${fixtureRoot}/data/SGSDECK/sentinel.txt?raw`,
+    "/data/%2e%2e/pipeline/lookup-output/sentinel.txt",
+  ];
+  for (const privateUrl of privateUrls) {
+    const response = await fetch(`${baseUrl}${privateUrl}`);
+    const body = await response.text();
+    assert.equal(response.status, 404, `private artifact must be denied: ${privateUrl}`);
+    assert.equal(body.includes(privateSentinel), false, `private bytes leaked: ${privateUrl}`);
+  }
 
   const jsRefreshMarker = "fixture-js-refresh";
   await writeFile(

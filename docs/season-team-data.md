@@ -71,23 +71,104 @@ Khai hoang dùng hướng dẫn được bảo trì mới nhất và không thu�
 Text gợi ý khai hoang trong nguồn Cùng Tồn không tự thêm đội hoặc liên kết
 chuyển hình vào dữ liệu Khai hoang.
 
-Recommended có [adapter riêng](../pipeline/sgsdeck_recommended.py), ngoài sáu
-nhóm của [catalog SGSDeck](sgsdeck-catalog.md). Adapter đọc cache đã checksum,
-không tự gọi mạng:
+Recommended có adapter/parser offline trong
+[`pipeline/sgsdeck_recommended.py`](../pipeline/sgsdeck_recommended.py) và crawler
+có cache/checkpoint trong
+[`pipeline/crawl_sgsdeck_recommended.py`](../pipeline/crawl_sgsdeck_recommended.py).
+Crawler chỉ nhận URL `https://sgsdeck.com/recommended`, kiểm tra redirect trước
+khi theo, đóng băng danh sách mùa/danh mục và lưu checksum từng trang. Chạy lại
+với `--resume`; scope chỉ được xuất bản khi có trạng thái `complete`,
+`empty-category` hoặc `uncollected-season`.
 
 ```bash
-python3 -m pipeline.sgsdeck_recommended --cache /path/to/recommended-cache
-python3 -m unittest tests.test_sgsdeck_recommended
+python3 -m pipeline.crawl_sgsdeck_recommended \
+  --cache .cache/sgsdeck-recommended --all-source-scopes --resume
+python3 -m pipeline.recommended_team_dedup \
+  --teams data/teams.json --team-tier data/team-tier.json \
+  --cache .cache/sgsdeck-recommended \
+  --identity-map pipeline/recommended-identity-map.json \
+  --output pipeline/recommended-other-teams.json
+python3 -m pipeline.build_recommended_reference \
+  --cache .cache/sgsdeck-recommended \
+  --identity-map pipeline/recommended-identity-map.json \
+  --other-ledger pipeline/recommended-other-teams.json \
+  --output src/data/recommended-reference
 ```
 
-Người dùng xác nhận ngày 2026-09-12 phạm vi sử dụng bao gồm lưu và hiển thị
-cấu hình/điểm Recommended trên website; [xác nhận thực thi](../plans/260907-0233-season-team-lookup/reports/execution-decisions.md)
-đã đóng câu hỏi quyền nguồn. Điều kiện đối chiếu dữ liệu bên dưới vẫn áp dụng.
+`recommended-identity-map.json` là ledger alias đã review. Identity nguồn chưa
+giải quyết được luôn là wildcard khi đối chiếu, không phải bằng chứng rằng một
+đội khác Team chuẩn. Team có alternatives chưa tách thành cấu hình cụ thể cũng
+ở trạng thái pending. Chỉ các row `admitted` trong
+`recommended-other-teams.json` được ghi vào `other-teams.json`; duplicate và
+pending không đi vào public artifact.
 
-Canonical evidence chỉ được ghi khi đủ mọi chi tiết của scope đã chọn và
-list/detail khớp. Các trường HTML streaming phải trở về đúng holder trước
-khi trích xuất. `pipeline/sgsdeck-recommended-evidence.json` là bằng chứng
-nguồn nội bộ, không nằm trong public routes và không tự trở thành điểm VN.
+`src/data/recommended-reference/current.json` chọn đúng một generation bất biến.
+Manifest khai báo hash và kích thước của `seasons.json`, `index.json`,
+`other-teams.json` và từng `details-<safeScopeKey>.json`. Astro chỉ xuất
+`/data/recommended/current.json` cùng các byte đã khai báo dưới
+`/data/recommended/<generationId>/`; HTML pin generation đó nên một trang đang
+mở không trộn hai lần cập nhật.
+
+### Tên Việt và dữ liệu Trung nguyên bản
+
+Tên tướng, chiến pháp và binh thư trong Team chuẩn chỉ dùng bản Việt đã có
+trong `pipeline/recommended-identity-map.json`, đối chiếu từ từ điển của dự án;
+không tự dịch tên mới. Alias phồn thể/giản thể được ghi cùng bằng chứng nguồn
+để tái sử dụng đúng tên Việt hiện có.
+
+Builder bổ sung `displayNameVi`, `tacticSlotsVi`, `bookSlotsVi` cho tướng chính
+và các cấu hình thay thế, sau khi kiểm tra hash corpus gốc với ledger Team khác.
+Hai mảng tên Việt giữ đúng vị trí slot nguồn; tên chưa đối chiếu được là `null`.
+Thẻ đội và chi tiết ưu tiên bản Việt từng slot, thiếu thì hiển thị tiếng Trung.
+Tìm kiếm hỗ trợ cả tên Việt có dấu/không dấu và tên Trung gốc.
+
+Các trường `nameRaw`, `tacticSlotsRaw`, `bookSlotsRaw`, `nameZh` và ghi chú nguồn
+không bị ghi đè, giữ dữ liệu cho giao diện hai ngôn ngữ sau này. Chưa có bộ chọn
+ngôn ngữ; tên đội và nội dung chưa có bản Việt vẫn giữ nguyên nguồn.
+
+Khi bổ sung bản dịch đã xác minh, cập nhật entry/alias tương ứng trong
+`pipeline/recommended-identity-map.json` và bằng chứng đối chiếu. Chạy lại lệnh
+dedup rồi builder ở trên vì ledger kiểm tra hash file mapping; không sửa trực
+tiếp generation đã xuất. Sau đó build và verify lại website.
+
+Tên mùa và nhãn bộ lọc dùng chung từ `pipeline/recommended-display-map.json`.
+Phe, loại binh và nguồn tái sử dụng thuật ngữ trên main. Toàn bộ 29 mùa nguồn,
+kể cả mùa cũ/chưa thu thập, có tên Việt riêng; tên đã có trong dự án được ưu
+tiên, tên bổ sung mang trạng thái `reference-translation`. Đây không phải xác
+nhận tên chính thức hoặc quy đổi mùa nguồn sang máy chủ Việt Nam.
+
+Builder giữ nguyên tên Trung, mã mùa, ID, giá trị lọc và thứ tự nguồn; chỉ thêm
+metadata hiển thị sau khi kiểm tra corpus. Bộ chọn, thẻ và chi tiết dùng cùng
+tên mùa; tìm mùa nhận tên Việt có/không dấu, tên Trung và mã nguồn. Tìm kiếm
+không tự đổi mùa đang chọn. Chỉnh display map chỉ cần chạy lại builder; mùa
+mới hoặc tên nguồn đổi phải được đối chiếu trong map trước khi xuất bản.
+
+### Danh sách tên còn thiếu bản Việt
+
+Xuất worksheet nội bộ từ generation đã công bố, không cần crawler hoặc mạng:
+
+```sh
+python3 -m pipeline.report_recommended_translations \
+  --reference-dir src/data/recommended-reference \
+  --identity-map pipeline/recommended-identity-map.json \
+  --output pipeline/recommended-missing-translations.json
+```
+
+Report hiện có 85 tên: 42 tướng, 36 chiến pháp, 7 binh thư. Mỗi mục giữ các
+biến thể chữ Trung, số lần xuất hiện, tối đa ba ngữ cảnh đội/URL nguồn và
+`displayNameVi: null` để người dùng ghi bản dịch. Nhóm theo khóa alias đã
+chuẩn hóa và loại thực thể; không tự gộp danh tính mơ hồ. Report ghi hash map
+và generation để nhận biết dữ liệu cũ; không được xuất ra website.
+
+Worksheet không phải nguồn dịch tự động. Sau khi người dùng xác nhận, chuyển
+bản dịch và bằng chứng vào identity map dùng chung, chạy lại dedup → builder
+→ report. Việc tạo lại report sẽ ghi đè worksheet; lưu bản dịch được duyệt
+vào map trước. Không đổi stable ID chỉ vì sửa cách viết tên Việt.
+
+Quyền lưu và hiển thị cấu hình/điểm Recommended đã được người dùng xác nhận
+ngày 2026-09-12. Dữ liệu này là tham khảo nguồn, không tự trở thành điểm,
+tier hoặc eligibility gameplay VN. Khai hoang hiện tại vẫn dùng dữ liệu bảo
+trì riêng; danh mục Khaihoang của Recommended chỉ nằm trong Team chuẩn.
 
 ## Kiểm tra phạm vi đã có dữ liệu
 

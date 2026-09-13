@@ -1,7 +1,7 @@
 ---
 phase: 1
 title: "Source coverage and dedup contract"
-status: pending
+status: completed
 priority: P1
 effort: "3d"
 dependencies: []
@@ -134,12 +134,12 @@ Runbook records commands/options, inventory/hash, rate/cap exceptions, fallback 
 
 ## Success Criteria
 
-- [ ] Every observed season/category reconciled; 29 current options retained; blocked scopes never omitted to select a partial generation.
-- [ ] Full raw configurations, count meaning and empty distinctions survive acquisition/join; scores/tiers/identity never guessed.
-- [ ] Reviewed hero+tactic mapping, explicit legacy extraction and variant/ownership/multiplicity dedup pass; initial missing provenance allowed, ambiguous identity separately pending.
-- [ ] External provenance gate works; admitted Other retains original IDs and explicit/unknown source-season attribution.
-- [ ] Generation binds all source/mapping/dedup/payload hashes; index/detail/Other agree; prior generation survives interrupted acquisition/publication.
-- [ ] Actual before/after/regression evidence exists per step; Phase 2 receives schema/sample generation/manifest/results; no UI/gameplay/MCP eligibility activated here.
+- [x] Every observed season/category reconciled; 29 current options retained; blocked scopes never omitted to select a partial generation.
+- [x] Full raw configurations, count meaning and empty distinctions survive acquisition/join; scores/tiers/identity never guessed.
+- [x] Reviewed hero+tactic mapping, explicit legacy extraction and variant/ownership/multiplicity dedup pass; initial missing provenance allowed, ambiguous identity separately pending.
+- [x] External provenance gate works; admitted Other retains original IDs and explicit/unknown source-season attribution.
+- [x] Generation binds all source/mapping/dedup/payload hashes; index/detail/Other agree; prior generation survives interrupted acquisition/publication.
+- [x] Actual before/after/regression evidence exists per step; Phase 2 receives schema/sample generation/manifest/results; no UI/gameplay/MCP eligibility activated here.
 
 ## Risk Assessment And Rollback
 

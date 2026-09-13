@@ -52,6 +52,7 @@ class SgsdeckIdentityTest(unittest.TestCase):
             'import { canonicalHeroId } from "./js/hero-identity.js";'
             'import { canonicalDictionaryId } from "./mcp-worker/src/data/entity-identity.ts";'
             'console.log(JSON.stringify([canonicalHeroId("SP Lữ Mông"),'
+            'canonicalHeroId("40Y Lữ Bố"),'
             'canonicalDictionaryId("tactics", "Nhất Thân Thị Đảm")]));'
         )
         runtime = json.loads(subprocess.check_output(
@@ -60,6 +61,7 @@ class SgsdeckIdentityTest(unittest.TestCase):
         ))
         self.assertEqual(runtime, [
             sgsdeck_identity.canonical_id("hero", "SP Lữ Mông"),
+            sgsdeck_identity.canonical_id("hero", "40Y Lữ Bố"),
             sgsdeck_identity.canonical_id("tactic", "Nhất Thân Thị Đảm"),
         ])
 

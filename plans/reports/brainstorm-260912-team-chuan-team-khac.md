@@ -1,6 +1,6 @@
 # Brainstorm đã chốt: Team chuẩn và Team khác theo mùa
 
-Ngày: 2026-09-12. Trạng thái: đã chốt hướng sản phẩm, chưa hoàn thành triển khai.
+Ngày: 2026-09-12. Trạng thái: đã chốt hướng sản phẩm, bổ sung quyết định Việt hóa Team chuẩn. Trạng thái triển khai và bằng chứng xem plan cùng tài liệu thực hiện bên dưới; không đồng nghĩa đã deploy.
 
 Tài liệu này tập hợp các quyết định của người dùng trong cuộc trao đổi, ưu tiên quyết định mới nhất. Đây là điểm tra cứu chung về sản phẩm; các bước thực hiện và kiểm thử nằm trong [plan chính](../260912-0950-recommended-season-browser/plan.md). Không tạo thêm plan triển khai.
 
@@ -71,6 +71,61 @@ Quy tắc này quyết định đội xuất hiện ở tab nào, không khẳng
 - Mùa chưa có dữ liệu, danh mục rỗng và không có đội khớp bộ lọc cần thông báo phù hợp. Team chưa rõ mùa không tự gán vào một mùa cụ thể.
 - Nhãn Team PK và Meta cũ được thay bằng hai tab mới; giữ dữ liệu, ID và khả năng truy cập liên kết cũ. Đội trùng không được lọt vào danh sách Team khác qua liên kết cũ.
 
+## Việt hóa Team chuẩn và giữ dữ liệu hai ngôn ngữ
+
+**Quyết định mới nhất của người dùng:** “Cứ dịch theo dữ liệu đã có sẵn, thiếu chiến pháp nào chưa Việt hóa thì anh tự dịch lại bổ sung sau, vẫn giữ tiếng Trung để sau này còn làm 2 ngôn ngữ cho site.”
+
+### Kết quả mong muốn
+
+Team chuẩn dùng tên Việt quen thuộc, nhất quán với Meta cũ và từ điển hiện có của dự án. Nội dung chưa có bản Việt vẫn đọc được bằng tiếng Trung; người dùng sẽ bổ sung bản dịch sau. Giữ đồng thời dữ liệu Trung và Việt để hỗ trợ hai ngôn ngữ về sau.
+
+### Cách làm đã chốt
+
+- Chiến pháp trùng với Meta cũ dùng nguyên tên Việt đã có, sau khi đối chiếu đúng danh tính qua tên Trung; không dịch lại thành cách gọi khác.
+- Tướng và binh thư cũng dùng bản Việt sẵn có trong dữ liệu dự án. Giữ đúng biến thể thường/SP/CO/40Y; không suy tên từ đội hình hoặc vị trí trang bị.
+- Đối chiếu chữ phồn thể/giản thể khi xác nhận đó là cùng tên nguồn; đây là nhận diện tên đã có bản Việt, không phải sáng tác bản dịch mới.
+- Có bản Việt thì ưu tiên hiển thị trên thẻ đội, chi tiết và cấu hình thay thế. Chưa có hoặc chưa xác định chắc thì giữ tiếng Trung; không giấu mục đó hoặc thay bằng tên gần giống.
+- Giữ nguyên tên và nội dung Trung gốc; bản Việt lưu riêng. Tên đội, ghi chú, cộng điểm và mô tả chưa có bản dịch sẵn vẫn giữ nguyên nguồn.
+- Tìm kiếm bằng tên Việt có dấu/không dấu và tên Trung gốc đều phải tìm được đúng đội.
+- Có danh sách tên còn thiếu bản Việt, chia theo tướng / chiến pháp / binh thư, loại trùng theo đúng danh tính đã xác định và kèm tên Trung cùng đội hoặc liên kết nguồn làm ngữ cảnh. Không gộp tên chưa chắc là cùng một thực thể. Đây là đầu vào để người dùng dịch bổ sung, không phải yêu cầu xây màn hình quản trị.
+- Quản lý bản dịch tại một nơi dùng chung; không sửa riêng trên từng đội. Khi người dùng bổ sung hoặc sửa tên Việt, cùng bản dịch được áp dụng cho mọi đội liên quan, thẻ đội, chi tiết và tìm kiếm.
+- Tách bản dịch hiển thị khỏi danh tính: đổi cách viết tên Việt hoặc ngôn ngữ hiển thị không đổi ID, liên kết đội hay kết quả xét trùng.
+- Lấy nhãn, thuật ngữ và bộ lọc đã có trên `main` làm chuẩn, tái sử dụng cho Team chuẩn; không dịch lại hoặc thiết kế thêm một bộ lọc khác. Điểm đối chiếu hiện có: `js/team-filter-section.js` (nhãn và cách dựng bộ lọc), `js/render.js` (tên phe, binh chủng và nhãn nguồn), cùng dữ liệu tương ứng trên main.
+- Việt hóa cả nhãn và giá trị hiển thị trong bộ lọc Team chuẩn: phe, binh chủng, mùa/kịch bản, danh mục nguồn, nhóm đội và các lựa chọn liên quan. Chip đang chọn, danh sách lựa chọn và ô tìm kiếm trong bộ lọc dùng cùng thuật ngữ đã có trên main. Chỉ giữ tiếng Trung cho giá trị thực sự chưa có bản Việt sau khi đối chiếu main; giữ nguyên ký hiệu Tier như T0/T1.
+- Bản dịch bộ lọc chỉ thay phần hiển thị, không đổi mã giá trị, tham số URL hoặc quy tắc lọc. Tìm lựa chọn bằng tên Việt có dấu/không dấu hoặc tên Trung gốc đều phải nhận ra đúng lựa chọn khi có dữ liệu tương ứng.
+- Việt hóa đầy đủ tên mùa/kịch bản trong bộ chọn mùa, kết quả tìm mùa, nhãn đang chọn, thẻ đội và chi tiết. Ưu tiên tên đã có trên main; tên mùa chưa có bản Việt thì đối chiếu nguồn và bổ sung bản dịch tên mùa, không áp dụng quy tắc “để người dùng dịch sau” dành cho chiến pháp còn thiếu.
+- Giữ riêng tên Trung gốc và mã mùa nguồn như S1/S28/PK/OG. Dịch tên hiển thị không đồng nghĩa quy đổi mùa nguồn sang mùa máy chủ Việt Nam; không tự khẳng định bản dịch bổ sung là tên chính thức trong game.
+
+### Ràng buộc và phần không làm
+
+- Không tự dịch bổ sung chiến pháp còn thiếu; người dùng chịu trách nhiệm cung cấp bản dịch sau.
+- Không dùng dịch tự động lúc mở trang, không phiên âm Hán–Việt hàng loạt và không ghi đè tiếng Trung bằng tiếng Việt.
+- Không thay tướng, chiến pháp, binh thư, thứ tự slot, tier, điểm, mùa hoặc thứ tự xếp đội vì Việt hóa.
+- Chưa thêm nút chuyển ngôn ngữ hoặc triển khai toàn bộ site song ngữ. Đợt này chỉ giữ dữ liệu đủ để làm việc đó sau.
+- Chưa xây màn hình quản trị bản dịch. Danh sách thiếu bản Việt phục vụ rà soát và bổ sung dữ liệu, không mở thêm luồng quản trị.
+- Không mở rộng đợt Việt hóa này sang Team khác hoặc thay đổi cơ chế xét trùng/gợi ý đội.
+
+### Các phương án đã loại
+
+- Dịch lại toàn bộ, kể cả tên đã có: không chọn vì dễ lệch thuật ngữ Meta cũ và vượt yêu cầu.
+- Chỉ thay vài nhãn giao diện: không chọn vì chiến pháp, tướng và binh thư vẫn chưa dùng bản Việt đã có.
+- Chỉ giữ bản Việt: không chọn vì mất dữ liệu gốc phục vụ đối chiếu và site hai ngôn ngữ.
+
+### Tiêu chí nghiệm thu Việt hóa
+
+- Tên có bản Việt được dùng nhất quán ở thẻ, chi tiết và cấu hình thay thế; từng slot thiếu bản Việt vẫn hiển thị đúng tiếng Trung của slot đó.
+- Dữ liệu Trung gốc còn nguyên; các tên mới chưa được dịch không bị đoán hoặc bỏ khỏi đội.
+- Tra tên Việt có dấu, không dấu và tên Trung trả về đúng cùng cấu hình tương ứng.
+- Toàn bộ cấu hình, tier, điểm, thứ tự nguồn và kết quả xét trùng không đổi.
+- Kiểm tra giao diện desktop/mobile và các luồng mở chi tiết, chọn thẻ tên để tìm kiếm.
+- Danh sách thiếu bản Việt bao phủ dữ liệu Team chuẩn đang xét, phân nhóm rõ, không lặp cùng danh tính và có ngữ cảnh nguồn để người dùng đối chiếu.
+- Một bản dịch được bổ sung hoặc sửa tại nơi quản lý chung phải áp dụng nhất quán cho mọi đội liên quan sau khi cập nhật dữ liệu; không cần sửa từng đội.
+- Kiểm tra việc sửa tên Việt không thay ID, liên kết, cấu hình hoặc kết quả xét trùng; tên Trung nguyên bản vẫn được giữ.
+- Bộ lọc dùng lại nhãn và thuật ngữ trên main, nhất quán ở nhãn, lựa chọn và chip đang chọn. Không để tiếng Trung ở giá trị đã có tên Việt tương ứng trên main; giá trị thực sự chưa dịch vẫn hiện tiếng Trung, không bị ẩn hoặc mất lựa chọn.
+- Chọn cùng một giá trị trước/sau Việt hóa trả về cùng tập đội. URL cũ và thao tác quay lại/tiến tới vẫn khôi phục đúng bộ lọc; tìm lựa chọn mùa bằng tên Việt hoặc Trung vẫn chọn đúng mã mùa.
+- Mọi tên mùa/kịch bản có trong dữ liệu thuộc phạm vi đều có tên Việt đã đối chiếu, dùng nhất quán ở bộ lọc, thẻ và chi tiết; không bỏ sót mùa cũ hoặc mùa chưa có đội. Mã mùa và tên Trung gốc vẫn được giữ; tìm bằng tên Việt có dấu/không dấu, tên Trung hoặc mã mùa đều nhận ra đúng mùa.
+
+Các yêu cầu bổ sung về danh sách thiếu bản Việt, quản lý bản dịch dùng chung, danh tính độc lập ngôn ngữ, Việt hóa bộ lọc và dịch đầy đủ tên mùa/kịch bản đã được người dùng chấp thuận. Trạng thái triển khai và bằng chứng kiểm chứng nằm ở phần cuối tài liệu.
 ## Giới hạn và những phần không làm trong phạm vi này
 
 - Tab Khai hoang hiện có vẫn duy trì dữ liệu mới nhất như trước. Khai hoang trong Recommended là nội dung tham khảo theo mùa nguồn riêng.
@@ -95,4 +150,8 @@ Quy tắc này quyết định đội xuất hiện ở tab nào, không khẳng
 - Phác thảo UI cũ đã được xóa theo yêu cầu ngày 2026-09-12; chỉ dùng plan chính ở trên.
 - [Báo cáo browser](../260912-0950-recommended-season-browser/reports/browser-research.md) lưu các quan sát và ảnh nguồn đã kiểm tra ngày 2026-09-12; [bản rà soát quyết định](../260912-0950-recommended-season-browser/reports/decision-review.md) ghi cách áp dụng tư vấn Kongming và thay đổi yêu cầu đầu vào Team khác.
 
-Chưa có câu hỏi sản phẩm cần chốt lại. Số team thu thập đầy đủ, số được đưa vào Team khác, số trùng và số chưa xác định phải được đo khi triển khai. Các phase của plan hiện vẫn pending; bản này chỉ lưu quyết định đã thống nhất.
+Chưa có câu hỏi sản phẩm cần chốt lại. Plan chính và [báo cáo kiểm chứng triển khai](../260912-0950-recommended-season-browser/reports/validation.md) sở hữu trạng thái của hai tab; nhận định cũ “các phase vẫn pending” không còn áp dụng.
+
+Phần Việt hóa đã triển khai và kiểm chứng trong worktree `CamNangTQCCL-season-team-lookup`: dùng tên tướng/chiến pháp/binh thư sẵn có, nhãn lọc theo main, đủ 29 tên mùa, tìm kiếm hai ngôn ngữ và danh sách 85 tên còn thiếu bản Việt. So sánh toàn bộ 90 payload xác nhận dữ liệu nguồn và kết quả xét trùng không đổi. Hướng dẫn bảo trì nằm tại `docs/season-team-data.md`.
+
+Đã commit/push phần Việt hóa ban đầu và mở [Draft PR #3](https://github.com/nguyennguyenit/CamNangTQCCL/pull/3); các phần bổ sung tiếp tục trên cùng nhánh `feat/season-team-lookup`. Chưa merge vào main hoặc deploy. Bản brainstorm ghi quyết định và tiêu chí, không thay thế bằng chứng phát hành.

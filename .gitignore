@@ -26,3 +26,9 @@ pipeline/raw_crawl_cache.json
 
 # Cache/export nguồn SGSDeck; normalized catalog trong data/sgsdeck không ignore
 pipeline/sgsdeck-cache/
+pipeline/lookup-output/.*.build.lock
+pipeline/lookup-output/activation-*/
+
+# Candidate build tạm thời — tái tạo từ lookup inputs khi cần review/promote
+pipeline/lookup-output/candidate/
+pipeline/lookup-output/transactions/

@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { tacticDescriptions } from "../js/tactics.js";
 
-const tactics = JSON.parse(await readFile(new URL("../data/tactics.json", import.meta.url), "utf8"));
+const tactics = JSON.parse(await readFile(new URL("../pipeline/lookup-inputs/tactics.json", import.meta.url), "utf8"));
 
 test("Đồng Lòng Hợp Sức resolves to the event heal instead of Cao Pi's domestic tactic", () => {
   const matches = tactics.filter((item) => item.viet === "Đồng Lòng Hợp Sức");

@@ -19,16 +19,15 @@ test.beforeEach(async ({page}) => {
   await page.route('https://challenges.cloudflare.com/**', route => route.fulfill({contentType:'application/javascript',body:'window.turnstile={render(){},reset(){}};'}));
 });
 test('real scenario-only scope remains reference and preserves Khai hoang', async ({page}) => {
-  await page.goto('/#team-pk');
+  await page.goto('/#coexist');
   await expect(page.getByLabel('Kịch bản đang chơi', {exact:true})).toBeVisible();
   await expect(page.locator('#season-summary')).toContainText('Tất cả — tham khảo');
-  await expect(page.locator('#section-team-pk .badge.stars')).toHaveCount(0);
-  await expect(page.locator('#section-heroes .badge.stars').first()).toBeAttached();
+  await expect(page.locator('#section-coexist .sgsdeck-score, #section-coexist .badge.tier')).toHaveCount(0);
+  await expect(page.locator('#section-lookup [data-lookup-id^="hero:"]').first()).toBeAttached();
   const values = await page.locator('#season-scenario option').evaluateAll(nodes => nodes.map(n=>n.value).filter(Boolean));
   await page.locator('#season-scenario').selectOption(values.find(v=>v.includes('binh')) || values.at(-1));
   await expect(page.locator('#season-summary')).toContainText('tham khảo');
   await expect(page.locator('#season-ruleset')).toHaveValue('');
-  await page.locator('[data-section="coexist"]').click();
   await expect(page.locator('#section-coexist .coexist-subteam')).toHaveCount(25);
   await page.locator('[data-section="khaihoang"]').click();
   await expect(page.locator('#season-controls')).toBeHidden();
@@ -39,10 +38,53 @@ import { createHash } from 'node:crypto';
 import { seasonConsumerFixture } from '../tests-js/fixtures/season-fixtures.mjs';
 async function controlledBundle(page, data = null) {
   data ||= await seasonConsumerFixture();
+  const slug = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  data['heroes-dict'] = data['heroes-dict'].map(row => ({
+    id: `hero:${slug(row.viet)}`, chinese: row.chinese, hanViet: row.hanViet ?? row.viet, viet: row.viet,
+    aliases: [], faction: row.faction ?? null, stars: null, cost: null,
+    stats: { luc: '', tri: '', thong: '', toc: '', chinh: '', mi: '' },
+    troopApt: { ky: null, thuan: null, cung: null, thuong: null, khiGioi: null },
+    selfTacticCn: null, inheritTacticCn: null, roleTag: null, roleTagViet: null,
+    iconUrl: null, isSP: false, linkScore: null, pending: false,
+    lookup: {
+      conditions: [], missingFields: [], revisions: [], variant: 'base',
+      selfTacticId: null, inheritTacticId: null, advisorId: null,
+      growth: { luc: null, tri: null, thong: null, toc: null, chinh: null, mi: null },
+      otherAptitudes: { infantry: null, navy: null },
+      categoryVi: null, exclusiveTitleVi: null,
+      civil: { roleVi: null, bonusVi: null, specialtyVi: null, tacticBonusVi: null },
+      civilInnatePoints: null, collectibleBonusVi: null, redRulesVi: null,
+      flags: { isCollectible: null, isDynamicOpen: null, isMusou: null, isCO: null, isSp: null },
+    },
+  }));
+  data.tactics = data.tactics.map(row => ({
+    id: `tactic:${slug(row.viet)}`, chinese: row.chinese, hanViet: row.hanViet ?? row.viet, viet: row.viet,
+    aliases: [], type: null, quality: null, effect: null, effectViet: null,
+    target: null, targetViet: null, troopFit: [], source: null, sourceHeroCn: null,
+    iconUrl: null, linkScore: null, pending: true,
+    lookup: {
+      conditions: [], missingFields: [], revisions: [], activationRate: null,
+      cooldown: null, maxUsers: null, pointCost: null, effectTypeVi: null,
+      exchangeConditionVi: null, acquiredFromVi: [], inheritedFromIds: [], conflictsVi: null,
+    },
+  }));
+  const lookupCatalog = { schemaVersion: 1, advisors: [], buildings: [], equipment: [], specials: [], troopMods: [] };
+  const lookupPayloads = {
+    'heroes-dict.json': JSON.stringify(data['heroes-dict']),
+    'tactics.json': JSON.stringify(data.tactics),
+    'lookup-catalog.json': JSON.stringify(lookupCatalog),
+  };
+  const lookupFiles = Object.fromEntries(Object.entries(lookupPayloads).sort(([left], [right]) => left.localeCompare(right)).map(([name, body]) => [name, createHash('sha256').update(body).digest('hex')]));
+  const lookupManifest = {
+    schemaVersion: 1,
+    generationId: `lookup:${createHash('sha256').update(`${JSON.stringify(lookupFiles)}\n`).digest('hex')}`,
+    files: lookupFiles,
+  };
+  const routeData = { ...data, 'lookup-catalog': lookupCatalog, 'lookup-manifest': lookupManifest };
   const hashes = Object.fromEntries(Object.entries(data).map(([key,value]) => [key, 'sha256:' + createHash('sha256').update(JSON.stringify(value)).digest('hex')]));
   await page.route('**/data/*.json', async route => {
     const key = new URL(route.request().url()).pathname.split('/').at(-1).replace('.json','');
-    if (key in data) return route.fulfill({contentType:'application/json',body:JSON.stringify(data[key])});
+    if (key in routeData) return route.fulfill({contentType:'application/json',body:JSON.stringify(routeData[key])});
     return route.continue();
   });
   await page.route(/^http:\/\/(?:localhost|127\.0\.0\.1):\d+\/(?:\?.*)?$/, async route => {
@@ -52,23 +94,20 @@ async function controlledBundle(page, data = null) {
   });
   return data;
 }
-test('verified fixture displays separate config cards, ordered detail and exact source score', async ({page}) => {
+test('verified fixture preserves exact config identity, ordered detail and source score', async ({page}) => {
   await controlledBundle(page);
-  await page.goto('/?scenario=scenario-a&ruleset=rules-a#team-pk');
-  await expect(page.locator('[data-config-id="config-a"]')).toHaveCount(1);
-  await expect(page.locator('[data-config-id="config-b"]')).toHaveCount(1);
-  await expect(page.locator('[data-config-id="config-a"]')).toContainText('Điểm SGSDeck: 132.5');
-  await expect(page.locator('[data-config-id="config-a"]')).toContainText('Kịch bản A · Luật A');
-  await page.locator('[data-config-id="config-b"]').getByRole('button',{name:'Chi tiết cấu hình'}).click();
+  await page.goto('/?scenario=scenario-a&ruleset=rules-a&config=config-a#coexist');
+  await expect(page.locator('#season-config-detail')).toContainText('Điểm SGSDeck: 132.5');
+  await expect(page.locator('#season-config-detail')).toContainText('Cấu hình: config-a · scenario-a · rules-a');
+  await page.goto('/?scenario=scenario-a&ruleset=rules-a&config=config-b#coexist');
   await expect(page).toHaveURL(/config=config-b/);
   await expect(page.locator('#season-config-detail')).toContainText('Chiến pháp 1: Hai');
   await expect(page.locator('#season-config-detail')).toContainText('Chưa có điểm SGSDeck');
-  await page.goBack();
-  await expect(page.locator('#season-config-detail')).toBeHidden();
-  await page.locator('#section-team-pk input[type="search"]').fill('cuong');
-  await expect(page).toHaveURL(/q=cuong/);
+  await page.getByRole('button',{name:'Đóng chi tiết'}).click();
+  expect(new URL(page.url()).searchParams.has('config')).toBe(false);
+  await page.goto('/?q=cuong#team-khac');
   await page.reload();
-  await expect(page.locator('#section-team-pk input[type="search"]')).toHaveValue('cuong');
+  await expect(page.getByRole('searchbox',{name:'Tìm Team khác',exact:true})).toHaveValue('cuong');
 });
 test('detail compares real inventory and changing a selected tactic removes its source score', async ({page}) => {
   await controlledBundle(page);
@@ -150,7 +189,7 @@ test('late roster scan response cannot restore scope confirmation or inventory c
 for (const width of [320,375,768,1024]) test(`season controls and details remain usable at ${width}px in both themes`,async({page},testInfo)=>{
   await controlledBundle(page);
   await page.setViewportSize({width,height:800});
-  await page.goto('/?scenario=scenario-a&ruleset=rules-a&config=config-a#team-pk');
+  await page.goto('/?scenario=scenario-a&ruleset=rules-a&config=config-a#coexist');
   await expect(page.locator('#season-config-detail')).toBeVisible();
   await page.locator('#season-scenario').focus();await expect(page.locator('#season-scenario')).toBeFocused();
   for (const theme of ['light','dark']) {
@@ -165,14 +204,14 @@ for (const width of [320,375,768,1024]) test(`season controls and details remain
 });
 test('closing details after a search preserves current filters and returns keyboard focus',async({page})=>{
   await controlledBundle(page);
-  await page.goto('/?scenario=scenario-a&ruleset=rules-a#team-pk');
-  await page.locator('[data-config-id="config-a"]').getByRole('button',{name:'Chi tiết cấu hình'}).click();
-  await page.locator('#section-team-pk input[type="search"]').fill('Bình');
+  await page.goto('/?scenario=scenario-a&ruleset=rules-a&q=B%C3%ACnh&config=config-a#team-khac');
+  await expect(page.locator('#season-config-detail')).toBeVisible();
+  await expect(page.getByRole('searchbox',{name:'Tìm Team khác',exact:true})).toHaveValue('Bình');
   await page.getByRole('button',{name:'Đóng chi tiết'}).click();
   await expect(page).toHaveURL(/q=B%C3%ACnh/);
   expect(new URL(page.url()).searchParams.has('config')).toBe(false);
-  await expect(page.locator('#section-team-pk input[type="search"]')).toHaveValue('Bình');
-  await expect(page.locator('#section-team-pk > h2')).toBeFocused();
+  await expect(page.getByRole('searchbox',{name:'Tìm Team khác',exact:true})).toHaveValue('Bình');
+  await expect(page.locator('#section-team-khac h2')).toBeFocused();
 });
 
 import { refreshConfigProofs } from '../tests-js/fixtures/season-fixtures.mjs';
@@ -193,20 +232,15 @@ for (const count of [500,501]) test(`roster enforces scoped candidate boundary $
   if(count===500) await expect(page.locator('.roster-results > section:first-child [data-config-id="config-a"]')).toHaveCount(1);
   else {await expect(page.locator('#section-roster-recommend .error')).toContainText('500');await expect(page.locator('.roster-results')).toHaveCount(0);}
 });
-test('all-reference keeps historical tiers separately from executable configuration tiers',async({page})=>{
-  await page.goto('/?tier=T0#team-pk');
-  await expect(page.locator('#section-team-pk .team-card .badge.tier').first()).toBeVisible();
-  await expect(page.locator('#section-team-pk')).toContainText('Tier lịch sử — tham khảo');
-  await expect(page.locator('#section-team-pk > .stats')).toContainText('0 cấu hình áp dụng');
-  await expect(page.locator('#section-team-pk')).toContainText('2026-07-03');
-  await page.locator('#season-scenario').selectOption('binh-dien-xuan-thu');
-  await expect(page.locator('#section-team-pk .badge.tier')).toHaveCount(0);
-  await page.goBack();
-  await expect(page.locator('#section-team-pk .badge.tier').first()).toBeVisible();
+test('all-reference keeps historical tiers separate from executable configuration tiers',async({page})=>{
+  await page.goto('/?tier=T0.5#team-khac');
+  await expect(page.locator('#section-team-khac .team-card .historical-tier').first()).toBeVisible();
+  await expect(page.locator('#section-team-khac')).toContainText('Tier lịch sử — tham khảo');
+  await expect(page.locator('#section-team-khac [data-config-id]')).toHaveCount(0);
   await page.route('**/data/team-tier.json',route=>route.fulfill({status:404,body:''}));
   await page.reload();
-  await expect(page.locator('#section-team-pk .team-card').first()).toBeVisible();
-  await expect(page.locator('#section-team-pk .badge.tier')).toHaveCount(0);
+  await expect(page.locator('#section-team-khac .team-card').first()).toBeVisible();
+  await expect(page.locator('#section-team-khac .historical-tier').first()).toBeVisible();
 });
 test('scoped recommendation exposes usable add-team actions and original source score',async({page})=>{
   await controlledBundle(page);
@@ -231,10 +265,8 @@ test('card score follows its displayed hero selection rather than another valid 
   score.selectionFingerprint=await seasonFingerprint(score.scoredSelection);
   data['season-evidence'].find(item=>item.id==='score-proof').configFingerprint=score.configFingerprint;
   await controlledBundle(page,data);
-  await page.goto('/?scenario=scenario-a&ruleset=rules-a#team-pk');
-  const card=page.locator('[data-config-id="config-a"]');
-  await expect(card).toContainText('Chưa có điểm SGSDeck');
-  await card.getByRole('button',{name:'Chi tiết cấu hình'}).click();
+  await page.goto('/?scenario=scenario-a&ruleset=rules-a&config=config-a#coexist');
+  await expect(page.locator('#season-config-detail .sgsdeck-score')).toHaveText('Chưa có điểm SGSDeck');
   await page.getByLabel('Tướng 1 · Tướng',{exact:true}).selectOption('hero:dung');
   await expect(page.locator('#season-config-detail .sgsdeck-score')).toHaveText('Điểm SGSDeck: 132.5');
   await expect(page.locator('#season-config-detail').getByRole('link',{name:'Nguồn điểm SGSDeck'})).toBeVisible();
@@ -270,17 +302,18 @@ for(const width of [375,1280]) test(`real Binh Dien review screenshot at ${width
   expect(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({path:testInfo.outputPath(`ui-real-binh-dien-${width}.png`)});
 });
-test('legacy Team PK retains derived faction facets without mutating the validated bundle',async({page})=>{
-  await page.goto('/#team-pk');
-  await expect(page.locator('#section-team-pk .fchip').filter({hasText:/^Thục \(/})).toHaveCount(1);
-  await page.locator('#section-team-pk .fchip').filter({hasText:/^Thục \(/}).click();
-  await expect(page.locator('#section-team-pk .team-card').first()).toBeVisible();
-  await expect(page.locator('#section-team-pk .team-card:not(.fa-thuc)')).toHaveCount(0);
+test('Team khác retains derived faction facets without mutating the validated bundle',async({page})=>{
+  await page.goto('/#team-khac');
+  const facet=page.locator('#section-team-khac .fchip').filter({hasText:/^Thục$/});
+  await expect(facet).toHaveCount(1);
+  await facet.click();
+  const cards=page.locator('#section-team-khac .team-card');
+  await expect(cards.first()).toBeVisible();
+  expect(await cards.evaluateAll(nodes=>nodes.every(node=>node.dataset.faction==='Thục'))).toBe(true);
 });
 test('opening detail keeps its close control below the sticky navigation',async({page})=>{
   await controlledBundle(page);await page.setViewportSize({width:1024,height:800});
-  await page.goto('/?scenario=scenario-a&ruleset=rules-a#team-pk');
-  await page.locator('[data-config-id="config-a"]').getByRole('button',{name:'Chi tiết cấu hình'}).click();
+  await page.goto('/?scenario=scenario-a&ruleset=rules-a&config=config-a#coexist');
   const close=await page.getByRole('button',{name:'Đóng chi tiết'}).boundingBox();const header=await page.locator('.top-header').boundingBox();
   expect(close.y).toBeGreaterThanOrEqual(header.y+header.height);
 });
@@ -308,11 +341,12 @@ test('optional unverified conditions remain informational in inventory compariso
   await expect(page.locator('.season-inventory-comparison')).not.toContainText('chưa thể đề xuất build');
 });
 test('keyboard facet and source toggles preserve focus and pressed state after filtering',async({page})=>{
-  await controlledBundle(page);await page.goto('/?scenario=scenario-a&ruleset=rules-a#team-pk');
-  const facet=page.locator('#section-team-pk .fchip').filter({hasText:/^Thục \(/});
+  await page.goto('/#team-khac');
+  const facet=page.locator('#section-team-khac .fchip').filter({hasText:/^Thục$/});
   await facet.focus();await page.keyboard.press('Space');
   await expect(facet).toBeFocused();await expect(facet).toHaveAttribute('aria-pressed','true');
-  await page.locator('[data-section="coexist"]').click();
+  await controlledBundle(page);
+  await page.goto('/?scenario=scenario-a&ruleset=rules-a#coexist');
   const source=page.locator('#section-coexist .fchip').filter({hasText:'Bảng Cùng Tồn'});
   await source.focus();await page.keyboard.press('Space');
   await expect(source).toBeFocused();await expect(source).toHaveAttribute('aria-pressed','true');

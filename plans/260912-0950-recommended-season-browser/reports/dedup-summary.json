@@ -1,0 +1,17 @@
+{
+  "admitted": 40,
+  "decisions": {
+    "distinct": 40,
+    "duplicate": 19,
+    "pendingIdentity": 107,
+    "pendingSource": 0
+  },
+  "dedupKeyVersion": 1,
+  "inputTeamRows": 166,
+  "pendingBranches": {
+    "pendingAlternative": 79
+  },
+  "schemaVersion": 1,
+  "selectedGenerationId": "996d7b36b9954e64d24358cbb0fb1371a18a39e72748c8ceb1a837add76f88e5",
+  "unresolvedRecommendedConfigurations": 380
+}
