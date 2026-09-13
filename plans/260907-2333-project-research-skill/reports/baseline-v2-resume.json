@@ -1,0 +1,11 @@
+{
+  "observedPrimary": ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10-handoff", "10-lower", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "23a", "23b", "24", "25", "26", "authorized-handoff", "negative-intent", "route-mechanic", "route-source", "route-team"],
+  "observedSecondRound": ["15-second"],
+  "blocked": [],
+  "resumeIds": [],
+  "lastAttemptAt": "2026-09-13T23:32:24.709+07:00",
+  "lastStatus": "OBSERVED",
+  "lastCase": "route-team",
+  "reason": "Baseline v2 capture complete: 35/35 primary plus case15-second",
+  "executionProfileHash": "9720af9911516dfaad0bdf5dd87664394ccd9e7471c0f1272b001be85df2bd74"
+}

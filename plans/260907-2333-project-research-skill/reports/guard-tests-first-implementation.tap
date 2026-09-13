@@ -1,0 +1,96 @@
+TAP version 13
+# Subtest: list chỉ trả về khoá snapshot được cấp phép
+ok 1 - list chỉ trả về khoá snapshot được cấp phép
+  ---
+  duration_ms: 4.678875
+  type: 'test'
+  ...
+# Subtest: read trả nội dung đúng và chặn mọi biến thể đường dẫn ngoài phạm vi
+ok 2 - read trả nội dung đúng và chặn mọi biến thể đường dẫn ngoài phạm vi
+  ---
+  duration_ms: 1.568209
+  type: 'test'
+  ...
+# Subtest: search là literal, phân biệt hoa thường, không thấy file trên đĩa
+ok 3 - search là literal, phân biệt hoa thường, không thấy file trên đĩa
+  ---
+  duration_ms: 1.301584
+  type: 'test'
+  ...
+# Subtest: create_report ghi đúng byte một lần, không ghi đè, đọc/tìm được ngay
+not ok 4 - create_report ghi đúng byte một lần, không ghi đè, đọc/tìm được ngay
+  ---
+  duration_ms: 3.358625
+  type: 'test'
+  location: '/Users/plateau/Project/CamNangTQCCL/plans/260907-2333-project-research-skill/reports/harness/guard.test.mjs:98:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/plateau/Project/CamNangTQCCL/plans/260907-2333-project-research-skill/reports/harness/guard.test.mjs:107:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: ghi ra vị trí không phải mục tiêu bị từ chối và không đụng file khác
+ok 5 - ghi ra vị trí không phải mục tiêu bị từ chối và không đụng file khác
+  ---
+  duration_ms: 2.835041
+  type: 'test'
+  ...
+# Subtest: symlink ở lá bị từ chối, file ngoài không đổi
+ok 6 - symlink ở lá bị từ chối, file ngoài không đổi
+  ---
+  duration_ms: 2.293917
+  type: 'test'
+  ...
+# Subtest: symlink ở thư mục cha bị từ chối, không tạo hiệu ứng bên ngoài
+ok 7 - symlink ở thư mục cha bị từ chối, không tạo hiệu ứng bên ngoài
+  ---
+  duration_ms: 7.058375
+  type: 'test'
+  ...
+# Subtest: create_report bị từ chối khi không có mục tiêu được cấp
+ok 8 - create_report bị từ chối khi không có mục tiêu được cấp
+  ---
+  duration_ms: 0.358833
+  type: 'test'
+  ...
+# Subtest: op lạ và payload sai kiểu bị từ chối mà không ném lỗi
+ok 9 - op lạ và payload sai kiểu bị từ chối mà không ném lỗi
+  ---
+  duration_ms: 0.706083
+  type: 'test'
+  ...
+# Subtest: manifest khớp sha256 và sources bất biến sau constructor
+ok 10 - manifest khớp sha256 và sources bất biến sau constructor
+  ---
+  duration_ms: 0.552916
+  type: 'test'
+  ...
+# Subtest: trace ghi mọi yêu cầu kể cả op sai và giữ nguyên action gốc
+ok 11 - trace ghi mọi yêu cầu kể cả op sai và giữ nguyên action gốc
+  ---
+  duration_ms: 0.171458
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 10
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 116.285208

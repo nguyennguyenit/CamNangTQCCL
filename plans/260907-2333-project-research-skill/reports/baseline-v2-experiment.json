@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "capturedAt": "2026-09-12T02:44:36+07:00",
+  "packetSnapshot": "2026-09-08 historical replay",
+  "executionProfileHash": "9720af9911516dfaad0bdf5dd87664394ccd9e7471c0f1272b001be85df2bd74",
+  "executionProfile": {
+    "adapterVersion": 2,
+    "executable": "/Users/plateau/.local/share/claude/versions/2.1.263",
+    "executableSha256": "ef5d2909c8af49f31ab6d5487e90316777bc2fac170adfe8160716caa8aaf4f9",
+    "expectedCliVersion": "2.1.263",
+    "expectedModel": "claude-opus-5",
+    "nativeTools": ["StructuredOutput"],
+    "nativeMcpServers": [],
+    "sessionMode": "fresh-process-per-turn",
+    "actionRounds": 5,
+    "closureRounds": 1,
+    "protocol": "structured-output-v2",
+    "responseSchemaHash": "15482aaa45577ba0d23ac7e4deb4607eae6e0adf182d9055e65119b804d6a22e"
+  },
+  "hashes": {
+    "reports/harness/model-session.mjs": "e8bdfae4882791879f4cf2c0fe1d0906987da05fd704675c221b63552253834b",
+    "reports/harness/guard.mjs": "ee67da69a4a26f38ebc9bb42621392a4be427f91fc7c65524d96b3c35d5958e0",
+    "reports/harness/run-replay.mjs": "533b7c55923bc7b0d8b53506b99e0902d9b48ed809ba66a4c9eef04f2ef74a9a",
+    "reports/harness/preflight.mjs": "6d70e31ff124aeb88353c5bbb7b728f907adad782639b9e76c145f143b083aeb",
+    "reports/harness/guard.test.mjs": "1743e46493c8c67a88483b43113c968cefdd5acdca88a48b5e6f82d129e8636d",
+    "reports/harness/parity.test.mjs": "7bf94374b6a0de6e5446d2bfdc5ccbb31d1d8c1848c26bebb4028e3db88602df",
+    "reports/input-packet-manifest.json": "de89c56bb69305cc82c96c82e5c752217b496506d987c59b603001841cd85115"
+  },
+  "preflight": {
+    "artifact": "reports/empirical-preflight-v2-attempt-03.json",
+    "status": "PASS"
+  },
+  "scope": {
+    "primaryCaptures": 35,
+    "case15SecondRoundRequired": true,
+    "canaryOrder": ["04", "10-handoff", "15", "01"]
+  }
+}

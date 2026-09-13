@@ -1,0 +1,94 @@
+TAP version 13
+# Subtest: list chỉ trả về khoá snapshot được cấp phép
+ok 1 - list chỉ trả về khoá snapshot được cấp phép
+  ---
+  duration_ms: 3.644917
+  type: 'test'
+  ...
+# Subtest: read trả nội dung đúng và chặn mọi biến thể đường dẫn ngoài phạm vi
+ok 2 - read trả nội dung đúng và chặn mọi biến thể đường dẫn ngoài phạm vi
+  ---
+  duration_ms: 1.580292
+  type: 'test'
+  ...
+# Subtest: search là literal, phân biệt hoa thường, không thấy file trên đĩa
+ok 3 - search là literal, phân biệt hoa thường, không thấy file trên đĩa
+  ---
+  duration_ms: 0.709041
+  type: 'test'
+  ...
+# Subtest: create_report ghi đúng byte một lần, không ghi đè, đọc/tìm được ngay
+ok 4 - create_report ghi đúng byte một lần, không ghi đè, đọc/tìm được ngay
+  ---
+  duration_ms: 5.536083
+  type: 'test'
+  ...
+# Subtest: ghi ra vị trí không phải mục tiêu bị từ chối và không đụng file khác
+ok 5 - ghi ra vị trí không phải mục tiêu bị từ chối và không đụng file khác
+  ---
+  duration_ms: 1.287542
+  type: 'test'
+  ...
+# Subtest: symlink ở lá bị từ chối, file ngoài không đổi
+ok 6 - symlink ở lá bị từ chối, file ngoài không đổi
+  ---
+  duration_ms: 1.380625
+  type: 'test'
+  ...
+# Subtest: symlink ở thư mục cha bị từ chối, không tạo hiệu ứng bên ngoài
+ok 7 - symlink ở thư mục cha bị từ chối, không tạo hiệu ứng bên ngoài
+  ---
+  duration_ms: 0.687584
+  type: 'test'
+  ...
+# Subtest: create_report bị từ chối khi không có mục tiêu được cấp
+ok 8 - create_report bị từ chối khi không có mục tiêu được cấp
+  ---
+  duration_ms: 0.085333
+  type: 'test'
+  ...
+# Subtest: op lạ và payload sai kiểu bị từ chối mà không ném lỗi
+ok 9 - op lạ và payload sai kiểu bị từ chối mà không ném lỗi
+  ---
+  duration_ms: 0.199041
+  type: 'test'
+  ...
+# Subtest: manifest khớp sha256 và sources bất biến sau constructor
+ok 10 - manifest khớp sha256 và sources bất biến sau constructor
+  ---
+  duration_ms: 0.215541
+  type: 'test'
+  ...
+# Subtest: trace ghi mọi yêu cầu kể cả op sai và giữ nguyên action gốc
+ok 11 - trace ghi mọi yêu cầu kể cả op sai và giữ nguyên action gốc
+  ---
+  duration_ms: 0.047458
+  type: 'test'
+  ...
+# Subtest: terminal prose is observable but never dispatched as an action
+ok 12 - terminal prose is observable but never dispatched as an action
+  ---
+  duration_ms: 2.171625
+  type: 'test'
+  ...
+# Subtest: candidate rejects changed prompts, source bytes and permissions
+ok 13 - candidate rejects changed prompts, source bytes and permissions
+  ---
+  duration_ms: 0.499708
+  type: 'test'
+  ...
+# Subtest: independent guard instances never expose reports from another branch
+ok 14 - independent guard instances never expose reports from another branch
+  ---
+  duration_ms: 0.396875
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 68.696667

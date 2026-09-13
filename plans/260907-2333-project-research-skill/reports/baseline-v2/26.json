@@ -1,0 +1,1131 @@
+{
+  "id": "26",
+  "parityHash": "25b97d104486cd7095c6467112e3dd5a6bc941372d573b4daeeec4edc3c51a67",
+  "instructionHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "executionProfile": {
+    "adapterVersion": 2,
+    "executable": "/Users/plateau/.local/share/claude/versions/2.1.263",
+    "executableSha256": "ef5d2909c8af49f31ab6d5487e90316777bc2fac170adfe8160716caa8aaf4f9",
+    "expectedCliVersion": "2.1.263",
+    "expectedModel": "claude-opus-5",
+    "nativeTools": [
+      "StructuredOutput"
+    ],
+    "nativeMcpServers": [],
+    "sessionMode": "fresh-process-per-turn",
+    "actionRounds": 5,
+    "closureRounds": 1,
+    "protocol": "structured-output-v2",
+    "responseSchemaHash": "15482aaa45577ba0d23ac7e4deb4607eae6e0adf182d9055e65119b804d6a22e"
+  },
+  "executionProfileHash": "9720af9911516dfaad0bdf5dd87664394ccd9e7471c0f1272b001be85df2bd74",
+  "manifest": [
+    {
+      "path": "docs/research-sources.md",
+      "sha256": "583bc81b08b2e71774a4a602e9b15cb9e41f4724ae9e59f2819624031fe8160e"
+    },
+    {
+      "path": ".agents/skills/tqccl-coexist-team-builder/SKILL.md",
+      "sha256": "b4f8abee81888b597120d4af723bd5448eacfd16e850c8b7bba641a371bc81a0"
+    },
+    {
+      "path": ".agents/skills/tqccl-coexist-team-builder/references/chat-context-team-notes.md",
+      "sha256": "77d2afd226b94b366ff4b6fa16549ad58a9045e1a228989e2de374d8f3e482d5"
+    },
+    {
+      "path": ".agents/skills/tqccl-coexist-team-builder/references/coexist-team-rules.md",
+      "sha256": "4ac12ccbf27536ec46241a3d29c7b7b0aa43a4567619e49a1dabc2a1de3ece83"
+    },
+    {
+      "path": ".agents/skills/tqccl-coexist-team-builder/references/multi-source-research-and-logic-checks.md",
+      "sha256": "a916c8c81c65e458cba11d24328ef3ed63f2dca46cce9e661a502796452110fb"
+    },
+    {
+      "path": "plans/reports/research-260825-binh-dien-xuan-thu-global-only.md",
+      "sha256": "1c3c421b77a1c991ad14503c1c2a349313a25a74a009bad52ae3181e0273db8b"
+    },
+    {
+      "path": "runtime/current-json-projection.json",
+      "sha256": "09e18fac54e03efbd0741e8e91f4ce1dd7d0c3e5761040f17ff8f4edc644411a"
+    }
+  ],
+  "trace": [
+    {
+      "sequence": 1,
+      "action": {
+        "op": "read",
+        "path": "plans/reports/research-260825-binh-dien-xuan-thu-global-only.md"
+      },
+      "ok": true,
+      "state": "allowed",
+      "content": "# Research Global-only — Binh Diễn Xuân Thu\n\n> **Snapshot nghiên cứu tháng 8/2026 — lưu trữ.** Nội dung phản ánh server trải nghiệm và nguồn có đến 27/08/2026; không phải đánh giá meta mùa live hiện tại. Việc lưu Git ngày 06/09/2026 không xác nhận lại lịch mở mùa, cân bằng hoặc tier bên dưới.\n\n- Ngày chốt dữ liệu ban đầu: 2026-08-25\n- Cập nhật gần nhất: 2026-08-27, bổ sung dữ liệu server trải nghiệm Nhật công bố ngày 24/08\n- Phạm vi: Global/International server, gồm Đài–Hồng–Ma, Nhật, Hàn và các khu vực Global khác\n- Không dùng dữ liệu chiến trường Đại Lục để xếp đội\n- Trạng thái: `global-preview-after-balance-2-expanded`\n\n## Chốt lại phạm vi Global\n\n`兵演春秋 / 병연춘추 / Binh Diễn Xuân Thu` là kịch bản nguyên bản dành riêng cho Global, phục vụ Hàn Quốc, Đài–Hồng–Ma, Nhật Bản, Việt Nam và các khu vực Global khác. Nguồn tiếng Hoa phồn thể và tiếng Nhật dưới đây đều đang nói về **Global**, không phải server Đại Lục.\n\nMốc công bố cho cụm Đài–Hồng–Ma/VN là 05/09/2026. Nhật có lịch trải nghiệm riêng; thông báo tuyển người chơi ghi hai đợt, đợt một 13–20/08 và đợt hai 31/08–08/09. Vì vậy ngày mở và tiến độ kiểm thử có thể lệch giữa các vùng Global.\n\nNguồn xác nhận phạm vi: [thông báo Global tiếng Hoa phồn thể](https://www.findglocal.com/TW/Unknown/103800634776945/%E4%B8%89%E5%9C%8B%E5%BF%97%E3%83%BB%E6%88%B0%E7%95%A5%E7%89%88), [App Store Hàn Quốc](https://apps.apple.com/kr/app/%EC%82%BC%EA%B5%AD%EC%A7%80-%EC%A0%84%EB%9E%B5%ED%8C%90/id1524791715), [tin Hàn Quốc về phạm vi các vùng Global](https://m.gamechosun.co.kr/news/view.php?no=223376), [thông báo trải nghiệm Nhật](https://www6.twstalker.com/ShinSen_SGS).\n\n## Vì sao chưa có tier list Global đáng tin\n\nNguồn Global tiếng Hoa phồn thể đã đăng thay đổi cho vòng thử nghiệm thứ hai vào 21/08. Patch này thay đổi trực tiếp phần lớn binh chủng từng tạo ra các đội mạnh trong vòng đầu:\n\n| Binh chủng | Thay đổi vòng hai | Hệ quả với đội vòng đầu |\n|---|---|---|\n| Phi Hùng Quân | Trí lực cộng dồn 3% → 2%; hồi phục 14% → 8%; tăng sát thương 36% → 12%; hồi theo sát thương 60% → 40% | Điêu Thuyền Cung, Đô Đốc Cung, Phú Quý Kỵ và Tư Mã Phi Hùng đều bị giảm đáng kể |\n| Hổ Báo Kỵ | Giảm hệ số phát động; cộng thêm phát động 5% → 2%; nhiều hiệu ứng 25% → 15% | Tiềm Long Mã Siêu và các đội đột kích chưa thể giữ đánh giá vòng một |\n| Tây Lương Thiết Kỵ | Võ/trí toàn đội 40 → 15; xuyên né/tr抵 30% → 15%; nhiều hệ số chí mạng bị hạ | Ngô Kỵ và Ngũ Mưu bạo kích bị hạ trần |\n| Đại Kích Sĩ | Tăng sát thương 22% → 11%; tăng phát động chủ tướng 35% → 25%; phá trận 30% → 25% | Nhánh Đại Kích Hoàng Mã bị giảm, nhưng vẫn còn cơ chế liên kích hữu ích |\n| Giải Phiền Vệ | Giảm hệ số tăng phát động theo thuộc tính; tăng sát thương 12% → 6% | Nhánh Giải Phiền Hoàng Mã bị giảm trực tiếp |\n| Vô Đương Phi Quân | Tăng sát thương 20% → 40%; xuyên phòng thủ DOT 25% → 40%; thêm cơ chế hỏa tiễn/hồi phục | Trở thành mục tiêu kiểm thử quan trọng nhất của vòng hai |\n| Hổ Vệ Quân | Tăng sát thương 18% → 36%; tăng trần ảnh hưởng 10% → 20%; kích hoạt cố định hai lần mỗi hiệp | Hạt Nhân Trương Phi có khả năng trở lại |\n| Đằng Giáp Binh | Thêm hiệu ứng phó tướng hưởng hiệu ứng chủ tướng, kháng giảm thuộc tính, thanh tẩy DOT và chống binh đao đầu trận | Pháp Quan Khiên, Bắc Phạt Khiên và các đội khiên Đằng Giáp cần test lại |\n| Thanh Châu Binh | Phản kích 18% → 36%; tổng hồi phục 40% → 60%; hồi hiệp 5 lên 120%; sát thương lên mục tiêu bị khống chế 50% → 100% | Mở khả năng cho đội thương khống chế/phản kích, nhưng chưa có build hậu patch đủ chiến báo |\n\nNguồn đầy đủ: [cập nhật vòng thử nghiệm thứ hai Global](https://forum.gamer.com.tw/C.php?bsn=36815&snA=11540).\n\n**Kết luận tại mốc 25/08:** mọi bài “top tier candidate” xuất bản ngày 12–15/08 chỉ phản ánh vòng một. Ở thời điểm đó chưa có tập chiến báo hậu patch đủ lớn để lập tier list Global mới.\n\n**Cập nhật 27/08:** hai bài Nhật công bố ngày 24/08 đã tổng hợp tỷ lệ liên chiến của 14 biến thể và các trận đạt trên 10.000 chiến công trên server trải nghiệm. Đây là bằng chứng hậu patch mạnh hơn danh sách ứng viên vòng một, nhưng vẫn là dữ liệu preview, không phải tier chính thức từ mùa Global live.\n\n## Các đội Global có bằng chứng vòng một\n\n### 1. Hoàng Mã Thương — SP Mã Siêu + SP Hoàng Phổ Tung + Hứa Du\n\n- Hai nhánh được thử: `Tinh·Giải Phiền Vệ` và `Tinh·Đại Kích Sĩ`.\n- Test Global tiếng Hoa phồn thể ghi nhận Hứa Du 440 trí, 633 cơ hội đánh thường và 312 lần kích hoạt Giải Phiền, tương đương 49,3% trước patch.\n- Người thử đánh giá hai nhánh gần ngang nhau và chờ vòng hai để so lại.\n- Cả hai nhánh đều đã bị nerf, nhưng lõi Hoàng Mã vốn đã là đội mạnh ổn định của Global nên đây vẫn là đội **an toàn nhất để retest**, không phải T0 đã được xác nhận cho S26.\n\nNguồn: [test Giải Phiền Vệ Global](https://forum.gamer.com.tw/C.php?bsn=36815&snA=11527&tnum=1), [bài Đại Kích Sĩ và thảo luận lựa chọn](https://forum.gamer.com.tw/Co.php?bsn=36815&sn=70177).\n\n### 2. Đô Đốc Cung — Chu Du + Lục Tốn + SP Lữ Mông\n\n- Có bài chia sẻ trực tiếp từ tiên phong Global kèm phần chiến báo.\n- Bản vòng một dùng `Tinh·Linh Cơ Nhất Động` cho Chu Du và Phi Hùng chuyển cung cho Lục Tốn; SP Lữ Mông mang Nhạn Hành Trận + Thuyền Cỏ.\n- Chính tác giả đã dự đoán Phi Hùng sẽ bị giảm sức mạnh; điều này đã xảy ra ở patch vòng hai.\n- Tác giả cho rằng Bạch Nhĩ Cung hợp hệ ba Kỳ Chính hơn, nhưng trước patch hiệu quả còn kém; vòng hai đã sửa Bạch Nhĩ nên đây là nhánh cần test lại.\n\nNguồn: [chia sẻ Đô Đốc Cung trên tiên phong Global](https://forum.gamer.com.tw/Co.php?bsn=36815&sn=70160).\n\n### 3. Tiềm Long Mã Siêu — CO Đại Kiều + Hứa Du + SP Mã Siêu\n\n- Global tiếng Hoa phồn thể có bài Hổ Báo Kỵ và nói đội này cho kết quả nổi bật, kèm chiến báo.\n- Cấu hình được đề xuất: Hổ Báo Kỵ với tăng tốc/thiên về phát động đột kích, tăng phát động và hiệu ứng khống chế ngẫu nhiên.\n- Patch vòng hai nerf hầu hết các nút chính của Hổ Báo, nên chiến báo vòng một không đủ để giữ xếp hạng.\n\nNguồn: [Hổ Báo Kỵ và đội Tiềm Long Mã Siêu](https://forum.gamer.com.tw/C.php?bsn=36815&snA=11518&tnum=1).\n\n### 4. Pháp Quan Khiên — SP Quan Vũ + Mã Đại + SP Pháp Chính\n\n- Hai hướng Global được đề xuất: Tiên Đăng Tử Sĩ chuyển khiên hoặc Đằng Giáp tinh luyện.\n- Đằng Giáp vừa được làm lại theo hướng chống giảm thuộc tính, thanh tẩy sát thương duy trì và bảo vệ chủ tướng trước binh đao đầu trận.\n- Đây là đội nên ưu tiên kiểm thử vòng hai vì lõi Pháp Quan vốn mạnh và cơ chế mới vá đúng các điểm phòng thủ, nhưng hiện chưa có chiến báo hậu patch.\n\nNguồn vòng một: [các ứng viên S26 trên server Nhật Global](https://sangokushi-shinsen.info/2026/08/15/627%E3%80%90%E8%B2%82%E8%9D%89%E3%81%AE%E4%B8%89%E5%9B%BD%E5%BF%97%E7%9C%9F%E6%88%A6%E3%80%91%E3%80%80s26%E3%80%80%E6%9C%89%E6%9C%9B%E7%B7%A8%E6%88%90%EF%BC%91%E3%80%80%E6%9D%A5%E6%9C%9F%E3%81%AE/), [phân tích Đằng Giáp vòng một](https://sangokushi-shinsen.info/2026/08/15/624%E3%80%90%E8%B2%82%E8%9D%89%E3%81%AE%E4%B8%89%E5%9B%BD%E5%BF%97%E7%9C%9F%E6%88%A6%E3%80%91%E3%80%80s26%E3%80%80%E5%85%B5%E6%BC%94%E6%98%A5%E7%A7%8B%EF%BC%93%E3%80%80%E8%97%A4%E7%94%B2%E5%85%B5/).\n\n### 5. Hạt Nhân Trương Phi — Chu Thái + Trương Phi + SP Viên Thiệu\n\n- Danh sách Global Nhật vòng một đã đề xuất Hổ Vệ Quân tinh luyện cho đội này.\n- Patch vòng hai buff trực tiếp sát thương, trần ảnh hưởng và số lần kích hoạt Hổ Vệ.\n- Đây là **ứng viên tăng hạng rõ nhất trên giấy** sau patch, nhưng chưa được gọi là meta vì chưa có chiến báo hậu patch.\n\nNguồn đội: [năm ứng viên bổ sung Global Nhật](https://sangokushi-shinsen.info/2026/08/15/628%E3%80%90%E8%B2%82%E8%9D%89%E3%81%AE%E4%B8%89%E5%9B%BD%E5%BF%97%E7%9C%9F%E6%88%A6%E3%80%91%E3%80%80s26%E3%80%80%E6%9C%89%E6%9C%9B%E7%B7%A8%E6%88%90%EF%BC%92%E3%80%80%E8%8D%89%E8%88%B9%E7%94%98/), [buff Hổ Vệ vòng hai](https://forum.gamer.com.tw/C.php?bsn=36815&snA=11540).\n\n## 40Y Lữ Bố trên Global\n\nCác tổ hợp đã được thử/đề xuất:\n\n- 40Y Lữ Bố + SP Lô Trực + SP Điêu Thuyền.\n- Cam Ninh + 40Y Lữ Bố + Hứa Du.\n- Cam Ninh + 40Y Lữ Bố + SP Điêu Thuyền — ảnh từ session người dùng, chưa có nguồn chữ độc lập.\n- Một số người chơi Global thử ghép với CO Đại Kiều và nhận thấy sức mạnh tăng nhiều nhờ hiệu ứng của Đại Kiều.\n\nPhản hồi Global hiện tại không đồng thuận:\n\n- Có chiến báo tiên phong được chia sẻ, nhưng chi tiết nằm trong video/ảnh nên chỉ xếp bằng chứng trung bình–yếu.\n- Người thử cho rằng 40Y Lữ Bố cần cả Huyết Nhận và Dẫn Huyền để đủ sát thương, gây xung đột cộng tồn lớn.\n- Có đánh giá đội SP Lô Trực + 40Y Lữ Bố + SP Điêu Thuyền không chịu được Ngũ Mưu Kỵ và 40Y Lữ Bố chỉ ở khoảng T1–T2 trong vòng đầu.\n- Patch vòng hai tăng hệ số võ lực của giảm sát thương sau lần đánh thường thứ ba, nhưng chưa có chiến báo hậu patch để chứng minh đã giải quyết vấn đề.\n\nNguồn: [thảo luận build 40Y Lữ Bố Global](https://forum.gamer.com.tw/C.php?bsn=36815&gothis=70173&page=1&snA=11517), [video/test tiên phong Global và chiến báo ảnh](https://forum.gamer.com.tw/Co.php?bsn=36815&sn=70175), [patch vòng hai](https://forum.gamer.com.tw/C.php?bsn=36815&snA=11540).\n\n## Thứ tự theo dõi ban đầu sau patch vòng hai — mốc 25/08\n\n1. **Hoàng Mã Thương:** so trực tiếp Đại Kích và Giải Phiền sau nerf.\n2. **Pháp Quan Khiên/Đằng Giáp:** kiểm chứng độ bền và kèo hỏa công sau khi Đằng Giáp được làm lại.\n3. **Hạt Nhân Trương Phi/Hổ Vệ:** xác minh mức tăng thực tế từ ba buff lớn.\n4. **Đội Vô Đương Phi Quân:** tìm build Global mới tận dụng DOT, xuyên phòng thủ và hồi phục; hiện chưa chốt ba tướng.\n5. **Đô Đốc Cung:** test lại Phi Hùng đã nerf so với Bạch Nhĩ đã chỉnh sửa.\n6. **40Y Lữ Bố:** chỉ nâng hạng nếu có chuỗi chiến báo hậu patch với chi phí chiến pháp hợp lý.\n\n## Cập nhật 27/08 — 14 biến thể dùng chiến pháp binh chủng đã có dữ liệu liên chiến\n\nNguồn Nhật ngày 24/08 công bố bảng xếp hạng dựa trên dữ liệu liên chiến của server trải nghiệm sau vòng cân bằng thứ hai. `Tỷ lệ liên chiến` trong nguồn là khả năng đội đạt hòa trở lên để tiếp tục đánh, không phải tỷ lệ thắng thuần. Nguồn không công khai cùng một cỡ mẫu cho mọi đội, nên các con số dưới đây chỉ là thước đo preview tương đối.\n\n| Hạng preview | Lõi đội | Thay đổi chiến pháp/binh chủng | Dữ liệu được công bố | Đối chiếu repo |\n|---:|---|---|---|---|\n| 1 | SP Đổng Trác + SP Lô Trực + SP Điêu Thuyền | `Chuyển·Phi Hùng Quân` dùng cho cung | 86% hòa trở lên; có chuỗi khoảng 20 trận | Lõi đã có `team-intro-53` |\n| 2 | SP Mã Siêu + SP Hoàng Phổ Tung + Hứa Du | `Tinh·Giải Phiền Vệ` | 82%; tăng độ ổn định nhờ bảo đảm kích hoạt hồi phục | Lõi đã có `team-intro-1` |\n| 3 | SP Mã Siêu + SP Hoàng Phổ Tung + Hứa Du | `Tinh·Đại Kích Sĩ` | Đồng nhóm đầu; thắng dứt điểm nhiều hơn bản Giải Phiền | Cùng lõi `team-intro-1`, phải lưu thành biến thể thứ hai |\n| 4 | SP Quan Vũ + CO Tinh Thái + SP Pháp Chính | `Tinh·Đan Dương Binh` | 81%; nguồn cho rằng mạnh hơn bản Đằng Giáp | Lõi đã có `team-intro-40` |\n| 5 | Trương Giác + Vũ Cát + Tả Từ | `Tinh·Phi Hùng Quân`, chuyển từ khiên sang kỵ | Có mặt trong top 7; tận dụng hồi phục và né của Tam Tiên | Lõi khiên đã có `team-intro-46`, `moi-phe-144`; đây là biến thể đổi binh chủng |\n| 6 | SP Gia Cát Lượng + Quan Hưng + Trương Bào | `Tinh·Đan Dương Binh`, chuyển Bắc Phạt sang khiên | Nhiều trận trên 10.000 chiến công; lên cấp rất nhanh trong thử nghiệm | Lõi thương đã có `team-intro-7`, `moi-phe-107/108`; cần ghi cả điều kiện chính lệnh tăng thích tính |\n| 7 | CO Đại Kiều + Tôn Thượng Hương + CO Tiểu Kiều | `Tinh·Hổ Báo Kỵ`, chuyển Nhị Kiều sang kỵ | 80%; tăng mạnh xác suất chiến pháp đột kích | Chưa có lõi chính xác; dictionary cũng chưa có hai bản CO |\n| 8 | Chu Du + Lục Tốn + SP Lữ Mông | `Chuyển·Phi Hùng Quân` + `Tinh·Nhanh Trí Động Não` | Có độ bền và nhiều nguồn hồi phục; nằm trong top 14 | Lõi đã có `moi-phe-121` |\n| 9 | SP Điêu Thuyền + Chu Du + Tào Tháo | `Chuyển·Phi Hùng Quân` + `Tinh·Nhanh Trí Động Não` | Phi Hùng tiếp tục là phần tăng sức mạnh chính sau nerf | Có lõi liên quan `team-intro-32`, nhưng bản repo dùng SP Chu Du nên không phải exact match |\n| 10 | SP Quan Vũ + SP Pháp Chính + Lưu Bị | `Tinh·Đan Dương Binh` | Nguồn ghi nhận trên 80%, gần các bản dùng Mã Đại/CO Tinh Thái | Lõi đã có `team-intro-50` |\n| 11 | Chu Thái + SP Mã Siêu + Tào Tháo | `Tinh·Hổ Báo Kỵ` + Tiềm Long Trận | Nâng mạnh tần suất đột kích của SP Mã Siêu | Chưa có lõi chính xác |\n| 12 | CO Đại Kiều + Tôn Thượng Hương + CO Tiểu Kiều | `Tinh·Tử Sĩ Tiên Phong`, dùng cung | Thấp hơn bản Hổ Báo nhưng không cần bảo vật binh chủng và khắc Hoàng Mã tốt hơn | Cùng lõi Nhị Kiều mới, là biến thể binh chủng thứ hai |\n| 13 | SP Tuân Úc + SP Quách Gia + Giả Hủ | `Tinh·Tây Lương Thiết Kỵ` | Tăng kỳ mưu; cũng có thể dùng Phi Hùng với sức mạnh gần tương đương | Lõi đã có `team-intro-11`, `moi-phe-75` |\n| 14 | Tư Mã Ý + Tào Tháo + Mãn Sủng | `Tinh·Đằng Giáp Binh` | Khoảng 74%; giảm điểm yếu trước hỏa công và không cần bảo vật | Lõi đã có `team-intro-42`, `moi-phe-67/68` |\n\nNguồn: [top 7 tỷ lệ liên chiến server trải nghiệm Nhật](https://sangokushi-shinsen.info/2026/08/24/633%e3%80%90%e8%b2%82%e8%9d%89%e3%81%ae%e4%b8%89%e5%9b%bd%e5%bf%97%e7%9c%9f%e6%88%a6%e3%80%91%e3%80%80s26%e3%80%80%e9%80%a3%e6%88%a6%e7%8e%87%e3%83%a9%e3%83%b3%e3%82%ad%e3%83%b3%e3%82%b0%e3%80%80top7/), [hạng 8–14](https://sangokushi-shinsen.info/2026/08/24/634%e3%80%90%e8%b2%82%e8%9d%89%e3%81%ae%e4%b8%89%e5%9b%bd%e5%bf%97%e7%9c%9f%e6%88%a6%e3%80%91%e3%80%80s26%e3%80%80%e9%80%a3%e6%88%a6%e7%8e%87%e3%83%a9%e3%83%b3%e3%82%ad%e3%83%b3%e3%82%b0%e3%80%80/).\n\n### Watchlist mở rộng — có trận trên 10.000 chiến công nhưng chưa đủ mẫu để xếp top 14\n\n| Lõi/biến thể | Thay đổi mùa | Nhận định dữ liệu |\n|---|---|---|\n| SP Đổng Trác + SP Viên Thiệu + SP Điêu Thuyền | `Chuyển·Phi Hùng Quân` | Bản thay SP Lô Trực khi không có tướng; đã có trận trên 10.000 chiến công |\n| Cam Ninh + Lữ Bố + Hứa Du | `Tinh·Cẩm Phàm Quân`; dùng đăng dụng lệnh đổi Cam Ninh sang Quần | Đã xuất hiện chiến tích lớn, nhưng cạnh tranh đúng bộ chiến pháp với Hoàng Mã/Nhị Kiều |\n| Tả Từ + Lữ Bố + Hứa Du | `Tinh·Tử Sĩ Tiên Phong` hoặc `Tinh·Cẩm Phàm Quân` | Hai nhánh cùng lõi; nâng thích tính Tả Từ lên B, chưa có tỷ lệ liên chiến tổng hợp |\n| Trương Liêu + Vương Nguyên Cơ + Quách Gia | `Tinh·Hổ Báo Kỵ` | Đội tốc công có chiến tích lớn, thích hợp đội 4 hơn là lõi bền |\n| SP Gia Cát Lượng + Quan Hưng + Trương Bào | `Tinh·Hãm Trận Doanh` | Phương án thay Đan Dương để cộng tồn; nhiều lần vượt 10.000 chiến công nhưng thấp hơn bản Đan Dương |\n| SP Điêu Thuyền + Vương Dị + Gia Cát Lượng | `Chuyển·Phi Hùng Quân` + `Tinh·Nhanh Trí Động Não` | Lõi Tiềm Long mới, mới ở mức watchlist |\n| SP Gia Cát Lượng + Hoàng Trung + Quan Vũ | `Tinh·Hãm Trận Doanh` + Võ Phong Trận | Có trận lớn nhưng biến động cao vì phụ thuộc Hoàng Trung |\n| Trình Phổ + Lục Tốn + CO Tiểu Kiều | `Tinh·Bạch Mã Nghĩa Tòng` | Tiên công kéo dài giúp đội đánh trước, nhưng chưa có tỷ lệ ổn định |\n| 40Y Lữ Bố + SP Điêu Thuyền + SP Lô Trực | `Tinh·Cẩm Phàm Quân` | Bằng chứng mới mạnh hơn ảnh đơn lẻ trước đây, nhưng vẫn chưa vào top 14 |\n| SP Tuân Úc + SP Quách Gia + Tuân Du | `Tinh·Phi Hùng Quân` | Có trận lớn và đã có lõi `team-intro-12`; là biến thể Phú Quý không dùng Giả Hủ |\n\nNguồn watchlist: [19 build đạt trên 10.000 chiến công](https://sangokushi-shinsen.info/2026/08/24/631%e3%80%90%e8%b2%82%e8%9d%89%e3%81%ae%e4%b8%89%e5%9b%bd%e5%bf%97%e7%9C%9f%e6%88%a6%e3%80%91%e3%80%80s26%e3%80%80%e6%9c%89%e6%9c%9b%e7%b7%a8%e6%88%90%ef%bc%94%e3%80%80%e7%8d%b2%e5%be%97%e6%88%a6/).\n\n### Đối chiếu đa vùng và giới hạn bằng chứng\n\n- Nguồn Hoa phồn thể hậu patch xác nhận Phi Hùng bị giảm mạnh nhưng vẫn “tiếp tục mạnh”; điều này phù hợp với ba đội Phi Hùng nằm trong top 9 Nhật.\n- Nguồn Hàn Quốc cũng nêu Thái Sư Cung và Đô Đốc Cung là hai lõi tận dụng Phi Hùng Cung; đồng thời nhấn mạnh Đan Dương và Đằng Giáp làm các đội khiên rất khó xuyên.\n- Dữ liệu Nhật đến từ server trải nghiệm và có thể lệch bởi độ đỏ, cấp đội và card pool. Một thảo luận Hoa phồn thể cảnh báo không áp thẳng kết luận tiên phong vào server chính thức.\n- `Vô Đương Phi Quân`, `Thanh Châu Binh`, `Hổ Vệ Quân` được buff ở vòng hai nhưng chưa xuất hiện trong top 14 hoặc nhóm chiến tích lớn đã công bố. Không suy từ buff cơ chế thành đội meta.\n- `Bạch Nhĩ Binh` vẫn chưa có bằng chứng tăng hạng; nguồn Hoa phồn thể đánh giá hiệu quả vòng đầu gần đội không mang binh chủng.\n\nNguồn đối chiếu: [patch vòng hai Hoa phồn thể](https://forum.gamer.com.tw/C.php?bsn=36815&snA=11540), [bài Phi Hùng và đội phù hợp](https://forum.gamer.com.tw/C.php?bsn=36815&snA=11515), [bình luận Hàn Quốc về các đội binh chủng](https://m.dcinside.com/board/3kingdoms/367857), [cảnh báo giới hạn server tiên phong](https://forum.gamer.com.tw/C.php?bsn=36815&last=1&snA=11520&tnum=3).\n\n### Ràng buộc cộng tồn mùa mới\n\n- Chỉ được sửa tối đa bốn chiến pháp binh chủng, nên 14 biến thể trên không thể cùng xuất hiện trong một portfolio.\n- Phi Hùng cạnh tranh trực tiếp giữa Thái Sư Cung, Đô Đốc Cung, SP Điêu Thuyền Cung, Tam Tiên Kỵ và Phú Quý Kỵ.\n- Đan Dương cạnh tranh giữa Pháp Quan Khiên và Bắc Phạt Khiên. Nếu dùng cho Bắc Phạt, Pháp Quan nên chuyển sang `Tinh·Đằng Giáp Binh` hoặc `Chuyển·Tử Sĩ Tiên Phong`.\n- Hoàng Mã chỉ chọn một trong `Tinh·Đại Kích Sĩ` và `Tinh·Giải Phiền Vệ`; Đại Kích thiên thắng dứt điểm, Giải Phiền thiên liên chiến và ít đòi hỏi bảo vật hơn.\n- Hoàng Mã, Nhị Kiều và Ôn Hầu Cung cùng tranh `Đương Phong Thôi Quyết`, `Thôi Phong Đoạn Nhẫn`, `Thuyền Cỏ Mượn Tên`, `Lâm Nguy Cứu Chủ`; không được đề xuất cùng lúc như ba đội độc lập.\n\nNguồn cộng tồn: [gợi ý portfolio S26 từ dữ liệu trải nghiệm](https://sangokushi-shinsen.info/2026/08/24/636%e3%80%90%e8%b2%82%e8%9d%89%e3%81%ae%e4%b8%89%e5%9b%bd%e5%bf%97%e7%9c%9f%e6%88%a6%e3%80%91%e3%80%80s26%e3%80%80%e5%85%b1%e5%ad%98%e7%b7%a8%e6%88%90%e3%80%80%e5%a4%aa%e5%b8%ab%e5%bc%93%e3%83%bb/).\n\n## Quyết định dữ liệu MCP\n\n- Chưa nhập đội S26 mới vào `data/teams.json`.\n- Có thể stage 14 biến thể xếp hạng với trạng thái `post-balance-preview`; watchlist chỉ dùng trạng thái `watch`, không trộn hai mức bằng chứng.\n- Không gắn T0/T0.5 cho bất kỳ biến thể S26 nào trước khi có dữ liệu mùa Global live và nguồn tier độc lập; tỷ lệ liên chiến của server trải nghiệm không tự động trở thành tier MCP.\n- Các bài Nhật và Hoa phồn thể được giữ vì đều thuộc Global, nhưng phải gắn rõ `region: JP-global` hoặc `region: TW-global` trong ghi chú nghiên cứu.\n- Không dùng bài server Đại Lục để quyết định tier cho mùa này vì Binh Diễn Xuân Thu là kịch bản Global-original và cân bằng đã tách biệt.\n- Khi có dữ liệu hậu patch, nên lưu biến thể mùa bằng metadata `season` và `customTroop` thay vì nhân đôi lõi ba tướng thành bản ghi gần trùng.\n\n## Khoảng trống nguồn\n\n- Tìm kiếm công khai bằng tiếng Việt chưa trả về bài đội hình/chiến báo Binh Diễn Xuân Thu có thể kiểm chứng.\n- Nguồn Hàn Quốc đã có bình luận cơ chế và tên một số lõi đội, nhưng chưa có bảng build/chiến báo chi tiết tương đương nguồn Nhật.\n- Chưa tìm thấy cộng đồng tiếng Anh có chiến báo chi tiết cho mùa này.\n- Do đó bằng chứng đội hình hiện tập trung ở hai vùng Global: Đài–Hồng–Ma và Nhật.\n"
+    },
+    {
+      "sequence": 2,
+      "action": {
+        "op": "read",
+        "path": "docs/research-sources.md"
+      },
+      "ok": true,
+      "state": "allowed",
+      "content": "# Phân loại nguồn research Tam Quốc Chí Chiến Lược\n\nCập nhật phân loại: 2026-09-07. Dựa trên các lượt xác minh ngày 2026-09-06–07; không phải một lần kiểm thử lại toàn bộ website. Phạm vi gồm các nguồn đã khảo sát trong danh sách tham khảo và 233乐园, không phải toàn bộ nguồn từng xuất hiện trong repo.\n\nPhân loại theo **mục đích sử dụng** và **bằng chứng của từng bài**. Một website có thể phục vụ nhiều mục đích; được chọn để research không có nghĩa mọi nội dung đã đủ điều kiện nhập dữ liệu.\n\n## 1. Tra cứu dữ liệu và đối chiếu cơ chế\n\n| Nguồn | Khu vực/ngôn ngữ | Dùng để | Giới hạn |\n| --- | --- | --- | --- |\n| [Lingxi — thư viện chính thức](https://sgzzlb.lingxigames.com/station/) | Trung Quốc / giản thể | Tra tên gốc, mô tả tướng/chiến pháp, trang bị, binh chủng và điều kiện sử dụng. | Chính thức cho khu vực nguồn; không tự động xác nhận phiên bản Global. Cơ chế cụ thể cần mô tả đúng bản hoặc kiểm thử tương ứng. |\n\n## 2. Research cấu hình team và chiến thuật\n\n| Nguồn | Khu vực/ngôn ngữ | Vai trò research | Lưu ý khi lấy cấu hình |\n| --- | --- | --- | --- |\n| [SGSDeck — đội đề xuất](https://sgsdeck.com/recommended) | Đài Loan / phồn thể | **Team chuẩn “Sách Giáo Khoa” của project, theo quyết định người dùng ngày 2026-09-07.** Là mốc cấu hình để đối chiếu các build khác. | Ghi đúng cấu hình, mùa và tier của nguồn. Vai trò chuẩn tham chiếu không tự xác nhận hiệu quả trên mọi server/phiên bản. Phần kho/tài khoản chưa thử trong khảo sát. |\n| [Kazten](https://kazten.com/) | Nhật | Đội mẫu theo mùa, khai hoang, biến thể theo kịch bản. | Ghi rõ mùa, ngày bài và ngữ cảnh giới thiệu/thử nghiệm/thực chiến. |\n| [Shinsen Navi](https://sangokushi-shinsen.com/) | Nhật | Vai trò từng tướng, chiến pháp, binh thư, đội dùng tướng đó và trước/sau thức tỉnh. | Kiểm tra ngày và cấu hình ở bài chi tiết; không suy từ trang chủ. |\n| [Chousen](https://sangokushi-shinsen.info/) | Nhật | Phân tích meta, đối đầu và nhiều đội cùng tồn. | Một số bài dùng máy chủ thử nghiệm; giữ nguyên nhãn đó, không chuyển thành kết luận live. |\n| [DailyGames — bảng đội](https://www.dailygames-online.com/sangokushisinsen/?page_id=820) | Nhật | Mẫu đội, chủ/phó tướng, chiến pháp, binh thư, cộng điểm. | Nhiều mẫu thuộc mùa cũ. Dùng làm cấu hình tham khảo, chưa đủ kết luận meta hiện tại. |\n\n## 3. Research build team từ cộng đồng và bài tổng hợp\n\n| Nguồn | Khu vực/ngôn ngữ | Vai trò research | Lưu ý khi lấy cấu hình |\n| --- | --- | --- | --- |\n| [233乐园 — cộng đồng game](https://www.233leyuan.com/circle/9df2ab326c234f2a9aeb1b7f8a463a1a) | Trung Quốc / giản thể | **Nguồn research build team đã được người dùng chọn**: tổ hợp tướng, chiến pháp, binh thư, cộng điểm, tốc độ, thay thế, khai hoang/chuyển đội. | Đọc bài cụ thể; ghi nhãn AI/đăng lại, truy nguyên bản và đối chiếu nhận định quan trọng. Không loại nguồn chỉ vì không có công cụ ghép đội. |\n| [Bahamut — diễn đàn game](https://forum.gamer.com.tw/B.php?bsn=36815) | Đài Loan / phồn thể | Bài người chơi, chiến báo, trao đổi cấu hình và phản hồi. | Bộ đọc từng gặp 403; chỉ trích phần bài thực sự truy cập/đọc được. Bình luận không mặc nhiên xác nhận cơ chế. |\n| [Yaojing Team — kho hướng dẫn](https://www.yaojingteam.com/guides) | Trung Quốc / giản thể | Tìm bài theo kịch bản, đội hình, khai hoang và phương án cùng tồn. | Nhiều mục dẫn WeChat hoặc dịch vụ tư vấn. Phân biệt bài gốc với giới thiệu dịch vụ; chưa xác nhận công cụ tự ghép. |\n\n## 4. Tham khảo sản phẩm và trải nghiệm ghép đội\n\n| Nguồn | Tham khảo phần nào | Không dùng để suy ra |\n| --- | --- | --- |\n| [Hensei Kobo](https://sgs.henseikobo.app/) | Chọn kho tướng/chiến pháp, bàn ghép đội, đối chiếu sở hữu với đội mẫu, xuất ảnh. | Điểm khớp kho không phải sức mạnh hay tỷ lệ thắng. Hướng dẫn công khai không thay thế kiểm thử luồng đăng nhập. |\n| [SGSDeck](https://sgsdeck.com/) | Bộ lọc, quản lý nhiều nhân vật, kho cá nhân, sao chép/chia sẻ đội và cách trình bày catalog. | Có tính năng trên trang giới thiệu không có nghĩa đã kiểm thử toàn bộ. Vai trò research đội mẫu nằm riêng ở nhóm 2. |\n\n## 5. Tư liệu lịch sử\n\n- [Hatena / sanguo-zhi.com](https://www.sanguo-zhi.com/): chỉ tham khảo bài Tam Quốc mùa cũ. [Tác giả xác nhận](https://www.sanguo-zhi.com/profile/) đã nghỉ 三国志真戦 và chuyển sang Nobunaga. Không chọn làm nguồn meta/Binh Diễn Xuân Thu hiện tại.\n- Các bài cũ của DailyGames hoặc bất kỳ nguồn nào khác vẫn giữ mùa gốc. Website còn cập nhật không tự làm mới bài cũ.\n\n## 6. Chưa sử dụng trong danh sách research hiện tại\n\n| Nguồn | Lý do/trạng thái |\n| --- | --- |\n| [三战助手](https://news.dmzgame.com/sgz/news/2021-07-16/1221.html) | Chỉ xác minh được hướng dẫn 2022; đã rút đề xuất, chưa có điểm vào công cụ đang dùng được. |\n| [开荒高手](https://www.threekingdom100.com/) | Chưa xác minh được ứng dụng thực tế và phiên bản game; đã rút đề xuất. Không kết luận trang chết hay sai game. |\n| [三战模拟大师](https://szmoni.my.canvasite.cn/) | Landing page WeChat mini-program mô phỏng; đã rút đề xuất vì không sát nhu cầu website tham khảo đã chốt. |\n| [easychiu/sgs-pei-jiang](https://easychiu.github.io/sgs-pei-jiang/) | Người dùng đánh giá không sát nhu cầu; thiên về mô phỏng, không ưu tiên. |\n| [shinsen-wiki](https://wikiwiki.jp/shinsen-wiki/), [3game.tech](https://3game.tech/) | Chưa đủ nội dung/bằng chứng truy cập trong khảo sát để đưa vào tập nguồn sử dụng. |\n| [sgmdtx.com](https://sgmdtx.com/), [nobunaga-shinsen-sim.jp](https://nobunaga-shinsen-sim.jp/) | Khác game: 三国谋定天下 và 信長の野望 真戦. Không dùng làm nguồn dữ liệu Tam Quốc Chí Chiến Lược. |\n\n## Trạng thái bằng chứng cho từng nhận định\n\n**Chuẩn tham chiếu và trạng thái bằng chứng là hai thông tin riêng.** SGSDeck giữ vai trò “Sách Giáo Khoa” theo quyết định project. Khi research, lấy đúng đội SGSDeck làm mốc; bài nguồn khác được đối chiếu thành biến thể hoặc phương án thay thế và phải nêu phần khác biệt. Nếu chưa tìm thấy/đọc được mẫu SGSDeck phù hợp, ghi rõ “chưa có mốc SGSDeck đã xác minh”, không tự gắn nhãn Sách Giáo Khoa cho một đội khác. Vai trò này không tự thay đổi tier hoặc dữ liệu runtime đang được quản lý riêng.\n\n| Trạng thái | Ý nghĩa | Cách dùng |\n| --- | --- | --- |\n| Đã đối chiếu | Nhận định có mô tả chính thức đúng phiên bản, kiểm thử hoặc bằng chứng độc lập phù hợp. | Có thể dùng trong phạm vi đã xác minh; lưu nguồn. |\n| Phương án từ nguồn | Bài đã đọc có cấu hình cụ thể nhưng chưa đủ đối chiếu. | Ghi rõ đề xuất của tác giả/khu vực/mùa; không gọi là cấu hình tối ưu đã xác nhận. |\n| Chưa xác minh | Chỉ có tiêu đề, snippet, nhãn AI/đăng lại chưa truy nguyên hoặc thiếu mùa. | Dùng tìm tiếp; để trống chi tiết chưa biết, không tự điền dữ liệu. |\n\nHai trang đăng lại cùng một bài không phải hai bằng chứng độc lập. Nhãn AI không tự chứng minh sai; một bài có lỗi cũng không phủ nhận mọi bài cùng website. Đánh giá theo nhận định và bằng chứng cụ thể.\n\n## Cách chọn nguồn khi research một team\n\n1. Chốt bộ ba tướng, khu vực, kịch bản và giai đoạn trước/sau thức tỉnh hoặc PK.\n2. Tìm mẫu SGSDeck phù hợp làm mốc “Sách Giáo Khoa”; bổ sung nhóm 2 và 3, bao gồm 233乐园, để nghiên cứu biến thể và phương án thay thế. Dùng nhóm 1 để đối chiếu tên và điều kiện chiến pháp.\n3. Ghi: chủ/phó tướng, binh chủng, chiến pháp, binh thư, cộng điểm, tốc độ, thay thế và chuyển đội nếu nguồn có.\n4. Gắn URL bài, tác giả nếu biết, ngày gốc/ngày đăng lại, khu vực/mùa, bối cảnh thử nghiệm/live và trạng thái bằng chứng.\n5. So sánh từng build với mẫu SGSDeck: tướng, chủ tướng, binh chủng, chiến pháp và các điều kiện khác mà nguồn cung cấp. Khi nguồn bất đồng, giữ các biến thể cùng điều kiện áp dụng; không gộp thành một cấu hình hoặc đảo quyết định đã xác minh khi chưa có bằng chứng mới.\n\n## Bằng chứng khảo sát\n\n- [Danh sách nguồn và các đính chính ngày 6–7/9/2026](../plans/reports/research-260906-2333-team-builder-reference-sites.md).\n- [Xác minh 233乐园 và phạm vi dùng research build team](../plans/reports/research-260907-1639-233leyuan-source-validation.md).\n\nGiới hạn còn lại: luồng đăng nhập/trả phí chưa thử; phạm vi mùa Global cần xác minh theo từng nghiên cứu. Tài liệu này phân loại nguồn, không thay đổi dữ liệu runtime.\n"
+    },
+    {
+      "sequence": 3,
+      "action": {
+        "op": "read",
+        "path": ".agents/skills/tqccl-coexist-team-builder/references/multi-source-research-and-logic-checks.md"
+      },
+      "ok": true,
+      "state": "allowed",
+      "content": "# Multi-Source Research And Logic Checks\n\nUse this reference when a recommendation needs evidence beyond project data, especially battle reports, cross-server meta, or tactic mechanics.\n\n## Source And Language Coverage\n\nSearch multiple markets when the answer depends on current meta or battle reports:\n\n- Chinese mainland: `三国志战略版`\n- Traditional Chinese/Taiwan/HK: `三國志戰略版`\n- Japanese: `三國志 真戦`\n- Korean: `삼국지 전략판`\n- English/global communities: `Three Kingdoms Tactics`, `Sangokushi Tactics`, exact hero/tactic names if known\n- Vietnamese: in-game Vietnamese names, local community names, and the CamNangTQCCL project data\n\nPrefer official patch notes, large strategy sites, battle-report articles, season tier lists, and repeated player reports. Treat isolated screenshots or single forum comments as weak evidence.\n\n## Query Pattern\n\nFor team research, combine:\n\n- exact hero names in the source language,\n- exact tactic names in the source language,\n- keywords for battle reports or coexist:\n  - CN: `战报`, `共存`, `阵容`, `搭配`, `赛季`, `白板`\n  - JP: `戦報`, `共存`, `編成`, `テンプレ`\n  - KR: `전보`, `공존`, `덱`, `조합`\n  - EN: `battle report`, `coexist`, `lineup`, `build`\n\nWhen possible, check at least two languages or regions before calling a team \"proven\". If only one region has evidence, say so.\n\n## Evidence Grading\n\n- Strong: multiple battle reports plus build details plus season context.\n- Medium: one detailed article or repeated community consensus with exact tactics.\n- Weak: image-only post, comment-only claim, or build without results.\n- Project-local: valid for this repo, but still check mechanics before recommending.\n\nDo not claim \"có chiến báo chứng minh\" unless at least one source clearly includes battle reports or explicit battle-record discussion. If images are inaccessible or image-only, say the source claims/provides battle reports but details are not text-verifiable.\n\n## Logic Sanity Checklist\n\nBefore finalizing any team, reject or flag these mismatches:\n\n- Assault/basic-attack support on active-magic teams.\n  - Example: `Hổ Báo Kỵ` supports assault/basic-attack tempo; do not recommend it as support for a chủ động/mưu lược Phi Hùng team.\n- Active-rate boosters paired with non-active tactics.\n  - Example: `Dốc Sức Tính Kế` must be paired with another non-self active tactic on the same holder; not `Tạm Lánh`, formations, troop tactics, passives, or command-only setups.\n- Preparation tactics on repeat-active engines when reliability is the goal.\n  - Repeating a 1-turn preparation tactic does not make it instant.\n- Healing-dependent tactics without active healing.\n  - Example: `Phi Hùng Quân` wants real healing sources; pure damage/status skills do not feed its healing-value plan.\n- Main-commander-scaling tactics on the wrong commander.\n  - If a tactic's damage or buff follows the chủ tướng, put the intended damage/core general as chủ tướng.\n- Self-control risk ignored.\n  - Example: `Giả Hủ` can disrupt allies with Hỗn Loạn; mention this risk when pairing with SP Quách Gia active damage.\n- Basic-attack proc tactics on generals that do not basic attack enough.\n  - Example: `Binh Vô Thường Thế` is weak on a general that is not expected to attack repeatedly.\n- Formation/troop mismatch.\n  - Do not recommend a troop tactic that does not match the chosen troop type or a formation that undermines the team's damage distribution.\n\n## Final Research Statement\n\nWhen answering with researched evidence, include:\n\n- region/source names,\n- whether evidence is battle reports, tier list, or mechanics article,\n- exact build from source if it differs from the user's coexist build,\n- what was changed for no-overlap coexist and what that costs.\n"
+    }
+  ],
+  "transcript": [
+    {
+      "role": "agent",
+      "content": {
+        "actions": [
+          {
+            "op": "read",
+            "path": "plans/reports/research-260825-binh-dien-xuan-thu-global-only.md"
+          },
+          {
+            "op": "read",
+            "path": "docs/research-sources.md"
+          },
+          {
+            "op": "read",
+            "path": ".agents/skills/tqccl-coexist-team-builder/references/multi-source-research-and-logic-checks.md"
+          }
+        ],
+        "answer": ""
+      }
+    },
+    {
+      "role": "tool",
+      "action": {
+        "op": "read",
+        "path": "plans/reports/research-260825-binh-dien-xuan-thu-global-only.md"
+      },
+      "result": {
+        "ok": true,
+        "content": "# Research Global-only — Binh Diễn Xuân Thu\n\n> **Snapshot nghiên cứu tháng 8/2026 — lưu trữ.** Nội dung phản ánh server trải nghiệm và nguồn có đến 27/08/2026; không phải đánh giá meta mùa live hiện tại. Việc lưu Git ngày 06/09/2026 không xác nhận lại lịch mở mùa, cân bằng hoặc tier bên dưới.\n\n- Ngày chốt dữ liệu ban đầu: 2026-08-25\n- Cập nhật gần nhất: 2026-08-27, bổ sung dữ liệu server trải nghiệm Nhật công bố ngày 24/08\n- Phạm vi: Global/International server, gồm Đài–Hồng–Ma, Nhật, Hàn và các khu vực Global khác\n- Không dùng dữ liệu chiến trường Đại Lục để xếp đội\n- Trạng thái: `global-preview-after-balance-2-expanded`\n\n## Chốt lại phạm vi Global\n\n`兵演春秋 / 병연춘추 / Binh Diễn Xuân Thu` là kịch bản nguyên bản dành riêng cho Global, phục vụ Hàn Quốc, Đài–Hồng–Ma, Nhật Bản, Việt Nam và các khu vực Global khác. Nguồn tiếng Hoa phồn thể và tiếng Nhật dưới đây đều đang nói về **Global**, không phải server Đại Lục.\n\nMốc công bố cho cụm Đài–Hồng–Ma/VN là 05/09/2026. Nhật có lịch trải nghiệm riêng; thông báo tuyển người chơi ghi hai đợt, đợt một 13–20/08 và đợt hai 31/08–08/09. Vì vậy ngày mở và tiến độ kiểm thử có thể lệch giữa các vùng Global.\n\nNguồn xác nhận phạm vi: [thông báo Global tiếng Hoa phồn thể](https://www.findglocal.com/TW/Unknown/103800634776945/%E4%B8%89%E5%9C%8B%E5%BF%97%E3%83%BB%E6%88%B0%E7%95%A5%E7%89%88), [App Store Hàn Quốc](https://apps.apple.com/kr/app/%EC%82%BC%EA%B5%AD%EC%A7%80-%EC%A0%84%EB%9E%B5%ED%8C%90/id1524791715), [tin Hàn Quốc về phạm vi các vùng Global](https://m.gamechosun.co.kr/news/view.php?no=223376), [thông báo trải nghiệm Nhật](https://www6.twstalker.com/ShinSen_SGS).\n\n## Vì sao chưa có tier list Global đáng tin\n\nNguồn Global tiếng Hoa phồn thể đã đăng thay đổi cho vòng thử nghiệm thứ hai vào 21/08. Patch này thay đổi trực tiếp phần lớn binh chủng từng tạo ra các đội mạnh trong vòng đầu:\n\n| Binh chủng | Thay đổi vòng hai | Hệ quả với đội vòng đầu |\n|---|---|---|\n| Phi Hùng Quân | Trí lực cộng dồn 3% → 2%; hồi phục 14% → 8%; tăng sát thương 36% → 12%; hồi theo sát thương 60% → 40% | Điêu Thuyền Cung, Đô Đốc Cung, Phú Quý Kỵ và Tư Mã Phi Hùng đều bị giảm đáng kể |\n| Hổ Báo Kỵ | Giảm hệ số phát động; cộng thêm phát động 5% → 2%; nhiều hiệu ứng 25% → 15% | Tiềm Long Mã Siêu và các đội đột kích chưa thể giữ đánh giá vòng một |\n| Tây Lương Thiết Kỵ | Võ/trí toàn đội 40 → 15; xuyên né/tr抵 30% → 15%; nhiều hệ số chí mạng bị hạ | Ngô Kỵ và Ngũ Mưu bạo kích bị hạ trần |\n| Đại Kích Sĩ | Tăng sát thương 22% → 11%; tăng phát động chủ tướng 35% → 25%; phá trận 30% → 25% | Nhánh Đại Kích Hoàng Mã bị giảm, nhưng vẫn còn cơ chế liên kích hữu ích |\n| Giải Phiền Vệ | Giảm hệ số tăng phát động theo thuộc tính; tăng sát thương 12% → 6% | Nhánh Giải Phiền Hoàng Mã bị giảm trực tiếp |\n| Vô Đương Phi Quân | Tăng sát thương 20% → 40%; xuyên phòng thủ DOT 25% → 40%; thêm cơ chế hỏa tiễn/hồi phục | Trở thành mục tiêu kiểm thử quan trọng nhất của vòng hai |\n| Hổ Vệ Quân | Tăng sát thương 18% → 36%; tăng trần ảnh hưởng 10% → 20%; kích hoạt cố định hai lần mỗi hiệp | Hạt Nhân Trương Phi có khả năng trở lại |\n| Đằng Giáp Binh | Thêm hiệu ứng phó tướng hưởng hiệu ứng chủ tướng, kháng giảm thuộc tính, thanh tẩy DOT và chống binh đao đầu trận | Pháp Quan Khiên, Bắc Phạt Khiên và các đội khiên Đằng Giáp cần test lại |\n| Thanh Châu Binh | Phản kích 18% → 36%; tổng hồi phục 40% → 60%; hồi hiệp 5 lên 120%; sát thương lên mục tiêu bị khống chế 50% → 100% | Mở khả năng cho đội thương khống chế/phản kích, nhưng chưa có build hậu patch đủ chiến báo |\n\nNguồn đầy đủ: [cập nhật vòng thử nghiệm thứ hai Global](https://forum.gamer.com.tw/C.php?bsn=36815&snA=11540).\n\n**Kết luận tại mốc 25/08:** mọi bài “top tier candidate” xuất bản ngày 12–15/08 chỉ phản ánh vòng một. Ở thời điểm đó chưa có tập chiến báo hậu patch đủ lớn để lập tier list Global mới.\n\n**Cập nhật 27/08:** hai bài Nhật công bố ngày 24/08 đã tổng hợp tỷ lệ liên chiến của 14 biến thể và các trận đạt trên 10.000 chiến công trên server trải nghiệm. Đây là bằng chứng hậu patch mạnh hơn danh sách ứng viên vòng một, nhưng vẫn là dữ liệu preview, không phải tier chính thức từ mùa Global live.\n\n## Các đội Global có bằng chứng vòng một\n\n### 1. Hoàng Mã Thương — SP Mã Siêu + SP Hoàng Phổ Tung + Hứa Du\n\n- Hai nhánh được thử: `Tinh·Giải Phiền Vệ` và `Tinh·Đại Kích Sĩ`.\n- Test Global tiếng Hoa phồn thể ghi nhận Hứa Du 440 trí, 633 cơ hội đánh thường và 312 lần kích hoạt Giải Phiền, tương đương 49,3% trước patch.\n- Người thử đánh giá hai nhánh gần ngang nhau và chờ vòng hai để so lại.\n- Cả hai nhánh đều đã bị nerf, nhưng lõi Hoàng Mã vốn đã là đội mạnh ổn định của Global nên đây vẫn là đội **an toàn nhất để retest**, không phải T0 đã được xác nhận cho S26.\n\nNguồn: [test Giải Phiền Vệ Global](https://forum.gamer.com.tw/C.php?bsn=36815&snA=11527&tnum=1), [bài Đại Kích Sĩ và thảo luận lựa chọn](https://forum.gamer.com.tw/Co.php?bsn=36815&sn=70177).\n\n### 2. Đô Đốc Cung — Chu Du + Lục Tốn + SP Lữ Mông\n\n- Có bài chia sẻ trực tiếp từ tiên phong Global kèm phần chiến báo.\n- Bản vòng một dùng `Tinh·Linh Cơ Nhất Động` cho Chu Du và Phi Hùng chuyển cung cho Lục Tốn; SP Lữ Mông mang Nhạn Hành Trận + Thuyền Cỏ.\n- Chính tác giả đã dự đoán Phi Hùng sẽ bị giảm sức mạnh; điều này đã xảy ra ở patch vòng hai.\n- Tác giả cho rằng Bạch Nhĩ Cung hợp hệ ba Kỳ Chính hơn, nhưng trước patch hiệu quả còn kém; vòng hai đã sửa Bạch Nhĩ nên đây là nhánh cần test lại.\n\nNguồn: [chia sẻ Đô Đốc Cung trên tiên phong Global](https://forum.gamer.com.tw/Co.php?bsn=36815&sn=70160).\n\n### 3. Tiềm Long Mã Siêu — CO Đại Kiều + Hứa Du + SP Mã Siêu\n\n- Global tiếng Hoa phồn thể có bài Hổ Báo Kỵ và nói đội này cho kết quả nổi bật, kèm chiến báo.\n- Cấu hình được đề xuất: Hổ Báo Kỵ với tăng tốc/thiên về phát động đột kích, tăng phát động và hiệu ứng khống chế ngẫu nhiên.\n- Patch vòng hai nerf hầu hết các nút chính của Hổ Báo, nên chiến báo vòng một không đủ để giữ xếp hạng.\n\nNguồn: [Hổ Báo Kỵ và đội Tiềm Long Mã Siêu](https://forum.gamer.com.tw/C.php?bsn=36815&snA=11518&tnum=1).\n\n### 4. Pháp Quan Khiên — SP Quan Vũ + Mã Đại + SP Pháp Chính\n\n- Hai hướng Global được đề xuất: Tiên Đăng Tử Sĩ chuyển khiên hoặc Đằng Giáp tinh luyện.\n- Đằng Giáp vừa được làm lại theo hướng chống giảm thuộc tính, thanh tẩy sát thương duy trì và bảo vệ chủ tướng trước binh đao đầu trận.\n- Đây là đội nên ưu tiên kiểm thử vòng hai vì lõi Pháp Quan vốn mạnh và cơ chế mới vá đúng các điểm phòng thủ, nhưng hiện chưa có chiến báo hậu patch.\n\nNguồn vòng một: [các ứng viên S26 trên server Nhật Global](https://sangokushi-shinsen.info/2026/08/15/627%E3%80%90%E8%B2%82%E8%9D%89%E3%81%AE%E4%B8%89%E5%9B%BD%E5%BF%97%E7%9C%9F%E6%88%A6%E3%80%91%E3%80%80s26%E3%80%80%E6%9C%89%E6%9C%9B%E7%B7%A8%E6%88%90%EF%BC%91%E3%80%80%E6%9D%A5%E6%9C%9F%E3%81%AE/), [phân tích Đằng Giáp vòng một](https://sangokushi-shinsen.info/2026/08/15/624%E3%80%90%E8%B2%82%E8%9D%89%E3%81%AE%E4%B8%89%E5%9B%BD%E5%BF%97%E7%9C%9F%E6%88%A6%E3%80%91%E3%80%80s26%E3%80%80%E5%85%B5%E6%BC%94%E6%98%A5%E7%A7%8B%EF%BC%93%E3%80%80%E8%97%A4%E7%94%B2%E5%85%B5/).\n\n### 5. Hạt Nhân Trương Phi — Chu Thái + Trương Phi + SP Viên Thiệu\n\n- Danh sách Global Nhật vòng một đã đề xuất Hổ Vệ Quân tinh luyện cho đội này.\n- Patch vòng hai buff trực tiếp sát thương, trần ảnh hưởng và số lần kích hoạt Hổ Vệ.\n- Đây là **ứng viên tăng hạng rõ nhất trên giấy** sau patch, nhưng chưa được gọi là meta vì chưa có chiến báo hậu patch.\n\nNguồn đội: [năm ứng viên bổ sung Global Nhật](https://sangokushi-shinsen.info/2026/08/15/628%E3%80%90%E8%B2%82%E8%9D%89%E3%81%AE%E4%B8%89%E5%9B%BD%E5%BF%97%E7%9C%9F%E6%88%A6%E3%80%91%E3%80%80s26%E3%80%80%E6%9C%89%E6%9C%9B%E7%B7%A8%E6%88%90%EF%BC%92%E3%80%80%E8%8D%89%E8%88%B9%E7%94%98/), [buff Hổ Vệ vòng hai](https://forum.gamer.com.tw/C.php?bsn=36815&snA=11540).\n\n## 40Y Lữ Bố trên Global\n\nCác tổ hợp đã được thử/đề xuất:\n\n- 40Y Lữ Bố + SP Lô Trực + SP Điêu Thuyền.\n- Cam Ninh + 40Y Lữ Bố + Hứa Du.\n- Cam Ninh + 40Y Lữ Bố + SP Điêu Thuyền — ảnh từ session người dùng, chưa có nguồn chữ độc lập.\n- Một số người chơi Global thử ghép với CO Đại Kiều và nhận thấy sức mạnh tăng nhiều nhờ hiệu ứng của Đại Kiều.\n\nPhản hồi Global hiện tại không đồng thuận:\n\n- Có chiến báo tiên phong được chia sẻ, nhưng chi tiết nằm trong video/ảnh nên chỉ xếp bằng chứng trung bình–yếu.\n- Người thử cho rằng 40Y Lữ Bố cần cả Huyết Nhận và Dẫn Huyền để đủ sát thương, gây xung đột cộng tồn lớn.\n- Có đánh giá đội SP Lô Trực + 40Y Lữ Bố + SP Điêu Thuyền không chịu được Ngũ Mưu Kỵ và 40Y Lữ Bố chỉ ở khoảng T1–T2 trong vòng đầu.\n- Patch vòng hai tăng hệ số võ lực của giảm sát thương sau lần đánh thường thứ ba, nhưng chưa có chiến báo hậu patch để chứng minh đã giải quyết vấn đề.\n\nNguồn: [thảo luận build 40Y Lữ Bố Global](https://forum.gamer.com.tw/C.php?bsn=36815&gothis=70173&page=1&snA=11517), [video/test tiên phong Global và chiến báo ảnh](https://forum.gamer.com.tw/Co.php?bsn=36815&sn=70175), [patch vòng hai](https://forum.gamer.com.tw/C.php?bsn=36815&snA=11540).\n\n## Thứ tự theo dõi ban đầu sau patch vòng hai — mốc 25/08\n\n1. **Hoàng Mã Thương:** so trực tiếp Đại Kích và Giải Phiền sau nerf.\n2. **Pháp Quan Khiên/Đằng Giáp:** kiểm chứng độ bền và kèo hỏa công sau khi Đằng Giáp được làm lại.\n3. **Hạt Nhân Trương Phi/Hổ Vệ:** xác minh mức tăng thực tế từ ba buff lớn.\n4. **Đội Vô Đương Phi Quân:** tìm build Global mới tận dụng DOT, xuyên phòng thủ và hồi phục; hiện chưa chốt ba tướng.\n5. **Đô Đốc Cung:** test lại Phi Hùng đã nerf so với Bạch Nhĩ đã chỉnh sửa.\n6. **40Y Lữ Bố:** chỉ nâng hạng nếu có chuỗi chiến báo hậu patch với chi phí chiến pháp hợp lý.\n\n## Cập nhật 27/08 — 14 biến thể dùng chiến pháp binh chủng đã có dữ liệu liên chiến\n\nNguồn Nhật ngày 24/08 công bố bảng xếp hạng dựa trên dữ liệu liên chiến của server trải nghiệm sau vòng cân bằng thứ hai. `Tỷ lệ liên chiến` trong nguồn là khả năng đội đạt hòa trở lên để tiếp tục đánh, không phải tỷ lệ thắng thuần. Nguồn không công khai cùng một cỡ mẫu cho mọi đội, nên các con số dưới đây chỉ là thước đo preview tương đối.\n\n| Hạng preview | Lõi đội | Thay đổi chiến pháp/binh chủng | Dữ liệu được công bố | Đối chiếu repo |\n|---:|---|---|---|---|\n| 1 | SP Đổng Trác + SP Lô Trực + SP Điêu Thuyền | `Chuyển·Phi Hùng Quân` dùng cho cung | 86% hòa trở lên; có chuỗi khoảng 20 trận | Lõi đã có `team-intro-53` |\n| 2 | SP Mã Siêu + SP Hoàng Phổ Tung + Hứa Du | `Tinh·Giải Phiền Vệ` | 82%; tăng độ ổn định nhờ bảo đảm kích hoạt hồi phục | Lõi đã có `team-intro-1` |\n| 3 | SP Mã Siêu + SP Hoàng Phổ Tung + Hứa Du | `Tinh·Đại Kích Sĩ` | Đồng nhóm đầu; thắng dứt điểm nhiều hơn bản Giải Phiền | Cùng lõi `team-intro-1`, phải lưu thành biến thể thứ hai |\n| 4 | SP Quan Vũ + CO Tinh Thái + SP Pháp Chính | `Tinh·Đan Dương Binh` | 81%; nguồn cho rằng mạnh hơn bản Đằng Giáp | Lõi đã có `team-intro-40` |\n| 5 | Trương Giác + Vũ Cát + Tả Từ | `Tinh·Phi Hùng Quân`, chuyển từ khiên sang kỵ | Có mặt trong top 7; tận dụng hồi phục và né của Tam Tiên | Lõi khiên đã có `team-intro-46`, `moi-phe-144`; đây là biến thể đổi binh chủng |\n| 6 | SP Gia Cát Lượng + Quan Hưng + Trương Bào | `Tinh·Đan Dương Binh`, chuyển Bắc Phạt sang khiên | Nhiều trận trên 10.000 chiến công; lên cấp rất nhanh trong thử nghiệm | Lõi thương đã có `team-intro-7`, `moi-phe-107/108`; cần ghi cả điều kiện chính lệnh tăng thích tính |\n| 7 | CO Đại Kiều + Tôn Thượng Hương + CO Tiểu Kiều | `Tinh·Hổ Báo Kỵ`, chuyển Nhị Kiều sang kỵ | 80%; tăng mạnh xác suất chiến pháp đột kích | Chưa có lõi chính xác; dictionary cũng chưa có hai bản CO |\n| 8 | Chu Du + Lục Tốn + SP Lữ Mông | `Chuyển·Phi Hùng Quân` + `Tinh·Nhanh Trí Động Não` | Có độ bền và nhiều nguồn hồi phục; nằm trong top 14 | Lõi đã có `moi-phe-121` |\n| 9 | SP Điêu Thuyền + Chu Du + Tào Tháo | `Chuyển·Phi Hùng Quân` + `Tinh·Nhanh Trí Động Não` | Phi Hùng tiếp tục là phần tăng sức mạnh chính sau nerf | Có lõi liên quan `team-intro-32`, nhưng bản repo dùng SP Chu Du nên không phải exact match |\n| 10 | SP Quan Vũ + SP Pháp Chính + Lưu Bị | `Tinh·Đan Dương Binh` | Nguồn ghi nhận trên 80%, gần các bản dùng Mã Đại/CO Tinh Thái | Lõi đã có `team-intro-50` |\n| 11 | Chu Thái + SP Mã Siêu + Tào Tháo | `Tinh·Hổ Báo Kỵ` + Tiềm Long Trận | Nâng mạnh tần suất đột kích của SP Mã Siêu | Chưa có lõi chính xác |\n| 12 | CO Đại Kiều + Tôn Thượng Hương + CO Tiểu Kiều | `Tinh·Tử Sĩ Tiên Phong`, dùng cung | Thấp hơn bản Hổ Báo nhưng không cần bảo vật binh chủng và khắc Hoàng Mã tốt hơn | Cùng lõi Nhị Kiều mới, là biến thể binh chủng thứ hai |\n| 13 | SP Tuân Úc + SP Quách Gia + Giả Hủ | `Tinh·Tây Lương Thiết Kỵ` | Tăng kỳ mưu; cũng có thể dùng Phi Hùng với sức mạnh gần tương đương | Lõi đã có `team-intro-11`, `moi-phe-75` |\n| 14 | Tư Mã Ý + Tào Tháo + Mãn Sủng | `Tinh·Đằng Giáp Binh` | Khoảng 74%; giảm điểm yếu trước hỏa công và không cần bảo vật | Lõi đã có `team-intro-42`, `moi-phe-67/68` |\n\nNguồn: [top 7 tỷ lệ liên chiến server trải nghiệm Nhật](https://sangokushi-shinsen.info/2026/08/24/633%e3%80%90%e8%b2%82%e8%9d%89%e3%81%ae%e4%b8%89%e5%9b%bd%e5%bf%97%e7%9c%9f%e6%88%a6%e3%80%91%e3%80%80s26%e3%80%80%e9%80%a3%e6%88%a6%e7%8e%87%e3%83%a9%e3%83%b3%e3%82%ad%e3%83%b3%e3%82%b0%e3%80%80top7/), [hạng 8–14](https://sangokushi-shinsen.info/2026/08/24/634%e3%80%90%e8%b2%82%e8%9d%89%e3%81%ae%e4%b8%89%e5%9b%bd%e5%bf%97%e7%9c%9f%e6%88%a6%e3%80%91%e3%80%80s26%e3%80%80%e9%80%a3%e6%88%a6%e7%8e%87%e3%83%a9%e3%83%b3%e3%82%ad%e3%83%b3%e3%82%b0%e3%80%80/).\n\n### Watchlist mở rộng — có trận trên 10.000 chiến công nhưng chưa đủ mẫu để xếp top 14\n\n| Lõi/biến thể | Thay đổi mùa | Nhận định dữ liệu |\n|---|---|---|\n| SP Đổng Trác + SP Viên Thiệu + SP Điêu Thuyền | `Chuyển·Phi Hùng Quân` | Bản thay SP Lô Trực khi không có tướng; đã có trận trên 10.000 chiến công |\n| Cam Ninh + Lữ Bố + Hứa Du | `Tinh·Cẩm Phàm Quân`; dùng đăng dụng lệnh đổi Cam Ninh sang Quần | Đã xuất hiện chiến tích lớn, nhưng cạnh tranh đúng bộ chiến pháp với Hoàng Mã/Nhị Kiều |\n| Tả Từ + Lữ Bố + Hứa Du | `Tinh·Tử Sĩ Tiên Phong` hoặc `Tinh·Cẩm Phàm Quân` | Hai nhánh cùng lõi; nâng thích tính Tả Từ lên B, chưa có tỷ lệ liên chiến tổng hợp |\n| Trương Liêu + Vương Nguyên Cơ + Quách Gia | `Tinh·Hổ Báo Kỵ` | Đội tốc công có chiến tích lớn, thích hợp đội 4 hơn là lõi bền |\n| SP Gia Cát Lượng + Quan Hưng + Trương Bào | `Tinh·Hãm Trận Doanh` | Phương án thay Đan Dương để cộng tồn; nhiều lần vượt 10.000 chiến công nhưng thấp hơn bản Đan Dương |\n| SP Điêu Thuyền + Vương Dị + Gia Cát Lượng | `Chuyển·Phi Hùng Quân` + `Tinh·Nhanh Trí Động Não` | Lõi Tiềm Long mới, mới ở mức watchlist |\n| SP Gia Cát Lượng + Hoàng Trung + Quan Vũ | `Tinh·Hãm Trận Doanh` + Võ Phong Trận | Có trận lớn nhưng biến động cao vì phụ thuộc Hoàng Trung |\n| Trình Phổ + Lục Tốn + CO Tiểu Kiều | `Tinh·Bạch Mã Nghĩa Tòng` | Tiên công kéo dài giúp đội đánh trước, nhưng chưa có tỷ lệ ổn định |\n| 40Y Lữ Bố + SP Điêu Thuyền + SP Lô Trực | `Tinh·Cẩm Phàm Quân` | Bằng chứng mới mạnh hơn ảnh đơn lẻ trước đây, nhưng vẫn chưa vào top 14 |\n| SP Tuân Úc + SP Quách Gia + Tuân Du | `Tinh·Phi Hùng Quân` | Có trận lớn và đã có lõi `team-intro-12`; là biến thể Phú Quý không dùng Giả Hủ |\n\nNguồn watchlist: [19 build đạt trên 10.000 chiến công](https://sangokushi-shinsen.info/2026/08/24/631%e3%80%90%e8%b2%82%e8%9d%89%e3%81%ae%e4%b8%89%e5%9b%bd%e5%bf%97%e7%9C%9f%e6%88%a6%e3%80%91%e3%80%80s26%e3%80%80%e6%9c%89%e6%9c%9b%e7%b7%a8%e6%88%90%ef%bc%94%e3%80%80%e7%8d%b2%e5%be%97%e6%88%a6/).\n\n### Đối chiếu đa vùng và giới hạn bằng chứng\n\n- Nguồn Hoa phồn thể hậu patch xác nhận Phi Hùng bị giảm mạnh nhưng vẫn “tiếp tục mạnh”; điều này phù hợp với ba đội Phi Hùng nằm trong top 9 Nhật.\n- Nguồn Hàn Quốc cũng nêu Thái Sư Cung và Đô Đốc Cung là hai lõi tận dụng Phi Hùng Cung; đồng thời nhấn mạnh Đan Dương và Đằng Giáp làm các đội khiên rất khó xuyên.\n- Dữ liệu Nhật đến từ server trải nghiệm và có thể lệch bởi độ đỏ, cấp đội và card pool. Một thảo luận Hoa phồn thể cảnh báo không áp thẳng kết luận tiên phong vào server chính thức.\n- `Vô Đương Phi Quân`, `Thanh Châu Binh`, `Hổ Vệ Quân` được buff ở vòng hai nhưng chưa xuất hiện trong top 14 hoặc nhóm chiến tích lớn đã công bố. Không suy từ buff cơ chế thành đội meta.\n- `Bạch Nhĩ Binh` vẫn chưa có bằng chứng tăng hạng; nguồn Hoa phồn thể đánh giá hiệu quả vòng đầu gần đội không mang binh chủng.\n\nNguồn đối chiếu: [patch vòng hai Hoa phồn thể](https://forum.gamer.com.tw/C.php?bsn=36815&snA=11540), [bài Phi Hùng và đội phù hợp](https://forum.gamer.com.tw/C.php?bsn=36815&snA=11515), [bình luận Hàn Quốc về các đội binh chủng](https://m.dcinside.com/board/3kingdoms/367857), [cảnh báo giới hạn server tiên phong](https://forum.gamer.com.tw/C.php?bsn=36815&last=1&snA=11520&tnum=3).\n\n### Ràng buộc cộng tồn mùa mới\n\n- Chỉ được sửa tối đa bốn chiến pháp binh chủng, nên 14 biến thể trên không thể cùng xuất hiện trong một portfolio.\n- Phi Hùng cạnh tranh trực tiếp giữa Thái Sư Cung, Đô Đốc Cung, SP Điêu Thuyền Cung, Tam Tiên Kỵ và Phú Quý Kỵ.\n- Đan Dương cạnh tranh giữa Pháp Quan Khiên và Bắc Phạt Khiên. Nếu dùng cho Bắc Phạt, Pháp Quan nên chuyển sang `Tinh·Đằng Giáp Binh` hoặc `Chuyển·Tử Sĩ Tiên Phong`.\n- Hoàng Mã chỉ chọn một trong `Tinh·Đại Kích Sĩ` và `Tinh·Giải Phiền Vệ`; Đại Kích thiên thắng dứt điểm, Giải Phiền thiên liên chiến và ít đòi hỏi bảo vật hơn.\n- Hoàng Mã, Nhị Kiều và Ôn Hầu Cung cùng tranh `Đương Phong Thôi Quyết`, `Thôi Phong Đoạn Nhẫn`, `Thuyền Cỏ Mượn Tên`, `Lâm Nguy Cứu Chủ`; không được đề xuất cùng lúc như ba đội độc lập.\n\nNguồn cộng tồn: [gợi ý portfolio S26 từ dữ liệu trải nghiệm](https://sangokushi-shinsen.info/2026/08/24/636%e3%80%90%e8%b2%82%e8%9d%89%e3%81%ae%e4%b8%89%e5%9b%bd%e5%bf%97%e7%9c%9f%e6%88%a6%e3%80%91%e3%80%80s26%e3%80%80%e5%85%b1%e5%ad%98%e7%b7%a8%e6%88%90%e3%80%80%e5%a4%aa%e5%b8%ab%e5%bc%93%e3%83%bb/).\n\n## Quyết định dữ liệu MCP\n\n- Chưa nhập đội S26 mới vào `data/teams.json`.\n- Có thể stage 14 biến thể xếp hạng với trạng thái `post-balance-preview`; watchlist chỉ dùng trạng thái `watch`, không trộn hai mức bằng chứng.\n- Không gắn T0/T0.5 cho bất kỳ biến thể S26 nào trước khi có dữ liệu mùa Global live và nguồn tier độc lập; tỷ lệ liên chiến của server trải nghiệm không tự động trở thành tier MCP.\n- Các bài Nhật và Hoa phồn thể được giữ vì đều thuộc Global, nhưng phải gắn rõ `region: JP-global` hoặc `region: TW-global` trong ghi chú nghiên cứu.\n- Không dùng bài server Đại Lục để quyết định tier cho mùa này vì Binh Diễn Xuân Thu là kịch bản Global-original và cân bằng đã tách biệt.\n- Khi có dữ liệu hậu patch, nên lưu biến thể mùa bằng metadata `season` và `customTroop` thay vì nhân đôi lõi ba tướng thành bản ghi gần trùng.\n\n## Khoảng trống nguồn\n\n- Tìm kiếm công khai bằng tiếng Việt chưa trả về bài đội hình/chiến báo Binh Diễn Xuân Thu có thể kiểm chứng.\n- Nguồn Hàn Quốc đã có bình luận cơ chế và tên một số lõi đội, nhưng chưa có bảng build/chiến báo chi tiết tương đương nguồn Nhật.\n- Chưa tìm thấy cộng đồng tiếng Anh có chiến báo chi tiết cho mùa này.\n- Do đó bằng chứng đội hình hiện tập trung ở hai vùng Global: Đài–Hồng–Ma và Nhật.\n"
+      }
+    },
+    {
+      "role": "tool",
+      "action": {
+        "op": "read",
+        "path": "docs/research-sources.md"
+      },
+      "result": {
+        "ok": true,
+        "content": "# Phân loại nguồn research Tam Quốc Chí Chiến Lược\n\nCập nhật phân loại: 2026-09-07. Dựa trên các lượt xác minh ngày 2026-09-06–07; không phải một lần kiểm thử lại toàn bộ website. Phạm vi gồm các nguồn đã khảo sát trong danh sách tham khảo và 233乐园, không phải toàn bộ nguồn từng xuất hiện trong repo.\n\nPhân loại theo **mục đích sử dụng** và **bằng chứng của từng bài**. Một website có thể phục vụ nhiều mục đích; được chọn để research không có nghĩa mọi nội dung đã đủ điều kiện nhập dữ liệu.\n\n## 1. Tra cứu dữ liệu và đối chiếu cơ chế\n\n| Nguồn | Khu vực/ngôn ngữ | Dùng để | Giới hạn |\n| --- | --- | --- | --- |\n| [Lingxi — thư viện chính thức](https://sgzzlb.lingxigames.com/station/) | Trung Quốc / giản thể | Tra tên gốc, mô tả tướng/chiến pháp, trang bị, binh chủng và điều kiện sử dụng. | Chính thức cho khu vực nguồn; không tự động xác nhận phiên bản Global. Cơ chế cụ thể cần mô tả đúng bản hoặc kiểm thử tương ứng. |\n\n## 2. Research cấu hình team và chiến thuật\n\n| Nguồn | Khu vực/ngôn ngữ | Vai trò research | Lưu ý khi lấy cấu hình |\n| --- | --- | --- | --- |\n| [SGSDeck — đội đề xuất](https://sgsdeck.com/recommended) | Đài Loan / phồn thể | **Team chuẩn “Sách Giáo Khoa” của project, theo quyết định người dùng ngày 2026-09-07.** Là mốc cấu hình để đối chiếu các build khác. | Ghi đúng cấu hình, mùa và tier của nguồn. Vai trò chuẩn tham chiếu không tự xác nhận hiệu quả trên mọi server/phiên bản. Phần kho/tài khoản chưa thử trong khảo sát. |\n| [Kazten](https://kazten.com/) | Nhật | Đội mẫu theo mùa, khai hoang, biến thể theo kịch bản. | Ghi rõ mùa, ngày bài và ngữ cảnh giới thiệu/thử nghiệm/thực chiến. |\n| [Shinsen Navi](https://sangokushi-shinsen.com/) | Nhật | Vai trò từng tướng, chiến pháp, binh thư, đội dùng tướng đó và trước/sau thức tỉnh. | Kiểm tra ngày và cấu hình ở bài chi tiết; không suy từ trang chủ. |\n| [Chousen](https://sangokushi-shinsen.info/) | Nhật | Phân tích meta, đối đầu và nhiều đội cùng tồn. | Một số bài dùng máy chủ thử nghiệm; giữ nguyên nhãn đó, không chuyển thành kết luận live. |\n| [DailyGames — bảng đội](https://www.dailygames-online.com/sangokushisinsen/?page_id=820) | Nhật | Mẫu đội, chủ/phó tướng, chiến pháp, binh thư, cộng điểm. | Nhiều mẫu thuộc mùa cũ. Dùng làm cấu hình tham khảo, chưa đủ kết luận meta hiện tại. |\n\n## 3. Research build team từ cộng đồng và bài tổng hợp\n\n| Nguồn | Khu vực/ngôn ngữ | Vai trò research | Lưu ý khi lấy cấu hình |\n| --- | --- | --- | --- |\n| [233乐园 — cộng đồng game](https://www.233leyuan.com/circle/9df2ab326c234f2a9aeb1b7f8a463a1a) | Trung Quốc / giản thể | **Nguồn research build team đã được người dùng chọn**: tổ hợp tướng, chiến pháp, binh thư, cộng điểm, tốc độ, thay thế, khai hoang/chuyển đội. | Đọc bài cụ thể; ghi nhãn AI/đăng lại, truy nguyên bản và đối chiếu nhận định quan trọng. Không loại nguồn chỉ vì không có công cụ ghép đội. |\n| [Bahamut — diễn đàn game](https://forum.gamer.com.tw/B.php?bsn=36815) | Đài Loan / phồn thể | Bài người chơi, chiến báo, trao đổi cấu hình và phản hồi. | Bộ đọc từng gặp 403; chỉ trích phần bài thực sự truy cập/đọc được. Bình luận không mặc nhiên xác nhận cơ chế. |\n| [Yaojing Team — kho hướng dẫn](https://www.yaojingteam.com/guides) | Trung Quốc / giản thể | Tìm bài theo kịch bản, đội hình, khai hoang và phương án cùng tồn. | Nhiều mục dẫn WeChat hoặc dịch vụ tư vấn. Phân biệt bài gốc với giới thiệu dịch vụ; chưa xác nhận công cụ tự ghép. |\n\n## 4. Tham khảo sản phẩm và trải nghiệm ghép đội\n\n| Nguồn | Tham khảo phần nào | Không dùng để suy ra |\n| --- | --- | --- |\n| [Hensei Kobo](https://sgs.henseikobo.app/) | Chọn kho tướng/chiến pháp, bàn ghép đội, đối chiếu sở hữu với đội mẫu, xuất ảnh. | Điểm khớp kho không phải sức mạnh hay tỷ lệ thắng. Hướng dẫn công khai không thay thế kiểm thử luồng đăng nhập. |\n| [SGSDeck](https://sgsdeck.com/) | Bộ lọc, quản lý nhiều nhân vật, kho cá nhân, sao chép/chia sẻ đội và cách trình bày catalog. | Có tính năng trên trang giới thiệu không có nghĩa đã kiểm thử toàn bộ. Vai trò research đội mẫu nằm riêng ở nhóm 2. |\n\n## 5. Tư liệu lịch sử\n\n- [Hatena / sanguo-zhi.com](https://www.sanguo-zhi.com/): chỉ tham khảo bài Tam Quốc mùa cũ. [Tác giả xác nhận](https://www.sanguo-zhi.com/profile/) đã nghỉ 三国志真戦 và chuyển sang Nobunaga. Không chọn làm nguồn meta/Binh Diễn Xuân Thu hiện tại.\n- Các bài cũ của DailyGames hoặc bất kỳ nguồn nào khác vẫn giữ mùa gốc. Website còn cập nhật không tự làm mới bài cũ.\n\n## 6. Chưa sử dụng trong danh sách research hiện tại\n\n| Nguồn | Lý do/trạng thái |\n| --- | --- |\n| [三战助手](https://news.dmzgame.com/sgz/news/2021-07-16/1221.html) | Chỉ xác minh được hướng dẫn 2022; đã rút đề xuất, chưa có điểm vào công cụ đang dùng được. |\n| [开荒高手](https://www.threekingdom100.com/) | Chưa xác minh được ứng dụng thực tế và phiên bản game; đã rút đề xuất. Không kết luận trang chết hay sai game. |\n| [三战模拟大师](https://szmoni.my.canvasite.cn/) | Landing page WeChat mini-program mô phỏng; đã rút đề xuất vì không sát nhu cầu website tham khảo đã chốt. |\n| [easychiu/sgs-pei-jiang](https://easychiu.github.io/sgs-pei-jiang/) | Người dùng đánh giá không sát nhu cầu; thiên về mô phỏng, không ưu tiên. |\n| [shinsen-wiki](https://wikiwiki.jp/shinsen-wiki/), [3game.tech](https://3game.tech/) | Chưa đủ nội dung/bằng chứng truy cập trong khảo sát để đưa vào tập nguồn sử dụng. |\n| [sgmdtx.com](https://sgmdtx.com/), [nobunaga-shinsen-sim.jp](https://nobunaga-shinsen-sim.jp/) | Khác game: 三国谋定天下 và 信長の野望 真戦. Không dùng làm nguồn dữ liệu Tam Quốc Chí Chiến Lược. |\n\n## Trạng thái bằng chứng cho từng nhận định\n\n**Chuẩn tham chiếu và trạng thái bằng chứng là hai thông tin riêng.** SGSDeck giữ vai trò “Sách Giáo Khoa” theo quyết định project. Khi research, lấy đúng đội SGSDeck làm mốc; bài nguồn khác được đối chiếu thành biến thể hoặc phương án thay thế và phải nêu phần khác biệt. Nếu chưa tìm thấy/đọc được mẫu SGSDeck phù hợp, ghi rõ “chưa có mốc SGSDeck đã xác minh”, không tự gắn nhãn Sách Giáo Khoa cho một đội khác. Vai trò này không tự thay đổi tier hoặc dữ liệu runtime đang được quản lý riêng.\n\n| Trạng thái | Ý nghĩa | Cách dùng |\n| --- | --- | --- |\n| Đã đối chiếu | Nhận định có mô tả chính thức đúng phiên bản, kiểm thử hoặc bằng chứng độc lập phù hợp. | Có thể dùng trong phạm vi đã xác minh; lưu nguồn. |\n| Phương án từ nguồn | Bài đã đọc có cấu hình cụ thể nhưng chưa đủ đối chiếu. | Ghi rõ đề xuất của tác giả/khu vực/mùa; không gọi là cấu hình tối ưu đã xác nhận. |\n| Chưa xác minh | Chỉ có tiêu đề, snippet, nhãn AI/đăng lại chưa truy nguyên hoặc thiếu mùa. | Dùng tìm tiếp; để trống chi tiết chưa biết, không tự điền dữ liệu. |\n\nHai trang đăng lại cùng một bài không phải hai bằng chứng độc lập. Nhãn AI không tự chứng minh sai; một bài có lỗi cũng không phủ nhận mọi bài cùng website. Đánh giá theo nhận định và bằng chứng cụ thể.\n\n## Cách chọn nguồn khi research một team\n\n1. Chốt bộ ba tướng, khu vực, kịch bản và giai đoạn trước/sau thức tỉnh hoặc PK.\n2. Tìm mẫu SGSDeck phù hợp làm mốc “Sách Giáo Khoa”; bổ sung nhóm 2 và 3, bao gồm 233乐园, để nghiên cứu biến thể và phương án thay thế. Dùng nhóm 1 để đối chiếu tên và điều kiện chiến pháp.\n3. Ghi: chủ/phó tướng, binh chủng, chiến pháp, binh thư, cộng điểm, tốc độ, thay thế và chuyển đội nếu nguồn có.\n4. Gắn URL bài, tác giả nếu biết, ngày gốc/ngày đăng lại, khu vực/mùa, bối cảnh thử nghiệm/live và trạng thái bằng chứng.\n5. So sánh từng build với mẫu SGSDeck: tướng, chủ tướng, binh chủng, chiến pháp và các điều kiện khác mà nguồn cung cấp. Khi nguồn bất đồng, giữ các biến thể cùng điều kiện áp dụng; không gộp thành một cấu hình hoặc đảo quyết định đã xác minh khi chưa có bằng chứng mới.\n\n## Bằng chứng khảo sát\n\n- [Danh sách nguồn và các đính chính ngày 6–7/9/2026](../plans/reports/research-260906-2333-team-builder-reference-sites.md).\n- [Xác minh 233乐园 và phạm vi dùng research build team](../plans/reports/research-260907-1639-233leyuan-source-validation.md).\n\nGiới hạn còn lại: luồng đăng nhập/trả phí chưa thử; phạm vi mùa Global cần xác minh theo từng nghiên cứu. Tài liệu này phân loại nguồn, không thay đổi dữ liệu runtime.\n"
+      }
+    },
+    {
+      "role": "tool",
+      "action": {
+        "op": "read",
+        "path": ".agents/skills/tqccl-coexist-team-builder/references/multi-source-research-and-logic-checks.md"
+      },
+      "result": {
+        "ok": true,
+        "content": "# Multi-Source Research And Logic Checks\n\nUse this reference when a recommendation needs evidence beyond project data, especially battle reports, cross-server meta, or tactic mechanics.\n\n## Source And Language Coverage\n\nSearch multiple markets when the answer depends on current meta or battle reports:\n\n- Chinese mainland: `三国志战略版`\n- Traditional Chinese/Taiwan/HK: `三國志戰略版`\n- Japanese: `三國志 真戦`\n- Korean: `삼국지 전략판`\n- English/global communities: `Three Kingdoms Tactics`, `Sangokushi Tactics`, exact hero/tactic names if known\n- Vietnamese: in-game Vietnamese names, local community names, and the CamNangTQCCL project data\n\nPrefer official patch notes, large strategy sites, battle-report articles, season tier lists, and repeated player reports. Treat isolated screenshots or single forum comments as weak evidence.\n\n## Query Pattern\n\nFor team research, combine:\n\n- exact hero names in the source language,\n- exact tactic names in the source language,\n- keywords for battle reports or coexist:\n  - CN: `战报`, `共存`, `阵容`, `搭配`, `赛季`, `白板`\n  - JP: `戦報`, `共存`, `編成`, `テンプレ`\n  - KR: `전보`, `공존`, `덱`, `조합`\n  - EN: `battle report`, `coexist`, `lineup`, `build`\n\nWhen possible, check at least two languages or regions before calling a team \"proven\". If only one region has evidence, say so.\n\n## Evidence Grading\n\n- Strong: multiple battle reports plus build details plus season context.\n- Medium: one detailed article or repeated community consensus with exact tactics.\n- Weak: image-only post, comment-only claim, or build without results.\n- Project-local: valid for this repo, but still check mechanics before recommending.\n\nDo not claim \"có chiến báo chứng minh\" unless at least one source clearly includes battle reports or explicit battle-record discussion. If images are inaccessible or image-only, say the source claims/provides battle reports but details are not text-verifiable.\n\n## Logic Sanity Checklist\n\nBefore finalizing any team, reject or flag these mismatches:\n\n- Assault/basic-attack support on active-magic teams.\n  - Example: `Hổ Báo Kỵ` supports assault/basic-attack tempo; do not recommend it as support for a chủ động/mưu lược Phi Hùng team.\n- Active-rate boosters paired with non-active tactics.\n  - Example: `Dốc Sức Tính Kế` must be paired with another non-self active tactic on the same holder; not `Tạm Lánh`, formations, troop tactics, passives, or command-only setups.\n- Preparation tactics on repeat-active engines when reliability is the goal.\n  - Repeating a 1-turn preparation tactic does not make it instant.\n- Healing-dependent tactics without active healing.\n  - Example: `Phi Hùng Quân` wants real healing sources; pure damage/status skills do not feed its healing-value plan.\n- Main-commander-scaling tactics on the wrong commander.\n  - If a tactic's damage or buff follows the chủ tướng, put the intended damage/core general as chủ tướng.\n- Self-control risk ignored.\n  - Example: `Giả Hủ` can disrupt allies with Hỗn Loạn; mention this risk when pairing with SP Quách Gia active damage.\n- Basic-attack proc tactics on generals that do not basic attack enough.\n  - Example: `Binh Vô Thường Thế` is weak on a general that is not expected to attack repeatedly.\n- Formation/troop mismatch.\n  - Do not recommend a troop tactic that does not match the chosen troop type or a formation that undermines the team's damage distribution.\n\n## Final Research Statement\n\nWhen answering with researched evidence, include:\n\n- region/source names,\n- whether evidence is battle reports, tier list, or mechanics article,\n- exact build from source if it differs from the user's coexist build,\n- what was changed for no-overlap coexist and what that costs.\n"
+      }
+    },
+    {
+      "role": "agent",
+      "content": {
+        "answer": "## Tổng hợp nghiên cứu đã lưu — Binh Diễn Xuân Thu (Global only)\n\n**Nguồn trong repo:** `plans/reports/research-260825-binh-dien-xuan-thu-global-only.md` (chốt dữ liệu 25/08/2026, cập nhật 27/08/2026, lưu Git 06/09/2026, trạng thái `global-preview-after-balance-2-expanded`), đối chiếu với `docs/research-sources.md` và reference `multi-source-research-and-logic-checks.md`.\n\n### 1. Phạm vi nghiên cứu\n\n- `兵演春秋 / 병연춘추 / Binh Diễn Xuân Thu` là **kịch bản nguyên bản chỉ dành cho Global**: Hàn Quốc, Đài–Hồng–Ma, Nhật, Việt Nam và các khu vực Global khác.\n- **Không dùng dữ liệu server Đại Lục** để xếp đội, vì cân bằng đã tách biệt.\n- Mốc công bố cụm Đài–Hồng–Ma/VN: 05/09/2026. Nhật có lịch trải nghiệm riêng (đợt 1: 13–20/08, đợt 2: 31/08–08/09) ⇒ ngày mở và tiến độ kiểm thử lệch nhau giữa các vùng Global.\n- Bằng chứng đội hình tập trung ở **hai vùng**: Đài–Hồng–Ma (Bahamut, phồn thể) và Nhật (Chousen/sangokushi-shinsen.info). Nguồn Hàn chỉ có bình luận cơ chế; **chưa có** nguồn tiếng Việt hay tiếng Anh kèm chiến báo kiểm chứng được.\n\n### 2. Bối cảnh: vì sao không có tier list Global đáng tin\n\nPatch vòng cân bằng thứ hai (21/08) sửa trực tiếp phần lớn binh chủng tạo nên các đội mạnh vòng một:\n\n- **Nerf:** Phi Hùng Quân (tăng sát thương 36%→12%, hồi phục 14%→8%), Hổ Báo Kỵ, Tây Lương Thiết Kỵ (võ/trí toàn đội 40→15), Đại Kích Sĩ, Giải Phiền Vệ.\n- **Buff:** Vô Đương Phi Quân, Hổ Vệ Quân, Đằng Giáp Binh (thêm kháng giảm thuộc tính, thanh tẩy DOT, chống binh đao đầu trận), Thanh Châu Binh.\n\n⇒ Mọi bài \"top tier\" ngày 12–15/08 chỉ phản ánh **vòng một**, đã hết hiệu lực.\n\n### 3. Giải thích các chỉ số\n\n| Chỉ số | Định nghĩa trong nguồn | Giới hạn khi dùng |\n|---|---|---|\n| **Tỷ lệ liên chiến** (86%, 82%, 81%, 80%, 74%) | Khả năng đội đạt **hòa trở lên** để tiếp tục đánh — **không phải tỷ lệ thắng thuần** | Nguồn Nhật **không công khai cùng cỡ mẫu** cho mọi đội ⇒ chỉ là thước đo **preview tương đối**, không so ngang tuyệt đối |\n| **Trận trên 10.000 chiến công** | Ngưỡng chiến công một trận, chứng minh khả năng bùng nổ/thắng lớn | Chứng cho **sức sát thương đỉnh**, không chứng cho **độ ổn định**; nhóm watchlist chỉ có chỉ số này, chưa đủ mẫu xếp top 14 |\n| **Hạng preview 1–14** | Xếp theo dữ liệu liên chiến server trải nghiệm Nhật sau vòng cân bằng 2 (công bố 24/08) | **Không phải tier** mùa Global live; có thể lệch bởi độ đỏ, cấp đội, card pool |\n| **Thang bằng chứng** (reference) | Mạnh = nhiều chiến báo + build + ngữ cảnh mùa; Trung bình = một bài chi tiết hoặc đồng thuận lặp lại; Yếu = chỉ ảnh/chỉ bình luận | Ví dụ 40Y Lữ Bố chỉ ở mức **trung bình–yếu** vì chi tiết nằm trong video/ảnh |\n| **Nhãn vùng** | `region: JP-global` hoặc `region: TW-global` | Bắt buộc gắn trong ghi chú; hai trang đăng lại cùng bài **không** là hai bằng chứng độc lập |\n\n### 4. Nhóm dẫn đầu preview (mốc 27/08)\n\n1. SP Đổng Trác + SP Lô Trực + SP Điêu Thuyền — `Chuyển·Phi Hùng Quân` — **86%**\n2. SP Mã Siêu + SP Hoàng Phổ Tung + Hứa Du — `Tinh·Giải Phiền Vệ` — **82%** (ổn định, ít đòi bảo vật)\n3. Cùng lõi trên — `Tinh·Đại Kích Sĩ` — đồng nhóm đầu, **thắng dứt điểm nhiều hơn**\n4. SP Quan Vũ + CO Tinh Thái + SP Pháp Chính — `Tinh·Đan Dương Binh` — **81%** (mạnh hơn bản Đằng Giáp)\n7. CO Đại Kiều + Tôn Thượng Hương + CO Tiểu Kiều — `Tinh·Hổ Báo Kỵ` — **80%** (chưa có lõi trong repo)\n14. Tư Mã Ý + Tào Tháo + Mãn Sủng — `Tinh·Đằng Giáp Binh` — **~74%**\n\n**Buff nhưng chưa có bằng chứng:** Vô Đương Phi Quân, Thanh Châu Binh, Hổ Vệ Quân đều **không** xuất hiện trong top 14 lẫn nhóm chiến tích lớn ⇒ không suy từ buff cơ chế thành đội meta. `Bạch Nhĩ Binh` vẫn chưa có bằng chứng tăng hạng.\n\n### 5. Ràng buộc cộng tồn (giới hạn phạm vi áp dụng thực tế)\n\n- Chỉ được sửa **tối đa 4 chiến pháp binh chủng** ⇒ 14 biến thể **không thể** cùng nằm trong một portfolio.\n- `Phi Hùng` tranh giữa Thái Sư Cung, Đô Đốc Cung, SP Điêu Thuyền Cung, Tam Tiên Kỵ, Phú Quý Kỵ.\n- `Đan Dương` tranh giữa Pháp Quan Khiên và Bắc Phạt Khiên (nếu ưu tiên Bắc Phạt, Pháp Quan chuyển `Tinh·Đằng Giáp Binh` hoặc `Chuyển·Tử Sĩ Tiên Phong`).\n- Hoàng Mã chỉ chọn **một** trong Đại Kích / Giải Phiền.\n- Hoàng Mã, Nhị Kiều, Ôn Hầu Cung cùng tranh `Đương Phong Thôi Quyết`, `Thôi Phong Đoạn Nhẫn`, `Thuyền Cỏ Mượn Tên`, `Lâm Nguy Cứu Chủ` ⇒ không đề xuất đồng thời như ba đội độc lập.\n\n### 6. Quyết định dữ liệu đã chốt\n\n- **Chưa nhập** đội S26 nào vào `data/teams.json`.\n- Có thể stage 14 biến thể ở trạng thái `post-balance-preview`; watchlist giữ riêng trạng thái `watch` — **không trộn hai mức bằng chứng**.\n- **Không gắn T0/T0.5** cho bất kỳ biến thể S26 trước khi có dữ liệu mùa Global live + nguồn tier độc lập. Tỷ lệ liên chiến server trải nghiệm không tự thành tier MCP.\n- Lưu biến thể mùa bằng metadata `season` + `customTroop`, không nhân đôi lõi ba tướng thành bản ghi gần trùng.\n\n### 7. Phạm vi áp dụng — lưu ý quan trọng\n\n- **Dùng được:** làm thứ tự ưu tiên **retest**, hiểu hướng cân bằng vòng 2, và lọc ràng buộc cộng tồn trước khi dựng portfolio.\n- **Không dùng được:** kết luận meta/tier mùa Global live, hay so hạng tuyệt đối giữa các đội.\n- **Độ cũ:** dữ liệu chốt 25–27/08, tức **trước** mốc mở 05/09 của cụm Đài–Hồng–Ma/VN. Tính đến hôm nay (13/09/2026) đã lệch hơn hai tuần và toàn bộ vẫn là **server trải nghiệm**; việc lưu Git 06/09 không xác nhận lại lịch, cân bằng hay tier.\n- **Thiếu mốc chuẩn:** `docs/research-sources.md` chốt SGSDeck là team \"Sách Giáo Khoa\" từ ngày 07/09 — **sau** báo cáo này. Vì vậy nghiên cứu Binh Diễn Xuân Thu hiện **chưa có mốc SGSDeck đã xác minh**; nếu cần đối chiếu theo chuẩn project thì phải bổ sung một lượt research mới.\n\nNếu bạn muốn, tôi có thể đọc thêm `coexist-team-rules.md` và `runtime/current-json-projection.json` để kiểm tra lõi nào trong top 14 đã/chưa có bản ghi tương ứng, hoặc viết báo cáo cập nhật ghi rõ các khoảng trống cần verify lại sau mốc 05/09.",
+        "actions": []
+      }
+    }
+  ],
+  "native": [
+    {
+      "type": "process",
+      "pid": 15962,
+      "cwd": "/private/var/folders/fy/yxlcmgds1nzf2bvh17m__8km0000gn/T/research-replay-UG6ZDm",
+      "args": [
+        "-u",
+        "ANTHROPIC_API_KEY",
+        "-u",
+        "ANTHROPIC_AUTH_TOKEN",
+        "-u",
+        "ANTHROPIC_BASE_URL",
+        "-u",
+        "CLAUDE_CODE_OAUTH_TOKEN",
+        "-u",
+        "CLAUDE_CODE_USE_BEDROCK",
+        "-u",
+        "CLAUDE_CODE_USE_VERTEX",
+        "-u",
+        "CLAUDE_CODE_USE_FOUNDRY",
+        "/Users/plateau/.local/share/claude/versions/2.1.263",
+        "--safe-mode",
+        "--tools",
+        "",
+        "--no-session-persistence",
+        "--output-format",
+        "stream-json",
+        "--verbose",
+        "--json-schema",
+        "{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"actions\",\"answer\"],\"properties\":{\"actions\":{\"type\":\"array\",\"maxItems\":12,\"items\":{\"type\":\"object\",\"required\":[\"op\"],\"properties\":{\"op\":{\"type\":\"string\",\"minLength\":1}},\"additionalProperties\":true}},\"answer\":{\"type\":\"string\"}}}"
+      ]
+    },
+    {
+      "type": "system",
+      "subtype": "init",
+      "cwd": "/private/var/folders/fy/yxlcmgds1nzf2bvh17m__8km0000gn/T/research-replay-UG6ZDm",
+      "session_id": "7194852d-3516-4d1a-a5ee-44fcf806b0ba",
+      "tools": [
+        "StructuredOutput"
+      ],
+      "mcp_servers": [],
+      "model": "claude-opus-5",
+      "permissionMode": "default",
+      "slash_commands": [
+        "design-sync",
+        "dataviz",
+        "update-config",
+        "verify",
+        "debug",
+        "code-review",
+        "simplify",
+        "batch",
+        "fewer-permission-prompts",
+        "doctor",
+        "loop",
+        "schedule",
+        "claude-api",
+        "run",
+        "run-skill-generator",
+        "advisor",
+        "agents",
+        "auto-mode-setup",
+        "autocompact",
+        "clear",
+        "color",
+        "compact",
+        "config",
+        "context",
+        "effort",
+        "fast",
+        "heapdump",
+        "init",
+        "mcp",
+        "import",
+        "model",
+        "__remote-workflow",
+        "workflow-launch-exec",
+        "reload-plugins",
+        "reload-skills",
+        "rename",
+        "ultrareview",
+        "security-review",
+        "usage-credits",
+        "extra-usage",
+        "usage",
+        "insights",
+        "recap",
+        "skill-doctor",
+        "goal",
+        "design",
+        "design-consent",
+        "design-revoke",
+        "list-agents",
+        "team-onboarding"
+      ],
+      "terminal_slash_commands": [
+        "doctor",
+        "color",
+        "reload-plugins"
+      ],
+      "apiKeySource": "none",
+      "claude_code_version": "2.1.263",
+      "output_style": "default",
+      "agents": [
+        "claude",
+        "Explore",
+        "general-purpose",
+        "Plan"
+      ],
+      "skills": [
+        "design-sync",
+        "dataviz",
+        "update-config",
+        "verify",
+        "debug",
+        "code-review",
+        "simplify",
+        "batch",
+        "fewer-permission-prompts",
+        "doctor",
+        "loop",
+        "schedule",
+        "claude-api",
+        "run",
+        "run-skill-generator"
+      ],
+      "plugins": [],
+      "capabilities": [
+        "interrupt_receipt_v1",
+        "interrupt_cancel_queued_v1",
+        "msg_lifecycle_v1"
+      ],
+      "analytics_disabled": false,
+      "product_feedback_disabled": false,
+      "uuid": "3ad9b456-44e9-4e48-81c3-13bafcf2e78b",
+      "messaging_socket_path": "/tmp/cc-socks/15962.sock",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required"
+    },
+    {
+      "type": "rate_limit_event",
+      "rate_limit_info": {
+        "status": "allowed",
+        "resetsAt": 1789333200,
+        "rateLimitType": "five_hour",
+        "overageStatus": "rejected",
+        "overageDisabledReason": "org_level_disabled",
+        "isUsingOverage": false,
+        "unifiedWindows": {
+          "five_hour": {
+            "utilization": 0.54,
+            "resetsAt": 1789333200
+          },
+          "seven_day": {
+            "utilization": 0.65,
+            "resetsAt": 1789668000
+          }
+        }
+      },
+      "uuid": "0d7fcae7-96f9-43cc-bf4b-031165503800",
+      "session_id": "7194852d-3516-4d1a-a5ee-44fcf806b0ba"
+    },
+    {
+      "type": "assistant",
+      "message": {
+        "model": "claude-opus-5",
+        "id": "msg_011Cf1kLFV3adT7kcLR9P4fe",
+        "type": "message",
+        "role": "assistant",
+        "content": [
+          {
+            "type": "text",
+            "text": "I'll read the saved research report and its supporting sources."
+          }
+        ],
+        "container": null,
+        "stop_reason": null,
+        "stop_sequence": null,
+        "stop_details": null,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 1355,
+          "cache_read_input_tokens": 711,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 1355
+          },
+          "output_tokens": 1,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "diagnostics": null,
+        "context_management": null
+      },
+      "parent_tool_use_id": null,
+      "session_id": "7194852d-3516-4d1a-a5ee-44fcf806b0ba",
+      "uuid": "24ff5e4b-6dda-4eaf-a42c-034f5d33fdd4",
+      "timestamp": "2026-09-13T16:23:41.285Z",
+      "request_id": "req_011Cf1kLEx3pgUbmmFDQaU5h"
+    },
+    {
+      "type": "assistant",
+      "message": {
+        "model": "claude-opus-5",
+        "id": "msg_011Cf1kLFV3adT7kcLR9P4fe",
+        "type": "message",
+        "role": "assistant",
+        "content": [
+          {
+            "type": "tool_use",
+            "id": "toolu_015rvo7pfKTMDFdVwCNDHjnb",
+            "name": "StructuredOutput",
+            "input": {
+              "actions": [
+                {
+                  "op": "read",
+                  "path": "plans/reports/research-260825-binh-dien-xuan-thu-global-only.md"
+                },
+                {
+                  "op": "read",
+                  "path": "docs/research-sources.md"
+                },
+                {
+                  "op": "read",
+                  "path": ".agents/skills/tqccl-coexist-team-builder/references/multi-source-research-and-logic-checks.md"
+                }
+              ],
+              "answer": ""
+            },
+            "caller": {
+              "type": "direct"
+            }
+          }
+        ],
+        "container": null,
+        "stop_reason": null,
+        "stop_sequence": null,
+        "stop_details": null,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 1355,
+          "cache_read_input_tokens": 711,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 1355
+          },
+          "output_tokens": 1,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "diagnostics": null,
+        "context_management": null
+      },
+      "parent_tool_use_id": null,
+      "session_id": "7194852d-3516-4d1a-a5ee-44fcf806b0ba",
+      "uuid": "2268d795-985b-45f6-99ae-1949c2cea2db",
+      "timestamp": "2026-09-13T16:23:42.662Z",
+      "request_id": "req_011Cf1kLEx3pgUbmmFDQaU5h"
+    },
+    {
+      "type": "user",
+      "message": {
+        "role": "user",
+        "content": [
+          {
+            "tool_use_id": "toolu_015rvo7pfKTMDFdVwCNDHjnb",
+            "type": "tool_result",
+            "content": "Structured output provided successfully"
+          }
+        ]
+      },
+      "parent_tool_use_id": null,
+      "session_id": "7194852d-3516-4d1a-a5ee-44fcf806b0ba",
+      "uuid": "2053bc82-f113-4800-baf5-4e61fe7969c5",
+      "timestamp": "2026-09-13T16:23:42.668Z",
+      "tool_use_result": "Structured output provided successfully"
+    },
+    {
+      "type": "rate_limit_event",
+      "rate_limit_info": {
+        "status": "allowed",
+        "resetsAt": 1789333200,
+        "rateLimitType": "five_hour",
+        "overageStatus": "rejected",
+        "overageDisabledReason": "org_level_disabled",
+        "isUsingOverage": false,
+        "unifiedWindows": {
+          "five_hour": {
+            "utilization": 0.55,
+            "resetsAt": 1789333200
+          },
+          "seven_day": {
+            "utilization": 0.65,
+            "resetsAt": 1789668000
+          }
+        }
+      },
+      "uuid": "42e4d945-21e2-468d-9a49-7566710e4a40",
+      "session_id": "7194852d-3516-4d1a-a5ee-44fcf806b0ba"
+    },
+    {
+      "duration_api_ms": 4494,
+      "stop_reason": "tool_use",
+      "session_id": "7194852d-3516-4d1a-a5ee-44fcf806b0ba",
+      "total_cost_usd": 0.0206205,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 1355,
+        "cache_read_input_tokens": 711,
+        "output_tokens": 204,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 1355,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 204,
+            "cache_read_input_tokens": 711,
+            "cache_creation_input_tokens": 1355,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 1355
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "modelUsage": {
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 1480,
+          "outputTokens": 25,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 0,
+          "webSearchRequests": 0,
+          "costUSD": 0.001605,
+          "contextWindow": 200000,
+          "maxOutputTokens": 32000,
+          "thinkingTokens": 0,
+          "canonicalModel": "claude-haiku-4-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        },
+        "claude-opus-5": {
+          "inputTokens": 2,
+          "outputTokens": 204,
+          "cacheReadInputTokens": 711,
+          "cacheCreationInputTokens": 1355,
+          "webSearchRequests": 0,
+          "costUSD": 0.0190155,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 64000,
+          "thinkingTokens": 0,
+          "canonicalModel": "claude-opus-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "is_error": false,
+      "num_turns": 2,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "{\"actions\":[{\"op\":\"read\",\"path\":\"plans/reports/research-260825-binh-dien-xuan-thu-global-only.md\"},{\"op\":\"read\",\"path\":\"docs/research-sources.md\"},{\"op\":\"read\",\"path\":\".agents/skills/tqccl-coexist-team-builder/references/multi-source-research-and-logic-checks.md\"}],\"answer\":\"\"}",
+      "structured_output": {
+        "actions": [
+          {
+            "op": "read",
+            "path": "plans/reports/research-260825-binh-dien-xuan-thu-global-only.md"
+          },
+          {
+            "op": "read",
+            "path": "docs/research-sources.md"
+          },
+          {
+            "op": "read",
+            "path": ".agents/skills/tqccl-coexist-team-builder/references/multi-source-research-and-logic-checks.md"
+          }
+        ],
+        "answer": ""
+      },
+      "ttft_ms": 1963,
+      "type": "result",
+      "duration_ms": 3363,
+      "uuid": "beca7e5f-3f40-4e43-a268-c1496b16a059",
+      "ttft_stream_ms": 1624,
+      "time_to_request_ms": 19,
+      "first_content_frame_ms": 1624,
+      "queued_turn_count": 0
+    },
+    {
+      "type": "process",
+      "pid": 16556,
+      "cwd": "/private/var/folders/fy/yxlcmgds1nzf2bvh17m__8km0000gn/T/research-replay-UG6ZDm",
+      "args": [
+        "-u",
+        "ANTHROPIC_API_KEY",
+        "-u",
+        "ANTHROPIC_AUTH_TOKEN",
+        "-u",
+        "ANTHROPIC_BASE_URL",
+        "-u",
+        "CLAUDE_CODE_OAUTH_TOKEN",
+        "-u",
+        "CLAUDE_CODE_USE_BEDROCK",
+        "-u",
+        "CLAUDE_CODE_USE_VERTEX",
+        "-u",
+        "CLAUDE_CODE_USE_FOUNDRY",
+        "/Users/plateau/.local/share/claude/versions/2.1.263",
+        "--safe-mode",
+        "--tools",
+        "",
+        "--no-session-persistence",
+        "--output-format",
+        "stream-json",
+        "--verbose",
+        "--json-schema",
+        "{\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"actions\",\"answer\"],\"properties\":{\"actions\":{\"type\":\"array\",\"maxItems\":12,\"items\":{\"type\":\"object\",\"required\":[\"op\"],\"properties\":{\"op\":{\"type\":\"string\",\"minLength\":1}},\"additionalProperties\":true}},\"answer\":{\"type\":\"string\"}}}"
+      ]
+    },
+    {
+      "type": "system",
+      "subtype": "init",
+      "cwd": "/private/var/folders/fy/yxlcmgds1nzf2bvh17m__8km0000gn/T/research-replay-UG6ZDm",
+      "session_id": "916734f6-f015-4037-90d0-2fe9f797a71d",
+      "tools": [
+        "StructuredOutput"
+      ],
+      "mcp_servers": [],
+      "model": "claude-opus-5",
+      "permissionMode": "default",
+      "slash_commands": [
+        "design-sync",
+        "dataviz",
+        "update-config",
+        "verify",
+        "debug",
+        "code-review",
+        "simplify",
+        "batch",
+        "fewer-permission-prompts",
+        "doctor",
+        "loop",
+        "schedule",
+        "claude-api",
+        "run",
+        "run-skill-generator",
+        "advisor",
+        "agents",
+        "auto-mode-setup",
+        "autocompact",
+        "clear",
+        "color",
+        "compact",
+        "config",
+        "context",
+        "effort",
+        "fast",
+        "heapdump",
+        "init",
+        "mcp",
+        "import",
+        "model",
+        "__remote-workflow",
+        "workflow-launch-exec",
+        "reload-plugins",
+        "reload-skills",
+        "rename",
+        "ultrareview",
+        "security-review",
+        "usage-credits",
+        "extra-usage",
+        "usage",
+        "insights",
+        "recap",
+        "skill-doctor",
+        "goal",
+        "design",
+        "design-consent",
+        "design-revoke",
+        "list-agents",
+        "team-onboarding"
+      ],
+      "terminal_slash_commands": [
+        "doctor",
+        "color",
+        "reload-plugins"
+      ],
+      "apiKeySource": "none",
+      "claude_code_version": "2.1.263",
+      "output_style": "default",
+      "agents": [
+        "claude",
+        "Explore",
+        "general-purpose",
+        "Plan"
+      ],
+      "skills": [
+        "design-sync",
+        "dataviz",
+        "update-config",
+        "verify",
+        "debug",
+        "code-review",
+        "simplify",
+        "batch",
+        "fewer-permission-prompts",
+        "doctor",
+        "loop",
+        "schedule",
+        "claude-api",
+        "run",
+        "run-skill-generator"
+      ],
+      "plugins": [],
+      "capabilities": [
+        "interrupt_receipt_v1",
+        "interrupt_cancel_queued_v1",
+        "msg_lifecycle_v1"
+      ],
+      "analytics_disabled": false,
+      "product_feedback_disabled": false,
+      "uuid": "badfb5d6-1a6d-488e-97c8-6d5a9ba186a4",
+      "messaging_socket_path": "/tmp/cc-socks/16556.sock",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required"
+    },
+    {
+      "type": "rate_limit_event",
+      "rate_limit_info": {
+        "status": "allowed",
+        "resetsAt": 1789333200,
+        "rateLimitType": "five_hour",
+        "overageStatus": "rejected",
+        "overageDisabledReason": "org_level_disabled",
+        "isUsingOverage": false,
+        "unifiedWindows": {
+          "five_hour": {
+            "utilization": 0.55,
+            "resetsAt": 1789333200
+          },
+          "seven_day": {
+            "utilization": 0.65,
+            "resetsAt": 1789668000
+          }
+        }
+      },
+      "uuid": "545edbc2-010e-4859-9858-e8243d2187b4",
+      "session_id": "916734f6-f015-4037-90d0-2fe9f797a71d"
+    },
+    {
+      "type": "system",
+      "subtype": "thinking_tokens",
+      "estimated_tokens": 50,
+      "estimated_tokens_delta": 50,
+      "session_id": "916734f6-f015-4037-90d0-2fe9f797a71d",
+      "uuid": "cbd4faa3-3e13-47e6-a067-bc72d4ca3afb"
+    },
+    {
+      "type": "system",
+      "subtype": "thinking_tokens",
+      "estimated_tokens": 100,
+      "estimated_tokens_delta": 50,
+      "session_id": "916734f6-f015-4037-90d0-2fe9f797a71d",
+      "uuid": "32012805-e865-4581-b857-bd80824cbfea"
+    },
+    {
+      "type": "system",
+      "subtype": "thinking_tokens",
+      "estimated_tokens": 200,
+      "estimated_tokens_delta": 100,
+      "session_id": "916734f6-f015-4037-90d0-2fe9f797a71d",
+      "uuid": "c8d31eb3-24a7-46f7-8186-c109a2be72d3"
+    },
+    {
+      "type": "system",
+      "subtype": "thinking_tokens",
+      "estimated_tokens": 300,
+      "estimated_tokens_delta": 100,
+      "session_id": "916734f6-f015-4037-90d0-2fe9f797a71d",
+      "uuid": "c166b7b3-7c52-435b-85c5-b6b9785be9b1"
+    },
+    {
+      "type": "system",
+      "subtype": "thinking_tokens",
+      "estimated_tokens": 450,
+      "estimated_tokens_delta": 150,
+      "session_id": "916734f6-f015-4037-90d0-2fe9f797a71d",
+      "uuid": "bd40a3f4-0ad2-4d8b-9ade-5049855c3672"
+    },
+    {
+      "type": "system",
+      "subtype": "thinking_tokens",
+      "estimated_tokens": 550,
+      "estimated_tokens_delta": 100,
+      "session_id": "916734f6-f015-4037-90d0-2fe9f797a71d",
+      "uuid": "d6f6291c-60d0-4fdb-a49a-ad196af693ea"
+    },
+    {
+      "type": "system",
+      "subtype": "thinking_tokens",
+      "estimated_tokens": 600,
+      "estimated_tokens_delta": 50,
+      "session_id": "916734f6-f015-4037-90d0-2fe9f797a71d",
+      "uuid": "f5503419-be74-493e-9660-4e4ebb108220"
+    },
+    {
+      "type": "system",
+      "subtype": "thinking_tokens",
+      "estimated_tokens": 700,
+      "estimated_tokens_delta": 100,
+      "session_id": "916734f6-f015-4037-90d0-2fe9f797a71d",
+      "uuid": "7101d67f-1751-4c4c-a88c-5c9cae4b5182"
+    },
+    {
+      "type": "system",
+      "subtype": "thinking_tokens",
+      "estimated_tokens": 750,
+      "estimated_tokens_delta": 50,
+      "session_id": "916734f6-f015-4037-90d0-2fe9f797a71d",
+      "uuid": "c887cbec-e1d8-4014-a6ad-a54139991471"
+    },
+    {
+      "type": "system",
+      "subtype": "thinking_tokens",
+      "estimated_tokens": 950,
+      "estimated_tokens_delta": 200,
+      "session_id": "916734f6-f015-4037-90d0-2fe9f797a71d",
+      "uuid": "ef40a827-57a3-4e07-ba5b-7bd1cf9a08df"
+    },
+    {
+      "type": "system",
+      "subtype": "thinking_tokens",
+      "estimated_tokens": 1000,
+      "estimated_tokens_delta": 50,
+      "session_id": "916734f6-f015-4037-90d0-2fe9f797a71d",
+      "uuid": "22cfcd4e-4353-4273-8f43-2557d89aca3c"
+    },
+    {
+      "type": "system",
+      "subtype": "thinking_tokens",
+      "estimated_tokens": 1100,
+      "estimated_tokens_delta": 100,
+      "session_id": "916734f6-f015-4037-90d0-2fe9f797a71d",
+      "uuid": "cab543d3-6ed1-4560-8171-93ef114786b0"
+    },
+    {
+      "type": "assistant",
+      "message": {
+        "model": "claude-opus-5",
+        "id": "msg_011Cf1kLcuuapKf7NcRoZrqA",
+        "type": "message",
+        "role": "assistant",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "",
+            "signature": "CAISshgKpgEIERgCKkCHV2Oswx9StXW3Q4QBas7IiURNea4N/k80Mu1h2Nr7VzI1O8+ceSoDbHidHyadXk3ejjVBsbyjt1slUOqey8i+Mg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiRlNDhmNzAzOS1mMWQ3LTQ5MTUtYmM5Yy04Zjk2MGNhOTdmNTByEJvXZSqjQESAC+9StgQfz6yIAQGoAaWcm9UGsAECEgzczhRxDKhwkJayn0AaDB1kyYh80z/aWdNGASIwQdH1Izqc05SXop4DJdcmQPprtzM0h+ysocmx81VXGVSFTTrGH80ncIOWk1PZxHc5KrgW9S+ImvPxjpxx5o0fBvjDRV+hMWCrwesSy6EmzSOIlgCsHCxEkWhS1bAhTOt4+HFT3D2A63HYIr+kZ8B4swo8E/njJG/6lM82cc8IPRBs9Xa5vpDiQk22vQbCtpzBxanb8CicsOytDpwhQMVuLCwsfYzBo+0PEeT8rDJKGdCGBIn1GJh+irfzUnr0UGKqZV8tJk/4SACo5HYUheVUHHkDkEys097Xdnobm7t3nVgOHQCORdWCJxPjmia//eQ9TmmZtiKDNAuBaPe+B7Gh8Wc/gnWvHqzCSYIRkpXo5FcjP/Iyt8fYnm/N3MljCdReY6cc4RITPS17ywRu25GhBQ/YOCPkjOotQpKVaHh4lv+F+wgdxiCZ8XEP36GmaoEodfmnnXnacD2XC3zbU0QkGKsZquCyVaYtz6RdTuHzTfoHlBZIa2cqX63urF/Gni2br1QaXW1r9XVCS+aUF3r6JBdExAW9plPZbtzQ3gkSzSqFbXxYqwpyKQAntfMpstAc1kYshM8N8BaFjhSObPW1LUcgcWEflqRXJdb/J+Pce/EMB3D8IRPQONIKwa1Q5eDBgJ1bVyK2qBIeqSfgmpmDpNS2z13auFtaUnm8qbJUnlAiQLPkLAd9HHV9bSEaEqozGL6DzwExpy58qdM3SOKVaKPi7zTtKpvHDeBuGbwbfD4yUhT4in5lSvv80mECkUjpkIojwCd+wvNbnkhiu2qVQys7T78fD8aWwVr1V3wyl+aaTHxKBdiM05PKf/tKO73r3Lq6YSA06wxoKRNyDN9uTBtnq4Vdor/7+zzZ3GGzzvLfV2WapY5EXriDWcuGIvAIAB9LhMnUKyipVHCdMf59p37Pp+WM/XnO21WieIYqfqel8blUfsHn6njqetl7/lk0yepKjpUQVx/nKBrfeIKPf0JPy1Xb1pAaL+so7potrWULEY+wApwXQ0Mu6phoDUuTA+uVPfUimkunWZsMxXtcXM3AVqvJhNMd9+J8lH06hqTYQ0ThFwuk43nAMBhQrbK2DCL4/KIaOdnoL7ce91GbfFEGvTGd+5M66OuIjb42kqjg+fHQ1fX1t39qblSYqJ3g3Jvz66FmvxbyCe1T2J7mmLF1AnDV7PtnrcwP+fKZ/mcf5WRnJOiq7LprnUReaoCE3boc4chNn9lHXtijuxL4E3OktYa/WCenn+npnYyeGQu43ghVOPunmWkCLBQvk3MoZe6V/ouK5669BXeoPGujUL15CxGF/yZihEwq8+aTeq7dz2t6u6l4JpZlWE3m0vsnjAxt+o0LZY7z56lhuijuMGNcBlFAF7HiStEeIZhbWy5Xw69FRHzlP4NZUhC8oRkvd1RY4F65WSJxNlOUislNozFZ3rMFnNTAlKhTCUveI4IWnxEyAMcTdjwu9T+3OlbjFkN5/d/5A4M0NnqpcrQX/h4zL/A2w9EDL9Wv8oXYRNKkUoUzAnhhPb/wMK7/Xtg5y9DFs2e4pdXn07fJ6ksMdSAgvIUviPivMwd2DzcNuEm0BwwLPsItAbKnN9GP8zJLO5q6x1XWpxoFEefWAecaF1/LUtEbwjzcuQJZGjvqcA9dOgPeYPcepMmBd9zI1iD61aRa0q4URjtV5GRh4imyGatBgmTRpqHLRXkWHzMKeT3sLTj70BaMFUMveGJ9DwFKzTZ7ZyPYkUhdoRQbiNXiy0C6qro9BmB7zQT4FH5VNwOOLLd+J4rXLqme0HUfoxTcoHFr9xoufSFZ2D6zXf1TkkLj3D1MQ+IRp0sgcS2VSYPWeWWhZCkcgfCginrjKh9PXy4Vi6a0BT1Od9WorZDDhHvse5mDCM5nmrLFEkRi4UoRkDnH5h0RnJT9ag849ujujbSHo3zR7fgnzIV0N/95Cspcxlsx3kL+T9ENhfOIGZsYHgTlezL2ovU/CaxuWHzb549KIsH6pPZ/zT+5ceuTSbbZVEwK0pdfdMH26QLed4Etq87VXilLnSQIBn6iOR0oMXrfQWb9Zs9WJ+4bizAVILUAb2enCyjMgtZrVeo6DHRRAoQrg9/Lo/s/VzL/BIcUo6BE6EXFIAdLxvzPqMZ4SF9iKQmsyegFWEQCKCqAdGTkAX2FwG19AZwtqBM4akecE7FabOHASWS24YUCKHLiaM70KRwNGh1fyBdyOMdCuJpr1ID42UmaiYvIleiO+AN9aKCeC4krH0Cg8Tj/28TyyorjrfT4QTMkjqbOLwP0ZBdX7qouE2bXBn1wgChyrcOPTkNMHqFmN0Z0jQJX47IQbdmnQ0FWMJCJtYVZah+zZPbcN8TyxTDopO70Azn8JZSHSWgvU7f63VfEMD+AAUzFMbvQ8T2+pi4McG8JBJPxC7lwEDyNvCRPt5wDXA2v1HTjuJohG+iavywvPwPkiSTBIT+SPLbWdTwO9OldmsuBDnS3qFDcTqa4FbZH4LGx3YtcNYOHyQuBC7T9gWnej8MyeuaKCNfGRjB9B1UifVRM6eH1Vmi/XL/aCikZTbx+9du37Q398h6ZTuc6c2HX5pmLBSTsK3+TdFMoPVEOFkT1IhNQrmlQwPwglpQdbv1qEeCO6+qjuoCoxAY0T9WUUnGZr/ptxUgvcxJYd9iQ/9CuADQxnM0aV1eDpSLRNiy1D/OGQ40/aqueUb/B733iLXA3UwmqOR21nnLHbTR8vjEZAmHLNjSXvekAyb9aGZagZCiZIACyitVFWiYfbDeSwbJgummmjR7XtJ30o2m/oioYTmC4xEKAoMRZgoHjftgzGtN39jULsOMaWSDyFRCww4yrIQOqCp9oB8vUuun7lEXjYUEI6ZRblLQfmIvRY0J79xDx6Cqt9TdPo8F933wdJ+JtxHiaECcER+I06JGDMXiB96+tZw+ZwPNT/h6haZBf6+irQRB3RTDukE2mDds12gP6QD1VDbSXtZCmSiJXXKAUET5rlBK8X9GIBaXFvSgL7BBySYHsu+W9QgthoDmTlDHs9TcOzRNyirjBxz5zkQh2wCJxFxXL8SZmZh7BIXDXn+EVunViD0T7wQp40RQ8O2JHbC+l1wDaz48V047Q6td/kT33SQGvK2RJWUTnzzQbq1DUf5VvWFO2l5Zy3atu7p6coeETbl6oQ3ykz+Pe7DGSLzpEk6ji/xKnvHroVsMHDwho4CC/JSjc2HPoTH6eiwsangaxUHiBhH8k7Gioh8qzUOBm54O9NJ2orbVqwni2uxDUx2mqM24fMp4mZo+5XQTHUgeIsNn549uaG1fWnw4HHKoFCTkvJwWouzpKHJw4eWlc7K2f/8oR6TAvLwRbOY+M5yBrGhoFuxA/XuLbao4BW7mkzXj/MZP6j4qrqSeoDvDSn1yJj9vkbUSrZCCMTggO28nVjlJ6EamxA+Ke8h+R9hlIlOPWuvIXS2qvCiFt7HLzBO5S4tnjalLaj3nvH31gA81KwFLHRoLPIL4fW7KeazsRDaI8Vu4J2T/ig570vMFctB2LJ7rqzD/aq7wSxDBXNwBetEwtQzddsqajrgmxXDEBfB1I8+mtbJ9skc+48TRLu2hprPaTPsvNYxSIwBebwlxhPYBP15Od9QcPOlkswIpq5HDOFMEn8Zh5u+nmR2LNZV/roTncWYjdqEwC8Uf5pmOOqjETkO/FKj1Ltmu1LmpLorRUuUAR3RryxqCLsB30iCae+7j56eMYvJSmzka1SLIAeuQPOidnGYEHq7QUjQs9kDtwyr7V8fr7jYOOwUK1b4FQ1SBIht785b1gRkjME97YOFE30VBy/A0W28vMlk6tCdXwsQ1nK6Snl+DzhTOo/o7F/J4s7pqQmPR6wiGUKlpVoWfb2Hl0vVjhb5wB6dogRWgNIvVnoIan4xgB"
+          }
+        ],
+        "container": null,
+        "stop_reason": null,
+        "stop_sequence": null,
+        "stop_details": null,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 20012,
+          "cache_read_input_tokens": 711,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 20012
+          },
+          "output_tokens": 2,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "diagnostics": null,
+        "context_management": null
+      },
+      "parent_tool_use_id": null,
+      "session_id": "916734f6-f015-4037-90d0-2fe9f797a71d",
+      "uuid": "683acfaf-7f99-412e-8ae0-5415d51bdd2c",
+      "timestamp": "2026-09-13T16:24:05.517Z",
+      "request_id": "req_011Cf1kLaubNn8cjZXBV7vVP"
+    },
+    {
+      "type": "assistant",
+      "message": {
+        "model": "claude-opus-5",
+        "id": "msg_011Cf1kLcuuapKf7NcRoZrqA",
+        "type": "message",
+        "role": "assistant",
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"actions\":[],\"answer\":\"## Tổng hợp nghiên cứu đã lưu — Binh Diễn Xuân Thu (Global only)\\n\\n**Nguồn trong repo:** `plans/reports/research-260825-binh-dien-xuan-thu-global-only.md` (chốt dữ liệu 25/08/2026, cập nhật 27/08/2026, lưu Git 06/09/2026, trạng thái `global-preview-after-balance-2-expanded`), đối chiếu với `docs/research-sources.md` và reference `multi-source-research-and-logic-checks.md`.\\n\\n### 1. Phạm vi nghiên cứu\\n\\n- `兵演春秋 / 병연춘추 / Binh Diễn Xuân Thu` là **kịch bản nguyên bản chỉ dành cho Global**: Hàn Quốc, Đài–Hồng–Ma, Nhật, Việt Nam và các khu vực Global khác.\\n- **Không dùng dữ liệu server Đại Lục** để xếp đội, vì cân bằng đã tách biệt.\\n- Mốc công bố cụm Đài–Hồng–Ma/VN: 05/09/2026. Nhật có lịch trải nghiệm riêng (đợt 1: 13–20/08, đợt 2: 31/08–08/09) ⇒ ngày mở và tiến độ kiểm thử lệch nhau giữa các vùng Global.\\n- Bằng chứng đội hình tập trung ở **hai vùng**: Đài–Hồng–Ma (Bahamut, phồn thể) và Nhật (Chousen/sangokushi-shinsen.info). Nguồn Hàn chỉ có bình luận cơ chế; **chưa có** nguồn tiếng Việt hay tiếng Anh kèm chiến báo kiểm chứng được.\\n\\n### 2. Bối cảnh: vì sao không có tier list Global đáng tin\\n\\nPatch vòng cân bằng thứ hai (21/08) sửa trực tiếp phần lớn binh chủng tạo nên các đội mạnh vòng một:\\n\\n- **Nerf:** Phi Hùng Quân (tăng sát thương 36%→12%, hồi 14%→8%), Hổ Báo Kỵ, Tây Lương Thiết Kỵ (võ/trí toàn đội 40→15), Đại Kích Sĩ, Giải Phiền Vệ.\\n- **Buff:** Vô Đương Phi Quân, Hổ Vệ Quân, Đằng Giáp Binh (thêm kháng giảm thuộc tính, thanh tẩy DOT, chống binh đao đầu trận), Thanh Châu Binh.\\n\\n⇒ Mọi bài \\\"top tier\\\" ngày 12–15/08 chỉ phản ánh **vòng một**, đã hết hiệu lực.\\n\\n### 3. Giải thích các chỉ số\\n\\n| Chỉ số | Định nghĩa trong nguồn | Giới hạn khi dùng |\\n|---|---|---|\\n| **Tỷ lệ liên chiến** (86%, 82%, 81%, 80%, 74%) | Khả năng đội đạt **hòa trở lên** để tiếp tục đánh — **không phải tỷ lệ thắng thuần** | Nguồn Nhật **không công khai cùng cỡ mẫu** cho mọi đội ⇒ chỉ là thước đo **preview tương đối**, không so ngang tuyệt đối |\\n| **Trận trên 10.000 chiến công** | Ngưỡng chiến công một trận, chứng minh khả năng bùng nổ/thắng lớn | Chứng cho **sức sát thương đỉnh**, không chứng cho **độ ổn định**; nhóm watchlist chỉ có chỉ số này, chưa đủ mẫu xếp top 14 |\\n| **Hạng preview 1–14** | Xếp theo dữ liệu liên chiến server trải nghiệm Nhật sau vòng cân bằng 2 (công bố 24/08) | **Không phải tier** mùa Global live; dữ liệu có thể lệch bởi độ đỏ, cấp đội, card pool |\\n| **Thang bằng chứng** (reference) | Mạnh = nhiều chiến báo + build + ngữ cảnh mùa; Trung bình = một bài chi tiết hoặc đồng thuận lặp lại; Yếu = chỉ ảnh/chỉ bình luận | Ví dụ 40Y Lữ Bố chỉ ở mức **trung bình–yếu** vì chi tiết nằm trong video/ảnh |\\n| **Nhãn vùng** | `region: JP-global` hoặc `region: TW-global` | Bắt buộc gắn trong ghi chú; hai trang đăng lại cùng bài **không** là hai bằng chứng độc lập |\\n\\n### 4. Nhóm dẫn đầu preview (mốc 27/08)\\n\\n1. SP Đổng Trác + SP Lô Trực + SP Điêu Thuyền — `Chuyển·Phi Hùng Quân` — **86%**\\n2. SP Mã Siêu + SP Hoàng Phổ Tung + Hứa Du — `Tinh·Giải Phiền Vệ` — **82%** (ổn định, ít đòi bảo vật)\\n3. Cùng lõi trên — `Tinh·Đại Kích Sĩ` — đồng nhóm đầu, **thắng dứt điểm nhiều hơn**\\n4. SP Quan Vũ + CO Tinh Thái + SP Pháp Chính — `Tinh·Đan Dương Binh` — **81%** (mạnh hơn bản Đằng Giáp)\\n7. CO Đại Kiều + Tôn Thượng Hương + CO Tiểu Kiều — `Tinh·Hổ Báo Kỵ` — **80%** (chưa có lõi trong repo)\\n14. Tư Mã Ý + Tào Tháo + Mãn Sủng — `Tinh·Đằng Giáp Binh` — **~74%**\\n\\n**Buff nhưng chưa có bằng chứng:** Vô Đương Phi Quân, Thanh Châu Binh, Hổ Vệ Quân đều **không** xuất hiện trong top 14 lẫn nhóm chiến tích lớn ⇒ không suy từ buff cơ chế thành đội meta. `Bạch Nhĩ Binh` vẫn chưa có bằng chứng tăng hạng.\\n\\n### 5. Ràng buộc cộng tồn (giới hạn phạm vi áp dụng thực tế)\\n\\n- Chỉ được sửa **tối đa 4 chiến pháp binh chủng** ⇒ 14 biến thể **không thể** cùng nằm trong một portfolio.\\n- `Phi Hùng` tranh giữa Thái Sư Cung, Đô Đốc Cung, SP Điêu Thuyền Cung, Tam Tiên Kỵ, Phú Quý Kỵ.\\n- `Đan Dương` tranh giữa Pháp Quan Khiên và Bắc Phạt Khiên (nếu ưu tiên Bắc Phạt, Pháp Quan chuyển `Tinh·Đằng Giáp Binh` hoặc `Chuyển·Tử Sĩ Tiên Phong`).\\n- Hoàng Mã chỉ chọn **một** trong Đại Kích / Giải Phiền.\\n- Hoàng Mã, Nhị Kiều, Ôn Hầu Cung cùng tranh `Đương Phong Thôi Quyết`, `Thôi Phong Đoạn Nhẫn`, `Thuyền Cỏ Mượn Tên`, `Lâm Nguy Cứu Chủ` ⇒ không đề xuất đồng thời như ba đội độc lập.\\n\\n### 6. Quyết định dữ liệu đã chốt\\n\\n- **Chưa nhập** đội S26 nào vào `data/teams.json`.\\n- Có thể stage 14 biến thể ở trạng thái `post-balance-preview`; watchlist giữ riêng trạng thái `watch` — **không trộn hai mức bằng chứng**.\\n- **Không gắn T0/T0.5** cho bất kỳ biến thể S26 trước khi có dữ liệu mùa Global live + nguồn tier độc lập. Tỷ lệ liên chiến server trải nghiệm không tự thành tier MCP.\\n- Lưu biến thể mùa bằng metadata `season` + `customTroop`, không nhân đôi lõi ba tướng thành bản ghi gần trùng.\\n\\n### 7. Phạm vi áp dụng — lưu ý quan trọng\\n\\n- **Dùng được:** làm thứ tự ưu tiên **retest**, hiểu hướng cân bằng vòng 2, và lọc ràng buộc cộng tồn trước khi dựng portfolio.\\n- **Không dùng được:** kết luận meta/tier mùa Global live, hay so hạng tuyệt đối giữa các đội.\\n- **Độ cũ:** dữ liệu chốt 25–27/08, tức **trước** mốc mở 05/09 của cụm Đài–Hồng–Ma/VN. Tính đến hôm nay (13/09/2026) đã lệch hơn hai tuần và toàn bộ vẫn là **server trải nghiệm**; việc lưu Git 06/09 không xác nhận lại lịch, cân bằng hay tier.\\n- **Thiếu mốc chuẩn:** `docs/research-sources.md` chốt SGSDeck là team \\\"Sách Giáo Khoa\\\" từ ngày 07/09 — **sau** báo cáo này. Vì vậy nghiên cứu Binh Diễn Xuân Thu hiện **chưa có mốc SGSDeck đã xác minh**; nếu cần đối chiếu theo chuẩn project thì phải bổ sung một lượt research mới.\\n\\nNếu bạn muốn, tôi có thể đọc thêm `coexist-team-rules.md` và `runtime/current-json-projection.json` để kiểm tra lõi nào trong top 14 đã/chưa có bản ghi tương ứng, hoặc viết báo cáo cập nhật ghi rõ các khoảng trống cần verify lại sau mốc 05/09.\"}"
+          }
+        ],
+        "container": null,
+        "stop_reason": null,
+        "stop_sequence": null,
+        "stop_details": null,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 20012,
+          "cache_read_input_tokens": 711,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 20012
+          },
+          "output_tokens": 2,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "diagnostics": null,
+        "context_management": null
+      },
+      "parent_tool_use_id": null,
+      "session_id": "916734f6-f015-4037-90d0-2fe9f797a71d",
+      "uuid": "ca87ad67-9f04-466d-9c05-df96a5c13a60",
+      "timestamp": "2026-09-13T16:24:56.379Z",
+      "request_id": "req_011Cf1kLaubNn8cjZXBV7vVP"
+    },
+    {
+      "type": "user",
+      "message": {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "[structured-output-enforce] You MUST call the StructuredOutput tool to complete this request. Call this tool now."
+          }
+        ]
+      },
+      "parent_tool_use_id": null,
+      "session_id": "916734f6-f015-4037-90d0-2fe9f797a71d",
+      "uuid": "630e6b03-9d97-4cd1-a4c2-e553f9997f35",
+      "timestamp": "2026-09-13T16:24:56.461Z",
+      "isSynthetic": true
+    },
+    {
+      "type": "assistant",
+      "message": {
+        "model": "claude-opus-5",
+        "id": "msg_011Cf1kRvTyBsdp4mHeHH6wH",
+        "type": "message",
+        "role": "assistant",
+        "content": [
+          {
+            "type": "tool_use",
+            "id": "toolu_01GkABCMFBTvTqGuPRRJLSMW",
+            "name": "StructuredOutput",
+            "input": {
+              "answer": "## Tổng hợp nghiên cứu đã lưu — Binh Diễn Xuân Thu (Global only)\n\n**Nguồn trong repo:** `plans/reports/research-260825-binh-dien-xuan-thu-global-only.md` (chốt dữ liệu 25/08/2026, cập nhật 27/08/2026, lưu Git 06/09/2026, trạng thái `global-preview-after-balance-2-expanded`), đối chiếu với `docs/research-sources.md` và reference `multi-source-research-and-logic-checks.md`.\n\n### 1. Phạm vi nghiên cứu\n\n- `兵演春秋 / 병연춘추 / Binh Diễn Xuân Thu` là **kịch bản nguyên bản chỉ dành cho Global**: Hàn Quốc, Đài–Hồng–Ma, Nhật, Việt Nam và các khu vực Global khác.\n- **Không dùng dữ liệu server Đại Lục** để xếp đội, vì cân bằng đã tách biệt.\n- Mốc công bố cụm Đài–Hồng–Ma/VN: 05/09/2026. Nhật có lịch trải nghiệm riêng (đợt 1: 13–20/08, đợt 2: 31/08–08/09) ⇒ ngày mở và tiến độ kiểm thử lệch nhau giữa các vùng Global.\n- Bằng chứng đội hình tập trung ở **hai vùng**: Đài–Hồng–Ma (Bahamut, phồn thể) và Nhật (Chousen/sangokushi-shinsen.info). Nguồn Hàn chỉ có bình luận cơ chế; **chưa có** nguồn tiếng Việt hay tiếng Anh kèm chiến báo kiểm chứng được.\n\n### 2. Bối cảnh: vì sao không có tier list Global đáng tin\n\nPatch vòng cân bằng thứ hai (21/08) sửa trực tiếp phần lớn binh chủng tạo nên các đội mạnh vòng một:\n\n- **Nerf:** Phi Hùng Quân (tăng sát thương 36%→12%, hồi phục 14%→8%), Hổ Báo Kỵ, Tây Lương Thiết Kỵ (võ/trí toàn đội 40→15), Đại Kích Sĩ, Giải Phiền Vệ.\n- **Buff:** Vô Đương Phi Quân, Hổ Vệ Quân, Đằng Giáp Binh (thêm kháng giảm thuộc tính, thanh tẩy DOT, chống binh đao đầu trận), Thanh Châu Binh.\n\n⇒ Mọi bài \"top tier\" ngày 12–15/08 chỉ phản ánh **vòng một**, đã hết hiệu lực.\n\n### 3. Giải thích các chỉ số\n\n| Chỉ số | Định nghĩa trong nguồn | Giới hạn khi dùng |\n|---|---|---|\n| **Tỷ lệ liên chiến** (86%, 82%, 81%, 80%, 74%) | Khả năng đội đạt **hòa trở lên** để tiếp tục đánh — **không phải tỷ lệ thắng thuần** | Nguồn Nhật **không công khai cùng cỡ mẫu** cho mọi đội ⇒ chỉ là thước đo **preview tương đối**, không so ngang tuyệt đối |\n| **Trận trên 10.000 chiến công** | Ngưỡng chiến công một trận, chứng minh khả năng bùng nổ/thắng lớn | Chứng cho **sức sát thương đỉnh**, không chứng cho **độ ổn định**; nhóm watchlist chỉ có chỉ số này, chưa đủ mẫu xếp top 14 |\n| **Hạng preview 1–14** | Xếp theo dữ liệu liên chiến server trải nghiệm Nhật sau vòng cân bằng 2 (công bố 24/08) | **Không phải tier** mùa Global live; có thể lệch bởi độ đỏ, cấp đội, card pool |\n| **Thang bằng chứng** (reference) | Mạnh = nhiều chiến báo + build + ngữ cảnh mùa; Trung bình = một bài chi tiết hoặc đồng thuận lặp lại; Yếu = chỉ ảnh/chỉ bình luận | Ví dụ 40Y Lữ Bố chỉ ở mức **trung bình–yếu** vì chi tiết nằm trong video/ảnh |\n| **Nhãn vùng** | `region: JP-global` hoặc `region: TW-global` | Bắt buộc gắn trong ghi chú; hai trang đăng lại cùng bài **không** là hai bằng chứng độc lập |\n\n### 4. Nhóm dẫn đầu preview (mốc 27/08)\n\n1. SP Đổng Trác + SP Lô Trực + SP Điêu Thuyền — `Chuyển·Phi Hùng Quân` — **86%**\n2. SP Mã Siêu + SP Hoàng Phổ Tung + Hứa Du — `Tinh·Giải Phiền Vệ` — **82%** (ổn định, ít đòi bảo vật)\n3. Cùng lõi trên — `Tinh·Đại Kích Sĩ` — đồng nhóm đầu, **thắng dứt điểm nhiều hơn**\n4. SP Quan Vũ + CO Tinh Thái + SP Pháp Chính — `Tinh·Đan Dương Binh` — **81%** (mạnh hơn bản Đằng Giáp)\n7. CO Đại Kiều + Tôn Thượng Hương + CO Tiểu Kiều — `Tinh·Hổ Báo Kỵ` — **80%** (chưa có lõi trong repo)\n14. Tư Mã Ý + Tào Tháo + Mãn Sủng — `Tinh·Đằng Giáp Binh` — **~74%**\n\n**Buff nhưng chưa có bằng chứng:** Vô Đương Phi Quân, Thanh Châu Binh, Hổ Vệ Quân đều **không** xuất hiện trong top 14 lẫn nhóm chiến tích lớn ⇒ không suy từ buff cơ chế thành đội meta. `Bạch Nhĩ Binh` vẫn chưa có bằng chứng tăng hạng.\n\n### 5. Ràng buộc cộng tồn (giới hạn phạm vi áp dụng thực tế)\n\n- Chỉ được sửa **tối đa 4 chiến pháp binh chủng** ⇒ 14 biến thể **không thể** cùng nằm trong một portfolio.\n- `Phi Hùng` tranh giữa Thái Sư Cung, Đô Đốc Cung, SP Điêu Thuyền Cung, Tam Tiên Kỵ, Phú Quý Kỵ.\n- `Đan Dương` tranh giữa Pháp Quan Khiên và Bắc Phạt Khiên (nếu ưu tiên Bắc Phạt, Pháp Quan chuyển `Tinh·Đằng Giáp Binh` hoặc `Chuyển·Tử Sĩ Tiên Phong`).\n- Hoàng Mã chỉ chọn **một** trong Đại Kích / Giải Phiền.\n- Hoàng Mã, Nhị Kiều, Ôn Hầu Cung cùng tranh `Đương Phong Thôi Quyết`, `Thôi Phong Đoạn Nhẫn`, `Thuyền Cỏ Mượn Tên`, `Lâm Nguy Cứu Chủ` ⇒ không đề xuất đồng thời như ba đội độc lập.\n\n### 6. Quyết định dữ liệu đã chốt\n\n- **Chưa nhập** đội S26 nào vào `data/teams.json`.\n- Có thể stage 14 biến thể ở trạng thái `post-balance-preview`; watchlist giữ riêng trạng thái `watch` — **không trộn hai mức bằng chứng**.\n- **Không gắn T0/T0.5** cho bất kỳ biến thể S26 trước khi có dữ liệu mùa Global live + nguồn tier độc lập. Tỷ lệ liên chiến server trải nghiệm không tự thành tier MCP.\n- Lưu biến thể mùa bằng metadata `season` + `customTroop`, không nhân đôi lõi ba tướng thành bản ghi gần trùng.\n\n### 7. Phạm vi áp dụng — lưu ý quan trọng\n\n- **Dùng được:** làm thứ tự ưu tiên **retest**, hiểu hướng cân bằng vòng 2, và lọc ràng buộc cộng tồn trước khi dựng portfolio.\n- **Không dùng được:** kết luận meta/tier mùa Global live, hay so hạng tuyệt đối giữa các đội.\n- **Độ cũ:** dữ liệu chốt 25–27/08, tức **trước** mốc mở 05/09 của cụm Đài–Hồng–Ma/VN. Tính đến hôm nay (13/09/2026) đã lệch hơn hai tuần và toàn bộ vẫn là **server trải nghiệm**; việc lưu Git 06/09 không xác nhận lại lịch, cân bằng hay tier.\n- **Thiếu mốc chuẩn:** `docs/research-sources.md` chốt SGSDeck là team \"Sách Giáo Khoa\" từ ngày 07/09 — **sau** báo cáo này. Vì vậy nghiên cứu Binh Diễn Xuân Thu hiện **chưa có mốc SGSDeck đã xác minh**; nếu cần đối chiếu theo chuẩn project thì phải bổ sung một lượt research mới.\n\nNếu bạn muốn, tôi có thể đọc thêm `coexist-team-rules.md` và `runtime/current-json-projection.json` để kiểm tra lõi nào trong top 14 đã/chưa có bản ghi tương ứng, hoặc viết báo cáo cập nhật ghi rõ các khoảng trống cần verify lại sau mốc 05/09.",
+              "actions": []
+            },
+            "caller": {
+              "type": "direct"
+            }
+          }
+        ],
+        "container": null,
+        "stop_reason": null,
+        "stop_sequence": null,
+        "stop_details": null,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 4866,
+          "cache_read_input_tokens": 20723,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 4866
+          },
+          "output_tokens": 25,
+          "service_tier": "standard",
+          "inference_geo": "not_available"
+        },
+        "diagnostics": null,
+        "context_management": null
+      },
+      "parent_tool_use_id": null,
+      "session_id": "916734f6-f015-4037-90d0-2fe9f797a71d",
+      "uuid": "9f23f46e-a6e9-41a2-b688-0688964e8de2",
+      "timestamp": "2026-09-13T16:25:36.556Z",
+      "request_id": "req_011Cf1kRur1sRBNfoTzKT8Yj"
+    },
+    {
+      "type": "user",
+      "message": {
+        "role": "user",
+        "content": [
+          {
+            "tool_use_id": "toolu_01GkABCMFBTvTqGuPRRJLSMW",
+            "type": "tool_result",
+            "content": "Structured output provided successfully"
+          }
+        ]
+      },
+      "parent_tool_use_id": null,
+      "session_id": "916734f6-f015-4037-90d0-2fe9f797a71d",
+      "uuid": "004a083f-f1a2-4cc1-ac52-f4bc4122df67",
+      "timestamp": "2026-09-13T16:25:36.585Z",
+      "tool_use_result": "Structured output provided successfully"
+    },
+    {
+      "type": "rate_limit_event",
+      "rate_limit_info": {
+        "status": "allowed",
+        "resetsAt": 1789333200,
+        "rateLimitType": "five_hour",
+        "overageStatus": "rejected",
+        "overageDisabledReason": "org_level_disabled",
+        "isUsingOverage": false,
+        "unifiedWindows": {
+          "five_hour": {
+            "utilization": 0.6,
+            "resetsAt": 1789333200
+          },
+          "seven_day": {
+            "utilization": 0.65,
+            "resetsAt": 1789668000
+          }
+        }
+      },
+      "uuid": "f18333d2-2bfc-4162-900e-25160639f6c4",
+      "session_id": "916734f6-f015-4037-90d0-2fe9f797a71d"
+    },
+    {
+      "duration_api_ms": 114654,
+      "stop_reason": "tool_use",
+      "session_id": "916734f6-f015-4037-90d0-2fe9f797a71d",
+      "total_cost_usd": 0.489411,
+      "usage": {
+        "input_tokens": 4,
+        "cache_creation_input_tokens": 24878,
+        "cache_read_input_tokens": 21434,
+        "output_tokens": 8465,
+        "output_tokens_details": {
+          "thinking_tokens": 1157
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 24878,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 3639,
+            "cache_read_input_tokens": 20723,
+            "cache_creation_input_tokens": 4866,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 4866
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "modelUsage": {
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 18119,
+          "outputTokens": 30,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 0,
+          "webSearchRequests": 0,
+          "costUSD": 0.018269,
+          "contextWindow": 200000,
+          "maxOutputTokens": 32000,
+          "thinkingTokens": 0,
+          "canonicalModel": "claude-haiku-4-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        },
+        "claude-opus-5": {
+          "inputTokens": 4,
+          "outputTokens": 8465,
+          "cacheReadInputTokens": 21434,
+          "cacheCreationInputTokens": 24878,
+          "webSearchRequests": 0,
+          "costUSD": 0.471142,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 64000,
+          "thinkingTokens": 1157,
+          "canonicalModel": "claude-opus-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "is_error": false,
+      "num_turns": 3,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "{\"answer\":\"## Tổng hợp nghiên cứu đã lưu — Binh Diễn Xuân Thu (Global only)\\n\\n**Nguồn trong repo:** `plans/reports/research-260825-binh-dien-xuan-thu-global-only.md` (chốt dữ liệu 25/08/2026, cập nhật 27/08/2026, lưu Git 06/09/2026, trạng thái `global-preview-after-balance-2-expanded`), đối chiếu với `docs/research-sources.md` và reference `multi-source-research-and-logic-checks.md`.\\n\\n### 1. Phạm vi nghiên cứu\\n\\n- `兵演春秋 / 병연춘추 / Binh Diễn Xuân Thu` là **kịch bản nguyên bản chỉ dành cho Global**: Hàn Quốc, Đài–Hồng–Ma, Nhật, Việt Nam và các khu vực Global khác.\\n- **Không dùng dữ liệu server Đại Lục** để xếp đội, vì cân bằng đã tách biệt.\\n- Mốc công bố cụm Đài–Hồng–Ma/VN: 05/09/2026. Nhật có lịch trải nghiệm riêng (đợt 1: 13–20/08, đợt 2: 31/08–08/09) ⇒ ngày mở và tiến độ kiểm thử lệch nhau giữa các vùng Global.\\n- Bằng chứng đội hình tập trung ở **hai vùng**: Đài–Hồng–Ma (Bahamut, phồn thể) và Nhật (Chousen/sangokushi-shinsen.info). Nguồn Hàn chỉ có bình luận cơ chế; **chưa có** nguồn tiếng Việt hay tiếng Anh kèm chiến báo kiểm chứng được.\\n\\n### 2. Bối cảnh: vì sao không có tier list Global đáng tin\\n\\nPatch vòng cân bằng thứ hai (21/08) sửa trực tiếp phần lớn binh chủng tạo nên các đội mạnh vòng một:\\n\\n- **Nerf:** Phi Hùng Quân (tăng sát thương 36%→12%, hồi phục 14%→8%), Hổ Báo Kỵ, Tây Lương Thiết Kỵ (võ/trí toàn đội 40→15), Đại Kích Sĩ, Giải Phiền Vệ.\\n- **Buff:** Vô Đương Phi Quân, Hổ Vệ Quân, Đằng Giáp Binh (thêm kháng giảm thuộc tính, thanh tẩy DOT, chống binh đao đầu trận), Thanh Châu Binh.\\n\\n⇒ Mọi bài \\\"top tier\\\" ngày 12–15/08 chỉ phản ánh **vòng một**, đã hết hiệu lực.\\n\\n### 3. Giải thích các chỉ số\\n\\n| Chỉ số | Định nghĩa trong nguồn | Giới hạn khi dùng |\\n|---|---|---|\\n| **Tỷ lệ liên chiến** (86%, 82%, 81%, 80%, 74%) | Khả năng đội đạt **hòa trở lên** để tiếp tục đánh — **không phải tỷ lệ thắng thuần** | Nguồn Nhật **không công khai cùng cỡ mẫu** cho mọi đội ⇒ chỉ là thước đo **preview tương đối**, không so ngang tuyệt đối |\\n| **Trận trên 10.000 chiến công** | Ngưỡng chiến công một trận, chứng minh khả năng bùng nổ/thắng lớn | Chứng cho **sức sát thương đỉnh**, không chứng cho **độ ổn định**; nhóm watchlist chỉ có chỉ số này, chưa đủ mẫu xếp top 14 |\\n| **Hạng preview 1–14** | Xếp theo dữ liệu liên chiến server trải nghiệm Nhật sau vòng cân bằng 2 (công bố 24/08) | **Không phải tier** mùa Global live; có thể lệch bởi độ đỏ, cấp đội, card pool |\\n| **Thang bằng chứng** (reference) | Mạnh = nhiều chiến báo + build + ngữ cảnh mùa; Trung bình = một bài chi tiết hoặc đồng thuận lặp lại; Yếu = chỉ ảnh/chỉ bình luận | Ví dụ 40Y Lữ Bố chỉ ở mức **trung bình–yếu** vì chi tiết nằm trong video/ảnh |\\n| **Nhãn vùng** | `region: JP-global` hoặc `region: TW-global` | Bắt buộc gắn trong ghi chú; hai trang đăng lại cùng bài **không** là hai bằng chứng độc lập |\\n\\n### 4. Nhóm dẫn đầu preview (mốc 27/08)\\n\\n1. SP Đổng Trác + SP Lô Trực + SP Điêu Thuyền — `Chuyển·Phi Hùng Quân` — **86%**\\n2. SP Mã Siêu + SP Hoàng Phổ Tung + Hứa Du — `Tinh·Giải Phiền Vệ` — **82%** (ổn định, ít đòi bảo vật)\\n3. Cùng lõi trên — `Tinh·Đại Kích Sĩ` — đồng nhóm đầu, **thắng dứt điểm nhiều hơn**\\n4. SP Quan Vũ + CO Tinh Thái + SP Pháp Chính — `Tinh·Đan Dương Binh` — **81%** (mạnh hơn bản Đằng Giáp)\\n7. CO Đại Kiều + Tôn Thượng Hương + CO Tiểu Kiều — `Tinh·Hổ Báo Kỵ` — **80%** (chưa có lõi trong repo)\\n14. Tư Mã Ý + Tào Tháo + Mãn Sủng — `Tinh·Đằng Giáp Binh` — **~74%**\\n\\n**Buff nhưng chưa có bằng chứng:** Vô Đương Phi Quân, Thanh Châu Binh, Hổ Vệ Quân đều **không** xuất hiện trong top 14 lẫn nhóm chiến tích lớn ⇒ không suy từ buff cơ chế thành đội meta. `Bạch Nhĩ Binh` vẫn chưa có bằng chứng tăng hạng.\\n\\n### 5. Ràng buộc cộng tồn (giới hạn phạm vi áp dụng thực tế)\\n\\n- Chỉ được sửa **tối đa 4 chiến pháp binh chủng** ⇒ 14 biến thể **không thể** cùng nằm trong một portfolio.\\n- `Phi Hùng` tranh giữa Thái Sư Cung, Đô Đốc Cung, SP Điêu Thuyền Cung, Tam Tiên Kỵ, Phú Quý Kỵ.\\n- `Đan Dương` tranh giữa Pháp Quan Khiên và Bắc Phạt Khiên (nếu ưu tiên Bắc Phạt, Pháp Quan chuyển `Tinh·Đằng Giáp Binh` hoặc `Chuyển·Tử Sĩ Tiên Phong`).\\n- Hoàng Mã chỉ chọn **một** trong Đại Kích / Giải Phiền.\\n- Hoàng Mã, Nhị Kiều, Ôn Hầu Cung cùng tranh `Đương Phong Thôi Quyết`, `Thôi Phong Đoạn Nhẫn`, `Thuyền Cỏ Mượn Tên`, `Lâm Nguy Cứu Chủ` ⇒ không đề xuất đồng thời như ba đội độc lập.\\n\\n### 6. Quyết định dữ liệu đã chốt\\n\\n- **Chưa nhập** đội S26 nào vào `data/teams.json`.\\n- Có thể stage 14 biến thể ở trạng thái `post-balance-preview`; watchlist giữ riêng trạng thái `watch` — **không trộn hai mức bằng chứng**.\\n- **Không gắn T0/T0.5** cho bất kỳ biến thể S26 trước khi có dữ liệu mùa Global live + nguồn tier độc lập. Tỷ lệ liên chiến server trải nghiệm không tự thành tier MCP.\\n- Lưu biến thể mùa bằng metadata `season` + `customTroop`, không nhân đôi lõi ba tướng thành bản ghi gần trùng.\\n\\n### 7. Phạm vi áp dụng — lưu ý quan trọng\\n\\n- **Dùng được:** làm thứ tự ưu tiên **retest**, hiểu hướng cân bằng vòng 2, và lọc ràng buộc cộng tồn trước khi dựng portfolio.\\n- **Không dùng được:** kết luận meta/tier mùa Global live, hay so hạng tuyệt đối giữa các đội.\\n- **Độ cũ:** dữ liệu chốt 25–27/08, tức **trước** mốc mở 05/09 của cụm Đài–Hồng–Ma/VN. Tính đến hôm nay (13/09/2026) đã lệch hơn hai tuần và toàn bộ vẫn là **server trải nghiệm**; việc lưu Git 06/09 không xác nhận lại lịch, cân bằng hay tier.\\n- **Thiếu mốc chuẩn:** `docs/research-sources.md` chốt SGSDeck là team \\\"Sách Giáo Khoa\\\" từ ngày 07/09 — **sau** báo cáo này. Vì vậy nghiên cứu Binh Diễn Xuân Thu hiện **chưa có mốc SGSDeck đã xác minh**; nếu cần đối chiếu theo chuẩn project thì phải bổ sung một lượt research mới.\\n\\nNếu bạn muốn, tôi có thể đọc thêm `coexist-team-rules.md` và `runtime/current-json-projection.json` để kiểm tra lõi nào trong top 14 đã/chưa có bản ghi tương ứng, hoặc viết báo cáo cập nhật ghi rõ các khoảng trống cần verify lại sau mốc 05/09.\",\"actions\":[]}",
+      "structured_output": {
+        "answer": "## Tổng hợp nghiên cứu đã lưu — Binh Diễn Xuân Thu (Global only)\n\n**Nguồn trong repo:** `plans/reports/research-260825-binh-dien-xuan-thu-global-only.md` (chốt dữ liệu 25/08/2026, cập nhật 27/08/2026, lưu Git 06/09/2026, trạng thái `global-preview-after-balance-2-expanded`), đối chiếu với `docs/research-sources.md` và reference `multi-source-research-and-logic-checks.md`.\n\n### 1. Phạm vi nghiên cứu\n\n- `兵演春秋 / 병연춘추 / Binh Diễn Xuân Thu` là **kịch bản nguyên bản chỉ dành cho Global**: Hàn Quốc, Đài–Hồng–Ma, Nhật, Việt Nam và các khu vực Global khác.\n- **Không dùng dữ liệu server Đại Lục** để xếp đội, vì cân bằng đã tách biệt.\n- Mốc công bố cụm Đài–Hồng–Ma/VN: 05/09/2026. Nhật có lịch trải nghiệm riêng (đợt 1: 13–20/08, đợt 2: 31/08–08/09) ⇒ ngày mở và tiến độ kiểm thử lệch nhau giữa các vùng Global.\n- Bằng chứng đội hình tập trung ở **hai vùng**: Đài–Hồng–Ma (Bahamut, phồn thể) và Nhật (Chousen/sangokushi-shinsen.info). Nguồn Hàn chỉ có bình luận cơ chế; **chưa có** nguồn tiếng Việt hay tiếng Anh kèm chiến báo kiểm chứng được.\n\n### 2. Bối cảnh: vì sao không có tier list Global đáng tin\n\nPatch vòng cân bằng thứ hai (21/08) sửa trực tiếp phần lớn binh chủng tạo nên các đội mạnh vòng một:\n\n- **Nerf:** Phi Hùng Quân (tăng sát thương 36%→12%, hồi phục 14%→8%), Hổ Báo Kỵ, Tây Lương Thiết Kỵ (võ/trí toàn đội 40→15), Đại Kích Sĩ, Giải Phiền Vệ.\n- **Buff:** Vô Đương Phi Quân, Hổ Vệ Quân, Đằng Giáp Binh (thêm kháng giảm thuộc tính, thanh tẩy DOT, chống binh đao đầu trận), Thanh Châu Binh.\n\n⇒ Mọi bài \"top tier\" ngày 12–15/08 chỉ phản ánh **vòng một**, đã hết hiệu lực.\n\n### 3. Giải thích các chỉ số\n\n| Chỉ số | Định nghĩa trong nguồn | Giới hạn khi dùng |\n|---|---|---|\n| **Tỷ lệ liên chiến** (86%, 82%, 81%, 80%, 74%) | Khả năng đội đạt **hòa trở lên** để tiếp tục đánh — **không phải tỷ lệ thắng thuần** | Nguồn Nhật **không công khai cùng cỡ mẫu** cho mọi đội ⇒ chỉ là thước đo **preview tương đối**, không so ngang tuyệt đối |\n| **Trận trên 10.000 chiến công** | Ngưỡng chiến công một trận, chứng minh khả năng bùng nổ/thắng lớn | Chứng cho **sức sát thương đỉnh**, không chứng cho **độ ổn định**; nhóm watchlist chỉ có chỉ số này, chưa đủ mẫu xếp top 14 |\n| **Hạng preview 1–14** | Xếp theo dữ liệu liên chiến server trải nghiệm Nhật sau vòng cân bằng 2 (công bố 24/08) | **Không phải tier** mùa Global live; có thể lệch bởi độ đỏ, cấp đội, card pool |\n| **Thang bằng chứng** (reference) | Mạnh = nhiều chiến báo + build + ngữ cảnh mùa; Trung bình = một bài chi tiết hoặc đồng thuận lặp lại; Yếu = chỉ ảnh/chỉ bình luận | Ví dụ 40Y Lữ Bố chỉ ở mức **trung bình–yếu** vì chi tiết nằm trong video/ảnh |\n| **Nhãn vùng** | `region: JP-global` hoặc `region: TW-global` | Bắt buộc gắn trong ghi chú; hai trang đăng lại cùng bài **không** là hai bằng chứng độc lập |\n\n### 4. Nhóm dẫn đầu preview (mốc 27/08)\n\n1. SP Đổng Trác + SP Lô Trực + SP Điêu Thuyền — `Chuyển·Phi Hùng Quân` — **86%**\n2. SP Mã Siêu + SP Hoàng Phổ Tung + Hứa Du — `Tinh·Giải Phiền Vệ` — **82%** (ổn định, ít đòi bảo vật)\n3. Cùng lõi trên — `Tinh·Đại Kích Sĩ` — đồng nhóm đầu, **thắng dứt điểm nhiều hơn**\n4. SP Quan Vũ + CO Tinh Thái + SP Pháp Chính — `Tinh·Đan Dương Binh` — **81%** (mạnh hơn bản Đằng Giáp)\n7. CO Đại Kiều + Tôn Thượng Hương + CO Tiểu Kiều — `Tinh·Hổ Báo Kỵ` — **80%** (chưa có lõi trong repo)\n14. Tư Mã Ý + Tào Tháo + Mãn Sủng — `Tinh·Đằng Giáp Binh` — **~74%**\n\n**Buff nhưng chưa có bằng chứng:** Vô Đương Phi Quân, Thanh Châu Binh, Hổ Vệ Quân đều **không** xuất hiện trong top 14 lẫn nhóm chiến tích lớn ⇒ không suy từ buff cơ chế thành đội meta. `Bạch Nhĩ Binh` vẫn chưa có bằng chứng tăng hạng.\n\n### 5. Ràng buộc cộng tồn (giới hạn phạm vi áp dụng thực tế)\n\n- Chỉ được sửa **tối đa 4 chiến pháp binh chủng** ⇒ 14 biến thể **không thể** cùng nằm trong một portfolio.\n- `Phi Hùng` tranh giữa Thái Sư Cung, Đô Đốc Cung, SP Điêu Thuyền Cung, Tam Tiên Kỵ, Phú Quý Kỵ.\n- `Đan Dương` tranh giữa Pháp Quan Khiên và Bắc Phạt Khiên (nếu ưu tiên Bắc Phạt, Pháp Quan chuyển `Tinh·Đằng Giáp Binh` hoặc `Chuyển·Tử Sĩ Tiên Phong`).\n- Hoàng Mã chỉ chọn **một** trong Đại Kích / Giải Phiền.\n- Hoàng Mã, Nhị Kiều, Ôn Hầu Cung cùng tranh `Đương Phong Thôi Quyết`, `Thôi Phong Đoạn Nhẫn`, `Thuyền Cỏ Mượn Tên`, `Lâm Nguy Cứu Chủ` ⇒ không đề xuất đồng thời như ba đội độc lập.\n\n### 6. Quyết định dữ liệu đã chốt\n\n- **Chưa nhập** đội S26 nào vào `data/teams.json`.\n- Có thể stage 14 biến thể ở trạng thái `post-balance-preview`; watchlist giữ riêng trạng thái `watch` — **không trộn hai mức bằng chứng**.\n- **Không gắn T0/T0.5** cho bất kỳ biến thể S26 trước khi có dữ liệu mùa Global live + nguồn tier độc lập. Tỷ lệ liên chiến server trải nghiệm không tự thành tier MCP.\n- Lưu biến thể mùa bằng metadata `season` + `customTroop`, không nhân đôi lõi ba tướng thành bản ghi gần trùng.\n\n### 7. Phạm vi áp dụng — lưu ý quan trọng\n\n- **Dùng được:** làm thứ tự ưu tiên **retest**, hiểu hướng cân bằng vòng 2, và lọc ràng buộc cộng tồn trước khi dựng portfolio.\n- **Không dùng được:** kết luận meta/tier mùa Global live, hay so hạng tuyệt đối giữa các đội.\n- **Độ cũ:** dữ liệu chốt 25–27/08, tức **trước** mốc mở 05/09 của cụm Đài–Hồng–Ma/VN. Tính đến hôm nay (13/09/2026) đã lệch hơn hai tuần và toàn bộ vẫn là **server trải nghiệm**; việc lưu Git 06/09 không xác nhận lại lịch, cân bằng hay tier.\n- **Thiếu mốc chuẩn:** `docs/research-sources.md` chốt SGSDeck là team \"Sách Giáo Khoa\" từ ngày 07/09 — **sau** báo cáo này. Vì vậy nghiên cứu Binh Diễn Xuân Thu hiện **chưa có mốc SGSDeck đã xác minh**; nếu cần đối chiếu theo chuẩn project thì phải bổ sung một lượt research mới.\n\nNếu bạn muốn, tôi có thể đọc thêm `coexist-team-rules.md` và `runtime/current-json-projection.json` để kiểm tra lõi nào trong top 14 đã/chưa có bản ghi tương ứng, hoặc viết báo cáo cập nhật ghi rõ các khoảng trống cần verify lại sau mốc 05/09.",
+        "actions": []
+      },
+      "ttft_ms": 21440,
+      "type": "result",
+      "duration_ms": 112511,
+      "uuid": "f0118592-0f21-495a-bb55-66c35219f473",
+      "ttft_stream_ms": 2759,
+      "time_to_request_ms": 15,
+      "first_content_frame_ms": 3641,
+      "queued_turn_count": 0
+    }
+  ],
+  "status": "OBSERVED",
+  "startedAt": "2026-09-13T16:23:38.394Z",
+  "answer": "## Tổng hợp nghiên cứu đã lưu — Binh Diễn Xuân Thu (Global only)\n\n**Nguồn trong repo:** `plans/reports/research-260825-binh-dien-xuan-thu-global-only.md` (chốt dữ liệu 25/08/2026, cập nhật 27/08/2026, lưu Git 06/09/2026, trạng thái `global-preview-after-balance-2-expanded`), đối chiếu với `docs/research-sources.md` và reference `multi-source-research-and-logic-checks.md`.\n\n### 1. Phạm vi nghiên cứu\n\n- `兵演春秋 / 병연춘추 / Binh Diễn Xuân Thu` là **kịch bản nguyên bản chỉ dành cho Global**: Hàn Quốc, Đài–Hồng–Ma, Nhật, Việt Nam và các khu vực Global khác.\n- **Không dùng dữ liệu server Đại Lục** để xếp đội, vì cân bằng đã tách biệt.\n- Mốc công bố cụm Đài–Hồng–Ma/VN: 05/09/2026. Nhật có lịch trải nghiệm riêng (đợt 1: 13–20/08, đợt 2: 31/08–08/09) ⇒ ngày mở và tiến độ kiểm thử lệch nhau giữa các vùng Global.\n- Bằng chứng đội hình tập trung ở **hai vùng**: Đài–Hồng–Ma (Bahamut, phồn thể) và Nhật (Chousen/sangokushi-shinsen.info). Nguồn Hàn chỉ có bình luận cơ chế; **chưa có** nguồn tiếng Việt hay tiếng Anh kèm chiến báo kiểm chứng được.\n\n### 2. Bối cảnh: vì sao không có tier list Global đáng tin\n\nPatch vòng cân bằng thứ hai (21/08) sửa trực tiếp phần lớn binh chủng tạo nên các đội mạnh vòng một:\n\n- **Nerf:** Phi Hùng Quân (tăng sát thương 36%→12%, hồi phục 14%→8%), Hổ Báo Kỵ, Tây Lương Thiết Kỵ (võ/trí toàn đội 40→15), Đại Kích Sĩ, Giải Phiền Vệ.\n- **Buff:** Vô Đương Phi Quân, Hổ Vệ Quân, Đằng Giáp Binh (thêm kháng giảm thuộc tính, thanh tẩy DOT, chống binh đao đầu trận), Thanh Châu Binh.\n\n⇒ Mọi bài \"top tier\" ngày 12–15/08 chỉ phản ánh **vòng một**, đã hết hiệu lực.\n\n### 3. Giải thích các chỉ số\n\n| Chỉ số | Định nghĩa trong nguồn | Giới hạn khi dùng |\n|---|---|---|\n| **Tỷ lệ liên chiến** (86%, 82%, 81%, 80%, 74%) | Khả năng đội đạt **hòa trở lên** để tiếp tục đánh — **không phải tỷ lệ thắng thuần** | Nguồn Nhật **không công khai cùng cỡ mẫu** cho mọi đội ⇒ chỉ là thước đo **preview tương đối**, không so ngang tuyệt đối |\n| **Trận trên 10.000 chiến công** | Ngưỡng chiến công một trận, chứng minh khả năng bùng nổ/thắng lớn | Chứng cho **sức sát thương đỉnh**, không chứng cho **độ ổn định**; nhóm watchlist chỉ có chỉ số này, chưa đủ mẫu xếp top 14 |\n| **Hạng preview 1–14** | Xếp theo dữ liệu liên chiến server trải nghiệm Nhật sau vòng cân bằng 2 (công bố 24/08) | **Không phải tier** mùa Global live; có thể lệch bởi độ đỏ, cấp đội, card pool |\n| **Thang bằng chứng** (reference) | Mạnh = nhiều chiến báo + build + ngữ cảnh mùa; Trung bình = một bài chi tiết hoặc đồng thuận lặp lại; Yếu = chỉ ảnh/chỉ bình luận | Ví dụ 40Y Lữ Bố chỉ ở mức **trung bình–yếu** vì chi tiết nằm trong video/ảnh |\n| **Nhãn vùng** | `region: JP-global` hoặc `region: TW-global` | Bắt buộc gắn trong ghi chú; hai trang đăng lại cùng bài **không** là hai bằng chứng độc lập |\n\n### 4. Nhóm dẫn đầu preview (mốc 27/08)\n\n1. SP Đổng Trác + SP Lô Trực + SP Điêu Thuyền — `Chuyển·Phi Hùng Quân` — **86%**\n2. SP Mã Siêu + SP Hoàng Phổ Tung + Hứa Du — `Tinh·Giải Phiền Vệ` — **82%** (ổn định, ít đòi bảo vật)\n3. Cùng lõi trên — `Tinh·Đại Kích Sĩ` — đồng nhóm đầu, **thắng dứt điểm nhiều hơn**\n4. SP Quan Vũ + CO Tinh Thái + SP Pháp Chính — `Tinh·Đan Dương Binh` — **81%** (mạnh hơn bản Đằng Giáp)\n7. CO Đại Kiều + Tôn Thượng Hương + CO Tiểu Kiều — `Tinh·Hổ Báo Kỵ` — **80%** (chưa có lõi trong repo)\n14. Tư Mã Ý + Tào Tháo + Mãn Sủng — `Tinh·Đằng Giáp Binh` — **~74%**\n\n**Buff nhưng chưa có bằng chứng:** Vô Đương Phi Quân, Thanh Châu Binh, Hổ Vệ Quân đều **không** xuất hiện trong top 14 lẫn nhóm chiến tích lớn ⇒ không suy từ buff cơ chế thành đội meta. `Bạch Nhĩ Binh` vẫn chưa có bằng chứng tăng hạng.\n\n### 5. Ràng buộc cộng tồn (giới hạn phạm vi áp dụng thực tế)\n\n- Chỉ được sửa **tối đa 4 chiến pháp binh chủng** ⇒ 14 biến thể **không thể** cùng nằm trong một portfolio.\n- `Phi Hùng` tranh giữa Thái Sư Cung, Đô Đốc Cung, SP Điêu Thuyền Cung, Tam Tiên Kỵ, Phú Quý Kỵ.\n- `Đan Dương` tranh giữa Pháp Quan Khiên và Bắc Phạt Khiên (nếu ưu tiên Bắc Phạt, Pháp Quan chuyển `Tinh·Đằng Giáp Binh` hoặc `Chuyển·Tử Sĩ Tiên Phong`).\n- Hoàng Mã chỉ chọn **một** trong Đại Kích / Giải Phiền.\n- Hoàng Mã, Nhị Kiều, Ôn Hầu Cung cùng tranh `Đương Phong Thôi Quyết`, `Thôi Phong Đoạn Nhẫn`, `Thuyền Cỏ Mượn Tên`, `Lâm Nguy Cứu Chủ` ⇒ không đề xuất đồng thời như ba đội độc lập.\n\n### 6. Quyết định dữ liệu đã chốt\n\n- **Chưa nhập** đội S26 nào vào `data/teams.json`.\n- Có thể stage 14 biến thể ở trạng thái `post-balance-preview`; watchlist giữ riêng trạng thái `watch` — **không trộn hai mức bằng chứng**.\n- **Không gắn T0/T0.5** cho bất kỳ biến thể S26 trước khi có dữ liệu mùa Global live + nguồn tier độc lập. Tỷ lệ liên chiến server trải nghiệm không tự thành tier MCP.\n- Lưu biến thể mùa bằng metadata `season` + `customTroop`, không nhân đôi lõi ba tướng thành bản ghi gần trùng.\n\n### 7. Phạm vi áp dụng — lưu ý quan trọng\n\n- **Dùng được:** làm thứ tự ưu tiên **retest**, hiểu hướng cân bằng vòng 2, và lọc ràng buộc cộng tồn trước khi dựng portfolio.\n- **Không dùng được:** kết luận meta/tier mùa Global live, hay so hạng tuyệt đối giữa các đội.\n- **Độ cũ:** dữ liệu chốt 25–27/08, tức **trước** mốc mở 05/09 của cụm Đài–Hồng–Ma/VN. Tính đến hôm nay (13/09/2026) đã lệch hơn hai tuần và toàn bộ vẫn là **server trải nghiệm**; việc lưu Git 06/09 không xác nhận lại lịch, cân bằng hay tier.\n- **Thiếu mốc chuẩn:** `docs/research-sources.md` chốt SGSDeck là team \"Sách Giáo Khoa\" từ ngày 07/09 — **sau** báo cáo này. Vì vậy nghiên cứu Binh Diễn Xuân Thu hiện **chưa có mốc SGSDeck đã xác minh**; nếu cần đối chiếu theo chuẩn project thì phải bổ sung một lượt research mới.\n\nNếu bạn muốn, tôi có thể đọc thêm `coexist-team-rules.md` và `runtime/current-json-projection.json` để kiểm tra lõi nào trong top 14 đã/chưa có bản ghi tương ứng, hoặc viết báo cáo cập nhật ghi rõ các khoảng trống cần verify lại sau mốc 05/09.",
+  "format": "structured-output-v2",
+  "endedAt": "2026-09-13T16:25:36.973Z"
+}
