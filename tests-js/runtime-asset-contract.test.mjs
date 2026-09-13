@@ -63,6 +63,11 @@ test("team identifiers are unique and every tier row joins a team", async () => 
 
   assert.equal(idSet.size, ids.length, "team.id values must be unique");
   assert.ok(teams.every((team) => Array.isArray(team.heroes) && team.heroes.length > 0));
+  // Mỗi đội gốc có một trang tĩnh riêng, nên ID phải là một segment đường dẫn an toàn.
+  for (const id of ids) {
+    assert.match(id, /^[^\u0000-\u001f\u007f/\\?#%:*"<>|\s]+$/, `team id must be routable: ${id}`);
+    assert.ok(!id.startsWith(".") && !id.endsWith("."), `team id must not be a dot path: ${id}`);
+  }
   assert.ok(teams.every((team) => team.source !== "do-uy"), "Đô Úy teams must stay hidden");
   for (const row of teamTier) {
     assert.equal(typeof row.teamId, "string");

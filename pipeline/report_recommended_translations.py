@@ -8,14 +8,21 @@ import re
 from pathlib import Path
 
 from pipeline.build_recommended_reference import canonical_bytes, sha
-from pipeline.recommended_identity import alias_key, build_mapping, resolve_identity
+from pipeline.recommended_identity import (
+    alias_key,
+    build_display_mapping,
+    resolve_display_kind,
+    resolve_display_name,
+    resolve_identity,
+    resolve_team_display_name,
+)
 
 
 SCHEMA_VERSION = 1
 HEX64 = re.compile(r"[0-9a-f]{64}")
 SELECTOR_KEYS = ["generationId", "manifestSha256", "schemaVersion"]
 PLACEHOLDERS = {"-", "--", "–", "—", "n/a", "N/A"}
-KINDS = ("hero", "tactic", "book")
+KINDS = ("team", "hero", "tactic", "book")
 HOLDER_FIELDS = (("heroes", "primary"), ("alternativeHoldersRaw", "alternative"))
 CONTEXT_LIMIT = 3
 
@@ -58,6 +65,7 @@ def _observations(records):
     for row in records:
         context = {"sourceConfigId": row.get("sourceConfigId"), "teamNameRaw": row.get("nameZh"),
                    "sourceUrl": row.get("sourceUrl")}
+        yield "team", row.get("nameZh"), "team", context
         for field, holderKind in HOLDER_FIELDS:
             for holder in row.get(field) or []:
                 yield "hero", holder.get("nameRaw"), holderKind, context
@@ -81,25 +89,42 @@ def collect_missing(records, mapping):
         value = " ".join(raw.split())
         if not value or value in PLACEHOLDERS:
             continue
-        cached = resolutions.get((kind, value))
+        kind = resolve_display_kind(kind, value, mapping)
+        source_config_id = context.get("sourceConfigId") if kind == "team" else None
+        cache_key = (kind, source_config_id, value)
+        cached = resolutions.get(cache_key)
         if cached is None:
-            resolved = resolve_identity(kind, value, mapping)
-            display = resolved.get("displayNameVi")
-            if resolved.get("status") == "resolved" and isinstance(display, str) and display.strip():
-                cached = {"status": "resolved"}
-            elif resolved.get("status") == "ambiguous":
-                cached = {"status": "ambiguous", "reason": resolved.get("reason"),
-                          "candidates": sorted(resolved.get("candidates") or [])}
+            if kind == "team":
+                display = resolve_team_display_name(
+                    {"sourceConfigId": source_config_id, "nameZh": value},
+                    mapping,
+                )
+                cached = {"status": "resolved"} if isinstance(display, str) and display.strip() else {
+                    "status": "missing",
+                    "reason": "no-reviewed-vietnamese-name",
+                }
             else:
-                cached = {"status": "missing",
-                          "reason": "no-reviewed-vietnamese-name" if resolved.get("status") == "resolved" else resolved.get("reason")}
-            resolutions[(kind, value)] = cached
+                resolved = resolve_identity(kind, value, mapping)
+                display = resolve_display_name(kind, value, mapping)
+                if isinstance(display, str) and display.strip():
+                    cached = {"status": "resolved"}
+                elif resolved.get("status") == "ambiguous":
+                    cached = {"status": "ambiguous", "reason": resolved.get("reason"),
+                              "candidates": sorted(resolved.get("candidates") or [])}
+                else:
+                    cached = {"status": "missing",
+                              "reason": "no-reviewed-vietnamese-name" if resolved.get("status") == "resolved" else resolved.get("reason")}
+            resolutions[cache_key] = cached
         if cached["status"] == "resolved":
             continue
         key = alias_key(value)
-        group = groups.setdefault((kind, key), {"variants": {}, "contexts": [], "occurrences": 0, "holderKinds": set()})
+        group_key = (kind, key, None)
+        group = groups.setdefault(group_key, {"variants": {}, "contexts": [], "occurrences": 0,
+                                               "holderKinds": set(), "sourceConfigIds": set()})
         group["occurrences"] += 1
         group["holderKinds"].add(holderKind)
+        if kind == "team" and source_config_id:
+            group["sourceConfigIds"].add(source_config_id)
         variant = group["variants"].setdefault(value, {"raw": value, "occurrences": 0, "status": cached["status"],
                                                        "reason": cached.get("reason")})
         variant["occurrences"] += 1
@@ -108,10 +133,10 @@ def collect_missing(records, mapping):
         if len(group["contexts"]) < CONTEXT_LIMIT and context not in group["contexts"]:
             group["contexts"].append(dict(context))
     items = []
-    for (kind, key), group in sorted(groups.items()):
+    for (kind, key, source_config_id), group in sorted(groups.items(), key=lambda item: tuple("" if value is None else value for value in item[0])):
         variants = [group["variants"][raw] for raw in sorted(group["variants"])]
-        items.append({
-            "itemId": _item_id(kind, key),
+        item = {
+            "itemId": _item_id(kind, [key, source_config_id] if kind == "team" else key),
             "kind": kind,
             "aliasKey": key,
             "status": "ambiguous" if any(variant["status"] == "ambiguous" for variant in variants) else "missing",
@@ -120,13 +145,19 @@ def collect_missing(records, mapping):
             "rawVariants": variants,
             "contextExamples": group["contexts"],
             "displayNameVi": None,
-        })
+        }
+        if kind == "team":
+            source_ids = sorted(group["sourceConfigIds"])
+            item["sourceConfigIds"] = source_ids
+            if len(source_ids) == 1:
+                item["sourceConfigId"] = source_ids[0]
+        items.append(item)
     return items
 
 
 def build_report(reference_dir, identity_map):
     generation = read_generation(reference_dir)
-    mapping = build_mapping(json.loads(Path(identity_map).read_bytes()).get("entries", []))
+    mapping = build_display_mapping(json.loads(Path(identity_map).read_bytes()).get("entries", []))
     items = collect_missing(generation["records"], mapping)
     counts = {"total": len(items), "occurrences": sum(item["occurrences"] for item in items),
               "ambiguous": sum(1 for item in items if item["status"] == "ambiguous")}

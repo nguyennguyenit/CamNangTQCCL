@@ -1,0 +1,99 @@
+---
+// Vỏ trang dùng chung: root giữ nguyên tab buttons cho app.js, trang con dùng link thật.
+interface Props {
+  title: string;
+  description: string;
+  pageKind?: 'root' | 'detail' | 'not-found';
+  activeSection?: 'team-chuan' | 'team-khac' | null;
+  tagline?: string;
+}
+
+const {
+  title,
+  description,
+  pageKind = 'root',
+  activeSection = null,
+  tagline = 'Tất cả — tham khảo',
+} = Astro.props;
+
+const BRAND = 'Cẩm Nang Game Tam Quốc Chí - Chiến Lược';
+const SECTIONS = [
+  {id: 'team-chuan', label: 'Team chuẩn'},
+  {id: 'team-khac', label: 'Team khác'},
+  {id: 'coexist', label: 'Cùng Tồn'},
+  {id: 'khaihoang', label: 'Khai hoang'},
+  {id: 'heroes', label: 'Tra cứu tướng'},
+  {id: 'tactics', label: 'Tra cứu chiến pháp'},
+  {id: 'recruit-tracker', label: 'Theo dõi chiêu mộ', beta: true},
+  {id: 'analyze', label: 'Soi đội từ ảnh', beta: true},
+  {id: 'roster-recommend', label: 'Gợi ý đội từ kho', beta: true},
+];
+const isRoot = pageKind === 'root';
+const contentClass = isRoot ? 'content' : 'content detail-content';
+---
+<!doctype html>
+<html lang="vi" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/png" sizes="128x128" href="/favicon.png" />
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Bỏ qua điều hướng</a>
+    <div class="top-header">
+      <header class="site-header">
+        <div class="brand">
+          <button id="section-menu-toggle" class="section-menu-toggle" type="button" aria-controls="section-menu-items" aria-expanded="false" aria-label="Mở menu trang" data-label-mode="icon">☰</button>
+          <div>
+            {isRoot
+              ? <h1 class="site-title">{BRAND}</h1>
+              : <a class="site-title" href="/">{BRAND}</a>}
+            <p class="tagline">{tagline}</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="theme-toggle" class="icon-btn" type="button" title="Đổi giao diện sáng/tối" aria-label="Chuyển sang giao diện tối" aria-pressed="false">🌗</button>
+        </div>
+      </header>
+
+      <nav class="section-nav" aria-label="Chuyên mục">
+        <div id="section-menu-items" class="section-menu-items">
+          {SECTIONS.map((section) => (isRoot
+            ? <button class={section.id === 'team-chuan' ? 'nav-tab active' : 'nav-tab'} data-section={section.id}>{section.label}{section.beta ? <span class="badge beta">Beta</span> : null}</button>
+            : <a
+                class={section.id === activeSection ? 'nav-tab active' : 'nav-tab'}
+                data-section={section.id}
+                href={`/#${section.id}`}
+                aria-current={section.id === activeSection ? 'location' : null}
+              >{section.label}{section.beta ? <span class="badge beta">Beta</span> : null}</a>))}
+        </div>
+      </nav>
+    </div>
+
+    <slot name="notice" />
+
+    <main id="main-content" class="layout">
+      <div class={contentClass}>
+        <slot />
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <p class="credit">Build bởi <strong>Nguyễn Nguyên</strong> · HLxThanos · Team 2 bang Huynh Đệ</p>
+    </footer>
+
+    {!isRoot && (
+      <script is:inline type="module">
+        import { initSiteChrome } from '/js/site-chrome.js';
+        initSiteChrome();
+      </script>
+    )}
+    <slot name="scripts" />
+  </body>
+</html>

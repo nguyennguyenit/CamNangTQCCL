@@ -1,6 +1,12 @@
 import unittest
 
-from pipeline.recommended_identity import build_mapping, resolve_identity
+from pipeline.recommended_identity import (
+    build_display_mapping,
+    build_mapping,
+    resolve_display_name,
+    resolve_identity,
+    resolve_team_display_name,
+)
 
 
 class RecommendedIdentityTest(unittest.TestCase):
@@ -24,6 +30,57 @@ class RecommendedIdentityTest(unittest.TestCase):
         ])
         self.assertEqual(resolve_identity("hero", "X", conflict)["status"], "ambiguous")
 
+    def test_translation_approval_does_not_confirm_or_merge_variant_identity(self):
+        base = next(item for item in self.mapping["entries"] if item["stableId"] == "hero:lu-bu")
+        translation = {"kind": "hero", "variant": "40Y", "aliases": ["40Y 呂布"],
+                       "displayNameVi": "40Y Lữ Bố", "reviewStatus": "translation-reviewed", "evidenceRef": "user:1"}
+        mapping = build_display_mapping([base, translation])
+        self.assertEqual(resolve_display_name("hero", "40Y呂布", mapping), "40Y Lữ Bố")
+        self.assertEqual(resolve_display_name("hero", "呂布", mapping), "Lữ Bố")
+        self.assertIsNone(resolve_display_name("hero", "SP 呂布", mapping))
+        self.assertEqual(resolve_identity("hero", "40Y 呂布", mapping)["status"], "missing")
+        self.assertEqual(resolve_identity("hero", "呂布", mapping)["stableId"], "hero:lu-bu")
+        unreviewed = build_display_mapping([base, {**translation, "reviewStatus": "pending"}])
+        self.assertIsNone(resolve_display_name("hero", "40Y 呂布", unreviewed))
+
+    def test_team_titles_support_global_and_source_scoped_translations(self):
+        entries = [
+            {
+                "kind": "team",
+                "aliases": ["桃園盾"],
+                "displayNameVi": "Đào Viên Thuẫn",
+                "reviewStatus": "translation-reviewed",
+                "evidenceRef": "fixture:team-global",
+            },
+            {
+                "kind": "team",
+                "aliases": ["變種隊"],
+                "sourceConfigId": "source-a",
+                "displayNameVi": "Đội Biến Thể A",
+                "reviewStatus": "translation-reviewed",
+                "evidenceRef": "fixture:team-scoped",
+            },
+        ]
+        mapping = build_display_mapping(entries)
+        self.assertEqual(
+            resolve_team_display_name({"sourceConfigId": "source-a", "nameZh": "變種隊"}, mapping),
+            "Đội Biến Thể A",
+        )
+        self.assertIsNone(
+            resolve_team_display_name({"sourceConfigId": "source-b", "nameZh": "變種隊"}, mapping)
+        )
+        self.assertEqual(
+            resolve_team_display_name({"sourceConfigId": "source-b", "nameZh": "桃園盾"}, mapping),
+            "Đào Viên Thuẫn",
+        )
+        with self.assertRaises(ValueError):
+            build_display_mapping([entries[1], {**entries[1], "displayNameVi": "Tên Khác"}])
+        with self.assertRaises(ValueError):
+            build_display_mapping([entries[1], dict(entries[1])])
+        with self.assertRaises(ValueError):
+            resolve_team_display_name({"sourceConfigId": "source-a", "nameZh": "Tên Khác"}, mapping)
+        with self.assertRaises(ValueError):
+            build_display_mapping([{**entries[1], "stableId": "team:forbidden"}])
 
 if __name__ == "__main__":
     unittest.main()

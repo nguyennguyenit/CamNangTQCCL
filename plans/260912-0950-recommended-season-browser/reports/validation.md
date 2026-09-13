@@ -3,8 +3,30 @@
 Date: 2026-09-12  
 Worktree: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup`  
 Branch: `feat/season-team-lookup`  
-Selected generation: `20d85cbbc63d16b40a2b952c9a0ffad79ebfbd61c1bcf64495c0f0bb36206e5a`  
-Manifest SHA-256: `2ae1257f40b7cacf7c0ad9d1d42a7b80ff08e067dc3f511e25c7dc421efafea1`
+Selected generation: `89317bb82ae31a886e49cf0d04180f413cb654ec75e5d25b29f3ff9173d4a9d0`
+Manifest SHA-256: `1e99c46372a36176a439eb1b5fb87933c0103f4845efbe71f7031d95be67e37c`
+
+## Approved translation batch, variant badges and bonds — local follow-up
+
+- Applied 79 additional approved alias groups. Verified every group appears with its exact approved label in published holder slots, including SP Hoàng Phổ Tung, Trương Nhiệm and the requested book/tactic wording. Translation-only entries have no stable identity.
+- SP/CO/40Y render as separate leading badges on cards, details and alternatives. CO names retain Vô Song. The 40Y badge uses dark text on its gold background.
+- Classified all five indexed source occurrences of `桃園結義` as `bond`, displayed as **Duyên phận: Kết Nghĩa Vườn Đào**, never as selectable tactics. Raw source slots remain unchanged; `tacticSlotKinds` records the display classification in parallel.
+- The worksheet now contains one unresolved tactic, `戮力上心`, with 11 occurrences. The [source page](https://sgsdeck.com/recommended/s27-han-hanshi-gong-1) and the existing reviewed `勠力同心` → Đồng Lòng Hợp Sức dictionary entry do not establish equivalence. A [separate tactic description](https://m.51nacs.com/article/1040.html) supports the latter spelling, not the proposed source typo. No alias was invented.
+- Compared all 90 payloads against preceding generation `35c00d98fef3e37ffe5a1ca0ba3ad463173fb51a10318e84a452848c28e1a671`, excluding only localized fields, slot-kind annotations and publication fingerprints: raw source content, IDs, slots, order and scores are unchanged. Dedup ledger differs only in the mapping-file byte hash; identity mapping hash and all decisions remain unchanged.
+- Python suite: 216 run, 12 skipped, zero failures. Node: 200 passed. Full Playwright: 80 passed, including real published SP/CO/40Y cards/details and bond separation. Dist verification: 137 files, 42 raw assets. Astro check: zero errors, warnings or hints across 13 files.
+- Restarted the persistent dev server at `http://127.0.0.1:4321/#team-chuan` and verified it serves this generation. Live smoke exercised variant badges, CO Vô Song Đại Kiều search in Vietnamese/Chinese, card/detail bond separation, retained ambiguous source spelling and a 320px dark layout without horizontal overflow.
+- Visually inspected desktop badge screenshots and mobile detail: `/tmp/approved-batch-40y-sp.png`, `/tmp/approved-batch-co.png`, `/tmp/approved-batch-bond-mobile.png`. These are transient artifacts; the verification browser is closed and dev remains running.
+- An initial smoke assertion incorrectly required broad `Vô Song`/`無雙` query result parity: accent-insensitive Vietnamese also matches **Văn Võ Song Toàn**, while Chinese also matches untranslated source notes. Replaced that assumption with the exact hero-name scenario; it passed without changing search behavior.
+- Changes remain local after PR commit `623aa05`; earlier remote CI does not attest this batch. No English dictionary or language switcher was implemented.
+
+## Earlier five-name approval — local follow-up
+
+- Applied only the five user-approved display names: 40Y Lữ Bố, Vương Dị, SP Pháp Chính, SP Lư Thực, SP Điêu Thuyền. Translation approval does not resolve unknown identity or merge base/SP/40Y variants.
+- Compared all 90 payloads against generation `20d85cbbc63d16b40a2b952c9a0ffad79ebfbd61c1bcf64495c0f0bb36206e5a`: exactly 114 index/detail holder appearances changed display names; other differences are publication fingerprints. All dedup decisions and admitted rows are unchanged.
+- At this stage the missing-name worksheet had 80 groups (37 hero, 36 tactic, 7 book); the additional approvals are recorded in the later batch above.
+- Python regression suite: 214 run, 12 skipped, no failures. Translation-only identity boundary regression passes. Build/check/verify and 22 Recommended browser tests passed after the first approval; final five-name generation rebuilt and passed dist verification.
+- Restarted dev at port 4321 and visually verified all five names. Live smoke confirms Chinese/Vietnamese Lữ Bố search returns identical cards and details use the approved display name.
+- These additions are local changes after PR commit `623aa05`; the prior PR CI result does not attest this new generation.
 
 ## Localization follow-up — 2026-09-12
 

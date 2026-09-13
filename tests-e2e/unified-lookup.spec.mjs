@@ -120,16 +120,6 @@ test('chuyển sang Tra cứu rồi Back giữ nguyên truy vấn và mùa ngu�
   await expect(page.getByRole('searchbox', { name: 'Tìm Team khác', exact: true })).toHaveValue('cuong');
 });
 
-test('Recommended giữ nguồn, pin và đóng chi tiết bằng Escape', async ({ page }) => {
-  await page.goto('/#team-chuan');
-  const card = page.locator('#section-team-chuan .reference-team-card').first();
-  await card.getByRole('button', { name: 'Chi tiết' }).click();
-  await expect(page.locator('#recommended-team-detail')).toBeVisible();
-  await page.keyboard.press('Escape');
-  await expect(page.locator('#recommended-team-detail')).toHaveCount(0);
-  await expect(page.locator('#recommended-publication')).toBeAttached();
-});
-
 test('quá 60 kết quả vẫn tới được bản ghi cuối bằng Xem thêm', async ({ page }) => {
   await page.goto('/#lookup?group=heroes');
   const total = Number(await lookup(page).locator('[data-lookup-total]').getAttribute('data-lookup-total'));

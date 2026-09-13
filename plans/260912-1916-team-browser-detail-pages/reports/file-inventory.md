@@ -1,0 +1,61 @@
+# Absolute file inventory
+
+Chưa sửa implementation. Create/modify/regenerate/read actions dưới đây là phạm vi được lập kế hoạch; dependency theo phase docs. Fresh scout xác nhận exported callsites trước cook, không mở rộng scope tự động.
+
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/README.md` — phase-04.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/css/styles.css` — phase-03.
+- Read/reuse; retain existing consumer contract: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/data/teams.json` — phase-01.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/docs/code-standards.md` — phase-04.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/docs/deployment-guide.md` — phase-04.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/docs/design-guidelines.md` — phase-04.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/docs/season-team-data.md` — phase-04.
+- Read/reuse; retain existing consumer contract: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/js/analyze.js` — phase-02.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/js/app.js` — phase-02, phase-03.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/js/recommended-reference-render.js` — phase-02, phase-03.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/js/recommended-reference-state.js` — phase-02, phase-03.
+- Read/reuse; retain existing consumer contract: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/js/render.js` — phase-02.
+- Read/reuse; retain existing consumer contract: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/js/roster-recommend-ui.js` — phase-02.
+- Create: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/js/site-chrome.js` — phase-02.
+- Create: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/js/team-detail-navigation.js` — phase-02.
+- Create: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/js/team-detail.js` — phase-02.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/js/team-filter-section.js` — phase-02, phase-03.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/pipeline/build_recommended_reference.py` — phase-01.
+- Create: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/pipeline/recommended-content-links.json` — phase-01.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/pipeline/recommended-identity-map.json` — phase-01.
+- Regenerate after Green: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/pipeline/recommended-missing-translations.json` — phase-01.
+- Regenerate after Green: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/pipeline/recommended-other-teams.json` — phase-01.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/pipeline/recommended_identity.py` — phase-01.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/pipeline/report_recommended_translations.py` — phase-01.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/pipeline/sgsdeck_recommended.py` — phase-01.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/public/_headers` — phase-02.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/scripts/verify-astro-dist.mjs` — phase-02.
+- Regenerate after Green: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/src/data/recommended-reference/current.json` — phase-01.
+- Create: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/src/layouts/SiteLayout.astro` — phase-02.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/src/lib/public-artifact-manifest.mjs` — phase-02.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/src/lib/recommended-reference-artifacts.ts` — phase-02.
+- Create: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/src/lib/team-detail-routes.ts` — phase-02.
+- Create: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/src/pages/404.astro` — phase-02.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/src/pages/index.astro` — phase-02.
+- Create: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/src/pages/teams/legacy/[legacyTeamId].astro` — phase-02.
+- Create: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/src/pages/teams/recommended/[sourceConfigId].astro` — phase-02.
+- Verify; modify only if an intended contract changes: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests-e2e/khaihoang-options.spec.mjs` — phase-04.
+- Verify; modify only if an intended contract changes: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests-e2e/mcp-domain-compatibility.spec.mjs` — phase-04.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests-e2e/recommended-browser.spec.mjs` — phase-02, phase-03, phase-04.
+- Verify; modify only if an intended contract changes: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests-e2e/season-lookup.spec.mjs` — phase-04.
+- Verify; modify only if an intended contract changes: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests-e2e/spa-parity.spec.mjs` — phase-04.
+- Create: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests-e2e/team-detail-pages.spec.mjs` — phase-02, phase-03, phase-04.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests-js/astro-dist-contract.test.mjs` — phase-02.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests-js/frontend-shell-contract.test.mjs` — phase-02.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests-js/pages-headers-contract.test.mjs` — phase-02.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests-js/recommended-reference-artifacts.test.mjs` — phase-02.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests-js/recommended-reference-state.test.mjs` — phase-03.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests-js/runtime-asset-contract.test.mjs` — phase-02.
+- Create: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests-js/team-detail-navigation.test.mjs` — phase-02.
+- Create: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests-js/team-detail-routes.test.mjs` — phase-02.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests/test_build_recommended_reference.py` — phase-01.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests/test_recommended_identity.py` — phase-01.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests/test_recommended_team_dedup.py` — phase-01.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests/test_report_recommended_translations.py` — phase-01.
+- Modify: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/tests/test_sgsdeck_recommended.py` — phase-01.
+
+Generation payloads: create a new immutable `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/src/data/recommended-reference/<generation-sha256>/` after Green; do not overwrite older generations. Root CHANGELOG.md is absent and not scheduled for creation.

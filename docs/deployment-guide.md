@@ -41,6 +41,14 @@ python3 -m unittest discover -s tests
 
 Cài Chromium một lần bằng `npx playwright install chromium`. Test Node/E2E cũng kiểm tra local HTTP preview, routed HTTPS, private-path exclusion và mixed-content mà không gọi live third-party.
 
+Contract route chi tiết, `404.html` và `_headers` thuộc `npm run test:dist` (`tests-js/astro-dist-contract.test.mjs` và `tests-js/pages-headers-contract.test.mjs`) cùng `npm run verify`. Hành vi trình duyệt của route và 404 kiểm bằng:
+
+```bash
+npx playwright test tests-e2e/team-detail-pages.spec.mjs
+```
+
+Các lệnh này chạy trên preview local; chúng không chứng minh response của Pages.
+
 ## Rebuild dữ liệu có kiểm soát
 
 Các lệnh dự án:
@@ -86,15 +94,25 @@ Build output: dist
 Node: 24.20.0
 ```
 
-Astro dùng static output, không adapter và không Pages Functions. `dist/` phải chỉ chứa `index.html`, manifest-approved `js/`, `css/`, `data/` và `_headers`. Shared verifier đối chiếu raw bytes với source và từ chối `pipeline/`, `worker/`, tests, plans, symlink, secret-like hoặc file lạ.
+Astro dùng static output, không adapter và không Pages Functions. `dist/` phải chỉ chứa `index.html`, `404.html`, đúng bộ trang chi tiết đội sinh từ catalog, manifest-approved `js/`, `css/`, `data/` và `_headers`. Shared verifier đối chiếu raw bytes với source và từ chối `pipeline/`, `worker/`, tests, plans, symlink, secret-like hoặc file lạ.
 
-`public/_headers` quy định:
+Trang chi tiết đội là route tĩnh sinh sẵn: `/teams/recommended/<sourceConfigId>/` cho mỗi bản ghi của publication đang được chọn và `/teams/legacy/<legacyTeamId>/` cho mỗi đội gốc trong `data/teams.json`. [`src/lib/team-detail-routes.ts`](../src/lib/team-detail-routes.ts) là inventory dùng chung cho build và verifier, nên `dist/` không được thừa hay thiếu một trang nào. Không có SPA fallback: `404.html` top-level phải tồn tại, giữ heading `not-found-title` và không boot `app.js` hoặc `team-detail.js`; URL `/teams/...` ngoài catalog phải trả `404` kèm trang 404 tĩnh thay vì shell root.
+
+`public/_headers` đặt `Cache-Control: public, max-age=0, must-revalidate` cho đúng chín rule:
 
 ```text
-Cache-Control: public, max-age=0, must-revalidate
+/
+/index.html
+/teams/recommended/*
+/teams/legacy/*
+/404.html
+/js/*
+/css/*
+/data/*
+/favicon.png
 ```
 
-cho `/`, `/index.html`, `/js/*`, `/css/*`, `/data/*`. Local test chỉ xác nhận syntax, coverage và exact copy vào `dist/_headers`; phải quan sát header response thật trên Pages preview trước promotion. Pages parse `_headers` như deployment control, không phục vụ file này như static asset.
+Local test chỉ xác nhận syntax, coverage của mọi shell/trang chi tiết/raw asset đã publish và exact copy vào `dist/_headers`; phải quan sát header response thật trên Pages preview trước promotion. Pages parse `_headers` như deployment control, không phục vụ file này như static asset.
 
 Trước deploy:
 
@@ -111,8 +129,8 @@ Không thực hiện các bước sau trong build/local verification. Khi releas
 1. Tạo release commit tập trung; không deploy từ worktree dirty.
 2. Ghi deployment ID/version production known-good hiện tại trước khi tạo preview.
 3. Kiểm tra Pages settings khớp root/build/output/Node ở trên.
-4. Trên preview, xác nhận `/`, JS/CSS và mọi JSON public trả đúng artifact; với path private, chỉ cần body không chứa source/private bytes vì Pages có thể dùng SPA fallback khi không có top-level `404.html`.
-5. Quan sát `Cache-Control` thật cho shell/JS/CSS/JSON và xác nhận `_headers` không được phục vụ như asset.
+4. Trên preview, xác nhận `/`, `/404.html`, vài route `/teams/recommended/…` và `/teams/legacy/…`, JS/CSS và mọi JSON public trả đúng artifact. Một ID đội không có trong catalog và một path private phải trả `404` với trang 404 tĩnh, không phải shell root; status và body thật chỉ chứng minh được trên preview.
+5. Quan sát `Cache-Control` thật cho shell, trang chi tiết đội, `404.html`, JS/CSS/JSON và xác nhận `_headers` không được phục vụ như asset.
 6. Preview origin khác production nên Vision POST bị Worker từ chối theo exact `ALLOWED_ORIGIN`; không nới origin để làm preview canary.
 7. Sau phê duyệt promotion, kiểm tra production-origin `POST /analyze` được phép, origin lạ bị từ chối, và `OPTIONS` trả CORS headers đã cấu hình. Preflight chỉ là CORS transport, không xác thực caller.
 8. Giữ production origin `https://tqccl.pages.dev`, nên origin của localStorage production không đổi; preview có storage origin riêng.
@@ -215,11 +233,12 @@ Kỳ vọng `204` và `access-control-allow-origin: https://tqccl.pages.dev`.
 Smoke checklist sau promotion được ủy quyền:
 
 1. Mở production, chuyển đủ 9 hash section và kiểm tra JSON/network không lỗi.
-2. Kiểm tra hai tab team hiển thị 56/110, không có tab/asset/team Đô Úy và filter mobile collapse.
-3. Test tra cứu, theme, tracker export/import bằng dữ liệu không nhạy cảm.
-4. Upload screenshot đã crop; xác nhận Turnstile, analyze và map/team match.
-5. Test scan/review/recommend; reload và xác nhận state không chứa ảnh/token.
-6. Kiểm tra origin lạ có header bị 403 và lỗi không leak upstream detail.
+2. Kiểm tra Team chuẩn và Team khác load đúng generation đang pin, bộ lọc mùa/danh mục/điểm hoạt động, không có tab/asset/team Đô Úy và filter mobile collapse.
+3. Mở trực tiếp một `/teams/recommended/…` và một `/teams/legacy/…`, reload, rồi dùng link quay lại; một ID không tồn tại phải trả trang 404 tĩnh.
+4. Test tra cứu, theme, tracker export/import bằng dữ liệu không nhạy cảm.
+5. Upload screenshot đã crop; xác nhận Turnstile, analyze và map/team match.
+6. Test scan/review/recommend; reload và xác nhận state không chứa ảnh/token.
+7. Kiểm tra origin lạ có header bị 403 và lỗi không leak upstream detail.
 
 Lưu ý: request không có `Origin` vẫn qua app guard; CORS không phải auth. KV rate/day/month cap là best-effort do eventual consistency.
 
@@ -229,7 +248,7 @@ Lưu ý: request không có `Origin` vẫn qua app guard; CORS không phải aut
 
 1. Promote deployment ID/version known-good đã ghi trước release; rollback toàn artifact, không mix HTML/JS/data giữa hai build.
 2. Purge cache bị ảnh hưởng nếu client còn nhận asset của deployment lỗi.
-3. Kiểm tra lại header/fallback body, `js/config.js`, data schema, client mới và client đã cache.
+3. Kiểm tra lại header thật, trang 404 tĩnh, một route chi tiết đội, `js/config.js`, data schema, client mới và client đã cache.
 4. Chỉ cập nhật Deployment Record bằng ID/URL/thời gian đã quan sát.
 
 ### Worker
@@ -264,5 +283,5 @@ Digest dùng danh sách path đã sort, mỗi path và file bytes được phân
 - [System Architecture](system-architecture.md)
 - [Code Standards](code-standards.md)
 - [Cloudflare Pages custom headers](https://developers.cloudflare.com/pages/configuration/headers/)
-- [Cloudflare Pages serving và SPA fallback](https://developers.cloudflare.com/pages/configuration/serving-pages/)
+- [Cloudflare Pages serving và xử lý 404](https://developers.cloudflare.com/pages/configuration/serving-pages/)
 - [Cloudflare Pages rollbacks](https://developers.cloudflare.com/pages/configuration/rollbacks/)

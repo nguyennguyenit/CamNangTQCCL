@@ -177,9 +177,41 @@ def _field(card, label):
     return []
 
 
-def parse_recommended_detail(html, url):
-    validate_source_url(url)
-    root = RenderedPage(html).root
+def _recommended_holder_cards(root):
+    return [
+        card for card in root.walk("div")
+        if {"sm:p-5", "p-4", "space-y-2"}.issubset(card.attrs.get("class", "").split())
+        and next((node.text for node in card.walk("p") if "text-xl" in node.attrs.get("class", "")), "")
+    ]
+
+
+def _display_notes(root, cards):
+    paragraphs = [
+        node for node in root.walk("p")
+        if "text-xl" not in node.attrs.get("class", "") and node.text
+    ]
+    owners = {}
+    for card_index, card in enumerate(cards):
+        owner = "primary" if card_index < 3 else "alternative"
+        holder_index = card_index if card_index < 3 else card_index - 3
+        for paragraph in card.walk("p"):
+            if "text-xl" not in paragraph.attrs.get("class", "") and paragraph.text:
+                owners[id(paragraph)] = (owner, holder_index)
+    blocks = []
+    for occurrence, paragraph in enumerate(paragraphs):
+        owner, holder_index = owners.get(id(paragraph), ("team", None))
+        block = {
+            "id": f"p-{occurrence + 1}",
+            "textRaw": paragraph.text,
+            "owner": owner,
+        }
+        if holder_index is not None:
+            block["holderIndex"] = holder_index
+        blocks.append(block)
+    return {"schemaVersion": 1, "blocks": blocks}
+
+
+def _parse_recommended_detail_root(root, url):
     title = next(root.walk("h1"), Node()).text
     canonical = [node.attrs.get("href") for node in root.walk("link") if node.attrs.get("rel") == "canonical"]
     if len(canonical) != 1 or unquote(canonical[0]) != unquote(url) or not title:
@@ -194,12 +226,9 @@ def parse_recommended_detail(html, url):
     if not label:
         raise ValueError("Recommended detail has no source season")
     heroes = []
-    for card in root.walk("div"):
-        if not {"sm:p-5", "p-4", "space-y-2"}.issubset(card.attrs.get("class", "").split()):
-            continue
+    cards = _recommended_holder_cards(root)
+    for card in cards:
         hero = next((node.text for node in card.walk("p") if "text-xl" in node.attrs.get("class", "")), "")
-        if not hero:
-            continue
         tactics = [re.sub(r"\[[A-Z]\]", "", "".join(node.text for node in _field(card, f"戰法 {index}"))).strip() for index in (1, 2)]
         books = [book.text for node in _field(card, "兵書") for book in node.walk("button")]
         role = next((node.text for node in card.walk("span") if re.fullmatch(r"主將|副將 \d+", node.text)), "")
@@ -220,6 +249,19 @@ def parse_recommended_detail(html, url):
                        "slotState": "source-empty"})
     unit_types = [node.text[1:] for node in root.walk("span") if node.text in {"#弓", "#騎", "#盾", "#槍", "#器械"}]
     return {"sourceConfigId": url.rsplit("/", 1)[-1], "sourceUrl": url, "nameZh": title, "value": _number(score), "sourceSeason": {"label": label}, "heroes": heroes, "alternativeHoldersRaw": alternatives, "unitTypesRaw": unit_types, "notesRaw": "\n".join(node.text for node in root.walk("p") if "text-xl" not in node.attrs.get("class", ""))}
+
+
+def parse_recommended_detail(html, url):
+    validate_source_url(url)
+    return _parse_recommended_detail_root(RenderedPage(html).root, url)
+
+
+def parse_recommended_detail_with_display_notes(html, url):
+    """Return unchanged raw detail plus a display-only paragraph ownership projection."""
+    validate_source_url(url)
+    root = RenderedPage(html).root
+    raw = _parse_recommended_detail_root(root, url)
+    return raw, _display_notes(root, _recommended_holder_cards(root))
 
 
 def join_recommended_evidence(listing, details):

@@ -232,15 +232,20 @@ for (const count of [500,501]) test(`roster enforces scoped candidate boundary $
   if(count===500) await expect(page.locator('.roster-results > section:first-child [data-config-id="config-a"]')).toHaveCount(1);
   else {await expect(page.locator('#section-roster-recommend .error')).toContainText('500');await expect(page.locator('.roster-results')).toHaveCount(0);}
 });
-test('all-reference keeps historical tiers separate from executable configuration tiers',async({page})=>{
+test('retired legacy tier selectors stay inert and the browser survives a missing tier artifact',async({page})=>{
+  const section=page.locator('#section-team-khac');
+  await page.goto('/#team-khac');
+  const baseline=await section.locator('.stats').textContent();
   await page.goto('/?tier=T0.5#team-khac');
-  await expect(page.locator('#section-team-khac .team-card .historical-tier').first()).toBeVisible();
-  await expect(page.locator('#section-team-khac')).toContainText('Tier lịch sử — tham khảo');
-  await expect(page.locator('#section-team-khac [data-config-id]')).toHaveCount(0);
+  await expect(section.locator('.scope-note[role="status"]')).toContainText('không còn áp dụng');
+  await expect(section.locator('.stats')).toHaveText(baseline);
+  await expect(section.locator('.badge.tier, .historical-tier')).toHaveCount(0);
+  await expect(section.locator('[data-config-id]')).toHaveCount(0);
   await page.route('**/data/team-tier.json',route=>route.fulfill({status:404,body:''}));
   await page.reload();
-  await expect(page.locator('#section-team-khac .team-card').first()).toBeVisible();
-  await expect(page.locator('#section-team-khac .historical-tier').first()).toBeVisible();
+  await expect(section.locator('.team-card').first()).toBeVisible();
+  await expect(section.locator('.stats')).toHaveText(baseline);
+  await expect(section.locator('.error')).toHaveCount(0);
 });
 test('scoped recommendation exposes usable add-team actions and original source score',async({page})=>{
   await controlledBundle(page);
@@ -302,14 +307,21 @@ for(const width of [375,1280]) test(`real Binh Dien review screenshot at ${width
   expect(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({path:testInfo.outputPath(`ui-real-binh-dien-${width}.png`)});
 });
-test('Team khác retains derived faction facets without mutating the validated bundle',async({page})=>{
+test('Team khác faction facet filters by derived faction without mutating the scope model',async({page})=>{
   await page.goto('/#team-khac');
-  const facet=page.locator('#section-team-khac .fchip').filter({hasText:/^Thục$/});
-  await expect(facet).toHaveCount(1);
+  const section=page.locator('#section-team-khac');
+  const facet=section.locator('.fchip[data-focus-key^="faction:"]').first();
+  const raw=(await facet.getAttribute('data-focus-key')).slice('faction:'.length);
+  const scopedLabel=await facet.textContent();
+  const total=await section.locator('.team-card').count();
   await facet.click();
-  const cards=page.locator('#section-team-khac .team-card');
+  await expect(facet).toHaveAttribute('aria-pressed','true');
+  const cards=section.locator('.team-card');
   await expect(cards.first()).toBeVisible();
-  expect(await cards.evaluateAll(nodes=>nodes.every(node=>node.dataset.faction==='Thục'))).toBe(true);
+  expect(await cards.evaluateAll((nodes,value)=>nodes.every(node=>node.dataset.faction===value),raw)).toBe(true);
+  await expect(facet).toHaveText(scopedLabel);
+  await section.getByRole('button',{name:'Xóa lọc'}).click();
+  await expect(section.locator('.team-card')).toHaveCount(total);
 });
 test('opening detail keeps its close control below the sticky navigation',async({page})=>{
   await controlledBundle(page);await page.setViewportSize({width:1024,height:800});
@@ -342,9 +354,11 @@ test('optional unverified conditions remain informational in inventory compariso
 });
 test('keyboard facet and source toggles preserve focus and pressed state after filtering',async({page})=>{
   await page.goto('/#team-khac');
-  const facet=page.locator('#section-team-khac .fchip').filter({hasText:/^Thục$/});
+  const facet=page.locator('#section-team-khac .fchip[data-focus-key^="faction:"]').first();
+  const raw=(await facet.getAttribute('data-focus-key')).slice('faction:'.length);
   await facet.focus();await page.keyboard.press('Space');
   await expect(facet).toBeFocused();await expect(facet).toHaveAttribute('aria-pressed','true');
+  expect(await page.evaluate(()=>new URL(location.href).searchParams.get('faction'))).toBe(raw);
   await controlledBundle(page);
   await page.goto('/?scenario=scenario-a&ruleset=rules-a#coexist');
   const source=page.locator('#section-coexist .fchip').filter({hasText:'Bảng Cùng Tồn'});

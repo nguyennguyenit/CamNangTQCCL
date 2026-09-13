@@ -4,6 +4,15 @@
 /index.html
   Cache-Control: public, max-age=0, must-revalidate
 
+/teams/recommended/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/teams/legacy/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/404.html
+  Cache-Control: public, max-age=0, must-revalidate
+
 /js/*
   Cache-Control: public, max-age=0, must-revalidate
 
