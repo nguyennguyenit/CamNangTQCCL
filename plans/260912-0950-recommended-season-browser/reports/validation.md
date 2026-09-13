@@ -3,7 +3,7 @@
 Date: 2026-09-12  
 Worktree: `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup`  
 Branch: `feat/season-team-lookup`  
-Selected generation: `89317bb82ae31a886e49cf0d04180f413cb654ec75e5d25b29f3ff9173d4a9d0`  
+Selected generation: `89317bb82ae31a886e49cf0d04180f413cb654ec75e5d25b29f3ff9173d4a9d0`
 Manifest SHA-256: `1e99c46372a36176a439eb1b5fb87933c0103f4845efbe71f7031d95be67e37c`
 
 ## Approved translation batch, variant badges and bonds — local follow-up
