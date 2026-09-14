@@ -140,11 +140,11 @@ Clean cutover mọi active consumer, không compatibility aliases hay fallback r
 
 ## Implementation checklist
 
-- [ ] P3-A Pin cùng snapshot cho HTML và data routes
-- [ ] P3-B Cutover mọi data renderer và bilingual search
-- [ ] P3-C Việt hóa dynamic states giữ nguyên user content
-- [ ] P3-D Chặn thiếu dịch tại build dist và CI
-- [ ] P3-E Chứng minh toàn site rồi cập nhật tài liệu
+- [x] P3-A Pin cùng snapshot cho HTML và data routes
+- [x] P3-B Cutover mọi data renderer và bilingual search
+- [x] P3-C Việt hóa dynamic states giữ nguyên user content
+- [x] P3-D Chặn thiếu dịch tại build dist và CI
+- [x] P3-E Chứng minh toàn site rồi cập nhật tài liệu
 
 ## Failure Protocol
 If any Verify step does not meet its stated pass condition, STOP this phase.

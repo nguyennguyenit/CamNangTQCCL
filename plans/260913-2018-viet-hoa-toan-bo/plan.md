@@ -1,7 +1,7 @@
 ---
 title: "Việt hóa toàn bộ website, giữ nguyên nguồn và gameplay"
 description: "Offline reviewed translations, coherent display publication, all eight sections and standalone routes, strict build gate."
-status: in-progress
+status: completed
 priority: P1
 effort: ""
 branch: main
