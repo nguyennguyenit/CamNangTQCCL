@@ -182,7 +182,7 @@ export function createSeasonTeamSection({mount, title, onQuery, onOpenConfig}) {
   const heading = el('h2',{tabindex:'-1'},title);
   const search = el('input',{type:'search',class:'search','aria-label':`Tìm ${title}`,placeholder:'Tìm tướng, chiến pháp, binh thư…'});
   const sort = el('select',{'aria-label':`Sắp xếp ${title}`},[
-    el('option',{value:'tier'},'Theo tier'), el('option',{value:'sgsdeck-score'},'Theo điểm SGSDeck'),
+    el('option',{value:'tier'},'Theo bậc'), el('option',{value:'sgsdeck-score'},'Theo điểm SGSDeck'),
   ]);
   const counts = el('p',{class:'stats','aria-live':'polite'});
   const notice = el('p',{class:'scope-note',role:'status'});
@@ -202,7 +202,7 @@ export function createSeasonTeamSection({mount, title, onQuery, onOpenConfig}) {
     replaceFilterButtons(filters,QUERY_FILTERS.map(key=>{
       const values = [...new Set(rows.flatMap(row=>rowFacet(row,key)))].sort();
       if (!values.length) return null;
-      const label = {faction:'Phe',unit:'Loại binh',tier:'Tier',source:'Nguồn'}[key];
+      const label = {faction:'Phe',unit:'Loại binh',tier:'Bậc',source:'Nguồn'}[key];
       return el('div',{class:'fgroup'},[el('div',{class:'flabel'},label),el('div',{class:'chip-row'},values.map(value=>{
         const selected = state.filters[key].includes(value);
         return el('button',{type:'button',class:`fchip${selected?' on':''}`,dataset:{focusKey:JSON.stringify([key,value])},'aria-pressed':String(selected),onClick:()=>onQuery({[key]:selected?state.filters[key].filter(v=>v!==value):[...state.filters[key],value]})},`${key === 'source' ? SOURCE_LABEL[value] || value : value === 'untiered' ? 'Chưa xếp hạng' : value} (${rows.filter(row=>rowFacet(row,key).includes(value)).length})`);
@@ -265,7 +265,7 @@ const SCORE_CHIP_LIMIT=8;
 export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onNavigate}) {
   let rows=[], state={query:'',filters:{}}, registry={seasonOptions:[]}, scoreExpanded=false, currentScopeRows=[];
   const heading=el('h2',{tabindex:'-1'},title);
-  const intro=el('p',{class:'section-intro-sub'},family==='other'?'Các đội có sẵn, đã đối chiếu với Team chuẩn.':'Dữ liệu SGSDeck Recommended theo mùa nguồn.');
+  const intro=el('p',{class:'section-intro-sub'},family==='other'?'Các đội có sẵn, đã đối chiếu với đội chuẩn.':'Dữ liệu đề xuất của SGSDeck được phân chia theo mùa tương ứng trong nguồn.');
   const search=el('input',{type:'search',class:'search','aria-label':`Tìm ${title}`,placeholder:'Tìm tướng, chiến pháp, binh thư…'});
   const season=el('select',{'aria-label':'Mùa nguồn'});
   const category=el('select',{'aria-label':'Danh mục nguồn'});
@@ -290,16 +290,19 @@ export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onN
     filters,
   ]),notice,grid);
 
-  // Nhãn hiển thị dùng chung từ dữ liệu nguồn; thiếu nhãn thì giữ nguyên giá trị raw.
-  const displayLabel=(kind,value)=>registry.displayLabels?.[kind]?.[value] || value;
+  const cjk=/[\u3400-\u9fff\uf900-\ufaff]/u;
+  const safeLabel=value=>typeof value === 'string' && value.trim() && !cjk.test(value)
+    ? value.trim()
+    : 'Nội dung tiếng Việt chưa sẵn sàng';
+  const displayLabel=(kind,value)=>safeLabel(registry.displayLabels?.[kind]?.[value] || value);
   const seasonOptionText=item=>{
-    const vi=item.displayCode && item.displayNameVi ? `${item.displayCode} · ${item.displayNameVi}` : null;
-    const base=vi || [item.label,item.nameRaw].filter(Boolean).join(' · ') || item.sourceSeasonId;
+    const base=item.displayCode && item.displayNameVi
+      ? `${item.displayCode} · ${item.displayNameVi}`
+      : safeLabel(item.displayNameVi);
     return `${base}${item.advertisedCountRaw != null ? ` (${item.advertisedCountRaw})` : ''}`;
   };
   const seasonOptionTitle=item=>[
-    item.nameRaw,
-    item.label,
+    item.label && !cjk.test(item.label) ? item.label : null,
     item.translationStatus === 'reference-translation' ? 'Tên dịch tham khảo, không phải tên mùa chính thức' : null,
   ].filter(Boolean).join(' · ') || null;
 

@@ -11,6 +11,123 @@ const DISCLAIMER =
   "Ảnh được gửi tới Alibaba Cloud DashScope để phân tích (không lưu lại). " +
   "Tránh ảnh lộ tên tài khoản; nên crop chỉ phần đội hình.";
 
+/* ---------- Thông điệp lỗi (không để lọt văn bản upstream) ---------- */
+// Mọi câu lỗi hiển thị cho người dùng đều lấy từ các bảng dưới đây. Văn bản lạ
+// từ Worker/model (tiếng Trung, tiếng Anh, stack trace…) luôn bị thay bằng câu
+// chung, không bao giờ render nguyên văn.
+export const ANALYZE_GENERIC_ERROR = "Không thể phân tích ảnh. Vui lòng thử lại.";
+export const ANALYZE_ACTION_ERROR = "Không thể hoàn tất thao tác. Vui lòng thử lại.";
+
+
+const STATUS_ERRORS = {
+  400: "Yêu cầu không hợp lệ. Tải lại trang rồi thử lại.",
+  403: "Xác thực chống bot chưa hợp lệ. Xác thực lại rồi thử.",
+  404: "Không tìm thấy dịch vụ soi ảnh. Thử lại sau.",
+  413: "Ảnh quá lớn. Hãy crop hoặc giảm kích thước rồi thử lại.",
+  415: "Chỉ nhận ảnh PNG, JPEG hoặc WebP.",
+  422: "Không đọc được đội từ ảnh. Thử ảnh rõ hơn.",
+  429: "Hết lượt soi hôm nay. Thử lại sau.",
+  500: ANALYZE_GENERIC_ERROR,
+  503: "Tính năng soi ảnh đang tạm nghỉ. Thử lại sau.",
+};
+
+// Chuỗi lỗi ĐÃ BIẾT (Worker hiện tại + upstream DashScope) -> câu tiếng Việt cố
+// định. Khóa là chuỗi đã chuẩn hóa (trim + lowercase).
+const UPSTREAM_ERRORS = new Map(Object.entries({
+  "thiếu ảnh": "Chưa có ảnh để soi. Chọn ảnh rồi thử lại.",
+  "ảnh quá lớn": "Ảnh quá lớn. Hãy crop hoặc giảm kích thước rồi thử lại.",
+  "base64 không hợp lệ": "Ảnh gửi lên bị lỗi. Chọn lại ảnh rồi thử.",
+  "ảnh quá nhỏ / hỏng": "Ảnh quá nhỏ hoặc bị hỏng. Chọn ảnh khác.",
+  "chỉ nhận ảnh png/jpeg/webp": "Chỉ nhận ảnh PNG, JPEG hoặc WebP.",
+  "body json không hợp lệ": "Yêu cầu không hợp lệ. Tải lại trang rồi thử lại.",
+  "mode không hợp lệ": "Yêu cầu không hợp lệ. Tải lại trang rồi thử lại.",
+  "origin không được phép": "Trang chưa được phép gọi dịch vụ soi ảnh.",
+  "not found": "Không tìm thấy dịch vụ soi ảnh. Thử lại sau.",
+  "tính năng đang tắt": "Tính năng soi ảnh đang tạm tắt. Thử lại sau.",
+  "đã đạt giới hạn tháng, tạm dừng": "Đã hết lượt soi của tháng này. Thử lại sau.",
+  "hết lượt hôm nay": "Hết lượt soi hôm nay. Thử lại vào ngày mai.",
+  "bạn thử quá nhiều lần, đợi chút": "Bạn thử quá nhiều lần. Đợi một lát rồi thử lại.",
+  "thiếu xác thực chống bot": "Cần xác thực chống bot trước khi soi ảnh.",
+  "token xác thực đã dùng": "Phiên xác thực đã dùng. Xác thực lại rồi thử.",
+  "lỗi xác thực, thử lại": "Xác thực chống bot lỗi. Thử lại.",
+  "xác thực chống bot thất bại": "Xác thực chống bot thất bại. Thử lại.",
+  "lỗi xử lý, thử lại sau": ANALYZE_GENERIC_ERROR,
+  "lỗi xử lý": ANALYZE_GENERIC_ERROR,
+  // Upstream tiếng Trung / tiếng Anh đã gặp: gộp về câu chung, không render gốc.
+  "服务器内部错误": ANALYZE_GENERIC_ERROR,
+  "internal server error": ANALYZE_GENERIC_ERROR,
+  "请求过于频繁": "Bạn thử quá nhiều lần. Đợi một lát rồi thử lại.",
+  "too many requests": "Bạn thử quá nhiều lần. Đợi một lát rồi thử lại.",
+}));
+
+function normalizeUpstreamError(value) {
+  return typeof value === "string" ? value.trim().toLowerCase() : "";
+}
+
+/** Đổi lỗi Worker (status + message thô) thành câu tiếng Việt trong danh sách. */
+export function localizeWorkerError(rawError, status) {
+  return (
+    UPSTREAM_ERRORS.get(normalizeUpstreamError(rawError)) ||
+    STATUS_ERRORS[status] ||
+    ANALYZE_GENERIC_ERROR
+  );
+}
+
+function localizedError(message, extra) {
+  const err = new Error(message);
+  err.localized = true;
+  if (extra) Object.assign(err, extra);
+  return err;
+}
+
+/** Câu tiếng Việt an toàn cho bất kỳ lỗi nào trước khi đưa lên UI. */
+export function describeAnalyzeError(error, fallback = ANALYZE_GENERIC_ERROR) {
+  return error?.localized && error.message ? error.message : fallback;
+}
+function isNonblankString(value) {
+  return typeof value === "string" && Boolean(value.trim());
+}
+
+function isStringArray(value) {
+  return Array.isArray(value) && value.every(isNonblankString);
+}
+
+export function validateWorkerResult(mode, data) {
+  if (!data || typeof data !== "object" || Array.isArray(data)) return false;
+  if (mode === "scanHeroes") {
+    return Array.isArray(data.heroes) && data.heroes.length > 0 && data.heroes.every(hero =>
+      hero && typeof hero === "object" &&
+      isNonblankString(hero.nameCn) &&
+      (hero.level === undefined || Number.isFinite(hero.level)) &&
+      (hero.redStars === undefined || Number.isFinite(hero.redStars))
+    );
+  }
+  if (mode === "scanTactics") {
+    return Array.isArray(data.tactics) && data.tactics.length > 0 && data.tactics.every(tactic =>
+      isNonblankString(typeof tactic === "string" ? tactic : tactic?.nameCn)
+    );
+  }
+  if (mode === "scanBuiltTeams") {
+    return Array.isArray(data.teams) && data.teams.length > 0 && data.teams.every(team =>
+      team && typeof team === "object" &&
+      isNonblankString(team.teamName) &&
+      isStringArray(team.heroesCn) &&
+      isStringArray(team.tacticsCn) &&
+      (team.heroesCn.length > 0 || team.tacticsCn.length > 0)
+    );
+  }
+  if (mode !== "analyzeTeamImage") return false;
+  return Array.isArray(data.heroes) && data.heroes.length > 0 && data.heroes.every(hero =>
+    hero && typeof hero === "object" &&
+    isNonblankString(hero.nameCn) &&
+    isStringArray(hero.tacticsCn) &&
+    isStringArray(hero.booksCn) &&
+    typeof hero.statFocusCn === "string" &&
+    (hero.nameFromPortrait === undefined || hero.nameFromPortrait === true)
+  );
+}
+
+
 /* ---------- Nén ảnh client ---------- */
 export function compressImage(file) {
   return new Promise((resolve, reject) => {
@@ -61,13 +178,13 @@ export async function callWorker(imageDataUrl, token, mode = "analyzeTeamImage")
   try {
     data = await res.json();
   } catch {
-    /* ignore */
+    if (res.ok) throw localizedError(ANALYZE_GENERIC_ERROR, {status: res.status});
   }
   if (!res.ok) {
-    const msg = data?.error || (res.status === 429 ? "Hết lượt, thử lại sau" : "Lỗi máy chủ");
-    const err = new Error(msg);
-    err.status = res.status;
-    throw err;
+    throw localizedError(localizeWorkerError(data?.error, res.status), { status: res.status });
+  }
+  if (!validateWorkerResult(mode, data)) {
+    throw localizedError(ANALYZE_GENERIC_ERROR, {status: res.status});
   }
   return data;
 }
@@ -130,10 +247,10 @@ function renderResults(box, result, deps) {
 
   const similar = findSimilarTeams(mapped, deps.teams, { minHeroes: 2 });
   if (similar.length) {
-    box.append(el("h3", { class: "ana-rh" }, "Team có sẵn giống"));
+    box.append(el("h3", { class: "ana-rh" }, "Đội có sẵn tương tự"));
     box.append(el("ul", { class: "ana-teams" }, similar.map((s) => similarTeamRow(s, deps.onOpenTeam))));
   } else {
-    box.append(el("p", { class: "ana-note" }, "Không tìm thấy team có sẵn đủ giống (≥2 tướng trùng)."));
+    box.append(el("p", { class: "ana-note" }, "Không tìm thấy đội có sẵn nào có mức độ tương đồng đủ cao (≥2 tướng trùng)."));
   }
 }
 
@@ -254,8 +371,7 @@ export function initAnalyze(deps, mount) {
       setStatus("");
     } catch (e) {
       if (started !== generation) return;
-      const m = e.status === 429 ? "Hết lượt hôm nay, thử lại sau." : e.status === 422 ? "Không đọc được đội từ ảnh, thử ảnh rõ hơn." : e.message;
-      setStatus(m, "err");
+      setStatus(describeAnalyzeError(e, ANALYZE_ACTION_ERROR), "err");
     } finally {
       if (started !== generation) return;
       // Turnstile token dùng 1 lần -> reset, yêu cầu xác thực lại.

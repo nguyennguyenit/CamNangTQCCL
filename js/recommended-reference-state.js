@@ -35,7 +35,7 @@ export function readRecommendedQuery(href, registry = {}) {
     if (values.length > 1) notices.push(`Tham số ${key} bị lặp; chỉ dùng giá trị đầu.`);
     scalar[key] = values[0] || null;
   }
-  if (RETIRED.some(key=>url.searchParams.has(key))) notices.push('Bộ lọc Tier/sao và tham số sắp xếp cũ không còn áp dụng; Team giữ thứ tự nguồn cố định.');
+  if (RETIRED.some(key=>url.searchParams.has(key))) notices.push('Bộ lọc bậc/sao và tham số sắp xếp cũ không còn áp dụng; đội giữ thứ tự nguồn cố định.');
   const seasons = new Set(registry.seasons || registry.seasonOptions?.map(item=>item.sourceSeasonId) || []);
   if (scalar.season && scalar.season !== 'all' && scalar.season !== 'unknown' && seasons.size && !seasons.has(scalar.season)) {
     notices.push('Mùa không tồn tại; đã dùng mùa mặc định.');
@@ -121,7 +121,7 @@ function searchTerms(row,labels) {
     ...units,...units.map(value=>labels?.unit?.[value]),
     ...(row.heroes || row.holders || []).flatMap(holderTerms),
     ...(row.alternativeHoldersRaw || []).flatMap(holderTerms),
-    ...(row.displayNotes?.blocks || []).map(block=>block?.textRaw),
+    ...(row.displayNotes?.blocks || []).flatMap(block=>[block?.textRaw,block?.textVi]),
     ...(row.legacyContent ? legacyContentTerms(row.legacyContent) : []),
     ...(row.legacyReferences || []).flatMap(reference=>reference.legacyContent ? legacyContentTerms(reference.legacyContent) : []),
   ];
@@ -185,15 +185,15 @@ async function digest(bytes) { return [...new Uint8Array(await crypto.subtle.dig
 
 /** Verifier dùng chung: pin trang → manifest đúng generation → artifact đúng hash. */
 export async function loadVerifiedRecommendedManifest(pin, loadBytes) {
-  if (!pin?.generationId || !pin.manifestSha256) throw new Error('Thiếu pin Team chuẩn.');
+  if (!pin?.generationId || !pin.manifestSha256) throw new Error('Thiếu mã xác minh đội chuẩn.');
   const manifestBytes = await loadBytes(`${pin.generationId}/manifest.json`);
-  if (await digest(manifestBytes) !== pin.manifestSha256) throw new Error('Manifest Team chuẩn không khớp trang.');
+  if (await digest(manifestBytes) !== pin.manifestSha256) throw new Error('Danh mục đội chuẩn không khớp trang.');
   const manifest = bytesToJson(manifestBytes);
-  if (manifest.schemaVersion !== 1 || manifest.generationId !== pin.generationId || manifest.dedupKeyVersion !== 1) throw new Error('Manifest Team chuẩn sai định danh.');
+  if (manifest.schemaVersion !== 1 || manifest.generationId !== pin.generationId || manifest.dedupKeyVersion !== 1) throw new Error('Danh mục đội chuẩn sai định danh.');
   const load = async name => {
     const bytes = await loadBytes(`${pin.generationId}/${name}`);
     const expected = manifest.files?.[name];
-    if (!expected || await digest(bytes) !== expected.sha256 || bytes.byteLength !== expected.bytes) throw new Error(`Artifact Team chuẩn không hợp lệ: ${name}`);
+    if (!expected || await digest(bytes) !== expected.sha256 || bytes.byteLength !== expected.bytes) throw new Error(`Dữ liệu đội chuẩn không hợp lệ: ${name}`);
     return bytesToJson(bytes);
   };
   return {manifest, load};
@@ -202,7 +202,7 @@ export async function loadVerifiedRecommendedManifest(pin, loadBytes) {
 export async function loadRecommendedReference(pin, loadBytes) {
   const {manifest, load} = await loadVerifiedRecommendedManifest(pin, loadBytes);
   const required = ['seasons.json','index.json','other-teams.json'];
-  if (required.some(name=>!manifest.files?.[name])) throw new Error('Manifest Team chuẩn thiếu artifact bắt buộc.');
+  if (required.some(name=>!manifest.files?.[name])) throw new Error('Danh mục đội chuẩn thiếu dữ liệu bắt buộc.');
   const [seasons,index,other] = await Promise.all([load('seasons.json'),load('index.json'),load('other-teams.json')]);
   return Object.freeze({pin,manifest,seasons,index,other,loadDetail:scopeKey=>load(`details-${scopeKey}.json`)});
 }
@@ -217,13 +217,18 @@ export async function loadRecommendedDetailRecord(pin, {scopeKey, sourceConfigId
   return matches[0];
 }
 
-/** Đội gốc tự xác minh bytes raw, không phụ thuộc publication Team chuẩn. */
-export async function loadVerifiedLegacyTeam(legacyTeamId, expectedHash, loadBytes) {
+/** Toàn bộ đội gốc tự xác minh bytes raw trước khi tạo bản hiển thị. */
+export async function loadVerifiedLegacyTeams(expectedHash, loadBytes) {
   if (!/^sha256:[0-9a-f]{64}$/.test(expectedHash || '')) throw new Error('Thiếu vân tay dữ liệu đội gốc.');
   const bytes = await loadBytes();
   if (`sha256:${await digest(bytes)}` !== expectedHash) throw new Error('Dữ liệu đội gốc không khớp vân tay của trang.');
   const teams = bytesToJson(bytes);
   if (!Array.isArray(teams)) throw new Error('Dữ liệu đội gốc sai định dạng.');
+  return teams;
+}
+
+export async function loadVerifiedLegacyTeam(legacyTeamId, expectedHash, loadBytes) {
+  const teams = await loadVerifiedLegacyTeams(expectedHash, loadBytes);
   const matches = teams.filter(team=>team.id === legacyTeamId);
   if (matches.length !== 1) throw new Error('Không tìm thấy đúng một đội gốc với mã này.');
   return matches[0];

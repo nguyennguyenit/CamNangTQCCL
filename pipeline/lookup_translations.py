@@ -9,7 +9,15 @@ from pathlib import Path
 
 
 HASH = re.compile(r"^[0-9a-f]{64}$")
-CJK = re.compile(r"[\u3400-\u9fff]")
+CJK = re.compile(
+    "[\u2e80-\u2e99\u2e9b-\u2ef3\u2f00-\u2fd5\u3005\u3007"
+    "\u3021-\u3029\u3038-\u303b\u3400-\u4dbf\u4e00-\u9fff"
+    "\uf900-\ufa6d\ufa70-\ufad9"
+    "\U00016fe2-\U00016fe3\U00016ff0-\U00016ff6"
+    "\U00020000-\U0002a6df\U0002a700-\U0002b81d\U0002b820-\U0002cead"
+    "\U0002ceb0-\U0002ebe0\U0002ebf0-\U0002ee5d\U0002f800-\U0002fa1d"
+    "\U00030000-\U0003134a\U00031350-\U00033479]"
+)
 LEDGER_KEYS = {"schemaVersion", "glossaryVersion", "entries"}
 ENTRY_KEYS = {
     "entityId",

@@ -1,0 +1,94 @@
+# Hợp đồng kỹ thuật — Việt hóa toàn bộ website
+
+Ngày nghiên cứu: 2026-09-14 (+07). Chỉ lập kế hoạch; `--hard --advice --yagni --tdd`.
+
+## Nguồn quyết định và baseline
+
+- Quyết định sản phẩm: [brainstorm đã chốt](../../reports/brainstorm-260914-0236-viet-hoa-toan-bo.md). Không mở lại phỏng vấn về raw disclosure, AI review hay dịch runtime.
+- Bản Recommended hiện tại: `fb8b3871d76792ffa812ded103ee0c52f83ab3607fd294085e33d088422bfb8e`; manifest SHA-256 `ab103e6cf517725d89f24ac93cd057018d4a65ceb965b30aa17edce05b542d1e`.
+- 1.366 Recommended, 40 Team khác; 1.967 note blocks, 1.928 blocks có Hán, 1.117 đoạn Hán khác nhau; 661 tiêu đề nguồn khác nhau. Đây là baseline Recommended, KHÔNG phải mẫu số toàn website. Lookup có 3.503 ledger entries.
+- 11 ô `戮力上心` đã hiển thị **Đồng Lòng Hợp Sức**, `reviewStatus: translation-reviewed`, không stable identity. Giữ test `tests/test_recommended_identity.py::test_luc_luc_display_approval_does_not_merge_combat_and_internal_identities`. Báo cáo thiếu tên hiện bằng 0 không chứng minh notes đã dịch.
+- Raw corpus SHA-256: `f50833b3e201ecabc29fc1c88fd87b1b2ecc0d376805bf1d35cc20d929b772db`; inventory SHA-256: `591857173405450f9972faad1b6ce3b1abbd9641608a8c1a8ea8e843fba15ff5`. Authority: `pipeline/recommended-other-teams.json::recommendedCorpusHash/sourceInventoryHash`; đối chiếu strict, không sửa source để khớp bản chép trong plan.
+
+## C1. Mẫu số và biên hiển thị
+
+Inventory phải bao gồm từng trường đang hiển thị và trạng thái reachable, không chỉ chuỗi có Hán:
+
+- `team-chuan` / `team-khac`: `js/app.js`, `js/recommended-reference-render.js`, `js/recommended-reference-state.js`; mọi source scope, category, dropdown build, main/alternative holder, note owner, tactic/book/stat, score/status, legacy reference và source link. `notesByOwner` hiện đọc `textRaw`; các fallback `nameRaw/nameZh` hiện tồn tại.
+- Route độc lập: `src/pages/teams/recommended/[sourceConfigId].astro`, `src/pages/teams/legacy/[legacyTeamId].astro`, `js/team-detail.js`, `src/lib/team-detail-routes.ts`. Bao gồm HTML title/meta, no-JS, loading, error, back navigation. Bỏ subtitle tên nguồn thô; chỉ giữ liên kết nguồn hiện có, không disclosure mới.
+- `coexist`: `js/render.js::coexistGroup/seasonCoexistGroup`, `data/coexist.json`, `data/season-content-links.json`; tên đội, mô tả, mở đầu, notes, disclaimer, slot tướng/chiến pháp/binh thư/chất tướng. `seasonCoexistGroup` hiện render `summaryRaw/openingSuggestionsRaw/notesRaw/teamNameRaw`.
+- `khaihoang`: `js/render.js::khaihoangTable`, `data/khaihoang.json`; guide/option label, team/hero name, tactic alternatives, notes, displayed source labels. Phân loại tác giả theo đúng field; không miễn cả nhãn trộn tên tác giả và lời giải thích.
+- `lookup`: `js/unified-lookup.js`, `js/lookup-detail.js`, `js/lookup-data.js`; search/filters/modal, revisions/conditions/relations, loading/empty/error. Giữ search `aliasesZh`; không thêm `provider/sourceUrl/provenance` vào DTO. `hero-list.js` và `tactics.js` không phải consumer active của `app.js`; không lấy việc nằm trong asset manifest làm bằng chứng active.
+- `recruit-tracker`: `js/recruit-tracker.js`, store tương ứng; tài khoản mặc định, pity/history, forms, prompts/confirm, backup/import errors, quota, empty states. `Account` và `Pity` là text website; tên tài khoản/banner/hero/note do người dùng nhập giữ nguyên.
+- `analyze`: `js/analyze.js`, `js/analyze-map.js`; unconfigured/configured, upload/paste/drop, Turnstile, progress, 422/429/network/invalid JSON/unknown service error, recognized/unrecognized results, confidence, outside-scope and similar teams.
+- `roster-recommend`: `js/roster-recommend-ui.js`, `js/roster-scan-map.js`, `js/roster-scan-state.js`; cả `scanHeroes/scanTactics/scanBuiltTeams`, review, local storage/import, recognized/unrecognized OCR, recommendations/exclusions/conflicts, empty/error/scope states.
+- Shell: `src/pages/index.astro`, `src/layouts/SiteLayout.astro`, `js/site-chrome.js`; nav/menu/theme, tooltip, placeholder, `aria-label`, title/alt, error/noscript/footer. Layout không import component header riêng; root và detail có bộ literal riêng, gồm `Team`, `Beta`, `Build`.
+- Active intermediate owner: `js/team-filter-section.js::createRecommendedSection/createSeasonCoexistSection`. `app.js` gọi tại 181/332/333; wrapper giữ season/facet/category tooltips, introduction text, dispatch renderer và search Cùng Tồn. Cả file phải nằm trong reviewed source-hash inventory; thêm display context qua hai factories, không giữ raw tooltip hay search chỉ `group.content`.
+- Upstream generated text: `worker/src/schema.ts::validateBuiltTeamsScanResult` tạo `Team ${i + 1}` khi thiếu tên. Đây không phải user/OCR name. Chỉ Việt hóa default tại producer, giữ wire schema và tên được cung cấp; không migration API/auth/model. Browser nhận output này qua `roster-scan-map.js` rồi roster UI.
+
+Phân loại mỗi location: `translate`, `canonical`, `authored-vi`, `exempt`, `missing-source`. `translate` phải có ledger+review; `canonical` phải resolve glossary đã kiểm; `authored-vi` phải có bằng chứng kiểm text; `exempt` phải ghi field/owner/lý do exact; `missing-source` chỉ áp dụng khi nguồn thực sự thiếu. Tổng mọi nhóm phải bằng inventory; unknown, omitted và pending đều bằng 0 ở gate cuối.
+
+Exempt chỉ gồm URL/ID/hash, tên sản phẩm/tác giả thực, mã game/tier được liệt kê exact, alias chỉ dùng search, và text thật sự từ người dùng/ảnh. Không regex miễn mọi ASCII, mọi chữ viết hoa, mọi `translate=no`, hoặc cả result panel. Không-Hán không đồng nghĩa tiếng Việt: English-only text vẫn phải được kiểm độc lập.
+
+## C2. Ledger và bằng chứng kiểm độc lập
+
+- Reuse `pipeline/lookup_translations.py::{canonical_json_bytes,translation_fingerprint,validate_translation_entries}`. Ledger mới `pipeline/site-translations.json` giữ **đúng schema hiện hành**: root `schemaVersion/glossaryVersion/entries`; entry `entityId/fieldPath/inputFingerprint/textVi/status/review`; review `reviewer/reviewedAt/evidence/semanticChecks`. Không nhét `textRaw`, draft status hay đoạn dài vào name map.
+- Location key phải chứa domain + stable ID; fieldPath và fingerprint context giữ source field, source scope/config, owner `team/primary/alternative`, holder index/identity và slot. Cùng câu ở hai owner vẫn là hai nghĩa vụ publication; chỉ dedup công việc draft theo exact text + context tương thích.
+- Glossary digest được tính từ bytes thực của `pipeline/sgsdeck-name-map.json`, `pipeline/recommended-identity-map.json`, `pipeline/recommended-display-map.json`, `pipeline/lookup-identity.json`, các từ điển đang được capture và policy thuật ngữ. Không tin `glossaryVersion` do chính ledger khai báo. Với site entries, đưa digest độc lập vào fingerprint context. Với Lookup, giữ extractor/identity-context hiện có; validator site kiểm receipt với digest mới, không ép migration fingerprint Lookup không liên quan.
+- `pipeline/site-translation-reviews.json` là **receipt kiểm**, không phải ledger/schema dịch thứ hai. Mỗi batch ghi actual draft session, actual independent reviewer session (khác nhau), model/provider nếu runtime cung cấp, thời điểm và output evidence thật. Mỗi checked item bind ledger/location key, inputFingerprint, SHA-256 của đúng textVi, glossary digest, verdict và tham chiếu output riêng. Không cho agent dịch tự điền verdict để hoàn thành review.
+- Main phải capture **bytes output thật** của mỗi independent reviewer thành `pipeline/localization-reviews/<batch-id>.json` private/portable, cùng actual runtime session metadata; receipt bind relative path + output SHA-256 và accepted item result. Offline check từ chối output thiếu, bị sửa, rejected hoặc key/session/text hash không khớp. Không trỏ duy nhất tới `agent://`/log tạm; không public allowlist thư mục này. Main kiểm runtime rồi capture là trust boundary; hai chuỗi session khác nhau không tự chứng minh tính độc lập hay semantic correctness.
+- Draft có sẵn (như Lookup) được capture/adopt thành candidate trong một draft session thật trước khi gửi reviewer; ghi origin `inherited` và artifact hash, không bịa historical author/session. Receipt không chứa alternate translation/status; ledger vẫn là authority. Không cần thêm signing service hay review platform.
+- Reviewer nhìn source + context + bản dịch + glossary; kiểm số/range/%/đơn vị, phủ định, điều kiện, mục tiêu, mùa/revision, thuật ngữ và không thêm chiến thuật. Reviewer trả lỗi cụ thể hoặc accepted; mọi item có kết quả riêng, kể cả chunk draft trùng câu.
+- 3.503 entry Lookup hiện có được kiểm độc lập tại chỗ; không copy sang site ledger. Receipt cũ có metadata chung không tự chứng minh một lượt kiểm độc lập đã diễn ra. Nếu không đổi text/public bytes thì không promote Lookup vô ích. Nếu cần sửa, dùng candidate/validate/promote hiện có, không ghi trực tiếp public dict.
+- Bất kỳ text/fingerprint/glossary/owner thay đổi đều làm receipt cũ không còn hợp lệ. Chỉ case chưa rõ nghĩa mới hỏi người dùng; không đoán, không tự thay bằng “Chưa có dữ liệu”.
+
+## C3. Nguồn offline portable, không phụ thuộc sibling worktree
+
+Cache hiện không ở checkout chính; cache đã đối chiếu tại `/Users/plateau/Project/worktrees/CamNangTQCCL-season-team-lookup/.cache/sgsdeck-recommended`. Có 1.444 cached pages, tổng 117.522.979 bytes (~112 MiB). Không commit toàn HTML cache chỉ để Việt hóa.
+
+Lệnh capture **sẽ tạo ở phase 1**, không có hiện nay: `python3 -m pipeline.site_localization capture --cache "$RECOMMENDED_CACHE" --output pipeline/localization-inputs/recommended.json`.
+
+- Lần capture đầu đọc cache thật bằng `inputs_from_cache`, kiểm manifest/page/inventory/corpus với ledger hiện hành, rồi ghi snapshot normalized private. Giữ raw records/details, inventory, `displayNotes.blocks` chỉ có ownership + textRaw; bỏ mọi derived Vietnamese projection trước khi lưu. Kèm capture receipt/pins trong policy private.
+- Snapshot là output parse từ source thật, KHÔNG tái dựng HTML/source từ public display DTO. Hydration dùng `localize_rows` + `apply_display_map`, khôi phục `mappingHash/decisionSnapshotHash/dedupKeyVersion` từ authoritative map/other-ledger; không tin textVi cũ. Nhánh CLI `--input` hiện chỉ JSON-load, nên không gửi raw snapshot thẳng vào nó rồi giả định đã hydrate.
+- Capture giữ source scope/order và note owner fields; không gọi `raw_source_record` wholesale để strip vì helper này cũng loại scope/order và `displayNotes`. Chỉ bỏ derived display fields có chủ đích; test cache-path và normalized-path hydrated inputs cho cùng publication bytes.
+- Snapshot được commit như input private; CI build từ đây, không cần cache, sibling path, network, credential hay crawl. Reparse khi parser/source thay đổi là capture mới với evidence mới; không gọi snapshot này là bản sao HTML nguyên gốc.
+- Test cùng snapshot ở hai thư mục độc lập tạo cùng bytes; cache bị sửa hoặc inventory mismatch bị từ chối trước khi ghi snapshot. Không cho `capture` tự cập nhật source pins để “khớp” input lạ.
+
+## C4. Một projection ngoài Recommended, không thay gameplay inputs
+
+File mới được đề xuất: `pipeline/site_localization.py` (extract/validate/compile/CLI), `pipeline/site-localization-policy.json` (inventory/field policy/narrow exceptions), `pipeline/localization-inputs/recommended.json`, `pipeline/site-translations.json`, `pipeline/site-translation-reviews.json`, `data/website-display.json`, `js/website-display.js`. Đây là build-time pipeline nhỏ; không service, DB, admin, runtime translator, i18n framework hay thêm selector transaction framework.
+
+- Recommended: thêm `displayNotes.blocks[].textVi` và projection còn thiếu vào generation hiện có; block id/owner/holderIndex/textRaw giữ nguyên. `_validated_display_notes`/publication validation yêu cầu textVi cho source text có nghĩa; `raw_source_record` tiếp tục strip display-only fields. Index và detail phải cùng projection, không drift. Short-name maps giữ boundary identity/display-only của 11 ô.
+- Non-Recommended: `website-display.json` chỉ có `{schemaVersion,generationId,sourceHashes,recommendedPin,values}`. `values` là dictionary location-key → text Việt của các trường ngoài Recommended; không copy raw record, lookup source/provenance, receipt hay ledger vào public file. Khóa không chứa raw text. Missing-source được quyết định từ raw schema, không dùng fallback chuỗi.
+- Public location key dùng cùng quy ước hai runtime: JSON compact array `[entityId,fieldPath]` (Python canonical serializer bỏ trailing newline / JS `JSON.stringify`); không ghép delimiter mơ hồ, không key từ raw text. Renderer chỉ resolve key đã được inventory phê duyệt.
+- `sourceHashes` chỉ liệt kê public data bytes được consumer dùng; `recommendedPin` bind generation+manifest cuối. Private descriptor tính `generationId` từ captured inputs, glossary/ledger/review/policy digests và payload; SHA-256 của file public là pin cho browser/HTML. Không self-hash cả field chứa chính hash.
+- Thứ tự không chu kỳ: capture sources → validate expected/receipts → build Recommended bằng ledger → compile non-Recommended với Recommended pin cuối → validate cả bộ → ghi sidecar atomic. Intermediate repo có thể fail build; không tuyên bố atomic nhiều file. Publication website chỉ từ một build thành công; không đổi site đang deploy ở task này.
+- `src/lib/root-static-artifacts.ts` thêm snapshot **dùng chung cached Promise per root**: capture sidecar + Recommended + public source bytes, kiểm rồi reread pins trước trả. `src/pages/index.astro` và `teamDetailCatalog` dùng snapshot đó; `readPublicArtifact` phải serve cùng captured bytes cho sidecar và các dependencies, không đọc file mutable lần nữa. Tách raw-read helper tránh recursion; giữ lookup transaction và path safety. Không thay `SeasonContext` raw model hoặc đưa translated copies vào engine.
+- `js/website-display.js` chỉ verify SHA/schema/dependency pin rồi lookup approved value; không translate/fuzzy fallback/network API. `js/app.js` và `js/team-detail.js` là hai entrypoints tải snapshot; truyền display context đến renderer. Raw models vẫn phục vụ search, canonical matching, dedup, eligibility, scores và recommendations. Thiếu/mismatch display → trạng thái lỗi Việt, không raw fallback hoặc giấu riêng record bị lỗi để pass.
+- Raw files `data/teams.json`, `coexist.json`, `khaihoang.json`, source season sidecars không bị sửa để dịch. Lookup public bytes chỉ đổi qua promotion khi có correction có chứng cứ. Source fields/source hashes, identity, dedup decisions, scores/tier/mùa không đổi vì translation-only edits.
+- `src/lib/public-artifact-manifest.mjs` là allowlist authority; thêm đúng sidecar/module. `scripts/verify-astro-dist.mjs` là dist policy authority; không tạo một release allowlist khác.
+
+## C5. UI literals, dynamic text và gate chống phát sinh
+
+Không cần chuyển mọi literal sang thư viện i18n. Policy ghi owner file/symbol/literal và các trạng thái render cần kiểm; bind review inventory vào hash các UI source files đã kiểm. Đổi source file khiến inventory review stale đến khi re-inventory/review thật; không tự refresh hash trong build. Source/context không đổi được reuse receipt; không cần dịch lại chỉ vì formatting.
+
+`callWorker` vẫn giữ signature/status để hai callers dùng; lỗi service/protocol/network được phân loại với message Việt đã kiểm. Không đưa `data.error`, exception `.message`, confidence enum hoặc provider prose trực tiếp lên UI. Phân loại thực tế 422, 429, invalid JSON, network, Turnstile, unavailable; unknown vẫn báo lỗi dịch vụ trung thực, không giả thành thành công hay “thiếu dữ liệu”. Không đổi wire API Worker để Việt hóa client.
+
+Success result cũng phải kiểm. Canonical recognized names lấy từ dict đã kiểm; unmatched raw OCR được đánh dấu đúng là text nhận diện chưa xác minh, không biến thành danh tính chuẩn. Giữ số sao/level/input/account text nguyên; text website quanh nó phải Việt. Không persist thêm image/token. Mock Worker/Turnstile chỉ trong browser tests; không thành production fallback.
+
+Gate cuối cần đồng thời: exact inventory coverage, fresh ledger+independent receipts, checked UI code hashes, no forbidden Han ở designated display fields/visible DOM/a11y names, review English toàn inventory, source/gameplay parity, privacy, pin coherence, và browser states. Không scan toàn repo/raw JSON bằng một regex rồi kết luận.
+
+## C6. Existing entrypoints và caller closure
+
+- `lookup_translations.py::validate_translation_entries` được Lookup builder và tests dùng: Unicode fix phải chạy regression Lookup; không đổi exact schema.
+- `build_recommended_reference.py::build_generation/inputs_from_cache/localize_rows/apply_display_map`, CLI `--input/--cache/--identity-map/--other-ledger/--teams/--content-links/--output` hiện có. Site compiler phải reuse, không copy implementation.
+- `root-static-artifacts.ts::readPublicArtifact/staticPathsFor/seasonArtifactHashes` được data routes/home và contracts dùng; thêm display snapshot không mở rộng `season-context.js` accepted raw schema.
+- Closure renderer: `app.js:181,332–333` → `team-filter-section.js::createSeasonCoexistSection/createRecommendedSection` → `seasonCoexistGroup/recommendedTeamCard`; và `team-detail.js:70,76,94` → `recommendedTeamDetailContent/legacyOriginalDetailContent`. E2E direct callers tại `tests-e2e/team-detail-pages.spec.mjs:64,129,154` cũng phải nhận display context mới; không compatibility fallback để giữ fixture cũ.
+- `callWorker` được `initAnalyze` và `roster-recommend-ui.js` dùng. `mapBuiltTeamsScan`/rich variant có fallback `Team đã build`; sửa text mặc định, không đổi matcher/engine.
+- Artifact closure: ba GET callers `src/pages/{data,js,css}/[file].*.ts`, `seasonArtifactHashes`, `tests-js/astro-dist-contract.test.mjs`; giữ signature và JS/CSS behavior. `teamDetailCatalog` callers: hai team Astro pages, `teamDetailHtmlPaths`, `scripts/verify-astro-dist.mjs`, `tests-js/team-detail-routes.test.mjs`; custom-root tests phải inject coherent display fixture, không đọc checkout thật.
+- `playwright.config.mjs`: project `astro`, Chromium desktop, build+preview ở port 4174, `reuseExistingServer:false`; tests có thể set viewport 390×844. Không reuse dev server không rõ build.
+- `.github/workflows/mcp-worker.yml`: credential-free gate gọi `npm run check:repository` trong `mcp-worker`; paths hiện bỏ sót `pipeline/**` và nhiều `src/**`. `mcp-worker/scripts/check-repository.ts::REPOSITORY_GATE_COMMANDS` chạy root build/dist/e2e/node/Python và Worker/MCP checks, nhưng chưa có `npm run verify`. Bổ sung đúng local gate/pattern, giữ production jobs/approval nguyên.
+
+## Phương án bị loại
+
+Không dịch đè nguồn; không copy Lookup raw sang website; không dịch paragraph bằng short-name alias map; không đổi API/engine/identity; không thêm review server; không commit 112 MiB HTML khi normalized input đủ cho dịch offline; không giảm scope còn Recommended; không dùng nội dung giả để lấp chỗ thiếu. Ba phase là ba gate dependency (contract → reviewed publication → all-consumer release), không ba đợt “MVP” thiếu mục.

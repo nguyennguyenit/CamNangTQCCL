@@ -16,6 +16,10 @@ export function el(tag, props = {}, children = []) {
   return node;
 }
 
+const CJK_TEXT = /[\u3400-\u9fff\uf900-\ufaff]/u;
+const publicText = (value, fallback = "Nội dung tiếng Việt chưa sẵn sàng") =>
+  typeof value === "string" && value.trim() && !CJK_TEXT.test(value) ? value.trim() : fallback;
+
 const UNIT_CLASS = { "Kỵ": "u-ky", "Cung": "u-cung", "Thương": "u-thuong", "Khiên": "u-khien" };
 // Phe -> hậu tố class màu (Ngụy xanh đậm, Thục xanh lá, Ngô đỏ, Quần vàng).
 export const FACTION_CODE = { "Ngụy": "nguy", "Thục": "thuc", "Ngô": "ngo", "Quần": "quan", "Hỗn hợp": "honhop" };
@@ -365,7 +369,7 @@ export function khaihoangTable(data) {
       : null,
     chamSuTeams.length
       ? el("div", { class: "kh-block" }, [
-          el("h2", { class: "kh-section-title" }, "Team Chạm Sứ / Ăn vạ"),
+          el("h2", { class: "kh-section-title" }, "Đội Chạm Sứ / Ăn vạ"),
           el("div", { class: "cham-su-cards" }, chamSuTeams.map(chamSuTeamCard)),
         ])
       : null,
@@ -382,15 +386,15 @@ export function khaihoangTable(data) {
 export function seasonCoexistGroup(reference) {
   if (!reference.source) return coexistGroup(reference.content);
   const {content, source} = reference;
-  const raw = (label, value) => value ? el('p', {class:'season-raw'}, [el('strong', {}, label + ': '), value]) : null;
+  const raw = (label, value) => value ? el('p', {class:'season-detail-text'}, [el('strong', {}, label + ': '), publicText(value)]) : null;
   return el('section', {class:'coexist-group', dataset:{recordId:reference.recordId}}, [
-    el('h3', {}, content.groupLabel),
+    el('h3', {}, publicText(content.groupLabel)),
     el('p', {class:'scope-note'}, reference.classification === 'applicable' ? 'Áp dụng theo phiên bản luật đã chọn' : 'Tham khảo kịch bản — chưa xác nhận theo phiên bản luật'),
     raw('Tổng quan', content.summaryRaw), raw('Gợi ý khai hoang', content.openingSuggestionsRaw), raw('Ghi chú', content.notesRaw),
     el('a', {href:source.url, target:'_blank', rel:'noopener noreferrer'}, 'Nguồn Cùng Tồn'), raw('Lưu ý nguồn', source.disclaimerRaw),
     el('div', {class:'coexist-teams'}, content.teams.map(team => el('article', {class:'coexist-subteam'}, [
-      el('h4', {class:'coexist-subteam-title'}, team.teamNameRaw), raw('Cải tạo chiến pháp binh chủng', team.unitTacticEffectsRaw),
-      ...team.heroes.map(hero => el('div', {class:'hero'}, [el('h5', {}, hero.nameRaw),
+      el('h4', {class:'coexist-subteam-title'}, publicText(team.teamNameRaw)), raw('Cải tạo chiến pháp binh chủng', team.unitTacticEffectsRaw),
+      ...team.heroes.map(hero => el('div', {class:'hero'}, [el('h5', {}, publicText(hero.nameRaw)),
         ...hero.tacticSlotsRaw.map((value, index) => raw(`Chiến pháp ${index + 1}`, value || 'Chưa có dữ liệu')),
         raw('Cộng điểm', hero.statFocusRaw || 'Chưa có dữ liệu'),
         ...hero.bookSlotsRaw.map((value, index) => raw(`Binh thư ${index + 1}`, value || 'Chưa có dữ liệu')),
@@ -407,7 +411,7 @@ export function seasonTeamCard(row, onTag, onOpen) {
     card.querySelectorAll('.heroes .line,.counters,.notes').forEach(node=>node.remove());
   }
   card.append(el('p',{class:'scope-note'},row.classification === 'applicable' ? 'Áp dụng theo phiên bản luật đã chọn' : row.classification === 'unknown' ? 'Chưa rõ mùa — tham khảo' : 'Tham khảo kịch bản'));
-  if (row.legacyRankings?.length) card.append(el('details',{class:'legacy-tier-sources'},[el('summary',{},'Tier lịch sử — tham khảo'),...row.legacyRankings.map(rank=>el('p',{},`${rank.tier} · ${rank.source} · ${rank.updatedAt}`))]));
+  if (row.legacyRankings?.length) card.append(el('details',{class:'legacy-tier-sources'},[el('summary',{},'Bậc lịch sử — tham khảo'),...row.legacyRankings.map(rank=>el('p',{},`${rank.tier} · ${rank.source} · ${rank.updatedAt}`))]));
   if (row.contextLabel) card.append(el('p',{class:'scope-note'},row.contextLabel));
   card.append(el('p',{class:'sgsdeck-score'},row.sourceScore ? `Điểm SGSDeck: ${row.sourceScore.value}` : 'Chưa có điểm SGSDeck'));
   card.append(el('p',{class:'scope-note'},`Nguồn: ${SOURCE_LABEL[row.team.source] || row.team.source || 'Chưa có dữ liệu'}`));
@@ -470,23 +474,23 @@ export function seasonConfigDetail(row, model, {onClose,onImport}) {
       el('legend',{},`Tướng ${index+1} · ${index === 0 ? 'Chủ tướng' : 'Phó tướng ' + index}`),chooser(`Tướng ${index+1} · Tướng`,slot.heroRefs,value=>{selection.heroSlots[index].heroRef=value;}),
       ...slot.tacticSlots.map((value,i)=>chooser(`Tướng ${index+1} · Chiến pháp ${i+1}`,value.tacticRefs,ref=>{selection.heroSlots[index].tacticRefs[i]=ref;})),
       ...slot.bookSlots.map((value,i)=>chooser(`Tướng ${index+1} · Binh thư ${i+1}`,value.bookRefs,ref=>{selection.heroSlots[index].bookRefs[i]=ref;})),
-      el('p',{class:'season-raw'},`Cộng điểm: ${slot.statFocusRaw || 'Chưa có dữ liệu'}`),
+      el('p',{class:'season-detail-text'},`Cộng điểm: ${publicText(slot.statFocusRaw)}`),
     ])),
     el('details',{},[
       el('summary',{},'Nguồn và đánh giá cấu hình'),
-      ...model.data['season-evidence'].filter(proof=>[...config.evidenceRefs,...(row.evaluation?.rankings.flatMap(rank=>rank.evidenceRefs) || [])].includes(proof.id)).map(proof=>el('p',{},[el('a',{href:proof.provenance.sourceUrl,target:'_blank',rel:'noopener noreferrer'},proof.provenance.provider),` · ${proof.provenance.region} · ${proof.provenance.fetchedAt} · ${proof.note}`])),
-      el('p',{},row.evaluation?.reviewNote || 'Chưa có đánh giá cấu hình.'),
+      ...model.data['season-evidence'].filter(proof=>[...config.evidenceRefs,...(row.evaluation?.rankings.flatMap(rank=>rank.evidenceRefs) || [])].includes(proof.id)).map(proof=>el('p',{},[el('a',{href:proof.provenance.sourceUrl,target:'_blank',rel:'noopener noreferrer'},proof.provenance.provider),` · ${proof.provenance.region} · ${proof.provenance.fetchedAt} · ${publicText(proof.note)}`])),
+      el('p',{},publicText(row.evaluation?.reviewNote, 'Chưa có đánh giá cấu hình.')),
       ...(row.evaluation?.rankings || []).map(rank=>el('p',{},`${rank.tier}${rank.id === row.evaluation.defaultRankingId ? ' · Đánh giá được chọn' : ' · Tham khảo nguồn khác'}`)),
     ]),
     el('h4',{},'Điều kiện và hiệu ứng'),
-    ...config.requirements.map(item=>el('p',{class:'season-raw'},`${item.descriptionRaw} · Chưa xác minh điều kiện${item.mandatory ? ' · Bắt buộc' : ''}`)),
+    ...config.requirements.map(item=>el('p',{class:'season-detail-text'},`${publicText(item.descriptionRaw)} · Chưa xác minh điều kiện${item.mandatory ? ' · Bắt buộc' : ''}`)),
     ...config.effectBundles.map(item=>el('div',{class:'season-effect'},[
-      el('h5',{},item.labelRaw),el('p',{class:'season-raw'},item.effectsRaw),
-      ...item.requirementIds.map(id=>el('p',{class:'season-raw'},`Điều kiện: ${config.requirements.find(requirement=>requirement.id === id).descriptionRaw}`)),
+      el('h5',{},publicText(item.labelRaw)),el('p',{class:'season-detail-text'},publicText(item.effectsRaw)),
+      ...item.requirementIds.map(id=>el('p',{class:'season-detail-text'},`Điều kiện: ${publicText(config.requirements.find(requirement=>requirement.id === id)?.descriptionRaw)}`)),
       el('p',{class:'scope-note'},'Chưa xác minh điều kiện và hiệu ứng từ kho hiện tại.'),
     ])),
     !config.requirements.length && !config.effectBundles.length ? el('p',{},'Không có điều kiện đặc biệt được ghi trong cấu hình.') : null,
-    el('p',{class:'season-raw'},config.notes || 'Ghi chú: chưa có dữ liệu'),compare,comparison,
+    el('p',{class:'season-detail-text'},publicText(config.notes, 'Ghi chú: chưa có dữ liệu')),compare,comparison,
   ]);
   refreshScore();
   return detail;

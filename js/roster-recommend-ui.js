@@ -1,5 +1,5 @@
 import { ANALYZE_CONFIG, isAnalyzeConfigured } from "./config.js";
-import { callWorker, compressImage, loadTurnstile } from "./analyze.js";
+import { callWorker, compressImage, describeAnalyzeError, loadTurnstile } from "./analyze.js";
 import { el } from "./render.js";
 import { mapBuiltTeamsScan, mapHeroesScan, mapTacticsScan } from "./roster-scan-map.js";
 import {
@@ -17,8 +17,17 @@ import { recommendTeams } from "./team-recommend-engine.js";
 const SCAN_TYPES = [
   { id: "heroes", label: "Tướng", mode: "scanHeroes" },
   { id: "tactics", label: "Chiến pháp", mode: "scanTactics" },
-  { id: "builtTeams", label: "Team đã build", mode: "scanBuiltTeams" },
+  { id: "builtTeams", label: "Đội đã xây dựng", mode: "scanBuiltTeams" },
 ];
+
+const ROSTER_PROVIDER_ERROR = "Không đọc được ảnh. Vui lòng thử lại.";
+const ROSTER_STATUS_LABELS = {
+  "missing-tactic": "Thiếu chiến pháp",
+  "move-tactic": "Cần điều chuyển chiến pháp",
+  variant: "Dùng biến thể",
+  "build-now": "Có thể xây dựng ngay",
+  locked: "Đã khóa",
+};
 
 function loadState() {
   return deserializeRosterScanState(localStorage.getItem(ROSTER_SCAN_STORAGE_KEY));
@@ -39,7 +48,7 @@ function itemList(items, emptyText, type, onRemove) {
 }
 
 function teamList(teams) {
-  if (!teams?.length) return el("p", { class: "roster-empty" }, "Chưa có team khóa.");
+  if (!teams?.length) return el("p", { class: "roster-empty" }, "Chưa có đội khóa.");
   return el("div", { class: "roster-locked-list" }, teams.map((team) =>
     el("article", { class: "roster-locked-team" }, [
       el("strong", {}, team.teamName),
@@ -74,7 +83,7 @@ function renderReview(state, { heroOptions = [], tacticOptions = [], onRemove, o
       addControl("tactics", tacticOptions, onAdd),
     ]),
     el("section", { class: "roster-review-panel" }, [
-      el("h3", {}, "Team đang khóa"),
+      el("h3", {}, "Đội đang khóa"),
       teamList(state.lockedTeams),
     ]),
   ]);
@@ -83,29 +92,29 @@ function renderReview(state, { heroOptions = [], tacticOptions = [], onRemove, o
 function renderRecommendation(result, onOpenTeam, model) {
   const teamRow = (entry) => el("article", { class: "roster-result-team", dataset: entry.configId ? {configId:entry.configId} : {} }, [
     el("div", { class: "roster-result-head" }, [
-      el("strong", {}, entry.team?.name || "Team đã build"),
-      el("span", { class: "roster-status" }, entry.status || "locked"),
+      el("strong", {}, entry.team?.name || "Đội đã xây dựng"),
+      el("span", { class: "roster-status" }, ROSTER_STATUS_LABELS[entry.status] || "Đã khóa"),
     ]),
     entry.configId ? el('p',{class:'sgsdeck-score'},(() => { const score = resolveSelectionScore(model,entry.configId,selectionFromEntry(model,entry)); return score ? `Điểm SGSDeck: ${score.value}` : 'Chưa có điểm SGSDeck'; })()) : null,
-    entry.tier ? el("p", {}, `Tier: ${entry.tier}`) : null,
+    entry.tier ? el("p", {}, `Bậc: ${entry.tier}`) : null,
     entry.selectedTactics?.length ? el("p", {}, `Chiến pháp: ${entry.selectedTactics.join(", ")}`) : null,
     entry.usedAlternatives?.length
       ? el("p", {}, `Biến thể: ${entry.usedAlternatives.map((a) => `${a.from} -> ${a.to}`).join(", ")}`)
       : null,
-    entry.team && !entry.locked ? el("button", { type: "button", class: "ana-link-btn", onClick: () => onOpenTeam?.(entry.team) }, "Mở team") : null,
+    entry.team && !entry.locked ? el("button", { type: "button", class: "ana-link-btn", onClick: () => onOpenTeam?.(entry.team) }, "Mở đội") : null,
   ]);
 
   return el("div", { class: "roster-results" }, [
     el("section", {}, [
-      el("h3", {}, "Portfolio sau khi build"),
+      el("h3", {}, "Danh sách đội sau khi xây dựng"),
       ...(result.portfolioTeams || []).map(teamRow),
     ]),
     el("section", {}, [
       el("h3", {}, "Nên thêm"),
-      ...((result.addTeams || []).length ? (result.addTeams || []).map(teamRow) : [el("p", { class: "roster-empty" }, "Đã đủ 5 team hoặc chưa có team phù hợp.")]),
+      ...((result.addTeams || []).length ? (result.addTeams || []).map(teamRow) : [el("p", { class: "roster-empty" }, "Đã đủ 5 đội hoặc chưa có đội phù hợp.")]),
     ]),
     el("section", {}, [
-      el("h3", {}, "Team mạnh nhưng chưa build được"),
+      el("h3", {}, "Đội mạnh nhưng chưa thể xây dựng"),
       ...(result.blockedStrongTeams || []).slice(0, 5).map((entry) =>
         el("article", { class: "roster-result-team muted" }, [
           el("strong", {}, entry.team.name),
@@ -196,7 +205,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
         status.textContent = "Đã đọc xong. Kiểm tra lại dữ liệu bên dưới.";
       } catch (err) {
         if (started !== generation) return;
-        status.textContent = err.message || "Không đọc được ảnh.";
+        status.textContent = describeAnalyzeError(err, ROSTER_PROVIDER_ERROR);
       } finally {
         if (started !== generation) { btn.disabled=false; return; }
         token = "";
@@ -226,17 +235,17 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     "aria-label": "Ưu tiên gợi ý",
     onChange: (event) => { preference = event.target.value; rerender(); },
   }, [
-    el("option", { value: "meta" }, "Meta T0 -> T1"),
+    el("option", { value: "meta" }, "Meta T0 → T1"),
     el("option", { value: "redStars" }, "Nhiều hột"),
   ]);
-  const confirmBtn = el("button", { type: "button", class: "ana-btn" }, "Xác nhận dữ liệu scan");
+  const confirmBtn = el("button", { type: "button", class: "ana-btn" }, "Xác nhận dữ liệu đã đọc");
   confirmBtn.addEventListener("click", () => {
     if (!gameplayAllowed()) return;
     state = { ...serializeRosterScanState(state), confirmed: true, updatedAt: new Date().toISOString() };
     saveState(state);
     rerender();
   });
-  recommendBtn = el("button", { type: "button", class: "ana-btn primary", disabled: "" }, "Gợi ý 5 team");
+  recommendBtn = el("button", { type: "button", class: "ana-btn primary", disabled: "" }, "Gợi ý 5 đội");
   recommendBtn.addEventListener("click", () => {
     if (!state.confirmed || !gameplayAllowed()) return;
     const projected = scope?.browse?.kind === 'verified-pair' ? projectSeasonCandidates(scope.model,scope.browse.seasonContext,{experimentalUntiered,lockedTeams:state.lockedTeams}) : {ok:true,teams,teamTier};
@@ -269,7 +278,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
         rerender();
       },
     }), renderRecommendation(result, onOpenTeam, scope?.model),
-      ...((projected.diagnostics || []).filter(item=>item.code === 'LOCKED_TEAM_OUT_OF_SCOPE' || item.code === 'REQUIREMENT_UNVERIFIED').map(item=>el('p',{class:'scope-note'},item.code === 'LOCKED_TEAM_OUT_OF_SCOPE' ? 'Team khóa ngoài phạm vi: vẫn giữ tài nguyên đang dùng.' : 'Cấu hình có điều kiện chưa kiểm chứng không được đưa vào gợi ý.'))));
+      ...((projected.diagnostics || []).filter(item=>item.code === 'LOCKED_TEAM_OUT_OF_SCOPE' || item.code === 'REQUIREMENT_UNVERIFIED').map(item=>el('p',{class:'scope-note'},item.code === 'LOCKED_TEAM_OUT_OF_SCOPE' ? 'Đội khóa ngoài phạm vi: vẫn giữ tài nguyên đang dùng.' : 'Cấu hình có điều kiện chưa kiểm chứng không được đưa vào gợi ý.'))));
   });
 
   const untiered = el('input',{type:'checkbox','aria-label':'Thử nghiệm cấu hình chưa xếp hạng',onChange:event=>{experimentalUntiered=event.target.checked;rerender();}});
@@ -278,7 +287,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       scopeNotice,
       el('label',{class:'season-opt-in'},[untiered,'Thử nghiệm cấu hình chưa xếp hạng']),
       el("h2", {}, "Gợi ý đội từ kho"),
-      el("p", { class: "ana-note" }, "AI chỉ đọc ảnh. Team được chọn bằng engine local từ dữ liệu đã curate."),
+      el("p", { class: "ana-note" }, "AI chỉ đọc ảnh. Đội được chọn bằng công cụ cục bộ từ dữ liệu đã tuyển chọn."),
       el("div", { class: "roster-token-row" }, [tsBox, modeSelect, confirmBtn, recommendBtn]),
       el("div", { class: "roster-scan-grid" }, scanControls),
       output,

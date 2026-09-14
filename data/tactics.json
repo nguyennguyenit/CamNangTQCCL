@@ -323,7 +323,7 @@
     ],
     "chinese": "百騎劫營",
     "effect": "2020-04-01 更新 / 普通攻擊之後，對隨機敵軍單體發動一次兵刃攻擊（傷害率 81%→162%）同時有 50% 機率對敵軍主將額外發動一次兵刃攻擊（傷害率 60%→120%） /  / 原始版本 / 待補充",
-    "effectViet": "Cập nhật 2020-04-01 / Sau khi đánh thường, phát động 1 lần tấn công binh khí lên 1 mục tiêu quân địch ngẫu nhiên (tỷ lệ sát thương 81%→162%), đồng thời có 50% xác suất phát động thêm 1 lần tấn công binh khí lên chủ tướng địch (tỷ lệ sát thương 60%→120%) /  / Phiên bản gốc / Chờ bổ sung",
+    "effectViet": "Cập nhật ngày 2020-04-01: Sau khi đánh thường, phát động 1 lần tấn công binh khí lên 1 mục tiêu quân địch ngẫu nhiên (tỷ lệ sát thương 81%→162%), đồng thời có 50% xác suất phát động thêm 1 lần tấn công binh khí lên chủ tướng địch (tỷ lệ sát thương 60%→120%).\n\nPhiên bản gốc: Chờ bổ sung (theo nguồn).",
     "hanViet": "Bách Kỵ Kiếp Doanh",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088179763989507.png",
     "id": "tactic:bach-ky-kiep-doanh",
@@ -349,13 +349,13 @@
           "effectiveDate": "2020-04-01",
           "isCurrent": true,
           "labelVi": "Bản hiện hành",
-          "textVi": "Sau khi đánh thường, phát động 1 lần tấn công binh khí lên 1 mục tiêu quân địch ngẫu nhiên (tỷ lệ sát thương 81%→162%), đồng thời có 50% xác suất phát động thêm 1 lần tấn công binh khí lên chủ tướng địch (tỷ lệ sát thương 60%→120%)"
+          "textVi": "Sau khi đánh thường, phát động 1 lần tấn công binh khí lên 1 mục tiêu quân địch ngẫu nhiên (tỷ lệ sát thương 81%→162%), đồng thời có 50% xác suất phát động thêm 1 lần tấn công binh khí lên chủ tướng địch (tỷ lệ sát thương 60%→120%).\n\n"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Chờ bổ sung"
+          "textVi": "Chờ bổ sung (theo nguồn)."
         }
       ]
     },
@@ -563,7 +563,7 @@
     ],
     "chinese": "暴戾無仁",
     "effect": "普通攻擊之後，對攻擊目標再次發起一次兵刃攻擊（傷害率 196%），並使其進入混亂狀態（攻擊和戰法無差別選擇目標），持續 1 回合（發動機率 25%→35%）",
-    "effectViet": "Sau đòn đánh thường, tiếp tục phát động 1 đòn tấn công binh nhận lên mục tiêu bị tấn công (tỷ lệ sát thương 196%), đồng thời khiến mục tiêu rơi vào trạng thái Hỗn Loạn (đòn tấn công và chiến pháp chọn mục tiêu không phân biệt), kéo dài 1 lượt (xác suất phát động 25%→35%)",
+    "effectViet": "Sau đòn đánh thường, tiếp tục phát động 1 đòn tấn công binh khí lên mục tiêu bị tấn công (tỷ lệ sát thương 196%), đồng thời khiến mục tiêu rơi vào trạng thái Hỗn Loạn (đòn tấn công và chiến pháp chọn mục tiêu không phân biệt), kéo dài 1 lượt (xác suất phát động 25%→35%)",
     "hanViet": "Bạo Lệ Vô Nhân",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088206674643971.png",
     "id": "tactic:bao-le-vo-nhan",
@@ -805,7 +805,7 @@
     ],
     "chinese": "振軍擊營",
     "effect": "對敵軍單體造成兵刃傷害（傷害率117.5% → 235%）及禁療（無法恢復兵力）狀態，持續3回合，並使有負面狀態的友軍單體自帶戰法發動幾率提高5% → 10%，持續1回合",
-    "effectViet": "Gây sát thương binh khí lên 1 đơn vị địch (tỷ lệ sát thương 117.5%→235%) và khiến mục tiêu rơi vào trạng thái cấm trị liệu (không thể hồi binh lực), kéo dài 3 lượt; đồng thời tăng 5%→10% xác suất phát động chiến pháp tự có của 1 đơn vị quân ta đang chịu trạng thái bất lợi, kéo dài 1 lượt",
+    "effectViet": "Gây sát thương binh khí lên 1 đơn vị địch (tỷ lệ sát thương 117,5%→235%) và khiến mục tiêu rơi vào trạng thái cấm trị liệu (không thể hồi binh lực), kéo dài 3 lượt; đồng thời tăng 5%→10% xác suất phát động chiến pháp tự có của 1 đơn vị quân ta đang chịu trạng thái bất lợi, kéo dài 1 lượt",
     "hanViet": "Chấn Quân Kích Doanh",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088189805153287.png",
     "id": "tactic:chan-quan-kich-doanh",
@@ -1291,7 +1291,7 @@
     ],
     "chinese": "錦帆百翎",
     "effect": "2023-09-13 更新（增強） / 戰鬥中，提高自身 25%→50% 會心機率及 10%→20% 會心傷害；自身為主將時，提高友軍群體（2 人）2.5%→5% 會心機率、5%→10% 會心傷害及 5%→10% 倒戈 /  / 2020-01-08 更新（增強） / 戰鬥中，提高自身 25%→50% 會心機率及 10%→20% 會心傷害；自身為主將時，提高友軍群體（2人）2.5%→5% 會心機率及 5%→10% 會心傷害 / 註：額外添加會心傷害提高 20% 的效果，當主將時提高隊友 5% 會心率及 10% 會心傷害 /  / 原始版本 / 待補充",
-    "effectViet": "Cập nhật 2023-09-13 (tăng cường) / Trong chiến đấu, tăng 25%→50% xác suất Hội tâm và 10%→20% sát thương Hội tâm của bản thân; khi bản thân là chủ tướng, tăng cho nhóm quân đồng minh (2 người) 2.5%→5% xác suất Hội tâm, 5%→10% sát thương Hội tâm và 5%→10% Đảo qua /  / Cập nhật 2020-01-08 (tăng cường) / Trong chiến đấu, tăng 25%→50% xác suất Hội tâm và 10%→20% sát thương Hội tâm của bản thân; khi bản thân là chủ tướng, tăng cho nhóm quân đồng minh (2 người) 2.5%→5% xác suất Hội tâm và 5%→10% sát thương Hội tâm / Ghi chú: Bổ sung hiệu quả tăng 20% sát thương Hội tâm; khi là chủ tướng, tăng cho đồng đội 5% tỷ lệ Hội tâm và 10% sát thương Hội tâm /  / Phiên bản gốc / Chờ bổ sung",
+    "effectViet": "Cập nhật 2023-09-13 (tăng cường)\nTrong chiến đấu, tăng 25%→50% xác suất Hội tâm và 10%→20% sát thương Hội tâm của bản thân; khi bản thân là chủ tướng, tăng cho nhóm quân đồng minh (2 người) 2.5%→5% xác suất Hội tâm, 5%→10% sát thương Hội tâm và 5%→10% tỷ lệ hút máu từ sát thương binh khí.\n\nCập nhật 2020-01-08 (tăng cường)\nTrong chiến đấu, tăng 25%→50% xác suất Hội tâm và 10%→20% sát thương Hội tâm của bản thân; khi bản thân là chủ tướng, tăng cho nhóm quân đồng minh (2 người) 2.5%→5% xác suất Hội tâm và 5%→10% sát thương Hội tâm.\nGhi chú: Bổ sung hiệu quả tăng 20% sát thương Hội tâm; khi là chủ tướng, tăng cho đồng đội 5% tỷ lệ Hội tâm và 10% sát thương Hội tâm.\n\nPhiên bản gốc\nNguồn ghi: Chờ bổ sung.",
     "hanViet": "Cẩm Phàm Bách Linh",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088176127527943.png",
     "id": "tactic:cam-pham-bach-linh",
@@ -1315,19 +1315,19 @@
           "effectiveDate": "2023-09-13",
           "isCurrent": true,
           "labelVi": "Bản hiện hành",
-          "textVi": "Trong chiến đấu, tăng 25%→50% xác suất Hội tâm và 10%→20% sát thương Hội tâm của bản thân; khi bản thân là chủ tướng, tăng cho nhóm quân đồng minh (2 người) 2.5%→5% xác suất Hội tâm, 5%→10% sát thương Hội tâm và 5%→10% Đảo qua"
+          "textVi": "\nTrong chiến đấu, tăng 25%→50% xác suất Hội tâm và 10%→20% sát thương Hội tâm của bản thân; khi bản thân là chủ tướng, tăng cho nhóm quân đồng minh (2 người) 2.5%→5% xác suất Hội tâm, 5%→10% sát thương Hội tâm và 5%→10% tỷ lệ hút máu từ sát thương binh khí.\n\n"
         },
         {
           "effectiveDate": "2020-01-08",
           "isCurrent": false,
           "labelVi": "Bản 2020-01-08",
-          "textVi": "Trong chiến đấu, tăng 25%→50% xác suất Hội tâm và 10%→20% sát thương Hội tâm của bản thân; khi bản thân là chủ tướng, tăng cho nhóm quân đồng minh (2 người) 2.5%→5% xác suất Hội tâm và 5%→10% sát thương Hội tâm / Ghi chú: Bổ sung hiệu quả tăng 20% sát thương Hội tâm; khi là chủ tướng, tăng cho đồng đội 5% tỷ lệ Hội tâm và 10% sát thương Hội tâm"
+          "textVi": "\nTrong chiến đấu, tăng 25%→50% xác suất Hội tâm và 10%→20% sát thương Hội tâm của bản thân; khi bản thân là chủ tướng, tăng cho nhóm quân đồng minh (2 người) 2.5%→5% xác suất Hội tâm và 5%→10% sát thương Hội tâm.\nGhi chú: Bổ sung hiệu quả tăng 20% sát thương Hội tâm; khi là chủ tướng, tăng cho đồng đội 5% tỷ lệ Hội tâm và 10% sát thương Hội tâm.\n\n"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Chờ bổ sung"
+          "textVi": "\nNguồn ghi: Chờ bổ sung."
         }
       ]
     },
@@ -1619,7 +1619,7 @@
     ],
     "chinese": "勇烈持重",
     "effect": "2020-12-02 更新（削弱） / 受到傷害時，有 20%→35% 機率淨化自己負面效果，同時使隨機敵軍單體進入震懾（無法行動）狀態，持續 1 回合，該效果每回合最多觸發一次 /  / 2020-01-08 更新（增強） / 受到傷害時，有 20%→35% 機率淨化自己負面效果，同時使隨機敵軍單體進入震懾（無法行動）狀態，持續 1 回合 /  / 原始版本 / 受到傷害時，有 15%→30% 機率淨化自己負面效果，同時使隨機敵軍單體進入震懾（無法行動）狀態，持續 1 回合",
-    "effectViet": "Cập nhật 2020-12-02 (suy yếu) / Khi chịu sát thương, có 20%→35% xác suất thanh tẩy hiệu ứng bất lợi của bản thân, đồng thời khiến 1 mục tiêu quân địch ngẫu nhiên rơi vào trạng thái Chấn nhiếp (không thể hành động), kéo dài 1 lượt; hiệu quả này tối đa kích hoạt 1 lần mỗi lượt /  / Cập nhật 2020-01-08 (tăng cường) / Khi chịu sát thương, có 20%→35% xác suất thanh tẩy hiệu ứng bất lợi của bản thân, đồng thời khiến 1 mục tiêu quân địch ngẫu nhiên rơi vào trạng thái Chấn nhiếp (không thể hành động), kéo dài 1 lượt /  / Phiên bản gốc / Khi chịu sát thương, có 15%→30% xác suất thanh tẩy hiệu ứng bất lợi của bản thân, đồng thời khiến 1 mục tiêu quân địch ngẫu nhiên rơi vào trạng thái Chấn nhiếp (không thể hành động), kéo dài 1 lượt",
+    "effectViet": "Cập nhật 2020-12-02 (suy yếu) / Khi chịu sát thương, có 20%→35% xác suất thanh tẩy hiệu ứng bất lợi của bản thân, đồng thời khiến 1 mục tiêu quân địch ngẫu nhiên rơi vào trạng thái Chấn nhiếp (không thể hành động), kéo dài 1 lượt; hiệu quả này tối đa kích hoạt 1 lần mỗi lượt / Cập nhật 2020-01-08 (tăng cường) / Khi chịu sát thương, có 20%→35% xác suất thanh tẩy hiệu ứng bất lợi của bản thân, đồng thời khiến 1 mục tiêu quân địch ngẫu nhiên rơi vào trạng thái Chấn nhiếp (không thể hành động), kéo dài 1 lượt / Phiên bản gốc / Khi chịu sát thương, có 15%→30% xác suất thanh tẩy hiệu ứng bất lợi của bản thân, đồng thời khiến 1 mục tiêu quân địch ngẫu nhiên rơi vào trạng thái Chấn nhiếp (không thể hành động), kéo dài 1 lượt",
     "hanViet": "Dũng Liệt Trì Trọng",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088189285059589.png",
     "id": "tactic:dung-liet-tri-trong",
@@ -1739,7 +1739,7 @@
     ],
     "chinese": "以逸待勞",
     "effect": "2020-12-16 更新（增強） / 治療我軍群體（2 人，治療率 77%→154%，受智力影響），並使其下 3 次受到傷害分別降低（25%→50%、18.8%→37.5%、12.5%→25%，受智力影響），且下次受到控制狀態時有25%→40%（受智力影響）機率免疫 /  / 原始版本 / 治療我軍群體（2 人，治療率 54%→108%，受智力影響，並使其在受到下 2 次傷害時有 25%→40% 機率抵禦，可免疫傷害",
-    "effectViet": "Cập nhật 2020-12-16 (tăng cường) / Trị liệu một nhóm quân ta (2 người, tỷ lệ trị liệu 77%→154%, chịu ảnh hưởng của Trí lực), đồng thời lần lượt giảm sát thương phải chịu trong 3 lần kế tiếp (25%→50%, 18.8%→37.5%, 12.5%→25%, chịu ảnh hưởng của Trí lực), và khi nhận trạng thái khống chế lần kế tiếp có 25%→40% xác suất miễn nhiễm (chịu ảnh hưởng của Trí lực) /  / Phiên bản gốc / Trị liệu một nhóm quân ta (2 người, tỷ lệ trị liệu 54%→108%, chịu ảnh hưởng của Trí lực), đồng thời trong 2 lần chịu sát thương kế tiếp có 25%→40% xác suất Chống Đỡ, có thể miễn nhiễm sát thương",
+    "effectViet": "Cập nhật 2020-12-16 (tăng cường) / Trị liệu một nhóm quân ta (2 người, tỷ lệ trị liệu 77%→154%, chịu ảnh hưởng của Trí lực), đồng thời lần lượt giảm sát thương phải chịu trong 3 lần kế tiếp (25%→50%, 18.8%→37.5%, 12.5%→25%, chịu ảnh hưởng của Trí lực), và khi nhận trạng thái khống chế lần kế tiếp có 25%→40% xác suất miễn nhiễm (chịu ảnh hưởng của Trí lực) / Phiên bản gốc / Trị liệu một nhóm quân ta (2 người, tỷ lệ trị liệu 54%→108%, chịu ảnh hưởng của Trí lực), đồng thời trong 2 lần chịu sát thương kế tiếp có 25%→40% xác suất Chống Đỡ, có thể miễn nhiễm sát thương",
     "hanViet": "Dưỡng Sức Chống Địch",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088204799790080.png",
     "id": "tactic:duong-suc-chong-dich",
@@ -2599,7 +2599,7 @@
     ],
     "chinese": "陷陣突襲",
     "effect": "2023-09-27 更新（增強） / 戰鬥中，自身普通攻擊有 34%→68% 機率鎖定敵軍主將，自身突擊戰法發動機率提高 7.5%→15% 且自身成功發動突擊戰法後，對目標額外發動一次兵刃攻擊（傷害率 47.5%→95%，戰鬥第 3 回合起，此次傷害有 68% 機率額外攻擊一名敵軍)；自身為主將時，獲得 3%→6% 倒戈 /  / 2020-04-01 更新（增強） / 戰鬥中，使自己的普通攻擊有 34%→68% 機率鎖定敵軍主將，自身突擊戰法發動率提高 7.5%→15% 且自身成功發動突擊戰法後，對目標額外發動一次兵刃攻擊（傷害率 47.5%→95%）；自身為主將時，獲得 3%→6% 倒戈 / 註：突擊戰法發動率由 3%→6% 調整為 7.5%→15%，成功發動突擊後的額外兵刃傷害由 37.5%→75% 調整為 47.5%→95%，當張遼為主將時突擊戰法發動率提高效果調整為獲得 3%→6% 倒戈效果 /  / 原始版本 / →",
-    "effectViet": "Cập nhật 2023-09-27 (tăng cường) / Trong chiến đấu, đòn đánh thường của bản thân có 34%→68% xác suất khóa chủ tướng địch làm mục tiêu; xác suất phát động chiến pháp đột kích của bản thân tăng 7.5%→15%, và sau khi bản thân phát động thành công chiến pháp đột kích, tấn công binh khí thêm một lần vào mục tiêu (tỷ lệ sát thương 47.5%→95%; từ lượt 3 của trận chiến trở đi, sát thương lần này có 68% xác suất tấn công thêm một quân địch); khi bản thân là chủ tướng, nhận 3%→6% Đảo qua / / Cập nhật 2020-04-01 (tăng cường) / Trong chiến đấu, khiến đòn đánh thường của bản thân có 34%→68% xác suất khóa chủ tướng địch làm mục tiêu; tỷ lệ phát động chiến pháp đột kích của bản thân tăng 7.5%→15%, và sau khi bản thân phát động thành công chiến pháp đột kích, tấn công binh khí thêm một lần vào mục tiêu (tỷ lệ sát thương 47.5%→95%); khi bản thân là chủ tướng, nhận 3%→6% Đảo qua / Chú thích: tỷ lệ phát động chiến pháp đột kích được điều chỉnh từ 3%→6% thành 7.5%→15%; sát thương binh khí bổ sung sau khi phát động đột kích thành công được điều chỉnh từ 37.5%→75% thành 47.5%→95%; khi Trương Liêu là chủ tướng, hiệu ứng tăng tỷ lệ phát động chiến pháp đột kích được điều chỉnh thành nhận hiệu ứng 3%→6% Đảo qua / / Phiên bản gốc / →",
+    "effectViet": "Cập nhật 2023-09-27 (tăng cường)\nTrong chiến đấu, đòn đánh thường của bản thân có 34%→68% xác suất chọn chủ tướng địch làm mục tiêu; xác suất phát động chiến pháp đột kích của bản thân tăng 7.5%→15%. Sau khi bản thân phát động thành công chiến pháp đột kích, thực hiện thêm 1 đòn tấn công binh khí vào mục tiêu (tỷ lệ sát thương 47.5%→95%; từ lượt 3 của trận chiến trở đi, đòn này có 68% xác suất tấn công thêm 1 đơn vị địch). Khi bản thân là chủ tướng, nhận hiệu ứng hút máu binh khí 3%→6%.\n\nCập nhật 2020-04-01 (tăng cường)\nTrong chiến đấu, đòn đánh thường của bản thân có 34%→68% xác suất chọn chủ tướng địch làm mục tiêu; xác suất phát động chiến pháp đột kích của bản thân tăng 7.5%→15%. Sau khi bản thân phát động thành công chiến pháp đột kích, thực hiện thêm 1 đòn tấn công binh khí vào mục tiêu (tỷ lệ sát thương 47.5%→95%). Khi bản thân là chủ tướng, nhận hiệu ứng hút máu binh khí 3%→6%.\nChú thích: Xác suất phát động chiến pháp đột kích được điều chỉnh từ 3%→6% thành 7.5%→15%; sát thương binh khí bổ sung sau khi phát động đột kích thành công được điều chỉnh từ 37.5%→75% thành 47.5%→95%. Khi Trương Liêu là chủ tướng, hiệu ứng tăng xác suất phát động chiến pháp đột kích được đổi thành hiệu ứng hút máu binh khí 3%→6%.\n\nPhiên bản gốc\nNguồn chỉ có ký hiệu “→”, không có nội dung mô tả phiên bản gốc.",
     "hanViet": "Hãm Trận Đột Tập",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088201893137416.png",
     "id": "tactic:ham-tran-dot-tap",
@@ -2623,19 +2623,25 @@
           "effectiveDate": "2023-09-27",
           "isCurrent": true,
           "labelVi": "Bản hiện hành",
-          "textVi": "Trong chiến đấu, đòn đánh thường của bản thân có 34%→68% xác suất khóa chủ tướng địch làm mục tiêu; xác suất phát động chiến pháp đột kích của bản thân tăng 7.5%→15%, và sau khi bản thân phát động thành công chiến pháp đột kích, tấn công binh khí thêm một lần vào mục tiêu (tỷ lệ sát thương 47.5%→95%; từ lượt 3 của trận chiến trở đi, sát thương lần này có 68% xác suất tấn công thêm một quân địch); khi bản thân là chủ tướng, nhận 3%→6% Đảo qua"
+          "textVi": "\nTrong chiến đấu, đòn đánh thường của bản thân có 34%→68% xác suất chọn chủ tướng địch làm mục tiêu; xác suất phát động chiến pháp đột kích của bản thân tăng 7.5%→15%. Sau khi bản thân phát động thành công chiến pháp đột kích, thực hiện thêm 1 đòn tấn công binh khí vào mục tiêu (tỷ lệ sát thương 47.5%→95%; từ lượt 3 của trận chiến trở đi, đòn này có 68% xác suất tấn công thêm 1 đơn vị địch). Khi bản thân là chủ tướng, nhận hiệu ứng hút máu binh khí 3%→6%.\n\n"
         },
         {
           "effectiveDate": "2020-04-01",
           "isCurrent": false,
           "labelVi": "Bản 2020-04-01",
-          "textVi": "Trong chiến đấu, khiến đòn đánh thường của bản thân có 34%→68% xác suất khóa chủ tướng địch làm mục tiêu; tỷ lệ phát động chiến pháp đột kích của bản thân tăng 7.5%→15%, và sau khi bản thân phát động thành công chiến pháp đột kích, tấn công binh khí thêm một lần vào mục tiêu (tỷ lệ sát thương 47.5%→95%); khi bản thân là chủ tướng, nhận 3%→6% Đảo qua / Chú thích: tỷ lệ phát động chiến pháp đột kích được điều chỉnh từ 3%→6% thành 7.5%→15%; sát thương binh khí bổ sung sau khi phát động đột kích thành công được điều chỉnh từ 37.5%→75% thành 47.5%→95%; khi Trương Liêu là chủ tướng, hiệu ứng tăng tỷ lệ phát động chiến pháp đột kích được điều chỉnh thành nhận hiệu ứng 3%→6% Đảo qua"
+          "textVi": "\nTrong chiến đấu, đòn đánh thường của bản thân có 34%→68% xác suất chọn chủ tướng địch làm mục tiêu; xác suất phát động chiến pháp đột kích của bản thân tăng 7.5%→15%. Sau khi bản thân phát động thành công chiến pháp đột kích, thực hiện thêm 1 đòn tấn công binh khí vào mục tiêu (tỷ lệ sát thương 47.5%→95%). Khi bản thân là chủ tướng, nhận hiệu ứng hút máu binh khí 3%→6%.\nChú thích: Xác suất phát động chiến pháp đột kích được điều chỉnh từ 3%→6% thành 7.5%→15%; sát thương binh khí bổ sung sau khi phát động đột kích thành công được điều chỉnh từ 37.5%→75% thành 47.5%→95%. Khi Trương Liêu là chủ tướng, hiệu ứng tăng xác suất phát động chiến pháp đột kích được đổi thành hiệu ứng hút máu binh khí 3%→6%.\n\n"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "→"
+          "textVi": "\nNguồn chỉ có ký hiệu “→”, không có nội dung mô tả"
+        },
+        {
+          "effectiveDate": null,
+          "isCurrent": false,
+          "labelVi": "Bản gốc",
+          "textVi": "."
         }
       ]
     },
@@ -3034,7 +3040,7 @@
     ],
     "chinese": "胡笳餘音",
     "effect": "2021-01-13 更新 / 治療我軍群體（2 人，治療率 61%→122%，受智力影響）並有 50% 機率使自身及友軍單體造成的兵刃傷害和謀略傷害提高，受到的兵刃傷害和謀略傷害降低 13%→26%（受智力影響），獨立判斷，持續 2 回合 /  / 2020-01-08 更新（增強） / 治療我軍群體（2 人，治療率 61%→122%，受智力影響），並使自身及友軍單體受到的兵刃傷害和謀略傷害降低 13%→26%（受智力影響），持續 2 回合 / 註：額外使自身也獲得傷害降低效果 /  / 原始版本 / 待補充",
-    "effectViet": "Cập nhật 2021-01-13 / Trị liệu nhóm quân ta (2 người, tỷ lệ trị liệu 61%→122%, chịu ảnh hưởng của trí lực), đồng thời có 50% xác suất tăng 13%→26% sát thương binh khí và sát thương mưu lược do bản thân cùng 1 đơn vị quân ta gây ra, và giảm 13%→26% sát thương binh khí cùng sát thương mưu lược họ phải chịu (chịu ảnh hưởng của trí lực); phán định độc lập, kéo dài 2 lượt / Cập nhật 2020-01-08 (tăng cường) / Trị liệu nhóm quân ta (2 người, tỷ lệ trị liệu 61%→122%, chịu ảnh hưởng của trí lực), đồng thời giảm 13%→26% sát thương binh khí và sát thương mưu lược mà bản thân cùng 1 đơn vị quân ta phải chịu (chịu ảnh hưởng của trí lực), kéo dài 2 lượt / Chú thích: Bổ sung để bản thân cũng nhận hiệu quả giảm sát thương / Phiên bản gốc / Chờ bổ sung",
+    "effectViet": "Cập nhật 2021-01-13\nTrị liệu cho nhóm quân ta (2 người, tỷ lệ trị liệu 61%→122%, chịu ảnh hưởng của trí lực). Đồng thời, có 50% xác suất tăng 13%→26% sát thương binh khí và sát thương mưu lược do bản thân cùng 1 đơn vị đồng minh gây ra, và giảm 13%→26% sát thương binh khí và sát thương mưu lược họ phải chịu (chịu ảnh hưởng của trí lực); các hiệu ứng được xét độc lập, kéo dài 2 lượt.\n\nCập nhật 2020-01-08 (tăng cường)\nTrị liệu cho nhóm quân ta (2 người, tỷ lệ trị liệu 61%→122%, chịu ảnh hưởng của trí lực), đồng thời giảm 13%→26% sát thương binh khí và sát thương mưu lược mà bản thân cùng 1 đơn vị đồng minh phải chịu (chịu ảnh hưởng của trí lực), kéo dài 2 lượt.\nChú thích: Bổ sung hiệu ứng giảm sát thương cho cả bản thân.\n\nPhiên bản gốc\nNguồn ghi “Chờ bổ sung”, chưa cung cấp nội dung phiên bản gốc.",
     "hanViet": "Hồ Già Dư Âm",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088175246724101.png",
     "id": "tactic:ho-gia-du-am",
@@ -3058,19 +3064,25 @@
           "effectiveDate": "2021-01-13",
           "isCurrent": true,
           "labelVi": "Bản hiện hành",
-          "textVi": "Trị liệu nhóm quân ta (2 người, tỷ lệ trị liệu 61%→122%, chịu ảnh hưởng của trí lực), đồng thời có 50% xác suất tăng 13%→26% sát thương binh khí và sát thương mưu lược do bản thân cùng 1 đơn vị quân ta gây ra, và giảm 13%→26% sát thương binh khí cùng sát thương mưu lược họ phải chịu (chịu ảnh hưởng của trí lực); phán định độc lập, kéo dài 2 lượt"
+          "textVi": "\nTrị liệu cho nhóm quân ta (2 người, tỷ lệ trị liệu 61%→122%, chịu ảnh hưởng của trí lực). Đồng thời, có 50% xác suất tăng 13%→26% sát thương binh khí và sát thương mưu lược do bản thân cùng 1 đơn vị đồng minh gây ra, và giảm 13%→26% sát thương binh khí và sát thương mưu lược họ phải chịu (chịu ảnh hưởng của trí lực); các hiệu ứng được xét độc lập, kéo dài 2 lượt.\n\n"
         },
         {
           "effectiveDate": "2020-01-08",
           "isCurrent": false,
           "labelVi": "Bản 2020-01-08",
-          "textVi": "Trị liệu nhóm quân ta (2 người, tỷ lệ trị liệu 61%→122%, chịu ảnh hưởng của trí lực), đồng thời giảm 13%→26% sát thương binh khí và sát thương mưu lược mà bản thân cùng 1 đơn vị quân ta phải chịu (chịu ảnh hưởng của trí lực), kéo dài 2 lượt / Chú thích: Bổ sung để bản thân cũng nhận hiệu quả giảm sát thương"
+          "textVi": "\nTrị liệu cho nhóm quân ta (2 người, tỷ lệ trị liệu 61%→122%, chịu ảnh hưởng của trí lực), đồng thời giảm 13%→26% sát thương binh khí và sát thương mưu lược mà bản thân cùng 1 đơn vị đồng minh phải chịu (chịu ảnh hưởng của trí lực), kéo dài 2 lượt.\nChú thích: Bổ sung hiệu ứng giảm sát thương cho cả bản thân.\n\n"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Chờ bổ sung"
+          "textVi": "\nNguồn ghi “Chờ bổ sung”, chưa cung cấp nội dung"
+        },
+        {
+          "effectiveDate": null,
+          "isCurrent": false,
+          "labelVi": "Bản gốc",
+          "textVi": "."
         }
       ]
     },
@@ -3473,7 +3485,7 @@
     ],
     "chinese": "克敵制勝",
     "effect": "普通攻擊之後，對攻擊目標再次發起一次謀略傷害（傷害率90%→180%，受智力影響）；若目標處於潰逃、中毒或灼燒三種狀態中的至少一種，則有85%機率使目標進入虛弱狀態，持續1回合。",
-    "effectViet": "Sau khi đánh thường, tiếp tục gây một lần sát thương mưu lược lên mục tiêu bị tấn công (tỷ lệ sát thương 90%→180%, chịu ảnh hưởng của Trí lực); nếu mục tiêu đang có ít nhất một trong ba trạng thái Hội đào, Trúng độc hoặc Thiêu đốt, có 85% xác suất khiến mục tiêu rơi vào trạng thái Suy nhược, kéo dài 1 lượt.",
+    "effectViet": "Sau khi đánh thường, tiếp tục gây một lần sát thương mưu lược lên mục tiêu bị tấn công (tỷ lệ sát thương 90%→180%, chịu ảnh hưởng của Trí lực); nếu mục tiêu đang có ít nhất một trong ba trạng thái Tan tác, Trúng độc hoặc Thiêu đốt, có 85% xác suất khiến mục tiêu rơi vào trạng thái Suy nhược, kéo dài 1 lượt.",
     "hanViet": "Khắc Địch Chế Thắng",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088180007259144.png",
     "id": "tactic:khac-dich-che-thang",
@@ -3622,7 +3634,7 @@
     ],
     "chinese": "金丹秘術",
     "effect": "2020-01-08 更新 / 戰鬥前 2 回合，使我軍全體獲得 17.5%→35% 規避（可免疫傷害）效果，並在戰鬥第 3 回合開始，獲得休整狀態（每回合恢復一次兵力，回復 29%→58% ，受智力影響），持續 3 回合 / 註：規避效果由第 1 回合調整為前 2 回合，規避機率由 20%→40% 調整為 17.5%→35% /  / 原始版本 / 戰鬥第 1 回合，使我軍全體獲得 20%→40% 規避效果，可免疫傷害，並在戰鬥第 3 回合開始，獲得休整狀態（每回合恢復一次兵力，回復 29%→58% ，受智力影響），持續 3 回合",
-    "effectViet": "Cập nhật 2020-01-08 / Trong 2 lượt đầu trước khi chiến đấu, toàn quân ta nhận hiệu quả né tránh 17.5%→35% (có thể miễn nhiễm sát thương); từ đầu lượt 3 của trận đấu, nhận trạng thái nghỉ dưỡng (mỗi lượt hồi binh lực 1 lần, tỷ lệ hồi phục 29%→58%, chịu ảnh hưởng của trí lực), kéo dài 3 lượt / Chú thích: Hiệu quả né tránh được điều chỉnh từ lượt 1 thành 2 lượt đầu; xác suất né tránh được điều chỉnh từ 20%→40% thành 17.5%→35% / Phiên bản gốc / Ở lượt 1 của trận đấu, toàn quân ta nhận hiệu quả né tránh 20%→40%, có thể miễn nhiễm sát thương; từ đầu lượt 3 của trận đấu, nhận trạng thái nghỉ dưỡng (mỗi lượt hồi binh lực 1 lần, tỷ lệ hồi phục 29%→58%, chịu ảnh hưởng của trí lực), kéo dài 3 lượt",
+    "effectViet": "Cập nhật 2020-01-08\nTrong 2 lượt đầu của trận chiến, toàn quân ta nhận hiệu ứng né tránh 17.5%→35% (có thể miễn nhiễm sát thương). Từ đầu lượt 3 của trận chiến, toàn quân ta nhận trạng thái nghỉ dưỡng (mỗi lượt hồi phục binh lực 1 lần, tỷ lệ hồi phục 29%→58%, chịu ảnh hưởng của trí lực), kéo dài 3 lượt.\nChú thích: Hiệu ứng né tránh được điều chỉnh từ lượt 1 thành 2 lượt đầu; xác suất né tránh được điều chỉnh từ 20%→40% thành 17.5%→35%.\n\nPhiên bản gốc\nỞ lượt 1 của trận chiến, toàn quân ta nhận hiệu ứng né tránh 20%→40% (có thể miễn nhiễm sát thương). Từ đầu lượt 3 của trận chiến, toàn quân ta nhận trạng thái nghỉ dưỡng (mỗi lượt hồi phục binh lực 1 lần, tỷ lệ hồi phục 29%→58%, chịu ảnh hưởng của trí lực), kéo dài 3 lượt.",
     "hanViet": "Kim Đan Bí Thuật",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088214899674113.png",
     "id": "tactic:kim-dan-bi-thuat",
@@ -3646,13 +3658,13 @@
           "effectiveDate": "2020-01-08",
           "isCurrent": true,
           "labelVi": "Bản hiện hành",
-          "textVi": "Trong 2 lượt đầu trước khi chiến đấu, toàn quân ta nhận hiệu quả né tránh 17.5%→35% (có thể miễn nhiễm sát thương); từ đầu lượt 3 của trận đấu, nhận trạng thái nghỉ dưỡng (mỗi lượt hồi binh lực 1 lần, tỷ lệ hồi phục 29%→58%, chịu ảnh hưởng của trí lực), kéo dài 3 lượt / Chú thích: Hiệu quả né tránh được điều chỉnh từ lượt 1 thành 2 lượt đầu; xác suất né tránh được điều chỉnh từ 20%→40% thành 17.5%→35%"
+          "textVi": "\nTrong 2 lượt đầu của trận chiến, toàn quân ta nhận hiệu ứng né tránh 17.5%→35% (có thể miễn nhiễm sát thương). Từ đầu lượt 3 của trận chiến, toàn quân ta nhận trạng thái nghỉ dưỡng (mỗi lượt hồi phục binh lực 1 lần, tỷ lệ hồi phục 29%→58%, chịu ảnh hưởng của trí lực), kéo dài 3 lượt.\nChú thích: Hiệu ứng né tránh được điều chỉnh từ lượt 1 thành 2 lượt đầu; xác suất né tránh được điều chỉnh từ 20%→40% thành 17.5%→35%.\n\n"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Ở lượt 1 của trận đấu, toàn quân ta nhận hiệu quả né tránh 20%→40%, có thể miễn nhiễm sát thương; từ đầu lượt 3 của trận đấu, nhận trạng thái nghỉ dưỡng (mỗi lượt hồi binh lực 1 lần, tỷ lệ hồi phục 29%→58%, chịu ảnh hưởng của trí lực), kéo dài 3 lượt"
+          "textVi": "\nỞ lượt 1 của trận chiến, toàn quân ta nhận hiệu ứng né tránh 20%→40% (có thể miễn nhiễm sát thương). Từ đầu lượt 3 của trận chiến, toàn quân ta nhận trạng thái nghỉ dưỡng (mỗi lượt hồi phục binh lực 1 lần, tỷ lệ hồi phục 29%→58%, chịu ảnh hưởng của trí lực), kéo dài 3 lượt."
         }
       ]
     },
@@ -3971,7 +3983,7 @@
     ],
     "chinese": "奇兵間道",
     "effect": "2023-10-11 更新（增強） / 戰鬥中，自身發動準備戰法時，有 75% 機率（受武力影響）減少 1 回合準備時間，戰鬥前 4 回合，主動戰法造成的傷害提高 15%→30%（受武力影響），第 5 回合時，若自身兵力低於 50%，獲得 22.5%→45% 倒戈，直到戰鬥結束 /  / 原始版本 / 戰鬥中，自身發動準備戰法時，有 75% 機率（受武力影響）減少 1 回合準備時間，戰鬥前 4 回合，主動戰法造成的傷害提高 15%→30%（受武力影響），第 5 回合時，若自身兵力低於 50%，獲得 22.5%→45% 倒戈，否則自身主動戰法發動率提升 3%→6%，直到戰鬥結束",
-    "effectViet": "Cập nhật 2023-10-11 (tăng cường): Trong chiến đấu, khi bản thân phát động chiến pháp cần chuẩn bị, có 75% xác suất (chịu ảnh hưởng của vũ lực) giảm 1 lượt chuẩn bị; trong 4 lượt đầu của trận đấu, sát thương do chiến pháp chủ động gây ra tăng 15%→30% (chịu ảnh hưởng của vũ lực); ở lượt 5, nếu binh lực bản thân thấp hơn 50%, nhận 22.5%→45% đảo qua cho đến khi trận đấu kết thúc. Phiên bản gốc: Trong chiến đấu, khi bản thân phát động chiến pháp cần chuẩn bị, có 75% xác suất (chịu ảnh hưởng của vũ lực) giảm 1 lượt chuẩn bị; trong 4 lượt đầu của trận đấu, sát thương do chiến pháp chủ động gây ra tăng 15%→30% (chịu ảnh hưởng của vũ lực); ở lượt 5, nếu binh lực bản thân thấp hơn 50%, nhận 22.5%→45% đảo qua, nếu không thì tỷ lệ phát động chiến pháp chủ động của bản thân tăng 3%→6%, kéo dài cho đến khi trận đấu kết thúc.",
+    "effectViet": "Cập nhật 2023-10-11 (tăng cường)\nTrong chiến đấu, khi bản thân phát động chiến pháp cần chuẩn bị, có 75% xác suất (chịu ảnh hưởng của vũ lực) giảm 1 lượt chuẩn bị. Trong 4 lượt đầu của trận chiến, sát thương do chiến pháp chủ động gây ra tăng 15%→30% (chịu ảnh hưởng của vũ lực). Ở lượt 5, nếu binh lực bản thân thấp hơn 50%, nhận hiệu ứng hút máu binh khí 22.5%→45% cho đến khi trận chiến kết thúc.\n\nPhiên bản gốc\nTrong chiến đấu, khi bản thân phát động chiến pháp cần chuẩn bị, có 75% xác suất (chịu ảnh hưởng của vũ lực) giảm 1 lượt chuẩn bị. Trong 4 lượt đầu của trận chiến, sát thương do chiến pháp chủ động gây ra tăng 15%→30% (chịu ảnh hưởng của vũ lực). Ở lượt 5, nếu binh lực bản thân thấp hơn 50%, nhận hiệu ứng hút máu binh khí 22.5%→45%; nếu không, xác suất phát động chiến pháp chủ động của bản thân tăng 3%→6%. Hiệu ứng nhận được kéo dài cho đến khi trận chiến kết thúc.",
     "hanViet": "Kỳ Binh Gian Đạo",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/7/785177378907942921.png",
     "id": "tactic:ky-binh-gian-dao",
@@ -3995,13 +4007,13 @@
           "effectiveDate": "2023-10-11",
           "isCurrent": true,
           "labelVi": "Bản hiện hành",
-          "textVi": "Trong chiến đấu, khi bản thân phát động chiến pháp cần chuẩn bị, có 75% xác suất (chịu ảnh hưởng của vũ lực) giảm 1 lượt chuẩn bị; trong 4 lượt đầu của trận đấu, sát thương do chiến pháp chủ động gây ra tăng 15%→30% (chịu ảnh hưởng của vũ lực); ở lượt 5, nếu binh lực bản thân thấp hơn 50%, nhận 22.5%→45% đảo qua cho đến khi trận đấu kết thúc."
+          "textVi": "\nTrong chiến đấu, khi bản thân phát động chiến pháp cần chuẩn bị, có 75% xác suất (chịu ảnh hưởng của vũ lực) giảm 1 lượt chuẩn bị. Trong 4 lượt đầu của trận chiến, sát thương do chiến pháp chủ động gây ra tăng 15%→30% (chịu ảnh hưởng của vũ lực). Ở lượt 5, nếu binh lực bản thân thấp hơn 50%, nhận hiệu ứng hút máu binh khí 22.5%→45% cho đến khi trận chiến kết thúc.\n\n"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Trong chiến đấu, khi bản thân phát động chiến pháp cần chuẩn bị, có 75% xác suất (chịu ảnh hưởng của vũ lực) giảm 1 lượt chuẩn bị; trong 4 lượt đầu của trận đấu, sát thương do chiến pháp chủ động gây ra tăng 15%→30% (chịu ảnh hưởng của vũ lực); ở lượt 5, nếu binh lực bản thân thấp hơn 50%, nhận 22.5%→45% đảo qua, nếu không thì tỷ lệ phát động chiến pháp chủ động của bản thân tăng 3%→6%, kéo dài cho đến khi trận đấu kết thúc."
+          "textVi": "\nTrong chiến đấu, khi bản thân phát động chiến pháp cần chuẩn bị, có 75% xác suất (chịu ảnh hưởng của vũ lực) giảm 1 lượt chuẩn bị. Trong 4 lượt đầu của trận chiến, sát thương do chiến pháp chủ động gây ra tăng 15%→30% (chịu ảnh hưởng của vũ lực). Ở lượt 5, nếu binh lực bản thân thấp hơn 50%, nhận hiệu ứng hút máu binh khí 22.5%→45%; nếu không, xác suất phát động chiến pháp chủ động của bản thân tăng 3%→6%. Hiệu ứng nhận được kéo dài cho đến khi trận chiến kết thúc."
         }
       ]
     },
@@ -4147,7 +4159,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Sát thương binh khí quần thể",
-      "exchangeConditionVi": "Họa Loạn Trường An / Quần·Lý Thôi × 1 / Quần·Quách Dĩ × 1 / Quần·bốn sao × 8",
+      "exchangeConditionVi": "Họa Loạn Trường An: Lý Thôi thuộc phe Quần × 1; Quách Dĩ thuộc phe Quần × 1; tướng bốn sao thuộc phe Quần × 8.",
       "inheritedFromIds": [],
       "maxUsers": 1,
       "missingFields": [],
@@ -4221,7 +4233,7 @@
     ],
     "chinese": "臨戰先登",
     "effect": "2021-07-21 更新（增強） / 對敵軍群體（2 人）造成兵刃攻擊（傷害率 75%→150%），之後自己進入虛弱狀態（無法造成傷害），持續 1 回合 /  / 2020-04-01 更新 / 對敵軍群體（2 人）造成兵刃攻擊（傷害率 67.5%→135%），之後自己進入虛弱狀態（無法造成傷害），持續 1 回合 /  / 原始版本 / 對敵軍群體（2 人）造成兵刃攻擊（傷害率 109%→218%），之後自己進入虛弱狀態（無法造成傷害），持續 1 回合（發動機率 60%）",
-    "effectViet": "Cập nhật 2021-07-21 (tăng cường) / Gây tấn công binh khí lên nhóm quân địch (2 người) (tỷ lệ sát thương 75%→150%), sau đó bản thân rơi vào trạng thái Suy nhược (không thể gây sát thương), kéo dài 1 lượt /  / Cập nhật 2020-04-01 / Gây tấn công binh khí lên nhóm quân địch (2 người) (tỷ lệ sát thương 67.5%→135%), sau đó bản thân rơi vào trạng thái Suy nhược (không thể gây sát thương), kéo dài 1 lượt /  / Phiên bản gốc / Gây tấn công binh khí lên nhóm quân địch (2 người) (tỷ lệ sát thương 109%→218%), sau đó bản thân rơi vào trạng thái Suy nhược (không thể gây sát thương), kéo dài 1 lượt (xác suất phát động 60%)",
+    "effectViet": "Cập nhật 2021-07-21 (tăng cường): Gây sát thương binh khí lên nhóm quân địch (2 người) (tỷ lệ sát thương 75%→150%), sau đó bản thân rơi vào trạng thái Suy nhược (không thể gây sát thương), kéo dài 1 lượt.\n\nCập nhật 2020-04-01: Gây sát thương binh khí lên nhóm quân địch (2 người) (tỷ lệ sát thương 67.5%→135%), sau đó bản thân rơi vào trạng thái Suy nhược (không thể gây sát thương), kéo dài 1 lượt.\n\nPhiên bản gốc: Gây sát thương binh khí lên nhóm quân địch (2 người) (tỷ lệ sát thương 109%→218%), sau đó bản thân rơi vào trạng thái Suy nhược (không thể gây sát thương), kéo dài 1 lượt (xác suất phát động 60%).",
     "hanViet": "Lâm Chiến Tiên Đăng",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088199640796169.png",
     "id": "tactic:lam-chien-tien-dang",
@@ -4245,19 +4257,19 @@
           "effectiveDate": "2021-07-21",
           "isCurrent": true,
           "labelVi": "Bản hiện hành",
-          "textVi": "Gây tấn công binh khí lên nhóm quân địch (2 người) (tỷ lệ sát thương 75%→150%), sau đó bản thân rơi vào trạng thái Suy nhược (không thể gây sát thương), kéo dài 1 lượt"
+          "textVi": "Gây sát thương binh khí lên nhóm quân địch (2 người) (tỷ lệ sát thương 75%→150%), sau đó bản thân rơi vào trạng thái Suy nhược (không thể gây sát thương), kéo dài 1 lượt.\n\n"
         },
         {
           "effectiveDate": "2020-04-01",
           "isCurrent": false,
           "labelVi": "Bản 2020-04-01",
-          "textVi": "Gây tấn công binh khí lên nhóm quân địch (2 người) (tỷ lệ sát thương 67.5%→135%), sau đó bản thân rơi vào trạng thái Suy nhược (không thể gây sát thương), kéo dài 1 lượt"
+          "textVi": "Gây sát thương binh khí lên nhóm quân địch (2 người) (tỷ lệ sát thương 67.5%→135%), sau đó bản thân rơi vào trạng thái Suy nhược (không thể gây sát thương), kéo dài 1 lượt.\n\n"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Gây tấn công binh khí lên nhóm quân địch (2 người) (tỷ lệ sát thương 109%→218%), sau đó bản thân rơi vào trạng thái Suy nhược (không thể gây sát thương), kéo dài 1 lượt (xác suất phát động 60%)"
+          "textVi": "Gây sát thương binh khí lên nhóm quân địch (2 người) (tỷ lệ sát thương 109%→218%), sau đó bản thân rơi vào trạng thái Suy nhược (không thể gây sát thương), kéo dài 1 lượt (xác suất phát động 60%)."
         }
       ]
     },
@@ -4324,7 +4336,7 @@
     ],
     "chinese": "青州兵",
     "effect": "2021-09-29 更新（重做） / 將槍兵進階為沖堅毀銳的青州兵：戰鬥前 2 回合，使我軍群體（2 人）受到普通攻擊時對攻擊者進行一次反擊（傷害率 36%→72%），第三回合回合開始時依次為我軍全體恢復兵力，優先完全恢復我軍兵力最低單體，再恢復我軍其他單體（總治療率 90%→180%，受武力影響，額外受敵軍造成傷害影響）；若曹操統領，治療額外受統率影響 /  / 2020-07-29 更新（增強） / 將槍兵進階為沖堅毀銳的青州兵：部隊造成傷害時，有 28% 機率使本次傷害提升 15%→30%，並使攻擊目標下次造成的傷害降低 15%→30%，若曹操統領，則造成傷害降低效果受統率影響 /  / 原始版本 / 將槍兵進階為沖堅毀銳的青州兵：部隊造成傷害時，有 25% 機率使本次傷害提升 15%→30%，並使攻擊目標下次造成的傷害降低 11%→22%，若曹操統領，則造成傷害降低效果受統率影響",
-    "effectViet": "Cập nhật 2021-09-29 (làm lại) / Nâng cấp binh chủng Thương thành quân Thanh Châu xông thành phá nhuệ: trong 2 hiệp đầu trận, khi nhóm quân ta (2 người) chịu tấn công thường, phản kích người tấn công 1 lần (tỷ lệ sát thương 36%→72%); khi bắt đầu hiệp 3, lần lượt hồi phục binh lực cho toàn thể quân ta, ưu tiên hồi phục hoàn toàn cho 1 đơn vị quân ta có binh lực thấp nhất, sau đó hồi phục các đơn vị quân ta khác (tổng tỷ lệ trị liệu 90%→180%, chịu ảnh hưởng của Võ lực và chịu thêm ảnh hưởng bởi sát thương quân địch gây ra); nếu Tào Tháo thống lĩnh, trị liệu còn chịu thêm ảnh hưởng của Thống suất /  / Cập nhật 2020-07-29 (tăng cường) / Nâng cấp binh chủng Thương thành quân Thanh Châu xông thành phá nhuệ: khi đội quân gây sát thương, có 28% xác suất tăng 15%→30% sát thương lần này, đồng thời giảm 15%→30% sát thương do mục tiêu bị tấn công gây ra trong lần kế tiếp; nếu Tào Tháo thống lĩnh, hiệu ứng giảm sát thương gây ra chịu ảnh hưởng của Thống suất /  / Phiên bản gốc / Nâng cấp binh chủng Thương thành quân Thanh Châu xông thành phá nhuệ: khi đội quân gây sát thương, có 25% xác suất tăng 15%→30% sát thương lần này, đồng thời giảm 11%→22% sát thương do mục tiêu bị tấn công gây ra trong lần kế tiếp; nếu Tào Tháo thống lĩnh, hiệu ứng giảm sát thương gây ra chịu ảnh hưởng của Thống suất",
+    "effectViet": "Cập nhật 2021-09-29 (làm lại): Nâng cấp quân thuộc binh chủng Thương thành quân Thanh Châu, chuyên phá vỡ phòng tuyến và đánh tan quân tinh nhuệ: trong 2 hiệp đầu trận, khi nhóm quân ta (2 người) chịu tấn công thường, phản kích người tấn công 1 lần (tỷ lệ sát thương 36%→72%); khi bắt đầu hiệp 3, lần lượt hồi phục binh lực cho toàn thể quân ta, ưu tiên hồi phục hoàn toàn cho 1 đơn vị quân ta có binh lực thấp nhất, sau đó hồi phục các đơn vị quân ta khác (tổng tỷ lệ trị liệu 90%→180%, chịu ảnh hưởng của Võ lực và chịu thêm ảnh hưởng bởi sát thương quân địch gây ra); nếu Tào Tháo thống lĩnh, trị liệu còn chịu thêm ảnh hưởng của Thống suất.\n\nCập nhật 2020-07-29 (tăng cường): Nâng cấp quân thuộc binh chủng Thương thành quân Thanh Châu, chuyên phá vỡ phòng tuyến và đánh tan quân tinh nhuệ: khi đội quân gây sát thương, có 28% xác suất tăng 15%→30% sát thương lần này, đồng thời giảm 15%→30% sát thương do mục tiêu bị tấn công gây ra trong lần kế tiếp; nếu Tào Tháo thống lĩnh, hiệu ứng giảm sát thương gây ra chịu ảnh hưởng của Thống suất.\n\nPhiên bản gốc: Nâng cấp quân thuộc binh chủng Thương thành quân Thanh Châu, chuyên phá vỡ phòng tuyến và đánh tan quân tinh nhuệ: khi đội quân gây sát thương, có 25% xác suất tăng 15%→30% sát thương lần này, đồng thời giảm 11%→22% sát thương do mục tiêu bị tấn công gây ra trong lần kế tiếp; nếu Tào Tháo thống lĩnh, hiệu ứng giảm sát thương gây ra chịu ảnh hưởng của Thống suất.",
     "hanViet": "Lính Thanh Châu",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088188014185472.png",
     "id": "tactic:linh-thanh-chau",
@@ -4348,19 +4360,19 @@
           "effectiveDate": "2021-09-29",
           "isCurrent": true,
           "labelVi": "Bản hiện hành",
-          "textVi": "Nâng cấp binh chủng Thương thành quân Thanh Châu xông thành phá nhuệ: trong 2 hiệp đầu trận, khi nhóm quân ta (2 người) chịu tấn công thường, phản kích người tấn công 1 lần (tỷ lệ sát thương 36%→72%); khi bắt đầu hiệp 3, lần lượt hồi phục binh lực cho toàn thể quân ta, ưu tiên hồi phục hoàn toàn cho 1 đơn vị quân ta có binh lực thấp nhất, sau đó hồi phục các đơn vị quân ta khác (tổng tỷ lệ trị liệu 90%→180%, chịu ảnh hưởng của Võ lực và chịu thêm ảnh hưởng bởi sát thương quân địch gây ra); nếu Tào Tháo thống lĩnh, trị liệu còn chịu thêm ảnh hưởng của Thống suất"
+          "textVi": "Nâng cấp quân thuộc binh chủng Thương thành quân Thanh Châu, chuyên phá vỡ phòng tuyến và đánh tan quân tinh nhuệ: trong 2 hiệp đầu trận, khi nhóm quân ta (2 người) chịu tấn công thường, phản kích người tấn công 1 lần (tỷ lệ sát thương 36%→72%); khi bắt đầu hiệp 3, lần lượt hồi phục binh lực cho toàn thể quân ta, ưu tiên hồi phục hoàn toàn cho 1 đơn vị quân ta có binh lực thấp nhất, sau đó hồi phục các đơn vị quân ta khác (tổng tỷ lệ trị liệu 90%→180%, chịu ảnh hưởng của Võ lực và chịu thêm ảnh hưởng bởi sát thương quân địch gây ra); nếu Tào Tháo thống lĩnh, trị liệu còn chịu thêm ảnh hưởng của Thống suất.\n\n"
         },
         {
           "effectiveDate": "2020-07-29",
           "isCurrent": false,
           "labelVi": "Bản 2020-07-29",
-          "textVi": "Nâng cấp binh chủng Thương thành quân Thanh Châu xông thành phá nhuệ: khi đội quân gây sát thương, có 28% xác suất tăng 15%→30% sát thương lần này, đồng thời giảm 15%→30% sát thương do mục tiêu bị tấn công gây ra trong lần kế tiếp; nếu Tào Tháo thống lĩnh, hiệu ứng giảm sát thương gây ra chịu ảnh hưởng của Thống suất"
+          "textVi": "Nâng cấp quân thuộc binh chủng Thương thành quân Thanh Châu, chuyên phá vỡ phòng tuyến và đánh tan quân tinh nhuệ: khi đội quân gây sát thương, có 28% xác suất tăng 15%→30% sát thương lần này, đồng thời giảm 15%→30% sát thương do mục tiêu bị tấn công gây ra trong lần kế tiếp; nếu Tào Tháo thống lĩnh, hiệu ứng giảm sát thương gây ra chịu ảnh hưởng của Thống suất.\n\n"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Nâng cấp binh chủng Thương thành quân Thanh Châu xông thành phá nhuệ: khi đội quân gây sát thương, có 25% xác suất tăng 15%→30% sát thương lần này, đồng thời giảm 11%→22% sát thương do mục tiêu bị tấn công gây ra trong lần kế tiếp; nếu Tào Tháo thống lĩnh, hiệu ứng giảm sát thương gây ra chịu ảnh hưởng của Thống suất"
+          "textVi": "Nâng cấp quân thuộc binh chủng Thương thành quân Thanh Châu, chuyên phá vỡ phòng tuyến và đánh tan quân tinh nhuệ: khi đội quân gây sát thương, có 25% xác suất tăng 15%→30% sát thương lần này, đồng thời giảm 11%→22% sát thương do mục tiêu bị tấn công gây ra trong lần kế tiếp; nếu Tào Tháo thống lĩnh, hiệu ứng giảm sát thương gây ra chịu ảnh hưởng của Thống suất."
         }
       ]
     },
@@ -4383,7 +4395,7 @@
     ],
     "chinese": "裸衣血戰",
     "effect": "2020-06-03 更新 / 戰鬥中無法發動主動戰法，戰鬥前 3 回合，獲得 45%→90% 連擊及 5%→10% 倒戈，並使自身及敵軍單體統率降低 40% /  / 原始版本 / 戰鬥中無法發動主動戰法，戰鬥前 3 回合，獲得 45%→90% 連擊，並使自身及敵軍單體統率降低 40%，自身武力提高雙方降低統率的 20%→40%",
-    "effectViet": "Cập nhật 2020-06-03 / Trong chiến đấu không thể phát động chiến pháp chủ động; trong 3 hiệp đầu trận, nhận 45%→90% Liên Kích và 5%→10% Đảo Giáo, đồng thời khiến Thống suất của bản thân và 1 đơn vị địch giảm 40% /  / Phiên bản gốc / Trong chiến đấu không thể phát động chiến pháp chủ động; trong 3 hiệp đầu trận, nhận 45%→90% Liên Kích, đồng thời khiến Thống suất của bản thân và 1 đơn vị địch giảm 40%; Võ lực của bản thân tăng bằng 20%→40% tổng lượng Thống suất bị giảm của hai bên",
+    "effectViet": "Cập nhật 2020-06-03\nTrong chiến đấu không thể phát động chiến pháp chủ động; trong 3 hiệp đầu trận, nhận 45%→90% Liên Kích và 5%→10% Đảo Giáo, đồng thời khiến Thống suất của bản thân và 1 đơn vị địch giảm 40%.\n\nPhiên bản gốc\nTrong chiến đấu không thể phát động chiến pháp chủ động; trong 3 hiệp đầu trận, nhận 45%→90% Liên Kích, đồng thời khiến Thống suất của bản thân và 1 đơn vị địch giảm 40%; Võ lực của bản thân tăng bằng 20%→40% tổng lượng Thống suất bị giảm của hai bên.",
     "hanViet": "Lõa Y Huyết Chiến",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088174755990531.png",
     "id": "tactic:loa-y-huyet-chien",
@@ -4407,13 +4419,13 @@
           "effectiveDate": "2020-06-03",
           "isCurrent": true,
           "labelVi": "Bản hiện hành",
-          "textVi": "Trong chiến đấu không thể phát động chiến pháp chủ động; trong 3 hiệp đầu trận, nhận 45%→90% Liên Kích và 5%→10% Đảo Giáo, đồng thời khiến Thống suất của bản thân và 1 đơn vị địch giảm 40%"
+          "textVi": "\nTrong chiến đấu không thể phát động chiến pháp chủ động; trong 3 hiệp đầu trận, nhận 45%→90% Liên Kích và 5%→10% Đảo Giáo, đồng thời khiến Thống suất của bản thân và 1 đơn vị địch giảm 40%.\n\n"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Trong chiến đấu không thể phát động chiến pháp chủ động; trong 3 hiệp đầu trận, nhận 45%→90% Liên Kích, đồng thời khiến Thống suất của bản thân và 1 đơn vị địch giảm 40%; Võ lực của bản thân tăng bằng 20%→40% tổng lượng Thống suất bị giảm của hai bên"
+          "textVi": "\nTrong chiến đấu không thể phát động chiến pháp chủ động; trong 3 hiệp đầu trận, nhận 45%→90% Liên Kích, đồng thời khiến Thống suất của bản thân và 1 đơn vị địch giảm 40%; Võ lực của bản thân tăng bằng 20%→40% tổng lượng Thống suất bị giảm của hai bên."
         }
       ]
     },
@@ -4439,7 +4451,7 @@
     ],
     "chinese": "累世立名",
     "effect": "2020-01-08 更新 / 註：主將時提高統率效果由 50 變更為 40→80 /  / 原始版本 / 待補充",
-    "effectViet": "Cập nhật 2020-01-08 / Chú thích: Khi làm chủ tướng, hiệu quả tăng Thống suất được đổi từ 50 thành 40→80 /  / Phiên bản gốc / Chờ bổ sung",
+    "effectViet": "Cập nhật 2020-01-08\nChú thích: Khi làm chủ tướng, mức tăng Thống suất được đổi từ 50 thành 40→80.\n\nPhiên bản gốc\nNguồn ghi “Chờ bổ sung”, chưa cung cấp nội dung phiên bản gốc.",
     "hanViet": "Lũy Thế Lập Danh",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088186231606273.png",
     "id": "tactic:luy-the-lap-danh",
@@ -4463,13 +4475,19 @@
           "effectiveDate": "2020-01-08",
           "isCurrent": true,
           "labelVi": "Bản hiện hành",
-          "textVi": "Chú thích: Khi làm chủ tướng, hiệu quả tăng Thống suất được đổi từ 50 thành 40→80"
+          "textVi": "\nChú thích: Khi làm chủ tướng, mức tăng Thống suất được đổi từ 50 thành 40→80.\n\n"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Chờ bổ sung"
+          "textVi": "\nNguồn ghi “Chờ bổ sung”, chưa cung cấp nội dung"
+        },
+        {
+          "effectiveDate": null,
+          "isCurrent": false,
+          "labelVi": "Bản gốc",
+          "textVi": "."
         }
       ]
     },
@@ -5083,7 +5101,7 @@
     ],
     "chinese": "才辯機捷",
     "effect": "使自身施加的灼燒、水攻、中毒、潰逃、沙暴、叛逃狀態傷害提高45%→90%，休整和急救的恢復量提高15%→30%。",
-    "effectViet": "Tăng 45%→90% sát thương trạng thái thiêu đốt, thủy công, trúng độc, hội đào, bão cát và phản loạn do bản thân áp dụng; tăng 15%→30% lượng hồi phục từ nghỉ dưỡng và cấp cứu.",
+    "effectViet": "Tăng 45%→90% sát thương của các trạng thái thiêu đốt, thủy công, trúng độc, tháo chạy, bão cát và đào ngũ do bản thân áp dụng; tăng 15%→30% lượng hồi phục từ nghỉ dưỡng và cấp cứu.",
     "hanViet": "Tài Biện Cơ Tiệp",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/7/785177059020959750.png",
     "id": "tactic:tai-bien-co-tiep",
@@ -5308,7 +5326,7 @@
     ],
     "chinese": "肉身鐵壁",
     "effect": "戰鬥中，為友軍承擔（15%→30%，友軍主將為30%→60%）的傷害效果（兵刃傷害額外受自身統率影響），當友軍兵力高於70%時，使其造成傷害提高12%→-18%（受統率影響），若主將為孫權，造成傷害提高的基礎值增加至20%→30%",
-    "effectViet": "Trong chiến đấu, gánh chịu thay cho đồng minh 15%→30% hiệu quả sát thương (nếu đồng minh là chủ tướng thì 30%→60%; sát thương binh khí còn chịu thêm ảnh hưởng của Thống suất bản thân). Khi binh lực đồng minh cao hơn 70%, tăng 12%→-18% sát thương họ gây ra (chịu ảnh hưởng của Thống suất); nếu chủ tướng là Tôn Quyền, giá trị cơ bản của mức tăng sát thương tăng lên 20%→30%.",
+    "effectViet": "Trong chiến đấu, gánh chịu thay cho đồng minh 15%→30% hiệu quả sát thương (nếu đồng minh là chủ tướng thì 30%→60%; sát thương binh khí còn chịu thêm ảnh hưởng của Thống suất bản thân). Khi binh lực đồng minh cao hơn 70%, tăng 12%→-18% sát thương họ gây ra (chịu ảnh hưởng của Thống suất); nếu chủ tướng là Tôn Quyền, giá trị cơ bản của mức tăng sát thương tăng lên 20%→30%. Lưu ý: Nguồn ghi nguyên mức “12%→-18%” dù mô tả là tăng sát thương; dấu âm chưa được xác minh và nguồn không có bản sửa hay chú thích làm rõ.",
     "hanViet": "Nhục Thân Thiết Bích",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088198726437889.png",
     "id": "tactic:nhuc-than-thiet-bich",
@@ -5352,7 +5370,7 @@
     ],
     "chinese": "搦戰群雄",
     "effect": "2020-04-01 更新（增強） / 註：受到兵刃傷害降低效果現在受武力影響 /  / 原始版本 / 待補充",
-    "effectViet": "Cập nhật 2020-04-01 (tăng cường) / Chú thích: Hiệu quả giảm sát thương binh khí phải chịu hiện chịu ảnh hưởng của Vũ lực /  / Phiên bản gốc / Chờ bổ sung",
+    "effectViet": "Cập nhật 2020-04-01 (tăng cường)\nChú thích: Hiệu quả giảm sát thương binh khí nhận vào nay chịu ảnh hưởng của Vũ lực.\n\nPhiên bản gốc: Chờ bổ sung.",
     "hanViet": "Nạch Chiến Quần Hùng",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088214664793092.png",
     "id": "tactic:nach-chien-quan-hung",
@@ -5376,13 +5394,13 @@
           "effectiveDate": "2020-04-01",
           "isCurrent": true,
           "labelVi": "Bản hiện hành",
-          "textVi": "Chú thích: Hiệu quả giảm sát thương binh khí phải chịu hiện chịu ảnh hưởng của Vũ lực"
+          "textVi": "\nChú thích: Hiệu quả giảm sát thương binh khí nhận vào nay chịu ảnh hưởng của Vũ lực.\n\n"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Chờ bổ sung"
+          "textVi": "Chờ bổ sung."
         }
       ]
     },
@@ -5416,7 +5434,8 @@
     "linkScore": 1.0,
     "lookup": {
       "acquiredFromVi": [
-        "Phạt"
+        "Phạt. Lưu ý: Giá trị nguồn được chọn ghi “Phạt”, nhưng trường võ tướng nguồn trong cùng bản ghi lại ghi Tôn Quyền. Danh tính của “Phạt” chưa được làm rõ trong nguồn",
+        "chưa xác định trường nào có thẩm quyền để giải quyết mâu thuẫn này."
       ],
       "activationRate": 0.45,
       "conditions": [],
@@ -5638,7 +5657,7 @@
     ],
     "chinese": "符命自立",
     "effect": "早期獲得「玉璽」提升雙爆機率(隨回合遞減)；為主將時提主動發動率。",
-    "effectViet": "Sớm nhận được “Ngọc Tỷ” để tăng tỷ lệ bạo kích kép (giảm dần theo số lượt); khi là chủ tướng, tăng tỷ lệ phát động chiến pháp chủ động.",
+    "effectViet": "Sớm nhận được “Ngọc Tỷ” để tăng tỷ lệ bạo kích kép (giảm dần theo số lượt); khi là chủ tướng, tăng tỷ lệ phát động chiến pháp chủ động. Lưu ý: Nguồn chưa nêu các trị số tăng, công thức giảm theo lượt hoặc định nghĩa rõ hai loại bạo kích trong “bạo kích kép”.",
     "hanViet": "Phù Mệnh Tự Lập",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088197484923909.png",
     "id": "tactic:phu-menh-tu-lap",
@@ -5770,7 +5789,7 @@
     ],
     "chinese": "錦帆軍",
     "effect": "2023-05-09 更新（增強） / 將弓兵進階為氣蓋千夫的錦帆軍：部隊普通攻擊時，有 45% 機率使目標進入潰逃狀態（傷害率 32%→64%，受武力影響），持續 2 回合；若目標已經潰逃則造成兵刃攻擊（傷害率 55%→110%）並恢復傷害量的 30% 兵力；若甘寧統領，提高友軍 3%→6% 會心 /  / 原始版本 / 將弓兵進階為氣蓋千夫的錦帆軍：部隊普通攻擊時，有 40% 機率使目標進入潰逃狀態（傷害率 32%→64%，受武力影響），持續 2 回合；若目標已經潰逃則造成兵刃攻擊（傷害率 55%→110%）並恢復傷害量的 30% 兵力；若甘寧統領，提高友軍 3%→6% 會心",
-    "effectViet": "Cập nhật 2023-05-09 (tăng cường) / Nâng cấp cung binh thành Cẩm Phàm Quân với khí thế át nghìn quân: khi bộ đội tấn công thường, có 45% xác suất khiến mục tiêu rơi vào trạng thái Tan Tác (tỷ lệ sát thương 32%→64%, chịu ảnh hưởng của Võ lực), kéo dài 2 hiệp; nếu mục tiêu đã Tan Tác thì gây một đòn tấn công binh khí (tỷ lệ sát thương 55%→110%) và hồi phục binh lực bằng 30% lượng sát thương; nếu Cam Ninh thống lĩnh, tăng 3%→6% Hội Tâm cho quân đồng minh /  / Phiên bản gốc / Nâng cấp cung binh thành Cẩm Phàm Quân với khí thế át nghìn quân: khi bộ đội tấn công thường, có 40% xác suất khiến mục tiêu rơi vào trạng thái Tan Tác (tỷ lệ sát thương 32%→64%, chịu ảnh hưởng của Võ lực), kéo dài 2 hiệp; nếu mục tiêu đã Tan Tác thì gây một đòn tấn công binh khí (tỷ lệ sát thương 55%→110%) và hồi phục binh lực bằng 30% lượng sát thương; nếu Cam Ninh thống lĩnh, tăng 3%→6% Hội Tâm cho quân đồng minh",
+    "effectViet": "Cập nhật 2023-05-09 (tăng cường)\nNâng cấp cung binh thành Cẩm Phàm Quân với khí thế át nghìn quân: khi bộ đội tấn công thường, có 45% xác suất khiến mục tiêu rơi vào trạng thái Tan Tác (tỷ lệ sát thương 32%→64%, chịu ảnh hưởng của Võ lực), kéo dài 2 hiệp; nếu mục tiêu đã Tan Tác thì gây một đòn tấn công binh khí (tỷ lệ sát thương 55%→110%) và hồi phục binh lực bằng 30% lượng sát thương; nếu Cam Ninh thống lĩnh, tăng 3%→6% Hội Tâm cho quân đồng minh.\n\nPhiên bản gốc\nNâng cấp cung binh thành Cẩm Phàm Quân với khí thế át nghìn quân: khi bộ đội tấn công thường, có 40% xác suất khiến mục tiêu rơi vào trạng thái Tan Tác (tỷ lệ sát thương 32%→64%, chịu ảnh hưởng của Võ lực), kéo dài 2 hiệp; nếu mục tiêu đã Tan Tác thì gây một đòn tấn công binh khí (tỷ lệ sát thương 55%→110%) và hồi phục binh lực bằng 30% lượng sát thương; nếu Cam Ninh thống lĩnh, tăng 3%→6% Hội Tâm cho quân đồng minh.",
     "hanViet": "Quân Cẩm Phàm",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088214404746244.png",
     "id": "tactic:quan-cam-pham",
@@ -5794,13 +5813,13 @@
           "effectiveDate": "2023-05-09",
           "isCurrent": true,
           "labelVi": "Bản hiện hành",
-          "textVi": "Nâng cấp cung binh thành Cẩm Phàm Quân với khí thế át nghìn quân: khi bộ đội tấn công thường, có 45% xác suất khiến mục tiêu rơi vào trạng thái Tan Tác (tỷ lệ sát thương 32%→64%, chịu ảnh hưởng của Võ lực), kéo dài 2 hiệp; nếu mục tiêu đã Tan Tác thì gây một đòn tấn công binh khí (tỷ lệ sát thương 55%→110%) và hồi phục binh lực bằng 30% lượng sát thương; nếu Cam Ninh thống lĩnh, tăng 3%→6% Hội Tâm cho quân đồng minh"
+          "textVi": "\nNâng cấp cung binh thành Cẩm Phàm Quân với khí thế át nghìn quân: khi bộ đội tấn công thường, có 45% xác suất khiến mục tiêu rơi vào trạng thái Tan Tác (tỷ lệ sát thương 32%→64%, chịu ảnh hưởng của Võ lực), kéo dài 2 hiệp; nếu mục tiêu đã Tan Tác thì gây một đòn tấn công binh khí (tỷ lệ sát thương 55%→110%) và hồi phục binh lực bằng 30% lượng sát thương; nếu Cam Ninh thống lĩnh, tăng 3%→6% Hội Tâm cho quân đồng minh.\n\n"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Nâng cấp cung binh thành Cẩm Phàm Quân với khí thế át nghìn quân: khi bộ đội tấn công thường, có 40% xác suất khiến mục tiêu rơi vào trạng thái Tan Tác (tỷ lệ sát thương 32%→64%, chịu ảnh hưởng của Võ lực), kéo dài 2 hiệp; nếu mục tiêu đã Tan Tác thì gây một đòn tấn công binh khí (tỷ lệ sát thương 55%→110%) và hồi phục binh lực bằng 30% lượng sát thương; nếu Cam Ninh thống lĩnh, tăng 3%→6% Hội Tâm cho quân đồng minh"
+          "textVi": "\nNâng cấp cung binh thành Cẩm Phàm Quân với khí thế át nghìn quân: khi bộ đội tấn công thường, có 40% xác suất khiến mục tiêu rơi vào trạng thái Tan Tác (tỷ lệ sát thương 32%→64%, chịu ảnh hưởng của Võ lực), kéo dài 2 hiệp; nếu mục tiêu đã Tan Tác thì gây một đòn tấn công binh khí (tỷ lệ sát thương 55%→110%) và hồi phục binh lực bằng 30% lượng sát thương; nếu Cam Ninh thống lĩnh, tăng 3%→6% Hội Tâm cho quân đồng minh."
         }
       ]
     },
@@ -6763,7 +6782,7 @@
     ],
     "chinese": "垂心萬物",
     "effect": "奇數回合提升武力最高隊友傷害並賦予連擊判定；偶數回合群體治療。",
-    "effectViet": "Ở hiệp lẻ, tăng sát thương cho đồng đội có võ lực cao nhất và trao phán định liên kích; ở hiệp chẵn, trị liệu theo nhóm.",
+    "effectViet": "Ở hiệp lẻ, tăng sát thương cho đồng đội có võ lực cao nhất và trao phán định liên kích; ở hiệp chẵn, trị liệu theo nhóm. Lưu ý: Nguồn chưa làm rõ “trao phán định liên kích” là cấp trạng thái liên kích hay thực hiện kiểm tra kích hoạt, cũng chưa nêu số lần, xác suất hoặc thời hạn của cơ chế này.",
     "hanViet": "Thùy Tâm Vạn Vật",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/7/785176823598870534.png",
     "id": "tactic:thuy-tam-van-vat",
@@ -6985,7 +7004,7 @@
     ],
     "chinese": "神機莫測",
     "effect": "更新 / 使敵軍單體混亂 2 回合，並對自身外的敵我全體依次判定：若未混亂則有 25%→35% 機率使其混亂 2 回合；友軍已混亂時，解除其負面狀態（賈詡為主將時，提高目標友軍 6%→12% 造成傷害，受智力影響，持續 2 回合）；敵軍已混亂時，對其造成謀略攻擊（傷害率 87.5%→175%，受智力影響） /  / 2020-04-01 更新 / 使敵軍單體混亂 2 回合，並對自身外的敵我全體依次判定：若未混亂則有 25%→35% 機率使其混亂 2 回合；友軍已混亂時，解除其負面狀態（自身為主將時，提高其 6%→12% 造成傷害，受智力影響，持續 2 回合）；敵軍已混亂時，對其造成謀略攻擊（傷害率 87.5%→175%，受智力影響） /  / 2020-02-19 更新 / 註：戰法名稱由「營謀亂武」調整為「神機莫測」 /  / 原始版本 / 待補充",
-    "effectViet": "Cập nhật / Khiến 1 đơn vị địch hỗn loạn trong 2 lượt, đồng thời lần lượt phán định toàn thể địch và ta ngoại trừ bản thân: nếu chưa hỗn loạn thì có 25%→35% xác suất khiến mục tiêu hỗn loạn trong 2 lượt; nếu đồng minh đã hỗn loạn, giải trừ trạng thái bất lợi của mục tiêu (khi Giả Hủ là chủ tướng, tăng 6%→12% sát thương do đồng minh mục tiêu gây ra, chịu ảnh hưởng của trí lực, duy trì 2 lượt); nếu quân địch đã hỗn loạn, gây cho mục tiêu một đòn tấn công mưu lược (tỷ lệ sát thương 87.5%→175%, chịu ảnh hưởng của trí lực) / / Cập nhật 2020-04-01 / Khiến 1 đơn vị địch hỗn loạn trong 2 lượt, đồng thời lần lượt phán định toàn thể địch và ta ngoại trừ bản thân: nếu chưa hỗn loạn thì có 25%→35% xác suất khiến mục tiêu hỗn loạn trong 2 lượt; nếu đồng minh đã hỗn loạn, giải trừ trạng thái bất lợi của mục tiêu (khi bản thân là chủ tướng, tăng 6%→12% sát thương do mục tiêu gây ra, chịu ảnh hưởng của trí lực, duy trì 2 lượt); nếu quân địch đã hỗn loạn, gây cho mục tiêu một đòn tấn công mưu lược (tỷ lệ sát thương 87.5%→175%, chịu ảnh hưởng của trí lực) / / Cập nhật 2020-02-19 / Chú thích: tên chiến pháp được đổi từ “Doanh Mưu Loạn Vũ” thành “Thần Cơ Mạc Trắc” / / Phiên bản gốc / Chờ bổ sung",
+    "effectViet": "Cập nhật (nguồn không ghi ngày):\nKhiến 1 đơn vị địch hỗn loạn trong 2 lượt, đồng thời lần lượt xét toàn thể quân địch và quân ta, ngoại trừ bản thân: nếu mục tiêu chưa hỗn loạn, có 25%→35% xác suất khiến mục tiêu hỗn loạn trong 2 lượt; nếu đồng minh đã hỗn loạn, giải trừ trạng thái bất lợi của mục tiêu (khi Giả Hủ là chủ tướng, tăng 6%→12% sát thương do đồng minh mục tiêu gây ra, chịu ảnh hưởng của trí lực, duy trì 2 lượt); nếu quân địch đã hỗn loạn, gây cho mục tiêu một đòn tấn công mưu lược (tỷ lệ sát thương 87.5%→175%, chịu ảnh hưởng của trí lực).\n\nCập nhật 2020-04-01:\nKhiến 1 đơn vị địch hỗn loạn trong 2 lượt, đồng thời lần lượt xét toàn thể quân địch và quân ta, ngoại trừ bản thân: nếu mục tiêu chưa hỗn loạn, có 25%→35% xác suất khiến mục tiêu hỗn loạn trong 2 lượt; nếu đồng minh đã hỗn loạn, giải trừ trạng thái bất lợi của mục tiêu (khi bản thân là chủ tướng, tăng 6%→12% sát thương do mục tiêu gây ra, chịu ảnh hưởng của trí lực, duy trì 2 lượt); nếu quân địch đã hỗn loạn, gây cho mục tiêu một đòn tấn công mưu lược (tỷ lệ sát thương 87.5%→175%, chịu ảnh hưởng của trí lực).\n\nCập nhật 2020-02-19:\nChú thích: Tên chiến pháp được đổi từ “Doanh Mưu Loạn Vũ” thành “Thần Cơ Mạc Trắc”.\n\nPhiên bản gốc:\nNguồn ghi: “Chờ bổ sung”.",
     "hanViet": "Thần Cơ Mạc Trắc",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088206959856641.png",
     "id": "tactic:than-co-mac-trac",
@@ -7009,19 +7028,19 @@
           "effectiveDate": "2020-04-01",
           "isCurrent": true,
           "labelVi": "Bản hiện hành",
-          "textVi": "Khiến 1 đơn vị địch hỗn loạn trong 2 lượt, đồng thời lần lượt phán định toàn thể địch và ta ngoại trừ bản thân: nếu chưa hỗn loạn thì có 25%→35% xác suất khiến mục tiêu hỗn loạn trong 2 lượt; nếu đồng minh đã hỗn loạn, giải trừ trạng thái bất lợi của mục tiêu (khi bản thân là chủ tướng, tăng 6%→12% sát thương do mục tiêu gây ra, chịu ảnh hưởng của trí lực, duy trì 2 lượt); nếu quân địch đã hỗn loạn, gây cho mục tiêu một đòn tấn công mưu lược (tỷ lệ sát thương 87.5%→175%, chịu ảnh hưởng của trí lực)"
+          "textVi": "\nKhiến 1 đơn vị địch hỗn loạn trong 2 lượt, đồng thời lần lượt xét toàn thể quân địch và quân ta, ngoại trừ bản thân: nếu mục tiêu chưa hỗn loạn, có 25%→35% xác suất khiến mục tiêu hỗn loạn trong 2 lượt; nếu đồng minh đã hỗn loạn, giải trừ trạng thái bất lợi của mục tiêu (khi bản thân là chủ tướng, tăng 6%→12% sát thương do mục tiêu gây ra, chịu ảnh hưởng của trí lực, duy trì 2 lượt); nếu quân địch đã hỗn loạn, gây cho mục tiêu một đòn tấn công mưu lược (tỷ lệ sát thương 87.5%→175%, chịu ảnh hưởng của trí lực).\n\n"
         },
         {
           "effectiveDate": "2020-02-19",
           "isCurrent": false,
           "labelVi": "Bản 2020-02-19",
-          "textVi": "Chú thích: tên chiến pháp được đổi từ “Doanh Mưu Loạn Vũ” thành “Thần Cơ Mạc Trắc”"
+          "textVi": "\nChú thích: Tên chiến pháp được đổi từ “Doanh Mưu Loạn Vũ” thành “Thần Cơ Mạc Trắc”.\n\n"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Chờ bổ sung"
+          "textVi": "\nNguồn ghi: “Chờ bổ sung”."
         }
       ]
     },
@@ -7430,7 +7449,7 @@
     ],
     "chinese": "守而必固",
     "effect": "2023-05-09 更新（增強） / 戰鬥開始時，嘲諷敵軍主將（強迫目標攻擊自己），並使自己的統率提高 30→60 點，持續 4 回合 /  / 原始版本 / 戰鬥開始時，嘲諷敵軍主將（強迫目標攻擊自己），並使自己的統率提高 20→40 點，持續 4 回合",
-    "effectViet": "Cập nhật 2023-05-09 (tăng cường) / Khi trận chiến bắt đầu, khiêu khích chủ tướng địch (buộc mục tiêu tấn công bản thân), đồng thời tăng 30→60 điểm thống lĩnh của bản thân, duy trì 4 lượt / / Phiên bản gốc / Khi trận chiến bắt đầu, khiêu khích chủ tướng địch (buộc mục tiêu tấn công bản thân), đồng thời tăng 20→40 điểm thống lĩnh của bản thân, duy trì 4 lượt",
+    "effectViet": "Cập nhật 2023-05-09 (tăng cường):\nKhi trận chiến bắt đầu, khiêu khích chủ tướng địch (buộc mục tiêu tấn công bản thân), đồng thời tăng 30→60 điểm Thống suất của bản thân, duy trì 4 lượt.\n\nPhiên bản gốc:\nKhi trận chiến bắt đầu, khiêu khích chủ tướng địch (buộc mục tiêu tấn công bản thân), đồng thời tăng 20→40 điểm Thống suất của bản thân, duy trì 4 lượt.",
     "hanViet": "Thủ Nhi Tất Cố",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088193793936390.png",
     "id": "tactic:thu-nhi-tat-co",
@@ -7458,13 +7477,13 @@
           "effectiveDate": "2023-05-09",
           "isCurrent": true,
           "labelVi": "Bản hiện hành",
-          "textVi": "Khi trận chiến bắt đầu, khiêu khích chủ tướng địch (buộc mục tiêu tấn công bản thân), đồng thời tăng 30→60 điểm thống lĩnh của bản thân, duy trì 4 lượt"
+          "textVi": "\nKhi trận chiến bắt đầu, khiêu khích chủ tướng địch (buộc mục tiêu tấn công bản thân), đồng thời tăng 30→60 điểm Thống suất của bản thân, duy trì 4 lượt.\n\n"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Khi trận chiến bắt đầu, khiêu khích chủ tướng địch (buộc mục tiêu tấn công bản thân), đồng thời tăng 20→40 điểm thống lĩnh của bản thân, duy trì 4 lượt"
+          "textVi": "\nKhi trận chiến bắt đầu, khiêu khích chủ tướng địch (buộc mục tiêu tấn công bản thân), đồng thời tăng 20→40 điểm Thống suất của bản thân, duy trì 4 lượt."
         }
       ]
     },
@@ -7746,7 +7765,7 @@
     ],
     "chinese": "潛龍陣",
     "effect": "2023-02-22 更新（增強） / 我軍三名武將陣營均不相同時，主將提升 7.5%→15% 武力、智力、速度、統率，造成傷害降低 15%，副將造成傷害提高 7.5%→15%，受到傷害降低 7.5%→15% 且可以觸發戰法的主將效果；若我軍主將的任意戰法擁有主將效果，使其失去該效果且屬性提升值降低為 2.5%→5% /  / 原始版本 / 我軍三名武將陣營均不相同時，主將提升 7.5%→15% 武力、智力、速度、統率，造成傷害降低 30%，副將造成傷害提高 7.5%→15%，受到傷害降低 5%→10% 且可以觸發戰法的主將效果；若我軍主將的任意戰法擁有主將效果，使其失去該效果且屬性提升值降低為 2.5%→5%",
-    "effectViet": "Cập nhật 2023-02-22 (tăng cường) / Khi ba võ tướng quân ta đều thuộc các thế lực khác nhau, chủ tướng tăng 7.5%→15% vũ lực, trí lực, tốc độ và thống suất, sát thương gây ra giảm 15%; phó tướng gây sát thương tăng 7.5%→15%, sát thương phải chịu giảm 7.5%→15% và có thể kích hoạt hiệu ứng chủ tướng của chiến pháp. Nếu bất kỳ chiến pháp nào của chủ tướng quân ta có hiệu ứng chủ tướng, khiến chiến pháp đó mất hiệu ứng này và mức tăng thuộc tính giảm còn 2.5%→5% / / Phiên bản gốc / Khi ba võ tướng quân ta đều thuộc các thế lực khác nhau, chủ tướng tăng 7.5%→15% vũ lực, trí lực, tốc độ và thống suất, sát thương gây ra giảm 30%; phó tướng gây sát thương tăng 7.5%→15%, sát thương phải chịu giảm 5%→10% và có thể kích hoạt hiệu ứng chủ tướng của chiến pháp. Nếu bất kỳ chiến pháp nào của chủ tướng quân ta có hiệu ứng chủ tướng, khiến chiến pháp đó mất hiệu ứng này và mức tăng thuộc tính giảm còn 2.5%→5%",
+    "effectViet": "Cập nhật 2023-02-22 (tăng cường):\nKhi ba võ tướng quân ta đều thuộc các thế lực khác nhau, chủ tướng được tăng 7.5%→15% vũ lực, trí lực, tốc độ và thống suất, sát thương gây ra giảm 15%; phó tướng được tăng 7.5%→15% sát thương gây ra, giảm 7.5%→15% sát thương phải chịu và có thể kích hoạt hiệu ứng chủ tướng của chiến pháp. Nếu bất kỳ chiến pháp nào của chủ tướng quân ta có hiệu ứng chủ tướng thì chiến pháp đó mất hiệu ứng này và mức tăng thuộc tính giảm còn 2.5%→5%.\n\nPhiên bản gốc:\nKhi ba võ tướng quân ta đều thuộc các thế lực khác nhau, chủ tướng được tăng 7.5%→15% vũ lực, trí lực, tốc độ và thống suất, sát thương gây ra giảm 30%; phó tướng được tăng 7.5%→15% sát thương gây ra, giảm 5%→10% sát thương phải chịu và có thể kích hoạt hiệu ứng chủ tướng của chiến pháp. Nếu bất kỳ chiến pháp nào của chủ tướng quân ta có hiệu ứng chủ tướng thì chiến pháp đó mất hiệu ứng này và mức tăng thuộc tính giảm còn 2.5%→5%.",
     "hanViet": "Tiềm Long Trận",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/7/785173762650337283.png",
     "id": "tactic:tiem-long-tran",
@@ -7770,13 +7789,13 @@
           "effectiveDate": "2023-02-22",
           "isCurrent": true,
           "labelVi": "Bản hiện hành",
-          "textVi": "Khi ba võ tướng quân ta đều thuộc các thế lực khác nhau, chủ tướng tăng 7.5%→15% vũ lực, trí lực, tốc độ và thống suất, sát thương gây ra giảm 15%; phó tướng gây sát thương tăng 7.5%→15%, sát thương phải chịu giảm 7.5%→15% và có thể kích hoạt hiệu ứng chủ tướng của chiến pháp. Nếu bất kỳ chiến pháp nào của chủ tướng quân ta có hiệu ứng chủ tướng, khiến chiến pháp đó mất hiệu ứng này và mức tăng thuộc tính giảm còn 2.5%→5%"
+          "textVi": "\nKhi ba võ tướng quân ta đều thuộc các thế lực khác nhau, chủ tướng được tăng 7.5%→15% vũ lực, trí lực, tốc độ và thống suất, sát thương gây ra giảm 15%; phó tướng được tăng 7.5%→15% sát thương gây ra, giảm 7.5%→15% sát thương phải chịu và có thể kích hoạt hiệu ứng chủ tướng của chiến pháp. Nếu bất kỳ chiến pháp nào của chủ tướng quân ta có hiệu ứng chủ tướng thì chiến pháp đó mất hiệu ứng này và mức tăng thuộc tính giảm còn 2.5%→5%.\n\n"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Khi ba võ tướng quân ta đều thuộc các thế lực khác nhau, chủ tướng tăng 7.5%→15% vũ lực, trí lực, tốc độ và thống suất, sát thương gây ra giảm 30%; phó tướng gây sát thương tăng 7.5%→15%, sát thương phải chịu giảm 5%→10% và có thể kích hoạt hiệu ứng chủ tướng của chiến pháp. Nếu bất kỳ chiến pháp nào của chủ tướng quân ta có hiệu ứng chủ tướng, khiến chiến pháp đó mất hiệu ứng này và mức tăng thuộc tính giảm còn 2.5%→5%"
+          "textVi": "\nKhi ba võ tướng quân ta đều thuộc các thế lực khác nhau, chủ tướng được tăng 7.5%→15% vũ lực, trí lực, tốc độ và thống suất, sát thương gây ra giảm 30%; phó tướng được tăng 7.5%→15% sát thương gây ra, giảm 5%→10% sát thương phải chịu và có thể kích hoạt hiệu ứng chủ tướng của chiến pháp. Nếu bất kỳ chiến pháp nào của chủ tướng quân ta có hiệu ứng chủ tướng thì chiến pháp đó mất hiệu ứng này và mức tăng thuộc tính giảm còn 2.5%→5%."
         }
       ]
     },
@@ -8241,7 +8260,7 @@
     ],
     "chinese": "鴆毒",
     "effect": "對敵軍單體施加鴆酒，降低其30% → 60%武力（受智力影響），持續1回合，1回合後毒發造成謀略攻擊（傷害率113% → 226%，受智力影響）同時降低其30 → 60點統率（受智力影響），可無限疊加，直到戰鬥結束",
-    "effectViet": "Gây rượu độc cho một đơn vị địch, giảm 30%→60% Vũ lực của mục tiêu (chịu ảnh hưởng của Trí lực), kéo dài 1 lượt. Sau 1 lượt, độc phát gây tấn công mưu lược (tỷ lệ sát thương 113%→226%, chịu ảnh hưởng của Trí lực), đồng thời giảm 30→60 điểm Thống suất của mục tiêu (chịu ảnh hưởng của Trí lực); có thể cộng dồn không giới hạn cho đến khi trận chiến kết thúc.",
+    "effectViet": "Đầu độc một đơn vị địch bằng rượu độc, giảm 30%→60% Vũ lực của mục tiêu (chịu ảnh hưởng của Trí lực), kéo dài 1 lượt. Sau 1 lượt, độc phát gây tấn công mưu lược (tỷ lệ sát thương 113%→226%, chịu ảnh hưởng của Trí lực), đồng thời giảm 30→60 điểm Thống suất của mục tiêu (chịu ảnh hưởng của Trí lực); có thể cộng dồn không giới hạn cho đến khi trận chiến kết thúc.",
     "hanViet": "Trậm Độc",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088194636991492.png",
     "id": "tactic:tram-doc",
@@ -8369,7 +8388,7 @@
     ],
     "chinese": "西涼鐵騎",
     "effect": "2019-12-04 更新（增強） / 將騎兵進階為橫行天下的西涼鐵騎：戰鬥前 3 回合，提高我軍全體 12.5%→25% 會心機率（觸發時兵刃傷害提高 100%）；若馬騰統領，則提高會心機率受速度影響 /  / 原始版本 / 將騎兵進階為橫行天下的西涼鐵騎：戰鬥前 3 回合，提高我軍全體 12.5%→25% 會心機率（觸發時兵刃傷害提高 100%）",
-    "effectViet": "Cập nhật 2019-12-04 (tăng cường) / Nâng cấp binh chủng Kỵ thành Tây Lương Thiết Kỵ tung hoành thiên hạ: Trong 3 lượt đầu của trận chiến, tăng 12.5%→25% xác suất Hội tâm cho toàn quân ta (khi kích hoạt, sát thương binh khí tăng 100%); nếu Mã Đằng thống lĩnh, mức tăng xác suất Hội tâm chịu ảnh hưởng của Tốc độ /  / Phiên bản gốc / Nâng cấp binh chủng Kỵ thành Tây Lương Thiết Kỵ tung hoành thiên hạ: Trong 3 lượt đầu của trận chiến, tăng 12.5%→25% xác suất Hội tâm cho toàn quân ta (khi kích hoạt, sát thương binh khí tăng 100%)",
+    "effectViet": "Cập nhật 2019-12-04 (tăng cường):\nNâng cấp Kỵ binh thành Tây Lương Thiết Kỵ tung hoành thiên hạ: Trong 3 lượt đầu của trận chiến, tăng 12.5%→25% xác suất Hội tâm cho toàn quân ta (khi kích hoạt, sát thương binh khí tăng 100%); nếu Mã Đằng thống lĩnh, mức tăng xác suất Hội tâm chịu ảnh hưởng của Tốc độ.\n\nPhiên bản gốc:\nNâng cấp Kỵ binh thành Tây Lương Thiết Kỵ tung hoành thiên hạ: Trong 3 lượt đầu của trận chiến, tăng 12.5%→25% xác suất Hội tâm cho toàn quân ta (khi kích hoạt, sát thương binh khí tăng 100%).",
     "hanViet": "Tây Lương Thiết Kỵ",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088212118850568.png",
     "id": "tactic:tay-luong-thiet-ky",
@@ -8395,13 +8414,13 @@
           "effectiveDate": "2019-12-04",
           "isCurrent": true,
           "labelVi": "Bản hiện hành",
-          "textVi": "Nâng cấp binh chủng Kỵ thành Tây Lương Thiết Kỵ tung hoành thiên hạ: Trong 3 lượt đầu của trận chiến, tăng 12.5%→25% xác suất Hội tâm cho toàn quân ta (khi kích hoạt, sát thương binh khí tăng 100%); nếu Mã Đằng thống lĩnh, mức tăng xác suất Hội tâm chịu ảnh hưởng của Tốc độ"
+          "textVi": "\nNâng cấp Kỵ binh thành Tây Lương Thiết Kỵ tung hoành thiên hạ: Trong 3 lượt đầu của trận chiến, tăng 12.5%→25% xác suất Hội tâm cho toàn quân ta (khi kích hoạt, sát thương binh khí tăng 100%); nếu Mã Đằng thống lĩnh, mức tăng xác suất Hội tâm chịu ảnh hưởng của Tốc độ.\n\n"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Nâng cấp binh chủng Kỵ thành Tây Lương Thiết Kỵ tung hoành thiên hạ: Trong 3 lượt đầu của trận chiến, tăng 12.5%→25% xác suất Hội tâm cho toàn quân ta (khi kích hoạt, sát thương binh khí tăng 100%)"
+          "textVi": "\nNâng cấp Kỵ binh thành Tây Lương Thiết Kỵ tung hoành thiên hạ: Trong 3 lượt đầu của trận chiến, tăng 12.5%→25% xác suất Hội tâm cho toàn quân ta (khi kích hoạt, sát thương binh khí tăng 100%)."
         }
       ]
     },
@@ -8511,7 +8530,7 @@
     ],
     "chinese": "象兵",
     "effect": "2020-02-19 更新 / 將騎兵進階為象兵：部隊基礎攻城值提高 25% 但行軍速度降低 50%，戰鬥中受到傷害時，將傷害的 25%→50% 延後於 3 回合內逐步結算，並使結算傷害降低 10%→20%，自身有灼燒狀態時，獲得 50% 群攻及混亂狀態；若統領為蠻族，部隊每多 1 名蠻族武將結算的傷害額外降低 5%→10% /  / 原始版本 / 將騎兵進階為橫行無忌的象兵：部隊基礎攻城值提高 25% 但行軍速度降低 50%，將受到傷害的 25%→50% 延後於 3 回合內逐步結算，且結算傷害降低 10%→20%，自身灼燒時，獲得 50% 群攻及混亂；若蠻族統領，部隊每多 1 名蠻族武將結算的傷害額外降低 5%→10%",
-    "effectViet": "Cập nhật 2020-02-19: Nâng cấp binh chủng Kỵ thành Tượng Binh: Giá trị công thành cơ bản của đội quân tăng 25% nhưng tốc độ hành quân giảm 50%. Khi chịu sát thương trong chiến đấu, 25%→50% sát thương sẽ được hoãn và quyết toán dần trong 3 lượt, đồng thời sát thương quyết toán giảm 10%→20%. Khi bản thân ở trạng thái thiêu đốt, nhận 50% quần công và trạng thái hỗn loạn; nếu người thống lĩnh là man tộc, mỗi khi đội quân có thêm 1 võ tướng man tộc, sát thương quyết toán giảm thêm 5%→10%. Bản gốc: Nâng cấp binh chủng Kỵ thành Tượng Binh tung hoành không kiêng dè: Giá trị công thành cơ bản của đội quân tăng 25% nhưng tốc độ hành quân giảm 50%; 25%→50% sát thương phải chịu được hoãn và quyết toán dần trong 3 lượt, đồng thời sát thương quyết toán giảm 10%→20%. Khi bản thân bị thiêu đốt, nhận 50% quần công và hỗn loạn; nếu do man tộc thống lĩnh, mỗi khi đội quân có thêm 1 võ tướng man tộc, sát thương quyết toán giảm thêm 5%→10%.",
+    "effectViet": "Cập nhật 2020-02-19: Nâng cấp binh chủng Kỵ thành Tượng Binh: Giá trị công thành cơ bản của đội quân tăng 25% nhưng tốc độ hành quân giảm 50%. Khi chịu sát thương trong chiến đấu, 25%→50% sát thương sẽ được hoãn và tính dần trong 3 lượt, đồng thời lượng sát thương này giảm 10%→20%. Khi bản thân ở trạng thái thiêu đốt, bản thân nhận hiệu ứng đánh lan với tỷ lệ sát thương 50% và trạng thái hỗn loạn; nếu người thống lĩnh là man tộc, mỗi khi đội quân có thêm 1 võ tướng man tộc, lượng sát thương được tính sau giảm thêm 5%→10%.\n\nBản gốc: Nâng cấp binh chủng Kỵ thành Tượng Binh tung hoành không kiêng dè: Giá trị công thành cơ bản của đội quân tăng 25% nhưng tốc độ hành quân giảm 50%; 25%→50% sát thương phải chịu được hoãn và tính dần trong 3 lượt, đồng thời lượng sát thương này giảm 10%→20%. Khi bản thân bị thiêu đốt, bản thân nhận hiệu ứng đánh lan với tỷ lệ sát thương 50% và trạng thái hỗn loạn; nếu do man tộc thống lĩnh, mỗi khi đội quân có thêm 1 võ tướng man tộc, lượng sát thương được tính sau giảm thêm 5%→10%.",
     "hanViet": "Tượng Binh",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088181030669314.png",
     "id": "tactic:tuong-binh",
@@ -8535,13 +8554,13 @@
           "effectiveDate": "2020-02-19",
           "isCurrent": true,
           "labelVi": "Bản hiện hành",
-          "textVi": "Nâng cấp binh chủng Kỵ thành Tượng Binh: Giá trị công thành cơ bản của đội quân tăng 25% nhưng tốc độ hành quân giảm 50%. Khi chịu sát thương trong chiến đấu, 25%→50% sát thương sẽ được hoãn và quyết toán dần trong 3 lượt, đồng thời sát thương quyết toán giảm 10%→20%. Khi bản thân ở trạng thái thiêu đốt, nhận 50% quần công và trạng thái hỗn loạn; nếu người thống lĩnh là man tộc, mỗi khi đội quân có thêm 1 võ tướng man tộc, sát thương quyết toán giảm thêm 5%→10%."
+          "textVi": "Nâng cấp binh chủng Kỵ thành Tượng Binh: Giá trị công thành cơ bản của đội quân tăng 25% nhưng tốc độ hành quân giảm 50%. Khi chịu sát thương trong chiến đấu, 25%→50% sát thương sẽ được hoãn và tính dần trong 3 lượt, đồng thời lượng sát thương này giảm 10%→20%. Khi bản thân ở trạng thái thiêu đốt, bản thân nhận hiệu ứng đánh lan với tỷ lệ sát thương 50% và trạng thái hỗn loạn; nếu người thống lĩnh là man tộc, mỗi khi đội quân có thêm 1 võ tướng man tộc, lượng sát thương được tính sau giảm thêm 5%→10%.\n\n"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Nâng cấp binh chủng Kỵ thành Tượng Binh tung hoành không kiêng dè: Giá trị công thành cơ bản của đội quân tăng 25% nhưng tốc độ hành quân giảm 50%; 25%→50% sát thương phải chịu được hoãn và quyết toán dần trong 3 lượt, đồng thời sát thương quyết toán giảm 10%→20%. Khi bản thân bị thiêu đốt, nhận 50% quần công và hỗn loạn; nếu do man tộc thống lĩnh, mỗi khi đội quân có thêm 1 võ tướng man tộc, sát thương quyết toán giảm thêm 5%→10%."
+          "textVi": "Nâng cấp binh chủng Kỵ thành Tượng Binh tung hoành không kiêng dè: Giá trị công thành cơ bản của đội quân tăng 25% nhưng tốc độ hành quân giảm 50%; 25%→50% sát thương phải chịu được hoãn và tính dần trong 3 lượt, đồng thời lượng sát thương này giảm 10%→20%. Khi bản thân bị thiêu đốt, bản thân nhận hiệu ứng đánh lan với tỷ lệ sát thương 50% và trạng thái hỗn loạn; nếu do man tộc thống lĩnh, mỗi khi đội quân có thêm 1 võ tướng man tộc, lượng sát thương được tính sau giảm thêm 5%→10%."
         }
       ]
     },
@@ -9369,7 +9388,7 @@
     ],
     "chinese": "運籌決算",
     "effect": "2020-11-18 更新（增強） / 準備 1 回合，對敵軍全體發動一次謀略攻擊（傷害率 88%→176%，受智力影響） /  / 原始版本 / 準備 1 回合，對敵軍全體發動一次謀略攻擊（傷害率 91%→182%，受智力影響）（發動機率 35%）",
-    "effectViet": "Cập nhật 2020-11-18 (tăng cường) / Chuẩn bị 1 lượt, phát động một đòn tấn công mưu lược lên toàn quân địch (tỷ lệ sát thương 88%→176%, chịu ảnh hưởng của trí lực) / / Phiên bản gốc / Chuẩn bị 1 lượt, phát động một đòn tấn công mưu lược lên toàn quân địch (tỷ lệ sát thương 91%→182%, chịu ảnh hưởng của trí lực) (xác suất phát động 35%)",
+    "effectViet": "Cập nhật 2020-11-18 (nguồn ghi là “tăng cường”): Chuẩn bị 1 lượt, phát động một đòn tấn công mưu lược lên toàn quân địch (tỷ lệ sát thương 88%→176%, chịu ảnh hưởng của trí lực).\n\nPhiên bản gốc: Chuẩn bị 1 lượt, phát động một đòn tấn công mưu lược lên toàn quân địch (tỷ lệ sát thương 91%→182%, chịu ảnh hưởng của trí lực; xác suất phát động 35%).",
     "hanViet": "Vận Trù Quyết Toán",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088192007162881.png",
     "id": "tactic:van-tru-quyet-toan",
@@ -9397,13 +9416,13 @@
           "effectiveDate": "2020-11-18",
           "isCurrent": true,
           "labelVi": "Bản hiện hành",
-          "textVi": "Chuẩn bị 1 lượt, phát động một đòn tấn công mưu lược lên toàn quân địch (tỷ lệ sát thương 88%→176%, chịu ảnh hưởng của trí lực)"
+          "textVi": "Chuẩn bị 1 lượt, phát động một đòn tấn công mưu lược lên toàn quân địch (tỷ lệ sát thương 88%→176%, chịu ảnh hưởng của trí lực).\n\n"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Chuẩn bị 1 lượt, phát động một đòn tấn công mưu lược lên toàn quân địch (tỷ lệ sát thương 91%→182%, chịu ảnh hưởng của trí lực) (xác suất phát động 35%)"
+          "textVi": "Chuẩn bị 1 lượt, phát động một đòn tấn công mưu lược lên toàn quân địch (tỷ lệ sát thương 91%→182%, chịu ảnh hưởng của trí lực; xác suất phát động 35%)."
         }
       ]
     },
@@ -9870,7 +9889,7 @@
     ],
     "chinese": "登鋒陷陣",
     "effect": "2024-09-11 更新（增強） / 對敵軍單體造成兵刃傷害（傷害率 104%→208%）並對其施加繳械（無法普通攻擊），持續 2 回合 /  / 原始版本 / 對目標單體造成兵刃攻擊（傷害率 104%→208%）並繳械（無法普通攻擊），同時使自己的統率降低 40%，並進入禁療狀態，持續 2 回合",
-    "effectViet": "Cập nhật 2024-09-11 (tăng cường) / Gây sát thương binh khí lên 1 mục tiêu quân địch (tỷ lệ sát thương 104%→208%) và gây Tước vũ khí (không thể đánh thường) cho mục tiêu, kéo dài 2 lượt /  / Phiên bản gốc / Gây tấn công binh khí lên 1 mục tiêu (tỷ lệ sát thương 104%→208%) và gây Tước vũ khí (không thể đánh thường), đồng thời khiến Thống suất của bản thân giảm 40% và rơi vào trạng thái Cấm trị liệu, kéo dài 2 lượt",
+    "effectViet": "Cập nhật 2024-09-11 (tăng cường)\nGây sát thương binh khí lên 1 mục tiêu quân địch (tỷ lệ sát thương 104%→208%) và gây Tước vũ khí (không thể đánh thường) cho mục tiêu, kéo dài 2 lượt.\n\nPhiên bản gốc\nGây sát thương binh khí lên 1 mục tiêu (tỷ lệ sát thương 104%→208%) và gây Tước vũ khí (không thể đánh thường), đồng thời khiến Thống suất của bản thân giảm 40% và rơi vào trạng thái Cấm trị liệu, kéo dài 2 lượt.",
     "hanViet": "Đăng Phong Hãm Trận",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088202446785537.png",
     "id": "tactic:dang-phong-ham-tran",
@@ -9894,13 +9913,13 @@
           "effectiveDate": "2024-09-11",
           "isCurrent": true,
           "labelVi": "Bản hiện hành",
-          "textVi": "Gây sát thương binh khí lên 1 mục tiêu quân địch (tỷ lệ sát thương 104%→208%) và gây Tước vũ khí (không thể đánh thường) cho mục tiêu, kéo dài 2 lượt"
+          "textVi": "\nGây sát thương binh khí lên 1 mục tiêu quân địch (tỷ lệ sát thương 104%→208%) và gây Tước vũ khí (không thể đánh thường) cho mục tiêu, kéo dài 2 lượt.\n\n"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Gây tấn công binh khí lên 1 mục tiêu (tỷ lệ sát thương 104%→208%) và gây Tước vũ khí (không thể đánh thường), đồng thời khiến Thống suất của bản thân giảm 40% và rơi vào trạng thái Cấm trị liệu, kéo dài 2 lượt"
+          "textVi": "\nGây sát thương binh khí lên 1 mục tiêu (tỷ lệ sát thương 104%→208%) và gây Tước vũ khí (không thể đánh thường), đồng thời khiến Thống suất của bản thân giảm 40% và rơi vào trạng thái Cấm trị liệu, kéo dài 2 lượt."
         }
       ]
     },
@@ -10173,7 +10192,7 @@
     ],
     "chinese": "毒泉拒蜀",
     "effect": "施加「猛毒」，受傷或蠻族攻擊會疊加層數，疊滿爆炸並清除冷卻。",
-    "effectViet": "Gây “kịch độc”; khi chịu sát thương hoặc bị man tộc tấn công sẽ cộng dồn tầng, khi đầy tầng sẽ phát nổ và xóa hồi chiêu.",
+    "effectViet": "Áp dụng trạng thái “kịch độc”; khi chịu sát thương hoặc bị man tộc tấn công, số tầng được cộng dồn. Khi cộng dồn đủ tầng, phát nổ và xóa thời gian hồi chiêu.",
     "hanViet": "Độc Tuyền Cự Thục",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/7/785170623213793288.png",
     "id": "tactic:doc-tuyen-cu-thuc",
@@ -10425,7 +10444,7 @@
     ],
     "chinese": "解煩衛",
     "effect": "槍兵專屬。全體提速；速度最快者普攻時機率發動兵刃攻擊或轉化為治療效果，目標隨機。",
-    "effectViet": "Dành riêng cho Thương binh. Tăng Tốc độ cho toàn thể; khi người có Tốc độ nhanh nhất đánh thường, có xác suất phát động đòn tấn công binh khí hoặc chuyển thành hiệu quả trị liệu, mục tiêu ngẫu nhiên.",
+    "effectViet": "Dành riêng cho binh chủng Thương. Tăng Tốc độ cho toàn thể; khi đơn vị có Tốc độ cao nhất tấn công thường, có xác suất phát động đòn tấn công binh khí hoặc chuyển sang hiệu ứng trị liệu. Mục tiêu được chọn ngẫu nhiên.",
     "hanViet": "Giải Phiền Vệ",
     "iconUrl": "",
     "id": "tactic:giai-phien-ve",
@@ -10903,7 +10922,7 @@
     ],
     "chinese": "飛熊軍",
     "effect": "騎兵專屬。提升全隊治療效果；並使主將有機率依據累積治療量觸發額外謀略傷害。",
-    "effectViet": "Dành riêng cho kỵ binh. Tăng hiệu quả trị liệu của toàn quân; đồng thời khiến chủ tướng có xác suất kích hoạt thêm sát thương mưu lược dựa trên lượng trị liệu tích lũy.",
+    "effectViet": "Dành riêng cho kỵ binh. Tăng hiệu quả trị liệu của toàn đội; đồng thời cho chủ tướng cơ hội gây thêm sát thương mưu lược dựa trên lượng trị liệu tích lũy.",
     "hanViet": "Phi Hùng Quân",
     "iconUrl": "",
     "id": "tactic:phi-hung-quan",
@@ -11139,7 +11158,7 @@
     ],
     "chinese": "忠勇義烈",
     "effect": "戰鬥中，自身每回合有30%→60%機率獲得以下效果;主動戰法發動率提升3%→6%(受武力影響)；武力、統率、智力提升22.5→45；14%→28%倒戈，持續1回合，每種效果獨立判定。",
-    "effectViet": "Trong chiến đấu, mỗi lượt bản thân có 30%→60% xác suất nhận các hiệu ứng sau: tỷ lệ phát động chiến pháp chủ động tăng 3%→6% (chịu ảnh hưởng của vũ lực); vũ lực, thống lĩnh và trí lực tăng 22.5→45; nhận 14%→28% đảo qua, kéo dài 1 lượt. Mỗi hiệu ứng được phán định độc lập.",
+    "effectViet": "Trong chiến đấu, mỗi lượt bản thân có 30%→60% xác suất nhận các hiệu ứng sau: tỷ lệ phát động chiến pháp chủ động tăng 3%→6% (chịu ảnh hưởng của vũ lực); vũ lực, thống lĩnh và trí lực tăng 22.5→45; nhận hiệu ứng hút máu từ sát thương binh khí với tỷ lệ 14%→28%. Các hiệu ứng kéo dài 1 lượt và được phán định độc lập.",
     "hanViet": "Trung Dũng Nghĩa Liệt",
     "iconUrl": "",
     "id": "tactic:trung-dung-nghia-liet",
@@ -11568,7 +11587,7 @@
     ],
     "chinese": "按圖索驥",
     "effect": "委任為馴馬官時，提升高品質良馬產出概率。",
-    "effectViet": "Khi được bổ nhiệm làm Tuần mã quan, tăng xác suất sản xuất ngựa tốt phẩm chất cao.",
+    "effectViet": "Khi được bổ nhiệm làm Thuần mã quan, tăng xác suất sản xuất ngựa phẩm chất cao.",
     "hanViet": "Án Đồ Tác Ký",
     "iconUrl": null,
     "id": "tactic:an-do-tac-ky",
@@ -12028,7 +12047,7 @@
     ],
     "chinese": "止戈為武",
     "effect": "普通攻擊之後，對目標發動一次兵刃攻擊（傷害率 97.5%→195%）並對其施加 1 回合繳械。",
-    "effectViet": "Sau đòn đánh thường, phát động một đòn tấn công binh khí lên mục tiêu (tỷ lệ sát thương 97.5%→195%) và khiến mục tiêu bị tước vũ khí trong 1 lượt.",
+    "effectViet": "Sau đòn đánh thường, phát động một đòn tấn công binh khí lên mục tiêu (tỷ lệ sát thương 97,5%→195%) và khiến mục tiêu bị tước vũ khí trong 1 lượt.",
     "hanViet": "Chỉ Qua Vy Võ",
     "iconUrl": null,
     "id": "tactic:chi-qua-vy-vo",
@@ -12074,7 +12093,7 @@
     ],
     "chinese": "整軍經武",
     "effect": "戰鬥中奇數回合使自身受到傷害降低12.5→25%(自身最高屬性影響)，偶數回合，自身統率智力提升15→30點。",
-    "effectViet": "Trong chiến đấu, ở các hiệp lẻ, giảm 12.5→25% sát thương bản thân phải chịu (chịu ảnh hưởng bởi thuộc tính cao nhất của bản thân); ở các hiệp chẵn, Thống suất và Trí lực của bản thân tăng 15→30 điểm.",
+    "effectViet": "Trong chiến đấu, ở các hiệp lẻ, giảm 12,5%→25% sát thương bản thân phải chịu (chịu ảnh hưởng bởi thuộc tính cao nhất của bản thân); ở các hiệp chẵn, Thống suất và Trí lực của bản thân tăng 15→30 điểm.",
     "hanViet": "Chỉnh Quân Kinh Võ",
     "iconUrl": null,
     "id": "tactic:chinh-quan-kinh-vo",
@@ -12192,7 +12211,7 @@
     ],
     "chinese": "眾望所歸",
     "effect": "我軍群體2人恢復一定兵力(治療率36→72%，統率影響)，並使我軍單體武力最高武將對敵軍單體發動一次兵刃攻擊(傷害率43→86%)。我軍單體智力最高武將對敵軍單體發動一次謀略攻擊(傷害率43→86%)，若我軍武力智力最高者皆為同一人，這兩次的傷害會降至為36→72%",
-    "effectViet": "Hồi phục một lượng binh lực cho 2 người thuộc nhóm quân ta (tỷ lệ trị liệu 36→72%, chịu ảnh hưởng của Thống suất), đồng thời khiến võ tướng có Vũ lực cao nhất trong quân ta phát động 1 lần tấn công binh nhận vào 1 đơn vị địch (tỷ lệ sát thương 43→86%). Võ tướng có Trí lực cao nhất trong quân ta phát động 1 lần tấn công mưu lược vào 1 đơn vị địch (tỷ lệ sát thương 43→86%); nếu người có Vũ lực cao nhất và người có Trí lực cao nhất trong quân ta là cùng một người, sát thương của cả hai lần sẽ giảm còn 36→72%.",
+    "effectViet": "Hồi phục một lượng binh lực cho 2 võ tướng quân ta (tỷ lệ trị liệu 36→72%, chịu ảnh hưởng của Thống suất), đồng thời khiến võ tướng có Võ lực cao nhất trong quân ta phát động 1 lần tấn công binh khí vào 1 đơn vị địch (tỷ lệ sát thương 43→86%). Võ tướng có Trí lực cao nhất trong quân ta phát động 1 lần tấn công mưu lược vào 1 đơn vị địch (tỷ lệ sát thương 43→86%); nếu người có Võ lực cao nhất và người có Trí lực cao nhất trong quân ta là cùng một người, sát thương của cả hai lần sẽ giảm còn 36→72%.",
     "hanViet": "Chúng Vọng Sở Quy",
     "iconUrl": null,
     "id": "tactic:chung-vong-so-quy",
@@ -12313,7 +12332,7 @@
     ],
     "chinese": "鳩毒",
     "effect": "2020-04-01 更新（增強） / 註：降低武力效果由 30% 調整為 30→60%，降低統率效果現在受智力影響 /  / 原始版本 / 待補充",
-    "effectViet": "Cập nhật 2020-04-01 (tăng cường) / Ghi chú: hiệu quả giảm vũ lực được điều chỉnh từ 30% thành 30→60%; hiệu quả giảm thống suất nay chịu ảnh hưởng của trí lực / Phiên bản gốc / Chờ bổ sung",
+    "effectViet": "Cập nhật ngày 2020-04-01 (tăng cường)\nGhi chú: Hiệu quả giảm vũ lực được điều chỉnh từ 30% thành 30→60%; hiệu quả giảm thống suất nay chịu ảnh hưởng của trí lực.\n\nPhiên bản gốc: Chờ bổ sung.",
     "hanViet": "Cưu Độc",
     "iconUrl": null,
     "id": "tactic:cuu-doc",
@@ -12335,13 +12354,13 @@
           "effectiveDate": "2020-04-01",
           "isCurrent": true,
           "labelVi": "Bản hiện hành",
-          "textVi": "Ghi chú: hiệu quả giảm vũ lực được điều chỉnh từ 30% thành 30→60%; hiệu quả giảm thống suất nay chịu ảnh hưởng của trí lực"
+          "textVi": "\nGhi chú: Hiệu quả giảm vũ lực được điều chỉnh từ 30% thành 30→60%; hiệu quả giảm thống suất nay chịu ảnh hưởng của trí lực.\n\n"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Chờ bổ sung"
+          "textVi": "Chờ bổ sung."
         }
       ]
     },
@@ -12590,7 +12609,7 @@
     ],
     "chinese": "以寡敵眾",
     "effect": "戰鬥第2、4、6回合，恢復自身兵力(治療率144%→288%，受武力影響)並 提高自身5%→10%武力；戰鬥第5回合，對敵軍全體造成兵刃傷害(傷害率 36%→72%)",
-    "effectViet": "Ở lượt 2, 4 và 6 của trận chiến, hồi phục binh lực bản thân (tỷ lệ trị liệu 144%→288%, chịu ảnh hưởng của võ lực) và tăng 5%→10% võ lực bản thân; ở lượt 5 của trận chiến, gây sát thương binh nhận lên toàn bộ quân địch (tỷ lệ sát thương 36%→72%)",
+    "effectViet": "Ở lượt 2, 4 và 6 của trận chiến, hồi phục binh lực bản thân (tỷ lệ trị liệu 144%→288%, chịu ảnh hưởng của võ lực) và tăng 5%→10% võ lực bản thân; ở lượt 5 của trận chiến, gây sát thương binh khí lên toàn bộ quân địch (tỷ lệ sát thương 36%→72%)",
     "hanViet": "Dĩ Quả Địch Chúng",
     "iconUrl": null,
     "id": "tactic:di-qua-dich-chung",
@@ -13214,7 +13233,7 @@
     ],
     "chinese": "虎侯",
     "effect": "戰鬥中，友軍群體發動或受到普通攻擊時，自身有22.5%→45%機率使我軍全體統率提升7.5→15點，可疊加5次，持續2回合，並對敵軍單體造成兵刃傷害(傷害率33%→66%)。",
-    "effectViet": "Trong chiến đấu, khi nhóm quân đồng minh phát động hoặc chịu đòn đánh thường, bản thân có 22.5%→45% xác suất khiến thống suất của toàn thể quân ta tăng 7.5→15 điểm, có thể cộng dồn 5 lần, duy trì 2 hiệp, đồng thời gây sát thương binh nhận lên một mục tiêu quân địch (tỷ lệ sát thương 33%→66%).",
+    "effectViet": "Trong chiến đấu, khi nhóm quân đồng minh thực hiện hoặc chịu đòn đánh thường, bản thân có 22.5%→45% xác suất khiến thống suất của toàn thể quân ta tăng 7.5→15 điểm, có thể cộng dồn 5 lần, duy trì 2 hiệp, đồng thời gây sát thương binh khí lên một mục tiêu quân địch (tỷ lệ sát thương 33%→66%).",
     "hanViet": "Hổ Hầu",
     "iconUrl": null,
     "id": "tactic:ho-hau",
@@ -13423,7 +13442,7 @@
     ],
     "chinese": "蕙質蘭心",
     "effect": "戰鬥中，我軍全體統率提升10→20(受各自智力影響)，且自身獲得7層蘭心效果，每層使自身造成和受到傷害降低5%→10%;自身受到傷害時，消耗1層蘭心效果並有50%機率(受智力影響)治療我軍單體 (治療率111%→222%，受智力影響)，蘭心首次降至4層時，敵我全體造成的兵刃傷害降低10%→20%(受智力影響)。",
-    "effectViet": "Trong chiến đấu, thống suất của toàn thể quân ta tăng 10→20 (chịu ảnh hưởng bởi trí lực của từng người), đồng thời bản thân nhận 7 tầng hiệu quả Lan Tâm; mỗi tầng khiến sát thương bản thân gây ra và phải chịu giảm 5%→10%. Khi bản thân chịu sát thương, tiêu hao 1 tầng hiệu quả Lan Tâm và có 50% xác suất (chịu ảnh hưởng của trí lực) trị liệu một mục tiêu quân ta (tỷ lệ trị liệu 111%→222%, chịu ảnh hưởng của trí lực). Khi Lan Tâm lần đầu giảm xuống 4 tầng, sát thương binh nhận do toàn thể hai bên gây ra giảm 10%→20% (chịu ảnh hưởng của trí lực).",
+    "effectViet": "Trong chiến đấu, thống suất của toàn thể quân ta tăng 10→20 (chịu ảnh hưởng bởi trí lực của từng người), đồng thời bản thân nhận 7 tầng hiệu quả Lan Tâm; mỗi tầng khiến sát thương bản thân gây ra và phải chịu giảm 5%→10%. Khi bản thân chịu sát thương, tiêu hao 1 tầng hiệu quả Lan Tâm và có 50% xác suất (chịu ảnh hưởng của trí lực) trị liệu một mục tiêu quân ta (tỷ lệ trị liệu 111%→222%, chịu ảnh hưởng của trí lực). Khi Lan Tâm lần đầu giảm xuống 4 tầng, sát thương binh khí do toàn bộ đơn vị của cả hai bên gây ra giảm 10%→20% (chịu ảnh hưởng của trí lực).",
     "hanViet": "Huệ Chất Lan Tâm",
     "iconUrl": null,
     "id": "tactic:hue-chat-lan-tam",
@@ -13478,7 +13497,7 @@
       ],
       "activationRate": 1,
       "conditions": [],
-      "conflictsVi": "Kháng cự",
+      "conflictsVi": "Kháng cự. Lưu ý: Nguồn chưa có văn bản riêng xác nhận mục xung đột này hoặc xác nhận “Kháng cự” có đồng nghĩa với “Chống đỡ” trong mô tả hiệu ứng hay không.",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
       "exchangeConditionVi": null,
@@ -13746,7 +13765,7 @@
     ],
     "chinese": "牽制",
     "effect": "[B級] 對敵軍單體造成兵刃傷並降低其武力、智力 20 點。",
-    "effectViet": "[Cấp B] Gây sát thương binh nhận cho 1 đơn vị địch và giảm 20 điểm Vũ lực, Trí lực của mục tiêu.",
+    "effectViet": "[Cấp B] Gây sát thương binh khí cho 1 đơn vị địch và giảm 20 điểm Vũ lực, Trí lực của mục tiêu.",
     "hanViet": "Khiên Chế",
     "iconUrl": null,
     "id": "tactic:khien-che",
@@ -13901,7 +13920,7 @@
     ],
     "chinese": "枯木逢春",
     "effect": "【待核實】可能是恢復類戰法或特定劇本技能。主要效果通常為持續性的兵力恢復。",
-    "effectViet": "【Chờ xác minh】Có thể là chiến pháp hồi phục hoặc kỹ năng của một kịch bản cụ thể. Hiệu quả chính thường là hồi phục binh lực liên tục.",
+    "effectViet": "Thông tin trong nguồn đang chờ xác minh: Có thể đây là chiến pháp hồi phục hoặc kỹ năng của một kịch bản cụ thể. Theo mô tả chưa được xác minh này, hiệu quả chính thường là hồi phục binh lực liên tục.",
     "hanViet": "Khô Mộc Phùng Xuân",
     "iconUrl": null,
     "id": "tactic:kho-moc-phung-xuan",
@@ -14013,7 +14032,7 @@
     ],
     "chinese": "堅強之花",
     "effect": "即將受到普通攻擊時,20%→38%機率(受統率影響,每回合觸發後機率降20%,新回合重置)使武力最高的友軍造成傷害提升7.8%→18.6%(受統率影響)持續1回合,對象友軍與敵軍攻擊者進行1次普通攻擊(攻先手),雙方相互發動1次普攻。若先手武將造成的普戰傷害較高,則18%→36%機率(受統率影響)獲得連擊/17%→35%減傷/100%→172%反擊/生失/必中中的2~3種效果持續1回合;若較低則18%→36.9%機率(受智力影響)為其恢復兵力(治療率100%→172%,受智力影響)",
-    "effectViet": "Khi sắp chịu đòn đánh thường, có 20%→38% xác suất (chịu ảnh hưởng của thống suất; sau khi kích hoạt trong mỗi lượt, xác suất giảm 20%; được đặt lại ở lượt mới) khiến sát thương do đồng minh có vũ lực cao nhất gây ra tăng 7.8%→18.6% (chịu ảnh hưởng của thống suất), duy trì 1 lượt; đồng minh mục tiêu và kẻ địch tấn công thực hiện 1 đòn đánh thường, bên tấn công ra tay trước, hai bên phát động 1 đòn đánh thường lẫn nhau. Nếu sát thương đánh thường do võ tướng ra tay trước gây ra cao hơn, thì có 18%→36% xác suất (chịu ảnh hưởng của thống suất) nhận 2~3 hiệu ứng trong số liên kích / giảm 17%→35% sát thương / phản kích 100%→172% / mất sinh lực / tất trúng, duy trì 1 lượt; nếu thấp hơn, thì có 18%→36.9% xác suất (chịu ảnh hưởng của trí lực) hồi phục binh lực cho người đó (tỷ lệ trị liệu 100%→172%, chịu ảnh hưởng của trí lực)",
+    "effectViet": "Khi sắp chịu đòn đánh thường, có 20%→38% xác suất (chịu ảnh hưởng của thống suất; sau khi kích hoạt trong mỗi lượt, xác suất giảm 20%; được đặt lại ở lượt mới) khiến sát thương do đồng minh có vũ lực cao nhất gây ra tăng 7.8%→18.6% (chịu ảnh hưởng của thống suất), duy trì 1 lượt. Đồng minh mục tiêu và kẻ địch tấn công đánh thường lẫn nhau, mỗi bên 1 đòn; bên tấn công ra tay trước. Nếu sát thương đánh thường do võ tướng ra tay trước gây ra cao hơn, có 18%→36% xác suất (chịu ảnh hưởng của thống suất) nhận 2~3 hiệu ứng trong số: liên kích / giảm 17%→35% sát thương / phản kích 100%→172% / mất sinh lực / tất trúng, duy trì 1 lượt. Nếu thấp hơn, có 18%→36.9% xác suất (chịu ảnh hưởng của trí lực) hồi phục binh lực cho người đó (tỷ lệ trị liệu 100%→172%, chịu ảnh hưởng của trí lực). Lưu ý: Nguồn có thuật ngữ bất thường đang được dịch là “mất sinh lực”, chưa xác minh được ý nghĩa; nguồn cũng chưa nêu rõ chủ thể nhận các hiệu ứng ở nhánh sát thương cao hơn.",
     "hanViet": "Kiên Cường Chi Hoa",
     "iconUrl": null,
     "id": "tactic:kien-cuong-chi-hoa",
@@ -14127,7 +14146,7 @@
     ],
     "chinese": "騎虎難下",
     "effect": "當除自己之外的友軍受到普通攻擊時，有20% → 35%概率對該友軍造成當回合禁療（無法恢復兵力）并對敵軍群體（2人）造成兵刃攻擊（傷害率36% → 72%）",
-    "effectViet": "Khi quân đồng minh khác bản thân bị đánh thường, có 20%→35% xác suất khiến quân đồng minh đó bị Cấm trị liệu trong lượt hiện tại (không thể hồi phục binh lực), đồng thời gây tấn công binh khí lên nhóm quân địch (2 người) (tỷ lệ sát thương 36%→72%).",
+    "effectViet": "Khi một đơn vị đồng minh khác bản thân chịu đòn đánh thường, có 20%→35% xác suất khiến chính đơn vị đồng minh đó bị Cấm trị liệu trong lượt hiện tại (không thể hồi phục binh lực), đồng thời thực hiện đòn tấn công binh khí lên nhóm quân địch (2 người, tỷ lệ sát thương 36%→72%).",
     "hanViet": "Kỵ Hổ Nan Hạ",
     "iconUrl": null,
     "id": "tactic:ky-ho-nan-ha",
@@ -14559,7 +14578,7 @@
     ],
     "chinese": "明察秋毫",
     "effect": "【待核實】可能是提升偵察效果或減少戰鬥中負面狀態判定概率的補位名稱。",
-    "effectViet": "【Chờ xác minh】Có thể là tên tạm dùng cho hiệu ứng tăng hiệu quả trinh sát hoặc giảm xác suất bị phán định trạng thái bất lợi trong chiến đấu.",
+    "effectViet": "[Chờ xác minh] Có thể đây là tên dùng để điền vào chỗ trống, chỉ hiệu ứng tăng hiệu quả trinh sát hoặc giảm xác suất bị phán định trạng thái bất lợi trong chiến đấu.",
     "hanViet": "Minh Sát Thu Hào",
     "iconUrl": null,
     "id": "tactic:minh-sat-thu-hao",
@@ -14596,7 +14615,7 @@
     ],
     "chinese": "宜城之志",
     "effect": "【OCR校正】對應馬良或相關機制。提升自身主動戰法發動率，增強控制與輸出平滑度。",
-    "effectViet": "【Hiệu chỉnh OCR】Tương ứng với Mã Lương hoặc cơ chế liên quan. Tăng tỷ lệ phát động chiến pháp chủ động của bản thân, tăng cường khả năng khống chế và độ ổn định của sát thương đầu ra.",
+    "effectViet": "[Hiệu chỉnh OCR] Tương ứng với Mã Lương hoặc một cơ chế liên quan. Tăng tỷ lệ phát động chiến pháp chủ động của bản thân, tăng cường khả năng khống chế và giúp sát thương đầu ra ổn định hơn.",
     "hanViet": "Nghi Thành Chi Chí",
     "iconUrl": null,
     "id": "tactic:nghi-thanh-chi-chi",
@@ -15053,7 +15072,7 @@
     ],
     "chinese": "赴湯蹈火",
     "effect": "戰鬥中段回合(2~6)賦予我軍群體抵禦狀態與特殊護盾「嚴密」，具備多層抵禦疊加機制。",
-    "effectViet": "Trong các lượt giữa trận (2~6), ban cho nhóm quân ta trạng thái chống đỡ và lá chắn đặc biệt “Nghiêm Mật”, có cơ chế cộng dồn nhiều tầng chống đỡ.",
+    "effectViet": "Trong các lượt giữa trận (2~6), trao cho nhóm quân ta trạng thái chống đỡ và lá chắn đặc biệt “Nghiêm Mật”, với cơ chế cộng dồn nhiều tầng chống đỡ.",
     "hanViet": "Phó Thang Đạo Hỏa",
     "iconUrl": null,
     "id": "tactic:pho-thang-dao-hoa",
@@ -15140,7 +15159,7 @@
     ],
     "chinese": "鋒芒畢露",
     "effect": "我軍準備發動戰法時機率提升會心與奇謀幾率，可疊加，顯著提升爆發。",
-    "effectViet": "Khi quân ta chuẩn bị phát động chiến pháp, có xác suất tăng tỷ lệ Hội Tâm và Kỳ Mưu, có thể cộng dồn, tăng đáng kể khả năng bùng nổ sát thương.",
+    "effectViet": "Khi quân ta chuẩn bị phát động chiến pháp, có xác suất tăng tỷ lệ Hội Tâm và Kỳ Mưu, có thể cộng dồn, tăng đáng kể khả năng bùng nổ sát thương. Lưu ý: Nguồn chỉ mô tả định tính, chưa nêu xác suất kích hoạt tăng ích, mức tăng, giới hạn cộng dồn hoặc thời hạn; không thể dùng tỷ lệ phát động của chiến pháp thay cho xác suất kích hoạt tăng ích.",
     "hanViet": "Phong Mang Tất Lộ",
     "iconUrl": null,
     "id": "tactic:phong-mang-tat-lo",
@@ -16039,7 +16058,7 @@
     ],
     "chinese": "韜心惑敵",
     "effect": "戰鬥首回合，有17.5%→35%機率(受雙方智力差影響)使敵軍全體陷入計窮狀態，，每個目標獨立判定，持續1回合；戰鬥第2回合，使敵軍智力低於自身的武將造成主動戰法傷害降低15%3→0%(受雙方智力差影響)，持續3回合。",
-    "effectViet": "Ở lượt đầu của trận đấu, có 17.5%→35% xác suất (chịu ảnh hưởng của chênh lệch trí lực hai bên) khiến toàn thể quân địch rơi vào trạng thái kế cùng; mỗi mục tiêu được phán định độc lập, duy trì 1 lượt. Ở lượt 2 của trận đấu, khiến sát thương chiến pháp chủ động do võ tướng địch có trí lực thấp hơn bản thân gây ra giảm 15%3→0% (chịu ảnh hưởng của chênh lệch trí lực hai bên), duy trì 3 lượt.",
+    "effectViet": "Ở lượt đầu của trận đấu, có 17.5%→35% xác suất (chịu ảnh hưởng của chênh lệch trí lực hai bên) khiến toàn thể quân địch rơi vào trạng thái kế cùng; mỗi mục tiêu được phán định độc lập, duy trì 1 lượt. Ở lượt 2 của trận đấu, khiến sát thương chiến pháp chủ động do võ tướng địch có trí lực thấp hơn bản thân gây ra giảm 15%3→0% (chịu ảnh hưởng của chênh lệch trí lực hai bên), duy trì 3 lượt. Lưu ý: Chuỗi số “15%3→0%” bị lỗi ngay trong nguồn; mức giảm đúng chưa được xác nhận.",
     "hanViet": "Thao Tâm Hoặc Địch",
     "iconUrl": null,
     "id": "tactic:thao-tam-hoac-dich",
@@ -16431,7 +16450,7 @@
     ],
     "chinese": "取磨寸鐵",
     "effect": "委任為治鐵官時，穩定提升鐵礦資源的產量收益。",
-    "effectViet": "Khi được bổ nhiệm làm Trị thiết quan, tăng ổn định lợi ích sản lượng tài nguyên quặng sắt.",
+    "effectViet": "Khi được bổ nhiệm làm Trị thiết quan, lợi ích thu được từ sản lượng tài nguyên quặng sắt tăng một cách ổn định.",
     "hanViet": "Thủ Ma Thốn Thiết",
     "iconUrl": null,
     "id": "tactic:thu-ma-thon-thiet",
@@ -16675,7 +16694,7 @@
     ],
     "chinese": "垂惠萬物",
     "effect": "【OCR校正】委任為主政官或貿易官時，提升產量效益或貿易兌換比例。",
-    "effectViet": "【Hiệu chỉnh OCR】Khi bổ nhiệm làm Chủ chính quan hoặc Mậu dịch quan, tăng hiệu quả sản lượng hoặc tỷ lệ quy đổi mậu dịch.",
+    "effectViet": "Nguồn ghi chú: “Hiệu chỉnh OCR”. Khi được bổ nhiệm làm Chủ chính quan hoặc Mậu dịch quan, tăng hiệu quả sản lượng hoặc tỷ lệ quy đổi mậu dịch.",
     "hanViet": "Thùy Huệ Vạn Vật",
     "iconUrl": null,
     "id": "tactic:thuy-hue-van-vat",
@@ -16756,7 +16775,7 @@
     ],
     "chinese": "先登死士",
     "effect": "2024-08-28 更新（增強） / 將弓兵進階為悍不畏死的先登死士：戰鬥中，我軍全體免疫遇襲狀態，且受到傷害時有 30%→60% 機率（受攜帶者統率影響）觸發以下效果：若兵力百分比低於攻擊者則偷取其 10.5→21 點統率（受攜帶者統率影響），否則降低其 1.5%→3% 主動戰法發動率，持續 2 回合，可疊加 4 次；若麴義統領，則可疊加 5 次 /  / 原始版本 / 將弓兵進階為悍不畏死的先登死士：戰鬥中，我軍全體免疫遇襲狀態，且受到傷害時有 20→40% 機率（受攜帶者統率影響）觸發以下效果：若兵力百分比低於攻擊者則偷取其 10.5→21 點統率，否則降低其 1.5%→3% 主動戰法發動率，持續 2 回合，可疊加 4 次；若麴義統領，則可疊加 5 次",
-    "effectViet": "Cập nhật 2024-08-28 (tăng cường): Nâng cấp cung binh thành Tiên Đăng tử sĩ gan dạ không sợ chết. Trong chiến đấu, toàn thể quân ta miễn nhiễm trạng thái tập kích; khi chịu sát thương, có 30%→60% xác suất (chịu ảnh hưởng của thống suất người mang) kích hoạt hiệu quả sau: nếu phần trăm binh lực thấp hơn người tấn công thì đánh cắp 10.5→21 điểm thống suất của người đó (chịu ảnh hưởng của thống suất người mang), nếu không thì giảm 1.5%→3% tỷ lệ phát động chiến pháp chủ động của người đó, duy trì 2 hiệp, có thể cộng dồn 4 lần; nếu do Khúc Nghĩa thống lĩnh thì có thể cộng dồn 5 lần. / Phiên bản gốc: Nâng cấp cung binh thành Tiên Đăng tử sĩ gan dạ không sợ chết. Trong chiến đấu, toàn thể quân ta miễn nhiễm trạng thái tập kích; khi chịu sát thương, có 20→40% xác suất (chịu ảnh hưởng của thống suất người mang) kích hoạt hiệu quả sau: nếu phần trăm binh lực thấp hơn người tấn công thì đánh cắp 10.5→21 điểm thống suất của người đó, nếu không thì giảm 1.5%→3% tỷ lệ phát động chiến pháp chủ động của người đó, duy trì 2 hiệp, có thể cộng dồn 4 lần; nếu do Khúc Nghĩa thống lĩnh thì có thể cộng dồn 5 lần.",
+    "effectViet": "Cập nhật 2024-08-28 (tăng cường): Nâng cấp cung binh thành Tiên Đăng tử sĩ gan dạ không sợ chết. Trong chiến đấu, toàn thể quân ta miễn nhiễm trạng thái tập kích; khi chịu sát thương, có 30%→60% xác suất (chịu ảnh hưởng của thống suất người mang) kích hoạt hiệu quả sau: nếu phần trăm binh lực thấp hơn người tấn công thì đánh cắp 10.5→21 điểm thống suất của người đó (chịu ảnh hưởng của thống suất người mang), nếu không thì giảm 1.5%→3% tỷ lệ phát động chiến pháp chủ động của người đó, duy trì 2 hiệp, có thể cộng dồn 4 lần; nếu do Khúc Nghĩa thống lĩnh thì có thể cộng dồn 5 lần. / Phiên bản gốc: Nâng cấp cung binh thành Tiên Đăng tử sĩ gan dạ không sợ chết. Trong chiến đấu, toàn thể quân ta miễn nhiễm trạng thái tập kích; khi chịu sát thương, có 20%→40% xác suất (chịu ảnh hưởng của thống suất người mang) kích hoạt hiệu quả sau: nếu phần trăm binh lực thấp hơn người tấn công thì đánh cắp 10.5→21 điểm thống suất của người đó, nếu không thì giảm 1.5%→3% tỷ lệ phát động chiến pháp chủ động của người đó, duy trì 2 hiệp, có thể cộng dồn 4 lần; nếu do Khúc Nghĩa thống lĩnh thì có thể cộng dồn 5 lần.",
     "hanViet": "Tiên Đăng Tử Sĩ",
     "iconUrl": null,
     "id": "tactic:tien-dang-tu-si",
@@ -16788,7 +16807,7 @@
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Nâng cấp cung binh thành Tiên Đăng tử sĩ gan dạ không sợ chết. Trong chiến đấu, toàn thể quân ta miễn nhiễm trạng thái tập kích; khi chịu sát thương, có 20→40% xác suất (chịu ảnh hưởng của thống suất người mang) kích hoạt hiệu quả sau: nếu phần trăm binh lực thấp hơn người tấn công thì đánh cắp 10.5→21 điểm thống suất của người đó, nếu không thì giảm 1.5%→3% tỷ lệ phát động chiến pháp chủ động của người đó, duy trì 2 hiệp, có thể cộng dồn 4 lần; nếu do Khúc Nghĩa thống lĩnh thì có thể cộng dồn 5 lần."
+          "textVi": "Nâng cấp cung binh thành Tiên Đăng tử sĩ gan dạ không sợ chết. Trong chiến đấu, toàn thể quân ta miễn nhiễm trạng thái tập kích; khi chịu sát thương, có 20%→40% xác suất (chịu ảnh hưởng của thống suất người mang) kích hoạt hiệu quả sau: nếu phần trăm binh lực thấp hơn người tấn công thì đánh cắp 10.5→21 điểm thống suất của người đó, nếu không thì giảm 1.5%→3% tỷ lệ phát động chiến pháp chủ động của người đó, duy trì 2 hiệp, có thể cộng dồn 4 lần; nếu do Khúc Nghĩa thống lĩnh thì có thể cộng dồn 5 lần."
         }
       ]
     },
@@ -17128,7 +17147,7 @@
     ],
     "chinese": "爭分奪秒",
     "effect": "【待核實】可能為提升行動順位或縮短準備回合類的戰法機制。",
-    "effectViet": "【Chờ xác minh】Có thể là cơ chế chiến pháp giúp tăng thứ tự hành động hoặc rút ngắn số hiệp chuẩn bị.",
+    "effectViet": "Nguồn ghi chú: “Chờ xác minh”. Có thể đây là cơ chế chiến pháp giúp nâng thứ tự ưu tiên hành động hoặc rút ngắn số lượt chuẩn bị.",
     "hanViet": "Tranh Phân Đoạt Miểu",
     "iconUrl": null,
     "id": "tactic:tranh-phan-doat-mieu",
@@ -17164,7 +17183,7 @@
     ],
     "chinese": "重擊",
     "effect": "普通攻擊之後，對攻擊目標再次發起一次兵刃攻擊（傷害率70% → 140%）",
-    "effectViet": "Sau đòn đánh thường, tiếp tục phát động một lần công kích binh nhận lên mục tiêu bị tấn công (tỷ lệ sát thương 70%→140%).",
+    "effectViet": "Sau đòn đánh thường, tiếp tục thực hiện một đòn tấn công bằng binh khí lên mục tiêu bị tấn công (tỷ lệ sát thương 70%→140%).",
     "hanViet": "Trọng Kích",
     "iconUrl": null,
     "id": "tactic:trong-kich",

@@ -7,14 +7,14 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
-    "check": "astro check",
+    "build": "python3 -m pipeline.site_localization check --root . --stage public && astro build",
+    "check": "python3 -m pipeline.site_localization check --root . --stage public && astro check",
     "preview": "astro preview",
     "test:contracts": "node --test tests-js/runtime-asset-contract.test.mjs",
     "test:dist": "node --experimental-strip-types --test tests-js/astro-dist-contract.test.mjs tests-js/pages-headers-contract.test.mjs",
     "test:dev-contract": "node --test tests-js/astro-dev-contract.test.mjs",
     "test:node": "node --experimental-strip-types --test tests-js/*.test.mjs",
-    "verify": "node scripts/verify-astro-dist.mjs",
+    "verify": "python3 -m pipeline.site_localization check --root . --stage public && node scripts/verify-astro-dist.mjs",
     "test:e2e": "playwright test",
     "test:e2e:astro": "playwright test --project=astro"
   },

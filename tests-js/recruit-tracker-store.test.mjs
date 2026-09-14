@@ -41,7 +41,6 @@ test("default state has one account, Danh tướng PK, and four pending daily sl
 
   assert.equal(state.schemaVersion, 1);
   assert.equal(state.accounts.length, 1);
-  assert.equal(state.accounts[0].name, "Main");
   assert.equal(state.activeAccountId, state.accounts[0].id);
   assert.equal(summary.daily.banner.name, "Danh tướng PK");
   assert.equal(summary.daily.pity.pullsSinceFiveStar, 0);
@@ -151,9 +150,9 @@ test("localStorage adapter falls back on corrupt data and saves valid JSON", () 
   const storage = memoryStorage({ tqcclRecruitTracker: "{not-json" });
   const loaded = loadRecruitTrackerState(storage, NOW);
 
-  assert.equal(loaded.accounts[0].name, "Main");
-
-  saveRecruitTrackerState(storage, loaded);
+  const named = renameAccount(loaded, loaded.activeAccountId, "主账号 Main");
+  saveRecruitTrackerState(storage, named);
   const reloaded = loadRecruitTrackerState(storage, NOW);
   assert.equal(validateRecruitTrackerImport(reloaded).ok, true);
+  assert.equal(reloaded.accounts[0].name, "主账号 Main");
 });

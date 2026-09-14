@@ -38,6 +38,12 @@ export const REPOSITORY_GATE_COMMANDS: readonly RepositoryGateCommand[] = [
     cwd: repositoryRoot,
   },
   {
+    label: "astro-verify",
+    command: "npm",
+    args: ["run", "verify"],
+    cwd: repositoryRoot,
+  },
+  {
     label: "astro-e2e",
     command: "npm",
     args: ["run", "test:e2e"],

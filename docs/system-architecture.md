@@ -47,6 +47,12 @@ baseline bất biến, snapshot SGSDeck đã checksum, registry danh tính và b
 `promote_unified_lookup.py` giữ shared lock và durable journal để thay bốn file
 generation công khai có thể recover. Xem [quy trình vận hành](unified-lookup.md).
 
+### Publication hiển thị tiếng Việt
+
+`pipeline/site_localization.py` capture nguồn Recommended bất biến, kiểm ledger cùng receipt review, rồi dựng candidate private. Candidate đầy đủ chứa generation Recommended, `site-display.json` và một candidate Lookup được `build_unified_lookup.py` dựng/kiểm lại. Manifest site bind hash input, pin Recommended, generation cùng hash public Lookup và các source JSON hiển thị; publish chỉ thay generation Recommended với `data/website-display.json`, đồng thời từ chối nếu bốn file Lookup công khai không trùng candidate đã review.
+
+`textRaw` và identity nguồn không bị sửa. `textVi` chỉ đi vào projection hiển thị sau review; dữ liệu root dùng overlay theo exact entity/field path. `npm run build` và `npm run verify` chạy gate public fail-closed trước khi tạo hoặc chấp nhận `dist/`.
+
 Đường build cố ý không đưa `Team Đô Úy.html` vào artifact và hiện tạo 50 Team PK + 110 meta cũ, trong khi artifact công khai có 56 + 110. Sáu Team PK bổ sung vẫn chưa có đường tái tạo nhìn thấy. `pipeline/do-uy-ss18-source.json` giữ 40 record nguồn thô làm archive, không phải input publication. HTML/cache còn bị ignore. Vì vậy pipeline là công cụ bảo trì có điều kiện, chưa phải clean-clone reproducible build.
 
 ### Dữ liệu đội theo kịch bản
@@ -72,12 +78,14 @@ thuộc [manifest của site](../src/lib/public-artifact-manifest.mjs).
 ## Static runtime
 
 [`src/pages/index.astro`](../src/pages/index.astro) là document authority của
-tám section cùng hash dữ liệu mùa, lookup và pin Recommended. [`js/app.js`](../js/app.js)
-sở hữu khởi tạo runtime; [`season-ui-state.js`](../js/season-ui-state.js) sở hữu
-query và kiểm hash toàn bộ dữ liệu tham chiếu trước activation. [`lookup-data.js`](../js/lookup-data.js)
-kiểm inventory/hash/generation của ba payload Tra cứu trước khi chia sẻ đúng
-bytes tướng/chiến pháp cho các consumer. Bundle thiếu hoặc trộn chỉ khóa feature
-phụ thuộc với thông báo; Team chuẩn và các feature local độc lập vẫn hoạt động.
+tám section cùng hash dữ liệu mùa, pin Recommended và pin website-display.
+[`js/app.js`](../js/app.js) sở hữu khởi tạo runtime; nó capture từng response byte
+một lần, xác minh sidecar cùng toàn bộ source hash rồi mới áp overlay tiếng Việt.
+[`season-ui-state.js`](../js/season-ui-state.js) sở hữu query và kiểm hash toàn bộ
+dữ liệu tham chiếu trước activation. [`lookup-data.js`](../js/lookup-data.js)
+kiểm inventory/hash/generation của ba payload Tra cứu. Thay đổi ở bất kỳ
+dependency đã được website-display pin đều dừng toàn bộ khởi tạo; lỗi semantic
+Lookup trong một publication byte-coherent mới chỉ khóa các feature phụ thuộc.
 
 Scope, filter/search và chi tiết cấu hình cùng đi qua query owner; hash xác
 định section đang áp dụng. Restore scenario-only không tự nâng sang luật đã
@@ -102,7 +110,7 @@ Trong [`data/khaihoang.json`](../data/khaihoang.json), `chamSuTeams` là trườ
 
 Hướng dẫn khai hoang curate thuộc tùy chọn `teams[].guide`, sở hữu bởi đúng bộ ba tướng và không thuộc `variants[]`. Guide có thể chứa tổng quan, điểm mở đất/chuyển đội, yêu cầu đỏ, thứ tự quân thủ đất 4/5, cảnh báo, tách đội và các bước chuyển hình. Renderer đặt guide ngoài `.kh-build`, nên đổi variant chỉ đổi chiến pháp/chủ tướng; nội dung và trạng thái mở của guide giữ nguyên. UI Khai hoang không trình bày mùa, khu vực hoặc link nguồn của đội chính; các dữ liệu đó vẫn có thể tồn tại nội bộ. Nguồn Chạm Sứ tiếp tục hiển thị theo contract riêng.
 
-Owner hiển thị là [`khaihoangTable` trong `js/render.js`](../js/render.js): thứ tự ba khối là đội chính (`teams`) → **Team Chạm Sứ / Ăn vạ** (`chamSuTeams`) → quân thủ mỏ (`mines`). Contract tương thích giữ object thiếu/rỗng `chamSuTeams` và input mảng mỏ legacy; chỉ ẩn khối Chạm Sứ khi không có dữ liệu. Kiểm chứng nằm ở [`tests-e2e/khaihoang-options.spec.mjs`](../tests-e2e/khaihoang-options.spec.mjs).
+Owner hiển thị là [`khaihoangTable` trong `js/render.js`](../js/render.js): thứ tự ba khối là đội chính (`teams`) → **Đội Chạm Sứ / Ăn vạ** (`chamSuTeams`) → quân thủ mỏ (`mines`). Contract tương thích giữ object thiếu/rỗng `chamSuTeams` và input mảng mỏ legacy; chỉ ẩn khối Chạm Sứ khi không có dữ liệu. Kiểm chứng nằm ở [`tests-e2e/khaihoang-options.spec.mjs`](../tests-e2e/khaihoang-options.spec.mjs).
 
 JSON đã curate là dữ liệu runtime cần bảo toàn. [`build_khaihoang_payload` trong `pipeline/build_json.py`](../pipeline/build_json.py) chỉ phản ánh HTML đầu vào: HTML cũ có sáu nhóm Chạm Sứ, còn bản CSV được đối chiếu có tám nhóm và một chiến pháp đã đổi. CSV chưa phải input tự động của pipeline HTML; không chạy full rebuild để nhập phần này vì có thể mất đội bổ sung, variants/options, mùa và mỏ đã curate. [Báo cáo đối chiếu nguồn](../plans/260907-0236-cham-su-khai-hoang/reports/source-reconciliation.md) giữ chi tiết khác biệt và bằng chứng bảo toàn; [fixture parser](../tests/fixtures/khaihoang-cham-su-source.html) giữ boundary kiểm thử không phụ thuộc HTML local bị ignore.
 
@@ -184,8 +192,7 @@ Luồng Worker:
 5. Xác thực Turnstile và chống replay.
 6. Validate image MIME, magic bytes và size sau decode.
 7. Commit global usage, gọi DashScope Qwen, tolerant-parse và validate output theo mode.
-
-Worker không chủ động lưu ảnh; log tối thiểu. KV eventual consistency không tạo hard quota. Turnstile là rào chính chống lạm dụng ngoài browser.
+8. Browser tiếp tục kiểm envelope tương ứng với mode cho cả response `200`; JSON lỗi hoặc sai shape được đổi thành thông báo tiếng Việt hữu hạn, không đi vào state review.
 
 ## Deployment boundary
 
@@ -201,12 +208,15 @@ Config commit hiện trỏ Pages `https://tqccl.pages.dev` tới Worker `https:/
 
 Astro dùng `output: "static"` và không có Cloudflare adapter/Pages Functions. Manifest explicit trong `src/lib/public-artifact-manifest.mjs` cho phép đúng các route JS/CSS/JSON; helper từ chối file lạ, symlink và path thoát root. `scripts/verify-astro-dist.mjs` là policy output duy nhất: kiểm allowlist, byte parity của raw asset và `public/_headers` → `dist/_headers`, đồng thời từ chối source/private/secret-like output.
 
+Browser CI chỉ do `.github/workflows/mcp-worker.yml` sở hữu. Pull request/push chạm `data/**`, `pipeline/**`, `js/**`, `src/**`, Astro config hoặc test liên quan đều chạy một repository gate credential-free; gate bao gồm root build, dist contract, `npm run verify`, Playwright, Node, Python, Vision Worker và Wrangler dry-run. Không có workflow Pages thứ hai chạy một tập kiểm tra lệch.
+
 `_headers` yêu cầu browser revalidate shell, JS, CSS và JSON (`public, max-age=0, must-revalidate`). Đây là local deployment contract; response header thật và SPA fallback body chỉ được xác nhận trên Pages preview có ủy quyền.
 
 ## Failure và fallback
 
 - Thiếu `team-tier.json`: site vẫn render team không badge tier.
 - Lỗi JSON bắt buộc: Team PK hiển thị hướng dẫn tải lại/liên hệ quản trị; các init sau không hoàn tất.
+- Dependency trong `data/website-display.json` đổi bytes hoặc sai pin: toàn bộ khởi tạo dừng trước render và chỉ hiện lỗi tiếng Việt hữu hạn.
 - Vision lỗi: tra cứu local và tracker vẫn độc lập; UI trả status theo lỗi Worker.
 - Research MCP HTTP lỗi: CLI/stdio local vẫn độc lập; recommendation fail closed, không tự bịa đội hình.
 - Research MCP trả `401/429/503` trước dữ liệu khi bearer, quota hoặc cấu hình không hợp lệ; `/healthz` không đại diện data readiness.

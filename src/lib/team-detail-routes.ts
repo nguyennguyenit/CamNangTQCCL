@@ -1,7 +1,8 @@
 import { createHash } from 'node:crypto';
 import { lstat, readFile, realpath } from 'node:fs/promises';
 import { join } from 'node:path';
-import { DEFAULT_RECOMMENDED_ROOT, recommendedPublicationSnapshot } from './recommended-reference-artifacts.ts';
+import { DEFAULT_RECOMMENDED_ROOT, recommendedPublicationSnapshot, type RecommendedPublicationSnapshot } from './recommended-reference-artifacts.ts';
+import { websiteDisplayPublicationSnapshot } from './root-static-artifacts.ts';
 
 export const DEFAULT_TEAMS_PATH = join(process.cwd(), 'data/teams.json');
 
@@ -71,9 +72,7 @@ async function readRegularFile(path: string) {
   return readFile(await realpath(path));
 }
 
-async function buildCatalog(recommendedRoot: string, teamsPath: string): Promise<TeamDetailRouteCatalog> {
-  const snapshot = await recommendedPublicationSnapshot(recommendedRoot);
-  const teamsBytes = await readRegularFile(teamsPath);
+async function buildCatalogFromSnapshot(snapshot: RecommendedPublicationSnapshot, teamsBytes: Uint8Array): Promise<TeamDetailRouteCatalog> {
   const legacyTeamsSha256 = `sha256:${createHash('sha256').update(teamsBytes).digest('hex')}`;
   const declaredLegacyHash = snapshot.manifest.legacyTeamsHash;
   if (typeof declaredLegacyHash !== 'string' || declaredLegacyHash !== legacyTeamsSha256) {
@@ -180,9 +179,15 @@ export function teamDetailCatalog({
   teamsPath = DEFAULT_TEAMS_PATH,
 }: { recommendedRoot?: string; teamsPath?: string } = {}) {
   if (recommendedRoot === DEFAULT_RECOMMENDED_ROOT && teamsPath === DEFAULT_TEAMS_PATH) {
-    return defaultCatalog ??= buildCatalog(recommendedRoot, teamsPath);
+    return defaultCatalog ??= (async () => {
+      const website = await websiteDisplayPublicationSnapshot();
+      const teamsBytes = website.publicFiles['teams.json'];
+      if (!teamsBytes) throw new Error('Website display snapshot does not pin data/teams.json');
+      return buildCatalogFromSnapshot(website.recommended, teamsBytes);
+    })();
   }
-  return buildCatalog(recommendedRoot, teamsPath);
+  return Promise.all([recommendedPublicationSnapshot(recommendedRoot), readRegularFile(teamsPath)])
+    .then(([snapshot, teamsBytes]) => buildCatalogFromSnapshot(snapshot, teamsBytes));
 }
 
 export function findAdmittedVariant(catalog: TeamDetailRouteCatalog, legacyTeamId: unknown, legacyVariantId: unknown) {

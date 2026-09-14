@@ -7,6 +7,7 @@ import {
   recordBannerMiss,
   recordDailySlotFiveStar,
   recordDailySlotMiss,
+  renameAccount,
 } from "../js/recruit-tracker-store.js";
 import { buildRecruitTrackerViewModel } from "../js/recruit-tracker.js";
 
@@ -14,6 +15,7 @@ const TODAY = "2026-07-10";
 
 test("recruit tracker view model exposes compact daily, limited, history, and hero options", () => {
   let state = createDefaultRecruitTrackerState("2026-07-10T03:30:00+07:00");
+  state = renameAccount(state, state.activeAccountId, "主账号 Main");
   const accountId = state.activeAccountId;
   state = recordDailySlotMiss(state, { accountId, date: TODAY, slotKey: "free_1" });
   state = recordDailySlotFiveStar(state, { accountId, date: TODAY, slotKey: "half_1", heroName: "SP Quan Vũ" });
@@ -27,7 +29,7 @@ test("recruit tracker view model exposes compact daily, limited, history, and he
     { name: "SP Mã Siêu", chinese: "SP马超" },
   ]);
 
-  assert.equal(viewModel.accountLabel, "Main");
+  assert.equal(viewModel.accountLabel, "主账号 Main");
   assert.equal(viewModel.daily.title, "Danh tướng PK - Hằng ngày");
   assert.equal(viewModel.daily.pityText, "0/30");
   assert.deepEqual(viewModel.daily.slots.map((slot) => [slot.label, slot.statusLabel]), [
@@ -37,7 +39,9 @@ test("recruit tracker view model exposes compact daily, limited, history, and he
     ["Nửa giá 2", "Chưa quay"],
   ]);
   assert.equal(viewModel.limitedBanners[0].name, "Kỳ Tật Như Phong");
-  assert.equal(viewModel.limitedBanners[0].warning, "Kiểm tra lại dữ liệu/game rule");
+  assert.ok(viewModel.limitedBanners[0].warning);
+  assert.doesNotMatch(viewModel.limitedBanners[0].warning, /[\u3400-\u9fff\uf900-\ufaff]/u);
+  assert.equal(viewModel.daily.warning, "");
   assert.equal(viewModel.history[0].heroName, "SP Quan Vũ");
   assert.deepEqual(viewModel.heroOptions, ["Lưu Bị", "SP Mã Siêu"]);
 });

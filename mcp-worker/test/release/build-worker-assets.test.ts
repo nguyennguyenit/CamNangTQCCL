@@ -9,6 +9,7 @@ import {
   writeFile,
 } from "node:fs/promises";
 import { tmpdir } from "node:os";
+import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 
 import { afterEach, describe, expect, it } from "vitest";
@@ -27,6 +28,7 @@ import {
 import {
   buildWorkerAssets,
   replaceWorkerAssetDirectory,
+  WORKER_SOURCE_ONLY_FILES,
   WorkerAssetBuildError,
 } from "../../scripts/build-worker-assets.js";
 import {
@@ -353,6 +355,21 @@ describe("buildWorkerAssets", () => {
     expect(packageJson.scripts["build:data-release"]).toBeUndefined();
     expect(workflow).toContain("npm run --silent build:worker-assets");
     expect(workflow).not.toContain("build:data-release");
+  });
+
+  it("nhận website-display như source-only và không emit vào Worker assets", async () => {
+    const parent = await mkdtemp(join(tmpdir(), "tqccl-worker-assets-"));
+    const outputDirectory = join(parent, ".worker-assets");
+    const dataRoot = fileURLToPath(new URL("data/", repositoryRoot));
+
+    const built = await buildWorkerAssets({
+      ...buildOptions(dataRoot, outputDirectory),
+      allowedSourceFiles: WORKER_SOURCE_ONLY_FILES,
+    });
+    const names = await readdir(outputDirectory);
+
+    expect(built.artifactNames).toEqual(V2_ARTIFACT_NAMES);
+    expect(names).not.toContain("website-display.json");
   });
 
   it("cleanup backup thất bại không báo build fail sau commit", async () => {

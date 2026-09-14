@@ -3636,6 +3636,15 @@
     },
     {
       "aliases": [
+        "戮力上心"
+      ],
+      "displayNameVi": "Đồng Lòng Hợp Sức",
+      "evidenceRef": "user-confirmed:2026-09-14:recommended-11-slots=Đồng Lòng Hợp Sức; Vietnamese screenshot 847x381; display-only approval, source identity remains unresolved; plans/reports/brainstorm-260914-0236-viet-hoa-toan-bo.md",
+      "kind": "tactic",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
         "手起刀落"
       ],
       "displayNameVi": "Thủ Khởi Đao Lạc",

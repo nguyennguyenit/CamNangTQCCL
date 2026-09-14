@@ -1,3 +1,5 @@
+import json
+from pathlib import Path
 import unittest
 
 from pipeline.recommended_identity import (
@@ -42,6 +44,21 @@ class RecommendedIdentityTest(unittest.TestCase):
         self.assertEqual(resolve_identity("hero", "呂布", mapping)["stableId"], "hero:lu-bu")
         unreviewed = build_display_mapping([base, {**translation, "reviewStatus": "pending"}])
         self.assertIsNone(resolve_display_name("hero", "40Y 呂布", unreviewed))
+
+    def test_luc_luc_display_approval_does_not_merge_combat_and_internal_identities(self):
+        path = Path(__file__).resolve().parents[1] / "pipeline" / "recommended-identity-map.json"
+        mapping = build_display_mapping(json.loads(path.read_text(encoding="utf-8"))["entries"])
+        self.assertEqual(
+            resolve_display_name("tactic", "戮力上心", mapping),
+            "Đồng Lòng Hợp Sức",
+        )
+        self.assertEqual(resolve_identity("tactic", "戮力上心", mapping)["status"], "missing")
+        combat = resolve_identity("tactic", "勠力同心", mapping)
+        internal = resolve_identity("tactic", "戮力上国", mapping)
+        self.assertEqual(combat["status"], "resolved")
+        self.assertEqual(internal["status"], "resolved")
+        self.assertNotEqual(combat["stableId"], internal["stableId"])
+        self.assertEqual(internal["displayNameVi"], "Lục Lực Thượng Quốc")
 
     def test_team_titles_support_global_and_source_scoped_translations(self):
         entries = [

@@ -86,7 +86,6 @@ export function heroDetailModal(hero, tacticsDict) {
         hero.stars != null ? el("span", { class: "badge stars" }, "★".repeat(hero.stars)) : null,
         hero.roleTagViet ? el("span", { class: "badge role" }, hero.roleTagViet) : null,
       ].filter(Boolean)),
-      el("div", { class: "hero-modal-cn" }, hero.chinese),
     ]),
   ].filter(Boolean));
 

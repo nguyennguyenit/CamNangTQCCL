@@ -3,11 +3,12 @@
 import { el } from './render.js';
 import {
   loadRecommendedDetailRecord,
-  loadVerifiedLegacyTeam,
+  loadVerifiedLegacyTeams,
   loadVerifiedRecommendedManifest,
 } from './recommended-reference-state.js';
 import { legacyOriginalDetailContent, recommendedTeamDetailContent } from './recommended-reference-render.js';
 import { safeReturnUrl } from './team-detail-navigation.js';
+import { loadWebsiteDisplay, localizeData } from './website-display.js';
 
 const VERIFY_MESSAGE = 'Không thể xác minh dữ liệu đội hình. Hãy tải lại trang hoặc quay lại danh sách.';
 const NETWORK_MESSAGE = 'Không tải được chi tiết đội hình. Hãy kiểm tra kết nối rồi thử lại.';
@@ -35,6 +36,8 @@ export async function initTeamDetail({documentTarget = document} = {}) {
 
   const {family, sourceConfigId, scopeKey, generationId, manifestSha256, legacyTeamId, legacyTeamsSha256} = root.dataset;
   const pin = {schemaVersion: 1, generationId, manifestSha256};
+  const websitePin = JSON.parse(documentTarget.querySelector('#website-display-publication')?.textContent || 'null');
+  let websiteDisplay;
   const variantParams = new URL(location.href).searchParams;
   const requestedVariantPresent = variantParams.has('variant');
   const requestedVariant = variantParams.get('variant');
@@ -65,19 +68,30 @@ export async function initTeamDetail({documentTarget = document} = {}) {
     root.setAttribute('aria-busy', 'false');
   };
 
+  async function localizedLegacyTeams() {
+    const teams = await loadVerifiedLegacyTeams(legacyTeamsSha256, () => fetchBytes('/data/teams.json'));
+    return localizeData(websiteDisplay, 'data/teams.json', teams);
+  }
+
   async function loadRecommended() {
-    const record = await loadRecommendedDetailRecord(pin, {scopeKey, sourceConfigId}, name => fetchBytes(`/data/recommended/${name}`));
-    showContent(recommendedTeamDetailContent(record));
+    const [record, legacyTeams] = await Promise.all([
+      loadRecommendedDetailRecord(pin, {scopeKey, sourceConfigId}, name => fetchBytes(`/data/recommended/${name}`)),
+      localizedLegacyTeams(),
+    ]);
+    showContent(recommendedTeamDetailContent(record, {legacyTeams}));
   }
 
   async function loadLegacy() {
-    const team = await loadVerifiedLegacyTeam(legacyTeamId, legacyTeamsSha256, () => fetchBytes('/data/teams.json'));
+    const teams = await localizedLegacyTeams();
+    const matches = teams.filter(candidate => candidate.id === legacyTeamId);
+    if (matches.length !== 1) throw new Error('Không tìm thấy đúng một đội gốc với mã này.');
+    const team = matches[0];
     if (!requestedVariantPresent) {
-      showContent(legacyOriginalDetailContent(team, {}));
+      showContent(legacyOriginalDetailContent(team));
       return;
     }
     const originalLink = el('a', {class: 'detail-link', href: `/teams/legacy/${encodeURIComponent(legacyTeamId)}/`}, 'Xem đội gốc');
-    let admitted = null;
+    let admitted;
     try {
       const {load} = await loadVerifiedRecommendedManifest(pin, name => fetchBytes(`/data/recommended/${name}`));
       const other = await load('other-teams.json');
@@ -88,16 +102,22 @@ export async function initTeamDetail({documentTarget = document} = {}) {
       return;
     }
     if (!admitted) {
-      showError('Biến thể này không có trong dữ liệu Team khác đã xác minh.', {actions: [originalLink]});
+      showError('Biến thể này không có trong dữ liệu đội khác đã xác minh.', {actions: [originalLink]});
       return;
     }
-    showContent(legacyOriginalDetailContent(admitted.legacyContent || team, {variant: admitted}));
+    const content = {...(admitted.legacyContent || team), notes: team.notes};
+    showContent(legacyOriginalDetailContent(content, {variant: admitted}));
   }
 
   async function load() {
     pending = true;
     showLoading();
     try {
+      websiteDisplay ??= await loadWebsiteDisplay(
+        websitePin,
+        path => fetchBytes(path === 'website-display.json' ? '/data/website-display.json' : `/${path}`),
+        pin,
+      );
       if (family === 'recommended') await loadRecommended();
       else await loadLegacy();
     } catch (error) {

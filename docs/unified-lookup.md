@@ -79,7 +79,7 @@ review; không xóa lock hoặc chép preimage thủ công.
 
 `#lookup` là route canonical. `#heroes`, `#tactics` và deep link `#lookup/<group>/<id>` tương thích mà không rewrite history ngoài navigation do người dùng thực hiện. Sáu chip nhóm, tìm Việt bỏ dấu/Hán/Hán-Việt, phân trang, modal focus trap, Escape, Back/Forward, mobile và light/dark thuộc contract trình duyệt.
 
-Astro build capture một publication snapshot. Cùng hero/tactic bytes phải khớp lookup manifest và `#season-artifact-hashes`; scoped Recommended bytes phải khớp `#recommended-publication`. Nếu HTML, route hoặc generation bị interleave, build/verifier dừng thay vì phát hành artifact trộn.
+Astro build capture một website-display publication snapshot. Sidecar pin exact bytes/generation của Lookup cùng source JSON hiển thị và generation Recommended; HTML và mọi route raw đều dùng snapshot đó. Candidate strict của `site_localization` tự dựng/validate Lookup từ review inputs và chỉ publish khi bốn file Lookup công khai đã trùng candidate. Nếu source hash, HTML pin, route hoặc generation bị interleave, build/verifier dừng toàn bộ khởi tạo thay vì phát hành artifact trộn hoặc render raw.
 
 MCP vẫn có tám tool và bốn search kinds `hero`, `tactic`, `team`, `book`. Bốn nhóm catalog mới chỉ thuộc website. Raw project root được nhận khi hai lookup sidecar và dictionary bytes coherent; packaged MCP root được nhận theo `manifest.json` sáu/mười một artifact. Hai lookup sidecar website được validate ở ingress nhưng không emit thành MCP artifact hay kind. Root trộn hai format bị từ chối.
 
@@ -90,5 +90,6 @@ MCP vẫn có tám tool và bốn search kinds `hero`, `tactic`, `team`, `book`.
 - Đổi semantic runtime MCP: chạy `npm --prefix mcp-worker run generate:workflow-build`, commit generated identity rồi chạy `check`.
 - Đổi public manifest/build verifier/router: chạy root check, build, dist verifier, dev contract và Astro E2E.
 - Đổi raw-ingress/MCP packaging: chạy MCP `check` và `test:worker`; build release assets chỉ trong clean exact-SHA checkout.
+- Đổi code/UI source được policy localization theo dõi: review diff, cập nhật exact source binding, dựng/check/publish candidate `--stage all`, rồi chạy public check; không sửa sidecar hay generation bằng tay.
 
 Release/deploy, Worker asset publication và rollback production cần authorization riêng. Local acceptance không cấp quyền cho các thao tác đó.

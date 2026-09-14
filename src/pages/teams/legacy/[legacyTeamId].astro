@@ -18,17 +18,18 @@ export async function getStaticPaths() {
 }
 
 const {entry, generationId, manifestSha256, legacyTeamsSha256} = Astro.props;
-const title = entry.nickname || entry.name || entry.legacyTeamId;
+const rawTitle = entry.nickname || entry.name || entry.legacyTeamId;
+const title = /[\u3400-\u9fff\uf900-\ufaff]/u.test(rawTitle) ? 'Nội dung tiếng Việt chưa sẵn sàng' : rawTitle;
 ---
 <SiteLayout
-  title={`${title} — Team khác — Cẩm Nang Game Tam Quốc Chí - Chiến Lược`}
+  title={`${title} — Đội khác — Cẩm Nang Game Tam Quốc Chí - Chiến Lược`}
   description={`Nội dung gốc của đội ${title} trong dữ liệu đội hình sẵn có.`}
   pageKind="detail"
   activeSection="team-khac"
-  tagline="Chi tiết Team khác"
+  tagline="Chi tiết đội khác"
 >
   <nav class="detail-back-row" aria-label="Quay lại danh sách đội">
-    <a id="team-return-link" class="detail-link" href="/#team-khac" data-family-href="/#team-khac">Quay lại Team khác</a>
+    <a id="team-return-link" class="detail-link" href="/#team-khac" data-family-href="/#team-khac">Quay lại đội khác</a>
   </nav>
 
   <article
@@ -45,16 +46,13 @@ const title = entry.nickname || entry.name || entry.legacyTeamId;
     <div class="detail-header">
       <div>
         <h1 id="team-detail-title" class="detail-title">{title}</h1>
-        {entry.name && entry.name !== title
-          ? <p class="scope-note detail-source-title" translate="no">{entry.name}</p>
-          : null}
       </div>
       <p class="detail-score">Chưa có điểm nguồn</p>
     </div>
 
     <div id="team-detail-status" class="detail-state" role="status" aria-live="polite" aria-atomic="true">Đang tải chi tiết…</div>
     <noscript>
-      <p class="scope-note">Trang chi tiết cần JavaScript để đọc dữ liệu gốc đã xác minh. Bạn vẫn có thể quay lại danh sách Team khác bằng liên kết phía trên.</p>
+      <p class="scope-note">Trang chi tiết cần JavaScript để đọc dữ liệu gốc đã xác minh. Bạn vẫn có thể quay lại danh sách đội khác bằng liên kết phía trên.</p>
     </noscript>
     <div id="team-detail-body" hidden></div>
   </article>

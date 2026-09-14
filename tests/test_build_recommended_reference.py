@@ -6,6 +6,8 @@ import unittest
 from pathlib import Path
 
 from pipeline.build_recommended_reference import (
+    _validated_display_notes,
+    _validated_raw_display_notes,
     apply_display_map,
     build_generation,
     canonical_object_hash,
@@ -289,6 +291,18 @@ class BuildRecommendedReferenceTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "missing seasons: pk-s01"):
             apply_display_map(inputs, self._loaded(self._display_map(seasons=[payload["seasons"][0]])))
 
+    def test_display_notes_require_reviewed_vietnamese_text(self):
+        row = {"heroes": [], "alternativeHoldersRaw": []}
+        projection = {
+            "schemaVersion": 1,
+            "blocks": [{"id": "p-1", "textRaw": "source note", "owner": "team"}],
+        }
+        self.assertEqual(_validated_raw_display_notes(projection, row), projection)
+        with self.assertRaisesRegex(ValueError, "textVi"):
+            _validated_display_notes(projection, row)
+        projection["blocks"][0]["textVi"] = "Ghi chú đã dịch"
+        self.assertEqual(_validated_display_notes(projection, row), projection)
+
     def test_display_name_change_keeps_identity_and_filter_metadata(self):
         identity = ("sourceSeasonId", "nameRaw", "label", "status", "advertisedCountRaw")
         first, scope_key, _ = self._display_inputs()
@@ -321,7 +335,7 @@ class BuildRecommendedReferenceTest(unittest.TestCase):
             "displayNameVi": "Đội Kiểm Thử",
             "displayNotes": {
                 "schemaVersion": 1,
-                "blocks": [{"id": "p-1", "textRaw": "source note", "owner": "team"}],
+                "blocks": [{"id": "p-1", "textRaw": "source note", "textVi": "Ghi chú nguồn", "owner": "team"}],
             },
         }
         index = {

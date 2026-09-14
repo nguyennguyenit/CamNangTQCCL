@@ -62,7 +62,7 @@ test('alias #heroes và #tactics preselect nhóm mà không rewrite hash', async
 test('quay lại Tra cứu bằng tab đồng bộ bộ lọc với hash mới', async ({ page }) => {
   await page.goto('/#lookup?group=tactics');
   await expect(lookup(page).getByRole('button', { name: 'Chiến pháp' })).toHaveAttribute('aria-pressed', 'true');
-  await page.getByRole('tab', { name: 'Team chuẩn', exact: true }).click();
+  await page.getByRole('tab', { name: 'Đội chuẩn', exact: true }).click();
   await page.getByRole('tab', { name: 'Tra cứu', exact: true }).click();
   await expect(page).toHaveURL(/#lookup$/);
   await expect(lookup(page).locator('.lookup-chip[aria-pressed="true"]')).toHaveCount(0);
@@ -86,17 +86,17 @@ test('route sai bị từ chối bằng lỗi tiếng Việt trong section looku
   }
 });
 
-test('bundle Tra cứu lỗi chỉ khóa lookup, Team chuẩn vẫn hoạt động', async ({ page }) => {
+test('thay đổi dependency đã pin khiến toàn bộ publication dừng fail-closed', async ({ page }) => {
   await page.route('**/data/lookup-manifest.json', (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: '{"schemaVersion":2}\n' }));
   await page.goto('/#lookup');
-  await expect(lookup(page).getByRole('alert')).toContainText('Dữ liệu Tra cứu hiện không khả dụng');
-  await page.getByRole('tab', { name: 'Team chuẩn', exact: true }).click();
-  await expect(page.locator('#section-team-chuan .team-card').first()).toBeVisible();
-  for (const name of ['Theo dõi chiêu mộ', 'Soi đội từ ảnh', 'Gợi ý đội từ kho']) {
-    await page.getByRole('tab', { name: new RegExp(name) }).click();
-    await expect(page.locator('section.active [role="status"]')).toContainText('cần dữ liệu Tra cứu');
-  }
+  const error = page.locator('#section-team-chuan .error');
+  await expect(error).toHaveText('Không thể tải dữ liệu. Hãy tải lại trang hoặc liên hệ quản trị viên nếu lỗi tiếp diễn.');
+  await expect(error).toBeHidden();
+  await expect(lookup(page)).toBeEmpty();
+  await page.getByRole('tab', { name: 'Đội chuẩn', exact: true }).click();
+  await expect(error).toBeVisible();
+  await expect(page.locator('#section-team-chuan .team-card')).toHaveCount(0);
 });
 
 test('Team chuẩn vẫn là mặc định và alias Team khác giữ nguyên', async ({ page }) => {
@@ -111,13 +111,13 @@ test('Team chuẩn vẫn là mặc định và alias Team khác giữ nguyên', 
 
 test('chuyển sang Tra cứu rồi Back giữ nguyên truy vấn và mùa nguồn của Team khác', async ({ page }) => {
   await page.goto('/?q=cuong#team-khac');
-  await expect(page.getByRole('searchbox', { name: 'Tìm Team khác', exact: true })).toHaveValue('cuong');
+  await expect(page.getByRole('searchbox', { name: 'Tìm Đội khác', exact: true })).toHaveValue('cuong');
   await page.getByRole('tab', { name: 'Tra cứu', exact: true }).click();
   await expect(lookup(page)).toBeVisible();
   await page.goBack();
   await expect(page).toHaveURL(/q=cuong/);
   await expect(page.locator('#section-team-khac')).toHaveClass(/active/);
-  await expect(page.getByRole('searchbox', { name: 'Tìm Team khác', exact: true })).toHaveValue('cuong');
+  await expect(page.getByRole('searchbox', { name: 'Tìm Đội khác', exact: true })).toHaveValue('cuong');
 });
 
 test('quá 60 kết quả vẫn tới được bản ghi cuối bằng Xem thêm', async ({ page }) => {

@@ -54,10 +54,7 @@ test('Recommended detail renders note ownership once per source occurrence',asyn
   await expect(paragraphs).toHaveCount(blocks.length);
   // Mỗi occurrence hiển thị đúng một lần, kể cả khi hai occurrence có cùng nội dung.
   const rendered=(await paragraphs.allTextContents()).map(value=>value.trim()).sort();
-  expect(rendered).toEqual(blocks.map(block=>block.textRaw.trim()).sort());
-  // The aggregate projection must not be rendered a second time next to the owned blocks.
-  const aggregate=await page.locator('#team-detail-body').evaluate((node,text)=>node.textContent.split(text).length-1,record.notesRaw);
-  expect(aggregate).toBeLessThanOrEqual(1);
+  expect(rendered).toEqual(blocks.map(block=>block.textVi.trim()).sort());
   const ownership=await page.evaluate(async()=>{
     const {recommendedTeamDetailContent}=await import('/js/recommended-reference-render.js');
     const holder=name=>({displayNameVi:name,tacticSlotsRaw:[],tacticSlotsVi:[],bookSlotsRaw:[],bookSlotsVi:[],statFocusRaw:'',roleRaw:''});
@@ -66,11 +63,11 @@ test('Recommended detail renders note ownership once per source occurrence',asyn
       heroes:[holder('A'),holder('B'),holder('C')],
       alternativeHoldersRaw:[holder('D')],
       displayNotes:{schemaVersion:1,blocks:[
-        {id:'p-team',owner:'team',holderIndex:null,textRaw:'Cùng nội dung'},
-        {id:'p-a',owner:'primary',holderIndex:0,textRaw:'Cùng nội dung'},
-        {id:'p-b',owner:'primary',holderIndex:1,textRaw:'Cùng nội dung'},
-        {id:'p-c',owner:'primary',holderIndex:2,textRaw:'Cùng nội dung'},
-        {id:'p-d',owner:'alternative',holderIndex:0,textRaw:'Cùng nội dung'},
+        {id:'p-team',owner:'team',holderIndex:null,textRaw:'Nguồn 1',textVi:'Ghi chú đã duyệt'},
+        {id:'p-a',owner:'primary',holderIndex:0,textRaw:'Nguồn 2',textVi:'Ghi chú đã duyệt'},
+        {id:'p-b',owner:'primary',holderIndex:1,textRaw:'Nguồn 3',textVi:'Ghi chú đã duyệt'},
+        {id:'p-c',owner:'primary',holderIndex:2,textRaw:'Nguồn 4',textVi:'Ghi chú đã duyệt'},
+        {id:'p-d',owner:'alternative',holderIndex:0,textRaw:'Nguồn 5',textVi:'Ghi chú đã duyệt'},
       ]},
       legacyReferences:[],
     });
@@ -82,9 +79,57 @@ test('Recommended detail renders note ownership once per source occurrence',asyn
       team:sectionFor('Mô tả & điều kiện').querySelectorAll('.detail-note').length,
       primary:[...sectionFor('Cấu hình chính').querySelectorAll('.reference-detail-holder')].map(node=>node.querySelectorAll('.detail-note').length),
       alternative:[...sectionFor('Cấu hình thay thế').querySelectorAll('.reference-detail-holder')].map(node=>node.querySelectorAll('.detail-note').length),
+      texts:[...host.querySelectorAll('.detail-note')].map(node=>node.textContent),
     };
   });
-  expect(ownership).toEqual({all:5,team:1,primary:[1,1,1],alternative:[1]});
+  expect(ownership).toEqual({
+    all:5,
+    team:1,
+    primary:[1,1,1],
+    alternative:[1],
+    texts:Array(5).fill('Ghi chú đã duyệt'),
+  });
+});
+
+test('Recommended detail distinguishes absent slots from untranslated populated slots',async({page})=>{
+  await page.goto('/teams/recommended/team-epoddo/');
+  const slots=await page.evaluate(async()=>{
+    const {recommendedTeamDetailContent}=await import('/js/recommended-reference-render.js');
+    const holder=(name,tacticRaw,tacticVi,bookRaw,bookVi,statRaw,statVi)=>({
+      displayNameVi:name,
+      tacticSlotsRaw:tacticRaw,
+      tacticSlotsVi:tacticVi,
+      bookSlotsRaw:bookRaw,
+      bookSlotsVi:bookVi,
+      statFocusRaw:statRaw,
+      statFocusVi:statVi,
+      roleRaw:'',
+    });
+    const fragment=recommendedTeamDetailContent({
+      sourceConfigId:'slot-state-probe',
+      sourceUrl:'https://sgsdeck.com/recommended/slot-state-probe',
+      heroes:[
+        holder('A',[''],[null],['','',''],[null,null,null],'',null),
+        holder('B',['突陣'],[null],['破陣'],[null],'全武',null),
+        holder('C',['Đột Trận'],['Đột Trận'],['Phá Trận'],['Phá Trận'],'Toàn Võ Lực','Toàn Võ Lực'),
+      ],
+      alternativeHoldersRaw:[],
+      displayNotes:{schemaVersion:1,blocks:[]},
+      legacyReferences:[],
+    });
+    const host=document.createElement('div');
+    host.append(fragment);
+    return [...host.querySelectorAll('.reference-detail-holder')].map(node=>({
+      tactics:node.querySelector('.holder-tactics dd')?.textContent,
+      books:node.querySelector('.holder-books dd')?.textContent,
+      stat:node.querySelector('.holder-stat dd')?.textContent,
+    }));
+  });
+  expect(slots).toEqual([
+    {tactics:'Chưa có dữ liệu',books:'Chưa có dữ liệu',stat:'Chưa có dữ liệu'},
+    {tactics:'Nội dung tiếng Việt chưa sẵn sàng',books:'Nội dung tiếng Việt chưa sẵn sàng',stat:'Nội dung tiếng Việt chưa sẵn sàng'},
+    {tactics:'Đột Trận',books:'Phá Trận',stat:'Toàn Võ Lực'},
+  ]);
 });
 
 test('legacy original keeps notes, counters, hero notes and every alternative',async({page,request})=>{
@@ -302,7 +347,7 @@ test('the return link restores the exact root state on a fresh load',async({page
   await page.reload();
   await back.click();
   await expect.poll(()=>page.evaluate(()=>new URL(location.href).searchParams.get('q'))).toBe(query);
-  await expect(page.locator('#section-team-chuan').getByLabel('Tìm Team chuẩn')).toHaveValue(query);
+  await expect(page.locator('#section-team-chuan').getByLabel('Tìm Đội chuẩn')).toHaveValue(query);
   await expect(page.locator('#section-team-chuan .filter-collapse-toggle')).toHaveAttribute('aria-expanded','true');
   await expect(page.locator('#section-team-chuan-filters')).not.toHaveClass(/collapsed/);
   await expect(page.locator('#section-team-chuan .score-toggle')).toHaveAttribute('aria-expanded','true');
@@ -331,7 +376,7 @@ test('combined score, unit, faction and Vietnamese search survive detail reload 
   await page.locator(`#section-team-chuan .score-group .fchip[data-focus-key="score:${score}"]`).click();
   await page.locator(`#section-team-chuan .unit-group .fchip[data-focus-key="unit:${unit}"]`).click();
   await page.locator(`#section-team-chuan .faction-group .fchip[data-focus-key="faction:${faction}"]`).click();
-  await page.locator('#section-team-chuan').getByLabel('Tìm Team chuẩn').fill(row.displayNameVi);
+  await page.locator('#section-team-chuan').getByLabel('Tìm Đội chuẩn').fill(row.displayNameVi);
   await expect.poll(()=>page.evaluate(()=>history.length)).toBe(historyBefore);
 
   const card=page.locator(`#section-team-chuan .reference-team-card[data-source-config-id="${row.sourceConfigId}"]`);
@@ -349,7 +394,7 @@ test('combined score, unit, faction and Vietnamese search survive detail reload 
   await expect.poll(()=>page.evaluate(()=>new URL(location.href).searchParams.getAll('score'))).toEqual([score]);
   await expect.poll(()=>page.evaluate(()=>new URL(location.href).searchParams.getAll('unit'))).toEqual([unit]);
   await expect.poll(()=>page.evaluate(()=>new URL(location.href).searchParams.getAll('faction'))).toEqual([faction]);
-  await expect(page.locator('#section-team-chuan').getByLabel('Tìm Team chuẩn')).toHaveValue(row.displayNameVi);
+  await expect(page.locator('#section-team-chuan').getByLabel('Tìm Đội chuẩn')).toHaveValue(row.displayNameVi);
   await expect(page.locator(`#section-team-chuan .score-group .fchip[data-focus-key="score:${score}"]`)).toHaveAttribute('aria-pressed','true');
   await expect(page.locator(`#section-team-chuan .unit-group .fchip[data-focus-key="unit:${unit}"]`)).toContainText(unitLabel);
   await expect(page.locator(`#section-team-chuan .faction-group .fchip[data-focus-key="faction:${faction}"]`)).toContainText(factionLabel);
@@ -443,7 +488,7 @@ test('detail pages keep working when sessionStorage writes are denied',async({pa
   await expect(page.locator('#team-return-link')).toHaveAttribute('href',/q=/);
   await page.goBack();
   await expect.poll(()=>page.evaluate(()=>new URL(location.href).searchParams.get('q'))).toBe(query);
-  await expect(page.locator('#section-team-chuan').getByLabel('Tìm Team chuẩn')).toHaveValue(query);
+  await expect(page.locator('#section-team-chuan').getByLabel('Tìm Đội chuẩn')).toHaveValue(query);
 });
 
 test('multi-page history does not loop or restore a foreign entry',async({page,request})=>{

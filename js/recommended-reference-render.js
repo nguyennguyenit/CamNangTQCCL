@@ -1,13 +1,22 @@
 import { el, FACTION_CODE, SOURCE_LABEL } from './render.js';
 import { validateReferenceSourceUrl } from './recommended-reference-state.js';
 
-const text = value => value || 'Chưa có dữ liệu';
+const CJK = /[\u3400-\u9fff\uf900-\ufaff]/u;
+const UNAVAILABLE = 'Nội dung tiếng Việt chưa sẵn sàng';
+const text = value => typeof value === 'string' && value.trim() && !CJK.test(value) ? value.trim() : UNAVAILABLE;
+const localizedSlot = (raw,vi) => {
+  const hasSource = typeof raw === 'string' ? Boolean(raw.trim()) : Boolean(raw);
+  const hasDisplay = typeof vi === 'string' && Boolean(vi.trim());
+  if (!hasSource && !hasDisplay) return {value:null,interactive:false};
+  const value=text(vi);
+  return {value,interactive:value !== UNAVAILABLE};
+};
 
 const VARIANT_CLASS={SP:'sp',CO:'co','40Y':'y40'};
 
 function holderNameNodes(holder) {
   const name=holder.displayNameVi || holder.nameRaw || '';
-  const value=typeof name === 'string' ? name.trim() : '';
+  const value=text(name);
   // Accept a separate prefix or one attached to Chinese text, never part of a Latin name.
   const match=value.match(/^(SP|CO|40Y)(?:\s+|(?=[\u3400-\u9fff]))(.+)$/u);
   if (!match) return [el('span',{class:'hn'},text(value))];
@@ -24,7 +33,7 @@ function tacticSlotEntries(holder) {
   const vi=holder.tacticSlotsVi || [];
   const kinds=holder.tacticSlotKinds || [];
   const length=Math.max(2,raw.length,vi.length);
-  return Array.from({length},(_,index)=>({value:vi[index] || raw[index] || null,bond:kinds[index] === 'bond'}));
+  return Array.from({length},(_,index)=>({...localizedSlot(raw[index],vi[index]),bond:kinds[index] === 'bond'}));
 }
 
 
@@ -35,43 +44,48 @@ function holderView(holder,onTag,{isMain=false}={}) {
       : el('span',{class:`tag ${cls}`},value)
     : el('span',{class:`tag ${cls} missing-slot`},'Chưa có dữ liệu');
   const entries=tacticSlotEntries(holder);
-  const bonds=entries.filter(entry=>entry.bond);
+  const bonds=entries.filter(entry=>entry.bond && entry.value);
   return el('div',{class:'hero reference-holder'},[
     el('div',{class:'hero-name'},[
       ...holderNameNodes(holder),
       isMain ? el('span',{class:'badge role main-holder',title:'Chủ tướng','aria-label':'Chủ tướng'},'C') : null,
     ]),
-    el('div',{class:'line tactics'},entries.filter(entry=>!entry.bond).map(entry=>slotTag(entry.value,'t-tactic',true))),
+    el('div',{class:'line tactics'},entries.filter(entry=>!entry.bond).map(entry=>slotTag(entry.value,'t-tactic',entry.interactive))),
     bonds.length ? el('div',{class:'line bonds'},[
       el('span',{class:'slot-label'},'Duyên phận:'),
       ...bonds.map(entry=>slotTag(entry.value,'t-bond',false)),
     ]) : null,
-    el('div',{class:'line books'},Array.from({length:3},(_,index)=>slotTag(holder.bookSlotsVi?.[index] || holder.bookSlotsRaw?.[index],'t-book',true))),
+    el('div',{class:'line books'},Array.from({length:3},(_,index)=>{
+      const entry=localizedSlot(holder.bookSlotsRaw?.[index],holder.bookSlotsVi?.[index]);
+      return slotTag(entry.value,'t-book',entry.interactive);
+    })),
   ]);
 }
 
-const slotLine=(raw,vi)=>(raw || []).map((value,index)=>text(vi?.[index] || value)).join(' · ');
-const entryLine=entries=>entries.map(entry=>text(entry.value)).join(' · ');
-const noteParagraph=value=>el('p',{class:'detail-note season-raw'},value);
+const slotLine=(raw,vi)=>(raw || []).map((value,index)=>localizedSlot(value,vi?.[index]).value).filter(Boolean).join(' · ');
+const entryLine=entries=>entries.map(entry=>entry.value).filter(Boolean).join(' · ');
+const noteParagraph=value=>el('p',{class:'detail-note'},text(value));
 const fact=(cls,label,value)=>el('div',{class:cls},[el('dt',{},label),el('dd',{},value)]);
+const detailSlotValue=value=>value || 'Chưa có dữ liệu';
 
 /** Một holder trên trang chi tiết; ghi chú đi kèm đúng chủ sở hữu, không gộp aggregate. */
 function detailHolder(holder,{level='h3',notes=[],isMain=false}={}) {
   const entries=tacticSlotEntries(holder);
-  const bonds=entries.filter(entry=>entry.bond);
+  const bonds=entries.filter(entry=>entry.bond && entry.value);
+  const statFocus=localizedSlot(holder.statFocusRaw,holder.statFocusVi).value;
   return el('section',{class:'reference-detail-holder season-slot'},[
     el(level,{},[
       ...holderNameNodes(holder),
       isMain ? el('span',{class:'badge role main-holder',title:'Chủ tướng','aria-label':'Chủ tướng'},'C') : null,
     ]),
     el('dl',{class:'detail-facts'},[
-      fact('holder-tactics','Chiến pháp',text(entryLine(entries.filter(entry=>!entry.bond)))),
+      fact('holder-tactics','Chiến pháp',detailSlotValue(entryLine(entries.filter(entry=>!entry.bond)))),
       bonds.length ? fact('holder-bonds','Duyên phận',entryLine(bonds)) : null,
-      fact('holder-books','Binh thư',text(slotLine(holder.bookSlotsRaw,holder.bookSlotsVi))),
+      fact('holder-books','Binh thư',detailSlotValue(slotLine(holder.bookSlotsRaw,holder.bookSlotsVi))),
       fact(
         holder.statFocusKind === 'note' ? 'holder-stat-note' : 'holder-stat',
         holder.statFocusKind === 'note' ? 'Lưu ý' : 'Cộng điểm',
-        text(holder.statFocusVi),
+        detailSlotValue(statFocus),
       ),
     ].filter(Boolean)),
     ...notes.map(noteParagraph),
@@ -90,17 +104,17 @@ const UNIT_CLASS={'Kỵ':'u-ky','Cung':'u-cung','Thương':'u-thuong','Khiên':'
 const unitBadges=(row,labels)=>{
   const values=row.unitTypesRaw?.length ? row.unitTypesRaw : (row.unit || []);
   return values.map(value=>{
-    const label=labels?.unit?.[value] || value;
-    return el('span',{class:`badge unit ${UNIT_CLASS[label] || ''}`.trim(),title:label===value?null:value},label);
+    const label=text(labels?.unit?.[value] || value);
+    return el('span',{class:`badge unit ${UNIT_CLASS[label] || ''}`.trim()},label);
   });
 };
 
 const factionBadge=(row,labels)=>{
   const raw=row.factionRaw ?? row.faction;
   if (!raw) return null;
-  const label=labels?.faction?.[raw] || raw;
+  const label=text(labels?.faction?.[raw] || raw);
   const code=FACTION_CODE[label];
-  return el('span',{class:`badge faction${code ? ` f-${code}` : ''}`,title:label===raw?null:raw},label);
+  return el('span',{class:`badge faction${code ? ` f-${code}` : ''}`},label);
 };
 
 // Điểm nguồn giữ đúng độ chính xác nguồn; thiếu điểm là nhãn trung tính, không phải 0.
@@ -161,14 +175,13 @@ export function recommendedTeamCard(row,{onTag,href,labels}={}) {
 function notesByOwner(record) {
   const blocks=record.displayNotes?.blocks;
   if (!Array.isArray(blocks)) {
-    // Bản ghi chưa có projection: giữ nguyên aggregate cũ, không tự suy ownership.
-    return {team:[record.notesRaw].filter(Boolean),primary:new Map(),alternative:new Map(),projected:false};
+    return {team:[UNAVAILABLE],primary:new Map(),alternative:new Map(),projected:false};
   }
   const team=[];
   const primary=new Map();
   const alternative=new Map();
   for (const block of blocks) {
-    const value=block?.textRaw;
+    const value=block?.textVi || UNAVAILABLE;
     if (!value) continue;
     const bucket=block.owner === 'primary' ? primary : block.owner === 'alternative' ? alternative : null;
     if (!bucket) { team.push(value); continue; }
@@ -214,7 +227,7 @@ function legacyContentSections(content,{title,provenance=[]}={}) {
 }
 
 /** Nội dung chi tiết Team chuẩn cho trang riêng; trả fragment, không tự tạo article/h1. */
-export function recommendedTeamDetailContent(record) {
+export function recommendedTeamDetailContent(record,{legacyTeams=[]}={}) {
   const fragment=document.createDocumentFragment();
   const notes=notesByOwner(record);
   const holders=record.heroes || record.holders || [];
@@ -223,7 +236,7 @@ export function recommendedTeamDetailContent(record) {
 
   fragment.append(section('Cấu hình chính',el('div',{class:'season-hero-slot'},holders.map((holder,index)=>detailHolder(holder,{
     isMain:index===0,
-    notes:notes.projected ? notes.primary.get(index) || [] : [holder.notesRaw].filter(Boolean),
+    notes:notes.projected ? notes.primary.get(index) || [] : [],
   })))));
   const teamNotes=section('Mô tả & điều kiện',notes.team.map(noteParagraph));
   if (teamNotes) fragment.append(teamNotes);
@@ -235,7 +248,7 @@ export function recommendedTeamDetailContent(record) {
       el('div',{class:'season-hero-slot'},slice.map((holder,position)=>detailHolder(holder,{
         level:'h4',
         isMain:position===0,
-        notes:notes.projected ? notes.alternative.get(index*3+position) || [] : [holder.notesRaw].filter(Boolean),
+        notes:notes.projected ? notes.alternative.get(index*3+position) || [] : [],
       }))),
     ]);
   });
@@ -252,6 +265,7 @@ export function recommendedTeamDetailContent(record) {
   }
   for (const {content,references} of legacyReferenceGroups.values()) {
     const first=references[0];
+    const localizedContent=legacyTeams.find(team=>team.id===first.legacyTeamId) || content;
     const provenance=references.map(reference=>el('div',{class:'legacy-provenance'},[
       el('p',{class:'scope-note'},`Đội gốc: ${reference.legacyTeamId}${reference.legacyVariantId ? ` · biến thể ${reference.legacyVariantId}` : ''}`),
       el('p',{class:'scope-note'},`Bằng chứng rà soát: ${reference.evidenceRef || 'Chưa ghi'} · ${reference.legacyContentSha256 || ''}`),
@@ -259,8 +273,8 @@ export function recommendedTeamDetailContent(record) {
     ]));
     fragment.append(el('section',{class:'detail-section legacy-reference'},[
       el('h2',{},'Nội dung đội gốc đã đối chiếu'),
-      ...legacyContentSections(content,{
-        title:content.nickname || content.name || first.legacyTeamId,
+      ...legacyContentSections(localizedContent,{
+        title:localizedContent.nickname || localizedContent.name || first.legacyTeamId,
         provenance,
       }),
     ]));

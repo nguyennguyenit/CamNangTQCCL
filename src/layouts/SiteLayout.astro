@@ -1,4 +1,5 @@
 ---
+import { websiteDisplayPublicationSnapshot } from '../lib/root-static-artifacts';
 // Vỏ trang dùng chung: root giữ nguyên tab buttons cho app.js, trang con dùng link thật.
 interface Props {
   title: string;
@@ -18,8 +19,8 @@ const {
 
 const BRAND = 'Cẩm Nang Game Tam Quốc Chí - Chiến Lược';
 const SECTIONS = [
-  {id: 'team-chuan', label: 'Team chuẩn'},
-  {id: 'team-khac', label: 'Team khác'},
+  {id: 'team-chuan', label: 'Đội chuẩn'},
+  {id: 'team-khac', label: 'Đội khác'},
   {id: 'coexist', label: 'Cùng Tồn'},
   {id: 'khaihoang', label: 'Khai hoang'},
   {id: 'heroes', label: 'Tra cứu tướng'},
@@ -30,6 +31,7 @@ const SECTIONS = [
 ];
 const isRoot = pageKind === 'root';
 const contentClass = isRoot ? 'content' : 'content detail-content';
+const website = await websiteDisplayPublicationSnapshot();
 ---
 <!doctype html>
 <html lang="vi" data-theme="light">
@@ -65,13 +67,13 @@ const contentClass = isRoot ? 'content' : 'content detail-content';
       <nav class="section-nav" aria-label="Chuyên mục">
         <div id="section-menu-items" class="section-menu-items">
           {SECTIONS.map((section) => (isRoot
-            ? <button class={section.id === 'team-chuan' ? 'nav-tab active' : 'nav-tab'} data-section={section.id}>{section.label}{section.beta ? <span class="badge beta">Beta</span> : null}</button>
+            ? <button class={section.id === 'team-chuan' ? 'nav-tab active' : 'nav-tab'} data-section={section.id}>{section.label}{section.beta ? <span class="badge beta">Thử nghiệm</span> : null}</button>
             : <a
                 class={section.id === activeSection ? 'nav-tab active' : 'nav-tab'}
                 data-section={section.id}
                 href={`/#${section.id}`}
                 aria-current={section.id === activeSection ? 'location' : null}
-              >{section.label}{section.beta ? <span class="badge beta">Beta</span> : null}</a>))}
+              >{section.label}{section.beta ? <span class="badge beta">Thử nghiệm</span> : null}</a>))}
         </div>
       </nav>
     </div>
@@ -85,9 +87,11 @@ const contentClass = isRoot ? 'content' : 'content detail-content';
     </main>
 
     <footer class="site-footer">
-      <p class="credit">Build bởi <strong>Nguyễn Nguyên</strong> · HLxThanos · Team 2 bang Huynh Đệ</p>
+      <p class="credit">Được xây dựng bởi <strong>Nguyễn Nguyên</strong> · HLxThanos · Đội 2 bang Huynh Đệ</p>
     </footer>
 
+    <script is:inline type="application/json" id="recommended-publication" set:html={JSON.stringify(website.recommended.pin)}></script>
+    <script is:inline type="application/json" id="website-display-publication" set:html={JSON.stringify(website.pin)}></script>
     {!isRoot && (
       <script is:inline type="module">
         import { initSiteChrome } from '/js/site-chrome.js';

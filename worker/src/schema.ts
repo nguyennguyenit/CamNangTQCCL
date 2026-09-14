@@ -149,7 +149,7 @@ export function validateBuiltTeamsScanResult(parsed: unknown): BuiltTeamsScanRes
   if (!Array.isArray(teamsRaw)) throw new TypeError("Thiếu mảng 'teams'");
   const teams = teamsRaw.slice(0, 12).map((t: any, i: number) => {
     if (!t || typeof t !== "object") throw new TypeError(`teams[${i}] không hợp lệ`);
-    const teamName = typeof t.teamName === "string" && t.teamName.trim() ? cut(t.teamName) : `Team ${i + 1}`;
+    const teamName = typeof t.teamName === "string" && t.teamName.trim() ? cut(t.teamName) : `Đội số ${i + 1}`;
     const heroesCn = strList(t.heroesCn || t.heroes);
     const tacticsCn = strList(t.tacticsCn || t.tactics);
     return { teamName, heroesCn, tacticsCn };

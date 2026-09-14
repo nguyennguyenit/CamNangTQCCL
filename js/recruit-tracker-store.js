@@ -51,7 +51,7 @@ function defaultDailyBanner() {
 }
 
 export function createDefaultRecruitTrackerState(now = new Date()) {
-  const account = { id: "acc_main", name: "Main", createdAt: typeof now === "string" ? now : nowIso() };
+  const account = { id: "acc_main", name: "Chính", createdAt: typeof now === "string" ? now : nowIso() };
   return {
     schemaVersion: SCHEMA_VERSION,
     activeAccountId: account.id,
@@ -141,7 +141,7 @@ export function getPity(state, accountId, bannerId) {
 
 export function createAccount(state, name) {
   const next = withState(state);
-  const account = { id: makeId("acc"), name: String(name || "Account").trim() || "Account", createdAt: nowIso() };
+  const account = { id: makeId("acc"), name: String(name || "Tài khoản").trim() || "Tài khoản", createdAt: nowIso() };
   next.accounts.push(account);
   next.activeAccountId = account.id;
   return next;
@@ -317,11 +317,11 @@ export function getRecruitTrackerSummary(state, { accountId, date = localDateFro
 export function validateRecruitTrackerImport(value) {
   if (!value || typeof value !== "object") return { ok: false, error: "Dữ liệu không hợp lệ." };
   if (value.schemaVersion !== SCHEMA_VERSION) return { ok: false, error: "Sai phiên bản dữ liệu." };
-  if (!Array.isArray(value.accounts) || value.accounts.length === 0) return { ok: false, error: "Thiếu account." };
+  if (!Array.isArray(value.accounts) || value.accounts.length === 0) return { ok: false, error: "Thiếu tài khoản." };
   if (!value.accounts.every((account) => account && typeof account.id === "string" && typeof account.name === "string")) {
-    return { ok: false, error: "Account không hợp lệ." };
+    return { ok: false, error: "Tài khoản không hợp lệ." };
   }
-  if (!value.accounts.some((account) => account.id === value.activeAccountId)) return { ok: false, error: "Active account không hợp lệ." };
+  if (!value.accounts.some((account) => account.id === value.activeAccountId)) return { ok: false, error: "Tài khoản hiện tại không hợp lệ." };
   if (!Array.isArray(value.banners)) return { ok: false, error: "Thiếu banner." };
   if (!Array.isArray(value.pullEvents)) return { ok: false, error: "Thiếu lịch sử quay." };
   return { ok: true, summary: { accounts: value.accounts.length, banners: value.banners.length, events: value.pullEvents.length } };

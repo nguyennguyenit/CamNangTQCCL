@@ -1,8 +1,8 @@
 ---
-import { seasonArtifactHashes } from '../lib/root-static-artifacts';
-import { recommendedPublicationSnapshot } from '../lib/recommended-reference-artifacts';
+import { seasonArtifactHashes, websiteDisplayPublicationSnapshot } from '../lib/root-static-artifacts';
+const website = await websiteDisplayPublicationSnapshot();
 const seasonHashes = await seasonArtifactHashes();
-const recommended = await recommendedPublicationSnapshot();
+const recommended = website.recommended;
 ---
 <!doctype html>
 <html lang="vi" data-theme="light">
@@ -10,9 +10,9 @@ const recommended = await recommendedPublicationSnapshot();
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cẩm Nang Game Tam Quốc Chí - Chiến Lược</title>
-    <meta name="description" content="Tổng hợp meta team, đội hình Cùng Tồn và Khai hoang game Tam Quốc Chí Chiến Lược, có đầy đủ bộ lọc theo tướng, chiến pháp, binh thư, tier." />
+    <meta name="description" content="Tổng hợp đội hình meta, đội hình Cùng Tồn và Khai hoang game Tam Quốc Chí Chiến Lược, có đầy đủ bộ lọc theo tướng, chiến pháp, binh thư, bậc." />
     <meta property="og:title" content="Cẩm Nang Game Tam Quốc Chí - Chiến Lược" />
-    <meta property="og:description" content="Tổng hợp meta team + bộ lọc đầy đủ." />
+    <meta property="og:description" content="Tổng hợp đội hình meta và bộ lọc đầy đủ." />
     <meta property="og:type" content="website" />
     <link rel="icon" type="image/png" sizes="128x128" href="/favicon.png" />
     <link rel="stylesheet" href="/css/styles.css" />
@@ -34,14 +34,14 @@ const recommended = await recommendedPublicationSnapshot();
 
       <nav class="section-nav" role="tablist" aria-label="Mục chính">
         <div id="section-menu-items" class="section-menu-items">
-          <button class="nav-tab active" role="tab" aria-selected="true" data-section="team-chuan">Team chuẩn</button>
-          <button class="nav-tab" role="tab" aria-selected="false" data-section="team-khac">Team khác</button>
+          <button class="nav-tab active" role="tab" aria-selected="true" data-section="team-chuan">Đội chuẩn</button>
+          <button class="nav-tab" role="tab" aria-selected="false" data-section="team-khac">Đội khác</button>
           <button class="nav-tab" role="tab" aria-selected="false" data-section="coexist">Cùng Tồn</button>
           <button class="nav-tab" role="tab" aria-selected="false" data-section="khaihoang">Khai hoang</button>
           <button class="nav-tab" role="tab" aria-selected="false" data-section="lookup">Tra cứu</button>
-          <button class="nav-tab" role="tab" aria-selected="false" data-section="recruit-tracker">Theo dõi chiêu mộ <span class="badge beta">Beta</span></button>
-          <button class="nav-tab" role="tab" aria-selected="false" data-section="analyze">Soi đội từ ảnh <span class="badge beta">Beta</span></button>
-          <button class="nav-tab" role="tab" aria-selected="false" data-section="roster-recommend">Gợi ý đội từ kho <span class="badge beta">Beta</span></button>
+          <button class="nav-tab" role="tab" aria-selected="false" data-section="recruit-tracker">Theo dõi chiêu mộ <span class="badge beta">Thử nghiệm</span></button>
+          <button class="nav-tab" role="tab" aria-selected="false" data-section="analyze">Soi đội từ ảnh <span class="badge beta">Thử nghiệm</span></button>
+          <button class="nav-tab" role="tab" aria-selected="false" data-section="roster-recommend">Gợi ý đội từ kho <span class="badge beta">Thử nghiệm</span></button>
         </div>
       </nav>
     </div>
@@ -63,11 +63,12 @@ const recommended = await recommendedPublicationSnapshot();
     </main>
 
     <footer class="site-footer">
-      <p class="credit">Build bởi <strong>Nguyễn Nguyên</strong> · HLxThanos · Team 2 bang Huynh Đệ</p>
+      <p class="credit">Được xây dựng bởi <strong>Nguyễn Nguyên</strong> · HLxThanos · Đội 2 bang Huynh Đệ</p>
     </footer>
 
     <script is:inline type="application/json" id="season-artifact-hashes" set:html={JSON.stringify(seasonHashes)}></script>
     <script is:inline type="application/json" id="recommended-publication" set:html={JSON.stringify(recommended.pin)}></script>
+    <script is:inline type="application/json" id="website-display-publication" set:html={JSON.stringify(website.pin)}></script>
     <script is:inline type="module" src="/js/app.js"></script>
   </body>
 </html>

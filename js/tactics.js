@@ -6,14 +6,13 @@ import { searchDict } from "./match-dict.js";
 
 const QUALITY_ORDER = ["S", "A", "B"];
 
-/** Mô tả theo thứ tự ưu tiên Việt -> Trung, hỗ trợ record cũ chỉ có effect. */
+/** Chỉ hiển thị mô tả tiếng Việt; trường nguồn vẫn dành cho tìm kiếm nội bộ. */
 export function tacticDescriptions(t) {
-  const descriptions = [];
-  if (t.effectViet) descriptions.push({ lang: "vi", label: "Tiếng Việt", text: t.effectViet });
-  if (t.effect && t.effect !== t.effectViet) {
-    descriptions.push({ lang: "zh", label: "中文", text: t.effect });
-  }
-  return descriptions;
+  return [{
+    lang: "vi",
+    label: "Tiếng Việt",
+    text: t.effectViet || "Nội dung tiếng Việt chưa sẵn sàng",
+  }];
 }
 
 /** Card 1 chiến pháp (DOM-safe). */
@@ -24,7 +23,6 @@ export function tacticCard(t) {
   ]);
 
   const sub = el("div", { class: "tac-sub" }, [
-    t.chinese ? el("span", { class: "tac-cn" }, t.chinese) : null,
     t.hanViet && t.hanViet !== t.viet ? el("span", { class: "tac-hv" }, t.hanViet) : null,
   ]);
 

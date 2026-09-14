@@ -6,6 +6,11 @@ import {
   artifactEntriesFor,
   validatePublicArtifactManifest,
 } from "./public-artifact-manifest.mjs";
+import {
+  DEFAULT_RECOMMENDED_ROOT,
+  recommendedPublicationSnapshot,
+  type RecommendedPublicationSnapshot,
+} from "./recommended-reference-artifacts.ts";
 
 type ArtifactKind = "js" | "css" | "data";
 type PublicArtifactManifest = Parameters<typeof validatePublicArtifactManifest>[0];
@@ -24,6 +29,22 @@ const lookupSnapshots = new Map<string, Promise<{
   manifest: { schemaVersion: number; generationId: string; files: Record<string, string> };
   files: Record<string, Buffer>;
 }>>();
+const WEBSITE_DISPLAY_FILE = "website-display.json";
+type WebsiteDisplayDocument = {
+  schemaVersion: number;
+  generationId: string;
+  sourceHashes: Record<string, string>;
+  recommendedPin: { schemaVersion: number; generationId: string; manifestSha256: string };
+  values: Record<string, string>;
+};
+export type WebsiteDisplayPublicationSnapshot = {
+  document: WebsiteDisplayDocument;
+  bytes: Buffer;
+  pin: { generationId: string; sha256: string };
+  recommended: RecommendedPublicationSnapshot;
+  publicFiles: Record<string, Buffer>;
+};
+const websiteDisplaySnapshots = new Map<string, Promise<WebsiteDisplayPublicationSnapshot>>();
 
 function sha256(bytes: Uint8Array) {
   return createHash("sha256").update(bytes).digest("hex");
@@ -150,25 +171,24 @@ export async function validatePublicArtifactTree({
   }
 }
 
-export async function readPublicArtifact({
-  kind,
-  routeParam,
-  rootDir = DEFAULT_PROJECT_ROOT,
-  manifest = PUBLIC_ARTIFACTS,
-}: ArtifactOptions & { kind: ArtifactKind; routeParam?: string }) {
+function allowlistedArtifact(kind: ArtifactKind, routeParam: string | undefined, manifest: PublicArtifactManifest) {
   validatePublicArtifactManifest(manifest);
-  const artifact = artifactEntriesFor(kind, manifest)
-    .find((candidate) => candidate.routeParam === routeParam);
-  if (!artifact) {
-    throw new Error(`Public artifact is not allowlisted: ${kind}/${routeParam}`);
-  }
-  if (kind === "data" && LOOKUP_FILES.includes(artifact.sourceBasename as typeof LOOKUP_FILES[number])) {
-    const snapshot = await lookupPublicationSnapshot({ rootDir, manifest });
-    return { artifact, bytes: snapshot.files[artifact.sourceBasename], mimeType: artifact.mimeType };
-  }
+  const artifact = artifactEntriesFor(kind, manifest).find((candidate) => candidate.routeParam === routeParam);
+  if (!artifact) throw new Error(`Public artifact is not allowlisted: ${kind}/${routeParam}`);
+  return artifact;
+}
 
+async function readAllowlistedBytes(
+  kind: ArtifactKind,
+  routeParam: string | undefined,
+  rootDir: string,
+  manifest: PublicArtifactManifest,
+) {
+  const artifact = allowlistedArtifact(kind, routeParam, manifest);
   const rootRealpath = await realpath(rootDir);
-  const sourcePath = join(rootDir, kind, artifact.sourceBasename);
+  const directory = join(rootDir, kind);
+  const directoryRealpath = await realpath(directory);
+  const sourcePath = join(directory, artifact.sourceBasename);
   let sourceStat;
   try {
     sourceStat = await lstat(sourcePath);
@@ -179,15 +199,95 @@ export async function readPublicArtifact({
     throw new Error(`Public artifact source must be a regular file, not a symlink: ${sourcePath}`);
   }
   const sourceRealpath = await realpath(sourcePath);
-  if (!withinRoot(sourceRealpath, rootRealpath) || dirname(sourceRealpath) !== join(rootRealpath, kind)) {
+  if (!withinRoot(sourceRealpath, rootRealpath) || dirname(sourceRealpath) !== directoryRealpath) {
     throw new Error(`Public artifact source escapes its allowlisted directory: ${sourcePath}`);
   }
+  return { artifact, bytes: await readFile(sourceRealpath), mimeType: artifact.mimeType };
+}
 
-  return {
-    artifact,
-    bytes: await readFile(sourceRealpath),
-    mimeType: artifact.mimeType,
-  };
+export function websiteDisplayPublicationSnapshot({
+  rootDir = DEFAULT_PROJECT_ROOT,
+  manifest = PUBLIC_ARTIFACTS,
+}: ArtifactOptions = {}) {
+  const key = rootDir;
+  const cached = websiteDisplaySnapshots.get(key);
+  if (cached) return cached;
+  const pending = (async () => {
+    const display = await readAllowlistedBytes("data", "website-display", rootDir, manifest);
+    let document: WebsiteDisplayDocument;
+    try {
+      document = JSON.parse(display.bytes.toString("utf8"));
+    } catch {
+      throw new Error("Website display artifact is invalid JSON");
+    }
+    if (
+      !document
+      || Object.keys(document).sort().join(",") !== "generationId,recommendedPin,schemaVersion,sourceHashes,values"
+      || document.schemaVersion !== 1
+      || !/^site-localization:[0-9a-f]{64}$/.test(document.generationId)
+      || !document.sourceHashes
+      || !document.values
+    ) throw new Error("Website display artifact shape is invalid");
+
+    const recommendedRoot = rootDir === DEFAULT_PROJECT_ROOT
+      ? DEFAULT_RECOMMENDED_ROOT
+      : join(rootDir, "src", "data", "recommended-reference");
+    const recommended = await recommendedPublicationSnapshot(recommendedRoot);
+    if (
+      document.recommendedPin.schemaVersion !== recommended.pin.schemaVersion
+      || document.recommendedPin.generationId !== recommended.pin.generationId
+      || document.recommendedPin.manifestSha256 !== recommended.pin.manifestSha256
+    ) throw new Error("Website display Recommended pin mismatch");
+
+    const publicFiles: Record<string, Buffer> = { [WEBSITE_DISPLAY_FILE]: display.bytes };
+    const allowedData = new Set<string>(artifactEntriesFor("data", manifest).map((entry) => entry.sourceBasename));
+    for (const [relativePath, expectedHash] of Object.entries(document.sourceHashes)) {
+      if (!/^data\/[^/]+\.json$/.test(relativePath)) throw new Error("Website display source path is invalid");
+      const basename = relativePath.slice("data/".length);
+      if (!allowedData.has(basename) || basename === WEBSITE_DISPLAY_FILE) {
+        throw new Error(`Website display source is not allowlisted: ${relativePath}`);
+      }
+      const route = basename.slice(0, -".json".length);
+      const source = await readAllowlistedBytes("data", route, rootDir, manifest);
+      if (expectedHash !== sha256(source.bytes)) throw new Error(`Website display source hash mismatch: ${relativePath}`);
+      publicFiles[basename] = source.bytes;
+    }
+    const reread = await readAllowlistedBytes("data", "website-display", rootDir, manifest);
+    if (!reread.bytes.equals(display.bytes)) throw new Error("Website display artifact changed during capture");
+    return Object.freeze({
+      document: Object.freeze(document),
+      bytes: display.bytes,
+      pin: Object.freeze({ generationId: document.generationId, sha256: sha256(display.bytes) }),
+      recommended,
+      publicFiles: Object.freeze(publicFiles),
+    });
+  })();
+  websiteDisplaySnapshots.set(key, pending);
+  pending.catch(() => {
+    if (websiteDisplaySnapshots.get(key) === pending) websiteDisplaySnapshots.delete(key);
+  });
+  return pending;
+}
+
+export async function readPublicArtifact({
+  kind,
+  routeParam,
+  rootDir = DEFAULT_PROJECT_ROOT,
+  manifest = PUBLIC_ARTIFACTS,
+}: ArtifactOptions & { kind: ArtifactKind; routeParam?: string }) {
+  const artifact = allowlistedArtifact(kind, routeParam, manifest);
+  if (kind === "data") {
+    if (artifactEntriesFor("data", manifest).some((entry) => entry.routeParam === "website-display")) {
+      const display = await websiteDisplayPublicationSnapshot({ rootDir, manifest });
+      const captured = display.publicFiles[artifact.sourceBasename];
+      if (captured) return { artifact, bytes: captured, mimeType: artifact.mimeType };
+    }
+    if (LOOKUP_FILES.includes(artifact.sourceBasename as typeof LOOKUP_FILES[number])) {
+      const snapshot = await lookupPublicationSnapshot({ rootDir, manifest });
+      return { artifact, bytes: snapshot.files[artifact.sourceBasename], mimeType: artifact.mimeType };
+    }
+  }
+  return readAllowlistedBytes(kind, routeParam, rootDir, manifest);
 }
 
 export async function staticPathsFor(kind: ArtifactKind, options: ArtifactOptions = {}) {

@@ -326,7 +326,7 @@ function lockedEntry(team, index) {
     locked: true,
     team: {
       id: team.teamId || `locked-${index}`,
-      name: team.teamName || team.teamId || `Team đã build ${index + 1}`,
+      name: team.teamName || team.teamId || `Đội đã xây dựng ${index + 1}`,
     },
     tier: "",
     tierRankings: [],

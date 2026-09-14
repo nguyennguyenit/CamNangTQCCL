@@ -9,62 +9,25 @@
       "missingNames": 0,
       "occurrences": 0
     },
-    "occurrences": 11,
+    "occurrences": 0,
     "tactic": {
-      "missingNames": 1,
-      "occurrences": 11
+      "missingNames": 0,
+      "occurrences": 0
     },
     "team": {
       "missingNames": 0,
       "occurrences": 0
     },
-    "total": 1
+    "total": 0
   },
-  "items": [
-    {
-      "aliasKey": "戮力上心",
-      "contextExamples": [
-        {
-          "sourceConfigId": "s27-han-hanshi-gong-1",
-          "sourceUrl": "https://sgsdeck.com/recommended/s27-han-hanshi-gong-1",
-          "teamNameRaw": "漢室弓"
-        },
-        {
-          "sourceConfigId": "s27-han-hanshi-gong-2",
-          "sourceUrl": "https://sgsdeck.com/recommended/s27-han-hanshi-gong-2",
-          "teamNameRaw": "漢室弓（變種）"
-        },
-        {
-          "sourceConfigId": "s27-han-zhujun-rou-gong",
-          "sourceUrl": "https://sgsdeck.com/recommended/s27-han-zhujun-rou-gong",
-          "teamNameRaw": "SP 朱儁漢肉弓"
-        }
-      ],
-      "displayNameVi": null,
-      "holderKinds": [
-        "primary"
-      ],
-      "itemId": "tactic:d5a19ced816b6a0fca2663f3",
-      "kind": "tactic",
-      "occurrences": 11,
-      "rawVariants": [
-        {
-          "occurrences": 11,
-          "raw": "戮力上心",
-          "reason": "no-reviewed-exact-alias",
-          "status": "missing"
-        }
-      ],
-      "status": "missing"
-    }
-  ],
-  "mappingHash": "sha256:78e0de60a2af6e9a11fa4babecadfa700fdcccdb7a5e0268fce9b3520effcfb4",
+  "items": [],
+  "mappingHash": "sha256:4a544d605248a7b93d1a65cd58a4af0bb66df6548c59705bf51e1e29252bb3a6",
   "note": "Điền displayNameVi cho từng tên gốc còn thiếu, rồi cập nhật pipeline/recommended-identity-map.json.",
   "schemaVersion": 1,
   "sourceGeneration": {
-    "generationId": "b69cddeb19acbb06f0bccabe99412d8d54ac3032514582281e1941fbe56da02d",
-    "indexSha256": "c81c1edd0be493000f5b0bb7a82b8d7ece457615efd182f595d47846e5c8aa7a",
-    "manifestSha256": "5c7ed3ac248eb8cc7c723907a9150b8acda88dfd348c0a4e84e0b9412cddbd49",
+    "generationId": "fb8b3871d76792ffa812ded103ee0c52f83ab3607fd294085e33d088422bfb8e",
+    "indexSha256": "a773c207c455ad125a7646d65846c7794f0e48bff2d88c8db4a84752eeb9c307",
+    "manifestSha256": "ab103e6cf517725d89f24ac93cd057018d4a65ceb965b30aa17edce05b542d1e",
     "records": 1366
   }
 }

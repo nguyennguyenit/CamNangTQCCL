@@ -37,6 +37,14 @@ import {
 export { WorkerAssetBuildError } from "../src/release/worker-release-evidence.js";
 
 const execFileAsync = promisify(execFile);
+export const WORKER_SOURCE_ONLY_FILES = [
+  "facets.json",
+  "khaihoang.json",
+  "tactics-generic.json",
+  "lookup-catalog.json",
+  "lookup-manifest.json",
+  "website-display.json",
+] as const;
 
 export interface BuildWorkerAssetsOptions {
   dataRoot: string | URL;
@@ -329,13 +337,7 @@ async function main(): Promise<void> {
       dataRoot: resolve(repositoryRoot, "data"),
       outputDirectory,
       workflowBuildId: WORKFLOW_BUILD_ID,
-      allowedSourceFiles: [
-        "facets.json",
-        "khaihoang.json",
-        "tactics-generic.json",
-        "lookup-catalog.json",
-        "lookup-manifest.json",
-      ],
+      allowedSourceFiles: WORKER_SOURCE_ONLY_FILES,
       readSourceState: async () => {
         const commitSha = await gitOutput(repositoryRoot, [
           "rev-parse",

@@ -16,6 +16,7 @@ describe("repository release gate", () => {
       "mcp-worker",
       "astro-build",
       "astro-dist",
+      "astro-verify",
       "astro-e2e",
       "root-js",
       "python-fallback",

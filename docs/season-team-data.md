@@ -127,8 +127,9 @@ Generation descriptor pin thêm `legacyTeamsHash` và `contentLinksHash`, nên �
 
 `displayNotes` là projection `schemaVersion: 1` gồm các block có `id` duy nhất,
 `owner` thuộc `team`, `primary` hoặc `alternative`, `holderIndex` nằm trong số holder
-tương ứng và `textRaw` không rỗng. Bản ghi chưa có projection giữ nguyên ghi chú
-aggregate `notesRaw`; renderer không tự suy ownership cho ghi chú cũ.
+tương ứng, `textRaw` không rỗng và `textVi` đã review không rỗng/không chứa chữ Hán.
+Capture chỉ nhận ownership cùng `textRaw`; strict publication mới yêu cầu `textVi`.
+Renderer không suy ownership hoặc fallback raw khi bản dịch thiếu.
 
 ### Tên Việt và dữ liệu Trung nguyên bản
 
@@ -150,23 +151,41 @@ Chỉ dẫn cộng điểm được dịch bằng bảng `statFocus` đã duyệ
 binh thư sang nhãn **Lưu ý** thay vì **Cộng điểm**.
 
 Các trường `nameRaw`, `tacticSlotsRaw`, `bookSlotsRaw`, `statFocusRaw`,
-`nameZh` và ghi chú nguồn không bị ghi đè, giữ dữ liệu để truy nguyên và cho
-giao diện hai ngôn ngữ sau này. Chưa có bộ chọn ngôn ngữ; tên đội và nội dung
-chưa có bản Việt vẫn giữ nguyên nguồn.
+`nameZh` và ghi chú nguồn không bị ghi đè, giữ dữ liệu để truy nguyên và tìm
+bằng alias gốc. Chưa có bộ chọn ngôn ngữ; website mặc định chỉ render projection
+Việt đã review, còn trường website-owned thiếu bản dịch làm strict gate dừng.
 
-Khi bổ sung bản dịch đã xác minh, cập nhật entry/alias tương ứng trong
-`pipeline/recommended-identity-map.json` và bằng chứng đối chiếu. Chạy lại lệnh
-dedup rồi builder ở trên vì ledger kiểm tra hash file mapping; không sửa trực
-tiếp generation đã xuất. Sau đó build và verify lại website.
-
-Kiểm chứng generation mới bằng lệnh thật:
+Khi nguồn Recommended thay đổi, capture lại từ cache đã xác minh vào file private;
+không recrawl trong builder và không tái dựng snapshot từ DTO public:
 
 ```bash
+python3 -m pipeline.site_localization capture \
+  --cache "$RECOMMENDED_CACHE" \
+  --output pipeline/localization-inputs/recommended.json
+python3 -m pipeline.site_localization inventory \
+  --root . \
+  --report .cache/site-localization-inventory.json
+```
+
+Review inventory; cập nhật identity/display map, `pipeline/site-translations.json`
+và receipt độc lập trong `pipeline/site-translation-reviews.json`. Không sửa
+generation đã xuất hoặc tự refresh fingerprint để né review. Dựng và kiểm
+candidate mới ở đường dẫn rỗng, rồi mới publish:
+
+```bash
+python3 -m pipeline.site_localization build --root . --stage all --output .cache/site-localization-candidate
+python3 -m pipeline.site_localization check --root . --stage all --candidate .cache/site-localization-candidate
+python3 -m pipeline.site_localization publish --root . --candidate .cache/site-localization-candidate
+python3 -m pipeline.site_localization check --root . --stage public
 python3 -m unittest tests.test_build_recommended_reference
 npm run build
 npm run verify
 npm run test:dist
 ```
+
+Candidate strict cũng dựng và pin Lookup từ cùng review inputs. Publish không thay
+Lookup; bốn file Lookup công khai phải đã trùng candidate, nếu không lệnh dừng.
+Xóa candidate private sau khi public check đạt.
 
 Publication đã chọn cũng là inventory của route chi tiết đội; phần route tĩnh và
 trang 404 nằm ở [deployment guide](deployment-guide.md).
@@ -194,10 +213,11 @@ python3 -m pipeline.report_recommended_translations \
   --output pipeline/recommended-missing-translations.json
 ```
 
-Report hiện còn một chiến pháp chưa xác thực: `戮力上心` (11 lần xuất hiện);
-không còn tên tướng hoặc binh thư thiếu bản dịch. Mỗi mục giữ các biến thể chữ
-Trung, số lần xuất hiện, tối đa ba ngữ cảnh đội/URL nguồn và
-`displayNameVi: null` để người dùng ghi bản dịch. Nhóm theo khóa alias đã
+Report hiện không còn tên thiếu bản Việt sau bản duyệt ngày 2026-09-14:
+11 ô nguồn `戮力上心` hiển thị **Đồng Lòng Hợp Sức**. Đây là bản duyệt
+hiển thị `translation-reviewed`, không xác nhận danh tính để xét trùng đội.
+Khi còn tên thiếu, mỗi mục giữ biến thể chữ Trung, số lần xuất hiện, tối đa
+ba ngữ cảnh đội/URL nguồn và `displayNameVi: null`. Nhóm theo khóa alias
 chuẩn hóa và loại thực thể; không tự gộp danh tính mơ hồ. Report ghi hash map
 và generation để nhận biết dữ liệu cũ; không được xuất ra website.
 
@@ -224,11 +244,14 @@ thêm `tacticSlotKinds` theo đúng vị trí và bản dịch trong `tacticSlot
 UI tách dòng **Duyên phận**, không tạo nút chọn chiến pháp cho mục này.
 Phân loại hiển thị không sửa bằng chứng nguồn hay quyết định xét trùng.
 
-Không tự đổi `戮力上心` thành `勠力同心` (**Đồng Lòng Hợp Sức**).
-[Trang nguồn S27](https://sgsdeck.com/recommended/s27-han-hanshi-gong-1)
-ghi tên đầu nhưng chưa có đối chiếu hiệu ứng đủ để xác nhận hai tên là một.
-Từ điển hiện có `勠力同心`; [bài mô tả chiến pháp](https://m.51nacs.com/article/1040.html)
-cũng dùng tên này, không chứng minh lỗi chữ của trang nguồn.
+Người dùng đã cung cấp ảnh tiếng Việt **Đồng Lòng Hợp Sức** và yêu cầu xử lý
+11 ô Recommended ngày 2026-09-14. Alias `戮力上心` được duyệt cho **hiển thị**
+bằng entry `translation-reviewed`, không gán stable ID và không nhập vào
+identity `勠力同心`. `tacticSlotsRaw` vẫn giữ nguyên `戮力上心`; dedup vẫn coi
+danh tính nguồn đó là unresolved. Không đổi chiến pháp Nội chính
+`戮力上国` (**Lục Lực Thượng Quốc**) của Tào Phi hoặc từ điển Tra cứu.
+Bằng chứng, giới hạn danh tính và kết quả kiểm tra nằm trong
+[brainstorm Việt hoá](../plans/reports/brainstorm-260914-0236-viet-hoa-toan-bo.md).
 
 Sau khi đổi generation trong lúc chạy `npm run dev`, khởi động lại dev server
 để nạp publication mới; server đang chạy có thể vẫn giữ generation cũ.

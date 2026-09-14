@@ -3,6 +3,7 @@ import { readdir, readFile } from "node:fs/promises";
 import { relative, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { PUBLIC_ARTIFACTS, validatePublicArtifactManifest } from "../src/lib/public-artifact-manifest.mjs";
+import { websiteDisplayPublicationSnapshot } from "../src/lib/root-static-artifacts.ts";
 import { recommendedPublicationSnapshot } from "../src/lib/recommended-reference-artifacts.ts";
 import { teamDetailCatalog } from "../src/lib/team-detail-routes.ts";
 
@@ -36,7 +37,9 @@ export async function verifyAstroDist({
   validatePublicArtifactManifest(manifest);
   const rootPath = fileURLToPath(projectRoot);
   const distPath = fileURLToPath(distDir);
-  const recommended = await recommendedPublicationSnapshot(resolve(rootPath, "src/data/recommended-reference"));
+  const hasWebsiteDisplay = manifest.some((entry) => entry.kind === "data" && entry.routeParam === "website-display");
+  const website = hasWebsiteDisplay ? await websiteDisplayPublicationSnapshot({rootDir: rootPath, manifest}) : null;
+  const recommended = website?.recommended ?? await recommendedPublicationSnapshot(resolve(rootPath, "src/data/recommended-reference"));
   const catalog = await teamDetailCatalog({
     recommendedRoot: resolve(rootPath, "src/data/recommended-reference"),
     teamsPath: resolve(rootPath, "data/teams.json"),
@@ -108,6 +111,15 @@ export async function verifyAstroDist({
   ) {
     throw new Error("Built HTML Recommended pin differs from emitted generation");
   }
+  if (website) {
+    const embeddedWebsite = html.match(/id="website-display-publication"[^>]*>([^<]+)<\/script>/);
+    if (!embeddedWebsite) throw new Error("Built HTML lacks the website display publication pin");
+    const embeddedWebsitePin = JSON.parse(embeddedWebsite[1]);
+    if (
+      embeddedWebsitePin.generationId !== website.pin.generationId
+      || embeddedWebsitePin.sha256 !== website.pin.sha256
+    ) throw new Error("Built HTML website display pin differs from emitted publication");
+  }
 
   // Mỗi trang chi tiết phải pin đúng identity đã validate, và không nạp app gốc.
   const readPage = async (decodedPath) => readFile(resolve(distPath, emittedByDecodedPath.get(decodedPath)), "utf8");
@@ -136,6 +148,12 @@ export async function verifyAstroDist({
       const page = await readPage(path);
       for (const pin of pins) {
         if (!page.includes(pin)) throw new Error(`Team detail page lacks its validated pin: ${path} (${pin})`);
+      }
+      if (website) {
+        const pageWebsite = page.match(/id="website-display-publication"[^>]*>([^<]+)<\/script>/);
+        if (!pageWebsite || JSON.stringify(JSON.parse(pageWebsite[1])) !== JSON.stringify(website.pin)) {
+          throw new Error(`Team detail page lacks the website display publication pin: ${path}`);
+        }
       }
       if (page.includes('src="/js/app.js"')) throw new Error(`Team detail page boots the root application: ${path}`);
     }));

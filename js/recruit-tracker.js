@@ -42,7 +42,7 @@ function uniqueSorted(values) {
 export function buildRecruitTrackerViewModel(summary, heroesDict = []) {
   const heroes = Array.isArray(heroesDict) ? heroesDict : Object.values(heroesDict || {});
   return {
-    accountLabel: summary.account?.name || "Account",
+    accountLabel: summary.account?.name || "Tài khoản",
     accounts: summary.accounts,
     heroOptions: uniqueSorted(heroes.map(heroName)),
     daily: {
@@ -50,7 +50,7 @@ export function buildRecruitTrackerViewModel(summary, heroesDict = []) {
       pityText: `${summary.daily.pity.pullsSinceFiveStar}/${summary.daily.pity.pityLimit}`,
       remainingText: `Còn ${summary.daily.pity.remaining} lượt`,
       todayText: `Hôm nay: ${summary.daily.todayDone}/4`,
-      warning: summary.daily.pity.isOverLimit ? "Kiểm tra lại dữ liệu/game rule" : "",
+      warning: summary.daily.pity.isOverLimit ? "Kiểm tra lại dữ liệu/quy tắc game" : "",
       slots: summary.daily.slots.map((slot) => ({
         ...slot,
         statusLabel: SLOT_STATUS_LABEL[slot.status] || slot.status,
@@ -61,7 +61,7 @@ export function buildRecruitTrackerViewModel(summary, heroesDict = []) {
       id: item.banner.id,
       name: item.banner.name,
       pityText: `${item.pity.pullsSinceFiveStar}/${item.pity.pityLimit}`,
-      warning: item.pity.isOverLimit ? "Kiểm tra lại dữ liệu/game rule" : "",
+      warning: item.pity.isOverLimit ? "Kiểm tra lại dữ liệu/quy tắc game" : "",
     })),
     history: summary.history,
   };
@@ -113,7 +113,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
   function renderHeader(viewModel) {
     const select = el("select", {
       class: "rt-select",
-      "aria-label": "Chọn account",
+      "aria-label": "Chọn tài khoản",
       onchange: (event) => mutate(setActiveAccount(state, event.target.value)),
     }, viewModel.accounts.map((account) => el("option", {
       value: account.id,
@@ -122,13 +122,13 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
 
     return el("section", { class: "rt-section rt-account-bar" }, [
       el("div", { class: "rt-account-main" }, [
-        el("span", { class: "rt-kicker" }, "Account"),
+        el("span", { class: "rt-kicker" }, "Tài khoản"),
         select,
       ]),
       el("div", { class: "rt-actions" }, [
-        el("button", { class: "rt-btn", type: "button", onclick: addAccount }, "+ Account"),
+        el("button", { class: "rt-btn", type: "button", onclick: addAccount }, "+ Tài khoản"),
         el("button", { class: "rt-btn", type: "button", onclick: renameActiveAccount }, "Đổi tên"),
-        el("button", { class: "rt-btn", type: "button", onclick: deleteActiveAccount }, "Xóa acc"),
+        el("button", { class: "rt-btn", type: "button", onclick: deleteActiveAccount }, "Xóa tài khoản"),
         el("button", { class: "rt-btn", type: "button", onclick: exportJson }, "Xuất JSON"),
         renderImportControl(),
       ]),
@@ -192,7 +192,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
       el("div", { class: "rt-section-head" }, [
         el("div", {}, [
           el("h2", {}, "Gói hạn giờ / Đột xuất"),
-          el("p", { class: "rt-sub" }, "Tạo riêng cho banner có hạn giờ hoặc gói theo giai đoạn."),
+          el("p", { class: "rt-sub" }, "Tạo riêng cho banner có thời hạn hoặc gói theo giai đoạn."),
         ]),
         el("button", { class: "rt-btn rt-primary", type: "button", onclick: addLimitedBanner }, "+ Thêm gói"),
       ]),
@@ -240,7 +240,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
 
   function renderPity(pityText, remainingText, warning) {
     return el("div", { class: `rt-pity${warning ? " warn" : ""}` }, [
-      el("span", { class: "rt-pity-label" }, "Pity 5★"),
+      el("span", { class: "rt-pity-label" }, "Mốc bảo hiểm 5★"),
       el("strong", {}, pityText),
       remainingText ? el("span", { class: "rt-sub" }, remainingText) : null,
       warning ? el("span", { class: "rt-warning" }, warning) : null,
@@ -288,7 +288,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
       el("div", { class: "rt-section-head" }, [
         el("div", {}, [
           el("h2", {}, "Lịch sử 5★"),
-          el("p", { class: "rt-sub" }, "Mới nhất trước, lọc theo account đang chọn."),
+          el("p", { class: "rt-sub" }, "Mới nhất trước, lọc theo tài khoản đang chọn."),
         ]),
       ]),
       viewModel.history.length
@@ -316,31 +316,31 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
   }
 
   function addAccount() {
-    const name = prompt("Tên account mới:");
+    const name = prompt("Tên tài khoản mới:");
     if (!name) return;
-    mutate(createAccount(state, name.trim()), "Đã thêm account.");
+    mutate(createAccount(state, name.trim()), "Đã thêm tài khoản.");
   }
 
   function renameActiveAccount() {
     const current = state.accounts.find((account) => account.id === state.activeAccountId);
-    const name = prompt("Tên account:", current?.name || "");
+    const name = prompt("Tên tài khoản:", current?.name || "");
     if (!name) return;
-    mutate(renameAccount(state, state.activeAccountId, name.trim()), "Đã đổi tên account.");
+    mutate(renameAccount(state, state.activeAccountId, name.trim()), "Đã đổi tên tài khoản.");
   }
 
   function deleteActiveAccount() {
     const current = state.accounts.find((account) => account.id === state.activeAccountId);
     if (!current || state.accounts.length <= 1) {
-      message = "Cần giữ ít nhất 1 account.";
+      message = "Cần giữ ít nhất 1 tài khoản.";
       render();
       return;
     }
-    if (!confirm(`Xóa account "${current.name}" và dữ liệu chiêu mộ của account này?`)) return;
-    mutate(deleteAccount(state, current.id), "Đã xóa account.");
+    if (!confirm(`Xóa tài khoản "${current.name}" và dữ liệu chiêu mộ của tài khoản này?`)) return;
+    mutate(deleteAccount(state, current.id), "Đã xóa tài khoản.");
   }
 
   function addLimitedBanner() {
-    const name = prompt("Tên gói/banner hạn giờ:");
+    const name = prompt("Tên gói/banner có thời hạn:");
     if (!name) return;
     mutate(createLimitedBanner(state, { name: name.trim() }), "Đã thêm gói hạn giờ.");
   }
@@ -400,7 +400,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
         return;
       }
       const summary = validation.summary;
-      const ok = confirm(`Ghi đè dữ liệu hiện tại?\nFile có ${summary.accounts} account, ${summary.banners} banner, ${summary.events} lượt quay.\nNên Xuất JSON backup trước nếu chưa chắc.`);
+      const ok = confirm(`Ghi đè dữ liệu hiện tại?\nFile có ${summary.accounts} tài khoản, ${summary.banners} đợt chiêu mộ, ${summary.events} lượt quay.\nNên Xuất JSON sao lưu trước nếu chưa chắc.`);
       if (!ok) return;
       mutate(parsed, "Đã nhập JSON.");
     } catch {

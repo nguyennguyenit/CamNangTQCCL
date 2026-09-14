@@ -150,7 +150,7 @@ test("boots once with clean first-party requests and stable metadata", async ({ 
 
   await expect(page).toHaveTitle("Cẩm Nang Game Tam Quốc Chí - Chiến Lược");
   await expect(page.locator("html")).toHaveAttribute("lang", "vi");
-  await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /Tổng hợp meta team/);
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /đội hình/i);
   const appModule = page.locator('script[type="module"]');
   await expect(appModule).toHaveCount(1);
   await expect(appModule).toHaveAttribute("src", /^(?:\.\/|\/)js\/app\.js$/);
@@ -269,8 +269,7 @@ test("required JSON failure stays in Team chuẩn and can remain hidden on anoth
 
   await page.goto("/#lookup");
   const error = page.locator("#section-team-chuan .error");
-  await expect(error).toContainText("Lỗi tải dữ liệu: ./data/teams.json: 503");
-  await expect(error).toContainText("Hãy tải lại trang hoặc liên hệ quản trị viên nếu lỗi tiếp diễn");
+  await expect(error).toHaveText("Không thể tải dữ liệu. Hãy tải lại trang hoặc liên hệ quản trị viên nếu lỗi tiếp diễn.");
   await expect(error).not.toContainText(/python3|http server|index\.html/i);
   await expectActiveSection(page, "lookup");
   await expect(error).toBeHidden();
@@ -364,15 +363,15 @@ test("opening a roster recommendation preserves its tab and opens the exact orig
   }, rosterState);
   await page.goto("/#roster-recommend");
   await waitForBoot(page);
-  await page.getByRole("button", { name: "Gợi ý 5 team", exact: true }).click();
+  await page.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
   const recommendation = page.locator(".roster-result-team").filter({
-    has: page.getByRole("button", { name: "Mở team", exact: true }),
+    has: page.getByRole("button", { name: "Mở đội", exact: true }),
   }).first();
   const selectedName = await recommendation.locator("strong").textContent();
   const selectedTeam = teamsFixture.find((team) => team.name === selectedName);
   expect(selectedTeam).toBeTruthy();
 
-  await recommendation.getByRole("button", { name: "Mở team", exact: true }).click();
+  await recommendation.getByRole("button", { name: "Mở đội", exact: true }).click();
   await expect(page).toHaveURL(new RegExp(`/teams/legacy/${selectedTeam.id}/`));
   await expect(page.locator("#team-detail-body")).toBeVisible();
   await expect(page.locator("h1#team-detail-title")).toHaveText(selectedTeam.nickname || selectedTeam.name);

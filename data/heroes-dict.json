@@ -54,7 +54,7 @@
     },
     "pending": false,
     "roleTag": "控 / 兼",
-    "roleTagViet": "Khống / Kiêm",
+    "roleTagViet": "Khống chế / Kiêm nhiệm",
     "selfTacticCn": "溯江摇橹",
     "stars": 5,
     "stats": {
@@ -128,7 +128,7 @@
     },
     "pending": false,
     "roleTag": "謀",
-    "roleTagViet": "Mưu",
+    "roleTagViet": "Mưu lược",
     "selfTacticCn": "江天长焰",
     "stars": 5,
     "stats": {
@@ -202,7 +202,7 @@
     },
     "pending": false,
     "roleTag": "兼",
-    "roleTagViet": "Kiêm",
+    "roleTagViet": "Kiêm nhiệm",
     "selfTacticCn": "围师必阙",
     "stars": 5,
     "stats": {
@@ -276,7 +276,7 @@
     },
     "pending": false,
     "roleTag": "輔 / 控",
-    "roleTagViet": "Phụ / Khống",
+    "roleTagViet": "Phụ trợ / Khống chế",
     "selfTacticCn": "机鉴先识",
     "stars": 5,
     "stats": {
@@ -426,7 +426,7 @@
     },
     "pending": false,
     "roleTag": "輔",
-    "roleTagViet": "Phụ",
+    "roleTagViet": "Phụ trợ",
     "selfTacticCn": "锦囊妙计",
     "stars": 5,
     "stats": {
@@ -500,7 +500,7 @@
     },
     "pending": false,
     "roleTag": "謀 / 輔",
-    "roleTagViet": "Mưu / Phụ",
+    "roleTagViet": "Mưu lược / Phụ trợ",
     "selfTacticCn": "经天纬地",
     "stars": 5,
     "stats": {
@@ -575,7 +575,7 @@
     },
     "pending": false,
     "roleTag": "輔 / 控",
-    "roleTagViet": "Phụ / Khống",
+    "roleTagViet": "Phụ trợ / Khống chế",
     "selfTacticCn": "誓守无降",
     "stars": 5,
     "stats": {
@@ -724,7 +724,7 @@
     },
     "pending": false,
     "roleTag": "仙 / 謀",
-    "roleTagViet": "Tiên / Mưu",
+    "roleTagViet": "Tiên / Mưu lược",
     "selfTacticCn": "兴云布雨",
     "stars": 5,
     "stats": {
@@ -798,7 +798,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": "持军毅重",
     "stars": 5,
     "stats": {
@@ -872,7 +872,7 @@
     },
     "pending": false,
     "roleTag": "謀",
-    "roleTagViet": "Mưu",
+    "roleTagViet": "Mưu lược",
     "selfTacticCn": "才辩机捷",
     "stars": 5,
     "stats": {
@@ -946,7 +946,7 @@
     },
     "pending": false,
     "roleTag": "蠻 / 盾",
-    "roleTagViet": "Man / Thuẫn",
+    "roleTagViet": "Man tộc / Phòng thủ",
     "selfTacticCn": "藤甲兵",
     "stars": 5,
     "stats": {
@@ -1021,7 +1021,7 @@
     },
     "pending": false,
     "roleTag": "輔 / 武",
-    "roleTagViet": "Phụ / Võ",
+    "roleTagViet": "Phụ trợ / Vũ lực",
     "selfTacticCn": "白马义从",
     "stars": 5,
     "stats": {
@@ -1171,7 +1171,7 @@
     },
     "pending": false,
     "roleTag": "戰 / 控",
-    "roleTagViet": "Chiến / Khống",
+    "roleTagViet": "Chiến / Khống chế",
     "selfTacticCn": "威震华夏",
     "stars": 5,
     "stats": {
@@ -1246,7 +1246,7 @@
     },
     "pending": false,
     "roleTag": "戰 / 控",
-    "roleTagViet": "Chiến / Khống",
+    "roleTagViet": "Chiến / Khống chế",
     "selfTacticCn": "将门虎女",
     "stars": 5,
     "stats": {
@@ -1321,7 +1321,7 @@
     },
     "pending": false,
     "roleTag": "盾 / 武",
-    "roleTagViet": "Thuẫn / Võ",
+    "roleTagViet": "Phòng thủ / Vũ lực",
     "selfTacticCn": "古之恶来",
     "stars": 5,
     "stats": {
@@ -1396,7 +1396,7 @@
     },
     "pending": false,
     "roleTag": "輔 / 武",
-    "roleTagViet": "Phụ / Võ",
+    "roleTagViet": "Phụ trợ / Vũ lực",
     "selfTacticCn": "国士将风",
     "stars": 5,
     "stats": {
@@ -1471,7 +1471,7 @@
     },
     "pending": false,
     "roleTag": "醫 / 控",
-    "roleTagViet": "Y / Khống",
+    "roleTagViet": "Y thuật / Khống chế",
     "selfTacticCn": "仁德载世",
     "stars": 5,
     "stats": {
@@ -1546,7 +1546,7 @@
     },
     "pending": false,
     "roleTag": "仙 / 醫",
-    "roleTagViet": "Tiên / Y",
+    "roleTagViet": "Tiên / Y thuật",
     "selfTacticCn": "青囊",
     "stars": 5,
     "stats": {
@@ -1621,7 +1621,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": "搦战群雄",
     "stars": 5,
     "stats": {
@@ -1771,7 +1771,7 @@
     },
     "pending": false,
     "roleTag": "謀",
-    "roleTagViet": "Mưu",
+    "roleTagViet": "Mưu lược",
     "selfTacticCn": "鹰视狼顾",
     "stars": 5,
     "stats": {
@@ -1846,7 +1846,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": "天下无双",
     "stars": 5,
     "stats": {
@@ -1921,7 +1921,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": "狮子奋迅",
     "stars": 5,
     "stats": {
@@ -1996,7 +1996,7 @@
     },
     "pending": false,
     "roleTag": "控 / 兼",
-    "roleTagViet": "Khống / Kiêm",
+    "roleTagViet": "Khống chế / Kiêm nhiệm",
     "selfTacticCn": "白衣渡江",
     "stars": 5,
     "stats": {
@@ -2070,7 +2070,7 @@
     },
     "pending": false,
     "roleTag": "盾",
-    "roleTagViet": "Thuẫn",
+    "roleTagViet": "Phòng thủ",
     "selfTacticCn": "肉身铁壁",
     "stars": 5,
     "stats": {
@@ -2144,7 +2144,7 @@
     },
     "pending": false,
     "roleTag": "謀",
-    "roleTagViet": "Mưu",
+    "roleTagViet": "Mưu lược",
     "selfTacticCn": "神火计",
     "stars": 5,
     "stats": {
@@ -2293,7 +2293,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": "将行其疾",
     "stars": 5,
     "stats": {
@@ -2413,7 +2413,7 @@
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
       "conditions": [],
-      "exclusiveTitleVi": "Thỉ chí tường long",
+      "exclusiveTitleVi": "Thỉ Chí Tường Long",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -2442,7 +2442,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": "神射",
     "stars": 5,
     "stats": {
@@ -2517,7 +2517,7 @@
     },
     "pending": false,
     "roleTag": "兼",
-    "roleTagViet": "Kiêm",
+    "roleTagViet": "Kiêm nhiệm",
     "selfTacticCn": "义胆雄心",
     "stars": 5,
     "stats": {
@@ -2592,7 +2592,7 @@
     },
     "pending": false,
     "roleTag": "盾",
-    "roleTagViet": "Thuẫn",
+    "roleTagViet": "Phòng thủ",
     "selfTacticCn": "江东猛虎",
     "stars": 5,
     "stats": {
@@ -2667,7 +2667,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": "弓腰姬",
     "stars": 5,
     "stats": {
@@ -2817,7 +2817,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": "江东小霸王",
     "stars": 5,
     "stats": {
@@ -2892,7 +2892,7 @@
     },
     "pending": false,
     "roleTag": "蠻 / 戰 / 盾",
-    "roleTagViet": "Man / Chiến / Thuẫn",
+    "roleTagViet": "Man tộc / Chiến / Phòng thủ",
     "selfTacticCn": "南蛮渠魁",
     "stars": 5,
     "stats": {
@@ -3041,7 +3041,7 @@
     },
     "pending": false,
     "roleTag": "仙 / 醫",
-    "roleTagViet": "Tiên / Y",
+    "roleTagViet": "Tiên / Y thuật",
     "selfTacticCn": "金丹秘术",
     "stars": 5,
     "stats": {
@@ -3116,7 +3116,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": "抬棺决战",
     "stars": 5,
     "stats": {
@@ -3191,7 +3191,7 @@
     },
     "pending": false,
     "roleTag": "謀",
-    "roleTagViet": "Mưu",
+    "roleTagViet": "Mưu lược",
     "selfTacticCn": "连环计",
     "stars": 5,
     "stats": {
@@ -3266,7 +3266,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": "奋矛英姿",
     "stars": 5,
     "stats": {
@@ -3341,7 +3341,7 @@
     },
     "pending": false,
     "roleTag": "謀",
-    "roleTagViet": "Mưu",
+    "roleTagViet": "Mưu lược",
     "selfTacticCn": "沉断机谋",
     "stars": 5,
     "stats": {
@@ -3566,7 +3566,7 @@
     },
     "pending": false,
     "roleTag": "戰 / 輔",
-    "roleTagViet": "Chiến / Phụ",
+    "roleTagViet": "Chiến / Phụ trợ",
     "selfTacticCn": "枪舞如风",
     "stars": 5,
     "stats": {
@@ -3641,7 +3641,7 @@
     },
     "pending": false,
     "roleTag": "黃 / 謀",
-    "roleTagViet": "Hoàng / Mưu",
+    "roleTagViet": "Khăn Vàng / Mưu lược",
     "selfTacticCn": "五雷轰顶",
     "stars": 5,
     "stats": {
@@ -3716,7 +3716,7 @@
     },
     "pending": false,
     "roleTag": "謀",
-    "roleTagViet": "Mưu",
+    "roleTagViet": "Mưu lược",
     "selfTacticCn": "窃幸乘宠",
     "stars": 5,
     "stats": {
@@ -3762,7 +3762,7 @@
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
       "conditions": [],
-      "exclusiveTitleVi": "Cổ chi Triệu Hổ",
+      "exclusiveTitleVi": "Cổ Chi Thiệu Hổ",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -3791,7 +3791,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": "陷阵突袭",
     "stars": 5,
     "stats": {
@@ -3866,7 +3866,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": "大戟士",
     "stars": 5,
     "stats": {
@@ -3941,7 +3941,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": "燕人咆哮",
     "stars": 5,
     "stats": {
@@ -4015,7 +4015,7 @@
     },
     "pending": false,
     "roleTag": "謀",
-    "roleTagViet": "Mưu",
+    "roleTagViet": "Mưu lược",
     "selfTacticCn": "处兹不惑",
     "stars": 5,
     "stats": {
@@ -4089,7 +4089,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": "长驱直入",
     "stars": 5,
     "stats": {
@@ -4164,7 +4164,7 @@
     },
     "pending": false,
     "roleTag": "戰 / 控",
-    "roleTagViet": "Chiến / Khống",
+    "roleTagViet": "Chiến / Khống chế",
     "selfTacticCn": "登锋陷阵",
     "stars": 5,
     "stats": {
@@ -4312,7 +4312,7 @@
     },
     "pending": false,
     "roleTag": "盾",
-    "roleTagViet": "Thuẫn",
+    "roleTagViet": "Phòng thủ",
     "selfTacticCn": "固若金汤",
     "stars": 5,
     "stats": {
@@ -4386,7 +4386,7 @@
     },
     "pending": false,
     "roleTag": "輔 / 盾",
-    "roleTagViet": "Phụ / Thuẫn",
+    "roleTagViet": "Phụ trợ / Phòng thủ",
     "selfTacticCn": "乱世奸雄",
     "stars": 5,
     "stats": {
@@ -4535,7 +4535,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": "虎豹骑",
     "stars": 5,
     "stats": {
@@ -4609,7 +4609,7 @@
     },
     "pending": false,
     "roleTag": "蠻 / 戰",
-    "roleTagViet": "Man / Chiến",
+    "roleTagViet": "Man tộc / Chiến",
     "selfTacticCn": "象兵",
     "stars": 5,
     "stats": {
@@ -4683,7 +4683,7 @@
     },
     "pending": false,
     "roleTag": "蠻 / 謀",
-    "roleTagViet": "Man / Mưu",
+    "roleTagViet": "Man tộc / Mưu lược",
     "selfTacticCn": "毒泉拒蜀",
     "stars": 5,
     "stats": {
@@ -4757,7 +4757,7 @@
     },
     "pending": false,
     "roleTag": "謀 / 輔",
-    "roleTagViet": "Mưu / Phụ",
+    "roleTagViet": "Mưu lược / Phụ trợ",
     "selfTacticCn": "鸩毒",
     "stars": 5,
     "stats": {
@@ -4831,7 +4831,7 @@
     },
     "pending": false,
     "roleTag": "謀",
-    "roleTagViet": "Mưu",
+    "roleTagViet": "Mưu lược",
     "selfTacticCn": "监统震军",
     "stars": 5,
     "stats": {
@@ -4905,7 +4905,7 @@
     },
     "pending": false,
     "roleTag": "醫 / 輔",
-    "roleTagViet": "Y / Phụ",
+    "roleTagViet": "Y thuật / Phụ trợ",
     "selfTacticCn": "以逸待劳",
     "stars": 5,
     "stats": {
@@ -4980,7 +4980,7 @@
     },
     "pending": false,
     "roleTag": "輔",
-    "roleTagViet": "Phụ",
+    "roleTagViet": "Phụ trợ",
     "selfTacticCn": "镇扼防拒",
     "stars": 5,
     "stats": {
@@ -5054,7 +5054,7 @@
     },
     "pending": false,
     "roleTag": "輔",
-    "roleTagViet": "Phụ",
+    "roleTagViet": "Phụ trợ",
     "selfTacticCn": "垂心万物",
     "stars": 5,
     "stats": {
@@ -5352,7 +5352,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": "锦帆百翎",
     "stars": 5,
     "stats": {
@@ -5427,7 +5427,7 @@
     },
     "pending": false,
     "roleTag": "控 / 輔",
-    "roleTagViet": "Khống / Phụ",
+    "roleTagViet": "Khống chế / Phụ trợ",
     "selfTacticCn": "竭忠尽智",
     "stars": 5,
     "stats": {
@@ -5501,7 +5501,7 @@
     },
     "pending": false,
     "roleTag": "蠻 / 武 / 醫",
-    "roleTagViet": "Man / Võ / Y",
+    "roleTagViet": "Man tộc / Vũ lực / Y thuật",
     "selfTacticCn": "火神英风",
     "stars": 5,
     "stats": {
@@ -5575,7 +5575,7 @@
     },
     "pending": false,
     "roleTag": "謀",
-    "roleTagViet": "Mưu",
+    "roleTagViet": "Mưu lược",
     "selfTacticCn": "十面埋伏",
     "stars": 5,
     "stats": {
@@ -5649,7 +5649,7 @@
     },
     "pending": false,
     "roleTag": "盾 / 控",
-    "roleTagViet": "Thuẫn / Khống",
+    "roleTagViet": "Phòng thủ / Khống chế",
     "selfTacticCn": "勇烈持重",
     "stars": 5,
     "stats": {
@@ -5797,7 +5797,7 @@
     },
     "pending": false,
     "roleTag": "謀 / 輔",
-    "roleTagViet": "Mưu / Phụ",
+    "roleTagViet": "Mưu lược / Phụ trợ",
     "selfTacticCn": "十二奇策",
     "stars": 5,
     "stats": {
@@ -5871,7 +5871,7 @@
     },
     "pending": false,
     "roleTag": "戰 / 盾",
-    "roleTagViet": "Chiến / Thuẫn",
+    "roleTagViet": "Chiến / Phòng thủ",
     "selfTacticCn": "酒池肉林",
     "stars": 5,
     "stats": {
@@ -5945,7 +5945,7 @@
     },
     "pending": false,
     "roleTag": "輔",
-    "roleTagViet": "Phụ",
+    "roleTagViet": "Phụ trợ",
     "selfTacticCn": "云聚影从",
     "stars": 5,
     "stats": {
@@ -6094,7 +6094,7 @@
     },
     "pending": false,
     "roleTag": "醫 / 輔",
-    "roleTagViet": "Y / Phụ",
+    "roleTagViet": "Y thuật / Phụ trợ",
     "selfTacticCn": "胡笳余音",
     "stars": 5,
     "stats": {
@@ -6243,7 +6243,7 @@
     },
     "pending": false,
     "roleTag": "兼",
-    "roleTagViet": "Kiêm",
+    "roleTagViet": "Kiêm nhiệm",
     "selfTacticCn": "符命自立",
     "stars": 5,
     "stats": {
@@ -6393,7 +6393,7 @@
     },
     "pending": false,
     "roleTag": "輔",
-    "roleTagViet": "Phụ",
+    "roleTagViet": "Phụ trợ",
     "selfTacticCn": "傲睨王侯",
     "stars": 5,
     "stats": {
@@ -6468,7 +6468,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": "虎痴",
     "stars": 5,
     "stats": {
@@ -6543,7 +6543,7 @@
     },
     "pending": false,
     "roleTag": "控 / 謀",
-    "roleTagViet": "Khống / Mưu",
+    "roleTagViet": "Khống chế / Mưu lược",
     "selfTacticCn": "神机妙算",
     "stars": 5,
     "stats": {
@@ -6618,7 +6618,7 @@
     },
     "pending": false,
     "roleTag": "控",
-    "roleTagViet": "Khống",
+    "roleTagViet": "Khống chế",
     "selfTacticCn": "闭月",
     "stars": 5,
     "stats": {
@@ -6693,7 +6693,7 @@
     },
     "pending": false,
     "roleTag": "控 / 謀",
-    "roleTagViet": "Khống / Mưu",
+    "roleTagViet": "Khống chế / Mưu lược",
     "selfTacticCn": "神机莫测",
     "stars": 5,
     "stats": {
@@ -6843,7 +6843,7 @@
     },
     "pending": false,
     "roleTag": "控",
-    "roleTagViet": "Khống",
+    "roleTagViet": "Khống chế",
     "selfTacticCn": "暗渡陈仓",
     "stars": 5,
     "stats": {
@@ -6918,7 +6918,7 @@
     },
     "pending": false,
     "roleTag": "控",
-    "roleTagViet": "Khống",
+    "roleTagViet": "Khống chế",
     "selfTacticCn": "顾盼生姿",
     "stars": 5,
     "stats": {
@@ -6992,7 +6992,7 @@
     },
     "pending": false,
     "roleTag": "醫 / 兼",
-    "roleTagViet": "Y / Kiêm",
+    "roleTagViet": "Y thuật / Kiêm nhiệm",
     "selfTacticCn": "金城汤池",
     "stars": 5,
     "stats": {
@@ -7066,7 +7066,7 @@
     },
     "pending": false,
     "roleTag": "輔",
-    "roleTagViet": "Phụ",
+    "roleTagViet": "Phụ trợ",
     "selfTacticCn": "十胜十败",
     "stars": 5,
     "stats": {
@@ -7141,7 +7141,7 @@
     },
     "pending": false,
     "roleTag": "謀 / 控",
-    "roleTagViet": "Mưu / Khống",
+    "roleTagViet": "Mưu lược / Khống chế",
     "selfTacticCn": "精练策数",
     "stars": 5,
     "stats": {
@@ -7216,7 +7216,7 @@
     },
     "pending": false,
     "roleTag": "輔 / 盾",
-    "roleTagViet": "Phụ / Thuẫn",
+    "roleTagViet": "Phụ trợ / Phòng thủ",
     "selfTacticCn": "校胜帷幄",
     "stars": 5,
     "stats": {
@@ -7291,7 +7291,7 @@
     },
     "pending": false,
     "roleTag": "謀",
-    "roleTagViet": "Mưu",
+    "roleTagViet": "Mưu lược",
     "selfTacticCn": "火烧连营",
     "stars": 5,
     "stats": {
@@ -7441,7 +7441,7 @@
     },
     "pending": false,
     "roleTag": "謀",
-    "roleTagViet": "Mưu",
+    "roleTagViet": "Mưu lược",
     "selfTacticCn": "百计多谋",
     "stars": 5,
     "stats": {
@@ -7666,7 +7666,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": "鸱苕凤姿",
     "stars": 5,
     "stats": {
@@ -7816,7 +7816,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": "槊血纵横",
     "stars": 5,
     "stats": {
@@ -7966,7 +7966,7 @@
     },
     "pending": false,
     "roleTag": "盾",
-    "roleTagViet": "Thuẫn",
+    "roleTagViet": "Phòng thủ",
     "selfTacticCn": "陷阵营",
     "stars": 5,
     "stats": {
@@ -8115,7 +8115,7 @@
     },
     "pending": false,
     "roleTag": "輔 / 醫",
-    "roleTagViet": "Phụ / Y",
+    "roleTagViet": "Phụ trợ / Y thuật",
     "selfTacticCn": "济贫好施",
     "stars": 5,
     "stats": {
@@ -8190,7 +8190,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": "百步穿杨",
     "stars": 5,
     "stats": {
@@ -8265,7 +8265,7 @@
     },
     "pending": false,
     "roleTag": "輔",
-    "roleTagViet": "Phụ",
+    "roleTagViet": "Phụ trợ",
     "selfTacticCn": "工神",
     "stars": 5,
     "stats": {
@@ -8340,7 +8340,7 @@
     },
     "pending": false,
     "roleTag": "控 / 盾",
-    "roleTagViet": "Khống / Thuẫn",
+    "roleTagViet": "Khống chế / Phòng thủ",
     "selfTacticCn": "苦肉计",
     "stars": 5,
     "stats": {
@@ -8415,7 +8415,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {
@@ -9014,7 +9014,7 @@
     },
     "pending": false,
     "roleTag": "能輔助能輸出,有額有實力的全能武將",
-    "roleTagViet": "Võ tướng toàn năng vừa hỗ trợ vừa gây sát thương, có nhan sắc lẫn thực lực",
+    "roleTagViet": "Võ tướng toàn năng vừa hỗ trợ vừa gây sát thương, có thực lực (cụm mô tả ngay trước “có thực lực” trong nguồn chưa rõ nghĩa, nghi lỗi chữ).",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {
@@ -9837,7 +9837,7 @@
     },
     "pending": false,
     "roleTag": "謀",
-    "roleTagViet": "Mưu",
+    "roleTagViet": "Mưu lược",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {
@@ -9986,7 +9986,7 @@
     },
     "pending": false,
     "roleTag": "謀",
-    "roleTagViet": "Mưu",
+    "roleTagViet": "Mưu lược",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {
@@ -11632,7 +11632,7 @@
     },
     "pending": false,
     "roleTag": "控 / 戰",
-    "roleTagViet": "Khống / Chiến",
+    "roleTagViet": "Khống chế / Chiến",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {
@@ -12451,7 +12451,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {
@@ -12526,7 +12526,7 @@
     },
     "pending": false,
     "roleTag": "輔",
-    "roleTagViet": "Phụ",
+    "roleTagViet": "Phụ trợ",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {
@@ -12601,7 +12601,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {
@@ -12676,7 +12676,7 @@
     },
     "pending": false,
     "roleTag": "輔",
-    "roleTagViet": "Phụ",
+    "roleTagViet": "Phụ trợ",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {
@@ -12751,7 +12751,7 @@
     },
     "pending": false,
     "roleTag": "盾",
-    "roleTagViet": "Thuẫn",
+    "roleTagViet": "Phòng thủ",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {
@@ -12826,7 +12826,7 @@
     },
     "pending": false,
     "roleTag": "輔",
-    "roleTagViet": "Phụ",
+    "roleTagViet": "Phụ trợ",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {
@@ -12901,7 +12901,7 @@
     },
     "pending": false,
     "roleTag": "輔 / 盾",
-    "roleTagViet": "Phụ / Thuẫn",
+    "roleTagViet": "Phụ trợ / Phòng thủ",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {
@@ -12976,7 +12976,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {
@@ -13051,7 +13051,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {
@@ -13126,7 +13126,7 @@
     },
     "pending": false,
     "roleTag": "輔",
-    "roleTagViet": "Phụ",
+    "roleTagViet": "Phụ trợ",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {
@@ -13201,7 +13201,7 @@
     },
     "pending": false,
     "roleTag": "謀",
-    "roleTagViet": "Mưu",
+    "roleTagViet": "Mưu lược",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {
@@ -13276,7 +13276,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {
@@ -13351,7 +13351,7 @@
     },
     "pending": false,
     "roleTag": "武",
-    "roleTagViet": "Võ",
+    "roleTagViet": "Vũ lực",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {
@@ -13426,7 +13426,7 @@
     },
     "pending": false,
     "roleTag": "輔",
-    "roleTagViet": "Phụ",
+    "roleTagViet": "Phụ trợ",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {
@@ -13576,7 +13576,7 @@
     },
     "pending": false,
     "roleTag": "輔/盾",
-    "roleTagViet": "Phụ/Thuẫn",
+    "roleTagViet": "Phụ trợ / Phòng thủ",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {
@@ -13651,7 +13651,7 @@
     },
     "pending": false,
     "roleTag": "輔",
-    "roleTagViet": "Phụ",
+    "roleTagViet": "Phụ trợ",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {
@@ -13726,7 +13726,7 @@
     },
     "pending": false,
     "roleTag": "輔",
-    "roleTagViet": "Phụ",
+    "roleTagViet": "Phụ trợ",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {
@@ -13801,7 +13801,7 @@
     },
     "pending": false,
     "roleTag": "黃 / 謀",
-    "roleTagViet": "Hoàng / Mưu",
+    "roleTagViet": "Khăn Vàng / Mưu lược",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {
@@ -13876,7 +13876,7 @@
     },
     "pending": false,
     "roleTag": "黃 / 盾",
-    "roleTagViet": "Hoàng / Thuẫn",
+    "roleTagViet": "Khăn Vàng / Phòng thủ",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {
@@ -14996,7 +14996,7 @@
     },
     "pending": false,
     "roleTag": "輔",
-    "roleTagViet": "Phụ",
+    "roleTagViet": "Phụ trợ",
     "selfTacticCn": null,
     "stars": 5,
     "stats": {

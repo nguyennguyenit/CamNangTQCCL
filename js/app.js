@@ -7,6 +7,7 @@ import { initAnalyze } from "./analyze.js";
 import { initRecruitTracker } from "./recruit-tracker.js";
 import { initRosterRecommend } from "./roster-recommend-ui.js";
 import { initSiteChrome } from "./site-chrome.js";
+import { displayValue, loadWebsiteDisplay, localizeData } from "./website-display.js";
 
 import { loadSeasonModel, readSeasonQuery, updateSeasonURL, defaultSeasonSelection, BUNDLE_NOTICE } from './season-ui-state.js';
 import { assignDerivedFactions } from "./derive-team-faction.js";
@@ -107,25 +108,39 @@ function switchSection(name) {
   onNavigation();
 }
 
-/* ---------- Boot ---------- */
 async function main() {
   initNav();
+  let websiteDisplay = null;
   try {
     const byteRequests = new Map();
     const loadBytes = (name) => {
-      if (!byteRequests.has(name)) byteRequests.set(name, fetch(`./data/${name}.json`).then(async response => {
-        if (!response.ok) throw new Error(`./data/${name}.json: ${response.status}`);
+      const path = name === "website-display.json"
+        ? "data/website-display.json"
+        : name.startsWith("data/")
+          ? name
+          : `data/${name.replace(/\\.json$/, "")}.json`;
+      if (!byteRequests.has(path)) byteRequests.set(path, fetch(`./${path}`).then(async response => {
+        if (!response.ok) throw new Error(`./${path}: ${response.status}`);
         return new Uint8Array(await response.arrayBuffer());
       }));
-      return byteRequests.get(name);
+      return byteRequests.get(path);
     };
     const loadData = name => loadBytes(name).then(bytes => JSON.parse(new TextDecoder().decode(bytes)));
-    const [teams, coexist, khaihoang, booksDict] = await Promise.all([
+    const recommendedPin = JSON.parse($('#recommended-publication').textContent);
+    websiteDisplay = await loadWebsiteDisplay(
+      JSON.parse($('#website-display-publication').textContent),
+      loadBytes,
+      recommendedPin,
+    );
+    const [teamsSource, coexistSource, khaihoangSource, booksDict] = await Promise.all([
       loadData("teams"),
       loadData("coexist"),
-      loadJSON("./data/khaihoang.json"),
+      loadData("khaihoang"),
       loadData("books-dict"),
     ]);
+    const teams = localizeData(websiteDisplay, "data/teams.json", teamsSource);
+    const coexist = localizeData(websiteDisplay, "data/coexist.json", coexistSource);
+    const khaihoang = localizeData(websiteDisplay, "data/khaihoang.json", khaihoangSource);
     let lookupBundle = null;
     try {
       lookupBundle = await loadLookupBundle(name => loadBytes(name.replace(/\.json$/, "")));
@@ -142,7 +157,7 @@ async function main() {
     try { seasonModel = await loadSeasonModel(JSON.parse($('#season-artifact-hashes').textContent), loadBytes); } catch { /* Legacy display stays available with an explicit notice. */ }
     let recommendedModel = null;
     try {
-      const pin = JSON.parse($('#recommended-publication').textContent);
+      const pin = recommendedPin;
       recommendedModel = await loadRecommendedReference(pin, async path => {
         const response = await fetch(`./data/recommended/${path}`);
         if (!response.ok) throw new Error(`./data/recommended/${path}: ${response.status}`);
@@ -329,11 +344,11 @@ async function main() {
       if (previous !== JSON.stringify(browse)) consumers.forEach(consumer=>consumer?.setSeasonScope?.({model:seasonModel,browse}));
     }
     if (recommendedModel) {
-      sections['team-chuan'] = createRecommendedSection({mount:$('#section-team-chuan'),title:'Team chuẩn',family:'recommended',onQuery:navigateReference,hrefFor:referenceHref,onNavigate:onReferenceNavigate});
-      sections['team-khac'] = createRecommendedSection({mount:$('#section-team-khac'),title:'Team khác',family:'other',onQuery:navigateReference,hrefFor:referenceHref,onNavigate:onReferenceNavigate});
+      sections['team-chuan'] = createRecommendedSection({mount:$('#section-team-chuan'),title:'Đội chuẩn',family:'recommended',onQuery:navigateReference,hrefFor:referenceHref,onNavigate:onReferenceNavigate});
+      sections['team-khac'] = createRecommendedSection({mount:$('#section-team-khac'),title:'Đội khác',family:'other',onQuery:navigateReference,hrefFor:referenceHref,onNavigate:onReferenceNavigate});
     } else {
-      $('#section-team-chuan').append(el('p',{class:'error',role:'status'},'Dữ liệu Team chuẩn hiện không khả dụng. Các mục khác vẫn hoạt động.'));
-      $('#section-team-khac').append(el('p',{class:'error',role:'status'},'Dữ liệu Team khác hiện không khả dụng. Các mục khác vẫn hoạt động.'));
+      $('#section-team-chuan').append(el('p',{class:'error',role:'status'},'Dữ liệu đội chuẩn hiện không khả dụng. Các mục khác vẫn hoạt động.'));
+      $('#section-team-khac').append(el('p',{class:'error',role:'status'},'Dữ liệu đội khác hiện không khả dụng. Các mục khác vẫn hoạt động.'));
     }
     let lookupUI = null;
     onNavigation = () => {
@@ -376,7 +391,10 @@ async function main() {
     consumers.forEach(consumer=>consumer?.setSeasonScope?.({model:seasonModel,browse:browse || {kind:["scenario","ruleset"].some(key=>new URL(location.href).searchParams.has(key)) ? "invalid" : "all-reference"}}, {initial:true}));
   } catch (err) {
     const mount = $("#section-team-chuan");
-    if (mount) mount.append(el("p", { class: "error" }, "Lỗi tải dữ liệu: " + err.message + ". Hãy tải lại trang hoặc liên hệ quản trị viên nếu lỗi tiếp diễn."));
+    const template = websiteDisplay
+      ? displayValue(websiteDisplay, "ui:app/load-error", "errorTemplate")
+      : "Không thể tải dữ liệu. Hãy tải lại trang hoặc liên hệ quản trị viên nếu lỗi tiếp diễn.";
+    if (mount) mount.append(el("p", { class: "error" }, template.replace("{message}", "không xác định")));
   }
 }
 

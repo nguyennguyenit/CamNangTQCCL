@@ -96,6 +96,8 @@ Node: 24.20.0
 
 Astro dùng static output, không adapter và không Pages Functions. `dist/` phải chỉ chứa `index.html`, `404.html`, đúng bộ trang chi tiết đội sinh từ catalog, manifest-approved `js/`, `css/`, `data/` và `_headers`. Shared verifier đối chiếu raw bytes với source và từ chối `pipeline/`, `worker/`, tests, plans, symlink, secret-like hoặc file lạ.
 
+Publication hiển thị là một snapshot fail-closed: `data/website-display.json` pin source JSON, generation Recommended và generation/hash Lookup đã review. `npm run build` kiểm publication hiện hành trước Astro; `npm run verify` kiểm lại publication và exact `dist/`. Không publish candidate site nếu Lookup công khai chưa được promote đúng candidate.
+
 Trang chi tiết đội là route tĩnh sinh sẵn: `/teams/recommended/<sourceConfigId>/` cho mỗi bản ghi của publication đang được chọn và `/teams/legacy/<legacyTeamId>/` cho mỗi đội gốc trong `data/teams.json`. [`src/lib/team-detail-routes.ts`](../src/lib/team-detail-routes.ts) là inventory dùng chung cho build và verifier, nên `dist/` không được thừa hay thiếu một trang nào. Không có SPA fallback: `404.html` top-level phải tồn tại, giữ heading `not-found-title` và không boot `app.js` hoặc `team-detail.js`; URL `/teams/...` ngoài catalog phải trả `404` kèm trang 404 tĩnh thay vì shell root.
 
 `public/_headers` đặt `Cache-Control: public, max-age=0, must-revalidate` cho đúng chín rule:
@@ -120,6 +122,7 @@ Trước deploy:
 - ghi base commit, scoped-source digest và `dist/` digest;
 - xác nhận `js/config.js` trỏ đúng Worker URL và Turnstile public site key;
 - chạy local HTTP/routed-HTTPS exposure probe và full gate;
+- xác nhận `.github/workflows/mcp-worker.yml` là workflow CI duy nhất và full `npm run check:repository` credential-free đã đạt; workflow này không deploy Pages;
 - xác nhận `worker/wrangler.toml` `ALLOWED_ORIGIN` khớp exact Pages origin.
 
 ### Preview, promotion và canary

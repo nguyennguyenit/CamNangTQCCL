@@ -9,6 +9,7 @@ import os
 import re
 import tempfile
 from pathlib import Path
+from pipeline.lookup_translations import CJK as HAN_SCRIPT
 from pipeline.recommended_identity import (
     build_display_mapping,
     resolve_display_kind,
@@ -78,7 +79,7 @@ def raw_source_record(row):
                 for holder in raw[field]
             ]
     return raw
-def _validated_display_notes(value, row):
+def _validated_raw_display_notes(value, row):
     if not isinstance(value, dict) or value.get("schemaVersion") != 1 or not isinstance(value.get("blocks"), list):
         raise ValueError("Recommended displayNotes projection is invalid")
     seen = set()
@@ -104,6 +105,15 @@ def _validated_display_notes(value, row):
             raise ValueError("Recommended displayNotes owner is invalid")
         if not isinstance(block.get("textRaw"), str) or not block["textRaw"].strip():
             raise ValueError("Recommended displayNotes text is invalid")
+    return value
+
+
+def _validated_display_notes(value, row):
+    _validated_raw_display_notes(value, row)
+    for block in value["blocks"]:
+        text_vi = block.get("textVi")
+        if not isinstance(text_vi, str) or not text_vi.strip() or HAN_SCRIPT.search(text_vi):
+            raise ValueError("Recommended displayNotes textVi must be reviewed Vietnamese")
     return value
 
 
@@ -364,6 +374,8 @@ def _build_generation_locked(inputs, output):
         key = scope["safeScopeKey"]
         payloads["details-" + key + ".json"] = {"schemaVersion": SCHEMA_VERSION, "records": details.get(key, [])}
     descriptor = {"schemaVersion": SCHEMA_VERSION, "inventoryHash": inventory.get("inventoryHash"), "mappingHash": inputs.get("mappingHash"), "decisionSnapshotHash": inputs.get("decisionSnapshotHash"), "dedupKeyVersion": inputs.get("dedupKeyVersion"), "legacyTeamsHash": inputs["legacyTeamsHash"], "contentLinksHash": inputs["contentLinksHash"], "payloadHashes": {name: sha(canonical_bytes(value)) for name, value in sorted(payloads.items())}}
+    if inputs.get("localizationInputsHash") is not None:
+        descriptor["localizationInputsHash"] = inputs["localizationInputsHash"]
     generation_id = sha(canonical_bytes(descriptor))
     target = output / generation_id
     if not target.exists():

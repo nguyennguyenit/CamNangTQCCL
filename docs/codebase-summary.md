@@ -32,7 +32,7 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | `public/favicon.png` | Logo PNG 128×128, góc trong suốt; ảnh gốc từ [Thiên Thượng Hỏa](https://thienthuonghoa.com/assets/uploads/images/tqccl-logo.jpg). `STATIC_PUBLIC_ARTIFACTS` trong dist verifier kiểm byte parity; `/favicon.png` phải revalidate. |
 | `src/lib/root-static-artifacts.ts` | Đọc raw artifact an toàn và trả bytes/MIME cho static endpoint. |
 | `scripts/verify-astro-dist.mjs` | Kiểm toàn bộ `dist/`, byte parity và deployment-control artifact. |
-| `js/app.js` | Load 6 JSON bắt buộc + tier tùy chọn; init nav, theme và các section. |
+| `js/app.js`, `js/website-display.js` | Capture byte runtime, xác minh publication/source hash và áp overlay tiếng Việt trước khi khởi tạo tám section. |
 | `js/team-filter-section.js` | Shared full-text search, chip động, stats, clear và mobile collapse cho 2 tab team. |
 | `js/team-pk.js`, `js/meta-cu.js` | Chọn source, cấu hình filter và sort riêng từng tab. |
 | `js/render.js`, `js/filters.js` | DOM builder, team card, tier và pure filter/search. |
@@ -53,6 +53,7 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | [`mcp-worker/src/security/`](../mcp-worker/src/security/) | Bearer rotation tối đa 15 phút, digest/fingerprint, request guards và isolate-local limits. |
 | [`mcp-worker/workflow-source-manifest.json`](../mcp-worker/workflow-source-manifest.json), [`generate-workflow-build.ts`](../mcp-worker/scripts/generate-workflow-build.ts) | Owner của semantic closure và `workflowBuildId`; `workflowVersion` ghép identity này với full `releaseId`. |
 | [`mcp-worker/scripts/`](../mcp-worker/scripts/) | Deterministic asset build/evidence, exact-version deployment controller, live/edge verifier và repository gate credential-free. |
+| `pipeline/site_localization.py`, `pipeline/site-localization-policy.json` | Inventory/review gate, candidate private và publication pin chung cho display, Recommended và Lookup. |
 | `pipeline/build_json.py` | Build team, facet, Cùng Tồn, khai hoang từ HTML export. |
 | `pipeline/build_dict.py` | Crawl/cache/link và merge chiến pháp generic, build tướng/chiến pháp. |
 | `pipeline/build_books_dict.py` | Validate bảng map Hán→Việt với facet binh thư. |
@@ -99,7 +100,7 @@ Tab Khai hoang hỗ trợ `variants[]` tùy chọn trên từng đội: cấu h�
 - `worker/test/`: config, guard, model, rate-limit, scan modes, schema.
 - `mcp-worker/test/`: snapshot/filesystem/Static Assets/cache, tám handler, CLI/stdio/HTTP parity, bearer/limits/protocol, ownership-safe release/rollback, verifier, import guard và production-shaped Workerd budget.
 
-Gate hiện được kiểm bằng script trong root, `worker/package.json` và [`mcp-worker/package.json`](../mcp-worker/package.json). Kết quả có thời điểm của migration Worker Static Assets nằm trong [`implementation-verification.md`](../plans/260731-0237-thay-r2-bng-worker-static-assets/reports/implementation-verification.md); đây là bằng chứng local, không phải bằng chứng production.
+Gate thống nhất nằm ở `.github/workflows/mcp-worker.yml`: `mcp-worker/scripts/check-repository.ts` chạy MCP, root Astro build/dist/`npm run verify`/E2E/Node/Python, Vision Worker và Wrangler dry-run trong môi trường không có release credential. Kết quả có thời điểm của migration Worker Static Assets nằm trong [`implementation-verification.md`](../plans/260731-0237-thay-r2-bng-worker-static-assets/reports/implementation-verification.md); đây là bằng chứng local, không phải bằng chứng production.
 
 ## Điểm cần chú ý
 

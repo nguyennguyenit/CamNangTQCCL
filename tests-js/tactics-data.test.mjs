@@ -6,23 +6,18 @@ import { tacticDescriptions } from "../js/tactics.js";
 import { matchDict } from "../js/match-dict.js";
 
 const tactics = JSON.parse(await readFile(new URL("../pipeline/lookup-inputs/tactics.json", import.meta.url), "utf8"));
+const publicTactics = JSON.parse(await readFile(new URL("../data/tactics.json", import.meta.url), "utf8"));
 
-test("Vô Địch Can Trường has one complete record and retains its Han-Viet lookup", async () => {
-  const matches = tactics.filter((item) => item.viet === "Vô Địch Can Trường");
-  assert.equal(matches.length, 1);
-  const tactic = matches[0];
-  assert.equal(tactic.chinese, "刚勇无前");
-  assert.equal(tactic.hanViet, "Cương Dũng Vô Tiền");
-  assert.equal(tactic.type, "Bị động");
+test("promoted Cương Dũng Vô Tiền resolves every supported name to one stable identity", async () => {
+  const tactic = publicTactics.find((item) => item.id === "tactic:cuong-dung-vo-tien");
+  assert.ok(tactic);
+  assert.equal(tactic.viet, "Cương Dũng Vô Tiền");
   assert.equal(tactic.quality, "S");
-  assert.ok(tactic.effect);
+  assert.ok(tactic.effectViet);
   assert.ok(tactic.iconUrl);
-  assert.equal(tactic.pending, undefined);
-  for (const query of ["Vô Địch Can Trường", "vo dich can truong", "Cương Dũng Vô Tiền", "刚勇无前"]) {
-    assert.equal(matchDict(query, tactics).record, tactic, query);
+  for (const query of ["Cương Dũng Vô Tiền", "cuong dung vo tien", "刚勇无前"]) {
+    assert.equal(matchDict(query, publicTactics).record?.id, tactic.id, query);
   }
-  const overrides = JSON.parse(await readFile(new URL("../pipeline/tactic-name-overrides.json", import.meta.url), "utf8"));
-  assert.equal(overrides.overrides["刚勇无前"].viet, tactic.viet);
   const generic = JSON.parse(await readFile(new URL("../data/tactics-generic.json", import.meta.url), "utf8"));
   assert.equal(generic.tactics.some((item) => item.viet === tactic.viet), false);
 });
@@ -143,15 +138,15 @@ test("six tactics match Vietnamese in-game screenshots", () => {
   }
 });
 
-test("tacticDescriptions returns Vietnamese then Chinese with fallback", () => {
-  assert.deepEqual(tacticDescriptions({ effectViet: "Bản dịch", effect: "原文" }), [
-    { lang: "vi", label: "Tiếng Việt", text: "Bản dịch" },
-    { lang: "zh", label: "中文", text: "原文" },
-  ]);
-  assert.deepEqual(tacticDescriptions({ effect: "仅中文" }), [
-    { lang: "zh", label: "中文", text: "仅中文" },
-  ]);
-  assert.deepEqual(tacticDescriptions({}), []);
+test("tacticDescriptions exposes Vietnamese and never falls back to Chinese", () => {
+  const translated = tacticDescriptions({ effectViet: "Bản dịch", effect: "原文" });
+  assert.deepEqual(translated, [{ lang: "vi", label: "Tiếng Việt", text: "Bản dịch" }]);
+  assert.doesNotMatch(JSON.stringify(translated), /原文/);
+
+  const unavailable = tacticDescriptions({ effect: "仅中文" });
+  assert.equal(unavailable.length, 1);
+  assert.equal(unavailable[0].lang, "vi");
+  assert.doesNotMatch(JSON.stringify(unavailable), /仅中文/);
 });
 
 test("generated data keeps Đánh Bại Quân Địch references", async () => {

@@ -90,8 +90,16 @@ describe("parseAndValidateByMode", () => {
     expect(out).toEqual({ tactics: [{ nameCn: "当锋摧决" }] });
   });
 
-  it("validates scanBuiltTeams mode", () => {
-    const out = parseAndValidateByMode("scanBuiltTeams", '{"teams":[{"teamName":"旧队","heroesCn":["程普"],"tacticsCn":["抚辑军民"]}]}');
-    expect(out).toEqual({ teams: [{ teamName: "旧队", heroesCn: ["程普"], tacticsCn: ["抚辑军民"] }] });
+  it("validates scanBuiltTeams mode and supplies Vietnamese missing names", () => {
+    const out = parseAndValidateByMode(
+      "scanBuiltTeams",
+      '{"teams":[{"teamName":"旧队","heroesCn":["程普"],"tacticsCn":["抚辑军民"]},{"heroesCn":["关羽"],"tacticsCn":[]}]}',
+    );
+    expect(out).toEqual({
+      teams: [
+        { teamName: "旧队", heroesCn: ["程普"], tacticsCn: ["抚辑军民"] },
+        { teamName: "Đội số 2", heroesCn: ["关羽"], tacticsCn: [] },
+      ],
+    });
   });
 });

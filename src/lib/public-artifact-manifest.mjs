@@ -48,6 +48,7 @@ export const PUBLIC_ARTIFACTS = Object.freeze([
   entry("js", "team-filter-section"),
   entry("js", "team-pk"),
   entry("js", "team-recommend-engine"),
+  entry("js", "website-display"),
   entry("css", "styles"),
   entry("data", "books-dict"),
   entry("data", "coexist"),
@@ -65,6 +66,7 @@ export const PUBLIC_ARTIFACTS = Object.freeze([
   entry("data", "tactics"),
   entry("data", "team-tier"),
   entry("data", "teams"),
+  entry("data", "website-display"),
 ]);
 
 export function validatePublicArtifactManifest(manifest = PUBLIC_ARTIFACTS) {

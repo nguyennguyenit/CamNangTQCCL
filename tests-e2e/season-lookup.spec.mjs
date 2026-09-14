@@ -3,6 +3,7 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { test, expect } from '@playwright/test';
+import { replaceWebsiteDisplayPin, websiteDisplayFixture } from './fixtures/website-display-fixture.mjs';
 
 const repositoryRoot = fileURLToPath(new URL('../', import.meta.url));
 function trackedScreenshotHashes() {
@@ -81,15 +82,40 @@ async function controlledBundle(page, data = null) {
     files: lookupFiles,
   };
   const routeData = { ...data, 'lookup-catalog': lookupCatalog, 'lookup-manifest': lookupManifest };
+  const routeBodies = Object.fromEntries(
+    Object.entries(routeData).map(([key, value]) => [key, JSON.stringify(value)]),
+  );
+  const pinnedKeys = {
+    'teams': 'data/teams.json',
+    'coexist': 'data/coexist.json',
+    'khaihoang': 'data/khaihoang.json',
+    'season-content-links': 'data/season-content-links.json',
+    'heroes-dict': 'data/heroes-dict.json',
+    'tactics': 'data/tactics.json',
+    'lookup-catalog': 'data/lookup-catalog.json',
+    'lookup-manifest': 'data/lookup-manifest.json',
+  };
+  const displayOverrides = Object.fromEntries(
+    Object.entries(pinnedKeys)
+      .filter(([key]) => key in routeBodies)
+      .map(([key, path]) => [path, routeBodies[key]]),
+  );
+  const website = websiteDisplayFixture(displayOverrides, {
+    dropValuesFor: ['data/teams.json', 'data/coexist.json', 'data/khaihoang.json'],
+  });
   const hashes = Object.fromEntries(Object.entries(data).map(([key,value]) => [key, 'sha256:' + createHash('sha256').update(JSON.stringify(value)).digest('hex')]));
   await page.route('**/data/*.json', async route => {
     const key = new URL(route.request().url()).pathname.split('/').at(-1).replace('.json','');
-    if (key in routeData) return route.fulfill({contentType:'application/json',body:JSON.stringify(routeData[key])});
+    if (key === 'website-display') return route.fulfill({contentType:'application/json',body:website.body});
+    if (key in routeBodies) return route.fulfill({contentType:'application/json',body:routeBodies[key]});
     return route.continue();
   });
   await page.route(/^http:\/\/(?:localhost|127\.0\.0\.1):\d+\/(?:\?.*)?$/, async route => {
     const response = await route.fetch();
-    const html = (await response.text()).replace(/(<script[^>]*id="season-artifact-hashes"[^>]*>)[\s\S]*?(<\/script>)/, (_,start,end)=> start + JSON.stringify(hashes) + end);
+    const html = replaceWebsiteDisplayPin(
+      (await response.text()).replace(/(<script[^>]*id="season-artifact-hashes"[^>]*>)[\s\S]*?(<\/script>)/, (_,start,end)=> start + JSON.stringify(hashes) + end),
+      website.pin,
+    );
     await route.fulfill({response,body:html});
   });
   return data;
@@ -107,7 +133,7 @@ test('verified fixture preserves exact config identity, ordered detail and sourc
   expect(new URL(page.url()).searchParams.has('config')).toBe(false);
   await page.goto('/?q=cuong#team-khac');
   await page.reload();
-  await expect(page.getByRole('searchbox',{name:'Tìm Team khác',exact:true})).toHaveValue('cuong');
+  await expect(page.getByRole('searchbox',{name:'Tìm Đội khác',exact:true})).toHaveValue('cuong');
 });
 test('detail compares real inventory and changing a selected tactic removes its source score', async ({page}) => {
   await controlledBundle(page);
@@ -126,13 +152,13 @@ test('roster runs exact configs, then scope change clears portfolio and confirma
   await controlledBundle(page);
   await page.addInitScript(()=>localStorage.setItem('tqccl.rosterRecommend.scanState.v1', JSON.stringify({ownedHeroes:[{name:'Anh'},{name:'Bình'},{name:'Cường'}],ownedTactics:['Một','Hai','Ba','Bốn','Năm','Sáu'].map(name=>({name})),lockedTeams:[],confirmed:true})));
   await page.goto('/?scenario=scenario-a&ruleset=rules-a#roster-recommend');
-  await page.getByRole('button',{name:'Xác nhận dữ liệu scan'}).click();
-  await page.getByRole('button',{name:'Gợi ý 5 team',exact:true}).click();
+  await page.getByRole('button',{name:'Xác nhận dữ liệu đã đọc'}).click();
+  await page.getByRole('button',{name:'Gợi ý 5 đội',exact:true}).click();
   await expect(page.locator('.roster-results > section:first-child [data-config-id="config-a"]')).toHaveCount(1);
   await expect(page.locator('.roster-results')).toContainText('Điểm SGSDeck: 132.5');
   await page.locator('#season-ruleset').selectOption('');
   await expect(page.locator('.roster-results')).toHaveCount(0);
-  await expect(page.getByRole('button',{name:'Gợi ý 5 team',exact:true})).toBeDisabled();
+  await expect(page.getByRole('button',{name:'Gợi ý 5 đội',exact:true})).toBeDisabled();
   await expect(page.locator('#section-roster-recommend')).toContainText('Chọn phiên bản luật');
   const state = await page.evaluate(()=>JSON.parse(localStorage.getItem('tqccl.rosterRecommend.scanState.v1')));
   expect(state.ownedHeroes).toHaveLength(3);
@@ -165,7 +191,7 @@ test('invalid scope and mixed bundle never activate scoped cards or gameplay', a
   await page.route('**/data/season-team-configs.json',route=>route.fulfill({json:[]}));
   await page.goto('/?scenario=scenario-a&ruleset=rules-a#roster-recommend');
   await expect(page.locator('#season-summary')).toContainText('Không xác thực');
-  await expect(page.getByRole('button',{name:'Xác nhận dữ liệu scan'})).toBeDisabled();
+  await expect(page.getByRole('button',{name:'Xác nhận dữ liệu đã đọc'})).toBeDisabled();
 });
 test('late roster scan response cannot restore scope confirmation or inventory changes', async ({page}) => {
   await controlledBundle(page);
@@ -182,7 +208,7 @@ test('late roster scan response cannot restore scope confirmation or inventory c
   release();
   await expect(page.getByRole('button',{name:'Đọc Tướng',exact:true})).toBeEnabled();
   await expect(page.locator('.roster-review-panel').first()).toContainText('Chưa đọc tướng');
-  await expect(page.getByRole('button',{name:'Xác nhận dữ liệu scan'})).toBeDisabled();
+  await expect(page.getByRole('button',{name:'Xác nhận dữ liệu đã đọc'})).toBeDisabled();
   const stored=await page.evaluate(()=>JSON.parse(localStorage.getItem('tqccl.rosterRecommend.scanState.v1')));
   expect(stored.ownedHeroes).toEqual([]);expect(stored.confirmed).toBe(false);
 });
@@ -206,11 +232,11 @@ test('closing details after a search preserves current filters and returns keybo
   await controlledBundle(page);
   await page.goto('/?scenario=scenario-a&ruleset=rules-a&q=B%C3%ACnh&config=config-a#team-khac');
   await expect(page.locator('#season-config-detail')).toBeVisible();
-  await expect(page.getByRole('searchbox',{name:'Tìm Team khác',exact:true})).toHaveValue('Bình');
+  await expect(page.getByRole('searchbox',{name:'Tìm Đội khác',exact:true})).toHaveValue('Bình');
   await page.getByRole('button',{name:'Đóng chi tiết'}).click();
   await expect(page).toHaveURL(/q=B%C3%ACnh/);
   expect(new URL(page.url()).searchParams.has('config')).toBe(false);
-  await expect(page.getByRole('searchbox',{name:'Tìm Team khác',exact:true})).toHaveValue('Bình');
+  await expect(page.getByRole('searchbox',{name:'Tìm Đội khác',exact:true})).toHaveValue('Bình');
   await expect(page.locator('#section-team-khac h2')).toBeFocused();
 });
 
@@ -227,8 +253,8 @@ for (const count of [500,501]) test(`roster enforces scoped candidate boundary $
   await controlledBundle(page,data);
   await page.addInitScript(()=>localStorage.setItem('tqccl.rosterRecommend.scanState.v1',JSON.stringify({ownedHeroes:['Anh','Bình','Cường'].map(name=>({name})),ownedTactics:['Một','Hai','Ba','Bốn','Năm','Sáu'].map(name=>({name})),lockedTeams:[],confirmed:false})));
   await page.goto('/?scenario=scenario-a&ruleset=rules-a#roster-recommend');
-  await page.getByRole('button',{name:'Xác nhận dữ liệu scan'}).click();
-  await page.getByRole('button',{name:'Gợi ý 5 team',exact:true}).click();
+  await page.getByRole('button',{name:'Xác nhận dữ liệu đã đọc'}).click();
+  await page.getByRole('button',{name:'Gợi ý 5 đội',exact:true}).click();
   if(count===500) await expect(page.locator('.roster-results > section:first-child [data-config-id="config-a"]')).toHaveCount(1);
   else {await expect(page.locator('#section-roster-recommend .error')).toContainText('500');await expect(page.locator('.roster-results')).toHaveCount(0);}
 });
@@ -251,12 +277,12 @@ test('scoped recommendation exposes usable add-team actions and original source 
   await controlledBundle(page);
   await page.addInitScript(()=>localStorage.setItem('tqccl.rosterRecommend.scanState.v1',JSON.stringify({ownedHeroes:['Anh','Bình','Cường'].map(name=>({name})),ownedTactics:['Một','Hai','Ba','Bốn','Năm','Sáu'].map(name=>({name})),lockedTeams:[],confirmed:false})));
   await page.goto('/?scenario=scenario-a&ruleset=rules-a#roster-recommend');
-  await page.getByRole('button',{name:'Xác nhận dữ liệu scan'}).click();
-  await page.getByRole('button',{name:'Gợi ý 5 team',exact:true}).click();
+  await page.getByRole('button',{name:'Xác nhận dữ liệu đã đọc'}).click();
+  await page.getByRole('button',{name:'Gợi ý 5 đội',exact:true}).click();
   const added=page.locator('.roster-results > section').nth(1);
-  await expect(added.getByRole('button',{name:'Mở team'})).toHaveCount(1);
+  await expect(added.getByRole('button',{name:'Mở đội'})).toHaveCount(1);
   await expect(added).toContainText('Điểm SGSDeck: 132.5');
-  await added.getByRole('button',{name:'Mở team'}).click();
+  await added.getByRole('button',{name:'Mở đội'}).click();
   await expect(page).toHaveURL(/config=config-a/);
   await expect(page.locator('#season-config-detail')).toBeVisible();
 });
@@ -297,7 +323,7 @@ test('unavailable season bundle keeps no-context legacy gameplay with an ordinar
   await page.route('**/data/season-evidence.json',route=>route.fulfill({status:503,body:''}));
   await page.goto('/?q=legacy#roster-recommend');
   await expect(page.locator('#season-summary')).toContainText('Không xác thực');
-  await expect(page.getByRole('button',{name:'Xác nhận dữ liệu scan'})).toBeEnabled();
+  await expect(page.getByRole('button',{name:'Xác nhận dữ liệu đã đọc'})).toBeEnabled();
 });
 
 for(const width of [375,1280]) test(`real Binh Dien review screenshot at ${width}px`,async({page},testInfo)=>{

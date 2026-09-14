@@ -308,7 +308,7 @@
         "戰意昂揚"
       ],
       "conditions": [],
-      "effectVi": "Bị động: Khi bộ đội đang ở nhận chiến công, sẽ nhận thêm điểm chiến ý. Khi chiến ý đạt 100, thi triển kỹ quân sư sẽ xóa toàn bộ chiến ý và giảm 30% tiêu hao khi thi triển (chịu ảnh hưởng của độ thuần thục, tối đa giảm 50%). Động viên: Võ tướng trong bộ đội lập tức được xóa trạng thái trọng thương, hồi phục 100% thương binh và nhận 3000 binh lực.",
+      "effectVi": "Bị động: Khi bộ đội nhận chiến công, sẽ nhận thêm điểm chiến ý. Khi chiến ý đạt 100, thi triển kỹ năng quân sư sẽ xóa toàn bộ chiến ý và giảm 30% tiêu hao khi thi triển (chịu ảnh hưởng của độ thuần thục, tối đa giảm 50%). Động viên: Võ tướng trong bộ đội lập tức được xóa trạng thái trọng thương, hồi phục 100% thương binh và nhận 3000 binh lực.",
       "elementVi": "Lâm",
       "heroIds": [
         "hero:chu-thai"
@@ -417,7 +417,7 @@
       "missingFields": [],
       "nameVi": "Lâm Địch Chế Biến",
       "tacticPoints": 10,
-      "usageVi": "Dùng để chạm sứ, giảm tổn thất binh lực."
+      "usageVi": "Dùng khi đánh tiêu hao bằng lực lượng nhỏ, giúp giảm tổn thất binh lực."
     },
     {
       "aliasesVi": [],
@@ -459,7 +459,7 @@
         "定軍奇襲"
       ],
       "conditions": [],
-      "effectVi": "Dành riêng cho cung binh. Chọn một ô trong phạm vi 3 ô không phải ô hiện tại của bản thân (ô không có kiến trúc hoặc ô có kiến trúc đáp ứng quy tắc nối đất); sau khi chuẩn bị 15 giây, lần lượt giao chiến với các bộ đội người chơi trên ô đó và nhận hiệu ứng tăng ích chiến đấu: trong hiệp đầu, toàn quân ta gây 50% sát thương lên một đơn vị địch ngẫu nhiên (loại sát thương do chỉ số cao hơn giữa võ lực và trí lực của chủ tướng quyết định; tỷ lệ sát thương chịu ảnh hưởng của thuộc tính tương ứng và độ thuần thục, tối đa gây 75%); nếu chủ tướng quân ta thuộc trận doanh Thục, tỷ lệ sát thương tăng thêm 10%. Nếu sau khi thi triển không xảy ra giao chiến, hoàn trả 80% điểm kế lược và sách lực đã tiêu hao. Lưu ý: không thể chọn kiến trúc đang miễn chiến để thi triển.",
+      "effectVi": "Dành riêng cho cung binh. Chọn một ô trong phạm vi 3 ô không phải ô hiện tại của bản thân (ô không có kiến trúc hoặc ô có kiến trúc đáp ứng quy tắc nối đất); sau khi chuẩn bị 15 giây, lần lượt giao chiến với các bộ đội người chơi trên ô đó và nhận hiệu ứng tăng ích chiến đấu: trong hiệp đầu, toàn quân ta gây 50% sát thương lên một đơn vị địch ngẫu nhiên (chịu ảnh hưởng của chỉ số cao hơn giữa võ lực và trí lực của chủ tướng; tỷ lệ sát thương chịu ảnh hưởng của thuộc tính tương ứng và độ thuần thục, tối đa gây 75%); nếu chủ tướng quân ta thuộc trận doanh Thục, tỷ lệ sát thương tăng thêm 10%. Nếu sau khi thi triển không xảy ra giao chiến, hoàn trả 80% điểm kế lược và sách lực đã tiêu hao. Lưu ý: không thể chọn kiến trúc đang miễn chiến để thi triển.",
       "elementVi": "Hỏa",
       "heroIds": [
         "hero:hoang-trung"
@@ -638,7 +638,7 @@
       "missingFields": [],
       "nameVi": "Minh Thệ Thủ Ngự",
       "tacticPoints": 12,
-      "usageVi": "Tăng ích đồn trú dùng để phòng thủ, xung đột với các hiệu quả cấp cứu khác (như Hãm Trận Doanh). Dùng để thủ 89."
+      "usageVi": "Tăng ích đồn trú dùng để phòng thủ, xung đột với các hiệu quả cấp cứu khác (như Hãm Trận Doanh). Dùng để thủ 89. Lưu ý: Nguồn không giải thích “89” chỉ đối tượng nào; chưa đủ căn cứ hiểu là cấp 8 và 9 hay một địa điểm cụ thể."
     },
     {
       "aliasesVi": [],
@@ -1119,7 +1119,7 @@
             "wood": 1600
           },
           "durationVi": "1 phút",
-          "effectVi": "Vũ lực bộ đội +2",
+          "effectVi": "Võ lực bộ đội +2",
           "id": "building-level:binh-chien-vo:1",
           "level": 1
         },
@@ -1807,7 +1807,7 @@
       "maxLevel": 20,
       "missingFields": [],
       "nameVi": "Thảng Khố",
-      "summaryVi": "Tăng giới hạn lưu trữ tài nguyên (gỗ/sắt/đá)"
+      "summaryVi": "Tăng giới hạn lưu trữ tài nguyên gỗ, sắt và đá"
     },
     {
       "aliasesVi": [],
@@ -2057,7 +2057,7 @@
       "maxLevel": 10,
       "missingFields": [],
       "nameVi": "Thành Tường",
-      "summaryVi": "Tăng độ bền của chủ thành (kiến trúc phòng thủ cơ bản)"
+      "summaryVi": "Tăng độ bền của thành chính (công trình phòng thủ cơ bản)"
     },
     {
       "aliasesVi": [],
@@ -2368,7 +2368,7 @@
             "wood": 3600
           },
           "durationVi": "1 giờ 40 phút",
-          "effectVi": "Sản lượng gỗ +1500/giờ, Quan Gỗ",
+          "effectVi": "Sản lượng gỗ +1500/giờ; mở khóa quan phụ trách gỗ.",
           "id": "building-level:phat-moc-truong:10",
           "level": 10
         },
@@ -3185,7 +3185,7 @@
             "wood": null
           },
           "durationVi": null,
-          "effectVi": "COST +10, độ bền thành trì +100",
+          "effectVi": "Thống ngự +10, độ bền thành trì +100",
           "id": "building-level:quan-vuong-dien:1",
           "level": 1
         },
@@ -3196,7 +3196,7 @@
             "wood": 2400
           },
           "durationVi": "30 giây",
-          "effectVi": "COST +11, độ bền thành trì +200",
+          "effectVi": "Giới hạn chi phí (COST) +11; độ bền thành trì +200.",
           "id": "building-level:quan-vuong-dien:2",
           "level": 2
         },
@@ -3207,7 +3207,7 @@
             "wood": 6000
           },
           "durationVi": "5 phút",
-          "effectVi": "COST +12, độ bền thành trì +300",
+          "effectVi": "Giới hạn chi phí (COST) +12; độ bền thành trì +300.",
           "id": "building-level:quan-vuong-dien:3",
           "level": 3
         },
@@ -3218,7 +3218,7 @@
             "wood": 16000
           },
           "durationVi": "30 phút",
-          "effectVi": "COST +13, độ bền thành trì +400",
+          "effectVi": "Giới hạn chi phí (COST) +13; độ bền thành trì +400.",
           "id": "building-level:quan-vuong-dien:4",
           "level": 4
         },
@@ -3229,7 +3229,7 @@
             "wood": 24000
           },
           "durationVi": "3 giờ",
-          "effectVi": "COST +14, độ bền thành trì +500",
+          "effectVi": "Giới hạn chi phí (COST) +14; độ bền thành trì +500.",
           "id": "building-level:quan-vuong-dien:5",
           "level": 5
         },
@@ -3240,7 +3240,7 @@
             "wood": 48000
           },
           "durationVi": "8 giờ",
-          "effectVi": "COST +15, độ bền thành trì +600",
+          "effectVi": "Giới hạn chi phí +15, độ bền thành trì +600",
           "id": "building-level:quan-vuong-dien:6",
           "level": 6
         },
@@ -3251,7 +3251,7 @@
             "wood": 96000
           },
           "durationVi": "12 giờ",
-          "effectVi": "COST +16, độ bền thành trì +700",
+          "effectVi": "Giới hạn chi phí +16, độ bền thành trì +700",
           "id": "building-level:quan-vuong-dien:7",
           "level": 7
         },
@@ -3262,7 +3262,7 @@
             "wood": 192000
           },
           "durationVi": "24 giờ",
-          "effectVi": "COST +17, độ bền thành trì +800",
+          "effectVi": "Giới hạn chi phí +17, độ bền thành trì +800",
           "id": "building-level:quan-vuong-dien:8",
           "level": 8
         },
@@ -3273,7 +3273,7 @@
             "wood": 288000
           },
           "durationVi": "36 giờ",
-          "effectVi": "COST +17, độ bền thành trì +900",
+          "effectVi": "Giới hạn chi phí +17, độ bền thành trì +900",
           "id": "building-level:quan-vuong-dien:9",
           "level": 9
         },
@@ -3284,7 +3284,7 @@
             "wood": 432000
           },
           "durationVi": "48 giờ",
-          "effectVi": "COST +17, độ bền thành trì +1000",
+          "effectVi": "Giới hạn chi phí (COST) +17; độ bền thành trì +1000.",
           "id": "building-level:quan-vuong-dien:10",
           "level": 10
         }
@@ -3644,7 +3644,7 @@
             "wood": 10000
           },
           "durationVi": "1 giờ 40 phút",
-          "effectVi": "Sản lượng tiền đồng +1000/giờ, Quan thuế vụ",
+          "effectVi": "Sản lượng tiền đồng +1000/giờ; mở khóa Quan thuế vụ.",
           "id": "building-level:dan-cu:10",
           "level": 10
         },
@@ -4677,7 +4677,7 @@
             "wood": 60000
           },
           "durationVi": "10 giờ",
-          "effectVi": "Tăng sức mạnh võ tướng thủ quân thành phòng",
+          "effectVi": "Tăng sức mạnh cho võ tướng của quân phòng thủ thành.",
           "id": "building-level:hieu-uy-phu:1",
           "level": 1
         },
@@ -4688,7 +4688,7 @@
             "wood": 120000
           },
           "durationVi": "20 giờ",
-          "effectVi": "Tăng sức mạnh võ tướng thủ quân thành phòng",
+          "effectVi": "Tăng sức mạnh cho võ tướng của quân phòng thủ thành.",
           "id": "building-level:hieu-uy-phu:2",
           "level": 2
         },
@@ -4699,7 +4699,7 @@
             "wood": 240000
           },
           "durationVi": "30 giờ",
-          "effectVi": "Tăng sức mạnh võ tướng thủ quân thành phòng",
+          "effectVi": "Tăng sức mạnh cho võ tướng của quân phòng thủ thành.",
           "id": "building-level:hieu-uy-phu:3",
           "level": 3
         },
@@ -4710,7 +4710,7 @@
             "wood": 480000
           },
           "durationVi": "40 giờ",
-          "effectVi": "Tăng sức mạnh võ tướng thủ quân thành phòng",
+          "effectVi": "Tăng sức mạnh cho võ tướng của quân phòng thủ thành.",
           "id": "building-level:hieu-uy-phu:4",
           "level": 4
         }
@@ -5236,7 +5236,7 @@
             "wood": 12000
           },
           "durationVi": "2 giờ",
-          "effectVi": "Mỗi ngày có thể tìm kiếm 4 lần, Sứ giả tìm kiếm",
+          "effectVi": "Mỗi ngày có thể tìm kiếm 4 lần. Nguồn còn ghi “sứ giả tìm kiếm” nhưng không nêu rõ hiệu ứng liên quan.",
           "id": "building-level:tam-phong-dai:1",
           "level": 1
         },
@@ -5365,7 +5365,7 @@
             "wood": 10000
           },
           "durationVi": "5 giờ",
-          "effectVi": "Kinh nghiệm luyện binh của võ tướng 80000, Sứ giả luyện binh",
+          "effectVi": "Kinh nghiệm luyện binh của võ tướng: 80000; Sứ giả luyện binh. Lưu ý: Nguồn chỉ liệt kê Sứ giả luyện binh, chưa xác nhận cấp 1 mở khóa chức danh này hay chức danh có tác dụng gì.",
           "id": "building-level:dien-vo-truong:1",
           "level": 1
         },
@@ -8318,7 +8318,7 @@
         "周旋"
       ],
       "conditions": [],
-      "descriptionVi": "Dành riêng cho Tử Kim Toan Nghê Giáp; khi binh lực bản thân lần đầu thấp hơn 70%, bản thân nhận 9% đảo qua (khi gây sát thương binh khí, hồi phục cho bản thân một lượng binh lực nhất định dựa trên lượng sát thương), kéo dài 2 lượt",
+      "descriptionVi": "Dành riêng cho Tử Kim Toan Nghê Giáp; khi binh lực bản thân lần đầu thấp hơn 70%, bản thân nhận hiệu ứng hồi phục binh lực theo sát thương binh khí ở mức 9% (khi gây sát thương binh khí, hồi phục cho bản thân một lượng binh lực nhất định dựa trên lượng sát thương), kéo dài 2 lượt",
       "equipmentId": "equipment:tu-kim-toan-nghe-giap",
       "exclusiveHeroId": null,
       "id": "equipment-special:chu-toan",
@@ -8783,7 +8783,7 @@
         "機巧"
       ],
       "conditions": [],
-      "descriptionVi": "Độc quyền Cơ Quan Thú: khi Hoàng Nguyệt Anh trang bị, hiệu quả giảm sát thương ở lượt 4 của Công Thần đổi thành 1 đơn vị quân ta",
+      "descriptionVi": "Độc quyền Cơ Quan Thú: khi Hoàng Nguyệt Anh trang bị, hiệu quả giảm sát thương ở lượt 4 của Công Thần chuyển sang áp dụng cho 1 đơn vị quân ta",
       "equipmentId": "equipment:co-quan-thu",
       "exclusiveHeroId": "hero:hoang-nguyet-anh",
       "id": "equipment-special:co-xao",
@@ -9042,7 +9042,7 @@
           "convertsToVi": "Thương binh",
           "descriptionVi": "Nâng cấp thương binh thành Đan Dương Binh dũng mãnh vô úy",
           "id": "troop-option:dan-duong-binh:chuyen-tri-thuong-special-spear",
-          "nameVi": "Xoay·Cầm thương",
+          "nameVi": "Chuyển·Cầm thương",
           "tierVi": "Đặc biệt"
         },
         {
@@ -9082,7 +9082,7 @@
         },
         {
           "convertsToVi": null,
-          "descriptionVi": "Đan Dương Binh nhận được không còn suy giảm mỗi hiệp, đồng thời nhận thêm 25%",
+          "descriptionVi": "Số lượng Đan Dương Binh nhận được không còn suy giảm mỗi hiệp, đồng thời lượng Đan Dương Binh nhận được tăng thêm 25%.",
           "id": "troop-option:dan-duong-binh:chinh-quan-intermediate",
           "nameVi": "Chỉnh quân",
           "tierVi": "Trung cấp"
@@ -9182,7 +9182,7 @@
         },
         {
           "convertsToVi": null,
-          "descriptionVi": "Có thể đồng thời giảm tỷ lệ phát động chiến pháp đột kích, nhưng hiệu quả giảm mỗi lần giảm 1%",
+          "descriptionVi": "Có thể đồng thời làm giảm tỷ lệ phát động chiến pháp đột kích, nhưng mức giảm áp dụng mỗi lần bị giảm bớt 1%.",
           "id": "troop-option:tien-dang-tu-si:uc-the-basic",
           "nameVi": "Ức thế",
           "tierVi": "Cơ bản"
@@ -9296,7 +9296,7 @@
         },
         {
           "convertsToVi": null,
-          "descriptionVi": "Nhận 15% đảo qua",
+          "descriptionVi": "Nhận 15% Đảo Qua. Lưu ý: Nguồn chưa định nghĩa tác dụng của Đảo Qua hoặc ý nghĩa của tỷ lệ 15%; chưa đủ căn cứ diễn giải thành hút máu hay xác suất đổi phe.",
           "id": "troop-option:dai-kich-si:dao-qua-special",
           "nameVi": "Đảo qua",
           "tierVi": "Đặc biệt"
@@ -9416,7 +9416,7 @@
         },
         {
           "convertsToVi": "Khiên binh",
-          "descriptionVi": "Nâng cấp binh chủng khiên thành Vô Đương Phi Quân bách phát bách trúng",
+          "descriptionVi": "Nâng cấp khiên binh thành Vô Đương Phi Quân, đội quân bách phát bách trúng.",
           "id": "troop-option:vo-duong-phi-quan:chuyen-cu-my-special-shield",
           "nameVi": "Chuyển·Cử thuẫn",
           "tierVi": "Đặc biệt"
@@ -9481,7 +9481,7 @@
           "convertsToVi": null,
           "descriptionVi": "Trong thời gian mục tiêu chịu sát thương do Vô Đương Phi Quân gây ra, sát thương mà mục tiêu gây ra giảm (5%*số trạng thái bất lợi hiện có)",
           "id": "troop-option:vo-duong-phi-quan:vi-dinh-advanced",
-          "nameVi": "Chưa định",
+          "nameVi": "Chưa định (tên trong nguồn mang nghĩa chưa định; nguồn chưa cung cấp tên kỹ năng đã xác lập).",
           "tierVi": "Cao cấp"
         },
         {
@@ -9545,7 +9545,7 @@
         },
         {
           "convertsToVi": null,
-          "descriptionVi": "Độ thích tính binh chủng thương của người mang tăng 1 cấp",
+          "descriptionVi": "Mức độ thích ứng với binh chủng thương của người mang tăng 1 cấp",
           "id": "troop-option:bach-nhi-binh:tri-thuong-special",
           "nameVi": "Trì thương",
           "tierVi": "Đặc biệt"
@@ -9638,7 +9638,7 @@
       "options": [
         {
           "convertsToVi": null,
-          "descriptionVi": "Độ thích tính binh chủng cung của người mang tăng 1 cấp",
+          "descriptionVi": "Mức độ thích ứng với binh chủng cung của người mang tăng 1 cấp.",
           "id": "troop-option:bach-ma-nghia-tong:loan-cung-special",
           "nameVi": "Giương cung",
           "tierVi": "Đặc biệt"
@@ -9687,7 +9687,7 @@
         },
         {
           "convertsToVi": null,
-          "descriptionVi": "Khi quân ta bị kế cùng, có 25% xác suất miễn nhiễm",
+          "descriptionVi": "Khi quân ta bị áp dụng trạng thái Kế Cùng (không thể phát động chiến pháp chủ động), có 25% xác suất miễn nhiễm với trạng thái này.",
           "id": "troop-option:bach-ma-nghia-tong:vo-cu-intermediate",
           "nameVi": "Vô Úy",
           "tierVi": "Trung cấp"
@@ -9739,14 +9739,14 @@
           "textVi": "Binh Diễn Xuân Thu"
         }
       ],
-      "effectVi": "Nâng cấp thuẫn binh thành Đằng Giáp Binh đao thương bất nhập: sát thương binh nhận vào của toàn quân ta giảm 12%→24% (chịu ảnh hưởng của thống suất), nhưng khi ở trạng thái thiêu đốt sẽ tổn thất thêm binh lực mỗi lượt (tỷ lệ sát thương 300%); nếu do Ngột Đột Cốt thống lĩnh, lượng binh lực tổn thất khi ở trạng thái thiêu đốt giảm (tỷ lệ sát thương 250%)",
+      "effectVi": "Nâng cấp thuẫn binh thành Đằng Giáp Binh đao thương bất nhập: sát thương binh khí mà toàn quân ta phải chịu giảm 12%→24% (chịu ảnh hưởng của thống suất), nhưng khi ở trạng thái thiêu đốt sẽ tổn thất thêm binh lực mỗi lượt (tỷ lệ sát thương 300%); nếu do Ngột Đột Cốt thống lĩnh, lượng binh lực tổn thất khi ở trạng thái thiêu đốt giảm (tỷ lệ sát thương 250%)",
       "id": "troop-mod:dang-giap-binh",
       "missingFields": [],
       "nameVi": "Đằng Giáp Binh",
       "options": [
         {
           "convertsToVi": null,
-          "descriptionVi": "Độ thích tính binh chủng thuẫn binh của người mang tăng 1 cấp",
+          "descriptionVi": "Mức độ thích ứng với binh chủng thuẫn binh của người mang tăng 1 cấp",
           "id": "troop-option:dang-giap-binh:cu-my-special",
           "nameVi": "Giơ khiên",
           "tierVi": "Đặc biệt"
@@ -9767,7 +9767,7 @@
         },
         {
           "convertsToVi": null,
-          "descriptionVi": "Hiệu quả giảm sát thương binh tăng 8%",
+          "descriptionVi": "Hiệu quả giảm sát thương vật lý tăng 8%.",
           "id": "troop-option:dang-giap-binh:dang-giap-basic",
           "nameVi": "Đằng Giáp",
           "tierVi": "Cơ bản"
@@ -9809,14 +9809,14 @@
         },
         {
           "convertsToVi": null,
-          "descriptionVi": "Sau khi chịu sát thương binh, sát thương binh mà võ tướng này phải chịu trong lượt hiện tại giảm 3%, đặt lại khi kết thúc lượt",
+          "descriptionVi": "Sau khi chịu sát thương vật lý, sát thương vật lý mà võ tướng này phải chịu trong hiệp hiện tại giảm 3%; mức giảm này được đặt lại khi hiệp kết thúc.",
           "id": "troop-option:dang-giap-binh:kien-nhan-advanced",
-          "nameVi": "Kiên Nhẫn",
+          "nameVi": "Kiên Nhận",
           "tierVi": "Cao cấp"
         },
         {
           "convertsToVi": null,
-          "descriptionVi": "Trong 2 lượt đầu giao chiến, khi chủ tướng chịu sát thương binh, có 50% xác suất nhận 1 lần chống đỡ (mỗi lượt kích hoạt tối đa 2 lần)",
+          "descriptionVi": "Trong 2 hiệp đầu của trận chiến, khi chủ tướng chịu sát thương vật lý, có 50% xác suất nhận 1 lần Kháng Cự (mỗi hiệp kích hoạt tối đa 2 lần).",
           "id": "troop-option:dang-giap-binh:de-ngu-advanced",
           "nameVi": "Kháng Cự",
           "tierVi": "Cao cấp"
@@ -9830,7 +9830,7 @@
         }
       ],
       "revisions": [],
-      "suggestedBuildVi": "【Nhẫn Nại】+【Đằng Giáp】+【Kiên Nhận】+【Tịnh Hóa】→ Đằng Giáp Pháp Quan Thuẫn; tăng đáng kể khả năng ứng phó với thiêu đốt và hiệu quả giảm sát thương, bù đắp nhược điểm sợ thiêu đốt của Đằng Giáp Binh",
+      "suggestedBuildVi": "【Nhẫn Nại】+【Đằng Giáp】+【Kiên Nhẫn】+【Tịnh Hóa】→ Đằng Giáp Pháp Quan Thuẫn; tăng đáng kể khả năng ứng phó với thiêu đốt và hiệu quả giảm sát thương, bù đắp nhược điểm sợ thiêu đốt của Đằng Giáp Binh",
       "troopLimitVi": [
         "Khiên binh"
       ]
@@ -9924,7 +9924,7 @@
         },
         {
           "convertsToVi": null,
-          "descriptionVi": "Độ thích tính binh chủng thuẫn binh của người mang tăng 1 cấp",
+          "descriptionVi": "Mức độ thích hợp với binh chủng thuẫn binh của người mang tăng 1 cấp",
           "id": "troop-option:ho-ve-quan:cu-my-special",
           "nameVi": "Giơ khiên",
           "tierVi": "Đặc biệt"
@@ -9962,7 +9962,7 @@
       "options": [
         {
           "convertsToVi": null,
-          "descriptionVi": "Độ thích tính binh chủng kỵ binh của người mang tăng 1 cấp",
+          "descriptionVi": "Mức độ thích hợp với binh chủng kỵ binh của người mang tăng 1 cấp",
           "id": "troop-option:ho-bao-ky:ky-thuat-special",
           "nameVi": "Kỵ Thuật",
           "tierVi": "Đặc biệt"
@@ -10006,7 +10006,7 @@
           "convertsToVi": null,
           "descriptionVi": "Tỷ lệ phát động chiến pháp đột kích tăng thêm 5%",
           "id": "troop-option:ho-bao-ky:thuong-cong-intermediate",
-          "nameVi": "Cường Công",
+          "nameVi": "Đánh Trước",
           "tierVi": "Trung cấp"
         },
         {
@@ -10025,7 +10025,7 @@
         },
         {
           "convertsToVi": null,
-          "descriptionVi": "Sau khi phát động chiến pháp đột kích, có 25% xác suất nhận 1 tầng Kháng đỡ, duy trì 1 hiệp",
+          "descriptionVi": "Sau khi phát động chiến pháp đột kích, có 25% xác suất nhận 1 tầng Kháng Cự, duy trì 1 hiệp.",
           "id": "troop-option:ho-bao-ky:de-ngu-advanced",
           "nameVi": "Kháng Cự",
           "tierVi": "Cao cấp"
@@ -10039,7 +10039,7 @@
         },
         {
           "convertsToVi": null,
-          "descriptionVi": "Sau khi phát động chiến pháp đột kích, có 25% xác suất ngẫu nhiên gây cho mục tiêu một trong các hiệu quả sau (Chấn nhiếp, Kỹ cùng, Tước giới…; phần chữ tại đây trên màn hình trò chơi bị cắt, chờ bổ sung đầy đủ)",
+          "descriptionVi": "Sau khi phát động chiến pháp đột kích, có 25% xác suất gây ngẫu nhiên một trong các hiệu ứng sau lên mục tiêu (Chấn nhiếp, Kỹ cùng, Tước giới…; văn bản tại vị trí này trên màn hình trò chơi bị cắt, chờ bổ sung đầy đủ).",
           "id": "troop-option:ho-bao-ky:trong-sang-advanced",
           "nameVi": "Trọng Thương",
           "tierVi": "Cao cấp"
@@ -10089,7 +10089,7 @@
       "options": [
         {
           "convertsToVi": null,
-          "descriptionVi": "Độ thích tính binh chủng kỵ binh của người mang tăng 1 cấp",
+          "descriptionVi": "Mức độ thích hợp với binh chủng kỵ binh của người mang tăng 1 cấp",
           "id": "troop-option:tay-luong-thiet-ky:ky-thuat-special",
           "nameVi": "Kỵ Thuật",
           "tierVi": "Đặc biệt"
@@ -10117,7 +10117,7 @@
         },
         {
           "convertsToVi": null,
-          "descriptionVi": "Hội tâm/Kỳ mưu nhận được chịu ảnh hưởng của Võ lực",
+          "descriptionVi": "Võ lực ảnh hưởng đến Hội tâm/Kỳ mưu nhận được.",
           "id": "troop-option:tay-luong-thiet-ky:thao-dien-basic",
           "nameVi": "Thao diễn",
           "tierVi": "Cơ bản"
@@ -10217,7 +10217,7 @@
         },
         {
           "convertsToVi": null,
-          "descriptionVi": "Độ thích tính binh chủng thương của người mang tăng 1 cấp",
+          "descriptionVi": "Mức độ thích hợp với binh chủng thương binh của người mang tăng 1 cấp",
           "id": "troop-option:giai-phien-ve:tri-thuong-special",
           "nameVi": "Trì thương",
           "tierVi": "Đặc biệt"
@@ -10395,7 +10395,7 @@
         },
         {
           "convertsToVi": null,
-          "descriptionVi": "Sát thương được quyết toán dần đổi thành hoãn lại 4 hiệp",
+          "descriptionVi": "Phần sát thương vốn được tính dần nay chuyển sang hoãn tính 4 hiệp.",
           "id": "troop-option:tuong-binh:bi-thao-advanced",
           "nameVi": "Da dày",
           "tierVi": "Cao cấp"
@@ -10439,7 +10439,7 @@
       "options": [
         {
           "convertsToVi": null,
-          "descriptionVi": "Độ thích tính binh chủng cung của người mang tăng 1 cấp",
+          "descriptionVi": "Mức độ thích ứng với binh chủng cung của người mang tăng 1 cấp",
           "id": "troop-option:cam-pham-quan:loan-cung-special",
           "nameVi": "Giương cung",
           "tierVi": "Đặc biệt"
@@ -10453,28 +10453,28 @@
         },
         {
           "convertsToVi": null,
-          "descriptionVi": "Hiệu quả hội đào do Cẩm Phàm Quân gây ra đổi thành sát thương mưu lược, chịu ảnh hưởng bởi Trí lực",
+          "descriptionVi": "Sát thương từ hiệu ứng tháo chạy do Cẩm Phàm Quân gây ra được chuyển thành sát thương mưu lược, chịu ảnh hưởng bởi Trí lực.",
           "id": "troop-option:cam-pham-quan:tri-thu-special",
           "nameVi": "Trí thủ",
           "tierVi": "Đặc biệt"
         },
         {
           "convertsToVi": null,
-          "descriptionVi": "Nếu mục tiêu đã hội đào, sát thương binh nhận gây ra tăng 20%",
+          "descriptionVi": "Nếu mục tiêu đã ở trạng thái tháo chạy (Hội Tẩu), sát thương binh khí gây ra tăng 20%.",
           "id": "troop-option:cam-pham-quan:dung-vo-basic",
           "nameVi": "Dũng võ",
           "tierVi": "Cơ bản"
         },
         {
           "convertsToVi": null,
-          "descriptionVi": "Nếu mục tiêu đã hội đào, gây sát thương binh nhận và hồi phục binh lực bằng lượng sát thương; lượng hồi phục tăng 40%",
+          "descriptionVi": "Nếu mục tiêu đã ở trạng thái tháo chạy, gây sát thương vật lý và hồi phục binh lực dựa trên lượng sát thương gây ra; lượng binh lực hồi phục tăng 40%.",
           "id": "troop-option:cam-pham-quan:y-tri-basic",
           "nameVi": "Y trị",
           "tierVi": "Cơ bản"
         },
         {
           "convertsToVi": null,
-          "descriptionVi": "Đối với mục tiêu đã hội đào, đổi từ gây sát thương binh nhận thành gây sát thương mưu lược",
+          "descriptionVi": "Đối với mục tiêu đã ở trạng thái tháo chạy, chuyển từ gây sát thương vật lý sang gây sát thương mưu lược.",
           "id": "troop-option:cam-pham-quan:muu-luoc-basic",
           "nameVi": "Mưu Lược",
           "tierVi": "Cơ bản"
@@ -10495,7 +10495,7 @@
         },
         {
           "convertsToVi": null,
-          "descriptionVi": "Ở hiệp đầu của trận chiến, áp dụng trạng thái hội đào lên chủ tướng địch (tỷ lệ sát thương 64%, kéo dài 2 hiệp)",
+          "descriptionVi": "Trong hiệp đầu của trận chiến, gây trạng thái tháo chạy lên chủ tướng địch (tỷ lệ sát thương 64%, kéo dài 2 hiệp).",
           "id": "troop-option:cam-pham-quan:uy-hach-intermediate",
           "nameVi": "Uy hách",
           "tierVi": "Trung cấp"
@@ -10509,14 +10509,14 @@
         },
         {
           "convertsToVi": null,
-          "descriptionVi": "Nếu mục tiêu đã hội đào, có 45% xác suất khiến mục tiêu rơi vào trạng thái phản loạn (tỷ lệ sát thương 55%, chịu ảnh hưởng bởi chỉ số cao hơn giữa Võ lực và Trí lực, bỏ qua phòng ngự), kéo dài 1 hiệp",
+          "descriptionVi": "Nếu mục tiêu đã ở trạng thái tháo chạy (Hội Tẩu), có 45% xác suất khiến mục tiêu rơi vào trạng thái đào ngũ (Phản Đào), kéo dài 1 lượt (tỷ lệ sát thương 55%, chịu ảnh hưởng của chỉ số cao hơn giữa vũ lực và trí lực, bỏ qua phòng ngự).",
           "id": "troop-option:cam-pham-quan:dinh-khieu-advanced",
           "nameVi": "Doanh khiếu",
           "tierVi": "Cao cấp"
         },
         {
           "convertsToVi": null,
-          "descriptionVi": "Nếu mục tiêu đã hội đào, gây sát thương binh nhận và hồi phục binh lực bằng lượng sát thương; mục tiêu hồi phục đổi thành một đơn vị phe ta có binh lực thấp nhất",
+          "descriptionVi": "Nếu mục tiêu đã ở trạng thái tháo chạy (Hội Tẩu), gây sát thương binh khí và hồi phục binh lực bằng lượng sát thương gây ra; mục tiêu được hồi phục đổi thành một đơn vị quân ta có binh lực thấp nhất.",
           "id": "troop-option:cam-pham-quan:cuu-ho-advanced",
           "nameVi": "Cứu hộ",
           "tierVi": "Cao cấp"
@@ -10567,7 +10567,7 @@
         },
         {
           "convertsToVi": null,
-          "descriptionVi": "Độ thích tính binh chủng thuẫn binh của người mang tăng 1 cấp",
+          "descriptionVi": "Mức độ thích hợp với binh chủng thuẫn binh của người mang tăng 1 cấp",
           "id": "troop-option:ham-tran-doanh:cu-my-special",
           "nameVi": "Giơ khiên",
           "tierVi": "Đặc biệt"
@@ -10674,7 +10674,7 @@
           "textVi": "Binh Diễn Xuân Thu"
         }
       ],
-      "effectVi": "Cập nhật 2021-09-29 (làm lại): Nâng cấp binh thương thành Thanh Châu Binh xung kiên hủy nhuệ: Trong 2 lượt đầu của trận đấu, khi nhóm quân ta (2 người) chịu tấn công thường, sẽ phản kích người tấn công 1 lần (tỷ lệ sát thương 36%→72%); khi bắt đầu lượt thứ 3, lần lượt hồi phục binh lực cho toàn quân ta, ưu tiên hồi phục hoàn toàn cho một đơn vị quân ta có binh lực thấp nhất, sau đó hồi phục các đơn vị quân ta khác (tổng tỷ lệ trị liệu 90%→180%, chịu ảnh hưởng của Võ lực và chịu thêm ảnh hưởng từ sát thương do quân địch gây ra); nếu Tào Tháo thống lĩnh, trị liệu còn chịu thêm ảnh hưởng của Thống suất / Cập nhật 2020-07-29 (tăng cường): Nâng cấp binh thương thành Thanh Châu Binh xung kiên hủy nhuệ: Khi bộ đội gây sát thương, có 28% xác suất khiến sát thương lần này tăng 15%→30%, đồng thời khiến sát thương do mục tiêu bị tấn công gây ra ở lần kế tiếp giảm 15%→30%; nếu Tào Tháo thống lĩnh, hiệu quả giảm sát thương gây ra sẽ chịu ảnh hưởng của Thống suất / Phiên bản gốc: Nâng cấp binh thương thành Thanh Châu Binh xung kiên hủy nhuệ: Khi bộ đội gây sát thương, có 25% xác suất khiến sát thương lần này tăng 15%→30%, đồng thời khiến sát thương do mục tiêu bị tấn công gây ra ở lần kế tiếp giảm 11%→22%; nếu Tào Tháo thống lĩnh, hiệu quả giảm sát thương gây ra sẽ chịu ảnh hưởng của Thống suất",
+      "effectVi": "Cập nhật 2021-09-29 (làm lại): Nâng cấp thương binh thành Thanh Châu Binh xung kiên hủy nhuệ: Trong 2 lượt đầu của trận đấu, khi nhóm quân ta (2 người) chịu tấn công thường, sẽ phản kích người tấn công 1 lần (tỷ lệ sát thương 36%→72%); khi bắt đầu lượt thứ 3, lần lượt hồi phục binh lực cho toàn quân ta, ưu tiên hồi phục hoàn toàn cho một đơn vị quân ta có binh lực thấp nhất, sau đó hồi phục các đơn vị quân ta khác (tổng tỷ lệ trị liệu 90%→180%, chịu ảnh hưởng của Võ lực và chịu thêm ảnh hưởng từ sát thương do quân địch gây ra); nếu Tào Tháo thống lĩnh, trị liệu còn chịu thêm ảnh hưởng của Thống suất / Cập nhật 2020-07-29 (tăng cường): Nâng cấp thương binh thành Thanh Châu Binh xung kiên hủy nhuệ: Khi bộ đội gây sát thương, có 28% xác suất khiến sát thương lần này tăng 15%→30%, đồng thời khiến sát thương do mục tiêu bị tấn công gây ra ở lần kế tiếp giảm 15%→30%; nếu Tào Tháo thống lĩnh, hiệu quả giảm sát thương gây ra sẽ chịu ảnh hưởng của Thống suất / Phiên bản gốc: Nâng cấp thương binh thành Thanh Châu Binh xung kiên hủy nhuệ: Khi bộ đội gây sát thương, có 25% xác suất khiến sát thương lần này tăng 15%→30%, đồng thời khiến sát thương do mục tiêu bị tấn công gây ra ở lần kế tiếp giảm 11%→22%; nếu Tào Tháo thống lĩnh, hiệu quả giảm sát thương gây ra sẽ chịu ảnh hưởng của Thống suất",
       "id": "troop-mod:thanh-chau-binh",
       "missingFields": [],
       "nameVi": "Thanh Châu Binh",
@@ -10769,19 +10769,19 @@
           "effectiveDate": "2021-09-29",
           "isCurrent": true,
           "labelVi": "Bản hiện hành",
-          "textVi": "Nâng cấp binh thương thành Thanh Châu Binh xung kiên hủy nhuệ: Trong 2 lượt đầu của trận đấu, khi nhóm quân ta (2 người) chịu tấn công thường, sẽ phản kích người tấn công 1 lần (tỷ lệ sát thương 36%→72%); khi bắt đầu lượt thứ 3, lần lượt hồi phục binh lực cho toàn quân ta, ưu tiên hồi phục hoàn toàn cho một đơn vị quân ta có binh lực thấp nhất, sau đó hồi phục các đơn vị quân ta khác (tổng tỷ lệ trị liệu 90%→180%, chịu ảnh hưởng của Võ lực và chịu thêm ảnh hưởng từ sát thương do quân địch gây ra); nếu Tào Tháo thống lĩnh, trị liệu còn chịu thêm ảnh hưởng của Thống suất"
+          "textVi": "Nâng cấp thương binh thành Thanh Châu Binh xung kiên hủy nhuệ: Trong 2 lượt đầu của trận đấu, khi nhóm quân ta (2 người) chịu tấn công thường, sẽ phản kích người tấn công 1 lần (tỷ lệ sát thương 36%→72%); khi bắt đầu lượt thứ 3, lần lượt hồi phục binh lực cho toàn quân ta, ưu tiên hồi phục hoàn toàn cho một đơn vị quân ta có binh lực thấp nhất, sau đó hồi phục các đơn vị quân ta khác (tổng tỷ lệ trị liệu 90%→180%, chịu ảnh hưởng của Võ lực và chịu thêm ảnh hưởng từ sát thương do quân địch gây ra); nếu Tào Tháo thống lĩnh, trị liệu còn chịu thêm ảnh hưởng của Thống suất"
         },
         {
           "effectiveDate": "2020-07-29",
           "isCurrent": false,
           "labelVi": "Bản 2020-07-29",
-          "textVi": "Nâng cấp binh thương thành Thanh Châu Binh xung kiên hủy nhuệ: Khi bộ đội gây sát thương, có 28% xác suất khiến sát thương lần này tăng 15%→30%, đồng thời khiến sát thương do mục tiêu bị tấn công gây ra ở lần kế tiếp giảm 15%→30%; nếu Tào Tháo thống lĩnh, hiệu quả giảm sát thương gây ra sẽ chịu ảnh hưởng của Thống suất"
+          "textVi": "Nâng cấp thương binh thành Thanh Châu Binh xung kiên hủy nhuệ: Khi bộ đội gây sát thương, có 28% xác suất khiến sát thương lần này tăng 15%→30%, đồng thời khiến sát thương do mục tiêu bị tấn công gây ra ở lần kế tiếp giảm 15%→30%; nếu Tào Tháo thống lĩnh, hiệu quả giảm sát thương gây ra sẽ chịu ảnh hưởng của Thống suất"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Nâng cấp binh thương thành Thanh Châu Binh xung kiên hủy nhuệ: Khi bộ đội gây sát thương, có 25% xác suất khiến sát thương lần này tăng 15%→30%, đồng thời khiến sát thương do mục tiêu bị tấn công gây ra ở lần kế tiếp giảm 11%→22%; nếu Tào Tháo thống lĩnh, hiệu quả giảm sát thương gây ra sẽ chịu ảnh hưởng của Thống suất"
+          "textVi": "Nâng cấp thương binh thành Thanh Châu Binh xung kiên hủy nhuệ: Khi bộ đội gây sát thương, có 25% xác suất khiến sát thương lần này tăng 15%→30%, đồng thời khiến sát thương do mục tiêu bị tấn công gây ra ở lần kế tiếp giảm 11%→22%; nếu Tào Tháo thống lĩnh, hiệu quả giảm sát thương gây ra sẽ chịu ảnh hưởng của Thống suất"
         }
       ],
       "suggestedBuildVi": "【Thiện Chiến】+【Y Trị】+【Bất Khuất】+【Vu Hồi】→ Thương Bắc Phạt; tăng sát thương phản kích, lượng trị liệu và hiệu quả né tránh, nâng cao toàn diện hiệu quả chiến pháp",
@@ -10808,14 +10808,14 @@
       "options": [
         {
           "convertsToVi": "Cung binh",
-          "descriptionVi": "Nâng cấp binh cung thành Phi Hùng Quân dũng bất khả đương",
+          "descriptionVi": "Nâng cấp cung binh thành Phi Hùng Quân dũng bất khả đương",
           "id": "troop-option:phi-hung-quan:chuyen-loan-cung-special-bow",
           "nameVi": "Chuyển·Giương cung",
           "tierVi": "Đặc biệt"
         },
         {
           "convertsToVi": null,
-          "descriptionVi": "Độ thích tính binh chủng kỵ binh của người mang tăng 1 cấp",
+          "descriptionVi": "Mức độ thích hợp với binh chủng kỵ binh của người mang tăng 1 cấp",
           "id": "troop-option:phi-hung-quan:ky-thuat-special",
           "nameVi": "Kỵ Thuật",
           "tierVi": "Đặc biệt"
@@ -10829,7 +10829,7 @@
         },
         {
           "convertsToVi": null,
-          "descriptionVi": "Mục tiêu có lượng sát thương bị ảnh hưởng đổi từ quân ta thành toàn bộ chiến trường",
+          "descriptionVi": "Phạm vi các mục tiêu ảnh hưởng đến lượng sát thương được đổi từ quân ta sang toàn bộ đơn vị trên chiến trường.",
           "id": "troop-option:phi-hung-quan:quan-luc-advanced",
           "nameVi": "Quần lực",
           "tierVi": "Cao cấp"
