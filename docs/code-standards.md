@@ -12,7 +12,7 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
 - `app.js` chỉ điều phối load/init. Behavior section đặt trong module riêng.
 - Hai tab Team chuẩn/Team khác dùng cùng `createRecommendedSection()` trong `js/team-filter-section.js`; không fork filter UI theo family.
 - Thẻ đội và nội dung chi tiết dùng chung `js/recommended-reference-render.js`; trang chi tiết không dựng lại markup thẻ hay style riêng.
-- Href, snapshot quay lại và migrate URL tham chiếu cũ thuộc `js/team-detail-navigation.js`; không tự nối path `/teams/...` ở chỗ khác.
+- Href, snapshot quay lại và migrate URL tham chiếu cũ thuộc `js/team-detail-navigation.js`; không tự nối path `/doi-chuan/...` hoặc `/doi-khac/...` ở chỗ khác. Bảng route handle do build nhúng (`#team-route-handles`) và phải được đăng ký trước lần dựng href đầu tiên; registry validate rồi thay nguyên khối, thiếu identity thì trả `null` chứ không fallback về URL ID cũ.
 - Liên kết sang trang chi tiết là anchor thật: chỉ ghi snapshot ở click primary không modifier, không `preventDefault` và không router tự viết.
 - Ưu tiên pure function cho normalize, filter, map, score và state transition.
 - Render dữ liệu bằng DOM API/`textContent`; không đưa dữ liệu nguồn thô vào `innerHTML`.
@@ -24,13 +24,15 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
 - `js/`, `css/`, `data/` ở repository root là source canonical; không tạo bản copy editable trong `public/`.
 - Mọi raw asset public phải có entry explicit trong `src/lib/public-artifact-manifest.mjs`; route param không extension và source basename exact.
 - Static endpoint phải trả raw bytes/MIME đúng; từ chối file lạ, symlink, non-regular file và realpath thoát root.
-- `public/` chỉ chứa deployment-control/static file do Astro copy; hiện `public/_headers` phải byte-equal với `dist/_headers`.
+- `public/` chỉ chứa deployment-control/static file do Astro copy; hiện `public/_headers` và `public/robots.txt` phải byte-equal với output tương ứng trong `dist/`.
 - `scripts/verify-astro-dist.mjs` là output policy duy nhất. Test và CLI phải gọi cùng verifier, không nhân đôi allowlist.
 - Shell/JS/CSS/JSON mutable dùng `Cache-Control: public, max-age=0, must-revalidate`; Pages response thật vẫn phải được kiểm tra trước promotion.
 - `src/pages/404.astro` là trang 404 top-level; không dựa vào SPA fallback và không boot `app.js`/`team-detail.js` trong trang đó.
-- Route `/teams/recommended/<sourceConfigId>/` và `/teams/legacy/<legacyTeamId>/` sinh từ `src/lib/team-detail-routes.ts`; inventory HTML này dùng chung cho build và verifier, ID không routable bị loại.
-- `public/_headers` phải phủ cả `/teams/recommended/*`, `/teams/legacy/*`, `/404.html` và `/favicon.png`.
+- Route `/doi-chuan/<mùa>-<handle>/` và `/doi-khac/<handle>/` sinh từ `src/lib/team-detail-routes.ts`; handle đóng băng trong `pipeline/team-route-handles.json`, inventory HTML dùng chung cho build và verifier, ID hoặc handle không routable bị loại. URL chỉ là lớp trình bày: `sourceConfigId`/`legacyTeamId` vẫn là định danh nguồn (`data-*` trên `#team-detail-root` và link `https://sgsdeck.com/recommended/<sourceConfigId>`) và không đổi theo route.
+- `public/_headers` phải phủ cả `/doi-chuan/*`, `/doi-khac/*`, `/404.html` và `/favicon.png`.
 - Root và trang con dùng chung `src/layouts/SiteLayout.astro` cùng một `/css/styles.css`; không thêm stylesheet hoặc shell riêng cho trang chi tiết.
+- `link rel="canonical"` và `og:url` chỉ khai cho URL công khai ổn định và luôn cùng một giá trị: `src/layouts/SiteLayout.astro` phát chúng từ prop `canonicalUrl`, hai họ trang chi tiết truyền pathname của chính trang kèm `og:type="article"`, còn trang gốc khai trực tiếp trong `<head>` của `src/pages/index.astro` (trang này không dùng layout) để gom mọi biến thể query về một URL. `src/pages/404.astro` chỉ khai `robots=noindex` và cố ý không có canonical lẫn `og:url`.
+- `public/robots.txt` và `src/pages/sitemap.xml.ts` là surface crawl công khai: sitemap phát đúng root cộng inventory route của `src/lib/team-detail-routes.ts`, và origin công khai duy nhất khai ở `site` của `astro.config.mjs` — robots, sitemap, canonical và `og:url` đều phải khớp origin đó. Không thêm `Disallow` cho `/js/`, `/css/`, `/data/` vì crawler cần chúng để render.
 
 ## UI và accessibility
 

@@ -7,7 +7,7 @@ import {
   loadVerifiedRecommendedManifest,
 } from './recommended-reference-state.js';
 import { legacyOriginalDetailContent, recommendedTeamDetailContent } from './recommended-reference-render.js';
-import { safeReturnUrl } from './team-detail-navigation.js';
+import { safeReturnUrl, setTeamRouteHandlesFromJSON, teamDetailPath } from './team-detail-navigation.js';
 import { loadWebsiteDisplay, localizeData } from './website-display.js';
 
 const VERIFY_MESSAGE = 'Không thể xác minh dữ liệu đội hình. Hãy tải lại trang hoặc quay lại danh sách.';
@@ -29,6 +29,8 @@ function upgradeReturnLink(link) {
 export async function initTeamDetail({documentTarget = document} = {}) {
   const root = documentTarget.querySelector('#team-detail-root');
   if (!root) return null;
+  // Trang chi tiết chỉ nhúng bảng legacy route handle; phải đăng ký trước lần dựng link đội gốc.
+  setTeamRouteHandlesFromJSON(documentTarget.querySelector('#team-route-handles')?.textContent);
   const status = documentTarget.querySelector('#team-detail-status');
   const body = documentTarget.querySelector('#team-detail-body');
   const returnLink = documentTarget.querySelector('#team-return-link');
@@ -90,7 +92,7 @@ export async function initTeamDetail({documentTarget = document} = {}) {
       showContent(legacyOriginalDetailContent(team));
       return;
     }
-    const originalLink = el('a', {class: 'detail-link', href: `/teams/legacy/${encodeURIComponent(legacyTeamId)}/`}, 'Xem đội gốc');
+    const originalLink = el('a', {class: 'detail-link', href: teamDetailPath({legacyTeamId})}, 'Xem đội gốc');
     let admitted;
     try {
       const {load} = await loadVerifiedRecommendedManifest(pin, name => fetchBytes(`/data/recommended/${name}`));

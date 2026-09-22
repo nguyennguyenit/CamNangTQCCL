@@ -1,6 +1,13 @@
 import { expect, test } from "@playwright/test";
 
 const HAN = /[\u3400-\u9fff\uf900-\ufaff]/u;
+/** Detail routes come from the frozen inventory the build embedded, never from a re-derived slug. */
+const routeHandles = async (request) => {
+  const html = await (await request.get("/index.html")).text();
+  const match = html.match(/id="team-route-handles"[^>]*>([^<]+)<\/script>/);
+  if (!match) throw new Error("Built HTML lacks the team route handle map");
+  return JSON.parse(match[1]);
+};
 const transparentPng = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAF/gL+4gZ8WQAAAABJRU5ErkJggg==",
   "base64",
@@ -12,7 +19,8 @@ test("localization-red-note: Recommended detail renders reviewed Vietnamese note
   const row = index.records.find((item) => item.displayNotes?.blocks?.some((block) => HAN.test(block.textRaw || "")));
   expect(row).toBeTruthy();
 
-  await page.goto(`/teams/recommended/${encodeURIComponent(row.sourceConfigId)}/`);
+  const handles = await routeHandles(request);
+  await page.goto(`/doi-chuan/${encodeURIComponent(handles.r[row.sourceConfigId])}/`);
   const notes = page.locator("#team-detail-body .detail-note");
   await expect(notes.first()).toBeVisible();
   const visible = (await notes.allTextContents()).join("\n");
@@ -31,7 +39,7 @@ test("legacy detail renders its exact approved note instead of raw Han text", as
   expect(approved).not.toMatch(HAN);
   expect(team.notes).toMatch(HAN);
 
-  await page.goto(`/teams/legacy/${encodeURIComponent(team.id)}/`);
+  await page.goto(`/doi-khac/${encodeURIComponent((await routeHandles(request)).l[team.id])}/`);
   const body = page.locator("#team-detail-body");
   await expect(body).toContainText(approved);
   await expect(body).not.toContainText(team.notes);

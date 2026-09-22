@@ -7,13 +7,21 @@ const publication=async request=>{
   return {pin,index,other,seasons};
 };
 const rawTeams=async request=>(await request.get('/data/teams.json')).json();
-const recommendedPath=id=>`/teams/recommended/${encodeURIComponent(id)}/`;
-const legacyPath=id=>`/teams/legacy/${encodeURIComponent(id)}/`;
+/** Final route segments come from the same inventory the build used, never from a re-derived slug. */
+const routeHandles=async request=>{
+  const html=await (await request.get('/index.html')).text();
+  const match=html.match(/id="team-route-handles"[^>]*>([^<]+)<\/script>/);
+  if (!match) throw new Error('Built HTML lacks the team route handle map');
+  return JSON.parse(match[1]);
+};
+const recommendedPath=(handles,id)=>`/doi-chuan/${encodeURIComponent(handles.r[id])}/`;
+const legacyPath=(handles,id)=>`/doi-khac/${encodeURIComponent(handles.l[id])}/`;
 
 test('Recommended detail loads directly, survives reload and shows verified source content',async({page,request})=>{
   const {index}=await publication(request);
+  const handles=await routeHandles(request);
   const row=index.records.find(item=>item.value!=null && item.heroes?.length===3);
-  await page.goto(recommendedPath(row.sourceConfigId));
+  await page.goto(recommendedPath(handles,row.sourceConfigId));
 
   const detail=page.locator('#team-detail-root');
   await expect(page.locator('h1#team-detail-title')).toHaveText(row.displayNameVi || row.nameZh);
@@ -44,12 +52,13 @@ test('Recommended detail loads directly, survives reload and shows verified sour
 
 test('Recommended detail renders note ownership once per source occurrence',async({page,request})=>{
   const {pin,index}=await publication(request);
+  const handles=await routeHandles(request);
   const row=index.records.find(item=>(item.displayNotes?.blocks || []).length>1);
   const details=await (await request.get(`/data/recommended/${pin.generationId}/details-${row.safeScopeKey}.json`)).json();
   const record=details.records.find(item=>item.sourceConfigId===row.sourceConfigId);
   const blocks=record.displayNotes.blocks;
 
-  await page.goto(recommendedPath(row.sourceConfigId));
+  await page.goto(recommendedPath(handles,row.sourceConfigId));
   const paragraphs=page.locator('#team-detail-body .detail-note');
   await expect(paragraphs).toHaveCount(blocks.length);
   // Mỗi occurrence hiển thị đúng một lần, kể cả khi hai occurrence có cùng nội dung.
@@ -91,8 +100,8 @@ test('Recommended detail renders note ownership once per source occurrence',asyn
   });
 });
 
-test('Recommended detail distinguishes absent slots from untranslated populated slots',async({page})=>{
-  await page.goto('/teams/recommended/team-epoddo/');
+test('Recommended detail distinguishes absent slots from untranslated populated slots',async({page,request})=>{
+  await page.goto(recommendedPath(await routeHandles(request),'team-epoddo'));
   const slots=await page.evaluate(async()=>{
     const {recommendedTeamDetailContent}=await import('/js/recommended-reference-render.js');
     const holder=(name,tacticRaw,tacticVi,bookRaw,bookVi,statRaw,statVi)=>({
@@ -134,9 +143,10 @@ test('Recommended detail distinguishes absent slots from untranslated populated 
 
 test('legacy original keeps notes, counters, hero notes and every alternative',async({page,request})=>{
   const teams=await rawTeams(request);
+  const handles=await routeHandles(request);
   const team=teams.find(item=>item.notes && (item.counters?.good?.length || item.counters?.avoid?.length))
     || teams.find(item=>item.notes);
-  await page.goto(legacyPath(team.id));
+  await page.goto(legacyPath(handles,team.id));
 
   await expect(page.locator('h1#team-detail-title')).toHaveText(team.nickname || team.name);
   await expect(page.locator('.detail-score')).toHaveText('Chưa có điểm nguồn');
@@ -167,7 +177,7 @@ test('legacy original keeps notes, counters, hero notes and every alternative',a
 
 test('hostile source text is rendered as text and never executed',async({page,request})=>{
   const teams=await rawTeams(request);
-  await page.goto(legacyPath(teams[0].id));
+  await page.goto(legacyPath(await routeHandles(request),teams[0].id));
   const hostile='<img src=x onerror="document.title=\'pwned\'">"><script>document.title="pwned"</script>';
   const rendered=await page.evaluate(async text=>{
     const module=await import('/js/recommended-reference-render.js');
@@ -188,8 +198,11 @@ test('hostile source text is rendered as text and never executed',async({page,re
 });
 test('duplicate legacy content renders once while every reviewed locator remains visible',async({page,request})=>{
   const teams=await rawTeams(request);
-  await page.goto(legacyPath(teams[0].id));
+  await page.goto(legacyPath(await routeHandles(request),teams[0].id));
   const result=await page.evaluate(async()=>{
+    // The direct renderer needs the legacy route registry before it can build original-team links.
+    const {setTeamRouteHandles}=await import('/js/team-detail-navigation.js');
+    const unregistered=!setTeamRouteHandles({l:{'legacy-probe':'doi-probe-goc'}});
     const {recommendedTeamDetailContent}=await import('/js/recommended-reference-render.js');
     const content={
       id:'legacy-probe',name:'Đội probe',nickname:null,source:'team-intro',notes:'Nội dung duy nhất',
@@ -202,18 +215,24 @@ test('duplicate legacy content renders once while every reviewed locator remains
       legacyReferences:[
         {legacyTeamId:'legacy-probe',legacyVariantId:'variant-a',legacyContentSha256:fingerprint,evidenceRef:'review-a',legacyContent:content},
         {legacyTeamId:'legacy-probe',legacyVariantId:'variant-b',legacyContentSha256:fingerprint,evidenceRef:'review-b',legacyContent:content},
+        {legacyTeamId:'legacy-unregistered',legacyVariantId:'variant-c',legacyContentSha256:fingerprint,evidenceRef:'review-c',legacyContent:content},
       ],
     });
     const host=document.createElement('div');
     host.append(fragment);
     return {
+      unregistered,
       bodies:host.querySelectorAll('.legacy-reference').length,
       provenance:host.querySelectorAll('.legacy-provenance').length,
+      links:[...host.querySelectorAll('.legacy-provenance a')].map(link=>link.getAttribute('href')),
       text:host.textContent,
     };
   });
-  expect(result.bodies).toBe(1);
-  expect(result.provenance).toBe(2);
+  expect(result.unregistered).toBe(false);
+  expect(result.bodies).toBe(2);
+  expect(result.provenance).toBe(3);
+  // Registered originals get the frozen route; an unregistered one never falls back to a path.
+  expect(result.links).toEqual(['/doi-khac/doi-probe-goc/','/doi-khac/doi-probe-goc/',null]);
   expect(result.text).toContain('variant-a');
   expect(result.text).toContain('review-a');
   expect(result.text).toContain('variant-b');
@@ -223,24 +242,31 @@ test('duplicate legacy content renders once while every reviewed locator remains
 
 test('only the exact admitted pair resolves a variant and a bad one links back to the original',async({page,request})=>{
   const {other}=await publication(request);
+  const handles=await routeHandles(request);
   const admitted=other.records[0];
-  await page.goto(`${legacyPath(admitted.legacyTeamId)}?variant=${encodeURIComponent(admitted.legacyVariantId)}`);
+  const originalPath=legacyPath(handles,admitted.legacyTeamId);
+  await page.goto(`${originalPath}?variant=${encodeURIComponent(admitted.legacyVariantId)}`);
   await expect(page.locator('#team-detail-body')).toBeVisible();
   await expect(page.locator('#team-detail-root')).toContainText(admitted.legacyVariantId);
 
-  await page.goto(`${legacyPath(admitted.legacyTeamId)}?variant=v-${'0'.repeat(64)}`);
+  await page.goto(`${originalPath}?variant=v-${'0'.repeat(64)}`);
   const alert=page.locator('#team-detail-status [role="alert"]');
   await expect(alert).toBeVisible();
   await expect(page.locator('h1#team-detail-title')).not.toBeEmpty();
-  const original=page.locator('#team-detail-root a[href="'+legacyPath(admitted.legacyTeamId)+'"]');
+  const original=page.locator('#team-detail-root a[href="'+originalPath+'"]');
   await expect(original).toBeVisible();
+  // The original-team action must point at the new route, never at the retired family.
+  const originalHrefs=await original.evaluateAll(links=>links.map(link=>link.getAttribute('href')));
+  expect(originalHrefs.length).toBeGreaterThan(0);
+  expect(originalHrefs.every(href=>href===originalPath)).toBe(true);
+  expect(originalPath.startsWith('/doi-khac/')).toBe(true);
   // A rejected variant must never be answered with the original team content.
   await expect(page.locator('#team-detail-body')).toBeHidden();
   for (const suffix of ['?variant=','?variant=%2Fbad']) {
-    await page.goto(`${legacyPath(admitted.legacyTeamId)}${suffix}`);
+    await page.goto(`${originalPath}${suffix}`);
     await expect(page.locator('#team-detail-status [role="alert"]')).toBeVisible();
     await expect(page.locator('#team-detail-body')).toBeHidden();
-    await expect(page.locator('#team-detail-root a[href="'+legacyPath(admitted.legacyTeamId)+'"]')).toBeVisible();
+    await expect(page.locator('#team-detail-root a[href="'+originalPath+'"]')).toBeVisible();
   }
   await original.click();
   await expect(page.locator('#team-detail-body')).toBeVisible();
@@ -248,11 +274,12 @@ test('only the exact admitted pair resolves a variant and a bad one links back t
 
 test('original pages stay readable while Recommended artifacts are unavailable',async({page,request})=>{
   const teams=await rawTeams(request);
+  const handles=await routeHandles(request);
   const {other}=await publication(request);
   const pending=teams.find(team=>!other.records.some(row=>row.legacyTeamId===team.id));
   await page.route('**/data/recommended/**',route=>route.abort());
 
-  await page.goto(legacyPath(pending.id));
+  await page.goto(legacyPath(handles,pending.id));
   await expect(page.locator('#team-detail-body')).toBeVisible();
   await expect(page.locator('h1#team-detail-title')).toHaveText(pending.nickname || pending.name);
 
@@ -268,7 +295,7 @@ test('Recommended detail fails closed when its payload cannot be verified',async
   let currentRequests=0;
   await page.route('**/data/recommended/current.json',route=>{currentRequests+=1;return route.abort();});
   await page.route('**/data/recommended/*/details-*.json',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({schemaVersion:1,records:[]})}));
-  await page.goto(recommendedPath(row.sourceConfigId));
+  await page.goto(recommendedPath(await routeHandles(request),row.sourceConfigId));
   await expect(page.locator('#team-detail-status [role="alert"]')).toBeVisible();
   await expect(page.locator('#team-detail-body')).toBeHidden();
   await expect(page.locator('#team-detail-retry')).toBeVisible();
@@ -279,7 +306,9 @@ test('Recommended detail fails closed when its payload cannot be verified',async
 
 test('card title and CTA are the same native link and modified clicks stay native',async({page,context,request})=>{
   const {index}=await publication(request);
+  const handles=await routeHandles(request);
   const row=index.records[0];
+  const detailPath=recommendedPath(handles,row.sourceConfigId);
   await page.goto(`/?season=${encodeURIComponent(row.sourceSeasonId)}#team-chuan`);
   const card=page.locator(`#section-team-chuan .reference-team-card[data-source-config-id="${row.sourceConfigId}"]`);
   await expect(card).toBeVisible();
@@ -287,18 +316,55 @@ test('card title and CTA are the same native link and modified clicks stay nativ
   const cta=card.getByRole('link',{name:'Xem chi tiết'});
   const href=await title.getAttribute('href');
   expect(href).toBe(await cta.getAttribute('href'));
-  expect(href.startsWith(recommendedPath(row.sourceConfigId))).toBe(true);
+  // Path is exactly the frozen catalog route; the only query is the safe return origin.
+  expect(href.split('?')[0]).toBe(detailPath);
+  expect(new URLSearchParams(href.split('?')[1] || '').get('from')).toBe(`/?season=${encodeURIComponent(row.sourceSeasonId)}#team-chuan`);
+  // Both anchors carry the stable delegation marker instead of a pinned path prefix.
+  await expect(title).toHaveAttribute('data-team-detail-link','');
+  await expect(cta).toHaveAttribute('data-team-detail-link','');
   await expect(card).not.toHaveAttribute('tabindex','0');
 
   const before=await page.evaluate(()=>history.length);
   const popup=context.waitForEvent('page');
   await title.click({modifiers:['ControlOrMeta']});
   const opened=await popup;
-  await opened.waitForURL('**/teams/recommended/**');
-  expect(new URL(opened.url()).pathname).toBe(recommendedPath(row.sourceConfigId));
+  await opened.waitForURL('**/doi-chuan/**');
+  expect(new URL(opened.url()).pathname).toBe(detailPath);
   await opened.close();
   expect(page.url()).toContain('#team-chuan');
   expect(await page.evaluate(()=>history.length)).toBe(before);
+});
+
+test('every rendered team card links to its catalog route and never to a retired path',async({page,request})=>{
+  const handles=await routeHandles(request);
+  const cardLinks=async section=>page.locator(`${section} .reference-team-card`).evaluateAll(nodes=>nodes.map(node=>({
+    sourceConfigId:node.dataset.sourceConfigId || null,
+    legacyTeamId:node.dataset.legacyTeamId || null,
+    href:node.querySelector('.team-name a')?.getAttribute('href') ?? null,
+  })));
+
+  await page.goto('/#team-chuan');
+  await expect(page.locator('#section-team-chuan .reference-team-card').first()).toBeVisible();
+  const recommended=await cardLinks('#section-team-chuan');
+  expect(recommended.length).toBeGreaterThan(0);
+  for (const card of recommended) {
+    expect(card.sourceConfigId,JSON.stringify(card)).toBeTruthy();
+    const segment=handles.r[card.sourceConfigId];
+    expect(segment,card.sourceConfigId).toBeTruthy();
+    // Only the path is pinned here; the safe return query is appended by the root surface.
+    expect(card.href.split('?')[0],card.sourceConfigId).toBe(`/doi-chuan/${encodeURIComponent(segment)}/`);
+  }
+
+  await page.goto('/#team-khac');
+  await expect(page.locator('#section-team-khac .reference-team-card').first()).toBeVisible();
+  const legacy=await cardLinks('#section-team-khac');
+  expect(legacy.length).toBeGreaterThan(0);
+  for (const card of legacy) {
+    expect(card.legacyTeamId,JSON.stringify(card)).toBeTruthy();
+    const segment=handles.l[card.legacyTeamId];
+    expect(segment,card.legacyTeamId).toBeTruthy();
+    expect(card.href.split('?')[0],card.legacyTeamId).toBe(`/doi-khac/${encodeURIComponent(segment)}/`);
+  }
 });
 
 test('list to detail and back keeps query, tab and scroll position',async({page,request})=>{
@@ -311,7 +377,7 @@ test('list to detail and back keeps query, tab and scroll position',async({page,
   const scrolled=await page.evaluate(()=>Math.round(window.scrollY));
   expect(scrolled).toBeGreaterThan(0);
   await card.locator('.team-name a').evaluate(link=>link.click());
-  await expect(page).toHaveURL(new RegExp(`teams/recommended/`));
+  await expect(page).toHaveURL(new RegExp(`doi-chuan/`));
   await expect(page.locator('#team-detail-body')).toBeVisible();
 
   await page.goBack();
@@ -407,42 +473,70 @@ test('combined score, unit, faction and Vietnamese search survive detail reload 
 
 test('a shared link without origin still offers the matching family scope',async({page,request})=>{
   const {index}=await publication(request);
+  const handles=await routeHandles(request);
   const row=index.records[0];
-  await page.goto(recommendedPath(row.sourceConfigId));
+  await page.goto(recommendedPath(handles,row.sourceConfigId));
   await expect(page.locator('#team-return-link')).toHaveAttribute('href',/#team-chuan$/);
   const teams=await rawTeams(request);
-  await page.goto(legacyPath(teams[0].id));
+  await page.goto(legacyPath(handles,teams[0].id));
   await expect(page.locator('#team-return-link')).toHaveAttribute('href','/#team-khac');
 });
 
 test('old reference links replace into dedicated routes while config keeps gameplay precedence',async({page,request})=>{
   const {index}=await publication(request);
+  const handles=await routeHandles(request);
   const row=index.records[0];
+  const legacyTeamId='team-intro-14';
+  const legacyDetail=legacyPath(handles,legacyTeamId);
   await page.goto(`/?season=${encodeURIComponent(row.sourceSeasonId)}&detail=${encodeURIComponent(row.sourceConfigId)}#team-chuan`);
-  await expect(page).toHaveURL(new RegExp(`teams/recommended/`));
+  await expect(page).toHaveURL(new RegExp(`doi-chuan/`));
   await expect(page.locator('#team-detail-body')).toBeVisible();
   await expect(page.locator('#team-return-link')).toHaveAttribute('href',new RegExp(`season=${encodeURIComponent(row.sourceSeasonId)}`));
 
-  await page.goto('/?legacyTeam=team-intro-14#team-khac');
-  await expect(page).toHaveURL(/teams\/legacy\/team-intro-14\//);
+  await page.goto(`/?legacyTeam=${legacyTeamId}#team-khac`);
+  await expect(page).toHaveURL(new RegExp(`doi-khac/${handles.l[legacyTeamId]}/`));
   await expect(page.locator('#team-detail-body')).toBeVisible();
-  await page.goto('/?legacyTeam=team-intro-14&legacyVariant=%2Fbad#team-khac');
+  await page.goto(`/?legacyTeam=${legacyTeamId}&legacyVariant=%2Fbad#team-khac`);
   await expect(page).toHaveURL(/variant=%2Fbad/);
   await expect(page.locator('#team-detail-status [role="alert"]')).toBeVisible();
   await expect(page.locator('#team-detail-body')).toBeHidden();
+  await expect(page.locator('#team-detail-root a[href="'+legacyDetail+'"]')).toBeVisible();
 
-  await page.goto('/?config=missing&legacyTeam=team-intro-14#analyze');
-  await expect(page).not.toHaveURL(/teams\/legacy/);
+  await page.goto(`/?config=missing&legacyTeam=${legacyTeamId}#analyze`);
+  await expect(page).not.toHaveURL(/doi-khac/);
   await expect(page.locator('#season-detail-mount')).toContainText('Không có cấu hình này');
   await page.goto(`/?config=missing&detail=${encodeURIComponent(row.sourceConfigId)}#analyze`);
-  await expect(page).not.toHaveURL(/teams\/recommended/);
+  await expect(page).not.toHaveURL(/doi-chuan/);
+});
+
+test('retired team routes serve the static 404 while their replacements resolve',async({page,request})=>{
+  const handles=await routeHandles(request);
+  const {index}=await publication(request);
+  const teams=await rawTeams(request);
+  const recommendedId='team-b8ink3';
+  expect(index.records.some(row=>row.sourceConfigId===recommendedId)).toBe(true);
+  expect(handles.r[recommendedId]).toBe('pk-s24-tu-ma-phi-hung');
+
+  // The old family is a hard cutover: no redirect, no shell, just the static 404.
+  for (const retired of [`/teams/recommended/${recommendedId}/`,`/teams/legacy/${teams[0].id}/`]) {
+    const response=await request.get(retired);
+    expect(response.status(),retired).toBe(404);
+    expect(await response.text()).toContain('Không tìm thấy trang');
+  }
+  await page.goto(`/teams/recommended/${recommendedId}/`);
+  await expect(page.locator('#not-found-title')).toBeVisible();
+  await expect(page.locator('#section-team-chuan')).toHaveCount(0);
+
+  // The replacement route for the same identity still serves the real page.
+  expect((await request.get(recommendedPath(handles,recommendedId))).status()).toBe(200);
+  expect((await request.get(legacyPath(handles,teams[0].id))).status()).toBe(200);
 });
 
 test('unknown routes serve the static 404 instead of the root shell',async({page,request})=>{
   await page.setViewportSize({width:375,height:812});
-  const missing=await request.get('/teams/recommended/khong-ton-tai/');
+  const missing=await request.get('/doi-chuan/khong-ton-tai/');
   expect(missing.status()).toBe(404);
-  await page.goto('/teams/recommended/khong-ton-tai/');
+  await page.goto('/doi-chuan/khong-ton-tai/');
   await expect(page.locator('#not-found-title')).toBeVisible();
   await expect(page.locator('#section-team-chuan')).toHaveCount(0);
   await expect(page.getByRole('link',{name:'Về trang chủ'})).toHaveAttribute('href','/');
@@ -453,7 +547,7 @@ test('unknown routes serve the static 404 instead of the root shell',async({page
   await expect(page.locator('.section-nav')).toHaveClass(/open/);
 
   const teams=await rawTeams(request);
-  const nested=await request.get(`/teams/legacy/${teams[0].id}/data/teams.json`);
+  const nested=await request.get(`${legacyPath(await routeHandles(request),teams[0].id)}data/teams.json`);
   expect(nested.status()).toBe(404);
   expect(await nested.text()).not.toContain('"id"');
   const notFoundArtifact=await request.get('/404.html');
@@ -465,7 +559,7 @@ test('theme toggle works on detail pages even when localStorage is denied',async
   await page.addInitScript(()=>{
     Object.defineProperty(window,'localStorage',{configurable:true,get(){throw new Error('denied');}});
   });
-  await page.goto(legacyPath(teams[0].id));
+  await page.goto(legacyPath(await routeHandles(request),teams[0].id));
   await expect(page.locator('#team-detail-body')).toBeVisible();
   const before=await page.evaluate(()=>document.documentElement.dataset.theme);
   await page.locator('#theme-toggle').click();
@@ -493,14 +587,15 @@ test('detail pages keep working when sessionStorage writes are denied',async({pa
 
 test('multi-page history does not loop or restore a foreign entry',async({page,request})=>{
   const {index}=await publication(request);
+  const handles=await routeHandles(request);
   const [first,second]=index.records;
   await page.goto('/#team-chuan');
   const start=await page.evaluate(()=>history.length);
-  await page.goto(recommendedPath(first.sourceConfigId));
-  await page.goto(recommendedPath(second.sourceConfigId));
+  await page.goto(recommendedPath(handles,first.sourceConfigId));
+  await page.goto(recommendedPath(handles,second.sourceConfigId));
   expect(await page.evaluate(()=>history.length)).toBe(start+2);
   await page.goBack();
-  await expect(page).toHaveURL(new RegExp(encodeURIComponent(first.sourceConfigId).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')));
+  await expect(page).toHaveURL(new RegExp(handles.r[first.sourceConfigId]));
   await expect(page.locator('#team-detail-body')).toBeVisible();
   await page.goBack();
   await expect(page).toHaveURL(/#team-chuan$/);

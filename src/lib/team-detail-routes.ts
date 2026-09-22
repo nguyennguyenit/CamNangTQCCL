@@ -5,6 +5,7 @@ import { DEFAULT_RECOMMENDED_ROOT, recommendedPublicationSnapshot, type Recommen
 import { websiteDisplayPublicationSnapshot } from './root-static-artifacts.ts';
 
 export const DEFAULT_TEAMS_PATH = join(process.cwd(), 'data/teams.json');
+export const DEFAULT_HANDLES_PATH = join(process.cwd(), 'pipeline/team-route-handles.json');
 
 /** Identifiers become filesystem paths and URL segments, so only opaque single segments are routable. */
 const UNSAFE_IDENTIFIER = /[\u0000-\u001f\u007f/\\?#%:*"<>|\s]/;
@@ -17,8 +18,17 @@ export function isRoutableIdentifier(value: unknown): value is string {
     && !value.endsWith('.');
 }
 
+/** A season code only contributes a path segment when it is dash-separated alphanumerics. */
+const SEASON_CODE = /^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/;
+function routeSeasonSegment(sourceSeasonCode: unknown) {
+  return typeof sourceSeasonCode === 'string' && SEASON_CODE.test(sourceSeasonCode)
+    ? sourceSeasonCode.toLowerCase()
+    : null;
+}
+
 export interface RecommendedRouteEntry {
   sourceConfigId: string;
+  routeSegment: string;
   routePath: string;
   htmlPath: string;
   safeScopeKey: string;
@@ -37,6 +47,7 @@ export interface RecommendedRouteEntry {
 
 export interface LegacyRouteEntry {
   legacyTeamId: string;
+  routeSegment: string;
   routePath: string;
   htmlPath: string;
   name: string | null;
@@ -63,16 +74,87 @@ export interface TeamDetailRouteCatalog {
 
 const text = (value: unknown) => (typeof value === 'string' && value ? value : null);
 
-export const recommendedRoutePath = (sourceConfigId: string) => `/teams/recommended/${encodeURIComponent(sourceConfigId)}/`;
-export const legacyRoutePath = (legacyTeamId: string) => `/teams/legacy/${encodeURIComponent(legacyTeamId)}/`;
+export const recommendedRoutePath = (routeSegment: string) => `/doi-chuan/${encodeURIComponent(routeSegment)}/`;
+export const legacyRoutePath = (routeSegment: string) => `/doi-khac/${encodeURIComponent(routeSegment)}/`;
 
 async function readRegularFile(path: string) {
   const stat = await lstat(path);
-  if (stat.isSymbolicLink() || !stat.isFile()) throw new Error(`Raw legacy teams artifact is not a regular file: ${path}`);
+  if (stat.isSymbolicLink() || !stat.isFile()) throw new Error(`Raw artifact is not a regular file: ${path}`);
   return readFile(await realpath(path));
 }
 
-async function buildCatalogFromSnapshot(snapshot: RecommendedPublicationSnapshot, teamsBytes: Uint8Array): Promise<TeamDetailRouteCatalog> {
+/** Frozen handle inventory: bare handles per family, reviewed once and never derived from names again. */
+interface TeamRouteHandleLedger {
+  generationId: string;
+  legacyTeamsSha256: string;
+  recommended: Record<string, string>;
+  legacy: Record<string, string>;
+}
+
+const plainObject = (value: unknown): value is Record<string, unknown> => (
+  !!value && typeof value === 'object' && !Array.isArray(value)
+);
+
+function parseHandleLedger(raw: unknown, path: string): TeamRouteHandleLedger {
+  if (!plainObject(raw)) throw new Error(`Team route handle ledger must be an object: ${path}`);
+  if (raw.schemaVersion !== 1) throw new Error(`Team route handle ledger schemaVersion must be 1: ${path}`);
+  const generationId = raw.generationId;
+  if (typeof generationId !== 'string' || !generationId) {
+    throw new Error(`Team route handle ledger needs a generationId: ${path}`);
+  }
+  const legacyTeamsSha256 = raw.legacyTeamsSha256;
+  if (typeof legacyTeamsSha256 !== 'string' || !/^sha256:[0-9a-f]{64}$/.test(legacyTeamsSha256)) {
+    throw new Error(`Team route handle ledger needs a sha256 legacyTeamsSha256: ${path}`);
+  }
+  const handles = raw.handles;
+  if (!plainObject(handles)) throw new Error(`Team route handle ledger needs a handles object: ${path}`);
+  const families: Record<'recommended' | 'legacy', Record<string, string>> = { recommended: {}, legacy: {} };
+  for (const family of ['recommended', 'legacy'] as const) {
+    const value = handles[family];
+    if (!plainObject(value)) {
+      throw new Error(`Team route handle ledger handle family must be an object: ${path} (${family})`);
+    }
+    for (const [key, handle] of Object.entries(value)) {
+      if (typeof handle !== 'string') {
+        throw new Error(`Team route handle ledger handle must be a string: ${path} (${family} ${key})`);
+      }
+      families[family][key] = handle;
+    }
+  }
+  return { generationId, legacyTeamsSha256, ...families };
+}
+
+/** Exact key-set comparison that names the keys which are missing or no longer selected. */
+function exactKeySet(actual: Record<string, string>, expected: Set<string>, label: string) {
+  const missing = [...expected].filter((key) => !Object.hasOwn(actual, key)).sort();
+  if (missing.length) {
+    throw new Error(`Team route handle ledger is missing handles for ${missing.length} ${label}: ${missing.join(', ')}`);
+  }
+  const unknown = Object.keys(actual).filter((key) => !expected.has(key)).sort();
+  if (unknown.length) {
+    throw new Error(`Team route handle ledger has ${unknown.length} unknown ${label} handle key(s): ${unknown.join(', ')}`);
+  }
+}
+
+/** Emitted paths are the route identity, so a repeat is a build failure rather than a silent overwrite. */
+function distinctRoutePaths(entries: Array<{ routePath: string; key: string }>, label: string) {
+  const byPath = new Map<string, string[]>();
+  for (const { routePath, key } of entries) {
+    byPath.set(routePath, [...(byPath.get(routePath) ?? []), key]);
+  }
+  for (const [routePath, keys] of byPath) {
+    if (keys.length > 1) {
+      throw new Error(`Team route handle ledger has duplicate ${label} route paths: ${routePath} (${keys.join(', ')})`);
+    }
+  }
+}
+
+async function buildCatalogFromSnapshot(
+  snapshot: RecommendedPublicationSnapshot,
+  teamsBytes: Uint8Array,
+  ledgerBytes: Uint8Array,
+  handlesPath: string,
+): Promise<TeamDetailRouteCatalog> {
   const legacyTeamsSha256 = `sha256:${createHash('sha256').update(teamsBytes).digest('hex')}`;
   const declaredLegacyHash = snapshot.manifest.legacyTeamsHash;
   if (typeof declaredLegacyHash !== 'string' || declaredLegacyHash !== legacyTeamsSha256) {
@@ -81,11 +163,34 @@ async function buildCatalogFromSnapshot(snapshot: RecommendedPublicationSnapshot
     );
   }
 
+  const ledger = parseHandleLedger(JSON.parse(ledgerBytes.toString()), handlesPath);
+  if (ledger.generationId !== snapshot.pin.generationId) {
+    throw new Error(
+      `Team route handle ledger generationId differs from the selected Recommended generation: ${ledger.generationId} != ${snapshot.pin.generationId}`,
+    );
+  }
+  if (ledger.legacyTeamsSha256 !== legacyTeamsSha256) {
+    throw new Error(
+      `Team route handle ledger legacyTeamsSha256 differs from the raw originals: ${ledger.legacyTeamsSha256} != ${legacyTeamsSha256}`,
+    );
+  }
+
   const teams = JSON.parse(teamsBytes.toString());
   if (!Array.isArray(teams) || !teams.length) throw new Error('Raw legacy teams artifact must contain teams');
   const index = JSON.parse(Buffer.from(snapshot.files['index.json']).toString());
   const other = JSON.parse(Buffer.from(snapshot.files['other-teams.json']).toString());
   if (!Array.isArray(index?.records) || !Array.isArray(other?.records)) throw new Error('Selected Recommended publication is missing route records');
+
+  exactKeySet(
+    ledger.recommended,
+    new Set(index.records.map((row: Record<string, unknown>) => String(row.sourceConfigId))),
+    'Recommended',
+  );
+  exactKeySet(
+    ledger.legacy,
+    new Set(teams.map((team: Record<string, unknown>) => String(team.id))),
+    'legacy team',
+  );
 
   const scopeKeys = new Set<string>(Array.isArray(snapshot.manifest.allowedScopeKeys) ? snapshot.manifest.allowedScopeKeys as string[] : []);
   const seenRecommended = new Set<string>();
@@ -98,10 +203,20 @@ async function buildCatalogFromSnapshot(snapshot: RecommendedPublicationSnapshot
     if (typeof safeScopeKey !== 'string' || !scopeKeys.has(safeScopeKey)) {
       throw new Error(`Recommended row ${sourceConfigId} points at an undeclared detail scope`);
     }
+    const seasonSegment = routeSeasonSegment(row.sourceSeasonCode);
+    if (!seasonSegment) {
+      throw new Error(`Recommended row ${sourceConfigId} has no usable season code for its route segment`);
+    }
+    const handle = ledger.recommended[sourceConfigId];
+    if (!isRoutableIdentifier(handle)) {
+      throw new Error(`Team route handle ledger handle is not routable: Recommended ${sourceConfigId} -> ${JSON.stringify(handle)}`);
+    }
+    const routeSegment = `${seasonSegment}-${handle}`;
     return {
       sourceConfigId,
-      routePath: recommendedRoutePath(sourceConfigId),
-      htmlPath: `teams/recommended/${sourceConfigId}/index.html`,
+      routeSegment,
+      routePath: recommendedRoutePath(routeSegment),
+      htmlPath: `doi-chuan/${routeSegment}/index.html`,
       safeScopeKey,
       displayNameVi: text(row.displayNameVi),
       nameZh: text(row.nameZh),
@@ -137,16 +252,24 @@ async function buildCatalogFromSnapshot(snapshot: RecommendedPublicationSnapshot
     if (!isRoutableIdentifier(legacyTeamId)) throw new Error(`Unroutable legacy identifier: ${String(legacyTeamId)}`);
     if (seenLegacy.has(legacyTeamId)) throw new Error(`Duplicate legacy identifier: ${legacyTeamId}`);
     seenLegacy.add(legacyTeamId);
+    const routeSegment = ledger.legacy[legacyTeamId];
+    if (!isRoutableIdentifier(routeSegment)) {
+      throw new Error(`Team route handle ledger handle is not routable: legacy ${legacyTeamId} -> ${JSON.stringify(routeSegment)}`);
+    }
     return {
       legacyTeamId,
-      routePath: legacyRoutePath(legacyTeamId),
-      htmlPath: `teams/legacy/${legacyTeamId}/index.html`,
+      routeSegment,
+      routePath: legacyRoutePath(routeSegment),
+      htmlPath: `doi-khac/${routeSegment}/index.html`,
       name: text(team.name),
       nickname: text(team.nickname),
       source: text(team.source),
       variantIds: [],
     };
   });
+
+  distinctRoutePaths(recommended.map((entry) => ({ routePath: entry.routePath, key: entry.sourceConfigId })), 'Recommended');
+  distinctRoutePaths(legacy.map((entry) => ({ routePath: entry.routePath, key: entry.legacyTeamId })), 'legacy');
 
   for (const variant of variants) {
     if (!seenLegacy.has(variant.legacyTeamId)) {
@@ -177,17 +300,25 @@ let defaultCatalog: Promise<TeamDetailRouteCatalog> | undefined;
 export function teamDetailCatalog({
   recommendedRoot = DEFAULT_RECOMMENDED_ROOT,
   teamsPath = DEFAULT_TEAMS_PATH,
-}: { recommendedRoot?: string; teamsPath?: string } = {}) {
-  if (recommendedRoot === DEFAULT_RECOMMENDED_ROOT && teamsPath === DEFAULT_TEAMS_PATH) {
+  handlesPath = DEFAULT_HANDLES_PATH,
+}: { recommendedRoot?: string; teamsPath?: string; handlesPath?: string } = {}) {
+  if (
+    recommendedRoot === DEFAULT_RECOMMENDED_ROOT
+    && teamsPath === DEFAULT_TEAMS_PATH
+    && handlesPath === DEFAULT_HANDLES_PATH
+  ) {
     return defaultCatalog ??= (async () => {
       const website = await websiteDisplayPublicationSnapshot();
       const teamsBytes = website.publicFiles['teams.json'];
       if (!teamsBytes) throw new Error('Website display snapshot does not pin data/teams.json');
-      return buildCatalogFromSnapshot(website.recommended, teamsBytes);
+      return buildCatalogFromSnapshot(website.recommended, teamsBytes, await readRegularFile(handlesPath), handlesPath);
     })();
   }
-  return Promise.all([recommendedPublicationSnapshot(recommendedRoot), readRegularFile(teamsPath)])
-    .then(([snapshot, teamsBytes]) => buildCatalogFromSnapshot(snapshot, teamsBytes));
+  return Promise.all([
+    recommendedPublicationSnapshot(recommendedRoot),
+    readRegularFile(teamsPath),
+    readRegularFile(handlesPath),
+  ]).then(([snapshot, teamsBytes, ledgerBytes]) => buildCatalogFromSnapshot(snapshot, teamsBytes, ledgerBytes, handlesPath));
 }
 
 export function findAdmittedVariant(catalog: TeamDetailRouteCatalog, legacyTeamId: unknown, legacyVariantId: unknown) {
@@ -198,6 +329,6 @@ export function findAdmittedVariant(catalog: TeamDetailRouteCatalog, legacyTeamI
 }
 
 /** Exact generated HTML inventory used by both the build and the dist verifier. */
-export async function teamDetailHtmlPaths(options?: { recommendedRoot?: string; teamsPath?: string }) {
+export async function teamDetailHtmlPaths(options?: { recommendedRoot?: string; teamsPath?: string; handlesPath?: string }) {
   return (await teamDetailCatalog(options)).htmlPaths;
 }

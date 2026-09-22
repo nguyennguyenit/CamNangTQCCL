@@ -1,0 +1,65 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { teamDetailCatalog } from '../../lib/team-detail-routes';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const catalog = await teamDetailCatalog();
+  return catalog.legacy.map((entry) => ({
+    params: {team: entry.routeSegment},
+    props: {
+      entry,
+      generationId: catalog.generationId,
+      manifestSha256: catalog.manifestSha256,
+      legacyTeamsSha256: catalog.legacyTeamsSha256,
+    },
+  }));
+}
+
+const {entry, generationId, manifestSha256, legacyTeamsSha256} = Astro.props;
+// Canonical bỏ query/hash: mọi biến thể deep-link vẫn trỏ về đúng một URL chi tiết.
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
+const rawTitle = entry.nickname || entry.name || entry.legacyTeamId;
+const title = /[\u3400-\u9fff\uf900-\ufaff]/u.test(rawTitle) ? 'Nội dung tiếng Việt chưa sẵn sàng' : rawTitle;
+---
+<SiteLayout
+  title={`${title} — Đội khác — Cẩm Nang Game Tam Quốc Chí - Chiến Lược`}
+  description={`Nội dung gốc của đội ${title} trong dữ liệu đội hình sẵn có.`}
+  pageKind="detail"
+  activeSection="team-khac"
+  tagline="Chi tiết đội khác"
+  canonicalUrl={canonicalUrl}
+  ogType="article"
+>
+  <nav class="detail-back-row" aria-label="Quay lại danh sách đội">
+    <a id="team-return-link" class="detail-link" href="/#team-khac" data-family-href="/#team-khac">Quay lại đội khác</a>
+  </nav>
+
+  <article
+    id="team-detail-root"
+    class="season-config-detail reference-detail"
+    aria-labelledby="team-detail-title"
+    aria-busy="true"
+    data-family="legacy"
+    data-legacy-team-id={entry.legacyTeamId}
+    data-legacy-teams-sha256={legacyTeamsSha256}
+    data-generation-id={generationId}
+    data-manifest-sha256={manifestSha256}
+  >
+    <div class="detail-header">
+      <div>
+        <h1 id="team-detail-title" class="detail-title">{title}</h1>
+      </div>
+      <p class="detail-score">Chưa có điểm nguồn</p>
+    </div>
+
+    <div id="team-detail-status" class="detail-state" role="status" aria-live="polite" aria-atomic="true">Đang tải chi tiết…</div>
+    <noscript>
+      <p class="scope-note">Trang chi tiết cần JavaScript để đọc dữ liệu gốc đã xác minh. Bạn vẫn có thể quay lại danh sách đội khác bằng liên kết phía trên.</p>
+    </noscript>
+    <div id="team-detail-body" hidden></div>
+  </article>
+
+  <script is:inline type="module" src="/js/team-detail.js" slot="scripts"></script>
+</SiteLayout>

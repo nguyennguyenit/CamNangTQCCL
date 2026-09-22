@@ -2,10 +2,12 @@ import { createHash } from "node:crypto";
 import { readdir, readFile } from "node:fs/promises";
 import { relative, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import astroConfig from "../astro.config.mjs";
 import { PUBLIC_ARTIFACTS, validatePublicArtifactManifest } from "../src/lib/public-artifact-manifest.mjs";
 import { websiteDisplayPublicationSnapshot } from "../src/lib/root-static-artifacts.ts";
 import { recommendedPublicationSnapshot } from "../src/lib/recommended-reference-artifacts.ts";
 import { teamDetailCatalog } from "../src/lib/team-detail-routes.ts";
+import { sitemapDocument } from "../src/pages/sitemap.xml.ts";
 
 export const DEPLOYMENT_CONTROL_ARTIFACTS = Object.freeze([
   Object.freeze({ sourcePath: "public/_headers", outputPath: "_headers" }),
@@ -13,7 +15,9 @@ export const DEPLOYMENT_CONTROL_ARTIFACTS = Object.freeze([
 
 export const STATIC_PUBLIC_ARTIFACTS = Object.freeze([
   Object.freeze({ sourcePath: "public/favicon.png", outputPath: "favicon.png" }),
+  Object.freeze({ sourcePath: "public/robots.txt", outputPath: "robots.txt" }),
 ]);
+
 
 async function listFiles(directory, base = directory) {
   const files = [];
@@ -43,6 +47,7 @@ export async function verifyAstroDist({
   const catalog = await teamDetailCatalog({
     recommendedRoot: resolve(rootPath, "src/data/recommended-reference"),
     teamsPath: resolve(rootPath, "data/teams.json"),
+    handlesPath: resolve(rootPath, "pipeline/team-route-handles.json"),
   });
   if (catalog.generationId !== recommended.pin.generationId) {
     throw new Error("Team detail catalog and emitted Recommended generation differ");
@@ -56,6 +61,7 @@ export async function verifyAstroDist({
   const expectedFiles = [
     "index.html",
     "404.html",
+    "sitemap.xml",
     ...catalog.htmlPaths,
     ...expectedAssets,
     ...recommendedFiles,
@@ -80,6 +86,15 @@ export async function verifyAstroDist({
     );
   }
   if (emittedByDecodedPath.size !== files.length) throw new Error("dist contains colliding team detail paths");
+
+  // Byte equality with the build-owned generator enforces valid structure, exact absolute
+  // origins, and the absence of query/hash drift without maintaining a second XML parser.
+  const sitemapXml = await readFile(resolve(distPath, "sitemap.xml"), "utf8");
+  const sitemapRoutePaths = [...catalog.recommended, ...catalog.legacy].map((entry) => entry.routePath);
+  const expectedSitemapXml = sitemapDocument(astroConfig.site, sitemapRoutePaths);
+  if (sitemapXml !== expectedSitemapXml) {
+    throw new Error("dist sitemap.xml does not match the generated document");
+  }
 
   for (const artifact of manifest) {
     const relativePath = `${artifact.kind}/${artifact.sourceBasename}`;
@@ -162,6 +177,15 @@ export async function verifyAstroDist({
   if (!notFound.includes('id="not-found-title"')) throw new Error("Static 404 page lacks its not-found heading");
   if (notFound.includes('src="/js/app.js"') || notFound.includes('src="/js/team-detail.js"')) {
     throw new Error("Static 404 page must not boot application entries");
+  }
+  if (!/<meta\b(?=[^>]*\bname=["']robots["'])(?=[^>]*\bcontent=["']noindex["'])[^>]*>/iu.test(notFound)) {
+    throw new Error("Static 404 page must declare robots=noindex");
+  }
+  if (/<link\b(?=[^>]*\brel=["']canonical["'])[^>]*>/iu.test(notFound)) {
+    throw new Error("Static 404 page must not declare a canonical URL");
+  }
+  if (/<meta\b(?=[^>]*\bproperty=["']og:url["'])[^>]*>/iu.test(notFound)) {
+    throw new Error("Static 404 page must not declare og:url");
   }
   let lookupGenerationId = null;
   const lookupRoutes = new Set(manifest.filter((artifact) => artifact.kind === "data").map((artifact) => artifact.routeParam));

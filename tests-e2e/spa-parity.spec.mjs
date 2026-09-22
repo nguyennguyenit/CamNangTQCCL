@@ -8,6 +8,11 @@ const storageFixture = JSON.parse(
 const teamsFixture = JSON.parse(
   await readFile(new URL("../data/teams.json", import.meta.url), "utf8"),
 );
+/** Frozen legacy route segment for a raw original; read from the same ledger the build consumes. */
+const routeHandles = JSON.parse(
+  await readFile(new URL("../pipeline/team-route-handles.json", import.meta.url), "utf8"),
+).handles;
+const legacyRoute = (legacyTeamId) => `/doi-khac/${encodeURIComponent(routeHandles.legacy[legacyTeamId])}/`;
 const distRoot = new URL("../dist/", import.meta.url);
 const publicArtifactPaths = PUBLIC_ARTIFACTS.map(
   (artifact) => `/${artifact.kind}/${artifact.sourceBasename}`,
@@ -372,7 +377,7 @@ test("opening a roster recommendation preserves its tab and opens the exact orig
   expect(selectedTeam).toBeTruthy();
 
   await recommendation.getByRole("button", { name: "Mở đội", exact: true }).click();
-  await expect(page).toHaveURL(new RegExp(`/teams/legacy/${selectedTeam.id}/`));
+  await expect(page).toHaveURL(new RegExp(legacyRoute(selectedTeam.id)));
   await expect(page.locator("#team-detail-body")).toBeVisible();
   await expect(page.locator("h1#team-detail-title")).toHaveText(selectedTeam.nickname || selectedTeam.name);
   // Người dùng quay lại đúng tab gợi ý đã mở đội.

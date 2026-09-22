@@ -14,9 +14,21 @@ import {
   readReturnSnapshot,
   clearReturnSnapshot,
   migrateLegacyReferenceUrl,
+  setTeamRouteHandles,
+  setTeamRouteHandlesFromJSON,
 } from '../js/team-detail-navigation.js';
 
 const ROOT='https://tqccl.pages.dev';
+const RECOMMENDED='team-epoddo';
+const LEGACY='team-intro-4';
+const RECOMMENDED_SEGMENT='pk-s24-tiem-long-dieu-thuyen';
+const LEGACY_SEGMENT='tan-ngo-thuong';
+
+const handles=()=>setTeamRouteHandles({
+  r:{[RECOMMENDED]:RECOMMENDED_SEGMENT},
+  l:{[LEGACY]:LEGACY_SEGMENT},
+});
+const empty=()=>setTeamRouteHandles({});
 
 function memoryStorage({failGet=false,failSet=false}={}) {
   const map=new Map();
@@ -28,28 +40,112 @@ function memoryStorage({failGet=false,failSet=false}={}) {
   };
 }
 
-test('detail hrefs are root-absolute, encoded and carry only identity plus a safe origin',()=>{
-  assert.equal(teamDetailPath({sourceConfigId:'team-epoddo'}),'/teams/recommended/team-epoddo/');
-  assert.equal(teamDetailPath({legacyTeamId:'team-intro-4'}),'/teams/legacy/team-intro-4/');
-  assert.equal(
-    teamDetailPath({sourceConfigId:'yxms-049-仙人盾-by大米'}),
-    `/teams/recommended/${encodeURIComponent('yxms-049-仙人盾-by大米')}/`,
-  );
+test('the route-handle registry is uninitialised until a caller registers one',async()=>{
+  // A fresh module instance proves the shipped default is "no registry", never an old ID path.
+  const fresh=await import(new URL('../js/team-detail-navigation.js?uninitialised',import.meta.url).href);
+  assert.equal(typeof fresh.setTeamRouteHandles,'function');
+  assert.equal(fresh.teamDetailPath({sourceConfigId:RECOMMENDED}),null);
+  assert.equal(fresh.teamDetailPath({legacyTeamId:LEGACY}),null);
+  assert.equal(fresh.teamDetailHref({sourceConfigId:RECOMMENDED}),null);
+  assert.equal(fresh.migrateLegacyReferenceUrl(`${ROOT}/?detail=${RECOMMENDED}#team-chuan`,{
+    hasRecommended:id=>id===RECOMMENDED,
+    hasLegacy:id=>id===LEGACY,
+  }),null);
+});
+
+test('detail hrefs come from the registered final segments and carry only identity plus a safe origin',()=>{
+  assert.equal(handles(),true);
+  assert.equal(teamDetailPath({sourceConfigId:RECOMMENDED}),`/doi-chuan/${RECOMMENDED_SEGMENT}/`);
+  assert.equal(teamDetailPath({legacyTeamId:LEGACY}),`/doi-khac/${LEGACY_SEGMENT}/`);
+  // Identity always beats a stray variant, and an unregistered identity never falls back to an ID path.
+  assert.equal(teamDetailPath({sourceConfigId:RECOMMENDED,legacyTeamId:LEGACY}),`/doi-chuan/${RECOMMENDED_SEGMENT}/`);
+  assert.equal(teamDetailPath({sourceConfigId:'team-missing'}),null);
+  assert.equal(teamDetailPath({legacyTeamId:'team-missing'}),null);
   assert.equal(teamDetailPath({}),null);
   assert.equal(teamDetailPath({legacyTeamId:'../secret'}),null);
 
   assert.equal(
-    teamDetailHref({legacyTeamId:'team-intro-4',legacyVariantId:'v-'+'a'.repeat(64)}),
-    `/teams/legacy/team-intro-4/?variant=v-${'a'.repeat(64)}`,
+    teamDetailHref({legacyTeamId:LEGACY,legacyVariantId:'v-'+'a'.repeat(64)}),
+    `/doi-khac/${LEGACY_SEGMENT}/?variant=v-${'a'.repeat(64)}`,
   );
-  assert.equal(teamDetailHref({legacyTeamId:'team-intro-4',legacyVariantId:''}),'/teams/legacy/team-intro-4/?variant=');
-  assert.equal(teamDetailHref({legacyTeamId:'team-intro-4',legacyVariantId:'/bad'}),'/teams/legacy/team-intro-4/?variant=%2Fbad');
+  assert.equal(teamDetailHref({legacyTeamId:LEGACY,legacyVariantId:''}),`/doi-khac/${LEGACY_SEGMENT}/?variant=`);
+  assert.equal(teamDetailHref({legacyTeamId:LEGACY,legacyVariantId:'/bad'}),`/doi-khac/${LEGACY_SEGMENT}/?variant=%2Fbad`);
   assert.equal(
-    teamDetailHref({sourceConfigId:'team-epoddo'},{from:'/?season=pk-s24&q=quan#team-chuan'}),
-    `/teams/recommended/team-epoddo/?from=${encodeURIComponent('/?season=pk-s24&q=quan#team-chuan')}`,
+    teamDetailHref({sourceConfigId:RECOMMENDED},{from:'/?season=pk-s24&q=quan#team-chuan'}),
+    `/doi-chuan/${RECOMMENDED_SEGMENT}/?from=${encodeURIComponent('/?season=pk-s24&q=quan#team-chuan')}`,
   );
   // An unsafe origin is dropped instead of being propagated into the detail URL.
-  assert.equal(teamDetailHref({sourceConfigId:'team-epoddo'},{from:'https://evil.example/'}),'/teams/recommended/team-epoddo/');
+  assert.equal(teamDetailHref({sourceConfigId:RECOMMENDED},{from:'https://evil.example/'}),`/doi-chuan/${RECOMMENDED_SEGMENT}/`);
+  // A registered identity without a handle is still not routable.
+  assert.equal(teamDetailHref({sourceConfigId:'team-missing'},{from:'/?q=a#team-chuan'}),null);
+
+  // Non-ASCII segments stay encoded in the emitted href.
+  assert.equal(setTeamRouteHandles({r:{'yxms-049':'pk-s24-仙人盾'}}),true);
+  assert.equal(teamDetailPath({sourceConfigId:'yxms-049'}),`/doi-chuan/${encodeURIComponent('pk-s24-仙人盾')}/`);
+});
+
+test('the registry replaces atomically and refuses malformed payloads',()=>{
+  assert.equal(handles(),true);
+
+  const malformed=[
+    null,
+    undefined,
+    7,
+    'r',
+    [],
+    new Date(0),
+    new Map(),
+    {l:new Date(0)},
+    {r:new Map()},
+    {l:new(class RouteFamily {})()},
+    {x:{}},
+    {r:[]},
+    {r:null},
+    {r:{'../secret':'ok'}},
+    {r:{'':'ok'}},
+    {r:{'team-epoddo':'/escape'}},
+    {r:{'team-epoddo':'trail.'}},
+    {r:{'team-epoddo':'inner space'}},
+    {r:{'team-epoddo':7}},
+    {r:{a:'same',b:'same'}},
+    {r:{'team-epoddo':RECOMMENDED_SEGMENT},'l':{'team-intro-4':LEGACY_SEGMENT},extra:{}},
+  ];
+  for (const payload of malformed) {
+    assert.equal(setTeamRouteHandles(payload),false,`must reject ${JSON.stringify(payload)}`);
+  }
+  // A rejected payload leaves the previous registry fully intact.
+  assert.equal(teamDetailPath({sourceConfigId:RECOMMENDED}),`/doi-chuan/${RECOMMENDED_SEGMENT}/`);
+  assert.equal(teamDetailPath({legacyTeamId:LEGACY}),`/doi-khac/${LEGACY_SEGMENT}/`);
+
+  // An empty family object is a valid registration that contains nothing.
+  assert.equal(setTeamRouteHandles({l:{}}),true);
+  assert.equal(teamDetailPath({legacyTeamId:LEGACY}),null);
+  assert.equal(teamDetailPath({sourceConfigId:RECOMMENDED}),null);
+
+  // A valid payload replaces instead of merging, and a partial payload only owns its own family.
+  assert.equal(setTeamRouteHandles({l:{'team-intro-9':'hoang-ma-thuong'}}),true);
+  assert.equal(teamDetailPath({legacyTeamId:'team-intro-9'}),'/doi-khac/hoang-ma-thuong/');
+  assert.equal(teamDetailPath({legacyTeamId:LEGACY}),null);
+  assert.equal(teamDetailPath({sourceConfigId:RECOMMENDED}),null);
+});
+
+test('the embedded JSON payload is parsed defensively before it can replace the registry',()=>{
+  assert.equal(handles(),true);
+
+  for (const raw of ['',null,undefined,'{not json','[]','null','"r"',JSON.stringify({r:{'team-epoddo':'ok'},l:{'team-intro-4':'ok'},x:{}})]) {
+    assert.equal(setTeamRouteHandlesFromJSON(raw),false,`must reject ${String(raw)}`);
+  }
+  assert.equal(teamDetailPath({sourceConfigId:RECOMMENDED}),`/doi-chuan/${RECOMMENDED_SEGMENT}/`);
+
+  // The detail-page payload carries only the legacy family.
+  assert.equal(setTeamRouteHandlesFromJSON(JSON.stringify({l:{[LEGACY]:LEGACY_SEGMENT}})),true);
+  assert.equal(teamDetailPath({legacyTeamId:LEGACY}),`/doi-khac/${LEGACY_SEGMENT}/`);
+  assert.equal(teamDetailPath({sourceConfigId:RECOMMENDED}),null);
+
+  // The root payload carries both families.
+  assert.equal(setTeamRouteHandlesFromJSON(JSON.stringify({r:{[RECOMMENDED]:RECOMMENDED_SEGMENT},l:{[LEGACY]:LEGACY_SEGMENT}})),true);
+  assert.equal(teamDetailPath({legacyTeamId:LEGACY}),`/doi-khac/${LEGACY_SEGMENT}/`);
+  assert.equal(teamDetailPath({sourceConfigId:RECOMMENDED}),`/doi-chuan/${RECOMMENDED_SEGMENT}/`);
 });
 
 test('return origin accepts normalized root state and rejects foreign or looping targets',()=>{
@@ -74,7 +170,7 @@ test('return origin accepts normalized root state and rejects foreign or looping
     '/\\evil.example',
     'javascript:alert(1)',
     'data:text/html,<script>',
-    '/teams/legacy/team-intro-4/',
+    '/doi-khac/tan-ngo-thuong/',
     '/%2e%2e/admin',
     '/..%2fadmin',
     '/?q=a#unknown-tab',
@@ -167,29 +263,30 @@ test('snapshot storage failures never block navigation and never restore a forei
   assert.equal(readReturnSnapshot('/#team-chuan',poisoned),null);
 });
 
-test('old reference URLs migrate by identity while any config key keeps gameplay precedence',()=>{
+test('old reference URLs migrate to the registered routes while any config key keeps gameplay precedence',()=>{
   const resolver={
-    hasRecommended:id=>id==='team-epoddo',
-    hasLegacy:id=>id==='team-intro-4',
+    hasRecommended:id=>id===RECOMMENDED,
+    hasLegacy:id=>id===LEGACY,
   };
   const migrate=(href,extra=resolver)=>migrateLegacyReferenceUrl(href,extra);
+  assert.equal(handles(),true);
 
-  const recommended=migrate(`${ROOT}/?season=pk-s24&detail=team-epoddo#team-chuan`);
+  const recommended=migrate(`${ROOT}/?season=pk-s24&detail=${RECOMMENDED}#team-chuan`);
   assert.equal(recommended.replace,true);
   assert.equal(
     recommended.target,
-    `/teams/recommended/team-epoddo/?from=${encodeURIComponent('/?season=pk-s24#team-chuan')}`,
+    `/doi-chuan/${RECOMMENDED_SEGMENT}/?from=${encodeURIComponent('/?season=pk-s24#team-chuan')}`,
   );
 
-  const legacy=migrate(`${ROOT}/?legacyTeam=team-intro-4#team-khac`);
-  assert.equal(legacy.target,`/teams/legacy/team-intro-4/?from=${encodeURIComponent('/#team-khac')}`);
+  const legacy=migrate(`${ROOT}/?legacyTeam=${LEGACY}#team-khac`);
+  assert.equal(legacy.target,`/doi-khac/${LEGACY_SEGMENT}/?from=${encodeURIComponent('/#team-khac')}`);
 
-  const variant=migrate(`${ROOT}/?legacyTeam=team-intro-4&legacyVariant=v-9#team-khac`);
-  assert.equal(variant.target,`/teams/legacy/team-intro-4/?variant=v-9&from=${encodeURIComponent('/#team-khac')}`);
-  const malformedVariant=migrate(`${ROOT}/?legacyTeam=team-intro-4&legacyVariant=%2Fbad#team-khac`);
-  assert.equal(malformedVariant.target,`/teams/legacy/team-intro-4/?variant=%2Fbad&from=${encodeURIComponent('/#team-khac')}`);
-  const emptyVariant=migrate(`${ROOT}/?legacyTeam=team-intro-4&legacyVariant=#team-khac`);
-  assert.equal(emptyVariant.target,`/teams/legacy/team-intro-4/?variant=&from=${encodeURIComponent('/#team-khac')}`);
+  const variant=migrate(`${ROOT}/?legacyTeam=${LEGACY}&legacyVariant=v-9#team-khac`);
+  assert.equal(variant.target,`/doi-khac/${LEGACY_SEGMENT}/?variant=v-9&from=${encodeURIComponent('/#team-khac')}`);
+  const malformedVariant=migrate(`${ROOT}/?legacyTeam=${LEGACY}&legacyVariant=%2Fbad#team-khac`);
+  assert.equal(malformedVariant.target,`/doi-khac/${LEGACY_SEGMENT}/?variant=%2Fbad&from=${encodeURIComponent('/#team-khac')}`);
+  const emptyVariant=migrate(`${ROOT}/?legacyTeam=${LEGACY}&legacyVariant=#team-khac`);
+  assert.equal(emptyVariant.target,`/doi-khac/${LEGACY_SEGMENT}/?variant=&from=${encodeURIComponent('/#team-khac')}`);
 
   // Unknown identity must not become an arbitrary path.
   assert.equal(migrate(`${ROOT}/?detail=team-missing#team-chuan`),null);
@@ -197,7 +294,16 @@ test('old reference URLs migrate by identity while any config key keeps gameplay
   assert.equal(migrate(`${ROOT}/#team-chuan`),null);
 
   // Gameplay config keeps precedence, including an invalid config value.
-  assert.equal(migrate(`${ROOT}/?config=season-config-1&detail=team-epoddo#analyze`),null);
-  assert.equal(migrate(`${ROOT}/?config=missing&legacyTeam=team-intro-4#analyze`),null);
-  assert.equal(migrate(`${ROOT}/?config=&legacyTeam=team-intro-4#analyze`),null);
+  assert.equal(migrate(`${ROOT}/?config=season-config-1&detail=${RECOMMENDED}#analyze`),null);
+  assert.equal(migrate(`${ROOT}/?config=missing&legacyTeam=${LEGACY}#analyze`),null);
+  assert.equal(migrate(`${ROOT}/?config=&legacyTeam=${LEGACY}#analyze`),null);
+
+  // A resolver that claims an identity the registry never froze migrates nothing.
+  assert.equal(migrate(`${ROOT}/?detail=team-claimed#team-chuan`,{hasRecommended:()=>true}),null);
+  assert.equal(migrate(`${ROOT}/?legacyTeam=team-claimed#team-khac`,{hasLegacy:()=>true}),null);
+
+  // Without any registered handles there is no migration at all.
+  assert.equal(empty(),true);
+  assert.equal(migrate(`${ROOT}/?detail=${RECOMMENDED}#team-chuan`),null);
+  assert.equal(migrate(`${ROOT}/?legacyTeam=${LEGACY}#team-khac`),null);
 });

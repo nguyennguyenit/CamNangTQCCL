@@ -206,7 +206,7 @@ Luồng Worker:
 
 Config commit hiện trỏ Pages `https://tqccl.pages.dev` tới Worker `https://tqccl-vision-proxy.nguyennlt-ncc.workers.dev/analyze`. Đây là public config hoạt động, không phải placeholder.
 
-Astro dùng `output: "static"` và không có Cloudflare adapter/Pages Functions. Manifest explicit trong `src/lib/public-artifact-manifest.mjs` cho phép đúng các route JS/CSS/JSON; helper từ chối file lạ, symlink và path thoát root. `scripts/verify-astro-dist.mjs` là policy output duy nhất: kiểm allowlist, byte parity của raw asset và `public/_headers` → `dist/_headers`, đồng thời từ chối source/private/secret-like output.
+Astro dùng `output: "static"` và không có Cloudflare adapter/Pages Functions. Manifest explicit trong `src/lib/public-artifact-manifest.mjs` cho phép đúng các route JS/CSS/JSON; helper từ chối file lạ, symlink và path thoát root. `scripts/verify-astro-dist.mjs` là policy output duy nhất: kiểm allowlist, byte parity của raw asset và của mọi artifact trong `public/` (deployment-control lẫn static public) → `dist/`, đối chiếu `dist/sitemap.xml` với document sinh từ chính inventory route, đồng thời từ chối source/private/secret-like output.
 
 Browser CI chỉ do `.github/workflows/mcp-worker.yml` sở hữu. Pull request/push chạm `data/**`, `pipeline/**`, `js/**`, `src/**`, Astro config hoặc test liên quan đều chạy một repository gate credential-free; gate bao gồm root build, dist contract, `npm run verify`, Playwright, Node, Python, Vision Worker và Wrangler dry-run. Không có workflow Pages thứ hai chạy một tập kiểm tra lệch.
 

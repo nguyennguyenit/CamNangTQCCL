@@ -1,5 +1,6 @@
 ---
 import { websiteDisplayPublicationSnapshot } from '../lib/root-static-artifacts';
+import { teamDetailCatalog } from '../lib/team-detail-routes';
 // Vỏ trang dùng chung: root giữ nguyên tab buttons cho app.js, trang con dùng link thật.
 interface Props {
   title: string;
@@ -7,6 +8,9 @@ interface Props {
   pageKind?: 'root' | 'detail' | 'not-found';
   activeSection?: 'team-chuan' | 'team-khac' | null;
   tagline?: string;
+  canonicalUrl?: URL | string;
+  ogType?: 'website' | 'article';
+  robots?: string;
 }
 
 const {
@@ -15,7 +19,13 @@ const {
   pageKind = 'root',
   activeSection = null,
   tagline = 'Tất cả — tham khảo',
+  canonicalUrl,
+  ogType = 'website',
+  robots,
 } = Astro.props;
+
+// Chỉ trang có URL công khai ổn định mới khai canonical; 404 cố ý bỏ trống cả canonical lẫn og:url.
+const canonicalHref = canonicalUrl ? new URL(canonicalUrl).href : null;
 
 const BRAND = 'Cẩm Nang Game Tam Quốc Chí - Chiến Lược';
 const SECTIONS = [
@@ -32,6 +42,10 @@ const SECTIONS = [
 const isRoot = pageKind === 'root';
 const contentClass = isRoot ? 'content' : 'content detail-content';
 const website = await websiteDisplayPublicationSnapshot();
+// Trang chi tiết không nạp `app.js`, nên chỉ nó cần bảng legacy route handle (đo được ≈4.9 KB).
+const legacyRouteSegments = pageKind === 'detail'
+  ? Object.fromEntries((await teamDetailCatalog()).legacy.map((entry) => [entry.legacyTeamId, entry.routeSegment]))
+  : null;
 ---
 <!doctype html>
 <html lang="vi" data-theme="light">
@@ -40,9 +54,12 @@ const website = await websiteDisplayPublicationSnapshot();
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {canonicalHref ? <link rel="canonical" href={canonicalHref} /> : null}
+    {robots ? <meta name="robots" content={robots} /> : null}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
+    {canonicalHref ? <meta property="og:url" content={canonicalHref} /> : null}
     <link rel="icon" type="image/png" sizes="128x128" href="/favicon.png" />
     <link rel="stylesheet" href="/css/styles.css" />
   </head>
@@ -92,6 +109,9 @@ const website = await websiteDisplayPublicationSnapshot();
 
     <script is:inline type="application/json" id="recommended-publication" set:html={JSON.stringify(website.recommended.pin)}></script>
     <script is:inline type="application/json" id="website-display-publication" set:html={JSON.stringify(website.pin)}></script>
+    {legacyRouteSegments && (
+      <script is:inline type="application/json" id="team-route-handles" set:html={JSON.stringify({l: legacyRouteSegments})}></script>
+    )}
     {!isRoot && (
       <script is:inline type="module">
         import { initSiteChrome } from '/js/site-chrome.js';

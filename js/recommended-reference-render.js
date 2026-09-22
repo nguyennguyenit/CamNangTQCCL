@@ -1,5 +1,6 @@
 import { el, FACTION_CODE, SOURCE_LABEL } from './render.js';
 import { validateReferenceSourceUrl } from './recommended-reference-state.js';
+import { teamDetailPath } from './team-detail-navigation.js';
 
 const CJK = /[\u3400-\u9fff\uf900-\ufaff]/u;
 const UNAVAILABLE = 'Nội dung tiếng Việt chưa sẵn sàng';
@@ -158,7 +159,7 @@ export function recommendedTeamCard(row,{onTag,href,labels}={}) {
   const name=text(row.displayNameVi || row.nameZh || row.name);
   return el('article',{class:'team-card reference-team-card',dataset:{referenceKey:row.sourceConfigId || row.legacyVariantId || row.legacyTeamId || '',sourceConfigId:row.sourceConfigId || '',legacyTeamId:row.legacyTeamId || '',faction:row.factionRaw || row.faction || ''}},[
     el('div',{class:'team-head'},[
-      el('h3',{class:'team-name'},href ? el('a',{href},name) : name),
+      el('h3',{class:'team-name'},href ? el('a',{href,dataset:{teamDetailLink:''}},name) : name),
       scoreBadge(row),
     ]),
     el('div',{class:'card-head'},[
@@ -168,7 +169,7 @@ export function recommendedTeamCard(row,{onTag,href,labels}={}) {
     el('div',{class:'heroes'},(row.heroes || row.holders || []).map((holder,index)=>holderView(holder,onTag,{isMain:index===0}))),
     alternativesDisclosure(row,onTag),
     counterChips(row,onTag),
-    href ? el('a',{class:'ana-link-btn',href},'Xem chi tiết') : null,
+    href ? el('a',{class:'ana-link-btn',href,dataset:{teamDetailLink:''}},'Xem chi tiết') : null,
   ]);
 }
 
@@ -269,7 +270,7 @@ export function recommendedTeamDetailContent(record,{legacyTeams=[]}={}) {
     const provenance=references.map(reference=>el('div',{class:'legacy-provenance'},[
       el('p',{class:'scope-note'},`Đội gốc: ${reference.legacyTeamId}${reference.legacyVariantId ? ` · biến thể ${reference.legacyVariantId}` : ''}`),
       el('p',{class:'scope-note'},`Bằng chứng rà soát: ${reference.evidenceRef || 'Chưa ghi'} · ${reference.legacyContentSha256 || ''}`),
-      el('p',{class:'detail-link-row'},el('a',{class:'detail-link',href:`/teams/legacy/${encodeURIComponent(reference.legacyTeamId)}/`},'Xem trang đội gốc')),
+      el('p',{class:'detail-link-row'},el('a',{class:'detail-link',href:teamDetailPath({legacyTeamId:reference.legacyTeamId})},'Xem trang đội gốc')),
     ]));
     fragment.append(el('section',{class:'detail-section legacy-reference'},[
       el('h2',{},'Nội dung đội gốc đã đối chiếu'),

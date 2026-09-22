@@ -4,7 +4,13 @@ import {mkdtemp,mkdir,writeFile,rm,readFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {createHash} from 'node:crypto';
-import {teamDetailCatalog,findAdmittedVariant} from '../src/lib/team-detail-routes.ts';
+import {
+  legacyRoutePath,
+  recommendedRoutePath,
+  teamDetailCatalog,
+  teamDetailHtmlPaths,
+  findAdmittedVariant,
+} from '../src/lib/team-detail-routes.ts';
 
 const bytes=value=>Buffer.from(JSON.stringify(value)+'\n');
 const hash=value=>createHash('sha256').update(value).digest('hex');
@@ -42,7 +48,19 @@ const admittedRow=(legacyTeamId,legacyVariantId,legacyContent)=>({
   legacyContentSha256:'sha256:'+'3'.repeat(64),
 });
 
-async function fixture({recommendedIds=['team-alpha','yxms-049-仙人盾-by大米'],teams,variants=[['team-intro-0','v-'+'a'.repeat(64)]],legacyTeamsHash}={}) {
+/** Fixture ledger freezes the raw identifier as the handle; season codes are owned by the catalog. */
+const frozenHandles=(recommendedIds,teams)=>({
+  recommended:Object.fromEntries(recommendedIds.map(id=>[id,id])),
+  legacy:Object.fromEntries(teams.map(team=>[team.id,team.id])),
+});
+
+async function fixture({
+  recommendedIds=['team-alpha','yxms-049-仙人盾-by大米'],
+  seasonCodes={},
+  teams,
+  variants=[['team-intro-0','v-'+'a'.repeat(64)]],
+  legacyTeamsHash,
+}={}) {
   const root=await mkdtemp(join(tmpdir(),'team-detail-routes-'));
   const generationId='1'.repeat(64);
   const generation=join(root,'recommended',generationId);
@@ -53,7 +71,10 @@ async function fixture({recommendedIds=['team-alpha','yxms-049-仙人盾-by大�
   await writeFile(teamsPath,teamsBytes);
   const byId=new Map(teamRows.map(team=>[team.id,team]));
   const scope='s-'+'2'.repeat(64);
-  const records=recommendedIds.map(recommendedRow);
+  const records=recommendedIds.map(id=>recommendedRow(
+    id,
+    seasonCodes[id] === undefined ? {} : {sourceSeasonCode:seasonCodes[id]},
+  ));
   const payloads={
     'seasons.json':bytes({schemaVersion:1,seasonOptions:[],scopes:[]}),
     'index.json':bytes({schemaVersion:1,records}),
@@ -69,10 +90,49 @@ async function fixture({recommendedIds=['team-alpha','yxms-049-仙人盾-by大�
   });
   await writeFile(join(generation,'manifest.json'),manifest);
   await writeFile(join(root,'recommended','current.json'),bytes({schemaVersion:1,generationId,manifestSha256:hash(manifest)}));
-  return {root,recommendedRoot:join(root,'recommended'),teamsPath,generationId,teamRows};
+
+  const defaultHandles=frozenHandles(recommendedIds,teamRows);
+  /** Writes an alternative ledger in the same root and returns its path. */
+  const alternativeLedger=async(overrides={},name='alternative-ledger.json')=>{
+    const handles=overrides.handles === undefined
+      ? defaultHandles
+      : overrides.handles === null
+        ? null
+        : {...defaultHandles,...overrides.handles};
+    const path=join(root,name);
+    await writeFile(path,bytes({
+      schemaVersion:overrides.schemaVersion ?? 1,
+      generationId:overrides.generationId ?? generationId,
+      legacyTeamsSha256:overrides.legacyTeamsSha256 ?? `sha256:${hash(teamsBytes)}`,
+      note:'Handle URL đã review; gán một lần, không suy lại từ displayNameVi.',
+      handles,
+    }));
+    return path;
+  };
+
+  return {
+    root,
+    recommendedRoot:join(root,'recommended'),
+    teamsPath,
+    generationId,
+    teamRows,
+    defaultHandles,
+    handlesPath:await alternativeLedger({},'team-route-handles.json'),
+    alternativeLedger,
+  };
 }
 
-const build=async setup=>teamDetailCatalog({recommendedRoot:setup.recommendedRoot,teamsPath:setup.teamsPath});
+const build=(setup,handlesPath=setup.handlesPath)=>teamDetailCatalog({
+  recommendedRoot:setup.recommendedRoot,
+  teamsPath:setup.teamsPath,
+  handlesPath,
+});
+
+test('route builders are the single source of the Vietnamese path shape',()=>{
+  assert.equal(recommendedRoutePath('pk-s24-tu-ma-phi-hung'),'/doi-chuan/pk-s24-tu-ma-phi-hung/');
+  assert.equal(legacyRoutePath('hoang-ma-thuong'),'/doi-khac/hoang-ma-thuong/');
+  assert.equal(recommendedRoutePath('pk-s24-仙人盾'),`/doi-chuan/${encodeURIComponent('pk-s24-仙人盾')}/`);
+});
 
 test('catalog routes every selected Recommended row and every raw original exactly once',async t=>{
   const setup=await fixture();
@@ -81,21 +141,156 @@ test('catalog routes every selected Recommended row and every raw original exact
 
   assert.deepEqual(catalog.recommended.map(entry=>entry.sourceConfigId),['team-alpha','yxms-049-仙人盾-by大米']);
   assert.deepEqual(catalog.legacy.map(entry=>entry.legacyTeamId),['team-intro-0','team-intro-1','moi-phe-4']);
-  assert.equal(catalog.recommended[0].routePath,'/teams/recommended/team-alpha/');
-  assert.equal(catalog.recommended[1].routePath,`/teams/recommended/${encodeURIComponent('yxms-049-仙人盾-by大米')}/`);
-  assert.equal(catalog.legacy[0].routePath,'/teams/legacy/team-intro-0/');
-  assert.equal(catalog.recommended[0].htmlPath,'teams/recommended/team-alpha/index.html');
-  assert.equal(catalog.legacy[0].htmlPath,'teams/legacy/team-intro-0/index.html');
+  // The final segment is the row's season code plus the frozen handle; every path derives from it.
+  assert.equal(catalog.recommended[0].routeSegment,'pk-s24-team-alpha');
+  assert.equal(catalog.recommended[0].routePath,'/doi-chuan/pk-s24-team-alpha/');
+  assert.equal(catalog.recommended[0].htmlPath,'doi-chuan/pk-s24-team-alpha/index.html');
+  assert.equal(catalog.recommended[1].routeSegment,'pk-s24-yxms-049-仙人盾-by大米');
+  assert.equal(catalog.recommended[1].routePath,`/doi-chuan/${encodeURIComponent('pk-s24-yxms-049-仙人盾-by大米')}/`);
+  assert.equal(catalog.recommended[1].htmlPath,'doi-chuan/pk-s24-yxms-049-仙人盾-by大米/index.html');
+  assert.equal(catalog.legacy[0].routeSegment,'team-intro-0');
+  assert.equal(catalog.legacy[0].routePath,'/doi-khac/team-intro-0/');
+  assert.equal(catalog.legacy[0].htmlPath,'doi-khac/team-intro-0/index.html');
 
   // Originals that were never admitted into Team khác still have their own readable page.
-  const unadmitted=catalog.legacy.find(entry=>entry.legacyTeamId==='moi-phe-4');
-  assert.deepEqual(unadmitted.variantIds,[]);
+  assert.deepEqual(catalog.legacy.find(entry=>entry.legacyTeamId==='moi-phe-4').variantIds,[]);
   assert.deepEqual(catalog.legacy.find(entry=>entry.legacyTeamId==='team-intro-0').variantIds,['v-'+'a'.repeat(64)]);
 
   assert.equal(catalog.htmlPaths.length,catalog.recommended.length+catalog.legacy.length);
   assert.equal(new Set(catalog.htmlPaths).size,catalog.htmlPaths.length);
+  assert.deepEqual(catalog.htmlPaths,await teamDetailHtmlPaths({
+    recommendedRoot:setup.recommendedRoot,
+    teamsPath:setup.teamsPath,
+    handlesPath:setup.handlesPath,
+  }));
   assert.equal(catalog.legacyTeamsSha256,`sha256:${hash(await readFile(setup.teamsPath))}`);
   assert.equal(catalog.generationId,setup.generationId);
+});
+
+test('the season code in the final segment always comes from the row',async t=>{
+  const setup=await fixture({recommendedIds:['team-alpha','team-beta'],seasonCodes:{'team-beta':'OG'}});
+  t.after(()=>rm(setup.root,{recursive:true,force:true}));
+  // The same frozen handle in two seasons stays two distinct pages.
+  const ledger=await setup.alternativeLedger({handles:{recommended:{'team-alpha':'doi-ba-thuong','team-beta':'doi-ba-thuong'}}},'shared-handle.json');
+  const catalog=await build(setup,ledger);
+
+  assert.deepEqual(catalog.recommended.map(entry=>entry.routeSegment),['pk-s24-doi-ba-thuong','og-doi-ba-thuong']);
+  assert.deepEqual(catalog.recommended.map(entry=>entry.routePath),['/doi-chuan/pk-s24-doi-ba-thuong/','/doi-chuan/og-doi-ba-thuong/']);
+  assert.equal(new Set(catalog.htmlPaths).size,catalog.htmlPaths.length);
+});
+
+test('a Recommended row without a usable season code never becomes a route',async t=>{
+  const cleanup=[];
+  t.after(()=>Promise.all(cleanup.map(setup=>rm(setup.root,{recursive:true,force:true}))));
+
+  for (const seasonCode of ['mùa mới','',null,7,'-S28']) {
+    const setup=await fixture({seasonCodes:{'team-alpha':seasonCode}});
+    cleanup.push(setup);
+    await assert.rejects(build(setup),error=>{
+      assert.match(error.message,/season code/i);
+      assert.match(error.message,/team-alpha/);
+      return true;
+    },`must reject ${JSON.stringify(seasonCode)}`);
+  }
+});
+
+test('the frozen ledger must cover the exact selected keys',async t=>{
+  const setup=await fixture();
+  t.after(()=>rm(setup.root,{recursive:true,force:true}));
+
+  const missingRecommended=await setup.alternativeLedger({handles:{recommended:{'team-alpha':'team-alpha'}}},'missing-recommended.json');
+  await assert.rejects(build(setup,missingRecommended),error=>{
+    assert.match(error.message,/missing/i);
+    assert.match(error.message,/Recommended/i);
+    assert.match(error.message,/yxms-049-仙人盾-by大米/);
+    return true;
+  });
+
+  const extraRecommended=await setup.alternativeLedger({handles:{recommended:{...setup.defaultHandles.recommended,'team-ghost':'team-ghost'}}},'extra-recommended.json');
+  await assert.rejects(build(setup,extraRecommended),error=>{
+    assert.match(error.message,/unknown/i);
+    assert.match(error.message,/team-ghost/);
+    return true;
+  });
+
+  const missingLegacy=await setup.alternativeLedger({handles:{legacy:{'team-intro-0':'team-intro-0'}}},'missing-legacy.json');
+  await assert.rejects(build(setup,missingLegacy),error=>{
+    assert.match(error.message,/missing/i);
+    assert.match(error.message,/moi-phe-4/);
+    return true;
+  });
+
+  const extraLegacy=await setup.alternativeLedger({handles:{legacy:{...setup.defaultHandles.legacy,'team-ghost':'team-ghost'}}},'extra-legacy.json');
+  await assert.rejects(build(setup,extraLegacy),error=>{
+    assert.match(error.message,/unknown/i);
+    assert.match(error.message,/team-ghost/);
+    return true;
+  });
+});
+
+test('the frozen ledger must still describe the selected publication',async t=>{
+  const setup=await fixture();
+  t.after(()=>rm(setup.root,{recursive:true,force:true}));
+
+  const staleGeneration=await setup.alternativeLedger({generationId:'9'.repeat(64)},'stale-generation.json');
+  await assert.rejects(build(setup,staleGeneration),/generation/i);
+
+  const staleTeams=await setup.alternativeLedger({legacyTeamsSha256:'sha256:'+'9'.repeat(64)},'stale-teams.json');
+  await assert.rejects(build(setup,staleTeams),error=>{
+    assert.match(error.message,/legacyTeamsSha256/);
+    assert.match(error.message,/raw originals/i);
+    return true;
+  });
+
+  const malformed=[
+    ['schema',{schemaVersion:2}],
+    ['blank-generation',{generationId:''}],
+    ['bad-teams-hash',{legacyTeamsSha256:'not-a-digest'}],
+    ['null-handles',{handles:null}],
+    ['array-family',{handles:{recommended:[]}}],
+    ['numeric-handle',{handles:{legacy:{'team-intro-0':7}}}],
+  ];
+  for (const [name,overrides] of malformed) {
+    const path=await setup.alternativeLedger(overrides,`malformed-${name}.json`);
+    await assert.rejects(build(setup,path),/team route handle ledger/i,`must reject ${name}`);
+  }
+
+  await assert.rejects(build(setup,join(setup.root,'absent-ledger.json')),/ENOENT|no such file/i);
+});
+
+test('unroutable and colliding handles never become routes',async t=>{
+  const setup=await fixture();
+  t.after(()=>rm(setup.root,{recursive:true,force:true}));
+  const shared=await fixture({recommendedIds:['team-alpha','team-beta']});
+  t.after(()=>rm(shared.root,{recursive:true,force:true}));
+
+  for (const handle of ['../secret','teams/legacy','.','team%2fx','team id','x/../y','']) {
+    const path=await setup.alternativeLedger({handles:{recommended:{...setup.defaultHandles.recommended,'team-alpha':handle}}},`unroutable-${Buffer.from(handle).toString('hex')}.json`);
+    await assert.rejects(build(setup,path),error=>{
+      assert.match(error.message,/handle/i);
+      assert.match(error.message,/team-alpha/);
+      return true;
+    },`must reject recommended handle ${JSON.stringify(handle)}`);
+  }
+
+  const unroutableLegacy=await setup.alternativeLedger({handles:{legacy:{...setup.defaultHandles.legacy,'moi-phe-4':'/moi-phe-4'}}},'unroutable-legacy.json');
+  await assert.rejects(build(setup,unroutableLegacy),/handle/i);
+
+  // The SC-prefixed path is the emitted identity, so two rows may share a handle only across seasons.
+  const duplicateRecommended=await shared.alternativeLedger({handles:{recommended:{'team-alpha':'same','team-beta':'same'}}},'duplicate-recommended.json');
+  await assert.rejects(build(shared,duplicateRecommended),error=>{
+    assert.match(error.message,/duplicate/i);
+    assert.match(error.message,/doi-chuan\/pk-s24-same/i);
+    return true;
+  });
+
+  const duplicateLegacy=await setup.alternativeLedger({handles:{legacy:{...setup.defaultHandles.legacy,'team-intro-1':'team-intro-0'}}},'duplicate-legacy.json');
+  await assert.rejects(build(setup,duplicateLegacy),error=>{
+    assert.match(error.message,/duplicate/i);
+    assert.match(error.message,/team-intro-0/);
+    assert.match(error.message,/team-intro-1/);
+    return true;
+  });
 });
 
 test('only the exact admitted ID pair resolves a variant',async t=>{
@@ -150,24 +345,76 @@ test('selected publication must match the exact raw originals it was built from'
   await assert.rejects(build(drifted),/legacy teams hash/i);
 });
 
+test('a custom project root must supply the ledger that belongs to it',async t=>{
+  const setup=await fixture();
+  t.after(()=>rm(setup.root,{recursive:true,force:true}));
+  const defaultCatalog=await teamDetailCatalog();
+  assert.equal(defaultCatalog.recommended.length,1366);
+
+  // Reusing the worktree ledger for a foreign root fails loudly instead of emitting foreign routes.
+  const worktreeLedger=new URL('../pipeline/team-route-handles.json',import.meta.url).pathname;
+  await assert.rejects(build(setup,worktreeLedger),error=>{
+    assert.match(error.message,/team route handle ledger/i);
+    return true;
+  });
+
+  // A foreign ledger with the default publication is rejected for the same reason.
+  await assert.rejects(teamDetailCatalog({handlesPath:setup.handlesPath}),/team route handle ledger/i);
+
+  // Custom roots are never served from the default cache, and they never poison it.
+  const custom=await teamDetailCatalog({recommendedRoot:setup.recommendedRoot,teamsPath:setup.teamsPath,handlesPath:setup.handlesPath});
+  assert.equal(custom.recommended.length,2);
+  assert.equal(custom.htmlPaths.length,5);
+  assert.equal(custom.generationId,setup.generationId);
+  const cached=await teamDetailCatalog();
+  assert.equal(cached.generationId,defaultCatalog.generationId);
+  assert.equal(cached.recommended.length,1366);
+  assert.equal(cached.htmlPaths.length,1532);
+});
+
 test('worktree publication yields the real route inventory and pins the real originals',async()=>{
   const catalog=await teamDetailCatalog();
   const teamsBytes=await readFile(new URL('../data/teams.json',import.meta.url));
   const teams=JSON.parse(teamsBytes.toString());
+  const ledger=JSON.parse(await readFile(new URL('../pipeline/team-route-handles.json',import.meta.url),'utf8'));
 
   assert.equal(catalog.legacyTeamsSha256,`sha256:${hash(teamsBytes)}`);
+  assert.equal(catalog.generationId,ledger.generationId);
   assert.equal(catalog.legacy.length,teams.length);
   assert.deepEqual(catalog.legacy.map(entry=>entry.legacyTeamId).sort(),teams.map(team=>team.id).sort());
-  assert.ok(catalog.recommended.length>0);
+  assert.equal(catalog.recommended.length,Object.keys(ledger.handles.recommended).length);
+  assert.equal(catalog.recommended.length,1366);
+  assert.equal(catalog.legacy.length,166);
   assert.equal(new Set(catalog.recommended.map(entry=>entry.sourceConfigId)).size,catalog.recommended.length);
   assert.equal(catalog.htmlPaths.length,catalog.recommended.length+catalog.legacy.length);
+  assert.equal(new Set(catalog.htmlPaths).size,catalog.htmlPaths.length);
   assert.ok(catalog.variants.length>0);
+
+  // The plan's locked examples must be exactly what this catalog emits.
+  const recommended=Object.fromEntries(catalog.recommended.map(entry=>[entry.sourceConfigId,entry]));
+  assert.equal(recommended['team-b8ink3'].routeSegment,'pk-s24-tu-ma-phi-hung');
+  assert.equal(recommended['team-b8ink3'].routePath,'/doi-chuan/pk-s24-tu-ma-phi-hung/');
+  assert.equal(recommended['team-b8ink3'].htmlPath,'doi-chuan/pk-s24-tu-ma-phi-hung/index.html');
+  assert.equal(recommended['og-bingyan-40y-lvbu-b'].routePath,'/doi-chuan/og-40y-lu-bo-cung-vuong-di/');
+  const legacy=Object.fromEntries(catalog.legacy.map(entry=>[entry.legacyTeamId,entry]));
+  assert.equal(legacy['team-intro-1'].routePath,'/doi-khac/hoang-ma-thuong/');
+
+  // Every route derives from its own segment plus the handle the ledger froze.
+  for (const entry of catalog.recommended) {
+    assert.ok(entry.routeSegment.endsWith(`-${ledger.handles.recommended[entry.sourceConfigId]}`),entry.sourceConfigId);
+    assert.match(entry.routeSegment,/^[a-z0-9-]+$/,entry.sourceConfigId);
+    assert.ok(Buffer.byteLength(entry.routeSegment)<=128,entry.sourceConfigId);
+    assert.equal(entry.routePath,recommendedRoutePath(entry.routeSegment));
+    assert.equal(entry.htmlPath,`doi-chuan/${entry.routeSegment}/index.html`);
+    assert.match(entry.safeScopeKey,/^s-[0-9a-f]{64}$/);
+  }
+  for (const entry of catalog.legacy) {
+    assert.equal(entry.routeSegment,ledger.handles.legacy[entry.legacyTeamId]);
+    assert.equal(entry.routePath,legacyRoutePath(entry.routeSegment));
+    assert.equal(entry.htmlPath,`doi-khac/${entry.routeSegment}/index.html`);
+  }
   for (const variant of catalog.variants) {
     assert.ok(catalog.legacy.some(entry=>entry.legacyTeamId===variant.legacyTeamId));
     assert.equal(findAdmittedVariant(catalog,variant.legacyTeamId,variant.legacyVariantId).legacyVariantId,variant.legacyVariantId);
-  }
-  for (const entry of catalog.recommended) {
-    assert.match(entry.safeScopeKey,/^s-[0-9a-f]{64}$/);
-    assert.ok(!entry.htmlPath.includes('..'));
   }
 });

@@ -15,6 +15,13 @@ import {
   seasonArtifactHashes,
   validatePublicArtifactTree,
 } from "../src/lib/root-static-artifacts.ts";
+import { teamDetailCatalog } from "../src/lib/team-detail-routes.ts";
+import {
+  GET as sitemapGet,
+  SITEMAP_MIME,
+  sitemapDocument,
+  sitemapLocations,
+} from "../src/pages/sitemap.xml.ts";
 import { verifyAstroDist } from "../scripts/verify-astro-dist.mjs";
 import { assertFrontendShellContract } from "./frontend-shell-contract-assertions.mjs";
 
@@ -24,6 +31,32 @@ const jsonBytes = (value) => Buffer.from(`${JSON.stringify(value)}\n`);
 const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
 
 const LEGACY_TEAM_ID = "team-intro-0";
+const LEGACY_HANDLE = "vinh-quang-thuong";
+const LEGACY_ROUTE_SEGMENT = LEGACY_HANDLE;
+
+const FIXTURE_ORIGIN = "https://tqccl.pages.dev";
+
+/** The fixture dist mirrors the built sitemap: the root page plus every catalog route, XML-escaped. */
+const fixtureSitemapXml = (locations) => `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${locations.map((location) => `  <url>\n    <loc>${location}</loc>\n  </url>`).join("\n")}
+</urlset>
+`;
+
+const FIXTURE_ROBOTS = `User-agent: *\nAllow: /\n\nSitemap: ${FIXTURE_ORIGIN}/sitemap.xml\n`;
+
+/** Head metadata is read back by attribute so tag order never decides the contract. */
+const tagAttribute = (tag, name) => tag?.match(new RegExp(`${name}=["']([^"']*)["']`, "u"))?.[1] ?? null;
+const linkHref = (html, rel) => tagAttribute(html.match(new RegExp(`<link[^>]+rel=["']${rel}["'][^>]*>`, "u"))?.[0], "href");
+const metaContent = (html, key) => tagAttribute(html.match(new RegExp(`<meta[^>]+(?:property|name)=["']${key}["'][^>]*>`, "u"))?.[0], "content");
+
+/** robots.txt, the sitemap and every canonical are locked to the single configured origin. */
+async function configuredSite() {
+  const source = await readFile(new URL("../astro.config.mjs", import.meta.url), "utf8");
+  const match = source.match(/site:\s*["'](https?:\/\/[^"']+)["']/u);
+  assert.ok(match, "astro.config.mjs must declare an absolute site origin");
+  return match[1];
+}
 
 async function writeRecommendedFixture(projectDir, distDir, { legacyTeamsHash } = {}) {
   const generationId = "1".repeat(64);
@@ -71,12 +104,32 @@ async function writeRecommendedFixture(projectDir, distDir, { legacyTeamsHash } 
   await writeFile(join(distDir, "data", "recommended", "current.json"), current);
   const pin = { schemaVersion: 1, generationId, manifestSha256: sha256(manifest) };
   await writeFile(join(distDir, "index.html"), `<!doctype html><script id="recommended-publication" type="application/json">${JSON.stringify(pin)}</script>\n`);
-  await writeFile(join(distDir, "404.html"), '<!doctype html><h1 id="not-found-title">Không tìm thấy trang</h1>\n');
-  await mkdir(join(distDir, "teams", "legacy", LEGACY_TEAM_ID), { recursive: true });
   await writeFile(
-    join(distDir, "teams", "legacy", LEGACY_TEAM_ID, "index.html"),
+    join(distDir, "404.html"),
+    '<!doctype html><head><meta name="robots" content="noindex"></head><h1 id="not-found-title">Không tìm thấy trang</h1>\n',
+  );
+  // The route cutover reads its frozen handles from the ledger of the same project root.
+  await mkdir(join(projectDir, "pipeline"), { recursive: true });
+  const ledger = {
+    schemaVersion: 1,
+    generationId,
+    legacyTeamsSha256: `sha256:${sha256(teamsBytes)}`,
+    note: "Handle URL đã review; gán một lần, không suy lại từ displayNameVi.",
+    handles: { recommended: {}, legacy: { [LEGACY_TEAM_ID]: LEGACY_HANDLE } },
+  };
+  await writeFile(join(projectDir, "pipeline", "team-route-handles.json"), jsonBytes(ledger));
+  // robots.txt is a static public artifact; the sitemap is derived from the same frozen catalog.
+  await mkdir(join(projectDir, "public"), { recursive: true });
+  await writeFile(join(projectDir, "public", "robots.txt"), FIXTURE_ROBOTS);
+  await writeFile(join(distDir, "robots.txt"), FIXTURE_ROBOTS);
+  const sitemap = fixtureSitemapXml([`${FIXTURE_ORIGIN}/`, `${FIXTURE_ORIGIN}/doi-khac/${LEGACY_ROUTE_SEGMENT}/`]);
+  await writeFile(join(distDir, "sitemap.xml"), sitemap);
+  await mkdir(join(distDir, "doi-khac", LEGACY_ROUTE_SEGMENT), { recursive: true });
+  await writeFile(
+    join(distDir, "doi-khac", LEGACY_ROUTE_SEGMENT, "index.html"),
     `<!doctype html><article id="team-detail-root" data-legacy-team-id="${LEGACY_TEAM_ID}" data-legacy-teams-sha256="sha256:${sha256(teamsBytes)}" data-generation-id="${generationId}" data-manifest-sha256="${sha256(manifest)}"></article>\n`,
   );
+  return { ledger, generationId, manifest, sitemap };
 }
 
 test("season bundle publishes exactly five sidecars with the shared resolver", async () => {
@@ -404,7 +457,7 @@ test("dist verifier admits exactly the catalog team pages, the 404 and no stale 
   const favicon = await readFile(new URL("public/favicon.png", projectRoot));
   await writeFile(join(projectDir, "public", "favicon.png"), favicon);
   await writeFile(join(distDir, "favicon.png"), favicon);
-  await writeRecommendedFixture(projectDir, distDir);
+  const fixture = await writeRecommendedFixture(projectDir, distDir);
   const verify = () => verifyAstroDist({
     projectRoot: new URL(`file://${projectDir}/`),
     distDir: new URL(`file://${distDir}/`),
@@ -412,20 +465,53 @@ test("dist verifier admits exactly the catalog team pages, the 404 and no stale 
   });
 
   const result = await verify();
-  assert.ok(result.files.includes(`teams/legacy/${LEGACY_TEAM_ID}/index.html`));
+  assert.ok(result.files.includes(`doi-khac/${LEGACY_ROUTE_SEGMENT}/index.html`));
   assert.ok(result.files.includes("404.html"));
+  assert.ok(!result.files.some((file) => file.startsWith("teams/")));
+  await writeFile(join(distDir, "sitemap.xml"), fixture.sitemap.replaceAll(FIXTURE_ORIGIN, "https://wrong.example"));
+  await assert.rejects(verify(), /sitemap.*generated document/i);
+  await writeFile(join(distDir, "sitemap.xml"), fixture.sitemap.replace("</loc>", "?q=wrong</loc>"));
+  await assert.rejects(verify(), /sitemap.*generated document/i);
+  await writeFile(join(distDir, "sitemap.xml"), fixture.sitemap.replace("</urlset>", "<broken></urlset>"));
+  await assert.rejects(verify(), /sitemap.*generated document/i);
+  await writeFile(join(distDir, "sitemap.xml"), fixture.sitemap);
+  const validNotFound = await readFile(join(distDir, "404.html"), "utf8");
+  await writeFile(join(distDir, "404.html"), validNotFound.replace('<meta name="robots" content="noindex">', ""));
+  await assert.rejects(verify(), /404.*noindex/i);
+  await writeFile(
+    join(distDir, "404.html"),
+    validNotFound.replace(
+      "</head>",
+      '<link rel="canonical" href="https://tqccl.pages.dev/404/"><meta property="og:url" content="https://tqccl.pages.dev/404/"></head>',
+    ),
+  );
+  await assert.rejects(verify(), /404.*canonical|404.*og:url/i);
+  await writeFile(join(distDir, "404.html"), validNotFound);
 
   await rm(join(distDir, "404.html"));
   await assert.rejects(verify(), /missing: 404\.html/i);
-  await writeFile(join(distDir, "404.html"), '<!doctype html><h1 id="not-found-title">Không tìm thấy trang</h1>\n');
+  await writeFile(join(distDir, "404.html"), validNotFound);
 
-  await mkdir(join(distDir, "teams", "legacy", "team-khong-co"), { recursive: true });
-  await writeFile(join(distDir, "teams", "legacy", "team-khong-co", "index.html"), "<!doctype html>\n");
-  await assert.rejects(verify(), /unexpected: teams\/legacy\/team-khong-co\/index\.html/i);
-  await rm(join(distDir, "teams", "legacy", "team-khong-co"), { recursive: true });
+  // The verifier's inventory is the ledger's frozen segment, not a path it re-derives.
+  const relocated = { ...fixture.ledger, handles: { recommended: {}, legacy: { [LEGACY_TEAM_ID]: "hoang-ma-thuong" } } };
+  await writeFile(join(projectDir, "pipeline", "team-route-handles.json"), jsonBytes(relocated));
+  await assert.rejects(verify(), /missing: doi-khac\/hoang-ma-thuong\/index\.html/i);
+  await assert.rejects(verify(), /unexpected: doi-khac\/vinh-quang-thuong\/index\.html/i);
+  await writeFile(join(projectDir, "pipeline", "team-route-handles.json"), jsonBytes(fixture.ledger));
+
+  await mkdir(join(distDir, "doi-khac", "team-khong-co"), { recursive: true });
+  await writeFile(join(distDir, "doi-khac", "team-khong-co", "index.html"), "<!doctype html>\n");
+  await assert.rejects(verify(), /unexpected: doi-khac\/team-khong-co\/index\.html/i);
+  await rm(join(distDir, "doi-khac", "team-khong-co"), { recursive: true });
+
+  // A page still emitted under the retired route family is not part of the inventory.
+  await mkdir(join(distDir, "teams", "legacy", LEGACY_TEAM_ID), { recursive: true });
+  await writeFile(join(distDir, "teams", "legacy", LEGACY_TEAM_ID, "index.html"), "<!doctype html>\n");
+  await assert.rejects(verify(), /unexpected: teams\/legacy\/team-intro-0\/index\.html/i);
+  await rm(join(distDir, "teams"), { recursive: true });
 
   // Each legacy publication pin is independently enforced while identity/raw pins remain valid.
-  const legacyPagePath = join(distDir, "teams", "legacy", LEGACY_TEAM_ID, "index.html");
+  const legacyPagePath = join(distDir, "doi-khac", LEGACY_ROUTE_SEGMENT, "index.html");
   const validLegacyPage = await readFile(legacyPagePath, "utf8");
   await writeFile(legacyPagePath, validLegacyPage.replace(/\sdata-generation-id="[^"]+"/, ""));
   await assert.rejects(verify(), /lacks its validated pin/i);
@@ -475,6 +561,152 @@ test("built dist is allowlisted and every emitted asset is byte-identical", asyn
     scriptPattern: /<script[^>]+type=["']module["'][^>]+src=["']\/js\/app\.js["'][^>]*><\/script>/,
   });
   assert.doesNotMatch(html, /_astro\//);
+});
+
+test("built dist declares canonical, article metadata, robots and the catalog sitemap", async () => {
+  const site = await configuredSite();
+  const origin = new URL(site).origin;
+  const rootHref = new URL("/", origin).href;
+  const read = (relative) => readFile(new URL(`../dist/${relative}`, import.meta.url), "utf8");
+  const catalog = await teamDetailCatalog();
+
+  const index = await read("index.html");
+  assert.equal(linkHref(index, "canonical"), rootHref);
+  assert.equal(metaContent(index, "og:url"), rootHref);
+  assert.equal(metaContent(index, "og:type"), "website");
+
+  for (const entry of [catalog.recommended[0], catalog.legacy[0]]) {
+    assert.ok(entry, "the catalog must publish both detail families");
+    const html = await read(entry.htmlPath);
+    const canonical = new URL(entry.routePath, origin).href;
+    assert.equal(linkHref(html, "canonical"), canonical, entry.htmlPath);
+    assert.equal(metaContent(html, "og:url"), canonical, entry.htmlPath);
+    assert.equal(metaContent(html, "og:type"), "article", entry.htmlPath);
+  }
+
+  const notFound = await read("404.html");
+  assert.equal(metaContent(notFound, "robots"), "noindex");
+  assert.equal(linkHref(notFound, "canonical"), null);
+  assert.equal(metaContent(notFound, "og:url"), null);
+
+  const robots = await read("robots.txt");
+  assert.deepEqual(
+    await readFile(new URL("../dist/robots.txt", import.meta.url)),
+    await readFile(new URL("../public/robots.txt", import.meta.url)),
+  );
+  assert.deepEqual(
+    robots.split(/\r?\n/u).filter(Boolean),
+    ["User-agent: *", "Allow: /", `Sitemap: ${rootHref}sitemap.xml`],
+  );
+  assert.doesNotMatch(robots, /Disallow/iu);
+
+  const sitemap = await read("sitemap.xml");
+  assert.match(sitemap, /^<\?xml version="1\.0" encoding="UTF-8"\?>/u);
+  const locations = [...sitemap.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
+  // Release baseline: one root page plus 1366 Recommended and 166 legacy detail pages.
+  assert.equal(locations.length, 1533);
+  assert.deepEqual(
+    locations,
+    [rootHref, ...[...catalog.recommended, ...catalog.legacy]
+      .map((entry) => entry.routePath)
+      .sort()
+      .map((path) => new URL(path, origin).href)],
+  );
+  for (const location of locations) {
+    const url = new URL(location);
+    assert.equal(url.origin, origin, location);
+    assert.equal(url.pathname.startsWith("/teams/"), false, location);
+  }
+});
+
+test("sitemap endpoint publishes exactly the root page plus the catalog routes", async () => {
+  const site = await configuredSite();
+  const origin = new URL(site).origin;
+  const catalog = await teamDetailCatalog();
+  const response = await sitemapGet({ site: new URL(site) });
+
+  assert.equal(response.headers.get("content-type"), SITEMAP_MIME);
+  const xml = await response.text();
+  assert.match(xml, /^<\?xml version="1\.0" encoding="UTF-8"\?>/u);
+  assert.match(xml, /<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9">/u);
+  assert.doesNotMatch(xml, /<lastmod>|<changefreq>|<priority>/u);
+
+  const locations = [...xml.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
+  const routePaths = [...catalog.recommended, ...catalog.legacy].map((entry) => entry.routePath);
+  assert.equal(catalog.recommended.length, 1366);
+  assert.equal(catalog.legacy.length, 166);
+  assert.equal(locations.length, 1533);
+  assert.deepEqual(
+    locations,
+    [new URL("/", origin).href, ...routePaths.sort().map((path) => new URL(path, origin).href)],
+  );
+  assert.equal(new Set(locations).size, locations.length);
+  assert.equal(locations.filter((location) => new URL(location).pathname.startsWith("/teams/")).length, 0);
+});
+
+test("sitemap endpoint fails closed on a missing origin, duplicates and the retired family", async () => {
+  await assert.rejects(sitemapGet({ site: undefined }), /origin/iu);
+  await assert.rejects(sitemapGet({ site: new URL("file:///tmp/site") }), /http/iu);
+  assert.throws(() => sitemapLocations("not a url", ["/"]), /origin/iu);
+  assert.throws(() => sitemapLocations(FIXTURE_ORIGIN, ["/doi-chuan/a/", "/doi-chuan/a/"]), /duplicate/iu);
+  assert.throws(() => sitemapLocations(FIXTURE_ORIGIN, ["/teams/legacy/team-intro-0/"]), /retired/iu);
+});
+
+test("sitemap XML escapes loc metacharacters", () => {
+  // `&` and `'` survive URL normalization in a path, so the emitted text must escape them.
+  const xml = sitemapDocument(FIXTURE_ORIGIN, ["/doi-chuan/a&b'c/"]);
+  assert.match(xml, /<loc>https:\/\/tqccl\.pages\.dev\/doi-chuan\/a&amp;b&apos;c\/<\/loc>/u);
+  assert.doesNotMatch(xml, /&(?!amp;|lt;|gt;|quot;|apos;)/u);
+});
+
+test("dist verifier locks the emitted sitemap to the catalog route set", async (t) => {
+  const { rm } = await import("node:fs/promises");
+  const projectDir = await mkdtemp(join(tmpdir(), "tqccl-sitemap-source-"));
+  const distDir = await mkdtemp(join(tmpdir(), "tqccl-sitemap-dist-"));
+  t.after(async () => {
+    await Promise.all([
+      rm(projectDir, { recursive: true, force: true }),
+      rm(distDir, { recursive: true, force: true }),
+    ]);
+  });
+  await mkdir(join(projectDir, "public"), { recursive: true });
+  await writeFile(join(projectDir, "public", "_headers"), "/\n  Cache-Control: max-age=0\n");
+  await writeFile(join(distDir, "_headers"), "/\n  Cache-Control: max-age=0\n");
+  const favicon = await readFile(new URL("public/favicon.png", projectRoot));
+  await writeFile(join(projectDir, "public", "favicon.png"), favicon);
+  await writeFile(join(distDir, "favicon.png"), favicon);
+  await writeRecommendedFixture(projectDir, distDir);
+  const verify = () => verifyAstroDist({
+    projectRoot: new URL(`file://${projectDir}/`),
+    distDir: new URL(`file://${distDir}/`),
+    manifest: [],
+  });
+
+  await verify();
+  const root = `${FIXTURE_ORIGIN}/`;
+  const detail = `${FIXTURE_ORIGIN}/doi-khac/${LEGACY_ROUTE_SEGMENT}/`;
+  const rejected = {
+    "the root page is missing": [detail],
+    "a catalog route is missing": [root],
+    "the retired family is published": [root, detail, `${FIXTURE_ORIGIN}/teams/legacy/${LEGACY_TEAM_ID}/`],
+    "a URL is published twice": [root, detail, detail],
+  };
+  for (const [label, locations] of Object.entries(rejected)) {
+    await writeFile(join(distDir, "sitemap.xml"), fixtureSitemapXml(locations));
+    await assert.rejects(verify(), /sitemap/i, label);
+  }
+  await writeFile(join(distDir, "sitemap.xml"), fixtureSitemapXml([root, detail]));
+  await verify();
+
+  // A shell or payload served as sitemap.xml is not a sitemap.
+  await writeFile(join(distDir, "sitemap.xml"), "<!doctype html>\n");
+  await assert.rejects(verify(), /sitemap/i);
+  await writeFile(join(distDir, "sitemap.xml"), fixtureSitemapXml([root, detail]));
+  await verify();
+
+  // robots.txt stays a byte-identical copy of its reviewed source.
+  await writeFile(join(distDir, "robots.txt"), "User-agent: *\nDisallow: /\n");
+  await assert.rejects(verify(), /robots\.txt/i);
 });
 
 const LOOKUP_FILES = ["heroes-dict.json", "lookup-catalog.json", "lookup-manifest.json", "tactics.json"];

@@ -1,5 +1,14 @@
 import {test,expect} from '@playwright/test';
 
+/** Detail routes come from the frozen inventory the build embedded, never from a re-derived slug. */
+const routeHandles=async request=>{
+  const html=await (await request.get('/index.html')).text();
+  const match=html.match(/id="team-route-handles"[^>]*>([^<]+)<\/script>/);
+  if (!match) throw new Error('Built HTML lacks the team route handle map');
+  return JSON.parse(match[1]);
+};
+const recommendedPath=async(request,id)=>`/doi-chuan/${encodeURIComponent((await routeHandles(request)).r[id])}/`;
+
 
 for (const width of [320,375,768,1280]) {
   for (const theme of ['light','dark']) {
@@ -35,7 +44,7 @@ test('cards expose holders tactics books and a native detail link',async({page})
   await expect(card.locator('.tactics .tag').first()).toBeVisible();
   await expect(card.locator('.books .tag').first()).toBeVisible();
   await card.getByRole('link',{name:'Xem chi tiết'}).click();
-  await expect(page).toHaveURL(/\/teams\/recommended\//);
+  await expect(page).toHaveURL(/\/doi-chuan\//);
   await expect(page.locator('#team-detail-body')).toBeVisible();
 });
 
@@ -64,7 +73,7 @@ test('season scope changes stay on the browser and keep the URL authoritative',a
 
 test('old legacy reference links replace into the dedicated original page',async({page})=>{
   await page.goto('/?legacyTeam=team-intro-14#team-khac');
-  await expect(page).toHaveURL(/\/teams\/legacy\/team-intro-14\//);
+  await expect(page).toHaveURL(/\/doi-khac\/lieu-co-ky\//);
   await expect(page.locator('#team-detail-body')).toBeVisible();
   await expect(page.locator('h1#team-detail-title')).not.toBeEmpty();
 });
@@ -75,7 +84,7 @@ test('gameplay config keeps precedence over old reference selectors',async({page
   await page.getByRole('tab',{name:'Cùng Tồn',exact:true}).click();
   await expect(page).not.toHaveURL(/detail=/);
   await page.goto('/?config=missing&legacyTeam=team-intro-14#analyze');
-  await expect(page).not.toHaveURL(/teams\/legacy/);
+  await expect(page).not.toHaveURL(/doi-khac/);
   await expect(page.locator('#season-detail-mount')).toContainText('Không có cấu hình này');
 });
 
@@ -102,7 +111,7 @@ test('root keeps other tabs usable during an isolated Recommended outage',async(
   await expect(page.locator('#section-team-khac .error')).toBeAttached();
   // Old reference selectors cannot be resolved without the publication, so the root stays put.
   await page.goto('/?detail=missing-reference#analyze');
-  await expect(page).not.toHaveURL(/teams\/recommended/);
+  await expect(page).not.toHaveURL(/doi-chuan/);
   await expect(page.locator('#section-analyze .ana-status')).toBeAttached();
 });
 
@@ -111,7 +120,7 @@ test('source detail preserves alternative holders and prefers available Vietname
   const index=await (await request.get(`/data/recommended/${pin.generationId}/index.json`)).json();
   const row=index.records.find(row=>row.sourceConfigId==='team-b8ink3');
   const alternatives=row.alternativeHoldersRaw;
-  await page.goto('/teams/recommended/team-b8ink3/');
+  await page.goto('/doi-chuan/pk-s24-tu-ma-phi-hung/');
   const groups=page.locator('#team-detail-body .reference-alternative-group');
   await expect(groups).toHaveCount(Math.ceil(alternatives.length/3));
   const holders=groups.locator('.reference-detail-holder');
@@ -232,7 +241,7 @@ test('the source scope caption lives on the detail page and never on a card',asy
   await expect(card).toBeVisible();
   await expect(card.locator('.scope-note')).toHaveCount(0);
   await expect(card).not.toContainText(expectedCode);
-  await page.goto(`/teams/recommended/${encodeURIComponent(row.sourceConfigId)}/`);
+  await page.goto(await recommendedPath(request,row.sourceConfigId));
   const detailNote=page.locator('#team-detail-root .detail-header .scope-note').last();
   await expect(detailNote).toContainText(expectedCode);
   await expect(detailNote).toContainText(expectedCategory);
@@ -265,7 +274,7 @@ for (const [sourceConfigId,codes] of [
     const card=page.locator(`#section-team-chuan .reference-team-card[data-source-config-id="${sourceConfigId}"]`);
     await expect(card).toBeVisible();
     await assertHeadings(card.locator('.reference-holder .hero-name'));
-    await page.goto(`/teams/recommended/${encodeURIComponent(sourceConfigId)}/`);
+    await page.goto(await recommendedPath(request,sourceConfigId));
     await expect(page.locator('#team-detail-body')).toBeVisible();
     await assertHeadings(page.locator('#team-detail-body .reference-detail-holder h3'));
   });
@@ -290,7 +299,7 @@ test('bond slots read as Duyên phận and never as selectable tactics',async({p
   await expect(cardHolder.locator('.bonds button')).toHaveCount(0);
   await expect(cardHolder.locator('.tactics .t-tactic')).toHaveText(tactics);
   await expect(cardHolder.locator('.tactics')).not.toContainText(bond);
-  await page.goto(`/teams/recommended/${encodeURIComponent(row.sourceConfigId)}/`);
+  await page.goto(await recommendedPath(request,row.sourceConfigId));
   await expect(page.locator('#team-detail-body')).toBeVisible();
   const detailHolder=page.locator('#team-detail-body .reference-detail-holder').nth(holderIndex);
   await expect(detailHolder.locator('.holder-bonds dd')).toHaveText(bond);

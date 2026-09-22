@@ -20,6 +20,7 @@ import {
   matchesReturnSnapshot,
   migrateLegacyReferenceUrl,
   readReturnSnapshot,
+  setTeamRouteHandlesFromJSON,
   teamDetailHref,
   writeReturnSnapshot,
 } from './team-detail-navigation.js';
@@ -109,6 +110,8 @@ function switchSection(name) {
 }
 
 async function main() {
+  // Bảng route handle phải sẵn sàng trước migrate và mọi lần dựng href.
+  setTeamRouteHandlesFromJSON($('#team-route-handles')?.textContent);
   initNav();
   let websiteDisplay = null;
   try {

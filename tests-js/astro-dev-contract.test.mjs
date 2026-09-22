@@ -87,6 +87,11 @@ test("Astro dev preserves module resolution, MIME types, refresh, and exact JSON
   for (const path of ["astro.config.mjs", "tsconfig.json"]) {
     await cp(new URL(`../${path}`, import.meta.url), new URL(path, fixtureUrl));
   }
+  await mkdir(new URL("pipeline/", fixtureUrl), { recursive: true });
+  await cp(
+    new URL("../pipeline/team-route-handles.json", import.meta.url),
+    new URL("pipeline/team-route-handles.json", fixtureUrl),
+  );
   await symlink(new URL("../node_modules/", import.meta.url), new URL("node_modules", fixtureUrl), "dir");
   const privateSentinel = "lookup-private-sentinel";
   const privateFiles = [

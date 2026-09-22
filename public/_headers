@@ -4,10 +4,10 @@
 /index.html
   Cache-Control: public, max-age=0, must-revalidate
 
-/teams/recommended/*
+/doi-chuan/*
   Cache-Control: public, max-age=0, must-revalidate
 
-/teams/legacy/*
+/doi-khac/*
   Cache-Control: public, max-age=0, must-revalidate
 
 /404.html

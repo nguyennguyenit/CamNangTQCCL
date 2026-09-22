@@ -274,8 +274,9 @@ export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onN
   const counts=el('p',{class:'stats','aria-live':'polite'});
   const grid=el('div',{class:'season-team-groups'});
   // Title/CTA là link thật: chỉ ghi snapshot, không chặn hành vi trình duyệt.
+  // Marker ổn định của link chi tiết, không pin path segment của route.
   grid.addEventListener('click',event=>{
-    const link=event.target.closest?.('a[href^="/teams/"]');
+    const link=event.target.closest?.('a[data-team-detail-link]');
     if (link) onNavigate?.(event,link);
   });
   const toggle=el('button',{type:'button',class:'filter-collapse-toggle','aria-controls':filters.id,'aria-expanded':'false'},'Bộ lọc');

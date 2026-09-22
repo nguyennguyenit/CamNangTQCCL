@@ -188,7 +188,9 @@ Lookup; bốn file Lookup công khai phải đã trùng candidate, nếu không 
 Xóa candidate private sau khi public check đạt.
 
 Publication đã chọn cũng là inventory của route chi tiết đội; phần route tĩnh và
-trang 404 nằm ở [deployment guide](deployment-guide.md).
+trang 404 nằm ở [deployment guide](deployment-guide.md). Publish generation mới
+phải rebind `generationId` của `pipeline/team-route-handles.json` sang successor
+trước `npm run build`; handle không được sinh lại.
 
 Tên mùa và nhãn bộ lọc dùng chung từ `pipeline/recommended-display-map.json`.
 Phe, loại binh và nguồn tái sử dụng thuật ngữ trên main. Toàn bộ 29 mùa nguồn,

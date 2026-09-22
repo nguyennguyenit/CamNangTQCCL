@@ -1,5 +1,6 @@
 // Điều hướng dùng chung giữa root và trang chi tiết: href chuẩn, nguồn quay lại an toàn
-// và snapshot trạng thái giao diện. Không chạm DOM, không phụ thuộc dữ liệu đội.
+// và snapshot trạng thái giao diện. Không chạm DOM, không phụ thuộc dữ liệu đội: bảng route
+// handle do caller bơm vào qua setTeamRouteHandles.
 
 export const TEAM_RETURN_STORAGE_KEY = 'tqccl:team-return:v1';
 
@@ -14,6 +15,9 @@ const LOOP_QUERY_KEYS = ['detail','legacyTeam','legacyVariant','from'];
 const RETURN_ORIGIN = 'https://tqccl.invalid';
 const UNSAFE_IDENTIFIER = /[\u0000-\u001f\u007f/\\?#%:*"<>|\s]/;
 
+/** Route families published by the build: `r` = Recommended, `l` = legacy originals. */
+const ROUTE_FAMILIES = ['r', 'l'];
+
 function routableIdentifier(value) {
   return typeof value === 'string'
     && value.length > 0
@@ -23,10 +27,64 @@ function routableIdentifier(value) {
     && !value.endsWith('.');
 }
 
+function plainObject(value) {
+  if (!value || typeof value !== 'object') return false;
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === Object.prototype || prototype === null;
+}
+
+/**
+ * Registry bảng route handle: `r[sourceConfigId]` và `l[legacyTeamId]` là final route segment.
+ * Registry chưa khởi tạo, family/identity không có hoặc payload hỏng ⇒ `teamDetailPath` trả null,
+ * tuyệt đối không fallback về URL ID cũ.
+ */
+let teamRouteHandles = null;
+
+/** Validate toàn payload rồi replace nguyên khối; payload hỏng không đụng registry hiện hành. */
+export function setTeamRouteHandles(map) {
+  if (!plainObject(map)) return false;
+  const next = {};
+  for (const family of Object.keys(map)) {
+    if (!ROUTE_FAMILIES.includes(family)) return false;
+    const entries = map[family];
+    if (!plainObject(entries)) return false;
+    const segments = new Set();
+    const handles = new Map();
+    for (const [identity, segment] of Object.entries(entries)) {
+      if (!routableIdentifier(identity) || !routableIdentifier(segment)) return false;
+      if (segments.has(segment)) return false;
+      segments.add(segment);
+      handles.set(identity, segment);
+    }
+    next[family] = handles;
+  }
+  teamRouteHandles = next;
+  return true;
+}
+
+/** Payload JSON nhúng trong document shell; lỗi parse không bao giờ thay registry hiện hành. */
+export function setTeamRouteHandlesFromJSON(raw) {
+  if (typeof raw !== 'string' || !raw) return false;
+  let payload;
+  try {
+    payload = JSON.parse(raw);
+  } catch {
+    return false;
+  }
+  return setTeamRouteHandles(payload);
+}
+
 export function teamDetailPath(target) {
-  if (routableIdentifier(target?.sourceConfigId)) return `/teams/recommended/${encodeURIComponent(target.sourceConfigId)}/`;
-  if (routableIdentifier(target?.legacyTeamId)) return `/teams/legacy/${encodeURIComponent(target.legacyTeamId)}/`;
-  return null;
+  const families = teamRouteHandles;
+  if (!families) return null;
+  const [prefix, family, identity] = routableIdentifier(target?.sourceConfigId)
+    ? ['doi-chuan', 'r', target.sourceConfigId]
+    : routableIdentifier(target?.legacyTeamId)
+      ? ['doi-khac', 'l', target.legacyTeamId]
+      : [];
+  if (!prefix) return null;
+  const segment = families[family]?.get(identity);
+  return segment ? `/${prefix}/${encodeURIComponent(segment)}/` : null;
 }
 
 export function teamDetailHref(target, {from, origin} = {}) {
@@ -198,10 +256,12 @@ export function migrateLegacyReferenceUrl(href, resolver = {}) {
   const legacyVariantId = url.searchParams.get('legacyVariant');
   const from = safeReturnUrl(`${url.pathname}${url.search}${url.hash}`);
   if (detail && resolver.hasRecommended?.(detail)) {
-    return {target: teamDetailHref({sourceConfigId: detail}, {from}), replace: true};
+    const target = teamDetailHref({sourceConfigId: detail}, {from});
+    if (target) return {target, replace: true};
   }
   if (legacyTeamId && resolver.hasLegacy?.(legacyTeamId)) {
-    return {target: teamDetailHref({legacyTeamId, legacyVariantId}, {from}), replace: true};
+    const target = teamDetailHref({legacyTeamId, legacyVariantId}, {from});
+    if (target) return {target, replace: true};
   }
   return null;
 }

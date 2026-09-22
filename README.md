@@ -8,7 +8,7 @@ Website tĩnh tra cứu đội hình, tướng, chiến pháp và hỗ trợ qu�
 
 - 9 section có deep-link bằng hash: Team chuẩn, Team khác, Cùng Tồn, Khai hoang, tướng, chiến pháp, tracker chiêu mộ, soi đội và gợi ý đội từ kho. Hash cũ `#team-pk`/`#meta-cu` được chuẩn hóa về `#team-khac`.
 - Hai tab team dùng chung một browser: search toàn văn, select mùa/danh mục nguồn và chip facet (loại binh, điểm, phe, nhóm, nguồn) đếm theo phạm vi đang chọn; mobile thu gọn vùng lọc sau nút `Bộ lọc`.
-- Mỗi đội có trang chi tiết tĩnh riêng dưới `/teams/recommended/<sourceConfigId>/` hoặc `/teams/legacy/<legacyTeamId>/`; URL ngoài danh sách sinh sẵn trả trang 404 tĩnh.
+- Mỗi đội có trang chi tiết tĩnh riêng dưới `/doi-chuan/<mùa>-<handle>/` hoặc `/doi-khac/<handle>/`; handle tiếng Việt đóng băng trong `pipeline/team-route-handles.json` nên sửa `displayNameVi` không đổi URL. URL cũ `/teams/…` và URL ngoài danh sách sinh sẵn trả trang 404 tĩnh, không redirect.
 - Chọn kịch bản/phiên bản luật dùng chung cho tra cứu, Cùng Tồn và gợi ý; URL giữ phạm vi, bộ lọc và cấu hình đang mở. Khai hoang dùng bản bảo trì mới nhất.
 - Tra cứu 112 tướng và 239 chiến pháp bằng dữ liệu local, hỗ trợ tên Việt/Hán-Việt/Hán.
 - 8 section có deep-link bằng hash: Team chuẩn, Team khác, Cùng Tồn, Khai hoang, Tra cứu, tracker chiêu mộ, soi đội và gợi ý đội từ kho.
@@ -119,7 +119,8 @@ Xem [Deployment Guide](docs/deployment-guide.md) và bản ghi triển khai có 
 ```text
 src/pages/index.astro  # document shell Astro
 src/pages/404.astro    # trang 404 top-level
-src/pages/teams/       # trang chi tiết đội sinh từ catalog
+src/pages/doi-chuan/   # trang chi tiết Đội chuẩn sinh từ catalog
+src/pages/doi-khac/    # trang chi tiết Đội khác sinh từ catalog
 src/lib/, src/pages/   # manifest + static endpoints byte-exact
 css/, js/, data/       # source runtime canonical
 public/_headers        # Pages deployment-control source

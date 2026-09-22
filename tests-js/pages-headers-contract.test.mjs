@@ -8,8 +8,8 @@ const cachePolicy = "public, max-age=0, must-revalidate";
 const expectedRules = [
   "/",
   "/index.html",
-  "/teams/recommended/*",
-  "/teams/legacy/*",
+  "/doi-chuan/*",
+  "/doi-khac/*",
   "/404.html",
   "/js/*",
   "/css/*",
@@ -81,15 +81,19 @@ test("_headers covers every published shell and mutable raw asset", async () => 
     `/data/recommended/${"1".repeat(64)}/manifest.json`,
     `/data/recommended/${"1".repeat(64)}/details-s-${"2".repeat(64)}.json`,
     "/404.html",
-    "/teams/recommended/team-epoddo/",
-    "/teams/recommended/team-epoddo/index.html",
-    "/teams/legacy/team-intro-4/",
-    "/teams/legacy/team-intro-4/index.html",
+    "/doi-chuan/pk-s24-tu-ma-phi-hung/",
+    "/doi-chuan/pk-s24-tu-ma-phi-hung/index.html",
+    "/doi-khac/hoang-ma-thuong/",
+    "/doi-khac/hoang-ma-thuong/index.html",
   ];
   for (const path of publicPaths) {
     assert.equal(policyFor(rules, path), cachePolicy, `${path} must revalidate`);
   }
   for (const path of ["/pipeline/private.py", "/worker/src/index.ts", "/tests/example.py", "/plans/plan.md"]) {
+    assert.equal(policyFor(rules, path), undefined, `${path} must not match a public rule`);
+  }
+  // The retired route family is no longer a published detail page, so no rule may claim it.
+  for (const path of ["/teams/recommended/team-epoddo/", "/teams/legacy/team-intro-4/", "/teams/"]) {
     assert.equal(policyFor(rules, path), undefined, `${path} must not match a public rule`);
   }
 });
