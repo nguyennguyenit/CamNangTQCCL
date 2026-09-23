@@ -59,7 +59,7 @@ REQUIRED_SECTIONS = (
     "team-chuan",
     "team-khac",
 )
-REQUIRED_ROUTE_FAMILIES = ("legacy-detail", "recommended-detail")
+REQUIRED_ROUTE_FAMILIES = ("khaihoang-detail", "legacy-detail", "recommended-detail")
 REQUIRED_OWNER_FILES = (
     "js/app.js",
     "js/team-filter-section.js",
@@ -218,10 +218,10 @@ CANONICAL_DATA_FIELDS = {
 }
 AUTHORED_VI_DATA_FIELDS = {
     "avoid",
+    "buildNote",
     "context",
     "disclaimerRaw",
     "displayLabel",
-    "displayNote",
     "evidenceRefs",
     "good",
     "groupLabel",
@@ -229,6 +229,7 @@ AUTHORED_VI_DATA_FIELDS = {
     "note",
     "notes",
     "notesRaw",
+    "openingNote",
     "openingSuggestionsRaw",
     "overview",
     "seasonNote",
@@ -333,6 +334,7 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:recruit/banner-name-prompt", "prompt", "Tên gói/banner hạn giờ:", "js/recruit-tracker.js", "addLimitedBanner", "prompt", "translate"),
     ("ui:recruit-store/account-missing", "error", "Thiếu account.", "js/recruit-tracker-store.js", "validateRecruitTrackerImport", "error", "translate"),
     ("ui:recruit-store/banner-missing", "error", "Thiếu banner.", "js/recruit-tracker-store.js", "validateRecruitTrackerImport", "error", "translate"),
+    ("ui:khaihoang/guide-heading", "heading", "Hướng dẫn khai hoang", "js/render.js", "khaihoangGuide", "data", "authored-vi", 'el("h2", { class: "kh-guide-title" }, "Hướng dẫn khai hoang")'),
 )
 
 
@@ -527,7 +529,7 @@ def validate_policy(policy):
     families = policy["routeFamilies"]
     family_ids = [family.get("id") for family in families]
     if tuple(sorted(family_ids)) != REQUIRED_ROUTE_FAMILIES:
-        raise ValueError("policy must cover both standalone detail route families")
+        raise ValueError("policy must cover all three standalone detail route families")
 
     glossary_sources = set(sources)
     for section in sections:
@@ -1132,8 +1134,10 @@ def validate_review_receipts(receipts, ledger, *, root=ROOT, digest, review_dir=
         if len(receipt_keys) != len(set(receipt_keys)):
             problems.append({"location": where, "reason": "review batch contains duplicate receipt locations"})
             continue
-        if set(results) != set(receipt_keys):
-            problems.append({"location": where, "reason": "captured reviewer locations do not exactly match receipt locations"})
+        # Historical outputs stay immutable; a receipt claims every output location
+        # that remains active in the independently inventoried translation ledger.
+        if set(receipt_keys) != set(results).intersection(entries):
+            problems.append({"location": where, "reason": "receipt locations do not match active captured reviewer locations"})
             continue
         for item in batch["items"]:
             key = (item["entityId"], item["fieldPath"])

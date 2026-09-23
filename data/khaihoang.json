@@ -1,6 +1,7 @@
 {
   "teams": [
     {
+      "id": "gia-cat-khac-sp-ma-sieu-phap-chinh",
       "unitType": "Thương",
       "heroes": [
         {
@@ -35,7 +36,7 @@
             "Thịnh Khí Linh Địch"
           ],
           "note": "Sau khi lv.20 để Pháp Chính làm chủ tướng",
-          "displayNote": "Sau cấp 20 để Pháp Chính làm chủ tướng."
+          "buildNote": "Sau cấp 20 để Pháp Chính làm chủ tướng."
         }
       ],
       "title": "Gia Cát Khác · SP Mã Siêu · Pháp Chính",
@@ -80,7 +81,8 @@
             }
           ],
           "note": "Pháp Chính mang Tiềm Long từ đầu; cần có Thôi Phong. Nguồn hướng tới tài khoản nhiều hột, không suy các mốc mở đất cho mọi tài khoản.",
-          "displayNote": "Pháp Chính mang Tiềm Long từ đầu; cần có Thôi Phong. Cấu hình hướng tới tài khoản nhiều hột; không suy các mốc mở đất cho mọi tài khoản.",
+          "buildNote": "Pháp Chính mang Tiềm Long từ đầu; cần có Thôi Phong.",
+          "openingNote": "Cấu hình hướng tới tài khoản nhiều hột; không suy các mốc mở đất cho mọi tài khoản.",
           "sources": [
             {
               "label": "CNBlogs — hướng dẫn SP Mã Siêu",
@@ -130,7 +132,7 @@
             }
           ],
           "note": "Đổi vị trí Giải Phiền và Thịnh Khí; sau 20 SP Mã Siêu dùng Bạo Lệ + Mau Giành. Nguồn mùa S23.",
-          "displayNote": "Đổi vị trí Giải Phiền và Thịnh Khí; sau cấp 20 SP Mã Siêu dùng Bạo Lệ + Mau Giành.",
+          "buildNote": "Đổi vị trí Giải Phiền và Thịnh Khí; sau cấp 20 SP Mã Siêu dùng Bạo Lệ + Mau Giành.",
           "sources": [
             {
               "label": "貂蝉 — hướng dẫn S23",
@@ -143,6 +145,7 @@
       ]
     },
     {
+      "id": "gia-cat-khac-quan-ngan-binh-nhac-tien",
       "unitType": "Thương",
       "heroes": [
         {
@@ -233,7 +236,7 @@
             }
           ],
           "note": "Sau 20 chuyển chủ tướng sang Quan Ngân Bình, Thanh Châu đặt trên Quan. Chỉnh Võ Lực Quan cao hơn Nhạc theo nguồn. Nguồn dùng 士争先赴 (Sĩ Tranh Tiên Phó); chưa xác nhận là alias của Nhanh Chân Tranh Đất.",
-          "displayNote": "Sau cấp 20 chuyển chủ tướng sang Quan Ngân Bình, Thanh Châu đặt trên Quan. Chỉnh Võ Lực Quan cao hơn Nhạc. Sĩ Tranh Tiên Phó chưa được xác nhận là alias của Nhanh Chân Tranh Đất.",
+          "buildNote": "Sau cấp 20 chuyển chủ tướng sang Quan Ngân Bình, Thanh Châu đặt trên Quan. Chỉnh Võ Lực Quan cao hơn Nhạc. Sĩ Tranh Tiên Phó chưa được xác nhận là alias của Nhanh Chân Tranh Đất.",
           "sources": [
             {
               "label": "リーレ — hướng dẫn S13",
@@ -246,6 +249,7 @@
       ]
     },
     {
+      "id": "khuong-duy-ha-hau-uyen-gia-cat-khac",
       "unitType": "Cung",
       "heroes": [
         {
@@ -280,7 +284,7 @@
             "Thịnh Khí Linh Địch"
           ],
           "note": "Sau khi lv.20 để Gia Cát Khác làm chủ tướng",
-          "displayNote": "Sau cấp 20 để Gia Cát Khác làm chủ tướng."
+          "buildNote": "Sau cấp 20 để Gia Cát Khác làm chủ tướng."
         }
       ],
       "title": "Khương Duy · Hạ Hầu Uyên · Gia Cát Khác",
@@ -333,7 +337,7 @@
             }
           ],
           "note": "Sau 20 dùng Bát Môn thay Tiềm Long trên Gia Cát Khác. Cấu hình Cung trong nguồn; không đổi sang Kỵ mà vẫn giữ Vô Đương.",
-          "displayNote": "Sau cấp 20 dùng Bát Môn thay Tiềm Long trên Gia Cát Khác. Giữ cấu hình Cung và Vô Đương, không đổi sang Kỵ.",
+          "buildNote": "Sau cấp 20 dùng Bát Môn thay Tiềm Long trên Gia Cát Khác. Giữ cấu hình Cung và Vô Đương, không đổi sang Kỵ.",
           "sources": [
             {
               "label": "貂蝉 — hướng dẫn S23",
@@ -346,6 +350,7 @@
       ]
     },
     {
+      "id": "luc-ton-ta-tu-truong-xuan-hoa",
       "unitType": "Cung",
       "heroes": [
         {
@@ -358,7 +363,8 @@
             "Vô Đương Phi Quân"
           ],
           "note": "Cộng Trí Lực. Nguồn sát thương chính của đội; ưu tiên Lục Tốn nhiều hột, kết quả phụ thuộc khả năng phát động chiến pháp.",
-          "displayNote": "Cộng Trí Lực. Là nguồn sát thương chính của đội; ưu tiên Lục Tốn nhiều hột, kết quả phụ thuộc khả năng phát động chiến pháp."
+          "buildNote": "Cộng Trí Lực.",
+          "openingNote": "Là nguồn sát thương chính của đội; ưu tiên Lục Tốn nhiều hột, kết quả phụ thuộc khả năng phát động chiến pháp."
         },
         {
           "name": "Tả Từ",
@@ -370,7 +376,7 @@
             "Tam Thế Trận"
           ],
           "note": "Cộng Trí Lực theo bản Kazten. Có thể thay Thịnh Khí Linh Địch bằng Sĩ Biệt Tam Nhật tùy thủ quân và độ đỏ; chọn một trong hai. Sau cấp 20 và thức tỉnh, nhận Tam Thế Trận từ Trương Xuân Hoa.",
-          "displayNote": "Cộng Trí Lực. Có thể thay Thịnh Khí Linh Địch bằng Sĩ Biệt Tam Nhật tùy thủ quân và độ đỏ; chọn một trong hai. Sau cấp 20 và thức tỉnh, nhận Tam Thế Trận từ Trương Xuân Hoa."
+          "buildNote": "Cộng Trí Lực. Có thể thay Thịnh Khí Linh Địch bằng Sĩ Biệt Tam Nhật tùy thủ quân và độ đỏ; chọn một trong hai. Sau cấp 20 và thức tỉnh, nhận Tam Thế Trận từ Trương Xuân Hoa."
         },
         {
           "name": "Trương Xuân Hoa",
@@ -382,7 +388,7 @@
             "Sợ Bóng Sợ Gió"
           ],
           "note": "Chỉnh Tốc Độ để hành động trước Lục Tốn, còn lại cộng Trí Lực; không có số điểm tốc cố định cho mọi tài khoản. Sau thức tỉnh chuyển Tam Thế sang Tả Từ, dùng Đoạt Hồn Hiệp Phách + Sợ Bóng Sợ Gió.",
-          "displayNote": "Chỉnh Tốc Độ để hành động trước Lục Tốn, còn lại cộng Trí Lực; không có số điểm tốc cố định cho mọi tài khoản. Sau thức tỉnh chuyển Tam Thế sang Tả Từ, dùng Đoạt Hồn Hiệp Phách + Sợ Bóng Sợ Gió."
+          "buildNote": "Chỉnh Tốc Độ để hành động trước Lục Tốn, còn lại cộng Trí Lực; không có số điểm tốc cố định cho mọi tài khoản. Sau thức tỉnh chuyển Tam Thế sang Tả Từ, dùng Đoạt Hồn Hiệp Phách + Sợ Bóng Sợ Gió."
         }
       ],
       "title": "Lục Tốn · Tả Từ · Trương Xuân Hoa",
@@ -429,7 +435,7 @@
             }
           ],
           "note": "Biến thể Dengeki: Tam Thế ở Trương Xuân Hoa, bỏ Sợ Bóng Sợ Gió để Tả Từ mang cả Thịnh Khí + Sĩ Biệt. Khác với bản mặc định cho Tả Từ mang Tam Thế + một trong Thịnh Khí/Sĩ Biệt; không trộn hai cấu hình. Nguồn chỉ liệt kê bộ hai chiêu, không chốt trước cấp 20 hoặc chứng minh mạnh hơn bản mặc định.",
-          "displayNote": "Tam Thế ở Trương Xuân Hoa; Tả Từ mang cả Thịnh Khí + Sĩ Biệt thay Sợ Bóng Sợ Gió. Không trộn hai cấu hình. Chỉ có bộ hai chiêu, chưa chốt trước cấp 20 hoặc mạnh hơn mặc định.",
+          "buildNote": "Tam Thế ở Trương Xuân Hoa; Tả Từ mang cả Thịnh Khí + Sĩ Biệt thay Sợ Bóng Sợ Gió. Không trộn hai cấu hình. Chỉ có bộ hai chiêu, chưa chốt trước cấp 20 hoặc mạnh hơn mặc định.",
           "sources": [
             {
               "label": "Dengeki/Qookka — khai hoang S23",
@@ -443,7 +449,7 @@
       "commanderAfter": "Lục Tốn",
       "context": "Tam Thế Lục · Cung · có nguồn Nhật Global. Cấu hình mặc định theo nhánh Thịnh Khí trong hướng dẫn Kazten.",
       "note": "Thận trọng với thủ quân có tất trúng vì làm giảm lợi thế né tránh của Tả Từ. Mốc mở đất phụ thuộc hột tướng, trang bị, thủ quân và đội đánh hao; chưa đủ căn cứ xếp hạng meta Binh Diễn Xuân Thu hiện tại.",
-      "displayNote": "Thận trọng với thủ quân có tất trúng vì làm giảm lợi thế né tránh của Tả Từ. Mốc mở đất phụ thuộc hột tướng, trang bị, thủ quân và đội đánh hao.",
+      "openingNote": "Thận trọng với thủ quân có tất trúng vì làm giảm lợi thế né tránh của Tả Từ. Mốc mở đất phụ thuộc hột tướng, trang bị, thủ quân và đội đánh hao.",
       "sources": [
         {
           "label": "Kazten — cấu hình và cộng điểm, 20/11/2025",
@@ -460,6 +466,7 @@
       ]
     },
     {
+      "id": "ha-hau-uyen-thai-su-tu-hoang-nguyet-anh",
       "unitType": "Kỵ",
       "heroes": [
         {
@@ -546,7 +553,7 @@
             }
           ],
           "note": "Chọn nhánh Bạo Lệ được nguồn liệt kê. Bách Kỵ đặt trên Hạ Hầu Uyên; Hoàng Nguyệt Anh mang Hổ Báo + Tam Thế. Đây là cấu hình Kỵ.",
-          "displayNote": "Chọn nhánh Bạo Lệ. Bách Kỵ đặt trên Hạ Hầu Uyên; Hoàng Nguyệt Anh mang Hổ Báo + Tam Thế. Đây là cấu hình Kỵ.",
+          "buildNote": "Chọn nhánh Bạo Lệ. Bách Kỵ đặt trên Hạ Hầu Uyên; Hoàng Nguyệt Anh mang Hổ Báo + Tam Thế. Đây là cấu hình Kỵ.",
           "sources": [
             {
               "label": "真戦ナビ — 6 đội khai hoang PK",
@@ -559,6 +566,7 @@
       ]
     },
     {
+      "id": "ton-thuong-huong-tran-cung-hoang-nguyet-anh",
       "unitType": "Cung",
       "heroes": [
         {
@@ -631,7 +639,7 @@
             }
           ],
           "note": "Chọn nhánh Cung: giữ Vô Đương ở Trần Cung; khác bản mặc định chuyển Kỵ. Nguồn cũ, chưa xác nhận vị trí meta hiện tại.",
-          "displayNote": "Chọn nhánh Cung: giữ Vô Đương ở Trần Cung, khác bản mặc định chuyển Kỵ.",
+          "buildNote": "Chọn nhánh Cung: giữ Vô Đương ở Trần Cung, khác bản mặc định chuyển Kỵ.",
           "sources": [
             {
               "label": "九游研究所 trên Bilibili — Tôn Thượng Hương",
@@ -643,6 +651,7 @@
       ]
     },
     {
+      "id": "thai-van-co-khuong-duy-thai-su-tu",
       "unitType": "Cung",
       "heroes": [
         {
@@ -682,6 +691,7 @@
       "title": "Thái Văn Cơ · Khương Duy · Thái Sử Từ"
     },
     {
+      "id": "khuong-duy-ha-hau-uyen-phap-chinh",
       "unitType": "Cung",
       "heroes": [
         {
@@ -768,7 +778,7 @@
             }
           ],
           "note": "Khương Duy mang Vô Đương trước 20; sau 20 Hạ Hầu Uyên dùng Mau Giành thay Nhất Kỵ. Chọn nhánh Cung của nguồn.",
-          "displayNote": "Khương Duy mang Vô Đương trước cấp 20; sau cấp 20 Hạ Hầu Uyên dùng Mau Giành thay Nhất Kỵ. Đây là nhánh Cung.",
+          "buildNote": "Khương Duy mang Vô Đương trước cấp 20; sau cấp 20 Hạ Hầu Uyên dùng Mau Giành thay Nhất Kỵ. Đây là nhánh Cung.",
           "sources": [
             {
               "label": "18183 — mục 姜夏法",
@@ -781,6 +791,7 @@
       ]
     },
     {
+      "id": "sp-vien-thieu-ha-hau-uyen-truong-xuan-hoa",
       "unitType": "Cung",
       "heroes": [
         {
@@ -861,7 +872,7 @@
             }
           ],
           "note": "SP Viên Thiệu đổi Nằm Gai sang Xế Đao; Trương Xuân Hoa đổi Thịnh Khí sang Thời Cơ. Nguồn chỉ cho bộ hai chiêu.",
-          "displayNote": "SP Viên Thiệu đổi Nằm Gai sang Xế Đao; Trương Xuân Hoa đổi Thịnh Khí sang Thời Cơ. Chỉ có bộ hai chiêu.",
+          "buildNote": "SP Viên Thiệu đổi Nằm Gai sang Xế Đao; Trương Xuân Hoa đổi Thịnh Khí sang Thời Cơ. Chỉ có bộ hai chiêu.",
           "sources": [
             {
               "label": "Dengeki/Qookka — khai hoang S23",
@@ -873,6 +884,7 @@
       ]
     },
     {
+      "id": "khuong-duy-quan-ngan-binh-thai-van-co",
       "unitType": "Kỵ",
       "heroes": [
         {
@@ -920,6 +932,7 @@
       }
     },
     {
+      "id": "quan-ngan-binh-nhac-tien-thai-van-co",
       "unitType": "Thương",
       "heroes": [
         {
@@ -1006,7 +1019,7 @@
             }
           ],
           "note": "Sau 20 Nhạc Tiến mang Thanh Châu; Thái Văn Cơ mang Tạm Lánh + Cắt Xương. Nguồn dùng 士争先赴 (Sĩ Tranh Tiên Phó); chưa xác nhận là alias của Nhanh Chân Tranh Đất.",
-          "displayNote": "Sau cấp 20 Nhạc Tiến mang Thanh Châu; Thái Văn Cơ mang Tạm Lánh + Cắt Xương. Sĩ Tranh Tiên Phó chưa được xác nhận là alias của Nhanh Chân Tranh Đất.",
+          "buildNote": "Sau cấp 20 Nhạc Tiến mang Thanh Châu; Thái Văn Cơ mang Tạm Lánh + Cắt Xương. Sĩ Tranh Tiên Phó chưa được xác nhận là alias của Nhanh Chân Tranh Đất.",
           "sources": [
             {
               "label": "18183 — mục 机关枪",
@@ -1019,6 +1032,7 @@
       ]
     },
     {
+      "id": "gia-cat-khac-thai-su-tu-ta-tu",
       "unitType": "Cung",
       "heroes": [
         {
@@ -1031,7 +1045,7 @@
             "Thịnh Khí Linh Địch"
           ],
           "note": "Chủ tướng trước và sau lv.20; cộng toàn Thống Soái. Sau lv.20 cần thức tỉnh. Giữ ba mức thích tính khác nhau để Võ Phong Trận hoạt động. Sau điện 7, có thể luyện Trình Phổ đến lv.20 để thay làm chủ tướng, giữ Võ Phong và đổi Thịnh Khí sang Lâm Nguy Cứu Chủ.",
-          "displayNote": "Chủ tướng trước và sau cấp 20; cộng toàn Thống Soái. Sau cấp 20 cần thức tỉnh. Giữ ba mức thích tính khác nhau để Võ Phong Trận hoạt động. Sau điện 7, có thể luyện Trình Phổ đến cấp 20 để thay làm chủ tướng, giữ Võ Phong và đổi Thịnh Khí sang Lâm Nguy Cứu Chủ."
+          "buildNote": "Chủ tướng trước và sau cấp 20; cộng toàn Thống Soái. Sau cấp 20 cần thức tỉnh. Giữ ba mức thích tính khác nhau để Võ Phong Trận hoạt động. Sau điện 7, có thể luyện Trình Phổ đến cấp 20 để thay làm chủ tướng, giữ Võ Phong và đổi Thịnh Khí sang Lâm Nguy Cứu Chủ."
         },
         {
           "name": "Thái Sử Từ",
@@ -1043,7 +1057,8 @@
             "Mau Giành Lợi Thế"
           ],
           "note": "Cộng khoảng 15 điểm Tốc Độ, còn lại Võ Lực; chỉnh tốc theo thủ quân. Cần có Thôi Phong Đoạn Nhẫn; không nhầm với Phá Phong Đoạn Nhẫn. Ưu tiên đất thương, tránh đội tất trúng hoặc hỗn loạn.",
-          "displayNote": "Cộng khoảng 15 điểm Tốc Độ, còn lại Võ Lực; chỉnh tốc theo thủ quân. Cần có Thôi Phong Đoạn Nhẫn; không nhầm với Phá Phong Đoạn Nhẫn. Ưu tiên đất Thương, tránh đội tất trúng hoặc hỗn loạn."
+          "buildNote": "Cộng khoảng 15 điểm Tốc Độ, còn lại Võ Lực; chỉnh tốc theo thủ quân. Cần có Thôi Phong Đoạn Nhẫn; không nhầm với Phá Phong Đoạn Nhẫn.",
+          "openingNote": "Ưu tiên đất Thương, tránh đội tất trúng hoặc hỗn loạn."
         },
         {
           "name": "Tả Từ",
@@ -1055,7 +1070,8 @@
             "Thời Cơ Chiến Thắng"
           ],
           "note": "Cộng toàn Thống Soái trong giai đoạn đầu; khi chuyển Trình Phổ đánh đất cao, đổi sang toàn Trí Lực. Build tham khảo CN/KR và cộng đồng Hoa ngữ; đối chiếu phiên bản chiến pháp, hột tướng và thủ quân của mùa đang chơi.",
-          "displayNote": "Cộng toàn Thống Soái trong giai đoạn đầu; khi chuyển Trình Phổ đánh đất cao, đổi sang toàn Trí Lực. Đối chiếu phiên bản chiến pháp, hột tướng và thủ quân của mùa đang chơi."
+          "buildNote": "Cộng toàn Thống Soái trong giai đoạn đầu; khi chuyển Trình Phổ đánh đất cao, đổi sang toàn Trí Lực.",
+          "openingNote": "Đối chiếu phiên bản chiến pháp, hột tướng và thủ quân của mùa đang chơi."
         }
       ],
       "title": "Gia Cát Khác · Thái Sử Từ · Tả Từ",
@@ -1102,7 +1118,8 @@
             }
           ],
           "note": "Thay Thịnh Khí bằng Sĩ Biệt khi chuẩn bị đất 6. Bản mặc định giữ Thịnh Khí để quét đất 5; đối chiếu thủ quân trước khi đánh.",
-          "displayNote": "Thay Thịnh Khí bằng Sĩ Biệt khi chuẩn bị đất 6. Bản mặc định giữ Thịnh Khí để quét đất 5; đối chiếu thủ quân trước khi đánh.",
+          "buildNote": "Thay Thịnh Khí bằng Sĩ Biệt khi chuẩn bị đất 6.",
+          "openingNote": "Bản mặc định giữ Thịnh Khí để quét đất 5; đối chiếu thủ quân trước khi đánh.",
           "sources": [
             {
               "label": "凱獃 — Võ Phong Thái Sử Từ",
@@ -1145,7 +1162,7 @@
             }
           ],
           "note": "Cùng bộ chiêu với lựa chọn đất 6 Bahamut, nhưng tác giả Hàn dùng ngay sau cấp 20. Giữ ba mức thích tính khác nhau để Võ Phong hoạt động.",
-          "displayNote": "Dùng bộ chiêu này ngay sau cấp 20. Giữ ba mức thích tính khác nhau để Võ Phong hoạt động.",
+          "buildNote": "Dùng bộ chiêu này ngay sau cấp 20. Giữ ba mức thích tính khác nhau để Võ Phong hoạt động.",
           "sources": [
             {
               "label": "DCInside — trải nghiệm 제태좌",
@@ -1164,6 +1181,7 @@
       "context": "Trước cấp 20 và sau thức tỉnh quét đất 5. Xem lựa chọn riêng khi chuẩn bị đất 6."
     },
     {
+      "id": "sp-lo-truc-thai-su-tu-truong-xuan-hoa",
       "unitType": "Cung",
       "heroes": [
         {
@@ -1198,7 +1216,7 @@
             "Đồng Lòng Hợp Sức"
           ],
           "note": "Đồng Lòng Hợp Sức (勠力同心): chiến pháp sự kiện Chủ động, xác suất 50%, trị liệu và tăng Thống Soái; đã đối chiếu ảnh client Việt ngày 06/09/2026.",
-          "displayNote": "Đồng Lòng Hợp Sức (勠力同心): chiến pháp sự kiện Chủ động, xác suất 50%, trị liệu và tăng Thống Soái."
+          "buildNote": "Đồng Lòng Hợp Sức (勠力同心): chiến pháp sự kiện Chủ động, xác suất 50%, trị liệu và tăng Thống Soái."
         }
       ],
       "title": "SP Lô Trực · Thái Sử Từ · Trương Xuân Hoa",
@@ -1211,6 +1229,7 @@
       ]
     },
     {
+      "id": "sp-hoang-nguyet-anh-sp-ma-sieu-gia-cat-khac",
       "unitType": "Thương",
       "heroes": [
         {
@@ -1223,7 +1242,7 @@
             "Giải Phiền Vệ"
           ],
           "note": "Sheet cho phép thay bằng Pháp Chính; đội Gia Cát Khác · SP Mã Siêu · Pháp Chính đã có riêng. Chiến pháp sau lv.20 dùng khi đã thức tỉnh.",
-          "displayNote": "Có thể thay bằng Pháp Chính; đội Gia Cát Khác · SP Mã Siêu · Pháp Chính đã có riêng. Chiến pháp sau cấp 20 dùng khi đã thức tỉnh."
+          "buildNote": "Có thể thay bằng Pháp Chính; đội Gia Cát Khác · SP Mã Siêu · Pháp Chính đã có riêng. Chiến pháp sau cấp 20 dùng khi đã thức tỉnh."
         },
         {
           "name": "SP Mã Siêu",
@@ -1252,6 +1271,7 @@
       "context": "Nhánh trước 20 có căn cứ CN; khác biệt sau 20 chưa đủ dữ liệu xác minh để thêm thành cấu hình lựa chọn."
     },
     {
+      "id": "chu-thai-truong-phi-truong-xuan-hoa",
       "unitType": "Khiên",
       "heroes": [
         {
@@ -1264,7 +1284,7 @@
             "Phong Thi Trận"
           ],
           "note": "Cộng Thống Soái.",
-          "displayNote": "Cộng Thống Soái."
+          "buildNote": "Cộng Thống Soái."
         },
         {
           "name": "Trương Phi",
@@ -1276,7 +1296,8 @@
             "Hoành Tảo Thiên Quân"
           ],
           "note": "Chủ tướng trước và sau cấp 20; cộng Võ Lực. Nguồn sát thương chính của đội, ưu tiên Trương Phi nhiều hột. Theo Kazten, có thể thay Kích Kỳ Nọa Quy bằng Phá Quân Uy Thắng.",
-          "displayNote": "Chủ tướng trước và sau cấp 20; cộng Võ Lực. Là nguồn sát thương chính của đội, ưu tiên Trương Phi nhiều hột. Có thể thay Kích Kỳ Nọa Quy bằng Phá Quân Uy Thắng."
+          "buildNote": "Chủ tướng trước và sau cấp 20; cộng Võ Lực.",
+          "openingNote": "Là nguồn sát thương chính của đội, ưu tiên Trương Phi nhiều hột. Có thể thay Kích Kỳ Nọa Quy bằng Phá Quân Uy Thắng."
         },
         {
           "name": "Trương Xuân Hoa",
@@ -1288,7 +1309,7 @@
             "Tạm Lánh Sóng Gió"
           ],
           "note": "Cộng Trí Lực theo bản Kazten.",
-          "displayNote": "Cộng Trí Lực."
+          "buildNote": "Cộng Trí Lực."
         }
       ],
       "title": "Chu Thái · Trương Phi · Trương Xuân Hoa",
@@ -1296,7 +1317,8 @@
       "period": "Trước cấp 20 và sau thức tỉnh · Kazten, 20/11/2025",
       "context": "Đội khai hoang khiên 張周春盾, hướng chuyển sang Hạt Nhân Trương Phi. Có hướng dẫn và ghi nhận người chơi Nhật Global; chưa đủ căn cứ xếp hạng meta cho mùa Binh Diễn Xuân Thu.",
       "note": "Bản S20 ngày 25/05/2025 giữ cùng bộ chiêu nhưng thay Kích Kỳ Nọa Quy bằng 疾風豪雨 (chưa xác nhận tên Việt); Trương Xuân Hoa cộng Thống Soái trước cấp 20, Trí Lực sau cấp 20. Mốc mở đất phụ thuộc hột tướng, trang bị, thủ quân và đội đánh hao; không áp mốc nhanh nhất cho mọi tài khoản.",
-      "displayNote": "Ở cấu hình mặc định, Trương Xuân Hoa cộng Trí Lực. Phương án thay Kích Kỳ Nọa Quy bằng 疾風豪雨 (chưa xác nhận tên Việt) có cách cộng điểm riêng: Trương Xuân Hoa cộng Thống Soái trước cấp 20, Trí Lực sau cấp 20. Mốc mở đất phụ thuộc hột tướng, trang bị, thủ quân và đội đánh hao; không áp mốc nhanh nhất cho mọi tài khoản.",
+      "buildNote": "Ở cấu hình mặc định, Trương Xuân Hoa cộng Trí Lực. Phương án thay Kích Kỳ Nọa Quy bằng 疾風豪雨 (chưa xác nhận tên Việt) có cách cộng điểm riêng: Trương Xuân Hoa cộng Thống Soái trước cấp 20, Trí Lực sau cấp 20.",
+      "openingNote": "Mốc mở đất phụ thuộc hột tướng, trang bị, thủ quân và đội đánh hao; không áp mốc nhanh nhất cho mọi tài khoản.",
       "commanderBefore": "Trương Phi",
       "commanderAfter": "Trương Phi",
       "sources": [
@@ -1319,11 +1341,12 @@
       ]
     },
     {
+      "id": "truong-xuan-hoa-lu-bo-ta-tu",
       "unitType": "Cung",
       "heroes": [
-        {"name":"Trương Xuân Hoa","unitTypeAfter":"Cung","tacticsAfter":["Thịnh Khí Linh Địch","Võ Phong Trận"],"note":"Cấu hình cấp 32 đã đối chiếu; không suy ra bộ trước cấp 20.","displayNote":"Chỉ có dữ liệu sau cấp 20; không suy ra bộ trước cấp 20."},
-        {"name":"Lữ Bố","unitTypeAfter":"Cung","tacticsAfter":["Thôi Phong Đoạn Nhẫn","Mau Giành Lợi Thế"],"note":"Cấu hình cấp 32 đã đối chiếu; không suy ra bộ trước cấp 20.","displayNote":"Chỉ có dữ liệu sau cấp 20; không suy ra bộ trước cấp 20."},
-        {"name":"Tả Từ","unitTypeAfter":"Cung","tacticsAfter":["Lâm Nguy Cứu Chủ","Tạm Lánh Sóng Gió"],"note":"Cấu hình cấp 32 đã đối chiếu; không suy ra bộ trước cấp 20.","displayNote":"Chỉ có dữ liệu sau cấp 20; không suy ra bộ trước cấp 20."}
+        {"name":"Trương Xuân Hoa","unitTypeAfter":"Cung","tacticsAfter":["Thịnh Khí Linh Địch","Võ Phong Trận"],"note":"Cấu hình cấp 32 đã đối chiếu; không suy ra bộ trước cấp 20.","buildNote":"Chỉ có dữ liệu sau cấp 20; không suy ra bộ trước cấp 20."},
+        {"name":"Lữ Bố","unitTypeAfter":"Cung","tacticsAfter":["Thôi Phong Đoạn Nhẫn","Mau Giành Lợi Thế"],"note":"Cấu hình cấp 32 đã đối chiếu; không suy ra bộ trước cấp 20.","buildNote":"Chỉ có dữ liệu sau cấp 20; không suy ra bộ trước cấp 20."},
+        {"name":"Tả Từ","unitTypeAfter":"Cung","tacticsAfter":["Lâm Nguy Cứu Chủ","Tạm Lánh Sóng Gió"],"note":"Cấu hình cấp 32 đã đối chiếu; không suy ra bộ trước cấp 20.","buildNote":"Chỉ có dữ liệu sau cấp 20; không suy ra bộ trước cấp 20."}
       ],
       "title":"Trương Xuân Hoa · Lữ Bố · Tả Từ",
       "commanderAfter":"Trương Xuân Hoa",
@@ -1337,6 +1360,7 @@
       }
     },
     {
+      "id": "sp-chu-tuan-ha-hau-uyen-gia-cat-khac",
       "unitType":"Cung",
       "heroes":[
         {"name":"SP Chu Tuấn","unitTypeBefore":"Cung","tacticBefore":"Vô Đương Phi Quân","unitTypeAfter":"Cung","tacticsAfter":["Vô Đương Phi Quân","Sợ Bóng Sợ Gió"]},

@@ -168,9 +168,18 @@ python3 -m pipeline.site_localization inventory \
 ```
 
 Review inventory; cập nhật identity/display map, `pipeline/site-translations.json`
-và receipt độc lập trong `pipeline/site-translation-reviews.json`. Không sửa
-generation đã xuất hoặc tự refresh fingerprint để né review. Dựng và kiểm
-candidate mới ở đường dẫn rỗng, rồi mới publish:
+và receipt độc lập trong `pipeline/site-translation-reviews.json`. Output reviewer
+đã lưu là bằng chứng lịch sử bất biến; khi source location nghỉ, receipt của batch
+cũ chỉ claim phần giao với ledger đang hoạt động, còn output giữ nguyên tất cả
+verdict. Validator buộc receipt claim **mọi** location của output còn active;
+ledger phải khớp obligation suy từ nguồn và mỗi entry cần đúng một accepted
+review. Location mới phải có output/reviewer độc lập, không lấy review cũ sang
+đường dẫn mới hay tự refresh fingerprint để né review. Chuỗi tiếng Việt tự soạn
+trong UI không có nguồn để dịch (ví dụ heading hướng dẫn Khai hoang) khai location
+trong `pipeline/site-localization-policy.json` với owner file::symbol và
+classification `authored-vi` kèm text-check evidence từ review độc lập; loại này
+cố ý không nằm trong ledger/receipt dịch. Không sửa generation đã xuất.
+Dựng và kiểm candidate mới ở đường dẫn rỗng, rồi mới publish:
 
 ```bash
 python3 -m pipeline.site_localization build --root . --stage all --output .cache/site-localization-candidate

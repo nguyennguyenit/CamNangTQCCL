@@ -1,10 +1,15 @@
-"""Freeze reviewed route handles for the Recommended (Đội chuẩn) and legacy (Đội khác) team pages.
+"""Freeze reviewed route handles for the Recommended (Đội chuẩn), legacy (Đội khác) and Khai hoang
+team pages.
 
 `--write` derives the initial ledger once from the pinned generation and refuses to reassign an
 existing ledger, so a later `displayNameVi` translation can never move a published URL. `--check`
 only validates the frozen ledger (publication integrity, generation/hash pin, exact key sets,
 routability, season-prefix rule and final-segment uniqueness) and never rebuilds assignments from
-the current display names.
+the current display names or titles.
+
+The ledger schema version is independent of the Recommended publication schema version: the ledger
+is v2 (adding `khaihoangSha256` and `handles.khaihoang`), while the Recommended selector, manifest
+and index payloads stay v1.
 
     python3 -m pipeline.team_route_handles --write
     python3 -m pipeline.team_route_handles --check
@@ -24,16 +29,18 @@ from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 
-SCHEMA_VERSION = 1
+PUBLICATION_SCHEMA_VERSION = 1
+LEDGER_SCHEMA_VERSION = 2
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_LEDGER_PATH = REPO_ROOT / "pipeline" / "team-route-handles.json"
 DEFAULT_GENERATION_ROOT = REPO_ROOT / "src" / "data" / "recommended-reference"
 DEFAULT_TEAMS_PATH = REPO_ROOT / "data" / "teams.json"
+DEFAULT_KHAIHOANG_PATH = REPO_ROOT / "data" / "khaihoang.json"
 DEFAULT_DISPLAY_MAP_PATH = REPO_ROOT / "pipeline" / "recommended-display-map.json"
 
 LEDGER_NOTE = "Handle URL đã review; gán một lần, không suy lại từ displayNameVi."
-LEDGER_KEYS = ("schemaVersion", "generationId", "legacyTeamsSha256", "note", "handles")
-HANDLE_GROUPS = ("recommended", "legacy")
+LEDGER_KEYS = ("schemaVersion", "generationId", "legacyTeamsSha256", "khaihoangSha256", "note", "handles")
+HANDLE_GROUPS = ("recommended", "legacy", "khaihoang")
 
 HEX64 = re.compile(r"[0-9a-f]{64}")
 SELECTOR_KEYS = ["generationId", "manifestSha256", "schemaVersion"]
@@ -346,13 +353,70 @@ def build_legacy_handles(teams) -> tuple[dict, dict]:
     return handles, stats
 
 
-def build_ledger(generation_id: str, teams_bytes: bytes, recommended: dict, legacy: dict) -> dict:
+def khaihoang_ids(teams) -> list[str]:
+    """The declared team ids, rejecting a missing or repeated id instead of falling back to an index."""
+    ids: list[str] = []
+    seen: set[str] = set()
+    for team in teams:
+        if not isinstance(team, dict):
+            raise TeamRouteHandleError(f"Khai hoang team must be an object, got {team!r}")
+        team_id = team.get("id")
+        if not isinstance(team_id, str) or not team_id:
+            raise TeamRouteHandleError(f"Khai hoang team {team.get('title')!r} has no id")
+        if team_id in seen:
+            raise TeamRouteHandleError(f"Khai hoang source declares the id {team_id!r} more than once")
+        seen.add(team_id)
+        ids.append(team_id)
+    return ids
+
+
+def build_khaihoang_handles(teams) -> tuple[dict, dict]:
+    """One-time assignment: id and handle both start as the ASCII slug of the current title.
+
+    `--check` never re-derives them, so a later title edit or a reorder cannot move a published URL.
+    """
+    khaihoang_ids(teams)  # reject a missing or repeated id before assigning anything
+    handles: dict[str, str] = {}
+    for team in teams:
+        team_id = team["id"]
+        title = team.get("title")
+        if not isinstance(title, str) or not title.strip():
+            raise TeamRouteHandleError(f"Khai hoang team {team_id!r} has no title to slug")
+        handle = slug(title)
+        if not handle:
+            raise TeamRouteHandleError(f"Khai hoang team {team_id!r} has an empty title slug: {title!r}")
+        if not is_routable_identifier(handle):
+            raise TeamRouteHandleError(f"Khai hoang team {team_id!r} title slug is not routable: {handle!r}")
+        handles[team_id] = handle
+
+    shared: dict[str, list[str]] = defaultdict(list)
+    for team_id, handle in handles.items():
+        shared[handle].append(team_id)
+    duplicates = {handle: ids for handle, ids in shared.items() if len(ids) > 1}
+    if duplicates:
+        raise TeamRouteHandleError(
+            "Khai hoang titles produce duplicate handles: "
+            + ", ".join(f"{handle}={', '.join(sorted(ids))}" for handle, ids in sorted(duplicates.items()))
+        )
+    stats = {"keys": len(handles), "distinctHandles": len(set(handles.values()))}
+    return handles, stats
+
+
+def build_ledger(
+    generation_id: str,
+    teams_bytes: bytes,
+    khaihoang_bytes: bytes,
+    recommended: dict,
+    legacy: dict,
+    khaihoang: dict,
+) -> dict:
     return {
-        "schemaVersion": SCHEMA_VERSION,
+        "schemaVersion": LEDGER_SCHEMA_VERSION,
         "generationId": generation_id,
         "legacyTeamsSha256": "sha256:" + sha256_hex(teams_bytes),
+        "khaihoangSha256": "sha256:" + sha256_hex(khaihoang_bytes),
         "note": LEDGER_NOTE,
-        "handles": {"recommended": dict(recommended), "legacy": dict(legacy)},
+        "handles": {"recommended": dict(recommended), "legacy": dict(legacy), "khaihoang": dict(khaihoang)},
     }
 
 
@@ -363,12 +427,16 @@ def ledger_bytes(ledger: dict) -> bytes:
 def _ledger_handles(ledger: dict) -> dict:
     if not isinstance(ledger, dict) or set(ledger) != set(LEDGER_KEYS):
         raise TeamRouteHandleError(f"Ledger must declare exactly {', '.join(LEDGER_KEYS)}")
-    if ledger["schemaVersion"] != SCHEMA_VERSION:
-        raise TeamRouteHandleError(f"Ledger schemaVersion {ledger['schemaVersion']!r} is not {SCHEMA_VERSION}")
+    if ledger["schemaVersion"] != LEDGER_SCHEMA_VERSION:
+        raise TeamRouteHandleError(
+            f"Ledger schemaVersion {ledger['schemaVersion']!r} is not {LEDGER_SCHEMA_VERSION}"
+        )
     if not isinstance(ledger["generationId"], str) or not HEX64.fullmatch(ledger["generationId"]):
         raise TeamRouteHandleError(f"Ledger generationId {ledger['generationId']!r} is not a generation id")
     if not isinstance(ledger["legacyTeamsSha256"], str):
         raise TeamRouteHandleError("Ledger legacyTeamsSha256 must be a string")
+    if not isinstance(ledger["khaihoangSha256"], str):
+        raise TeamRouteHandleError("Ledger khaihoangSha256 must be a string")
     if not isinstance(ledger["note"], str) or not ledger["note"].strip():
         raise TeamRouteHandleError("Ledger note must be a non-empty string")
     handles = ledger["handles"]
@@ -380,10 +448,57 @@ def _ledger_handles(ledger: dict) -> dict:
     return handles
 
 
-def validate_ledger(ledger: dict, *, generation_id: str, records, teams_bytes: bytes, teams) -> None:
+def _khaihoang_problems(ledger: dict, khaihoang: dict, khaihoang_bytes: bytes, khaihoang_teams, problems: list) -> None:
+    """Khai hoang gate: source hash, id set, routability and one handle per team."""
+    expected_hash = "sha256:" + sha256_hex(khaihoang_bytes)
+    if ledger["khaihoangSha256"] != expected_hash:
+        problems.append(
+            f"ledger khaihoangSha256 {ledger['khaihoangSha256']!r} is not the current Khai hoang hash {expected_hash!r}"
+        )
+    try:
+        ids = khaihoang_ids(khaihoang_teams)
+    except TeamRouteHandleError as error:
+        problems.append(str(error))
+        return
+    missing = sorted(set(ids) - set(khaihoang))
+    if missing:
+        problems.append(
+            f"ledger is missing {len(missing)} Khai hoang handles: {', '.join(missing[:DIAGNOSTIC_LIMIT])}"
+        )
+    extra = sorted(set(khaihoang) - set(ids))
+    if extra:
+        problems.append(
+            f"ledger declares {len(extra)} unknown Khai hoang handles: {', '.join(extra[:DIAGNOSTIC_LIMIT])}"
+        )
+    shared: dict[str, list[str]] = defaultdict(list)
+    for team_id in ids:
+        if team_id not in khaihoang:
+            continue
+        handle = khaihoang[team_id]
+        if not isinstance(handle, str):
+            problems.append(f"Khai hoang handle for {team_id} must be a string, got {handle!r}")
+            continue
+        if not is_routable_identifier(handle):
+            problems.append(f"Khai hoang handle {handle!r} for {team_id} is not routable")
+        shared[handle].append(team_id)
+    for handle, ids_sharing in sorted(shared.items()):
+        if len(ids_sharing) > 1:
+            problems.append(f"Khai hoang handle {handle!r} is shared by {', '.join(sorted(ids_sharing))}")
+
+
+def validate_ledger(
+    ledger: dict,
+    *,
+    generation_id: str,
+    records,
+    teams_bytes: bytes,
+    teams,
+    khaihoang_bytes: bytes,
+    khaihoang_teams,
+) -> None:
     """Gate the frozen ledger: pin, exact key sets, routability, season prefix and uniqueness."""
     handles = _ledger_handles(ledger)
-    recommended, legacy = handles["recommended"], handles["legacy"]
+    recommended, legacy, khaihoang = handles["recommended"], handles["legacy"], handles["khaihoang"]
     problems = []
 
     if ledger["generationId"] != generation_id:
@@ -393,6 +508,7 @@ def validate_ledger(ledger: dict, *, generation_id: str, records, teams_bytes: b
         problems.append(
             f"ledger legacyTeamsSha256 {ledger['legacyTeamsSha256']!r} is not the current legacy teams hash {expected_hash!r}"
         )
+    _khaihoang_problems(ledger, khaihoang, khaihoang_bytes, khaihoang_teams, problems)
 
     records_by_id: dict[str, dict] = {}
     for record in records:
@@ -493,7 +609,7 @@ def read_publication(root_dir) -> Publication:
     if (
         not isinstance(current, dict)
         or sorted(current) != sorted(SELECTOR_KEYS)
-        or current.get("schemaVersion") != SCHEMA_VERSION
+        or current.get("schemaVersion") != PUBLICATION_SCHEMA_VERSION
         or not HEX64.fullmatch(str(current.get("generationId")))
         or not HEX64.fullmatch(str(current.get("manifestSha256")))
     ):
@@ -507,7 +623,7 @@ def read_publication(root_dir) -> Publication:
     manifest = json.loads(manifest_bytes)
     if (
         not isinstance(manifest, dict)
-        or manifest.get("schemaVersion") != SCHEMA_VERSION
+        or manifest.get("schemaVersion") != PUBLICATION_SCHEMA_VERSION
         or manifest.get("generationId") != current["generationId"]
         or manifest.get("dedupKeyVersion") != 1
     ):
@@ -535,7 +651,7 @@ def read_publication(root_dir) -> Publication:
     if current_path.read_bytes() != current_bytes:
         raise TeamRouteHandleError("Recommended current changed during snapshot")
     index = json.loads(files["index.json"])
-    if not isinstance(index, dict) or index.get("schemaVersion") != SCHEMA_VERSION or not isinstance(index.get("records"), list):
+    if not isinstance(index, dict) or index.get("schemaVersion") != PUBLICATION_SCHEMA_VERSION or not isinstance(index.get("records"), list):
         raise TeamRouteHandleError("Unsupported Recommended index payload")
     return Publication(
         generation_id=current["generationId"],
@@ -551,6 +667,15 @@ def load_teams(path) -> tuple[bytes, list]:
     teams = json.loads(data)
     if not isinstance(teams, list) or not teams:
         raise TeamRouteHandleError(f"Legacy teams artifact must contain teams: {path}")
+    return data, teams
+
+
+def load_khaihoang(path) -> tuple[bytes, list]:
+    data = Path(path).read_bytes()
+    document = json.loads(data)
+    teams = document.get("teams") if isinstance(document, dict) else None
+    if not isinstance(teams, list) or not teams:
+        raise TeamRouteHandleError(f"Khai hoang artifact must contain teams: {path}")
     return data, teams
 
 
@@ -605,19 +730,32 @@ def _report_baseline(generation_id: str, stats: dict, legacy_stats: dict, recomm
         )
 
 
-def write_ledger(*, generation_root, teams_path, ledger_path, display_map_path, out=print) -> int:
+def _freezes_the_same_assignments(existing: object, candidate: dict) -> bool:
+    """Key order and indentation are not assignments: only a changed pin, hash or handle refuses."""
+    return (
+        isinstance(existing, dict)
+        and set(existing) == set(LEDGER_KEYS)
+        and all(existing[key] == candidate[key] for key in LEDGER_KEYS)
+    )
+
+
+def write_ledger(*, generation_root, teams_path, khaihoang_path, ledger_path, display_map_path, out=print) -> int:
     publication = read_publication(generation_root)
     teams_bytes, teams = load_teams(teams_path)
+    khaihoang_bytes, khaihoang_teams = load_khaihoang(khaihoang_path)
     labels = load_faction_labels(display_map_path)
     recommended, stats = build_recommended_handles(publication.records, labels)
     legacy, legacy_stats = build_legacy_handles(teams)
-    ledger = build_ledger(publication.generation_id, teams_bytes, recommended, legacy)
+    khaihoang, khaihoang_stats = build_khaihoang_handles(khaihoang_teams)
+    ledger = build_ledger(publication.generation_id, teams_bytes, khaihoang_bytes, recommended, legacy, khaihoang)
     validate_ledger(
         ledger,
         generation_id=publication.generation_id,
         records=publication.records,
         teams_bytes=teams_bytes,
         teams=teams,
+        khaihoang_bytes=khaihoang_bytes,
+        khaihoang_teams=khaihoang_teams,
     )
     _report_baseline(publication.generation_id, stats, legacy_stats, recommended, out)
 
@@ -627,6 +765,9 @@ def write_ledger(*, generation_root, teams_path, ledger_path, display_map_path, 
         if path.read_bytes() == data:
             out(f"ledger {path} already matches the generated candidate (no-op)")
             return 0
+        if _freezes_the_same_assignments(json.loads(path.read_bytes()), ledger):
+            out(f"ledger {path} already freezes the generated assignments (no-op)")
+            return 0
         raise TeamRouteHandleError(
             f"refusing to reassign: {path} differs from the generated candidate; a frozen URL must be "
             "reviewed and the ledger replaced deliberately"
@@ -635,13 +776,17 @@ def write_ledger(*, generation_root, teams_path, ledger_path, display_map_path, 
     temporary = path.with_name(f"{path.name}.tmp")
     temporary.write_bytes(data)
     os.replace(temporary, path)
-    out(f"wrote {len(recommended)} recommended + {len(legacy)} legacy handles to {path}")
+    out(
+        f"wrote {len(recommended)} recommended + {len(legacy)} legacy + {len(khaihoang)} Khai hoang handles "
+        f"({khaihoang_stats['distinctHandles']} distinct Khai hoang slugs) to {path}"
+    )
     return 0
 
 
-def check_ledger(*, generation_root, teams_path, ledger_path, display_map_path, diagnose=False, out=print) -> int:
+def check_ledger(*, generation_root, teams_path, khaihoang_path, ledger_path, display_map_path, diagnose=False, out=print) -> int:
     publication = read_publication(generation_root)
     teams_bytes, teams = load_teams(teams_path)
+    khaihoang_bytes, khaihoang_teams = load_khaihoang(khaihoang_path)
     ledger = json.loads(Path(ledger_path).read_bytes())
     validate_ledger(
         ledger,
@@ -649,9 +794,14 @@ def check_ledger(*, generation_root, teams_path, ledger_path, display_map_path, 
         records=publication.records,
         teams_bytes=teams_bytes,
         teams=teams,
+        khaihoang_bytes=khaihoang_bytes,
+        khaihoang_teams=khaihoang_teams,
     )
     out(f"ledger {ledger_path} matches generation {publication.generation_id}")
-    out(f"recommended handles: {len(ledger['handles']['recommended'])}; legacy handles: {len(ledger['handles']['legacy'])}")
+    out(
+        f"recommended handles: {len(ledger['handles']['recommended'])}; legacy handles: "
+        f"{len(ledger['handles']['legacy'])}; Khai hoang handles: {len(ledger['handles']['khaihoang'])}"
+    )
     if diagnose:
         recommended, stats = build_recommended_handles(publication.records, load_faction_labels(display_map_path))
         differences = sorted(
@@ -673,21 +823,34 @@ def main(argv=None) -> int:
     mode.add_argument("--check", action="store_true", help="validate the frozen ledger without deriving handles from display names")
     parser.add_argument("--generation-root", type=Path, default=DEFAULT_GENERATION_ROOT, help="Recommended root holding current.json and the generation directory")
     parser.add_argument("--teams", type=Path, default=DEFAULT_TEAMS_PATH, help="legacy teams artifact")
+    parser.add_argument("--khaihoang", type=Path, help="Khai hoang artifact; required with custom inputs")
     parser.add_argument("--ledger", type=Path, default=DEFAULT_LEDGER_PATH, help="frozen ledger to write or validate")
     parser.add_argument("--display-map", type=Path, default=DEFAULT_DISPLAY_MAP_PATH, help="display map holding labels.faction")
     parser.add_argument("--diagnose", action="store_true", help="with --check: also print name-derived differences without gating on them")
     args = parser.parse_args(argv)
+    if args.khaihoang is None:
+        if (
+            args.generation_root != DEFAULT_GENERATION_ROOT
+            or args.teams != DEFAULT_TEAMS_PATH
+            or args.ledger != DEFAULT_LEDGER_PATH
+            or args.display_map != DEFAULT_DISPLAY_MAP_PATH
+        ):
+            print("error: custom inputs require an explicit --khaihoang source", file=sys.stderr)
+            return 1
+        args.khaihoang = DEFAULT_KHAIHOANG_PATH
     try:
         if args.write:
             return write_ledger(
                 generation_root=args.generation_root,
                 teams_path=args.teams,
+                khaihoang_path=args.khaihoang,
                 ledger_path=args.ledger,
                 display_map_path=args.display_map,
             )
         return check_ledger(
             generation_root=args.generation_root,
             teams_path=args.teams,
+            khaihoang_path=args.khaihoang,
             ledger_path=args.ledger,
             display_map_path=args.display_map,
             diagnose=args.diagnose,

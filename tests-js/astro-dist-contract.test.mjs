@@ -34,6 +34,11 @@ const LEGACY_TEAM_ID = "team-intro-0";
 const LEGACY_HANDLE = "vinh-quang-thuong";
 const LEGACY_ROUTE_SEGMENT = LEGACY_HANDLE;
 
+const KHAIHOANG_TEAM_ID = "gia-cat-khac-sp-ma-sieu-phap-chinh";
+const KHAIHOANG_HANDLE = KHAIHOANG_TEAM_ID;
+const KHAIHOANG_ROUTE_SEGMENT = KHAIHOANG_HANDLE;
+const KHAIHOANG_TITLE = "Gia Cát Khác · SP Mã Siêu · Pháp Chính";
+
 const FIXTURE_ORIGIN = "https://tqccl.pages.dev";
 
 /** The fixture dist mirrors the built sitemap: the root page plus every catalog route, XML-escaped. */
@@ -103,31 +108,55 @@ async function writeRecommendedFixture(projectDir, distDir, { legacyTeamsHash } 
   await mkdir(join(distDir, "data", "recommended"), { recursive: true });
   await writeFile(join(distDir, "data", "recommended", "current.json"), current);
   const pin = { schemaVersion: 1, generationId, manifestSha256: sha256(manifest) };
-  await writeFile(join(distDir, "index.html"), `<!doctype html><script id="recommended-publication" type="application/json">${JSON.stringify(pin)}</script>\n`);
+  const registry = {
+    r: {},
+    l: { [LEGACY_TEAM_ID]: LEGACY_HANDLE },
+    k: { [KHAIHOANG_TEAM_ID]: KHAIHOANG_HANDLE },
+  };
+  await writeFile(
+    join(distDir, "index.html"),
+    `<!doctype html><script id="team-route-handles" type="application/json">${JSON.stringify(registry)}</script><script id="recommended-publication" type="application/json">${JSON.stringify(pin)}</script>\n`,
+  );
   await writeFile(
     join(distDir, "404.html"),
     '<!doctype html><head><meta name="robots" content="noindex"></head><h1 id="not-found-title">Không tìm thấy trang</h1>\n',
   );
   // The route cutover reads its frozen handles from the ledger of the same project root.
   await mkdir(join(projectDir, "pipeline"), { recursive: true });
+  const khaiHoangBytes = jsonBytes({ teams: [{ id: KHAIHOANG_TEAM_ID, title: KHAIHOANG_TITLE }] });
+  await writeFile(join(projectDir, "data", "khaihoang.json"), khaiHoangBytes);
   const ledger = {
-    schemaVersion: 1,
+    schemaVersion: 2,
     generationId,
     legacyTeamsSha256: `sha256:${sha256(teamsBytes)}`,
+    khaihoangSha256: `sha256:${sha256(khaiHoangBytes)}`,
     note: "Handle URL đã review; gán một lần, không suy lại từ displayNameVi.",
-    handles: { recommended: {}, legacy: { [LEGACY_TEAM_ID]: LEGACY_HANDLE } },
+    handles: {
+      recommended: {},
+      legacy: { [LEGACY_TEAM_ID]: LEGACY_HANDLE },
+      khaihoang: { [KHAIHOANG_TEAM_ID]: KHAIHOANG_HANDLE },
+    },
   };
   await writeFile(join(projectDir, "pipeline", "team-route-handles.json"), jsonBytes(ledger));
   // robots.txt is a static public artifact; the sitemap is derived from the same frozen catalog.
   await mkdir(join(projectDir, "public"), { recursive: true });
   await writeFile(join(projectDir, "public", "robots.txt"), FIXTURE_ROBOTS);
   await writeFile(join(distDir, "robots.txt"), FIXTURE_ROBOTS);
-  const sitemap = fixtureSitemapXml([`${FIXTURE_ORIGIN}/`, `${FIXTURE_ORIGIN}/doi-khac/${LEGACY_ROUTE_SEGMENT}/`]);
+  const sitemap = fixtureSitemapXml([
+    `${FIXTURE_ORIGIN}/`,
+    `${FIXTURE_ORIGIN}/doi-khac/${LEGACY_ROUTE_SEGMENT}/`,
+    `${FIXTURE_ORIGIN}/khai-hoang/${KHAIHOANG_ROUTE_SEGMENT}/`,
+  ]);
   await writeFile(join(distDir, "sitemap.xml"), sitemap);
   await mkdir(join(distDir, "doi-khac", LEGACY_ROUTE_SEGMENT), { recursive: true });
   await writeFile(
     join(distDir, "doi-khac", LEGACY_ROUTE_SEGMENT, "index.html"),
-    `<!doctype html><article id="team-detail-root" data-legacy-team-id="${LEGACY_TEAM_ID}" data-legacy-teams-sha256="sha256:${sha256(teamsBytes)}" data-generation-id="${generationId}" data-manifest-sha256="${sha256(manifest)}"></article>\n`,
+    `<!doctype html><article id="team-detail-root" data-legacy-team-id="${LEGACY_TEAM_ID}" data-legacy-teams-sha256="sha256:${sha256(teamsBytes)}" data-generation-id="${generationId}" data-manifest-sha256="${sha256(manifest)}"></article><script type="module" src="/js/team-detail.js"></script>\n`,
+  );
+  await mkdir(join(distDir, "khai-hoang", KHAIHOANG_ROUTE_SEGMENT), { recursive: true });
+  await writeFile(
+    join(distDir, "khai-hoang", KHAIHOANG_ROUTE_SEGMENT, "index.html"),
+    `<!doctype html><article id="team-detail-root" data-family="khaihoang" data-khaihoang-team-id="${KHAIHOANG_TEAM_ID}" data-khaihoang-sha256="sha256:${sha256(khaiHoangBytes)}"></article><script type="module" src="/js/khaihoang-detail.js"></script>\n`,
   );
   return { ledger, generationId, manifest, sitemap };
 }
@@ -493,11 +522,29 @@ test("dist verifier admits exactly the catalog team pages, the 404 and no stale 
   await writeFile(join(distDir, "404.html"), validNotFound);
 
   // The verifier's inventory is the ledger's frozen segment, not a path it re-derives.
-  const relocated = { ...fixture.ledger, handles: { recommended: {}, legacy: { [LEGACY_TEAM_ID]: "hoang-ma-thuong" } } };
+  const relocated = { ...fixture.ledger, handles: { ...fixture.ledger.handles, legacy: { [LEGACY_TEAM_ID]: "hoang-ma-thuong" } } };
   await writeFile(join(projectDir, "pipeline", "team-route-handles.json"), jsonBytes(relocated));
   await assert.rejects(verify(), /missing: doi-khac\/hoang-ma-thuong\/index\.html/i);
   await assert.rejects(verify(), /unexpected: doi-khac\/vinh-quang-thuong\/index\.html/i);
   await writeFile(join(projectDir, "pipeline", "team-route-handles.json"), jsonBytes(fixture.ledger));
+
+  // A relocated Khai hoang handle moves that page too: the frozen segment is the inventory.
+  const relocatedKhaiHoang = { ...fixture.ledger, handles: { ...fixture.ledger.handles, khaihoang: { [KHAIHOANG_TEAM_ID]: "khai-hoang-doi-ten" } } };
+  await writeFile(join(projectDir, "pipeline", "team-route-handles.json"), jsonBytes(relocatedKhaiHoang));
+  await assert.rejects(verify(), /missing: khai-hoang\/khai-hoang-doi-ten\/index\.html/i);
+  await assert.rejects(verify(), /unexpected: khai-hoang\/gia-cat-khac-sp-ma-sieu-phap-chinh\/index\.html/i);
+  await writeFile(join(projectDir, "pipeline", "team-route-handles.json"), jsonBytes(fixture.ledger));
+
+  // Every Khai hoang page pins its own identity, its source hash and its own entry.
+  const khaiHoangPagePath = join(distDir, "khai-hoang", KHAIHOANG_ROUTE_SEGMENT, "index.html");
+  const validKhaiHoangPage = await readFile(khaiHoangPagePath, "utf8");
+  await writeFile(khaiHoangPagePath, validKhaiHoangPage.replace(`data-khaihoang-team-id="${KHAIHOANG_TEAM_ID}"`, 'data-khaihoang-team-id="team-doi-ten"'));
+  await assert.rejects(verify(), /lacks its validated pin/i);
+  await writeFile(khaiHoangPagePath, validKhaiHoangPage.replace(/data-khaihoang-sha256="[^"]+"/u, `data-khaihoang-sha256="sha256:${"0".repeat(64)}"`));
+  await assert.rejects(verify(), /lacks its validated pin/i);
+  await writeFile(khaiHoangPagePath, validKhaiHoangPage.replace('src="/js/khaihoang-detail.js"', 'src="/js/app.js"'));
+  await assert.rejects(verify(), /does not load its own entry|boots the root application/i);
+  await writeFile(khaiHoangPagePath, validKhaiHoangPage);
 
   await mkdir(join(distDir, "doi-khac", "team-khong-co"), { recursive: true });
   await writeFile(join(distDir, "doi-khac", "team-khong-co", "index.html"), "<!doctype html>\n");
@@ -550,6 +597,9 @@ test("built dist is allowlisted and every emitted asset is byte-identical", asyn
   assert.equal(result.assetCount, PUBLIC_ARTIFACTS.length);
   assert.ok(result.files.includes("index.html"));
   assert.ok(result.files.includes("_headers"));
+  // The Khai hoang page ships with its own entry: both must exist in the emitted dist.
+  assert.ok(result.files.includes("js/khaihoang-detail.js"));
+  assert.ok(result.files.includes("khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/index.html"));
   assert.equal(result.unexpectedFiles.length, 0);
   assert.deepEqual(
     await readFile(new URL("../dist/_headers", import.meta.url)),
@@ -575,8 +625,8 @@ test("built dist declares canonical, article metadata, robots and the catalog si
   assert.equal(metaContent(index, "og:url"), rootHref);
   assert.equal(metaContent(index, "og:type"), "website");
 
-  for (const entry of [catalog.recommended[0], catalog.legacy[0]]) {
-    assert.ok(entry, "the catalog must publish both detail families");
+  for (const entry of [catalog.recommended[0], catalog.legacy[0], catalog.khaiHoang[0]]) {
+    assert.ok(entry, "the catalog must publish all three detail families");
     const html = await read(entry.htmlPath);
     const canonical = new URL(entry.routePath, origin).href;
     assert.equal(linkHref(html, "canonical"), canonical, entry.htmlPath);
@@ -603,11 +653,11 @@ test("built dist declares canonical, article metadata, robots and the catalog si
   const sitemap = await read("sitemap.xml");
   assert.match(sitemap, /^<\?xml version="1\.0" encoding="UTF-8"\?>/u);
   const locations = [...sitemap.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
-  // Release baseline: one root page plus 1366 Recommended and 166 legacy detail pages.
-  assert.equal(locations.length, 1533);
+  // Release baseline: one root page plus 1366 Recommended, 166 legacy and 17 Khai hoang detail pages.
+  assert.equal(locations.length, 1550);
   assert.deepEqual(
     locations,
-    [rootHref, ...[...catalog.recommended, ...catalog.legacy]
+    [rootHref, ...[...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang]
       .map((entry) => entry.routePath)
       .sort()
       .map((path) => new URL(path, origin).href)],
@@ -632,10 +682,11 @@ test("sitemap endpoint publishes exactly the root page plus the catalog routes",
   assert.doesNotMatch(xml, /<lastmod>|<changefreq>|<priority>/u);
 
   const locations = [...xml.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
-  const routePaths = [...catalog.recommended, ...catalog.legacy].map((entry) => entry.routePath);
+  const routePaths = [...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath);
   assert.equal(catalog.recommended.length, 1366);
   assert.equal(catalog.legacy.length, 166);
-  assert.equal(locations.length, 1533);
+  assert.equal(catalog.khaiHoang.length, 17);
+  assert.equal(locations.length, 1550);
   assert.deepEqual(
     locations,
     [new URL("/", origin).href, ...routePaths.sort().map((path) => new URL(path, origin).href)],
@@ -685,23 +736,25 @@ test("dist verifier locks the emitted sitemap to the catalog route set", async (
   await verify();
   const root = `${FIXTURE_ORIGIN}/`;
   const detail = `${FIXTURE_ORIGIN}/doi-khac/${LEGACY_ROUTE_SEGMENT}/`;
+  const khaiHoang = `${FIXTURE_ORIGIN}/khai-hoang/${KHAIHOANG_ROUTE_SEGMENT}/`;
   const rejected = {
-    "the root page is missing": [detail],
-    "a catalog route is missing": [root],
-    "the retired family is published": [root, detail, `${FIXTURE_ORIGIN}/teams/legacy/${LEGACY_TEAM_ID}/`],
-    "a URL is published twice": [root, detail, detail],
+    "the root page is missing": [detail, khaiHoang],
+    "a legacy route is missing": [root, khaiHoang],
+    "a Khai hoang route is missing": [root, detail],
+    "the retired family is published": [root, detail, khaiHoang, `${FIXTURE_ORIGIN}/teams/legacy/${LEGACY_TEAM_ID}/`],
+    "a URL is published twice": [root, detail, khaiHoang, khaiHoang],
   };
   for (const [label, locations] of Object.entries(rejected)) {
     await writeFile(join(distDir, "sitemap.xml"), fixtureSitemapXml(locations));
     await assert.rejects(verify(), /sitemap/i, label);
   }
-  await writeFile(join(distDir, "sitemap.xml"), fixtureSitemapXml([root, detail]));
+  await writeFile(join(distDir, "sitemap.xml"), fixtureSitemapXml([root, detail, khaiHoang]));
   await verify();
 
   // A shell or payload served as sitemap.xml is not a sitemap.
   await writeFile(join(distDir, "sitemap.xml"), "<!doctype html>\n");
   await assert.rejects(verify(), /sitemap/i);
-  await writeFile(join(distDir, "sitemap.xml"), fixtureSitemapXml([root, detail]));
+  await writeFile(join(distDir, "sitemap.xml"), fixtureSitemapXml([root, detail, khaiHoang]));
   await verify();
 
   // robots.txt stays a byte-identical copy of its reviewed source.

@@ -536,6 +536,9 @@ test('unknown routes serve the static 404 instead of the root shell',async({page
   await page.setViewportSize({width:375,height:812});
   const missing=await request.get('/doi-chuan/khong-ton-tai/');
   expect(missing.status()).toBe(404);
+  const missingKhaiHoang=await request.get('/khai-hoang/khong-ton-tai/');
+  expect(missingKhaiHoang.status()).toBe(404);
+  expect(await missingKhaiHoang.text()).toContain('Không tìm thấy trang');
   await page.goto('/doi-chuan/khong-ton-tai/');
   await expect(page.locator('#not-found-title')).toBeVisible();
   await expect(page.locator('#section-team-chuan')).toHaveCount(0);
@@ -600,4 +603,49 @@ test('multi-page history does not loop or restore a foreign entry',async({page,r
   await page.goBack();
   await expect(page).toHaveURL(/#team-chuan$/);
   expect(await page.evaluate(()=>history.length)).toBe(start+2);
+});
+
+const khaiHoangPath=(handles,teamId)=>`/khai-hoang/${encodeURIComponent(handles.k[teamId])}/`;
+
+test('Khai hoang detail loads directly, pins its verified source and never boots the root app',async({page,request})=>{
+  const handles=await routeHandles(request);
+  const [teamId]=Object.keys(handles.k);
+  expect(teamId,JSON.stringify(handles.k)).toBeTruthy();
+  const path=khaiHoangPath(handles,teamId);
+  expect((await request.get(path)).status()).toBe(200);
+
+  await page.goto(path);
+  const root=page.locator('#team-detail-root');
+  await expect(root).toHaveAttribute('data-family','khaihoang');
+  await expect(root).toHaveAttribute('data-khaihoang-team-id',teamId);
+  await expect(root).toHaveAttribute('data-khaihoang-sha256',/^sha256:[0-9a-f]{64}$/);
+  await expect(page.locator('h1#team-detail-title')).not.toBeEmpty();
+  await expect(page.locator('h1')).toHaveCount(1);
+  await expect(page.locator('#team-detail-body')).toBeVisible();
+  await expect(page.locator('#team-detail-body')).not.toBeEmpty();
+  await expect(page.locator('#team-detail-status')).toBeHidden();
+  await expect(page.locator('#team-return-link')).toHaveAttribute('href','/#khaihoang');
+  // Canonical luôn là pathname: deep-link `variant`/`from` không tạo URL thứ hai.
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href',new RegExp(`${path}$`));
+  await expect(page.locator('meta[property="og:type"]')).toHaveAttribute('content','article');
+  await expect(page.locator('script[src="/js/khaihoang-detail.js"]')).toHaveCount(1);
+  await expect(page.locator('#section-khaihoang')).toHaveCount(0);
+  await expect(page.locator('#season-controls')).toHaveCount(0);
+
+  await page.reload();
+  await expect(page.locator('#team-detail-body')).toBeVisible();
+});
+
+test('every Khai hoang team has a reachable detail route in the published sitemap',async({request})=>{
+  const handles=await routeHandles(request);
+  const teamIds=Object.keys(handles.k);
+  expect(teamIds.length).toBeGreaterThan(0);
+  const sitemap=await (await request.get('/sitemap.xml')).text();
+  const pathnames=[...sitemap.matchAll(/<loc>([^<]*)<\/loc>/g)].map(([,location])=>new URL(location).pathname);
+  expect(new Set(pathnames).size).toBe(pathnames.length);
+  for(const teamId of teamIds){
+    const path=khaiHoangPath(handles,teamId);
+    expect(pathnames,teamId).toContain(path);
+    expect((await request.get(path)).status(),path).toBe(200);
+  }
 });

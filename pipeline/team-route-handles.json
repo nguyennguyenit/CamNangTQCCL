@@ -1,5 +1,5 @@
 {
-  "generationId": "91768e1ae00eb8c5d02ad0a9443922c678cb8c0f8ce85e30768920457183ea57",
+  "generationId": "b60b51c9f5a5b86de3d27a278a9a562dabbfdeeb0b61cac54d00e71e9f6bbb67",
   "handles": {
     "legacy": {
       "moi-phe-100": "vu-sieu-binh",
@@ -168,6 +168,25 @@
       "team-intro-7": "bac-phat-thuong",
       "team-intro-8": "pho-sieu-uc",
       "team-intro-9": "vu-binh-binh"
+    },
+    "khaihoang": {
+      "gia-cat-khac-sp-ma-sieu-phap-chinh": "gia-cat-khac-sp-ma-sieu-phap-chinh",
+      "gia-cat-khac-quan-ngan-binh-nhac-tien": "gia-cat-khac-quan-ngan-binh-nhac-tien",
+      "khuong-duy-ha-hau-uyen-gia-cat-khac": "khuong-duy-ha-hau-uyen-gia-cat-khac",
+      "luc-ton-ta-tu-truong-xuan-hoa": "luc-ton-ta-tu-truong-xuan-hoa",
+      "ha-hau-uyen-thai-su-tu-hoang-nguyet-anh": "ha-hau-uyen-thai-su-tu-hoang-nguyet-anh",
+      "ton-thuong-huong-tran-cung-hoang-nguyet-anh": "ton-thuong-huong-tran-cung-hoang-nguyet-anh",
+      "thai-van-co-khuong-duy-thai-su-tu": "thai-van-co-khuong-duy-thai-su-tu",
+      "khuong-duy-ha-hau-uyen-phap-chinh": "khuong-duy-ha-hau-uyen-phap-chinh",
+      "sp-vien-thieu-ha-hau-uyen-truong-xuan-hoa": "sp-vien-thieu-ha-hau-uyen-truong-xuan-hoa",
+      "khuong-duy-quan-ngan-binh-thai-van-co": "khuong-duy-quan-ngan-binh-thai-van-co",
+      "quan-ngan-binh-nhac-tien-thai-van-co": "quan-ngan-binh-nhac-tien-thai-van-co",
+      "gia-cat-khac-thai-su-tu-ta-tu": "gia-cat-khac-thai-su-tu-ta-tu",
+      "sp-lo-truc-thai-su-tu-truong-xuan-hoa": "sp-lo-truc-thai-su-tu-truong-xuan-hoa",
+      "sp-hoang-nguyet-anh-sp-ma-sieu-gia-cat-khac": "sp-hoang-nguyet-anh-sp-ma-sieu-gia-cat-khac",
+      "chu-thai-truong-phi-truong-xuan-hoa": "chu-thai-truong-phi-truong-xuan-hoa",
+      "truong-xuan-hoa-lu-bo-ta-tu": "truong-xuan-hoa-lu-bo-ta-tu",
+      "sp-chu-tuan-ha-hau-uyen-gia-cat-khac": "sp-chu-tuan-ha-hau-uyen-gia-cat-khac"
     },
     "recommended": {
       "2-1nsjj7f": "phap-am-thuan-ban-tran-ach-2",
@@ -1539,6 +1558,7 @@
     }
   },
   "legacyTeamsSha256": "sha256:d71f617f669dd5a3cc75788b1b579bd94f8c0a43a7e2fb74cb2ab9075d13ce46",
+  "khaihoangSha256": "sha256:973b252b08ef9332f19866e7321389bd952d03d8156c586718674db8a09de211",
   "note": "Handle URL đã review; gán một lần, không suy lại từ displayNameVi.",
-  "schemaVersion": 1
+  "schemaVersion": 2
 }

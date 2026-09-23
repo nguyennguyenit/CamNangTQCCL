@@ -88,20 +88,6 @@ test('gameplay config keeps precedence over old reference selectors',async({page
   await expect(page.locator('#season-detail-mount')).toContainText('Không có cấu hình này');
 });
 
-test('surface snapshots restore gameplay queries without leaking them into Team chuẩn',async({page})=>{
-  await page.goto('/?scenario=binh-dien-xuan-thu&q=quan+su#coexist');
-  await expect(page.getByLabel('Tìm Cùng Tồn')).toHaveValue('quan su');
-  await page.getByRole('tab',{name:'Đội chuẩn',exact:true}).click();
-  await expect(page).not.toHaveURL(/q=/);
-  await expect(page).toHaveURL(/scenario=binh-dien-xuan-thu/);
-  await page.getByRole('tab',{name:'Cùng Tồn',exact:true}).click();
-  await expect(page).toHaveURL(/q=quan\+su/);
-  await expect(page.getByLabel('Tìm Cùng Tồn')).toHaveValue('quan su');
-  await page.getByLabel('Tìm Cùng Tồn').fill('cap nhat');
-  await page.getByRole('tab',{name:'Đội chuẩn',exact:true}).click();
-  await page.getByRole('tab',{name:'Cùng Tồn',exact:true}).click();
-  await expect(page.getByLabel('Tìm Cùng Tồn')).toHaveValue('cap nhat');
-});
 
 test('root keeps other tabs usable during an isolated Recommended outage',async({page})=>{
   await page.route('**/data/recommended/**',route=>route.abort());

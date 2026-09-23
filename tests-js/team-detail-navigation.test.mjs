@@ -16,6 +16,11 @@ import {
   migrateLegacyReferenceUrl,
   setTeamRouteHandles,
   setTeamRouteHandlesFromJSON,
+  khaiHoangContextKey,
+  khaiHoangPairFromUrl,
+  khaiHoangUrlWithPair,
+  khaiHoangDetailVariantUrl,
+  safeKhaiHoangVariants,
 } from '../js/team-detail-navigation.js';
 
 const ROOT='https://tqccl.pages.dev';
@@ -23,6 +28,13 @@ const RECOMMENDED='team-epoddo';
 const LEGACY='team-intro-4';
 const RECOMMENDED_SEGMENT='pk-s24-tiem-long-dieu-thuyen';
 const LEGACY_SEGMENT='tan-ngo-thuong';
+const KHAIHOANG='gia-cat-khac-sp-ma-sieu-phap-chinh';
+const KHAIHOANG_HANDLE='gia-cat-khac-sp-ma-sieu-phap-chinh';
+const KHAIHOANG_VARIANT='cn-thoi-phong';
+/** Inventory dùng để loại lựa chọn stale: team -> variant ID còn tồn tại. */
+const KHAIHOANG_INVENTORY={[KHAIHOANG]:[KHAIHOANG_VARIANT],'luc-ton-ta-tu-truong-xuan-hoa':['jp-s23']};
+
+const khaiHoangHandles=()=>setTeamRouteHandles({k:{[KHAIHOANG]:KHAIHOANG_HANDLE}});
 
 const handles=()=>setTeamRouteHandles({
   r:{[RECOMMENDED]:RECOMMENDED_SEGMENT},
@@ -306,4 +318,188 @@ test('old reference URLs migrate to the registered routes while any config key k
   assert.equal(empty(),true);
   assert.equal(migrate(`${ROOT}/?detail=${RECOMMENDED}#team-chuan`),null);
   assert.equal(migrate(`${ROOT}/?legacyTeam=${LEGACY}#team-khac`),null);
+});
+
+test('Khai hoang detail routes come from the frozen handle registry and omit a default variant',()=>{
+  assert.equal(khaiHoangHandles(),true);
+  assert.equal(teamDetailPath({khaiHoangTeamId:KHAIHOANG}),`/khai-hoang/${KHAIHOANG_HANDLE}/`);
+  assert.equal(teamDetailPath({khaiHoangTeamId:'team-missing'}),null);
+  assert.equal(teamDetailPath({khaiHoangTeamId:'../secret'}),null);
+  // Identity precedence never lets a stray Khai hoang id shadow a reference identity.
+  assert.equal(setTeamRouteHandles({
+    r:{[RECOMMENDED]:RECOMMENDED_SEGMENT},
+    k:{[KHAIHOANG]:KHAIHOANG_HANDLE},
+  }),true);
+  assert.equal(teamDetailPath({sourceConfigId:RECOMMENDED,khaiHoangTeamId:KHAIHOANG}),`/doi-chuan/${RECOMMENDED_SEGMENT}/`);
+
+  assert.equal(teamDetailHref({khaiHoangTeamId:KHAIHOANG}),`/khai-hoang/${KHAIHOANG_HANDLE}/`);
+  // Mặc định (thiếu/rỗng/không routable) không bao giờ phát `variant`.
+  assert.equal(teamDetailHref({khaiHoangTeamId:KHAIHOANG,khaiHoangVariantId:''}),`/khai-hoang/${KHAIHOANG_HANDLE}/`);
+  assert.equal(teamDetailHref({khaiHoangTeamId:KHAIHOANG,khaiHoangVariantId:null}),`/khai-hoang/${KHAIHOANG_HANDLE}/`);
+  assert.equal(teamDetailHref({khaiHoangTeamId:KHAIHOANG,khaiHoangVariantId:'/bad'}),`/khai-hoang/${KHAIHOANG_HANDLE}/`);
+  assert.equal(
+    teamDetailHref({khaiHoangTeamId:KHAIHOANG,khaiHoangVariantId:KHAIHOANG_VARIANT}),
+    `/khai-hoang/${KHAIHOANG_HANDLE}/?variant=${KHAIHOANG_VARIANT}`,
+  );
+  // Href tự đủ state: `from` là URL root kèm đúng cặp của card, không query lạ nào khác.
+  assert.equal(
+    teamDetailHref(
+      {khaiHoangTeamId:KHAIHOANG,khaiHoangVariantId:KHAIHOANG_VARIANT},
+      {from:khaiHoangUrlWithPair('/#khaihoang',{teamId:KHAIHOANG,variantId:KHAIHOANG_VARIANT})},
+    ),
+    `/khai-hoang/${KHAIHOANG_HANDLE}/?variant=${KHAIHOANG_VARIANT}`
+      + `&from=${encodeURIComponent(`/?khTeam=${KHAIHOANG}&khVariant=${KHAIHOANG_VARIANT}#khaihoang`)}`,
+  );
+  // `from` ngoài origin hoặc không an toàn bị bỏ, không kéo state lạ vào URL chi tiết.
+  assert.equal(
+    teamDetailHref({khaiHoangTeamId:KHAIHOANG},{from:'https://evil.example/'}),
+    `/khai-hoang/${KHAIHOANG_HANDLE}/`,
+  );
+  // Family `k` cũng được validate nguyên khối như hai family cũ.
+  for (const payload of [{k:[]},{k:null},{k:{'../secret':'ok'}},{k:{[KHAIHOANG]:'inner space'}},{k:{a:'same',b:'same'}},{k:{[KHAIHOANG]:KHAIHOANG_HANDLE},x:{}}]) {
+    assert.equal(setTeamRouteHandles(payload),false,`must reject ${JSON.stringify(payload)}`);
+  }
+  assert.equal(teamDetailPath({khaiHoangTeamId:KHAIHOANG}),`/khai-hoang/${KHAIHOANG_HANDLE}/`);
+});
+
+test('Khai hoang root pair stays on the root URL and never bleeds into another surface',()=>{
+  // Nondefault ghi đủ cặp; mặc định chỉ bỏ `khVariant`; không có team thì bỏ cả cặp.
+  assert.equal(khaiHoangUrlWithPair('/#khaihoang',{teamId:KHAIHOANG,variantId:KHAIHOANG_VARIANT}),`/?khTeam=${KHAIHOANG}&khVariant=${KHAIHOANG_VARIANT}#khaihoang`);
+  assert.equal(khaiHoangUrlWithPair('/#khaihoang',{teamId:KHAIHOANG,variantId:''}),`/?khTeam=${KHAIHOANG}#khaihoang`);
+  assert.equal(khaiHoangUrlWithPair('/#khaihoang',{teamId:'',variantId:''}),'/#khaihoang');
+  assert.equal(khaiHoangUrlWithPair('/#khaihoang',{}),'/#khaihoang');
+  // Query khác, path và hash giữ nguyên; cặp cũ bị thay chứ không nhân bản.
+  assert.equal(khaiHoangUrlWithPair('/?q=vien#khaihoang',{teamId:KHAIHOANG}),`/?q=vien&khTeam=${KHAIHOANG}#khaihoang`);
+  assert.equal(khaiHoangUrlWithPair(`/?khTeam=old&khVariant=old&q=vien#khaihoang`,{teamId:KHAIHOANG,variantId:KHAIHOANG_VARIANT}),`/?q=vien&khTeam=${KHAIHOANG}&khVariant=${KHAIHOANG_VARIANT}#khaihoang`);
+  // Identity không routable không được ghi vào URL.
+  assert.equal(khaiHoangUrlWithPair('/#khaihoang',{teamId:'../secret',variantId:'/bad'}),'/#khaihoang');
+
+  assert.deepEqual(khaiHoangPairFromUrl(`/?khTeam=${KHAIHOANG}&khVariant=${KHAIHOANG_VARIANT}#khaihoang`),{teamId:KHAIHOANG,variantId:KHAIHOANG_VARIANT});
+  assert.deepEqual(khaiHoangPairFromUrl(`/?khTeam=${KHAIHOANG}#khaihoang`),{teamId:KHAIHOANG,variantId:''});
+  assert.deepEqual(khaiHoangPairFromUrl('/#khaihoang'),{teamId:'',variantId:''});
+  assert.deepEqual(khaiHoangPairFromUrl(`/?khTeam=%2Fbad&khVariant=%2Fbad#khaihoang`),{teamId:'',variantId:''});
+  assert.deepEqual(khaiHoangPairFromUrl('not a url'),{teamId:'',variantId:''});
+
+  // Cặp này là query hợp lệ của root nên sống sót qua safeReturnUrl, kèm nguyên hash tab.
+  assert.equal(safeReturnUrl(`/?khTeam=${KHAIHOANG}&khVariant=${KHAIHOANG_VARIANT}#khaihoang`),`/?khTeam=${KHAIHOANG}&khVariant=${KHAIHOANG_VARIANT}#khaihoang`);
+  assert.equal(safeReturnUrl('/?khTeam=x&rogue=1#khaihoang'),null);
+});
+
+test('Khai hoang recovery context drops exactly the active pair',()=>{
+  assert.equal(khaiHoangContextKey(`/?khTeam=${KHAIHOANG}&khVariant=${KHAIHOANG_VARIANT}#khaihoang`),'/#khaihoang');
+  assert.equal(khaiHoangContextKey('/?q=vien&khTeam=a&khVariant=b#khaihoang'),'/?q=vien#khaihoang');
+  const context = '/?q=mot&scenario=binh-dien-xuan-thu&khTeam=a&q=hai&ruleset=demo&khVariant=b#khaihoang';
+  const otherPair = '/?q=mot&scenario=binh-dien-xuan-thu&khTeam=other&q=hai&ruleset=demo&khVariant=other#khaihoang';
+  assert.equal(khaiHoangContextKey(context),'/?q=mot&scenario=binh-dien-xuan-thu&q=hai&ruleset=demo#khaihoang');
+  assert.equal(khaiHoangContextKey(otherPair),khaiHoangContextKey(context));
+  assert.equal(khaiHoangContextKey('/?q=hai&scenario=binh-dien-xuan-thu&q=mot&ruleset=demo#khaihoang'),'/?q=hai&scenario=binh-dien-xuan-thu&q=mot&ruleset=demo#khaihoang');
+  const scopedSnapshot = captureReturnSnapshot({href: context, scrollY: 0, tab: 'khaihoang'});
+  assert.equal(matchesReturnSnapshot(scopedSnapshot, otherPair), true);
+  assert.equal(matchesReturnSnapshot(scopedSnapshot, '/?q=hai&scenario=binh-dien-xuan-thu&q=mot&ruleset=demo#khaihoang'), false);
+  assert.equal(matchesReturnSnapshot(scopedSnapshot, '/?q=mot&scenario=other&q=hai&ruleset=demo#khaihoang'), false);
+  assert.equal(matchesReturnSnapshot(scopedSnapshot, '/?q=mot&scenario=binh-dien-xuan-thu&q=hai&ruleset=other#khaihoang'), false);
+  assert.equal(khaiHoangContextKey('/#khaihoang'),'/#khaihoang');
+  // Surface khác vẫn exact URL: context key chỉ tồn tại cho tab Khai hoang.
+  assert.equal(khaiHoangContextKey('/#team-chuan'),null);
+  assert.equal(khaiHoangContextKey('/?q=vien#team-khac'),null);
+  assert.equal(khaiHoangContextKey('https://evil.example/?khTeam=a#khaihoang'),null);
+  assert.equal(khaiHoangContextKey('/khai-hoang/handle/'),null);
+  assert.equal(khaiHoangContextKey(null),null);
+
+  const snapshot=captureReturnSnapshot({href:`/?khTeam=${KHAIHOANG}&khVariant=${KHAIHOANG_VARIANT}#khaihoang`,scrollY:0,tab:'khaihoang'});
+  // Khác riêng active pair thì phải nhận; khác tab hoặc query khác thì phải bị loại.
+  assert.equal(matchesReturnSnapshot(snapshot,'/#khaihoang'),true);
+  assert.equal(matchesReturnSnapshot(snapshot,'/?khTeam=other&khVariant=other#khaihoang'),true);
+  assert.equal(matchesReturnSnapshot(snapshot,'/?q=vien#khaihoang'),false);
+  assert.equal(matchesReturnSnapshot(snapshot,'/#team-chuan'),false);
+  assert.equal(matchesReturnSnapshot(snapshot,'/#analyze'),false);
+  // Snapshot surface khác vẫn exact URL như trước.
+  const reference=captureReturnSnapshot({href:'/?q=vien#team-chuan',scrollY:0,tab:'team-chuan'});
+  assert.equal(matchesReturnSnapshot(reference,'/?q=vien#team-chuan'),true);
+  assert.equal(matchesReturnSnapshot(reference,'/?q=other#team-chuan'),false);
+});
+
+test('Khai hoang selection map is sparse, inventory-limited, and authoritative when empty',()=>{
+  // Chỉ giữ nondefault; thiếu key nghĩa là mặc định.
+  assert.deepEqual(safeKhaiHoangVariants({[KHAIHOANG]:KHAIHOANG_VARIANT,'luc-ton-ta-tu-truong-xuan-hoa':''},KHAIHOANG_INVENTORY),{[KHAIHOANG]:KHAIHOANG_VARIANT});
+  // Variant stale chỉ loại đúng entry sai, không xóa cả map.
+  assert.deepEqual(
+    safeKhaiHoangVariants({[KHAIHOANG]:'variant-da-bo','luc-ton-ta-tu-truong-xuan-hoa':'jp-s23'},KHAIHOANG_INVENTORY),
+    {'luc-ton-ta-tu-truong-xuan-hoa':'jp-s23'},
+  );
+  assert.deepEqual(safeKhaiHoangVariants({'team-da-bo':'jp-s23'},KHAIHOANG_INVENTORY),{});
+  // Payload hỏng không tự sinh lựa chọn.
+  for (const hostile of [null,undefined,'x',7,[],[KHAIHOANG],new Map([[KHAIHOANG,KHAIHOANG_VARIANT]])]) {
+    assert.deepEqual(safeKhaiHoangVariants(hostile,KHAIHOANG_INVENTORY),{},`must reject ${String(hostile)}`);
+  }
+  assert.deepEqual(safeKhaiHoangVariants({[KHAIHOANG]:'../bad','luc-ton-ta-tu-truong-xuan-hoa':'jp-s23'},KHAIHOANG_INVENTORY),{'luc-ton-ta-tu-truong-xuan-hoa':'jp-s23'});
+
+  const storage=memoryStorage();
+  const snapshot=captureReturnSnapshot({
+    href:`/?khTeam=${KHAIHOANG}&khVariant=${KHAIHOANG_VARIANT}#khaihoang`,
+    scrollY:640,
+    tab:'khaihoang',
+    khaihoangVariants:{[KHAIHOANG]:KHAIHOANG_VARIANT,'luc-ton-ta-tu-truong-xuan-hoa':'jp-s23','team-da-bo':'jp-s23'},
+    khaihoangInventory:KHAIHOANG_INVENTORY,
+  });
+  assert.deepEqual(snapshot.khaihoangVariants,{[KHAIHOANG]:KHAIHOANG_VARIANT,'luc-ton-ta-tu-truong-xuan-hoa':'jp-s23'});
+  assert.equal(writeReturnSnapshot(snapshot,storage),true);
+  // Cùng tab, khác cặp đang chọn ⇒ vẫn đọc được map và scroll.
+  assert.deepEqual(
+    readReturnSnapshot('/#khaihoang',storage,{khaihoangInventory:KHAIHOANG_INVENTORY}),
+    {...snapshot,url:snapshot.url},
+  );
+  // Inventory mới đã bỏ một variant ⇒ chỉ entry stale biến mất khi đọc.
+  assert.deepEqual(
+    readReturnSnapshot('/#khaihoang',storage,{khaihoangInventory:{[KHAIHOANG]:['variant-moi'],'luc-ton-ta-tu-truong-xuan-hoa':['jp-s23']}}).khaihoangVariants,
+    {'luc-ton-ta-tu-truong-xuan-hoa':'jp-s23'},
+  );
+  // Map rỗng là lựa chọn hợp lệ của người dùng, không bị coi là thiếu dữ liệu.
+  const reset=captureReturnSnapshot({href:'/#khaihoang',scrollY:0,tab:'khaihoang',khaihoangVariants:{},khaihoangInventory:KHAIHOANG_INVENTORY});
+  assert.equal(Object.hasOwn(reset,'khaihoangVariants'),true);
+  assert.deepEqual(reset.khaihoangVariants,{});
+  writeReturnSnapshot(reset,storage);
+  const restored=readReturnSnapshot('/#khaihoang',storage,{khaihoangInventory:KHAIHOANG_INVENTORY});
+  assert.equal(Object.hasOwn(restored,'khaihoangVariants'),true);
+  assert.deepEqual(restored.khaihoangVariants,{});
+
+  // Snapshot v1 cũ thiếu map vẫn đọc tab/scroll theo contract cũ, không tự sinh map.
+  const legacy=memoryStorage();
+  legacy.map.set(TEAM_RETURN_STORAGE_KEY,JSON.stringify({version:1,url:'/#khaihoang',scrollY:210,tab:'khaihoang',disclosures:{filters:true}}));
+  const legacyRead=readReturnSnapshot('/#khaihoang',legacy,{khaihoangInventory:KHAIHOANG_INVENTORY});
+  assert.equal(legacyRead.scrollY,210);
+  assert.equal(legacyRead.tab,'khaihoang');
+  assert.equal(Object.hasOwn(legacyRead,'khaihoangVariants'),false);
+
+  // Map hỏng hoặc storage bị chặn không làm hỏng phần còn lại của snapshot.
+  const poisoned=memoryStorage();
+  poisoned.map.set(TEAM_RETURN_STORAGE_KEY,JSON.stringify({version:1,url:'/#khaihoang',scrollY:0,tab:'khaihoang',disclosures:{},khaihoangVariants:'all'}));
+  const poisonedRead=readReturnSnapshot('/#khaihoang',poisoned,{khaihoangInventory:KHAIHOANG_INVENTORY});
+  assert.equal(poisonedRead.tab,'khaihoang');
+  assert.equal(Object.hasOwn(poisonedRead,'khaihoangVariants'),false);
+  assert.equal(readReturnSnapshot('/#khaihoang',memoryStorage({failGet:true}),{khaihoangInventory:KHAIHOANG_INVENTORY}),null);
+  assert.equal(captureReturnSnapshot({href:'https://evil.example/',khaihoangVariants:{[KHAIHOANG]:KHAIHOANG_VARIANT}}),null);
+});
+
+test('the detail page variant URL only replaces its own variant query',()=>{
+  const detail=`/khai-hoang/${KHAIHOANG_HANDLE}/?variant=${KHAIHOANG_VARIANT}&from=${encodeURIComponent('/#khaihoang')}`;
+  assert.equal(
+    khaiHoangDetailVariantUrl(detail,'jp-s23'),
+    `/khai-hoang/${KHAIHOANG_HANDLE}/?variant=jp-s23&from=${encodeURIComponent('/#khaihoang')}`,
+  );
+  // Về mặc định thì bỏ hẳn `variant`, `from` vẫn nguyên.
+  assert.equal(khaiHoangDetailVariantUrl(detail,''),`/khai-hoang/${KHAIHOANG_HANDLE}/?from=${encodeURIComponent('/#khaihoang')}`);
+  assert.equal(khaiHoangDetailVariantUrl(detail,'/bad'),`/khai-hoang/${KHAIHOANG_HANDLE}/?from=${encodeURIComponent('/#khaihoang')}`);
+  assert.equal(khaiHoangDetailVariantUrl(`/khai-hoang/${KHAIHOANG_HANDLE}/?from=%2F%23khaihoang`,'jp-s23'),`/khai-hoang/${KHAIHOANG_HANDLE}/?from=%2F%23khaihoang&variant=jp-s23`);
+  // Không có gì khác bị chạm: hash và query lạ của trang chi tiết giữ nguyên.
+  assert.equal(khaiHoangDetailVariantUrl(`/khai-hoang/${KHAIHOANG_HANDLE}/?variant=a&from=x#top`,'b'),`/khai-hoang/${KHAIHOANG_HANDLE}/?variant=b&from=x#top`);
+});
+
+test('a Khai hoang share link without origin returns to the Khai hoang tab',()=>{
+  assert.equal(familyReturnHref('khaihoang'),'/#khaihoang');
+  assert.equal(familyReturnHref('khaihoang',{sourceSeasonId:'pk-s24',sourceCategoryId:'交戰'}),'/#khaihoang');
+  assert.equal(returnHrefFor('khaihoang',{from:`/?khTeam=${KHAIHOANG}&khVariant=${KHAIHOANG_VARIANT}#khaihoang`}),`/?khTeam=${KHAIHOANG}&khVariant=${KHAIHOANG_VARIANT}#khaihoang`);
+  assert.equal(returnHrefFor('khaihoang',{from:'https://evil.example/'}),'/#khaihoang');
+  assert.equal(returnHrefFor('khaihoang',{}),'/#khaihoang');
+  assert.equal(returnHrefFor('khaihoang',{from:'/khai-hoang/handle/'}),'/#khaihoang');
 });

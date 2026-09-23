@@ -13,6 +13,26 @@ const routeHandles = JSON.parse(
   await readFile(new URL("../pipeline/team-route-handles.json", import.meta.url), "utf8"),
 ).handles;
 const legacyRoute = (legacyTeamId) => `/doi-khac/${encodeURIComponent(routeHandles.legacy[legacyTeamId])}/`;
+const khaiHoangFixture = JSON.parse(
+  await readFile(new URL("../data/khaihoang.json", import.meta.url), "utf8"),
+);
+const khaiHoangTeams = khaiHoangFixture.teams;
+/** Hai đội có selector cấu hình: đủ cho journey nhiều card cùng lúc. */
+const [khaiHoangTeamA, khaiHoangTeamB] = khaiHoangTeams.filter((team) => (team.variants || []).length);
+const khaiHoangRoute = (teamId) => `/khai-hoang/${encodeURIComponent(routeHandles.khaihoang[teamId])}/`;
+const khaiHoangCard = (page, team) => page.locator(".kh-card").filter({
+  has: page.locator(`select[aria-label="Cấu hình ${team.title}"]`),
+});
+async function seedKhaiHoangReturnSources(page, historyMap, sessionMap) {
+  await page.addInitScript(({historyMap, sessionMap}) => {
+    const snapshot = (map) => ({
+      version: 1, url: "/#khaihoang", scrollY: 0, tab: "khaihoang", disclosures: {},
+      ...(map === null ? {} : {khaihoangVariants: map}),
+    });
+    sessionStorage.setItem("tqccl:team-return:v1", JSON.stringify(snapshot(sessionMap)));
+    history.replaceState({teamReturn: snapshot(historyMap)}, "", location.href);
+  }, {historyMap, sessionMap});
+}
 const distRoot = new URL("../dist/", import.meta.url);
 const publicArtifactPaths = PUBLIC_ARTIFACTS.map(
   (artifact) => `/${artifact.kind}/${artifact.sourceBasename}`,
@@ -207,6 +227,179 @@ test("all hash sections support direct links, clicks, back, and forward", async 
   await page.goto("/#not-a-section");
   await expectActiveSection(page, "team-chuan");
   await expect(page).toHaveURL(/#team-chuan$/);
+});
+
+test("Khai hoang selection lives in the root URL and survives detail round trips", async ({ page }) => {
+  const teamA = khaiHoangTeamA;
+  const teamB = khaiHoangTeamB;
+  const variantA = teamA.variants[0].id;
+  const variantB = teamB.variants[0].id;
+  const pairFrom = (teamId, variantId) => `/?khTeam=${teamId}${variantId ? `&khVariant=${variantId}` : ""}#khaihoang`;
+  const cardA = khaiHoangCard(page, teamA);
+  const cardB = khaiHoangCard(page, teamB);
+
+  await page.goto("/#khaihoang");
+  await waitForBoot(page);
+  await expect(page.locator(".kh-card")).toHaveCount(khaiHoangTeams.length);
+  expect(new URL(page.url()).search).toBe("");
+  // Card mặc định đã tự đủ state: `from` mang đúng cặp của chính nó và không mang query lạ nào.
+  await expect(cardA.locator(".kh-detail-link")).toHaveAttribute(
+    "href",
+    `${khaiHoangRoute(teamA.id)}?from=${encodeURIComponent(pairFrom(teamA.id, ""))}`,
+  );
+
+  // Đổi selector ghi cặp vào URL root và dựng lại href của đúng card đó.
+  await cardA.locator("select").selectOption(variantA);
+  expect(new URL(page.url()).searchParams.get("khTeam")).toBe(teamA.id);
+  expect(new URL(page.url()).searchParams.get("khVariant")).toBe(variantA);
+  const hrefA = `${khaiHoangRoute(teamA.id)}?variant=${variantA}&from=${encodeURIComponent(pairFrom(teamA.id, variantA))}`;
+  await expect(cardA.locator(".kh-title-link")).toHaveAttribute("href", hrefA);
+  await expect(cardA.locator(".kh-detail-link")).toHaveAttribute("href", hrefA);
+  await expect(cardB.locator(".kh-detail-link")).toHaveAttribute(
+    "href",
+    `${khaiHoangRoute(teamB.id)}?from=${encodeURIComponent(pairFrom(teamB.id, ""))}`,
+  );
+
+  // Primary click: URL detail mang variant và `from` an toàn, nút quay lại dùng đúng `from`.
+  await cardA.locator(".kh-detail-link").click();
+  await expect(page.locator("#team-detail-body")).toBeVisible();
+  expect(new URL(page.url()).pathname).toBe(khaiHoangRoute(teamA.id));
+  expect(new URL(page.url()).searchParams.get("variant")).toBe(variantA);
+  await expect(page.locator("#team-return-link")).toHaveAttribute("href", pairFrom(teamA.id, variantA));
+
+  // A4: chọn B rồi A, mở A bằng primary click, Back: cả hai lấy từ map của snapshot.
+  await page.goBack();
+  await expect(cardA.locator("select")).toHaveValue(variantA);
+  await cardB.locator("select").selectOption(variantB);
+  await cardA.locator("select").selectOption(variantA);
+  await cardA.locator(".kh-title-link").click();
+  await expect(page.locator("#team-detail-body")).toBeVisible();
+  await page.goBack();
+  await expect(cardA.locator("select")).toHaveValue(variantA);
+  await expect(cardB.locator("select")).toHaveValue(variantB);
+
+  // Copy link của B rồi mở trong cùng tab: B lấy từ URL, A vẫn lấy từ map cùng context.
+  const hrefB = await cardB.locator(".kh-detail-link").getAttribute("href");
+  await page.goto(new URL(hrefB, page.url()).href);
+  await expect(page.locator("#team-detail-body")).toBeVisible();
+  await page.locator("#team-return-link").click();
+  await expect(cardB.locator("select")).toHaveValue(variantB);
+  await expect(cardA.locator("select")).toHaveValue(variantA);
+
+  // Surface khác không mang cặp Khai hoang sang query của nó, và quay lại thì cặp được phục hồi.
+  await page.locator('.nav-tab[data-section="coexist"]').click();
+  await expectActiveSection(page, "coexist");
+  expect(new URL(page.url()).searchParams.has("khTeam")).toBe(false);
+  expect(new URL(page.url()).searchParams.has("khVariant")).toBe(false);
+  await page.locator('.nav-tab[data-section="khaihoang"]').click();
+  await expectActiveSection(page, "khaihoang");
+  expect(new URL(page.url()).searchParams.get("khTeam")).toBe(teamB.id);
+  await expect(cardA.locator("select")).toHaveValue(variantA);
+});
+
+test("Khai hoang restore falls back to the URL pair when session storage is denied", async ({ page }) => {
+  const team = khaiHoangTeamA;
+  const variant = team.variants[0].id;
+  await page.addInitScript(() => {
+    Object.defineProperty(window, "sessionStorage", { get() { throw new Error("denied"); } });
+  });
+
+  await page.goto(`/?khTeam=${team.id}&khVariant=${variant}#khaihoang`);
+  await waitForBoot(page);
+  const card = khaiHoangCard(page, team);
+  await expect(card.locator("select")).toHaveValue(variant);
+  // Không có snapshot thì chỉ active team trên URL sống sót; card khác về mặc định.
+  await expect(khaiHoangCard(page, khaiHoangTeamB).locator("select")).toHaveValue("");
+  // Điều hướng vẫn hoạt động dù storage bị chặn.
+  await card.locator(".kh-detail-link").click();
+  await expect(page.locator("#team-detail-body")).toBeVisible();
+  expect(new URL(page.url()).searchParams.get("variant")).toBe(variant);
+});
+
+test("Khai hoang ignores malformed or stale snapshot maps", async ({ page }) => {
+  const team = khaiHoangTeamA;
+  await page.addInitScript((teamId) => {
+    sessionStorage.setItem("tqccl:team-return:v1", JSON.stringify({
+      version: 1, url: "/#khaihoang", scrollY: 0, tab: "khaihoang", disclosures: {},
+      khaihoangVariants: { [teamId]: "variant-da-bo", "team-khong-ton-tai": "variant-la" },
+    }));
+  }, team.id);
+
+  await page.goto("/#khaihoang");
+  await waitForBoot(page);
+  await expect(khaiHoangCard(page, team).locator("select")).toHaveValue("");
+});
+
+test("invalid URL variant cannot erase a valid Khai hoang snapshot selection", async ({ page }) => {
+  const team = khaiHoangTeamA;
+  const saved = team.variants[0].id;
+  const other = khaiHoangTeamB;
+  const otherSaved = other.variants[0].id;
+  await page.addInitScript(({teamId, variantId, otherId, otherVariantId}) => {
+    sessionStorage.setItem("tqccl:team-return:v1", JSON.stringify({
+      version: 1, url: "/#khaihoang", scrollY: 0, tab: "khaihoang", disclosures: {},
+      khaihoangVariants: {[teamId]: variantId, [otherId]: otherVariantId},
+    }));
+  }, {teamId: team.id, variantId: saved, otherId: other.id, otherVariantId: otherSaved});
+  await page.goto(`/?khTeam=${team.id}&khVariant=${khaiHoangTeamB.variants[0].id}#khaihoang`);
+  await waitForBoot(page);
+  await expect(khaiHoangCard(page, team).locator("select")).toHaveValue(saved);
+  await expect(khaiHoangCard(page, other).locator("select")).toHaveValue(otherSaved);
+  await page.goto(`/?khTeam=${team.id}&khVariant=not%20routable#khaihoang`);
+  await waitForBoot(page);
+  await expect(khaiHoangCard(page, team).locator("select")).toHaveValue(saved);
+  await expect(khaiHoangCard(page, other).locator("select")).toHaveValue(otherSaved);
+  const validOverride = team.variants[1].id;
+  await page.goto(`/?khTeam=${team.id}&khVariant=${validOverride}#khaihoang`);
+  await waitForBoot(page);
+  await expect(khaiHoangCard(page, team).locator("select")).toHaveValue(validOverride);
+  await expect(khaiHoangCard(page, other).locator("select")).toHaveValue(otherSaved);
+  // Variant bị thiếu mới có quyền ghi đè snapshot thành build mặc định.
+  await page.goto(`/?khTeam=${team.id}#khaihoang`);
+  await waitForBoot(page);
+  await expect(khaiHoangCard(page, team).locator("select")).toHaveValue("");
+  await expect(khaiHoangCard(page, other).locator("select")).toHaveValue(otherSaved);
+});
+
+test("a valid history selection map wins over a conflicting session map", async ({page}) => {
+  const a = khaiHoangTeamA;
+  const b = khaiHoangTeamB;
+  await seedKhaiHoangReturnSources(page, {[a.id]: a.variants[0].id}, {[b.id]: b.variants[0].id});
+  await page.goto("/#khaihoang");
+  await waitForBoot(page);
+  await expect(khaiHoangCard(page, a).locator("select")).toHaveValue(a.variants[0].id);
+  await expect(khaiHoangCard(page, b).locator("select")).toHaveValue("");
+});
+
+test("an intentionally empty history map cannot resurrect older session selections", async ({page}) => {
+  const a = khaiHoangTeamA;
+  const b = khaiHoangTeamB;
+  await seedKhaiHoangReturnSources(page, {}, {[a.id]: a.variants[0].id, [b.id]: b.variants[0].id});
+  await page.goto("/#khaihoang");
+  await waitForBoot(page);
+  await expect(khaiHoangCard(page, a).locator("select")).toHaveValue("");
+  await expect(khaiHoangCard(page, b).locator("select")).toHaveValue("");
+});
+
+test("a legacy history snapshot without a map falls back to the newer session map", async ({page}) => {
+  const a = khaiHoangTeamA;
+  const b = khaiHoangTeamB;
+  await seedKhaiHoangReturnSources(page, null, {[a.id]: a.variants[0].id, [b.id]: b.variants[0].id});
+  await page.goto("/#khaihoang");
+  await waitForBoot(page);
+  await expect(khaiHoangCard(page, a).locator("select")).toHaveValue(a.variants[0].id);
+  await expect(khaiHoangCard(page, b).locator("select")).toHaveValue(b.variants[0].id);
+});
+
+test("switching into Khai hoang refreshes each native detail link's return tab", async ({ page }) => {
+  await page.goto("/#team-chuan");
+  await waitForBoot(page);
+  await page.locator('.nav-tab[data-section="khaihoang"]').click();
+  const team = khaiHoangTeamA;
+  const link = khaiHoangCard(page, team).locator(".kh-detail-link");
+  await expect(link).toHaveAttribute("href", new RegExp(`from=${encodeURIComponent(`/?khTeam=${team.id}#khaihoang`)}$`));
+  await link.click();
+  await expect(page.locator("#team-return-link")).toHaveAttribute("href", `/?khTeam=${team.id}#khaihoang`);
 });
 
 test("legacy storage payloads survive load and sanitize forbidden roster fields on save", async ({ page }) => {

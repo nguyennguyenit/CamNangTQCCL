@@ -1,7 +1,9 @@
 ---
+phase: 2
 title: "Hiển thị, điều hướng và kiểm chứng"
-status: todo
+status: completed
 priority: P2
+dependencies: [1]
 ---
 
 # Phase 2: Hiển thị, điều hướng và kiểm chứng
@@ -12,11 +14,13 @@ Chỉ bắt đầu sau gate offline phase 1 xanh: ID/ghi chú/ledger v2/catalog 
 
 ## Context và key insights
 
+Các quan sát dưới đây là trạng thái nguồn **lúc lập plan**, giữ làm mốc "trước/sau":
+
 - [Thiết kế](../../docs/design-guidelines.md), [chuẩn code](../../docs/code-standards.md), [plan index](./plan.md).
 - `js/render.js:293-325` có native select, renderer build và guide; dùng lại, không dựng bản markup khác trên trang riêng.
-- `js/app.js:295-330` có history/session snapshot, native anchor navigation và restore; `:385-393` restore hiện xảy ra trước mount Khai hoang.
+- `js/app.js:295-330` có history/session snapshot, native anchor navigation và restore; `:385-393` restore khi đó xảy ra trước mount Khai hoang.
 - `js/team-detail-navigation.js:177-230` capture/read snapshot phải cùng hiểu state mới; chỉ thêm field vào writer là chưa đủ.
-- `tests-e2e/khaihoang-options.spec.mjs` kiểm guide trong card; các assertion placement này cần chuyển sang detail, giữ kiểm build/Chạm Sứ/mines.
+- `tests-e2e/khaihoang-options.spec.mjs` khi đó kiểm guide trong card; các assertion placement này đã được chuyển sang detail, vẫn giữ kiểm build/Chạm Sứ/mines.
 
 ## Requirements và architecture
 
@@ -83,17 +87,17 @@ Tạo `src/pages/khai-hoang/[team].astro` và `js/khaihoang-detail.js` trong cù
 5. Cập nhật CSS dùng tokens hiện có; desktop/mobile và focus-visible; không thêm UI framework/modal.
 6. Migrate E2E guide assertions sang route detail và giữ variant/commander/tactic/Chạm Sứ/mines tests. Kế thừa migration note-field từ phase 1, bảo vệ nội dung bằng mapping đủ câu/điều kiện và consumer scenarios; cập nhật đầy đủ published fixtures. Bỏ test chỉ pin wording/incidental markup thay vì re-pin. Chỉ giữ test mới cho lỗi có thể xảy ra thật.
 7. Hoàn tất code/fixtures và review localization → build/check successor candidate → publish → rebind ledger generationId khớp publication vừa chọn, không sinh lại handle → chạy các gate khi không còn writer đồng thời. Refresh publication thêm lần nào phải rebind lại lần đó.
-8. Mở browser thật qua local runtime, thực hiện journey, chụp danh sách và detail. Sau smoke xanh, cập nhật docs liên quan, bỏ script tạm và ghi evidence vào plan; không commit/deploy.
+8. Mở browser thật qua local runtime, thực hiện journey, chụp danh sách và detail. Sau smoke xanh, cập nhật docs liên quan, bỏ script tạm và ghi evidence vào plan. Không push/deploy; người dùng đã cho phép commit local cho đợt này.
 
 ## Todo
 
-- [ ] Dựng card chỉ build và detail dùng renderer chung.
-- [ ] Tạo page/entry, nối catalog/shell và đăng ký public artifact đồng bộ.
-- [ ] Load pin/localize, variant URL và trạng thái lỗi đầy đủ.
-- [ ] Giữ cấu hình, return URL, snapshot và scroll đúng thứ tự.
-- [ ] Review localization, publish successor rồi rebind ledger trước build.
-- [ ] Migrate kiểm thử contract và chạy verification sau tích hợp.
-- [ ] Kiểm browser mobile/desktop, cập nhật docs sau smoke.
+- [x] Dựng card chỉ build và detail dùng renderer chung.
+- [x] Tạo page/entry, nối catalog/shell và đăng ký public artifact đồng bộ.
+- [x] Load pin/localize, variant URL và trạng thái lỗi đầy đủ.
+- [x] Giữ cấu hình, return URL, snapshot và scroll đúng thứ tự.
+- [x] Review localization, publish successor rồi rebind ledger trước build.
+- [x] Migrate kiểm thử contract và chạy verification sau tích hợp.
+- [x] Kiểm browser mobile/desktop, cập nhật docs sau smoke.
 
 ## Success criteria và scenario coverage
 
@@ -107,7 +111,7 @@ Tạo `src/pages/khai-hoang/[team].astro` và `js/khaihoang-detail.js` trong cù
 
 ## Verification commands
 
-Các lệnh dưới đây là kế hoạch chạy, chưa phải kết quả:
+Các lệnh dưới đây đã chạy trên cây tĩnh sau cutover; kết quả ghi ngay bên dưới:
 
 ```bash
 python3 -m pipeline.team_route_handles --check
@@ -123,7 +127,11 @@ npm run test:dev-contract
 npm run test:e2e:astro -- tests-e2e/khaihoang-options.spec.mjs tests-e2e/team-detail-pages.spec.mjs tests-e2e/spa-parity.spec.mjs
 ```
 
-Playwright config hiện tự build + preview tại 4174 với `reuseExistingServer:false`; không chiếm port đó bằng server thủ công. Sau focused scenarios xanh, chạy full `npm run test:e2e:astro` vì chạm navigation/render/shell dùng chung. Không sửa config để né lỗi thời gian hoặc che regression.
+Kết quả: Python 368 pass; Node 316 pass; runtime contract 5; dist contract 27; dev contract 2;
+Astro E2E 153 pass (gồm ba spec focused trên rồi full suite); `npm run check` 0 error / 0 warning /
+1 hint; `npm run build` 1551 trang; `npm run verify` 1700 file; gate localization public xanh và
+ledger `--check` xanh trên generation cuối. Playwright tự build + preview tại 4174 với
+`reuseExistingServer:false`; không chiếm port đó bằng server thủ công và không sửa config.
 
 ## Risks và security
 
@@ -132,6 +140,20 @@ Playwright config hiện tự build + preview tại 4174 với `reuseExistingSer
 - Thay notes/source bytes phải refresh publication thực, không chỉ patch hash. Renderer nhãn UI mới cũng thuộc inventory localization.
 - Dữ liệu đã dịch mới được hiển thị; không để chữ Hán từ raw note lọt lại trong migration.
 
+## Trạng thái hoàn tất
+
+Đóng ngày 2026-09-24 sau khi toàn bộ acceptance xanh. Cả bảy mục Todo đã xong, không mục nào còn treo.
+
+- **Card chỉ build (A1):** `js/render.js` tách `khaihoangBuildContent(build, openingNotes=false)` và `khaihoangGuide(guide)`; card gọi build content ở chế độ không có `openingNote` và **không** gọi guide, còn `openingNote` chỉ bật ở detail (`openingNotes = true`). Tên team và “Xem chi tiết” là anchor thật; `onSelect` cập nhật href của cả hai link nên Enter/Cmd-click/middle-click/copy link đều mang đúng cặp đang chọn.
+- **Detail và guide ownership (A2):** `src/pages/khai-hoang/[team].astro` + `js/khaihoang-detail.js` dùng `loadWebsiteDisplay`/`localizeData` với pin `data-khaihoang-team-id` + `data-khaihoang-sha256`; guide lấy theo team (owner bộ ba) và nằm ngoài subtree bị replace khi đổi build, team thiếu guide vẫn hiển thị build và mọi note hiện có.
+- **17 route tĩnh:** `dist/khai-hoang/` có đúng 17 thư mục, khớp `handles.khaihoang` trong ledger; `catalog.htmlPaths` = recommended + legacy + khaihoang và verifier kiểm từng trang (`scripts/verify-astro-dist.mjs`), `public/_headers` phủ `/khai-hoang/*`, `public-artifact-manifest.mjs` đăng ký `js/khaihoang-detail`, 404 vẫn `noindex` và không boot entry nào.
+- **Variant và URL (A3/A5):** detail dùng `?variant=<variantId>&from=<safeRootURL>`, default bỏ `variant`, đổi select dùng `replaceState`; variant lạ hiện thông báo + link về cấu hình mặc định thay vì render default dưới tên variant lạ; canonical luôn là pathname.
+- **Snapshot và quay lại (A4):** `js/team-detail-navigation.js` có `KHAIHOANG_TEAM_QUERY_KEY`/`KHAIHOANG_VARIANT_QUERY_KEY`, `khaiHoangContextKey` (gọi `safeReturnUrl` trước, chỉ bỏ đúng `khTeam`/`khVariant` khi URL thuộc `#khaihoang`), `khaiHoangUrlWithPair`, và map `khaihoangVariants` được validate theo inventory trong `captureReturnSnapshot`/`readReturnSnapshot`. `js/app.js` mount Khai hoang trước khi restore, persist map khi đổi selector/primary-click/`pagehide`, overlay active pair hợp lệ từ URL sau snapshot, và chỉ nhận overlay khi URL có đúng một team, tối đa một variant thuộc team đó — nên cặp sai/ngoài team/stale không xoá được lựa chọn đã lưu. Đội Chuẩn/Đội Khác vẫn so full URL.
+- **Localization (A7):** publication cuối là generation `b60b51c9f5a5b86de3d27a278a9a562dabbfdeeb0b61cac54d00e71e9f6bbb67`; ledger v2 rebind `generationId` sang đúng generation này và giữ 17 handle + `khaihoangSha256` đúng nguồn. Nhãn guide “Hướng dẫn khai hoang” là copy tiếng Việt do người viết, có obligation + review độc lập (UX reviewer ACCEPT) và render là `h2`, không đi vòng qua inventory. Chạm Sứ, mines, Đội Chuẩn/Đội Khác, sitemap, headers và verifier giữ nguyên contract.
+- **Kiểm chứng:** bảng kết quả ở mục Verification commands. Visual kiểm thật ở 320/375/1280 px, cả sáng và tối, không tràn ngang và không mất focus khi đổi build; đo tương phản theme tối đạt tối thiểu 4.85:1 ở unit badge và 6.20:1 ở chip. Hai finding có điều kiện của Kongming đã đóng: (1) variant URL sai không còn xoá lựa chọn snapshot hợp lệ — phủ bởi `tests-e2e/spa-parity.spec.mjs:333-361,364-391`; (2) fixture âm của Option B nay phân biệt được exact projection với subset-only — phủ bởi `tests/test_site_localization.py:357-379` theo contract ở `docs/season-team-data.md:171-178`. Kongming kết luận **GO** trên bản cuối.
+- Ba finding review ban đầu (2 High: version coupling, publication pin; 1 Medium: note-field cutover) đã xử lý đúng như plan mô tả: ledger tách v2 khỏi publication v1, thứ tự publish → rebind → build được giữ, và `displayNote` đã nghỉ không quay lại dưới dạng alias.
+- Docs `docs/system-architecture.md`, `docs/code-standards.md`, `docs/deployment-guide.md` và `docs/season-team-data.md` đã cập nhật sau smoke xanh.
+
 ## Next step
 
-Sau tất cả acceptance xanh, ghi số liệu và đường dẫn evidence, hoàn tất checklist bằng công cụ plan. Chỉ đề nghị commit/deploy khi người dùng yêu cầu; hiện tại dừng ở plan chờ duyệt.
+Acceptance đã xanh và checklist đã đóng bằng trạng thái trong frontmatter. Plan đi vào **một commit local duy nhất** theo yêu cầu người dùng; không push, không deploy. Không đề nghị thêm thay đổi nào ngoài phạm vi này.

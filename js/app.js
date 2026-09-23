@@ -15,11 +15,16 @@ import { createSeasonCoexistSection, createRecommendedSection } from "./team-fil
 import { resolveBrowseState, projectSeasonBrowse, resolveSelectionScore } from './season-context.js';
 import { loadRecommendedReference, readRecommendedQuery } from './recommended-reference-state.js';
 import {
+  KHAIHOANG_TEAM_QUERY_KEY,
+  KHAIHOANG_VARIANT_QUERY_KEY,
   captureReturnSnapshot,
   isNativeNavigationClick,
+  khaiHoangPairFromUrl,
+  khaiHoangUrlWithPair,
   matchesReturnSnapshot,
   migrateLegacyReferenceUrl,
   readReturnSnapshot,
+  safeKhaiHoangVariants,
   setTeamRouteHandlesFromJSON,
   teamDetailHref,
   writeReturnSnapshot,
@@ -160,6 +165,13 @@ async function main() {
     const teams = localizeData(websiteDisplay, "data/teams.json", teamsSource);
     const coexist = localizeData(websiteDisplay, "data/coexist.json", coexistSource);
     const khaihoang = localizeData(websiteDisplay, "data/khaihoang.json", khaihoangSource);
+    // Controller Khai hoang do renderer dựng; app chỉ bơm callback và giữ lựa chọn qua snapshot.
+    let khaiHoangUI = null;
+    // Inventory của Khai hoang: chỉ ID còn tồn tại mới được ghi vào snapshot phục hồi.
+    const khaihoangInventory = new Map(
+      (Array.isArray(khaihoang) ? [] : khaihoang.teams || [])
+        .map(team => [team.id, new Set((team.variants || []).map(variant => variant.id))]),
+    );
     let lookupBundle = null;
     try {
       lookupBundle = await loadLookupBundle(name => loadBytes(name.replace(/\.json$/, "")));
@@ -267,10 +279,12 @@ async function main() {
     };
     const REFERENCE_PARAMS = ['season','category','q','detail','legacyTeam','legacyVariant','faction','unit','score','subcategory','source'];
     const GAMEPLAY_PARAMS = ['config','q','faction','unit','tier','source','sort','stars'];
-    const ALL_SURFACE_PARAMS = [...new Set([...REFERENCE_PARAMS,...GAMEPLAY_PARAMS])];
+    // Khai hoang giữ cặp đang chọn trong query của chính nó; surface khác không mang state này sang.
+    const KHAIHOANG_PARAMS = [KHAIHOANG_TEAM_QUERY_KEY,KHAIHOANG_VARIANT_QUERY_KEY];
+    const ALL_SURFACE_PARAMS = [...new Set([...REFERENCE_PARAMS,...GAMEPLAY_PARAMS,...KHAIHOANG_PARAMS])];
     const REFERENCE_SECTIONS = ['team-chuan','team-khac'];
     const GAMEPLAY_SECTIONS = ['coexist','analyze','roster-recommend'];
-    const surfaceParams = name => REFERENCE_SECTIONS.includes(name) ? REFERENCE_PARAMS : GAMEPLAY_SECTIONS.includes(name) ? GAMEPLAY_PARAMS : null;
+    const surfaceParams = name => name === 'khaihoang' ? KHAIHOANG_PARAMS : REFERENCE_SECTIONS.includes(name) ? REFERENCE_PARAMS : GAMEPLAY_SECTIONS.includes(name) ? GAMEPLAY_PARAMS : null;
     const surfaceSnapshot = (url,keys) => keys
       .filter(key=>!['detail','legacyTeam','legacyVariant','config'].includes(key))
       .flatMap(key=>url.searchParams.getAll(key).map(value=>[key,value]));
@@ -311,17 +325,58 @@ async function main() {
         disclosures:sections[tab]?.getDisclosureState?.() || {
           filters:$(`#section-${tab}-filters`)?.classList.contains('collapsed') === false,
         },
+        // Chỉ root Khai hoang đã mount mới ghi map; map rỗng vẫn là lựa chọn hợp lệ của người dùng.
+        khaihoangVariants:khaiHoangUI?.getVariants(),
+        khaihoangInventory,
       });
       if (!snapshot) return;
       history.replaceState({...history.state,teamReturn:snapshot},'',location.href);
       writeReturnSnapshot(snapshot,sessionStore());
     };
+    // Chỉ tab Khai hoang mới ghi cặp đang chọn vào URL root.
+    const syncKhaiHoangRoot = (teamId, variantId) => {
+      if (sectionFromHash() !== 'khaihoang') return;
+      const url = khaiHoangUrlWithPair(location.href,{teamId,variantId});
+      if (url === `${location.pathname}${location.search}${location.hash}`) return;
+      history.replaceState(history.state,'',url);
+    };
     const onReferenceNavigate = event => { if (isNativeNavigationClick(event)) rememberReturn(); };
+    const khaiHoangSelections = snapshot => snapshot && Object.hasOwn(snapshot,'khaihoangVariants')
+      ? safeKhaiHoangVariants(snapshot.khaihoangVariants,khaihoangInventory)
+      : null;
     const restoreReturnState = () => {
       const fromHistory = history.state?.teamReturn;
-      const snapshot = fromHistory && matchesReturnSnapshot(fromHistory,location.href)
-        ? captureReturnSnapshot({href:location.href,scrollY:fromHistory.scrollY,tab:fromHistory.tab,disclosures:fromHistory.disclosures})
-        : readReturnSnapshot(location.href,sessionStore());
+      const historySnapshot = fromHistory && matchesReturnSnapshot(fromHistory,location.href)
+        ? captureReturnSnapshot({
+            href:location.href,
+            scrollY:fromHistory.scrollY,
+            tab:fromHistory.tab,
+            disclosures:fromHistory.disclosures,
+            khaihoangVariants:fromHistory.khaihoangVariants,
+            khaihoangInventory,
+          })
+        : null;
+      const historySelections = khaiHoangSelections(historySnapshot);
+      const sessionSnapshot = historySelections === null
+        ? readReturnSnapshot(location.href,sessionStore(),{khaihoangInventory})
+        : null;
+      // Snapshot history cũ thiếu map không được che map mới hơn trong session; map rỗng thì có quyền.
+      const selections = historySelections ?? khaiHoangSelections(sessionSnapshot);
+      if (khaiHoangUI && (selections !== null || sectionFromHash() === 'khaihoang')) {
+        const next = {...(selections || {})};
+        if (sectionFromHash() === 'khaihoang') {
+          const pair = khaiHoangPairFromUrl(location.href);
+          const params = new URL(location.href).searchParams;
+          const teams = params.getAll(KHAIHOANG_TEAM_QUERY_KEY);
+          const variants = params.getAll(KHAIHOANG_VARIANT_QUERY_KEY);
+          if (teams.length === 1 && variants.length <= 1 && khaihoangInventory.has(pair.teamId)
+            && (variants.length === 0 || (pair.variantId && khaihoangInventory.get(pair.teamId).has(pair.variantId)))) {
+            next[pair.teamId] = pair.variantId;
+          }
+        }
+        khaiHoangUI.setVariants(next);
+      }
+      const snapshot = historySnapshot || sessionSnapshot;
       if (!snapshot) return;
       const section=sections[snapshot.tab || sectionFromHash()];
       if (section?.setDisclosureState) section.setDisclosureState(snapshot.disclosures);
@@ -379,7 +434,28 @@ async function main() {
       renderScope();
       renderReference();
       if (sectionFromHash() === "lookup") lookupUI?.render();
+      khaiHoangUI?.updateLinks();
     };
+    // Mount controller Khai hoang trước restore: restoration ghi lựa chọn vào card đã dựng,
+    // href tự đủ state cho Cmd/Ctrl-click và copy link mà không cần sửa URL tab nguồn.
+    khaiHoangUI = khaihoangTable(khaihoang, {
+      hrefFor: (teamId, variantId) => teamDetailHref(
+        {khaiHoangTeamId: teamId, khaiHoangVariantId: variantId},
+        {from: khaiHoangUrlWithPair(location.href, {teamId, variantId})},
+      ),
+      // Primary click: đồng bộ cặp đang bấm rồi mới ghi snapshot, không preventDefault.
+      onNavigate: (event, teamId, variantId) => {
+        if (!isNativeNavigationClick(event)) return;
+        syncKhaiHoangRoot(teamId, variantId);
+        rememberReturn();
+      },
+      // Đổi select: URL root theo cặp mới và snapshot được làm mới ngay.
+      onChange: (teamId, variantId) => {
+        syncKhaiHoangRoot(teamId, variantId);
+        rememberReturn();
+      },
+    });
+    $("#section-khaihoang").append(khaiHoangUI.element);
     onNavigation();
     renderScope();
     restoreReturnState();
@@ -390,7 +466,8 @@ async function main() {
       setTimeout(()=>{restoringHistory=false;},0);
     });
     window.addEventListener('pageshow', event => { if (event.persisted) restoreReturnState(); });
-    $("#section-khaihoang").append(khaihoangTable(khaihoang));
+    // Scroll mới nhất phải vào snapshot trước khi rời tab bằng paste/copy URL.
+    window.addEventListener('pagehide', rememberReturn);
     if (catalog) lookupUI = initUnifiedLookup({ heroes: heroesDict, tactics, catalog }, $("#section-lookup"));
 
     // Kết quả gameplay giữ nguyên tab người dùng: config mở detail dùng chung, đội gốc đi trang riêng.

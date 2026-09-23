@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "batchId": "khaihoang-note-cutover-20260923",
+  "reviewerSession": "KhaiHoangL10nReview",
+  "items": [
+    {
+      "entityId": "data:data/khaihoang.json:teams[12].heroes[2]",
+      "fieldPath": "teams[12].heroes[2].buildNote",
+      "inputFingerprint": "b072bf97849393f2b596b528d6e4a535d6c94b8c494eb896d8611a352e8f7fcf",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "6ea2fd38a094928b78f66e508d6123ea3dc7da2fcaa720772fac42f2da53cbe6",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "data:data/khaihoang.json:teams[14]",
+      "fieldPath": "teams[14].buildNote",
+      "inputFingerprint": "bdd9ef7ba7797b094c6cbe8de6d7b50e009740a86d0572018f9b41b19e7f8f00",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "b1f4eff85fbcc6e5c6d6060d89db52b5ba9288a2a620de8e3749302e0639960c",
+      "verdict": "accepted"
+    }
+  ]
+}

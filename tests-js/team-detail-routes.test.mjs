@@ -7,6 +7,7 @@ import {createHash} from 'node:crypto';
 import {
   legacyRoutePath,
   recommendedRoutePath,
+  khaiHoangRoutePath,
   teamDetailCatalog,
   teamDetailHtmlPaths,
   findAdmittedVariant,
@@ -49,15 +50,27 @@ const admittedRow=(legacyTeamId,legacyVariantId,legacyContent)=>({
 });
 
 /** Fixture ledger freezes the raw identifier as the handle; season codes are owned by the catalog. */
-const frozenHandles=(recommendedIds,teams)=>({
+const frozenHandles=(recommendedIds,teams,khaiHoangTeams)=>({
   recommended:Object.fromEntries(recommendedIds.map(id=>[id,id])),
   legacy:Object.fromEntries(teams.map(team=>[team.id,team.id])),
+  khaihoang:Object.fromEntries(khaiHoangTeams.map(team=>[team.id,team.id])),
 });
+
+/** Mirrors `slug()` in pipeline/team_route_handles.py; the fixture titles only need the ASCII path. */
+const slug=value=>value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+
+/** The data owner assigns `id` as the ASCII slug of the current title; the fixture does the same. */
+const khaiHoangTeam=(title,overrides={})=>({id:slug(title),title,...overrides});
+const KHAIHOANG_TEAMS=[
+  khaiHoangTeam('Gia Cát Khác · SP Mã Siêu · Pháp Chính'),
+  khaiHoangTeam('Quan Ngân Bình · Nhạc Tiến'),
+];
 
 async function fixture({
   recommendedIds=['team-alpha','yxms-049-仙人盾-by大米'],
   seasonCodes={},
   teams,
+  khaiHoangTeams=KHAIHOANG_TEAMS,
   variants=[['team-intro-0','v-'+'a'.repeat(64)]],
   legacyTeamsHash,
 }={}) {
@@ -69,6 +82,9 @@ async function fixture({
   const teamsBytes=bytes(teamRows);
   const teamsPath=join(root,'teams.json');
   await writeFile(teamsPath,teamsBytes);
+  const khaiHoangBytes=bytes({teams:khaiHoangTeams});
+  const khaiHoangPath=join(root,'khaihoang.json');
+  await writeFile(khaiHoangPath,khaiHoangBytes);
   const byId=new Map(teamRows.map(team=>[team.id,team]));
   const scope='s-'+'2'.repeat(64);
   const records=recommendedIds.map(id=>recommendedRow(
@@ -91,7 +107,7 @@ async function fixture({
   await writeFile(join(generation,'manifest.json'),manifest);
   await writeFile(join(root,'recommended','current.json'),bytes({schemaVersion:1,generationId,manifestSha256:hash(manifest)}));
 
-  const defaultHandles=frozenHandles(recommendedIds,teamRows);
+  const defaultHandles=frozenHandles(recommendedIds,teamRows,khaiHoangTeams);
   /** Writes an alternative ledger in the same root and returns its path. */
   const alternativeLedger=async(overrides={},name='alternative-ledger.json')=>{
     const handles=overrides.handles === undefined
@@ -101,9 +117,10 @@ async function fixture({
         : {...defaultHandles,...overrides.handles};
     const path=join(root,name);
     await writeFile(path,bytes({
-      schemaVersion:overrides.schemaVersion ?? 1,
+      schemaVersion:overrides.schemaVersion ?? 2,
       generationId:overrides.generationId ?? generationId,
       legacyTeamsSha256:overrides.legacyTeamsSha256 ?? `sha256:${hash(teamsBytes)}`,
+      khaihoangSha256:overrides.khaihoangSha256 ?? `sha256:${hash(khaiHoangBytes)}`,
       note:'Handle URL đã review; gán một lần, không suy lại từ displayNameVi.',
       handles,
     }));
@@ -114,6 +131,8 @@ async function fixture({
     root,
     recommendedRoot:join(root,'recommended'),
     teamsPath,
+    khaiHoangPath,
+    khaiHoangTeams,
     generationId,
     teamRows,
     defaultHandles,
@@ -126,6 +145,7 @@ const build=(setup,handlesPath=setup.handlesPath)=>teamDetailCatalog({
   recommendedRoot:setup.recommendedRoot,
   teamsPath:setup.teamsPath,
   handlesPath,
+  khaiHoangPath:setup.khaiHoangPath,
 });
 
 test('route builders are the single source of the Vietnamese path shape',()=>{
@@ -156,12 +176,13 @@ test('catalog routes every selected Recommended row and every raw original exact
   assert.deepEqual(catalog.legacy.find(entry=>entry.legacyTeamId==='moi-phe-4').variantIds,[]);
   assert.deepEqual(catalog.legacy.find(entry=>entry.legacyTeamId==='team-intro-0').variantIds,['v-'+'a'.repeat(64)]);
 
-  assert.equal(catalog.htmlPaths.length,catalog.recommended.length+catalog.legacy.length);
+  assert.equal(catalog.htmlPaths.length,catalog.recommended.length+catalog.legacy.length+catalog.khaiHoang.length);
   assert.equal(new Set(catalog.htmlPaths).size,catalog.htmlPaths.length);
   assert.deepEqual(catalog.htmlPaths,await teamDetailHtmlPaths({
     recommendedRoot:setup.recommendedRoot,
     teamsPath:setup.teamsPath,
     handlesPath:setup.handlesPath,
+    khaiHoangPath:setup.khaiHoangPath,
   }));
   assert.equal(catalog.legacyTeamsSha256,`sha256:${hash(await readFile(setup.teamsPath))}`);
   assert.equal(catalog.generationId,setup.generationId);
@@ -243,11 +264,15 @@ test('the frozen ledger must still describe the selected publication',async t=>{
   });
 
   const malformed=[
-    ['schema',{schemaVersion:2}],
+    ['schema-v1',{schemaVersion:1}],
+    ['schema-v3',{schemaVersion:3}],
     ['blank-generation',{generationId:''}],
     ['bad-teams-hash',{legacyTeamsSha256:'not-a-digest'}],
+    ['bad-khaihoang-hash',{khaihoangSha256:'not-a-digest'}],
     ['null-handles',{handles:null}],
     ['array-family',{handles:{recommended:[]}}],
+    ['missing-family',{handles:{khaihoang:null}}],
+    ['unknown-family',{handles:{extra:{}}}],
     ['numeric-handle',{handles:{legacy:{'team-intro-0':7}}}],
   ];
   for (const [name,overrides] of malformed) {
@@ -359,23 +384,28 @@ test('a custom project root must supply the ledger that belongs to it',async t=>
   });
 
   // A foreign ledger with the default publication is rejected for the same reason.
-  await assert.rejects(teamDetailCatalog({handlesPath:setup.handlesPath}),/team route handle ledger/i);
+  await assert.rejects(
+    teamDetailCatalog({handlesPath:setup.handlesPath,khaiHoangPath:setup.khaiHoangPath}),
+    /team route handle ledger/i,
+  );
 
   // Custom roots are never served from the default cache, and they never poison it.
-  const custom=await teamDetailCatalog({recommendedRoot:setup.recommendedRoot,teamsPath:setup.teamsPath,handlesPath:setup.handlesPath});
+  const custom=await teamDetailCatalog({recommendedRoot:setup.recommendedRoot,teamsPath:setup.teamsPath,handlesPath:setup.handlesPath,khaiHoangPath:setup.khaiHoangPath});
   assert.equal(custom.recommended.length,2);
-  assert.equal(custom.htmlPaths.length,5);
+  assert.equal(custom.htmlPaths.length,7);
   assert.equal(custom.generationId,setup.generationId);
   const cached=await teamDetailCatalog();
   assert.equal(cached.generationId,defaultCatalog.generationId);
   assert.equal(cached.recommended.length,1366);
-  assert.equal(cached.htmlPaths.length,1532);
+  assert.equal(cached.htmlPaths.length,1549);
 });
 
 test('worktree publication yields the real route inventory and pins the real originals',async()=>{
   const catalog=await teamDetailCatalog();
   const teamsBytes=await readFile(new URL('../data/teams.json',import.meta.url));
   const teams=JSON.parse(teamsBytes.toString());
+  const khaiHoangBytes=await readFile(new URL('../data/khaihoang.json',import.meta.url));
+  const khaiHoangTeams=JSON.parse(khaiHoangBytes.toString()).teams;
   const ledger=JSON.parse(await readFile(new URL('../pipeline/team-route-handles.json',import.meta.url),'utf8'));
 
   assert.equal(catalog.legacyTeamsSha256,`sha256:${hash(teamsBytes)}`);
@@ -386,7 +416,7 @@ test('worktree publication yields the real route inventory and pins the real ori
   assert.equal(catalog.recommended.length,1366);
   assert.equal(catalog.legacy.length,166);
   assert.equal(new Set(catalog.recommended.map(entry=>entry.sourceConfigId)).size,catalog.recommended.length);
-  assert.equal(catalog.htmlPaths.length,catalog.recommended.length+catalog.legacy.length);
+  assert.equal(catalog.htmlPaths.length,catalog.recommended.length+catalog.legacy.length+catalog.khaiHoang.length);
   assert.equal(new Set(catalog.htmlPaths).size,catalog.htmlPaths.length);
   assert.ok(catalog.variants.length>0);
 
@@ -417,4 +447,227 @@ test('worktree publication yields the real route inventory and pins the real ori
     assert.ok(catalog.legacy.some(entry=>entry.legacyTeamId===variant.legacyTeamId));
     assert.equal(findAdmittedVariant(catalog,variant.legacyTeamId,variant.legacyVariantId).legacyVariantId,variant.legacyVariantId);
   }
+
+  // Khai hoang identity is pinned here and its pages ship in the same emitted inventory.
+  assert.equal(ledger.schemaVersion,2);
+  assert.equal(catalog.khaiHoangSha256,`sha256:${hash(khaiHoangBytes)}`);
+  assert.equal(catalog.khaiHoang.length,khaiHoangTeams.length);
+  assert.equal(catalog.khaiHoang.length,17);
+  assert.deepEqual(catalog.khaiHoang.map(entry=>entry.khaiHoangTeamId),khaiHoangTeams.map(team=>team.id));
+  assert.equal(new Set(catalog.khaiHoang.map(entry=>entry.handle)).size,catalog.khaiHoang.length);
+  for (const [index,entry] of catalog.khaiHoang.entries()) {
+    assert.equal(entry.handle,ledger.handles.khaihoang[entry.khaiHoangTeamId]);
+    assert.equal(entry.title,khaiHoangTeams[index].title);
+    assert.equal(entry.sourceSha256,catalog.khaiHoangSha256);
+    assert.equal(entry.routeSegment,entry.handle);
+    assert.equal(entry.routePath,khaiHoangRoutePath(entry.handle));
+    assert.equal(entry.htmlPath,`khai-hoang/${entry.handle}/index.html`);
+  }
+  assert.deepEqual(
+    catalog.htmlPaths.filter(path=>path.startsWith('khai-hoang/')),
+    catalog.khaiHoang.map(entry=>entry.htmlPath).sort(),
+  );
+  assert.equal(catalog.htmlPaths.length,1366+166+17);
+});
+
+test('Khai hoang route contract: an injected source yields the emitted routes and pins',async t=>{
+  const setup=await fixture();
+  t.after(()=>rm(setup.root,{recursive:true,force:true}));
+  const catalog=await build(setup);
+  const sourceBytes=await readFile(setup.khaiHoangPath);
+
+  assert.equal(khaiHoangRoutePath('gia-cat-khac-sp-ma-sieu-phap-chinh'),'/khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/');
+  assert.equal(catalog.khaiHoangSha256,`sha256:${hash(sourceBytes)}`);
+  assert.deepEqual(catalog.khaiHoang.map(entry=>entry.khaiHoangTeamId),setup.khaiHoangTeams.map(team=>team.id));
+  assert.deepEqual(catalog.khaiHoang.map(entry=>entry.title),setup.khaiHoangTeams.map(team=>team.title));
+  assert.deepEqual(catalog.khaiHoang.map(entry=>entry.handle),setup.khaiHoangTeams.map(team=>team.id));
+  assert.equal(catalog.khaiHoang[0].routeSegment,'gia-cat-khac-sp-ma-sieu-phap-chinh');
+  assert.equal(catalog.khaiHoang[0].routePath,'/khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/');
+  assert.equal(catalog.khaiHoang[0].htmlPath,'khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/index.html');
+  for (const entry of catalog.khaiHoang) assert.equal(entry.sourceSha256,catalog.khaiHoangSha256);
+
+  // The injected source owns the emitted inventory: every prospective route is a real page path.
+  assert.equal(catalog.htmlPaths.length,catalog.recommended.length+catalog.legacy.length+catalog.khaiHoang.length);
+  assert.deepEqual(
+    catalog.htmlPaths.filter(path=>path.startsWith('khai-hoang/')),
+    catalog.khaiHoang.map(entry=>entry.htmlPath).sort(),
+  );
+  assert.deepEqual(catalog.htmlPaths,await teamDetailHtmlPaths({
+    recommendedRoot:setup.recommendedRoot,
+    teamsPath:setup.teamsPath,
+    handlesPath:setup.handlesPath,
+    khaiHoangPath:setup.khaiHoangPath,
+  }));
+});
+
+test('Khai hoang route contract: a v2 ledger reads the v1 Recommended publication',async t=>{
+  const setup=await fixture();
+  t.after(()=>rm(setup.root,{recursive:true,force:true}));
+  const catalog=await build(setup);
+  const ledger=JSON.parse(await readFile(setup.handlesPath,'utf8'));
+
+  assert.equal(ledger.schemaVersion,2);
+  assert.equal(ledger.khaihoangSha256,`sha256:${hash(await readFile(setup.khaiHoangPath))}`);
+  assert.deepEqual(Object.keys(ledger.handles).sort(),['khaihoang','legacy','recommended']);
+  assert.equal(catalog.generationId,setup.generationId);
+  assert.equal(catalog.recommended.length,2);
+  assert.equal(catalog.legacy.length,3);
+  const published=await Promise.all([
+    readFile(join(setup.recommendedRoot,'current.json'),'utf8'),
+    readFile(join(setup.recommendedRoot,setup.generationId,'manifest.json'),'utf8'),
+    readFile(join(setup.recommendedRoot,setup.generationId,'index.json'),'utf8'),
+  ]);
+  assert.deepEqual(published.map(document=>JSON.parse(document).schemaVersion),[1,1,1]);
+});
+
+test('Khai hoang route contract: source hash, missing, duplicate and unroutable identities are rejected',async t=>{
+  const cleanup=[];
+  t.after(()=>Promise.all(cleanup.map(setup=>rm(setup.root,{recursive:true,force:true}))));
+
+  const setup=await fixture(); cleanup.push(setup);
+  const [firstId,secondId]=setup.khaiHoangTeams.map(team=>team.id);
+
+  const staleSource=await setup.alternativeLedger({khaihoangSha256:'sha256:'+'9'.repeat(64)},'stale-khaihoang-source.json');
+  await assert.rejects(build(setup,staleSource),error=>{
+    assert.match(error.message,/khaihoangSha256/);
+    assert.match(error.message,/Khai hoang source/i);
+    return true;
+  });
+
+  const missing=await setup.alternativeLedger({handles:{khaihoang:{[firstId]:firstId}}},'missing-khaihoang.json');
+  await assert.rejects(build(setup,missing),error=>{
+    assert.match(error.message,/missing/i);
+    assert.match(error.message,new RegExp(secondId));
+    return true;
+  });
+
+  const unknown=await setup.alternativeLedger({handles:{khaihoang:{...setup.defaultHandles.khaihoang,'doi-ghost':'doi-ghost'}}},'unknown-khaihoang.json');
+  await assert.rejects(build(setup,unknown),error=>{
+    assert.match(error.message,/unknown/i);
+    assert.match(error.message,/doi-ghost/);
+    return true;
+  });
+
+  const duplicate=await setup.alternativeLedger({handles:{khaihoang:{...setup.defaultHandles.khaihoang,[secondId]:firstId}}},'duplicate-khaihoang.json');
+  await assert.rejects(build(setup,duplicate),error=>{
+    assert.match(error.message,/duplicate/i);
+    assert.match(error.message,new RegExp(firstId));
+    return true;
+  });
+
+  for (const handle of ['../secret','khai hoang','',7]) {
+    const unroutable=await setup.alternativeLedger({handles:{khaihoang:{...setup.defaultHandles.khaihoang,[secondId]:handle}}},`unroutable-khaihoang-${Buffer.from(String(handle)).toString('hex')}.json`);
+    await assert.rejects(build(setup,unroutable),error=>{
+      assert.match(error.message,/handle/i);
+      assert.match(error.message,new RegExp(secondId));
+      return true;
+    },`must reject Khai hoang handle ${JSON.stringify(handle)}`);
+  }
+
+  const duplicateSource=await fixture({khaiHoangTeams:[...setup.khaiHoangTeams,khaiHoangTeam(setup.khaiHoangTeams[0].title,{id:firstId})]});
+  cleanup.push(duplicateSource);
+  await assert.rejects(build(duplicateSource),/duplicate Khai hoang identifier/i);
+
+  const missingId=await fixture({khaiHoangTeams:[{title:'Đội thiếu id'}]});
+  cleanup.push(missingId);
+  await assert.rejects(build(missingId),/Khai hoang team has no id/i);
+
+  const missingTitle=await fixture({khaiHoangTeams:[{id:'doi-thieu-title',title:''}]});
+  cleanup.push(missingTitle);
+  await assert.rejects(build(missingTitle),/has no title/i);
+
+  const emptySource=await fixture({khaiHoangTeams:[]});
+  cleanup.push(emptySource);
+  await assert.rejects(build(emptySource),/must contain teams/i);
+});
+
+test('Khai hoang route contract: titles and reordering never move a frozen handle',async t=>{
+  const setup=await fixture();
+  t.after(()=>rm(setup.root,{recursive:true,force:true}));
+  const frozen=JSON.parse(await readFile(setup.handlesPath,'utf8')).handles.khaihoang;
+  const reordered=[...setup.khaiHoangTeams].reverse().map(team=>({...team,title:`${team.title} · bản mới`}));
+  const renamedBytes=bytes({teams:reordered});
+  await writeFile(setup.khaiHoangPath,renamedBytes);
+  const ledger=await setup.alternativeLedger({khaihoangSha256:`sha256:${hash(renamedBytes)}`},'renamed-khaihoang.json');
+  const catalog=await build(setup,ledger);
+
+  assert.deepEqual(catalog.khaiHoang.map(entry=>entry.khaiHoangTeamId),reordered.map(team=>team.id));
+  assert.deepEqual(catalog.khaiHoang.map(entry=>entry.handle),reordered.map(team=>frozen[team.id]));
+  assert.deepEqual(catalog.khaiHoang.map(entry=>entry.title),reordered.map(team=>team.title));
+  for (const entry of catalog.khaiHoang) {
+    assert.equal(entry.handle,entry.khaiHoangTeamId);
+    assert.equal(entry.handle.includes('ban-moi'),false);
+    assert.equal(entry.routePath,khaiHoangRoutePath(frozen[entry.khaiHoangTeamId]));
+  }
+  // The frozen assignment is untouched by the title edit, and the edited titles would have moved it.
+  assert.deepEqual(JSON.parse(await readFile(setup.handlesPath,'utf8')).handles.khaihoang,frozen);
+  const [firstTeam]=reordered;
+  assert.notEqual(slug(firstTeam.title),frozen[firstTeam.id]);
+});
+
+test('Khai hoang route contract: the frozen ledger and the raw data assemble the real routes',async()=>{
+  // Injected repository paths only: no default published snapshot and no build.
+  const catalog=await teamDetailCatalog({
+    recommendedRoot:new URL('../src/data/recommended-reference/',import.meta.url).pathname.replace(/\/$/,''),
+    teamsPath:new URL('../data/teams.json',import.meta.url).pathname,
+    handlesPath:new URL('../pipeline/team-route-handles.json',import.meta.url).pathname,
+    khaiHoangPath:new URL('../data/khaihoang.json',import.meta.url).pathname,
+  });
+  const ledger=JSON.parse(await readFile(new URL('../pipeline/team-route-handles.json',import.meta.url),'utf8'));
+  const khaiHoangBytes=await readFile(new URL('../data/khaihoang.json',import.meta.url));
+  const khaiHoangTeams=JSON.parse(khaiHoangBytes.toString()).teams;
+
+  // The wire shape Python writes and TypeScript reads: one ledger schema, one source hash key.
+  assert.equal(ledger.schemaVersion,2);
+  assert.match(ledger.khaihoangSha256,/^sha256:[0-9a-f]{64}$/);
+  assert.deepEqual(Object.keys(ledger.handles).sort(),['khaihoang','legacy','recommended']);
+
+  assert.equal(catalog.khaiHoangSha256,`sha256:${hash(khaiHoangBytes)}`);
+  assert.equal(catalog.khaiHoang.length,khaiHoangTeams.length);
+  assert.equal(catalog.khaiHoang.length,17);
+  assert.deepEqual(catalog.khaiHoang.map(entry=>entry.khaiHoangTeamId),khaiHoangTeams.map(team=>team.id));
+  assert.deepEqual(catalog.khaiHoang.map(entry=>entry.title),khaiHoangTeams.map(team=>team.title));
+  for (const entry of catalog.khaiHoang) {
+    assert.equal(entry.handle,ledger.handles.khaihoang[entry.khaiHoangTeamId]);
+    assert.equal(entry.routePath,khaiHoangRoutePath(entry.handle));
+    assert.equal(entry.htmlPath,`khai-hoang/${entry.handle}/index.html`);
+    assert.equal(entry.sourceSha256,catalog.khaiHoangSha256);
+  }
+  // The emitted inventory covers the Khai hoang pages alongside the two published families.
+  assert.equal(catalog.htmlPaths.length,catalog.recommended.length+catalog.legacy.length+catalog.khaiHoang.length);
+  assert.deepEqual(
+    catalog.htmlPaths.filter(path=>path.startsWith('khai-hoang/')),
+    catalog.khaiHoang.map(entry=>entry.htmlPath).sort(),
+  );
+});
+
+test('Khai hoang route contract: a custom root never falls back to the live Khai hoang source',async t=>{
+  const setup=await fixture();
+  t.after(()=>rm(setup.root,{recursive:true,force:true}));
+
+  // A custom root that does not name its Khai hoang source is refused outright.
+  await assert.rejects(
+    teamDetailCatalog({recommendedRoot:setup.recommendedRoot,teamsPath:setup.teamsPath,handlesPath:setup.handlesPath}),
+    /must supply its own Khai hoang source/i,
+  );
+  await assert.rejects(
+    teamDetailCatalog({recommendedRoot:setup.recommendedRoot,teamsPath:setup.teamsPath,handlesPath:setup.handlesPath,khaiHoangBytes:undefined}),
+    /must supply its own Khai hoang source/i,
+  );
+
+  // The repository ledger cannot describe the fixture source ...
+  await assert.rejects(
+    build(setup,new URL('../pipeline/team-route-handles.json',import.meta.url).pathname),
+    /team route handle ledger/i,
+  );
+  // ... and the fixture source cannot describe the repository publication or ledger.
+  await assert.rejects(teamDetailCatalog({khaiHoangPath:setup.khaiHoangPath}),/khaiHoangSha256/i);
+
+  // The fixture run resolves only the injected bytes: the repository Khai hoang file is never read
+  // for it, and its own hash is never the one the fixture catalog reports.
+  const repositoryBytes=await readFile(new URL('../data/khaihoang.json',import.meta.url));
+  const fixtureCatalog=await build(setup);
+  assert.equal(fixtureCatalog.khaiHoangSha256,`sha256:${hash(await readFile(setup.khaiHoangPath))}`);
+  assert.notEqual(fixtureCatalog.khaiHoangSha256,`sha256:${hash(repositoryBytes)}`);
+  assert.equal(fixtureCatalog.khaiHoang.length,setup.khaiHoangTeams.length);
 });

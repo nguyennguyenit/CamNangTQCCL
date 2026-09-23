@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile, stat } from "node:fs/promises";
 import { test } from "node:test";
+import { PUBLIC_ARTIFACTS } from "../src/lib/public-artifact-manifest.mjs";
 
 const root = new URL("../", import.meta.url);
 const runtimeAssets = [
@@ -84,6 +85,14 @@ test("published facets and modules do not expose the retired Đô Úy season", a
 
   const manifestSource = await readFile(new URL("src/lib/public-artifact-manifest.mjs", root), "utf8");
   assert.doesNotMatch(manifestSource, /entry\(["']js["'],\s*["']do-uy["']\)/);
+});
+
+test("the Khai hoang detail entry is a registered runtime module with a real source", async () => {
+  const entry = PUBLIC_ARTIFACTS.find((artifact) => artifact.kind === "js" && artifact.routeParam === "khaihoang-detail");
+  assert.ok(entry, "js/khaihoang-detail must be published for the Khai hoang detail page");
+  assert.equal(entry.publicationClass, "runtime");
+  assert.equal(entry.sourceBasename, "khaihoang-detail.js");
+  assert.ok((await stat(new URL(`js/${entry.sourceBasename}`, root))).isFile());
 });
 
 

@@ -45509,14 +45509,6 @@
         },
         {
           "entityId": "data:data/khaihoang.json:teams[14]",
-          "fieldPath": "teams[14].displayNote",
-          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-          "inputFingerprint": "95b6280bdfb646de78b6dea85ae44b30d75fb8d3e49a45368b9986e1c485b316",
-          "textSha256": "f6d6623f95c8da470a64dd394711c9fd8b6036296b41a4278ae1d39ce99bed08",
-          "verdict": "accepted"
-        },
-        {
-          "entityId": "data:data/khaihoang.json:teams[14]",
           "fieldPath": "teams[14].note",
           "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
           "inputFingerprint": "9b6827b6f2a5ce5635b33c2411f664fd02359a953360c0fb10eb8501d63d8e71",
@@ -46577,14 +46569,6 @@
         },
         {
           "entityId": "data:data/khaihoang.json:teams[12].heroes[2]",
-          "fieldPath": "teams[12].heroes[2].displayNote",
-          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-          "inputFingerprint": "3c35158f31bca29b0442052020bfb6d6055b0e2f5dfc3b81f27d7bbe984e85d2",
-          "textSha256": "6ea2fd38a094928b78f66e508d6123ea3dc7da2fcaa720772fac42f2da53cbe6",
-          "verdict": "accepted"
-        },
-        {
-          "entityId": "data:data/khaihoang.json:teams[12].heroes[2]",
           "fieldPath": "teams[12].heroes[2].note",
           "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
           "inputFingerprint": "bcec4544f6257804e25a0de852963f3043224d616e649d8d4bb7bc66680a2038",
@@ -46653,6 +46637,32 @@
           "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
           "inputFingerprint": "ffea5204a9ae145ae232881874db1de0a44a91138b038dca94378cbf8ab0359f",
           "textSha256": "e4bb664d0026018146719f4fa0a5824b7163b7278b8bcd0431fe281e7e815e23",
+          "verdict": "accepted"
+        }
+      ]
+    },
+    {
+      "batchId": "khaihoang-note-cutover-20260923",
+      "draftSession": "Main:khaihoang-note-cutover-20260923",
+      "reviewerSession": "KhaiHoangL10nReview",
+      "reviewedAt": "2026-09-23T18:28:23Z",
+      "outputPath": "pipeline/localization-reviews/khaihoang-note-cutover-20260923.json",
+      "outputSha256": "8ba86d052e4f9bc0f4b86f84682271439b9e76a0377fba3502477c1a34cf058f",
+      "items": [
+        {
+          "entityId": "data:data/khaihoang.json:teams[12].heroes[2]",
+          "fieldPath": "teams[12].heroes[2].buildNote",
+          "inputFingerprint": "b072bf97849393f2b596b528d6e4a535d6c94b8c494eb896d8611a352e8f7fcf",
+          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+          "textSha256": "6ea2fd38a094928b78f66e508d6123ea3dc7da2fcaa720772fac42f2da53cbe6",
+          "verdict": "accepted"
+        },
+        {
+          "entityId": "data:data/khaihoang.json:teams[14]",
+          "fieldPath": "teams[14].buildNote",
+          "inputFingerprint": "bdd9ef7ba7797b094c6cbe8de6d7b50e009740a86d0572018f9b41b19e7f8f00",
+          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+          "textSha256": "b1f4eff85fbcc6e5c6d6060d89db52b5ba9288a2a620de8e3749302e0639960c",
           "verdict": "accepted"
         }
       ]

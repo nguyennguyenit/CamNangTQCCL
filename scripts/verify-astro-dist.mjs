@@ -48,6 +48,8 @@ export async function verifyAstroDist({
     recommendedRoot: resolve(rootPath, "src/data/recommended-reference"),
     teamsPath: resolve(rootPath, "data/teams.json"),
     handlesPath: resolve(rootPath, "pipeline/team-route-handles.json"),
+    // A verifier root is always explicit: the pinned Khai hoang source comes from the same root.
+    khaiHoangPath: resolve(rootPath, "data/khaihoang.json"),
   });
   if (catalog.generationId !== recommended.pin.generationId) {
     throw new Error("Team detail catalog and emitted Recommended generation differ");
@@ -90,7 +92,7 @@ export async function verifyAstroDist({
   // Byte equality with the build-owned generator enforces valid structure, exact absolute
   // origins, and the absence of query/hash drift without maintaining a second XML parser.
   const sitemapXml = await readFile(resolve(distPath, "sitemap.xml"), "utf8");
-  const sitemapRoutePaths = [...catalog.recommended, ...catalog.legacy].map((entry) => entry.routePath);
+  const sitemapRoutePaths = [...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath);
   const expectedSitemapXml = sitemapDocument(astroConfig.site, sitemapRoutePaths);
   if (sitemapXml !== expectedSitemapXml) {
     throw new Error("dist sitemap.xml does not match the generated document");
@@ -136,11 +138,24 @@ export async function verifyAstroDist({
     ) throw new Error("Built HTML website display pin differs from emitted publication");
   }
 
+  // The root registry is the single map every card href derives from, so it must be the catalog.
+  const registryMatch = html.match(/id="team-route-handles"[^>]*>([^<]+)<\/script>/);
+  if (!registryMatch) throw new Error("Built HTML lacks the team route handle registry");
+  const expectedRegistry = {
+    r: Object.fromEntries(catalog.recommended.map((entry) => [entry.sourceConfigId, entry.routeSegment])),
+    l: Object.fromEntries(catalog.legacy.map((entry) => [entry.legacyTeamId, entry.routeSegment])),
+    k: Object.fromEntries(catalog.khaiHoang.map((entry) => [entry.khaiHoangTeamId, entry.handle])),
+  };
+  if (JSON.stringify(JSON.parse(registryMatch[1])) !== JSON.stringify(expectedRegistry)) {
+    throw new Error("Built HTML team route handle registry differs from the catalog");
+  }
+
   // Mỗi trang chi tiết phải pin đúng identity đã validate, và không nạp app gốc.
   const readPage = async (decodedPath) => readFile(resolve(distPath, emittedByDecodedPath.get(decodedPath)), "utf8");
   const pages = [
     ...catalog.recommended.map((entry) => ({
       path: entry.htmlPath,
+      entry: "/js/team-detail.js",
       pins: [
         `data-source-config-id="${entry.sourceConfigId}"`,
         `data-scope-key="${entry.safeScopeKey}"`,
@@ -150,6 +165,7 @@ export async function verifyAstroDist({
     })),
     ...catalog.legacy.map((entry) => ({
       path: entry.htmlPath,
+      entry: "/js/team-detail.js",
       pins: [
         `data-legacy-team-id="${entry.legacyTeamId}"`,
         `data-legacy-teams-sha256="${catalog.legacyTeamsSha256}"`,
@@ -157,12 +173,24 @@ export async function verifyAstroDist({
         `data-manifest-sha256="${catalog.manifestSha256}"`,
       ],
     })),
+    ...catalog.khaiHoang.map((entry) => ({
+      path: entry.htmlPath,
+      entry: "/js/khaihoang-detail.js",
+      pins: [
+        `data-family="khaihoang"`,
+        `data-khaihoang-team-id="${entry.khaiHoangTeamId}"`,
+        `data-khaihoang-sha256="${catalog.khaiHoangSha256}"`,
+      ],
+    })),
   ];
   for (let start = 0; start < pages.length; start += 64) {
-    await Promise.all(pages.slice(start, start + 64).map(async ({ path, pins }) => {
+    await Promise.all(pages.slice(start, start + 64).map(async ({ path, entry, pins }) => {
       const page = await readPage(path);
       for (const pin of pins) {
         if (!page.includes(pin)) throw new Error(`Team detail page lacks its validated pin: ${path} (${pin})`);
+      }
+      if (!page.includes(`src="${entry}"`)) {
+        throw new Error(`Team detail page does not load its own entry: ${path} (${entry})`);
       }
       if (website) {
         const pageWebsite = page.match(/id="website-display-publication"[^>]*>([^<]+)<\/script>/);
@@ -175,7 +203,7 @@ export async function verifyAstroDist({
   }
   const notFound = await readPage("404.html");
   if (!notFound.includes('id="not-found-title"')) throw new Error("Static 404 page lacks its not-found heading");
-  if (notFound.includes('src="/js/app.js"') || notFound.includes('src="/js/team-detail.js"')) {
+  if (notFound.includes('src="/js/app.js"') || notFound.includes('src="/js/team-detail.js"') || notFound.includes('src="/js/khaihoang-detail.js"')) {
     throw new Error("Static 404 page must not boot application entries");
   }
   if (!/<meta\b(?=[^>]*\bname=["']robots["'])(?=[^>]*\bcontent=["']noindex["'])[^>]*>/iu.test(notFound)) {

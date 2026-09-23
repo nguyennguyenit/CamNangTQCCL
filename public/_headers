@@ -10,6 +10,9 @@
 /doi-khac/*
   Cache-Control: public, max-age=0, must-revalidate
 
+/khai-hoang/*
+  Cache-Control: public, max-age=0, must-revalidate
+
 /404.html
   Cache-Control: public, max-age=0, must-revalidate
 

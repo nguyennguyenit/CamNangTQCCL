@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
+import { createHash } from "node:crypto";
 import { cp, mkdir, mkdtemp, readFile, symlink, writeFile } from "node:fs/promises";
 import { createServer } from "node:net";
 import { tmpdir } from "node:os";
@@ -84,6 +85,15 @@ test("Astro dev preserves module resolution, MIME types, refresh, and exact JSON
   for (const path of ["src", "js", "css", "data"]) {
     await cp(new URL(`../${path}/`, import.meta.url), new URL(`${path}/`, fixtureUrl), { recursive: true });
   }
+  // The route catalog reads the Khai hoang bytes from the pinned website display publication. The
+  // repository pin is refreshed by the localization task, so the fixture keeps its own copy
+  // coherent with the fixture data instead of depending on the repository pin state.
+  const fixtureKhaiHoangBytes = await readFile(new URL("data/khaihoang.json", fixtureUrl));
+  const fixtureKhaiHoangSha256 = createHash("sha256").update(fixtureKhaiHoangBytes).digest("hex");
+  const fixtureDisplayUrl = new URL("data/website-display.json", fixtureUrl);
+  const fixtureDisplay = JSON.parse(await readFile(fixtureDisplayUrl, "utf8"));
+  fixtureDisplay.sourceHashes["data/khaihoang.json"] = fixtureKhaiHoangSha256;
+  await writeFile(fixtureDisplayUrl, JSON.stringify(fixtureDisplay));
   for (const path of ["astro.config.mjs", "tsconfig.json"]) {
     await cp(new URL(`../${path}`, import.meta.url), new URL(path, fixtureUrl));
   }
@@ -169,6 +179,29 @@ test("Astro dev preserves module resolution, MIME types, refresh, and exact JSON
     Buffer.from(await jsonResponse.arrayBuffer()),
     await readFile(new URL("data/teams.json", fixtureUrl)),
   );
+
+  // The new detail route is prerendered from the same catalog in dev, pins its verified source and
+  // never boots the root application.
+  const khaiHoangHandles = JSON.parse(
+    await readFile(new URL("pipeline/team-route-handles.json", fixtureUrl), "utf8"),
+  ).handles.khaihoang;
+  const [khaiHoangTeamId] = Object.keys(khaiHoangHandles);
+  assert.ok(khaiHoangTeamId, "the fixture ledger must freeze Khai hoang handles");
+  const khaiHoangPage = await fetch(`${baseUrl}/khai-hoang/${encodeURIComponent(khaiHoangHandles[khaiHoangTeamId])}/`);
+  assert.equal(khaiHoangPage.status, 200);
+  const khaiHoangHtml = await khaiHoangPage.text();
+  for (const pin of [
+    'data-family="khaihoang"',
+    `data-khaihoang-team-id="${khaiHoangTeamId}"`,
+    `data-khaihoang-sha256="sha256:${fixtureKhaiHoangSha256}"`,
+    'src="/js/khaihoang-detail.js"',
+  ]) {
+    assert.ok(khaiHoangHtml.includes(pin), `dev Khai hoang detail page lacks ${pin}`);
+  }
+  assert.equal(khaiHoangHtml.includes('src="/js/app.js"'), false);
+  const detailEntry = await fetch(`${baseUrl}/js/khaihoang-detail.js`);
+  assert.equal(detailEntry.status, 200);
+  assert.match(detailEntry.headers.get("content-type") || "", /text\/javascript/);
   const privateUrls = [
     "/pipeline/lookup-identity.json",
     "/pipeline/lookup-translations.json?raw",

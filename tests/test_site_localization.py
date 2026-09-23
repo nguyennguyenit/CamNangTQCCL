@@ -9,6 +9,7 @@ from pathlib import Path
 from pipeline.lookup_translations import canonical_json_bytes
 from pipeline.site_localization import (
     _assert_lookup_publication,
+    _data_classification,
     glossary_digest,
     check,
     compile_data_candidate,
@@ -34,6 +35,13 @@ from pipeline.site_localization import (
 ROOT = Path(__file__).resolve().parents[1]
 
 
+class KhaiHoangNoteClassificationTest(unittest.TestCase):
+    def test_split_notes_remain_reviewable_and_han_requires_translation(self):
+        self.assertEqual(_data_classification(("teams", 3, "buildNote"), "Cộng Trí Lực."), "authored-vi")
+        self.assertEqual(_data_classification(("teams", 3, "openingNote"), "Ưu tiên đất Thương."), "authored-vi")
+        self.assertEqual(_data_classification(("teams", 14, "buildNote"), "Chiến pháp 疾風豪雨"), "translate")
+
+
 class SiteLocalizationTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -46,7 +54,7 @@ class SiteLocalizationTest(unittest.TestCase):
             [row["id"] for row in report["sections"]],
             ["analyze", "coexist", "khaihoang", "lookup", "recruit-tracker", "roster-recommend", "team-chuan", "team-khac"],
         )
-        self.assertEqual([row["id"] for row in report["routeFamilies"]], ["legacy-detail", "recommended-detail"])
+        self.assertEqual([row["id"] for row in report["routeFamilies"]], ["khaihoang-detail", "legacy-detail", "recommended-detail"])
         self.assertEqual(report["unknownLocations"], 0)
         self.assertEqual(report["unknownLocationDetails"], [])
         self.assertEqual(report["duplicateLocations"], 0)
@@ -334,11 +342,38 @@ class SiteLocalizationTest(unittest.TestCase):
             extra_output_receipts["batches"][0]["outputSha256"] = hashlib.sha256(
                 extra_output_bytes
             ).hexdigest()
-            self.assertTrue(
-                validate_review_receipts(
-                    extra_output_receipts, ledger, root=root, digest=digest
-                )
+            self.assertEqual(
+                validate_review_receipts(extra_output_receipts, ledger, root=root, digest=digest),
+                [],
             )
+            active_extra = copy.deepcopy(ledger)
+            active_extra["entries"].append({
+                "entityId": extra_item["entityId"],
+                "fieldPath": extra_item["fieldPath"],
+                "inputFingerprint": fingerprint,
+                "textVi": text_vi,
+            })
+            # Even another accepted batch cannot cherry-pick an active result out
+            # of this historical output's active receipt projection.
+            second_output = {
+                "schemaVersion": 1,
+                "batchId": "batch-2",
+                "reviewerSession": "second-review-session",
+                "items": [extra_item],
+            }
+            second_bytes = canonical_json_bytes(second_output)
+            (output_path.parent / "batch-2.json").write_bytes(second_bytes)
+            active_receipts = copy.deepcopy(extra_output_receipts)
+            active_receipts["batches"].append({
+                "batchId": "batch-2",
+                "draftSession": "second-draft-session",
+                "reviewerSession": "second-review-session",
+                "reviewedAt": "2026-09-23T00:00:00Z",
+                "outputPath": "pipeline/localization-reviews/batch-2.json",
+                "outputSha256": hashlib.sha256(second_bytes).hexdigest(),
+                "items": [extra_item],
+            })
+            self.assertTrue(validate_review_receipts(active_receipts, active_extra, root=root, digest=digest))
 
             output_path.write_bytes(output_bytes)
             duplicate_receipt_item = copy.deepcopy(receipts)

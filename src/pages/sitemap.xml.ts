@@ -53,7 +53,7 @@ export function sitemapDocument(site: string | URL | undefined, routePaths: read
 
 export const GET: APIRoute = async ({ site }: APIContext) => {
   const catalog = await teamDetailCatalog();
-  const routePaths = [...catalog.recommended, ...catalog.legacy].map((entry) => entry.routePath);
+  const routePaths = [...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath);
   return new Response(sitemapDocument(site, routePaths), {
     headers: { "Content-Type": SITEMAP_MIME },
   });

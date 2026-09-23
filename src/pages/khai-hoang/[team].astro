@@ -1,0 +1,57 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { teamDetailCatalog } from '../../lib/team-detail-routes';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const catalog = await teamDetailCatalog();
+  return catalog.khaiHoang.map((entry) => ({
+    params: {team: entry.routeSegment},
+    props: {entry, khaiHoangSha256: catalog.khaiHoangSha256},
+  }));
+}
+
+const {entry, khaiHoangSha256} = Astro.props;
+// Canonical bỏ query/hash: `variant` và `from` là trạng thái deep-link, không phải URL riêng.
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
+// Nguồn chưa dịch xong không được lộ chữ Hán ra tiêu đề công khai.
+const title = /[\u3400-\u9fff\uf900-\ufaff]/u.test(entry.title) ? 'Nội dung tiếng Việt chưa sẵn sàng' : entry.title;
+---
+<SiteLayout
+  title={`${title} — Khai hoang — Cẩm Nang Game Tam Quốc Chí - Chiến Lược`}
+  description={`Hướng dẫn khai hoang của đội ${title}: cấu hình đang chọn và toàn bộ ghi chú đã xác minh.`}
+  pageKind="detail"
+  activeSection="khaihoang"
+  tagline="Chi tiết Khai hoang"
+  canonicalUrl={canonicalUrl}
+  ogType="article"
+>
+  <nav class="detail-back-row" aria-label="Quay lại danh sách Khai hoang">
+    <a id="team-return-link" class="detail-link" href="/#khaihoang" data-family-href="/#khaihoang">Quay lại Khai hoang</a>
+  </nav>
+
+  <article
+    id="team-detail-root"
+    class="season-config-detail reference-detail"
+    aria-labelledby="team-detail-title"
+    aria-busy="true"
+    data-family="khaihoang"
+    data-khaihoang-team-id={entry.khaiHoangTeamId}
+    data-khaihoang-sha256={khaiHoangSha256}
+  >
+    <div class="detail-header">
+      <div>
+        <h1 id="team-detail-title" class="detail-title">{title}</h1>
+      </div>
+    </div>
+
+    <div id="team-detail-status" class="detail-state" role="status" aria-live="polite" aria-atomic="true">Đang tải chi tiết…</div>
+    <noscript>
+      <p class="scope-note">Trang chi tiết cần JavaScript để đọc dữ liệu Khai hoang đã xác minh. Bạn vẫn có thể quay lại danh sách Khai hoang bằng liên kết phía trên.</p>
+    </noscript>
+    <div id="team-detail-body" hidden></div>
+  </article>
+
+  <script is:inline type="module" src="/js/khaihoang-detail.js" slot="scripts"></script>
+</SiteLayout>

@@ -98,15 +98,16 @@ Astro dùng static output, không adapter và không có Pages Functions. `dist/
 
 Publication hiển thị là một snapshot fail-closed: `data/website-display.json` pin source JSON, generation Recommended và generation/hash Lookup đã review. `npm run build` kiểm publication hiện hành trước Astro; `npm run verify` kiểm lại publication và exact `dist/`. Không publish candidate site nếu Lookup công khai chưa được promote đúng candidate.
 
-Trang chi tiết đội là route tĩnh sinh sẵn: `/doi-chuan/<mùa>-<handle>/` cho mỗi bản ghi của publication đang được chọn và `/doi-khac/<handle>/` cho mỗi đội gốc trong `data/teams.json`. [`src/lib/team-detail-routes.ts`](../src/lib/team-detail-routes.ts) là inventory dùng chung cho build và verifier, đọc handle đã đóng băng trong `pipeline/team-route-handles.json` và **fail** nếu ledger lệch generation/hash/key-set, handle không routable hoặc route sinh ra trùng; nhờ vậy `dist/` không được thừa hay thiếu một trang nào. Handle được gán một lần rồi đóng băng, và ledger pin `generationId` của publication Recommended đang chọn: khi publication sinh generation mới (ví dụ refresh provenance của localization) chỉ rebind `generationId` sang successor, không sinh lại handle, rồi `python3 -m pipeline.team_route_handles --check` phải xanh trước `npm run build`. Không có SPA fallback và không có redirect: `404.html` top-level phải tồn tại, giữ heading `not-found-title` và không boot `app.js` hoặc `team-detail.js`; cả URL cũ `/teams/...` lẫn URL `/doi-chuan/...`/`/doi-khac/...` ngoài catalog phải trả `404` kèm trang 404 tĩnh thay vì shell root.
+Trang chi tiết đội là route tĩnh sinh sẵn: `/doi-chuan/<mùa>-<handle>/` cho mỗi bản ghi Recommended, `/doi-khac/<handle>/` cho mỗi đội gốc trong `data/teams.json`, và `/khai-hoang/<handle>/` cho mỗi đội Khai hoang trong publication đã xác minh. [`src/lib/team-detail-routes.ts`](../src/lib/team-detail-routes.ts) là inventory dùng chung cho build và verifier, đọc handle đóng băng trong `pipeline/team-route-handles.json` (ledger v2, publication Recommended v1) và **fail** nếu ledger lệch generation/hash/key-set, handle không routable hoặc route trùng; `dist/` không được thừa/thiếu trang. Handle gán một lần; khi publication sinh successor chỉ rebind `generationId`, không sinh lại handle, rồi `python3 -m pipeline.team_route_handles --check` trước `npm run build`. Không có SPA fallback/redirect: `404.html` top-level giữ `not-found-title`, không boot `app.js` hoặc detail entry; URL cũ `/teams/...` hay bất kỳ handle ngoài catalog phải trả 404 tĩnh thay vì root shell.
 
-`public/_headers` đặt `Cache-Control: public, max-age=0, must-revalidate` cho đúng chín rule:
+`public/_headers` đặt `Cache-Control: public, max-age=0, must-revalidate` cho đúng mười rule:
 
 ```text
 /
 /index.html
 /doi-chuan/*
 /doi-khac/*
+/khai-hoang/*
 /404.html
 /js/*
 /css/*
@@ -132,7 +133,7 @@ Không thực hiện các bước sau trong build/local verification. Khi releas
 1. Tạo release commit tập trung; không deploy từ worktree dirty.
 2. Ghi deployment ID/version production known-good hiện tại trước khi tạo preview.
 3. Kiểm tra Pages settings khớp root/build/output/Node ở trên.
-4. Trên preview, xác nhận `/`, `/404.html`, vài route `/doi-chuan/…` và `/doi-khac/…`, JS/CSS và mọi JSON public trả đúng artifact. Kiểm `/robots.txt` khớp byte với source và trỏ đúng `Sitemap` production origin, và `/sitemap.xml` trả MIME XML với đúng tập URL đã phát hành (không URL `/teams/…`, không trùng). Một ID/handle đội không có trong catalog, một URL `/teams/…` cũ và một path private phải trả `404` với trang 404 tĩnh, không phải shell root; status và body thật chỉ chứng minh được trên preview.
+4. Trên preview, xác nhận `/`, `/404.html`, vài route thuộc cả ba họ `/doi-chuan/…`, `/doi-khac/…`, `/khai-hoang/…`, JS/CSS và JSON public trả đúng artifact. Kiểm `/robots.txt` khớp byte source, trỏ đúng `Sitemap` production origin; `/sitemap.xml` trả MIME XML với đúng tập URL, không `/teams/…` hay trùng. ID/handle ngoài catalog, `/teams/…` cũ và private path phải trả 404 tĩnh, không shell root; status/body thật chỉ chứng minh trên preview.
 5. Quan sát `Cache-Control` thật cho shell, trang chi tiết đội, `404.html`, JS/CSS/JSON và xác nhận `_headers` không được phục vụ như asset.
 6. Preview origin khác production nên Vision POST bị Worker từ chối theo exact `ALLOWED_ORIGIN`; không nới origin để làm preview canary.
 7. Sau phê duyệt promotion, kiểm tra production-origin `POST /analyze` được phép, origin lạ bị từ chối, và `OPTIONS` trả CORS headers đã cấu hình. Preflight chỉ là CORS transport, không xác thực caller.
@@ -237,7 +238,7 @@ Smoke checklist sau promotion được ủy quyền:
 
 1. Mở production, chuyển đủ 9 hash section và kiểm tra JSON/network không lỗi.
 2. Kiểm tra Team chuẩn và Team khác load đúng generation đang pin, bộ lọc mùa/danh mục/điểm hoạt động, không có tab/asset/team Đô Úy và filter mobile collapse.
-3. Mở trực tiếp một `/doi-chuan/…` và một `/doi-khac/…`, reload, rồi dùng link quay lại; một handle không tồn tại và một URL `/teams/…` cũ phải trả trang 404 tĩnh.
+3. Mở trực tiếp một `/doi-chuan/…`, một `/doi-khac/…` và một `/khai-hoang/…`, reload, rồi dùng link quay lại; một handle không tồn tại và một URL `/teams/…` cũ phải trả trang 404 tĩnh.
 4. Test tra cứu, theme, tracker export/import bằng dữ liệu không nhạy cảm.
 5. Upload screenshot đã crop; xác nhận Turnstile, analyze và map/team match.
 6. Test scan/review/recommend; reload và xác nhận state không chứa ảnh/token.

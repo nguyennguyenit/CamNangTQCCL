@@ -14,10 +14,14 @@ from pathlib import Path
 from pipeline.team_route_handles import (
     DEFAULT_DISPLAY_MAP_PATH,
     DEFAULT_GENERATION_ROOT,
+    DEFAULT_KHAIHOANG_PATH,
     DEFAULT_LEDGER_PATH,
     DEFAULT_TEAMS_PATH,
     LEDGER_NOTE,
+    LEDGER_SCHEMA_VERSION,
+    PUBLICATION_SCHEMA_VERSION,
     TeamRouteHandleError,
+    build_khaihoang_handles,
     build_ledger,
     build_legacy_handles,
     build_recommended_handles,
@@ -26,6 +30,7 @@ from pipeline.team_route_handles import (
     main,
     read_publication,
     season_code,
+    sha256_hex,
     slug,
     validate_ledger,
 )
@@ -65,6 +70,24 @@ def canonical(value):
 
 def write_teams(path, teams):
     data = (json.dumps(teams, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
+    Path(path).write_bytes(data)
+    return data
+
+
+def khaihoang_team(title, **overrides):
+    """The data owner assigns `id` as the ASCII slug of the current title; tests do the same."""
+    return {"id": slug(title), "title": title, **overrides}
+
+
+KHAIHOANG_TEAMS = (
+    khaihoang_team("Gia Cát Khác · SP Mã Siêu · Pháp Chính"),
+    khaihoang_team("Quan Ngân Bình · Nhạc Tiến"),
+    khaihoang_team("Trương Xuân Hoa · Lữ Bố · Tả Từ"),
+)
+
+
+def write_khaihoang(path, teams):
+    data = (json.dumps({"teams": list(teams)}, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
     Path(path).write_bytes(data)
     return data
 
@@ -355,32 +378,58 @@ class LedgerFixture(unittest.TestCase):
         self.generation_root = write_publication(self.root / "recommended", self.records)
         self.teams_path = self.root / "teams.json"
         self.teams_bytes = write_teams(self.teams_path, self.teams)
+        self.khaihoang_path = self.root / "khaihoang.json"
+        self.khaihoang_bytes = write_khaihoang(self.khaihoang_path, KHAIHOANG_TEAMS)
         self.ledger_path = self.root / "team-route-handles.json"
         self.publication = read_publication(self.generation_root)
 
     def generated_ledger(self):
         recommended, _ = build_recommended_handles(self.records, LABELS)
         legacy, _ = build_legacy_handles(self.teams)
-        return build_ledger(self.publication.generation_id, self.teams_bytes, recommended, legacy)
+        khaihoang, _ = build_khaihoang_handles(KHAIHOANG_TEAMS)
+        return build_ledger(
+            self.publication.generation_id,
+            self.teams_bytes,
+            self.khaihoang_bytes,
+            recommended,
+            legacy,
+            khaihoang,
+        )
 
-    def validate(self, ledger):
+    def validate(self, ledger, *, khaihoang_bytes=None, khaihoang_teams=None):
         validate_ledger(
             ledger,
             generation_id=self.publication.generation_id,
             records=self.publication.records,
             teams_bytes=self.teams_bytes,
             teams=self.teams,
+            khaihoang_bytes=self.khaihoang_bytes if khaihoang_bytes is None else khaihoang_bytes,
+            khaihoang_teams=KHAIHOANG_TEAMS if khaihoang_teams is None else khaihoang_teams,
         )
+
+    def argv(self, *extra):
+        """Every CLI call is pinned to the fixture artifacts; extras override the pinned defaults."""
+        return [
+            "--generation-root", str(self.generation_root),
+            "--teams", str(self.teams_path),
+            "--khaihoang", str(self.khaihoang_path),
+            "--ledger", str(self.ledger_path),
+            *extra,
+        ]
 
 
 class LedgerValidatorTest(LedgerFixture):
     def test_generated_ledger_validates(self):
         ledger = self.generated_ledger()
         self.validate(ledger)
-        self.assertEqual(ledger["schemaVersion"], 1)
+        self.assertEqual(ledger["schemaVersion"], LEDGER_SCHEMA_VERSION)
         self.assertEqual(ledger["note"], LEDGER_NOTE)
         self.assertEqual(ledger["legacyTeamsSha256"], "sha256:" + hashlib.sha256(self.teams_bytes).hexdigest())
-        self.assertEqual(set(ledger), {"schemaVersion", "generationId", "legacyTeamsSha256", "note", "handles"})
+        self.assertEqual(ledger["khaihoangSha256"], "sha256:" + hashlib.sha256(self.khaihoang_bytes).hexdigest())
+        self.assertEqual(
+            set(ledger),
+            {"schemaVersion", "generationId", "legacyTeamsSha256", "khaihoangSha256", "note", "handles"},
+        )
 
     def test_missing_recommended_key_fails(self):
         ledger = self.generated_ledger()
@@ -462,11 +511,24 @@ class LedgerValidatorTest(LedgerFixture):
         ledger = self.generated_ledger()
         for broken in (
             {key: value for key, value in ledger.items() if key != "note"},
+            {key: value for key, value in ledger.items() if key != "khaihoangSha256"},
             {**ledger, "extra": 1},
-            {**ledger, "schemaVersion": 2},
+            {**ledger, "schemaVersion": PUBLICATION_SCHEMA_VERSION},
+            {**ledger, "schemaVersion": 3},
+            {**ledger, "khaihoangSha256": None},
             {**ledger, "handles": {"recommended": ledger["handles"]["recommended"]}},
-            {**ledger, "handles": {"recommended": ledger["handles"]["recommended"], "legacy": ledger["handles"]["legacy"], "extra": {}}},
-            {**ledger, "handles": {"recommended": [], "legacy": ledger["handles"]["legacy"]}},
+            {**ledger, "handles": {"recommended": ledger["handles"]["recommended"], "legacy": ledger["handles"]["legacy"]}},
+            {
+                **ledger,
+                "handles": {
+                    "recommended": ledger["handles"]["recommended"],
+                    "legacy": ledger["handles"]["legacy"],
+                    "khaihoang": ledger["handles"]["khaihoang"],
+                    "extra": {},
+                },
+            },
+            {**ledger, "handles": {"recommended": [], "legacy": ledger["handles"]["legacy"], "khaihoang": ledger["handles"]["khaihoang"]}},
+            {**ledger, "handles": {"recommended": ledger["handles"]["recommended"], "legacy": ledger["handles"]["legacy"], "khaihoang": []}},
         ):
             with self.subTest(broken=sorted(broken)):
                 with self.assertRaises(TeamRouteHandleError):
@@ -476,40 +538,31 @@ class LedgerValidatorTest(LedgerFixture):
         ledger = self.generated_ledger()
         scrambled = dict(ledger)
         scrambled["handles"] = {
-            "recommended": dict(reversed(list(ledger["handles"]["recommended"].items()))),
-            "legacy": dict(reversed(list(ledger["handles"]["legacy"].items()))),
+            family: dict(reversed(list(ledger["handles"][family].items())))
+            for family in ("recommended", "legacy", "khaihoang")
         }
         self.assertEqual(ledger_bytes(scrambled), ledger_bytes(ledger))
         document = json.loads(ledger_bytes(ledger))
-        self.assertEqual(list(document["handles"]["recommended"]), sorted(document["handles"]["recommended"]))
-        self.assertEqual(list(document["handles"]["legacy"]), sorted(document["handles"]["legacy"]))
+        for family in ("recommended", "legacy", "khaihoang"):
+            self.assertEqual(list(document["handles"][family]), sorted(document["handles"][family]))
         self.assertTrue(ledger_bytes(ledger).endswith(b"\n"))
 
 
 class LedgerCliTest(LedgerFixture):
     def test_write_then_check_round_trip(self):
-        code, out, _ = run_cli([
-            "--write", "--generation-root", str(self.generation_root),
-            "--teams", str(self.teams_path), "--ledger", str(self.ledger_path),
-        ])
+        code, out, _ = run_cli(self.argv("--write"))
         self.assertEqual(code, 0, out)
         self.assertIn("wrote", out)
         written = self.ledger_path.read_bytes()
         self.assertEqual(written, ledger_bytes(self.generated_ledger()))
 
-        code, out, err = run_cli([
-            "--check", "--generation-root", str(self.generation_root),
-            "--teams", str(self.teams_path), "--ledger", str(self.ledger_path),
-        ])
+        code, out, err = run_cli(self.argv("--check"))
         self.assertEqual(code, 0, err)
         self.assertIn(self.publication.generation_id, out)
         self.assertEqual(self.ledger_path.read_bytes(), written)
 
     def test_repeated_write_is_a_byte_identical_no_op(self):
-        argv = [
-            "--write", "--generation-root", str(self.generation_root),
-            "--teams", str(self.teams_path), "--ledger", str(self.ledger_path),
-        ]
+        argv = self.argv("--write")
         self.assertEqual(run_cli(argv)[0], 0)
         written = self.ledger_path.read_bytes()
         code, out, _ = run_cli(argv)
@@ -518,10 +571,7 @@ class LedgerCliTest(LedgerFixture):
         self.assertEqual(self.ledger_path.read_bytes(), written)
 
     def test_write_refuses_to_reassign_an_existing_ledger(self):
-        argv = [
-            "--write", "--generation-root", str(self.generation_root),
-            "--teams", str(self.teams_path), "--ledger", str(self.ledger_path),
-        ]
+        argv = self.argv("--write")
         self.assertEqual(run_cli(argv)[0], 0)
         frozen = json.loads(self.ledger_path.read_bytes())
         frozen["handles"]["recommended"]["s2-solo"] = "doi-b-renamed"
@@ -534,38 +584,23 @@ class LedgerCliTest(LedgerFixture):
         self.assertEqual(self.ledger_path.read_bytes(), edited)
 
     def test_check_fails_on_a_stale_manifest_hash(self):
-        self.assertEqual(run_cli([
-            "--write", "--generation-root", str(self.generation_root),
-            "--teams", str(self.teams_path), "--ledger", str(self.ledger_path),
-        ])[0], 0)
+        self.assertEqual(run_cli(self.argv("--write"))[0], 0)
         selector = json.loads((self.generation_root / "current.json").read_bytes())
         selector["manifestSha256"] = "0" * 64
         (self.generation_root / "current.json").write_bytes(canonical(selector))
-        code, _, err = run_cli([
-            "--check", "--generation-root", str(self.generation_root),
-            "--teams", str(self.teams_path), "--ledger", str(self.ledger_path),
-        ])
+        code, _, err = run_cli(self.argv("--check"))
         self.assertEqual(code, 1)
         self.assertIn("hash mismatch", err)
 
     def test_check_fails_when_a_generation_row_has_no_handle(self):
-        self.assertEqual(run_cli([
-            "--write", "--generation-root", str(self.generation_root),
-            "--teams", str(self.teams_path), "--ledger", str(self.ledger_path),
-        ])[0], 0)
+        self.assertEqual(run_cli(self.argv("--write"))[0], 0)
         rewrite_index(self.generation_root, [*self.records, recommended_row("s3-new", "Đội Mới", season="PK-S3")])
-        code, _, err = run_cli([
-            "--check", "--generation-root", str(self.generation_root),
-            "--teams", str(self.teams_path), "--ledger", str(self.ledger_path),
-        ])
+        code, _, err = run_cli(self.argv("--check"))
         self.assertEqual(code, 1)
         self.assertIn("s3-new", err)
 
     def test_check_is_translation_independent_on_a_collision_dissolving_copy(self):
-        self.assertEqual(run_cli([
-            "--write", "--generation-root", str(self.generation_root),
-            "--teams", str(self.teams_path), "--ledger", str(self.ledger_path),
-        ])[0], 0)
+        self.assertEqual(run_cli(self.argv("--write"))[0], 0)
         frozen_bytes = self.ledger_path.read_bytes()
         frozen = json.loads(frozen_bytes)
 
@@ -576,10 +611,7 @@ class LedgerCliTest(LedgerFixture):
         ]
         rewrite_index(copy, mutated)
 
-        code, out, err = run_cli([
-            "--check", "--generation-root", str(copy),
-            "--teams", str(self.teams_path), "--ledger", str(self.ledger_path), "--diagnose",
-        ])
+        code, out, err = run_cli(self.argv("--check", "--generation-root", str(copy), "--diagnose"))
         self.assertEqual(code, 0, err)
         self.assertEqual(self.ledger_path.read_bytes(), frozen_bytes)
         self.assertEqual(json.loads(self.ledger_path.read_bytes())["handles"], frozen["handles"])
@@ -596,20 +628,190 @@ class LedgerCliTest(LedgerFixture):
         generation = copy / FIXTURE_GENERATION_ID
         data = canonical({"schemaVersion": 1, "records": [recommended_row("s1-renamed", "Đội Mới")]})
         (generation / "index.json").write_bytes(data)
-        code, _, err = run_cli([
-            "--check", "--generation-root", str(copy),
-            "--teams", str(self.teams_path), "--ledger", str(self.ledger_path),
-        ])
+        code, _, err = run_cli(self.argv("--check", "--generation-root", str(copy)))
         self.assertEqual(code, 1)
         self.assertIn("hash mismatch", err)
 
     def test_check_fails_when_the_ledger_is_absent(self):
-        code, _, err = run_cli([
-            "--check", "--generation-root", str(self.generation_root),
-            "--teams", str(self.teams_path), "--ledger", str(self.root / "missing.json"),
-        ])
+        code, _, err = run_cli(self.argv("--check", "--ledger", str(self.root / "missing.json")))
         self.assertEqual(code, 1)
         self.assertTrue(err.strip())
+
+
+class KhaiHoangOfflineContracts(LedgerFixture):
+    """Offline gate for Khai hoang identity: ledger v2, injected source and frozen handles."""
+
+    def test_handles_start_as_the_ascii_slug_of_the_current_title(self):
+        handles, stats = build_khaihoang_handles(KHAIHOANG_TEAMS)
+        self.assertEqual(handles, {team["id"]: slug(team["title"]) for team in KHAIHOANG_TEAMS})
+        self.assertEqual(stats, {"keys": 3, "distinctHandles": 3})
+        self.assertEqual(
+            handles["gia-cat-khac-sp-ma-sieu-phap-chinh"],
+            "gia-cat-khac-sp-ma-sieu-phap-chinh",
+        )
+
+    def test_ledger_v2_pins_the_khaihoang_source_while_the_publication_stays_v1(self):
+        ledger = self.generated_ledger()
+        self.validate(ledger)
+        self.assertEqual(ledger["schemaVersion"], LEDGER_SCHEMA_VERSION)
+        self.assertEqual(ledger["khaihoangSha256"], "sha256:" + hashlib.sha256(self.khaihoang_bytes).hexdigest())
+        self.assertEqual(ledger["handles"]["khaihoang"], {team["id"]: team["id"] for team in KHAIHOANG_TEAMS})
+        generation = self.generation_root / self.publication.generation_id
+        versions = [
+            json.loads((self.generation_root / "current.json").read_bytes())["schemaVersion"],
+            json.loads((generation / "manifest.json").read_bytes())["schemaVersion"],
+            json.loads((generation / "index.json").read_bytes())["schemaVersion"],
+        ]
+        self.assertEqual(versions, [PUBLICATION_SCHEMA_VERSION] * 3)
+
+    def test_a_missing_or_repeated_source_id_is_rejected(self):
+        for teams, expected in (
+            ([{"title": "Đội A"}], "has no id"),
+            ([{"id": "", "title": "Đội A"}], "has no id"),
+            ([khaihoang_team("Đội A"), {"id": "doi-a", "title": "Đội A"}], "more than once"),
+        ):
+            with self.subTest(teams=teams):
+                with self.assertRaises(TeamRouteHandleError) as error:
+                    build_khaihoang_handles(teams)
+                self.assertIn(expected, str(error.exception))
+
+        duplicated = [*KHAIHOANG_TEAMS, {"id": KHAIHOANG_TEAMS[0]["id"], "title": "Bản sao"}]
+        with self.assertRaises(TeamRouteHandleError) as error:
+            self.validate(self.generated_ledger(), khaihoang_teams=duplicated)
+        self.assertIn("more than once", str(error.exception))
+
+    def test_duplicate_handles_from_titles_are_rejected(self):
+        with self.assertRaises(TeamRouteHandleError) as error:
+            build_khaihoang_handles([
+                {"id": "doi-a-1", "title": "Đội A"},
+                {"id": "doi-a-2", "title": "đội a"},
+            ])
+        self.assertIn("duplicate handles", str(error.exception))
+        self.assertIn("doi-a-1", str(error.exception))
+        self.assertIn("doi-a-2", str(error.exception))
+
+    def test_missing_duplicate_or_unknown_handles_are_rejected(self):
+        ledger = self.generated_ledger()
+        del ledger["handles"]["khaihoang"]["quan-ngan-binh-nhac-tien"]
+        with self.assertRaises(TeamRouteHandleError) as error:
+            self.validate(ledger)
+        self.assertIn("missing", str(error.exception))
+        self.assertIn("quan-ngan-binh-nhac-tien", str(error.exception))
+
+        ledger = self.generated_ledger()
+        ledger["handles"]["khaihoang"]["doi-ghost"] = "doi-ghost"
+        with self.assertRaises(TeamRouteHandleError) as error:
+            self.validate(ledger)
+        self.assertIn("unknown", str(error.exception))
+        self.assertIn("doi-ghost", str(error.exception))
+
+        ledger = self.generated_ledger()
+        ledger["handles"]["khaihoang"]["quan-ngan-binh-nhac-tien"] = ledger["handles"]["khaihoang"][
+            "gia-cat-khac-sp-ma-sieu-phap-chinh"
+        ]
+        with self.assertRaises(TeamRouteHandleError) as error:
+            self.validate(ledger)
+        self.assertIn("shared by", str(error.exception))
+        self.assertIn("quan-ngan-binh-nhac-tien", str(error.exception))
+
+    def test_unroutable_or_non_string_handles_are_rejected(self):
+        for handle, expected in (("đội b", "not routable"), ("doi/a", "not routable"), ("", "not routable"), (7, "must be a string")):
+            ledger = self.generated_ledger()
+            ledger["handles"]["khaihoang"]["quan-ngan-binh-nhac-tien"] = handle
+            with self.subTest(handle=handle):
+                with self.assertRaises(TeamRouteHandleError) as error:
+                    self.validate(ledger)
+                self.assertIn(expected, str(error.exception))
+
+    def test_a_khaihoang_source_hash_mismatch_is_rejected(self):
+        ledger = self.generated_ledger()
+        ledger["khaihoangSha256"] = "sha256:" + "0" * 64
+        with self.assertRaises(TeamRouteHandleError) as error:
+            self.validate(ledger)
+        self.assertIn("khaihoangSha256", str(error.exception))
+
+        shorter = write_khaihoang(self.root / "other-khaihoang.json", KHAIHOANG_TEAMS[:1])
+        with self.assertRaises(TeamRouteHandleError) as error:
+            self.validate(self.generated_ledger(), khaihoang_bytes=shorter, khaihoang_teams=KHAIHOANG_TEAMS[:1])
+        self.assertIn("khaihoangSha256", str(error.exception))
+
+    def test_a_title_edit_or_reorder_never_moves_a_frozen_handle(self):
+        frozen = self.generated_ledger()
+        reordered = [{**team, "title": f"{team['title']} · bản mới"} for team in reversed(KHAIHOANG_TEAMS)]
+        data = write_khaihoang(self.khaihoang_path, reordered)
+        candidate, _ = build_khaihoang_handles(reordered)
+        for team in reordered:
+            self.assertEqual(candidate[team["id"]], slug(team["title"]))
+        self.assertNotEqual(candidate, frozen["handles"]["khaihoang"])
+
+        ledger = {**frozen, "khaihoangSha256": "sha256:" + sha256_hex(data)}
+        self.validate(ledger, khaihoang_bytes=data, khaihoang_teams=reordered)
+        self.assertEqual(ledger["handles"]["khaihoang"], frozen["handles"]["khaihoang"])
+
+    def test_a_ledger_that_only_differs_in_key_order_is_not_reassigned(self):
+        ledger = self.generated_ledger()
+        families = ledger["handles"]
+        reordered = {
+            **ledger,
+            "handles": {
+                "recommended": families["recommended"],
+                "khaihoang": families["khaihoang"],
+                "legacy": families["legacy"],
+            },
+        }
+        self.ledger_path.write_bytes((json.dumps(reordered, ensure_ascii=False, indent=2) + "\n").encode("utf-8"))
+        before = self.ledger_path.read_bytes()
+        self.assertNotEqual(before, ledger_bytes(ledger))
+
+        code, out, err = run_cli(self.argv("--write"))
+        self.assertEqual(code, 0, err)
+        self.assertIn("no-op", out)
+        self.assertEqual(self.ledger_path.read_bytes(), before)
+
+    def test_a_fixture_ledger_never_pins_the_repository_khaihoang_source(self):
+        code, out, err = run_cli(self.argv("--write"))
+        self.assertEqual(code, 0, err)
+        self.assertIn("Khai hoang", out)
+        ledger = json.loads(self.ledger_path.read_bytes())
+        repository_hash = "sha256:" + sha256_hex(DEFAULT_KHAIHOANG_PATH.read_bytes())
+        self.assertEqual(ledger["khaihoangSha256"], "sha256:" + sha256_hex(self.khaihoang_bytes))
+        self.assertNotEqual(ledger["khaihoangSha256"], repository_hash)
+        self.assertEqual(set(ledger["handles"]["khaihoang"]), {team["id"] for team in KHAIHOANG_TEAMS})
+
+        code, out, err = run_cli(self.argv("--check"))
+        self.assertEqual(code, 0, err)
+        self.assertIn("Khai hoang handles: 3", out)
+
+        # The fixture run never adopts the live file: the frozen fixture ledger cannot validate
+        # against the repository source ...
+        code, _, err = run_cli([
+            "--check",
+            "--generation-root", str(self.generation_root),
+            "--teams", str(self.teams_path),
+            "--ledger", str(self.ledger_path),
+        ])
+        self.assertEqual(code, 1)
+        self.assertIn("--khaihoang", err)
+
+        # ... and a ledger pinning the repository hash cannot validate against the fixture source.
+        ledger = json.loads(self.ledger_path.read_bytes())
+        ledger["khaihoangSha256"] = repository_hash
+        self.ledger_path.write_bytes(ledger_bytes(ledger))
+        code, _, err = run_cli(self.argv("--check"))
+        self.assertEqual(code, 1)
+        self.assertIn("khaihoangSha256", err)
+
+    def test_custom_root_cli_requires_an_explicit_khaihoang_source_before_writing(self):
+        code, _, err = run_cli([
+            "--write",
+            "--generation-root", str(self.generation_root),
+            "--teams", str(self.teams_path),
+            "--ledger", str(self.ledger_path),
+        ])
+        self.assertEqual(code, 1)
+        self.assertIn("--khaihoang", err)
+        self.assertFalse(self.ledger_path.exists())
+
 
 
 class PinnedLedgerTest(unittest.TestCase):
@@ -620,6 +822,8 @@ class PinnedLedgerTest(unittest.TestCase):
         cls.publication = read_publication(DEFAULT_GENERATION_ROOT)
         cls.teams_bytes = DEFAULT_TEAMS_PATH.read_bytes()
         cls.teams = json.loads(cls.teams_bytes)
+        cls.khaihoang_bytes = DEFAULT_KHAIHOANG_PATH.read_bytes()
+        cls.khaihoang_teams = json.loads(cls.khaihoang_bytes)["teams"]
         cls.ledger = json.loads(DEFAULT_LEDGER_PATH.read_bytes())
         cls.labels = json.loads(DEFAULT_DISPLAY_MAP_PATH.read_bytes())["labels"]["faction"]
 
@@ -630,17 +834,34 @@ class PinnedLedgerTest(unittest.TestCase):
             records=self.publication.records,
             teams_bytes=self.teams_bytes,
             teams=self.teams,
+            khaihoang_bytes=self.khaihoang_bytes,
+            khaihoang_teams=self.khaihoang_teams,
         )
 
     def test_committed_ledger_has_the_documented_shape_and_counts(self):
-        self.assertEqual(set(self.ledger), {"schemaVersion", "generationId", "legacyTeamsSha256", "note", "handles"})
-        self.assertEqual(self.ledger["schemaVersion"], 1)
+        self.assertEqual(
+            set(self.ledger),
+            {"schemaVersion", "generationId", "legacyTeamsSha256", "khaihoangSha256", "note", "handles"},
+        )
+        self.assertEqual(self.ledger["schemaVersion"], LEDGER_SCHEMA_VERSION)
         self.assertEqual(self.ledger["generationId"], self.publication.generation_id)
         self.assertEqual(self.ledger["legacyTeamsSha256"], "sha256:" + hashlib.sha256(self.teams_bytes).hexdigest())
+        self.assertEqual(self.ledger["khaihoangSha256"], "sha256:" + hashlib.sha256(self.khaihoang_bytes).hexdigest())
         self.assertEqual(len(self.ledger["handles"]["recommended"]), 1366)
         self.assertEqual(len(self.ledger["handles"]["legacy"]), 166)
+        self.assertEqual(len(self.ledger["handles"]["khaihoang"]), 17)
+        self.assertEqual(len(self.ledger["handles"]["khaihoang"]), len(self.khaihoang_teams))
         self.assertEqual(len(self.ledger["handles"]["recommended"]), len(self.publication.records))
         self.assertEqual(len(self.ledger["handles"]["legacy"]), len(self.teams))
+
+    def test_committed_khaihoang_handles_cover_every_team_once_and_stay_routable(self):
+        handles = self.ledger["handles"]["khaihoang"]
+        self.assertEqual(set(handles), {team["id"] for team in self.khaihoang_teams})
+        self.assertEqual(len(set(handles.values())), len(handles))
+        for team_id, handle in handles.items():
+            with self.subTest(team_id=team_id):
+                self.assertTrue(is_routable_identifier(handle))
+                self.assertNotEqual(handle, "")
 
     def test_committed_handles_are_routable_and_never_repeat_their_season(self):
         seasons = {row["sourceConfigId"]: season_code(row) for row in self.publication.records}
@@ -659,8 +880,11 @@ class PinnedLedgerTest(unittest.TestCase):
     def test_committed_ledger_is_exactly_what_the_current_inputs_generate(self):
         recommended, stats = build_recommended_handles(self.publication.records, self.labels)
         legacy, legacy_stats = build_legacy_handles(self.teams)
+        khaihoang, khaihoang_stats = build_khaihoang_handles(self.khaihoang_teams)
         self.assertEqual(recommended, self.ledger["handles"]["recommended"])
         self.assertEqual(legacy, self.ledger["handles"]["legacy"])
+        self.assertEqual(khaihoang, self.ledger["handles"]["khaihoang"])
+        self.assertEqual(khaihoang_stats, {"keys": 17, "distinctHandles": 17})
 
         self.assertEqual(stats["keys"], 1366)
         self.assertEqual(stats["groupKeys"], 1264)
@@ -698,7 +922,7 @@ class PinnedLedgerTest(unittest.TestCase):
             rewrite_index(copy, records)
 
             before = DEFAULT_LEDGER_PATH.read_bytes()
-            code, _, err = run_cli(["--check", "--generation-root", str(copy)])
+            code, _, err = run_cli(["--check", "--generation-root", str(copy), "--khaihoang", str(DEFAULT_KHAIHOANG_PATH)])
             self.assertEqual(code, 0, err)
             self.assertEqual(DEFAULT_LEDGER_PATH.read_bytes(), before)
 
@@ -719,7 +943,7 @@ class PinnedLedgerTest(unittest.TestCase):
                 if row["sourceConfigId"] == "s11-wu-dudu-zhuanyou":
                     row["displayNameVi"] = "Đô Đốc Cung Duy Nhất"
             (generation / "index.json").write_bytes(canonical({"schemaVersion": 1, "records": records}))
-            code, _, err = run_cli(["--check", "--generation-root", str(copy)])
+            code, _, err = run_cli(["--check", "--generation-root", str(copy), "--khaihoang", str(DEFAULT_KHAIHOANG_PATH)])
             self.assertEqual(code, 1)
             self.assertIn("hash mismatch", err)
 

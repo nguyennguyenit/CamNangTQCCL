@@ -14,6 +14,42 @@ const expectedGuideHeroReferences = [
   "Trình Phổ", "Trương Giác", "Trương Phi", "Tự Thụ",
 ].sort();
 
+// Reviewed phase-1 migration table: the 30 retired `displayNote` owners, each recorded as the
+// destination field of its sentences. `null` means the field must be absent rather than empty, and
+// the pair must reproduce the retired value sentence for sentence (59 sentences in total).
+const noteMigration = [
+  ["teams[0].variants[0]", "Pháp Chính mang Tiềm Long từ đầu; cần có Thôi Phong.", "Cấu hình hướng tới tài khoản nhiều hột; không suy các mốc mở đất cho mọi tài khoản."],
+  ["teams[0].variants[1]", "Đổi vị trí Giải Phiền và Thịnh Khí; sau cấp 20 SP Mã Siêu dùng Bạo Lệ + Mau Giành.", null],
+  ["teams[0].heroes[2]", "Sau cấp 20 để Pháp Chính làm chủ tướng.", null],
+  ["teams[1].variants[0]", "Sau cấp 20 chuyển chủ tướng sang Quan Ngân Bình, Thanh Châu đặt trên Quan. Chỉnh Võ Lực Quan cao hơn Nhạc. Sĩ Tranh Tiên Phó chưa được xác nhận là alias của Nhanh Chân Tranh Đất.", null],
+  ["teams[2].variants[0]", "Sau cấp 20 dùng Bát Môn thay Tiềm Long trên Gia Cát Khác. Giữ cấu hình Cung và Vô Đương, không đổi sang Kỵ.", null],
+  ["teams[2].heroes[2]", "Sau cấp 20 để Gia Cát Khác làm chủ tướng.", null],
+  ["teams[3]", null, "Thận trọng với thủ quân có tất trúng vì làm giảm lợi thế né tránh của Tả Từ. Mốc mở đất phụ thuộc hột tướng, trang bị, thủ quân và đội đánh hao."],
+  ["teams[3].variants[0]", "Tam Thế ở Trương Xuân Hoa; Tả Từ mang cả Thịnh Khí + Sĩ Biệt thay Sợ Bóng Sợ Gió. Không trộn hai cấu hình. Chỉ có bộ hai chiêu, chưa chốt trước cấp 20 hoặc mạnh hơn mặc định.", null],
+  ["teams[3].heroes[0]", "Cộng Trí Lực.", "Là nguồn sát thương chính của đội; ưu tiên Lục Tốn nhiều hột, kết quả phụ thuộc khả năng phát động chiến pháp."],
+  ["teams[3].heroes[1]", "Cộng Trí Lực. Có thể thay Thịnh Khí Linh Địch bằng Sĩ Biệt Tam Nhật tùy thủ quân và độ đỏ; chọn một trong hai. Sau cấp 20 và thức tỉnh, nhận Tam Thế Trận từ Trương Xuân Hoa.", null],
+  ["teams[3].heroes[2]", "Chỉnh Tốc Độ để hành động trước Lục Tốn, còn lại cộng Trí Lực; không có số điểm tốc cố định cho mọi tài khoản. Sau thức tỉnh chuyển Tam Thế sang Tả Từ, dùng Đoạt Hồn Hiệp Phách + Sợ Bóng Sợ Gió.", null],
+  ["teams[4].variants[0]", "Chọn nhánh Bạo Lệ. Bách Kỵ đặt trên Hạ Hầu Uyên; Hoàng Nguyệt Anh mang Hổ Báo + Tam Thế. Đây là cấu hình Kỵ.", null],
+  ["teams[5].variants[0]", "Chọn nhánh Cung: giữ Vô Đương ở Trần Cung, khác bản mặc định chuyển Kỵ.", null],
+  ["teams[7].variants[0]", "Khương Duy mang Vô Đương trước cấp 20; sau cấp 20 Hạ Hầu Uyên dùng Mau Giành thay Nhất Kỵ. Đây là nhánh Cung.", null],
+  ["teams[8].variants[0]", "SP Viên Thiệu đổi Nằm Gai sang Xế Đao; Trương Xuân Hoa đổi Thịnh Khí sang Thời Cơ. Chỉ có bộ hai chiêu.", null],
+  ["teams[10].variants[0]", "Sau cấp 20 Nhạc Tiến mang Thanh Châu; Thái Văn Cơ mang Tạm Lánh + Cắt Xương. Sĩ Tranh Tiên Phó chưa được xác nhận là alias của Nhanh Chân Tranh Đất.", null],
+  ["teams[11].variants[0]", "Thay Thịnh Khí bằng Sĩ Biệt khi chuẩn bị đất 6.", "Bản mặc định giữ Thịnh Khí để quét đất 5; đối chiếu thủ quân trước khi đánh."],
+  ["teams[11].variants[1]", "Dùng bộ chiêu này ngay sau cấp 20. Giữ ba mức thích tính khác nhau để Võ Phong hoạt động.", null],
+  ["teams[11].heroes[0]", "Chủ tướng trước và sau cấp 20; cộng toàn Thống Soái. Sau cấp 20 cần thức tỉnh. Giữ ba mức thích tính khác nhau để Võ Phong Trận hoạt động. Sau điện 7, có thể luyện Trình Phổ đến cấp 20 để thay làm chủ tướng, giữ Võ Phong và đổi Thịnh Khí sang Lâm Nguy Cứu Chủ.", null],
+  ["teams[11].heroes[1]", "Cộng khoảng 15 điểm Tốc Độ, còn lại Võ Lực; chỉnh tốc theo thủ quân. Cần có Thôi Phong Đoạn Nhẫn; không nhầm với Phá Phong Đoạn Nhẫn.", "Ưu tiên đất Thương, tránh đội tất trúng hoặc hỗn loạn."],
+  ["teams[11].heroes[2]", "Cộng toàn Thống Soái trong giai đoạn đầu; khi chuyển Trình Phổ đánh đất cao, đổi sang toàn Trí Lực.", "Đối chiếu phiên bản chiến pháp, hột tướng và thủ quân của mùa đang chơi."],
+  ["teams[12].heroes[2]", "Đồng Lòng Hợp Sức (勠力同心): chiến pháp sự kiện Chủ động, xác suất 50%, trị liệu và tăng Thống Soái.", null],
+  ["teams[13].heroes[0]", "Có thể thay bằng Pháp Chính; đội Gia Cát Khác · SP Mã Siêu · Pháp Chính đã có riêng. Chiến pháp sau cấp 20 dùng khi đã thức tỉnh.", null],
+  ["teams[14]", "Ở cấu hình mặc định, Trương Xuân Hoa cộng Trí Lực. Phương án thay Kích Kỳ Nọa Quy bằng 疾風豪雨 (chưa xác nhận tên Việt) có cách cộng điểm riêng: Trương Xuân Hoa cộng Thống Soái trước cấp 20, Trí Lực sau cấp 20.", "Mốc mở đất phụ thuộc hột tướng, trang bị, thủ quân và đội đánh hao; không áp mốc nhanh nhất cho mọi tài khoản."],
+  ["teams[14].heroes[0]", "Cộng Thống Soái.", null],
+  ["teams[14].heroes[1]", "Chủ tướng trước và sau cấp 20; cộng Võ Lực.", "Là nguồn sát thương chính của đội, ưu tiên Trương Phi nhiều hột. Có thể thay Kích Kỳ Nọa Quy bằng Phá Quân Uy Thắng."],
+  ["teams[14].heroes[2]", "Cộng Trí Lực.", null],
+  ["teams[15].heroes[0]", "Chỉ có dữ liệu sau cấp 20; không suy ra bộ trước cấp 20.", null],
+  ["teams[15].heroes[1]", "Chỉ có dữ liệu sau cấp 20; không suy ra bộ trước cấp 20.", null],
+  ["teams[15].heroes[2]", "Chỉ có dữ liệu sau cấp 20; không suy ra bộ trước cấp 20.", null],
+];
+
 test("Khác Bình Tiến uses spears in both opening phases", () => {
   const team = data.teams.find((t) => t.title === "Gia Cát Khác · Quan Ngân Bình · Nhạc Tiến");
   assert.equal(team.unitType, "Thương");
@@ -151,12 +187,38 @@ test("opening-guide fields stay finite, curated, and separate from build variant
   }
 });
 
-test("every retained build note has a curated public counterpart", () => {
-  for (const team of data.teams) {
-    for (const build of [team, ...(team.variants || [])]) {
-      if (build.note) assert.ok(build.displayNote, `${team.title}: missing curated build note`);
-    }
+/** Every object node in the document, paired with its path (`teams[0].variants[1]`). */
+const objectNodes = (value, path = "", out = []) => {
+  if (!value || typeof value !== "object") return out;
+  for (const [key, child] of Object.entries(value)) {
+    const childPath = Array.isArray(value) ? `${path}[${key}]` : path ? `${path}.${key}` : key;
+    if (child && typeof child === "object" && !Array.isArray(child)) out.push([childPath, child]);
+    objectNodes(child, childPath, out);
   }
+  return out;
+};
+
+test("every retired display note keeps its sentences in exactly one owner field", () => {
+  const owners = objectNodes(data)
+    .filter(([, node]) => Object.hasOwn(node, "buildNote") || Object.hasOwn(node, "openingNote"))
+    .map(([path]) => path);
+  assert.deepEqual(owners.sort(), noteMigration.map(([path]) => path).sort());
+
+  let sentences = 0;
+  for (const [path, build, opening] of noteMigration) {
+    const owner = path.replace(/\[(\d+)\]/g, ".$1").split(".").reduce((node, key) => node[key], data);
+    assert.deepEqual([owner.buildNote ?? null, owner.openingNote ?? null], [build, opening], path);
+    sentences += [build, opening].filter(Boolean).join(" ").split(/(?<=\.)\s+/)
+      .filter((sentence) => sentence.trim()).length;
+  }
+  assert.equal(sentences, 59);
+});
+
+test("the retired displayNote field is gone from the whole document", () => {
+  const offenders = objectNodes(data)
+    .filter(([, node]) => Object.hasOwn(node, "displayNote"))
+    .map(([path]) => `${path}.displayNote`);
+  assert.deepEqual(offenders, []);
 });
 
 test("new guide hero references are the reviewed canonical set", () => {

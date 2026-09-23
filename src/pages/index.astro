@@ -8,6 +8,7 @@ const recommended = website.recommended;
 const catalog = await teamDetailCatalog();
 const recommendedRouteSegments = Object.fromEntries(catalog.recommended.map((entry) => [entry.sourceConfigId, entry.routeSegment]));
 const legacyRouteSegments = Object.fromEntries(catalog.legacy.map((entry) => [entry.legacyTeamId, entry.routeSegment]));
+const khaiHoangHandles = Object.fromEntries(catalog.khaiHoang.map((entry) => [entry.khaiHoangTeamId, entry.handle]));
 ---
 <!doctype html>
 <html lang="vi" data-theme="light">
@@ -74,7 +75,7 @@ const legacyRouteSegments = Object.fromEntries(catalog.legacy.map((entry) => [en
     </footer>
 
     <script is:inline type="application/json" id="season-artifact-hashes" set:html={JSON.stringify(seasonHashes)}></script>
-    <script is:inline type="application/json" id="team-route-handles" set:html={JSON.stringify({r: recommendedRouteSegments, l: legacyRouteSegments})}></script>
+    <script is:inline type="application/json" id="team-route-handles" set:html={JSON.stringify({r: recommendedRouteSegments, l: legacyRouteSegments, k: khaiHoangHandles})}></script>
     <script is:inline type="application/json" id="recommended-publication" set:html={JSON.stringify(recommended.pin)}></script>
     <script is:inline type="application/json" id="website-display-publication" set:html={JSON.stringify(website.pin)}></script>
     <script is:inline type="module" src="/js/app.js"></script>
