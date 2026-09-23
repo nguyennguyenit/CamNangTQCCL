@@ -1,0 +1,315 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "Analyze.dc.html": {
+      "h": 1272,
+      "title": "Soi đội từ ảnh — desktop",
+      "w": 1440,
+      "x": 1990,
+      "y": 11760,
+      "is_interactive": true
+    },
+    "AnalyzeMobile.dc.html": {
+      "h": 1600,
+      "title": "Soi đội từ ảnh — mobile",
+      "w": 390,
+      "x": 3510,
+      "y": 11760
+    },
+    "Coexist.dc.html": {
+      "h": 1832,
+      "title": "Cùng Tồn — desktop",
+      "w": 1440,
+      "x": 0,
+      "y": 8460,
+      "is_interactive": true
+    },
+    "CoexistMobile.dc.html": {
+      "h": 1560,
+      "title": "Cùng Tồn — mobile",
+      "w": 390,
+      "x": 1520,
+      "y": 8460
+    },
+    "DirA-ChienBao.dc.html": {
+      "h": 1080,
+      "title": "Hướng A — Chiến báo (tối, game HUD)",
+      "w": 760,
+      "x": 0,
+      "y": 2420
+    },
+    "DirB-BangTra.dc.html": {
+      "h": 480,
+      "title": "Hướng B — Bảng tra (dữ liệu dày)",
+      "w": 1120,
+      "x": 840,
+      "y": 2420
+    },
+    "DirC-ThuyMac.dc.html": {
+      "h": 1080,
+      "title": "Hướng C — Thủy mặc (tối giản)",
+      "w": 760,
+      "x": 2040,
+      "y": 2420
+    },
+    "Khaihoang.dc.html": {
+      "h": 2852,
+      "title": "Khai hoang — desktop",
+      "w": 1440,
+      "x": 1990,
+      "y": 8460,
+      "is_interactive": true
+    },
+    "KhaihoangMobile.dc.html": {
+      "h": 2000,
+      "title": "Khai hoang — mobile",
+      "w": 390,
+      "x": 3510,
+      "y": 8460
+    },
+    "Landing.dc.html": {
+      "h": 4420,
+      "title": "Landing — giới thiệu (desktop)",
+      "w": 1440,
+      "x": 0,
+      "y": 13800,
+      "is_interactive": true
+    },
+    "LandingMobile.dc.html": {
+      "h": 4136,
+      "title": "Landing — giới thiệu (mobile)",
+      "w": 390,
+      "x": 1520,
+      "y": 13800,
+      "is_interactive": true
+    },
+    "Lookup.dc.html": {
+      "h": 1592,
+      "title": "Tra cứu — tướng",
+      "w": 1440,
+      "x": 0,
+      "y": 6340,
+      "is_interactive": true
+    },
+    "LookupMobile.dc.html": {
+      "h": 1720,
+      "title": "Tra cứu — mobile",
+      "w": 390,
+      "x": 4560,
+      "y": 6340
+    },
+    "LookupProfile.dc.html": {
+      "h": 1072,
+      "title": "Tra cứu — hồ sơ tướng",
+      "w": 1440,
+      "x": 3040,
+      "y": 6340,
+      "is_interactive": true
+    },
+    "LookupTactics.dc.html": {
+      "h": 1672,
+      "title": "Tra cứu — chiến pháp",
+      "w": 1440,
+      "x": 1520,
+      "y": 6340,
+      "is_interactive": true
+    },
+    "Main.dc.html": {
+      "h": 1592,
+      "title": "Đội chuẩn — desktop",
+      "w": 1440,
+      "x": 0,
+      "y": 0,
+      "is_interactive": true
+    },
+    "MainTable.dc.html": {
+      "h": 1992,
+      "title": "Đội chuẩn — desktop, dạng bảng",
+      "w": 1440,
+      "x": 0,
+      "y": 3900,
+      "is_interactive": true
+    },
+    "MobileFilters.dc.html": {
+      "h": 1240,
+      "title": "Mobile — bộ lọc mở",
+      "w": 390,
+      "x": 3510,
+      "y": 0
+    },
+    "MobileList.dc.html": {
+      "h": 1440,
+      "title": "Đội chuẩn — mobile",
+      "w": 390,
+      "x": 3040,
+      "y": 0
+    },
+    "MobileTable.dc.html": {
+      "h": 1760,
+      "title": "Đội chuẩn — mobile, dạng bảng",
+      "w": 390,
+      "x": 1520,
+      "y": 3900
+    },
+    "Recruit.dc.html": {
+      "h": 1452,
+      "title": "Theo dõi chiêu mộ — desktop",
+      "w": 1440,
+      "x": 0,
+      "y": 11760,
+      "is_interactive": true
+    },
+    "RecruitMobile.dc.html": {
+      "h": 1640,
+      "title": "Theo dõi chiêu mộ — mobile",
+      "w": 390,
+      "x": 1520,
+      "y": 11760
+    },
+    "Roster.dc.html": {
+      "h": 1372,
+      "title": "Gợi ý đội từ kho — desktop",
+      "w": 1440,
+      "x": 3980,
+      "y": 11760,
+      "is_interactive": true
+    },
+    "RosterMobile.dc.html": {
+      "h": 1320,
+      "title": "Gợi ý đội từ kho — mobile",
+      "w": 390,
+      "x": 5500,
+      "y": 11760
+    },
+    "StyleGuide.dc.html": {
+      "h": 1400,
+      "title": "Hệ thống thị giác",
+      "w": 1280,
+      "x": 3980,
+      "y": 0
+    },
+    "TeamDetail.dc.html": {
+      "h": 1392,
+      "title": "Chi tiết đội — desktop",
+      "w": 1440,
+      "x": 1520,
+      "y": 0,
+      "is_interactive": true
+    },
+    "LandingMenu.dc.html": {
+      "x": 2000,
+      "y": 13800,
+      "w": 1440,
+      "h": 720,
+      "title": "Landing — menu đang mở (desktop)",
+      "is_interactive": true
+    },
+    "LandingMenuMobile.dc.html": {
+      "x": 3520,
+      "y": 13800,
+      "w": 390,
+      "h": 1800,
+      "title": "Landing — menu mobile đang mở",
+      "is_interactive": true
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-09-23T07:40:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "coexistrow": {
+      "kind": "title1",
+      "maxW": 3900,
+      "text": "Cùng Tồn · Khai hoang",
+      "w": 240,
+      "x": 0,
+      "y": 8180
+    },
+    "directions": {
+      "kind": "title1",
+      "maxW": 2800,
+      "text": "Ba hướng khác để so sánh",
+      "w": 240,
+      "x": 0,
+      "y": 2120
+    },
+    "heading": {
+      "kind": "title1",
+      "maxW": 5260,
+      "text": "Sổ binh pháp — thiết kế lại Cẩm Nang TQCCL",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "landingrow": {
+      "kind": "title1",
+      "maxW": 3910,
+      "text": "Landing page giới thiệu",
+      "w": 240,
+      "x": 0,
+      "y": 13520
+    },
+    "lookuprow": {
+      "kind": "title1",
+      "maxW": 4950,
+      "text": "Tra cứu",
+      "w": 240,
+      "x": 0,
+      "y": 6060
+    },
+    "tableview": {
+      "kind": "title1",
+      "maxW": 1910,
+      "text": "Chế độ xem Bảng — chuyển Thẻ / Bảng",
+      "w": 240,
+      "x": 0,
+      "y": 3620
+    },
+    "toolsrow": {
+      "kind": "title1",
+      "maxW": 5890,
+      "text": "Công cụ Beta · Chiêu mộ · Soi đội · Gợi ý kho",
+      "w": 240,
+      "x": 0,
+      "y": 11480
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "TeamDetail.dc.html",
+    "MobileList.dc.html",
+    "MobileFilters.dc.html",
+    "StyleGuide.dc.html",
+    "DirA-ChienBao.dc.html",
+    "DirB-BangTra.dc.html",
+    "DirC-ThuyMac.dc.html",
+    "MainTable.dc.html",
+    "MobileTable.dc.html",
+    "Lookup.dc.html",
+    "LookupTactics.dc.html",
+    "LookupProfile.dc.html",
+    "LookupMobile.dc.html",
+    "Coexist.dc.html",
+    "CoexistMobile.dc.html",
+    "Khaihoang.dc.html",
+    "KhaihoangMobile.dc.html",
+    "Recruit.dc.html",
+    "RecruitMobile.dc.html",
+    "Analyze.dc.html",
+    "AnalyzeMobile.dc.html",
+    "Roster.dc.html",
+    "RosterMobile.dc.html",
+    "Landing.dc.html",
+    "LandingMobile.dc.html",
+    "LandingMenu.dc.html",
+    "LandingMenuMobile.dc.html"
+  ],
+  "pages": [],
+  "title": "Cẩm Nang TQCCL — Redesign"
+}

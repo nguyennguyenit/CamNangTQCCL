@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Theo dõi chiêu mộ — mobile</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&amp;family=Noto+Serif+Display:wght@600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Be Vietnam Pro',system-ui,sans-serif;background:#F3EEE3;color:#1E1B16}
+a{color:#A8202A}a:hover{color:#7E1620}
+</style>
+</helmet>
+<div style="width: 390px; height: 1640px; box-sizing: border-box; display: flex; flex-direction: column; background: #F3EEE3; color: #1E1B16; font-family: 'Be Vietnam Pro', system-ui, sans-serif; overflow: hidden;">
+  <header style="height: 60px; flex-shrink: 0; box-sizing: border-box; padding: 0 8px 0 4px; display: flex; align-items: center; gap: 6px; background: #1C1A17; color: #F3EEE3;">
+    <button type="button" aria-label="Mở menu trang" aria-expanded="false" style="width: 44px; height: 44px; border: none; border-radius: 10px; background: transparent; color: #F3EEE3; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg>
+    </button>
+    <span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 5px; background: #A8202A; color: #F9F3E6; display: flex; align-items: center; justify-content: center; font-family: 'Noto Serif TC', 'Songti TC', serif; font-size: 19px; font-weight: 700; flex-shrink: 0;">兵</span>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; min-width: 0;">
+      <span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 16px; font-weight: 700;">Cẩm Nang Tam Quốc Chí</span>
+      <span style="font-size: 11px; color: #B8AF9F; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Chiêu mộ · Binh Diễn Xuân Thu</span>
+    </div>
+    <button type="button" aria-label="Chuyển sang giao diện tối" aria-pressed="false" style="width: 44px; height: 44px; border: none; border-radius: 10px; background: transparent; color: #F3EEE3; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+    </button>
+  </header>
+  <main style="flex-grow: 1; box-sizing: border-box; padding: 24px 16px 32px; display: flex; flex-direction: column; gap: 16px;">
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #A8202A;">Công cụ · Beta</span>
+      <h1 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-size: 34px; font-weight: 700; line-height: 1.05;">Theo dõi chiêu mộ</h1>
+      <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #5F5A50;">Lưu trong trình duyệt này; nhớ Xuất JSON để sao lưu.</p>
+    </div>
+    <div style="display: flex; gap: 8px; align-items: flex-end;">
+      <label style="flex-grow: 1; display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #5F5A50;">Tài khoản
+        <select style="height: 44px; width: 100%; padding: 0 12px; border: 1px solid #CFC5B1; border-radius: 10px; background: #FFFCF5; font: inherit; font-size: 15px; font-weight: 600;"><option>Chính</option></select></label>
+      <button type="button" aria-label="Tùy chọn tài khoản" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 10px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; border: 1px solid #CFC5B1; background: #FFFCF5; color: #1E1B16; width: 44px; padding: 0;">…</button>
+    </div>
+    <section style="display: flex; flex-direction: column; gap: 14px; padding: 16px; background: #FFFCF5; border: 1px solid #D8CFBD; border-radius: 14px;">
+      <h2 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-size: 21px; font-weight: 700;">Danh tướng PK · Hằng ngày</h2>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+          <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #5F5A50;">Mốc bảo hiểm 5★</span>
+          <div style="display: flex; align-items: baseline; gap: 12px;"><span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 52px; font-weight: 700; line-height: 0.9; color: #A8202A; font-variant-numeric: tabular-nums;">12</span><span style="font-size: 18px; color: #5F5A50;">/ 30 lượt</span></div>
+          <span role="meter" aria-label="Tiến độ bảo hiểm" aria-valuemin="0" aria-valuemax="30" aria-valuenow="12" style="display: block; height: 10px; border-radius: 5px; background: #EAE3D4; overflow: hidden;"><span style="display: block; width: 40%; height: 100%; background: #A8202A;"></span></span>
+          <span style="font-size: 14px;"><strong>Còn 18 lượt</strong> tới mốc bảo hiểm · Hôm nay 3/4</span>
+        </div>
+      <div style="display: flex; flex-direction: column; gap: 10px;"><div style="display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 12px; border: 1px solid #E0D6C4; background: #FBF7EE;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline;"><span style="font-size: 14.5px; font-weight: 700;">Miễn phí 1</span><span style="font-size: 12.5px; font-weight: 600; color: #3A352D;">Không ra</span></div>
+            <div style="display: flex; gap: 6px;"><button type="button" aria-pressed="true" style="flex: 1; min-height: 44px; border-radius: 9px; border: 1px solid #1C1A17; background: #1C1A17; color: #F3EEE3; font: inherit; font-size: 13.5px; font-weight: 600;">Không ra</button><button type="button" aria-pressed="false" style="flex: 1; min-height: 44px; border-radius: 9px; border: 1px solid #D8CFBD; background: #FFFCF5; color: #1E1B16; font: inherit; font-size: 13.5px; font-weight: 600;">Ra 5★</button></div></div><div style="display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 12px; border: 1px solid #E0D6C4; background: #FBF7EE;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline;"><span style="font-size: 14.5px; font-weight: 700;">Nửa giá 1</span><span style="font-size: 12.5px; font-weight: 600; color: #3A352D;">Không ra</span></div>
+            <div style="display: flex; gap: 6px;"><button type="button" aria-pressed="true" style="flex: 1; min-height: 44px; border-radius: 9px; border: 1px solid #1C1A17; background: #1C1A17; color: #F3EEE3; font: inherit; font-size: 13.5px; font-weight: 600;">Không ra</button><button type="button" aria-pressed="false" style="flex: 1; min-height: 44px; border-radius: 9px; border: 1px solid #D8CFBD; background: #FFFCF5; color: #1E1B16; font: inherit; font-size: 13.5px; font-weight: 600;">Ra 5★</button></div></div><div style="display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 12px; border: 1px solid #E0D6C4; background: #FBF7EE;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline;"><span style="font-size: 14.5px; font-weight: 700;">Miễn phí 2</span><span style="font-size: 12.5px; font-weight: 600; color: #3A352D;">Không ra</span></div>
+            <div style="display: flex; gap: 6px;"><button type="button" aria-pressed="true" style="flex: 1; min-height: 44px; border-radius: 9px; border: 1px solid #1C1A17; background: #1C1A17; color: #F3EEE3; font: inherit; font-size: 13.5px; font-weight: 600;">Không ra</button><button type="button" aria-pressed="false" style="flex: 1; min-height: 44px; border-radius: 9px; border: 1px solid #D8CFBD; background: #FFFCF5; color: #1E1B16; font: inherit; font-size: 13.5px; font-weight: 600;">Ra 5★</button></div></div><div style="display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 12px; border: 1px solid #E0D6C4; background: #FBF7EE;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline;"><span style="font-size: 14.5px; font-weight: 700;">Nửa giá 2</span><span style="font-size: 12.5px; font-weight: 600; color: #5F5A50;">Chưa quay</span></div>
+            <div style="display: flex; gap: 6px;"><button type="button" aria-pressed="false" style="flex: 1; min-height: 44px; border-radius: 9px; border: 1px solid #D8CFBD; background: #FFFCF5; color: #1E1B16; font: inherit; font-size: 13.5px; font-weight: 600;">Không ra</button><button type="button" aria-pressed="false" style="flex: 1; min-height: 44px; border-radius: 9px; border: 1px solid #D8CFBD; background: #FFFCF5; color: #1E1B16; font: inherit; font-size: 13.5px; font-weight: 600;">Ra 5★</button></div></div></div>
+    </section>
+    <section style="display: flex; flex-direction: column; gap: 4px; padding: 16px; background: #FFFCF5; border: 1px solid #D8CFBD; border-radius: 14px;">
+      <h2 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-size: 19px; font-weight: 700;">Lịch sử 5★</h2>
+      <ol style="margin: 0; padding: 0; list-style: none;"><li style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; padding: 12px 0; border-top: none;">
+            <span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 17px; font-weight: 700;">SP Lữ Mông</span><span style="display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 0 9px; border-radius: 999px; font-size: 12px; font-weight: 600; background: #F6E1DC; color: #8E1B24;">Chủ lực</span>
+            <span style="font-size: 12.5px; color: #5F5A50;">21/09/2026 · Danh tướng PK</span><span style="font-size: 12.5px; color: #5F5A50; text-align: right; font-variant-numeric: tabular-nums;">lượt 30/30</span></li><li style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; padding: 12px 0; border-top: 1px dashed #E6DECF;">
+            <span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 17px; font-weight: 700;">Hứa Du</span><span style="display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 0 9px; border-radius: 999px; font-size: 12px; font-weight: 600; background: #EAE3D4; color: #3A352D;">Dùng đội</span>
+            <span style="font-size: 12.5px; color: #5F5A50;">14/09/2026 · Danh tướng PK</span><span style="font-size: 12.5px; color: #5F5A50; text-align: right; font-variant-numeric: tabular-nums;">lượt 18/30</span></li><li style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; padding: 12px 0; border-top: 1px dashed #E6DECF;">
+            <span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 17px; font-weight: 700;">Tào Tháo</span><span style="display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 0 9px; border-radius: 999px; font-size: 12px; font-weight: 600; background: #F6E1DC; color: #8E1B24;">Chủ lực</span>
+            <span style="font-size: 12.5px; color: #5F5A50;">02/09/2026 · [Tên gói hạn giờ]</span><span style="font-size: 12.5px; color: #5F5A50; text-align: right; font-variant-numeric: tabular-nums;">lượt 27/30</span></li></ol>
+    </section>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;"><button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 10px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; border: 1px solid #CFC5B1; background: #FFFCF5; color: #1E1B16;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"></path><polyline points="7 10 12 15 17 10"></polyline><path d="M5 20h14"></path></svg> Xuất JSON</button><button type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 10px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; border: 1px solid #CFC5B1; background: #FFFCF5; color: #1E1B16;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V9"></path><polyline points="7 14 12 9 17 14"></polyline><path d="M5 4h14"></path></svg> Nhập JSON</button></div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1640}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

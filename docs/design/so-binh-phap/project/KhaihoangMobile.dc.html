@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Khai hoang — mobile</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&amp;family=Noto+Serif+Display:wght@600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Be Vietnam Pro',system-ui,sans-serif;background:#F3EEE3;color:#1E1B16}
+a{color:#A8202A}a:hover{color:#7E1620}
+</style>
+</helmet>
+<div style="width: 390px; height: 2000px; box-sizing: border-box; display: flex; flex-direction: column; background: #F3EEE3; color: #1E1B16; font-family: 'Be Vietnam Pro', system-ui, sans-serif; overflow: hidden;">
+  <header style="height: 60px; flex-shrink: 0; box-sizing: border-box; padding: 0 8px 0 4px; display: flex; align-items: center; gap: 6px; background: #1C1A17; color: #F3EEE3;">
+    <button type="button" aria-label="Mở menu trang" aria-expanded="false" style="width: 44px; height: 44px; border: none; border-radius: 10px; background: transparent; color: #F3EEE3; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg>
+    </button>
+    <span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 5px; background: #A8202A; color: #F9F3E6; display: flex; align-items: center; justify-content: center; font-family: 'Noto Serif TC', 'Songti TC', serif; font-size: 19px; font-weight: 700; flex-shrink: 0;">兵</span>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; min-width: 0;">
+      <span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 16px; font-weight: 700;">Cẩm Nang Tam Quốc Chí</span>
+      <span style="font-size: 11px; color: #B8AF9F; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Khai hoang · Binh Diễn Xuân Thu</span>
+    </div>
+    <button type="button" aria-label="Chuyển sang giao diện tối" aria-pressed="false" style="width: 44px; height: 44px; border: none; border-radius: 10px; background: transparent; color: #F3EEE3; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+    </button>
+  </header>
+  <main style="flex-grow: 1; box-sizing: border-box; padding: 24px 16px 32px; display: flex; flex-direction: column; gap: 16px;">
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #A8202A;">Đội hình</span>
+      <h1 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-size: 34px; font-weight: 700; line-height: 1.05;">Khai hoang</h1>
+      <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #5F5A50;">Đội mở đất, chạm sứ và quân thủ từng mỏ.</p>
+    </div>
+    <nav aria-label="Trong trang" style="display: flex; gap: 8px; flex-wrap: wrap;"><a href="#de-xuat" style="display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid #CFC5B1; background: #FFFCF5; color: #1E1B16; font-size: 14px; font-weight: 600; text-decoration: none;">Đội đề xuất <span style="font-weight: 400; color: #5F5A50;">17</span></a><a href="#cham-su" style="display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid #CFC5B1; background: #FFFCF5; color: #1E1B16; font-size: 14px; font-weight: 600; text-decoration: none;">Chạm Sứ / Ăn vạ <span style="font-weight: 400; color: #5F5A50;">8</span></a><a href="#mo" style="display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid #CFC5B1; background: #FFFCF5; color: #1E1B16; font-size: 14px; font-weight: 600; text-decoration: none;">Quân thủ các mỏ <span style="font-weight: 400; color: #5F5A50;">5</span></a></nav>
+    <h2 id="de-xuat-m" style="margin: 0; display: flex; align-items: baseline; gap: 12px; font-family: 'Noto Serif Display', Georgia, serif; font-size: 28px; font-weight: 700;">Đội đề xuất <span style="font-family: 'Be Vietnam Pro', sans-serif; font-size: 14px; font-weight: 500; color: #5F5A50;">17</span></h2>
+    <div role="group" aria-label="Lọc theo loại binh" style="display: flex; flex-wrap: wrap; gap: 8px;"><button type="button" aria-pressed="true" style="display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid #1C1A17; background: #1C1A17; color: #F3EEE3; font: inherit; font-size: 14px; font-weight: 600;">Tất cả <span style="font-weight: 400; opacity: 0.8;">17</span></button><button type="button" aria-pressed="false" style="display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid #D8CFBD; background: #F7F2E8; color: #1E1B16; font: inherit; font-size: 14px; font-weight: 600;">Cung <span style="font-weight: 400; opacity: 0.8;">10</span></button><button type="button" aria-pressed="false" style="display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid #D8CFBD; background: #F7F2E8; color: #1E1B16; font: inherit; font-size: 14px; font-weight: 600;">Thương <span style="font-weight: 400; opacity: 0.8;">4</span></button><button type="button" aria-pressed="false" style="display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid #D8CFBD; background: #F7F2E8; color: #1E1B16; font: inherit; font-size: 14px; font-weight: 600;">Kỵ <span style="font-weight: 400; opacity: 0.8;">2</span></button><button type="button" aria-pressed="false" style="display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid #D8CFBD; background: #F7F2E8; color: #1E1B16; font: inherit; font-size: 14px; font-weight: 600;">Khiên <span style="font-weight: 400; opacity: 0.8;">1</span></button></div>
+    <article style="display: flex; flex-direction: column; background: #FFFCF5; border: 1px solid #D8CFBD; border-radius: 12px; overflow: hidden;">
+          <header style="display: flex; align-items: center; gap: 10px; padding: 14px 14px 0;"><span style="display: inline-flex; align-items: center; height: 24px; padding: 0 9px; border-radius: 999px; font-size: 12px; font-weight: 600; background: #EAE3D4; color: #3A352D;">Thương</span>
+            <h3 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-size: 19px; font-weight: 700; line-height: 1.25;">Gia Cát Khác · Quan Ngân Bình · Nhạc Tiến</h3></header>
+          <div role="group" aria-label="Chọn cấu hình" style="display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 14px 0;"><button type="button" aria-pressed="true" style="min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid #1C1A17; background: #1C1A17; color: #F3EEE3; font: inherit; font-size: 13px; font-weight: 600;">Mặc định</button><button type="button" aria-pressed="false" style="min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid #D8CFBD; background: #F7F2E8; color: #1E1B16; font: inherit; font-size: 13px; font-weight: 600;">Quan Ngân Bình chủ tướng</button></div>
+          <div style="display: flex; flex-direction: column; padding: 6px 14px 10px;"><div style="display: flex; flex-direction: column; gap: 4px; padding: 10px 0; border-top: none;">
+              <span style="font-size: 14.5px; font-weight: 600;">Gia Cát Khác</span>
+              <span style="font-size: 13px; color: #5F5A50;">Trước: <span style="color: #8E1B24; font-size: 13.5px; font-weight: 500;">Thịnh Khí Linh Địch</span></span>
+              <span style="font-size: 13px; color: #5F5A50;">Sau: <span style="color: #8E1B24; font-size: 13.5px; font-weight: 500;">Thịnh Khí Linh Địch</span> + <span style="color: #8E1B24; font-size: 13.5px; font-weight: 500;">Tiềm Long Trận</span></span></div><div style="display: flex; flex-direction: column; gap: 4px; padding: 10px 0; border-top: 1px dashed #E6DECF;">
+              <span style="font-size: 14.5px; font-weight: 600;">Quan Ngân Bình</span>
+              <span style="font-size: 13px; color: #5F5A50;">Trước: <span style="color: #8E1B24; font-size: 13.5px; font-weight: 500;">Hoành Tào Thiên Quân</span></span>
+              <span style="font-size: 13px; color: #5F5A50;">Sau: <span style="color: #8E1B24; font-size: 13.5px; font-weight: 500;">Cứ Thủy Đoạn Kiều</span> + <span style="color: #8E1B24; font-size: 13.5px; font-weight: 500;">Hoành Tào Thiên Quân</span></span></div><div style="display: flex; flex-direction: column; gap: 4px; padding: 10px 0; border-top: 1px dashed #E6DECF;">
+              <span style="font-size: 14.5px; font-weight: 600;">Nhạc Tiến</span>
+              <span style="font-size: 13px; color: #5F5A50;">Trước: <span style="color: #8E1B24; font-size: 13.5px; font-weight: 500;">Nhanh Chân Tranh Đất</span></span>
+              <span style="font-size: 13px; color: #5F5A50;">Sau: <span style="color: #8E1B24; font-size: 13.5px; font-weight: 500;">Nhanh Chân Tranh Đất</span> + <span style="color: #8E1B24; font-size: 13.5px; font-weight: 500;">Lính Thanh Châu</span></span></div></div>
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 14px 14px; border-top: 1px solid #E6DECF; background: #FBF7EE;">
+            <p style="margin: 0; font-size: 13.5px; line-height: 1.5;">Đội khai hoang chuyên đánh đất, chuyển mượt sang một đội Ngũ Hồng Thương.</p>
+            <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px;"><div style="display: flex; flex-direction: column; gap: 5px;">
+                <span style="display: flex; justify-content: space-between; font-size: 12px; color: #5F5A50;"><span>Đất 4</span><strong style="color: #1E1B16; font-variant-numeric: tabular-nums;">7</strong></span>
+                <span style="height: 6px; border-radius: 3px; background: #EAE3D4; overflow: hidden;"><span style="display: block; width: 70%; height: 100%; background: #A8202A;"></span></span></div><div style="display: flex; flex-direction: column; gap: 5px;">
+                <span style="display: flex; justify-content: space-between; font-size: 12px; color: #5F5A50;"><span>Đất 5</span><strong style="color: #1E1B16; font-variant-numeric: tabular-nums;">8</strong></span>
+                <span style="height: 6px; border-radius: 3px; background: #EAE3D4; overflow: hidden;"><span style="display: block; width: 80%; height: 100%; background: #A8202A;"></span></span></div><div style="display: flex; flex-direction: column; gap: 5px;">
+                <span style="display: flex; justify-content: space-between; font-size: 12px; color: #5F5A50;"><span>Đất 6</span><strong style="color: #1E1B16; font-variant-numeric: tabular-nums;">8,5</strong></span>
+                <span style="height: 6px; border-radius: 3px; background: #EAE3D4; overflow: hidden;"><span style="display: block; width: 85%; height: 100%; background: #A8202A;"></span></span></div><div style="display: flex; flex-direction: column; gap: 5px;">
+                <span style="display: flex; justify-content: space-between; font-size: 12px; color: #5F5A50;"><span>Đất 7–8</span><strong style="color: #1E1B16; font-variant-numeric: tabular-nums;">9</strong></span>
+                <span style="height: 6px; border-radius: 3px; background: #EAE3D4; overflow: hidden;"><span style="display: block; width: 90%; height: 100%; background: #A8202A;"></span></span></div><div style="display: flex; flex-direction: column; gap: 5px;">
+                <span style="display: flex; justify-content: space-between; font-size: 12px; color: #5F5A50;"><span>Chuyển</span><strong style="color: #1E1B16; font-variant-numeric: tabular-nums;">7</strong></span>
+                <span style="height: 6px; border-radius: 3px; background: #EAE3D4; overflow: hidden;"><span style="display: block; width: 70%; height: 100%; background: #A8202A;"></span></span></div><div style="display: flex; flex-direction: column; gap: 5px;">
+                <span style="display: flex; justify-content: space-between; font-size: 12px; color: #5F5A50;"><span>Tổng</span><strong style="color: #1E1B16; font-variant-numeric: tabular-nums;">7,9</strong></span>
+                <span style="height: 6px; border-radius: 3px; background: #EAE3D4; overflow: hidden;"><span style="display: block; width: 79%; height: 100%; background: #1C1A17;"></span></span></div></div>
+            <span style="font-size: 12px; color: #5F5A50;">Điểm /10 cho cả bộ ba tướng · Tướng trắng vẫn dùng được; càng nhiều đỏ càng tốt.</span></div>
+          <button type="button" aria-expanded="false" style="display: flex; justify-content: space-between; align-items: center; min-height: 44px; padding: 0 14px; border: none; border-top: 1px solid #E6DECF; background: none; font: inherit; font-size: 13.5px; font-weight: 600; color: #1E1B16;">Hướng dẫn đánh đất và chuyển hình <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+        </article>
+    <h2 id="cham-su-m" style="margin: 0; display: flex; align-items: baseline; gap: 12px; font-family: 'Noto Serif Display', Georgia, serif; font-size: 28px; font-weight: 700;">Chạm Sứ / Ăn vạ <span style="font-family: 'Be Vietnam Pro', sans-serif; font-size: 14px; font-weight: 500; color: #5F5A50;">8</span></h2>
+    <article style="display: flex; flex-direction: column; gap: 8px; padding: 16px 18px; background: #FFFCF5; border: 1px solid #D8CFBD; border-radius: 12px;">
+          <h3 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-size: 17px; font-weight: 700;">Lữ Mông · Giả Hủ</h3>
+          <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 3px;"><li style="font-size: 13.5px;"><span style="font-weight: 600;">Lữ Mông</span> — <span style="color: #8E1B24; font-size: 13.5px; font-weight: 500;">Bạch Mã Nghĩa Tòng</span></li><li style="font-size: 13.5px;"><span style="font-weight: 600;">Giả Hủ</span> — <span style="color: #8E1B24; font-size: 13.5px; font-weight: 500;">Ngụy Thư Tương Gian</span></li></ul>
+          <span style="font-size: 12.5px; line-height: 1.45; color: #5F5A50;">Mang 1 lính. Tướng thay thế: Điêu Thuyền, Hoàng Cái, Phùng Kỷ.</span>
+        </article>
+    <article style="display: flex; flex-direction: column; gap: 8px; padding: 14px; background: #FFFCF5; border: 1px solid #D8CFBD; border-radius: 12px;">
+        <h3 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-size: 17px; font-weight: 700;">Mỏ 4</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px;"><span style="padding: 4px 8px; border-radius: 6px; background: #F7F2E8; font-size: 12.5px;"><strong style="font-weight: 600;">Quách Dĩ</strong> · Kỵ</span><span style="padding: 4px 8px; border-radius: 6px; background: #F7F2E8; font-size: 12.5px;"><strong style="font-weight: 600;">Trương Lương</strong> · Thương</span><span style="padding: 4px 8px; border-radius: 6px; background: #F7F2E8; font-size: 12.5px;"><strong style="font-weight: 600;">Tưởng Khâm</strong> · Cung</span><span style="padding: 4px 8px; border-radius: 6px; background: #F7F2E8; font-size: 12.5px;"><strong style="font-weight: 600;">Lăng Tháo</strong> · Kỵ</span><span style="padding: 4px 8px; border-radius: 6px; background: #F7F2E8; font-size: 12.5px;"><strong style="font-weight: 600;">Chu Hoàn</strong> · Thương</span><span style="padding: 4px 8px; border-radius: 6px; background: #F7F2E8; font-size: 12.5px;"><strong style="font-weight: 600;">Trương Dực</strong> · Khiên</span><span style="padding: 4px 8px; border-radius: 6px; background: #F7F2E8; font-size: 12.5px;"><strong style="font-weight: 600;">Hoàng Quyền</strong> · Cung</span><span style="padding: 4px 8px; border-radius: 6px; background: #F7F2E8; font-size: 12.5px;"><strong style="font-weight: 600;">Tào Chương</strong> · Khiên</span></div></article><article style="display: flex; flex-direction: column; gap: 8px; padding: 14px; background: #FFFCF5; border: 1px solid #D8CFBD; border-radius: 12px;">
+        <h3 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-size: 17px; font-weight: 700;">Mỏ 5</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px;"><span style="padding: 4px 8px; border-radius: 6px; background: #F7F2E8; font-size: 12.5px;"><strong style="font-weight: 600;">Phan Chương</strong> · Thương</span><span style="padding: 4px 8px; border-radius: 6px; background: #F7F2E8; font-size: 12.5px;"><strong style="font-weight: 600;">Trương Lương</strong> · Thương</span><span style="padding: 4px 8px; border-radius: 6px; background: #F7F2E8; font-size: 12.5px;"><strong style="font-weight: 600;">Tưởng Khâm</strong> · Cung</span><span style="padding: 4px 8px; border-radius: 6px; background: #F7F2E8; font-size: 12.5px;"><strong style="font-weight: 600;">Trần Vũ</strong> · Khiên</span><span style="padding: 4px 8px; border-radius: 6px; background: #F7F2E8; font-size: 12.5px;"><strong style="font-weight: 600;">Tào Chân</strong> · Kỵ</span><span style="padding: 4px 8px; border-radius: 6px; background: #F7F2E8; font-size: 12.5px;"><strong style="font-weight: 600;">Lý Thôi</strong> · Kỵ</span><span style="padding: 4px 8px; border-radius: 6px; background: #F7F2E8; font-size: 12.5px;"><strong style="font-weight: 600;">Hoàng Quyền</strong> · Cung</span><span style="padding: 4px 8px; border-radius: 6px; background: #F7F2E8; font-size: 12.5px;"><strong style="font-weight: 600;">Trần Kiểu</strong> · Khiên</span></div></article>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":2000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

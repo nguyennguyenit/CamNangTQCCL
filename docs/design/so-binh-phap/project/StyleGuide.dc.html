@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Hệ thống thị giác</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Noto+Serif+Display:wght@600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700&amp;text=%E5%85%B5&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Be Vietnam Pro',system-ui,sans-serif;background:#F3EEE3;color:#1E1B16}
+a{color:#A8202A}a:hover{color:#7E1620}
+</style>
+</helmet>
+<div style="width: 1280px; height: 1400px; box-sizing: border-box; padding: 56px 64px; display: flex; flex-direction: column; gap: 44px; background: #F3EEE3; color: #1E1B16; font-family: 'Be Vietnam Pro', system-ui, sans-serif;">
+  <div style="display: flex; align-items: center; gap: 18px;">
+    <span aria-hidden="true" style="width: 56px; height: 56px; border-radius: 8px; background: #A8202A; color: #F9F3E6; display: flex; align-items: center; justify-content: center; font-family: 'Noto Serif TC', 'Songti TC', serif; font-size: 34px; font-weight: 700; box-shadow: inset 0 0 0 2px rgba(249,243,230,0.25);">兵</span>
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <h1 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-size: 40px; font-weight: 700; line-height: 1;">Sổ binh pháp</h1>
+      <span style="font-size: 14px; color: #5F5A50;">Giấy dó, mực đen, ấn son — hệ thống thị giác cho Cẩm Nang Tam Quốc Chí</span>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px;">
+    <section style="display: flex; flex-direction: column; gap: 14px;">
+      <h2 style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #5F5A50;">Màu — giao diện sáng</h2>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px;">
+        <sc-for list="{{light}}" as="c" hint-placeholder-count="9">
+          <div style="display: flex; flex-direction: column; border: 1px solid #D8CFBD; border-radius: 10px; overflow: hidden; background: #FFFCF5;">
+            <span style="height: 52px; background: {{c.hex}};"></span>
+            <span style="display: flex; flex-direction: column; padding: 8px 10px;"><span style="font-size: 13px; font-weight: 600;">{{c.name}}</span><span style="font-size: 12px; color: #5F5A50; font-family: ui-monospace, Menlo, monospace;">{{c.hex}}</span></span>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+    <section style="display: flex; flex-direction: column; gap: 14px;">
+      <h2 style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #5F5A50;">Màu — giao diện tối</h2>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 12px; border-radius: 12px; background: #16140F;">
+        <sc-for list="{{dark}}" as="c" hint-placeholder-count="9">
+          <div style="display: flex; flex-direction: column; border: 1px solid #3A352D; border-radius: 10px; overflow: hidden; background: #201D18;">
+            <span style="height: 40px; background: {{c.hex}};"></span>
+            <span style="display: flex; flex-direction: column; padding: 8px 10px;"><span style="font-size: 13px; font-weight: 600; color: #EDE6D8;">{{c.name}}</span><span style="font-size: 12px; color: #A99F8E; font-family: ui-monospace, Menlo, monospace;">{{c.hex}}</span></span>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </div>
+
+  <section style="display: flex; flex-direction: column; gap: 14px;">
+    <h2 style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #5F5A50;">Phe — luôn đi kèm chữ, không dùng màu làm tín hiệu duy nhất</h2>
+    <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px;">
+      <sc-for list="{{factions}}" as="f" hint-placeholder-count="5">
+        <div style="display: flex; flex-direction: column; gap: 10px; padding: 14px; border: 1px solid #D8CFBD; border-radius: 12px; background: #FFFCF5;">
+          <span style="display: inline-flex; align-self: flex-start; align-items: center; gap: 7px; height: 28px; padding: 0 11px; border: 1px solid #D8CFBD; border-radius: 999px; font-size: 13px; font-weight: 600;"><span aria-hidden="true" style="width: 10px; height: 10px; border-radius: 2px; background: {{f.light}};"></span>{{f.name}}</span>
+          <span style="font-size: 12px; color: #5F5A50; font-family: ui-monospace, Menlo, monospace;">sáng {{f.light}} · tối {{f.dark}}</span>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px;">
+    <section style="display: flex; flex-direction: column; gap: 16px;">
+      <h2 style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #5F5A50;">Chữ</h2>
+      <div style="display: flex; flex-direction: column; gap: 14px; padding: 22px; border: 1px solid #D8CFBD; border-radius: 12px; background: #FFFCF5;">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px;"><span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 48px; font-weight: 700; line-height: 1;">Đội chuẩn</span><span style="font-size: 12px; color: #5F5A50;">Noto Serif Display 700 · 48–64</span></div>
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px;"><span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 23px; font-weight: 700;">Tinh Mã Thương</span><span style="font-size: 12px; color: #5F5A50;">Tên đội · 21–26</span></div>
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px;"><span style="font-size: 15px; line-height: 1.6;">Cấu hình tham khảo, giữ đúng thứ tự nguồn.</span><span style="font-size: 12px; color: #5F5A50;">Be Vietnam Pro 400 · 15</span></div>
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px;"><span style="font-size: 15px; font-weight: 600;">SP Mã Siêu</span><span style="font-size: 12px; color: #5F5A50;">Tên tướng · 600 · 15</span></div>
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px;"><span style="font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #5F5A50;">Chủ tướng · Điểm nguồn</span><span style="font-size: 12px; color: #5F5A50;">Nhãn · 600 · 11 caps</span></div>
+      </div>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 16px;">
+      <h2 style="margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #5F5A50;">Thành phần</h2>
+      <div style="display: flex; flex-direction: column; gap: 18px; padding: 22px; border: 1px solid #D8CFBD; border-radius: 12px; background: #FFFCF5;">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
+          <span style="display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 9px; border: 1px solid #D8CFBD; border-radius: 999px; font-size: 12px; font-weight: 600;"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 2px; background: #1F7A4D;"></span>Thục</span>
+          <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 9px; border-radius: 999px; background: #EAE3D4; font-size: 12px; font-weight: 600; color: #3A352D;">Thương</span>
+          <button type="button" style="height: 26px; padding: 0 9px; border: none; border-radius: 6px; background: #F6E1DC; color: #8E1B24; font: inherit; font-size: 12.5px; font-weight: 500;">Đương Phong Thôi Quyết</button>
+          <button type="button" style="height: 26px; padding: 0 9px; border: 1px solid #D8CFBD; border-radius: 6px; background: transparent; color: #3A352D; font: inherit; font-size: 12.5px;">Quần Cung</button>
+          <span style="font-size: 12px; color: #5F5A50;">phe · loại binh · chiến pháp (tìm) · khắc chế (tìm)</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
+          <button type="button" aria-pressed="false" style="display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border: 1px solid #D8CFBD; border-radius: 999px; background: #F7F2E8; color: #1E1B16; font: inherit; font-size: 14px; font-weight: 600;">Cung <span style="font-weight: 400;">23</span></button>
+          <button type="button" aria-pressed="true" style="display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border: 1px solid #1C1A17; border-radius: 999px; background: #1C1A17; color: #F3EEE3; font: inherit; font-size: 14px; font-weight: 600;">Thương <span style="font-weight: 400;">20</span></button>
+          <span style="font-size: 12px; color: #5F5A50;">chip lọc: tắt · bật (aria-pressed)</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px;">
+          <a href="TeamDetail.dc.html" style="display: flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 10px; background: #1C1A17; color: #F3EEE3; font-size: 14px; font-weight: 600; text-decoration: none;">Xem chi tiết</a>
+          <button type="button" style="height: 44px; padding: 0 16px; border: 1px solid #D8CFBD; border-radius: 10px; background: #F7F2E8; color: #1E1B16; font: inherit; font-size: 14px; font-weight: 500;">Phương án thay thế (3)</button>
+          <button type="button" style="height: 44px; padding: 0 6px; border: none; background: none; color: #A8202A; font: inherit; font-size: 14px; font-weight: 600;">Xóa lọc</button>
+        </div>
+        <div style="display: flex; align-items: flex-end; gap: 14px;">
+          <span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 44px; font-weight: 700; line-height: 1; color: #A8202A;">118</span>
+          <span style="font-size: 12px; color: #5F5A50; padding-bottom: 4px;">Điểm nguồn: số serif màu son, chỉ để tham khảo — không lọc, không sao, không Tier trên thẻ</span>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1400}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      light: [
+        { name: 'Giấy (nền)', hex: '#F3EEE3' }, { name: 'Thẻ', hex: '#FFFCF5' }, { name: 'Giấy đậm', hex: '#EAE3D4' },
+        { name: 'Mực', hex: '#1E1B16' }, { name: 'Chữ phụ', hex: '#5F5A50' }, { name: 'Viền', hex: '#D8CFBD' },
+        { name: 'Son', hex: '#A8202A' }, { name: 'Son nhạt', hex: '#F6E1DC' }, { name: 'Dải header', hex: '#1C1A17' }
+      ],
+      dark: [
+        { name: 'Nền', hex: '#16140F' }, { name: 'Thẻ', hex: '#201D18' }, { name: 'Thẻ đậm', hex: '#2A2620' },
+        { name: 'Chữ', hex: '#EDE6D8' }, { name: 'Chữ phụ', hex: '#A99F8E' }, { name: 'Viền', hex: '#3A352D' },
+        { name: 'Son', hex: '#E3646A' }, { name: 'Son nhạt', hex: '#3A2023' }, { name: 'Dải header', hex: '#0F0E0B' }
+      ],
+      factions: [
+        { name: 'Ngụy', light: '#1F3A93', dark: '#4F74D6' }, { name: 'Thục', light: '#1F7A4D', dark: '#5FCE95' },
+        { name: 'Ngô', light: '#B8232C', dark: '#E0555D' }, { name: 'Quần', light: '#B08422', dark: '#E0B94E' },
+        { name: 'Hỗn hợp', light: '#6B45A0', dark: '#A884E0' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

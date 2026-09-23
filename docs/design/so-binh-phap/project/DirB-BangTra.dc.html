@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Hướng B — Bảng tra</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;background:#FFFFFF;color:#111827}
+a{color:#1D4ED8}a:hover{color:#1E3A8A}
+</style>
+</helmet>
+<div style="width: 1120px; height: 480px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #111827; font-family: 'IBM Plex Sans', system-ui, sans-serif;">
+  <header style="display: flex; align-items: center; gap: 28px; height: 56px; padding: 0 24px; border-bottom: 1px solid #E5E7EB;">
+    <span style="font-size: 15px; font-weight: 700;">TQCCL<span style="color: #6B7280; font-weight: 500;"> / Cẩm nang</span></span>
+    <nav aria-label="Chuyên mục" style="display: flex; align-items: stretch; height: 100%; gap: 2px;">
+      <a href="#" aria-current="page" style="display: flex; align-items: center; padding: 0 12px; border-bottom: 2px solid #1D4ED8; font-size: 14px; font-weight: 600; color: #111827; text-decoration: none;">Đội chuẩn</a>
+      <a href="#" style="display: flex; align-items: center; padding: 0 12px; border-bottom: 2px solid transparent; font-size: 14px; color: #4B5563; text-decoration: none;">Đội khác</a>
+      <a href="#" style="display: flex; align-items: center; padding: 0 12px; border-bottom: 2px solid transparent; font-size: 14px; color: #4B5563; text-decoration: none;">Cùng Tồn</a>
+      <a href="#" style="display: flex; align-items: center; padding: 0 12px; border-bottom: 2px solid transparent; font-size: 14px; color: #4B5563; text-decoration: none;">Khai hoang</a>
+      <a href="#" style="display: flex; align-items: center; padding: 0 12px; border-bottom: 2px solid transparent; font-size: 14px; color: #4B5563; text-decoration: none;">Tra cứu</a>
+    </nav>
+  </header>
+
+  <div style="display: flex; align-items: center; gap: 10px; padding: 14px 24px; border-bottom: 1px solid #E5E7EB; background: #F9FAFB;">
+    <label style="display: flex; align-items: center; gap: 8px; width: 320px; height: 36px; padding: 0 10px; border: 1px solid #D1D5DB; border-radius: 6px; background: #FFFFFF; color: #6B7280;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+      <input type="search" aria-label="Tìm đội" placeholder="Tìm tướng, chiến pháp…" style="flex-grow: 1; border: none; outline: none; font: inherit; font-size: 14px; color: #111827;">
+    </label>
+    <button type="button" style="height: 36px; padding: 0 12px; border: 1px solid #D1D5DB; border-radius: 6px; background: #FFFFFF; font: inherit; font-size: 13px; color: #111827;">Mùa: Bá Vương Thảo Nghịch ▾</button>
+    <button type="button" style="height: 36px; padding: 0 12px; border: 1px solid #D1D5DB; border-radius: 6px; background: #FFFFFF; font: inherit; font-size: 13px; color: #111827;">Loại binh ▾</button>
+    <button type="button" aria-pressed="true" style="height: 36px; padding: 0 12px; border: 1px solid #1D4ED8; border-radius: 6px; background: #EFF4FF; font: inherit; font-size: 13px; font-weight: 600; color: #1D4ED8;">Phe: Thục ✕</button>
+    <span role="status" style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #4B5563;">24 / 82 đội</span>
+  </div>
+
+  <table style="width: 100%; border-collapse: collapse; font-size: 13.5px;">
+    <thead>
+      <tr style="text-align: left; color: #4B5563; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;">
+        <th scope="col" style="padding: 10px 24px; border-bottom: 1px solid #E5E7EB; font-weight: 600; width: 230px;">Đội</th>
+        <th scope="col" style="padding: 10px 12px; border-bottom: 1px solid #E5E7EB; font-weight: 600;">Chủ tướng</th>
+        <th scope="col" style="padding: 10px 12px; border-bottom: 1px solid #E5E7EB; font-weight: 600;">Phó 1</th>
+        <th scope="col" style="padding: 10px 12px; border-bottom: 1px solid #E5E7EB; font-weight: 600;">Phó 2</th>
+        <th scope="col" style="padding: 10px 24px; border-bottom: 1px solid #E5E7EB; font-weight: 600; text-align: right; width: 70px;">Điểm</th>
+      </tr>
+    </thead>
+    <tbody>
+      <sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+        <tr style="vertical-align: top; background: {{r.bg}};">
+          <td style="padding: 12px 24px; border-bottom: 1px solid #F0F1F3;">
+            <a href="#" style="font-size: 14.5px; font-weight: 600; color: #111827; text-decoration: none;">{{r.name}}</a>
+            <div style="display: flex; gap: 8px; margin-top: 4px; font-size: 12px; color: #4B5563;"><span style="display: inline-flex; align-items: center; gap: 5px;"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: {{r.fc}};"></span>{{r.faction}}</span><span>· {{r.unit}}</span></div>
+          </td>
+          <sc-for list="{{r.heroes}}" as="h" hint-placeholder-count="3">
+            <td style="padding: 12px; border-bottom: 1px solid #F0F1F3;">
+              <div style="font-weight: 600;">{{h.name}}</div>
+              <div style="margin-top: 3px; font-size: 12.5px; line-height: 1.45; color: #4B5563;">{{h.tactics}}</div>
+            </td>
+          </sc-for>
+          <td style="padding: 12px 24px; border-bottom: 1px solid #F0F1F3; text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600;">{{r.score}}</td>
+        </tr>
+      </sc-for>
+    </tbody>
+  </table>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1120,"height":480}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var T = '#15803D';
+    function row(name, unit, score, heroes) {
+      return { name: name, faction: 'Thục', fc: T, unit: unit, score: score, bg: '#FFFFFF',
+        heroes: heroes.map(function (h) { return { name: h[0], tactics: h[1] }; }) };
+    }
+    return {
+      rows: [
+        row('Pháp Âm Thuẫn (bản Trấn Ách)', 'Khiên', 120, [['SP Quan Vũ', 'Lấy Ít Đánh Nhiều · Kích Kỳ Nọa Quy'], ['SP Pháp Chính', 'Dưỡng Sức Đợi Chiến · Trấn Ách Phòng Cự'], ['Lưu Bị', 'Ngư Lân Trận · Mê Hoặc']]),
+        row('Pháp Âm Thuẫn (bản Trấn Ách) 2', 'Khiên', 120, [['SP Quan Vũ', 'Lấy Ít Đánh Nhiều · Kích Kỳ Nọa Quy'], ['SP Pháp Chính', 'Dưỡng Sức Đợi Chiến · Trấn Ách Phòng Cự'], ['Mã Đại', 'Ngư Lân Trận · Mê Hoặc']]),
+        row('Tinh Mã Thương', 'Thương', 118, [['SP Mã Siêu', 'Đương Phong Thôi Quyết · Thôi Phong Đoạn Nhẫn'], ['SP Hoàng Phổ Tung', 'Thuyền Cỏ Mượn Tên · Giải Phiền Vệ'], ['Hứa Du', 'Thác · Cách Hay Cứu Trợ · Vạn Quân Đoạt Sư']])
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

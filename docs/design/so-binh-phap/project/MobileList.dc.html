@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Đội chuẩn — mobile</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Noto+Serif+Display:wght@600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700&amp;text=%E5%85%B5&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Be Vietnam Pro',system-ui,sans-serif;background:#F3EEE3;color:#1E1B16}
+a{color:#A8202A}a:hover{color:#7E1620}
+</style>
+</helmet>
+<div style="width: 390px; height: 1440px; box-sizing: border-box; display: flex; flex-direction: column; background: #F3EEE3; color: #1E1B16; font-family: 'Be Vietnam Pro', system-ui, sans-serif; overflow: hidden;">
+  <header style="height: 60px; box-sizing: border-box; padding: 0 8px 0 4px; display: flex; align-items: center; gap: 6px; background: #1C1A17; color: #F3EEE3;">
+    <button type="button" aria-label="Mở menu trang" aria-expanded="false" style="width: 44px; height: 44px; border: none; border-radius: 10px; background: transparent; color: #F3EEE3; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg>
+    </button>
+    <span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 5px; background: #A8202A; color: #F9F3E6; display: flex; align-items: center; justify-content: center; font-family: 'Noto Serif TC', 'Songti TC', serif; font-size: 19px; font-weight: 700; flex-shrink: 0;">兵</span>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; min-width: 0;">
+      <span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 16px; font-weight: 700;">Cẩm Nang Tam Quốc Chí</span>
+      <span style="font-size: 11px; color: #B8AF9F; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Binh Diễn Xuân Thu — tham khảo</span>
+    </div>
+    <button type="button" aria-label="Chuyển sang giao diện tối" aria-pressed="false" style="width: 44px; height: 44px; border: none; border-radius: 10px; background: transparent; color: #F3EEE3; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+    </button>
+  </header>
+
+  <main style="flex-grow: 1; box-sizing: border-box; padding: 24px 16px 32px; display: flex; flex-direction: column; gap: 20px;">
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #A8202A;">Đội hình</span>
+      <h1 style="margin: 0; font-family: 'Noto Serif Display', Georgia, serif; font-size: 36px; font-weight: 700; line-height: 1.05;">Đội chuẩn</h1>
+      <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #5F5A50;">Cấu hình tham khảo từ SGSDeck, giữ đúng thứ tự nguồn.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;">
+      <label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #5F5A50;">Mùa nguồn
+        <select style="height: 44px; width: 100%; padding: 0 10px; border: 1px solid #CFC5B1; border-radius: 10px; background: #FFFCF5; color: #1E1B16; font: inherit; font-size: 14px; font-weight: 500;"><option>OG · Binh Diễn Xuân Thu</option></select>
+      </label>
+      <label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #5F5A50;">Danh mục
+        <select style="height: 44px; width: 100%; padding: 0 10px; border: 1px solid #CFC5B1; border-radius: 10px; background: #FFFCF5; color: #1E1B16; font: inherit; font-size: 14px; font-weight: 500;"><option>Giao chiến</option></select>
+      </label>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <label style="display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 14px; background: #FFFCF5; border: 1px solid #CFC5B1; border-radius: 12px; color: #5F5A50;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+        <input type="search" aria-label="Tìm trong Đội chuẩn" placeholder="Tìm tướng, chiến pháp, binh thư…" style="flex-grow: 1; min-width: 0; border: none; outline: none; background: transparent; font: inherit; font-size: 15px; color: #1E1B16;">
+      </label>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <a href="MobileFilters.dc.html" aria-expanded="false" style="display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 14px; border: 1px solid #CFC5B1; border-radius: 10px; background: #FFFCF5; color: #1E1B16; font-size: 14px; font-weight: 600; text-decoration: none;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="10" y1="17" x2="14" y2="17"></line></svg>
+          Bộ lọc
+        </a>
+        <span role="status" style="margin-left: auto; font-size: 14px; color: #5F5A50;"><strong style="color: #1E1B16; font-variant-numeric: tabular-nums;">25</strong> / 25 đội</span>
+        <div role="group" aria-label="Kiểu hiển thị" style="display: flex; gap: 2px; padding: 3px; border: 1px solid #CFC5B1; border-radius: 11px; background: #FFFCF5;">
+          <a href="MobileList.dc.html" aria-label="Xem dạng thẻ" aria-current="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 38px; border-radius: 8px; background: #1C1A17; color: #F3EEE3;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"></rect><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"></rect><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"></rect><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"></rect></svg></a>
+          <a href="MobileTable.dc.html" aria-label="Xem dạng bảng" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 38px; border-radius: 8px; background: transparent; color: #3A352D;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></a>
+        </div>
+      </div>
+    </div>
+
+    <sc-for list="{{teams}}" as="t" hint-placeholder-count="2">
+      <article style="display: flex; flex-direction: column; background: #FFFCF5; border: 1px solid #D8CFBD; border-radius: 12px;">
+        <header style="display: flex; align-items: center; gap: 14px; padding: 12px 14px 10px; border-bottom: 1px solid #E6DECF;">
+                <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;">
+                  <a href="TeamDetail.dc.html" style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 18px; font-weight: 700; line-height: 1.2; color: #1E1B16; text-decoration: none;">{{t.name}}</a>
+                  <span style="display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: #5F5A50;"><sc-if value="{{t.hasFaction}}" hint-placeholder-val="{{ true }}"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 2px; background: {{t.fc}};"></span><span style="font-weight: 600; color: #3A352D;">{{t.faction}}</span></sc-if>{{t.unitText}}</span>
+                </div>
+                <span style="flex-shrink: 0; display: flex; align-items: baseline; gap: 4px;"><span style="font-family: 'Noto Serif Display', Georgia, serif; font-size: 26px; font-weight: 700; line-height: 1; color: #A8202A; font-variant-numeric: tabular-nums;">{{t.score}}</span><span style="font-size: 11px; color: #5F5A50;">điểm</span></span>
+              </header>
+        <div style="display: flex; flex-direction: column; padding: 0 14px;">
+          <sc-for list="{{t.heroes}}" as="h" hint-placeholder-count="3">
+            <div style="display: grid; grid-template-columns: 38px minmax(0, 1fr); column-gap: 8px; row-gap: 3px; align-items: baseline; padding: 9px 0; border-top: {{h.sep}};">
+              <span style="font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #5F5A50;">{{h.short}}</span>
+              <span style="font-size: 14.5px; font-weight: 600; line-height: 1.35;">{{h.name}}</span>
+              <span style="grid-column: 2;"><span style="display: flex; flex-wrap: wrap; column-gap: 12px; row-gap: 2px;">
+                        <sc-for list="{{h.tactics}}" as="tc" hint-placeholder-count="2"><button type="button" title="Tìm chiến pháp này" style="padding: 0; border: none; background: none; color: #8E1B24; font: inherit; font-size: 13.5px; font-weight: 500; text-align: left; cursor: pointer;">{{tc}}</button></sc-for>
+                      </span></span>
+              <span style="grid-column: 2;"><span style="font-size: 12px; line-height: 1.4; color: #5F5A50;">Binh thư · <span style="font-style: {{h.booksStyle}};">{{h.booksText}}</span></span></span>
+            </div>
+          </sc-for>
+        </div>
+        <footer style="display: flex; flex-direction: column; border-top: 1px solid #E6DECF;">
+          <sc-if value="{{t.hasFear}}" hint-placeholder-val="{{ true }}">
+            <span style="padding: 9px 14px 0; font-size: 13px; line-height: 1.45; color: #5F5A50;"><strong style="font-weight: 600; color: #A8202A;">{{t.fearLabel}}</strong> {{t.fearText}}</span>
+          </sc-if>
+          <div style="display: flex; align-items: center; gap: 16px; padding: 0 14px;">
+            <sc-if value="{{t.hasAlts}}" hint-placeholder-val="{{ true }}">
+              <button type="button" aria-expanded="false" style="display: flex; align-items: center; gap: 4px; min-height: 44px; padding: 0; border: none; background: none; color: #1E1B16; font: inherit; font-size: 13.5px; font-weight: 500; cursor: pointer;">Thay thế ({{t.alts}}) <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+            </sc-if>
+            <a href="TeamDetail.dc.html" style="margin-left: auto; display: flex; align-items: center; gap: 4px; min-height: 44px; font-size: 13.5px; font-weight: 600; text-decoration: none;">Chi tiết <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></a>
+          </div>
+        </footer>
+      </article>
+    </sc-for>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1440}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var FC = { 'Ngụy': '#1F3A93', 'Thục': '#1F7A4D', 'Ngô': '#B8232C', 'Quần': '#B08422' };
+    var SHORT = { 'Chủ tướng': 'Chủ', 'Phó 1': 'Phó 1', 'Phó 2': 'Phó 2' };
+    function team(r, i) {
+      var t = { name: r[0], faction: r[1], unit: r[2], score: r[3], alts: r[4] };
+      t.hasFaction = !!t.faction;
+      t.fc = FC[t.faction] || 'transparent';
+      t.unitText = (t.faction && t.unit ? '· ' : '') + (t.unit || '');
+      t.fear = []; t.hasFear = false; t.fearLabel = 'Sợ'; t.fearText = '';
+      t.hasAlts = t.alts > 0;
+      t.bg = i % 2 ? '#FBF7EE' : '#FFFCF5';
+      t.border = i ? '1px solid #E6DECF' : 'none';
+      t.heroes = r[5].map(function (h, j) {
+        return { role: h[0], short: SHORT[h[0]] || h[0], name: h[1], tactics: h[2],
+          booksText: h[3] || 'Nguồn chưa ghi', booksStyle: h[3] ? 'normal' : 'italic', sep: j ? '1px dashed #E6DECF' : 'none' };
+      });
+      t.lineup = t.heroes.map(function (h) { return h.name; }).join(' · ');
+      return t;
+    }
+    var RAW = [["40Y Lữ Bố Cung (Vương Dị, Pháp Chính)", "Quần", "Cung", 113, 0, [["Chủ tướng", "40Y Lữ Bố", ["Dẫn Huyền Lực Chiến", "Huyết Đao Tranh Giành"], "Dĩ Trực Báo Oán · Tinh Chuẩn · Trì Trọng"], ["Phó 1", "Vương Dị", ["Đoạt Hồn Hiệp Phách", "Đương Phong Thôi Quyết"], "Kỳ Chính Tương Sinh · Văn Thao · Giấu Đao"], ["Phó 2", "SP Pháp Chính", ["Tam Thế Trận", "Lâm Nguy Cứu Chủ"], "Tam Quân Chi Chúng · Rèn Luyện · Dẫn Quân"]]], ["Hoàng Mã Thương (Tinh·Giải Phiền Vệ)", null, "Thương", 113, 0, [["Chủ tướng", "SP Mã Siêu", ["Đương Phong Thôi Quyết", "Thôi Phong Đoạn Nhẫn"], "Tấn Công Điểm Yếu · Tốc Chiến · Khép Hờ"], ["Phó 1", "SP Hoàng Phổ Tung", ["Thuyền Cỏ Mượn Tên", "Vạn Quân Đoạt Sư"], "Đánh Giá Tình Hình · Chia lời"], ["Phó 2", "Hứa Du", ["Lâm Nguy Cứu Chủ", "Giải Phiền Vệ"], "Yêu Lính Thương Dân · Thế Phòng Thủ · Phòng Bị"]]]];
+    return { teams: RAW.map(team) };
+  }
+}
+</script>
+</body>
+</html>
