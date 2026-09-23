@@ -2,11 +2,42 @@
   {
     "aliases": [],
     "evidenceRefs": [
+      "coexist-anh-hung-menh-the-scenario-confirmation"
+    ],
+    "id": "anh-hung-menh-the",
+    "kind": "scenario",
+    "labelVi": "PK-S26 · Anh Hùng Mệnh Thế",
+    "region": "VN",
+    "reviewStatus": "reviewed",
+    "rulesets": [],
+    "schemaVersion": 1,
+    "sourceMappings": [
+      {
+        "evidenceRefs": [
+          "coexist-anh-hung-menh-the-scenario-confirmation"
+        ],
+        "provenance": {
+          "fetchedAt": "2026-09-23",
+          "provider": "project-maintainer",
+          "region": "VN",
+          "sourceUrl": "https://github.com/nguyennguyenit/CamNangTQCCL/blob/main/data/coexist.json"
+        },
+        "reviewStatus": "reviewed",
+        "rulesetId": null,
+        "sourceSeason": {
+          "scenarioName": "Anh Hùng Mệnh Thế"
+        }
+      }
+    ]
+  },
+  {
+    "aliases": [],
+    "evidenceRefs": [
       "coexist-binh-dien-scenario-confirmation"
     ],
     "id": "binh-dien-xuan-thu",
     "kind": "scenario",
-    "labelVi": "Binh Diễn Xuân Thu",
+    "labelVi": "OG · Binh Diễn Xuân Thu",
     "region": "VN",
     "reviewStatus": "reviewed",
     "rulesets": [],

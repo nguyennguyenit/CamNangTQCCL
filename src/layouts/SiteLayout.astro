@@ -84,13 +84,13 @@ const legacyRouteSegments = pageKind === 'detail'
       <nav class="section-nav" aria-label="Chuyên mục">
         <div id="section-menu-items" class="section-menu-items">
           {SECTIONS.map((section) => (isRoot
-            ? <button class={section.id === 'team-chuan' ? 'nav-tab active' : 'nav-tab'} data-section={section.id}>{section.label}{section.beta ? <span class="badge beta">Thử nghiệm</span> : null}</button>
+            ? <button class={section.id === 'team-chuan' ? 'nav-tab active' : 'nav-tab'} data-section={section.id}>{section.label}{section.beta ? <span class="badge beta">Beta</span> : null}</button>
             : <a
                 class={section.id === activeSection ? 'nav-tab active' : 'nav-tab'}
                 data-section={section.id}
                 href={`/#${section.id}`}
                 aria-current={section.id === activeSection ? 'location' : null}
-              >{section.label}{section.beta ? <span class="badge beta">Thử nghiệm</span> : null}</a>))}
+              >{section.label}{section.beta ? <span class="badge beta">Beta</span> : null}</a>))}
         </div>
       </nav>
     </div>

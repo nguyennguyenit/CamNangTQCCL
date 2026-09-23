@@ -167,13 +167,21 @@ function coexistHeroRow(h) {
   ].filter(Boolean));
 }
 
+function coexistTeams(teams) {
+  return el("div", { class: "coexist-teams" }, teams.map((team) =>
+    el("article", { class: "coexist-subteam" }, [
+      el("h4", { class: "coexist-subteam-title" }, team.teamName),
+      team.unitTacticEffects
+        ? el("div", { class: "ct-meta" }, [
+            el("span", { class: "ct-meta-item" }, ["Cải tạo: ", el("b", {}, team.unitTacticEffects)]),
+          ])
+        : null,
+      el("div", { class: "heroes" }, (team.heroes || []).map(coexistHeroRow)),
+    ].filter(Boolean))));
+}
+
 /** 1 nhóm Cùng Tồn. */
 export function coexistGroup(group) {
-  const teams = el("div", { class: "coexist-teams" }, group.teams.map((t) =>
-    el("article", { class: "coexist-subteam" }, [
-      el("h4", { class: "coexist-subteam-title" }, t.teamName),
-      el("div", { class: "heroes" }, (t.heroes || []).map(coexistHeroRow)),
-    ])));
   return el("section", { class: "coexist-group" }, [
     el("h3", {}, group.groupLabel || "Nhóm"),
     group.summary
@@ -182,7 +190,7 @@ export function coexistGroup(group) {
           el("p", { class: "coexist-summary" }, group.summary),
         ])
       : null,
-    teams,
+    coexistTeams(group.teams),
   ].filter(Boolean));
 }
 
@@ -387,19 +395,22 @@ export function seasonCoexistGroup(reference) {
   if (!reference.source) return coexistGroup(reference.content);
   const {content, source} = reference;
   const raw = (label, value) => value ? el('p', {class:'season-detail-text'}, [el('strong', {}, label + ': '), publicText(value)]) : null;
+  const teams = content.teams.map(team => ({
+    teamName: publicText(team.teamNameRaw),
+    unitTacticEffects: publicText(team.unitTacticEffectsRaw, ''),
+    heroes: team.heroes.map(hero => ({
+      name: publicText(hero.nameRaw),
+      tactics: hero.tacticSlotsRaw.map(value => publicText(value, 'Chưa có dữ liệu')),
+      books: hero.bookSlotsRaw.map(value => publicText(value, 'Chưa có dữ liệu')),
+      statFocus: publicText(hero.statFocusRaw, 'Chưa có dữ liệu'),
+    })),
+  }));
   return el('section', {class:'coexist-group', dataset:{recordId:reference.recordId}}, [
     el('h3', {}, publicText(content.groupLabel)),
     el('p', {class:'scope-note'}, reference.classification === 'applicable' ? 'Áp dụng theo phiên bản luật đã chọn' : 'Tham khảo kịch bản — chưa xác nhận theo phiên bản luật'),
     raw('Tổng quan', content.summaryRaw), raw('Gợi ý khai hoang', content.openingSuggestionsRaw), raw('Ghi chú', content.notesRaw),
     el('a', {href:source.url, target:'_blank', rel:'noopener noreferrer'}, 'Nguồn Cùng Tồn'), raw('Lưu ý nguồn', source.disclaimerRaw),
-    el('div', {class:'coexist-teams'}, content.teams.map(team => el('article', {class:'coexist-subteam'}, [
-      el('h4', {class:'coexist-subteam-title'}, publicText(team.teamNameRaw)), raw('Cải tạo chiến pháp binh chủng', team.unitTacticEffectsRaw),
-      ...team.heroes.map(hero => el('div', {class:'hero'}, [el('h5', {}, publicText(hero.nameRaw)),
-        ...hero.tacticSlotsRaw.map((value, index) => raw(`Chiến pháp ${index + 1}`, value || 'Chưa có dữ liệu')),
-        raw('Cộng điểm', hero.statFocusRaw || 'Chưa có dữ liệu'),
-        ...hero.bookSlotsRaw.map((value, index) => raw(`Binh thư ${index + 1}`, value || 'Chưa có dữ liệu')),
-      ])),
-    ]))),
+    coexistTeams(teams),
   ]);
 }
 

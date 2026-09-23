@@ -1,0 +1,255 @@
+{
+  "schemaVersion": 1,
+  "batchId": "site-review-v5-095",
+  "reviewerSession": "reviewer:pengci-cam-tu-2026-09-23",
+  "items": [
+    {
+      "entityId": "recommended:s-23f6d4c106a9bb349147ec7b06420cbbd348d1d3a50a6ae37759120adfd1d1ee/s7-qun-pengci-lv",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "e4c0168802c87d1689c6d27b48d3bda6ee2463e9b5ede27ad07a7b444828caf9",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "471f599eff6485b9c7f7d1bc0e0fdea767b8f3472c51aedfe9840bc74aa1a569",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-qun-san-shi-lv",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "b8849d31d49689a760d044038133ae1684c93e993e8916fc9a5f4d5fe6a13688",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "68e300cfcd7a97652a71f422e766a4435c60469c3f3730c2d19d1e54c3ba6cdb",
+      "verdict": "accepted",
+      "notes": "碰瓷神隊 -> 'Đội cảm tử cực mạnh'; Lã Bố -> Lữ Bố per site name; T1 and 3-turn burst preserved."
+    },
+    {
+      "entityId": "recommended:s-481c234b892dc86d150ae070083403124c64d363db953706ee4fe1157029c12f/s22-san-shi-lv",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "e7e3c18eaac74552c3f4d8aa061760667ee4d522eaca19e54e180250771098d2",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "214b3ee1b4419cf44206f5a3746e727f7b82bfcf0897d3ab527287ae549766a9",
+      "verdict": "accepted",
+      "notes": "Restored original; 太尉盾 'Thái Úy Khiên' is an existing site form (both word orders occur on site)."
+    },
+    {
+      "entityId": "recommended:s-5087770b809522eb7ac0bdeb95fb4fb77c751b046d30c908ed17bbffca91312b/yxms-001-賈詡太史慈死士",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "92b99ffcc182547409dbae23cdfbcaedf5cfd17968a731805b411420392084a9",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "75316fb734924107753deb7100183faf4a24d367a84b775fd02bdffd5e654f2f",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "recommended:s-5087770b809522eb7ac0bdeb95fb4fb77c751b046d30c908ed17bbffca91312b/yxms-002-賈詡呂蒙",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "1cd4720015e950f42896a9ea02272b7e047c476d9a68068958aab35860673a28",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "eb9044448f04395367d29f9b19b59bf67c1a915827b1f330eac3c66992379171",
+      "verdict": "accepted",
+      "notes": "Restored original; 'Bản 2 người' vs sibling 'Bản 3 tướng' is a minor wording inconsistency, not an error."
+    },
+    {
+      "entityId": "recommended:s-5087770b809522eb7ac0bdeb95fb4fb77c751b046d30c908ed17bbffca91312b/yxms-003-張讓黃月英周泰",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "e44fdfc2bd86c8ba23446e4e267b19237b064172229c5408d9b1432de718e9be",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "bbb7d4f98a80ee7b434e397981ce32eda47034ed3ada32c286c857a4cd1b5689",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "recommended:s-5087770b809522eb7ac0bdeb95fb4fb77c751b046d30c908ed17bbffca91312b/yxms-004-張讓黃月英",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "bc55a603b8faf9352a71e276c050bf8a693a5e8e3d4b649cf1c7e1ad3fcf6a9c",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "7340600a313f01730c407be4642fd4a8c5fbbd52212d93a5f5161522dafb2fa0",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "recommended:s-5087770b809522eb7ac0bdeb95fb4fb77c751b046d30c908ed17bbffca91312b/yxms-005-孫尚香凌統",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "1308025402b713a0be1abad7a1df7d73f7dc3d68f253ae13c195b134e5d290c6",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "4fd86434c029c1a68ac6c7cd7439b816fc9deed16f3d547ac597300da8974865",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "recommended:s-5087770b809522eb7ac0bdeb95fb4fb77c751b046d30c908ed17bbffca91312b/yxms-006-馬超黃月英",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "3b263bf269ca320d6e75f9b0897a40982c1170fc86991e4ad336785c35f4453e",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "8c0165d667648a7d40d291bd3a5fd96cbe68a50532da78fbc1d869cbb9538268",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "recommended:s-5087770b809522eb7ac0bdeb95fb4fb77c751b046d30c908ed17bbffca91312b/yxms-007-甘寧周泰",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "d747ebd1fa0455803cf32c20e54d87c3ba753a18ad1f8ff86973e8b211f4bfe4",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "71eee5f988fd88c5d5a69567e128cd51e3adadf52bdf26f94b077fe378a81db1",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "recommended:s-5087770b809522eb7ac0bdeb95fb4fb77c751b046d30c908ed17bbffca91312b/yxms-008-逢紀八門",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "118fbbcfa99b41e0634cde95ce4b59f11ebb61e21db8a4ca8e68cce63cf94132",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "b3b26c1cc7183171a58a1688757e4b216308990450abe4939ffb63e907eb75b5",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "recommended:s-582c177414e87c4256c3a25c77c35002262857961a3fb67ec2209004e0d1bf2b/s8-qun-pengci-lv",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "81bd298d53fcb5979f4d5c9e724e609b0ab05e3932c7f94aca959bda1ea32388",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "471f599eff6485b9c7f7d1bc0e0fdea767b8f3472c51aedfe9840bc74aa1a569",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "recommended:s-656d382a572c2f2ae5253747cf9ec9d9f70d1dc9b0eafa4de612fa388cea277a/s27-sanshi-lv",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "e2874113a06f3b09c427ebb824d0c617e6d52cbf190c562f2f8e966a5a2d1a38",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "8abafd4931ec3ffbf09367a64670ee93acfb0e62447ac89b236f89b5a465f5b9",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "recommended:s-656d382a572c2f2ae5253747cf9ec9d9f70d1dc9b0eafa4de612fa388cea277a/s27-wu-qi",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "61fb846eba5a0c29d5d6b7d91a3976a3a73cf86cba7b02b87cb2442a86f86d5b",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "9d43087a8da7210b0fe61df0d3efeac0148460588c6cccc0b989728351513c62",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "recommended:s-815ee725ee45dba3f4c715b1171b73cda573e54475f7e617790ff200abb9f1a4/s13-kz-wu-qi",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "19a66ab8591e46b85d13033ed65f0db52edfdb18aeee40f4de0a72f558ec01ae",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "dcf11659fd5dc10a7ced041d32a42b99a41a15025a2fe01e9db1605a940e079a",
+      "verdict": "accepted",
+      "notes": "Restored original; 碰瓷要碰很多 rendered 'Phải đánh cảm tử rất nhiều', negation 不推薦 kept."
+    },
+    {
+      "entityId": "recommended:s-95a45938f3276727e1d7257ecbde914b25d4af94389ca632ef0cc89c679eb929/s14-san-shi-lv",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "142b4eceb4c462ab3c786ffd47305ac0c6a606923db4448dfd59a8906a11b70c",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "6f69745e97f8f43121ff8cf797a00eb922d3623e5a43fddaaf1ce5437ce1512b",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "recommended:s-b21fc616cf596a0cec9788fd858d5808c0f0bfb009129642837911a16e11a17d/s25-pengci-bubing",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "979b9d950ba61536ccc225132769c89f49107f4aa2b1218cae29755c8c339368",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "ab5c1ffbcc8e5478f51130710d29ec8a6ce3fc6734dafb8c7411378190ce015c",
+      "verdict": "accepted",
+      "notes": "時代的眼淚 -> 'dấu tích của một thời' acceptable idiomatic rendering."
+    },
+    {
+      "entityId": "recommended:s-b21fc616cf596a0cec9788fd858d5808c0f0bfb009129642837911a16e11a17d/s25-sanshi-lv",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "0ea77f696ec37cace0e7bc946b62714ccef491259deece71234dd827c483d350",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "235070aab33a3483a8b2b18cfd87599e1c268e90f79cc436fcd23354a3279364",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "recommended:s-b21fc616cf596a0cec9788fd858d5808c0f0bfb009129642837911a16e11a17d/s25-wu-qi",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "0b28051285d066719c9ccf8810fc30b2b3a49d2ccd9a2ed4ea1c742483761342",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "9d43087a8da7210b0fe61df0d3efeac0148460588c6cccc0b989728351513c62",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "recommended:s-bf1c362e813a99325ec75ef411b988bf08154904d48c6ea713e3cbb92f1fbbe1/s28-pengci-bubing",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "18d9e2dde7dcec160bc6b6813b6a1c9f9d805ac2a59a2f20ab4b64ef23630091",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "ab5c1ffbcc8e5478f51130710d29ec8a6ce3fc6734dafb8c7411378190ce015c",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "recommended:s-bf1c362e813a99325ec75ef411b988bf08154904d48c6ea713e3cbb92f1fbbe1/s28-sanshi-lv",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "e41f8ba41e10297393d1004248e75dad886f7fc74351d5a7a86319b3a9ab3844",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "235070aab33a3483a8b2b18cfd87599e1c268e90f79cc436fcd23354a3279364",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "recommended:s-bf1c362e813a99325ec75ef411b988bf08154904d48c6ea713e3cbb92f1fbbe1/s28-wu-qi",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "b98ee1c9070d2c4fada0b03056b407bb4c00b157098d32e96b66e2db58b01553",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "9d43087a8da7210b0fe61df0d3efeac0148460588c6cccc0b989728351513c62",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-zhangfei-nuke-bow",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "8acd4252e675a2711f4d8e72f3b51c7321999b204f89fb783bff80eae706a0ac",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "bb764e2b509e20f62ccc15437ab67776f120893f561472b0838f3fe84a0b459c",
+      "verdict": "accepted",
+      "notes": "【】 mirrored from source; 碰瓷陣容 -> 'đội hình cảm tử'."
+    },
+    {
+      "entityId": "recommended:s-c95d9b2c159433a94620adb8722d0a9ef1e98a3d5a879bf098bb60296dad685e/s3-qun-pengci-lv",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "63569c19590b37335404e988b3923e4fde737264d2eabefb341164fdd19a44fd",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "471f599eff6485b9c7f7d1bc0e0fdea767b8f3472c51aedfe9840bc74aa1a569",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "recommended:s-d7d31f4483fc5d0f93c39ff9d011633eebfcf03eb0d57e52cb42924510f3fb55/s6-qun-pengci-lv",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "c197cc5f7b9851240697964c58b2ae3c750d5236fd83c75a1eb91ea6fa41a723",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "471f599eff6485b9c7f7d1bc0e0fdea767b8f3472c51aedfe9840bc74aa1a569",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/s26-san-shi-lv",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "7c09da3dffe9270835b54310afd63f1f6f08612c6b5727b262bea2deb669cb9c",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "4e85c8a2a91efd5d7e0841b09e3baed2352dd1ff7a4dc51ce6b2093a3401eb90",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "recommended:s-d9284731c5f2c2957445ef4587366ba8981afaa8d676ad4ab127731127f516b4/s5-qun-pengci-lv",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "276a0812ecc25b74bb4defe7f9d9de08f93b6a0718ab5a8e4d0b4ab4def32129",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "471f599eff6485b9c7f7d1bc0e0fdea767b8f3472c51aedfe9840bc74aa1a569",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "recommended:s-fe906b5b0cb3be399c262d7b9cc5620316a9ed0dc397d946b4adbab5b3b5db14/s4-qun-pengci-lv",
+      "fieldPath": "displayNotes.blocks.p-1.textRaw",
+      "inputFingerprint": "df3865206edc9f907755a160da14209faf8b50c44cc1f29b3398f6ac6664eb0e",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "471f599eff6485b9c7f7d1bc0e0fdea767b8f3472c51aedfe9840bc74aa1a569",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "data:data/khaihoang.json:teams[4].guide",
+      "fieldPath": "teams[4].guide.overview",
+      "inputFingerprint": "1fffc5111811f3b3906f791de857c91a497eb7608eb496a07700949c840023b5",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "6590304307bdf7b1bc058c6b4fb4141230e709c409572120ffca5f1fdad1267f",
+      "verdict": "accepted",
+      "notes": "Khai hoang: stray 碰瓷 -> 'Chạm Sứ' per page terminology."
+    },
+    {
+      "entityId": "data:data/khaihoang.json:teams[15].guide.transitions[2]",
+      "fieldPath": "teams[15].guide.transitions[2].target",
+      "inputFingerprint": "d8340dd4f6519024ce55bee6a356baeca20c24d3ea8e2fb85e16124075106e79",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "c0fb602c5449399a84cffb6d678c6632630fc632a7f3ae58e5aef99919bbabb0",
+      "verdict": "accepted",
+      "notes": "Khai hoang: stray 碰瓷 -> 'Chạm Sứ' per page terminology."
+    }
+  ]
+}

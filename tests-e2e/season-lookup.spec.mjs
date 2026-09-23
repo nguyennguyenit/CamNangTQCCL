@@ -21,15 +21,29 @@ test.beforeEach(async ({page}) => {
 });
 test('real scenario-only scope remains reference and preserves Khai hoang', async ({page}) => {
   await page.goto('/#coexist');
-  await expect(page.getByLabel('Kịch bản đang chơi', {exact:true})).toBeVisible();
-  await expect(page.locator('#season-summary')).toContainText('Tất cả — tham khảo');
+  const seasonMenu = page.getByRole('combobox', {name:'Mùa', exact:true});
+  await expect(seasonMenu).toBeVisible();
+  await expect(seasonMenu.locator('option[value="anh-hung-menh-the"]')).toHaveText('PK-S26 · Anh Hùng Mệnh Thế');
+  await expect(seasonMenu.locator('option[value="binh-dien-xuan-thu"]')).toHaveText('OG · Binh Diễn Xuân Thu');
+  await expect(page.locator('#section-coexist > h2 + #season-controls')).toBeVisible();
+  await expect(page.locator('#season-summary')).toBeHidden();
+  await expect(page.getByRole('combobox',{name:'Phiên bản luật'})).toBeHidden();
+  await expect(page.locator('#section-coexist input[type="search"], #section-coexist .clear-btn, #section-coexist .fchip, #section-coexist > .scope-note')).toHaveCount(0);
+  await expect(page.locator('#section-coexist')).not.toContainText('Chưa xác định kịch bản');
   await expect(page.locator('#section-coexist .sgsdeck-score, #section-coexist .badge.tier')).toHaveCount(0);
   await expect(page.locator('#section-lookup [data-lookup-id^="hero:"]').first()).toBeAttached();
-  const values = await page.locator('#season-scenario option').evaluateAll(nodes => nodes.map(n=>n.value).filter(Boolean));
-  await page.locator('#season-scenario').selectOption(values.find(v=>v.includes('binh')) || values.at(-1));
-  await expect(page.locator('#season-summary')).toContainText('tham khảo');
-  await expect(page.locator('#season-ruleset')).toHaveValue('');
-  await expect(page.locator('#section-coexist .coexist-subteam')).toHaveCount(25);
+  for (const scenarioId of ['anh-hung-menh-the','binh-dien-xuan-thu']) {
+    await seasonMenu.selectOption(scenarioId);
+    await expect(page.locator('#season-ruleset')).toHaveValue('');
+    await expect(page.locator('#section-coexist .coexist-subteam')).toHaveCount(25);
+    const coexistCards = page.locator('#section-coexist .coexist-subteam');
+    expect(await coexistCards.evaluateAll(cards => cards.every(card => {
+      const heroes = card.querySelector(':scope > .heroes');
+      return heroes
+        && heroes.querySelectorAll(':scope > .hero').length === 3
+        && heroes.querySelectorAll(':scope > .hero > .hero-name > .hn').length === 3;
+    }))).toBe(true);
+  }
   await page.locator('[data-section="khaihoang"]').click();
   await expect(page.locator('#season-controls')).toBeHidden();
   await expect(page.locator('.tagline')).toContainText('mới nhất');
@@ -171,17 +185,16 @@ test('scenario-only analysis blocks matching and offers explicit out-of-scope re
   await expect(page.getByRole('button',{name:'Soi đội',exact:true})).toBeDisabled();
   await expect(page.getByLabel('Xem đội ngoài phạm vi để tham khảo')).toBeVisible();
 });
-test('coexist search uses scoped raw text, retains query and escapes source markup', async ({page}) => {
+test('coexist keeps only the season filter and ignores stale filter query', async ({page}) => {
   await controlledBundle(page);
-  await page.goto('/?scenario=scenario-a&q=sentinel-missing#coexist');
-  await expect(page.locator('#section-coexist .coexist-subteam')).toHaveCount(0);
-  await page.locator('#section-coexist input[type="search"]').fill('quan su');
-  await expect(page.locator('#section-coexist .coexist-subteam')).toHaveCount(1);
+  await page.goto('/?scenario=scenario-a&q=sentinel-missing&source=legacy#coexist');
+  await expect(page.getByRole('combobox',{name:'Mùa',exact:true})).toBeVisible();
+  await expect(page.getByRole('combobox',{name:'Phiên bản luật'})).toBeHidden();
+  await expect(page.locator('#section-coexist input[type="search"], #section-coexist .clear-btn, #section-coexist .fchip')).toHaveCount(0);
+  await expect(page.locator('#section-coexist .coexist-subteam')).not.toHaveCount(0);
   await expect(page.locator('#section-coexist')).toContainText('<img src=x onerror=alert(1)>');
   await expect(page.locator('#section-coexist img')).toHaveCount(0);
   await expect(page.locator('#section-coexist')).toContainText('Cải tạo');
-  await page.reload();
-  await expect(page.locator('#section-coexist input[type="search"]')).toHaveValue('quan su');
 });
 test('invalid scope and mixed bundle never activate scoped cards or gameplay', async ({page}) => {
   await controlledBundle(page);
@@ -366,7 +379,8 @@ test('coexist distinguishes exact-pair applicable groups from scenario-only refe
   await controlledBundle(page,data);await page.goto('/?scenario=scenario-a&ruleset=rules-a#coexist');
   await expect(page.getByRole('heading',{name:'Áp dụng theo phiên bản luật (1)',exact:true})).toBeVisible();
   await expect(page.getByRole('heading',{name:'Tham khảo kịch bản (1)',exact:true})).toBeVisible();
-  await expect(page.locator('#section-coexist > .scope-note')).toContainText('1 nhóm áp dụng · 1 nhóm tham khảo');
+  await expect(page.locator('#season-summary')).toBeHidden();
+  await expect(page.locator('#section-coexist > .scope-note')).toHaveCount(0);
   await expect(page.locator('#section-coexist .sgsdeck-score, #section-coexist .badge.tier')).toHaveCount(0);
 });
 test('optional unverified conditions remain informational in inventory comparison',async({page})=>{
@@ -378,16 +392,11 @@ test('optional unverified conditions remain informational in inventory compariso
   await expect(page.locator('.season-inventory-comparison')).toContainText('chưa kiểm chứng');
   await expect(page.locator('.season-inventory-comparison')).not.toContainText('chưa thể đề xuất build');
 });
-test('keyboard facet and source toggles preserve focus and pressed state after filtering',async({page})=>{
+test('keyboard facet toggles preserve focus and pressed state after filtering',async({page})=>{
   await page.goto('/#team-khac');
   const facet=page.locator('#section-team-khac .fchip[data-focus-key^="faction:"]').first();
   const raw=(await facet.getAttribute('data-focus-key')).slice('faction:'.length);
   await facet.focus();await page.keyboard.press('Space');
   await expect(facet).toBeFocused();await expect(facet).toHaveAttribute('aria-pressed','true');
   expect(await page.evaluate(()=>new URL(location.href).searchParams.get('faction'))).toBe(raw);
-  await controlledBundle(page);
-  await page.goto('/?scenario=scenario-a&ruleset=rules-a#coexist');
-  const source=page.locator('#section-coexist .fchip').filter({hasText:'Bảng Cùng Tồn'});
-  await source.focus();await page.keyboard.press('Space');
-  await expect(source).toBeFocused();await expect(source).toHaveAttribute('aria-pressed','true');
 });

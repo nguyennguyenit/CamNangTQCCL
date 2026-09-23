@@ -92,6 +92,23 @@ function sectionFromHash() {
   const name = hash.replace(/^#/, "");
   return LEGACY_SECTIONS[name] || (SECTIONS.includes(name) ? name : "team-chuan");
 }
+function placeSeasonControls(name) {
+  const controls = $('#season-controls');
+  if (!controls) return;
+  controls.hidden = !['coexist','analyze','roster-recommend'].includes(name);
+  const rulesetControl = $('#season-ruleset-control');
+  if (rulesetControl) rulesetControl.hidden = name === 'coexist';
+  const summary = $('#season-summary');
+  if (summary) summary.hidden = name === 'coexist';
+  if (name === 'coexist') {
+    const heading = $('#section-coexist > h2');
+    if (heading) heading.after(controls);
+  } else {
+    const detailMount = $('#season-detail-mount');
+    if (detailMount) detailMount.before(controls);
+  }
+}
+
 function switchSection(name) {
   document.querySelectorAll(".nav-tab").forEach((t) => {
     const active = t.dataset.section === name;
@@ -101,8 +118,7 @@ function switchSection(name) {
   });
   document.querySelectorAll(".section").forEach((s) => s.classList.toggle("active", s.id === `section-${name}`));
   sectionMenu?.setActive(name);
-  const controls = $('#season-controls');
-  if (controls) controls.hidden = !['coexist','analyze','roster-recommend'].includes(name);
+  placeSeasonControls(name);
   $('.tagline').textContent = name === 'khaihoang' ? 'Khai hoang — dữ liệu mới nhất' : name === 'team-chuan' || name === 'team-khac' ? 'Duyệt đội hình theo mùa nguồn' : 'Tra cứu đội hình theo kịch bản';
   activeSection = name;
   if (sectionFromHash() !== name) location.hash = name === "lookup" ? "lookup" : name;
@@ -196,7 +212,7 @@ async function main() {
         window.scrollTo({top:window.scrollY + detail.getBoundingClientRect().top - $('.top-header').getBoundingClientRect().height - 12,behavior:'instant'});
       }
     }
-    const coexistUI = createSeasonCoexistSection({mount:$('#section-coexist'),onQuery:changes=>navigateQuery(changes)});
+    const coexistUI = createSeasonCoexistSection({mount:$('#section-coexist')});
     function queryForSection(name) {
       const state = readSeasonQuery(location.href,seasonModel);
       return sectionFromHash() === name ? state : {...state,query:'',sort:'tier',filters:{faction:[],unit:[],tier:[],source:[]},notices:[]};
@@ -321,10 +337,13 @@ async function main() {
       sections['team-chuan']?.update(recommendedModel.index.records,state,registry);
       sections['team-khac']?.update(recommendedModel.other.records,explicitSeason ? state : {...state,season:'all'},registry);
     }
-    const scenarioSelect = el('select', {id:'season-scenario', 'aria-label':'Kịch bản đang chơi'}, [el('option',{value:''},'Tất cả — tham khảo'), ...(seasonModel?.data['season-registry'] || []).filter(scenario=>scenario.reviewStatus === 'reviewed').map(scenario => el('option',{value:scenario.id},scenario.labelVi))]);
+    const scenarioSelect = el('select', {id:'season-scenario'}, [el('option',{value:''},'Tất cả — tham khảo'), ...(seasonModel?.data['season-registry'] || []).filter(scenario=>scenario.reviewStatus === 'reviewed').map(scenario => el('option',{value:scenario.id},scenario.labelVi))]);
     const rulesetSelect = el('select', {id:'season-ruleset', 'aria-label':'Phiên bản luật'});
+    const rulesetControl = el('label',{id:'season-ruleset-control',for:'season-ruleset'},['Phiên bản luật',rulesetSelect]);
+    rulesetControl.hidden = sectionFromHash() === 'coexist';
     const summary = el('p', {id:'season-summary', role:'status', class:'scope-note'});
-    $('#season-controls').replaceChildren(el('label',{for:'season-scenario'},['Kịch bản đang chơi',scenarioSelect]), el('label',{for:'season-ruleset'},['Phiên bản luật',rulesetSelect]), summary);
+    $('#season-controls').replaceChildren(el('div',{class:'reference-scope-controls'},[el('label',{for:'season-scenario'},['Mùa',scenarioSelect]),rulesetControl]), summary);
+    placeSeasonControls(activeSection);
     if (!seasonModel) { scenarioSelect.disabled = true; rulesetSelect.disabled = true; }
     scenarioSelect.addEventListener('change', () => {
       const next = resolveBrowseState(seasonModel, scenarioSelect.value ? {scenarioId:scenarioSelect.value} : {}, {origin:'scenario-change'});
@@ -342,7 +361,7 @@ async function main() {
       rulesetSelect.disabled = !scenario || !scenario.rulesets.some(rule=>rule.reviewStatus === 'reviewed');
       summary.textContent = !seasonModel ? BUNDLE_NOTICE : browse.kind === 'invalid' ? 'Kịch bản hoặc phiên bản luật không hợp lệ. Hãy chọn lại phạm vi.' : browse.kind === 'all-reference' ? 'Tất cả — tham khảo' : `${scenario?.labelVi || ''} · ${browse.kind === 'verified-pair' ? rulesetSelect.selectedOptions[0]?.textContent : scenario?.rulesets.some(rule=>rule.reviewStatus === 'reviewed') ? 'Chưa chọn phiên bản luật — tham khảo' : 'Chưa có phiên bản luật được xác minh — tham khảo'}`;
       const groups = projection ? [...projection.coexist.applicable, ...projection.coexist.scenarioReference, ...projection.coexist.unknown] : coexist.map(content=>({content,source:null}));
-      coexistUI.update(groups,queryForSection('coexist'),browse?.kind === 'all-reference' || !browse ? 'Tham khảo — gồm dữ liệu chưa rõ mùa' : summary.textContent);
+      coexistUI.update(groups);
       renderTeams();
       if (previous !== JSON.stringify(browse)) consumers.forEach(consumer=>consumer?.setSeasonScope?.({model:seasonModel,browse}));
     }

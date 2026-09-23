@@ -318,6 +318,11 @@ class CuratedSeasonBundleTest(unittest.TestCase):
         source=[link for link in links if link['target']['type']=='source-owned-coexist']
         self.assertEqual(len(source),5)
         self.assertEqual(sum(len(link['target']['payload']['teams']) for link in source),25)
+        scenarios={link['scenarioId'] for link in links}
+        self.assertEqual(scenarios,{'anh-hung-menh-the','binh-dien-xuan-thu'})
+        legacy=[link for link in links if link['target']['type']=='legacy-locator']
+        self.assertEqual(len(legacy),5)
+        self.assertTrue(all(link['reviewStatus']=='reviewed' and link['scenarioId']=='anh-hung-menh-the' for link in legacy))
         self.assertTrue(all(link['rulesetId'] is None and not link['configIds'] for link in links))
 
     def test_source_snapshot_url_and_observation_evidence_must_match(self):

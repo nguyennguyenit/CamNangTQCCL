@@ -9,7 +9,8 @@ const localizedSlot = (raw,vi) => {
   const hasSource = typeof raw === 'string' ? Boolean(raw.trim()) : Boolean(raw);
   const hasDisplay = typeof vi === 'string' && Boolean(vi.trim());
   if (!hasSource && !hasDisplay) return {value:null,interactive:false};
-  const value=text(vi);
+  let value=hasDisplay ? text(vi) : UNAVAILABLE;
+  if (value === UNAVAILABLE && hasSource) value=text(raw);
   return {value,interactive:value !== UNAVAILABLE};
 };
 

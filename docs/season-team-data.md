@@ -271,12 +271,13 @@ hiện có. Một kịch bản xuất hiện trong registry không bảo đảm 
 cấu hình đủ bằng chứng. Tập rỗng phải được giữ nguyên cho đến khi đủ bằng
 chứng, không điền bằng dữ liệu mùa khác.
 
-Registry hiện chỉ có Binh Diễn Xuân Thu, chưa có luật đã review;
-configs/evaluations rỗng nên chưa có tier hay điểm VN theo luật. Nguồn Cùng Tồn
-mới thuộc kịch bản này ở mức tham khảo; nhóm legacy chưa xác định kịch bản vẫn
-nằm riêng. Website cho phép đọc nguồn khi chỉ chọn kịch bản; request gameplay
-theo mùa của MCP cần cặp kịch bản/luật đã review, vì vậy dữ liệu hiện tại chưa
-cung cấp cặp hợp lệ cho nhánh đó.
+Registry hiện có hai kịch bản tham khảo, đều chưa có luật đã review:
+**PK-S26 · Anh Hùng Mệnh Thế** cho năm nhóm Cùng Tồn legacy và
+**OG · Binh Diễn Xuân Thu** cho năm nhóm được thêm sau. Configs/evaluations
+vẫn rỗng nên chưa có tier hay điểm VN theo luật. Website cho phép đọc nguồn
+khi chỉ chọn kịch bản; request gameplay theo mùa của MCP cần cặp
+kịch bản/luật đã review, vì vậy dữ liệu hiện tại chưa cung cấp cặp hợp lệ cho
+nhánh đó.
 
 [Báo cáo intake Cùng Tồn](../plans/260907-0233-season-team-lookup/reports/phase-02-data-validation.md)
 và [inventory Recommended](../plans/260907-0233-season-team-lookup/reports/recommended-score-inventory.md)

@@ -228,27 +228,15 @@ export function createSeasonTeamSection({mount, title, onQuery, onOpenConfig}) {
 }
 
 import { seasonCoexistGroup } from './render.js';
-import { normalizeText } from './filters.js';
-export function createSeasonCoexistSection({mount,onQuery}) {
-  const search=el('input',{type:'search',class:'search','aria-label':'Tìm Cùng Tồn',placeholder:'Tìm đội, tướng, điều kiện nguồn…'});
-  const sources=el('div',{class:'chip-row'}), notice=el('p',{class:'scope-note'}), grid=el('div');
-  search.addEventListener('input',()=>onQuery({q:search.value}));
-  mount.replaceChildren(el('h2',{},'Cùng Tồn'),el('div',{class:'filter-bar'},[search,el('button',{type:'button',class:'clear-btn',onClick:()=>onQuery({q:null,source:null,faction:null,unit:null,tier:null,sort:null,stars:null})},'Xóa lọc')]),sources,notice,grid);
-  return {update(groups,state,scopeLabel){
-    if (search.value !== state.query) search.value=state.query;
-    const sourceId=group=>group.source?.id || 'legacy';
-    const available=[...new Set(groups.map(sourceId))];
-    const selected=state.filters.source.filter(value=>available.includes(value));
-    replaceFilterButtons(sources,available.map(value=>el('button',{type:'button',class:`fchip${selected.includes(value)?' on':''}`,dataset:{focusKey:value},'aria-pressed':String(selected.includes(value)),onClick:()=>onQuery({source:selected.includes(value)?selected.filter(item=>item!==value):[...selected,value]})},value === 'legacy' ? 'Nguồn cũ' : 'Bảng Cùng Tồn')));
-    const query=normalizeText(state.query);
-    const filtered=groups.filter(group=>(!selected.length || selected.includes(sourceId(group))) && (!query || normalizeText(JSON.stringify(group.content)).includes(query)));
-    const applicable=filtered.filter(group=>group.classification === 'applicable');
-    const references=filtered.filter(group=>group.classification === 'scenarioReference');
-    const unknown=filtered.filter(group=>!group.classification || group.classification === 'unknown');
-    notice.textContent=`${scopeLabel} · ${applicable.length} nhóm áp dụng · ${references.length} nhóm tham khảo · ${unknown.length} nhóm chưa rõ mùa / ${groups.length} nhóm` + (selected.length !== state.filters.source.length || ['unit','tier','faction'].some(key=>state.filters[key].length) ? ' · Đã bỏ bộ lọc không có trong dữ liệu nguồn.' : '');
+export function createSeasonCoexistSection({mount}) {
+  const grid=el('div');
+  mount.replaceChildren(el('h2',{},'Cùng Tồn'),grid);
+  return {update(groups){
+    const applicable=groups.filter(group=>group.classification === 'applicable');
+    const references=groups.filter(group=>group.classification === 'scenarioReference');
+    const unknown=groups.filter(group=>!group.classification || group.classification === 'unknown');
     grid.replaceChildren(...[[applicable,'Áp dụng theo phiên bản luật'],[references,'Tham khảo kịch bản'],[unknown,'Chưa xác định kịch bản — tham khảo']].filter(([items])=>items.length).map(([items,label])=>el('div',{class:'coexist-scope-group'},[el('h3',{},`${label} (${items.length})`),...items.map(seasonCoexistGroup)])));
-    if (state.browse?.kind === 'verified-pair' && !applicable.length) grid.prepend(el('p',{class:'scope-note'},'Chưa có bộ Cùng Tồn được xác minh cho phiên bản luật này.'));
-    if (!filtered.length) grid.append(el('p',{class:'empty'},'Không có nhóm Cùng Tồn khớp phạm vi và bộ lọc này.'));
+    if (!groups.length) grid.append(el('p',{class:'empty'},'Không có nhóm Cùng Tồn trong mùa này.'));
   }};
 }
 

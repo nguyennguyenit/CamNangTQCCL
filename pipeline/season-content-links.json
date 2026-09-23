@@ -1526,13 +1526,15 @@
   },
   {
     "configIds": [],
-    "evidenceRefs": [],
+    "evidenceRefs": [
+      "coexist-anh-hung-menh-the-scenario-confirmation"
+    ],
     "id": "link:coexist-legacy-group-c62cde93620f",
     "kind": "coexist",
     "recordId": "coexist-legacy-group-c62cde93620f",
-    "reviewStatus": "pending",
+    "reviewStatus": "reviewed",
     "rulesetId": null,
-    "scenarioId": null,
+    "scenarioId": "anh-hung-menh-the",
     "schemaVersion": 1,
     "target": {
       "contentFingerprint": "sha256:92cfb10a127be7a2f2ca0744a5ba8084585ea67983c6367b11b41f9cde54ec28",
@@ -1545,13 +1547,15 @@
   },
   {
     "configIds": [],
-    "evidenceRefs": [],
+    "evidenceRefs": [
+      "coexist-anh-hung-menh-the-scenario-confirmation"
+    ],
     "id": "link:coexist-legacy-group-7ca78ac0417f",
     "kind": "coexist",
     "recordId": "coexist-legacy-group-7ca78ac0417f",
-    "reviewStatus": "pending",
+    "reviewStatus": "reviewed",
     "rulesetId": null,
-    "scenarioId": null,
+    "scenarioId": "anh-hung-menh-the",
     "schemaVersion": 1,
     "target": {
       "contentFingerprint": "sha256:1621e16d3370c330a673e5996bb9508b4deb44ddf896a5aad8c8496ef989bdba",
@@ -1564,13 +1568,15 @@
   },
   {
     "configIds": [],
-    "evidenceRefs": [],
+    "evidenceRefs": [
+      "coexist-anh-hung-menh-the-scenario-confirmation"
+    ],
     "id": "link:coexist-legacy-group-6cfa058cec1a",
     "kind": "coexist",
     "recordId": "coexist-legacy-group-6cfa058cec1a",
-    "reviewStatus": "pending",
+    "reviewStatus": "reviewed",
     "rulesetId": null,
-    "scenarioId": null,
+    "scenarioId": "anh-hung-menh-the",
     "schemaVersion": 1,
     "target": {
       "contentFingerprint": "sha256:b4415018bf1ac1dd0602a4620d7863c444e90c1f5416df99d2686834ad8dcde5",
@@ -1583,13 +1589,15 @@
   },
   {
     "configIds": [],
-    "evidenceRefs": [],
+    "evidenceRefs": [
+      "coexist-anh-hung-menh-the-scenario-confirmation"
+    ],
     "id": "link:coexist-legacy-group-f5e839013060",
     "kind": "coexist",
     "recordId": "coexist-legacy-group-f5e839013060",
-    "reviewStatus": "pending",
+    "reviewStatus": "reviewed",
     "rulesetId": null,
-    "scenarioId": null,
+    "scenarioId": "anh-hung-menh-the",
     "schemaVersion": 1,
     "target": {
       "contentFingerprint": "sha256:db08a9fa085976d8ab2e99cc6f11841f5bf16ecf2fc6d18cfcb4f32a17c710ab",
@@ -1602,13 +1610,15 @@
   },
   {
     "configIds": [],
-    "evidenceRefs": [],
+    "evidenceRefs": [
+      "coexist-anh-hung-menh-the-scenario-confirmation"
+    ],
     "id": "link:coexist-legacy-group-7f693e27576d",
     "kind": "coexist",
     "recordId": "coexist-legacy-group-7f693e27576d",
-    "reviewStatus": "pending",
+    "reviewStatus": "reviewed",
     "rulesetId": null,
-    "scenarioId": null,
+    "scenarioId": "anh-hung-menh-the",
     "schemaVersion": 1,
     "target": {
       "contentFingerprint": "sha256:eab8f334dc5bfd8e8e8f825b6dcd30f4296246dccdb5e0c0ac5f4c6664ceceb5",

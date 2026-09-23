@@ -4,6 +4,27 @@
     "claim": {
       "kind": "scenario-attribution",
       "rulesetId": null,
+      "scenarioId": "anh-hung-menh-the"
+    },
+    "id": "coexist-anh-hung-menh-the-scenario-confirmation",
+    "note": "Chủ dự án xác nhận ngày 2026-09-23 rằng năm nhóm Cùng Tồn legacy trong data/coexist.json thuộc kịch bản Anh Hùng Mệnh Thế. Đây là xác nhận kịch bản, không phải bằng chứng phiên bản luật.",
+    "provenance": {
+      "fetchedAt": "2026-09-23",
+      "provider": "project-maintainer",
+      "region": "VN",
+      "sourceUrl": "https://github.com/nguyennguyenit/CamNangTQCCL/blob/main/data/coexist.json"
+    },
+    "reviewStatus": "reviewed",
+    "schemaVersion": 1,
+    "sourceSeason": {
+      "scenarioName": "Anh Hùng Mệnh Thế"
+    }
+  },
+  {
+    "canonicalRef": null,
+    "claim": {
+      "kind": "scenario-attribution",
+      "rulesetId": null,
       "scenarioId": "binh-dien-xuan-thu"
     },
     "id": "coexist-binh-dien-scenario-confirmation",
@@ -26,7 +47,7 @@
       "scenarioId": null
     },
     "id": "coexist-binh-dien-source-snapshot",
-    "note": "Snapshot CSV kiểm chứng ngày 2026-09-07: 94 records, 220 dòng vật lý, 10 cột, 5 nhóm, 25 đội, 75 vị trí tướng. Nguồn không xác lập ruleset hay số mùa; dữ liệu Cùng Tồn cũ vẫn chưa rõ kịch bản và luật.",
+    "note": "Snapshot CSV kiểm chứng ngày 2026-09-07: 94 records, 220 dòng vật lý, 10 cột, 5 nhóm, 25 đội, 75 vị trí tướng. Nguồn không xác lập ruleset hay số mùa.",
     "provenance": {
       "fetchedAt": "2026-09-07",
       "provider": "google-sheets",

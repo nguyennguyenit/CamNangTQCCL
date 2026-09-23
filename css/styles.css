@@ -94,7 +94,7 @@ body {
 .section-menu-items { display: flex; gap: .3rem; flex-wrap: wrap; }
 .nav-tab {
   background: none; border: none; border-bottom: 3px solid transparent;
-  padding: .5rem .9rem; font-size: .92rem; cursor: pointer; color: var(--muted);
+  padding: .5rem .9rem; font-size: .92rem; cursor: pointer; color: var(--muted); text-decoration: none;
   border-radius: 6px 6px 0 0;
 }
 .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
@@ -204,7 +204,7 @@ body {
 .team-card:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0, 0, 0, .12); }
 .team-card.dim { opacity: .82; }
 .team-name { display: block; width: 100%; text-align: left; background: none; border: none; cursor: pointer; padding: 0 0 .4rem; margin-bottom: .5rem; color: var(--accent); font-size: 1rem; font-weight: 700; letter-spacing: .01em; }
-.team-name:hover { text-decoration: underline; }
+.team-name:is(button):hover, .reference-team-card .team-name > a:hover { text-decoration: underline; }
 .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: .5rem; margin-bottom: .6rem; padding-bottom: .5rem; border-bottom: 1px dashed var(--line); }
 .units { display: flex; gap: .25rem; flex-wrap: wrap; }
 .head-right { display: flex; gap: .3rem; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
@@ -788,10 +788,9 @@ body {
 }
 
 /* Shared season controls remain compact and follow the current section. */
-.season-controls { display:flex; flex-wrap:wrap; align-items:end; gap:10px; margin-bottom:16px; }
+.season-controls { margin-bottom:16px; }
 .season-controls[hidden] { display:none; }
-.season-controls label { display:flex; flex-direction:column; gap:4px; font-size:.85rem; flex:1 1 180px; max-width:320px; }
-.season-controls select { width:100%; min-height:44px; padding:8px; background:var(--panel); color:var(--ink); border:1px solid var(--line); border-radius:8px; }
+.season-controls .reference-scope-controls { margin:0; }
 .scope-note { color:var(--muted); font-size:.9rem; line-height:1.5; }
 .season-controls .scope-note { flex-basis:100%; margin:0; }
 .season-raw { white-space:pre-wrap; overflow-wrap:anywhere; line-height:1.55; }
@@ -821,6 +820,7 @@ body {
 @media (max-width:680px) { .season-controls select,.season-slot select,#section-coexist .search { font-size:16px; } }
 .reference-scope-controls { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; margin:10px 0; }
 .reference-scope-controls label { display:flex; flex-direction:column; gap:4px; color:var(--muted); font-size:.85rem; }
+.reference-scope-controls label[hidden] { display:none; }
 .reference-scope-controls input,.reference-scope-controls select { width:100%; min-height:44px; padding:8px; color:var(--ink); background:var(--panel); border:1px solid var(--line); border-radius:8px; }
 .reference-holder .line { display:flex; flex-wrap:wrap; gap:6px; }
 .reference-team-card { min-width:0; overflow-wrap:anywhere; }
@@ -876,7 +876,7 @@ body {
 .reference-detail .tag,.reference-detail .chip { cursor:default; white-space:normal; overflow-wrap:anywhere; }
 .reference-detail .counters { list-style:none; margin:6px 0 0; padding:0; }
 /* Title và CTA của card là link thật, giữ nguyên nhịp chữ hiện có. */
-.reference-team-card .team-name > a { display:block; color:inherit; text-decoration:inherit; }
+.reference-team-card .team-name > a { display:block; color:inherit; text-decoration:none; }
 .reference-team-card > .ana-link-btn { display:inline-flex; align-items:center; min-height:44px; }
 @media (max-width:480px) {
   .detail-header { grid-template-columns:1fr; }
