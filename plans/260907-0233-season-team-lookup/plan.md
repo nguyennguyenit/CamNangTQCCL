@@ -13,13 +13,13 @@ created: 2026-09-07
 
 # Tra cứu đội hình theo mùa và kịch bản
 
-## Trạng thái — 2026-09-12
+## Trạng thái — 2026-09-23
 
 **Completed: cả bốn phase đã hoàn thành, gồm real clean-source release validation.** Invocation `--auto --advice --tdd`; Kongming được giao quyền quyết định. Người dùng đã cho phép worktree riêng và commit local bền vững để đóng gate; không push, merge, deploy hoặc bypass guard. [Bằng chứng đóng release](reports/isolated-release-closure.md).
 
 Outcome: chọn kịch bản/ruleset → lọc đội → nhóm tier → cấu hình cụ thể → đối chiếu kho. Phạm vi Team PK, Meta phe cũ, Cùng Tồn, soi đội, gợi ý kho và Research MCP. Giữ ID/hash/no-context cũ; không thêm backend, hợp nhất danh mục hoặc suy luật/tier/lịch phát hành. Strict clients phải refresh discovery/schema output v2.
 
-Dữ liệu hiện tại: một kịch bản VN Binh Diễn Xuân Thu; **0 ruleset/config/evaluation reviewed**, năm nhóm tham khảo mới/25 đội/75 vị trí. Khoảng trống là trạng thái được hỗ trợ: cơ chế scoped execution đã triển khai và fixture-test, chưa có gợi ý gameplay VN đã xác minh. Chín artifact legacy giữ nguyên bytes.
+Dữ liệu hiện tại: hai kịch bản VN tham khảo — **PK-S26 · Anh Hùng Mệnh Thế** cho năm nhóm legacy và **OG · Binh Diễn Xuân Thu** cho năm nhóm mới/25 đội/75 vị trí; **0 ruleset/config/evaluation reviewed**. Khoảng trống là trạng thái được hỗ trợ: cơ chế scoped execution đã triển khai và fixture-test, chưa có gợi ý gameplay VN đã xác minh. Chín artifact legacy giữ nguyên bytes.
 
 ## Phases
 
