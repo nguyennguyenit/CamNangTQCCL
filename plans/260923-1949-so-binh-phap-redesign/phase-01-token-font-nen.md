@@ -1,7 +1,7 @@
 ---
 phase: 1
 title: "Token, font, component nền, công cụ so ảnh"
-status: pending
+status: completed
 priority: P1
 effort: "2.5d"
 dependencies: []

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile, stat } from "node:fs/promises";
+import { readFile, readdir, stat } from "node:fs/promises";
 import { test } from "node:test";
 import { PUBLIC_ARTIFACTS } from "../src/lib/public-artifact-manifest.mjs";
 
@@ -93,6 +93,31 @@ test("the Khai hoang detail entry is a registered runtime module with a real sou
   assert.equal(entry.publicationClass, "runtime");
   assert.equal(entry.sourceBasename, "khaihoang-detail.js");
   assert.ok((await stat(new URL(`js/${entry.sourceBasename}`, root))).isFile());
+});
+
+test("self-hosted fonts ship the licensed subset set and nothing else", async () => {
+  const fonts = await readdir(new URL("public/fonts/", root));
+  assert.ok(fonts.includes("OFL.txt"), "font self-host phải kèm giấy phép OFL");
+  const woff2 = fonts.filter((name) => name.endsWith(".woff2")).sort();
+  const expected = [
+    ...["400", "500", "600", "700"].flatMap((weight) =>
+      ["latin", "latin-ext", "vietnamese"].map((subset) => `be-vietnam-pro-${weight}-${subset}.woff2`)),
+    ...["latin", "latin-ext", "vietnamese"].map((subset) => `noto-serif-display-700-${subset}.woff2`),
+  ].sort();
+  assert.deepEqual(woff2, expected);
+  for (const name of woff2) {
+    const info = await stat(new URL(`public/fonts/${name}`, root));
+    assert.ok(info.size > 0, `${name} must not be empty`);
+  }
+  assert.deepEqual(
+    fonts.filter((name) => !name.endsWith(".woff2") && name !== "OFL.txt"),
+    [],
+    "public/fonts chỉ chứa woff2 và OFL.txt",
+  );
+  const license = await readFile(new URL("public/fonts/OFL.txt", root), "utf8");
+  assert.match(license, /SIL Open Font License/);
+  assert.match(license, /Be Vietnam Pro/);
+  assert.match(license, /Noto Serif Display/);
 });
 
 

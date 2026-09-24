@@ -18,6 +18,11 @@ export const STATIC_PUBLIC_ARTIFACTS = Object.freeze([
   Object.freeze({ sourcePath: "public/robots.txt", outputPath: "robots.txt" }),
 ]);
 
+/** Thư mục public tĩnh phải được copy nguyên trạng vào dist: danh sách file khớp và từng byte khớp. */
+export const STATIC_PUBLIC_DIRECTORIES = Object.freeze([
+  Object.freeze({ sourcePath: "public/fonts", outputPath: "fonts" }),
+]);
+
 
 async function listFiles(directory, base = directory) {
   const files = [];
@@ -37,6 +42,7 @@ export async function verifyAstroDist({
   manifest = PUBLIC_ARTIFACTS,
   controlArtifacts = DEPLOYMENT_CONTROL_ARTIFACTS,
   staticArtifacts = STATIC_PUBLIC_ARTIFACTS,
+  staticDirectories = STATIC_PUBLIC_DIRECTORIES,
 } = {}) {
   validatePublicArtifactManifest(manifest);
   const rootPath = fileURLToPath(projectRoot);
@@ -60,6 +66,13 @@ export async function verifyAstroDist({
   ];
   const expectedAssets = manifest.map((artifact) =>
     `${artifact.kind}/${artifact.sourceBasename}`);
+  // Font self-host là thư mục public tĩnh: dist phải có đúng danh sách file và đúng từng byte.
+  const staticDirectoryFiles = [];
+  for (const directory of staticDirectories) {
+    const files = await listFiles(resolve(rootPath, directory.sourcePath));
+    if (!files.length) throw new Error(`static public directory is empty: ${directory.sourcePath}`);
+    for (const file of files) staticDirectoryFiles.push([`${directory.sourcePath}/${file}`, `${directory.outputPath}/${file}`]);
+  }
   const expectedFiles = [
     "index.html",
     "404.html",
@@ -69,6 +82,7 @@ export async function verifyAstroDist({
     ...recommendedFiles,
     ...controlArtifacts.map((artifact) => artifact.outputPath),
     ...staticArtifacts.map((artifact) => artifact.outputPath),
+    ...staticDirectoryFiles.map(([, outputPath]) => outputPath),
   ].sort();
   const files = await listFiles(distPath);
   // Route segments may be emitted percent-encoded; identity is the decoded path.
@@ -259,6 +273,16 @@ export async function verifyAstroDist({
     }
   }
 
+  for (const [sourcePath, outputPath] of staticDirectoryFiles) {
+    const [sourceBytes, emittedBytes] = await Promise.all([
+      readFile(resolve(rootPath, sourcePath)),
+      readFile(resolve(distPath, outputPath)),
+    ]);
+    if (!sourceBytes.equals(emittedBytes)) {
+      throw new Error(`Static public file bytes differ from source: ${outputPath}`);
+    }
+  }
+
   const forbiddenSegments = new Set([
     "pipeline",
     "worker",
@@ -279,6 +303,7 @@ export async function verifyAstroDist({
 
   return {
     assetCount: manifest.length,
+    staticFileCount: staticDirectoryFiles.length,
     files,
     unexpectedFiles,
     missingFiles,
@@ -289,5 +314,5 @@ export async function verifyAstroDist({
 const invokedPath = process.argv[1] ? pathToFileURL(resolve(process.argv[1])).href : "";
 if (import.meta.url === invokedPath) {
   const result = await verifyAstroDist();
-  console.log(`Verified ${result.files.length} dist files (${result.assetCount} raw assets).`);
+  console.log(`Verified ${result.files.length} dist files (${result.assetCount} raw assets, ${result.staticFileCount} static public files).`);
 }

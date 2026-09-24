@@ -14,6 +14,7 @@ const expectedRules = [
   "/404.html",
   "/js/*",
   "/css/*",
+  "/fonts/*",
   "/data/*",
   "/favicon.png",
 ];
@@ -78,6 +79,9 @@ test("_headers covers every published shell and mutable raw asset", async () => 
     "/index.html",
     "/favicon.png",
     ...PUBLIC_ARTIFACTS.map((artifact) => `/${artifact.kind}/${artifact.sourceBasename}`),
+    "/fonts/be-vietnam-pro-400-latin.woff2",
+    "/fonts/noto-serif-display-700-vietnamese.woff2",
+    "/fonts/OFL.txt",
     "/data/recommended/current.json",
     `/data/recommended/${"1".repeat(64)}/manifest.json`,
     `/data/recommended/${"1".repeat(64)}/details-s-${"2".repeat(64)}.json`,

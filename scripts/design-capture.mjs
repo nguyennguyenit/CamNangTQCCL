@@ -6,47 +6,11 @@
 //
 // Artboard dựng bằng docs/design/so-binh-phap/project/support.js (shim tự viết).
 // Bỏ 3 artboard hướng A/B/C (chỉ để so sánh, không implement).
-import { createServer } from 'node:http';
-import { readFile, readdir, mkdir, rm, stat } from 'node:fs/promises';
-import { extname, join, resolve, sep } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { readdir, mkdir, rm, stat } from 'node:fs/promises';
+import { join } from 'node:path';
+import { artboards, SCREENS_DIR, serve } from './design-artboards.mjs';
 
-const DESIGN_DIR = fileURLToPath(new URL('../docs/design/so-binh-phap/', import.meta.url));
-const PROJECT_DIR = join(DESIGN_DIR, 'project');
-const SCREENS_DIR = join(DESIGN_DIR, 'screens');
-const SKIPPED = /^Dir[ABC]-/;
 const REQUIRED_FONTS = ['Be Vietnam Pro', 'Noto Serif Display'];
-const TYPES = {
-  '.html': 'text/html; charset=utf-8',
-  '.js': 'text/javascript; charset=utf-8',
-  '.json': 'application/json; charset=utf-8',
-};
-
-function serve() {
-  const server = createServer(async (request, response) => {
-    const path = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
-    const file = resolve(PROJECT_DIR, `.${path.endsWith('/') ? `${path}index.html` : path}`);
-    if (!file.startsWith(PROJECT_DIR + sep)) {
-      response.writeHead(403).end();
-      return;
-    }
-    try {
-      const body = await readFile(file);
-      response.writeHead(200, { 'content-type': TYPES[extname(file)] ?? 'application/octet-stream' }).end(body);
-    } catch {
-      response.writeHead(404).end();
-    }
-  });
-  return new Promise((done) => server.listen(0, '127.0.0.1', () => done(server)));
-}
-
-async function boards() {
-  const canvas = JSON.parse(await readFile(join(PROJECT_DIR, 'canvas.json'), 'utf8'));
-  return Object.entries(canvas.boards)
-    .filter(([file]) => !SKIPPED.test(file))
-    .map(([file, { w, h }]) => ({ file, name: file.replace(/\.dc\.html$/, ''), width: w, height: h }))
-    .sort((a, b) => a.name.localeCompare(b.name));
-}
 
 async function captureOnce(browser, origin, board) {
   const page = await browser.newPage({ viewport: { width: board.width, height: board.height }, deviceScaleFactor: 1 });
@@ -96,7 +60,7 @@ if (process.argv.includes('--serve')) {
   console.log(`Artboard: ${origin}/Landing.dc.html (Ctrl+C để dừng)`);
 } else {
   const { chromium } = await import('@playwright/test');
-  const list = await boards();
+  const list = await artboards();
   const browser = await chromium.launch();
   let failed = 0;
   try {

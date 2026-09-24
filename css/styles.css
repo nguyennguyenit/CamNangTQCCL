@@ -1,56 +1,355 @@
-/* ===== Design tokens ===== */
+/* Cẩm Nang TQCCL — stylesheet dùng chung.
+   Cấu trúc: khối token (sinh từ tokens.json) → @font-face self-host → khối legacy (thu dần mỗi phase)
+   → component nền "Sổ binh pháp". Không viết mã màu hay giá trị vi mô ngoài khối token ngoài khối legacy;
+   soát bằng `node scripts/design-tokens.mjs --check`. */
+/* ===== Token "Sổ binh pháp" — sinh từ docs/design/so-binh-phap/tokens.json ===== */
 :root {
-  --bg: #f4f1ea;
-  --panel: #fffdf8;
-  --panel-2: #efe9dd;
-  --ink: #20242b;
-  --muted: #6b6f78;
-  --line: #d9d2c4;
-  --accent: #b8232c;
-  --accent-soft: #f2dada;
-  --good: #1f7a4d;
-  --good-bg: #dff0e6;
-  --avoid: #b8232c;
-  --avoid-bg: #f6dede;
-  --radius: 10px;
-  --shadow: 0 1px 3px rgba(0, 0, 0, .08);
-  /* unit colors */
-  --ky: #2563b8;
-  --cung: #1f7a4d;
-  --thuong: #b8232c;
-  --khien: #8a6d1f;
-  /* faction colors: Ngụy xanh đậm, Thục xanh lá, Ngô đỏ, Quần vàng */
-  --f-nguy: #1f3a93;
-  --f-thuc: #1f7a4d;
-  --f-ngo: #b8232c;
-  --f-quan: #c9962a;
-  --f-honhop: #7349a8;
-}
-:root[data-theme="dark"] {
-  --bg: #14161b;
-  --panel: #1d2027;
-  --panel-2: #23272f;
-  --ink: #e7e3da;
-  --muted: #9aa0ab;
-  --line: #333944;
-  --accent: #e0555d;
-  --accent-soft: #3a2326;
-  --good: #5fce95;
-  --good-bg: #1c3328;
-  --avoid: #e0555d;
-  --avoid-bg: #362325;
-  --shadow: 0 1px 3px rgba(0, 0, 0, .35);
-  --ky: #6aa6ff;
-  --cung: #5fce95;
-  --thuong: #e0555d;
-  --khien: #d6b85a;
-  --f-nguy: #4f74d6;
-  --f-thuc: #5fce95;
-  --f-ngo: #e0555d;
-  --f-quan: #e0b94e;
-  --f-honhop: #a884e0;
+  --bg: #F3EEE3;
+  --panel: #FFFCF5;
+  --panel-2: #EAE3D4;
+  --panel-3: #F7F2E8;
+  --ink: #1E1B16;
+  --ink-2: #3A352D;
+  --muted: #5F5A50;
+  --line: #D8CFBD;
+  --line-2: #E6DECF;
+  --accent: #A8202A;
+  --accent-soft: #F6E1DC;
+  --accent-ink: #8E1B24;
+  --band: #1C1A17;
+  --band-ink: #F3EEE3;
+  --band-muted: #A99F8E;
+  --band-dim: #B8AF9F;
+  --band-faint: #8F8676;
+  --band-link: #E4DCCB;
+  --band-line: #34302A;
+  --band-row-line: #2E2A24;
+  --band-control-line: #3F3A32;
+  --band-active: #2B2722;
+  --band-beta-line: #6A6254;
+  --band-beta-ink: #D9CDB4;
+  --nav-idle: #CFC6B6;
+  --nav-underline: #E36A6F;
+  --seal-ink: #F9F3E6;
+  --on-accent: #FFFFFF;
+  --on-gold: #3A2C00;
+  --focus-ring: #A8202A;
+  --overlay: rgba(0, 0, 0, 0.5);
+  --good: #1F7A4D;
+  --good-bg: #E0EFE6;
+  --avoid: #B8232C;
+  --avoid-bg: #FBF1EE;
+  --ky: #2563B8;
+  --cung: #1F7A4D;
+  --thuong: #B8232C;
+  --khien: #8A6D1F;
+  --tier-0: #C0392B;
+  --tier-05: #D35400;
+  --tier-1: #E67E22;
+  --tier-15: #D4A017;
+  --tier-2: #2980B9;
+  --stars: #F5C542;
+  --stars-ink: #5A4500;
+  --status-untested-bg: #EFE0FB;
+  --status-untested-ink: #6B2FB3;
+  --status-situational-bg: #FDE9D6;
+  --status-situational-ink: #9A5A1A;
+  --status-recommend-bg: #1F7A4D;
+  --f-nguy: #1F3A93;
+  --f-thuc: #1F7A4D;
+  --f-ngo: #B8232C;
+  --f-quan: #B08422;
+  --f-honhop: #6B45A0;
+  --font-sans: 'Be Vietnam Pro', system-ui, sans-serif;
+  --font-serif: 'Noto Serif Display', Georgia, serif;
+  --font-cjk: 'Songti TC', 'Noto Serif CJK TC', serif;
+  --font-mono: ui-monospace, Menlo, monospace;
+  --type-landing-title: 700 64px/0.9 'Noto Serif Display', Georgia, serif;
+  --type-section-title: 700 48px/1.05 'Noto Serif Display', Georgia, serif;
+  --type-detail-title: 700 34px/1.05 'Noto Serif Display', Georgia, serif;
+  --type-list-title: 700 22px/1.2 'Noto Serif Display', Georgia, serif;
+  --type-card-title: 700 19px/1.2 'Noto Serif Display', Georgia, serif;
+  --type-dialog-title: 700 20px/1.2 'Noto Serif Display', Georgia, serif;
+  --type-brand: 700 17px/1 'Noto Serif Display', Georgia, serif;
+  --type-score-hero: 700 44px/1 'Noto Serif Display', Georgia, serif;
+  --type-score-card: 700 28px/1 'Noto Serif Display', Georgia, serif;
+  --type-score-table: 700 22px/1 'Noto Serif Display', Georgia, serif;
+  --type-body: 400 15px/1.6 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-strong: 600 15px/1.3 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-hero-name: 600 14.5px/1.35 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-tactic: 500 13.5px/1.35 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-meta: 400 12.5px/1.45 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-small: 400 13px/1.5 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-control: 600 14px/1.2 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-badge: 600 12px/1.2 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-tag: 500 12.5px/1.35 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-table-head: 700 11px/1.2 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-table-head-spacing: 0.1em;
+  --type-table-cell: 600 12.5px/1.35 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-label-caps: 700 11px/1.2 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-label-caps-spacing: 0.14em;
+  --type-field-caps: 600 11px/1.2 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-field-caps-spacing: 0.12em;
+  --type-input: 400 15px/1.4 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-select: 400 14.5px/1.35 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-nav: 500 14.5px/1 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-nav-active: 600 14.5px/1 'Be Vietnam Pro', system-ui, sans-serif;
+  --space-1: 1px;
+  --space-2: 2px;
+  --space-3: 3px;
+  --space-4: 4px;
+  --space-5: 5px;
+  --space-6: 6px;
+  --space-7: 7px;
+  --space-8: 8px;
+  --space-9: 9px;
+  --space-10: 10px;
+  --space-11: 11px;
+  --space-12: 12px;
+  --space-14: 14px;
+  --space-16: 16px;
+  --space-18: 18px;
+  --space-20: 20px;
+  --space-22: 22px;
+  --space-24: 24px;
+  --space-26: 26px;
+  --space-28: 28px;
+  --space-32: 32px;
+  --space-36: 36px;
+  --space-40: 40px;
+  --space-48: 48px;
+  --space-52: 52px;
+  --space-56: 56px;
+  --space-64: 64px;
+  --radius-2: 2px;
+  --radius-3: 3px;
+  --radius-4: 4px;
+  --radius-5: 5px;
+  --radius-6: 6px;
+  --radius-8: 8px;
+  --radius-9: 9px;
+  --radius-10: 10px;
+  --radius-11: 11px;
+  --radius-12: 12px;
+  --radius-14: 14px;
+  --radius-16: 16px;
+  --radius-18: 18px;
+  --radius-999: 999px;
+  --radius-round: 50%;
+  --control-24: 24px;
+  --control-26: 26px;
+  --control-28: 28px;
+  --control-32: 32px;
+  --control-36: 36px;
+  --control-38: 38px;
+  --control-40: 40px;
+  --control-44: 44px;
+  --control-48: 48px;
+  --control-52: 52px;
+  --control-56: 56px;
+  --control-72: 72px;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 4px 14px rgba(0, 0, 0, 0.12);
+  --shadow-pop: 0 8px 24px rgba(0, 0, 0, 0.14);
+  --shadow-modal: 0 12px 36px rgba(0, 0, 0, 0.35);
+  --shadow-accent: 0 2px 6px rgba(168, 32, 42, 0.28);
+  --shadow-good: 0 2px 6px rgba(31, 122, 77, 0.28);
+  --shadow-float: 0 24px 60px rgba(0, 0, 0, 0.45);
+  --shadow-menu: 0 24px 60px rgba(0, 0, 0, 0.18);
+  --shadow-seal: inset 0 0 0 2px rgba(249, 243, 230, 0.25);
+  --shadow-focus: 0 0 0 3px var(--accent-soft);
+  --focus-width: 2px;
+  --focus-outline-offset: 2px;
+  --border-hair: 1px;
+  --border-heavy: 2px;
+  --border-underline: 3px;
+  --border-faction: 4px;
+  --z-1: 1;
+  --z-2: 2;
+  --z-3: 3;
+  --z-4: 4;
+  --z-5: 5;
+  --z-20: 20;
+  --z-30: 30;
+  --z-50: 50;
+  --z-70: 70;
+  --motion-fast: 120ms;
+  --motion-base: 150ms;
+  --motion-off: 1ms;
+  --radius: var(--radius-10);
+  --shadow: var(--shadow-card);
 }
 
+:root[data-theme="dark"] {
+  --bg: #16140F;
+  --panel: #201D18;
+  --panel-2: #2A2620;
+  --panel-3: #2A2620;
+  --ink: #EDE6D8;
+  --ink-2: #CFC6B6;
+  --muted: #A99F8E;
+  --line: #3A352D;
+  --line-2: #2E2A24;
+  --accent: #E3646A;
+  --accent-soft: #3A2023;
+  --accent-ink: #FF858B;
+  --band: #0F0E0B;
+  --band-ink: #EDE6D8;
+  --focus-ring: #E36A6F;
+  --good: #5FCE95;
+  --good-bg: #1C3328;
+  --avoid: #FF858B;
+  --avoid-bg: #362325;
+  --ky: #6AA6FF;
+  --cung: #5FCE95;
+  --thuong: #E0555D;
+  --khien: #D6B85A;
+  --f-nguy: #4F74D6;
+  --f-thuc: #5FCE95;
+  --f-ngo: #E0555D;
+  --f-quan: #E0B94E;
+  --f-honhop: #A884E0;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --focus-outline-offset: 3px;
+}
+
+/* ===== Font self-host (public/fonts) — nguồn và SHA-256 ở docs/design/so-binh-phap/README.md ===== */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-400-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-400-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-400-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-500-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-500-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-500-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-600-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-600-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-600-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-700-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-700-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/be-vietnam-pro-700-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Noto Serif Display';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/noto-serif-display-700-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+
+@font-face {
+  font-family: 'Noto Serif Display';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/noto-serif-display-700-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Noto Serif Display';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/noto-serif-display-700-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* legacy:start ceiling=657 */
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) {
@@ -131,7 +430,7 @@ body {
   background: var(--line); color: var(--panel); transition: background .15s ease, color .15s ease;
 }
 .clear-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
-.clear-btn:hover::before { background: var(--accent); color: #fff; }
+.clear-btn:hover::before { background: var(--accent); color: var(--on-accent); }
 .clear-btn:active { transform: translateY(1px); }
 .clear-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--accent-soft); border-color: var(--accent); }
 /* Stats dạng pill nhẹ ở cuối hàng. */
@@ -152,7 +451,7 @@ body {
 .fchip:hover { border-color: var(--accent); background: var(--accent-soft); transform: translateY(-1px); }
 .fchip:active { transform: translateY(0) scale(.97); }
 .fchip:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--accent-soft); border-color: var(--accent); }
-.fchip.on { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 2px 6px rgba(184, 35, 44, .28); }
+.fchip.on { background: var(--accent); color: var(--on-accent); border-color: var(--accent); box-shadow: var(--shadow-accent); }
 .fchip.on:hover { background: var(--accent); transform: translateY(-1px); }
 /* Chip Phe: chấm màu trước nhãn + nền màu phe khi chọn */
 .fchip[class*="f-"]::before { content: ""; display: inline-block; width: .55em; height: .55em; border-radius: 50%; margin-right: .35rem; vertical-align: baseline; }
@@ -161,13 +460,13 @@ body {
 .fchip.f-ngo::before { background: var(--f-ngo); }
 .fchip.f-quan::before { background: var(--f-quan); }
 .fchip.f-honhop::before { background: var(--f-honhop); }
-.fchip.f-nguy.on { background: var(--f-nguy); border-color: transparent; color: #fff; }
-.fchip.f-thuc.on { background: var(--f-thuc); border-color: transparent; color: #fff; }
-.fchip.f-ngo.on { background: var(--f-ngo); border-color: transparent; color: #fff; }
-.fchip.f-quan.on { background: var(--f-quan); border-color: transparent; color: #3a2c00; }
-.fchip.f-honhop.on { background: var(--f-honhop); border-color: transparent; color: #fff; }
-.fchip.on[class*="f-"]::before { background: #fff; }
-.fchip.f-quan.on::before { background: #3a2c00; }
+.fchip.f-nguy.on { background: var(--f-nguy); border-color: transparent; color: var(--on-accent); }
+.fchip.f-thuc.on { background: var(--f-thuc); border-color: transparent; color: var(--on-accent); }
+.fchip.f-ngo.on { background: var(--f-ngo); border-color: transparent; color: var(--on-accent); }
+.fchip.f-quan.on { background: var(--f-quan); border-color: transparent; color: var(--on-gold); }
+.fchip.f-honhop.on { background: var(--f-honhop); border-color: transparent; color: var(--on-accent); }
+.fchip.on[class*="f-"]::before { background: var(--on-accent); }
+.fchip.f-quan.on::before { background: var(--on-gold); }
 .combo-input {
   width: 100%; padding: .5rem .6rem; border: 1px solid var(--line); border-radius: 9px;
   background: var(--bg); color: var(--ink); font-size: .82rem;
@@ -179,7 +478,7 @@ body {
   position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 30;
   display: flex; flex-direction: column; gap: 1px;
   background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, .14); padding: .3rem; max-height: 280px; overflow-y: auto;
+  box-shadow: var(--shadow-pop); padding: .3rem; max-height: 280px; overflow-y: auto;
 }
 .combo-list:empty { display: none; }
 .combo-item {
@@ -191,7 +490,7 @@ body {
 .combo-item:focus-visible { outline: none; background: var(--accent-soft); color: var(--accent); }
 .combo-selected { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .45rem; }
 .sel-tag {
-  display: inline-flex; align-items: center; gap: .15rem; background: var(--accent); color: #fff; border: none;
+  display: inline-flex; align-items: center; gap: .15rem; background: var(--accent); color: var(--on-accent); border: none;
   border-radius: 999px; padding: .25rem .6rem; font-size: .76rem; font-weight: 500; cursor: pointer;
   transition: background .15s ease, transform .12s ease;
 }
@@ -201,7 +500,7 @@ body {
 /* ===== Team grid ===== */
 .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: .9rem; }
 .team-card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: .8rem; box-shadow: var(--shadow); transition: transform .12s ease, box-shadow .12s ease; }
-.team-card:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0, 0, 0, .12); }
+.team-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
 .team-card.dim { opacity: .82; }
 .team-name { display: block; width: 100%; text-align: left; background: none; border: none; cursor: pointer; padding: 0 0 .4rem; margin-bottom: .5rem; color: var(--accent); font-size: 1rem; font-weight: 700; letter-spacing: .01em; }
 .team-name:is(button):hover, .reference-team-card .team-name > a:hover { text-decoration: underline; }
@@ -211,26 +510,26 @@ body {
 
 .badge { font-size: .72rem; padding: .15rem .5rem; border-radius: 6px; font-weight: 600; white-space: nowrap; }
 .badge.beta { display: inline-block; margin-left: .2rem; background: var(--accent-soft); color: var(--accent); font-size: .65rem; vertical-align: middle; }
-.badge.unit { color: #fff; }
+.badge.unit { color: var(--on-accent); }
 :root[data-theme="dark"] .badge.unit { color: var(--bg); }
 .badge.unit.small { font-size: .62rem; padding: .05rem .3rem; }
 .u-ky { background: var(--ky); } .u-cung { background: var(--cung); } .u-thuong { background: var(--thuong); } .u-khien { background: var(--khien); }
-.badge.stars { background: #f5c542; color: #5a4500; }
+.badge.stars { background: var(--stars); color: var(--stars-ink); }
 /* Tier team (tham khảo, multi-source): T0 mạnh -> T3 nhạt; half-tier dùng class t-05/t-15 */
-.badge.tier { color: #fff; cursor: help; letter-spacing: .02em; }
-.badge.tier.t-0 { background: #c0392b; }
-.badge.tier.t-05 { background: #d35400; }
-.badge.tier.t-1 { background: #e67e22; }
-.badge.tier.t-15 { background: #d4a017; color: #3a2c00; }
-.badge.tier.t-2 { background: #2980b9; }
+.badge.tier { color: var(--on-accent); cursor: help; letter-spacing: .02em; }
+.badge.tier.t-0 { background: var(--tier-0); }
+.badge.tier.t-05 { background: var(--tier-05); }
+.badge.tier.t-1 { background: var(--tier-1); }
+.badge.tier.t-15 { background: var(--tier-15); color: var(--on-gold); }
+.badge.tier.t-2 { background: var(--tier-2); }
 .badge.tier.t-3 { background: var(--muted); }
 .badge.faction { background: var(--panel-2); color: var(--ink); border: 1px solid var(--line); }
 /* Phe: tô màu nhãn + viền trái card để quét nhanh */
-.badge.faction.f-nguy { background: var(--f-nguy); color: #fff; border-color: transparent; }
-.badge.faction.f-thuc { background: var(--f-thuc); color: #fff; border-color: transparent; }
-.badge.faction.f-ngo { background: var(--f-ngo); color: #fff; border-color: transparent; }
-.badge.faction.f-quan { background: var(--f-quan); color: #3a2c00; border-color: transparent; }
-.badge.faction.f-honhop { background: var(--f-honhop); color: #fff; border-color: transparent; }
+.badge.faction.f-nguy { background: var(--f-nguy); color: var(--on-accent); border-color: transparent; }
+.badge.faction.f-thuc { background: var(--f-thuc); color: var(--on-accent); border-color: transparent; }
+.badge.faction.f-ngo { background: var(--f-ngo); color: var(--on-accent); border-color: transparent; }
+.badge.faction.f-quan { background: var(--f-quan); color: var(--on-gold); border-color: transparent; }
+.badge.faction.f-honhop { background: var(--f-honhop); color: var(--on-accent); border-color: transparent; }
 .team-card.fa-nguy { border-left: 4px solid var(--f-nguy); }
 .team-card.fa-thuc { border-left: 4px solid var(--f-thuc); }
 .team-card.fa-ngo { border-left: 4px solid var(--f-ngo); }
@@ -238,15 +537,15 @@ body {
 .team-card.fa-honhop { border-left: 4px solid var(--f-honhop); }
 .badge.status { border: 1px solid var(--line); }
 .status-out-meta { background: var(--panel-2); color: var(--muted); }
-.status-youtuber-untested { background: #efe0fb; color: #6b2fb3; }
-.status-situational { background: #fde9d6; color: #9a5a1a; }
-.badge.recommend { background: #1e8e4e; color: #fff; letter-spacing: .01em; }
+.status-youtuber-untested { background: var(--status-untested-bg); color: var(--status-untested-ink); }
+.status-situational { background: var(--status-situational-bg); color: var(--status-situational-ink); }
+.badge.recommend { background: var(--status-recommend-bg); color: var(--on-accent); letter-spacing: .01em; }
 
 .heroes { display: flex; flex-direction: column; gap: .5rem; }
 .hero { padding: .35rem .45rem; background: var(--bg); border-radius: 8px; }
 .hero-name { font-size: .92rem; margin-bottom: .2rem; display: flex; align-items: center; gap: .3rem; flex-wrap: wrap; }
 .hn { font-weight: 700; }
-.pre { font-size: .6rem; font-weight: 700; padding: .05rem .25rem; border-radius: 4px; color: #fff; }
+.pre { font-size: .6rem; font-weight: 700; padding: .05rem .25rem; border-radius: 4px; color: var(--on-accent); }
 .pre.sp { background: var(--accent); } .pre.co { background: var(--khien); }
 .variant { font-size: .74rem; color: var(--muted); }
 .line { display: flex; flex-wrap: wrap; gap: .25rem .15rem; align-items: center; margin-top: .15rem; }
@@ -254,7 +553,7 @@ body {
 .alt-sep { color: var(--muted); font-size: .7rem; }
 .tag { border: none; cursor: pointer; font-size: .76rem; padding: .12rem .4rem; border-radius: 5px; }
 .t-tactic { background: var(--accent-soft); color: var(--accent); }
-:root[data-theme="dark"] .t-tactic { color: #ff858b; }
+:root[data-theme="dark"] .t-tactic { color: var(--accent-ink); }
 .t-book { background: var(--panel-2); color: var(--muted); font-size: .72rem; }
 .tag.alt { opacity: .75; font-style: italic; }
 
@@ -300,7 +599,7 @@ body {
 .kh-section-title { font-size: 1rem; color: var(--accent); margin: 0 0 .8rem; padding-bottom: .35rem; border-bottom: 2px solid var(--line); }
 .kh-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 1rem; }
 .kh-card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: .8rem; box-shadow: var(--shadow); transition: transform .12s ease, box-shadow .12s ease; }
-.kh-card:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0, 0, 0, .12); }
+.kh-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
 .kh-title { margin: 0; font-size: .9rem; text-align: right; }
 /* Nhãn Trước/Sau đứng đầu mỗi dòng chiến pháp. */
 .kh-line .kh-label { font-size: .66rem; font-weight: 700; color: var(--muted); text-transform: uppercase; min-width: 2.6rem; }
@@ -320,7 +619,7 @@ body {
 .kh-guide-overview, .kh-guide-scope, .kh-guide-red, .kh-guide-warning, .kh-guide-note { margin: .35rem 0; font-size: .8rem; line-height: 1.5; }
 .kh-guide-scope { color: var(--muted); }
 .kh-guide-warning { color: var(--avoid); }
-:root[data-theme="dark"] .kh-guide-warning { color: #ff858b; }
+:root[data-theme="dark"] .kh-guide-warning { color: var(--accent-ink); }
 .kh-guide-ratings { display: flex; flex-wrap: wrap; gap: .35rem; }
 .kh-guide-rating { padding: .15rem .35rem; border-radius: .3rem; background: var(--bg); font-size: .76rem; }
 .kh-guide-details { margin-top: .5rem; }
@@ -358,7 +657,7 @@ body {
 .tac-card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); box-shadow: var(--shadow); padding: .65rem .75rem; display: flex; flex-direction: column; gap: .35rem; }
 .tac-head { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
 .tac-viet { font-weight: 700; font-size: .98rem; color: var(--ink); }
-.tac-q { font-weight: 700; font-size: .72rem; padding: .08rem .4rem; border-radius: 999px; color: #fff; }
+.tac-q { font-weight: 700; font-size: .72rem; padding: .08rem .4rem; border-radius: 999px; color: var(--on-accent); }
 .tac-q.q-S { background: var(--accent); }
 .tac-q.q-A { background: var(--f-nguy); }
 .tac-q.q-B { background: var(--muted); }
@@ -399,8 +698,8 @@ body {
 }
 .rt-btn:hover { border-color: var(--accent); color: var(--accent); }
 .rt-btn:disabled { opacity: .55; cursor: not-allowed; }
-.rt-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-.rt-primary:hover { color: #fff; filter: brightness(1.03); }
+.rt-primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.rt-primary:hover { color: var(--on-accent); filter: brightness(1.03); }
 .rt-btn-small { min-height: 2rem; padding: .3rem .55rem; font-size: .76rem; }
 .rt-file { display: none; }
 .rt-import { position: relative; overflow: hidden; }
@@ -459,7 +758,7 @@ body {
 .team-filters.collapsed { display: flex; }
 .fchip.recommend { border-color: var(--good); color: var(--good); }
 .fchip.recommend:hover { background: var(--good-bg); border-color: var(--good); }
-.fchip.recommend.on { background: var(--good); border-color: var(--good); color: #fff; box-shadow: 0 2px 6px rgba(31, 122, 77, .28); }
+.fchip.recommend.on { background: var(--good); border-color: var(--good); color: var(--on-accent); box-shadow: var(--shadow-good); }
 
 .section-intro { margin: .2rem 0 .8rem; }
 .section-intro-title { margin: 0 0 .2rem; font-size: 1.1rem; color: var(--accent); }
@@ -470,7 +769,7 @@ body {
 .flabel-inline { font-size: .68rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 700; }
 .hero-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: .7rem; margin-top: .4rem; }
 .hero-card { display: flex; gap: .6rem; align-items: flex-start; text-align: left; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); box-shadow: var(--shadow); padding: .55rem .65rem; cursor: pointer; transition: transform .12s ease, box-shadow .12s ease; }
-.hero-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, .12); border-color: var(--accent); }
+.hero-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); border-color: var(--accent); }
 .hc-icon { width: 52px; height: 52px; border-radius: 8px; object-fit: cover; background: var(--panel-2); flex-shrink: 0; }
 .hc-body { display: flex; flex-direction: column; gap: .3rem; min-width: 0; }
 .hc-name { font-weight: 700; font-size: .9rem; color: var(--ink); }
@@ -478,14 +777,14 @@ body {
 .badge.role { background: var(--accent-soft); color: var(--accent); }
 .hc-apt { display: flex; flex-wrap: wrap; gap: .2rem; }
 .apt { display: inline-flex; gap: .2rem; font-size: .68rem; padding: .06rem .4rem; border-radius: 999px; background: var(--panel-2); color: var(--ink); }
-.apt-s { background: var(--accent); color: #fff; }
-.apt-a { background: var(--f-nguy); color: #fff; }
+.apt-s { background: var(--accent); color: var(--on-accent); }
+.apt-a { background: var(--f-nguy); color: var(--on-accent); }
 .apt-troop { font-weight: 600; }
 
 /* Modal chi tiết tướng */
-.hero-overlay { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, .5); display: flex; align-items: flex-start; justify-content: center; padding: 4vh 1rem; overflow-y: auto; }
+.hero-overlay { position: fixed; inset: 0; z-index: 50; background: var(--overlay); display: flex; align-items: flex-start; justify-content: center; padding: 4vh 1rem; overflow-y: auto; }
 .hero-overlay-close { position: absolute; top: 1rem; right: 1rem; width: 2.2rem; height: 2.2rem; border-radius: 50%; border: none; background: var(--panel); color: var(--ink); font-size: 1.1rem; cursor: pointer; box-shadow: var(--shadow); }
-.hero-modal { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 8px 30px rgba(0, 0, 0, .3); padding: 1rem 1.1rem; max-width: 540px; width: 100%; display: flex; flex-direction: column; gap: .85rem; }
+.hero-modal { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-modal); padding: 1rem 1.1rem; max-width: 540px; width: 100%; display: flex; flex-direction: column; gap: .85rem; }
 .hero-modal-head { display: flex; gap: .8rem; align-items: center; }
 .hero-modal-icon { width: 72px; height: 72px; border-radius: 10px; object-fit: cover; background: var(--panel-2); flex-shrink: 0; }
 .hero-modal-id { display: flex; flex-direction: column; gap: .3rem; }
@@ -516,7 +815,7 @@ body {
 .ana-preview { display: none; max-width: 100%; max-height: 260px; margin: .7rem 0; border-radius: var(--radius); border: 1px solid var(--line); }
 .ana-preview.on { display: block; }
 .ana-turnstile { margin: .6rem 0; }
-.ana-btn { background: var(--accent); color: #fff; border: none; border-radius: var(--radius); padding: .55rem 1.1rem; font-size: .95rem; font-weight: 600; cursor: pointer; }
+.ana-btn { background: var(--accent); color: var(--on-accent); border: none; border-radius: var(--radius); padding: .55rem 1.1rem; font-size: .95rem; font-weight: 600; cursor: pointer; }
 .ana-btn:disabled { opacity: .5; cursor: not-allowed; }
 .ana-status { font-size: .85rem; margin: .5rem 0; }
 .ana-status.err { color: var(--avoid); }
@@ -526,7 +825,7 @@ body {
 .ana-hero { border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); padding: .55rem .7rem; }
 .ana-hero-head { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; margin-bottom: .35rem; }
 .ana-hero-name { font-weight: 700; }
-.ana-stat { font-size: .72rem; padding: .06rem .4rem; border-radius: 999px; background: var(--f-nguy); color: #fff; }
+.ana-stat { font-size: .72rem; padding: .06rem .4rem; border-radius: 999px; background: var(--f-nguy); color: var(--on-accent); }
 .ana-flag { font-size: .7rem; color: var(--avoid); }
 .ana-hero-icon { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex: none; }
 .ana-tactics { display: flex; flex-wrap: wrap; gap: .3rem; }
@@ -858,7 +1157,7 @@ body {
 .team-filters .fgroup.secondary { opacity:.95; }
 .reference-detail-holder { border-top:1px solid var(--line); padding-block:10px; }
 /* Badge biến thể 40Y dùng chung style .pre với SP/CO. */
-.pre.y40 { background:var(--f-quan); color:#3a2c00; }
+.pre.y40 { background:var(--f-quan); color:var(--on-gold); }
 /* Duyên phận không phải chiến pháp: màu khác và không bấm được để lọc. */
 .t-bond { background:var(--panel-2); color:var(--f-honhop); cursor:default; }
 .slot-label { font-size:.72rem; color:var(--muted); }
@@ -909,8 +1208,8 @@ body {
 .lookup-card > img { width:52px; height:52px; flex:0 0 52px; object-fit:cover; }
 .lookup-card > button { width:100%; min-height:52px; padding:.7rem; text-align:left; border:0; background:transparent; color:var(--ink); cursor:pointer; overflow-wrap:anywhere; }
 .lookup-more { min-height:44px; margin:1rem auto; display:block; padding:.5rem 1rem; border:1px solid var(--accent); border-radius:8px; background:var(--panel); color:var(--accent); }
-.lookup-backdrop { position:fixed; inset:0; z-index:70; display:flex; align-items:flex-start; justify-content:center; padding:4vh 1rem; overflow:auto; background:rgba(0,0,0,.55); }
-.lookup-dialog { width:min(680px,100%); max-height:92vh; overflow:auto; padding:1rem; border:1px solid var(--line); border-radius:12px; background:var(--panel); color:var(--ink); box-shadow:0 12px 36px rgba(0,0,0,.35); overflow-wrap:anywhere; }
+.lookup-backdrop { position:fixed; inset:0; z-index:70; display:flex; align-items:flex-start; justify-content:center; padding:4vh 1rem; overflow:auto; background:var(--overlay); }
+.lookup-dialog { width:min(680px,100%); max-height:92vh; overflow:auto; padding:1rem; border:1px solid var(--line); border-radius:12px; background:var(--panel); color:var(--ink); box-shadow:var(--shadow-modal); overflow-wrap:anywhere; }
 .lookup-dialog h3 { margin-top:0; }
 .lookup-close { float:right; min-width:44px; min-height:44px; }
 .lookup-profile { display:flex; flex-direction:column; gap:.5rem; }
@@ -918,4 +1217,286 @@ body {
 .lookup-profile button { min-height:44px; text-align:left; color:var(--accent); background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:.5rem; }
 .lookup-dialog :focus-visible,.lookup-card button:focus-visible,.lookup-chip:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
 @media (max-width:680px) { .lookup-search { font-size:16px; } .lookup-backdrop { padding:1rem .5rem; } .lookup-dialog { max-height:calc(100vh - 2rem); } }
+/* legacy:end */
 
+/* ===== Component nền (Phase 1) ===== */
+/* Component nền dùng lại cho mọi mục: giá trị chỉ qua token, xem danh mục ở tokens.json (mục `components`).
+   Rule ở đây nằm sau khối legacy nên thắng khi trùng selector; rule riêng của legacy (focus 3px, mobile 44px)
+   vẫn thắng vì specificity cao hơn — phase sở hữu từng mục sẽ thay dần. */
+
+body {
+  font: var(--type-body);
+}
+
+.site-title {
+  font: var(--type-brand);
+}
+
+/* ---------- Badge ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  min-height: var(--control-24);
+  padding: var(--space-2) var(--space-9);
+  border-radius: var(--radius-999);
+  font: var(--type-badge);
+  color: var(--ink);
+}
+
+/* Badge phe: nền thẻ + ô vuông màu 8px (aria-hidden) đi kèm chữ tên phe. */
+.badge.faction,
+.badge.faction[class*="f-"] {
+  gap: var(--space-6);
+  min-height: var(--control-28);
+  padding: 0 var(--space-11);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-999);
+  background: var(--panel);
+  color: var(--ink);
+  font: var(--type-badge);
+}
+
+.badge.faction[class*="f-"]::before {
+  content: "";
+  flex: none;
+  width: var(--space-8);
+  height: var(--space-8);
+  border-radius: var(--radius-2);
+  background: var(--badge-dot);
+}
+
+.badge.faction.f-nguy { --badge-dot: var(--f-nguy); }
+.badge.faction.f-thuc { --badge-dot: var(--f-thuc); }
+.badge.faction.f-ngo { --badge-dot: var(--f-ngo); }
+.badge.faction.f-quan { --badge-dot: var(--f-quan); }
+.badge.faction.f-honhop { --badge-dot: var(--f-honhop); }
+
+/* Badge loại binh: nền giấy đậm, chữ mực 2 — màu chỉ dành cho phe. */
+.badge.unit {
+  background: var(--panel-2);
+  color: var(--ink-2);
+}
+
+:root[data-theme="dark"] .badge.unit {
+  color: var(--ink-2);
+}
+
+/* ---------- Chip lọc ---------- */
+.fchip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  min-height: var(--control-44);
+  padding: 0 var(--space-14);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-999);
+  background: var(--panel-3);
+  color: var(--ink);
+  font: var(--type-control);
+}
+
+.fchip:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+/* Chip bật: nền dải + chữ trên dải; chấm phe giữ màu phe (chữ luôn nói rõ phe). */
+.fchip.on,
+.fchip[aria-pressed="true"],
+.fchip[class*="f-"].on,
+.fchip[class*="f-"][aria-pressed="true"],
+.fchip.recommend.on,
+.fchip.recommend[aria-pressed="true"] {
+  background: var(--band);
+  border-color: var(--band);
+  color: var(--band-ink);
+}
+
+.fchip[class*="f-"]::before {
+  width: var(--space-8);
+  height: var(--space-8);
+  margin-right: 0;
+  border-radius: var(--radius-2);
+}
+
+.fchip[class*="f-"]::before,
+.fchip[class*="f-"].on::before,
+.fchip[class*="f-"][aria-pressed="true"]::before {
+  background: var(--chip-dot);
+}
+
+.fchip.f-nguy { --chip-dot: var(--f-nguy); }
+.fchip.f-thuc { --chip-dot: var(--f-thuc); }
+.fchip.f-ngo { --chip-dot: var(--f-ngo); }
+.fchip.f-quan { --chip-dot: var(--f-quan); }
+.fchip.f-honhop { --chip-dot: var(--f-honhop); }
+
+/* ---------- Nút ---------- */
+.ana-link-btn,
+a.ana-link-btn,
+.detail-action,
+a.detail-action,
+.lookup-more,
+a.lookup-more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--control-44);
+  padding: 0 var(--space-18);
+  border: var(--border-hair) solid var(--band);
+  border-radius: var(--radius-10);
+  background: var(--band);
+  color: var(--band-ink);
+  font: var(--type-control);
+  text-decoration: none;
+}
+
+.ana-link-btn:hover,
+a.ana-link-btn:hover,
+.detail-action:hover,
+a.detail-action:hover,
+.lookup-more:hover,
+a.lookup-more:hover {
+  background: var(--band-active);
+  border-color: var(--band-active);
+  color: var(--band-ink);
+}
+
+.detail-link,
+.kh-detail-link,
+.score-toggle,
+.rt-btn:not(.rt-primary) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--control-44);
+  padding: 0 var(--space-16);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-10);
+  background: var(--panel-3);
+  color: var(--ink);
+  font: var(--type-control);
+  text-decoration: none;
+}
+
+.detail-link:hover,
+.kh-detail-link:hover,
+.score-toggle:hover,
+.rt-btn:not(.rt-primary):hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Nhãn biến thể (SP / CO / 40Y) trên thẻ: nền giấy đậm + mực 2 như badge loại binh.
+   `.pre.y40` cũ dùng `#3A2C00` trên `--f-quan` #B08422 = 4,01:1 (< 4,5) sau khi `--f-quan` theo artboard. */
+.pre.y40 {
+  background: var(--panel-2);
+  color: var(--ink-2);
+}
+
+.clear-btn {
+  min-height: var(--control-44);
+  padding: 0 var(--space-6);
+  border: none;
+  background: none;
+  border-radius: var(--radius-10);
+  color: var(--accent);
+  font: var(--type-control);
+}
+
+/* ---------- Nút chiến pháp (tìm) ---------- */
+.tag.t-tactic {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-26);
+  padding: 0 var(--space-9);
+  border: none;
+  border-radius: var(--radius-6);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font: var(--type-tag);
+}
+
+/* ---------- Số điểm serif son ---------- */
+.badge.score:not(.missing-score) {
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font: var(--type-score-card);
+}
+
+.detail-score {
+  color: var(--accent);
+  font: var(--type-score-table);
+}
+
+/* ---------- Thẻ ---------- */
+.team-card,
+.kh-card,
+.tac-card,
+.lookup-card,
+.rt-section,
+.ana-hero,
+.mine,
+.coexist-group,
+.cham-su-card,
+.season-config-detail {
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-10);
+  background: var(--panel);
+  box-shadow: var(--shadow-card);
+}
+
+.team-card:hover,
+.kh-card:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+/* ---------- Ô tìm ---------- */
+.search,
+.lookup-search,
+.tac-search,
+.combo-input {
+  min-height: var(--control-48);
+  padding: 0 var(--space-14);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-12);
+  background: var(--panel);
+  color: var(--ink);
+  font: var(--type-input);
+}
+
+/* ---------- Select và nhãn caps ---------- */
+.season-slot select,
+.team-filter-bar select,
+.reference-scope-controls select,
+.rt-select,
+.rt-form select,
+.kh-variant-select {
+  min-height: var(--control-44);
+  padding: 0 var(--space-14);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-10);
+  background: var(--panel);
+  color: var(--ink);
+  font: var(--type-select);
+}
+
+.flabel,
+.flabel-inline,
+.rt-kicker {
+  font: var(--type-field-caps);
+  letter-spacing: var(--type-field-caps-spacing);
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+/* ---------- Focus bàn phím ---------- */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: var(--focus-width) solid var(--focus-ring);
+  outline-offset: var(--focus-outline-offset);
+}

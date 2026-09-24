@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { mkdtemp, mkdir, readFile, symlink, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, readdir, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -49,6 +49,21 @@ ${locations.map((location) => `  <url>\n    <loc>${location}</loc>\n  </url>`).j
 `;
 
 const FIXTURE_ROBOTS = `User-agent: *\nAllow: /\n\nSitemap: ${FIXTURE_ORIGIN}/sitemap.xml\n`;
+
+const FIXTURE_HEADERS = "/\n  Cache-Control: max-age=0\n";
+
+/** Font self-host là thư mục public tĩnh; fixture dist phải có bản sao byte-equal ở cả hai phía. */
+async function writeStaticFonts(projectDir, distDir) {
+  const source = await readdir(new URL("public/fonts/", projectRoot));
+  assert.ok(source.includes("OFL.txt"), "public/fonts phải kèm giấy phép OFL");
+  await mkdir(join(projectDir, "public", "fonts"), { recursive: true });
+  await mkdir(join(distDir, "fonts"), { recursive: true });
+  for (const name of source) {
+    const bytes = await readFile(new URL(`public/fonts/${name}`, projectRoot));
+    await writeFile(join(projectDir, "public", "fonts", name), bytes);
+    await writeFile(join(distDir, "fonts", name), bytes);
+  }
+}
 
 /** Head metadata is read back by attribute so tag order never decides the contract. */
 const tagAttribute = (tag, name) => tag?.match(new RegExp(`${name}=["']([^"']*)["']`, "u"))?.[1] ?? null;
@@ -418,12 +433,13 @@ test("dist verifier rejects missing, unexpected, and symlinked output", async (t
   await mkdir(join(projectDir, "public"));
   await mkdir(join(distDir, "data"));
   await writeFile(join(projectDir, "data", "fixture.json"), "{}\n");
-  await writeFile(join(projectDir, "public", "_headers"), "/\n  Cache-Control: max-age=0\n");
+  await writeFile(join(projectDir, "public", "_headers"), FIXTURE_HEADERS);
   await writeFile(join(distDir, "index.html"), "<!doctype html>\n");
-  await writeFile(join(distDir, "_headers"), "/\n  Cache-Control: max-age=0\n");
+  await writeFile(join(distDir, "_headers"), FIXTURE_HEADERS);
   const favicon = await readFile(new URL("public/favicon.png", projectRoot));
   await writeFile(join(projectDir, "public", "favicon.png"), favicon);
   await writeFile(join(distDir, "favicon.png"), favicon);
+  await writeStaticFonts(projectDir, distDir);
   await writeRecommendedFixture(projectDir, distDir);
 
   await assert.rejects(
@@ -457,7 +473,7 @@ test("dist verifier rejects missing, unexpected, and symlinked output", async (t
     }),
     /control artifact bytes differ/i,
   );
-  await writeFile(join(distDir, "_headers"), "/\n  Cache-Control: max-age=0\n");
+  await writeFile(join(distDir, "_headers"), FIXTURE_HEADERS);
   await symlink(join(projectDir, "data", "fixture.json"), join(distDir, "fixture-link.json"));
   await assert.rejects(
     verifyAstroDist({
@@ -481,11 +497,12 @@ test("dist verifier admits exactly the catalog team pages, the 404 and no stale 
   });
   const manifest = [];
   await mkdir(join(projectDir, "public"), { recursive: true });
-  await writeFile(join(projectDir, "public", "_headers"), "/\n  Cache-Control: max-age=0\n");
-  await writeFile(join(distDir, "_headers"), "/\n  Cache-Control: max-age=0\n");
+  await writeFile(join(projectDir, "public", "_headers"), FIXTURE_HEADERS);
+  await writeFile(join(distDir, "_headers"), FIXTURE_HEADERS);
   const favicon = await readFile(new URL("public/favicon.png", projectRoot));
   await writeFile(join(projectDir, "public", "favicon.png"), favicon);
   await writeFile(join(distDir, "favicon.png"), favicon);
+  await writeStaticFonts(projectDir, distDir);
   const fixture = await writeRecommendedFixture(projectDir, distDir);
   const verify = () => verifyAstroDist({
     projectRoot: new URL(`file://${projectDir}/`),
@@ -597,6 +614,9 @@ test("built dist is allowlisted and every emitted asset is byte-identical", asyn
   assert.equal(result.assetCount, PUBLIC_ARTIFACTS.length);
   assert.ok(result.files.includes("index.html"));
   assert.ok(result.files.includes("_headers"));
+  // Font self-host đi kèm giấy phép và nằm trong allowlist dist.
+  assert.ok(result.files.includes("fonts/be-vietnam-pro-400-latin.woff2"));
+  assert.ok(result.files.includes("fonts/OFL.txt"));
   // The Khai hoang page ships with its own entry: both must exist in the emitted dist.
   assert.ok(result.files.includes("js/khaihoang-detail.js"));
   assert.ok(result.files.includes("khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/index.html"));
@@ -721,11 +741,12 @@ test("dist verifier locks the emitted sitemap to the catalog route set", async (
     ]);
   });
   await mkdir(join(projectDir, "public"), { recursive: true });
-  await writeFile(join(projectDir, "public", "_headers"), "/\n  Cache-Control: max-age=0\n");
-  await writeFile(join(distDir, "_headers"), "/\n  Cache-Control: max-age=0\n");
+  await writeFile(join(projectDir, "public", "_headers"), FIXTURE_HEADERS);
+  await writeFile(join(distDir, "_headers"), FIXTURE_HEADERS);
   const favicon = await readFile(new URL("public/favicon.png", projectRoot));
   await writeFile(join(projectDir, "public", "favicon.png"), favicon);
   await writeFile(join(distDir, "favicon.png"), favicon);
+  await writeStaticFonts(projectDir, distDir);
   await writeRecommendedFixture(projectDir, distDir);
   const verify = () => verifyAstroDist({
     projectRoot: new URL(`file://${projectDir}/`),
@@ -886,6 +907,49 @@ test("season hashes and data routes serve the pinned lookup generation", async (
   assert.deepEqual(Buffer.from(served.bytes), payloads["heroes-dict.json"]);
 });
 
+test("dist verifier byte-locks the self-hosted font directory", async (t) => {
+  const { rm } = await import("node:fs/promises");
+  const projectDir = await mkdtemp(join(tmpdir(), "tqccl-fonts-source-"));
+  const distDir = await mkdtemp(join(tmpdir(), "tqccl-fonts-dist-"));
+  t.after(async () => {
+    await Promise.all([
+      rm(projectDir, { recursive: true, force: true }),
+      rm(distDir, { recursive: true, force: true }),
+    ]);
+  });
+  await mkdir(join(projectDir, "public"), { recursive: true });
+  await writeFile(join(projectDir, "public", "_headers"), FIXTURE_HEADERS);
+  await writeFile(join(distDir, "_headers"), FIXTURE_HEADERS);
+  const favicon = await readFile(new URL("public/favicon.png", projectRoot));
+  await writeFile(join(projectDir, "public", "favicon.png"), favicon);
+  await writeFile(join(distDir, "favicon.png"), favicon);
+  await writeStaticFonts(projectDir, distDir);
+  await writeRecommendedFixture(projectDir, distDir);
+  const verify = () => verifyAstroDist({
+    projectRoot: new URL(`file://${projectDir}/`),
+    distDir: new URL(`file://${distDir}/`),
+    manifest: [],
+  });
+
+  const result = await verify();
+  assert.ok(result.staticFileCount >= 16, "mọi file font + giấy phép phải nằm trong allowlist dist");
+  assert.ok(result.files.includes("fonts/OFL.txt"));
+
+  // Sửa nội dung một file font trong dist là lệch byte với nguồn đã review.
+  await writeFile(join(distDir, "fonts", "OFL.txt"), "tampered\n");
+  await assert.rejects(verify(), /fonts\/OFL\.txt/i);
+  await writeStaticFonts(projectDir, distDir);
+
+  // File lạ trong dist/fonts không được lọt qua allowlist.
+  await writeFile(join(distDir, "fonts", "extra.woff2"), "x");
+  await assert.rejects(verify(), /unexpected: fonts\/extra\.woff2/i);
+  await rm(join(distDir, "fonts", "extra.woff2"));
+
+  // Thiếu một file font đã publish cũng chặn.
+  await rm(join(distDir, "fonts", "OFL.txt"));
+  await assert.rejects(verify(), /missing: fonts\/OFL\.txt/i);
+});
+
 async function lookupDistFixture(t) {
   const projectDir = await mkdtemp(join(tmpdir(), "tqccl-lookup-dist-source-"));
   const distDir = await mkdtemp(join(tmpdir(), "tqccl-lookup-dist-out-"));
@@ -903,6 +967,7 @@ async function lookupDistFixture(t) {
   const favicon = await readFile(new URL("public/favicon.png", projectRoot));
   await writeFile(join(projectDir, "public", "favicon.png"), favicon);
   await writeFile(join(distDir, "favicon.png"), favicon);
+  await writeStaticFonts(projectDir, distDir);
   await writeRecommendedFixture(projectDir, distDir);
   const marker = async (hashes) => {
     const html = await readFile(join(distDir, "index.html"), "utf8");

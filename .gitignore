@@ -32,3 +32,6 @@ pipeline/lookup-output/activation-*/
 # Candidate build tạm thời — tái tạo từ lookup inputs khi cần review/promote
 pipeline/lookup-output/candidate/
 pipeline/lookup-output/transactions/
+
+# Cache tạm của công cụ design (ảnh so sánh, báo cáo trích token, venv fontTools)
+.cache/
