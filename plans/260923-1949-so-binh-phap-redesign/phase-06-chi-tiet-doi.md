@@ -24,7 +24,7 @@ Brainstorm §3 (URL chi tiết đóng băng), §7 Bước 4, §11.3 (Khai hoang 
 
 ## Tasks & Steps
 1. Khung chung: hàng quay lại (`.detail-back-row`, `.detail-link` giữ) → header (tên serif, `nameZh` nếu có, dòng mùa · danh mục, badge phe + binh) → panel điểm (`.detail-score` giữ; số serif son; "Xem nguồn" trỏ link nguồn đã có trong dữ liệu; nút "Sao chép liên kết" dùng `navigator.clipboard.writeText(location.href)` với thông báo `role="status"`, lỗi clipboard → chọn sẵn URL trong ô chỉ đọc).
-2. Thẻ tướng ×3 theo artboard; giữ các phần detail đang có mà artboard không vẽ (ghi chú theo tướng, phương án thay thế, "Khắc được"/"Sợ", tham chiếu legacy, metadata nguồn) — xếp dưới thẻ tướng theo thứ tự artboard "ghi chú nguồn đánh số", không bỏ dữ liệu.
+2. Thẻ tướng ×3 theo artboard; giữ các phần detail đang có mà artboard không vẽ (ghi chú theo tướng, phương án thay thế, "Khắc được"/"Sợ", tham chiếu legacy, metadata nguồn) — xếp dưới thẻ tướng theo thứ tự artboard "ghi chú nguồn đánh số", không bỏ dữ liệu. "Khắc được"/"Sợ" lấy từ `content.counters` legacy (`recommended-reference-render.js:198-225`): trang Đội chuẩn hiện không có dữ liệu này (0/1366) → không render khối, không để tiêu đề rỗng.
 3. Đội khác: phần nào thiếu dữ liệu (tên Trung, điểm) → không render phần đó, không để ô trống.
 4. Khai hoang chi tiết: khung giống trên; nội dung hướng dẫn giữ đúng plan `260922-1806` (build đang chọn + hướng dẫn đầy đủ + chọn variant), chỉ đổi trình bày.
 5. `?from=` và snapshot quay lại (Phase 2) không đổi hành vi.

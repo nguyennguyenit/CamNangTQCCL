@@ -1,6 +1,6 @@
 # Brainstorm — Redesign "Sổ binh pháp" (toàn site)
 
-Ngày: 2026-09-23 · Cập nhật: 2026-09-24 (xem §10) · Trạng thái: **đã chốt, sẵn sàng làm plan** · Nguồn design: canvas <https://claude.ai/artifact/JshDEV8qspJo6VJ6rgiB71> · bản chụp trong repo: [docs/design/so-binh-phap/](../../docs/design/so-binh-phap/README.md) (phiên bản `1790189023-ec86`, 2026-09-24)
+Ngày: 2026-09-23 · Cập nhật: 2026-09-24 (xem §10) · Trạng thái: **đã chốt, sẵn sàng làm plan** · Nguồn design: canvas <https://claude.ai/artifact/JshDEV8qspJo6VJ6rgiB71> · bản chụp trong repo: [docs/design/so-binh-phap/](../../docs/design/so-binh-phap/README.md) (phiên bản `1790191281-3a81`, 2026-09-24)
 
 ## 1. Outcome
 
