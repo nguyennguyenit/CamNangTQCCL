@@ -34,6 +34,7 @@ Brainstorm §5 #6 (chân dung + fallback), §6 (Tra cứu), §11.4 (font CJK), a
 
 ## Verification
 - e2e: chặn ảnh bằng `page.route` cho **mọi** host chân dung đang có trong `heroes-dict.json` (hiện `image.aligames.com` 92 tướng, `cloud.lingxigames.com` 20 tướng; 90 tướng không có `iconUrl`) — lấy danh sách host từ dữ liệu trong test, không viết cứng một domain → mọi thẻ hiện fallback chữ Hán, không ảnh vỡ; không phần tử nào có text khớp `/\b[a-z]+[A-Z][A-Za-z]*:/` (khóa thô) trong hồ sơ; hộp thoại khóa focus + Escape + trả focus; deep-link `?group=&id=` mở đúng hồ sơ; số liệu "Trong cẩm nang" của 1 tướng khớp phép đếm độc lập trong test; `index.json` không được tải khi chưa mở hồ sơ (đếm request).
+- **Đo tải "Trong cẩm nang":** `index.json` 3.374.425 byte, gzip ≈ 309 KB (đo 2026-09-25). Playwright mở `/tra-cuu/` ở 390px với throttle CDP "Fast 3G" (`Network.emulateNetworkConditions`: 1,6 Mbps xuống, latency 150 ms) và CPU ×4, cache trống; đo từ lúc bấm thẻ tướng đầu tiên tới lúc khối "Trong cẩm nang" có số liệu, lấy trung vị 3 lần, ghi vào `visual-phase-07.md`. Hộp thoại + phần hồ sơ khác phải hiện ngay, khối "Trong cẩm nang" có trạng thái đang tải (`aria-busy`) trong lúc chờ. Trung vị > 2 s → **dừng**, báo người dùng, đề xuất chuyển phép tính sang build (file thống kê theo tướng, thêm vào manifest/verifier/`_headers`) thay vì tự làm.
 - `node --test tests-js/unified-lookup.test.mjs`
 - `npm run check && npm run build && npm run verify && npm run test:e2e`
 - `node scripts/design-compare.mjs --phase 07` → `reports/visual-phase-07.md`.
