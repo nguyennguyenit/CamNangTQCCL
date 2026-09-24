@@ -1,13 +1,15 @@
 ---
 phase: 2
 title: "UI tra cứu tướng + modal"
-status: pending
+status: cancelled
 priority: P1
 effort: "5h"
 dependencies: [1]
 ---
 
 # Phase 2: UI tra cứu tướng + modal
+
+Không triển khai tiếp theo [quyết định ngày 2026-09-24](./plan.md). Nội dung và checklist bên dưới chỉ giữ làm lịch sử.
 
 ## Overview
 Tab mới "Tra cứu tướng" (mirror pattern `tactics.js`: search + chip lọc + grid card) và modal chi tiết tướng. Modal mở từ card tab tướng (modal-từ-Soi-đội tách pha sau, KHÔNG làm ở đây).

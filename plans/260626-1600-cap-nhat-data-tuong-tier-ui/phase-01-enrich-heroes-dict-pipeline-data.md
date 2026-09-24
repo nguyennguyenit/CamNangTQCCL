@@ -1,13 +1,15 @@
 ---
 phase: 1
 title: "Enrich heroes-dict (pipeline+data)"
-status: pending
+status: cancelled
 priority: P1
 effort: "3h"
 dependencies: []
 ---
 
 # Phase 1: Enrich heroes-dict (pipeline+data)
+
+Không triển khai tiếp theo [quyết định ngày 2026-09-24](./plan.md). Nội dung và checklist bên dưới chỉ giữ làm lịch sử.
 
 ## Overview
 Parse thêm field đã có sẵn trong cache lingxi vào `heroes-dict.json`: thích tính binh chủng (S/A/B), tên chiến pháp truyền thừa, tag vai trò (+ map Hán→Việt). KHÔNG thêm mô tả chiến pháp (link runtime ở P2).

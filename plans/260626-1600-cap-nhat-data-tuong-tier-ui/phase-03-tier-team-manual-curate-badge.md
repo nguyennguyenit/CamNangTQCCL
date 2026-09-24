@@ -1,13 +1,15 @@
 ---
 phase: 3
 title: "Tier team manual curate + badge"
-status: pending
+status: cancelled
 priority: P2
 effort: "4h"
 dependencies: []
 ---
 
 # Phase 3: Tier team manual curate + badge
+
+Không triển khai tiếp theo [quyết định ngày 2026-09-24](./plan.md). Nội dung và checklist bên dưới chỉ giữ làm lịch sử.
 
 ## Overview
 Gắn tier T0–T3 vào **team** (172 team) từ bảng curate thủ công, build ra `data/team-tier.json`, hiển thị badge ở card Team PK. Nguồn TQ rank đội hình nên đây là điểm gắn đúng.

@@ -1,7 +1,7 @@
 ---
 title: "Cập nhật data tướng + UI chi tiết + tier team"
 description: ""
-status: pending
+status: cancelled
 priority: P2
 branch: "main"
 tags: []
@@ -13,6 +13,12 @@ source: skill
 ---
 
 # Cập nhật data tướng + UI chi tiết + tier team
+
+## Quyết định ngừng triển khai — 2026-09-24
+
+Theo yêu cầu người dùng, không cook tiếp plan này và không đưa vào danh sách công việc đang mở. Các chức năng của bốn phase đã được triển khai trước đây; đường build và giao diện hiện hành đã được các plan kế nhiệm thay thế, đặc biệt [Bộ tra cứu thống nhất](../260912-0607-unified-lookup/plan.md).
+
+Trạng thái `cancelled` áp dụng cho plan và cả bốn phase, không có nghĩa là gỡ bỏ chức năng đã có hoặc xác nhận toàn bộ acceptance cũ đã pass. Giữ nguyên checklist và nội dung bên dưới làm lịch sử; các ghi chú pending hoặc không tự đóng plan trước đây được quyết định này thay thế.
 
 ## Overview
 
@@ -30,10 +36,10 @@ Làm giàu data 112 tướng từ field lingxi đã crawl sẵn (parse thêm, kh
 
 | Phase | Name | Status |
 |-------|------|--------|
-| 1 | [Enrich heroes-dict (pipeline+data)](./phase-01-enrich-heroes-dict-pipeline-data.md) | Pending |
-| 2 | [UI tra cứu tướng + modal](./phase-02-ui-tra-c-u-t-ng-modal.md) | Pending |
-| 3 | [Tier team manual curate + badge](./phase-03-tier-team-manual-curate-badge.md) | Pending |
-| 4 | [Seasonal suggest-helper (optional)](./phase-04-seasonal-suggest-helper-optional.md) | Pending |
+| 1 | [Enrich heroes-dict (pipeline+data)](./phase-01-enrich-heroes-dict-pipeline-data.md) | Cancelled |
+| 2 | [UI tra cứu tướng + modal](./phase-02-ui-tra-c-u-t-ng-modal.md) | Cancelled |
+| 3 | [Tier team manual curate + badge](./phase-03-tier-team-manual-curate-badge.md) | Cancelled |
+| 4 | [Seasonal suggest-helper (optional)](./phase-04-seasonal-suggest-helper-optional.md) | Cancelled |
 
 ## Dependencies
 

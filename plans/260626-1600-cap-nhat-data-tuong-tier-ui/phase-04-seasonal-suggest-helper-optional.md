@@ -1,13 +1,15 @@
 ---
 phase: 4
 title: "Seasonal suggest-helper (optional)"
-status: pending
+status: cancelled
 priority: P3
 effort: "3h"
 dependencies: [3]
 ---
 
 # Phase 4: Seasonal suggest-helper (optional)
+
+Không triển khai tiếp theo [quyết định ngày 2026-09-24](./plan.md). Nội dung và checklist bên dưới chỉ giữ làm lịch sử.
 
 ## Overview
 Trợ lý chạy 1 lần/mùa: fetch nguồn tier TQ, trích chuỗi tên đội T0/T1, **in gợi ý** để người duyệt rồi chép vào `team-tier-map.json`. KHÔNG auto-ghi data, KHÔNG vào runtime. Optional — chỉ làm nếu P3 ổn và còn nhu cầu.
