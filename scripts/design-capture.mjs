@@ -48,7 +48,7 @@ async function boards() {
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
-async function capture(browser, origin, board) {
+async function captureOnce(browser, origin, board) {
   const page = await browser.newPage({ viewport: { width: board.width, height: board.height }, deviceScaleFactor: 1 });
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
@@ -58,16 +58,34 @@ async function capture(browser, origin, board) {
     const failure = await page.getAttribute('html', 'data-dc-error');
     if (failure) throw new Error(failure);
     if (errors.length) throw new Error(errors.join('\n'));
-    const missing = await page.evaluate(async (families) => {
+    // Google Fonts chia mỗi font thành nhiều lát unicode-range và chỉ tải lát khi layout cần → thứ tự tải
+    // thay đổi theo mạng, ảnh chụp lệch giữa các lần chạy. Tải hết mọi lát; lát nào lỗi mạng thì chụp lại.
+    const unloaded = await page.evaluate(async (families) => {
+      await Promise.allSettled([...document.fonts].map((face) => face.load()));
       await document.fonts.ready;
-      return families.filter((family) => ![...document.fonts].some((face) => face.family.replaceAll('"', '') === family && face.status === 'loaded'));
+      await new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done)));
+      const faces = [...document.fonts];
+      const absent = families.filter((family) => !faces.some((face) => face.family.replaceAll('"', '') === family));
+      const failed = faces.filter((face) => face.status !== 'loaded').map((face) => `${face.family} ${face.weight} (${face.status})`);
+      return [...absent.map((family) => `${family} (không khai báo)`), ...new Set(failed)];
     }, REQUIRED_FONTS);
-    if (missing.length) throw new Error(`Font chưa tải: ${missing.join(', ')} (cần mạng tới Google Fonts)`);
+    if (unloaded.length) throw new Error(`Font chưa tải: ${unloaded.join(', ')} (cần mạng tới Google Fonts)`);
     const path = join(SCREENS_DIR, `${board.name}.png`);
     await page.screenshot({ path, fullPage: true });
     return path;
   } finally {
     await page.close();
+  }
+}
+
+async function capture(browser, origin, board, attempts = 3) {
+  for (let attempt = 1; ; attempt += 1) {
+    try {
+      return await captureOnce(browser, origin, board);
+    } catch (error) {
+      if (attempt >= attempts || !error.message.startsWith('Font chưa tải')) throw error;
+      console.error(`thử lại ${board.name} (${attempt}/${attempts}): ${error.message}`);
+    }
   }
 }
 
