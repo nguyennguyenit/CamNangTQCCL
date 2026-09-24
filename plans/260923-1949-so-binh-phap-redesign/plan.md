@@ -24,7 +24,7 @@ Nguồn chuẩn: [brainstorm-260923-2001-so-binh-phap-redesign.md](../reports/br
 ## Điều kiện bắt đầu
 
 - **Chặn bởi** plan `260922-1806-khai-hoang-trang-chi-tiet` — **đã gỡ 2026-09-24:** plan đó `status: completed`, code ở commit `68a49b3`; kiểm trên cây sau commit: `npm run check` 0 lỗi, `npm run test:node` 316/316, `python3 -m unittest discover -s tests` 368 OK, `npm run test:e2e` 153/153, `npm run verify` (gate bản dịch public + 1700 file dist) và `npm run test:dist` 27/27 pass.
-- Trước khi bắt đầu Phase 1, `git status --short` không được còn file code/pipeline đang sửa dở. Còn lại lúc lập plan (không thuộc plan này): 8 thư mục generation Recommended chưa track, không file nào tham chiếu (`src/data/recommended-reference/{3415d2…,42523b…,478006…,5e55b9…,820180…,b0f897…,bd8ff3…,f57c82…}`, tạo 22–23/09), `site-compile.log` (23/09), đổi trạng thái plan `260626-1600` sang `cancelled`, 1 dòng đầu brainstorm — chủ nhân quyết giữ/xóa.
+- Trước khi bắt đầu Phase 1, `git status --short` không được còn file code/pipeline đang sửa dở. **Đã dọn 2026-09-25:** 8 thư mục generation Recommended chưa track, không file nào tham chiếu, và `site-compile.log` đã chuyển sang `~/.Trash/CamNangTQCCL-cleanup-260925/` (khôi phục được); plan `260626-1600` → `cancelled` commit `2e351b6`; brainstorm + plan này commit `e4df36b`. Chỉ còn `.cache/` chưa track (Phase 1 thêm vào `.gitignore`).
 - Phase 1 đọc lại mọi file nó sửa; số dòng trích dẫn lấy từ cây làm việc ngày 2026-09-24.
 
 ## Bằng chứng hiện trạng
