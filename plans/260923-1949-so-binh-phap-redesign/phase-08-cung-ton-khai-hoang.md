@@ -29,7 +29,7 @@ Brainstorm §2 (thuật ngữ Chạm Sứ), §6 (Cùng Tồn, Khai hoang), §3 (
 3. **Khai hoang — thẻ** (theo plan `260922-1806` + quyết định 2026-09-24): khối build dùng chung `khaihoangBuildContent` (Trước → Sau, chiến pháp chữ son, ghi chú build) đã thiết kế ở Phase 6 — thẻ chỉ bọc khối đó, không fork markup (`docs/code-standards.md:14`); chọn cấu hình (chip 44px); thanh điểm 6 mốc (Đất 4, Đất 5, Đất 6, Đất 7–8, Chuyển, Tổng; thang /10, cột Tổng màu mực) đọc từ `guide.ratings` (`land4, land5, land6, land7to8, transition, overall`, vd `data/khaihoang.json:188`) — chỉ 11/17 đội có guide nên chỉ 11 thẻ có thanh; đội không có `ratings` → không vẽ thanh. Thẻ chỉ hiện số liệu, chữ hướng dẫn ở trang chi tiết; dòng cuối thẻ là link "Hướng dẫn đánh đất →" tới `/khai-hoang/<đội>/` (giữ `variant`); đội không có guide vẫn có link "Chi tiết →".
 4. **Khai hoang — khối khác:** lọc loại binh (chip), anchor 3 khối "Đội đề xuất", "Chạm Sứ / Ăn vạ", "Quân thủ các mỏ" (nút nhảy khối trên đầu trang); lưới Chạm Sứ; bảng/thẻ quân thủ mỏ theo artboard (mobile: thẻ từng mỏ).
 5. Thuật ngữ: khối Khai hoang dùng "Chạm Sứ"; không đổi 5 tên "…cảm tử".
-6. Chữ mới → obligations `authored-vi`; obligation `translate` dời/bỏ/đổi → chờ receipt (plan.md "Quy trình bắt buộc mỗi phase" bước 2a).
+6. Chữ mới → obligations `authored-vi`; obligation `translate` dời file/đổi chữ → dừng chờ receipt, bị bỏ → xóa theo plan.md "Quy trình bắt buộc mỗi phase" bước 2a.
 7. Cặp so ảnh: Coexist, CoexistMobile, Khaihoang, KhaihoangMobile.
 
 ## Verification

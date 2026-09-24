@@ -20,6 +20,7 @@ Brainstorm §3 (không đổi Worker/engine/schema lưu trữ), §6 (Beta chỉ 
 
 ## Files to Create / Modify
 - Modify (chỉ phần render/DOM): `js/recruit-tracker.js` (`:114-159,206-247`), `js/analyze.js` (`:193-254,275-380`), `js/roster-recommend-ui.js` (`:73-124,284-307`), `css/styles.css` (gồm `#season-controls` và `#season-config-detail` trên `/soi-doi/`, `/goi-y-doi/`).
+- Obligation `translate` trong file bị viết lại: `js/recruit-tracker.js` 21, `js/roster-recommend-ui.js` 10 (2 binding, vd `describeAnalyzeError(err, ROSTER_PROVIDER_ERROR)`, `ROSTER_STATUS_LABELS[entry.status]`), `js/analyze.js` 4 (2 binding: `localizeWorkerError(data?.error, res.status)`, `describeAnalyzeError(e, ANALYZE_ACTION_ERROR)`) → giữ nguyên văn biểu thức binding và chữ gốc/chữ đã duyệt trong đúng file (plan.md "Quy trình bắt buộc mỗi phase" bước 2a); đổi chữ → dừng chờ receipt.
 - **Không sửa:** `js/recruit-tracker-store.js`, `js/roster-scan-state.js`, engine gợi ý, `worker/`, `js/analyze-map.js` (trừ khi chỉ đọc dữ liệu hiển thị đã export).
 - Modify: policy + obligations theo plan.md "Quy trình bắt buộc mỗi phase" bước 2 (generation mới, `data/website-display.json`, `pipeline/team-route-handles.json` là thay đổi dự kiến của quy trình, không tính là đổi dữ liệu); `scripts/design-compare.mjs`; test e2e/tests-js của 3 công cụ.
 
