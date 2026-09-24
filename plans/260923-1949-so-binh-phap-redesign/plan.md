@@ -3,7 +3,7 @@ title: "Redesign Sổ binh pháp toàn site"
 description: "Đưa toàn bộ Cẩm Nang TQCCL sang giao diện Sổ binh pháp đúng canvas: Landing ở /, mỗi mục một đường dẫn, header/footer dùng chung, token sáng/tối, font self-host."
 status: pending
 priority: P1
-effort: ""
+effort: "22.5d"
 branch: main
 tags: [frontend, feature, routing, design]
 blockedBy: [260922-1806-khai-hoang-trang-chi-tiet]
@@ -45,24 +45,31 @@ Nguồn chuẩn: [brainstorm-260923-2001-so-binh-phap-redesign.md](../reports/br
 
 ## Quyết định kỹ thuật
 
-1. **Mục = trang tĩnh.** 8 trang `src/pages/<đường-dẫn>/index.astro` dùng `SiteLayout` với `pageKind="section"` + `activeSection`; mỗi trang chỉ có một mount `section-<id>`. Layout gắn `data-section` lên `<body>`; `js/app.js` đọc giá trị này và chỉ khởi động mục đó (bỏ tab, `hashchange`, `switchSection`). Hiện `app.js` tải **mọi** dữ liệu lúc khởi động (`js/app.js:154-196`: website display, teams/coexist/khaihoang, bộ Tra cứu, season model, Recommended); chia trang mà giữ nguyên thì mỗi lần chuyển mục tải lại toàn bộ → Phase 2 phải chỉ tải dữ liệu mục đang mở cần (bảng phụ thuộc mục → dữ liệu lập từ code, không đoán).
-2. **Trạng thái trên query, giữ tên khóa cũ:** bộ lọc đội giữ `season, category, q, detail, legacyTeam, legacyVariant, faction, unit, subcategory, source`; bỏ `score`; thêm `view=bang`. Tra cứu chuyển `group`, `id` từ hash sang query của `/tra-cuu/`. `ROOT_QUERY_KEYS` thêm `view`; `score` chuyển sang nhóm khóa bị bỏ lặng lẽ để `from` cũ vẫn dùng được (Phase 5).
-3. **Landing `/`** = `src/pages/index.astro` dùng `SiteLayout` `pageKind="landing"` + entry `js/landing.js`: đọc hash cũ, `location.replace` sang đường dẫn mới, giữ query; hash lạ → ở lại Landing. Bảng ánh xạ ở Phase 2.
+1. **Mục = trang tĩnh.** 8 trang `src/pages/<đường-dẫn>/index.astro` dùng `SiteLayout` với `pageKind="section"` + `activeSection`; mỗi trang chỉ có một mount `section-<id>`. Layout gắn `data-page-section` lên `<body>` (không dùng `data-section` vì nav đã dùng thuộc tính này, `SiteLayout.astro:90`); `js/app.js` đọc giá trị này và chỉ **mount** mục đó (bỏ tab, `hashchange`, `switchSection`). **Không tối ưu tải dữ liệu theo mục trong plan này:** `loadWebsiteDisplay` tải + xác minh hash mọi nguồn trong `sourceHashes` trước khi rẽ nhánh (`js/app.js:153-158`, `js/website-display.js:86-91`), và `_headers` đặt `must-revalidate` cho `/data/*` nên lần chuyển mục sau chỉ là revalidate. Phase 2 giữ nguyên tập dữ liệu khởi động và **đo** (byte truyền lần mở trang mục thứ hai) vào báo cáo; tối ưu tải là plan riêng nếu số đo xấu.
+2. **Trạng thái trên query, giữ tên khóa cũ:** bộ lọc đội giữ `season, category, q, detail, legacyTeam, legacyVariant, faction, unit, subcategory, source`; bỏ `score`; thêm `view=bang`. Tra cứu chuyển `group`, `id` từ hash sang query của `/tra-cuu/`. **`safeReturnUrl` đổi từ "gặp khóa lạ → loại cả URL" sang "giữ khóa được phép của đúng trang, bỏ lặng lẽ mọi khóa khác"** (gồm `score`, `fbclid`, `gclid`, `msclkid`, `utm_*`); danh sách khóa được giữ theo pathname (Phase 2 bước 7). URL `from` cũ dạng `/…#<tab>` được chuẩn hóa qua cùng bảng ánh xạ của Landing thay vì bị loại.
+3. **Landing `/`** = `src/pages/index.astro` dùng `SiteLayout` `pageKind="landing"`. Bảng ánh xạ hash cũ nằm ở **một** nguồn `js/legacy-routes.js` (ESM thuần, không import): export bảng + hàm thuần `resolveLegacyRoute(href, origin)` trả đích cùng origin hoặc `null`, dựng đích bằng `URL`/`URLSearchParams`. Hai nơi dùng: (a) `index.astro` import lúc build và nhúng vào **script inline chặn trong `<head>`** (`resolveLegacyRoute.toString()` + bảng JSON) để chuyển tiếp trước khi vẽ trang, kèm listener `hashchange`; (b) `safeReturnUrl` import ở trình duyệt để chuẩn hóa `from`/snapshot cũ. Không có `js/landing.js` riêng trừ khi Landing có tương tác khác.
 4. **Điều hướng dùng chung:** entry mới `js/site-nav.js` lo menu thả (Công cụ, Game; Landing thêm Đội hình, Tra cứu) và menu mobile toàn màn hình; thay hẳn `js/mobile-section-menu.js` (xóa file + test cũ, không để alias).
 5. **CSS một file.** Giữ `css/styles.css` (không tách): khối token → nền → component → theo trang. Không có mã hex ngoài khối token. Tránh thêm manifest/verifier cho file CSS mới (`tests-js/astro-dist-contract.test.mjs:609-612` đang khóa `/css/styles.css`).
 6. **Font self-host** trong `public/fonts/`: Be Vietnam Pro 400/500/600/700 + Noto Serif Display 700, chỉ subset latin + latin-ext + vietnamese, `font-display: swap`, preload 2 file dùng ngay màn đầu; kèm `public/fonts/OFL.txt`. Ấn 兵 là SVG path (trích từ Noto Serif TC Bold một lần); chữ Hán thay chân dung dùng serif hệ thống.
-7. **Chữ UI:** chữ tác giả mới (Landing, nhãn menu, footer) khai báo lớp `authored-vi`; chỉ chuỗi lớp `translate` bị đổi mới cần receipt độc lập (người dùng sắp xếp phiên review, agent không tự duyệt).
+7. **Chữ UI + gate bản dịch:** chữ tác giả mới khai báo lớp `authored-vi` (không cần receipt). Mọi thay đổi obligation (thêm, dời file, bỏ) và mọi thay đổi policy đi qua quy trình bản dịch ở mục "Quy trình bắt buộc mỗi phase" bước 2 — gồm cập nhật baseline inventory và publish lại generation. Obligation `translate` bị dời file hoặc bỏ, hoặc đổi chữ, đều cần receipt độc lập (fingerprint gồm `sourceFile`/`ownerSymbol`, `pipeline/site_localization.py:1355-1368`); người dùng sắp xếp phiên review, agent không tự duyệt. Ưu tiên giữ nguyên obligation bằng cách để chữ đã duyệt còn trong đúng file nguồn.
 8. **Quyết định nội dung đã chốt 2026-09-24:** thẻ Khai hoang giữ build + Trước → Sau + thanh điểm 6 mốc, hướng dẫn chữ ở trang chi tiết, dòng cuối thẻ là link "Hướng dẫn đánh đất →"; ô tổng quan Cùng Tồn hiện nguyên `notesRaw`/`openingSuggestionsRaw`, "5 đội · 15 tướng · không trùng" tính từ mảng tướng; ngày cập nhật = ngày build (dd/mm/yyyy, giờ Việt Nam), mục "Góp ý, báo lỗi" ẩn đến khi có kênh; credit sửa thành "dành cho game".
 9. **Thẻ đội:** dòng cuối gộp "Sợ …" (lấy từ counters `avoid`), "Thay thế (n)", "Chi tiết →"; "Khắc được" chỉ còn ở trang chi tiết; bỏ glyph ⚔/⚠.
 10. **Trang mục tự đủ:** layout phát cho trang mục mọi payload `app.js` đọc (bảng ở Phase 2 bước 2, `{r,l,k}` cho cả 8 trang); `app.js` fetch `/data/…` tuyệt đối; lỗi tải hiện ở mount của mục đang mở.
 11. **Giữ phạm vi mùa, chi tiết cấu hình và migrate URL cũ** — không bỏ tính năng đang có dù canvas không vẽ. Phase 2 giữ hành vi; Phase 8 (Cùng Tồn) và Phase 9 (Soi đội, Gợi ý đội) làm giao diện theo StyleGuide. Dữ liệu thật hiện có 2 kịch bản, 0 phiên bản luật, 0 cấu hình reviewed → chỉ select Mùa làm đầy đủ; select Phiên bản luật và chi tiết cấu hình chỉ áp token, kiểm bằng fixture test. URL `/` không hash nhưng có khóa root cũ → `/doi-chuan/` + query (mục mặc định cũ).
-12. **"Trong cẩm nang" (Phase 7) nối tướng bằng so khớp chính xác** `nameRaw` ↔ `chinese`/`aliases[]` của catalog Tra cứu (bỏ khoảng trắng), tính trên trình duyệt từ `index.json` (gzip ≈ 309 KB, chỉ tải khi mở hồ sơ đầu tiên); đo trên generation đang pin: 4071/4098 ô khớp, 0 mơ hồ. Phase 7 đo thời gian tải trên mobile chậm; trung vị > 2 s → dừng, hỏi người dùng về phương án tính lúc build.
+12. **"Trong cẩm nang" (Phase 7) nối tướng bằng so khớp chính xác theo từng nguồn:** Đội chuẩn — `nameRaw` ↔ `chinese`/`aliases[]` (bỏ khoảng trắng), 4071/4098 ô khớp, 0 mơ hồ; Đội khác — `holders[].nameRaw` (tên Việt) ↔ `hanViet` (duy nhất trên 202 tướng), 120/120 ô khớp. Phase 7 **bắt đầu bằng spike đo tải** (`index.json` gzip ≈ 309 KB + hash + parse, mobile chậm) trước khi dựng UI; trung vị > 2 s → dừng ngay đầu phase, hỏi người dùng về phương án tính lúc build.
+13. **Theme không nháy giữa các trang:** script inline chặn trong `<head>` của `SiteLayout` đặt `data-theme` từ `localStorage.theme` (lỗi storage → `prefers-color-scheme`) trước stylesheet; `site-chrome.js` giữ nút đổi và áp lại theme ở `pageshow` + sự kiện `storage`.
+14. **Quy tắc render an toàn (mọi phase):** nội dung động chỉ qua `el()`/`textContent`; không `innerHTML`/`insertAdjacentHTML`/`outerHTML` với dữ liệu; SVG tĩnh viết trong Astro hoặc `createElementNS`; mọi `href` ra ngoài lấy từ dữ liệu phải qua kiểm scheme `http(s)` (tổng quát hóa validator ở `recommended-reference-state.js:172-181`); link ngoài `target="_blank" rel="noopener noreferrer"` như code hiện có (`js/render.js:372,515`); query link dựng bằng `URLSearchParams`.
 
 ## Quy trình bắt buộc mỗi phase
 
 1. Đọc artboard của phase (mã nguồn + PNG) trước khi viết CSS; lấy giá trị qua token, không chép inline style.
-2. Sửa file khóa hash → rà `UI_LITERAL_OBLIGATIONS` cho chữ đổi/thêm → cập nhật `sourceFiles` bằng hash thật → `python3 -m pipeline.site_localization check --root . --stage public`. Chuỗi `translate` đổi → dừng, ghi danh sách vào báo cáo phase, chờ receipt độc lập.
-3. Chạy test đích của phase (ghi trong phase), không sửa test để né; test đổi có chủ đích phải ghi lý do trong commit.
+2. **Quy trình bản dịch** (bắt buộc khi phase sửa file trong `sourceFiles`, obligation hoặc policy — gần như mọi phase):
+   a. Sửa code + `UI_LITERAL_OBLIGATIONS`; với mỗi obligation `translate` bị dời/bỏ/đổi chữ → ghi vào báo cáo phase và **dừng** tới khi có receipt độc lập (`pipeline/site-translation-reviews.json`).
+   b. Cập nhật `sourceFiles` hash và `baseline.notes` (`concreteLocationCount`, `concreteInventorySha256`, `uiTranslateObligations`, `siteLedgerObligations` khi đổi) bằng script Python gọi `sha256_hex()` / `concrete_site_locations()` — không sửa tay; ghi cũ → mới vào báo cáo phase (tiền lệ: `68a49b3` đổi `concreteLocationCount` 56240 → 56265).
+   c. Publish lại theo `docs/season-team-data.md:184-190`: `site_localization build --stage all --output .cache/site-localization-candidate` → `check --stage all --candidate …` → `publish --candidate …` → `check --stage public`. Policy thuộc `localizationInputsHash` (`site_localization.py:1503-1517`) nên mỗi lần đổi policy sinh generation Recommended mới + `data/website-display.json` mới.
+   d. Sửa `generationId` trong `pipeline/team-route-handles.json` sang generation mới (build từ chối lệch, `src/lib/team-detail-routes.ts:207-210`) → `python3 -m pipeline.team_route_handles --check`. Payload trùng nội dung nên git lưu lại blob cũ; chỉ manifest/descriptor mới.
+   e. Cập nhật số ghim trong `tests/test_site_localization.py` (`:61-76,237,446-456`) nếu đổi; khởi động lại dev server.
+3. **Gate mỗi phase = bộ A2 đầy đủ**, xanh trước khi commit: `npm run check && npm run build && npm run verify && npm run test:dist && npm run test:node && npm run test:e2e && python3 -m unittest discover -s tests`; cộng test đích của phase. Không sửa test để né; test đổi có chủ đích phải ghi lý do trong commit.
 4. Báo cáo so ảnh `plans/260923-1949-so-binh-phap-redesign/reports/visual-phase-NN.md`: chạy `node scripts/design-compare.mjs --phase NN` (tạo ở Phase 1), liệt kê từng chỗ lệch → "đã sửa" hoặc "giữ, lý do". Ảnh ghép ở `.cache/design-compare/` (không commit).
 5. Commit riêng mỗi phase, conventional, không nhắc AI. Không deploy.
 
@@ -77,27 +84,28 @@ Nguồn chuẩn: [brainstorm-260923-2001-so-binh-phap-redesign.md](../reports/br
 | 5 | [Đội chuẩn / Đội khác: lọc, thẻ, Thẻ/Bảng](./phase-05-doi-danh-sach.md) | Main, MainTable, MobileList, MobileTable, MobileFilters | 3 |
 | 6 | [Trang chi tiết đội](./phase-06-chi-tiet-doi.md) | TeamDetail | 5 |
 | 7 | [Tra cứu + hồ sơ](./phase-07-tra-cuu.md) | Lookup, LookupTactics, LookupProfile, LookupMobile | 3 |
-| 8 | [Cùng Tồn + Khai hoang](./phase-08-cung-ton-khai-hoang.md) | Coexist(+Mobile), Khaihoang(+Mobile) | 5 |
-| 9 | [3 công cụ Beta](./phase-09-cong-cu-beta.md) | Recruit, Analyze, Roster (+Mobile) | 3, 8 (dùng lại style phạm vi mùa) |
+| 8 | [Cùng Tồn + Khai hoang](./phase-08-cung-ton-khai-hoang.md) | Coexist(+Mobile), Khaihoang(+Mobile) | 5, 6 (dùng lại khối build Khai hoang) |
+| 9 | [3 công cụ Beta](./phase-09-cong-cu-beta.md) | Recruit, Analyze, Roster (+Mobile) | 3, 7, 8 (helper chân dung, style phạm vi mùa) |
 | 10 | [Giao diện tối, a11y, responsive, docs, full test](./phase-10-toi-a11y-docs.md) | StyleGuide (bảng tối) | 1–9 |
 
-Một người thực thi tuần tự 1 → 10. Phase 4, 5, 7 cùng phụ thuộc Phase 3, Phase 9 thêm Phase 8; tất cả đều sửa `css/styles.css` và `pipeline/site-localization-policy.json` → không chạy song song.
+Một người thực thi tuần tự 1 → 10. Phase 4, 5, 7 cùng phụ thuộc Phase 3; Phase 8 thêm Phase 6; Phase 9 thêm Phase 7, 8; tất cả đều sửa `css/styles.css` và `pipeline/site-localization-policy.json` (và publish lại generation) → không chạy song song.
 
 ## Acceptance (theo brainstorm §4)
 
-- [ ] A1: Mỗi artboard có báo cáo so ảnh 1440/390, mọi chỗ lệch đã xử lý hoặc có lý do.
-- [ ] A2: `npm run check`, `npm run build`, `npm run verify`, `npm run test:node`, `npm run test:e2e`, `python3 -m unittest discover -s tests` pass; test chỉ đổi khi hành vi đổi có chủ đích.
+- [ ] A1: Mỗi artboard trang có báo cáo so ảnh ở đúng bề rộng artboard (1440 hoặc 390), mọi chỗ lệch đã xử lý hoặc có lý do; StyleGuide (1280, không có trang tương ứng) được soát bằng báo cáo bảng token + tương phản ở Phase 1.
+- [ ] A2: `npm run check`, `npm run build`, `npm run verify`, `npm run test:dist`, `npm run test:node`, `npm run test:e2e`, `python3 -m unittest discover -s tests` pass ở **mọi** commit phase; test chỉ đổi khi hành vi đổi có chủ đích.
 - [ ] A3: `site_localization check --stage public` pass, không problem; số obligation mới được ghi trong báo cáo Phase 10.
 - [ ] A4: Giao diện tối: chữ thường ≥ 4.5:1, chữ ≥ 24px ≥ 3:1; màu phe/binh/trạng thái luôn có chữ đi kèm.
 - [ ] A5: Mobile vùng bấm ≥ 44px, không cuộn ngang ở 320/390; focus-visible rõ; menu thả và hộp thoại: `aria-expanded`, Escape đóng, focus quay về nút, bấm ngoài để đóng, hộp thoại khóa focus.
-- [ ] A6: Mọi hash cũ (§ bảng Phase 2) và URL `/` không hash có khóa root cũ chuyển đúng đường dẫn mới, giữ query; `?detail=` / `?legacyTeam=` cũ vẫn mở đúng trang chi tiết; URL chi tiết đội không đổi.
-- [ ] A7: `docs/design-guidelines.md`, `docs/code-standards.md` mô tả đúng mô hình đường dẫn + token mới.
+- [ ] A6: Mọi hash cũ (§ bảng Phase 2) và URL `/` không hash có khóa root cũ chuyển đúng đường dẫn mới, giữ query, kể cả khi dán vào tab đang ở `/`; `?detail=` / `?legacyTeam=` cũ vẫn mở đúng trang chi tiết; URL chi tiết đội không đổi và `from` cũ dạng `/…#<tab>` vẫn quay về đúng trang mục + query.
+- [ ] A7: `docs/design-guidelines.md`, `docs/code-standards.md`, `docs/system-architecture.md`, `docs/deployment-guide.md`, `docs/unified-lookup.md`, `README.md` mô tả đúng mô hình đường dẫn + token mới; `docs/project-changelog.md` có mục cho redesign.
 
 ## Rủi ro
 
-- Policy bản dịch là JSON một dòng: sửa hash bằng script Python gọi `sha256_hex()`, không sửa tay.
-- Snapshot quay lại cũ trong `sessionStorage` chứa URL `/#…` → `safeReturnUrl` mới từ chối, người dùng về trang mục mặc định; chấp nhận, không viết lớp tương thích.
+- Mỗi phase sinh một generation Recommended mới (quy trình bước 2c–d). Nội dung payload thường giống hệt nên git lưu lại blob cũ (đã kiểm: `index.json` của `b60b51…` và `91768e…` cùng hash), nhưng cây làm việc thêm ~6,7 MB mỗi lần; không xóa generation cũ đã track trong plan này.
+- Snapshot quay lại cũ trong `sessionStorage` chứa URL `/#…` → chuẩn hóa qua `js/legacy-routes.js` như `from` (quyết định #2); không khớp bảng → về trang mục mặc định.
 - Dev server giữ snapshot pin trong bộ nhớ (`src/lib/root-static-artifacts.ts`): sau publish phải khởi động lại.
+- Receipt độc lập là việc của người dùng: phase có obligation `translate` dời/bỏ/đổi sẽ dừng chờ. Phase 2 cần ít nhất một receipt (bỏ `ui:root/build-credit`, xem Phase 2 bước 9) → nên xếp phiên review trước khi bắt đầu Phase 2.
 - Ảnh chân dung hotlink có thể bị chặn → fallback chữ Hán phải test bằng route chặn ảnh, chặn **mọi** host có trong `heroes-dict.json` (`image.aligames.com` 92, `cloud.lingxigames.com` 20; 90 tướng không có ảnh).
 - Thẻ/Bảng với dữ liệu Đội khác: `value` vắng trong `other-teams.json` (0/40) → cột Điểm hiện "—", không bịa.
 - "Sợ …" / "Khắc được" chỉ có ở dữ liệu legacy: 0/1366 Đội chuẩn, 9/40 Đội khác → thẻ và trang chi tiết Đội chuẩn lệch artboard có chủ đích.
@@ -113,7 +121,7 @@ Một người thực thi tuần tự 1 → 10. Phase 4, 5, 7 cùng phụ thuộ
 
 | # | Finding | Severity | Bằng chứng | Áp vào |
 |---|---|---|---|---|
-| 1 | Chia trang nhưng `app.js` vẫn tải toàn bộ dữ liệu mỗi lần → mỗi lần chuyển mục tải lại tất cả; câu "không tăng tải" sai | High | `js/app.js:154-196` | Quyết định #1, Phase 2 bước 3b |
+| 1 | Chia trang nhưng `app.js` vẫn tải toàn bộ dữ liệu mỗi lần → mỗi lần chuyển mục tải lại tất cả; câu "không tăng tải" sai | High | `js/app.js:154-196` | Quyết định #1, Phase 2 bước 3b (cách sửa "tải theo mục" đã thay bằng finding #18, 2026-09-25) |
 | 2 | `khaiHoangContextKey` và snapshot quay lại dựa vào hash `#khaihoang`; test ghim URL hash | High | `js/team-detail-navigation.js:174-182,287-305`; `tests-js/team-detail-navigation.test.mjs:163-215` | Phase 2 bước 7 |
 | 3 | Parser Tra cứu từ chối mọi khóa lạ → link có `utm_*`/`fbclid` hiện lỗi khi chuyển sang query | High | `js/unified-lookup.js:34-36` | Phase 2 bước 4 |
 | 4 | Consumer của `mobile-section-menu.js` là `site-chrome.js` + manifest, không phải `app.js` | High | `js/site-chrome.js:3`; `src/lib/public-artifact-manifest.mjs:34` | Phase 3 files |
@@ -146,12 +154,54 @@ Một người thực thi tuần tự 1 → 10. Phase 4, 5, 7 cùng phụ thuộ
 | 15 | Ví dụ 3b sai (Chiêu mộ cần bộ Tra cứu); lỗi tải luôn ghi vào `#section-team-chuan`; `initSiteChrome` có thể bị gọi 2 lần | Medium | `app.js:60,179,481-496`; `spa-parity.spec.mjs:468-470` | Phase 2 bước 1, 3, 3b |
 | 16 | Redesign Cùng Tồn làm rơi phân loại phạm vi, `summaryRaw`, link nguồn, `disclaimerRaw`; thứ tự nhóm xung đột phạm vi mùa | Medium | `team-filter-section.js:235-239`; `render.js:498,511-516` | Phase 8 bước 1, 2, Verification |
 
-Đã kiểm, không thành finding: số liệu Landing đều tính được (1366/26 mùa, 166 `teams.json`, 202, 406, 5×5, 17, 8 Chạm Sứ, 5 mỏ); `guide.ratings` 11/17; `index.json` 3.374.425 byte; trường adapter Bảng tồn tại; gate UI obligation chấp nhận chữ gốc hoặc bản dịch đã duyệt (`site_localization.py:1241-1244`) và chỉ `translate` cần receipt (`:1355-1358`); credit mới đúng brainstorm §10.2; `public/_headers` không có CSP nên font self-host/ảnh hotlink không cần đổi header.
+Đã kiểm, không thành finding: số liệu Landing đều tính được (1366/26 mùa, 202, 406, 5×5, 17, 8 Chạm Sứ, 5 mỏ; con số 166 `teams.json` được sửa ở finding #38); `guide.ratings` 11/17; `index.json` 3.374.425 byte; trường adapter Bảng tồn tại; gate UI obligation chấp nhận chữ gốc hoặc bản dịch đã duyệt (`site_localization.py:1241-1244`) và chỉ `translate` cần receipt (`:1355-1358`); credit mới đúng brainstorm §10.2; `public/_headers` không có CSP nên font self-host/ảnh hotlink không cần đổi header.
 
 ### Whole-Plan Consistency Sweep — 2026-09-25
 - Đã đọc lại: plan.md, phase-01 … phase-10.
 - Thay đổi quyết định đã rà: 6 (payload trang mục, fetch tuyệt đối, giữ phạm vi mùa/config/migrate, allowlist `view`/`score`, khóa nối tướng, độ phủ counters).
 - Chỗ cũ đã sửa theo: Phase 2 bước 1–3b, 6, 7, 10, Verification; Phase 5 files, bước 3b, 5; Phase 6 bước 2; Phase 7 bước 4b, Verification; Phase 8 files, bước 1, 2, 2b, Verification; Phase 9 files, bước 3b, dependencies; Phase 10 docs; plan.md bằng chứng, quyết định #2/#10–#12, bảng phase, A6, rủi ro.
+- Mâu thuẫn còn lại: 0.
+
+### Session — 2026-09-25 (review độc lập)
+
+4 reviewer độc lập (Failure Mode / Flow Tracer, Assumption / Scope Auditor, Scope / Contract Verifier, Security / Fact Checker) chạy ở HEAD `d2d2fa4`, đều trả finding có bằng chứng. Phiên chính kiểm lại các finding chịu lực trước khi nhận: policy nằm trong `localizationInputsHash` (`site_localization.py:1503-1517`, `build_recommended_reference.py:376-379`); baseline inventory (`site_localization.py:1897-1901`); re-pin `generationId` (`team-detail-routes.ts:207-210`, tiền lệ `68a49b3`); `hanViet` duy nhất, 120/120 ô Đội khác khớp; 10 liên kết Cùng Tồn (5 `binh-dien-xuan-thu`, 5 `anh-hung-menh-the`); `qrcode@1.5.4` tồn tại; payload trùng giữa generation (`index.json` của `b60b51…` = `91768e…`).
+
+**Findings:** 27 (27 accepted, 0 rejected) · 2 Critical, 10 High, 15 Medium. Một gợi ý con bị loại: bỏ `#season-artifact-hashes` khỏi Đội chuẩn/Đội khác (trái quyết định #11 giữ chi tiết cấu hình).
+
+| # | Finding | Severity | Bằng chứng | Áp vào |
+|---|---|---|---|---|
+| 17 | Đổi policy (kể cả chỉ hash) làm đổi generation Recommended + website-display; phải publish lại + re-pin `team-route-handles.json` mỗi phase, plan không có bước này | Critical | `site_localization.py:1503-1517,1570-1579,1674-1682`; `build_recommended_reference.py:376-379`; `team-detail-routes.ts:207-210` | Quy trình bước 2c–d, Rủi ro, mọi phase |
+| 18 | "Chỉ tải dữ liệu mục cần" không làm được như viết: `loadWebsiteDisplay` tải + xác minh ~2,1 MB trên mọi trang; e2e đếm request sẽ sai | High | `app.js:153-158`; `website-display.js:86-91` | Quyết định #1, Phase 2 bước 3b (bỏ tối ưu, chỉ đo) |
+| 19 | Thêm/dời obligation (cả `authored-vi`) đổi baseline inventory đã khóa → gate đỏ, chặn `build`/`test:e2e` | Critical | `site_localization.py:1244-1256,1406-1418,1897-1901`; policy `baseline.notes` | Quy trình bước 2b, 2e |
+| 20 | Dời obligation `translate` làm fingerprint + receipt mất hiệu lực; Phase 5 chờ receipt cho chuỗi không phải obligation | High | `site_localization.py:1146-1160,1355-1368`; `lookup_translations.py:37-46,90-97`; `recommended-reference-render.js:141,173` | Quyết định #7, Phase 2 bước 9, Phase 4, Phase 5 bước 8, Rủi ro |
+| 21 | Verifier vẫn đòi route handles/season hashes/pin trên `dist/index.html` (nay là Landing) | High | `verify-astro-dist.mjs:120-153,239-246`; `astro-dist-contract.test.mjs:117-118,907-910,960-961` | Phase 2 bước 8, files |
+| 22 | Theme tối nháy sáng mỗi lần chuyển trang; Back từ bfcache giữ theme cũ | High | `SiteLayout.astro:51,116-118`; `site-chrome.js:26-43` | Quyết định #13, Phase 2 bước 1, 10 |
+| 23 | Phase 3–9 không chạy bộ test đang khóa file mình sửa (`test:dist`, Python) | High | `astro-dist-contract.test.mjs:26`; `test_site_localization.py:446-456` | Quy trình bước 3, A2, Verification mọi phase |
+| 24 | `safeReturnUrl` loại cả URL khi có `fbclid`/`utm_*`, `group`/`id` Tra cứu, `group` Cùng Tồn (sửa #11 chưa đủ) | High | `team-detail-navigation.js:14,139-143,288-289`; `app.js:269-276` | Quyết định #2, Phase 2 bước 3, 7, Phase 5 bước 3b, Phase 8 files |
+| 25 | Khóa nối Phase 7 khớp 0/120 ô Đội khác (`nameRaw` là tên Việt) | High | `other-teams.json` holders; `heroes-dict.json` `hanViet` | Quyết định #12, Phase 7 bước 4b |
+| 26 | Link "Xem cả n đội chuẩn" → `?q=` cho số đội khác n (mùa mặc định, tìm chuỗi rộng) | High | `recommended-reference-state.js:45,115-128,150-160` | Phase 7 bước 4b |
+| 27 | Ngân sách tải 2 s gần như chắc trượt, lại chỉ đo ở cuối phase | High | `recommended-reference-state.js:187-199`; gzip 308.928 B | Quyết định #12, Phase 7 bước 0 |
+| 28 | Cùng Tồn mặc định có 10 nhóm, hai bộ cùng nhãn "Cùng tồn 1…5" | High | `season-context.js:349-350,365,368`; `season-content-links.json` | Phase 8 Goal, bước 1, Verification |
+| 29 | Link chi tiết đã chia sẻ có `from=/…#<tab>` mất trạng thái quay lại | Medium | `team-detail.js:24-26`; `khaihoang-detail.js:58-59`; `team-detail-navigation.js:137-138,161-162` | Quyết định #2, #3, Phase 2 bước 7, A6, Rủi ro |
+| 30 | Chuyển tiếp Landing chưa đặc tả: dựng đích an toàn, `hashchange`, vẽ trang trước khi chuyển, `/?score=` mất chuyển sau Phase 5 | Medium | `unified-lookup.js:33-35`; `app.js:93-98,129`; `team-detail-navigation.js:14` | Quyết định #3, Phase 2 bước 5–6, 10 |
+| 31 | Grep "`/#` = 0" của Phase 2 mâu thuẫn link `/#nguon-du-lieu` của Phase 3 | Medium | `SiteLayout.astro:91` | Phase 2 bước 7, Phase 3 bước 4 |
+| 32 | Phase 3 yêu cầu `rel="noopener"`, trái quy ước `noopener noreferrer` và brainstorm link chính thức | Medium | `render.js:372,515`; `recommended-reference-render.js:295`; `khaihoang-options.spec.mjs:280` | Quyết định #14, Phase 3 bước 5, Phase 4 bước 4 |
+| 33 | 92/112 chân dung là `http://` (mixed content trên HTTPS), thiếu `referrerpolicy` | Medium | `heroes-dict.json:308,532`; `analyze.js:202`; `unified-lookup.js:319-324` | Phase 7 files, bước 2, Verification |
+| 34 | Không có quy tắc render text-only / kiểm scheme `href` cho bề mặt mới | Medium | `unified-lookup.js:175`; `render.js:10,372`; `recommended-reference-state.js:172-181` | Quyết định #14, Phase 6 bước 1, Phase 7 bước 2, Phase 9 bước 2, Phase 10 bước 5 |
+| 35 | Sinh asset bằng công cụ không ghim phiên bản, không ghi nguồn gốc | Medium | `package.json`; fontTools chưa cài; `verify-astro-dist.mjs:16-19` | Phase 1 bước 3–4, Phase 4 bước 4 |
+| 36 | Phụ thuộc ẩn `.top-header`, `.tagline`; tagline "mùa hiện tại" không có nguồn dữ liệu | Medium | `app.js:127,224`; `season-lookup.spec.mjs:49,368` | Phase 1 bước 5, Phase 2 bước 1, 3, Phase 3 bước 1 |
+| 37 | `data-section` trên `<body>` trùng thuộc tính nav | Medium | `SiteLayout.astro:90`; `season-lookup.spec.mjs:47`; `frontend-shell-contract-assertions.mjs:30` | Quyết định #1, Phase 2 bước 1 |
+| 38 | Landing ghi "166 đội" (kho `teams.json`) nhưng trang Đội khác có 40 | Medium | `app.js:393`; `other-teams.json` | Phase 4 bước 1 |
+| 39 | Bỏ lọc điểm làm vỡ test/code Phase 5 không liệt kê | Medium | `team-detail-pages.spec.mjs:404-464`; `team-filter-section.js:382,389`; `team-detail-navigation.js:276` | Phase 5 files, bước 3b |
+| 40 | `waitForBoot` chờ `#season-scenario` + Turnstile (chỉ có trên 2–5 trang); test Back `?q=` không nên xóa | Medium | `spa-parity.spec.mjs:126-129`; `mcp-domain-compatibility.spec.mjs:3-5`; `recommended-browser.spec.mjs:123-131` | Phase 2 bước 2, 10 |
+| 41 | Phase 8 sửa `khaihoangBuildContent` dùng chung với trang chi tiết Phase 6 | Medium | `render.js:234,432`; `khaihoang-detail.js:4`; `code-standards.md:14` | Phase 6 files, bước 4, Phase 8 deps, bước 3 |
+| 42 | Nhiều docs mô tả mô hình cũ nằm ngoài Phase 10 → A7 trượt | Medium | `README.md:9-14`; `deployment-guide.md:103-113,136,240`; `unified-lookup.md:80`; `design-guidelines.md:40-44` | A7, Phase 10 files, bước 4 |
+| 43 | A1 không đạt được cho StyleGuide; `design-compare` thiếu `clip`/`--theme` mà phase sau dùng | Medium | `canvas.json` StyleGuide 1280; Phase 3 bước 8; Phase 10 bước 1 | A1, Phase 1 files, bước 7, Phase 10 files |
+
+### Whole-Plan Consistency Sweep — 2026-09-25 (sau review độc lập)
+- Đã đọc lại: plan.md, phase-01 … phase-10.
+- Thay đổi quyết định đã rà: 9 (quy trình bản dịch + publish, bỏ tối ưu tải theo mục, `data-page-section`, `safeReturnUrl` giữ khóa theo trang + chuẩn hóa `from` cũ, `js/legacy-routes.js` thay `js/landing.js`, khóa nối theo từng nguồn + spike đầu Phase 7, theme chặn nháy, quy tắc render an toàn, khối build Khai hoang chuyển sang Phase 6).
+- Chỗ cũ đã sửa theo: plan.md quyết định #1/#2/#3/#7/#12, thêm #13/#14, quy trình bước 2–3, A1/A2/A6/A7, rủi ro, bảng phase + câu tuần tự, dòng #1/#5 bảng cũ; Phase 1 files, bước 2–5, 7–8, Verification; Phase 2 toàn bộ files/bước/Verification; Phase 3 files, bước 1, 4–5, Verification; Phase 4 files, bước 1, 4, Verification; Phase 5 files, bước 3b, 7–8, Verification; Phase 6 files, bước 1, 4, Verification; Phase 7 files, bước 0, 2, 4b, Verification; Phase 8 deps, Goal, files, bước 1, 3, 6, Verification; Phase 9 deps, files, bước 2, Verification; Phase 10 files, bước 4–6, Verification; effort.
 - Mâu thuẫn còn lại: 0.
 
 ## Validation Log
@@ -164,6 +214,6 @@ Một người thực thi tuần tự 1 → 10. Phase 4, 5, 7 cùng phụ thuộ
 
 ## Handoff
 
-Plan `260922-1806-khai-hoang-trang-chi-tiet` đã land (`68a49b3`). Red-team 2026-09-25 chạy trong phiên chính, chưa phải review độc lập — nếu muốn, chạy lại `/ak:plan red-team plans/260923-1949-so-binh-phap-redesign` khi hết giới hạn 429. Dọn cây làm việc theo "Điều kiện bắt đầu", rồi: `/ak:cook /Users/plateau/Project/CamNangTQCCL/plans/260923-1949-so-binh-phap-redesign/plan.md`. Không tự bắt đầu code từ phiên lập plan.
+Plan `260922-1806-khai-hoang-trang-chi-tiet` đã land (`68a49b3`). Review độc lập đã chạy 2026-09-25 (27 finding, đã áp dụng). **Trước Phase 2** người dùng cần xếp một phiên review độc lập cho receipt bỏ `ui:root/build-credit` (Phase 2 bước 9); các phase sau chỉ dừng khi có obligation `translate` dời/bỏ/đổi. Rồi: `/ak:cook /Users/plateau/Project/CamNangTQCCL/plans/260923-1949-so-binh-phap-redesign/plan.md`. Không tự bắt đầu code từ phiên lập plan.
 
 <!-- slug: so-binh-phap-redesign -->
