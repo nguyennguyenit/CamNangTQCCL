@@ -1,12 +1,14 @@
 // Entry tối giản cho trang chi tiết: chỉ tải đúng payload đã pin, không khởi động app gốc.
 
 import { el } from './render.js';
+import { detailPanelActions } from './detail-actions.js';
 import {
-  loadRecommendedDetailRecord,
+  loadRecommendedDetailView,
   loadVerifiedLegacyTeams,
   loadVerifiedRecommendedManifest,
+  validateReferenceSourceUrl,
 } from './recommended-reference-state.js';
-import { legacyOriginalDetailContent, recommendedTeamDetailContent } from './recommended-reference-render.js';
+import { detailBadges, legacyOriginalDetailContent, recommendedTeamDetailContent } from './recommended-reference-render.js';
 import { safeReturnUrl, setTeamRouteHandlesFromJSON, teamDetailPath } from './team-detail-navigation.js';
 import { loadWebsiteDisplay, localizeData } from './website-display.js';
 
@@ -34,7 +36,21 @@ export async function initTeamDetail({documentTarget = document} = {}) {
   const status = documentTarget.querySelector('#team-detail-status');
   const body = documentTarget.querySelector('#team-detail-body');
   const returnLink = documentTarget.querySelector('#team-return-link');
+  const badges = documentTarget.querySelector('#team-detail-badges');
+  const panel = documentTarget.querySelector('#team-detail-panel');
+  const panelActions = documentTarget.querySelector('#team-detail-actions');
   upgradeReturnLink(returnLink);
+
+  /** Đầu trang: huy hiệu phe/loại binh có dữ liệu (bỏ hẳn phần thiếu) và link nguồn đã kiểm scheme. */
+  const paintHeader = (record, labels, sources) => {
+    if (badges) {
+      const nodes = detailBadges(record, labels);
+      badges.replaceChildren(...nodes);
+      badges.hidden = !nodes.length;
+    }
+    if (panelActions) panelActions.replaceChildren(detailPanelActions({sources}));
+    if (panel) panel.hidden = false;
+  };
 
   const {family, sourceConfigId, scopeKey, generationId, manifestSha256, legacyTeamId, legacyTeamsSha256} = root.dataset;
   const pin = {schemaVersion: 1, generationId, manifestSha256};
@@ -76,11 +92,13 @@ export async function initTeamDetail({documentTarget = document} = {}) {
   }
 
   async function loadRecommended() {
-    const [record, legacyTeams] = await Promise.all([
-      loadRecommendedDetailRecord(pin, {scopeKey, sourceConfigId}, name => fetchBytes(`/data/recommended/${name}`)),
+    const [{record, labels}, legacyTeams] = await Promise.all([
+      loadRecommendedDetailView(pin, {scopeKey, sourceConfigId}, name => fetchBytes(`/data/recommended/${name}`)),
       localizedLegacyTeams(),
     ]);
-    showContent(recommendedTeamDetailContent(record, {legacyTeams}));
+    const source = validateReferenceSourceUrl('recommended', record, record.sourceUrl);
+    paintHeader(record, labels, source ? [{href: source}] : []);
+    showContent(recommendedTeamDetailContent(record, {legacyTeams, labels}));
   }
 
   async function loadLegacy() {
@@ -89,6 +107,7 @@ export async function initTeamDetail({documentTarget = document} = {}) {
     if (matches.length !== 1) throw new Error('Không tìm thấy đúng một đội gốc với mã này.');
     const team = matches[0];
     if (!requestedVariantPresent) {
+      paintHeader(team, null, []);
       showContent(legacyOriginalDetailContent(team));
       return;
     }
@@ -108,6 +127,7 @@ export async function initTeamDetail({documentTarget = document} = {}) {
       return;
     }
     const content = {...(admitted.legacyContent || team), notes: team.notes};
+    paintHeader(content, null, []);
     showContent(legacyOriginalDetailContent(content, {variant: admitted}));
   }
 

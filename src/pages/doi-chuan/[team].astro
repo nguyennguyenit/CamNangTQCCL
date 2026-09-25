@@ -20,7 +20,9 @@ const title = entry.displayNameVi || 'Nội dung tiếng Việt chưa sẵn sàn
 const scopeLine = [entry.sourceSeasonCode, entry.sourceSeasonNameVi, entry.sourceCategoryNameVi]
   .filter(Boolean)
   .join(' · ');
-const score = entry.value == null ? 'Chưa có điểm nguồn' : `${entry.value} điểm`;
+// Tên Trung là chữ phụ của tiêu đề (artboard TeamDetail); chỉ hiện khi nguồn thật có chữ Hán.
+const nameZh = entry.nameZh && /[\u3400-\u9fff\uf900-\ufaff]/u.test(entry.nameZh) ? entry.nameZh : null;
+const hasScore = entry.value != null;
 const fallbackReturn = familyReturnHref('recommended', {
   sourceSeasonId: entry.sourceSeasonId,
   sourceCategoryId: entry.sourceCategoryId,
@@ -36,12 +38,15 @@ const fallbackReturn = familyReturnHref('recommended', {
   ogType="article"
 >
   <nav class="detail-back-row" aria-label="Quay lại danh sách đội">
-    <a id="team-return-link" class="detail-link" href={fallbackReturn} data-family-href={fallbackReturn}>Quay lại đội chuẩn</a>
+    <a id="team-return-link" class="detail-link detail-back-link" href={fallbackReturn} data-family-href={fallbackReturn}>
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="11 6 5 12 11 18"></polyline></svg>
+      Quay lại đội chuẩn
+    </a>
   </nav>
 
   <article
     id="team-detail-root"
-    class="season-config-detail reference-detail"
+    class="reference-detail"
     aria-labelledby="team-detail-title"
     aria-busy="true"
     data-family="recommended"
@@ -52,11 +57,28 @@ const fallbackReturn = familyReturnHref('recommended', {
     data-legacy-teams-sha256={legacyTeamsSha256}
   >
     <div class="detail-header">
-      <div>
-        <h1 id="team-detail-title" class="detail-title">{title}</h1>
-        {scopeLine ? <p class="scope-note">{scopeLine}</p> : null}
+      <div class="detail-head-main">
+        {scopeLine ? <p class="scope-note detail-kicker">{scopeLine}</p> : null}
+        <div class="detail-title-row">
+          <h1 id="team-detail-title" class="detail-title">{title}</h1>
+          {nameZh ? <span class="detail-title-zh" lang="zh-Hant">{nameZh}</span> : null}
+        </div>
+        <!-- Huy hiệu phe/loại binh do js/team-detail.js gắn từ bản ghi đã xác minh. -->
+        <div id="team-detail-badges" class="detail-badges" hidden></div>
       </div>
-      <p class="detail-score">{score}</p>
+      <div id="team-detail-panel" class="detail-score-panel">
+        {hasScore ? (
+          <p class="detail-panel-label">
+            <span class="detail-panel-kicker">Điểm nguồn</span>
+            <span class="detail-panel-note">theo SGSDeck</span>
+          </p>
+        ) : null}
+        <p class="detail-score">
+          {hasScore ? <><span class="detail-score-value">{entry.value}</span> <span class="detail-score-unit">điểm</span></> : 'Chưa có điểm nguồn'}
+        </p>
+        <!-- Link nguồn đã kiểm scheme và nút sao chép liên kết do js/team-detail.js gắn. -->
+        <div id="team-detail-actions" class="detail-panel-actions"></div>
+      </div>
     </div>
 
     <div id="team-detail-status" class="detail-state" role="status" aria-live="polite" aria-atomic="true">Đang tải chi tiết…</div>

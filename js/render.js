@@ -1,5 +1,7 @@
 // DOM builders thuần — nhận data, trả HTMLElement. Không state, không innerHTML data thô.
 
+import { validateHttpSourceUrl } from './recommended-reference-state.js';
+
 /** Helper tạo element gọn. */
 export function el(tag, props = {}, children = []) {
   const node = document.createElement(tag);
@@ -225,27 +227,31 @@ function tacticChip(name, cls = "t-tactic") {
 }
 
 /**
- * 1 hàng tướng trong đội hình khai hoang — khối dọc giống card Team PK.
- * `buildNote` thuộc đúng build đang chọn; `openingNote` chỉ hiện ở trang chi tiết.
+ * Một hàng tướng của khối build khai hoang theo artboard Khaihoang: tên, "Trước · …" → "Sau · …",
+ * chiến pháp chữ son, ghi chú build của đúng build đang chọn (ghi chú mở đất chỉ ở trang chi tiết).
  */
 function khaihoangHeroRow(h, openingNotes = false) {
-  const name = el("div", { class: "hero-name" }, [
-    el("span", { class: "hn" }, h.name),
-  ]);
-  const before = el("div", { class: "line kh-line" }, [
-    el("span", { class: "kh-label" }, "Trước"),
-    el("span", { class: `badge unit small ${UNIT_CLASS[h.unitTypeBefore] || ""}` }, h.unitTypeBefore),
-    tacticChip(h.tacticBefore),
+  const unit = (unitType) => unitType
+    ? el("span", { class: `badge unit small ${UNIT_CLASS[unitType] || ""}` }, unitType)
+    : null;
+  const stage = (cls, label, children) => children.length
+    ? el("span", { class: `kh-stage ${cls}` }, [el("span", { class: "kh-label" }, label), " · ", ...children])
+    : null;
+  const before = stage("kh-before", "Trước", [
+    unit(h.unitTypeBefore), h.tacticBefore ? tacticChip(h.tacticBefore) : null,
   ].filter(Boolean));
-  const after = el("div", { class: "line kh-line" }, [
-    el("span", { class: "kh-label" }, "Sau"),
-    el("span", { class: `badge unit small ${UNIT_CLASS[h.unitTypeAfter] || ""}` }, h.unitTypeAfter),
-    ...(h.tacticsAfter || []).map((t) => tacticChip(t)),
+  const after = stage("kh-after", "Sau", [
+    unit(h.unitTypeAfter), ...(h.tacticsAfter || []).map((t) => tacticChip(t)),
   ].filter(Boolean));
-  return el("div", { class: "hero" }, [
-    name,
-    h.tacticBefore ? before : null,
-    h.tacticsAfter?.length ? after : null,
+  return el("div", { class: "hero kh-hero" }, [
+    el("div", { class: "hero-name" }, [
+      el("span", { class: "hn" }, h.name),
+    ]),
+    before || after ? el("div", { class: "kh-stages" }, [
+      before,
+      before && after ? el("span", { class: "kh-arrow", "aria-hidden": "true" }, "→") : null,
+      after,
+    ].filter(Boolean)) : null,
     h.buildNote ? el("div", { class: "kh-note" }, h.buildNote) : null,
     openingNotes && h.openingNote ? el("div", { class: "kh-opening-note" }, h.openingNote) : null,
   ].filter(Boolean));
@@ -390,7 +396,9 @@ function khaihoangTeamCard(team, { onSelect, onActivate }) {
 }
 
 function khaihoangSources(sources = []) {
-  const links = sources.filter((source) => /^https:\/\//.test(source.url || ""));
+  const links = sources
+    .map((source) => ({url: validateHttpSourceUrl(source.url), label: source.label}))
+    .filter((source) => source.url);
   return links.length ? el("div", { class: "kh-sources" }, [
     el("span", {}, "Nguồn: "),
     ...links.map((source) => el("a", {

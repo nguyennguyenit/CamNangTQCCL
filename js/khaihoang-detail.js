@@ -2,6 +2,9 @@
 // Không khởi động app gốc và không ghi ngược trạng thái danh sách.
 
 import { applyKhaihoangUnit, el, khaihoangBuildContent, khaihoangGuide } from './render.js';
+import { detailPanelActions } from './detail-actions.js';
+import { detailBadges } from './recommended-reference-render.js';
+import { validateHttpSourceUrl } from './recommended-reference-state.js';
 import { khaiHoangDetailVariantUrl, returnHrefFor } from './team-detail-navigation.js';
 import { loadWebsiteDisplay, localizeData } from './website-display.js';
 
@@ -54,6 +57,9 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
 
   const teamId = root.dataset.khaihoangTeamId || '';
   const pinnedSha = (root.dataset.khaihoangSha256 || '').replace(/^sha256:/, '');
+  const badges = documentTarget.querySelector('#team-detail-badges');
+  const panel = documentTarget.querySelector('#team-detail-panel');
+  const panelActions = documentTarget.querySelector('#team-detail-actions');
   let loadBytes = byteLoader();
   const from = new URL(location.href).searchParams.get('from');
   if (returnLink) returnLink.href = returnHrefFor('khaihoang', {from});
@@ -61,6 +67,22 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
   let pending = false;
   let team = null;
   let mount = null;
+
+  /** Nguồn của build đang chọn: chỉ link đã qua kiểm scheme `http(s)`, nhãn lấy từ dữ liệu. */
+  const buildSources = (build) => (build?.sources || [])
+    .map((source) => ({href: validateHttpSourceUrl(source.url), label: source.label}))
+    .filter((source) => source.href);
+
+  /** Đầu trang chi tiết: huy hiệu loại binh của build đang chọn + hành động (nguồn, sao chép link). */
+  const paintHeader = (build) => {
+    if (badges) {
+      const nodes = detailBadges({unitType: build?.unitType ? [build.unitType] : []}, null);
+      badges.replaceChildren(...nodes);
+      badges.hidden = !nodes.length;
+    }
+    if (panelActions) panelActions.replaceChildren(detailPanelActions({sources: buildSources(build)}));
+    if (panel) panel.hidden = false;
+  };
 
   const requestedVariant = () => new URL(location.href).searchParams.get('variant') || '';
   const variantFor = (variantId) =>
@@ -103,6 +125,7 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
     const build = variantFor(variantId) || team;
     applyKhaihoangUnit(mount.unit, build);
     mount.content.replaceChildren(...khaihoangBuildContent(build, true));
+    paintHeader(build);
     if (mount.select) mount.select.value = variantId;
   };
 

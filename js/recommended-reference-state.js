@@ -145,15 +145,36 @@ export function resolveTeamDestination(team) {
   return null;
 }
 
-export function validateReferenceSourceUrl(family, identity, raw) {
+/**
+ * Kiểm scheme dùng chung cho mọi URL nguồn lấy từ dữ liệu (quyết định #14): chỉ nhận `http(s)` tuyệt đối,
+ * không userinfo, không ký tự điều khiển; fragment được giữ (link Google Sheets có `#gid=…`).
+ * URL hỏng trả `null` để caller không dựng link — không ném lỗi ra ngoài.
+ */
+export function validateHttpSourceUrl(raw) {
+  if (typeof raw !== 'string' || /[\u0000-\u001f]/.test(raw)) return null;
   try {
     const url = new URL(raw);
-    if (!['http:','https:'].includes(url.protocol) || url.username || url.password || url.hash || /[\u0000-\u001f]/.test(raw)) return null;
-    if (family === 'recommended') {
-      if (url.protocol !== 'https:' || url.hostname !== 'sgsdeck.com' || decodeURIComponent(url.pathname) !== `/recommended/${identity.sourceConfigId}` || url.search) return null;
-    }
+    if (!['http:','https:'].includes(url.protocol) || url.username || url.password) return null;
     return url.href;
   } catch { return null; }
+}
+
+/**
+ * URL nguồn theo từng họ: `recommended` giữ nguyên ràng buộc danh tính (https, host, path giải mã được,
+ * không query/fragment); họ khác chỉ cần phép kiểm scheme ở trên. Mọi lỗi giải mã trả `null`, không ném.
+ */
+export function validateReferenceSourceUrl(family, identity, raw) {
+  const href = validateHttpSourceUrl(raw);
+  if (!href) return null;
+  if (family !== 'recommended') return href;
+  try {
+    const url = new URL(href);
+    if (url.protocol !== 'https:' || url.hostname !== 'sgsdeck.com' || url.hash || url.search) return null;
+    return decodeURIComponent(url.pathname) === `/recommended/${identity.sourceConfigId}` ? href : null;
+  } catch {
+    // `%ZZ` trong path không giải mã được: không phải URL nguồn hợp lệ, không được làm hỏng trang chi tiết.
+    return null;
+  }
 }
 
 function bytesToJson(bytes) { return JSON.parse(new TextDecoder().decode(bytes)); }
@@ -183,14 +204,17 @@ export async function loadRecommendedReference(pin, loadBytes) {
   return Object.freeze({pin,manifest,seasons,index,other,loadDetail:scopeKey=>load(`details-${scopeKey}.json`)});
 }
 
-/** Trang chi tiết chỉ tải đúng scope của nó; không kéo index/other/seasons. */
-export async function loadRecommendedDetailRecord(pin, {scopeKey, sourceConfigId}, loadBytes) {
+/**
+ * Trang chi tiết chỉ tải đúng scope của nó: bản ghi đã xác minh + nhãn hiển thị phe/loại binh của
+ * `seasons.json` cùng generation (đầu trang cần nhãn Việt cho giá trị nguồn), không kéo index/other.
+ */
+export async function loadRecommendedDetailView(pin, {scopeKey, sourceConfigId}, loadBytes) {
   if (!/^s-[0-9a-f]{64}$/.test(scopeKey || '')) throw new Error('Scope chi tiết không hợp lệ.');
   const {load} = await loadVerifiedRecommendedManifest(pin, loadBytes);
-  const payload = await load(`details-${scopeKey}.json`);
+  const [payload,seasons] = await Promise.all([load(`details-${scopeKey}.json`),load('seasons.json')]);
   const matches = (payload.records || []).filter(row=>row.sourceConfigId === sourceConfigId);
   if (matches.length !== 1) throw new Error('Không tìm thấy đúng một cấu hình trong dữ liệu đã xác minh.');
-  return matches[0];
+  return {record: matches[0], labels: seasons?.displayLabels ?? null};
 }
 
 /** Toàn bộ đội gốc tự xác minh bytes raw trước khi tạo bản hiển thị. */

@@ -50,6 +50,124 @@ test('Recommended detail loads directly, survives reload and shows verified sour
   await expect(page.locator('#team-detail-body')).toBeVisible();
 });
 
+test('Recommended detail uses the TeamDetail shell: scope line, Chinese title, badges and score panel',async({page,request})=>{
+  const {index,seasons}=await publication(request);
+  const handles=await routeHandles(request);
+  // Bản ghi đủ dữ liệu đầu trang: mùa/danh mục, phe, loại binh, tên Trung, điểm và URL nguồn.
+  const row=index.records.find(item=>item.factionRaw && item.unitTypesRaw?.length && item.nameZh && item.value!=null);
+  expect(row).toBeTruthy();
+  await page.goto(recommendedPath(handles,row.sourceConfigId));
+  const detail=page.locator('#team-detail-root');
+  await expect(detail).toHaveAttribute('aria-busy','false');
+
+  // Nhãn mùa · danh mục nằm trên tiêu đề trong `.detail-header`, không lặp ở thẻ danh sách.
+  const kicker=page.locator('#team-detail-root .detail-header .scope-note.detail-kicker');
+  await expect(kicker).toHaveCount(1);
+  for (const part of [row.sourceSeasonCode,row.sourceSeasonNameVi,row.sourceCategoryNameVi].filter(Boolean)) {
+    await expect(kicker).toContainText(part);
+  }
+  await expect(page.locator('#team-detail-root .detail-title-zh')).toHaveText(row.nameZh);
+
+  const badges=page.locator('#team-detail-root .detail-badges');
+  await expect(badges.locator('.badge.faction')).toHaveText(seasons.displayLabels?.faction?.[row.factionRaw] || row.factionRaw);
+  await expect(badges.locator('.badge.unit')).toHaveText(row.unitTypesRaw.map(unit=>seasons.displayLabels?.unit?.[unit] || unit));
+
+  // Panel điểm: nhãn caps, số serif son + đơn vị, link nguồn đã kiểm scheme.
+  const panel=page.locator('#team-detail-root .detail-score-panel');
+  await expect(panel.locator('.detail-panel-kicker')).toHaveText('Điểm nguồn');
+  await expect(panel.locator('.detail-panel-note')).toHaveText('theo SGSDeck');
+  await expect(panel.locator('.detail-score-value')).toHaveText(String(row.value));
+  await expect(panel.locator('.detail-score-unit')).toHaveText('điểm');
+  const source=panel.locator('.detail-source-link');
+  await expect(source).toHaveText('Xem nguồn');
+  await expect(source).toHaveAttribute('href',row.sourceUrl);
+  await expect(source).toHaveAttribute('target','_blank');
+  await expect(source).toHaveAttribute('rel','noopener noreferrer');
+  // Chỉ một URL chi tiết cho mỗi đội: canonical là pathname, không kèm query/hash.
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href',new RegExp(`${recommendedPath(handles,row.sourceConfigId)}$`));
+});
+
+test('recommended hero cards keep role, Chinese name, tactic ordinals and books',async({page,request})=>{
+  const {index}=await publication(request);
+  const handles=await routeHandles(request);
+  const row=index.records.find(item=>item.heroes?.length===3
+    && item.heroes.every(holder=>(holder.tacticSlotsVi || []).some(Boolean))
+    && item.heroes.every(holder=>(holder.bookSlotsVi || []).some(Boolean))
+    && item.heroes.every(holder=>holder.nameRaw && /[\u3400-\u9fff]/u.test(holder.nameRaw)));
+  expect(row).toBeTruthy();
+  await page.goto(recommendedPath(handles,row.sourceConfigId));
+  const cards=page.locator('#team-detail-body .detail-hero-card');
+  await expect(cards).toHaveCount(3);
+  await expect(cards.locator('.detail-hero-role')).toHaveText(['Chủ tướng','Phó tướng 1','Phó tướng 2']);
+  for (const [position,holder] of row.heroes.entries()) {
+    const card=cards.nth(position);
+    await expect(card.locator('.detail-hero-name .hn')).toHaveText((holder.displayNameVi || holder.nameRaw).replace(/^(?:SP|CO|40Y)\s+/,''));
+    await expect(card.locator('.detail-hero-zh')).toHaveText(holder.nameRaw);
+    const tactics=(holder.tacticSlotsVi || []).map((vi,slot)=>holder.tacticSlotKinds?.[slot]==='bond' ? null : (vi || holder.tacticSlotsRaw?.[slot])).filter(Boolean);
+    await expect(card.locator('.detail-hero-tactics-vi')).toHaveText(tactics);
+    await expect(card.locator('.detail-hero-tactics-zh')).toHaveText((holder.tacticSlotsRaw || []).filter((raw,slot)=>raw && holder.tacticSlotKinds?.[slot] !== 'bond'));
+    const books=(holder.bookSlotsVi || []).map((vi,slot)=>vi || holder.bookSlotsRaw?.[slot]).filter(Boolean);
+    await expect(card.locator('.detail-hero-books-vi')).toHaveText(books);
+    await expect(card.locator('.detail-hero-label')).toHaveText(['Chiến pháp','Binh thư']);
+  }
+});
+
+test('Đội khác detail drops the score panel content and Chinese name instead of faking them',async({page,request})=>{
+  const teams=await rawTeams(request);
+  const handles=await routeHandles(request);
+  const team=teams.find(item=>item.nickname && item.faction && item.unitType?.length) || teams[0];
+  await page.goto(legacyPath(handles,team.id));
+  const detail=page.locator('#team-detail-root');
+  await expect(detail).toHaveAttribute('aria-busy','false');
+  await expect(page.locator('#team-detail-body')).toBeVisible();
+  // Đội khác không có điểm nguồn và tên Trung: hai phần đó không được render dưới dạng ô trống.
+  await expect(detail.locator('.detail-score')).toHaveCount(0);
+  await expect(detail.locator('.detail-title-zh')).toHaveCount(0);
+  await expect(detail.locator('.detail-kicker')).toHaveCount(0);
+  await expect(detail.locator('.detail-hero-role')).toHaveCount(0);
+  // Panel vẫn có hàng hành động (sao chép liên kết) và huy hiệu có dữ liệu.
+  await expect(detail.locator('.detail-score-panel')).toBeVisible();
+  await expect(detail.locator('#team-copy-link')).toBeVisible();
+  if (team.faction) await expect(detail.locator('.detail-badges .badge.faction')).toHaveText(team.faction);
+  for (const unit of team.unitType || []) await expect(detail.locator('.detail-badges .badge.unit')).toContainText(unit);
+  await expect(detail.locator('.detail-source-link')).toHaveCount(0);
+});
+
+test('copy link reports the real clipboard result and offers a selected fallback',async({context,page,request})=>{
+  const {index}=await publication(request);
+  const handles=await routeHandles(request);
+  const row=index.records.find(item=>item.value!=null);
+  await context.grantPermissions(['clipboard-read','clipboard-write']);
+  const query=`?from=${encodeURIComponent('/doi-chuan/?season=' + row.sourceSeasonId)}`;
+  await page.goto(`${recommendedPath(handles,row.sourceConfigId)}${query}`);
+  await expect(page.locator('#team-detail-body')).toBeVisible();
+  const button=page.locator('#team-copy-link');
+  await expect(button).toHaveAttribute('aria-label','Sao chép liên kết đội');
+  await button.click();
+  await expect(page.locator('#team-copy-status')).toHaveText('Đã sao chép liên kết');
+  await expect(page.locator('#team-copy-fallback')).toBeHidden();
+  // Đúng URL đang xem, gồm cả `from` (không phải URL canonical hay origin).
+  await expect.poll(()=>page.evaluate(()=>navigator.clipboard.readText())).toBe(new URL(page.url()).href);
+
+  // Clipboard lỗi: không được báo thành công, phải chọn sẵn URL trong ô chỉ đọc.
+  await page.addInitScript(()=>{
+    Object.defineProperty(navigator,'clipboard',{configurable:true,get(){return {writeText:()=>Promise.reject(new Error('denied'))};}});
+  });
+  await page.reload();
+  await expect(page.locator('#team-detail-body')).toBeVisible();
+  await page.locator('#team-copy-link').click();
+  const fallback=page.locator('#team-copy-fallback');
+  await expect(fallback).toBeVisible();
+  await expect(fallback).toHaveValue(page.url());
+  await expect(page.locator('#team-copy-status')).toHaveText('Không sao chép tự động được. Liên kết đã được chọn sẵn để bạn tự sao chép.');
+  const selection=await page.evaluate(()=>{
+    const input=document.querySelector('#team-copy-fallback');
+    return {focused:document.activeElement === input,selected:input.value.slice(input.selectionStart,input.selectionEnd)};
+  });
+  expect(selection.focused).toBe(true);
+  expect(selection.selected).toBe(page.url());
+});
+
 test('Recommended detail renders note ownership once per source occurrence',async({page,request})=>{
   const {pin,index}=await publication(request);
   const handles=await routeHandles(request);
@@ -85,8 +203,8 @@ test('Recommended detail renders note ownership once per source occurrence',asyn
     const sectionFor=label=>[...host.querySelectorAll('.detail-section')].find(section=>section.querySelector(':scope > h2')?.textContent===label);
     return {
       all:host.querySelectorAll('.detail-note').length,
-      team:sectionFor('Mô tả & điều kiện').querySelectorAll('.detail-note').length,
-      primary:[...sectionFor('Cấu hình chính').querySelectorAll('.reference-detail-holder')].map(node=>node.querySelectorAll('.detail-note').length),
+      team:sectionFor('Ghi chú nguồn').querySelectorAll('.detail-note').length,
+      primary:[...sectionFor('Đội hình').querySelectorAll('.reference-detail-holder')].map(node=>node.querySelectorAll('.detail-note').length),
       alternative:[...sectionFor('Cấu hình thay thế').querySelectorAll('.reference-detail-holder')].map(node=>node.querySelectorAll('.detail-note').length),
       texts:[...host.querySelectorAll('.detail-note')].map(node=>node.textContent),
     };
@@ -128,14 +246,21 @@ test('Recommended detail distinguishes absent slots from untranslated populated 
     });
     const host=document.createElement('div');
     host.append(fragment);
-    return [...host.querySelectorAll('.reference-detail-holder')].map(node=>({
-      tactics:node.querySelector('.holder-tactics dd')?.textContent,
-      books:node.querySelector('.holder-books dd')?.textContent,
-      stat:node.querySelector('.holder-stat dd')?.textContent,
+    const slotText=(card,block)=>{
+      const container=card.querySelector(`.detail-hero-${block}-block`);
+      const items=[...container.querySelectorAll(`.detail-hero-${block}-vi`)].map(node=>node.textContent);
+      return items.length ? items.join(' · ') : container.querySelector('.detail-hero-missing')?.textContent;
+    };
+    return [...host.querySelectorAll('.detail-hero-card')].map(node=>({
+      tactics:slotText(node,'tactics'),
+      books:slotText(node,'books'),
+      stat:node.querySelector('.detail-hero-stat')?.textContent,
     }));
   });
   expect(slots).toEqual([
-    {tactics:'Chưa có dữ liệu',books:'Chưa có dữ liệu',stat:'Chưa có dữ liệu'},
+    // Ô trống hoàn toàn: nguồn và bản dịch đều không có → nhãn "Chưa có dữ liệu".
+    {tactics:'Chưa có dữ liệu',books:'Chưa có dữ liệu',stat:undefined},
+    // Nguồn có chữ nhưng chưa dịch: hiện nhãn chờ dịch, không bịa chữ Việt.
     {tactics:'Nội dung tiếng Việt chưa sẵn sàng',books:'Nội dung tiếng Việt chưa sẵn sàng',stat:'Nội dung tiếng Việt chưa sẵn sàng'},
     {tactics:'Đột Trận',books:'Phá Trận',stat:'Toàn Võ Lực'},
   ]);
@@ -149,7 +274,8 @@ test('legacy original keeps notes, counters, hero notes and every alternative',a
   await page.goto(legacyPath(handles,team.id));
 
   await expect(page.locator('h1#team-detail-title')).toHaveText(team.nickname || team.name);
-  await expect(page.locator('.detail-score')).toHaveText('Chưa có điểm nguồn');
+  // Đội khác không có điểm nguồn: phần điểm không được render (plan Phase 6 bước 3), panel chỉ còn hành động.
+  await expect(page.locator('.detail-score')).toHaveCount(0);
   const body=page.locator('#team-detail-body');
   const holders=body.locator('.reference-detail-holder');
   await expect(holders).toHaveCount(team.heroes.length);
@@ -196,6 +322,41 @@ test('hostile source text is rendered as text and never executed',async({page,re
   expect(rendered.title).not.toBe('pwned');
   await expect(page).toHaveTitle(/^(?!pwned).*/);
 });
+test('a malformed source URL suppresses the anchor without breaking the render',async({page,request})=>{
+  const {index}=await publication(request);
+  const row=index.records[0];
+  await page.goto(recommendedPath(await routeHandles(request),row.sourceConfigId));
+  const result=await page.evaluate(async()=>{
+    const {recommendedTeamDetailContent}=await import('/js/recommended-reference-render.js');
+    const {validateReferenceSourceUrl,validateHttpSourceUrl}=await import('/js/recommended-reference-state.js');
+    const holder={displayNameVi:'A',tacticSlotsRaw:[],tacticSlotsVi:[],bookSlotsRaw:[],bookSlotsVi:[],statFocusRaw:'',roleRaw:''};
+    const host=document.createElement('div');
+    host.append(recommendedTeamDetailContent({
+      sourceConfigId:'malformed-probe',sourceUrl:'https://sgsdeck.com/recommended/%ZZ',
+      heroes:[holder],alternativeHoldersRaw:[],displayNotes:{schemaVersion:1,blocks:[]},legacyReferences:[],
+    }));
+    return {
+      cards:host.querySelectorAll('.detail-hero-card').length,
+      sourceAnchors:host.querySelectorAll('.detail-source a').length,
+      invalidSource:validateReferenceSourceUrl('recommended',{sourceConfigId:'malformed-probe'},'https://sgsdeck.com/recommended/%ZZ'),
+      fragmentSource:validateReferenceSourceUrl('recommended',{sourceConfigId:'malformed-probe'},'https://sgsdeck.com/recommended/malformed-probe#frag'),
+      exactlyValid:validateReferenceSourceUrl('recommended',{sourceConfigId:'malformed-probe'},'https://sgsdeck.com/recommended/malformed-probe'),
+      // Fragment của URL nguồn chung (Google Sheets) vẫn được giữ.
+      sheets:validateHttpSourceUrl('https://docs.google.com/spreadsheets/d/x/edit#gid=562317106'),
+      notice:host.textContent.includes('Liên kết nguồn không hợp lệ hoặc chưa có.'),
+    };
+  });
+  expect(result).toEqual({
+    cards:1,
+    sourceAnchors:0,
+    invalidSource:null,
+    fragmentSource:null,
+    exactlyValid:'https://sgsdeck.com/recommended/malformed-probe',
+    sheets:'https://docs.google.com/spreadsheets/d/x/edit#gid=562317106',
+    notice:true,
+  });
+});
+
 test('duplicate legacy content renders once while every reviewed locator remains visible',async({page,request})=>{
   const teams=await rawTeams(request);
   await page.goto(legacyPath(await routeHandles(request),teams[0].id));

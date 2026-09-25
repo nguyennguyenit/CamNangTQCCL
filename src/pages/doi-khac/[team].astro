@@ -33,12 +33,15 @@ const title = /[\u3400-\u9fff\uf900-\ufaff]/u.test(rawTitle) ? 'Nội dung tiế
   ogType="article"
 >
   <nav class="detail-back-row" aria-label="Quay lại danh sách đội">
-    <a id="team-return-link" class="detail-link" href="/doi-khac/" data-family-href="/doi-khac/">Quay lại đội khác</a>
+    <a id="team-return-link" class="detail-link detail-back-link" href="/doi-khac/" data-family-href="/doi-khac/">
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="11 6 5 12 11 18"></polyline></svg>
+      Quay lại đội khác
+    </a>
   </nav>
 
   <article
     id="team-detail-root"
-    class="season-config-detail reference-detail"
+    class="reference-detail"
     aria-labelledby="team-detail-title"
     aria-busy="true"
     data-family="legacy"
@@ -48,10 +51,17 @@ const title = /[\u3400-\u9fff\uf900-\ufaff]/u.test(rawTitle) ? 'Nội dung tiế
     data-manifest-sha256={manifestSha256}
   >
     <div class="detail-header">
-      <div>
-        <h1 id="team-detail-title" class="detail-title">{title}</h1>
+      <div class="detail-head-main">
+        <div class="detail-title-row">
+          <h1 id="team-detail-title" class="detail-title">{title}</h1>
+        </div>
+        <!-- Huy hiệu phe/loại binh do js/team-detail.js gắn từ đội gốc đã xác minh. -->
+        <div id="team-detail-badges" class="detail-badges" hidden></div>
       </div>
-      <p class="detail-score">Chưa có điểm nguồn</p>
+      <!-- Đội khác không có điểm nguồn và tên Trung: panel chỉ giữ hành động (nguồn, sao chép link). -->
+      <div id="team-detail-panel" class="detail-score-panel" hidden>
+        <div id="team-detail-actions" class="detail-panel-actions"></div>
+      </div>
     </div>
 
     <div id="team-detail-status" class="detail-state" role="status" aria-live="polite" aria-atomic="true">Đang tải chi tiết…</div>

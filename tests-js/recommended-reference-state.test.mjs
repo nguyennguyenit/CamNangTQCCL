@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { projectRecommendedRows, readRecommendedQuery, resolveTeamDestination, validateReferenceSourceUrl } from '../js/recommended-reference-state.js';
+import { projectRecommendedRows, readRecommendedQuery, resolveTeamDestination, validateHttpSourceUrl, validateReferenceSourceUrl } from '../js/recommended-reference-state.js';
 
 const rows = [
   {sourceConfigId:'b',sourceSeasonId:'s28',sourceCategoryId:'交戰',tierRaw:'T2',tierOrder:2,value:72,listIndex:1,factionRaw:'群',unitTypesRaw:['弓'],subcategoryRaw:'交戰',heroes:[]},
@@ -60,6 +60,30 @@ test('source URL policy rejects wrong hosts and credentials', () => {
   assert.equal(validateReferenceSourceUrl('recommended',{sourceConfigId:'abc'},'https://evil.test/recommended/abc'), null);
   assert.equal(validateReferenceSourceUrl('recommended',{sourceConfigId:'呂布'},'https://sgsdeck.com/recommended/%E5%91%82%E5%B8%83'), 'https://sgsdeck.com/recommended/%E5%91%82%E5%B8%83');
   assert.equal(validateReferenceSourceUrl('other',{},'javascript:alert(1)'), null);
+});
+
+test('shared http(s) source check keeps links honest for every family', () => {
+  // Đội khác và Khai hoang không có ràng buộc danh tính, nhưng vẫn phải là URL tuyệt đối http(s).
+  assert.equal(validateHttpSourceUrl('https://kazten.com/entry/2025/11/20/180000'), 'https://kazten.com/entry/2025/11/20/180000');
+  assert.equal(validateHttpSourceUrl('http://example.test/a'), 'http://example.test/a');
+  for (const unsafe of [
+    'javascript:alert(1)', 'data:text/html,<script>1</script>', 'file:///etc/passwd', '//evil.test/x',
+    '/relative/path', 'https://user:pass@example.test/x',
+    'https://example.test/a\u0000b', '', null, undefined, 42,
+  ]) {
+    assert.equal(validateHttpSourceUrl(unsafe), null, `${String(unsafe)} phải bị từ chối`);
+  }
+  // Fragment của URL nguồn thật (ví dụ #gid= của Google Sheets) vẫn giữ nguyên.
+  assert.equal(validateHttpSourceUrl('https://docs.google.com/spreadsheets/d/x/edit#gid=1'), 'https://docs.google.com/spreadsheets/d/x/edit#gid=1');
+  // Ràng buộc danh tính của Recommended vẫn nguyên vẹn khi dùng chung phép kiểm scheme.
+  assert.equal(validateReferenceSourceUrl('recommended',{sourceConfigId:'abc'},'http://sgsdeck.com/recommended/abc'), null);
+  assert.equal(validateReferenceSourceUrl('recommended',{sourceConfigId:'abc'},'https://sgsdeck.com/recommended/abc?x=1'), null);
+  // Fragment chỉ hợp lệ với nguồn chung; URL nguồn Recommended đóng băng không có fragment.
+  assert.equal(validateReferenceSourceUrl('recommended',{sourceConfigId:'probe'},'https://sgsdeck.com/recommended/probe#fragment'), null);
+  // Path không giải mã được: trả null, không ném URIError ra ngoài.
+  assert.equal(validateReferenceSourceUrl('recommended',{sourceConfigId:'probe'},'https://sgsdeck.com/recommended/%ZZ'), null);
+  assert.equal(validateReferenceSourceUrl('recommended',{sourceConfigId:'probe'},'https://sgsdeck.com/recommended/%E5%91%82'), null);
+  assert.doesNotThrow(() => validateReferenceSourceUrl('recommended',{sourceConfigId:'probe'},'https://sgsdeck.com/recommended/%E0%A4%A'));
 });
 
 test('query matches enriched rows by Vietnamese with or without accents and by original Chinese', () => {

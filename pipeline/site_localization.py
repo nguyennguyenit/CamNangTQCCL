@@ -515,6 +515,24 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:recommended/detail-cta", "action", "'Chi tiết'", "js/recommended-reference-render.js", "recommendedTeamCard", "static", "authored-vi"),
     ("ui:recommended/find-tactic", "title", "'Tìm chiến pháp này'", "js/recommended-reference-render.js", "holderView", "static", "authored-vi"),
     ("ui:recommended/table-missing", "text", "'—'", "js/recommended-reference-render.js", "tableHeroCell", "empty", "authored-vi"),
+    # Trang chi tiết đội (Phase 6): khung TeamDetail, panel điểm, thẻ tướng và nút sao chép liên kết.
+    ("ui:detail/copy-link", "ariaLabel", "'Sao chép liên kết đội'", "js/detail-actions.js", "copyControl", "static", "authored-vi"),
+    ("ui:detail/copy-fallback-label", "ariaLabel", "'Liên kết đội'", "js/detail-actions.js", "copyControl", "static", "authored-vi"),
+    ("ui:detail/copied", "message", "'Đã sao chép liên kết'", "js/detail-actions.js", "copyControl", "success", "authored-vi"),
+    ("ui:detail/copy-failed", "message", "'Không sao chép tự động được. Liên kết đã được chọn sẵn để bạn tự sao chép.'", "js/detail-actions.js", "copyControl", "error", "authored-vi"),
+    ("ui:detail/source-link", "action", "SOURCE_LINK_LABEL = 'Xem nguồn'", "js/detail-actions.js", "sourceLink", "static", "authored-vi"),
+    ("ui:recommended/detail-lineup", "heading", "'Đội hình'", "js/recommended-reference-render.js", "recommendedTeamDetailContent", "static", "authored-vi"),
+    ("ui:recommended/detail-notes", "heading", "'Ghi chú nguồn'", "js/recommended-reference-render.js", "detailNotes", "static", "authored-vi"),
+    ("ui:recommended/detail-role-main", "label", "'Chủ tướng'", "js/recommended-reference-render.js", "detailHeroCard", "static", "authored-vi"),
+    ("ui:recommended/detail-role-vice1", "label", "'Phó tướng 1'", "js/recommended-reference-render.js", "detailHeroCard", "static", "authored-vi"),
+    ("ui:recommended/detail-role-vice2", "label", "'Phó tướng 2'", "js/recommended-reference-render.js", "detailHeroCard", "static", "authored-vi"),
+    ("ui:recommended/detail-tactic-label", "label", "'Chiến pháp'", "js/recommended-reference-render.js", "detailHeroCard", "static", "authored-vi"),
+    ("ui:recommended/detail-books-label", "label", "'Binh thư'", "js/recommended-reference-render.js", "detailHeroCard", "static", "authored-vi"),
+    ("ui:recommended/detail-bonds-label", "label", "'Duyên phận'", "js/recommended-reference-render.js", "detailHeroCard", "static", "authored-vi"),
+    ("ui:recommended/detail-stat-note", "label", "Lưu ý: ", "js/recommended-reference-render.js", "detailHeroCard", "static", "authored-vi"),
+    ("ui:recommended/detail-missing", "text", "'Chưa có dữ liệu'", "js/recommended-reference-render.js", "detailHeroCard", "empty", "authored-vi"),
+    ("ui:route-recommended/score-label", "label", "Điểm nguồn", "src/pages/doi-chuan/[team].astro", "score panel", "static", "authored-vi"),
+    ("ui:route-recommended/score-source", "label", "theo SGSDeck", "src/pages/doi-chuan/[team].astro", "score panel", "static", "authored-vi"),
 )
 
 

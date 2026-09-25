@@ -35,7 +35,12 @@ function tacticSlotEntries(holder) {
   const vi=holder.tacticSlotsVi || [];
   const kinds=holder.tacticSlotKinds || [];
   const length=Math.max(2,raw.length,vi.length);
-  return Array.from({length},(_,index)=>({...localizedSlot(raw[index],vi[index]),bond:kinds[index] === 'bond'}));
+  return Array.from({length},(_,index)=>({
+    ...localizedSlot(raw[index],vi[index]),
+    raw: raw[index],
+    index,
+    bond: kinds[index] === 'bond',
+  }));
 }
 
 
@@ -76,33 +81,106 @@ function holderView(holder,onTag,{index=0}={}) {
   ]);
 }
 
-const slotLine=(raw,vi)=>(raw || []).map((value,index)=>localizedSlot(value,vi?.[index]).value).filter(Boolean).join(' · ');
-const entryLine=entries=>entries.map(entry=>entry.value).filter(Boolean).join(' · ');
 const noteParagraph=value=>el('p',{class:'detail-note'},text(value));
 const fact=(cls,label,value)=>el('div',{class:cls},[el('dt',{},label),el('dd',{},value)]);
-const detailSlotValue=value=>value || 'Chưa có dữ liệu';
 
-/** Một holder trên trang chi tiết; ghi chú đi kèm đúng chủ sở hữu, không gộp aggregate. */
-function detailHolder(holder,{level='h3',notes=[],isMain=false}={}) {
-  const entries=tacticSlotEntries(holder);
-  const bonds=entries.filter(entry=>entry.bond && entry.value);
-  const statFocus=localizedSlot(holder.statFocusRaw,holder.statFocusVi).value;
-  return el('section',{class:'reference-detail-holder season-slot'},[
-    el(level,{},[
-      ...holderNameNodes(holder),
+/** Chữ Hán nguồn chỉ hiển thị như chữ phụ; chuỗi đã là tiếng Việt thì bỏ. */
+const hanText=value=>typeof value === 'string' && CJK.test(value) ? value.trim() : null;
+
+/** Nhãn hiển thị của một giá trị nguồn (phe, loại binh) từ `seasons.json`: own-property, chỉ nhận chuỗi. */
+export function labelValue(labels,kind,raw) {
+  if (typeof raw !== 'string' || !raw) return null;
+  const table=labels?.[kind];
+  if (!table || typeof table !== 'object') return null;
+  const value=Object.hasOwn(table,raw) ? table[raw] : null;
+  return typeof value === 'string' && value.trim() ? value.trim() : null;
+}
+
+/** Huy hiệu phe + loại binh của đầu trang chi tiết; phần thiếu dữ liệu bỏ hẳn, không để ô trống. */
+export function detailBadges(row,labels) {
+  const nodes=[];
+  const rawFaction=row?.factionRaw ?? row?.faction;
+  const faction=labelValue(labels,'faction',rawFaction)
+    || (typeof rawFaction === 'string' && rawFaction.trim() && !CJK.test(rawFaction) ? rawFaction.trim() : null);
+  if (faction) {
+    const code=FACTION_CODE[faction];
+    nodes.push(el('span',{class:code ? `badge faction f-${code}` : 'badge faction'},faction));
+  }
+  for (const raw of (row?.unitTypesRaw?.length ? row.unitTypesRaw : (row?.unitType || []))) {
+    const label=labelValue(labels,'unit',raw)
+      || (typeof raw === 'string' && raw.trim() && !CJK.test(raw) ? raw.trim() : null);
+    if (label) nodes.push(el('span',{class:'badge unit'},label));
+  }
+  return nodes;
+}
+
+/** Vai trò đầy đủ của thẻ tướng trên trang chi tiết (artboard TeamDetail). */
+const DETAIL_HERO_ROLES=['Chủ tướng','Phó tướng 1','Phó tướng 2'];
+
+/**
+ * Một thẻ tướng của trang chi tiết (artboard TeamDetail): đầu thẻ vai trò + chỉ số, tên Việt và tên Trung,
+ * chiến pháp có số thứ tự, duyên phận, binh thư hai cột, ghi chú đúng chủ sở hữu.
+ * Dữ liệu thiếu thì bỏ phần đó; ô rỗng chỉ hiện nhãn "Chưa có dữ liệu" khi cả nguồn lẫn bản dịch đều trống.
+ */
+function detailHeroCard(holder,{role=null,level='h3',isMain=false,notes=[],legacy=false}={}) {
+  const entries=legacy ? [] : tacticSlotEntries(holder);
+  const tactics=legacy
+    ? (holder.tactics || []).map(item=>({value:text(item.name),zh:null}))
+    : entries.filter(entry=>!entry.bond && entry.value).map(entry=>({value:entry.value,zh:hanText(entry.raw)}));
+  const bonds=legacy ? [] : entries.filter(entry=>entry.bond && entry.value);
+  const books=legacy
+    ? (holder.books || []).map(item=>({value:text(item.name),zh:null}))
+    : Array.from({length:3},(_,slot)=>{
+      const raw=holder.bookSlotsRaw?.[slot];
+      const value=localizedSlot(raw,holder.bookSlotsVi?.[slot]).value;
+      return value ? {value,zh:hanText(raw)} : null;
+    }).filter(Boolean);
+  const stat=legacy ? null : localizedSlot(holder.statFocusRaw,holder.statFocusVi);
+  const statText=stat?.value
+    ? (holder.statFocusKind === 'note' && stat.value !== UNAVAILABLE ? `Lưu ý: ${stat.value}` : stat.value)
+    : null;
+  const zh=legacy ? null : hanText(holder.nameRaw);
+  /**
+   * Danh sách ô giá trị của thẻ: chiến pháp là `ol` có số thứ tự (artboard), binh thư là `ul` hai cột
+   * "tên Việt · chữ Hán" không có số trang trí.
+   */
+  const pips=(items,cls,{stacked=true,ordinal=true}={})=>items.length
+    ? el(ordinal ? 'ol' : 'ul',{class:cls},items.map((item,index)=>{
+      const value=[
+        el('span',{class:`${cls}-vi`},item.value),
+        item.zh ? el('span',{class:`${cls}-zh`,lang:'zh-Hant'},item.zh) : null,
+      ].filter(Boolean);
+      return el('li',{class:`${cls}-item`},[
+        ordinal ? el('span',{class:`${cls}-index`,'aria-hidden':'true'},String(index+1)) : null,
+        ...(stacked ? [el('span',{class:`${cls}-text`},value)] : value),
+      ].filter(Boolean));
+    }))
+    : el('p',{class:'detail-hero-missing'},'Chưa có dữ liệu');
+  const block=(label,body,cls='')=>el('div',{class:`detail-hero-block ${cls}`.trim()},[el('span',{class:'detail-hero-label'},label),body]);
+  const head=[role ? el('span',{class:'detail-hero-role'},role) : null,statText ? el('span',{class:'detail-hero-stat'},statText) : null].filter(Boolean);
+  return el('section',{class:'reference-detail-holder detail-hero-card'},[
+    head.length ? el('header',{class:'detail-hero-head'},head) : null,
+    el(level,{class:'detail-hero-name'},[
+      ...(legacy ? [text(holder.name)] : holderNameNodes(holder)),
       isMain ? el('span',{class:'badge role main-holder',title:'Chủ tướng','aria-label':'Chủ tướng'},'C') : null,
     ]),
-    el('dl',{class:'detail-facts'},[
-      fact('holder-tactics','Chiến pháp',detailSlotValue(entryLine(entries.filter(entry=>!entry.bond)))),
-      bonds.length ? fact('holder-bonds','Duyên phận',entryLine(bonds)) : null,
-      fact('holder-books','Binh thư',detailSlotValue(slotLine(holder.bookSlotsRaw,holder.bookSlotsVi))),
-      fact(
-        holder.statFocusKind === 'note' ? 'holder-stat-note' : 'holder-stat',
-        holder.statFocusKind === 'note' ? 'Lưu ý' : 'Cộng điểm',
-        detailSlotValue(statFocus),
-      ),
-    ].filter(Boolean)),
+    zh ? el('span',{class:'detail-hero-zh',lang:'zh-Hant'},zh) : null,
+    block('Chiến pháp',pips(tactics,'detail-hero-tactics'),'detail-hero-tactics-block'),
+    bonds.length ? el('div',{class:'detail-hero-block detail-hero-bonds'},[
+      el('span',{class:'detail-hero-label'},'Duyên phận'),
+      el('span',{class:'detail-hero-bond-list'},bonds.map(entry=>el('span',{class:'tag t-bond'},entry.value))),
+    ]) : null,
+    block('Binh thư',pips(books,'detail-hero-books',{stacked:false,ordinal:false}),'detail-hero-books-block'),
     ...notes.map(noteParagraph),
+  ].filter(Boolean));
+}
+
+/** Ghi chú nguồn đánh số theo artboard TeamDetail; không có ghi chú thì không dựng khối. */
+function detailNotes(notes) {
+  if (!notes.length) return null;
+  return el('section',{class:'detail-section detail-notes'},[
+    el('h2',{},'Ghi chú nguồn'),
+    el('ol',{class:'detail-note-list'},notes.map(note=>el('li',{class:'detail-note'},note))),
   ]);
 }
 
@@ -127,12 +205,12 @@ function rowDisplayName(row) {
 /** Dòng "■ phe · binh" của thẻ và ô đội của bảng: chỉ phần có dữ liệu, phần thiếu bỏ hẳn. */
 function metaLine(row,labels) {
   const raw=row.factionRaw ?? row.faction;
-  const faction=raw ? text(labels?.faction?.[raw] || raw) : '';
+  const factionValue=labelValue(labels,'faction',raw) ?? (raw ? text(raw) : '');
   const units=(row.unitTypesRaw?.length ? row.unitTypesRaw : (row.unit || []))
-    .map(value=>text(labels?.unit?.[value] || value))
+    .map(value=>labelValue(labels,'unit',value) ?? text(value))
     .filter(Boolean);
   const nodes=[];
-  if (faction) nodes.push(el('span',{class:`reference-faction f-${FACTION_CODE[faction] || 'none'}`},faction));
+  if (factionValue) nodes.push(el('span',{class:`reference-faction f-${FACTION_CODE[factionValue] || 'none'}`},factionValue));
   if (units.length) nodes.push(el('span',{class:'reference-units'},units.join(' · ')));
   if (!nodes.length) return null;
   return el('p',{class:'reference-meta'},nodes.flatMap((node,index)=>index ? [' · ',node] : [node]));
@@ -273,20 +351,13 @@ function legacyContentSections(content,{title,provenance=[]}={}) {
     ].filter(Boolean);
     return rows.length ? [el('section',{class:'legacy-alternative-group'},[el('h3',{},text(hero.name)),el('dl',{class:'detail-facts'},rows)])] : [];
   });
+  const heroCards=(content.heroes || []).map((hero,index)=>detailHeroCard({
+    name: hero.name, tactics: hero.tactics, books: hero.books, note: hero.note,
+  },{isMain: index === 0, legacy: true, notes: hero.note ? [hero.note] : []}));
   return [
     title ? el('h3',{class:'legacy-content-title'},title) : null,
     ...provenance,
-    section('Cấu hình gốc',(content.heroes || []).map((hero,index)=>el('section',{class:'reference-detail-holder season-slot'},[
-      el('h3',{},[
-        text(hero.name),
-        index===0 ? el('span',{class:'badge role main-holder',title:'Chủ tướng','aria-label':'Chủ tướng'},'C') : null,
-      ]),
-      el('dl',{class:'detail-facts'},[
-        fact('holder-tactics','Chiến pháp',(hero.tactics || []).map(item=>item.name).join(' · ') || 'Chưa có dữ liệu'),
-        fact('holder-books','Binh thư',(hero.books || []).map(item=>item.name).join(' · ') || 'Chưa có dữ liệu'),
-      ]),
-      hero.note ? noteParagraph(hero.note) : null,
-    ]))),
+    section('Cấu hình gốc',heroCards.length ? el('div',{class:'detail-hero-grid'},heroCards) : null),
     section('Mô tả & cách vận hành',content.notes ? noteParagraph(content.notes) : null),
     section('Khắc chế',[
       counters.good?.length ? el('div',{class:'counter-group'},[el('h3',{},'Khắc chế tốt'),counterList(counters.good,'good')]) : null,
@@ -297,26 +368,29 @@ function legacyContentSections(content,{title,provenance=[]}={}) {
 }
 
 /** Nội dung chi tiết Team chuẩn cho trang riêng; trả fragment, không tự tạo article/h1. */
-export function recommendedTeamDetailContent(record,{legacyTeams=[]}={}) {
+export function recommendedTeamDetailContent(record,{legacyTeams=[],labels=null}={}) {
   const fragment=document.createDocumentFragment();
   const notes=notesByOwner(record);
   const holders=record.heroes || record.holders || [];
   const alternatives=record.alternativeHoldersRaw || [];
   const source=validateReferenceSourceUrl('recommended',record,record.sourceUrl);
 
-  fragment.append(section('Cấu hình chính',el('div',{class:'season-hero-slot'},holders.map((holder,index)=>detailHolder(holder,{
+  const heroCards=holders.map((holder,index)=>detailHeroCard(holder,{
+    role:DETAIL_HERO_ROLES[index] || null,
     isMain:index===0,
     notes:notes.projected ? notes.primary.get(index) || [] : [],
-  })))));
-  const teamNotes=section('Mô tả & điều kiện',notes.team.map(noteParagraph));
+  }));
+  if (heroCards.length) fragment.append(section('Đội hình',el('div',{class:'detail-hero-grid'},heroCards)));
+  const teamNotes=detailNotes(notes.team);
   if (teamNotes) fragment.append(teamNotes);
 
   const groups=Array.from({length:Math.ceil(alternatives.length/3)},(_,index)=>{
     const slice=alternatives.slice(index*3,index*3+3);
     return el('section',{class:'reference-alternative-group'},[
       el('h3',{},`Cấu hình thay thế ${index+1}`),
-      el('div',{class:'season-hero-slot'},slice.map((holder,position)=>detailHolder(holder,{
+      el('div',{class:'detail-hero-grid'},slice.map((holder,position)=>detailHeroCard(holder,{
         level:'h4',
+        role:DETAIL_HERO_ROLES[position] || null,
         isMain:position===0,
         notes:notes.projected ? notes.alternative.get(index*3+position) || [] : [],
       }))),

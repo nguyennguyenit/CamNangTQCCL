@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { expect, test } from "@playwright/test";
 import { replaceWebsiteDisplayPin, websiteDisplayFixture } from "./fixtures/website-display-fixture.mjs";
@@ -579,4 +580,81 @@ test("localized notes never render source Chinese characters", async ({ page, re
     name: "SP Lô Trực · Thái Sử Từ · Trương Xuân Hoa", exact: true,
   }) });
   await expect(dongLong.locator(".kh-note")).not.toContainText(HAN);
+});
+
+/* ---------- Phase 6: khung chi tiết dùng chung, khối build dùng chung, kiểm scheme nguồn ---------- */
+
+/** Nguồn Khai hoang thay được URL để kiểm phép lọc scheme (byte nguồn vẫn phải khớp pin của trang). */
+async function routeDetailSource(page, mutate) {
+  const payload = structuredClone(data);
+  mutate(payload);
+  const body = JSON.stringify(payload);
+  const website = websiteDisplayFixture(
+    {"data/khaihoang.json": body},
+    {dropValuesFor: ["data/khaihoang.json"]},
+  );
+  await page.route("**/data/website-display.json", (route) =>
+    route.fulfill({contentType: "application/json", body: website.body}));
+  await page.route(khaihoangRequest, (route) =>
+    route.fulfill({contentType: "application/json", body}));
+  // Trang chi tiết ghim sha256 của nguồn: thay pin theo đúng byte đã định tuyến.
+  const sourceSha = createHash("sha256").update(body).digest("hex");
+  await page.route(DETAIL_DOCUMENT, async (route) => {
+    const response = await route.fetch();
+    const html = replaceWebsiteDisplayPin(await response.text(), website.pin)
+      .replace(/data-khaihoang-sha256="sha256:[0-9a-f]{64}"/, `data-khaihoang-sha256="sha256:${sourceSha}"`);
+    await route.fulfill({response, body: html});
+  });
+}
+
+test("detail header carries the unit badge, the shared build block and the panel actions", async ({ page, request }) => {
+  const handles = await routeHandles(request);
+  const target = teamByTitle("Chu Thái · Trương Phi · Trương Xuân Hoa");
+  await routeDetail(page);
+  await page.goto(detailPath(handles, target.id));
+  const body = page.locator("#team-detail-body");
+  await expect(body).toBeVisible();
+
+  // Huy hiệu loại binh của cấu hình đang chọn nằm ở đầu trang, ngoài subtree build.
+  await expect(page.locator("#team-detail-root .detail-badges .badge.unit")).toHaveText(target.unitType);
+  await expect(page.locator("#team-detail-root .detail-score")).toHaveCount(0);
+  await expect(page.locator("#team-detail-root .detail-title-zh")).toHaveCount(0);
+
+  // Khối build dùng chung: tên tướng rồi "Trước · … → Sau · …" theo đúng thứ tự đọc của artboard.
+  const first = body.locator(".kh-build .kh-hero").first();
+  await expect(first.locator(".hn")).toHaveText("Chu Thái");
+  await expect(first.locator(".kh-stages .kh-label")).toHaveText(["Trước", "Sau"]);
+  await expect(first.locator(".kh-arrow")).toHaveText("→");
+  await expect(first.locator(".kh-before .tag.t-tactic")).toHaveText(target.heroes[0].tacticBefore);
+  await expect(first.locator(".kh-after .tag.t-tactic")).toHaveText(target.heroes[0].tacticsAfter);
+  // Chiến pháp trong khối build là chữ son không nền, không phải nút tìm.
+  await expect(first.locator(".kh-stage .tag.t-tactic")).toHaveCount(3);
+  await expect(body.locator(".kh-build button")).toHaveCount(0);
+
+  // Hành động: sao chép liên kết luôn có; nguồn chỉ hiện khi dữ liệu có URL hợp lệ.
+  await expect(page.locator("#team-detail-root #team-copy-link")).toBeVisible();
+  await expect(page.locator("#team-detail-root #team-copy-fallback")).toBeHidden();
+});
+
+test("a javascript: source URL in the source data never becomes an anchor", async ({ page, request }) => {
+  const handles = await routeHandles(request);
+  const target = teamByTitle("Chu Thái · Trương Phi · Trương Xuân Hoa");
+  await routeDetailSource(page, (payload) => {
+    const team = payload.teams.find((item) => item.id === target.id);
+    team.sources = [
+      {label: "Nguồn hỏng", url: "javascript:document.title='pwned'"},
+      {label: "Nguồn tương đối", url: "/relative/nguon"},
+      {label: "Nguồn thật", url: "https://example.test/nguon-that"},
+    ];
+  });
+  await page.goto(detailPath(handles, target.id));
+  const panel = page.locator("#team-detail-root .detail-score-panel");
+  await expect(panel).toBeVisible();
+  const links = panel.locator(".detail-source-link");
+  await expect(links).toHaveCount(1);
+  await expect(links).toHaveAttribute("href", "https://example.test/nguon-that");
+  await expect(links).toHaveAttribute("rel", "noopener noreferrer");
+  await expect(panel.locator('a[href^="javascript:"]')).toHaveCount(0);
+  await expect(panel).not.toContainText("javascript:");
+  await expect(page).toHaveTitle(/^(?!pwned).*/);
 });

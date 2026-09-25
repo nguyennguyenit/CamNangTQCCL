@@ -20,6 +20,7 @@ export const PUBLIC_ARTIFACTS = Object.freeze([
   entry("js", "app"),
   entry("js", "config"),
   entry("js", "derive-team-faction"),
+  entry("js", "detail-actions"),
   entry("js", "filters"),
   entry("js", "hanviet"),
   entry("js", "hero-detail"),

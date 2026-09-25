@@ -291,8 +291,10 @@ test('bond slots read as Duyên phận and never as selectable tactics',async({p
   await page.goto(await recommendedPath(request,row.sourceConfigId));
   await expect(page.locator('#team-detail-body')).toBeVisible();
   const detailHolder=page.locator('#team-detail-body .reference-detail-holder').nth(holderIndex);
-  await expect(detailHolder.locator('.holder-bonds dd')).toHaveText(bond);
-  await expect(detailHolder.locator('.holder-tactics dd')).toHaveText(tactics.join(' · '));
+  await expect(detailHolder.locator('.detail-hero-bonds .detail-hero-label')).toHaveText('Duyên phận');
+  await expect(detailHolder.locator('.detail-hero-bond-list .t-bond')).toHaveText(bond);
+  await expect(detailHolder.locator('.detail-hero-tactics-vi')).toHaveText(tactics);
+  await expect(detailHolder.locator('.detail-hero-tactics-block')).not.toContainText(bond);
 });
 
 test('compact cards keep complete source content, native links and non-navigating chips',async({page,request})=>{
@@ -377,16 +379,16 @@ test('absent book slots stay noninteractive and distinct from missing translatio
   await expect(card.locator('.books .reference-books-missing')).toHaveText(['Nguồn chưa ghi','Nguồn chưa ghi','Nguồn chưa ghi']);
   await expect(card.locator('.books').filter({hasText:'Nội dung tiếng Việt chưa sẵn sàng'})).toHaveCount(0);
   await card.getByRole('link',{name:'Chi tiết'}).click();
-  await expect(page.locator('#team-detail-body .holder-books dd')).toHaveText([
+  // Chi tiết giữ nguyên phân biệt "nguồn trống" với "chưa dịch": cả ba thẻ đều ghi nhãn trống, không bịa chữ.
+  await expect(page.locator('#team-detail-body .detail-hero-books-block .detail-hero-missing')).toHaveText([
     'Chưa có dữ liệu',
     'Chưa có dữ liệu',
     'Chưa có dữ liệu',
   ]);
-  await expect(page.locator('#team-detail-body .holder-stat dd')).toHaveText([
-    'Chưa có dữ liệu',
-    'Chưa có dữ liệu',
-    'Chưa có dữ liệu',
-  ]);
+  await expect(page.locator('#team-detail-body .detail-hero-books-block').first()).not.toContainText('Nội dung tiếng Việt chưa sẵn sàng');
+  // Chỉ số trống hoàn toàn: đầu thẻ chỉ còn vai trò, không có ô chỉ số rỗng.
+  await expect(page.locator('#team-detail-body .detail-hero-stat')).toHaveCount(0);
+  await expect(page.locator('#team-detail-body .detail-hero-role')).toHaveText(['Chủ tướng','Phó tướng 1','Phó tướng 2']);
 });
 
 test('Team khác cards read the "Sợ …" line from legacy counters without chips',async({page,request})=>{

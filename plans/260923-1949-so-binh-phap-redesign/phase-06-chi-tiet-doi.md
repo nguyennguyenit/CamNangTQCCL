@@ -1,7 +1,7 @@
 ---
 phase: 6
 title: "Trang chi tiết đội"
-status: pending
+status: completed
 priority: P1
 effort: "2d"
 dependencies: [5]

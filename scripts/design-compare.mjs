@@ -26,6 +26,8 @@ const DEFAULT_BASE = 'http://127.0.0.1:4321';
  * `ready` là selector chỉ xuất hiện SAU khi nội dung của cặp đã dựng xong — bắt buộc, để ảnh chụp không
  * rơi vào lúc trang còn trống. `clip: {y, height}` cắt cả hai ảnh (header ở Phase 3); `setup` là các
  * selector cần bấm trước khi chụp để artboard ở trạng thái mở (menu, bộ lọc, hồ sơ).
+ * `artboard` là ảnh chuẩn trong `screens/`; cặp không có `artboard` (đặt `name` thay thế) chỉ chụp trang
+ * thật để soát nhất quán giữa các họ trang — không có ảnh artboard để ghép cạnh.
  */
 const PAIRS = [
   // Phase 3 — header dùng chung (cắt dải header) và footer dùng chung (cắt đáy trang).
@@ -42,6 +44,14 @@ const PAIRS = [
   { phase: 5, artboard: 'MobileList', path: '/doi-chuan/', width: 390, ready: '#section-team-chuan .reference-team-card' },
   { phase: 5, artboard: 'MobileTable', path: '/doi-chuan/?view=bang', width: 390, ready: '#section-team-chuan .reference-table tbody tr' },
   { phase: 5, artboard: 'MobileFilters', path: '/doi-chuan/', width: 390, ready: '#section-team-chuan .reference-toolbar', setup: ['#section-team-chuan .filter-collapse-toggle'] },
+  // Phase 6 — khung chi tiết đội (TeamDetail 1440) và soát nhất quán ở 390 cùng hai họ còn lại
+  // (không có artboard: chỉ chụp trang thật để đối chiếu nội bộ).
+  { phase: 6, artboard: 'TeamDetail', path: '/doi-chuan/pk-s24-tiem-long-dieu-thuyen/', width: 1440, ready: '#team-detail-body .detail-hero-card' },
+  { phase: 6, name: 'TeamDetail-390', path: '/doi-chuan/pk-s24-tiem-long-dieu-thuyen/', width: 390, ready: '#team-detail-body .detail-hero-card' },
+  { phase: 6, name: 'DoiKhac-1440', path: '/doi-khac/tan-ngo-thuong/', width: 1440, ready: '#team-detail-body .detail-hero-card' },
+  { phase: 6, name: 'DoiKhac-390', path: '/doi-khac/tan-ngo-thuong/', width: 390, ready: '#team-detail-body .detail-hero-card' },
+  { phase: 6, name: 'KhaiHoang-1440', path: '/khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/', width: 1440, ready: '#team-detail-body .kh-build' },
+  { phase: 6, name: 'KhaiHoang-390', path: '/khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/', width: 390, ready: '#team-detail-body .kh-build' },
   { phase: 7, artboard: 'Lookup', path: '/tra-cuu/', width: 1440, ready: '#section-lookup' },
   { phase: 7, artboard: 'LookupTactics', path: '/tra-cuu/?group=tactics', width: 1440, ready: '#section-lookup' },
   { phase: 7, artboard: 'LookupProfile', path: '/tra-cuu/?group=heroes&id=hero:1', width: 1440, ready: '#section-lookup' },
@@ -164,7 +174,7 @@ async function capturePairs(options) {
   }
   const missingReady = pairs.filter((pair) => !pair.ready);
   if (missingReady.length) {
-    throw new Error(`cặp ảnh phải khai \`ready\` (selector chỉ có sau khi nội dung dựng xong): ${missingReady.map((pair) => pair.artboard).join(', ')}`);
+    throw new Error(`cặp ảnh phải khai \`ready\` (selector chỉ có sau khi nội dung dựng xong): ${missingReady.map((pair) => pair.name || pair.artboard).join(', ')}`);
   }
   const browser = await openBrowser();
   const server = await serve(runDir);
@@ -172,6 +182,7 @@ async function capturePairs(options) {
   const rows = [];
   try {
     for (const pair of pairs) {
+      const key = pair.name || pair.artboard;
       const context = await newContext(browser, { theme: options.theme, width: pair.width, height: 1000 });
       try {
         const page = await context.newPage();
@@ -181,20 +192,25 @@ async function capturePairs(options) {
           await page.click(selector, { timeout: 5_000 });
           await page.evaluate(() => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done))));
         }
-        await page.screenshot({ path: join(runDir, `${pair.artboard}.localhost.png`), fullPage: true });
+        await page.screenshot({ path: join(runDir, `${key}.localhost.png`), fullPage: true });
       } finally {
         await context.close();
       }
-      await copyFile(join(SCREENS_DIR, `${pair.artboard}.png`), join(runDir, `${pair.artboard}.artboard.png`));
-      await writeFile(join(runDir, `${pair.artboard}.html`), compositeHtml(pair));
+      // Cặp không có artboard: giữ ảnh trang thật làm bằng chứng, không ghép cạnh và không nhận xét bố cục artboard.
+      if (!pair.artboard) {
+        rows.push([key, `${pair.width}px`, pair.path, `\`.cache/design-compare/phase-${String(options.phase).padStart(2, '0')}${options.theme === 'dark' ? '-dark' : ''}/${key}.localhost.png\``, '—', 'không có artboard — soát nhất quán']);
+        continue;
+      }
+      await copyFile(join(SCREENS_DIR, `${pair.artboard}.png`), join(runDir, `${key}.artboard.png`));
+      await writeFile(join(runDir, `${key}.html`), compositeHtml(pair));
       const shotContext = await newContext(browser, { theme: options.theme, width: pair.width * 2 + 16, height: 120 });
       try {
         const shotPage = await shotContext.newPage();
-        await shotPage.goto(`${origin}/${pair.artboard}.html`, { waitUntil: 'load' });
+        await shotPage.goto(`${origin}/${key}.html`, { waitUntil: 'load' });
         await shotPage.evaluate(() => Promise.all([...document.images].map((image) => image.decode().catch(() => {}))));
-        const out = join(runDir, `${pair.artboard}.png`);
+        const out = join(runDir, `${key}.png`);
         await shotPage.screenshot({ path: out, fullPage: true });
-        rows.push([pair.artboard, `${pair.width}px`, pair.path, out.replace(`${ROOT_DIR}/`, '')]);
+        rows.push([pair.artboard, `${pair.width}px`, pair.path, out.replace(`${ROOT_DIR}/`, ''), '', '']);
       } finally {
         await shotContext.close();
       }
