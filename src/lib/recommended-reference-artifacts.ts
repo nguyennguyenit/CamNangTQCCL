@@ -3,7 +3,7 @@ import { lstat, readFile, readdir, realpath } from 'node:fs/promises';
 import { dirname, join, relative, isAbsolute, sep } from 'node:path';
 
 const GENERATION = /^[0-9a-f]{64}$/;
-const FILE = /^(?:manifest|seasons|index|other-teams|details-s-[0-9a-f]{64})\.json$/;
+const FILE = /^(?:manifest|seasons|index|other-teams|hero-summaries|details-s-[0-9a-f]{64})\.json$/;
 export const DEFAULT_RECOMMENDED_ROOT = join(process.cwd(),'src/data/recommended-reference');
 const hash = (bytes:Uint8Array)=>createHash('sha256').update(bytes).digest('hex');
 export interface RecommendedPublicationSnapshot {
@@ -37,7 +37,7 @@ async function readPublicationSnapshot(rootDir:string):Promise<RecommendedPublic
   if (manifest.schemaVersion!==1 || manifest.generationId!==current.generationId || manifest.dedupKeyVersion!==1) throw new Error('Recommended manifest identity mismatch');
   const declared=Object.keys(manifest.files || {}).sort();
   const scopes=Array.isArray(manifest.allowedScopeKeys) ? manifest.allowedScopeKeys : [];
-  const required=['index.json','other-teams.json','seasons.json',...scopes.map((key:string)=>`details-${key}.json`)].sort();
+  const required=['index.json','other-teams.json','seasons.json','hero-summaries.json',...scopes.map((key:string)=>`details-${key}.json`)].sort();
   if (!declared.length || declared.includes('manifest.json') || declared.some(name=>!FILE.test(name)) || JSON.stringify(declared)!==JSON.stringify(required)) throw new Error('Invalid Recommended file inventory');
   const actual=(await readdir(generation)).sort();
   if (JSON.stringify(actual)!==JSON.stringify([...declared,'manifest.json'].sort())) throw new Error('Recommended generation inventory mismatch');

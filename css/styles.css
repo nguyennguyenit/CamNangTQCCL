@@ -154,6 +154,11 @@
   --type-hero-card-zh: 400 13px/1.4 'Songti TC', 'Noto Serif CJK TC', serif;
   --type-han-line: 400 12.5px/1.4 'Songti TC', 'Noto Serif CJK TC', serif;
   --type-book-line: 400 14px/1.5 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-lookup-title: 700 40px/1.05 'Noto Serif Display', Georgia, serif;
+  --type-lookup-zh: 400 20px/1 'Songti TC', 'Noto Serif CJK TC', serif;
+  --type-portrait-han: 600 64px/1 'Songti TC', 'Noto Serif CJK TC', serif;
+  --type-portrait-han-dialog: 600 84px/1 'Songti TC', 'Noto Serif CJK TC', serif;
+  --type-cam-nang-number: 700 34px/1 'Noto Serif Display', Georgia, serif;
   --space-1: 1px;
   --space-2: 2px;
   --space-3: 3px;
@@ -186,6 +191,8 @@
   --space-72: 72px;
   --space-88: 88px;
   --space-96: 96px;
+  --space-132: 132px;
+  --space-164: 164px;
   --radius-2: 2px;
   --radius-3: 3px;
   --radius-4: 4px;
@@ -210,6 +217,7 @@
   --control-40: 40px;
   --control-44: 44px;
   --control-48: 48px;
+  --control-50: 50px;
   --control-52: 52px;
   --control-56: 56px;
   --control-72: 72px;
@@ -414,7 +422,7 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-/* legacy:start ceiling=547 */
+/* legacy:start ceiling=519 */
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) {
@@ -1071,25 +1079,6 @@ body {
 }
 
 /* Vỏ trang chi tiết, panel điểm, thẻ tướng: dựng lại ở khối "Phase 6" cuối file. */
-/* Unified lookup */
-.lookup-chips { display:flex; flex-wrap:wrap; gap:.5rem; margin:.75rem 0; }
-.lookup-chip { min-height:44px; }
-.lookup-search { width:100%; min-height:44px; }
-.lookup-summary,.lookup-feedback { color:var(--muted); }
-.lookup-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr)); gap:.7rem; }
-.lookup-card { min-width:0; display:flex; align-items:center; border:1px solid var(--line); border-radius:var(--radius); background:var(--panel); box-shadow:var(--shadow); overflow:hidden; }
-.lookup-card > img { width:52px; height:52px; flex:0 0 52px; object-fit:cover; }
-.lookup-card > button { width:100%; min-height:52px; padding:.7rem; text-align:left; border:0; background:transparent; color:var(--ink); cursor:pointer; overflow-wrap:anywhere; }
-.lookup-more { min-height:44px; margin:1rem auto; display:block; padding:.5rem 1rem; border:1px solid var(--accent); border-radius:8px; background:var(--panel); color:var(--accent); }
-.lookup-backdrop { position:fixed; inset:0; z-index:70; display:flex; align-items:flex-start; justify-content:center; padding:4vh 1rem; overflow:auto; background:var(--overlay); }
-.lookup-dialog { width:min(680px,100%); max-height:92vh; overflow:auto; padding:1rem; border:1px solid var(--line); border-radius:12px; background:var(--panel); color:var(--ink); box-shadow:var(--shadow-modal); overflow-wrap:anywhere; }
-.lookup-dialog h3 { margin-top:0; }
-.lookup-close { float:right; min-width:44px; min-height:44px; }
-.lookup-profile { display:flex; flex-direction:column; gap:.5rem; }
-.lookup-profile p { margin:.2rem 0; line-height:1.5; }
-.lookup-profile button { min-height:44px; text-align:left; color:var(--accent); background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:.5rem; }
-.lookup-dialog :focus-visible,.lookup-card button:focus-visible,.lookup-chip:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
-@media (max-width:680px) { .lookup-search { font-size:16px; } .lookup-backdrop { padding:1rem .5rem; } .lookup-dialog { max-height:calc(100vh - 2rem); } }
 /* legacy:end */
 
 /* ===== Component nền (Phase 1) ===== */
@@ -4569,5 +4558,969 @@ main.layout:has(> .detail-content) {
 
   .kh-detail-build .kh-stages {
     display: flex;
+  }
+}
+
+/* ===== Tra cứu + hồ sơ (Phase 7) ===== */
+/* Component: tokens.json `hop-thoai`, `o-chan-dung`, `ho-so-tuong`, `khoi-cam-nang` (Phase 7 sở hữu) và
+   các component dùng lại `the`, `bang`, `chip-loc`, `o-tim`, `nhan-caps`, `nhan-bien-the`.
+   Artboard Lookup.dc.html, LookupTactics.dc.html, LookupProfile.dc.html, LookupMobile.dc.html.
+   Vỏ trang mục theo artboard: 40/48/56 desktop, 24/16/32 mobile. */
+body[data-page-section="lookup"] .layout {
+  padding: var(--space-40) var(--space-48) var(--space-56);
+}
+
+.lookup-head .reference-head-text {
+  max-width: 720px; /* con số artboard (Lookup.dc.html) ngoài thang token — tiền lệ khối Landing */
+}
+
+/* ---------- Ô tìm (56px desktop theo Lookup, 50px mobile theo LookupMobile) ---------- */
+.lookup-search {
+  display: flex;
+  align-items: center;
+  min-height: var(--control-56);
+  padding: 0 var(--space-18);
+  gap: var(--space-12);
+  border-radius: var(--radius-14);
+  color: var(--muted);
+}
+
+.lookup-search-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: var(--type-input);
+}
+
+/* ---------- Chip nhóm: tab gạch chân, kèm số đếm ---------- */
+.lookup-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin: var(--space-4) 0 var(--space-24);
+  border-bottom: var(--border-hair) solid var(--line);
+}
+
+.lookup-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-6);
+  min-height: var(--control-44);
+  padding: 0 var(--space-16);
+  border: 0;
+  border-bottom: var(--border-underline) solid transparent;
+  border-radius: 0;
+  background: none;
+  color: var(--muted);
+  font: var(--type-strong);
+  cursor: pointer;
+}
+
+/* Chip lọc bật có nền `--band`; tab Tra cứu ghi đè cả nền lẫn viền để nhãn không chìm (mực trên giấy). */
+.lookup-chip[aria-pressed="true"] {
+  border-color: transparent;
+  border-bottom-color: var(--accent);
+  background-color: var(--bg);
+  color: var(--ink);
+}
+
+.lookup-chip-count {
+  color: var(--muted);
+  font: var(--type-table-cell);
+}
+
+.lookup-status-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-16);
+}
+
+.lookup-summary {
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-control);
+}
+
+.lookup-summary strong {
+  color: var(--ink);
+}
+
+.lookup-order {
+  color: var(--muted);
+  font: var(--type-small);
+}
+
+.lookup-feedback {
+  color: var(--muted);
+}
+
+/* ---------- Lưới tướng: 6 cột desktop / 2 cột mobile ---------- */
+/* Vùng kết quả: bảng chiến pháp chiếm toàn bộ chiều rộng; lưới 6 cột chỉ áp cho thẻ kết quả. */
+.lookup-grid {
+  display: block;
+  margin-top: var(--space-16);
+}
+
+.lookup-grid-cards {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--space-16);
+}
+
+.lookup-grid:empty {
+  margin-top: 0;
+}
+
+.lookup-card {
+  display: block;
+  min-width: 0;
+  border-radius: var(--radius-12);
+}
+
+.lookup-card-button {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: var(--control-44);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-12);
+  background: none;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+
+.lookup-card-portrait {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--space-132);
+  background: var(--accent-soft);
+}
+
+.lookup-card-variant {
+  position: absolute;
+  top: var(--space-8);
+  right: var(--space-8);
+}
+
+.lookup-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-10) var(--space-12) var(--space-12);
+}
+
+.lookup-card-name {
+  font: var(--type-strong);
+}
+
+.lookup-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-6);
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+.lookup-card-meta-text {
+  font: var(--type-meta);
+}
+
+/* ---------- Ô chân dung dùng chung (Tra cứu, hồ sơ, Soi đội) ---------- */
+.hero-portrait {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+
+/* Ảnh phủ lên ô chữ Hán; chữ chỉ ẩn khi ảnh đã tải xong (CDN treo vẫn thấy chữ). */
+.hero-portrait img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-portrait-loaded .hero-portrait-han {
+  display: none;
+}
+
+.lookup-portrait {
+  width: 100%;
+  height: 100%;
+}
+
+.lookup-card-portrait .hero-portrait-han {
+  font: var(--type-portrait-han);
+}
+
+.lookup-dialog-portrait .hero-portrait-han {
+  font: var(--type-portrait-han-dialog);
+}
+
+/* ---------- Bảng chiến pháp ---------- */
+.lookup-table-panel {
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-14);
+  background: var(--panel);
+  overflow: hidden;
+}
+
+.lookup-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.lookup-table thead tr {
+  background: var(--panel-2);
+}
+
+.lookup-table thead th {
+  padding: var(--space-12) var(--space-12);
+  color: var(--ink-2);
+  font: var(--type-table-head);
+  letter-spacing: var(--type-table-head-spacing);
+  text-transform: uppercase;
+  text-align: left;
+}
+
+.lookup-table thead th:first-child {
+  padding-left: var(--space-18);
+}
+
+.lookup-table tbody th,
+.lookup-table tbody td {
+  padding: var(--space-14) var(--space-12);
+  border-top: var(--border-hair) solid var(--line-2);
+  color: var(--ink-2);
+  font: var(--type-tactic);
+  vertical-align: top;
+  text-align: left;
+}
+
+.lookup-table tbody th.lookup-table-cell-name {
+  padding-left: var(--space-18);
+}
+
+.lookup-table-name {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: var(--type-table-name);
+  text-align: left;
+  cursor: pointer;
+}
+
+.lookup-table-zh {
+  margin-left: var(--space-6);
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+.lookup-table-effect {
+  margin: var(--space-6) 0 0;
+  color: var(--muted);
+  font: var(--type-small);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.lookup-quality {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--control-26);
+  min-height: var(--control-26);
+  padding: 0 var(--space-6);
+  border-radius: var(--radius-6);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font: var(--type-badge);
+}
+
+.lookup-table .lookup-table-rate {
+  text-align: right;
+  font: var(--type-control);
+  font-variant-numeric: tabular-nums;
+}
+
+.lookup-more-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  margin-top: var(--space-20);
+}
+
+.lookup-more-note {
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+/* ---------- Hộp thoại hồ sơ ---------- */
+.lookup-dialog-open {
+  overflow: hidden;
+}
+
+.lookup-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-70);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--space-40) var(--space-16);
+  overflow: auto;
+  background: var(--overlay);
+}
+
+.lookup-dialog {
+  width: min(960px, 100%); /* bề rộng artboard LookupProfile ngoài thang token */
+  margin: 0 auto;
+  border-radius: var(--radius-18);
+  background: var(--bg);
+  box-shadow: var(--shadow-modal);
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.lookup-dialog-head {
+  display: grid;
+  grid-template-columns: var(--space-132) minmax(0, 1fr) var(--control-44);
+  gap: var(--space-24);
+  align-items: start;
+  padding: var(--space-28) var(--space-28) var(--space-24);
+  background: var(--panel);
+  border-bottom: var(--border-hair) solid var(--line);
+}
+
+.lookup-dialog-portrait {
+  width: var(--space-132);
+  height: var(--space-164);
+  border-radius: var(--radius-12);
+}
+
+.lookup-dialog-ident {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+  min-width: 0;
+}
+
+.lookup-dialog-eyebrow {
+  color: var(--accent);
+  font: var(--type-field-caps);
+  letter-spacing: var(--type-field-caps-spacing);
+  text-transform: uppercase;
+}
+
+.lookup-dialog-titles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-14);
+}
+
+.lookup-dialog-title {
+  margin: 0;
+  font: var(--type-lookup-title);
+}
+
+.lookup-dialog-zh {
+  color: var(--muted);
+  font: var(--type-lookup-zh);
+}
+
+.lookup-dialog-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+/* Danh sách cặp nhãn/giá trị: mỗi dòng là một lưới con nên cột giá trị không bị cột nhãn ăn hết. */
+.lookup-dialog-facts {
+  margin: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--space-4);
+  font: var(--type-body);
+}
+
+.lookup-fact {
+  display: grid;
+  grid-template-columns: var(--space-132) minmax(0, 1fr);
+  column-gap: var(--space-14);
+  align-items: baseline;
+}
+
+.lookup-fact-key {
+  color: var(--muted);
+}
+
+.lookup-fact-value {
+  margin: 0;
+  font: var(--type-strong);
+}
+
+.lookup-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--control-44);
+  width: var(--control-44);
+  height: var(--control-44);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-10);
+  background: var(--panel);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.lookup-profile {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: var(--space-24);
+  padding: var(--space-24) var(--space-28) var(--space-28);
+}
+
+.lookup-profile-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-22);
+  min-width: 0;
+}
+
+.lookup-profile-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.lookup-section-title {
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-field-caps);
+  letter-spacing: var(--type-field-caps-spacing);
+  text-transform: uppercase;
+}
+
+.lookup-stats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.lookup-stat {
+  display: grid;
+  grid-template-columns: var(--space-88) var(--space-40) minmax(0, 1fr) var(--space-88);
+  gap: var(--space-12);
+  align-items: center;
+}
+
+.lookup-stat-label {
+  color: var(--ink-2);
+  font: var(--type-body);
+}
+
+.lookup-stat-value {
+  font: var(--type-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.lookup-stat-bar {
+  height: var(--space-8);
+  border-radius: var(--radius-4);
+  background: var(--panel-2);
+  overflow: hidden;
+}
+
+.lookup-stat-fill {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+}
+
+.lookup-stat-growth {
+  color: var(--muted);
+  font: var(--type-meta);
+  text-align: right;
+}
+
+.lookup-aptitudes {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--space-6);
+}
+
+.lookup-aptitude {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-10) var(--space-4);
+  border-radius: var(--radius-10);
+  background: var(--panel-3);
+}
+
+.lookup-aptitude-grade {
+  color: var(--ink-2);
+  font: var(--type-score-table);
+}
+
+.lookup-aptitude-label {
+  color: var(--ink-2);
+  font: var(--type-meta);
+  text-align: center;
+}
+
+.lookup-relation-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-16) var(--space-18);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-12);
+  background: var(--panel);
+}
+
+.lookup-relation-label {
+  color: var(--muted);
+  font: var(--type-field-caps);
+  letter-spacing: var(--type-field-caps-spacing);
+  text-transform: uppercase;
+}
+
+.lookup-relation-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-10);
+}
+
+.lookup-relation-name {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: var(--type-dialog-title);
+  text-align: left;
+  cursor: pointer;
+}
+
+.lookup-relation-sub {
+  color: var(--muted);
+  font: var(--type-small);
+}
+
+.lookup-relation-effect {
+  margin: 0;
+  color: var(--ink-2);
+  font: var(--type-tactic);
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.lookup-relation-pending {
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-small);
+}
+
+.lookup-civil {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-12);
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-10);
+  background: var(--panel-2);
+  color: var(--ink);
+  font: var(--type-tactic);
+}
+
+.lookup-civil-label {
+  font: var(--type-strong);
+}
+
+.lookup-civil-empty {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.lookup-children {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.lookup-child-link {
+  min-height: var(--control-44);
+  padding: var(--space-8) var(--space-12);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-8);
+  background: var(--panel-2);
+  color: var(--accent-ink);
+  font: var(--type-control);
+  text-align: left;
+  cursor: pointer;
+}
+
+.lookup-child-row {
+  margin: 0;
+  color: var(--ink-2);
+  font: var(--type-tactic);
+}
+
+/* ---------- Khối "Trong cẩm nang" ---------- */
+.cam-nang {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-14);
+  padding: 0 var(--space-28) var(--space-28);
+}
+
+.cam-nang-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-16);
+  padding-top: var(--space-20);
+  border-top: var(--border-hair) solid var(--line);
+}
+
+.cam-nang-heading {
+  margin: 0;
+  font: var(--type-list-title);
+}
+
+.cam-nang-note {
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+.cam-nang-status {
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-small);
+}
+
+.cam-nang-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-14);
+}
+
+.cam-nang-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  padding: var(--space-16) var(--space-18);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-12);
+  background: var(--panel);
+}
+
+.cam-nang-title {
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-field-caps);
+  letter-spacing: var(--type-field-caps-spacing);
+  text-transform: uppercase;
+}
+
+.cam-nang-counts {
+  display: flex;
+  gap: var(--space-18);
+}
+
+.cam-nang-count {
+  display: flex;
+  flex-direction: column;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+a.cam-nang-count .cam-nang-number {
+  color: var(--accent);
+}
+
+.cam-nang-number {
+  font: var(--type-cam-nang-number);
+}
+
+.cam-nang-unit {
+  color: var(--muted);
+  font: var(--type-small);
+}
+
+.cam-nang-bars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cam-nang-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-4) var(--space-10);
+  align-items: center;
+}
+
+.cam-nang-bar-label {
+  font: var(--type-body);
+}
+
+.cam-nang-bar-value {
+  font: var(--type-table-cell);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.cam-nang-bar-track {
+  grid-column: 1 / -1;
+  height: var(--space-6);
+  border-radius: var(--radius-3);
+  background: var(--panel-2);
+  overflow: hidden;
+}
+
+.cam-nang-bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+}
+
+.cam-nang-facts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding-top: var(--space-10);
+  border-top: var(--border-hair) dashed var(--line-2);
+}
+
+.cam-nang-fact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.cam-nang-fact-label {
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+.cam-nang-fact-value {
+  font: var(--type-tactic);
+}
+
+.cam-nang-teams {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cam-nang-team {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-2) var(--space-12);
+  align-items: center;
+  padding: var(--space-10) 0;
+  border-top: var(--border-hair) dashed var(--line-2);
+}
+
+.cam-nang-team:first-child {
+  border-top: 0;
+}
+
+.cam-nang-team-name {
+  color: var(--ink);
+  font: var(--type-table-name);
+  text-decoration: none;
+}
+
+.cam-nang-team-score {
+  color: var(--accent);
+  font: var(--type-dialog-title);
+  font-variant-numeric: tabular-nums;
+}
+
+.cam-nang-team-meta {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+.cam-nang-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  min-height: var(--control-44);
+  color: var(--accent);
+  font: var(--type-control);
+  text-decoration: none;
+}
+
+@media (max-width: 680px) {
+  body[data-page-section="lookup"] .layout {
+    padding: var(--space-24) var(--space-16) var(--space-32);
+  }
+
+  .lookup-search {
+    min-height: var(--control-50);
+  }
+
+  .lookup-grid-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Bảng chiến pháp trên mobile: mỗi hàng một khối, mỗi ô có nhãn cột để đủ cả sáu trường. */
+  .lookup-table thead {
+    display: none;
+  }
+
+  .lookup-table,
+  .lookup-table tbody,
+  .lookup-table tr,
+  .lookup-table th,
+  .lookup-table td {
+    display: block;
+  }
+
+  .lookup-table tbody tr {
+    padding: var(--space-14) var(--space-18);
+    border-top: var(--border-hair) solid var(--line-2);
+  }
+
+  .lookup-table tbody tr:first-child {
+    border-top: 0;
+  }
+
+  .lookup-table tbody th.lookup-table-cell-name,
+  .lookup-table tbody td {
+    padding: 0;
+    border: 0;
+  }
+
+  .lookup-table tbody td {
+    display: grid;
+    grid-template-columns: var(--space-96) minmax(0, 1fr);
+    gap: var(--space-10);
+    align-items: baseline;
+    justify-items: start;
+    padding-top: var(--space-6);
+  }
+
+  /* Ô tên chiến pháp: nhãn cột một dòng riêng rồi mới tới tên, chữ Hán và mô tả. */
+  .lookup-table tbody th.lookup-table-cell-name {
+    display: block;
+    padding-top: var(--space-6);
+  }
+
+  .lookup-table tbody th::before,
+  .lookup-table tbody td::before {
+    content: attr(data-label);
+    display: block;
+    color: var(--muted);
+    font: var(--type-field-caps);
+    letter-spacing: var(--type-field-caps-spacing);
+    text-transform: uppercase;
+  }
+
+  .lookup-table .lookup-table-rate {
+    text-align: left;
+  }
+
+  .lookup-backdrop {
+    padding: var(--space-16) var(--space-8);
+  }
+
+  /* Đầu hồ sơ mobile: hàng 1 là ảnh + nút đóng, khối định danh/facts chiếm trọn chiều rộng bên dưới. */
+  .lookup-dialog-head {
+    grid-template-columns: var(--space-88) minmax(0, 1fr);
+    gap: var(--space-14);
+    padding: var(--space-18) var(--space-18) var(--space-16);
+  }
+
+  .lookup-dialog-portrait {
+    grid-column: 1;
+    grid-row: 1;
+    width: var(--space-88);
+    height: var(--space-96);
+  }
+
+  .lookup-close {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+  .lookup-dialog-ident {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  /* Tên nhỏ hơn để không ngắt giữa từ; facts xếp dọc, mỗi dòng một khối. */
+  .lookup-dialog-title {
+    font: var(--type-card-title);
+  }
+
+  .lookup-dialog-zh {
+    font: var(--type-meta);
+  }
+
+  .lookup-fact {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-2);
+  }
+
+  .lookup-profile {
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--space-18);
+  }
+
+  .lookup-stat {
+    grid-template-columns: minmax(0, 1fr) var(--space-40) var(--space-88);
+  }
+
+  .lookup-stat-bar {
+    grid-column: 1 / -1;
+  }
+
+  .lookup-aptitudes {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .cam-nang {
+    padding: 0 var(--space-18) var(--space-18);
+  }
+
+  .cam-nang-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lookup-table-effect {
+    -webkit-line-clamp: 3;
   }
 }

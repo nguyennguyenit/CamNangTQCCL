@@ -44,8 +44,8 @@ HANDLE_GROUPS = ("recommended", "legacy", "khaihoang")
 
 HEX64 = re.compile(r"[0-9a-f]{64}")
 SELECTOR_KEYS = ["generationId", "manifestSha256", "schemaVersion"]
-ARTIFACT_NAME = re.compile(r"^(?:manifest|seasons|index|other-teams|details-s-[0-9a-f]{64})\.json$")
-REQUIRED_ARTIFACTS = ("index.json", "other-teams.json", "seasons.json")
+ARTIFACT_NAME = re.compile(r"^(?:manifest|seasons|index|other-teams|hero-summaries|details-s-[0-9a-f]{64})\.json$")
+REQUIRED_ARTIFACTS = ("index.json", "other-teams.json", "seasons.json", "hero-summaries.json")
 
 DIAGNOSTIC_LIMIT = 20
 MIXED_FACTION = "混"

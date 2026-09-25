@@ -26,6 +26,8 @@ export const PUBLIC_ARTIFACTS = Object.freeze([
   entry("js", "hero-detail"),
   entry("js", "hero-identity"),
   entry("js", "hero-list"),
+  entry("js", "hero-portrait"),
+  entry("js", "hero-summaries"),
   entry("js", "khaihoang-detail"),
   entry("js", "legacy-routes"),
   entry("js", "lookup-data"),

@@ -4,6 +4,7 @@ import { projectSeasonCandidates } from "./season-context.js";
 // Giữ 3 section cũ offline: Turnstile script CHỈ nạp khi mở tab này.
 
 import { el } from "./render.js";
+import { heroPortrait } from "./hero-portrait.js";
 import { ANALYZE_CONFIG, isAnalyzeConfigured } from "./config.js";
 import { mapTeamRead, findSimilarTeams } from "./analyze-map.js";
 
@@ -192,15 +193,14 @@ export async function callWorker(imageDataUrl, token, mode = "analyzeTeamImage")
 /* ---------- Render kết quả ---------- */
 function heroResultCard(m) {
   const flag = m.hero.sure ? null : el("span", { class: "ana-flag", title: "Độ tin thấp, kiểm tra lại" }, "⚠ kiểm tra");
-  // Icon official (hotlink) để mắt thường xác nhận; gãy/403 -> ẩn, không chặn text.
+  // Icon official (hotlink) để mắt thường xác nhận; dùng helper chân dung chung (nâng https, no-referrer),
+  // gãy/403 -> bỏ ảnh, không chặn text.
   const icon = m.hero.icon
-    ? el("img", {
-        class: "ana-hero-icon",
-        src: m.hero.icon,
-        alt: m.hero.viet,
-        loading: "lazy",
-        referrerpolicy: "no-referrer", // tránh CDN chặn hotlink theo Referer
-        onerror: (e) => e.target.remove(),
+    ? heroPortrait({
+        nameVi: m.hero.viet,
+        iconUrl: m.hero.icon,
+        className: "ana-hero-icon",
+        fallbackOnError: false,
       })
     : null;
   const tactics = el("div", { class: "ana-tactics" },

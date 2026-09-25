@@ -94,6 +94,9 @@ test('server routes keep serving the bytes captured with one website publication
     'index.json': bytes({records: []}),
     'other-teams.json': bytes({records: []}),
     'seasons.json': bytes({records: []}),
+    'hero-summaries.json': bytes({schemaVersion: 1, provenance: {catalogSha256: `sha256:${'0'.repeat(64)}`,
+      recommendedJoin: 'heroes[].nameRaw ↔ chinese|aliases', otherJoin: 'holders[].nameRaw ↔ hanViet',
+      unmatchedSlots: {recommended: 0, other: 0}, ambiguousSlots: {recommended: 0, other: 0}}, summaries: {}}),
   };
   for (const [name, content] of Object.entries(recommendedFiles)) await writeFile(join(generationRoot, name), content);
   const manifest = {

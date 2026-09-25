@@ -135,6 +135,11 @@ async function writeRecommendedFixture(projectDir, distDir, { legacyTeamsHash } 
     "seasons.json": jsonBytes({ schemaVersion: 1, seasonOptions: [], scopes: [] }),
     "index.json": jsonBytes({ schemaVersion: 1, records: [] }),
     "other-teams.json": jsonBytes({ schemaVersion: 1, records: [] }),
+    "hero-summaries.json": jsonBytes({ schemaVersion: 1, provenance: {
+      catalogSha256: `sha256:${"0".repeat(64)}`,
+      recommendedJoin: "heroes[].nameRaw ↔ chinese|aliases", otherJoin: "holders[].nameRaw ↔ hanViet",
+      unmatchedSlots: { recommended: 0, other: 0 }, ambiguousSlots: { recommended: 0, other: 0 },
+    }, summaries: {} }),
     [`details-${scope}.json`]: jsonBytes({ schemaVersion: 1, records: [] }),
   };
   const files = Object.fromEntries(Object.entries(payloads).map(([name, bytes]) => [name, { sha256: sha256(bytes), bytes: bytes.length }]));

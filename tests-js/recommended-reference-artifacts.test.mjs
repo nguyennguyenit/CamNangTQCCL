@@ -9,6 +9,13 @@ import {recommendedPublicationSnapshot,readRecommendedArtifact} from '../src/lib
 const bytes=value=>Buffer.from(JSON.stringify(value)+'\n');
 const hash=value=>createHash('sha256').update(value).digest('hex');
 
+/** Payload "Trong cẩm nang" rỗng nhưng đúng cấu trúc (fixture không có tướng khớp). */
+function summariesPayload(){
+  return bytes({schemaVersion:1,provenance:{catalogSha256:`sha256:${'0'.repeat(64)}`,
+    recommendedJoin:'heroes[].nameRaw ↔ chinese|aliases',otherJoin:'holders[].nameRaw ↔ hanViet',
+    unmatchedSlots:{recommended:0,other:0},ambiguousSlots:{recommended:0,other:0}},summaries:{}});
+}
+
 async function fixture(){
   const root=await mkdtemp(join(tmpdir(),'recommended-artifacts-'));
   const id='1'.repeat(64), generation=join(root,id); await mkdir(generation);
@@ -17,6 +24,7 @@ async function fixture(){
     'seasons.json':bytes({seasons:[]}),
     'index.json':bytes({records:[]}),
     'other-teams.json':bytes({records:[]}),
+    'hero-summaries.json':summariesPayload(),
     [`details-${scope}.json`]:bytes({records:[]}),
   };
   const files=Object.fromEntries(Object.entries(payloads).map(([name,data])=>[name,{sha256:hash(data),bytes:data.length}]));

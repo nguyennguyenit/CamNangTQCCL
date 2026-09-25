@@ -1,7 +1,7 @@
 ---
 phase: 7
 title: "Tra cứu + hồ sơ"
-status: pending
+status: completed
 priority: P2
 effort: "2d"
 dependencies: [3]
@@ -24,7 +24,14 @@ Brainstorm §5 #6 (chân dung + fallback), §6 (Tra cứu), §11.4 (font CJK), a
 - Modify: policy + obligations theo plan.md "Quy trình bắt buộc mỗi phase" bước 2; `scripts/design-compare.mjs`; `tests-e2e/unified-lookup.spec.mjs`, `tests-js/unified-lookup.test.mjs`.
 
 ## Tasks & Steps
-0. **Spike đo tải "Trong cẩm nang" — làm trước mọi bước khác.** Trang thử tạm (không commit) trên `/tra-cuu/`: gọi `loadVerifiedRecommendedManifest` + tải `index.json`, `other-teams.json` + hash + parse + phép đếm cho 1 tướng. Playwright ở 390px, throttle CDP "Fast 3G" (`Network.emulateNetworkConditions`: 1,6 Mbps xuống, latency 150 ms), CPU ×4, cache trống, trung vị 3 lần; ghi số vào `visual-phase-07.md`. (`astro preview` có gzip: `node_modules/vite/dist/node/chunks/node.js:34920`; gzip `index.json` ≈ 309 KB, riêng truyền đã ≈ 1,5 s.) Trung vị ≤ 2 s → làm bước 4b như dưới. Trung vị > 2 s → **dừng ngay**, báo người dùng; phương án đề xuất: tính số liệu theo tướng lúc build thành file nhỏ công khai (manifest + verifier + `/data/*` header đã có) — không tự làm khi chưa được duyệt.
+0. **Spike đo tải "Trong cẩm nang" — ĐÃ CHẠY 2026-09-25: trung vị 2058 ms > 2 s ⇒ TRƯỢT ngân sách.**
+   Kongming P06b (`agent://KongmingP06b.phase_7_decision`) uỷ quyền quyết định: **dừng đường tính lúc chạy**,
+   giữ nguyên ngân sách và không bỏ trường nào; **duyệt phương án tính lúc build** — số liệu theo tướng sinh
+   trong chính generation Recommended đang pin (`hero-summaries.json`, khóa nối chính xác theo từng nguồn,
+   descriptor mang hash kho Tra cứu) và phát qua bộ manifest/hash + `/data/*` sẵn có; trang hồ sơ chỉ tải
+   `manifest.json` + `hero-summaries.json`. Số đo đầy đủ + số đo lại (trung vị 1029 ms sau vòng sửa P07; 1041 ms là lần đo trước vòng sửa) ở
+   `reports/visual-phase-07.md` §1. Bước 4b vì vậy thực hiện theo phương án này.
+   (Bản gốc của bước:  Trang thử tạm (không commit) trên `/tra-cuu/`: gọi `loadVerifiedRecommendedManifest` + tải `index.json`, `other-teams.json` + hash + parse + phép đếm cho 1 tướng. Playwright ở 390px, throttle CDP "Fast 3G" (`Network.emulateNetworkConditions`: 1,6 Mbps xuống, latency 150 ms), CPU ×4, cache trống, trung vị 3 lần; ghi số vào `visual-phase-07.md`. (`astro preview` có gzip: `node_modules/vite/dist/node/chunks/node.js:34920`; gzip `index.json` ≈ 309 KB, riêng truyền đã ≈ 1,5 s.) Trung vị ≤ 2 s → làm bước 4b như dưới. Trung vị > 2 s → **dừng ngay**, báo người dùng; phương án đề xuất: tính số liệu theo tướng lúc build thành file nhỏ công khai (manifest + verifier + `/data/*` header đã có) — cần duyệt.) **Đã duyệt.**
 1. **Nhóm tra cứu:** chip nhóm có số đếm (`.lookup-chip` giữ) + ô tìm 50px + "`n` tướng" (`role="status"`).
 2. **Lưới tướng:** 6 cột desktop / 2 cột mobile; ô chân dung từ `iconUrl` qua helper chung: đổi `http:` → `https:` lúc render (92/112 URL hiện là `http://image.aligames.com/…`, `data/heroes-dict.json:308`; site chạy HTTPS → mixed content; bản `https` đã thử trả 200), `referrerpolicy="no-referrer"` (như `js/analyze.js:202`, CDN chặn hotlink theo Referer), `loading="lazy"`, `decoding="async"`, `alt` = tên tướng; lỗi ảnh hoặc không có `iconUrl` → ô màu `--accent-soft`/màu phe + chữ Hán đầu tên (`--font-cjk`, `lang="zh-Hant"`, `aria-hidden`). `.lookup-card` giữ. Render bằng `el()`/`textContent` (plan.md quyết định #14); bỏ các `innerHTML` tĩnh trong vùng viết lại (`unified-lookup.js:175,242,252`).
 3. **Bảng chiến pháp:** cột phẩm, loại, hiệu quả, mục tiêu, tỷ lệ từ dữ liệu profile đã có (`lookup-detail.js:75-93`); trường thiếu → "—".
@@ -34,6 +41,13 @@ Brainstorm §5 #6 (chân dung + fallback), §6 (Tra cứu), §11.4 (font CJK), a
    - Đội chuẩn (`index.json`, `nameRaw` chữ Hán): `nameRaw` ↔ `chinese`/`aliases[]` của `heroes-dict.json`, chỉ bỏ khoảng trắng (`SP荀彧` ≡ `SP 荀彧`) → 4071/4098 ô khớp đúng 1 ID, 0 mơ hồ, 27 không khớp (tướng ngoài catalog như `周劭`, `陳翊`, ô rỗng, `任意武將`, `死士`); không có đếm trùng SP/không SP (`40Y 呂布` là ID riêng).
    - Đội khác (`other-teams.json`, `holders[].nameRaw` tên Việt, vd "SP Lữ Mông"): `nameRaw` ↔ `hanViet` (duy nhất trên 202 tướng) → 120/120 ô khớp.
    - Ô không khớp không tính cho tướng nào; `nameRaw` khớp ≥ 2 ID → bỏ ô đó, log cảnh báo dev. Test đơn vị ghim cả hai quy tắc (khoảng trắng, mơ hồ, không khớp, nguồn Việt vs Hán). Tướng không xuất hiện → "Chưa có trong đội nào". Thứ tự "đội tiêu biểu": điểm giảm dần rồi thứ tự nguồn.
+4c. **Vòng sửa P07 (2026-09-25):** sáu finding chặn của Kongming P07 đã sửa: bảng chiến pháp toàn chiều rộng
+   (6 cột desktop, mobile xếp dọc kèm nhãn cột), đầu hồ sơ mobile thật (ảnh + nút đóng một hàng, khối định danh/
+   facts trọn chiều rộng, đo 320/390), tab đang chọn ghi đè nền+viền (tương phản ≥ 4,5:1), một hàm nhãn Việt cho
+   mọi chỗ hiển thị loại chiến pháp, trả lại các trường bị refactor làm mất (bậc đặc kỹ, phẩm trang bị, loại/dạng
+   hiệu ứng chiến pháp), số liệu đếm cả Đội khác và dựng từ chính danh sách đã sắp phát, Back trả focus. Regression
+   cho từng lỗi nằm ở `tests-e2e/unified-lookup.spec.mjs` (8 ca mới) và `tests/test_hero_summaries.py` (so mọi
+   trường). Chi tiết + bằng chứng: `reports/visual-phase-07.md` §2b.
 5. **Sửa `bonusVi:`**: nhãn trường `civil`/generic hiện dùng chính khóa làm nhãn (`lookup-detail.js:9,59-62`) → bảng nhãn tiếng Việt cho mọi khóa hiển thị; khóa không có nhãn → không render trường (và log cảnh báo dev), không bao giờ in khóa thô. Nhãn mới → obligations.
 6. Cặp so ảnh: Lookup (`/tra-cuu/`), LookupTactics (`/tra-cuu/?group=tactics`), LookupProfile (setup: mở hồ sơ SP Lữ Mông như artboard), LookupMobile.
 

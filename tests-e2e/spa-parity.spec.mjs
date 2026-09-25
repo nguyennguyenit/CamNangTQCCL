@@ -758,8 +758,14 @@ test("synthetic HTTPS serves dist locally and characterizes legacy HTTP icons", 
   await page.goto("https://astro.local/tra-cuu/?group=heroes");
   await waitForBoot(page);
   await expectActiveSection(page, "lookup");
-  const icon = page.locator("#section-lookup img[src^='http://']").first();
-  await expect(icon).toBeAttached();
+  // Phase 7: dữ liệu vẫn có URL `http://` (di sản), nhưng render nâng lên `https://` nên không còn mixed content.
+  const legacyHttp = await page.evaluate(async () => {
+    const heroes = await (await fetch('/data/heroes-dict.json')).json();
+    return heroes.filter((hero) => (hero.iconUrl ?? '').startsWith('http://')).length;
+  });
+  expect(legacyHttp).toBeGreaterThan(0);
+  await expect(page.locator("#section-lookup img[src^='http://']")).toHaveCount(0);
+  await expect(page.locator("#section-lookup img[src^='https://']").first()).toBeAttached();
   await expect.poll(() => externalImageRequests.length).toBeGreaterThan(0);
   expect(externalImageRequests.every((url) => url.protocol === "https:")).toBe(true);
 

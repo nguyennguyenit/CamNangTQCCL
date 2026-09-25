@@ -9,6 +9,7 @@ import os
 import re
 import tempfile
 from pathlib import Path
+from pipeline.hero_summaries import build_hero_summaries, validate_hero_summaries_shape
 from pipeline.lookup_translations import CJK as HAN_SCRIPT
 from pipeline.recommended_identity import (
     build_display_mapping,
@@ -117,10 +118,10 @@ def _validated_display_notes(value, row):
     return value
 
 
-def prepare_publication_inputs(inputs, *, teams_bytes, content_links_bytes, ledger_bytes):
+def prepare_publication_inputs(inputs, *, teams_bytes, content_links_bytes, ledger_bytes, catalog_bytes):
     """Re-derive display lineage from authoritative raw inputs at the publication boundary."""
-    if not all(isinstance(value, (bytes, bytearray)) for value in (teams_bytes, content_links_bytes, ledger_bytes)):
-        raise ValueError("Publication requires authoritative teams, content links and ledger bytes")
+    if not all(isinstance(value, (bytes, bytearray)) for value in (teams_bytes, content_links_bytes, ledger_bytes, catalog_bytes)):
+        raise ValueError("Publication requires authoritative teams, content links, ledger and catalog bytes")
     candidate = copy.deepcopy(inputs)
     teams = json.loads(bytes(teams_bytes))
     links = json.loads(bytes(content_links_bytes))
@@ -269,6 +270,8 @@ def prepare_publication_inputs(inputs, *, teams_bytes, content_links_bytes, ledg
     }
     candidate["legacyTeamsHash"] = teams_hash
     candidate["contentLinksHash"] = "sha256:" + sha(bytes(content_links_bytes))
+    # Hash kho Tra cứu (khóa nối) vào descriptor ⇒ đổi kho là generation đổi, không thể còn số liệu cũ.
+    candidate["heroCatalogHash"] = "sha256:" + sha(bytes(catalog_bytes))
     return candidate
 def sha(data):
     return hashlib.sha256(data).hexdigest()
@@ -360,7 +363,8 @@ def validate_generation_inputs(inputs):
             raise ValueError("Public Team khác legacy content fingerprint differs")
 
 
-def _build_generation_locked(inputs, output):
+
+def _build_generation_locked(inputs, output, catalog_bytes):
     inventory = inputs["inventory"]
     records = sorted(inputs.get("records", []), key=_rank)
     seasons = {"schemaVersion": SCHEMA_VERSION, "defaultSourceSeasonId": next((x["sourceSeasonId"] for x in inventory.get("seasonOptions", []) if x.get("status") == "available"), None), "seasonOptions": inventory.get("seasonOptions", []), "scopes": inventory["scopes"]}
@@ -369,11 +373,17 @@ def _build_generation_locked(inputs, output):
     index = {"schemaVersion": SCHEMA_VERSION, "records": records}
     other = {"schemaVersion": SCHEMA_VERSION, "note": "Các đội có sẵn, đã đối chiếu với Team chuẩn.", "records": inputs.get("otherTeams", [])}
     details = inputs.get("details", {})
-    payloads = {"seasons.json": seasons, "index.json": index, "other-teams.json": other}
+    # Số liệu "Trong cẩm nang" (Phase 7) tính từ chính `records` đã sắp ở trên — cùng thứ tự với
+    # `index.json` phát ra, nên thứ tự đồng hạng của số liệu khớp bản phát.
+    summaries = build_hero_summaries(
+        catalog_bytes=catalog_bytes, records=records, other_records=inputs.get("otherTeams") or [],
+    )
+    validate_hero_summaries_shape(summaries, records=records, other_records=inputs.get("otherTeams") or [])
+    payloads = {"seasons.json": seasons, "index.json": index, "other-teams.json": other, "hero-summaries.json": summaries}
     for scope in inventory["scopes"]:
         key = scope["safeScopeKey"]
         payloads["details-" + key + ".json"] = {"schemaVersion": SCHEMA_VERSION, "records": details.get(key, [])}
-    descriptor = {"schemaVersion": SCHEMA_VERSION, "inventoryHash": inventory.get("inventoryHash"), "mappingHash": inputs.get("mappingHash"), "decisionSnapshotHash": inputs.get("decisionSnapshotHash"), "dedupKeyVersion": inputs.get("dedupKeyVersion"), "legacyTeamsHash": inputs["legacyTeamsHash"], "contentLinksHash": inputs["contentLinksHash"], "payloadHashes": {name: sha(canonical_bytes(value)) for name, value in sorted(payloads.items())}}
+    descriptor = {"schemaVersion": SCHEMA_VERSION, "inventoryHash": inventory.get("inventoryHash"), "mappingHash": inputs.get("mappingHash"), "decisionSnapshotHash": inputs.get("decisionSnapshotHash"), "dedupKeyVersion": inputs.get("dedupKeyVersion"), "legacyTeamsHash": inputs["legacyTeamsHash"], "contentLinksHash": inputs["contentLinksHash"], "heroSummaryCatalogHash": inputs["heroCatalogHash"], "payloadHashes": {name: sha(canonical_bytes(value)) for name, value in sorted(payloads.items())}}
     if inputs.get("localizationInputsHash") is not None:
         descriptor["localizationInputsHash"] = inputs["localizationInputsHash"]
     generation_id = sha(canonical_bytes(descriptor))
@@ -403,12 +413,13 @@ def _build_generation_locked(inputs, output):
     os.replace(temporary, output / "current.json")
     return selector
 
-def build_generation(inputs, output, *, teams_bytes, content_links_bytes, ledger_bytes):
+def build_generation(inputs, output, *, teams_bytes, content_links_bytes, ledger_bytes, catalog_bytes):
     candidate = prepare_publication_inputs(
         inputs,
         teams_bytes=teams_bytes,
         content_links_bytes=content_links_bytes,
         ledger_bytes=ledger_bytes,
+        catalog_bytes=catalog_bytes,
     )
     validate_generation_inputs(candidate)
     output = Path(output)
@@ -419,7 +430,7 @@ def build_generation(inputs, output, *, teams_bytes, content_links_bytes, ledger
     except FileExistsError as error:
         raise RuntimeError("Another Recommended generation writer is active") from error
     try:
-        return _build_generation_locked(candidate, output)
+        return _build_generation_locked(candidate, output, catalog_bytes)
     finally:
         lock.rmdir()
 
@@ -727,11 +738,13 @@ def main():
     parser.add_argument("--other-ledger", type=Path)
     parser.add_argument("--teams", type=Path, required=True)
     parser.add_argument("--content-links", type=Path, required=True)
+    parser.add_argument("--catalog", type=Path, required=True)
     parser.add_argument("--display-map", type=Path, default=DISPLAY_MAP_PATH)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     teams_bytes = args.teams.read_bytes()
     content_links_bytes = args.content_links.read_bytes()
+    catalog_bytes = args.catalog.read_bytes()
     ledger_bytes = args.other_ledger.read_bytes() if args.other_ledger else None
     if args.input and ledger_bytes is not None:
         inputs = json.loads(args.input.read_text())
@@ -745,6 +758,7 @@ def main():
         teams_bytes=teams_bytes,
         content_links_bytes=content_links_bytes,
         ledger_bytes=ledger_bytes,
+        catalog_bytes=catalog_bytes,
     )
 
 

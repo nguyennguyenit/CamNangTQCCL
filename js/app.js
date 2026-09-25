@@ -28,6 +28,7 @@ import {
   safeKhaiHoangVariants,
   setTeamRouteHandlesFromJSON,
   teamDetailHref,
+  teamDetailPath,
   writeReturnSnapshot,
 } from './team-detail-navigation.js';
 
@@ -152,18 +153,31 @@ async function main() {
     if (controls && $('#season-artifact-hashes')) {
       try { seasonModel = await loadSeasonModel(JSON.parse($('#season-artifact-hashes').textContent), loadBytes); } catch { /* Legacy display stays available with an explicit notice. */ }
     }
+    // Generation Đội chuẩn chỉ tải khi trang thật sự cần: hai trang danh sách ngay lúc boot, các trang
+    // khác (Tra cứu, Khai hoang, Công cụ) chỉ qua `loadRecommended()` nếu có nơi hỏi tới. Nhờ vậy trang
+    // Tra cứu không kéo `index.json`/`other-teams.json` khi chưa mở hồ sơ; promise lỗi bị xóa để thử lại.
     let recommendedModel = null;
-    try {
-      const pin = recommendedPin;
-      recommendedModel = await loadRecommendedReference(pin, async path => {
-        const response = await fetch(`/data/recommended/${path}`);
-        if (!response.ok) throw new Error(`/data/recommended/${path}: ${response.status}`);
-        return response.arrayBuffer();
-      });
-    } catch { /* Recommended views render an isolated unavailable state below. */ }
-    // URL tham chiếu cũ đi tiếp bằng identity thật; key config giữ precedence gameplay.
+    let recommendedPending = null;
+    const loadRecommendedBytes = async path => {
+      const response = await fetch(`/data/recommended/${path}`);
+      if (!response.ok) throw new Error(`/data/recommended/${path}: ${response.status}`);
+      return response.arrayBuffer();
+    };
+    const loadRecommended = () => {
+      if (!recommendedPending) {
+        recommendedPending = loadRecommendedReference(recommendedPin, loadRecommendedBytes)
+          .then(model => { recommendedModel = model; return model; })
+          .catch(error => { recommendedPending = null; throw error; });
+      }
+      return recommendedPending;
+    };
+    if (REFERENCE_SECTIONS.includes(pageSection)) {
+      try { await loadRecommended(); } catch { /* Recommended views render an isolated unavailable state below. */ }
+    }
+    // URL tham chiếu cũ đi tiếp bằng identity thật; bảng route handle đã phát cho mọi trang mục nên
+    // nhận diện Đội chuẩn không cần nạp index.
     const migration = migrateLegacyReferenceUrl(location.href, {
-      hasRecommended: id => !!recommendedModel?.index.records.some(row => row.sourceConfigId === id),
+      hasRecommended: id => teamDetailPath({ sourceConfigId: id }) !== null,
       hasLegacy: id => teams.some(team => team.id === id),
     });
     if (migration) { location.replace(migration.target); return; }
@@ -440,7 +454,14 @@ async function main() {
     window.addEventListener('pageshow', event => { if (event.persisted) restoreReturnState(); });
     // Scroll mới nhất phải vào snapshot trước khi rời trang bằng paste/copy URL.
     window.addEventListener('pagehide', rememberReturn);
-    if (pageSection === 'lookup' && catalog) lookupUI = initUnifiedLookup({ heroes: heroesDict, tactics, catalog }, mount);
+    if (pageSection === 'lookup' && catalog) lookupUI = initUnifiedLookup({ heroes: heroesDict, tactics, catalog }, mount, {
+      summary: {
+        pin: recommendedPin,
+        loadBytes: loadRecommendedBytes,
+        // Khóa nối của số liệu là chính kho Tra cứu đang phát; hash đã xác minh lúc boot.
+        catalogSha256: websiteDisplay?.sourceHashes?.["data/heroes-dict.json"] ?? null,
+      },
+    });
 
     // Kết quả gameplay giữ nguyên trang người dùng: config mở detail dùng chung, đội gốc đi trang riêng.
     const onOpenTeam = (team) => {

@@ -562,3 +562,137 @@ test("trang Tra cứu chỉ còn một tab và một mount lookup", async () => 
   assert.match(page, /<section\b[^>]*id=["']section-lookup["'][^>]*>/);
   assert.match(page, /<script[^>]+type=["']module["'][^>]+src=["']\/js\/app\.js["']/);
 });
+
+/* ---------- Phase 7: giao diện mới, nhãn tiếng Việt, khối "Trong cẩm nang" ---------- */
+
+import { lookupCardView, tacticTableRow, camNangView, POSITION_LABELS } from "../js/unified-lookup.js";
+import { portraitUrl, portraitChar } from "../js/hero-portrait.js";
+import { parseHeroSummaries } from "../js/hero-summaries.js";
+
+const HERO_UI = hero("hero:sp-lu-mong", "SP Lữ Mông", {
+  chinese: "SP 呂蒙", aliases: ["SP吕蒙"], faction: "Ngô", stars: 5, roleTagViet: "Khống chế / Kiêm nhiệm",
+  iconUrl: "http://image.aligames.com/a.png",
+  lookup: { variant: "sp", categoryVi: "Quân sự", flags: { isCollectible: true, isDynamicOpen: true, isSp: true, isMusou: false, isCO: false } },
+});
+
+function heroUiCorpus(over = {}) {
+  return buildLookupCorpus({ heroes: [HERO_UI, ...(over.heroes ?? [])], tactics: TACTIC_POOL, catalog: CATALOG });
+}
+
+test("thẻ kết quả Tra cứu hiện biến thể, phe, sao và tên Hán", () => {
+  const entry = heroUiCorpus().byId.get("hero:sp-lu-mong");
+  const view = lookupCardView("heroes", entry);
+  assert.equal(view.variant, "SP");
+  assert.equal(view.faction, "Ngô");
+  assert.equal(view.stars, "5 sao");
+  assert.equal(view.chinese, "SP 呂蒙");
+  assert.deepEqual(view.meta.map((part) => part.text), ["Ngô", "Khống chế / Kiêm nhiệm"]);
+});
+
+test("bảng chiến pháp lấy phẩm, loại, dạng hiệu ứng, mục tiêu, tỷ lệ và để trống thành —", () => {
+  const corpus = heroUiCorpus();
+  const row = tacticTableRow(lookupProfile(corpus, "tactic:nhan-duc"));
+  assert.equal(row.nameVi, "Nhân Đức Tải Thế");
+  assert.equal(row.quality, "S");
+  assert.equal(row.type, "Chủ động");
+  assert.equal(row.effectType, "Tăng ích");
+  assert.equal(row.target, "Quân ta");
+  assert.equal(row.rate, "100%");
+
+  const pending = tacticTableRow(lookupProfile(corpus, "tactic:cho-dich"));
+  assert.equal(pending.target, "—");
+  const missing = buildLookupCorpus({
+    heroes: [],
+    tactics: [tactic("tactic:thieu", "Thiếu Dữ Liệu", { lookup: { activationRate: null } })],
+    catalog: CATALOG,
+  });
+  assert.equal(tacticTableRow(lookupProfile(missing, "tactic:thieu")).rate, "—");
+});
+
+test("nội chính hiện nhãn tiếng Việt, không bao giờ in khóa thô", () => {
+  const warned = [];
+  const original = console.warn;
+  console.warn = (message) => warned.push(String(message));
+  try {
+    const corpus = buildLookupCorpus({
+      heroes: [hero("hero:la-mat", "La Mật", { lookup: { civil: { bonusVi: "Thưởng A", khoaLanh: "X" } } })],
+      tactics: TACTIC_POOL,
+      catalog: CATALOG,
+    });
+    const civil = lookupProfile(corpus, "hero:la-mat").sections.find((section) => section.key === "civil");
+    assert.deepEqual(civil.fields.map((field) => field.labelVi), ["Thưởng nội chính"]);
+    const shown = civil.fields.map((field) => `${field.labelVi}=${field.textVi}`).join(" | ");
+    assert.equal(shown, "Thưởng nội chính=Thưởng A");
+    assert.doesNotMatch(shown, /khoaLanh|bonusVi|Đang cập nhật/);
+  } finally {
+    console.warn = original;
+  }
+  assert.ok(warned.some((line) => line.includes("khoaLanh")), "khóa không nhãn phải được cảnh báo cho dev");
+});
+
+test("khối Trong cẩm nang gộp vị trí hai họ, giữ trần 3 mục và gắn nhãn vị trí", () => {
+  const view = camNangView({
+    searchName: "SP Lữ Mông",
+    standard: { teams: 48, positions: [1, 10, 37] },
+    other: { teams: 7, positions: [1, 1, 5] },
+    tactics: [{ name: "Thuyền Cỏ Mượn Tên", teams: 34 }, { name: "An Ủi Quân Dân", teams: 10 }],
+    books: { teams: 52, items: [{ name: "Phòng Bị", teams: 24 }] },
+    statFocus: { teams: 41, items: [{ name: "Toàn Thống Soái", teams: 23 }] },
+    representative: [
+      { family: "recommended", name: "Quán Quân Thương", seasonLabel: "PK-S25", score: 113, position: 2, sourceConfigId: "s25" },
+      { family: "other", name: "Mông Tốn Túc", seasonLabel: "", score: null, position: 0, legacyTeamId: "team-intro-4", legacyVariantId: "v-1" },
+    ],
+  });
+  assert.deepEqual(view.positions.map((row) => [row.label, row.count]), [["Chủ tướng", 2], ["Phó tướng 1", 11], ["Phó tướng 2", 42]]);
+  assert.equal(view.positions[2].percent, 100);
+  assert.equal(view.positions[0].percent, 5);
+  assert.deepEqual(POSITION_LABELS, ["Chủ tướng", "Phó tướng 1", "Phó tướng 2"]);
+  assert.deepEqual(view.representative.map((team) => team.positionLabel), ["Phó tướng 2", "Chủ tướng"]);
+  assert.equal(camNangView(null), null);
+});
+
+test("ô chân dung nâng https, từ chối scheme lạ và lấy chữ Hán đầu tên", () => {
+  assert.equal(portraitUrl("http://image.aligames.com/a.png"), "https://image.aligames.com/a.png");
+  assert.equal(portraitUrl("https://cloud.lingxigames.com/a.png"), "https://cloud.lingxigames.com/a.png");
+  assert.equal(portraitUrl("javascript:alert(1)"), null);
+  assert.equal(portraitUrl("image.aligames.com/a.png"), null);
+  assert.equal(portraitUrl(null), null);
+  assert.equal(portraitChar("SP 呂蒙", "SP Lữ Mông"), "呂");
+  assert.equal(portraitChar("", "Nghiêm Nhan"), "N");
+  assert.equal(portraitChar("", ""), "?");
+});
+
+const SUMMARY_FIXTURE = {
+  schemaVersion: 1,
+  provenance: {
+    catalogSha256: `sha256:${"a".repeat(64)}`,
+    recommendedJoin: "heroes[].nameRaw ↔ chinese|aliases (bỏ khoảng trắng)",
+    otherJoin: "holders[].nameRaw ↔ hanViet (bỏ khoảng trắng hai đầu)",
+    unmatchedSlots: { recommended: 27, other: 0 },
+    ambiguousSlots: { recommended: 0, other: 0 },
+  },
+  summaries: {
+    "hero:sp-lu-mong": {
+      searchName: "SP Lữ Mông",
+      standard: { teams: 48, positions: [1, 10, 37] },
+      other: { teams: 7, positions: [1, 1, 5] },
+      tactics: [{ name: "Thuyền Cỏ Mượn Tên", teams: 34 }],
+      books: { teams: 52, items: [{ name: "Phòng Bị", teams: 24 }] },
+      statFocus: { teams: 41, items: [{ name: "Toàn Thống Soái", teams: 23 }] },
+      representative: [{ family: "recommended", name: "Quán Quân Thương", seasonLabel: "PK-S25", score: 113, position: 2, sourceConfigId: "s25" }],
+    },
+  },
+};
+
+test("payload Trong cẩm nang chỉ được nhận khi khớp kho Tra cứu và đúng cấu trúc", () => {
+  const parsed = parseHeroSummaries(SUMMARY_FIXTURE, { catalogSha256: "a".repeat(64) });
+  assert.equal(parsed["hero:sp-lu-mong"].standard.teams, 48);
+  assert.throws(() => parseHeroSummaries(SUMMARY_FIXTURE, { catalogSha256: "b".repeat(64) }), /kho Tra cứu/);
+  assert.throws(() => parseHeroSummaries({ ...SUMMARY_FIXTURE, schemaVersion: 2 }, { catalogSha256: "a".repeat(64) }), /phiên bản/);
+  const broken = structuredClone(SUMMARY_FIXTURE);
+  broken.summaries["hero:sp-lu-mong"].standard.teams = 999;
+  assert.throws(() => parseHeroSummaries(broken, { catalogSha256: "a".repeat(64) }), /không hợp lệ/);
+  const brokenItems = structuredClone(SUMMARY_FIXTURE);
+  brokenItems.summaries["hero:sp-lu-mong"].books.items[0].teams = 99;
+  assert.throws(() => parseHeroSummaries(brokenItems, { catalogSha256: "a".repeat(64) }), /binh thư/);
+});
