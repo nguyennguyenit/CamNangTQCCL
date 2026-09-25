@@ -313,7 +313,7 @@ test('card title and CTA are the same native link and modified clicks stay nativ
   const card=page.locator(`#section-team-chuan .reference-team-card[data-source-config-id="${row.sourceConfigId}"]`);
   await expect(card).toBeVisible();
   const title=card.locator('.team-name a');
-  const cta=card.getByRole('link',{name:'Xem chi tiết'});
+  const cta=card.getByRole('link',{name:'Chi tiết'});
   const href=await title.getAttribute('href');
   expect(href).toBe(await cta.getAttribute('href'));
   // Path is exactly the frozen catalog route; the only query is the safe return origin.
@@ -401,13 +401,10 @@ test('the return link restores the exact root state on a fresh load',async({page
   const disclosure=page.locator('#section-team-chuan .filter-collapse-toggle');
   await disclosure.click();
   await expect(disclosure).toHaveAttribute('aria-expanded','true');
-  const scoreToggle=page.locator('#section-team-chuan .score-toggle');
-  await scoreToggle.click();
-  await expect(page.locator('#section-team-chuan .score-toggle')).toHaveAttribute('aria-expanded','true');
   const alternatives=card.locator(':scope > details.reference-alternatives');
   await alternatives.locator('summary').click();
   await expect(alternatives).toHaveAttribute('open','');
-  await card.getByRole('link',{name:'Xem chi tiết'}).click();
+  await card.getByRole('link',{name:'Chi tiết'}).click();
   const back=page.locator('#team-return-link');
   await expect(back).toHaveAttribute('href',/q=/);
   await page.reload();
@@ -416,18 +413,15 @@ test('the return link restores the exact root state on a fresh load',async({page
   await expect(page.locator('#section-team-chuan').getByLabel('Tìm Đội chuẩn')).toHaveValue(query);
   await expect(page.locator('#section-team-chuan .filter-collapse-toggle')).toHaveAttribute('aria-expanded','true');
   await expect(page.locator('#section-team-chuan-filters')).not.toHaveClass(/collapsed/);
-  await expect(page.locator('#section-team-chuan .score-toggle')).toHaveAttribute('aria-expanded','true');
-  await expect(page.locator(`#section-team-chuan .reference-team-card[data-source-config-id="${row.sourceConfigId}"] > details.reference-alternatives`)).toHaveAttribute('open','');
 });
 
-test('combined score, unit, faction and Vietnamese search survive detail reload and history',async({page,request})=>{
+test('view mode, unit, faction and Vietnamese search survive detail reload and history',async({page,request})=>{
   const {index,seasons}=await publication(request);
+  const handles=await routeHandles(request);
   const seasonId='pk-s24';
   const seasonRows=index.records.filter(row=>row.sourceSeasonId===seasonId);
-  const scores=[...new Set(seasonRows.map(row=>row.value).filter(value=>value!=null))]
-    .sort((a,b)=>Number(b)-Number(a));
-  const score=String(scores[10]);
-  const row=seasonRows.find(item=>String(item.value)===score && item.factionRaw && item.unitTypesRaw?.length && item.displayNameVi);
+  // Cần bản ghi có route handle: bảng chỉ dựng link chi tiết khi handle tồn tại.
+  const row=seasonRows.find(item=>handles.r[item.sourceConfigId] && item.factionRaw && item.unitTypesRaw?.length && item.displayNameVi);
   expect(row).toBeTruthy();
   const unit=row.unitTypesRaw[0];
   const faction=row.factionRaw;
@@ -436,39 +430,43 @@ test('combined score, unit, faction and Vietnamese search survive detail reload 
 
   await page.setViewportSize({width:375,height:812});
   await page.goto(`/doi-chuan/?season=${seasonId}`);
+  const section=page.locator('#section-team-chuan');
   const historyBefore=await page.evaluate(()=>history.length);
   await page.locator('#section-team-chuan .filter-collapse-toggle').click();
-  await page.locator('#section-team-chuan .score-toggle').click();
-  await page.locator(`#section-team-chuan .score-group .fchip[data-focus-key="score:${score}"]`).click();
   await page.locator(`#section-team-chuan .unit-group .fchip[data-focus-key="unit:${unit}"]`).click();
   await page.locator(`#section-team-chuan .faction-group .fchip[data-focus-key="faction:${faction}"]`).click();
   await page.locator('#section-team-chuan').getByLabel('Tìm Đội chuẩn').fill(row.displayNameVi);
+  // Đổi sang Bảng chỉ replaceState: không thêm bước lịch sử và không mất bộ lọc.
+  await page.locator('#section-team-chuan .view-btn[data-view="bang"]').click();
   await expect.poll(()=>page.evaluate(()=>history.length)).toBe(historyBefore);
 
-  const card=page.locator(`#section-team-chuan .reference-team-card[data-source-config-id="${row.sourceConfigId}"]`);
-  await expect(card).toBeVisible();
-  await card.scrollIntoViewIfNeeded();
+  const tableRow=page.locator(`#section-team-chuan .reference-table tbody tr[data-reference-key="${row.sourceConfigId}"]`);
+  await expect(tableRow).toBeVisible();
+  await tableRow.scrollIntoViewIfNeeded();
   const rootScroll=await page.evaluate(()=>Math.round(scrollY));
   expect(rootScroll).toBeGreaterThan(0);
-  await card.locator('.team-name a').click();
+  await tableRow.locator('.reference-table-name').click();
   await expect(page.locator('#team-detail-root')).toHaveAttribute('data-source-config-id',row.sourceConfigId);
   await expect(page.locator('.detail-source')).toContainText(row.sourceConfigId);
   await page.reload();
   await expect(page.locator('#team-detail-body')).toBeVisible();
 
   await page.locator('#team-return-link').click();
-  await expect.poll(()=>page.evaluate(()=>new URL(location.href).searchParams.getAll('score'))).toEqual([score]);
   await expect.poll(()=>page.evaluate(()=>new URL(location.href).searchParams.getAll('unit'))).toEqual([unit]);
   await expect.poll(()=>page.evaluate(()=>new URL(location.href).searchParams.getAll('faction'))).toEqual([faction]);
+  await expect.poll(()=>page.evaluate(()=>new URL(location.href).searchParams.get('view'))).toBe('bang');
   await expect(page.locator('#section-team-chuan').getByLabel('Tìm Đội chuẩn')).toHaveValue(row.displayNameVi);
-  await expect(page.locator(`#section-team-chuan .score-group .fchip[data-focus-key="score:${score}"]`)).toHaveAttribute('aria-pressed','true');
+  await expect(page.locator('#section-team-chuan .view-btn[data-view="bang"]')).toHaveAttribute('aria-pressed','true');
   await expect(page.locator(`#section-team-chuan .unit-group .fchip[data-focus-key="unit:${unit}"]`)).toContainText(unitLabel);
   await expect(page.locator(`#section-team-chuan .faction-group .fchip[data-focus-key="faction:${faction}"]`)).toContainText(factionLabel);
+  await expect(page.locator(`#section-team-chuan .reference-table tbody tr[data-reference-key="${row.sourceConfigId}"]`)).toBeVisible();
   await expect.poll(()=>page.evaluate(()=>Math.round(scrollY))).toBeGreaterThan(rootScroll/2);
+  // Lịch sử: tiến/lùi giữa danh sách (Bảng) và trang chi tiết vẫn đúng chiều.
   await page.goBack();
   await expect(page.locator('#team-detail-body')).toBeVisible();
   await page.goForward();
-  await expect(card).toBeVisible();
+  await expect(page.locator('#section-team-chuan .view-btn[data-view="bang"]')).toHaveAttribute('aria-pressed','true');
+  await expect(page.locator(`#section-team-chuan .reference-table tbody tr[data-reference-key="${row.sourceConfigId}"]`)).toBeVisible();
 });
 
 test('a shared link without origin still offers the matching family scope',async({page,request})=>{

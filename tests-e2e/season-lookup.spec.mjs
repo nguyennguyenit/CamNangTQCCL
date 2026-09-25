@@ -257,7 +257,8 @@ test('closing details after a search preserves current filters and returns keybo
   await expect(page).toHaveURL(/q=B%C3%ACnh/);
   expect(new URL(page.url()).searchParams.has('config')).toBe(false);
   await expect(page.getByRole('searchbox',{name:'Tìm Đội khác',exact:true})).toHaveValue('Bình');
-  await expect(page.locator('#section-team-khac h2')).toBeFocused();
+  // Đầu mục danh sách dùng h1 (artboard Main) và `focus()` của section trỏ vào đó.
+  await expect(page.locator('#section-team-khac h1.reference-title')).toBeFocused();
 });
 
 import { refreshConfigProofs } from '../tests-js/fixtures/season-fixtures.mjs';

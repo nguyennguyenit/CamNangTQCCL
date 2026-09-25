@@ -15,12 +15,11 @@ export const KHAIHOANG_VARIANT_QUERY_KEY = 'khVariant';
 
 /**
  * Khóa query mỗi trang mục giữ lại khi dựng URL quay lại; khóa khác bị bỏ lặng lẽ.
- * `score` còn trong bộ lọc Đội chuẩn/Đội khác nên vẫn sống sót; Phase 5 bỏ nó cùng lúc với
- * bộ lọc và thêm `view`.
+ * Đội chuẩn/Đội khác không còn `score` (bộ lọc điểm đã bỏ) và thêm `view` cho chế độ Thẻ/Bảng.
  */
 export const SECTION_QUERY_KEYS = Object.freeze({
-  '/doi-chuan/': ['season','category','q','faction','unit','score','subcategory','source','scenario','ruleset','config'],
-  '/doi-khac/': ['season','category','q','faction','unit','score','subcategory','source','scenario','ruleset','config'],
+  '/doi-chuan/': ['season','category','q','faction','unit','view','subcategory','source','scenario','ruleset','config'],
+  '/doi-khac/': ['season','category','q','faction','unit','view','subcategory','source','scenario','ruleset','config'],
   '/cung-ton/': ['config','q','faction','unit','tier','source','sort','stars','scenario','ruleset'],
   '/soi-doi/': ['config','q','faction','unit','tier','source','sort','stars','scenario','ruleset'],
   '/goi-y-doi/': ['config','q','faction','unit','tier','source','sort','stars','scenario','ruleset'],
@@ -314,9 +313,7 @@ export function isNativeNavigationClick(event) {
 function safeDisclosures(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
   const result={};
-  for (const key of ['filters','score']) {
-    if (typeof value[key] === 'boolean') result[key]=value[key];
-  }
+  if (typeof value.filters === 'boolean') result.filters=value.filters;
   if (Array.isArray(value.alternatives)) {
     result.alternatives=[...new Set(value.alternatives.filter(item=>
       typeof item === 'string' && item.length > 0 && item.length <= 128 && !/[\u0000-\u001f]/.test(item),

@@ -166,8 +166,9 @@ test('return origin accepts section URLs, normalizes old root state, and rejects
   assert.equal(safeReturnUrl('/#team-pk'),'/doi-khac/?source=team-intro');
   assert.equal(safeReturnUrl('/?season=pk-s24&category=交戰#team-chuan'),`/doi-chuan/?season=pk-s24&category=${encodeURIComponent('交戰')}`);
   assert.equal(safeReturnUrl('/?faction=Thục&faction=Ngô&q=vien#team-khac'),`/doi-khac/?faction=${encodeURIComponent('Thục')}&faction=${encodeURIComponent('Ngô')}&q=vien`);
-  // Điểm nguồn là selector của Đội chuẩn nên phải sống sót vòng list → detail → quay lại.
-  assert.equal(safeReturnUrl('/?season=pk-s24&score=113&score=unknown#team-chuan'),'/doi-chuan/?season=pk-s24&score=113&score=unknown');
+  // Bộ lọc điểm đã bỏ: `score` cũ bị bỏ lặng lẽ khi dựng URL quay lại; `view` của chế độ Bảng sống sót.
+  assert.equal(safeReturnUrl('/?season=pk-s24&score=113&score=unknown#team-chuan'),'/doi-chuan/?season=pk-s24');
+  assert.equal(safeReturnUrl('/doi-chuan/?view=bang&score=113&unit=%E9%A8%8E'),'/doi-chuan/?view=bang&unit=%E9%A8%8E');
   // URL mục: hash bị bỏ, khóa ngoài allowlist của trang bị bỏ lặng lẽ.
   assert.equal(safeReturnUrl('/doi-chuan/?faction=Thục&fbclid=x&utm_source=z'),`/doi-chuan/?faction=${encodeURIComponent('Thục')}`);
   assert.equal(safeReturnUrl('/doi-chuan/?rogue=1'),'/doi-chuan/');
@@ -238,13 +239,15 @@ test('only unmodified primary clicks may record a return snapshot',()=>{
 });
 
 test('return snapshots keep UI state only and match one exact section URL',()=>{
-  const snapshot=captureReturnSnapshot({href:'/doi-chuan/?q=vien&season=pk-s24',scrollY:842.6,tab:'team-chuan',disclosures:{filters:true,score:true,alternatives:['cfg-1','cfg-2','cfg-1'],seasons:false}});
+  const snapshot=captureReturnSnapshot({href:'/doi-chuan/?q=vien&season=pk-s24&view=bang',scrollY:842.6,tab:'team-chuan',disclosures:{filters:true,score:true,alternatives:['cfg-1','cfg-2','cfg-1'],seasons:false}});
   assert.equal(snapshot.version,1);
-  assert.equal(snapshot.url,'/doi-chuan/?q=vien&season=pk-s24');
+  assert.equal(snapshot.url,'/doi-chuan/?q=vien&season=pk-s24&view=bang');
   assert.equal(snapshot.scrollY,843);
-  assert.deepEqual(snapshot.disclosures,{filters:true,score:true,alternatives:['cfg-1','cfg-2']});
-  assert.equal(matchesReturnSnapshot(snapshot,'/doi-chuan/?q=vien&season=pk-s24'),true);
-  assert.equal(matchesReturnSnapshot(snapshot,`${ROOT}/doi-chuan/?q=vien&season=pk-s24`,{origin:ROOT}),true);
+  // `score` không còn là khóa disclosure; `view` thuộc URL nên không nằm trong snapshot.
+  assert.deepEqual(snapshot.disclosures,{filters:true,alternatives:['cfg-1','cfg-2']});
+  assert.equal(matchesReturnSnapshot(snapshot,'/doi-chuan/?q=vien&season=pk-s24&view=bang'),true);
+  assert.equal(matchesReturnSnapshot(snapshot,'/doi-chuan/?q=vien&season=pk-s24'),false);
+  assert.equal(matchesReturnSnapshot(snapshot,`${ROOT}/doi-chuan/?q=vien&season=pk-s24&view=bang`,{origin:ROOT}),true);
   assert.equal(matchesReturnSnapshot(snapshot,'/doi-chuan/?q=vien'),false);
   assert.equal(matchesReturnSnapshot(snapshot,'/doi-khac/?q=vien&season=pk-s24'),false);
   assert.equal(matchesReturnSnapshot({version:0,url:'/doi-chuan/'},'/doi-chuan/'),false);

@@ -16,6 +16,31 @@ export function el(tag, props = {}, children = []) {
   return node;
 }
 
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+/** Element SVG tĩnh: `document.createElementNS`, không dựng hình bằng chuỗi HTML. */
+export function svgNode(tag, attrs = {}, children = []) {
+  const node = document.createElementNS(SVG_NS, tag);
+  for (const [key, value] of Object.entries(attrs)) if (value != null) node.setAttribute(key, String(value));
+  for (const child of [].concat(children)) if (child) node.append(child);
+  return node;
+}
+
+/** Icon nét trang trí (aria-hidden) theo quy ước artboard: khung vuông, nét tròn 1.8. */
+export function icon(children, { size = 18, stroke = 1.8, viewBox = "0 0 24 24" } = {}) {
+  return svgNode("svg", {
+    "aria-hidden": "true",
+    width: size,
+    height: size,
+    viewBox,
+    fill: "none",
+    stroke: "currentColor",
+    "stroke-width": stroke,
+    "stroke-linecap": "round",
+    "stroke-linejoin": "round",
+  }, children);
+}
+
 const CJK_TEXT = /[\u3400-\u9fff\uf900-\ufaff]/u;
 const publicText = (value, fallback = "Nội dung tiếng Việt chưa sẵn sàng") =>
   typeof value === "string" && value.trim() && !CJK_TEXT.test(value) ? value.trim() : fallback;

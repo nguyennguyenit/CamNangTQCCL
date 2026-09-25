@@ -240,44 +240,95 @@ export function createSeasonCoexistSection({mount}) {
   }};
 }
 
-import { projectRecommendedRows, referenceFacetValues, SCORE_UNKNOWN } from './recommended-reference-state.js';
-import { recommendedTeamCard } from './recommended-reference-render.js';
+import { projectRecommendedRows, referenceFacetValues } from './recommended-reference-state.js';
+import { recommendedTeamCard, recommendedTeamTable } from './recommended-reference-render.js';
+import { icon, svgNode } from './render.js';
+import { TEAM_VIEW_CARDS, TEAM_VIEW_TABLE, canonicalTeamView } from './team-view.js';
 
-// Nhóm chính Loại binh → Điểm → Phe; nhóm phụ vẫn nằm trong vùng Bộ lọc.
-const PRIMARY_FACETS=['unit','score','faction'];
+// Nhóm chính Loại binh → Phe theo artboard Main; Nhóm/Nguồn thu gọn trong accordion.
+const PRIMARY_FACETS=['unit','faction'];
 const SECONDARY_FACETS=['subcategory','source'];
-const FACET_LABEL={unit:'Loại binh',score:'Điểm',faction:'Phe',subcategory:'Nhóm',source:'Nguồn'};
-const SCORE_CHIP_LIMIT=8;
+const FACET_LABEL={unit:'Loại binh',faction:'Phe',subcategory:'Nhóm',source:'Nguồn'};
+const VIEW_LABEL={[TEAM_VIEW_CARDS]:'Thẻ',[TEAM_VIEW_TABLE]:'Bảng'};
 
-/** Shared-style Team chuẩn/Team khác browser; điểm nguồn chỉ lọc, không đổi thứ tự nguồn. */
+const VIEW_ICON=view=>view===TEAM_VIEW_CARDS
+  ? [svgNode('rect',{x:3,y:3,width:7.5,height:7.5,rx:1.5}),svgNode('rect',{x:13.5,y:3,width:7.5,height:7.5,rx:1.5}),svgNode('rect',{x:3,y:13.5,width:7.5,height:7.5,rx:1.5}),svgNode('rect',{x:13.5,y:13.5,width:7.5,height:7.5,rx:1.5})]
+  : [svgNode('line',{x1:3,y1:6,x2:21,y2:6}),svgNode('line',{x1:3,y1:12,x2:21,y2:12}),svgNode('line',{x1:3,y1:18,x2:21,y2:18})];
+
+const CHEVRON=[svgNode('polyline',{points:'6 9 12 15 18 9'})];
+const FILTER_ICON=[svgNode('line',{x1:4,y1:7,x2:20,y2:7}),svgNode('line',{x1:7,y1:12,x2:17,y2:12}),svgNode('line',{x1:10,y1:17,x2:14,y2:17})];
+
+/** Shared-style Team chuẩn/Team khác browser: sidebar lọc, thẻ gọn và chế độ Bảng. */
 export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onNavigate}) {
-  let rows=[], state={query:'',filters:{}}, registry={seasonOptions:[]}, scoreExpanded=false, currentScopeRows=[];
-  const heading=el('h2',{tabindex:'-1'},title);
-  const intro=el('p',{class:'section-intro-sub'},family==='other'?'Các đội có sẵn, đã đối chiếu với đội chuẩn.':'Dữ liệu đề xuất của SGSDeck được phân chia theo mùa tương ứng trong nguồn.');
-  const search=el('input',{type:'search',class:'search','aria-label':`Tìm ${title}`,placeholder:'Tìm tướng, chiến pháp, binh thư…'});
+  let rows=[], state={query:'',filters:{},view:TEAM_VIEW_CARDS}, registry={seasonOptions:[]}, currentScopeRows=[];
+  const openFacets=new Set();
+  const heading=el('h1',{class:'reference-title',tabindex:'-1'},title);
+  const kicker=el('span',{class:'reference-kicker'},'Đội hình');
+  const intro=el('p',{class:'reference-lead'},family==='other'?'Các đội có sẵn, đã đối chiếu với đội chuẩn.':'Dữ liệu đề xuất của SGSDeck được phân chia theo mùa tương ứng trong nguồn.');
+  const searchInput=el('input',{type:'search',class:'reference-search-input','aria-label':`Tìm ${title}`,placeholder:'Tìm tướng, chiến pháp, binh thư…'});
+  const search=el('label',{class:'search reference-search'},[
+    icon([svgNode('circle',{cx:11,cy:11,r:7}),svgNode('line',{x1:16.5,y1:16.5,x2:21,y2:21})]),
+    searchInput,
+  ]);
   const season=el('select',{'aria-label':'Mùa nguồn'});
   const category=el('select',{'aria-label':'Danh mục nguồn'});
-  const filters=el('div',{class:'team-filters collapsed',id:`${mount.id}-filters`});
-  const notice=el('p',{class:'scope-note',role:'status'});
-  const counts=el('p',{class:'stats','aria-live':'polite'});
-  const grid=el('div',{class:'season-team-groups'});
+  const filters=el('aside',{class:'reference-filters collapsed',id:`${mount.id}-filters`,'aria-label':'Bộ lọc'});
+  const notice=el('p',{class:'scope-note reference-notice',role:'status'});
+  const count=el('span',{class:'stats reference-count',role:'status'});
+  const view=el('div',{class:'reference-view'});
+  const empty=el('p',{class:'empty reference-empty'});
+  const clear=el('button',{type:'button',class:'clear-btn',onClick:()=>{
+    onQuery({q:null,faction:null,unit:null,subcategory:null,source:null});
+    // Xóa lọc làm nút này bị vô hiệu và cây lọc dựng lại: trả focus về ô tìm kiếm, không thả về BODY.
+    searchInput.focus({preventScroll:true});
+  }},'Xóa lọc');
+  const filterCount=el('span',{class:'filter-count','aria-hidden':'true',hidden:''});
+  const toggle=el('button',{type:'button',class:'filter-collapse-toggle','aria-controls':filters.id,'aria-expanded':'false'},[
+    icon(FILTER_ICON,{size:18}),
+    el('span',{class:'filter-toggle-label'},'Bộ lọc'),
+    filterCount,
+  ]);
+  const viewButtons=[TEAM_VIEW_CARDS,TEAM_VIEW_TABLE].map(value=>el('button',{
+    type:'button',class:`view-btn view-btn-${value}`,dataset:{view:value},'aria-pressed':'false',
+    'aria-label':value===TEAM_VIEW_CARDS?'Xem dạng thẻ':'Xem dạng bảng',
+    onClick:()=>onQuery({view: value===TEAM_VIEW_TABLE ? TEAM_VIEW_TABLE : null}),
+  },[icon(VIEW_ICON(value),{size:16}),el('span',{class:'view-btn-label'},VIEW_LABEL[value])]));
   // Title/CTA là link thật: chỉ ghi snapshot, không chặn hành vi trình duyệt.
   // Marker ổn định của link chi tiết, không pin path segment của route.
-  grid.addEventListener('click',event=>{
+  view.addEventListener('click',event=>{
     const link=event.target.closest?.('a[data-team-detail-link]');
     if (link) onNavigate?.(event,link);
   });
-  const toggle=el('button',{type:'button',class:'filter-collapse-toggle','aria-controls':filters.id,'aria-expanded':'false'},'Bộ lọc');
-  toggle.addEventListener('click',()=>toggle.setAttribute('aria-expanded',String(!filters.classList.toggle('collapsed'))));
-  search.addEventListener('input',()=>onQuery({q:search.value || null}));
+  searchInput.addEventListener('input',()=>onQuery({q:searchInput.value || null}));
   season.addEventListener('change',()=>onQuery({season:season.value,detail:null,legacyTeam:null,legacyVariant:null},true));
   category.addEventListener('change',()=>onQuery({category:category.value,detail:null,legacyTeam:null,legacyVariant:null},true));
-  const clear=el('button',{type:'button',class:'clear-btn',onClick:()=>onQuery({q:null,faction:null,unit:null,score:null,subcategory:null,source:null})},'Xóa lọc');
-  mount.replaceChildren(el('div',{class:'section-intro'},[heading,intro]),el('div',{class:'team-filter-bar'},[
-    el('div',{class:'filter-bar'},[search,clear,toggle,counts]),
-    el('div',{class:'reference-scope-controls'},[el('label',{},['Mùa',season]),el('label',{},['Danh mục',category])]),
-    filters,
-  ]),notice,grid);
+  toggle.addEventListener('click',()=>setFiltersExpanded(filters.classList.contains('collapsed')));
+  mount.replaceChildren(
+    el('header',{class:'reference-head'},[
+      el('div',{class:'reference-head-text'},[kicker,heading,intro]),
+      el('div',{class:'reference-scope-controls'},[
+        el('label',{class:'flabel'},['Mùa nguồn',season]),
+        el('label',{class:'flabel'},['Danh mục',category]),
+      ]),
+    ]),
+    el('div',{class:'reference-browser'},el('div',{class:'reference-results'},[
+      el('div',{class:'reference-toolbar'},[
+        search,
+        toggle,
+        count,
+        el('div',{class:'reference-view-toggle',role:'group','aria-label':'Kiểu hiển thị'},viewButtons),
+      ]),
+      filters,
+      el('div',{class:'reference-results-body'},[notice,view,empty]),
+    ])),
+  );
+
+  /** Mở/đóng panel lọc mobile; desktop luôn hiện sidebar nên class này vô hại. */
+  function setFiltersExpanded(expanded) {
+    const open=expanded === true;
+    filters.classList.toggle('collapsed',!open);
+    toggle.setAttribute('aria-expanded',String(open));
+  }
 
   const cjk=/[\u3400-\u9fff\uf900-\ufaff]/u;
   const safeLabel=value=>typeof value === 'string' && value.trim() && !cjk.test(value)
@@ -295,6 +346,7 @@ export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onN
     item.translationStatus === 'reference-translation' ? 'Tên dịch tham khảo, không phải tên mùa chính thức' : null,
   ].filter(Boolean).join(' · ') || null;
 
+
   function renderSeasonOptions() {
     const current=state.season || (family==='other'?'all':registry.defaultSourceSeasonId);
     const options=registry.seasonOptions || [];
@@ -305,50 +357,89 @@ export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onN
     if ([...season.options].some(option=>option.value===current)) season.value=current;
   }
 
-  // Điểm hiển thị giảm dần, chưa có điểm xuống cuối; các facet khác giữ thứ tự chữ.
+  // Facet sắp theo thứ tự chữ; giá trị đang chọn vẫn có mặt khi phạm vi hiện tại không đếm được nó.
   const facetEntries=(scopeRows,key)=>{
     const counts=new Map();
     for (const row of scopeRows) for (const value of referenceFacetValues(row,key)) counts.set(value,(counts.get(value) || 0)+1);
     for (const value of state.filters?.[key] || []) if (!counts.has(value)) counts.set(value,0);
-    const entries=[...counts];
-    return key==='score'
-      ? entries.sort(([a],[b])=>a===SCORE_UNKNOWN?1:b===SCORE_UNKNOWN?-1:Number(b)-Number(a))
-      : entries.sort(([a],[b])=>a.localeCompare(b));
+    return [...counts].sort(([a],[b])=>a.localeCompare(b));
   };
-  const chipText=(key,value)=>key==='source'?(SOURCE_LABEL[value] || value):key==='score'?(value===SCORE_UNKNOWN?'Chưa có điểm nguồn':value):displayLabel(key,value);
+  const chipText=(key,value)=>key==='source'?(SOURCE_LABEL[value] || value):displayLabel(key,value);
+
+  /** Lọc đang bật = chip đã chọn + từ khóa tìm; dùng cho badge "Bộ lọc" và trạng thái "Xóa lọc". */
+  function activeFilterCount() {
+    const facets=Object.values(state.filters || {}).reduce((total,values)=>total + (Array.isArray(values) ? values.length : 0),0);
+    return facets + (state.query ? 1 : 0);
+  }
+
+  const facetChip=(key,selected,value,count)=>{
+    const code=key==='faction' ? FACTION_CODE[displayLabel(key,value)] : null;
+    return el('button',{
+      type:'button',class:`fchip ${key}-chip${code ? ` f-${code}` : ''}${selected.includes(value) ? ' on' : ''}`,'aria-pressed':String(selected.includes(value)),
+      title:chipText(key,value)===value?null:value,dataset:{focusKey:`${key}:${value}`},
+      onClick:()=>onQuery({[key]:selected.includes(value)?selected.filter(item=>item!==value):[...selected,value]}),
+    },[
+      el('span',{class:'fchip-check','aria-hidden':'true'}),
+      el('span',{class:'fchip-label'},chipText(key,value)),
+      ' ',
+      el('span',{class:'fchip-count'},String(count)),
+    ]);
+  };
 
   function facetGroup(key,entries) {
+    if (!entries.length) return null;
     const selected=state.filters?.[key] || [];
-    const chip=([value,count])=>{
-      const factionCode=key==='faction' ? FACTION_CODE[displayLabel(key,value)] : null;
-      return el('button',{
-        type:'button',class:`fchip${factionCode?` f-${factionCode}`:''}${selected.includes(value)?' on':''}`,'aria-pressed':String(selected.includes(value)),
-        title:key==='score' || chipText(key,value)===value?null:value,dataset:{focusKey:`${key}:${value}`},
-        onClick:()=>onQuery({[key]:selected.includes(value)?selected.filter(item=>item!==value):[...selected,value]}),
-      },`${chipText(key,value)} (${count})`);
-    };
-    const label=el('div',{class:'flabel'},FACET_LABEL[key]);
-    if (key!=='score' || entries.length<=SCORE_CHIP_LIMIT) {
-      return el('div',{class:`fgroup ${key}-group${SECONDARY_FACETS.includes(key)?' secondary':''}`},[label,el('div',{class:'chip-row'},entries.map(chip))]);
-    }
-    // Thu gọn chỉ là trình bày: mức đang chọn ngoài 8 mức đầu vẫn hiện và vẫn lọc.
-    const visible=scoreExpanded?entries:entries.filter(([value],index)=>index<SCORE_CHIP_LIMIT || selected.includes(value));
-    const chipRow=el('div',{class:'chip-row',id:`${mount.id}-score-values`},visible.map(chip));
-    return el('div',{class:'fgroup score-group'},[label,chipRow,el('button',{
-      type:'button',class:'score-toggle','aria-expanded':String(scoreExpanded),'aria-controls':chipRow.id,
-      dataset:{focusKey:'score:toggle'},onClick:()=>{scoreExpanded=!scoreExpanded;renderFacets(currentScopeRows);},
-    },scoreExpanded?'Thu gọn':`Xem tất cả mức điểm (${entries.length})`)]);
+    const secondary=SECONDARY_FACETS.includes(key);
+    const open=secondary && openFacets.has(key);
+    const row=el('div',{class:'chip-row',id:`${mount.id}-${key}-values`},entries.map(([value,count])=>facetChip(key,selected,value,count)));
+    // Nhóm phụ thu gọn mặc định: chip vẫn nằm trong DOM nhưng `hidden` giữ đúng trạng thái.
+    if (secondary && !open) row.hidden=true;
+    const label=secondary
+      ? el('button',{type:'button',class:'flabel flabel-toggle','aria-expanded':String(open),'aria-controls':row.id,dataset:{focusKey:`${key}:toggle`},onClick:()=>{
+        if (openFacets.has(key)) openFacets.delete(key); else openFacets.add(key);
+        renderFacets(currentScopeRows);
+      }},[FACET_LABEL[key],icon(CHEVRON,{size:16})])
+      : el('div',{class:'flabel'},FACET_LABEL[key]);
+    return el('div',{class:`fgroup ${key}-group${secondary?' secondary':''}`},[label,row]);
+  }
+
+  /** Dựng lại sidebar nhưng giữ focus theo `data-focus-key` để lọc bằng bàn phím không bị mất chỗ. */
+  function replaceFilterNodes(children) {
+    const focused=filters.contains(document.activeElement) ? document.activeElement.dataset.focusKey : null;
+    filters.replaceChildren(...children);
+    if (focused) filters.querySelector(`[data-focus-key="${CSS.escape(focused)}"]`)?.focus({preventScroll:true});
   }
 
   function renderFacets(scopeRows) {
-    replaceFilterButtons(filters,[...PRIMARY_FACETS,...SECONDARY_FACETS].map(key=>{
-      const entries=facetEntries(scopeRows,key);
-      return entries.length?facetGroup(key,entries):null;
-    }).filter(Boolean));
+    const active=activeFilterCount();
+    clear.disabled=active===0;
+    filterCount.textContent=String(active);
+    filterCount.hidden=active===0;
+    replaceFilterNodes([
+      el('div',{class:'reference-filter-head'},[el('h2',{class:'reference-filter-title'},'Bộ lọc'),clear]),
+      ...[...PRIMARY_FACETS,...SECONDARY_FACETS].map(key=>facetGroup(key,facetEntries(scopeRows,key))).filter(Boolean),
+    ]);
+  }
+
+  function updateViewButtons() {
+    const table=canonicalTeamView(state.view)===TEAM_VIEW_TABLE;
+    for (const button of viewButtons) {
+      const on=(button.dataset.view===TEAM_VIEW_TABLE)===table;
+      button.setAttribute('aria-pressed',String(on));
+      button.classList.toggle('on',on);
+    }
+  }
+
+  function renderView(filtered,labels,sourceScope) {
+    view.replaceChildren(canonicalTeamView(state.view)===TEAM_VIEW_TABLE
+      ? el('div',{class:'reference-table-frame'},recommendedTeamTable(filtered,{hrefFor,labels}))
+      : el('div',{class:'team-grid'},filtered.map(row=>recommendedTeamCard(row,{onTag:value=>onQuery({q:value}),href:hrefFor?.(row),labels}))));
+    empty.textContent=currentScopeRows.length?'Không có đội khớp bộ lọc.':sourceScope?.state==='uncollected-season'?'Mùa nguồn chưa được thu thập.':sourceScope?.state==='empty-category'?'Nguồn xác nhận danh mục này hiện không có đội.':family==='other' && (state.season==='unknown' || state.category==='unknown')?'Không có đội có thuộc tính nguồn chưa rõ trong phạm vi này.':'Mùa hoặc danh mục này chưa có dữ liệu.';
+    empty.hidden=filtered.length>0;
   }
 
   function render() {
-    if (search.value!==state.query) search.value=state.query || '';
+    if (searchInput.value!==state.query) searchInput.value=state.query || '';
     renderSeasonOptions();
     const categories=family==='other'
       ? ['all','unknown',...new Set(rows.flatMap(row=>row.sourceCategoryIds || []))]
@@ -360,36 +451,30 @@ export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onN
     currentScopeRows=scopeRows;
     renderFacets(scopeRows);
     const filtered=projectRecommendedRows(rows,state,labels);
-    counts.textContent=`${filtered.length} / ${scopeRows.length} đội`;
+    count.replaceChildren(el('strong',{},String(filtered.length)),` / ${scopeRows.length} đội`);
     const sourceScope=family==='recommended' ? registry.scopes?.find(scope=>scope.sourceSeasonId===state.season && scope.sourceCategoryId===state.category) : null;
     const scopeNotice=sourceScope?.state==='uncollected-season'?'Mùa nguồn chưa được thu thập.':sourceScope?.state==='empty-category'?'Nguồn xác nhận danh mục này hiện không có đội.':'';
     notice.textContent=[...(state.notices || []),scopeNotice].filter(Boolean).join(' ');
-    grid.replaceChildren(el('div',{class:'team-grid'},filtered.map(row=>recommendedTeamCard(row,{onTag:value=>onQuery({q:value}),href:hrefFor?.(row),labels}))));
-    if (!filtered.length) grid.append(el('p',{class:'empty'},scopeRows.length?'Không có đội khớp bộ lọc.':sourceScope?.state==='uncollected-season'?'Mùa nguồn chưa được thu thập.':sourceScope?.state==='empty-category'?'Nguồn xác nhận danh mục này hiện không có đội.':family==='other' && (state.season==='unknown' || state.category==='unknown')?'Không có đội có thuộc tính nguồn chưa rõ trong phạm vi này.':'Mùa hoặc danh mục này chưa có dữ liệu.'));
+    notice.hidden=!notice.textContent;
+    updateViewButtons();
+    renderView(filtered,labels,sourceScope);
   }
   return {
     update(nextRows,nextState,nextRegistry){rows=nextRows;state=nextState;registry=nextRegistry;render();},
     focus(){heading.focus();},
     setSearch(value){onQuery({q:value || null});},
-    setFiltersExpanded(expanded){
-      const open=expanded === true;
-      filters.classList.toggle('collapsed',!open);
-      toggle.setAttribute('aria-expanded',String(open));
-    },
+    setFiltersExpanded,
     getDisclosureState(){
       return {
         filters:filters.classList.contains('collapsed') === false,
-        score:scoreExpanded,
-        alternatives:[...grid.querySelectorAll('.reference-team-card[data-reference-key] > details.reference-alternatives[open]')]
+        alternatives:[...view.querySelectorAll('.reference-team-card[data-reference-key] > details.reference-alternatives[open]')]
           .map(details=>details.parentElement.dataset.referenceKey).filter(Boolean).slice(0,12),
       };
     },
     setDisclosureState(disclosures={}){
-      this.setFiltersExpanded(disclosures.filters);
-      scoreExpanded=disclosures.score === true;
-      renderFacets(currentScopeRows);
+      setFiltersExpanded(disclosures.filters);
       const open=new Set(disclosures.alternatives || []);
-      for (const card of grid.querySelectorAll('.reference-team-card[data-reference-key]')) {
+      for (const card of view.querySelectorAll('.reference-team-card[data-reference-key]')) {
         const details=card.querySelector(':scope > details.reference-alternatives');
         if (details) details.open=open.has(card.dataset.referenceKey);
       }

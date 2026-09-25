@@ -288,10 +288,14 @@ test("legacy query before a hash survives the Team chuẩn redirect", async ({ p
   await expectActiveSection(page, "team-chuan");
 });
 
-test("a legacy score query redirects to Team chuẩn without losing the value", async ({ page }) => {
+test("a legacy score query still redirects to Team chuẩn and is then retired", async ({ page }) => {
+  // `score` còn trong bảng khóa root đóng băng (nhận diện URL gốc cũ) nhưng bộ lọc điểm đã bỏ,
+  // nên đích chuyển tiếp là /doi-chuan/ và tham số bị xóa ngay lần replaceState đầu.
   await page.goto("/?score=113");
-  await expect(page).toHaveURL("/doi-chuan/?score=113");
+  await expect(page).toHaveURL("/doi-chuan/");
   await waitForBoot(page);
+  await expect(page.locator("#section-team-chuan .reference-team-card").first()).toBeVisible();
+  await expect(page.locator("#section-team-chuan .fgroup .flabel")).not.toContainText(["Điểm"]);
 });
 
 test("legacy lookup hash merges only supported hash keys over the outer query", async ({ page }) => {

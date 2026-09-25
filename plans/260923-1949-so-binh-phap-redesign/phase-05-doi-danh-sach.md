@@ -1,7 +1,7 @@
 ---
 phase: 5
 title: "Đội chuẩn / Đội khác: lọc, thẻ, Thẻ/Bảng"
-status: pending
+status: completed
 priority: P1
 effort: "3d"
 dependencies: [3]

@@ -14,6 +14,7 @@ import { assignDerivedFactions } from "./derive-team-faction.js";
 import { createSeasonCoexistSection, createRecommendedSection } from "./team-filter-section.js";
 import { resolveBrowseState, projectSeasonBrowse, resolveSelectionScore } from './season-context.js';
 import { loadRecommendedReference, readRecommendedQuery } from './recommended-reference-state.js';
+import { resolveTeamView, writeStoredTeamView } from './team-view.js';
 import {
   KHAIHOANG_TEAM_QUERY_KEY,
   KHAIHOANG_VARIANT_QUERY_KEY,
@@ -62,6 +63,24 @@ function stripTrackingParams() {
   history.replaceState(history.state, '', url);
 }
 
+/** Bộ lọc điểm đã bỏ: `score=` cũ bị bỏ qua và bị xóa khỏi URL ngay lần replaceState đầu. */
+function stripRetiredReferenceParams(pageSection) {
+  if (!REFERENCE_SECTIONS.includes(pageSection)) return;
+  const url = new URL(location.href);
+  if (!url.searchParams.has('score')) return;
+  url.searchParams.delete('score');
+  history.replaceState(history.state, '', url);
+}
+
+/** localStorage có thể bị chặn (chế độ riêng tư): đọc/ghi lựa chọn Thẻ/Bảng chỉ là ghi nhớ. */
+function localStore() {
+  try {
+    return globalThis.localStorage;
+  } catch {
+    return null;
+  }
+}
+
 async function main() {
   const pageSection = document.body.dataset.pageSection || '';
   const mount = pageSection ? $(`#section-${pageSection}`) : null;
@@ -73,6 +92,7 @@ async function main() {
   // Bảng route handle phải sẵn sàng trước migrate và mọi lần dựng href.
   setTeamRouteHandlesFromJSON($('#team-route-handles')?.textContent);
   stripTrackingParams();
+  stripRetiredReferenceParams(pageSection);
   // Layout sở hữu payload: có `#season-controls` nghĩa là trang này có phạm vi mùa. app.js
   // không giữ danh sách mục nào của riêng nó, nên thêm/bớt trang chỉ cần sửa layout.
   const controls = $('#season-controls');
@@ -221,6 +241,8 @@ async function main() {
       renderScope();
     };
     const navigateReference = (changes, push = false) => {
+      // Kiểu hiển thị được ghi nhớ theo trình duyệt; URL chỉ mang `view=bang`, Thẻ là mặc định.
+      if (Object.hasOwn(changes, 'view')) writeStoredTeamView(localStore(), changes.view);
       const url = new URL(location.href);
       for (const [key,value] of Object.entries(changes)) {
         url.searchParams.delete(key);
@@ -314,9 +336,11 @@ async function main() {
       if (!REFERENCE_SECTIONS.includes(pageSection) || !recommendedModel) return;
       const registry = recommendedModel.seasons || {};
       const state = readRecommendedQuery(location.href,registry);
+      // URL > giá trị đã lưu > Thẻ; cả hai trang danh sách dùng chung một lựa chọn.
+      const resolved = {...state, view:resolveTeamView(state.view, localStore())};
       const explicitSeason = new URL(location.href).searchParams.has('season');
-      sections['team-chuan']?.update(recommendedModel.index.records,state,registry);
-      sections['team-khac']?.update(recommendedModel.other.records,explicitSeason ? state : {...state,season:'all'},registry);
+      sections['team-chuan']?.update(recommendedModel.index.records,resolved,registry);
+      sections['team-khac']?.update(recommendedModel.other.records,explicitSeason ? resolved : {...resolved,season:'all'},registry);
     }
     const scenarioSelect = seasonScoped ? el('select', {id:'season-scenario'}, [el('option',{value:''},'Tất cả — tham khảo'), ...(seasonModel?.data['season-registry'] || []).filter(scenario=>scenario.reviewStatus === 'reviewed').map(scenario => el('option',{value:scenario.id},scenario.labelVi))]) : null;
     const rulesetSelect = seasonScoped ? el('select', {id:'season-ruleset', 'aria-label':'Phiên bản luật'}) : null;

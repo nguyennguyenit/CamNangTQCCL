@@ -48,6 +48,7 @@ export const PUBLIC_ARTIFACTS = Object.freeze([
   entry("js", "team-detail-navigation"),
   entry("js", "team-detail"),
   entry("js", "team-filter-section"),
+  entry("js", "team-view"),
   entry("js", "team-pk"),
   entry("js", "team-recommend-engine"),
   entry("js", "website-display"),

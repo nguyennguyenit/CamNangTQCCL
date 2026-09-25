@@ -15,7 +15,7 @@ test('query rejects duplicate scalars and unsupported sorting without changing f
 });
 
 test('facets are OR within key and AND across keys', () => {
-  const state = {season:'s28',category:'交戰',query:'',filters:{faction:['魏','蜀'],unit:['騎'],score:[],subcategory:[],source:[]}};
+  const state = {season:'s28',category:'交戰',query:'',filters:{faction:['魏','蜀'],unit:['騎'],subcategory:[],source:[]}};
   assert.deepEqual(projectRecommendedRows(rows,state).map(x=>x.sourceConfigId), ['a']);
 });
 
@@ -24,10 +24,30 @@ test('Team khác season attribution distinguishes all, unknown and reviewed memb
     {legacyTeamId:'unknown',legacyVariantId:'v-1',sourceSeasonIds:null,holders:[]},
     {legacyTeamId:'known',legacyVariantId:'v-2',sourceSeasonIds:['s28','s27'],holders:[]},
   ];
-  const state = season => ({season,category:'all',query:'',filters:{faction:[],unit:[],score:[],subcategory:[],source:[]}});
+  const state = season => ({season,category:'all',query:'',filters:{faction:[],unit:[],subcategory:[],source:[]}});
   assert.deepEqual(projectRecommendedRows(other,state('all')).map(row=>row.legacyTeamId), ['unknown','known']);
   assert.deepEqual(projectRecommendedRows(other,state('unknown')).map(row=>row.legacyTeamId), ['unknown']);
   assert.deepEqual(projectRecommendedRows(other,state('s28')).map(row=>row.legacyTeamId), ['known']);
+});
+
+test('view chọn chế độ Thẻ/Bảng: chỉ nhận giá trị hợp lệ, giá trị lạ kèm thông báo', () => {
+  const read = search => readRecommendedQuery(`https://x.test/?season=s28${search}#team-chuan`, {seasons:['s28']});
+  assert.equal(read('').view, null);
+  assert.equal(read('&view=bang').view, 'bang');
+  assert.equal(read('&view=the').view, 'the');
+  const invalid = read('&view=cards');
+  assert.equal(invalid.view, null);
+  assert.match(invalid.notices.join(' '), /hiển thị/);
+  const duplicated = read('&view=bang&view=the');
+  assert.equal(duplicated.view, 'bang');
+  assert.match(duplicated.notices.join(' '), /view bị lặp/);
+});
+
+test('bộ lọc điểm đã bỏ: `score` không còn là facet và không lọc gì', () => {
+  const state = readRecommendedQuery('https://x.test/?season=s28&score=113&score=unknown#team-chuan', {seasons:['s28']});
+  assert.equal(state.filters.score, undefined);
+  assert.equal(Object.hasOwn(state.filters,'score'),false);
+  assert.deepEqual(projectRecommendedRows(rows,{...state,category:'交戰'}).map(x=>x.sourceConfigId), ['a','b']);
 });
 
 test('legacy aliases preserve exact original destination', () => {
@@ -53,7 +73,7 @@ test('query matches enriched rows by Vietnamese with or without accents and by o
       {nameRaw:'張飛',displayNameVi:'Trương Phi',tacticSlotsRaw:['橫掃千軍'],tacticSlotsVi:[null],bookSlotsRaw:[],bookSlotsVi:[]},
     ]},
   ];
-  const state = query => ({season:'s28',category:'交戰',query,filters:{faction:[],unit:[],score:[],subcategory:[],source:[]}});
+  const state = query => ({season:'s28',category:'交戰',query,filters:{faction:[],unit:[],subcategory:[],source:[]}});
   const ids = query => projectRecommendedRows(enriched,state(query)).map(row=>row.sourceConfigId);
   assert.deepEqual(ids('Lữ Bố'), ['vi']);
   assert.deepEqual(ids('lu bo'), ['vi']);
@@ -64,51 +84,6 @@ test('query matches enriched rows by Vietnamese with or without accents and by o
   assert.deepEqual(ids('truong phi'), ['other']);
   assert.deepEqual(ids('ngu muu than ky lan'), ['notes']);
   assert.deepEqual(ids('五謀臣'), ['notes']);
-});
-
-const scored = [
-  {sourceConfigId:'high',sourceSeasonId:'s28',sourceCategoryId:'交戰',tierOrder:1,listIndex:0,value:113,factionRaw:'魏',unitTypesRaw:['騎'],subcategoryRaw:'第一隊',heroes:[]},
-  {sourceConfigId:'decimal',sourceSeasonId:'s28',sourceCategoryId:'交戰',tierOrder:1,listIndex:1,value:98.5,factionRaw:'魏',unitTypesRaw:['弓'],subcategoryRaw:'第一隊',heroes:[]},
-  {sourceConfigId:'zero',sourceSeasonId:'s28',sourceCategoryId:'交戰',tierOrder:2,listIndex:2,value:0,factionRaw:'群',unitTypesRaw:['騎'],subcategoryRaw:'交戰',heroes:[]},
-  {sourceConfigId:'tier-wins',sourceSeasonId:'s28',sourceCategoryId:'交戰',tierOrder:1,listIndex:3,value:1,factionRaw:'群',unitTypesRaw:['騎'],subcategoryRaw:'交戰',heroes:[]},
-  {sourceConfigId:'unscored',sourceSeasonId:'s28',sourceCategoryId:'交戰',tierOrder:2,listIndex:4,value:null,factionRaw:'群',unitTypesRaw:['騎'],subcategoryRaw:'交戰',heroes:[]},
-];
-const scoredState = (extra={}) => ({season:'s28',category:'交戰',query:'',filters:{faction:[],unit:[],score:[],subcategory:[],source:[],...extra}});
-const scoredIds = state => projectRecommendedRows(scored,state).map(row=>row.sourceConfigId);
-
-test('score filters by exact source value and keeps 0 distinct from missing', () => {
-  assert.deepEqual(scoredIds(scoredState({score:['113']})), ['high']);
-  assert.deepEqual(scoredIds(scoredState({score:['98.5']})), ['decimal']);
-  assert.deepEqual(scoredIds(scoredState({score:['0']})), ['zero']);
-  assert.deepEqual(scoredIds(scoredState({score:['unknown']})), ['unscored']);
-  // Repeated values are OR inside the facet and never reorder the fixed source ranking.
-  assert.deepEqual(scoredIds(scoredState({score:['unknown','113','0']})), ['high','zero','unscored']);
-  // Cross-facet is AND.
-  assert.deepEqual(scoredIds(scoredState({score:['113','0'],faction:['魏'],unit:['騎']})), ['high']);
-  assert.deepEqual(scoredIds(scoredState({score:['113'],unit:['弓']})), []);
-  // Other facets keep working next to score.
-  assert.deepEqual(scoredIds(scoredState({score:['0','unknown'],subcategory:['交戰']})), ['zero','unscored']);
-  // Tier trước điểm: điểm 1 của Tier 1 vẫn đứng trước điểm 0 của Tier 2.
-  assert.deepEqual(scoredIds(scoredState()), ['high','decimal','tier-wins','zero','unscored']);
-});
-
-test('score query values canonicalize, de-duplicate and reject ambiguous input with a notice', () => {
-  const read = search => readRecommendedQuery(`https://x.test/?season=s28&${search}#team-chuan`, {seasons:['s28']});
-  const canonical = read('score=113.0&score=113&score=+113&score=%20113%20&score=unknown');
-  assert.deepEqual(canonical.filters.score, ['113','unknown']);
-  assert.deepEqual(projectRecommendedRows(scored,{...canonical,category:'交戰'}).map(row=>row.sourceConfigId), ['high','unscored']);
-
-  const rejected = read('score=&score=-5&score=Infinity&score=NaN&score=1e3&score=T1&score=4.5%20sao&score=98.5');
-  assert.deepEqual(rejected.filters.score, ['98.5']);
-  assert.match(rejected.notices.join(' '), /điểm/i);
-  assert.deepEqual(projectRecommendedRows(scored,{...rejected,category:'交戰'}).map(row=>row.sourceConfigId), ['decimal']);
-
-  // Old Tier/star selectors are dropped from the reference query with a notice, never mapped onto score.
-  const legacyAliases = read('tier=T1&stars=4.5&sort=score');
-  assert.equal(legacyAliases.filters.tier, undefined);
-  assert.deepEqual(legacyAliases.filters.score, []);
-  assert.match(legacyAliases.notices.join(' '), /không còn áp dụng|sắp xếp/);
-  assert.deepEqual(projectRecommendedRows(scored,{...legacyAliases,category:'交戰'}).map(row=>row.sourceConfigId), ['high','decimal','tier-wins','zero','unscored']);
 });
 
 test('search reads declared domain fields only and never hashes or source URLs', () => {

@@ -1,29 +1,10 @@
 import { normalizeText } from './filters.js';
+import { canonicalTeamView } from './team-view.js';
 
-const REPEATABLE = ['faction','unit','score','subcategory','source'];
+/** Facet lặp được của danh sách đội; bộ lọc điểm đã bỏ nên `score` không còn ở đây. */
+const REPEATABLE = ['faction','unit','subcategory','source'];
 /** Selector cũ của bảng xếp hạng: bỏ khỏi query Team, không map sang điểm nguồn. */
 const RETIRED = ['tier','stars','sort','point'];
-export const SCORE_UNKNOWN = 'unknown';
-const SCORE_TEXT = /^\d+(?:\.\d+)?$/;
-
-/** Canonical text của một mức điểm nguồn: số hữu hạn không âm, hoặc token unknown. */
-export function canonicalScoreValue(raw) {
-  const value = String(raw ?? '').trim();
-  if (value === SCORE_UNKNOWN) return SCORE_UNKNOWN;
-  if (!SCORE_TEXT.test(value)) return null;
-  const number = Number(value);
-  if (!Number.isFinite(number)) return null;
-  const canonical = String(number);
-  // Chuỗi canonical phải tự đọc lại được; không nhận số bị đổi sang exponent hay underflow về 0.
-  if (!SCORE_TEXT.test(canonical) || (number === 0 && !/^0(?:\.0+)?$/.test(value))) return null;
-  return canonical;
-}
-
-/** Điểm của một hàng theo đúng độ chính xác nguồn; thiếu điểm là token riêng, không phải 0. */
-export function rowScoreValue(row) {
-  const value = typeof row.value === 'string' ? Number(row.value) : row.value;
-  return value == null || !Number.isFinite(value) ? SCORE_UNKNOWN : String(value);
-}
 const SCALARS = ['season','category','q','detail','legacyTeam','legacyVariant'];
 
 export function readRecommendedQuery(href, registry = {}) {
@@ -36,6 +17,10 @@ export function readRecommendedQuery(href, registry = {}) {
     scalar[key] = values[0] || null;
   }
   if (RETIRED.some(key=>url.searchParams.has(key))) notices.push('Bộ lọc bậc/sao và tham số sắp xếp cũ không còn áp dụng; đội giữ thứ tự nguồn cố định.');
+  const viewValues = url.searchParams.getAll('view').filter(Boolean);
+  if (viewValues.length > 1) notices.push('Tham số view bị lặp; chỉ dùng giá trị đầu.');
+  const view = canonicalTeamView(viewValues[0]);
+  if (viewValues[0] && !view) notices.push('Kiểu hiển thị không hợp lệ đã bị bỏ.');
   const seasons = new Set(registry.seasons || registry.seasonOptions?.map(item=>item.sourceSeasonId) || []);
   if (scalar.season && scalar.season !== 'all' && scalar.season !== 'unknown' && seasons.size && !seasons.has(scalar.season)) {
     notices.push('Mùa không tồn tại; đã dùng mùa mặc định.');
@@ -45,30 +30,21 @@ export function readRecommendedQuery(href, registry = {}) {
     season: scalar.season || registry.defaultSourceSeasonId || 'all',
     category: scalar.category || 'all',
     query: scalar.q || '', detail: scalar.detail,
-    legacyTeam: scalar.legacyTeam, legacyVariant: scalar.legacyVariant,
-    filters: Object.fromEntries(REPEATABLE.map(key=>[key,readFacet(url,key,notices)])),
+    legacyTeam: scalar.legacyTeam, legacyVariant: scalar.legacyVariant, view,
+    filters: Object.fromEntries(REPEATABLE.map(key=>[key,readFacet(url,key)])),
     notices,
   };
 }
 
-function readFacet(url,key,notices) {
-  const raw = url.searchParams.getAll(key);
-  if (key !== 'score') return [...new Set(raw.filter(Boolean))];
-  const canonical = [];
-  const rejected = [];
-  for (const value of raw) {
-    const score = canonicalScoreValue(value);
-    if (score === null) rejected.push(value); else canonical.push(score);
-  }
-  if (rejected.length) notices.push(`Giá trị điểm không hợp lệ đã bị bỏ: ${rejected.map(value=>value || '(trống)').join(', ')}.`);
-  return [...new Set(canonical)];
+/** Facet lặp: giữ nguyên giá trị nguồn, bỏ trùng, không diễn giải. */
+function readFacet(url,key) {
+  return [...new Set(url.searchParams.getAll(key).filter(Boolean))];
 }
 
 /** Giá trị facet của một hàng, dùng chung cho projector và bộ đếm phạm vi của UI. */
 export function referenceFacetValues(row,key) {
   if (key === 'faction') return [row.factionRaw ?? row.faction].filter(Boolean);
   if (key === 'unit') return row.unitTypesRaw || row.unit || [];
-  if (key === 'score') return [rowScoreValue(row)];
   if (key === 'subcategory') return [row.subcategoryRaw].filter(Boolean);
   if (key === 'source') return [row.source].filter(Boolean);
   return [];

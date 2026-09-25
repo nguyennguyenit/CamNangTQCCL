@@ -46,9 +46,10 @@ test('cards expose holders tactics books and a native detail link',async({page})
   await page.goto('/doi-chuan/');
   const card=page.locator('#section-team-chuan .reference-team-card').first();
   await expect(card.locator('.reference-holder')).toHaveCount(3);
+  await expect(card.locator('.reference-role').first()).toHaveText('CHỦ');
   await expect(card.locator('.tactics .tag').first()).toBeVisible();
-  await expect(card.locator('.books .tag').first()).toBeVisible();
-  await card.getByRole('link',{name:'Xem chi tiết'}).click();
+  await expect(card.locator('.books').first()).toContainText('Binh thư ·');
+  await card.getByRole('link',{name:'Chi tiết'}).click();
   await expect(page).toHaveURL(/\/doi-chuan\//);
   await expect(page.locator('#team-detail-body')).toBeVisible();
 });
@@ -148,15 +149,16 @@ test('localized facet chips filter with raw values, show scoped counts and keep 
   await expect(section.locator('.reference-team-card').first()).toBeVisible();
   await section.getByRole('button',{name:'Bộ lọc'}).click();
   const groups=await section.locator('.fgroup .flabel').allTextContents();
-  // Primary order is Loại binh → Điểm → Phe; the retired Tier facet is gone.
-  expect(groups.slice(0,3)).toEqual(['Loại binh','Điểm','Phe']);
+  // Bộ lọc điểm đã bỏ: nhóm chính là Loại binh → Phe, Nhóm/Nguồn thu gọn phía sau.
+  expect(groups.slice(0,2)).toEqual(['Loại binh','Phe']);
+  expect(groups).not.toContain('Điểm');
   expect(groups).not.toContain('Tier');
   const chip=section.locator('.fchip[data-focus-key^="faction:"]').first();
   const raw=(await chip.getAttribute('data-focus-key')).slice('faction:'.length);
   const label=seasons.displayLabels?.faction?.[raw] || raw;
   const season=seasons.defaultSourceSeasonId;
   const scoped=scopedCount(index.records,row=>row.sourceSeasonId===season && (row.factionRaw ?? row.faction)===raw);
-  await expect(chip).toHaveText(`${label} (${scoped})`);
+  await expect(chip).toHaveText(`${label} ${scoped}`);
   if (seasons.displayLabels?.faction?.[raw]) {
     expect(await chip.textContent()).not.toMatch(/[\u3400-\u9fff]/);
     await expect(chip).toHaveAttribute('title',raw);
@@ -168,7 +170,7 @@ test('localized facet chips filter with raw values, show scoped counts and keep 
   await expect(section.locator('.reference-team-card')).toHaveCount(matching);
   await expect(section.locator(`.reference-team-card[data-faction="${raw}"]`)).toHaveCount(matching);
   // Scoped counts stay anchored to season/category, not to the active selection.
-  await expect(chip).toHaveText(`${label} (${scoped})`);
+  await expect(chip).toHaveText(`${label} ${scoped}`);
 });
 
 test('mobile keeps search and the native season select outside the collapsed filters and has no season search box',async({page,request})=>{
@@ -310,17 +312,16 @@ test('compact cards keep complete source content, native links and non-navigatin
   expect(scoreBox.x).toBeGreaterThanOrEqual(titleBox.x+titleBox.width-1);
   expect(scoreBox.y+scoreBox.height).toBeLessThanOrEqual(cardBox.y+cardBox.height/2);
 
-  // Nhãn loại binh và phe tiếng Việt hiển thị được, không chỉ là data attribute.
-  for (const unit of row.unitTypesRaw) await expect(card.locator('.units')).toContainText(seasons.displayLabels?.unit?.[unit] || unit);
-  await expect(card.locator('.badge.faction')).toHaveText(seasons.displayLabels?.faction?.[row.factionRaw] || row.factionRaw);
+  // Dòng "■ phe · binh": phe và loại binh tiếng Việt hiển thị được, không chỉ là data attribute.
+  const meta=card.locator('.reference-meta');
+  await expect(meta.locator('.reference-faction')).toHaveText(seasons.displayLabels?.faction?.[row.factionRaw] || row.factionRaw);
+  for (const unit of row.unitTypesRaw) await expect(meta.locator('.reference-units')).toContainText(seasons.displayLabels?.unit?.[unit] || unit);
 
-  // Ba holder vẫn đủ; chỉ holder đầu có nhãn Chủ tướng, không render vai trò raw của ba hàng.
+  // Ba hàng tướng đủ, vai trò viết tắt theo đúng thứ tự; huy hiệu Chủ tướng chỉ còn ở trang chi tiết.
   const primaryHolders=card.locator(':scope > .heroes > .reference-holder');
   await expect(primaryHolders).toHaveCount(3);
-  await expect(primaryHolders.locator('.main-holder')).toHaveCount(1);
-  await expect(primaryHolders.first().locator('.main-holder')).toHaveText('C');
-  await expect(primaryHolders.nth(1).locator('.main-holder')).toHaveCount(0);
-  await expect(primaryHolders.nth(2).locator('.main-holder')).toHaveCount(0);
+  await expect(primaryHolders.locator('.reference-role')).toHaveText(['CHỦ','PHÓ 1','PHÓ 2']);
+  await expect(card.locator('.main-holder')).toHaveCount(0);
   for (const [position,holder] of row.heroes.entries()) {
     const view=primaryHolders.nth(position);
     for (const [slot,raw] of (holder.tacticSlotsRaw || []).entries()) {
@@ -342,14 +343,13 @@ test('compact cards keep complete source content, native links and non-navigatin
   await expect(alternatives).toHaveAttribute('open','');
   await expect(alternatives.locator('.reference-holder')).toHaveCount(row.alternativeHoldersRaw.length);
   const alternativeHolders=alternatives.locator('.reference-holder');
-  await expect(alternativeHolders.locator('.main-holder')).toHaveCount(Math.ceil(row.alternativeHoldersRaw.length/3));
-  for (let index=0;index<row.alternativeHoldersRaw.length;index+=1) {
-    await expect(alternativeHolders.nth(index).locator('.main-holder')).toHaveCount(index%3===0 ? 1 : 0);
-  }
+  await expect(alternativeHolders.locator('.reference-role')).toHaveText(
+    row.alternativeHoldersRaw.map((_,index)=>['CHỦ','PHÓ 1','PHÓ 2'][index%3]),
+  );
   await expect(alternatives.locator('.reference-holder').first()).toContainText(firstName.replace(/^(SP|CO|40Y)\s+/,''));
 
-  // Title và CTA là cùng một link thật; chip chiến pháp chỉ tìm kiếm.
-  const cta=card.getByRole('link',{name:'Xem chi tiết'});
+  // Title và CTA là cùng một link thật; nút chiến pháp chỉ tìm kiếm.
+  const cta=card.getByRole('link',{name:'Chi tiết'});
   expect(await title.getAttribute('href')).toBe(await cta.getAttribute('href'));
   const tactic=primaryHolders.locator('.tactics .t-tactic').first();
   const tacticText=(await tactic.textContent()).trim();
@@ -373,10 +373,10 @@ test('absent book slots stay noninteractive and distinct from missing translatio
   const card=page.locator(`#section-team-chuan .reference-team-card[data-source-config-id="${row.sourceConfigId}"]`);
   await expect(card).toBeVisible();
   await expect(card.locator('.books button')).toHaveCount(0);
-  await expect(card.locator('.books .missing-slot')).toHaveCount(9);
   await expect(card.locator('.books')).toHaveCount(3);
+  await expect(card.locator('.books .reference-books-missing')).toHaveText(['Nguồn chưa ghi','Nguồn chưa ghi','Nguồn chưa ghi']);
   await expect(card.locator('.books').filter({hasText:'Nội dung tiếng Việt chưa sẵn sàng'})).toHaveCount(0);
-  await card.getByRole('link',{name:'Xem chi tiết'}).click();
+  await card.getByRole('link',{name:'Chi tiết'}).click();
   await expect(page.locator('#team-detail-body .holder-books dd')).toHaveText([
     'Chưa có dữ liệu',
     'Chưa có dữ liệu',
@@ -389,59 +389,36 @@ test('absent book slots stay noninteractive and distinct from missing translatio
   ]);
 });
 
-test('Team khác cards keep real counter chips that search without leaving the browser',async({page,request})=>{
+test('Team khác cards read the "Sợ …" line from legacy counters without chips',async({page,request})=>{
   const {other}=await referenceData(request);
-  const legacy=other.records.find(item=>item.legacyContent?.counters?.good?.length);
-  const good=legacy.legacyContent.counters.good[0];
+  const legacy=other.records.find(item=>item.legacyContent?.counters?.avoid?.length);
+  const avoid=legacy.legacyContent.counters.avoid;
   await page.goto('/doi-khac/');
   const section=page.locator('#section-team-khac');
   const card=section.locator(`.reference-team-card[data-legacy-team-id="${legacy.legacyTeamId}"]`);
   await expect(card).toBeVisible();
-  for (const name of legacy.legacyContent.counters.good) await expect(card.locator('.counters')).toContainText(name);
-  for (const name of legacy.legacyContent.counters.avoid || []) await expect(card.locator('.counters')).toContainText(name);
-  await card.locator('.counters .chip.good').first().click();
-  expect(new URL(page.url()).pathname).toBe('/doi-khac/');
-  expect(await page.evaluate(()=>new URL(location.href).searchParams.get('q'))).toBe(good);
-  await expect(section.locator(`.reference-team-card[data-legacy-team-id="${legacy.legacyTeamId}"]`)).toHaveCount(1);
+  const fear=card.locator('.reference-fear');
+  await expect(fear).toContainText('Sợ');
+  for (const name of avoid) await expect(fear).toContainText(name);
+  // Chip ⚔/⚠ đã bỏ khỏi thẻ: chỉ còn nút chiến pháp, mọi nút khác biến mất.
+  await expect(card.locator('.counters, .chip')).toHaveCount(0);
+  await expect(card.locator('button:not(.t-tactic)')).toHaveCount(0);
+  expect(new URL(page.url()).searchParams.get('q')).toBeNull();
+  // Đội chuẩn không có bản ghi nào ghi đội sợ → thẻ không giữ khoảng trống cho dòng này.
+  await page.goto('/doi-chuan/');
+  await expect(page.locator('#section-team-chuan .reference-fear')).toHaveCount(0);
 });
 
-test('score facet keeps selections visible outside the collapsed eight and only filters',async({page,request})=>{
+test('a retired score filter is ignored, stripped from the URL and never filters the list',async({page,request})=>{
   const {index}=await referenceData(request);
-  const seasonId=[...new Set(index.records.map(row=>row.sourceSeasonId))]
-    .map(id=>({id,values:new Set(index.records.filter(row=>row.sourceSeasonId===id).map(row=>row.value))}))
-    .sort((a,b)=>b.values.size-a.values.size)[0];
-  expect(seasonId.values.size).toBeGreaterThanOrEqual(36);
-  const scoped=index.records.filter(row=>row.sourceSeasonId===seasonId.id);
-  const numeric=[...new Set(scoped.filter(row=>row.value!=null).map(row=>row.value))].sort((a,b)=>b-a);
-  const target=numeric[20];
-  const expected=scoped.filter(row=>row.value===target).length;
-  await page.goto(`/doi-chuan/?season=${encodeURIComponent(seasonId.id)}`);
+  const seasonId=index.records[0].sourceSeasonId;
+  const total=index.records.filter(row=>row.sourceSeasonId===seasonId).length;
+  await page.goto(`/doi-chuan/?season=${encodeURIComponent(seasonId)}&score=113`);
   const section=page.locator('#section-team-chuan');
-  await expect(section.locator('.reference-team-card').first()).toBeVisible();
-  const group=section.locator('.fgroup.score-group');
-  await expect(group.locator('.fchip')).toHaveCount(8);
-  const visible=await group.locator('.fchip').allTextContents();
-  expect(visible.map(text=>Number(text.replace(/\s*\(\d+\)$/,'')))).toEqual(numeric.slice(0,8));
-  const expand=group.getByRole('button',{name:/Xem tất cả mức điểm/});
-  await expect(expand).toHaveAttribute('aria-expanded','false');
-  const before=await section.locator('.reference-team-card').count();
-  await expand.click();
-  const collapse=group.getByRole('button',{name:'Thu gọn'});
-  await expect(collapse).toHaveAttribute('aria-expanded','true');
-  await expect(group.locator('.fchip')).toHaveCount(numeric.length+(scoped.some(row=>row.value==null)?1:0));
-  await expect(section.locator('.reference-team-card')).toHaveCount(before);
-  const chip=group.locator(`.fchip[data-focus-key="score:${target}"]`);
-  await chip.click();
-  expect(await page.evaluate(()=>new URL(location.href).searchParams.getAll('score'))).toEqual([String(target)]);
-  await expect(section.locator('.reference-team-card')).toHaveCount(expected);
-  await collapse.click();
-  await expect(chip).toBeVisible();
-  await expect(chip).toHaveAttribute('aria-pressed','true');
-  await expect(group.locator('.fchip')).toHaveCount(9);
-  await expect(section.locator('.reference-team-card')).toHaveCount(expected);
-  await section.getByRole('button',{name:'Xóa lọc'}).click();
-  expect(await page.evaluate(()=>new URL(location.href).searchParams.getAll('score'))).toEqual([]);
-  await expect(section.locator('.reference-team-card')).toHaveCount(before);
+  await expect(section.locator('.reference-team-card')).toHaveCount(total);
+  await expect(section.locator('.fgroup .flabel')).not.toContainText(['Điểm']);
+  await expect.poll(()=>page.evaluate(()=>new URL(location.href).search)).toBe(`?season=${encodeURIComponent(seasonId)}`);
+  await expect(page).toHaveURL(new RegExp(`/doi-chuan/\\?season=${encodeURIComponent(seasonId)}$`));
 });
 
 test('retired tier and sort selectors are reported and dropped without touching gameplay scope',async({page,request})=>{
@@ -459,7 +436,8 @@ test('retired tier and sort selectors are reported and dropped without touching 
 const gridColumns=page=>page.evaluate(()=>new Set([...document.querySelectorAll('#section-team-chuan .team-grid > .reference-team-card')]
   .slice(0,12).map(card=>Math.round(card.getBoundingClientRect().x))).size);
 
-for (const [width,columns] of [[1440,4],[1100,3],[800,2],[375,1],[320,1]]) {
+// Lưới thẻ gọn: 2 cột khi còn sidebar, 1 cột khi sidebar thu thành panel.
+for (const [width,columns] of [[1440,2],[1100,2],[800,1],[375,1],[320,1]]) {
   test(`reference grid renders ${columns} readable columns at ${width}px`,async({page})=>{
     await page.setViewportSize({width,height:900});
     await page.goto('/doi-chuan/');
@@ -472,7 +450,7 @@ for (const [width,columns] of [[1440,4],[1100,3],[800,2],[375,1],[320,1]]) {
       const title=card.querySelector('.team-name').getBoundingClientRect();
       const score=card.querySelector('.reference-score').getBoundingClientRect();
       const box=card.getBoundingClientRect();
-      const inside=[...card.querySelectorAll('.reference-holder,.counters,.ana-link-btn,details.reference-alternatives')]
+      const inside=[...card.querySelectorAll('.reference-holder,.reference-meta,.ana-link-btn,details.reference-alternatives')]
         .every(node=>node.getBoundingClientRect().right<=box.right+1);
       return {overlaps:title.right>score.left+1 && title.top<score.bottom && score.top<title.bottom,inside};
     });
@@ -481,6 +459,146 @@ for (const [width,columns] of [[1440,4],[1100,3],[800,2],[375,1],[320,1]]) {
     await page.screenshot({path:test.info().outputPath(`reference-grid-${width}.png`),fullPage:false});
   });
 }
+
+test('compact cards drop the hero panel and give tactic buttons a 44px mobile hit box',async({page,request})=>{
+  const {index}=await referenceData(request);
+  const row=index.records.find(item=>item.heroes?.length===3 && item.value!=null);
+  await page.setViewportSize({width:390,height:812});
+  await page.goto(`/doi-chuan/?season=${encodeURIComponent(row.sourceSeasonId)}`);
+  const section=page.locator('#section-team-chuan');
+  const card=section.locator(`.reference-team-card[data-source-config-id="${row.sourceConfigId}"]`);
+  await expect(card).toBeVisible();
+  const measured=await card.locator('.reference-holder').first().evaluate(holder=>{
+    const tactic=holder.querySelector('.t-tactic');
+    const books=holder.querySelector('.books');
+    const style=getComputedStyle(holder);
+    const cardStyle=getComputedStyle(holder.closest('.reference-team-card'));
+    const box=tactic.getBoundingClientRect();
+    const neighbour=tactic.nextElementSibling?.getBoundingClientRect();
+    return {
+      hit:{height:Math.round(box.height),width:Math.round(box.width)},
+      overlapWithNeighbour:neighbour
+        ? box.right>neighbour.left+0.5 && box.bottom>neighbour.top+0.5 && neighbour.bottom>box.top+0.5
+        : false,
+      heroBackground:style.backgroundColor,
+      cardBackground:cardStyle.backgroundColor,
+      heroRadius:style.borderRadius,
+      tacticBackground:getComputedStyle(tactic).backgroundColor,
+      tacticColor:getComputedStyle(tactic).color,
+      booksDisplay:getComputedStyle(books).display,
+      booksText:books.textContent,
+    };
+  });
+  // A5: vùng bấm chiến pháp ≥ 44px và không chồng lên nút bên cạnh.
+  expect(measured.hit.height).toBeGreaterThanOrEqual(44);
+  expect(measured.hit.width).toBeGreaterThanOrEqual(44);
+  expect(measured.overlapWithNeighbour).toBe(false);
+  // Thẻ gọn không còn vỏ panel của component chung; chiến pháp là chữ, không phải chip nền son nhạt.
+  expect(measured.heroBackground).toBe(measured.cardBackground);
+  expect(measured.heroRadius).toBe('0px');
+  expect(measured.tacticBackground).toBe(measured.cardBackground);
+  expect(measured.booksDisplay).toBe('block');
+  expect(measured.booksText.startsWith('Binh thư · ')).toBe(true);
+  const tactic=card.locator('.reference-holder').first().locator('.t-tactic').first();
+  const text=(await tactic.textContent()).trim();
+  await tactic.click();
+  await expect.poll(()=>page.evaluate(()=>new URL(location.href).searchParams.get('q'))).toBe(text);
+  await expect(section.locator('.reference-team-card').first()).toBeVisible();
+});
+
+test('the legacy table names rows by nickname before name without touching identity',async({page,request})=>{
+  const {other}=await referenceData(request);
+  const legacy=other.records.find(item=>item.nickname && item.name && item.nickname!==item.name);
+  expect(legacy,{message:'cần một bản ghi đội gốc có nickname khác name'}).toBeTruthy();
+  await page.goto('/doi-khac/?view=bang');
+  const section=page.locator('#section-team-khac');
+  const row=section.locator(`.reference-table tbody tr[data-reference-key="${legacy.legacyVariantId || legacy.legacyTeamId}"]`);
+  await expect(row).toBeVisible();
+  await expect(row.locator('.reference-table-name')).toHaveText(legacy.nickname);
+  expect(legacy.nickname).not.toBe(legacy.name);
+  const href=await row.locator('.reference-table-name').getAttribute('href');
+  await row.locator('.reference-table-name').click();
+  await expect(page).toHaveURL(new RegExp(href.split('?')[0]));
+  await expect(page.locator('#team-detail-root')).toHaveAttribute('data-legacy-team-id',legacy.legacyTeamId);
+  if (legacy.legacyVariantId) await expect(page).toHaveURL(new RegExp(`variant=${encodeURIComponent(legacy.legacyVariantId)}`));
+  await expect(page.locator('#team-detail-root')).toHaveAttribute('aria-busy','false');
+  await expect(page.locator('#team-detail-body')).toBeVisible();
+});
+
+test('Thẻ/Bảng remembers the choice, keeps filters and lets the URL win over storage',async({page})=>{
+  await page.goto('/doi-chuan/');
+  const section=page.locator('#section-team-chuan');
+  await expect(section.locator('.reference-team-card').first()).toBeVisible();
+  expect(await page.evaluate(()=>localStorage.getItem('tqccl.teamView.v1'))).toBeNull();
+  // Đổi chế độ giữ nguyên bộ lọc đang bật và không thêm bước lịch sử.
+  const historyBefore=await page.evaluate(()=>history.length);
+  await page.locator('#section-team-chuan').getByLabel('Tìm Đội chuẩn').fill('Lữ Bố');
+  const filtered=await section.locator('.reference-team-card').count();
+  expect(filtered).toBeGreaterThan(0);
+  expect(filtered).toBeLessThan(25);
+  await section.locator('.view-btn[data-view="bang"]').click();
+  await expect(page).toHaveURL(/view=bang/);
+  await expect(page).toHaveURL(/q=L/);
+  expect(await page.evaluate(()=>history.length)).toBe(historyBefore);
+  expect(await page.evaluate(()=>localStorage.getItem('tqccl.teamView.v1'))).toBe('bang');
+  await expect(section.locator('.view-btn[data-view="bang"]')).toHaveAttribute('aria-pressed','true');
+  await expect(section.locator('.reference-table tbody tr')).toHaveCount(filtered);
+  // Nạp lại trang không có `view`: dùng giá trị đã lưu, vẫn giữ từ khóa tìm.
+  await page.goto('/doi-chuan/?q=L%E1%BB%AF%20B%E1%BB%91');
+  await expect(section.locator('.reference-table tbody tr')).toHaveCount(filtered);
+  await expect(section.locator('.view-btn[data-view="the"]')).toHaveAttribute('aria-pressed','false');
+  // Trang Đội khác dùng chung lựa chọn đã lưu.
+  await page.goto('/doi-khac/');
+  await expect(page.locator('#section-team-khac .reference-table tbody tr').first()).toBeVisible();
+  // Quay về Thẻ rồi mở URL Bảng đã chia sẻ: URL thắng giá trị đã lưu.
+  await page.locator('#section-team-khac .view-btn[data-view="the"]').click();
+  await expect(page).not.toHaveURL(/view=/);
+  expect(await page.evaluate(()=>localStorage.getItem('tqccl.teamView.v1'))).toBe('the');
+  await expect(page.locator('#section-team-khac .reference-team-card').first()).toBeVisible();
+  await page.goto('/doi-chuan/?view=bang');
+  await expect(page.locator('#section-team-chuan .reference-table tbody tr').first()).toBeVisible();
+  await expect(page.locator('#section-team-chuan .view-btn[data-view="bang"]')).toHaveAttribute('aria-pressed','true');
+});
+
+test('list to detail and Back from the table view restores view, filters, exact identities and scroll',async({page,request})=>{
+  await page.goto('/doi-chuan/');
+  const section=page.locator('#section-team-chuan');
+  await expect(section.locator('.reference-team-card').first()).toBeVisible();
+  // Một bộ lọc thật (Loại binh), rồi chuyển sang Bảng.
+  const raw=(await section.locator('.fchip[data-focus-key^="unit:"]').first().getAttribute('data-focus-key')).slice('unit:'.length);
+  await section.locator(`.fchip[data-focus-key="unit:${raw}"]`).click();
+  await section.locator('.view-btn[data-view="bang"]').click();
+  await expect(page).toHaveURL(/view=bang/);
+  const rows=section.locator('.reference-table tbody tr');
+  await expect(rows.first()).toBeVisible();
+  const renderedKeys=()=>rows.evaluateAll(nodes=>nodes.map(node=>node.dataset.referenceKey).sort());
+  const keys=await renderedKeys();
+  expect(keys.length).toBeGreaterThan(1);
+  const scrolled=await page.evaluate(()=>{
+    document.documentElement.style.scrollBehavior='auto';
+    window.scrollTo(0,900);
+    return Math.round(window.scrollY);
+  });
+  expect(scrolled).toBeGreaterThan(0);
+
+  // Bấm đúng link đang render của hàng đầu (không tự dựng URL) rồi chờ trang chi tiết tải xong.
+  // Dùng click DOM thật để Playwright không tự cuộn phần tử vào khung nhìn — mốc cuộn đã ghi phải là
+  // mốc của người dùng, không phải mốc do công cụ cuộn hộ.
+  const first=rows.first();
+  const key=await first.getAttribute('data-reference-key');
+  await first.locator('.reference-table-name').evaluate(node=>node.click());
+  await expect(page.locator('#team-detail-root')).toHaveAttribute('data-source-config-id',key);
+  await expect(page.locator('#team-detail-root')).toHaveAttribute('aria-busy','false');
+  await expect(page.locator('#team-detail-body')).toBeVisible();
+  await page.goBack();
+  await expect(page).toHaveURL(/view=bang/);
+  await expect(page).toHaveURL(new RegExp(`unit=${encodeURIComponent(raw)}`));
+  await expect(section.locator('.view-btn[data-view="bang"]')).toHaveAttribute('aria-pressed','true');
+  await expect(section.locator(`.fchip[data-focus-key="unit:${raw}"]`)).toHaveAttribute('aria-pressed','true');
+  // Danh tính khôi phục phải đúng từng bản ghi, không chỉ đúng số hàng.
+  await expect.poll(renderedKeys).toEqual(keys);
+  await expect.poll(()=>page.evaluate(()=>Math.round(window.scrollY))).toBe(scrolled);
+});
 
 test('same-document season and category history re-renders the same records on Back and Forward',async({page,request})=>{
   const {seasons,index}=await referenceData(request);
@@ -566,8 +684,13 @@ test('list to detail and Back restores the rendered list filters and scroll posi
   await section.locator(`.fchip[data-focus-key="faction:${raw}"]`).click();
   await expect(page).toHaveURL(new RegExp(`faction=${encodeURIComponent(raw)}`));
   const filtered=await section.locator('.reference-team-card').count();
-  await page.evaluate(()=>window.scrollTo(0,900));
-  const scrolled=await page.evaluate(()=>Math.round(window.scrollY));
+  // `html { scroll-behavior: smooth }`: ép cuộn tức thời để mốc ghi lại là vị trí cuối, không phải giữa animation.
+  const scrolled=await page.evaluate(()=>{
+    document.documentElement.style.scrollBehavior='auto';
+    window.scrollTo(0,900);
+    return Math.round(window.scrollY);
+  });
+  expect(scrolled).toBeGreaterThan(0);
 
   await page.goto(`/doi-chuan/${encodeURIComponent(handles.r[id])}/`);
   await expect(page.locator('#team-detail-root')).toBeVisible();

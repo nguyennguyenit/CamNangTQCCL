@@ -38,10 +38,10 @@ const PAIRS = [
   { phase: 4, artboard: 'Landing', path: '/', width: 1440, ready: '#tai-game' },
   { phase: 4, artboard: 'LandingMobile', path: '/', width: 390, ready: '#tai-game' },
   { phase: 5, artboard: 'Main', path: '/doi-chuan/', width: 1440, ready: '#section-team-chuan .reference-team-card' },
-  { phase: 5, artboard: 'MainTable', path: '/doi-chuan/?view=bang', width: 1440, ready: '#section-team-chuan .reference-team-card' },
+  { phase: 5, artboard: 'MainTable', path: '/doi-chuan/?view=bang', width: 1440, ready: '#section-team-chuan .reference-table tbody tr' },
   { phase: 5, artboard: 'MobileList', path: '/doi-chuan/', width: 390, ready: '#section-team-chuan .reference-team-card' },
-  { phase: 5, artboard: 'MobileTable', path: '/doi-chuan/?view=bang', width: 390, ready: '#section-team-chuan .reference-team-card' },
-  { phase: 5, artboard: 'MobileFilters', path: '/doi-chuan/', width: 390, ready: '.team-filter-bar', setup: ['.filter-collapse-toggle'] },
+  { phase: 5, artboard: 'MobileTable', path: '/doi-chuan/?view=bang', width: 390, ready: '#section-team-chuan .reference-table tbody tr' },
+  { phase: 5, artboard: 'MobileFilters', path: '/doi-chuan/', width: 390, ready: '#section-team-chuan .reference-toolbar', setup: ['#section-team-chuan .filter-collapse-toggle'] },
   { phase: 7, artboard: 'Lookup', path: '/tra-cuu/', width: 1440, ready: '#section-lookup' },
   { phase: 7, artboard: 'LookupTactics', path: '/tra-cuu/?group=tactics', width: 1440, ready: '#section-lookup' },
   { phase: 7, artboard: 'LookupProfile', path: '/tra-cuu/?group=heroes&id=hero:1', width: 1440, ready: '#section-lookup' },
@@ -84,6 +84,16 @@ async function openBrowser() {
 
 async function newContext(browser, { theme, width, height = 900 }) {
   const context = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: 1 });
+  // Mỗi lần tải trang là một lần đo sạch: bỏ lựa chọn giao diện trang tự ghi (localStorage, trừ `theme`)
+  // và snapshot quay lại (sessionStorage) để probe sau không đo nhầm trạng thái do probe trước để lại.
+  await context.addInitScript(() => {
+    try {
+      for (const key of Object.keys(localStorage)) if (key !== 'theme') localStorage.removeItem(key);
+    } catch { /* storage bị chặn: không có gì phải xóa */ }
+    try {
+      sessionStorage.clear();
+    } catch { /* storage bị chặn: không có gì phải xóa */ }
+  });
   // Theme tối được đặt trước khi tải để `initSiteChrome` áp ngay, không chớp sáng.
   if (theme === 'dark') await context.addInitScript(() => localStorage.setItem('theme', 'dark'));
   return context;
@@ -396,8 +406,9 @@ async function probeTokens(options) {
             }));
           }
           if (probe.setup?.length) {
-            // Probe có thao tác đổi trạng thái (bật chip, mở menu) — nạp lại URL gốc của trang (bỏ query do
-            // thao tác sinh ra) để probe sau vẫn đo trạng thái đầu.
+            // Probe có thao tác đổi trạng thái (bật chip, mở menu, chuyển Thẻ/Bảng) — nạp lại URL gốc của
+            // trang (bỏ query do thao tác sinh ra) để probe sau vẫn đo trạng thái đầu; lựa chọn trang tự
+            // ghi đã bị xóa ở init script của context.
             await tab.goto(`${options.base}${path}`, { waitUntil: 'domcontentloaded' });
             settled = false;
           }
