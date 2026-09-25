@@ -13,13 +13,106 @@ const SCROLL_LOCK_CLASS = 'site-menu-open';
 const DESKTOP_QUERY = '(min-width: 821px)';
 const FOCUSABLE = 'a[href], button';
 
+/**
+ * Hành vi menu thả dùng chung cho header (Công cụ/Game) và menu tài khoản của công cụ Chiêu mộ:
+ * `aria-expanded` + `hidden` của panel, Escape đóng và trả focus về nút, bấm ra ngoài hoặc Tab ra
+ * khỏi menu thì đóng, bấm link/hành động trong menu chỉ đóng chứ không cướp focus.
+ *
+ * Nơi dùng gắn listener ở `document` MỘT lần cho cả nhóm menu rồi gọi `handleDocumentClick` /
+ * `handleDocumentFocusOut` / `handleEscape` của từng menu (nhiều menu trong cùng trang phải chia sẻ
+ * một listener, và việc mở menu này đóng menu kia do nơi gọi quyết định qua `onChange`).
+ *
+ * `shouldHidePanel`: trả về false khi bề rộng lớn — hàng hành động hiện thẳng trong trang nên panel
+ * không bị `hidden` lúc menu đóng (nút mở menu lúc đó do CSS ẩn).
+ */
+export function createDropdownMenu({
+  root,
+  button,
+  panel,
+  closeSelector = 'a[href]',
+  shouldHidePanel = () => true,
+  onChange = null,
+} = {}) {
+  let open = false;
+
+  /** Ghi trạng thái hiện tại ra DOM — cũng dùng để khởi tạo và đồng bộ sau khi bề rộng đổi. */
+  function apply() {
+    panel.hidden = !open && shouldHidePanel();
+    button.setAttribute('aria-expanded', String(open));
+    if (open) root.classList.add('open');
+    else root.classList.remove('open');
+  }
+
+  function setOpen(next, { restoreFocus = false } = {}) {
+    if (open === next) return;
+    open = next;
+    apply();
+    if (typeof onChange === 'function') onChange(open);
+    if (!open && restoreFocus) button.focus();
+  }
+
+  const menu = {
+    root,
+    button,
+    panel,
+    isOpen: () => open,
+    open: () => setOpen(true),
+    close: (options) => setOpen(false, options),
+    setOpen,
+    sync: apply,
+    /** Link trong menu tự điều hướng: chỉ đóng menu, không giành focus. */
+    handlePanelClick(event) {
+      if (open && event?.target?.closest?.(closeSelector)) menu.close();
+    },
+    handleDocumentClick(event) {
+      if (open && !root.contains(event?.target)) menu.close();
+    },
+    handleDocumentFocusOut(event) {
+      if (!open) return;
+      const next = event?.relatedTarget;
+      // `null` = focus rời hẳn tài liệu (cửa sổ khác, chụp ảnh): giữ menu, chỉ đóng khi Tab sang chỗ khác.
+      if (!next || root.contains(next)) return;
+      menu.close();
+    },
+    handleEscape() {
+      if (!open) return false;
+      menu.close({ restoreFocus: true });
+      return true;
+    },
+  };
+
+  button.addEventListener('click', () => {
+    if (open) menu.close();
+    else menu.open();
+  });
+  panel.addEventListener('click', (event) => menu.handlePanelClick(event));
+  return menu;
+}
+
 export function createSiteNav({ documentTarget = document, windowTarget = globalThis } = {}) {
   const root = documentTarget.documentElement;
+  /** Nơi giữ trạng thái mở độc quyền: mở một menu thì đóng các menu còn lại. */
+  const menus = [];
   const dropdowns = [...documentTarget.querySelectorAll('[data-dropdown]')]
     .map((element) => {
       const button = element.querySelector('[data-dropdown-button]');
       const panel = element.querySelector('[data-dropdown-panel]');
-      return button && panel ? { root: element, button, panel } : null;
+      if (!button || !panel) return null;
+      const menu = createDropdownMenu({
+        root: element,
+        button,
+        panel,
+        onChange(open) {
+          if (open) {
+            for (const other of menus) if (other !== menu && other.isOpen()) other.close();
+            openDropdown = menu;
+          } else if (openDropdown === menu) {
+            openDropdown = null;
+          }
+        },
+      });
+      menus.push(menu);
+      return menu;
     })
     .filter(Boolean);
   const menuToggle = documentTarget.querySelector('#section-menu-toggle');
@@ -28,27 +121,17 @@ export function createSiteNav({ documentTarget = document, windowTarget = global
   let openDropdown = null;
   let menuOpen = false;
 
-  function setDropdown(dropdown, open) {
-    dropdown.panel.hidden = !open;
-    dropdown.button.setAttribute('aria-expanded', String(open));
-    if (open) dropdown.root.classList.add('open');
-    else dropdown.root.classList.remove('open');
-  }
-
   function closeDropdowns({ restoreFocus = false } = {}) {
     if (!openDropdown) return;
     const previous = openDropdown;
     openDropdown = null;
-    setDropdown(previous, false);
-    if (restoreFocus) previous.button.focus();
+    previous.close({ restoreFocus });
   }
 
-  function openByDropdown(dropdown) {
-    const alreadyOpen = openDropdown === dropdown;
-    closeDropdowns();
-    if (alreadyOpen) return;
-    openDropdown = dropdown;
-    setDropdown(dropdown, true);
+  /** Nút menu tự bật/tắt trong `createDropdownMenu`; nơi đây chỉ giữ trạng thái mở độc quyền. */
+  function toggleDropdown(dropdown) {
+    if (openDropdown === dropdown) dropdown.close();
+    else dropdown.open();
   }
 
   function setMenuOpen(open, { restoreFocus = true } = {}) {
@@ -86,14 +169,7 @@ export function createSiteNav({ documentTarget = document, windowTarget = global
     }
   }
 
-  for (const dropdown of dropdowns) {
-    setDropdown(dropdown, false);
-    dropdown.button.addEventListener('click', () => openByDropdown(dropdown));
-    // Bấm vào link trong menu: để trình duyệt điều hướng, chỉ đóng menu và không giành focus.
-    dropdown.panel.addEventListener('click', (event) => {
-      if (event.target?.closest?.('a[href]')) closeDropdowns();
-    });
-  }
+  for (const dropdown of dropdowns) dropdown.sync();
 
   menuToggle?.addEventListener('click', () => setMenuOpen(!menuOpen));
   closeButton?.addEventListener('click', () => setMenuOpen(false));
@@ -103,16 +179,10 @@ export function createSiteNav({ documentTarget = document, windowTarget = global
   });
 
   documentTarget.addEventListener('click', (event) => {
-    if (!openDropdown) return;
-    if (openDropdown.root.contains(event.target)) return;
-    closeDropdowns();
+    for (const dropdown of dropdowns) dropdown.handleDocumentClick(event);
   });
   documentTarget.addEventListener('focusout', (event) => {
-    if (!openDropdown) return;
-    const next = event.relatedTarget;
-    // `null` = focus rời hẳn tài liệu (cửa sổ khác, chụp ảnh): giữ menu, chỉ đóng khi Tab sang chỗ khác.
-    if (!next || openDropdown.root.contains(next)) return;
-    closeDropdowns();
+    for (const dropdown of dropdowns) dropdown.handleDocumentFocusOut(event);
   });
   documentTarget.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
@@ -120,7 +190,7 @@ export function createSiteNav({ documentTarget = document, windowTarget = global
         setMenuOpen(false);
         return;
       }
-      if (openDropdown) closeDropdowns({ restoreFocus: true });
+      closeDropdowns({ restoreFocus: true });
       return;
     }
     trapFocus(event);
@@ -152,7 +222,7 @@ export function createSiteNav({ documentTarget = document, windowTarget = global
     menuToggle,
     overlay,
     closeDropdowns,
-    openDropdown: (index = 0) => dropdowns[index] && openByDropdown(dropdowns[index]),
+    openDropdown: (index = 0) => dropdowns[index] && toggleDropdown(dropdowns[index]),
     openMenu: () => setMenuOpen(true),
     closeMenu: (options) => setMenuOpen(false, options),
     isMenuOpen: () => menuOpen,

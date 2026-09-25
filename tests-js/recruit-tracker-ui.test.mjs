@@ -38,7 +38,13 @@ test("recruit tracker view model exposes compact daily, limited, history, and he
     ["Miễn phí 2", "Chưa quay"],
     ["Nửa giá 2", "Chưa quay"],
   ]);
+  // Giá trị cho đồng hồ pity (thanh role=meter) lấy thẳng từ store: quá mốc vẫn hiện số thật, phần trăm kẹp 100.
+  assert.deepEqual(viewModel.daily.pity, { value: 0, limit: 30, remaining: 30, isOverLimit: false, percent: 0 });
+  assert.equal(viewModel.daily.todayDone, 2);
+  assert.equal(viewModel.daily.pityText, `${viewModel.daily.pity.value}/${viewModel.daily.pity.limit}`);
   assert.equal(viewModel.limitedBanners[0].name, "Kỳ Tật Như Phong");
+  assert.deepEqual(viewModel.limitedBanners[0].pity, { value: 31, limit: 30, remaining: 0, isOverLimit: true, percent: 100 });
+  assert.equal(viewModel.limitedBanners[0].pityText, "31/30");
   assert.ok(viewModel.limitedBanners[0].warning);
   assert.doesNotMatch(viewModel.limitedBanners[0].warning, /[\u3400-\u9fff\uf900-\ufaff]/u);
   assert.equal(viewModel.daily.warning, "");

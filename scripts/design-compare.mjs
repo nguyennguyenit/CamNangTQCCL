@@ -67,12 +67,19 @@ const PAIRS = [
   { phase: 8, name: 'Coexist-320', path: '/cung-ton/', width: 320, ready: '#section-coexist .coexist-group-chip' },
   { phase: 8, name: 'Khaihoang-320', path: '/khai-hoang/', width: 320, ready: '#section-khaihoang .kh-card .kh-build' },
   { phase: 8, name: 'KhaiHoangDetail-390', path: '/khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/', width: 390, ready: '#team-detail-body .kh-build' },
-  { phase: 9, artboard: 'Recruit', path: '/chieu-mo/', width: 1440, ready: '#section-recruit-tracker' },
-  { phase: 9, artboard: 'RecruitMobile', path: '/chieu-mo/', width: 390, ready: '#section-recruit-tracker' },
-  { phase: 9, artboard: 'Analyze', path: '/soi-doi/', width: 1440, ready: '#section-analyze' },
-  { phase: 9, artboard: 'AnalyzeMobile', path: '/soi-doi/', width: 390, ready: '#section-analyze' },
-  { phase: 9, artboard: 'Roster', path: '/goi-y-doi/', width: 1440, ready: '#section-roster-recommend' },
-  { phase: 9, artboard: 'RosterMobile', path: '/goi-y-doi/', width: 390, ready: '#section-roster-recommend' },
+  { phase: 9, artboard: 'Recruit', path: '/chieu-mo/', width: 1440, ready: '#section-recruit-tracker .rt-section' },
+  { phase: 9, artboard: 'RecruitMobile', path: '/chieu-mo/', width: 390, ready: '#section-recruit-tracker .rt-section' },
+  { phase: 9, artboard: 'Analyze', path: '/soi-doi/', width: 1440, ready: '#section-analyze .ana-card' },
+  { phase: 9, artboard: 'AnalyzeMobile', path: '/soi-doi/', width: 390, ready: '#section-analyze .ana-card' },
+  { phase: 9, artboard: 'Roster', path: '/goi-y-doi/', width: 1440, ready: '#section-roster-recommend .roster-steps' },
+  { phase: 9, artboard: 'RosterMobile', path: '/goi-y-doi/', width: 390, ready: '#section-roster-recommend .roster-steps' },
+  // 320: soát nhất quán, không có ảnh artboard riêng.
+  { phase: 9, name: 'Recruit-320', path: '/chieu-mo/', width: 320, ready: '#section-recruit-tracker .rt-section' },
+  { phase: 9, name: 'Analyze-320', path: '/soi-doi/', width: 320, ready: '#section-analyze .ana-card' },
+  { phase: 9, name: 'Roster-320', path: '/goi-y-doi/', width: 320, ready: '#section-roster-recommend .roster-steps' },
+  // Phạm vi mùa + chi tiết cấu hình trên 2 trang công cụ: không có artboard, theo StyleGuide (Phase 8 bước 2b).
+  { phase: 9, name: 'SoiDoi-season-1440', path: '/soi-doi/?scenario=binh-dien-xuan-thu', width: 1440, ready: '#section-analyze .tool-head #season-controls' },
+  { phase: 9, name: 'GoiYDoi-season-1440', path: '/goi-y-doi/?scenario=binh-dien-xuan-thu', width: 1440, ready: '#section-roster-recommend .tool-head #season-controls' },
 ];
 
 function parseArgs(argv) {

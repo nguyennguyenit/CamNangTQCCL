@@ -37,6 +37,8 @@ const $ = (sel) => document.querySelector(sel);
 /** Mục có phạm vi mùa + chi tiết cấu hình: layout chỉ phát payload cho đúng 5 trang này. */
 const REFERENCE_SECTIONS = ['team-chuan', 'team-khac'];
 const GAMEPLAY_SECTIONS = ['coexist', 'analyze', 'roster-recommend'];
+/** 3 công cụ Beta (Phase 9): bộ chọn Mùa nằm trong đầu mục do chính công cụ dựng. */
+const TOOL_SECTIONS = ['analyze', 'roster-recommend'];
 /** Khóa theo dõi bị bỏ khỏi URL trang mục ngay khi khởi động; mọi khóa khác giữ nguyên. */
 const TRACKING_PARAM = /^(?:utm_.+|fbclid|gclid|msclkid)$/;
 
@@ -380,14 +382,19 @@ async function main() {
       placeSeasonControls();
       if (!seasonModel) { scenarioSelect.disabled = true; rulesetSelect.disabled = true; }
     }
-    /** Bộ chọn Mùa / Phiên bản luật cố định theo trang: Cùng Tồn đặt trong đầu mục, 3 mục gameplay còn lại trên thanh. */
+    /** Bộ chọn Mùa / Phiên bản luật cố định theo trang: Cùng Tồn và 3 công cụ đặt trong đầu mục, mục gameplay còn lại trên thanh. */
     function placeSeasonControls() {
+      // Trang không có phạm vi mùa (Chiêu mộ, Tra cứu, trang chi tiết) không có #season-controls.
+      if (!controls) return;
       controls.hidden = !GAMEPLAY_SECTIONS.includes(pageSection);
       rulesetControl.hidden = pageSection === 'coexist';
       summary.hidden = pageSection === 'coexist';
       if (pageSection === 'coexist') {
         const head = mount.querySelector(':scope > .coexist-head');
         if (head) head.append(controls);
+      } else if (TOOL_SECTIONS.includes(pageSection) && mount.querySelector('.tool-head')) {
+        // 3 công cụ Phase 9 dựng đầu mục sau khi app khởi tạo, nên lần đặt thứ hai (sau khi mount) mới có đích.
+        mount.querySelector('.tool-head').append(controls);
       } else if (detailMount) {
         detailMount.before(controls);
       }
@@ -496,6 +503,8 @@ async function main() {
       mount.append(el("p", { class: "error", role: "status" }, "Tính năng này cần dữ liệu Tra cứu đang không khả dụng."));
     }
     consumers.forEach(consumer=>consumer?.setSeasonScope?.({model:seasonModel,browse:browse || {kind:["scenario","ruleset"].some(key=>new URL(location.href).searchParams.has(key)) ? "invalid" : "all-reference"}}, {initial:true}));
+    // 3 công cụ dựng đầu mục ở bước mount phía trên: đặt lại bộ chọn Mùa vào đúng đầu mục của công cụ.
+    placeSeasonControls();
   } catch (err) {
     const template = websiteDisplay
       ? displayValue(websiteDisplay, "ui:app/load-error", "errorTemplate")

@@ -3,7 +3,7 @@
 // querySelector(All) với selector con (thẻ, #id, [attr], thẻ[attr], danh sách phẩy).
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { createSiteNav } from "../js/site-nav.js";
+import { createDropdownMenu, createSiteNav } from "../js/site-nav.js";
 
 function matches(element, selector) {
   return selector.split(",").some((part) => {
@@ -312,4 +312,59 @@ test("popstate và pagehide dọn cả hai loại menu cùng khóa cuộn", () =
   assert.equal(nav.isMenuOpen(), false, "pagehide đóng menu mobile");
   assert.equal(nav.isDropdownOpen(0), false, "pagehide đóng menu thả");
   assert.equal(documentElement.classList.contains("site-menu-open"), false, "pagehide mở khóa cuộn");
+});
+
+test("menu thả dùng chung: Escape trả focus, bấm ngoài/focusout đóng, panel theo bề rộng", () => {
+  // Dùng lại shell giả của file để có `ownerDocument` (harness `focus()` ghi vào đó).
+  const shell = fakeShell();
+  const documentTarget = shell.documentTarget;
+  const bind = (node) => {
+    node.ownerDocument = documentTarget;
+    for (const child of node.children) bind(child);
+    return node;
+  };
+  const root = documentTarget.documentElement.querySelector("body").append(createElement("div"));
+  const button = root.append(createElement("button"));
+  button.setAttribute("aria-expanded", "false");
+  const panel = root.append(createElement("div"));
+  const link = panel.append(createElement("a"));
+  link.setAttribute("href", "/chieu-mo/");
+  bind(root);
+  let hideWhenClosed = true;
+  const menu = createDropdownMenu({ root, button, panel, shouldHidePanel: () => hideWhenClosed });
+
+  menu.sync();
+  assert.deepEqual([panel.hidden, button.getAttribute("aria-expanded"), root.classList.contains("open")], [true, "false", false]);
+
+  button.click();
+  assert.deepEqual([panel.hidden, button.getAttribute("aria-expanded"), menu.isOpen()], [false, "true", true]);
+  assert.equal(menu.handleEscape(), true, "Escape đóng menu đang mở");
+  assert.deepEqual([panel.hidden, menu.isOpen(), button.focused], [true, false, true]);
+
+  assert.equal(menu.handleEscape(), false, "menu đã đóng thì Escape không cướp focus");
+
+  menu.open();
+  menu.handlePanelClick({ target: link });
+  assert.equal(menu.isOpen(), false, "bấm link trong menu chỉ đóng menu (để trình duyệt điều hướng)");
+
+  menu.open();
+  menu.handleDocumentClick({ target: root });
+  assert.equal(menu.isOpen(), true, "bấm trong menu thì giữ mở");
+  menu.handleDocumentClick({ target: shell.toggle });
+  assert.equal(menu.isOpen(), false, "bấm ra ngoài thì đóng");
+
+  menu.open();
+  menu.handleDocumentFocusOut({ relatedTarget: link });
+  assert.equal(menu.isOpen(), true, "focus còn trong menu thì giữ mở");
+  menu.handleDocumentFocusOut({ relatedTarget: null });
+  assert.equal(menu.isOpen(), true, "focus rời hẳn tài liệu thì giữ menu");
+  menu.handleDocumentFocusOut({ relatedTarget: shell.toggle });
+  assert.equal(menu.isOpen(), false, "Tab ra ngoài menu thì đóng");
+
+  // Bề rộng lớn: hàng thao tác hiện thẳng nên panel không bị ẩn khi menu đóng.
+  hideWhenClosed = false;
+  menu.close();
+  menu.sync();
+  assert.equal(panel.hidden, false);
+  assert.equal(button.getAttribute("aria-expanded"), "false");
 });

@@ -1,7 +1,7 @@
 ---
 phase: 9
 title: "3 công cụ Beta"
-status: pending
+status: completed
 priority: P2
 effort: "2d"
 dependencies: [3, 7, 8]

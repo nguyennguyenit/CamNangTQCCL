@@ -1,12 +1,11 @@
 import { ANALYZE_CONFIG, isAnalyzeConfigured } from "./config.js";
 import { callWorker, compressImage, describeAnalyzeError, loadTurnstile } from "./analyze.js";
-import { el } from "./render.js";
+import { el, icon, svgNode } from "./render.js";
 import { mapBuiltTeamsScan, mapHeroesScan, mapTacticsScan } from "./roster-scan-map.js";
 import {
   ROSTER_SCAN_STORAGE_KEY,
   addCanonicalItem,
   applyScanResult,
-  createInitialRosterScanState,
   deserializeRosterScanState,
   removeItem,
   serializeRosterScanState,
@@ -15,9 +14,9 @@ import { projectSeasonCandidates, resolveSelectionScore, selectionFromEntry } fr
 import { recommendTeams } from "./team-recommend-engine.js";
 
 const SCAN_TYPES = [
-  { id: "heroes", label: "Tướng", mode: "scanHeroes" },
-  { id: "tactics", label: "Chiến pháp", mode: "scanTactics" },
-  { id: "builtTeams", label: "Đội đã xây dựng", mode: "scanBuiltTeams" },
+  { id: "heroes", label: "Tướng", mode: "scanHeroes", unit: "tướng" },
+  { id: "tactics", label: "Chiến pháp", mode: "scanTactics", unit: "chiến pháp" },
+  { id: "builtTeams", label: "Đội đã xây dựng", mode: "scanBuiltTeams", unit: "đội" },
 ];
 
 const ROSTER_PROVIDER_ERROR = "Không đọc được ảnh. Vui lòng thử lại.";
@@ -29,100 +28,24 @@ const ROSTER_STATUS_LABELS = {
   locked: "Đã khóa",
 };
 
+/** Bề rộng hẹp: nút "Sửa kho đã đọc" mở/đóng khu kiểm tra kho. */
+const COMPACT_QUERY = "(max-width: 680px)";
+
+const shieldIcon = () => icon([
+  svgNode("path", { d: "M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" }),
+], { size: 16 });
+
+const closeIcon = () => icon([
+  svgNode("line", { x1: 6, y1: 6, x2: 18, y2: 18 }),
+  svgNode("line", { x1: 18, y1: 6, x2: 6, y2: 18 }),
+], { size: 12, stroke: 2.4 });
+
 function loadState() {
   return deserializeRosterScanState(localStorage.getItem(ROSTER_SCAN_STORAGE_KEY));
 }
 
 function saveState(state) {
   localStorage.setItem(ROSTER_SCAN_STORAGE_KEY, JSON.stringify(serializeRosterScanState(state)));
-}
-
-function itemList(items, emptyText, type, onRemove) {
-  if (!items?.length) return el("p", { class: "roster-empty" }, emptyText);
-  return el("ul", { class: "roster-chip-list" }, items.map((item) =>
-    el("li", {}, [
-      el("span", {}, item.name || item),
-      onRemove ? el("button", { type: "button", class: "roster-remove", onclick: () => onRemove(type, item.name || item) }, "x") : null,
-    ]),
-  ));
-}
-
-function teamList(teams) {
-  if (!teams?.length) return el("p", { class: "roster-empty" }, "Chưa có đội khóa.");
-  return el("div", { class: "roster-locked-list" }, teams.map((team) =>
-    el("article", { class: "roster-locked-team" }, [
-      el("strong", {}, team.teamName),
-      el("p", {}, `Tướng: ${(team.heroes || []).join(", ") || "-"}`),
-      el("p", {}, `Chiến pháp: ${(team.tactics || []).join(", ") || "-"}`),
-    ]),
-  ));
-}
-
-function addControl(type, options, onAdd) {
-  const input = el("input", { class: "ana-input", type: "search", list: `roster-${type}-options`, placeholder: "Thêm thủ công" });
-  const datalist = el("datalist", { id: `roster-${type}-options` }, options.map((name) => el("option", { value: name })));
-  const button = el("button", { type: "button", class: "ana-btn", onclick: () => {
-    const value = input.value.trim();
-    if (!value) return;
-    onAdd(type, value);
-    input.value = "";
-  } }, "Thêm");
-  return el("div", { class: "roster-add-row" }, [input, datalist, button]);
-}
-
-function renderReview(state, { heroOptions = [], tacticOptions = [], onRemove, onAdd } = {}) {
-  return el("div", { class: "roster-review-grid" }, [
-    el("section", { class: "roster-review-panel" }, [
-      el("h3", {}, "Tướng đã đọc"),
-      itemList(state.ownedHeroes, "Chưa đọc tướng.", "heroes", onRemove),
-      addControl("heroes", heroOptions, onAdd),
-    ]),
-    el("section", { class: "roster-review-panel" }, [
-      el("h3", {}, "Chiến pháp đã đọc"),
-      itemList(state.ownedTactics, "Chưa đọc chiến pháp.", "tactics", onRemove),
-      addControl("tactics", tacticOptions, onAdd),
-    ]),
-    el("section", { class: "roster-review-panel" }, [
-      el("h3", {}, "Đội đang khóa"),
-      teamList(state.lockedTeams),
-    ]),
-  ]);
-}
-
-function renderRecommendation(result, onOpenTeam, model) {
-  const teamRow = (entry) => el("article", { class: "roster-result-team", dataset: entry.configId ? {configId:entry.configId} : {} }, [
-    el("div", { class: "roster-result-head" }, [
-      el("strong", {}, entry.team?.name || "Đội đã xây dựng"),
-      el("span", { class: "roster-status" }, ROSTER_STATUS_LABELS[entry.status] || "Đã khóa"),
-    ]),
-    entry.configId ? el('p',{class:'sgsdeck-score'},(() => { const score = resolveSelectionScore(model,entry.configId,selectionFromEntry(model,entry)); return score ? `Điểm SGSDeck: ${score.value}` : 'Chưa có điểm SGSDeck'; })()) : null,
-    entry.tier ? el("p", {}, `Bậc: ${entry.tier}`) : null,
-    entry.selectedTactics?.length ? el("p", {}, `Chiến pháp: ${entry.selectedTactics.join(", ")}`) : null,
-    entry.usedAlternatives?.length
-      ? el("p", {}, `Biến thể: ${entry.usedAlternatives.map((a) => `${a.from} -> ${a.to}`).join(", ")}`)
-      : null,
-    entry.team && !entry.locked ? el("button", { type: "button", class: "ana-link-btn", onClick: () => onOpenTeam?.(entry.team) }, "Mở đội") : null,
-  ]);
-
-  return el("div", { class: "roster-results" }, [
-    el("section", {}, [
-      el("h3", {}, "Danh sách đội sau khi xây dựng"),
-      ...(result.portfolioTeams || []).map(teamRow),
-    ]),
-    el("section", {}, [
-      el("h3", {}, "Nên thêm"),
-      ...((result.addTeams || []).length ? (result.addTeams || []).map(teamRow) : [el("p", { class: "roster-empty" }, "Đã đủ 5 đội hoặc chưa có đội phù hợp.")]),
-    ]),
-    el("section", {}, [
-      el("h3", {}, "Đội mạnh nhưng chưa thể xây dựng"),
-      ...(result.blockedStrongTeams || []).slice(0, 5).map((entry) =>
-        el("article", { class: "roster-result-team muted" }, [
-          el("strong", {}, entry.team.name),
-          el("p", {}, entry.missingHeroes?.length ? `Thiếu tướng: ${entry.missingHeroes.join(", ")}` : `Thiếu chiến pháp: ${(entry.missingTactics || []).join(", ")}`),
-        ]),
-      ),
-    ]),
-  ]);
 }
 
 export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, onOpenTeam }, mount) {
@@ -136,46 +59,53 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     );
     return;
   }
+  const doc = mount.ownerDocument ?? globalThis.document;
+  const compact = globalThis.matchMedia?.(COMPACT_QUERY) ?? null;
   let state = loadState();
   let scope = null;
   let generation = 0;
   let experimentalUntiered = false;
+  let reviewExpanded = false;
+  let recommended = false;
   const scopeNotice = el('p',{class:'season-gameplay-notice',role:'status'});
   const gameplayAllowed = () => !scope || scope.browse?.kind === 'all-reference' || scope.browse?.kind === 'verified-pair';
   let token = "";
   let preference = "meta";
-  const output = el("div", { class: "roster-output" });
   const tsBox = el("div", { class: "ana-turnstile" });
   const heroOptions = (heroesDict || []).map((h) => h.viet).filter(Boolean).sort();
   const tacticOptions = (tacticsDict || []).map((t) => t.viet).filter(Boolean).sort();
-  let recommendBtn = null;
+  const recommendBtn = el("button", { type: "button", class: "ana-btn primary", disabled: "" }, "Gợi ý 5 đội");
+  const confirmBtn = el("button", { type: "button", class: "ana-btn" }, "Xác nhận dữ liệu đã đọc");
+  const resultsSlot = el("div", { class: "roster-results-slot" });
 
-  const refreshRecommend = () => {
-    if (recommendBtn) recommendBtn.disabled = !state.confirmed || !gameplayAllowed();
-  };
+  /* ---------- Bước 1–2–3: tóm tắt tiến trình đọc kho → kiểm tra → gợi ý ---------- */
+  const stepNodes = [
+    { key: "scan", label: "Đọc kho" },
+    { key: "review", label: "Kiểm tra" },
+    { key: "suggest", label: "Gợi ý" },
+  ].map((step, index) => ({
+    ...step,
+    node: el("li", { class: "roster-step", dataset: { step: step.key } }, [`${index + 1} · ${step.label}`]),
+  }));
+  const stepList = el("ol", { class: "roster-steps", "aria-label": "Các bước" }, stepNodes.map((step) => step.node));
+  const scanned = () => (state.ownedHeroes?.length || 0) + (state.ownedTactics?.length || 0) + (state.lockedTeams?.length || 0) > 0;
 
-  const rerender = () => {
-    output.replaceChildren(renderReview(state, {
-      heroOptions,
-      tacticOptions,
-      onRemove: (type, name) => {
-        state = removeItem(state, type, name);
-        saveState(state);
-        rerender();
-      },
-      onAdd: (type, name) => {
-        state = addCanonicalItem(state, type, name);
-        saveState(state);
-        rerender();
-      },
-    }));
-    refreshRecommend();
-  };
+  function paintSteps() {
+    const states = {
+      scan: scanned() ? "done" : "current",
+      review: state.confirmed ? "done" : scanned() ? "current" : "pending",
+      suggest: recommended ? "done" : state.confirmed ? "current" : "pending",
+    };
+    for (const step of stepNodes) step.node.dataset.state = states[step.key];
+  }
 
-  const scanControls = SCAN_TYPES.map((scan) => {
+  /* ---------- Ba thẻ đọc ảnh: đếm kết quả đã đọc, trạng thái Xong / Chưa đọc ---------- */
+  const scanControls = SCAN_TYPES.map((scan, index) => {
     const fileInput = el("input", { type: "file", accept: "image/*" });
     const btn = el("button", { type: "button", class: "ana-btn" }, `Đọc ${scan.label}`);
     const status = el("p", { class: "ana-note" }, "");
+    const count = el("span", { class: "roster-scan-count" });
+    const badge = el("span", { class: "badge roster-scan-state" });
     btn.addEventListener("click", async () => {
       const file = fileInput.files?.[0];
       if (!file) {
@@ -201,6 +131,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
             : mapBuiltTeamsScan(raw, { heroesDict, tacticsDict });
         state = applyScanResult(state, scan.id, mapped);
         saveState(state);
+        // Đọc xong là thay đổi kho: huỷ kết quả gợi ý cũ và khoá lại nút cho tới khi xác nhận lại.
         rerender();
         status.textContent = "Đã đọc xong. Kiểm tra lại dữ liệu bên dưới.";
       } catch (err) {
@@ -213,23 +144,153 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
         btn.disabled = false;
       }
     });
-    return el("section", { class: "roster-scan-card" }, [
-      el("h3", {}, scan.label),
+    const card = el("section", { class: "roster-scan-card" }, [
+      el("header", { class: "roster-scan-head" }, [
+        el("span", { class: "roster-step-caps" }, `BƯỚC ${index + 1}`),
+        badge,
+      ]),
+      el("h3", { class: "roster-scan-title" }, scan.label),
+      count,
       fileInput,
       btn,
       status,
     ]);
+    return { scan, card, status, count, badge };
   });
 
-  loadTurnstile().then((ts) => {
-    ts.render(tsBox, {
-      sitekey: ANALYZE_CONFIG.turnstileSiteKey,
-      callback: (tok) => { token = tok; },
-      "expired-callback": () => { token = ""; },
-    });
-  }).catch(() => {
-    tsBox.textContent = "Không tải được Turnstile.";
-  });
+  function paintScanCards() {
+    const counts = {
+      heroes: state.ownedHeroes?.length || 0,
+      tactics: state.ownedTactics?.length || 0,
+      builtTeams: state.lockedTeams?.length || 0,
+    };
+    for (const control of scanControls) {
+      const total = counts[control.scan.id] || 0;
+      control.count.textContent = total ? `${total} ${control.scan.unit} đã đọc` : "Chưa đọc";
+      control.badge.textContent = total ? "Xong" : "Chưa đọc";
+      control.badge.dataset.state = total ? "done" : "pending";
+    }
+  }
+
+  /* ---------- Kiểm tra kho: chip và nút thêm giữ nguyên nút/ô nhập khi cập nhật ---------- */
+  function itemList(getItems, emptyText, type, onRemove) {
+    const empty = el("p", { class: "roster-empty" }, emptyText);
+    const list = el("ul", { class: "roster-chip-list" });
+    function paint() {
+      const items = getItems() || [];
+      list.replaceChildren(...items.map((item) => {
+        const name = item.name || item;
+        const remove = el("button", { type: "button", class: "roster-remove", "aria-label": `Bỏ ${name}` }, [closeIcon()]);
+        remove.addEventListener("click", () => onRemove(type, name, remove));
+        return el("li", {}, [el("span", {}, name), remove]);
+      }));
+      list.hidden = items.length === 0;
+      empty.hidden = items.length > 0;
+    }
+    return { list, empty, paint };
+  }
+
+  function teamList(getItems) {
+    const empty = el("p", { class: "roster-empty" }, "Chưa có đội khóa. Đội khóa giữ nguyên tài nguyên đang dùng khi gợi ý.");
+    const list = el("div", { class: "roster-locked-list" });
+    function paint() {
+      const items = getItems() || [];
+      list.replaceChildren(...items.map((team) =>
+        el("article", { class: "roster-locked-team" }, [
+          el("strong", {}, team.teamName),
+          el("p", {}, `Tướng: ${(team.heroes || []).join(", ") || "-"}`),
+          el("p", {}, `Chiến pháp: ${(team.tactics || []).join(", ") || "-"}`),
+        ]),
+      ));
+      list.hidden = items.length === 0;
+      empty.hidden = items.length > 0;
+    }
+    return { list, empty, paint };
+  }
+
+  function addControl(type, options) {
+    const input = el("input", { class: "ana-input", type: "search", list: `roster-${type}-options`, placeholder: "Thêm thủ công" });
+    const datalist = el("datalist", { id: `roster-${type}-options` }, options.map((name) => el("option", { value: name })));
+    const button = el("button", { type: "button", class: "ana-btn", onclick: () => {
+      const value = input.value.trim();
+      if (!value) return;
+      addItem(type, value);
+      input.value = "";
+    } }, "Thêm");
+    return el("div", { class: "roster-add-row" }, [input, datalist, button]);
+  }
+
+  const heroList = itemList(() => state.ownedHeroes, "Chưa đọc tướng.", "heroes", removeItemAt);
+  const tacticList = itemList(() => state.ownedTactics, "Chưa đọc chiến pháp.", "tactics", removeItemAt);
+  const lockedList = teamList(() => state.lockedTeams);
+  const heroPanel = el("section", { class: "roster-review-panel" }, [
+    el("h3", {}, "Tướng đã đọc"),
+    heroList.list,
+    heroList.empty,
+    addControl("heroes", heroOptions),
+  ]);
+  const tacticPanel = el("section", { class: "roster-review-panel" }, [
+    el("h3", {}, "Chiến pháp đã đọc"),
+    tacticList.list,
+    tacticList.empty,
+    addControl("tactics", tacticOptions),
+  ]);
+  const lockedPanel = el("section", { class: "roster-review-panel" }, [
+    el("h3", {}, "Đội đang khóa"),
+    lockedList.list,
+    lockedList.empty,
+  ]);
+  const reviewArea = el("div", { class: "roster-review", id: "roster-review-area" }, [
+    el("div", { class: "roster-review-grid" }, [heroPanel, tacticPanel, lockedPanel]),
+  ]);
+
+  const toggleReviewBtn = el("button", {
+    type: "button",
+    class: "rt-btn roster-review-toggle",
+    "aria-controls": "roster-review-area",
+    onclick: () => {
+      reviewExpanded = !reviewExpanded;
+      applyReviewVisibility();
+    },
+  }, "Sửa kho đã đọc");
+
+  function applyReviewVisibility() {
+    const collapsed = Boolean(compact?.matches) && !reviewExpanded;
+    reviewArea.hidden = collapsed;
+    toggleReviewBtn.setAttribute("aria-expanded", String(!collapsed));
+  }
+
+  function syncReview() {
+    // Chỉ chip và danh sách đổi: panel, ô nhập và nút thêm giữ nguyên nút nên bàn phím không mất focus.
+    heroList.paint();
+    tacticList.paint();
+    lockedList.paint();
+    paintScanCards();
+    paintSteps();
+  }
+
+  function removeItemAt(type, name, button) {
+    const list = button.closest(".roster-chip-list");
+    const buttons = list ? [...list.querySelectorAll(".roster-remove")] : [];
+    const index = buttons.indexOf(button);
+    const hadFocus = doc.activeElement === button;
+    state = removeItem(state, type, name);
+    saveState(state);
+    rerender();
+    if (!hadFocus) return;
+    // Nút vừa bấm biến mất theo chip: chuyển focus sang chip kế tiếp, lùi về ô nhập khi hết chip.
+    const panel = type === "heroes" ? heroPanel : tacticPanel;
+    const nextButtons = [...panel.querySelectorAll(".roster-remove")];
+    const target = nextButtons[index] || nextButtons[index - 1] || panel.querySelector(".roster-add-row input");
+    target?.focus();
+  }
+
+  function addItem(type, name) {
+    state = addCanonicalItem(state, type, name);
+    saveState(state);
+    rerender();
+  }
+
   const modeSelect = el("select", {
     class: "ana-input",
     "aria-label": "Ưu tiên gợi ý",
@@ -238,19 +299,23 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     el("option", { value: "meta" }, "Meta T0 → T1"),
     el("option", { value: "redStars" }, "Nhiều hột"),
   ]);
-  const confirmBtn = el("button", { type: "button", class: "ana-btn" }, "Xác nhận dữ liệu đã đọc");
+
+  const untiered = el('input',{type:'checkbox','aria-label':'Thử nghiệm cấu hình chưa xếp hạng',onChange:event=>{experimentalUntiered=event.target.checked;rerender();}});
+
   confirmBtn.addEventListener("click", () => {
     if (!gameplayAllowed()) return;
     state = { ...serializeRosterScanState(state), confirmed: true, updatedAt: new Date().toISOString() };
     saveState(state);
     rerender();
   });
-  recommendBtn = el("button", { type: "button", class: "ana-btn primary", disabled: "" }, "Gợi ý 5 đội");
+
   recommendBtn.addEventListener("click", () => {
     if (!state.confirmed || !gameplayAllowed()) return;
     const projected = scope?.browse?.kind === 'verified-pair' ? projectSeasonCandidates(scope.model,scope.browse.seasonContext,{experimentalUntiered,lockedTeams:state.lockedTeams}) : {ok:true,teams,teamTier};
     if (!projected.ok) {
-      output.replaceChildren(el('p',{class:'error',role:'status'},projected.message + (projected.limits ? ` (${projected.limits.candidateCount}/${projected.limits.maxCandidates} cấu hình)` : '')));
+      resultsSlot.replaceChildren(el('p',{class:'error',role:'status'},projected.message + (projected.limits ? ` (${projected.limits.candidateCount}/${projected.limits.maxCandidates} cấu hình)` : '')));
+      recommended = false;
+      paintSteps();
       return;
     }
     const result = recommendTeams({
@@ -264,36 +329,108 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       keepExistingTeams: true,
       fullBox: state.ownedHeroes.length > 40 && state.ownedTactics.length > 60,
     });
-    output.replaceChildren(renderReview(state, {
-      heroOptions,
-      tacticOptions,
-      onRemove: (type, name) => {
-        state = removeItem(state, type, name);
-        saveState(state);
-        rerender();
-      },
-      onAdd: (type, name) => {
-        state = addCanonicalItem(state, type, name);
-        saveState(state);
-        rerender();
-      },
-    }), renderRecommendation(result, onOpenTeam, scope?.model),
+    resultsSlot.replaceChildren(renderRecommendation(result, onOpenTeam, scope?.model),
       ...((projected.diagnostics || []).filter(item=>item.code === 'LOCKED_TEAM_OUT_OF_SCOPE' || item.code === 'REQUIREMENT_UNVERIFIED').map(item=>el('p',{class:'scope-note'},item.code === 'LOCKED_TEAM_OUT_OF_SCOPE' ? 'Đội khóa ngoài phạm vi: vẫn giữ tài nguyên đang dùng.' : 'Cấu hình có điều kiện chưa kiểm chứng không được đưa vào gợi ý.'))));
+    recommended = true;
+    paintSteps();
   });
 
-  const untiered = el('input',{type:'checkbox','aria-label':'Thử nghiệm cấu hình chưa xếp hạng',onChange:event=>{experimentalUntiered=event.target.checked;rerender();}});
+  const refreshRecommend = () => {
+    recommendBtn.disabled = !state.confirmed || !gameplayAllowed();
+  };
+
+  const rerender = () => {
+    syncReview();
+    resultsSlot.replaceChildren();
+    recommended = false;
+    paintSteps();
+    refreshRecommend();
+  };
+
+  function renderRecommendation(result, onOpenTeam, model) {
+    const teamRow = (entry, index) => el("li", { class: "roster-result-team", dataset: entry.configId ? {configId:entry.configId} : {} }, [
+      el("span", { class: "roster-rank", "aria-hidden": "true" }, String(index + 1)),
+      el("div", { class: "roster-result-main" }, [
+        el("strong", { class: "roster-result-name" }, entry.team?.name || "Đội đã xây dựng"),
+        el("span", { class: "roster-status", dataset: { status: entry.status || "locked" } }, ROSTER_STATUS_LABELS[entry.status] || "Đã khóa"),
+        entry.configId ? el('p',{class:'sgsdeck-score'},(() => { const score = resolveSelectionScore(model,entry.configId,selectionFromEntry(model,entry)); return score ? `Điểm SGSDeck: ${score.value}` : 'Chưa có điểm SGSDeck'; })()) : null,
+        entry.tier ? el("p", { class: "roster-result-meta" }, `Bậc: ${entry.tier}`) : null,
+        entry.selectedTactics?.length ? el("p", { class: "roster-result-meta" }, `Chiến pháp: ${entry.selectedTactics.join(", ")}`) : null,
+        entry.usedAlternatives?.length
+          ? el("p", { class: "roster-result-meta" }, `Biến thể: ${entry.usedAlternatives.map((a) => `${a.from} -> ${a.to}`).join(", ")}`)
+          : null,
+      ]),
+      entry.team && !entry.locked ? el("button", { type: "button", class: "ana-link-btn", onClick: () => onOpenTeam?.(entry.team) }, "Mở đội") : null,
+    ]);
+
+    const portfolio = result.portfolioTeams || [];
+    const addTeams = result.addTeams || [];
+    return el("div", { class: "roster-results" }, [
+      el("section", {}, [
+        el("h3", {}, "Danh sách đội sau khi xây dựng"),
+        ...(portfolio.length
+          ? [el("ol", { class: "roster-team-list" }, portfolio.map(teamRow))]
+          : [el("p", { class: "roster-empty" }, "Chưa có đội nào xây dựng được từ kho hiện tại.")]),
+      ]),
+      el("section", {}, [
+        el("h3", {}, "Nên thêm"),
+        ...(addTeams.length
+          ? [el("ol", { class: "roster-team-list" }, addTeams.map(teamRow))]
+          : [el("p", { class: "roster-empty" }, "Đã đủ 5 đội hoặc chưa có đội phù hợp.")]),
+      ]),
+      el("section", {}, [
+        el("h3", {}, "Đội mạnh nhưng chưa thể xây dựng"),
+        ...(result.blockedStrongTeams || []).slice(0, 5).map((entry) =>
+          el("article", { class: "roster-result-team muted" }, [
+            el("strong", { class: "roster-result-name" }, entry.team.name),
+            el("p", { class: "roster-result-meta" }, entry.missingHeroes?.length ? `Thiếu tướng: ${entry.missingHeroes.join(", ")}` : `Thiếu chiến pháp: ${(entry.missingTactics || []).join(", ")}`),
+          ]),
+        ),
+      ]),
+    ]);
+  }
+
+  loadTurnstile().then((ts) => {
+    ts.render(tsBox, {
+      sitekey: ANALYZE_CONFIG.turnstileSiteKey,
+      callback: (tok) => { token = tok; },
+      "expired-callback": () => { token = ""; },
+    });
+  }).catch(() => {
+    tsBox.textContent = "Không tải được Turnstile.";
+  });
+
   mount.replaceChildren(
     el("div", { class: "analyze-panel roster-recommend" }, [
+      el("header", { class: "tool-head" }, [
+        el("div", { class: "reference-head-text" }, [
+          el("span", { class: "reference-kicker" }, "Công cụ · Beta"),
+          el("h1", { class: "reference-title", tabindex: "-1" }, "Gợi ý đội từ kho"),
+          el("p", { class: "reference-lead" }, "Đọc ảnh kho tướng và chiến pháp, kiểm tra lại, rồi để công cụ cục bộ chọn tối đa 5 đội không trùng tài nguyên."),
+        ]),
+      ]),
+      el("p", { class: "tool-notice" }, [
+        el("span", { class: "tool-notice-icon", "aria-hidden": "true" }, [shieldIcon()]),
+        el("span", {}, "AI chỉ đọc ảnh. Đội được chọn bằng công cụ cục bộ từ dữ liệu đã tuyển chọn."),
+      ]),
       scopeNotice,
-      el('label',{class:'season-opt-in'},[untiered,'Thử nghiệm cấu hình chưa xếp hạng']),
-      el("h2", {}, "Gợi ý đội từ kho"),
-      el("p", { class: "ana-note" }, "AI chỉ đọc ảnh. Đội được chọn bằng công cụ cục bộ từ dữ liệu đã tuyển chọn."),
-      el("div", { class: "roster-token-row" }, [tsBox, modeSelect, confirmBtn, recommendBtn]),
-      el("div", { class: "roster-scan-grid" }, scanControls),
-      output,
+      stepList,
+      el("div", { class: "roster-controls" }, [
+        tsBox,
+        modeSelect,
+        el('label',{class:'season-opt-in'},[untiered,'Thử nghiệm cấu hình chưa xếp hạng']),
+        confirmBtn,
+        recommendBtn,
+      ]),
+      el("div", { class: "roster-scan-grid" }, scanControls.map((control) => control.card)),
+      toggleReviewBtn,
+      reviewArea,
+      resultsSlot,
     ]),
   );
   rerender();
+  compact?.addEventListener?.("change", applyReviewVisibility);
+  applyReviewVisibility();
   return {
     setSeasonScope(next, {initial=false} = {}) {
       generation++;

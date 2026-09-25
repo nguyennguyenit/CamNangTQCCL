@@ -693,3 +693,56 @@ for (const width of [1440, 320]) {
     expect((await active()).className).toContain('coexist-group-chip');
   });
 }
+
+/* ---------- Phase 9: phạm vi mùa + chi tiết cấu hình trên 2 trang công cụ ---------- */
+
+test('tool pages keep the season scope and config detail in Phase 8 shape', async ({page}) => {
+  await controlledBundle(page);
+  for (const path of ['/soi-doi/?scenario=scenario-a&ruleset=rules-a&config=config-a', '/goi-y-doi/?scenario=scenario-a&ruleset=rules-a&config=config-a']) {
+    await page.goto(path);
+    // Bộ chọn Mùa nằm trong đầu mục công cụ (cùng hình dạng header Phase 5/8, không có artboard riêng).
+    const head = page.locator('.tool-head');
+    await expect(head).toBeVisible();
+    await expect(head.locator('#season-controls #season-scenario')).toBeVisible();
+    await expect(head.locator('#season-controls label[for="season-scenario"]')).toBeVisible();
+    const select = await head.locator('#season-scenario').evaluate(node => ({
+      height: node.getBoundingClientRect().height,
+      background: getComputedStyle(node).backgroundColor,
+      radius: getComputedStyle(node).borderRadius,
+    }));
+    expect(select.height).toBeGreaterThanOrEqual(44);
+    expect(select.background).not.toBe('rgba(0, 0, 0, 0)');
+    expect(select.radius).toBe('10px');
+
+    // Chi tiết cấu hình chỉ áp token (nền thẻ, viền, bán kính) — không bố cục lại.
+    const detail = page.locator('#season-config-detail');
+    await expect(detail).toBeVisible();
+    await expect(detail).toContainText('Cấu hình: config-a · scenario-a · rules-a');
+    const panel = await detail.evaluate(node => ({
+      background: getComputedStyle(node).backgroundColor,
+      radius: getComputedStyle(node).borderRadius,
+    }));
+    const tokens = await page.evaluate(() => {
+      const root = getComputedStyle(document.documentElement);
+      return { panel: root.getPropertyValue('--panel').trim(), radius: root.getPropertyValue('--radius-10').trim() };
+    });
+    expect(panel.background).not.toBe('rgba(0, 0, 0, 0)');
+    expect(tokens.panel).not.toBe('');
+    expect(panel.radius).toBe(tokens.radius);
+  }
+});
+
+test('config-detail inventory link to the roster tool keeps scenario and ruleset', async ({page}) => {
+  await controlledBundle(page);
+  await page.goto('/soi-doi/?scenario=scenario-a&ruleset=rules-a&config=config-a');
+  // Kho đang trống: chi tiết cấu hình đề nghị mở công cụ gợi ý đội để nhập kho.
+  await page.getByRole('button', {name: 'Đối chiếu kho của tôi'}).click();
+  await expect(page.locator('.season-inventory-comparison')).toContainText('Chưa có kho để đối chiếu.');
+  const link = page.getByRole('link', {name: 'Mở scan / nhập kho'});
+  await expect(link).toBeVisible();
+  await expect(link).toHaveAttribute('href', '/goi-y-doi/?scenario=scenario-a&ruleset=rules-a');
+  await link.click();
+  await expect(page).toHaveURL('/goi-y-doi/?scenario=scenario-a&ruleset=rules-a');
+  await expect(page.locator('#season-summary')).toContainText('Kịch bản A · Luật A');
+  await expect(page.locator('#section-roster-recommend .tool-head #season-scenario')).toHaveValue('scenario-a');
+});

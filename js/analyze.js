@@ -3,7 +3,7 @@ import { projectSeasonCandidates } from "./season-context.js";
 // (lazy-load) -> gọi Worker -> map 3 trục (analyze-map) -> render + đối chiếu team.
 // Giữ 3 section cũ offline: Turnstile script CHỈ nạp khi mở tab này.
 
-import { el } from "./render.js";
+import { el, icon, svgNode } from "./render.js";
 import { heroPortrait } from "./hero-portrait.js";
 import { ANALYZE_CONFIG, isAnalyzeConfigured } from "./config.js";
 import { mapTeamRead, findSimilarTeams } from "./analyze-map.js";
@@ -191,11 +191,30 @@ export async function callWorker(imageDataUrl, token, mode = "analyzeTeamImage")
 }
 
 /* ---------- Render kết quả ---------- */
+const alertIcon = () => icon([
+  svgNode("path", { d: "M12 3l10 18H2z" }),
+  svgNode("line", { x1: 12, y1: 10, x2: 12, y2: 14 }),
+  svgNode("line", { x1: 12, y1: 17.5, x2: 12, y2: 17.6 }),
+], { size: 14, stroke: 2 });
+
+const checkIcon = () => icon([svgNode("polyline", { points: "5 12 10 17 19 7" })], { size: 14, stroke: 2.2 });
+
+const cameraIcon = () => icon([
+  svgNode("path", { d: "M4 8h3l2-3h6l2 3h3v11H4z" }),
+  svgNode("circle", { cx: 12, cy: 13, r: 3.5 }),
+], { size: 28, stroke: 1.6 });
+
+const shieldIcon = () => icon([
+  svgNode("path", { d: "M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" }),
+], { size: 16 });
+
 function heroResultCard(m) {
-  const flag = m.hero.sure ? null : el("span", { class: "ana-flag", title: "Độ tin thấp, kiểm tra lại" }, "⚠ kiểm tra");
+  const flag = m.hero.sure
+    ? null
+    : el("span", { class: "ana-flag", title: "Độ tin thấp, kiểm tra lại" }, [alertIcon(), "kiểm tra"]);
   // Icon official (hotlink) để mắt thường xác nhận; dùng helper chân dung chung (nâng https, no-referrer),
   // gãy/403 -> bỏ ảnh, không chặn text.
-  const icon = m.hero.icon
+  const portrait = m.hero.icon
     ? heroPortrait({
         nameVi: m.hero.viet,
         iconUrl: m.hero.icon,
@@ -218,7 +237,7 @@ function heroResultCard(m) {
     : null;
   return el("div", { class: "ana-hero" }, [
     el("div", { class: "ana-hero-head" }, [
-      icon,
+      portrait,
       el("span", { class: "ana-hero-name" }, m.hero.viet),
       m.statFocus ? el("span", { class: "ana-stat" }, m.statFocus) : null,
       flag,
@@ -228,30 +247,39 @@ function heroResultCard(m) {
   ]);
 }
 
+/**
+ * Hàng "đội tương tự": chỉ hiện trường có thật trong dữ liệu `findSimilarTeams` trả về — tên đội
+ * (`team.name`, thiếu thì mã đội) và số khớp tướng/chiến pháp. Điểm, mùa và trạng thái khớp theo
+ * artboard không có trong dữ liệu này nên giữ cách hiển thị cũ (xem báo cáo phase 9).
+ */
 function similarTeamRow(s, onOpen) {
+  const team = s.team || {};
   const label = `${s.heroHit}/${s.total} tướng` + (s.tacticHit ? ` · ${s.tacticHit} chiến pháp` : "");
-  const btn = el("button", { class: "ana-team-link", type: "button" }, `${s.team.id || "team"} (${label})`);
-  if (onOpen) btn.addEventListener("click", () => onOpen(s.team));
-  return el("li", {}, btn);
+  const btn = el("button", { class: "ana-team-link", type: "button" }, team.name || team.id || "team");
+  if (onOpen) btn.addEventListener("click", () => onOpen(team));
+  return el("li", { class: "ana-team-row", dataset: team.id ? { teamId: team.id } : {} }, [
+    btn,
+    el("span", { class: `ana-team-hits${s.heroHit === s.total ? " full" : ""}` }, label),
+  ]);
 }
 
-function renderResults(box, result, deps) {
-  box.replaceChildren();
+function renderResults(readBox, similarBox, result, deps) {
+  readBox.replaceChildren();
+  similarBox.replaceChildren();
   if (!result || !Array.isArray(result.heroes) || result.heroes.length === 0) {
-    box.append(el("p", { class: "ana-status err" }, "Phản hồi không hợp lệ, thử lại."));
-    return;
+    readBox.append(el("p", { class: "ana-status err" }, "Phản hồi không hợp lệ, thử lại."));
+    return false;
   }
   const mapped = mapTeamRead(result.heroes, deps);
-  box.append(el("h3", { class: "ana-rh" }, "Đội đọc được"));
-  box.append(el("div", { class: "ana-heroes" }, mapped.map(heroResultCard)));
+  readBox.append(el("div", { class: "ana-heroes" }, mapped.map(heroResultCard)));
 
   const similar = findSimilarTeams(mapped, deps.teams, { minHeroes: 2 });
   if (similar.length) {
-    box.append(el("h3", { class: "ana-rh" }, "Đội có sẵn tương tự"));
-    box.append(el("ul", { class: "ana-teams" }, similar.map((s) => similarTeamRow(s, deps.onOpenTeam))));
+    similarBox.append(el("ol", { class: "ana-teams" }, similar.map((s) => similarTeamRow(s, deps.onOpenTeam))));
   } else {
-    box.append(el("p", { class: "ana-note" }, "Không tìm thấy đội có sẵn nào có mức độ tương đồng đủ cao (≥2 tướng trùng)."));
+    similarBox.append(el("p", { class: "ana-note" }, "Không tìm thấy đội có sẵn nào có mức độ tương đồng đủ cao (≥2 tướng trùng)."));
   }
+  return true;
 }
 
 /* ---------- Khởi tạo section ---------- */
@@ -271,40 +299,124 @@ export function initAnalyze(deps, mount) {
   let showOutside = false;
   const gameplayAllowed = () => !scope || scope.browse?.kind === 'all-reference' || scope.browse?.kind === 'verified-pair';
   const scopeNotice = el('p',{class:'season-gameplay-notice',role:'status'});
-  const outside = el('input',{type:'checkbox','aria-label':'Xem đội ngoài phạm vi để tham khảo',onChange:event=>{showOutside=event.target.checked;results.replaceChildren();}});
-  const state = { imageDataUrl: null, token: null, busy: false };
-  const drop = el("button", { type:"button", class: "ana-drop" }, "📷 Kéo-thả ảnh, dán (Ctrl+V), hoặc bấm chọn");
+  const outside = el('input',{type:'checkbox','aria-label':'Xem đội ngoài phạm vi để tham khảo',onChange:event=>{showOutside=event.target.checked;similarBox.replaceChildren();similarCard.hidden=!state.done;}});
+  const state = { imageDataUrl: null, fileName: '', token: null, busy: false, done: false };
+  const drop = el("button", { type: "button", class: "ana-drop" }, [
+    cameraIcon(),
+    el("span", { class: "ana-drop-title" }, "Kéo thả ảnh, dán (Ctrl+V) hoặc bấm để chọn"),
+    el("span", { class: "ana-drop-note" }, "PNG, JPEG hoặc WebP · nên crop chỉ phần đội hình"),
+  ]);
   const fileInput = el("input", { type: "file", accept: "image/*", class: "ana-file" });
   const preview = el("img", { class: "ana-preview", alt: "Ảnh đã chọn" });
+  const fileName = el("span", { class: "ana-file-name" });
+  const fileRow = el("div", { class: "ana-file-row", hidden: "" }, [
+    el("span", { class: "ana-thumb" }, [preview]),
+    el("div", { class: "ana-file-info" }, [
+      fileName,
+      el("span", { class: "rt-sub" }, "Đã nén · sẵn sàng gửi"),
+      el("button", { class: "tool-text-action", type: "button", onclick: () => fileInput.click() }, "Chọn ảnh khác"),
+    ]),
+  ]);
   const tsBox = el("div", { class: "ana-turnstile" });
-  const analyzeBtn = el("button", { class: "ana-btn", type: "button", disabled: "" }, "Soi đội");
-  const status = el("p", { class: "ana-status" });
-  const results = el("div", { class: "ana-results" });
+  const analyzeBtn = el("button", { class: "ana-btn primary ana-run", type: "button", disabled: "" }, "Soi đội");
+  const status = el("p", { class: "ana-status", role: "status" });
+  const heroBox = el("div", { class: "ana-read-body" });
+  const similarBox = el("div", { class: "ana-similar-body" });
+  const similarCard = el("section", { class: "ana-card ana-similar", hidden: "" }, [
+    el("header", { class: "ana-card-head" }, [
+      el("h2", { class: "ana-card-title" }, "3 · Đội có sẵn tương tự"),
+      el("span", { class: "rt-sub" }, "Theo số tướng và chiến pháp trùng"),
+    ]),
+    similarBox,
+  ]);
+
+  const steps = [
+    { label: "Nén ảnh", done: () => Boolean(state.imageDataUrl) },
+    { label: "Xác thực chống bot", done: () => Boolean(state.token) },
+    { label: "Soi đội và đối chiếu", doneLabel: "Đã đọc xong — kiểm tra lại kết quả bên phải", done: () => state.done },
+  ].map((step) => {
+    const mark = checkIcon();
+    const labelNode = el("span", {}, step.label);
+    const node = el("li", { class: "ana-step" }, [el("span", { class: "ana-step-mark", "aria-hidden": "true" }, [mark]), labelNode]);
+    return { ...step, node, mark, labelNode };
+  });
+  const stepList = el("ol", { class: "ana-steps", "aria-label": "Trạng thái" }, steps.map((step) => step.node));
+
+  const readCard = el("section", { class: "ana-card ana-read" }, [
+    el("header", { class: "ana-card-head" }, [
+      el("h2", { class: "ana-card-title" }, "2 · Đội đọc được"),
+      el("span", { class: "rt-sub" }, "Tên Việt chuẩn · icon chỉ để đối chiếu"),
+    ]),
+    heroBox,
+  ]);
+
+  const pickCard = el("section", { class: "ana-card ana-pick" }, [
+    el("h2", { class: "ana-card-title" }, "1 · Chọn ảnh"),
+    el("p", { class: "tool-notice" }, [
+      el("span", { class: "tool-notice-icon", "aria-hidden": "true" }, [shieldIcon()]),
+      el("span", { class: "ana-disclaimer-text" }, DISCLAIMER),
+    ]),
+    drop,
+    fileInput,
+    fileRow,
+    el("label", { class: "season-opt-in" }, [outside, "Xem đội ngoài phạm vi để tham khảo"]),
+    tsBox,
+    analyzeBtn,
+    status,
+    stepList,
+  ]);
+
+  const head = el("header", { class: "tool-head" }, [
+    el("div", { class: "reference-head-text" }, [
+      el("span", { class: "reference-kicker" }, "Công cụ · Beta"),
+      el("h1", { class: "reference-title", tabindex: "-1" }, "Soi đội từ ảnh"),
+      el("p", { class: "reference-lead" }, "Chụp màn hình đội hình, AI đọc tên tướng và chiến pháp, rồi đối chiếu với các đội trong cẩm nang."),
+    ]),
+  ]);
 
   function setStatus(msg, kind = "") {
-    status.className = `ana-status ${kind}`;
+    status.className = `ana-status ${kind}`.trim();
     status.textContent = msg || "";
   }
-  function refreshBtn() {
+
+  /** Trạng thái công cụ vẽ tại chỗ: nút chạy, hàng ảnh đã chọn và danh sách bước. */
+  function paint() {
     analyzeBtn.disabled = !(state.imageDataUrl && state.token && !state.busy && gameplayAllowed());
+    fileRow.hidden = !state.imageDataUrl;
+    drop.classList.toggle("chosen", Boolean(state.imageDataUrl));
+    for (const step of steps) {
+      const done = step.done();
+      step.node.dataset.state = done ? "done" : "pending";
+      step.mark.hidden = !done;
+      step.labelNode.textContent = done && step.doneLabel ? step.doneLabel : step.label;
+    }
+  }
+
+  function clearResults() {
+    heroBox.replaceChildren();
+    similarBox.replaceChildren();
+    similarCard.hidden = true;
+    state.done = false;
+    paint();
   }
 
   async function pickFile(file) {
     if (!file || !file.type.startsWith("image/")) return;
     const started = ++generation;
-    results.replaceChildren();
+    clearResults();
     setStatus("Đang nén ảnh…");
     try {
       const compressed = await compressImage(file);
       if (started !== generation) return;
       state.imageDataUrl = compressed;
+      state.fileName = file.name || "ảnh đã chọn";
       preview.src = state.imageDataUrl;
-      preview.classList.add("on");
+      fileName.textContent = state.fileName;
       setStatus("");
     } catch (e) {
       setStatus(e.message, "err");
     }
-    refreshBtn();
+    paint();
   }
 
   // Turnstile render (lazy khi mở section).
@@ -318,11 +430,11 @@ export function initAnalyze(deps, mount) {
         sitekey: ANALYZE_CONFIG.turnstileSiteKey,
         callback: (tok) => {
           state.token = tok;
-          refreshBtn();
+          paint();
         },
         "expired-callback": () => {
           state.token = null;
-          refreshBtn();
+          paint();
         },
       });
     } catch (e) {
@@ -353,21 +465,24 @@ export function initAnalyze(deps, mount) {
   analyzeBtn.addEventListener("click", async () => {
     if (state.busy || !gameplayAllowed() || !state.imageDataUrl || !state.token) return;
     const projected = scope?.browse?.kind === 'verified-pair' ? projectSeasonCandidates(scope.model,scope.browse.seasonContext,{mode:'all',experimentalUntiered:true}) : {ok:true,teams:deps.teams};
-    if (!projected.ok) { results.replaceChildren();setStatus(projected.message,'err');return; }
+    if (!projected.ok) { clearResults();setStatus(projected.message,'err');return; }
     const started = generation;
     state.busy = true;
-    refreshBtn();
+    paint();
     setStatus("Đang soi đội…");
     try {
       const result = await callWorker(state.imageDataUrl, state.token);
       if (started !== generation) return;
-      renderResults(results, result, {...deps,teams:projected.teams});
+      const ok = renderResults(heroBox, similarBox, result, {...deps,teams:projected.teams});
+      if (!ok) { setStatus("Phản hồi không hợp lệ, thử lại.", "err"); state.done = false; return; }
+      similarCard.hidden = false;
       if (showOutside && scope?.browse?.kind === 'verified-pair') {
         const outsideTeams = deps.teams.filter(team=>!projected.teams.some(candidate=>candidate.id === team.id));
         const mapped = mapTeamRead(result.heroes,deps);
         const references = findSimilarTeams(mapped,outsideTeams,{minHeroes:2});
-        results.append(el('h3',{},'Ngoài phạm vi — chỉ tham khảo'),el('ul',{},references.map(item=>el('li',{},`${item.team.name || item.team.id} · ${item.heroHit} tướng trùng · Không áp dụng cho luật đang chọn`))));
+        similarBox.append(el('h3',{class:'ana-read-title'},'Ngoài phạm vi — chỉ tham khảo'),el('ol',{class:'ana-teams'},references.map(item=>el('li',{class:'ana-team-row'},[el('span',{class:'ana-note'},`${item.team.name || item.team.id} · ${item.heroHit} tướng trùng · Không áp dụng cho luật đang chọn`)]))));
       }
+      state.done = true;
       setStatus("");
     } catch (e) {
       if (started !== generation) return;
@@ -378,30 +493,27 @@ export function initAnalyze(deps, mount) {
       state.token = null;
       state.busy = false;
       if (turnstileRendered && window.turnstile) window.turnstile.reset(tsBox);
-      refreshBtn();
+      paint();
     }
   });
 
   mount.replaceChildren(
+    head,
     scopeNotice,
-    el("label",{class:"season-opt-in"},[outside,"Xem đội ngoài phạm vi để tham khảo"]),
-    el("p", { class: "ana-disclaimer" }, DISCLAIMER),
-    drop,
-    fileInput,
-    preview,
-    tsBox,
-    analyzeBtn,
-    status,
-    results,
+    el("div", { class: "ana-layout" }, [
+      pickCard,
+      el("div", { class: "ana-col" }, [readCard, similarCard]),
+    ]),
   );
+  paint();
   ensureTurnstile();
   return {
     setSeasonScope(next) {
       scope=next;generation++;
       state.busy=false;state.token=null;
-      results.replaceChildren();setStatus('');
+      clearResults();setStatus('');
       scopeNotice.textContent=gameplayAllowed() ? (next.browse?.kind === 'verified-pair' ? 'Đối chiếu đội theo phiên bản luật đang chọn.' : 'Dữ liệu cũ — tham khảo, chưa xác định kịch bản.') : 'Chọn phiên bản luật đã xác minh để soi và đối chiếu đội.';
-      refreshBtn();
+      paint();
     },
   };
 }

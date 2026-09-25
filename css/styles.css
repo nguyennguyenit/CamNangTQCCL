@@ -162,6 +162,9 @@
   --type-cam-nang-number: 700 34px/1 'Noto Serif Display', Georgia, serif;
   --type-coexist-count: 700 30px/1.1 'Noto Serif Display', Georgia, serif;
   --type-card-title-sm: 700 17px/1.2 'Noto Serif Display', Georgia, serif;
+  --type-pity-unit: 400 18px/1.4 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-pity-value-mobile: 700 52px/0.9 'Noto Serif Display', Georgia, serif;
+  --type-tool-step-title: 700 16px/1.2 'Be Vietnam Pro', system-ui, sans-serif;
   --space-1: 1px;
   --space-2: 2px;
   --space-3: 3px;
@@ -425,7 +428,7 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-/* legacy:start ceiling=470 */
+/* legacy:start ceiling=329 */
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) {
@@ -643,78 +646,6 @@ body {
 .tac-desc-label { color: var(--accent); font-size: .75rem; }
 .tac-desc.pending { color: var(--muted); font-style: italic; }
 
-/* ===== Theo dõi chiêu mộ ===== */
-.rt-shell { display: grid; gap: .85rem; }
-.rt-section {
-  background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
-  padding: .85rem 1rem; box-shadow: var(--shadow);
-}
-.rt-section-head { display: flex; justify-content: space-between; align-items: flex-start; gap: .8rem; margin-bottom: .7rem; }
-.rt-section h2 { margin: 0; font-size: 1rem; color: var(--accent); }
-.rt-sub { color: var(--muted); font-size: .78rem; margin: .12rem 0 0; }
-.rt-account-bar { display: flex; justify-content: space-between; align-items: center; gap: .8rem; }
-.rt-account-main { display: flex; align-items: center; gap: .45rem; min-width: 220px; }
-.rt-kicker { font-size: .68rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; font-weight: 700; }
-.rt-select,
-.rt-form input,
-.rt-form select {
-  min-height: 2.35rem; border: 1px solid var(--line); border-radius: 8px;
-  background: var(--bg); color: var(--ink); padding: .42rem .55rem; font: inherit;
-}
-.rt-actions { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; justify-content: flex-end; }
-.rt-btn {
-  display: inline-flex; align-items: center; justify-content: center; min-height: 2.25rem;
-  border: 1px solid var(--line); border-radius: 8px; background: var(--panel-2);
-  color: var(--ink); padding: .42rem .7rem; cursor: pointer; font-size: .82rem; font-weight: 650;
-}
-.rt-btn:hover { border-color: var(--accent); color: var(--accent); }
-.rt-btn:disabled { opacity: .55; cursor: not-allowed; }
-.rt-primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
-.rt-primary:hover { color: var(--on-accent); filter: brightness(1.03); }
-.rt-btn-small { min-height: 2rem; padding: .3rem .55rem; font-size: .76rem; }
-.rt-file { display: none; }
-.rt-import { position: relative; overflow: hidden; }
-.rt-message {
-  margin: 0; padding: .55rem .75rem; border: 1px solid var(--line); border-left: 3px solid var(--accent);
-  border-radius: 8px; background: var(--panel); color: var(--ink); font-size: .84rem;
-}
-.rt-pity {
-  display: inline-flex; align-items: baseline; gap: .35rem; flex-wrap: wrap;
-  background: var(--panel-2); border-radius: 8px; padding: .35rem .55rem; min-width: 9rem;
-}
-.rt-pity-label { font-size: .68rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; font-weight: 700; }
-.rt-pity strong { color: var(--accent); font-size: 1rem; }
-.rt-warning { color: var(--avoid); font-size: .75rem; font-weight: 700; }
-.rt-pity.warn { border: 1px solid var(--avoid); }
-.rt-daily-meta { color: var(--muted); font-size: .82rem; margin: -.25rem 0 .55rem; }
-.rt-slot-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .55rem; }
-.rt-slot {
-  border: 1px solid var(--line); border-radius: 8px; background: var(--bg);
-  padding: .55rem; display: flex; flex-direction: column; gap: .55rem; min-height: 7rem;
-}
-.rt-slot-main { display: flex; flex-direction: column; gap: .16rem; }
-.rt-slot-label { font-weight: 700; }
-.rt-slot-status { font-size: .76rem; color: var(--muted); }
-.rt-slot-miss { border-left: 3px solid var(--muted); }
-.rt-slot-fiveStar { border-left: 3px solid var(--accent); background: var(--accent-soft); }
-.rt-slot-actions { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: auto; }
-.rt-limited-list { display: grid; gap: .45rem; }
-.rt-limited {
-  border: 1px solid var(--line); border-radius: 8px; padding: .55rem .65rem;
-  display: flex; align-items: center; justify-content: space-between; gap: .7rem; background: var(--bg);
-}
-.rt-limited-main { display: flex; align-items: center; gap: .7rem; flex-wrap: wrap; }
-.rt-empty { margin: 0; color: var(--muted); font-size: .84rem; }
-.rt-form { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .65rem; align-items: end; }
-.rt-form label { display: flex; flex-direction: column; gap: .25rem; font-size: .78rem; color: var(--muted); font-weight: 700; }
-.rt-form label span { color: var(--muted); }
-.rt-form-wide { grid-column: span 2; }
-.rt-history { display: grid; gap: .45rem; }
-.rt-history-item { border: 1px solid var(--line); border-radius: 8px; background: var(--bg); padding: .55rem .65rem; }
-.rt-history-meta { color: var(--muted); font-size: .76rem; margin-bottom: .2rem; }
-.rt-history-hero { display: flex; flex-wrap: wrap; gap: .45rem; align-items: baseline; }
-.rt-note { margin: .35rem 0 0; color: var(--muted); font-size: .8rem; font-style: italic; }
-
 /* ===== Filter bar inline + section intro (dùng chung 3 tab team) ===== */
 .team-filter-bar {
   background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
@@ -774,40 +705,6 @@ body {
 .ht-effect { margin: 0; font-size: .82rem; line-height: 1.45; color: var(--ink); }
 .ht-effect.pending { color: var(--muted); font-style: italic; }
 
-/* ===== Soi đội từ ảnh ===== */
-.ana-disclaimer { font-size: .8rem; color: var(--muted); background: var(--panel-2); border-radius: var(--radius); padding: .5rem .7rem; margin: 0 0 .8rem; }
-.ana-setup { padding: 1.2rem; border: 1px dashed var(--line); border-radius: var(--radius); text-align: center; color: var(--muted); }
-.ana-drop { border: 2px dashed var(--line); border-radius: var(--radius); padding: 1.4rem; text-align: center; color: var(--muted); cursor: pointer; transition: border-color .15s, background .15s; }
-.ana-drop:hover, .ana-drop.over { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); }
-.ana-file { display: none; }
-.ana-preview { display: none; max-width: 100%; max-height: 260px; margin: .7rem 0; border-radius: var(--radius); border: 1px solid var(--line); }
-.ana-preview.on { display: block; }
-.ana-turnstile { margin: .6rem 0; }
-.ana-btn { background: var(--accent); color: var(--on-accent); border: none; border-radius: var(--radius); padding: .55rem 1.1rem; font-size: .95rem; font-weight: 600; cursor: pointer; }
-.ana-btn:disabled { opacity: .5; cursor: not-allowed; }
-.ana-status { font-size: .85rem; margin: .5rem 0; }
-.ana-status.err { color: var(--avoid); }
-.ana-results { margin-top: 1rem; }
-.ana-rh { font-size: .95rem; margin: 1rem 0 .5rem; }
-.ana-heroes { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: .6rem; }
-.ana-hero { border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); padding: .55rem .7rem; }
-.ana-hero-head { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; margin-bottom: .35rem; }
-.ana-hero-name { font-weight: 700; }
-.ana-stat { font-size: .72rem; padding: .06rem .4rem; border-radius: 999px; background: var(--f-nguy); color: var(--on-accent); }
-.ana-flag { font-size: .7rem; color: var(--avoid); }
-.ana-hero-icon { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex: none; }
-.ana-tactics { display: flex; flex-wrap: wrap; gap: .3rem; }
-.ana-tac { font-size: .76rem; padding: .08rem .45rem; border-radius: 999px; background: var(--panel-2); }
-.ana-tac.unsure { border: 1px dashed var(--avoid); color: var(--avoid); }
-/* Binh thư (dòng vàng) — phân biệt với chiến pháp bằng viền vàng nhạt. */
-.ana-books { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .3rem; }
-.ana-book { font-size: .72rem; padding: .08rem .45rem; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--f-quan); }
-.ana-book.unsure { border: 1px dashed var(--avoid); color: var(--avoid); }
-.ana-teams { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .3rem; }
-.ana-team-link { background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--radius); padding: .4rem .6rem; cursor: pointer; text-align: left; color: var(--ink); }
-.ana-team-link:hover { border-color: var(--accent); }
-.ana-note { font-size: .82rem; color: var(--muted); }
-
 /* ===== Responsive ===== */
 @media (max-width: 820px) {
   .stats { font-size: .72rem; }
@@ -837,158 +734,9 @@ body {
   .team-filters.collapsed { display: none; }
   .team-filters .fchip { padding: .42rem .85rem; font-size: .82rem; }
   .team-filters .fgroup { flex: 1 1 100%; max-width: none; min-width: 0; }
-  .rt-account-bar,
-  .rt-section-head,
-  .rt-limited {
-    align-items: stretch;
-    flex-direction: column;
-  }
-  .rt-account-main {
-    min-width: 0;
-    width: 100%;
-  }
-  .rt-select,
-  .rt-account-main .rt-select {
-    width: 100%;
-  }
-  .rt-actions {
-    justify-content: flex-start;
-  }
-  .rt-slot-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .rt-slot {
-    min-height: 8rem;
-  }
-  .rt-form {
-    grid-template-columns: 1fr;
-  }
-  .rt-form-wide {
-    grid-column: auto;
-  }
-  .rt-form input,
-  .rt-form select,
-  .rt-form .rt-btn {
-    width: 100%;
-  }
 .tac-toolbar { top: 56px; }
 }
 
-.roster-recommend {
-  display: grid;
-  gap: 1rem;
-}
-
-.roster-token-row,
-.roster-scan-grid,
-.roster-review-grid {
-  display: grid;
-  gap: .75rem;
-}
-
-.roster-token-row {
-  grid-template-columns: minmax(12rem, 1fr) minmax(10rem, 14rem) auto auto;
-  align-items: center;
-}
-
-.roster-scan-grid,
-.roster-review-grid {
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-}
-
-.roster-scan-card,
-.roster-review-panel,
-.roster-locked-team,
-.roster-result-team {
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--panel);
-  padding: .85rem;
-}
-
-.roster-scan-card {
-  display: grid;
-  gap: .65rem;
-}
-
-.roster-chip-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .35rem;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.roster-chip-list li,
-.roster-status {
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: .18rem .5rem;
-  font-size: .82rem;
-  background: var(--soft);
-}
-
-.roster-chip-list li {
-  display: inline-flex;
-  align-items: center;
-  gap: .3rem;
-}
-
-.roster-remove {
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-  cursor: pointer;
-  font-weight: 700;
-  line-height: 1;
-  padding: .05rem .1rem;
-}
-
-.roster-add-row {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: .4rem;
-  margin-top: .65rem;
-}
-
-.roster-locked-list,
-.roster-results,
-.roster-results section {
-  display: grid;
-  gap: .65rem;
-}
-
-.roster-result-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: .5rem;
-}
-
-.roster-result-team.muted {
-  opacity: .78;
-}
-
-.roster-empty {
-  color: var(--muted);
-  margin: .2rem 0 0;
-}
-
-@media (max-width: 700px) {
-  .roster-token-row {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 420px) {
-  .rt-slot-grid {
-    grid-template-columns: 1fr;
-  }
-  .rt-btn {
-    flex: 1 1 auto;
-  }
-}
 
 /* Shared season controls remain compact and follow the current section. */
 .season-controls { margin-bottom:16px; }
@@ -1182,7 +930,8 @@ a.lookup-more:hover {
 
 .detail-link,
 .kh-detail-link,
-.rt-btn:not(.rt-primary) {
+.rt-btn:not(.rt-primary),
+.ana-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1198,7 +947,8 @@ a.lookup-more:hover {
 
 .detail-link:hover,
 .kh-detail-link:hover,
-.rt-btn:not(.rt-primary):hover {
+.rt-btn:not(.rt-primary):hover,
+.ana-btn:hover {
   border-color: var(--accent);
   color: var(--accent);
 }
@@ -1255,8 +1005,13 @@ a.lookup-more:hover {
 .tac-card,
 .lookup-card,
 .rt-section,
+.ana-card,
 .ana-hero,
 .cham-su-card,
+.roster-scan-card,
+.roster-review-panel,
+.roster-locked-team,
+.roster-result-team,
 .season-config-detail {
   border: var(--border-hair) solid var(--line);
   border-radius: var(--radius-10);
@@ -1310,6 +1065,12 @@ a.lookup-more:hover {
 
 /* ---------- Focus bàn phím ---------- */
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: var(--focus-width) solid var(--focus-ring);
+  outline-offset: var(--focus-outline-offset);
+}
+
+/* Ô nhập JSON: input file trong suốt nên chuyển vòng focus sang nhãn đang hiện (Phase 9, P09-R1). */
+.rt-import:has(.rt-file:focus-visible) {
   outline: var(--focus-width) solid var(--focus-ring);
   outline-offset: var(--focus-outline-offset);
 }
@@ -6207,5 +5968,1390 @@ body[data-page-section="khaihoang"] .layout {
 
   .kh-mine-cards {
     display: flex;
+  }
+}
+
+/* ===== 3 công cụ Beta: Chiêu mộ, Soi đội, Gợi ý đội (Phase 9) ===== */
+/* Component tokens.json dùng lại: `the` (thẻ công cụ: .rt-section, .ana-card, .ana-hero, .roster-*),
+   `nhan-caps`, `chip-loc`, `badge`, `nut-chinh`, `nut-phu`, `o-chan-dung` (chân dung Soi đội),
+   `season-config-detail` (Phase 2/8). Component mới của phase (xem mục `components`): tool-head,
+   tool-notice, tool-text-action, thanh-tien-do, buoc-cong-cu, the-doc-anh, hang-doi-tuong-tu,
+   menu-tai-khoan.
+   Artboard: Recruit/RecruitMobile, Analyze/AnalyzeMobile, Roster/RosterMobile. Phạm vi mùa và chi tiết
+   cấu hình trên /soi-doi/, /goi-y-doi/ không có artboard → theo StyleGuide (cùng mức đầu tư Phase 8 2b). */
+body[data-page-section="recruit-tracker"] .layout,
+body[data-page-section="analyze"] .layout,
+body[data-page-section="roster-recommend"] .layout {
+  padding: var(--space-40) var(--space-48) var(--space-56);
+}
+
+/* ---------- Đầu mục công cụ (kicker + h1 serif + lead + chọn Mùa) ---------- */
+.tool-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-40);
+  padding-bottom: var(--space-28);
+  border-bottom: var(--border-hair) solid var(--line);
+}
+
+.tool-head .reference-head-text {
+  max-width: 720px; /* con số artboard (Recruit.dc.html:33, Analyze.dc.html, Roster.dc.html) — tiền lệ khối Landing */
+}
+
+.tool-head .season-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-8);
+  margin: 0;
+}
+
+.tool-head .season-controls[hidden] {
+  display: none;
+}
+
+.tool-head .reference-scope-controls {
+  display: flex;
+  flex: none;
+  gap: var(--space-12);
+  margin: 0;
+}
+
+.tool-head .reference-scope-controls select {
+  min-width: 240px; /* con số artboard (Coexist.dc.html) ngoài thang token — tiền lệ khối Landing */
+}
+
+.tool-head .scope-note {
+  text-align: right;
+}
+
+/* ---------- Thông báo đầu trang (khiên + chữ) ---------- */
+.tool-notice {
+  display: flex;
+  gap: var(--space-10);
+  align-items: flex-start;
+  margin: 0;
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-12);
+  background: var(--panel-2);
+  color: var(--ink-2);
+  font: var(--type-small);
+}
+
+.tool-notice-icon {
+  display: inline-flex;
+  flex: none;
+  margin-top: var(--space-2);
+}
+
+/* ---------- Nút chữ (không viền) ---------- */
+.tool-text-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--control-32);
+  padding: 0 var(--space-6);
+  border: none;
+  border-radius: var(--radius-8);
+  background: none;
+  color: var(--accent);
+  font: var(--type-control);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.tool-text-action:hover {
+  color: var(--accent-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.tool-text-action:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+/* Nút chính của công cụ dùng cặp dải của `nut-chinh`; nút đã ghi trạng thái (`aria-pressed`) giữ nguyên cặp
+   dải kể cả khi trỏ chuột còn trên nút vừa bấm (nút lúc đó đã khoá). */
+.ana-btn.primary,
+.rt-btn.rt-primary,
+.rt-btn[aria-pressed="true"],
+.rt-btn[aria-pressed="true"]:hover {
+  background: var(--band);
+  border-color: var(--band);
+  color: var(--band-ink);
+}
+
+.ana-btn.primary:hover,
+.rt-btn.rt-primary:hover {
+  background: var(--band-active);
+  border-color: var(--band-active);
+  color: var(--band-ink);
+}
+
+.ana-btn:disabled,
+.rt-btn:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+/* ---------- Chiêu mộ (Recruit, RecruitMobile) ---------- */
+.rt-shell {
+  display: grid;
+  gap: var(--space-22);
+}
+
+.rt-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-14);
+  padding: var(--space-24);
+}
+
+.rt-section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-12);
+}
+
+.rt-section-title {
+  margin: 0;
+  font: var(--type-list-title);
+}
+
+.rt-section-note {
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+.rt-sub {
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+.rt-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: var(--space-22);
+  align-items: start;
+}
+
+.rt-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-22);
+  min-width: 0;
+}
+
+.rt-account-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-10);
+  padding: var(--space-12) var(--space-16);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-14);
+  background: var(--panel);
+}
+
+.rt-account-pick {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+}
+
+.rt-account-pick .rt-select {
+  min-width: 200px; /* con số artboard (Recruit.dc.html:43) ngoài thang token */
+}
+
+.rt-account-menu {
+  display: flex;
+  align-items: center;
+}
+
+/* Nút ⋯ chỉ có ở bề rộng hẹp; selector hai lớp để thắng `.rt-btn:not(.rt-primary)`. */
+.rt-account-menu .rt-account-toggle {
+  display: none;
+  width: var(--control-44);
+  padding: 0;
+}
+
+.rt-account-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-10);
+}
+
+.rt-account-gap {
+  flex: 1 1 auto;
+}
+
+/* Nút chữ trong hàng thao tác tài khoản: artboard dùng vùng bấm 44px (khác nút chữ trong hàng ảnh). */
+.rt-account-actions .tool-text-action {
+  min-height: var(--control-44);
+}
+
+/* Ô nhập JSON: input file phủ trong suốt trên nhãn nút — vẫn bấm/focus được, không kéo bề rộng gốc 253px. */
+.rt-import {
+  position: relative;
+  overflow: hidden;
+}
+
+.rt-file {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.rt-message {
+  margin: 0;
+  padding: var(--space-12) var(--space-16);
+  border: var(--border-hair) solid var(--line);
+  border-left: var(--border-heavy) solid var(--accent);
+  border-radius: var(--radius-10);
+  background: var(--panel);
+  color: var(--ink);
+  font: var(--type-small);
+}
+
+.rt-pity-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+}
+
+.rt-pity-figures {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-12);
+}
+
+.rt-pity-value {
+  color: var(--accent);
+  font: var(--type-score-panel);
+  font-variant-numeric: tabular-nums;
+}
+
+.rt-pity-unit {
+  color: var(--muted);
+  font: var(--type-pity-unit);
+}
+
+.rt-pity-meter {
+  display: block;
+  height: var(--space-10);
+  border-radius: var(--radius-5);
+  background: var(--panel-2);
+  overflow: hidden;
+}
+
+.rt-pity-fill {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+}
+
+.rt-pity-meta {
+  color: var(--muted);
+  font: var(--type-small);
+}
+
+.rt-pity-meta strong {
+  color: var(--ink);
+}
+
+.rt-warning {
+  margin: 0;
+  color: var(--avoid);
+  font: var(--type-badge);
+}
+
+.rt-warning[hidden] {
+  display: none;
+}
+
+.rt-slot-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-12);
+}
+
+.rt-slot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+  padding: var(--space-14);
+  border: var(--border-hair) solid var(--line-2);
+  border-radius: var(--radius-12);
+  background: var(--panel-3);
+}
+
+.rt-slot-miss {
+  border-left: var(--border-heavy) solid var(--muted);
+}
+
+.rt-slot-fiveStar {
+  border-left: var(--border-heavy) solid var(--accent);
+  background: var(--accent-soft);
+}
+
+.rt-slot-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.rt-slot-label {
+  font: var(--type-hero-name);
+}
+
+.rt-slot-status {
+  color: var(--ink-2);
+  font: var(--type-meta);
+}
+
+.rt-slot-actions {
+  display: flex;
+  gap: var(--space-6);
+  margin-top: auto;
+}
+
+.rt-slot-actions .rt-btn {
+  flex: 1 1 0;
+}
+
+.rt-limited-list {
+  display: grid;
+  gap: var(--space-12);
+}
+
+.rt-banner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 220px);
+  gap: var(--space-12) var(--space-16);
+  align-items: center;
+  padding: var(--space-14) var(--space-16);
+  border: var(--border-hair) solid var(--line-2);
+  border-radius: var(--radius-12);
+  background: var(--panel-3);
+}
+
+.rt-banner-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.rt-banner-name {
+  font: var(--type-strong);
+}
+
+.rt-banner-progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.rt-banner-progress-row {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font: var(--type-small);
+}
+
+.rt-banner-count {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.rt-banner-meter {
+  height: var(--space-8);
+  border-radius: var(--radius-4);
+}
+
+.rt-banner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+}
+
+.rt-banner .rt-warning {
+  grid-column: 1 / -1;
+}
+
+.rt-empty {
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+.rt-empty[hidden] {
+  display: none;
+}
+
+.rt-form {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-12);
+  align-items: end;
+}
+
+.rt-form label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  color: var(--muted);
+  font: var(--type-field-caps);
+  letter-spacing: var(--type-field-caps-spacing);
+  text-transform: uppercase;
+}
+
+.rt-form-wide {
+  grid-column: span 2;
+}
+
+.rt-history {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rt-history[hidden] {
+  display: none;
+}
+
+.rt-history-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-4) var(--space-12);
+  padding: var(--space-12) 0;
+  border-top: var(--border-hair) dashed var(--line-2);
+}
+
+.rt-history-item:first-child {
+  border-top: none;
+}
+
+.rt-history-hero {
+  font: var(--type-card-title-sm);
+}
+
+.rt-history-date,
+.rt-history-pulls {
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+.rt-history-pulls {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.rt-value {
+  justify-self: start;
+  background: var(--panel-2);
+  color: var(--ink-2);
+}
+
+.rt-value-accent {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+
+.rt-note {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+.rt-form-slot:empty {
+  display: none;
+}
+
+/* ---------- Soi đội (Analyze, AnalyzeMobile) ---------- */
+.ana-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 440px) minmax(0, 1fr);
+  gap: var(--space-22);
+  align-items: start;
+}
+
+.ana-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-22);
+  min-width: 0;
+}
+
+.ana-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-14);
+  padding: var(--space-22);
+}
+
+.ana-card[hidden] {
+  display: none;
+}
+
+.ana-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-8);
+}
+
+.ana-card-title {
+  margin: 0;
+  font: var(--type-list-title);
+}
+
+.ana-setup {
+  padding: var(--space-20);
+  border: var(--border-heavy) dashed var(--line);
+  border-radius: var(--radius-14);
+  text-align: center;
+  color: var(--muted);
+}
+
+.ana-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-10);
+  min-height: var(--space-132);
+  padding: var(--space-20);
+  border: var(--border-heavy) dashed var(--line);
+  border-radius: var(--radius-14);
+  background: var(--panel-3);
+  color: var(--ink-2);
+  font: inherit;
+  cursor: pointer;
+  text-align: center;
+  text-wrap: pretty;
+  transition: border-color .15s ease, background .15s ease;
+}
+
+.ana-drop:hover,
+.ana-drop.over {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--ink);
+}
+
+.ana-drop-title {
+  font: var(--type-strong);
+}
+
+.ana-drop-note {
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+.ana-file {
+  display: none;
+}
+
+.ana-file-row {
+  display: grid;
+  grid-template-columns: minmax(0, 120px) minmax(0, 1fr);
+  gap: var(--space-14);
+  align-items: center;
+  padding: var(--space-12);
+  border: var(--border-hair) solid var(--line-2);
+  border-radius: var(--radius-12);
+  background: var(--panel-3);
+}
+
+.ana-file-row[hidden] {
+  display: none;
+}
+
+.ana-thumb {
+  display: block;
+  height: var(--space-88);
+  border-radius: var(--radius-8);
+  background: var(--panel-2);
+  overflow: hidden;
+}
+
+.ana-preview {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ana-file-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.ana-file-name {
+  font: var(--type-strong);
+}
+
+.ana-turnstile {
+  margin: 0;
+}
+
+.ana-status {
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-small);
+}
+
+.ana-status.err {
+  color: var(--avoid);
+}
+
+.ana-steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: var(--type-tactic);
+}
+
+.ana-step {
+  display: flex;
+  gap: var(--space-8);
+  align-items: center;
+  color: var(--muted);
+}
+
+.ana-step[data-state="done"] {
+  color: var(--good);
+}
+
+.ana-step-mark {
+  display: inline-flex;
+}
+
+.ana-step-mark[hidden] {
+  display: none;
+}
+
+.ana-read-body,
+.ana-similar-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+}
+
+.ana-read-title {
+  margin: 0;
+  font: var(--type-strong);
+}
+
+.ana-heroes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-10);
+}
+
+.ana-hero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-14) var(--space-16);
+}
+
+.ana-hero-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.ana-hero-name {
+  font: var(--type-strong);
+}
+
+.ana-hero-icon {
+  flex: none;
+}
+
+.ana-stat {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-24);
+  padding: 0 var(--space-9);
+  border-radius: var(--radius-999);
+  background: var(--f-nguy);
+  color: var(--on-accent);
+  font: var(--type-badge);
+}
+
+.ana-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-5);
+  color: var(--avoid);
+  font: var(--type-badge);
+}
+
+.ana-tactics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-14);
+}
+
+.ana-tac {
+  color: var(--accent-ink);
+  font: var(--type-tactic);
+}
+
+.ana-tac.unsure {
+  border-bottom: var(--border-hair) dashed var(--avoid);
+  color: var(--avoid);
+}
+
+.ana-books {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-14);
+}
+
+.ana-book {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-24);
+  padding: 0 var(--space-9);
+  border: var(--border-hair) solid var(--f-quan);
+  border-radius: var(--radius-999);
+  background: var(--panel-2);
+  color: var(--ink-2);
+  font: var(--type-badge);
+}
+
+.ana-book.unsure {
+  border-style: dashed;
+  border-color: var(--avoid);
+  color: var(--avoid);
+}
+
+.ana-teams {
+  display: grid;
+  gap: var(--space-10);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ana-team-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-4) var(--space-14);
+  align-items: center;
+  padding: var(--space-14) var(--space-16);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-12);
+  background: var(--panel);
+}
+
+.ana-team-row:first-child {
+  border-color: var(--accent);
+  background: var(--avoid-bg);
+}
+
+.ana-team-link {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--ink);
+  font: var(--type-card-title-sm);
+  text-align: left;
+  cursor: pointer;
+}
+
+.ana-team-link:hover {
+  color: var(--accent);
+}
+
+.ana-team-hits {
+  color: var(--ink-2);
+  font: var(--type-meta);
+  text-align: right;
+}
+
+.ana-team-hits.full {
+  color: var(--good);
+}
+
+.ana-note {
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+/* ---------- Gợi ý đội (Roster, RosterMobile) ---------- */
+.roster-recommend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-22);
+}
+
+.roster-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: var(--type-table-cell);
+  text-align: center;
+}
+
+.roster-step {
+  padding: var(--space-8) var(--space-4);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-8);
+  background: var(--panel-3);
+  color: var(--muted);
+}
+
+/* Chữ lục trên nền giấy nhạt: cặp --good/--good-bg của StyleGuide chỉ đạt 4,47:1 ở theme sáng (< 4,5). */
+.roster-step[data-state="done"] {
+  border-color: transparent;
+  background: var(--panel-3);
+  color: var(--good);
+}
+
+.roster-step[data-state="current"] {
+  background: var(--band);
+  color: var(--band-ink);
+}
+
+.roster-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-10);
+}
+
+.roster-controls .ana-turnstile {
+  flex: 1 1 100%;
+}
+
+.roster-scan-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-14);
+}
+
+.roster-scan-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-16);
+}
+
+.roster-scan-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+}
+
+.roster-step-caps {
+  color: var(--accent);
+  font: var(--type-label-caps);
+  letter-spacing: var(--type-label-caps-spacing);
+  text-transform: uppercase;
+}
+
+.roster-scan-title {
+  margin: 0;
+  font: var(--type-tool-step-title);
+}
+
+.roster-scan-count {
+  color: var(--muted);
+  font: var(--type-small);
+}
+
+.roster-scan-state[data-state="done"] {
+  background: var(--panel-3);
+  color: var(--good);
+}
+
+.roster-scan-state[data-state="pending"] {
+  background: var(--panel-2);
+  color: var(--ink-2);
+}
+
+/* Nút mở khu sửa kho chỉ có ở bề rộng hẹp; selector hai lớp để thắng `.rt-btn:not(.rt-primary)`. */
+.roster-recommend .roster-review-toggle {
+  display: none;
+}
+
+.roster-review[hidden] {
+  display: none;
+}
+
+.roster-review-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--space-14);
+}
+
+.roster-review-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-16);
+}
+
+.roster-review-panel h3 {
+  margin: 0;
+  font: var(--type-list-title);
+}
+
+.roster-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.roster-chip-list[hidden] {
+  display: none;
+}
+
+.roster-chip-list li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  min-height: var(--control-32);
+  padding: 0 var(--space-6) 0 var(--space-12);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-999);
+  background: var(--panel-3);
+  font: var(--type-tactic);
+}
+
+.roster-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--control-28);
+  height: var(--control-28);
+  border: none;
+  border-radius: var(--radius-round);
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.roster-remove:hover {
+  color: var(--avoid);
+}
+
+.roster-add-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-8);
+}
+
+.ana-input,
+.roster-add-row .ana-input {
+  min-height: var(--control-44);
+  padding: 0 var(--space-14);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-10);
+  background: var(--panel);
+  color: var(--ink);
+  font: var(--type-select);
+}
+
+.roster-locked-list {
+  display: grid;
+  gap: var(--space-10);
+}
+
+.roster-locked-list[hidden] {
+  display: none;
+}
+
+.roster-locked-team {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-12);
+  font: var(--type-small);
+}
+
+.roster-locked-team strong {
+  font: var(--type-strong);
+}
+
+.roster-locked-team p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.roster-results-slot {
+  display: grid;
+  gap: var(--space-22);
+}
+
+.roster-results {
+  display: grid;
+  gap: var(--space-22);
+}
+
+.roster-results section {
+  display: grid;
+  gap: var(--space-10);
+}
+
+.roster-results h3 {
+  margin: 0;
+  font: var(--type-list-title);
+}
+
+.roster-team-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-12);
+  background: var(--panel);
+  list-style: none;
+  overflow: hidden;
+}
+
+.roster-result-team {
+  display: grid;
+  grid-template-columns: var(--control-32) minmax(0, 1fr) auto;
+  gap: var(--space-4) var(--space-14);
+  align-items: center;
+  padding: var(--space-14) var(--space-16);
+  border-top: var(--border-hair) solid var(--line-2);
+  background: var(--panel);
+}
+
+/* Hàng có số thứ tự: số ở cột đầu, nội dung ở giữa, "Mở đội" ở cột cuối (không để auto-placement
+   chiếm cột số như bản trước). */
+.roster-rank {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  color: var(--muted);
+  font: var(--type-list-title);
+}
+
+.roster-result-main {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+
+.roster-result-team > .ana-link-btn {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+  justify-self: end;
+}
+
+/* Hàng đội mạnh nhưng chưa xây dựng: không có số thứ tự và không có nút -> một cột nội dung. */
+.roster-result-team.muted {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.roster-result-team.muted .roster-result-name,
+.roster-result-team.muted .roster-result-meta {
+  grid-column: 1;
+  grid-row: auto;
+}
+
+.roster-result-team:first-child {
+  border-top: none;
+}
+
+
+
+.roster-result-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-4) var(--space-14);
+  align-items: center;
+  min-width: 0;
+}
+
+.roster-result-name {
+  font: var(--type-card-title-sm);
+}
+
+.roster-result-meta {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+.roster-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-24);
+  padding: 0 var(--space-9);
+  border-radius: var(--radius-999);
+  background: var(--panel-2);
+  color: var(--ink-2);
+  font: var(--type-badge);
+  justify-self: end;
+}
+
+.roster-status[data-status="build-now"] {
+  background: var(--panel-3);
+  color: var(--good);
+}
+
+.roster-status[data-status="variant"] {
+  color: var(--ky);
+}
+
+.roster-status[data-status="missing-tactic"],
+.roster-status[data-status="move-tactic"] {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+
+.roster-result-team.muted {
+  background: var(--panel-3);
+}
+
+.roster-result-team.muted .roster-result-name {
+  font: var(--type-strong);
+}
+
+
+
+.roster-empty {
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+.roster-empty[hidden] {
+  display: none;
+}
+
+@media (max-width: 980px) {
+  .rt-grid,
+  .ana-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .roster-scan-grid {
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  body[data-page-section="recruit-tracker"] .layout,
+  body[data-page-section="analyze"] .layout,
+  body[data-page-section="roster-recommend"] .layout {
+    padding: var(--space-24) var(--space-16) var(--space-32);
+  }
+
+  .tool-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-24);
+  }
+
+  .tool-head .reference-title {
+    font: var(--type-detail-title);
+  }
+
+  .tool-head .season-controls {
+    align-items: stretch;
+  }
+
+  .tool-head .reference-scope-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-8);
+  }
+
+  .tool-head .reference-scope-controls select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .tool-head .scope-note {
+    text-align: left;
+  }
+
+  .tool-notice {
+    align-items: flex-start;
+  }
+
+  .tool-text-action {
+    min-height: var(--control-44);
+  }
+
+  .rt-section {
+    padding: var(--space-16);
+  }
+
+  .rt-pity-value {
+    font: var(--type-pity-value-mobile);
+  }
+
+  /* Hàng tài khoản bề rộng hẹp: lưới [select co giãn | nút ⋯ 44px], hàng thao tác xuống dòng dưới. */
+  .rt-account-bar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--control-44);
+    align-items: center;
+  }
+
+  .rt-account-pick {
+    min-width: 0;
+  }
+
+  .rt-account-pick .rt-select {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .rt-account-menu {
+    display: contents;
+  }
+
+  .rt-account-menu .rt-account-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .rt-account-actions {
+    flex-direction: column;
+    align-items: stretch;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    min-width: 0;
+    padding: var(--space-12);
+    border: var(--border-hair) solid var(--line);
+    border-radius: var(--radius-12);
+    background: var(--panel);
+  }
+
+  .rt-account-actions[hidden] {
+    display: none;
+  }
+
+  .rt-account-actions .rt-btn {
+    width: 100%;
+  }
+
+  .rt-account-gap {
+    display: none;
+  }
+
+  .rt-banner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .rt-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .rt-form-wide {
+    grid-column: auto;
+  }
+
+  .rt-form input,
+  .rt-form select,
+  .rt-form .rt-btn {
+    width: 100%;
+  }
+
+  .ana-card {
+    padding: var(--space-16);
+  }
+
+  .ana-file-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ana-heroes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ana-team-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ana-team-hits {
+    text-align: left;
+  }
+
+  .roster-scan-grid,
+  .roster-review-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .roster-recommend .roster-review-toggle {
+    display: inline-flex;
+    width: 100%;
+  }
+
+  .roster-result-team {
+    grid-template-columns: var(--control-28) minmax(0, 1fr);
+  }
+
+  .roster-result-team > .ana-link-btn {
+    grid-column: 2;
+    grid-row: auto;
+    justify-self: start;
+  }
+
+  /* Tên đội phải còn bề rộng dùng được: pill trạng thái xuống dòng dưới tên. */
+  .roster-result-main {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .roster-status {
+    grid-column: 1;
+    justify-self: start;
+  }
+}
+
+@media (max-width: 400px) {
+  /* 320px: hai nút thao tác trong ô lượt xếp dọc để không tràn khỏi thẻ. */
+  .rt-slot-actions {
+    flex-direction: column;
+  }
+
+  .rt-slot-actions .rt-btn {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  .rt-banner-actions .rt-btn {
+    flex: 1 1 auto;
   }
 }
