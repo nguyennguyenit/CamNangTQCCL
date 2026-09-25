@@ -28,6 +28,7 @@
   --band-active: #2B2722;
   --band-beta-line: #6A6254;
   --band-beta-ink: #D9CDB4;
+  --band-btn-line: #5A5348;
   --nav-idle: #CFC6B6;
   --nav-underline: #E36A6F;
   --seal-ink: #F9F3E6;
@@ -59,6 +60,7 @@
   --footer-bg: #141210;
   --band-good: #7FC99E;
   --focus-ring-band: #E36A6F;
+  --qr-panel: #FFFFFF;
   --f-nguy: #1F3A93;
   --f-thuc: #1F7A4D;
   --f-ngo: #B8232C;
@@ -103,6 +105,39 @@
   --type-header-title: 700 19px/1.2 'Noto Serif Display', Georgia, serif;
   --type-header-title-landing: 700 20px/1.2 'Noto Serif Display', Georgia, serif;
   --type-header-title-mobile: 700 16px/1.2 'Noto Serif Display', Georgia, serif;
+  --type-landing-hero: 700 76px/1.02 'Noto Serif Display', Georgia, serif;
+  --type-landing-hero-spacing: -0.01em;
+  --type-landing-hero-mobile: 700 42px/1.05 'Noto Serif Display', Georgia, serif;
+  --type-landing-stat: 700 44px/1 'Noto Serif Display', Georgia, serif;
+  --type-landing-stat-mobile: 700 30px/1 'Noto Serif Display', Georgia, serif;
+  --type-landing-stat-label: 400 14px/1.4 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-landing-section-title: 700 40px/1.1 'Noto Serif Display', Georgia, serif;
+  --type-landing-section-title-sm: 700 36px/1.1 'Noto Serif Display', Georgia, serif;
+  --type-landing-section-title-mobile: 700 28px/1.2 'Noto Serif Display', Georgia, serif;
+  --type-landing-card-title: 700 24px/1.2 'Noto Serif Display', Georgia, serif;
+  --type-landing-card-title-mobile: 700 20px/1.2 'Noto Serif Display', Georgia, serif;
+  --type-landing-tool-title-mobile: 700 18px/1.2 'Noto Serif Display', Georgia, serif;
+  --type-landing-feature-title: 700 28px/1.2 'Noto Serif Display', Georgia, serif;
+  --type-landing-lead: 400 18px/1.65 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-landing-body: 400 15.5px/1.6 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-landing-sub: 400 16px/1.65 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-landing-sub-mobile: 400 14.5px/1.6 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-landing-card-desc: 400 15px/1.55 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-landing-card-desc-mobile: 400 14px/1.5 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-landing-vault-desc: 400 14.5px/1.55 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-landing-kicker: 600 12px/1.2 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-landing-kicker-spacing: 0.16em;
+  --type-landing-kicker-mobile: 700 11.5px/1.2 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-landing-kicker-mobile-spacing: 0.16em;
+  --type-landing-hero-kicker: 600 12.5px/1.2 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-landing-hero-kicker-spacing: 0.16em;
+  --type-landing-hero-kicker-mobile: 600 11px/1.2 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-landing-hero-kicker-mobile-spacing: 0.14em;
+  --type-landing-store: 600 17px/1.15 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-landing-store-kicker: 400 11.5px/1.15 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-landing-cta: 600 16px/1.2 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-landing-cta-lead: 400 16px/1.6 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-landing-exe-title: 700 16px/1.2 'Be Vietnam Pro', system-ui, sans-serif;
   --space-1: 1px;
   --space-2: 2px;
   --space-3: 3px;
@@ -123,13 +158,18 @@
   --space-24: 24px;
   --space-26: 26px;
   --space-28: 28px;
+  --space-30: 30px;
   --space-32: 32px;
   --space-36: 36px;
   --space-40: 40px;
+  --space-44: 44px;
   --space-48: 48px;
   --space-52: 52px;
   --space-56: 56px;
   --space-64: 64px;
+  --space-72: 72px;
+  --space-88: 88px;
+  --space-96: 96px;
   --radius-2: 2px;
   --radius-3: 3px;
   --radius-4: 4px;
@@ -358,7 +398,7 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-/* legacy:start ceiling=603 */
+/* legacy:start ceiling=600 */
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) {
@@ -375,7 +415,6 @@ body {
 
 /* ===== Header, điều hướng, footer: dựng lại ở khối "Phase 3" cuối file ===== */
 .stats { font-size: .82rem; color: var(--muted); white-space: nowrap; }
-.disclaimer { font-size: .76rem; color: var(--muted); padding: .5rem 1.2rem 0; margin: 0; font-style: italic; }
 
 /* ===== Layout (1 cột, filter inline trong từng tab) ===== */
 .layout { padding: 1rem 1.2rem 3rem; }
@@ -2169,5 +2208,867 @@ a.lookup-more:hover {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-6);
+  }
+}
+
+/* ===== Landing (Phase 4) ===== */
+/* Danh mục component: tokens.json `khoi-hero`, `so-lieu`, `the-landing`, `the-tai-game`, `cta-toi`.
+   Điểm vào trang bỏ padding khung để dải tối của hero liền mạch với header; mọi giá trị qua token
+   (riêng bề rộng nút tải 220px và mã QR 148px là con số artboard không thuộc thang token — tiền lệ
+   bề rộng panel menu thả của Phase 3). */
+
+.layout-landing {
+  padding: 0;
+}
+
+/* ---------- Hero ---------- */
+.landing-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 520px;
+  gap: var(--space-64);
+  align-items: center;
+  padding: var(--space-72) var(--space-64) var(--space-96);
+  background-color: var(--band);
+  color: var(--band-ink);
+  scroll-margin-top: calc(var(--control-72) + var(--space-4));
+}
+
+.landing-hero-copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+
+.landing-hero-kicker {
+  margin: 0;
+  color: var(--nav-underline);
+  font: var(--type-landing-hero-kicker);
+  letter-spacing: var(--type-landing-hero-kicker-spacing);
+  text-transform: uppercase;
+}
+
+.landing-hero-title {
+  margin: 0;
+  font: var(--type-landing-hero);
+  letter-spacing: var(--type-landing-hero-spacing);
+}
+
+.landing-hero-title-accent {
+  color: var(--nav-underline);
+}
+
+.landing-lead {
+  max-width: 600px;
+  margin: 0;
+  color: var(--nav-idle);
+  font: var(--type-landing-lead);
+}
+
+.landing-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-12);
+}
+
+.landing-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-10);
+  min-height: var(--control-52);
+  padding-inline: var(--space-24);
+  border: var(--border-hair) solid var(--accent);
+  border-radius: var(--radius-12);
+  background-color: var(--accent);
+  color: var(--on-accent);
+  font: var(--type-landing-cta);
+  text-decoration: none;
+}
+
+.landing-btn:hover {
+  background-color: var(--accent-strong);
+  border-color: var(--accent-strong);
+}
+
+.landing-btn-ghost {
+  background-color: transparent;
+  border-color: var(--band-btn-line);
+  color: var(--band-ink);
+}
+
+.landing-btn-ghost:hover {
+  background-color: var(--band-active);
+  border-color: var(--band-btn-line);
+}
+
+.landing-checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-22);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--band-dim);
+  font: var(--type-control);
+}
+
+.landing-checks li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.landing-checks svg {
+  color: var(--band-good);
+}
+
+/* ---------- Khối chung ---------- */
+.landing-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-32);
+  padding: var(--space-88) var(--space-64);
+  scroll-margin-top: calc(var(--control-72) + var(--space-4));
+}
+
+.landing-section-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+  max-width: 760px;
+}
+
+.landing-kicker {
+  margin: 0;
+  color: var(--accent);
+  font: var(--type-landing-kicker);
+  letter-spacing: var(--type-landing-kicker-spacing);
+  text-transform: uppercase;
+}
+
+.landing-section-title {
+  margin: 0;
+  font: var(--type-landing-section-title);
+}
+
+.landing-section-title-sm {
+  font: var(--type-landing-section-title-sm);
+}
+
+.landing-section-sub {
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-landing-sub);
+}
+
+.landing-inline-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--accent);
+}
+
+.landing-inline-link:hover {
+  color: var(--accent-strong);
+}
+
+/* ---------- Dải số liệu ---------- */
+.landing-stats {
+  gap: var(--space-18);
+  padding-block: var(--space-44);
+  border-bottom: var(--border-hair) solid var(--line);
+}
+
+.landing-stat-list {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.landing-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-inline: var(--space-28);
+  border-left: var(--border-hair) solid var(--line);
+}
+
+.landing-stat:first-child {
+  border-left: 0;
+}
+
+.landing-stat-number {
+  color: var(--ink);
+  font: var(--type-landing-stat);
+  font-variant-numeric: tabular-nums;
+}
+
+.landing-stat-label {
+  color: var(--muted);
+  font: var(--type-landing-stat-label);
+}
+
+.landing-stats-note {
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-small);
+}
+
+/* ---------- Thẻ điều hướng ---------- */
+.landing-card-grid,
+.landing-vault-list {
+  display: grid;
+  gap: var(--space-20);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.landing-card-grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.landing-card-grid-2,
+.landing-vault-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.landing-card-grid > li,
+.landing-vault-list > li {
+  display: flex;
+}
+
+.landing-card,
+.landing-vault {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-14);
+  width: 100%;
+  padding: var(--space-28);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-16);
+  background-color: var(--panel);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.landing-card:hover,
+.landing-vault:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+.landing-card-index {
+  color: var(--line);
+  font: var(--type-landing-stat);
+  font-variant-numeric: tabular-nums;
+}
+
+.landing-card-title {
+  font: var(--type-landing-card-title);
+}
+
+.landing-card-desc {
+  font: var(--type-landing-card-desc);
+}
+
+.landing-card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  min-height: var(--control-32);
+  color: var(--accent);
+  font: var(--type-strong);
+}
+
+/* Thẻ "Giữ đất và mở đất": viền dày hơn, chữ dẫn dài hơn thẻ điều hướng. */
+.landing-card-feature {
+  gap: var(--space-12);
+  padding: var(--space-30);
+}
+
+.landing-feature-title {
+  font: var(--type-landing-feature-title);
+}
+
+.landing-body {
+  font: var(--type-landing-body);
+}
+
+/* Thẻ công cụ Beta: tiêu đề + chip Beta, dòng ghi chú dính đáy thẻ. */
+.landing-card-tool {
+  gap: var(--space-12);
+  padding: var(--space-26);
+}
+
+.landing-tool-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-10);
+  font: var(--type-list-title);
+}
+
+.landing-beta {
+  flex: 0 0 auto;
+  padding: var(--space-2) var(--space-8);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-5);
+  color: var(--muted);
+  font: var(--type-badge);
+  white-space: nowrap;
+}
+
+.landing-tool-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+  margin-top: auto;
+  padding-top: var(--space-12);
+  border-top: var(--border-hair) dashed var(--line-2);
+  color: var(--muted);
+  font: var(--type-small);
+}
+
+.landing-tool-note svg {
+  flex-shrink: 0;
+  margin-top: var(--space-1);
+  color: var(--good);
+}
+
+/* ---------- Hai kho đội ---------- */
+.landing-vaults {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: var(--space-56);
+  align-items: center;
+  background-color: var(--panel-2);
+}
+
+.landing-vault-list {
+  gap: var(--space-16);
+}
+
+.landing-vault {
+  gap: var(--space-6);
+  padding: var(--space-18);
+}
+
+.landing-vault-term {
+  color: var(--muted);
+  font: var(--type-field-caps);
+  letter-spacing: var(--type-field-caps-spacing);
+  text-transform: uppercase;
+}
+
+.landing-vault-desc {
+  font: var(--type-landing-vault-desc);
+}
+
+/* ---------- Công cụ ---------- */
+.landing-tools {
+  background-color: var(--panel-2);
+}
+
+/* ---------- Tải game ---------- */
+.landing-download {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: var(--space-56);
+  align-items: center;
+}
+
+.landing-download-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: var(--space-24);
+  padding: var(--space-24);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-18);
+  background-color: var(--panel);
+}
+
+.landing-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-10);
+  margin: 0;
+}
+
+.landing-qr-frame {
+  display: flex;
+  padding: var(--space-8);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-10);
+  background-color: var(--qr-panel);
+}
+
+.landing-qr-frame svg {
+  display: block;
+  width: 148px;
+  height: auto;
+}
+
+.landing-qr-caption {
+  color: var(--muted);
+  font: var(--type-meta);
+  text-align: center;
+}
+
+.landing-store {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-12);
+}
+
+.landing-store-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  width: 220px;
+  min-height: var(--control-56);
+  padding-inline: var(--space-18);
+  border-radius: var(--radius-12);
+  background-color: var(--band);
+  color: var(--band-ink);
+  text-decoration: none;
+}
+
+.landing-store-btn:hover {
+  background-color: var(--band-active);
+}
+
+.landing-store-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.landing-store-kicker {
+  color: var(--nav-idle);
+  font: var(--type-landing-store-kicker);
+}
+
+.landing-store-name {
+  font: var(--type-landing-store);
+}
+
+.landing-exe {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-10);
+  width: 220px;
+  padding: var(--space-20);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-14);
+  background-color: var(--accent-soft);
+  color: var(--accent-ink);
+  text-decoration: none;
+}
+
+.landing-exe-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.landing-exe-title {
+  font: var(--type-landing-exe-title);
+}
+
+.landing-exe-note {
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+/* ---------- CTA tối ---------- */
+.landing-cta {
+  align-items: center;
+  gap: var(--space-22);
+  padding: var(--space-96) var(--space-64);
+  background-color: var(--band);
+  color: var(--band-ink);
+  text-align: center;
+}
+
+.seal-cta {
+  width: var(--space-64);
+  height: var(--space-64);
+  padding: var(--space-12);
+  border-radius: var(--radius-9);
+}
+
+.landing-cta-title {
+  margin: 0;
+  font: var(--type-section-title);
+}
+
+.landing-cta-lead {
+  max-width: 620px;
+  margin: 0;
+  color: var(--nav-idle);
+  font: var(--type-landing-cta-lead);
+}
+
+/* ---------- Thẻ đội xem trước (dùng lại component thẻ của Phase 5) ---------- */
+.landing-preview-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 500px;
+  justify-self: center;
+  gap: var(--space-12);
+  padding: var(--space-20);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-16);
+  background-color: var(--panel);
+  box-shadow: var(--shadow-float);
+  color: var(--ink);
+}
+
+.landing-preview-card .team-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-14);
+  padding-bottom: var(--space-12);
+  border-bottom: var(--border-hair) solid var(--line-2);
+}
+
+.landing-preview-card .team-name {
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  font: var(--type-dialog-title);
+}
+
+.landing-preview-card .team-name > a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.landing-preview-card .team-name > a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.landing-preview-score {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: baseline;
+  gap: var(--space-4);
+}
+
+.landing-preview-score-unit {
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+.landing-preview-card .reference-holder {
+  padding: var(--space-9) 0;
+  border-top: var(--border-hair) dashed var(--line-2);
+  border-radius: 0;
+  background-color: transparent;
+}
+
+.landing-preview-card .heroes > .reference-holder:first-child {
+  border-top: 0;
+}
+
+/* Nhãn C (chủ tướng) là chữ trên nền son nhạt: theme tối cần --accent-ink mới đạt 4,5:1. */
+.landing-preview-card .badge.role {
+  color: var(--accent-ink);
+}
+
+.landing-preview-card .tag {
+  cursor: default;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.landing-preview-link {
+  align-self: flex-end;
+}
+
+/* ---------- Bảng xem trước (component `bang` của Phase 5) ---------- */
+.landing-vaults-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  min-width: 0;
+}
+
+.landing-table-preview {
+  min-width: 0;
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-12);
+  background-color: var(--panel);
+  overflow: hidden;
+}
+
+.landing-table-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-12);
+  margin: 0;
+  padding: var(--space-12) var(--space-16);
+  border-bottom: var(--border-hair) solid var(--line-2);
+}
+
+.landing-table-scope {
+  font: var(--type-table-cell);
+  color: var(--ink);
+}
+
+.landing-table-count {
+  font: var(--type-meta);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.landing-table-scroll {
+  overflow-x: auto;
+}
+
+.reference-table {
+  width: 100%;
+  min-width: 420px;
+  border-collapse: collapse;
+  background-color: var(--panel-2);
+}
+
+.reference-table th,
+.reference-table td {
+  padding: var(--space-12) var(--space-16);
+  border-top: var(--border-hair) solid var(--line-2);
+  text-align: left;
+  vertical-align: top;
+}
+
+.reference-table tr:first-child th,
+.reference-table tr:first-child td {
+  border-top: 0;
+}
+
+.reference-table th {
+  font: var(--type-strong);
+  color: var(--ink);
+}
+
+.reference-table td {
+  font: var(--type-tactic);
+  color: var(--ink-2);
+}
+
+.landing-table-meta {
+  display: block;
+  margin-top: var(--space-2);
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+.reference-table td.landing-table-score {
+  font: var(--type-score-table);
+  color: var(--accent);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ---------- Mũi tên link ngoài của nút tải ---------- */
+.landing-store-arrow,
+.landing-exe-arrow {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  color: var(--band-muted);
+}
+
+.landing-exe-arrow {
+  align-self: flex-end;
+  margin-left: 0;
+  color: var(--muted);
+}
+
+/* ---------- Mobile (LandingMobile) ---------- */
+@media (max-width: 820px) {
+  .landing-hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-18);
+    padding: var(--space-28) var(--space-16) var(--space-36);
+    scroll-margin-top: calc(var(--control-44) + var(--space-16));
+  }
+
+  .landing-hero-copy {
+    gap: var(--space-18);
+  }
+
+  .landing-preview-card {
+    max-width: none;
+    padding: var(--space-16);
+  }
+
+  .landing-preview-card .team-head {
+    padding-bottom: var(--space-10);
+  }
+
+  .landing-vaults-body {
+    gap: var(--space-14);
+  }
+
+  .landing-table-bar {
+    padding: var(--space-10) var(--space-12);
+  }
+
+  .landing-hero-title {
+    font: var(--type-landing-hero-mobile);
+    letter-spacing: normal;
+  }
+
+  .landing-hero-kicker {
+    font: var(--type-landing-hero-kicker-mobile);
+    letter-spacing: var(--type-landing-hero-kicker-mobile-spacing);
+  }
+
+  /* Bản mobile không vẽ dải gạch đầu dòng lẫn nút phụ của hero. */
+  .landing-checks {
+    display: none;
+  }
+
+  .landing-hero-actions {
+    flex-direction: column;
+  }
+
+  .landing-section {
+    gap: var(--space-14);
+    margin-top: var(--space-36);
+    padding: 0 var(--space-16);
+    scroll-margin-top: calc(var(--control-44) + var(--space-16));
+  }
+
+  .landing-kicker {
+    font: var(--type-landing-kicker-mobile);
+    letter-spacing: var(--type-landing-kicker-mobile-spacing);
+  }
+
+  .landing-section-title,
+  .landing-section-title-sm,
+  .landing-cta-title {
+    font: var(--type-landing-section-title-mobile);
+  }
+
+  .landing-section-sub {
+    font: var(--type-landing-sub-mobile);
+  }
+
+  .landing-stats {
+    gap: var(--space-10);
+    padding-block: 0;
+    border-bottom: 0;
+  }
+
+  .landing-stat-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-10);
+  }
+
+  .landing-stat,
+  .landing-stat:first-child {
+    gap: var(--space-2);
+    padding: var(--space-14);
+    border: var(--border-hair) solid var(--line);
+    border-radius: var(--radius-16);
+    background-color: var(--panel);
+  }
+
+  .landing-stat-number {
+    font: var(--type-landing-stat-mobile);
+  }
+
+  .landing-stat-label {
+    font: var(--type-meta);
+  }
+
+  .landing-card-grid,
+  .landing-vault-list,
+  .landing-download {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .landing-hero-actions .landing-btn {
+    width: 100%;
+  }
+
+  .landing-card-grid,
+  .landing-vault-list {
+    gap: var(--space-14);
+  }
+
+  .landing-card {
+    padding: var(--space-18);
+  }
+
+  .landing-card-feature,
+  .landing-card-tool {
+    padding: var(--space-16);
+  }
+
+  .landing-card-title,
+  .landing-feature-title {
+    font: var(--type-landing-card-title-mobile);
+  }
+
+  .landing-card-desc,
+  .landing-body {
+    font: var(--type-landing-card-desc-mobile);
+  }
+
+  .landing-tool-title {
+    font: var(--type-landing-tool-title-mobile);
+  }
+
+  .landing-tool-note {
+    padding-top: var(--space-10);
+    font: var(--type-meta);
+  }
+
+  .landing-vaults {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-14);
+    padding-block: var(--space-28);
+  }
+
+  .landing-download {
+    gap: var(--space-12);
+  }
+
+  .landing-download-panel {
+    flex-direction: column;
+    gap: var(--space-10);
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+  }
+
+  .landing-store-btn,
+  .landing-exe {
+    width: 100%;
+  }
+
+  .landing-exe {
+    flex-direction: row;
+    align-items: center;
+    padding: var(--space-14) var(--space-16);
+  }
+
+  .landing-cta {
+    gap: var(--space-18);
+    margin-bottom: var(--space-40);
+    padding: var(--space-36) var(--space-16);
   }
 }

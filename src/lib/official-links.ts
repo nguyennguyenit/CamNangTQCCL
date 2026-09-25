@@ -36,8 +36,11 @@ export const COMMUNITY_LINKS: SiteLink[] = [
   link('YouTube', 'https://www.youtube.com/@tamquocchi-chienluoc'),
 ];
 
-export const DOWNLOAD_LINKS: SiteLink[] = [
-  link('App Store', 'https://apps.apple.com/vn/app/id1616630100'),
-  link('Google Play', 'https://play.google.com/store/apps/details?id=com.vntth.sgzzlb.gp.vn&gl=vn'),
-  link('Máy tính (Windows)', 'https://global-package-publish.qookkagames.com/s3gsource/13/s3g_vn_0610.pc.exe'),
-];
+/** Trang chủ game — nguồn của câu "Liên kết lấy từ website chính thức" ở mục Tải game (Landing). */
+export const OFFICIAL_GAME_SITE_HREF = OFFICIAL_LINKS[0].href;
+
+export const APP_STORE_LINK: SiteLink = link('App Store', 'https://apps.apple.com/vn/app/id1616630100');
+export const GOOGLE_PLAY_LINK: SiteLink = link('Google Play', 'https://play.google.com/store/apps/details?id=com.vntth.sgzzlb.gp.vn&gl=vn');
+export const DESKTOP_DOWNLOAD_LINK: SiteLink = link('Máy tính (Windows)', 'https://global-package-publish.qookkagames.com/s3gsource/13/s3g_vn_0610.pc.exe');
+
+export const DOWNLOAD_LINKS: SiteLink[] = [APP_STORE_LINK, GOOGLE_PLAY_LINK, DESKTOP_DOWNLOAD_LINK];

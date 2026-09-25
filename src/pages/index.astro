@@ -1,18 +1,24 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
+import DownloadQr from '../components/DownloadQr.astro';
 import { resolveLegacyRoute } from '../../js/legacy-routes.js';
+import { landingCopy, landingPreviews, landingStatistics, viNumber } from '../lib/landing-stats';
+import {
+  APP_STORE_LINK,
+  DESKTOP_DOWNLOAD_LINK,
+  EXTERNAL_REL,
+  GOOGLE_PLAY_LINK,
+  OFFICIAL_GAME_SITE_HREF,
+} from '../lib/official-links';
+import { SEAL_PATH, SEAL_VIEW_BOX } from '../lib/seal';
 
 const canonicalUrl = new URL('/', Astro.site);
-const SECTIONS = [
-  {id: 'team-chuan', label: 'Đội chuẩn', path: '/doi-chuan/'},
-  {id: 'team-khac', label: 'Đội khác', path: '/doi-khac/'},
-  {id: 'coexist', label: 'Cùng Tồn', path: '/cung-ton/'},
-  {id: 'khaihoang', label: 'Khai hoang', path: '/khai-hoang/'},
-  {id: 'lookup', label: 'Tra cứu', path: '/tra-cuu/'},
-  {id: 'recruit-tracker', label: 'Theo dõi chiêu mộ', path: '/chieu-mo/', beta: true},
-  {id: 'analyze', label: 'Soi đội từ ảnh', path: '/soi-doi/', beta: true},
-  {id: 'roster-recommend', label: 'Gợi ý đội từ kho', path: '/goi-y-doi/', beta: true},
-];
+// Mọi con số của Landing tính lúc build từ dữ liệu đã publish (xem src/lib/landing-stats.ts).
+const stats = await landingStatistics();
+const copy = landingCopy(stats);
+// Hai khối xem trước dựng từ dữ liệu publish thật (thẻ đội + bảng phạm vi mặc định).
+const previews = await landingPreviews();
+const storeButtons = [APP_STORE_LINK, GOOGLE_PLAY_LINK];
 // Hash cũ phải chuyển trước khi vẽ trang: nhúng nguyên hàm thuần của js/legacy-routes.js vào một
 // script inline chặn trong <head>. Listener `hashchange` phủ trường hợp dán link cũ khi đang ở `/`.
 const redirectSource = `(function(){var resolve=${resolveLegacyRoute.toString()};var go=function(){var target=resolve(window.location.href,window.location.origin);if(target)window.location.replace(target);};go();window.addEventListener('hashchange',go);})();`;
@@ -25,32 +31,221 @@ const redirectSource = `(function(){var resolve=${resolveLegacyRoute.toString()}
 >
   <script is:inline id="legacy-route-redirect" slot="head" set:html={redirectSource}></script>
 
-  <p class="disclaimer">Dữ liệu tổng hợp từ chia sẻ kinh nghiệm người chơi, mang tính tham khảo — không phải phương án duy nhất.</p>
+  <section id="dau-trang" class="landing-hero">
+    <div class="landing-hero-copy">
+      <p class="landing-hero-kicker">Cẩm nang cộng đồng<span class="landing-hero-kicker-extra"> · Tam Quốc Chí Chiến Lược</span></p>
+      <h1 class="landing-hero-title">Mùa này chơi đội nào?<br /><span class="landing-hero-title-accent">Mở sổ là thấy.</span></h1>
+      <p class="landing-lead">{copy.heroLead}</p>
+      <div class="landing-hero-actions">
+        <a class="landing-btn landing-btn-primary" href="/doi-chuan/">Mở Đội chuẩn<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></a>
+        <a class="landing-btn landing-btn-ghost" href="/tra-cuu/">Tra cứu tướng</a>
+      </div>
+      <ul class="landing-checks">
+        <li><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"></polyline></svg>Lọc theo mùa, binh, phe</li>
+        <li><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"></polyline></svg>Tên tướng theo bản game VN</li>
+        <li><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"></polyline></svg>Sáng / tối</li>
+      </ul>
+    </div>
+    <article class="team-card reference-team-card landing-preview-card" aria-label="Ví dụ một thẻ đội">
+      <div class="team-head">
+        <h2 class="team-name"><a href={previews.team.href}>{previews.team.name}</a></h2>
+        <span class="landing-preview-score"><span class="badge score reference-score" title="Điểm nguồn">{previews.team.score ?? '—'}</span><span class="landing-preview-score-unit">điểm</span></span>
+      </div>
+      <div class="card-head">
+        <div class="units">{previews.team.units.map((unit) => <span class="badge unit">{unit}</span>)}</div>
+        <div class="head-right">{previews.team.faction ? <span class="badge faction">{previews.team.faction}</span> : null}</div>
+      </div>
+      <div class="heroes">
+        {previews.team.holders.map((holder) => (
+          <div class="hero reference-holder">
+            <div class="hero-name">
+              <span class="hn">{holder.name}</span>
+              {holder.isMain ? <span class="badge role main-holder" title="Chủ tướng" aria-label="Chủ tướng">C</span> : null}
+            </div>
+            {holder.tactics.length ? <div class="line tactics">{holder.tactics.map((tactic) => <span class="tag t-tactic">{tactic}</span>)}</div> : null}
+            {holder.books.length ? <div class="line books">{holder.books.map((book) => <span class="tag t-book">{book}</span>)}</div> : null}
+          </div>
+        ))}
+      </div>
+      <a class="ana-link-btn landing-preview-link" href={previews.team.href}>Xem chi tiết<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></a>
+    </article>
+  </section>
 
-  <section id="landing-quick" aria-labelledby="landing-quick-title">
-    <p class="section-intro-title">Lối vào nhanh</p>
-    <h2 id="landing-quick-title">Bạn đang cần gì?</h2>
-    <p class="section-intro-sub">Ba câu hỏi người chơi hay tìm nhất, mỗi câu dẫn thẳng tới đúng mục.</p>
-    <ul class="landing-cards">
+  <section id="nguon-du-lieu" class="landing-section landing-stats" aria-labelledby="landing-stats-title">
+    <h2 id="landing-stats-title" class="visually-hidden">Số liệu cẩm nang</h2>
+    <ul class="landing-stat-list">
+      <li class="landing-stat"><span class="landing-stat-number">{viNumber(stats.standardConfigs)}</span><span class="landing-stat-label">cấu hình Đội chuẩn</span></li>
+      <li class="landing-stat"><span class="landing-stat-number">{viNumber(stats.standardTier0)}</span><span class="landing-stat-label">cấu hình xếp T0</span></li>
+      <li class="landing-stat"><span class="landing-stat-number">{viNumber(stats.sourceSeasons)}</span><span class="landing-stat-label">mùa nguồn</span></li>
+      <li class="landing-stat"><span class="landing-stat-number">{viNumber(stats.heroes)}</span><span class="landing-stat-label">tướng</span></li>
+      <li class="landing-stat"><span class="landing-stat-number">{viNumber(stats.tactics)}</span><span class="landing-stat-label">chiến pháp</span></li>
+    </ul>
+    <p class="landing-stats-note">Tổng hợp từ SGSDeck và người chơi · tham khảo, không phải phương án duy nhất.</p>
+  </section>
+
+  <section id="landing-need" class="landing-section landing-need" aria-labelledby="landing-need-title">
+    <div class="landing-section-head">
+      <p class="landing-kicker">Lối vào nhanh</p>
+      <h2 id="landing-need-title" class="landing-section-title">Bạn đang cần gì?</h2>
+      <p class="landing-section-sub">Ba câu hỏi người chơi hay tìm nhất, mỗi câu dẫn thẳng tới đúng mục.</p>
+    </div>
+    <ul class="landing-card-grid landing-card-grid-3">
       <li>
-        <a href="/doi-chuan/">Mùa này chơi đội nào? — Mở Đội chuẩn</a>
-        <p>Lọc theo mùa, loại binh và phe. Xem dạng thẻ để đọc kỹ, hoặc dạng bảng để so nhanh.</p>
+        <a class="landing-card" href="/doi-chuan/">
+          <span class="landing-card-index" aria-hidden="true">01</span>
+          <span class="landing-card-title">Mùa này chơi đội nào?</span>
+          <span class="landing-card-desc">Lọc theo mùa, loại binh và phe. Xem dạng thẻ để đọc kỹ, hoặc dạng bảng để so nhanh.</span>
+          <span class="landing-card-link">Mở Đội chuẩn<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></span>
+        </a>
       </li>
       <li>
-        <a href="/goi-y-doi/">Có sẵn tướng này thì ghép gì? — Gợi ý đội từ kho</a>
-        <p>Chụp màn hình kho tướng và chiến pháp. Công cụ chọn tối đa 5 đội không trùng tài nguyên.</p>
+        <a class="landing-card" href="/goi-y-doi/">
+          <span class="landing-card-index" aria-hidden="true">02</span>
+          <span class="landing-card-title">Có sẵn tướng này thì ghép gì?</span>
+          <span class="landing-card-desc">Chụp màn hình kho tướng và chiến pháp. Công cụ chọn tối đa 5 đội không trùng tài nguyên.</span>
+          <span class="landing-card-link">Gợi ý đội từ kho<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></span>
+        </a>
       </li>
       <li>
-        <a href="/tra-cuu/">Tướng, chiến pháp này làm gì? — Tra cứu</a>
-        <p>Gõ tên Việt, Hán-Việt hay chữ Hán. Xem chỉ số, thích tính binh chủng và hiệu quả chiến pháp.</p>
+        <a class="landing-card" href="/tra-cuu/">
+          <span class="landing-card-index" aria-hidden="true">03</span>
+          <span class="landing-card-title">Tướng, chiến pháp này làm gì?</span>
+          <span class="landing-card-desc">Gõ tên Việt, Hán-Việt hay chữ Hán. Xem chỉ số, thích tính binh chủng và hiệu quả chiến pháp.</span>
+          <span class="landing-card-link">Tra cứu<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></span>
+        </a>
       </li>
     </ul>
+  </section>
 
-    <h3>Tất cả mục</h3>
-    <ul class="landing-sections">
-      {SECTIONS.map((section) => (
-        <li><a href={section.path}>{section.label}{section.beta ? <span class="badge beta">Beta</span> : null}</a></li>
-      ))}
+  <section id="landing-vaults" class="landing-section landing-vaults" aria-labelledby="landing-vaults-title">
+    <div class="landing-section-head">
+      <p class="landing-kicker">Kho đội</p>
+      <h2 id="landing-vaults-title" class="landing-section-title landing-section-title-sm">Hai kho đội, một bộ lọc chung</h2>
+      <p class="landing-section-sub">Lọc theo mùa, loại binh, phe hoặc gõ tên tướng, chiến pháp, binh thư. Xem dạng thẻ để đọc kỹ, dạng bảng để so nhiều đội cùng lúc.</p>
+    </div>
+    <div class="landing-vaults-body">
+      <ul class="landing-vault-list">
+        <li>
+          <a class="landing-vault" href="/doi-chuan/">
+            <span class="landing-vault-term">Đội chuẩn</span>
+            <span class="landing-vault-desc"><strong>{copy.standardCount}</strong> {copy.standardNote}</span>
+          </a>
+        </li>
+        <li>
+          <a class="landing-vault" href="/doi-khac/">
+            <span class="landing-vault-term">Đội khác</span>
+            <span class="landing-vault-desc"><strong>{copy.otherCount}</strong> {copy.otherNote}</span>
+          </a>
+        </li>
+      </ul>
+      <div class="landing-table-preview">
+        <p class="landing-table-bar"><span class="landing-table-scope">Chế độ Bảng · {previews.table.scopeLabel}</span><span class="landing-table-count">{previews.table.count}</span></p>
+        <div class="landing-table-scroll" role="region" tabindex="0" aria-label="Bảng ví dụ đội hình">
+          <table class="reference-table">
+            <caption class="visually-hidden">Ví dụ chế độ Bảng</caption>
+            <tbody>
+              {previews.table.rows.map((row) => (
+                <tr>
+                  <th scope="row">{row.name}{row.meta ? <span class="landing-table-meta">{row.meta}</span> : null}</th>
+                  <td>{row.holders}</td>
+                  <td class="landing-table-score">{row.score}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="landing-land" class="landing-section landing-land" aria-labelledby="landing-land-title">
+    <div class="landing-section-head">
+      <p class="landing-kicker">Ngoài chiến trường</p>
+      <h2 id="landing-land-title" class="landing-section-title">Giữ đất và mở đất</h2>
+      <p class="landing-section-sub">Hai mục cho giai đoạn đầu mùa và cho tài khoản nuôi nhiều đội.</p>
+    </div>
+    <ul class="landing-card-grid landing-card-grid-2">
+      <li>
+        <a class="landing-card landing-card-feature" href="/cung-ton/">
+          <span class="landing-feature-title">Cùng Tồn</span>
+          <span class="landing-body">{copy.coexistNote}</span>
+          <span class="landing-card-link">Xem Cùng Tồn<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></span>
+        </a>
+      </li>
+      <li>
+        <a class="landing-card landing-card-feature" href="/khai-hoang/">
+          <span class="landing-feature-title">Khai hoang</span>
+          <span class="landing-body">{copy.khaiHoangNote}</span>
+          <span class="landing-card-link">Xem Khai hoang<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></span>
+        </a>
+      </li>
     </ul>
+  </section>
+
+  <section id="landing-tools" class="landing-section landing-tools" aria-labelledby="landing-tools-title">
+    <div class="landing-section-head">
+      <p class="landing-kicker">Công cụ cá nhân · Beta</p>
+      <h2 id="landing-tools-title" class="landing-section-title">Không chỉ tra, còn tính giúp bạn</h2>
+      <p class="landing-section-sub">Ba công cụ chạy trên chính dữ liệu của bạn — và nói rõ dữ liệu đi đâu.</p>
+    </div>
+    <ul class="landing-card-grid landing-card-grid-3">
+      <li>
+        <a class="landing-card landing-card-tool" href="/chieu-mo/">
+          <span class="landing-tool-title">Theo dõi chiêu mộ<span class="landing-beta">Beta</span></span>
+          <span class="landing-card-desc">Đếm lượt tới mốc bảo hiểm 5★ cho nhiều tài khoản, ghi lại tướng đã ra.</span>
+          <span class="landing-tool-note">Lưu ngay trong trình duyệt · xuất/nhập JSON để sao lưu</span>
+        </a>
+      </li>
+      <li>
+        <a class="landing-card landing-card-tool" href="/soi-doi/">
+          <span class="landing-tool-title">Soi đội từ ảnh<span class="landing-beta">Beta</span></span>
+          <span class="landing-card-desc">Gửi ảnh đội hình, nhận tên tướng và chiến pháp kèm các đội tương tự trong cẩm nang.</span>
+        </a>
+      </li>
+      <li>
+        <a class="landing-card landing-card-tool" href="/goi-y-doi/">
+          <span class="landing-tool-title">Gợi ý đội từ kho<span class="landing-beta">Beta</span></span>
+          <span class="landing-card-desc">Đọc ảnh kho, cho bạn sửa lại, rồi gợi ý đội theo meta hoặc theo số hột.</span>
+          <span class="landing-tool-note">AI chỉ đọc ảnh; việc chọn đội chạy ngay trên máy bạn</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <section id="tai-game" class="landing-section landing-download" aria-labelledby="tai-game-title">
+    <div class="landing-section-head">
+      <p class="landing-kicker">Tải game chính thức</p>
+      <h2 id="tai-game-title" class="landing-section-title">Chưa cài game? Tải Tam Quốc Chí – Chiến Lược</h2>
+      <p class="landing-section-sub">Liên kết lấy từ <a class="landing-inline-link" href={OFFICIAL_GAME_SITE_HREF} target="_blank" rel={EXTERNAL_REL}>website chính thức<svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"></path><path d="M20 4l-9 9"></path></svg><span class="visually-hidden">(mở tab mới)</span></a> của nhà phát hành. Cẩm nang không phân phối bản cài.</p>
+    </div>
+    <div class="landing-download-panel">
+      <figure class="landing-qr">
+        <span class="landing-qr-frame" role="img" aria-label="Mã QR tải game"><DownloadQr /></span>
+        <figcaption class="landing-qr-caption">Quét để tải trên điện thoại</figcaption>
+      </figure>
+      <div class="landing-store">
+        {storeButtons.map((entry) => (
+          <a class="landing-store-btn" href={entry.href} target="_blank" rel={EXTERNAL_REL}>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"></rect><line x1="11" y1="18" x2="13" y2="18"></line></svg>
+            <span class="landing-store-text"><span class="landing-store-kicker">Tải về trên</span><span class="landing-store-name">{entry.label}</span></span>
+            <span class="landing-store-arrow"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"></path><path d="M20 4l-9 9"></path></svg></span>
+            <span class="visually-hidden">(mở tab mới)</span>
+          </a>
+        ))}
+      </div>
+      <a class="landing-exe" href={DESKTOP_DOWNLOAD_LINK.href} target="_blank" rel={EXTERNAL_REL}>
+        <svg aria-hidden="true" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3.5" width="19" height="13" rx="2"></rect><line x1="8" y1="20.5" x2="16" y2="20.5"></line><line x1="12" y1="16.5" x2="12" y2="20.5"></line><line x1="12" y1="6.5" x2="12" y2="12.5"></line><polyline points="9.5 10 12 12.5 14.5 10"></polyline></svg>
+        <span class="landing-exe-text"><span class="landing-exe-title">Tải xuống phiên bản máy tính</span><span class="landing-exe-note">Windows · tệp cài .exe từ nhà phát hành</span></span>
+        <span class="landing-exe-arrow"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"></path><path d="M20 4l-9 9"></path></svg></span>
+        <span class="visually-hidden">(mở tab mới)</span>
+      </a>
+    </div>
+  </section>
+
+  <section id="landing-cta" class="landing-section landing-cta" aria-labelledby="landing-cta-title">
+    <span class="seal seal-cta" aria-hidden="true"><svg viewBox={SEAL_VIEW_BOX}><path d={SEAL_PATH} fill="currentColor"></path></svg></span>
+    <h2 id="landing-cta-title" class="landing-cta-title">Mở cẩm nang, chọn đội cho mùa này.</h2>
+    <p class="landing-cta-lead">Chạy ngay trên trình duyệt, dùng tốt trên điện thoại, có giao diện sáng và tối.</p>
+    <a class="landing-btn landing-btn-primary" href="/doi-chuan/">Mở cẩm nang<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></a>
   </section>
 </SiteLayout>

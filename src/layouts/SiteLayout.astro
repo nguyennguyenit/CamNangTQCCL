@@ -348,7 +348,7 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
 
     <slot name="notice" />
 
-    <main id="main-content" class="layout">
+    <main id="main-content" class:list={['layout', landing && 'layout-landing']}>
       <div class={contentClass}>
         {seasonScope ? <div id="season-controls" class="season-controls" aria-label="Phạm vi đội hình"></div> : null}
         <slot />
