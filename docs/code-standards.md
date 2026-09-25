@@ -42,7 +42,7 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
 - Query gameplay (`config`, `tier`, `sort`, `stars`) thuộc Cùng Tồn/soi đội/gợi ý kho; snapshot theo từng surface, không rò giữa hai nhóm.
 - Thu gọn là trình bày: mức điểm đang chọn vẫn hiển thị và vẫn lọc dù nằm ngoài tám mức đầu.
 - Disclosure phục hồi (`filters`, `score`, `alternatives`) chỉ nhận snapshot khớp đúng một URL root; storage lỗi không được chặn điều hướng.
-- Mobile dùng shared inline filter collapse và `mobile-section-menu.js`; không tham chiếu drawer module không tồn tại.
+- Mobile dùng shared inline filter collapse và `js/site-nav.js` (menu toàn màn hình); không tham chiếu drawer/module điều hướng không tồn tại.
 - Không thiết kế tương tác chỉ dựa vào hover; giữ touch target đủ dùng.
 - Khi thêm dialog/upload/status async: bổ sung focus management, keyboard activation và live region, kèm test.
 

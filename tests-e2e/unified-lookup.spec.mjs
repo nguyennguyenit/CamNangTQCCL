@@ -3,6 +3,11 @@
 // đồng thời giữ nguyên Team chuẩn mặc định, alias Team khác và history.
 import { test, expect } from '@playwright/test';
 
+/** Link điều hướng của mục: bảng desktop trong header hoặc menu mobile đang mở (footer cũng có link cùng tên). */
+function navLink(page, name, mobile = false) {
+  return (mobile ? page.locator('#section-menu-items') : page.locator('.site-nav')).getByRole('link', { name, exact: true });
+}
+
 const CJK = /[\u3400-\u9fff]/;
 const GROUPS = ['heroes', 'tactics', 'equipment', 'advisors', 'troop-mods', 'buildings'];
 
@@ -12,7 +17,7 @@ const cards = (page) => lookup(page).locator('.lookup-card');
 
 test('Tra cứu mở đúng trang mục và không tách lại hai bảng tra cứu cũ', async ({ page }) => {
   await page.goto('/tra-cuu/');
-  await expect(page.getByRole('link', { name: 'Tra cứu', exact: true })).toHaveAttribute('aria-current', 'page');
+  await expect(navLink(page, 'Tra cứu', false)).toHaveAttribute('aria-current', 'page');
   await expect(lookup(page)).toBeVisible();
   await expect(page.getByRole('link', { name: 'Tra cứu tướng' })).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'Tra cứu chiến pháp' })).toHaveCount(0);
@@ -22,11 +27,11 @@ test('Tra cứu mở đúng trang mục và không tách lại hai bảng tra c�
 
 test('nav link Tra cứu hỗ trợ điều hướng bằng bàn phím', async ({ page }) => {
   await page.goto('/doi-chuan/');
-  const lookupLink = page.getByRole('link', { name: 'Tra cứu', exact: true });
+  const lookupLink = navLink(page, 'Tra cứu');
   await lookupLink.focus();
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL('/tra-cuu/');
-  await expect(page.getByRole('link', { name: 'Tra cứu', exact: true })).toHaveAttribute('aria-current', 'page');
+  await expect(navLink(page, 'Tra cứu', false)).toHaveAttribute('aria-current', 'page');
 });
 
 test('sáu chip nhóm là nút có aria-pressed và deep link chọn đúng nhóm', async ({ page }) => {
@@ -56,9 +61,9 @@ test('legacy aliases select lookup groups and query history restores each group'
 test('quay lại Tra cứu bằng liên kết cập nhật route và bộ lọc', async ({ page }) => {
   await page.goto('/tra-cuu/?group=tactics');
   await expect(chip(page, 'tactics')).toHaveAttribute('aria-pressed', 'true');
-  await page.getByRole('link', { name: 'Đội chuẩn', exact: true }).click();
+  await navLink(page, 'Đội chuẩn').click();
   await expect(page).toHaveURL('/doi-chuan/');
-  await page.getByRole('link', { name: 'Tra cứu', exact: true }).click();
+  await navLink(page, 'Tra cứu').click();
   await expect(page).toHaveURL('/tra-cuu/');
   await expect(lookup(page).locator('.lookup-chip[aria-pressed="true"]')).toHaveCount(0);
   await expect(lookup(page).locator('[data-lookup-total]')).toContainText(/^\d+ kết quả$/);
@@ -119,7 +124,7 @@ test('landing giữ hash lạ và alias Team khác chuyển sang trang riêng', 
 test('chuyển sang Tra cứu rồi Back giữ nguyên truy vấn của Team khác', async ({ page }) => {
   await page.goto('/doi-khac/?q=cuong');
   await expect(page.getByRole('searchbox', { name: 'Tìm Đội khác', exact: true })).toHaveValue('cuong');
-  await page.getByRole('link', { name: 'Tra cứu', exact: true }).click();
+  await navLink(page, 'Tra cứu').click();
   await expect(page).toHaveURL('/tra-cuu/');
   await expect(lookup(page)).toBeVisible();
   await page.goBack();
@@ -224,8 +229,8 @@ for (const width of [320, 375, 768, 1280]) {
       await page.addInitScript((value) => localStorage.setItem('theme', value), theme);
       await page.goto('/tra-cuu/');
       if (width <= 820) await page.locator('#section-menu-toggle').click();
-      await expect(page.getByRole('link', { name: 'Tra cứu', exact: true })).toHaveAttribute('aria-current', 'page');
-      if (width <= 820) await page.locator('#section-menu-toggle').click();
+      await expect(navLink(page, 'Tra cứu', width <= 820)).toHaveAttribute('aria-current', 'page');
+      if (width <= 820) await page.locator('.site-menu-close').click();
       for (const group of GROUPS) {
         await chip(page, group).click();
         await expect(chip(page, group)).toHaveAttribute('aria-pressed', 'true');

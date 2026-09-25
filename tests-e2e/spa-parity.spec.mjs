@@ -145,6 +145,14 @@ async function waitForBoot(page) {
   }
 }
 
+/** Ba mục Beta nằm trong menu thả "Công cụ": mở menu trước khi bấm link thật. */
+const MENU_SECTIONS = ["recruit-tracker", "analyze", "roster-recommend"];
+async function clickSectionLink(page, name) {
+  const link = page.locator(`a[data-section="${name}"]`);
+  if (MENU_SECTIONS.includes(name) && !(await link.isVisible())) await page.locator("#nav-toggle-cong-cu").click();
+  await link.click();
+}
+
 async function expectActiveSection(page, name) {
   await expect(page.locator(`a[data-section="${name}"]`)).toHaveAttribute("aria-current", "page");
   await expect(page.locator("body")).toHaveAttribute("data-page-section", name);
@@ -231,7 +239,7 @@ test("section links navigate across pages and browser history", async ({ page })
 
   for (const name of sections) {
     if (name === "khaihoang") continue;
-    await page.locator(`a[data-section="${name}"]`).click();
+    await clickSectionLink(page, name);
     await expect(page).toHaveURL(sectionPaths[name]);
     await waitForBoot(page);
     await expectActiveSection(page, name);
@@ -564,7 +572,7 @@ test("legacy storage payloads survive load and sanitize forbidden roster fields 
   expect(savedTracker.activeAccountId).toBe("acc_sentinel");
   expect(savedTracker.pullEvents).toHaveLength(1);
 
-  await page.locator('a[data-section="roster-recommend"]').click();
+  await clickSectionLink(page, "roster-recommend");
   await expect(page).toHaveURL("/goi-y-doi/");
   await waitForBoot(page);
   await expectActiveSection(page, "roster-recommend");
@@ -655,26 +663,27 @@ test("Turnstile failure is surfaced only on its protected section pages", async 
   await expect(page.locator("script[src*='turnstile']")).toHaveCount(0);
 });
 
-test("mobile section menu closes after selection and Escape", async ({ page }) => {
+test("mobile menu closes after selection and Escape", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/doi-chuan/");
   await waitForBoot(page);
   const toggle = page.locator("#section-menu-toggle");
-  const nav = page.locator(".section-nav");
+  const overlay = page.locator("#section-menu-items");
 
   await toggle.click();
   await expect(toggle).toHaveAttribute("aria-expanded", "true");
-  await expect(nav).toHaveClass(/\bopen\b/);
-  await page.locator('a[data-section="coexist"]').click();
+  await expect(overlay).toBeVisible();
+  await overlay.getByRole("link", { name: "Cùng Tồn", exact: true }).click();
   await expect(page).toHaveURL("/cung-ton/");
   await waitForBoot(page);
-  await expect(nav).not.toHaveClass(/\bopen\b/);
+  await expect(overlay).toBeHidden();
   await expectActiveSection(page, "coexist");
 
   await toggle.click();
   await page.keyboard.press("Escape");
   await expect(toggle).toHaveAttribute("aria-expanded", "false");
-  await expect(nav).not.toHaveClass(/\bopen\b/);
+  await expect(overlay).toBeHidden();
+  await expect(toggle).toBeFocused();
 });
 
 test("Team chuẩn search remains URL-backed and filterable", async ({ page }) => {
@@ -769,4 +778,293 @@ test("synthetic HTTPS serves dist locally and characterizes legacy HTTP icons", 
     expect(response.status()).toBe(404);
     await expect(page.locator("body")).toHaveText("Not found");
   }
+});
+
+/* ===== Phase 3: header, menu thả, menu mobile, footer ===== */
+
+const dropdownMenu = (page, key) => page.locator(`#nav-menu-${key}`);
+const dropdownToggle = (page, key) => page.locator(`#nav-toggle-${key}`);
+
+test("menu thả mở độc quyền, Escape trả focus, bấm ra ngoài và Tab ra khỏi menu đều đóng", async ({ page }) => {
+  await page.goto("/doi-chuan/");
+  await waitForBoot(page);
+  const tools = dropdownToggle(page, "cong-cu");
+  const game = dropdownToggle(page, "game");
+
+  await tools.click();
+  await expect(tools).toHaveAttribute("aria-expanded", "true");
+  await expect(dropdownMenu(page, "cong-cu")).toBeVisible();
+  await expect(tools).toBeFocused();
+
+  await game.click();
+  await expect(game).toHaveAttribute("aria-expanded", "true");
+  await expect(dropdownMenu(page, "game")).toBeVisible();
+  await expect(dropdownMenu(page, "cong-cu")).toBeHidden();
+  await expect(tools).toHaveAttribute("aria-expanded", "false");
+
+  await page.keyboard.press("Escape");
+  await expect(game).toHaveAttribute("aria-expanded", "false");
+  await expect(dropdownMenu(page, "game")).toBeHidden();
+  await expect(game).toBeFocused();
+
+  await tools.click();
+  await expect(dropdownMenu(page, "cong-cu")).toBeVisible();
+  await page.locator("main").click({ position: { x: 5, y: 5 } });
+  await expect(dropdownMenu(page, "cong-cu")).toBeHidden();
+
+  // Bàn phím: mở bằng Enter, đi hết các mục rồi Tab ra ngoài thì menu đóng.
+  await tools.focus();
+  await page.keyboard.press("Enter");
+  await expect(dropdownMenu(page, "cong-cu")).toBeVisible();
+  for (let index = 0; index < 3; index += 1) await page.keyboard.press("Tab");
+  await expect(page.locator("#nav-menu-cong-cu .nav-menu-item").last()).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(dropdownMenu(page, "cong-cu")).toBeHidden();
+
+  // Menu thả không nuốt link: mở Game rồi bấm link nội bộ ở cột khác vẫn điều hướng bình thường.
+  await game.click();
+  await page.locator('a[data-section="coexist"]').click();
+  await expect(page).toHaveURL("/cung-ton/");
+  await waitForBoot(page);
+  await expect(dropdownMenu(page, "game")).toBeHidden();
+});
+
+test("menu mobile toàn màn hình khóa cuộn nền và trả focus về ☰", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/doi-chuan/");
+  await waitForBoot(page);
+  const toggle = page.locator("#section-menu-toggle");
+  const overlay = page.locator("#section-menu-items");
+
+  await page.evaluate(() => window.scrollTo(0, 250));
+  await toggle.click();
+  await expect(overlay).toBeVisible();
+  await expect(page.locator("html")).toHaveClass(/site-menu-open/);
+  await expect(page.locator(".site-menu-close")).toBeFocused();
+  expect(await page.evaluate(() => {
+    const before = window.scrollY;
+    window.scrollBy(0, 200);
+    return before === window.scrollY;
+  })).toBe(true);
+
+  // Nút sáng/tối trong đầu menu cùng một trạng thái với nút ở header.
+  const headerBefore = await page.locator("#theme-toggle").getAttribute("aria-pressed");
+  await page.locator("#theme-toggle-menu").click();
+  await expect(page.locator("#theme-toggle")).not.toHaveAttribute("aria-pressed", headerBefore);
+  expect(await page.locator("html").getAttribute("data-theme")).toBe(headerBefore === "true" ? "light" : "dark");
+
+  await page.keyboard.press("Escape");
+  await expect(overlay).toBeHidden();
+  await expect(page.locator("html")).not.toHaveClass(/site-menu-open/);
+  await expect(toggle).toBeFocused();
+
+  await toggle.click();
+  await page.locator(".site-menu-close").click();
+  await expect(overlay).toBeHidden();
+  expect(await page.evaluate(() => getComputedStyle(document.documentElement).overflow)).toBe("visible");
+});
+
+/** Mọi bề mặt shell: menu thả desktop, lớp phủ mobile, footer. */
+const OUTBOUND_SURFACES = {desktop: ".site-nav", mobile: "#section-menu-items", footer: ".site-footer"};
+
+test("link HTTP(S) ở cả ba bề mặt shell mở tab mới an toàn; mailto và link nội bộ thì không", async ({ page, context }) => {
+  for (const path of ["/", "/doi-chuan/", "/tra-cuu/"]) {
+    await page.goto(path);
+    await waitForBoot(page).catch(() => {});
+    const audit = await page.evaluate((surfaces) => {
+      const http = (href) => /^https?:/i.test(href ?? "");
+      const rows = [];
+      for (const [surface, selector] of Object.entries(surfaces)) {
+        for (const anchor of document.querySelectorAll(`${selector} a[href]`)) {
+          rows.push({
+            surface,
+            href: anchor.getAttribute("href"),
+            external: http(anchor.getAttribute("href")),
+            target: anchor.getAttribute("target"),
+            rel: anchor.getAttribute("rel") ?? "",
+            indicator: Boolean(anchor.querySelector("svg[aria-hidden='true']")),
+            notice: anchor.textContent.includes("(mở tab mới)"),
+          });
+        }
+      }
+      return rows;
+    }, OUTBOUND_SURFACES);
+
+    // Đúng số link HTTP(S) của từng bề mặt: 4 link chính thức + 3 cộng đồng + 3 tải game (menu),
+    // và 4 + 3 ở dải footer (link CSKH là mailto nên không tính).
+    expect(audit.filter((row) => row.surface === "desktop" && row.external).length).toBe(10);
+    expect(audit.filter((row) => row.surface === "mobile" && row.external).length).toBe(10);
+    expect(audit.filter((row) => row.surface === "footer" && row.external).length).toBe(7);
+
+    for (const row of audit) {
+      const where = `${path} ${row.surface} ${row.href}`;
+      if (row.external) {
+        expect(row.target, where).toBe("_blank");
+        expect(row.rel, where).toContain("noopener");
+        expect(row.rel, where).toContain("noreferrer");
+        expect(row.notice, `${where} thiếu chữ ẩn "(mở tab mới)"`).toBe(true);
+        expect(row.indicator, `${where} thiếu chỉ báo ↗`).toBe(true);
+      } else {
+        expect(row.target, `${where} không được mở tab mới`).toBeNull();
+        expect(row.notice, `${where} không được gắn chữ ẩn mở tab mới`).toBe(false);
+      }
+    }
+
+    // mailto CSKH: có chỉ báo ↗ theo artboard nhưng không target và không chữ ẩn.
+    const mailto = audit.filter((row) => row.href.startsWith("mailto:"));
+    expect(mailto.length).toBe(3);
+    for (const row of mailto) {
+      expect(row.target, row.href).toBeNull();
+      expect(row.notice, row.href).toBe(false);
+      expect(row.indicator, row.href).toBe(true);
+    }
+  }
+
+  // Một link menu tiêu biểu: mở tab mới thật, đích do test kiểm soát (không phụ thuộc dịch vụ ngoài).
+  await context.route("https://tqccl.vntth.com/**", (route) => route.fulfill({
+    contentType: "text/html",
+    body: "<!doctype html><title>popup-kiem-soat</title>ok",
+  }));
+  await page.goto("/");
+  await page.click("#nav-toggle-game");
+  const [popup] = await Promise.all([
+    page.waitForEvent("popup"),
+    page.locator('#nav-menu-game a[href="https://tqccl.vntth.com/"]').click(),
+  ]);
+  await popup.waitForLoadState("domcontentloaded");
+  expect(new URL(popup.url()).hostname).toBe("tqccl.vntth.com");
+  expect(await popup.title()).toBe("popup-kiem-soat");
+  expect(new URL(page.url()).hostname).toBe("127.0.0.1");
+  // Link trong menu vẫn để trình duyệt điều hướng và đóng menu thay đổi (disclosure).
+  await expect(page.locator("#nav-menu-game")).toBeHidden();
+  await expect(page.locator("#nav-toggle-game")).toHaveAttribute("aria-expanded", "false");
+  await popup.close();
+});
+
+test("aria-current đúng trên cả 8 trang mục", async ({ page }) => {
+  for (const name of sections) {
+    await page.goto(sectionPaths[name]);
+    await waitForBoot(page);
+    await expectActiveSection(page, name);
+    const active = page.locator(`a[data-section="${name}"]`);
+    await expect(active).toHaveAttribute("aria-current", "page");
+    for (const toggle of await page.locator(".nav-tab-toggle").all()) {
+      if (await active.isVisible()) break;
+      await toggle.click();
+    }
+    // Đúng một dấu "trang hiện tại" nhìn thấy được (footer và menu mobile không lặp).
+    await expect(active).toBeVisible();
+    await expect(page.locator('a[aria-current="page"]:visible')).toHaveCount(1);
+  }
+});
+
+test("footer dùng chung có trên Landing, trang mục, trang chi tiết và 404 với cùng ngày dữ liệu", async ({ page }) => {
+  const footer = page.locator(".site-footer");
+  const detailPath = legacyRoute(teamsFixture[0].id);
+  const dates = new Set();
+  for (const path of ["/", "/doi-chuan/", detailPath, "/doi-chuan/khong-ton-tai/"]) {
+    await page.goto(path);
+    await waitForBoot(page).catch(() => {});
+    await expect(footer).toBeVisible();
+    const chip = (await footer.locator(".footer-chip").textContent()).trim();
+    expect(chip).toMatch(/^Dữ liệu cập nhật \d{2}\/\d{2}\/\d{4}$/);
+    dates.add(chip);
+    await expect(footer).toContainText("Được xây dựng bởi");
+    await expect(footer.locator('a[href="/#nguon-du-lieu"]')).toHaveCount(1);
+    // Nút sáng/tối chỉ ở header; footer không còn hàng ghi chú "Nguồn dữ liệu"/"Góp ý".
+    await expect(footer.locator('[data-theme-toggle]')).toHaveCount(0);
+    await expect(page.locator("body")).not.toContainText("Góp ý");
+  }
+  expect(dates.size).toBe(1);
+});
+
+test("menu mobile giữ đủ 6 dòng Tra cứu và tiêu đề nhóm là link tới /tra-cuu/", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/tra-cuu/");
+  await waitForBoot(page);
+  await page.locator("#section-menu-toggle").click();
+  const overlay = page.locator("#section-menu-items");
+  await expect(overlay).toBeVisible();
+  const heading = overlay.locator(".site-menu-group-link", { hasText: "Tra cứu" });
+  await expect(heading).toHaveAttribute("aria-current", "page");
+  await expect(heading).toHaveAttribute("href", "/tra-cuu/");
+  const box = await heading.boundingBox();
+  expect(box.height).toBeGreaterThanOrEqual(44);
+  await expect(overlay.locator('a[href^="/tra-cuu/?group="]')).toHaveCount(6);
+  // Bấm dòng con vẫn vào đúng nhóm và menu đóng lại.
+  await overlay.locator('a[href="/tra-cuu/?group=tactics"]').click();
+  await expect(page).toHaveURL("/tra-cuu/?group=tactics");
+  await expect(page.locator("#section-menu-items")).toBeHidden();
+});
+
+test("Back/Forward cùng tài liệu đóng menu mobile và mở khóa cuộn", async ({ page }) => {
+  // Cùng Tồn có điều khiển mùa hiện ở desktop; chọn mùa rồi mới sang mobile mở lớp phủ.
+  await page.goto("/cung-ton/");
+  await waitForBoot(page);
+  const season = page.locator("#season-scenario");
+  const options = await season.locator("option").evaluateAll((nodes) => nodes.map((node) => node.value));
+  const first = options[0];
+  const second = options.find((value) => value && value !== first);
+  const seasonQuery = (value) => new RegExp(`scenario=${value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`);
+
+  await season.selectOption(second);
+  await expect(page).toHaveURL(seasonQuery(second));
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.locator("#section-menu-toggle").click();
+  await expect(page.locator("#section-menu-items")).toBeVisible();
+  await expect(page.locator("html")).toHaveClass(/site-menu-open/);
+
+  await page.goBack();
+  await expect(page).not.toHaveURL(seasonQuery(second));
+  await expect(page.locator("#section-menu-items")).toBeHidden();
+  await expect(page.locator("#section-menu-toggle")).toHaveAttribute("aria-expanded", "false");
+  await expect(page.locator("html")).not.toHaveClass(/site-menu-open/);
+  expect(await page.evaluate(() => getComputedStyle(document.body).overflow)).not.toBe("hidden");
+  // Cuộn nền phải dùng được lại (`scroll-behavior: smooth` nên ép `instant` để đo tức thì).
+  const scrolling = await page.evaluate(() => {
+    window.scrollTo({top: 0, behavior: "instant"});
+    const before = window.scrollY;
+    window.scrollTo({top: 240, behavior: "instant"});
+    return {before, after: window.scrollY, room: document.scrollingElement.scrollHeight - window.innerHeight};
+  });
+  expect(scrolling.room).toBeGreaterThan(0);
+  expect(scrolling.after).toBeGreaterThan(scrolling.before);
+
+  await page.goForward();
+  await expect(page).toHaveURL(seasonQuery(second));
+  await expect(page.locator("#section-menu-items")).toBeHidden();
+  await expect(page.locator("html")).not.toHaveClass(/site-menu-open/);
+
+  // Đối chiếu lại giá trị mùa do URL sở hữu ở bề rộng desktop.
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await expect(season).toHaveValue(second);
+  await page.goBack();
+  await expect(season).toHaveValue(first);
+});
+
+test("rời trang bằng điều hướng khác tài liệu rồi quay lại không giữ lớp phủ hay khóa cuộn", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/doi-chuan/");
+  await waitForBoot(page);
+  await page.locator("#section-menu-toggle").click();
+  await expect(page.locator("html")).toHaveClass(/site-menu-open/);
+
+  await page.goto("/tra-cuu/");
+  await waitForBoot(page);
+  await page.goBack();
+  await waitForBoot(page);
+
+  await expect(page.locator("#section-menu-items")).toBeHidden();
+  await expect(page.locator("#section-menu-toggle")).toHaveAttribute("aria-expanded", "false");
+  await expect(page.locator("html")).not.toHaveClass(/site-menu-open/);
+  expect(await page.evaluate(() => getComputedStyle(document.body).overflow)).not.toBe("hidden");
+  // Cuộn nền phải dùng được lại (`scroll-behavior: smooth` nên ép `instant` để đo tức thì).
+  const scrolling = await page.evaluate(() => {
+    window.scrollTo({top: 0, behavior: "instant"});
+    const before = window.scrollY;
+    window.scrollTo({top: 240, behavior: "instant"});
+    return {before, after: window.scrollY, room: document.scrollingElement.scrollHeight - window.innerHeight};
+  });
+  expect(scrolling.room).toBeGreaterThan(0);
+  expect(scrolling.after).toBeGreaterThan(scrolling.before);
 });

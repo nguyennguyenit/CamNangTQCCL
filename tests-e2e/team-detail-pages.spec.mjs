@@ -599,7 +599,8 @@ test('unknown routes serve the static 404 instead of the root shell',async({page
   await page.locator('#theme-toggle').click();
   await expect.poll(()=>page.evaluate(()=>document.documentElement.dataset.theme)).not.toBe(themeBefore);
   await page.locator('#section-menu-toggle').click();
-  await expect(page.locator('.section-nav')).toHaveClass(/open/);
+  await expect(page.locator('#section-menu-toggle')).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('#section-menu-items')).toBeVisible();
 
   const teams=await rawTeams(request);
   const nested=await request.get(`${legacyPath(await routeHandles(request),teams[0].id)}data/teams.json`);

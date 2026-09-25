@@ -42,12 +42,50 @@ export function assertFrontendShellContract(html, {
       if (other !== section) assert.ok(!ids.has(`section-${other}`), `${section} must not mount ${other}`);
     }
     assert.match(html, new RegExp(`id=["']section-${section}["'][^>]+class=["']section active["']`));
-    assert.match(html, new RegExp(`class=["']nav-tab active["'][^>]+data-section=["']${section}["'][^>]+aria-current=["']page["']`));
+    // Mục đang xem: link phẳng hoặc mục trong menu thả — luôn kèm data-section + aria-current.
+    assert.match(html, new RegExp(`class=["'][^"']*\\bactive\\b[^"']*["'][^>]*data-section=["']${section}["'][^>]*aria-current=["']page["']`));
   }
 
   assert.match(html, /id=["']section-menu-toggle["']/);
   assert.match(html, /aria-controls=["']section-menu-items["']/);
   assert.match(html, /aria-expanded=["']false["']/);
   assert.match(html, /id=["']section-menu-items["']/);
-  assert.match(html, /id=["']theme-toggle["']/);
+  // Một bộ điều khiển theme, hai nút: nút header và nút trong đầu menu mobile.
+  assert.match(html, /id=["']theme-toggle["'][^>]*data-theme-toggle/);
+  assert.match(html, /id=["']theme-toggle-menu["'][^>]*data-theme-toggle/);
+  assert.equal((html.match(/data-theme-toggle/g) ?? []).length, 2);
+
+  // Menu thả: mỗi nút có aria-controls trỏ tới panel đang ẩn (không có JS thì mọi mục vẫn vào được từ footer).
+  const menuButtons = [...html.matchAll(/<button[^>]*data-dropdown-button[^>]*>/g)].map(([tag]) => tag);
+  assert.ok(menuButtons.length >= 2, "desktop phải có ít nhất 2 menu thả (Công cụ, Game)");
+  for (const tag of menuButtons) {
+    const controls = tag.match(/aria-controls=["']([^"']+)["']/)?.[1];
+    assert.ok(controls, `nút menu thả phải có aria-controls: ${tag}`);
+    assert.match(html, new RegExp(`id=["']${controls}["'][^>]*hidden`));
+  }
+
+  // Footer dùng chung mọi pageKind: chip ngày build, cột link, dải Game chính thức, chữ credit đã duyệt.
+  assert.match(html, /class=["'][^"']*site-footer/);
+  assert.match(html, /class=["']footer-chip["'][^>]*>\s*<span[^>]*footer-dot[^>]*><\/span>Dữ liệu cập nhật \d{2}\/\d{2}\/\d{4}/);
+  assert.match(html, /id=["']tai-game["']|href=["']\/#tai-game["']/);
+  assert.match(html, /href=["']\/#nguon-du-lieu["']/);
+  assert.match(html, /Được xây dựng bởi/);
+  assert.doesNotMatch(html, /Góp ý/);
+  assert.doesNotMatch(html, /\[KÊNH LIÊN HỆ\]/);
+
+  // Link ra ngoài mở tab mới luôn kèm cả hai giá trị rel; không dùng ảnh/logo nhà phát hành.
+  const targetBlank = [...html.matchAll(/<a\b[^>]*target=["']_blank["'][^>]*>/g)].map(([tag]) => tag);
+  assert.ok(targetBlank.length >= 17, `shell phải mở tab mới cho mọi link HTTP(S): ${targetBlank.length}`);
+  for (const tag of targetBlank) {
+    assert.match(tag, /href=["']https?:/i, `chỉ link HTTP(S) mới mở tab mới: ${tag}`);
+    assert.match(tag, /rel=["'][^"']*noopener[^"']*["']/, `thiếu noopener: ${tag}`);
+    assert.match(tag, /rel=["'][^"']*noreferrer[^"']*["']/, `thiếu noreferrer: ${tag}`);
+  }
+  // mailto không mở tab mới và không được gắn chữ ẩn "(mở tab mới)".
+  const mailto = [...html.matchAll(/<a\b[^>]*href=["']mailto:[^"']*["'][^>]*>[\s\S]{0,400}?<\/a>/g)].map(([tag]) => tag);
+  assert.ok(mailto.length >= 1, 'shell phải có link mailto CSKH');
+  for (const tag of mailto) {
+    assert.doesNotMatch(tag, /target=["']_blank["']/, `mailto không mở tab mới: ${tag}`);
+    assert.doesNotMatch(tag, /mở tab mới/, `mailto không có chữ ẩn mở tab mới: ${tag}`);
+  }
 }

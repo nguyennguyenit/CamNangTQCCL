@@ -1,8 +1,8 @@
-// Chrome dùng chung cho mọi trang: theme và menu section. Không tải dữ liệu gameplay.
+// Chrome dùng chung cho mọi trang: theme và điều hướng (menu thả + menu mobile). Không tải dữ liệu gameplay.
 // Đây là nơi duy nhất gắn nút đổi giao diện; script inline trong <head> của SiteLayout đặt
 // `data-theme` trước stylesheet để trang không nháy, còn ở đây chỉ áp lại và đổi giá trị.
 
-import { createMobileSectionMenu } from './mobile-section-menu.js';
+import { createSiteNav } from './site-nav.js';
 
 const THEME_KEY = 'theme';
 
@@ -36,23 +36,27 @@ function systemTheme() {
 
 export function initSiteChrome({documentTarget = document, windowTarget = globalThis} = {}) {
   const root = documentTarget.documentElement;
-  const toggle = documentTarget.querySelector('#theme-toggle');
+  // Hai nút cùng một bộ điều khiển: `#theme-toggle` ở header (trang trong) và nút trong đầu menu mobile.
+  const toggles = [...documentTarget.querySelectorAll('[data-theme-toggle]')];
   const applyTheme = (theme) => {
     root.dataset.theme = theme;
     root.style.colorScheme = theme;
-    if (!toggle) return;
     const dark = theme === 'dark';
-    toggle.setAttribute('aria-pressed', String(dark));
-    toggle.setAttribute('aria-label', dark ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối');
+    for (const toggle of toggles) {
+      toggle.setAttribute('aria-pressed', String(dark));
+      toggle.setAttribute('aria-label', dark ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối');
+    }
   };
   const syncTheme = () => applyTheme(readStoredTheme() || systemTheme());
   syncTheme();
-  toggle?.addEventListener('click', () => {
-    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
-    applyTheme(next);
-    // Ghi hỏng vẫn phải đổi được giao diện trong phiên hiện tại.
-    storeTheme(next);
-  });
+  for (const toggle of toggles) {
+    toggle.addEventListener('click', () => {
+      const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      applyTheme(next);
+      // Ghi hỏng vẫn phải đổi được giao diện trong phiên hiện tại.
+      storeTheme(next);
+    });
+  }
   // Back/forward từ bfcache dựng lại DOM cũ: đọc lại lựa chọn thay vì giữ theme đã chụp.
   windowTarget.addEventListener?.('pageshow', syncTheme);
   // Tab khác đổi theme (kể cả xóa khóa: `key === null`).
@@ -60,11 +64,6 @@ export function initSiteChrome({documentTarget = document, windowTarget = global
     if (!event || event.key === THEME_KEY || event.key === null) syncTheme();
   });
 
-  const nav = documentTarget.querySelector('.section-nav');
-  const menuToggle = documentTarget.querySelector('#section-menu-toggle');
-  const tabs = [...documentTarget.querySelectorAll('.nav-tab')];
-  const menu = nav && menuToggle ? createMobileSectionMenu({nav, toggle: menuToggle, tabs, documentTarget}) : null;
-  menu?.setActive(tabs.find((tab) => tab.classList.contains('active'))?.dataset.section);
-
-  return {menu, applyTheme, syncTheme};
+  const nav = createSiteNav({documentTarget, windowTarget});
+  return {nav, applyTheme, syncTheme};
 }

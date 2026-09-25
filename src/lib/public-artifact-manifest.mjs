@@ -32,7 +32,7 @@ export const PUBLIC_ARTIFACTS = Object.freeze([
   entry("js", "match-dict"),
   entry("js", "unified-lookup"),
   entry("js", "meta-cu"),
-  entry("js", "mobile-section-menu"),
+  entry("js", "site-nav"),
   entry("js", "recruit-tracker-store"),
   entry("js", "recruit-tracker"),
   entry("js", "recommended-reference-render"),

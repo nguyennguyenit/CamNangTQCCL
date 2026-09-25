@@ -1,7 +1,7 @@
 ---
 phase: 3
 title: "Header, menu thả, menu mobile, footer"
-status: pending
+status: completed
 priority: P1
 effort: "2d"
 dependencies: [2]

@@ -543,12 +543,18 @@ test("trang Tra cứu chỉ còn một tab và một mount lookup", async () => 
   assert.match(sections[1], /\{id:\s*'lookup',\s*label:\s*'Tra cứu',/);
   assert.doesNotMatch(sections[1], /\bid:\s*'(?:heroes|tactics)'/);
 
-  const navLink = layout.match(/\{SECTIONS\.map\(\(section\) => \(\s*<a\b([\s\S]*?)<\/a>\s*\)\)\}/);
+  const navLink = layout.match(/\{!landing && topSections\.map\(\(section\) => \([\s\S]*?<a\b([\s\S]*?)<\/a>/);
   assert.ok(navLink, "nav phải kết xuất mỗi mục thành liên kết <a>");
   assert.match(navLink[1], /data-section=\{section\.id\}/);
   assert.match(navLink[1], /href=\{section\.path\}/);
   assert.match(navLink[1], /aria-current=\{section\.id === activeSection \? 'page' : null\}/);
   assert.match(navLink[1], />\{section\.label\}/);
+  // Ba mục Beta nằm trong menu thả "Công cụ": vẫn là liên kết thật, cùng bộ thuộc tính nav.
+  const toolLink = layout.match(/section\.entries\.map\(\(entry\) => \([\s\S]*?<a\b([\s\S]*?)>\s*<span class="nav-menu-label"/);
+  assert.ok(toolLink, "mục trong menu thả phải là liên kết <a>");
+  assert.match(toolLink[1], /data-section=\{entry\.id\}/);
+  assert.match(toolLink[1], /href=\{entry\.href\}/);
+  assert.match(toolLink[1], /aria-current=\{entry\.id && entry\.id === activeSection \? 'page' : null\}/);
 
   const mounts = [...page.matchAll(/<section\b[^>]*\bid=["'](section-[^"']+)["'][^>]*>/g)]
     .map((match) => match[1]);

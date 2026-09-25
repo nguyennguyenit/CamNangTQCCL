@@ -28,10 +28,13 @@ const DEFAULT_BASE = 'http://127.0.0.1:4321';
  * selector cần bấm trước khi chụp để artboard ở trạng thái mở (menu, bộ lọc, hồ sơ).
  */
 const PAIRS = [
-  // Phase 3 — header dùng chung: artboard trang cắt đúng dải header.
+  // Phase 3 — header dùng chung (cắt dải header) và footer dùng chung (cắt đáy trang).
   { phase: 3, artboard: 'Main', path: '/doi-chuan/', width: 1440, clip: { y: 0, height: 72 }, ready: '.site-header' },
-  { phase: 3, artboard: 'LandingMenu', path: '/', width: 1440, ready: '.site-header', setup: ['#section-menu-toggle'] },
+  { phase: 3, artboard: 'MobileList', path: '/doi-chuan/', width: 390, clip: { y: 0, height: 64 }, ready: '.site-header' },
+  { phase: 3, artboard: 'LandingMenu', path: '/', width: 1440, ready: '.site-header', setup: ['#nav-toggle-doi-hinh'] },
   { phase: 3, artboard: 'LandingMenuMobile', path: '/', width: 390, ready: '.site-header', setup: ['#section-menu-toggle'] },
+  { phase: 3, artboard: 'Landing', path: '/', width: 1440, clip: { bottom: 580 }, ready: '.site-footer' },
+  { phase: 3, artboard: 'LandingMobile', path: '/', width: 390, clip: { bottom: 1280 }, ready: '.site-footer' },
   { phase: 4, artboard: 'Landing', path: '/', width: 1440, ready: '#landing-quick' },
   { phase: 4, artboard: 'LandingMobile', path: '/', width: 390, ready: '#landing-quick' },
   { phase: 5, artboard: 'Main', path: '/doi-chuan/', width: 1440, ready: '#section-team-chuan .reference-team-card' },
@@ -113,13 +116,20 @@ async function closeServer(server) {
   await new Promise((done) => server.close(done));
 }
 
-/** Ảnh ghép: artboard (trái) cạnh localhost (phải), cắt theo `clip` nếu có. */
+/**
+ * Ảnh ghép: artboard (trái) cạnh localhost (phải).
+ * `clip` cắt theo đỉnh ảnh (`{y, height}`) hoặc theo đáy (`{bottom}` — footer, chiều cao hai ảnh khác nhau).
+ */
 function compositeHtml({ artboard, width, clip }) {
+  const frameStyle = clip
+    ? (clip.bottom ? `height:${clip.bottom}px;display:flex;align-items:flex-end` : `height:${clip.height}px`)
+    : '';
+  const imageStyle = clip?.bottom ? ' style="flex:none"' : (clip?.y ? ` style="margin-top:-${clip.y}px"` : '');
   const frame = (label, src) => `
     <figure>
       <figcaption>${label}</figcaption>
-      <div class="frame"${clip ? ` style="height:${clip.height}px"` : ''}>
-        <img src="${src}" width="${width}"${clip ? ` style="margin-top:-${clip.y}px"` : ''} alt="">
+      <div class="frame"${frameStyle ? ` style="${frameStyle}"` : ''}>
+        <img src="${src}" width="${width}"${imageStyle} alt="">
       </div>
     </figure>`;
   return `<!doctype html><meta charset="utf-8"><title>${artboard} — so ảnh</title>
@@ -167,7 +177,7 @@ async function capturePairs(options) {
       }
       await copyFile(join(SCREENS_DIR, `${pair.artboard}.png`), join(runDir, `${pair.artboard}.artboard.png`));
       await writeFile(join(runDir, `${pair.artboard}.html`), compositeHtml(pair));
-      const shotContext = await newContext(browser, { theme: options.theme, width: pair.width * 2 + 16 });
+      const shotContext = await newContext(browser, { theme: options.theme, width: pair.width * 2 + 16, height: 120 });
       try {
         const shotPage = await shotContext.newPage();
         await shotPage.goto(`${origin}/${pair.artboard}.html`, { waitUntil: 'load' });
@@ -335,16 +345,18 @@ async function probeTokens(options) {
     const pages = new Map();
     for (const [key, component] of components) {
       for (const probe of probesOf(component)) {
-        const page = probe.page ?? '/';
+        // Trạng thái chỉ có ở mobile (menu toàn màn hình) khai `width`; mặc định 1440.
+        const page = `${probe.page ?? '/'}@${probe.width ?? 1440}`;
         if (!pages.has(page)) pages.set(page, []);
         pages.get(page).push([key, component, probe]);
       }
     }
     for (const [page, entries] of pages) {
-      const context = await newContext(browser, { theme: options.theme, width: 1440, height: 1000 });
+      const [path, width] = page.split('@');
+      const context = await newContext(browser, { theme: options.theme, width: Number(width), height: 1000 });
       try {
         const tab = await context.newPage();
-        await tab.goto(`${options.base}${page}`, { waitUntil: 'domcontentloaded' });
+        await tab.goto(`${options.base}${path}`, { waitUntil: 'domcontentloaded' });
         let settled = false;
         for (const [key, component, probe] of entries) {
           // Chờ phần tử đầu tiên cần có mặt (mốc `ready`, hoặc bước setup, hoặc chính phần tử đo):
@@ -386,7 +398,7 @@ async function probeTokens(options) {
           if (probe.setup?.length) {
             // Probe có thao tác đổi trạng thái (bật chip, mở menu) — nạp lại URL gốc của trang (bỏ query do
             // thao tác sinh ra) để probe sau vẫn đo trạng thái đầu.
-            await tab.goto(`${options.base}${page}`, { waitUntil: 'domcontentloaded' });
+            await tab.goto(`${options.base}${path}`, { waitUntil: 'domcontentloaded' });
             settled = false;
           }
         }

@@ -1,6 +1,11 @@
 import { lookupProfile } from "./lookup-detail.js";
 
 export const LOOKUP_GROUPS = Object.freeze(["heroes", "tactics", "equipment", "advisors", "troop-mods", "buildings"]);
+/** Nhãn nhóm dùng chung cho chip ở trang Tra cứu và menu điều hướng (SiteLayout). */
+export const LOOKUP_GROUP_LABELS = Object.freeze({
+  heroes: "Tướng", tactics: "Chiến pháp", equipment: "Trang bị",
+  advisors: "Quân sư", "troop-mods": "Cải tạo binh chủng", buildings: "Công trình",
+});
 const GROUP_BY_KIND = Object.freeze({
   hero: "heroes", tactic: "tactics", equipment: "equipment", "equipment-special": "equipment",
   advisor: "advisors", "troop-mod": "troop-mods", building: "buildings",
@@ -93,10 +98,7 @@ export function initUnifiedLookup(bundle, mount) {
   let query = "";
   let route = parseLookupQuery(location.search);
   let opener = null;
-  const labels = {
-    heroes: "Tướng", tactics: "Chiến pháp", equipment: "Trang bị",
-    advisors: "Quân sư", "troop-mods": "Cải tạo binh chủng", buildings: "Công trình",
-  };
+  const labels = LOOKUP_GROUP_LABELS;
   const heading = document.createElement("h2");
   heading.textContent = "Tra cứu";
   const search = document.createElement("input");

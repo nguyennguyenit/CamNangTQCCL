@@ -1,4 +1,10 @@
 import { fileURLToPath } from 'node:url';
+
+/** Link điều hướng của mục: bảng desktop trong header hoặc menu mobile đang mở (footer cũng có link cùng tên). */
+function navLink(page, name, mobile = false) {
+  return (mobile ? page.locator('#section-menu-items') : page.locator('.site-nav')).getByRole('link', { name, exact: true });
+}
+
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -46,7 +52,7 @@ test('real scenario-only scope remains reference and preserves Khai hoang', asyn
   }
   await page.locator('a[data-section="khaihoang"]').click();
   await expect(page).toHaveURL('/khai-hoang/');
-  await expect(page.getByRole('link', {name:'Khai hoang', exact:true})).toHaveAttribute('aria-current','page');
+  await expect(navLink(page, 'Khai hoang')).toHaveAttribute('aria-current','page');
 });
 
 import { createHash } from 'node:crypto';

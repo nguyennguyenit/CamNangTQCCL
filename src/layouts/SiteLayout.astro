@@ -1,8 +1,22 @@
 ---
 import { seasonArtifactHashes, websiteDisplayPublicationSnapshot } from '../lib/root-static-artifacts';
 import { teamDetailCatalog } from '../lib/team-detail-routes';
+import { buildDateVi } from '../lib/build-date';
+import { SEAL_PATH, SEAL_VIEW_BOX } from '../lib/seal';
+import {
+  COMMUNITY_LINKS,
+  DATA_SOURCE_HREF,
+  DOWNLOAD_HREF,
+  DOWNLOAD_LINKS,
+  EXTERNAL_REL,
+  OFFICIAL_LINKS,
+  type SiteLink,
+} from '../lib/official-links';
+import { LOOKUP_GROUPS, LOOKUP_GROUP_LABELS } from '../../js/unified-lookup.js';
 // Vỏ trang dùng chung: Landing, 8 trang mục và các trang chi tiết đều đi qua đây nên phần đầu
 // trang chỉ tồn tại một bản. Trang mục khai `data-page-section` để js/app.js biết mục cần mount.
+// Header có hai biến thể (`pageKind`): Landing nhiều menu thả, trang trong một hàng link + 2 menu.
+// Menu thả và menu mobile do `js/site-nav.js` điều khiển; chữ hiển thị khai obligation `authored-vi`.
 interface Props {
   title: string;
   description: string;
@@ -28,7 +42,7 @@ const {
 // Chỉ trang có URL công khai ổn định mới khai canonical; 404 cố ý bỏ trống cả canonical lẫn og:url.
 const canonicalHref = canonicalUrl ? new URL(canonicalUrl).href : null;
 
-const BRAND = 'Cẩm Nang Game Tam Quốc Chí - Chiến Lược';
+const LOGO_TITLE = 'Cẩm Nang Tam Quốc Chí';
 const SECTIONS = [
   {id: 'team-chuan', label: 'Đội chuẩn', path: '/doi-chuan/'},
   {id: 'team-khac', label: 'Đội khác', path: '/doi-khac/'},
@@ -41,12 +55,126 @@ const SECTIONS = [
 ];
 /** Mục có phạm vi mùa + chi tiết cấu hình: chỉ 5 trang này cần hai payload bên dưới. */
 const SEASON_SECTIONS = ['team-chuan', 'team-khac', 'coexist', 'analyze', 'roster-recommend'];
+/** Mô tả một dòng cho mục menu (artboard LandingMenu · LandingMenuMobile). */
+const SECTION_DESCRIPTIONS: Record<string, string> = {
+  'team-chuan': 'Cấu hình đội theo mùa nguồn',
+  'team-khac': 'Đội người chơi tổng hợp và đối chiếu',
+  coexist: 'Các nhóm đội dùng cùng lúc',
+  khaihoang: 'Hướng dẫn đánh đất theo từng đội',
+  lookup: 'Xem tướng, chiến pháp, trang bị, quân sư',
+  'recruit-tracker': 'Mốc bảo hiểm 5★, nhiều tài khoản',
+  analyze: 'Đọc đội từ ảnh chụp màn hình',
+  'roster-recommend': 'Tối đa 5 đội không trùng tài nguyên',
+};
+const LOOKUP_DESCRIPTIONS: Record<string, string> = {
+  heroes: 'Chỉ số, binh chủng và chiến pháp',
+  tactics: 'Hiệu quả và cách dùng chiến pháp',
+  equipment: 'Trang bị theo ô và phẩm chất',
+  advisors: 'Hiệu ứng và cách dùng quân sư',
+  'troop-mods': 'Cải tạo binh chủng và gợi ý build',
+  buildings: 'Công trình theo cấp và hiệu quả',
+};
+const FOOTER_INTRO =
+  'Cẩm nang cộng đồng cho người chơi Tam Quốc Chí Chiến Lược: đội hình theo mùa, tra cứu tướng và chiến pháp, cùng vài công cụ tính giúp.';
+const COPYRIGHT =
+  '© 2026 Cẩm Nang TQCCL · Cẩm nang tra cứu build tướng dành cho game Tam Quốc Chí - Chiến Lược';
+const CREDIT = 'Nguyễn Nguyên · HLxThanos · Team 2 bang Huynh Đệ';
+const OPEN_GUIDE_LABEL = 'Mở cẩm nang';
+const OPEN_GUIDE_SHORT_LABEL = 'Mở';
+const OPEN_GUIDE_MOBILE_LABEL = 'Mở Đội chuẩn';
+const FOOTER_SOURCE_LABEL = 'Nguồn dữ liệu';
+const ABOUT_LABEL = 'Về cẩm nang';
+const MENU_ABOUT_LABEL = 'Về cẩm nang · nguồn dữ liệu';
+const MENU_LABEL = 'Menu chính';
+const MENU_OPEN_LABEL = 'Mở menu trang';
+const MENU_CLOSE_LABEL = 'Đóng menu';
+const FIGURES_LABEL = 'Đội hình';
+const TOOLS_LABEL = 'Công cụ';
+const TOOLS_TITLE = 'Công cụ · Beta';
+const GAME_LABEL = 'Game';
+const GAME_TITLE = 'Game chính thức · liên kết của nhà phát hành';
+const GAME_STRIP_TITLE = 'Game chính thức';
+const COMMUNITY_TITLE = 'Cộng đồng game';
+const DOWNLOAD_TITLE = 'Tải game';
+const UPDATED_LABEL = 'Dữ liệu cập nhật';
+
 // `:root` không đặt sẵn data-theme: script inline dưới đây quyết định trước khi stylesheet chạy.
 const pageSection = pageKind === 'section' ? activeSection : null;
 const seasonScope = pageSection !== null && SEASON_SECTIONS.includes(pageSection);
 const contentClass = pageKind === 'detail' ? 'content detail-content' : 'content';
 const website = await websiteDisplayPublicationSnapshot();
 const seasonHashes = seasonScope ? await seasonArtifactHashes() : null;
+const updatedOn = buildDateVi();
+const topSections = SECTIONS.slice(0, 5);
+const toolSections = SECTIONS.slice(5);
+const landing = pageKind === 'landing';
+/** Mục điều hướng: `data-section` chỉ đặt ở menu desktop để danh sách shell giữ đúng 8 mục. */
+const sectionEntry = (section: (typeof SECTIONS)[number]) => ({
+  id: section.id,
+  label: section.label,
+  href: section.path,
+  description: SECTION_DESCRIPTIONS[section.id],
+  beta: Boolean(section.beta),
+});
+const LOOKUP_LABELS: Record<string, string> = LOOKUP_GROUP_LABELS;
+const lookupEntries = LOOKUP_GROUPS.map((group: string) => ({
+  label: LOOKUP_LABELS[group],
+  href: `/tra-cuu/?group=${group}`,
+  description: LOOKUP_DESCRIPTIONS[group],
+}));
+const lookupEntry = sectionEntry(SECTIONS.find((section) => section.id === 'lookup')!);
+type Entry = {label: string; href: string; description?: string; id?: string; current?: boolean; external?: boolean; offsite?: boolean; beta?: boolean};
+type MenuSection = {title?: string; titleHref?: string; titleCurrent?: boolean; titleBadge?: boolean; entries: Entry[]; chips?: boolean; rows?: boolean; twoColumn?: boolean};
+type Menu = {key: string; label: string; width: number; beta?: boolean; sections: MenuSection[]};
+/** `external` = mở tab mới (http/https); `offsite` = đi khỏi site (http/https/mailto) nên cần chỉ báo ↗. */
+const external = (group: SiteLink): Entry => ({
+  label: group.label,
+  href: group.href,
+  description: group.description,
+  external: group.external,
+  offsite: group.external || group.href.startsWith('mailto:'),
+});
+const gameMenuSections: MenuSection[] = [
+  {title: GAME_TITLE, entries: OFFICIAL_LINKS.map(external)},
+  {title: COMMUNITY_TITLE, entries: COMMUNITY_LINKS.map(external), chips: true},
+  {title: DOWNLOAD_TITLE, entries: DOWNLOAD_LINKS.map(external), chips: true},
+];
+const toolsMenuSection: MenuSection = {
+  title: TOOLS_TITLE,
+  entries: toolSections.map(sectionEntry),
+};
+/** Menu thả desktop: Landing có 4 nhóm, trang trong có link phẳng + 2 nhóm. */
+const menus: Menu[] = landing
+  ? [
+      {key: 'doi-hinh', label: FIGURES_LABEL, width: 320, sections: [{entries: topSections.slice(0, 4).map(sectionEntry)}]},
+      {
+        key: 'tra-cuu',
+        label: SECTIONS[4].label,
+        width: 480,
+        sections: [{entries: [lookupEntry, ...lookupEntries], twoColumn: true}],
+      },
+      {key: 'cong-cu', label: TOOLS_LABEL, beta: true, width: 340, sections: [toolsMenuSection]},
+      {key: 'game', label: GAME_LABEL, width: 500, sections: gameMenuSections},
+    ]
+  : [
+      {key: 'cong-cu', label: TOOLS_LABEL, beta: true, width: 340, sections: [toolsMenuSection]},
+      {key: 'game', label: GAME_LABEL, width: 500, sections: gameMenuSections},
+    ];
+/** Menu mobile toàn màn hình: nhóm nội bộ trước, rồi link chính thức, cộng đồng và tải game. */
+const mobileGroups: MenuSection[] = [
+  {title: FIGURES_LABEL, entries: topSections.slice(0, 4).map(sectionEntry), rows: true},
+  {title: SECTIONS[4].label, titleHref: SECTIONS[4].path, titleCurrent: activeSection === SECTIONS[4].id, entries: lookupEntries, rows: true},
+  {...toolsMenuSection, title: TOOLS_LABEL, titleBadge: true},
+  {title: GAME_STRIP_TITLE, entries: OFFICIAL_LINKS.map(external), rows: true},
+  {title: COMMUNITY_TITLE, entries: COMMUNITY_LINKS.map(external), rows: true},
+  {title: DOWNLOAD_TITLE, entries: DOWNLOAD_LINKS.map(external), rows: true},
+];
+const footerColumns: MenuSection[] = [
+  {title: FIGURES_LABEL, entries: [sectionEntry(SECTIONS[0]), sectionEntry(SECTIONS[1]), sectionEntry(SECTIONS[2]), sectionEntry(SECTIONS[3])].map((entry) => ({...entry, description: undefined}))},
+  {title: SECTIONS[4].label, entries: [lookupEntry, ...lookupEntries].map((entry) => ({...entry, description: undefined}))},
+  {title: TOOLS_TITLE, entries: toolSections.map(sectionEntry).map((entry) => ({...entry, description: undefined, beta: undefined}))},
+  {title: ABOUT_LABEL, entries: [{label: FOOTER_SOURCE_LABEL, href: DATA_SOURCE_HREF}]},
+];
 // Bảng route handle: `{r,l,k}` cho mọi trang mục, chỉ `{l}` cho trang chi tiết (≈4.9 KB).
 const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
   ? null
@@ -101,33 +229,121 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
   <body data-page-section={pageSection}>
     <a class="skip-link" href="#main-content">Bỏ qua điều hướng</a>
     <div class="top-header">
-      <header class="site-header">
-        <div class="brand">
-          <button id="section-menu-toggle" class="section-menu-toggle" type="button" aria-controls="section-menu-items" aria-expanded="false" aria-label="Mở menu trang" data-label-mode="icon">☰</button>
-          <div>
-            {pageKind === 'landing'
-              ? <h1 class="site-title">{BRAND}</h1>
-              : <a class="site-title" href="/">{BRAND}</a>}
-            <p class="tagline">{tagline}</p>
-          </div>
-        </div>
+      <header class:list={['site-header', landing && 'site-header-landing']}>
+        <button id="section-menu-toggle" class="site-menu-toggle" type="button" aria-controls="section-menu-items" aria-expanded="false" aria-label={MENU_OPEN_LABEL}>
+          <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg>
+        </button>
+        {landing
+          ? <div class="brand"><span class="seal seal-header" aria-hidden="true"><svg viewBox={SEAL_VIEW_BOX}><path d={SEAL_PATH} fill="currentColor"></path></svg></span><span class="brand-text"><h1 class="site-title">{LOGO_TITLE}</h1><span class="tagline">{tagline}</span></span></div>
+          : <a class="brand" href="/"><span class="seal seal-header" aria-hidden="true"><svg viewBox={SEAL_VIEW_BOX}><path d={SEAL_PATH} fill="currentColor"></path></svg></span><span class="brand-text"><span class="site-title">{LOGO_TITLE}</span><span class="tagline">{tagline}</span></span></a>}
+
+        <nav class="site-nav" aria-label={MENU_LABEL}>
+          <ul class="site-nav-list">
+            {!landing && topSections.map((section) => (
+              <li>
+                <a
+                  class:list={['nav-tab', {active: section.id === activeSection}]}
+                  data-section={section.id}
+                  href={section.path}
+                  aria-current={section.id === activeSection ? 'page' : null}
+                >{section.label}</a>
+              </li>
+            ))}
+            {menus.map((menu) => (
+              <li class="nav-dropdown" data-dropdown>
+                <button
+                  id={`nav-toggle-${menu.key}`}
+                  class="nav-tab nav-tab-toggle"
+                  type="button"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                  aria-controls={`nav-menu-${menu.key}`}
+                  data-dropdown-button
+                >{menu.label}{menu.beta ? <span class="badge-beta">Beta</span> : null}<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                <div id={`nav-menu-${menu.key}`} class="nav-menu" style={`--nav-menu-width: ${menu.width}px`} data-dropdown-panel hidden>
+                  {menu.sections.map((section) => (
+                    <>
+                      {section.title ? <p class="nav-menu-title">{section.title}</p> : null}
+                      <ul class:list={['nav-menu-list', {chips: section.chips, columns: section.twoColumn}]}>
+                        {section.entries.map((entry) => (
+                          <li>
+                            <a
+                              class:list={['nav-menu-item', {active: entry.current || entry.id === activeSection}]}
+                              data-section={entry.id}
+                              href={entry.href}
+                              target={entry.external ? '_blank' : null}
+                              rel={entry.external ? EXTERNAL_REL : null}
+                              aria-current={entry.id && entry.id === activeSection ? 'page' : null}
+                            >
+                              <span class="nav-menu-label">{entry.label}{entry.offsite ? <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"></path><path d="M20 4l-9 9"></path><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"></path></svg> : null}</span>
+                              {entry.description ? <span class="nav-menu-desc">{entry.description}</span> : null}
+                              {entry.external ? <span class="visually-hidden">(mở tab mới)</span> : null}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  ))}
+                </div>
+              </li>
+            ))}
+            {landing ? <li><a class="nav-tab nav-tab-plain" href={DATA_SOURCE_HREF}>{ABOUT_LABEL}</a></li> : null}
+          </ul>
+        </nav>
+
         <div class="header-actions">
-          <button id="theme-toggle" class="icon-btn" type="button" title="Đổi giao diện sáng/tối" aria-label="Chuyển sang giao diện tối" aria-pressed="false">🌗</button>
+          <button id="theme-toggle" class="icon-btn theme-toggle" type="button" data-theme-toggle title="Đổi giao diện sáng/tối" aria-label="Chuyển sang giao diện tối" aria-pressed="false">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+          </button>
+          {landing ? <a class="header-cta" href="/doi-chuan/"><span class="header-cta-label">{OPEN_GUIDE_LABEL}</span><span class="header-cta-short" aria-hidden="true">{OPEN_GUIDE_SHORT_LABEL}</span></a> : null}
         </div>
       </header>
+    </div>
 
-      <nav class="section-nav" aria-label="Chuyên mục">
-        <div id="section-menu-items" class="section-menu-items">
-          {SECTIONS.map((section) => (
-            <a
-              class:list={['nav-tab', {active: section.id === activeSection}]}
-              data-section={section.id}
-              href={section.path}
-              aria-current={section.id === activeSection ? 'page' : null}
-            >{section.label}{section.beta ? <span class="badge beta">Beta</span> : null}</a>
-          ))}
-        </div>
+    <div id="section-menu-items" class="site-menu" role="dialog" aria-modal="true" aria-label="Menu" hidden>
+      <div class="site-menu-head">
+        <button class="site-menu-close" type="button" aria-label={MENU_CLOSE_LABEL} data-menu-close>
+          <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg>
+        </button>
+        <span class="seal seal-menu" aria-hidden="true"><svg viewBox={SEAL_VIEW_BOX}><path d={SEAL_PATH} fill="currentColor"></path></svg></span>
+        <span class="site-menu-title">{LOGO_TITLE}</span>
+        <button id="theme-toggle-menu" class="icon-btn theme-toggle" type="button" data-theme-toggle title="Đổi giao diện sáng/tối" aria-label="Chuyển sang giao diện tối" aria-pressed="false">
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+        </button>
+      </div>
+      <nav class="site-menu-nav" aria-label={MENU_LABEL}>
+        {mobileGroups.map((group, groupIndex) => (
+          <section class="site-menu-group">
+            {group.titleHref
+              ? <a class="site-menu-group-title site-menu-group-link" href={group.titleHref} aria-current={group.titleCurrent ? 'page' : null}>{group.title}</a>
+              : <h2 class="site-menu-group-title">{group.title}{group.titleBadge ? <span class="badge-beta">Beta</span> : null}</h2>}
+            <ul class="site-menu-list">
+              {/* Dòng nội bộ lấy tên truy cập từ nhãn (`aria-labelledby`) để vẫn đúng tên trang;
+                  link http(s) giữ nguyên nội dung để đọc được "(mở tab mới)". */}
+              {group.entries.map((entry, entryIndex) => (
+                <li>
+                  <a
+                    class="site-menu-row"
+                    href={entry.href}
+                    target={entry.external ? '_blank' : null}
+                    rel={entry.external ? EXTERNAL_REL : null}
+                    aria-current={entry.id && entry.id === activeSection ? 'page' : null}
+                    aria-labelledby={entry.external ? null : `menu-label-${groupIndex}-${entryIndex}`}
+                  >
+                    <span class="site-menu-text">
+                      <span class="site-menu-label" id={entry.external ? null : `menu-label-${groupIndex}-${entryIndex}`}>{entry.label}{entry.offsite ? <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"></path><path d="M20 4l-9 9"></path><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"></path></svg> : null}{entry.external ? <span class="visually-hidden">(mở tab mới)</span> : null}</span>
+                      {entry.description ? <span class="site-menu-desc">{entry.description}</span> : null}
+                    </span>
+                    <svg class="site-menu-arrow" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+        <a class="site-menu-about" href={DATA_SOURCE_HREF}>{MENU_ABOUT_LABEL}</a>
       </nav>
+      <div class="site-menu-cta"><a class="header-cta" href="/doi-chuan/">{OPEN_GUIDE_MOBILE_LABEL}</a></div>
     </div>
 
     <slot name="notice" />
@@ -140,7 +356,42 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
     </main>
 
     <footer class="site-footer">
-      <p class="credit">Được xây dựng bởi <strong>Nguyễn Nguyên</strong> · HLxThanos · Đội 2 bang Huynh Đệ</p>
+      <div class="footer-grid">
+        <div class="footer-about">
+          <a class="footer-brand" href="/"><span class="seal seal-footer" aria-hidden="true"><svg viewBox={SEAL_VIEW_BOX}><path d={SEAL_PATH} fill="currentColor"></path></svg></span><span class="footer-title">{LOGO_TITLE}</span></a>
+          <p class="footer-intro">{FOOTER_INTRO}</p>
+          <p class="footer-chip"><span class="footer-dot" aria-hidden="true"></span>{UPDATED_LABEL} {updatedOn}</p>
+        </div>
+        {footerColumns.map((column) => (
+          <nav class="footer-col" aria-label={column.title}>
+            <h2 class="footer-col-title">{column.title}</h2>
+            <ul class="footer-col-list">
+              {column.entries.map((entry) => (
+                <li><a class="footer-link" href={entry.href}>{entry.label}</a></li>
+              ))}
+            </ul>
+          </nav>
+        ))}
+      </div>
+      <nav class="footer-game" aria-label={GAME_STRIP_TITLE}>
+        <h2 class="footer-game-title">{GAME_STRIP_TITLE}</h2>
+        <ul class="footer-game-list">
+          {OFFICIAL_LINKS.map((entry) => (
+            <li><a class="footer-link" href={entry.href} target={entry.external ? '_blank' : null} rel={entry.external ? EXTERNAL_REL : null}>{entry.label}<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"></path><path d="M20 4l-9 9"></path></svg>{entry.external ? <span class="visually-hidden">(mở tab mới)</span> : null}</a></li>
+          ))}
+          <li><a class="footer-link" href={DOWNLOAD_HREF}>{DOWNLOAD_TITLE}</a></li>
+        </ul>
+        <span class="footer-game-divider" aria-hidden="true"></span>
+        <ul class="footer-game-list">
+          {COMMUNITY_LINKS.map((entry) => (
+            <li><a class="footer-link" href={entry.href} target={entry.external ? '_blank' : null} rel={entry.external ? EXTERNAL_REL : null}>{entry.label}<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"></path><path d="M20 4l-9 9"></path></svg>{entry.external ? <span class="visually-hidden">(mở tab mới)</span> : null}</a></li>
+          ))}
+        </ul>
+      </nav>
+      <div class="footer-bottom">
+        <span>{COPYRIGHT}</span>
+        <span>Được xây dựng bởi <strong>{CREDIT}</strong></span>
+      </div>
     </footer>
 
     <script is:inline type="application/json" id="recommended-publication" set:html={JSON.stringify(website.recommended.pin)}></script>

@@ -1,5 +1,10 @@
 import {test,expect} from '@playwright/test';
 
+/** Link điều hướng của mục: bảng desktop trong header hoặc menu mobile đang mở (footer cũng có link cùng tên). */
+function navLink(page, name, mobile = false) {
+  return (mobile ? page.locator('#section-menu-items') : page.locator('.site-nav')).getByRole('link', { name, exact: true });
+}
+
 /** Detail routes come from the frozen inventory the build embedded, never from a re-derived slug. */
 const routeHandles=async request=>{
   const html=await (await request.get('/doi-chuan/')).text();
@@ -17,9 +22,9 @@ for (const width of [320,375,768,1280]) {
       await page.addInitScript(value=>localStorage.setItem('theme',value),theme);
       await page.goto('/doi-chuan/');
       if (width <= 820) await page.locator('#section-menu-toggle').click();
-      await expect(page.getByRole('link',{name:'Đội chuẩn',exact:true})).toHaveAttribute('aria-current','page');
-      await expect(page.getByRole('link',{name:'Đội khác',exact:true})).toHaveAttribute('href','/doi-khac/');
-      if (width <= 820) await page.locator('#section-menu-toggle').click();
+      await expect(navLink(page, 'Đội chuẩn', width <= 820)).toHaveAttribute('aria-current','page');
+      await expect(navLink(page, 'Đội khác', width <= 820)).toHaveAttribute('href','/doi-khac/');
+      if (width <= 820) await page.locator('.site-menu-close').click();
       await expect(page.getByLabel('Phiên bản luật')).toBeHidden();
       await expect(page.locator('#section-team-chuan').getByLabel('Mùa nguồn',{exact:true})).toBeVisible();
       await expect(page.getByLabel('Tìm Đội chuẩn')).toBeVisible();
@@ -32,7 +37,7 @@ for (const width of [320,375,768,1280]) {
 test('historical hashes redirect to the canonical Team khác source views',async({page})=>{
   await page.goto('/#team-pk');
   await expect(page).toHaveURL(/\/doi-khac\/\?source=team-intro$/);
-  await expect(page.getByRole('link',{name:'Đội khác',exact:true})).toHaveAttribute('aria-current','page');
+  await expect(navLink(page, 'Đội khác')).toHaveAttribute('aria-current','page');
   await page.goto('/#meta-cu');
   await expect(page).toHaveURL(/\/doi-khac\/\?source=moi-phe$/);
 });
@@ -77,7 +82,7 @@ test('old legacy reference links replace into the dedicated original page',async
 test('gameplay config keeps precedence over old reference selectors',async({page})=>{
   await page.goto('/doi-chuan/');
   await expect(page.locator('#section-team-chuan .reference-team-card').first()).toBeVisible();
-  await page.getByRole('link',{name:'Cùng Tồn',exact:true}).click();
+  await navLink(page, 'Cùng Tồn').click();
   await expect(page).toHaveURL('/cung-ton/');
   await expect(page).not.toHaveURL(/detail=/);
   await page.goto('/soi-doi/?config=missing&legacyTeam=team-intro-14');
@@ -117,14 +122,14 @@ test('source detail preserves alternative holders and prefers available Vietname
 
 test('Back and Forward restore URL-owned reference snapshots without rewriting history',async({page})=>{
   await page.goto('/doi-chuan/?q=sentinel');
-  await page.getByRole('link',{name:'Đội khác',exact:true}).click();
+  await navLink(page, 'Đội khác').click();
   await expect(page).toHaveURL('/doi-khac/');
   await page.goBack();
   await expect(page).toHaveURL('/doi-chuan/?q=sentinel');
   await expect(page.locator('#section-team-chuan').getByLabel('Tìm Đội chuẩn')).toHaveValue('sentinel');
   await page.goForward();
   await expect(page).toHaveURL('/doi-khac/');
-  await expect(page.getByRole('link',{name:'Đội khác',exact:true})).toHaveAttribute('aria-current','page');
+  await expect(navLink(page, 'Đội khác')).toHaveAttribute('aria-current','page');
 });
 
 const scopedCount=(records,predicate)=>records.filter(predicate).length;

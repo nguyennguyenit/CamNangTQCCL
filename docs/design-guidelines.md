@@ -33,7 +33,7 @@ Các tab Theo dõi chiêu mộ, Soi đội từ ảnh và Gợi ý đội từ k
 - Thẻ giữ dạng gọn và vẫn đủ nội dung nguồn: tên đội + điểm nguồn, badge loại binh/phe, các holder với chiến pháp và binh thư, disclosure `Phương án thay thế (n)`, chip khắc chế và CTA `Xem chi tiết`. Không đặt caption Tier hoặc caption mùa/danh mục lên thẻ; caption phạm vi chỉ thuộc trang chi tiết.
 - Chip khắc chế và tag trong holder là hành vi tìm kiếm, không điều hướng; chỉ tên đội và CTA là link.
 - Trên mobile, `.team-filters.collapsed` ẩn nhóm sau nút `Bộ lọc`; đây là inline collapse, không phải drawer/module riêng.
-- Menu section mobile do `mobile-section-menu.js` quản lý, tách khỏi filter collapse.
+- Menu điều hướng (menu thả desktop + menu mobile toàn màn hình) do `js/site-nav.js` quản lý, tách khỏi filter collapse.
 
 ## Tra cứu thống nhất
 
