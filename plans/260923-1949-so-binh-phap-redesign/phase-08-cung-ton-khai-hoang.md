@@ -1,7 +1,7 @@
 ---
 phase: 8
 title: "Cùng Tồn + Khai hoang"
-status: pending
+status: completed
 priority: P2
 effort: "2.5d"
 dependencies: [5, 6]

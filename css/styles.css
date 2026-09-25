@@ -61,6 +61,7 @@
   --band-good: #7FC99E;
   --focus-ring-band: #E36A6F;
   --qr-panel: #FFFFFF;
+  --transparent: rgba(0, 0, 0, 0);
   --f-nguy: #1F3A93;
   --f-thuc: #1F7A4D;
   --f-ngo: #B8232C;
@@ -159,6 +160,8 @@
   --type-portrait-han: 600 64px/1 'Songti TC', 'Noto Serif CJK TC', serif;
   --type-portrait-han-dialog: 600 84px/1 'Songti TC', 'Noto Serif CJK TC', serif;
   --type-cam-nang-number: 700 34px/1 'Noto Serif Display', Georgia, serif;
+  --type-coexist-count: 700 30px/1.1 'Noto Serif Display', Georgia, serif;
+  --type-card-title-sm: 700 17px/1.2 'Noto Serif Display', Georgia, serif;
   --space-1: 1px;
   --space-2: 2px;
   --space-3: 3px;
@@ -422,7 +425,7 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-/* legacy:start ceiling=519 */
+/* legacy:start ceiling=470 */
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) {
@@ -587,49 +590,16 @@ body {
 .section.active { display: block; }
 
 /* Coexist — card lồng, tái dùng kiểu .hero + tag */
-.coexist-group { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem; margin-bottom: 1.2rem; }
-.coexist-group > h3 { margin: 0 0 .5rem; font-size: 1rem; color: var(--accent); }
-.coexist-teams { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: .8rem; }
-.coexist-subteam { background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: .6rem; }
-.coexist-subteam-title { margin: 0 0 .5rem; font-size: .88rem; padding-bottom: .35rem; border-bottom: 1px dashed var(--line); }
-/* tag chiến pháp/binh thư ở Cùng Tồn chỉ hiển thị, không bấm */
-.coexist-subteam .tag { cursor: default; }
-.ct-meta { display: flex; flex-wrap: wrap; gap: .15rem .6rem; margin-top: .25rem; font-size: .72rem; color: var(--muted); }
-.ct-meta-item b { color: var(--ink); font-weight: 600; }
-/* Tổng quan combo — thu gọn được */
-.coexist-summary-box { margin: 0 0 .8rem; font-size: .82rem; }
-.coexist-summary-box > summary { cursor: pointer; color: var(--muted); font-weight: 600; }
-.coexist-summary { margin: .4rem 0 0; color: var(--muted); line-height: 1.5; }
 .muted { color: var(--muted); } .stat { color: var(--ky); } .advisor { color: var(--khien); }
 
-/* Khaihoang */
-.mines { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
-.mine { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: .9rem; }
-.mine h3 { margin: 0 0 .6rem; color: var(--accent); }
-.enemies { display: flex; flex-direction: column; gap: .35rem; }
-.enemy { display: flex; justify-content: space-between; align-items: center; padding: .3rem .5rem; background: var(--bg); border-radius: 6px; border-left: 3px solid var(--line); font-size: .85rem; }
-.enemy.u-ky { border-left-color: var(--ky); } .enemy.u-cung { border-left-color: var(--cung); }
-.enemy.u-thuong { border-left-color: var(--thuong); } .enemy.u-khien { border-left-color: var(--khien); }
 
-/* Khai hoang — đội hình đề xuất (tái dùng kiểu card Team PK) */
-.kh-block { margin-bottom: 1.6rem; }
-.kh-section-title { font-size: 1rem; color: var(--accent); margin: 0 0 .8rem; padding-bottom: .35rem; border-bottom: 2px solid var(--line); }
-.kh-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 1rem; }
-.kh-card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: .8rem; box-shadow: var(--shadow); transition: transform .12s ease, box-shadow .12s ease; }
-.kh-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
-.kh-title { margin: 0; font-size: .9rem; text-align: right; }
-/* Nhãn Trước/Sau đứng đầu mỗi dòng chiến pháp. */
-.kh-note { font-size: .73rem; color: var(--muted); font-style: italic; margin-top: .15rem; }
 .kh-variant-control { display: grid; gap: .35rem; margin: .75rem 0; font-size: .8rem; color: var(--muted); }
 .kh-variant-select { width: 100%; min-width: 0; min-height: 44px; padding: .45rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: inherit; font-size: max(1rem, 16px); }
 .kh-variant-select:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-.kh-season-context { padding: .75rem; border-left: 3px solid var(--accent); background: var(--panel); font-size: .85rem; line-height: 1.6; }
 .kh-build-context, .kh-build-note, .kh-commander, .kh-opening-note { margin: .4rem 0; font-size: .78rem; line-height: 1.5; overflow-wrap: anywhere; }
 .kh-build-context { color: var(--muted); }
 .kh-sources { display: flex; flex-wrap: wrap; gap: .3rem .5rem; margin-top: .6rem; font-size: .75rem; overflow-wrap: anywhere; }
 .kh-sources a { color: var(--accent); text-decoration: underline; }
-/* Tag chiến pháp ở khai hoang chỉ để hiển thị, không bấm. */
-.kh-card .tag, .cham-su-card .tag { cursor: default; }
 .kh-guide { margin: .7rem 0; padding: .65rem; border: 1px solid var(--line); border-radius: .5rem; background: color-mix(in srgb, var(--panel) 88%, var(--accent)); min-width: 0; overflow-wrap: anywhere; }
 .kh-guide-title { margin: 0 0 .45rem; font-size: 1rem; color: var(--ink); }
 .kh-guide-overview, .kh-guide-scope, .kh-guide-red, .kh-guide-warning, .kh-guide-note { margin: .35rem 0; font-size: .8rem; line-height: 1.5; }
@@ -642,17 +612,6 @@ body {
 .kh-guide-details summary { cursor: pointer; font-weight: 600; }
 .kh-guide-list { margin-top: .55rem; }
 .kh-guide-list ol, .kh-guide-list ul { margin: .25rem 0; padding-left: 1.2rem; }
-.cham-su-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 1rem; }
-.cham-su-card { min-width: 0; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: .8rem; box-shadow: var(--shadow); overflow-wrap: anywhere; }
-.cham-su-title { margin: 0 0 .65rem; font-size: .9rem; }
-.cham-su-card .tag { max-width: 100%; white-space: normal; }
-/* Tên team và CTA của card là link thật, giữ nhịp chữ hiện có. */
-.kh-card .kh-title > a { display: block; color: inherit; text-decoration: none; }
-.kh-card .kh-title > a:hover { color: var(--accent); text-decoration: underline; }
-.kh-detail-row { margin: .45rem 0 0; }
-.kh-card .kh-detail-link { display: inline-flex; align-items: center; min-height: 44px; padding: 0 .6rem; border: 1px solid var(--line); border-radius: 8px; background: var(--panel-2); color: var(--accent); font-size: .8rem; text-decoration: none; }
-.kh-card .kh-detail-link:hover { border-color: var(--accent); }
-.kh-card .kh-title > a:focus-visible, .kh-card .kh-detail-link:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 /* Trang chi tiết khai hoang: build bị thay khi đổi cấu hình, hướng dẫn đứng ngoài subtree đó. */
 .kh-detail-build { margin: .75rem 0; min-width: 0; }
 .kh-detail-build-head { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-bottom: .35rem; }
@@ -1297,8 +1256,6 @@ a.lookup-more:hover {
 .lookup-card,
 .rt-section,
 .ana-hero,
-.mine,
-.coexist-group,
 .cham-su-card,
 .season-config-detail {
   border: var(--border-hair) solid var(--line);
@@ -4327,7 +4284,6 @@ main.layout:has(> .detail-content) {
 }
 
 
-
 .detail-hero-tactics-index {
   display: inline-flex;
   align-items: center;
@@ -4620,7 +4576,7 @@ body[data-page-section="lookup"] .layout {
 
 /* Chip lọc bật có nền `--band`; tab Tra cứu ghi đè cả nền lẫn viền để nhãn không chìm (mực trên giấy). */
 .lookup-chip[aria-pressed="true"] {
-  border-color: transparent;
+  border-color: var(--transparent);
   border-bottom-color: var(--accent);
   background-color: var(--bg);
   color: var(--ink);
@@ -5522,5 +5478,734 @@ a.cam-nang-count .cam-nang-number {
 
   .lookup-table-effect {
     -webkit-line-clamp: 3;
+  }
+}
+
+/* ===== Cùng Tồn + Khai hoang (Phase 8) ===== */
+/* Component: tokens.json `chon-nhom`, `o-tong-quan-cung-ton`, `the-cung-ton`, `the-khai-hoang`,
+   `thanh-diem` (bản thẻ), `luoi-cham-su` (Phase 8 sở hữu) và các component dùng lại `the`, `bang`,
+   `chip-loc`, `nhan-caps`, `khung-chi-tiet`.
+   Artboard Coexist.dc.html, CoexistMobile.dc.html, Khaihoang.dc.html, KhaihoangMobile.dc.html.
+   Vỏ trang mục theo artboard: 40/48/56 desktop, 24/16/32 mobile. */
+body[data-page-section="coexist"] .layout,
+body[data-page-section="khaihoang"] .layout {
+  padding: var(--space-40) var(--space-48) var(--space-56);
+}
+
+/* ---------- Cùng Tồn: đầu mục (kicker + h1 serif + lead + chọn Mùa) ---------- */
+.coexist-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-40);
+  padding-bottom: var(--space-28);
+  border-bottom: var(--border-hair) solid var(--line);
+}
+
+.coexist-head .reference-scope-controls {
+  display: flex;
+  flex: none;
+  gap: var(--space-12);
+  margin: 0;
+}
+
+.coexist-head .reference-scope-controls select {
+  min-width: 240px; /* con số artboard (Coexist.dc.html) ngoài thang token — tiền lệ khối Landing */
+}
+
+/* Chip chọn kịch bản: cùng hình dạng chip viên, dùng lại vai trò chữ của `chip-loc`. */
+.coexist-scenarios {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+  margin-top: var(--space-24);
+}
+
+.coexist-scenarios[hidden] {
+  display: none;
+}
+
+.coexist-scenario {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-44);
+  padding: 0 var(--space-14);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-999);
+  background: var(--panel-3);
+  color: var(--ink);
+  font: var(--type-control);
+}
+
+.coexist-scenario:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.coexist-scenario[aria-pressed="true"] {
+  background: var(--band);
+  border-color: var(--band);
+  color: var(--band-ink);
+}
+
+/* ---------- Chọn nhóm 1–5 của kịch bản đang chọn ---------- */
+.coexist-groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-20);
+  margin-top: var(--space-24);
+}
+
+.coexist-scope-title {
+  margin: 0 0 var(--space-10);
+  font: var(--type-list-title);
+}
+
+.coexist-group-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: var(--space-10);
+}
+
+.coexist-group-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  min-width: 0;
+  min-height: var(--control-44);
+  padding: var(--space-12) var(--space-14);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-12);
+  background: var(--panel);
+  color: var(--ink);
+  text-align: left;
+}
+
+.coexist-group-chip:hover {
+  border-color: var(--accent);
+}
+
+.coexist-group-chip[aria-pressed="true"] {
+  background: var(--band);
+  border-color: var(--band);
+  color: var(--band-ink);
+}
+
+.coexist-group-chip[aria-pressed="true"]:hover {
+  border-color: var(--band);
+}
+
+.coexist-chip-label {
+  font: var(--type-control);
+}
+
+.coexist-chip-note {
+  font: var(--type-meta);
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.coexist-group-chip[aria-pressed="true"] .coexist-chip-note {
+  color: var(--nav-idle);
+}
+
+/* ---------- Nhóm đang xem: tiêu đề, phân loại, ô tổng quan, lưới đội ---------- */
+.coexist-group-view {
+  margin-top: var(--space-28);
+}
+
+.coexist-group-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  margin-bottom: var(--space-16);
+}
+
+.coexist-group-title {
+  margin: 0;
+  font: var(--type-list-title);
+}
+
+.coexist-overview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 1fr);
+  background: var(--panel);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-14);
+  overflow: hidden;
+}
+
+.coexist-overview-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+  min-width: 0;
+  padding: var(--space-20) var(--space-24);
+  border-right: var(--border-hair) solid var(--line-2);
+}
+
+.coexist-overview-col:last-child {
+  border-right: none;
+}
+
+.coexist-col-label {
+  font: var(--type-field-caps);
+  letter-spacing: var(--type-field-caps-spacing);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.coexist-raw-text {
+  margin: 0;
+  font: var(--type-small);
+  color: var(--ink-2);
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.coexist-count-line {
+  font: var(--type-coexist-count);
+  color: var(--ink);
+}
+
+.coexist-count-ok {
+  color: var(--good);
+}
+
+.coexist-count-dup {
+  color: var(--avoid);
+}
+
+.coexist-source {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-44);
+  color: var(--accent);
+  font: var(--type-control);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.coexist-teams {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-18);
+  align-items: start;
+  margin-top: var(--space-18);
+}
+
+.coexist-subteam {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-12);
+  background: var(--panel);
+  overflow: hidden;
+}
+
+.coexist-subteam-title {
+  margin: 0;
+  padding: var(--space-14) var(--space-18) var(--space-12);
+  border-bottom: var(--border-hair) solid var(--line-2);
+  font: var(--type-card-title);
+}
+
+.coexist-subteam-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-10) var(--space-18);
+  border-bottom: var(--border-hair) solid var(--line-2);
+  background: var(--panel-3);
+}
+
+.coexist-tag {
+  padding: var(--space-2) var(--space-8);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-6);
+  background: var(--panel);
+  color: var(--ink);
+  font: var(--type-meta);
+}
+
+.coexist-heroes {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-2) var(--space-18) var(--space-6);
+}
+
+.coexist-hero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+  padding: var(--space-10) 0;
+  border-top: var(--border-hair) dashed var(--line-2);
+}
+
+.coexist-hero:first-child {
+  border-top: none;
+}
+
+.coexist-hero-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-10);
+}
+
+.coexist-hero-name {
+  font: var(--type-hero-name);
+  color: var(--ink);
+}
+
+.coexist-hero-focus {
+  flex-shrink: 0;
+  font: var(--type-meta);
+  color: var(--muted);
+}
+
+.coexist-hero-tactics {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--space-12);
+  row-gap: var(--space-2);
+  min-width: 0;
+}
+
+.coexist-tactic {
+  color: var(--accent-ink);
+  font: var(--type-tactic);
+}
+
+.coexist-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-12);
+  font: var(--type-meta);
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Khai hoang: đầu mục, lưu ý nguồn, nút nhảy khối ---------- */
+.khaihoang-head {
+  padding-bottom: var(--space-28);
+  border-bottom: var(--border-hair) solid var(--line);
+}
+
+.khaihoang-source-note {
+  margin: var(--space-24) 0 0;
+  padding: var(--space-14) var(--space-18);
+  border-radius: var(--radius-12);
+  background: var(--panel-2);
+  color: var(--ink-2);
+  font: var(--type-small);
+}
+
+.kh-anchors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+  margin-top: var(--space-24);
+}
+
+.kh-anchor {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  min-height: var(--control-44);
+  padding: 0 var(--space-14);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-10);
+  background: var(--panel);
+  color: var(--ink);
+  font: var(--type-control);
+  text-decoration: none;
+}
+
+.kh-anchor:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.kh-anchor-count {
+  font: var(--type-small);
+  color: var(--muted);
+}
+
+.kh-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  margin-top: var(--space-40);
+}
+
+.kh-section-title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-12);
+  margin: 0;
+  font: var(--type-detail-section-title);
+  scroll-margin-top: var(--space-88);
+}
+
+.kh-section-count {
+  font: var(--type-small);
+  color: var(--muted);
+}
+
+.kh-unit-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.kh-unit-count {
+  font: var(--type-small);
+}
+
+/* ---------- Thẻ đội khai hoang đề xuất ---------- */
+.kh-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-18);
+  align-items: start;
+}
+
+.kh-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-12);
+  overflow: hidden;
+}
+
+/* Bộ lọc loại binh ẩn thẻ bằng thuộc tính `hidden`: `display: flex` ở trên phải nhường UA rule. */
+.kh-card[hidden] {
+  display: none;
+}
+
+.kh-card-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+  padding: var(--space-14) var(--space-20) 0;
+}
+
+.kh-title {
+  margin: 0;
+  font: var(--type-card-title);
+}
+
+.kh-config-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  padding: var(--space-12) var(--space-20) 0;
+}
+
+.kh-card .kh-build {
+  padding: var(--space-6) var(--space-20) var(--space-10);
+}
+
+.kh-ratings-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+  padding: var(--space-14) var(--space-20);
+  border-top: var(--border-hair) solid var(--line-2);
+  background: var(--panel-3);
+}
+
+.kh-ratings-block:empty {
+  display: none;
+}
+
+.kh-ratings {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--space-12);
+}
+
+.kh-rating {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+.kh-rating-head {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-6);
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+.kh-rating-value {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.kh-rating-track {
+  height: var(--space-6);
+  border-radius: var(--radius-3);
+  background: var(--panel-2);
+  overflow: hidden;
+}
+
+.kh-rating-fill {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+}
+
+.kh-rating-fill-total {
+  background: var(--ink);
+}
+
+.kh-ratings-note {
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+.kh-card-foot {
+  margin-top: auto;
+  border-top: var(--border-hair) solid var(--line-2);
+}
+
+.kh-card .kh-detail-link {
+  width: 100%;
+  justify-content: flex-start;
+  min-height: var(--control-44);
+  padding: 0 var(--space-20);
+  border: none;
+  border-radius: 0;
+  background: none;
+  color: var(--ink);
+  font: var(--type-control);
+}
+
+.kh-card .kh-detail-link:hover {
+  border: none;
+  color: var(--accent);
+}
+
+/* ---------- Lưới Chạm Sứ ---------- */
+.cham-su-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-14);
+}
+
+.cham-su-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 0;
+  padding: var(--space-16) var(--space-18);
+  border-radius: var(--radius-12);
+  overflow-wrap: anywhere;
+}
+
+.cham-su-title {
+  margin: 0;
+  font: var(--type-card-title-sm);
+}
+
+.cham-su-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: var(--type-tactic);
+}
+
+.cham-su-hero {
+  font: var(--type-hero-name);
+  color: var(--ink);
+}
+
+.cham-su-tactic {
+  color: var(--accent-ink);
+  font: var(--type-tactic);
+}
+
+.cham-su-note {
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+/* ---------- Quân thủ các mỏ: bảng desktop, thẻ mobile ---------- */
+.kh-table-frame {
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-14);
+  background: var(--panel);
+  overflow: hidden;
+}
+
+.kh-mines {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.kh-mines caption {
+  position: absolute;
+  width: var(--space-1);
+  height: var(--space-1);
+  overflow: hidden;
+}
+
+.kh-mines thead tr {
+  background: var(--panel-2);
+}
+
+.kh-mines thead th {
+  padding: var(--space-10) var(--space-18);
+  text-align: left;
+  font: var(--type-field-caps);
+  letter-spacing: var(--type-field-caps-spacing);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.kh-mines thead th[scope="colgroup"] {
+  padding: var(--space-10) var(--space-8);
+}
+
+.kh-mines tbody th {
+  padding: var(--space-12) var(--space-18);
+  border-top: var(--border-hair) solid var(--line-2);
+  text-align: left;
+  font: var(--type-card-title-sm);
+  white-space: nowrap;
+}
+
+.kh-mines td {
+  padding: var(--space-10) var(--space-8);
+  border-top: var(--border-hair) solid var(--line-2);
+}
+
+.kh-mine-hero {
+  display: block;
+  font: var(--type-hero-name);
+  color: var(--ink);
+}
+
+.kh-mine-unit {
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+.kh-mine-cards {
+  display: none;
+  flex-direction: column;
+  gap: var(--space-14);
+}
+
+.kh-mine-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-16) var(--space-18);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-12);
+  background: var(--panel);
+}
+
+.kh-mine-card h3 {
+  margin: 0;
+  font: var(--type-card-title-sm);
+}
+
+.kh-mine-enemies {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font: var(--type-small);
+  color: var(--muted);
+}
+
+.kh-mine-enemy strong {
+  color: var(--ink);
+  font: var(--type-hero-name);
+}
+
+@media (max-width: 980px) {
+  .coexist-teams,
+  .cham-su-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .coexist-overview {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .coexist-overview-col {
+    border-right: none;
+    border-bottom: var(--border-hair) solid var(--line-2);
+  }
+
+  .kh-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 680px) {
+  body[data-page-section="coexist"] .layout,
+  body[data-page-section="khaihoang"] .layout {
+    padding: var(--space-24) var(--space-16) var(--space-32);
+  }
+
+  .coexist-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-24);
+  }
+
+  .coexist-head .reference-scope-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-8);
+  }
+
+  .coexist-head .reference-scope-controls select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .coexist-group-row,
+  .coexist-teams,
+  .kh-cards,
+  .cham-su-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .coexist-scenarios {
+    flex-direction: column;
+  }
+
+  .coexist-scope-title,
+  .coexist-group-title,
+  .kh-section-title {
+    font: var(--type-list-title);
+  }
+
+  .kh-ratings {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .kh-table-frame {
+    display: none;
+  }
+
+  .kh-mine-cards {
+    display: flex;
   }
 }

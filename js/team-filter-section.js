@@ -228,16 +228,158 @@ export function createSeasonTeamSection({mount, title, onQuery, onOpenConfig}) {
 }
 
 import { seasonCoexistGroup } from './render.js';
-export function createSeasonCoexistSection({mount}) {
-  const grid=el('div');
-  mount.replaceChildren(el('h2',{},'Cùng Tồn'),grid);
-  return {update(groups){
-    const applicable=groups.filter(group=>group.classification === 'applicable');
-    const references=groups.filter(group=>group.classification === 'scenarioReference');
-    const unknown=groups.filter(group=>!group.classification || group.classification === 'unknown');
-    grid.replaceChildren(...[[applicable,'Áp dụng theo phiên bản luật'],[references,'Tham khảo kịch bản'],[unknown,'Chưa xác định kịch bản — tham khảo']].filter(([items])=>items.length).map(([items,label])=>el('div',{class:'coexist-scope-group'},[el('h3',{},`${label} (${items.length})`),...items.map(seasonCoexistGroup)])));
-    if (!groups.length) grid.append(el('p',{class:'empty'},'Không có nhóm Cùng Tồn trong mùa này.'));
-  }};
+
+/** Nhóm không gắn kịch bản (nhánh `unknown`) nằm trong mục riêng này. */
+const COEXIST_UNKNOWN_SCENARIO = '';
+const COEXIST_UNKNOWN_LABEL = 'Chưa xác định kịch bản';
+/** Thứ tự và câu chữ phân loại giữ nguyên như trước redesign. */
+const COEXIST_SCOPES = [
+  ['applicable', 'Áp dụng theo phiên bản luật'],
+  ['scenarioReference', 'Tham khảo kịch bản'],
+  ['unknown', 'Chưa xác định kịch bản — tham khảo'],
+];
+
+/** Khóa nhận diện nhóm: `recordId` khi có, ngược lại số thứ tự 1-based trong danh sách nhận được. */
+function coexistGroupKey(group, index) {
+  return group.recordId ? String(group.recordId) : String(index + 1);
+}
+
+/**
+ * Mục Cùng Tồn: chọn kịch bản rồi chọn nhóm 1–5 của kịch bản đó; chỉ nhóm đang xem được dựng.
+ * Tập kịch bản/nhóm đúng bằng tập `update(groups)` nhận, không lọc thêm ngoài phép chiếu phạm vi.
+ * `onGroup(key | null)` được gọi khi URL phải đổi: chọn nhóm mới, hoặc bỏ `group` cũ không còn hợp lệ.
+ */
+export function createSeasonCoexistSection({mount, scenarioLabel = () => COEXIST_UNKNOWN_LABEL, onGroup} = {}) {
+  const title = el('h1', {class: 'reference-title', tabindex: '-1'}, 'Cùng Tồn');
+  const head = el('header', {class: 'coexist-head'}, [
+    el('div', {class: 'reference-head-text'}, [
+      el('span', {class: 'reference-kicker'}, 'Đội hình'),
+      title,
+      el('p', {class: 'reference-lead'}, 'Năm đội dùng được cùng lúc trong một tài khoản. Mỗi nhóm là một tổ hợp 15 tướng không trùng nhau.'),
+    ]),
+  ]);
+  const scenarioRow = el('div', {class: 'coexist-scenarios', role: 'group', 'aria-label': 'Chọn kịch bản'});
+  const chooser = el('div', {class: 'coexist-groups'});
+  const groupView = el('div', {class: 'coexist-group-view'});
+  const empty = el('p', {class: 'empty'}, 'Không có nhóm Cùng Tồn trong mùa này.');
+  mount.replaceChildren(head, scenarioRow, chooser, groupView, empty);
+  let scenarios = new Map();
+  let selectedScenario = COEXIST_UNKNOWN_SCENARIO;
+  let selectedKey = '';
+  // Nút đang có trong DOM theo nhận diện (scenarioId / khóa nhóm) để bật/tắt `aria-pressed` tại chỗ.
+  let scenarioNodes = new Map();
+  let groupNodes = new Map();
+
+  function scenarioTitle(scenario) {
+    return scenario === COEXIST_UNKNOWN_SCENARIO ? COEXIST_UNKNOWN_LABEL : scenarioLabel(scenario) || COEXIST_UNKNOWN_LABEL;
+  }
+
+  /**
+   * Người dùng bấm/bàn phím chọn một mục: chỉ hàng nhóm được dựng lại khi đổi kịch bản, còn chính nút vừa
+   * kích hoạt luôn được giữ nguyên trong DOM nên trình duyệt không mất focus (không gọi `.focus()` ở đây).
+   */
+  function activate(scenario, key) {
+    const scenarioChanged = scenario !== selectedScenario;
+    selectedScenario = scenario;
+    selectedKey = key;
+    if (scenarioChanged) paintGroupRow();
+    syncPressed();
+    paintGroupView();
+    if (typeof onGroup === 'function') onGroup(key);
+  }
+
+  function selectScenario(scenario) {
+    const items = scenarios.get(scenario) || [];
+    if (!items.length) return;
+    activate(scenario, items.some((item) => item.key === selectedKey) ? selectedKey : items[0].key);
+  }
+
+  function syncPressed() {
+    for (const [scenario, button] of scenarioNodes) button.setAttribute('aria-pressed', String(scenario === selectedScenario));
+    for (const [key, button] of groupNodes) button.setAttribute('aria-pressed', String(key === selectedKey));
+  }
+
+  function paintScenarioRow() {
+    scenarioNodes = new Map();
+    scenarioRow.replaceChildren(...[...scenarios].map(([scenario]) => {
+      const button = el('button', {
+        type: 'button', class: 'coexist-scenario', 'aria-pressed': String(scenario === selectedScenario),
+        dataset: { scenario },
+        onclick: () => { if (scenario !== selectedScenario) selectScenario(scenario); },
+      }, scenarioTitle(scenario));
+      scenarioNodes.set(scenario, button);
+      return button;
+    }));
+    scenarioRow.hidden = scenarios.size < 2;
+  }
+
+  function paintGroupRow() {
+    groupNodes = new Map();
+    const current = scenarios.get(selectedScenario) || [];
+    chooser.replaceChildren(...COEXIST_SCOPES.map(([classification, label]) => {
+      const items = current.filter((item) => (item.group.classification || 'unknown') === classification);
+      if (!items.length) return null;
+      return el('div', {class: 'coexist-scope-group'}, [
+        el('h2', {class: 'coexist-scope-title'}, `${label} (${items.length})`),
+        el('div', {class: 'coexist-group-row', role: 'group', 'aria-label': 'Chọn nhóm Cùng Tồn'}, items.map((item) => {
+          const chip = el('button', {
+            type: 'button', class: 'coexist-group-chip', 'aria-pressed': String(item.key === selectedKey),
+            dataset: { groupKey: item.key },
+            onclick: () => activate(item.scenario, item.key),
+          }, [
+            el('span', {class: 'coexist-chip-label'}, item.group.content?.groupLabel || item.group.groupLabel || 'Nhóm'),
+            item.group.content?.summaryRaw
+              ? el('span', {class: 'coexist-chip-note'}, item.group.content.summaryRaw)
+              : item.group.content?.summary
+                ? el('span', {class: 'coexist-chip-note'}, item.group.content.summary)
+                : null,
+          ].filter(Boolean));
+          groupNodes.set(item.key, chip);
+          return chip;
+        })),
+      ]);
+    }).filter(Boolean));
+  }
+
+  function paintGroupView() {
+    const current = scenarios.get(selectedScenario) || [];
+    const selected = current.find((item) => item.key === selectedKey) || null;
+    groupView.replaceChildren(...(selected ? [seasonCoexistGroup(selected.group, {scenarioLabel: scenarioTitle(selected.scenario)})] : []));
+  }
+
+  /** Dựng lại toàn bộ hàng chọn (đổi phạm vi mùa, tải trang): không đụng focus của trang. */
+  function paint() {
+    paintScenarioRow();
+    paintGroupRow();
+    paintGroupView();
+  }
+
+  return {
+    update(groups = [], requested = null) {
+      scenarios = new Map();
+      const next = groups || [];
+      next.forEach((group, index) => {
+        const scenario = group.scenarioId || COEXIST_UNKNOWN_SCENARIO;
+        if (!scenarios.has(scenario)) scenarios.set(scenario, []);
+        scenarios.get(scenario).push({group, scenario, key: coexistGroupKey(group, index)});
+      });
+      // `null` = URL không có `group`; chuỗi bất kỳ (kể cả rỗng) = có yêu cầu, phải kiểm hợp lệ.
+      const requestedKey = typeof requested === 'string' ? requested : null;
+      let hit = null;
+      if (requestedKey) for (const [scenario, items] of scenarios) {
+        const match = items.find((item) => item.key === requestedKey);
+        if (match) { hit = match; break; }
+      }
+      if (!hit) hit = scenarios.values().next().value?.[0] || null;
+      selectedScenario = hit ? hit.scenario : COEXIST_UNKNOWN_SCENARIO;
+      selectedKey = hit ? hit.key : '';
+      empty.hidden = next.length > 0;
+      paint();
+      // Nhóm cũ không còn trong phạm vi mới: về nhóm đầu và bỏ `group` khỏi URL.
+      if (requested !== null && requestedKey !== selectedKey && typeof onGroup === 'function') onGroup(null);
+    },
+    focus() { title.focus(); },
+  };
 }
 
 import { projectRecommendedRows, referenceFacetValues } from './recommended-reference-state.js';

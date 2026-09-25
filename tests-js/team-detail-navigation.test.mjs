@@ -174,6 +174,10 @@ test('return origin accepts section URLs, normalizes old root state, and rejects
   assert.equal(safeReturnUrl('/doi-chuan/?rogue=1'),'/doi-chuan/');
   assert.equal(safeReturnUrl('/khai-hoang/?khTeam=a&khVariant=b&q=x'),'/khai-hoang/?khTeam=a&khVariant=b');
   assert.equal(safeReturnUrl('/tra-cuu/?group=heroes&id=hero%3Aluu-bi&utm_source=z'),'/tra-cuu/?group=heroes&id=hero%3Aluu-bi');
+  // `group` của Cùng Tồn (recordId nhóm đang xem) là khóa được giữ của `/cung-ton/`.
+  assert.equal(safeReturnUrl('/cung-ton/?group=coexist-bdx-group-0fb69f7aa19a&q=B%C3%ACnh&fbclid=1'),'/cung-ton/?group=coexist-bdx-group-0fb69f7aa19a&q=B%C3%ACnh');
+  assert.equal(safeReturnUrl('/cung-ton/?group=3&scenario=binh-dien-xuan-thu'),'/cung-ton/?group=3&scenario=binh-dien-xuan-thu');
+  assert.equal(safeReturnUrl('/cung-ton/?group=a&detail=x'),'/cung-ton/?group=a');
   assert.equal(safeReturnUrl('/chieu-mo/?q=x'),'/chieu-mo/');
   // Absolute URLs are accepted only for the page's own origin.
   assert.equal(safeReturnUrl(`${ROOT}/doi-chuan/?q=a`,{origin:ROOT}),'/doi-chuan/?q=a');

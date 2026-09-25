@@ -213,7 +213,22 @@ async function main() {
         window.scrollTo({top:window.scrollY + detail.getBoundingClientRect().top - headerHeight - 12,behavior:'instant'});
       }
     }
-    const coexistUI = pageSection === 'coexist' ? createSeasonCoexistSection({mount}) : null;
+    const coexistUI = pageSection === 'coexist' ? createSeasonCoexistSection({
+      mount,
+      // Nhãn kịch bản lấy từ registry đã xác thực; nhóm không gắn kịch bản dùng nhãn riêng của mục.
+      scenarioLabel: scenarioId => seasonModel?.data['season-registry'].find(item => item.id === scenarioId)?.labelVi || '',
+      onGroup: syncCoexistGroup,
+    }) : null;
+    /**
+     * Nhóm Cùng Tồn đang xem nằm trong query của chính trang mục; chỉ `replaceState` (không render lại)
+     * để đổi nhóm và nhóm cũ hết hợp lệ đều không tạo thêm bước lịch sử.
+     */
+    function syncCoexistGroup(key) {
+      if (pageSection !== 'coexist') return;
+      const next = String(updateSeasonURL(location.href, {group: key ?? null}));
+      if (next === location.href) return;
+      history.replaceState(history.state, '', next);
+    }
     function queryForSection(name) {
       const state = readSeasonQuery(location.href,seasonModel);
       return pageSection === name ? state : {...state,query:'',sort:'tier',filters:{faction:[],unit:[],tier:[],source:[]},notices:[]};
@@ -365,14 +380,14 @@ async function main() {
       placeSeasonControls();
       if (!seasonModel) { scenarioSelect.disabled = true; rulesetSelect.disabled = true; }
     }
-    /** Bộ chọn Mùa / Phiên bản luật cố định theo trang: chỉ 3 mục gameplay hiện, Cùng Tồn nằm dưới tiêu đề mục. */
+    /** Bộ chọn Mùa / Phiên bản luật cố định theo trang: Cùng Tồn đặt trong đầu mục, 3 mục gameplay còn lại trên thanh. */
     function placeSeasonControls() {
       controls.hidden = !GAMEPLAY_SECTIONS.includes(pageSection);
       rulesetControl.hidden = pageSection === 'coexist';
       summary.hidden = pageSection === 'coexist';
       if (pageSection === 'coexist') {
-        const heading = mount.querySelector(':scope > h2');
-        if (heading) heading.after(controls);
+        const head = mount.querySelector(':scope > .coexist-head');
+        if (head) head.append(controls);
       } else if (detailMount) {
         detailMount.before(controls);
       }
@@ -394,7 +409,9 @@ async function main() {
       rulesetSelect.disabled = !scenario || !scenario.rulesets.some(rule=>rule.reviewStatus === 'reviewed');
       summary.textContent = !seasonModel ? BUNDLE_NOTICE : browse.kind === 'invalid' ? 'Kịch bản hoặc phiên bản luật không hợp lệ. Hãy chọn lại phạm vi.' : browse.kind === 'all-reference' ? 'Tất cả — tham khảo' : `${scenario?.labelVi || ''} · ${browse.kind === 'verified-pair' ? rulesetSelect.selectedOptions[0]?.textContent : scenario?.rulesets.some(rule=>rule.reviewStatus === 'reviewed') ? 'Chưa chọn phiên bản luật — tham khảo' : 'Chưa có phiên bản luật được xác minh — tham khảo'}`;
       const groups = projection ? [...projection.coexist.applicable, ...projection.coexist.scenarioReference, ...projection.coexist.unknown] : coexist.map(content=>({content,source:null}));
-      coexistUI?.update(groups);
+      // `group` không hợp lệ (kể cả lặp khóa) được coi là "có yêu cầu": mục tự về nhóm đầu và bỏ khỏi URL.
+      const groupParams = new URL(location.href).searchParams.getAll('group');
+      coexistUI?.update(groups, groupParams.length === 0 ? null : groupParams.length === 1 ? groupParams[0] : '');
       renderTeams();
       if (previous !== JSON.stringify(browse)) consumers.forEach(consumer=>consumer?.setSeasonScope?.({model:seasonModel,browse}));
     }

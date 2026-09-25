@@ -84,13 +84,17 @@ test("every source option replaces only its card and restores the default", asyn
     const next = page.locator(".kh-card").nth((index + 1) % data.teams.length);
     const neighbor = await next.textContent();
     const neighborHref = await next.getByRole("link").first().getAttribute("href");
-    const select = card.getByRole("combobox");
-    await expect(select).toHaveCount(team.variants?.length ? 1 : 0);
+    const chips = card.locator(".kh-config-chip");
+    await expect(chips).toHaveCount(team.variants?.length ? team.variants.length + 1 : 0);
+    await expect(card.locator(".kh-config-row")).toHaveCount(team.variants?.length ? 1 : 0);
     for (const variant of team.variants || []) {
-      await expect(select.locator(`option[value="${variant.id}"]`)).toHaveText(variant.displayLabel);
+      const chip = card.locator(`.kh-config-chip[data-variant="${variant.id}"]`);
+      await expect(chip).toHaveText(variant.displayLabel);
       expect(variant.displayLabel).not.toMatch(/CN|Nhật|Hàn|Bahamut|S\d+/);
-      await select.selectOption(variant.id);
-      await expect(card.locator(".card-head .badge")).toHaveText(variant.unitType);
+      await chip.click();
+      await expect(chip).toHaveAttribute("aria-pressed", "true");
+      await expect(card.locator('.kh-config-chip[aria-pressed="true"]')).toHaveCount(1);
+      await expect(card.locator(".kh-card-head .badge")).toHaveText(variant.unitType);
       await expect(card.locator(".kh-transforms")).toHaveCount(0);
       for (const [i, hero] of variant.heroes.entries()) {
         const row = card.locator(".hero").nth(i);
@@ -102,7 +106,7 @@ test("every source option replaces only its card and restores the default", asyn
       }
       await expect(next).toHaveText(neighbor);
       await expect(next.getByRole("link").first()).toHaveAttribute("href", neighborHref);
-      // Link của card đang chọn tự mang cặp đang hoạt động ngay khi đổi selector.
+      // Link của card đang chọn tự mang cặp đang hoạt động ngay khi đổi cấu hình.
       for (const link of await card.getByRole("link").all()) {
         await expect(link).toHaveAttribute("href", new RegExp(`/khai-hoang/${handles.k[team.id]}/`));
         await expect(link).toHaveAttribute("href", new RegExp(`variant=${variant.id}`));
@@ -110,7 +114,8 @@ test("every source option replaces only its card and restores the default", asyn
       }
     }
     if (team.variants?.length) {
-      await select.selectOption("");
+      await card.locator('.kh-config-chip[data-variant=""]').click();
+      await expect(card.locator('.kh-config-chip[data-variant=""]')).toHaveAttribute("aria-pressed", "true");
       await expect(card.locator(".kh-build")).toHaveText(initial);
       for (const link of await card.getByRole("link").all()) {
         await expect(link).not.toHaveAttribute("href", /variant=/);
@@ -118,7 +123,7 @@ test("every source option replaces only its card and restores the default", asyn
     }
   }
   // Chọn cấu hình không điều hướng khỏi danh sách.
-  await expect(page.locator(".kh-card").first().getByRole("combobox")).toHaveCount(1);
+  await expect(page.locator(".kh-card").first().locator(".kh-config-chip").first()).toHaveCount(1);
   expect(new URL(page.url()).pathname).toBe("/khai-hoang/");
   expect(new URL(page.url()).hash).toBe("");
 });
@@ -141,32 +146,35 @@ test("cards never render guides or opening notes, even when the payload carries 
 test("source selection works with keyboard on mobile without overflow", async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await routeKhaihoang(page, data);
-  const select = page.getByRole("combobox", { name: `Cấu hình ${data.teams[0].title}`, exact: true });
-  await select.focus();
-  // Native select type-ahead targets the neutral tactic-based option label.
-  await page.keyboard.press(data.teams[0].variants[0].displayLabel[0].toLowerCase());
-  await expect(select).toHaveValue(data.teams[0].variants[0].id);
-  await expect(select).toBeFocused();
+  const team = data.teams.find((item) => item.variants?.length);
+  const card = page.locator(".kh-card").filter({ has: page.getByRole("heading", { name: team.title, exact: true }) });
+  // Chip cấu hình là button thật: bàn phím chọn bằng Tab + Enter, không cần type-ahead của select.
+  const chip = card.locator(`.kh-config-chip[data-variant="${team.variants[0].id}"]`);
+  await chip.focus();
+  await expect(chip).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(chip).toHaveAttribute("aria-pressed", "true");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-  await page.locator(".kh-card").first().screenshot({ path: testInfo.outputPath("mobile-option.png") });
+  await card.screenshot({ path: testInfo.outputPath("mobile-option.png") });
 });
 
 test("curated tactical build notes stay visible without source provenance", async ({ page }) => {
   await routeKhaihoang(page, data);
+  const chipFor = (card, variantId) => card.locator(`.kh-config-chip[data-variant="${variantId}"]`);
   const lucTon = page.locator(".kh-card").filter({ has: page.getByRole("heading", {
     name: "Lục Tốn · Tả Từ · Trương Xuân Hoa", exact: true,
   }) });
   await expect(lucTon.locator(".kh-build-note")).toHaveCount(0);
-  await lucTon.getByRole("combobox").selectOption("jp-s23-si-biet");
+  await chipFor(lucTon, "jp-s23-si-biet").click();
   await expect(lucTon.locator(".kh-build-note")).toContainText(/không trộn hai cấu hình/i);
   await expect(lucTon.locator(".kh-build-note")).not.toContainText(/Nguồn|Dengeki|S23/);
 
   const maSieu = page.locator(".kh-card").filter({ has: page.getByRole("heading", {
     name: "Gia Cát Khác · SP Mã Siêu · Pháp Chính", exact: true,
   }) });
-  await maSieu.getByRole("combobox").selectOption("cn-thoi-phong");
+  await chipFor(maSieu, "cn-thoi-phong").click();
   await expect(maSieu.locator(".kh-build-note")).toContainText("Pháp Chính mang Tiềm Long từ đầu; cần có Thôi Phong.");
-  await maSieu.getByRole("combobox").selectOption("");
+  await chipFor(maSieu, "").click();
   await expect(maSieu.locator(".kh-build")).not.toContainText("Pháp Chính mang Tiềm Long từ đầu");
 
   const chuThai = teamByTitle("Chu Thái · Trương Phi · Trương Xuân Hoa");
@@ -186,17 +194,92 @@ test("main Khai hoang cards keep current-only wording and real detail links", as
   await expect(main).toHaveCount(data.teams.length);
   for (let index = 0; index < await main.count(); index++) {
     const card = main.nth(index);
+    const team = data.teams[index];
     await expect(card).not.toContainText(/Kazten|CN\/KR|Nguồn:/);
     const links = card.getByRole("link");
-    await expect(links).toHaveCount(2);
-    for (const link of await links.all()) {
-      await expect(link).toHaveAttribute("href", new RegExp(`/khai-hoang/${handles.k[data.teams[index].id]}/`));
-      await expect(link).toHaveAttribute("href", /from=/);
-    }
-    await expect(card.getByRole("link", { name: data.teams[index].title, exact: true })).toHaveCount(1);
-    await expect(card.getByRole("link", { name: "Xem chi tiết", exact: true })).toHaveCount(1);
+    await expect(links).toHaveCount(1);
+    const link = links.first();
+    await expect(link).toHaveAttribute("href", new RegExp(`/khai-hoang/${handles.k[team.id]}/`));
+    await expect(link).toHaveAttribute("href", /from=/);
+    // Chữ hướng dẫn đánh đất chỉ ở trang chi tiết: thẻ chỉ còn một dòng link tới đúng route.
+    await expect(link).toHaveText(team.guide && Object.keys(team.guide).length ? "Hướng dẫn đánh đất →" : "Chi tiết →");
   }
   await expect(main.locator(".kh-guide, .kh-opening-note")).toHaveCount(0);
+});
+
+test("cards draw the six-mark rating bar only for the teams that have guide ratings", async ({ page }) => {
+  await routeKhaihoang(page, data);
+  const withRatings = data.teams.filter((team) => team.guide?.ratings && Object.keys(team.guide.ratings).length);
+  expect(withRatings.length).toBeGreaterThan(0);
+  expect(withRatings.length).toBeLessThan(data.teams.length);
+  await expect(page.locator(".kh-card .kh-ratings")).toHaveCount(withRatings.length);
+  for (const [index, team] of data.teams.entries()) {
+    const card = page.locator(".kh-card").nth(index);
+    const bar = card.locator(".kh-ratings");
+    if (!team.guide?.ratings || !Object.keys(team.guide.ratings).length) {
+      await expect(bar).toHaveCount(0);
+      await expect(card.locator(".kh-ratings-block")).toBeHidden();
+      continue;
+    }
+    await expect(bar).toHaveCount(1);
+    const marks = bar.locator(".kh-rating");
+    const expected = [["Đất 4", "land4"], ["Đất 5", "land5"], ["Đất 6", "land6"], ["Đất 7–8", "land7to8"], ["Chuyển", "transition"], ["Tổng", "overall"]]
+      .filter(([, key]) => Number.isFinite(Number(team.guide.ratings[key])));
+    await expect(marks).toHaveCount(expected.length);
+    for (const [markIndex, [label, key]] of expected.entries()) {
+      const value = Number(team.guide.ratings[key]);
+      const mark = marks.nth(markIndex);
+      await expect(mark.locator(".kh-rating-label")).toHaveText(label);
+      await expect(mark.locator(".kh-rating-value")).toHaveText(String(value).replace(".", ","));
+      // Độ dài thanh là chính con số chia thang 10, không phải trang trí cố định.
+      const width = await mark.locator(".kh-rating-fill").evaluate((node) => node.style.width);
+      expect(width).toBe(`${Math.round(value * 10)}%`);
+    }
+    // Cột Tổng là mốc duy nhất dùng màu mực thay vì màu son.
+    await expect(bar.locator(".kh-rating-fill-total")).toHaveCount(expected.some(([, key]) => key === "overall") ? 1 : 0);
+    await expect(card.locator(".kh-ratings-note")).toHaveText("Điểm /10 cho cả bộ ba tướng · Tướng trắng vẫn dùng được; càng nhiều đỏ càng tốt.");
+  }
+});
+
+test("unit filter narrows the same rendered cards without touching their state", async ({ page }) => {
+  await routeKhaihoang(page, data);
+  const counts = new Map();
+  for (const team of data.teams) counts.set(team.unitType, (counts.get(team.unitType) ?? 0) + 1);
+  const all = page.locator(".kh-unit-chip").first();
+  await expect(all).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator(".kh-unit-chip")).toHaveCount(counts.size + 1);
+  await expect(page.locator(".kh-anchor").first()).toHaveText(/Đội đề xuất/);
+  for (const [unit, count] of counts) {
+    await page.locator(`.kh-unit-chip[data-unit="${unit}"]`).click();
+    await expect(page.locator(`.kh-unit-chip[data-unit="${unit}"]`)).toHaveAttribute("aria-pressed", "true");
+    await expect(all).toHaveAttribute("aria-pressed", "false");
+    const visible = page.locator(".kh-card:visible");
+    await expect(visible).toHaveCount(count);
+    expect(await visible.evaluateAll((nodes) => nodes.every((node) => node.querySelector(".kh-card-head .badge").textContent.trim() === nodes[0].querySelector(".kh-card-head .badge").textContent.trim()))).toBe(true);
+  }
+  await all.click();
+  await expect(page.locator(".kh-card:visible")).toHaveCount(data.teams.length);
+});
+
+test("mines render as a table on desktop and as one card per mine on mobile", async ({ page }) => {
+  await routeKhaihoang(page, data);
+  await expect(page.locator(".kh-mines tbody tr")).toHaveCount(data.mines.length);
+  await expect(page.locator(".kh-mines caption")).toHaveText("Quân thủ từng mỏ");
+  const firstMine = data.mines[0];
+  const row = page.locator(".kh-mines tbody tr").first();
+  await expect(row.locator("th")).toHaveText(firstMine.name);
+  await expect(row.locator(".kh-mine-hero")).toHaveText(firstMine.enemies.map((enemy) => enemy.hero));
+  await expect(row.locator(".kh-mine-unit")).toHaveText(firstMine.enemies.map((enemy) => enemy.unitType));
+  await expect(page.locator(".kh-table-frame")).toBeVisible();
+  await expect(page.locator(".kh-mine-cards")).toBeHidden();
+
+  await page.setViewportSize({ width: 320, height: 800 });
+  await expect(page.locator(".kh-mine-cards")).toBeVisible();
+  await expect(page.locator(".kh-table-frame")).toBeHidden();
+  await expect(page.locator(".kh-mine-card")).toHaveCount(data.mines.length);
+  await expect(page.locator(".kh-mine-card").first().locator("h3")).toHaveText(firstMine.name);
+  await expect(page.locator(".kh-mine-enemy").first()).toHaveText(`${firstMine.enemies[0].hero} · ${firstMine.enemies[0].unitType}`);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
 
 test("researched root builds render their stage-specific leaders, units, and tactic slots", async ({ page }) => {
@@ -261,9 +344,9 @@ for (const width of [1280, 375]) {
   test(`standalone Chạm Sứ groups preserve source content and order at ${width}px`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: 812 });
     await routeKhaihoang(page, { ...data, chamSuTeams });
-    await expect(page.getByRole("heading", { name: "Đội Chạm Sứ / Ăn vạ", exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: `Đội Chạm Sứ / Ăn vạ ${chamSuTeams.length}`, exact: true })).toBeVisible();
     await expect(page.locator(".kh-section-title")).toHaveText([
-      "Đội hình khai hoang đề xuất", "Đội Chạm Sứ / Ăn vạ", "Quân thủ các mỏ",
+      `Đội khai hoang đề xuất ${data.teams.length}`, `Đội Chạm Sứ / Ăn vạ ${chamSuTeams.length}`, `Quân thủ các mỏ ${data.mines.length}`,
     ]);
     await expect(page.locator(".kh-card")).toHaveCount(data.teams.length);
     await expect(page.locator(".cham-su-card")).toHaveCount(chamSuTeams.length);
@@ -271,9 +354,9 @@ for (const width of [1280, 375]) {
     for (const [index, team] of chamSuTeams.entries()) {
       const card = page.locator(".cham-su-card").nth(index);
       await expect(card.getByRole("heading")).toHaveText(team.title);
-      await expect(card.locator(".hn")).toHaveText(team.heroes.map((hero) => hero.name));
-      await expect(card.locator(".tag")).toHaveText(team.heroes.map((hero) => hero.tactic));
-      await expect(card.locator(".kh-build-note")).toHaveText(team.note);
+      await expect(card.locator(".cham-su-hero")).toHaveText(team.heroes.map((hero) => hero.name));
+      await expect(card.locator(".cham-su-tactic")).toHaveText(team.heroes.map((hero) => hero.tactic));
+      await expect(card.locator(".cham-su-note")).toHaveText(team.note);
       await expect(card.getByRole("combobox")).toHaveCount(0);
       await expect(card.locator(".kh-label, .badge.unit")).toHaveCount(0);
       const link = card.getByRole("link", { name: team.sources[0].label, exact: true });
@@ -291,10 +374,10 @@ for (const shape of ["missing", "empty", "legacy"]) {
     const payload = shape === "legacy" ? data.mines
       : shape === "empty" ? { ...withoutChamSu, chamSuTeams: [] } : withoutChamSu;
     await routeKhaihoang(page, payload);
-    await expect(page.getByRole("heading", { name: "Quân thủ các mỏ", exact: true })).toBeVisible();
-    await expect(page.locator(".mine")).toHaveCount(data.mines.length);
+    await expect(page.getByRole("heading", { name: `Quân thủ các mỏ ${data.mines.length}`, exact: true })).toBeVisible();
+    await expect(page.locator(".kh-mine-card")).toHaveCount(data.mines.length);
     await expect(page.locator(".kh-card")).toHaveCount(shape === "legacy" ? 0 : data.teams.length);
-    await expect(page.getByRole("heading", { name: "Đội Chạm Sứ / Ăn vạ", exact: true })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: /Đội Chạm Sứ \/ Ăn vạ/ })).toHaveCount(0);
     await expect(page.locator(".cham-su-card")).toHaveCount(0);
     await expect(page.getByText("Chuyển hình đề xuất", { exact: true })).toHaveCount(0);
     await expect(page.locator(".kh-guide")).toHaveCount(0);
@@ -393,8 +476,8 @@ test("detail URL keeps variant and from in sync across select, reload and histor
   await expect(page.locator(".kh-card")).toHaveCount(data.teams.length);
   // Mở chi tiết từ card đang chọn cấu hình, đúng như primary-click ngoài danh sách.
   const card = page.locator(".kh-card").filter({ has: page.getByRole("heading", { name: target.title, exact: true }) });
-  const cta = card.getByRole("link", { name: "Xem chi tiết", exact: true });
-  await card.getByRole("combobox").selectOption(first.id);
+  const cta = card.getByRole("link").first();
+  await card.locator(`.kh-config-chip[data-variant="${first.id}"]`).click();
   const entryUrl = await cta.getAttribute("href");
   expect(entryUrl).toContain(`/khai-hoang/${handles.k[target.id]}/`);
   expect(entryUrl).toContain(`variant=${first.id}`);

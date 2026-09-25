@@ -20,7 +20,7 @@ export const KHAIHOANG_VARIANT_QUERY_KEY = 'khVariant';
 export const SECTION_QUERY_KEYS = Object.freeze({
   '/doi-chuan/': ['season','category','q','faction','unit','view','subcategory','source','scenario','ruleset','config'],
   '/doi-khac/': ['season','category','q','faction','unit','view','subcategory','source','scenario','ruleset','config'],
-  '/cung-ton/': ['config','q','faction','unit','tier','source','sort','stars','scenario','ruleset'],
+  '/cung-ton/': ['group','config','q','faction','unit','tier','source','sort','stars','scenario','ruleset'],
   '/soi-doi/': ['config','q','faction','unit','tier','source','sort','stars','scenario','ruleset'],
   '/goi-y-doi/': ['config','q','faction','unit','tier','source','sort','stars','scenario','ruleset'],
   '/khai-hoang/': [KHAIHOANG_TEAM_QUERY_KEY,KHAIHOANG_VARIANT_QUERY_KEY],

@@ -21,7 +21,7 @@ const khaiHoangTeams = khaiHoangFixture.teams;
 const [khaiHoangTeamA, khaiHoangTeamB] = khaiHoangTeams.filter((team) => (team.variants || []).length);
 const khaiHoangRoute = (teamId) => `/khai-hoang/${encodeURIComponent(routeHandles.khaihoang[teamId])}/`;
 const khaiHoangCard = (page, team) => page.locator(".kh-card").filter({
-  has: page.locator(`select[aria-label="Cấu hình ${team.title}"]`),
+  has: page.locator(`.kh-config-row[aria-label="Chọn cấu hình ${team.title}"]`),
 });
 async function seedKhaiHoangReturnSources(page, historyMap, sessionMap, snapshotUrl = "/#khaihoang") {
   await page.addInitScript(({historyMap, sessionMap, snapshotUrl}) => {
@@ -375,11 +375,11 @@ test("Khai hoang selection uses its own query URL and survives detail round trip
   );
 
   // Đổi selector ghi cặp vào URL root và dựng lại href của đúng card đó.
-  await cardA.locator("select").selectOption(variantA);
+  await cardA.locator(`.kh-config-chip[data-variant="${variantA}"]`).click();
   expect(new URL(page.url()).searchParams.get("khTeam")).toBe(teamA.id);
   expect(new URL(page.url()).searchParams.get("khVariant")).toBe(variantA);
   const hrefA = `${khaiHoangRoute(teamA.id)}?variant=${variantA}&from=${encodeURIComponent(pairFrom(teamA.id, variantA))}`;
-  await expect(cardA.locator(".kh-title-link")).toHaveAttribute("href", hrefA);
+  await expect(cardA.locator(".kh-detail-link")).toHaveAttribute("href", hrefA);
   await expect(cardA.locator(".kh-detail-link")).toHaveAttribute("href", hrefA);
   await expect(cardB.locator(".kh-detail-link")).toHaveAttribute(
     "href",
@@ -395,22 +395,22 @@ test("Khai hoang selection uses its own query URL and survives detail round trip
 
   // A4: chọn B rồi A, mở A bằng primary click, Back: cả hai lấy từ map của snapshot.
   await page.goBack();
-  await expect(cardA.locator("select")).toHaveValue(variantA);
-  await cardB.locator("select").selectOption(variantB);
-  await cardA.locator("select").selectOption(variantA);
-  await cardA.locator(".kh-title-link").click();
+  expect(await cardA.locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(variantA);
+  await cardB.locator(`.kh-config-chip[data-variant="${variantB}"]`).click();
+  await cardA.locator(`.kh-config-chip[data-variant="${variantA}"]`).click();
+  await cardA.locator(".kh-detail-link").click();
   await expect(page.locator("#team-detail-body")).toBeVisible();
   await page.goBack();
-  await expect(cardA.locator("select")).toHaveValue(variantA);
-  await expect(cardB.locator("select")).toHaveValue(variantB);
+  expect(await cardA.locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(variantA);
+  expect(await cardB.locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(variantB);
 
   // Copy link của B rồi mở trong cùng tab: B lấy từ URL, A vẫn lấy từ map cùng context.
   const hrefB = await cardB.locator(".kh-detail-link").getAttribute("href");
   await page.goto(new URL(hrefB, page.url()).href);
   await expect(page.locator("#team-detail-body")).toBeVisible();
   await page.locator("#team-return-link").click();
-  await expect(cardB.locator("select")).toHaveValue(variantB);
-  await expect(cardA.locator("select")).toHaveValue(variantA);
+  expect(await cardB.locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(variantB);
+  expect(await cardA.locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(variantA);
 
   // Surface khác không mang cặp Khai hoang sang query của nó, và quay lại thì cặp được phục hồi.
   await page.locator('a[data-section="coexist"]').click();
@@ -424,7 +424,7 @@ test("Khai hoang selection uses its own query URL and survives detail round trip
   await waitForBoot(page);
   await expectActiveSection(page, "khaihoang");
   await expect.poll(() => new URL(page.url()).searchParams.get("khTeam")).toBe(teamB.id);
-  await expect(cardA.locator("select")).toHaveValue(variantA);
+  expect(await cardA.locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(variantA);
 });
 
 test("Khai hoang restore falls back to the URL pair when session storage is denied", async ({ page }) => {
@@ -437,9 +437,9 @@ test("Khai hoang restore falls back to the URL pair when session storage is deni
   await page.goto(`/khai-hoang/?khTeam=${team.id}&khVariant=${variant}`);
   await waitForBoot(page);
   const card = khaiHoangCard(page, team);
-  await expect(card.locator("select")).toHaveValue(variant);
+  expect(await card.locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(variant);
   // Không có snapshot thì chỉ active team trên URL sống sót; card khác về mặc định.
-  await expect(khaiHoangCard(page, khaiHoangTeamB).locator("select")).toHaveValue("");
+  expect(await khaiHoangCard(page, khaiHoangTeamB).locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe("");
   // Điều hướng vẫn hoạt động dù storage bị chặn.
   await card.locator(".kh-detail-link").click();
   await expect(page.locator("#team-detail-body")).toBeVisible();
@@ -458,7 +458,7 @@ for (const snapshotUrl of ["/#khaihoang", "/khai-hoang/"]) {
 
     await page.goto("/khai-hoang/");
     await waitForBoot(page);
-    await expect(khaiHoangCard(page, team).locator("select")).toHaveValue("");
+    expect(await khaiHoangCard(page, team).locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe("");
   });
 }
 
@@ -476,22 +476,22 @@ for (const snapshotUrl of ["/#khaihoang", "/khai-hoang/"]) {
     }, {teamId: team.id, variantId: saved, otherId: other.id, otherVariantId: otherSaved, snapshotUrl});
     await page.goto(`/khai-hoang/?khTeam=${team.id}&khVariant=${khaiHoangTeamB.variants[0].id}`);
     await waitForBoot(page);
-    await expect(khaiHoangCard(page, team).locator("select")).toHaveValue(saved);
-    await expect(khaiHoangCard(page, other).locator("select")).toHaveValue(otherSaved);
+    expect(await khaiHoangCard(page, team).locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(saved);
+    expect(await khaiHoangCard(page, other).locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(otherSaved);
     await page.goto(`/khai-hoang/?khTeam=${team.id}&khVariant=not%20routable`);
     await waitForBoot(page);
-    await expect(khaiHoangCard(page, team).locator("select")).toHaveValue(saved);
-    await expect(khaiHoangCard(page, other).locator("select")).toHaveValue(otherSaved);
+    expect(await khaiHoangCard(page, team).locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(saved);
+    expect(await khaiHoangCard(page, other).locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(otherSaved);
     const validOverride = team.variants[1].id;
     await page.goto(`/khai-hoang/?khTeam=${team.id}&khVariant=${validOverride}`);
     await waitForBoot(page);
-    await expect(khaiHoangCard(page, team).locator("select")).toHaveValue(validOverride);
-    await expect(khaiHoangCard(page, other).locator("select")).toHaveValue(otherSaved);
+    expect(await khaiHoangCard(page, team).locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(validOverride);
+    expect(await khaiHoangCard(page, other).locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(otherSaved);
     // Variant bị thiếu mới có quyền ghi đè snapshot thành build mặc định.
     await page.goto(`/khai-hoang/?khTeam=${team.id}`);
     await waitForBoot(page);
-    await expect(khaiHoangCard(page, team).locator("select")).toHaveValue("");
-    await expect(khaiHoangCard(page, other).locator("select")).toHaveValue(otherSaved);
+    expect(await khaiHoangCard(page, team).locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe("");
+    expect(await khaiHoangCard(page, other).locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(otherSaved);
   });
 }
 
@@ -502,8 +502,8 @@ for (const snapshotUrl of ["/#khaihoang", "/khai-hoang/"]) {
     await seedKhaiHoangReturnSources(page, {[a.id]: a.variants[0].id}, {[b.id]: b.variants[0].id}, snapshotUrl);
     await page.goto("/khai-hoang/");
     await waitForBoot(page);
-    await expect(khaiHoangCard(page, a).locator("select")).toHaveValue(a.variants[0].id);
-    await expect(khaiHoangCard(page, b).locator("select")).toHaveValue("");
+    expect(await khaiHoangCard(page, a).locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(a.variants[0].id);
+    expect(await khaiHoangCard(page, b).locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe("");
   });
 }
 
@@ -514,8 +514,8 @@ for (const snapshotUrl of ["/#khaihoang", "/khai-hoang/"]) {
     await seedKhaiHoangReturnSources(page, {}, {[a.id]: a.variants[0].id, [b.id]: b.variants[0].id}, snapshotUrl);
     await page.goto("/khai-hoang/");
     await waitForBoot(page);
-    await expect(khaiHoangCard(page, a).locator("select")).toHaveValue("");
-    await expect(khaiHoangCard(page, b).locator("select")).toHaveValue("");
+    expect(await khaiHoangCard(page, a).locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe("");
+    expect(await khaiHoangCard(page, b).locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe("");
   });
 }
 
@@ -526,8 +526,8 @@ for (const snapshotUrl of ["/#khaihoang", "/khai-hoang/"]) {
     await seedKhaiHoangReturnSources(page, null, {[a.id]: a.variants[0].id, [b.id]: b.variants[0].id}, snapshotUrl);
     await page.goto("/khai-hoang/");
     await waitForBoot(page);
-    await expect(khaiHoangCard(page, a).locator("select")).toHaveValue(a.variants[0].id);
-    await expect(khaiHoangCard(page, b).locator("select")).toHaveValue(b.variants[0].id);
+    expect(await khaiHoangCard(page, a).locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(a.variants[0].id);
+    expect(await khaiHoangCard(page, b).locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(b.variants[0].id);
   });
 }
 
