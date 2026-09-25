@@ -1,0 +1,16 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+const canonicalUrl = new URL('/cung-ton/', Astro.site);
+---
+<SiteLayout
+  title="Cùng Tồn — Cẩm Nang Game Tam Quốc Chí - Chiến Lược"
+  description="Các nhóm tướng Cùng Tồn theo kịch bản và phiên bản luật, kèm cấu hình áp dụng và phần tham khảo."
+  pageKind="section"
+  activeSection="coexist"
+  tagline="Tra cứu đội hình theo kịch bản"
+  canonicalUrl={canonicalUrl}
+>
+  <section id="section-coexist" class="section active"></section>
+
+  <script is:inline type="module" src="/js/app.js" slot="scripts"></script>
+</SiteLayout>

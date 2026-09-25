@@ -1,4 +1,6 @@
 // Chrome dùng chung cho mọi trang: theme và menu section. Không tải dữ liệu gameplay.
+// Đây là nơi duy nhất gắn nút đổi giao diện; script inline trong <head> của SiteLayout đặt
+// `data-theme` trước stylesheet để trang không nháy, còn ở đây chỉ áp lại và đổi giá trị.
 
 import { createMobileSectionMenu } from './mobile-section-menu.js';
 
@@ -23,10 +25,18 @@ function storeTheme(theme) {
   }
 }
 
-export function initSiteChrome({documentTarget = document} = {}) {
+/** Không có lựa chọn đã lưu thì theo hệ điều hành; matchMedia hỏng về mặc định sáng. */
+function systemTheme() {
+  try {
+    return globalThis.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  } catch {
+    return 'light';
+  }
+}
+
+export function initSiteChrome({documentTarget = document, windowTarget = globalThis} = {}) {
   const root = documentTarget.documentElement;
   const toggle = documentTarget.querySelector('#theme-toggle');
-  const prefersDark = globalThis.matchMedia?.('(prefers-color-scheme: dark)').matches;
   const applyTheme = (theme) => {
     root.dataset.theme = theme;
     root.style.colorScheme = theme;
@@ -35,12 +45,19 @@ export function initSiteChrome({documentTarget = document} = {}) {
     toggle.setAttribute('aria-pressed', String(dark));
     toggle.setAttribute('aria-label', dark ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối');
   };
-  applyTheme(readStoredTheme() || (prefersDark ? 'dark' : 'light'));
+  const syncTheme = () => applyTheme(readStoredTheme() || systemTheme());
+  syncTheme();
   toggle?.addEventListener('click', () => {
     const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
     applyTheme(next);
     // Ghi hỏng vẫn phải đổi được giao diện trong phiên hiện tại.
     storeTheme(next);
+  });
+  // Back/forward từ bfcache dựng lại DOM cũ: đọc lại lựa chọn thay vì giữ theme đã chụp.
+  windowTarget.addEventListener?.('pageshow', syncTheme);
+  // Tab khác đổi theme (kể cả xóa khóa: `key === null`).
+  windowTarget.addEventListener?.('storage', (event) => {
+    if (!event || event.key === THEME_KEY || event.key === null) syncTheme();
   });
 
   const nav = documentTarget.querySelector('.section-nav');
@@ -49,5 +66,5 @@ export function initSiteChrome({documentTarget = document} = {}) {
   const menu = nav && menuToggle ? createMobileSectionMenu({nav, toggle: menuToggle, tabs, documentTarget}) : null;
   menu?.setActive(tabs.find((tab) => tab.classList.contains('active'))?.dataset.section);
 
-  return {menu, applyTheme};
+  return {menu, applyTheme, syncTheme};
 }

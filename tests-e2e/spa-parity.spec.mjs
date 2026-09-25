@@ -23,15 +23,15 @@ const khaiHoangRoute = (teamId) => `/khai-hoang/${encodeURIComponent(routeHandle
 const khaiHoangCard = (page, team) => page.locator(".kh-card").filter({
   has: page.locator(`select[aria-label="Cấu hình ${team.title}"]`),
 });
-async function seedKhaiHoangReturnSources(page, historyMap, sessionMap) {
-  await page.addInitScript(({historyMap, sessionMap}) => {
+async function seedKhaiHoangReturnSources(page, historyMap, sessionMap, snapshotUrl = "/#khaihoang") {
+  await page.addInitScript(({historyMap, sessionMap, snapshotUrl}) => {
     const snapshot = (map) => ({
-      version: 1, url: "/#khaihoang", scrollY: 0, tab: "khaihoang", disclosures: {},
+      version: 1, url: snapshotUrl, scrollY: 0, tab: "khaihoang", disclosures: {},
       ...(map === null ? {} : {khaihoangVariants: map}),
     });
     sessionStorage.setItem("tqccl:team-return:v1", JSON.stringify(snapshot(sessionMap)));
     history.replaceState({teamReturn: snapshot(historyMap)}, "", location.href);
-  }, {historyMap, sessionMap});
+  }, {historyMap, sessionMap, snapshotUrl});
 }
 const distRoot = new URL("../dist/", import.meta.url);
 const publicArtifactPaths = PUBLIC_ARTIFACTS.map(
@@ -61,6 +61,16 @@ const sections = [
   "analyze",
   "roster-recommend",
 ];
+const sectionPaths = {
+  "team-chuan": "/doi-chuan/",
+  "team-khac": "/doi-khac/",
+  coexist: "/cung-ton/",
+  khaihoang: "/khai-hoang/",
+  lookup: "/tra-cuu/",
+  "recruit-tracker": "/chieu-mo/",
+  analyze: "/soi-doi/",
+  "roster-recommend": "/goi-y-doi/",
+};
 const transparentPng = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAEAQH/XP8W3QAAAABJRU5ErkJggg==",
   "base64",
@@ -74,7 +84,11 @@ const distContentTypes = {
 
 async function fulfillFromDist(route) {
   const url = new URL(route.request().url());
-  const relativePath = decodeURIComponent(url.pathname === "/" ? "index.html" : url.pathname.slice(1));
+  const relativePath = decodeURIComponent(
+    url.pathname === "/"
+      ? "index.html"
+      : `${url.pathname.slice(1)}${url.pathname.endsWith("/") ? "index.html" : ""}`,
+  );
   if (
     !relativePath
     || relativePath.split("/").some((segment) => segment === ".." || segment.includes("\\"))
@@ -124,15 +138,18 @@ test.beforeEach(async ({ context }) => {
 });
 
 async function waitForBoot(page) {
-  await expect(page.locator("#season-scenario")).toBeAttached();
-  await expect(page.locator("script[src*='turnstile']")).toHaveCount(1);
+  await expect(page.locator('body[data-boot="ready"]')).toBeAttached();
+  const section = await page.locator("body").getAttribute("data-page-section");
+  if (section === "analyze" || section === "roster-recommend") {
+    await expect(page.locator("script[src*='turnstile']")).toHaveCount(1);
+  }
 }
 
 async function expectActiveSection(page, name) {
-  await expect(page.locator(`.nav-tab[data-section="${name}"]`)).toHaveClass(/\bactive\b/);
-  await expect(page.locator(`#section-${name}`)).toHaveClass(/\bactive\b/);
-  await expect(page.locator(".nav-tab.active")).toHaveCount(1);
-  await expect(page.locator(".section.active")).toHaveCount(1);
+  await expect(page.locator(`a[data-section="${name}"]`)).toHaveAttribute("aria-current", "page");
+  await expect(page.locator("body")).toHaveAttribute("data-page-section", name);
+  await expect(page.locator(".section")).toHaveCount(1);
+  await expect(page.locator(".section")).toHaveAttribute("id", `section-${name}`);
 }
 
 test("boots once with clean first-party requests and stable metadata", async ({ page }) => {
@@ -170,17 +187,16 @@ test("boots once with clean first-party requests and stable metadata", async ({ 
     }
   });
 
-  await page.goto("/");
+  await page.goto("/doi-chuan/");
   await waitForBoot(page);
 
-  await expect(page).toHaveTitle("Cẩm Nang Game Tam Quốc Chí - Chiến Lược");
+  await expect(page).toHaveTitle("Đội chuẩn — Cẩm Nang Game Tam Quốc Chí - Chiến Lược");
   await expect(page.locator("html")).toHaveAttribute("lang", "vi");
   await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /đội hình/i);
-  const appModule = page.locator('script[type="module"]');
+  const appModule = page.locator('script[type="module"][src="/js/app.js"]');
   await expect(appModule).toHaveCount(1);
-  await expect(appModule).toHaveAttribute("src", /^(?:\.\/|\/)js\/app\.js$/);
-  await expect(page.locator(".nav-tab")).toHaveCount(sections.length);
-  await expect(page.locator(".section")).toHaveCount(sections.length);
+  await expect(page.locator("a[data-section]")).toHaveCount(sections.length);
+  await expect(page.locator(".section")).toHaveCount(1);
   await expectActiveSection(page, "team-chuan");
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);
@@ -208,37 +224,135 @@ test("boots once with clean first-party requests and stable metadata", async ({ 
   expect(unexpectedExternalRequests).toEqual([]);
 });
 
-test("all hash sections support direct links, clicks, back, and forward", async ({ page }) => {
-  await page.goto("/#khaihoang");
+test("section links navigate across pages and browser history", async ({ page }) => {
+  await page.goto("/khai-hoang/");
   await waitForBoot(page);
   await expectActiveSection(page, "khaihoang");
 
   for (const name of sections) {
-    await page.locator(`.nav-tab[data-section="${name}"]`).click();
-    await expect(page).toHaveURL(new RegExp(`#${name}$`));
+    if (name === "khaihoang") continue;
+    await page.locator(`a[data-section="${name}"]`).click();
+    await expect(page).toHaveURL(sectionPaths[name]);
+    await waitForBoot(page);
     await expectActiveSection(page, name);
   }
 
   await page.goBack();
+  await expect(page).toHaveURL(sectionPaths.analyze);
   await expectActiveSection(page, "analyze");
   await page.goForward();
+  await expect(page).toHaveURL(sectionPaths["roster-recommend"]);
   await expectActiveSection(page, "roster-recommend");
 
   await page.goto("/#not-a-section");
+  await expect(page).toHaveURL("/#not-a-section");
+  expect(await page.locator("body").getAttribute("data-page-section")).toBeNull();
+  await expect(page.locator('script[type="module"][src="/js/app.js"]')).toHaveCount(0);
+});
+for (const [hash, destination] of [
+  ["#team-chuan", "/doi-chuan/"],
+  ["#team-khac", "/doi-khac/"],
+  ["#team-pk", "/doi-khac/?source=team-intro"],
+  ["#meta-cu", "/doi-khac/?source=moi-phe"],
+  ["#coexist", "/cung-ton/"],
+  ["#khaihoang", "/khai-hoang/"],
+  ["#lookup", "/tra-cuu/"],
+  ["#tactics", "/tra-cuu/?group=tactics"],
+  ["#lookup?group=tactics", "/tra-cuu/?group=tactics"],
+  ["#heroes", "/tra-cuu/?group=heroes"],
+  ["#recruit-tracker", "/chieu-mo/"],
+  ["#analyze", "/soi-doi/"],
+  ["#roster-recommend", "/goi-y-doi/"],
+]) {
+  test(`legacy hash ${hash} redirects to ${destination}`, async ({ page }) => {
+    await page.goto(`/${hash}`);
+    await expect(page).toHaveURL(destination);
+    const [name] = Object.entries(sectionPaths).find(([, path]) => destination.startsWith(path));
+    await waitForBoot(page);
+    await expectActiveSection(page, name);
+  });
+}
+
+test("legacy query before a hash survives the Team chuẩn redirect", async ({ page }) => {
+  await page.goto("/?season=s26#team-chuan");
+  await expect(page).toHaveURL("/doi-chuan/?season=s26");
+  await waitForBoot(page);
   await expectActiveSection(page, "team-chuan");
-  await expect(page).toHaveURL(/#team-chuan$/);
 });
 
-test("Khai hoang selection lives in the root URL and survives detail round trips", async ({ page }) => {
+test("a legacy score query redirects to Team chuẩn without losing the value", async ({ page }) => {
+  await page.goto("/?score=113");
+  await expect(page).toHaveURL("/doi-chuan/?score=113");
+  await waitForBoot(page);
+});
+
+test("legacy lookup hash merges only supported hash keys over the outer query", async ({ page }) => {
+  await page.goto("/?group=heroes&source=campaign#lookup?group=tactics&unsupported=ignored");
+  await expect(page).toHaveURL(/\/tra-cuu\/\?/);
+  const query = new URL(page.url()).searchParams;
+  expect(query.get("group")).toBe("tactics");
+  expect(query.get("source")).toBe("campaign");
+  expect(query.has("unsupported")).toBe(false);
+  await waitForBoot(page);
+  await expect(page.locator('#section-lookup .lookup-chip[data-group="tactics"]')).toHaveAttribute("aria-pressed", "true");
+});
+
+test("a real legacy detail query reaches its dedicated source detail", async ({ page, request }) => {
+  const pin = await (await request.get("/data/recommended/current.json")).json();
+  const index = await (await request.get(`/data/recommended/${pin.generationId}/index.json`)).json();
+  const row = index.records.find((item) => item.sourceConfigId);
+  expect(row).toBeTruthy();
+
+  await page.goto(`/?detail=${encodeURIComponent(row.sourceConfigId)}`);
+  await expect(page).toHaveURL(/\/doi-chuan\/[^/?]+\/\?from=%2Fdoi-chuan%2F$/);
+  await expect(page.locator("#team-detail-body")).toBeVisible();
+  await expect(page.locator("#team-detail-root")).toHaveAttribute("data-source-config-id", row.sourceConfigId);
+});
+
+test("gameplay config keeps precedence on a legacy analyze URL", async ({ page }) => {
+  await page.goto("/?config=x&legacyTeam=y#analyze");
+  await expect(page).toHaveURL("/soi-doi/?config=x&legacyTeam=y");
+  await waitForBoot(page);
+  await expectActiveSection(page, "analyze");
+});
+
+test("unknown and retired hashes stay on the Landing page", async ({ page }) => {
+  for (const hash of ["#xyz", "#nguon-du-lieu", "#tai-game", "#dau-trang"]) {
+    await page.goto(`/${hash}`);
+    await expect(page).toHaveURL(`/${hash}`);
+    expect(await page.locator("body").getAttribute("data-page-section")).toBeNull();
+    await expect(page.locator('script[type="module"][src="/js/app.js"]')).toHaveCount(0);
+  }
+});
+
+test("empty and unknown-only Landing queries do not enter a section", async ({ page }) => {
+  for (const url of ["/", "/?utm_source=campaign&fbclid=click-id"]) {
+    await page.goto(url);
+    await expect(page).toHaveURL(url);
+    expect(await page.locator("body").getAttribute("data-page-section")).toBeNull();
+    await expect(page.locator('script[type="module"][src="/js/app.js"]')).toHaveCount(0);
+  }
+});
+
+test("pasting a legacy hash on Landing redirects through hashchange", async ({ page }) => {
+  await page.goto("/");
+  await page.evaluate(() => { location.hash = "#analyze"; });
+  await expect(page).toHaveURL("/soi-doi/");
+  await waitForBoot(page);
+  await expectActiveSection(page, "analyze");
+});
+
+
+test("Khai hoang selection uses its own query URL and survives detail round trips", async ({ page }) => {
   const teamA = khaiHoangTeamA;
   const teamB = khaiHoangTeamB;
   const variantA = teamA.variants[0].id;
   const variantB = teamB.variants[0].id;
-  const pairFrom = (teamId, variantId) => `/?khTeam=${teamId}${variantId ? `&khVariant=${variantId}` : ""}#khaihoang`;
+  const pairFrom = (teamId, variantId) => `/khai-hoang/?khTeam=${teamId}${variantId ? `&khVariant=${variantId}` : ""}`;
   const cardA = khaiHoangCard(page, teamA);
   const cardB = khaiHoangCard(page, teamB);
 
-  await page.goto("/#khaihoang");
+  await page.goto("/khai-hoang/");
   await waitForBoot(page);
   await expect(page.locator(".kh-card")).toHaveCount(khaiHoangTeams.length);
   expect(new URL(page.url()).search).toBe("");
@@ -287,13 +401,17 @@ test("Khai hoang selection lives in the root URL and survives detail round trips
   await expect(cardA.locator("select")).toHaveValue(variantA);
 
   // Surface khác không mang cặp Khai hoang sang query của nó, và quay lại thì cặp được phục hồi.
-  await page.locator('.nav-tab[data-section="coexist"]').click();
+  await page.locator('a[data-section="coexist"]').click();
+  await expect(page).toHaveURL(sectionPaths.coexist);
+  await waitForBoot(page);
   await expectActiveSection(page, "coexist");
   expect(new URL(page.url()).searchParams.has("khTeam")).toBe(false);
   expect(new URL(page.url()).searchParams.has("khVariant")).toBe(false);
-  await page.locator('.nav-tab[data-section="khaihoang"]').click();
+  await page.goBack();
+  await expect(page).toHaveURL(/\/khai-hoang\/\?khTeam=/);
+  await waitForBoot(page);
   await expectActiveSection(page, "khaihoang");
-  expect(new URL(page.url()).searchParams.get("khTeam")).toBe(teamB.id);
+  await expect.poll(() => new URL(page.url()).searchParams.get("khTeam")).toBe(teamB.id);
   await expect(cardA.locator("select")).toHaveValue(variantA);
 });
 
@@ -304,7 +422,7 @@ test("Khai hoang restore falls back to the URL pair when session storage is deni
     Object.defineProperty(window, "sessionStorage", { get() { throw new Error("denied"); } });
   });
 
-  await page.goto(`/?khTeam=${team.id}&khVariant=${variant}#khaihoang`);
+  await page.goto(`/khai-hoang/?khTeam=${team.id}&khVariant=${variant}`);
   await waitForBoot(page);
   const card = khaiHoangCard(page, team);
   await expect(card.locator("select")).toHaveValue(variant);
@@ -316,90 +434,103 @@ test("Khai hoang restore falls back to the URL pair when session storage is deni
   expect(new URL(page.url()).searchParams.get("variant")).toBe(variant);
 });
 
-test("Khai hoang ignores malformed or stale snapshot maps", async ({ page }) => {
-  const team = khaiHoangTeamA;
-  await page.addInitScript((teamId) => {
-    sessionStorage.setItem("tqccl:team-return:v1", JSON.stringify({
-      version: 1, url: "/#khaihoang", scrollY: 0, tab: "khaihoang", disclosures: {},
-      khaihoangVariants: { [teamId]: "variant-da-bo", "team-khong-ton-tai": "variant-la" },
-    }));
-  }, team.id);
+for (const snapshotUrl of ["/#khaihoang", "/khai-hoang/"]) {
+  test(`Khai hoang ignores malformed or stale snapshot maps from ${snapshotUrl}`, async ({ page }) => {
+    const team = khaiHoangTeamA;
+    await page.addInitScript(({teamId, snapshotUrl}) => {
+      sessionStorage.setItem("tqccl:team-return:v1", JSON.stringify({
+        version: 1, url: snapshotUrl, scrollY: 0, tab: "khaihoang", disclosures: {},
+        khaihoangVariants: { [teamId]: "variant-da-bo", "team-khong-ton-tai": "variant-la" },
+      }));
+    }, {teamId: team.id, snapshotUrl});
 
-  await page.goto("/#khaihoang");
-  await waitForBoot(page);
-  await expect(khaiHoangCard(page, team).locator("select")).toHaveValue("");
-});
+    await page.goto("/khai-hoang/");
+    await waitForBoot(page);
+    await expect(khaiHoangCard(page, team).locator("select")).toHaveValue("");
+  });
+}
 
-test("invalid URL variant cannot erase a valid Khai hoang snapshot selection", async ({ page }) => {
-  const team = khaiHoangTeamA;
-  const saved = team.variants[0].id;
-  const other = khaiHoangTeamB;
-  const otherSaved = other.variants[0].id;
-  await page.addInitScript(({teamId, variantId, otherId, otherVariantId}) => {
-    sessionStorage.setItem("tqccl:team-return:v1", JSON.stringify({
-      version: 1, url: "/#khaihoang", scrollY: 0, tab: "khaihoang", disclosures: {},
-      khaihoangVariants: {[teamId]: variantId, [otherId]: otherVariantId},
-    }));
-  }, {teamId: team.id, variantId: saved, otherId: other.id, otherVariantId: otherSaved});
-  await page.goto(`/?khTeam=${team.id}&khVariant=${khaiHoangTeamB.variants[0].id}#khaihoang`);
-  await waitForBoot(page);
-  await expect(khaiHoangCard(page, team).locator("select")).toHaveValue(saved);
-  await expect(khaiHoangCard(page, other).locator("select")).toHaveValue(otherSaved);
-  await page.goto(`/?khTeam=${team.id}&khVariant=not%20routable#khaihoang`);
-  await waitForBoot(page);
-  await expect(khaiHoangCard(page, team).locator("select")).toHaveValue(saved);
-  await expect(khaiHoangCard(page, other).locator("select")).toHaveValue(otherSaved);
-  const validOverride = team.variants[1].id;
-  await page.goto(`/?khTeam=${team.id}&khVariant=${validOverride}#khaihoang`);
-  await waitForBoot(page);
-  await expect(khaiHoangCard(page, team).locator("select")).toHaveValue(validOverride);
-  await expect(khaiHoangCard(page, other).locator("select")).toHaveValue(otherSaved);
-  // Variant bị thiếu mới có quyền ghi đè snapshot thành build mặc định.
-  await page.goto(`/?khTeam=${team.id}#khaihoang`);
-  await waitForBoot(page);
-  await expect(khaiHoangCard(page, team).locator("select")).toHaveValue("");
-  await expect(khaiHoangCard(page, other).locator("select")).toHaveValue(otherSaved);
-});
+for (const snapshotUrl of ["/#khaihoang", "/khai-hoang/"]) {
+  test(`an invalid URL variant cannot erase a valid snapshot from ${snapshotUrl}`, async ({ page }) => {
+    const team = khaiHoangTeamA;
+    const saved = team.variants[0].id;
+    const other = khaiHoangTeamB;
+    const otherSaved = other.variants[0].id;
+    await page.addInitScript(({teamId, variantId, otherId, otherVariantId, snapshotUrl}) => {
+      sessionStorage.setItem("tqccl:team-return:v1", JSON.stringify({
+        version: 1, url: snapshotUrl, scrollY: 0, tab: "khaihoang", disclosures: {},
+        khaihoangVariants: {[teamId]: variantId, [otherId]: otherVariantId},
+      }));
+    }, {teamId: team.id, variantId: saved, otherId: other.id, otherVariantId: otherSaved, snapshotUrl});
+    await page.goto(`/khai-hoang/?khTeam=${team.id}&khVariant=${khaiHoangTeamB.variants[0].id}`);
+    await waitForBoot(page);
+    await expect(khaiHoangCard(page, team).locator("select")).toHaveValue(saved);
+    await expect(khaiHoangCard(page, other).locator("select")).toHaveValue(otherSaved);
+    await page.goto(`/khai-hoang/?khTeam=${team.id}&khVariant=not%20routable`);
+    await waitForBoot(page);
+    await expect(khaiHoangCard(page, team).locator("select")).toHaveValue(saved);
+    await expect(khaiHoangCard(page, other).locator("select")).toHaveValue(otherSaved);
+    const validOverride = team.variants[1].id;
+    await page.goto(`/khai-hoang/?khTeam=${team.id}&khVariant=${validOverride}`);
+    await waitForBoot(page);
+    await expect(khaiHoangCard(page, team).locator("select")).toHaveValue(validOverride);
+    await expect(khaiHoangCard(page, other).locator("select")).toHaveValue(otherSaved);
+    // Variant bị thiếu mới có quyền ghi đè snapshot thành build mặc định.
+    await page.goto(`/khai-hoang/?khTeam=${team.id}`);
+    await waitForBoot(page);
+    await expect(khaiHoangCard(page, team).locator("select")).toHaveValue("");
+    await expect(khaiHoangCard(page, other).locator("select")).toHaveValue(otherSaved);
+  });
+}
 
-test("a valid history selection map wins over a conflicting session map", async ({page}) => {
-  const a = khaiHoangTeamA;
-  const b = khaiHoangTeamB;
-  await seedKhaiHoangReturnSources(page, {[a.id]: a.variants[0].id}, {[b.id]: b.variants[0].id});
-  await page.goto("/#khaihoang");
-  await waitForBoot(page);
-  await expect(khaiHoangCard(page, a).locator("select")).toHaveValue(a.variants[0].id);
-  await expect(khaiHoangCard(page, b).locator("select")).toHaveValue("");
-});
+for (const snapshotUrl of ["/#khaihoang", "/khai-hoang/"]) {
+  test(`a valid history map wins over a conflicting session map from ${snapshotUrl}`, async ({page}) => {
+    const a = khaiHoangTeamA;
+    const b = khaiHoangTeamB;
+    await seedKhaiHoangReturnSources(page, {[a.id]: a.variants[0].id}, {[b.id]: b.variants[0].id}, snapshotUrl);
+    await page.goto("/khai-hoang/");
+    await waitForBoot(page);
+    await expect(khaiHoangCard(page, a).locator("select")).toHaveValue(a.variants[0].id);
+    await expect(khaiHoangCard(page, b).locator("select")).toHaveValue("");
+  });
+}
 
-test("an intentionally empty history map cannot resurrect older session selections", async ({page}) => {
-  const a = khaiHoangTeamA;
-  const b = khaiHoangTeamB;
-  await seedKhaiHoangReturnSources(page, {}, {[a.id]: a.variants[0].id, [b.id]: b.variants[0].id});
-  await page.goto("/#khaihoang");
-  await waitForBoot(page);
-  await expect(khaiHoangCard(page, a).locator("select")).toHaveValue("");
-  await expect(khaiHoangCard(page, b).locator("select")).toHaveValue("");
-});
+for (const snapshotUrl of ["/#khaihoang", "/khai-hoang/"]) {
+  test(`an empty history map cannot resurrect older session selections from ${snapshotUrl}`, async ({page}) => {
+    const a = khaiHoangTeamA;
+    const b = khaiHoangTeamB;
+    await seedKhaiHoangReturnSources(page, {}, {[a.id]: a.variants[0].id, [b.id]: b.variants[0].id}, snapshotUrl);
+    await page.goto("/khai-hoang/");
+    await waitForBoot(page);
+    await expect(khaiHoangCard(page, a).locator("select")).toHaveValue("");
+    await expect(khaiHoangCard(page, b).locator("select")).toHaveValue("");
+  });
+}
 
-test("a legacy history snapshot without a map falls back to the newer session map", async ({page}) => {
-  const a = khaiHoangTeamA;
-  const b = khaiHoangTeamB;
-  await seedKhaiHoangReturnSources(page, null, {[a.id]: a.variants[0].id, [b.id]: b.variants[0].id});
-  await page.goto("/#khaihoang");
-  await waitForBoot(page);
-  await expect(khaiHoangCard(page, a).locator("select")).toHaveValue(a.variants[0].id);
-  await expect(khaiHoangCard(page, b).locator("select")).toHaveValue(b.variants[0].id);
-});
+for (const snapshotUrl of ["/#khaihoang", "/khai-hoang/"]) {
+  test(`a history snapshot without a map falls back to session state from ${snapshotUrl}`, async ({page}) => {
+    const a = khaiHoangTeamA;
+    const b = khaiHoangTeamB;
+    await seedKhaiHoangReturnSources(page, null, {[a.id]: a.variants[0].id, [b.id]: b.variants[0].id}, snapshotUrl);
+    await page.goto("/khai-hoang/");
+    await waitForBoot(page);
+    await expect(khaiHoangCard(page, a).locator("select")).toHaveValue(a.variants[0].id);
+    await expect(khaiHoangCard(page, b).locator("select")).toHaveValue(b.variants[0].id);
+  });
+}
 
-test("switching into Khai hoang refreshes each native detail link's return tab", async ({ page }) => {
-  await page.goto("/#team-chuan");
+test("switching into Khai hoang refreshes each native detail link's return URL", async ({ page }) => {
+  await page.goto("/doi-chuan/");
   await waitForBoot(page);
-  await page.locator('.nav-tab[data-section="khaihoang"]').click();
+  await page.locator('a[data-section="khaihoang"]').click();
+  await expect(page).toHaveURL("/khai-hoang/");
+  await waitForBoot(page);
   const team = khaiHoangTeamA;
   const link = khaiHoangCard(page, team).locator(".kh-detail-link");
-  await expect(link).toHaveAttribute("href", new RegExp(`from=${encodeURIComponent(`/?khTeam=${team.id}#khaihoang`)}$`));
+  const returnUrl = `/khai-hoang/?khTeam=${team.id}`;
+  await expect(link).toHaveAttribute("href", new RegExp(`from=${encodeURIComponent(returnUrl)}$`));
   await link.click();
-  await expect(page.locator("#team-return-link")).toHaveAttribute("href", `/?khTeam=${team.id}#khaihoang`);
+  await expect(page.locator("#team-return-link")).toHaveAttribute("href", returnUrl);
 });
 
 test("legacy storage payloads survive load and sanitize forbidden roster fields on save", async ({ page }) => {
@@ -415,11 +546,10 @@ test("legacy storage payloads survive load and sanitize forbidden roster fields 
     }
   }, serialized);
 
-  await page.goto("/#recruit-tracker");
+  await page.goto("/chieu-mo/");
   await waitForBoot(page);
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await expect(page.locator("#section-recruit-tracker")).toContainText("Sentinel Account");
-  await expect(page.locator("#section-roster-recommend")).toContainText("Sentinel Hero");
 
   const before = await page.evaluate((keys) => Object.fromEntries(
     keys.map((key) => [key, localStorage.getItem(key)]),
@@ -434,8 +564,11 @@ test("legacy storage payloads survive load and sanitize forbidden roster fields 
   expect(savedTracker.activeAccountId).toBe("acc_sentinel");
   expect(savedTracker.pullEvents).toHaveLength(1);
 
-  await page.locator('.nav-tab[data-section="roster-recommend"]').click();
+  await page.locator('a[data-section="roster-recommend"]').click();
+  await expect(page).toHaveURL("/goi-y-doi/");
+  await waitForBoot(page);
   await expectActiveSection(page, "roster-recommend");
+  await expect(page.locator("#section-roster-recommend")).toContainText("Sentinel Hero");
   const heroPanel = page.locator("#section-roster-recommend .roster-review-panel").filter({
     has: page.locator("h3", { hasText: "Tướng đã đọc" }),
   });
@@ -450,8 +583,6 @@ test("legacy storage payloads survive load and sanitize forbidden roster fields 
 
   await page.reload();
   await waitForBoot(page);
-  await expect(page.locator("#section-recruit-tracker")).toContainText("Sentinel Account");
-  await expect(page.locator("#section-recruit-tracker .rt-slot-miss")).toHaveCount(1);
   await expect(page.locator("#section-roster-recommend")).toContainText("Sentinel Hero Two");
   const reloadedStorage = await page.evaluate(() => ({
     tracker: JSON.parse(localStorage.getItem("tqcclRecruitTracker")),
@@ -459,26 +590,31 @@ test("legacy storage payloads survive load and sanitize forbidden roster fields 
   }));
   expect(reloadedStorage.tracker.pullEvents).toHaveLength(1);
   expect(reloadedStorage.roster.ownedHeroes.map((hero) => hero.name)).toContain("Sentinel Hero Two");
+
+  await page.goto("/chieu-mo/");
+  await waitForBoot(page);
+  await expect(page.locator("#section-recruit-tracker")).toContainText("Sentinel Account");
+  await expect(page.locator("#section-recruit-tracker .rt-slot-miss")).toHaveCount(1);
 });
 
-test("required JSON failure stays in Team chuẩn and can remain hidden on another hash", async ({ page }) => {
+test("required JSON failure is shown on its own section page", async ({ page }) => {
   await page.route("**/data/teams.json", (route) =>
     route.fulfill({ status: 503, contentType: "application/json", body: "{}" }));
 
-  await page.goto("/#lookup");
-  const error = page.locator("#section-team-chuan .error");
+  await page.goto("/tra-cuu/");
+  await waitForBoot(page);
+  const error = page.locator("#section-lookup .error");
   await expect(error).toHaveText("Không thể tải dữ liệu. Hãy tải lại trang hoặc liên hệ quản trị viên nếu lỗi tiếp diễn.");
   await expect(error).not.toContainText(/python3|http server|index\.html/i);
   await expectActiveSection(page, "lookup");
-  await expect(error).toBeHidden();
-  await expect(page.locator("#section-lookup")).toBeEmpty();
 });
 
 test("optional tier failure is non-fatal", async ({ page }) => {
   await page.route("**/data/team-tier.json", (route) =>
     route.fulfill({ status: 404, contentType: "application/json", body: "{}" }));
 
-  await page.goto("/");
+  await page.goto("/doi-chuan/");
+  await waitForBoot(page);
   await expect(page.locator("#section-team-chuan .team-card").first()).toBeVisible();
   await expect(page.locator("#section-team-chuan .error")).toHaveCount(0);
 });
@@ -493,29 +629,35 @@ test("a hanging optional tier request retains the legacy blocked-render behavior
     await route.abort("timedout");
   });
 
-  await page.goto("/");
+  await page.goto("/doi-chuan/");
   await expect(page.locator("#section-team-chuan .team-card")).toHaveCount(0);
   await expect(page.locator("#section-team-chuan .error")).toHaveCount(0);
   releaseTier();
   await expect(page.locator("#section-team-chuan .team-card").first()).toBeVisible();
 });
 
-test("Turnstile failure does not break local sections or duplicate its script", async ({ page }) => {
+test("Turnstile failure is surfaced only on its protected section pages", async ({ page }) => {
   await page.route("https://challenges.cloudflare.com/**", (route) => route.abort("blockedbyclient"));
 
-  await page.goto("/#analyze");
-  await expect(page.locator("#section-team-chuan .team-card").first()).toBeAttached();
+  await page.goto("/soi-doi/");
+  await waitForBoot(page);
   await expect(page.locator("#section-analyze .ana-status")).toContainText("Không tải được Turnstile");
+  await expect(page.locator("script[src*='turnstile']")).toHaveCount(1);
+
+  await page.goto("/goi-y-doi/");
+  await waitForBoot(page);
   await expect(page.locator("#section-roster-recommend .ana-turnstile")).toContainText("Không tải được Turnstile");
   await expect(page.locator("script[src*='turnstile']")).toHaveCount(1);
 
-  await page.locator('.nav-tab[data-section="lookup"]').click();
+  await page.goto("/tra-cuu/");
+  await waitForBoot(page);
   await expect(page.locator("#section-lookup")).not.toBeEmpty();
+  await expect(page.locator("script[src*='turnstile']")).toHaveCount(0);
 });
 
 test("mobile section menu closes after selection and Escape", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
+  await page.goto("/doi-chuan/");
   await waitForBoot(page);
   const toggle = page.locator("#section-menu-toggle");
   const nav = page.locator(".section-nav");
@@ -523,7 +665,9 @@ test("mobile section menu closes after selection and Escape", async ({ page }) =
   await toggle.click();
   await expect(toggle).toHaveAttribute("aria-expanded", "true");
   await expect(nav).toHaveClass(/\bopen\b/);
-  await page.locator('.nav-tab[data-section="coexist"]').click();
+  await page.locator('a[data-section="coexist"]').click();
+  await expect(page).toHaveURL("/cung-ton/");
+  await waitForBoot(page);
   await expect(nav).not.toHaveClass(/\bopen\b/);
   await expectActiveSection(page, "coexist");
 
@@ -534,18 +678,18 @@ test("mobile section menu closes after selection and Escape", async ({ page }) =
 });
 
 test("Team chuẩn search remains URL-backed and filterable", async ({ page }) => {
-  await page.goto("/#team-chuan");
+  await page.goto("/doi-chuan/");
   await waitForBoot(page);
   const section = page.locator("#section-team-chuan");
   const search = section.locator('input[type="search"]').first();
   await search.fill("sentinel-no-match");
-  await expect(page).toHaveURL(/q=sentinel-no-match/);
+  await expect(page).toHaveURL(/\/doi-chuan\/\?q=sentinel-no-match/);
   await expect(section.locator(".empty")).toContainText("Không có");
   await search.fill("");
   await expect(section.locator(".team-card").first()).toBeVisible();
 });
 
-test("opening a roster recommendation preserves its tab and opens the exact original", async ({ page }) => {
+test("opening a roster recommendation preserves its section and opens the exact original", async ({ page }) => {
   const seedTeams = teamsFixture.slice(0, 20);
   const rosterState = {
     ownedHeroes: [...new Set(seedTeams.flatMap((team) =>
@@ -559,7 +703,7 @@ test("opening a roster recommendation preserves its tab and opens the exact orig
   await page.addInitScript((state) => {
     localStorage.setItem("tqccl.rosterRecommend.scanState.v1", JSON.stringify(state));
   }, rosterState);
-  await page.goto("/#roster-recommend");
+  await page.goto("/goi-y-doi/");
   await waitForBoot(page);
   await page.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
   const recommendation = page.locator(".roster-result-team").filter({
@@ -573,9 +717,9 @@ test("opening a roster recommendation preserves its tab and opens the exact orig
   await expect(page).toHaveURL(new RegExp(legacyRoute(selectedTeam.id)));
   await expect(page.locator("#team-detail-body")).toBeVisible();
   await expect(page.locator("h1#team-detail-title")).toHaveText(selectedTeam.nickname || selectedTeam.name);
-  // Người dùng quay lại đúng tab gợi ý đã mở đội.
-  await expect(page.locator("#team-return-link")).toHaveAttribute("href", /#roster-recommend$/);
+  await expect(page.locator("#team-return-link")).toHaveAttribute("href", "/goi-y-doi/");
 });
+
 
 test("local preview serves approved artifacts and excludes private source paths", async ({ request }) => {
   for (const path of ["/", ...publicArtifactPaths]) {
@@ -598,7 +742,7 @@ test("synthetic HTTPS serves dist locally and characterizes legacy HTTP icons", 
     }
   });
 
-  await page.goto("https://astro.local/#lookup?group=heroes");
+  await page.goto("https://astro.local/tra-cuu/?group=heroes");
   await waitForBoot(page);
   await expectActiveSection(page, "lookup");
   const icon = page.locator("#section-lookup img[src^='http://']").first();

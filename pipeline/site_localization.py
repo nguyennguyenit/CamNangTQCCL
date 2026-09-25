@@ -296,7 +296,6 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:root/team-chuan", "navLabel", ">Team chuẩn<", "src/pages/index.astro", "root navigation", "static", "translate"),
     ("ui:root/team-khac", "navLabel", ">Team khác<", "src/pages/index.astro", "root navigation", "static", "translate"),
     ("ui:root/beta", "statusLabel", ">Beta<", "src/pages/index.astro", "root navigation", "static", "translate"),
-    ("ui:root/build-credit", "creditLabel", "Build bởi", "src/pages/index.astro", "footer", "static", "translate"),
     ("ui:layout/team-chuan", "navLabel", "label: 'Team chuẩn'", "src/layouts/SiteLayout.astro", "SECTIONS", "static", "translate"),
     ("ui:layout/team-khac", "navLabel", "label: 'Team khác'", "src/layouts/SiteLayout.astro", "SECTIONS", "static", "translate"),
     ("ui:layout/beta", "statusLabel", ">Beta<", "src/layouts/SiteLayout.astro", "navigation", "static", "translate"),
@@ -335,6 +334,23 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:recruit-store/account-missing", "error", "Thiếu account.", "js/recruit-tracker-store.js", "validateRecruitTrackerImport", "error", "translate"),
     ("ui:recruit-store/banner-missing", "error", "Thiếu banner.", "js/recruit-tracker-store.js", "validateRecruitTrackerImport", "error", "translate"),
     ("ui:khaihoang/guide-heading", "heading", "Hướng dẫn khai hoang", "js/render.js", "khaihoangGuide", "data", "authored-vi", 'el("h2", { class: "kh-guide-title" }, "Hướng dẫn khai hoang")'),
+    # Trang mục tách đường dẫn: tiêu đề và mô tả riêng của từng trang là chữ tác giả mới.
+    ("ui:section-page/doi-chuan", "title", "Đội chuẩn — Cẩm Nang Game Tam Quốc Chí - Chiến Lược", "src/pages/doi-chuan/index.astro", "page metadata", "static", "authored-vi"),
+    ("ui:section-page/doi-chuan", "metaDescription", "Danh sách đội hình Đội chuẩn theo dữ liệu SGSDeck Recommended, lọc theo phe, loại binh, mùa nguồn và điểm.", "src/pages/doi-chuan/index.astro", "page metadata", "static", "authored-vi"),
+    ("ui:section-page/doi-khac", "title", "Đội khác — Cẩm Nang Game Tam Quốc Chí - Chiến Lược", "src/pages/doi-khac/index.astro", "page metadata", "static", "authored-vi"),
+    ("ui:section-page/doi-khac", "metaDescription", "Danh sách đội hình Đội khác đã đối chiếu với đội chuẩn, lọc theo phe, loại binh và mùa nguồn.", "src/pages/doi-khac/index.astro", "page metadata", "static", "authored-vi"),
+    ("ui:section-page/cung-ton", "title", "Cùng Tồn — Cẩm Nang Game Tam Quốc Chí - Chiến Lược", "src/pages/cung-ton/index.astro", "page metadata", "static", "authored-vi"),
+    ("ui:section-page/cung-ton", "metaDescription", "Các nhóm tướng Cùng Tồn theo kịch bản và phiên bản luật, kèm cấu hình áp dụng và phần tham khảo.", "src/pages/cung-ton/index.astro", "page metadata", "static", "authored-vi"),
+    ("ui:section-page/khai-hoang", "title", "Khai hoang — Cẩm Nang Game Tam Quốc Chí - Chiến Lược", "src/pages/khai-hoang/index.astro", "page metadata", "static", "authored-vi"),
+    ("ui:section-page/khai-hoang", "metaDescription", "Hướng dẫn khai hoang theo từng đội: build trước và sau, thanh điểm mốc và cách đánh đất.", "src/pages/khai-hoang/index.astro", "page metadata", "static", "authored-vi"),
+    ("ui:section-page/tra-cuu", "title", "Tra cứu — Cẩm Nang Game Tam Quốc Chí - Chiến Lược", "src/pages/tra-cuu/index.astro", "page metadata", "static", "authored-vi"),
+    ("ui:section-page/tra-cuu", "metaDescription", "Tra cứu tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng và công trình theo tên Việt hoặc chữ Hán.", "src/pages/tra-cuu/index.astro", "page metadata", "static", "authored-vi"),
+    ("ui:section-page/chieu-mo", "title", "Theo dõi chiêu mộ — Cẩm Nang Game Tam Quốc Chí - Chiến Lược", "src/pages/chieu-mo/index.astro", "page metadata", "static", "authored-vi"),
+    ("ui:section-page/chieu-mo", "metaDescription", "Theo dõi chiêu mộ theo tài khoản: lịch sử, mốc bảo hiểm và số lượt còn lại của từng đợt.", "src/pages/chieu-mo/index.astro", "page metadata", "static", "authored-vi"),
+    ("ui:section-page/soi-doi", "title", "Soi đội từ ảnh — Cẩm Nang Game Tam Quốc Chí - Chiến Lược", "src/pages/soi-doi/index.astro", "page metadata", "static", "authored-vi"),
+    ("ui:section-page/soi-doi", "metaDescription", "Soi đội hình từ ảnh chụp và đối chiếu với dữ liệu đội đã được tuyển chọn.", "src/pages/soi-doi/index.astro", "page metadata", "static", "authored-vi"),
+    ("ui:section-page/goi-y-doi", "title", "Gợi ý đội từ kho — Cẩm Nang Game Tam Quốc Chí - Chiến Lược", "src/pages/goi-y-doi/index.astro", "page metadata", "static", "authored-vi"),
+    ("ui:section-page/goi-y-doi", "metaDescription", "Gợi ý đội từ kho tướng và chiến pháp của bạn, kèm điều kiện và hiệu ứng cần kiểm chứng.", "src/pages/goi-y-doi/index.astro", "page metadata", "static", "authored-vi"),
 )
 
 

@@ -1,12 +1,12 @@
-// Điều phối dữ liệu tĩnh, section navigation, theme và hai browser đội theo mùa.
+// Điều phối dữ liệu tĩnh và mục của MỘT trang mục: mỗi đường dẫn tự nạp dữ liệu, tự mount mục
+// của mình. Không còn tab, hashchange hay switchSection — điều hướng giữa các mục là chuyển trang.
 
 import { seasonConfigDetail, bestTier, el, khaihoangTable } from "./render.js";
 import { loadLookupBundle } from "./lookup-data.js";
-import { initUnifiedLookup, parseLookupRoute } from "./unified-lookup.js";
+import { initUnifiedLookup } from "./unified-lookup.js";
 import { initAnalyze } from "./analyze.js";
 import { initRecruitTracker } from "./recruit-tracker.js";
 import { initRosterRecommend } from "./roster-recommend-ui.js";
-import { initSiteChrome } from "./site-chrome.js";
 import { displayValue, loadWebsiteDisplay, localizeData } from "./website-display.js";
 
 import { loadSeasonModel, readSeasonQuery, updateSeasonURL, defaultSeasonSelection, BUNDLE_NOTICE } from './season-ui-state.js';
@@ -30,13 +30,13 @@ import {
   writeReturnSnapshot,
 } from './team-detail-navigation.js';
 
-let sectionMenu = null;
-let onNavigation = () => {};
-let onSectionRequest = name => switchSection(name);
-let activeSection = 'team-chuan';
-let restoringHistory = false;
-
 const $ = (sel) => document.querySelector(sel);
+
+/** Mục có phạm vi mùa + chi tiết cấu hình: layout chỉ phát payload cho đúng 5 trang này. */
+const REFERENCE_SECTIONS = ['team-chuan', 'team-khac'];
+const GAMEPLAY_SECTIONS = ['coexist', 'analyze', 'roster-recommend'];
+/** Khóa theo dõi bị bỏ khỏi URL trang mục ngay khi khởi động; mọi khóa khác giữ nguyên. */
+const TRACKING_PARAM = /^(?:utm_.+|fbclid|gclid|msclkid)$/;
 
 async function loadJSON(path) {
   const res = await fetch(path);
@@ -53,98 +53,41 @@ async function loadOptionalJSON(path, fallback) {
   }
 }
 
-/* ---------- Section nav ---------- */
-const SECTIONS = ["team-chuan", "team-khac", "coexist", "khaihoang", "lookup", "recruit-tracker", "analyze", "roster-recommend"];
-const LEGACY_SECTIONS = {"team-pk":"team-khac","meta-cu":"team-khac"};
-function initNav() {
-  sectionMenu = initSiteChrome().menu;
-  document.querySelectorAll(".nav-tab").forEach((tab) => {
-    tab.addEventListener("click", () => onSectionRequest(tab.dataset.section));
-  });
-  const tabs = [...document.querySelectorAll(".nav-tab")];
-  tabs.forEach((tab, index) => tab.addEventListener("keydown", (event) => {
-    if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
-    event.preventDefault();
-    const offset = event.key === "ArrowRight" ? 1 : -1;
-    tabs[(index + offset + tabs.length) % tabs.length].focus();
-    onSectionRequest(tabs[(index + offset + tabs.length) % tabs.length].dataset.section);
-  }));
-  // Deep-link: mở section theo hash (#khaihoang) + đồng bộ khi đổi hash.
-  window.addEventListener("hashchange", () => {
-    canonicalizeSectionHash();
-    const target = sectionFromHash();
-    if (restoringHistory) { restoringHistory = false; switchSection(target); }
-    else if (activeSection !== target && !history.state?.referenceAlias) onSectionRequest(target,{replace:true});
-    else switchSection(target);
-  });
-  canonicalizeSectionHash();
-  switchSection(sectionFromHash());
-}
-function canonicalizeSectionHash() {
-  const hash = location.hash || '';
-  const name = hash.slice(1);
-  if (!name || SECTIONS.includes(name) || parseLookupRoute(hash)) return;
-  const legacy = LEGACY_SECTIONS[name];
+/** URL trang mục sạch khóa theo dõi: `replaceState` để không thêm bước lịch sử. */
+function stripTrackingParams() {
   const url = new URL(location.href);
-  url.hash = legacy ? `#${legacy}` : '#team-chuan';
-  if (legacy) url.searchParams.set('source', name === 'team-pk' ? 'team-intro' : 'moi-phe');
-  history.replaceState({...history.state,referenceAlias:legacy ? name : null}, '', url);
-}
-function sectionFromHash() {
-  const hash = location.hash || "";
-  const lookup = parseLookupRoute(hash);
-  if (lookup) return "lookup";
-  const name = hash.replace(/^#/, "");
-  return LEGACY_SECTIONS[name] || (SECTIONS.includes(name) ? name : "team-chuan");
-}
-function placeSeasonControls(name) {
-  const controls = $('#season-controls');
-  if (!controls) return;
-  controls.hidden = !['coexist','analyze','roster-recommend'].includes(name);
-  const rulesetControl = $('#season-ruleset-control');
-  if (rulesetControl) rulesetControl.hidden = name === 'coexist';
-  const summary = $('#season-summary');
-  if (summary) summary.hidden = name === 'coexist';
-  if (name === 'coexist') {
-    const heading = $('#section-coexist > h2');
-    if (heading) heading.after(controls);
-  } else {
-    const detailMount = $('#season-detail-mount');
-    if (detailMount) detailMount.before(controls);
-  }
-}
-
-function switchSection(name) {
-  document.querySelectorAll(".nav-tab").forEach((t) => {
-    const active = t.dataset.section === name;
-    t.classList.toggle("active", active);
-    t.setAttribute("aria-selected", String(active));
-    t.tabIndex = active ? 0 : -1;
-  });
-  document.querySelectorAll(".section").forEach((s) => s.classList.toggle("active", s.id === `section-${name}`));
-  sectionMenu?.setActive(name);
-  placeSeasonControls(name);
-  $('.tagline').textContent = name === 'khaihoang' ? 'Khai hoang — dữ liệu mới nhất' : name === 'team-chuan' || name === 'team-khac' ? 'Duyệt đội hình theo mùa nguồn' : 'Tra cứu đội hình theo kịch bản';
-  activeSection = name;
-  if (sectionFromHash() !== name) location.hash = name === "lookup" ? "lookup" : name;
-  onNavigation();
+  const removed = [...url.searchParams.keys()].filter((key) => TRACKING_PARAM.test(key));
+  if (!removed.length) return;
+  for (const key of removed) url.searchParams.delete(key);
+  history.replaceState(history.state, '', url);
 }
 
 async function main() {
+  const pageSection = document.body.dataset.pageSection || '';
+  const mount = pageSection ? $(`#section-${pageSection}`) : null;
+  // app.js chỉ được nạp ở trang mục; thiếu mount là lỗi build nên không giữ trang ở trạng thái chờ.
+  if (!mount) {
+    document.body.dataset.boot = 'ready';
+    return;
+  }
   // Bảng route handle phải sẵn sàng trước migrate và mọi lần dựng href.
   setTeamRouteHandlesFromJSON($('#team-route-handles')?.textContent);
-  initNav();
+  stripTrackingParams();
+  // Layout sở hữu payload: có `#season-controls` nghĩa là trang này có phạm vi mùa. app.js
+  // không giữ danh sách mục nào của riêng nó, nên thêm/bớt trang chỉ cần sửa layout.
+  const controls = $('#season-controls');
+  const seasonScoped = controls !== null;
   let websiteDisplay = null;
   try {
     const byteRequests = new Map();
     const loadBytes = (name) => {
       const path = name === "website-display.json"
-        ? "data/website-display.json"
+        ? "/data/website-display.json"
         : name.startsWith("data/")
-          ? name
-          : `data/${name.replace(/\\.json$/, "")}.json`;
-      if (!byteRequests.has(path)) byteRequests.set(path, fetch(`./${path}`).then(async response => {
-        if (!response.ok) throw new Error(`./${path}: ${response.status}`);
+          ? `/${name}`
+          : `/data/${name.replace(/\.json$/, "")}.json`;
+      if (!byteRequests.has(path)) byteRequests.set(path, fetch(path).then(async response => {
+        if (!response.ok) throw new Error(`${path}: ${response.status}`);
         return new Uint8Array(await response.arrayBuffer());
       }));
       return byteRequests.get(path);
@@ -176,22 +119,25 @@ async function main() {
     try {
       lookupBundle = await loadLookupBundle(name => loadBytes(name.replace(/\.json$/, "")));
     } catch {
-      $("#section-lookup").append(el("p", { class: "error", role: "alert" }, "Dữ liệu Tra cứu hiện không khả dụng. Các mục đội hình vẫn hoạt động."));
+      mount.append(el("p", { class: "error", role: "alert" }, "Dữ liệu Tra cứu hiện không khả dụng. Các mục đội hình vẫn hoạt động."));
     }
     const heroesDict = lookupBundle?.heroes ?? [];
     const tactics = lookupBundle?.tactics ?? [];
     const catalog = lookupBundle?.catalog ?? null;
-    const teamTier = await loadOptionalJSON("./data/team-tier.json", []);
+    const teamTier = await loadOptionalJSON("/data/team-tier.json", []);
     const tierIndex = new Map(teamTier.map((r) => [r.teamId, r.rankings]));
 
+    // Phạm vi mùa chỉ có payload ở 5 trang mục; thiếu hash là trang không dùng đến mô hình mùa.
     let seasonModel = null;
-    try { seasonModel = await loadSeasonModel(JSON.parse($('#season-artifact-hashes').textContent), loadBytes); } catch { /* Legacy display stays available with an explicit notice. */ }
+    if (controls && $('#season-artifact-hashes')) {
+      try { seasonModel = await loadSeasonModel(JSON.parse($('#season-artifact-hashes').textContent), loadBytes); } catch { /* Legacy display stays available with an explicit notice. */ }
+    }
     let recommendedModel = null;
     try {
       const pin = recommendedPin;
       recommendedModel = await loadRecommendedReference(pin, async path => {
-        const response = await fetch(`./data/recommended/${path}`);
-        if (!response.ok) throw new Error(`./data/recommended/${path}: ${response.status}`);
+        const response = await fetch(`/data/recommended/${path}`);
+        if (!response.ok) throw new Error(`/data/recommended/${path}: ${response.status}`);
         return response.arrayBuffer();
       });
     } catch { /* Recommended views render an isolated unavailable state below. */ }
@@ -207,27 +153,36 @@ async function main() {
     const sections = {};
     let openedConfig = null;
     let configTrigger = null;
-    const detailMount = el('div',{id:'season-detail-mount'});
-    $('#season-controls').after(detailMount);
-    detailMount.addEventListener('keydown',event=>{
+    const detailMount = controls ? el('div',{id:'season-detail-mount'}) : null;
+    controls?.after(detailMount);
+    detailMount?.addEventListener('keydown',event=>{
       if (event.key !== 'Escape' || !detailMount.querySelector('#season-config-detail')) return;
       event.preventDefault();
       navigateQuery({config:null});
-      if (configTrigger?.isConnected) configTrigger.focus(); else sections[sectionFromHash()]?.focus?.();
+      if (configTrigger?.isConnected) configTrigger.focus(); else sections[pageSection]?.focus?.();
     });
+    /** Nút nhập kho của chi tiết cấu hình là link thật; giữ nguyên phạm vi mùa đang chọn. */
+    const rosterImportHref = () => {
+      const current = new URL(location.href).searchParams;
+      const params = new URLSearchParams();
+      for (const key of ['scenario','ruleset']) if (current.has(key)) params.set(key, current.get(key));
+      const search = params.toString();
+      return `/goi-y-doi/${search ? `?${search}` : ''}`;
+    };
     function openConfig(configId) {
       configTrigger = document.activeElement;
       navigateQuery({config:configId},true);
       const detail = $('#season-config-detail');
       if (detail) {
         detail.focus({preventScroll:true});
-        window.scrollTo({top:window.scrollY + detail.getBoundingClientRect().top - $('.top-header').getBoundingClientRect().height - 12,behavior:'instant'});
+        const headerHeight = $('.top-header')?.getBoundingClientRect().height ?? 0;
+        window.scrollTo({top:window.scrollY + detail.getBoundingClientRect().top - headerHeight - 12,behavior:'instant'});
       }
     }
-    const coexistUI = createSeasonCoexistSection({mount:$('#section-coexist')});
+    const coexistUI = pageSection === 'coexist' ? createSeasonCoexistSection({mount}) : null;
     function queryForSection(name) {
       const state = readSeasonQuery(location.href,seasonModel);
-      return sectionFromHash() === name ? state : {...state,query:'',sort:'tier',filters:{faction:[],unit:[],tier:[],source:[]},notices:[]};
+      return pageSection === name ? state : {...state,query:'',sort:'tier',filters:{faction:[],unit:[],tier:[],source:[]},notices:[]};
     }
     function renderTeams() {
       if (!seasonModel) return;
@@ -253,16 +208,16 @@ async function main() {
       detailMount.append(seasonConfigDetail(row,seasonModel,{
         onClose:()=>{
           navigateQuery({config:null});
-          if (configTrigger?.isConnected) configTrigger.focus(); else sections[sectionFromHash()]?.focus?.();
+          if (configTrigger?.isConnected) configTrigger.focus(); else sections[pageSection]?.focus?.();
         },
-        onImport:()=>switchSection('roster-recommend'),
+        importHref:rosterImportHref(),
       }));
     }
     const navigateQuery = (changes, push = false) => {
       const url = updateSeasonURL(location.href, changes);
       history[push ? 'pushState' : 'replaceState'](history.state, '', url);
       const params = new URL(location.href).searchParams;
-      detailMount.hidden = !['config','detail','legacyTeam'].some(key=>params.has(key)) && !['team-chuan','team-khac'].includes(sectionFromHash());
+      if (detailMount) detailMount.hidden = !['config','detail','legacyTeam'].some(key=>params.has(key)) && !REFERENCE_SECTIONS.includes(pageSection);
       renderScope();
     };
     const navigateReference = (changes, push = false) => {
@@ -275,36 +230,7 @@ async function main() {
       history[push ? 'pushState' : 'replaceState'](history.state, '', url);
       renderReference();
       const params = new URL(location.href).searchParams;
-      detailMount.hidden = !['config','detail','legacyTeam'].some(key=>params.has(key)) && !['team-chuan','team-khac'].includes(sectionFromHash());
-    };
-    const REFERENCE_PARAMS = ['season','category','q','detail','legacyTeam','legacyVariant','faction','unit','score','subcategory','source'];
-    const GAMEPLAY_PARAMS = ['config','q','faction','unit','tier','source','sort','stars'];
-    // Khai hoang giữ cặp đang chọn trong query của chính nó; surface khác không mang state này sang.
-    const KHAIHOANG_PARAMS = [KHAIHOANG_TEAM_QUERY_KEY,KHAIHOANG_VARIANT_QUERY_KEY];
-    const ALL_SURFACE_PARAMS = [...new Set([...REFERENCE_PARAMS,...GAMEPLAY_PARAMS,...KHAIHOANG_PARAMS])];
-    const REFERENCE_SECTIONS = ['team-chuan','team-khac'];
-    const GAMEPLAY_SECTIONS = ['coexist','analyze','roster-recommend'];
-    const surfaceParams = name => name === 'khaihoang' ? KHAIHOANG_PARAMS : REFERENCE_SECTIONS.includes(name) ? REFERENCE_PARAMS : GAMEPLAY_SECTIONS.includes(name) ? GAMEPLAY_PARAMS : null;
-    const surfaceSnapshot = (url,keys) => keys
-      .filter(key=>!['detail','legacyTeam','legacyVariant','config'].includes(key))
-      .flatMap(key=>url.searchParams.getAll(key).map(value=>[key,value]));
-    onSectionRequest = (name,{replace=false}={}) => {
-      const current = activeSection;
-      const currentKeys = surfaceParams(current);
-      const targetKeys = surfaceParams(name);
-      if (!currentKeys && !targetKeys) { switchSection(name); return; }
-      const url = new URL(location.href);
-      const snapshots = {...(history.state?.surfaceSnapshots || {})};
-      if (currentKeys && !history.state?.referenceAlias) snapshots[current] = surfaceSnapshot(url,currentKeys);
-      ALL_SURFACE_PARAMS.forEach(key=>url.searchParams.delete(key));
-      if (targetKeys) {
-        const saved = snapshots[name];
-        if (saved) saved.forEach(([key,value])=>url.searchParams.append(key,value));
-        else if (name === 'team-khac') url.searchParams.set('season','all');
-      }
-      url.hash = `#${name}`;
-      history[replace?'replaceState':'pushState']({...history.state,surfaceSnapshots:snapshots,referenceAlias:null},'',url);
-      switchSection(name);
+      if (detailMount) detailMount.hidden = !['config','detail','legacyTeam'].some(key=>params.has(key)) && !REFERENCE_SECTIONS.includes(pageSection);
     };
     const sessionStore = () => {
       try { return globalThis.sessionStorage; } catch { return null; }
@@ -317,7 +243,7 @@ async function main() {
     );
     // Snapshot chỉ là trạng thái giao diện; lỗi storage không được chặn điều hướng.
     const rememberReturn = () => {
-      const tab = sectionFromHash();
+      const tab = pageSection;
       const snapshot = captureReturnSnapshot({
         href:location.href,
         scrollY:window.scrollY,
@@ -333,9 +259,9 @@ async function main() {
       history.replaceState({...history.state,teamReturn:snapshot},'',location.href);
       writeReturnSnapshot(snapshot,sessionStore());
     };
-    // Chỉ tab Khai hoang mới ghi cặp đang chọn vào URL root.
+    // Chỉ trang Khai hoang mới ghi cặp đang chọn vào URL của chính nó.
     const syncKhaiHoangRoot = (teamId, variantId) => {
-      if (sectionFromHash() !== 'khaihoang') return;
+      if (pageSection !== 'khaihoang') return;
       const url = khaiHoangUrlWithPair(location.href,{teamId,variantId});
       if (url === `${location.pathname}${location.search}${location.hash}`) return;
       history.replaceState(history.state,'',url);
@@ -362,15 +288,15 @@ async function main() {
         : null;
       // Snapshot history cũ thiếu map không được che map mới hơn trong session; map rỗng thì có quyền.
       const selections = historySelections ?? khaiHoangSelections(sessionSnapshot);
-      if (khaiHoangUI && (selections !== null || sectionFromHash() === 'khaihoang')) {
+      if (khaiHoangUI && (selections !== null || pageSection === 'khaihoang')) {
         const next = {...(selections || {})};
-        if (sectionFromHash() === 'khaihoang') {
+        if (pageSection === 'khaihoang') {
           const pair = khaiHoangPairFromUrl(location.href);
           const params = new URL(location.href).searchParams;
-          const teams = params.getAll(KHAIHOANG_TEAM_QUERY_KEY);
-          const variants = params.getAll(KHAIHOANG_VARIANT_QUERY_KEY);
-          if (teams.length === 1 && variants.length <= 1 && khaihoangInventory.has(pair.teamId)
-            && (variants.length === 0 || (pair.variantId && khaihoangInventory.get(pair.teamId).has(pair.variantId)))) {
+          const teamParams = params.getAll(KHAIHOANG_TEAM_QUERY_KEY);
+          const variantParams = params.getAll(KHAIHOANG_VARIANT_QUERY_KEY);
+          if (teamParams.length === 1 && variantParams.length <= 1 && khaihoangInventory.has(pair.teamId)
+            && (variantParams.length === 0 || (pair.variantId && khaihoangInventory.get(pair.teamId).has(pair.variantId)))) {
             next[pair.teamId] = pair.variantId;
           }
         }
@@ -378,34 +304,48 @@ async function main() {
       }
       const snapshot = historySnapshot || sessionSnapshot;
       if (!snapshot) return;
-      const section=sections[snapshot.tab || sectionFromHash()];
+      const section=sections[snapshot.tab || pageSection];
       if (section?.setDisclosureState) section.setDisclosureState(snapshot.disclosures);
       else section?.setFiltersExpanded?.(snapshot.disclosures?.filters);
       if (!snapshot.scrollY) return;
       requestAnimationFrame(()=>window.scrollTo({top:snapshot.scrollY,behavior:'instant'}));
     };
     function renderReference() {
-      if (!recommendedModel) return;
+      if (!REFERENCE_SECTIONS.includes(pageSection) || !recommendedModel) return;
       const registry = recommendedModel.seasons || {};
       const state = readRecommendedQuery(location.href,registry);
       const explicitSeason = new URL(location.href).searchParams.has('season');
       sections['team-chuan']?.update(recommendedModel.index.records,state,registry);
       sections['team-khac']?.update(recommendedModel.other.records,explicitSeason ? state : {...state,season:'all'},registry);
     }
-    const scenarioSelect = el('select', {id:'season-scenario'}, [el('option',{value:''},'Tất cả — tham khảo'), ...(seasonModel?.data['season-registry'] || []).filter(scenario=>scenario.reviewStatus === 'reviewed').map(scenario => el('option',{value:scenario.id},scenario.labelVi))]);
-    const rulesetSelect = el('select', {id:'season-ruleset', 'aria-label':'Phiên bản luật'});
-    const rulesetControl = el('label',{id:'season-ruleset-control',for:'season-ruleset'},['Phiên bản luật',rulesetSelect]);
-    rulesetControl.hidden = sectionFromHash() === 'coexist';
-    const summary = el('p', {id:'season-summary', role:'status', class:'scope-note'});
-    $('#season-controls').replaceChildren(el('div',{class:'reference-scope-controls'},[el('label',{for:'season-scenario'},['Mùa',scenarioSelect]),rulesetControl]), summary);
-    placeSeasonControls(activeSection);
-    if (!seasonModel) { scenarioSelect.disabled = true; rulesetSelect.disabled = true; }
-    scenarioSelect.addEventListener('change', () => {
+    const scenarioSelect = seasonScoped ? el('select', {id:'season-scenario'}, [el('option',{value:''},'Tất cả — tham khảo'), ...(seasonModel?.data['season-registry'] || []).filter(scenario=>scenario.reviewStatus === 'reviewed').map(scenario => el('option',{value:scenario.id},scenario.labelVi))]) : null;
+    const rulesetSelect = seasonScoped ? el('select', {id:'season-ruleset', 'aria-label':'Phiên bản luật'}) : null;
+    const rulesetControl = seasonScoped ? el('label',{id:'season-ruleset-control',for:'season-ruleset'},['Phiên bản luật',rulesetSelect]) : null;
+    const summary = seasonScoped ? el('p', {id:'season-summary', role:'status', class:'scope-note'}) : null;
+    if (seasonScoped) {
+      controls.replaceChildren(el('div',{class:'reference-scope-controls'},[el('label',{for:'season-scenario'},['Mùa',scenarioSelect]),rulesetControl]), summary);
+      placeSeasonControls();
+      if (!seasonModel) { scenarioSelect.disabled = true; rulesetSelect.disabled = true; }
+    }
+    /** Bộ chọn Mùa / Phiên bản luật cố định theo trang: chỉ 3 mục gameplay hiện, Cùng Tồn nằm dưới tiêu đề mục. */
+    function placeSeasonControls() {
+      controls.hidden = !GAMEPLAY_SECTIONS.includes(pageSection);
+      rulesetControl.hidden = pageSection === 'coexist';
+      summary.hidden = pageSection === 'coexist';
+      if (pageSection === 'coexist') {
+        const heading = mount.querySelector(':scope > h2');
+        if (heading) heading.after(controls);
+      } else if (detailMount) {
+        detailMount.before(controls);
+      }
+    }
+    scenarioSelect?.addEventListener('change', () => {
       const next = resolveBrowseState(seasonModel, scenarioSelect.value ? {scenarioId:scenarioSelect.value} : {}, {origin:'scenario-change'});
       navigateQuery({scenario:next.scenarioId, ruleset:next.rulesetId, config:null}, true);
     });
-    rulesetSelect.addEventListener('change', () => navigateQuery({ruleset:rulesetSelect.value,config:null},true));
+    rulesetSelect?.addEventListener('change', () => navigateQuery({ruleset:rulesetSelect.value,config:null},true));
     function renderScope() {
+      if (!seasonScoped) return;
       const previous = JSON.stringify(browse);
       browse = seasonModel ? readSeasonQuery(location.href, seasonModel).browse : null;
       projection = seasonModel ? projectSeasonBrowse(seasonModel, browse) : null;
@@ -416,61 +356,69 @@ async function main() {
       rulesetSelect.disabled = !scenario || !scenario.rulesets.some(rule=>rule.reviewStatus === 'reviewed');
       summary.textContent = !seasonModel ? BUNDLE_NOTICE : browse.kind === 'invalid' ? 'Kịch bản hoặc phiên bản luật không hợp lệ. Hãy chọn lại phạm vi.' : browse.kind === 'all-reference' ? 'Tất cả — tham khảo' : `${scenario?.labelVi || ''} · ${browse.kind === 'verified-pair' ? rulesetSelect.selectedOptions[0]?.textContent : scenario?.rulesets.some(rule=>rule.reviewStatus === 'reviewed') ? 'Chưa chọn phiên bản luật — tham khảo' : 'Chưa có phiên bản luật được xác minh — tham khảo'}`;
       const groups = projection ? [...projection.coexist.applicable, ...projection.coexist.scenarioReference, ...projection.coexist.unknown] : coexist.map(content=>({content,source:null}));
-      coexistUI.update(groups);
+      coexistUI?.update(groups);
       renderTeams();
       if (previous !== JSON.stringify(browse)) consumers.forEach(consumer=>consumer?.setSeasonScope?.({model:seasonModel,browse}));
     }
-    if (recommendedModel) {
-      sections['team-chuan'] = createRecommendedSection({mount:$('#section-team-chuan'),title:'Đội chuẩn',family:'recommended',onQuery:navigateReference,hrefFor:referenceHref,onNavigate:onReferenceNavigate});
-      sections['team-khac'] = createRecommendedSection({mount:$('#section-team-khac'),title:'Đội khác',family:'other',onQuery:navigateReference,hrefFor:referenceHref,onNavigate:onReferenceNavigate});
-    } else {
-      $('#section-team-chuan').append(el('p',{class:'error',role:'status'},'Dữ liệu đội chuẩn hiện không khả dụng. Các mục khác vẫn hoạt động.'));
-      $('#section-team-khac').append(el('p',{class:'error',role:'status'},'Dữ liệu đội khác hiện không khả dụng. Các mục khác vẫn hoạt động.'));
+    if (pageSection === 'team-chuan') {
+      sections['team-chuan'] = recommendedModel
+        ? createRecommendedSection({mount,title:'Đội chuẩn',family:'recommended',onQuery:navigateReference,hrefFor:referenceHref,onNavigate:onReferenceNavigate})
+        : null;
+    } else if (pageSection === 'team-khac') {
+      sections['team-khac'] = recommendedModel
+        ? createRecommendedSection({mount,title:'Đội khác',family:'other',onQuery:navigateReference,hrefFor:referenceHref,onNavigate:onReferenceNavigate})
+        : null;
+    }
+    if (REFERENCE_SECTIONS.includes(pageSection) && !recommendedModel) {
+      mount.append(el('p',{class:'error',role:'status'}, pageSection === 'team-chuan'
+        ? 'Dữ liệu đội chuẩn hiện không khả dụng. Các mục khác vẫn hoạt động.'
+        : 'Dữ liệu đội khác hiện không khả dụng. Các mục khác vẫn hoạt động.'));
     }
     let lookupUI = null;
-    onNavigation = () => {
-      const params = new URL(location.href).searchParams;
-      detailMount.hidden = !params.has('config') && !['team-chuan','team-khac'].includes(sectionFromHash());
+    const refresh = () => {
+      if (detailMount) detailMount.hidden = !new URL(location.href).searchParams.has('config') && !REFERENCE_SECTIONS.includes(pageSection);
       renderScope();
       renderReference();
-      if (sectionFromHash() === "lookup") lookupUI?.render();
       khaiHoangUI?.updateLinks();
     };
     // Mount controller Khai hoang trước restore: restoration ghi lựa chọn vào card đã dựng,
-    // href tự đủ state cho Cmd/Ctrl-click và copy link mà không cần sửa URL tab nguồn.
-    khaiHoangUI = khaihoangTable(khaihoang, {
-      hrefFor: (teamId, variantId) => teamDetailHref(
-        {khaiHoangTeamId: teamId, khaiHoangVariantId: variantId},
-        {from: khaiHoangUrlWithPair(location.href, {teamId, variantId})},
-      ),
-      // Primary click: đồng bộ cặp đang bấm rồi mới ghi snapshot, không preventDefault.
-      onNavigate: (event, teamId, variantId) => {
-        if (!isNativeNavigationClick(event)) return;
-        syncKhaiHoangRoot(teamId, variantId);
-        rememberReturn();
-      },
-      // Đổi select: URL root theo cặp mới và snapshot được làm mới ngay.
-      onChange: (teamId, variantId) => {
-        syncKhaiHoangRoot(teamId, variantId);
-        rememberReturn();
-      },
-    });
-    $("#section-khaihoang").append(khaiHoangUI.element);
-    onNavigation();
+    // href tự đủ state cho Cmd/Ctrl-click và copy link mà không cần sửa URL nguồn.
+    if (pageSection === 'khaihoang') {
+      khaiHoangUI = khaihoangTable(khaihoang, {
+        hrefFor: (teamId, variantId) => teamDetailHref(
+          {khaiHoangTeamId: teamId, khaiHoangVariantId: variantId},
+          {from: khaiHoangUrlWithPair(location.href, {teamId, variantId})},
+        ),
+        // Primary click: đồng bộ cặp đang bấm rồi mới ghi snapshot, không preventDefault.
+        onNavigate: (event, teamId, variantId) => {
+          if (!isNativeNavigationClick(event)) return;
+          syncKhaiHoangRoot(teamId, variantId);
+          rememberReturn();
+        },
+        // Đổi select: URL mục theo cặp mới và snapshot được làm mới ngay.
+        onChange: (teamId, variantId) => {
+          syncKhaiHoangRoot(teamId, variantId);
+          rememberReturn();
+        },
+      });
+      mount.append(khaiHoangUI.element);
+    }
+    refresh();
     renderScope();
     restoreReturnState();
+    // Back/Forward đổi URL: đọc lại và render trạng thái do URL sở hữu (mùa, bộ lọc, chi tiết
+    // cấu hình, consumer phạm vi) TRƯỚC khi khôi phục disclosure/lựa chọn/scroll.
+    // Tra cứu giữ listener popstate riêng của nó trong `initUnifiedLookup`.
     window.addEventListener("popstate", () => {
-      restoringHistory = true;
-      switchSection(sectionFromHash());
+      refresh();
       restoreReturnState();
-      setTimeout(()=>{restoringHistory=false;},0);
     });
     window.addEventListener('pageshow', event => { if (event.persisted) restoreReturnState(); });
-    // Scroll mới nhất phải vào snapshot trước khi rời tab bằng paste/copy URL.
+    // Scroll mới nhất phải vào snapshot trước khi rời trang bằng paste/copy URL.
     window.addEventListener('pagehide', rememberReturn);
-    if (catalog) lookupUI = initUnifiedLookup({ heroes: heroesDict, tactics, catalog }, $("#section-lookup"));
+    if (pageSection === 'lookup' && catalog) lookupUI = initUnifiedLookup({ heroes: heroesDict, tactics, catalog }, mount);
 
-    // Kết quả gameplay giữ nguyên tab người dùng: config mở detail dùng chung, đội gốc đi trang riêng.
+    // Kết quả gameplay giữ nguyên trang người dùng: config mở detail dùng chung, đội gốc đi trang riêng.
     const onOpenTeam = (team) => {
       if (team.configId && seasonModel) { openConfig(team.configId); return; }
       const href = teamDetailHref({legacyTeamId:team.id},{from:location.href});
@@ -479,21 +427,21 @@ async function main() {
       location.assign(href);
     };
     if (lookupBundle) {
-      initRecruitTracker({ heroesDict, mount: $("#section-recruit-tracker") });
-      consumers.push(initAnalyze({ teams, heroesDict, tacticsDict: tactics, booksDict, onOpenTeam }, $("#section-analyze")));
-      consumers.push(initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict: tactics, onOpenTeam }, $("#section-roster-recommend")));
-    } else {
-      for (const id of ["section-recruit-tracker", "section-analyze", "section-roster-recommend"]) {
-        $(`#${id}`).append(el("p", { class: "error", role: "status" }, "Tính năng này cần dữ liệu Tra cứu đang không khả dụng."));
-      }
+      if (pageSection === 'recruit-tracker') initRecruitTracker({ heroesDict, mount });
+      if (pageSection === 'analyze') consumers.push(initAnalyze({ teams, heroesDict, tacticsDict: tactics, booksDict, onOpenTeam }, mount));
+      if (pageSection === 'roster-recommend') consumers.push(initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict: tactics, onOpenTeam }, mount));
+    } else if (['recruit-tracker', 'analyze', 'roster-recommend'].includes(pageSection)) {
+      mount.append(el("p", { class: "error", role: "status" }, "Tính năng này cần dữ liệu Tra cứu đang không khả dụng."));
     }
     consumers.forEach(consumer=>consumer?.setSeasonScope?.({model:seasonModel,browse:browse || {kind:["scenario","ruleset"].some(key=>new URL(location.href).searchParams.has(key)) ? "invalid" : "all-reference"}}, {initial:true}));
   } catch (err) {
-    const mount = $("#section-team-chuan");
     const template = websiteDisplay
       ? displayValue(websiteDisplay, "ui:app/load-error", "errorTemplate")
       : "Không thể tải dữ liệu. Hãy tải lại trang hoặc liên hệ quản trị viên nếu lỗi tiếp diễn.";
-    if (mount) mount.append(el("p", { class: "error" }, template.replace("{message}", "không xác định")));
+    mount.append(el("p", { class: "error", role: "alert" }, template.replace("{message}", "không xác định")));
+  } finally {
+    // Tín hiệu cho e2e: mount xong, kể cả khi nhánh trên đã lỗi.
+    document.body.dataset.boot = 'ready';
   }
 }
 

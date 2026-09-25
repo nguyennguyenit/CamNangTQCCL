@@ -1,17 +1,33 @@
-// Điều hướng dùng chung giữa root và trang chi tiết: href chuẩn, nguồn quay lại an toàn
+// Điều hướng dùng chung giữa trang mục và trang chi tiết: href chuẩn, nguồn quay lại an toàn
 // và snapshot trạng thái giao diện. Không chạm DOM, không phụ thuộc dữ liệu đội: bảng route
 // handle do caller bơm vào qua setTeamRouteHandles.
 
+import { resolveLegacyRoute } from './legacy-routes.js';
+
 export const TEAM_RETURN_STORAGE_KEY = 'tqccl:team-return:v1';
 
-export const ROOT_TABS = ['team-chuan','team-khac','coexist','khaihoang','heroes','tactics','recruit-tracker','analyze','roster-recommend'];
+/** Tám mục cẩm nang; `tab` của snapshot và `aria-current` của nav đều dùng đúng id này. */
+export const SECTION_TABS = ['team-chuan','team-khac','coexist','khaihoang','lookup','recruit-tracker','analyze','roster-recommend'];
 
-/** Tab riêng của Khai hoang: cặp đang chọn nằm trong query URL root, không có store thứ hai. */
+/** Tab riêng của Khai hoang: cặp đang chọn nằm trong query URL mục, không có store thứ hai. */
 export const KHAIHOANG_TEAM_QUERY_KEY = 'khTeam';
 export const KHAIHOANG_VARIANT_QUERY_KEY = 'khVariant';
 
-/** Query keys the root surfaces own; anything else in `from` is treated as untrusted. */
-export const ROOT_QUERY_KEYS = ['season','category','q','faction','unit','score','tier','subcategory','source','scenario','ruleset','sort','stars','config',KHAIHOANG_TEAM_QUERY_KEY,KHAIHOANG_VARIANT_QUERY_KEY];
+/**
+ * Khóa query mỗi trang mục giữ lại khi dựng URL quay lại; khóa khác bị bỏ lặng lẽ.
+ * `score` còn trong bộ lọc Đội chuẩn/Đội khác nên vẫn sống sót; Phase 5 bỏ nó cùng lúc với
+ * bộ lọc và thêm `view`.
+ */
+export const SECTION_QUERY_KEYS = Object.freeze({
+  '/doi-chuan/': ['season','category','q','faction','unit','score','subcategory','source','scenario','ruleset','config'],
+  '/doi-khac/': ['season','category','q','faction','unit','score','subcategory','source','scenario','ruleset','config'],
+  '/cung-ton/': ['config','q','faction','unit','tier','source','sort','stars','scenario','ruleset'],
+  '/soi-doi/': ['config','q','faction','unit','tier','source','sort','stars','scenario','ruleset'],
+  '/goi-y-doi/': ['config','q','faction','unit','tier','source','sort','stars','scenario','ruleset'],
+  '/khai-hoang/': [KHAIHOANG_TEAM_QUERY_KEY,KHAIHOANG_VARIANT_QUERY_KEY],
+  '/tra-cuu/': ['group','id'],
+  '/chieu-mo/': [],
+});
 
 /** Selectors that would send the detail page straight back to itself. */
 const LOOP_QUERY_KEYS = ['detail','legacyTeam','legacyVariant','from'];
@@ -112,10 +128,13 @@ export function teamDetailHref(target, {from, origin} = {}) {
 }
 
 /**
- * Chỉ chấp nhận URL root cùng origin đã normalize: pathname `/`, hash thuộc tab hiện có,
- * query nằm trong allowlist. Selector mở chi tiết bị bỏ để không tạo vòng lặp.
+ * Chuẩn hóa URL quay lại: chỉ chấp nhận cùng origin và pathname thuộc 8 trang mục.
+ * URL gốc cũ (`/` + hash tab, hoặc `/` + khóa root cũ) được chuyển qua bảng của Landing rồi
+ * xét như URL mới, nên link chi tiết đã chia sẻ trước cutover vẫn quay về đúng trang.
+ * Bỏ hash của URL mục và bỏ selector mở lại chính trang chi tiết (không tạo vòng lặp).
+ * Vẫn từ chối: khác origin, `//`, ký tự điều khiển và pathname ngoài tập 8 trang.
  */
-export function safeReturnUrl(raw, {origin = globalThis.location?.origin} = {}) {
+function normalizedSectionTarget(raw, origin) {
   if (typeof raw !== 'string' || !raw || raw.length > 2048) return null;
   if (/[\u0000-\u001f\u007f\\]/.test(raw)) return null;
   if (raw.startsWith('//')) return null;
@@ -134,51 +153,73 @@ export function safeReturnUrl(raw, {origin = globalThis.location?.origin} = {}) 
   } catch {
     return null;
   }
-  if (pathname !== '/' || url.pathname !== '/') return null;
-  if (url.hash && !ROOT_TABS.includes(url.hash.slice(1))) return null;
+  let candidate = url;
+  if (pathname === '/') {
+    // Root cũ: chuẩn hóa bằng đúng bảng chuyển tiếp của Landing trước khi xét allowlist.
+    if (url.pathname !== '/') return null;
+    const normalized = resolveLegacyRoute(`${url.pathname}${url.search}${url.hash}`, RETURN_ORIGIN);
+    if (!normalized) return null;
+    try {
+      candidate = new URL(normalized, RETURN_ORIGIN);
+      pathname = decodeURIComponent(candidate.pathname);
+    } catch {
+      return null;
+    }
+  }
+  if (!Object.hasOwn(SECTION_QUERY_KEYS, pathname) || candidate.pathname !== pathname) return null;
   const params = new URLSearchParams();
-  for (const [key, value] of url.searchParams) {
+  for (const [key, value] of candidate.searchParams) {
     if (LOOP_QUERY_KEYS.includes(key)) continue;
-    if (!ROOT_QUERY_KEYS.includes(key)) return null;
+    params.append(key, value);
+  }
+  return {pathname, params};
+}
+
+/** URL quay lại: giữ khóa được phép của đúng trang, bỏ lặng lẽ mọi khóa khác. */
+export function safeReturnUrl(raw, {origin = globalThis.location?.origin} = {}) {
+  const target = normalizedSectionTarget(raw, origin);
+  if (!target) return null;
+  const allowed = SECTION_QUERY_KEYS[target.pathname];
+  const params = new URLSearchParams();
+  for (const [key, value] of target.params) {
+    if (!allowed.includes(key)) continue;
     params.append(key, value);
   }
   const search = params.toString();
-  return `/${search ? `?${search}` : ''}${url.hash}`;
+  return `${target.pathname}${search ? `?${search}` : ''}`;
 }
 
 export function familyReturnHref(family, {sourceSeasonId, sourceCategoryId} = {}) {
-  if (family === 'khaihoang') return '/#khaihoang';
-  const tab = family === 'recommended' ? 'team-chuan' : 'team-khac';
+  if (family === 'khaihoang') return '/khai-hoang/';
   const params = new URLSearchParams();
   if (family === 'recommended') {
     if (sourceSeasonId && sourceSeasonId !== 'all') params.set('season', sourceSeasonId);
     if (sourceCategoryId && sourceCategoryId !== 'all') params.set('category', sourceCategoryId);
   }
   const search = params.toString();
-  return `/${search ? `?${search}` : ''}#${tab}`;
+  const path = family === 'recommended' ? '/doi-chuan/' : '/doi-khac/';
+  return `${path}${search ? `?${search}` : ''}`;
 }
 
 export function returnHrefFor(family, {from, origin, ...scope} = {}) {
   return safeReturnUrl(from, {origin}) || familyReturnHref(family, scope);
 }
 
-function khaiHoangPairlessUrl(safeUrl) {
-  const url = new URL(safeUrl, RETURN_ORIGIN);
-  url.searchParams.delete(KHAIHOANG_TEAM_QUERY_KEY);
-  url.searchParams.delete(KHAIHOANG_VARIANT_QUERY_KEY);
-  const search = url.searchParams.toString();
-  return `/${search ? `?${search}` : ''}${url.hash}`;
-}
-
 /**
- * Khóa phục hồi của Khai hoang: gọi `safeReturnUrl` trước, chỉ khi URL an toàn thuộc tab
- * `#khaihoang` mới bỏ đúng `khTeam`/`khVariant`; path, hash và mọi query khác giữ nguyên.
- * URL khác tab trả null ⇒ caller quay về so khớp exact.
+ * Khóa phục hồi của Khai hoang: `safeReturnUrl` chuẩn hóa trước (URL gốc `/#khaihoang` cũng về
+ * `/khai-hoang/`), chỉ khi thuộc đúng trang Khai hoang mới bỏ đúng `khTeam`/`khVariant`.
+ * Trang Khai hoang chỉ sở hữu cặp đó, nên URL khác ở khóa không thuộc trang là cùng trạng thái.
+ * URL khác trang trả null ⇒ caller quay về so khớp exact.
  */
 export function khaiHoangContextKey(raw, {origin = globalThis.location?.origin} = {}) {
   const url = safeReturnUrl(raw, {origin});
   if (!url) return null;
-  return new URL(url, RETURN_ORIGIN).hash === '#khaihoang' ? khaiHoangPairlessUrl(url) : null;
+  const target = new URL(url, RETURN_ORIGIN);
+  if (target.pathname !== '/khai-hoang/') return null;
+  target.searchParams.delete(KHAIHOANG_TEAM_QUERY_KEY);
+  target.searchParams.delete(KHAIHOANG_VARIANT_QUERY_KEY);
+  const search = target.searchParams.toString();
+  return `${target.pathname}${search ? `?${search}` : ''}`;
 }
 
 /** Cặp đang chọn trên URL root; thiếu hoặc không routable đều về mặc định ''. */
@@ -291,7 +332,7 @@ export function captureReturnSnapshot({href, scrollY, tab, disclosures, khaihoan
     version: 1,
     url,
     scrollY: Number.isFinite(scrollY) && scrollY > 0 ? Math.min(Math.round(scrollY), 1_000_000) : 0,
-    tab: ROOT_TABS.includes(tab) ? tab : null,
+    tab: SECTION_TABS.includes(tab) ? tab : null,
     disclosures: safeDisclosures(disclosures),
   };
   // Chỉ ghi map khi root Khai hoang đã khởi tạo; map rỗng vẫn là trạng thái hợp lệ và có quyền.
@@ -300,8 +341,10 @@ export function captureReturnSnapshot({href, scrollY, tab, disclosures, khaihoan
 }
 
 /**
- * Hai URL cùng tab `#khaihoang` khớp theo context key (bỏ đúng cặp đang chọn); mọi surface khác
- * vẫn phải khớp full URL, nên snapshot khác `q`/`scenario`/`ruleset` hoặc tab bị loại.
+ * Hai URL cùng trang `/khai-hoang/` khớp theo context key: khóa phục hồi bỏ đúng cặp
+ * `khTeam`/`khVariant` và giữ mọi khóa khác mà trang sở hữu (allowlist chỉ có hai khóa đó, nên
+ * `q`/`scenario`/`ruleset` không được coi là trạng thái phân biệt). Mọi surface khác phải khớp
+ * full URL, nên snapshot khác trang hoặc khác query được phép đều bị loại.
  */
 export function matchesReturnSnapshot(snapshot, href, {origin} = {}) {
   const url = safeReturnUrl(href, {origin});
@@ -340,7 +383,7 @@ export function readReturnSnapshot(href, storage, {origin, khaihoangInventory} =
   }
   if (!matchesReturnSnapshot(snapshot,href,{origin})) return null;
   if (!Number.isFinite(snapshot.scrollY) || snapshot.scrollY < 0 || snapshot.scrollY > 1_000_000) return null;
-  if (snapshot.tab !== null && !ROOT_TABS.includes(snapshot.tab)) return null;
+  if (snapshot.tab !== null && !SECTION_TABS.includes(snapshot.tab)) return null;
   const restored = {
     version: 1,
     url: snapshot.url,

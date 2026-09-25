@@ -13,6 +13,21 @@
 /khai-hoang/*
   Cache-Control: public, max-age=0, must-revalidate
 
+/cung-ton/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/tra-cuu/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/chieu-mo/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/soi-doi/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/goi-y-doi/*
+  Cache-Control: public, max-age=0, must-revalidate
+
 /404.html
   Cache-Control: public, max-age=0, must-revalidate
 

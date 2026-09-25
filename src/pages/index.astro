@@ -1,85 +1,56 @@
 ---
-import { seasonArtifactHashes, websiteDisplayPublicationSnapshot } from '../lib/root-static-artifacts';
-import { teamDetailCatalog } from '../lib/team-detail-routes';
-const website = await websiteDisplayPublicationSnapshot();
-const seasonHashes = await seasonArtifactHashes();
-const recommended = website.recommended;
-// Final route segments come from the validated catalog once: callers only hold source identities.
-const catalog = await teamDetailCatalog();
-const recommendedRouteSegments = Object.fromEntries(catalog.recommended.map((entry) => [entry.sourceConfigId, entry.routeSegment]));
-const legacyRouteSegments = Object.fromEntries(catalog.legacy.map((entry) => [entry.legacyTeamId, entry.routeSegment]));
-const khaiHoangHandles = Object.fromEntries(catalog.khaiHoang.map((entry) => [entry.khaiHoangTeamId, entry.handle]));
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { resolveLegacyRoute } from '../../js/legacy-routes.js';
+
+const canonicalUrl = new URL('/', Astro.site);
+const SECTIONS = [
+  {id: 'team-chuan', label: 'Đội chuẩn', path: '/doi-chuan/'},
+  {id: 'team-khac', label: 'Đội khác', path: '/doi-khac/'},
+  {id: 'coexist', label: 'Cùng Tồn', path: '/cung-ton/'},
+  {id: 'khaihoang', label: 'Khai hoang', path: '/khai-hoang/'},
+  {id: 'lookup', label: 'Tra cứu', path: '/tra-cuu/'},
+  {id: 'recruit-tracker', label: 'Theo dõi chiêu mộ', path: '/chieu-mo/', beta: true},
+  {id: 'analyze', label: 'Soi đội từ ảnh', path: '/soi-doi/', beta: true},
+  {id: 'roster-recommend', label: 'Gợi ý đội từ kho', path: '/goi-y-doi/', beta: true},
+];
+// Hash cũ phải chuyển trước khi vẽ trang: nhúng nguyên hàm thuần của js/legacy-routes.js vào một
+// script inline chặn trong <head>. Listener `hashchange` phủ trường hợp dán link cũ khi đang ở `/`.
+const redirectSource = `(function(){var resolve=${resolveLegacyRoute.toString()};var go=function(){var target=resolve(window.location.href,window.location.origin);if(target)window.location.replace(target);};go();window.addEventListener('hashchange',go);})();`;
 ---
-<!doctype html>
-<html lang="vi" data-theme="light">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cẩm Nang Game Tam Quốc Chí - Chiến Lược</title>
-    <meta name="description" content="Tổng hợp đội hình meta, đội hình Cùng Tồn và Khai hoang game Tam Quốc Chí Chiến Lược, có đầy đủ bộ lọc theo tướng, chiến pháp, binh thư, bậc." />
-    <link rel="canonical" href="https://tqccl.pages.dev/" />
-    <meta property="og:title" content="Cẩm Nang Game Tam Quốc Chí - Chiến Lược" />
-    <meta property="og:description" content="Tổng hợp đội hình meta và bộ lọc đầy đủ." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://tqccl.pages.dev/" />
-    <link rel="icon" type="image/png" sizes="128x128" href="/favicon.png" />
-    <link rel="stylesheet" href="/css/styles.css" />
-    <link rel="preload" href="/fonts/be-vietnam-pro-400-latin.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/noto-serif-display-700-latin.woff2" as="font" type="font/woff2" crossorigin />
-  </head>
-  <body>
-    <div class="top-header">
-      <header class="site-header">
-        <div class="brand">
-          <button id="section-menu-toggle" class="section-menu-toggle" type="button" aria-controls="section-menu-items" aria-expanded="false" aria-label="Mở menu trang" data-label-mode="icon">☰</button>
-          <div>
-            <h1>Cẩm Nang Game Tam Quốc Chí - Chiến Lược</h1>
-            <p class="tagline">Tất cả — tham khảo</p>
-          </div>
-        </div>
-        <div class="header-actions">
-          <button id="theme-toggle" class="icon-btn" title="Đổi giao diện sáng/tối" aria-label="Đổi giao diện">🌗</button>
-        </div>
-      </header>
+<SiteLayout
+  title="Cẩm Nang Game Tam Quốc Chí - Chiến Lược"
+  description="Tổng hợp đội hình meta, đội hình Cùng Tồn và Khai hoang game Tam Quốc Chí Chiến Lược, có đầy đủ bộ lọc theo tướng, chiến pháp, binh thư, bậc."
+  pageKind="landing"
+  canonicalUrl={canonicalUrl}
+>
+  <script is:inline id="legacy-route-redirect" slot="head" set:html={redirectSource}></script>
 
-      <nav class="section-nav" role="tablist" aria-label="Mục chính">
-        <div id="section-menu-items" class="section-menu-items">
-          <button class="nav-tab active" role="tab" aria-selected="true" data-section="team-chuan">Đội chuẩn</button>
-          <button class="nav-tab" role="tab" aria-selected="false" data-section="team-khac">Đội khác</button>
-          <button class="nav-tab" role="tab" aria-selected="false" data-section="coexist">Cùng Tồn</button>
-          <button class="nav-tab" role="tab" aria-selected="false" data-section="khaihoang">Khai hoang</button>
-          <button class="nav-tab" role="tab" aria-selected="false" data-section="lookup">Tra cứu</button>
-          <button class="nav-tab" role="tab" aria-selected="false" data-section="recruit-tracker">Theo dõi chiêu mộ <span class="badge beta">Beta</span></button>
-          <button class="nav-tab" role="tab" aria-selected="false" data-section="analyze">Soi đội từ ảnh <span class="badge beta">Beta</span></button>
-          <button class="nav-tab" role="tab" aria-selected="false" data-section="roster-recommend">Gợi ý đội từ kho <span class="badge beta">Beta</span></button>
-        </div>
-      </nav>
-    </div>
+  <p class="disclaimer">Dữ liệu tổng hợp từ chia sẻ kinh nghiệm người chơi, mang tính tham khảo — không phải phương án duy nhất.</p>
 
-    <p class="disclaimer">Dữ liệu tổng hợp từ chia sẻ kinh nghiệm người chơi, mang tính tham khảo — không phải phương án duy nhất.</p>
+  <section id="landing-quick" aria-labelledby="landing-quick-title">
+    <p class="section-intro-title">Lối vào nhanh</p>
+    <h2 id="landing-quick-title">Bạn đang cần gì?</h2>
+    <p class="section-intro-sub">Ba câu hỏi người chơi hay tìm nhất, mỗi câu dẫn thẳng tới đúng mục.</p>
+    <ul class="landing-cards">
+      <li>
+        <a href="/doi-chuan/">Mùa này chơi đội nào? — Mở Đội chuẩn</a>
+        <p>Lọc theo mùa, loại binh và phe. Xem dạng thẻ để đọc kỹ, hoặc dạng bảng để so nhanh.</p>
+      </li>
+      <li>
+        <a href="/goi-y-doi/">Có sẵn tướng này thì ghép gì? — Gợi ý đội từ kho</a>
+        <p>Chụp màn hình kho tướng và chiến pháp. Công cụ chọn tối đa 5 đội không trùng tài nguyên.</p>
+      </li>
+      <li>
+        <a href="/tra-cuu/">Tướng, chiến pháp này làm gì? — Tra cứu</a>
+        <p>Gõ tên Việt, Hán-Việt hay chữ Hán. Xem chỉ số, thích tính binh chủng và hiệu quả chiến pháp.</p>
+      </li>
+    </ul>
 
-    <main class="layout">
-      <div class="content">
-        <div id="season-controls" class="season-controls" aria-label="Phạm vi đội hình"></div>
-        <section id="section-team-chuan" class="section active" role="tabpanel"></section>
-        <section id="section-team-khac" class="section" role="tabpanel"></section>
-        <section id="section-coexist" class="section" role="tabpanel"></section>
-        <section id="section-khaihoang" class="section" role="tabpanel"></section>
-        <section id="section-lookup" class="section" role="tabpanel"></section>
-        <section id="section-recruit-tracker" class="section" role="tabpanel"></section>
-        <section id="section-analyze" class="section" role="tabpanel"></section>
-        <section id="section-roster-recommend" class="section" role="tabpanel"></section>
-      </div>
-    </main>
-
-    <footer class="site-footer">
-      <p class="credit">Được xây dựng bởi <strong>Nguyễn Nguyên</strong> · HLxThanos · Đội 2 bang Huynh Đệ</p>
-    </footer>
-
-    <script is:inline type="application/json" id="season-artifact-hashes" set:html={JSON.stringify(seasonHashes)}></script>
-    <script is:inline type="application/json" id="team-route-handles" set:html={JSON.stringify({r: recommendedRouteSegments, l: legacyRouteSegments, k: khaiHoangHandles})}></script>
-    <script is:inline type="application/json" id="recommended-publication" set:html={JSON.stringify(recommended.pin)}></script>
-    <script is:inline type="application/json" id="website-display-publication" set:html={JSON.stringify(website.pin)}></script>
-    <script is:inline type="module" src="/js/app.js"></script>
-  </body>
-</html>
+    <h3>Tất cả mục</h3>
+    <ul class="landing-sections">
+      {SECTIONS.map((section) => (
+        <li><a href={section.path}>{section.label}{section.beta ? <span class="badge beta">Beta</span> : null}</a></li>
+      ))}
+    </ul>
+  </section>
+</SiteLayout>

@@ -12704,14 +12704,6 @@
           "verdict": "accepted"
         },
         {
-          "entityId": "ui:root/build-credit",
-          "fieldPath": "creditLabel",
-          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-          "inputFingerprint": "8592ca2d55f2fafafdd65acaba0ac3420b0653d1feff66d051b05b0446f8a288",
-          "textSha256": "93da3005e9aa5ad05fe34dbdd1e7c7be663da08a2792aaf75e97ba8a8d2f6fa6",
-          "verdict": "accepted"
-        },
-        {
           "entityId": "ui:layout/build-credit",
           "fieldPath": "creditLabel",
           "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",

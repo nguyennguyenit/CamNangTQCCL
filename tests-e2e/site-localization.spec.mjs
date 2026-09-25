@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 const HAN = /[\u3400-\u9fff\uf900-\ufaff]/u;
 /** Detail routes come from the frozen inventory the build embedded, never from a re-derived slug. */
 const routeHandles = async (request) => {
-  const html = await (await request.get("/index.html")).text();
+  const html = await (await request.get("/doi-chuan/")).text();
   const match = html.match(/id="team-route-handles"[^>]*>([^<]+)<\/script>/);
   if (!match) throw new Error("Built HTML lacks the team route handle map");
   return JSON.parse(match[1]);
@@ -56,7 +56,7 @@ test("localization-red-provider-error: Analyze does not expose upstream prose", 
     body: JSON.stringify({ error: "服务器内部错误" }),
   }));
 
-  await page.goto("/#analyze");
+  await page.goto("/soi-doi/");
   await page.locator("#section-analyze input[type=file]").setInputFiles({
     name: "team.png",
     mimeType: "image/png",

@@ -1,0 +1,16 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+const canonicalUrl = new URL('/soi-doi/', Astro.site);
+---
+<SiteLayout
+  title="Soi đội từ ảnh — Cẩm Nang Game Tam Quốc Chí - Chiến Lược"
+  description="Soi đội hình từ ảnh chụp và đối chiếu với dữ liệu đội đã được tuyển chọn."
+  pageKind="section"
+  activeSection="analyze"
+  tagline="Tra cứu đội hình theo kịch bản"
+  canonicalUrl={canonicalUrl}
+>
+  <section id="section-analyze" class="section active"></section>
+
+  <script is:inline type="module" src="/js/app.js" slot="scripts"></script>
+</SiteLayout>

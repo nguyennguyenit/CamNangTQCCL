@@ -5,6 +5,18 @@ export const prerender = true;
 
 export const SITEMAP_MIME = "application/xml; charset=utf-8";
 
+/** Tám trang mục tĩnh; thứ tự trong tài liệu do `sitemapLocations` sắp xếp. */
+export const SECTION_PATHS = [
+  "/doi-chuan/",
+  "/doi-khac/",
+  "/cung-ton/",
+  "/khai-hoang/",
+  "/tra-cuu/",
+  "/chieu-mo/",
+  "/soi-doi/",
+  "/goi-y-doi/",
+] as const;
+
 const XML_ESCAPES: Record<string, string> = {
   "&": "&amp;",
   "<": "&lt;",
@@ -53,7 +65,10 @@ export function sitemapDocument(site: string | URL | undefined, routePaths: read
 
 export const GET: APIRoute = async ({ site }: APIContext) => {
   const catalog = await teamDetailCatalog();
-  const routePaths = [...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath);
+  const routePaths = [
+    ...SECTION_PATHS,
+    ...[...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath),
+  ];
   return new Response(sitemapDocument(site, routePaths), {
     headers: { "Content-Type": SITEMAP_MIME },
   });

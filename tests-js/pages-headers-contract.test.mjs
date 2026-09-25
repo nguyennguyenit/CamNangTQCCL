@@ -11,6 +11,11 @@ const expectedRules = [
   "/doi-chuan/*",
   "/doi-khac/*",
   "/khai-hoang/*",
+  "/cung-ton/*",
+  "/tra-cuu/*",
+  "/chieu-mo/*",
+  "/soi-doi/*",
+  "/goi-y-doi/*",
   "/404.html",
   "/js/*",
   "/css/*",
@@ -92,6 +97,9 @@ test("_headers covers every published shell and mutable raw asset", async () => 
     "/doi-khac/hoang-ma-thuong/index.html",
     "/khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/",
     "/khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/index.html",
+    // Mọi trang mục mới đều phải revalidate như nhau.
+    ...["doi-chuan", "doi-khac", "cung-ton", "khai-hoang", "tra-cuu", "chieu-mo", "soi-doi", "goi-y-doi"]
+      .flatMap((section) => [`/${section}/`, `/${section}/index.html`]),
   ];
   for (const path of publicPaths) {
     assert.equal(policyFor(rules, path), cachePolicy, `${path} must revalidate`);

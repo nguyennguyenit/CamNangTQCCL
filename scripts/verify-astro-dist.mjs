@@ -7,7 +7,7 @@ import { PUBLIC_ARTIFACTS, validatePublicArtifactManifest } from "../src/lib/pub
 import { websiteDisplayPublicationSnapshot } from "../src/lib/root-static-artifacts.ts";
 import { recommendedPublicationSnapshot } from "../src/lib/recommended-reference-artifacts.ts";
 import { teamDetailCatalog } from "../src/lib/team-detail-routes.ts";
-import { sitemapDocument } from "../src/pages/sitemap.xml.ts";
+import { SECTION_PATHS, sitemapDocument } from "../src/pages/sitemap.xml.ts";
 
 export const DEPLOYMENT_CONTROL_ARTIFACTS = Object.freeze([
   Object.freeze({ sourcePath: "public/_headers", outputPath: "_headers" }),
@@ -73,10 +73,12 @@ export async function verifyAstroDist({
     if (!files.length) throw new Error(`static public directory is empty: ${directory.sourcePath}`);
     for (const file of files) staticDirectoryFiles.push([`${directory.sourcePath}/${file}`, `${directory.outputPath}/${file}`]);
   }
+  const sectionHtmlPaths = SECTION_PATHS.map((path) => `${path.slice(1)}index.html`);
   const expectedFiles = [
     "index.html",
     "404.html",
     "sitemap.xml",
+    ...sectionHtmlPaths,
     ...catalog.htmlPaths,
     ...expectedAssets,
     ...recommendedFiles,
@@ -106,7 +108,10 @@ export async function verifyAstroDist({
   // Byte equality with the build-owned generator enforces valid structure, exact absolute
   // origins, and the absence of query/hash drift without maintaining a second XML parser.
   const sitemapXml = await readFile(resolve(distPath, "sitemap.xml"), "utf8");
-  const sitemapRoutePaths = [...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath);
+  const sitemapRoutePaths = [
+    ...SECTION_PATHS,
+    ...[...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath),
+  ];
   const expectedSitemapXml = sitemapDocument(astroConfig.site, sitemapRoutePaths);
   if (sitemapXml !== expectedSitemapXml) {
     throw new Error("dist sitemap.xml does not match the generated document");
@@ -131,41 +136,57 @@ export async function verifyAstroDist({
     const emitted = await readFile(resolve(distPath, `data/recommended/${recommended.pin.generationId}/${name}`));
     if (!emitted.equals(bytes)) throw new Error(`Emitted Recommended artifact differs from source: ${name}`);
   }
-  const html = await readFile(resolve(distPath, "index.html"), "utf8");
-  const embedded = html.match(/id="recommended-publication"[^>]*>([^<]+)<\/script>/);
-  if (!embedded) throw new Error("Built HTML lacks the Recommended publication pin");
-  const embeddedPin = JSON.parse(embedded[1]);
-  if (
-    embeddedPin.schemaVersion !== recommended.pin.schemaVersion
-    || embeddedPin.generationId !== recommended.pin.generationId
-    || embeddedPin.manifestSha256 !== recommended.pin.manifestSha256
-  ) {
-    throw new Error("Built HTML Recommended pin differs from emitted generation");
+  // Landing chỉ có script chuyển tiếp hash cũ; mọi payload của app.js thuộc về 8 trang mục.
+  const readPage = async (decodedPath) => readFile(resolve(distPath, emittedByDecodedPath.get(decodedPath)), "utf8");
+  const landing = await readPage("index.html");
+  for (const forbidden of ['id="team-route-handles"', 'id="season-artifact-hashes"', 'id="season-controls"', 'src="/js/app.js"']) {
+    if (landing.includes(forbidden)) throw new Error(`Landing must not carry the section payload: ${forbidden}`);
   }
-  if (website) {
-    const embeddedWebsite = html.match(/id="website-display-publication"[^>]*>([^<]+)<\/script>/);
-    if (!embeddedWebsite) throw new Error("Built HTML lacks the website display publication pin");
-    const embeddedWebsitePin = JSON.parse(embeddedWebsite[1]);
-    if (
-      embeddedWebsitePin.generationId !== website.pin.generationId
-      || embeddedWebsitePin.sha256 !== website.pin.sha256
-    ) throw new Error("Built HTML website display pin differs from emitted publication");
-  }
-
-  // The root registry is the single map every card href derives from, so it must be the catalog.
-  const registryMatch = html.match(/id="team-route-handles"[^>]*>([^<]+)<\/script>/);
-  if (!registryMatch) throw new Error("Built HTML lacks the team route handle registry");
+  if (!landing.includes('id="legacy-route-redirect"')) throw new Error("Landing lacks the inline legacy route redirect");
   const expectedRegistry = {
     r: Object.fromEntries(catalog.recommended.map((entry) => [entry.sourceConfigId, entry.routeSegment])),
     l: Object.fromEntries(catalog.legacy.map((entry) => [entry.legacyTeamId, entry.routeSegment])),
     k: Object.fromEntries(catalog.khaiHoang.map((entry) => [entry.khaiHoangTeamId, entry.handle])),
   };
-  if (JSON.stringify(JSON.parse(registryMatch[1])) !== JSON.stringify(expectedRegistry)) {
-    throw new Error("Built HTML team route handle registry differs from the catalog");
+  // Bảng payload của phase: cả 8 trang mục nhận `{r,l,k}`; chỉ 5 trang có phạm vi mùa.
+  const SEASON_SECTION_PATHS = new Set(["/doi-chuan/", "/doi-khac/", "/cung-ton/", "/soi-doi/", "/goi-y-doi/"]);
+  const seasonHashesMarkers = [];
+  for (const sectionPath of SECTION_PATHS) {
+    const htmlPath = `${sectionPath.slice(1)}index.html`;
+    const season = SEASON_SECTION_PATHS.has(sectionPath);
+    const page = await readPage(htmlPath);
+    if (!page.includes('src="/js/app.js"')) throw new Error(`Section page does not load the section application: ${htmlPath}`);
+    const pageSection = page.match(/<body[^>]*\bdata-page-section="([a-z-]+)"/);
+    if (!pageSection) throw new Error(`Section page does not declare its page section: ${htmlPath}`);
+    if (!page.includes(`id="section-${pageSection[1]}"`)) throw new Error(`Section page lacks its own mount: ${htmlPath}`);
+    const registryMatch = page.match(/id="team-route-handles"[^>]*>([^<]+)<\/script>/);
+    if (!registryMatch) throw new Error(`Section page lacks the team route handle registry: ${htmlPath}`);
+    if (JSON.stringify(JSON.parse(registryMatch[1])) !== JSON.stringify(expectedRegistry)) {
+      throw new Error(`Section page team route handle registry differs from the catalog: ${htmlPath}`);
+    }
+    const embedded = page.match(/id="recommended-publication"[^>]*>([^<]+)<\/script>/);
+    if (!embedded) throw new Error(`Section page lacks the Recommended publication pin: ${htmlPath}`);
+    const embeddedPin = JSON.parse(embedded[1]);
+    if (
+      embeddedPin.schemaVersion !== recommended.pin.schemaVersion
+      || embeddedPin.generationId !== recommended.pin.generationId
+      || embeddedPin.manifestSha256 !== recommended.pin.manifestSha256
+    ) throw new Error(`Section page Recommended pin differs from emitted generation: ${htmlPath}`);
+    if (website) {
+      const embeddedWebsite = page.match(/id="website-display-publication"[^>]*>([^<]+)<\/script>/);
+      if (!embeddedWebsite || JSON.stringify(JSON.parse(embeddedWebsite[1])) !== JSON.stringify(website.pin)) {
+        throw new Error(`Section page lacks the website display publication pin: ${htmlPath}`);
+      }
+    }
+    const seasonMarker = page.match(/id="season-artifact-hashes"[^>]*>([^<]+)<\/script>/);
+    if (season && !seasonMarker) throw new Error(`Season section page lacks its season artifact hashes: ${htmlPath}`);
+    if (season && !page.includes('id="season-controls"')) throw new Error(`Season section page lacks its season controls mount: ${htmlPath}`);
+    if (!season && seasonMarker) throw new Error(`Section page must not carry season artifact hashes: ${htmlPath}`);
+    if (!season && page.includes('id="season-controls"')) throw new Error(`Section page must not carry a season controls mount: ${htmlPath}`);
+    if (seasonMarker) seasonHashesMarkers.push(JSON.parse(seasonMarker[1]));
   }
 
   // Mỗi trang chi tiết phải pin đúng identity đã validate, và không nạp app gốc.
-  const readPage = async (decodedPath) => readFile(resolve(distPath, emittedByDecodedPath.get(decodedPath)), "utf8");
   const pages = [
     ...catalog.recommended.map((entry) => ({
       path: entry.htmlPath,
@@ -251,12 +272,12 @@ export async function verifyAstroDist({
     const ordered = Object.fromEntries(Object.keys(lookupManifest.files).sort().map((name) => [name, lookupManifest.files[name]]));
     const derived = "lookup:" + createHash("sha256").update(`${JSON.stringify(ordered)}\n`).digest("hex");
     if (lookupManifest.generationId !== derived) throw new Error("Emitted lookup generation is invalid");
-    const seasonMarker = html.match(/id="season-artifact-hashes"[^>]*>([^<]+)<\/script>/);
-    if (!seasonMarker) throw new Error("Built HTML lacks season-artifact-hashes generation pin");
-    const seasonHashes = JSON.parse(seasonMarker[1]);
-    for (const name of ["heroes-dict", "tactics"]) {
-      if (seasonHashes[name] !== `sha256:${lookupManifest.files[`${name}.json`]}`) {
-        throw new Error("Built HTML season-artifact-hashes differs from lookup generation");
+    if (!seasonHashesMarkers.length) throw new Error("No section page carries the season-artifact-hashes generation pin");
+    for (const seasonHashes of seasonHashesMarkers) {
+      for (const name of ["heroes-dict", "tactics"]) {
+        if (seasonHashes[name] !== `sha256:${lookupManifest.files[`${name}.json`]}`) {
+          throw new Error("Built HTML season-artifact-hashes differs from lookup generation");
+        }
       }
     }
     lookupGenerationId = lookupManifest.generationId;

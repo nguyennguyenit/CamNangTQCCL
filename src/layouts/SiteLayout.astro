@@ -1,12 +1,13 @@
 ---
-import { websiteDisplayPublicationSnapshot } from '../lib/root-static-artifacts';
+import { seasonArtifactHashes, websiteDisplayPublicationSnapshot } from '../lib/root-static-artifacts';
 import { teamDetailCatalog } from '../lib/team-detail-routes';
-// Vỏ trang dùng chung: root giữ nguyên tab buttons cho app.js, trang con dùng link thật.
+// Vỏ trang dùng chung: Landing, 8 trang mục và các trang chi tiết đều đi qua đây nên phần đầu
+// trang chỉ tồn tại một bản. Trang mục khai `data-page-section` để js/app.js biết mục cần mount.
 interface Props {
   title: string;
   description: string;
-  pageKind?: 'root' | 'detail' | 'not-found';
-  activeSection?: 'team-chuan' | 'team-khac' | 'khaihoang' | null;
+  pageKind: 'landing' | 'section' | 'detail' | 'not-found';
+  activeSection?: 'team-chuan' | 'team-khac' | 'coexist' | 'khaihoang' | 'lookup' | 'recruit-tracker' | 'analyze' | 'roster-recommend' | null;
   tagline?: string;
   canonicalUrl?: URL | string;
   ogType?: 'website' | 'article';
@@ -16,7 +17,7 @@ interface Props {
 const {
   title,
   description,
-  pageKind = 'root',
+  pageKind,
   activeSection = null,
   tagline = 'Tất cả — tham khảo',
   canonicalUrl,
@@ -29,26 +30,38 @@ const canonicalHref = canonicalUrl ? new URL(canonicalUrl).href : null;
 
 const BRAND = 'Cẩm Nang Game Tam Quốc Chí - Chiến Lược';
 const SECTIONS = [
-  {id: 'team-chuan', label: 'Đội chuẩn'},
-  {id: 'team-khac', label: 'Đội khác'},
-  {id: 'coexist', label: 'Cùng Tồn'},
-  {id: 'khaihoang', label: 'Khai hoang'},
-  {id: 'heroes', label: 'Tra cứu tướng'},
-  {id: 'tactics', label: 'Tra cứu chiến pháp'},
-  {id: 'recruit-tracker', label: 'Theo dõi chiêu mộ', beta: true},
-  {id: 'analyze', label: 'Soi đội từ ảnh', beta: true},
-  {id: 'roster-recommend', label: 'Gợi ý đội từ kho', beta: true},
+  {id: 'team-chuan', label: 'Đội chuẩn', path: '/doi-chuan/'},
+  {id: 'team-khac', label: 'Đội khác', path: '/doi-khac/'},
+  {id: 'coexist', label: 'Cùng Tồn', path: '/cung-ton/'},
+  {id: 'khaihoang', label: 'Khai hoang', path: '/khai-hoang/'},
+  {id: 'lookup', label: 'Tra cứu', path: '/tra-cuu/'},
+  {id: 'recruit-tracker', label: 'Theo dõi chiêu mộ', path: '/chieu-mo/', beta: true},
+  {id: 'analyze', label: 'Soi đội từ ảnh', path: '/soi-doi/', beta: true},
+  {id: 'roster-recommend', label: 'Gợi ý đội từ kho', path: '/goi-y-doi/', beta: true},
 ];
-const isRoot = pageKind === 'root';
-const contentClass = isRoot ? 'content' : 'content detail-content';
+/** Mục có phạm vi mùa + chi tiết cấu hình: chỉ 5 trang này cần hai payload bên dưới. */
+const SEASON_SECTIONS = ['team-chuan', 'team-khac', 'coexist', 'analyze', 'roster-recommend'];
+// `:root` không đặt sẵn data-theme: script inline dưới đây quyết định trước khi stylesheet chạy.
+const pageSection = pageKind === 'section' ? activeSection : null;
+const seasonScope = pageSection !== null && SEASON_SECTIONS.includes(pageSection);
+const contentClass = pageKind === 'detail' ? 'content detail-content' : 'content';
 const website = await websiteDisplayPublicationSnapshot();
-// Trang chi tiết không nạp `app.js`, nên chỉ nó cần bảng legacy route handle (đo được ≈4.9 KB).
-const legacyRouteSegments = pageKind === 'detail'
-  ? Object.fromEntries((await teamDetailCatalog()).legacy.map((entry) => [entry.legacyTeamId, entry.routeSegment]))
-  : null;
+const seasonHashes = seasonScope ? await seasonArtifactHashes() : null;
+// Bảng route handle: `{r,l,k}` cho mọi trang mục, chỉ `{l}` cho trang chi tiết (≈4.9 KB).
+const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
+  ? null
+  : await teamDetailCatalog().then((catalog) => {
+      const legacy = Object.fromEntries(catalog.legacy.map((entry) => [entry.legacyTeamId, entry.routeSegment]));
+      if (pageKind === 'detail') return {l: legacy};
+      return {
+        r: Object.fromEntries(catalog.recommended.map((entry) => [entry.sourceConfigId, entry.routeSegment])),
+        l: legacy,
+        k: Object.fromEntries(catalog.khaiHoang.map((entry) => [entry.khaiHoangTeamId, entry.handle])),
+      };
+    });
 ---
 <!doctype html>
-<html lang="vi" data-theme="light">
+<html lang="vi">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -61,18 +74,38 @@ const legacyRouteSegments = pageKind === 'detail'
     <meta property="og:type" content={ogType} />
     {canonicalHref ? <meta property="og:url" content={canonicalHref} /> : null}
     <link rel="icon" type="image/png" sizes="128x128" href="/favicon.png" />
+    <slot name="head" />
+    <script is:inline>
+      // Đặt theme trước stylesheet để trang tối không nháy sáng; lỗi storage về theo hệ điều hành.
+      (function () {
+        var theme = 'light';
+        try {
+          var stored = localStorage.getItem('theme');
+          if (stored === 'dark' || stored === 'light') theme = stored;
+          else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) theme = 'dark';
+        } catch (error) {
+          try {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) theme = 'dark';
+          } catch (ignored) {
+            theme = 'light';
+          }
+        }
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+      })();
+    </script>
     <link rel="stylesheet" href="/css/styles.css" />
     <link rel="preload" href="/fonts/be-vietnam-pro-400-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/noto-serif-display-700-latin.woff2" as="font" type="font/woff2" crossorigin />
   </head>
-  <body>
+  <body data-page-section={pageSection}>
     <a class="skip-link" href="#main-content">Bỏ qua điều hướng</a>
     <div class="top-header">
       <header class="site-header">
         <div class="brand">
           <button id="section-menu-toggle" class="section-menu-toggle" type="button" aria-controls="section-menu-items" aria-expanded="false" aria-label="Mở menu trang" data-label-mode="icon">☰</button>
           <div>
-            {isRoot
+            {pageKind === 'landing'
               ? <h1 class="site-title">{BRAND}</h1>
               : <a class="site-title" href="/">{BRAND}</a>}
             <p class="tagline">{tagline}</p>
@@ -85,14 +118,14 @@ const legacyRouteSegments = pageKind === 'detail'
 
       <nav class="section-nav" aria-label="Chuyên mục">
         <div id="section-menu-items" class="section-menu-items">
-          {SECTIONS.map((section) => (isRoot
-            ? <button class={section.id === 'team-chuan' ? 'nav-tab active' : 'nav-tab'} data-section={section.id}>{section.label}{section.beta ? <span class="badge beta">Beta</span> : null}</button>
-            : <a
-                class={section.id === activeSection ? 'nav-tab active' : 'nav-tab'}
-                data-section={section.id}
-                href={`/#${section.id}`}
-                aria-current={section.id === activeSection ? 'location' : null}
-              >{section.label}{section.beta ? <span class="badge beta">Beta</span> : null}</a>))}
+          {SECTIONS.map((section) => (
+            <a
+              class:list={['nav-tab', {active: section.id === activeSection}]}
+              data-section={section.id}
+              href={section.path}
+              aria-current={section.id === activeSection ? 'page' : null}
+            >{section.label}{section.beta ? <span class="badge beta">Beta</span> : null}</a>
+          ))}
         </div>
       </nav>
     </div>
@@ -101,6 +134,7 @@ const legacyRouteSegments = pageKind === 'detail'
 
     <main id="main-content" class="layout">
       <div class={contentClass}>
+        {seasonScope ? <div id="season-controls" class="season-controls" aria-label="Phạm vi đội hình"></div> : null}
         <slot />
       </div>
     </main>
@@ -111,15 +145,12 @@ const legacyRouteSegments = pageKind === 'detail'
 
     <script is:inline type="application/json" id="recommended-publication" set:html={JSON.stringify(website.recommended.pin)}></script>
     <script is:inline type="application/json" id="website-display-publication" set:html={JSON.stringify(website.pin)}></script>
-    {legacyRouteSegments && (
-      <script is:inline type="application/json" id="team-route-handles" set:html={JSON.stringify({l: legacyRouteSegments})}></script>
-    )}
-    {!isRoot && (
-      <script is:inline type="module">
-        import { initSiteChrome } from '/js/site-chrome.js';
-        initSiteChrome();
-      </script>
-    )}
+    {seasonHashes && <script is:inline type="application/json" id="season-artifact-hashes" set:html={JSON.stringify(seasonHashes)}></script>}
+    {routeHandles && <script is:inline type="application/json" id="team-route-handles" set:html={JSON.stringify(routeHandles)}></script>}
+    <script is:inline type="module">
+      import { initSiteChrome } from '/js/site-chrome.js';
+      initSiteChrome();
+    </script>
     <slot name="scripts" />
   </body>
 </html>

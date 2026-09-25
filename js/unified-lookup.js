@@ -7,14 +7,13 @@ const GROUP_BY_KIND = Object.freeze({
 });
 const ROUTE_ERRORS = Object.freeze({
   "duplicate-param": "Mỗi tham số tra cứu chỉ được xuất hiện một lần.",
-  "unknown-param": "Tra cứu có tham số không được hỗ trợ.",
   "unknown-group": "Nhóm tra cứu không hợp lệ.",
   "id-kind-mismatch": "Mục tra cứu không thuộc nhóm đã chọn.",
   "unknown-id-kind": "Mã mục tra cứu không hợp lệ.",
 });
 
 function errorRoute(code) {
-  return { section: "lookup", group: null, id: null, alias: null, error: code, messageVi: ROUTE_ERRORS[code] };
+  return { section: "lookup", group: null, id: null, error: code, messageVi: ROUTE_ERRORS[code] };
 }
 
 function groupForId(id) {
@@ -24,15 +23,12 @@ function groupForId(id) {
   return GROUP_BY_KIND[id.slice(0, separator)] ?? null;
 }
 
-export function parseLookupRoute(hash) {
-  if (hash === "#heroes" || hash === "#tactics") {
-    const alias = hash.slice(1);
-    return { section: "lookup", group: alias, id: null, alias, error: null, messageVi: null };
-  }
-  if (hash !== "#lookup" && !hash?.startsWith("#lookup?")) return null;
-  const query = hash.includes("?") ? hash.slice(hash.indexOf("?") + 1) : "";
-  const params = new URLSearchParams(query);
-  for (const key of params.keys()) if (!['group', 'id'].includes(key)) return errorRoute("unknown-param");
+/**
+ * Hồ sơ Tra cứu nằm trên query của `/tra-cuu/`: chỉ `group` và `id` được xét, khóa khác của
+ * trang bị bỏ qua (link có `utm_*`/`fbclid` vẫn dùng được). Giá trị lặp hoặc sai vẫn là lỗi.
+ */
+export function parseLookupQuery(search) {
+  const params = new URLSearchParams(search ?? "");
   for (const key of ["group", "id"]) if (params.getAll(key).length > 1) return errorRoute("duplicate-param");
   let group = params.has("group") ? params.get("group") : null;
   const id = params.has("id") ? params.get("id") : null;
@@ -41,16 +37,14 @@ export function parseLookupRoute(hash) {
   if (id !== null && inferred === null) return errorRoute("unknown-id-kind");
   if (group !== null && id !== null && group !== inferred) return errorRoute("id-kind-mismatch");
   if (group === null && inferred) group = inferred;
-  return { section: "lookup", group, id, alias: null, error: null, messageVi: null };
+  return { section: "lookup", group, id, error: null, messageVi: null };
 }
 
-export function formatLookupHash(route) {
-  if (route?.alias === "heroes" || route?.alias === "tactics") return `#${route.alias}`;
+export function formatLookupQuery(route) {
   const params = new URLSearchParams();
   if (route?.group) params.set("group", route.group);
   if (route?.id) params.set("id", route.id);
-  const query = params.toString();
-  return query ? `#lookup?${query}` : "#lookup";
+  return params.toString();
 }
 
 function normalized(value) {
@@ -97,7 +91,7 @@ export function initUnifiedLookup(bundle, mount) {
   const corpus = buildLookupCorpus(bundle);
   let page = 1;
   let query = "";
-  let route = parseLookupRoute(location.hash) ?? parseLookupRoute("#lookup");
+  let route = parseLookupQuery(location.search);
   let opener = null;
   const labels = {
     heroes: "Tướng", tactics: "Chiến pháp", equipment: "Trang bị",
@@ -124,10 +118,13 @@ export function initUnifiedLookup(bundle, mount) {
   detailMount.className = "lookup-detail-mount";
   mount.replaceChildren(heading, search, chips, summary, feedback, grid, detailMount);
 
+  /** Hồ sơ là query của trang: giữ mọi khóa khác, chỉ thay đúng `group`/`id`. */
   function setRoute(next, { push = true } = {}) {
     route = next;
     const url = new URL(location.href);
-    url.hash = formatLookupHash(next);
+    url.searchParams.delete("group");
+    url.searchParams.delete("id");
+    for (const [key, value] of new URLSearchParams(formatLookupQuery(next))) url.searchParams.set(key, value);
     history[push ? "pushState" : "replaceState"](history.state, "", url);
     render();
   }
@@ -198,7 +195,7 @@ export function initUnifiedLookup(bundle, mount) {
         button.type = "button";
         button.dataset.lookupRelation = relation.targetId;
         button.textContent = `${relation.labelVi}: ${relation.titleVi}`;
-        button.addEventListener("click", () => setRoute({ section: "lookup", group: relation.targetGroup, id: relation.targetId, alias: null, error: null }));
+        button.addEventListener("click", () => setRoute({ section: "lookup", group: relation.targetGroup, id: relation.targetId, error: null }));
         body.append(button);
       } else {
         const row = document.createElement("p");
@@ -218,7 +215,7 @@ export function initUnifiedLookup(bundle, mount) {
           const button = document.createElement("button");
           button.type = "button";
           button.textContent = item.titleVi;
-          button.addEventListener("click", () => setRoute({ section: "lookup", group: linked.group, id: linked.id, alias: null, error: null }));
+          button.addEventListener("click", () => setRoute({ section: "lookup", group: linked.group, id: linked.id, error: null }));
           block.append(button);
           continue;
         }
@@ -277,7 +274,7 @@ export function initUnifiedLookup(bundle, mount) {
   }
   function render() {
     mount.querySelector(".lookup-more")?.remove();
-    route = parseLookupRoute(location.hash) ?? route;
+    route = parseLookupQuery(location.search);
     feedback.removeAttribute("role");
     feedback.textContent = "";
     detailMount.replaceChildren();
@@ -289,7 +286,7 @@ export function initUnifiedLookup(bundle, mount) {
       button.dataset.group = group;
       button.textContent = labels[group];
       button.setAttribute("aria-pressed", String(route?.group === group));
-      button.addEventListener("click", () => { page = 1; setRoute({ section: "lookup", group, id: null, alias: null, error: null }); });
+      button.addEventListener("click", () => { page = 1; setRoute({ section: "lookup", group, id: null, error: null }); });
       chips.append(button);
     }
     if (route?.error) {
@@ -329,7 +326,7 @@ export function initUnifiedLookup(bundle, mount) {
       button.textContent = item.nameVi;
       button.addEventListener("click", () => {
         opener = button;
-        setRoute({ section: "lookup", group, id: item.id, alias: null, error: null });
+        setRoute({ section: "lookup", group, id: item.id, error: null });
       });
       card.append(button);
       grid.append(card);
@@ -347,7 +344,6 @@ export function initUnifiedLookup(bundle, mount) {
     if (route?.id) renderDialog(route.id);
   }
   search.addEventListener("input", () => { query = search.value; page = 1; render(); });
-  window.addEventListener("hashchange", () => { page = 1; render(); });
   window.addEventListener("popstate", () => { page = 1; render(); });
   render();
   return { corpus, render };

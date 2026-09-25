@@ -1,21 +1,23 @@
 // TDD js/unified-lookup.js + js/lookup-detail.js — một cửa tra cứu sáu nhóm.
-// Route `#lookup?group=<...>&id=<...>`, alias `#heroes`/`#tactics` không rewrite,
-// search toàn corpus trước khi phân trang, hồ sơ chỉ tiếng Việt và liên kết theo ID.
+// Route Tra cứu dùng query `?group=<...>&id=<...>` để chọn nhóm và hồ sơ.
+// Tìm kiếm toàn corpus trước khi phân trang, hồ sơ chỉ tiếng Việt và liên kết theo ID.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   LOOKUP_GROUPS,
-  parseLookupRoute,
-  formatLookupHash,
+  parseLookupQuery,
+  formatLookupQuery,
   buildLookupCorpus,
   searchLookupGroup,
 } from "../js/unified-lookup.js";
 import { lookupProfile } from "../js/lookup-detail.js";
+import { resolveLegacyRoute } from "../js/legacy-routes.js";
 import { readFile } from "node:fs/promises";
 
 const CJK = /[\u3400-\u9fff]/;
 const SOURCE_SENTINELS = ["sgsdeck", "https://sentinel.example/tra-cuu", ".card > .name"];
-const shellPath = new URL("../src/pages/index.astro", import.meta.url);
+const lookupPagePath = new URL("../src/pages/tra-cuu/index.astro", import.meta.url);
+const siteLayoutPath = new URL("../src/layouts/SiteLayout.astro", import.meta.url);
 
 function sourceNoise() {
   return { source: "sgsdeck", sourceUrl: "https://sentinel.example/tra-cuu", selector: ".card > .name" };
@@ -137,108 +139,113 @@ test("sáu nhóm theo đúng thứ tự công bố", () => {
   assert.deepEqual(LOOKUP_GROUPS, ["heroes", "tactics", "equipment", "advisors", "troop-mods", "buildings"]);
 });
 
-test("#lookup trần mở toàn bộ, group/id đều tùy chọn", () => {
-  const route = parseLookupRoute("#lookup");
+test("query trống mở toàn bộ corpus, group/id đều tùy chọn", () => {
+  const route = parseLookupQuery("?");
   assert.equal(route.section, "lookup");
   assert.equal(route.group, null);
   assert.equal(route.id, null);
-  assert.equal(route.alias, null);
   assert.equal(route.error, null);
 });
 
 test("mỗi group hợp lệ được nhận, id được decode", () => {
   for (const group of LOOKUP_GROUPS) {
-    const route = parseLookupRoute(`#lookup?group=${group}`);
+    const route = parseLookupQuery(`?group=${group}`);
     assert.equal(route.group, group);
     assert.equal(route.error, null);
   }
-  const withId = parseLookupRoute("#lookup?group=heroes&id=hero%3Aluu-bi");
+  const withId = parseLookupQuery("?group=heroes&id=hero%3Aluu-bi");
   assert.equal(withId.group, "heroes");
   assert.equal(withId.id, "hero:luu-bi");
   assert.equal(withId.error, null);
 });
 
 test("thiếu group thì suy ra từ loại ID", () => {
-  assert.equal(parseLookupRoute("#lookup?id=tactic%3Anhan-duc").group, "tactics");
-  assert.equal(parseLookupRoute("#lookup?id=equipment-special%3Agian-hung").group, "equipment");
-  assert.equal(parseLookupRoute("#lookup?id=troop-mod%3Adan-duong-binh").group, "troop-mods");
-  assert.equal(parseLookupRoute("#lookup?id=building%3Abat-tran-do").group, "buildings");
-  assert.equal(parseLookupRoute("#lookup?id=advisor%3Aan-phuc-binh-tam").group, "advisors");
+  assert.equal(parseLookupQuery("?id=tactic%3Anhan-duc").group, "tactics");
+  assert.equal(parseLookupQuery("?id=equipment-special%3Agian-hung").group, "equipment");
+  assert.equal(parseLookupQuery("?id=troop-mod%3Adan-duong-binh").group, "troop-mods");
+  assert.equal(parseLookupQuery("?id=building%3Abat-tran-do").group, "buildings");
+  assert.equal(parseLookupQuery("?id=advisor%3Aan-phuc-binh-tam").group, "advisors");
 });
 
 test("trang bị đặc hiệu nằm cùng nhóm trang bị", () => {
-  const route = parseLookupRoute("#lookup?group=equipment&id=equipment-special%3Agian-hung");
+  const route = parseLookupQuery("?group=equipment&id=equipment-special%3Agian-hung");
   assert.equal(route.error, null);
   assert.equal(route.id, "equipment-special:gian-hung");
 });
 
-function assertLookupError(hash, code) {
-  const route = parseLookupRoute(hash);
-  assert.equal(route.section, "lookup", `${hash} phải ở lại lookup để hiện lỗi bản địa hóa`);
-  assert.equal(route.error, code, `${hash} phải báo lỗi ${code}`);
+function assertLookupError(search, code) {
+  const route = parseLookupQuery(search);
+  assert.equal(route.section, "lookup", `${search} phải ở lại lookup để hiện lỗi bản địa hóa`);
+  assert.equal(route.error, code, `${search} phải báo lỗi ${code}`);
   assert.equal(route.id, null);
-  assert.ok(route.messageVi && route.messageVi.length > 0, `${hash} thiếu thông báo tiếng Việt`);
-  assert.doesNotMatch(route.messageVi, CJK, `${hash} không được hiện chữ Hán`);
+  assert.ok(route.messageVi && route.messageVi.length > 0, `${search} thiếu thông báo tiếng Việt`);
+  assert.doesNotMatch(route.messageVi, CJK, `${search} không được hiện chữ Hán`);
 }
 
 test("tham số trùng bị từ chối", () => {
-  assertLookupError("#lookup?group=heroes&group=tactics", "duplicate-param");
-  assertLookupError("#lookup?group=heroes&id=hero%3Aluu-bi&id=hero%3Atao-thao", "duplicate-param");
+  assertLookupError("?group=heroes&group=tactics", "duplicate-param");
+  assertLookupError("?group=heroes&id=hero%3Aluu-bi&id=hero%3Atao-thao", "duplicate-param");
 });
 
-test("tham số lạ bị từ chối, không nhận query tự do", () => {
-  assertLookupError("#lookup?group=heroes&q=luu", "unknown-param");
-  assertLookupError("#lookup?src=https%3A%2F%2Fevil.example%2Fx.json", "unknown-param");
+// Bước 4: parser chỉ xét `group`/`id`; khóa khác được bỏ qua thay vì báo `unknown-param`.
+test("bỏ qua khóa khác và chỉ xét group/id", () => {
+  const withUnknownKey = parseLookupQuery("?group=heroes&q=luu");
+  assert.equal(withUnknownKey.group, "heroes");
+  assert.equal(withUnknownKey.id, null);
+  assert.equal(withUnknownKey.error, null);
+
+  const withExternalSource = parseLookupQuery("?src=https://evil.example/x.json");
+  assert.equal(withExternalSource.group, null);
+  assert.equal(withExternalSource.id, null);
+  assert.equal(withExternalSource.error, null);
 });
 
 test("group lạ hoặc rỗng bị từ chối", () => {
-  assertLookupError("#lookup?group=books", "unknown-group");
-  assertLookupError("#lookup?group=", "unknown-group");
-  assertLookupError("#lookup?group=HEROES", "unknown-group");
+  assertLookupError("?group=books", "unknown-group");
+  assertLookupError("?group=", "unknown-group");
+  assertLookupError("?group=HEROES", "unknown-group");
 });
 
 test("id sai loại so với group bị từ chối", () => {
-  assertLookupError("#lookup?group=heroes&id=tactic%3Anhan-duc", "id-kind-mismatch");
-  assertLookupError("#lookup?group=buildings&id=troop-mod%3Adan-duong-binh", "id-kind-mismatch");
-  assertLookupError("#lookup?group=tactics&id=equipment-special%3Agian-hung", "id-kind-mismatch");
+  assertLookupError("?group=heroes&id=tactic%3Anhan-duc", "id-kind-mismatch");
+  assertLookupError("?group=buildings&id=troop-mod%3Adan-duong-binh", "id-kind-mismatch");
+  assertLookupError("?group=tactics&id=equipment-special%3Agian-hung", "id-kind-mismatch");
 });
 
-test("id không phải canonical ID bị từ chối, không fetch URL từ hash", () => {
-  assertLookupError("#lookup?id=https%3A%2F%2Fevil.example%2Fx.json", "unknown-id-kind");
-  assertLookupError("#lookup?id=..%2F..%2Fdata%2Fsgsdeck%2Findex.json", "unknown-id-kind");
-  assertLookupError("#lookup?group=heroes&id=", "unknown-id-kind");
+test("id không phải canonical ID bị từ chối, không fetch URL từ query", () => {
+  assertLookupError("?id=https%3A%2F%2Fevil.example%2Fx.json", "unknown-id-kind");
+  assertLookupError("?id=..%2F..%2Fdata%2Fsdeck%2Findex.json", "unknown-id-kind");
+  assertLookupError("?id=..%2F..%2Fdata%2Fsgsdeck%2Findex.json", "unknown-id-kind");
+  assertLookupError("?group=heroes&id=", "unknown-id-kind");
 });
 
-test("#heroes và #tactics là alias preselect, không bị rewrite", () => {
-  const heroesAlias = parseLookupRoute("#heroes");
-  assert.equal(heroesAlias.section, "lookup");
-  assert.equal(heroesAlias.group, "heroes");
-  assert.equal(heroesAlias.alias, "heroes");
-  assert.equal(formatLookupHash(heroesAlias), "#heroes");
-
-  const tacticsAlias = parseLookupRoute("#tactics");
-  assert.equal(tacticsAlias.group, "tactics");
-  assert.equal(tacticsAlias.alias, "tactics");
-  assert.equal(formatLookupHash(tacticsAlias), "#tactics");
+test("query rỗng luôn trả đủ shape route Tra cứu", () => {
+  assert.deepEqual(parseLookupQuery(""), {
+    section: "lookup", group: null, id: null, error: null, messageVi: null,
+  });
 });
 
-test("hash chuẩn được serialize ổn định và encode ID", () => {
-  assert.equal(formatLookupHash(parseLookupRoute("#lookup")), "#lookup");
-  assert.equal(formatLookupHash(parseLookupRoute("#lookup?group=tactics")), "#lookup?group=tactics");
+test("group query đặt trạng thái preselect", () => {
+  assert.equal(parseLookupQuery("?group=heroes").group, "heroes");
+  assert.equal(parseLookupQuery("?group=tactics").group, "tactics");
+});
+
+test("alias hash cũ chuyển tới trang Tra cứu với group tương ứng", () => {
+  assert.equal(resolveLegacyRoute("https://tqccl.pages.dev/#heroes", "https://tqccl.pages.dev"), "/tra-cuu/?group=heroes");
+  assert.equal(resolveLegacyRoute("https://tqccl.pages.dev/#tactics", "https://tqccl.pages.dev"), "/tra-cuu/?group=tactics");
+});
+
+test("query được serialize ổn định và encode ID", () => {
+  assert.equal(formatLookupQuery(parseLookupQuery("")), "");
+  assert.equal(formatLookupQuery(parseLookupQuery("?group=tactics")), "group=tactics");
   assert.equal(
-    formatLookupHash(parseLookupRoute("#lookup?group=heroes&id=hero%3Aluu-bi")),
-    "#lookup?group=heroes&id=hero%3Aluu-bi",
+    formatLookupQuery(parseLookupQuery("?group=heroes&id=hero%3Aluu-bi")),
+    "group=heroes&id=hero%3Aluu-bi",
   );
   assert.equal(
-    formatLookupHash({ section: "lookup", group: "equipment", id: "equipment-special:gian-hung", alias: null }),
-    "#lookup?group=equipment&id=equipment-special%3Agian-hung",
+    formatLookupQuery({ section: "lookup", group: "heroes", id: "hero:luu-bi", error: null }),
+    "group=heroes&id=hero%3Aluu-bi",
   );
-});
-
-test("hash ngoài lookup không bị lookup chiếm quyền", () => {
-  for (const hash of ["", "#", "#team-chuan", "#team-khac", "#team-pk", "#meta-cu", "#coexist", "#khaihoang", "#analyze", "#khong-ton-tai"]) {
-    assert.equal(parseLookupRoute(hash), null, `${hash || "(rỗng)"} phải để router Team chuẩn xử lý`);
-  }
 });
 
 /* ---------- Corpus, tìm kiếm, phân trang ---------- */
@@ -526,17 +533,26 @@ test("hồ sơ mọi nhóm ẩn nguồn và chỉ hiện tiếng Việt", () => 
   }
 });
 
-test("shell chỉ còn một tab Tra cứu và một mount lookup", async () => {
-  const html = await readFile(shellPath, "utf8");
-  const sections = [...html.matchAll(/data-section=["']([^"']+)["']/g)].map((match) => match[1]);
+test("trang Tra cứu chỉ còn một tab và một mount lookup", async () => {
+  const [page, layout] = await Promise.all([
+    readFile(lookupPagePath, "utf8"),
+    readFile(siteLayoutPath, "utf8"),
+  ]);
+  const sections = layout.match(/const SECTIONS = \[([\s\S]*?)\n\];/);
+  assert.ok(sections, "thiếu danh sách nav trong SiteLayout");
+  assert.match(sections[1], /\{id:\s*'lookup',\s*label:\s*'Tra cứu',/);
+  assert.doesNotMatch(sections[1], /\bid:\s*'(?:heroes|tactics)'/);
 
-  assert.equal(sections.includes("lookup"), true, "thiếu tab Tra cứu");
-  assert.equal(sections.includes("heroes"), false, "tab Tra cứu tướng phải được gộp");
-  assert.equal(sections.includes("tactics"), false, "tab Tra cứu chiến pháp phải được gộp");
-  assert.match(html, /data-section=["']lookup["'][^>]*>\s*Tra cứu/);
-  assert.match(html, /id=["']section-lookup["']/);
-  assert.doesNotMatch(html, /id=["']section-heroes["']/);
-  assert.doesNotMatch(html, /id=["']section-tactics["']/);
-  assert.match(html, /class=["']nav-tab active["'][^>]+data-section=["']team-chuan["']/);
-  assert.match(html, /id=["']section-team-chuan["'][^>]+class=["']section active["']/);
+  const navLink = layout.match(/\{SECTIONS\.map\(\(section\) => \(\s*<a\b([\s\S]*?)<\/a>\s*\)\)\}/);
+  assert.ok(navLink, "nav phải kết xuất mỗi mục thành liên kết <a>");
+  assert.match(navLink[1], /data-section=\{section\.id\}/);
+  assert.match(navLink[1], /href=\{section\.path\}/);
+  assert.match(navLink[1], /aria-current=\{section\.id === activeSection \? 'page' : null\}/);
+  assert.match(navLink[1], />\{section\.label\}/);
+
+  const mounts = [...page.matchAll(/<section\b[^>]*\bid=["'](section-[^"']+)["'][^>]*>/g)]
+    .map((match) => match[1]);
+  assert.deepEqual(mounts, ["section-lookup"], "trang Tra cứu chỉ có một mount");
+  assert.match(page, /<section\b[^>]*id=["']section-lookup["'][^>]*>/);
+  assert.match(page, /<script[^>]+type=["']module["'][^>]+src=["']\/js\/app\.js["']/);
 });

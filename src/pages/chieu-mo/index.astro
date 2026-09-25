@@ -1,0 +1,16 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+const canonicalUrl = new URL('/chieu-mo/', Astro.site);
+---
+<SiteLayout
+  title="Theo dõi chiêu mộ — Cẩm Nang Game Tam Quốc Chí - Chiến Lược"
+  description="Theo dõi chiêu mộ theo tài khoản: lịch sử, mốc bảo hiểm và số lượt còn lại của từng đợt."
+  pageKind="section"
+  activeSection="recruit-tracker"
+  tagline="Tra cứu đội hình theo kịch bản"
+  canonicalUrl={canonicalUrl}
+>
+  <section id="section-recruit-tracker" class="section active"></section>
+
+  <script is:inline type="module" src="/js/app.js" slot="scripts"></script>
+</SiteLayout>

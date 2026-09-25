@@ -52,6 +52,40 @@ const FIXTURE_ROBOTS = `User-agent: *\nAllow: /\n\nSitemap: ${FIXTURE_ORIGIN}/si
 
 const FIXTURE_HEADERS = "/\n  Cache-Control: max-age=0\n";
 
+/** Tám trang mục tĩnh của mô hình đường dẫn mới; 5 trang đầu có phạm vi mùa. */
+const SECTION_PAGE_SPECS = [
+  { path: "doi-chuan", section: "team-chuan", season: true },
+  { path: "doi-khac", section: "team-khac", season: true },
+  { path: "cung-ton", section: "coexist", season: true },
+  { path: "khai-hoang", section: "khaihoang", season: false },
+  { path: "tra-cuu", section: "lookup", season: false },
+  { path: "chieu-mo", section: "recruit-tracker", season: false },
+  { path: "soi-doi", section: "analyze", season: true },
+  { path: "goi-y-doi", section: "roster-recommend", season: true },
+];
+const SECTION_LOCATIONS = SECTION_PAGE_SPECS.map(({ path }) => `${FIXTURE_ORIGIN}/${path}/`);
+const SEASON_MARKER = {
+  "heroes-dict": `sha256:${"0".repeat(64)}`,
+  tactics: `sha256:${"0".repeat(64)}`,
+};
+
+/** Trang mục trong fixture mang đúng payload mà verifier khóa theo bảng của phase. */
+function sectionPageHtml({ section, season, registry, pin, seasonHashes }) {
+  return [
+    `<!doctype html><body data-page-section="${section}">`,
+    `<section id="section-${section}" class="section active"></section>`,
+    season ? '<div id="season-controls"></div>' : "",
+    `<script id="team-route-handles" type="application/json">${JSON.stringify(registry)}</script>`,
+    `<script id="recommended-publication" type="application/json">${JSON.stringify(pin)}</script>`,
+    season ? `<script id="season-artifact-hashes" type="application/json">${JSON.stringify(seasonHashes)}</script>` : "",
+    '<script type="module" src="/js/app.js"></script>',
+    "\n",
+  ].join("");
+}
+
+/** Landing chỉ còn script chuyển tiếp hash cũ; không payload, không app.js. */
+const LANDING_HTML = '<!doctype html><body><script id="legacy-route-redirect">(function(){})();</script>\n';
+
 /** Font self-host là thư mục public tĩnh; fixture dist phải có bản sao byte-equal ở cả hai phía. */
 async function writeStaticFonts(projectDir, distDir) {
   const source = await readdir(new URL("public/fonts/", projectRoot));
@@ -128,10 +162,11 @@ async function writeRecommendedFixture(projectDir, distDir, { legacyTeamsHash } 
     l: { [LEGACY_TEAM_ID]: LEGACY_HANDLE },
     k: { [KHAIHOANG_TEAM_ID]: KHAIHOANG_HANDLE },
   };
-  await writeFile(
-    join(distDir, "index.html"),
-    `<!doctype html><script id="team-route-handles" type="application/json">${JSON.stringify(registry)}</script><script id="recommended-publication" type="application/json">${JSON.stringify(pin)}</script>\n`,
-  );
+  await writeFile(join(distDir, "index.html"), LANDING_HTML);
+  for (const spec of SECTION_PAGE_SPECS) {
+    await mkdir(join(distDir, spec.path), { recursive: true });
+    await writeFile(join(distDir, spec.path, "index.html"), sectionPageHtml({ ...spec, registry, pin, seasonHashes: SEASON_MARKER }));
+  }
   await writeFile(
     join(distDir, "404.html"),
     '<!doctype html><head><meta name="robots" content="noindex"></head><h1 id="not-found-title">Không tìm thấy trang</h1>\n',
@@ -159,8 +194,11 @@ async function writeRecommendedFixture(projectDir, distDir, { legacyTeamsHash } 
   await writeFile(join(distDir, "robots.txt"), FIXTURE_ROBOTS);
   const sitemap = fixtureSitemapXml([
     `${FIXTURE_ORIGIN}/`,
-    `${FIXTURE_ORIGIN}/doi-khac/${LEGACY_ROUTE_SEGMENT}/`,
-    `${FIXTURE_ORIGIN}/khai-hoang/${KHAIHOANG_ROUTE_SEGMENT}/`,
+    ...[
+      ...SECTION_LOCATIONS,
+      `${FIXTURE_ORIGIN}/doi-khac/${LEGACY_ROUTE_SEGMENT}/`,
+      `${FIXTURE_ORIGIN}/khai-hoang/${KHAIHOANG_ROUTE_SEGMENT}/`,
+    ].sort(),
   ]);
   await writeFile(join(distDir, "sitemap.xml"), sitemap);
   await mkdir(join(distDir, "doi-khac", LEGACY_ROUTE_SEGMENT), { recursive: true });
@@ -625,12 +663,23 @@ test("built dist is allowlisted and every emitted asset is byte-identical", asyn
     await readFile(new URL("../dist/_headers", import.meta.url)),
     await readFile(new URL("../public/_headers", import.meta.url)),
   );
-  const html = await readFile(new URL("../dist/index.html", import.meta.url), "utf8");
+  const html = await readFile(new URL("../dist/doi-chuan/index.html", import.meta.url), "utf8");
   assertFrontendShellContract(html, {
     stylesheetPattern: /<link[^>]+rel=["']stylesheet["'][^>]+href=["']\/css\/styles\.css["']/,
     scriptPattern: /<script[^>]+type=["']module["'][^>]+src=["']\/js\/app\.js["'][^>]*><\/script>/,
+    section: "team-chuan",
   });
   assert.doesNotMatch(html, /_astro\//);
+  // Landing là trang riêng: không nạp app.js, chỉ có script chuyển tiếp hash cũ.
+  const landing = await readFile(new URL("../dist/index.html", import.meta.url), "utf8");
+  assert.doesNotMatch(landing, /_astro\//);
+  assert.match(landing, /id=["']legacy-route-redirect["']/);
+  // Script chặn phải chứa nguyên thân hàm thuần của js/legacy-routes.js, không phải bản sao rời.
+  assert.match(landing, /function resolveLegacyRoute\(/);
+  assert.match(landing, /addEventListener\(['"]hashchange['"]/);
+  assert.doesNotMatch(landing, /src=["']\/js\/app\.js["']/);
+  assert.doesNotMatch(landing, /id=["']team-route-handles["']/);
+  assert.doesNotMatch(landing, /id=["']season-artifact-hashes["']/);
 });
 
 test("built dist declares canonical, article metadata, robots and the catalog sitemap", async () => {
@@ -673,14 +722,14 @@ test("built dist declares canonical, article metadata, robots and the catalog si
   const sitemap = await read("sitemap.xml");
   assert.match(sitemap, /^<\?xml version="1\.0" encoding="UTF-8"\?>/u);
   const locations = [...sitemap.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
-  // Release baseline: one root page plus 1366 Recommended, 166 legacy and 17 Khai hoang detail pages.
-  assert.equal(locations.length, 1550);
+  // Release baseline: Landing, 8 trang mục, 1366 Recommended, 166 legacy và 17 Khai hoang.
+  assert.equal(locations.length, 1558);
   assert.deepEqual(
     locations,
-    [rootHref, ...[...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang]
-      .map((entry) => entry.routePath)
-      .sort()
-      .map((path) => new URL(path, origin).href)],
+    [rootHref, ...[
+      ...SECTION_PAGE_SPECS.map(({ path }) => `/${path}/`),
+      ...[...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath),
+    ].sort().map((path) => new URL(path, origin).href)],
   );
   for (const location of locations) {
     const url = new URL(location);
@@ -702,11 +751,14 @@ test("sitemap endpoint publishes exactly the root page plus the catalog routes",
   assert.doesNotMatch(xml, /<lastmod>|<changefreq>|<priority>/u);
 
   const locations = [...xml.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
-  const routePaths = [...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath);
+  const routePaths = [
+    ...SECTION_PAGE_SPECS.map(({ path }) => `/${path}/`),
+    ...[...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath),
+  ];
   assert.equal(catalog.recommended.length, 1366);
   assert.equal(catalog.legacy.length, 166);
   assert.equal(catalog.khaiHoang.length, 17);
-  assert.equal(locations.length, 1550);
+  assert.equal(locations.length, 1558);
   assert.deepEqual(
     locations,
     [new URL("/", origin).href, ...routePaths.sort().map((path) => new URL(path, origin).href)],
@@ -758,24 +810,30 @@ test("dist verifier locks the emitted sitemap to the catalog route set", async (
   const root = `${FIXTURE_ORIGIN}/`;
   const detail = `${FIXTURE_ORIGIN}/doi-khac/${LEGACY_ROUTE_SEGMENT}/`;
   const khaiHoang = `${FIXTURE_ORIGIN}/khai-hoang/${KHAIHOANG_ROUTE_SEGMENT}/`;
+  // Generator: root trước, rồi toàn bộ route (trang mục + chi tiết) đã sort.
+  const sitemapFor = (locations) => fixtureSitemapXml([root, ...[...locations].sort()]);
+  const catalogLocations = [...SECTION_LOCATIONS, detail, khaiHoang];
+  const complete = sitemapFor(catalogLocations);
+  const without = (location) => sitemapFor(catalogLocations.filter((item) => item !== location));
   const rejected = {
-    "the root page is missing": [detail, khaiHoang],
-    "a legacy route is missing": [root, khaiHoang],
-    "a Khai hoang route is missing": [root, detail],
-    "the retired family is published": [root, detail, khaiHoang, `${FIXTURE_ORIGIN}/teams/legacy/${LEGACY_TEAM_ID}/`],
-    "a URL is published twice": [root, detail, khaiHoang, khaiHoang],
+    "the root page is missing": fixtureSitemapXml([...catalogLocations].sort()),
+    "a section page is missing": without(SECTION_LOCATIONS[0]),
+    "a legacy route is missing": without(detail),
+    "a Khai hoang route is missing": without(khaiHoang),
+    "the retired family is published": sitemapFor([...catalogLocations, `${FIXTURE_ORIGIN}/teams/legacy/${LEGACY_TEAM_ID}/`]),
+    "a URL is published twice": sitemapFor([...catalogLocations, khaiHoang]),
   };
-  for (const [label, locations] of Object.entries(rejected)) {
-    await writeFile(join(distDir, "sitemap.xml"), fixtureSitemapXml(locations));
+  for (const [label, xml] of Object.entries(rejected)) {
+    await writeFile(join(distDir, "sitemap.xml"), xml);
     await assert.rejects(verify(), /sitemap/i, label);
   }
-  await writeFile(join(distDir, "sitemap.xml"), fixtureSitemapXml([root, detail, khaiHoang]));
+  await writeFile(join(distDir, "sitemap.xml"), complete);
   await verify();
 
   // A shell or payload served as sitemap.xml is not a sitemap.
   await writeFile(join(distDir, "sitemap.xml"), "<!doctype html>\n");
   await assert.rejects(verify(), /sitemap/i);
-  await writeFile(join(distDir, "sitemap.xml"), fixtureSitemapXml([root, detail, khaiHoang]));
+  await writeFile(join(distDir, "sitemap.xml"), complete);
   await verify();
 
   // robots.txt stays a byte-identical copy of its reviewed source.
@@ -969,10 +1027,14 @@ async function lookupDistFixture(t) {
   await writeFile(join(distDir, "favicon.png"), favicon);
   await writeStaticFonts(projectDir, distDir);
   await writeRecommendedFixture(projectDir, distDir);
+  // Pin mùa sống ở cả 5 trang mục có phạm vi mùa; fixture phải đổi đồng bộ mọi trang.
   const marker = async (hashes) => {
-    const html = await readFile(join(distDir, "index.html"), "utf8");
-    const stripped = html.replace(/<script id="season-artifact-hashes"[^>]*>[^<]*<\/script>\n?/, "");
-    await writeFile(join(distDir, "index.html"), `${stripped.trimEnd()}<script id="season-artifact-hashes" type="application/json">${JSON.stringify(hashes)}</script>\n`);
+    for (const spec of SECTION_PAGE_SPECS.filter((entry) => entry.season)) {
+      const pagePath = join(distDir, spec.path, "index.html");
+      const html = await readFile(pagePath, "utf8");
+      const stripped = html.replace(/<script id="season-artifact-hashes"[^>]*>[^<]*<\/script>\n?/, "");
+      await writeFile(pagePath, `${stripped.trimEnd()}<script id="season-artifact-hashes" type="application/json">${JSON.stringify(hashes)}</script>\n`);
+    }
   };
   await marker({
     "heroes-dict": `sha256:${manifest.files["heroes-dict.json"]}`,
@@ -1022,7 +1084,8 @@ test("dist verifier rejects emitted dictionaries that leave the lookup manifest"
 
 test("dist verifier still enforces the Recommended publication pin alongside lookup checks", async (t) => {
   const fixture = await lookupDistFixture(t);
-  const html = await readFile(join(fixture.distDir, "index.html"), "utf8");
-  await writeFile(join(fixture.distDir, "index.html"), html.replace(/"generationId":"[0-9a-f]{64}"/, `"generationId":"${"3".repeat(64)}"`));
+  const pagePath = join(fixture.distDir, "doi-chuan", "index.html");
+  const html = await readFile(pagePath, "utf8");
+  await writeFile(pagePath, html.replace(/"generationId":"[0-9a-f]{64}"/, `"generationId":"${"3".repeat(64)}"`));
   await assert.rejects(fixture.verify(), /Recommended/i);
 });

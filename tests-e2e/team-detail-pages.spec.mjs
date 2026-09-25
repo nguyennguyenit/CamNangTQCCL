@@ -9,9 +9,9 @@ const publication=async request=>{
 const rawTeams=async request=>(await request.get('/data/teams.json')).json();
 /** Final route segments come from the same inventory the build used, never from a re-derived slug. */
 const routeHandles=async request=>{
-  const html=await (await request.get('/index.html')).text();
+  const html=await (await request.get('/doi-chuan/')).text();
   const match=html.match(/id="team-route-handles"[^>]*>([^<]+)<\/script>/);
-  if (!match) throw new Error('Built HTML lacks the team route handle map');
+  if (!match) throw new Error('Built Team chuẩn page lacks the team route handle map');
   return JSON.parse(match[1]);
 };
 const recommendedPath=(handles,id)=>`/doi-chuan/${encodeURIComponent(handles.r[id])}/`;
@@ -40,9 +40,9 @@ test('Recommended detail loads directly, survives reload and shows verified sour
     }
   }
   await expect(detail.locator('.detail-source')).toContainText(row.sourceConfigId);
-  await expect(page.locator('#team-return-link')).toHaveAttribute('href',/^\/(\?|#)/);
-  // The dedicated page must not boot the root application or its gameplay datasets.
-  await expect(page.locator('#section-team-chuan')).toHaveCount(0);
+  await expect(page.locator('#team-return-link')).toHaveAttribute('href',/^\/(?:doi-chuan\/|doi-khac\/|khai-hoang\/)/);
+  // Trang chi tiết không nạp ứng dụng mục hay dữ liệu gameplay.
+  await expect(page.locator('script[type="module"][src="/js/app.js"]')).toHaveCount(0);
   await expect(page.locator('#season-controls')).toHaveCount(0);
 
   await page.reload();
@@ -285,7 +285,7 @@ test('original pages stay readable while Recommended artifacts are unavailable',
 
   // Duplicate/pending originals are reachable directly but are not admitted into Team khác.
   await page.unroute('**/data/recommended/**');
-  await page.goto('/#team-khac');
+  await page.goto('/doi-khac/');
   await expect(page.locator(`#section-team-khac .reference-team-card[data-legacy-team-id="${pending.id}"]`)).toHaveCount(0);
 });
 
@@ -309,7 +309,7 @@ test('card title and CTA are the same native link and modified clicks stay nativ
   const handles=await routeHandles(request);
   const row=index.records[0];
   const detailPath=recommendedPath(handles,row.sourceConfigId);
-  await page.goto(`/?season=${encodeURIComponent(row.sourceSeasonId)}#team-chuan`);
+  await page.goto(`/doi-chuan/?season=${encodeURIComponent(row.sourceSeasonId)}`);
   const card=page.locator(`#section-team-chuan .reference-team-card[data-source-config-id="${row.sourceConfigId}"]`);
   await expect(card).toBeVisible();
   const title=card.locator('.team-name a');
@@ -318,7 +318,7 @@ test('card title and CTA are the same native link and modified clicks stay nativ
   expect(href).toBe(await cta.getAttribute('href'));
   // Path is exactly the frozen catalog route; the only query is the safe return origin.
   expect(href.split('?')[0]).toBe(detailPath);
-  expect(new URLSearchParams(href.split('?')[1] || '').get('from')).toBe(`/?season=${encodeURIComponent(row.sourceSeasonId)}#team-chuan`);
+  expect(new URLSearchParams(href.split('?')[1] || '').get('from')).toBe(`/doi-chuan/?season=${encodeURIComponent(row.sourceSeasonId)}`);
   // Both anchors carry the stable delegation marker instead of a pinned path prefix.
   await expect(title).toHaveAttribute('data-team-detail-link','');
   await expect(cta).toHaveAttribute('data-team-detail-link','');
@@ -331,7 +331,7 @@ test('card title and CTA are the same native link and modified clicks stay nativ
   await opened.waitForURL('**/doi-chuan/**');
   expect(new URL(opened.url()).pathname).toBe(detailPath);
   await opened.close();
-  expect(page.url()).toContain('#team-chuan');
+  expect(new URL(page.url()).pathname).toBe('/doi-chuan/');
   expect(await page.evaluate(()=>history.length)).toBe(before);
 });
 
@@ -343,7 +343,7 @@ test('every rendered team card links to its catalog route and never to a retired
     href:node.querySelector('.team-name a')?.getAttribute('href') ?? null,
   })));
 
-  await page.goto('/#team-chuan');
+  await page.goto('/doi-chuan/');
   await expect(page.locator('#section-team-chuan .reference-team-card').first()).toBeVisible();
   const recommended=await cardLinks('#section-team-chuan');
   expect(recommended.length).toBeGreaterThan(0);
@@ -355,7 +355,7 @@ test('every rendered team card links to its catalog route and never to a retired
     expect(card.href.split('?')[0],card.sourceConfigId).toBe(`/doi-chuan/${encodeURIComponent(segment)}/`);
   }
 
-  await page.goto('/#team-khac');
+  await page.goto('/doi-khac/');
   await expect(page.locator('#section-team-khac .reference-team-card').first()).toBeVisible();
   const legacy=await cardLinks('#section-team-khac');
   expect(legacy.length).toBeGreaterThan(0);
@@ -370,7 +370,7 @@ test('every rendered team card links to its catalog route and never to a retired
 test('list to detail and back keeps query, tab and scroll position',async({page,request})=>{
   const {index}=await publication(request);
   const row=index.records[0];
-  await page.goto(`/?season=${encodeURIComponent(row.sourceSeasonId)}#team-chuan`);
+  await page.goto(`/doi-chuan/?season=${encodeURIComponent(row.sourceSeasonId)}`);
   const card=page.locator(`#section-team-chuan .reference-team-card[data-source-config-id="${row.sourceConfigId}"]`);
   await expect(card).toBeVisible();
   await page.evaluate(()=>window.scrollTo({top:600,behavior:'instant'}));
@@ -382,7 +382,7 @@ test('list to detail and back keeps query, tab and scroll position',async({page,
 
   await page.goBack();
   await expect(page).toHaveURL(new RegExp(`season=${encodeURIComponent(row.sourceSeasonId)}`));
-  await expect(page).toHaveURL(/#team-chuan$/);
+  await expect(page).toHaveURL(/\/doi-chuan\/\?season=/);
   await expect(page.locator('#section-team-chuan .reference-team-card').first()).toBeVisible();
   await expect.poll(()=>page.evaluate(()=>Math.round(window.scrollY))).toBeGreaterThan(scrolled/2);
   await page.goForward();
@@ -395,7 +395,7 @@ test('the return link restores the exact root state on a fresh load',async({page
   const row=index.records.find(item=>item.sourceSeasonId==='pk-s24' && item.alternativeHoldersRaw?.length);
   expect(row).toBeTruthy();
   const query=row.displayNameVi || row.nameZh;
-  await page.goto(`/?season=${encodeURIComponent(row.sourceSeasonId)}&q=${encodeURIComponent(query)}#team-chuan`);
+  await page.goto(`/doi-chuan/?season=${encodeURIComponent(row.sourceSeasonId)}&q=${encodeURIComponent(query)}`);
   const card=page.locator(`#section-team-chuan .reference-team-card[data-source-config-id="${row.sourceConfigId}"]`);
   await expect(card).toBeVisible();
   const disclosure=page.locator('#section-team-chuan .filter-collapse-toggle');
@@ -435,7 +435,7 @@ test('combined score, unit, faction and Vietnamese search survive detail reload 
   const factionLabel=seasons.displayLabels?.faction?.[faction] || faction;
 
   await page.setViewportSize({width:375,height:812});
-  await page.goto(`/?season=${seasonId}#team-chuan`);
+  await page.goto(`/doi-chuan/?season=${seasonId}`);
   const historyBefore=await page.evaluate(()=>history.length);
   await page.locator('#section-team-chuan .filter-collapse-toggle').click();
   await page.locator('#section-team-chuan .score-toggle').click();
@@ -475,12 +475,64 @@ test('a shared link without origin still offers the matching family scope',async
   const {index}=await publication(request);
   const handles=await routeHandles(request);
   const row=index.records[0];
+  const recommendedReturn=`/doi-chuan/?season=${encodeURIComponent(row.sourceSeasonId)}&category=${encodeURIComponent(row.sourceCategoryId)}`;
   await page.goto(recommendedPath(handles,row.sourceConfigId));
-  await expect(page.locator('#team-return-link')).toHaveAttribute('href',/#team-chuan$/);
+  await expect(page.locator('#team-return-link')).toHaveAttribute('href',recommendedReturn);
   const teams=await rawTeams(request);
   await page.goto(legacyPath(handles,teams[0].id));
-  await expect(page.locator('#team-return-link')).toHaveAttribute('href','/#team-khac');
+  await expect(page.locator('#team-return-link')).toHaveAttribute('href','/doi-khac/');
 });
+test('legacy detail return links normalize the old Team chuẩn source URL',async({page,request})=>{
+  const {index}=await publication(request);
+  const handles=await routeHandles(request);
+  const row=index.records.find(item=>item.sourceConfigId && item.sourceSeasonId);
+  const sectionUrl=`/doi-chuan/?season=${encodeURIComponent(row.sourceSeasonId)}`;
+  const oldFrom=`/?season=${encodeURIComponent(row.sourceSeasonId)}#team-chuan`;
+  await page.goto(`${recommendedPath(handles,row.sourceConfigId)}?from=${encodeURIComponent(oldFrom)}`);
+  await expect(page.locator('#team-detail-body')).toBeVisible();
+  await expect(page.locator('#team-return-link')).toHaveAttribute('href',sectionUrl);
+  await page.locator('#team-return-link').click();
+  await expect(page).toHaveURL(sectionUrl);
+  await expect(page.locator(`#section-team-chuan .reference-team-card[data-source-config-id="${row.sourceConfigId}"]`)).toBeVisible();
+});
+
+test('tracking keys are stripped while faction and scroll survive detail history',async({page,request})=>{
+  const {index,seasons}=await publication(request);
+  const row=index.records.find(item=>item.sourceConfigId && item.factionRaw && item.sourceSeasonId===seasons.defaultSourceSeasonId);
+  const faction=row.factionRaw;
+  await page.goto(`/doi-chuan/?fbclid=x&faction=${encodeURIComponent(faction)}`);
+  const card=page.locator(`#section-team-chuan .reference-team-card[data-source-config-id="${row.sourceConfigId}"]`);
+  await expect(card).toBeVisible();
+  await expect.poll(()=>new URL(page.url()).searchParams.get('faction')).toBe(faction);
+  expect(new URL(page.url()).searchParams.has('fbclid')).toBe(false);
+  await card.scrollIntoViewIfNeeded();
+  const scrollY=await page.evaluate(()=>Math.round(window.scrollY));
+  expect(scrollY).toBeGreaterThan(0);
+  await card.locator('.team-name a').click();
+  await expect(page.locator('#team-detail-body')).toBeVisible();
+  await page.goBack();
+  await expect(page).toHaveURL(`/doi-chuan/?faction=${encodeURIComponent(faction)}`);
+  await expect.poll(()=>new URL(page.url()).searchParams.get('faction')).toBe(faction);
+  await expect.poll(()=>page.evaluate(()=>Math.round(window.scrollY))).toBeGreaterThan(scrollY/2);
+  await expect(card).toBeVisible();
+});
+
+test('theme is applied before paint and survives cross-section Back navigation',async({page})=>{
+  await page.addInitScript(()=>{
+    if(localStorage.getItem('theme')===null) localStorage.setItem('theme','dark');
+    document.addEventListener('DOMContentLoaded',()=>{
+      window.themeAtDOMContentLoaded=document.documentElement.dataset.theme;
+    },{once:true});
+  });
+  await page.goto('/doi-chuan/');
+  await expect.poll(()=>page.evaluate(()=>window.themeAtDOMContentLoaded)).toBe('dark');
+  await page.goto('/doi-khac/');
+  await page.locator('#theme-toggle').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme','light');
+  await page.goBack();
+  await expect(page.locator('html')).toHaveAttribute('data-theme','light');
+});
+
 
 test('old reference links replace into dedicated routes while config keeps gameplay precedence',async({page,request})=>{
   const {index}=await publication(request);
@@ -488,24 +540,24 @@ test('old reference links replace into dedicated routes while config keeps gamep
   const row=index.records[0];
   const legacyTeamId='team-intro-14';
   const legacyDetail=legacyPath(handles,legacyTeamId);
-  await page.goto(`/?season=${encodeURIComponent(row.sourceSeasonId)}&detail=${encodeURIComponent(row.sourceConfigId)}#team-chuan`);
-  await expect(page).toHaveURL(new RegExp(`doi-chuan/`));
+  await page.goto(`/doi-chuan/?season=${encodeURIComponent(row.sourceSeasonId)}&detail=${encodeURIComponent(row.sourceConfigId)}`);
+  await expect(page).toHaveURL(new RegExp(`/doi-chuan/[^/?]+/`));
   await expect(page.locator('#team-detail-body')).toBeVisible();
   await expect(page.locator('#team-return-link')).toHaveAttribute('href',new RegExp(`season=${encodeURIComponent(row.sourceSeasonId)}`));
 
-  await page.goto(`/?legacyTeam=${legacyTeamId}#team-khac`);
+  await page.goto(`/doi-khac/?legacyTeam=${legacyTeamId}`);
   await expect(page).toHaveURL(new RegExp(`doi-khac/${handles.l[legacyTeamId]}/`));
   await expect(page.locator('#team-detail-body')).toBeVisible();
-  await page.goto(`/?legacyTeam=${legacyTeamId}&legacyVariant=%2Fbad#team-khac`);
+  await page.goto(`/doi-khac/?legacyTeam=${legacyTeamId}&legacyVariant=%2Fbad`);
   await expect(page).toHaveURL(/variant=%2Fbad/);
   await expect(page.locator('#team-detail-status [role="alert"]')).toBeVisible();
   await expect(page.locator('#team-detail-body')).toBeHidden();
   await expect(page.locator('#team-detail-root a[href="'+legacyDetail+'"]')).toBeVisible();
 
-  await page.goto(`/?config=missing&legacyTeam=${legacyTeamId}#analyze`);
+  await page.goto(`/soi-doi/?config=missing&legacyTeam=${legacyTeamId}`);
   await expect(page).not.toHaveURL(/doi-khac/);
   await expect(page.locator('#season-detail-mount')).toContainText('Không có cấu hình này');
-  await page.goto(`/?config=missing&detail=${encodeURIComponent(row.sourceConfigId)}#analyze`);
+  await page.goto(`/soi-doi/?config=missing&detail=${encodeURIComponent(row.sourceConfigId)}`);
   await expect(page).not.toHaveURL(/doi-chuan/);
 });
 
@@ -577,7 +629,7 @@ test('detail pages keep working when sessionStorage writes are denied',async({pa
     const denied=()=>{throw new Error('denied');};
     Object.defineProperty(window,'sessionStorage',{configurable:true,get(){return {getItem:denied,setItem:denied,removeItem:denied};}});
   });
-  await page.goto(`/?season=${encodeURIComponent(row.sourceSeasonId)}&q=${encodeURIComponent(query)}#team-chuan`);
+  await page.goto(`/doi-chuan/?season=${encodeURIComponent(row.sourceSeasonId)}&q=${encodeURIComponent(query)}`);
   const card=page.locator(`#section-team-chuan .reference-team-card[data-source-config-id="${row.sourceConfigId}"]`);
   await expect(card).toBeVisible();
   await card.locator('.team-name a').click();
@@ -592,7 +644,7 @@ test('multi-page history does not loop or restore a foreign entry',async({page,r
   const {index}=await publication(request);
   const handles=await routeHandles(request);
   const [first,second]=index.records;
-  await page.goto('/#team-chuan');
+  await page.goto('/doi-chuan/');
   const start=await page.evaluate(()=>history.length);
   await page.goto(recommendedPath(handles,first.sourceConfigId));
   await page.goto(recommendedPath(handles,second.sourceConfigId));
@@ -601,7 +653,7 @@ test('multi-page history does not loop or restore a foreign entry',async({page,r
   await expect(page).toHaveURL(new RegExp(handles.r[first.sourceConfigId]));
   await expect(page.locator('#team-detail-body')).toBeVisible();
   await page.goBack();
-  await expect(page).toHaveURL(/#team-chuan$/);
+  await expect(page).toHaveURL('/doi-chuan/');
   expect(await page.evaluate(()=>history.length)).toBe(start+2);
 });
 
@@ -624,12 +676,12 @@ test('Khai hoang detail loads directly, pins its verified source and never boots
   await expect(page.locator('#team-detail-body')).toBeVisible();
   await expect(page.locator('#team-detail-body')).not.toBeEmpty();
   await expect(page.locator('#team-detail-status')).toBeHidden();
-  await expect(page.locator('#team-return-link')).toHaveAttribute('href','/#khaihoang');
+  await expect(page.locator('#team-return-link')).toHaveAttribute('href','/khai-hoang/');
   // Canonical luôn là pathname: deep-link `variant`/`from` không tạo URL thứ hai.
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href',new RegExp(`${path}$`));
   await expect(page.locator('meta[property="og:type"]')).toHaveAttribute('content','article');
   await expect(page.locator('script[src="/js/khaihoang-detail.js"]')).toHaveCount(1);
-  await expect(page.locator('#section-khaihoang')).toHaveCount(0);
+  await expect(page.locator('script[type="module"][src="/js/app.js"]')).toHaveCount(0);
   await expect(page.locator('#season-controls')).toHaveCount(0);
 
   await page.reload();

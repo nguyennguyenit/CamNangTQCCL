@@ -542,7 +542,7 @@ import { canonicalHeroId } from './hero-identity.js';
 import { normalizeText } from './filters.js';
 
 /** Ordered configuration details use explicit selections; inventory facts never become tiers. */
-export function seasonConfigDetail(row, model, {onClose,onImport}) {
+export function seasonConfigDetail(row, model, {onClose,importHref}) {
   const {config,team} = row;
   const names = new Map();
   for (const [dataset,kind] of [['heroes-dict','hero'],['tactics','tactic'],['books-dict','book']]) for (const item of model.data[dataset]) {
@@ -566,7 +566,7 @@ export function seasonConfigDetail(row, model, {onClose,onImport}) {
   const compare = el('button',{type:'button',class:'ana-btn',onClick:()=>{
     const inventory = deserializeRosterScanState(localStorage.getItem(ROSTER_SCAN_STORAGE_KEY));
     if (!inventory.ownedHeroes.length && !inventory.ownedTactics.length) {
-      comparison.replaceChildren(el('p',{},'Chưa có kho để đối chiếu.'),el('button',{type:'button',class:'ana-link-btn',onClick:onImport},'Mở scan / nhập kho'));
+      comparison.replaceChildren(el('p',{},'Chưa có kho để đối chiếu.'),el('a',{class:'ana-link-btn',href:importHref},'Mở scan / nhập kho'));
       return;
     }
     const result = compareSeasonInventory(selection,inventory);

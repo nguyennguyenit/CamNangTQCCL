@@ -1,13 +1,17 @@
 import { expect, test } from "@playwright/test";
 
 async function waitForBoot(page) {
-  await expect(page.locator("#season-scenario")).toBeAttached();
+  await expect(page.locator('body[data-boot="ready"]')).toBeAttached();
+  const section = await page.locator("body").getAttribute("data-page-section");
+  if (section === "analyze" || section === "roster-recommend") {
+    await expect(page.locator("script[src*='turnstile']")).toHaveCount(1);
+  }
 }
 
 test("scan được lưu/hiển thị và recommendation giữ assignment theo holder", async ({
   page,
 }) => {
-  await page.goto("/#roster-recommend");
+  await page.goto("/goi-y-doi/");
   await waitForBoot(page);
 
   const compatibility = await page.evaluate(async () => {
@@ -76,7 +80,7 @@ test("scan được lưu/hiển thị và recommendation giữ assignment theo h
 test("analyze-map chạy trong Astro preview và đối chiếu đúng full hero identity", async ({
   page,
 }) => {
-  await page.goto("/#analyze");
+  await page.goto("/soi-doi/");
   await waitForBoot(page);
 
   const result = await page.evaluate(async () => {

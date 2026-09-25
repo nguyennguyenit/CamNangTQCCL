@@ -15,9 +15,9 @@ test.beforeEach(async ({ context }) => {
 
 /** Route handle do build nhúng: URL chi tiết không bao giờ được suy lại từ title. */
 async function routeHandles(request) {
-  const html = await (await request.get("/index.html")).text();
+  const html = await (await request.get("/khai-hoang/")).text();
   const match = html.match(/id="team-route-handles"[^>]*>([^<]+)<\/script>/);
-  if (!match) throw new Error("Built HTML lacks the team route handle map");
+  if (!match) throw new Error("Built Khai hoang page lacks the team route handle map");
   return JSON.parse(match[1]);
 }
 
@@ -44,11 +44,11 @@ async function routeKhaihoang(page, payload, {keepLocalization = false} = {}) {
     route.fulfill({contentType: "application/json", body: website.body}));
   await page.route(khaihoangRequest, (route) =>
     route.fulfill({contentType: "application/json", body: khaihoangBody}));
-  await page.route(/^http:\/\/(?:localhost|127\.0\.0\.1):\d+\/(?:\?.*)?$/, async (route) => {
+  await page.route(/^http:\/\/(?:localhost|127\.0\.0\.1):\d+\/khai-hoang\/(?:\?.*)?$/, async (route) => {
     const response = await route.fetch();
     await route.fulfill({response, body: replaceWebsiteDisplayPin(await response.text(), website.pin)});
   });
-  await page.goto("/#khaihoang");
+  await page.goto("/khai-hoang/");
 }
 
 const DETAIL_DOCUMENT = /^http:\/\/(?:localhost|127\.0\.0\.1):\d+\/khai-hoang\/[^/?]+\/(?:\?.*)?$/;
@@ -118,8 +118,8 @@ test("every source option replaces only its card and restores the default", asyn
   }
   // Chọn cấu hình không điều hướng khỏi danh sách.
   await expect(page.locator(".kh-card").first().getByRole("combobox")).toHaveCount(1);
-  expect(new URL(page.url()).pathname).toBe("/");
-  expect(page.url()).toContain("#khaihoang");
+  expect(new URL(page.url()).pathname).toBe("/khai-hoang/");
+  expect(new URL(page.url()).hash).toBe("");
 });
 
 test("cards never render guides or opening notes, even when the payload carries them", async ({ page }) => {
@@ -330,9 +330,7 @@ test("detail owns the roster guide and keeps it open across variant changes", as
   await expect(guide.locator("summary")).toHaveCount(1);
 
   // Trang chi tiết không boot ứng dụng gốc.
-  await expect(page.locator("#section-khaihoang")).toHaveCount(0);
-  await expect(page.locator("#section-team-chuan")).toHaveCount(0);
-  await expect(page.locator('[data-section="khaihoang"].nav-tab.active')).toHaveCount(1);
+  await expect(page.locator('a[data-section="khaihoang"][aria-current="page"]')).toHaveCount(1);
 });
 
 test("detail keeps every opening note with its owner and never borrows from the default build", async ({ page, request }) => {
@@ -390,7 +388,7 @@ test("detail URL keeps variant and from in sync across select, reload and histor
   const handles = await routeHandles(request);
   const target = teamByTitle("Gia Cát Khác · Thái Sử Từ · Tả Từ");
   const [first, second] = target.variants;
-  await page.goto("/#khaihoang");
+  await page.goto("/khai-hoang/");
   await expect(page.locator(".kh-card")).toHaveCount(data.teams.length);
   // Mở chi tiết từ card đang chọn cấu hình, đúng như primary-click ngoài danh sách.
   const card = page.locator(".kh-card").filter({ has: page.getByRole("heading", { name: target.title, exact: true }) });
@@ -408,7 +406,7 @@ test("detail URL keeps variant and from in sync across select, reload and histor
   const entry = new URL(page.url());
   const from = entry.searchParams.get("from");
   expect(from.startsWith("/")).toBe(true);
-  expect(from.endsWith("#khaihoang")).toBe(true);
+  expect(from).toContain("/khai-hoang/?");
   expect(from).toContain(`khTeam=${target.id}`);
   expect(from).toContain(`khVariant=${first.id}`);
   await expect(page.locator("#team-return-link")).toHaveAttribute("href", from);
@@ -446,7 +444,7 @@ test("unknown variants warn and offer the default build instead of pretending", 
   const handles = await routeHandles(request);
   const target = teamByTitle("Lục Tốn · Tả Từ · Trương Xuân Hoa");
   await routeDetail(page);
-  await page.goto(detailPath(handles, target.id, { variant: "khong-co-cau-hinh", from: "/#khaihoang" }));
+  await page.goto(detailPath(handles, target.id, { variant: "khong-co-cau-hinh", from: "/khai-hoang/" }));
 
   const status = page.locator("#team-detail-status");
   await expect(status.locator('[role="alert"]')).toContainText("khong-co-cau-hinh");
@@ -486,7 +484,7 @@ test("detail fails closed on loading, source hash, network and unsafe return sou
   await expect(page.locator("#team-detail-root")).toHaveAttribute("aria-busy", "true");
   await expect(page.locator("#team-detail-body")).toBeVisible();
   // `from` ngoài origin bị loại: nút quay lại về danh sách Khai hoang.
-  await expect(page.locator("#team-return-link")).toHaveAttribute("href", "/#khaihoang");
+  await expect(page.locator("#team-return-link")).toHaveAttribute("href", "/khai-hoang/");
 
   // Hash lệch: byte nguồn khác pin trên trang thì không render nội dung nguồn.
   await page.unroute(khaihoangRequest);
