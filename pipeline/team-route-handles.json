@@ -1,5 +1,5 @@
 {
-  "generationId": "5c6668435aa68263f73166c66adea68db2cb3a5f1f84bb567181afa10a475fbe",
+  "generationId": "07792857058889034cb799b8795b5d2963d81fac78f5142726a429ad9cd3a432",
   "handles": {
     "legacy": {
       "moi-phe-100": "vu-sieu-binh",
@@ -1557,7 +1557,7 @@
       "yxms-067-張關蔡": "truong-quan-thai"
     }
   },
-  "legacyTeamsSha256": "sha256:d71f617f669dd5a3cc75788b1b579bd94f8c0a43a7e2fb74cb2ab9075d13ce46",
+  "legacyTeamsSha256": "sha256:45e13dca78877abc13d2ef2213be9432c8307aa558d99783498279f7563cf283",
   "khaihoangSha256": "sha256:973b252b08ef9332f19866e7321389bd952d03d8156c586718674db8a09de211",
   "note": "Handle URL đã review; gán một lần, không suy lại từ displayNameVi.",
   "schemaVersion": 2

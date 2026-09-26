@@ -1,55 +1,43 @@
 {
   "heroes": [
     {
-      "value": "Quan Vũ",
-      "count": 29
+      "value": "Tào Tháo",
+      "count": 27
     },
     {
-      "value": "Tào Tháo",
+      "value": "Quan Vũ",
       "count": 26
     },
     {
-      "value": "Chu Du",
-      "count": 23
-    },
-    {
-      "value": "Tuân Úc",
-      "count": 23
-    },
-    {
       "value": "Giả Hủ",
-      "count": 21
+      "count": 22
     },
     {
       "value": "Lưu Bị",
+      "count": 21
+    },
+    {
+      "value": "Tuân Úc",
       "count": 20
     },
     {
       "value": "Lỗ Túc",
-      "count": 20
+      "count": 19
     },
     {
       "value": "Thái Sử Từ",
-      "count": 20
-    },
-    {
-      "value": "Gia Cát Lượng",
-      "count": 19
+      "count": 18
     },
     {
       "value": "Lữ Mông",
-      "count": 19
-    },
-    {
-      "value": "Trương Giác",
-      "count": 19
-    },
-    {
-      "value": "Lục Tốn",
       "count": 17
     },
     {
-      "value": "Quách Gia",
+      "value": "Trương Giác",
+      "count": 17
+    },
+    {
+      "value": "Lục Tốn",
       "count": 16
     },
     {
@@ -57,11 +45,11 @@
       "count": 16
     },
     {
-      "value": "Tôn Quyền",
-      "count": 16
+      "value": "Chu Du",
+      "count": 15
     },
     {
-      "value": "Mãn Sủng",
+      "value": "Gia Cát Lượng",
       "count": 15
     },
     {
@@ -69,59 +57,43 @@
       "count": 14
     },
     {
+      "value": "Tôn Quyền",
+      "count": 12
+    },
+    {
       "value": "Chu Thái",
-      "count": 13
-    },
-    {
-      "value": "Pháp Chính",
-      "count": 13
-    },
-    {
-      "value": "Tả Từ",
-      "count": 13
+      "count": 11
     },
     {
       "value": "Khương Duy",
-      "count": 12
+      "count": 11
+    },
+    {
+      "value": "Mãn Sủng",
+      "count": 11
     },
     {
       "value": "Trương Phi",
-      "count": 12
-    },
-    {
-      "value": "Hứa Du",
       "count": 11
     },
     {
-      "value": "Tư Mã Ý",
-      "count": 11
-    },
-    {
-      "value": "Điêu Thuyền",
-      "count": 11
-    },
-    {
-      "value": "Bàng Thống",
+      "value": "Pháp Chính",
       "count": 10
     },
     {
-      "value": "Cam Ninh",
-      "count": 9
+      "value": "Quách Gia",
+      "count": 10
     },
     {
-      "value": "Chu Thiệu",
-      "count": 9
+      "value": "Tả Từ",
+      "count": 10
     },
     {
       "value": "Ngụy Diên",
       "count": 9
     },
     {
-      "value": "Hoàng Phủ Hoành",
-      "count": 8
-    },
-    {
-      "value": "Tiêu Chỉ",
+      "value": "Hứa Du",
       "count": 8
     },
     {
@@ -129,19 +101,23 @@
       "count": 8
     },
     {
-      "value": "Trương Liêu",
+      "value": "Tư Mã Ý",
       "count": 8
+    },
+    {
+      "value": "Bàng Thống",
+      "count": 7
+    },
+    {
+      "value": "Cam Ninh",
+      "count": 7
     },
     {
       "value": "Hác Chiêu",
       "count": 7
     },
     {
-      "value": "Lữ Bố",
-      "count": 7
-    },
-    {
-      "value": "Tuân Du",
+      "value": "Trương Liêu",
       "count": 6
     },
     {
@@ -149,15 +125,11 @@
       "count": 6
     },
     {
-      "value": "Hạ Hầu Đôn",
-      "count": 5
+      "value": "Điêu Thuyền",
+      "count": 6
     },
     {
-      "value": "Lục Tốṇ",
-      "count": 5
-    },
-    {
-      "value": "Mã Siêu",
+      "value": "Lữ Bố",
       "count": 5
     },
     {
@@ -165,31 +137,19 @@
       "count": 5
     },
     {
-      "value": "Trần Dực",
-      "count": 5
-    },
-    {
       "value": "Vương Nguyên Cơ",
       "count": 5
     },
     {
-      "value": "Hoàng Phổ Tung",
+      "value": "Hoàng Phủ Tung",
       "count": 4
     },
     {
       "value": "Hạ Hầu Uyên",
-      "count": 4
+      "count": 3
     },
     {
-      "value": "Tôn Thượng Hương",
-      "count": 4
-    },
-    {
-      "value": "Đổng Trác",
-      "count": 4
-    },
-    {
-      "value": "Lô Trực",
+      "value": "Hạ Hầu Đôn",
       "count": 3
     },
     {
@@ -197,7 +157,7 @@
       "count": 3
     },
     {
-      "value": "Mã Thiền",
+      "value": "Mã Siêu",
       "count": 3
     },
     {
@@ -209,10 +169,6 @@
       "count": 3
     },
     {
-      "value": "Thẩm Hằng",
-      "count": 3
-    },
-    {
       "value": "Tinh Thái",
       "count": 3
     },
@@ -221,15 +177,15 @@
       "count": 3
     },
     {
-      "value": "Tô Tín",
+      "value": "Tuân Du",
       "count": 3
     },
     {
-      "value": "Từ Ngạn",
+      "value": "Tôn Thượng Hương",
       "count": 3
     },
     {
-      "value": "Đại Kiều",
+      "value": "Đổng Trác",
       "count": 3
     },
     {
@@ -241,23 +197,11 @@
       "count": 2
     },
     {
-      "value": "Dương Kỳ",
-      "count": 2
-    },
-    {
-      "value": "Giả Hụ̉",
-      "count": 2
-    },
-    {
       "value": "Hoàng Nguyệt Anh",
       "count": 2
     },
     {
-      "value": "Hoàng Trung",
-      "count": 2
-    },
-    {
-      "value": "Liễu Tẩm",
+      "value": "Lô Trực",
       "count": 2
     },
     {
@@ -273,19 +217,11 @@
       "count": 2
     },
     {
-      "value": "Trần Hy",
-      "count": 2
-    },
-    {
       "value": "Tà Tử",
       "count": 2
     },
     {
       "value": "Tào Phi",
-      "count": 2
-    },
-    {
-      "value": "Tần Khê",
       "count": 2
     },
     {
@@ -313,15 +249,11 @@
       "count": 1
     },
     {
-      "value": "Bộ Luyện Sư",
-      "count": 1
-    },
-    {
       "value": "Chung Hội",
       "count": 1
     },
     {
-      "value": "Lư Thực",
+      "value": "Hoàng Trung",
       "count": 1
     },
     {
@@ -334,6 +266,10 @@
     },
     {
       "value": "Quan Bình",
+      "count": 1
+    },
+    {
+      "value": "Tiêu Chỉ",
       "count": 1
     },
     {
@@ -359,103 +295,75 @@
     {
       "value": "Đổng Bạch",
       "count": 1
-    },
-    {
-      "value": "Đổng Trách",
-      "count": 1
     }
   ],
   "tactics": [
     {
       "value": "Thuyền Cỏ Mượn Tên",
-      "count": 105
+      "count": 90
     },
     {
       "value": "Cắt Xương Trị Độc",
-      "count": 79
-    },
-    {
-      "value": "Đương Phong Thôi Quyết",
-      "count": 73
+      "count": 65
     },
     {
       "value": "Tạm Lánh Sóng Gió",
+      "count": 57
+    },
+    {
+      "value": "Đương Phong Thôi Quyết",
       "count": 56
-    },
-    {
-      "value": "Đoạt Hồn Hiệp Phách",
-      "count": 54
-    },
-    {
-      "value": "Sĩ Biệt Tam Nhật",
-      "count": 53
     },
     {
       "value": "An Ủi Quân Dân",
       "count": 45
     },
     {
+      "value": "Sĩ Biệt Tam Nhật",
+      "count": 43
+    },
+    {
+      "value": "Đoạt Hồn Hiệp Phách",
+      "count": 42
+    },
+    {
       "value": "Uy Mưu Vô Địch",
-      "count": 41
-    },
-    {
-      "value": "Phong Thi Trận",
-      "count": 34
-    },
-    {
-      "value": "Thái Bình Đạo Pháp",
-      "count": 31
-    },
-    {
-      "value": "Binh Vô Thường Thế",
-      "count": 29
+      "count": 39
     },
     {
       "value": "Lính Giáp Mây",
-      "count": 29
+      "count": 30
     },
     {
-      "value": "Không Đánh Mà Thắng",
-      "count": 25
+      "value": "Phong Thi Trận",
+      "count": 30
     },
     {
-      "value": "Thượng Binh Phạt Mưu",
-      "count": 25
+      "value": "Binh Vô Thường Thế",
+      "count": 26
     },
     {
       "value": "Mau Giành Lợi Thế",
-      "count": 24
+      "count": 22
     },
     {
-      "value": "Mê Hoặc",
-      "count": 24
+      "value": "Thái Bình Đạo Pháp",
+      "count": 22
     },
     {
-      "value": "Toàn Quân Đồng Lòng",
-      "count": 23
-    },
-    {
-      "value": "Dốc Sức Tính Kế",
+      "value": "Không Đánh Mà Thắng",
       "count": 21
     },
     {
-      "value": "Thịnh Khí Linh Địch",
-      "count": 17
-    },
-    {
-      "value": "Hoành Tảo Thiên Quân",
-      "count": 15
+      "value": "Dốc Sức Tính Kế",
+      "count": 16
     },
     {
       "value": "Hãm Trận Doanh",
       "count": 15
     },
     {
-      "value": "Dưỡng Sức Đợi Chiến",
-      "count": 14
-    },
-    {
-      "value": "Gió Táp Mưa Sa",
+      "value": "Hoành Tảo Thiên Quân",
       "count": 14
     },
     {
@@ -463,11 +371,11 @@
       "count": 14
     },
     {
-      "value": "Anh Thành Tự Thủ",
-      "count": 13
+      "value": "Thượng Binh Phạt Mưu",
+      "count": 14
     },
     {
-      "value": "Lâm Nguy Cứu Chủ",
+      "value": "Gió Táp Mưa Sa",
       "count": 13
     },
     {
@@ -475,11 +383,11 @@
       "count": 13
     },
     {
-      "value": "Quân Cẩm Phàm",
+      "value": "Thịnh Khí Linh Địch",
       "count": 13
     },
     {
-      "value": "Sợ Bóng Sợ Gió",
+      "value": "Toàn Quân Đồng Lòng",
       "count": 13
     },
     {
@@ -487,15 +395,7 @@
       "count": 13
     },
     {
-      "value": "Bạo Lệ Vô Nhân",
-      "count": 12
-    },
-    {
       "value": "Cơ Hình Trận",
-      "count": 12
-    },
-    {
-      "value": "Cưỡi Ngựa Nghìn Dặm",
       "count": 12
     },
     {
@@ -503,7 +403,19 @@
       "count": 12
     },
     {
-      "value": "Dụng Võ Thần Thông",
+      "value": "Mê Hoặc",
+      "count": 12
+    },
+    {
+      "value": "Sợ Bóng Sợ Gió",
+      "count": 12
+    },
+    {
+      "value": "Bạo Lệ Vô Nhân",
+      "count": 11
+    },
+    {
+      "value": "Cưỡi Ngựa Nghìn Dặm",
       "count": 11
     },
     {
@@ -511,31 +423,15 @@
       "count": 11
     },
     {
-      "value": "Thôi Phong Đoạn Nhẫn",
-      "count": 11
-    },
-    {
-      "value": "Tiềm Long Trận",
-      "count": 11
-    },
-    {
       "value": "Trung Dũng Nghĩa Liệt",
       "count": 11
-    },
-    {
-      "value": "Võ Phong Trận",
-      "count": 11
-    },
-    {
-      "value": "Cương Nhu Kết Hợp",
-      "count": 10
     },
     {
       "value": "Kích Kỳ Nọa Quy",
       "count": 10
     },
     {
-      "value": "Lõa Y Huyết Chiến",
+      "value": "Tiềm Long Trận",
       "count": 10
     },
     {
@@ -543,11 +439,27 @@
       "count": 10
     },
     {
+      "value": "Anh Thành Tự Thủ",
+      "count": 9
+    },
+    {
+      "value": "Dụng Võ Thần Thông",
+      "count": 9
+    },
+    {
+      "value": "Lõa Y Huyết Chiến",
+      "count": 9
+    },
+    {
       "value": "Lửa Đuổi Gió Bay",
       "count": 9
     },
     {
-      "value": "Thiêu Đốt Doanh Lũy",
+      "value": "Quân Cẩm Phàm",
+      "count": 9
+    },
+    {
+      "value": "Võ Phong Trận",
       "count": 9
     },
     {
@@ -555,15 +467,7 @@
       "count": 9
     },
     {
-      "value": "Bách Kỵ Kiếp Doanh",
-      "count": 8
-    },
-    {
       "value": "Bát Môn Kim Tỏa Trận",
-      "count": 8
-    },
-    {
-      "value": "Hình Nhất Trận",
       "count": 8
     },
     {
@@ -571,19 +475,7 @@
       "count": 8
     },
     {
-      "value": "Phá Trận Thôi Kiên",
-      "count": 8
-    },
-    {
       "value": "Thiết Kỵ Khu Trì",
-      "count": 8
-    },
-    {
-      "value": "Văn Võ Song Toàn",
-      "count": 8
-    },
-    {
-      "value": "Vạn Quân Đoạt Sư",
       "count": 8
     },
     {
@@ -591,39 +483,15 @@
       "count": 8
     },
     {
-      "value": "Nhanh Trí Động Não",
+      "value": "Bách Kỵ Kiếp Doanh",
       "count": 7
     },
     {
-      "value": "Nhân Lợi Chế Quyền",
+      "value": "Phá Trận Thôi Kiên",
       "count": 7
     },
     {
-      "value": "Nhạn Hành Trận",
-      "count": 7
-    },
-    {
-      "value": "Thâm Tàng Nhược Hư",
-      "count": 7
-    },
-    {
-      "value": "Đồng Tâm Hiệp Lực",
-      "count": 7
-    },
-    {
-      "value": "Chúng Động Vạn Kế",
-      "count": 6
-    },
-    {
-      "value": "Công Bất Đường Quyên",
-      "count": 6
-    },
-    {
-      "value": "Kế Hay Mưu Giỏi",
-      "count": 6
-    },
-    {
-      "value": "Ngư Lân Trận",
+      "value": "Hình Nhất Trận",
       "count": 6
     },
     {
@@ -631,12 +499,12 @@
       "count": 6
     },
     {
-      "value": "Thừa Địch Bất Ngu",
+      "value": "Văn Võ Song Toàn",
       "count": 6
     },
     {
-      "value": "Tỏa Nhuệ",
-      "count": 6
+      "value": "Chúng Động Vạn Kế",
+      "count": 5
     },
     {
       "value": "Khí Lăng Tam Quân",
@@ -655,27 +523,19 @@
       "count": 5
     },
     {
-      "value": "Nhạn Hình Trận",
-      "count": 5
-    },
-    {
-      "value": "Nhất Kỵ Đương Thiên",
-      "count": 5
-    },
-    {
       "value": "Nằm Gai Nếm Mật",
       "count": 5
     },
     {
-      "value": "Tinh·Ngư Lân Trận",
-      "count": 5
-    },
-    {
-      "value": "Tiên Đăng Tử Sĩ",
+      "value": "Thiêu Đốt Doanh Lũy",
       "count": 5
     },
     {
       "value": "Vô Đương Phi Quân",
+      "count": 5
+    },
+    {
+      "value": "Vạn Quân Đoạt Sư",
       "count": 5
     },
     {
@@ -687,7 +547,11 @@
       "count": 4
     },
     {
-      "value": "Giải Phiền Vệ",
+      "value": "Cương Nhu Kết Hợp",
+      "count": 4
+    },
+    {
+      "value": "Dưỡng Sức Đợi Chiến",
       "count": 4
     },
     {
@@ -695,35 +559,27 @@
       "count": 4
     },
     {
-      "value": "Hợp Quân Tụ Chúng",
+      "value": "Lâm Nguy Cứu Chủ",
       "count": 4
     },
     {
-      "value": "Phi Hùng Quân",
+      "value": "Nhất Kỵ Đương Thiên",
       "count": 4
     },
     {
-      "value": "Phong Trợ Hỏa Thế",
+      "value": "Thôi Phong Đoạn Nhẫn",
       "count": 4
     },
     {
-      "value": "Thâm Mưu Viễn Lự",
+      "value": "Thừa Địch Bất Ngu",
       "count": 4
-    },
-    {
-      "value": "Tây Lương Thiết Kỵ",
-      "count": 4
-    },
-    {
-      "value": "Đồng Lòng Hợp Sức",
-      "count": 4
-    },
-    {
-      "value": "Bạch Mã Nghĩa Tòng",
-      "count": 3
     },
     {
       "value": "Hình Cơ Quân Lược",
+      "count": 3
+    },
+    {
+      "value": "Ngư Lân Trận",
       "count": 3
     },
     {
@@ -731,19 +587,31 @@
       "count": 3
     },
     {
+      "value": "Nhân Lợi Chế Quyền",
+      "count": 3
+    },
+    {
+      "value": "Nhạn Hành Trận",
+      "count": 3
+    },
+    {
+      "value": "Phi Hùng Quân",
+      "count": 3
+    },
+    {
       "value": "Trấn Mục Hoành Mâu",
       "count": 3
     },
     {
-      "value": "Tử Sĩ Tiên Phong",
-      "count": 3
-    },
-    {
-      "value": "Biết Mình Biết Ta",
+      "value": "Bạch Mã Nghĩa Tòng",
       "count": 2
     },
     {
-      "value": "Lấy Ít Địch Nhiều",
+      "value": "Công Bất Đường Quyên",
+      "count": 2
+    },
+    {
+      "value": "Giải Phiền Vệ",
       "count": 2
     },
     {
@@ -751,19 +619,19 @@
       "count": 2
     },
     {
+      "value": "Nhanh Trí Động Não",
+      "count": 2
+    },
+    {
       "value": "Quỷ Thần Đình Uy",
       "count": 2
     },
     {
-      "value": "Thịnh Khí",
+      "value": "Thâm Tàng Nhược Hư",
       "count": 2
     },
     {
       "value": "Thời Cơ Chiến Thắng",
-      "count": 2
-    },
-    {
-      "value": "Tinh·Phong Thi Trận",
       "count": 2
     },
     {
@@ -775,6 +643,10 @@
       "count": 2
     },
     {
+      "value": "Tây Lương Thiết Kỵ",
+      "count": 2
+    },
+    {
       "value": "Tị Thực Kích Hư",
       "count": 2
     },
@@ -783,8 +655,16 @@
       "count": 2
     },
     {
-      "value": "Độc Hành Phó Đấu",
+      "value": "Đồng Lòng Hợp Sức",
       "count": 2
+    },
+    {
+      "value": "Đồng Tâm Hiệp Lực",
+      "count": 2
+    },
+    {
+      "value": "Biết Mình Biết Ta",
+      "count": 1
     },
     {
       "value": "Hoành Qua Dược Mã",
@@ -803,7 +683,7 @@
       "count": 1
     },
     {
-      "value": "Kích Kỳ Đọa Quy",
+      "value": "Hợp Quân Tụ Chúng",
       "count": 1
     },
     {
@@ -815,19 +695,7 @@
       "count": 1
     },
     {
-      "value": "Lục Lực Đồng Tâm",
-      "count": 1
-    },
-    {
       "value": "Nhất Lực Cự Thủ",
-      "count": 1
-    },
-    {
-      "value": "Phá Phong Đoạn Nhẫn",
-      "count": 1
-    },
-    {
-      "value": "Sở Hướng Phi Mĩ",
       "count": 1
     },
     {
@@ -839,177 +707,177 @@
       "count": 1
     },
     {
+      "value": "Tinh·Phong Thi Trận",
+      "count": 1
+    },
+    {
+      "value": "Tiên Đăng Tử Sĩ",
+      "count": 1
+    },
+    {
       "value": "Tượng Binh",
+      "count": 1
+    },
+    {
+      "value": "Tử Sĩ Tiên Phong",
       "count": 1
     }
   ],
   "books": [
     {
-      "value": "Cầm Binh Khí",
-      "count": 112
+      "value": "Thế Phòng Thủ",
+      "count": 101
     },
     {
-      "value": "Thế Phòng Thủ",
-      "count": 108
+      "value": "Cầm Binh Khí",
+      "count": 99
     },
     {
       "value": "Khép Hờ",
-      "count": 107
+      "count": 93
     },
     {
       "value": "Tấn Công Điểm Yếu",
-      "count": 103
+      "count": 90
     },
     {
       "value": "Khích Lệ Lòng Quân",
-      "count": 85
-    },
-    {
-      "value": "Yêu Lính Thương Dân",
       "count": 73
     },
     {
+      "value": "Yêu Lính Thương Dân",
+      "count": 67
+    },
+    {
       "value": "Quỷ Mưu",
-      "count": 70
-    },
-    {
-      "value": "Phòng Bị",
-      "count": 66
-    },
-    {
-      "value": "Văn Thao",
       "count": 63
     },
     {
-      "value": "Dẫn Quân",
-      "count": 58
+      "value": "Phòng Bị",
+      "count": 62
     },
     {
-      "value": "Tướng Uy",
-      "count": 58
-    },
-    {
-      "value": "Tam Quân Chi Chúng",
-      "count": 56
+      "value": "Văn Thao",
+      "count": 53
     },
     {
       "value": "Thắng Trận",
-      "count": 56
+      "count": 52
     },
     {
-      "value": "Rèn Luyện",
-      "count": 46
+      "value": "Tướng Uy",
+      "count": 47
+    },
+    {
+      "value": "Dẫn Quân",
+      "count": 39
     },
     {
       "value": "Kỳ Chính Tương Sinh",
-      "count": 45
+      "count": 39
     },
     {
       "value": "Tốc Chiến",
-      "count": 40
+      "count": 39
+    },
+    {
+      "value": "Tam Quân Chi Chúng",
+      "count": 37
     },
     {
       "value": "Giáp Sắt",
-      "count": 35
-    },
-    {
-      "value": "Thắng Sẽ Càng Mạnh",
-      "count": 35
-    },
-    {
-      "value": "Lấy Võ Dẹp Loạn",
-      "count": 33
-    },
-    {
-      "value": "Đánh Sau Trúng Trước",
-      "count": 33
-    },
-    {
-      "value": "Man Dũng Phi Dũng",
-      "count": 32
-    },
-    {
-      "value": "Bách Chiến",
       "count": 31
     },
     {
-      "value": "Thần Cơ",
-      "count": 26
+      "value": "Rèn Luyện",
+      "count": 31
     },
     {
-      "value": "Chiến Đấu Trường Kỳ",
-      "count": 24
+      "value": "Bách Chiến",
+      "count": 30
+    },
+    {
+      "value": "Man Dũng Phi Dũng",
+      "count": 30
+    },
+    {
+      "value": "Thắng Sẽ Càng Mạnh",
+      "count": 30
+    },
+    {
+      "value": "Đánh Sau Trúng Trước",
+      "count": 30
+    },
+    {
+      "value": "Lấy Võ Dẹp Loạn",
+      "count": 29
+    },
+    {
+      "value": "Thần Cơ",
+      "count": 25
     },
     {
       "value": "Cứu Chủ",
       "count": 21
     },
     {
-      "value": "Không Chiến Mà Thắng",
-      "count": 20
-    },
-    {
       "value": "Gặp Địch Không Loạn",
       "count": 19
     },
     {
-      "value": "Võ Lược",
-      "count": 19
+      "value": "Chiến Đấu Trường Kỳ",
+      "count": 18
     },
     {
-      "value": "Xem Bói",
-      "count": 19
+      "value": "Không Chiến Mà Thắng",
+      "count": 18
+    },
+    {
+      "value": "Võ Lược",
+      "count": 18
+    },
+    {
+      "value": "Đánh Phá Vòng Vây",
+      "count": 18
     },
     {
       "value": "Chia Nhỏ Đánh Nhanh",
       "count": 17
     },
     {
+      "value": "Xem Bói",
+      "count": 16
+    },
+    {
       "value": "Liền Mạch Một Hơi",
-      "count": 17
-    },
-    {
-      "value": "Đánh Phá Vòng Vây",
-      "count": 17
-    },
-    {
-      "value": "Nghĩa Dũng",
-      "count": 14
-    },
-    {
-      "value": "Biết Cách Phòng Thủ",
-      "count": 12
+      "count": 15
     },
     {
       "value": "Cứu Viện",
       "count": 12
     },
     {
-      "value": "Giấu Đao",
+      "value": "Nghĩa Dũng",
       "count": 12
+    },
+    {
+      "value": "Biết Cách Phòng Thủ",
+      "count": 11
     },
     {
       "value": "Hợp Biến",
       "count": 11
     },
     {
-      "value": "Diệu Toán",
+      "value": "Giấu Đao",
       "count": 10
     },
     {
-      "value": "Tĩnh Tâm",
-      "count": 10
+      "value": "Diệu Toán",
+      "count": 9
     },
     {
       "value": "Cương Nhu",
-      "count": 9
-    },
-    {
-      "value": "Tản Tiên",
-      "count": 9
-    },
-    {
-      "value": "Tinh Chuẩn",
       "count": 8
     },
     {
@@ -1021,15 +889,19 @@
       "count": 7
     },
     {
-      "value": "Kế Sách Dụ Địch",
+      "value": "Tinh Chuẩn",
+      "count": 7
+    },
+    {
+      "value": "Tĩnh Tâm",
+      "count": 7
+    },
+    {
+      "value": "Tản Tiên",
       "count": 7
     },
     {
       "value": "Khai Hạp",
-      "count": 6
-    },
-    {
-      "value": "Tam Lý Nhĩ Hoàn",
       "count": 6
     },
     {
@@ -1045,7 +917,11 @@
       "count": 5
     },
     {
-      "value": "Đánh Bất Ngờ Thắng",
+      "value": "Kế Sách Dụ Địch",
+      "count": 5
+    },
+    {
+      "value": "Tam Lý Nhĩ Hoàn",
       "count": 5
     },
     {
@@ -1053,11 +929,7 @@
       "count": 5
     },
     {
-      "value": "Không Lộ Tài Năng",
-      "count": 4
-    },
-    {
-      "value": "Thiện Chiến",
+      "value": "Đánh Bất Ngờ Thắng",
       "count": 4
     },
     {
@@ -1077,16 +949,8 @@
       "count": 3
     },
     {
-      "value": "Trì Trọng",
+      "value": "Thiện Chiến",
       "count": 3
-    },
-    {
-      "value": "Thuận Thiên Thuận Tời",
-      "count": 2
-    },
-    {
-      "value": "Thích Làm Việc Thiện",
-      "count": 2
     },
     {
       "value": "Thận Trọng",
@@ -1097,7 +961,15 @@
       "count": 2
     },
     {
+      "value": "Trì Trọng",
+      "count": 2
+    },
+    {
       "value": "Hành Động Theo Thời",
+      "count": 1
+    },
+    {
+      "value": "Không Lộ Tài Năng",
       "count": 1
     },
     {
@@ -1111,24 +983,32 @@
     {
       "value": "Sắc Bén",
       "count": 1
+    },
+    {
+      "value": "Thuận Thiên Thuận Tời",
+      "count": 1
+    },
+    {
+      "value": "Thích Làm Việc Thiện",
+      "count": 1
     }
   ],
   "unitTypes": [
     {
       "value": "Cung",
-      "count": 74
+      "count": 53
     },
     {
       "value": "Khiên",
-      "count": 59
+      "count": 53
     },
     {
       "value": "Thương",
-      "count": 38
+      "count": 35
     },
     {
       "value": "Kỵ",
-      "count": 36
+      "count": 29
     }
   ],
   "stars": [
@@ -1148,23 +1028,23 @@
   "factions": [
     {
       "value": "Ngô",
-      "count": 41
+      "count": 27
     },
     {
       "value": "Thục",
-      "count": 35
-    },
-    {
-      "value": "Ngụy",
-      "count": 32
-    },
-    {
-      "value": "Quần",
-      "count": 28
+      "count": 26
     },
     {
       "value": "Hỗn hợp",
-      "count": 27
+      "count": 25
+    },
+    {
+      "value": "Ngụy",
+      "count": 20
+    },
+    {
+      "value": "Quần",
+      "count": 18
     }
   ],
   "statuses": [
@@ -1174,7 +1054,7 @@
     },
     {
       "value": "meta",
-      "count": 103
+      "count": 56
     }
   ],
   "sources": [
@@ -1184,7 +1064,7 @@
     },
     {
       "value": "team-intro",
-      "count": 55
+      "count": 56
     }
   ]
 }

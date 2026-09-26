@@ -1,7 +1,7 @@
 ---
 phase: 2
 title: "7 lỗi nặng"
-status: pending
+status: completed
 priority: P1
 effort: "3.5d"
 dependencies: [1]

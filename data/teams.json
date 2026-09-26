@@ -173,8 +173,8 @@
         "note": null
       },
       {
-        "name": "SP Hoàng Phổ Tung",
-        "baseName": "Hoàng Phổ Tung",
+        "name": "SP Hoàng Phủ Tung",
+        "baseName": "Hoàng Phủ Tung",
         "alternatives": [],
         "variant": null,
         "isSP": true,
@@ -301,8 +301,8 @@
         "note": null
       },
       {
-        "name": "SP Hoàng Phổ Tung",
-        "baseName": "Hoàng Phổ Tung",
+        "name": "SP Hoàng Phủ Tung",
+        "baseName": "Hoàng Phủ Tung",
         "alternatives": [],
         "variant": null,
         "isSP": true,
@@ -426,8 +426,8 @@
         "note": null
       },
       {
-        "name": "SP Hoàng Phổ Tung",
-        "baseName": "Hoàng Phổ Tung",
+        "name": "SP Hoàng Phủ Tung",
+        "baseName": "Hoàng Phủ Tung",
         "alternatives": [],
         "variant": null,
         "isSP": true,
@@ -2070,7 +2070,7 @@
         "isCO": false,
         "tactics": [
           {
-            "name": "Thịnh Khí",
+            "name": "Thịnh Khí Linh Địch",
             "alternatives": []
           },
           {
@@ -3993,8 +3993,8 @@
         "note": null
       },
       {
-        "name": "SP Hoàng Phổ Tung",
-        "baseName": "Hoàng Phổ Tung",
+        "name": "SP Hoàng Phủ Tung",
+        "baseName": "Hoàng Phủ Tung",
         "alternatives": [],
         "variant": null,
         "isSP": true,
@@ -4451,7 +4451,7 @@
   {
     "id": "team-intro-35",
     "source": "team-intro",
-    "name": "Trách Thuyền Bố",
+    "name": "Trác Thuyền Bố",
     "nickname": null,
     "rawType": "Cung",
     "unitType": [
@@ -4462,8 +4462,8 @@
     "status": "meta",
     "heroes": [
       {
-        "name": "SP Đổng Trách",
-        "baseName": "Đổng Trách",
+        "name": "SP Đổng Trác",
+        "baseName": "Đổng Trác",
         "alternatives": [],
         "variant": null,
         "isSP": true,
@@ -7556,7 +7556,7 @@
   {
     "id": "moi-phe-72",
     "source": "moi-phe",
-    "name": "Tháo Hụ̉ Chiêu",
+    "name": "Tháo Hủ Chiêu",
     "nickname": null,
     "rawType": "Khiên",
     "unitType": [
@@ -7602,8 +7602,8 @@
         "note": null
       },
       {
-        "name": "Giả Hụ̉(S)",
-        "baseName": "Giả Hụ̉",
+        "name": "Giả Hủ(S)",
+        "baseName": "Giả Hủ",
         "alternatives": [],
         "variant": "S",
         "isSP": false,
@@ -9249,7 +9249,7 @@
   {
     "id": "moi-phe-86",
     "source": "moi-phe",
-    "name": "Tháo Hoảng Hụ̉",
+    "name": "Tháo Hoảng Hủ",
     "nickname": null,
     "rawType": "Khiên",
     "unitType": [
@@ -9326,8 +9326,8 @@
         "note": null
       },
       {
-        "name": "Giả Hụ̉(S)",
-        "baseName": "Giả Hụ̉",
+        "name": "Giả Hủ(S)",
+        "baseName": "Giả Hủ",
         "alternatives": [],
         "variant": "S",
         "isSP": false,
@@ -12498,7 +12498,7 @@
   {
     "id": "moi-phe-113",
     "source": "moi-phe",
-    "name": "Tốṇ Túc Mông",
+    "name": "Tốn Túc Mông",
     "nickname": null,
     "rawType": "Thương",
     "unitType": [
@@ -12509,8 +12509,8 @@
     "status": "out-meta",
     "heroes": [
       {
-        "name": "Lục Tốṇ(S)",
-        "baseName": "Lục Tốṇ",
+        "name": "Lục Tốn(S)",
+        "baseName": "Lục Tốn",
         "alternatives": [],
         "variant": "S",
         "isSP": false,
@@ -12619,7 +12619,7 @@
   {
     "id": "moi-phe-114",
     "source": "moi-phe",
-    "name": "Tốṇ Túc Mông",
+    "name": "Tốn Túc Mông",
     "nickname": null,
     "rawType": "Thương",
     "unitType": [
@@ -12630,8 +12630,8 @@
     "status": "out-meta",
     "heroes": [
       {
-        "name": "Lục Tốṇ(S)",
-        "baseName": "Lục Tốṇ",
+        "name": "Lục Tốn(S)",
+        "baseName": "Lục Tốn",
         "alternatives": [],
         "variant": "S",
         "isSP": false,
@@ -12744,7 +12744,7 @@
   {
     "id": "moi-phe-115",
     "source": "moi-phe",
-    "name": "Mông Tốṇ Túc",
+    "name": "Mông Tốn Túc",
     "nickname": null,
     "rawType": "Thương",
     "unitType": [
@@ -12788,8 +12788,8 @@
         "note": null
       },
       {
-        "name": "Lục Tốṇ(S)",
-        "baseName": "Lục Tốṇ",
+        "name": "Lục Tốn(S)",
+        "baseName": "Lục Tốn",
         "alternatives": [],
         "variant": "S",
         "isSP": false,
@@ -12863,7 +12863,7 @@
   {
     "id": "moi-phe-116",
     "source": "moi-phe",
-    "name": "Tốṇ Ninh Phổ",
+    "name": "Tốn Ninh Phổ",
     "nickname": null,
     "rawType": "Thương",
     "unitType": [
@@ -12874,8 +12874,8 @@
     "status": "out-meta",
     "heroes": [
       {
-        "name": "Lục Tốṇ(S)",
-        "baseName": "Lục Tốṇ",
+        "name": "Lục Tốn(S)",
+        "baseName": "Lục Tốn",
         "alternatives": [],
         "variant": "S",
         "isSP": false,
@@ -14936,7 +14936,7 @@
   {
     "id": "moi-phe-133",
     "source": "moi-phe",
-    "name": "Tốṇ Túc Phổ",
+    "name": "Tốn Túc Phổ",
     "nickname": null,
     "rawType": "Khiên",
     "unitType": [
@@ -14947,8 +14947,8 @@
     "status": "out-meta",
     "heroes": [
       {
-        "name": "Lục Tốṇ(S)",
-        "baseName": "Lục Tốṇ",
+        "name": "Lục Tốn(S)",
+        "baseName": "Lục Tốn",
         "alternatives": [],
         "variant": "S",
         "isSP": false,
@@ -14980,7 +14980,7 @@
         "note": null
       },
       {
-        "name": "Lỗ Túc̣(S)",
+        "name": "Lỗ Túc(S)",
         "baseName": "Lỗ Túc",
         "alternatives": [],
         "variant": "S",

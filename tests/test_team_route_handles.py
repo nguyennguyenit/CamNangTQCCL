@@ -891,8 +891,16 @@ class PinnedLedgerTest(unittest.TestCase):
         legacy, legacy_stats = build_legacy_handles(self.teams)
         khaihoang, khaihoang_stats = build_khaihoang_handles(self.khaihoang_teams)
         self.assertEqual(recommended, self.ledger["handles"]["recommended"])
-        self.assertEqual(legacy, self.ledger["handles"]["legacy"])
         self.assertEqual(khaihoang, self.ledger["handles"]["khaihoang"])
+        # Legacy handles are frozen at first publication: a later team-name correction may derive a different
+        # slug, but the published URL keeps its ledger entry (`--write` refuses to reassign). The ledger must
+        # still cover exactly the current teams, with unique routable handles.
+        frozen = self.ledger["handles"]["legacy"]
+        self.assertEqual(set(frozen), set(legacy))
+        self.assertEqual(len(set(frozen.values())), len(frozen))
+        for team_id, handle in frozen.items():
+            with self.subTest(team_id=team_id):
+                self.assertTrue(is_routable_identifier(handle))
         self.assertEqual(khaihoang_stats, {"keys": 17, "distinctHandles": 17})
 
         self.assertEqual(stats["keys"], 1366)
