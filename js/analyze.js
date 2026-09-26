@@ -1,4 +1,3 @@
-import { projectSeasonCandidates } from "./season-context.js";
 import { SOURCE_LABEL } from "./render.js";
 // Section "Soi đội từ ảnh" (Phase 4): upload/paste ảnh -> nén client -> Turnstile
 // (lazy-load) -> gọi Worker -> map 3 trục (analyze-map) -> render + đối chiếu team.
@@ -296,18 +295,7 @@ export function initAnalyze(deps, mount) {
     return;
   }
 
-  let scope = null;
   let generation = 0;
-  let showOutside = false;
-  const gameplayAllowed = () => !scope || scope.browse?.kind === 'all-reference' || scope.browse?.kind === 'verified-pair';
-  const scopeNotice = el('p',{class:'season-gameplay-notice',role:'status'});
-  const outside = el('input',{type:'checkbox','aria-label':'Xem đội ngoài phạm vi để tham khảo',onChange:event=>{
-    showOutside=event.target.checked;
-    // Có kết quả đã đọc thì vẽ lại đúng nó; không có thì dọn sạch, không để lại thẻ rỗng chỉ có tiêu đề.
-    if (state.result) { applyResult(state.result,state.teams); return; }
-    similarBox.replaceChildren();
-    similarCard.hidden = true;
-  }});
   const state = { imageDataUrl: null, fileName: '', token: null, busy: false, done: false };
   const drop = el("button", { type: "button", class: "ana-drop" }, [
     cameraIcon(),
@@ -370,7 +358,6 @@ export function initAnalyze(deps, mount) {
     drop,
     fileInput,
     fileRow,
-    el("label", { class: "season-opt-in" }, [outside, "Xem đội ngoài phạm vi để tham khảo"]),
     tsBox,
     analyzeBtn,
     status,
@@ -392,7 +379,7 @@ export function initAnalyze(deps, mount) {
 
   /** Trạng thái công cụ vẽ tại chỗ: nút chạy, hàng ảnh đã chọn và danh sách bước. */
   function paint() {
-    analyzeBtn.disabled = !(state.imageDataUrl && state.token && !state.busy && gameplayAllowed());
+    analyzeBtn.disabled = !(state.imageDataUrl && state.token && !state.busy);
     fileRow.hidden = !state.imageDataUrl;
     drop.classList.toggle("chosen", Boolean(state.imageDataUrl));
     for (const step of steps) {
@@ -403,17 +390,11 @@ export function initAnalyze(deps, mount) {
     }
   }
 
-  /** Vẽ kết quả đã đọc cho một tập đội: dùng cho cả lượt chạy và khi đổi "ngoài phạm vi". */
-  function applyResult(result, teams) {
-    const ok = renderResults(heroBox, similarBox, result, { ...deps, teams });
+  /** Vẽ kết quả đã đọc: `false` khi phản hồi không hợp lệ. */
+  function applyResult(result) {
+    const ok = renderResults(heroBox, similarBox, result, deps);
     readCard.hidden = !ok;
     similarCard.hidden = !ok;
-    if (ok && showOutside && scope?.browse?.kind === 'verified-pair') {
-      const outsideTeams = deps.teams.filter((team) => !teams.some((candidate) => candidate.id === team.id));
-      const mapped = mapTeamRead(result.heroes, deps);
-      const references = findSimilarTeams(mapped, outsideTeams, { minHeroes: 2 });
-      similarBox.append(el('h3', { class: 'ana-read-title' }, 'Ngoài phạm vi — chỉ tham khảo'), el('ol', { class: 'ana-teams' }, references.map((item) => el('li', { class: 'ana-team-row' }, [el('span', { class: 'ana-note' }, `${item.team.name || item.team.id} · ${item.heroHit} tướng trùng · Không áp dụng cho luật đang chọn`)]))));
-    }
     state.done = ok;
     paint();
     return ok;
@@ -425,9 +406,6 @@ export function initAnalyze(deps, mount) {
     readCard.hidden = true;
     similarCard.hidden = true;
     state.done = false;
-    // Không giữ kết quả cũ: nếu còn, ô "ngoài phạm vi" sẽ dựng lại kết quả của ảnh/mùa trước.
-    state.result = null;
-    state.teams = null;
     paint();
   }
 
@@ -494,9 +472,7 @@ export function initAnalyze(deps, mount) {
   });
 
   analyzeBtn.addEventListener("click", async () => {
-    if (state.busy || !gameplayAllowed() || !state.imageDataUrl || !state.token) return;
-    const projected = scope?.browse?.kind === 'verified-pair' ? projectSeasonCandidates(scope.model,scope.browse.seasonContext,{mode:'all',experimentalUntiered:true}) : {ok:true,teams:deps.teams};
-    if (!projected.ok) { clearResults();setStatus(projected.message,'err');return; }
+    if (state.busy || !state.imageDataUrl || !state.token) return;
     const started = generation;
     state.busy = true;
     paint();
@@ -504,11 +480,7 @@ export function initAnalyze(deps, mount) {
     try {
       const result = await callWorker(state.imageDataUrl, state.token);
       if (started !== generation) return;
-      state.result = result;
-      state.teams = projected.teams;
-      if (!applyResult(result, projected.teams)) {
-        state.result = null;
-        state.teams = null;
+      if (!applyResult(result)) {
         setStatus("Phản hồi không hợp lệ, thử lại.", "err");
         return;
       }
@@ -528,7 +500,6 @@ export function initAnalyze(deps, mount) {
 
   mount.replaceChildren(
     head,
-    scopeNotice,
     el("div", { class: "ana-layout" }, [
       pickCard,
       el("div", { class: "ana-col" }, [readCard, similarCard]),
@@ -536,15 +507,4 @@ export function initAnalyze(deps, mount) {
   );
   paint();
   ensureTurnstile();
-  return {
-    setSeasonScope(next) {
-      scope=next;generation++;
-      state.busy=false;state.token=null;
-      // Token vừa bỏ nhưng widget vẫn hiện "đã xác thực" -> reset để widget cấp token mới, không phải chờ hết hạn.
-      if (turnstileRendered && window.turnstile) window.turnstile.reset(tsBox);
-      clearResults();setStatus('');
-      scopeNotice.textContent=gameplayAllowed() ? (next.browse?.kind === 'verified-pair' ? 'Đối chiếu đội theo phiên bản luật đang chọn.' : 'Dữ liệu cũ — tham khảo, chưa xác định kịch bản.') : 'Chọn phiên bản luật đã xác minh để soi và đối chiếu đội.';
-      paint();
-    },
-  };
 }

@@ -50,6 +50,7 @@
   --cung: #1F7A4D;
   --thuong: #B8232C;
   --khien: #8A6D1F;
+  --khien-ink: #6E5716;
   --accent-strong: #7E1620;
   --footer-bg: #141210;
   --band-good: #7FC99E;
@@ -304,6 +305,7 @@
   --cung: #5FCE95;
   --thuong: #E0555D;
   --khien: #D6B85A;
+  --khien-ink: #D6B85A;
   --on-fill: #16140F;
   --f-nguy: #4F74D6;
   --f-thuc: #5FCE95;
@@ -512,10 +514,22 @@ body { margin: 0; background: var(--bg); color: var(--ink); }
 .badge { white-space: nowrap; }
 .badge.role { background: var(--accent-soft); color: var(--accent); }
 .badge.unit.small { font: var(--type-badge-small); padding: var(--space-1) var(--space-5); }
-/* Nhãn biến thể (SP / CO) trên thẻ và trong dòng tướng. */
-.pre { font: var(--type-variant-label); padding: var(--space-1) var(--space-4); border-radius: var(--radius-4); color: var(--on-fill); }
-.pre.sp { background: var(--accent); }
-.pre.co { background: var(--khien); }
+/* Nhãn biến thể (SP / CO / 40Y): con dấu viền mảnh cùng màu chữ, nền trong suốt, đứng liền trước tên tướng.
+   Mực: SP son (7,05:1+ trên nền giấy), CO `--khien-ink` (≥ 5,4:1), 40Y mực 2 — đủ 4,5:1 ở cả hai theme. */
+.pre {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  padding: var(--space-1) var(--space-4);
+  border: var(--border-hair) solid currentColor;
+  border-radius: var(--radius-3);
+  background: var(--transparent);
+  color: var(--ink-2);
+  font: var(--type-variant-label);
+  letter-spacing: var(--type-hero-role-spacing);
+}
+.pre.sp { color: var(--accent-ink); }
+.pre.co { color: var(--khien-ink); }
 .team-card { transition: transform var(--motion-fast) ease, box-shadow var(--motion-fast) ease; }
 .team-card:hover { transform: translateY(-2px); }
 /* Tên đội trong thẻ là link thật: chỉ gạch chân khi hover, không tự viết router. */
@@ -594,7 +608,6 @@ body { margin: 0; background: var(--bg); color: var(--ink); }
 .season-config-detail { padding: var(--space-16); margin: var(--space-12) 0; }
 .season-hero-slot { min-width: 0; margin: var(--space-12) 0; border: var(--border-hair) solid var(--line); border-radius: var(--radius-8); display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-8); }
 .season-slot { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
-.season-opt-in { display: flex; align-items: center; gap: var(--space-8); min-height: var(--control-44); }
 .season-config-detail { overflow-wrap: anywhere; }
 .season-config-detail a, #section-coexist a { color: var(--accent); text-underline-offset: var(--space-3); }
 .season-config-detail summary, .season-config-detail button, #section-coexist .fchip, #section-coexist .clear-btn, #section-coexist .search { min-height: var(--control-44); }
@@ -813,13 +826,6 @@ a.lookup-more:hover {
 .ana-btn:hover {
   border-color: var(--accent);
   color: var(--accent);
-}
-
-/* Nhãn biến thể (SP / CO / 40Y) trên thẻ: nền giấy đậm + mực 2 như badge loại binh.
-   `.pre.y40` cũ dùng `#3A2C00` trên `--f-quan` #B08422 = 4,01:1 (< 4,5) sau khi `--f-quan` theo artboard. */
-.pre.y40 {
-  background: var(--panel-2);
-  color: var(--ink-2);
 }
 
 .clear-btn {
@@ -2827,11 +2833,70 @@ body[data-page-section="team-khac"] .layout {
   text-wrap: pretty;
 }
 
-/* Desktop: hai select phạm vi nằm ngang cạnh nhau (artboard Main); mobile đổi sang lưới 2 cột. */
-.reference-head .reference-scope-controls {
-  display: flex;
+/* Phạm vi duy nhất của danh sách đội: một khung gồm nhãn nhỏ + giá trị + mũi tên; cả khung là vùng bấm. */
+.reference-season-field {
+  position: relative;
+  display: grid;
   flex: none;
-  gap: var(--space-12);
+  width: 320px; /* vừa nhãn mùa dài nhất "OG · Binh Diễn Xuân Thu (25)" */
+  max-width: 100%;
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-10);
+  background: var(--panel);
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.reference-season-field:hover {
+  border-color: var(--muted);
+}
+
+.reference-season-field:focus-within {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-focus);
+}
+
+.reference-season-label {
+  position: absolute;
+  top: var(--space-8);
+  left: var(--space-14);
+  color: var(--muted);
+  font: var(--type-field-caps);
+  letter-spacing: var(--type-field-caps-spacing);
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+/* Select phủ cả khung (nhãn nằm trong vùng đệm trên) để bấm đâu cũng mở danh sách. */
+.reference-season-field select {
+  width: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: var(--space-26) var(--space-40) var(--space-8) var(--space-14);
+  border: none;
+  border-radius: inherit;
+  background: none;
+  color: inherit;
+  font: var(--type-control);
+  appearance: none;
+  cursor: pointer;
+  text-overflow: ellipsis;
+}
+
+.reference-season-field select:focus,
+.reference-season-field select:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.reference-season-field svg {
+  position: absolute;
+  top: 50%;
+  right: var(--space-14);
+  color: var(--muted);
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
 .reference-scope-controls label {
@@ -2911,15 +2976,17 @@ body[data-page-section="team-khac"] .layout {
   margin: 0;
 }
 
+/* Vùng kết quả là container: lưới gọn đổi số cột theo bề rộng thật (còn/không còn sidebar). */
 .reference-view {
   min-width: 0;
+  container: team-view / inline-size;
 }
 
 .reference-empty {
   margin: 0;
 }
 
-/* ---------- Chuyển Thẻ / Bảng (aria-pressed, mặc định Thẻ) ---------- */
+/* ---------- Chuyển 2 cột / 4 cột / Bảng (aria-pressed, mặc định 2 cột) ---------- */
 .reference-view-toggle {
   display: flex;
   flex: none;
@@ -2953,6 +3020,16 @@ body[data-page-section="team-khac"] .layout {
   color: var(--select-ink);
 }
 
+/* Dưới 1280px vùng kết quả hẹp: nút chỉ còn icon (tên đầy đủ ở aria-label/title) để ô tìm đủ rộng. */
+@media (max-width: 1279px) {
+  .view-btn {
+    padding: 0 var(--space-10);
+  }
+
+  .view-btn-label {
+    display: none;
+  }
+}
 
 /* ---------- Sidebar lọc (desktop); mobile dùng cùng phần tử như panel thu gọn ---------- */
 .reference-filters {
@@ -2960,18 +3037,21 @@ body[data-page-section="team-khac"] .layout {
   grid-row: 1 / span 4;
   display: flex;
   flex-direction: column;
-  gap: var(--space-24);
-  padding: var(--space-22);
+  gap: 0;
+  padding: var(--space-6) var(--space-12) var(--space-12);
   border: var(--border-hair) solid var(--line);
   border-radius: var(--radius-14);
   background: var(--panel);
 }
 
+/* Tiêu đề dính với nhóm đầu bằng một vạch mảnh; mỗi nhóm cách nhau bằng vạch thay vì khoảng trắng lớn. */
 .reference-filter-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-12);
+  padding: 0 var(--space-4) var(--space-6) var(--space-8);
+  border-bottom: var(--border-hair) solid var(--line-2);
 }
 
 .reference-filter-title {
@@ -2979,76 +3059,131 @@ body[data-page-section="team-khac"] .layout {
   font: var(--type-strong);
 }
 
+.reference-filters .reference-filter-head .clear-btn {
+  min-height: var(--control-36);
+  padding: 0 var(--space-8);
+  font: var(--type-chip-pill);
+}
+
+/* Không có gì để xóa: giữ chỗ (không nhảy bố cục) nhưng ẩn hẳn thay vì hiện chữ xám. */
+.reference-filters .reference-filter-head .clear-btn:disabled {
+  visibility: hidden;
+}
+
+.reference-filters .fgroup {
+  margin: 0;
+  padding: var(--space-14) 0 var(--space-4);
+}
+
 .reference-filters .fgroup + .fgroup {
-  margin-top: var(--space-4);
+  margin-top: var(--space-6);
+  border-top: var(--border-hair) solid var(--line-2);
+}
+
+.reference-filters .flabel {
+  margin: 0 0 var(--space-6);
+  padding: 0 var(--space-8);
+  color: var(--muted);
 }
 
 .reference-filters .chip-row {
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-1);
 }
 
 .reference-filters .fchip {
   justify-content: flex-start;
   width: 100%;
+  min-height: var(--control-36);
   gap: var(--space-10);
   padding: 0 var(--space-8);
   border-color: transparent;
   border-radius: var(--radius-8);
   background: none;
-  color: var(--ink);
+  color: var(--ink-2);
+  font: var(--type-tactic);
   text-align: left;
+  transition: background-color 150ms ease, color 150ms ease;
 }
 
-/* Ô vuông chọn đứng trước chấm phe; trạng thái bật là nền dải như chip. */
+/* Ô vuông chọn đứng trước chấm phe. */
 .reference-filters .fchip-check {
   order: -1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex: none;
   width: var(--space-16);
   height: var(--space-16);
-  border: var(--border-hair) solid var(--line);
+  border: 1.5px solid var(--line);
   border-radius: var(--radius-4);
   background: var(--panel);
+  transition: background-color 150ms ease, border-color 150ms ease;
 }
 
 .reference-filters .fchip-label {
   flex: 1 1 auto;
 }
 
+/* Số đếm là viên nhỏ canh phải, cùng bề rộng tối thiểu để cột số thẳng hàng. */
 .reference-filters .fchip-count {
   flex: none;
+  min-width: var(--space-24);
+  padding: 0 var(--space-6);
+  border-radius: var(--radius-999);
+  background: var(--panel-3);
   color: var(--muted);
-  font: var(--type-meta);
+  font: var(--type-badge);
+  line-height: var(--space-20);
   font-variant-numeric: tabular-nums;
+  text-align: center;
 }
 
 .reference-filters .fchip:hover {
-  border-color: var(--line);
+  border-color: transparent;
   background: var(--panel-3);
+  color: var(--ink);
 }
 
+.reference-filters .fchip:hover .fchip-check {
+  border-color: var(--muted);
+}
+
+.reference-filters .fchip:hover .fchip-count {
+  background: var(--panel-2);
+}
+
+/* Bật: dải nền nhạt + ô tích đặc, thay vì cả hàng đen — sidebar nhẹ mắt khi chọn nhiều mục. */
 .reference-filters .fchip[aria-pressed="true"] {
-  border-color: var(--select);
+  border-color: transparent;
+  background: var(--panel-3);
+  color: var(--ink);
+  font: var(--type-chip-pill);
+}
+
+.reference-filters .fchip[aria-pressed="true"] .fchip-count {
   background: var(--select);
   color: var(--select-ink);
 }
 
-.reference-filters .fchip[aria-pressed="true"] .fchip-count {
-  color: var(--select-muted);
-}
-
 .reference-filters .fchip[aria-pressed="true"] .fchip-check {
-  border-color: var(--select-ink);
-  background: var(--select-ink);
+  border-color: var(--select);
+  background: var(--select);
 }
 
 .reference-filters .fchip[aria-pressed="true"] .fchip-check::after {
   content: "✓";
-  display: block;
-  color: var(--select);
+  color: var(--select-ink);
   font: var(--type-badge);
-  line-height: var(--space-14);
-  text-align: center;
+}
+
+/* Hàng bật trên sidebar không dùng nền `--select`, nên chấm phe giữ màu thường (không đổi sang bậc nền sáng). */
+@media (min-width: 901px) {
+  .reference-filters .fchip.f-nguy[aria-pressed="true"] { --chip-dot: var(--f-nguy); }
+  .reference-filters .fchip.f-thuc[aria-pressed="true"] { --chip-dot: var(--f-thuc); }
+  .reference-filters .fchip.f-ngo[aria-pressed="true"] { --chip-dot: var(--f-ngo); }
+  .reference-filters .fchip.f-quan[aria-pressed="true"] { --chip-dot: var(--f-quan); }
+  .reference-filters .fchip.f-honhop[aria-pressed="true"] { --chip-dot: var(--f-honhop); }
 }
 
 /* Nhóm phụ (Nhóm, Nguồn) thu gọn mặc định; chip vẫn nằm trong DOM khi đóng. */
@@ -3058,9 +3193,9 @@ body[data-page-section="team-khac"] .layout {
   justify-content: space-between;
   gap: var(--space-6);
   width: 100%;
-  min-height: var(--control-44);
+  min-height: var(--control-36);
   margin: 0;
-  padding: 0;
+  padding: 0 var(--space-8);
   border: none;
   background: none;
   color: var(--muted);
@@ -3101,22 +3236,59 @@ body[data-page-section="team-khac"] .layout {
   display: none;
 }
 
-/* ---------- Thẻ đội gọn (2 cột desktop, 1 cột mobile) ---------- */
+/* ---------- Thẻ đội (Thẻ 2 cột desktop · Lưới gọn tối đa 4 cột · 1 cột mobile) ---------- */
 .reference-view .team-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-20);
 }
 
+/* Lưới gọn: số cột theo bề rộng vùng kết quả, tối đa 4; thẻ bên trong tự chuyển sang bố cục hẹp. */
+.reference-view .team-grid.team-grid-dense {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-14);
+}
+
+@container team-view (min-width: 460px) {
+  .reference-view .team-grid.team-grid-dense {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container team-view (min-width: 720px) {
+  .reference-view .team-grid.team-grid-dense {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@container team-view (min-width: 960px) {
+  .reference-view .team-grid.team-grid-dense {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Gáy thẻ là vạch màu phe (bóng inset nên ôm đúng góc bo); tên phe vẫn là chữ ở dòng meta. */
 .reference-view .reference-team-card {
+  --card-spine: var(--line);
   display: flex;
   flex-direction: column;
   min-width: 0;
   padding: 0;
   border-radius: var(--radius-10);
-  box-shadow: var(--shadow-card);
+  box-shadow: inset 0 var(--border-underline) 0 var(--card-spine), var(--shadow-card);
   overflow-wrap: anywhere;
+  container: team-card / inline-size;
 }
+
+.reference-view .reference-team-card:hover {
+  box-shadow: inset 0 var(--border-underline) 0 var(--card-spine), var(--shadow-hover);
+}
+
+.reference-view .reference-team-card[data-faction-code="nguy"] { --card-spine: var(--f-nguy); }
+.reference-view .reference-team-card[data-faction-code="thuc"] { --card-spine: var(--f-thuc); }
+.reference-view .reference-team-card[data-faction-code="ngo"] { --card-spine: var(--f-ngo); }
+.reference-view .reference-team-card[data-faction-code="quan"] { --card-spine: var(--f-quan); }
+.reference-view .reference-team-card[data-faction-code="honhop"] { --card-spine: var(--f-honhop); }
 
 .reference-card-head {
   display: flex;
@@ -3126,12 +3298,21 @@ body[data-page-section="team-khac"] .layout {
   border-bottom: var(--border-hair) solid var(--line-2);
 }
 
+.reference-view .reference-card-head {
+  align-items: flex-start;
+  padding: var(--space-18) var(--space-18) var(--space-14);
+}
+
 .reference-card-title {
   flex: 1 1 auto;
   min-width: 0;
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+}
+
+.reference-view .reference-card-title {
+  gap: var(--space-6);
 }
 
 .reference-view .team-name {
@@ -3193,36 +3374,67 @@ body[data-page-section="team-khac"] .layout {
   font: var(--type-meta);
 }
 
+/* Ấn điểm: số serif son trong khung son viền kép, nhãn "ĐIỂM" caps bên dưới. Thiếu điểm dùng cùng
+   khuôn nhưng viền đứt nét + "—" mực nhạt, nên đầu thẻ hai trang luôn cùng hình dạng. */
+.reference-view .reference-score-wrap {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  min-width: var(--size-col-60);
+  padding: var(--space-7) var(--space-8) var(--space-6);
+  border: var(--border-hair) solid var(--accent);
+  border-radius: var(--radius-6);
+  background: var(--panel);
+  box-shadow: inset 0 0 0 var(--border-heavy) var(--accent-soft);
+}
+
+.reference-view .reference-score-unit {
+  color: var(--accent-ink);
+  font: var(--type-hero-role);
+  letter-spacing: var(--type-hero-role-spacing);
+  text-transform: uppercase;
+}
+
+.reference-view .reference-score-wrap.is-missing {
+  border-style: dashed;
+  border-color: var(--line);
+  box-shadow: none;
+}
+
 .reference-view .reference-score.missing-score {
+  display: inline-flex;
+  align-items: center;
   padding: 0;
   border: none;
   background: none;
   color: var(--muted);
-  font: var(--type-meta);
+  font: var(--type-score-card);
+}
+
+.reference-view .reference-score-wrap.is-missing .reference-score-unit {
+  color: var(--muted);
 }
 
 .reference-view .heroes {
   display: flex;
   flex-direction: column;
-  padding: 0 var(--space-18);
+  gap: 0;
+  padding: var(--space-4) var(--space-18);
 }
 
-/* Thẻ gọn: hàng tướng không còn vỏ panel của component chung (`--bg` + radius 8), chỉ còn dòng kẻ mảnh. */
+/* Dòng tướng không có vỏ panel của component chung, chỉ dòng kẻ đứt. Thẻ rộng: vai trò | tên | chiến
+   pháp + binh thư; thẻ hẹp (<480px: lưới gọn, tablet, mobile) xếp tên → chiến pháp → binh thư. */
 .reference-view .reference-holder {
   display: grid;
-  grid-template-columns: var(--space-40) 128px minmax(0, 1fr);
+  grid-template-columns: var(--size-col-hero-role) minmax(0, 8rem) minmax(0, 1fr);
   column-gap: var(--space-10);
   row-gap: var(--space-2);
   align-items: baseline;
-  padding: var(--space-8) 0;
+  padding: var(--space-10) 0;
   border-top: var(--border-hair) dashed var(--line-2);
   border-radius: 0;
   background: var(--panel);
-}
-
-/* Bỏ khoảng cách giữa các hàng tướng của lưới chung: artboard chỉ dùng padding của từng hàng. */
-.reference-view .heroes {
-  gap: 0;
 }
 
 .reference-view .heroes > .reference-holder:first-child {
@@ -3236,8 +3448,24 @@ body[data-page-section="team-khac"] .layout {
   text-transform: uppercase;
 }
 
+/* Chủ tướng nổi hơn hai phó tướng: nhãn vai trò chữ son (vẫn là chữ, không chỉ màu). */
+.reference-view .reference-holder[data-role="CHỦ"] .reference-role {
+  color: var(--accent-ink);
+}
+
+/* Nhãn biến thể và tên luôn cùng một hàng: tên dài tự xuống dòng bên trong span của nó.
+   Thẻ rộng: ô tên phủ mọi hàng của dòng tướng nên tên nhiều dòng không đẩy dòng binh thư xuống. */
 .reference-view .reference-holder .hero-name {
+  flex-wrap: nowrap;
+  align-items: baseline;
+  grid-row: span 3;
+  gap: var(--space-5);
+  margin: 0;
   font: var(--type-hero-name);
+  min-width: 0;
+}
+
+.reference-view .reference-holder .hero-name .hn {
   min-width: 0;
 }
 
@@ -3247,26 +3475,57 @@ body[data-page-section="team-khac"] .layout {
   grid-column: 3;
 }
 
-/* "Binh thư · …" là một câu chữ chảy dòng, không phải các ô flex rời. */
+.reference-view .reference-holder .tactics {
+  gap: var(--space-4) var(--space-6);
+  margin: 0;
+}
+
+/* "Binh thư · …" là một câu chữ chảy dòng; nhãn nhạt, tên binh thư mực đậm để đọc nổi. */
 .reference-view .reference-holder .books {
   display: block;
-  margin: 0;
+  margin: var(--space-2) 0 0;
   color: var(--muted);
   font: var(--type-meta);
 }
 
-/* Chiến pháp trong thẻ là chữ son bấm được (artboard Main: padding 0, căn trái), không phải chip nền son nhạt.
-   Giữ min-height 26px trên desktop (vùng bấm ≥ 24px, WCAG 2.5.8); mobile nâng lên 44px. */
+.reference-view .reference-book-values {
+  color: var(--ink-2);
+  font: var(--type-tag);
+}
+
+@container team-card (max-width: 479px) {
+  .reference-view .reference-holder {
+    grid-template-columns: var(--size-col-hero-role) minmax(0, 1fr);
+    column-gap: var(--space-8);
+    row-gap: var(--space-3);
+  }
+
+  .reference-view .reference-holder .hero-name {
+    grid-row: auto;
+  }
+
+  .reference-view .reference-holder .tactics,
+  .reference-view .reference-holder .bonds,
+  .reference-view .reference-holder .books {
+    grid-column: 2;
+  }
+}
+
+/* Chiến pháp là chip son nhạt bấm được (tìm theo chiến pháp); desktop cao 26px (≥ 24px, WCAG 2.5.8). */
 .reference-view .reference-holder .t-tactic {
   justify-content: flex-start;
   min-height: var(--control-26);
-  padding: 0;
+  padding: 0 var(--space-8);
   border: none;
   border-radius: var(--radius-6);
-  background: var(--panel);
+  background: var(--accent-soft);
   color: var(--accent-ink);
   font: var(--type-tactic);
   text-align: left;
+}
+
+.reference-view .reference-holder .t-tactic:hover {
+  text-decoration: underline;
 }
 
 .reference-books-missing {
@@ -3293,6 +3552,7 @@ body[data-page-section="team-khac"] .layout {
   padding-bottom: var(--space-9);
 }
 
+/* Chân thẻ nền giấy nhạt, bo đúng góc trong của thẻ (10px − viền 1px). */
 .reference-card-foot {
   display: flex;
   align-items: center;
@@ -3301,6 +3561,12 @@ body[data-page-section="team-khac"] .layout {
   margin-top: auto;
   padding: 0 var(--space-18);
   border-top: var(--border-hair) solid var(--line-2);
+}
+
+.reference-view .reference-card-foot {
+  padding: 0 var(--space-8) 0 var(--space-18);
+  border-radius: 0 0 var(--radius-9) var(--radius-9);
+  background: var(--panel-3);
 }
 
 .reference-fear {
@@ -3328,6 +3594,55 @@ body[data-page-section="team-khac"] .layout {
   flex: none;
   gap: var(--space-4);
   margin-left: auto;
+}
+
+/* Trong danh sách, CTA là nút chữ son (nhẹ hơn nút mực đặc lặp lại trên mọi thẻ); vẫn cao 44px. */
+.reference-view .reference-card-foot .ana-link-btn {
+  padding: 0 var(--space-10);
+  border-color: var(--transparent);
+  background: var(--transparent);
+  color: var(--accent-ink);
+}
+
+.reference-view .reference-card-foot .ana-link-btn:hover {
+  border-color: var(--transparent);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+
+/* Lưới gọn: chữ và khoảng đệm nhỏ hơn; binh thư xuống dòng đủ tên (cắt "…" khiến tên binh thư không đọc được). */
+.reference-view .team-grid-dense .reference-card-head {
+  gap: var(--space-10);
+  padding: var(--space-14) var(--space-14) var(--space-12);
+}
+
+.reference-view .team-grid-dense .team-name {
+  font: var(--type-card-title-sm);
+}
+
+.reference-view .team-grid-dense .reference-score-wrap {
+  min-width: var(--space-52);
+  padding: var(--space-5) var(--space-6) var(--space-4);
+}
+
+.reference-view .team-grid-dense .reference-score {
+  font: var(--type-score-table);
+}
+
+.reference-view .team-grid-dense .heroes {
+  padding: var(--space-2) var(--space-14);
+}
+
+.reference-view .team-grid-dense .reference-holder {
+  padding: var(--space-8) 0;
+}
+
+.reference-view .team-grid-dense .reference-alternatives {
+  margin: 0 var(--space-14);
+}
+
+.reference-view .team-grid-dense .reference-card-foot {
+  padding-left: var(--space-14);
 }
 
 /* ---------- Bảng (5 cột desktop, hàng thu gọn trên mobile) ---------- */
@@ -3456,10 +3771,8 @@ body[data-page-section="team-khac"] .layout {
     font: var(--type-section-title-mobile);
   }
 
-  .reference-head .reference-scope-controls {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-10);
+  .reference-season-field {
+    width: 100%;
   }
 
   .reference-scope-controls select {
@@ -3478,7 +3791,7 @@ body[data-page-section="team-khac"] .layout {
      vì khối legacy gán order=2 cho mọi `.filter-collapse-toggle`. */
   .reference-toolbar {
     flex-wrap: wrap;
-    gap: var(--space-10);
+    gap: var(--space-10) var(--space-8);
     margin-bottom: var(--space-12);
   }
 
@@ -3541,9 +3854,8 @@ body[data-page-section="team-khac"] .layout {
   }
 
   .reference-filters {
-    gap: var(--space-20);
     margin-bottom: var(--space-16);
-    padding: var(--space-18) var(--space-16);
+    padding: var(--space-8) var(--space-14) var(--space-14);
   }
 
   .reference-filters.collapsed {
@@ -3556,17 +3868,47 @@ body[data-page-section="team-khac"] .layout {
     gap: var(--space-8);
   }
 
+  /* Mobile giữ viên chip chạm 44px; chọn = nền `--select` như chip toàn site. */
   .reference-filters .fchip {
     width: auto;
+    min-height: var(--control-44);
     gap: var(--space-6);
-    padding: 0 var(--space-14);
+    font: var(--type-control);
+    padding: 0 var(--space-8) 0 var(--space-14);
     border-color: var(--line);
     border-radius: var(--radius-999);
     background: var(--panel-3);
+    color: var(--ink);
+  }
+
+  .reference-filters .fchip:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .reference-filters .fchip .fchip-count,
+  .reference-filters .fchip:hover .fchip-count {
+    background: var(--panel);
+  }
+
+  .reference-filters .fchip[aria-pressed="true"] {
+    border-color: var(--select);
+    background: var(--select);
+    color: var(--select-ink);
+    font: var(--type-control);
+  }
+
+  .reference-filters .fchip[aria-pressed="true"] .fchip-count {
+    background: var(--select-hover);
+    color: var(--select-ink);
   }
 
   .reference-filters .fchip-check {
     display: none;
+  }
+
+  .reference-filters .flabel-toggle {
+    min-height: var(--control-44);
   }
 
   .reference-view .team-grid {
@@ -3574,37 +3916,35 @@ body[data-page-section="team-khac"] .layout {
     gap: var(--space-14);
   }
 
-  .reference-view .heroes {
+  .reference-view .heroes,
+  .reference-view .team-grid-dense .heroes {
     padding: 0 var(--space-14);
   }
 
-  .reference-card-head {
-    padding: var(--space-12) var(--space-14) var(--space-10);
+  .reference-view .reference-card-head,
+  .reference-view .team-grid-dense .reference-card-head {
+    padding: var(--space-14) var(--space-14) var(--space-12);
   }
 
-  .reference-view .reference-holder {
-    grid-template-columns: var(--size-col-hero-role) minmax(0, 1fr);
-    column-gap: var(--space-8);
-    row-gap: var(--space-3);
+  /* Bố cục hẹp (vai trò | tên → chiến pháp → binh thư) đến từ container query của thẻ. */
+  .reference-view .reference-holder,
+  .reference-view .team-grid-dense .reference-holder {
     padding: var(--space-9) 0;
   }
 
-  /* A5: vùng bấm của chiến pháp ≥ 44px trên mobile; các nút cách nhau 12px nên không chồng nhau. */
+  /* A5: vùng bấm của chiến pháp ≥ 44px trên mobile; viền trong suốt trên/dưới giữ vùng bấm 44px nhưng
+     chip nhìn thấy chỉ cao 30px. Các nút cách nhau 8px nên không chồng nhau. */
   .reference-view .reference-holder .tactics {
-    column-gap: var(--space-12);
-    row-gap: var(--space-2);
+    column-gap: var(--space-8);
+    row-gap: 0;
   }
 
   .reference-view .reference-holder .t-tactic {
     min-height: var(--control-44);
-    padding: 0 var(--space-2);
+    padding: 0 var(--space-10);
+    border-block: var(--space-7) solid var(--transparent);
+    background-clip: padding-box;
     font: var(--type-hero-name);
-  }
-
-  .reference-view .reference-holder .tactics,
-  .reference-view .reference-holder .bonds,
-  .reference-view .reference-holder .books {
-    grid-column: 2;
   }
 
   .reference-view .reference-holder .books {
@@ -3615,10 +3955,11 @@ body[data-page-section="team-khac"] .layout {
     margin: 0 var(--space-14);
   }
 
-  .reference-card-foot {
+  .reference-view .reference-card-foot,
+  .reference-view .team-grid-dense .reference-card-foot {
     flex-wrap: wrap;
     gap: var(--space-8) var(--space-16);
-    padding: var(--space-9) var(--space-14) var(--space-4);
+    padding: var(--space-9) var(--space-8) var(--space-4) var(--space-14);
   }
 
   .reference-fear {
@@ -6462,15 +6803,15 @@ body[data-page-section="khaihoang"] .layout {
    `season-config-detail` (Phase 2/8). Component mới của phase (xem mục `components`): tool-head,
    tool-notice, tool-text-action, thanh-tien-do, buoc-cong-cu, the-doc-anh, hang-doi-tuong-tu,
    menu-tai-khoan.
-   Artboard: Recruit/RecruitMobile, Analyze/AnalyzeMobile, Roster/RosterMobile. Phạm vi mùa và chi tiết
-   cấu hình trên /soi-doi/, /goi-y-doi/ không có artboard → theo StyleGuide (cùng mức đầu tư Phase 8 2b). */
+   Artboard: Recruit/RecruitMobile, Analyze/AnalyzeMobile, Roster/RosterMobile. Hai công cụ /soi-doi/,
+   /goi-y-doi/ chạy trên dữ liệu đội cũ, không có bộ chọn Mùa / Phiên bản luật. */
 body[data-page-section="recruit-tracker"] .layout,
 body[data-page-section="analyze"] .layout,
 body[data-page-section="roster-recommend"] .layout {
   padding: var(--space-40) var(--space-48) var(--space-56);
 }
 
-/* ---------- Đầu mục công cụ (kicker + h1 serif + lead + chọn Mùa) ---------- */
+/* ---------- Đầu mục công cụ (kicker + h1 serif + lead) ---------- */
 .tool-head {
   display: flex;
   align-items: flex-end;
@@ -6482,33 +6823,6 @@ body[data-page-section="roster-recommend"] .layout {
 
 .tool-head .reference-head-text {
   max-width: 720px; /* con số artboard (Recruit.dc.html:33, Analyze.dc.html, Roster.dc.html) — tiền lệ khối Landing */
-}
-
-.tool-head .season-controls {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: var(--space-8);
-  margin: 0;
-}
-
-.tool-head .season-controls[hidden] {
-  display: none;
-}
-
-.tool-head .reference-scope-controls {
-  display: flex;
-  flex: none;
-  gap: var(--space-12);
-  margin: 0;
-}
-
-.tool-head .reference-scope-controls select {
-  min-width: 240px; /* con số artboard (Coexist.dc.html) ngoài thang token — tiền lệ khối Landing */
-}
-
-.tool-head .scope-note {
-  text-align: right;
 }
 
 /* ---------- Thông báo đầu trang (khiên + chữ) ---------- */
@@ -7164,11 +7478,6 @@ body[data-page-section="roster-recommend"] .layout {
   gap: var(--space-10);
 }
 
-.ana-read-title {
-  margin: 0;
-  font: var(--type-strong);
-}
-
 .ana-heroes {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -7701,25 +8010,6 @@ body[data-page-section="roster-recommend"] .layout {
 
   .tool-head .reference-title {
     font: var(--type-detail-title);
-  }
-
-  .tool-head .season-controls {
-    align-items: stretch;
-  }
-
-  .tool-head .reference-scope-controls {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-8);
-  }
-
-  .tool-head .reference-scope-controls select {
-    width: 100%;
-    min-width: 0;
-  }
-
-  .tool-head .scope-note {
-    text-align: left;
   }
 
   .tool-notice {

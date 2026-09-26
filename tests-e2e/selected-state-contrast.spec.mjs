@@ -125,6 +125,7 @@ test('chip phe đang bật: ô vuông phe và số đếm đọc được ở c�
           dot: dot.backgroundColor,
           dotWidth: Number.parseFloat(dot.width),
           count: count ? getComputedStyle(count).color : null,
+          countBg: count ? getComputedStyle(count).backgroundColor : null,
           checkBg: check ? getComputedStyle(check).backgroundColor : null,
           checkInk: check ? getComputedStyle(check, '::after').color : null,
         };
@@ -133,7 +134,9 @@ test('chip phe đang bật: ô vuông phe và số đếm đọc được ở c�
       expect(measured, label).toBeTruthy();
       expect(measured.dotWidth, `${label}: ô vuông phe được vẽ`).toBe(8);
       expect(contrast(measured.ink, measured.chipBg), `${label}: chữ trên nền`).toBeGreaterThanOrEqual(MIN_TEXT);
-      if (measured.count) expect(contrast(measured.count, measured.chipBg), `${label}: số đếm`).toBeGreaterThanOrEqual(MIN_TEXT);
+      // Số đếm có thể là viên có nền riêng (sidebar desktop): đo trên nền gần nhất thực sự vẽ.
+      const countBg = measured.countBg && measured.countBg !== 'rgba(0, 0, 0, 0)' ? measured.countBg : measured.chipBg;
+      if (measured.count) expect(contrast(measured.count, countBg), `${label}: số đếm`).toBeGreaterThanOrEqual(MIN_TEXT);
       if (measured.checkInk && measured.checkBg) {
         expect(contrast(measured.checkInk, measured.checkBg), `${label}: dấu ✓`).toBeGreaterThanOrEqual(MIN_TEXT);
       }

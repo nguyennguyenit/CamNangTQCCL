@@ -1,4 +1,4 @@
-// Lựa chọn Thẻ/Bảng của hai trang danh sách đội (Đội chuẩn / Đội khác).
+// Kiểu hiển thị của hai trang danh sách đội (Đội chuẩn / Đội khác): Thẻ 2 cột, Lưới 4 cột, Bảng.
 // Thứ tự quyết định: query `view` của URL > giá trị đã lưu > mặc định Thẻ.
 // Tên khóa theo quy ước `tqccl…vN` như js/roster-scan-state.js; lỗi storage chỉ làm mất ghi nhớ,
 // không bao giờ chặn render.
@@ -6,14 +6,16 @@
 export const TEAM_VIEW_STORAGE_KEY = 'tqccl.teamView.v1';
 export const TEAM_VIEW_TABLE = 'bang';
 export const TEAM_VIEW_CARDS = 'the';
+export const TEAM_VIEW_GRID = 'luoi';
 
 /** Giá trị hợp lệ duy nhất của `view`; tra bằng own-property nên chuỗi lạ không lọt qua. */
 const VIEWS = Object.freeze({
   [TEAM_VIEW_CARDS]: TEAM_VIEW_CARDS,
+  [TEAM_VIEW_GRID]: TEAM_VIEW_GRID,
   [TEAM_VIEW_TABLE]: TEAM_VIEW_TABLE,
 });
 
-/** `'the'` / `'bang'` khi hợp lệ, `null` khi thiếu hoặc không hợp lệ. */
+/** `'the'` / `'luoi'` / `'bang'` khi hợp lệ, `null` khi thiếu hoặc không hợp lệ. */
 export function canonicalTeamView(value) {
   return typeof value === 'string' && Object.hasOwn(VIEWS, value) ? VIEWS[value] : null;
 }

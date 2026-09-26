@@ -171,29 +171,6 @@ test('detail compares real inventory and changing a selected tactic removes its 
   await page.getByRole('button',{name:'Đối chiếu kho của tôi'}).click();
   await expect(page.locator('.season-inventory-comparison')).toContainText('Thiếu chiến pháp: Bảy');
 });
-test('roster runs exact configs, then scope change clears portfolio and confirmation while retaining inventory', async ({page}) => {
-  await controlledBundle(page);
-  await page.addInitScript(()=>localStorage.setItem('tqccl.rosterRecommend.scanState.v1', JSON.stringify({ownedHeroes:[{name:'Anh'},{name:'Bình'},{name:'Cường'}],ownedTactics:['Một','Hai','Ba','Bốn','Năm','Sáu'].map(name=>({name})),lockedTeams:[],confirmed:true})));
-  await page.goto('/goi-y-doi/?scenario=scenario-a&ruleset=rules-a');
-  await page.getByRole('button',{name:'Xác nhận dữ liệu đã đọc'}).click();
-  await page.getByRole('button',{name:'Gợi ý 5 đội',exact:true}).click();
-  await expect(page.locator('.roster-results > section:first-child [data-config-id="config-a"]')).toHaveCount(1);
-  await expect(page.locator('.roster-results')).toContainText('Điểm SGSDeck: 132.5');
-  await page.locator('#season-ruleset').selectOption('');
-  await expect(page.locator('.roster-results')).toHaveCount(0);
-  await expect(page.getByRole('button',{name:'Gợi ý 5 đội',exact:true})).toBeDisabled();
-  await expect(page.locator('#section-roster-recommend')).toContainText('Chọn phiên bản luật');
-  const state = await page.evaluate(()=>JSON.parse(localStorage.getItem('tqccl.rosterRecommend.scanState.v1')));
-  expect(state.ownedHeroes).toHaveLength(3);
-  expect(state.confirmed).toBe(false);
-});
-test('scenario-only analysis blocks matching and offers explicit out-of-scope reference choice', async ({page}) => {
-  await controlledBundle(page);
-  await page.goto('/soi-doi/?scenario=scenario-a');
-  await expect(page.locator('#section-analyze .season-gameplay-notice')).toContainText('Chọn phiên bản luật');
-  await expect(page.getByRole('button',{name:'Soi đội',exact:true})).toBeDisabled();
-  await expect(page.getByLabel('Xem đội ngoài phạm vi để tham khảo')).toBeVisible();
-});
 test('coexist keeps only the season filter and ignores stale filter query', async ({page}) => {
   await controlledBundle(page);
   await page.goto('/cung-ton/?scenario=scenario-a&q=sentinel-missing&source=legacy');
@@ -212,28 +189,9 @@ test('invalid scope and mixed bundle never activate scoped cards or gameplay', a
   await expect(page.locator('#season-config-detail')).toHaveCount(0);
   await expect(page.locator('#section-team-khac [data-config-id]')).toHaveCount(0);
   await page.route('**/data/season-team-configs.json',route=>route.fulfill({json:[]}));
-  await page.goto('/goi-y-doi/?scenario=scenario-a&ruleset=rules-a');
+  await page.goto('/doi-khac/?scenario=scenario-a&ruleset=rules-a');
   await expect(page.locator('#season-summary')).toContainText('Không xác thực');
-  await expect(page.getByRole('button',{name:'Xác nhận dữ liệu đã đọc'})).toBeDisabled();
-});
-test('late roster scan response cannot restore scope confirmation or inventory changes', async ({page}) => {
-  await controlledBundle(page);
-  await page.route('https://challenges.cloudflare.com/**',route=>route.fulfill({contentType:'application/javascript',body:"window.turnstile={render(_node,options){options.callback('fixture-token');},reset(){}};"}));
-  let release, arrived;
-  const requestArrived=new Promise(resolve=>{arrived=resolve;});
-  const gate=new Promise(resolve=>{release=resolve;});
-  await page.route('https://tqccl-vision-proxy.nguyennlt-ncc.workers.dev/**',async route=>{arrived();await gate;await route.fulfill({json:{heroes:[{name:'Anh',chinese:'Anh'}]}});});
-  await page.goto('/goi-y-doi/?scenario=scenario-a&ruleset=rules-a');
-  await page.locator('.roster-scan-card input[type="file"]').first().setInputFiles({name:'scan.png',mimeType:'image/png',buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAEAQH/XP8W3QAAAABJRU5ErkJggg==','base64')});
-  await page.getByRole('button',{name:'Đọc Tướng',exact:true}).click();
-  await requestArrived;
-  await page.locator('#season-ruleset').selectOption('');
-  release();
-  await expect(page.getByRole('button',{name:'Đọc Tướng',exact:true})).toBeEnabled();
-  await expect(page.locator('.roster-review-panel').first()).toContainText('Chưa đọc tướng');
-  await expect(page.getByRole('button',{name:'Xác nhận dữ liệu đã đọc'})).toBeDisabled();
-  const stored=await page.evaluate(()=>JSON.parse(localStorage.getItem('tqccl.rosterRecommend.scanState.v1')));
-  expect(stored.ownedHeroes).toEqual([]);expect(stored.confirmed).toBe(false);
+  await expect(page.locator('#section-team-khac [data-config-id]')).toHaveCount(0);
 });
 for (const width of [320,375,768,1024]) test(`season controls and details remain usable at ${width}px in both themes`,async({page},testInfo)=>{
   await controlledBundle(page);
@@ -265,23 +223,6 @@ test('closing details after a search preserves current filters and returns keybo
 });
 
 import { refreshConfigProofs } from '../tests-js/fixtures/season-fixtures.mjs';
-for (const count of [500,501]) test(`roster enforces scoped candidate boundary ${count}`,async({page})=>{
-  const data=await seasonConsumerFixture();
-  const original=data['season-team-configs'][0], evaluation=data['season-team-evaluations'][0];
-  for(let index=2;index<count;index++){
-    const config={...structuredClone(original),id:`config-limit-${index}`};
-    data['season-team-configs'].push(config);
-    data['season-team-evaluations'].push({...structuredClone(evaluation),id:`eval-limit-${index}`,configId:config.id,sourceScore:null});
-  }
-  refreshConfigProofs(data);
-  await controlledBundle(page,data);
-  await page.addInitScript(()=>localStorage.setItem('tqccl.rosterRecommend.scanState.v1',JSON.stringify({ownedHeroes:['Anh','Bình','Cường'].map(name=>({name})),ownedTactics:['Một','Hai','Ba','Bốn','Năm','Sáu'].map(name=>({name})),lockedTeams:[],confirmed:false})));
-  await page.goto('/goi-y-doi/?scenario=scenario-a&ruleset=rules-a');
-  await page.getByRole('button',{name:'Xác nhận dữ liệu đã đọc'}).click();
-  await page.getByRole('button',{name:'Gợi ý 5 đội',exact:true}).click();
-  if(count===500) await expect(page.locator('.roster-results > section:first-child [data-config-id="config-a"]')).toHaveCount(1);
-  else {await expect(page.locator('#section-roster-recommend .error')).toContainText('500');await expect(page.locator('.roster-results')).toHaveCount(0);}
-});
 test('retired legacy tier selectors stay inert and the browser survives a missing tier artifact',async({page})=>{
   const section=page.locator('#section-team-khac');
   await page.goto('/doi-khac/');
@@ -296,19 +237,6 @@ test('retired legacy tier selectors stay inert and the browser survives a missin
   await expect(section.locator('.team-card').first()).toBeVisible();
   await expect(section.locator('.stats')).toHaveText(baseline);
   await expect(section.locator('.error')).toHaveCount(0);
-});
-test('scoped recommendation exposes usable add-team actions and original source score',async({page})=>{
-  await controlledBundle(page);
-  await page.addInitScript(()=>localStorage.setItem('tqccl.rosterRecommend.scanState.v1',JSON.stringify({ownedHeroes:['Anh','Bình','Cường'].map(name=>({name})),ownedTactics:['Một','Hai','Ba','Bốn','Năm','Sáu'].map(name=>({name})),lockedTeams:[],confirmed:false})));
-  await page.goto('/goi-y-doi/?scenario=scenario-a&ruleset=rules-a');
-  await page.getByRole('button',{name:'Xác nhận dữ liệu đã đọc'}).click();
-  await page.getByRole('button',{name:'Gợi ý 5 đội',exact:true}).click();
-  const added=page.locator('.roster-results > section').nth(1);
-  await expect(added.getByRole('button',{name:'Mở đội'})).toHaveCount(1);
-  await expect(added).toContainText('Điểm SGSDeck: 132.5');
-  await added.getByRole('button',{name:'Mở đội'}).click();
-  await expect(page).toHaveURL(/config=config-a/);
-  await expect(page.locator('#season-config-detail')).toBeVisible();
 });
 import { seasonFingerprint, configFingerprintProjection } from '../js/season-context.js';
 test('card score follows its displayed hero selection rather than another valid scored alternative',async({page})=>{
@@ -343,13 +271,6 @@ test('validated source score with unknown upstream season still opens its exact 
   await expect(page.locator('#season-config-detail .sgsdeck-score')).toHaveText('Điểm SGSDeck: 132.5');
   await expect(page.locator('#section-team-khac .error')).toHaveCount(0);
 });
-test('unavailable season bundle keeps no-context legacy gameplay with an ordinary search query',async({page})=>{
-  await page.route('**/data/season-evidence.json',route=>route.fulfill({status:503,body:''}));
-  await page.goto('/goi-y-doi/?q=legacy');
-  await expect(page.locator('#season-summary')).toContainText('Không xác thực');
-  await expect(page.getByRole('button',{name:'Xác nhận dữ liệu đã đọc'})).toBeEnabled();
-});
-
 for(const width of [375,1280]) test(`real Binh Dien review screenshot at ${width}px`,async({page},testInfo)=>{
   await page.setViewportSize({width,height:900});await page.goto('/cung-ton/?scenario=binh-dien-xuan-thu');
   await expect(page.locator('#section-coexist .coexist-group-chip')).toHaveCount(5);
@@ -443,73 +364,6 @@ test('scenario history re-renders the scoped surface on Back and Forward',async(
   await expect(scenario).toHaveValue(after.scenario);
   await expect(summary).toHaveText(after.summary);
   await expect(groups).toHaveCount(after.groups);
-});
-
-test('ruleset history re-renders the scoped surface on Back and Forward',async({page})=>{
-  await controlledBundle(page);
-  const scenario=page.locator('#season-scenario');
-  const ruleset=page.locator('#season-ruleset');
-  const summary=page.locator('#season-summary');
-  const query=key=>page.evaluate(k=>new URL(location.href).searchParams.get(k),key);
-  await page.goto('/soi-doi/?scenario=scenario-a&ruleset=rules-a');
-  await expect(page.locator('#section-analyze')).toBeVisible();
-  // Soi đội hiện đủ cả hai bộ chọn (Cùng Tồn ẩn Phiên bản luật theo thiết kế).
-  await expect(scenario).toBeVisible();
-  await expect(ruleset).toBeVisible();
-  await expect(ruleset).toHaveValue('rules-a');
-  const withRuleset=(await summary.textContent()).trim();
-
-  // Bỏ phiên bản luật: một pushState thật, đổi cả URL lẫn phạm vi đang render.
-  await ruleset.selectOption('');
-  await expect.poll(()=>query('ruleset')).toBeNull();
-  await expect(ruleset).toHaveValue('');
-  const withoutRuleset=(await summary.textContent()).trim();
-  expect(withoutRuleset).not.toBe(withRuleset);
-
-  await page.goBack();
-  await expect.poll(()=>query('ruleset')).toBe('rules-a');
-  await expect(ruleset).toHaveValue('rules-a');
-  await expect(summary).toHaveText(withRuleset);
-
-  await page.goForward();
-  await expect.poll(()=>query('ruleset')).toBeNull();
-  await expect(ruleset).toHaveValue('');
-  await expect(summary).toHaveText(withoutRuleset);
-});
-
-test('config detail visibility follows history on Back and Forward',async({page})=>{
-  await controlledBundle(page);
-  await page.addInitScript(()=>localStorage.setItem('tqccl.rosterRecommend.scanState.v1',JSON.stringify({ownedHeroes:['Anh','Bình','Cường'].map(name=>({name})),ownedTactics:['Một','Hai','Ba','Bốn','Năm','Sáu'].map(name=>({name})),lockedTeams:[],confirmed:false})));
-  const detail=page.locator('#season-config-detail');
-  await page.goto('/goi-y-doi/?scenario=scenario-a&ruleset=rules-a');
-  await expect(page.locator('#section-roster-recommend')).toBeVisible();
-  await page.getByRole('button',{name:'Xác nhận dữ liệu đã đọc'}).click();
-  await page.getByRole('button',{name:'Gợi ý 5 đội',exact:true}).click();
-  const scoped=page.url();
-  await expect(detail).toHaveCount(0);
-
-  // Mở chi tiết cấu hình từ nút thật của công cụ: `openConfig` pushState thêm một mục lịch sử.
-  await page.locator('.roster-results > section').nth(1).getByRole('button',{name:'Mở đội'}).click();
-  await expect(page).toHaveURL(/config=config-a/);
-  await expect(detail).toBeVisible();
-  const opened=page.url();
-
-  // Back: URL mất `config` và chi tiết phải ẩn theo; bề mặt scoped vẫn còn render.
-  await page.goBack();
-  await expect(page).toHaveURL(scoped);
-  await expect(detail).toHaveCount(0);
-  await expect(page.locator('.roster-results > section').first()).toBeVisible();
-
-  // Forward: URL có `config` trở lại và chi tiết phải được render lại.
-  await page.goForward();
-  await expect(page).toHaveURL(opened);
-  await expect(detail).toBeVisible();
-  await expect(detail).toContainText('Cấu hình: config-a · scenario-a · rules-a');
-
-  // Đóng bằng nút trong chi tiết: replaceState bỏ `config` và chi tiết biến mất ngay.
-  await page.getByRole('button',{name:'Đóng chi tiết'}).click();
-  await expect(detail).toHaveCount(0);
-  expect(new URL(page.url()).searchParams.has('config')).toBe(false);
 });
 
 /* ---------- Phase 8: chọn kịch bản/nhóm và ô tổng quan Cùng Tồn ---------- */
@@ -694,55 +548,34 @@ for (const width of [1440, 320]) {
   });
 }
 
-/* ---------- Phase 9: phạm vi mùa + chi tiết cấu hình trên 2 trang công cụ ---------- */
+/* ---------- Hai trang công cụ: không có phạm vi mùa ---------- */
 
-test('tool pages keep the season scope and config detail in Phase 8 shape', async ({page}) => {
+test('config-detail inventory link opens the roster tool without season keys', async ({page}) => {
   await controlledBundle(page);
-  for (const path of ['/soi-doi/?scenario=scenario-a&ruleset=rules-a&config=config-a', '/goi-y-doi/?scenario=scenario-a&ruleset=rules-a&config=config-a']) {
-    await page.goto(path);
-    // Bộ chọn Mùa nằm trong đầu mục công cụ (cùng hình dạng header Phase 5/8, không có artboard riêng).
-    const head = page.locator('.tool-head');
-    await expect(head).toBeVisible();
-    await expect(head.locator('#season-controls #season-scenario')).toBeVisible();
-    await expect(head.locator('#season-controls label[for="season-scenario"]')).toBeVisible();
-    const select = await head.locator('#season-scenario').evaluate(node => ({
-      height: node.getBoundingClientRect().height,
-      background: getComputedStyle(node).backgroundColor,
-      radius: getComputedStyle(node).borderRadius,
-    }));
-    expect(select.height).toBeGreaterThanOrEqual(44);
-    expect(select.background).not.toBe('rgba(0, 0, 0, 0)');
-    expect(select.radius).toBe('10px');
-
-    // Chi tiết cấu hình chỉ áp token (nền thẻ, viền, bán kính) — không bố cục lại.
-    const detail = page.locator('#season-config-detail');
-    await expect(detail).toBeVisible();
-    await expect(detail).toContainText('Cấu hình: config-a · scenario-a · rules-a');
-    const panel = await detail.evaluate(node => ({
-      background: getComputedStyle(node).backgroundColor,
-      radius: getComputedStyle(node).borderRadius,
-    }));
-    const tokens = await page.evaluate(() => {
-      const root = getComputedStyle(document.documentElement);
-      return { panel: root.getPropertyValue('--panel').trim(), radius: root.getPropertyValue('--radius-10').trim() };
-    });
-    expect(panel.background).not.toBe('rgba(0, 0, 0, 0)');
-    expect(tokens.panel).not.toBe('');
-    expect(panel.radius).toBe(tokens.radius);
-  }
-});
-
-test('config-detail inventory link to the roster tool keeps scenario and ruleset', async ({page}) => {
-  await controlledBundle(page);
-  await page.goto('/soi-doi/?scenario=scenario-a&ruleset=rules-a&config=config-a');
+  await page.goto('/doi-khac/?scenario=scenario-a&ruleset=rules-a&config=config-a');
   // Kho đang trống: chi tiết cấu hình đề nghị mở công cụ gợi ý đội để nhập kho.
   await page.getByRole('button', {name: 'Đối chiếu kho của tôi'}).click();
   await expect(page.locator('.season-inventory-comparison')).toContainText('Chưa có kho để đối chiếu.');
   const link = page.getByRole('link', {name: 'Mở scan / nhập kho'});
-  await expect(link).toBeVisible();
-  await expect(link).toHaveAttribute('href', '/goi-y-doi/?scenario=scenario-a&ruleset=rules-a');
+  await expect(link).toHaveAttribute('href', '/goi-y-doi/');
   await link.click();
-  await expect(page).toHaveURL('/goi-y-doi/?scenario=scenario-a&ruleset=rules-a');
-  await expect(page.locator('#season-summary')).toContainText('Kịch bản A · Luật A');
-  await expect(page.locator('#section-roster-recommend .tool-head #season-scenario')).toHaveValue('scenario-a');
+  await expect(page).toHaveURL('/goi-y-doi/');
+  await expect(page.locator('#section-roster-recommend .tool-head')).toBeVisible();
+});
+
+test('tool pages drop old season links and run on the legacy teams', async ({page}) => {
+  await page.goto('/soi-doi/?scenario=x&ruleset=y&config=z&q=giu');
+  await expect(page.locator('body')).toHaveAttribute('data-boot', 'ready');
+  await expect(page).toHaveURL('/soi-doi/?q=giu');
+  await expect(page.locator('#season-controls, #season-scenario, #season-ruleset, #season-summary')).toHaveCount(0);
+  await expect(page.locator('#section-analyze .ana-drop')).toBeVisible();
+  await expect(page.locator('#section-analyze')).not.toContainText('Tất cả — tham khảo');
+
+  await page.goto('/goi-y-doi/?scenario=x&ruleset=y');
+  await expect(page.locator('body')).toHaveAttribute('data-boot', 'ready');
+  await expect(page).toHaveURL('/goi-y-doi/');
+  await expect(page.locator('#season-controls, #season-scenario, #season-ruleset, #season-summary')).toHaveCount(0);
+  await page.getByRole('button', {name: 'Xác nhận dữ liệu đã đọc'}).click();
+  await page.getByRole('button', {name: 'Gợi ý 5 đội', exact: true}).click();
+  await expect(page.locator('#section-roster-recommend .roster-results')).toBeVisible();
 });

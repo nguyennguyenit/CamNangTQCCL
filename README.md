@@ -6,11 +6,11 @@ Website tĩnh tra cứu đội hình, tướng, chiến pháp và hỗ trợ qu�
 
 ## Tính năng
 
-- Landing ở `/` và **8 trang mục tĩnh** có đường dẫn riêng: `/doi-chuan/`, `/doi-khac/`, `/cung-ton/`, `/khai-hoang/`, `/tra-cuu/`, `/chieu-mo/`, `/soi-doi/`, `/goi-y-doi/`. Trạng thái nằm trên query của đúng trang (`?season=`, `?q=`, `?group=&id=`, `?view=bang`, `?config=`…).
+- Landing ở `/` và **8 trang mục tĩnh** có đường dẫn riêng: `/doi-chuan/`, `/doi-khac/`, `/cung-ton/`, `/khai-hoang/`, `/tra-cuu/`, `/chieu-mo/`, `/soi-doi/`, `/goi-y-doi/`. Trạng thái nằm trên query của đúng trang (`?season=`, `?q=`, `?group=&id=`, `?view=luoi|bang`, `?config=`…).
 - Hash cũ của SPA (`#team-pk`, `#meta-cu`, `#khaihoang`, `#lookup?group=…`, `#heroes`, `#tactics`…) và URL `/` không hash có khóa cũ được Landing chuyển tiếp sang đường dẫn mới, giữ query; bảng chuyển tiếp ở `js/legacy-routes.js`.
-- Hai trang danh sách đội dùng chung một browser: search toàn văn, select mùa/danh mục nguồn và chip facet (loại binh, phe, nhóm, nguồn) đếm theo phạm vi đang chọn, chuyển **Thẻ / Bảng** (`?view=bang`), mobile thu gọn vùng lọc sau nút `Bộ lọc`.
+- Hai trang danh sách đội dùng chung một browser và một kiểu thẻ: search toàn văn, một ô chọn mùa nguồn và chip facet (loại binh, phe, nhóm, nguồn) đếm theo mùa đang chọn, chuyển **2 cột / 4 cột / Bảng** (`?view=luoi`, `?view=bang`), mobile thu gọn vùng lọc sau nút `Bộ lọc`.
 - Mỗi đội có trang chi tiết tĩnh riêng dưới `/doi-chuan/<mùa>-<handle>/`, `/doi-khac/<handle>/` hoặc `/khai-hoang/<handle>/`; handle tiếng Việt đóng băng trong `pipeline/team-route-handles.json` nên sửa `displayNameVi` không đổi URL. URL cũ `/teams/…` và URL ngoài danh sách sinh sẵn trả trang 404 tĩnh, không redirect.
-- Chọn kịch bản/phiên bản luật dùng chung cho Đội chuẩn, Đội khác, Cùng Tồn, Soi đội và Gợi ý đội; URL giữ phạm vi, bộ lọc và cấu hình đang mở. Khai hoang dùng bản bảo trì mới nhất.
+- Chọn kịch bản/phiên bản luật dùng chung cho Đội chuẩn, Đội khác và Cùng Tồn; URL giữ phạm vi, bộ lọc và cấu hình đang mở. Soi đội và Gợi ý đội không có bộ chọn mùa, luôn chạy trên dữ liệu đội cũ. Khai hoang dùng bản bảo trì mới nhất.
 - Tra cứu local 202 tướng, 406 chiến pháp và bốn nhóm catalog bổ sung; sáu chip nhóm, hỗ trợ tên Việt/Hán-Việt/Hán, paging, hộp thoại hồ sơ và khối "Trong cẩm nang" tính lúc build.
 - Tracker chiêu mộ lưu nhiều account, pity và lịch sử trong `localStorage`; có xuất/nhập JSON.
 - Soi screenshot qua Worker + DashScope Qwen; frontend map kết quả và đối chiếu đội local. AI chỉ trích xuất dữ liệu từ ảnh, không chọn team.

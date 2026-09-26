@@ -634,7 +634,7 @@ test('a shared link without origin still offers the matching family scope',async
   const {index}=await publication(request);
   const handles=await routeHandles(request);
   const row=index.records[0];
-  const recommendedReturn=`/doi-chuan/?season=${encodeURIComponent(row.sourceSeasonId)}&category=${encodeURIComponent(row.sourceCategoryId)}`;
+  const recommendedReturn=`/doi-chuan/?season=${encodeURIComponent(row.sourceSeasonId)}`;
   await page.goto(recommendedPath(handles,row.sourceConfigId));
   await expect(page.locator('#team-return-link')).toHaveAttribute('href',recommendedReturn);
   const teams=await rawTeams(request);
@@ -713,10 +713,10 @@ test('old reference links replace into dedicated routes while config keeps gamep
   await expect(page.locator('#team-detail-body')).toBeHidden();
   await expect(page.locator('#team-detail-root a[href="'+legacyDetail+'"]')).toBeVisible();
 
-  await page.goto(`/soi-doi/?config=missing&legacyTeam=${legacyTeamId}`);
+  await page.goto(`/cung-ton/?config=missing&legacyTeam=${legacyTeamId}`);
   await expect(page).not.toHaveURL(/doi-khac/);
   await expect(page.locator('#season-detail-mount')).toContainText('Không có cấu hình này');
-  await page.goto(`/soi-doi/?config=missing&detail=${encodeURIComponent(row.sourceConfigId)}`);
+  await page.goto(`/cung-ton/?config=missing&detail=${encodeURIComponent(row.sourceConfigId)}`);
   await expect(page).not.toHaveURL(/doi-chuan/);
 });
 

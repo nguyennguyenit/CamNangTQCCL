@@ -1,6 +1,20 @@
 # Project Changelog
 
-## 2026-09-26
+## 2026-09-26 (thẻ đội + lưới 4 cột)
+
+### Changed
+
+- Thẻ đội của `/doi-chuan/` và `/doi-khac/` dựng lại chung một bố cục: gáy thẻ tô màu phe, điểm nguồn nằm trong ô ấn son viền kép (nhãn "ĐIỂM"), đội chưa có điểm dùng cùng ô ấn viền đứt nét "—" (trình đọc màn hình đọc "Chưa có điểm nguồn") nên đầu thẻ hai trang cùng hình dạng; vai trò Chủ tướng chữ son; chân thẻ nền giấy nhạt với CTA "Chi tiết" dạng nút chữ son 44px thay cho nút mực đặc lặp lại.
+- Dòng tướng co giãn theo bề rộng thẻ bằng container query: thẻ ≥ 480px giữ ba cột `vai trò | tên | chiến pháp + binh thư`, thẻ hẹp hơn (lưới gọn, tablet, mobile) xếp tên → chiến pháp → binh thư.
+- Chuyển kiểu hiển thị thành ba nút `2 cột` / `4 cột` / `Bảng`: `4 cột` (`?view=luoi`) là lưới thẻ gọn, số cột theo bề rộng vùng kết quả (4 ở 1440px, 3 ở 1280px, 2 ở 1024px, 1 ở mobile); lựa chọn nhớ chung cho hai trang qua `tqccl.teamView.v1`, URL chỉ mang `view=luoi|bang`. Dưới 1280px nút chỉ còn icon.
+- Bản dịch: 5 obligation `authored-vi` của nút chuyển kiểu hiển thị (`2 cột`, `4 cột`, `Bảng` + aria), policy `site-vi-260926-the-doi-luoi`, publish generation `1a4fd71a…` và re-pin `pipeline/team-route-handles.json`; probe `tokens.json` (`the-doi`, `dong-tuong`, `chuyen-the-bang`, `nut-chinh`) cập nhật theo thẻ mới.
+- Dòng tướng: nhãn biến thể `40Y`/`SP`/`CO` đổi thành con dấu viền mảnh cùng màu chữ (nền trong suốt; CO dùng token mới `--khien-ink` để đạt ≥ 5,4:1) và luôn cùng hàng với tên tướng; ở thẻ rộng ô tên phủ mọi hàng nên tên nhiều dòng không còn đẩy dòng binh thư xuống. Chiến pháp thành chip son nhạt (mobile: vùng bấm 44px, chip nhìn thấy 30px), tên binh thư chuyển sang mực đậm `type.tag` để nổi hơn nhãn "Binh thư ·".
+- Sidebar lọc `/doi-chuan/`, `/doi-khac/` gọn lại: hàng 36px thay cho 44px, nhóm ngăn bằng vạch mảnh, số đếm thành viên nhỏ canh phải, mục đang bật dùng dải nền nhạt + ô tích đặc thay cho cả hàng đen, `Xóa lọc` ẩn khi không có gì để xóa. Panel cao 572px → 438px ở `/doi-chuan/`. Mobile giữ chip 44px.
+- Bỏ bộ chọn `Danh mục` ở `/doi-chuan/`, `/doi-khac/`: danh sách luôn gộp mọi danh mục nguồn; `?category=` cũ bị bỏ khỏi URL lúc tải trang và không lọc gì, link quay lại từ trang chi tiết chỉ còn `season`. Ô `Mùa nguồn` thành một khung gọn (nhãn nhỏ trên giá trị, mũi tên phải, cả khung là vùng bấm). Bản dịch: bỏ obligation `ui:recommended/category-label`, policy `site-vi-260926-bo-danh-muc`, publish generation `0ddbd034…` và re-pin `pipeline/team-route-handles.json`.
+- Lưới `4 cột`: dòng binh thư xuống dòng hiện đủ tên thay cho cắt một dòng "…" (tên binh thư thứ ba trở đi trước đây không đọc được).
+- Bỏ bộ chọn `Mùa` / `Phiên bản luật` và dòng "Tất cả — tham khảo" khỏi hai công cụ `/soi-doi/`, `/goi-y-doi/`: công cụ luôn đối chiếu/gợi ý trên dữ liệu đội cũ, bỏ ô "Xem đội ngoài phạm vi để tham khảo", thông báo phạm vi và ô "Thử nghiệm cấu hình chưa xếp hạng"; `?scenario=`, `?ruleset=`, `?config=` cũ bị bỏ khỏi URL lúc tải, link "Mở scan / nhập kho" trong chi tiết cấu hình trỏ `/goi-y-doi/`. Hai trang không còn nhận `#season-controls`/`#season-artifact-hashes`. Bản dịch: bỏ obligation `ui:analyze/outside-heading`, `ui:analyze/outside-note`, policy `site-vi-260926-bo-mua-cong-cu`, publish generation `f93a51ea…` và re-pin `pipeline/team-route-handles.json`.
+
+## 2026-09-26 (Sổ binh pháp)
 
 ### Changed
 

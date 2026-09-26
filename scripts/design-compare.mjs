@@ -77,9 +77,6 @@ const PAIRS = [
   { phase: 9, name: 'Recruit-320', path: '/chieu-mo/', width: 320, ready: '#section-recruit-tracker .rt-section' },
   { phase: 9, name: 'Analyze-320', path: '/soi-doi/', width: 320, ready: '#section-analyze .ana-card' },
   { phase: 9, name: 'Roster-320', path: '/goi-y-doi/', width: 320, ready: '#section-roster-recommend .roster-steps' },
-  // Phạm vi mùa + chi tiết cấu hình trên 2 trang công cụ: không có artboard, theo StyleGuide (Phase 8 bước 2b).
-  { phase: 9, name: 'SoiDoi-season-1440', path: '/soi-doi/?scenario=binh-dien-xuan-thu', width: 1440, ready: '#section-analyze .tool-head #season-controls' },
-  { phase: 9, name: 'GoiYDoi-season-1440', path: '/goi-y-doi/?scenario=binh-dien-xuan-thu', width: 1440, ready: '#section-roster-recommend .tool-head #season-controls' },
 ];
 
 function parseArgs(argv) {

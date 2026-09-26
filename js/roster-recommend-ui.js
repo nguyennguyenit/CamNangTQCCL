@@ -10,7 +10,6 @@ import {
   removeItem,
   serializeRosterScanState,
 } from "./roster-scan-state.js";
-import { projectSeasonCandidates, resolveSelectionScore, selectionFromEntry } from './season-context.js';
 import { recommendTeams } from "./team-recommend-engine.js";
 
 const SCAN_TYPES = [
@@ -62,13 +61,8 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   const doc = mount.ownerDocument ?? globalThis.document;
   const compact = globalThis.matchMedia?.(COMPACT_QUERY) ?? null;
   let state = loadState();
-  let scope = null;
-  let generation = 0;
-  let experimentalUntiered = false;
   let reviewExpanded = false;
   let recommended = false;
-  const scopeNotice = el('p',{class:'season-gameplay-notice',role:'status'});
-  const gameplayAllowed = () => !scope || scope.browse?.kind === 'all-reference' || scope.browse?.kind === 'verified-pair';
   let token = "";
   let preference = "meta";
   const tsBox = el("div", { class: "ana-turnstile" });
@@ -129,14 +123,11 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
         status.textContent = "Xác thực Turnstile trước.";
         return;
       }
-      const started = generation;
       btn.disabled = true;
       status.textContent = "Đang đọc ảnh...";
       try {
         const imageDataUrl = await compressImage(file);
-        if (started !== generation) return;
         const raw = await callWorker(imageDataUrl, token, scan.mode);
-        if (started !== generation) return;
         const mapped = scan.id === "heroes"
           ? mapHeroesScan(raw, { heroesDict, tacticsDict })
           : scan.id === "tactics"
@@ -148,10 +139,8 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
         rerender();
         status.textContent = "Đã đọc xong. Kiểm tra lại dữ liệu bên dưới.";
       } catch (err) {
-        if (started !== generation) return;
         status.textContent = describeAnalyzeError(err, ROSTER_PROVIDER_ERROR);
       } finally {
-        if (started !== generation) { btn.disabled=false; return; }
         token = "";
         if (window.turnstile) window.turnstile.reset(tsBox);
         btn.disabled = false;
@@ -314,28 +303,17 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     el("option", { value: "redStars" }, "Nhiều hột"),
   ]);
 
-  const untiered = el('input',{type:'checkbox','aria-label':'Thử nghiệm cấu hình chưa xếp hạng',onChange:event=>{experimentalUntiered=event.target.checked;rerender();}});
-
   confirmBtn.addEventListener("click", () => {
-    if (!gameplayAllowed()) return;
     state = { ...serializeRosterScanState(state), confirmed: true, updatedAt: new Date().toISOString() };
     saveState(state);
     rerender();
   });
 
   recommendBtn.addEventListener("click", () => {
-    if (!state.confirmed || !gameplayAllowed()) return;
-    const projected = scope?.browse?.kind === 'verified-pair' ? projectSeasonCandidates(scope.model,scope.browse.seasonContext,{experimentalUntiered,lockedTeams:state.lockedTeams}) : {ok:true,teams,teamTier};
-    if (!projected.ok) {
-      resultsSlot.replaceChildren(el('p',{class:'error',role:'status'},projected.message + (projected.limits ? ` (${projected.limits.candidateCount}/${projected.limits.maxCandidates} cấu hình)` : '')));
-      recommended = false;
-      paintSteps();
-      return;
-    }
+    if (!state.confirmed) return;
     const result = recommendTeams({
-      teams:projected.teams,
-      teamTier:projected.teamTier,
-      ...(projected.seasonContext ? {seasonContext:projected.seasonContext,experimentalUntiered} : {}),
+      teams,
+      teamTier,
       ownedHeroes: state.ownedHeroes,
       ownedTactics: state.ownedTactics,
       lockedTeams: state.lockedTeams,
@@ -343,14 +321,13 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       keepExistingTeams: true,
       fullBox: state.ownedHeroes.length > 40 && state.ownedTactics.length > 60,
     });
-    resultsSlot.replaceChildren(renderRecommendation(result, onOpenTeam, scope?.model),
-      ...((projected.diagnostics || []).filter(item=>item.code === 'LOCKED_TEAM_OUT_OF_SCOPE' || item.code === 'REQUIREMENT_UNVERIFIED').map(item=>el('p',{class:'scope-note'},item.code === 'LOCKED_TEAM_OUT_OF_SCOPE' ? 'Đội khóa ngoài phạm vi: vẫn giữ tài nguyên đang dùng.' : 'Cấu hình có điều kiện chưa kiểm chứng không được đưa vào gợi ý.'))));
+    resultsSlot.replaceChildren(renderRecommendation(result, onOpenTeam));
     recommended = true;
     paintSteps();
   });
 
   const refreshRecommend = () => {
-    recommendBtn.disabled = !state.confirmed || !gameplayAllowed();
+    recommendBtn.disabled = !state.confirmed;
   };
 
   const rerender = () => {
@@ -361,13 +338,12 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     refreshRecommend();
   };
 
-  function renderRecommendation(result, onOpenTeam, model) {
-    const teamRow = (entry, index) => el("li", { class: "roster-result-team", dataset: entry.configId ? {configId:entry.configId} : {} }, [
+  function renderRecommendation(result, onOpenTeam) {
+    const teamRow = (entry, index) => el("li", { class: "roster-result-team" }, [
       el("span", { class: "roster-rank", "aria-hidden": "true" }, String(index + 1)),
       el("div", { class: "roster-result-main" }, [
         el("strong", { class: "roster-result-name" }, entry.team?.name || "Đội đã xây dựng"),
         el("span", { class: "roster-status", dataset: { status: entry.status || "locked" } }, ROSTER_STATUS_LABELS[entry.status] || "Đã khóa"),
-        entry.configId ? el('p',{class:'sgsdeck-score'},(() => { const score = resolveSelectionScore(model,entry.configId,selectionFromEntry(model,entry)); return score ? `Điểm SGSDeck: ${score.value}` : 'Chưa có điểm SGSDeck'; })()) : null,
         entry.tier ? el("p", { class: "roster-result-meta" }, `Bậc: ${entry.tier}`) : null,
         entry.selectedTactics?.length ? el("p", { class: "roster-result-meta" }, `Chiến pháp: ${entry.selectedTactics.join(", ")}`) : null,
         entry.usedAlternatives?.length
@@ -427,12 +403,10 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
         el("span", { class: "tool-notice-icon", "aria-hidden": "true" }, [shieldIcon()]),
         el("span", {}, "AI chỉ đọc ảnh. Đội được chọn bằng công cụ cục bộ từ dữ liệu đã tuyển chọn."),
       ]),
-      scopeNotice,
       stepList,
       el("div", { class: "roster-controls" }, [
         tsBox,
         modeSelect,
-        el('label',{class:'season-opt-in'},[untiered,'Thử nghiệm cấu hình chưa xếp hạng']),
         confirmBtn,
         recommendBtn,
       ]),
@@ -445,21 +419,4 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   rerender();
   compact?.addEventListener?.("change", applyReviewVisibility);
   applyReviewVisibility();
-  return {
-    setSeasonScope(next, {initial=false} = {}) {
-      generation++;
-      scope=next;
-      token='';
-      // Token vừa bỏ nhưng widget vẫn hiện "đã xác thực" -> reset để widget cấp token mới, không phải chờ hết hạn.
-      if (window.turnstile) window.turnstile.reset(tsBox);
-      if (!initial || next.browse?.kind !== 'all-reference') {
-        state={...state,confirmed:false};
-        if (!initial) saveState(state);
-      }
-      confirmBtn.disabled=!gameplayAllowed();
-      scopeNotice.textContent=gameplayAllowed() ? (next.browse?.kind === 'verified-pair' ? 'Gợi ý theo kịch bản và phiên bản luật đang chọn.' : 'Gợi ý theo dữ liệu cũ — tham khảo, chưa xác định kịch bản.') : 'Chọn phiên bản luật đã xác minh để xác nhận kho và gợi ý đội.';
-      mount.querySelectorAll('.roster-scan-card .ana-note').forEach(node=>{node.textContent='';});
-      rerender();
-    },
-  };
 }

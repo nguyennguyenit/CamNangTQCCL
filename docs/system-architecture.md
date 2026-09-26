@@ -87,8 +87,7 @@ dependency đã được website-display pin đều dừng toàn bộ khởi t�
 Lookup trong một publication byte-coherent mới chỉ khóa các feature phụ thuộc.
 
 Scope, filter/search, thứ tự hiển thị và chi tiết cấu hình cùng đi qua query owner của đúng trang; mục đang mở do đường dẫn quyết định, hash cũ chỉ được Landing chuyển tiếp qua `js/legacy-routes.js`. Restore scenario-only không tự nâng sang luật đã
-review. Đổi scope vô hiệu confirmation, portfolio và kết quả scan đến muộn,
-đồng thời giữ kho để người dùng review lại. UI không dùng MCP để suy thêm luật.
+review. Hai công cụ Soi đội và Gợi ý đội không có phạm vi mùa: luôn đối chiếu/gợi ý trên dữ liệu đội cũ và bỏ `scenario`/`ruleset`/`config` khỏi URL khi tải. UI không dùng MCP để suy thêm luật.
 
 Hồ sơ tướng của Tra cứu đọc thêm artifact tính lúc build `hero-summaries.json` sinh trong chính generation Recommended đang pin (khóa nối chính xác theo từng nguồn, descriptor mang hash kho Tra cứu), nên mở hồ sơ chỉ cần `manifest.json` + `hero-summaries.json` thay vì nạp toàn bộ kho đội chuẩn. Phạm vi và ngân sách tải của đường này ghi ở [quyết định #12 của plan redesign](../plans/260923-1949-so-binh-phap-redesign/plan.md).
 

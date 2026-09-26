@@ -164,7 +164,8 @@ test('return origin accepts section URLs, normalizes old root state, and rejects
   // URL gốc cũ đi qua bảng chuyển tiếp của Landing rồi xét như URL mục.
   assert.equal(safeReturnUrl('/#team-khac'),'/doi-khac/');
   assert.equal(safeReturnUrl('/#team-pk'),'/doi-khac/?source=team-intro');
-  assert.equal(safeReturnUrl('/?season=pk-s24&category=交戰#team-chuan'),`/doi-chuan/?season=pk-s24&category=${encodeURIComponent('交戰')}`);
+  // Bộ chọn danh mục đã bỏ: `category` cũ bị bỏ lặng lẽ như `score`.
+  assert.equal(safeReturnUrl('/?season=pk-s24&category=交戰#team-chuan'),'/doi-chuan/?season=pk-s24');
   assert.equal(safeReturnUrl('/?faction=Thục&faction=Ngô&q=vien#team-khac'),`/doi-khac/?faction=${encodeURIComponent('Thục')}&faction=${encodeURIComponent('Ngô')}&q=vien`);
   // Bộ lọc điểm đã bỏ: `score` cũ bị bỏ lặng lẽ khi dựng URL quay lại; `view` của chế độ Bảng sống sót.
   assert.equal(safeReturnUrl('/?season=pk-s24&score=113&score=unknown#team-chuan'),'/doi-chuan/?season=pk-s24');
@@ -221,11 +222,8 @@ test('return origin accepts section URLs, normalizes old root state, and rejects
 test('a share link without origin still returns to the right family page',()=>{
   assert.equal(familyReturnHref('recommended'),'/doi-chuan/');
   assert.equal(familyReturnHref('legacy'),'/doi-khac/');
-  assert.equal(
-    familyReturnHref('recommended',{sourceSeasonId:'pk-s24',sourceCategoryId:'交戰'}),
-    `/doi-chuan/?season=pk-s24&category=${encodeURIComponent('交戰')}`,
-  );
-  assert.equal(familyReturnHref('recommended',{sourceSeasonId:'all',sourceCategoryId:'all'}),'/doi-chuan/');
+  assert.equal(familyReturnHref('recommended',{sourceSeasonId:'pk-s24'}),'/doi-chuan/?season=pk-s24');
+  assert.equal(familyReturnHref('recommended',{sourceSeasonId:'all'}),'/doi-chuan/');
   assert.equal(returnHrefFor('recommended',{from:'/doi-chuan/?q=a'}),'/doi-chuan/?q=a');
   assert.equal(returnHrefFor('recommended',{from:'https://evil.example/',sourceSeasonId:'pk-s24'}),'/doi-chuan/?season=pk-s24');
   assert.equal(returnHrefFor('legacy',{}),'/doi-khac/');

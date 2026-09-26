@@ -321,10 +321,10 @@ test("a real legacy detail query reaches its dedicated source detail", async ({ 
   await expect(page.locator("#team-detail-root")).toHaveAttribute("data-source-config-id", row.sourceConfigId);
 });
 
-test("gameplay config keeps precedence on a legacy analyze URL", async ({ page }) => {
+test("legacy analyze hash lands on Soi đội and drops retired season keys", async ({ page }) => {
   await page.goto("/?config=x&legacyTeam=y#analyze");
-  await expect(page).toHaveURL("/soi-doi/?config=x&legacyTeam=y");
   await waitForBoot(page);
+  await expect(page).toHaveURL("/soi-doi/?legacyTeam=y");
   await expectActiveSection(page, "analyze");
 });
 

@@ -14,7 +14,7 @@ import { assignDerivedFactions } from "./derive-team-faction.js";
 import { createSeasonCoexistSection, createRecommendedSection } from "./team-filter-section.js";
 import { resolveBrowseState, projectSeasonBrowse, resolveSelectionScore } from './season-context.js';
 import { loadRecommendedReference, readRecommendedQuery } from './recommended-reference-state.js';
-import { resolveTeamView, writeStoredTeamView, canonicalTeamView, TEAM_VIEW_TABLE } from "./team-view.js";
+import { resolveTeamView, writeStoredTeamView, canonicalTeamView, TEAM_VIEW_CARDS } from "./team-view.js";
 import {
   KHAIHOANG_TEAM_QUERY_KEY,
   KHAIHOANG_VARIANT_QUERY_KEY,
@@ -34,10 +34,9 @@ import {
 
 const $ = (sel) => document.querySelector(sel);
 
-/** Mục có phạm vi mùa + chi tiết cấu hình: layout chỉ phát payload cho đúng 5 trang này. */
+/** Đội chuẩn/Đội khác: hai trang danh sách tham chiếu. */
 const REFERENCE_SECTIONS = ['team-chuan', 'team-khac'];
-const GAMEPLAY_SECTIONS = ['coexist', 'analyze', 'roster-recommend'];
-/** 3 công cụ Beta (Phase 9): bộ chọn Mùa nằm trong đầu mục do chính công cụ dựng. */
+/** Hai công cụ Beta chạy trên dữ liệu đội cũ, không có phạm vi mùa. */
 const TOOL_SECTIONS = ['analyze', 'roster-recommend'];
 /** Khóa theo dõi bị bỏ khỏi URL trang mục ngay khi khởi động; mọi khóa khác giữ nguyên. */
 const TRACKING_PARAM = /^(?:utm_.+|fbclid|gclid|msclkid)$/;
@@ -66,12 +65,25 @@ function stripTrackingParams() {
   history.replaceState(history.state, '', url);
 }
 
-/** Bộ lọc điểm đã bỏ: `score=` cũ bị bỏ qua và bị xóa khỏi URL ngay lần replaceState đầu. */
+/** Khóa đã nghỉ của Đội chuẩn/Đội khác (bộ lọc điểm, bộ chọn danh mục): bỏ qua và xóa khỏi URL ngay lần replaceState đầu. */
+const RETIRED_REFERENCE_PARAMS = ['score', 'category'];
 function stripRetiredReferenceParams(pageSection) {
   if (!REFERENCE_SECTIONS.includes(pageSection)) return;
   const url = new URL(location.href);
-  if (!url.searchParams.has('score')) return;
-  url.searchParams.delete('score');
+  const present = RETIRED_REFERENCE_PARAMS.filter((key) => url.searchParams.has(key));
+  if (!present.length) return;
+  for (const key of present) url.searchParams.delete(key);
+  history.replaceState(history.state, '', url);
+}
+
+/** Khóa phạm vi mùa đã nghỉ ở hai công cụ (Soi đội, Gợi ý đội): link cũ không được mang trạng thái vô hình. */
+const RETIRED_TOOL_PARAMS = ['scenario', 'ruleset', 'config'];
+function stripRetiredToolParams(pageSection) {
+  if (!TOOL_SECTIONS.includes(pageSection)) return;
+  const url = new URL(location.href);
+  const present = RETIRED_TOOL_PARAMS.filter((key) => url.searchParams.has(key));
+  if (!present.length) return;
+  for (const key of present) url.searchParams.delete(key);
   history.replaceState(history.state, '', url);
 }
 
@@ -96,6 +108,7 @@ async function main() {
   setTeamRouteHandlesFromJSON($('#team-route-handles')?.textContent);
   stripTrackingParams();
   stripRetiredReferenceParams(pageSection);
+  stripRetiredToolParams(pageSection);
   // Layout sở hữu payload: có `#season-controls` nghĩa là trang này có phạm vi mùa. app.js
   // không giữ danh sách mục nào của riêng nó, nên thêm/bớt trang chỉ cần sửa layout.
   const controls = $('#season-controls');
@@ -150,7 +163,7 @@ async function main() {
     const teamTier = await loadOptionalJSON("/data/team-tier.json", []);
     const tierIndex = new Map(teamTier.map((r) => [r.teamId, r.rankings]));
 
-    // Phạm vi mùa chỉ có payload ở 5 trang mục; thiếu hash là trang không dùng đến mô hình mùa.
+    // Phạm vi mùa chỉ có payload ở 3 trang mục; thiếu hash là trang không dùng đến mô hình mùa.
     let seasonModel = null;
     if (controls && $('#season-artifact-hashes')) {
       try { seasonModel = await loadSeasonModel(JSON.parse($('#season-artifact-hashes').textContent), loadBytes); } catch { /* Legacy display stays available with an explicit notice. */ }
@@ -185,36 +198,18 @@ async function main() {
     if (migration) { location.replace(migration.target); return; }
     let browse = seasonModel ? readSeasonQuery(location.href, seasonModel).browse : null;
     let projection = seasonModel ? projectSeasonBrowse(seasonModel, browse) : null;
-    const consumers = [];
     const sections = {};
     let openedConfig = null;
-    let configTrigger = null;
     const detailMount = controls ? el('div',{id:'season-detail-mount'}) : null;
     controls?.after(detailMount);
     detailMount?.addEventListener('keydown',event=>{
       if (event.key !== 'Escape' || !detailMount.querySelector('#season-config-detail')) return;
       event.preventDefault();
       navigateQuery({config:null});
-      if (configTrigger?.isConnected) configTrigger.focus(); else sections[pageSection]?.focus?.();
+      sections[pageSection]?.focus?.();
     });
-    /** Nút nhập kho của chi tiết cấu hình là link thật; giữ nguyên phạm vi mùa đang chọn. */
-    const rosterImportHref = () => {
-      const current = new URL(location.href).searchParams;
-      const params = new URLSearchParams();
-      for (const key of ['scenario','ruleset']) if (current.has(key)) params.set(key, current.get(key));
-      const search = params.toString();
-      return `/goi-y-doi/${search ? `?${search}` : ''}`;
-    };
-    function openConfig(configId) {
-      configTrigger = document.activeElement;
-      navigateQuery({config:configId},true);
-      const detail = $('#season-config-detail');
-      if (detail) {
-        detail.focus({preventScroll:true});
-        const headerHeight = $('.top-header')?.getBoundingClientRect().height ?? 0;
-        window.scrollTo({top:window.scrollY + detail.getBoundingClientRect().top - headerHeight - 12,behavior:'instant'});
-      }
-    }
+    /** Nút nhập kho của chi tiết cấu hình là link thật tới công cụ Gợi ý đội (không mang phạm vi mùa). */
+    const rosterImportHref = () => '/goi-y-doi/';
     const coexistUI = pageSection === 'coexist' ? createSeasonCoexistSection({
       mount,
       // Nhãn kịch bản lấy từ registry đã xác thực; nhóm không gắn kịch bản dùng nhãn riêng của mục.
@@ -259,7 +254,7 @@ async function main() {
       detailMount.append(seasonConfigDetail(row,seasonModel,{
         onClose:()=>{
           navigateQuery({config:null});
-          if (configTrigger?.isConnected) configTrigger.focus(); else sections[pageSection]?.focus?.();
+          sections[pageSection]?.focus?.();
         },
         importHref:rosterImportHref(),
       }));
@@ -272,7 +267,7 @@ async function main() {
       renderScope();
     };
     const navigateReference = (changes, push = false) => {
-      // Kiểu hiển thị được ghi nhớ theo trình duyệt; URL chỉ mang `view=bang`, Thẻ là mặc định.
+      // Kiểu hiển thị được ghi nhớ theo trình duyệt; URL chỉ mang `view=luoi|bang`, Thẻ là mặc định.
       if (Object.hasOwn(changes, 'view')) writeStoredTeamView(localStore(), changes.view);
       const url = new URL(location.href);
       for (const [key,value] of Object.entries(changes)) {
@@ -374,16 +369,17 @@ async function main() {
       sections['team-khac']?.update(recommendedModel.other.records,explicitSeason ? resolved : {...resolved,season:'all'},registry);
       canonicaliseView();
     }
-    /** N5-3: `view` chỉ có nghĩa khi bằng `bang`; `?view=the` (mặc định) và giá trị lạ/lặp bị bỏ khỏi URL
-     *  để mọi đường link cùng nghĩa có cùng một hình dạng. Chạy sau khi render nên thông báo về giá trị
-     *  không hợp lệ vẫn hiện ở lượt đọc đầu; `replaceState` nên không thêm mục lịch sử. */
+    /** N5-3: `view` chỉ có nghĩa khi là `luoi` hoặc `bang`; `?view=the` (mặc định) và giá trị lạ/lặp bị bỏ
+     *  khỏi URL để mọi đường link cùng nghĩa có cùng một hình dạng. Chạy sau khi render nên thông báo về giá
+     *  trị không hợp lệ vẫn hiện ở lượt đọc đầu; `replaceState` nên không thêm mục lịch sử. */
     function canonicaliseView() {
       const url = new URL(location.href);
       const values = url.searchParams.getAll('view');
-      const meaningful = canonicalTeamView(values[0]) === TEAM_VIEW_TABLE;
+      const canonical = canonicalTeamView(values[0]);
+      const meaningful = canonical !== null && canonical !== TEAM_VIEW_CARDS;
       if (!values.length || (values.length === 1 && meaningful)) return;
       url.searchParams.delete('view');
-      if (meaningful) url.searchParams.set('view', TEAM_VIEW_TABLE);
+      if (meaningful) url.searchParams.set('view', canonical);
       history.replaceState(history.state, '', url);
     }
     const scenarioSelect = seasonScoped ? el('select', {id:'season-scenario'}, [el('option',{value:''},'Tất cả — tham khảo'), ...(seasonModel?.data['season-registry'] || []).filter(scenario=>scenario.reviewStatus === 'reviewed').map(scenario => el('option',{value:scenario.id},scenario.labelVi))]) : null;
@@ -395,19 +391,16 @@ async function main() {
       placeSeasonControls();
       if (!seasonModel) { scenarioSelect.disabled = true; rulesetSelect.disabled = true; }
     }
-    /** Bộ chọn Mùa / Phiên bản luật cố định theo trang: Cùng Tồn và 3 công cụ đặt trong đầu mục, mục gameplay còn lại trên thanh. */
+    /** Bộ chọn Mùa cố định theo trang: Cùng Tồn đặt trong đầu mục; Đội chuẩn/Đội khác giữ ẩn. */
     function placeSeasonControls() {
-      // Trang không có phạm vi mùa (Chiêu mộ, Tra cứu, trang chi tiết) không có #season-controls.
+      // Trang không có phạm vi mùa (Chiêu mộ, Tra cứu, công cụ, trang chi tiết) không có #season-controls.
       if (!controls) return;
-      controls.hidden = !GAMEPLAY_SECTIONS.includes(pageSection);
+      controls.hidden = pageSection !== 'coexist';
       rulesetControl.hidden = pageSection === 'coexist';
       summary.hidden = pageSection === 'coexist';
       if (pageSection === 'coexist') {
         const head = mount.querySelector(':scope > .coexist-head');
         if (head) head.append(controls);
-      } else if (TOOL_SECTIONS.includes(pageSection) && mount.querySelector('.tool-head')) {
-        // 3 công cụ Phase 9 dựng đầu mục sau khi app khởi tạo, nên lần đặt thứ hai (sau khi mount) mới có đích.
-        mount.querySelector('.tool-head').append(controls);
       } else if (detailMount) {
         detailMount.before(controls);
       }
@@ -419,7 +412,6 @@ async function main() {
     rulesetSelect?.addEventListener('change', () => navigateQuery({ruleset:rulesetSelect.value,config:null},true));
     function renderScope() {
       if (!seasonScoped) return;
-      const previous = JSON.stringify(browse);
       browse = seasonModel ? readSeasonQuery(location.href, seasonModel).browse : null;
       projection = seasonModel ? projectSeasonBrowse(seasonModel, browse) : null;
       const scenario = seasonModel?.data['season-registry'].find(item=>item.id === browse?.scenarioId);
@@ -433,7 +425,6 @@ async function main() {
       const groupParams = new URL(location.href).searchParams.getAll('group');
       coexistUI?.update(groups, groupParams.length === 0 ? null : groupParams.length === 1 ? groupParams[0] : '');
       renderTeams();
-      if (previous !== JSON.stringify(browse)) consumers.forEach(consumer=>consumer?.setSeasonScope?.({model:seasonModel,browse}));
     }
     if (pageSection === 'team-chuan') {
       sections['team-chuan'] = recommendedModel
@@ -482,7 +473,7 @@ async function main() {
     renderScope();
     restoreReturnState();
     // Back/Forward đổi URL: đọc lại và render trạng thái do URL sở hữu (mùa, bộ lọc, chi tiết
-    // cấu hình, consumer phạm vi) TRƯỚC khi khôi phục disclosure/lựa chọn/scroll.
+    // cấu hình) TRƯỚC khi khôi phục disclosure/lựa chọn/scroll.
     // Tra cứu giữ listener popstate riêng của nó trong `initUnifiedLookup`.
     window.addEventListener("popstate", () => {
       refresh();
@@ -500,9 +491,8 @@ async function main() {
       },
     });
 
-    // Kết quả gameplay giữ nguyên trang người dùng: config mở detail dùng chung, đội gốc đi trang riêng.
+    // Kết quả công cụ giữ nguyên trang người dùng: đội gốc đi trang chi tiết riêng.
     const onOpenTeam = (team) => {
-      if (team.configId && seasonModel) { openConfig(team.configId); return; }
       const href = teamDetailHref({legacyTeamId:team.id},{from:location.href});
       if (!href) return;
       rememberReturn();
@@ -510,14 +500,11 @@ async function main() {
     };
     if (lookupBundle) {
       if (pageSection === 'recruit-tracker') initRecruitTracker({ heroesDict, mount });
-      if (pageSection === 'analyze') consumers.push(initAnalyze({ teams, heroesDict, tacticsDict: tactics, booksDict, onOpenTeam }, mount));
-      if (pageSection === 'roster-recommend') consumers.push(initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict: tactics, onOpenTeam }, mount));
+      if (pageSection === 'analyze') initAnalyze({ teams, heroesDict, tacticsDict: tactics, booksDict, onOpenTeam }, mount);
+      if (pageSection === 'roster-recommend') initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict: tactics, onOpenTeam }, mount);
     } else if (['recruit-tracker', 'analyze', 'roster-recommend'].includes(pageSection)) {
       mount.append(el("p", { class: "error", role: "status" }, "Tính năng này cần dữ liệu Tra cứu đang không khả dụng."));
     }
-    consumers.forEach(consumer=>consumer?.setSeasonScope?.({model:seasonModel,browse:browse || {kind:["scenario","ruleset"].some(key=>new URL(location.href).searchParams.has(key)) ? "invalid" : "all-reference"}}, {initial:true}));
-    // 3 công cụ dựng đầu mục ở bước mount phía trên: đặt lại bộ chọn Mùa vào đúng đầu mục của công cụ.
-    placeSeasonControls();
   } catch (err) {
     const template = websiteDisplay
       ? displayValue(websiteDisplay, "ui:app/load-error", "errorTemplate")

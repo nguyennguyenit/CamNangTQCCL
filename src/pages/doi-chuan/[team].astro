@@ -23,10 +23,7 @@ const scopeLine = [entry.sourceSeasonCode, entry.sourceSeasonNameVi, entry.sourc
 // Tên Trung là chữ phụ của tiêu đề (artboard TeamDetail); chỉ hiện khi nguồn thật có chữ Hán.
 const nameZh = entry.nameZh && /[\u3400-\u9fff\uf900-\ufaff]/u.test(entry.nameZh) ? entry.nameZh : null;
 const hasScore = entry.value != null;
-const fallbackReturn = familyReturnHref('recommended', {
-  sourceSeasonId: entry.sourceSeasonId,
-  sourceCategoryId: entry.sourceCategoryId,
-});
+const fallbackReturn = familyReturnHref('recommended', { sourceSeasonId: entry.sourceSeasonId });
 ---
 <SiteLayout
   title={`${title} — Đội chuẩn — Cẩm Nang Game Tam Quốc Chí - Chiến Lược`}

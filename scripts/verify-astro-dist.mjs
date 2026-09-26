@@ -148,8 +148,8 @@ export async function verifyAstroDist({
     l: Object.fromEntries(catalog.legacy.map((entry) => [entry.legacyTeamId, entry.routeSegment])),
     k: Object.fromEntries(catalog.khaiHoang.map((entry) => [entry.khaiHoangTeamId, entry.handle])),
   };
-  // Bảng payload của phase: cả 8 trang mục nhận `{r,l,k}`; chỉ 5 trang có phạm vi mùa.
-  const SEASON_SECTION_PATHS = new Set(["/doi-chuan/", "/doi-khac/", "/cung-ton/", "/soi-doi/", "/goi-y-doi/"]);
+  // Bảng payload của phase: cả 8 trang mục nhận `{r,l,k}`; chỉ 3 trang có phạm vi mùa.
+  const SEASON_SECTION_PATHS = new Set(["/doi-chuan/", "/doi-khac/", "/cung-ton/"]);
   const seasonHashesMarkers = [];
   for (const sectionPath of SECTION_PATHS) {
     const htmlPath = `${sectionPath.slice(1)}index.html`;

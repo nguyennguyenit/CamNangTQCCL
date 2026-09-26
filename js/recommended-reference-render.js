@@ -202,28 +202,39 @@ function rowDisplayName(row) {
   return safe ? safe.trim() : UNAVAILABLE;
 }
 
+/** Nhãn phe hiển thị + mã màu phe (`nguy`/`thuc`/…/`none`) của một bản ghi đội. */
+function factionOf(row,labels) {
+  const raw=row.factionRaw ?? row.faction;
+  const label=labelValue(labels,'faction',raw) ?? (raw ? text(raw) : '');
+  return {label,code:FACTION_CODE[label] || 'none'};
+}
+
 /** Dòng "■ phe · binh" của thẻ và ô đội của bảng: chỉ phần có dữ liệu, phần thiếu bỏ hẳn. */
 function metaLine(row,labels) {
-  const raw=row.factionRaw ?? row.faction;
-  const factionValue=labelValue(labels,'faction',raw) ?? (raw ? text(raw) : '');
+  const faction=factionOf(row,labels);
   const units=(row.unitTypesRaw?.length ? row.unitTypesRaw : (row.unit || []))
     .map(value=>labelValue(labels,'unit',value) ?? text(value))
     .filter(Boolean);
   const nodes=[];
-  if (factionValue) nodes.push(el('span',{class:`reference-faction f-${FACTION_CODE[factionValue] || 'none'}`},factionValue));
+  if (faction.label) nodes.push(el('span',{class:`reference-faction f-${faction.code}`},faction.label));
   if (units.length) nodes.push(el('span',{class:'reference-units'},units.join(' · ')));
   if (!nodes.length) return null;
   return el('p',{class:'reference-meta'},nodes.flatMap((node,index)=>index ? [' · ',node] : [node]));
 }
 
-// Điểm nguồn giữ đúng độ chính xác nguồn; thiếu điểm là nhãn trung tính, không phải 0.
+// Điểm nguồn giữ đúng độ chính xác nguồn; thiếu điểm là ô ấn trống "—" (không phải 0) cùng khuôn với
+// ô có điểm, để thẻ Đội chuẩn và Đội khác chung một bố cục đầu thẻ.
 const scoreBadge=row=>row.value != null
   ? el('span',{class:'reference-score-wrap'},[
     el('span',{class:'badge score reference-score',title:'Điểm nguồn'},String(row.value)),
     ' ',
     el('span',{class:'reference-score-unit'},'điểm'),
   ])
-  : el('span',{class:'badge score reference-score missing-score'},'Chưa có điểm nguồn');
+  : el('span',{class:'reference-score-wrap is-missing',title:'Chưa có điểm nguồn'},[
+    el('span',{class:'badge score reference-score missing-score','aria-hidden':'true'},'—'),
+    el('span',{class:'visually-hidden'},'Chưa có điểm nguồn'),
+    el('span',{class:'reference-score-unit','aria-hidden':'true'},'điểm'),
+  ]);
 
 function legacyAlternativeLines(content) {
   return (content?.heroes || []).flatMap(hero=>[
@@ -256,11 +267,12 @@ const detailHrefFor=(href,children,cls)=>href
   ? el('a',{class:cls,href,dataset:{teamDetailLink:''}},children)
   : el('span',{class:cls},children);
 
-/** Title và CTA là link thật tới cùng href; click có modifier vẫn là hành vi trình duyệt. */
+/** Title và CTA là link thật tới cùng href; click có modifier vẫn là hành vi trình duyệt.
+ *  `data-faction-code` tô gáy thẻ theo màu phe (trang trí; tên phe vẫn là chữ trong dòng meta). */
 export function recommendedTeamCard(row,{onTag,href,labels}={}) {
   const name=rowDisplayName(row);
   const fear=fearLine(row);
-  return el('article',{class:'team-card reference-team-card',dataset:{referenceKey:row.sourceConfigId || row.legacyVariantId || row.legacyTeamId || '',sourceConfigId:row.sourceConfigId || '',legacyTeamId:row.legacyTeamId || '',faction:row.factionRaw || row.faction || ''}},[
+  return el('article',{class:'team-card reference-team-card',dataset:{referenceKey:row.sourceConfigId || row.legacyVariantId || row.legacyTeamId || '',sourceConfigId:row.sourceConfigId || '',legacyTeamId:row.legacyTeamId || '',faction:row.factionRaw || row.faction || '',factionCode:factionOf(row,labels).code}},[
     el('header',{class:'reference-card-head'},[
       el('div',{class:'reference-card-title'},[
         el('h3',{class:'team-name'},href ? el('a',{href,dataset:{teamDetailLink:''}},name) : name),

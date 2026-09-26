@@ -15,7 +15,7 @@ test('query rejects duplicate scalars and unsupported sorting without changing f
 });
 
 test('facets are OR within key and AND across keys', () => {
-  const state = {season:'s28',category:'交戰',query:'',filters:{faction:['魏','蜀'],unit:['騎'],subcategory:[],source:[]}};
+  const state = {season:'s28',query:'',filters:{faction:['魏','蜀'],unit:['騎'],subcategory:[],source:[]}};
   assert.deepEqual(projectRecommendedRows(rows,state).map(x=>x.sourceConfigId), ['a']);
 });
 
@@ -24,7 +24,7 @@ test('Team khác season attribution distinguishes all, unknown and reviewed memb
     {legacyTeamId:'unknown',legacyVariantId:'v-1',sourceSeasonIds:null,holders:[]},
     {legacyTeamId:'known',legacyVariantId:'v-2',sourceSeasonIds:['s28','s27'],holders:[]},
   ];
-  const state = season => ({season,category:'all',query:'',filters:{faction:[],unit:[],subcategory:[],source:[]}});
+  const state = season => ({season,query:'',filters:{faction:[],unit:[],subcategory:[],source:[]}});
   assert.deepEqual(projectRecommendedRows(other,state('all')).map(row=>row.legacyTeamId), ['unknown','known']);
   assert.deepEqual(projectRecommendedRows(other,state('unknown')).map(row=>row.legacyTeamId), ['unknown']);
   assert.deepEqual(projectRecommendedRows(other,state('s28')).map(row=>row.legacyTeamId), ['known']);
@@ -43,11 +43,12 @@ test('view chọn chế độ Thẻ/Bảng: chỉ nhận giá trị hợp lệ, 
   assert.match(duplicated.notices.join(' '), /view bị lặp/);
 });
 
-test('bộ lọc điểm đã bỏ: `score` không còn là facet và không lọc gì', () => {
-  const state = readRecommendedQuery('https://x.test/?season=s28&score=113&score=unknown#team-chuan', {seasons:['s28']});
-  assert.equal(state.filters.score, undefined);
+test('khóa đã nghỉ `score` và `category` không còn lọc gì', () => {
+  const state = readRecommendedQuery(`https://x.test/?season=s28&score=113&score=unknown&category=${encodeURIComponent('器械')}#team-chuan`, {seasons:['s28']});
   assert.equal(Object.hasOwn(state.filters,'score'),false);
-  assert.deepEqual(projectRecommendedRows(rows,{...state,category:'交戰'}).map(x=>x.sourceConfigId), ['a','b']);
+  assert.equal(Object.hasOwn(state,'category'),false);
+  // Cả hai hàng thuộc danh mục 交戰: `category=器械` cũ không được thu hẹp danh sách.
+  assert.deepEqual(projectRecommendedRows(rows,state).map(x=>x.sourceConfigId), ['a','b']);
 });
 
 test('legacy aliases preserve exact original destination', () => {
@@ -97,7 +98,7 @@ test('query matches enriched rows by Vietnamese with or without accents and by o
       {nameRaw:'張飛',displayNameVi:'Trương Phi',tacticSlotsRaw:['橫掃千軍'],tacticSlotsVi:[null],bookSlotsRaw:[],bookSlotsVi:[]},
     ]},
   ];
-  const state = query => ({season:'s28',category:'交戰',query,filters:{faction:[],unit:[],subcategory:[],source:[]}});
+  const state = query => ({season:'s28',query,filters:{faction:[],unit:[],subcategory:[],source:[]}});
   const ids = query => projectRecommendedRows(enriched,state(query)).map(row=>row.sourceConfigId);
   assert.deepEqual(ids('Lữ Bố'), ['vi']);
   assert.deepEqual(ids('lu bo'), ['vi']);
@@ -128,7 +129,7 @@ test('search reads declared domain fields only and never hashes or source URLs',
     },
   ];
   const labels={faction:{魏:'Ngụy'},unit:{騎:'Kỵ'}};
-  const ids = query => projectRecommendedRows(rows,{season:'s28',category:'all',query,filters:{}},labels).map(row=>row.sourceConfigId || row.legacyTeamId);
+  const ids = query => projectRecommendedRows(rows,{season:'s28',query,filters:{}},labels).map(row=>row.sourceConfigId || row.legacyTeamId);
   assert.deepEqual(ids('nguy ky'), ['primary']);
   assert.deepEqual(ids('先鋒隊'), ['primary']);
   assert.deepEqual(ids('truong lieu'), ['primary']);

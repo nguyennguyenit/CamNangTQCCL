@@ -1,4 +1,4 @@
-// Lựa chọn Thẻ/Bảng: URL > giá trị đã lưu > Thẻ, và storage hỏng không được chặn render.
+// Kiểu hiển thị 2 cột / 4 cột / Bảng: URL > giá trị đã lưu > Thẻ, và storage hỏng không được chặn render.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { TEAM_VIEW_STORAGE_KEY, canonicalTeamView, readStoredTeamView, resolveTeamView, writeStoredTeamView } from '../js/team-view.js';
@@ -17,10 +17,11 @@ const brokenStorage = {
   setItem() { throw new Error('blocked'); },
 };
 
-test('only the two documented view values survive canonicalization', () => {
+test('only the three documented view values survive canonicalization', () => {
   assert.equal(canonicalTeamView('the'), 'the');
+  assert.equal(canonicalTeamView('luoi'), 'luoi');
   assert.equal(canonicalTeamView('bang'), 'bang');
-  for (const hostile of ['cards', 'table', 'Thẻ', '', null, undefined, 7, {}, 'toString', 'constructor']) {
+  for (const hostile of ['cards', 'table', 'grid', 'Thẻ', 'lưới', '', null, undefined, 7, {}, 'toString', 'constructor']) {
     assert.equal(canonicalTeamView(hostile), null, `must reject ${String(hostile)}`);
   }
 });
@@ -41,6 +42,9 @@ test('storage read and write failures fall back to Thẻ without throwing', () =
   assert.equal(resolveTeamView(null, brokenStorage), 'the');
   assert.equal(writeStoredTeamView(brokenStorage, 'bang'), false);
   const stored = memoryStorage();
+  assert.equal(writeStoredTeamView(stored, 'luoi'), true);
+  assert.equal(stored.value(TEAM_VIEW_STORAGE_KEY), 'luoi');
+  assert.equal(resolveTeamView(null, stored), 'luoi');
   assert.equal(writeStoredTeamView(stored, 'bang'), true);
   assert.equal(stored.value(TEAM_VIEW_STORAGE_KEY), 'bang');
   // Giá trị lạ không bao giờ được ghi xuống storage.

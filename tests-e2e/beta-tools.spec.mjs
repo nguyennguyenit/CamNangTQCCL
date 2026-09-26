@@ -36,12 +36,6 @@ function turnstileResets(page, selector) {
   }, selector);
 }
 
-/** Đổi Mùa sang kịch bản đầu tiên rồi về "Tất cả — tham khảo": hai lần đổi phạm vi, kết thúc ở phạm vi được chạy công cụ. */
-async function changeSeasonAndBack(page) {
-  await page.locator("#season-scenario").selectOption({ index: 1 });
-  await page.locator("#season-scenario").selectOption({ index: 0 });
-}
-
 const WORKER_ROUTE = "https://tqccl-vision-proxy.nguyennlt-ncc.workers.dev/**";
 
 /**
@@ -294,7 +288,7 @@ test.describe("Soi đội", () => {
 
   });
 
-  test("đổi Mùa reset widget Turnstile để cấp token mới; nút Soi đội chờ token mới rồi chạy lại được (N9-5)", async ({ page }) => {
+  test("token Turnstile dùng một lần: widget reset sau lượt soi, nút chờ token mới rồi chạy lại được (N9-5)", async ({ page }) => {
     await page.route("https://challenges.cloudflare.com/**", (route) =>
       route.fulfill({ contentType: "application/javascript", body: TURNSTILE_STUB }));
     const tokens = [];
@@ -318,19 +312,9 @@ test.describe("Soi đội", () => {
     await page.evaluate(() => window.__turnstileSolve());
     await expect(run).toBeEnabled();
 
-    // Đổi Mùa bỏ token đang có: widget phải được reset (mỗi lần đổi một lần) để cấp token mới.
-    await changeSeasonAndBack(page);
-    await expect.poll(resets).toBe(3);
-    // Ảnh vẫn giữ và phạm vi cho chạy, nên nút khoá chỉ vì chưa có token mới.
-    await expect(steps.nth(0)).toHaveAttribute("data-state", "done");
-    await expect(steps.nth(1)).toHaveAttribute("data-state", "pending");
-    await expect(run).toBeDisabled();
-
     // Widget cấp token mới -> nút dùng lại được và Worker nhận token mới, không phải token đã bỏ.
-    await page.evaluate(() => window.__turnstileSolve());
-    await expect(run).toBeEnabled();
     await run.click();
-    await expect.poll(() => tokens).toEqual(["fixture-token", "fixture-token-2"]);
+    await expect.poll(() => tokens).toEqual(["fixture-token", "fixture-token-1"]);
   });
 });
 
@@ -350,61 +334,7 @@ test.describe("Gợi ý đội", () => {
     });
   };
 
-  test("kết quả đã xóa không quay lại khi bật ô ngoài phạm vi (P9-R1)", async ({ page, request }) => {
-    await page.route("https://challenges.cloudflare.com/**", (route) =>
-      route.fulfill({ contentType: "application/javascript", body: TURNSTILE_STUB }));
-    const teams = await (await request.get("/data/teams.json")).json();
-    const target = teams.find((team) => Array.isArray(team.heroes) && team.heroes.length >= 3);
-    const heroesDict = await (await request.get("/data/heroes-dict.json")).json();
-    const tacticsDict = await (await request.get("/data/tactics.json")).json();
-    const reads = target.heroes.map((hero) => ({
-      nameCn: heroesDict.find((record) => record.viet === hero.name)?.chinese ?? hero.name,
-      tacticsCn: (hero.tactics || []).map((slot) => tacticsDict.find((record) => record.viet === slot.name)?.chinese ?? slot.name),
-      booksCn: [], statFocusCn: "",
-    }));
-    await page.route(WORKER_ROUTE, (route) => route.fulfill({ json: { heroes: reads } }));
-
-    const section = (page) => page.locator("#section-analyze");
-    const runOnce = async () => {
-      await section(page).locator("input[type=file]").setInputFiles({ name: "doi-hinh.png", mimeType: "image/png", buffer: transparentPng });
-      const run = section(page).getByRole("button", { name: "Soi đội", exact: true });
-      await expect(run).toBeEnabled();
-      await run.click();
-      await expect(section(page).locator(".ana-read .ana-hero").first()).toBeVisible();
-    };
-    const expectCleared = async () => {
-      await expect(section(page).locator(".ana-read .ana-hero")).toHaveCount(0);
-      await expect(section(page).locator(".ana-similar")).toBeHidden();
-      await expect(section(page).locator(".ana-step").nth(2)).toHaveAttribute("data-state", "pending");
-      await expect(section(page).locator(".ana-step").nth(2).locator(".ana-step-mark")).toBeHidden();
-    };
-    const outside = () => section(page).getByRole("checkbox", { name: "Xem đội ngoài phạm vi để tham khảo" });
-
-    await page.goto("/soi-doi/");
-    await waitForBoot(page);
-    await runOnce();
-    // Chuỗi 1: chọn ảnh khác (xóa kết quả) rồi bật ô ngoài phạm vi.
-    await section(page).getByRole("button", { name: "Chọn ảnh khác" }).click();
-    await section(page).locator("input[type=file]").setInputFiles({ name: "anh-khac.png", mimeType: "image/png", buffer: transparentPng });
-    await section(page).locator(".ana-file-row").getByRole("button", { name: "Chọn ảnh khác" }).click();
-    await outside().check();
-    await expectCleared();
-
-    // Chuỗi 2: chạy lại rồi đổi Mùa (xóa kết quả) và bật ô ngoài phạm vi.
-    await outside().uncheck();
-    // Token Turnstile của stub chỉ được cấp khi widget render lại, nên nạp lại trang cho lượt chạy thứ hai.
-    await page.goto("/soi-doi/");
-    await waitForBoot(page);
-    await runOnce();
-    await page.locator("#season-scenario").selectOption({ index: 1 });
-    // Đổi Mùa xóa kết quả (không phụ thuộc vào một dòng trạng thái cụ thể).
-    await expect(section(page).locator(".ana-read .ana-hero")).toHaveCount(0);
-    await expect(section(page).locator(".ana-similar")).toBeHidden();
-    await outside().check();
-    await expectCleared();
-  });
-
-  test("đổi Mùa reset widget Turnstile để cấp token mới; đọc ảnh kho chờ token mới rồi đọc lại được (N9-5)", async ({ page }) => {
+  test("token Turnstile dùng một lần: đọc ảnh kho chờ token mới rồi đọc lại được (N9-5)", async ({ page }) => {
     await page.route("https://challenges.cloudflare.com/**", (route) =>
       route.fulfill({ contentType: "application/javascript", body: TURNSTILE_STUB }));
     const tokens = [];
@@ -425,11 +355,6 @@ test.describe("Gợi ý đội", () => {
     await expect(card.locator(".ana-note")).toContainText("Đã đọc xong");
     // Token dùng một lần: sau lượt đọc widget bị reset đúng một lần; người dùng giải lại để có token.
     await expect.poll(resets).toBe(1);
-    await page.evaluate(() => window.__turnstileSolve());
-
-    // Đổi Mùa bỏ token đang có: widget phải được reset (mỗi lần đổi một lần) để cấp token mới.
-    await changeSeasonAndBack(page);
-    await expect.poll(resets).toBe(3);
     // Chưa có token mới: bấm đọc bị chặn, không gọi Worker.
     await scan.click();
     await expect(card.locator(".ana-note")).toHaveText("Xác thực Turnstile trước.");
@@ -439,7 +364,7 @@ test.describe("Gợi ý đội", () => {
     await page.evaluate(() => window.__turnstileSolve());
     await scan.click();
     await expect(card.locator(".ana-note")).toContainText("Đã đọc xong");
-    expect(tokens).toEqual(["fixture-token", "fixture-token-2"]);
+    expect(tokens).toEqual(["fixture-token", "fixture-token-1"]);
   });
 
   test("tiến trình 1–2–3, danh sách 5 đội đánh số và nút sửa kho giữ focus", async ({ page, request }) => {

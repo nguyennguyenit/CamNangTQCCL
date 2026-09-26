@@ -5,7 +5,7 @@ import { canonicalTeamView } from './team-view.js';
 const REPEATABLE = ['faction','unit','subcategory','source'];
 /** Selector cũ của bảng xếp hạng: bỏ khỏi query Team, không map sang điểm nguồn. */
 const RETIRED = ['tier','stars','sort','point'];
-const SCALARS = ['season','category','q','detail','legacyTeam','legacyVariant'];
+const SCALARS = ['season','q','detail','legacyTeam','legacyVariant'];
 
 export function readRecommendedQuery(href, registry = {}) {
   const url = new URL(href);
@@ -28,7 +28,6 @@ export function readRecommendedQuery(href, registry = {}) {
   }
   return {
     season: scalar.season || registry.defaultSourceSeasonId || 'all',
-    category: scalar.category || 'all',
     query: scalar.q || '', detail: scalar.detail,
     legacyTeam: scalar.legacyTeam, legacyVariant: scalar.legacyVariant, view,
     filters: Object.fromEntries(REPEATABLE.map(key=>[key,readFacet(url,key)])),
@@ -55,13 +54,6 @@ function seasonMatches(row, season) {
   if (row.sourceConfigId) return row.sourceSeasonId === season;
   if (season === 'unknown') return row.sourceSeasonIds == null;
   return Array.isArray(row.sourceSeasonIds) && row.sourceSeasonIds.includes(season);
-}
-
-function categoryMatches(row, category) {
-  if (!category || category === 'all') return true;
-  if (row.sourceConfigId) return row.sourceCategoryId === category;
-  if (category === 'unknown') return row.sourceCategoryIds == null;
-  return Array.isArray(row.sourceCategoryIds) && row.sourceCategoryIds.includes(category);
 }
 
 function holderTerms(holder) {
@@ -127,7 +119,6 @@ export function projectRecommendedRows(rows,state,labels) {
   const queryTerms=query.split(/\s+/).filter(Boolean);
   return rows.filter(row => {
     if (!seasonMatches(row,state.season)) return false;
-    if (!categoryMatches(row,state.category)) return false;
     for (const key of REPEATABLE) {
       const selected = state.filters?.[key] || [];
       if (selected.length && !referenceFacetValues(row,key).some(value=>selected.includes(value))) return false;

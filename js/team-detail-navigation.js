@@ -15,14 +15,14 @@ export const KHAIHOANG_VARIANT_QUERY_KEY = 'khVariant';
 
 /**
  * Khóa query mỗi trang mục giữ lại khi dựng URL quay lại; khóa khác bị bỏ lặng lẽ.
- * Đội chuẩn/Đội khác không còn `score` (bộ lọc điểm đã bỏ) và thêm `view` cho chế độ Thẻ/Bảng.
+ * Đội chuẩn/Đội khác không còn `score` (bộ lọc điểm đã bỏ) và `category` (bộ chọn danh mục đã bỏ); thêm `view` cho chế độ Thẻ/Bảng.
  */
 export const SECTION_QUERY_KEYS = Object.freeze({
-  '/doi-chuan/': ['season','category','q','faction','unit','view','subcategory','source','scenario','ruleset','config'],
-  '/doi-khac/': ['season','category','q','faction','unit','view','subcategory','source','scenario','ruleset','config'],
+  '/doi-chuan/': ['season','q','faction','unit','view','subcategory','source','scenario','ruleset','config'],
+  '/doi-khac/': ['season','q','faction','unit','view','subcategory','source','scenario','ruleset','config'],
   '/cung-ton/': ['group','config','q','faction','unit','tier','source','sort','stars','scenario','ruleset'],
-  '/soi-doi/': ['config','q','faction','unit','tier','source','sort','stars','scenario','ruleset'],
-  '/goi-y-doi/': ['config','q','faction','unit','tier','source','sort','stars','scenario','ruleset'],
+  '/soi-doi/': ['q','faction','unit','tier','source','sort','stars'],
+  '/goi-y-doi/': ['q','faction','unit','tier','source','sort','stars'],
   '/khai-hoang/': [KHAIHOANG_TEAM_QUERY_KEY,KHAIHOANG_VARIANT_QUERY_KEY],
   '/tra-cuu/': ['group','id'],
   '/chieu-mo/': [],
@@ -188,12 +188,11 @@ export function safeReturnUrl(raw, {origin = globalThis.location?.origin} = {}) 
   return `${target.pathname}${search ? `?${search}` : ''}`;
 }
 
-export function familyReturnHref(family, {sourceSeasonId, sourceCategoryId} = {}) {
+export function familyReturnHref(family, {sourceSeasonId} = {}) {
   if (family === 'khaihoang') return '/khai-hoang/';
   const params = new URLSearchParams();
   if (family === 'recommended') {
     if (sourceSeasonId && sourceSeasonId !== 'all') params.set('season', sourceSeasonId);
-    if (sourceCategoryId && sourceCategoryId !== 'all') params.set('category', sourceCategoryId);
   }
   const search = params.toString();
   const path = family === 'recommended' ? '/doi-chuan/' : '/doi-khac/';
