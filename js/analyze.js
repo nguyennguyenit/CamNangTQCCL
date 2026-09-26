@@ -1,4 +1,5 @@
 import { projectSeasonCandidates } from "./season-context.js";
+import { SOURCE_LABEL } from "./render.js";
 // Section "Soi đội từ ảnh" (Phase 4): upload/paste ảnh -> nén client -> Turnstile
 // (lazy-load) -> gọi Worker -> map 3 trục (analyze-map) -> render + đối chiếu team.
 // Giữ 3 section cũ offline: Turnstile script CHỈ nạp khi mở tab này.
@@ -254,7 +255,10 @@ function heroResultCard(m) {
  */
 function similarTeamRow(s, onOpen) {
   const team = s.team || {};
-  const label = `${s.heroHit}/${s.total} tướng` + (s.tacticHit ? ` · ${s.tacticHit} chiến pháp` : "");
+  // Nhãn nguồn tách các đội trùng tên (22 tên dùng chung cho 48/166 đội).
+  const sourceLabel = SOURCE_LABEL[team.source] || team.source || "";
+  const label = `${s.heroHit}/${s.total} tướng` + (s.tacticHit ? ` · ${s.tacticHit} chiến pháp` : "")
+    + (sourceLabel ? ` · ${sourceLabel}` : "");
   const btn = el("button", { class: "ana-team-link", type: "button" }, team.name || team.id || "team");
   if (onOpen) btn.addEventListener("click", () => onOpen(team));
   return el("li", { class: "ana-team-row", dataset: team.id ? { teamId: team.id } : {} }, [
@@ -266,10 +270,8 @@ function similarTeamRow(s, onOpen) {
 function renderResults(readBox, similarBox, result, deps) {
   readBox.replaceChildren();
   similarBox.replaceChildren();
-  if (!result || !Array.isArray(result.heroes) || result.heroes.length === 0) {
-    readBox.append(el("p", { class: "ana-status err" }, "Phản hồi không hợp lệ, thử lại."));
-    return false;
-  }
+  // Thông báo lỗi do dòng trạng thái của công cụ hiện (một lần), không lặp lại trong thẻ kết quả.
+  if (!result || !Array.isArray(result.heroes) || result.heroes.length === 0) return false;
   const mapped = mapTeamRead(result.heroes, deps);
   readBox.append(el("div", { class: "ana-heroes" }, mapped.map(heroResultCard)));
 
@@ -299,7 +301,13 @@ export function initAnalyze(deps, mount) {
   let showOutside = false;
   const gameplayAllowed = () => !scope || scope.browse?.kind === 'all-reference' || scope.browse?.kind === 'verified-pair';
   const scopeNotice = el('p',{class:'season-gameplay-notice',role:'status'});
-  const outside = el('input',{type:'checkbox','aria-label':'Xem đội ngoài phạm vi để tham khảo',onChange:event=>{showOutside=event.target.checked;similarBox.replaceChildren();similarCard.hidden=!state.done;}});
+  const outside = el('input',{type:'checkbox','aria-label':'Xem đội ngoài phạm vi để tham khảo',onChange:event=>{
+    showOutside=event.target.checked;
+    // Có kết quả đã đọc thì vẽ lại đúng nó; không có thì dọn sạch, không để lại thẻ rỗng chỉ có tiêu đề.
+    if (state.result) { applyResult(state.result,state.teams); return; }
+    similarBox.replaceChildren();
+    similarCard.hidden = true;
+  }});
   const state = { imageDataUrl: null, fileName: '', token: null, busy: false, done: false };
   const drop = el("button", { type: "button", class: "ana-drop" }, [
     cameraIcon(),
@@ -337,8 +345,10 @@ export function initAnalyze(deps, mount) {
   ].map((step) => {
     const mark = checkIcon();
     const labelNode = el("span", {}, step.label);
-    const node = el("li", { class: "ana-step" }, [el("span", { class: "ana-step-mark", "aria-hidden": "true" }, [mark]), labelNode]);
-    return { ...step, node, mark, labelNode };
+    // Dấu ✓ nằm trong span bọc: `hidden` chỉ có tác dụng trên phần tử HTML, không trên chính SVG.
+    const markWrap = el("span", { class: "ana-step-mark", "aria-hidden": "true" }, [mark]);
+    const node = el("li", { class: "ana-step" }, [markWrap, labelNode]);
+    return { ...step, node, markWrap, labelNode };
   });
   const stepList = el("ol", { class: "ana-steps", "aria-label": "Trạng thái" }, steps.map((step) => step.node));
 
@@ -387,9 +397,24 @@ export function initAnalyze(deps, mount) {
     for (const step of steps) {
       const done = step.done();
       step.node.dataset.state = done ? "done" : "pending";
-      step.mark.hidden = !done;
+      step.markWrap.hidden = !done;
       step.labelNode.textContent = done && step.doneLabel ? step.doneLabel : step.label;
     }
+  }
+
+  /** Vẽ kết quả đã đọc cho một tập đội: dùng cho cả lượt chạy và khi đổi "ngoài phạm vi". */
+  function applyResult(result, teams) {
+    const ok = renderResults(heroBox, similarBox, result, { ...deps, teams });
+    similarCard.hidden = !ok;
+    if (ok && showOutside && scope?.browse?.kind === 'verified-pair') {
+      const outsideTeams = deps.teams.filter((team) => !teams.some((candidate) => candidate.id === team.id));
+      const mapped = mapTeamRead(result.heroes, deps);
+      const references = findSimilarTeams(mapped, outsideTeams, { minHeroes: 2 });
+      similarBox.append(el('h3', { class: 'ana-read-title' }, 'Ngoài phạm vi — chỉ tham khảo'), el('ol', { class: 'ana-teams' }, references.map((item) => el('li', { class: 'ana-team-row' }, [el('span', { class: 'ana-note' }, `${item.team.name || item.team.id} · ${item.heroHit} tướng trùng · Không áp dụng cho luật đang chọn`)]))));
+    }
+    state.done = ok;
+    paint();
+    return ok;
   }
 
   function clearResults() {
@@ -397,6 +422,9 @@ export function initAnalyze(deps, mount) {
     similarBox.replaceChildren();
     similarCard.hidden = true;
     state.done = false;
+    // Không giữ kết quả cũ: nếu còn, ô "ngoài phạm vi" sẽ dựng lại kết quả của ảnh/mùa trước.
+    state.result = null;
+    state.teams = null;
     paint();
   }
 
@@ -473,16 +501,14 @@ export function initAnalyze(deps, mount) {
     try {
       const result = await callWorker(state.imageDataUrl, state.token);
       if (started !== generation) return;
-      const ok = renderResults(heroBox, similarBox, result, {...deps,teams:projected.teams});
-      if (!ok) { setStatus("Phản hồi không hợp lệ, thử lại.", "err"); state.done = false; return; }
-      similarCard.hidden = false;
-      if (showOutside && scope?.browse?.kind === 'verified-pair') {
-        const outsideTeams = deps.teams.filter(team=>!projected.teams.some(candidate=>candidate.id === team.id));
-        const mapped = mapTeamRead(result.heroes,deps);
-        const references = findSimilarTeams(mapped,outsideTeams,{minHeroes:2});
-        similarBox.append(el('h3',{class:'ana-read-title'},'Ngoài phạm vi — chỉ tham khảo'),el('ol',{class:'ana-teams'},references.map(item=>el('li',{class:'ana-team-row'},[el('span',{class:'ana-note'},`${item.team.name || item.team.id} · ${item.heroHit} tướng trùng · Không áp dụng cho luật đang chọn`)]))));
+      state.result = result;
+      state.teams = projected.teams;
+      if (!applyResult(result, projected.teams)) {
+        state.result = null;
+        state.teams = null;
+        setStatus("Phản hồi không hợp lệ, thử lại.", "err");
+        return;
       }
-      state.done = true;
       setStatus("");
     } catch (e) {
       if (started !== generation) return;

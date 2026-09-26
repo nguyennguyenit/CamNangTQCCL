@@ -547,14 +547,14 @@ test("trang Tra cứu chỉ còn một tab và một mount lookup", async () => 
   assert.ok(navLink, "nav phải kết xuất mỗi mục thành liên kết <a>");
   assert.match(navLink[1], /data-section=\{section\.id\}/);
   assert.match(navLink[1], /href=\{section\.path\}/);
-  assert.match(navLink[1], /aria-current=\{section\.id === activeSection \? 'page' : null\}/);
+  assert.match(navLink[1], /aria-current=\{currentMark\(section\.id\)\}/);
   assert.match(navLink[1], />\{section\.label\}/);
   // Ba mục Beta nằm trong menu thả "Công cụ": vẫn là liên kết thật, cùng bộ thuộc tính nav.
   const toolLink = layout.match(/section\.entries\.map\(\(entry\) => \([\s\S]*?<a\b([\s\S]*?)>\s*<span class="nav-menu-label"/);
   assert.ok(toolLink, "mục trong menu thả phải là liên kết <a>");
   assert.match(toolLink[1], /data-section=\{entry\.id\}/);
   assert.match(toolLink[1], /href=\{entry\.href\}/);
-  assert.match(toolLink[1], /aria-current=\{entry\.id && entry\.id === activeSection \? 'page' : null\}/);
+  assert.match(toolLink[1], /aria-current=\{currentMark\(entry\.id\)\}/);
 
   const mounts = [...page.matchAll(/<section\b[^>]*\bid=["'](section-[^"']+)["'][^>]*>/g)]
     .map((match) => match[1]);
@@ -565,13 +565,13 @@ test("trang Tra cứu chỉ còn một tab và một mount lookup", async () => 
 
 /* ---------- Phase 7: giao diện mới, nhãn tiếng Việt, khối "Trong cẩm nang" ---------- */
 
-import { lookupCardView, tacticTableRow, camNangView, POSITION_LABELS } from "../js/unified-lookup.js";
+import { lookupCardView, tacticTableRow, camNangView, POSITION_LABELS, costText } from "../js/unified-lookup.js";
 import { portraitUrl, portraitChar } from "../js/hero-portrait.js";
 import { parseHeroSummaries } from "../js/hero-summaries.js";
 
 const HERO_UI = hero("hero:sp-lu-mong", "SP Lữ Mông", {
   chinese: "SP 呂蒙", aliases: ["SP吕蒙"], faction: "Ngô", stars: 5, roleTagViet: "Khống chế / Kiêm nhiệm",
-  iconUrl: "http://image.aligames.com/a.png",
+  iconUrl: "http://image.aligames.com/a.png", cost: 7,
   lookup: { variant: "sp", categoryVi: "Quân sự", flags: { isCollectible: true, isDynamicOpen: true, isSp: true, isMusou: false, isCO: false } },
 });
 
@@ -586,7 +586,7 @@ test("thẻ kết quả Tra cứu hiện biến thể, phe, sao và tên Hán", 
   assert.equal(view.faction, "Ngô");
   assert.equal(view.stars, "5 sao");
   assert.equal(view.chinese, "SP 呂蒙");
-  assert.deepEqual(view.meta.map((part) => part.text), ["Ngô", "Khống chế / Kiêm nhiệm"]);
+  assert.deepEqual(view.meta.map((part) => part.text), ["Ngô", "Thống ngự 7", "Khống chế / Kiêm nhiệm"]);
 });
 
 test("bảng chiến pháp lấy phẩm, loại, dạng hiệu ứng, mục tiêu, tỷ lệ và để trống thành —", () => {
@@ -607,6 +607,56 @@ test("bảng chiến pháp lấy phẩm, loại, dạng hiệu ứng, mục tiê
     catalog: CATALOG,
   });
   assert.equal(tacticTableRow(lookupProfile(missing, "tactic:thieu")).rate, "—");
+});
+
+test("tỷ lệ kích hoạt là phần trăm; giá trị ngoài 0–1 không in số vô nghĩa", () => {
+  const warned = [];
+  const original = console.warn;
+  console.warn = (message) => warned.push(String(message));
+  try {
+    const corpus = buildLookupCorpus({
+      heroes: [HERO_UI],
+      tactics: [
+        tactic("tactic:ti-le-le", "Tỷ Lệ Lẻ", { lookup: { activationRate: 0.375 } }),
+        tactic("tactic:ti-le-tron", "Tỷ Lệ Tròn", { lookup: { activationRate: 0.55 } }),
+        tactic("tactic:ngoai-khoang", "Ngoài Khoảng", { lookup: { activationRate: 50 } }),
+        tactic("tactic:am", "Âm", { lookup: { activationRate: -1 } }),
+      ],
+      catalog: CATALOG,
+    });
+    assert.equal(tacticTableRow(lookupProfile(corpus, "tactic:ti-le-le")).rate, "37.5%");
+    assert.equal(tacticTableRow(lookupProfile(corpus, "tactic:ti-le-tron")).rate, "55%");
+    // Dữ liệu sai khoảng (50 = 5000%) không được in ra: bảng hiện gạch ngang, hồ sơ cũng vậy.
+    assert.equal(tacticTableRow(lookupProfile(corpus, "tactic:ngoai-khoang")).rate, "—");
+    assert.equal(tacticTableRow(lookupProfile(corpus, "tactic:am")).rate, "—");
+    const field = lookupProfile(corpus, "tactic:ti-le-tron").fields.find((item) => item.key === "activationRate");
+    assert.equal(field.labelVi, "Tỷ lệ kích hoạt");
+    assert.equal(field.textVi, "55%");
+    const shown = lookupProfile(corpus, "tactic:ngoai-khoang").fields.find((item) => item.key === "activationRate");
+    assert.equal(shown.textVi, "—");
+    assert.doesNotMatch(shown.textVi, /5000|50%/);
+  } finally {
+    console.warn = original;
+  }
+  assert.ok(warned.some((line) => line.includes("ngoài khoảng 0–1")), "tỷ lệ sai khoảng phải được cảnh báo cho dev");
+});
+
+test("chi phí công trình bỏ ô rỗng và khóa không nhãn, không in null hay khóa thô", () => {
+  const warned = [];
+  const original = console.warn;
+  console.warn = (message) => warned.push(String(message));
+  try {
+    assert.equal(costText({ wood: 180, stone: null, iron: 180 }), "Gỗ: 180, Sắt: 180");
+    assert.equal(costText({ wood: 0, food: undefined, stone: "" }), "Gỗ: 0");
+    // Không còn ô nào dùng được thì bỏ hẳn phần chi phí thay vì hiện chuỗi rỗng.
+    assert.equal(costText({ stone: null, iron: null }), null);
+    assert.equal(costText({ vang: 5 }), null);
+    assert.equal(costText(null), null);
+    assert.equal(costText("không phải đối tượng"), null);
+  } finally {
+    console.warn = original;
+  }
+  assert.ok(warned.some((line) => line.includes("vang")), "khóa chi phí không nhãn phải được cảnh báo cho dev");
 });
 
 test("nội chính hiện nhãn tiếng Việt, không bao giờ in khóa thô", () => {

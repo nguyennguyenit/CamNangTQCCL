@@ -83,10 +83,14 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     { key: "scan", label: "Đọc kho" },
     { key: "review", label: "Kiểm tra" },
     { key: "suggest", label: "Gợi ý" },
-  ].map((step, index) => ({
-    ...step,
-    node: el("li", { class: "roster-step", dataset: { step: step.key } }, [`${index + 1} · ${step.label}`]),
-  }));
+  ].map((step, index) => {
+    const mark = el("span", { class: "roster-step-mark", "aria-hidden": "true" });
+    return {
+      ...step,
+      mark,
+      node: el("li", { class: "roster-step", dataset: { step: step.key } }, [mark, `${index + 1} · ${step.label}`]),
+    };
+  });
   const stepList = el("ol", { class: "roster-steps", "aria-label": "Các bước" }, stepNodes.map((step) => step.node));
   const scanned = () => (state.ownedHeroes?.length || 0) + (state.ownedTactics?.length || 0) + (state.lockedTeams?.length || 0) > 0;
 
@@ -96,7 +100,13 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       review: state.confirmed ? "done" : scanned() ? "current" : "pending",
       suggest: recommended ? "done" : state.confirmed ? "current" : "pending",
     };
-    for (const step of stepNodes) step.node.dataset.state = states[step.key];
+    for (const step of stepNodes) {
+      step.node.dataset.state = states[step.key];
+      // Dấu ✓ chỉ hiện ở bước đã xong; bước đang làm được đánh dấu bằng `aria-current="step"`.
+      step.mark.hidden = states[step.key] !== "done";
+      if (states[step.key] === "current") step.node.setAttribute("aria-current", "step");
+      else step.node.removeAttribute("aria-current");
+    }
   }
 
   /* ---------- Ba thẻ đọc ảnh: đếm kết quả đã đọc, trạng thái Xong / Chưa đọc ---------- */

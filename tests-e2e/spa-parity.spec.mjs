@@ -1078,3 +1078,150 @@ test("rời trang bằng điều hướng khác tài liệu rồi quay lại kh�
   expect(scrolling.room).toBeGreaterThan(0);
   expect(scrolling.after).toBeGreaterThan(scrolling.before);
 });
+
+/* ---------- Vòng sửa Opus (P3-B1…B3, N1…N5) ---------- */
+
+test("menu thả Game neo phải và mọi panel nằm trong khung nhìn, không cuộn ngang", async ({ page }) => {
+  const detail = `/doi-khac/${encodeURIComponent(routeHandles.legacy[teamsFixture[0].id])}/`;
+  for (const width of [1280, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const path of ["/", "/doi-chuan/", detail]) {
+      await page.goto(path);
+      await expect(page.locator("#nav-toggle-game")).toBeVisible();
+      const buttons = await page.locator("[data-dropdown-button]").all();
+      for (const button of buttons) {
+        await button.click();
+        const panel = page.locator(`#${await button.getAttribute("aria-controls")}`);
+        await expect(panel).toBeVisible();
+        const box = await panel.boundingBox();
+        const viewport = await page.evaluate(() => document.documentElement.clientWidth);
+        expect(box.x).toBeGreaterThanOrEqual(0);
+        expect(box.x + box.width).toBeLessThanOrEqual(viewport);
+        expect(await page.evaluate(() => document.documentElement.scrollWidth === document.documentElement.clientWidth)).toBe(true);
+        await button.click();
+      }
+      // Nhóm Game neo theo mép phải nút (artboard LandingMenu: right 0, width 500).
+      expect(await page.locator("#nav-toggle-game").evaluate((node) => node.closest("[data-dropdown]").classList.contains("nav-dropdown-game"))).toBe(true);
+    }
+  }
+});
+
+test("header 821–1279px dùng ☰ thay nav ngang; 1280px mọi nhãn nav một dòng", async ({ page }) => {
+  for (const width of [821, 1024, 1180, 1279]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/doi-chuan/");
+    await expect(page.locator(".site-nav")).toBeHidden();
+    const toggle = page.locator("#section-menu-toggle");
+    await expect(toggle).toBeVisible();
+    const box = await toggle.boundingBox();
+    expect(box.width).toBeGreaterThanOrEqual(44);
+    expect(box.height).toBeGreaterThanOrEqual(44);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth === document.documentElement.clientWidth)).toBe(true);
+    // Lớp phủ mở được, Escape đóng và trả focus về ☰.
+    await toggle.click();
+    await expect(page.locator("#section-menu-items")).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(page.locator("#section-menu-items")).toBeHidden();
+    expect(await page.evaluate(() => document.activeElement?.id)).toBe("section-menu-toggle");
+  }
+  // 1280: nav ngang quay lại và mọi nhãn chỉ một hộp dòng.
+  await page.setViewportSize({ width: 1280, height: 900 });
+  for (const path of ["/doi-chuan/", "/"]) {
+    await page.goto(path);
+    await expect(page.locator(".site-nav")).toBeVisible();
+    const labels = page.locator(".site-nav .nav-tab");
+    const count = await labels.count();
+    expect(count).toBeGreaterThan(4);
+    for (let index = 0; index < count; index += 1) {
+      const lines = await labels.nth(index).evaluate((node) => {
+        const textNode = [...node.childNodes].find((child) => child.nodeType === 3 && child.textContent.trim());
+        const range = document.createRange();
+        range.selectNodeContents(textNode ?? node);
+        return range.getClientRects().length;
+      });
+      expect(lines).toBe(1);
+    }
+  }
+});
+
+test("resize 1024 → 1280 đóng lớp phủ mobile và mở khóa cuộn", async ({ page }) => {
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await page.goto("/doi-chuan/");
+  await page.locator("#section-menu-toggle").click();
+  await expect(page.locator("#section-menu-items")).toBeVisible();
+  expect(await page.evaluate(() => getComputedStyle(document.documentElement).overflow)).toBe("hidden");
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await expect(page.locator("#section-menu-items")).toBeHidden();
+  expect(await page.evaluate(() => getComputedStyle(document.documentElement).overflow)).toBe("visible");
+  await expect(page.locator("#section-menu-toggle")).toBeHidden();
+});
+
+test("320px: tagline một dòng, nằm gọn trong dải header và cắt bằng ellipsis", async ({ page }) => {
+  const measure = (page) => page.evaluate(() => {
+    const node = document.querySelector(".tagline");
+    const tagline = node.getBoundingClientRect();
+    const header = document.querySelector(".site-header").getBoundingClientRect();
+    const style = getComputedStyle(node);
+    return {
+      taglineHeight: Math.round(tagline.height),
+      taglineBottom: Math.round(tagline.bottom),
+      headerBottom: Math.round(header.bottom),
+      lineHeight: Number.parseFloat(style.lineHeight),
+      overflow: style.overflow,
+      clipped: node.scrollWidth > node.clientWidth,
+    };
+  });
+  await page.setViewportSize({ width: 320, height: 800 });
+  for (const path of ["/doi-chuan/", "/cung-ton/"]) {
+    await page.goto(path);
+    const measured = await measure(page);
+    // Một hộp dòng duy nhất (chiều cao đúng một dòng) và không tràn khỏi dải header.
+    expect(measured.taglineHeight).toBeLessThanOrEqual(measured.lineHeight + 1);
+    expect(measured.taglineBottom).toBeLessThanOrEqual(measured.headerBottom);
+    expect(measured.overflow).toBe("hidden");
+    expect(measured.clipped).toBe(true);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth === document.documentElement.clientWidth)).toBe(true);
+  }
+  // Đủ chỗ thì tagline hiện trọn chữ, không cắt.
+  await page.setViewportSize({ width: 1024, height: 800 });
+  for (const path of ["/doi-chuan/", "/cung-ton/"]) {
+    await page.goto(path);
+    const measured = await measure(page);
+    expect(measured.clipped).toBe(false);
+    expect(measured.taglineBottom).toBeLessThanOrEqual(measured.headerBottom);
+  }
+});
+
+test("trang 404 có lề trang như header và footer chạm đáy khung nhìn", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/khong-co-trang/");
+  const desktop = await page.evaluate(() => {
+    const card = document.querySelector(".detail-state").getBoundingClientRect();
+    const brand = document.querySelector(".brand").getBoundingClientRect();
+    const footer = document.querySelector(".site-footer").getBoundingClientRect();
+    return { cardLeft: Math.round(card.left), brandLeft: Math.round(brand.left), footerBottom: Math.round(footer.bottom), viewport: window.innerHeight };
+  });
+  expect(desktop.cardLeft).toBe(desktop.brandLeft);
+  expect(desktop.footerBottom).toBeGreaterThanOrEqual(desktop.viewport - 1);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/khong-co-trang/");
+  const mobile = await page.evaluate(() => document.querySelector(".detail-state").getBoundingClientRect().left);
+  expect(mobile).toBeGreaterThanOrEqual(16);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth === document.documentElement.clientWidth)).toBe(true);
+});
+
+test("shell: Landing một h1, trang chi tiết đánh dấu mục cha là aria-current=true, không còn aria-haspopup", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("h1")).toHaveCount(1);
+  await expect(page.locator(".brand .site-title")).toHaveJSProperty("tagName", "SPAN");
+  await expect(page.locator("[aria-haspopup]")).toHaveCount(0);
+  const detail = `/doi-khac/${encodeURIComponent(routeHandles.legacy[teamsFixture[0].id])}/`;
+  await page.goto(detail);
+  const parent = page.locator('.site-nav a[data-section="team-khac"]');
+  await expect(parent).toHaveAttribute("aria-current", "true");
+  await expect(page.locator('.site-nav a[aria-current="page"]')).toHaveCount(0);
+  await expect(page.locator("[aria-haspopup]")).toHaveCount(0);
+  // Trang mục vẫn là "page" — không đổi hành vi cũ.
+  await page.goto("/doi-khac/");
+  await expect(page.locator('.site-nav a[data-section="team-khac"]')).toHaveAttribute("aria-current", "page");
+});

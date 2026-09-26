@@ -27,9 +27,9 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
 - **`safeReturnUrl` giữ khóa theo trang**: `SECTION_QUERY_KEYS` là allowlist theo pathname của trang mục (`/doi-chuan/`, `/doi-khac/`, `/cung-ton/`, `/soi-doi/`, `/goi-y-doi/`, `/khai-hoang/`, `/tra-cuu/`, `/chieu-mo/`), chỉ giữ khóa có trong allowlist của **đúng** pathname đó và bỏ lặng lẽ mọi khóa khác (`fbclid`, `gclid`, `msclkid`, `utm_*`, `score`), không loại cả URL. URL gốc cũ dạng `/?…#<tab>` được chuẩn hoá về pathname + query của trang mục trước khi so allowlist, nên `from` cũ vẫn quay về đúng trang.
 - **Bộ chọn theme/điều hướng**: `js/site-nav.js` sở hữu menu thả + menu mobile và `createDropdownMenu` (dùng lại ở menu tài khoản công cụ); `js/site-chrome.js` sở hữu nút đổi theme, `pageshow` và sự kiện `storage`; theme theo hệ điều hành chỉ đọc ở mỗi lần tải trang (không có listener `matchMedia` cho trang đang mở).
 - **Artifact tính lúc build**: hồ sơ Tra cứu đọc `hero-summaries.json` sinh trong generation Recommended đang pin (kèm `provenance.catalogSha256`); không tải kho đội chuẩn khi mở hồ sơ.
-- Hai tab Team chuẩn/Team khác dùng cùng `createRecommendedSection()` trong `js/team-filter-section.js`; không fork filter UI theo family.
+- Hai trang mục Đội chuẩn/Đội khác dùng cùng `createRecommendedSection()` trong `js/team-filter-section.js`; không fork filter UI theo family.
 - Đội chuẩn/Đội khác dùng chung `js/recommended-reference-render.js`; Khai hoang dùng `js/render.js` cho build ở cả card và trang detail, guide chỉ nằm trên detail và ngoài subtree build bị thay khi đổi variant. Không fork markup build.
-- Href, snapshot quay lại và migrate URL tham chiếu cũ thuộc `js/team-detail-navigation.js`; không tự nối path `/doi-chuan/...`, `/doi-khac/...` hoặc `/khai-hoang/...` ở chỗ khác. Bảng route handle do build nhúng (`#team-route-handles`) đăng ký trước lần dựng href đầu tiên, validate và thay nguyên khối; thiếu identity trả `null`, không fallback URL ID cũ. Root Khai hoang dùng `khTeam`/`khVariant`, snapshot cùng map `khaihoangVariants`; chỉ context key của tab Khai hoang bỏ cặp query này, surface khác so full URL.
+- Href, snapshot quay lại và migrate URL tham chiếu cũ thuộc `js/team-detail-navigation.js`; không tự nối path `/doi-chuan/...`, `/doi-khac/...` hoặc `/khai-hoang/...` ở chỗ khác. Bảng route handle do build nhúng (`#team-route-handles`) đăng ký trước lần dựng href đầu tiên, validate và thay nguyên khối; thiếu identity trả `null`, không fallback URL ID cũ. Trang mục Khai hoang dùng `khTeam`/`khVariant`, snapshot cùng map `khaihoangVariants`; chỉ context key của trang mục Khai hoang bỏ cặp query này, surface khác so full URL.
 - Liên kết sang trang chi tiết là anchor thật: chỉ ghi snapshot ở click primary không modifier, không `preventDefault` và không router tự viết.
 - Ưu tiên pure function cho normalize, filter, map, score và state transition.
 - Render dữ liệu bằng DOM API/`textContent`; **không** `innerHTML`/`insertAdjacentHTML`/`outerHTML` với dữ liệu (chuỗi HTML còn lại trong `js/` phải là hằng tĩnh).
@@ -42,12 +42,12 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
 - `js/`, `css/`, `data/` ở repository root là source canonical; không tạo bản copy editable trong `public/`.
 - Mọi raw asset public phải có entry explicit trong `src/lib/public-artifact-manifest.mjs`; route param không extension và source basename exact.
 - Static endpoint phải trả raw bytes/MIME đúng; từ chối file lạ, symlink, non-regular file và realpath thoát root.
-- `public/` chỉ chứa deployment-control/static file do Astro copy; hiện `public/_headers` và `public/robots.txt` phải byte-equal với output tương ứng trong `dist/`.
+- `public/` chỉ chứa deployment-control/static file do Astro copy; hiện `public/_headers`, `public/robots.txt`, `public/favicon.png` và **cả thư mục `public/fonts/`** phải byte-equal với output tương ứng trong `dist/` (`scripts/verify-astro-dist.mjs` so cả bốn nhóm).
 - `scripts/verify-astro-dist.mjs` là output policy duy nhất. Test và CLI phải gọi cùng verifier, không nhân đôi allowlist.
 - Shell/JS/CSS/JSON mutable dùng `Cache-Control: public, max-age=0, must-revalidate`; Pages response thật vẫn phải được kiểm tra trước promotion.
 - `src/pages/404.astro` là trang 404 top-level; không dựa vào SPA fallback và không boot `app.js`/`team-detail.js` trong trang đó.
 - Ba route `/doi-chuan/<mùa>-<handle>/`, `/doi-khac/<handle>/` và `/khai-hoang/<handle>/` sinh từ `src/lib/team-detail-routes.ts`; handle đóng băng trong `pipeline/team-route-handles.json`, inventory HTML dùng chung cho build và verifier, ID/handle không routable bị loại. `sourceConfigId`/`legacyTeamId`/`khaiHoangTeamId` vẫn là định danh nguồn, không đổi theo route; Khai hoang chỉ render từ publication và pin source hash khớp, không fallback JSON thô.
-- `public/_headers` phải phủ cả `/doi-chuan/*`, `/doi-khac/*`, `/khai-hoang/*`, `/404.html` và `/favicon.png`.
+- `public/_headers` có **16 luật**, phủ `/`, `/index.html`, **8 trang mục** (`/doi-chuan/*`, `/doi-khac/*`, `/cung-ton/*`, `/khai-hoang/*`, `/tra-cuu/*`, `/chieu-mo/*`, `/soi-doi/*`, `/goi-y-doi/*`), `/404.html`, `/favicon.png`, `/js/*`, `/css/*`, `/fonts/*` và `/data/*` (mọi asset mutable dùng `max-age=0, must-revalidate`).
 - Root và trang con dùng chung `src/layouts/SiteLayout.astro` cùng một `/css/styles.css`; không thêm stylesheet hoặc shell riêng cho trang chi tiết.
 - **Font self-host** nằm ở `public/fonts/` (Be Vietnam Pro 400/500/600/700 + Noto Serif Display 700, subset latin/latin-ext/vietnamese, `font-display: swap`), khai `@font-face` trong `css/styles.css`, và phải có rule cache trong `public/_headers` cùng entry trong verifier; `public/fonts/OFL.txt` giữ license.
 - **CSS chỉ dùng token**: mọi giá trị vi mô lấy từ `docs/design/so-binh-phap/tokens.json` (nguồn duy nhất); `node scripts/design-tokens.mjs --check` phải pass và `node scripts/design-compare.mjs --tokens --phase NN` phải 0 lệch chưa giải thích. Không viết mã màu/px trực tiếp và không giữ lại khối legacy.
@@ -57,7 +57,7 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
 ## UI và accessibility
 
 - Nhãn tiếng Việt ngắn, trạng thái rõ; mọi control dùng `button`/`input` phù hợp và có tên truy cập được.
-- Filter count phải tính từ tập dữ liệu tab hiện tại. Không phụ thuộc `data/facets.json` ở runtime.
+- Filter count phải tính từ tập dữ liệu của mục đang mở. Không phụ thuộc `data/facets.json` ở runtime.
 - URL sở hữu bộ lọc Team: `season`, `category`, `q`, `faction`, `unit`, `subcategory`, `source`, `view`. Khóa `score`, selector cũ `tier`, `stars`, `sort`, `point` đã nghỉ; gặp thì bỏ lặng lẽ, không map sang điểm nguồn và không đổi thứ tự nguồn.
 - Query gameplay (`config`, `tier`, `sort`, `stars`) thuộc Cùng Tồn/soi đội/gợi ý kho; snapshot theo từng surface, không rò giữa hai nhóm.
 - Bộ lọc điểm đã nghỉ: không còn nhóm facet Điểm, không còn khóa `score` trên URL; điểm nguồn chỉ hiển thị trên thẻ/bảng và không đổi thứ tự nguồn.

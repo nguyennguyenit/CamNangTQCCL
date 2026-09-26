@@ -137,6 +137,10 @@ Phase không thêm màu mới (chỉ dùng cặp token sẵn có); mọi cặp c
 | Nút đóng hồ sơ | link ✕ 44px | `button` 44px có `aria-label="Đóng hồ sơ"` | Nút đóng hộp thoại phải là `button` (bàn phím) |
 | Chữ trong ô chân dung khi CDN treo | — | chữ Hán nằm **dưới** ảnh, chỉ ẩn khi ảnh `load` xong | CDN treo (không lỗi, không xong) vẫn thấy ô chữ, không còn ô trống |
 | Vài vai trò chữ dùng lại | 12/13/13,5/16/17px… | `type.*` gần nhất (lệch ≤ 1px hoặc ≤ 1 bậc weight) | Quy ước chung: dùng lại vai trò hiện có trước khi thêm token |
+| Chip nhóm mobile | viên `13.5px/600`, số đếm mờ 0,8 | dùng vai trò mới `type.chip-pill` 13.5/1.2/600 (số đếm giữ `type.table-cell`) | Artboard không ghi line-height cho hàng chip; 1,2 là bề cao dòng cho phần tử một dòng |
+| Số hàng chip nhóm ở 390/320 | 2 hàng (dữ liệu mẫu) | **3 hàng** (390) / **4 hàng** (320) | Nhãn + số đếm thật dài hơn dữ liệu mẫu ("Cải tạo binh chủng", 908 kết quả); vẫn là viên đầy, không cắt, không cuộn ngang |
+| Badge đầu hồ sơ ở 320 | artboard chỉ có bản 1440 | 5 badge xuống **3 hàng** | Cùng bộ badge/độ cao 26px; đầu hồ sơ 417px < 520px (ngưỡng e2e) |
+| Trạng thái mặc định `/tra-cuu/` | artboard mở sẵn "Tướng 202" | **908 kết quả hỗn hợp, không tab nào bật** | Giữ hành vi đã ghim bởi e2e Phase 2/7 (query không có `group` = tìm toàn corpus); đổi sẽ phá deep link và lịch sử — N5 của re-review Opus, ghi nhận chứ không sửa |
 
 ## 4. Bố cục (người duyệt)
 
@@ -148,10 +152,10 @@ LookupMobile @390) + **4 ảnh chụp trang thật** không có artboard (hồ s
 | --- | --- | --- | --- |
 | Lookup | `/tra-cuu/` @1440 | light | **đạt**: đầu mục kicker son + h1 serif + lead; ô tìm 56px có kính lúp; dải chip gạch chân có số đếm (Tướng 202, Chiến pháp 406…); lưới **6 cột** đúng artboard; thẻ có huy hiệu SP góc phải, tên 15/600 và dòng phe + vai trò; "Xem thêm" + "Mỗi lượt hiện 60 kết quả" |
 | Lookup | `/tra-cuu/` @1440 | light (đối chiếu chéo) | Ô chân dung: CDN của môi trường này không tải được ảnh nên mọi thẻ hiện ô chữ Hán — đúng thiết kế fallback; chữ Hán nằm **dưới** ảnh nên ảnh treo cũng không còn ô trống |
-| LookupTactics | `/tra-cuu/?group=tactics` @1440 | light | **đã sửa**: panel bảng chiếm **toàn chiều rộng** (>1300px), không còn bị `overflow:hidden` cắt; sáu cột hiện đủ với đúng dữ liệu ("Chỉ huy"/"Chủ động", "Tăng ích"/"Trị liệu", "Nhóm quân ta, 2 người", "100%") — khớp artboard |
+| LookupTactics | `/tra-cuu/?group=tactics` @1440 | light | **đã sửa**: panel bảng chiếm **toàn chiều rộng** (>1300px), không còn bị `overflow:hidden` cắt; sáu cột hiện đủ với đúng dữ liệu ("Chỉ huy"/"Chủ động", "Tăng ích"/"Trị liệu", "Nhóm quân ta, 2 người", "100%") — khớp artboard; bề rộng cột **60/120/230/200/80** đúng artboard, đầu bảng một dòng, tỷ lệ đã bỏ số thập phân dài và giá trị vô lý ("—") |
 | LookupTactics | `/tra-cuu/?group=tactics` @390 và @320 | light | **đã sửa**: mỗi hàng thành khối, nhãn cột viết hoa (Chiến pháp · Phẩm · Loại · Hiệu quả · Mục tiêu · Tỷ lệ) nằm trên từng giá trị, không cần cuộn ngang, không cột nào bị cắt (ảnh `.cache/spike/t390.png` đã xem) |
-| LookupProfile | `/tra-cuu/?group=heroes&id=hero:sp-lu-mong` @1440 | light | **đạt**: hộp thoại 960px nền giấy, đầu hồ sơ 132×164 + tên serif 40 + tên Hán 20 + badge SP/Ngô/5 sao/Thống ngự 7/Quân sự, bảng Vai trò · Danh hiệu độc quyền · Đặc tính; hai cột chỉ số/thích tính và thẻ chiến pháp; khối **Trong cẩm nang** 3 thẻ (48 đội chuẩn / 7 đội khác · thanh vị trí; top 3 chiến pháp 39/15/11; đội tiêu biểu 113 điểm) |
-| LookupMobile | `/tra-cuu/` @390 | light | **đạt**: lưới **2 cột**, ô tìm 50px, không cuộn ngang (`scrollWidth == innerWidth`) |
+| LookupProfile | `/tra-cuu/?group=heroes&id=hero:sp-lu-mong` @1440 | light | **đạt**: hộp thoại 960px nền giấy, đầu hồ sơ 132×164 + tên serif 40 + tên Hán 20 + badge viên 26px **SP** (nền dải) · **Ngô** (viền + chấm phe) · **5 sao** · **Thống ngự 7** · **Quân sự** (nền giấy đậm); ô thích tính bậc **S** tô nền son nhạt + chữ son đậm, bảng Vai trò · Danh hiệu độc quyền · Đặc tính; hai cột chỉ số/thích tính và thẻ chiến pháp; khối **Trong cẩm nang** 3 thẻ (48 đội chuẩn / 7 đội khác · thanh vị trí; top 3 chiến pháp 39/15/11; đội tiêu biểu 113 điểm) |
+| LookupMobile | `/tra-cuu/` @390 | light | **đạt**: lưới **2 cột**, ô tìm 50px, chip nhóm là **viên đầy** (đang chọn nền dải) cách ô tìm **16px**, không cuộn ngang (`scrollWidth == innerWidth`) |
 | — (không có artboard) | hồ sơ @390 và @320 | light (crop 320 đã xem) | **đã sửa**: hàng 1 là ảnh 88×96 + nút đóng, khối định danh/facts **chiếm trọn chiều rộng** bên dưới; facts xếp dọc một dòng mỗi cặp (338/268px), đầu hồ sơ 382px (trước 940/1089px), tên hồ sơ một dòng; ảnh crop `.cache/spike/p320-head.png` |
 
 Ảnh ghép theme tối đã tạo cùng bộ 4 ảnh ghép artboard + 4 ảnh trang thật (`.cache/design-compare/phase-07-dark/`) — dùng để soát nhất quán,
@@ -259,3 +263,90 @@ feat(lookup): rebuild Tra cứu and the hero profile on the Lookup artboards
 - declare 57 authored-vi obligations, refresh the localization policy (56514 locations) and
   re-pin route handles; drop the superseded legacy lookup CSS (ceiling 547 -> 519)
 ```
+
+## 10. Vòng sửa Opus (re-review độc lập, 2026-09-26)
+
+Rà soát độc lập tại HEAD `b89b1ad` (`agent://OpusRevD`) kết luận Phase 7 **NO-GO** với 5 finding chặn (P07-D1…D5)
+và 8 nit. Vòng này xử lý **hết** P07-D1…D5 + N1…N6; N7/N8 là dữ liệu thượng nguồn nên chỉ ghi nhận (bảng dưới).
+
+| # | Phát hiện | Sửa | Bằng chứng |
+| --- | --- | --- | --- |
+| **P07-D1** | Ô `bond` (duyên phận) bị đếm là "Chiến pháp hay mang" và `statFocusKind=note` (lưu ý) là "Hướng điểm hay dùng" (5 ô bond, 11 tướng note) | `pipeline/hero_summaries.py`: `_tactic_slots()` chỉ nhận ô kind `tactic`, `_stat_focus()` bỏ `kind=note` (thiếu cột ⇒ mặc định `tactic`/`stat`); phép đếm độc lập trong `tests/test_hero_summaries.py` và e2e áp cùng quy tắc | Unit `SlotKindTest` **đỏ trước khi sửa** (`['Chiến pháp Thật', 'Kết Nghĩa Vườn Đào'] != ['Chiến pháp Thật']`), xanh sau + ca cũ (thiếu cột kind) giữ nguyên cách đếm cũ. Generation mới `9e1a982a…`: SP Tào Tháo `[Nhạn Hành Trận 2, Tử Sĩ Tiên Phong 2, Cương Nhu Kết Hợp 1]` (**không còn** Kết Nghĩa Vườn Đào), SP Đổng Trác không còn bond, SP Quan Vũ `statFocus.teams` **43 → 39** và không còn "Khiên bậc S", SP Lữ Mông **không đổi** 48/7 + 39/15/11 |
+| **P07-D2** | "Tỷ lệ kích hoạt" in `55.00000000000001%` (9 chiến pháp) và `5000%` (`activationRate 50`) | `js/lookup-detail.js`: `ratePercentText()` → `Number((rate * 100).toFixed(1)) + "%"`; ngoài [0, 1] hoặc không hữu hạn → `—` + `console.warn` dev | Unit **đỏ trước khi sửa** (`actual: '55.00000000000001%'`, `expected: '55%'`), xanh sau (0.55 → "55%", 0.375 → "37.5%", 50 / −1 → "—"); e2e: mọi ô `.lookup-table tbody .lookup-table-rate` khớp `/^(—|\d+(\.\d)?%)$/`, 0 chuỗi `\d\.\d{6,}`, `tactic:thien-uy-khieu-tran` hiện "—" ở bảng và hồ sơ |
+| **P07-D3** | Hồ sơ công trình in `Đá: null` (30 cấp × 5 công trình) và `?? key` in khóa thô | `js/unified-lookup.js`: `costText()` bỏ ô rỗng, bỏ khóa không nhãn (cảnh báo dev), hết ô thì bỏ hẳn phần chi phí | Unit `costText` (bỏ `null`/`undefined`/rỗng, `0` vẫn hiện, khóa lạ bị bỏ + warn); e2e: `building:thai-thach-xu` cấp 1 = "Cấp 1 · **Sắt: 180, Gỗ: 180** · 1 phút…" (không có Đá), `building:quan-xa` cấp 1 không có phần chi phí; 0 `null`, 0 khóa `wood|stone|iron|food` trong hộp thoại |
+| **P07-D4** | Cột giữa bị bóp: đo được th **859/62/68/83/79/191**, đầu bảng 2 dòng, hàng trung vị 102px | `table-layout: fixed` + token `size.col-60/120/230/200/80` (nguồn artboard LookupTactics) cho `thead th:nth-child(2..6)`; `white-space: nowrap` cho đầu bảng | e2e 1440 và 1024: th = **60/120/230/200/80** (±2px), **mỗi th một hộp dòng**, 0 ô tràn khung; hàng trung vị **95px**; `design-compare --tokens --phase 07` vẫn 0 lệch |
+| **P07-D5a** | Ô thích tính bậc S không được tô (artboard #F6E1DC / #A8202A) | `dataset.grade` trên ô + CSS `.lookup-aptitude[data-grade="S"]` dùng `--accent-soft`/`--accent-ink` | e2e hai theme: ô S = `--accent-soft` + chữ `--accent-ink` (7,17 / 6,37:1), ô B/C giữ `--panel-3`/`--ink-2`; probe mới trong `ho-so-tuong` |
+| **P07-D5b** | Badge đầu hồ sơ: "SP" viên đỏ 21×28 chữ lệch trên, "5 sao"/"Thống ngự 7" trong suốt, thiếu "Quân sự"; phẩm của hộp thoại chiến pháp trong suốt | Badge viên 26px: `.badge-band` (nền dải) cho nhãn biến thể, `.badge-fill` (panel-2/ink-2) cho sao · thống ngự · hạng mục, `type.badge-chip`; `.lookup-dialog-badges{align-items:center}`; phẩm nhóm khác dùng viên `.lookup-quality` | e2e hai theme: đúng 5 badge theo thứ tự **SP · Ngô · 5 sao · Thống ngự 7 · Quân sự**, SP = `--band`/`--band-ink`, ba badge sau = `--panel-2`/`--ink-2` cao **26px**, 0 badge trong suốt; hộp thoại chiến pháp: viên phẩm = `--accent-soft`/`--accent-ink` |
+| **P07-D5c** | Chip nhóm mobile là tab gạch chân, xuống 3 hàng, cách ô tìm 4px | Viên đầy ≤680px theo `LookupMobile.dc.html`: `min-height: control.44` (artboard 40px, hợp đồng §11.4 áp 44px — xem vòng round 2), radius 999, chưa chọn `panel-3`/`line`, đang chọn `band`/`band-ink` (kể cả số đếm), cách ô tìm `space.16` | e2e 390: radius **999px**, đang chọn = `--band`/`--band-ink`, chưa chọn = `--panel-3`, cao ≥ 40px, khoảng cách **16px**; desktop: radius **0** (tab gạch chân), khoảng cách **24px** |
+| N1 | Ô tìm → hàng chip chỉ 4px | `margin: var(--space-24) 0` desktop, `margin-top: var(--space-16)` mobile | Đo trên DOM: 24px (1440) / 16px (390) — artboard (`main` gap 24px desktop, 16px mobile) chứ không phải 30px như ước lượng trong review |
+| N2 | Dòng phụ thẻ tướng thiếu "Thống ngự N" | `lookupCardView`: thêm `Thống ngự <cost>` sau phe | Unit: `meta` = `["Ngô", "Thống ngự 7", "Khống chế / Kiêm nhiệm"]`; e2e: thẻ SP Lữ Mông chứa "Thống ngự 7" |
+| N3 | Nhãn "Danh hiệu độc quyền" xuống 2 dòng ở 1440 | Cột nhãn dùng token `size.fact-label` = **156px** (= bề rộng đo được 153px của nhãn dài nhất ở `type.body` + 3px dư; artboard dùng `auto`) | e2e: nhãn "Danh hiệu độc quyền" **1 hộp dòng** ở 1440 |
+| N4 | Chỉ số mobile: "+1.96 / cấp" nằm riêng một dòng trong cột nhãn | Lưới mobile 2 hàng: hàng 1 nhãn + giá trị, hàng 2 thanh + tăng trưởng | e2e 390: tăng trưởng nằm **cạnh mép thanh** (left ≥ bar.right − 1), cùng hàng (|Δtop| ≤ 8px), thanh > ½ chiều rộng hàng; hàng chỉ số cao **46px** |
+| N5 | Trạng thái mặc định 908 kết quả hỗn hợp, không tab nào bật | **giữ** — hành vi đã ghim bởi e2e Phase 2/7 (query không `group` = tìm toàn corpus) | Ghi vào bảng "Lệch có chủ đích" ở §4 |
+| N6 | Nhãn "SP" nằm trên đỉnh hộp 28px | Cùng P07-D5b: badge viên 26px dùng `.badge` (`display: inline-flex; align-items: center`) | e2e: badge "SP" cao 26px, chữ căn giữa theo hộp |
+| N7 | `tactic:thien-uy-khieu-tran` có `activationRate 50` (dữ liệu nguồn sai) | **không sửa dữ liệu** trong phase redesign; P07-D2 hiện "—" | `data/tactics.json` vẫn `50`; sửa ở lần đổi dữ liệu riêng |
+| N8 | Chuỗi biên tập/nguồn lọt ra UI: `[Hiệu chỉnh OCR] …` (1 tướng, 3 chiến pháp), `Sự kiện liên động … (Bahamut bsn=36815)` (8 chiến pháp) | **không sửa** — là nội dung dữ liệu, không phải lỗi giao diện | Ghi nhận; dọn ở pipeline dữ liệu |
+
+> **Cách kiểm ở vòng này:** ảnh ghép được tạo lại sau khi sửa (8 ảnh mỗi theme, `.cache/design-compare/phase-07{,-dark}/`).
+> Các dòng §4 sửa ở trên dựa trên **phép đo DOM** ở 1440/390/320 × 2 theme (giá trị `getComputedStyle`, bề rộng cột,
+> hộp dòng của text node, khoảng cách hình học) — người thực thi **không** duyệt lại ảnh bằng mắt trong vòng này, nên
+> không có khẳng định nào chỉ dựa vào ảnh.
+
+### Gate sau vòng sửa
+
+| Lệnh | Kết quả |
+| --- | --- |
+| `npm run check` / `npm run build` / `npm run verify` | pass (0 error/warning; 1559 trang; gate bản dịch public 0 problem) |
+| `npm run test:dist` | **28/28 pass** |
+| `npm run test:node` | **349/349 pass** |
+| `npm run test:e2e` | **271/271 pass** |
+| `python3 -m unittest discover -s tests` | **379 OK** |
+| `node scripts/design-tokens.mjs --check` | pass (legacy **0** = ceiling 0) |
+| `design-compare --tokens --phase 07` (+dark) | **516/516** · **516/516**, 0 lệch chưa giải thích |
+| `design-compare --phase 07` (+dark) | 8 ảnh ghép mỗi theme ở `.cache/design-compare/phase-07{,-dark}/` |
+
+Generation: `d008d8be…` → **`9e1a982a16f5cd9a628ef0b891c8ac0666bbad252a4bdad6b8c380cbd1b103e9`** (re-pin
+`pipeline/team-route-handles.json`, `team_route_handles --check` pass: 1366 / 166 / 17). Policy:
+`site-vi-260926-toi-a11y-docs` → **`site-vi-260926-opus-recheck`** (làm mới 5 hash `sourceFiles`);
+`baseline.notes` không đổi (`concreteLocationCount` 56 653, `concreteInventorySha256` `a85e2fd6…` — cột chữ đổi
+không tính vào inventory, chỉ 5 hash file đổi). Obligation sửa chữ: `ui:section-page/doi-chuan` (meta description,
+lớp `authored-vi`), `ui:lookup/badge-cost` (biểu thức nay là template literal) — không cần receipt độc lập.
+Generation trung gian: chỉ một generation sinh trong vòng này (`9e1a982a…`) và nó đang được pin.
+
+## 11. Opus re-review round 2 (2026-09-26)
+
+| # | Phát hiện | Sửa | Bằng chứng |
+| --- | --- | --- | --- |
+| **P07-R1** (= P10-B1) | Chip nhóm mobile do chính vòng D5c tạo ra chỉ cao **40px** và chữ dính mép trên (kế thừa `align-items: baseline` của chip desktop) — sai A5 và hợp đồng §11.4 (40 → 44) | Khối ≤680: `.lookup-chip { align-items: center; min-height: var(--control-44) }`; probe `chip-loc` ở 390 đổi sang `control.44`; ghi lệch artboard 40 → hợp đồng 44 vào §4 | e2e (390/320 × 2 theme): 6/6 chip cao ≥ 44, khe chữ trên/dưới lệch ≤ 1px; đo trực tiếp: 44px, khe trên = khe dưới = 13px; ảnh `chip-390-light.png`, `chip-320-dark.png` (đã xem bằng mắt); `design-compare --tokens --phase 07` = **520/520**, 0 lệch |
+| **P07-R2** | Link đội tiêu biểu trong "Trong cẩm nang" chỉ cao **21px** ở mobile (link khối đứng riêng, không thuộc ngoại lệ inline) — khẳng định "không còn target dưới 44px" ở bản D5 là **sai**, xin đính chính | Link trải khắp hàng: `.cam-nang-team { position: relative }` + `.cam-nang-team-name::after { inset: 0 }` (hàng chỉ có một phần tử tương tác) + vòng focus trên cả hàng | e2e mới (390/320): mỗi hàng cao **64–65px**, `document.elementFromPoint` ở vùng ô điểm trả về chính `a.cam-nang-team-name`; bấm vào vùng điểm điều hướng tới trang đội và `from` vẫn mở lại hồ sơ. Đo trực tiếp: `same: true` cho cả 3 hàng |
+| N-a | Đầu bảng "Tỷ lệ" lấy cỡ chữ của ô (14px) thay vì 11px caps | Tách rule: `th.lookup-table-rate` chỉ còn `text-align`/`nowrap`; cỡ chữ ô chuyển sang `td.lookup-table-rate` | Đầu bảng nay đúng `type.table-head` như 5 cột còn lại |
+| N-b | Cột thứ hai của lưới chỉ số mobile là `auto` nên mỗi hàng một khổ thanh (254–261px) | Đổi sang `minmax(0, 1fr) var(--space-88)` (token sẵn có) ⇒ mọi thanh cùng thang | Ảnh hồ sơ 390: các thanh thẳng nhau |
+| N-c | `hero_summaries` lấy `*Vi` của Đội chuẩn nhưng lại lùi về `*Raw` (và ngược lại cho Đội khác) — nguy cơ lọt chữ Hán vào UI | `_tactic_slots(holder, name_field)` / `_stat_focus(holder, name_field)`: Đội chuẩn chỉ đọc `tacticSlotsVi`/`statFocusVi`, Đội khác chỉ đọc `tacticSlotsRaw`/`statFocusRaw` | Payload dựng lại **trùng byte** với bản đã phát (`rebuilt == published`: True) ⇒ không cần publish lại; `tests.test_hero_summaries` 11 OK |
+| N-d | `console.warn` về tỷ lệ 50 chạy ở production | **Giữ** theo quy ước sẵn có của file (cảnh báo dev cho dữ liệu sai) cho tới khi sửa dữ liệu (N7) | Ghi nhận |
+| N-e | Dòng phụ thẻ tướng dính chữ ("Thục Thống ngự 6 Chiến") | Thêm dấu `·` giữa các mảnh: `.lookup-card-meta > * + *::before { content: "·" }` (artboard đọc "Ngô · Thống ngự 7") | Dòng phụ nay đọc "Ngô · Thống ngự 7 · Khống chế / Kiêm nhiệm"; `textContent` của từng mảnh không đổi nên unit test cũ giữ nguyên |
+| N-f | Lớp phủ 821–1279 rộng hết màn hình | **Không sửa** (tuỳ chọn) — vẫn dùng được, không tràn | Ghi nhận |
+
+## 12. Opus re-review round 3 (2026-09-26)
+
+| # | Phát hiện | Sửa | Bằng chứng |
+| --- | --- | --- | --- |
+| **P07-R3** | Nút tên chiến pháp trong bảng Tra cứu chỉ cao **21px** ở mobile (60 nút/trang ở 390 và 320, cả 2 theme). Hàng ở mobile là `display:block` và nút là control duy nhất của hàng ⇒ không có ngoại lệ inline, cũng không có control tương đương ≥ 44px. Các lượt sweep trước chỉ đo nhóm mặc định (Tướng) nên bỏ sót. | Khối ≤680: `.lookup-table-name { display: inline-flex; align-items: center; min-height: var(--control-44) }` (cùng kiểu với `.lookup-relation-name` của Phase 10); probe `bang` thêm ca mobile `/tra-cuu/?group=tactics` (`min-height: control.44`, `bang.phaseUsed` bổ sung 10) | e2e mới trong `a11y-targets.spec.mjs` (320/390 × 2 theme): **mọi** `.lookup-table-name` ≥ 44×44, Enter mở đúng hồ sơ (`?id=tactic…`, hộp thoại chứa đúng tên), không cuộn ngang; `design-compare --tokens --phase 07` = **526/526** và `--phase 10` = **381/381** (đo lại sau lượt này) |
+| Đính chính A5 | Các khẳng định trước đây trong §3/§10/§11 ("hộp thoại không còn target dưới 44px", "không còn control đứng riêng dưới 44px") là **sai** cho bảng chiến pháp mobile. | Nay đúng: chip nhóm 44px (R1), hàng đội tiêu biểu là cả hàng ≥ 44px (R2), nút tên chiến pháp 44px (R3), link nguồn 44px (P10-B2) | Sweep 320/390 × 2 theme trên `/tra-cuu/`, `/tra-cuu/?group=tactics`, `/doi-chuan/`, `/doi-khac/`: chỉ còn ngoại lệ "control tương đương" đã khai (link tiêu đề thẻ đội) |
+
+### Gate (sau vòng sửa round 3)
+
+| Lệnh | Kết quả |
+| --- | --- |
+| `npm run check` / `npm run build` / `npm run verify` | pass (0 error/warning; 1559 trang; gate bản dịch public 0 problem) |
+| `npm run test:dist` | **28/28 pass** |
+| `npm run test:node` | **349/349 pass** |
+| `npm run test:e2e` | **278/278 pass** |
+| `python3 -m unittest discover -s tests` | **379 OK** |
+| `node scripts/design-tokens.mjs --check` | pass — legacy 0 (đã phủ `font` shorthand + custom property ngoài khối token) |
+| `design-compare --tokens --phase 07` | **526/526** · **526/526** (light · dark) — 0 lệch chưa giải thích |
+| `design-compare --tokens --phase 09` | chỉ 2 ngoại lệ đã khai (`select-nhan-caps`, `tool-head` line-height) — 0 lệch chưa giải thích |
+| `design-compare --tokens --phase 10` | **381/381** · **381/381** (light · dark) — 0 lệch chưa giải thích |
+
+Generation: `27d82121…` → **`df725667d70890c15f1848c90346bb7d4db7107ab3eb57af09f76bd0732edc16`**, manifest `fbf26a73fa10bc01`;
+policy `site-vi-260926-opus-round-2b` → **`site-vi-260926-opus-round-3`** (làm mới hash `js/analyze.js`); `team_route_handles --check` pass (1366/166/17);
+generation trung gian `27d82121…` đã xóa (chỉ còn generation đang pin).

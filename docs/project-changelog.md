@@ -9,6 +9,7 @@
 - Token hoá toàn bộ giao diện: `docs/design/so-binh-phap/tokens.json` là nguồn duy nhất cho màu/giá trị vi mô và danh mục component; khối CSS cũ ("legacy") đã xoá hết, `node scripts/design-tokens.mjs --check` báo 0 giá trị thô.
 - Font self-host (Be Vietnam Pro + Noto Serif Display, subset latin/latin-ext/vietnamese) ở `public/fonts/`, phục vụ cùng `/css/styles.css` và `public/_headers`.
 - Giao diện tối được rà trên DOM thật: sửa các cặp chữ/nền không đạt 4,5:1 của nút CTA header, nút CTA Landing, nhãn biến thể SP/CO và pill phe bằng token mới `--on-fill`/`--f-nguy-strong`; thêm token vai trò chữ cho nhãn biến thể, badge loại binh nhỏ và dòng phân loại phạm vi.
+- Shell: nav ngang chỉ hiện từ 1280px (dưới mốc đó header dùng ☰), panel menu thả neo trong khung nhìn, footer dùng chung nằm ở đáy trang ngắn, trang 404 có lề trang như các trang khác.
 - A11y/responsive: control ≥ 44px trên mobile, không cuộn ngang ở 320/390/768/1440, focus-visible rõ, menu thả/hộp thoại có `aria-expanded`/Escape/focus trả về, ô chọn ảnh native của Gợi ý đội có tên truy cập được (`aria-labelledby`), Turnstile 300px nằm trong khung cuộn ở bề rộng hẹp.
 - Tài liệu mô tả đúng mô hình mới: `design-guidelines`, `code-standards`, `system-architecture`, `deployment-guide`, `unified-lookup`, `README`.
 

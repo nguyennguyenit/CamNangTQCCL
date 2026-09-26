@@ -248,3 +248,55 @@ Tests changed on purpose: recruit view-model pins the new pity fields; site-nav 
 the shared dropdown menu used by the account menu; new beta-tools e2e (meter/steps/results/menus/
 review toggles with fixtures); season-lookup gains the two tool-page scope/config-detail cases.
 ```
+
+## Opus re-review round 2 (2026-09-26)
+
+| # | Phát hiện | Sửa | Bằng chứng |
+| --- | --- | --- | --- |
+| **P9-B1** | Danh sách bước Soi đội hiện ✓ ở **cả ba** bước dù chưa làm gì: `step.mark.hidden` được gán lên chính **phần tử SVG** (thuộc tính chỉ có trên HTML), nên CSS `.ana-step-mark[hidden]` không bao giờ khớp (A4) | `js/analyze.js`: giữ tham chiếu `markWrap` (span bọc SVG) và `paint()` đặt `step.markWrap.hidden = !done` | e2e mới trong `tests-e2e/beta-tools.spec.mjs`: lúc mới vào, dấu của bước 1 và 3 (đang chờ) **ẩn**, dấu bước 2 hiện (Turnstile stub xác thực ngay); sau lượt chạy, bước 3 hiện ✓ còn bước 2 về `pending` và **mất dấu** (token dùng một lần). Đo trên trình duyệt: `hidden: true`, `display: none` cho cả ba bước lúc đầu; ảnh `steps-390-light.png` (không còn ✓ trên nhãn bước) |
+| N9-1 | Hàng "Đội có sẵn tương tự" lặp tên đội (22 tên dùng chung cho 48/166 đội) | `similarTeamRow`: thêm nhãn nguồn `SOURCE_LABEL[team.source]` vào dòng số khớp | Hàng có dạng "3/3 tướng · 2 chiến pháp · Giới thiệu"; nguồn lấy từ `js/render.js` (một nguồn nhãn duy nhất) |
+| N9-2 | Dải bước Gợi ý đội phân biệt done/chờ chỉ bằng màu + viền mảnh | Thêm dấu ✓ (vẽ bằng CSS `::before` để `textContent` không đổi) và `aria-current="step"` cho bước hiện tại | Đo: bước hiện tại có `aria-current="step"`; dấu ✓ chỉ ở bước `done`; test cũ `toHaveText("1 · Đọc kho")` vẫn xanh vì dấu không nằm trong text |
+| N9-3 | Bật/tắt "Xem đội ngoài phạm vi" để lại thẻ rỗng chỉ có tiêu đề | Tách `applyResult(result, teams)` (dùng cho cả lượt chạy và khi đổi checkbox): có kết quả đã đọc thì vẽ lại, không thì dọn và ẩn thẻ | `state.result`/`state.teams` được giữ sau lượt chạy; không còn thẻ trống trong cả hai nhánh |
+| N9-4 | "Phản hồi không hợp lệ, thử lại." hiện **hai lần** (thẻ kết quả + dòng trạng thái) | Bỏ đoạn trong thẻ đọc; chỉ dòng trạng thái hiện thông báo | `renderResults` trả `false` mà không ghi gì vào thẻ; nhánh lỗi chỉ `setStatus(...)` |
+| N9-5, N8-1, N8-2 | Token Turnstile bị xóa khi đổi Mùa mà không `turnstile.reset` (có trước Phase 9); chip đang chọn ở theme tối dùng `--band` gần bằng nền trang; thứ tự chip kịch bản khác thứ tự ô Mùa | **Không sửa** — ngoài phạm vi vòng này | Ghi lại nguyên văn: N9-5 cần một kế hoạch riêng (đổi hành vi công cụ); N8-1 là quyết định bảng màu tối (`.fchip[aria-pressed=true]` dùng chung từ Phase 5, tương phản **chữ** vẫn đạt, chỉ phản hồi thị giác yếu: `--band #0F0E0B` trên nền `#16140F` ≈ 1,07:1 nên chip đang chọn trông như "lỗ"); N8-2 thuần thẩm mỹ |
+
+### Gate (sau vòng sửa round 2)
+
+| Lệnh | Kết quả |
+| --- | --- |
+| `npm run check` / `npm run build` / `npm run verify` | pass (0 error/warning; 1559 trang; gate bản dịch public 0 problem) |
+| `npm run test:dist` | **28/28 pass** |
+| `npm run test:node` | **349/349 pass** |
+| `npm run test:e2e` | **276/276 pass** (khẳng định sai của vòng sửa — trạng thái dấu ✓ của bước 2 Soi đội — đã sửa trước lần chạy này) |
+| `python3 -m unittest discover -s tests` | **379 OK** (chạy sau khi áp N-c: `test_hero_summaries` 11 OK, `test_site_localization` 10 OK) |
+| `node scripts/design-tokens.mjs --check` | pass — legacy **0**, `font` shorthand + custom property ngoài khối token đều được soát (N4) |
+| `design-compare --tokens` phase 03–10 × 2 theme | 03 **136/136**, 04 **720/720**, 05 **631/632**, 06 **400/400**, 07 **520/520**, 08 **589/590**, 09 (chỉ 2 ngoại lệ đã khai), 10 **295/295** — **0 lệch chưa giải thích** mọi phase × 2 theme |
+
+Generation: `9e1a982a…` → `ac620801…` (sau lượt sửa 5/6/9/10) → **`27d82121c65bf5443fbe1a1745acab271e8d6f96b1747a83aefba6b282e31cac`** (sau lượt sửa
+`js/roster-recommend-ui.js`), manifest `ef994027575931e2`; re-pin `pipeline/team-route-handles.json` + `team_route_handles --check` pass (1366/166/17). Policy:
+`site-vi-260926-opus-round-2` → `site-vi-260926-opus-round-2b` (2 lượt làm mới hash `sourceFiles`); `baseline.notes` không đổi.
+
+## Opus re-review round 3 (2026-09-26)
+
+| # | Phát hiện | Sửa | Bằng chứng |
+| --- | --- | --- | --- |
+| **P9-R1** | Hồi quy do chính bản sửa N9-3: `clearResults()` **không** xóa `state.result`/`state.teams`, nên sau khi kết quả đã bị xóa (chọn ảnh khác, hoặc đổi Mùa) thì bật lại ô "Xem đội ngoài phạm vi" sẽ dựng lại tướng/hàng của ảnh cũ, và bước 3 hiện "Đã đọc xong" — vòng qua cả chốt phạm vi mùa | `clearResults()` thêm `state.result = null; state.teams = null;`; nhánh phản hồi không hợp lệ trong lượt chạy cũng xóa hai trường này trước khi báo lỗi | e2e mới trong `beta-tools.spec.mjs` (2 chuỗi: chạy → chọn ảnh khác → bật ô; chạy → đổi `#season-scenario` → bật ô): sau mỗi chuỗi `.ana-read .ana-hero` = **0**, `.ana-similar` ẩn, bước 3 `data-state=pending` và **không** có dấu ✓. Đo trực tiếp trước khi sửa: bật ô sau khi đổi Mùa trả lại 3 tướng + 4 hàng của lượt trước (đã xác nhận bằng ảnh) |
+| Nit `/chieu-mo/` @320 | Nút ô "Không ra" xuống 2 dòng | **Không sửa** (thẩm mỹ, có trước vòng này) | Ghi nhận |
+
+### Gate (sau vòng sửa round 3)
+
+| Lệnh | Kết quả |
+| --- | --- |
+| `npm run check` / `npm run build` / `npm run verify` | pass (0 error/warning; 1559 trang; gate bản dịch public 0 problem) |
+| `npm run test:dist` | **28/28 pass** |
+| `npm run test:node` | **349/349 pass** |
+| `npm run test:e2e` | **278/278 pass** |
+| `python3 -m unittest discover -s tests` | **379 OK** |
+| `node scripts/design-tokens.mjs --check` | pass — legacy 0 (đã phủ `font` shorthand + custom property ngoài khối token) |
+| `design-compare --tokens --phase 07` | **526/526** · **526/526** (light · dark) — 0 lệch chưa giải thích |
+| `design-compare --tokens --phase 09` | chỉ 2 ngoại lệ đã khai (`select-nhan-caps`, `tool-head` line-height) — 0 lệch chưa giải thích |
+| `design-compare --tokens --phase 10` | **381/381** · **381/381** (light · dark) — 0 lệch chưa giải thích |
+
+Generation: `27d82121…` → **`df725667d70890c15f1848c90346bb7d4db7107ab3eb57af09f76bd0732edc16`**, manifest `fbf26a73fa10bc01`;
+policy `site-vi-260926-opus-round-2b` → **`site-vi-260926-opus-round-3`** (làm mới hash `js/analyze.js`); `team_route_handles --check` pass (1366/166/17);
+generation trung gian `27d82121…` đã xóa (chỉ còn generation đang pin).

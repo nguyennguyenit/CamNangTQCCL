@@ -685,6 +685,14 @@ test("built dist is allowlisted and every emitted asset is byte-identical", asyn
   assert.doesNotMatch(landing, /src=["']\/js\/app\.js["']/);
   assert.doesNotMatch(landing, /id=["']team-route-handles["']/);
   assert.doesNotMatch(landing, /id=["']season-artifact-hashes["']/);
+  // Landing chỉ có một h1 (tiêu đề hero); tên thương hiệu ở header là span, không phải h1 thứ hai.
+  assert.equal((landing.match(/<h1\b/g) ?? []).length, 1);
+  assert.match(landing, /<span class="brand-text"><span class="site-title">/);
+  // Panel menu thả là danh sách link (disclosure) nên không khai aria-haspopup.
+  assert.doesNotMatch(landing, /aria-haspopup/);
+  assert.doesNotMatch(html, /aria-haspopup/);
+  // Bộ lọc điểm đã bỏ từ Phase 5: mô tả /doi-chuan/ không còn nhắc "điểm".
+  assert.match(html, /<meta name="description" content="Danh sách đội hình Đội chuẩn theo dữ liệu SGSDeck Recommended, lọc theo phe, loại binh và mùa nguồn\."/);
 });
 
 test("built dist declares canonical, article metadata, robots and the catalog sitemap", async () => {

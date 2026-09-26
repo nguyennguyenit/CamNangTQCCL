@@ -395,7 +395,7 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:khaihoang/rating-overall", "label", '"Tổng"', "js/render.js", "khaihoangRatingBar", "data", "authored-vi"),
     # Trang mục tách đường dẫn: tiêu đề và mô tả riêng của từng trang là chữ tác giả mới.
     ("ui:section-page/doi-chuan", "title", "Đội chuẩn — Cẩm Nang Game Tam Quốc Chí - Chiến Lược", "src/pages/doi-chuan/index.astro", "page metadata", "static", "authored-vi"),
-    ("ui:section-page/doi-chuan", "metaDescription", "Danh sách đội hình Đội chuẩn theo dữ liệu SGSDeck Recommended, lọc theo phe, loại binh, mùa nguồn và điểm.", "src/pages/doi-chuan/index.astro", "page metadata", "static", "authored-vi"),
+    ("ui:section-page/doi-chuan", "metaDescription", "Danh sách đội hình Đội chuẩn theo dữ liệu SGSDeck Recommended, lọc theo phe, loại binh và mùa nguồn.", "src/pages/doi-chuan/index.astro", "page metadata", "static", "authored-vi"),
     ("ui:section-page/doi-khac", "title", "Đội khác — Cẩm Nang Game Tam Quốc Chí - Chiến Lược", "src/pages/doi-khac/index.astro", "page metadata", "static", "authored-vi"),
     ("ui:section-page/doi-khac", "metaDescription", "Danh sách đội hình Đội khác đã đối chiếu với đội chuẩn, lọc theo phe, loại binh và mùa nguồn.", "src/pages/doi-khac/index.astro", "page metadata", "static", "authored-vi"),
     ("ui:section-page/cung-ton", "title", "Cùng Tồn — Cẩm Nang Game Tam Quốc Chí - Chiến Lược", "src/pages/cung-ton/index.astro", "page metadata", "static", "authored-vi"),
@@ -613,7 +613,7 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:lookup/empty", "empty", '"Không có kết quả phù hợp."', "js/unified-lookup.js", "initUnifiedLookup", "empty", "authored-vi"),
     ("ui:lookup/unavailable", "message", '"Mục tra cứu đang được cập nhật."', "js/unified-lookup.js", "initUnifiedLookup", "empty", "authored-vi"),
     ("ui:lookup/close", "ariaLabel", '"Đóng hồ sơ"', "js/unified-lookup.js", "initUnifiedLookup", "static", "authored-vi"),
-    ("ui:lookup/badge-cost", "label", '"Thống ngự "', "js/unified-lookup.js", "initUnifiedLookup", "static", "authored-vi"),
+    ("ui:lookup/badge-cost", "label", '`Thống ngự ${record.cost}`', "js/unified-lookup.js", "initUnifiedLookup", "static", "authored-vi"),
     ("ui:lookup/fact-role", "label", '["Vai trò", valueText(fieldByKey(profile, "roleTagViet"), "")]', "js/unified-lookup.js", "initUnifiedLookup", "static", "authored-vi"),
     ("ui:lookup/fact-title", "label", '"Danh hiệu độc quyền"', "js/unified-lookup.js", "initUnifiedLookup", "static", "authored-vi"),
     ("ui:lookup/fact-traits", "label", '"Đặc tính"', "js/unified-lookup.js", "initUnifiedLookup", "static", "authored-vi"),

@@ -21,10 +21,10 @@ for (const width of [320,375,768,1280]) {
       await page.setViewportSize({width,height:800});
       await page.addInitScript(value=>localStorage.setItem('theme',value),theme);
       await page.goto('/doi-chuan/');
-      if (width <= 820) await page.locator('#section-menu-toggle').click();
-      await expect(navLink(page, 'Đội chuẩn', width <= 820)).toHaveAttribute('aria-current','page');
-      await expect(navLink(page, 'Đội khác', width <= 820)).toHaveAttribute('href','/doi-khac/');
-      if (width <= 820) await page.locator('.site-menu-close').click();
+      if (width < 1280) await page.locator('#section-menu-toggle').click();
+      await expect(navLink(page, 'Đội chuẩn', width < 1280)).toHaveAttribute('aria-current','page');
+      await expect(navLink(page, 'Đội khác', width < 1280)).toHaveAttribute('href','/doi-khac/');
+      if (width < 1280) await page.locator('.site-menu-close').click();
       await expect(page.getByLabel('Phiên bản luật')).toBeHidden();
       await expect(page.locator('#section-team-chuan').getByLabel('Mùa nguồn',{exact:true})).toBeVisible();
       await expect(page.getByLabel('Tìm Đội chuẩn')).toBeVisible();
@@ -701,4 +701,35 @@ test('list to detail and Back restores the rendered list filters and scroll posi
   await expect(section.locator('.reference-team-card')).toHaveCount(filtered);
   await expect(section.locator(`.fchip[data-focus-key="faction:${raw}"]`)).toHaveAttribute('aria-pressed','true');
   await expect.poll(()=>page.evaluate(()=>Math.round(window.scrollY))).toBe(scrolled);
+});
+
+test('ô vuông phe trong bộ lọc được vẽ thật (content của ::before) ở 1440 và 390 (P05-B1)', async ({page})=>{
+  for (const width of [1440, 390]) {
+    for (const theme of ['light', 'dark']) {
+      await page.setViewportSize({width,height:900});
+      await page.addInitScript(value=>localStorage.setItem('theme',value),theme);
+      await page.goto('/doi-chuan/');
+      const row = page.locator('#section-team-chuan .reference-filters .fchip.f-quan').first();
+      const square = await row.evaluate((node)=>{
+        const style = getComputedStyle(node,'::before');
+        const chip = node.getBoundingClientRect();
+        const label = node.querySelector('.fchip-label').getBoundingClientRect();
+        return {
+          content: style.content,
+          width: Math.round(Number.parseFloat(style.width)),
+          height: Math.round(Number.parseFloat(style.height)),
+          background: style.backgroundColor,
+          display: style.display,
+          squareLeftOfLabel: node.getBoundingClientRect().left <= label.left,
+          chipWidth: Math.round(chip.width),
+        };
+      });
+      expect(square.content, `${width}/${theme}: content`).toBe('""');
+      expect(square.display, `${width}/${theme}: hiển thị`).not.toBe('none');
+      expect(square.width, `${width}/${theme}: rộng ô vuông`).toBe(8);
+      expect(square.height, `${width}/${theme}: cao ô vuông`).toBe(8);
+      expect(square.background, `${width}/${theme}: màu phe`).not.toBe('rgba(0, 0, 0, 0)');
+      expect(square.squareLeftOfLabel, `${width}/${theme}: ô vuông trước nhãn`).toBe(true);
+    }
+  }
 });

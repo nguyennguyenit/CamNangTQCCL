@@ -28,3 +28,20 @@ Legacy CSS ceiling 657 → 0. Gate: check, build (1559 pages), verify, test:dist
 ## Open follow-ups (recorded in reports/phase-10-final.md)
 - Theme follows OS only at page load. Live OS switching is not implemented; the docs say so.
 - Whole-page bootstrap on section pages still loads shared publication data (red-team finding #18). A per-route loading project was deliberately not started.
+
+## Opus re-review (2026-09-26)
+Kongming was switched to `anthropic/claude-opus-5-5` and every phase was re-reviewed independently over four rounds. The re-review found blockers that the first review missed:
+- Game dropdown clipped off-screen; header broken between 821 and 1279px; 404 page without a gutter.
+- hero-summaries counted duyên phận slots and "Lưu ý" notes; rate floats; `null` building costs.
+- Faction squares never drawn; detail action panel spilling off the left edge; default-blue source link.
+- Pending ✓ marks in Soi đội; stale results reappearing after clearing.
+- Several mobile targets under 44px.
+
+Fixes were verified until phases 1–10 were all GO or GO-with-nits. Final gate: check, build 1559, verify, dist 28, node 349, e2e 278, unittest 379; `design-tokens --check` passes with legacy 0.
+
+Open nits:
+- Dark-theme selected chip vs page contrast (N8-1).
+- Mùa change does not reset the Turnstile widget (N9-5).
+- Mobile Landing table score column is only reachable by sideways scroll (N4-1).
+- QR provenance does not reach the built SVG (N4-2).
+- Source-data outlier `activationRate` 50 and editorial strings in catalog data.

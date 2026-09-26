@@ -62,6 +62,8 @@ export function assertFrontendShellContract(html, {
     const controls = tag.match(/aria-controls=["']([^"']+)["']/)?.[1];
     assert.ok(controls, `nút menu thả phải có aria-controls: ${tag}`);
     assert.match(html, new RegExp(`id=["']${controls}["'][^>]*hidden`));
+    // Panel là danh sách link (disclosure), không phải `role=menu` ⇒ không khai aria-haspopup.
+    assert.doesNotMatch(tag, /aria-haspopup/, `nút menu thả không được có aria-haspopup: ${tag}`);
   }
 
   // Footer dùng chung mọi pageKind: chip ngày build, cột link, dải Game chính thức, chữ credit đã duyệt.

@@ -182,7 +182,7 @@ bị bọc trong thẻ panel → bỏ class, thêm rule padding `32/48/56` cho `
 `max-width: 64rem`; (2) panel của Đội khác/Khai hoang là ô trống 340px chỉ có một nút → co theo nội dung
 (`width: max-content`, padding 16px) và cập nhật probe `panel-diem` cho trạng thái không điểm.
 
-Kiểm thêm bằng đo trực tiếp (Chromium thật): `scrollWidth == innerWidth` ở 320/390/1440 trên cả ba họ trang,
+Kiểm thêm bằng đo trực tiếp (Chromium thật): `scrollWidth == innerWidth` ở 320/390/1440 trên cả ba họ trang, **Đính chính P06-R1 (vòng round 3):** phép kiểm `scrollWidth` chỉ chạy trên `gia-cat-khac-sp-ma-sieu-phap-chinh` (nguồn ngắn) nên **đã bỏ sót P06-B1** — panel hành động có thể rộng hơn cột và tràn ra ngoài mép **trái**, mà tràn sang trái thì `scrollWidth` không phát hiện được. Panel nay là `width: fit-content; max-width: 100%; min-width: 0` (con của hàng hành động và ô dự phòng cũng có `max-width: 100%; min-width: 0`), và phạm vi kiểm là **cả 17** trang `/khai-hoang/<slug>/` ở 1440/390/320 cộng ca clipboard bị từ chối, kiểm bằng e2e thường trực trong `khaihoang-options.spec.mjs`;
 0 lỗi console/pageerror.
 
 ## 9. Rủi ro còn lại / việc của phase sau
@@ -224,3 +224,27 @@ feat(teams): rebuild the three team detail pages on the TeamDetail frame
   roles and three components with probes, declare 17 authored-vi obligations,
   refresh the localization policy (56457 locations) and re-pin route handles to 2c803111
 ```
+
+## Opus re-review round 2 (2026-09-26)
+
+| # | Phát hiện | Sửa | Bằng chứng |
+| --- | --- | --- | --- |
+| **P06-B1** | Panel hành động của trang chi tiết Đội khác/Khai hoang có thể rộng hơn cột và tràn ra **ngoài mép trái** (4/17 trang Khai hoang: panel tới 1570px; ở 390 link nằm ở x ≈ −1179). `scrollWidth` không bắt được vì tràn sang trái không cuộn được | `.detail-score-panel:not(:has(.detail-score)) { width: fit-content; max-width: 100%; min-width: 0 }`; `.detail-actions-body > *`, `.detail-copy-fallback`/`#team-copy-fallback`: `max-width: 100%; min-width: 0`; `.detail-source-link`: `white-space: normal; overflow-wrap: anywhere; text-align: start` | e2e mới `khaihoang-options.spec.mjs` chạy **cả 17** trang `/khai-hoang/<slug>/` ở 1440/390/320: mọi `a/button/input` trong panel có `left ≥ 0` và `right ≤ innerWidth`, và panel không giao với tiêu đề trang; thêm ca Đội khác khi `clipboard.writeText` bị từ chối (390/320: mép trái ≥ 0, ô dự phòng hiện). Đo trực tiếp 15 tổ hợp trước/sau: 0 vi phạm, ảnh `kh-panel-320-light.png` cho thấy 4 link nguồn xuống dòng trong khung |
+| **P06-B2** | Link "Mở nguồn SGSDeck trong thẻ mới" dùng **màu link mặc định của trình duyệt** (`rgb(0,0,238)` / `rgb(158,158,255)`) vì mất wrapper `season-config-detail` | `js/recommended-reference-render.js`: thêm `class:'detail-link'` (đã token hoá, đang dùng cho "Xem trang đội gốc") ⇒ vùng bấm 44px luôn, màu `--ink`/`--accent` theo theme | Đo: `class="detail-link"`, cao **44px**, màu `rgb(30,27,22)` (token), nền `--panel-3`; e2e mới trong `a11y-targets.spec.mjs` (320/390 × 2 theme) khẳng định cao/rộng ≥ 44, màu **không** thuộc bộ màu link mặc định, Enter mở tab mới |
+| N6-1 | §8 trước đây khẳng định "không tràn ở 320/390/1440" nhưng chỉ đo một trang Khai hoang có nguồn ngắn | §8 sửa: phạm vi đo nay là cả 17 trang + ca clipboard bị từ chối (xem e2e ở trên) | §8 cập nhật; e2e bao phủ toàn bộ 17 slug |
+
+### Gate (sau vòng sửa round 2)
+
+| Lệnh | Kết quả |
+| --- | --- |
+| `npm run check` / `npm run build` / `npm run verify` | pass (0 error/warning; 1559 trang; gate bản dịch public 0 problem) |
+| `npm run test:dist` | **28/28 pass** |
+| `npm run test:node` | **349/349 pass** |
+| `npm run test:e2e` | **276/276 pass** (khẳng định sai của vòng sửa — trạng thái dấu ✓ của bước 2 Soi đội — đã sửa trước lần chạy này) |
+| `python3 -m unittest discover -s tests` | **379 OK** (chạy sau khi áp N-c: `test_hero_summaries` 11 OK, `test_site_localization` 10 OK) |
+| `node scripts/design-tokens.mjs --check` | pass — legacy **0**, `font` shorthand + custom property ngoài khối token đều được soát (N4) |
+| `design-compare --tokens` phase 03–10 × 2 theme | 03 **136/136**, 04 **720/720**, 05 **631/632**, 06 **400/400**, 07 **520/520**, 08 **589/590**, 09 (chỉ 2 ngoại lệ đã khai), 10 **295/295** — **0 lệch chưa giải thích** mọi phase × 2 theme |
+
+Generation: `9e1a982a…` → `ac620801…` (sau lượt sửa 5/6/9/10) → **`27d82121c65bf5443fbe1a1745acab271e8d6f96b1747a83aefba6b282e31cac`** (sau lượt sửa
+`js/roster-recommend-ui.js`), manifest `ef994027575931e2`; re-pin `pipeline/team-route-handles.json` + `team_route_handles --check` pass (1366/166/17). Policy:
+`site-vi-260926-opus-round-2` → `site-vi-260926-opus-round-2b` (2 lượt làm mới hash `sourceFiles`); `baseline.notes` không đổi.

@@ -14,7 +14,7 @@ commit sau go/no-go.
 | Bước | Nội dung | Trạng thái |
 |---|---|---|
 | 1 | Đầu mục `.reference-head`: nhãn caps son, h1 serif 48px (36px mobile), mô tả 15px; select Mùa nguồn + Danh mục (44px) bên phải (desktop) / lưới 2 cột trên ô tìm (mobile) | xong — §4 |
-| 2 | Sidebar `.reference-filters` 272px: "Bộ lọc" + "Xóa lọc" (`disabled` khi không có lọc), nhóm Loại binh/Phe dạng hàng có ô vuông chọn + chấm phe + nhãn + số đếm; Nhóm/Nguồn thu gọn bằng `aria-expanded`. Mobile: nút "Bộ lọc" kèm số lọc đang bật mở panel (chip viên 44px) | xong — §3, §4 |
+| 2 | Sidebar `.reference-filters` 272px: "Bộ lọc" + "Xóa lọc" (`disabled` khi không có lọc), nhóm Loại binh/Phe dạng hàng có ô vuông chọn + ô vuông phe + nhãn + số đếm; Nhóm/Nguồn thu gọn bằng `aria-expanded`. Mobile: nút "Bộ lọc" kèm số lọc đang bật mở panel (chip viên 44px) | xong — §3, §4 |
 | 3 | Bỏ facet `score`: xóa khỏi state/projector/UI, bỏ `canonicalScoreValue`/`rowScoreValue`/`SCORE_UNKNOWN`; URL cũ có `score=` bị bỏ qua và bị xóa ở lần `replaceState` đầu | xong — §2, §6 |
 | 3b | `safeReturnUrl` giữ `view` cho `/doi-chuan/` + `/doi-khac/`, `score` không còn trong allowlist nên tự bị bỏ; `safeDisclosures` bỏ `score` | xong — §6 |
 | 4 | Thanh công cụ: ô tìm 48px có icon, "x / y đội" (`role="status"`), nhóm 2 nút Thẻ \| Bảng `aria-pressed` (desktop có chữ, mobile icon 44×44) | xong — §4 |
@@ -101,7 +101,7 @@ commit sau go/no-go.
 
 | Artboard | Trang | Đã xem | Kết luận |
 |---|---|---|---|
-| Main | `/doi-chuan/` @1440 | light + dark | **đã sửa**: đầu mục 1 hàng có select bên phải; sidebar 272px với hàng lọc có ô vuông + chấm phe + số đếm; thanh công cụ ô tìm 48px + "25 / 25 đội" + nhóm Thẻ\|Bảng (Thẻ đang chọn nền dải); lưới **2 cột** thẻ gọn |
+| Main | `/doi-chuan/` @1440 | light + dark | **đã sửa**: đầu mục 1 hàng có select bên phải; sidebar 272px với hàng lọc có ô vuông + ô vuông phe + số đếm; thanh công cụ ô tìm 48px + "25 / 25 đội" + nhóm Thẻ\|Bảng (Thẻ đang chọn nền dải); lưới **2 cột** thẻ gọn |
 | MainTable | `/doi-chuan/?view=bang` @1440 | light + dark | **đã sửa**: khung bo góc, đầu bảng nền giấy đậm 11 caps, hàng xen màu, ô đội = tên serif + "■ phe · binh", ô tướng = tên + 2 chiến pháp son, ô điểm serif son căn phải |
 | MobileList | `/doi-chuan/` @390 | light + dark | **đã sửa**: đầu mục xếp dọc, 2 select lưới 2 cột, ô tìm full width, hàng [Bộ lọc][25 / 25 đội][Thẻ\|Bảng], thẻ 1 cột có dòng binh thư và chân thẻ |
 | MobileTable | `/doi-chuan/?view=bang` @390 | light + dark | **đã sửa**: hàng thu gọn tên + "■ phe · binh" + danh sách tướng + điểm bên phải; không cuộn ngang (đo `scrollWidth = clientWidth` ở 320/390) |
@@ -262,3 +262,28 @@ feat(teams): rebuild the team lists with a filter sidebar, compact cards and a t
 - declare 33 authored-vi obligations, refresh the localization policy (56440 locations),
   republish the generation and re-pin route handles to 2fd184a9
 ```
+
+## Opus re-review round 2 (2026-09-26)
+
+| # | Phát hiện | Sửa | Bằng chứng |
+| --- | --- | --- | --- |
+| **P05-B1** | Ô vuông phe trong hàng lọc **không bao giờ được vẽ**: `.fchip[class*="f-"]::before` (bản viết lại ở commit 4fcdd0d) đặt bề rộng/màu nhưng thiếu `content`, nên probe token vẫn xanh trong khi không có gì hiển thị (cả sidebar 1440 lẫn panel lọc mobile 390) | Thêm `content: var(--content-dot); display: inline-block; flex: none;` (token mới `content.dot` = `""`, nguồn artboard `Main.dc.html:74-76`); probe `chip-loc` bổ sung `content` (đo trên `::before` qua `probe.pseudo` mới của `design-compare`) | `getComputedStyle(chip, '::before').content` = `'""'`, hộp **8×8**, `display: block`, nền = màu phe `rgb(176,132,34)` cho hàng Quần; ảnh `sidebar-1440-light.png` cho thấy thứ tự **ô chọn → ô vuông phe → nhãn → số** ở 1440 và 390 cả 2 theme; `design-compare --tokens --phase 05` = 631/632, 0 lệch chưa giải thích |
+| N5-1 | Nút "Xóa lọc" khi rỗng trông y như đang bấm được (son, có hover) | `.clear-btn:disabled { color: var(--muted); cursor: not-allowed }`, `::before` mờ, hover không đổi nền; probe `nut-chu` tách 2 trạng thái (enabled có `setup` bật một chip, disabled mong đợi `color.light.muted`) | Ảnh sidebar 1440 (không có lọc): nhãn + icon mờ, không còn affordance đỏ; probe 2 trạng thái xanh cả 2 theme |
+| Sửa báo cáo | §1/§4 ghi "chấm phe" trong sidebar là **sai** cho tới khi P05-B1 được sửa | Sửa lại thành "ô vuông phe" và ghi rõ vòng sửa | §1 và §4 cập nhật trong cùng commit này |
+| Chưa áp (ghi lại) | N5-2 (cột nhãn vai trò trên thẻ mobile lệch ~8px), N5-3 (canonicalise `?view=the`) | Không sửa trong vòng này | Cần đo lại bố cục thẻ mobile và thêm một lần `replaceState`; để vòng sau |
+
+### Gate (sau vòng sửa round 2)
+
+| Lệnh | Kết quả |
+| --- | --- |
+| `npm run check` / `npm run build` / `npm run verify` | pass (0 error/warning; 1559 trang; gate bản dịch public 0 problem) |
+| `npm run test:dist` | **28/28 pass** |
+| `npm run test:node` | **349/349 pass** |
+| `npm run test:e2e` | **276/276 pass** (khẳng định sai của vòng sửa — trạng thái dấu ✓ của bước 2 Soi đội — đã sửa trước lần chạy này) |
+| `python3 -m unittest discover -s tests` | **379 OK** (chạy sau khi áp N-c: `test_hero_summaries` 11 OK, `test_site_localization` 10 OK) |
+| `node scripts/design-tokens.mjs --check` | pass — legacy **0**, `font` shorthand + custom property ngoài khối token đều được soát (N4) |
+| `design-compare --tokens` phase 03–10 × 2 theme | 03 **136/136**, 04 **720/720**, 05 **631/632**, 06 **400/400**, 07 **520/520**, 08 **589/590**, 09 (chỉ 2 ngoại lệ đã khai), 10 **295/295** — **0 lệch chưa giải thích** mọi phase × 2 theme |
+
+Generation: `9e1a982a…` → `ac620801…` (sau lượt sửa 5/6/9/10) → **`27d82121c65bf5443fbe1a1745acab271e8d6f96b1747a83aefba6b282e31cac`** (sau lượt sửa
+`js/roster-recommend-ui.js`), manifest `ef994027575931e2`; re-pin `pipeline/team-route-handles.json` + `team_route_handles --check` pass (1366/166/17). Policy:
+`site-vi-260926-opus-round-2` → `site-vi-260926-opus-round-2b` (2 lượt làm mới hash `sourceFiles`); `baseline.notes` không đổi.

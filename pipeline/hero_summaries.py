@@ -82,6 +82,22 @@ class _Tally:
         self.teams = []
 
 
+def _tactic_slots(holder, name_field):
+    """Ô chiến pháp thật: ô có `tacticSlotKinds` là `bond` (duyên phận) không phải chiến pháp — cùng quy tắc
+    với `js/recommended-reference-render.js` (tách riêng và gắn nhãn "Duyên phận"). `name_field` là trường
+    tên của chính họ đó (Đội chuẩn: bản Việt, Đội khác: bản nguồn) — không trộn hai không gian tên."""
+    names = holder.get(name_field) or []
+    kinds = holder.get("tacticSlotKinds") or []
+    return [name for index, name in enumerate(names) if (kinds[index] if index < len(kinds) else "tactic") == "tactic"]
+
+
+def _stat_focus(holder, name_field):
+    """Hướng điểm thật: `statFocusKind == 'note'` là ghi chú (UI in "Lưu ý:"), không phải hướng điểm."""
+    if holder.get("statFocusKind", "stat") != "stat":
+        return None
+    return holder.get(name_field)
+
+
 def _count_items(target, values):
     """Đếm mỗi tên một lần cho mỗi đội, giữ thứ tự xuất hiện (thứ tự quyết định khi số đội bằng nhau)."""
     seen = set()
@@ -144,10 +160,10 @@ def build_hero_summaries(*, catalog_bytes, records, other_records):
                 continue
             item = tally(identifier)
             item.positions["recommended"][position] += 1
-            _count_items(item.tactics, hero.get("tacticSlotsVi"))
+            _count_items(item.tactics, _tactic_slots(hero, "tacticSlotsVi"))
             if _count_items(item.books, hero.get("bookSlotsVi")):
                 item.book_teams += 1
-            if _count_items(item.stat_focus, [hero.get("statFocusVi")]):
+            if _count_items(item.stat_focus, [_stat_focus(hero, "statFocusVi")]):
                 item.stat_focus_teams += 1
             item.teams.append({
                 "family": "recommended",
@@ -168,10 +184,10 @@ def build_hero_summaries(*, catalog_bytes, records, other_records):
             item = tally(identifier)
             item.positions["other"][position] += 1
             # Chiến pháp của Đội khác cũng thuộc phạm vi khối ("đội chuẩn và đội khác"), đếm một lần mỗi đội.
-            _count_items(item.tactics, holder.get("tacticSlotsRaw"))
+            _count_items(item.tactics, _tactic_slots(holder, "tacticSlotsRaw"))
             if _count_items(item.books, holder.get("bookSlotsRaw")):
                 item.book_teams += 1
-            if _count_items(item.stat_focus, [holder.get("statFocusRaw")]):
+            if _count_items(item.stat_focus, [_stat_focus(holder, "statFocusRaw")]):
                 item.stat_focus_teams += 1
             item.teams.append({
                 "family": "other",

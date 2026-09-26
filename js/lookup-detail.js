@@ -40,6 +40,25 @@ const TYPE_LABELS = {
 const RAW_ENUM = /^[A-Z][A-Z0-9_]*$/;
 
 /**
+ * Tỷ lệ kích hoạt trong dữ liệu là phân số 0–1 → "55%" / "37.5%". Giá trị ngoài khoảng đó (hoặc không
+ * hữu hạn) là lỗi dữ liệu: không in ra số vô nghĩa ("5000%"), hiện gạch ngang và cảnh báo dev một lần.
+ */
+const INVALID = "—";
+const RATE_WARNED = new Set();
+export function ratePercentText(value) {
+  if (value === null || value === undefined || value === "") return EMPTY;
+  const rate = Number(value);
+  if (!Number.isFinite(rate) || rate < 0 || rate > 1) {
+    if (!RATE_WARNED.has(String(value))) {
+      RATE_WARNED.add(String(value));
+      console.warn(`Tra cứu: tỷ lệ kích hoạt ngoài khoảng 0–1 (${String(value)}) — không hiển thị`);
+    }
+    return INVALID;
+  }
+  return `${Number((rate * 100).toFixed(1))}%`;
+}
+
+/**
  * Nhãn Việt của một giá trị `type` chiến pháp, dùng chung cho mọi chỗ hiển thị (bảng, thẻ chiến pháp,
  * thẻ kết quả nhóm hỗn hợp). Giá trị đã Việt hoá giữ nguyên; enum thô không có nhãn bị bỏ (kèm cảnh báo
  * dev) để UI không bao giờ in enum; giá trị khác trả nguyên văn.
@@ -124,7 +143,7 @@ function tacticProfile(corpus, entry) {
   pushField(profile, "effect", row.effectViet, "Hiệu ứng");
   pushField(profile, "target", row.targetViet, "Mục tiêu");
   const rate = lookup.activationRate;
-  pushField(profile, "activationRate", rate, "Tỷ lệ kích hoạt", rate == null ? EMPTY : `${rate * 100}%`);
+  pushField(profile, "activationRate", rate, "Tỷ lệ kích hoạt", ratePercentText(rate));
   for (const [key, label] of [["type", "Loại"], ["quality", "Phẩm chất"], ["effectTypeVi", "Dạng hiệu ứng"], ["exchangeConditionVi", "Điều kiện đổi"]]) {
     const value = key in row ? row[key] : lookup[key];
     if (value === undefined || value === "") continue;

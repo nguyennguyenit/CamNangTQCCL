@@ -99,3 +99,23 @@ Chỉ mục 24 artboard + StyleGuide → báo cáo sở hữu nằm ở [`visual
 | Ảnh chân dung CDN ngoài | Cần kiểm trên origin deploy; localhost không gọi được CDN (giới hạn môi trường) |
 | Turnstile trên preview localhost (Cloudflare `110200`) | Hành vi Turnstile kiểm bằng mock trong `tests-e2e/beta-tools.spec.mjs`; preview thật thuộc bước deploy |
 | Markup publish không đường render (`team-pk.js`, `meta-cu.js`, `hero-list.js`, `hero-detail.js`, `tactics.js`) | CSS đã xoá theo; xoá module + entry manifest để phase riêng nếu muốn dọn tiếp |
+
+## Vòng sửa Opus round 2 — số liệu thay cho §1–§4 (2026-09-26)
+
+Khối này **thay thế** mọi số liệu policy/generation/manifest/gate ở §1–§4 (chúng thuộc cây trước vòng sửa):
+
+| Mục | Giá trị trên cây hiện tại |
+| --- | --- |
+| `policyVersion` | **`site-vi-260926-opus-round-2b`** (trước: `site-vi-260926-toi-a11y-docs` → `site-vi-260926-opus-recheck`) |
+| `sourceFiles` làm mới hash | 5 file ở vòng P3/P7 (`js/lookup-detail.js`, `js/site-nav.js`, `js/unified-lookup.js`, `src/layouts/SiteLayout.astro`, `src/pages/doi-chuan/index.astro`) + 3 file ở vòng round 2 (`js/analyze.js`, `js/recommended-reference-render.js`, `js/roster-recommend-ui.js`) |
+| Generation đang pin | **`27d82121c65bf5443fbe1a1745acab271e8d6f96b1747a83aefba6b282e31cac`**, manifest **`ef994027575931e2`** (trước: `9e1a982a…`/`872ea98f…`, rồi `ac620801…`/`6a935bb3…`) |
+| Obligation sửa chữ | 2 obligation `authored-vi`: `ui:section-page/doi-chuan` (meta description) và `ui:lookup/badge-cost` (biểu thức) — không cần receipt; số đếm không đổi: 5591 / 2088 / 68, `concreteLocationCount` 56 653, `concreteInventorySha256` `a85e2fd6…` |
+| Gate cuối | `check`/`build`/`verify` pass (1559 trang, 0 problem), `test:dist` **28/28**, `test:node` **349/349**, `python3 -m unittest discover -s tests` **379 OK**, `test:e2e` **276/276**, `design-tokens --check` pass (legacy 0), `design-compare --tokens` phase 03–10 × 2 theme **0 lệch chưa giải thích** |
+| A5 sau vòng sửa | chip nhóm Tra cứu mobile 44px (chữ căn giữa), link nguồn SGSDeck 44px, link đội tiêu biểu trong hồ sơ là cả hàng ≥44px; sweep 320/390 × 2 theme không còn control đứng riêng dưới 44px |
+
+### Cập nhật round 3
+
+- `policyVersion`: **`site-vi-260926-opus-round-3`**; hash `js/analyze.js` làm mới (P9-R1).
+- Generation đang pin: **`df725667d70890c15f1848c90346bb7d4db7107ab3eb57af09f76bd0732edc16`**, manifest **`fbf26a73fa10bc01`** (trước đó `27d82121…`/`ef994027…`); generation trung gian đã xóa, chỉ còn bản đang pin.
+- Gate: `check`/`build`/`verify` pass, `test:dist` 28/28, `test:node` 349/349, `test:e2e` **278/278 pass**, `unittest` **379 OK**; `design-tokens --check` pass; `design-compare --tokens` 07 **526/526**, 09 chỉ ngoại lệ đã khai, 10 **381/381** (cả 2 theme).
+- A5 nay đầy đủ ở mobile: chip nhóm 44px, nút tên chiến pháp 44px (P07-R3), link nguồn 44px, hàng đội tiêu biểu là cả hàng ≥44px.

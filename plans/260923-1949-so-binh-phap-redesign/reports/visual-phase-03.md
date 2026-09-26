@@ -199,3 +199,55 @@ feat(shell): rebuild header, dropdown menus, mobile menu and shared footer
 | P2 | Link HTTP(S) trong cả hai menu thiếu `target`/`rel`; link mobile thiếu chữ ẩn "(mở tab mới)"; footer gắn `target=_blank` cho cả mailto | Cả ba renderer dùng chung `entry.external` (HTTP(S) → `target` + `EXTERNAL_REL` + ↗ + chữ ẩn; mailto/nội bộ → không `target`, không chữ ẩn) và `entry.offsite` cho chỉ báo ↗ (mailto vẫn có mũi tên theo artboard). Test cũ chỉ soi `a[target="_blank"]` đã bị thay bằng audit theo giao thức trên 3 bề mặt (10 + 10 + 7 link) + bấm thật một link menu với `context.route` kiểm soát đích |
 | P2 | Back cùng tài liệu để lớp phủ mở và giữ khóa cuộn | `js/site-nav.js` thêm `clearTransientState` gọi trong `popstate` và `pagehide`: đóng cả menu thả lẫn lớp phủ, mở khóa cuộn, **không** reload/không giành focus/không thêm store; hành vi URL-owned và phục hồi cuộn của Phase 2 giữ nguyên. Regression: unit (popstate/pagehide) + e2e Back/Forward cùng tài liệu (URL/mùa/lớp phủ/khóa cuộn/cuộn nền) + e2e rời trang khác tài liệu rồi quay lại |
 | P2 | Báo cáo claim sai về outbound/mailto | §1 bước 5 và §4 viết lại theo bằng chứng thật (số link theo bề mặt, mailto không `target`/không chữ ẩn, popup kiểm soát); §6 tách rõ số chạy bởi người thực thi khỏi phần Kongming kiểm độc lập (§6b) |
+
+## 11. Vòng sửa Opus (re-review độc lập, 2026-09-26)
+
+Rà soát độc lập tại HEAD `b89b1ad` (`'/Users/plateau/.omp/agent/sessions/-Project-CamNangTQCCL/2026-09-24T22-09-56-961Z_01a0d577-dae1-736c-8498-7e6dfd3aabd6/OpusRevB.md'`) kết luận Phase 3 **NO-GO** với 3 finding chặn
+(P3-B1…B3) và 5 nit. Vòng này xử lý hết, mỗi finding có regression e2e riêng.
+
+| # | Phát hiện | Sửa | Bằng chứng |
+| --- | --- | --- | --- |
+| **P3-B1** | Panel "Game" bị cắt khỏi khung nhìn và tạo cuộn ngang: `css/styles.css` có `.nav-dropdown-game .nav-menu{left:auto;right:0}` nhưng `SiteLayout.astro` không bao giờ gắn class đó (panel 1122→1622 ở khung 1440) | `<li class:list={['nav-dropdown', menu.key === 'game' && 'nav-dropdown-game']} data-dropdown>` — rule neo phải đã có sẵn, chỉ thiếu class | e2e `spa-parity.spec.mjs`: mở **từng** `[data-dropdown-button]` trên `/`, `/doi-chuan/` và một trang chi tiết ở 1280 và 1440 → panel left ≥ 0, right ≤ `clientWidth`, `scrollWidth == clientWidth`. Đo lại: Game ở `/doi-chuan/` = [632, 1132] @1280 và [712, 1212] @1440; ở `/` @1280 = [358, 858]; 0 cuộn ngang |
+| **P3-B2** | Header vỡ trong 821–1260px (nhãn nav xuống 2 dòng "Đội/chuẩn", tagline tràn khỏi dải 72px); tagline 2 dòng ở 320 | `.nav-tab{white-space:nowrap}`; `.tagline{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}`; khối mới `@media (max-width:1279px){.site-nav{display:none}.site-menu-toggle{display:inline-flex}}`; `DESKTOP_QUERY='(min-width: 1280px)'` trong `js/site-nav.js` | e2e: 821/1024/1180/1279 → nav ẩn, ☰ hiện 44×44, mở được lớp phủ, Escape trả focus; resize **1024 → 1280** đóng lớp phủ, mở khóa cuộn, ☰ ẩn; 1280/1440 mọi nhãn nav đúng **1 hộp dòng** (đo bằng hộp dòng của text node); 320 tagline cao đúng 1 dòng, đáy ≤ đáy header, cắt bằng ellipsis; 390/1024 hiện trọn chữ, không cắt. Đo lại: header 320 → 60px, 821/1024/1180/1279 → 72/76px, không cuộn ngang |
+| **P3-B3** | Trang 404 không có lề trang (thẻ `.detail-state` trải hết chiều rộng vì `not-found` không nhận `detail-content`) | `contentClass = pageKind === 'detail' \|\| pageKind === 'not-found' ? 'content detail-content' : 'content'` | e2e: 404 @1440 thẻ left = left thương hiệu = **48**; @390 left = **16** (≥ 16); @320 left = 16; 0 cuộn ngang |
+| N1 | Landing có **hai** `<h1>` (tên thương hiệu + tiêu đề hero) | Tên thương hiệu ở header Landing: `<h1 class="site-title">` → `<span class="site-title">` | e2e: `/` có đúng **1** `<h1>`; `npm run test:dist` khẳng định `dist/index.html` có 1 `<h1>` và brand là `<span class="brand-text"><span class="site-title">` |
+| N2 | Trang chi tiết đánh dấu link mục cha bằng `aria-current="page"` (sai: link đó không phải trang đang mở) | helper `currentMark(id)` = `pageKind === 'detail' ? 'true' : 'page'`, dùng cho link nav phẳng, mục trong menu thả và dòng menu mobile | e2e: trang chi tiết → link mục cha `aria-current="true"`, **0** link `aria-current="page"` trong `.site-nav`; trang mục vẫn `"page"`. `khaihoang-options.spec.mjs` (trang chi tiết Khai hoang) sửa theo đúng hành vi mới |
+| N3 | Nút menu thả khai `aria-haspopup="true"` dù panel là danh sách link (disclosure, không phải `role=menu`) | bỏ thuộc tính trong `SiteLayout.astro` | e2e: 0 phần tử `[aria-haspopup]` trên `/` và trang chi tiết; `test:dist` khẳng định `dist/index.html` + `dist/doi-chuan/index.html` không còn `aria-haspopup`; shell assertion thêm luật cấm cho mọi nút menu thả |
+| N4 | Mô tả `meta name="description"` của `/doi-chuan/` còn "và **điểm**" (bộ lọc điểm đã bỏ từ Phase 5) | `src/pages/doi-chuan/index.astro` → "…lọc theo phe, loại binh và mùa nguồn."; obligation `ui:section-page/doi-chuan` cập nhật theo (lớp `authored-vi` ⇒ không cần receipt) | `test:dist` khẳng định chuỗi mới trong `dist/doi-chuan/index.html`; `site_localization check --stage public` 0 problem sau khi publish lại |
+| N5 | Footer không chạm đáy ở trang ngắn (404 @1440×900 còn ~110px nền phía dưới) | `body{display:flex;flex-direction:column;min-height:var(--size-viewport)}` + `main{flex:1 0 auto}` (token mới `size.viewport` = `100dvh`) | e2e: 404 @1440×900 đáy footer = **900** = `innerHeight`; `min-height` computed của `body` = 900px; 390/320 không phát sinh cuộn ngang |
+
+Token/component thêm trong vòng này (đều ghi nguồn trong `tokens.json`): `size.viewport` (100dvh),
+`size.col-60/120/230/200/80` (bề rộng cột bảng chiến pháp — dùng ở Phase 7), `size.fact-label` (Phase 7),
+`type.badge-chip`, `type.chip-pill`; `badge` thêm 2 biến thể viên 26px kèm probe; `chip-loc` và `bang`
+thêm `7` vào `phaseUsed` để probe `/tra-cuu/` thật sự chạy trong gate Phase 7.
+
+### Gate sau vòng sửa
+
+| Lệnh | Kết quả |
+| --- | --- |
+| `npm run check` / `npm run build` / `npm run verify` | pass (0 error/warning; 1559 trang; gate bản dịch public 0 problem) |
+| `npm run test:dist` | **28/28 pass** |
+| `npm run test:node` | **349/349 pass** |
+| `npm run test:e2e` | **271/271 pass** |
+| `python3 -m unittest discover -s tests` | **379 OK** |
+| `node scripts/design-tokens.mjs --check` | pass — legacy **0** giá trị thô / 0 selector (`ceiling` 0) |
+| `design-compare --tokens --phase 03` (+dark) | **136/136** · **136/136**, 0 lệch chưa giải thích |
+| `design-compare --phase 03` (+dark) | 6 ảnh ghép mỗi theme ở `.cache/design-compare/phase-03{,-dark}/` |
+
+### Test sửa/thêm có chủ đích (vòng này)
+
+1. `tests-e2e/spa-parity.spec.mjs` **thêm 6 ca**: panel menu thả trong khung nhìn + neo phải của Game; header
+   821–1279 dùng ☰ (mở/Escape/focus) và 1280 mọi nhãn một hộp dòng; resize 1024→1280; tagline 320 một dòng
+   trong dải; 404 có lề trang + footer chạm đáy; Landing một `h1` + trang chi tiết `aria-current="true"` +
+   không `aria-haspopup`.
+2. `tests-e2e/recommended-browser.spec.mjs`, `tests-e2e/unified-lookup.spec.mjs`: ngưỡng "đang ở mobile" đổi từ
+   `width <= 820` sang `width < 1280` — mốc thu gọn nav nay là 1280px; các bề rộng đang chạy (320/375/768 và
+   1280) giữ nguyên hành vi.
+3. `tests-e2e/khaihoang-options.spec.mjs`: khẳng định `aria-current` trên trang chi tiết Khai hoang đổi từ
+   `"page"` sang `"true"` (N2: link mục cha không phải trang hiện tại) + thêm khẳng định `.site-nav` không còn
+   `aria-current="page"` trên trang chi tiết.
+4. `tests-js/astro-dist-contract.test.mjs`: thêm khẳng định `dist/index.html` một `h1`, brand là `span`, không
+   `aria-haspopup` (Landing + `/doi-chuan/`), và mô tả `/doi-chuan/` đúng chữ mới (bỏ "điểm").
+5. `tests-js/frontend-shell-contract-assertions.mjs`: thêm luật "nút menu thả không được có `aria-haspopup`".
+6. `tests-js/unified-lookup.test.mjs`: hai khẳng định đọc mã nguồn shell cập nhật theo biểu thức `currentMark(...)`
+   (biểu thức `aria-current` cũ không còn trong `SiteLayout.astro`).

@@ -434,7 +434,7 @@ export function recommendedTeamDetailContent(record,{legacyTeams=[],labels=null}
     ].filter(Boolean)),
     record.introRaw ? noteParagraph(record.introRaw) : null,
     source
-      ? el('p',{},el('a',{href:source,target:'_blank',rel:'noopener noreferrer'},'Mở nguồn SGSDeck trong thẻ mới'))
+      ? el('p',{},el('a',{class:'detail-link',href:source,target:'_blank',rel:'noopener noreferrer'},'Mở nguồn SGSDeck trong thẻ mới'))
       : el('p',{class:'scope-note'},'Liên kết nguồn không hợp lệ hoặc chưa có.'),
   ]));
   return fragment;

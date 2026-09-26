@@ -283,3 +283,10 @@ feat(landing): rebuild the Landing from published data with real previews and a 
   boundaries, previews with a live detail link, anchors in both widths, QR,
   outbound arrows, dark-theme QR, legacy redirect)
 ```
+
+## Nits từ re-review (round 3) — ghi nhận, không sửa
+
+| # | Nội dung | Trạng thái |
+| --- | --- | --- |
+| N4-1 | Bảng xem trước trên Landing mobile: cột **điểm** chỉ tới được khi cuộn ngang trong bảng và không có gợi ý nào cho biết bảng cuộn được. | **Ghi nhận, chưa sửa** (vòng round 3). Hai hướng: đưa điểm vào hàng xếp dọc như `MobileTable`, hoặc thêm gợi ý cuộn. |
+| N4-2 | Lệnh sinh QR và version (`qrcode@1.5.4`) nằm ở comment frontmatter của `src/pages/index.astro`, nên **không** có trong `dist/index.html` — trong khi plan ghi "comment ở đầu SVG". | **Ghi nhận, chưa sửa** (vòng round 3). Hoặc đưa comment vào trong SVG, hoặc coi frontmatter là chỗ ghi nguồn chính thức. |

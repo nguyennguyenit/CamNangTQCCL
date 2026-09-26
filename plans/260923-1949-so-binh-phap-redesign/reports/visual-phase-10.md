@@ -150,8 +150,7 @@ phản, **0 control thiếu tên truy cập được** (sau khi gắn `aria-labe
 trỏ vào tiêu đề thẻ — không thêm chuỗi UI mới).
 `prefers-reduced-motion: reduce`: **0 phần tử còn transition/animation** trên Landing.
 
-**Theme** — không lưu + OS tối → `dark`; lưu `light` + OS tối → `light`; đổi OS khi trang đang mở → cập nhật theo
-(hệ điều hành mới); `localStorage` ném lỗi → rơi về `prefers-color-scheme`, 0 `pageerror`; Back/Forward giữ đúng theme.
+**Theme** — không lưu + OS tối → `dark`; lưu `light` + OS tối → `light`; `localStorage` ném lỗi → rơi về `prefers-color-scheme`, 0 `pageerror`; Back/Forward giữ đúng theme.
 **Theme theo OS chỉ được đọc ở mỗi lần tải trang**: đổi OS khi trang đang mở **không** tự cập nhật
 (`js/site-chrome.js` không có listener `matchMedia`; lần đo đầu của phase đổi OS ngay lúc khởi tạo nên đọc sai —
 Kongming P10-2 xác nhận lại và report sửa theo hành vi thật, không thêm listener vì contract đóng băng không yêu cầu);
@@ -300,3 +299,67 @@ Không mở lại các quyết định đóng băng: **không** thêm listener `
   `--band-link` cho biến thể "nút chính" (đổi artboard → cần chủ dự án duyệt).
 - `js/team-pk.js`, `js/meta-cu.js`, `js/hero-list.js`, `js/hero-detail.js`, `js/tactics.js` vẫn được publish nhưng
   không có đường render: CSS đã xoá theo; nếu muốn dọn tiếp thì xoá module + manifest entry ở một phase riêng.
+
+## Opus re-review round 2 (2026-09-26)
+
+| # | Phát hiện | Sửa | Bằng chứng |
+| --- | --- | --- | --- |
+| **P10-B1** | Chip nhóm Tra cứu trên mobile chỉ cao **40px** và chữ dính mép trên (hồi quy do chính vòng sửa trước: P07-D5c) — sai A5 và hợp đồng §11.4 (40 → 44) | Trong khối ≤680: `.lookup-chip { align-items: center; min-height: var(--control-44) }`; probe `chip-loc` ở 390 đổi sang `control.44` | e2e mới (390/320 × 2 theme): **cả 6 chip** cao ≥ 44 và khoảng cách chữ trên/dưới lệch ≤ 1px; đo trực tiếp: cao 44, khe trên = khe dưới = 13px; ảnh `chip-390-light.png` (nhãn căn giữa viên) và `chip-320-dark.png`; `scrollWidth == innerWidth` vẫn đúng |
+| **P10-B2** | Link "Mở nguồn SGSDeck trong thẻ mới" trong thân chi tiết Đội chuẩn chỉ cao 19px, đứng riêng một dòng (không thuộc ngoại lệ inline của WCAG 2.5.8) trên 1366 route | `class:'detail-link'` (P06-B2) ⇒ 44px mọi bề rộng + `.detail-source > p > a { display: inline-flex; align-items: center; min-height: var(--control-44) }` trong khối A5 mobile | e2e `a11y-targets.spec.mjs` (320/390 × 2 theme): cao **44**, rộng 267, Enter mở tab mới, không có màu link mặc định, không cuộn ngang |
+| **P10-B3** | Số liệu Phase 10 lệch cây thật (policyVersion/generation/manifest/gate) | Cập nhật §1–§4 của `phase-10-final.md` và §5/§8/§10 của báo cáo này theo cây sau vòng sửa (xem khối "Số liệu cây hiện tại") | Chuỗi khớp `src/data/recommended-reference/current.json` (`27d82121…`/`ef994027…`), `pipeline/site-localization-policy.json` (`site-vi-260926-opus-round-2b`) và `pipeline/team-route-handles.json` |
+| N1 | Link tiêu đề thẻ đội cao 26px ở mobile — hợp lệ nhờ ngoại lệ "control tương đương" (mỗi thẻ có link "Chi tiết" 44px cùng href) nhưng chưa được khai | Khai ngoại lệ trong `docs/design-guidelines.md` (mục Responsive/touch) + ghi ở đây | Câu khai báo nằm trong tài liệu; 5 link/trang đầu `/doi-chuan/` đều có link "Chi tiết" 44px cùng href |
+| N2 | §5 "Theme" tự mâu thuẫn (nói đổi theme hệ điều hành cập nhật trang ngay, rồi nói đúng là không) | **Lượt round 2 khai đã sửa nhưng thực tế chưa** — mệnh đề sai còn ở §5; đã xóa thật ở vòng round 3 (P10-R1) | §5 hiện chỉ còn câu đúng: đổi OS khi trang đang mở **không** tự cập nhật (không có listener `matchMedia`) |
+| N3 | `docs/code-standards.md` còn câu cũ: chỉ `_headers`/`robots.txt` là byte-equal, `_headers` thiếu 8 trang mục và `/fonts/*`, còn dùng từ vựng tab/root | **Lượt round 2 khai đã sửa nhưng mới sửa phần từ vựng**; dòng 45 và 50 đã sửa thật ở vòng round 3 (P10-R1) | Dòng 45 nay kể cả `favicon.png` + `public/fonts/`; dòng 50 liệt kê đủ 16 luật của `public/_headers` (8 trang mục, `/404.html`, `/favicon.png`, `/js/*`, `/css/*`, `/fonts/*`, `/data/*`) |
+| N4 | Checker không soát `font` shorthand và custom property ngoài khối token | `scripts/design-tokens.mjs`: thêm `/^font$/` vào `CHECKED_PROPERTIES` và coi mọi property bắt đầu `--` là thuộc tính bị soát | `--check` vẫn pass (legacy 0) và giờ bắt được giá trị thô nếu ai đó viết `font: 11px …` hay `--x: 12px` ngoài khối token |
+| N5 | Bảng số probe token theo phase ở §2 đã cũ | Cập nhật theo số mới: 03 **136**, 04 **720**, 05 **631/632**, 06 **400**, 07 **520**, 08 **589/590**, 09 chỉ 2 ngoại lệ đã khai, 10 **295** | Khối Gate ở trên |
+| N8-1 (từ vòng 8/9) | Theme tối: chip/nút đang chọn dùng `--band` gần bằng nền trang nên phản hồi thị giác yếu | **Chưa sửa** — cần quyết định bảng màu tối | Số đo: `--band #0F0E0B` trên nền `#16140F` ≈ 1,07:1, trên chip chưa chọn `#2A2620` ≈ 1,35:1; tương phản **chữ** vẫn đạt nên không phải lỗi A4 |
+
+### Số liệu cây hiện tại (thay cho số cũ ở §1–§4)
+
+- `policyVersion`: **`site-vi-260926-opus-round-2b`**; `sourceFiles` làm mới hash cho `js/analyze.js`, `js/recommended-reference-render.js`, `js/roster-recommend-ui.js` (2 lượt) và 5 file của vòng trước.
+- Generation đang pin: **`27d82121c65bf5443fbe1a1745acab271e8d6f96b1747a83aefba6b282e31cac`** / manifest **`ef994027575931e2`** (trước đó `9e1a982a…` / `872ea98f…`).
+- Gate: `check`/`build`/`verify` pass, `test:dist` 28/28, `test:node` 349/349, `unittest` 379 OK; `test:e2e` 275/276 → khẳng định sai đã sửa, `beta-tools` chạy lại 9/9.
+- `design-tokens --check` pass (legacy 0, đã phủ `font`/custom property); `design-compare --tokens` phase 03–10 × 2 theme: 0 lệch chưa giải thích.
+
+### Gate (sau vòng sửa round 2)
+
+| Lệnh | Kết quả |
+| --- | --- |
+| `npm run check` / `npm run build` / `npm run verify` | pass (0 error/warning; 1559 trang; gate bản dịch public 0 problem) |
+| `npm run test:dist` | **28/28 pass** |
+| `npm run test:node` | **349/349 pass** |
+| `npm run test:e2e` | **276/276 pass** (khẳng định sai của vòng sửa — trạng thái dấu ✓ của bước 2 Soi đội — đã sửa trước lần chạy này) |
+| `python3 -m unittest discover -s tests` | **379 OK** (chạy sau khi áp N-c: `test_hero_summaries` 11 OK, `test_site_localization` 10 OK) |
+| `node scripts/design-tokens.mjs --check` | pass — legacy **0**, `font` shorthand + custom property ngoài khối token đều được soát (N4) |
+| `design-compare --tokens` phase 03–10 × 2 theme | 03 **136/136**, 04 **720/720**, 05 **631/632**, 06 **400/400**, 07 **520/520**, 08 **589/590**, 09 (chỉ 2 ngoại lệ đã khai), 10 **295/295** — **0 lệch chưa giải thích** mọi phase × 2 theme |
+
+Generation: `9e1a982a…` → `ac620801…` (sau lượt sửa 5/6/9/10) → **`27d82121c65bf5443fbe1a1745acab271e8d6f96b1747a83aefba6b282e31cac`** (sau lượt sửa
+`js/roster-recommend-ui.js`), manifest `ef994027575931e2`; re-pin `pipeline/team-route-handles.json` + `team_route_handles --check` pass (1366/166/17). Policy:
+`site-vi-260926-opus-round-2` → `site-vi-260926-opus-round-2b` (2 lượt làm mới hash `sourceFiles`); `baseline.notes` không đổi.
+
+## Opus re-review round 3 (2026-09-26)
+
+| # | Phát hiện | Sửa | Bằng chứng |
+| --- | --- | --- | --- |
+| **P07-R3** (khoá tick A5 của Phase 10) | Nút tên chiến pháp trong bảng Tra cứu chỉ cao **21px** ở mobile (60 nút/trang ở 390 và 320, cả 2 theme) — control duy nhất của hàng nên không có ngoại lệ và không có control tương đương | `.lookup-table-name { display: inline-flex; align-items: center; min-height: var(--control-44) }` trong khối ≤680; probe `bang` thêm ca mobile, `bang.phaseUsed` bổ sung 10 | e2e mới trong `a11y-targets.spec.mjs` (320/390 × 2 theme): **mọi** nút ≥ 44×44, Enter mở đúng hồ sơ, không cuộn ngang; đo trực tiếp 60/60 nút = **44px** ở cả 4 tổ hợp, Enter ra `?group=tactics&id=tactic%3Aan-ui-quan-dan` với hộp thoại đúng tên; ảnh `name-390-light`. `design-compare --tokens --phase 07` = 526/526, `--phase 10` = 381/381 |
+| **P10-R1 / N2** | §5 vẫn còn mệnh đề sai "đổi OS khi trang đang mở → cập nhật theo" (lượt round 2 khai đã sửa nhưng không) | Xóa mệnh đề đó; §5 chỉ còn câu đúng (không có listener `matchMedia`) | `grep` trên §5: không còn chuỗi "cập nhật theo" |
+| **P10-R1 / N3** | `docs/code-standards.md` dòng 45 và 50 vẫn sai: chỉ `_headers`/`robots.txt` là byte-equal; `_headers` không nêu 8 trang mục và `/fonts/*` (lượt round 2 mới sửa phần từ vựng) | Dòng 45 nay kể cả `public/favicon.png` + cả `public/fonts/`; dòng 50 liệt kê đủ **16 luật** của `public/_headers` (`/`, `/index.html`, 8 trang mục, `/404.html`, `/favicon.png`, `/js/*`, `/css/*`, `/fonts/*`, `/data/*`); "Root Khai hoang"/"tập dữ liệu tab" đổi sang từ vựng trang mục | `grep -c "^/" public/_headers` = 16 khớp danh sách trong tài liệu |
+| N3a-1 (từ N-e) | Dấu `·` của dòng phụ thẻ mồ côi ở đầu dòng khi mảnh xuống hàng (54/60 thẻ ở 1440, mọi thẻ ở 320) | Thu hẹp quy tắc còn `.reference-faction + *::before` (chỉ giữa phe và mảnh kế tiếp) | Đo ở 320: mảnh phe `::before: ""` (chấm màu), mảnh "Thống ngự N" có `::before: "·"`, mảnh vai trò `::before: none`; ảnh `cardmeta-320-light` cho thấy dòng vai trò xuống hàng **không** còn dấu ở đầu |
+
+### Gate (sau vòng sửa round 3)
+
+| Lệnh | Kết quả |
+| --- | --- |
+| `npm run check` / `npm run build` / `npm run verify` | pass (0 error/warning; 1559 trang; gate bản dịch public 0 problem) |
+| `npm run test:dist` | **28/28 pass** |
+| `npm run test:node` | **349/349 pass** |
+| `npm run test:e2e` | **278/278 pass** |
+| `python3 -m unittest discover -s tests` | **379 OK** |
+| `node scripts/design-tokens.mjs --check` | pass — legacy 0 (đã phủ `font` shorthand + custom property ngoài khối token) |
+| `design-compare --tokens --phase 07` | **526/526** · **526/526** (light · dark) — 0 lệch chưa giải thích |
+| `design-compare --tokens --phase 09` | chỉ 2 ngoại lệ đã khai (`select-nhan-caps`, `tool-head` line-height) — 0 lệch chưa giải thích |
+| `design-compare --tokens --phase 10` | **381/381** · **381/381** (light · dark) — 0 lệch chưa giải thích |
+
+Generation: `27d82121…` → **`df725667d70890c15f1848c90346bb7d4db7107ab3eb57af09f76bd0732edc16`**, manifest `fbf26a73fa10bc01`;
+policy `site-vi-260926-opus-round-2b` → **`site-vi-260926-opus-round-3`** (làm mới hash `js/analyze.js`); `team_route_handles --check` pass (1366/166/17);
+generation trung gian `27d82121…` đã xóa (chỉ còn generation đang pin).

@@ -105,3 +105,63 @@ test.describe("A5 — control đứng riêng phải đủ 44px ở mobile", () =
     }
   });
 });
+
+test.describe("A5 — vòng sửa Opus round 2", () => {
+  test("link nguồn SGSDeck trong thân chi tiết Đội chuẩn: đủ 44px, Enter mở được", async ({ browser }) => {
+    const path = "/doi-chuan/pk-s24-tiem-long-dieu-thuyen/";
+    for (const { width, colorScheme } of CASES) {
+      const context = await browser.newContext({ viewport: { width, height: 900 }, colorScheme });
+      await context.route("**/*", (route) => new URL(route.request().url()).hostname === "127.0.0.1"
+        ? route.continue() : route.abort());
+      const page = await context.newPage();
+      await page.goto(path);
+      const link = page.locator(".detail-source > p > a").first();
+      await expect(link).toBeVisible();
+      const box = await link.boundingBox();
+      expect(box.height, `${width}/${colorScheme}: chiều cao link nguồn`).toBeGreaterThanOrEqual(44);
+      expect(box.width, `${width}/${colorScheme}: chiều rộng link nguồn`).toBeGreaterThanOrEqual(44);
+      // Không còn màu link mặc định của trình duyệt (P06-B2).
+      const colour = await link.evaluate((node) => getComputedStyle(node).color);
+      expect(["rgb(0, 0, 238)", "rgb(85, 26, 139)", "rgb(158, 158, 255)"]).not.toContain(colour);
+      const [popup] = await Promise.all([page.waitForEvent("popup"), link.press("Enter")]);
+      expect(popup, `${width}/${colorScheme}: Enter mở tab mới`).toBeTruthy();
+      await popup.close();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+      await context.close();
+    }
+  });
+});
+
+test.describe("A5 — vòng sửa Opus round 3", () => {
+  test("nút tên chiến pháp trong bảng Tra cứu: đủ 44px và Enter mở hồ sơ", async ({ browser }) => {
+    for (const { width, colorScheme } of CASES) {
+      const context = await browser.newContext({ viewport: { width, height: 900 }, colorScheme });
+      await context.route("**/*", (route) => new URL(route.request().url()).hostname === "127.0.0.1"
+        ? route.continue() : route.abort());
+      const page = await context.newPage();
+      await page.goto("/tra-cuu/?group=tactics");
+      const names = page.locator("#section-lookup .lookup-table-name");
+      await expect(names.first()).toBeVisible();
+      const boxes = await names.evaluateAll((nodes) => nodes.map((node) => {
+        const rect = node.getBoundingClientRect();
+        return { height: Math.round(rect.height), width: Math.round(rect.width) };
+      }));
+      expect(boxes.length, `${width}/${colorScheme}: số nút`).toBeGreaterThan(20);
+      for (const box of boxes) {
+        expect(box.height, `${width}/${colorScheme}: chiều cao nút tên`).toBeGreaterThanOrEqual(44);
+        expect(box.width, `${width}/${colorScheme}: chiều rộng nút tên`).toBeGreaterThanOrEqual(44);
+      }
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+      // Enter mở đúng hồ sơ của chiến pháp đang chọn.
+      const first = names.first();
+      const label = (await first.textContent()).trim();
+      await first.focus();
+      await page.keyboard.press("Enter");
+      const dialog = page.getByRole("dialog");
+      await expect(dialog).toBeVisible();
+      await expect(dialog).toContainText(label);
+      await expect(page).toHaveURL(/id=tactic/);
+      await context.close();
+    }
+  });
+});

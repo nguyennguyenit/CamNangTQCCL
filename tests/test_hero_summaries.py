@@ -26,34 +26,45 @@ def hero(identifier, *, chinese="", aliases=(), han_viet="", viet=None):
     }
 
 
-def index_record(config_id, names, *, value=100, season="PK-S1", tactics=(), books=(), focus=None):
+def index_record(config_id, names, *, value=100, season="PK-S1", tactics=(), books=(), focus=None, kinds=None, focus_kinds=None):
+    """`kinds[i]`/`focus_kinds[i]` là `tacticSlotKinds`/`statFocusKind` của tướng ở vị trí i (None = không khai)."""
+    heroes = []
+    for index, (name, role) in enumerate(zip(names, ("主將", "副將 1", "副將 2"))):
+        holder = {
+            "nameRaw": name,
+            "roleRaw": role,
+            "tacticSlotsVi": list(tactics),
+            "bookSlotsVi": list(books),
+            "statFocusVi": focus,
+        }
+        if kinds is not None and index < len(kinds) and kinds[index] is not None:
+            holder["tacticSlotKinds"] = list(kinds[index])
+        if focus_kinds is not None and index < len(focus_kinds) and focus_kinds[index] is not None:
+            holder["statFocusKind"] = focus_kinds[index]
+        heroes.append(holder)
     return {
         "sourceConfigId": config_id,
         "displayNameVi": config_id,
         "sourceSeasonLabel": season,
         "value": value,
-        "heroes": [
-            {
-                "nameRaw": name,
-                "roleRaw": role,
-                "tacticSlotsVi": list(tactics),
-                "bookSlotsVi": list(books),
-                "statFocusVi": focus,
-            }
-            for name, role in zip(names, ("主將", "副將 1", "副將 2"))
-        ],
+        "heroes": heroes,
     }
 
 
-def other_record(team_id, names, *, tactics=(), books=(), focus=None):
+def other_record(team_id, names, *, tactics=(), books=(), focus=None, kinds=None, focus_kinds=None):
+    holders = []
+    for index, name in enumerate(names):
+        holder = {"nameRaw": name, "tacticSlotsRaw": list(tactics), "bookSlotsRaw": list(books), "statFocusRaw": focus}
+        if kinds is not None and index < len(kinds) and kinds[index] is not None:
+            holder["tacticSlotKinds"] = list(kinds[index])
+        if focus_kinds is not None and index < len(focus_kinds) and focus_kinds[index] is not None:
+            holder["statFocusKind"] = focus_kinds[index]
+        holders.append(holder)
     return {
         "legacyTeamId": team_id,
         "legacyVariantId": f"{team_id}-v",
         "name": team_id,
-        "holders": [
-            {"nameRaw": name, "tacticSlotsRaw": list(tactics), "bookSlotsRaw": list(books), "statFocusRaw": focus}
-            for name in names
-        ],
+        "holders": holders,
     }
 
 
@@ -141,6 +152,53 @@ class CountingTest(unittest.TestCase):
         self.assertEqual(list(payload["summaries"]), ["hero:luu-bi"])
 
 
+class SlotKindTest(unittest.TestCase):
+    """Ô `bond` (duyên phận) và `statFocusKind=note` (lưu ý) không phải chiến pháp/hướng điểm.
+
+    Cùng quy tắc với `js/recommended-reference-render.js` (duyên phận tách khỏi chiến pháp, ghi chú in
+    "Lưu ý:"); thiếu khóa kind thì mặc định là `tactic`/`stat` như trước.
+    """
+
+    def test_bond_slots_and_note_focus_are_not_counted(self):
+        payload = build_hero_summaries(
+            catalog_bytes=json.dumps(CATALOG, ensure_ascii=False).encode(),
+            records=[index_record(
+                "a", ["劉備", "", ""],
+                tactics=("Chiến pháp Thật", "Kết Nghĩa Vườn Đào"),
+                books=("Binh thư Thật",),
+                focus="Khiên bậc S",
+                kinds=[["tactic", "bond"], None, None],
+                focus_kinds=["note", None, None],
+            )],
+            other_records=[other_record(
+                "t1", ["Lưu Bị", "", ""],
+                tactics=("Chiến pháp Thật", "Kết Nghĩa Vườn Đào"),
+                books=("Binh thư Thật",),
+                focus="Khiên bậc S",
+                kinds=[["tactic", "bond"]],
+                focus_kinds=["note"],
+            )],
+        )
+        liu = payload["summaries"]["hero:luu-bi"]
+        self.assertEqual([item["name"] for item in liu["tactics"]], ["Chiến pháp Thật"])
+        self.assertEqual(liu["tactics"], [{"name": "Chiến pháp Thật", "teams": 2}])
+        self.assertEqual(liu["books"], {"teams": 2, "items": [{"name": "Binh thư Thật", "teams": 2}]})
+        self.assertEqual(liu["statFocus"], {"teams": 0, "items": []})
+
+    def test_missing_kind_columns_keep_the_old_counting(self):
+        """Không khai kinds (dữ liệu cũ) ⇒ mọi ô vẫn được đếm như trước."""
+        payload = build_hero_summaries(
+            catalog_bytes=json.dumps(CATALOG, ensure_ascii=False).encode(),
+            records=[index_record(
+                "a", ["劉備", "", ""], tactics=("Chiến pháp Thật", "Kết Nghĩa Vườn Đào"), focus="Toàn Thống",
+            )],
+            other_records=[],
+        )
+        liu = payload["summaries"]["hero:luu-bi"]
+        self.assertEqual([item["name"] for item in liu["tactics"]], ["Chiến pháp Thật", "Kết Nghĩa Vườn Đào"])
+        self.assertEqual(liu["statFocus"], {"teams": 1, "items": [{"name": "Toàn Thống", "teams": 1}]})
+
+
 class ValidationTest(unittest.TestCase):
     def setUp(self):
         self.catalog_bytes = json.dumps(CATALOG, ensure_ascii=False).encode()
@@ -223,6 +281,18 @@ class ValidationTest(unittest.TestCase):
                     counts[name] = counts.get(name, 0) + 1
             return bool(seen)
 
+        def tactic_slots(holder):
+            """Ô `bond` là duyên phận, không phải chiến pháp (thiếu kinds ⇒ mặc định `tactic`)."""
+            names = holder.get("tacticSlotsVi") or holder.get("tacticSlotsRaw") or []
+            kinds = holder.get("tacticSlotKinds") or []
+            return [name for index, name in enumerate(names) if (kinds[index] if index < len(kinds) else "tactic") == "tactic"]
+
+        def stat_focus(holder):
+            """`statFocusKind = note` là lưu ý, không phải hướng điểm."""
+            if holder.get("statFocusKind", "stat") != "stat":
+                return None
+            return holder.get("statFocusVi") or holder.get("statFocusRaw")
+
         for order, record in enumerate(records):
             for position, hero in enumerate(record["heroes"]):
                 identifier = only(chinese, strip(hero.get("nameRaw")))
@@ -230,10 +300,10 @@ class ValidationTest(unittest.TestCase):
                     continue
                 item = slot(identifier, record.get("displayNameVi"))
                 item["positions"]["standard"][position] += 1
-                add(item["tactics"], hero.get("tacticSlotsVi"))
+                add(item["tactics"], tactic_slots(hero))
                 if add(item["books"], hero.get("bookSlotsVi")):
                     item["book_teams"] += 1
-                if add(item["focus"], [hero.get("statFocusVi")]):
+                if add(item["focus"], [stat_focus(hero)]):
                     item["focus_teams"] += 1
                 item["teams"].append({
                     "family": "recommended", "name": record.get("displayNameVi"),
@@ -248,10 +318,10 @@ class ValidationTest(unittest.TestCase):
                     continue
                 item = slot(identifier, record.get("name"))
                 item["positions"]["other"][position] += 1
-                add(item["tactics"], holder.get("tacticSlotsRaw"))
+                add(item["tactics"], tactic_slots(holder))
                 if add(item["books"], holder.get("bookSlotsRaw")):
                     item["book_teams"] += 1
-                if add(item["focus"], [holder.get("statFocusRaw")]):
+                if add(item["focus"], [stat_focus(holder)]):
                     item["focus_teams"] += 1
                 item["teams"].append({
                     "family": "other", "name": record.get("name"), "seasonLabel": "", "score": None,

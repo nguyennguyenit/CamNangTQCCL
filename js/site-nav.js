@@ -10,7 +10,7 @@
 // menu thì đóng; menu mobile khóa cuộn nền và giam focus trong lớp phủ.
 
 const SCROLL_LOCK_CLASS = 'site-menu-open';
-const DESKTOP_QUERY = '(min-width: 821px)';
+const DESKTOP_QUERY = '(min-width: 1280px)';
 const FOCUSABLE = 'a[href], button';
 
 /**

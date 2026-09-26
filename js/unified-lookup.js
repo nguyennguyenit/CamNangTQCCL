@@ -138,6 +138,7 @@ export function lookupCardView(group, item) {
   const parts = hero
     ? [
         record.faction ? { kind: "faction", text: String(record.faction), code: FACTION_CODE[record.faction] ?? "none" } : null,
+        record.cost ? { kind: "text", text: `Thống ngự ${record.cost}` } : null,
         record.roleTagViet ? { kind: "text", text: String(record.roleTagViet) } : null,
       ]
     : [
@@ -332,11 +333,15 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
     const eyebrow = [labels[entryRow.group], record.lookup?.categoryVi ?? record.qualityVi ?? record.slotVi ?? record.elementVi ?? record.appliesToVi]
       .filter(Boolean).join(" · ");
     const badges = el("div", { class: "lookup-dialog-badges" });
-    if (view.variant) badges.append(el("span", { class: `pre ${String(record.lookup?.variant ?? "").toLowerCase()}` }, view.variant));
+    if (view.variant) badges.append(el("span", { class: "badge badge-band" }, view.variant));
     if (view.faction) badges.append(el("span", { class: `badge faction f-${FACTION_CODE[view.faction] ?? "none"}` }, view.faction));
-    if (view.stars) badges.append(el("span", { class: "badge" }, view.stars));
-    if (record.cost) badges.append(el("span", { class: "badge" }, ["Thống ngự ", String(record.cost)]));
-    if (entryRow.group !== "heroes" && record.quality) badges.append(el("span", { class: "badge" }, String(record.quality)));
+    if (view.stars) badges.append(el("span", { class: "badge badge-fill" }, view.stars));
+    if (record.cost) badges.append(el("span", { class: "badge badge-fill" }, `Thống ngự ${record.cost}`));
+    // Tướng: hạng mục (badge 'Quân sự' của artboard); nhóm khác: phẩm của chính mục.
+    const grade = entryRow.group === "heroes" ? record.lookup?.categoryVi : record.quality;
+    if (grade) badges.append(entryRow.group === "heroes"
+      ? el("span", { class: "badge badge-fill" }, String(grade))
+      : el("span", { class: "lookup-quality" }, String(grade)));
     const close = el("button", { type: "button", class: "lookup-close", "aria-label": "Đóng hồ sơ" }, [
       icon([
         svgNode("line", { x1: 6, y1: 6, x2: 18, y2: 18 }),
@@ -397,7 +402,10 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
     const aptitudes = profile.aptitudes.filter((item) => item && item.value);
     if (aptitudes.length) {
       block.append(el("h3", { class: "lookup-section-title" }, "Thích tính binh chủng"));
-      block.append(el("div", { class: "lookup-aptitudes" }, aptitudes.map((item) => el("div", { class: "lookup-aptitude" }, [
+      block.append(el("div", { class: "lookup-aptitudes" }, aptitudes.map((item) => el("div", {
+        class: "lookup-aptitude",
+        dataset: { grade: String(item.textVi) },
+      }, [
         el("span", { class: "lookup-aptitude-grade" }, item.textVi),
         el("span", { class: "lookup-aptitude-label" }, item.labelVi),
       ]))));
@@ -445,7 +453,7 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
         item.tierVi,
         item.descriptionVi,
         item.convertsToVi,
-        item.costs ? Object.entries(item.costs).map(([key, value]) => `${COST_LABELS[key] ?? key}: ${value}`).join(", ") : null,
+        item.costs ? costText(item.costs) : null,
         item.durationVi,
         item.effectVi,
       ].filter((value) => value && value !== "Đang cập nhật");
@@ -777,6 +785,31 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
 }
 
 const COST_LABELS = { wood: "Gỗ", iron: "Sắt", stone: "Đá", food: "Lương" };
+/** Khóa chi phí chưa có nhãn bị bỏ khỏi UI; cảnh báo dev một lần cho mỗi khóa để bổ sung nhãn. */
+const UNKNOWN_COST_KEYS = new Set();
+
+/**
+ * Chi phí của một cấp công trình: bỏ ô không có giá trị (`null`/`undefined`/rỗng) và khóa không có nhãn
+ * Việt (cảnh báo dev) — UI không bao giờ in `null` hay khóa thô. Không còn ô nào thì trả `null` để bỏ
+ * hẳn phần chi phí khỏi dòng.
+ */
+export function costText(costs) {
+  if (!costs || typeof costs !== "object") return null;
+  const parts = [];
+  for (const [key, value] of Object.entries(costs)) {
+    if (value === null || value === undefined || value === "") continue;
+    const label = Object.prototype.hasOwnProperty.call(COST_LABELS, key) ? COST_LABELS[key] : null;
+    if (!label) {
+      if (!UNKNOWN_COST_KEYS.has(key)) {
+        UNKNOWN_COST_KEYS.add(key);
+        console.warn(`Tra cứu: chưa có nhãn tiếng Việt cho khóa chi phí "${key}" — ô bị bỏ`);
+      }
+      continue;
+    }
+    parts.push(`${label}: ${value}`);
+  }
+  return parts.length ? parts.join(", ") : null;
+}
 
 function barFill(percent, className) {
   const fill = el("span", { class: className });

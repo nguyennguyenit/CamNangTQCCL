@@ -158,6 +158,8 @@
   --type-variant-label: 700 9.6px/1.2 'Be Vietnam Pro', system-ui, sans-serif;
   --type-badge-small: 600 9.92px/1.2 'Be Vietnam Pro', system-ui, sans-serif;
   --type-note: 400 14.4px/1.5 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-badge-chip: 600 12.5px/1.2 'Be Vietnam Pro', system-ui, sans-serif;
+  --type-chip-pill: 600 13.5px/1.2 'Be Vietnam Pro', system-ui, sans-serif;
   --space-1: 1px;
   --space-2: 2px;
   --space-3: 3px;
@@ -192,6 +194,14 @@
   --space-96: 96px;
   --space-132: 132px;
   --space-164: 164px;
+  --size-viewport: 100dvh;
+  --size-col-60: 60px;
+  --size-col-120: 120px;
+  --size-col-230: 230px;
+  --size-col-200: 200px;
+  --size-col-80: 80px;
+  --size-fact-label: 156px;
+  --content-dot: "";
   --radius-2: 2px;
   --radius-3: 3px;
   --radius-4: 4px;
@@ -521,6 +531,26 @@ body { margin: 0; background: var(--bg); color: var(--ink); }
 .clear-btn:hover { background: var(--accent-soft); color: var(--accent); }
 .clear-btn:hover::before { background: var(--accent); }
 .clear-btn:active { transform: translateY(1px); }
+
+/* Nút xóa lọc khi không có gì để xóa: mờ theo artboard, không còn affordance bấm. */
+.clear-btn:disabled {
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.clear-btn:disabled::before {
+  background: var(--line);
+  color: var(--muted);
+}
+
+.clear-btn:disabled:hover {
+  background: none;
+  color: var(--muted);
+}
+
+.clear-btn:disabled:hover::before {
+  background: var(--line);
+}
 .clear-btn:focus-visible { outline: none; box-shadow: var(--shadow-focus); border-color: var(--accent); }
 .scope-note { color: var(--muted); font: var(--type-note); }
 
@@ -560,7 +590,15 @@ body { margin: 0; background: var(--bg); color: var(--ink); }
    vẫn thắng vì specificity cao hơn — phase sở hữu từng mục sẽ thay dần. */
 
 body {
+  display: flex;
+  flex-direction: column;
+  min-height: var(--size-viewport);
   font: var(--type-body);
+}
+
+/* Trang ngắn (404) vẫn đẩy footer xuống đáy khung nhìn: nội dung co giãn giữa header và footer. */
+main {
+  flex: 1 0 auto;
 }
 
 /* ---------- Badge ---------- */
@@ -613,6 +651,27 @@ body {
   color: var(--ink-2);
 }
 
+/* Badge viên 26px của hồ sơ (artboard LookupProfile): nền dải cho nhãn biến thể SP/CO,
+   nền giấy đậm cho sao · thống ngự · hạng mục. */
+.badge.badge-band,
+.badge.badge-fill {
+  min-height: var(--control-26);
+  padding: 0 var(--space-10);
+  border: 0;
+  border-radius: var(--radius-999);
+  font: var(--type-badge-chip);
+}
+
+.badge.badge-band {
+  background: var(--band);
+  color: var(--band-ink);
+}
+
+.badge.badge-fill {
+  background: var(--panel-2);
+  color: var(--ink-2);
+}
+
 /* ---------- Chip lọc ---------- */
 .fchip {
   display: inline-flex;
@@ -645,6 +704,9 @@ body {
 }
 
 .fchip[class*="f-"]::before {
+  content: var(--content-dot);
+  display: inline-block;
+  flex: none;
   width: var(--space-8);
   height: var(--space-8);
   margin-right: 0;
@@ -968,8 +1030,11 @@ a.lookup-more:hover {
 
 .tagline {
   margin: 0;
+  overflow: hidden;
   color: var(--band-dim);
   font: var(--type-tagline);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .header-actions {
@@ -1067,6 +1132,7 @@ a.lookup-more:hover {
   color: var(--nav-idle);
   font: var(--type-nav);
   text-decoration: none;
+  white-space: nowrap;
   cursor: pointer;
 }
 
@@ -1499,6 +1565,18 @@ a.lookup-more:hover {
 .site-footer :where(a, button):focus-visible {
   outline-color: var(--focus-ring-band);
   outline-offset: var(--space-3);
+}
+
+/* ---------- Responsive: nav dàn ngang chỉ đủ chỗ từ 1280px (nhãn một dòng) ---------- */
+/* Dưới 1280px header chỉ có ☰ + lớp phủ toàn màn hình; nav ngang vẫn ẩn như khối ≤820px. */
+@media (max-width: 1279px) {
+  .site-nav {
+    display: none;
+  }
+
+  .site-menu-toggle {
+    display: inline-flex;
+  }
 }
 
 /* ---------- Responsive: header 1 hàng mobile + menu toàn màn hình ---------- */
@@ -3510,7 +3588,9 @@ main.layout:has(> .detail-content) {
 
 /* Đội khác / Khai hoang không có điểm nguồn: panel co theo hàng hành động, không phải ô trống 340px. */
 .detail-score-panel:not(:has(.detail-score)) {
-  width: max-content;
+  width: fit-content;
+  max-width: 100%;
+  min-width: 0;
   justify-self: end;
   gap: var(--space-12);
   padding: var(--space-16);
@@ -3562,9 +3642,18 @@ main.layout:has(> .detail-content) {
   gap: var(--space-8);
 }
 
+/* Con của hàng hành động co được trong cột 340px (nút chép link, ô dự phòng, link nguồn dài). */
+.detail-actions-body > * {
+  max-width: 100%;
+  min-width: 0;
+}
+
 .detail-source-link {
   flex: 1 1 auto;
   gap: var(--space-8);
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: start;
 }
 
 .detail-copy-btn {
@@ -3586,8 +3675,11 @@ main.layout:has(> .detail-content) {
   background: var(--panel-2);
 }
 
-.detail-copy-fallback {
+.detail-copy-fallback,
+#team-copy-fallback {
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   min-height: var(--control-44);
   padding: 0 var(--space-12);
   border: var(--border-hair) solid var(--line);
@@ -4082,7 +4174,7 @@ body[data-page-section="lookup"] .layout {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-4);
-  margin: var(--space-4) 0 var(--space-24);
+  margin: var(--space-24) 0;
   border-bottom: var(--border-hair) solid var(--line);
 }
 
@@ -4213,6 +4305,14 @@ body[data-page-section="lookup"] .layout {
   font: var(--type-meta);
 }
 
+/* Artboard Lookup đọc "Ngô · Thống ngự 7": dấu · chỉ giữa phe và mảnh kế tiếp, không đứng đầu dòng khi xuống hàng. */
+.lookup-card-meta > .reference-faction + *::before {
+  content: "·";
+  margin-right: var(--space-6);
+  color: var(--muted);
+}
+
+
 .lookup-card-meta-text {
   font: var(--type-meta);
 }
@@ -4264,7 +4364,29 @@ body[data-page-section="lookup"] .layout {
 
 .lookup-table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
+}
+
+/* Bề rộng cột theo artboard LookupTactics; cột tên nhận phần còn lại. */
+.lookup-table thead th:nth-child(2) {
+  width: var(--size-col-60);
+}
+
+.lookup-table thead th:nth-child(3) {
+  width: var(--size-col-120);
+}
+
+.lookup-table thead th:nth-child(4) {
+  width: var(--size-col-230);
+}
+
+.lookup-table thead th:nth-child(5) {
+  width: var(--size-col-200);
+}
+
+.lookup-table thead th:nth-child(6) {
+  width: var(--size-col-80);
 }
 
 .lookup-table thead tr {
@@ -4278,6 +4400,7 @@ body[data-page-section="lookup"] .layout {
   letter-spacing: var(--type-table-head-spacing);
   text-transform: uppercase;
   text-align: left;
+  white-space: nowrap;
 }
 
 .lookup-table thead th:first-child {
@@ -4339,6 +4462,10 @@ body[data-page-section="lookup"] .layout {
 
 .lookup-table .lookup-table-rate {
   text-align: right;
+  white-space: nowrap;
+}
+
+.lookup-table td.lookup-table-rate {
   font: var(--type-control);
   font-variant-numeric: tabular-nums;
 }
@@ -4433,6 +4560,7 @@ body[data-page-section="lookup"] .layout {
 .lookup-dialog-badges {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: var(--space-8);
 }
 
@@ -4447,7 +4575,7 @@ body[data-page-section="lookup"] .layout {
 
 .lookup-fact {
   display: grid;
-  grid-template-columns: var(--space-132) minmax(0, 1fr);
+  grid-template-columns: var(--size-fact-label) minmax(0, 1fr);
   column-gap: var(--space-14);
   align-items: baseline;
 }
@@ -4570,6 +4698,15 @@ body[data-page-section="lookup"] .layout {
   color: var(--ink-2);
   font: var(--type-meta);
   text-align: center;
+}
+
+/* Bậc S: ô nền son nhạt + chữ son đậm như artboard (cặp accent-soft/accent-ink 7,17 / 6,37:1). */
+.lookup-aptitude[data-grade="S"] {
+  background: var(--accent-soft);
+}
+
+.lookup-aptitude[data-grade="S"] .lookup-aptitude-grade {
+  color: var(--accent-ink);
 }
 
 .lookup-relation-card {
@@ -4825,6 +4962,7 @@ a.cam-nang-count .cam-nang-number {
 }
 
 .cam-nang-team {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: var(--space-2) var(--space-12);
@@ -4841,6 +4979,17 @@ a.cam-nang-count .cam-nang-number {
   color: var(--ink);
   font: var(--type-table-name);
   text-decoration: none;
+}
+
+/* Link trải khắp hàng: vùng bấm là cả hàng (≥44px) mà không cần bọc lại markup. */
+.cam-nang-team-name::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.cam-nang-team:has(.cam-nang-team-name:focus-visible) {
+  box-shadow: var(--shadow-focus);
 }
 
 .cam-nang-team-score {
@@ -4872,6 +5021,35 @@ a.cam-nang-count .cam-nang-number {
 
   .lookup-search {
     min-height: var(--control-50);
+  }
+
+  /* Chip nhóm mobile: viên đầy như artboard LookupMobile (desktop vẫn là tab gạch chân). */
+  .lookup-chips {
+    gap: var(--space-8);
+    margin-top: var(--space-16);
+    border-bottom: 0;
+  }
+
+  .lookup-chip {
+    align-items: center;
+    min-height: var(--control-44);
+    padding: 0 var(--space-12);
+    border: var(--border-hair) solid var(--line);
+    border-radius: var(--radius-999);
+    background-color: var(--panel-3);
+    color: var(--ink);
+    font: var(--type-chip-pill);
+  }
+
+  .lookup-chip[aria-pressed="true"] {
+    border-color: var(--band);
+    background-color: var(--band);
+    color: var(--band-ink);
+  }
+
+  /* Số đếm trên viên đang chọn phải đọc được trên nền dải. */
+  .lookup-chip[aria-pressed="true"] .lookup-chip-count {
+    color: var(--band-ink);
   }
 
   .lookup-grid-cards {
@@ -4931,6 +5109,13 @@ a.cam-nang-count .cam-nang-number {
     text-transform: uppercase;
   }
 
+  /* Nút tên chiến pháp là control duy nhất của hàng (bảng xếp dọc) nên phải đủ 44px. */
+  .lookup-table-name {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--control-44);
+  }
+
   .lookup-table .lookup-table-rate {
     text-align: left;
   }
@@ -4983,12 +5168,28 @@ a.cam-nang-count .cam-nang-number {
     padding: var(--space-18);
   }
 
+  /* Chỉ số mobile: hàng 1 nhãn + giá trị, hàng 2 thanh + tăng trưởng (tăng trưởng nằm cạnh thanh). */
   .lookup-stat {
-    grid-template-columns: minmax(0, 1fr) var(--space-40) var(--space-88);
+    grid-template-columns: minmax(0, 1fr) var(--space-88);
+    gap: var(--space-4) var(--space-12);
+    align-items: baseline;
+  }
+
+  .lookup-stat-label {
+    grid-area: 1 / 1;
+  }
+
+  .lookup-stat-value {
+    grid-area: 1 / 2;
   }
 
   .lookup-stat-bar {
-    grid-column: 1 / -1;
+    grid-area: 2 / 1;
+    align-self: center;
+  }
+
+  .lookup-stat-growth {
+    grid-area: 2 / 2;
   }
 
   .lookup-aptitudes {
@@ -6607,6 +6808,19 @@ body[data-page-section="roster-recommend"] .layout {
   color: var(--band-ink);
 }
 
+.roster-step-mark {
+  display: inline-flex;
+  margin-right: var(--space-4);
+}
+
+.roster-step-mark::before {
+  content: "✓";
+}
+
+.roster-step-mark[hidden] {
+  display: none;
+}
+
 .roster-controls {
   display: flex;
   flex-wrap: wrap;
@@ -7144,6 +7358,8 @@ body[data-page-section="roster-recommend"] .layout {
   .site-menu-head .icon-btn { flex: none; }
   /* Danh sách nguồn Khai hoang: mỗi link là một mục riêng, không nằm trong câu. */
   .kh-sources a { display: inline-flex; align-items: center; min-height: var(--control-44); }
+  /* Link nguồn SGSDeck đứng riêng một dòng trong thân chi tiết (không nằm trong câu). */
+  .detail-source > p > a { display: inline-flex; align-items: center; min-height: var(--control-44); }
   /* Ô chọn ảnh native của Gợi ý đội (Phase 9 giữ control hệ thống). */
   .roster-scan-card input[type="file"] { min-height: var(--control-44); }
   /* Ô nhập bên trong nhãn ô tìm: bản thân control cũng đủ 44px (nhãn 48px vẫn là vùng bấm chính). */

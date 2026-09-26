@@ -237,9 +237,9 @@ for (const width of [320, 375, 768, 1280]) {
       await page.setViewportSize({ width, height: 800 });
       await page.addInitScript((value) => localStorage.setItem('theme', value), theme);
       await page.goto('/tra-cuu/');
-      if (width <= 820) await page.locator('#section-menu-toggle').click();
-      await expect(navLink(page, 'Tra cứu', width <= 820)).toHaveAttribute('aria-current', 'page');
-      if (width <= 820) await page.locator('.site-menu-close').click();
+      if (width < 1280) await page.locator('#section-menu-toggle').click();
+      await expect(navLink(page, 'Tra cứu', width < 1280)).toHaveAttribute('aria-current', 'page');
+      if (width < 1280) await page.locator('.site-menu-close').click();
       for (const group of GROUPS) {
         await chip(page, group).click();
         await expect(chip(page, group)).toHaveAttribute('aria-pressed', 'true');
@@ -350,12 +350,18 @@ test('số liệu Trong cẩm nang của SP Lữ Mông khớp phép đếm độ
   let other = 0;
   const tactics = new Map();
   const roleIndex = { '主將': 0, '副將 1': 1, '副將 2': 2 };
+  // Ô `bond` (duyên phận) không phải chiến pháp; thiếu cột kind thì mặc định là `tactic`.
+  const realTactics = (holder, vi) => {
+    const names = (vi ? holder.tacticSlotsVi : holder.tacticSlotsRaw) ?? [];
+    const kinds = holder.tacticSlotKinds ?? [];
+    return names.filter((name, index) => name && (kinds[index] ?? 'tactic') === 'tactic');
+  };
   for (const [order, record] of index.records.entries()) {
     const holder = (record.heroes ?? []).find((item) => chineseKeys.has(strip(item.nameRaw)));
     if (!holder) continue;
     standard += 1;
     positions[roleIndex[holder.roleRaw]] += 1;
-    for (const name of new Set((holder.tacticSlotsVi ?? []).filter(Boolean))) tactics.set(name, (tactics.get(name) ?? 0) + 1);
+    for (const name of new Set(realTactics(holder, true))) tactics.set(name, (tactics.get(name) ?? 0) + 1);
     representative.push({ family: 'recommended', name: record.displayNameVi, score: record.value, order });
   }
   for (const record of others.records) {
@@ -363,7 +369,7 @@ test('số liệu Trong cẩm nang của SP Lữ Mông khớp phép đếm độ
     if (!holder) continue;
     other += 1;
     positions[(record.holders ?? []).indexOf(holder)] += 1;
-    for (const name of new Set((holder.tacticSlotsRaw ?? []).filter(Boolean))) tactics.set(name, (tactics.get(name) ?? 0) + 1);
+    for (const name of new Set(realTactics(holder, false))) tactics.set(name, (tactics.get(name) ?? 0) + 1);
     representative.push({ family: 'other', name: record.name, score: null, order: representative.length });
   }
   expect(standard).toBeGreaterThan(0);
@@ -587,4 +593,278 @@ test('Back đóng hồ sơ và trả focus về nơi đã mở', async ({ page }
   await page.goForward();
   await expect(page.getByRole('dialog')).toBeVisible();
   expect(await page.evaluate(() => document.activeElement !== document.body)).toBe(true);
+});
+
+/* ---------- Vòng sửa Opus (P07-D2…D5, N1…N4) ---------- */
+
+/** Đổi mã màu token (`#f6e1dc`) sang dạng `rgb(...)` mà `getComputedStyle` trả về. */
+function tokenRgb(value) {
+  const hex = String(value).trim().replace(/^#/, "");
+  const number = Number.parseInt(hex.length === 3 ? hex.replace(/./g, (c) => c + c) : hex, 16);
+  return `rgb(${(number >> 16) & 255}, ${(number >> 8) & 255}, ${number & 255})`;
+}
+
+/** Số dòng chữ thật của một phần tử (hộp dòng của text node, không tính padding). */
+const lineBoxes = (locator) => locator.evaluate((node) => {
+  const textNode = [...node.childNodes].find((child) => child.nodeType === 3 && child.textContent.trim());
+  const range = document.createRange();
+  range.selectNodeContents(textNode ?? node);
+  return range.getClientRects().length;
+});
+
+const tokenValue = (page, name) => page.evaluate((key) =>
+  getComputedStyle(document.documentElement).getPropertyValue(key).trim(), name);
+
+test('bảng chiến pháp: cột đúng artboard, đầu bảng một dòng, không ô nào tràn khung', async ({ page }) => {
+  // Bề rộng cột của artboard LookupTactics; cột tên nhận phần còn lại.
+  const declared = [60, 120, 230, 200, 80];
+  for (const width of [1440, 1024]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/tra-cuu/?group=tactics');
+    await expect(lookup(page).locator('.lookup-table tbody tr').first()).toBeVisible();
+    const headers = lookup(page).locator('.lookup-table thead th');
+    for (const [index, expected] of declared.entries()) {
+      const box = await headers.nth(index + 1).boundingBox();
+      expect(Math.abs(box.width - expected)).toBeLessThanOrEqual(2);
+      expect(await lineBoxes(headers.nth(index + 1))).toBe(1);
+    }
+    expect(await lineBoxes(headers.nth(0))).toBe(1);
+    // Không ô nào (đầu bảng hay thân bảng) tràn ra ngoài khung panel.
+    const overflow = await page.evaluate(() => {
+      const frame = document.querySelector('#section-lookup .lookup-table-panel').getBoundingClientRect();
+      return [...document.querySelectorAll('#section-lookup .lookup-table thead th, #section-lookup .lookup-table tbody tr:first-child > *')]
+        .filter((cell) => cell.getBoundingClientRect().right > frame.right + 1 || cell.scrollWidth > cell.clientWidth + 1)
+        .map((cell) => cell.textContent.trim().slice(0, 20));
+    });
+    expect(overflow).toEqual([]);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+  }
+});
+
+test('tỷ lệ kích hoạt trong bảng và hồ sơ không lộ số thập phân dài hay giá trị vô lý', async ({ page }) => {
+  await page.goto('/tra-cuu/?group=tactics');
+  await expect(lookup(page).locator('.lookup-table tbody tr').first()).toBeVisible();
+  const rates = await lookup(page).locator('.lookup-table tbody .lookup-table-rate').allTextContents();
+  expect(rates.length).toBeGreaterThan(20);
+  for (const text of rates) {
+    expect(text).not.toMatch(/\d\.\d{6,}/);
+    expect(text).toMatch(/^(—|\d+(?:\.\d)?%)$/);
+    if (text !== '—') expect(Number.parseFloat(text)).toBeLessThanOrEqual(100);
+  }
+  // Dữ liệu lỗi khoảng (activationRate 50) hiện gạch ngang, không in "Đá: null"/"5000%".
+  await page.goto('/tra-cuu/?group=tactics&id=tactic%3Athien-uy-khieu-tran');
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toContainText('Tỷ lệ kích hoạt');
+  const profile = await dialog.textContent();
+  expect(profile).not.toMatch(/\d\.\d{6,}/);
+  expect(profile).not.toContain('5000');
+  await expect(dialog.locator('.lookup-fact', { hasText: 'Tỷ lệ kích hoạt' }).first()).toContainText('—');
+});
+
+test('chi phí công trình không in null hay khóa thô, ô rỗng bị bỏ hẳn', async ({ page }) => {
+  for (const id of ['building%3Athai-thach-xu', 'building%3Aquan-xa']) {
+    await page.goto(`/tra-cuu/?group=buildings&id=${id}`);
+    const dialog = page.getByRole('dialog');
+    await expect(dialog).toContainText('Cấp công trình');
+    const text = await dialog.textContent();
+    expect(text).not.toMatch(/\bnull\b/);
+    expect(text).not.toMatch(/\b(?:wood|stone|iron|food)\b/);
+  }
+  // Thái Thạch Xứ: Đá là null trong dữ liệu nên chỉ còn Sắt và Gỗ.
+  await page.goto('/tra-cuu/?group=buildings&id=building%3Athai-thach-xu');
+  const level = page.getByRole('dialog').locator('.lookup-child-row', { hasText: 'Cấp 1' }).first();
+  await expect(level).toContainText('Sắt: 180');
+  await expect(level).toContainText('Gỗ: 180');
+  expect(await level.textContent()).not.toContain('Đá');
+  // Quân Xá: cấp 1 chỉ có hiệu ứng, không có chi phí nào dùng được.
+  await page.goto('/tra-cuu/?group=buildings&id=building%3Aquan-xa');
+  const first = page.getByRole('dialog').locator('.lookup-child-row', { hasText: 'Cấp 1' }).first();
+  await expect(first).toContainText('bố trí 1 bộ đội');
+  expect(await first.textContent()).not.toMatch(/Sắt|Đá|Gỗ|Lương/);
+});
+
+for (const theme of ['light', 'dark']) {
+  test(`ô thích tính bậc S và badge hồ sơ dùng đúng cặp token ở nền ${theme}`, async ({ page }) => {
+    await page.addInitScript((value) => localStorage.setItem('theme', value), theme);
+    await page.goto('/tra-cuu/?group=heroes&id=hero%3Asp-lu-mong');
+    await expect(page.getByRole('dialog')).toBeVisible();
+    const soft = tokenRgb(await tokenValue(page, '--accent-soft'));
+    const ink = tokenRgb(await tokenValue(page, '--accent-ink'));
+    const panel3 = tokenRgb(await tokenValue(page, '--panel-3'));
+    const ink2 = tokenRgb(await tokenValue(page, '--ink-2'));
+    const band = tokenRgb(await tokenValue(page, '--band'));
+    const bandInk = tokenRgb(await tokenValue(page, '--band-ink'));
+    const panel2 = tokenRgb(await tokenValue(page, '--panel-2'));
+    const tiles = await lookup(page).locator('.lookup-aptitude').evaluateAll((nodes) => nodes.map((node) => {
+      const grade = node.querySelector('.lookup-aptitude-grade');
+      return { grade: node.dataset.grade, background: getComputedStyle(node).backgroundColor, color: getComputedStyle(grade).color };
+    }));
+    expect(tiles.length).toBeGreaterThanOrEqual(5);
+    expect(tiles.filter((tile) => tile.grade === 'S').length).toBeGreaterThan(0);
+    for (const tile of tiles) {
+      if (tile.grade === 'S') {
+        expect(tile.background).toBe(soft);
+        expect(tile.color).toBe(ink);
+      } else {
+        expect(tile.background).toBe(panel3);
+        expect(tile.color).toBe(ink2);
+      }
+    }
+    // Badge đầu hồ sơ: viên 26px, nền không trong suốt (nhãn SP nền dải, còn lại nền giấy đậm).
+    const badges = await lookup(page).locator('.lookup-dialog-badges > *').evaluateAll((nodes) => nodes.map((node) => {
+      const style = getComputedStyle(node);
+      return { text: node.textContent.trim(), background: style.backgroundColor, color: style.color, height: Math.round(node.getBoundingClientRect().height) };
+    }));
+    expect(badges.map((badge) => badge.text)).toEqual(['SP', 'Ngô', '5 sao', 'Thống ngự 7', 'Quân sự']);
+    expect(badges[0].background).toBe(band);
+    expect(badges[0].color).toBe(bandInk);
+    for (const badge of badges.slice(2)) {
+      expect(badge.background).toBe(panel2);
+      expect(badge.color).toBe(ink2);
+      expect(badge.height).toBe(26);
+    }
+    // Hộp thoại chiến pháp: phẩm dùng đúng viên hồng như bảng.
+    await page.goto('/tra-cuu/?group=tactics&id=tactic%3Aan-ui-quan-dan');
+    const quality = lookup(page).locator('.lookup-dialog-badges .lookup-quality');
+    await expect(quality).toBeVisible();
+    expect(await quality.evaluate((node) => getComputedStyle(node).backgroundColor)).toBe(soft);
+    expect(await quality.evaluate((node) => getComputedStyle(node).color)).toBe(ink);
+  });
+}
+
+test('chip nhóm mobile là viên, cách ô tìm 16px; desktop vẫn là tab gạch chân cách 24px', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/tra-cuu/?group=heroes');
+  await expect(lookup(page).locator('.lookup-chip').first()).toBeVisible();
+  const gapOf = (page) => page.evaluate(() => {
+    const chips = document.querySelector('#section-lookup .lookup-chips').getBoundingClientRect();
+    const search = document.querySelector('#section-lookup .lookup-search').getBoundingClientRect();
+    return Math.round(chips.top - search.bottom);
+  });
+  expect(await gapOf(page)).toBe(24);
+  const desktopRadius = await lookup(page).locator('.lookup-chip[aria-pressed="true"]').evaluate((node) => getComputedStyle(node).borderRadius);
+  expect(desktopRadius).toBe('0px');
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/tra-cuu/?group=heroes');
+  await expect(lookup(page).locator('.lookup-chip').first()).toBeVisible();
+  expect(await gapOf(page)).toBe(16);
+  const band = tokenRgb(await tokenValue(page, '--band'));
+  const bandInk = tokenRgb(await tokenValue(page, '--band-ink'));
+  const panel3 = tokenRgb(await tokenValue(page, '--panel-3'));
+  const selected = await lookup(page).locator('.lookup-chip[aria-pressed="true"]').evaluate((node) => ({
+    radius: getComputedStyle(node).borderRadius,
+    background: getComputedStyle(node).backgroundColor,
+    color: getComputedStyle(node).color,
+    count: getComputedStyle(node.querySelector('.lookup-chip-count')).color,
+    height: Math.round(node.getBoundingClientRect().height),
+  }));
+  expect(selected.radius).toBe('999px');
+  expect(selected.background).toBe(band);
+  expect(selected.color).toBe(bandInk);
+  expect(selected.count).toBe(bandInk);
+  expect(selected.height).toBeGreaterThanOrEqual(44);
+  const idle = await lookup(page).locator('.lookup-chip[aria-pressed="false"]').first().evaluate((node) => ({
+    radius: getComputedStyle(node).borderRadius,
+    background: getComputedStyle(node).backgroundColor,
+  }));
+  expect(idle.radius).toBe('999px');
+  expect(idle.background).toBe(panel3);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+});
+
+test('thẻ tướng có dòng phụ Thống ngự; nhãn facts một dòng; chỉ số mobile gắn thanh với tăng trưởng', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/tra-cuu/?group=heroes');
+  const card = lookup(page).locator('.lookup-card').filter({ hasText: 'SP Lữ Mông' }).first();
+  await expect(card.locator('.lookup-card-meta')).toContainText('Thống ngự 7');
+
+  await page.goto('/tra-cuu/?group=heroes&id=hero%3Asp-lu-mong');
+  await expect(page.getByRole('dialog')).toBeVisible();
+  const label = lookup(page).locator('.lookup-fact', { hasText: 'Danh hiệu độc quyền' }).first().locator('.lookup-fact-key');
+  expect(await lineBoxes(label)).toBe(1);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/tra-cuu/?group=heroes&id=hero%3Asp-lu-mong');
+  await expect(page.getByRole('dialog')).toBeVisible();
+  const stats = await lookup(page).locator('.lookup-stat').evaluateAll((nodes) => nodes.map((node) => {
+    const bar = node.querySelector('.lookup-stat-bar').getBoundingClientRect();
+    const growth = node.querySelector('.lookup-stat-growth').getBoundingClientRect();
+    return {
+      barTop: Math.round(bar.top), growthTop: Math.round(growth.top),
+      barRight: Math.round(bar.right), growthLeft: Math.round(growth.left),
+      barWidth: Math.round(bar.width), rowWidth: Math.round(node.getBoundingClientRect().width),
+    };
+  }));
+  expect(stats.length).toBeGreaterThanOrEqual(5);
+  for (const stat of stats) {
+    // Tăng trưởng nằm cạnh mép thanh (không lọt vào cột nhãn) và cùng hàng với thanh.
+    expect(stat.growthLeft).toBeGreaterThanOrEqual(stat.barRight - 1);
+    expect(Math.abs(stat.barTop - stat.growthTop)).toBeLessThanOrEqual(8);
+    expect(stat.barWidth).toBeGreaterThan(stat.rowWidth / 2);
+  }
+});
+
+test('chip nhóm mobile đủ 44px và chữ căn giữa ở 390/320 × 2 theme (P10-B1/P07-R1)', async ({ page }) => {
+  const measure = (page) => page.evaluate(() => [...document.querySelectorAll('#section-lookup .lookup-chip')].map((node) => {
+    const text = [...node.childNodes].find((child) => child.nodeType === 3 && child.textContent.trim());
+    const range = document.createRange();
+    range.selectNodeContents(text ?? node);
+    const textBox = range.getBoundingClientRect();
+    const box = node.getBoundingClientRect();
+    return {
+      text: node.textContent.trim().slice(0, 14),
+      height: Math.round(box.height),
+      topGap: Math.round(textBox.top - box.top),
+      bottomGap: Math.round(box.bottom - textBox.bottom),
+    };
+  }));
+  for (const width of [390, 320]) {
+    for (const theme of ['light', 'dark']) {
+      await page.setViewportSize({ width, height: 844 });
+      await page.addInitScript((value) => localStorage.setItem('theme', value), theme);
+      await page.goto('/tra-cuu/?group=tactics');
+      await expect(lookup(page).locator('.lookup-chip').first()).toBeVisible();
+      const chips = await measure(page);
+      expect(chips.length, `${width}/${theme}`).toBe(GROUPS.length);
+      for (const chip of chips) {
+        expect(chip.height, `${width}/${theme} ${chip.text}`).toBeGreaterThanOrEqual(44);
+        expect(Math.abs(chip.topGap - chip.bottomGap), `${width}/${theme} ${chip.text}`).toBeLessThanOrEqual(1);
+      }
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+    }
+  }
+});
+
+test('hàng đội tiêu biểu: cả hàng là vùng bấm của link đội (P07-R2)', async ({ page }) => {
+  for (const width of [390, 320]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/tra-cuu/?group=heroes&id=hero%3Asp-lu-mong');
+    await expect(lookup(page).locator('.cam-nang-teams')).toBeVisible();
+    const rows = lookup(page).locator('.cam-nang-team');
+    const count = await rows.count();
+    expect(count).toBeGreaterThan(0);
+    for (let index = 0; index < count; index += 1) {
+      // Khối nằm dưới màn hình: cuộn hàng vào khung nhìn trước khi dò điểm bấm.
+      await rows.nth(index).scrollIntoViewIfNeeded();
+      const hit = await rows.nth(index).evaluate((node) => {
+        const link = node.querySelector('.cam-nang-team-name');
+        const score = node.querySelector('.cam-nang-team-score');
+        const box = score.getBoundingClientRect();
+        const point = { x: Math.round(box.left + box.width * 0.8), y: Math.round(box.top + box.height * 0.8) };
+        const resolved = document.elementFromPoint(point.x, point.y);
+        return { height: Math.round(node.getBoundingClientRect().height), sameLink: resolved === link || link?.contains(resolved) === true };
+      });
+      expect(hit.height, `${width}: chiều cao hàng`).toBeGreaterThanOrEqual(44);
+      expect(hit.sameLink, `${width}: điểm ở ô điểm trỏ về link đội`).toBe(true);
+    }
+    // Bấm ở vùng điểm vẫn điều hướng tới trang đội và giữ `from` mở lại hồ sơ.
+    await rows.first().scrollIntoViewIfNeeded();
+    const first = rows.first().locator('.cam-nang-team-name');
+    const href = await first.getAttribute('href');
+    const box = await rows.first().locator('.cam-nang-team-score').boundingBox();
+    await page.mouse.click(box.x + box.width * 0.8, box.y + box.height * 0.8);
+    await expect(page).toHaveURL(new RegExp(href.split('?')[0].replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    expect(new URL(page.url()).searchParams.get('from')).toContain('id=hero%3Asp-lu-mong');
+  }
 });

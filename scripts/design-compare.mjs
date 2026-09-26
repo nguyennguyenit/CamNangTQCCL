@@ -359,6 +359,10 @@ function expectation(tokens, theme, property, tokenRef) {
     throw new Error(`thuộc tính không đo được qua vai trò chữ: ${property} (${field ?? ''})`);
   }
   const raw = resolveValue(tokens, theme, tokenValue(tokens, theme, tokenRef));
+  if (property === 'content') {
+    // `getComputedStyle` trả `content` kèm dấu nháy ("" cho chuỗi rỗng).
+    return { display: raw, ok: (actual) => actual === raw || actual === `"${raw}"` };
+  }
   if (COLOR_PROPERTIES.has(property)) {
     const wanted = toRgb(raw);
     return { display: wanted, ok: (actual) => toRgb(actual) === wanted };
@@ -420,12 +424,13 @@ async function probeTokens(options) {
           }
           // Trạng thái sau setup mới có thể có phần tử đích (ví dụ chip vừa bật).
           await waitAttached(tab, probe.selector, 5_000);
-          const measured = await tab.evaluate(({ target, list }) => {
+          const measured = await tab.evaluate(({ target, list, pseudo }) => {
             const element = document.querySelector(target);
             if (!element) return null;
-            const style = getComputedStyle(element);
+            // `pseudo` cho phép đo phần tử giả (`::before`) — component như ô vuông phe chỉ có ở đó.
+            const style = getComputedStyle(element, pseudo || null);
             return Object.fromEntries(list.map((property) => [property, style.getPropertyValue(property)]));
-          }, { target: probe.selector, list: pairs.map(([property]) => property) });
+          }, { target: probe.selector, list: pairs.map(([property]) => property), pseudo: probe.pseudo ?? null });
           if (!measured) {
             failures.push({ key, state: probe.state ?? 'default', property: '-', actual: `không thấy phần tử (${probe.selector})`, explained: false });
             continue;

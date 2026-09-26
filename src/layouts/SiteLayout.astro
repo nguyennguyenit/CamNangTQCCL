@@ -101,7 +101,14 @@ const UPDATED_LABEL = 'Dữ liệu cập nhật';
 // `:root` không đặt sẵn data-theme: script inline dưới đây quyết định trước khi stylesheet chạy.
 const pageSection = pageKind === 'section' ? activeSection : null;
 const seasonScope = pageSection !== null && SEASON_SECTIONS.includes(pageSection);
-const contentClass = pageKind === 'detail' ? 'content detail-content' : 'content';
+/** Trang chi tiết và 404 dùng khung nội dung có lề trang (`main.layout:has(> .detail-content)`). */
+const contentClass = pageKind === 'detail' || pageKind === 'not-found' ? 'content detail-content' : 'content';
+/**
+ * Mục đang xem: trang mục là chính nó (`page`), trang chi tiết chỉ thuộc mục cha (`true`, không phải
+ * trang hiện tại) — khu vực được đánh dấu không phải tài liệu đang mở.
+ */
+const currentMark = (id: string | undefined | false | null) =>
+  id && id === activeSection ? (pageKind === 'detail' ? 'true' : 'page') : null;
 const website = await websiteDisplayPublicationSnapshot();
 const seasonHashes = seasonScope ? await seasonArtifactHashes() : null;
 const updatedOn = buildDateVi();
@@ -234,7 +241,7 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
           <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg>
         </button>
         {landing
-          ? <div class="brand"><span class="seal seal-header" aria-hidden="true"><svg viewBox={SEAL_VIEW_BOX}><path d={SEAL_PATH} fill="currentColor"></path></svg></span><span class="brand-text"><h1 class="site-title">{LOGO_TITLE}</h1><span class="tagline">{tagline}</span></span></div>
+          ? <div class="brand"><span class="seal seal-header" aria-hidden="true"><svg viewBox={SEAL_VIEW_BOX}><path d={SEAL_PATH} fill="currentColor"></path></svg></span><span class="brand-text"><span class="site-title">{LOGO_TITLE}</span><span class="tagline">{tagline}</span></span></div>
           : <a class="brand" href="/"><span class="seal seal-header" aria-hidden="true"><svg viewBox={SEAL_VIEW_BOX}><path d={SEAL_PATH} fill="currentColor"></path></svg></span><span class="brand-text"><span class="site-title">{LOGO_TITLE}</span><span class="tagline">{tagline}</span></span></a>}
 
         <nav class="site-nav" aria-label={MENU_LABEL}>
@@ -245,17 +252,16 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
                   class:list={['nav-tab', {active: section.id === activeSection}]}
                   data-section={section.id}
                   href={section.path}
-                  aria-current={section.id === activeSection ? 'page' : null}
+                  aria-current={currentMark(section.id)}
                 >{section.label}</a>
               </li>
             ))}
             {menus.map((menu) => (
-              <li class="nav-dropdown" data-dropdown>
+              <li class:list={['nav-dropdown', menu.key === 'game' && 'nav-dropdown-game']} data-dropdown>
                 <button
                   id={`nav-toggle-${menu.key}`}
                   class="nav-tab nav-tab-toggle"
                   type="button"
-                  aria-haspopup="true"
                   aria-expanded="false"
                   aria-controls={`nav-menu-${menu.key}`}
                   data-dropdown-button
@@ -273,7 +279,7 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
                               href={entry.href}
                               target={entry.external ? '_blank' : null}
                               rel={entry.external ? EXTERNAL_REL : null}
-                              aria-current={entry.id && entry.id === activeSection ? 'page' : null}
+                              aria-current={currentMark(entry.id)}
                             >
                               <span class="nav-menu-label">{entry.label}{entry.offsite ? <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"></path><path d="M20 4l-9 9"></path><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"></path></svg> : null}</span>
                               {entry.description ? <span class="nav-menu-desc">{entry.description}</span> : null}
@@ -327,7 +333,7 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
                     href={entry.href}
                     target={entry.external ? '_blank' : null}
                     rel={entry.external ? EXTERNAL_REL : null}
-                    aria-current={entry.id && entry.id === activeSection ? 'page' : null}
+                    aria-current={currentMark(entry.id)}
                     aria-labelledby={entry.external ? null : `menu-label-${groupIndex}-${entryIndex}`}
                   >
                     <span class="site-menu-text">

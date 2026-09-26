@@ -32,7 +32,7 @@ Artboard không phải golden master pixel: dữ liệu trong artboard là mẫu
 
 ## Shell dùng chung
 
-Header, menu thả desktop, menu mobile toàn màn hình và footer do `src/layouts/SiteLayout.astro` + `js/site-nav.js` sở hữu, dùng cho Landing, 8 trang mục và cả ba họ chi tiết; chỉ trang 404 khai báo riêng (không boot `app.js`). Menu mở/đóng bằng `aria-expanded`, Escape trả focus về nút, bấm ngoài đóng, menu mobile là `role="dialog"` `aria-modal`.
+Header, menu thả desktop, menu mobile toàn màn hình và footer do `src/layouts/SiteLayout.astro` + `js/site-nav.js` sở hữu, dùng cho Landing, 8 trang mục và cả ba họ chi tiết; chỉ trang 404 khai báo riêng (không boot `app.js`). Menu mở/đóng bằng `aria-expanded`, Escape trả focus về nút, bấm ngoài đóng, menu mobile là `role="dialog"` `aria-modal`. Nav ngang dàn một hàng chỉ hiện từ **1280px** trở lên; dưới mốc đó (kể cả tablet) header dùng nút ☰ mở lớp phủ, và `js/site-nav.js` chọn chế độ theo cùng mốc (`min-width: 1280px`). Khung trang là cột dọc `body` cao tối thiểu `100dvh` nên footer nằm ở đáy cả khi trang ngắn (404).
 
 **Theme** theo thứ tự: `localStorage.theme` → `prefers-color-scheme`. Một script inline chặn trong `<head>` đặt `data-theme` **trước** stylesheet (không nháy sáng khi chuyển trang); `js/site-chrome.js` giữ nút đổi giao diện, áp lại theme ở `pageshow` và đồng bộ khi tab khác đổi (`storage`). **Theme theo hệ điều hành chỉ được quyết định ở mỗi lần tải trang**: trang đang mở không tự đổi khi OS đổi (không có listener `matchMedia`), muốn theo lại thì tải lại trang/cửa sổ mới — nút đổi trong UI là đường đổi tức thời. Storage lỗi (bị chặn) thì rơi về `prefers-color-scheme`, không chặn render.
 
@@ -44,6 +44,8 @@ Danh mục đầy đủ ở `tokens.json` → `components`. Nhóm chính: thẻ 
 - **Nhãn biến thể** (`SP`/`CO`/`40Y`) luôn là chữ trên nền đủ tương phản; `.pre.y40` và badge loại binh dùng nền giấy + mực (không dùng màu phe làm nền).
 - Màu phe/trạng thái **luôn đi kèm chữ**: chấm màu là `aria-hidden`, không phải tín hiệu duy nhất.
 - Bảng rộng bắt buộc (bảng xem trước Landing) phải nằm trong container cuộn rõ (`.landing-table-preview`), không đẩy tràn trang.
+
+**Ngoại lệ "control tương đương" (WCAG 2.5.8):** link tiêu đề thẻ đội (`.reference-team-card .team-name > a`) có thể thấp hơn 44px trên mobile vì mỗi thẻ luôn có link "Chi tiết" cao 44px trỏ **cùng href** — đo trên `/doi-chuan/` (5 link/trang đầu) và `/doi-khac/` (17–40 link). Chip nhóm Tra cứu và link nguồn SGSDeck trong thân chi tiết thì **không** thuộc ngoại lệ này nên đều được nâng lên 44px.
 
 ## Responsive và touch
 

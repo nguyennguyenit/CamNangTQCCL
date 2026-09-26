@@ -44,6 +44,7 @@ export const CHECKED_PROPERTIES = Object.freeze([
   /^height$/,
   /^box-shadow$/,
   /^z-index$/,
+  /^font$/,
 ]);
 
 /** Giá trị thô được phép theo Verification (0, auto, 100%, viền 1px, inherit, currentColor). */
@@ -51,7 +52,8 @@ const ALLOWED_LITERALS = new Set(['0', 'auto', '100%', 'inherit', 'currentColor'
 const NUMERIC_LITERAL = /-?\d*\.?\d+(?:px|rem|em|%|vh|vw|vmin|vmax|pt|ch|ex)?/g;
 const COLOR_LITERAL = /#[0-9a-fA-F]{3,8}\b|\b(?:rgba?|hsla?)\(/g;
 
-const isChecked = (property) => CHECKED_PROPERTIES.some((pattern) => pattern.test(property));
+/** Thuộc tính bị soát: danh sách trên + mọi custom property khai ngoài khối token (N4). */
+const isChecked = (property) => property.startsWith('--') || CHECKED_PROPERTIES.some((pattern) => pattern.test(property));
 
 /** Tách khai báo của một khối CSS (không có khối lồng nhau) thành cặp thuộc tính/giá trị. */
 function declarations(block) {

@@ -199,6 +199,11 @@ test.describe("Soi đội", () => {
 
     const steps = section.locator(".ana-step");
     await expect(steps).toHaveCount(3);
+    // P9-B1: dấu ✓ là SVG nằm trong span bọc — bước CHƯA XONG phải ẩn dấu (trước đây mọi bước đều hiện ✓).
+    // Bước 2 (Turnstile) xong ngay ở stub nên dấu của nó hiện; bước 1 và 3 còn chờ nên phải ẩn.
+    await expect(steps.nth(0).locator(".ana-step-mark")).toBeHidden();
+    await expect(steps.nth(1).locator(".ana-step-mark")).toBeVisible();
+    await expect(steps.nth(2).locator(".ana-step-mark")).toBeHidden();
     await expect(steps.nth(0)).toHaveAttribute("data-state", "pending");
     await expect(section.locator(".ana-file-row")).toBeHidden();
 
@@ -215,6 +220,11 @@ test.describe("Soi đội", () => {
 
     await expect(section.locator(".ana-similar")).toBeVisible();
     await expect(steps.nth(2)).toHaveAttribute("data-state", "done");
+
+    // P9-B1: token Turnstile dùng một lần nên sau lượt chạy bước 2 quay lại "chưa xong" và mất dấu ✓.
+    await expect(steps.nth(2).locator(".ana-step-mark")).toBeVisible();
+    await expect(steps.nth(1)).toHaveAttribute("data-state", "pending");
+    await expect(steps.nth(1).locator(".ana-step-mark")).toBeHidden();
     const hero = section.locator(".ana-read .ana-hero").first();
     await expect(hero).toBeVisible();
     await expect(hero.locator(".ana-hero-name")).not.toHaveText("");
@@ -254,6 +264,7 @@ test.describe("Soi đội", () => {
     await row.locator(".ana-team-link").click();
     await expect(page).toHaveURL(/\/doi-khac\//);
     await expect(page.locator("#team-detail-body")).toBeVisible();
+
   });
 });
 
@@ -272,6 +283,60 @@ test.describe("Gợi ý đội", () => {
       },
     });
   };
+
+  test("kết quả đã xóa không quay lại khi bật ô ngoài phạm vi (P9-R1)", async ({ page, request }) => {
+    await page.route("https://challenges.cloudflare.com/**", (route) =>
+      route.fulfill({ contentType: "application/javascript", body: TURNSTILE_STUB }));
+    const teams = await (await request.get("/data/teams.json")).json();
+    const target = teams.find((team) => Array.isArray(team.heroes) && team.heroes.length >= 3);
+    const heroesDict = await (await request.get("/data/heroes-dict.json")).json();
+    const tacticsDict = await (await request.get("/data/tactics.json")).json();
+    const reads = target.heroes.map((hero) => ({
+      nameCn: heroesDict.find((record) => record.viet === hero.name)?.chinese ?? hero.name,
+      tacticsCn: (hero.tactics || []).map((slot) => tacticsDict.find((record) => record.viet === slot.name)?.chinese ?? slot.name),
+      booksCn: [], statFocusCn: "",
+    }));
+    await page.route(WORKER_ROUTE, (route) => route.fulfill({ json: { heroes: reads } }));
+
+    const section = (page) => page.locator("#section-analyze");
+    const runOnce = async () => {
+      await section(page).locator("input[type=file]").setInputFiles({ name: "doi-hinh.png", mimeType: "image/png", buffer: transparentPng });
+      const run = section(page).getByRole("button", { name: "Soi đội", exact: true });
+      await expect(run).toBeEnabled();
+      await run.click();
+      await expect(section(page).locator(".ana-read .ana-hero").first()).toBeVisible();
+    };
+    const expectCleared = async () => {
+      await expect(section(page).locator(".ana-read .ana-hero")).toHaveCount(0);
+      await expect(section(page).locator(".ana-similar")).toBeHidden();
+      await expect(section(page).locator(".ana-step").nth(2)).toHaveAttribute("data-state", "pending");
+      await expect(section(page).locator(".ana-step").nth(2).locator(".ana-step-mark")).toBeHidden();
+    };
+    const outside = () => section(page).getByRole("checkbox", { name: "Xem đội ngoài phạm vi để tham khảo" });
+
+    await page.goto("/soi-doi/");
+    await waitForBoot(page);
+    await runOnce();
+    // Chuỗi 1: chọn ảnh khác (xóa kết quả) rồi bật ô ngoài phạm vi.
+    await section(page).getByRole("button", { name: "Chọn ảnh khác" }).click();
+    await section(page).locator("input[type=file]").setInputFiles({ name: "anh-khac.png", mimeType: "image/png", buffer: transparentPng });
+    await section(page).locator(".ana-file-row").getByRole("button", { name: "Chọn ảnh khác" }).click();
+    await outside().check();
+    await expectCleared();
+
+    // Chuỗi 2: chạy lại rồi đổi Mùa (xóa kết quả) và bật ô ngoài phạm vi.
+    await outside().uncheck();
+    // Token Turnstile của stub chỉ được cấp khi widget render lại, nên nạp lại trang cho lượt chạy thứ hai.
+    await page.goto("/soi-doi/");
+    await waitForBoot(page);
+    await runOnce();
+    await page.locator("#season-scenario").selectOption({ index: 1 });
+    // Đổi Mùa xóa kết quả (không phụ thuộc vào một dòng trạng thái cụ thể).
+    await expect(section(page).locator(".ana-read .ana-hero")).toHaveCount(0);
+    await expect(section(page).locator(".ana-similar")).toBeHidden();
+    await outside().check();
+    await expectCleared();
+  });
 
   test("tiến trình 1–2–3, danh sách 5 đội đánh số và nút sửa kho giữ focus", async ({ page, request }) => {
     await seedRoster(page, request);

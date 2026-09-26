@@ -413,8 +413,9 @@ test("detail owns the roster guide and keeps it open across variant changes", as
   await expect(details).toHaveAttribute("open", "");
   await expect(guide.locator("summary")).toHaveCount(1);
 
-  // Trang chi tiết không boot ứng dụng gốc.
-  await expect(page.locator('a[data-section="khaihoang"][aria-current="page"]')).toHaveCount(1);
+  // Trang chi tiết không boot ứng dụng gốc; mục cha chỉ được đánh dấu khu vực (`true`), không phải trang hiện tại.
+  await expect(page.locator('a[data-section="khaihoang"][aria-current="true"]')).toHaveCount(1);
+  await expect(page.locator('.site-nav a[aria-current="page"]')).toHaveCount(0);
 });
 
 test("detail keeps every opening note with its owner and never borrows from the default build", async ({ page, request }) => {
@@ -740,4 +741,43 @@ test("a javascript: source URL in the source data never becomes an anchor", asyn
   await expect(panel.locator('a[href^="javascript:"]')).toHaveCount(0);
   await expect(panel).not.toContainText("javascript:");
   await expect(page).toHaveTitle(/^(?!pwned).*/);
+});
+
+test("panel hành động của chi tiết Khai hoang và Đội khác không tràn khỏi khung (P06-B1)", async ({ page, request }) => {
+  const handles = await routeHandles(request);
+  const ids = data.teams.map((team) => team.id);
+  expect(ids.length).toBe(17);
+  const boxes = () => page.evaluate(() => [...document.querySelectorAll(".detail-score-panel a, .detail-score-panel button, .detail-score-panel input")]
+    .map((node) => { const rect = node.getBoundingClientRect(); return { text: node.textContent.trim().slice(0, 24) || node.type, left: Math.round(rect.left), right: Math.round(rect.right) }; }));
+  /** Hai hộp có giao nhau theo cả hai trục (bàn đo không bắt được tràn sang trái). */
+  const overlaps = () => page.evaluate(() => {
+    const title = document.querySelector(".detail-title, .detail-hero-title");
+    const panel = document.querySelector(".detail-score-panel");
+    if (!title || !panel) return false;
+    const a = title.getBoundingClientRect(), b = panel.getBoundingClientRect();
+    return Math.min(a.right, b.right) - Math.max(a.left, b.left) > 0 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 0;
+  });
+  for (const width of [1440, 390, 320]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const id of ids) {
+      await page.goto(detailPath(handles, id));
+      await expect(page.locator("#team-detail-body")).toBeVisible();
+      const found = await boxes();
+      expect(found.length, `${id} ${width}: panel có control`).toBeGreaterThan(0);
+      for (const item of found) {
+        expect(item.left, `${id} ${width} ${item.text}: mép trái`).toBeGreaterThanOrEqual(0);
+        expect(item.right, `${id} ${width} ${item.text}: mép phải`).toBeLessThanOrEqual(width);
+      }
+      expect(await overlaps(), `${id} ${width}: panel không phủ đầu trang`).toBe(false);
+    }
+    // Đội khác: clipboard bị từ chối vẫn không tràn khỏi khung.
+    await page.goto("/doi-khac/tan-ngo-thuong/");
+    await page.evaluate(() => { navigator.clipboard.writeText = () => Promise.reject(new Error("denied")); });
+    await page.locator(".detail-copy-btn").first().click();
+    await expect(page.locator(".detail-copy-fallback").first()).toBeVisible();
+    for (const item of await boxes()) {
+      expect(item.left, `doi-khac ${width} ${item.text}: mép trái`).toBeGreaterThanOrEqual(0);
+      expect(item.right, `doi-khac ${width} ${item.text}: mép phải`).toBeLessThanOrEqual(width);
+    }
+  }
 });
