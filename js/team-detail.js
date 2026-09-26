@@ -10,8 +10,9 @@ import {
 } from './recommended-reference-state.js';
 import { detailBadges, legacyOriginalDetailContent, recommendedTeamDetailContent } from './recommended-reference-render.js';
 import { safeReturnUrl, setTeamRouteHandlesFromJSON, teamDetailPath } from './team-detail-navigation.js';
-import { loadWebsiteDisplay, localizeData } from './website-display.js';
+import { createByteLoader, loadWebsiteDisplay, localizeData } from './website-display.js';
 
+const TEAMS_SOURCE = 'data/teams.json';
 const VERIFY_MESSAGE = 'Không thể xác minh dữ liệu đội hình. Hãy tải lại trang hoặc quay lại danh sách.';
 const NETWORK_MESSAGE = 'Không tải được chi tiết đội hình. Hãy kiểm tra kết nối rồi thử lại.';
 
@@ -60,6 +61,9 @@ export async function initTeamDetail({documentTarget = document} = {}) {
   const requestedVariantPresent = variantParams.has('variant');
   const requestedVariant = variantParams.get('variant');
   let pending = false;
+  // Mỗi lượt tải có bộ nạp riêng: publication và bộ kiểm đội gốc đọc chung một request `teams.json`,
+  // còn "Thử lại" tải lại byte thật.
+  let loadBytes = createByteLoader();
 
   const showLoading = () => {
     root.setAttribute('aria-busy', 'true');
@@ -87,8 +91,8 @@ export async function initTeamDetail({documentTarget = document} = {}) {
   };
 
   async function localizedLegacyTeams() {
-    const teams = await loadVerifiedLegacyTeams(legacyTeamsSha256, () => fetchBytes('/data/teams.json'));
-    return localizeData(websiteDisplay, 'data/teams.json', teams);
+    const teams = await loadVerifiedLegacyTeams(legacyTeamsSha256, () => loadBytes(TEAMS_SOURCE));
+    return localizeData(websiteDisplay, TEAMS_SOURCE, teams);
   }
 
   async function loadRecommended() {
@@ -133,13 +137,10 @@ export async function initTeamDetail({documentTarget = document} = {}) {
 
   async function load() {
     pending = true;
+    loadBytes = createByteLoader();
     showLoading();
     try {
-      websiteDisplay ??= await loadWebsiteDisplay(
-        websitePin,
-        path => fetchBytes(path === 'website-display.json' ? '/data/website-display.json' : `/${path}`),
-        pin,
-      );
+      websiteDisplay ??= await loadWebsiteDisplay(websitePin, loadBytes, pin, {paths: [TEAMS_SOURCE]});
       if (family === 'recommended') await loadRecommended();
       else await loadLegacy();
     } catch (error) {

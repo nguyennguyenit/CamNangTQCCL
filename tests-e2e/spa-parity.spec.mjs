@@ -43,14 +43,22 @@ const privateProbePaths = [
   "/tests/test_build.py",
   "/plans/260723-2127-migrate-static-spa-to-astro/plan.md",
 ];
-const runtimeJson = [
-  "teams.json",
-  "coexist.json",
-  "khaihoang.json",
-  "tactics.json",
-  "heroes-dict.json",
-  "books-dict.json",
+/** Nguồn `/data/*.json` mỗi trang mục thật sự đọc (ngoài generation `/data/recommended/`). */
+const SEASON_BUNDLE = [
+  "season-registry.json", "season-evidence.json", "season-team-configs.json", "season-team-evaluations.json",
+  "season-content-links.json", "teams.json", "coexist.json", "heroes-dict.json", "tactics.json", "books-dict.json",
 ];
+const LOOKUP_BUNDLE = ["lookup-manifest.json", "heroes-dict.json", "tactics.json", "lookup-catalog.json"];
+const sectionData = {
+  "team-chuan": ["website-display.json", ...SEASON_BUNDLE],
+  "team-khac": ["website-display.json", ...SEASON_BUNDLE],
+  coexist: ["website-display.json", ...SEASON_BUNDLE],
+  khaihoang: ["website-display.json", "khaihoang.json"],
+  lookup: ["website-display.json", ...LOOKUP_BUNDLE],
+  "recruit-tracker": ["website-display.json", ...LOOKUP_BUNDLE],
+  analyze: ["website-display.json", ...LOOKUP_BUNDLE, "teams.json", "books-dict.json"],
+  "roster-recommend": ["website-display.json", ...LOOKUP_BUNDLE, "teams.json", "team-tier.json"],
+};
 const sections = [
   "team-chuan",
   "team-khac",
@@ -210,7 +218,7 @@ test("boots once with clean first-party requests and stable metadata", async ({ 
   expect(consoleErrors).toEqual([]);
   expect(firstPartyFailures).toEqual([]);
   expect(unexpectedExternalRequests).toEqual([]);
-  for (const name of [...runtimeJson, "team-tier.json"]) {
+  for (const name of sectionData["team-chuan"]) {
     expect(runtimeRequests.get(`/data/${name}`)).toBe(1);
   }
 
@@ -230,6 +238,23 @@ test("boots once with clean first-party requests and stable metadata", async ({ 
   expect(consoleErrors).toEqual([]);
   expect(firstPartyFailures).toEqual([]);
   expect(unexpectedExternalRequests).toEqual([]);
+});
+
+test("each section page requests only the data sources it uses, each once", async ({ page }) => {
+  for (const section of sections) {
+    const requests = [];
+    const record = (request) => {
+      const { hostname, pathname } = new URL(request.url());
+      if (hostname === "127.0.0.1" && pathname.startsWith("/data/")) requests.push(pathname);
+    };
+    page.on("request", record);
+    await page.goto(sectionPaths[section]);
+    await waitForBoot(page);
+    page.off("request", record);
+    const flat = requests.filter((path) => !path.startsWith("/data/recommended/")).map((path) => path.slice("/data/".length));
+    expect.soft([...flat].sort(), section).toEqual([...sectionData[section]].sort());
+    expect.soft(requests.length - new Set(requests).size, `${section} duplicate requests`).toBe(0);
+  }
 });
 
 test("section links navigate across pages and browser history", async ({ page }) => {
@@ -610,7 +635,7 @@ test("legacy storage payloads survive load and sanitize forbidden roster fields 
 });
 
 test("required JSON failure is shown on its own section page", async ({ page }) => {
-  await page.route("**/data/teams.json", (route) =>
+  await page.route("**/data/heroes-dict.json", (route) =>
     route.fulfill({ status: 503, contentType: "application/json", body: "{}" }));
 
   await page.goto("/tra-cuu/");
@@ -625,27 +650,10 @@ test("optional tier failure is non-fatal", async ({ page }) => {
   await page.route("**/data/team-tier.json", (route) =>
     route.fulfill({ status: 404, contentType: "application/json", body: "{}" }));
 
-  await page.goto("/doi-chuan/");
+  await page.goto("/goi-y-doi-tu-kho/");
   await waitForBoot(page);
-  await expect(page.locator("#section-team-chuan .team-card").first()).toBeVisible();
-  await expect(page.locator("#section-team-chuan .error")).toHaveCount(0);
-});
-
-test("a hanging optional tier request retains the legacy blocked-render behavior", async ({ page }) => {
-  let releaseTier;
-  const tierGate = new Promise((resolve) => {
-    releaseTier = resolve;
-  });
-  await page.route("**/data/team-tier.json", async (route) => {
-    await tierGate;
-    await route.abort("timedout");
-  });
-
-  await page.goto("/doi-chuan/");
-  await expect(page.locator("#section-team-chuan .team-card")).toHaveCount(0);
-  await expect(page.locator("#section-team-chuan .error")).toHaveCount(0);
-  releaseTier();
-  await expect(page.locator("#section-team-chuan .team-card").first()).toBeVisible();
+  await expect(page.locator("#section-roster-recommend .roster-scan-card").first()).toBeVisible();
+  await expect(page.locator("#section-roster-recommend .error")).toHaveCount(0);
 });
 
 test("Turnstile failure is surfaced only on its protected section pages", async ({ page }) => {

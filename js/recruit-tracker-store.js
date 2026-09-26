@@ -128,7 +128,11 @@ function eventMatches(event, accountId, bannerId) {
 }
 
 export function getPity(state, accountId, bannerId) {
-  const next = normalizeRecruitTrackerState(state);
+  return pityOf(normalizeRecruitTrackerState(state), accountId, bannerId);
+}
+
+/** Pity trên state đã normalize: không clone lại, chỉ đọc. */
+function pityOf(next, accountId, bannerId) {
   const banner = next.banners.find((item) => item.id === bannerId) || defaultDailyBanner();
   let pullsSinceFiveStar = 0;
   for (const event of next.pullEvents) {
@@ -224,7 +228,7 @@ export function recordDailySlotFiveStar(state, { accountId, date = localDateFrom
   const slot = daily.slots.find((item) => item.key === slotKey);
   if (!slot || slot.status !== "pending") return next;
   const pulls = 1;
-  const pullCount = getPity(next, actualAccountId, DAILY_BANNER_ID).pullsSinceFiveStar + pulls;
+  const pullCount = pityOf(next, actualAccountId, DAILY_BANNER_ID).pullsSinceFiveStar + pulls;
   slot.status = "fiveStar";
   addPullEvent(next, {
     accountId: actualAccountId,
@@ -261,7 +265,7 @@ export function recordBannerFiveStar(state, { accountId, bannerId, pulls = 1, he
   const next = withState(state);
   const actualAccountId = findAccountId(next, accountId);
   const actualPulls = Math.max(1, Number(pulls) || 1);
-  const pullCount = getPity(next, actualAccountId, bannerId).pullsSinceFiveStar + actualPulls;
+  const pullCount = pityOf(next, actualAccountId, bannerId).pullsSinceFiveStar + actualPulls;
   addPullEvent(next, {
     accountId: actualAccountId,
     bannerId,
@@ -278,7 +282,11 @@ export function recordBannerFiveStar(state, { accountId, bannerId, pulls = 1, he
 }
 
 export function getFiveStarHistory(state) {
-  const next = normalizeRecruitTrackerState(state);
+  return fiveStarHistoryOf(normalizeRecruitTrackerState(state));
+}
+
+/** Lịch sử 5★ trên state đã normalize, mới nhất trước; mỗi mục là bản sao nông của sự kiện. */
+function fiveStarHistoryOf(next) {
   const accountById = new Map(next.accounts.map((account) => [account.id, account]));
   const bannerById = new Map(next.banners.map((banner) => [banner.id, banner]));
   return next.pullEvents
@@ -304,7 +312,7 @@ export function getRecruitTrackerSummary(state, { accountId, date = localDateFro
   const dailyBanner = next.banners.find((banner) => banner.id === DAILY_BANNER_ID) || defaultDailyBanner();
   const limitedBanners = next.banners
     .filter((banner) => banner.id !== DAILY_BANNER_ID && banner.hasFiveStar !== false)
-    .map((banner) => ({ banner, pity: getPity(next, actualAccountId, banner.id) }));
+    .map((banner) => ({ banner, pity: pityOf(next, actualAccountId, banner.id) }));
   return {
     state: next,
     account: next.accounts.find((account) => account.id === actualAccountId),
@@ -313,10 +321,10 @@ export function getRecruitTrackerSummary(state, { accountId, date = localDateFro
       banner: dailyBanner,
       slots: dailyState.slots,
       todayDone: dailyState.slots.filter((slot) => slot.status !== "pending").length,
-      pity: getPity(next, actualAccountId, DAILY_BANNER_ID),
+      pity: pityOf(next, actualAccountId, DAILY_BANNER_ID),
     },
     limitedBanners,
-    history: getFiveStarHistory(next).filter((event) => event.accountId === actualAccountId),
+    history: fiveStarHistoryOf(next).filter((event) => event.accountId === actualAccountId),
   };
 }
 

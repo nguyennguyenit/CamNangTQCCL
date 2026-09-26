@@ -913,6 +913,22 @@ test('a changed teams.json reads as a verification failure and an unreachable on
   await expect(alert).toContainText('Hãy kiểm tra kết nối');
 });
 
+test('Đội chuẩn and Đội khác details fetch only the display publication and teams.json, each once',async({page,request})=>{
+  const handles=await routeHandles(request);
+  const {index}=await publication(request);
+  const teams=await rawTeams(request);
+  for (const path of [recommendedPath(handles,index.records[0].sourceConfigId),legacyPath(handles,teams[0].id)]) {
+    const requests=[];
+    const record=req=>{const {pathname}=new URL(req.url());if (pathname.startsWith('/data/') && !pathname.startsWith('/data/recommended/')) requests.push(pathname);};
+    page.on('request',record);
+    await page.goto(path);
+    await expect(page.locator('#team-detail-root')).toHaveAttribute('aria-busy','false');
+    await expect(page.locator('#team-detail-body')).toBeVisible();
+    page.off('request',record);
+    expect(requests.sort(),path).toEqual(['/data/teams.json','/data/website-display.json']);
+  }
+});
+
 test('Khai hoang detail with a tall source panel keeps the title right under the back link',async({page,request})=>{
   await page.setViewportSize({width:1280,height:900});
   const gap=async()=>{

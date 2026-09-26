@@ -387,6 +387,19 @@ for (const shape of ["missing", "empty", "legacy"]) {
 
 /* ---------- Trang chi tiết: hướng dẫn, ghi chú mở đất, URL và trạng thái lỗi ---------- */
 
+test("detail fetches only the display publication and khaihoang.json, each once", async ({ page, request }) => {
+  const handles = await routeHandles(request);
+  const requests = [];
+  page.on("request", (req) => {
+    const { pathname } = new URL(req.url());
+    if (pathname.startsWith("/data/")) requests.push(pathname);
+  });
+  await page.goto(detailPath(handles, data.teams[0].id));
+  await expect(page.locator("#team-detail-root")).toHaveAttribute("aria-busy", "false");
+  await expect(page.locator("#team-detail-body")).toBeVisible();
+  expect(requests.sort()).toEqual(["/data/khaihoang.json", "/data/website-display.json"]);
+});
+
 test("detail owns the roster guide and keeps it open across variant changes", async ({ page, request }) => {
   const handles = await routeHandles(request);
   const target = teamByTitle("Gia Cát Khác · Thái Sử Từ · Tả Từ");

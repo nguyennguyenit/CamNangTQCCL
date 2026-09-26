@@ -1,5 +1,19 @@
 # Project Changelog
 
+## 2026-09-27 (Hiệu năng runtime)
+
+### Changed
+
+- Mỗi trang chỉ tải và xác minh nguồn dữ liệu chính nó dùng (bảng nguồn theo trang ở `docs/code-standards.md`): `/khai-hoang/` còn 2 request `/data/` (trước 11), Tra cứu và Theo dõi chiêu mộ 5 (trước 11), Soi đội và Gợi ý đội 7 (trước 11), Đội chuẩn/Đội khác/Cùng Tồn 11 (trước 15); trang chi tiết Đội chuẩn/Đội khác tải `teams.json` một lần (trước hai lần) và không còn tải kho Tra cứu, Cùng Tồn, Khai hoang; chi tiết Khai hoang chỉ tải publication và `khaihoang.json`.
+- `loadWebsiteDisplay` nhận `{paths}` và băm các nguồn song song; `localizeData` từ chối nguồn chưa được publication xác minh. Bộ nạp byte dùng chung `createByteLoader()` (một request mỗi đường dẫn, lần lỗi được tải lại khi "Thử lại") thay cho ba bộ nạp riêng của `app.js`, `team-detail.js`, `khaihoang-detail.js`.
+- `app.js` tải kho Tra cứu, `team-tier.json` và mô hình mùa song song; lỗi kho Tra cứu chỉ báo ở trang dùng nó. Boot chỉ render phạm vi một lần và chi tiết cấu hình chỉ dựng đúng hàng được mở.
+- Theo dõi chiêu mộ: tóm tắt normalize state một lần (pity và lịch sử 5★ tính trên state đã normalize); 5 banner × 2000 sự kiện từ ~33 ms xuống ~5 ms mỗi lần render.
+- Policy `site-vi-260927-hieu-nang` (hash 5 file JS; inventory không đổi), publish generation `eeaa9c42…` (xoá generation `75a88d67…` của phần 4b), re-pin `pipeline/team-route-handles.json`.
+
+### Fixed
+
+- Test e2e N5-3 (`recommended-browser.spec.mjs`) không còn đọc URL trong trang ngay sau Back khi hai mục lịch sử cùng URL (đỏ ngẫu nhiên cả trước phase này).
+
 ## 2026-09-27 (Xoá code chết phần 4b: MCP, Vision Worker, pipeline)
 
 ### Removed

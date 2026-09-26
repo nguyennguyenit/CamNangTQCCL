@@ -12,12 +12,11 @@ const hash = value => createHash('sha256').update(value).digest('hex');
 const generationId = `site-localization:${'a'.repeat(64)}`;
 const recommendedPin = {schemaVersion: 1, generationId: 'b'.repeat(64), manifestSha256: 'c'.repeat(64)};
 
-function publication() {
-  const source = bytes('[{"id":"team-1"}]');
+function publication(sources = {'data/teams.json': bytes('[{"id":"team-1"}]')}) {
   const document = {
     schemaVersion: 1,
     generationId,
-    sourceHashes: {'data/teams.json': hash(source)},
+    sourceHashes: Object.fromEntries(Object.entries(sources).map(([path, content]) => [path, hash(content)])),
     recommendedPin,
     values: {[displayLocationKey('team-1', 'notes')]: 'Ghi chú tiếng Việt'},
   };
@@ -25,12 +24,62 @@ function publication() {
   const result = {
     document,
     display,
-    source,
     pin: {generationId, sha256: hash(display)},
-    load: async path => path === 'website-display.json' ? result.display : result.source,
+    load: async path => path === 'website-display.json' ? result.display : sources[path],
   };
   return result;
 }
+
+const threeSources = () => ({
+  'data/teams.json': bytes('[{"id":"team-1"}]'),
+  'data/coexist.json': bytes('[]'),
+  'data/khaihoang.json': bytes('{"teams":[]}'),
+});
+
+test('requests every listed source before the first one answers', async () => {
+  const sources = threeSources();
+  const fixture = publication(sources);
+  const requested = [];
+  const pending = [];
+  const loading = loadWebsiteDisplay(fixture.pin, path => {
+    if (path === 'website-display.json') return Promise.resolve(fixture.display);
+    requested.push(path);
+    return new Promise(resolve => pending.push(() => resolve(sources[path])));
+  }, recommendedPin, {paths: ['data/teams.json', 'data/coexist.json']});
+  await new Promise(resolve => setTimeout(resolve, 20));
+  assert.deepEqual(requested.sort(), ['data/coexist.json', 'data/teams.json']);
+  while (pending.length) {
+    pending.shift()();
+    await new Promise(resolve => setTimeout(resolve, 5));
+  }
+  await loading;
+});
+
+test('loads and verifies only the listed sources', async () => {
+  const fixture = publication(threeSources());
+  const requested = [];
+  const loaded = await loadWebsiteDisplay(fixture.pin, path => {
+    requested.push(path);
+    return fixture.load(path);
+  }, recommendedPin, {paths: ['data/khaihoang.json']});
+  assert.deepEqual(requested, ['website-display.json', 'data/khaihoang.json']);
+  assert.deepEqual(localizeData(loaded, 'data/khaihoang.json', {teams: []}), {teams: []});
+  assert.throws(() => localizeData(loaded, 'data/teams.json', [{id: 'team-1'}]), /chưa được xác minh: data\/teams\.json/);
+});
+
+test('rejects a requested source the publication does not pin', async () => {
+  const fixture = publication();
+  await assert.rejects(
+    loadWebsiteDisplay(fixture.pin, fixture.load, recommendedPin, {paths: ['data/team-tier.json']}),
+    /Nguồn dữ liệu hiển thị không hợp lệ/,
+  );
+});
+
+test('refuses to localize a source that was never verified', () => {
+  const unverified = {values: {[displayLocationKey('data:data/teams.json:[0]', '[0].notes')]: 'Chưa kiểm'}};
+  assert.throws(() => localizeData(unverified, 'data/teams.json', [{notes: '原文'}]), /chưa được xác minh/);
+});
+
 test('loads a fully pinned publication and resolves only reviewed display values', async () => {
   const fixture = publication();
   const loaded = await loadWebsiteDisplay(fixture.pin, fixture.load, recommendedPin);
@@ -142,14 +191,14 @@ test('server routes keep serving the bytes captured with one website publication
   assert.deepEqual(teamRoute.bytes, Buffer.from(teams));
 });
 
-test('applies reviewed data bindings without mutating source identities or order', () => {
+test('applies reviewed data bindings without mutating source identities or order', async () => {
   const source = [{id: 'first', notes: '原文'}, {id: 'second', notes: 'Giữ nguyên'}];
-  const publication = {
-    values: {
-      [displayLocationKey('data:data/teams.json:[0]', '[0].notes')]: 'Bản dịch đã duyệt',
-    },
-  };
-  const localized = localizeData(publication, 'data/teams.json', source);
+  const fixture = publication({'data/teams.json': bytes(source)});
+  fixture.document.values = {[displayLocationKey('data:data/teams.json:[0]', '[0].notes')]: 'Bản dịch đã duyệt'};
+  fixture.display = bytes(fixture.document);
+  fixture.pin.sha256 = hash(fixture.display);
+  const verified = await loadWebsiteDisplay(fixture.pin, fixture.load, recommendedPin);
+  const localized = localizeData(verified, 'data/teams.json', source);
   assert.deepEqual(localized, [{id: 'first', notes: 'Bản dịch đã duyệt'}, {id: 'second', notes: 'Giữ nguyên'}]);
   assert.deepEqual(source, [{id: 'first', notes: '原文'}, {id: 'second', notes: 'Giữ nguyên'}]);
 });

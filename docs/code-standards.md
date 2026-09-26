@@ -22,6 +22,19 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
   | `#season-artifact-hashes` | `app.js` (model mùa) | Đội chuẩn, Đội khác, Cùng Tồn |
   | `<div id="season-controls">` | `app.js` (`placeSeasonControls`) | 3 trang như trên; Soi đội, Gợi ý đội **không có** (công cụ luôn chạy dữ liệu đội cũ, bỏ `scenario`/`ruleset`/`config` khỏi URL khi tải) |
 
+- **Nguồn dữ liệu theo trang**: mỗi trang chỉ tải và xác minh nguồn chính nó đọc. `loadWebsiteDisplay(pin, loadBytes, recommendedPin, {paths})` băm song song đúng các nguồn trong `paths` (mặc định mọi nguồn trong `sourceHashes`; đường không được pin → lỗi) và `localizeData` từ chối nguồn chưa được chính publication đó xác minh. Byte đi qua `createByteLoader()` của `js/website-display.js`: một request mỗi đường dẫn cho cả publication, mô hình mùa và kho Tra cứu; lần tải lỗi bị bỏ để "Thử lại" tải lại. Thêm nguồn cho một trang thì thêm cả vào `paths` của trang đó.
+
+  | Trang | Xác minh qua website-display (`paths`) | Tải thêm (bộ kiểm riêng) |
+  |---|---|---|
+  | Đội chuẩn, Đội khác | — (thêm `teams` khi URL có `legacyTeam` không kèm `config`) | bộ mùa 10 file (`#season-artifact-hashes`), generation Recommended |
+  | Cùng Tồn | `coexist` | bộ mùa 10 file |
+  | Khai hoang | `khaihoang` | — |
+  | Tra cứu, Theo dõi chiêu mộ | `heroes-dict`, `tactics`, `lookup-catalog`, `lookup-manifest` (Tra cứu dùng hash `heroes-dict` đã xác minh làm `catalogSha256`) | Recommended theo yêu cầu khi mở hồ sơ |
+  | Soi đội | như Tra cứu + `teams` | `books-dict` |
+  | Gợi ý đội | như Tra cứu + `teams` | `team-tier` (tuỳ chọn) |
+  | Chi tiết Đội chuẩn/Đội khác | `teams` (một request, dùng chung với kiểm `legacyTeamsSha256`) | generation Recommended |
+  | Chi tiết Khai hoang | `khaihoang` (kiểm hash trang trước) | — |
+
 - **Fetch dữ liệu bằng đường dẫn tuyệt đối** `/data/…` (không dùng `./data/…`: dưới `/<mục>/` sẽ thành `/doi-chuan/data/…` → 404).
 - **Bảng chuyển tiếp hash cũ** nằm ở một nguồn `js/legacy-routes.js` (ESM thuần, không import): `index.astro` nhúng `resolveLegacyRoute.toString()` vào script inline chặn trong `<head>`, `js/team-detail-navigation.js` dùng cùng hàm để chuẩn hoá `from` và snapshot cũ. Thêm mục/hash mới thì sửa bảng đó, không viết nhánh riêng.
 - **`safeReturnUrl` giữ khóa theo trang**: `SECTION_QUERY_KEYS` là allowlist theo pathname của trang mục (`/doi-chuan/`, `/doi-khac/`, `/cung-ton/`, `/soi-doi-tu-anh/`, `/goi-y-doi-tu-kho/`, `/khai-hoang/`, `/tra-cuu/`, `/theo-doi-chieu-mo/`), chỉ giữ khóa có trong allowlist của **đúng** pathname đó và bỏ lặng lẽ mọi khóa khác (`fbclid`, `gclid`, `msclkid`, `utm_*`, `score`), không loại cả URL. URL gốc cũ dạng `/?…#<tab>` được chuẩn hoá về pathname + query của trang mục trước khi so allowlist, nên `from` cũ vẫn quay về đúng trang.

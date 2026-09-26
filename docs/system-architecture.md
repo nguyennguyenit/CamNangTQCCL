@@ -79,7 +79,10 @@ thuộc [manifest của site](../src/lib/public-artifact-manifest.mjs).
 
 [`src/pages/index.astro`](../src/pages/index.astro) là Landing; tám trang mục tĩnh (`/doi-chuan/`, `/doi-khac/`, `/cung-ton/`, `/khai-hoang/`, `/tra-cuu/`, `/theo-doi-chieu-mo/`, `/soi-doi-tu-anh/`, `/goi-y-doi-tu-kho/`) dùng chung `src/layouts/SiteLayout.astro`, mỗi trang một mount `#section-<id>` và `data-page-section` trên `<body>`. Layout phát pin Recommended, pin website-display, bảng route handle và hash dữ liệu mùa cho đúng trang cần (bảng ở [chuẩn code](code-standards.md)).
 [`js/app.js`](../js/app.js) sở hữu khởi tạo runtime; nó capture từng response byte
-một lần, xác minh sidecar cùng toàn bộ source hash rồi mới áp overlay tiếng Việt.
+một lần qua `createByteLoader()`, xác minh sidecar cùng hash của đúng các nguồn trang
+đang dùng (băm song song, bảng nguồn theo trang ở [chuẩn code](code-standards.md))
+rồi mới áp overlay tiếng Việt; `localizeData` từ chối nguồn chưa được xác minh.
+Kho Tra cứu, `team-tier.json` và mô hình mùa chỉ tải ở trang dùng chúng và tải song song.
 [`season-ui-state.js`](../js/season-ui-state.js) sở hữu query và kiểm hash toàn bộ
 dữ liệu tham chiếu trước activation. [`lookup-data.js`](../js/lookup-data.js)
 kiểm inventory/hash/generation của ba payload Tra cứu. Thay đổi ở bất kỳ
@@ -214,9 +217,9 @@ Browser CI chỉ do `.github/workflows/mcp-worker.yml` sở hữu. Pull request/
 
 ## Failure và fallback
 
-- Thiếu `team-tier.json`: site vẫn render team không badge tier.
+- Thiếu `team-tier.json`: Gợi ý đội (trang duy nhất đọc file này) vẫn chạy với đội không có tier.
 - Lỗi JSON bắt buộc: Team PK hiển thị hướng dẫn tải lại/liên hệ quản trị; các init sau không hoàn tất.
-- Dependency trong `data/website-display.json` đổi bytes hoặc sai pin: toàn bộ khởi tạo dừng trước render và chỉ hiện lỗi tiếng Việt hữu hạn.
+- Dependency trang đang dùng trong `data/website-display.json` đổi bytes hoặc sai pin: toàn bộ khởi tạo của trang dừng trước render và chỉ hiện lỗi tiếng Việt hữu hạn.
 - Vision lỗi: tra cứu local và tracker vẫn độc lập; UI trả status theo lỗi Worker.
 - Research MCP HTTP lỗi: CLI/stdio local vẫn độc lập; recommendation fail closed, không tự bịa đội hình.
 - Research MCP trả `401/429/503` trước dữ liệu khi bearer, quota hoặc cấu hình không hợp lệ; `/healthz` không đại diện data readiness.

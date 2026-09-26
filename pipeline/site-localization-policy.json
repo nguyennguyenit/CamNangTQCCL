@@ -75,7 +75,7 @@
       "hột": "red-copy count"
     }
   },
-  "policyVersion": "site-vi-260927-xoa-code-chet-b",
+  "policyVersion": "site-vi-260927-hieu-nang",
   "routeFamilies": [
     {
       "entrypoints": [
@@ -743,17 +743,17 @@
     "data/teams.json": "45e13dca78877abc13d2ef2213be9432c8307aa558d99783498279f7563cf283",
     "js/analyze-map.js": "f463c3ba472af8f8fcd18697180e48fb8b3323effdc0ee6d4ba240597b089039",
     "js/analyze.js": "674c2d1b532e21df5704fd013ccdcda07e084caa5056a3f9f24d9d8dff94b4df",
-    "js/app.js": "b08b4228cac4fbe09fe9fb43da0fca5b532d217b946879c0668f2e2453533293",
+    "js/app.js": "0e59287f2a10c33ac65f9c61643fe978b321bf120ecf3c63a6f8c556e51aacef",
     "js/detail-actions.js": "6fd2fbfd9b8ad73b6e4cfe0c4a907897b0e79e3d60437bacb0a8f2ee97c41104",
     "js/hero-portrait.js": "5abbe063592abaa25f3f22334456a7de3784b9c330de3bb9abbe77d47de11e2b",
     "js/hero-summaries.js": "6853ba62d68d4185d11044edca7a6c53b9c6a16aaf6228cd4f86f2b3d66bab9a",
-    "js/khaihoang-detail.js": "8f9d7a1c181439766fad935042ac31162fceb63eaab0b46b403580f72d73e987",
+    "js/khaihoang-detail.js": "f4a2e3ff0c8d5261480a85012e689ed11fbde16c4a526aa3eb2577c8917b5973",
     "js/legacy-routes.js": "f9d766d671613275d8e0fe1a263d1cb6e1a6288d47d32f2f172531d6fdee0668",
     "js/lookup-data.js": "d15b64ac8419453c2d49874da5f07c4db303f59091d512af80aa8b16158ffdd5",
     "js/lookup-detail.js": "4a29c5db0d506cf2784c04d3306b5a5e1f773c32b3c1111c92dd69ed735bc659",
     "js/recommended-reference-render.js": "7817d6c33802da92ef03a9b1097f0f5c91cc26e5125932a5d517567efddeecc5",
     "js/recommended-reference-state.js": "807a32681c04793f47acdf327ed342145bb18c53bc1ffa1aeb7ac36d0f198bcd",
-    "js/recruit-tracker-store.js": "21d4bdc4a760ae67b9ab925f4d4c9babbdcca539d6aca77d025c66051ae70bc5",
+    "js/recruit-tracker-store.js": "19fe4dba7c8da644b1e3481f4ddef0adc4e48c5ae04fea3e88f7a0ef50c909d9",
     "js/recruit-tracker.js": "cdcd434e7798f9d143ec697ec473d6b2fcb6c665d4b5a664c4415774c3d934be",
     "js/render.js": "0b95e9739049f043e83dda83ef81052d25ad6343ae7b3ba6eb79934f9bd72f20",
     "js/roster-recommend-ui.js": "af3825a732ed552354e138854b621e70c406a16453025b388f5456eb455c779a",
@@ -762,10 +762,10 @@
     "js/site-chrome.js": "f0d56b54055b9734bf6ecba49108c52c795aa7b4c5bba3375f04bc388d7e3a14",
     "js/site-nav.js": "768e351063f7fcf8a093ef279686406677f5acc6e92455665f644d28964abc41",
     "js/team-detail-navigation.js": "7cd09631129c123fbfea2737154d352458c2b3d066f49302c1e8d3ab9a70b120",
-    "js/team-detail.js": "2be28b14b950402be4e49f288c2de574be2d7a5eaf260794fb6e73d325abffd6",
+    "js/team-detail.js": "e96a1ebc5bf392316dab4664269aa1711422eb165fa39b2650d2011803348be8",
     "js/team-filter-section.js": "252f803094cd55f7e38e509b97be9e82a600aa926bda3a94849a9ec0734a788c",
     "js/unified-lookup.js": "2088f63898b9c0073d202f1957bec8ca3408d906e73b56e0f5117679c9c6847d",
-    "js/website-display.js": "db19587b93152d1fa5d3417a43290f097e0b2794d5d7eec34b25ddf2bde1c6f4",
+    "js/website-display.js": "b663990ea9006206d4404cbc505df4ddc4f53c84fd6f6e871c109ca250990908",
     "pipeline/lookup-identity.json": "cff3228ddcfd4be39fa7c0ad3746d18a6495fa11fc6d8e4480795181f82f38b1",
     "pipeline/recommended-display-map.json": "88ecb8b452ab3292e861ddd879c218a728c16f31734160f6959072bf0be19cd3",
     "pipeline/recommended-identity-map.json": "bac1cc7062288c81f399286fd58a73e83eaaba5cf29add663c8fb24590550cfa",

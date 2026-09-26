@@ -809,9 +809,10 @@ test('N5-3: `view` chỉ có nghĩa khi bằng `luoi` hoặc `bang`; `?view=the`
   await page.goto('/doi-chuan/');
   await page.goto('/doi-chuan/?view=the');
   await expect.poll(params).toEqual({});
-  await page.goBack();
-  await expect.poll(()=>page.evaluate(()=>new URL(location.href).pathname)).toBe('/doi-chuan/');
-  await expect.poll(params).toEqual({});
+  // Hai mục lịch sử cùng URL `/doi-chuan/` nên `goBack` có thể trả về trước khi tài liệu cũ commit, và trang
+  // lấy lại từ bfcache thay execution context: chờ điều hướng của khung chính rồi so URL phía trình duyệt.
+  await Promise.all([page.waitForEvent('framenavigated',frame=>frame===page.mainFrame()),page.goBack()]);
+  await expect(page).toHaveURL(/\/doi-chuan\/$/);
 });
 
 test('N5-4: panel lọc mobile đóng bằng Escape và trả focus về nút "Bộ lọc"; desktop không đổi',async({page})=>{

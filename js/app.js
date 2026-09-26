@@ -7,7 +7,7 @@ import { initUnifiedLookup } from "./unified-lookup.js";
 import { initAnalyze } from "./analyze.js";
 import { initRecruitTracker } from "./recruit-tracker.js";
 import { initRosterRecommend } from "./roster-recommend-ui.js";
-import { displayValue, loadWebsiteDisplay, localizeData } from "./website-display.js";
+import { createByteLoader, displayValue, loadWebsiteDisplay, localizeData } from "./website-display.js";
 
 import { loadSeasonModel, readSeasonQuery, updateSeasonURL, BUNDLE_NOTICE } from './season-ui-state.js';
 import { createSeasonCoexistSection, createRecommendedSection } from "./team-filter-section.js";
@@ -37,6 +37,10 @@ const $ = (sel) => document.querySelector(sel);
 const REFERENCE_SECTIONS = ['team-chuan', 'team-khac'];
 /** Hai công cụ Beta chạy trên dữ liệu đội cũ, không có phạm vi mùa. */
 const TOOL_SECTIONS = ['analyze', 'roster-recommend'];
+/** Mục dùng kho Tra cứu (tướng, chiến pháp, catalog): Tra cứu và ba công cụ. */
+const LOOKUP_SECTIONS = ['lookup', 'recruit-tracker', ...TOOL_SECTIONS];
+/** Nguồn của kho Tra cứu mà publication hiển thị pin: manifest neo ba payload, `heroes-dict` là khóa số liệu. */
+const LOOKUP_SOURCES = ['data/heroes-dict.json', 'data/tactics.json', 'data/lookup-catalog.json', 'data/lookup-manifest.json'];
 /** Khóa theo dõi bị bỏ khỏi URL trang mục ngay khi khởi động; mọi khóa khác giữ nguyên. */
 const TRACKING_PARAM = /^(?:utm_.+|fbclid|gclid|msclkid)$/;
 
@@ -114,58 +118,58 @@ async function main() {
   const seasonScoped = controls !== null;
   let websiteDisplay = null;
   try {
-    const byteRequests = new Map();
-    const loadBytes = (name) => {
-      const path = name === "website-display.json"
-        ? "/data/website-display.json"
-        : name.startsWith("data/")
-          ? `/${name}`
-          : `/data/${name.replace(/\.json$/, "")}.json`;
-      if (!byteRequests.has(path)) byteRequests.set(path, fetch(path).then(async response => {
-        if (!response.ok) throw new Error(`${path}: ${response.status}`);
-        return new Uint8Array(await response.arrayBuffer());
-      }));
-      return byteRequests.get(path);
-    };
+    // Một bộ nạp cho cả trang: publication, mô hình mùa và kho Tra cứu đọc chung byte, mỗi file một request.
+    const loadBytes = createByteLoader();
     const loadData = name => loadBytes(name).then(bytes => JSON.parse(new TextDecoder().decode(bytes)));
     const recommendedPin = JSON.parse($('#recommended-publication').textContent);
+    // Mỗi trang chỉ tải và xác minh nguồn chính nó đọc. Đội gốc: hai công cụ, hoặc link cũ `legacyTeam`
+    // cần nhận diện đội để chuyển tiếp (URL có `config` không chuyển tiếp).
+    const bootParams = new URL(location.href).searchParams;
+    const needsTeams = TOOL_SECTIONS.includes(pageSection) || (bootParams.has('legacyTeam') && !bootParams.has('config'));
+    const needsLookup = LOOKUP_SECTIONS.includes(pageSection);
     websiteDisplay = await loadWebsiteDisplay(
       JSON.parse($('#website-display-publication').textContent),
       loadBytes,
       recommendedPin,
+      {paths: [
+        ...(needsTeams ? ['data/teams.json'] : []),
+        ...(pageSection === 'coexist' ? ['data/coexist.json'] : []),
+        ...(pageSection === 'khaihoang' ? ['data/khaihoang.json'] : []),
+        ...(needsLookup ? LOOKUP_SOURCES : []),
+      ]},
     );
     const [teamsSource, coexistSource, khaihoangSource, booksDict] = await Promise.all([
-      loadData("teams"),
-      loadData("coexist"),
-      loadData("khaihoang"),
-      loadData("books-dict"),
+      needsTeams ? loadData("data/teams.json") : null,
+      pageSection === 'coexist' ? loadData("data/coexist.json") : null,
+      pageSection === 'khaihoang' ? loadData("data/khaihoang.json") : null,
+      pageSection === 'analyze' ? loadData("books-dict") : null,
     ]);
-    const teams = localizeData(websiteDisplay, "data/teams.json", teamsSource);
-    const coexist = localizeData(websiteDisplay, "data/coexist.json", coexistSource);
-    const khaihoang = localizeData(websiteDisplay, "data/khaihoang.json", khaihoangSource);
+    const teams = teamsSource && localizeData(websiteDisplay, "data/teams.json", teamsSource);
+    const coexist = coexistSource && localizeData(websiteDisplay, "data/coexist.json", coexistSource);
+    const khaihoang = khaihoangSource && localizeData(websiteDisplay, "data/khaihoang.json", khaihoangSource);
     // Controller Khai hoang do renderer dựng; app chỉ bơm callback và giữ lựa chọn qua snapshot.
     let khaiHoangUI = null;
     // Inventory của Khai hoang: chỉ ID còn tồn tại mới được ghi vào snapshot phục hồi.
     const khaihoangInventory = new Map(
-      (Array.isArray(khaihoang) ? [] : khaihoang.teams || [])
+      (!khaihoang || Array.isArray(khaihoang) ? [] : khaihoang.teams || [])
         .map(team => [team.id, new Set((team.variants || []).map(variant => variant.id))]),
     );
-    let lookupBundle = null;
-    try {
-      lookupBundle = await loadLookupBundle(name => loadBytes(name.replace(/\.json$/, "")));
-    } catch {
+    // Kho Tra cứu, tier (chỉ Gợi ý đội) và mô hình mùa độc lập nhau: tải song song, lỗi của từng phần tự xử lý.
+    const [lookupBundle, teamTier, seasonModel] = await Promise.all([
+      needsLookup ? loadLookupBundle(loadBytes).catch(() => null) : null,
+      pageSection === 'roster-recommend' ? loadOptionalJSON("/data/team-tier.json", []) : [],
+      // Phạm vi mùa chỉ có payload ở 3 trang mục; thiếu hash là trang không dùng đến mô hình mùa.
+      controls && $('#season-artifact-hashes')
+        ? loadSeasonModel(JSON.parse($('#season-artifact-hashes').textContent), loadBytes)
+          .catch(() => null) // Legacy display stays available with an explicit notice.
+        : null,
+    ]);
+    if (needsLookup && !lookupBundle) {
       mount.append(el("p", { class: "error", role: "alert" }, "Dữ liệu Tra cứu hiện không khả dụng. Các mục đội hình vẫn hoạt động."));
     }
     const heroesDict = lookupBundle?.heroes ?? [];
     const tactics = lookupBundle?.tactics ?? [];
     const catalog = lookupBundle?.catalog ?? null;
-    const teamTier = await loadOptionalJSON("/data/team-tier.json", []);
-
-    // Phạm vi mùa chỉ có payload ở 3 trang mục; thiếu hash là trang không dùng đến mô hình mùa.
-    let seasonModel = null;
-    if (controls && $('#season-artifact-hashes')) {
-      try { seasonModel = await loadSeasonModel(JSON.parse($('#season-artifact-hashes').textContent), loadBytes); } catch { /* Legacy display stays available with an explicit notice. */ }
-    }
     // Generation Đội chuẩn chỉ tải khi trang thật sự cần: hai trang danh sách ngay lúc boot, các trang
     // khác (Tra cứu, Khai hoang, Công cụ) chỉ qua `loadRecommended()` nếu có nơi hỏi tới. Nhờ vậy trang
     // Tra cứu không kéo `index.json`/`other-teams.json` khi chưa mở hồ sơ; promise lỗi bị xóa để thử lại.
@@ -191,7 +195,7 @@ async function main() {
     // nhận diện Đội chuẩn không cần nạp index.
     const migration = migrateLegacyReferenceUrl(location.href, {
       hasRecommended: id => teamDetailPath({ sourceConfigId: id }) !== null,
-      hasLegacy: id => teams.some(team => team.id === id),
+      hasLegacy: id => teams?.some(team => team.id === id) ?? false,
     });
     if (migration) { location.replace(migration.target); return; }
     // Cùng Tồn có đúng một điều khiển kịch bản (hàng nút của mục) và URL `scenario` sở hữu lựa chọn. URL chưa có
@@ -247,13 +251,17 @@ async function main() {
     function renderTeams() {
       if (!seasonModel) return;
       const state = readSeasonQuery(location.href,seasonModel);
-      const rows = ['applicable','scenarioReference','unknown'].flatMap(classification=>projection[classification].map(row=>({...row,classification})));
       const detailKey=JSON.stringify([state.configId,state.browse]);
       if (openedConfig === detailKey && detailMount.childElementCount) return;
       openedConfig = detailKey;
       detailMount.replaceChildren();
       if (!state.configId) return;
-      const row = rows.find(row=>row.configId === state.configId);
+      // Chỉ dựng đúng hàng được mở: nhóm phân loại theo thứ tự ưu tiên, hàng đầu tiên khớp `configId`.
+      let row = null;
+      for (const classification of ['applicable','scenarioReference','unknown']) {
+        const match = projection[classification].find(item=>item.configId === state.configId);
+        if (match) { row = {...match,classification}; break; }
+      }
       if (!row) { detailMount.append(el('p',{class:'error',role:'status'},'Không có cấu hình này trong phạm vi đã chọn.')); return; }
       detailMount.append(seasonConfigDetail(row,seasonModel,{
         onClose:()=>{
@@ -417,13 +425,15 @@ async function main() {
         rulesetSelect.disabled = !scenario || !scenario.rulesets.some(rule=>rule.reviewStatus === 'reviewed');
       }
       summary.textContent = !seasonModel ? BUNDLE_NOTICE : browse.kind === 'invalid' ? 'Kịch bản hoặc phiên bản luật không hợp lệ. Hãy chọn lại phạm vi.' : browse.kind === 'all-reference' ? 'Tất cả — tham khảo' : `${scenario?.labelVi || ''} · ${browse.kind === 'verified-pair' ? rule?.label : scenario?.rulesets.some(rule=>rule.reviewStatus === 'reviewed') ? 'Chưa chọn phiên bản luật — tham khảo' : 'Chưa có phiên bản luật được xác minh — tham khảo'}`;
-      const groups = projection ? [...projection.coexist.applicable, ...projection.coexist.scenarioReference, ...projection.coexist.unknown] : coexist.map(content=>({content,source:null}));
-      // `group` không hợp lệ (kể cả lặp khóa) được coi là "có yêu cầu": mục tự về nhóm đầu và bỏ khỏi URL.
-      const groupParams = new URL(location.href).searchParams.getAll('group');
-      coexistUI?.update(groups, groupParams.length === 0 ? null : groupParams.length === 1 ? groupParams[0] : '', {
-        scenarios: reviewedScenarioIds,
-        selected: browse?.scenarioId ?? null,
-      });
+      if (coexistUI) {
+        const groups = projection ? [...projection.coexist.applicable, ...projection.coexist.scenarioReference, ...projection.coexist.unknown] : coexist.map(content=>({content,source:null}));
+        // `group` không hợp lệ (kể cả lặp khóa) được coi là "có yêu cầu": mục tự về nhóm đầu và bỏ khỏi URL.
+        const groupParams = new URL(location.href).searchParams.getAll('group');
+        coexistUI.update(groups, groupParams.length === 0 ? null : groupParams.length === 1 ? groupParams[0] : '', {
+          scenarios: reviewedScenarioIds,
+          selected: browse?.scenarioId ?? null,
+        });
+      }
       renderTeams();
     }
     if (pageSection === 'team-chuan') {
@@ -469,7 +479,6 @@ async function main() {
       mount.append(khaiHoangUI.element);
     }
     refresh();
-    renderScope();
     restoreReturnState();
     // Back/Forward đổi URL: đọc lại và render trạng thái do URL sở hữu (mùa, bộ lọc, chi tiết
     // cấu hình) TRƯỚC khi khôi phục disclosure/lựa chọn/scroll.

@@ -6,7 +6,7 @@ import { detailPanelActions, isNetworkError } from './detail-actions.js';
 import { detailBadges } from './recommended-reference-render.js';
 import { validateHttpSourceUrl } from './recommended-reference-state.js';
 import { khaiHoangDetailVariantUrl, returnHrefFor } from './team-detail-navigation.js';
-import { loadWebsiteDisplay, localizeData } from './website-display.js';
+import { createByteLoader, loadWebsiteDisplay, localizeData } from './website-display.js';
 
 const KHAIHOANG_SOURCE = 'data/khaihoang.json';
 const SOURCE_HASH = /^[0-9a-f]{64}$/;
@@ -19,27 +19,8 @@ const MISSING_TEAM_MESSAGE = 'Không tìm thấy đúng một đội khai hoang 
 const VERIFY_FAILURES = new Set([MISSING_PIN_MESSAGE, CHANGED_SOURCE_MESSAGE, MISSING_TEAM_MESSAGE]);
 
 const decoder = new TextDecoder();
-const asBytes = (value) => (value instanceof Uint8Array ? value : new Uint8Array(value));
 const sha256Hex = async (bytes) => [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))]
   .map((value) => value.toString(16).padStart(2, '0')).join('');
-
-/** Bộ nạp byte dùng chung cho publication và nguồn dữ liệu, mỗi đường dẫn gọi mạng một lần. */
-function byteLoader() {
-  const requests = new Map();
-  return (path) => {
-    const target = path === 'website-display.json' ? '/data/website-display.json' : `/${path}`;
-    if (!requests.has(target)) {
-      const request = fetch(target).then((response) => {
-        if (!response.ok) throw new Error(`${target}: ${response.status}`);
-        return response.arrayBuffer();
-      });
-      requests.set(target, request);
-      // Lần tải lỗi không được giữ lại, nếu không nút "Thử lại" sẽ lặp lại đúng lỗi cũ.
-      request.catch(() => requests.delete(target));
-    }
-    return requests.get(target);
-  };
-}
 
 /**
  * Trang chi tiết một đội khai hoang: build đang chọn + hướng dẫn của team.
@@ -58,7 +39,7 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
   const badges = documentTarget.querySelector('#team-detail-badges');
   const panel = documentTarget.querySelector('#team-detail-panel');
   const panelActions = documentTarget.querySelector('#team-detail-actions');
-  let loadBytes = byteLoader();
+  let loadBytes = createByteLoader();
   const from = new URL(location.href).searchParams.get('from');
   if (returnLink) returnLink.href = returnHrefFor('khaihoang', {from});
 
@@ -149,7 +130,7 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
   async function load() {
     pending = true;
     // Mỗi lần thử là một lượt mới: bỏ cache byte và view cũ để "Thử lại" thật sự tải lại.
-    loadBytes = byteLoader();
+    loadBytes = createByteLoader();
     team = null;
     mount = null;
     showLoading();
@@ -157,10 +138,10 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
       const websitePin = JSON.parse(documentTarget.querySelector('#website-display-publication')?.textContent || 'null');
       const recommendedPin = JSON.parse(documentTarget.querySelector('#recommended-publication')?.textContent || 'null');
       // Pin riêng của trang được kiểm trước: sai nguồn thì báo đúng lý do, không tải tiếp.
-      const bytes = asBytes(await loadBytes(KHAIHOANG_SOURCE));
+      const bytes = await loadBytes(KHAIHOANG_SOURCE);
       if (!SOURCE_HASH.test(pinnedSha)) throw new Error(MISSING_PIN_MESSAGE);
       if (await sha256Hex(bytes) !== pinnedSha) throw new Error(CHANGED_SOURCE_MESSAGE);
-      const publication = await loadWebsiteDisplay(websitePin, loadBytes, recommendedPin);
+      const publication = await loadWebsiteDisplay(websitePin, loadBytes, recommendedPin, {paths: [KHAIHOANG_SOURCE]});
       const source = JSON.parse(decoder.decode(bytes));
       const data = localizeData(publication, KHAIHOANG_SOURCE, source);
       const matches = (Array.isArray(data) ? [] : (data.teams || [])).filter((item) => item?.id === teamId);
