@@ -1,6 +1,6 @@
 # Phase 6 — Vision Worker + Research MCP (2026-09-27)
 
-Finding: ReviewWorkers#1, #3, #4, #5, #9, #10, #11, #12, #13, #14, #15. Quyết định Q3 = A, Q6 = A. Một commit.
+Finding: ReviewWorkers#1, #3, #4, #5, #9, #10, #11, #12, #13, #14, #15. Quyết định Q3 = A, Q6 = A. Hai commit: `c9319aa` fix(mcp), `89bdaea` fix(worker) (site, gate, docs đi cùng).
 
 ## Vision Worker
 
