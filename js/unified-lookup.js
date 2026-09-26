@@ -139,7 +139,7 @@ export function lookupCardView(group, item) {
     ? [
         record.faction ? { kind: "faction", text: String(record.faction), code: FACTION_CODE[record.faction] ?? "none" } : null,
         record.cost ? { kind: "text", text: `Thống ngự ${record.cost}` } : null,
-        record.roleTagViet ? { kind: "text", text: String(record.roleTagViet) } : null,
+        record.roleTagViet ? { kind: "role", text: String(record.roleTagViet) } : null,
       ]
     : [
         (record.qualityVi ?? record.quality) ? { kind: "text", text: String(record.qualityVi ?? record.quality) } : null,
@@ -181,11 +181,15 @@ export function tacticTableRow(profile) {
   };
 }
 
-/** % thanh chỉ số/thanh đếm: giá trị 0-100 (chỉ số tướng) khoá trong [0, 100]. */
+/** % thanh chỉ số/thanh đếm theo trần `max`, khoá trong [0, 100]. */
 function barPercent(value, max) {
   const ratio = max > 0 ? (Number(value) || 0) / max : 0;
   return Math.max(0, Math.min(100, Math.round(ratio * 100)));
 }
+
+/* Trần thanh chỉ số hồ sơ: artboard LookupProfile vẽ 81→68%, 89→74%, 91→76%, 37→31% (= giá trị/120).
+   Dữ liệu thật đa số ≤100 nhưng vài tướng vượt (tới ~249); phần vượt 120 khoá đầy thanh, số vẫn in đúng. */
+const STAT_BAR_MAX = 120;
 
 /**
  * Khối "Trong cẩm nang" từ payload đã kiểm: số đội theo họ và theo vị trí (gộp hai họ, khớp tổng
@@ -193,10 +197,11 @@ function barPercent(value, max) {
  */
 export function camNangView(summary) {
   if (!summary) return null;
+  // Thanh dài trước như artboard LookupProfile (Phó tướng 2 → Phó tướng 1 → Chủ tướng); hoà giữ thứ tự vị trí.
   const positions = POSITION_LABELS.map((label, index) => {
     const count = summary.standard.positions[index] + summary.other.positions[index];
     return { label, count };
-  });
+  }).sort((a, b) => b.count - a.count);
   const max = Math.max(1, ...positions.map((row) => row.count));
   const maxTactic = Math.max(1, ...summary.tactics.map((item) => item.teams));
   return {
@@ -293,7 +298,7 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
 
   function statRow(labelVi, value, growthText) {
     const bar = el("span", { class: "lookup-stat-bar", "aria-hidden": "true" }, [
-      barFill(barPercent(value, 100), "lookup-stat-fill"),
+      barFill(barPercent(value, STAT_BAR_MAX), "lookup-stat-fill"),
     ]);
     return el("div", { class: "lookup-stat" }, [
       el("span", { class: "lookup-stat-label" }, labelVi),
@@ -651,13 +656,16 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
       }),
       view.variant ? el("span", { class: `pre ${String(item.record?.lookup?.variant ?? "").toLowerCase()} lookup-card-variant` }, view.variant) : null,
     ]);
-    const meta = el("span", { class: "lookup-card-meta" }, view.meta.map((part) => part.kind === "faction"
+    const meta = el("span", { class: "lookup-card-meta" }, view.meta.filter((part) => part.kind !== "role").map((part) => part.kind === "faction"
       ? el("span", { class: `reference-faction f-${part.code}` }, part.text)
       : el("span", { class: "lookup-card-meta-text" }, part.text)));
+    // Vai trò luôn nằm dòng riêng dưới "Phe · Thống ngự N" như artboard Lookup.
+    const role = view.meta.find((part) => part.kind === "role");
     button.append(portraitWrap);
     button.append(el("span", { class: "lookup-card-body" }, [
       el("span", { class: "lookup-card-name" }, item.nameVi),
       meta.childElementCount ? meta : null,
+      role ? el("span", { class: "lookup-card-role" }, role.text) : null,
     ]));
     button.addEventListener("click", () => {
       opener = button;

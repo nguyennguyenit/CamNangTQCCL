@@ -16384,7 +16384,7 @@
     "linkScore": null,
     "lookup": {
       "acquiredFromVi": [],
-      "activationRate": 50,
+      "activationRate": 0.5,
       "conditions": [],
       "conflictsVi": null,
       "cooldown": null,

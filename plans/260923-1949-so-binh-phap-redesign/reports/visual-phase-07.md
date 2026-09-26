@@ -326,6 +326,14 @@ Generation trung gian: chỉ một generation sinh trong vòng này (`9e1a982a�
 | N-e | Dòng phụ thẻ tướng dính chữ ("Thục Thống ngự 6 Chiến") | Thêm dấu `·` giữa các mảnh: `.lookup-card-meta > * + *::before { content: "·" }` (artboard đọc "Ngô · Thống ngự 7") | Dòng phụ nay đọc "Ngô · Thống ngự 7 · Khống chế / Kiêm nhiệm"; `textContent` của từng mảnh không đổi nên unit test cũ giữ nguyên |
 | N-f | Lớp phủ 821–1279 rộng hết màn hình | **Không sửa** (tuỳ chọn) — vẫn dùng được, không tràn | Ghi nhận |
 
+## Vòng nit (2026-09-26) — N-f, N7, N8
+
+| # | Nội dung | Kết luận vòng này | Bằng chứng |
+| --- | --- | --- | --- |
+| N-f | Lớp phủ 821–1279 rộng hết màn hình. | **Đã sửa** — `@media (max-width: 1279px) { .lookup-backdrop { padding-inline: var(--space-40) } }`: hộp thoại 960px luôn chừa lề hai bên, chỉ co thật dưới 1040px. Khối ≤680 giữ padding riêng và đứng sau nên thắng ở mobile. | `design-compare --tokens --phase 07` **531/531** cả hai theme |
+| N7 | `activationRate: 50` của `tactic:thien-uy-khieu-tran` (thượng nguồn SGSDeck ghi sai đơn vị; mọi chiến pháp khác dùng phân số 0–1). | **Đã sửa tại bước nhận giá trị** trong `pipeline/build_unified_lookup.py` (Kongming phán quyết: **không** sửa `data/sgsdeck/**`, vì fingerprint đầu vào bản dịch chứa cả object `attributes` — sẽ làm 3 mục ledger đã review thành `stale` và đòi receipt độc lập). Bảng `SOURCE_VALUE_CORRECTIONS` hardcode có lý do + hàm tra thuần, lỗi khi giá trị thô đổi / owner lệch / entry thừa; ledger thêm disposition `corrected-public` (`sourceValueHash` = 50 gốc, `localValueHash` = 0.5); validator chiến pháp từ chối `activationRate` ngoài [0,1]. | Candidate dựng lại → validate → promote: `data/tactics.json` **chỉ** đổi 50 → 0.5 ở đúng bản ghi đó; `heroes-dict`/`lookup-catalog` không đổi byte; generation Lookup `lookup:582ec0b0…` → **`lookup:064fd2d5…`**. UI: hồ sơ + bảng hiện **50%** (trước `—`). **Căn cứ:** byte `activationRate\":50` trong `pipeline/sgsdeck-cache/tactics-list.html`; quy ước đơn vị (163 chiến pháp ACTIVE trải 0,2–1, trong đó 30 giá trị đúng bằng 0,5). Đọc 50 là 50% là **suy luận** độ tin cậy cao, không có nguồn trong game độc lập; build **cố ý đỏ** nếu thượng nguồn đổi giá trị thô. Không dùng `effectText` làm căn cứ (chuỗi "32%→50%" ở đó là xác suất tăng số lần đánh thường — đính chính của Kongming). |
+| N8 | Chuỗi biên tập/nguồn gốc lọt ra UI: `[Hiệu chỉnh OCR] …` (3 chuỗi) và `(Bahamut bsn=36815)` (8 chiến pháp). | **bsn: đã sửa ở lớp hiển thị** — `js/lookup-detail.js` thêm `acquisitionDisplayText()` xoá đúng hậu tố ` (Bahamut bsn=<số>)` ở **cuối** chuỗi và không bao giờ trả chuỗi rỗng; `field.value` vẫn là mảng gốc nên dữ liệu + ledger đã review + `data/sgsdeck` giữ nguyên nguồn gốc; không thêm `title`/nhãn mới (sẽ là chữ UI mới). **`[Hiệu chỉnh OCR]`: chấp nhận, giữ nguyên từng byte** — là bản dịch trung thành của cảnh báo độ tin cậy `【OCR校正】` của nguồn, ẩn đi sẽ khiến văn bản chưa kiểm chứng trông như đã xác thực, còn đổi chữ thì cần receipt độc lập (quyết định #7); chuyển cho vòng review bản dịch sau. | `pipeline/lookup-translations.json` và `data/sgsdeck/**` **không đổi byte** (`git diff` rỗng). Node unit test cho `acquisitionDisplayText` (hậu tố ở cuối, chuỗi không có hậu tố, hậu tố ở giữa, chuỗi chỉ có mã), test dữ liệu (mọi tactic trong `data/tactics.json` không còn `bsn=`) và e2e `tactic:kien-cuong-chi-hoa` ("Cách nhận" có tên sự kiện, không có `bsn=`). |
+
 ## 12. Opus re-review round 3 (2026-09-26)
 
 | # | Phát hiện | Sửa | Bằng chứng |
@@ -350,3 +358,32 @@ Generation trung gian: chỉ một generation sinh trong vòng này (`9e1a982a�
 Generation: `27d82121…` → **`df725667d70890c15f1848c90346bb7d4db7107ab3eb57af09f76bd0732edc16`**, manifest `fbf26a73fa10bc01`;
 policy `site-vi-260926-opus-round-2b` → **`site-vi-260926-opus-round-3`** (làm mới hash `js/analyze.js`); `team_route_handles --check` pass (1366/166/17);
 generation trung gian `27d82121…` đã xóa (chỉ còn generation đang pin).
+
+## Audit 260926 — sửa theo ảnh ghép
+
+Nguồn phát hiện: `agent://AuditLookup` (L*, M*, T*, P*). Chỉ xử lý mục **new**; mục accepted (L5–L7, M5, M6, P5) giữ nguyên.
+
+| Id | Trạng thái | Chi tiết |
+| --- | --- | --- |
+| L1 | đã sửa | `.lookup-search { margin-top: var(--space-24) }` — kẻ đầu mục cách ô tìm 24px (DOM 1440: `.lookup-head` đáy 273 → ô tìm 297; artboard 273 → 298). |
+| M3 | đã sửa | ≤680: `.lookup-head { padding-bottom: 0; border-bottom: 0 }` (LookupMobile không có kẻ) + ô tìm `margin-top: var(--space-16)` (gap main mobile). DOM 390: border 0px, khối đầu → ô tìm 16px. |
+| L2 | đã sửa | Vai trò tách khỏi `.lookup-card-meta` thành `<span class="lookup-card-role">` dòng riêng (`lookupCardView` đánh dấu mảnh `kind: "role"`; `meta` vẫn đủ 3 mảnh nên unit test cũ giữ); dấu `·` gắn `::after` cho **mọi** mảnh không cuối của meta (trước chỉ mảnh phe) ⇒ thẻ chiến pháp/trang bị cũng có dấu đều. Câu N-e ở §10 ("`.lookup-card-meta > * + *::before`", "Ngô · Thống ngự 7 · Khống chế / Kiêm nhiệm") nay đã lỗi thời: dòng phụ đọc "Ngô · Thống ngự 7", vai trò ở dòng dưới như artboard. |
+| L3 | giữ | Chip "Trang bị" 204 = `catalog.equipment` 114 + `catalog.specials` 90: nhóm `equipment` của Tra cứu gộp cả bảo vật đặc biệt để mục nào cũng tìm được qua một chip; tách chip mới là đổi phân nhóm (thêm nhãn cần review dịch) chứ không phải sửa thị giác. Số artboard 114 là số riêng của equipment — ghi "Lệch có chủ đích". |
+| L4 | đã sửa | `.lookup-grid { margin-top: var(--space-24) }` (desktop; artboard `main` gap 24) — mobile `var(--space-16)` theo LookupMobile. |
+| M1 | đã sửa | ≤680: `.lookup-card-portrait { height: var(--space-96) }`, chữ Hán `font: var(--type-portrait-han-mobile)` (token mới 48px/600), `.lookup-grid-cards { gap: var(--space-10) }`. DOM 390: ô 96px, chữ 48px, gap 10px. |
+| M2 | giữ (D1) | Lead/placeholder rút gọn của LookupMobile không áp — quy tắc "không ẩn nội dung trên mobile". Lệch có chủ đích. |
+| M4 | đã sửa một phần / giữ (D1) | Không bỏ "· bấm để mở hồ sơ" và "Thứ tự theo nguồn" (D1). ≤680 `.lookup-status-row` `flex-wrap: wrap; row-gap: var(--space-4)`, `.lookup-order { white-space: nowrap }`: vừa một dòng thì một dòng (390 nhóm hỗn hợp), không vừa thì ghi chú xuống dòng **nguyên khối** thay vì cả hai mảnh cùng gãy 2 dòng (390 Chiến pháp, 320). |
+| T1 | đã sửa | `.lookup-table thead th { box-sizing: content-box }` — artboard khai báo `width` trên ô content-box nên bề rộng cột thật = width + padding (84/144/254/224/116); cột Tỷ lệ lề phải `var(--space-18)` như artboard (mobile đặt lại 0). DOM 1440: ranh cột 575/659/803/1057/1281 (artboard ≈570/654/798/1052/1276, trước sửa 686/746/866/1096). |
+| T2 | đã sửa | Bỏ override `-webkit-line-clamp: 3` ở ≤680 ⇒ mô tả chiến pháp 2 dòng như desktop/artboard (DOM 390: cao 39px = 2 × 19,5). |
+| P1 | đã sửa | Thang thanh chỉ số = **120** (`STAT_BAR_MAX` trong `js/unified-lookup.js`): artboard vẽ 81→68%, 89→74%, 91→76%, 37→31% đúng bằng giá trị/120. Dữ liệu thật (`data/heroes-dict.json`, 188 tướng có số): đa số ≤100 nhưng có ngoại lệ (Vũ lực tới 248,96; Thống soái 165,6; Tốc độ 143,09; Trí lực 155) — phần vượt 120 khoá đầy thanh, con số vẫn in đúng. DOM: 81→68%, 89→74%, 91→76%, 37→31% khớp artboard. |
+| P2 | đã sửa | `camNangView` xếp vị trí theo số đội **giảm dần** (hoà giữ thứ tự Chủ tướng → Phó 1 → Phó 2). DOM SP Lữ Mông: Phó tướng 2 42 → Phó tướng 1 11 → Chủ tướng 2. |
+| P3 | giữ | Tiêu đề thẻ 3 "Đội tiêu biểu" (khối gộp mọi mùa, mùa hiện ở từng hàng); tên thẻ theo một mùa của artboard sẽ sai khi đội đến từ nhiều mùa. Lệch có chủ đích. |
+| P4 | đã sửa | `.lookup-backdrop` padding-top `calc(var(--control-72) + var(--space-40))` (desktop; hộp thoại ở y=112 như artboard, nav không bị che); ≤820 `calc(var(--control-44) + var(--space-16) + var(--space-40))`; ≤680 `calc(var(--control-44) + var(--space-16) + var(--space-8))` (DOM 390: header 60, hộp thoại y=68). |
+
+**Chữ:** không đổi chuỗi UI nào (không động vào `UI_LITERAL_OBLIGATIONS`).
+
+**Token/component:** token mới `type.portrait-han-mobile` (48px/1/600 cjk, nguồn LookupMobile) + `--type-portrait-han-mobile` trong `:root`; component `o-chan-dung`: probe "ô chân dung mobile" đổi `space.132` → `space.96`, thêm probe chữ Hán thẻ mobile `type.portrait-han-mobile`, `artboard` ghi thêm LookupMobile.
+
+**Test đổi theo hành vi:** `tests-js/unified-lookup.test.mjs` (thứ tự/percent vị trí giảm dần), `tests-e2e/unified-lookup.spec.mjs` (so hàng vị trí theo thứ tự giảm dần của phép đếm độc lập, kèm nhãn).
+
+**Kiểm:** ảnh ghép `.cache/design-compare/phase-07{,-dark}/*.png` (xem Lookup, LookupTactics, LookupMobile, LookupProfile dark); `--tokens --phase 7` **517/517 · 517/517** (light · dark; lần chạy cuối sau khi slice Landing gỡ probe `.landing-preview-card .badge.faction` — trước đó light 538/538); unit `tests-js/unified-lookup.test.mjs` 47/47.

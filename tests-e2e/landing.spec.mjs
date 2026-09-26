@@ -236,14 +236,14 @@ test('hai khối xem trước dựng từ dữ liệu publish thật và link t�
   await expect(card).toBeVisible();
   await expect(card.locator('.team-name')).toHaveText(firstTeam.displayNameVi);
   await expect(card.locator('.reference-score')).toHaveText(String(firstTeam.value));
-  await expect(card.locator('.badge.unit')).toHaveText(firstTeam.unitTypesRaw.map((unit) => unitLabels[unit]));
-  await expect(card.locator('.badge.faction')).toHaveText(factionLabels[firstTeam.factionRaw]);
+  await expect(card.locator('.reference-units')).toHaveText(firstTeam.unitTypesRaw.map((unit) => unitLabels[unit]).join(' · '));
+  await expect(card.locator('.reference-faction')).toHaveText(factionLabels[firstTeam.factionRaw]);
   await expect(card.locator('.reference-holder')).toHaveCount(firstTeam.heroes.length);
-  await expect(card.locator('.reference-holder').first().locator('.hn')).toHaveText(firstTeam.heroes[0].displayNameVi);
+  await expect(card.locator('.reference-holder').first().locator('.hero-name')).toHaveText(firstTeam.heroes[0].displayNameVi);
   await expect(card.locator('.reference-holder').nth(1).locator('.tag.t-tactic').first())
     .toHaveText(firstTeam.heroes[1].tacticSlotsVi[0]);
 
-  const href = await card.locator('.ana-link-btn').getAttribute('href');
+  const href = await card.locator('.landing-preview-link').getAttribute('href');
   expect(href).toMatch(/^\/doi-chuan\/[^/]+\/$/);
   const detail = await page.request.get(href);
   expect(detail.status()).toBe(200);
@@ -263,14 +263,41 @@ test('hai khối xem trước dựng từ dữ liệu publish thật và link t�
   await expect(firstRow.locator('td').first()).toHaveText(firstTeam.heroes.map((holder) => holder.displayNameVi).join(' · '));
   await expect(firstRow.locator('.landing-table-score')).toHaveText(String(firstTeam.value));
 
-  // Vùng bảng cuộn riêng: không đẩy trang rộng ra ở 390px.
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/');
-  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
-  expect(await page.evaluate(() => {
-    const region = document.querySelector('.landing-table-scroll');
-    return region.scrollWidth > region.clientWidth;
-  })).toBe(true);
+  // N4-1: ở bề rộng hẹp bảng xếp dọc theo MobileTable nên cột điểm nằm ngay trong khung nhìn —
+  // không còn cuộn ngang bên trong khung và không đẩy trang rộng ra.
+  for (const width of [390, 320]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    const measured = await page.evaluate(() => {
+      const region = document.querySelector('.landing-table-scroll');
+      const row = region.querySelector('tbody tr');
+      const score = row.querySelector('.landing-table-score');
+      const name = row.querySelector('th');
+      const box = region.getBoundingClientRect();
+      const scoreBox = score.getBoundingClientRect();
+      const nameBox = name.getBoundingClientRect();
+      return {
+        innerScroll: region.scrollWidth - region.clientWidth,
+        scoreLeft: Math.round(scoreBox.left),
+        scoreRight: Math.round(scoreBox.right),
+        regionLeft: Math.round(box.left),
+        regionRight: Math.round(box.right),
+        sameRow: Math.abs(scoreBox.top - nameBox.top) <= 4,
+        scoreBelowName: scoreBox.top >= nameBox.bottom,
+        nameLeft: Math.round(nameBox.left),
+        rowText: score.textContent.trim(),
+      };
+    });
+    // Không cuộn ẩn, và điểm nằm trong khung: không cần gợi ý cuộn.
+    expect(measured.innerScroll, `${width}: cuộn ngang trong khung`).toBe(0);
+    expect(measured.scoreRight, `${width}: mép phải điểm`).toBeLessThanOrEqual(measured.regionRight);
+    expect(measured.scoreLeft, `${width}: mép trái điểm`).toBeGreaterThanOrEqual(measured.regionLeft);
+    // Điểm cùng hàng với tên đội (không bị đẩy xuống dưới như một hàng xếp dọc).
+    expect(measured.sameRow, `${width}: điểm cùng hàng với tên đội`).toBe(true);
+    expect(measured.scoreBelowName, `${width}: điểm không nằm dưới tên`).toBe(false);
+    expect(measured.rowText, `${width}: vẫn in điểm`).toBe(String(firstTeam.value));
+  }
 });
 
 test('ba nút tải đều có mũi tên link ngoài riêng, giữ icon thiết bị', async ({ page }) => {

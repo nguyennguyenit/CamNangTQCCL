@@ -1,5 +1,5 @@
 {
-  "builderHash": "3afd1499f4d216b3559dc716a2276b15c8354166ac99679a00a92e1aa17b61fc",
+  "builderHash": "05ecc0a7e082d9c765a989a0d5be058b76f4170b479c01cbc3a0b0cbfc72ef47",
   "compatibility": {
     "legacyHeroIds": [
       "hero:sp-lu-mong",
@@ -7136,12 +7136,12 @@
     "troopMods": 16
   },
   "executionHashes": {
-    "build_unified_lookup.py": "3afd1499f4d216b3559dc716a2276b15c8354166ac99679a00a92e1aa17b61fc",
+    "build_unified_lookup.py": "05ecc0a7e082d9c765a989a0d5be058b76f4170b479c01cbc3a0b0cbfc72ef47",
     "lookup_translations.py": "6f32d3f0b267882ad3993cc8811c5633ceab279bacafc37f983f2b38605e2b0d",
     "sgsdeck_identity.py": "94dcb9ea0f2bb777ebf2c8f93f79203b6b3cdedf7f90fa5980ba644f81bc89b1",
     "unified_lookup_identity.py": "54ab07f4fe30d0e3ecbef6426525c248130453736ff818d65c821c49807550eb"
   },
-  "generationId": "lookup:582ec0b0a41edfe088bf1cc18545c71877a9767cd9c89b7a6898f3219400d25d",
+  "generationId": "lookup:064fd2d5d2b55823974c1e50738996812c90c4badbd8415db6b2ad43e8bd5773",
   "inputHashes": {
     "baselineManifest": "c9f73823efa4ad99d41344f1b4e7aab180c9ae19ff706c0665df4a5947678efd",
     "identity": "cff3228ddcfd4be39fa7c0ad3746d18a6495fa11fc6d8e4480795181f82f38b1",
@@ -7150,11 +7150,11 @@
     "translations": "868963a2259002b1a2d1229b969a836c2914aacf5c26a55a4d3c3a2daa24f100"
   },
   "ledger": "ledger.json",
-  "ledgerHash": "74341ec6480850ad3cabe458b90b9dcd400f8a7b507654fc700ddac010eee9e8",
+  "ledgerHash": "dfc0271fc3d681b0948ed5cefaf431ba4773b913602f17a40b3e73e3f7500b0a",
   "outputHashes": {
     "heroes-dict.json": "7467e2816c2aa57198c5337f81e0e9957183911a624e93fcc08ea43cb8c52d23",
     "lookup-catalog.json": "9eeecbe41fa34ae324b98e7126a90110cc5c1ab99330c0f8eddc34423e2abd33",
-    "tactics.json": "2819b1a88a506e2a221eefebdeb16958fef8e9aa2bdedd953d96daa96c5d0db3"
+    "tactics.json": "052087bc5ae698d390ff99491b513dffec3416f837f23b241d5963eab34b7d32"
   },
   "schemaVersion": 1
 }

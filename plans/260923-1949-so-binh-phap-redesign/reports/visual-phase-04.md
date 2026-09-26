@@ -284,9 +284,31 @@ feat(landing): rebuild the Landing from published data with real previews and a 
   outbound arrows, dark-theme QR, legacy redirect)
 ```
 
-## Nits từ re-review (round 3) — ghi nhận, không sửa
+## Nits từ re-review (round 3) — **đã sửa ở vòng nit (2026-09-26)**
 
 | # | Nội dung | Trạng thái |
 | --- | --- | --- |
-| N4-1 | Bảng xem trước trên Landing mobile: cột **điểm** chỉ tới được khi cuộn ngang trong bảng và không có gợi ý nào cho biết bảng cuộn được. | **Ghi nhận, chưa sửa** (vòng round 3). Hai hướng: đưa điểm vào hàng xếp dọc như `MobileTable`, hoặc thêm gợi ý cuộn. |
-| N4-2 | Lệnh sinh QR và version (`qrcode@1.5.4`) nằm ở comment frontmatter của `src/pages/index.astro`, nên **không** có trong `dist/index.html` — trong khi plan ghi "comment ở đầu SVG". | **Ghi nhận, chưa sửa** (vòng round 3). Hoặc đưa comment vào trong SVG, hoặc coi frontmatter là chỗ ghi nguồn chính thức. |
+| N4-1 | Bảng xem trước trên Landing mobile: cột **điểm** chỉ tới được khi cuộn ngang trong bảng và không có gợi ý nào cho biết bảng cuộn được. | **Đã sửa** (vòng nit). Ở ≤820 bảng xếp dọc theo `MobileTable`: `min-width: 0`, `tr` là grid `minmax(0,1fr) auto`, điểm ở góc phải hàng 1, vạch ngăn chuyển sang hàng. Không còn cuộn trong khung nên không cần gợi ý cuộn. Đo ở 390 **và** 320: `scrollWidth` trang ≤ bề rộng, cuộn trong khung = 0, mép điểm nằm trong khung, điểm cùng hàng với tên đội. e2e `landing.spec.mjs` thay khẳng định cũ "vùng bảng cuộn riêng ở 390" (nay sai theo thiết kế); `LandingMobile` không vẽ bảng nên đây vẫn là ngoại lệ đã khai. |
+| N4-2 | Lệnh sinh QR và version (`qrcode@1.5.4`) nằm ở comment frontmatter của `src/pages/index.astro`, nên **không** có trong `dist/index.html` — trong khi plan ghi "comment ở đầu SVG". | **Đã sửa** (vòng nit). Comment nguồn gốc nay nằm **ngay sau thẻ `<svg>`** trong `src/components/DownloadQr.astro` (chỉ còn một bản; frontmatter chỉ trỏ tới), nên nó vào thẳng `dist/index.html`; bytes của SVG không đổi. `tests-js/astro-dist-contract.test.mjs` thêm khẳng định đọc `dist/index.html` và đòi comment nằm trong `<svg>` của `.landing-qr-frame` — đã kiểm đỏ trên `dist` cũ, xanh sau khi sửa; `npm run test:dist` 28/28. |
+
+## Audit 260926 — sửa theo ảnh ghép
+
+Nguồn finding: `agent://AuditChromeLanding` (F11–F18). Soát bằng `design-compare --phase 4 [--theme dark] --base http://127.0.0.1:4411` (`.cache/design-compare/phase-04/`, `phase-04-dark/`): Landing 1440 cao 4448px (artboard 4420; trước sửa 4589). `--tokens --phase 4` light/dark: 714/714 khớp.
+
+| Finding | Trạng thái | Chi tiết |
+| --- | --- | --- |
+| F11 | đã sửa | `#landing-vaults`: cột trái `.landing-vaults-intro` = khối dẫn + 2 thẻ kho (grid 2 cột, gap 22), cột phải = panel bảng (`src/pages/index.astro`); bỏ `.landing-vaults-body`. |
+| F12 | đã sửa | `.landing-table-bar` nền `--band`, chữ `--band-ink`, số đội `--band-dim`, bỏ vạch dưới; panel bảng bo `radius.16` như artboard. Probe `bang-xem-truoc` cập nhật (có `source`). |
+| F13 | đã sửa | Thẻ xem trước dựng lại thành thẻ gọn của artboard, cùng lớp với thẻ danh sách Phase 5: đầu thẻ tên + dòng meta "■ phe · **loại binh** · OG · Binh Diễn Xuân Thu" + điểm; hàng tướng grid 40px/1fr với nhãn CHỦ/PHÓ 1/PHÓ 2, tên (tiền tố 40Y/SP/CO là chip `nhan-bien-the`, D4), chiến pháp chữ son, dòng "Binh thư · …"; chân thẻ link chữ son "Chi tiết →" cao 44. Phe giữ trong dòng meta vì có dữ liệu (artboard không vẽ phe — D2 không bỏ dữ liệu). Component `the-doi-xem-truoc` + probe viết lại; bỏ probe Landing trong `badge-phe` và `nut-chien-phap`. |
+| F14 | đã sửa | Hai dòng `.landing-tool-note` thêm svg ✓ 16px (`--good`), CSS sẵn có. |
+| F15 | đã sửa (ngắt dòng) · giữ (kicker) | `<br class="landing-hero-break">` ẩn ≤820 + khoảng trắng trước → h1 mobile chảy "Mùa này chơi / đội nào? Mở sổ / là thấy." như artboard. Phần kicker " · Tam Quốc Chí Chiến Lược" giữ trên mobile → D1. |
+| F16 | giữ | Kicker/phụ đề/số 01–03 và tiêu đề dài trên mobile: nội dung artboard mobile lược bớt → D1 (không ẩn nội dung trên mobile). |
+| F17 | giữ | Tiêu đề "Chưa cài game? Tải Tam Quốc Chí – Chiến Lược" bản đầy đủ trên mobile → D1. |
+| F18 | đã sửa | Bỏ `margin-bottom: space.40` của `.landing-cta` ≤820: CTA tối liền footer tối như desktop. |
+
+Chữ thay đổi (`pipeline/site_localization.py`, đều authored-vi, `src/pages/index.astro`):
+- `ui:landing/preview-card-link`: "Xem chi tiết" → "Chi tiết" (literal hàng `>Chi tiết<`).
+- Bỏ `ui:landing/preview-card-main-holder` "Chủ tướng" (huy hiệu C không còn trên thẻ gọn).
+- Thêm `ui:landing/preview-card-role-main` "CHỦ", `…-role-deputy-1` "PHÓ 1", `…-role-deputy-2` "PHÓ 2", `ui:landing/preview-card-books` "Binh thư · ", `ui:landing/preview-card-books-missing` "Nguồn chưa ghi".
+
+Test: `tests-e2e/landing.spec.mjs` đổi selector thẻ xem trước (`.reference-units`, `.reference-faction`, `.hero-name`, `.landing-preview-link`) — không chạy suite theo chỉ dẫn.

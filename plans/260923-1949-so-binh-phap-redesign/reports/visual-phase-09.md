@@ -249,6 +249,12 @@ the shared dropdown menu used by the account menu; new beta-tools e2e (meter/ste
 review toggles with fixtures); season-lookup gains the two tool-page scope/config-detail cases.
 ```
 
+## Vòng nit (2026-09-26) — N9-5 đã sửa
+
+| # | Nội dung | Sửa | Bằng chứng |
+| --- | --- | --- | --- |
+| N9-5 | Đổi Mùa/đổi phạm vi thì hai công cụ bỏ token Turnstile nhưng **không** gọi `turnstile.reset`, nên widget vẫn hiện "đã xác thực" mà không còn token và nút chạy khoá tới khi widget hết hạn. | `setSeasonScope` của `js/analyze.js` và `js/roster-recommend-ui.js` nay gọi `window.turnstile.reset(tsBox)` với **đúng guard** của lần reset sau khi chạy (`turnstileRendered` / `window.turnstile`); token dùng một lần và các guard theo `generation` giữ nguyên; lượt `{initial:true}` lúc boot là no-op an toàn vì widget render lazy. | e2e `beta-tools.spec.mjs`: stub Turnstile ghi lại lần reset và **chỉ cấp token mới sau khi widget được reset**; 2 ca mới (Soi đội và Gợi ý đội) đòi đúng **3** lần reset sau hai lần đổi Mùa, token thứ hai thực sự tới Worker, và sau khi đổi Mùa bước 2 của Soi đội trở lại `pending` + nút khoá cho tới khi giải lại. Ca Gợi ý đội kiểm thông báo "Xác thực Turnstile trước." và Worker **không** được gọi (nút công cụ này không bị `disabled`, khác Soi đội). |
+
 ## Opus re-review round 2 (2026-09-26)
 
 | # | Phát hiện | Sửa | Bằng chứng |
@@ -300,3 +306,35 @@ Generation: `9e1a982a…` → `ac620801…` (sau lượt sửa 5/6/9/10) → **`
 Generation: `27d82121…` → **`df725667d70890c15f1848c90346bb7d4db7107ab3eb57af09f76bd0732edc16`**, manifest `fbf26a73fa10bc01`;
 policy `site-vi-260926-opus-round-2b` → **`site-vi-260926-opus-round-3`** (làm mới hash `js/analyze.js`); `team_route_handles --check` pass (1366/166/17);
 generation trung gian `27d82121…` đã xóa (chỉ còn generation đang pin).
+
+## Audit 260926 — sửa theo ảnh ghép
+
+Nguồn: `agent://AuditBetaTools` (mục `new`). Mục `accepted` (R4, M5, M6, A5–A7, N3, S4–S7) giữ nguyên.
+
+| Mã | Trạng thái | Chi tiết |
+| --- | --- | --- |
+| R1 | đã sửa | Đầu thẻ "Danh tướng PK · Hằng ngày": `js/recruit-tracker.js` bỏ `div` bọc, tiêu đề + `.rt-sub` là con trực tiếp của `header.rt-section-head.rt-section-head-inline`; `css/styles.css` `.rt-section-head-inline { flex-wrap: wrap; align-items: baseline }` + `.rt-sub { text-align: right }` (Recruit.dc.html:54). ≤680px meta xuống dòng thì canh trái. |
+| R2 | đã sửa | `.rt-slot-main` thành hàng `flex` `space-between`/`baseline` (tên ô trái, trạng thái phải, Recruit.dc.html:62) — mỗi ô bớt một dòng. |
+| R3 | đã sửa | Bỏ dòng trùng `.rt-section-note` "Mới nhất trước · <tài khoản>" (và hàng `paintHistory` vẽ nó, rule CSS `.rt-section-note`, trường chết `accountLabel` của view model); giữ **một** dòng "Mới nhất trước, lọc theo tài khoản đang chọn." đặt cùng hàng tiêu đề, canh phải như artboard (Recruit.dc.html:82). Giữ dòng này thay vì dòng artboard vì nó chứa bản dịch `translate` `ui:recruit/history-filter` (không được đổi/dời). |
+| M1 | đã sửa | ≤680px `.rt-slot-grid` một cột (RecruitMobile.dc.html:52). Bỏ luôn rule ≤400px xếp dọc hai nút trong ô lượt (P09-2) vì ô một cột đã đủ rộng cho hai nút cạnh nhau ở 320 (artboard mobile: hai nút cùng hàng); nit M5 "Không ra" 2 dòng ở 320 cũng hết. |
+| M2 | giữ — D1 | Artboard mobile là bản nén (không thông báo lưu, không khối Gói hạn giờ, không meta, lead ngắn). Quy tắc "không ẩn nội dung trên mobile": **Lệch có chủ đích**. |
+| M3 | đã sửa | ≤680px `.rt-account-pick` xếp dọc (nhãn trên, select dưới, `gap: var(--space-6)`) như RecruitMobile.dc.html:40 → "TÀI KHOẢN" một dòng. |
+| M4 | đã sửa | `.rt-section-head > .rt-btn { flex: none; white-space: nowrap }` → "+ Thêm gói" một dòng; tiêu đề `div` `min-width: 0` được xuống dòng. |
+| A1 | đã sửa | `js/analyze.js`: thẻ "2 · Đội đọc được" khởi tạo `hidden`, hiện/ẩn cùng thẻ 3 trong `applyResult`/`clearResults`; cột kết quả không còn thẻ nào hiện thì `display: none` (`.ana-col:not(:has(> :not([hidden])))`). Tiến trình/lỗi vẫn qua `p.ana-status[role=status]` ở thẻ 1 — live-region không đổi. |
+| A2 | giữ — hợp đồng dịch | "3 · Đội có sẵn tương tự" chứa bản dịch `translate` `ui:analyze/similar-team` ("Đội có sẵn tương tự"); đổi thành "Đội tương tự" làm mất chuỗi đã duyệt → cần receipt reviewer độc lập. |
+| A3 | giữ — D2 | Payload `analyze-map.js` không có vai trò (chỉ `statFocusCn`); cờ không chắc giữ chip "kiểm tra". Không bịa nhãn "Chủ/Phó". |
+| A4 | giữ | "Xem đội ngoài phạm vi để tham khảo" không có hàng `authored-vi` (không đăng ký trong `UI_LITERAL_OBLIGATIONS`) và được e2e `beta-tools`/`season-lookup` khoá theo tên truy cập; giao việc chỉ cho đổi chuỗi `authored-vi`. |
+| N1, N2 | giữ — D1 | Artboard mobile phẳng/không số thẻ, lead ngắn: **Lệch có chủ đích** (không ẩn/rút gọn nội dung trên mobile). |
+| S1 | giữ — hợp đồng dịch + D2 | Tiêu đề "Danh sách đội sau khi xây dựng" = bản dịch `translate` `ui:roster/portfolio` → giữ. Hàng kết quả: `recommendTeams` không trả điểm tổng/lý do một dòng như artboard ("113", "Đủ tướng và chiến pháp trong kho") → không bịa, giữ số + tên + pill + meta Bậc/Chiến pháp/Biến thể. Sửa câu §1 bước 3 "danh sách 5 đội đánh số + pill" — không có điểm/lý do theo artboard. |
+| S2 | đã sửa | `js/roster-recommend-ui.js` `paintScanCards`: pill `.roster-scan-state` chỉ hiện khi đã đọc ("Xong"), chưa đọc thì `hidden`; "Chưa đọc" còn **một lần** ở dòng đếm (đúng Roster.dc.html thẻ BƯỚC 3). Bỏ `data-state` + rule pending; `.roster-scan-state[hidden] { display: none }`. §1 bước 3 "pill Xong/Chưa đọc" nay là "pill Xong". |
+| S3 | giữ | Một phần đã ghi ở §3 ("ba panel kiểm tra kho" + "hàng điều khiển"). Gộp 3 thẻ thành 1 và bỏ ô thêm chiến pháp sẽ mất đường sửa chiến pháp/đội khoá — chức năng có sẵn; ghi chú "Bấm × để bỏ tướng đọc sai" là chữ mới ngoài phạm vi sửa ảnh ghép. **Lệch có chủ đích**. |
+| T1 | giữ — D1 | Luồng nén mobile: **Lệch có chủ đích**. |
+| T2 | giữ — audit sai | RosterMobile.dc.html:39-42 đặt `ol.Các bước` **trước** `label Ưu tiên` (xem `screens/RosterMobile.png`); site cũng dải bước trước hàng điều khiển → đã khớp, không đổi (desktop không bị ảnh hưởng). |
+
+Chữ đổi: xoá hàng `authored-vi` `ui:recruit/history-note` ("Mới nhất trước · ") khỏi `UI_LITERAL_OBLIGATIONS` (chuỗi bị bỏ theo R3). Không đổi/dời chuỗi `translate` nào; không chữ mới.
+
+Token/component: không token mới. `buoc-cong-cu` probe "trạng thái chưa đọc của thẻ" (`.roster-scan-state[data-state="pending"]`) thay bằng probe dòng đếm `.roster-scan-count` (`color.light.muted`, `type.small`) vì pill chờ không còn.
+
+Test: `tests-e2e/beta-tools.spec.mjs` bỏ assert `.rt-section-note`; `tests-js/recruit-tracker-ui.test.mjs` bỏ assert `accountLabel`.
+
+Kiểm: dev `127.0.0.1:4405`; `design-compare --phase 9` light + dark (1440/390/320) xem Recruit (meta cùng hàng, trạng thái ô cùng hàng tên, lịch sử một dòng meta), RecruitMobile/320 (ô lượt 1 cột, hai nút cùng hàng, TÀI KHOẢN một dòng, "+ Thêm gói" một dòng), Analyze 1440 (không còn thẻ 2 rỗng), Roster 1440/320 dark ("Chưa đọc" một lần). `--tokens --phase 9` light/dark: 758/761, chỉ lệch `o-chan-dung` (Tra cứu, không thuộc phase này) + 2 lệch đã giải thích.

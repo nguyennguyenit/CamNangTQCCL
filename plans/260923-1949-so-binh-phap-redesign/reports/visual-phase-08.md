@@ -231,3 +231,60 @@ feat(coexist,khaihoang): rebuild Cùng Tồn and Khai hoang on the Coexist and K
 - legacy ceiling 519 -> 470; add the coexist/khaihoang component catalog entries with probes and fix
   three Phase-7 probes that never ran against their real state
 ```
+
+## Audit 260926 — sửa theo ảnh ghép
+
+Nguồn finding: `agent://AuditCoexistKhaihoang` (C*, CM*, K*, KM*) và `agent://AuditTeamLists` (P6-2, P6-3 — trang chi tiết Khai hoang, ghi ở đây; `visual-phase-06.md` trỏ sang). Chỉ sửa mục `new`; mục `accepted` (C3, K6, K7, KM1) giữ nguyên.
+
+| Finding | Trạng thái | Chi tiết |
+| --- | --- | --- |
+| K1 (high) hàng build thẻ xếp dọc | **đã sửa** | `css/styles.css` khối build dùng chung: `.kh-build .kh-hero` dùng lưới `140px 0.8fr 20px 1.2fr` cho **cả thẻ và trang chi tiết**, `.kh-stages { display: contents }`, `.kh-before`/`.kh-arrow`/`.kh-after` đặt cột 2/3/4 (hàng chỉ có "Sau" không lọt sang cột "Trước"). `.kh-stage` thành chữ chảy dòng (`display: block`) để "Trước · <chiến pháp>" xuống dòng giữa từ như artboard; nhiều chiến pháp "Sau" nối " + " (`js/render.js` `khaihoangHeroRow`, ký hiệu như artboard). Ảnh `phase-08/Khaihoang.png`: mỗi tướng một hàng `tên | Trước · … → Sau · …` |
+| KM2 hàng build mobile | **đã sửa** | `.kh-build` là container (`container-type: inline-size`); `@container (max-width: 480px)` → một cột: tên / Trước / Sau mỗi phần một dòng (KhaihoangMobile.dc.html). Áp cho thẻ mobile, thẻ hai cột ở màn vừa và trang chi tiết mobile. Nhãn "Trước ·" giữ (artboard mobile "Trước:" — cùng nghĩa, không thêm chuỗi) |
+| K2 lead không có measure | **đã sửa** | `.khaihoang-head .reference-head-text { max-width: 720px }` (Khaihoang.dc.html:33, tiền lệ 720px của Lookup/Recruit). Đo 1440: `.reference-lead` 1344px → **720px**, lead 2 dòng như artboard |
+| K3 thứ tự chip loại binh | **đã sửa** | `js/render.js` `khaihoangTable`: sort giảm dần theo số đội (ổn định khi bằng). Đo: `Tất cả 17 · Cung 10 · Thương 4 · Kỵ 2 · Khiên 1` (khớp cả hai artboard) |
+| K4 / KM3 chân thẻ thiếu chevron | **đã sửa** | Link chân thẻ = nhãn trái + icon chevron sát phải (`justify-content: space-between`). Artboard vẽ `⌄` vì là nút disclosure; ở site đây là **link sang trang chi tiết** nên chevron chỉ sang phải (D3 — ngữ nghĩa điều khiển). Mũi tên chữ "→" trong nhãn bỏ (icon thay) |
+| K5 badge binh chủng trong hàng build | **đã sửa (có điều kiện)** | Badge chỉ hiện khi loại binh của tướng **khác** loại binh của build (đã ở badge đầu thẻ). Dữ liệu `data/khaihoang.json`: 156 ô loại binh, 3 ô khác build (đội "Tôn Thượng Hương · Trần Cung · Hoàng Nguyệt Anh": build Cung, "Sau" chuyển Kỵ) — đó là thông tin không có ở chỗ khác nên giữ ở đúng 3 ô này; mọi hàng còn lại khớp artboard (không badge) |
+| KM4 mũi tên rớt dòng ở 320 + badge trái tiêu đề | **đã sửa** | Ở khối hẹp mũi tên trang trí (`aria-hidden`) ẩn vì Trước/Sau đã tách dòng; `.kh-card-head` ≤680px xếp cột (badge **trên** tiêu đề). Ảnh `Khaihoang-320.localhost.png` |
+| C1 cấp độ đội / nhãn tướng gộp vào tên | **đã sửa** | `js/render.js` `splitSourceTag`: chỉ tách khi hiện, không sửa dữ liệu. Dòng cuối `teamNameRaw` dạng `\d+C` → pill `badge coexist-level` trong `header.coexist-subteam-head`; dòng cuối `nameRaw` trong ngoặc (ASCII hoặc toàn khổ) → `.coexist-hero-tag` ("Thương S"). Dòng khác nối bằng dấu cách như trước (vd. `Quan Hưng/ Quan Vũ` không bị coi là nhãn). `coexistCounts` vẫn đếm theo chuỗi nguồn nguyên vẹn |
+| C2 nhãn "Ghi chú" lặp dòng đầu dữ liệu | **đã sửa** | Khi dòng đầu nguồn trùng nhãn cột (bỏ `:` cuối, không phân biệt hoa thường) thì bỏ nhãn của site; chuỗi nguồn hiện **nguyên văn** (test "verbatim" vẫn đúng) và dòng đầu mang dáng nhãn caps qua `.coexist-raw-titled::first-line` |
+| CM1 hàng chọn nhóm mobile | **đã sửa** | `js/team-filter-section.js` `paintGroupRow`: mỗi chip thêm `.coexist-chip-number` (aria-hidden) + dòng `.coexist-group-note` dưới hàng (tóm tắt đội của nhóm đang chọn, cùng chuỗi nguồn của chip). ≤680px: một hàng 5 nút số 44px `flex:1`, nhãn nhóm ẩn thị giác nhưng vẫn là tên truy cập, tóm tắt từng chip ẩn (hiện lại ở dòng dưới khi chọn). Đo 390: 5 nút cao 44px; khối chọn 588px → hàng 44px + 1 dòng |
+| CM2 ô tổng quan mobile luôn mở | **đã sửa** | `seasonCoexistGroup`: hai cột nguyên văn (Tổng quan + Ghi chú, Gợi ý khai hoang) nằm trong `details.coexist-overview-fold`; desktop luôn mở (dòng tóm tắt ẩn, tỉ lệ cột giữ 1 : 1.2 : 1), mobile mặc định **đóng** — nội dung giữ nguyên, chỉ gập. Rời mobile khi đang gập thì tự mở lại (một listener `matchMedia` cho cả module) |
+| CM3 dòng số liệu mobile | **đã sửa** | Cột "Kiểm tra trùng tướng" nằm ngoài disclosure, ngay dưới nó; ≤680px `.coexist-count-line` dùng token mới `type.coexist-count-mobile` 13px/600 |
+| CM4 h1 mobile 36 → 34 | **đã sửa** | ≤680px `.reference-title` của trang mục `coexist` và `khaihoang` (`body[data-page-section]`) dùng `var(--type-detail-title)` (34px/1.05 sẵn có). Đo 390/320: 34px; desktop 48px không đổi |
+| P6-2 badge loại binh lặp ở chi tiết Khai hoang | **đã sửa** | `js/khaihoang-detail.js`: bỏ `.kh-detail-build-head` (badge thứ hai); loại binh chỉ còn ở `#team-detail-badges` và đổi theo cấu hình. Đo 1440: `#team-detail-root .badge` = `["Thương"]` |
+| P6-3 chọn cấu hình chi tiết khác họ | **đã sửa** | `<select>` + "Chọn cấu hình"/"Cấu hình mặc định" thay bằng `khaihoangConfigRow` **dùng chung** với thẻ danh sách (`.kh-config-row` `role=group` + `button.fchip.kh-config-chip[aria-pressed]` 44px). Đổi chip vẫn `replaceState` `?variant=` và giữ `from`. Tiêu đề khối serif 28px **giữ không thêm**: không có artboard chi tiết Khai hoang, thêm tiêu đề là thêm chữ tác giả ngoài phạm vi finding |
+
+### Lệch có chủ đích (thêm ở vòng này)
+
+| Chỗ | Artboard | Thực tế | Lý do |
+| --- | --- | --- | --- |
+| Lead mobile Cùng Tồn/Khai hoang | câu rút gọn | câu đầy đủ như desktop | D1 — không ẩn/rút nội dung trên mobile |
+| Nhãn disclosure mobile | "Chủ lực & gợi ý khai hoang" | "Tổng quan nhóm" | Nguồn không có danh sách chủ lực tách riêng (C3/"Ba đội Chủ lực"); nhãn dùng đúng tên vùng đã có (`aria-label`) |
+| Tiêu đề phân loại hàng nhóm trên mobile | không vẽ | giữ "Tham khảo kịch bản (5)" | D1 + đã ghi ở bảng lệch trên (phân loại phạm vi là contract) |
+| Dòng số liệu mobile | cả dòng màu `--good` | số liệu màu mực, kết luận `--good`/`--avoid` | Giữ màu theo kết luận để ca "có trùng" vẫn đỏ; cỡ/độ đậm khớp 13/600 |
+| Nhãn phụ tướng | 11.5px | `type.badge` 12px | Vai trò chữ gần nhất có sẵn (≤ 0,5px) |
+| Chevron chân thẻ Khai hoang | `⌄` (disclosure) | `›` sát phải | Chân thẻ là link điều hướng, không phải disclosure (D3) |
+
+### Thay đổi chữ (`pipeline/site_localization.py`, tất cả `authored-vi`)
+
+- `ui:khaihoang/card-guide-link`: "Hướng dẫn đánh đất →" → "Hướng dẫn đánh đất" (mũi tên thành icon).
+- `ui:khaihoang/card-detail-link`: "Chi tiết →" → "Chi tiết".
+- `ui:khaihoang/card-config-aria`, `card-default`, `card-variant`: chữ giữ nguyên, cột symbol `khaihoangTeamCard` → `khaihoangConfigRow` (hàm dùng chung thẻ + chi tiết).
+- Mới `ui:coexist/overview-summary` (`summaryLabel`): "Tổng quan nhóm".
+- Bỏ khỏi `js/khaihoang-detail.js` (không có dòng obligation): "Chọn cấu hình", "Cấu hình mặc định".
+- Không đụng dòng `translate`; không sửa dữ liệu (`textVi`/JSON). " + " giữa chiến pháp là ký hiệu.
+
+### Token / component
+
+- Token mới `type.coexist-count-mobile` 600 13px/1.5 sans (CoexistMobile.dc.html:45), `:root` thêm `--type-coexist-count-mobile`.
+- `components`: `chon-nhom` (phần/biến thể mobile + probe số nhóm, dòng nhóm đang chọn; probe chip mobile đổi sang `radius.10`), `o-tong-quan-cung-ton` (disclosure; probe mobile chuyển sang `.coexist-overview-fold` + summary 48px + dòng số liệu 13px), `the-cung-ton` (probe đầu thẻ tách `.coexist-subteam-head`; probe mới pill cấp độ, nhãn phụ tướng), `the-khai-hoang` (hàng build, chân thẻ, ghi chú K1–K5), `select-nhan-caps` bỏ `.kh-variant-select` + biến thể "chọn biến thể" (CSS select Khai hoang đã xoá).
+
+### Test cập nhật
+
+`tests-e2e/khaihoang-options.spec.mjs`: nhãn link chân thẻ bỏ "→"; hàng build không còn badge `Cung` trùng build (`toHaveCount(0)`); mọi thao tác chọn cấu hình ở trang chi tiết đổi từ `combobox.selectOption` sang chip `detailChip(page, id)` (+ `aria-pressed`), ca 320px chọn bằng Enter trên chip. Chưa chạy bộ e2e (build gate chờ lead re-pin).
+
+### Kiểm chứng
+
+- Ảnh ghép đã xem (dev server riêng `127.0.0.1:4404`): `phase-08/Khaihoang.png` (hàng build 1 hàng/tướng, chân thẻ chevron), `KhaihoangMobile.png` + `Khaihoang-320.localhost.png` (badge trên tiêu đề, tên/Trước/Sau, không mũi tên rớt), `Coexist.png` (pill 19C, nhãn "Thương S", dòng đầu "GHI CHÚ" dáng nhãn), `CoexistMobile.png` (hàng 5 nút số, dòng đội, disclosure đóng, số liệu 13px), `phase-08-dark/CoexistMobile.png`, `phase-06/KhaiHoang-1440.localhost.png` + `KhaiHoang-390.localhost.png` (một badge, nhóm chip, build 4 cột / 3 dòng).
+- Probe: `--tokens --phase 8` **616/617** light và dark, 0 lệch chưa giải thích (1 ngoại lệ đã khai `select-nhan-caps` line-height); `--tokens --phase 6` **378/378** hai theme; `design-tokens.mjs --check` ok.
+- Smoke Playwright 390→1440: disclosure đóng ở mobile, bấm mở được, đổi nhóm dựng lại vẫn đóng, resize lên 1440 tự mở; chip chi tiết đổi `?variant=` + `aria-pressed`; 320px `scrollWidth == innerWidth`.

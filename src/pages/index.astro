@@ -11,6 +11,7 @@ import {
   OFFICIAL_GAME_SITE_HREF,
 } from '../lib/official-links';
 import { SEAL_PATH, SEAL_VIEW_BOX } from '../lib/seal';
+import { FACTION_CODE } from '../../js/render.js';
 
 const canonicalUrl = new URL('/', Astro.site);
 // Mọi con số của Landing tính lúc build từ dữ liệu đã publish (xem src/lib/landing-stats.ts).
@@ -18,6 +19,16 @@ const stats = await landingStatistics();
 const copy = landingCopy(stats);
 // Hai khối xem trước dựng từ dữ liệu publish thật (thẻ đội + bảng phạm vi mặc định).
 const previews = await landingPreviews();
+/** Vai trò viết tắt của thẻ gọn — cùng ba nhãn với thẻ danh sách Phase 5 (js/recommended-reference-render.js). */
+const PREVIEW_ROLES = ['CHỦ', 'PHÓ 1', 'PHÓ 2'];
+/** Tiền tố biến thể thành chip `nhan-bien-the` như thẻ danh sách; tên Latin không có tiền tố giữ nguyên. */
+const VARIANT_CLASS: Record<string, string> = {SP: 'sp', CO: 'co', '40Y': 'y40'};
+const splitVariant = (name: string) => {
+  const match = name.match(/^(SP|CO|40Y)\s+(.+)$/u);
+  return match ? {prefix: match[1], variantClass: VARIANT_CLASS[match[1]], name: match[2].trim()} : {prefix: null, variantClass: null, name};
+};
+const previewFactionCode = previews.team.faction ? (FACTION_CODE as Record<string, string>)[previews.team.faction] ?? 'none' : null;
+const previewMetaTail = [previews.team.units.join(' · '), previews.table.scopeLabel].filter(Boolean);
 const storeButtons = [APP_STORE_LINK, GOOGLE_PLAY_LINK];
 // Hash cũ phải chuyển trước khi vẽ trang: nhúng nguyên hàm thuần của js/legacy-routes.js vào một
 // script inline chặn trong <head>. Listener `hashchange` phủ trường hợp dán link cũ khi đang ở `/`.
@@ -34,7 +45,7 @@ const redirectSource = `(function(){var resolve=${resolveLegacyRoute.toString()}
   <section id="dau-trang" class="landing-hero">
     <div class="landing-hero-copy">
       <p class="landing-hero-kicker">Cẩm nang cộng đồng<span class="landing-hero-kicker-extra"> · Tam Quốc Chí Chiến Lược</span></p>
-      <h1 class="landing-hero-title">Mùa này chơi đội nào?<br /><span class="landing-hero-title-accent">Mở sổ là thấy.</span></h1>
+      <h1 class="landing-hero-title">Mùa này chơi đội nào?{' '}<br class="landing-hero-break" /><span class="landing-hero-title-accent">Mở sổ là thấy.</span></h1>
       <p class="landing-lead">{copy.heroLead}</p>
       <div class="landing-hero-actions">
         <a class="landing-btn landing-btn-primary" href="/doi-chuan/">Mở Đội chuẩn<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></a>
@@ -47,27 +58,31 @@ const redirectSource = `(function(){var resolve=${resolveLegacyRoute.toString()}
       </ul>
     </div>
     <article class="team-card reference-team-card landing-preview-card" aria-label="Ví dụ một thẻ đội">
-      <div class="team-head">
-        <h2 class="team-name"><a href={previews.team.href}>{previews.team.name}</a></h2>
-        <span class="landing-preview-score"><span class="badge score reference-score" title="Điểm nguồn">{previews.team.score ?? '—'}</span><span class="landing-preview-score-unit">điểm</span></span>
-      </div>
-      <div class="card-head">
-        <div class="units">{previews.team.units.map((unit) => <span class="badge unit">{unit}</span>)}</div>
-        <div class="head-right">{previews.team.faction ? <span class="badge faction">{previews.team.faction}</span> : null}</div>
-      </div>
+      <header class="reference-card-head">
+        <div class="reference-card-title">
+          <h2 class="team-name"><a href={previews.team.href}>{previews.team.name}</a></h2>
+          <p class="reference-meta">{previewFactionCode ? <span class={`reference-faction f-${previewFactionCode}`}>{previews.team.faction}</span> : null}{previewMetaTail.map((part, index) => (
+            <>{index || previewFactionCode ? ' · ' : null}{index === 0 && previews.team.units.length ? <strong class="reference-units">{part}</strong> : part}</>
+          ))}</p>
+        </div>
+        <span class="reference-score-wrap"><span class="badge score reference-score" title="Điểm nguồn">{previews.team.score ?? '—'}</span><span class="reference-score-unit">điểm</span></span>
+      </header>
       <div class="heroes">
-        {previews.team.holders.map((holder) => (
-          <div class="hero reference-holder">
-            <div class="hero-name">
-              <span class="hn">{holder.name}</span>
-              {holder.isMain ? <span class="badge role main-holder" title="Chủ tướng" aria-label="Chủ tướng">C</span> : null}
+        {previews.team.holders.map((holder, index) => {
+          const variant = splitVariant(holder.name);
+          return (
+            <div class="hero reference-holder">
+              <span class="reference-role">{PREVIEW_ROLES[index] ?? ''}</span>
+              <div class="hero-name">{variant.prefix ? <><span class={`pre ${variant.variantClass}`}>{variant.prefix}</span> </> : null}<span class="hn">{variant.name}</span></div>
+              {holder.tactics.length ? <div class="line tactics">{holder.tactics.map((tactic) => <span class="tag t-tactic">{tactic}</span>)}</div> : null}
+              <p class="line books">Binh thư · {holder.books.length ? <span class="reference-book-values">{holder.books.join(' · ')}</span> : <span class="reference-books-missing">Nguồn chưa ghi</span>}</p>
             </div>
-            {holder.tactics.length ? <div class="line tactics">{holder.tactics.map((tactic) => <span class="tag t-tactic">{tactic}</span>)}</div> : null}
-            {holder.books.length ? <div class="line books">{holder.books.map((book) => <span class="tag t-book">{book}</span>)}</div> : null}
-          </div>
-        ))}
+          );
+        })}
       </div>
-      <a class="ana-link-btn landing-preview-link" href={previews.team.href}>Xem chi tiết<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></a>
+      <footer class="reference-card-foot">
+        <a class="landing-preview-link" href={previews.team.href}>Chi tiết<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></a>
+      </footer>
     </article>
   </section>
 
@@ -118,12 +133,12 @@ const redirectSource = `(function(){var resolve=${resolveLegacyRoute.toString()}
   </section>
 
   <section id="landing-vaults" class="landing-section landing-vaults" aria-labelledby="landing-vaults-title">
-    <div class="landing-section-head">
-      <p class="landing-kicker">Kho đội</p>
-      <h2 id="landing-vaults-title" class="landing-section-title landing-section-title-sm">Hai kho đội, một bộ lọc chung</h2>
-      <p class="landing-section-sub">Lọc theo mùa, loại binh, phe hoặc gõ tên tướng, chiến pháp, binh thư. Xem dạng thẻ để đọc kỹ, dạng bảng để so nhiều đội cùng lúc.</p>
-    </div>
-    <div class="landing-vaults-body">
+    <div class="landing-vaults-intro">
+      <div class="landing-section-head">
+        <p class="landing-kicker">Kho đội</p>
+        <h2 id="landing-vaults-title" class="landing-section-title landing-section-title-sm">Hai kho đội, một bộ lọc chung</h2>
+        <p class="landing-section-sub">Lọc theo mùa, loại binh, phe hoặc gõ tên tướng, chiến pháp, binh thư. Xem dạng thẻ để đọc kỹ, dạng bảng để so nhiều đội cùng lúc.</p>
+      </div>
       <ul class="landing-vault-list">
         <li>
           <a class="landing-vault" href="/doi-chuan/">
@@ -138,7 +153,8 @@ const redirectSource = `(function(){var resolve=${resolveLegacyRoute.toString()}
           </a>
         </li>
       </ul>
-      <div class="landing-table-preview">
+    </div>
+    <div class="landing-table-preview">
         <p class="landing-table-bar"><span class="landing-table-scope">Chế độ Bảng · {previews.table.scopeLabel}</span><span class="landing-table-count">{previews.table.count}</span></p>
         <div class="landing-table-scroll" role="region" tabindex="0" aria-label="Bảng ví dụ đội hình">
           <table class="reference-table">
@@ -154,7 +170,6 @@ const redirectSource = `(function(){var resolve=${resolveLegacyRoute.toString()}
             </tbody>
           </table>
         </div>
-      </div>
     </div>
   </section>
 
@@ -193,7 +208,7 @@ const redirectSource = `(function(){var resolve=${resolveLegacyRoute.toString()}
         <a class="landing-card landing-card-tool" href="/chieu-mo/">
           <span class="landing-tool-title">Theo dõi chiêu mộ<span class="landing-beta">Beta</span></span>
           <span class="landing-card-desc">Đếm lượt tới mốc bảo hiểm 5★ cho nhiều tài khoản, ghi lại tướng đã ra.</span>
-          <span class="landing-tool-note">Lưu ngay trong trình duyệt · xuất/nhập JSON để sao lưu</span>
+          <span class="landing-tool-note"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"></polyline></svg>Lưu ngay trong trình duyệt · xuất/nhập JSON để sao lưu</span>
         </a>
       </li>
       <li>
@@ -206,7 +221,7 @@ const redirectSource = `(function(){var resolve=${resolveLegacyRoute.toString()}
         <a class="landing-card landing-card-tool" href="/goi-y-doi/">
           <span class="landing-tool-title">Gợi ý đội từ kho<span class="landing-beta">Beta</span></span>
           <span class="landing-card-desc">Đọc ảnh kho, cho bạn sửa lại, rồi gợi ý đội theo meta hoặc theo số hột.</span>
-          <span class="landing-tool-note">AI chỉ đọc ảnh; việc chọn đội chạy ngay trên máy bạn</span>
+          <span class="landing-tool-note"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"></polyline></svg>AI chỉ đọc ảnh; việc chọn đội chạy ngay trên máy bạn</span>
         </a>
       </li>
     </ul>

@@ -81,7 +81,6 @@ function pityView(pity) {
 export function buildRecruitTrackerViewModel(summary, heroesDict = []) {
   const heroes = Array.isArray(heroesDict) ? heroesDict : Object.values(heroesDict || {});
   return {
-    accountLabel: summary.account?.name || "Tài khoản",
     accounts: summary.accounts,
     heroOptions: uniqueSorted(heroes.map(heroName)),
     daily: {
@@ -199,8 +198,9 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
   const slotGrid = el("div", { class: "rt-slot-grid" });
 
   const dailySection = el("section", { class: "rt-section" }, [
-    el("header", { class: "rt-section-head" }, [
-      el("div", {}, [dailyTitle, el("p", { class: "rt-sub" }, "4 lượt miễn phí / nửa giá mỗi ngày")]),
+    el("header", { class: "rt-section-head rt-section-head-inline" }, [
+      dailyTitle,
+      el("p", { class: "rt-sub" }, "4 lượt miễn phí / nửa giá mỗi ngày"),
     ]),
     el("div", { class: "rt-pity-block" }, [pityLabel, el("div", { class: "rt-pity-figures" }, [pityValue, pityUnit]), pityMeter, pityMeta, pityWarning]),
     slotGrid,
@@ -224,12 +224,9 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
   const historyList = el("ol", { class: "rt-history" });
   const historyEmpty = el("p", { class: "rt-empty" }, "Chưa ghi nhận tướng 5★.");
   const historySection = el("aside", { class: "rt-section rt-history-section" }, [
-    el("header", { class: "rt-section-head" }, [
-      el("div", {}, [
-        el("h2", { class: "rt-section-title" }, "Lịch sử 5★"),
-        el("p", { class: "rt-sub" }, "Mới nhất trước, lọc theo tài khoản đang chọn."),
-      ]),
-      el("span", { class: "rt-section-note" }),
+    el("header", { class: "rt-section-head rt-section-head-inline" }, [
+      el("h2", { class: "rt-section-title" }, "Lịch sử 5★"),
+      el("p", { class: "rt-sub" }, "Mới nhất trước, lọc theo tài khoản đang chọn."),
     ]),
     historyList,
     historyEmpty,
@@ -449,7 +446,6 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     historyList.replaceChildren(...items.map(renderHistoryItem));
     historyList.hidden = !items.length;
     historyEmpty.hidden = Boolean(items.length);
-    historySection.querySelector(".rt-section-note").textContent = `Mới nhất trước · ${viewModel.accountLabel}`;
   }
 
   function renderHistoryItem(item) {

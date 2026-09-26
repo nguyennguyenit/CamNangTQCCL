@@ -53,6 +53,18 @@ GOLDEN_HERO_DELTAS = {
     "hero:sp-lu-mong": ("troopApt", "cung", "S"),
     "hero:dong-bach": ("stats", "mi", "77"),
 }
+# Hiệu chỉnh giá trị nguồn đã review (Kongming ruling). Chỉ tra cứu thuần tại điểm adopt:
+# KHÔNG sửa source_docs/attrs, vì fingerprint dịch và sourceValueHash của ledger phải đọc giá trị thô.
+# Giá trị thô lệch `raw` (vd upstream đã sửa), chủ sở hữu lệch `entityId`, hoặc mục không được
+# tiêu thụ trong build đều làm build thất bại; mục khi đó phải review lại hoặc xóa.
+SOURCE_VALUE_CORRECTIONS = {
+    ("tactics", "cmtb9e3c6000058f84ugbcun5", "activationRate"): {
+        "entityId": "tactic:thien-uy-khieu-tran",
+        "raw": 50,
+        "published": 0.5,
+        "reason": "Reviewed unit correction: SGSDeck capture has activationRate 50 (percent scale) for 天威嘯陣; every other tactic uses a 0–1 fraction, so 50% is published as 0.5.",
+    },
+}
 QUALITY = {"橙": "Cam", "紫": "Tím", "藍": "Lam", "綠": "Lục"}
 ELEMENTS = {"風": "Phong", "火": "Hỏa", "水": "Thủy", "土": "Thổ", "雷": "Lôi", "山": "Sơn", "林": "Lâm"}
 TIERS = {"SPECIAL": "Đặc biệt", "BASIC": "Cơ bản", "INTERMEDIATE": "Trung cấp", "ADVANCED": "Cao cấp", "T0": "T0", "T1": "T1", "T2": "T2", "T3": "T3"}
@@ -452,6 +464,32 @@ def _number_or_none(value):
         raise ValueError(f"expected finite number, got {value!r}")
     return value
 
+def _resolved_source_value_corrections(source_docs, source_owner):
+    # Đối chiếu từng hiệu chỉnh với bản capture trước khi dựng spec dịch, để lỗi stale/owner
+    # được báo đúng nguyên nhân thay vì bị che bởi lỗi fingerprint dịch.
+    for key, correction in SOURCE_VALUE_CORRECTIONS.items():
+        group, source_id, field = key
+        record = next((row for row in source_docs[group]["records"] if row["sourceId"] == source_id), None)
+        if record is None:
+            raise ValueError(f"source value correction has no captured record: {key}")
+        owner = source_owner.get(f"{group}:{source_id}")
+        if owner != correction["entityId"]:
+            raise ValueError(f"source value correction owner mismatch: {key} resolves to {owner!r}, expected {correction['entityId']!r}")
+        raw = record.get("attributes", {}).get(field)
+        if canonical_json_bytes(raw) != canonical_json_bytes(correction["raw"]):
+            raise ValueError(f"stale source value correction: {key} captured {raw!r}, reviewed raw {correction['raw']!r}")
+    return SOURCE_VALUE_CORRECTIONS
+
+
+def _adopted_number(corrections, consumed, group, record, field):
+    # Tra cứu thuần: trả giá trị đã hiệu chỉnh nếu có, không đụng tới record gốc.
+    key = (group, record["sourceId"], field)
+    if key in corrections:
+        consumed.add(key)
+        return _number_or_none(corrections[key]["published"])
+    return _number_or_none(record["attributes"].get(field))
+
+
 def _enum(table, value, field):
     if value is None:
         return None
@@ -642,6 +680,8 @@ def _build_model(capture):
     translations = _json(capture["translations"])
     source_owner, decision_by_owner, decisions, _unused = _lookup_maps(identity, mapping)
     child_ids = _child_id_map(identity, source_docs, source_owner)
+    corrections = _resolved_source_value_corrections(source_docs, source_owner)
+    consumed_corrections = set()
     identity_translation_context = _sha(canonical_json_bytes({
         "decisions": [{key: row.get(key) for key in ("canonicalId", "nameVi", "aliasesVi", "aliasesZh", "variant")} for row in identity["decisions"]],
         "relations": [{key: row.get(key) for key in ("ownerId", "fieldPath", "targetId")} for row in identity["relationDecisions"]],
@@ -750,8 +790,12 @@ def _build_model(capture):
             "type": attrs.get("kind"), "quality": attrs.get("quality"), "effect": effect, "effectViet": effect_vi,
             "target": attrs.get("effectTarget") if attrs.get("effectTarget") is not None else row.get("target"), "targetViet": translated.get((owner, "targetViet")) or row.get("targetViet"), "troopFit": [_enum(TROOPS, value, "tactic.troopLimit") for value in attrs.get("troopLimit", [])],
             "source": attrs.get("source"), "sourceHeroCn": row.get("sourceHeroCn"), "iconUrl": row.get("iconUrl"), "linkScore": row.get("linkScore"), "pending": not bool(effect and effect_vi),
-            "lookup": {"conditions": _conditions(source, translated, owner), "missingFields": list(source.get("missingFields", [])), "revisions": _revisions(usable_source_effect, effect_vi), "activationRate": _number_or_none(attrs.get("activationRate")), "cooldown": _number_or_none(attrs.get("cooldown")), "maxUsers": _number_or_none(attrs.get("maxUsers")), "pointCost": _number_or_none(attrs.get("pointCost")), "effectTypeVi": translated.get((owner, "lookup.effectTypeVi")), "exchangeConditionVi": translated.get((owner, "lookup.exchangeConditionVi")), "acquiredFromVi": acquired_rows, "inheritedFromIds": inherited, "conflictsVi": translated.get((owner, "lookup.conflictsVi"))}})
+            "lookup": {"conditions": _conditions(source, translated, owner), "missingFields": list(source.get("missingFields", [])), "revisions": _revisions(usable_source_effect, effect_vi), "activationRate": _adopted_number(corrections, consumed_corrections, "tactics", source, "activationRate"), "cooldown": _number_or_none(attrs.get("cooldown")), "maxUsers": _number_or_none(attrs.get("maxUsers")), "pointCost": _number_or_none(attrs.get("pointCost")), "effectTypeVi": translated.get((owner, "lookup.effectTypeVi")), "exchangeConditionVi": translated.get((owner, "lookup.exchangeConditionVi")), "acquiredFromVi": acquired_rows, "inheritedFromIds": inherited, "conflictsVi": translated.get((owner, "lookup.conflictsVi"))}})
         tactics.append(row)
+    # Mục hiệu chỉnh không được tiêu thụ là mục mồ côi: build phải dừng để review lại bảng.
+    orphaned_corrections = set(corrections) - consumed_corrections
+    if orphaned_corrections:
+        raise ValueError(f"orphaned source value corrections: {sorted(orphaned_corrections)}")
 
     equipment = []
     for record in source_docs["equipment"]["records"]:
@@ -806,6 +850,7 @@ def _build_model(capture):
                 )
                 translation_fingerprint_value = specs.get(translation_key) if translation_key and not source_missing else None
                 fallback_value = None
+                correction = None if is_child else corrections.get((group, record["sourceId"], path.removeprefix("attributes.")))
                 mapped_disposition = _mapped_public_disposition(group, path, owner, relations)
                 if source_missing and group == "generals" and path == "attributes.role":
                     fallback_value = old_heroes.get(owner, {}).get("roleTag")
@@ -813,7 +858,10 @@ def _build_model(capture):
                     fallback_value = old_tactics.get(owner, {}).get("effect")
                 elif source_missing and group == "tactics" and path == "attributes.effectTarget":
                     fallback_value = old_tactics.get(owner, {}).get("target")
-                if translation_fingerprint_value:
+                if correction is not None:
+                    disposition, chosen_input = "corrected-public", "source"
+                    reason = correction["reason"]
+                elif translation_fingerprint_value:
                     disposition, chosen_input = "translated-public", "source"
                     reason = "Captured source value selected and bound to reviewed Vietnamese output."
                 elif fallback_value is not None:
@@ -831,7 +879,8 @@ def _build_model(capture):
                 else:
                     disposition, chosen_input = "private-evidence", "source"
                     reason = "Captured source value intentionally omitted from the public DTO."
-                ledger.append({"entityId": owner, "fieldPath": path, "disposition": disposition, "chosenInput": chosen_input, "sourceRecordId": record["sourceId"], "sourceFieldPath": path, "sourceValueHash": _sha(canonical_json_bytes(value)), "localValueHash": _sha(canonical_json_bytes(fallback_value)) if fallback_value is not None else None, "reason": reason, "translationInputFingerprint": translation_fingerprint_value, "reviewEvidence": ["captured source manifest", "private identity/translation ledgers"]})
+                local_value = correction["published"] if correction is not None else fallback_value
+                ledger.append({"entityId": owner, "fieldPath": path, "disposition": disposition, "chosenInput": chosen_input, "sourceRecordId": record["sourceId"], "sourceFieldPath": path, "sourceValueHash": _sha(canonical_json_bytes(value)), "localValueHash": _sha(canonical_json_bytes(local_value)) if local_value is not None else None, "reason": reason, "translationInputFingerprint": translation_fingerprint_value, "reviewEvidence": ["captured source manifest", "private identity/translation ledgers"]})
             for path, value in _flatten({key: value for key, value in record.items() if key != "attributes"}, "sourceRecord"):
                 translation_key = (owner, "conditions.scenarioVi") if path == "sourceRecord.sourceSeason.scenarioName" else None
                 ledger.append({"entityId": owner, "fieldPath": path, "disposition": "translated-public" if translation_key else "private-evidence", "chosenInput": "source", "sourceRecordId": record["sourceId"], "sourceFieldPath": path, "sourceValueHash": _sha(canonical_json_bytes(value)), "localValueHash": None, "reason": "Scenario condition translated for public display." if translation_key else "Provider/top-level source value retained only in private evidence.", "translationInputFingerprint": specs.get(translation_key) if translation_key else None, "reviewEvidence": ["captured source manifest", "private identity/translation ledgers"]})
@@ -1000,6 +1049,10 @@ def _validate_payloads(heroes, tactics, catalog):
             or any(not _optional_number(lookup[field]) for field in ("activationRate", "cooldown", "maxUsers", "pointCost"))
         ):
             raise ValueError(f"tactic scalar type is invalid: {row['id']}")
+        # Tỷ lệ kích hoạt công bố phải là phân số 0–1; lệch đơn vị từ upstream phải làm build thất bại,
+        # chỉ một mục SOURCE_VALUE_CORRECTIONS đã review mới cho phép hiệu chỉnh.
+        if lookup["activationRate"] is not None and not 0 <= lookup["activationRate"] <= 1:
+            raise ValueError(f"tactic activationRate is outside 0-1: {row['id']}")
         has_effect = isinstance(row["effect"], str) and bool(row["effect"].strip()) and row["effect"] not in MISSING_TEXT
         has_effect_vi = isinstance(row["effectViet"], str) and bool(row["effectViet"].strip())
         if (has_effect and not has_effect_vi) or row["pending"] != (not (has_effect and has_effect_vi)):
@@ -1356,7 +1409,7 @@ def validate_candidate(candidate, *, inputs=None, source=None, identity=None, tr
         not isinstance(ledger, list)
         or not ledger
         or any(not isinstance(row, dict) or set(row) != FIELD_LEDGER_KEYS for row in ledger)
-        or any(row["disposition"] not in {"translated-public", "typed-public", "mapped-public", "partially-mapped-public", "fallback-public", "missing-source", "private-evidence", "compatibility-preimage"} for row in ledger)
+        or any(row["disposition"] not in {"translated-public", "typed-public", "mapped-public", "partially-mapped-public", "fallback-public", "corrected-public", "missing-source", "private-evidence", "compatibility-preimage"} for row in ledger)
         or generation["ledgerHash"] != _sha(captured["ledger.json"])
         or generation.get("counts", {}).get("fieldLedgerRows") != len(ledger)
     ):

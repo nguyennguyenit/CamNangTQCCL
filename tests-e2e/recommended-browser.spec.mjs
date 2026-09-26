@@ -733,3 +733,69 @@ test('ô vuông phe trong bộ lọc được vẽ thật (content của ::befor
     }
   }
 });
+
+test('N5-3: `view` chỉ có nghĩa khi bằng `bang`; `?view=the` và giá trị lạ bị bỏ khỏi URL',async({page})=>{
+  const section=page.locator('#section-team-chuan');
+  const params=()=>page.evaluate(()=>Object.fromEntries(new URL(location.href).searchParams));
+  // `the` là mặc định của `resolveTeamView` nên URL phải về dạng không tham số, và vẫn giữ nguyên các khóa khác.
+  await page.goto('/doi-chuan/?view=the');
+  await expect(section.locator('.reference-team-card').first()).toBeVisible();
+  await expect.poll(params).toEqual({});
+  await page.goto('/doi-chuan/?view=the&q=L%E1%BB%AF%20B%E1%BB%91');
+  await expect(section.locator('.reference-team-card').first()).toBeVisible();
+  await expect.poll(params).toEqual({q:'Lữ Bố'});
+  // `bang` là giá trị duy nhất có nghĩa: giữ đúng một tham số, bỏ bản lặp.
+  await page.goto('/doi-chuan/?view=bang');
+  await expect(section.locator('.reference-table tbody tr').first()).toBeVisible();
+  await expect.poll(params).toEqual({view:'bang'});
+  await page.goto('/doi-chuan/?view=bang&view=the');
+  await expect(section.locator('.reference-table tbody tr').first()).toBeVisible();
+  await expect.poll(params).toEqual({view:'bang'});
+  // Giá trị lạ: vẫn báo cho người dùng ở lượt đọc đầu, đồng thời URL được chuẩn hoá.
+  await page.goto('/doi-chuan/?view=khong-hop-le');
+  await expect(section.locator('.reference-team-card').first()).toBeVisible();
+  await expect(section.locator('.reference-notice')).toContainText('Kiểu hiển thị không hợp lệ');
+  await expect.poll(params).toEqual({});
+  // Chuẩn hoá bằng `replaceState`: mục lịch sử của lần nạp này bị viết lại nên Back rời trang, không quay
+  // lại chính URL `?view=the`.
+  await page.goto('/doi-chuan/');
+  await page.goto('/doi-chuan/?view=the');
+  await expect.poll(params).toEqual({});
+  await page.goBack();
+  await expect.poll(()=>page.evaluate(()=>new URL(location.href).pathname)).toBe('/doi-chuan/');
+  await expect.poll(params).toEqual({});
+});
+
+test('N5-4: panel lọc mobile đóng bằng Escape và trả focus về nút "Bộ lọc"; desktop không đổi',async({page})=>{
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/doi-chuan/');
+  const section=page.locator('#section-team-chuan');
+  const toggle=section.locator('.filter-collapse-toggle');
+  const chip=section.locator('.reference-filters .fchip').first();
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-expanded','true');
+  await expect(chip).toBeVisible();
+  await chip.focus();
+  await page.keyboard.press('Escape');
+  await expect(toggle).toHaveAttribute('aria-expanded','false');
+  await expect(toggle).toBeFocused();
+  await expect(chip).toBeHidden();
+  // Bàn phím vẫn mở lại được, và lần mở sau Escape vẫn đóng.
+  await page.keyboard.press('Enter');
+  await expect(toggle).toHaveAttribute('aria-expanded','true');
+  await expect(chip).toBeVisible();
+  await chip.focus();
+  await page.keyboard.press('Escape');
+  await expect(toggle).toHaveAttribute('aria-expanded','false');
+  await expect(toggle).toBeFocused();
+  // Desktop: nút bị ẩn nên Escape không đóng sidebar và không cướp focus.
+  await page.setViewportSize({width:1440,height:900});
+  await page.goto('/doi-chuan/');
+  await expect(toggle).toBeHidden();
+  const firstChip=section.locator('.reference-filters .fchip').first();
+  await expect(firstChip).toBeVisible();
+  await firstChip.focus();
+  await page.keyboard.press('Escape');
+  await expect(firstChip).toBeVisible();
+  await expect(firstChip).toBeFocused();
+});

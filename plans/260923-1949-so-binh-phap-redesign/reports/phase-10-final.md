@@ -119,3 +119,36 @@ Khối này **thay thế** mọi số liệu policy/generation/manifest/gate ở
 - Generation đang pin: **`df725667d70890c15f1848c90346bb7d4db7107ab3eb57af09f76bd0732edc16`**, manifest **`fbf26a73fa10bc01`** (trước đó `27d82121…`/`ef994027…`); generation trung gian đã xóa, chỉ còn bản đang pin.
 - Gate: `check`/`build`/`verify` pass, `test:dist` 28/28, `test:node` 349/349, `test:e2e` **278/278 pass**, `unittest` **379 OK**; `design-tokens --check` pass; `design-compare --tokens` 07 **526/526**, 09 chỉ ngoại lệ đã khai, 10 **381/381** (cả 2 theme).
 - A5 nay đầy đủ ở mobile: chip nhóm 44px, nút tên chiến pháp 44px (P07-R3), link nguồn 44px, hàng đội tiêu biểu là cả hàng ≥44px.
+
+## 6. Số liệu sau vòng nit (2026-09-26)
+
+| Chỉ số | Giá trị sau vòng nit |
+| --- | --- |
+| `policyVersion` | `site-vi-260926-opus-round-3` → **`site-vi-260926-nit-round-1`** (làm mới hash 5 file: `js/analyze.js`, `js/app.js`, `js/lookup-detail.js`, `js/roster-recommend-ui.js`, `js/team-filter-section.js`) |
+| `baseline.notes` | **không đổi** — `concreteLocationCount` 56 653, `concreteInventorySha256` `a85e2fd6…`, `translationObligations` 5 591, `siteLedgerObligations` 2 088, `uiTranslateObligations` 68, `lookupReviewObligations` 3 503 ⇒ **không cần receipt mới** |
+| Generation Recommended | `df725667d70890c15f1848c90346bb7d4db7107ab3eb57af09f76bd0732edc16` → **`e99d99412bf7c39414f99101ef2a786b50b941792a9319e4920676952b707835`**; manifest `fbf26a73fa10bc01` → **`492dcbfeff2057a891473f1c12411353de4b33ce2421bd1c6f0213f8ac5e2fa2`** |
+| Generation Lookup | `lookup:582ec0b0a41edfe088bf1cc18545c71877a9767cd9c89b7a6898f3219400d25d` → **`lookup:064fd2d5d2b55823974c1e50738996812c90c4badbd8415db6b2ad43e8bd5773`**; `data/lookup-manifest.json` `962ab9eb…` |
+| `pipeline/team-route-handles.json` | re-pin `e99d9941…`; `team_route_handles --check` pass (**1 366** recommended / **166** legacy / **17** Khai hoang) |
+| `npm run check` / `npm run build` / `npm run verify` | pass (0 lỗi, 1 hint; **1 559** trang; gate bản dịch public 0 problem; **1 730** file dist) |
+| `npm run test:dist` | **28/28** |
+| `npm run test:node` | **352/352** |
+| `npm run test:e2e` | **288/288** |
+| `python3 -m unittest discover -s tests` | **381 OK** |
+| `design-tokens --check` | pass — legacy **0**; `:root` + khối tối khớp `tokens.json` sau khi thêm 10 token `--select*`/`--f-*-select` |
+| `design-compare --tokens` | 03 **136/136**, 04 **726/726**, 05 **642/643**, 06 **400/400**, 07 **531/531**, 08 **601/602**, 09 (2 ngoại lệ đã khai), 10 **381/381** — **0 lệch chưa giải thích**, cả hai theme |
+
+Chi tiết đo DOM thật của trạng thái "đang chọn" ở theme tối (số before/after, chứng minh test phân biệt được,
+bằng chứng theme sáng không đổi pixel) nằm ở `visual-phase-10.md`, mục **§ Nit round**.
+
+## 7. Số liệu sau vòng sửa theo audit ảnh ghép (2026-09-26)
+
+Chi tiết từng finding (đã sửa / giữ + lý do) ở mục **"Audit 260926 — sửa theo ảnh ghép"** của `visual-phase-03` … `visual-phase-10`.
+
+| Chỉ số | Giá trị |
+| --- | --- |
+| `policyVersion` | `site-vi-260926-nit-round-1` → **`site-vi-260926-audit-fix`** (làm mới hash 10 file: `js/analyze.js`, `js/khaihoang-detail.js`, `js/recruit-tracker.js`, `js/render.js`, `js/roster-recommend-ui.js`, `js/site-chrome.js`, `js/team-filter-section.js`, `js/unified-lookup.js`, `src/layouts/SiteLayout.astro`, `src/pages/index.astro`) |
+| `baseline.notes` | `concreteLocationCount` 56 653 → **56 658**, `concreteInventorySha256` → **`ee6e76e4…`** (chỉ thêm/bớt dòng `authored-vi`); `translationObligations` 5 591, `siteLedgerObligations` 2 088, `uiTranslateObligations` 68 **không đổi** ⇒ không cần receipt mới |
+| Generation Recommended | `e99d9941…` → **`d64f832a8d6b5f62c38a2048e289c32d5022e3376a3897d1b471aab79370faf8`**, manifest **`178f24ed2eba5076…`** |
+| `pipeline/team-route-handles.json` | re-pin `d64f832a…`; `--check` pass (1 366 / 166 / 17) |
+| Gate | `build`/`verify` pass (1 559 trang, 1 730 file dist), `test:dist` **28/28**, `test:node` **352/352**, `test:e2e` **288/288**, `unittest` **381 OK**, `design-tokens --check` pass (legacy 0) |
+| `design-compare --tokens` | 03 **136/136**, 04 **714/714**, 05 **630/631**, 06 **378/378**, 07 **517/517**, 08 **616/617**, 09 (2 ngoại lệ đã khai), 10 **385/385** — **0 lệch chưa giải thích**, cả hai theme |

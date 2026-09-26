@@ -14,7 +14,7 @@ commit sau go/no-go.
 | Bước | Nội dung | Trạng thái |
 |---|---|---|
 | 1 | Đầu mục `.reference-head`: nhãn caps son, h1 serif 48px (36px mobile), mô tả 15px; select Mùa nguồn + Danh mục (44px) bên phải (desktop) / lưới 2 cột trên ô tìm (mobile) | xong — §4 |
-| 2 | Sidebar `.reference-filters` 272px: "Bộ lọc" + "Xóa lọc" (`disabled` khi không có lọc), nhóm Loại binh/Phe dạng hàng có ô vuông chọn + ô vuông phe + nhãn + số đếm; Nhóm/Nguồn thu gọn bằng `aria-expanded`. Mobile: nút "Bộ lọc" kèm số lọc đang bật mở panel (chip viên 44px) | xong — §3, §4 |
+| 2 | Sidebar `.reference-filters` 272px: "Bộ lọc" + "Xóa lọc" (`disabled` khi không có lọc), nhóm Loại binh/Phe dạng hàng có ô vuông chọn + ô vuông phe + nhãn + số đếm; nhóm phụ thu gọn bằng `aria-expanded` **chỉ khi có dữ liệu**: `/doi-chuan/` **không** có nhóm "Nhóm"/"Nguồn" (dữ liệu `subcategoryRaw` rỗng 1366/1366, `source` null 1366/1366 ⇒ `facetGroup()` bỏ nhóm rỗng — D2, không bịa facet), `/doi-khac/` có nhóm "Nguồn" (`Meta phe (cũ)` / `Giới thiệu`). *(Đính chính audit 260926 P5-2: bản trước ghi "Nhóm/Nguồn thu gọn" như đã dựng cho cả hai trang là sai.)* Mobile: nút "Bộ lọc" kèm số lọc đang bật mở panel (chip viên 44px) | xong — §3, §4 |
 | 3 | Bỏ facet `score`: xóa khỏi state/projector/UI, bỏ `canonicalScoreValue`/`rowScoreValue`/`SCORE_UNKNOWN`; URL cũ có `score=` bị bỏ qua và bị xóa ở lần `replaceState` đầu | xong — §2, §6 |
 | 3b | `safeReturnUrl` giữ `view` cho `/doi-chuan/` + `/doi-khac/`, `score` không còn trong allowlist nên tự bị bỏ; `safeDisclosures` bỏ `score` | xong — §6 |
 | 4 | Thanh công cụ: ô tìm 48px có icon, "x / y đội" (`role="status"`), nhóm 2 nút Thẻ \| Bảng `aria-pressed` (desktop có chữ, mobile icon 44×44) | xong — §4 |
@@ -102,7 +102,7 @@ commit sau go/no-go.
 | Artboard | Trang | Đã xem | Kết luận |
 |---|---|---|---|
 | Main | `/doi-chuan/` @1440 | light + dark | **đã sửa**: đầu mục 1 hàng có select bên phải; sidebar 272px với hàng lọc có ô vuông + ô vuông phe + số đếm; thanh công cụ ô tìm 48px + "25 / 25 đội" + nhóm Thẻ\|Bảng (Thẻ đang chọn nền dải); lưới **2 cột** thẻ gọn |
-| MainTable | `/doi-chuan/?view=bang` @1440 | light + dark | **đã sửa**: khung bo góc, đầu bảng nền giấy đậm 11 caps, hàng xen màu, ô đội = tên serif + "■ phe · binh", ô tướng = tên + 2 chiến pháp son, ô điểm serif son căn phải |
+| MainTable | `/doi-chuan/?view=bang` @1440 | light + dark | **đã sửa**: khung bo góc, đầu bảng nền giấy đậm 11 caps, hàng xen màu, ô đội = tên serif + "■ phe · binh", ô tướng = tên + 2 chiến pháp son, ô điểm serif son. *(Đính chính audit 260926 P5-6: câu cũ "ô điểm căn phải" là **sai** tới trước vòng sửa 260926 — `th, td { text-align:left }` (0,2,1) đè `.reference-table-score` (0,2,0), đo `textAlign = 'left'`; nay đã căn phải thật, xem mục "Audit 260926".)* |
 | MobileList | `/doi-chuan/` @390 | light + dark | **đã sửa**: đầu mục xếp dọc, 2 select lưới 2 cột, ô tìm full width, hàng [Bộ lọc][25 / 25 đội][Thẻ\|Bảng], thẻ 1 cột có dòng binh thư và chân thẻ |
 | MobileTable | `/doi-chuan/?view=bang` @390 | light + dark | **đã sửa**: hàng thu gọn tên + "■ phe · binh" + danh sách tướng + điểm bên phải; không cuộn ngang (đo `scrollWidth = clientWidth` ở 320/390) |
 | MobileFilters | `/doi-chuan/` @390 (mở panel) | light + dark | **đã sửa**: panel lọc bo góc sau hàng công cụ với chip viên 44px |
@@ -272,6 +272,15 @@ feat(teams): rebuild the team lists with a filter sidebar, compact cards and a t
 | Sửa báo cáo | §1/§4 ghi "chấm phe" trong sidebar là **sai** cho tới khi P05-B1 được sửa | Sửa lại thành "ô vuông phe" và ghi rõ vòng sửa | §1 và §4 cập nhật trong cùng commit này |
 | Chưa áp (ghi lại) | N5-2 (cột nhãn vai trò trên thẻ mobile lệch ~8px), N5-3 (canonicalise `?view=the`) | Không sửa trong vòng này | Cần đo lại bố cục thẻ mobile và thêm một lần `replaceState`; để vòng sau |
 
+## Vòng nit (2026-09-26) — N5-2, N5-3, N5-4 đã sửa
+
+| # | Nội dung | Sửa | Bằng chứng |
+| --- | --- | --- | --- |
+| N5-2 | Cột nhãn vai trò của hàng tướng trên thẻ mobile lệch (~8px). | **Đây là lỗi thật:** `var(--space-38)` dùng ở `css/styles.css` nhưng **chưa từng được khai**, nên `grid-template-columns` vô hiệu lúc tính (→ `none`) và hàng tướng mobile mất cột nhãn/tên. Thêm token thật `size.col-hero-role` = 38px (nguồn `MobileList.dc.html` dòng tướng `38px minmax(0, 1fr)`) và `column-gap: var(--space-8)` đúng artboard (trước kế thừa 10px của bản rộng). | `design-tokens --check` pass; rà toàn file còn **0** custom property chưa khai; probe `dong-tuong` (mobile: `row-gap`, nền, viền) vẫn xanh cả 2 theme; `design-compare --tokens --phase 05` 642/643 (1 ngoại lệ đã khai của `select`) |
+| N5-3 | Canonicalise `?view=the`. | `js/app.js` thêm `canonicaliseView()` chạy sau render: bỏ `view` nếu không phải `bang`, gộp bản lặp, và dùng `history.replaceState` (không thêm mục lịch sử); lượt đọc đầu vẫn hiện thông báo cho giá trị không hợp lệ. | e2e `recommended-browser.spec.mjs`: `?view=the`, `?view=the&q=…`, `?view=bang`, `view` lặp, giá trị lạ, và Back rời trang |
+| N5-4 | Escape đóng panel lọc mobile. | `js/team-filter-section.js`: `keydown` trên vùng kết quả, chỉ hành động khi panel mở **và** nút "Bộ lọc" thực sự được vẽ (`getClientRects().length`) nên desktop là no-op; đóng rồi trả focus về nút. | e2e mới trong `recommended-browser.spec.mjs` (390: mở → Escape → `aria-expanded=false` + focus ở nút + chip ẩn; mở lại bằng Enter; 1440: focus và sidebar không đổi) |
+| N-f | Hộp thoại hồ sơ 821–1279 rộng hết màn hình. | Khối `@media (max-width: 1279px)` đặt `.lookup-backdrop { padding-inline: var(--space-40) }`: hộp thoại 960px luôn chừa lề hai bên (chỉ co thật dưới 1040px); khối ≤680 giữ padding riêng và đứng sau nên thắng ở mobile. | `design-compare --tokens --phase 07` **531/531** cả hai theme; khối ≤680 không đổi |
+
 ### Gate (sau vòng sửa round 2)
 
 | Lệnh | Kết quả |
@@ -287,3 +296,23 @@ feat(teams): rebuild the team lists with a filter sidebar, compact cards and a t
 Generation: `9e1a982a…` → `ac620801…` (sau lượt sửa 5/6/9/10) → **`27d82121c65bf5443fbe1a1745acab271e8d6f96b1747a83aefba6b282e31cac`** (sau lượt sửa
 `js/roster-recommend-ui.js`), manifest `ef994027575931e2`; re-pin `pipeline/team-route-handles.json` + `team_route_handles --check` pass (1366/166/17). Policy:
 `site-vi-260926-opus-round-2` → `site-vi-260926-opus-round-2b` (2 lượt làm mới hash `sourceFiles`); `baseline.notes` không đổi.
+
+## Audit 260926 — sửa theo ảnh ghép
+
+Nguồn: `agent://AuditTeamLists` (Phase 5). Đo lại trên dev server + ảnh ghép `.cache/design-compare/phase-05{,-dark}/` (Main, MainTable, MobileList, MobileTable, MobileFilters).
+
+| Finding | Trạng thái | Chi tiết |
+|---|---|---|
+| P5-1 thứ tự chip lọc | **đã sửa** | `js/team-filter-section.js` `facetEntries`: sắp theo **số đếm giảm dần**, hòa thì theo nhãn hiển thị tiếng Việt (`localeCompare(…,'vi')`) thay vì giá trị Hán thô. Đo: `/doi-chuan/` `Cung 14 \| Kỵ 5 \| Khiên 4 \| Thương 1` · `Quần 9 \| Thục 5 \| Ngô 4 \| Ngụy 3` (đúng artboard); `/doi-khac/` `Cung 11 \| Khiên 11 \| Kỵ 10 \| Thương 9` · `Ngô 13 \| Thục 11 \| Ngụy 8 \| Hỗn hợp 4 \| Quần 4` · `Meta phe (cũ) 30 \| Giới thiệu 10` — cùng một quy tắc cho hai trang |
+| P5-2 thiếu nhóm "Nhóm"/"Nguồn" | **giữ (D2)** | Dữ liệu Đội chuẩn `subcategoryRaw` rỗng 1366/1366, `source` null 1366/1366 ⇒ không bịa facet rỗng; `/doi-khac/` vẫn có "Nguồn". Đã đính chính câu sai ở §1 bước 2 |
+| P5-3 chip tiền tố `40Y`/`SP`/`CO` | **giữ (D4)** | Chip `nhan-bien-the` là bổ sung của hợp đồng; `tokens.json` → `nhan-bien-the` sửa `artboard` + `note`: artboard in tiền tố là chữ trơn trong tên tướng, không vẽ chip |
+| P5-4 CTA "Chi tiết →" đổi mép | **đã sửa** | `css/styles.css` `.reference-card-foot .ana-link-btn { margin-left: auto }` ở mọi bề rộng. Đo: mọi thẻ (có/không dòng "Sợ") CTA cách mép phải thẻ **19px** @1440 / **15px** @390 trên cả `/doi-chuan/` và `/doi-khac/` |
+| P5-5 tỉ lệ cột bảng | **đã sửa** | Token mới `size.col-250`, `size.col-64` (nguồn MainTable.dc.html, content-box); `thead th.reference-table-team` / `.reference-table-score-head` `box-sizing: content-box; width; padding-inline 18px`. Đo @1440: `286 \| 214 \| 214 \| 219 \| 100` (artboard render `286 \| 214–216 ×3 \| 100`); chiến pháp dài không còn xuống dòng; probe `bang` thêm 2 trạng thái đo `width` |
+| P5-6 cột Điểm căn trái | **đã sửa** | Selector `.reference-view .reference-table .reference-table-score` (0,3,0) vượt `th, td { text-align:left }` (0,2,1); đầu cột `.reference-table-score-head` căn phải; padding 18px như artboard; mobile reset `padding: 0`. Đo: `th`/`td` `textAlign = right` @1440, ô mobile vẫn phải. Đã đính chính câu sai ở §5 |
+| P5-7 nút chiến pháp desktop | **đã sửa** (một phần giữ theo D3) | `.reference-view .reference-holder .t-tactic`: `padding: 0`, `justify-content: flex-start`, `text-align: left` như artboard. **Giữ** `min-height: 26px` trên desktop (vùng bấm ≥ 24px, WCAG 2.5.8 — D3) nên mỗi dòng vẫn cao hơn chữ trơn của artboard vài px; mobile giữ 44px (P5-A2). Probe desktop của `nut-chien-phap` bỏ `padding-left: space.9` (không có token 0) + ghi chú |
+
+Thay đổi chữ: **không có** (chỉ comment trong code; không obligation nào đổi).
+
+Token/component mới: `size.col-250` (`--size-col-250`), `size.col-64` (`--size-col-64`); không có component mới. Probe cập nhật: `nut-chien-phap` (desktop), `bang` (+2 trạng thái cột).
+
+Kiểm chứng: ảnh ghép phase-05 light/dark đã xem (MainTable: đầu bảng + 4 hàng khớp artboard, Điểm căn phải; Main: CTA mép phải, chip xếp theo số đếm); `design-compare --tokens --phase 5` **645/646** light trên tokens đầy đủ trước khi Landing đổi; sau đó (bỏ probe trang `/` đang bị slice Landing sửa) **531/532** light và dark — 1 ngoại lệ đã khai `select-nhan-caps`, 0 lệch chưa giải thích; probe mới `bang` cột Đội/Điểm và `nut-chien-phap` desktop xanh.

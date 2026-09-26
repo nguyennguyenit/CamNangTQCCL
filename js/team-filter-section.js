@@ -269,6 +269,8 @@ export function createSeasonCoexistSection({mount, scenarioLabel = () => COEXIST
   // Nút đang có trong DOM theo nhận diện (scenarioId / khóa nhóm) để bật/tắt `aria-pressed` tại chỗ.
   let scenarioNodes = new Map();
   let groupNodes = new Map();
+  // Dòng tóm tắt nhóm đang chọn (mobile) theo từng hàng phạm vi → các nhóm của hàng đó.
+  let groupNotes = new Map();
 
   function scenarioTitle(scenario) {
     return scenario === COEXIST_UNKNOWN_SCENARIO ? COEXIST_UNKNOWN_LABEL : scenarioLabel(scenario) || COEXIST_UNKNOWN_LABEL;
@@ -297,6 +299,11 @@ export function createSeasonCoexistSection({mount, scenarioLabel = () => COEXIST
   function syncPressed() {
     for (const [scenario, button] of scenarioNodes) button.setAttribute('aria-pressed', String(scenario === selectedScenario));
     for (const [key, button] of groupNodes) button.setAttribute('aria-pressed', String(key === selectedKey));
+    for (const [note, items] of groupNotes) {
+      const text = groupSummary(items.find((item) => item.key === selectedKey));
+      note.textContent = text;
+      note.hidden = !text;
+    }
   }
 
   function paintScenarioRow() {
@@ -313,32 +320,44 @@ export function createSeasonCoexistSection({mount, scenarioLabel = () => COEXIST
     scenarioRow.hidden = scenarios.size < 2;
   }
 
+  /** Tóm tắt đội của nguồn cho một nhóm (cùng chuỗi hiện trong chip). */
+  function groupSummary(item) {
+    return item?.group.content?.summaryRaw || item?.group.content?.summary || '';
+  }
+
+  /**
+   * Desktop: chip nhóm kèm tóm tắt. Mobile (artboard CoexistMobile): một hàng nút số 44px, tóm tắt của
+   * nhóm đang chọn hiện ở dòng ngay dưới hàng (`coexist-group-note`); nhãn nhóm vẫn là tên truy cập của nút.
+   */
   function paintGroupRow() {
     groupNodes = new Map();
+    groupNotes = new Map();
     const current = scenarios.get(selectedScenario) || [];
     chooser.replaceChildren(...COEXIST_SCOPES.map(([classification, label]) => {
       const items = current.filter((item) => (item.group.classification || 'unknown') === classification);
       if (!items.length) return null;
+      const note = el('p', {class: 'coexist-group-note'});
+      groupNotes.set(note, items);
       return el('div', {class: 'coexist-scope-group'}, [
         el('h2', {class: 'coexist-scope-title'}, `${label} (${items.length})`),
-        el('div', {class: 'coexist-group-row', role: 'group', 'aria-label': 'Chọn nhóm Cùng Tồn'}, items.map((item) => {
+        el('div', {class: 'coexist-group-row', role: 'group', 'aria-label': 'Chọn nhóm Cùng Tồn'}, items.map((item, index) => {
+          const summary = groupSummary(item);
           const chip = el('button', {
             type: 'button', class: 'coexist-group-chip', 'aria-pressed': String(item.key === selectedKey),
             dataset: { groupKey: item.key },
             onclick: () => activate(item.scenario, item.key),
           }, [
+            el('span', {class: 'coexist-chip-number', 'aria-hidden': 'true'}, String(index + 1)),
             el('span', {class: 'coexist-chip-label'}, item.group.content?.groupLabel || item.group.groupLabel || 'Nhóm'),
-            item.group.content?.summaryRaw
-              ? el('span', {class: 'coexist-chip-note'}, item.group.content.summaryRaw)
-              : item.group.content?.summary
-                ? el('span', {class: 'coexist-chip-note'}, item.group.content.summary)
-                : null,
+            summary ? el('span', {class: 'coexist-chip-note'}, summary) : null,
           ].filter(Boolean));
           groupNodes.set(item.key, chip);
           return chip;
         })),
+        note,
       ]);
     }).filter(Boolean));
+    syncPressed();
   }
 
   function paintGroupView() {
@@ -445,6 +464,25 @@ export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onN
   season.addEventListener('change',()=>onQuery({season:season.value,detail:null,legacyTeam:null,legacyVariant:null},true));
   category.addEventListener('change',()=>onQuery({category:category.value,detail:null,legacyTeam:null,legacyVariant:null},true));
   toggle.addEventListener('click',()=>setFiltersExpanded(filters.classList.contains('collapsed')));
+  const results = el('div',{class:'reference-results'},[
+    el('div',{class:'reference-toolbar'},[
+      search,
+      toggle,
+      count,
+      el('div',{class:'reference-view-toggle',role:'group','aria-label':'Kiểu hiển thị'},viewButtons),
+    ]),
+    filters,
+    el('div',{class:'reference-results-body'},[notice,view,empty]),
+  ]);
+  // A5: panel lọc mobile đóng bằng Escape và trả focus về nút "Bộ lọc", như menu thả ở header.
+  // Desktop luôn hiện sidebar và nút này bị ẩn (`getClientRects` rỗng) nên Escape không đụng tới.
+  results.addEventListener('keydown',event=>{
+    if (event.key !== 'Escape') return;
+    if (filters.classList.contains('collapsed') || !toggle.getClientRects().length) return;
+    event.preventDefault();
+    setFiltersExpanded(false);
+    toggle.focus({preventScroll:true});
+  });
   mount.replaceChildren(
     el('header',{class:'reference-head'},[
       el('div',{class:'reference-head-text'},[kicker,heading,intro]),
@@ -453,16 +491,7 @@ export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onN
         el('label',{class:'flabel'},['Danh mục',category]),
       ]),
     ]),
-    el('div',{class:'reference-browser'},el('div',{class:'reference-results'},[
-      el('div',{class:'reference-toolbar'},[
-        search,
-        toggle,
-        count,
-        el('div',{class:'reference-view-toggle',role:'group','aria-label':'Kiểu hiển thị'},viewButtons),
-      ]),
-      filters,
-      el('div',{class:'reference-results-body'},[notice,view,empty]),
-    ])),
+    el('div',{class:'reference-browser'},results),
   );
 
   /** Mở/đóng panel lọc mobile; desktop luôn hiện sidebar nên class này vô hại. */
@@ -499,12 +528,13 @@ export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onN
     if ([...season.options].some(option=>option.value===current)) season.value=current;
   }
 
-  // Facet sắp theo thứ tự chữ; giá trị đang chọn vẫn có mặt khi phạm vi hiện tại không đếm được nó.
+  // Facet sắp theo số đếm giảm dần (như artboard), hòa thì theo nhãn hiển thị tiếng Việt;
+  // giá trị đang chọn vẫn có mặt khi phạm vi hiện tại không đếm được nó.
   const facetEntries=(scopeRows,key)=>{
     const counts=new Map();
     for (const row of scopeRows) for (const value of referenceFacetValues(row,key)) counts.set(value,(counts.get(value) || 0)+1);
     for (const value of state.filters?.[key] || []) if (!counts.has(value)) counts.set(value,0);
-    return [...counts].sort(([a],[b])=>a.localeCompare(b));
+    return [...counts].sort(([a,countA],[b,countB])=>countB-countA || chipText(key,a).localeCompare(chipText(key,b),'vi'));
   };
   const chipText=(key,value)=>key==='source'?(SOURCE_LABEL[value] || value):displayLabel(key,value);
 

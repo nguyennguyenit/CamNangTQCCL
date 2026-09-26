@@ -1,7 +1,7 @@
 // Entry trang chi tiết Khai hoang: chỉ đọc nguồn đã pin rồi hiển thị build + hướng dẫn.
 // Không khởi động app gốc và không ghi ngược trạng thái danh sách.
 
-import { applyKhaihoangUnit, el, khaihoangBuildContent, khaihoangGuide } from './render.js';
+import { el, khaihoangBuildContent, khaihoangConfigRow, khaihoangGuide } from './render.js';
 import { detailPanelActions } from './detail-actions.js';
 import { detailBadges } from './recommended-reference-render.js';
 import { validateHttpSourceUrl } from './recommended-reference-state.js';
@@ -123,10 +123,9 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
 
   const applyVariant = (variantId) => {
     const build = variantFor(variantId) || team;
-    applyKhaihoangUnit(mount.unit, build);
     mount.content.replaceChildren(...khaihoangBuildContent(build, true));
     paintHeader(build);
-    if (mount.select) mount.select.value = variantId;
+    for (const chip of mount.chips) chip.setAttribute('aria-pressed', String((chip.dataset.variant || '') === variantId));
   };
 
   /** Đổi cấu hình chỉ thay query `variant` của chính trang, giữ nguyên `from` và phần còn lại. */
@@ -135,26 +134,17 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
     applyVariant(variantId);
   };
 
+  /**
+   * Chọn cấu hình bằng cùng nhóm chip của thẻ danh sách; loại binh của build chỉ hiện một lần ở đầu trang
+   * (`#team-detail-badges`), khối build không lặp lại huy hiệu đó.
+   */
   const buildView = () => {
-    const variants = team.variants || [];
-    const select = variants.length ? el('select', {
-      class: 'kh-variant-select', 'aria-label': `Cấu hình ${team.title}`,
-      onchange: (event) => selectVariant(event.target.value),
-    }, [
-      el('option', {value: ''}, 'Cấu hình mặc định'),
-      ...variants.map((variant, index) => el('option', {value: variant.id}, variant.displayLabel || `Cấu hình ${index + 1}`)),
-    ]) : null;
-    const unit = el('span', {class: 'badge unit'});
-    applyKhaihoangUnit(unit, team);
+    const {row, chips} = khaihoangConfigRow(team, selectVariant);
     const content = el('div', {class: 'kh-build', 'aria-live': 'polite'});
-    const build = el('div', {class: 'kh-detail-build'}, [
-      el('div', {class: 'kh-detail-build-head'}, [unit]),
-      select ? el('label', {class: 'kh-variant-control'}, ['Chọn cấu hình', select]) : null,
-      content,
-    ].filter(Boolean));
+    const build = el('div', {class: 'kh-detail-build'}, [row, content].filter(Boolean));
     // Hướng dẫn thuộc team và nằm ngoài subtree build: đổi cấu hình không dựng lại phần này.
     body.replaceChildren(...[build, khaihoangGuide(team.guide)].filter(Boolean));
-    return {unit, select, content};
+    return {chips, content};
   };
   const ensureMount = () => (mount ??= buildView());
 

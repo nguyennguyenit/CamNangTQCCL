@@ -251,3 +251,24 @@ thêm `7` vào `phaseUsed` để probe `/tra-cuu/` thật sự chạy trong gate
 5. `tests-js/frontend-shell-contract-assertions.mjs`: thêm luật "nút menu thả không được có `aria-haspopup`".
 6. `tests-js/unified-lookup.test.mjs`: hai khẳng định đọc mã nguồn shell cập nhật theo biểu thức `currentMark(...)`
    (biểu thức `aria-current` cũ không còn trong `SiteLayout.astro`).
+
+## Audit 260926 — sửa theo ảnh ghép
+
+Nguồn finding: `agent://AuditChromeLanding` (F1–F10). Soát lại bằng `node scripts/design-compare.mjs --phase 3 [--theme dark] --base http://127.0.0.1:4411` (ảnh ghép `.cache/design-compare/phase-03/`, `phase-03-dark/`) và `--tokens --phase 3` cả hai theme: 136/136 khớp, 0 lệch.
+
+| Finding | Trạng thái | Chi tiết |
+| --- | --- | --- |
+| F1 | đã sửa | Trang trong: `.site-nav` bỏ `margin-left:auto`, nav đứng sát thương hiệu (gap 40 của header), chỉ `.header-actions` (nút sáng/tối) còn bị đẩy phải — đúng `Main.dc.html`. `css/styles.css` khối "Menu thả". Ảnh `phase-03/Main.png`: nav bắt đầu ngay sau brand như artboard. |
+| F2 | đã sửa | `.site-nav-list` gap 4 → 0 ở trang trong (artboard các mục kề nhau, padding 0 14); Landing giữ gap 4 (`LandingMenu.dc.html`). |
+| F3 | đã sửa | Landing: `.site-header-landing .site-nav{margin-left:auto}`, `.site-header-landing .header-actions{margin-left:0; gap:28}` (artboard: nút sáng/tối và CTA là con trực tiếp của header gap 28). Dưới 1280px (nav ẩn) cụm nút lấy lại `margin-left:auto`. Panel "Đội hình" neo lại đúng x artboard (`phase-03/LandingMenu.png`). |
+| F4 | đã sửa (mép trên) · giữ (nhịp mục) | `.site-header-landing .nav-menu{top:calc(100% + var(--space-16))}` → mép trên panel = đáy header 76px như artboard. Nhịp mục 64/59/65 vs 61/57/61 giữ: chênh do line-height token `type.strong` 1.3 / `type.meta` 1.45 (artboard để `normal`); đổi sẽ lệch token dùng chung (D3). |
+| F5 | đã sửa | CTA cuối lớp phủ mobile "Mở Đội chuẩn" thêm mũi tên → 16px (`src/layouts/SiteLayout.astro`, `.header-cta` gap 8 sẵn có). |
+| F6 | đã sửa | Cột footer "Tra cứu" bỏ dòng lặp "Tra cứu"; tiêu đề cột thành link `/tra-cuu/` (`.footer-col-title-link`, màu son như tiêu đề nhóm Tra cứu của menu mobile, Kongming #5). Ô tiêu đề mọi cột cao `control.32` (desktop) / `control.44` (mobile), gap cột 10 → 0, để link tiêu đề đủ vùng bấm mà 4 cột vẫn thẳng hàng. |
+| F7 | giữ | "Fanpage Facebook" / "Máy tính (Windows)": `src/lib/official-links.ts` là nguồn duy nhất cho panel Game + menu + footer; chính artboard không nhất quán (panel Game ghi "Fanpage Facebook"). Nhãn ngắn "Fanpage" của footer mobile là nội dung rút gọn trên mobile → D1. |
+| F8 | đã sửa | Panel "Tra cứu" (Landing desktop) còn 6 mục xếp 3/3; `/tra-cuu/` vẫn tới được qua tiêu đề panel là link (`.nav-menu-title.nav-menu-title-link`, cao `control.44`, chữ `--accent-ink`). |
+| F9 | đã sửa | Footer ≤820: 3 link cộng đồng thành pill (`.footer-community-list`: viền `--band-line`, bo `radius.999`, cao 44, padding 10, chữ `type.small`), xếp flex-wrap gap 8. |
+| F10 | đã sửa | Thêm phụ đề "Liên kết của nhà phát hành" dưới "GAME CHÍNH THỨC" (`.footer-game-subtitle`, `type.meta`, `--band-muted`), chỉ hiện ≤820 như artboard mobile; bỏ `margin-top:-4px` của artboard (giá trị âm không có token) → chênh 4px. |
+
+Chữ thay đổi (`pipeline/site_localization.py`): thêm `ui:layout/footer-game-subtitle` "Liên kết của nhà phát hành" (authored-vi). Không đụng dòng `translate`.
+
+Phụ (dark #2, toàn site): `color-scheme` khai bằng CSS theo `data-theme` (`html[data-theme="light"|"dark"]`), bỏ hai lệnh `style.colorScheme` inline (script đầu trang + `js/site-chrome.js`) để control native luôn theo thuộc tính theme. Chi tiết ở `visual-phase-10.md`.

@@ -59,6 +59,16 @@ export function ratePercentText(value) {
 }
 
 /**
+ * Ẩn mã trích dẫn máy ` (Bahamut bsn=<số>)` ở cuối chuỗi "Cách nhận" khi hiển thị (N8, Kongming ruling).
+ * Chỉ bỏ đúng hậu tố neo cuối, không đụng phần giữa chuỗi, không bao giờ trả chuỗi rỗng. Dữ liệu và
+ * ledger đã review vẫn giữ nguyên chuỗi đầy đủ làm provenance.
+ */
+export function acquisitionDisplayText(text) {
+  const shown = String(text).replace(/ \(Bahamut bsn=\d+\)$/u, "");
+  return shown || String(text);
+}
+
+/**
  * Nhãn Việt của một giá trị `type` chiến pháp, dùng chung cho mọi chỗ hiển thị (bảng, thẻ chiến pháp,
  * thẻ kết quả nhóm hỗn hợp). Giá trị đã Việt hoá giữ nguyên; enum thô không có nhãn bị bỏ (kèm cảnh báo
  * dev) để UI không bao giờ in enum; giá trị khác trả nguyên văn.
@@ -158,7 +168,7 @@ function tacticProfile(corpus, entry) {
   for (const [key, label] of [["cooldown", "Hồi chiêu"], ["maxUsers", "Số người dùng tối đa"], ["pointCost", "Điểm chiến pháp"]]) {
     optionalField(profile, key, lookup[key], label);
   }
-  if (lookup.acquiredFromVi?.length) pushField(profile, "acquiredFromVi", lookup.acquiredFromVi, "Cách nhận", listText(lookup.acquiredFromVi));
+  if (lookup.acquiredFromVi?.length) pushField(profile, "acquiredFromVi", lookup.acquiredFromVi, "Cách nhận", listText(lookup.acquiredFromVi.map(acquisitionDisplayText)));
   optionalField(profile, "conflictsVi", lookup.conflictsVi, "Xung đột");
   for (const id of lookup.inheritedFromIds ?? []) profile.relations.push(relation(corpus, `inheritedFrom:${id}`, "Truyền thừa từ", id, "heroes"));
   profile.conditions = conditions(lookup.conditions);

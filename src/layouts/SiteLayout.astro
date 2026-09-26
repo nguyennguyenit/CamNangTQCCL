@@ -94,6 +94,7 @@ const TOOLS_TITLE = 'Công cụ · Beta';
 const GAME_LABEL = 'Game';
 const GAME_TITLE = 'Game chính thức · liên kết của nhà phát hành';
 const GAME_STRIP_TITLE = 'Game chính thức';
+const GAME_STRIP_SUBTITLE = 'Liên kết của nhà phát hành';
 const COMMUNITY_TITLE = 'Cộng đồng game';
 const DOWNLOAD_TITLE = 'Tải game';
 const UPDATED_LABEL = 'Dữ liệu cập nhật';
@@ -158,7 +159,8 @@ const menus: Menu[] = landing
         key: 'tra-cuu',
         label: SECTIONS[4].label,
         width: 480,
-        sections: [{entries: [lookupEntry, ...lookupEntries], twoColumn: true}],
+        // Tiêu đề panel là link tới /tra-cuu/ (như nhóm Tra cứu của menu mobile) nên danh sách chỉ còn 6 nhóm.
+        sections: [{title: SECTIONS[4].label, titleHref: SECTIONS[4].path, entries: lookupEntries, twoColumn: true}],
       },
       {key: 'cong-cu', label: TOOLS_LABEL, beta: true, width: 340, sections: [toolsMenuSection]},
       {key: 'game', label: GAME_LABEL, width: 500, sections: gameMenuSections},
@@ -178,7 +180,7 @@ const mobileGroups: MenuSection[] = [
 ];
 const footerColumns: MenuSection[] = [
   {title: FIGURES_LABEL, entries: [sectionEntry(SECTIONS[0]), sectionEntry(SECTIONS[1]), sectionEntry(SECTIONS[2]), sectionEntry(SECTIONS[3])].map((entry) => ({...entry, description: undefined}))},
-  {title: SECTIONS[4].label, entries: [lookupEntry, ...lookupEntries].map((entry) => ({...entry, description: undefined}))},
+  {title: SECTIONS[4].label, titleHref: SECTIONS[4].path, entries: lookupEntries.map((entry) => ({...entry, description: undefined}))},
   {title: TOOLS_TITLE, entries: toolSections.map(sectionEntry).map((entry) => ({...entry, description: undefined, beta: undefined}))},
   {title: ABOUT_LABEL, entries: [{label: FOOTER_SOURCE_LABEL, href: DATA_SOURCE_HREF}]},
 ];
@@ -226,7 +228,6 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
           }
         }
         document.documentElement.dataset.theme = theme;
-        document.documentElement.style.colorScheme = theme;
       })();
     </script>
     <link rel="stylesheet" href="/css/styles.css" />
@@ -269,7 +270,11 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
                 <div id={`nav-menu-${menu.key}`} class="nav-menu" style={`--nav-menu-width: ${menu.width}px`} data-dropdown-panel hidden>
                   {menu.sections.map((section) => (
                     <>
-                      {section.title ? <p class="nav-menu-title">{section.title}</p> : null}
+                      {section.title
+                        ? section.titleHref
+                          ? <a class="nav-menu-title nav-menu-title-link" href={section.titleHref}>{section.title}</a>
+                          : <p class="nav-menu-title">{section.title}</p>
+                        : null}
                       <ul class:list={['nav-menu-list', {chips: section.chips, columns: section.twoColumn}]}>
                         {section.entries.map((entry) => (
                           <li>
@@ -349,7 +354,7 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
         ))}
         <a class="site-menu-about" href={DATA_SOURCE_HREF}>{MENU_ABOUT_LABEL}</a>
       </nav>
-      <div class="site-menu-cta"><a class="header-cta" href="/doi-chuan/">{OPEN_GUIDE_MOBILE_LABEL}</a></div>
+      <div class="site-menu-cta"><a class="header-cta" href="/doi-chuan/">{OPEN_GUIDE_MOBILE_LABEL}<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></a></div>
     </div>
 
     <slot name="notice" />
@@ -370,7 +375,7 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
         </div>
         {footerColumns.map((column) => (
           <nav class="footer-col" aria-label={column.title}>
-            <h2 class="footer-col-title">{column.title}</h2>
+            <h2 class="footer-col-title">{column.titleHref ? <a class="footer-col-title-link" href={column.titleHref}>{column.title}</a> : column.title}</h2>
             <ul class="footer-col-list">
               {column.entries.map((entry) => (
                 <li><a class="footer-link" href={entry.href}>{entry.label}</a></li>
@@ -381,6 +386,7 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
       </div>
       <nav class="footer-game" aria-label={GAME_STRIP_TITLE}>
         <h2 class="footer-game-title">{GAME_STRIP_TITLE}</h2>
+        <p class="footer-game-subtitle">{GAME_STRIP_SUBTITLE}</p>
         <ul class="footer-game-list">
           {OFFICIAL_LINKS.map((entry) => (
             <li><a class="footer-link" href={entry.href} target={entry.external ? '_blank' : null} rel={entry.external ? EXTERNAL_REL : null}>{entry.label}<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"></path><path d="M20 4l-9 9"></path></svg>{entry.external ? <span class="visually-hidden">(mở tab mới)</span> : null}</a></li>
@@ -388,7 +394,7 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
           <li><a class="footer-link" href={DOWNLOAD_HREF}>{DOWNLOAD_TITLE}</a></li>
         </ul>
         <span class="footer-game-divider" aria-hidden="true"></span>
-        <ul class="footer-game-list">
+        <ul class="footer-game-list footer-community-list">
           {COMMUNITY_LINKS.map((entry) => (
             <li><a class="footer-link" href={entry.href} target={entry.external ? '_blank' : null} rel={entry.external ? EXTERNAL_REL : null}>{entry.label}<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"></path><path d="M20 4l-9 9"></path></svg>{entry.external ? <span class="visually-hidden">(mở tab mới)</span> : null}</a></li>
           ))}

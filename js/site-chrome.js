@@ -40,7 +40,6 @@ export function initSiteChrome({documentTarget = document, windowTarget = global
   const toggles = [...documentTarget.querySelectorAll('[data-theme-toggle]')];
   const applyTheme = (theme) => {
     root.dataset.theme = theme;
-    root.style.colorScheme = theme;
     const dark = theme === 'dark';
     for (const toggle of toggles) {
       toggle.setAttribute('aria-pressed', String(dark));

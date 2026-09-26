@@ -691,6 +691,14 @@ test("built dist is allowlisted and every emitted asset is byte-identical", asyn
   // Panel menu thả là danh sách link (disclosure) nên không khai aria-haspopup.
   assert.doesNotMatch(landing, /aria-haspopup/);
   assert.doesNotMatch(html, /aria-haspopup/);
+  // Nguồn gốc QR (lệnh sinh + phiên bản qrcode) phải ra dist trong comment ngay đầu SVG;
+  // frontmatter của DownloadQr.astro không được build xuất ra nên không tính.
+  const qrProvenance = landing.match(/class="landing-qr-frame"[^>]*>\s*<svg\b[^>]*>\s*<!--([\s\S]*?)-->/)?.[1] ?? "";
+  assert.ok(
+    qrProvenance.includes('npx --yes qrcode@1.5.4 -t svg "https://tqccl.onelink.me/qmz6/qifw0r4t?af_qr=true"'),
+    "QR SVG in dist/index.html lacks the generation command comment",
+  );
+  assert.match(qrProvenance, /qrcode@1\.5\.4/);
   // Bộ lọc điểm đã bỏ từ Phase 5: mô tả /doi-chuan/ không còn nhắc "điểm".
   assert.match(html, /<meta name="description" content="Danh sách đội hình Đội chuẩn theo dữ liệu SGSDeck Recommended, lọc theo phe, loại binh và mùa nguồn\."/);
 });

@@ -324,7 +324,7 @@ test('index.json không được tải khi chưa mở hồ sơ, chỉ tải số
 
   await firstResult(page).click();
   await expect(page.getByRole('dialog')).toBeVisible();
-  await expect.poll(() => requested.length, { timeout: 15_000 }).toBeGreaterThan(0);
+  await expect.poll(() => requested.includes('hero-summaries.json'), { timeout: 15_000 }).toBe(true);
   expect(requested).toContain('manifest.json');
   expect(requested).toContain('hero-summaries.json');
   expect(requested).not.toContain('index.json');
@@ -388,10 +388,14 @@ test('số liệu Trong cẩm nang của SP Lữ Mông khớp phép đếm độ
     await expect(tacticRows.nth(index).locator('.cam-nang-bar-label')).toHaveText(name);
     await expect(tacticRows.nth(index).locator('.cam-nang-bar-value')).toHaveText(String(teams));
   }
+  // Vị trí xếp theo số đội giảm dần (hoà giữ thứ tự Chủ tướng → Phó tướng 1 → Phó tướng 2).
+  const positionLabels = ['Chủ tướng', 'Phó tướng 1', 'Phó tướng 2'];
+  const rankedPositions = positions.map((count, index) => [positionLabels[index], count]).sort((a, b) => b[1] - a[1]);
   const positionRows = lookup(page).locator('.cam-nang-card').first().locator('.cam-nang-bar');
-  await expect(positionRows.nth(0).locator('.cam-nang-bar-value')).toHaveText(String(positions[0]));
-  await expect(positionRows.nth(1).locator('.cam-nang-bar-value')).toHaveText(String(positions[1]));
-  await expect(positionRows.nth(2).locator('.cam-nang-bar-value')).toHaveText(String(positions[2]));
+  for (const [index, [label, count]] of rankedPositions.entries()) {
+    await expect(positionRows.nth(index).locator('.cam-nang-bar-label')).toHaveText(label);
+    await expect(positionRows.nth(index).locator('.cam-nang-bar-value')).toHaveText(String(count));
+  }
   // Không có phần tử nào lộ khóa thô kiểu `bonusVi:`.
   // Đội tiêu biểu phải theo đúng thứ tự nguồn đã phát (điểm giảm dần rồi thứ tự bản ghi).
   const ranked = [...representative].sort((a, b) => (a.score === null) - (b.score === null) || (b.score ?? 0) - (a.score ?? 0)
@@ -616,7 +620,7 @@ const tokenValue = (page, name) => page.evaluate((key) =>
   getComputedStyle(document.documentElement).getPropertyValue(key).trim(), name);
 
 test('bảng chiến pháp: cột đúng artboard, đầu bảng một dòng, không ô nào tràn khung', async ({ page }) => {
-  // Bề rộng cột của artboard LookupTactics; cột tên nhận phần còn lại.
+  // Bề rộng nội dung (content-box, như artboard LookupTactics khai) của các cột; cột tên nhận phần còn lại.
   const declared = [60, 120, 230, 200, 80];
   for (const width of [1440, 1024]) {
     await page.setViewportSize({ width, height: 900 });
@@ -624,8 +628,13 @@ test('bảng chiến pháp: cột đúng artboard, đầu bảng một dòng, kh
     await expect(lookup(page).locator('.lookup-table tbody tr').first()).toBeVisible();
     const headers = lookup(page).locator('.lookup-table thead th');
     for (const [index, expected] of declared.entries()) {
-      const box = await headers.nth(index + 1).boundingBox();
-      expect(Math.abs(box.width - expected)).toBeLessThanOrEqual(2);
+      const contentWidth = await headers.nth(index + 1).evaluate((node) => {
+        const style = getComputedStyle(node);
+        return node.getBoundingClientRect().width
+          - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight)
+          - parseFloat(style.borderLeftWidth) - parseFloat(style.borderRightWidth);
+      });
+      expect(Math.abs(contentWidth - expected)).toBeLessThanOrEqual(2);
       expect(await lineBoxes(headers.nth(index + 1))).toBe(1);
     }
     expect(await lineBoxes(headers.nth(0))).toBe(1);
@@ -651,14 +660,22 @@ test('tỷ lệ kích hoạt trong bảng và hồ sơ không lộ số thập p
     expect(text).toMatch(/^(—|\d+(?:\.\d)?%)$/);
     if (text !== '—') expect(Number.parseFloat(text)).toBeLessThanOrEqual(100);
   }
-  // Dữ liệu lỗi khoảng (activationRate 50) hiện gạch ngang, không in "Đá: null"/"5000%".
+  // Thiên Uy Khiếu Trận: nguồn ghi 50 (thang phần trăm), pipeline hiệu chỉnh đã review thành 0.5 → hiện 50%.
+  // Nhánh gạch ngang cho giá trị ngoài 0–1 vẫn được unit test ratePercentText (50 / −1) phủ.
   await page.goto('/tra-cuu/?group=tactics&id=tactic%3Athien-uy-khieu-tran');
   const dialog = page.getByRole('dialog');
   await expect(dialog).toContainText('Tỷ lệ kích hoạt');
   const profile = await dialog.textContent();
   expect(profile).not.toMatch(/\d\.\d{6,}/);
   expect(profile).not.toContain('5000');
-  await expect(dialog.locator('.lookup-fact', { hasText: 'Tỷ lệ kích hoạt' }).first()).toContainText('—');
+  await expect(dialog.locator('.lookup-fact', { hasText: 'Tỷ lệ kích hoạt' }).first()).toContainText('50%');
+});
+
+test('cách nhận hiện tên sự kiện, ẩn mã trích dẫn bsn của nguồn', async ({ page }) => {
+  await page.goto('/tra-cuu/?group=tactics&id=tactic%3Akien-cuong-chi-hoa');
+  const fact = page.getByRole('dialog').locator('.lookup-fact', { hasText: 'Cách nhận' }).first();
+  await expect(fact).toContainText('Sự kiện liên động Chân Tam Quốc Vô Song máy chủ Đài Loan');
+  expect(await fact.textContent()).not.toContain('bsn=');
 });
 
 test('chi phí công trình không in null hay khóa thô, ô rỗng bị bỏ hẳn', async ({ page }) => {

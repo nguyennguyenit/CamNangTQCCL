@@ -85,7 +85,7 @@ Riêng **số thứ tự chiến pháp** lần đo đầu chỉ đạt 7,23 / **
 
 | Chỗ | Artboard | Thực tế | Lý do |
 |---|---|---|---|
-| Nhãn panel và số điểm | nhãn caps **bên trái**, số **bên phải** cùng hàng | nhãn caps **trên**, số dưới | Bố cục một cột đọc tốt ở 320-1440 và không cần bảng hai cột; đây là **lệch có chủ đích** (Kongming: nonblocking, phải ghi rõ trong báo cáo) |
+| Nhãn panel và số điểm | nhãn caps **bên trái**, số **bên phải** cùng hàng | nhãn caps **trên**, số dưới | Bố cục một cột đọc tốt ở 320-1440 và không cần bảng hai cột; đây là **lệch có chủ đích** (Kongming: nonblocking, phải ghi rõ trong báo cáo). Riêng khối nhãn ("Điểm nguồn" rồi "theo SGSDeck") đã xếp **dọc, cách 6px** đúng artboard từ vòng audit 260926 (P6-1) |
 | Số điểm trong panel | chỉ số 64px, nhãn caps lo nghĩa | `120` + đơn vị "điểm" | Hợp đồng render `.detail-score` đã khóa từ Phase 2 (`"{value} điểm"`); đơn vị là chữ dữ liệu, không bịa |
 | Huy hiệu phe/loại binh | 30px/13px, padding 0 12px | component `badge-phe`/`badge-binh` (28/24px, 11/9px) | Chuẩn component StyleGuide (tiền lệ Phase 5: nhãn caps 11px thắng artboard) |
 | Nhãn caps ("Điểm nguồn", "Chiến pháp", "Binh thư") | 11/600/0.1em | `type.field-caps` 11/600/0.12em | Một vai trò caps dùng chung toàn site |
@@ -180,9 +180,15 @@ Mỗi theme: **1 ảnh ghép cạnh artboard** (TeamDetail @1440) + **5 ảnh ch
 Hai chỗ lệch bố cục đã **sửa trong lượt này**: (1) vỏ bài viết còn class `season-config-detail` nên toàn trang
 bị bọc trong thẻ panel → bỏ class, thêm rule padding `32/48/56` cho `main.layout` của trang chi tiết và gỡ
 `max-width: 64rem`; (2) panel của Đội khác/Khai hoang là ô trống 340px chỉ có một nút → co theo nội dung
-(`width: max-content`, padding 16px) và cập nhật probe `panel-diem` cho trạng thái không điểm.
+(xem đính chính bên dưới) và cập nhật probe `panel-diem` cho trạng thái không điểm.
 
-Kiểm thêm bằng đo trực tiếp (Chromium thật): `scrollWidth == innerWidth` ở 320/390/1440 trên cả ba họ trang, **Đính chính P06-R1 (vòng round 3):** phép kiểm `scrollWidth` chỉ chạy trên `gia-cat-khac-sp-ma-sieu-phap-chinh` (nguồn ngắn) nên **đã bỏ sót P06-B1** — panel hành động có thể rộng hơn cột và tràn ra ngoài mép **trái**, mà tràn sang trái thì `scrollWidth` không phát hiện được. Panel nay là `width: fit-content; max-width: 100%; min-width: 0` (con của hàng hành động và ô dự phòng cũng có `max-width: 100%; min-width: 0`), và phạm vi kiểm là **cả 17** trang `/khai-hoang/<slug>/` ở 1440/390/320 cộng ca clipboard bị từ chối, kiểm bằng e2e thường trực trong `khaihoang-options.spec.mjs`;
+Kiểm thêm bằng đo trực tiếp (Chromium thật) ở 320/390/1440 trên cả ba họ trang.
+**Đính chính P06-R1 (vòng round 3):** hai chỗ ở bản trước là **sai** và đã bị thay: (a) `width: max-content`
+không còn dùng nữa — panel nay là `width: fit-content; max-width: 100%; min-width: 0` (con của hàng hành động và
+ô dự phòng cũng có `max-width: 100%; min-width: 0`); (b) phép kiểm `scrollWidth == innerWidth` chỉ chạy trên
+`gia-cat-khac-sp-ma-sieu-phap-chinh` (nguồn ngắn) nên **đã bỏ sót P06-B1** — panel hành động có thể rộng hơn cột
+và tràn ra ngoài mép **trái**, mà tràn sang trái thì `scrollWidth` không phát hiện được. Phạm vi kiểm nay là
+**cả 17** trang `/khai-hoang/<slug>/` ở 1440/390/320 cộng ca clipboard bị từ chối, kiểm bằng e2e th…
 0 lỗi console/pageerror.
 
 ## 9. Rủi ro còn lại / việc của phase sau
@@ -248,3 +254,16 @@ feat(teams): rebuild the three team detail pages on the TeamDetail frame
 Generation: `9e1a982a…` → `ac620801…` (sau lượt sửa 5/6/9/10) → **`27d82121c65bf5443fbe1a1745acab271e8d6f96b1747a83aefba6b282e31cac`** (sau lượt sửa
 `js/roster-recommend-ui.js`), manifest `ef994027575931e2`; re-pin `pipeline/team-route-handles.json` + `team_route_handles --check` pass (1366/166/17). Policy:
 `site-vi-260926-opus-round-2` → `site-vi-260926-opus-round-2b` (2 lượt làm mới hash `sourceFiles`); `baseline.notes` không đổi.
+
+## Audit 260926 — sửa theo ảnh ghép
+
+Nguồn: `agent://AuditTeamLists` (Phase 6). Ảnh ghép `.cache/design-compare/phase-06{,-dark}/` đã chụp lại và xem vùng panel điểm.
+
+| Finding | Trạng thái | Chi tiết |
+|---|---|---|
+| P6-1 nhãn panel điểm cùng hàng | **đã sửa** | `css/styles.css` `.detail-panel-label`: `flex-direction: column; gap: var(--space-6)` (bỏ `flex-wrap`/`align-items: baseline`) theo `TeamDetail.dc.html:53`. Đo `/doi-chuan/pk-s24-thai-su-cung/`: "Điểm nguồn" y=209 → "theo SGSDeck" y=228, cùng x, khoảng cách **6px** ở 1440 và 390. Dòng "Nhãn panel và số điểm" trong mục Lệch có chủ đích đã bổ sung |
+| P6-2, P6-3 (Khai hoang chi tiết) | **đã sửa** (slice Khai hoang) | Chi tiết + bằng chứng ở `visual-phase-08.md` § "Audit 260926 — sửa theo ảnh ghép": bỏ huy hiệu loại binh lặp trong khối build (chỉ còn ở `#team-detail-badges`), `<select>` cấu hình thay bằng nhóm chip `.kh-config-row` dùng chung với thẻ danh sách |
+
+Thay đổi chữ: **không có**. Token/component mới: không có (dùng `space.6` sẵn có).
+
+Kiểm chứng: `design-compare --tokens --phase 6` **374/374** light và dark (chạy trên bản sao `tokens.json` bỏ các probe trang `/` vì Landing đang được slice khác sửa — probe `#dau-trang .landing-preview-card .badge.faction` timeout, không thuộc Phase 6); phase 5 tương tự **531/532** cả hai theme (1 ngoại lệ đã khai `select-nhan-caps`).

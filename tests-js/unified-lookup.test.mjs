@@ -10,7 +10,7 @@ import {
   buildLookupCorpus,
   searchLookupGroup,
 } from "../js/unified-lookup.js";
-import { lookupProfile } from "../js/lookup-detail.js";
+import { lookupProfile, acquisitionDisplayText } from "../js/lookup-detail.js";
 import { resolveLegacyRoute } from "../js/legacy-routes.js";
 import { readFile } from "node:fs/promises";
 
@@ -641,6 +641,47 @@ test("tỷ lệ kích hoạt là phần trăm; giá trị ngoài 0–1 không in
   assert.ok(warned.some((line) => line.includes("ngoài khoảng 0–1")), "tỷ lệ sai khoảng phải được cảnh báo cho dev");
 });
 
+const BAHAMUT_ACQUISITION = "Sự kiện liên động Chân Tam Quốc Vô Song máy chủ Đài Loan (Bahamut bsn=36815)";
+
+test("cách nhận ẩn đúng hậu tố trích dẫn Bahamut ở cuối, không đụng phần khác", () => {
+  assert.equal(acquisitionDisplayText(BAHAMUT_ACQUISITION), "Sự kiện liên động Chân Tam Quốc Vô Song máy chủ Đài Loan");
+  for (const plain of ["Truyền thừa", "Chư Hầu Thảo Đổng", "Sự kiện (Bahamut) cuối"]) {
+    assert.equal(acquisitionDisplayText(plain), plain);
+  }
+  const middle = "Sự kiện (Bahamut bsn=36815) rồi đổi thưởng";
+  assert.equal(acquisitionDisplayText(middle), middle);
+  // Chuỗi chỉ gồm trích dẫn không bị biến thành rỗng.
+  assert.equal(acquisitionDisplayText(" (Bahamut bsn=36815)"), " (Bahamut bsn=36815)");
+});
+
+test("ẩn trích dẫn chỉ ở phần hiển thị: field.value giữ nguyên chuỗi đầy đủ", () => {
+  const raw = [BAHAMUT_ACQUISITION, "Truyền thừa"];
+  const built = buildLookupCorpus({
+    heroes: [HERO_UI],
+    tactics: [tactic("tactic:lien-dong", "Liên Động", { lookup: { acquiredFromVi: raw } })],
+    catalog: CATALOG,
+  });
+  const field = fieldByKey(lookupProfile(built, "tactic:lien-dong"), "acquiredFromVi");
+  assert.deepEqual(field.value, raw);
+  assert.equal(field.textVi, "Sự kiện liên động Chân Tam Quốc Vô Song máy chủ Đài Loan, Truyền thừa");
+  assert.doesNotMatch(field.textVi, /bsn=/);
+});
+
+test("cách nhận của mọi chiến pháp đã công bố không lộ mã trích dẫn bsn", async () => {
+  const [heroes, tactics, catalog] = await Promise.all(
+    ["heroes-dict", "tactics", "lookup-catalog"].map(async (name) => JSON.parse(await readFile(new URL(`../data/${name}.json`, import.meta.url), "utf8"))),
+  );
+  const built = buildLookupCorpus({ heroes, tactics, catalog });
+  let checked = 0;
+  for (const row of tactics) {
+    const field = fieldByKey(lookupProfile(built, row.id), "acquiredFromVi");
+    if (!field) continue;
+    checked += 1;
+    assert.doesNotMatch(field.textVi, /bsn=\d+/, row.id);
+  }
+  assert.ok(checked > 0, "dữ liệu thật phải có chiến pháp mang cách nhận");
+});
+
 test("chi phí công trình bỏ ô rỗng và khóa không nhãn, không in null hay khóa thô", () => {
   const warned = [];
   const original = console.warn;
@@ -693,9 +734,9 @@ test("khối Trong cẩm nang gộp vị trí hai họ, giữ trần 3 mục và
       { family: "other", name: "Mông Tốn Túc", seasonLabel: "", score: null, position: 0, legacyTeamId: "team-intro-4", legacyVariantId: "v-1" },
     ],
   });
-  assert.deepEqual(view.positions.map((row) => [row.label, row.count]), [["Chủ tướng", 2], ["Phó tướng 1", 11], ["Phó tướng 2", 42]]);
-  assert.equal(view.positions[2].percent, 100);
-  assert.equal(view.positions[0].percent, 5);
+  assert.deepEqual(view.positions.map((row) => [row.label, row.count]), [["Phó tướng 2", 42], ["Phó tướng 1", 11], ["Chủ tướng", 2]]);
+  assert.equal(view.positions[0].percent, 100);
+  assert.equal(view.positions[2].percent, 5);
   assert.deepEqual(POSITION_LABELS, ["Chủ tướng", "Phó tướng 1", "Phó tướng 2"]);
   assert.deepEqual(view.representative.map((team) => team.positionLabel), ["Phó tướng 2", "Chủ tướng"]);
   assert.equal(camNangView(null), null);

@@ -314,6 +314,213 @@ Không mở lại các quyết định đóng băng: **không** thêm listener `
 | N5 | Bảng số probe token theo phase ở §2 đã cũ | Cập nhật theo số mới: 03 **136**, 04 **720**, 05 **631/632**, 06 **400**, 07 **520**, 08 **589/590**, 09 chỉ 2 ngoại lệ đã khai, 10 **295** | Khối Gate ở trên |
 | N8-1 (từ vòng 8/9) | Theme tối: chip/nút đang chọn dùng `--band` gần bằng nền trang nên phản hồi thị giác yếu | **Chưa sửa** — cần quyết định bảng màu tối | Số đo: `--band #0F0E0B` trên nền `#16140F` ≈ 1,07:1, trên chip chưa chọn `#2A2620` ≈ 1,35:1; tương phản **chữ** vẫn đạt nên không phải lỗi A4 |
 
+## § Nit round (2026-09-26) — vòng sửa các nit còn lại
+
+Vòng này sửa trọn 6 nhóm nit của các vòng review trước. Hai quyết định thiết kế/dữ liệu được **Kongming phán quyết**
+(agent `NitFix`), và vòng này làm đúng nguyên văn phán quyết đó.
+
+### N8-1 — trạng thái "đang chọn" và nút chính ở theme tối
+
+**Nguyên nhân gốc:** các rule trạng thái chọn mượn `--band` (màu **dải header** theo artboard, `renderVals dark[8]`),
+nên ở theme tối nền chip chỉ 1,05:1 với nền trang và 1,28:1 với chip chưa chọn. (Số của vòng review trước ghi 1,07 và
+1,35 — Kongming đính chính thành **1,05** và **1,28**; `--band-ink` trên `--band` tối là 15,54:1.)
+
+**Phán quyết (theo đúng nguyên văn):** thêm **họ token ngữ nghĩa `--select*`**, tách khỏi `--band`; bản sáng giữ đúng
+giá trị cũ nên **theme sáng không đổi pixel**; bản tối **đảo mực/giấy** như cách theme sáng đang làm. Không chọn
+phương án viền (nền vẫn 1,05:1) và không đổi `--band` ở theme tối (giá trị artboard đã chốt cho khung trang).
+
+| Token | Sáng (= token cũ) | Tối |
+| --- | --- | --- |
+| `--select` | `#1C1A17` (= `--band`) | `#EDE6D8` |
+| `--select-ink` | `#F3EEE3` (= `--band-ink`) | `#16140F` |
+| `--select-ink-2` | `#CFC6B6` (= `--nav-idle`) | `#3A352D` |
+| `--select-muted` | `#A99F8E` (= `--band-muted`) | `#5F5A50` |
+| `--select-hover` | `#2B2722` (= `--band-active`) | `#CFC6B6` |
+| `--f-nguy-select` / `--f-thuc-select` / `--f-ngo-select` | `#1F3A93` / `#1F7A4D` / `#B8232C` | giống bản sáng |
+| `--f-quan-select` / `--f-honhop-select` | `#B08422` / `#6B45A0` | `#8A6D1F` / `#6B45A0` |
+
+Chấm phe phải có bậc màu riêng: ở theme tối nền chọn là giấy sáng nên chấm phe của bảng tối (`#4F74D6` 3,52:1,
+`#5FCE95` 1,57:1, `#E0B95E`… 1,51:1) gần như mất; bậc "giấy" đạt 8,11 / 4,28 / 5,10 / 3,94 / 5,67. Quần có giá trị
+tối riêng vì `#B08422` trên giấy chỉ 2,74:1.
+
+**Đo trên DOM thật (theme tối, 390 và 1440, `/cung-ton/`, `/khai-hoang/`, `/doi-chuan/`, `/tra-cuu/`, `/goi-y-doi/`
+cộng `/soi-doi/`, `/chieu-mo/`, một trang chi tiết Đội chuẩn):**
+
+| Cặp đo | Số | Ngưỡng |
+| --- | --- | --- |
+| nền `.coexist-group-chip[aria-pressed=true]` `rgb(237,230,216)` trên nền trang `rgb(22,20,15)` | **14,82:1** | 1.4.11 ≥ 3 |
+| như trên, so với chip chưa chọn `rgb(32,29,24)` | **13,53:1** | ≥ 3 |
+| nền `.kh-config-chip[aria-pressed=true]` / `.view-btn[aria-pressed=true]` so với chip chưa chọn `rgb(42,38,32)` | **12,11:1** | ≥ 3 |
+| chữ trên nền chọn `rgb(22,20,15)` / `rgb(237,230,216)` | **14,82:1** | 1.4.3 ≥ 4,5 |
+| `.coexist-chip-note` (`--select-ink-2`) trên nền chọn | **9,79:1** | ≥ 4,5 |
+| `.fchip-count` (`--select-muted`) trên nền chọn | **5,52:1** | ≥ 4,5 |
+| dấu ✓ (`.fchip-check::after`) trên nền ô ✓ | **14,82:1** | ≥ 4,5 |
+| viên `.lookup-chip[aria-pressed=true]` @390 và số đếm | **14,82:1** | ≥ 4,5 |
+| hover nút chính `rgb(207,198,182)` trên nền trang và chữ trên nó | **10,87:1** | ≥ 3 / ≥ 4,5 |
+| chấm phe trên chip đang chọn (Ngụy · Thục · Ngô · Quần) | **8,11 · 4,28 · 5,10 · 3,94** | mục tiêu thiết kế ≥ 3 |
+
+Chấm Hỗn hợp không đo được trên `/doi-chuan/` vì dữ liệu trang không có chip phe Hỗn hợp; token và probe dùng ca
+Thục nên giá trị vẫn được khoá trong `tokens.json`.
+
+**Chứng minh phép đo phân biệt được (trước/sau):** ghi đè tạm `--select:#0F0E0B; --select-ink:#EDE6D8` trong trình
+duyệt (không sửa file) rồi đo lại `.coexist-group-chip[aria-pressed=true]`: nền `rgb(15,14,11)` /
+nền trang = **1,05:1** và so với chip chưa chọn = **1,15:1** ⇒ test mới **đỏ**; với token mới là **14,82 / 13,53**
+⇒ xanh. Đây là bằng chứng "failing-before" của test, không phải suy luận.
+
+**Theme sáng (bắt buộc giống từng pixel):** giá trị sáng của 10 token mới **bằng đúng** giá trị token cũ
+(`select`=`band`, `select-ink`=`band-ink`, `select-ink-2`=`nav-idle`, `select-muted`=`band-muted`,
+`select-hover`=`band-active`, `f-*-select` sáng = `f-*` sáng); đo lại trên DOM thấy đúng các giá trị cũ —
+nền chip `rgb(28,26,23)`, chữ `rgb(243,238,227)`, số đếm `rgb(169,159,142)`, hover `rgb(207,198,182)`, chấm phe
+`rgb(31,58,147)` / `rgb(31,122,77)` / `rgb(184,35,44)` / `rgb(176,132,34)`. Không đổi hình học, viền hay box-shadow.
+Ảnh đối chiếu: `cung-ton`/`doi-chuan`/`goi-y-doi` 1440 sáng và tối (xem `.cache/design-compare`, không commit).
+
+**Không đổi theo phán quyết:** `--band` và mọi bề mặt khung trang (header, nav, menu, hero, CTA, footer),
+`.badge.badge-band` (nhãn tĩnh, 1.4.11 không áp dụng), `.filter-count` (bong bóng tự có nền `--nav-underline`),
+và tab Tra cứu **desktop** (vẫn "mực trên giấy + gạch chân son"; test tương phản chữ của nó đã có sẵn).
+
+**Probe:** 14 mục `probes` trỏ lại `color.light.band*` → `color.light.select*`, `nut-chinh.styles` trỏ lại tương tự,
+thêm 5 probe mới (`.fchip-count`, `.fchip-check`, `.coexist-chip-note`, số đếm viên Tra cứu mobile, và hai probe
+`::before` của chip phe đang bật nay khoá thêm `color.faction.thuc-select`). Không khai `exceptions` mới.
+
+### N9-5 — đổi Mùa thì reset widget Turnstile
+
+`setSeasonScope` của Soi đội (`js/analyze.js`) và Gợi ý đội (`js/roster-recommend-ui.js`) bỏ token nhưng không gọi
+`turnstile.reset`, nên widget vẫn hiện "đã xác thực" mà không còn token và nút chạy khoá tới khi widget hết hạn.
+Nay cả hai gọi `window.turnstile.reset(tsBox)` với **đúng guard** của lần reset sau khi chạy
+(`turnstileRendered`/`window.turnstile`); token dùng một lần và các guard theo `generation` giữ nguyên. Lượt gọi
+`{initial:true}` lúc boot là no-op an toàn (widget render lazy). e2e `beta-tools.spec.mjs`: stub Turnstile ghi lại
+lần reset và **chỉ cấp token mới sau khi widget được reset**, thêm 2 ca (Soi đội, Gợi ý đội) đòi đúng 3 lần reset và
+token thứ hai thực sự tới Worker; ca Gợi ý đội kiểm thông báo "Xác thực Turnstile trước." + Worker không được gọi
+(nút của công cụ này không bị `disabled`, khác Soi đội).
+
+### N4-1 — bảng xem trước của Landing ở bề rộng hẹp
+
+Ở ≤820 (khối mobile của Landing; `LandingMobile` **không vẽ bảng** nên đây vẫn là ngoại lệ đã khai) bảng xếp dọc
+theo `MobileTable`: `min-width: 0`, `tr` là grid `minmax(0,1fr) auto`, **điểm nằm góc phải hàng 1**, vạch ngăn
+chuyển từ ô sang hàng. Không còn cuộn ngang *bên trong khung* nên không cần gợi ý cuộn, và `scrollWidth` trang vẫn
+≤ 320/390. e2e `landing.spec.mjs`: **thay** khẳng định cũ "vùng bảng cuộn riêng ở 390" (nay sai theo thiết kế) bằng
+4 khẳng định ở 390 **và** 320: không cuộn trong khung, mép điểm nằm trong khung, điểm cùng hàng với tên đội, và
+vẫn in đúng điểm.
+
+### N4-2 — nguồn gốc mã QR phải ra `dist`
+
+Lệnh sinh + phiên bản `qrcode@1.5.4` nằm ở frontmatter `DownloadQr.astro` nên **không** vào `dist/index.html`.
+Nay chúng là một comment HTML **ngay sau thẻ `<svg>`** (chỉ còn **một** bản, frontmatter chỉ còn câu trỏ tới).
+`bytes` của SVG không đổi (`viewBox`, thuộc tính, path giữ nguyên). `tests-js/astro-dist-contract.test.mjs` thêm
+khẳng định đọc `dist/index.html` và đòi comment nằm **trong** `<svg>` của `.landing-qr-frame`; đã kiểm nó **đỏ**
+trên `dist` cũ và **xanh** sau khi sửa (Astro build thật; tiền lệ comment đi vào `dist` là các comment của
+`src/pages/doi-khac/[team].astro`). `npm run test:dist` 28/28.
+
+### N5-2 — cột nhãn vai trò của hàng tướng mobile (đây là **lỗi thật**, không chỉ lệch 8px)
+
+`var(--space-38)` được dùng ở `css/styles.css` nhưng **chưa từng được khai** ở đâu: `design-tokens --check` không
+soát `grid-template-columns`, nên giá trị này làm cả khai báo **vô hiệu lúc tính** (`grid-template-columns: none`)
+và hàng tướng mobile mất cột nhãn/tên. Nay có token thật `size.col-hero-role` = **38px** (nguồn: `MobileList.dc.html`
+dòng tướng `grid-template-columns: 38px minmax(0, 1fr)`) và `column-gap: var(--space-8)` đúng artboard (trước đó
+kế thừa 10px của bản rộng). Rà toàn file: **0 custom property chưa khai** còn lại (`--badge-dot`, `--chip-dot`,
+`--meta-faction-dot` khai ngay trên selector dùng chúng; `--nav-menu-width` do `SiteLayout` phát inline).
+
+### N5-3 — chuẩn hoá `?view=the`
+
+`view` chỉ có nghĩa khi bằng `bang`. `js/app.js` thêm `canonicaliseView()` chạy **sau** khi render: bỏ `view` nếu
+giá trị không phải `bang`, gộp bản lặp, và dùng `history.replaceState` nên **không thêm mục lịch sử**. Vì chạy sau
+render nên lượt đọc đầu vẫn hiện thông báo "Kiểu hiển thị không hợp lệ đã bị bỏ." rồi URL mới được chuẩn hoá.
+e2e `recommended-browser.spec.mjs`: `?view=the` (một mình và kèm `q`), `?view=bang`, `view` lặp, giá trị lạ, và
+Back rời trang chứ không quay lại chính URL `?view=the`.
+
+### N5-4 — Escape đóng panel lọc mobile
+
+`js/team-filter-section.js` (`createRecommendedSection`): vùng kết quả nhận `keydown`; Escape chỉ hành động khi
+panel đang mở **và** nút "Bộ lọc" thực sự được vẽ (`getClientRects().length`), nên desktop là no-op; đóng panel rồi
+trả focus về nút. e2e: mở → Escape → `aria-expanded=false` + focus ở nút + chip ẩn; mở lại bằng Enter; ca desktop
+giữ nguyên focus và sidebar vẫn hiện.
+
+### N-f — hộp thoại hồ sơ ở 821–1279
+
+Thêm khối `@media (max-width: 1279px)` cạnh rule hộp thoại: `.lookup-backdrop { padding-inline: var(--space-40) }`.
+Hộp thoại 960px nhờ đó luôn chừa lề hai bên (thực sự co dưới 1040px) thay vì trông như chiếm hết màn hình; khối ≤680
+đặt padding riêng và đứng sau trong file nên vẫn thắng ở mobile.
+
+### N3a-1b — dấu `·` mồ côi ở 320
+
+Dấu ngăn cách chuyển từ **đầu mảnh kế tiếp** (`.reference-faction + *::before`) sang **cuối mảnh phe**
+(`.reference-filters`… `.reference-faction:not(:last-child)::after`), nên khi hàng xuống dòng dấu nằm cuối dòng trên.
+Đo ở 320 (`/tra-cuu/`, 60 thẻ, cả hai theme): 60/60 thẻ có dấu ở `::after` của mảnh phe, **0/60** ở `::before` của
+mảnh kế tiếp, 60/60 thẻ có mảnh "Thống ngự N" xuống hàng — ảnh `tra-cuu-320-dark` cho thấy dòng đọc
+"▪ Ngô ·" rồi "Thống ngự 7" ở dòng dưới, không còn dấu ở đầu dòng. Khoảng cách không đổi (6px · 6px);
+`.lookup-card-meta` không có probe `::before` nên không phát sinh nợ probe.
+
+### N6-a — §8 của `visual-phase-06.md` là mối nối, không phải bản viết lại
+
+Đã viết lại §8: bỏ giá trị `width: max-content` đứng trước phần đính chính, bỏ câu khẳng định chung
+"`scrollWidth == innerWidth` ở 320/390/1440 trên cả ba họ trang", và gộp đính chính P06-R1 vào chính đoạn văn thay
+vì nối sau câu sai.
+
+### N7/N8 — dữ liệu (`activationRate`) và chuỗi biên tập
+
+**Kongming phán quyết chỗ sửa `activationRate`: tại bước NHẬN giá trị trong `pipeline/build_unified_lookup.py`**
+(không sửa `data/sgsdeck/**`, không sửa `build_sgsdeck_catalog.py`). Lý do đã kiểm: fingerprint đầu vào bản dịch
+chứa **cả object `attributes`**, nên đổi snapshot sẽ làm 3 mục ledger đã review của `tactic:thien-uy-khieu-tran`
+thành `stale translation fingerprint` và đòi receipt độc lập — việc vòng này bị cấm làm. Đã làm đúng phán quyết:
+
+- `SOURCE_VALUE_CORRECTIONS` (bảng hardcode cạnh `GOLDEN_HERO_DELTAS`) với đúng entry/lý do; tra bằng hàm thuần,
+  **không** sửa `source_docs`/`attrs`; lỗi rõ ràng khi giá trị thô đổi, khi owner không khớp, và khi có entry thừa.
+- Ledger thêm disposition **`corrected-public`** (chosenInput `source`, `sourceValueHash` = 50 gốc, `localValueHash`
+  = 0.5); validator chiến pháp **từ chối** `activationRate` ngoài [0,1] để lần lỗi đơn vị sau làm build đỏ thay vì
+  hiện "—" cho người dùng.
+- Candidate dựng lại → validate → promote: `data/tactics.json` **chỉ** đổi đúng một giá trị
+  (`tactic:thien-uy-khieu-tran.lookup.activationRate` 50 → 0.5); `heroes-dict.json`/`lookup-catalog.json` không đổi
+  byte. Generation Lookup: `lookup:582ec0b0…` → **`lookup:064fd2d5d2b55823974c1e50738996812c90c4badbd8415db6b2ad43e8bd5773`**;
+  `data/lookup-manifest.json` = `962ab9eb…`.
+- **Nguồn và cách nói:** không nhắc `effectText` làm căn cứ (chuỗi "32%→50%" đó là xác suất **tăng số lần đánh
+  thường**, không phải tỷ lệ kích hoạt — Kongming đính chính). Căn cứ dùng trong báo cáo: byte `activationRate":50`
+  trong `pipeline/sgsdeck-cache/tactics-list.html`; quy ước đơn vị (mọi chiến pháp khác dùng phân số 0–1; 163 chiến
+  pháp ACTIVE trải 0,2–1 và 30 giá trị đúng bằng 0,5); việc đọc 50 là **50%** là suy luận độ tin cậy cao nhưng
+  không có nguồn trong game độc lập; và build **cố ý đỏ** nếu thượng nguồn đổi giá trị thô.
+- UI: hồ sơ và bảng chiến pháp nay hiện **50%** (trước là "—"); giữ nguyên nhánh "—" + `console.warn` dev cho giá trị
+  ngoài khoảng. e2e `unified-lookup.spec.mjs` đổi khẳng định thien-uy từ `—` sang `50%` (lý do ghi ở báo cáo).
+
+**Chuỗi biên tập (N8).** Kongming phán quyết tách đôi, và đã làm đúng:
+
+- **`(Bahamut bsn=36815)`** (8 chiến pháp, trường "Cách nhận") chỉ bị bỏ ở **chuỗi hiển thị**: `js/lookup-detail.js`
+  thêm `acquisitionDisplayText()` xoá đúng hậu tố ` (Bahamut bsn=<số>)` ở **cuối** chuỗi và không bao giờ trả chuỗi
+  rỗng; `field.value` vẫn là mảng gốc nên dữ liệu, ledger đã review và `data/sgsdeck` giữ nguyên nguồn gốc.
+  Không thêm `title`/nhãn mới (sẽ là chữ UI mới).
+- **`[Hiệu chỉnh OCR]`** (3 chuỗi) **giữ nguyên từng byte**: đó là bản dịch trung thành của cảnh báo độ tin cậy
+  `【OCR校正】` của nguồn; ẩn đi sẽ khiến văn bản chưa kiểm chứng trông như đã xác thực, còn đổi chữ thì cần receipt
+  độc lập. Ghi nhận là **nit đã chấp nhận**, chuyển cho vòng review bản dịch sau (nên diễn đạt thành câu cảnh báo
+  thường). `pipeline/lookup-translations.json` và `data/sgsdeck/**` **không đổi byte**.
+
+### Gate (sau vòng nit)
+
+| Lệnh | Kết quả |
+| --- | --- |
+| `npm run check` / `npm run build` / `npm run verify` | pass (0 lỗi, 1 hint; 1 559 trang; gate bản dịch public 0 problem; 1 730 file dist) |
+| `npm run test:dist` | **28/28 pass** |
+| `npm run test:node` | **352/352 pass** |
+| `npm run test:e2e` | **288/288 pass** |
+| `python3 -m unittest discover -s tests` | **381 OK** |
+| `node scripts/design-tokens.mjs --check` | pass — legacy **0**, `:root`/`:root[data-theme=dark]` khớp `tokens.json` sau khi thêm 10 token |
+| `design-compare --tokens` | 03 **136/136**, 04 **726/726**, 05 **642/643**, 06 **400/400**, 07 **531/531**, 08 **601/602**, 09 (2 ngoại lệ đã khai), 10 **381/381** — **0 lệch chưa giải thích** ở **cả hai theme** |
+| `tests-e2e/selected-state-contrast.spec.mjs` (mới) | 5/5 pass |
+
+Chuỗi publish: `inventory` → `build --stage all` → `check --stage all --candidate` (exit 0) → `publish` →
+`check --stage public` (exit 0) → re-pin `pipeline/team-route-handles.json` → `team_route_handles --check`
+(1 366 / 166 / 17). Policy `site-vi-260926-opus-round-3` → **`site-vi-260926-nit-round-1`** (làm mới hash 5 file:
+`js/analyze.js`, `js/app.js`, `js/lookup-detail.js`, `js/roster-recommend-ui.js`, `js/team-filter-section.js`);
+`baseline.notes` **không đổi** (56 653 vị trí, `a85e2fd6…`, 5 591/2 088/68/3 503 obligation) nên **không cần
+receipt mới**. Generation Recommended: `df725667…` → **`e99d99412bf7c39414f99101ef2a786b50b941792a9319e4920676952b707835`**,
+manifest `fbf26a73…` → **`492dcbfeff2057a891473f1c12411353de4b33ce2421bd1c6f0213f8ac5e2fa2`**.
+
+### Test thay đổi có chủ đích
+
+| Test | Thay đổi | Lý do |
+| --- | --- | --- |
+| `tests-e2e/landing.spec.mjs` | bỏ khẳng định "vùng bảng xem trước cuộn riêng ở 390" | khẳng định đó ghim **đúng hành vi mà N4-1 phải bỏ**; thay bằng 4 khẳng định mới ở 390 **và** 320 |
+| `tests-e2e/unified-lookup.spec.mjs` | thien-uy từ `—` sang `50%` | giá trị đã nằm trong khoảng; nhánh "—" vẫn được unit test `ratePercentText` phủ |
+| `tests-e2e/beta-tools.spec.mjs` | stub Turnstile mở rộng + 2 ca mới | cần quan sát được `reset`; không nới lỏng khẳng định nào |
+| `docs/design/so-binh-phap/tokens.json` | 14 probe trỏ lại `band → select`; 12 giá trị sáng **không đổi** | theo phán quyết; đo theme sáng vì thế giống hệt trước |
+
 ### Số liệu cây hiện tại (thay cho số cũ ở §1–§4)
 
 - `policyVersion`: **`site-vi-260926-opus-round-2b`**; `sourceFiles` làm mới hash cho `js/analyze.js`, `js/recommended-reference-render.js`, `js/roster-recommend-ui.js` (2 lượt) và 5 file của vòng trước.
@@ -363,3 +570,13 @@ Generation: `9e1a982a…` → `ac620801…` (sau lượt sửa 5/6/9/10) → **`
 Generation: `27d82121…` → **`df725667d70890c15f1848c90346bb7d4db7107ab3eb57af09f76bd0732edc16`**, manifest `fbf26a73fa10bc01`;
 policy `site-vi-260926-opus-round-2b` → **`site-vi-260926-opus-round-3`** (làm mới hash `js/analyze.js`); `team_route_handles --check` pass (1366/166/17);
 generation trung gian `27d82121…` đã xóa (chỉ còn generation đang pin).
+
+## Audit 260926 — sửa theo ảnh ghép
+
+Nguồn: `agent://AuditStyleGuideDark` (#1–#3; #4–#6 là `accepted`, giữ).
+
+| Finding | Trạng thái | Chi tiết |
+| --- | --- | --- |
+| #2 color-scheme | đã sửa | `css/styles.css`: `html[data-theme="light"]{color-scheme:light}` / `html[data-theme="dark"]{color-scheme:dark}`; bỏ `document.documentElement.style.colorScheme` trong script đầu trang (`SiteLayout.astro`) và `root.style.colorScheme` trong `js/site-chrome.js` (inline style từng thắng CSS nên đổi `data-theme` trực tiếp vẫn để scheme sáng). Smoke Chromium `/goi-y-doi/`: đặt `data-theme="dark"` → `getComputedStyle(html).colorScheme = "dark"`; bấm `#theme-toggle` trên `/` → `dark/dark`. |
+| #1 nền footer tối | giữ | Bảng tối StyleGuide chỉ có 9 màu (Nền, Thẻ, Thẻ đậm, Chữ, Chữ phụ, Viền, Son, Son nhạt, Dải header — `StyleGuide.dc.html:129-131`), không có giá trị footer; luật "Hai theme" của README không cho tự đặt màu → giữ `--footer-bg` dùng chung, biên footer do `--band-line` + dải Game. |
+| #3 mực ấn 兵 tối | giữ | Cùng lý do: bảng tối không có màu mực ấn; 3,02:1 vẫn đạt ngưỡng 3:1 cho đồ hoạ. |

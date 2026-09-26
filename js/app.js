@@ -14,7 +14,7 @@ import { assignDerivedFactions } from "./derive-team-faction.js";
 import { createSeasonCoexistSection, createRecommendedSection } from "./team-filter-section.js";
 import { resolveBrowseState, projectSeasonBrowse, resolveSelectionScore } from './season-context.js';
 import { loadRecommendedReference, readRecommendedQuery } from './recommended-reference-state.js';
-import { resolveTeamView, writeStoredTeamView } from './team-view.js';
+import { resolveTeamView, writeStoredTeamView, canonicalTeamView, TEAM_VIEW_TABLE } from "./team-view.js";
 import {
   KHAIHOANG_TEAM_QUERY_KEY,
   KHAIHOANG_VARIANT_QUERY_KEY,
@@ -372,6 +372,19 @@ async function main() {
       const explicitSeason = new URL(location.href).searchParams.has('season');
       sections['team-chuan']?.update(recommendedModel.index.records,resolved,registry);
       sections['team-khac']?.update(recommendedModel.other.records,explicitSeason ? resolved : {...resolved,season:'all'},registry);
+      canonicaliseView();
+    }
+    /** N5-3: `view` chỉ có nghĩa khi bằng `bang`; `?view=the` (mặc định) và giá trị lạ/lặp bị bỏ khỏi URL
+     *  để mọi đường link cùng nghĩa có cùng một hình dạng. Chạy sau khi render nên thông báo về giá trị
+     *  không hợp lệ vẫn hiện ở lượt đọc đầu; `replaceState` nên không thêm mục lịch sử. */
+    function canonicaliseView() {
+      const url = new URL(location.href);
+      const values = url.searchParams.getAll('view');
+      const meaningful = canonicalTeamView(values[0]) === TEAM_VIEW_TABLE;
+      if (!values.length || (values.length === 1 && meaningful)) return;
+      url.searchParams.delete('view');
+      if (meaningful) url.searchParams.set('view', TEAM_VIEW_TABLE);
+      history.replaceState(history.state, '', url);
     }
     const scenarioSelect = seasonScoped ? el('select', {id:'season-scenario'}, [el('option',{value:''},'Tất cả — tham khảo'), ...(seasonModel?.data['season-registry'] || []).filter(scenario=>scenario.reviewStatus === 'reviewed').map(scenario => el('option',{value:scenario.id},scenario.labelVi))]) : null;
     const rulesetSelect = seasonScoped ? el('select', {id:'season-ruleset', 'aria-label':'Phiên bản luật'}) : null;

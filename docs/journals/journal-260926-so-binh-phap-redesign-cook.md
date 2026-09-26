@@ -45,3 +45,9 @@ Open nits:
 - Mobile Landing table score column is only reachable by sideways scroll (N4-1).
 - QR provenance does not reach the built SVG (N4-2).
 - Source-data outlier `activationRate` 50 and editorial strings in catalog data.
+
+## Nit round + composite audit (2026-09-26 evening)
+- Nit round: `--select*` tokens fix dark selected states; Turnstile resets on Mùa change; the Landing mobile table shows its score inline; QR provenance ships in dist; the tactic activationRate outlier is corrected at lookup build time with a range check; Bahamut citations are hidden only in display. OCR flags were kept (reviewed text).
+- A parallel session ran a composite-image audit: color-scheme via CSS, Tra cứu role line, stat bar scale, Chiêu mộ history header, Soi đội hides empty result cards, Khai hoang detail config chips, Cùng Tồn overview fold on mobile, and footer/menu Tra cứu title links. The 68 translate obligations are unchanged.
+- Kongming (runtime switched to claude-fable-5-1) reviewed both parts and returned GO-with-nits. A flaky e2e poll in the lookup load-path test was fixed.
+- Gate: check, build 1559, verify, dist 28, node 352, e2e 288, unittest OK, design-tokens --check.

@@ -29,7 +29,6 @@ test("recruit tracker view model exposes compact daily, limited, history, and he
     { name: "SP Mã Siêu", chinese: "SP马超" },
   ]);
 
-  assert.equal(viewModel.accountLabel, "主账号 Main");
   assert.equal(viewModel.daily.title, "Danh tướng PK - Hằng ngày");
   assert.equal(viewModel.daily.pityText, "0/30");
   assert.deepEqual(viewModel.daily.slots.map((slot) => [slot.label, slot.statusLabel]), [

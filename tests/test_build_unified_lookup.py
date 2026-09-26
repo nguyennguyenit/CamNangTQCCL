@@ -170,6 +170,58 @@ class BuildUnifiedLookupTest(unittest.TestCase):
             for name in ("heroes-dict.json", "tactics.json", "lookup-catalog.json"):
                 self.assertEqual((changed / name).read_bytes(), (reference / name).read_bytes())
 
+    def test_reviewed_activation_rate_correction_is_published_and_ledgered(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "candidate"
+            self._build(output)
+            tactics = json.loads((output / "tactics.json").read_bytes())
+            by_id = {row["id"]: row for row in tactics}
+            self.assertEqual(by_id["tactic:thien-uy-khieu-tran"]["lookup"]["activationRate"], 0.5)
+            for row in tactics:
+                rate = row["lookup"]["activationRate"]
+                self.assertTrue(rate is None or 0 <= rate <= 1, row["id"])
+            field_ledger = json.loads((output / "ledger.json").read_bytes())
+            corrected = next(
+                row for row in field_ledger
+                if row["entityId"] == "tactic:thien-uy-khieu-tran"
+                and row["fieldPath"] == "attributes.activationRate"
+            )
+            canonical_sha = lambda value: hashlib.sha256(
+                (json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n").encode()
+            ).hexdigest()
+            self.assertEqual((corrected["disposition"], corrected["chosenInput"]), ("corrected-public", "source"))
+            self.assertEqual(corrected["sourceValueHash"], canonical_sha(50))
+            self.assertEqual(corrected["localValueHash"], canonical_sha(0.5))
+
+    def test_stale_source_value_correction_fails_the_build(self):
+        with tempfile.TemporaryDirectory() as directory:
+            directory = Path(directory)
+            source_copy = directory / "source"
+            shutil.copytree(ROOT / "data" / "sgsdeck", source_copy)
+            tactics_doc = json.loads((source_copy / "tactics.json").read_bytes())
+            record = next(row for row in tactics_doc["records"] if row["sourceId"] == "cmtb9e3c6000058f84ugbcun5")
+            record["attributes"]["activationRate"] = 0.5
+            tactics_bytes = json.dumps(tactics_doc, ensure_ascii=False).encode()
+            (source_copy / "tactics.json").write_bytes(tactics_bytes)
+            manifest = json.loads((source_copy / "manifest.json").read_bytes())
+            manifest["files"]["tactics"] = hashlib.sha256(tactics_bytes).hexdigest()
+            manifest_bytes = json.dumps(manifest, ensure_ascii=False).encode()
+            (source_copy / "manifest.json").write_bytes(manifest_bytes)
+            identity_dir = directory / "identity"
+            identity_dir.mkdir()
+            identity = json.loads((ROOT / "pipeline" / "lookup-identity.json").read_bytes())
+            identity["sourceManifestHash"] = hashlib.sha256(manifest_bytes).hexdigest()
+            (identity_dir / "lookup-identity.json").write_text(json.dumps(identity, ensure_ascii=False), encoding="utf-8")
+            shutil.copy2(ROOT / "pipeline" / "sgsdeck-name-map.json", identity_dir / "sgsdeck-name-map.json")
+            with self.assertRaisesRegex(ValueError, "stale source value correction"):
+                build_candidate(
+                    inputs=ROOT / "pipeline" / "lookup-inputs",
+                    source=source_copy,
+                    identity=identity_dir / "lookup-identity.json",
+                    translations=ROOT / "pipeline" / "lookup-translations.json",
+                    output=directory / "candidate",
+                )
+
     def test_glossary_change_invalidates_every_stale_translation(self):
         with tempfile.TemporaryDirectory() as directory:
             directory = Path(directory)
@@ -307,6 +359,7 @@ class BuildUnifiedLookupTest(unittest.TestCase):
                 ("civil points", lambda h, t, c: h[0]["lookup"].update(civilInnatePoints="invalid")),
                 ("variant", lambda h, t, c: h[0]["lookup"].update(variant="invalid")),
                 ("activation", lambda h, t, c: t[0]["lookup"].update(activationRate="invalid")),
+                ("activation range", lambda h, t, c: t[0]["lookup"].update(activationRate=50)),
                 ("tactic text", lambda h, t, c: t[0].update(effectViet={})),
                 ("special text", lambda h, t, c: c["specials"][0].update(descriptionVi={})),
                 ("advisor text", lambda h, t, c: c["advisors"][0].update(effectVi={})),

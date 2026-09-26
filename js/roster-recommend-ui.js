@@ -179,9 +179,10 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     };
     for (const control of scanControls) {
       const total = counts[control.scan.id] || 0;
+      // Chưa đọc: chỉ dòng đếm báo "Chưa đọc"; pill "Xong" chỉ hiện khi đã đọc (Roster.dc.html thẻ BƯỚC 3).
       control.count.textContent = total ? `${total} ${control.scan.unit} đã đọc` : "Chưa đọc";
-      control.badge.textContent = total ? "Xong" : "Chưa đọc";
-      control.badge.dataset.state = total ? "done" : "pending";
+      control.badge.textContent = "Xong";
+      control.badge.hidden = !total;
     }
   }
 
@@ -449,6 +450,8 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       generation++;
       scope=next;
       token='';
+      // Token vừa bỏ nhưng widget vẫn hiện "đã xác thực" -> reset để widget cấp token mới, không phải chờ hết hạn.
+      if (window.turnstile) window.turnstile.reset(tsBox);
       if (!initial || next.browse?.kind !== 'all-reference') {
         state={...state,confirmed:false};
         if (!initial) saveState(state);

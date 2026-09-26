@@ -367009,11 +367009,11 @@
   },
   {
     "chosenInput": "source",
-    "disposition": "typed-public",
+    "disposition": "corrected-public",
     "entityId": "tactic:thien-uy-khieu-tran",
     "fieldPath": "attributes.activationRate",
-    "localValueHash": null,
-    "reason": "Captured source value selected for an explicit typed public destination.",
+    "localValueHash": "8d5c1b5a87c51f970807fc0c2057b3ab3aaf11638ab667dc5956edc8f5bcf138",
+    "reason": "Reviewed unit correction: SGSDeck capture has activationRate 50 (percent scale) for 天威嘯陣; every other tactic uses a 0–1 fraction, so 50% is published as 0.5.",
     "reviewEvidence": [
       "captured source manifest",
       "private identity/translation ledgers"

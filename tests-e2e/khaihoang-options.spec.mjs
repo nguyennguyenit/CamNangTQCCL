@@ -8,6 +8,8 @@ const data = JSON.parse(await readFile(new URL("../data/khaihoang.json", import.
 const khaihoangSource = await readFile(new URL("../data/khaihoang.json", import.meta.url), "utf8");
 const HAN = /[\u3400-\u9fff\uf900-\ufaff]/u;
 const teamByTitle = (title) => data.teams.find((item) => item.title === title);
+/** Chip cấu hình của trang chi tiết (cùng nhóm chip `.kh-config-row` với thẻ danh sách). */
+const detailChip = (page, variantId) => page.locator(`#team-detail-body .kh-config-chip[data-variant="${variantId}"]`);
 
 test.beforeEach(async ({ context }) => {
   await context.route("**/*", (route) => new URL(route.request().url()).hostname === "127.0.0.1"
@@ -202,7 +204,7 @@ test("main Khai hoang cards keep current-only wording and real detail links", as
     await expect(link).toHaveAttribute("href", new RegExp(`/khai-hoang/${handles.k[team.id]}/`));
     await expect(link).toHaveAttribute("href", /from=/);
     // Chữ hướng dẫn đánh đất chỉ ở trang chi tiết: thẻ chỉ còn một dòng link tới đúng route.
-    await expect(link).toHaveText(team.guide && Object.keys(team.guide).length ? "Hướng dẫn đánh đất →" : "Chi tiết →");
+    await expect(link).toHaveText(team.guide && Object.keys(team.guide).length ? "Hướng dẫn đánh đất" : "Chi tiết");
   }
   await expect(main.locator(".kh-guide, .kh-opening-note")).toHaveCount(0);
 });
@@ -312,9 +314,8 @@ test("researched root builds render their stage-specific leaders, units, and tac
     await expect(rows).toHaveCount(3);
     for (const [index, [name, tactics]] of expected.rows.entries()) {
       await expect(rows.nth(index).locator(".hn")).toHaveText(name);
-      await expect(rows.nth(index).locator(".badge.unit.small")).toHaveText(
-        expected.before ? ["Cung", "Cung"] : "Cung",
-      );
+      // Loại binh của build đã ở badge đầu thẻ: hàng tướng không lặp lại khi trùng loại binh đó.
+      await expect(rows.nth(index).locator(".badge.unit.small")).toHaveCount(0);
       await expect(rows.nth(index).locator(".tag")).toHaveText(
         expected.before ? [tactics[0], ...tactics] : tactics,
       );
@@ -407,7 +408,7 @@ test("detail owns the roster guide and keeps it open across variant changes", as
   // Hướng dẫn nằm ngoài subtree build: đổi cấu hình không dựng lại, không đóng mục.
   const build = page.locator("#team-detail-body .kh-detail-build");
   const beforeBuild = await build.textContent();
-  await page.locator("#team-detail-body").getByRole("combobox").selectOption(target.variants[0].id);
+  await detailChip(page, target.variants[0].id).click();
   await expect(build).not.toHaveText(beforeBuild);
   await expect(guide).toHaveText(before);
   await expect(details).toHaveAttribute("open", "");
@@ -431,7 +432,7 @@ test("detail keeps every opening note with its owner and never borrows from the 
   await expect(body.locator(".hero .kh-opening-note")).toHaveText([lucTon.heroes[0].openingNote]);
   await expect(body.locator(".hero .kh-note").first()).toHaveText(lucTon.heroes[0].buildNote);
 
-  await body.getByRole("combobox").selectOption(lucTon.variants[0].id);
+  await detailChip(page, lucTon.variants[0].id).click();
   await expect(body.locator(".kh-build-note")).toHaveText(lucTon.variants[0].buildNote);
   await expect(body).not.toContainText(lucTon.openingNote);
   await expect(body.locator(".kh-opening-note")).toHaveCount(0);
@@ -453,7 +454,7 @@ test("teams without a guide render build and notes only, with no empty guide gro
   await expect(body.locator(".kh-build")).toHaveCount(1);
   await expect(body.locator(".kh-guide")).toHaveCount(0);
   for (const variant of target.variants) {
-    await body.getByRole("combobox").selectOption(variant.id);
+    await detailChip(page, variant.id).click();
     await expect(body.locator(".kh-build")).toHaveCount(1);
     await expect(body.locator(".kh-guide")).toHaveCount(0);
   }
@@ -485,8 +486,7 @@ test("detail URL keeps variant and from in sync across select, reload and histor
   expect(entryUrl).toContain("from=");
   await cta.click();
 
-  const select = page.locator("#team-detail-body").getByRole("combobox");
-  await expect(select).toHaveValue(first.id);
+  await expect(detailChip(page, first.id)).toHaveAttribute("aria-pressed", "true");
   // `from` là URL root an toàn mang đúng cặp đang chọn; nút quay lại dùng nguyên giá trị đó.
   const entry = new URL(page.url());
   const from = entry.searchParams.get("from");
@@ -498,7 +498,7 @@ test("detail URL keeps variant and from in sync across select, reload and histor
 
   // Đổi cấu hình thay query của chính trang, giữ nguyên `from` và không tạo lịch sử mới.
   const historyLength = await page.evaluate(() => history.length);
-  await select.selectOption(second.id);
+  await detailChip(page, second.id).click();
   const changed = new URL(page.url());
   expect(changed.pathname).toBe(entry.pathname);
   expect(changed.searchParams.get("variant")).toBe(second.id);
@@ -507,7 +507,7 @@ test("detail URL keeps variant and from in sync across select, reload and histor
   await expect(page.locator("#team-detail-body .kh-build")).toContainText(second.buildNote);
 
   await page.reload();
-  await expect(page.locator("#team-detail-body").getByRole("combobox")).toHaveValue(second.id);
+  await expect(detailChip(page, second.id)).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator("#team-detail-body .kh-build")).toContainText(second.buildNote);
 
   // Back về danh sách rồi Forward: entry lịch sử đã bị replaceState nên phải mở lại đúng
@@ -515,11 +515,11 @@ test("detail URL keeps variant and from in sync across select, reload and histor
   await page.goBack();
   await expect(page.locator(".kh-card")).toHaveCount(data.teams.length);
   await page.goForward();
-  await expect(page.locator("#team-detail-body").getByRole("combobox")).toHaveValue(second.id);
+  await expect(detailChip(page, second.id)).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator("#team-detail-body .kh-build")).toContainText(second.buildNote);
 
   // Chọn mặc định gỡ hẳn query `variant` nhưng vẫn giữ `from`.
-  await page.locator("#team-detail-body").getByRole("combobox").selectOption("");
+  await detailChip(page, "").click();
   const restored = new URL(page.url());
   expect(restored.searchParams.has("variant")).toBe(false);
   expect(restored.searchParams.get("from")).toBe(from);
@@ -544,7 +544,7 @@ test("unknown variants warn and offer the default build instead of pretending", 
 
   await fallback.click();
   await expect(page.locator("#team-detail-body")).toBeVisible();
-  await expect(page.locator("#team-detail-body").getByRole("combobox")).toHaveValue("");
+  await expect(detailChip(page, "")).toHaveAttribute("aria-pressed", "true");
   await expect(new URL(page.url()).searchParams.has("variant")).toBe(false);
 
   const foreign = teamByTitle("Gia Cát Khác · SP Mã Siêu · Pháp Chính").variants[0].id;
@@ -623,19 +623,19 @@ test("detail stays readable at 320px in both themes with keyboard selection", as
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.screenshot({ path: testInfo.outputPath("detail-320-light.png"), fullPage: true });
 
-  // Chọn cấu hình bằng bàn phím trên select native (type-ahead như danh sách).
-  const select = body.getByRole("combobox");
-  await select.focus();
-  await expect(select).toBeFocused();
-  await page.keyboard.press(target.variants[0].displayLabel[0].toLowerCase());
-  await expect(select).toHaveValue(target.variants[0].id);
+  // Chọn cấu hình bằng bàn phím: chip là button thật (Enter), cùng nhóm chip với thẻ danh sách.
+  const chip = detailChip(page, target.variants[0].id);
+  await chip.focus();
+  await expect(chip).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(chip).toHaveAttribute("aria-pressed", "true");
   await expect(new URL(page.url()).searchParams.get("variant")).toBe(target.variants[0].id);
   await expect(body.locator(".kh-guide-details")).toHaveAttribute("open", "");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 
   await page.locator("#theme-toggle").click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-  await expect(select).toBeVisible();
+  await expect(chip).toBeVisible();
   await expect(body.locator(".kh-build")).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.screenshot({ path: testInfo.outputPath("detail-320-dark.png"), fullPage: true });

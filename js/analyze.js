@@ -352,7 +352,8 @@ export function initAnalyze(deps, mount) {
   });
   const stepList = el("ol", { class: "ana-steps", "aria-label": "Trạng thái" }, steps.map((step) => step.node));
 
-  const readCard = el("section", { class: "ana-card ana-read" }, [
+  // Thẻ "2 · Đội đọc được" ẩn tới khi có kết quả như thẻ 3; lỗi/tiến trình vẫn báo qua dòng `role=status` ở thẻ 1.
+  const readCard = el("section", { class: "ana-card ana-read", hidden: "" }, [
     el("header", { class: "ana-card-head" }, [
       el("h2", { class: "ana-card-title" }, "2 · Đội đọc được"),
       el("span", { class: "rt-sub" }, "Tên Việt chuẩn · icon chỉ để đối chiếu"),
@@ -405,6 +406,7 @@ export function initAnalyze(deps, mount) {
   /** Vẽ kết quả đã đọc cho một tập đội: dùng cho cả lượt chạy và khi đổi "ngoài phạm vi". */
   function applyResult(result, teams) {
     const ok = renderResults(heroBox, similarBox, result, { ...deps, teams });
+    readCard.hidden = !ok;
     similarCard.hidden = !ok;
     if (ok && showOutside && scope?.browse?.kind === 'verified-pair') {
       const outsideTeams = deps.teams.filter((team) => !teams.some((candidate) => candidate.id === team.id));
@@ -420,6 +422,7 @@ export function initAnalyze(deps, mount) {
   function clearResults() {
     heroBox.replaceChildren();
     similarBox.replaceChildren();
+    readCard.hidden = true;
     similarCard.hidden = true;
     state.done = false;
     // Không giữ kết quả cũ: nếu còn, ô "ngoài phạm vi" sẽ dựng lại kết quả của ảnh/mùa trước.
@@ -537,6 +540,8 @@ export function initAnalyze(deps, mount) {
     setSeasonScope(next) {
       scope=next;generation++;
       state.busy=false;state.token=null;
+      // Token vừa bỏ nhưng widget vẫn hiện "đã xác thực" -> reset để widget cấp token mới, không phải chờ hết hạn.
+      if (turnstileRendered && window.turnstile) window.turnstile.reset(tsBox);
       clearResults();setStatus('');
       scopeNotice.textContent=gameplayAllowed() ? (next.browse?.kind === 'verified-pair' ? 'Đối chiếu đội theo phiên bản luật đang chọn.' : 'Dữ liệu cũ — tham khảo, chưa xác định kịch bản.') : 'Chọn phiên bản luật đã xác minh để soi và đối chiếu đội.';
       paint();

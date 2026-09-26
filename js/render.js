@@ -189,6 +189,18 @@ const sourceFieldText = (value) => {
   return CJK_TEXT.test(text) ? publicText(text) : text;
 };
 
+/**
+ * Tên nguồn Cùng Tồn ghi phần phụ ở dòng cuối (`"Hoàng Mã Thương\n19C"`, `"Hứa Du\n(Thương S)"`).
+ * Chỉ tách để hiện: dòng cuối khớp `pattern` thành pill, các dòng còn lại nối bằng dấu cách như trước.
+ */
+function splitSourceTag(value, pattern) {
+  const lines = String(value || "").split("\n").map((line) => line.trim()).filter(Boolean);
+  const tag = lines.length > 1 ? lines[lines.length - 1].match(pattern) : null;
+  return tag ? { name: lines.slice(0, -1).join(" "), tag: tag[1] } : { name: lines.join(" "), tag: "" };
+}
+const TEAM_LEVEL_TAG = /^(\d+C)$/;
+const HERO_NOTE_TAG = /^[(（](.+)[)）]$/u;
+
 /** 1 tướng trong đội Cùng Tồn: tên + thích tính, chiến pháp chữ son, dòng binh thư (artboard Coexist). */
 function coexistHeroRow(h) {
   const tactics = (h.tactics || []).length
@@ -198,9 +210,13 @@ function coexistHeroRow(h) {
     (h.books || []).length ? el("span", { class: "coexist-hero-books" }, `Binh thư · ${h.books.join(" · ")}`) : null,
     h.advisorSkill ? el("span", { class: "coexist-hero-advisor" }, `QS: ${h.advisorSkill}`) : null,
   ].filter(Boolean);
+  const name = splitSourceTag(h.name, HERO_NOTE_TAG);
   return el("div", { class: "coexist-hero" }, [
     el("div", { class: "coexist-hero-head" }, [
-      el("span", { class: "coexist-hero-name" }, h.name),
+      el("span", { class: "coexist-hero-name" }, [
+        name.name,
+        name.tag ? el("span", { class: "coexist-hero-tag" }, name.tag) : null,
+      ].filter(Boolean)),
       h.statFocus ? el("span", { class: "coexist-hero-focus" }, `+ ${h.statFocus}`) : null,
     ].filter(Boolean)),
     tactics,
@@ -210,9 +226,13 @@ function coexistHeroRow(h) {
 
 /** Lưới đội của một nhóm Cùng Tồn (dữ liệu đã chuẩn hóa qua `coexistModel`). */
 function coexistTeams(teams) {
-  return el("div", { class: "coexist-teams" }, teams.map((team) =>
-    el("article", { class: "coexist-subteam" }, [
-      el("h4", { class: "coexist-subteam-title" }, team.name),
+  return el("div", { class: "coexist-teams" }, teams.map((team) => {
+    const title = splitSourceTag(team.name, TEAM_LEVEL_TAG);
+    return el("article", { class: "coexist-subteam" }, [
+      el("header", { class: "coexist-subteam-head" }, [
+        el("h4", { class: "coexist-subteam-title" }, title.name),
+        title.tag ? el("span", { class: "badge coexist-level" }, title.tag) : null,
+      ].filter(Boolean)),
       team.unitTacticEffects
         ? el("div", { class: "coexist-subteam-tags" }, [
             el("span", { class: "coexist-col-label" }, "Cải tạo"),
@@ -220,7 +240,8 @@ function coexistTeams(teams) {
           ])
         : null,
       el("div", { class: "coexist-heroes" }, (team.heroes || []).map(coexistHeroRow)),
-    ].filter(Boolean))));
+    ].filter(Boolean));
+  }));
 }
 
 /**
@@ -294,6 +315,20 @@ export function coexistGroup(group) {
   return seasonCoexistGroup({ content: group, source: null, classification: "unknown" });
 }
 
+/** Ô tổng quan gập trên mobile (artboard CoexistMobile); desktop luôn mở và ẩn dòng tóm tắt. */
+const COEXIST_FOLD_QUERY = "(max-width: 680px)";
+let coexistFoldMedia;
+function coexistFoldCompact() {
+  if (coexistFoldMedia === undefined) {
+    coexistFoldMedia = globalThis.matchMedia?.(COEXIST_FOLD_QUERY) ?? null;
+    // Rời mobile khi đang gập: desktop không có dòng tóm tắt để mở lại nên phải tự mở.
+    coexistFoldMedia?.addEventListener?.("change", (event) => {
+      if (!event.matches) for (const fold of document.querySelectorAll(".coexist-overview-fold")) fold.open = true;
+    });
+  }
+  return Boolean(coexistFoldMedia?.matches);
+}
+
 /** 1 nhóm Cùng Tồn: tiêu đề (nhãn nhóm · kịch bản), phân loại phạm vi, ô tổng quan nguyên văn, lưới đội. */
 export function seasonCoexistGroup(reference, { scenarioLabel = "" } = {}) {
   const model = coexistModel(reference);
@@ -301,15 +336,19 @@ export function seasonCoexistGroup(reference, { scenarioLabel = "" } = {}) {
   const column = (children) => (children.length ? el("div", { class: "coexist-overview-col" }, children) : null);
   const rawBlock = (label, value) => {
     const text = sourceFieldText(value);
-    return text === null ? [] : [
-      el("span", { class: "coexist-col-label" }, label),
-      el("p", { class: "coexist-raw-text" }, text),
-    ];
+    if (text === null) return [];
+    // Nguồn tự mở đầu bằng đúng nhãn (vd. "Ghi chú\n…"): giữ nguyên văn, bỏ nhãn trùng và tô dòng đầu như nhãn.
+    const titled = text.split("\n")[0].trim().replace(/:$/, "").toLocaleLowerCase("vi") === label.toLocaleLowerCase("vi");
+    return [
+      titled ? null : el("span", { class: "coexist-col-label" }, label),
+      el("p", { class: titled ? "coexist-raw-text coexist-raw-titled" : "coexist-raw-text" }, text),
+    ].filter(Boolean);
   };
   const summaryBlock = rawBlock("Tổng quan", model.raw.summary).concat(rawBlock("Ghi chú", model.raw.notes));
   const openingBlock = rawBlock("Gợi ý khai hoang", model.raw.opening);
   const disclaimerBlock = rawBlock("Lưu ý nguồn", model.source?.disclaimerRaw);
   const sourceUrl = validateHttpSourceUrl(model.source?.url);
+  const foldColumns = [column(summaryBlock), column(openingBlock)].filter(Boolean);
   const props = { class: "coexist-group" };
   if (reference?.recordId) props.dataset = { recordId: reference.recordId };
   return el("section", props, [
@@ -318,8 +357,15 @@ export function seasonCoexistGroup(reference, { scenarioLabel = "" } = {}) {
       el("p", { class: "scope-note" }, COEXIST_SCOPE_NOTE[reference?.classification] || COEXIST_SCOPE_NOTE.unknown),
     ]),
     el("div", { class: "coexist-overview", "aria-label": "Tổng quan nhóm" }, [
-      column(summaryBlock),
-      column(openingBlock),
+      foldColumns.length
+        ? el("details", { class: "coexist-overview-fold", open: coexistFoldCompact() ? null : "" }, [
+            el("summary", { class: "coexist-overview-summary" }, [
+              "Tổng quan nhóm",
+              icon([svgNode("polyline", { points: "6 9 12 15 18 9" })], { size: 16, stroke: 2 }),
+            ]),
+            el("div", { class: "coexist-overview-fold-body" }, foldColumns),
+          ])
+        : null,
       column([
         el("span", { class: "coexist-col-label" }, "Kiểm tra trùng tướng"),
         el("span", { class: "coexist-count-line" }, [
@@ -346,9 +392,11 @@ function tacticChip(name, cls = "t-tactic") {
 /**
  * Một hàng tướng của khối build khai hoang theo artboard Khaihoang: tên, "Trước · …" → "Sau · …",
  * chiến pháp chữ son, ghi chú build của đúng build đang chọn (ghi chú mở đất chỉ ở trang chi tiết).
+ * Artboard không vẽ loại binh trong hàng: badge chỉ hiện khi khác loại binh của build (badge đầu thẻ),
+ * tức là thông tin đổi binh chủng mà đầu thẻ không nói.
  */
-function khaihoangHeroRow(h, openingNotes = false) {
-  const unit = (unitType) => unitType
+function khaihoangHeroRow(h, openingNotes = false, buildUnit = "") {
+  const unit = (unitType) => unitType && unitType !== buildUnit
     ? el("span", { class: `badge unit small ${UNIT_CLASS[unitType] || ""}` }, unitType)
     : null;
   const stage = (cls, label, children) => children.length
@@ -357,9 +405,10 @@ function khaihoangHeroRow(h, openingNotes = false) {
   const before = stage("kh-before", "Trước", [
     unit(h.unitTypeBefore), h.tacticBefore ? tacticChip(h.tacticBefore) : null,
   ].filter(Boolean));
-  const after = stage("kh-after", "Sau", [
-    unit(h.unitTypeAfter), ...(h.tacticsAfter || []).map((t) => tacticChip(t)),
-  ].filter(Boolean));
+  // Nhiều chiến pháp "Sau" nối bằng " + " như artboard (ký hiệu, không phải chữ).
+  const afterTactics = (h.tacticsAfter || []).map((t) => tacticChip(t)).filter(Boolean)
+    .flatMap((chip, index) => (index ? [" + ", chip] : [chip]));
+  const after = stage("kh-after", "Sau", [unit(h.unitTypeAfter), ...afterTactics].filter(Boolean));
   return el("div", { class: "hero kh-hero" }, [
     el("div", { class: "hero-name" }, [
       el("span", { class: "hn" }, h.name),
@@ -385,7 +434,7 @@ export function khaihoangBuildContent(build, openingNotes = false) {
     openingNotes && build.openingNote ? el("p", { class: "kh-opening-note" }, build.openingNote) : null,
     build.commanderBefore ? el("p", { class: "kh-commander" }, `Chủ tướng trước cấp 20: ${build.commanderBefore}`) : null,
     build.commanderAfter ? el("p", { class: "kh-commander" }, `Chủ tướng sau cấp 20: ${build.commanderAfter}`) : null,
-    el("div", { class: "heroes" }, (build.heroes || []).map((hero) => khaihoangHeroRow(hero, openingNotes))),
+    el("div", { class: "heroes" }, (build.heroes || []).map((hero) => khaihoangHeroRow(hero, openingNotes, build.unitType))),
   ].filter(Boolean);
 }
 
@@ -478,8 +527,8 @@ function khaihoangCardLink(className, label, activate) {
   return link;
 }
 
-/** Cập nhật badge binh chủng tại chỗ khi đổi build (card và trang chi tiết dùng chung). */
-export function applyKhaihoangUnit(node, build) {
+/** Cập nhật badge binh chủng của thẻ tại chỗ khi đổi build (trang chi tiết dùng `#team-detail-badges`). */
+function applyKhaihoangUnit(node, build) {
   node.textContent = build.unitType;
   node.className = `badge unit ${UNIT_CLASS[build.unitType] || ""}`;
 }
@@ -515,7 +564,7 @@ export function khaihoangRatingBar(ratings) {
   }));
 }
 
-/** Một chip chọn cấu hình của thẻ: cùng phần tử cho mặc định và từng biến thể. */
+/** Một chip chọn cấu hình: cùng phần tử cho mặc định và từng biến thể. */
 function khaihoangConfigChip(label, variantId, onSelect) {
   const chip = el("button", {
     type: "button",
@@ -527,23 +576,35 @@ function khaihoangConfigChip(label, variantId, onSelect) {
   return chip;
 }
 
+/**
+ * Nhóm chip chọn cấu hình dùng chung cho thẻ danh sách và trang chi tiết (artboard Khaihoang).
+ * `row` là null khi đội không có biến thể; `chips` luôn có chip mặc định để đồng bộ `aria-pressed`.
+ */
+export function khaihoangConfigRow(team, onSelect) {
+  const variants = team.variants || [];
+  const chips = [khaihoangConfigChip("Mặc định", "", onSelect)].concat(
+    variants.map((v, index) => khaihoangConfigChip(v.displayLabel || `Cấu hình ${index + 1}`, v.id, onSelect)),
+  );
+  const row = variants.length
+    ? el("div", { class: "kh-config-row", role: "group", "aria-label": `Chọn cấu hình ${team.title}` }, chips)
+    : null;
+  return { row, chips };
+}
+
 /** 1 card đội hình khai hoang đề xuất: build + thanh điểm; hướng dẫn chữ nằm ở trang chi tiết. */
 function khaihoangTeamCard(team, { onSelect, onActivate }) {
   const unit = el("span", { class: "badge unit" });
   applyKhaihoangUnit(unit, team);
   const hasGuide = Boolean(team.guide && Object.keys(team.guide).length);
-  const detailLink = khaihoangCardLink("kh-detail-link", hasGuide ? "Hướng dẫn đánh đất →" : "Chi tiết →", onActivate);
+  const detailLink = khaihoangCardLink("kh-detail-link", [
+    hasGuide ? "Hướng dẫn đánh đất" : "Chi tiết",
+    icon([svgNode("polyline", { points: "9 6 15 12 9 18" })], { size: 16, stroke: 2 }),
+  ], onActivate);
   const head = el("div", { class: "kh-card-head" }, [
     el("div", { class: "units" }, [unit]),
     el("h3", { class: "kh-title" }, team.title),
   ]);
-  const variants = team.variants || [];
-  const chips = [khaihoangConfigChip("Mặc định", "", onSelect)].concat(
-    variants.map((v, index) => khaihoangConfigChip(v.displayLabel || `Cấu hình ${index + 1}`, v.id, onSelect)),
-  );
-  const configRow = variants.length
-    ? el("div", { class: "kh-config-row", role: "group", "aria-label": `Chọn cấu hình ${team.title}` }, chips)
-    : null;
+  const { row: configRow, chips } = khaihoangConfigRow(team, onSelect);
   const content = el("div", { class: "kh-build", "aria-live": "polite" });
   const ratings = el("div", { class: "kh-ratings-block" });
   const element = el("article", { class: "kh-card" }, [
@@ -700,7 +761,8 @@ export function khaihoangTable(data, { hrefFor, onNavigate, onChange } = {}) {
   const unitCounts = new Map();
   for (const team of teams) unitCounts.set(team.unitType, (unitCounts.get(team.unitType) ?? 0) + 1);
   const cards = el("div", { class: "kh-cards" }, entries.map((entry) => entry.element));
-  const unitChips = [["", "Tất cả", teams.length], ...[...unitCounts].map(([unit, count]) => [unit, unit, count])]
+  // Giảm dần theo số đội như artboard; bằng nhau giữ thứ tự xuất hiện trong dữ liệu (sort ổn định).
+  const unitChips = [["", "Tất cả", teams.length], ...[...unitCounts].sort((a, b) => b[1] - a[1]).map(([unit, count]) => [unit, unit, count])]
     .map(([value, label, count]) => {
       const chip = el("button", {
         type: "button", class: "fchip kh-unit-chip", "aria-pressed": String(unitFilter === value),
