@@ -1,7 +1,7 @@
 // Điều phối dữ liệu tĩnh và mục của MỘT trang mục: mỗi đường dẫn tự nạp dữ liệu, tự mount mục
 // của mình. Không còn tab, hashchange hay switchSection — điều hướng giữa các mục là chuyển trang.
 
-import { seasonConfigDetail, bestTier, el, khaihoangTable } from "./render.js";
+import { seasonConfigDetail, el, khaihoangTable } from "./render.js";
 import { loadLookupBundle } from "./lookup-data.js";
 import { initUnifiedLookup } from "./unified-lookup.js";
 import { initAnalyze } from "./analyze.js";
@@ -9,10 +9,9 @@ import { initRecruitTracker } from "./recruit-tracker.js";
 import { initRosterRecommend } from "./roster-recommend-ui.js";
 import { displayValue, loadWebsiteDisplay, localizeData } from "./website-display.js";
 
-import { loadSeasonModel, readSeasonQuery, updateSeasonURL, defaultSeasonSelection, BUNDLE_NOTICE } from './season-ui-state.js';
-import { assignDerivedFactions } from "./derive-team-faction.js";
+import { loadSeasonModel, readSeasonQuery, updateSeasonURL, BUNDLE_NOTICE } from './season-ui-state.js';
 import { createSeasonCoexistSection, createRecommendedSection } from "./team-filter-section.js";
-import { resolveBrowseState, projectSeasonBrowse, resolveSelectionScore } from './season-context.js';
+import { resolveBrowseState, projectSeasonBrowse } from './season-context.js';
 import { loadRecommendedReference, readRecommendedQuery } from './recommended-reference-state.js';
 import { resolveTeamView, writeStoredTeamView, canonicalTeamView, TEAM_VIEW_CARDS } from "./team-view.js";
 import {
@@ -161,7 +160,6 @@ async function main() {
     const tactics = lookupBundle?.tactics ?? [];
     const catalog = lookupBundle?.catalog ?? null;
     const teamTier = await loadOptionalJSON("/data/team-tier.json", []);
-    const tierIndex = new Map(teamTier.map((r) => [r.teamId, r.rankings]));
 
     // Phạm vi mùa chỉ có payload ở 3 trang mục; thiếu hash là trang không dùng đến mô hình mùa.
     let seasonModel = null;
@@ -246,24 +244,10 @@ async function main() {
       if (next === location.href) return;
       history.replaceState(history.state, '', next);
     }
-    function queryForSection(name) {
-      const state = readSeasonQuery(location.href,seasonModel);
-      return pageSection === name ? state : {...state,query:'',sort:'tier',filters:{faction:[],unit:[],tier:[],source:[]},notices:[]};
-    }
     function renderTeams() {
       if (!seasonModel) return;
       const state = readSeasonQuery(location.href,seasonModel);
-      const rows = ['applicable','scenarioReference','unknown'].flatMap(classification=>projection[classification].map(row=>{
-        const legacyRankings = browse.kind === 'all-reference' && row.configId === null ? tierIndex.get(row.teamId) || [] : [];
-        const scenario = seasonModel.data['season-registry'].find(item=>item.id === row.config?.scenarioId);
-        const rule = scenario?.rulesets.find(item=>item.id === row.config?.rulesetId);
-        const contextLabel = row.configId ? `${scenario?.labelVi || 'Chưa rõ kịch bản'} · ${rule?.label || 'Chưa xác minh luật'}` : '';
-        const team = {...row.team};
-        assignDerivedFactions([team],heroesDict);
-        return {...row,team,contextLabel,classification,legacyRankings,legacyTier:bestTier(legacyRankings),sourceScore:row.configId ? resolveSelectionScore(seasonModel,row.configId,defaultSeasonSelection(row.config)) : null};
-      }));
-      sections['team-pk']?.update(rows.filter(row=>row.team.source !== 'moi-phe'),queryForSection('team-pk'));
-      sections['meta-cu']?.update(rows.filter(row=>row.team.source === 'moi-phe'),queryForSection('meta-cu'));
+      const rows = ['applicable','scenarioReference','unknown'].flatMap(classification=>projection[classification].map(row=>({...row,classification})));
       const detailKey=JSON.stringify([state.configId,state.browse]);
       if (openedConfig === detailKey && detailMount.childElementCount) return;
       openedConfig = detailKey;
@@ -456,7 +440,6 @@ async function main() {
         ? 'Dữ liệu đội chuẩn hiện không khả dụng. Các mục khác vẫn hoạt động.'
         : 'Dữ liệu đội khác hiện không khả dụng. Các mục khác vẫn hoạt động.'));
     }
-    let lookupUI = null;
     const refresh = () => {
       if (detailMount) detailMount.hidden = !new URL(location.href).searchParams.has('config') && !REFERENCE_SECTIONS.includes(pageSection);
       renderScope();
@@ -498,7 +481,7 @@ async function main() {
     window.addEventListener('pageshow', event => { if (event.persisted) restoreReturnState(); });
     // Scroll mới nhất phải vào snapshot trước khi rời trang bằng paste/copy URL.
     window.addEventListener('pagehide', rememberReturn);
-    if (pageSection === 'lookup' && catalog) lookupUI = initUnifiedLookup({ heroes: heroesDict, tactics, catalog }, mount, {
+    if (pageSection === 'lookup' && catalog) initUnifiedLookup({ heroes: heroesDict, tactics, catalog }, mount, {
       summary: {
         pin: recommendedPin,
         loadBytes: loadRecommendedBytes,
@@ -522,6 +505,7 @@ async function main() {
       mount.append(el("p", { class: "error", role: "status" }, "Tính năng này cần dữ liệu Tra cứu đang không khả dụng."));
     }
   } catch (err) {
+    console.error(err);
     const template = websiteDisplay
       ? displayValue(websiteDisplay, "ui:app/load-error", "errorTemplate")
       : "Không thể tải dữ liệu. Hãy tải lại trang hoặc liên hệ quản trị viên nếu lỗi tiếp diễn.";

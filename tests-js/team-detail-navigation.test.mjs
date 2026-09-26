@@ -12,7 +12,6 @@ import {
   matchesReturnSnapshot,
   writeReturnSnapshot,
   readReturnSnapshot,
-  clearReturnSnapshot,
   migrateLegacyReferenceUrl,
   setTeamRouteHandles,
   setTeamRouteHandlesFromJSON,
@@ -276,9 +275,6 @@ test('snapshot storage failures never block navigation and never restore a forei
   assert.deepEqual(readReturnSnapshot('/doi-chuan/?q=vien',storage),snapshot);
   assert.deepEqual(readReturnSnapshot(`${ROOT}/doi-chuan/?q=vien`,storage,{origin:ROOT}),snapshot);
   assert.equal(readReturnSnapshot('/doi-chuan/?q=other',storage),null);
-
-  clearReturnSnapshot(storage);
-  assert.equal(readReturnSnapshot('/doi-chuan/?q=vien',storage),null);
 
   assert.equal(writeReturnSnapshot(snapshot,memoryStorage({failSet:true})),false);
   assert.equal(readReturnSnapshot('/doi-chuan/?q=vien',memoryStorage({failGet:true})),null);

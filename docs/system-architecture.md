@@ -91,7 +91,7 @@ review. Hai công cụ Soi đội và Gợi ý đội không có phạm vi mùa:
 
 Hồ sơ tướng của Tra cứu đọc thêm artifact tính lúc build `hero-summaries.json` sinh trong chính generation Recommended đang pin (khóa nối chính xác theo từng nguồn, descriptor mang hash kho Tra cứu), nên mở hồ sơ chỉ cần `manifest.json` + `hero-summaries.json` thay vì nạp toàn bộ kho đội chuẩn. Phạm vi và ngân sách tải của đường này ghi ở [quyết định #12 của plan redesign](../plans/260923-1949-so-binh-phap-redesign/plan.md).
 
-Hai trang danh sách đội đều gọi `team-filter-section.js`. Module này tính facet trực tiếp từ tập source, tạo search/chip, thu gọn bộ lọc trên mobile và render card. `data/facets.json` không được load runtime.
+Hai trang danh sách đội đều gọi `createRecommendedSection()` của `team-filter-section.js`; cùng module còn dựng mục Cùng Tồn (`createSeasonCoexistSection()`). Module này tính facet trực tiếp từ tập source, tạo search/chip, thu gọn bộ lọc trên mobile; thẻ và bảng đội do `recommended-reference-render.js` dựng. `data/facets.json` không được load runtime.
 
 Tra cứu và gợi ý cốt lõi chạy local:
 
@@ -99,7 +99,7 @@ Tra cứu và gợi ý cốt lõi chạy local:
 - `unified-lookup.js` và `lookup-detail.js`: một search/profile cho sáu nhóm, paging và quan hệ theo ID; không suy team/tier/availability từ catalog.
 - `match-dict.js`: match Việt bỏ dấu/Hán-Việt/Hán.
 - `hero-identity.js`: SP, CO và bản thường có canonical ID riêng; `familyId` chỉ biểu diễn quan hệ cùng họ, không thay thế identity khi xét sở hữu. Mỗi combined slot là một tập alternatives và chỉ cần đúng một alternative để thỏa slot.
-- `filters.js`: search/filter team.
+- `filters.js`: chuẩn hoá chữ bỏ dấu (`normalizeText`) và blob tìm kiếm của một đội (`teamSearchBlob`), dùng chung giữa website và MCP.
 - `team-recommend-engine.js`: xét ownership, conflict tướng/chiến pháp, alternatives, tier/red stars và portfolio tối đa 5 team.
 - `coexist.json` và source-owned Cùng Tồn chỉ render tham khảo; recommender dùng dữ liệu legacy khi không có context hoặc cấu hình từ shared projector khi có cặp luật hợp lệ, không parse display string Cùng Tồn.
 

@@ -703,22 +703,13 @@ test("cách nhận của mọi chiến pháp đã công bố không lộ mã tr�
   assert.ok(checked > 0, "dữ liệu thật phải có chiến pháp mang cách nhận");
 });
 
-test("chi phí công trình bỏ ô rỗng và khóa không nhãn, không in null hay khóa thô", () => {
-  const warned = [];
-  const original = console.warn;
-  console.warn = (message) => warned.push(String(message));
-  try {
-    assert.equal(costText({ wood: 180, stone: null, iron: 180 }), "Gỗ: 180, Sắt: 180");
-    assert.equal(costText({ wood: 0, food: undefined, stone: "" }), "Gỗ: 0");
-    // Không còn ô nào dùng được thì bỏ hẳn phần chi phí thay vì hiện chuỗi rỗng.
-    assert.equal(costText({ stone: null, iron: null }), null);
-    assert.equal(costText({ vang: 5 }), null);
-    assert.equal(costText(null), null);
-    assert.equal(costText("không phải đối tượng"), null);
-  } finally {
-    console.warn = original;
-  }
-  assert.ok(warned.some((line) => line.includes("vang")), "khóa chi phí không nhãn phải được cảnh báo cho dev");
+test("chi phí công trình bỏ ô rỗng, không in null", () => {
+  assert.equal(costText({ wood: 180, stone: null, iron: 180 }), "Gỗ: 180, Sắt: 180");
+  assert.equal(costText({ wood: 0, iron: undefined, stone: "" }), "Gỗ: 0");
+  // Không còn ô nào dùng được thì bỏ hẳn phần chi phí thay vì hiện chuỗi rỗng.
+  assert.equal(costText({ stone: null, iron: null }), null);
+  assert.equal(costText(null), null);
+  assert.equal(costText("không phải đối tượng"), null);
 });
 
 test("nội chính hiện nhãn tiếng Việt, không bao giờ in khóa thô", () => {

@@ -395,15 +395,6 @@ export function readReturnSnapshot(href, storage, {origin, khaihoangInventory} =
   return restored;
 }
 
-export function clearReturnSnapshot(storage) {
-  try {
-    storage.removeItem(TEAM_RETURN_STORAGE_KEY);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 /**
  * URL tham chiếu cũ được resolve bằng identity thật rồi replace sang route mới.
  * Key `config` luôn giữ precedence gameplay, kể cả khi giá trị không hợp lệ.

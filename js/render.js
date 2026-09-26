@@ -50,130 +50,12 @@ const publicText = (value, fallback = "Nội dung tiếng Việt chưa sẵn sà
 const UNIT_CLASS = { "Kỵ": "u-ky", "Cung": "u-cung", "Thương": "u-thuong", "Khiên": "u-khien" };
 // Phe -> hậu tố class màu (Ngụy xanh đậm, Thục xanh lá, Ngô đỏ, Quần vàng).
 export const FACTION_CODE = { "Ngụy": "nguy", "Thục": "thuc", "Ngô": "ngo", "Quần": "quan", "Hỗn hợp": "honhop" };
-// Nhãn trạng thái dùng chung (cũng dùng ở app.js qua export).
-export const STATUS_LABEL = {
-  meta: "Meta",
-  "out-meta": "Cũ",
-  "youtuber-untested": "Youtuber",
-  situational: "Tình huống",
-};
-// Nhãn nguồn team (theo file gốc trong Meta Team PK).
+// Nhãn nguồn của đội cũ (`data/teams.json`): chip Nguồn ở Đội khác và trang chi tiết.
 export const SOURCE_LABEL = {
   "team-intro": "Giới thiệu",
   "do-uy": "Đô úy",
   "moi-phe": "Meta phe (cũ)",
 };
-
-/** Bậc tier tốt nhất (T số nhỏ nhất) trong list rankings. Rỗng -> null. */
-export function bestTier(rankings) {
-  if (!rankings || !rankings.length) return null;
-  return rankings.reduce((best, r) =>
-    parseFloat(r.tier.slice(1)) < parseFloat(best.slice(1)) ? r.tier : best,
-    rankings[0].tier);
-}
-
-/** Tier -> hậu tố class CSS (bỏ dấu chấm: T0.5 -> t-05). */
-export function tierClass(tier) {
-  return "t-" + tier.slice(1).replace(".", "");
-}
-
-/** Badge tier team + tooltip liệt kê mọi nguồn (multi-source minh bạch). */
-function tierBadge(rankings) {
-  const tier = bestTier(rankings);
-  if (!tier) return null;
-  const tip = rankings
-    .map((r) => `${r.tier} — ${r.source} (${r.updatedAt})`)
-    .join("\n");
-  return el("span", { class: `badge tier ${tierClass(tier)}`, title: `Tham khảo:\n${tip}` }, tier);
-}
-
-
-function statusBadge(status) {
-  if (status === "meta") return null;
-  return el("span", { class: `badge status status-${status}` }, STATUS_LABEL[status] || status);
-}
-
-/** Badge "Khuyến nghị" cho team được đề cử (cờ team.recommended). */
-function recommendBadge(team) {
-  if (!team.recommended) return null;
-  return el("span", { class: "badge recommend", title: "Đội được khuyến nghị" }, "Khuyến nghị");
-}
-
-function variantTags(g, cls, onTag) {
-  // g = {name, alternatives[]}
-  const wrap = el("span", { class: "vg" });
-  const main = el("button", {
-    class: `tag ${cls}`,
-    type: "button",
-    onclick: onTag ? () => onTag(g.name) : null,
-  }, g.name);
-  wrap.append(main);
-  for (const alt of g.alternatives || []) {
-    wrap.append(el("span", { class: "alt-sep" }, "/"));
-    wrap.append(
-      el("button", { class: `tag ${cls} alt`, type: "button", onclick: onTag ? () => onTag(alt) : null }, alt)
-    );
-  }
-  return wrap;
-}
-
-function heroRow(hero, onTag) {
-  const altName = (hero.alternatives || []).length ? " / " + hero.alternatives.join(" / ") : "";
-  const nameEl = el("div", { class: "hero-name" }, [
-    hero.isSP ? el("span", { class: "pre sp" }, "SP") : null,
-    hero.isCO ? el("span", { class: "pre co" }, "CO" ) : null,
-    el("span", { class: "hn" }, hero.baseName + altName),
-    hero.variant ? el("span", { class: "variant" }, `(${hero.variant})`) : null,
-  ]);
-
-  const tactics = el("div", { class: "line tactics" },
-    (hero.tactics || []).map((g) => variantTags(g, "t-tactic", onTag)));
-
-  const books = el("div", { class: "line books" },
-    (hero.books || []).map((g) => variantTags(g, "t-book", onTag)));
-
-  return el("div", { class: "hero" }, [nameEl, tactics, (hero.books || []).length ? books : null]);
-}
-
-function counterChips(counters, onTag) {
-  const wrap = el("div", { class: "counters" });
-  for (const g of counters.good || []) {
-    wrap.append(el("button", { class: "chip good", type: "button", title: "Khắc được", onclick: onTag ? () => onTag(g) : null }, "⚔ " + g));
-  }
-  for (const a of counters.avoid || []) {
-    wrap.append(el("button", { class: "chip avoid", type: "button", title: "Nên tránh", onclick: onTag ? () => onTag(a) : null }, "⚠ " + a));
-  }
-  return wrap.childElementCount ? wrap : null;
-}
-
-/** Card 1 team PK. onTag(value): callback khi bấm chip (để search). */
-export function teamCard(team, onTag, rankings) {
-  const fcode = FACTION_CODE[team.faction];
-  // Tiêu đề: ưu tiên tên gọi khác (nickname), mặc định tên ghép từ âm tiết cuối 3 tướng.
-  const title = team.nickname || team.name;
-  const titleEl = title
-    ? el("button", { class: "team-name", type: "button", title: "Tìm theo tên team", onclick: onTag ? () => onTag(title) : null }, title)
-    : null;
-  const head = el("div", { class: "card-head" }, [
-    el("div", { class: "units" }, (team.unitType || []).map((u) =>
-      el("span", { class: `badge unit ${UNIT_CLASS[u] || ""}` }, u))),
-    el("div", { class: "head-right" }, [
-      recommendBadge(team),
-      tierBadge(rankings),
-      team.faction ? el("span", { class: `badge faction${fcode ? " f-" + fcode : ""}` }, team.faction) : null,
-
-      statusBadge(team.status),
-    ]),
-  ]);
-
-  const heroes = el("div", { class: "heroes" }, team.heroes.map((h) => heroRow(h, onTag)));
-  const foot = counterChips(team.counters || {}, onTag);
-  const notes = team.notes ? el("div", { class: "notes" }, team.notes) : null;
-
-  const cls = ["team-card", team.status === "out-meta" ? "dim" : "", fcode ? "fa-" + fcode : ""]
-    .filter(Boolean).join(" ");
-  return el("article", { class: cls }, [titleEl, head, heroes, foot, notes].filter(Boolean));
-}
 
 /** Chuẩn hoá CRLF của trường nguồn nhiều dòng; chuỗi đã nhận được giữ nguyên, không trim. */
 const sourceTextLines = (value) => (typeof value === "string" ? value.replace(/\r\n?/g, "\n") : "");
@@ -308,11 +190,6 @@ function coexistModel(reference) {
       })),
     })),
   };
-}
-
-/** Nhóm Cùng Tồn của nhánh không có mô hình mùa (dữ liệu legacy). */
-export function coexistGroup(group) {
-  return seasonCoexistGroup({ content: group, source: null, classification: "unknown" });
 }
 
 /** Ô tổng quan gập trên mobile (artboard CoexistMobile); desktop luôn mở và ẩn dòng tóm tắt. */
@@ -841,24 +718,6 @@ export function khaihoangTable(data, { hrefFor, onNavigate, onChange } = {}) {
     },
     updateLinks: () => entries.forEach(writeLinks),
   };
-}
-
-export function seasonTeamCard(row, onTag, onOpen) {
-  const shownTeam = row.configId ? {...row.team,heroes:row.team.heroes.map(hero=>({...hero,alternatives:[]}))} : row.team;
-  const card = teamCard(shownTeam, onTag, row.classification === 'applicable' && row.tier ? [{tier:row.tier,source:'Cấu hình đã xác minh',updatedAt:''}] : row.legacyRankings);
-  if (row.configId) {
-    card.dataset.configId = row.configId;
-    card.querySelectorAll('.heroes .line,.counters,.notes').forEach(node=>node.remove());
-  }
-  card.append(el('p',{class:'scope-note'},row.classification === 'applicable' ? 'Áp dụng theo phiên bản luật đã chọn' : row.classification === 'unknown' ? 'Chưa rõ mùa — tham khảo' : 'Tham khảo kịch bản'));
-  if (row.legacyRankings?.length) card.append(el('details',{class:'legacy-tier-sources'},[el('summary',{},'Bậc lịch sử — tham khảo'),...row.legacyRankings.map(rank=>el('p',{},`${rank.tier} · ${rank.source} · ${rank.updatedAt}`))]));
-  if (row.contextLabel) card.append(el('p',{class:'scope-note'},row.contextLabel));
-  card.append(el('p',{class:'sgsdeck-score'},row.sourceScore ? `Điểm SGSDeck: ${row.sourceScore.value}` : 'Chưa có điểm SGSDeck'));
-  card.append(el('p',{class:'scope-note'},`Nguồn: ${SOURCE_LABEL[row.team.source] || row.team.source || 'Chưa có dữ liệu'}`));
-  if (row.sourceScore) card.append(el('a',{href:row.sourceScore.provenance.sourceUrl,target:'_blank',rel:'noopener noreferrer'},'Nguồn điểm SGSDeck'));
-  if (row.config?.requirements.some(item=>item.mandatory)) card.append(el('p',{class:'scope-note'},'Có điều kiện bắt buộc chưa xác minh.'));
-  if (row.configId) card.append(el('button',{type:'button',class:'ana-link-btn',onClick:onOpen},'Chi tiết cấu hình'));
-  return card;
 }
 
 import { resolveSelectionScore } from './season-context.js';

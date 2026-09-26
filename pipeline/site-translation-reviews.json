@@ -44764,22 +44764,6 @@
           "verdict": "accepted"
         },
         {
-          "entityId": "ui:season/tier-sort",
-          "fieldPath": "tierSort",
-          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-          "inputFingerprint": "61054bc285daab773ae5cbc97c7da34321021228be8fac70289cf36e44d05fd1",
-          "textSha256": "be59f1317d977bb0ed9b2ce70879b84d913f19383b714016744b17246dc3d805",
-          "verdict": "accepted"
-        },
-        {
-          "entityId": "ui:season/tier-label",
-          "fieldPath": "tierLabel",
-          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-          "inputFingerprint": "84c586aaa303086984b9f1cb896a24d2c8e4d795a069dfad3749a0dfb78631c7",
-          "textSha256": "59120ce32cd3c0edfa5d3626fac6ea5bb66c00e8865e4782cb5f04af8311a78d",
-          "verdict": "accepted"
-        },
-        {
           "entityId": "ui:analyze/similar-team",
           "fieldPath": "heading",
           "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",

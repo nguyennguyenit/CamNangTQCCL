@@ -849,30 +849,18 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
   return { corpus, render };
 }
 
-const COST_LABELS = { wood: "Gỗ", iron: "Sắt", stone: "Đá", food: "Lương" };
-/** Khóa chi phí chưa có nhãn bị bỏ khỏi UI; cảnh báo dev một lần cho mỗi khóa để bổ sung nhãn. */
-const UNKNOWN_COST_KEYS = new Set();
+const COST_LABELS = { wood: "Gỗ", iron: "Sắt", stone: "Đá" };
 
 /**
- * Chi phí của một cấp công trình: bỏ ô không có giá trị (`null`/`undefined`/rỗng) và khóa không có nhãn
- * Việt (cảnh báo dev) — UI không bao giờ in `null` hay khóa thô. Không còn ô nào thì trả `null` để bỏ
- * hẳn phần chi phí khỏi dòng.
+ * Chi phí của một cấp công trình (`lookup-data.js` bắt buộc đúng ba khóa `wood`/`iron`/`stone`): bỏ ô không có
+ * giá trị (`null`/`undefined`/rỗng) nên UI không bao giờ in `null`. Không còn ô nào thì trả `null` để bỏ hẳn phần
+ * chi phí khỏi dòng.
  */
 export function costText(costs) {
   if (!costs || typeof costs !== "object") return null;
-  const parts = [];
-  for (const [key, value] of Object.entries(costs)) {
-    if (value === null || value === undefined || value === "") continue;
-    const label = Object.prototype.hasOwnProperty.call(COST_LABELS, key) ? COST_LABELS[key] : null;
-    if (!label) {
-      if (!UNKNOWN_COST_KEYS.has(key)) {
-        UNKNOWN_COST_KEYS.add(key);
-        console.warn(`Tra cứu: chưa có nhãn tiếng Việt cho khóa chi phí "${key}" — ô bị bỏ`);
-      }
-      continue;
-    }
-    parts.push(`${label}: ${value}`);
-  }
+  const parts = Object.entries(costs)
+    .filter(([, value]) => value !== null && value !== undefined && value !== "")
+    .map(([key, value]) => `${COST_LABELS[key]}: ${value}`);
   return parts.length ? parts.join(", ") : null;
 }
 

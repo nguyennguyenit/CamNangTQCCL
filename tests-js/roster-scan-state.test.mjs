@@ -5,7 +5,6 @@ import {
   addCanonicalItem,
   applyScanResult,
   createInitialRosterScanState,
-  lockedConstraints,
   removeItem,
   serializeRosterScanState,
 } from "../js/roster-scan-state.js";
@@ -34,17 +33,6 @@ test("remove and add canonical items", () => {
   state = removeItem(state, "heroes", "Mã Siêu");
 
   assert.deepEqual(state.ownedHeroes.map((h) => h.name), ["SP Quách Gia"]);
-});
-
-test("lockedConstraints flattens locked team heroes and tactics", () => {
-  const state = applyScanResult(createInitialRosterScanState(), "builtTeams", {
-    teams: [{ teamName: "Team cũ", heroes: ["Trình Phổ"], tactics: ["An Ủi Quân Dân"] }],
-  });
-
-  assert.deepEqual(lockedConstraints(state), {
-    heroes: ["Trình Phổ"],
-    tactics: ["An Ủi Quân Dân"],
-  });
 });
 
 test("serialize strips image and token fields", () => {

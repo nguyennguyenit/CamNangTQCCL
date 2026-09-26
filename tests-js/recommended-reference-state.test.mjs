@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { projectRecommendedRows, readRecommendedQuery, resolveTeamDestination, validateHttpSourceUrl, validateReferenceSourceUrl } from '../js/recommended-reference-state.js';
+import { projectRecommendedRows, readRecommendedQuery, validateHttpSourceUrl, validateReferenceSourceUrl } from '../js/recommended-reference-state.js';
 
 const rows = [
   {sourceConfigId:'b',sourceSeasonId:'s28',sourceCategoryId:'交戰',tierRaw:'T2',tierOrder:2,value:72,listIndex:1,factionRaw:'群',unitTypesRaw:['弓'],subcategoryRaw:'交戰',heroes:[]},
@@ -49,11 +49,6 @@ test('khóa đã nghỉ `score` và `category` không còn lọc gì', () => {
   assert.equal(Object.hasOwn(state,'category'),false);
   // Cả hai hàng thuộc danh mục 交戰: `category=器械` cũ không được thu hẹp danh sách.
   assert.deepEqual(projectRecommendedRows(rows,state).map(x=>x.sourceConfigId), ['a','b']);
-});
-
-test('legacy aliases preserve exact original destination', () => {
-  assert.deepEqual(resolveTeamDestination({legacyTeamId:'team-intro-0'}), {kind:'legacy',legacyTeamId:'team-intro-0'});
-  assert.deepEqual(resolveTeamDestination({sourceConfigId:'abc',safeScopeKey:'s-'+ '1'.repeat(64)}), {kind:'recommended',sourceConfigId:'abc',scopeKey:'s-'+ '1'.repeat(64)});
 });
 
 test('source URL policy rejects wrong hosts and credentials', () => {

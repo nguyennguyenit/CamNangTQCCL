@@ -1,9 +1,9 @@
 // Browser state adapter; all season facts and eligibility come from the shared resolver.
 import { validateSeasonBundle, resolveBrowseState, compareSeasonIds } from './season-context.js';
-import { normalizeText, teamSearchBlob } from './filters.js';
+import { normalizeText } from './filters.js';
 
 export const SEASON_ARTIFACTS = Object.freeze(['season-registry', 'season-evidence', 'season-team-configs', 'season-team-evaluations', 'season-content-links', 'teams', 'coexist', 'heroes-dict', 'tactics', 'books-dict']);
-export const QUERY_FILTERS = Object.freeze(['faction', 'unit', 'tier', 'source']);
+const QUERY_FILTERS = Object.freeze(['faction', 'unit', 'tier', 'source']);
 export const BUNDLE_NOTICE = 'Không xác thực được bộ dữ liệu mùa. Đang hiển thị dữ liệu cũ để tham khảo; tính năng theo mùa chưa khả dụng.';
 export async function loadSeasonModel(hashes, loadBytes) {
   if (!hashes || Object.keys(hashes).length !== SEASON_ARTIFACTS.length) throw new Error(BUNDLE_NOTICE);
@@ -30,36 +30,6 @@ export function readSeasonQuery(url, model) {
     configId: params.getAll('config').length === 1 ? params.get('config') : null,
     notices: [...(params.has('stars') ? ['Bộ lọc sao cũ đã được bỏ.'] : []), ...(invalidScalar ? ['Tham số tìm kiếm hoặc cấu hình không hợp lệ đã được bỏ.'] : [])],
   };
-}
-export function rowFacet(row, key) {
-  if (key === 'unit') return row.team.unitType || [];
-  if (key === 'tier') return [row.tier || row.legacyTier || 'untiered'];
-  return row.team[key] ? [row.team[key]] : [];
-}
-export function validateTeamFilters(rows, queryState) {
-  const notices = [...queryState.notices];
-  const filters = {};
-  for (const key of QUERY_FILTERS) {
-    const available = new Set(rows.flatMap(row => rowFacet(row, key)));
-    filters[key] = queryState.filters[key].filter(value => available.has(value));
-    if (filters[key].length !== queryState.filters[key].length) notices.push('Đã bỏ giá trị bộ lọc không có trong phạm vi này.');
-  }
-  const sort = ['tier', 'sgsdeck-score'].includes(queryState.sort) ? queryState.sort : 'tier';
-  if (sort !== queryState.sort) notices.push('Kiểu sắp xếp không hợp lệ; đã dùng tier.');
-  return {...queryState, filters, sort, notices:[...new Set(notices)]};
-}
-export function filterSeasonRows(rows, state) {
-  const query = normalizeText(state.query);
-  return rows.filter(row => QUERY_FILTERS.every(key => !state.filters[key].length || rowFacet(row, key).some(value => state.filters[key].includes(value))) && (!query || teamSearchBlob(row.team).includes(query)))
-    .sort((left, right) => {
-      if (state.sort === 'sgsdeck-score') {
-        const a = left.sourceScore?.value ?? -Infinity, b = right.sourceScore?.value ?? -Infinity;
-        if (a !== b) return b > a ? 1 : -1;
-      }
-      const leftTier = left.tier || left.legacyTier, rightTier = right.tier || right.legacyTier;
-      const a = leftTier ? Number(leftTier.slice(1)) : Infinity, b = rightTier ? Number(rightTier.slice(1)) : Infinity;
-      return (a - b || 0) || compareSeasonIds(left.configId || left.teamId, right.configId || right.teamId);
-    });
 }
 export function updateSeasonURL(url, changes) {
   const next = new URL(url);

@@ -361,7 +361,6 @@ function notesByOwner(record) {
   const alternative=new Map();
   for (const block of blocks) {
     const value=block?.textVi || UNAVAILABLE;
-    if (!value) continue;
     const bucket=block.owner === 'primary' ? primary : block.owner === 'alternative' ? alternative : null;
     if (!bucket) { team.push(value); continue; }
     const index=Number.isInteger(block.holderIndex) ? block.holderIndex : -1;

@@ -496,9 +496,7 @@ body { margin: 0; background: var(--bg); color: var(--ink); }
 .error { color: var(--accent); }
 
 /* ---------- Thẻ đội + dòng tướng dùng chung (Landing xem trước, danh sách, Khai hoang) ---------- */
-.card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-8); margin-bottom: var(--space-10); padding-bottom: var(--space-8); border-bottom: var(--border-hair) dashed var(--line); }
 .units { display: flex; gap: var(--space-4); flex-wrap: wrap; }
-.head-right { display: flex; gap: var(--space-5); align-items: center; flex-wrap: wrap; justify-content: flex-end; }
 .heroes { display: flex; flex-direction: column; gap: var(--space-8); }
 .hero { padding: var(--space-6) var(--space-7); background: var(--bg); border-radius: var(--radius-8); }
 .hero-name { font: var(--type-body); margin-bottom: var(--space-3); display: flex; align-items: center; gap: var(--space-5); flex-wrap: wrap; }
@@ -507,7 +505,6 @@ body { margin: 0; background: var(--bg); color: var(--ink); }
 .reference-holder .line { gap: var(--space-6); }
 .counters { display: flex; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-10); padding-top: var(--space-8); border-top: var(--border-hair) dashed var(--line); }
 .tag { cursor: pointer; }
-.tag.t-book { background: var(--panel-2); color: var(--muted); font: var(--type-tag); }
 .slot-label { font: var(--type-tag); color: var(--muted); }
 /* Duyên phận không phải chiến pháp: màu khác và không bấm được để lọc. */
 .t-bond { background: var(--panel-2); color: var(--f-honhop); cursor: default; }
@@ -735,9 +732,7 @@ main {
 .fchip.on,
 .fchip[aria-pressed="true"],
 .fchip[class*="f-"].on,
-.fchip[class*="f-"][aria-pressed="true"],
-.fchip.recommend.on,
-.fchip.recommend[aria-pressed="true"] {
+.fchip[class*="f-"][aria-pressed="true"] {
   background: var(--select);
   border-color: var(--select);
   color: var(--select-ink);
@@ -862,15 +857,9 @@ a.lookup-more:hover {
   font: var(--type-score-card);
 }
 
-.detail-score {
-  color: var(--accent);
-  font: var(--type-score-table);
-}
-
 /* ---------- Thẻ ---------- */
 .team-card,
 .kh-card,
-.tac-card,
 .lookup-card,
 .rt-section,
 .ana-card,
@@ -894,9 +883,7 @@ a.lookup-more:hover {
 
 /* ---------- Ô tìm ---------- */
 .search,
-.lookup-search,
-.tac-search,
-.combo-input {
+.lookup-search {
   min-height: var(--control-48);
   padding: 0 var(--space-14);
   border: var(--border-hair) solid var(--line);
@@ -908,7 +895,6 @@ a.lookup-more:hover {
 
 /* ---------- Select và nhãn caps ---------- */
 .season-slot select,
-.team-filter-bar select,
 .reference-scope-controls select,
 .rt-select,
 .rt-form select {
@@ -922,7 +908,6 @@ a.lookup-more:hover {
 }
 
 .flabel,
-.flabel-inline,
 .rt-kicker {
   font: var(--type-field-caps);
   letter-spacing: var(--type-field-caps-spacing);
@@ -5479,12 +5464,6 @@ body[data-page-section="lookup"] .layout {
 .cam-nang-note {
   color: var(--muted);
   font: var(--type-meta);
-}
-
-.cam-nang-status {
-  margin: 0;
-  color: var(--muted);
-  font: var(--type-small);
 }
 
 .cam-nang-grid {

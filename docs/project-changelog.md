@@ -1,5 +1,21 @@
 # Project Changelog
 
+## 2026-09-27 (Xoá code chết phần 4a: JavaScript, Astro, CSS)
+
+### Removed
+
+- Module không trang nào nạp: `js/team-pk.js`, `js/meta-cu.js`, `js/tactics.js`, `js/hero-list.js`, `js/hero-detail.js` và `js/derive-team-faction.js` (chỉ còn phục vụ khối dựng hàng chết của `app.js`), cùng entry trong `src/lib/public-artifact-manifest.mjs` (không còn phát ra `dist/js/`) và test chỉ phủ chúng.
+- Chuỗi bộ lọc cũ: `createTeamFilterSection`, `createSeasonTeamSection`, `facetCount`; `teamCard`, `seasonTeamCard`, `coexistGroup`, `bestTier`, `tierClass`, `STATUS_LABEL` của `js/render.js`; `applyFilters`, `emptyState` của `js/filters.js` (còn `normalizeText`, `teamSearchBlob` dùng chung với MCP); `validateTeamFilters`, `filterSeasonRows`, `rowFacet` của `js/season-ui-state.js`. CSS không còn ai dùng: `.card-head`, `.head-right`, `.tag.t-book`, `.fchip.recommend`, `.tac-card`, `.tac-search`, `.combo-input`, `.team-filter-bar select`, `.flabel-inline`, `.cam-nang-status` và khối `.detail-score` đầu bị ghi đè.
+- `app.js`: lời gọi `update` của hai mục `team-pk`/`meta-cu` không tồn tại, `queryForSection`, các trường hàng chỉ phục vụ chúng và `lookupUI`; lỗi khởi động nay được `console.error`.
+- Export không có caller production: `clearReturnSnapshot`, `resolveTeamDestination`, `loadVerifiedLegacyTeam`, `lockedConstraints`, `heroIdentityKey`, `LOOKUP_PAYLOAD_NAMES`, 5 hằng chữ của `js/detail-actions.js` (bỏ `export`), `findAdmittedVariant`, `teamDetailHtmlPaths`, `src/lib/recommended-reference-data.mjs`.
+- Engine gợi ý đội: trường `presetId`, `presetReason`, `coexistSetBonus`, `score` và hai phần tử luôn 0 của `rankingTuple`; thứ tự gợi ý không đổi.
+- Nhánh không tới được: chặn paste theo tab cũ ở Soi đội, nhãn `food` và cảnh báo khoá chi phí lạ ở Tra cứu, `if (!value) continue` ở bảng Đội chuẩn.
+
+### Changed
+
+- Bản dịch: bỏ 2 tuple `translate` `ui:season/tier-sort`, `ui:season/tier-label` (mục ledger và item receipt); owner inventory của `data/coexist.json` là `js/render.js::seasonCoexistGroup`. Policy `site-vi-260927-xoa-code-chet-a`, publish generation `8e1f0231…` (xoá generation `b3636bad…` của phần 3c), re-pin `pipeline/team-route-handles.json`; `WORKFLOW_BUILD_ID` đổi vì file thuộc bao đóng MCP bị sửa (output MCP không đổi).
+- `docs/codebase-summary.md`, `docs/system-architecture.md`: bảng module mô tả Landing + 8 trang mục, `team-filter-section.js`, `render.js`, `filters.js` và bộ Tra cứu hiện có.
+
 ## 2026-09-27 (UI/UX phần 3c: trang chi tiết, shell)
 
 ### Fixed

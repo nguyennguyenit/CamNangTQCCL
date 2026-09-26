@@ -274,5 +274,3 @@ export function loadLookupBundle(fetchFn) {
   pending.catch(() => { if (loads.get(fetchFn) === pending) loads.delete(fetchFn); });
   return pending;
 }
-
-export const LOOKUP_PAYLOAD_NAMES = Object.freeze([...PAYLOAD_NAMES]);

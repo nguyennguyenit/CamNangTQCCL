@@ -8,7 +8,7 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 
 ```text
 .
-├── src/pages/index.astro   # document shell 9 section
+├── src/pages/              # Landing + 8 trang mục + trang chi tiết đội
 ├── src/lib/                # manifest và safe raw-artifact reader
 ├── src/pages/{js,css,data} # Astro static endpoints
 ├── css/, js/, data/        # source runtime canonical
@@ -27,16 +27,16 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 
 | File | Vai trò |
 |---|---|
-| `src/pages/index.astro` | Khai báo 9 tab/section và nạp raw `/js/app.js`; build thành `dist/index.html`. |
+| `src/pages/index.astro`, `src/pages/<mục>/index.astro` | Landing tĩnh (số liệu tính lúc build) và 8 trang mục; mỗi trang mục có một mount `#section-<id>` và nạp raw `/js/app.js`. |
 | `src/lib/public-artifact-manifest.mjs` | Allowlist route/source/class cho mọi JS/CSS/JSON public. |
 | `public/favicon.png` | Logo PNG 128×128, góc trong suốt; ảnh gốc từ [Thiên Thượng Hỏa](https://thienthuonghoa.com/assets/uploads/images/tqccl-logo.jpg). `STATIC_PUBLIC_ARTIFACTS` trong dist verifier kiểm byte parity; `/favicon.png` phải revalidate. |
 | `src/lib/root-static-artifacts.ts` | Đọc raw artifact an toàn và trả bytes/MIME cho static endpoint. |
 | `scripts/verify-astro-dist.mjs` | Kiểm toàn bộ `dist/`, byte parity và deployment-control artifact. |
-| `js/app.js`, `js/website-display.js` | Capture byte runtime, xác minh publication/source hash và áp overlay tiếng Việt trước khi khởi tạo tám section. |
-| `js/team-filter-section.js` | Shared full-text search, chip động, stats, clear và mobile collapse cho 2 tab team. |
-| `js/team-pk.js`, `js/meta-cu.js` | Chọn source, cấu hình filter và sort riêng từng tab. |
-| `js/render.js`, `js/filters.js` | DOM builder, team card, tier và pure filter/search. |
-| `js/hero-list.js`, `js/hero-detail.js`, `js/tactics.js` | Tra cứu tướng/chiến pháp local. |
+| `js/app.js`, `js/website-display.js` | Capture byte runtime, xác minh publication/source hash và áp overlay tiếng Việt trước khi khởi tạo mục của trang đang mở. |
+| `js/team-filter-section.js` | Mục Đội chuẩn/Đội khác (`createRecommendedSection`: search, chip động, stats, xoá lọc, thu gọn trên mobile, Thẻ/Thẻ gọn/Bảng) và mục Cùng Tồn (`createSeasonCoexistSection`). |
+| `js/render.js` | DOM builder dùng chung (`el`, icon), nhóm Cùng Tồn, bảng Khai hoang và chi tiết cấu hình mùa. |
+| `js/filters.js` | Chuẩn hoá chữ bỏ dấu và blob tìm kiếm của một đội, dùng chung với MCP. |
+| `js/unified-lookup.js`, `js/lookup-data.js`, `js/lookup-detail.js` | Tra cứu sáu nhóm: nạp và xác minh snapshot, tìm kiếm, hồ sơ và quan hệ theo ID. |
 | `js/recruit-tracker-store.js` | State schema v1, nhiều account, banner, pity, import/export localStorage. |
 | `js/analyze.js`, `js/analyze-map.js` | Nén ảnh, Turnstile, Worker call, canonical map và team similarity. |
 | `js/hero-identity.js` | Canonical identity tướng: SP/CO/base tách biệt, `familyId` riêng và combined slot là alternatives. |
@@ -95,7 +95,7 @@ Tab Khai hoang hỗ trợ `variants[]` tùy chọn trên từng đội: cấu h�
 ## Kiểm thử
 
 - `tests/`: parser, normalize, build, từ điển, tier, crawl/link.
-- `tests-js/`: Astro/dist/header contracts, filter, map, hero UI, mobile menu, tracker, roster state và recommend engine.
+- `tests-js/`: Astro/dist/header contracts, filter, map, Tra cứu, mobile menu, tracker, roster state và recommend engine.
 - `tests-e2e/`: Chromium parity, storage, JSON failure, exposure local/routed HTTPS và mixed-content.
 - `worker/test/`: config, guard, model, rate-limit, scan modes, schema.
 - `mcp-worker/test/`: snapshot/filesystem/Static Assets/cache, tám handler, CLI/stdio/HTTP parity, bearer/limits/protocol, ownership-safe release/rollback, verifier, import guard và production-shaped Workerd budget.
@@ -104,7 +104,6 @@ Gate thống nhất nằm ở `.github/workflows/mcp-worker.yml`: `mcp-worker/sc
 
 ## Điểm cần chú ý
 
-- Comment `50 team` trong `js/team-pk.js` đã cũ; UI dùng số runtime nên vẫn hiện 56.
 - `build_json.py` cố ý loại Đô Úy nhưng chỉ dựng 50 Team PK + 110 meta cũ; chưa tái tạo đủ artifact 56 + 110 an toàn.
 - 48 team Đô Úy từng công khai đã được retire; chỉ còn nguồn thô/archive 40 record tại `pipeline/do-uy-ss18-source.json`, không tham gia build/publication.
 - `facets.json` chậm hơn `teams.json` một team nhưng hiện không ảnh hưởng filter runtime.

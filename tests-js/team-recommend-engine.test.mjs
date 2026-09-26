@@ -312,15 +312,6 @@ test("full-box search can skip the individually best team for stronger portfolio
   assert.equal(result.portfolioTeams.some((entry) => entry.team?.id === "t0-alpha"), true);
 });
 
-test("result includes preset slots even before coexist sets exist", () => {
-  const [first] = run().portfolioTeams;
-
-  assert.equal(first.presetId, null);
-  assert.equal(first.presetReason, "");
-  assert.equal(first.coexistSetBonus, 0);
-  assert.equal(first.source, "team");
-});
-
 test("base hero không thỏa team cần SP cùng family", () => {
   const team = {
     id: "sp-required",

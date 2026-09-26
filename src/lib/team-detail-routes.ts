@@ -474,15 +474,3 @@ export function teamDetailCatalog({
     khaiHoangPath ?? 'injected Khai hoang bytes',
   ));
 }
-
-export function findAdmittedVariant(catalog: TeamDetailRouteCatalog, legacyTeamId: unknown, legacyVariantId: unknown) {
-  if (!isRoutableIdentifier(legacyTeamId) || !isRoutableIdentifier(legacyVariantId)) return null;
-  return catalog.variants.find(
-    (variant) => variant.legacyTeamId === legacyTeamId && variant.legacyVariantId === legacyVariantId,
-  ) ?? null;
-}
-
-/** Exact generated HTML inventory used by both the build and the dist verifier. */
-export async function teamDetailHtmlPaths(options?: TeamDetailCatalogOptions) {
-  return (await teamDetailCatalog(options)).htmlPaths;
-}

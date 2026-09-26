@@ -4,7 +4,6 @@ import assert from "node:assert/strict";
 import {
   canonicalHeroId,
   heroFamilyId,
-  heroIdentityKey,
   heroSlotAlternatives,
   normalizeHeroSlot,
 } from "../js/hero-identity.js";
@@ -18,7 +17,6 @@ test("SP, CO và bản thường có canonical ID riêng nhưng chung family", (
   assert.equal(heroFamilyId("SP Tuân Úc"), "hero-family:tuan-uc");
   assert.equal(heroFamilyId("Tuân Úc"), "hero-family:tuan-uc");
   assert.equal(heroFamilyId("CO Chân Cơ"), "hero-family:chan-co");
-  assert.equal(heroIdentityKey("SP Tuân Úc"), canonicalHeroId("SP Tuân Úc"));
 });
 
 test("40Y có ID riêng, chung family và map sang variant other", () => {

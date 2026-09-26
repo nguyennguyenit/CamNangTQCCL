@@ -1,7 +1,7 @@
 import { SOURCE_LABEL } from "./render.js";
 // Section "Soi đội từ ảnh" (Phase 4): upload/paste ảnh -> nén client -> Turnstile
 // (lazy-load) -> gọi Worker -> map 3 trục (analyze-map) -> render + đối chiếu team.
-// Giữ 3 section cũ offline: Turnstile script CHỈ nạp khi mở tab này.
+// Turnstile script chỉ nạp khi mở trang này.
 
 import { el, icon, svgNode } from "./render.js";
 import { heroPortrait } from "./hero-portrait.js";
@@ -486,8 +486,6 @@ export function initAnalyze(deps, mount) {
     pickFile(e.dataTransfer.files[0]);
   });
   document.addEventListener("paste", (e) => {
-    if (!mount.classList.contains("active")) return; // chỉ nhận paste khi tab analyze đang mở
-
     const item = [...(e.clipboardData?.items || [])].find((i) => i.type.startsWith("image/"));
     if (item) pickFile(item.getAsFile());
   });

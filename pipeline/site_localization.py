@@ -185,7 +185,7 @@ OUTPUT_ITEM_REQUIRED = {
 }
 OUTPUT_ITEM_OPTIONAL = {"errors", "notes"}
 DATA_INVENTORY_OWNERS = {
-    "data/coexist.json": "js/render.js::coexistGroup",
+    "data/coexist.json": "js/render.js::seasonCoexistGroup",
     "data/khaihoang.json": "js/render.js::khaihoangTable",
     "data/teams.json": "js/recommended-reference-render.js::legacyContentSections",
     "data/season-content-links.json": "js/render.js::seasonCoexistGroup",
@@ -278,8 +278,6 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:app/team-chuan-title", "title", "title:'Team chuẩn'", "js/app.js", "main", "static", "translate"),
     ("ui:app/team-khac-title", "title", "title:'Team khác'", "js/app.js", "main", "static", "translate"),
     ("ui:recommended/introduction", "introduction", "Dữ liệu SGSDeck Recommended theo mùa nguồn.", "js/team-filter-section.js", "createRecommendedSection", "static", "translate"),
-    ("ui:season/tier-sort", "tierSort", "Theo tier", "js/team-filter-section.js", "createSeasonTeamSection", "static", "translate"),
-    ("ui:season/tier-label", "tierLabel", "tier:'Tier'", "js/team-filter-section.js", "createSeasonTeamSection", "data", "translate"),
     ("ui:analyze/similar-team", "heading", "Team có sẵn giống", "js/analyze.js", "renderResult", "success", "translate"),
     ("ui:analyze/no-similar-team", "empty", "Không tìm thấy team có sẵn đủ giống", "js/analyze.js", "renderResult", "empty", "translate"),
     ("ui:roster/team-locked", "heading", "Team đang khóa", "js/roster-recommend-ui.js", "renderReview", "review", "translate"),

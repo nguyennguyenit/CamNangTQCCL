@@ -3,11 +3,11 @@
 
 import { el, icon, svgNode } from './render.js';
 
-export const SOURCE_LINK_LABEL = 'Xem nguồn';
-export const COPY_LINK_LABEL = 'Sao chép liên kết đội';
-export const COPY_FALLBACK_LABEL = 'Liên kết đội';
-export const COPIED_MESSAGE = 'Đã sao chép liên kết';
-export const COPY_FAILED_MESSAGE = 'Không sao chép tự động được. Liên kết đã được chọn sẵn để bạn tự sao chép.';
+const SOURCE_LINK_LABEL = 'Xem nguồn';
+const COPY_LINK_LABEL = 'Sao chép liên kết đội';
+const COPY_FALLBACK_LABEL = 'Liên kết đội';
+const COPIED_MESSAGE = 'Đã sao chép liên kết';
+const COPY_FAILED_MESSAGE = 'Không sao chép tự động được. Liên kết đã được chọn sẵn để bạn tự sao chép.';
 
 /**
  * Lỗi mạng/HTTP khi tải dữ liệu chi tiết: fetch bị chặn (TypeError của trình duyệt) hoặc bộ nạp báo

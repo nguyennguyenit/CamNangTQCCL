@@ -53,10 +53,6 @@ export function heroFamilyId(value) {
   return identity(value).familyId;
 }
 
-export function heroIdentityKey(value) {
-  return canonicalHeroId(value);
-}
-
 function primaryDisplayName(hero) {
   const named = cleanDisplayName(hero?.name || hero?.baseName || "");
   if (VARIANT_PREFIX.test(named)) return named;

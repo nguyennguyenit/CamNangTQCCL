@@ -149,7 +149,7 @@ function dictionary(rows, kind) {
 function canonicalRefs(value, dictionaryIndex, allowEmpty = false) {
   ids(value, dictionaryIndex, allowEmpty); for (const ref of value) ensure(dictionaryIndex.get(ref));
 }
-function validateRegistry(data, state) {
+function validateRegistry(state) {
   const { scenarios, proofs, rules } = state;
   for (const scenario of scenarios.values()) {
     object(scenario, ['schemaVersion', 'id', 'labelVi', 'aliases', 'region', 'kind', 'rulesets', 'sourceMappings', 'reviewStatus', 'evidenceRefs']);
@@ -303,7 +303,7 @@ export async function validateSeasonBundle(input) {
   try {
     object(input, [...ARTIFACTS, ...DATASETS]); const data = structuredClone(input); for (const key of [...ARTIFACTS, ...DATASETS]) list(data[key]);
     const state = { data, scenarios: index(data['season-registry']), proofs: index(data['season-evidence']), configs: index(data['season-team-configs']), evaluations: index(data['season-team-evaluations']), links: index(data['season-content-links']), teams: index(data.teams), heroes: dictionary(data['heroes-dict'], 'hero'), tactics: dictionary(data.tactics, 'tactic'), books: dictionary(data['books-dict'], 'book'), rules: new Map(), configHashes: new Map(), evaluationByConfig: new Map(), scoreSelections: new Map(), content: new Map(), legacyHashes: [] };
-    validateRegistry(data, state); await validateConfigs(state); await validateEvaluations(state);
+    validateRegistry(state); await validateConfigs(state); await validateEvaluations(state);
     state.legacyHashes = await Promise.all(data.coexist.map(seasonFingerprint)); await validateContent(state);
     const model = freeze({ data }); MODELS.set(model, state); return model;
   } catch (error) { if (error instanceof SeasonContextError) throw error; throw new SeasonContextError(); }

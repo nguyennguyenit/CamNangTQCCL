@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { applyFilters, emptyState, normalizeText, teamSearchBlob } from "../js/filters.js";
+import { normalizeText, teamSearchBlob } from "../js/filters.js";
 
 function team(over) {
   return {
@@ -19,70 +19,11 @@ function team(over) {
   };
 }
 
-test("empty state returns all", () => {
-  const teams = [team(), team({ stars: 4 })];
-  assert.equal(applyFilters(teams, emptyState()).length, 2);
-});
-
-test("AND between groups", () => {
-  const teams = [
-    team({ stars: 5, unitType: ["Thương"] }),
-    team({ stars: 5, unitType: ["Kỵ"] }),
-  ];
-  const s = emptyState();
-  s.stars.add("5");
-  s.unitTypes.add("Thương");
-  assert.equal(applyFilters(teams, s).length, 1);
-});
-
-test("OR within a group", () => {
-  const teams = [team({ stars: 5 }), team({ stars: 4 }), team({ stars: 4.5 })];
-  const s = emptyState();
-  s.stars.add("5");
-  s.stars.add("4");
-  assert.equal(applyFilters(teams, s).length, 2);
-});
-
-test("filters by source (Đô úy riêng)", () => {
-  const teams = [
-    team({ source: "do-uy" }),
-    team({ source: "team-intro" }),
-    team({ source: "moi-phe" }),
-  ];
-  const s = emptyState();
-  s.sources.add("do-uy");
-  const out = applyFilters(teams, s);
-  assert.equal(out.length, 1);
-  assert.equal(out[0].source, "do-uy");
-});
-
-test("matches tactic alternatives (not just primary)", () => {
+test("teamSearchBlob includes tactic alternatives, not just the primary name", () => {
   const t = team({
-    heroes: [
-      {
-        baseName: "X",
-        name: "X",
-        tactics: [{ name: "Uy Mưu Vô Địch", alternatives: ["Vạn Quân Đoạt Sư"] }],
-        books: [],
-      },
-    ],
+    heroes: [{ baseName: "X", name: "X", tactics: [{ name: "Uy Mưu Vô Địch", alternatives: ["Vạn Quân Đoạt Sư"] }], books: [] }],
   });
-  const s = emptyState();
-  s.tactics.add("Vạn Quân Đoạt Sư"); // chỉ có ở vế alternatives
-  assert.equal(applyFilters([t], s).length, 1);
-});
-
-test("full-text search is diacritic-insensitive", () => {
-  const t = team({ heroes: [{ baseName: "Mã Siêu", name: "SP Mã Siêu", tactics: [], books: [] }] });
-  const s = emptyState();
-  s.query = "ma sieu";
-  assert.equal(applyFilters([t], s).length, 1);
-});
-
-test("search miss returns empty", () => {
-  const s = emptyState();
-  s.query = "khong-ton-tai-xyz";
-  assert.equal(applyFilters([team()], s).length, 0);
+  assert.ok(teamSearchBlob(t).includes(normalizeText("Vạn Quân Đoạt Sư")));
 });
 
 test("normalizeText strips Vietnamese diacritics and đ", () => {
@@ -94,12 +35,8 @@ test("teamSearchBlob includes counters", () => {
   assert.ok(blob.includes("quan cung"));
 });
 
-test("search matches team name and nickname", () => {
-  const t = team({ name: "Ninh Từ Thái", nickname: "Hổ Thần Cung" });
-  const byName = emptyState();
-  byName.query = "ninh tu thai";
-  assert.equal(applyFilters([t], byName).length, 1);
-  const byNick = emptyState();
-  byNick.query = "ho than cung";
-  assert.equal(applyFilters([t], byNick).length, 1);
+test("teamSearchBlob matches team name and nickname without diacritics", () => {
+  const blob = teamSearchBlob(team({ name: "Ninh Từ Thái", nickname: "Hổ Thần Cung" }));
+  assert.ok(blob.includes("ninh tu thai"));
+  assert.ok(blob.includes("ho than cung"));
 });

@@ -2,7 +2,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import { tacticDescriptions } from "../js/tactics.js";
 import { matchDict } from "../js/match-dict.js";
 
 const tactics = JSON.parse(await readFile(new URL("../pipeline/lookup-inputs/tactics.json", import.meta.url), "utf8"));
@@ -136,17 +135,6 @@ test("six tactics match Vietnamese in-game screenshots", () => {
       assert.equal(matches[0][field], expected[field], `${expected.chinese}.${field}`);
     }
   }
-});
-
-test("tacticDescriptions exposes Vietnamese and never falls back to Chinese", () => {
-  const translated = tacticDescriptions({ effectViet: "Bản dịch", effect: "原文" });
-  assert.deepEqual(translated, [{ lang: "vi", label: "Tiếng Việt", text: "Bản dịch" }]);
-  assert.doesNotMatch(JSON.stringify(translated), /原文/);
-
-  const unavailable = tacticDescriptions({ effect: "仅中文" });
-  assert.equal(unavailable.length, 1);
-  assert.equal(unavailable[0].lang, "vi");
-  assert.doesNotMatch(JSON.stringify(unavailable), /仅中文/);
 });
 
 test("generated data keeps Đánh Bại Quân Địch references", async () => {

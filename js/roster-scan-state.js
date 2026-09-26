@@ -228,13 +228,6 @@ export function clearRosterScanState() {
   return createInitialRosterScanState();
 }
 
-export function lockedConstraints(state) {
-  return {
-    heroes: [...new Set((state?.lockedTeams || []).flatMap((team) => team.heroes || []))],
-    tactics: [...new Set((state?.lockedTeams || []).flatMap((team) => team.tactics || []))],
-  };
-}
-
 export function serializeRosterScanState(state) {
   return {
     ownedHeroes: uniqByName(state?.ownedHeroes || []),

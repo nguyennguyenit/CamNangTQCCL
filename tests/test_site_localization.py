@@ -68,7 +68,7 @@ class SiteLocalizationTest(unittest.TestCase):
         site_keys = {(item["entityId"], item["fieldPath"]) for item in obligations}
         lookup = json.loads((ROOT / "pipeline/lookup-translations.json").read_bytes())
         lookup_keys = {(item["entityId"], item["fieldPath"]) for item in lookup["entries"]}
-        self.assertEqual(len(site_keys), 2088)
+        self.assertEqual(len(site_keys), 2086)
         self.assertEqual(len(lookup_keys), 3503)
         self.assertTrue(site_keys.isdisjoint(lookup_keys))
         self.assertEqual(len(site_keys | lookup_keys), report["translation"]["expectedObligations"])
@@ -234,9 +234,9 @@ class SiteLocalizationTest(unittest.TestCase):
             }))
             report = check(root, policy=self.policy)
             self.assertEqual(report["exitCode"], 1)
-            self.assertEqual(report["coverage"]["expected"], 5591)
+            self.assertEqual(report["coverage"]["expected"], 5589)
             self.assertEqual(report["coverage"]["translated"], 5470)
-            self.assertEqual(report["coverage"]["missing"], 121)
+            self.assertEqual(report["coverage"]["missing"], 119)
             self.assertTrue(any("coverage does not match" in item["reason"] for item in report["problems"]))
 
     def test_actual_glossary_bytes_and_source_owner_invalidate_fingerprints(self):
@@ -443,17 +443,17 @@ class SiteLocalizationTest(unittest.TestCase):
         with tempfile.TemporaryDirectory(dir=cache) as temporary:
             data_candidate = Path(temporary) / "data-candidate"
             data_manifest = compile_data_candidate(ROOT, data_candidate)
-            self.assertEqual(data_manifest["counts"]["uiPending"], 68)
+            self.assertEqual(data_manifest["counts"]["uiPending"], 66)
             scoped = check(ROOT, stage="data", candidate=data_candidate)
             self.assertEqual(scoped["exitCode"], 0)
-            self.assertEqual(scoped["uiPending"], 68)
+            self.assertEqual(scoped["uiPending"], 66)
             self.assertEqual(scoped["uiMissingSources"], [])
 
             full_candidate = Path(temporary) / "full-candidate"
             full_manifest = compile_candidate(ROOT, full_candidate, stage="all")
             self.assertEqual(full_manifest["stage"], "all")
             self.assertEqual(full_manifest["counts"]["uiPending"], 0)
-            self.assertEqual(full_manifest["counts"]["uiValues"], 68)
+            self.assertEqual(full_manifest["counts"]["uiValues"], 66)
             strict = check(ROOT, stage="all", candidate=full_candidate)
             self.assertEqual(strict["exitCode"], 0)
             self.assertEqual(strict["uiMissingSources"], [])

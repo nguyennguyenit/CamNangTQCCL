@@ -107,14 +107,7 @@ export function normalizeTeamCandidate(
     requiredHeroes: heroSlots.map((slot) => slot.alternatives[0].displayName),
     tacticSlots: tacticSlots(team, heroSlots),
     redCopyScore,
-    baseScore: 100 - (TIER_RANK.get(tier) ?? 9) * 10 + Math.min(9, redCopyScore),
-    rankingTuple: [
-      TIER_RANK.get(tier) ?? Number.MAX_SAFE_INTEGER,
-      0,
-      0,
-      -redCopyScore,
-      String(key || ""),
-    ],
+    rankingTuple: [TIER_RANK.get(tier) ?? Number.MAX_SAFE_INTEGER, -redCopyScore, String(key || "")],
   };
 }
 
@@ -286,11 +279,7 @@ function makeEntry(candidate, heroUse, tacticUse, experimentalUntiered) {
     missingTactics: tacticUse.missing,
     tacticConflicts: tacticUse.conflicts,
     experimentalUntiered: experimentalUntiered === true && candidate.tier === "",
-    presetId: null,
-    presetReason: "",
-    coexistSetBonus: 0,
     source: "team",
-    score: candidate.baseScore - tacticUse.usedAlternatives.length * 3,
     rankingTuple: candidate.rankingTuple,
   };
 }
@@ -342,11 +331,7 @@ function lockedEntry(team, index) {
     missingTactics: [],
     tacticConflicts: [],
     experimentalUntiered: false,
-    presetId: null,
-    presetReason: "",
-    coexistSetBonus: 0,
     source: "locked",
-    score: 0,
   };
 }
 
@@ -451,8 +436,8 @@ function searchPortfolio(
       return portfolio.length > currentBest.length;
     }
     if (mode === "redStars") {
-      // rankingTuple[3] = -redCopyScore của đội (xem normalizeTeamCandidate); đội khóa không tính.
-      const redTotal = (entries) => entries.reduce((sum, entry) => sum - (entry.locked ? 0 : entry.rankingTuple[3]), 0);
+      // rankingTuple[1] = -redCopyScore của đội (xem normalizeTeamCandidate); đội khóa không tính.
+      const redTotal = (entries) => entries.reduce((sum, entry) => sum - (entry.locked ? 0 : entry.rankingTuple[1]), 0);
       const difference = redTotal(portfolio) - redTotal(currentBest);
       if (difference !== 0) return difference > 0;
     }

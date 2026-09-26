@@ -129,13 +129,6 @@ export function projectRecommendedRows(rows,state,labels) {
   }).slice().sort(fixedRank);
 }
 
-export function resolveTeamDestination(team) {
-  if (team?.sourceConfigId && team?.safeScopeKey) return {kind:'recommended',sourceConfigId:team.sourceConfigId,scopeKey:team.safeScopeKey};
-  if (team?.legacyTeamId) return {kind:'legacy',legacyTeamId:team.legacyTeamId,...(team.legacyVariantId ? {legacyVariantId:team.legacyVariantId} : {})};
-  if (team?.configId) return {kind:'gameplay',configId:team.configId,scenarioId:team.scenarioId,rulesetId:team.rulesetId};
-  return null;
-}
-
 /**
  * Kiểm scheme dùng chung cho mọi URL nguồn lấy từ dữ liệu (quyết định #14): chỉ nhận `http(s)` tuyệt đối,
  * không userinfo, không ký tự điều khiển; fragment được giữ (link Google Sheets có `#gid=…`).
@@ -216,11 +209,4 @@ export async function loadVerifiedLegacyTeams(expectedHash, loadBytes) {
   const teams = bytesToJson(bytes);
   if (!Array.isArray(teams)) throw new Error('Dữ liệu đội gốc sai định dạng.');
   return teams;
-}
-
-export async function loadVerifiedLegacyTeam(legacyTeamId, expectedHash, loadBytes) {
-  const teams = await loadVerifiedLegacyTeams(expectedHash, loadBytes);
-  const matches = teams.filter(team=>team.id === legacyTeamId);
-  if (matches.length !== 1) throw new Error('Không tìm thấy đúng một đội gốc với mã này.');
-  return matches[0];
 }

@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { serializeRosterScanState } from '../js/roster-scan-state.js';
-import { readSeasonQuery, updateSeasonURL, compareSeasonInventory, filterSeasonRows, validateTeamFilters, loadSeasonModel } from '../js/season-ui-state.js';
-import { validateSeasonBundle, projectSeasonBrowse } from '../js/season-context.js';
+import { readSeasonQuery, updateSeasonURL, compareSeasonInventory, loadSeasonModel } from '../js/season-ui-state.js';
+import { validateSeasonBundle } from '../js/season-context.js';
 import { seasonConsumerFixture } from './fixtures/season-fixtures.mjs';
 import { createHash } from 'node:crypto';
 
@@ -25,16 +25,9 @@ test('restored scenario URL stays reference while duplicate context stays invali
   assert.equal(readSeasonQuery('https://local/?scenario=scenario-a&scenario=scenario-a',model).browse.kind,'invalid');
   assert.equal(readSeasonQuery('https://local/?ruleset=rules-a',model).browse.kind,'invalid');
 });
-test('filter query preserves OR groups, ignores obsolete stars and sorts original unbounded score',async()=>{
-  const model=await validateSeasonBundle(await seasonConsumerFixture());
-  const state=readSeasonQuery('https://local/?scenario=scenario-a&ruleset=rules-a&stars=0&unit=Thương&unit=invalid&sort=sgsdeck-score',model);
-  const rows=projectSeasonBrowse(model,state.browse).applicable;
-  const query=validateTeamFilters(rows,state);
-  assert.equal(filterSeasonRows(rows,query).length,3);
-  assert.equal(filterSeasonRows(rows,query)[0].sourceScore.value,132.5);
-  assert.deepEqual(query.filters.unit,['Thương']);assert.equal(query.notices.length,2);
-  const next=updateSeasonURL('https://local/?scenario=scenario-a&config=config-a#meta-cu',{q:'Bình',unit:['Thương','Cung'],config:null});
-  assert.equal(next.hash,'#meta-cu');assert.equal(next.searchParams.get('scenario'),'scenario-a');assert.deepEqual(next.searchParams.getAll('unit'),['Thương','Cung']);
+test('updateSeasonURL replaces changed keys, keeps OR groups and the hash',()=>{
+  const next=updateSeasonURL('https://local/?scenario=scenario-a&config=config-a#muc',{q:'Bình',unit:['Thương','Cung'],config:null});
+  assert.equal(next.hash,'#muc');assert.equal(next.searchParams.get('scenario'),'scenario-a');assert.deepEqual(next.searchParams.getAll('unit'),['Thương','Cung']);
 });
 test('inventory comparison keeps SP distinct, detects duplicate holders and retained locked resources',()=>{
   const result=compareSeasonInventory({heroSlots:[{heroRef:'hero:sp-anh',tacticRefs:['tactic:mot','tactic:hai']},{heroRef:'hero:binh',tacticRefs:['tactic:mot','tactic:ba']}],requirementIds:['condition'],effectBundleIds:[]},{ownedHeroes:[{name:'Anh'},{name:'Bình'}],ownedTactics:[{name:'Một'},{name:'Hai'},{name:'Ba'}],lockedTeams:[{heroes:['Bình'],tactics:['Một']}]});

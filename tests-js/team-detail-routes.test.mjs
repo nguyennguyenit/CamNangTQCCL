@@ -9,8 +9,6 @@ import {
   recommendedRoutePath,
   khaiHoangRoutePath,
   teamDetailCatalog,
-  teamDetailHtmlPaths,
-  findAdmittedVariant,
 } from '../src/lib/team-detail-routes.ts';
 
 const bytes=value=>Buffer.from(JSON.stringify(value)+'\n');
@@ -181,12 +179,6 @@ test('catalog routes every selected Recommended row and every raw original exact
 
   assert.equal(catalog.htmlPaths.length,catalog.recommended.length+catalog.legacy.length+catalog.khaiHoang.length);
   assert.equal(new Set(catalog.htmlPaths).size,catalog.htmlPaths.length);
-  assert.deepEqual(catalog.htmlPaths,await teamDetailHtmlPaths({
-    recommendedRoot:setup.recommendedRoot,
-    teamsPath:setup.teamsPath,
-    handlesPath:setup.handlesPath,
-    khaiHoangPath:setup.khaiHoangPath,
-  }));
   assert.equal(catalog.legacyTeamsSha256,`sha256:${hash(await readFile(setup.teamsPath))}`);
   assert.equal(catalog.generationId,setup.generationId);
 });
@@ -321,18 +313,16 @@ test('unroutable and colliding handles never become routes',async t=>{
   });
 });
 
-test('only the exact admitted ID pair resolves a variant',async t=>{
+test('only the exact admitted ID pairs become variants',async t=>{
   const setup=await fixture({variants:[['team-intro-0','v-'+'a'.repeat(64)],['team-intro-1','v-'+'b'.repeat(64)]]});
   t.after(()=>rm(setup.root,{recursive:true,force:true}));
   const catalog=await build(setup);
 
-  assert.equal(findAdmittedVariant(catalog,'team-intro-0','v-'+'a'.repeat(64)).legacyTeamId,'team-intro-0');
-  // Variant of a different original must never resolve on this route.
-  assert.equal(findAdmittedVariant(catalog,'team-intro-0','v-'+'b'.repeat(64)),null);
-  assert.equal(findAdmittedVariant(catalog,'team-intro-0','v-'+'c'.repeat(64)),null);
-  assert.equal(findAdmittedVariant(catalog,'moi-phe-4','v-'+'a'.repeat(64)),null);
-  assert.equal(findAdmittedVariant(catalog,'../team-intro-0','v-'+'a'.repeat(64)),null);
-  assert.equal(findAdmittedVariant(catalog,'team-intro-0',''),null);
+  // Each admitted variant stays bound to its own original; no cross-original pair appears.
+  assert.deepEqual(
+    catalog.variants.map(variant=>[variant.legacyTeamId,variant.legacyVariantId]),
+    [['team-intro-0','v-'+'a'.repeat(64)],['team-intro-1','v-'+'b'.repeat(64)]],
+  );
 });
 
 test('unknown, duplicate and traversal identifiers never become routes',async t=>{
@@ -448,7 +438,6 @@ test('worktree publication yields the real route inventory and pins the real ori
   }
   for (const variant of catalog.variants) {
     assert.ok(catalog.legacy.some(entry=>entry.legacyTeamId===variant.legacyTeamId));
-    assert.equal(findAdmittedVariant(catalog,variant.legacyTeamId,variant.legacyVariantId).legacyVariantId,variant.legacyVariantId);
   }
 
   // Khai hoang identity is pinned here and its pages ship in the same emitted inventory.
@@ -495,12 +484,6 @@ test('Khai hoang route contract: an injected source yields the emitted routes an
     catalog.htmlPaths.filter(path=>path.startsWith('khai-hoang/')),
     catalog.khaiHoang.map(entry=>entry.htmlPath).sort(),
   );
-  assert.deepEqual(catalog.htmlPaths,await teamDetailHtmlPaths({
-    recommendedRoot:setup.recommendedRoot,
-    teamsPath:setup.teamsPath,
-    handlesPath:setup.handlesPath,
-    khaiHoangPath:setup.khaiHoangPath,
-  }));
 });
 
 test('Khai hoang route contract: a v2 ledger reads the v1 Recommended publication',async t=>{

@@ -942,7 +942,7 @@ async function lookupRoot(t, prefix) {
 
 test("manifest adds the lookup modules and data artifacts without dropping completed entries", () => {
   const byRoute = Object.fromEntries(PUBLIC_ARTIFACTS.map((entry) => [`${entry.kind}/${entry.routeParam}`, entry]));
-  for (const routeParam of ["lookup-data", "unified-lookup", "lookup-detail", "recommended-reference-state", "recommended-reference-render", "app", "hero-list", "tactics"]) {
+  for (const routeParam of ["lookup-data", "unified-lookup", "lookup-detail", "recommended-reference-state", "recommended-reference-render", "app"]) {
     assert.equal(byRoute[`js/${routeParam}`]?.publicationClass, "runtime", `js/${routeParam}`);
   }
   for (const routeParam of ["lookup-catalog", "lookup-manifest", "heroes-dict", "tactics", ...SEASON_SIDECARS]) {
