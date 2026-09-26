@@ -1,7 +1,7 @@
 ---
 title: "Sửa lỗi theo review toàn codebase"
 description: "Xử lý đủ 109 finding của 6 báo cáo review (JS lõi, công cụ, Astro/CSS, UI live, pipeline, Worker/MCP) theo 7 phase, test trước mỗi lỗi, giữ gate bản dịch xanh."
-status: pending
+status: in-progress
 priority: P1
 effort: "18.5d"
 branch: main
