@@ -1,12 +1,19 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  applyConfirmedCorrections,
-  normalizeObservations,
-  requiresConfirmation,
-} from "../../src/domain/normalization-service.js";
+import { normalizeObservations } from "../../src/domain/normalization-service.js";
 
 const workflowVersion = "workflow:sha256-release:build-workflow";
+
+type NormalizationResult = Awaited<ReturnType<typeof normalizeObservations>>;
+type Observations = Parameters<typeof normalizeObservations>[0]["observations"];
+
+// Công cụ MCP nhận lại toàn bộ quan sát trước cùng sửa tay của người dùng ở lượt sau.
+function resubmitWithCorrections(initial: NormalizationResult, corrections: Observations) {
+  return normalizeObservations({
+    workflowVersion,
+    observations: [...initial.observations, ...corrections],
+  });
+}
 
 describe("observation normalization", () => {
   it("dedupes identities, keeps all evidence, and chooses numeric max per scope", async () => {
@@ -62,7 +69,6 @@ describe("observation normalization", () => {
     expect(result.canonicalState.heroes[0]?.redStars).toBe(4);
     expect(result.canonicalState.heroes[0]?.evidence).toHaveLength(3);
     expect(result.warnings).toContain("conflicting-redStars:hero:sp-ma-sieu");
-    expect(requiresConfirmation(result)).toBe(true);
   });
 
   it("retains prior present fields when a cropped current source omits them", async () => {
@@ -142,7 +148,7 @@ describe("observation normalization", () => {
         },
       ],
     });
-    const corrected = await applyConfirmedCorrections(initial, [
+    const corrected = await resubmitWithCorrections(initial, [
       {
         observationId: "manual",
         entityKind: "hero",
@@ -269,7 +275,7 @@ describe("observation normalization", () => {
         },
       ],
     });
-    const corrected = await applyConfirmedCorrections(initial, [
+    const corrected = await resubmitWithCorrections(initial, [
       {
         observationId: "hero",
         entityKind: "hero",
@@ -323,7 +329,7 @@ describe("observation normalization", () => {
         },
       ],
     });
-    const corrected = await applyConfirmedCorrections(initial, [
+    const corrected = await resubmitWithCorrections(initial, [
       {
         observationId: "ambiguous",
         entityKind: "hero",

@@ -13,7 +13,6 @@ export interface HeroRead {
 }
 export interface AnalyzeResult {
   heroes: HeroRead[];
-  raw?: string;
 }
 
 export type AnalyzeMode = "analyzeTeamImage" | "scanHeroes" | "scanTactics" | "scanBuiltTeams";
@@ -156,11 +155,6 @@ export function validateBuiltTeamsScanResult(parsed: unknown): BuiltTeamsScanRes
   }).filter((team) => team.heroesCn.length || team.tacticsCn.length);
   if (teams.length === 0) throw new TypeError("teams rỗng");
   return { teams };
-}
-
-/** parse + validate gộp; ném lỗi mô tả nếu không đọc được. */
-export function parseAndValidate(text: string): AnalyzeResult {
-  return validateResult(tolerantParse(text));
 }
 
 export function parseAndValidateByMode(mode: AnalyzeMode, text: string): AnalyzeModeResult {

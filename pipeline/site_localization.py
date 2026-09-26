@@ -41,7 +41,6 @@ from pipeline.recommended_identity import build_display_mapping
 ROOT = Path(__file__).resolve().parents[1]
 POLICY_PATH = "pipeline/site-localization-policy.json"
 PACK_PATH = "pipeline/localization-inputs/recommended.json"
-LEDGER_PATH = "pipeline/site-translations.json"
 RECEIPTS_PATH = "pipeline/site-translation-reviews.json"
 REVIEW_OUTPUT_DIR = "pipeline/localization-reviews"
 IDENTITY_MAP_PATH = "pipeline/recommended-identity-map.json"
@@ -1635,11 +1634,11 @@ def _data_classification(path, text):
         return "authored-vi"
     raise ValueError(f"unreviewed data field classification: {field or '$'}")
 
-def ui_source_locations(root, obligations=UI_LITERAL_OBLIGATIONS):
+def ui_source_locations(root, ledger_relative, obligations=UI_LITERAL_OBLIGATIONS):
     locations = []
     missing = []
     try:
-        ledger = json.loads(_repo_member(root, "pipeline/site-translations.json", label="UI translation ledger").read_bytes())
+        ledger = json.loads(_repo_member(root, ledger_relative, label="UI translation ledger").read_bytes())
         reviewed = {
             (entry["entityId"], entry["fieldPath"]): entry["textVi"]
             for entry in ledger.get("entries", [])
@@ -1784,7 +1783,7 @@ def site_translation_obligations(root, pack):
 
 
 
-def concrete_site_locations(root, pack):
+def concrete_site_locations(root, pack, ledger_relative):
     """Extract the full phase-1 denominator from actual captured/public inputs."""
     locations = []
     for item in recommended_note_inputs(pack):
@@ -1816,7 +1815,7 @@ def concrete_site_locations(root, pack):
             "classification": "translate",
             "authority": "lookup-in-place-review",
         })
-    ui_locations, missing_literals = ui_source_locations(root)
+    ui_locations, missing_literals = ui_source_locations(root, ledger_relative)
     locations.extend(ui_locations)
     keys = [(item["entityId"], item["fieldPath"]) for item in locations]
     duplicates = len(keys) - len(set(keys))
@@ -2022,9 +2021,6 @@ def compile_candidate(root, output, *, stage):
     (output / "candidate-manifest.json").write_bytes(canonical_json_bytes(manifest))
     return manifest
 
-def compile_data_candidate(root, output):
-    return compile_candidate(root, output, stage="data")
-
 
 def check_candidate(root, candidate, *, stage):
     """Recompile in disposable storage and compare every candidate byte."""
@@ -2042,10 +2038,6 @@ def check_candidate(root, candidate, *, stage):
         if actual != expected:
             raise ValueError(f"{stage} candidate file inventory or bytes differ from deterministic reconstruction")
     return manifest
-
-
-def check_data_candidate(root, candidate):
-    return check_candidate(root, candidate, stage="data")
 
 
 def publish_candidate(root, candidate):
@@ -2183,7 +2175,7 @@ def inventory_report(root=ROOT, *, policy=None, pack=None):
         return report
     expected = expected_fingerprints(site_translation_obligations(root, pack), digest)
     recommended_expected = expected_fingerprints(recommended_note_inputs(pack), digest)
-    concrete = concrete_site_locations(root, pack)
+    concrete = concrete_site_locations(root, pack, policy["artifacts"]["ledger"])
     ledger_path = _repo_member(root, policy["artifacts"]["ledger"])
     entries = {}
     if ledger_path.is_file():
@@ -2296,7 +2288,7 @@ def check(root=ROOT, *, policy=None, stage=None, candidate=None, _evidence_only=
         return report
     recommended_expected = expected_fingerprints(recommended_note_inputs(pack), digest)
     site_expected = expected_fingerprints(site_translation_obligations(root, pack), digest)
-    concrete = concrete_site_locations(root, pack)
+    concrete = concrete_site_locations(root, pack, policy["artifacts"]["ledger"])
     baseline_inventory = policy["baseline"]["notes"]
     report["uiPending"] = sum(
         item["context"].get("domain") == "ui"

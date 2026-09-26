@@ -11,6 +11,11 @@ const CURRENT_TOKEN = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 const NEXT_TOKEN = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
 const NOW = Date.parse("2026-07-28T12:00:00.000Z");
 
+async function fingerprintOf(token: string): Promise<string> {
+  const single = validateBearerConfiguration({ currentToken: token }, NOW);
+  return (await authenticateBearer(`Bearer ${token}`, single)).fingerprint;
+}
+
 describe("xác thực managed-client bearer", () => {
   it("chỉ chấp nhận cú pháp Authorization Bearer nghiêm ngặt", () => {
     expect(parseBearer(`Bearer ${CURRENT_TOKEN}`)).toBe(CURRENT_TOKEN);
@@ -68,10 +73,10 @@ describe("xác thực managed-client bearer", () => {
 
     await expect(
       authenticateBearer(`Bearer ${CURRENT_TOKEN}`, configuration),
-    ).resolves.toMatchObject({ slot: "current" });
+    ).resolves.toMatchObject({ fingerprint: await fingerprintOf(CURRENT_TOKEN) });
     await expect(
       authenticateBearer(`Bearer ${NEXT_TOKEN}`, configuration),
-    ).resolves.toMatchObject({ slot: "next" });
+    ).resolves.toMatchObject({ fingerprint: await fingerprintOf(NEXT_TOKEN) });
   });
 
   it("không đưa token vào fingerprint hoặc lỗi xác thực", async () => {
@@ -109,10 +114,10 @@ describe("xác thực managed-client bearer", () => {
     );
     await expect(
       authenticateBearer(`Bearer ${CURRENT_TOKEN}`, overlap),
-    ).resolves.toMatchObject({ slot: "current" });
+    ).resolves.toMatchObject({ fingerprint: await fingerprintOf(CURRENT_TOKEN) });
     await expect(
       authenticateBearer(`Bearer ${NEXT_TOKEN}`, overlap),
-    ).resolves.toMatchObject({ slot: "next" });
+    ).resolves.toMatchObject({ fingerprint: await fingerprintOf(NEXT_TOKEN) });
 
     const promoted = validateBearerConfiguration(
       { currentToken: NEXT_TOKEN },
@@ -120,7 +125,7 @@ describe("xác thực managed-client bearer", () => {
     );
     await expect(
       authenticateBearer(`Bearer ${NEXT_TOKEN}`, promoted),
-    ).resolves.toMatchObject({ slot: "current" });
+    ).resolves.toMatchObject({ fingerprint: await fingerprintOf(NEXT_TOKEN) });
     await expect(
       authenticateBearer(`Bearer ${CURRENT_TOKEN}`, promoted),
     ).rejects.toMatchObject({ code: "UNAUTHORIZED" });

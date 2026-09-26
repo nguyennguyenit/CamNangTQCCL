@@ -42,12 +42,6 @@ export interface DataManifestV1 extends DataManifestBase { schemaVersion: 1 }
 export interface DataManifestV2 extends DataManifestBase { schemaVersion: 2 }
 export type DataManifest = DataManifestV1 | DataManifestV2;
 
-export interface ReleasePointer {
-  schemaVersion: 1;
-  releaseId: `sha256:${string}`;
-  manifestKey: string;
-}
-
 export interface SnapshotArtifacts {
   teams: ParsedArtifact;
   "team-tier": ParsedArtifact;

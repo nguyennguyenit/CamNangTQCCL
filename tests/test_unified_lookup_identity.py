@@ -8,7 +8,6 @@ from pathlib import Path
 from pipeline.sgsdeck_identity import canonical_id
 
 from pipeline.unified_lookup_identity import (
-    allocate_child_ids,
     freeze_baseline,
     inventory_from_sources,
     validate_registry,
@@ -182,15 +181,6 @@ class UnifiedLookupIdentityTest(unittest.TestCase):
                 inventory,
                 expected_hashes={"baseline": "c" * 64, "source": "d" * 64, "mapping": "e" * 64},
             )
-
-    def test_child_ids_survive_reordering(self):
-        children = [
-            {"tier": "BASIC", "name": "集智", "convertsTo": None},
-            {"tier": "SPECIAL", "name": "轉·持槍", "convertsTo": "SPEAR"},
-        ]
-        original = dict(zip((row["name"] for row in children), allocate_child_ids("troop-mod:dan-duong-binh", "troop-option", children)))
-        reordered = dict(zip((row["name"] for row in reversed(children)), allocate_child_ids("troop-mod:dan-duong-binh", "troop-option", list(reversed(children)))))
-        self.assertEqual(original, reordered)
 
     def test_registry_rejects_schema_identity_child_and_relation_tampering(self):
         inventory, registry, legacy_owners, expected_hashes = self._actual_contract()

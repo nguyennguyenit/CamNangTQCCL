@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { parseAndValidateByMode, tolerantParse, validateResult, parseAndValidate } from "../src/schema";
+import { parseAndValidateByMode, tolerantParse, validateResult } from "../src/schema";
 
 describe("tolerantParse", () => {
   it("parse JSON thuần", () => {
@@ -67,10 +67,10 @@ describe("validateResult", () => {
   });
 });
 
-describe("parseAndValidate (M1 end-to-end)", () => {
+describe("parseAndValidateByMode fenced output (M1 end-to-end)", () => {
   it("fence + validate", () => {
-    const out = parseAndValidate('```json\n{"heroes":[{"nameCn":"关羽","tacticsCn":[],"statFocusCn":"武力"}]}\n```');
-    expect(out.heroes[0].nameCn).toBe("关羽");
+    const out = parseAndValidateByMode("analyzeTeamImage", '```json\n{"heroes":[{"nameCn":"关羽","tacticsCn":[],"statFocusCn":"武力"}]}\n```');
+    expect("heroes" in out && out.heroes[0].nameCn).toBe("关羽");
   });
 });
 

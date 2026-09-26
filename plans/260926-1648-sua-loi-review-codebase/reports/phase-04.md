@@ -86,3 +86,68 @@ Exit 0, 203 s.
 | `mcp-worker` check | 43 file, 375 test |
 
 Lượt gate đầu đỏ 24 ca e2e Khai hoang (`.kh-card` 0/17) vì `UNIT_CLASS` bị xoá cùng `teamCard` trong khi `khaihoangConfigRow`/badge loại binh còn dùng; đã trả lại hằng, publish lại và gate xanh.
+
+## Part 4b — MCP, Vision Worker, pipeline
+
+### Đã xoá
+| Mục | Finding | Nội dung | Test đi cùng |
+|---|---|---|---|
+| M1 | ReviewWorkers#6 | `LegacyDomainAdapter` chỉ còn `findSimilarTeams` (`research-handlers.ts` `tqccl_match_team`) và `recommendTeams` (`recommendation-service.ts`); bỏ 15 method, validator/kiểu kết quả chỉ chúng dùng, import `js/filters.js`, `js/hanviet.js`, `js/match-dict.js`, `js/roster-scan-map.js`, `js/roster-scan-state.js` khỏi adapter. Bao đóng workflow bớt `js/roster-scan-map.js`, `js/roster-scan-state.js` → `semanticFiles` sửa đúng như generator in | `legacy-domain-adapter.test.ts` viết lại theo hành vi (6 ca): đọc đủ 3 tướng + 6 chiến pháp của `team-intro-0` → đội đầu là `team-intro-0` (`heroHit 3`, `tacticHit 6`, `total 3`), input không bị sửa; dưới `minHeroes` bị loại, nới `minHeroes` thì có; tướng đoán từ chân dung tính vào tổng nhưng không tính khớp; kho đủ tướng/chiến pháp của `team-intro-1` → được gợi ý, mọi chiến pháp chọn nằm trong kho; kho thiếu một tướng → không gợi ý; lỗi legacy bị che (`LegacyDomainAdapterError`, không lộ đường dẫn). Bỏ ca ghim danh sách method. `test/node-min-smoke.mjs` gọi `findSimilarTeams` thay `normalizeText` |
+| M2 | ReviewWorkers#7 | `LOOKUP_SIDECAR_FILES`, `ReleasePointer`, `requiresConfirmation`, `applyConfirmedCorrections`, `fromScrubSafeDigest` (+ hằng `DIGEST_BYTE_LENGTH`, `BASE64URL_BODY_PATTERN`, kiểu `HexDigest` chỉ nó dùng), `AuthenticatedBearer.slot`. `contracts.ts`: `createHeroSlot`, `parseBrowserScanConfirmation`, `parseConfirmationBinding`, `parseRosterSnapshot`, `UnresolvedObservation`, `ConfirmationDecision`, `RecommendationResult`, `ResultPage`, `DomainError`; kéo theo helper/kiểu chỉ các hàm/kiểu đó dùng: `FORBIDDEN_FIELD_NAMES`, `record`, `array`, `string`, `prefixedString`, `optionalFiniteNumber`, `rejectForbiddenFields`, `assertExactKeys`, `parseHeroIdentity`, `parseProvenance`, `parseOwnedHero`, `parseOwnedTactic`, `canonicalIdArray`, `parseLockedTeam`, kiểu `HeroIdentity`, `HeroSlot`, `BrowserScanConfirmation`, `ProvenanceRef`, `OwnedHero`, `OwnedTactic`, `LockedTeam`, `RosterSnapshot`, `TierRanking`, `TacticSelection`, `TeamMatch`, `ConflictDiagnostic`, `ResultLimits`, `RecommendationRequest` (chỉ test kiểu dùng) | `contracts.test` còn `stableStringify` (thêm ca từ chối NaN/hàm); xoá tautology `requiresConfirmation`; ba ca sửa tay của `normalization-service.test` gửi lại quan sát cũ + sửa tay qua `normalizeObservations` (đúng đường production `research-handlers.ts`); `digest-encoding.test` kiểm giải mã base64url bằng `Buffer` thay round-trip qua hàm đã xoá, bỏ nhóm ca decode; `bearer-auth.test` kiểm fingerprint của token được chấp nhận thay `slot` |
+| M3 | ReviewWorkers#8 | `parseAndValidate`, `AnalyzeResult.raw`, `GuardOk.bytes` | `schema.test` ca fence chuyển sang `parseAndValidateByMode("analyzeTeamImage", …)` |
+| P1 | ReviewPipeline#8 | `build_recommended_evidence`, `main()`/CLI, import chỉ chúng dùng (`argparse`, `hashlib`, `json`, `os`, `tempfile`, `datetime`, `Path`); `pipeline/sgsdeck-recommended-evidence.json` | bỏ `_cache` và 2 ca builder trong `test_sgsdeck_recommended.py` |
+| P2 | ReviewPipeline#9–12 | `unified_lookup_identity.py`: `build_registry`, `allocate_child_ids`, `_semantic_child_key` (chỉ allocate dùng). `site_localization.py`: `compile_data_candidate`, `check_data_candidate`, `LEDGER_PATH`; `ui_source_locations(root, ledger_relative, …)` và `concrete_site_locations(root, pack, ledger_relative)` nhận `policy["artifacts"]["ledger"]` từ hai caller. `parse_team_intro.py`: `EXPECTED_COUNTS`. `hanviet.py`: `STAT_MAP`, `stat_focus_vn`; comment `js/analyze-map.js` bỏ "mirror pipeline/hanviet.py STAT_MAP" | bỏ `test_child_ids_survive_reordering`, `StatFocusTest`; test `ui_source_locations` truyền đường ledger của policy; ca data stage gọi `compile_candidate(ROOT, out, stage="data")` |
+| P3 | ReviewPipeline#13 | 15 file `pipeline/localization-reviews/site-review-{final-000,final-006,final-009,final-010,v5-016,v5-022,v5-026,v5-030,v5-031,v5-053,v5-055,v5-073,v5-081,v5-088,v5-089}.json` (lệnh P3 liệt kê lại sau J3, đúng 15) | — |
+
+### Giữ lại vì còn consumer
+- `join_recommended_evidence`, `parse_*`, `validate_source_url`, `RenderedPage`, `MAX_SOURCE_BYTES` (`sgsdeck_recommended.py`): `build_recommended_reference.py`, `crawl_sgsdeck_recommended.py`.
+- `inventory_from_sources` (`unified_lookup_identity.py`): sau khi xoá `build_registry` chỉ test dùng để dựng inventory thật cho `validate_registry`; ngoài danh sách plan, giữ.
+- `_variant`, `_name_variant`, `_canonical_id`, `NAMESPACES`, `VARIANTS`: `validate_registry` dùng.
+- `LegacyDomainAdapterError`, `stableStringify`/`ContractValidationError`, `ConfirmationBinding`, `StructuredObservation`, `CanonicalEntity`, `ObservationEvidence`, kiểu id: còn caller trong `src/`.
+- `js/roster-scan-map.js`, `js/roster-scan-state.js`: còn trình duyệt dùng (`roster-recommend-ui.js`, `team-view.js`, `render.js`, manifest), chỉ ra khỏi bao đóng MCP.
+- `mcp-worker/test/research/season-bounds.test.ts` còn import `legacyDomainAdapter` không dùng (không thuộc phạm vi).
+- `pipeline/lookup-output/site-vi-candidate/generation.json` ghi `executionHashes["unified_lookup_identity.py"]` cũ; thư mục không ai đọc và được untrack ở Phase 7.
+
+### G0: tuple của file sửa (trước khi sửa)
+| File | Tuple | Ghi chú |
+|---|---|---|
+| `worker/src/schema.ts` | 1 `translate` (`ui:worker/team-default`, `Team ${i + 1}`) | không đụng; hash cập nhật ở G3 |
+| `js/analyze-map.js` | 0 (file bị ghim) | chỉ sửa comment; hash cập nhật ở G3 |
+| `worker/src/guard.ts`, file MCP, file pipeline | 0, không ghim | — |
+
+### G1
+Không thêm, đổi hay bỏ tuple nào.
+
+### Mốc
+- `policyVersion`: `site-vi-260927-xoa-code-chet-a` → `site-vi-260927-xoa-code-chet-b`.
+- `sourceFiles`: `js/analyze-map.js` `9613ccab…` → `f463c3ba…`; `worker/src/schema.ts` `c8455816…` → `1b454723…`.
+- `baseline.notes` không đổi (56669 location, 2086 site obligation, 5589 obligation, 66 `translate` UI).
+- **Generation mới:** `75a88d67c54fefb9f38599e4eb1014974d8f6484225f2a7c2b776d20951d0b5b`. G6: `git rm` generation `8e1f0231…` (phần 4a).
+- `pipeline/team-route-handles.json` re-pin; `--check` pass.
+- **`WORKFLOW_BUILD_ID`:** `build:sha256b64:lQ0YYP4AFveKhGRXcKAP0rZzMn-FXVyNMHoYALFHe_Q` → `build:sha256b64:DGo-uPzbFB4gYegvPeWq1Rlsi0Av1rTl1hz1XKdYkzM`; `semanticFiles` bớt `js/roster-scan-map.js`, `js/roster-scan-state.js`.
+- Số ghim `tests/test_site_localization.py` không đổi.
+
+### Docs
+- `docs/project-changelog.md`: mục phần 4b. Không doc nào khác nhắc phần đã xoá (`docs/codebase-summary.md` mô tả `js/roster-scan-state.js` phía trình duyệt, vẫn đúng).
+
+### Kiểm Verification của phase (phần 4b)
+- `rg` chuỗi module cũ: vẫn chỉ `js/legacy-routes.js` và test chuyển hash cũ như phần 4a.
+- `npm --prefix mcp-worker run test:coverage`: statements 93.25 %, branches 87.26 %, functions 99.07 %, lines 94.42 % (trước phần 4b: 91.19 / 85.85 / 95.82 / 92), trên ngưỡng 80/70.
+- `python3 -m pipeline.site_localization check --root . --stage public`: exit 0 (`coverage.missing` 0, `uiPending` 66).
+
+### Gate A2
+Exit 0, 194 s.
+
+| Bộ | Kết quả |
+|---|---|
+| `npm run verify` | `Verified 1725 dist files (52 raw assets, 16 static public files)` |
+| `npm run test:dist` | 29/29 |
+| `npm run test:node` | 342/342 |
+| `npm run test:e2e` | 317 passed |
+| `python3 -m unittest discover -s tests` | 377 OK (bỏ 6 ca chỉ phủ code đã xoá) |
+| `team_route_handles --check` | pass (generation `75a88d67…`) |
+| `worker` vitest | 6 file, 53 test; `typecheck` ok |
+| `mcp-worker` check | 43 file, 336 test (bỏ ca ghim method/tautology/hàm đã xoá); workflow build, typecheck, build, `test:node-min`, `verify:control-plane` ok |
+
+## Tổng kết phase 4
+Hai commit (4a `8a2a021`, 4b). Toàn bộ finding của phase đã xoá theo contract: ReviewJsCore#2, #3, #7 (phần chết), #11, #12, #15 (phần module); ReviewJsTools#18–#23, #19 (phần module); ReviewAstroCss#1, #2, #9, #10, #15, #16; ReviewWorkers#6, #7, #8; ReviewPipeline#8–#13 (phần xoá của #12). Phần "render một lần" của ReviewJsCore#7 ở Phase 5; phần CLI/docs của `parse_coexist_csv` (#12) ở Phase 7.

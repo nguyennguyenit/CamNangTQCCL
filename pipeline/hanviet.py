@@ -99,10 +99,6 @@ FACTION_MAP = {"魏": "Ngụy", "蜀": "Thục", "吴": "Ngô", "群": "Quần",
 # Map binh chủng: chữ Hán -> tên Việt (khớp unitTypes site: Kỵ/Cung/Thương/Khiên).
 TROOP_MAP = {"骑兵": "Kỵ", "弓兵": "Cung", "枪兵": "Thương", "盾兵": "Khiên", "器械": "Khí giới"}
 
-# Map chất tướng (statFocus) cho Phase 4: thuộc tính trội của tướng.
-STAT_MAP = {"智力": "Trí", "武力": "Lực", "统率": "Thống", "速度": "Tốc",
-            "政治": "Chính", "魅力": "Mị", "防御": "Phòng", "攻击": "Công", "全": "Toàn"}
-
 
 class MissingCharError(ValueError):
     """Ký tự Hán không có trong bảng phiên âm (fail-loud, không ship thiếu)."""
@@ -164,18 +160,6 @@ def title_case_vn(text: str) -> str:
 def to_viet(chinese: str, missing: Optional[Set[str]] = None) -> str:
     """Hán -> tên Việt title-case (phiên âm + viết hoa)."""
     return title_case_vn(transliterate(chinese, missing))
-
-
-def stat_focus_vn(chinese: str) -> str:
-    """Chất tướng Hán -> Việt. '全智力' -> 'Toàn Trí'; '智力' -> 'Trí'."""
-    s = (chinese or "").strip()
-    if not s:
-        return ""
-    prefix = ""
-    if s.startswith("全"):
-        prefix = "Toàn "
-        s = s[1:]
-    return (prefix + STAT_MAP.get(s, s)).strip()
 
 
 def faction_vn(chinese: str) -> str:

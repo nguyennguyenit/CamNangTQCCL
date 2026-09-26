@@ -20,12 +20,6 @@ COL_CP2 = 3
 COL_BOOKS = (4, 5, 6)
 COL_NOTES = 7
 
-EXPECTED_COUNTS = {
-    "team-intro": 50,   # Team giới thiệu(mới).html
-    "do-uy": 12,        # Team Đô Úy.html
-    "moi-phe": 110,     # Meta mỗi phe (cũ).html
-}
-
 
 def _cell(row: List[Cell], idx: int) -> str:
     return row[idx].text.strip() if idx < len(row) else ""

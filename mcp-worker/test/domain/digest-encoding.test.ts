@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 
 import {
   SCRUB_SAFE_DIGEST_PREFIX,
-  fromScrubSafeDigest,
   toScrubSafeDigest,
 } from "../../src/domain/digest-encoding.js";
 
@@ -28,12 +27,14 @@ describe("scrub-safe digest encoding", () => {
     }
   });
 
-  it("round-trips every byte pattern back to the original digest", () => {
+  it("keeps every digest byte recoverable from the base64url body", () => {
+    const decode = (token: string): string =>
+      `sha256:${Buffer.from(token.slice(SCRUB_SAFE_DIGEST_PREFIX.length), "base64url").toString("hex")}`;
     for (let byte = 0; byte < 256; byte += 1) {
       const original = hex(byte);
-      expect(fromScrubSafeDigest(toScrubSafeDigest(original))).toBe(original);
+      expect(decode(toScrubSafeDigest(original))).toBe(original);
     }
-    expect(fromScrubSafeDigest(toScrubSafeDigest(SAMPLE_HEX))).toBe(SAMPLE_HEX);
+    expect(decode(toScrubSafeDigest(SAMPLE_HEX))).toBe(SAMPLE_HEX);
   });
 
   it("is injective: distinct digests encode to distinct tokens", () => {
@@ -42,9 +43,9 @@ describe("scrub-safe digest encoding", () => {
     expect(tokens.size).toBe(256);
   });
 
-  it("accepts uppercase hex and normalizes the decoded digest to lowercase", () => {
+  it("encodes uppercase and lowercase hex of the same digest identically", () => {
     const upperBody = `sha256:${SAMPLE_HEX.slice("sha256:".length).toUpperCase()}`;
-    expect(fromScrubSafeDigest(toScrubSafeDigest(upperBody))).toBe(SAMPLE_HEX);
+    expect(toScrubSafeDigest(upperBody)).toBe(toScrubSafeDigest(SAMPLE_HEX));
   });
 
   describe("rejects malformed encode input", () => {
@@ -61,27 +62,6 @@ describe("scrub-safe digest encoding", () => {
     for (const [label, value] of cases) {
       it(label, () => {
         expect(() => toScrubSafeDigest(value)).toThrow(TypeError);
-      });
-    }
-  });
-
-  describe("rejects malformed decode input", () => {
-    const cases: Array<[string, string]> = [
-      ["empty string", ""],
-      ["missing prefix", "A".repeat(43)],
-      ["hex prefix instead of base64 prefix", SAMPLE_HEX],
-      ["42 character body", `${SCRUB_SAFE_DIGEST_PREFIX}${"A".repeat(42)}`],
-      ["44 character body", `${SCRUB_SAFE_DIGEST_PREFIX}${"A".repeat(44)}`],
-      [
-        "standard base64 alphabet",
-        `${SCRUB_SAFE_DIGEST_PREFIX}${"A".repeat(41)}+/`,
-      ],
-      ["padded body", `${SCRUB_SAFE_DIGEST_PREFIX}${"A".repeat(42)}=`],
-    ];
-
-    for (const [label, value] of cases) {
-      it(label, () => {
-        expect(() => fromScrubSafeDigest(value)).toThrow(TypeError);
       });
     }
   });

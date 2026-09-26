@@ -3,10 +3,6 @@ import { validateLookupBundle } from "../../../js/lookup-data.js";
 /** Sidecars the website publishes next to the raw dictionaries. */
 export const LOOKUP_CATALOG_FILE = "lookup-catalog.json";
 export const LOOKUP_MANIFEST_FILE = "lookup-manifest.json";
-export const LOOKUP_SIDECAR_FILES = [
-  LOOKUP_CATALOG_FILE,
-  LOOKUP_MANIFEST_FILE,
-] as const;
 
 /** The three payloads a lookup generation is verified over. */
 export const LOOKUP_PAYLOAD_FILES = [

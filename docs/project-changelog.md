@@ -1,5 +1,19 @@
 # Project Changelog
 
+## 2026-09-27 (Xoá code chết phần 4b: MCP, Vision Worker, pipeline)
+
+### Removed
+
+- MCP `LegacyDomainAdapter` chỉ còn `findSimilarTeams` và `recommendTeams` (hai method production gọi); bỏ 15 method còn lại cùng import `js/roster-scan-map.js`, `js/roster-scan-state.js` khỏi bao đóng workflow. Test ghim danh sách method thay bằng test hành vi: đội tương tự trả đúng đội đã đọc, gợi ý đội chỉ dùng tướng/chiến pháp có trong kho.
+- MCP export chết hoặc chỉ test dùng: `LOOKUP_SIDECAR_FILES`, `ReleasePointer`, `requiresConfirmation`, `applyConfirmedCorrections`, `fromScrubSafeDigest`; trong `contracts.ts`: `createHeroSlot`, `parseBrowserScanConfirmation`, `parseConfirmationBinding`, `parseRosterSnapshot`, các kiểu `UnresolvedObservation`, `ConfirmationDecision`, `RecommendationResult`, `RecommendationRequest`, `ResultPage`, `DomainError` và kiểu/helper chỉ chúng dùng; trường `AuthenticatedBearer.slot`.
+- Vision Worker: `parseAndValidate`, `AnalyzeResult.raw`, `GuardOk.bytes`.
+- Pipeline: CLI `build_recommended_evidence`/`main()` của `pipeline/sgsdeck_recommended.py` và `pipeline/sgsdeck-recommended-evidence.json` (không ai đọc; các `parse_*`, `join_recommended_evidence` giữ nguyên); `build_registry`, `allocate_child_ids` của `pipeline/unified_lookup_identity.py`; `compile_data_candidate`, `check_data_candidate`, `LEDGER_PATH` của `pipeline/site_localization.py` (`ui_source_locations` đọc ledger theo `policy["artifacts"]["ledger"]`); `EXPECTED_COUNTS` của `pipeline/parse_team_intro.py`; `STAT_MAP`, `stat_focus_vn` của `pipeline/hanviet.py`.
+- 15 file output reviewer mồ côi trong `pipeline/localization-reviews/` (không batch receipt nào trỏ tới).
+
+### Changed
+
+- Policy `site-vi-260927-xoa-code-chet-b` (hash `worker/src/schema.ts`, `js/analyze-map.js`; inventory không đổi), publish generation `75a88d67…` (xoá generation `8e1f0231…` của phần 4a), re-pin `pipeline/team-route-handles.json`; `WORKFLOW_BUILD_ID` đổi vì bao đóng MCP bớt hai file (output MCP không đổi).
+
 ## 2026-09-27 (Xoá code chết phần 4a: JavaScript, Astro, CSS)
 
 ### Removed

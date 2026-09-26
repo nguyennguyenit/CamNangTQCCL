@@ -1,16 +1,9 @@
 """Offline Recommended list/detail evidence, separate from the six catalogs."""
 from __future__ import annotations
 
-import argparse
-import hashlib
-import json
 import math
-import os
 import re
-import tempfile
-from datetime import datetime
 from html.parser import HTMLParser
-from pathlib import Path
 from urllib.parse import parse_qsl, unquote, urljoin, urlparse
 
 MAX_SOURCE_BYTES = 4 * 1024 * 1024
@@ -279,74 +272,3 @@ def join_recommended_evidence(listing, details):
             raise ValueError("Recommended holder mismatch")
     details = [{**detail, "tierRaw": by_id[detail["sourceConfigId"]].get("tierRaw"), "factionRaw": by_id[detail["sourceConfigId"]].get("factionRaw")} for detail in details]
     return {"schemaVersion": 1, "provider": "sgsdeck", "inventory": {"expected": listing["expectedCount"], "extracted": len(details), "missingDetails": listing["expectedCount"] - len(details)}, "sourceSeason": listing["sourceSeason"], "records": details}
-
-
-def build_recommended_evidence(cache_dir, output):
-    root = Path(cache_dir)
-    items = json.loads((root / "manifest.json").read_text())
-    if not isinstance(items, list) or not 1 <= len(items) <= 501:
-        raise ValueError("Invalid Recommended cache inventory")
-    listing, details, seen = None, [], set()
-    for item in items:
-        validate_source_url(item["url"])
-        if item["url"] in seen:
-            raise ValueError("Duplicate Recommended cache URL")
-        seen.add(item["url"])
-        path = item["path"]
-        if not isinstance(path, str) or not re.fullmatch(r"[a-z0-9-]+\.html", path):
-            raise ValueError("Invalid cache path")
-        file = root / path
-        if file.is_symlink() or not file.is_file() or file.stat().st_size > MAX_SOURCE_BYTES:
-            raise ValueError("Invalid cache file")
-        body = file.read_bytes()
-        digest = hashlib.sha256(body).hexdigest()
-        if digest != item["sha256"]:
-            raise ValueError("Recommended cache checksum mismatch")
-        try:
-            datetime.fromisoformat(item["fetchedAt"].replace("Z", "+00:00"))
-            html = body.decode("utf-8")
-        except (ValueError, TypeError) as error:
-            raise ValueError("Invalid Recommended cache metadata") from error
-        if urlparse(item["url"]).path == "/recommended":
-            if listing is not None:
-                raise ValueError("One selected scope per evidence build is required")
-            listing = parse_recommended_list(html)
-            listing["sourceSnapshotHash"] = "sha256:" + digest
-        else:
-            detail = parse_recommended_detail(html, item["url"])
-            detail.update({"sourceSnapshotHash": "sha256:" + digest, "provenance": {"provider": "sgsdeck", "region": "TW", "sourceUrl": item["url"], "fetchedAt": item["fetchedAt"]}, "canonicalRef": None, "reviewStatus": "pending"})
-            details.append(detail)
-    if listing is None:
-        raise ValueError("Recommended cache is missing its list")
-    result = join_recommended_evidence(listing, details)
-    if result["inventory"]["missingDetails"]:
-        raise ValueError("Recommended scope is incomplete; canonical evidence requires every listed detail")
-    result["listSnapshotHash"] = listing["sourceSnapshotHash"]
-    output = Path(output)
-    if output.is_symlink():
-        raise ValueError("Evidence output cannot be a symlink")
-    if output.exists():
-        previous = json.loads(output.read_text())
-        if previous.get("sourceSeason") == result["sourceSeason"]:
-            old_ids = {row["sourceConfigId"] for row in previous["records"]}
-            if not old_ids.issubset({row["sourceConfigId"] for row in result["records"]}):
-                raise ValueError("Recommended detail coverage shrank")
-    output.parent.mkdir(parents=True, exist_ok=True)
-    encoded = (json.dumps(result, ensure_ascii=False, sort_keys=True, indent=2, allow_nan=False) + "\n").encode()
-    with tempfile.TemporaryDirectory(prefix=".recommended-", dir=output.parent) as staging:
-        candidate = Path(staging) / output.name
-        candidate.write_bytes(encoded)
-        os.replace(candidate, output)
-    return result
-
-
-def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--cache", type=Path, required=True)
-    parser.add_argument("--output", type=Path, default=Path(__file__).with_name("sgsdeck-recommended-evidence.json"))
-    args = parser.parse_args()
-    build_recommended_evidence(args.cache, args.output)
-
-
-if __name__ == "__main__":
-    main()

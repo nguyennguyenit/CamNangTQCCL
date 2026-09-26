@@ -1,9 +1,5 @@
 """Recommended source contract using pinned, rendered source fragments."""
 import copy
-import hashlib
-import json
-import re
-import tempfile
 import unittest
 from pathlib import Path
 
@@ -154,41 +150,6 @@ class RecommendedSourceTest(unittest.TestCase):
             source.parse_recommended_list(LIST, requested_scope={"season": "pk-s28", "category": "交戰"})
         with self.assertRaisesRegex(ValueError, "requested scope"):
             source.parse_recommended_list(LIST, requested_scope={"sourceSeasonId": "og-兵演春秋", "sourceCategoryId": "器械"})
-
-    def _cache(self, root, listing):
-        items = []
-        for key, html, url in [("list", listing, "https://sgsdeck.com/recommended"), ("detail", DETAIL, URL)]:
-            body = html.encode()
-            (root / (key + ".html")).write_bytes(body)
-            items.append({"key": key, "url": url, "path": key + ".html", "sha256": hashlib.sha256(body).hexdigest(), "fetchedAt": "2026-09-12T06:07:25+00:00"})
-        (root / "manifest.json").write_text(json.dumps(items))
-
-    def test_incomplete_scope_cannot_publish_canonical_evidence(self):
-        with tempfile.TemporaryDirectory() as folder:
-            root = Path(folder)
-            self._cache(root, LIST)
-            output = root / "accepted.json"
-            with self.assertRaisesRegex(ValueError, "incomplete"):
-                source.build_recommended_evidence(root, output)
-            self.assertFalse(output.exists())
-
-    def test_offline_cache_checksums_and_failed_publish_preserve_evidence(self):
-        with tempfile.TemporaryDirectory() as folder:
-            root = Path(folder)
-            # A controlled one-card scope retains the pinned source card verbatim.
-            listing = re.sub(r'<a\b[^>]*href="/recommended/[^\"]+"[^>]*>.*?</a>',
-                             lambda match: match[0] if 'href="' + URL.removeprefix('https://sgsdeck.com') + '"' in match[0] else '', LIST, flags=re.S)
-            listing = listing.replace("25 套交戰配置", "1 套交戰配置")
-            self._cache(root, listing)
-            output = root / "accepted.json"
-            source.build_recommended_evidence(root, output)
-            before = output.read_bytes()
-            source.build_recommended_evidence(root, output)
-            self.assertEqual(output.read_bytes(), before)
-            (root / "detail.html").write_text("broken")
-            with self.assertRaises(ValueError):
-                source.build_recommended_evidence(root, output)
-            self.assertEqual(output.read_bytes(), before)
 
 
 if __name__ == "__main__":

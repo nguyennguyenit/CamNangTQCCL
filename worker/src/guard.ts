@@ -9,7 +9,6 @@ const MAGIC: Array<{ mime: string; test: (b: Uint8Array) => boolean }> = [
 
 export interface GuardOk {
   ok: true;
-  bytes: Uint8Array;
   mime: string;
   dataUri: string;
 }
@@ -58,7 +57,7 @@ export function validateImage(image: unknown, maxBytes: number): GuardOk | Guard
   if (!match) {
     return { ok: false, status: 415, message: "Chỉ nhận ảnh PNG/JPEG/WebP" };
   }
-  return { ok: true, bytes, mime: match.mime, dataUri: `data:${match.mime};base64,${toBase64(bytes)}` };
+  return { ok: true, mime: match.mime, dataUri: `data:${match.mime};base64,${toBase64(bytes)}` };
 }
 
 function toBase64(bytes: Uint8Array): string {

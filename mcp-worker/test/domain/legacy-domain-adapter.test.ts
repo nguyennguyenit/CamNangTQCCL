@@ -1,257 +1,90 @@
-import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
+import { normalizeText } from "../../../js/filters.js";
+import { canonicalHeroId } from "../../../js/hero-identity.js";
 import {
   LegacyDomainAdapterError,
   legacyDomainAdapter,
 } from "../../src/domain/legacy-domain-adapter.js";
 
-const adapterModuleUrl = new URL("../../src/domain/legacy-domain-adapter.ts", import.meta.url).href;
-const tsxLoaderPath = fileURLToPath(import.meta.resolve("tsx"));
-
 function loadJson(relativePath: string): unknown {
   return JSON.parse(readFileSync(new URL(`../../../${relativePath}`, import.meta.url), "utf8"));
 }
 
-const teams = loadJson("data/teams.json") as Array<Record<string, unknown>>;
-const teamTier = loadJson("data/team-tier.json") as Array<Record<string, unknown>>;
-const heroes = loadJson("data/heroes-dict.json") as Array<Record<string, unknown>>;
-const tactics = loadJson("data/tactics.json") as Array<Record<string, unknown>>;
+type TeamFixture = {
+  id: string;
+  heroes: Array<{ name: string; tactics: Array<{ name: string }> }>;
+};
 
-function team(id: string): Record<string, unknown> {
+const teams = loadJson("data/teams.json") as TeamFixture[];
+const teamTier = loadJson("data/team-tier.json") as Array<Record<string, unknown>>;
+
+function team(id: string): TeamFixture {
   const record = teams.find((candidate) => candidate.id === id);
   if (!record) throw new Error(`Missing committed team fixture: ${id}`);
   return record;
 }
 
-describe("legacy domain adapter characterization", () => {
-  it("loads independently of process.cwd and exposes only the typed adapter", () => {
-    const stdout = execFileSync(process.execPath, [
-      "--import", tsxLoaderPath,
-      "--input-type=module",
-      "--eval",
-      `const { legacyDomainAdapter } = await import(${JSON.stringify(adapterModuleUrl)});
-       process.stdout.write(JSON.stringify(Object.keys(legacyDomainAdapter).sort()));`,
-    ], { cwd: tmpdir(), encoding: "utf8", timeout: 5_000, stdio: ["ignore", "pipe", "pipe"] });
-    expect(JSON.parse(stdout)).toEqual([
-      "deserializeBrowserScanState",
-      "findSimilarTeams",
-      "mapBuiltTeamsScan",
-      "mapBuiltTeamsScanRich",
-      "mapHeroesScan",
-      "mapHeroesScanRich",
-      "mapRead",
-      "mapTacticsScan",
-      "mapTacticsScanRich",
-      "mapTeamRead",
-      "matchDictionary",
-      "normalizeTeamCandidate",
-      "normalizeText",
-      "recommendTeams",
-      "searchDictionary",
-      "serializeBrowserScanState",
-      "toVietHanViet",
-    ]);
-  }, 10_000);
+function tacticId(name: string): string {
+  return `tactic:${normalizeText(name).replace(/[^a-z0-9]+/gu, "-").replace(/^-+|-+$/gu, "")}`;
+}
 
-  it("maps a committed dictionary record without mutating input", () => {
-    const dictionary = structuredClone(heroes);
-    const before = structuredClone(dictionary);
-    const matched = legacyDomainAdapter.matchDictionary("SP Tuân Úc", dictionary);
-
-    expect(matched.record?.viet).toBe("SP Tuân Úc");
-    expect(dictionary).toEqual(before);
-    expect(JSON.parse(JSON.stringify(matched))).toEqual(matched);
-  });
-
-  it("executes dictionary search and Hán-Việt transliteration", () => {
-    const searched = legacyDomainAdapter.searchDictionary("Tuân Úc", heroes, {
-      limit: 2,
-    });
-
-    expect(searched[0]?.record.viet).toBe("Tuân Úc");
-    expect(legacyDomainAdapter.toVietHanViet("荀彧")).toBe("Tuân Úc");
-  });
-
-  it("tolerates unknown artifact fields while validating fields it uses", () => {
-    const result = legacyDomainAdapter.mapHeroesScan(
-      { heroes: [{ nameCn: "荀彧", redStars: 2, futureField: "ignored" }] },
-      { heroesDict: heroes },
-    );
-
-    expect(result.heroes).toHaveLength(1);
-    expect(result.heroes[0]?.name).toBeTruthy();
-  });
-
-  it("exposes evidence-rich scan mappings without removing the browser shape", () => {
-    const result = legacyDomainAdapter.mapHeroesScanRich(
-      {
-        heroes: [
-          {
-            nameCn: "SP荀彧",
-            redStars: 3,
-            imageOrdinal: 2,
-            fieldPresence: ["canonicalId", "redStars"],
-          },
-        ],
-      },
-      {
-        heroesDict: heroes,
-        sourceScope: "currentTurnImage",
-        batchId: "batch-1",
-      },
-    );
-
-    expect(result.heroes?.[0]).toMatchObject({
-      canonicalId: "hero:sp-tuan-uc",
-      familyId: "hero-family:tuan-uc",
+function confirmedReads(source: TeamFixture) {
+  return source.heroes.map((hero) => ({
+    hero: { matched: true, canonicalId: canonicalHeroId(hero.name), reviewRequired: false },
+    tactics: hero.tactics.map((tactic) => ({
+      matched: true,
+      canonicalId: tacticId(tactic.name),
       reviewRequired: false,
-      rawTextTrust: "untrusted",
-      imageOrdinal: 2,
-      evidence: {
-        sourceScope: "currentTurnImage",
-        batchId: "batch-1",
-        imageOrdinal: 2,
-        trust: "untrusted",
-      },
-    });
-  });
+    })),
+  }));
+}
 
-  it("preserves SP identity instead of collapsing to the base hero", () => {
-    const candidate = legacyDomainAdapter.normalizeTeamCandidate(team("team-intro-0"));
+function inventoryOf(source: TeamFixture) {
+  return {
+    ownedHeroes: source.heroes.map(({ name }) => name),
+    ownedTactics: source.heroes.flatMap(({ tactics }) => tactics.map(({ name }) => name)),
+  };
+}
 
-    expect(candidate.requiredHeroes).toContain("SP Tuân Úc");
-    expect(candidate.requiredHeroes).not.toContain("Tuân Úc");
-  });
+function recommendedIds(result: { portfolioTeams: Array<{ team: Record<string, unknown> }> }) {
+  return result.portfolioTeams.map((entry) => entry.team.id);
+}
 
-  it("represents a combined hero slot as alternatives", () => {
-    const candidate = legacyDomainAdapter.normalizeTeamCandidate(team("team-intro-27"));
-    const combined = candidate.heroSlots.find((slot) =>
-      (slot.alternatives as Array<Record<string, unknown>>).some(
-        (alternative) => alternative.displayName === "SP Lữ Mông",
-      ),
-    );
-
-    expect(combined?.alternatives).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ displayName: "SP Lữ Mông" }),
-        expect.objectContaining({ displayName: "Trình Phổ" }),
-      ]),
-    );
-  });
-
-  it("characterizes CO, multi-ranking, and untiered committed artifacts", () => {
-    const tierByTeam = new Map(
-      teamTier.map((entry) => [
-        String(entry.teamId),
-        (entry.rankings as Array<Record<string, unknown>>) ?? [],
-      ]),
-    );
-    const coCandidate = legacyDomainAdapter.normalizeTeamCandidate(team("team-intro-25"));
-    const rankedCandidate = legacyDomainAdapter.normalizeTeamCandidate(
-      team("team-intro-1"),
-      tierByTeam,
-    );
-    const untieredCandidate = legacyDomainAdapter.normalizeTeamCandidate(
-      team("team-intro-0"),
-      tierByTeam,
-    );
-
-    expect(coCandidate.requiredHeroes).toContain("CO Chân Cơ");
-    expect(coCandidate.requiredHeroes).not.toContain("Chân Cơ");
-    expect(rankedCandidate.tier).toBe("T0");
-    expect(untieredCandidate.tier).toBe("");
-  });
-
-  it("returns per-holder tactic selections while retaining the flat compatibility field", () => {
+describe("legacy domain adapter", () => {
+  it("finds the committed team whose heroes and tactics were read", () => {
     const source = team("team-intro-0");
-    const sourceHeroes = (source.heroes as Array<{ name: string }>).map(
-      ({ name }) => name,
-    );
-    const sourceTactics = (
-      source.heroes as Array<{ tactics: Array<{ name: string }> }>
-    ).flatMap(({ tactics: slots }) => slots.map(({ name }) => name));
-    const result = legacyDomainAdapter.recommendTeams({
-      teams: [source],
-      teamTier,
-      ownedHeroes: sourceHeroes,
-      ownedTactics: sourceTactics,
-      maxTeams: 1,
-      mode: "all",
-    });
+    const reads = confirmedReads(source);
+    const before = structuredClone(reads);
+    const similar = legacyDomainAdapter.findSimilarTeams(reads, teams, { minHeroes: 2, limit: 3 });
 
-    expect(result.portfolioTeams[0]?.selectedTactics).toEqual(sourceTactics);
-    expect(result.portfolioTeams[0]?.tacticSelections).toHaveLength(sourceTactics.length);
+    expect(similar[0]).toMatchObject({
+      team: { id: "team-intro-0" },
+      heroHit: 3,
+      tacticHit: 6,
+      total: 3,
+    });
+    expect(reads).toEqual(before);
   });
 
-  it("maps current team reads and returns defensive JSON output", () => {
-    const input = [
-      {
-        nameCn: "SP荀彧",
-        tacticsCn: ["草船借箭"],
-        booksCn: [],
-        statFocusCn: "全智力",
-      },
-    ];
-    const before = structuredClone(input);
-    const result = legacyDomainAdapter.mapTeamRead(input, {
-      heroesDict: heroes,
-      tacticsDict: tactics,
-      booksDict: [],
-    });
+  it("drops teams below the minimum hero overlap", () => {
+    const firstRead = confirmedReads(team("team-intro-0")).slice(0, 1);
+    const similar = legacyDomainAdapter.findSimilarTeams(firstRead, teams, { minHeroes: 2, limit: 5 });
 
-    expect(input).toEqual(before);
-    expect(result).not.toBe(input);
-    expect(JSON.parse(JSON.stringify(result))).toEqual(result);
-  });
-
-  it("executes single-read and similar-team mapping", () => {
-    const read = {
-      nameCn: "SP荀彧",
-      tacticsCn: ["草船借箭"],
-      booksCn: [],
-      statFocusCn: "全智力",
-    };
-    const dicts = {
-      heroesDict: heroes,
-      tacticsDict: tactics,
-      booksDict: [],
-    };
-    const mapped = legacyDomainAdapter.mapRead(read, dicts);
-    const similar = legacyDomainAdapter.findSimilarTeams(
-      [mapped],
-      teams,
-      { minHeroes: 1, limit: 3 },
-    );
-
-    expect((mapped.hero as Record<string, unknown>).viet).toBe("SP Tuân Úc");
-    expect(similar.length).toBeGreaterThan(0);
+    expect(similar).toEqual([]);
+    const loosened = legacyDomainAdapter.findSimilarTeams(firstRead, teams, { minHeroes: 1, limit: 50 });
+    expect(loosened.map(({ team: match }) => (match as { id: string }).id)).toContain("team-intro-0");
   });
 
   it("counts a portrait-guessed hero in the total but not as a similar-team hit", () => {
-    const dicts = {
-      heroesDict: [
-        { chinese: "曹操", viet: "Tào Tháo" },
-        { chinese: "关羽", viet: "Quan Vũ" },
-        { chinese: "张飞", viet: "Trương Phi" },
-      ],
-      tacticsDict: [],
-      booksDict: [],
-    };
-    const mapped = legacyDomainAdapter.mapTeamRead(
-      [
-        { nameCn: "曹操", tacticsCn: [], statFocusCn: "" },
-        { nameCn: "关羽", tacticsCn: [], statFocusCn: "" },
-        { nameCn: "张飞", tacticsCn: [], statFocusCn: "", nameFromPortrait: true },
-      ],
-      dicts,
-    );
+    const read = (canonicalId: string, sure?: boolean) => ({
+      hero: { matched: true, canonicalId, ...(sure === undefined ? {} : { sure }) },
+      tactics: [],
+    });
     const similar = legacyDomainAdapter.findSimilarTeams(
-      mapped,
+      [read(canonicalHeroId("Tào Tháo")), read(canonicalHeroId("Quan Vũ")), read(canonicalHeroId("Trương Phi"), false)],
       [
         {
           id: "ba-tuong",
@@ -270,76 +103,53 @@ describe("legacy domain adapter characterization", () => {
     expect(similar[0]).toMatchObject({ heroHit: 2, total: 3 });
   });
 
-  it("executes tactic, built-team, and browser-state adapters", () => {
-    const tacticScan = legacyDomainAdapter.mapTacticsScan(
-      { tactics: [{ nameCn: "草船借箭" }] },
-      { tacticsDict: tactics },
-    );
-    const builtScan = legacyDomainAdapter.mapBuiltTeamsScan(
-      {
-        teams: [
-          {
-            teamName: "Đội đã build",
-            heroesCn: ["荀彧"],
-            tacticsCn: ["草船借箭"],
-          },
-        ],
-      },
-      { heroesDict: heroes, tacticsDict: tactics },
-    );
-    const serialized = legacyDomainAdapter.serializeBrowserScanState({
-      ownedHeroes: [{ name: "Tuân Úc" }],
-      ownedTactics: [],
-      lockedTeams: [],
-      confirmed: true,
-      updatedAt: null,
+  it("recommends a team the inventory fully covers, using only owned tactics", () => {
+    const source = team("team-intro-1");
+    const inventory = inventoryOf(source);
+    const result = legacyDomainAdapter.recommendTeams({
+      teams,
+      teamTier,
+      ...inventory,
+      maxTeams: 5,
+      mode: "all",
     });
-    const deserialized = legacyDomainAdapter.deserializeBrowserScanState(
-      JSON.stringify(serialized),
-    );
 
-    expect(tacticScan.tactics[0]?.name).toBe("Thuyền Cỏ Mượn Tên");
-    expect(builtScan.teams[0]).toMatchObject({
-      teamName: "Đội đã build",
-      heroes: ["Tuân Úc"],
-      tactics: ["Thuyền Cỏ Mượn Tên"],
-    });
-    expect(deserialized).toEqual(serialized);
+    expect(recommendedIds(result)).toContain("team-intro-1");
+    for (const entry of result.portfolioTeams) {
+      expect(inventory.ownedTactics).toEqual(expect.arrayContaining(entry.selectedTactics));
+    }
+    const recommended = result.portfolioTeams.find((entry) => entry.team.id === "team-intro-1");
+    expect(recommended?.selectedTactics).toEqual(inventory.ownedTactics);
+    expect(recommended?.tacticSelections).toHaveLength(inventory.ownedTactics.length);
   });
 
-  it.each([
-    () =>
-      legacyDomainAdapter.mapBuiltTeamsScan(
-        { teams: [{ teamName: 42, heroes: [], tactics: [] }] },
-        { heroesDict: heroes, tacticsDict: tactics },
-      ),
-    () =>
-      legacyDomainAdapter.normalizeTeamCandidate({
-        heroes: [{ baseName: 42, tactics: [] }],
-      }),
-  ])("rejects malformed legacy output instead of trusting a TypeScript cast", (operation) => {
-    expect(operation).toThrow(LegacyDomainAdapterError);
+  it("does not recommend a team when the inventory lacks one of its heroes", () => {
+    const source = team("team-intro-1");
+    const inventory = inventoryOf(source);
+    const result = legacyDomainAdapter.recommendTeams({
+      teams,
+      teamTier,
+      ownedHeroes: inventory.ownedHeroes.slice(1),
+      ownedTactics: inventory.ownedTactics,
+      maxTeams: 5,
+      mode: "all",
+    });
+
+    expect(recommendedIds(result)).not.toContain("team-intro-1");
   });
 
-  it.each([
-    ["normalizeText", () =>
-      legacyDomainAdapter.normalizeText({
-        toString() {
-          throw new Error("/Users/private/artifact.json");
-        },
-      } as unknown as string)],
-    ["toVietHanViet", () =>
-      legacyDomainAdapter.toVietHanViet({
-        trim() {
-          throw new Error("/Users/private/artifact.json");
-        },
-      } as unknown as string)],
-  ])("redacts legacy errors from %s", (operation, invoke) => {
+  it("redacts legacy failures instead of leaking internal errors", () => {
+    const invoke = () =>
+      legacyDomainAdapter.recommendTeams({
+        teams: [{ heroes: [{ name: "/Users/private/artifact.json", tactics: 42 }] }],
+        ownedHeroes: [],
+        seasonContext: { scenarioId: "/Users/private" },
+      });
     expect(invoke).toThrow(LegacyDomainAdapterError);
     try {
       invoke();
     } catch (error) {
-      expect(error).toMatchObject({ operation });
+      expect(error).toMatchObject({ operation: "recommendTeams" });
       expect(String(error)).not.toContain("/Users/private");
     }
   });

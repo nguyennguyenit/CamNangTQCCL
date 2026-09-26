@@ -28,7 +28,6 @@ export interface ValidatedBearerConfiguration {
 }
 
 export interface AuthenticatedBearer {
-  slot: "current" | "next";
   fingerprint: string;
 }
 
@@ -141,7 +140,6 @@ export async function authenticateBearer(
     throw new BearerAuthError("UNAUTHORIZED");
   }
   return {
-    slot: currentMatches ? "current" : "next",
     fingerprint: fingerprint(presentedDigest),
   };
 }

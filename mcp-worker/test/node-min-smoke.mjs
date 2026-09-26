@@ -48,4 +48,11 @@ supportsPinnedVersion(workerPackage.engines.node, "mcp-worker engines.node");
 const { legacyDomainAdapter } = await import(
   "../dist/mcp-worker/src/domain/legacy-domain-adapter.js"
 );
-assert.equal(legacyDomainAdapter.normalizeText("  SP Tuân Úc  "), "sp tuan uc");
+const similar = legacyDomainAdapter.findSimilarTeams(
+  ["hero:tao-thao", "hero:quan-vu"].map((canonicalId) => ({
+    hero: { matched: true, canonicalId },
+    tactics: [],
+  })),
+  [{ id: "hai-tuong", heroes: [{ name: "Tào Tháo" }, { name: "Quan Vũ" }] }],
+);
+assert.deepEqual(similar.map(({ team, heroHit }) => [team.id, heroHit]), [["hai-tuong", 2]]);

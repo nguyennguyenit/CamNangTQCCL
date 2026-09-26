@@ -7,7 +7,7 @@ import { canonicalHeroId, normalizeHeroSlot } from "./hero-identity.js";
 import { matchDict } from "./match-dict.js";
 import { toVietHanViet } from "./hanviet.js";
 
-// Chất tướng Hán -> Việt (mirror pipeline/hanviet.py STAT_MAP).
+// Chất tướng Hán -> Việt.
 const STAT_MAP = {
   "智力": "Trí", "武力": "Lực", "统率": "Thống", "速度": "Tốc",
   "政治": "Chính", "魅力": "Mị", "防御": "Phòng", "攻击": "Công",

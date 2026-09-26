@@ -641,18 +641,3 @@ export async function normalizeObservations({
     confirmationBinding,
   };
 }
-
-export function requiresConfirmation(_result: NormalizationResult): boolean {
-  return true;
-}
-
-export async function applyConfirmedCorrections(
-  result: NormalizationResult,
-  corrections: readonly NormalizationObservation[],
-): Promise<NormalizationResult> {
-  return normalizeObservations({
-    workflowVersion: result.confirmationBinding.workflowVersion,
-    observations: [...result.observations, ...corrections],
-    ...(result.canonicalState.seasonContext ? {seasonContext: result.canonicalState.seasonContext} : {}),
-  });
-}

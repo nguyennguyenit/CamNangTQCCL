@@ -75,7 +75,7 @@
       "hột": "red-copy count"
     }
   },
-  "policyVersion": "site-vi-260927-xoa-code-chet-a",
+  "policyVersion": "site-vi-260927-xoa-code-chet-b",
   "routeFamilies": [
     {
       "entrypoints": [
@@ -741,7 +741,7 @@
     "data/khaihoang.json": "973b252b08ef9332f19866e7321389bd952d03d8156c586718674db8a09de211",
     "data/season-content-links.json": "c87e87e6984c5a39af11248c2125620477852aa1c82b299da339e262e2c881d9",
     "data/teams.json": "45e13dca78877abc13d2ef2213be9432c8307aa558d99783498279f7563cf283",
-    "js/analyze-map.js": "9613ccabc904bd342bd7d7e0f33f770a9668c0f1983e0770d54a962d8e3e0ab7",
+    "js/analyze-map.js": "f463c3ba472af8f8fcd18697180e48fb8b3323effdc0ee6d4ba240597b089039",
     "js/analyze.js": "674c2d1b532e21df5704fd013ccdcda07e084caa5056a3f9f24d9d8dff94b4df",
     "js/app.js": "b08b4228cac4fbe09fe9fb43da0fca5b532d217b946879c0668f2e2453533293",
     "js/detail-actions.js": "6fd2fbfd9b8ad73b6e4cfe0c4a907897b0e79e3d60437bacb0a8f2ee97c41104",
@@ -789,6 +789,6 @@
     "src/pages/soi-doi-tu-anh/index.astro": "f0dda9440cabd164ac4588e8383a35b3db90f74191c600c443be869d944b20d5",
     "src/pages/theo-doi-chieu-mo/index.astro": "4502c945663a6ddc634dde90005e8d48a55eb92893a85f8a4aa85c7c9bbdca5a",
     "src/pages/tra-cuu/index.astro": "070918708812d7053f0c9f81b1d68a4c6e6903e734a7bf518d51a6e1eca2f226",
-    "worker/src/schema.ts": "c845581693ae9a11f5a7f7bb5456e56fabcdc7c15877da7122a0e8892d0c7599"
+    "worker/src/schema.ts": "1b454723f6bfbb705358c9bd2d12428bdb86ca6e6964e8a1e291526371a5c1fc"
   }
 }

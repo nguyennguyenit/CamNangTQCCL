@@ -43,19 +43,6 @@ class TransliterateTest(unittest.TestCase):
         self.assertEqual(hanviet.to_viet("貂蝉"), "Điêu Thuyền")
 
 
-class StatFocusTest(unittest.TestCase):
-    def test_single_stat(self):
-        self.assertEqual(hanviet.stat_focus_vn("智力"), "Trí")
-        self.assertEqual(hanviet.stat_focus_vn("速度"), "Tốc")
-
-    def test_quan_prefix(self):
-        self.assertEqual(hanviet.stat_focus_vn("全智力"), "Toàn Trí")
-        self.assertEqual(hanviet.stat_focus_vn("全武力"), "Toàn Lực")
-
-    def test_empty(self):
-        self.assertEqual(hanviet.stat_focus_vn(""), "")
-
-
 class FactionTroopTest(unittest.TestCase):
     def test_faction(self):
         self.assertEqual(hanviet.faction_vn("魏"), "Ngụy")

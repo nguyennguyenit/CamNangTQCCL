@@ -12,7 +12,6 @@ from pipeline.site_localization import (
     _data_classification,
     glossary_digest,
     check,
-    compile_data_candidate,
     compile_candidate,
     expected_fingerprints,
     inventory_report,
@@ -141,11 +140,11 @@ class SiteLocalizationTest(unittest.TestCase):
                 "error",
                 "translate",
             )
-            locations, missing = ui_source_locations(root, (obligation,))
+            locations, missing = ui_source_locations(root, self.policy["artifacts"]["ledger"], (obligation,))
             self.assertEqual(missing, [])
             self.assertEqual((locations[0]["entityId"], locations[0]["fieldPath"]), ("ui:test/error", "error.message"))
             source.write_text("try {} catch (other) { show(other.message); }", encoding="utf-8")
-            _, missing = ui_source_locations(root, (obligation,))
+            _, missing = ui_source_locations(root, self.policy["artifacts"]["ledger"], (obligation,))
             self.assertEqual(missing, [{
                 "entityId": "ui:test/error",
                 "fieldPath": "error.message",
@@ -153,7 +152,7 @@ class SiteLocalizationTest(unittest.TestCase):
                 "sourceExpression": "caught.message",
             }])
             renamed = (*obligation[:2], "other.message", *obligation[3:])
-            locations, missing = ui_source_locations(root, (renamed,))
+            locations, missing = ui_source_locations(root, self.policy["artifacts"]["ledger"], (renamed,))
             self.assertEqual(missing, [])
             self.assertEqual((locations[0]["entityId"], locations[0]["fieldPath"]), ("ui:test/error", "error.message"))
 
@@ -442,7 +441,7 @@ class SiteLocalizationTest(unittest.TestCase):
         cache.mkdir(exist_ok=True)
         with tempfile.TemporaryDirectory(dir=cache) as temporary:
             data_candidate = Path(temporary) / "data-candidate"
-            data_manifest = compile_data_candidate(ROOT, data_candidate)
+            data_manifest = compile_candidate(ROOT, data_candidate, stage="data")
             self.assertEqual(data_manifest["counts"]["uiPending"], 66)
             scoped = check(ROOT, stage="data", candidate=data_candidate)
             self.assertEqual(scoped["exitCode"], 0)
