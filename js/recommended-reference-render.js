@@ -29,6 +29,12 @@ function holderNameNodes(holder) {
   ];
 }
 
+/** Nguồn để trống ô tướng (đội hai tướng, parser đệm ô thứ ba): không phải bản dịch còn thiếu. */
+const isSourceEmpty=holder=>holder?.slotState === 'source-empty';
+function sourceEmptySeat(className) {
+  return el('span',{class:`${className} source-empty-seat`,role:'img','aria-label':'Nguồn để trống',title:'Nguồn để trống'},'—');
+}
+
 // Ô chiến pháp theo dữ liệu nguồn; tacticSlotKinds (nếu có) đánh dấu ô nào thực chất là duyên phận.
 function tacticSlotEntries(holder) {
   const raw=holder.tacticSlotsRaw || [];
@@ -60,6 +66,12 @@ function tacticTag(entry,onTag) {
  * Binh thư trống ghi một dòng nghiêng "Nguồn chưa ghi" thay cho ba tag "Chưa có dữ liệu".
  */
 function holderView(holder,onTag,{index=0}={}) {
+  if (isSourceEmpty(holder)) {
+    return el('div',{class:'hero reference-holder',dataset:{role:HERO_ROLES[index]||''}},[
+      el('span',{class:'reference-role'},HERO_ROLES[index]||''),
+      el('div',{class:'hero-name'},sourceEmptySeat('hn')),
+    ]);
+  }
   const entries=tacticSlotEntries(holder);
   const bonds=entries.filter(entry=>entry.bond && entry.value);
   const tactics=entries.filter(entry=>!entry.bond).map(entry=>tacticTag(entry,onTag)).filter(Boolean);
@@ -123,6 +135,12 @@ const DETAIL_HERO_ROLES=['Chủ tướng','Phó tướng 1','Phó tướng 2'];
  * Dữ liệu thiếu thì bỏ phần đó; ô rỗng chỉ hiện nhãn "Chưa có dữ liệu" khi cả nguồn lẫn bản dịch đều trống.
  */
 function detailHeroCard(holder,{role=null,level='h3',isMain=false,notes=[],legacy=false}={}) {
+  if (!legacy && isSourceEmpty(holder)) {
+    return el('section',{class:'reference-detail-holder detail-hero-card'},[
+      role ? el('header',{class:'detail-hero-head'},el('span',{class:'detail-hero-role'},role)) : null,
+      el(level,{class:'detail-hero-name'},sourceEmptySeat('hn')),
+    ].filter(Boolean));
+  }
   const entries=legacy ? [] : tacticSlotEntries(holder);
   const tactics=legacy
     ? (holder.tactics || []).map(item=>({value:text(item.name),zh:null}))
@@ -294,6 +312,7 @@ const tableCell=(children,cls)=>el('td',{class:cls},children);
 /** Ô tướng của bảng: tên (kèm nhãn biến thể) + chiến pháp chữ son; thiếu chỗ thì "—". */
 function tableHeroCell(holder) {
   if (!holder) return tableCell('—','reference-table-hero');
+  if (isSourceEmpty(holder)) return tableCell(sourceEmptySeat('reference-table-holder'),'reference-table-hero');
   const tactics=tacticSlotEntries(holder).filter(entry=>!entry.bond && entry.value).map(entry=>entry.value);
   return tableCell([
     el('span',{class:'reference-table-holder'},holderNameNodes(holder)),
@@ -318,7 +337,7 @@ export function recommendedTeamTable(rows,{hrefFor,labels}={}) {
     const href=hrefFor?.(row);
     const name=rowDisplayName(row);
     const holders=(row.heroes || row.holders || []).slice(0,3);
-    const lineup=holders.map(holder=>text(holder.displayNameVi || holder.nameRaw)).filter(Boolean).join(' · ');
+    const lineup=holders.filter(holder=>!isSourceEmpty(holder)).map(holder=>text(holder.displayNameVi || holder.nameRaw)).filter(Boolean).join(' · ');
     return el('tr',{dataset:{referenceKey:row.sourceConfigId || row.legacyVariantId || row.legacyTeamId || ''}},[
       el('th',{scope:'row',class:'reference-table-team'},[
         detailHrefFor(href,name,'reference-table-name'),

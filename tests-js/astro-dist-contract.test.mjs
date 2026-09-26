@@ -606,6 +606,20 @@ test("dist verifier admits exactly the catalog team pages, the 404 and no stale 
   await assert.rejects(verify(), /does not load its own entry|boots the root application/i);
   await writeFile(khaiHoangPagePath, validKhaiHoangPage);
 
+  // Hai trang chi tiết cùng <title> hoặc cùng meta description thì tab/kết quả tìm kiếm không phân biệt được.
+  const legacyDetailPath = join(distDir, "doi-khac", LEGACY_ROUTE_SEGMENT, "index.html");
+  const validLegacyDetail = await readFile(legacyDetailPath, "utf8");
+  const withHead = (html, title, description) => html.replace("<!doctype html>", `<!doctype html><head><title>${title}</title><meta name="description" content="${description}"></head>`);
+  await writeFile(legacyDetailPath, withHead(validLegacyDetail, "Đội A — Đội khác", "Mô tả A"));
+  await writeFile(khaiHoangPagePath, withHead(validKhaiHoangPage, "Đội B — Khai hoang", "Mô tả B"));
+  await verify();
+  await writeFile(khaiHoangPagePath, withHead(validKhaiHoangPage, "Đội A — Đội khác", "Mô tả B"));
+  await assert.rejects(verify(), /duplicate <title>.*Đội A — Đội khác/i);
+  await writeFile(khaiHoangPagePath, withHead(validKhaiHoangPage, "Đội B — Khai hoang", "Mô tả A"));
+  await assert.rejects(verify(), /duplicate meta description.*Mô tả A/i);
+  await writeFile(legacyDetailPath, validLegacyDetail);
+  await writeFile(khaiHoangPagePath, validKhaiHoangPage);
+
   await mkdir(join(distDir, "doi-khac", "team-khong-co"), { recursive: true });
   await writeFile(join(distDir, "doi-khac", "team-khong-co", "index.html"), "<!doctype html>\n");
   await assert.rejects(verify(), /unexpected: doi-khac\/team-khong-co\/index\.html/i);

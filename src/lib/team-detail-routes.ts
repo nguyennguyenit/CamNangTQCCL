@@ -91,6 +91,29 @@ export const recommendedRoutePath = (routeSegment: string) => `/doi-chuan/${enco
 export const legacyRoutePath = (routeSegment: string) => `/doi-khac/${encodeURIComponent(routeSegment)}/`;
 export const khaiHoangRoutePath = (routeSegment: string) => `/khai-hoang/${encodeURIComponent(routeSegment)}/`;
 
+/**
+ * Thứ hạng của từng trang trong nhóm trang cùng khoá tiêu đề (tab, kết quả tìm kiếm không được trùng):
+ * `size` là số trang chung khoá, `ordinal` (từ 1) theo thứ tự `routeSegment`. Trả hàm tra hạng của một trang.
+ */
+export function detailTitleRanks<T extends { routeSegment: string }>(entries: T[], key: (entry: T) => string) {
+  const groups = new Map<string, T[]>();
+  for (const entry of entries) {
+    const value = key(entry);
+    groups.set(value, [...(groups.get(value) ?? []), entry]);
+  }
+  const ranks = new Map<string, { ordinal: number; size: number }>();
+  for (const group of groups.values()) {
+    [...group].sort((a, b) => a.routeSegment.localeCompare(b.routeSegment)).forEach((entry, index) => {
+      ranks.set(entry.routeSegment, { ordinal: index + 1, size: group.length });
+    });
+  }
+  return (entry: T) => {
+    const rank = ranks.get(entry.routeSegment);
+    if (!rank) throw new Error(`Team detail title rank is missing: ${entry.routeSegment}`);
+    return rank;
+  };
+}
+
 async function readRegularFile(path: string) {
   const stat = await lstat(path);
   if (stat.isSymbolicLink() || !stat.isFile()) throw new Error(`Raw artifact is not a regular file: ${path}`);

@@ -1,4 +1,4 @@
-// Kiểu hiển thị của hai trang danh sách đội (Đội chuẩn / Đội khác): Thẻ 2 cột, Lưới 4 cột, Bảng.
+// Kiểu hiển thị của hai trang danh sách đội (Đội chuẩn / Đội khác): Thẻ, Thẻ gọn, Bảng.
 // Thứ tự quyết định: query `view` của URL > giá trị đã lưu > mặc định Thẻ.
 // Tên khóa theo quy ước `tqccl…vN` như js/roster-scan-state.js; lỗi storage chỉ làm mất ghi nhớ,
 // không bao giờ chặn render.

@@ -196,6 +196,20 @@ async function main() {
       hasLegacy: id => teams.some(team => team.id === id),
     });
     if (migration) { location.replace(migration.target); return; }
+    // Cùng Tồn có đúng một điều khiển kịch bản (hàng nút của mục) và URL `scenario` sở hữu lựa chọn. URL chưa có
+    // `scenario` thì chọn kịch bản của nhóm trong `group` (link cũ đã chia sẻ), không thì kịch bản đầu tiên theo
+    // thứ tự registry; ghi bằng replaceState để không thêm bước lịch sử.
+    const reviewedScenarioIds = seasonModel
+      ? seasonModel.data['season-registry'].filter(item => item.reviewStatus === 'reviewed').map(item => item.id)
+      : [];
+    if (pageSection === 'coexist' && reviewedScenarioIds.length && !new URL(location.href).searchParams.has('scenario')) {
+      const groupParam = new URL(location.href).searchParams.getAll('group');
+      const linked = groupParam.length === 1
+        ? seasonModel.data['season-content-links'].find(link => link.recordId === groupParam[0])?.scenarioId
+        : null;
+      const scenario = reviewedScenarioIds.includes(linked) ? linked : reviewedScenarioIds[0];
+      history.replaceState(history.state, '', updateSeasonURL(location.href, {scenario}));
+    }
     let browse = seasonModel ? readSeasonQuery(location.href, seasonModel).browse : null;
     let projection = seasonModel ? projectSeasonBrowse(seasonModel, browse) : null;
     const sections = {};
@@ -215,7 +229,13 @@ async function main() {
       // Nhãn kịch bản lấy từ registry đã xác thực; nhóm không gắn kịch bản dùng nhãn riêng của mục.
       scenarioLabel: scenarioId => seasonModel?.data['season-registry'].find(item => item.id === scenarioId)?.labelVi || '',
       onGroup: syncCoexistGroup,
+      onScenario: scenarioId => {
+        const next = resolveBrowseState(seasonModel, {scenarioId}, {origin:'scenario-change'});
+        navigateQuery({scenario:next.scenarioId, ruleset:next.rulesetId, config:null}, true);
+      },
     }) : null;
+    // Đóng chi tiết cấu hình trả focus về đầu mục Cùng Tồn như hai trang danh sách đội.
+    if (coexistUI) sections.coexist = coexistUI;
     /**
      * Nhóm Cùng Tồn đang xem nằm trong query của chính trang mục; chỉ `replaceState` (không render lại)
      * để đổi nhóm và nhóm cũ hết hợp lệ đều không tạo thêm bước lịch sử.
@@ -382,28 +402,18 @@ async function main() {
       if (meaningful) url.searchParams.set('view', canonical);
       history.replaceState(history.state, '', url);
     }
-    const scenarioSelect = seasonScoped ? el('select', {id:'season-scenario'}, [el('option',{value:''},'Tất cả — tham khảo'), ...(seasonModel?.data['season-registry'] || []).filter(scenario=>scenario.reviewStatus === 'reviewed').map(scenario => el('option',{value:scenario.id},scenario.labelVi))]) : null;
-    const rulesetSelect = seasonScoped ? el('select', {id:'season-ruleset', 'aria-label':'Phiên bản luật'}) : null;
-    const rulesetControl = seasonScoped ? el('label',{id:'season-ruleset-control',for:'season-ruleset'},['Phiên bản luật',rulesetSelect]) : null;
+    // Cùng Tồn không có select phạm vi: hàng nút kịch bản của mục là điều khiển duy nhất.
+    const scopeSelects = seasonScoped && pageSection !== 'coexist';
+    const scenarioSelect = scopeSelects ? el('select', {id:'season-scenario'}, [el('option',{value:''},'Tất cả — tham khảo'), ...reviewedScenarioIds.map(id => el('option',{value:id},seasonModel.data['season-registry'].find(scenario=>scenario.id===id).labelVi))]) : null;
+    const rulesetSelect = scopeSelects ? el('select', {id:'season-ruleset', 'aria-label':'Phiên bản luật'}) : null;
+    const rulesetControl = scopeSelects ? el('label',{id:'season-ruleset-control',for:'season-ruleset'},['Phiên bản luật',rulesetSelect]) : null;
     const summary = seasonScoped ? el('p', {id:'season-summary', role:'status', class:'scope-note'}) : null;
     if (seasonScoped) {
-      controls.replaceChildren(el('div',{class:'reference-scope-controls'},[el('label',{for:'season-scenario'},['Mùa',scenarioSelect]),rulesetControl]), summary);
-      placeSeasonControls();
-      if (!seasonModel) { scenarioSelect.disabled = true; rulesetSelect.disabled = true; }
-    }
-    /** Bộ chọn Mùa cố định theo trang: Cùng Tồn đặt trong đầu mục; Đội chuẩn/Đội khác giữ ẩn. */
-    function placeSeasonControls() {
-      // Trang không có phạm vi mùa (Chiêu mộ, Tra cứu, công cụ, trang chi tiết) không có #season-controls.
-      if (!controls) return;
-      controls.hidden = pageSection !== 'coexist';
-      rulesetControl.hidden = pageSection === 'coexist';
+      controls.replaceChildren(...(scopeSelects ? [el('div',{class:'reference-scope-controls'},[el('label',{for:'season-scenario'},['Mùa',scenarioSelect]),rulesetControl])] : []), summary);
+      // Đội chuẩn/Đội khác giữ khối phạm vi ẩn (URL vẫn đọc được); Cùng Tồn chỉ giữ dòng tóm tắt ẩn.
+      controls.hidden = true;
       summary.hidden = pageSection === 'coexist';
-      if (pageSection === 'coexist') {
-        const head = mount.querySelector(':scope > .coexist-head');
-        if (head) head.append(controls);
-      } else if (detailMount) {
-        detailMount.before(controls);
-      }
+      if (scopeSelects && !seasonModel) { scenarioSelect.disabled = true; rulesetSelect.disabled = true; }
     }
     scenarioSelect?.addEventListener('change', () => {
       const next = resolveBrowseState(seasonModel, scenarioSelect.value ? {scenarioId:scenarioSelect.value} : {}, {origin:'scenario-change'});
@@ -415,15 +425,21 @@ async function main() {
       browse = seasonModel ? readSeasonQuery(location.href, seasonModel).browse : null;
       projection = seasonModel ? projectSeasonBrowse(seasonModel, browse) : null;
       const scenario = seasonModel?.data['season-registry'].find(item=>item.id === browse?.scenarioId);
-      scenarioSelect.value = scenario?.id || '';
-      rulesetSelect.replaceChildren(el('option',{value:''},'Chưa chọn — tham khảo'), ...(scenario?.rulesets || []).filter(rule=>rule.reviewStatus === 'reviewed').map(rule=>el('option',{value:rule.id},rule.label)));
-      rulesetSelect.value = browse?.rulesetId || '';
-      rulesetSelect.disabled = !scenario || !scenario.rulesets.some(rule=>rule.reviewStatus === 'reviewed');
-      summary.textContent = !seasonModel ? BUNDLE_NOTICE : browse.kind === 'invalid' ? 'Kịch bản hoặc phiên bản luật không hợp lệ. Hãy chọn lại phạm vi.' : browse.kind === 'all-reference' ? 'Tất cả — tham khảo' : `${scenario?.labelVi || ''} · ${browse.kind === 'verified-pair' ? rulesetSelect.selectedOptions[0]?.textContent : scenario?.rulesets.some(rule=>rule.reviewStatus === 'reviewed') ? 'Chưa chọn phiên bản luật — tham khảo' : 'Chưa có phiên bản luật được xác minh — tham khảo'}`;
+      const rule = scenario?.rulesets.find(item=>item.id === browse?.rulesetId);
+      if (scopeSelects) {
+        scenarioSelect.value = scenario?.id || '';
+        rulesetSelect.replaceChildren(el('option',{value:''},'Chưa chọn — tham khảo'), ...(scenario?.rulesets || []).filter(rule=>rule.reviewStatus === 'reviewed').map(rule=>el('option',{value:rule.id},rule.label)));
+        rulesetSelect.value = browse?.rulesetId || '';
+        rulesetSelect.disabled = !scenario || !scenario.rulesets.some(rule=>rule.reviewStatus === 'reviewed');
+      }
+      summary.textContent = !seasonModel ? BUNDLE_NOTICE : browse.kind === 'invalid' ? 'Kịch bản hoặc phiên bản luật không hợp lệ. Hãy chọn lại phạm vi.' : browse.kind === 'all-reference' ? 'Tất cả — tham khảo' : `${scenario?.labelVi || ''} · ${browse.kind === 'verified-pair' ? rule?.label : scenario?.rulesets.some(rule=>rule.reviewStatus === 'reviewed') ? 'Chưa chọn phiên bản luật — tham khảo' : 'Chưa có phiên bản luật được xác minh — tham khảo'}`;
       const groups = projection ? [...projection.coexist.applicable, ...projection.coexist.scenarioReference, ...projection.coexist.unknown] : coexist.map(content=>({content,source:null}));
       // `group` không hợp lệ (kể cả lặp khóa) được coi là "có yêu cầu": mục tự về nhóm đầu và bỏ khỏi URL.
       const groupParams = new URL(location.href).searchParams.getAll('group');
-      coexistUI?.update(groups, groupParams.length === 0 ? null : groupParams.length === 1 ? groupParams[0] : '');
+      coexistUI?.update(groups, groupParams.length === 0 ? null : groupParams.length === 1 ? groupParams[0] : '', {
+        scenarios: reviewedScenarioIds,
+        selected: browse?.scenarioId ?? null,
+      });
       renderTeams();
     }
     if (pageSection === 'team-chuan') {

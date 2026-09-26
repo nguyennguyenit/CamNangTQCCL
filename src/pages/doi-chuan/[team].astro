@@ -1,22 +1,26 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
-import { teamDetailCatalog } from '../../lib/team-detail-routes';
+import { detailTitleRanks, teamDetailCatalog } from '../../lib/team-detail-routes';
 import { familyReturnHref } from '../../../js/team-detail-navigation.js';
 
 export const prerender = true;
 
 export async function getStaticPaths() {
   const catalog = await teamDetailCatalog();
+  // Cùng tên đội có ở nhiều mùa (và đôi khi nhiều cấu hình trong một mùa): tiêu đề mang mã mùa, còn trùng thì số thứ tự.
+  const ranks = detailTitleRanks(catalog.recommended, (entry) => JSON.stringify([entry.displayNameVi, entry.sourceSeasonCode]));
   return catalog.recommended.map((entry) => ({
     params: {team: entry.routeSegment},
-    props: {entry, generationId: catalog.generationId, manifestSha256: catalog.manifestSha256, legacyTeamsSha256: catalog.legacyTeamsSha256},
+    props: {entry, rank: ranks(entry), generationId: catalog.generationId, manifestSha256: catalog.manifestSha256, legacyTeamsSha256: catalog.legacyTeamsSha256},
   }));
 }
 
-const {entry, generationId, manifestSha256, legacyTeamsSha256} = Astro.props;
+const {entry, rank, generationId, manifestSha256, legacyTeamsSha256} = Astro.props;
 // Canonical bỏ query/hash: mọi biến thể deep-link vẫn trỏ về đúng một URL chi tiết.
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 const title = entry.displayNameVi || 'Nội dung tiếng Việt chưa sẵn sàng';
+const qualifier = [entry.sourceSeasonCode, rank.ordinal > 1 ? String(rank.ordinal) : null].filter(Boolean).join(' · ');
+const pageLabel = qualifier ? `${title} (${qualifier})` : title;
 const scopeLine = [entry.sourceSeasonCode, entry.sourceSeasonNameVi, entry.sourceCategoryNameVi]
   .filter(Boolean)
   .join(' · ');
@@ -26,8 +30,8 @@ const hasScore = entry.value != null;
 const fallbackReturn = familyReturnHref('recommended', { sourceSeasonId: entry.sourceSeasonId });
 ---
 <SiteLayout
-  title={`${title} — Đội chuẩn — Cẩm Nang Game Tam Quốc Chí - Chiến Lược`}
-  description={`Chi tiết đội hình ${title} theo dữ liệu nguồn SGSDeck Recommended${scopeLine ? ` (${scopeLine})` : ''}.`}
+  title={`${pageLabel} — Đội chuẩn — Cẩm Nang Game Tam Quốc Chí - Chiến Lược`}
+  description={`Chi tiết đội hình ${rank.ordinal > 1 ? `${title} (${rank.ordinal})` : title} theo dữ liệu nguồn SGSDeck Recommended${scopeLine ? ` (${scopeLine})` : ''}.`}
   pageKind="detail"
   activeSection="team-chuan"
   tagline="Chi tiết đội chuẩn"

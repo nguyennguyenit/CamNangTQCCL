@@ -218,9 +218,22 @@ export async function verifyAstroDist({
       ],
     })),
   ];
+  // Tab và kết quả tìm kiếm chỉ phân biệt được trang chi tiết qua <title>/meta description: không trùng nhau.
+  const detailHeads = { "<title>": new Map(), "meta description": new Map() };
+  const claimHead = (kind, value, path) => {
+    if (value === null) return;
+    const owner = detailHeads[kind].get(value);
+    if (owner) throw new Error(`Team detail pages share a duplicate ${kind}: ${value} (${owner}, ${path})`);
+    detailHeads[kind].set(value, path);
+  };
   for (let start = 0; start < pages.length; start += 64) {
-    await Promise.all(pages.slice(start, start + 64).map(async ({ path, entry, pins }) => {
+    const loaded = await Promise.all(pages.slice(start, start + 64).map(async ({ path, entry, pins }) => {
       const page = await readPage(path);
+      claimHead("<title>", page.match(/<title>([^<]*)<\/title>/u)?.[1] ?? null, path);
+      claimHead("meta description", page.match(/<meta\b(?=[^>]*\bname=["']description["'])[^>]*\bcontent="([^"]*)"/u)?.[1] ?? null, path);
+      return { path, entry, pins, page };
+    }));
+    for (const { path, entry, pins, page } of loaded) {
       for (const pin of pins) {
         if (!page.includes(pin)) throw new Error(`Team detail page lacks its validated pin: ${path} (${pin})`);
       }
@@ -234,7 +247,7 @@ export async function verifyAstroDist({
         }
       }
       if (page.includes('src="/js/app.js"')) throw new Error(`Team detail page boots the root application: ${path}`);
-    }));
+    }
   }
   const notFound = await readPage("404.html");
   if (!notFound.includes('id="not-found-title"')) throw new Error("Static 404 page lacks its not-found heading");

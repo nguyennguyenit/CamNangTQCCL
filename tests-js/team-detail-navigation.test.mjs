@@ -175,10 +175,14 @@ test('return origin accepts section URLs, normalizes old root state, and rejects
   assert.equal(safeReturnUrl('/doi-chuan/?rogue=1'),'/doi-chuan/');
   assert.equal(safeReturnUrl('/khai-hoang/?khTeam=a&khVariant=b&q=x'),'/khai-hoang/?khTeam=a&khVariant=b');
   assert.equal(safeReturnUrl('/tra-cuu/?group=heroes&id=hero%3Aluu-bi&utm_source=z'),'/tra-cuu/?group=heroes&id=hero%3Aluu-bi');
-  // `group` của Cùng Tồn (recordId nhóm đang xem) là khóa được giữ của `/cung-ton/`.
-  assert.equal(safeReturnUrl('/cung-ton/?group=coexist-bdx-group-0fb69f7aa19a&q=B%C3%ACnh&fbclid=1'),'/cung-ton/?group=coexist-bdx-group-0fb69f7aa19a&q=B%C3%ACnh');
-  assert.equal(safeReturnUrl('/cung-ton/?group=3&scenario=binh-dien-xuan-thu'),'/cung-ton/?group=3&scenario=binh-dien-xuan-thu');
+  // Cùng Tồn chỉ sở hữu nhóm đang xem, cấu hình đang mở và phạm vi kịch bản/luật; khóa lọc cũ bị bỏ.
+  assert.equal(safeReturnUrl('/cung-ton/?group=coexist-bdx-group-0fb69f7aa19a&q=B%C3%ACnh&fbclid=1'),'/cung-ton/?group=coexist-bdx-group-0fb69f7aa19a');
+  assert.equal(safeReturnUrl('/cung-ton/?group=2&q=x&tier=T0&scenario=a'),'/cung-ton/?group=2&scenario=a');
+  assert.equal(safeReturnUrl('/cung-ton/?group=3&scenario=binh-dien-xuan-thu&ruleset=r&config=c&sort=tier&stars=5'),'/cung-ton/?group=3&scenario=binh-dien-xuan-thu&ruleset=r&config=c');
   assert.equal(safeReturnUrl('/cung-ton/?group=a&detail=x'),'/cung-ton/?group=a');
+  // Hai công cụ không có trạng thái URL nào để quay lại.
+  assert.equal(safeReturnUrl('/soi-doi-tu-anh/?q=x&faction=Thục'),'/soi-doi-tu-anh/');
+  assert.equal(safeReturnUrl('/goi-y-doi-tu-kho/?q=x&tier=T0'),'/goi-y-doi-tu-kho/');
   assert.equal(safeReturnUrl('/theo-doi-chieu-mo/?q=x'),'/theo-doi-chieu-mo/');
   // Absolute URLs are accepted only for the page's own origin.
   assert.equal(safeReturnUrl(`${ROOT}/doi-chuan/?q=a`,{origin:ROOT}),'/doi-chuan/?q=a');

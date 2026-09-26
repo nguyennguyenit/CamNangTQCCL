@@ -1008,16 +1008,16 @@ test("menu mobile giữ đủ 6 dòng Tra cứu và tiêu đề nhóm là link t
 });
 
 test("Back/Forward cùng tài liệu đóng menu mobile và mở khóa cuộn", async ({ page }) => {
-  // Cùng Tồn có điều khiển mùa hiện ở desktop; chọn mùa rồi mới sang mobile mở lớp phủ.
+  // Cùng Tồn chọn kịch bản bằng hàng nút ở desktop; chọn kịch bản thứ hai rồi mới sang mobile mở lớp phủ.
   await page.goto("/cung-ton/");
   await waitForBoot(page);
-  const season = page.locator("#season-scenario");
-  const options = await season.locator("option").evaluateAll((nodes) => nodes.map((node) => node.value));
-  const first = options[0];
-  const second = options.find((value) => value && value !== first);
+  const scenarios = page.locator("#section-coexist .coexist-scenario");
+  const ids = await scenarios.evaluateAll((nodes) => nodes.map((node) => node.dataset.scenario));
+  const [first, second] = ids;
   const seasonQuery = (value) => new RegExp(`scenario=${value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`);
+  const pressed = page.locator('#section-coexist .coexist-scenario[aria-pressed="true"]');
 
-  await season.selectOption(second);
+  await scenarios.nth(1).click();
   await expect(page).toHaveURL(seasonQuery(second));
   await page.setViewportSize({ width: 390, height: 844 });
   await page.locator("#section-menu-toggle").click();
@@ -1045,11 +1045,11 @@ test("Back/Forward cùng tài liệu đóng menu mobile và mở khóa cuộn", 
   await expect(page.locator("#section-menu-items")).toBeHidden();
   await expect(page.locator("html")).not.toHaveClass(/site-menu-open/);
 
-  // Đối chiếu lại giá trị mùa do URL sở hữu ở bề rộng desktop.
+  // Đối chiếu lại kịch bản do URL sở hữu ở bề rộng desktop.
   await page.setViewportSize({ width: 1280, height: 800 });
-  await expect(season).toHaveValue(second);
+  await expect(pressed).toHaveAttribute("data-scenario", second);
   await page.goBack();
-  await expect(season).toHaveValue(first);
+  await expect(pressed).toHaveAttribute("data-scenario", first);
 });
 
 test("rời trang bằng điều hướng khác tài liệu rồi quay lại không giữ lớp phủ hay khóa cuộn", async ({ page }) => {

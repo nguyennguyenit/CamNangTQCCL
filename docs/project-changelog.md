@@ -1,5 +1,24 @@
 # Project Changelog
 
+## 2026-09-27 (UI/UX phần 3a: danh sách đội, Cùng Tồn, Tra cứu)
+
+### Fixed
+
+- Đội chuẩn/Đội khác: mũi tên ô `Mùa nguồn` và các nút mở nhóm lọc (Nhóm, Nguồn) không còn mất nét ở `/doi-khac/` (mỗi icon dựng node SVG riêng).
+- Đội chuẩn nhận `?season=all` (link từ Tra cứu): ô `Mùa nguồn` có lựa chọn `Tất cả` và hiện đúng lựa chọn đó thay cho mùa mặc định.
+- Đội hai tướng ở nguồn (ô thứ ba để trống, ví dụ `yxms-005`) hiện ô `—` có tên truy cập "Nguồn để trống" trên thẻ, bảng và trang chi tiết thay cho "Nội dung tiếng Việt chưa sẵn sàng".
+- Tên đội chuẩn đã dịch hết dùng ngoặc thường: `Gian Hùng Kỵ（Lữ Bố）` → `Gian Hùng Kỵ (Lữ Bố)` (chuẩn hoá ở `resolve_team_display_name`; tên còn chữ Hán giữ nguyên).
+- Không còn hai trang chi tiết cùng `<title>` hoặc cùng mô tả: Đội chuẩn thêm mã mùa (`Hoàng Cân Thuẫn (PK-S26)`), Đội khác trùng tên thêm nhãn nguồn; còn trùng thì thêm số thứ tự (` · 2`). `scripts/verify-astro-dist.mjs` chặn tiêu đề/mô tả trùng.
+- Cùng Tồn chỉ còn một điều khiển kịch bản: bỏ select `Mùa` trong đầu mục, hàng nút kịch bản (thứ tự registry) ghi `?scenario=` bằng pushState, reload giữ và Back về kịch bản trước; URL chưa có `scenario` chọn kịch bản của `group` trong link cũ, không thì kịch bản đầu (replaceState). Đóng chi tiết cấu hình (nút hoặc Escape) trả focus về tiêu đề Cùng Tồn.
+- Link quay lại từ trang chi tiết chỉ giữ khoá thật của trang: Cùng Tồn `group`, `config`, `scenario`, `ruleset`; Soi đội, Gợi ý đội không giữ khoá nào.
+- Tra cứu: mở thẻ từ chế độ tất cả không còn chuyển lưới sang một nhóm (`group` là bộ lọc người dùng chọn, không suy từ `id`); bấm lại chip đang nhấn để về tất cả. Đóng hồ sơ đã mở trong phiên lùi lịch sử (một lần Back sau đó về trạng thái trước khi mở); Back giữ số lượt "Xem thêm" đã mở và trả focus về thẻ vừa mở; "Xem thêm" chỉ nối lượt mới và đưa focus tới mục đầu của lượt đó.
+- Tra cứu: con số "đội chuẩn" trong "Trong cẩm nang" là chữ thường (link "Tìm tướng này trong Đội chuẩn" giữ nguyên); hồ sơ tướng hiện `Điểm nội chính`, `Thưởng sưu tầm`, `Quy tắc điểm đỏ` khi dữ liệu có; nút đóng hồ sơ trên mobile (≤ 680px) ghim ở góc trên khi cuộn.
+
+### Changed
+
+- Nút chế độ xem của hai trang danh sách đội đổi nhãn `2 cột` / `4 cột` / `Bảng` → `Thẻ` / `Thẻ gọn` / `Bảng` (aria "Xem dạng thẻ", "Xem dạng thẻ gọn"); `?view=luoi|bang` và khoá nhớ `tqccl.teamView.v1` giữ nguyên.
+- Bản dịch: đổi chữ 4 obligation `authored-vi` của nút chế độ xem, thêm 4 (`ui:recommended/source-empty-seat`, `ui:lookup/hero-civil-points`, `hero-collectible-bonus`, `hero-red-rules`); policy `site-vi-260927-ui-ux-a`, publish generation `17a9c663…` (xoá generation trung gian `07792857…`) và re-pin `pipeline/team-route-handles.json`.
+
 ## 2026-09-27 (7 lỗi nặng)
 
 ### Fixed

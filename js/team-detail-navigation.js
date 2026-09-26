@@ -16,13 +16,14 @@ export const KHAIHOANG_VARIANT_QUERY_KEY = 'khVariant';
 /**
  * Khóa query mỗi trang mục giữ lại khi dựng URL quay lại; khóa khác bị bỏ lặng lẽ.
  * Đội chuẩn/Đội khác không còn `score` (bộ lọc điểm đã bỏ) và `category` (bộ chọn danh mục đã bỏ); thêm `view` cho chế độ Thẻ/Bảng.
+ * Cùng Tồn chỉ có nhóm, cấu hình và phạm vi kịch bản/luật; hai công cụ không có trạng thái URL.
  */
 export const SECTION_QUERY_KEYS = Object.freeze({
   '/doi-chuan/': ['season','q','faction','unit','view','subcategory','source','scenario','ruleset','config'],
   '/doi-khac/': ['season','q','faction','unit','view','subcategory','source','scenario','ruleset','config'],
-  '/cung-ton/': ['group','config','q','faction','unit','tier','source','sort','stars','scenario','ruleset'],
-  '/soi-doi-tu-anh/': ['q','faction','unit','tier','source','sort','stars'],
-  '/goi-y-doi-tu-kho/': ['q','faction','unit','tier','source','sort','stars'],
+  '/cung-ton/': ['group','config','scenario','ruleset'],
+  '/soi-doi-tu-anh/': [],
+  '/goi-y-doi-tu-kho/': [],
   '/khai-hoang/': [KHAIHOANG_TEAM_QUERY_KEY,KHAIHOANG_VARIANT_QUERY_KEY],
   '/tra-cuu/': ['group','id'],
   '/theo-doi-chieu-mo/': [],

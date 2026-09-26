@@ -1,15 +1,22 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
-import { teamDetailCatalog } from '../../lib/team-detail-routes';
+import { detailTitleRanks, teamDetailCatalog, type LegacyRouteEntry } from '../../lib/team-detail-routes';
+import { SOURCE_LABEL } from '../../../js/render.js';
 
 export const prerender = true;
 
 export async function getStaticPaths() {
   const catalog = await teamDetailCatalog();
+  // Tên đội gốc trùng nhau giữa các nguồn (và cả trong một nguồn): tiêu đề mang nhãn nguồn, còn trùng thì số thứ tự.
+  const nameKey = (entry: LegacyRouteEntry) => entry.nickname || entry.name || entry.legacyTeamId;
+  const byName = detailTitleRanks(catalog.legacy, nameKey);
+  const bySource = detailTitleRanks(catalog.legacy, (entry) => JSON.stringify([nameKey(entry), entry.source]));
   return catalog.legacy.map((entry) => ({
     params: {team: entry.routeSegment},
     props: {
       entry,
+      sharedName: byName(entry).size > 1,
+      ordinal: bySource(entry).ordinal,
       generationId: catalog.generationId,
       manifestSha256: catalog.manifestSha256,
       legacyTeamsSha256: catalog.legacyTeamsSha256,
@@ -17,15 +24,20 @@ export async function getStaticPaths() {
   }));
 }
 
-const {entry, generationId, manifestSha256, legacyTeamsSha256} = Astro.props;
+const {entry, sharedName, ordinal, generationId, manifestSha256, legacyTeamsSha256} = Astro.props;
 // Canonical bỏ query/hash: mọi biến thể deep-link vẫn trỏ về đúng một URL chi tiết.
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 const rawTitle = entry.nickname || entry.name || entry.legacyTeamId;
 const title = /[\u3400-\u9fff\uf900-\ufaff]/u.test(rawTitle) ? 'Nội dung tiếng Việt chưa sẵn sàng' : rawTitle;
+const pageLabel = [
+  title,
+  sharedName && entry.source ? (SOURCE_LABEL as Record<string, string>)[entry.source] || entry.source : null,
+  ordinal > 1 ? String(ordinal) : null,
+].filter(Boolean).join(' · ');
 ---
 <SiteLayout
-  title={`${title} — Đội khác — Cẩm Nang Game Tam Quốc Chí - Chiến Lược`}
-  description={`Nội dung gốc của đội ${title} trong dữ liệu đội hình sẵn có.`}
+  title={`${pageLabel} — Đội khác — Cẩm Nang Game Tam Quốc Chí - Chiến Lược`}
+  description={`Nội dung gốc của đội ${pageLabel} trong dữ liệu đội hình sẵn có.`}
   pageKind="detail"
   activeSection="team-khac"
   tagline="Chi tiết đội khác"

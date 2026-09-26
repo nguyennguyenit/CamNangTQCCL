@@ -59,7 +59,7 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
 - Nhãn tiếng Việt ngắn, trạng thái rõ; mọi control dùng `button`/`input` phù hợp và có tên truy cập được.
 - Filter count phải tính từ tập dữ liệu của mục đang mở. Không phụ thuộc `data/facets.json` ở runtime.
 - URL sở hữu bộ lọc Team: `season`, `q`, `faction`, `unit`, `subcategory`, `source`, `view`. Khóa `score`, `category`, selector cũ `tier`, `stars`, `sort`, `point` đã nghỉ; gặp thì bỏ lặng lẽ, không map sang điểm nguồn và không đổi thứ tự nguồn. Trang chi tiết Đội chuẩn quay lại chỉ mang `season`.
-- Query gameplay (`config`, `tier`, `sort`, `stars`) thuộc Cùng Tồn; soi đội/gợi ý kho không nhận `config`/`scenario`/`ruleset`. Snapshot theo từng surface, không rò giữa hai nhóm.
+- Query của Cùng Tồn chỉ gồm `group`, `config`, `scenario`, `ruleset` (hàng nút kịch bản là điều khiển phạm vi duy nhất, URL thiếu `scenario` được ghi kịch bản đầu theo thứ tự registry bằng `replaceState`); soi đội/gợi ý kho không có khóa URL nào được giữ khi quay lại (`SECTION_QUERY_KEYS` rỗng) và không nhận `config`/`scenario`/`ruleset`. Snapshot theo từng surface, không rò giữa hai nhóm.
 - Bộ lọc điểm đã nghỉ: không còn nhóm facet Điểm, không còn khóa `score` trên URL; điểm nguồn chỉ hiển thị trên thẻ/bảng và không đổi thứ tự nguồn.
 - Disclosure phục hồi (`filters`, `alternatives`, `view`) chỉ nhận snapshot khớp đúng pathname + query hiện tại; storage lỗi không được chặn điều hướng.
 - Mobile dùng shared inline filter collapse và `js/site-nav.js` (menu toàn màn hình); không tham chiếu drawer/module điều hướng không tồn tại.

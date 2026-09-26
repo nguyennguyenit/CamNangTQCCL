@@ -159,12 +159,15 @@ test("mỗi group hợp lệ được nhận, id được decode", () => {
   assert.equal(withId.error, null);
 });
 
-test("thiếu group thì suy ra từ loại ID", () => {
-  assert.equal(parseLookupQuery("?id=tactic%3Anhan-duc").group, "tactics");
-  assert.equal(parseLookupQuery("?id=equipment-special%3Agian-hung").group, "equipment");
-  assert.equal(parseLookupQuery("?id=troop-mod%3Adan-duong-binh").group, "troop-mods");
-  assert.equal(parseLookupQuery("?id=building%3Abat-tran-do").group, "buildings");
-  assert.equal(parseLookupQuery("?id=advisor%3Aan-phuc-binh-tam").group, "advisors");
+// `group` là bộ lọc lưới người dùng chọn, không suy từ `id`: mở hồ sơ từ chế độ tất cả vẫn ở chế độ tất cả.
+test("thiếu group thì lưới vẫn là tất cả, id mọi loại vẫn hợp lệ", () => {
+  for (const id of ["hero%3Atao-thao", "tactic%3Anhan-duc", "equipment-special%3Agian-hung", "troop-mod%3Adan-duong-binh", "building%3Abat-tran-do", "advisor%3Aan-phuc-binh-tam"]) {
+    const route = parseLookupQuery(`?id=${id}`);
+    assert.equal(route.error, null, id);
+    assert.equal(route.group, null, id);
+    assert.equal(route.id, decodeURIComponent(id));
+    assert.equal(formatLookupQuery(route), `id=${id}`);
+  }
 });
 
 test("trang bị đặc hiệu nằm cùng nhóm trang bị", () => {

@@ -861,3 +861,15 @@ test('every Khai hoang team has a reachable detail route in the published sitema
     expect((await request.get(path)).status(),path).toBe(200);
   }
 });
+
+test('a source-empty third seat reads as an empty seat on the Recommended detail page',async({page,request})=>{
+  const {index}=await publication(request);
+  const row=index.records.find(record=>record.sourceConfigId.startsWith('yxms-005'));
+  await page.goto(recommendedPath(await routeHandles(request),row.sourceConfigId));
+  const body=page.locator('#team-detail-body');
+  await expect(body.locator('.detail-hero-card').first()).toBeVisible();
+  await expect(body).not.toContainText('Nội dung tiếng Việt chưa sẵn sàng');
+  const seat=body.locator('.detail-hero-card').nth(2);
+  await expect(seat.locator('.detail-hero-role')).toHaveText('Phó tướng 2');
+  await expect(seat.getByRole('img',{name:'Nguồn để trống'})).toHaveText('—');
+});

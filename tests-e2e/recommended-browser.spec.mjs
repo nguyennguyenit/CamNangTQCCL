@@ -450,7 +450,7 @@ test('retired tier and sort selectors are reported and dropped without touching 
 const gridColumns=page=>page.evaluate(()=>new Set([...document.querySelectorAll('#section-team-chuan .team-grid > .reference-team-card')]
   .slice(0,12).map(card=>Math.round(card.getBoundingClientRect().x))).size);
 
-// Lưới thẻ gọn: 2 cột khi còn sidebar, 1 cột khi sidebar thu thành panel.
+// Chế độ Thẻ: 2 cột khi còn sidebar, 1 cột khi sidebar thu thành panel.
 for (const [width,columns] of [[1440,2],[1100,2],[800,1],[375,1],[320,1]]) {
   test(`reference grid renders ${columns} readable columns at ${width}px`,async({page})=>{
     await page.setViewportSize({width,height:900});
@@ -603,7 +603,7 @@ for (const [width,columns] of [[1440,4],[1280,3],[1024,2],[390,1]]) {
   });
 }
 
-test('2 cột / 4 cột / Bảng share one remembered choice and one card anatomy across both pages',async({page})=>{
+test('Thẻ / Thẻ gọn / Bảng share one remembered choice and one card anatomy across both pages',async({page})=>{
   await page.goto('/doi-chuan/');
   const chuan=page.locator('#section-team-chuan');
   await expect(chuan.locator('.reference-team-card').first()).toBeVisible();
@@ -846,4 +846,52 @@ test('N5-4: panel lọc mobile đóng bằng Escape và trả focus về nút "B
   await page.keyboard.press('Escape');
   await expect(firstChip).toBeVisible();
   await expect(firstChip).toBeFocused();
+});
+
+// Mỗi ô "Mùa nguồn" và mỗi nút mở facet vẽ mũi tên riêng: một node SVG dùng chung chỉ còn ở ô dựng sau cùng.
+for (const [path,section] of [['/doi-chuan/','#section-team-chuan'],['/doi-khac/','#section-team-khac']]) {
+  test(`every chevron and filter icon on ${path} draws its own strokes`,async({page})=>{
+    await page.setViewportSize({width:1280,height:900});
+    await page.goto(path);
+    const root=page.locator(section);
+    await expect(root.locator('.reference-team-card').first()).toBeVisible();
+    const strokes=await root.evaluate(node=>[
+      node.querySelector('.reference-season-field svg'),
+      node.querySelector('.filter-collapse-toggle svg'),
+      ...node.querySelectorAll('.fgroup button[aria-expanded] svg'),
+    ].map(svg=>svg ? svg.querySelectorAll('polyline, line').length : -1));
+    expect(strokes[0]).toBe(1);
+    expect(strokes[1]).toBe(3);
+    expect(strokes.slice(2)).toEqual(strokes.slice(2).map(()=>1));
+  });
+}
+
+test('?season=all keeps every Đội chuẩn season and the select says so',async({page})=>{
+  const section=page.locator('#section-team-chuan');
+  const total=await page.request.get('/data/recommended/current.json').then(response=>response.json())
+    .then(pin=>page.request.get(`/data/recommended/${pin.generationId}/index.json`)).then(response=>response.json())
+    .then(index=>index.records.length);
+  await page.goto('/doi-chuan/?season=all');
+  const season=section.getByLabel('Mùa nguồn',{exact:true});
+  await expect(season).toHaveValue('all');
+  await expect(season.locator('option:checked')).toHaveText('Tất cả');
+  await expect(section.locator('.reference-count')).toHaveText(`${total} / ${total} đội`);
+  const first=await season.locator('option').nth(1).getAttribute('value');
+  await season.selectOption(first);
+  expect(new URL(page.url()).searchParams.get('season')).toBe(first);
+  await expect(section.locator('.reference-count')).not.toHaveText(`${total} / ${total} đội`);
+});
+
+test('a source-empty third slot reads as an empty seat, not a missing translation',async({page})=>{
+  await page.goto('/doi-chuan/?season=pk-s26');
+  const card=page.locator('#section-team-chuan .reference-team-card[data-source-config-id^="yxms-005"]');
+  await expect(card).toHaveCount(1);
+  await expect(card).not.toContainText('Nội dung tiếng Việt chưa sẵn sàng');
+  const seat=card.locator('.reference-holder').nth(2);
+  await expect(seat.locator('.reference-role')).toHaveText('PHÓ 2');
+  await expect(seat.getByRole('img',{name:'Nguồn để trống'})).toHaveText('—');
+  await page.goto('/doi-chuan/?season=pk-s26&view=bang');
+  const row=page.locator('#section-team-chuan tr[data-reference-key^="yxms-005"]');
+  await expect(row).toHaveCount(1);
+  await expect(row).not.toContainText('Nội dung tiếng Việt chưa sẵn sàng');
 });

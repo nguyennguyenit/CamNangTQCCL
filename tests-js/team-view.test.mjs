@@ -1,4 +1,4 @@
-// Kiểu hiển thị 2 cột / 4 cột / Bảng: URL > giá trị đã lưu > Thẻ, và storage hỏng không được chặn render.
+// Kiểu hiển thị Thẻ / Thẻ gọn / Bảng: URL > giá trị đã lưu > Thẻ, và storage hỏng không được chặn render.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { TEAM_VIEW_STORAGE_KEY, canonicalTeamView, readStoredTeamView, resolveTeamView, writeStoredTeamView } from '../js/team-view.js';

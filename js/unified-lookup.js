@@ -55,17 +55,18 @@ function groupForId(id) {
 /**
  * Hồ sơ Tra cứu nằm trên query của `/tra-cuu/`: chỉ `group` và `id` được xét, khóa khác của
  * trang bị bỏ qua (link có `utm_*`/`fbclid` vẫn dùng được). Giá trị lặp hoặc sai vẫn là lỗi.
+ * `group` là bộ lọc lưới người dùng đã chọn (`null` = tất cả), không suy từ loại `id`: loại của `id`
+ * chỉ dùng để kiểm hợp lệ và tìm bản ghi.
  */
 export function parseLookupQuery(search) {
   const params = new URLSearchParams(search ?? "");
   for (const key of ["group", "id"]) if (params.getAll(key).length > 1) return errorRoute("duplicate-param");
-  let group = params.has("group") ? params.get("group") : null;
+  const group = params.has("group") ? params.get("group") : null;
   const id = params.has("id") ? params.get("id") : null;
   if (group !== null && !LOOKUP_GROUPS.includes(group)) return errorRoute("unknown-group");
-  const inferred = id !== null ? groupForId(id) : null;
-  if (id !== null && inferred === null) return errorRoute("unknown-id-kind");
-  if (group !== null && id !== null && group !== inferred) return errorRoute("id-kind-mismatch");
-  if (group === null && inferred) group = inferred;
+  const kind = id !== null ? groupForId(id) : null;
+  if (id !== null && kind === null) return errorRoute("unknown-id-kind");
+  if (group !== null && id !== null && group !== kind) return errorRoute("id-kind-mismatch");
   return { section: "lookup", group, id, error: null, messageVi: null };
 }
 
@@ -225,6 +226,8 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
   let route = parseLookupQuery(location.search);
   let opener = null;
   let dialogToken = 0;
+  // Đóng hồ sơ bằng history.go(): lượt render của popstate kế tiếp phải trả focus về thẻ đã mở.
+  let restoreAfterPop = false;
 
   const heading = el("header", { class: "reference-head lookup-head" }, [
     el("div", { class: "reference-head-text" }, [
@@ -256,28 +259,56 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
   const more = el("div", { class: "lookup-more-row" });
   mount.replaceChildren(heading, searchBox, chips, statusRow, feedback, grid, more, detailMount);
 
+  /**
+   * Số bước lịch sử hồ sơ đã push trong phiên (hồ sơ → hồ sơ liên quan → …) ghi ở `history.state`;
+   * 0 khi hồ sơ mở bằng deep link hoặc không có hồ sơ.
+   */
+  function dialogDepth() {
+    const depth = history.state?.lookupDialogDepth;
+    return route?.id && Number.isSafeInteger(depth) && depth > 0 ? depth : 0;
+  }
+
+  /** `history.state` hiện có, thay đúng khóa `lookupDialogDepth` (0 = bỏ khóa), giữ khóa của nơi khác. */
+  function stateWithDepth(depth) {
+    const { lookupDialogDepth, ...rest } = history.state && typeof history.state === "object" ? history.state : {};
+    if (depth > 0) return { ...rest, lookupDialogDepth: depth };
+    return Object.keys(rest).length ? rest : null;
+  }
+
   /** Hồ sơ là query của trang: giữ mọi khóa khác, chỉ thay đúng `group`/`id`. */
   function setRoute(next, { push = true } = {}) {
+    const state = push ? stateWithDepth(next.id ? dialogDepth() + 1 : 0) : history.state;
     route = next;
     const url = new URL(location.href);
     url.searchParams.delete("group");
     url.searchParams.delete("id");
     for (const [key, value] of new URLSearchParams(formatLookupQuery(next))) url.searchParams.set(key, value);
-    history[push ? "pushState" : "replaceState"](history.state, "", url);
+    history[push ? "pushState" : "replaceState"](state, "", url);
     render();
   }
 
-  function closeDialog({ restore = true } = {}) {
+  /**
+   * Hồ sơ mở bằng push trong phiên: đóng là lùi đúng số bước đã push, để một lần Back sau đó về trạng thái
+   * trước khi mở. Hồ sơ mở bằng deep link: bỏ `id` tại chỗ bằng replaceState.
+   */
+  function closeDialog() {
+    const depth = dialogDepth();
+    if (depth > 0) {
+      dialogToken += 1;
+      detailMount.replaceChildren();
+      document.documentElement.classList.remove("lookup-dialog-open");
+      restoreAfterPop = true;
+      history.go(-depth);
+      return;
+    }
     const openerId = opener?.dataset.lookupId;
     dialogToken += 1;
     detailMount.replaceChildren();
     document.documentElement.classList.remove("lookup-dialog-open");
     if (route?.id) setRoute({ ...route, id: null }, { push: false });
     else render();
-    if (restore) {
-      const restored = [...grid.querySelectorAll("[data-lookup-id]")].find((button) => button.dataset.lookupId === openerId);
-      (restored ?? search).focus();
-    }
+    const restored = [...grid.querySelectorAll("[data-lookup-id]")].find((button) => button.dataset.lookupId === openerId);
+    (restored ?? search).focus();
   }
 
   /** Nút/liên kết mở một mục khác trong hộp thoại (quan hệ, mục con). */
@@ -373,12 +404,17 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
     return { element: header, close };
   }
 
-  /** Bảng vai trò / danh hiệu / đặc tính theo artboard LookupProfile. */
+  /** Bảng vai trò / danh hiệu / đặc tính theo artboard LookupProfile, cùng các trường hồ sơ tướng khác khi có. */
   function heroFacts(profile) {
     const rows = [
       ["Vai trò", valueText(fieldByKey(profile, "roleTagViet"), "")],
       ["Danh hiệu độc quyền", valueText(fieldByKey(profile, "exclusiveTitleVi"), "")],
       ["Đặc tính", valueText(fieldByKey(profile, "flags"), "")],
+      // Nhãn do hồ sơ (`lookup-detail.js`) đặt; trường vắng thì `fieldByKey` trả null và dòng bị bỏ.
+      ...["civilInnatePoints", "collectibleBonusVi", "redRulesVi"].map((key) => {
+        const field = fieldByKey(profile, key);
+        return [field?.labelVi, valueText(field, "")];
+      }),
     ].filter(([, value]) => value);
     if (!rows.length) return null;
     return el("dl", { class: "lookup-dialog-facts" }, rows.map(([labelVi, textVi]) => factRow(labelVi, textVi)));
@@ -499,12 +535,10 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
   function camNangCards(view) {
     const appearance = el("article", { class: "cam-nang-card" }, [
       el("h4", { class: "cam-nang-title" }, "Xuất hiện trong"),
+      // Số đếm chỉ là số liệu: link "Tìm tướng này trong Đội chuẩn" (thẻ Đội tiêu biểu) mới dẫn sang danh sách,
+      // vì kết quả tìm theo tên không trùng khớp con số đếm theo vị trí tướng.
       el("div", { class: "cam-nang-counts" }, [
-        el("a", {
-          class: "cam-nang-count",
-          href: `/doi-chuan/?${new URLSearchParams({ season: "all", q: view.searchName })}`,
-          title: "Tìm tướng này trong Đội chuẩn",
-        }, [
+        el("div", { class: "cam-nang-count" }, [
           el("span", { class: "cam-nang-number" }, String(view.standard)),
           el("span", { class: "cam-nang-unit" }, "đội chuẩn"),
         ]),
@@ -724,11 +758,30 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
     } else {
       grid.append(...items.map((item) => cardView(group, item)));
     }
-    if (items.length < total) {
-      const button = el("button", { type: "button", class: "lookup-more" }, "Xem thêm");
-      button.addEventListener("click", () => { page += 1; render(); });
-      more.append(button, el("span", { class: "lookup-more-note" }, "Mỗi lượt hiện 60 kết quả"));
-    }
+    renderMore(items.length, total);
+  }
+
+  /** Hàng "Xem thêm" khi còn kết quả chưa hiện. */
+  function renderMore(shown, total) {
+    more.replaceChildren();
+    if (shown >= total) return;
+    const button = el("button", { type: "button", class: "lookup-more" }, "Xem thêm");
+    button.addEventListener("click", appendNextPage);
+    more.append(button, el("span", { class: "lookup-more-note" }, "Mỗi lượt hiện 60 kết quả"));
+  }
+
+  /**
+   * "Xem thêm" chỉ nối lượt mới vào cuối lưới (không dựng lại lượt đã hiện) rồi đưa focus tới mục đầu của
+   * lượt mới, để người dùng bàn phím đọc tiếp đúng chỗ thay vì rơi về `body`.
+   */
+  function appendNextPage() {
+    const group = route?.group ?? null;
+    page += 1;
+    const { items, total } = searchLookupGroup(corpus, { group, query, page });
+    const nodes = group === "tactics" ? items.map(tableRow) : items.map((item) => cardView(group, item));
+    (grid.querySelector(".lookup-table tbody") ?? grid).append(...nodes);
+    renderMore(grid.querySelectorAll("[data-lookup-id]").length, total);
+    nodes[0]?.querySelector("[data-lookup-id]")?.focus();
   }
 
   /** Trả focus về thẻ/nút đã mở hồ sơ (hoặc ô tìm) sau khi hộp thoại biến mất vì Back/Forward. */
@@ -739,7 +792,8 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
   }
 
   function render() {
-    const hadDialog = detailMount.querySelector(".lookup-dialog") !== null;
+    const hadDialog = detailMount.querySelector(".lookup-dialog") !== null || restoreAfterPop;
+    restoreAfterPop = false;
     route = parseLookupQuery(location.search);
     feedback.removeAttribute("role");
     feedback.textContent = "";
@@ -757,7 +811,8 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
         labels[group],
         el("span", { class: "lookup-chip-count" }, String(corpus.groups[group].length)),
       ]);
-      button.addEventListener("click", () => { page = 1; setRoute({ section: "lookup", group, id: null, error: null }); });
+      // Bấm lại chip đang nhấn bỏ lọc nhóm: lưới về tất cả.
+      button.addEventListener("click", () => { page = 1; setRoute({ section: "lookup", group: route?.group === group ? null : group, id: null, error: null }); });
       chips.append(button);
     }
     if (route?.error) {
@@ -785,7 +840,11 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
   }
 
   search.addEventListener("input", () => { query = search.value; page = 1; render(); });
-  window.addEventListener("popstate", () => { page = 1; render(); });
+  // Back/Forward giữ số lượt "Xem thêm" đã mở khi nhóm lọc không đổi (đóng/mở hồ sơ), chỉ về lượt đầu khi đổi nhóm.
+  window.addEventListener("popstate", () => {
+    if ((parseLookupQuery(location.search).group ?? null) !== (route?.group ?? null)) page = 1;
+    render();
+  });
   render();
   return { corpus, render };
 }

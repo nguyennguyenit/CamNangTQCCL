@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import json
 import argparse
+import re
 from pathlib import Path
 
 
@@ -110,6 +111,19 @@ def resolve_display_name(kind, raw, mapping):
     identity = resolve_identity(kind, raw, mapping)
     return identity.get("displayNameVi") if identity["status"] == "resolved" else None
 
+
+HAN_TEXT = re.compile(r"[\u3400-\u9fff\uf900-\ufaff]")
+
+
+def ascii_title_brackets(title):
+    """A fully Vietnamese title shows ASCII brackets; titles still carrying Han text keep the source form."""
+    if not isinstance(title, str) or HAN_TEXT.search(title) or not re.search("[（）]", title):
+        return title
+    title = re.sub(r"\s*（\s*", " (", title)
+    title = re.sub(r"\s*）", ")", title)
+    return " ".join(title.split())
+
+
 def resolve_team_display_name(row, mapping):
     """Resolve a reviewed team title without changing source identity."""
     if not isinstance(row, dict):
@@ -122,10 +136,10 @@ def resolve_team_display_name(row, mapping):
     if isinstance(source_config_id, str):
         translated = mapping.get("scopedTeamDisplayNames", {}).get((source_config_id, alias))
         if translated:
-            return translated
+            return ascii_title_brackets(translated)
         if source_config_id in mapping.get("scopedTeamAliases", {}):
             raise ValueError("Scoped team translation source title mismatch: " + source_config_id)
-    return mapping.get("teamDisplayNames", {}).get(alias)
+    return ascii_title_brackets(mapping.get("teamDisplayNames", {}).get(alias))
 
 
 def resolve_display_kind(kind, raw, mapping):

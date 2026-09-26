@@ -99,5 +99,20 @@ class RecommendedIdentityTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             build_display_mapping([{**entries[1], "stableId": "team:forbidden"}])
 
+    def test_team_titles_use_ascii_brackets_once_fully_translated(self):
+        entries = [
+            {"kind": "team", "aliases": ["奸雄騎（呂布）"], "displayNameVi": "Gian Hùng Kỵ（Lữ Bố）",
+             "reviewStatus": "translation-reviewed", "evidenceRef": "fixture:team-bracket"},
+            {"kind": "team", "aliases": ["騎（呂布）"], "displayNameVi": "Kỵ （ Lữ Bố ）  Thuẫn",
+             "reviewStatus": "translation-reviewed", "evidenceRef": "fixture:team-bracket-space"},
+            {"kind": "team", "aliases": ["弓（呂布）"], "displayNameVi": "Cung（呂布）",
+             "reviewStatus": "translation-reviewed", "evidenceRef": "fixture:team-bracket-han"},
+        ]
+        mapping = build_display_mapping(entries)
+        self.assertEqual(resolve_team_display_name({"nameZh": "奸雄騎（呂布）"}, mapping), "Gian Hùng Kỵ (Lữ Bố)")
+        self.assertEqual(resolve_team_display_name({"nameZh": "騎（呂布）"}, mapping), "Kỵ (Lữ Bố) Thuẫn")
+        # Tên còn chữ Hán giữ nguyên dấu ngoặc nguồn.
+        self.assertEqual(resolve_team_display_name({"nameZh": "弓（呂布）"}, mapping), "Cung（呂布）")
+
 if __name__ == "__main__":
     unittest.main()

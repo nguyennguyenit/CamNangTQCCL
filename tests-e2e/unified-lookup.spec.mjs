@@ -885,3 +885,95 @@ test('hàng đội tiêu biểu: cả hàng là vùng bấm của link đội (P
     expect(new URL(page.url()).searchParams.get('from')).toContain('id=hero%3Asp-lu-mong');
   }
 });
+
+/* ---------- Phase 3: nhóm lọc tách khỏi hồ sơ, Back/đóng, focus Xem thêm ---------- */
+
+const lookupTotal = (page) => lookup(page).locator('[data-lookup-total]');
+
+test('mở thẻ từ chế độ tất cả giữ lưới tất cả; bấm lại chip đang nhấn về tất cả', async ({ page }) => {
+  await page.goto('/tra-cuu/');
+  const pressed = lookup(page).locator('.lookup-chip[aria-pressed="true"]');
+  await expect(pressed).toHaveCount(0);
+  const total = await lookupTotal(page).getAttribute('data-lookup-total');
+  await firstResult(page).click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  expect(new URL(page.url()).searchParams.has('group')).toBe(false);
+  await expect(pressed).toHaveCount(0);
+  await expect(lookupTotal(page)).toHaveAttribute('data-lookup-total', total);
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page).toHaveURL('/tra-cuu/');
+  await expect(lookupTotal(page)).toHaveAttribute('data-lookup-total', total);
+
+  await chip(page, 'heroes').click();
+  await expect(page).toHaveURL('/tra-cuu/?group=heroes');
+  await chip(page, 'heroes').click();
+  await expect(page).toHaveURL('/tra-cuu/');
+  await expect(pressed).toHaveCount(0);
+  await expect(lookupTotal(page)).toHaveAttribute('data-lookup-total', total);
+});
+
+test('Xem thêm hai lần, mở thẻ thứ 150 rồi Back giữ 180 thẻ và focus thẻ vừa mở', async ({ page }) => {
+  await page.goto('/tra-cuu/?group=heroes');
+  const more = lookup(page).getByRole('button', { name: 'Xem thêm' });
+  await more.click();
+  await expect(cards(page)).toHaveCount(120);
+  await more.click();
+  await expect(cards(page)).toHaveCount(180);
+  const opener = cards(page).nth(149).locator('[data-lookup-id]');
+  const openedId = await opener.getAttribute('data-lookup-id');
+  await opener.click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await page.goBack();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(cards(page)).toHaveCount(180);
+  await expect(lookup(page).locator(`[data-lookup-id="${openedId}"]`)).toBeFocused();
+});
+
+test('đóng hồ sơ bằng nút X rồi một lần Back về đúng trạng thái trước khi mở', async ({ page }) => {
+  await page.goto('/tra-cuu/');
+  await chip(page, 'equipment').click();
+  await expect(page).toHaveURL('/tra-cuu/?group=equipment');
+  await firstResult(page).click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await page.getByRole('button', { name: 'Đóng hồ sơ' }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page).toHaveURL('/tra-cuu/?group=equipment');
+  await page.goBack();
+  await expect(page).toHaveURL('/tra-cuu/');
+  await expect(chip(page, 'equipment')).toHaveAttribute('aria-pressed', 'false');
+});
+
+test('Enter trên Xem thêm đưa focus tới thẻ đầu của lượt mới', async ({ page }) => {
+  await page.goto('/tra-cuu/?group=heroes');
+  await lookup(page).getByRole('button', { name: 'Xem thêm' }).focus();
+  await page.keyboard.press('Enter');
+  await expect(cards(page)).toHaveCount(120);
+  await expect(cards(page).nth(60).locator('[data-lookup-id]')).toBeFocused();
+});
+
+test('số đội chuẩn trong Trong cẩm nang là chữ, link chữ vẫn dẫn sang Đội chuẩn', async ({ page }) => {
+  await page.goto('/tra-cuu/?id=hero%3Achu-du');
+  const block = page.getByRole('dialog').locator('.cam-nang');
+  await expect(block.locator('.cam-nang-counts')).toBeVisible();
+  await expect(block.locator('.cam-nang-counts a')).toHaveCount(0);
+  await expect(block.getByRole('link', { name: 'Tìm tướng này trong Đội chuẩn' })).toBeVisible();
+});
+
+test('hồ sơ tướng hiện Điểm nội chính khi dữ liệu có', async ({ page }) => {
+  await page.goto('/tra-cuu/?id=hero%3Aluu-bi');
+  const fact = page.getByRole('dialog').locator('.lookup-dialog-facts .lookup-fact').filter({ hasText: 'Điểm nội chính' });
+  await expect(fact).toHaveCount(1);
+  await expect(fact.locator('dd')).toHaveText('0');
+});
+
+test('nút đóng hồ sơ vẫn trong màn hình khi cuộn hộp thoại trên mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto('/tra-cuu/?id=hero%3Atao-thao');
+  await expect(page.getByRole('dialog')).toBeVisible();
+  const scrolled = await page.locator('.lookup-backdrop').evaluate((node) => { node.scrollTop = 1500; return node.scrollTop; });
+  expect(scrolled).toBeGreaterThan(500);
+  const box = await page.getByRole('button', { name: 'Đóng hồ sơ' }).boundingBox();
+  expect(box.y).toBeGreaterThanOrEqual(0);
+  expect(box.y + box.height).toBeLessThanOrEqual(812);
+});

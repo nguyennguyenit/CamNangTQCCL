@@ -40,7 +40,7 @@ Header, menu thả desktop, menu mobile toàn màn hình và footer do `src/layo
 
 Danh mục đầy đủ ở `tokens.json` → `components`. Nhóm chính: thẻ (`.team-card`/`.kh-card`/`.lookup-card`/`.rt-section`/`.ana-card`…), thẻ đội và dòng tướng, badge (phe, loại binh, điểm nguồn, trạng thái), chip lọc, ô tìm, select + nhãn caps, nút chính/phụ/nút chữ, bảng, hộp thoại, thanh điểm, thẻ công cụ Beta và bước công cụ.
 
-- **2 cột / 4 cột / Bảng** của danh sách đội là ba chế độ của cùng một component, chuyển bằng nút `aria-pressed` (`?view=luoi` cho lưới gọn tối đa 4 cột, `?view=bang` cho bảng; 2 cột là mặc định, không ghi URL); mỗi chế độ chỉ hiện một cây DOM đúng chế độ đó (desktop bảng 5 cột, mobile hàng thu gọn). Lưới gọn đổi số cột theo bề rộng vùng kết quả (container query `team-view`: 4/3/2/1), không theo viewport.
+- **Thẻ / Thẻ gọn / Bảng** của danh sách đội là ba chế độ của cùng một component, chuyển bằng nút `aria-pressed` (`?view=luoi` cho Thẻ gọn — lưới tối đa 4 cột, `?view=bang` cho bảng; Thẻ là mặc định, không ghi URL); mỗi chế độ chỉ hiện một cây DOM đúng chế độ đó (desktop bảng 5 cột, mobile hàng thu gọn). Lưới gọn đổi số cột theo bề rộng vùng kết quả (container query `team-view`: 4/3/2/1), không theo viewport.
 - **Nhãn biến thể** (`SP`/`CO`/`40Y`) là con dấu viền mảnh: chữ và viền cùng một màu mực đủ tương phản (SP `--accent-ink`, CO `--khien-ink`, 40Y `--ink-2`), nền trong suốt; luôn đứng cùng hàng, ngay trước tên tướng (không dùng màu phe làm nền).
 - Màu phe/trạng thái **luôn đi kèm chữ**: chấm màu là `aria-hidden`, không phải tín hiệu duy nhất.
 - Bảng rộng bắt buộc (bảng xem trước Landing) phải nằm trong container cuộn rõ (`.landing-table-preview`), không đẩy tràn trang.
@@ -66,7 +66,7 @@ Danh mục đầy đủ ở `tokens.json` → `components`. Nhóm chính: thẻ 
 ## Bộ lọc danh sách đội
 
 - URL sở hữu bộ lọc: `season, q, faction, unit, subcategory, source, view`; `score` và `category` đã bỏ (danh sách luôn gộp mọi danh mục nguồn). Khóa lạ của trang khác bị bỏ lặng lẽ, khóa được phép của đúng trang được giữ (bảng `safeReturnUrl` theo pathname).
-- Hàng control: ô tìm + nút `Bộ lọc` (chỉ mobile) + số đếm `n / m đội` + chuyển 2 cột/4 cột/Bảng (dưới 1280px chỉ icon, tên đủ ở `aria-label`); phạm vi duy nhất là ô `Mùa nguồn` ở đầu mục, nằm ngoài vùng thu gọn: một khung (nhãn nhỏ viết hoa trên giá trị, mũi tên phải), cả khung là vùng bấm, rộng 320px desktop / đầy hàng mobile.
+- Hàng control: ô tìm + nút `Bộ lọc` (chỉ mobile) + số đếm `n / m đội` + chuyển Thẻ/Thẻ gọn/Bảng (dưới 1280px chỉ icon, tên đủ ở `aria-label`); phạm vi duy nhất là ô `Mùa nguồn` ở đầu mục, nằm ngoài vùng thu gọn: một khung (nhãn nhỏ viết hoa trên giá trị, mũi tên phải), cả khung là vùng bấm, rộng 320px desktop / đầy hàng mobile.
 - Nhóm chính trong vùng lọc: Loại binh → Phe → Nhóm; Nguồn là nhóm phụ (mặc định thu gọn). Chip đếm theo mùa đang chọn.
 - Sidebar desktop (>900px): hàng lọc 36px, nhóm ngăn bằng vạch `--line-2` (không dùng khoảng trắng lớn), số đếm là viên nhỏ canh phải; mục đang bật = nền `--panel-3` + ô tích và viên số nền `--select` (không tô đen cả hàng), chấm phe giữ màu thường. `Xóa lọc` ẩn (giữ chỗ) khi không có gì để xóa. Mobile giữ chip 44px, mục bật nền `--select`.
 - Điểm nguồn **chỉ hiển thị** (badge số), không có chip lọc điểm và không dùng để sắp xếp: thứ tự thẻ luôn theo nguồn; khóa `?score=` đã nghỉ và bị bỏ lặng lẽ khi gặp. `Xóa lọc` reset query + facet nhưng giữ mùa, và trả focus về ô tìm.
@@ -80,7 +80,7 @@ Grid phân trang và phải có `Xem thêm` để tới record cuối. Thẻ m�
 
 ## Phạm vi mùa và chi tiết cấu hình
 
-Không có artboard cho hai surface này; chúng theo StyleGuide và bảng token. `#season-controls` chỉ có ở 3 trang (`team-chuan`, `team-khac`, `coexist`); chỉ Cùng Tồn hiện select Mùa trong đầu mục. Chi tiết cấu hình `?config=` mở trong `#season-config-detail` với select 44px, nhãn caps, hàng slot theo holder và nút `Đối chiếu kho của tôi`.
+Không có artboard cho hai surface này; chúng theo StyleGuide và bảng token. `#season-controls` chỉ có ở 3 trang (`team-chuan`, `team-khac`, `coexist`) và luôn ẩn; Cùng Tồn không có select Mùa, hàng nút kịch bản (`.coexist-scenarios`, thứ tự registry) là điều khiển phạm vi duy nhất và ghi `?scenario=` bằng pushState. Chi tiết cấu hình `?config=` mở trong `#season-config-detail` với select 44px, nhãn caps, hàng slot theo holder và nút `Đối chiếu kho của tôi`.
 
 Chọn kịch bản là đọc tham khảo, chưa đủ để gợi ý hoặc so đội theo luật. Phân biệt vùng áp dụng đúng luật, tham khảo cùng kịch bản và chưa rõ kịch bản; mỗi vùng có số lượng riêng.
 
