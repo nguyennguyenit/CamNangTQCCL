@@ -123,7 +123,7 @@ async function boundedResponse(
 ): Promise<Response> {
   const bytes = await response.arrayBuffer();
   if (bytes.byteLength > maxResultBytes) {
-    return jsonResponse(500, "RESULT_TOO_LARGE");
+    return jsonResponse(413, "RESULT_TOO_LARGE");
   }
   return new Response(bytes, {
     status: response.status,

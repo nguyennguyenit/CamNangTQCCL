@@ -79,11 +79,12 @@ export function validateBearerConfiguration(
   const nextTokenNotAfterMs = Date.parse(input.nextTokenNotAfter);
   if (
     !Number.isFinite(nextTokenNotAfterMs) ||
-    nextTokenNotAfterMs <= nowMs ||
     nextTokenNotAfterMs > nowMs + MAX_OVERLAP_MS
   ) {
     invalidConfiguration();
   }
+  // Cửa sổ overlap đã đóng: NEXT hết hiệu lực, dịch vụ tiếp tục chỉ với CURRENT.
+  if (nextTokenNotAfterMs <= nowMs) return { currentToken: input.currentToken };
 
   return {
     currentToken: input.currentToken,

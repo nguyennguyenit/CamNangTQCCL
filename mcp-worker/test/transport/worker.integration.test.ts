@@ -378,9 +378,42 @@ describe("transport Streamable HTTP Worker", () => {
       ...ENV,
       TQCCL_MCP_MAX_RESULT_BYTES: "10",
     });
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(413);
     expect(await response.json()).toEqual({
       error: { code: "RESULT_TOO_LARGE" },
+    });
+  });
+
+  it("NEXT quá NOT_AFTER: CURRENT vẫn 200, NEXT 401, thiếu CURRENT vẫn 503", async () => {
+    const NEXT = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
+    const rotated = {
+      ...ENV,
+      TQCCL_MCP_BEARER_NEXT: NEXT,
+      TQCCL_MCP_NEXT_TOKEN_NOT_AFTER: "2026-07-28T11:49:00.000Z",
+    } as WorkerEnvironment;
+
+    const current = await workerWithCounters().worker.fetch(
+      rpcRequest(initializeRequest()),
+      rotated,
+    );
+    expect(current.status).toBe(200);
+
+    const next = await workerWithCounters().worker.fetch(
+      rpcRequest(initializeRequest(), { Authorization: `Bearer ${NEXT}` }),
+      rotated,
+    );
+    expect(next.status).toBe(401);
+    expect(await next.json()).toEqual({ error: { code: "UNAUTHORIZED" } });
+
+    const withoutCurrent: Partial<WorkerEnvironment> = { ...rotated };
+    delete withoutCurrent.TQCCL_MCP_BEARER_CURRENT;
+    const missingCurrent = await workerWithCounters().worker.fetch(
+      rpcRequest(initializeRequest()),
+      withoutCurrent as WorkerEnvironment,
+    );
+    expect(missingCurrent.status).toBe(503);
+    expect(await missingCurrent.json()).toEqual({
+      error: { code: "SERVICE_MISCONFIGURED" },
     });
   });
 });

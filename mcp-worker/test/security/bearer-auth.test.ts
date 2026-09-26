@@ -37,10 +37,12 @@ describe("xác thực managed-client bearer", () => {
       {},
       { currentToken: "short" },
       { currentToken: CURRENT_TOKEN, nextToken: NEXT_TOKEN },
+      { currentToken: CURRENT_TOKEN, nextTokenNotAfter: new Date(NOW + 60_000).toISOString() },
+      { nextToken: NEXT_TOKEN, nextTokenNotAfter: new Date(NOW + 60_000).toISOString() },
       {
         currentToken: CURRENT_TOKEN,
         nextToken: NEXT_TOKEN,
-        nextTokenNotAfter: new Date(NOW - 1).toISOString(),
+        nextTokenNotAfter: "không phải ngày",
       },
       {
         currentToken: CURRENT_TOKEN,
@@ -58,6 +60,25 @@ describe("xác thực managed-client bearer", () => {
       expect(() =>
         validateBearerConfiguration(configuration, NOW),
       ).toThrowError(BearerAuthError);
+    }
+  });
+
+  it("NEXT quá NOT_AFTER bị coi như không có: CURRENT vẫn xác thực, NEXT thành token lạ", async () => {
+    for (const nextTokenNotAfter of [
+      new Date(NOW).toISOString(),
+      new Date(NOW - 11 * 60_000).toISOString(),
+    ]) {
+      const configuration = validateBearerConfiguration(
+        { currentToken: CURRENT_TOKEN, nextToken: NEXT_TOKEN, nextTokenNotAfter },
+        NOW,
+      );
+      expect(configuration).toEqual({ currentToken: CURRENT_TOKEN });
+      await expect(
+        authenticateBearer(`Bearer ${CURRENT_TOKEN}`, configuration),
+      ).resolves.toMatchObject({ fingerprint: await fingerprintOf(CURRENT_TOKEN) });
+      await expect(
+        authenticateBearer(`Bearer ${NEXT_TOKEN}`, configuration),
+      ).rejects.toMatchObject({ code: "UNAUTHORIZED" });
     }
   });
 

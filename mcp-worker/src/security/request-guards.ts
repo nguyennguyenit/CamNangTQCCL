@@ -2,7 +2,7 @@ const MCP_METHODS = new Set(["GET", "POST", "DELETE"]);
 
 export class RequestGuardError extends Error {
   constructor(
-    readonly status: 400 | 405 | 406 | 413 | 415,
+    readonly status: 400 | 403 | 405 | 406 | 413 | 415,
     readonly code:
       | "METHOD_NOT_ALLOWED"
       | "ORIGIN_NOT_ALLOWED"
@@ -70,7 +70,7 @@ export function validateMcpRequestHead(
 
   const origin = request.headers.get("Origin");
   if (origin !== null && !options.allowedOrigins.includes(origin)) {
-    throw new RequestGuardError(400, "ORIGIN_NOT_ALLOWED");
+    throw new RequestGuardError(403, "ORIGIN_NOT_ALLOWED");
   }
 
   const declaredLength = request.headers.get("Content-Length");

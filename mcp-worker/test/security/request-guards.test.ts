@@ -35,12 +35,17 @@ describe("guard request MCP", () => {
       ),
     ).not.toThrow();
 
-    expect(() =>
+    let rejected: unknown;
+    try {
       validateMcpRequestHead(
         request("GET", { Origin: "https://agent.example.evil" }),
         OPTIONS,
-      ),
-    ).toThrowError(RequestGuardError);
+      );
+    } catch (error) {
+      rejected = error;
+    }
+    expect(rejected).toBeInstanceOf(RequestGuardError);
+    expect(rejected).toMatchObject({ status: 403, code: "ORIGIN_NOT_ALLOWED" });
   });
 
   it("từ chối method, media, encoding và declared length sai trước khi đọc body", () => {

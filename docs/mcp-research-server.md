@@ -105,6 +105,22 @@ MCP-Protocol-Version: 2025-11-25
 
 Mỗi request tạo MCP server/transport mới. Module scope chỉ giữ snapshot/index immutable đã validate và limiter isolate-local. Origin, method, bearer, rate/in-flight, body, protocol và result size đều bị giới hạn. Bearer là pre-shared secret cho managed client, không phải OAuth.
 
+Mã lỗi HTTP của Worker (body `{"error":{"code":"<CODE>"}}`, ngoài `/healthz`):
+
+| HTTP | Code | Khi nào |
+|---|---|---|
+| `400` | `INVALID_CONTENT_LENGTH`, `INVALID_JSON`, `PROTOCOL_VERSION_NOT_SUPPORTED` | Header/body sai dạng hoặc `initialize` không dùng protocol `2025-11-25` |
+| `401` | `UNAUTHORIZED` (+ `WWW-Authenticate: Bearer`) | Thiếu bearer hoặc bearer không khớp CURRENT/NEXT còn hiệu lực |
+| `403` | `ORIGIN_NOT_ALLOWED` | Có `Origin` nhưng không nằm trong `TQCCL_MCP_ALLOWED_ORIGINS` (cùng quy ước với SDK transport) |
+| `404` | `NOT_FOUND` | Route ngoài `/healthz`, `/mcp` |
+| `405` | `METHOD_NOT_ALLOWED` | Method ngoài POST/GET/DELETE |
+| `406`/`415` | `NOT_ACCEPTABLE`, `CONTENT_TYPE_NOT_ALLOWED`, `CONTENT_ENCODING_NOT_ALLOWED` | Header media sai |
+| `413` | `BODY_TOO_LARGE` | Body vượt `TQCCL_MCP_MAX_BODY_BYTES` |
+| `413` | `RESULT_TOO_LARGE` | Response vượt `TQCCL_MCP_MAX_RESULT_BYTES` |
+| `429` | `RATE_LIMITED`, `TOO_MANY_IN_FLIGHT` | Vượt rate hoặc số request đồng thời theo fingerprint bearer |
+| `500` | `INTERNAL_ERROR` | Lỗi bất ngờ khi xử lý MCP |
+| `503` | `SERVICE_MISCONFIGURED` | Cấu hình sai: thiếu/yếu CURRENT, NEXT và `NEXT_TOKEN_NOT_AFTER` không đi cùng nhau, ngày không parse được, overlap quá 15 phút, limit/version metadata sai |
+
 Observation và corpus là dữ liệu không tin cậy. Consumer phải normalize, cho người dùng rà soát canonical state, lưu `confirmationBinding`, rồi gửi đúng binding và `expectedWorkflowVersion` vào recommendation. MCP kiểm toàn vẹn binding nhưng không tự tuyên bố người dùng đã xác nhận.
 
 ## Worker Static Assets
@@ -207,7 +223,7 @@ Workflow `MCP edge security monitor` chạy lịch và manual. Drift chặn rele
 
 ## Rotation, incident và rollback
 
-Bearer rotation vẫn theo current → overlap có hạn → promote/retire. Rollback code/data không phục hồi bearer cũ.
+Bearer rotation vẫn theo current → overlap có hạn → promote/retire. Rollback code/data không phục hồi bearer cũ. Sau `TQCCL_MCP_NEXT_TOKEN_NOT_AFTER`, token NEXT tự hết hiệu lực (trả `401` như token lạ) và dịch vụ vẫn chạy bằng CURRENT; vận hành vẫn phải promote hoặc xoá biến NEXT/NOT_AFTER khỏi môi trường. Cấu hình sai khác vẫn `503 SERVICE_MISCONFIGURED`.
 
 Deployment controller dùng exact-current ownership guard:
 
