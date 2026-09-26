@@ -1,0 +1,241 @@
+{
+  "findings": [
+    {
+      "severity": "high",
+      "category": "logic",
+      "file": "js/analyze.js",
+      "line": 489,
+      "title": "Analyze button stays disabled forever if a new image is picked while a request is in flight",
+      "evidence": "The click handler captures `const started = generation;` (l.477). `pickFile` bumps `++generation` (l.414). When the old request settles, `finally { if (started !== generation) return; ... state.busy = false; ... }` (l.489-495) returns early, so `state.busy` stays `true`. The consumed Turnstile token is also never cleared. `paint()` sets `analyzeBtn.disabled = !(... && !state.busy)`, and nothing else ever resets `busy`, so the 'Soi đội' button stays disabled until the page is reloaded.",
+      "suggested_fix": "In `finally`, always reset `state.busy = false` and `state.token = null` and call turnstile.reset. Keep the generation guard only for applying results and status text."
+    },
+    {
+      "severity": "high",
+      "category": "logic",
+      "file": "js/recruit-tracker-store.js",
+      "line": 317,
+      "title": "Import validation is too shallow: an imported file can permanently break the tracker",
+      "evidence": "`validateRecruitTrackerImport` only checks that `accounts`, `banners` and `pullEvents` are arrays. It never checks element shapes or `dailyStates`. A throwaway run gave: `pullEvents [null]` → validate: true → getRecruitTrackerSummary THROWS 'Cannot read properties of null (reading 'accountId')', and it still throws after save+reload. The same happens with `dailyStates [null]` and with a dailyState that has no `slots` (THROWS reading 'filter'). `banners [null]` makes save/normalize throw. In the UI, `mutate(parsed)` (recruit-tracker.js:596) assigns and persists before rendering. The `catch` then shows 'File JSON không hợp lệ.', but the bad state is already in localStorage and every later render() throws. The only way out is clearing site data by hand.",
+      "suggested_fix": "Validate each account, banner, pullEvent and dailyState (types, ids, slot keys, finite pulls) in validateRecruitTrackerImport, or normalize/drop bad elements. Run a trial `getRecruitTrackerSummary(parsed)` before `mutate` so nothing is persisted if it throws."
+    },
+    {
+      "severity": "high",
+      "category": "logic",
+      "file": "js/unified-lookup.js",
+      "line": 78,
+      "title": "Search without diacritics does not match names containing 'đ/Đ' (129 heroes/tactics)",
+      "evidence": "`normalized()` uses only NFD plus stripping U+0300–036F. 'đ' (U+0111) does not decompose, so it never becomes 'd'. Throwaway run against the real data: 'dieu' → 0, 'Dieu thuyen' → 0, 'dong trac' → 0, while 'Điêu' → 2 and 'tao thao' → 2. 129 hero/tactic records contain đ/Đ. The placeholder promises '(gõ không dấu hoặc chữ Hán đều được)' and docs/unified-lookup.md:80 promises 'tìm Việt bỏ dấu'. `filters.js normalizeText` already handles this correctly (it prints 'dieu thuyen').",
+      "suggested_fix": "Use `normalizeText` from filters.js in `normalized()`, or add `.replace(/đ/g,'d')` after lowercasing. Precompute the normalized haystack once per entry instead of on every keystroke."
+    },
+    {
+      "severity": "high",
+      "category": "logic",
+      "file": "js/team-recommend-engine.js",
+      "line": 561,
+      "title": "Re-scanning the same built-team screenshot drops both locked teams and frees their heroes for other recommendations",
+      "evidence": "`applyScanResult` appends locked teams without deduping (roster-scan-state.js:178: `next.lockedTeams = [...(next.lockedTeams||[]), ...teams]`). The engine then treats any hero/tactic with count > 1 as a conflict and `continue`s. Both copies are excluded from the seed. Throwaway run: two identical locked teams → 'locked kept: 0, heroConflicts diag: 2, addTeams use locked heroes: true'. The UI has no way to remove a locked team: `teamList` (roster-recommend-ui.js:196) renders no remove button and there is no clear/reset action. Once this happens the user cannot fix it.",
+      "suggested_fix": "Dedupe locked teams (by sorted hero+tactic set) in applyScanResult/normalizeLockedTeam. Add a remove button for locked teams and a 'clear stock' action. In the engine, keep the first locked team on conflict instead of dropping both."
+    },
+    {
+      "severity": "medium",
+      "category": "ui-ux",
+      "file": "js/team-recommend-engine.js",
+      "line": 602,
+      "title": "'Thiếu tướng:' shows raw canonical IDs like 'hero:sp-hoang-pho-tung'",
+      "evidence": "`const missing = built.heroUse.missingHeroSlots.flat();` flattens canonical ids and stores them as `missingHeroes`. roster-recommend-ui.js:376 renders `Thiếu tướng: ${entry.missingHeroes.join(', ')}`. Real output: `[ 'hero:sp-ma-sieu', 'hero:sp-hoang-pho-tung', 'hero:hua-du' ]`. Flattening also mixes 'any one of' slot alternatives with separate slots.",
+      "suggested_fix": "Put display names in the blocked entry (from `heroSlots[i].alternatives[].displayName`), grouped per slot and joined with ' / ' for alternatives. Keep ids only in diagnostics."
+    },
+    {
+      "severity": "medium",
+      "category": "logic",
+      "file": "data/teams.json (consumed by js/team-recommend-engine.js assignHeroes/selectTactics)",
+      "line": null,
+      "title": "Some team hero/tactic slots can never be owned because they match no dictionary name, so those teams are always blocked",
+      "evidence": "A throwaway run with every dictionary hero and tactic owned still gave: blocked 6 strong teams. 11 of 498 hero slots are unownable, e.g. 'SP Hoàng Phổ Tung', 'SP Đổng Trách' (the dictionary has 'SP Đổng Trác'), 'Bái Sư Pháp Chính', 'Bái Sư SP Tuân Úc', 'SP Lô Trực', 'Tiêu Chỉ'. 4 of 996 tactic slots are unownable: 'Thịnh Khí' (dictionary: 'Thịnh Khí Linh Địch'), 'Tinh·Phong Thi Trận', 'Đồng Tâm Hiệp Lực'. hero-identity's VARIANT_PREFIX only knows 40Y/SP/CO, so the 'Bái Sư' prefix becomes part of the canonical id.",
+      "suggested_fix": "Add a pipeline/CI check that every team hero/tactic slot resolves to a dictionary canonical id. Fix the typos. Decide whether 'Bái Sư' is a variant prefix or should map to the base family."
+    },
+    {
+      "severity": "medium",
+      "category": "ui-ux",
+      "file": "js/unified-lookup.js",
+      "line": 507,
+      "title": "'N đội chuẩn' count links to a search that returns a very different number of teams",
+      "evidence": "The count shown is `summary.standard.teams`. The link is `/doi-chuan/?season=all&q=<searchName>`. `projectRecommendedRows` splits q on whitespace and matches each term anywhere in the row blob. A throwaway run over the real generation found 91/107 heroes mismatched: 'Chu Du' shows 33 but the link returns 625 rows, 'Chu Thái' 82 vs 274, 'Chung Hội' 3 vs 159, 'Bàng Thống' 64 vs 80.",
+      "suggested_fix": "Link with a precise filter (e.g. a hero-id facet), or match the whole phrase and search holder names only. Otherwise change the label so it does not promise the same count."
+    },
+    {
+      "severity": "medium",
+      "category": "logic",
+      "file": "js/unified-lookup.js",
+      "line": 67,
+      "title": "Opening a card from the all-groups view switches the page to that single group, and it stays there after closing",
+      "evidence": "In the mixed view `cardView(group=null)` calls `setRoute({group:null,id})`. `formatLookupQuery` writes only `id=`, and `parseLookupQuery` then infers the group (l.67 `if (group === null && inferred) group = inferred`). Throwaway run: pushed 'id=hero%3Atao-thao' → parsed group 'heroes' → after close 'group=heroes'. The grid behind the dialog re-renders filtered to Tướng, the chip turns pressed, and `page` from the mixed list carries over. No chip lets you return to the all-groups view, because chips only set a group (l.762).",
+      "suggested_fix": "Keep an explicit 'all' state in the URL (e.g. group=all, or preserve the absent group when id is set from the mixed view). Add a 'Tất cả' chip, or let clicking the pressed chip deselect it."
+    },
+    {
+      "severity": "medium",
+      "category": "ui-ux",
+      "file": "js/unified-lookup.js",
+      "line": 790,
+      "title": "Back/close history handling loses the loaded page and needs two Back presses",
+      "evidence": "The popstate listener does `page = 1; render();`. If a user loads 3 pages with 'Xem thêm', opens a card beyond item 60 and presses browser Back, the grid shrinks to 60 items, the opener card no longer exists, and focus falls back to the search box. Closing with X/Escape calls `setRoute({...route,id:null},{push:false})` (l.277), which replaces the dialog entry. History then has two identical list entries, so the next Back looks like it does nothing.",
+      "suggested_fix": "Do not reset `page` on popstate when only `id` changed. Close the dialog with `history.back()` when it was opened by a push in this session, otherwise replaceState."
+    },
+    {
+      "severity": "medium",
+      "category": "ui-ux",
+      "file": "js/unified-lookup.js",
+      "line": 731,
+      "title": "'Xem thêm' loses keyboard focus after loading more",
+      "evidence": "The click handler does `page += 1; render();`. `renderResults` calls `grid.replaceChildren()` and `more.replaceChildren()`, which destroys the focused button, so focus goes to <body>. Nothing moves focus to the first new item or back to the new 'Xem thêm' button. The same full rebuild runs on every card open and close.",
+      "suggested_fix": "Append only the new page items, or after render focus the first newly added card (or the new 'Xem thêm' button)."
+    },
+    {
+      "severity": "medium",
+      "category": "ui-ux",
+      "file": "js/recruit-tracker.js",
+      "line": 468,
+      "title": "Raw slot keys ('free_1', 'half_2') are shown to users",
+      "evidence": "The five-star form title is ``Ghi 5★ · ${pendingFiveStar.slotKey}`` (l.468). The history row appends ``item.drawSlot ? ` · ${item.drawSlot}` ``, which is 'free_1' etc. (l.455). Vietnamese labels already exist in DAILY_SLOT_DEFS ('Miễn phí 1', 'Nửa giá 2'). History also hard-codes ``lượt …/30`` (l.456) instead of the banner's pityLimit.",
+      "suggested_fix": "Map slot keys through DAILY_SLOT_DEFS labels (export a lookup) and use `banner.pityLimit` for the denominator."
+    },
+    {
+      "severity": "medium",
+      "category": "logic",
+      "file": "js/recruit-tracker-store.js",
+      "line": 220,
+      "title": "A 5★ for a daily slot can be recorded on a slot that is already done, double-counting pulls; the date field targets a different day's slot",
+      "evidence": "`recordDailySlotFiveStar` only checks `if (!slot) return next;` and does not check `status !== 'pending'`, while `recordDailySlotMiss` does. The daily form has an editable `Ngày` date input (recruit-tracker.js:484). Opening '5★' on today's pending slot and picking yesterday records onto yesterday's slot, even if it was already 'miss'. Throwaway run: events for the same slot/date = [['2026-09-25','free_1','miss'], ['2026-09-25','free_1','fiveStar']]. Today's slot stays 'Chưa quay' and can be recorded again.",
+      "suggested_fix": "Reject when `slot.status !== 'pending'`, and drop or lock the date field in daily mode (the slot was opened from today's grid)."
+    },
+    {
+      "severity": "medium",
+      "category": "logic",
+      "file": "js/recruit-tracker.js",
+      "line": 118,
+      "title": "The daily reset is never re-rendered while the page stays open",
+      "evidence": "`currentDate()` is only evaluated inside `render()`. The file has no timer, `visibilitychange` or focus listener (grep: no matches). If all 4 slots are done before midnight, their buttons stay `disabled` after midnight. Disabled buttons fire no handler, so the user cannot record the new day's pulls without reloading or using another control.",
+      "suggested_fix": "Re-render on `visibilitychange`/`focus` and schedule a timeout to the next local midnight (or to the game's reset hour if that differs)."
+    },
+    {
+      "severity": "medium",
+      "category": "ui-ux",
+      "file": "js/roster-recommend-ui.js",
+      "line": 303,
+      "title": "The 'Nhiều hột' mode does not rank by red stars; it only widens the tier filter",
+      "evidence": "The engine's `candidatePool` does `if (mode !== 'meta') return true;` (l.132), which only removes the T0–T1 filter. Ordering is still tier first in `compareCandidates` (l.121) and `rankingTuple`, with redCopyScore only as a tie-breaker. Throwaway run with all heroes and tactics owned: meta and redStars produce identical portfolios ('same teams: true', tiers T0,T0,T0,T0,T0.5).",
+      "suggested_fix": "Make redStars mode order by redCopyScore before tier (and in portfolioIsBetter), or rename the option to what it actually does (e.g. 'Mọi bậc')."
+    },
+    {
+      "severity": "medium",
+      "category": "ui-ux",
+      "file": "js/roster-recommend-ui.js",
+      "line": 188,
+      "title": "The review step ('Kiểm tra') hides OCR confidence, so guessed names look like confirmed ones",
+      "evidence": "Chips render only `el('span', {}, name)`. mapHeroesScan/mapTacticsScan store `confidence` ('low' for unmatched, whose name is a toVietHanViet transliteration), but nothing in roster-recommend-ui reads `confidence`. In contrast, analyze.js flags `kiểm tra`/`unsure`. An unmatched transliterated hero silently counts as owned and never matches any team.",
+      "suggested_fix": "Mark low-confidence and unmatched chips (class plus 'kiểm tra' text/title), and consider sorting them first so the user reviews them."
+    },
+    {
+      "severity": "low",
+      "category": "logic",
+      "file": "js/analyze-map.js",
+      "line": 158,
+      "title": "Similar-team matching ignores the portrait-guess flag, and the 'full' badge can hide heroes that were skipped",
+      "evidence": "`mapRead` sets `hero.sure = false` for `nameFromPortrait` (l.100) but leaves `reviewRequired` false. `findSimilarTeams` filters on `reviewRequired !== true` (l.158), so portrait-guessed heroes still drive matches. `total: readHeroes.size` counts only identified heroes: 3 read with 1 uncertain gives '2/2 tướng' with the `full` class (analyze.js:265).",
+      "suggested_fix": "Filter on `sure`, and use the number of heroes read (mapped.length) as `total`."
+    },
+    {
+      "severity": "low",
+      "category": "ui-ux",
+      "file": "js/analyze.js",
+      "line": 332,
+      "title": "Step text says results are 'bên phải' (on the right) but they sit below the form under 980px",
+      "evidence": "doneLabel is 'Đã đọc xong — kiểm tra lại kết quả bên phải'. css/styles.css:7987-7991 `@media (max-width: 980px) { .ana-layout { grid-template-columns: minmax(0, 1fr); } }` stacks the result column below.",
+      "suggested_fix": "Use position-neutral text, e.g. 'kiểm tra lại kết quả đã đọc'."
+    },
+    {
+      "severity": "low",
+      "category": "dead-code",
+      "file": "js/hero-list.js",
+      "line": 87,
+      "title": "hero-list.js and hero-detail.js are unreachable legacy modules but still published as runtime JS",
+      "evidence": "`initHeroList` has 0 references. hero-list.js is the only importer of hero-detail.js. Grep over js/src/scripts shows no importer of either except public-artifact-manifest.mjs:26,28 (`entry('js','hero-detail')`, `entry('js','hero-list')`). Only tests-js/hero-list.test.mjs and hero-detail.test.mjs use them. The unified lookup replaced them. tactics.js (outside this scope) is in the same state (only hero-list-era code imports searchDict).",
+      "suggested_fix": "Delete hero-list.js, hero-detail.js (and tactics.js), their tests and manifest entries. Update docs/codebase-summary.md."
+    },
+    {
+      "severity": "low",
+      "category": "doc-drift",
+      "file": "docs/codebase-summary.md",
+      "line": 39,
+      "title": "codebase-summary still describes the removed hero/tactic lookup and old data counts",
+      "evidence": "l.39: '`js/hero-list.js`, `js/hero-detail.js`, `js/tactics.js` | Tra cứu tướng/chiến pháp local.' (the runtime uses unified-lookup.js). l.70-71: tactics.json '239', heroes-dict '112', while docs/unified-lookup.md:7-8 says 202 heroes / 406 tactics and the data has 202 heroes.",
+      "suggested_fix": "Replace these rows with unified-lookup.js, lookup-data.js and lookup-detail.js, and refresh the counts."
+    },
+    {
+      "severity": "low",
+      "category": "dead-code",
+      "file": "js/recommended-reference-state.js",
+      "line": 221,
+      "title": "Exports with no production callers",
+      "evidence": "`loadVerifiedLegacyTeam` (l.221) has zero references anywhere, tests included. `resolveTeamDestination` (l.132), `lockedConstraints` (roster-scan-state.js:203), `heroIdentityKey` (hero-identity.js:56, a pure alias of canonicalHeroId) and `LOOKUP_PAYLOAD_NAMES` (lookup-data.js:278) are referenced only by tests-js/mcp tests. Checked by grepping js, src, scripts, pipeline, mcp-worker/src and worker/src.",
+      "suggested_fix": "Delete them and their pinning tests."
+    },
+    {
+      "severity": "low",
+      "category": "dead-code",
+      "file": "js/team-recommend-engine.js",
+      "line": 289,
+      "title": "Recommendation entries carry fields nobody reads",
+      "evidence": "`presetId: null`, `presetReason: ''`, `coexistSetBonus: 0` (l.289-291, 345-347) and `score` (l.293) are read neither by roster-recommend-ui.js nor by mcp-worker recommendation-service.ts baseResult (which maps team/tier/status/assignments/selectedTactics/usedAlternatives only). The only reader is tests-js/team-recommend-engine.test.mjs:315-317, which pins the constant defaults. `rankingTuple` slots [1] and [2] are always 0, so full-box search cannot prefer portfolios with fewer tactic downgrades.",
+      "suggested_fix": "Remove the dead fields and their assertions, or feed usedAlternatives.length into rankingTuple so the placeholders mean something."
+    },
+    {
+      "severity": "low",
+      "category": "dead-code",
+      "file": "js/analyze.js",
+      "line": 468,
+      "title": "Paste guard and comment left over from the old tab UI",
+      "evidence": "`if (!mount.classList.contains('active')) return;`. Every page's mount is statically `class=\"section active\"` (src/pages/soi-doi/index.astro:13), so the check is always true. The header comment at l.4 ('Giữ 3 section cũ offline: Turnstile script CHỈ nạp khi mở tab này') describes the removed tab SPA.",
+      "suggested_fix": "Drop the check and the stale comment."
+    },
+    {
+      "severity": "low",
+      "category": "dead-code",
+      "file": "js/unified-lookup.js",
+      "line": 795,
+      "title": "The 'food' cost label and the unknown-cost-key warning can never run",
+      "evidence": "lookup-data.js requires `level.costs` to have exactly the keys ['wood','iron','stone'] (`requireShape(... level.costs, ['wood','iron','stone'])`). So `COST_LABELS.food` and the `UNKNOWN_COST_KEYS` console.warn branch in costText are unreachable. Similarly recommended-reference-render.js:345 `const value = block?.textVi || UNAVAILABLE; if (!value) continue;` can never continue.",
+      "suggested_fix": "Remove the unreachable label, branch and check."
+    },
+    {
+      "severity": "low",
+      "category": "ui-ux",
+      "file": "js/lookup-detail.js",
+      "line": null,
+      "title": "Some hero profile fields are built but never shown in the dialog",
+      "evidence": "heroProfile pushes 'civilInnatePoints' ('Điểm nội chính'), 'collectibleBonusVi' and 'redRulesVi' into profile.fields. The hero dialog renders only header badges, heroFacts (roleTagViet/exclusiveTitleVi/flags), stats and the civil section, so these never appear. Current data has civilInnatePoints set on 1 hero; the other two are empty.",
+      "suggested_fix": "Add these fields to heroFacts (or the civil block), or stop building them."
+    },
+    {
+      "severity": "low",
+      "category": "hygiene",
+      "file": "js/recruit-tracker-store.js",
+      "line": 138,
+      "title": "Every render deep-clones the whole tracker state several times",
+      "evidence": "`getRecruitTrackerSummary` → `normalizeRecruitTrackerState` (JSON clone). Then `getPity` normalizes and clones again for each limited banner plus the daily banner, and `getFiveStarHistory` clones once more. Each mutation also clones through `withState`. Cost grows with (banners+3) × pullEvents on every click.",
+      "suggested_fix": "Normalize once in the summary, and pass the normalized state to private pity/history helpers that do not re-normalize."
+    }
+  ],
+  "checked_ok": [
+    "lookup-data.js: manifest digest, generationId recompute, strict per-record shape validation and dangling-reference checks look correct; the failed-load cache is evicted.",
+    "hero-summaries.js: payload validation (positions sum = teams, item.teams ≤ family teams, representative family ids) is consistent, and the loader promise resets on error.",
+    "searchLookupGroup paging: start/slice/hasMore arithmetic has no off-by-one, and render() accumulates pages 1..page correctly.",
+    "team-recommend-engine: within one team, the same tactic is never assigned to two slots (reserved set in selectTactics). Across teams, heroes and tactics are reserved through usedHeroes/usedTactics in both greedy and DFS. Alternative tactics are used only when the primary is unowned or taken, and are reported as usedAlternatives/'variant'.",
+    "hero-identity: SP/CO/40Y are distinct canonical ids with a shared familyId. Slash alternatives dedupe correctly.",
+    "match-dict: no duplicate Chinese names in heroes-dict, so exact CJK matches are unambiguous. Only empty-string tactic `chinese` values repeat, and those return score 0.",
+    "lookup-detail ratePercentText: no activationRate out of the 0–1 range in the current data, and the unknown tactic type enums in the data are all covered by TYPE_LABELS.",
+    "recommended-reference-render: no CJK leaks in legacy alternatives or counters in the current other-teams.json; within each scope, fixedRank matches the source listIndex order (29/29 scopes).",
+    "analyze.js error surfaces: all user-visible errors come from the Vietnamese tables; raw upstream text is never rendered.",
+    "roster-scan-state: forbidden keys (image/base64/token/path…) are stripped before localStorage, and applyScanResult/add/remove reset `confirmed`."
+  ]
+}

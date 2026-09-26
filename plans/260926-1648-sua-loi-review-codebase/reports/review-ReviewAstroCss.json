@@ -1,0 +1,207 @@
+{
+  "summary": "Read-only review of src/, css/styles.css, public/, scripts/, configs, workflows and root-level hygiene. I ran the checks against the current working tree and the fresh dist/ build from 2026-09-26 23:04. The only command I ran was the read-only `node scripts/design-tokens.mjs --check`, which passed. I did not run the build or the test suites. The throwaway /tmp scripts are deleted.",
+  "findings": [
+    {
+      "severity": "high",
+      "category": "dead-code",
+      "file": "js/team-pk.js, js/meta-cu.js, js/tactics.js, js/hero-list.js, js/hero-detail.js (published via src/lib/public-artifact-manifest.mjs:20-60)",
+      "line": "manifest entries: hero-detail, hero-list, meta-cu, tactics, team-pk",
+      "title": "5 JS modules are shipped to dist but no page imports them",
+      "evidence": "I built the import graph from every runtime entrypoint: app.js, site-chrome.js, team-detail.js, plus khaihoang-detail.js, which is loaded by khai-hoang/[team].astro. None of hero-detail, hero-list, meta-cu, tactics or team-pk is reachable. Grep shows `./tactics.js` and `./hero-list.js` are not imported anywhere in js/. hero-detail is imported only by hero-list, and team-pk/meta-cu only by themselves. They are referenced only by tests-js/{hero-list,hero-detail}.test.mjs and by the manifest. unified-lookup.js has replaced them.",
+      "suggested_fix": "Delete the 5 modules and their manifest entries (412 LOC). Delete their tests-js files too, plus any contract-test lists that enumerate them."
+    },
+    {
+      "severity": "high",
+      "category": "dead-code",
+      "file": "js/team-filter-section.js",
+      "line": "10-250",
+      "title": "About 240 lines of the filter-section factory are dead",
+      "evidence": "`facetCount` (line 10) and `createTeamFilterSection` (line 27) are used only by the dead team-pk.js/meta-cu.js. `createSeasonTeamSection` (line 180) has 0 references across js/src/tests-js/tests-e2e. app.js only uses createSeasonCoexistSection and createRecommendedSection. app.js:245-246 still call `sections['team-pk']?.update(...)` and `sections['meta-cu']?.update(...)`, but `sections` is only ever given the keys 'team-chuan' and 'team-khac' (app.js:430,434). Those two calls are always no-ops.",
+      "suggested_fix": "Remove the three exports and app.js:245-246 in the same change that deletes team-pk/meta-cu."
+    },
+    {
+      "severity": "high",
+      "category": "ui-ux",
+      "file": "data/teams.json",
+      "line": "7559, 7605-7606, 9252, 9329-9330, 12501-12513, 12622-12634, 12747, 12791-12792, 12866-12878, 14939-14951, 14983",
+      "title": "Stray Unicode combining marks corrupt hero and team names on 7 static /doi-khac/ pages",
+      "evidence": "teams.json contains `Lục Tốṇ` (n followed by U+0323), `Giả Hụ̉` and `Lỗ Túc̣`. `od -c` on dist/doi-khac/ton-tuc-mong-113/index.html shows `T ố n ̣` in both <title> and <h1>: `<h1 ...>Tốṇ Túc Mông` contains codepoint 0x323. 7 dist pages are affected: ton-ninh-pho, ton-tuc-pho, mong-ton-tuc, ton-tuc-mong-113, ton-tuc-mong-114 and 2 others. data/facets.json splits the heroes into `Lục Tốn` (17) + `Lục Tốṇ` (5) and `Giả Hủ` (21) + `Giả Hụ̉` (2). The published other-teams.json is already clean (displayNameVi `Lục Tốn`), so the static page titles disagree with the list.",
+      "suggested_fix": "Fix the source (the Meta Team PK export, or normalise in pipeline/build_json.py: NFC plus a check that rejects a combining mark after a non-vowel), then rebuild teams.json and facets.json. Handles stay frozen in the ledger."
+    },
+    {
+      "severity": "medium",
+      "category": "hygiene",
+      "file": "src/data/recommended-reference/",
+      "line": "-",
+      "title": "35 superseded generations (~208 MB) are tracked; 2 untracked orphans; the live generation is untracked",
+      "evidence": "current.json (modified) now pins f93a51ea…, and that directory is untracked (`??` in git status). Committing current.json without it breaks the build: readPublicationSnapshot throws 'Invalid Recommended generation directory'. 0ddbd034… and 1a4fd71a… are untracked intermediates, 6.8 MB each, that current.json no longer references; the changelog says each was superseded the same day. `git ls-files` lists 36 generations (215 MB incl. the old pin d64f832a…). recommended-reference-artifacts.ts reads only `current.generationId`, and nothing in pipeline/mcp-worker/worker reads older ones. pipeline/site_localization.py has no prune step, only rmtree of a temporary generation (line 2056). Every copy change publishes another ~6.8 MB tree.",
+      "suggested_fix": "Commit f93a51ea… together with current.json. Delete 0ddbd034… and 1a4fd71a…. Add a prune step (keep current plus N) and remove superseded generations from the tree."
+    },
+    {
+      "severity": "medium",
+      "category": "ui-ux",
+      "file": "src/layouts/SiteLayout.astro; src/pages/{index,tra-cuu,chieu-mo,soi-doi,goi-y-doi,cung-ton}/…",
+      "line": "SiteLayout.astro:36; */index.astro tagline=",
+      "title": "Header taglines are leftovers from removed UI and don't match the pages",
+      "evidence": "From the dist taglines: index.html shows `Tất cả — tham khảo`, the default at SiteLayout.astro:36. That is the label of the retired 'all scenarios' select option (removed per project-changelog.md:15), and the Landing artboard (docs/design/so-binh-phap/project/Landing.dc.html) has no tagline. tra-cuu, chieu-mo, soi-doi, goi-y-doi and cung-ton all show `Tra cứu đội hình theo kịch bản`, but a hero lookup, a recruit tracker and two tools with no scenario selector are not 'team lookup by scenario'.",
+      "suggested_fix": "Give each page an accurate tagline and make the prop required, or render no tagline on landing to match the artboard. Drop the misleading default."
+    },
+    {
+      "severity": "medium",
+      "category": "ui-ux",
+      "file": "css/styles.css",
+      "line": "54, 1988-1990",
+      "title": "Dark mode: the landing inline-link hover drops to 1.77:1 contrast",
+      "evidence": "`.landing-inline-link:hover { color: var(--accent-strong); }`, where `--accent-strong: #7E1620` is defined only in light :root and has no dark override. Computed contrast is 1.77:1 on dark --bg #16140F and 1.62:1 on --panel, against 5.52:1 for normal-state --accent #E3646A. The comment at line 8179 only fixes the CTA *background* hover case. Used on the 'website chính thức' link in the #tai-game section (index.astro:234).",
+      "suggested_fix": "Use `color: var(--accent-ink)` on hover, or add a dark `--accent-strong` and keep CTA backgrounds on a separate token."
+    },
+    {
+      "severity": "medium",
+      "category": "hygiene",
+      "file": ".github/workflows/mcp-worker.yml",
+      "line": "25-67 (pull_request/push paths)",
+      "title": "CI path filters omit css/** and public/**, so CSS or header changes run no gate",
+      "evidence": "The paths lists include js/**, src/**, data/**, scripts/**, tests-e2e/** etc., but not `css/**`, `public/**` (_headers, fonts, robots.txt) or tsconfig.json. `grep '\"css/\\|\"public/'` finds no match. The gate (mcp-worker/scripts/check-repository.ts) runs astro-build, test:dist, verify and test:e2e, including the contrast and layout e2e. A styles.css-only PR (e.g. f95760b) skips all of it.",
+      "suggested_fix": "Add \"css/**\", \"public/**\" and \"tsconfig.json\" to both path lists."
+    },
+    {
+      "severity": "medium",
+      "category": "ui-ux",
+      "file": "src/pages/doi-chuan/[team].astro, src/pages/doi-khac/[team].astro",
+      "line": "doi-chuan 29; doi-khac 27-28",
+      "title": "256 page titles are shared by 979 static pages",
+      "evidence": "From the dist scan: the same <title> repeats up to 15 times. For example, `Ngụy Pháp Kỵ — Đội chuẩn — …` appears on pk-s19, pk-s8, pk-s28, … s3; only the description carries the season (`PK-S19 · Trận chiến Đồng Quan`). 21 descriptions are also duplicated across 43 pages (e.g. doi-khac 'Duy Thống Lượng' ×3). Search engines treat these as near-duplicates, and browser tabs and history can't tell them apart.",
+      "suggested_fix": "Put entry.sourceSeasonCode in the recommended title (`${title} (PK-S19) — Đội chuẩn — …`). Add a distinguishing field (source, or the handle suffix) for duplicate doi-khac names."
+    },
+    {
+      "severity": "medium",
+      "category": "doc-drift",
+      "file": "docs/codebase-summary.md",
+      "line": "30, 37, 39, 107",
+      "title": "codebase-summary describes the old SPA and lists dead modules as live",
+      "evidence": "Line 30: `src/pages/index.astro | Khai báo 9 tab/section và nạp raw /js/app.js`. Index is now a static Landing and app.js loads per section page. Line 37 lists team-pk/meta-cu as live modules and line 39 does the same for hero-list/hero-detail/tactics. Line 107 says 'UI dùng số runtime nên vẫn hiện 56' for team-pk. Last updated 2026-09-14.",
+      "suggested_fix": "Regenerate the module table after the dead-module removal."
+    },
+    {
+      "severity": "medium",
+      "category": "dead-code",
+      "file": "src/lib/recommended-reference-data.mjs",
+      "line": "1-60",
+      "title": "Tracked prototype with no importers",
+      "evidence": "`git grep recommendedReferenceRows` finds only its own definition, with no imports in src/js/tests/scripts. Plans say not to adopt it: plans/260912-0950-recommended-season-browser/plan.md:54 calls it an 'unfinished prototype … redesign instead of adopting'.",
+      "suggested_fix": "Delete the file."
+    },
+    {
+      "severity": "low",
+      "category": "a11y",
+      "file": "src/layouts/SiteLayout.astro; js/site-chrome.js",
+      "line": "SiteLayout 312, 325; site-chrome.js:45-46",
+      "title": "Theme toggle changes both aria-pressed and aria-label, giving contradictory announcements",
+      "evidence": "site-chrome.js sets `aria-pressed=String(dark)` and also switches the label to `dark ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối'`. In dark mode a screen reader hears 'Chuyển sang giao diện sáng, toggle button, pressed'. The WAI-ARIA APG button pattern requires a toggle's label to stay the same when its state changes.",
+      "suggested_fix": "Either keep aria-pressed with a fixed label ('Giao diện tối'), or drop aria-pressed and keep the action label."
+    },
+    {
+      "severity": "low",
+      "category": "ui-ux",
+      "file": "src/pages/{doi-chuan,doi-khac,cung-ton,khai-hoang,tra-cuu,chieu-mo,soi-doi,goi-y-doi}/index.astro",
+      "line": "all (single empty <section>)",
+      "title": "Section pages have no <h1> and no <noscript> fallback in static HTML",
+      "evidence": "dist/doi-chuan/index.html main is `<div id=\"season-controls\" …></div><section id=\"section-team-chuan\" class=\"section active\"></section>`. noscript=0 and h1=0 on all 8 section pages; the h1 is created only by JS (e.g. team-filter-section.js:436). The detail pages do have a static h1 and a noscript message, per design-guidelines.",
+      "suggested_fix": "Render the static h1 (same text as JS) in the Astro page and add a noscript notice like the detail pages have."
+    },
+    {
+      "severity": "low",
+      "category": "a11y",
+      "file": "src/layouts/SiteLayout.astro",
+      "line": "~367 (`<div id=\"season-controls\" … aria-label=\"Phạm vi đội hình\">`)",
+      "title": "aria-label on a generic <div> with no role",
+      "evidence": "Output: `<div id=\"season-controls\" class=\"season-controls\" aria-label=\"Phạm vi đội hình\"></div>`. ARIA 1.2 prohibits naming the generic role, so screen readers ignore it (axe: aria-prohibited-attr).",
+      "suggested_fix": "Add role=\"group\", or drop the aria-label."
+    },
+    {
+      "severity": "low",
+      "category": "doc-drift",
+      "file": "src/pages/cung-ton/index.astro; docs/deployment-guide.md",
+      "line": "cung-ton 7; deployment-guide 269",
+      "title": "Copy still mentions removed controls",
+      "evidence": "The /cung-ton/ meta description says 'theo kịch bản và phiên bản luật', but app.js:399 hides `rulesetControl` whenever pageSection==='coexist'. deployment-guide.md:269's smoke checklist says 'bộ lọc mùa/danh mục/phe/loại binh', but the Danh mục selector was removed (changelog:13, design-guidelines 'category đã bỏ').",
+      "suggested_fix": "Update the description and the smoke checklist."
+    },
+    {
+      "severity": "low",
+      "category": "dead-code",
+      "file": "src/lib/team-detail-routes.ts",
+      "line": "455-466",
+      "title": "findAdmittedVariant and teamDetailHtmlPaths are used only by tests; the doc comment is wrong",
+      "evidence": "Both exports are referenced only in tests-js/team-detail-routes.test.mjs. teamDetailHtmlPaths is documented as 'used by both the build and the dist verifier', but scripts/verify-astro-dist.mjs:53-82 calls teamDetailCatalog().htmlPaths directly.",
+      "suggested_fix": "Remove both and have the tests use catalog.htmlPaths / catalog.variants. Or fix the comment if they are meant as API."
+    },
+    {
+      "severity": "low",
+      "category": "dead-code",
+      "file": "css/styles.css",
+      "line": "865-868, 5465-5469",
+      "title": "Unreferenced or fully overridden CSS",
+      "evidence": "A scan of all 683 class selectors found only `.cam-nang-status` with no markup/JS reference; it has no dynamic prefix and no git history in js/. `.detail-score` is defined at 865 (font: type-score-table) and again at 4188 (font: type-score-panel, same color); the first rule is fully overridden and only [team].astro uses the class. The remaining 10 repeated selectors are additive splits with no conflicts.",
+      "suggested_fix": "Delete both blocks."
+    },
+    {
+      "severity": "low",
+      "category": "hygiene",
+      "file": "assets/videos/team-info-from-download-260701/",
+      "line": "-",
+      "title": "20 MB of tracked video frames and segments that no code references; one file leaks a local path",
+      "evidence": "`git ls-files assets` lists 54 files (20M): mp4 segments, frames and a contact sheet. `git grep assets/videos` finds only 3 plans/reports links. team-list.md:3 contains `Source: /Users/plateau/Downloads/0ef29f…mp4` (also flagged in plans/reports/brainstorm-260923-2001…:87).",
+      "suggested_fix": "Move them out of the repo (or to LFS or an archive) and keep only team-list.md without the absolute path."
+    },
+    {
+      "severity": "low",
+      "category": "hygiene",
+      "file": "package.json",
+      "line": "13, 15, 19",
+      "title": "3 npm scripts are redundant and referenced nowhere",
+      "evidence": "`test:e2e:astro` = `playwright test --project=astro`, which is identical to `test:e2e` because 'astro' is the only project in playwright.config.mjs. `test:contracts` and `test:dev-contract` each run one file that `test:node` (tests-js/*.test.mjs) already covers. `git grep` finds no use in docs, CI or mcp-worker/scripts/check-repository.ts.",
+      "suggested_fix": "Remove all three."
+    },
+    {
+      "severity": "low",
+      "category": "ui-ux",
+      "file": "src/layouts/SiteLayout.astro",
+      "line": "234-235",
+      "title": "Only Latin font subsets are preloaded on an all-Vietnamese site",
+      "evidence": "Preloads cover be-vietnam-pro-400-latin and noto-serif-display-700-latin. The -vietnamese subsets (unicode-range U+1EA0-1EF9, U+0102-0103, U+0110-0111 … at styles.css:331-332) are needed on every page but are discovered late. With font-display: swap, Vietnamese letters briefly render in the fallback font while ASCII letters already use Be Vietnam Pro.",
+      "suggested_fix": "Also preload be-vietnam-pro-400-vietnamese and noto-serif-display-700-vietnamese, or replace the latin preload with them."
+    },
+    {
+      "severity": "low",
+      "category": "hygiene",
+      "file": "_site/, .wrangler/ (root), plans/260907-2333-project-research-skill/plan.md",
+      "line": "-",
+      "title": "Stale local artifacts and a stale plan status",
+      "evidence": "_site/ is untracked and gitignored, 1.1 MB, from 2026-06-27. It holds the old SPA build (js/do-uy.js, team-pk.js, meta-cu.js …) plus an unrelated showoff/dewee-mcp-bridge-fix/, and nothing references `_site`. Root .wrangler/ (8 KB, June) is ignored and unused. The 260907-2333 plan says `status: in-progress` with '0/103 checkbox', yet .agents/skills/tqccl-research/ (all 4 planned files) was committed in 82076bb on 2026-09-14.",
+      "suggested_fix": "Delete _site/ and the root .wrangler/ locally, and mark the plan completed (or record the real state)."
+    },
+    {
+      "severity": "low",
+      "category": "ui-ux",
+      "file": "src/layouts/SiteLayout.astro",
+      "line": "223-230",
+      "title": "No og:image, og:site_name or og:locale",
+      "evidence": "The <head> emits only og:title, og:description, og:type and og:url. Social shares of team detail pages will have no preview image.",
+      "suggested_fix": "Add og:site_name='Cẩm Nang Tam Quốc Chí', og:locale='vi_VN' and a default og:image (e.g. the seal/favicon rendered at 1200×630)."
+    }
+  ],
+  "checked_ok": [
+    "Canonical ↔ sitemap: all 1558 dist index.html pages have a canonical, and it matches the 1558 sitemap <loc> entries exactly (none missing either way). robots.txt points to the correct sitemap origin.",
+    "404: dist/404.html exists, has robots=noindex, no canonical/og:url, a clear h1 and home/list links; routeHandles and season payloads are skipped.",
+    "<html lang=\"vi\">, a skip-link to #main-content, Chinese text marked lang=zh-Hant, and every decorative SVG aria-hidden. External links carry rel=noopener noreferrer plus visually-hidden '(mở tab mới)'. Heading order on landing and detail pages is h1 → h2.",
+    "The dark theme covers all surface tokens. `design-tokens.mjs --check`: ':root khớp tokens.json; 0 mã màu ngoài khối token; 0 giá trị thô ngoài khối legacy'. The 31 light-only colour tokens are intentionally theme-invariant (band, shadows, QR, on-accent); the only real gap is --accent-strong used as text colour (finding above).",
+    "CSS dead-selector scan: 683 classes, 7 ids and 7 data-attributes. Apart from `.cam-nang-status`, every class is either referenced or built dynamically (`f-${code}`, `rt-slot-${…}`, and pips() building `${cls}-item/-vi/-zh/-index/-text`).",
+    "Breakpoints: the header nav switch agrees between CSS (1279px) and JS (site-nav DESKTOP_QUERY 1280px). JS COMPACT/FOLD queries use 680px, matching the CSS 680px blocks. The 820/900/980 breakpoints are component-specific, not contradictory.",
+    "public/fonts: all 15 woff2 files are referenced by @font-face; OFL.txt is the license. _headers cache policy (max-age=0 for everything) is documented as intentional in code-standards.md:47,50.",
+    "JS publish manifest: every js/*.js file is listed; no reachable module is unpublished.",
+    "All src/lib exports except those flagged are used in production code (landing-stats and root-static-artifacts types are internal; formatBuildDate is exported for its test).",
+    "Meta Team PK/ is gitignored and is the source that pipeline/build_json.py reads (OK). test-results/ is ignored and holds only .last-run.json. dist/ is ignored. _site/ is not tracked (0 files in git).",
+    "scripts/design-*.mjs are not in package.json but are documented in docs/design/so-binh-phap/README.md as the design workflow (OK)."
+  ]
+}

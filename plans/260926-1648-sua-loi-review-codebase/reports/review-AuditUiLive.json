@@ -1,0 +1,139 @@
+{
+  "summary": "I built the site with `npm run build` (1559 pages) and served dist with `astro preview` on :4391; that service is now stopped. Each of 13 pages was checked at 375x812 and 1280x800 in light and dark (52 page states). For every state I took a screenshot to /tmp/ui-audit/ and ran in-page checks. On top of that I tested the interactive parts: search and profile on tra-cuu, filters and search on doi-chuan, back button, view modes, chieu-mo counting, goi-y-doi steps, mobile menu, theme toggle, tab focus order and contrast. The repo was not edited; only dist/ was rebuilt. Findings are ordered by importance.",
+  "findings": [
+    {
+      "severity": "high",
+      "category": "ui-ux",
+      "file": "js/roster-recommend-ui.js",
+      "line": 376,
+      "title": "Gợi ý đội từ kho hiện ID thô 'hero:...' thay vì tên tướng",
+      "evidence": "On /goi-y-doi/, after 'Xác nhận' then 'Gợi ý 5 đội', the page shows: \"Siêu Tung Du — Thiếu tướng: hero:sp-ma-sieu, hero:sp-hoang-pho-tung, hero:hua-du\" (also \"hero:sp-tuan-uc, hero:gia-hu …\"). The code is `Thiếu tướng: ${entry.missingHeroes.join(\", \")}` with no name lookup. The engine returns canonical refs (team-recommend-engine.js:609 `missingHeroes: missing`). render.js:900 already maps refs with `names.get(ref) || ref`, but this file does not. Lines 348 (`selectedTactics`) and 350 (`usedAlternatives from/to`) also join raw values without mapping.",
+      "suggested_fix": "Map refs to Vietnamese names through heroesDict/tacticsDict before join (same pattern as render.js:900) for missingHeroes, missingTactics, selectedTactics and usedAlternatives."
+    },
+    {
+      "severity": "medium",
+      "category": "logic",
+      "file": "js/roster-recommend-ui.js",
+      "line": 306,
+      "title": "'Xác nhận dữ liệu đã đọc' works on an empty inventory; step bar becomes contradictory",
+      "evidence": "With a fresh localStorage and nothing scanned ('Chưa đọc tướng.'), clicking 'Xác nhận' enables 'Gợi ý 5 đội' (dis=false). After clicking 'Gợi ý 5 đội' the steps read: `LI 1 · Đọc kho cur=step` (still current, black) while `✓ 2 · Kiểm tra` and `✓ 3 · Gợi ý` are ticked as done. paintSteps (l.93-95) derives review/suggest from state.confirmed/recommended regardless of scanned(). The result then says 'Nên thêm: Đã đủ 5 đội hoặc chưa có đội phù hợp.' although there are 0 teams. Screenshots: /tmp/ui-audit/gy-confirm-empty.webp, gy-suggest-empty.webp.",
+      "suggested_fix": "Disable confirmBtn while !scanned() (or require at least one hero). Make review/suggest 'pending' when !scanned(). Split the empty message for the 'reached 5 teams' case vs the 'no suitable team' case."
+    },
+    {
+      "severity": "medium",
+      "category": "ui-ux",
+      "file": "js/team-filter-section.js",
+      "line": 429,
+      "title": "Chevron icon DOM node is shared, so the 'Mùa nguồn' dropdown loses its arrow on /doi-khac/",
+      "evidence": "`const CHEVRON=[svgNode('polyline',…)]` is created once per module, and icon() (render.js:32) appends those same nodes. They are used at l.501 (season field) and l.583 (collapsible 'Nguồn' facet); appending moves the polyline into the last svg. Measured: /doi-khac/ season svg = `<svg …></svg>` (innerHTML length 0), while /doi-chuan/ = `<polyline points=\"6 9 12 15 18 9\">`. Screenshots dk-375-light.webp and dk-1280-dark.webp show 'Mùa nguồn: Tất cả' with no arrow; dc-*.webp shows it. FILTER_ICON (l.430) has the same shared-node pattern.",
+      "suggested_fix": "Turn CHEVRON/FILTER_ICON into factories, e.g. `const chevron=()=>[svgNode('polyline',…)]`, and call icon(chevron())."
+    },
+    {
+      "severity": "medium",
+      "category": "ui-ux",
+      "file": "src/pages/tra-cuu/index.astro",
+      "line": 10,
+      "title": "Header subtitle copy-pasted: 'Tra cứu đội hình theo kịch bản' on 5 unrelated pages; landing shows 'Tất cả — tham khảo'",
+      "evidence": "`tagline=\"Tra cứu đội hình theo kịch bản\"` is set in tra-cuu, chieu-mo, soi-doi, goi-y-doi and cung-ton index.astro (l.10). It appears under the logo on Tra cứu (heroes/tactics lookup), Theo dõi chiêu mộ, Soi đội, Gợi ý đội (screenshots tc-*.webp, cm-*.webp, sd-*.webp, gy-*.webp). The landing page passes no tagline, so it gets the default `tagline = 'Tất cả — tham khảo'` (SiteLayout.astro:36). That string is the 'all seasons' option of the Cùng Tồn select (home-375-light.webp).",
+      "suggested_fix": "Give each page its own tagline, e.g. reuse SECTION_DESCRIPTIONS (SiteLayout.astro:59-68). Set a real landing tagline or make the default neutral."
+    },
+    {
+      "severity": "medium",
+      "category": "ui-ux",
+      "file": "css/styles.css",
+      "line": 1392,
+      "title": "Current page is not highlighted in the mobile menu or on tool pages' desktop nav",
+      "evidence": "On /doi-khac/ at 375, the 'Đội khác' row has aria-current=page, but computed styles are identical to the 'Đội chuẩn' row (diff = {}; children colours/weights equal). The only aria-current rule is `.site-menu-group-link[aria-current=\"page\"]`. At 1280 on /chieu-mo/, none of the .nav-tab items is active (all `cls=nav-tab cur=null`), so 'Công cụ' is not marked (cm-1280-dark.webp). Screenshot: /tmp/ui-audit/menu-375-dark.webp.",
+      "suggested_fix": "Add a `.site-menu-row[aria-current]` style (accent colour/bar). Mark the 'Công cụ' toggle active when activeSection is one of the tool sections."
+    },
+    {
+      "severity": "medium",
+      "category": "logic",
+      "file": "js/roster-recommend-ui.js",
+      "line": 384,
+      "title": "Turnstile has no 'error-callback': uncaught TurnstileError, and the user sees no Vietnamese message",
+      "evidence": "On /soi-doi/ and /goi-y-doi/ (all 8 runs), the console shows pageerror `Uncaught TurnstileError: [Cloudflare Turnstile] Error: 110200.` The widget shows the English text 'Unable to connect to website'; the 'Soi đội' button stays disabled with no explanation (sd-375-light.webp). ts.render in analyze.js:438 and roster-recommend-ui.js:384 only sets callback and expired-callback. .catch() only covers script-load failure. Code 110200 itself comes from localhost not being on the sitekey allowlist [environment], but runtime challenge/network errors would take the same path.",
+      "suggested_fix": "Add an 'error-callback' that clears the token and writes a Vietnamese status in both files (return true to suppress the throw)."
+    },
+    {
+      "severity": "low",
+      "category": "ui-ux",
+      "file": "js/roster-recommend-ui.js",
+      "line": 111,
+      "title": "Unstyled native file input shows English 'Choose File / No file chosen'",
+      "evidence": "/goi-y-doi/ at 375 and 1280 shows three raw inputs with 'Choose File  No file chosen' (gy-375-light.webp, gy-1280-dark.webp). /soi-doi/ uses a styled Vietnamese drop zone instead. The code comment says the native label was accepted in 'Phase 9', but the result is English text on a Vietnamese page and looks inconsistent with the sibling tool.",
+      "suggested_fix": "Hide the input visually behind a styled Vietnamese label/button, like analyze.js .ana-file."
+    },
+    {
+      "severity": "low",
+      "category": "ui-ux",
+      "file": "js/lookup (tra-cuu profile dialog)",
+      "line": 0,
+      "title": "On mobile the profile's close button scrolls away",
+      "evidence": "At 375 with /tra-cuu/?id=hero:tao-thao, .lookup-dialog is 2646px tall inside .lookup-backdrop (overflow auto). `.lookup-close` has position:static; after scrolling 1500px its top is -1414. The backdrop is only an 8px margin, so there is no visible way to close without scrolling back or using the Back button. Screenshot tc-profile-375-light.webp.",
+      "suggested_fix": "Make the dialog header or close button sticky (position:sticky; top:0) on small viewports."
+    },
+    {
+      "severity": "low",
+      "category": "logic",
+      "file": "js (lookup dialog URL state)",
+      "line": 0,
+      "title": "Closing a profile gives different filter state depending on how you close it",
+      "evidence": "Open from /tra-cuu/ (All) → URL ?id=hero:tao-thao, and the page behind silently switches to the 'Tướng' group ('2 tướng'). Close with Back → URL /tra-cuu/ (All). Close with Escape → URL /tra-cuu/?group=heroes (replaceState), so the user stays filtered to Tướng without having chosen it.",
+      "suggested_fix": "Remember the group that was active before opening and restore it on close, the same way Back does."
+    },
+    {
+      "severity": "low",
+      "category": "ui-ux",
+      "file": "css/styles.css (detail-header grid, align-items:end)",
+      "line": 0,
+      "title": "Khai hoang detail: large empty gap above the title when the side panel is tall",
+      "evidence": "On /khai-hoang/chu-thai-truong-phi-truong-xuan-hoa/ at 1280, .detail-header uses `align-items:end` with an aside of 4 source links (header 184→507px). The h1 starts at y=314, about 200px below 'Quay lại Khai hoang', with nothing in between (khd-1280-light.webp). Team-chuẩn detail pages with a short aside look normal.",
+      "suggested_fix": "Use align-items:start (or center) for .detail-header, or at least for the khai-hoang variant."
+    },
+    {
+      "severity": "low",
+      "category": "ui-ux",
+      "file": "src/pages/doi-khac/[team].astro (detail-score-panel)",
+      "line": 0,
+      "title": "Đội khác detail: bordered panel that holds only the copy-link icon",
+      "evidence": "On /doi-khac/bac-phat-thuong/, #team-detail-panel.detail-score-panel (86x78 at 1280, similar at 375) contains only the button #team-copy-link inside a bordered card. It looks like an empty box (dkd-375-dark.webp, dkd-1280-light.webp).",
+      "suggested_fix": "When there is no score or source, render the copy button inline, without the card frame."
+    },
+    {
+      "severity": "low",
+      "category": "ui-ux",
+      "file": "js/team-filter-section.js (view modes)",
+      "line": 0,
+      "title": "'2 cột' / '4 cột' view buttons do not match the actual layout below 1440px",
+      "evidence": "Card left offsets, 2-cột vs 4-cột: at 375 both are 1 column; at 768 2-cột = 1 column (width 721) while 4-cột = 3 columns; at 1024 both are 2 columns (identical); at 1280 4-cột = 3 columns; 4 columns only at 1440. The visible labels '2 cột'/'4 cột' promise specific counts.",
+      "suggested_fix": "Rename the modes by density ('Thẻ'/'Thẻ gọn'), or hide the duplicate mode at breakpoints where both render the same."
+    },
+    {
+      "severity": "low",
+      "category": "ui-ux",
+      "file": "data → dist/data/recommended/*/index.json",
+      "line": 0,
+      "title": "50 Vietnamese team names still use full-width CJK brackets （）",
+      "evidence": "Script over dist/data/recommended/*/index.json: 50 non-CJK strings contain （）, e.g. 'Thái Sư Cung（chuyển·Phi Hùng Quân）', 'Gian Hùng Kỵ（Lữ Bố）', 'Quân Thảo Hoàng Mã（Bạch bản không Lâm Nguy）'. They render next to names that use ASCII '(' on /doi-chuan/ (search 'Lữ Bố' result list).",
+      "suggested_fix": "Normalise （）→ ' (' ')' in the localisation/pipeline step for display names."
+    }
+  ],
+  "checked_ok": [
+    "No horizontal overflow on any of the 52 page states (scrollWidth ≤ innerWidth everywhere, 375 and 1280, light and dark); no elements overflowing the viewport outside scroll containers.",
+    "No 'undefined'/'null'/'NaN'/'[object Object]' in visible text; no duplicate IDs; 0 broken images on any page.",
+    "Visible Chinese text is intentional everywhere: detail pages show zh-Hant subtitles with lang=zh-Hant; tra-cuu portrait fallback glyphs are aria-hidden. Truncated 'Cùng tồn N' chip labels on mobile and the khai-hoang caption are deliberate screen-reader-only text.",
+    "WCAG AA contrast scan of main and header text, all 13 pages, both themes: no failures.",
+    "Focus order and visible focus ring checked on /doi-chuan/ with 30 Tab presses (skip link, nav, season select via parent ring, search, view buttons, filter chips, cards, tactic tags).",
+    "Theme toggle: data-theme, localStorage, aria-label and aria-pressed stay in sync on both toggles; the chosen theme persists across page loads.",
+    "Mobile menu: opens with focus on the close button, locks page scroll, Escape closes it and returns focus to the toggle.",
+    "/doi-chuan/: filter chips (Cung → 14/25), search (Lữ Bố / no-diacritics 'lu bo' / 呂布), empty state 'Không có đội khớp bộ lọc.', filters kept in the URL; detail 'Quay lại' link keeps the query; Back restores filters and focuses the clicked card.",
+    "/tra-cuu/: search 'Tào Tháo' → 2 results, profile opens with focus on the close button; Back and Forward reopen and close the dialog correctly.",
+    "/chieu-mo/: 'Không ra' updates the counter (0→1, 'Còn 29 lượt', 'Hôm nay 1/4'); deleting the last account is blocked with 'Cần giữ ít nhất 1 tài khoản.'",
+    "/cung-ton/: switching season and group works and updates ?group=.",
+    "404 page (/404.html, and real 404 status confirmed via curl): renders correctly in both themes and viewports.",
+    "No JavaScript console errors on any page except the Turnstile error on /soi-doi/ and /goi-y-doi/ (see findings)."
+  ],
+  "artifacts": "63 screenshots in /tmp/ui-audit/ named <page>-<375|1280>-<light|dark>.webp, plus tc-search-taothao, tc-profile-1280, tc-profile-375-light, dc-empty, dc-table-375, dc-grid-375, gy-confirm-empty, gy-suggest-empty, menu-375-dark, dk-seasonfield and home-375-light-full.",
+  "notes": "Page keys: home=/, dc=/doi-chuan/, dcd=/doi-chuan/og-40y-lu-bo-cung-dieu-thuyen/, dk=/doi-khac/, dkd=/doi-khac/bac-phat-thuong/, ct=/cung-ton/, kh=/khai-hoang/, khd=/khai-hoang/chu-thai-truong-phi-truong-xuan-hoa/, tc=/tra-cuu/, cm=/chieu-mo/, sd=/soi-doi/, gy=/goi-y-doi/, nf=/404.html. The browser tool timed out loading the non-existent URL /404-nope/, so the 404 page was loaded directly as /404.html; curl confirmed the real 404 status and page."
+}

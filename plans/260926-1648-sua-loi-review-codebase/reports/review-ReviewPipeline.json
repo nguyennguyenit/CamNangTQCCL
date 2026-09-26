@@ -1,0 +1,201 @@
+{
+  "summary": "Read-only review of pipeline/*.py, pipeline/*.json and the Python tests. I made no edits. Only in-memory, read-only or /tmp-output commands were run: AST import/dead-symbol scans in /tmp, in-memory builder calls, `site_localization check --stage public`, `team_route_handles --check`, `query_sgsdeck_catalog validate`, `suggest_aliases`, `report_recommended_translations --output /tmp/...`, and 29 scoped legacy tests. The biggest risks: the documented legacy rebuild silently gives 110 moi-phe teams new IDs, and 2 of its 5 steps no longer work (build_dict is fenced; build_books_dict fails on current facets). A 23 MB private candidate ledger is also committed because its folder name slips past the .gitignore patterns.",
+  "findings": [
+    {
+      "severity": "high",
+      "category": "logic",
+      "file": "pipeline/normalize.py",
+      "line": 237,
+      "title": "build_json renumbers all 110 moi-phe team IDs; these IDs are the join key for route handles and the Team khác ledger",
+      "evidence": "`\"id\": f\"{raw['source']}-{index}\"`, where `index` is a global counter (build_json.py:31-42, `idx += 1` across both files). The committed data/teams.json has moi-phe-62..moi-phe-171 (dating from when the 12 Đô Úy teams sat in between). An in-memory `build_teams()` now gives `['moi-phe-50', 'moi-phe-51'] … moi-phe-159`. Rebuilt[i] has the same heroes as committed moi-phe-(62+i) for 110/110 teams. So after a rebuild, every existing ID from moi-phe-62 to moi-phe-159 points to a different team (moi-phe-62 becomes the old moi-phe-74). pipeline/team-route-handles.json keys legacy handles by these IDs (e.g. `\"moi-phe-100\": \"vu-sieu-binh\"`), and recommended-other-teams.json uses them as legacyTeamId. The deployment-guide warning only mentions the 50 vs 56 count.",
+      "suggested_fix": "Derive IDs per source (a per-file index) or from a frozen ID ledger, and fail the build if rebuilt IDs map to different hero sets than the committed teams.json. At minimum, document the ID shift in the rebuild warning."
+    },
+    {
+      "severity": "medium",
+      "category": "doc-drift",
+      "file": "pipeline/build_dict.py",
+      "line": 118,
+      "title": "build_dict is permanently disabled, but the docs still list it as a routine rebuild step; its input chain is effectively dead",
+      "evidence": "`_assert_legacy_writable(Path('.'))` → `BLOCKED: unified lookup is activated; legacy dictionary writer is disabled`, because data/lookup-manifest.json exists. Still listed as a normal step at README.md:86 and docs/deployment-guide.md:59. It is described as the dictionary writer at docs/system-architecture.md:39 and docs/codebase-summary.md:58. codebase-summary.md:83 says tactics-generic is 'để build_dict merge lại'. code-standards.md:83 calls tactic-name-overrides.json and role-tag-map.json 'bảng curate đang publish'. Only build_dict reaches crawl_tactics.py and link_tactics.py (import graph); tactic-name-overrides.json, role-tag-map.json and the ignored 1.4 MB pipeline/raw_crawl_cache.json are read only by that chain and its tests.",
+      "suggested_fix": "Remove build_dict from the routine command lists and mark it retired, or delete build_dict/crawl_tactics/link_tactics and their tests and inputs. Update code-standards.md:83 so these two tables are not described as publishing inputs."
+    },
+    {
+      "severity": "medium",
+      "category": "logic",
+      "file": "pipeline/books-han-viet-map.json",
+      "line": 60,
+      "title": "The documented step `python3 -m pipeline.build_books_dict` fails on current data",
+      "evidence": "An in-memory `build_books_dict(_load_map(), facets.books)` raises `ValueError: [fail-loud] viet 'Quy Thuận' (Hán '归心') không thuộc facets.json.books`. Map entries at lines 60-61 (归心→Quy Thuận, 兵行诡道→Binh Hành Quỷ Đạo) are missing from facets.json.books. They were removed in commit 96d1e70 ('recompute facets.json'), and git log -S shows neither file has changed that string since. tests/test_build_books_dict.py only uses a synthetic FACET list, so this is not caught.",
+      "suggested_fix": "Decide whether these books belong in facets (restore them) or remove/flag the two map rows. Add one test that checks the real map against the real facets.json."
+    },
+    {
+      "severity": "medium",
+      "category": "doc-drift",
+      "file": "data/facets.json",
+      "line": 658,
+      "title": "facets.json is far more stale than the documented 'off by 1 team'",
+      "evidence": "Committed file vs `build_facets(data/teams.json)`: statuses sum 213 vs 166; heroes 91/651 vs 77/510; tactics 119/1411 vs 107/1122; factions 163 vs 116; unitTypes 207 vs 170. It contains 14 heroes and 12 tactics that no published team uses (e.g. 'Bộ Luyện Sư', 'Kích Kỳ Đọa Quy'). It also contains the aliased-away typo 'Nhạn Hình Trận' (line 658; aliases.json maps it to 'Nhạn Hành Trận'). The docs still say it is off by one team: README.md:160, docs/codebase-summary.md:85,110, deployment-guide.md:74, project-overview-pdr.md:68. facets.json is also the validation gate for build_books_dict and build_dict.",
+      "suggested_fix": "Regenerate facets.json from the current teams.json with build_facets (then re-check the books map), or correct the docs to describe the real mismatch. Add a test that sum(sources) == sum(statuses) == len(teams)."
+    },
+    {
+      "severity": "medium",
+      "category": "hygiene",
+      "file": "pipeline/lookup-output/site-vi-candidate/ledger.json",
+      "line": 1,
+      "title": "A private candidate build and activation manifest are committed because their folder names get past the .gitignore patterns",
+      "evidence": ".gitignore ignores `pipeline/lookup-output/candidate/` and `activation-*/`. The folders `site-vi-candidate/` and `site-vi-activation/` do not match, so `git check-ignore` reports 'not ignored'. The committed ledger.json is 23,124,654 bytes and was rewritten in f95760b (earlier blob 29ac5ea, 23,124,493 bytes, from d7827ee), so history holds two ~23 MB blobs. The other 4 candidate files are byte-identical to data/{tactics,heroes-dict,lookup-catalog,lookup-manifest}.json (same sha256). The activation manifest contains only `{\"paths\": []}`. No code or docs read either folder; they appear only in plans/ (phase-02-reviewed-publication.md:90-92). docs/unified-lookup.md:14 and the .gitignore comment say candidates are private and regenerable.",
+      "suggested_fix": "Untrack both folders and widen the ignore rules to `pipeline/lookup-output/*candidate*/` and `*activation*/`. Consider purging the ledger from history if repo size matters."
+    },
+    {
+      "severity": "medium",
+      "category": "doc-drift",
+      "file": "docs/season-team-data.md",
+      "line": 91,
+      "title": "The documented build_recommended_reference command is missing the required --catalog argument",
+      "evidence": "Running the documented arguments with --output /tmp/rr-out gives `build_recommended_reference.py: error: the following arguments are required: --catalog`. Declared at build_recommended_reference.py:741 as `parser.add_argument(\"--catalog\", type=Path, required=True)`.",
+      "suggested_fix": "Add `--catalog <path>` to the documented command (the catalog the publication uses)."
+    },
+    {
+      "severity": "medium",
+      "category": "logic",
+      "file": "pipeline/crawl_sgsdeck_recommended.py",
+      "line": 229,
+      "title": "`--resume` does nothing, and the CLI cannot create the scope-inventory.json it requires",
+      "evidence": "`parser.add_argument(\"--resume\", action=\"store_true\")` is never read; the only other 'resume' text is the error message at line 161. main() exits with 'scope-inventory.json is required; freeze a rendered picker first' (lines 232-234). Nothing in pipeline/ writes scope-inventory.json (grep finds only reads, at build_recommended_reference.py:612 and site_localization.py:1070). discover_scopes(), which builds that inventory, is called only from tests/test_crawl_sgsdeck_recommended.py. docs/season-team-data.md:79-85 tells users to re-run with `--resume`.",
+      "suggested_fix": "Remove the flag (the cache already acts as the resume point) and fix the docs. Add a `--freeze-inventory <rendered-picker.html>` mode that calls discover_scopes() and writes scope-inventory.json."
+    },
+    {
+      "severity": "medium",
+      "category": "dead-code",
+      "file": "pipeline/sgsdeck_recommended.py",
+      "line": 284,
+      "title": "The v1 build_recommended_evidence CLI cannot read the current crawler cache, and its output JSON has no readers",
+      "evidence": "The builder expects `items = json.loads(manifest.json)` to be a list, with each `path` matching `[a-z0-9-]+\\.html` (lines 286-297). The current crawler writes a dict `{\"schemaVersion\": 2, \"pages\": {...}, \"scopes\": [...]}` (crawl_sgsdeck_recommended._read_manifest) with `<sha256>.html` paths, so `python3 -m pipeline.sgsdeck_recommended --cache <crawler cache>` fails with 'Invalid Recommended cache inventory'. Its default output, pipeline/sgsdeck-recommended-evidence.json, is referenced only by sgsdeck_recommended.py itself (git grep) and was last written in 4222ef2. The parsers in this module are still used by build_recommended_reference and crawl_sgsdeck_recommended.",
+      "suggested_fix": "Delete build_recommended_evidence, its main() and tests, and pipeline/sgsdeck-recommended-evidence.json, keeping the shared parse_* helpers."
+    },
+    {
+      "severity": "low",
+      "category": "dead-code",
+      "file": "pipeline/unified_lookup_identity.py",
+      "line": 322,
+      "title": "build_registry has no callers; the tests pin allocate_child_ids, whose ID algorithm production never uses",
+      "evidence": "A repo-wide grep for `build_registry` finds only its definition. `allocate_child_ids` (line 283) is imported only by tests/test_unified_lookup_identity.py:11,191. It builds troop-option IDs from the raw source name (`_semantic_child_key`: name/traitName/nameZh). build_registry builds them from the reviewed Vietnamese name (`troop-option:{parent}:{_slug(reviewed_name|tier|convertsTo)}`, ~line 430). The test therefore proves reorder-stability of an algorithm that no production path runs.",
+      "suggested_fix": "Delete build_registry (a one-off generator for lookup-identity.json) and allocate_child_ids together with its test, or make build_registry use allocate_child_ids so the test covers real behaviour."
+    },
+    {
+      "severity": "low",
+      "category": "dead-code",
+      "file": "pipeline/site_localization.py",
+      "line": 2035,
+      "title": "Unused wrappers and constant; the ledger path is defined in three places",
+      "evidence": "`check_data_candidate` has 0 references anywhere. `compile_data_candidate` (line 2013) is used only in tests/test_site_localization.py. `LEDGER_PATH = \"pipeline/site-translations.json\"` (line 44) is never used. Line 1630 hardcodes `\"pipeline/site-translations.json\"`, while lines 1888/1909 read `policy[\"artifacts\"][\"ledger\"]`.",
+      "suggested_fix": "Remove check_data_candidate and LEDGER_PATH, let the test call compile_candidate(stage='data'), and read the ledger path from one place."
+    },
+    {
+      "severity": "low",
+      "category": "dead-code",
+      "file": "pipeline/parse_team_intro.py",
+      "line": 23,
+      "title": "EXPECTED_COUNTS is unused and duplicates counts kept elsewhere",
+      "evidence": "The AST and grep scan finds only its definition. The same counts are in build_json._TEAM_FILES (50, 110) and in tests/test_parse_team_intro.py:52-55 (50/12/110).",
+      "suggested_fix": "Delete the constant, or have build_json and the test import it as the single source."
+    },
+    {
+      "severity": "low",
+      "category": "dead-code",
+      "file": "pipeline/hanviet.py",
+      "line": 169,
+      "title": "Functions used only by tests: stat_focus_vn/STAT_MAP and parse_coexist_csv.build_content_links",
+      "evidence": "`stat_focus_vn` (with STAT_MAP, whose '全' key is unreachable) is referenced only in tests/test_hanviet.py:48-56. `parse_coexist_csv.build_content_links` (line 76) and `pipeline/coexist-source-record-map.json` are used only by tests/test_parse_coexist_csv.py. Nothing imports parse_coexist_csv and it has no CLI, so refreshing season-content-links.json from a new CSV needs ad-hoc Python.",
+      "suggested_fix": "Remove stat_focus_vn/STAT_MAP. Give parse_coexist_csv a documented CLI (it is the generator for season-content-links.json), or record in season-team-data.md that it is a library with no CLI."
+    },
+    {
+      "severity": "low",
+      "category": "hygiene",
+      "file": "pipeline/localization-reviews/site-review-final-000.json",
+      "line": 1,
+      "title": "15 committed reviewer outputs are not referenced by any receipt batch",
+      "evidence": "site-translation-reviews.json has 193 batches with 193 distinct outputPaths. The directory has 208 files, and 15 are orphans, e.g. site-review-final-000/006/009/010, site-review-v5-016/022/026/030/031/053/055/073/081/088/089. validate_review_receipts reads only `batch.outputPath`, so the gate never loads them.",
+      "suggested_fix": "Delete the orphans, or move them to an archive folder if they are historical evidence."
+    },
+    {
+      "severity": "low",
+      "category": "hygiene",
+      "file": "pipeline/recommended-missing-translations.json",
+      "line": 20,
+      "title": "The translation-gap report is pinned to an old Recommended generation",
+      "evidence": "The committed report has sourceGeneration.generationId fb8b3871…, indexSha256 a773c207…. Regenerating to /tmp against the current src/data/recommended-reference/current.json gives f93a51ea…, indexSha256 0b140bc9… (still 0 missing).",
+      "suggested_fix": "Regenerate it as part of the publish step, or stop committing this derived report."
+    },
+    {
+      "severity": "low",
+      "category": "doc-drift",
+      "file": "docs/unified-lookup.md",
+      "line": 73,
+      "title": "The promote/recover docs point to activation evidence that no longer matches the repo",
+      "evidence": "The doc says '`phase3-final-2` là evidence committed hiện tại' and shows `--activation pipeline/lookup-output/activation-phase3-final/activation-manifest.json` (line 50). The only transactions present are site-vi-260914-1625 and site-vi-260926-1928, both `committed`; the latter matches generation lookup:064fd2d5… in data/lookup-manifest.json.",
+      "suggested_fix": "Update the current-evidence sentence and use a generic `<activation-manifest>` placeholder in the example."
+    },
+    {
+      "severity": "low",
+      "category": "hygiene",
+      "file": "pipeline/sgsdeck_identity.py",
+      "line": 9,
+      "title": "Duplicated canonical-JSON, slug, sha and lock helpers across modules; the guards have already drifted apart",
+      "evidence": "Canonical JSON is defined 7 times: build_recommended_reference:36, crawl_sgsdeck_recommended:38, recommended_identity:11, recommended_team_dedup:16, lookup_translations:33, unified_lookup_identity:69, season_validation:8. Two of them (lookup_translations, unified_lookup_identity) omit `allow_nan=False`. The Vietnamese slug is defined 6 times: sgsdeck_identity:9, unified_lookup_identity:266 (both produce canonical IDs for the same namespaces), team_route_handles:121, season_validation:79, parse_khaihoang:136, query_sgsdeck_catalog:21. The sha256 helper is defined 5 times. The promotion.lock guard exists 3 times with different rules: build_dict.py:118-131 also rejects journals in `activation-prepared`/`writing`, but build_season_data.dictionary_exclusion (line 36) only takes the lock.",
+      "suggested_fix": "Put canonical_json/slug/sha256 and the lookup exclusion guard (lock plus journal check) into one pipeline helper module and import it everywhere."
+    },
+    {
+      "severity": "low",
+      "category": "logic",
+      "file": "pipeline/build_season_data.py",
+      "line": 36,
+      "title": "The season writer builds its lock path from --output-dir, so the documented candidate run does not lock against repo promotion",
+      "evidence": "`lock = output_dir.parent / \"pipeline/lookup-output/promotion.lock\"`. With the documented `--output-dir /tmp/tqccl-season-candidate` (season-team-data.md:14), the lock goes to /tmp/pipeline/lookup-output/promotion.lock and creates that directory tree. Meanwhile build_season_data still reads identity catalogs from ROOT/data (line ~266), with no exclusion against the repo's promotion.",
+      "suggested_fix": "Always lock ROOT/pipeline/lookup-output/promotion.lock (as promote_unified_lookup does via LOCK_RELATIVE), whatever the output dir is."
+    },
+    {
+      "severity": "low",
+      "category": "logic",
+      "file": "pipeline/suggest_aliases.py",
+      "line": 30,
+      "title": "suggest_aliases output is mostly noise: it compares raw names and ignores aliases already in aliases.json",
+      "evidence": "It counts `h[\"nameRaw\"]` instead of normalize.parse_hero().baseName, and never applies aliases.json. A real run shows 13 hero clusters, and 11 of them are variant pairs, not typos ('SP Tuân Úc | SP Tuân Úc(S)', 'SP Gia Cát Lượng | Gia Cát Lượng', 'Khương Duy | Khương Duy(S)'…). Typos that aliases.json already fixes keep coming back (all 11 tactic clusters, 'Tôn Thương Hương'). It also scans 'Team Đô Úy.html', which build_json excludes. Note: aliases.json `_note` says hero aliases apply to baseName.",
+      "suggested_fix": "Collect parse_hero(nameRaw)['baseName'], skip names already present as alias keys, and use the same file list as build_json._TEAM_FILES."
+    },
+    {
+      "severity": "low",
+      "category": "doc-drift",
+      "file": "pipeline/build_json.py",
+      "line": 1,
+      "title": "The build_json docstring and architecture doc describe behaviour the code does not have",
+      "evidence": "The docstring says 'Verify per-file count, log diff fail-fast. Deterministic output (UTF-8, sort key)', but `_write` uses `sort_keys=False` and no diff is logged. docs/system-architecture.md:38 says build_json 'dự kiến ghi' the four files, but main() always writes teams/facets/coexist/khaihoang.json.",
+      "suggested_fix": "Fix the docstring, and replace 'dự kiến ghi' with 'ghi đè' plus a link to the rebuild warning (see the ID-shift finding)."
+    },
+    {
+      "severity": "low",
+      "category": "logic",
+      "file": "pipeline/hanviet.py",
+      "line": 131,
+      "title": "COMPOUND_READINGS says longest-match but the code takes the first match",
+      "evidence": "The comment at lines 88 and 130 says 'Áp longest-match' / 'ưu tiên longest-match', but the code is `next((c for c in COMPOUND_READINGS if s.startswith(c, i)), None)`, which picks the first key in insertion order. This is harmless today (only two 2-character keys) but wrong as soon as overlapping compounds are added.",
+      "suggested_fix": "Iterate `sorted(COMPOUND_READINGS, key=len, reverse=True)`."
+    }
+  ],
+  "checked_but_ok": [
+    "`python3 -m pipeline.site_localization check --root . --stage public`: exitCode 0, problems [], uiMissingSources [], coverage missing 0 (5591/5591), including the uncommitted policy and UI-obligation edits.",
+    "`python3 -m pipeline.team_route_handles --check`: the ledger matches generation f93a51ea… (1366 recommended, 166 legacy, 17 Khai hoang handles).",
+    "`python3 -m pipeline.query_sgsdeck_catalog validate`: valid, 6 categories.",
+    "build_team_tier rebuilt in memory equals the committed data/team-tier.json (31 entries).",
+    "recommended-other-teams.json localTeamsSha256, teamTierSha256 and mappingFileSha256 all match the current files; inputTeamRows 166 == len(teams.json).",
+    "lookup-review-report.json registry/map/baseline/source hashes all match the current inputs (its only reader is a test; no writer exists).",
+    "data/{tactics,heroes-dict,lookup-catalog,lookup-manifest}.json are byte-identical to the latest committed promotion; both transaction journals are `committed`.",
+    "Every aliases.json tactic target exists in data/tactics.json, and no source typo leaks into it.",
+    "No duplicate keys in any pipeline dict literal (AST scan), which rules out silent Hán-Việt overrides in HV.",
+    "The build_season_data ↔ season_validation ↔ parse_coexist_csv circular imports are safe (lazy imports; each module imports cleanly on its own).",
+    "recommended_team_dedup: the dedup key is order-independent over holders and tactics, and unresolved source identities are treated as wildcards through _possibly_duplicate.",
+    "raw_crawl_cache.json and pipeline/sgsdeck-cache/ are ignored and untracked; the transactions/ folder is ignored.",
+    "Scoped legacy tests pass: tests.test_build, test_parse_team_intro, test_parse_secondary, test_build_books_dict, test_build_team_tier (29 tests, all OK; local HTML present). They do not cover the real books map vs the real facets.",
+    "suggest_team_tier matches heroes by hanViet; for the heroes in teams.json this matches exactly as many names as `viet` would (64/77), so no drift."
+  ]
+}

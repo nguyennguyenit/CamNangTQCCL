@@ -1,0 +1,153 @@
+{
+  "summary": "Read-only review of the js/ runtime core. I built findings from the code and grep, then checked the main ones by serving the built dist/ (its js/ is byte-identical to the working tree, per `diff -rq js dist/js`) and driving it with Playwright Chromium. Six findings were reproduced in the browser: #4 two-requests-to-teams.json, #5 Season select vs list, #6 Cùng Tồn double scenario picker, #8 error-message regex, #13 placeholder hero names, #14 copied link carries `from`. The rest come from code reading and grep. Throwaway scripts lived in /tmp and are deleted; no repo files were touched.",
+  "findings": [
+    {
+      "severity": "high",
+      "category": "logic",
+      "file": "js/season-context.js",
+      "line": 36,
+      "title": "A regex with the `v` flag can break every JS-driven page on older Safari/iOS 16 [INFERENCE: browser support]",
+      "evidence": "`ensure(raw ? !/[\\p{C}&&[^\\n\\r\\t]]/v.test(value) : ...)` is the only use of the `v` flag in js/. The `v` flag is ES2024: Chrome 112+, Firefox 116+, Safari 17+. An engine without it throws a SyntaxError when it parses the module. season-context.js is statically imported by app.js (line 15), season-ui-state.js (line 2) and render.js (line ~864, `import { resolveSelectionScore }`). render.js is in turn imported by team-detail.js and khaihoang-detail.js. So all 8 section pages and all detail pages would render an empty mount, and `data-boot` would never be set. playwright.config.mjs only tests `Desktop Chrome`, so CI cannot catch this.",
+      "suggested_fix": "Rewrite without `v`, e.g. `/(?![\\n\\r\\t])\\p{C}/u`, or `/\\p{C}/u` after stripping \\n\\r\\t. Optionally add a WebKit or older-engine smoke project."
+    },
+    {
+      "severity": "high",
+      "category": "dead-code",
+      "file": "js/team-pk.js; js/meta-cu.js; js/tactics.js (also js/hero-list.js → js/hero-detail.js)",
+      "line": 1,
+      "title": "Orphan modules still ship in the public artifact manifest",
+      "evidence": "`initTeamPk`, `initMetaCu` and `initTactics` are imported nowhere; grep over js/, src/, tests-js/, tests-e2e/ and scripts/ finds no importer of team-pk.js, meta-cu.js or hero-list.js. No page `<script>` loads them: only app.js, team-detail.js, khaihoang-detail.js and site-chrome.js are entry points. Yet src/lib/public-artifact-manifest.mjs lines 28, 37, 50 and 55 publish hero-list, meta-cu, tactics and team-pk. The only other references are tests: tests-js/tactics-data.test.mjs (for `tacticDescriptions`), hero-list.test.mjs and hero-detail.test.mjs.",
+      "suggested_fix": "Delete team-pk.js, meta-cu.js, tactics.js, hero-list.js and hero-detail.js (move `tacticDescriptions` if the data test still needs it). Remove them from the manifest and update docs/codebase-summary.md."
+    },
+    {
+      "severity": "high",
+      "category": "dead-code",
+      "file": "js/team-filter-section.js",
+      "line": 27,
+      "title": "About 60% of team-filter-section.js is unreachable legacy UI",
+      "evidence": "`createTeamFilterSection` (lines 10–167, with `facetCount`) is only called from the orphan team-pk.js and meta-cu.js. `createSeasonTeamSection` (line 180) has 0 callers anywhere. That makes further code dead in production: render.js `seasonTeamCard` (line 846) is only called by createSeasonTeamSection; render.js `teamCard`/`statusBadge`/`recommendBadge`/`STATUS_LABEL` are only reached through those two paths; `applyFilters`/`emptyState` in filters.js are only called by createTeamFilterSection; `validateTeamFilters`/`filterSeasonRows`/`rowFacet` in season-ui-state.js are only called by createSeasonTeamSection. render.js `coexistGroup` (line 314) has 0 references, tests included. The file header still says “dùng chung cho cả 3 tab Team PK / Đô Úy / Meta cũ”.",
+      "suggested_fix": "Remove the whole dead chain, with the tests that only cover it (filters.test.mjs applyFilters cases, season-ui-state filter cases, team-tier-badge on teamCard). Keep `normalizeText`/`teamSearchBlob` if they are still used."
+    },
+    {
+      "severity": "medium",
+      "category": "logic",
+      "file": "js/website-display.js",
+      "line": 87,
+      "title": "Serial waterfall loads ~2.4 MB of unrelated sources on every section and detail page",
+      "evidence": "`for (const [path, expected] of Object.entries(document.sourceHashes)) { const source = await loadBytes(path); ... }` verifies all 8 sources (coexist, heroes-dict, khaihoang, lookup-catalog, lookup-manifest, season-content-links, tactics, teams) one after another. Measured on /doi-chuan/<team>/ with 150 ms latency injected: 9 strictly serial requests (each starts about 1 ms after the previous one ends); content appears after ~1.9 s. team-detail.js has no byte cache, so /data/teams.json is requested twice (once at 1321 ms, again at 1481 ms). /khai-hoang/ issues 11 data requests, although the page only needs khaihoang.json. This contradicts team-detail.js line 1: “chỉ tải đúng payload đã pin”.",
+      "suggested_fix": "Hash the sources in parallel (`Promise.all`). Better: verify only the sources the caller actually localizes (pass a path allowlist). In team-detail.js, reuse one memoizing byte loader as khaihoang-detail.js does."
+    },
+    {
+      "severity": "medium",
+      "category": "ui-ux",
+      "file": "js/team-filter-section.js",
+      "line": 531,
+      "title": "Đội chuẩn Season dropdown lies when `?season=all` (the link Tra cứu generates)",
+      "evidence": "renderSeasonOptions has no 'all' option for family 'recommended', and `if (...some(option.value===current)) season.value=current` silently falls back to the first option. unified-lookup.js lines 507 and 560 link to `/doi-chuan/?season=all&q=…`. Reproduced on /doi-chuan/?season=all: the select shows “OG · Binh Diễn Xuân Thu (25)” while the count reads “396 / 1366 đội” (all seasons). Picking the displayed option fires no `change`, so the user cannot switch to OG either.",
+      "suggested_fix": "Add an explicit “Tất cả mùa” option for recommended, or make readRecommendedQuery reject `all` for this family and change the Tra cứu link."
+    },
+    {
+      "severity": "medium",
+      "category": "ui-ux",
+      "file": "js/app.js; js/team-filter-section.js",
+      "line": 396,
+      "title": "Cùng Tồn shows two scenario pickers that disagree",
+      "evidence": "app.js line 396 builds the “Mùa” `<select id=season-scenario>` and placeSeasonControls moves it into `.coexist-head`. createSeasonCoexistSection also renders its own `.coexist-scenarios` button row (visible whenever the scope has ≥2 scenarios). Reproduced on /cung-ton/: the select shows “Tất cả — tham khảo” while the “OG · Binh Diễn Xuân Thu” button is pressed. Clicking “PK-S26” writes only `?group=…`, the select stays “Tất cả — tham khảo”, and the title becomes “Cùng tồn 1 · PK-S26 …”. The two controls also list scenarios in opposite order (select: PK-S26, OG; buttons: OG, PK-S26).",
+      "suggested_fix": "Use one control: either drive the scenario buttons from `?scenario=`, or hide the select on Cùng Tồn and let the buttons own the scope."
+    },
+    {
+      "severity": "medium",
+      "category": "dead-code",
+      "file": "js/app.js",
+      "line": 236,
+      "title": "renderTeams builds rows for sections that no longer exist, twice at boot",
+      "evidence": "Lines 245–246 call `sections['team-pk']?.update(...)` and `sections['meta-cu']?.update(...)`, but grep shows `sections[...] =` is only ever assigned for 'team-chuan' and 'team-khac' (lines 430 and 434). On /doi-chuan/, /doi-khac/ and /cung-ton/ (all have #season-controls), every renderScope still maps all 166 legacy teams (projection.unknown under 'all-reference'). Each row calls `assignDerivedFactions([team],heroesDict)` at line 242, which rebuilds the 202-hero index per team. Boot then runs this twice: `refresh()` (which calls renderScope, line 446) followed by `renderScope()` again at line 473. `queryForSection`, and the imports `bestTier`/`resolveSelectionScore`/`defaultSeasonSelection`/`assignDerivedFactions`/`tierIndex`, exist only for this path. The rows are only consumed by `rows.find(row=>row.configId===state.configId)`, and data/season-team-configs.json is `[]`.",
+      "suggested_fix": "Delete the team-pk/meta-cu updates and queryForSection. Build the index once, and only resolve the single row when `state.configId` is set. Drop the duplicate `renderScope()` at line 473."
+    },
+    {
+      "severity": "medium",
+      "category": "logic",
+      "file": "js/team-detail.js",
+      "line": 144,
+      "title": "Detail-page error classification by regex mislabels verification failures as network errors",
+      "evidence": "`const verification = /xác minh|không khớp|hợp lệ|định danh|đúng một/i.test(error?.message)`. Tested with node: “Nguồn dữ liệu đã thay đổi: data/teams.json” (website-display.js line 91), “Không tìm thấy vị trí/trường nội dung tiếng Việt” (lines 43/46), “Dữ liệu đội gốc sai định dạng.” and “Thiếu vân tay dữ liệu đội gốc.” (recommended-reference-state.js lines 213/217) all return NETWORK. A deploy-skew or hash mismatch therefore tells the user “Hãy kiểm tra kết nối rồi thử lại” and offers a retry that can never succeed. khaihoang-detail.js uses the opposite strategy (an `isNetworkError` regex over the fetch messages), so the two detail pages disagree.",
+      "suggested_fix": "Classify network errors positively (fetch TypeError or `: \\d{3}$`, as khaihoang-detail.js does) and treat everything else as verification. Or throw typed errors."
+    },
+    {
+      "severity": "low",
+      "category": "logic",
+      "file": "js/app.js",
+      "line": 209,
+      "title": "Closing the config detail on Cùng Tồn drops focus",
+      "evidence": "Escape (line 209) and onClose (line 257) call `sections[pageSection]?.focus?.()`. `sections['coexist']` is never assigned (coexistUI lives in its own variable, line 214), so after “Đóng chi tiết” the button is removed and focus falls to `<body>`. Latent for now: no configs are published, but e2e season-lookup.spec.mjs exercises /cung-ton/?config=….",
+      "suggested_fix": "Register coexistUI as `sections.coexist`; it already exposes `focus()`."
+    },
+    {
+      "severity": "low",
+      "category": "hygiene",
+      "file": "js/team-detail-navigation.js",
+      "line": 23,
+      "title": "SECTION_QUERY_KEYS keeps retired filter keys for Cùng Tồn and the tools",
+      "evidence": "`'/cung-ton/': [...'q','faction','unit','tier','source','sort','stars'...]` and `'/soi-doi/'`/`'/goi-y-doi/'`: `['q','faction','unit','tier','source','sort','stars']`. Neither Cùng Tồn (createSeasonCoexistSection has no search/filter) nor analyze.js/roster-recommend-ui.js reads any of these keys (grep for searchParams there finds nothing). So stale keys survive in `from` return URLs and are never stripped.",
+      "suggested_fix": "Narrow the lists to keys each page actually owns: `/cung-ton/`: group, config, scenario, ruleset; tools: [] after the app.js strip."
+    },
+    {
+      "severity": "low",
+      "category": "dead-code",
+      "file": "js/app.js",
+      "line": 443,
+      "title": "Unused locals and error detail swallowed",
+      "evidence": "tsc --noUnusedLocals: `app.js(443,9) 'lookupUI' is declared but its value is never read`; `season-context.js(152,27) 'data'` (unused param of validateRegistry). Also the catch block at app.js line ~508 ignores `err`, always replaces `{message}` with “không xác định” and never logs, so a boot failure shows “Lỗi tải dữ liệu: không xác định.” with no console trace.",
+      "suggested_fix": "Drop `lookupUI` and the `data` param. `console.error(err)` in the boot catch."
+    },
+    {
+      "severity": "low",
+      "category": "dead-code",
+      "file": "js/detail-actions.js; js/team-detail-navigation.js",
+      "line": 6,
+      "title": "Exports nobody imports",
+      "evidence": "SOURCE_LINK_LABEL, COPY_LINK_LABEL, COPY_FALLBACK_LABEL, COPIED_MESSAGE and COPY_FAILED_MESSAGE: 0 references outside detail-actions.js (tests included). `clearReturnSnapshot` (team-detail-navigation.js line ~405) is only referenced by tests-js/team-detail-navigation.test.mjs.",
+      "suggested_fix": "Un-export the constants. Delete clearReturnSnapshot and its test."
+    },
+    {
+      "severity": "low",
+      "category": "ui-ux",
+      "file": "js/recommended-reference-render.js (outside target; seen from the Đội chuẩn page)",
+      "line": 24,
+      "title": "Hero names show the placeholder “Nội dung tiếng Việt chưa sẵn sàng” on 6 Đội chuẩn cards",
+      "evidence": "On /doi-chuan/?season=all, 6 `.hn` nodes contain the placeholder: cards yxms-002, 004, 005, 006, 007, 008. Example yxms-005: CHỦ Tôn Thượng Hương, PHÓ 1 Lăng Thống, PHÓ 2 “Nội dung tiếng Việt chưa sẵn sàng”. A full-text scan of all 8 section pages found no raw CJK leaking; only these placeholders.",
+      "suggested_fix": "Add the missing Vietnamese names to the translation/registry for those yxms records. The CJK guard is correct; the gap is data."
+    },
+    {
+      "severity": "low",
+      "category": "ui-ux",
+      "file": "js/detail-actions.js",
+      "line": 49,
+      "title": "“Sao chép liên kết đội” copies the sharer's private `from` state",
+      "evidence": "`const href = globalThis.location?.href` is copied as is. Detail hrefs carry `?from=` (observed `/doi-chuan/og-40y-lu-bo-cung-vuong-di/?from=%2Fdoi-chuan%2F`, and with filters `from` includes q, faction, …). The recipient's “Quay lại” link then points to the sharer's filtered list.",
+      "suggested_fix": "Copy the canonical URL: strip `from`, keep `variant` for Khai hoang and legacy variants."
+    },
+    {
+      "severity": "low",
+      "category": "doc-drift",
+      "file": "docs/codebase-summary.md; docs/system-architecture.md; docs/project-overview-pdr.md",
+      "line": 36,
+      "title": "Docs describe retired modules and tabs as live",
+      "evidence": "codebase-summary.md lines 36–39: “`js/team-pk.js`, `js/meta-cu.js` | Chọn source, cấu hình filter…”, “`js/hero-list.js`, `js/hero-detail.js`, `js/tactics.js` | Tra cứu tướng/chiến pháp local”. system-architecture.md line 102: “`filters.js`: search/filter team” (only the dead path uses it); line 218: “Lỗi JSON bắt buộc: Team PK hiển thị…”. project-overview-pdr.md FR-01: “Điều hướng 9 section bằng tab và hash URL” (now 8 path pages, hash is legacy-only). Stale code comments: render.js line 53 “STATUS_LABEL … cũng dùng ở app.js” (app.js does not import it); filters.js line 1 “Bộ lọc Team PK”.",
+      "suggested_fix": "Update these docs and comments in the same change that deletes the dead modules."
+    }
+  ],
+  "checked_ok": [
+    "No visible CJK text on /doi-chuan/, /doi-khac/ (cards and ?view=bang), /cung-ton/, /khai-hoang/, /tra-cuu/, /chieu-mo/, /soi-doi/, /goi-y-doi/ (DOM text walk, hidden and aria-hidden excluded). No 'undefined'/'null'/'NaN' text on the list pages. No page errors.",
+    "Cùng Tồn back button after changing the Mùa select correctly restores the scenario (pushState + popstate → refresh).",
+    "safeReturnUrl / normalizedSectionTarget reject cross-origin, `//`, control characters and non-section paths, and strip the loop keys (detail, legacyTeam, legacyVariant, from). No open redirect found.",
+    "legacy-routes.js uses own-property lookups for hash names, so `__proto__`/`constructor` hashes are safe.",
+    "Khai hoang selection flow: URL pair (khTeam/khVariant) plus the history/session snapshot map is validated against inventory; the stale-entry filter and the 64-entry cap are correct.",
+    "team-view.js: URL > storage > Thẻ precedence is correct; storage exceptions are contained; canonicaliseView uses replaceState (no extra history entry).",
+    "site-nav.js / site-chrome.js: exclusive dropdowns, Escape/focus restore, focus trap and scroll-lock cleanup on popstate/pagehide/desktop resize. Theme storage failures do not block toggling. The 1279px CSS breakpoint matches DESKTOP_QUERY 1280.",
+    "The khaihoang-detail.js byteLoader drops failed requests so “Thử lại” really refetches; its popstate listener is reachable (hash navigation after replaceState).",
+    "season-context.js exports that look test-only (projectSeasonCandidates, resolveTeamConfig, selectionFromEntry) are consumed by mcp-worker/src/domain/season-domain-adapter.ts, so they are not dead.",
+    "config.js and hero-portrait.js: live consumers exist (analyze.js, roster-recommend-ui.js, unified-lookup.js); the http→https upgrade and no-referrer handling are fine.",
+    "The dist/ used for smoke checks has js/ byte-identical to the working tree (`diff -rq js dist/js` is empty)."
+  ]
+}

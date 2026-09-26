@@ -1,0 +1,153 @@
+{
+  "findings": [
+    {
+      "severity": "medium",
+      "category": "logic",
+      "file": "worker/src/ratelimit.ts",
+      "line": 14,
+      "title": "KV write failures are uncaught, and each analysis does 4 KV writes (2 of them to hot global keys)",
+      "evidence": "incr() calls `await kv.put(key, …)` (ratelimit.ts:14) with no try/catch. One successful request writes to h:<hour>:<ip> (l.67), d:<day> (l.77), m:<month> (l.78) and ts:<token> (turnstile.ts:52). index.ts:59/77 has no try/catch around checkLimits or commitGlobalUsage; only callModel is wrapped. Throwaway smoke: a KV mock that throws `KV PUT failed: 429` on the second write to `d:` gave `req1 200`, then `req2 UNCAUGHT from fetch handler: KV PUT failed: 429 Too Many Requests`. [INFERENCE] Cloudflare KV documents 1 write/s per key and 1000 writes/day on the Free plan. So two users finishing in the same second, or passing ~250 analyses/day on Free, makes the handler throw. The response is then a Cloudflare 500 with no CORS headers, the browser sees a network error, and DAILY_CAP=500 can never actually be reached.",
+      "suggested_fix": "Wrap the KV counter/replay writes in try/catch (best-effort, since the docs already say the cap is not hard). Or move the global counters to a Durable Object or the Workers Rate Limiting binding. Also make sure every error path returns json(..., cors)."
+    },
+    {
+      "severity": "medium",
+      "category": "logic",
+      "file": "js/analyze.js",
+      "line": 489,
+      "title": "Choosing a new image while an analysis is running leaves the Analyze button disabled until reload",
+      "evidence": "click handler: `state.busy = true` (l.477) … `finally { if (started !== generation) return; … state.busy = false; … turnstile.reset }` (l.492-495). pickFile does `const started = ++generation` (l.414). The drop button (l.455) and paste (l.467) still work while busy. Picking or pasting a new image mid-request bumps generation, so the finally returns early: busy stays true, the already-used token is never cleared or reset, and paint() keeps `analyzeBtn.disabled = !(… && !state.busy)` (l.382) at true for good. The same logic exists in HEAD, so this is not caused by the uncommitted diff.",
+      "suggested_fix": "In finally, always set `state.busy = false`, clear the token and call turnstile.reset. Use the generation check only to decide whether to render the result."
+    },
+    {
+      "severity": "medium",
+      "category": "logic",
+      "file": "js/roster-recommend-ui.js",
+      "line": 122,
+      "title": "The three scan buttons share one single-use Turnstile token, so starting two scans at once fails one of them",
+      "evidence": "`let token = \"\"` (l.66) is shared. Each button checks only `if (!token)`, disables only itself (l.126), calls `callWorker(imageDataUrl, token, scan.mode)` (l.130) and clears the token in finally (l.144). Clicking 'Đọc Tướng' and then 'Đọc Chiến pháp' before the first finishes sends the same token twice. The worker rejects the second one: siteverify single-use gives 403 'Xác thực chống bot thất bại', or the KV seen-key check gives 'Token xác thực đã dùng', and that rejection still counts against the per-IP limit (checkLimits increments before Turnstile). The token is also cleared when compressImage fails before any request is sent.",
+      "suggested_fix": "Take the token atomically (`const t = token; token = \"\"`) before awaiting, or disable all scan buttons while one is in flight. Only reset Turnstile once a request was actually sent."
+    },
+    {
+      "severity": "medium",
+      "category": "logic",
+      "file": "worker/src/hero-names.ts",
+      "line": 5,
+      "title": "The portrait-recognition hero list in the Vision prompt is stale (112 names vs 202 heroes), and the regen command now outputs the wrong script",
+      "evidence": "HERO_NAMES_CN has 112 entries. data/heroes-dict.json now has 202 records, and 94 of them have no match (by chinese or aliases) in the worker list, e.g. 周倉, 鍾繇, 無雙甄姬, 丁奉, 馬岱, 廖化, SP 龐德. VISION_PROMPT (model.ts) forces nameFromPortrait picks to come 'trong DANH SÁCH HỢP LỆ', so these heroes can never be identified from portraits. The documented regen command `[h['chinese'] for h in …]` now emits Traditional names with spaces ('SP 呂蒙'), while the prompt demands Simplified (简体).",
+      "suggested_fix": "Regenerate from the simplified alias (e.g. the alias without spaces and in Simplified script) of all 202 records, fix the comment/command, and preferably generate it at build time or add a drift check."
+    },
+    {
+      "severity": "medium",
+      "category": "logic",
+      "file": "mcp-worker/src/security/bearer-auth.ts",
+      "line": 81,
+      "title": "When the rotation window expires, the whole MCP service returns 503, including requests with the valid current token",
+      "evidence": "validateBearerConfiguration runs on every request with now(). `nextTokenNotAfterMs <= nowMs` → invalidConfiguration() (l.81-87), and worker.ts:259 maps that to 503 SERVICE_MISCONFIGURED before any token comparison. Throwaway run of createWorker with CURRENT+NEXT, NOT_AFTER=+10min: `within overlap, current token: 200`, then 11 min later `after NOT_AFTER, current token: 503 {\"error\":{\"code\":\"SERVICE_MISCONFIGURED\"}}`. The plan (phase-04 line 134) says 'expired next and removed old are rejected deterministically', which implies only the next token is rejected, not a full outage. So any operator delay past 15 minutes takes MCP down.",
+      "suggested_fix": "After expiry, ignore/reject only the NEXT slot (treat it as absent) and keep CURRENT valid. If total fail-closed is really intended, update the plan/docs (docs/mcp-research-server.md §Rotation) to say so explicitly."
+    },
+    {
+      "severity": "medium",
+      "category": "dead-code",
+      "file": "mcp-worker/src/domain/legacy-domain-adapter.ts",
+      "line": 374,
+      "title": "15 of the 17 LegacyDomainAdapter methods are never called in production code",
+      "evidence": "Only `legacyDomainAdapter.findSimilarTeams` (research-handlers.ts:551) and `.recommendTeams` (recommendation-service.ts:220,232) are called from src/. normalizeText, toVietHanViet, matchDictionary, searchDictionary, mapRead, mapTeamRead, mapHeroesScan(+Rich), mapTacticsScan(+Rich), mapBuiltTeamsScan(+Rich), serialize/deserializeBrowserScanState and normalizeTeamCandidate have 0 src callers. The only thing keeping them is test/domain/legacy-domain-adapter.test.ts:40-58, which pins the method-name list (a wiring test).",
+      "suggested_fix": "Delete the unused methods and their imports from js/*, and replace the name-list test with behavior tests for findSimilarTeams and recommendTeams only."
+    },
+    {
+      "severity": "low",
+      "category": "dead-code",
+      "file": "mcp-worker/src/domain/contracts.ts",
+      "line": 68,
+      "title": "MCP exports with no references anywhere, or used only by tests",
+      "evidence": "Zero references repo-wide (excluding node_modules/dist): LOOKUP_SIDECAR_FILES (data/lookup-bundle.ts:6), ReleasePointer (data/artifact-contracts.ts:45, left over from the R2 era), UnresolvedObservation (contracts.ts:68), ConfirmationDecision (:74), RecommendationResult (:159), ResultPage (:165), DomainError (:170). Used only by tests: requiresConfirmation (normalization-service.ts:645, which is literally `return true`, so its test is a tautology), applyConfirmedCorrections (:649), fromScrubSafeDigest (digest-encoding.ts:47), createHeroSlot (contracts.ts:268), parseBrowserScanConfirmation (:285), parseConfirmationBinding (:293), parseRosterSnapshot (:415). Also AuthenticatedBearer.slot (bearer-auth.ts:31/144) is set but never read.",
+      "suggested_fix": "Delete them along with the tests that only exercise them (and the `requiresConfirmation` tautology test)."
+    },
+    {
+      "severity": "low",
+      "category": "dead-code",
+      "file": "worker/src/schema.ts",
+      "line": 162,
+      "title": "Dead leftovers in the Vision worker",
+      "evidence": "parseAndValidate() (schema.ts:162) is used only by test/schema.test.ts:70-72; production uses parseAndValidateByMode. AnalyzeResult.raw? (schema.ts:16) is never set or read anywhere in worker/ or js/. GuardOk.bytes (guard.ts:12/61) is returned but never read by index.ts (grep `\\.bytes` in src = 0).",
+      "suggested_fix": "Remove parseAndValidate (point its test at parseAndValidateByMode), the raw field, and the bytes field."
+    },
+    {
+      "severity": "low",
+      "category": "logic",
+      "file": "worker/src/guard.ts",
+      "line": 61,
+      "title": "The image guard decodes and re-encodes the whole image char-by-char: 13-32 ms CPU for a 1.4 MB image",
+      "evidence": "decodeBase64 loops over atob output (l.22-29), then toBase64 builds the string again with `bin += String.fromCharCode` in a loop (l.64-68) just to rebuild the data URI. Throwaway timing of validateImage on a 1.4 MB JPEG payload on this machine: 31.9 / 20.9 / 17.1 / 15.5 / 13.1 ms. [INFERENCE] On the Workers Free plan (10 ms CPU), images near MAX_IMAGE_BYTES may hit error 1102. Typical client output (1600px, q0.82) is smaller.",
+      "suggested_fix": "Validate magic bytes on only the first ~16 decoded bytes, estimate decoded size from the base64 length/padding, and build dataUri from the already-validated base64 body (`data:${mime};base64,${b64}`) instead of re-encoding."
+    },
+    {
+      "severity": "low",
+      "category": "logic",
+      "file": "worker/src/index.ts",
+      "line": 44,
+      "title": "The body is fully parsed before any size or rate check; image size is only checked after Turnstile",
+      "evidence": "`payload = await request.json()` (l.44) runs before checkLimits (l.59) and validateImage (l.71). There is no Content-Length precheck, so an oversized body (any client, any size up to Cloudflare's request limit) is fully read and parsed, and also costs a per-IP KV write and a siteverify call, before being rejected with 413.",
+      "suggested_fix": "Reject early when Content-Length > maxImageBytes*1.4 + small overhead (return 413 with CORS) before request.json()."
+    },
+    {
+      "severity": "low",
+      "category": "logic",
+      "file": "worker/src/turnstile.ts",
+      "line": 48,
+      "title": "siteverify result is checked only for `success`; the KV replay layer is an extra read + write with no real security value",
+      "evidence": "`if (!data?.success)` (l.48). hostname and action from the siteverify response are not checked. The file's own header says siteverify already enforces single use and the KV check is not atomic. Yet each request pays a KV get plus `kv.put(seenKey…)` (l.52), adding to the write pressure described in the first finding.",
+      "suggested_fix": "Check `data.hostname === new URL(ALLOWED_ORIGIN).hostname` (and action if the widget sets one). Consider dropping the KV seen-token write, since siteverify returns `timeout-or-duplicate` for reused tokens."
+    },
+    {
+      "severity": "low",
+      "category": "logic",
+      "file": "worker/src/model.ts",
+      "line": 101,
+      "title": "Upstream status leaks to the client, and a DashScope quota/auth failure looks like a retryable generic error",
+      "evidence": "`new Error(`Model upstream lỗi ${resp.status}`)` with status 502 is returned verbatim, because index.ts only hides the message when status===500. This contradicts code-standards.md:97 'Không leak upstream detail'. On the browser side, STATUS_ERRORS has no 502 and UPSTREAM_ERRORS has no 'model upstream lỗi …', so upstream 401/403/429 (key revoked, free quota used up) all show 'Không thể phân tích ảnh. Vui lòng thử lại.' Each retry then burns per-IP and global quota.",
+      "suggested_fix": "Return a fixed message such as 'Dịch vụ AI tạm lỗi' (distinct for upstream 429 vs 5xx), and add the matching entries to UPSTREAM_ERRORS or STATUS_ERRORS[502]."
+    },
+    {
+      "severity": "low",
+      "category": "logic",
+      "file": "worker/src/ratelimit.ts",
+      "line": 85,
+      "title": "IP hash is unsalted, truncated SHA-256 (easily reversible for IPv4), and per-IP buckets are per IPv6 /128",
+      "evidence": "hashIp = first 8 bytes of SHA-256(ip) with no salt (l.82-86), so all 2^32 IPv4 addresses can be enumerated offline. That makes the 'IP chỉ lưu dạng hash' promise (README, code-standards.md:99) weak. The key `h:${hourBucket}:${ipHash}` is per full address, so a client holding an IPv6 /64 can rotate addresses and bypass RL_PER_HOUR; only Turnstile and the global cap still apply.",
+      "suggested_fix": "Use HMAC-SHA256 with a secret salt, and bucket IPv6 by /64 before hashing."
+    },
+    {
+      "severity": "low",
+      "category": "logic",
+      "file": "mcp-worker/src/worker.ts",
+      "line": 126,
+      "title": "MCP HTTP error statuses differ from the SDK/spec convention",
+      "evidence": "boundedResponse returns HTTP 500 `{error:{code:'RESULT_TOO_LARGE'}}` with no JSON-RPC envelope (l.126), even though this is a client-actionable condition (format-result.ts says 'Thu hẹp truy vấn'). request-guards.ts:73 rejects a bad Origin with 400 ORIGIN_NOT_ALLOWED, while the bundled SDK transport (webStandardStreamableHttp.js:156-159) uses 403 for invalid Origin. [INFERENCE] The MCP 2025-11-25 transport spec requires 403.",
+      "suggested_fix": "Use 403 for Origin. For an oversized result, return a JSON-RPC error or a 413-class status instead of 500."
+    },
+    {
+      "severity": "low",
+      "category": "doc-drift",
+      "file": "worker/README.md",
+      "line": 8,
+      "title": "Worker README contract and hosting info are stale",
+      "evidence": "The README shows the request as `{image, turnstileToken}` with no `mode`, and the response as `{ heroes: [{ nameCn, tacticsCn[], statFocusCn }] }` without booksCn/nameFromPortrait or the 3 scan modes (compare schema.ts ANALYZE_MODES and docs/system-architecture.md:179-184). It also says 'KHÔNG deploy lên GitHub Pages' and gives the example ALLOWED_ORIGIN `https://user.github.io` (l.4, l.23), while the site is Cloudflare Pages `https://tqccl.pages.dev` (wrangler.toml:15, astro.config.mjs:31).",
+      "suggested_fix": "Update the README architecture block to list the 4 modes and their response shapes, and replace the GitHub Pages references with Cloudflare Pages."
+    }
+  ],
+  "checked_but_ok": [
+    "Browser↔worker mode names match exactly: ANALYZE_MODES (schema.ts:20) = analyzeTeamImage/scanHeroes/scanTactics/scanBuiltTeams; js/roster-recommend-ui.js:16-18 and callWorker default. validateWorkerResult (analyze.js:96-129) matches each worker validator's output shape (teamName always set, level/redStars numbers, nameFromPortrait only true).",
+    "Every Vision worker error string has a Vietnamese mapping in UPSTREAM_ERRORS (analyze.js:37-65), except the 502 'Model upstream lỗi N' (reported above).",
+    "CORS: requests without Origin are allowed by design and documented (system-architecture.md:189, code-standards.md:95). Browsers always send Origin on cross-origin POST, and the application/json preflight blocks other origins, so the missing-Origin case only affects non-browser clients, which can forge Origin anyway. Turnstile is the real gate. Preview origins being rejected is intentional (deployment-guide.md:145).",
+    "Rate-limit time keys: UTC day/month/hour buckets via toISOString slices, with TTLs 7200s/2d/40d all longer than their windows. Month/day rollover is correct. Global counters are committed only after Turnstile and the image guard (H2), as documented.",
+    "Turnstile: 300s TTL ≥ KV minimum 60s; the token is SHA-256 hashed before use as a KV key; missing or blank tokens are rejected before siteverify.",
+    "Magic bytes: PNG/JPEG/WebP (RIFF+WEBP at offset 8) are correct; decoded size is checked, plus an early base64-length check; the 64-byte minimum is fine.",
+    "MCP bearer compare: both sides SHA-256 digested, then compared with a constant-time loop (equalBytes). Tokens need ≥32 decoded bytes, base64url only; the header regex is strict. The fingerprint is a digest prefix, not the token.",
+    "MCP request limits: method/Origin/Content-Length/Content-Type/Encoding/Accept guards run before auth; the streaming body read is bounded (readBoundedJson); in-flight release happens in finally on every path; isolate-local limiters are documented (docs/mcp-research-server.md:106).",
+    "MCP static assets: run_worker_first=true plus the asset path regex `^/[a-z0-9-]+\\.json$` means no public asset exposure and no path traversal.",
+    "worker/.claude, worker/.wrangler, mcp-worker/.wrangler, .wrangler-dist, dist, coverage and .worker-assets are all gitignored and untracked (git ls-files shows none).",
+    "Vision worker Env vars: every field in config.ts Env is read (REGION/MODEL_ENDPOINT via resolveEndpoint). The mcp-worker env vars in wrangler.jsonc all map to runtimeConfiguration.",
+    "Vision worker tests and typecheck run in CI through check-repository.ts (vision-worker-tests / vision-worker-typecheck)."
+  ]
+}
