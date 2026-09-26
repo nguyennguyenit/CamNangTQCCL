@@ -314,16 +314,46 @@ export function getRecruitTrackerSummary(state, { accountId, date = localDateFro
   };
 }
 
+const PULL_RESULTS = new Set(["miss", "fiveStar"]);
+const SLOT_STATUSES = new Set(["pending", "miss", "fiveStar"]);
+const DAILY_SLOT_KEYS = new Set(DAILY_SLOT_DEFS.map((slot) => slot.key));
+
+function isRecord(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function isId(value) {
+  return typeof value === "string" && value.length > 0;
+}
+
+/** Mọi phần tử banner/lượt quay/lượt ngày đúng kiểu và chỉ trỏ tới tài khoản, banner có trong file. */
+function recordsAreConsistent(value) {
+  const accountIds = new Set(value.accounts.map((account) => account.id));
+  if (!value.banners.every((banner) => isRecord(banner) && isId(banner.id) && typeof banner.name === "string")) return false;
+  const bannerIds = new Set([DAILY_BANNER_ID, ...value.banners.map((banner) => banner.id)]);
+  const eventOk = (event) => isRecord(event)
+    && accountIds.has(event.accountId) && bannerIds.has(event.bannerId)
+    && typeof event.pulls === "number" && Number.isFinite(event.pulls) && event.pulls >= 1
+    && PULL_RESULTS.has(event.result);
+  if (!value.pullEvents.every(eventOk)) return false;
+  if (value.dailyStates === undefined) return true;
+  const slotOk = (slot) => isRecord(slot) && DAILY_SLOT_KEYS.has(slot.key) && SLOT_STATUSES.has(slot.status);
+  return Array.isArray(value.dailyStates) && value.dailyStates.every((daily) => isRecord(daily)
+    && accountIds.has(daily.accountId) && bannerIds.has(daily.bannerId) && typeof daily.date === "string"
+    && Array.isArray(daily.slots) && daily.slots.every(slotOk));
+}
+
 export function validateRecruitTrackerImport(value) {
   if (!value || typeof value !== "object") return { ok: false, error: "Dữ liệu không hợp lệ." };
   if (value.schemaVersion !== SCHEMA_VERSION) return { ok: false, error: "Sai phiên bản dữ liệu." };
   if (!Array.isArray(value.accounts) || value.accounts.length === 0) return { ok: false, error: "Thiếu tài khoản." };
-  if (!value.accounts.every((account) => account && typeof account.id === "string" && typeof account.name === "string")) {
+  if (!value.accounts.every((account) => isRecord(account) && isId(account.id) && typeof account.name === "string")) {
     return { ok: false, error: "Tài khoản không hợp lệ." };
   }
   if (!value.accounts.some((account) => account.id === value.activeAccountId)) return { ok: false, error: "Tài khoản hiện tại không hợp lệ." };
   if (!Array.isArray(value.banners)) return { ok: false, error: "Thiếu banner." };
   if (!Array.isArray(value.pullEvents)) return { ok: false, error: "Thiếu lịch sử quay." };
+  if (!recordsAreConsistent(value)) return { ok: false, error: "Dữ liệu không hợp lệ." };
   return { ok: true, summary: { accounts: value.accounts.length, banners: value.banners.length, events: value.pullEvents.length } };
 }
 

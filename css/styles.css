@@ -7839,6 +7839,12 @@ body[data-page-section="roster-recommend"] .layout {
   color: var(--muted);
 }
 
+/* Nút "Bỏ đội": nút phụ theo nội dung, không kéo hết bề ngang thẻ. */
+.roster-locked-team > .ana-btn {
+  align-self: flex-start;
+  margin-top: var(--space-4);
+}
+
 .roster-results-slot {
   display: grid;
   gap: var(--space-22);

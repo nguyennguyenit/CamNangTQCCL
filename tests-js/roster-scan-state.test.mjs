@@ -143,3 +143,13 @@ test("serialize loại secret lồng trong evidence nhưng giữ provenance an t
   assert.equal(text.includes("khong-duoc-giu"), false);
   assert.equal(serialized.ownedHeroes[0].evidence[0].sourceScope, "currentTurnImage");
 });
+
+test("đọc lại cùng ảnh đội đã xây không nhân đôi đội khóa (thứ tự tướng/chiến pháp không quan trọng)", () => {
+  const scan = { teams: [{ teamName: "Đội Thục", heroes: ["Lưu Bị", "Quan Vũ"], tactics: ["Nhân Đức", "Uy Chấn"] }] };
+  let state = applyScanResult(createInitialRosterScanState(), "builtTeams", scan);
+  state = applyScanResult(state, "builtTeams", scan);
+  assert.equal(state.lockedTeams.length, 1);
+  state = applyScanResult(state, "builtTeams", { teams: [{ teamName: "Đội Thục (đọc lại)", heroes: ["Quan Vũ", "Lưu Bị"], tactics: ["Uy Chấn", "Nhân Đức"] }] });
+  assert.equal(state.lockedTeams.length, 1);
+  assert.equal(serializeRosterScanState({ lockedTeams: [...scan.teams, ...scan.teams] }).lockedTeams.length, 1);
+});

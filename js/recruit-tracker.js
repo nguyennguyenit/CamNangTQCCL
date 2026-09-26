@@ -590,6 +590,8 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
         render();
         return;
       }
+      // Chạy thử đúng đường vẽ trước khi ghi: file lọt kiểm tra mà vẫn làm hỏng tracker thì không ghi đè.
+      getRecruitTrackerSummary(parsed, { date: currentDate() });
       const summary = validation.summary;
       const ok = confirm(`Ghi đè dữ liệu hiện tại?\nFile có ${summary.accounts} tài khoản, ${summary.banners} đợt chiêu mộ, ${summary.events} lượt quay.\nNên Xuất JSON sao lưu trước nếu chưa chắc.`);
       if (!ok) return;

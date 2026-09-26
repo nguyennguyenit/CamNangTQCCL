@@ -191,6 +191,25 @@ test.describe("Chiêu mộ", () => {
     await expect(section.locator("[data-hero-input]")).toBeFocused();
     await expect(section.locator(".rt-form-section h2")).toContainText("Ghi 5★ · free_1");
   });
+
+  test("nhập JSON hỏng: localStorage giữ nguyên, báo lỗi, công cụ vẫn ghi lượt được", async ({ page }) => {
+    await seed(page, { tqcclRecruitTracker: RECRUIT_FIXTURE });
+    page.on("dialog", async (dialog) => { await dialog.accept(); });
+    await page.goto("/theo-doi-chieu-mo/");
+    await waitForBoot(page);
+    const section = page.locator("#section-recruit-tracker");
+    const before = await page.evaluate(() => localStorage.getItem("tqcclRecruitTracker"));
+
+    const broken = structuredClone(RECRUIT_FIXTURE);
+    broken.pullEvents = [null];
+    await section.locator(".rt-file").setInputFiles({ name: "hong.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(broken)) });
+
+    await expect(section.locator(".rt-message")).toHaveText("Dữ liệu không hợp lệ.");
+    expect(await page.evaluate(() => localStorage.getItem("tqcclRecruitTracker"))).toBe(before);
+    await expect(section.locator(".rt-pity-value")).toHaveText("1");
+    await section.locator(".rt-slot").first().getByRole("button", { name: "Không ra", exact: true }).click();
+    await expect(section.locator(".rt-pity-value")).toHaveText("2");
+  });
 });
 
 test.describe("Soi đội", () => {
@@ -316,6 +335,40 @@ test.describe("Soi đội", () => {
     await run.click();
     await expect.poll(() => tokens).toEqual(["fixture-token", "fixture-token-1"]);
   });
+
+  test("đổi ảnh trong lúc đang soi: nút Soi đội mở lại sau khi giải Turnstile, kết quả ảnh cũ không hiện", async ({ page }) => {
+    await page.route("https://challenges.cloudflare.com/**", (route) =>
+      route.fulfill({ contentType: "application/javascript", body: TURNSTILE_STUB }));
+    let release;
+    const held = new Promise((resolve) => { release = resolve; });
+    let calls = 0;
+    await page.route(WORKER_ROUTE, async (route) => {
+      calls += 1;
+      await held;
+      await route.fulfill({ json: { heroes: [{ nameCn: "SP荀彧" }] } });
+    });
+
+    await page.goto("/soi-doi-tu-anh/");
+    await waitForBoot(page);
+    const section = page.locator("#section-analyze");
+    const run = section.getByRole("button", { name: "Soi đội", exact: true });
+    const resets = () => turnstileResets(page, "#section-analyze .ana-turnstile");
+    const input = section.locator("input[type=file]");
+
+    await input.setInputFiles({ name: "anh-cu.png", mimeType: "image/png", buffer: transparentPng });
+    await run.click();
+    await expect.poll(() => calls).toBe(1);
+    await input.setInputFiles({ name: "anh-moi.png", mimeType: "image/png", buffer: transparentPng });
+    await expect(section.locator(".ana-file-name")).toHaveText("anh-moi.png");
+
+    release();
+    await expect.poll(resets).toBe(1);
+    await page.evaluate(() => window.__turnstileSolve());
+    await expect(run).toBeEnabled();
+    expect(await resets()).toBe(1);
+    await expect(section.locator(".ana-read")).toBeHidden();
+    await expect(section.locator(".ana-similar")).toBeHidden();
+  });
 });
 
 test.describe("Gợi ý đội", () => {
@@ -431,6 +484,42 @@ test.describe("Gợi ý đội", () => {
     }
   });
 
+  test("đội khóa có nút bỏ (giữ sau tải lại) và nút xóa toàn bộ kho đưa về Chưa đọc", async ({ page }) => {
+    await seed(page, {
+      "tqccl.rosterRecommend.scanState.v1": {
+        ownedHeroes: [{ name: "Lưu Bị" }],
+        ownedTactics: [{ name: "Nhân Đức" }],
+        lockedTeams: [
+          { teamName: "Đội khóa A", heroes: ["Lưu Bị"], tactics: ["Nhân Đức"] },
+          { teamName: "Đội khóa B", heroes: ["Tào Tháo"], tactics: ["Hổ Báo Kỵ"] },
+        ],
+        confirmed: false,
+        updatedAt: "2026-07-25T00:00:00.000Z",
+      },
+    });
+    await page.goto("/goi-y-doi-tu-kho/");
+    await waitForBoot(page);
+    const section = page.locator("#section-roster-recommend");
+    const lockedTeams = section.locator(".roster-locked-team");
+    await expect(lockedTeams).toHaveCount(2);
+
+    await lockedTeams.filter({ hasText: "Đội khóa A" }).getByRole("button", { name: "Bỏ đội Đội khóa A" }).click();
+    await expect(lockedTeams).toHaveCount(1);
+    await expect(lockedTeams).toContainText("Đội khóa B");
+    await page.reload();
+    await waitForBoot(page);
+    await expect(lockedTeams).toHaveCount(1);
+    await expect(lockedTeams).toContainText("Đội khóa B");
+
+    page.once("dialog", (dialog) => dialog.accept());
+    await section.getByRole("button", { name: "Xóa toàn bộ kho", exact: true }).click();
+    await expect(section.locator(".roster-scan-count")).toHaveText(["Chưa đọc", "Chưa đọc", "Chưa đọc"]);
+    await expect(lockedTeams).toHaveCount(0);
+    await page.reload();
+    await waitForBoot(page);
+    await expect(section.locator(".roster-scan-count")).toHaveText(["Chưa đọc", "Chưa đọc", "Chưa đọc"]);
+  });
+
   test("mobile: nút Sửa kho đã đọc mở/đóng khu kiểm tra và giữ focus; thêm/bỏ chip giữ focus", async ({ page, request }) => {
     await seedRoster(page, request, { single: true });
     await page.setViewportSize({ width: 390, height: 844 });
@@ -475,6 +564,25 @@ test.describe("Gợi ý đội", () => {
     await expect(addButton).toBeFocused();
     await expect(input).toHaveValue("");
     await expect(heroPanel).toContainText("Tướng thử nghiệm");
+  });
+
+  test("đội mạnh chưa xây được ghi tên tướng thiếu theo slot, không lộ mã canonical", async ({ page, request }) => {
+    await seedRoster(page, request);
+    await page.goto("/goi-y-doi-tu-kho/");
+    await waitForBoot(page);
+    const section = page.locator("#section-roster-recommend");
+    await section.getByRole("button", { name: "Xác nhận dữ liệu đã đọc" }).click();
+    await section.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
+
+    const blocked = section.locator(".roster-results section").filter({ has: page.locator("h3", { hasText: "Đội mạnh nhưng chưa thể xây dựng" }) });
+    const missingHeroes = blocked.locator(".roster-result-meta").filter({ hasText: "Thiếu tướng:" });
+    await expect(missingHeroes.first()).toBeVisible();
+    await expect(blocked).not.toContainText("hero:");
+    const recommended = section.locator(".roster-team-list .roster-result-meta");
+    await expect(recommended.first()).toBeVisible();
+    for (const line of await recommended.allInnerTexts()) {
+      if (line.startsWith("Chiến pháp:") || line.startsWith("Biến thể:")) expect(line).not.toContain("tactic:");
+    }
   });
 });
 

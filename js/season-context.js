@@ -33,7 +33,7 @@ function object(value, required, optional = []) {
 function list(value, size) { ensure(Array.isArray(value) && (size === undefined || value.length === size)); return value; }
 function text(value, max = 512, raw = false) {
   ensure(typeof value === 'string' && [...value].length <= max);
-  ensure(raw ? !/[\p{C}&&[^\n\r\t]]/v.test(value) : value.length > 0 && value.trim() === value && !/\p{C}/u.test(value));
+  ensure(raw ? !/(?![\n\r\t])\p{C}/u.test(value) : value.length > 0 && value.trim() === value && !/\p{C}/u.test(value));
   return value;
 }
 function id(value) { return text(value, 128); }

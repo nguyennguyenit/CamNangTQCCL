@@ -308,3 +308,12 @@ for (const fullBox of [false, true]) {
     assert.equal(new Set(result.portfolioTeams.map(entry => entry.team.id)).size, 2);
   });
 }
+
+test('raw text keeps newline, carriage return and tab but rejects other control, format and private-use characters', async () => {
+  const outcome = async notes => {
+    const data = seasonFixture(); data['season-team-configs'][0].notes = notes;
+    try { await validateSeasonBundle(refreshConfigProofs(data)); return 'ok'; } catch (error) { assert.ok(error instanceof SeasonContextError); return 'rejected'; }
+  };
+  assert.equal(await outcome('Dòng 1\nDòng 2\r\n\tthụt lề'), 'ok');
+  for (const bad of ['a\u0000b', 'a\u0007b', 'a\u200bb', 'a\ue000b']) assert.equal(await outcome(bad), 'rejected', JSON.stringify(bad));
+});

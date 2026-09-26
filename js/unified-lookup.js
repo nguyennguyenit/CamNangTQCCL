@@ -11,6 +11,7 @@ import { lookupProfile, tacticTypeLabel } from "./lookup-detail.js";
 import { heroPortrait } from "./hero-portrait.js";
 import { createHeroSummaryLoader } from "./hero-summaries.js";
 import { teamDetailHref } from "./team-detail-navigation.js";
+import { normalizeText } from "./filters.js";
 
 export const LOOKUP_GROUPS = Object.freeze(["heroes", "tactics", "equipment", "advisors", "troop-mods", "buildings"]);
 /** Nhãn nhóm dùng chung cho chip ở trang Tra cứu và menu điều hướng (SiteLayout). */
@@ -75,10 +76,6 @@ export function formatLookupQuery(route) {
   return params.toString();
 }
 
-function normalized(value) {
-  return String(value ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("vi").trim();
-}
-
 function entry(group, record) {
   const nameVi = String(record.viet ?? record.nameVi ?? record.hanViet ?? "").trim();
   const aliases = [
@@ -87,7 +84,8 @@ function entry(group, record) {
     ...(Array.isArray(record.aliasesZh) ? record.aliasesZh : []),
     record.chinese,
   ].filter((value) => typeof value === "string" && value.length > 0);
-  return { id: record.id, group, nameVi, aliases, record };
+  const searchKeys = [nameVi, ...aliases].map(normalizeText);
+  return { id: record.id, group, nameVi, aliases, searchKeys, record };
 }
 
 export function buildLookupCorpus({ heroes, tactics, catalog }) {
@@ -106,9 +104,9 @@ export function buildLookupCorpus({ heroes, tactics, catalog }) {
 
 export function searchLookupGroup(corpus, { group = null, query = "", page = 1, pageSize = PAGE_SIZE } = {}) {
   const source = group ? (corpus.groups[group] ?? []) : LOOKUP_GROUPS.flatMap((key) => corpus.groups[key]);
-  const needle = normalized(query);
+  const needle = normalizeText(query);
   const matches = needle
-    ? source.filter((item) => [item.nameVi, ...item.aliases].some((value) => normalized(value).includes(needle)))
+    ? source.filter((item) => item.searchKeys.some((key) => key.includes(needle)))
     : source;
   const safePage = Number.isInteger(page) && page > 0 ? page : 1;
   const start = (safePage - 1) * pageSize;

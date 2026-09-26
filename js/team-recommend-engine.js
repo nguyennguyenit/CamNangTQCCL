@@ -142,16 +142,14 @@ function assignHeroes(candidate, ownedHeroes, usedHeroes) {
   const ownedBySlot = candidate.heroSlots.map((slot) =>
     slot.alternatives.filter(({ canonicalId }) => ownedHeroes.has(canonicalId)),
   );
-  const missingHeroSlots = ownedBySlot.flatMap((owned, index) =>
-    owned.length === 0
-      ? [candidate.heroSlots[index].alternatives.map(({ canonicalId }) => canonicalId)]
-      : [],
-  );
+  const missingSlots = candidate.heroSlots.filter((_, index) => ownedBySlot[index].length === 0);
+  const missingHeroSlots = missingSlots.map((slot) => slot.alternatives.map(({ canonicalId }) => canonicalId));
   if (missingHeroSlots.length > 0) {
     return {
       ok: false,
       assignments: [],
       missingHeroSlots,
+      missingHeroSlotNames: missingSlots.map((slot) => slot.alternatives.map(({ displayName }) => displayName)),
       conflictingHeroSlots: [],
     };
   }
@@ -544,24 +542,14 @@ export function recommendTeams({
     const entries = lockedTeams
       .slice(0, maxTeams)
       .map((team, index) => lockedEntry(team, index));
-    const heroCounts = new Map();
-    const tacticCounts = new Map();
-    for (const entry of entries) {
-      for (const { canonicalId } of entry.heroAssignments) {
-        heroCounts.set(canonicalId, (heroCounts.get(canonicalId) || 0) + 1);
-      }
-      for (const tactic of entry.selectedTactics) {
-        const canonicalId = canonicalOwnedTactic(tactic);
-        tacticCounts.set(canonicalId, (tacticCounts.get(canonicalId) || 0) + 1);
-      }
-    }
+    // Đội khóa đầu tiên giữ tài nguyên; đội khóa sau dùng lại tướng/chiến pháp đó mới là xung đột.
     for (const entry of entries) {
       const heroConflicts = entry.heroAssignments
         .map(({ canonicalId }) => canonicalId)
-        .filter((canonicalId) => heroCounts.get(canonicalId) > 1);
+        .filter((canonicalId) => seed.usedHeroes.has(canonicalId));
       const tacticConflicts = entry.selectedTactics
         .map(canonicalOwnedTactic)
-        .filter((canonicalId) => tacticCounts.get(canonicalId) > 1);
+        .filter((canonicalId) => seed.usedTactics.has(canonicalId));
       if (heroConflicts.length || tacticConflicts.length) {
         if (heroConflicts.length) {
           diagnostics.heroConflicts.push({
@@ -606,8 +594,8 @@ export function recommendTeams({
         ...candidateMetadata(candidate),
         tier: candidate.tier,
         status: "missing-hero",
-        missingHeroes: missing,
         missingHeroSlots: built.heroUse.missingHeroSlots,
+        missingHeroSlotNames: built.heroUse.missingHeroSlotNames,
       });
       continue;
     }

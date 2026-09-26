@@ -97,6 +97,19 @@ python3 -m pipeline.build_recommended_reference \
   --output src/data/recommended-reference
 ```
 
+Khi máy không có cache crawler (chỉ sửa `data/teams.json` hoặc identity map),
+sinh lại ledger Đội khác từ source pack đã capture thay cho `--cache`. Pack phải
+khớp `baseline.sourcePins` của `pipeline/site-localization-policy.json`, lệch thì
+lệnh từ chối và không ghi ledger:
+
+```bash
+python3 -m pipeline.recommended_team_dedup \
+  --teams data/teams.json --team-tier data/team-tier.json \
+  --pack pipeline/localization-inputs/recommended.json \
+  --identity-map pipeline/recommended-identity-map.json \
+  --output pipeline/recommended-other-teams.json
+```
+
 `recommended-identity-map.json` là ledger alias đã review. Identity nguồn chưa
 giải quyết được luôn là wildcard khi đối chiếu, không phải bằng chứng rằng một
 đội khác Team chuẩn. Team có alternatives chưa tách thành cấu hình cụ thể cũng

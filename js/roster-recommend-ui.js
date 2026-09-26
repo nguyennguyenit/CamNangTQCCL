@@ -6,8 +6,10 @@ import {
   ROSTER_SCAN_STORAGE_KEY,
   addCanonicalItem,
   applyScanResult,
+  clearRosterScanState,
   deserializeRosterScanState,
   removeItem,
+  removeLockedTeam,
   serializeRosterScanState,
 } from "./roster-scan-state.js";
 import { recommendTeams } from "./team-recommend-engine.js";
@@ -193,16 +195,17 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     return { list, empty, paint };
   }
 
-  function teamList(getItems) {
+  function teamList(getItems, onRemove) {
     const empty = el("p", { class: "roster-empty" }, "Chưa có đội khóa. Đội khóa giữ nguyên tài nguyên đang dùng khi gợi ý.");
     const list = el("div", { class: "roster-locked-list" });
     function paint() {
       const items = getItems() || [];
-      list.replaceChildren(...items.map((team) =>
+      list.replaceChildren(...items.map((team, index) =>
         el("article", { class: "roster-locked-team" }, [
           el("strong", {}, team.teamName),
           el("p", {}, `Tướng: ${(team.heroes || []).join(", ") || "-"}`),
           el("p", {}, `Chiến pháp: ${(team.tactics || []).join(", ") || "-"}`),
+          el("button", { type: "button", class: "ana-btn", "aria-label": `Bỏ đội ${team.teamName}`, onClick: () => onRemove(index) }, "Bỏ đội"),
         ]),
       ));
       list.hidden = items.length === 0;
@@ -225,7 +228,11 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
 
   const heroList = itemList(() => state.ownedHeroes, "Chưa đọc tướng.", "heroes", removeItemAt);
   const tacticList = itemList(() => state.ownedTactics, "Chưa đọc chiến pháp.", "tactics", removeItemAt);
-  const lockedList = teamList(() => state.lockedTeams);
+  const lockedList = teamList(() => state.lockedTeams, (index) => {
+    state = removeLockedTeam(state, index);
+    saveState(state);
+    rerender();
+  });
   const heroPanel = el("section", { class: "roster-review-panel" }, [
     el("h3", {}, "Tướng đã đọc"),
     heroList.list,
@@ -303,6 +310,13 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     el("option", { value: "redStars" }, "Nhiều hột"),
   ]);
 
+  const clearBtn = el("button", { type: "button", class: "ana-btn", onClick: () => {
+    if (!confirm("Xóa toàn bộ kho đã đọc (tướng, chiến pháp, đội khóa)? Không hoàn tác được.")) return;
+    state = clearRosterScanState();
+    saveState(state);
+    rerender();
+  } }, "Xóa toàn bộ kho");
+
   confirmBtn.addEventListener("click", () => {
     state = { ...serializeRosterScanState(state), confirmed: true, updatedAt: new Date().toISOString() };
     saveState(state);
@@ -373,7 +387,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
         ...(result.blockedStrongTeams || []).slice(0, 5).map((entry) =>
           el("article", { class: "roster-result-team muted" }, [
             el("strong", { class: "roster-result-name" }, entry.team.name),
-            el("p", { class: "roster-result-meta" }, entry.missingHeroes?.length ? `Thiếu tướng: ${entry.missingHeroes.join(", ")}` : `Thiếu chiến pháp: ${(entry.missingTactics || []).join(", ")}`),
+            el("p", { class: "roster-result-meta" }, entry.missingHeroSlotNames?.length ? `Thiếu tướng: ${entry.missingHeroSlotNames.map((names) => names.join(" / ")).join(", ")}` : `Thiếu chiến pháp: ${(entry.missingTactics || []).join(", ")}`),
           ]),
         ),
       ]),
@@ -409,6 +423,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
         modeSelect,
         confirmBtn,
         recommendBtn,
+        clearBtn,
       ]),
       el("div", { class: "roster-scan-grid" }, scanControls.map((control) => control.card)),
       toggleReviewBtn,

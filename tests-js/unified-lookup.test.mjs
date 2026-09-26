@@ -313,6 +313,24 @@ test("tìm tiếng Việt bỏ dấu và không phân biệt hoa thường", () 
   assert.equal(searchLookupGroup(built, { group: "heroes", query: "Lưu Bị" }).items[0].id, "hero:luu-bi");
 });
 
+test("tìm không dấu coi đ/Đ là d/D", () => {
+  const built = buildLookupCorpus({
+    heroes: [
+      { id: "hero:dieu-thuyen", viet: "Điêu Thuyền", chinese: "貂蟬" },
+      { id: "hero:dong-trac", viet: "Đổng Trác", chinese: "董卓" },
+    ],
+    tactics: [{ id: "tactic:doat-hon", viet: "Đoạt Hồn Hiệp Đấu", chinese: "奪魂挾鬥" }],
+    catalog: { equipment: [], specials: [], advisors: [], troopMods: [], buildings: [] },
+  });
+  const ids = (group, query) => searchLookupGroup(built, { group, query }).items.map((item) => item.id);
+  assert.deepEqual(ids("heroes", "dieu thuyen"), ["hero:dieu-thuyen"]);
+  assert.deepEqual(ids("heroes", "dong trac"), ["hero:dong-trac"]);
+  assert.deepEqual(ids("heroes", "DIEU"), ["hero:dieu-thuyen"]);
+  assert.deepEqual(ids("tactics", "hiep dau"), ["tactic:doat-hon"]);
+  assert.deepEqual(ids(null, "doat hon"), ["tactic:doat-hon"]);
+  assert.deepEqual(ids("heroes", "Điêu"), ["hero:dieu-thuyen"]);
+});
+
 test("chữ Hán chỉ là alias tìm kiếm cho mọi nhóm", () => {
   const built = corpus();
   const cases = [

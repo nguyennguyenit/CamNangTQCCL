@@ -168,6 +168,21 @@ function normalizeLockedTeam(team) {
   };
 }
 
+function lockedTeamKey(team) {
+  return JSON.stringify([[...team.heroes].sort(), [...team.tactics].sort()]);
+}
+
+/** Đội khóa trùng tướng + chiến pháp (không kể thứ tự) chỉ giữ bản đầu tiên. */
+function uniqLockedTeams(teams) {
+  const seen = new Set();
+  return (teams || []).map(normalizeLockedTeam).filter((team) => {
+    const key = lockedTeamKey(team);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 export function applyScanResult(state, type, result) {
   const next = serializeRosterScanState(state || createInitialRosterScanState());
   if (type === "heroes") {
@@ -175,7 +190,7 @@ export function applyScanResult(state, type, result) {
   } else if (type === "tactics") {
     next.ownedTactics = uniqByName([...(next.ownedTactics || []), ...(result?.tactics || [])]);
   } else if (type === "builtTeams") {
-    next.lockedTeams = [...(next.lockedTeams || []), ...(result?.teams || []).map(normalizeLockedTeam)];
+    next.lockedTeams = uniqLockedTeams([...(next.lockedTeams || []), ...(result?.teams || [])]);
   }
   next.confirmed = false;
   next.updatedAt = new Date().toISOString();
@@ -200,6 +215,19 @@ export function removeItem(state, type, name) {
   };
 }
 
+export function removeLockedTeam(state, index) {
+  return {
+    ...state,
+    lockedTeams: (state?.lockedTeams || []).filter((_, position) => position !== index),
+    confirmed: false,
+  };
+}
+
+/** Kho trống như lần đầu mở công cụ (tướng, chiến pháp, đội khóa đều bỏ). */
+export function clearRosterScanState() {
+  return createInitialRosterScanState();
+}
+
 export function lockedConstraints(state) {
   return {
     heroes: [...new Set((state?.lockedTeams || []).flatMap((team) => team.heroes || []))],
@@ -211,7 +239,7 @@ export function serializeRosterScanState(state) {
   return {
     ownedHeroes: uniqByName(state?.ownedHeroes || []),
     ownedTactics: uniqByName(state?.ownedTactics || []),
-    lockedTeams: (state?.lockedTeams || []).map(normalizeLockedTeam),
+    lockedTeams: uniqLockedTeams(state?.lockedTeams),
     confirmed: state?.confirmed === true,
     updatedAt: state?.updatedAt || null,
   };

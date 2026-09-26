@@ -489,8 +489,8 @@ export function initAnalyze(deps, mount) {
       if (started !== generation) return;
       setStatus(describeAnalyzeError(e, ANALYZE_ACTION_ERROR), "err");
     } finally {
-      if (started !== generation) return;
-      // Turnstile token dùng 1 lần -> reset, yêu cầu xác thực lại.
+      // Luôn mở khoá, kể cả khi người dùng đã chọn ảnh khác: token Turnstile dùng 1 lần -> reset,
+      // yêu cầu xác thực lại. Lượt cũ chỉ bị bỏ kết quả/trạng thái ở trên, không được kẹt nút.
       state.token = null;
       state.busy = false;
       if (turnstileRendered && window.turnstile) window.turnstile.reset(tsBox);

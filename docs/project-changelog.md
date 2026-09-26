@@ -1,5 +1,18 @@
 # Project Changelog
 
+## 2026-09-27 (7 lỗi nặng)
+
+### Fixed
+
+- Trang dùng `js/season-context.js` không còn hỏng trên Safari 16: regex cờ `v` thay bằng `/(?![\n\r\t])\p{C}/u` (cùng hành vi); test mới `tests-js/browser-baseline.test.mjs` kiểm mọi module JS phát hành chạy được trên cú pháp ES2022.
+- Tra cứu: tìm không dấu coi `đ`/`Đ` là `d`/`D` ("dieu thuyen" ra Điêu Thuyền); khoá tìm tính một lần mỗi mục thay vì mỗi lần gõ.
+- Gợi ý đội: dòng "Thiếu tướng:" của "Đội mạnh nhưng chưa thể xây dựng" hiện tên tướng theo từng vị trí (lựa chọn trong vị trí nối bằng " / ") thay cho mã `hero:…`.
+- Soi đội: chọn ảnh khác trong lúc đang soi không còn làm nút "Soi đội" kẹt; widget Turnstile luôn reset sau lượt soi, kết quả của ảnh cũ bị bỏ.
+- Chiêu mộ: nhập JSON kiểm từng tài khoản, gói, lượt quay, lượt ngày (khoá lượt, số lượt hữu hạn ≥ 1, tham chiếu tài khoản/gói có thật) và chạy thử trước khi ghi đè; file hỏng báo "Dữ liệu không hợp lệ.", dữ liệu cũ giữ nguyên.
+- Gợi ý đội: đọc lại cùng ảnh đội đã xây không nhân đôi đội khóa; hai đội khóa dùng chung tướng/chiến pháp thì giữ đội đầu, đội sau vào xung đột (trước đây bỏ cả hai và tướng của chúng bị gợi ý lại). Mỗi đội khóa có nút "Bỏ đội", thêm nút "Xóa toàn bộ kho" (có hỏi xác nhận).
+- `pipeline.recommended_team_dedup` nhận `--pack pipeline/localization-inputs/recommended.json` thay cho `--cache` khi máy không có cache crawler; pack phải khớp `baseline.sourcePins` (ledger sinh ra trùng byte với ledger hiện có).
+- Bản dịch: thêm 4 obligation `authored-vi` (`ui:roster/locked-remove`, `locked-remove-aria`, `clear-all`, `clear-all-confirm`), policy `site-vi-260927-loi-nang`, publish generation `5c666843…` và re-pin `pipeline/team-route-handles.json`; `WORKFLOW_BUILD_ID` MCP sinh lại (engine gợi ý đội dùng chung).
+
 ## 2026-09-27 (đường dẫn công cụ)
 
 ### Changed

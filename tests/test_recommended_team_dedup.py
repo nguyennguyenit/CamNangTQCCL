@@ -1,5 +1,13 @@
+import hashlib
+import json
+import re
+import tempfile
 import unittest
+from pathlib import Path
+from unittest import mock
 
+from pipeline import crawl_sgsdeck_recommended as crawler
+from pipeline import recommended_team_dedup, site_localization
 from pipeline.recommended_identity import build_mapping
 from pipeline.recommended_team_dedup import _partial_source_holders, _possibly_duplicate, build_other_team_ledger, classify_candidates, dedup_key
 
@@ -90,6 +98,82 @@ class RecommendedDedupTest(unittest.TestCase):
         result = build_other_team_ledger(teams, recommended, {"entries": entries})
         self.assertEqual(result["counts"]["duplicate"], 1)
         self.assertEqual(result["decisions"][0]["matchingRecommended"], ["source#alternative-1"])
+
+
+ROOT = Path(__file__).resolve().parents[1]
+FIXTURES = ROOT / "tests/fixtures/sgsdeck-recommended"
+DETAIL_URL = "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-b"
+PACK = "pipeline/localization-inputs/recommended.json"
+PINNED = ("cacheInventoryHash", "cacheManifestSha256", "cachedPageBytes", "cachedPageCount",
+          "recommendedCorpusHash", "recordCount", "sourceInventoryHash")
+
+
+def _fixture_cache(cache):
+    """Crawler-layout cache of one real fixture scope holding the single pinned detail card."""
+    listing = re.sub(
+        r'<a\b[^>]*href="/recommended/[^\"]+"[^>]*>.*?</a>',
+        lambda match: match[0] if 'href="' + DETAIL_URL.removeprefix("https://sgsdeck.com") + '"' in match[0] else "",
+        (FIXTURES / "list.html").read_text(), flags=re.S,
+    ).replace("25 套交戰配置", "1 套交戰配置")
+    detail = (FIXTURES / "detail-sample.html").read_text()
+    discovered = crawler.discover_scopes((FIXTURES / "source-season-picker.html").read_text())
+    scope = next(item for item in discovered["scopes"] if item["sourceScopeId"] == "og-兵演春秋|交戰")
+    inventory = {"schemaVersion": discovered["schemaVersion"], "seasonOptions": discovered["seasonOptions"], "scopes": [scope]}
+    inventory["inventoryHash"] = "sha256:" + hashlib.sha256(crawler.canonical_json(inventory).encode()).hexdigest()
+    cache.mkdir(parents=True)
+    (cache / "scope-inventory.json").write_text(json.dumps(inventory, ensure_ascii=False), encoding="utf-8")
+    pages = {DETAIL_URL: detail.encode()}
+    with mock.patch.object(crawler, "fetch_page", lambda url, timeout=30: (url, 200, pages.get(url, listing.encode()))):
+        crawler.crawl_scope(inventory, cache, scope, minimum_interval=0)
+
+
+def _dedup(*args):
+    with mock.patch("sys.argv", ["recommended_team_dedup", *args]):
+        recommended_team_dedup.main()
+
+
+class RecommendedDedupPackTest(unittest.TestCase):
+    def test_pack_mode_matches_cache_mode_byte_for_byte_and_passes_ledger_validation(self):
+        identity_map = ROOT / "pipeline/recommended-identity-map.json"
+        common = ["--teams", str(ROOT / "data/teams.json"), "--team-tier", str(ROOT / "data/team-tier.json"),
+                  "--identity-map", str(identity_map)]
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            cache, repository = base / "cache", base / "repository"
+            _fixture_cache(cache)
+            from_cache = base / "from-cache.json"
+            _dedup(*common, "--cache", str(cache), "--output", str(from_cache))
+
+            # Repository whose reviewed pins are the fixture pack's own provenance, then capture through the CLI.
+            pack = site_localization.capture_source_pack(cache, identity_map=identity_map, other_ledger=from_cache, root=ROOT)
+            policy = site_localization.load_policy(ROOT)
+            policy["baseline"]["sourcePins"] = {
+                **{key: pack["provenance"][key] for key in PINNED},
+                "normalizedSnapshotSha256": site_localization.sha256_hex(site_localization.canonical_json_bytes(pack)),
+                "authority": policy["baseline"]["sourcePins"]["authority"],
+            }
+            (repository / "pipeline").mkdir(parents=True)
+            (repository / "pipeline/site-localization-policy.json").write_text(json.dumps(policy, ensure_ascii=False), encoding="utf-8")
+            site_localization.main(["capture", "--root", str(repository), "--cache", str(cache), "--identity-map", str(identity_map),
+                                    "--other-ledger", str(from_cache), "--output", str(repository / PACK)])
+
+            from_pack = base / "from-pack.json"
+            _dedup(*common, "--root", str(repository), "--pack", PACK, "--output", str(from_pack))
+            self.assertEqual(from_pack.read_bytes(), from_cache.read_bytes())
+            captured = site_localization.load_source_pack(repository, PACK)
+            site_localization._validate_other_ledger(json.loads(from_pack.read_bytes()), captured["inventory"],
+                                                     identity_map.read_bytes(), site_localization.pack_corpus(captured))
+
+            # A pack that no longer matches the reviewed pins is refused instead of producing a ledger.
+            policy["baseline"]["sourcePins"]["recordCount"] += 1
+            (repository / "pipeline/site-localization-policy.json").write_text(json.dumps(policy, ensure_ascii=False), encoding="utf-8")
+            refused = base / "refused.json"
+            with self.assertRaisesRegex(ValueError, "pin"):
+                _dedup(*common, "--root", str(repository), "--pack", PACK, "--output", str(refused))
+            self.assertFalse(refused.exists())
+
+            with self.assertRaises(SystemExit):
+                _dedup(*common, "--cache", str(cache), "--pack", PACK, "--output", str(refused))
 
 
 if __name__ == "__main__":

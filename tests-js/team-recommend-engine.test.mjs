@@ -162,26 +162,29 @@ test("locked assignments suy slot không đè slot tường minh xuất hiện s
   );
 });
 
-test("hai locked teams trùng resource đều bị loại thay vì chọn đội đầu", () => {
+test("hai đội khóa chung tướng: giữ đội đầu, đội sau vào xung đột, tướng đội đầu không dùng lại", () => {
+  const team = {
+    id: "reuses-locked-hero",
+    name: "Dùng lại tướng đã khóa",
+    heroes: [{ name: "Tướng A", tactics: [{ name: "Chiến Pháp Tự Do", alternatives: [] }] }],
+  };
   const result = recommendTeams({
+    teams: [team],
+    teamTier: [{ teamId: team.id, rankings: [{ tier: "T0" }] }],
+    ownedHeroes: ["Tướng A", "Tướng B"],
+    ownedTactics: ["Dùng Chung", "Khác", "Chiến Pháp Tự Do"],
     lockedTeams: [
-      {
-        teamName: "Locked A",
-        heroes: ["hero:tuong-a"],
-        tactics: ["tactic:dung-chung"],
-      },
-      {
-        teamName: "Locked B",
-        heroes: ["hero:tuong-a"],
-        tactics: ["tactic:dung-chung"],
-      },
+      { teamName: "Locked A", heroes: ["Tướng A"], tactics: ["Dùng Chung"] },
+      { teamName: "Locked B", heroes: ["Tướng A", "Tướng B"], tactics: ["Khác"] },
     ],
-    maxTeams: 2,
+    maxTeams: 3,
   });
 
-  assert.equal(result.portfolioTeams.length, 0);
-  assert.equal(result.diagnostics.heroConflicts.length, 2);
-  assert.equal(result.diagnostics.tacticConflicts.length, 2);
+  const reused = result.addTeams.some((entry) => entry.heroAssignments.some((hero) => hero.canonicalId === "hero:tuong-a"));
+  assert.equal(reused, false, `addTeams use locked heroes: ${reused}`);
+  const locked = result.portfolioTeams.filter((entry) => entry.locked).map((entry) => entry.team.name);
+  assert.deepEqual(locked, ["Locked A"]);
+  assert.deepEqual(result.diagnostics.heroConflicts.map((conflict) => conflict.teamId).filter((id) => id.startsWith("locked-")), ["locked-1"]);
 });
 
 test("selected portfolio never duplicates tactics silently", () => {
@@ -594,4 +597,28 @@ test("seasonal ID bounds count Unicode characters consistently with the bundle v
   const configId='𐀀'.repeat(128),team={id:'unicode-team',configId,candidateKey:configId,heroes:[{name:'Anh',tactics:[]}]};
   const result=recommendTeams({teams:[team],teamTier:[{teamId:team.id,candidateKey:configId,rankings:[{tier:'T0'}]}],seasonContext:{scenarioId:'s',rulesetId:'r'},ownedHeroes:['Anh']});
   assert.equal(result.portfolioTeams[0].configId,configId);
+});
+
+test("blocked strong team names each missing slot with its display alternatives, never raw IDs", () => {
+  const team = {
+    id: "missing-two-slots",
+    name: "Thiếu hai slot",
+    heroes: [
+      { name: "Mã Siêu", tactics: [{ name: "Thuyền Cỏ Mượn Tên", alternatives: [] }] },
+      { name: "Hoàng Phủ Tung", alternatives: ["SP Hoàng Phủ Tung"], tactics: [{ name: "Phong Thi Trận", alternatives: [] }] },
+      { name: "Lưu Bị", tactics: [{ name: "Giải Phiền Vệ", alternatives: [] }] },
+    ],
+  };
+  const result = recommendTeams({
+    teams: [team],
+    teamTier: [{ teamId: team.id, rankings: [{ tier: "T0" }] }],
+    ownedHeroes: ["Lưu Bị"],
+    ownedTactics: ["Thuyền Cỏ Mượn Tên", "Phong Thi Trận", "Giải Phiền Vệ"],
+    maxTeams: 1,
+  });
+  const [blocked] = result.blockedStrongTeams;
+  assert.equal(blocked.status, "missing-hero");
+  assert.deepEqual(blocked.missingHeroSlotNames, [["Mã Siêu"], ["Hoàng Phủ Tung", "SP Hoàng Phủ Tung"]]);
+  assert.equal(blocked.missingHeroSlotNames.flat().some((name) => name.startsWith("hero:")), false);
+  assert.deepEqual(result.diagnostics.missingHeroes[0].heroes, ["hero:ma-sieu", "hero:hoang-phu-tung", "hero:sp-hoang-phu-tung"]);
 });

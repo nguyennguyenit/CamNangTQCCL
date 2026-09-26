@@ -156,3 +156,42 @@ test("localStorage adapter falls back on corrupt data and saves valid JSON", () 
   assert.equal(validateRecruitTrackerImport(reloaded).ok, true);
   assert.equal(reloaded.accounts[0].name, "主账号 Main");
 });
+
+function validImport() {
+  let state = createDefaultRecruitTrackerState(NOW);
+  state = createLimitedBanner(state, { name: "Gói A" });
+  state = recordDailySlotMiss(state, { date: TODAY, slotKey: "free_1" });
+  state = recordBannerMiss(state, { bannerId: state.banners[1].id, pulls: 3, date: TODAY });
+  return JSON.parse(JSON.stringify(state));
+}
+
+const BROKEN_IMPORTS = {
+  "pullEvents chứa null": (s) => { s.pullEvents = [null]; },
+  "dailyStates chứa null": (s) => { s.dailyStates = [null]; },
+  "dailyState thiếu slots": (s) => { delete s.dailyStates[0].slots; },
+  "banners chứa null": (s) => { s.banners = [null]; },
+  "pulls không hữu hạn": (s) => { s.pullEvents[0].pulls = Infinity; },
+  "pulls không phải số": (s) => { s.pullEvents[1].pulls = "ba"; },
+  "slotKey lạ": (s) => { s.dailyStates[0].slots[0].key = "free_9"; },
+  "sự kiện trỏ account không tồn tại": (s) => { s.pullEvents[0].accountId = "acc_ghost"; },
+  "sự kiện trỏ banner không tồn tại": (s) => { s.pullEvents[1].bannerId = "banner_ghost"; },
+  "dailyState trỏ account không tồn tại": (s) => { s.dailyStates[0].accountId = "acc_ghost"; },
+};
+
+test("import rejects malformed accounts, banners, events and daily states element by element", () => {
+  assert.equal(validateRecruitTrackerImport(validImport()).ok, true);
+  for (const [label, breakIt] of Object.entries(BROKEN_IMPORTS)) {
+    const broken = validImport();
+    breakIt(broken);
+    assert.equal(validateRecruitTrackerImport(broken).ok, false, label);
+  }
+});
+
+test("any import accepted by validation can be summarized without throwing", () => {
+  for (const [label, breakIt] of Object.entries({ "hợp lệ": () => {}, ...BROKEN_IMPORTS })) {
+    const candidate = validImport();
+    breakIt(candidate);
+    if (!validateRecruitTrackerImport(candidate).ok) continue;
+    assert.doesNotThrow(() => getRecruitTrackerSummary(candidate, { date: TODAY }), label);
+  }
+});

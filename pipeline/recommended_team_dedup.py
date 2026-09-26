@@ -193,14 +193,26 @@ def build_other_team_ledger(teams, recommended_records, mapping_descriptor, team
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--teams", required=True)
-    parser.add_argument("--cache", required=True)
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--cache", help="verified crawler cache of Recommended pages")
+    source.add_argument("--pack", help="captured source pack (repository-relative), verified against the reviewed pins")
+    parser.add_argument("--root", default=".", help="repository root holding the policy and the --pack file")
     parser.add_argument("--identity-map", required=True)
     parser.add_argument("--output", required=True)
     parser.add_argument("--team-tier", required=True)
     args = parser.parse_args()
-    from pipeline.build_recommended_reference import inputs_from_cache
-    inputs = inputs_from_cache(args.cache)
-    recommended = [item for scope in inputs["details"].values() for item in scope]
+    if args.pack:
+        # The pack was captured once from the crawler cache; it is the locked Recommended source when no cache
+        # is on disk. `load_source_pack` refuses a pack that differs from the policy's reviewed source pins.
+        from pipeline.site_localization import load_source_pack, pack_corpus
+        pack = load_source_pack(Path(args.root), args.pack)
+        recommended = pack_corpus(pack)
+        inventory_hash = pack["inventory"]["inventoryHash"]
+    else:
+        from pipeline.build_recommended_reference import inputs_from_cache
+        inputs = inputs_from_cache(args.cache)
+        recommended = [item for scope in inputs["details"].values() for item in scope]
+        inventory_hash = inputs["inventory"]["inventoryHash"]
     teams_bytes = Path(args.teams).read_bytes()
     tiers_bytes = Path(args.team_tier).read_bytes()
     mapping_bytes = Path(args.identity_map).read_bytes()
@@ -209,7 +221,7 @@ def main():
     mapping = json.loads(mapping_bytes)
     result = build_other_team_ledger(teams, recommended, mapping, team_tiers)
     result.update({
-        "sourceInventoryHash": inputs["inventory"]["inventoryHash"],
+        "sourceInventoryHash": inventory_hash,
         "recommendedCorpusHash": "sha256:" + hashlib.sha256(_canonical(recommended).encode()).hexdigest(),
         "mappingFileSha256": "sha256:" + hashlib.sha256(mapping_bytes).hexdigest(),
         "localTeamsSha256": "sha256:" + hashlib.sha256(teams_bytes).hexdigest(),
