@@ -189,7 +189,7 @@ test.describe("Chiêu mộ", () => {
     // Mở form 5★: focus vào ô tướng (hành vi cũ).
     await section.locator(".rt-slot").first().getByRole("button", { name: "Ra 5★", exact: true }).click();
     await expect(section.locator("[data-hero-input]")).toBeFocused();
-    await expect(section.locator(".rt-form-section h2")).toContainText("Ghi 5★ · free_1");
+    await expect(section.locator(".rt-form-section h2")).toHaveText("Ghi 5★ · Miễn phí 1");
   });
 
   test("nhập JSON hỏng: localStorage giữ nguyên, báo lỗi, công cụ vẫn ghi lượt được", async ({ page }) => {
@@ -209,6 +209,45 @@ test.describe("Chiêu mộ", () => {
     await expect(section.locator(".rt-pity-value")).toHaveText("1");
     await section.locator(".rt-slot").first().getByRole("button", { name: "Không ra", exact: true }).click();
     await expect(section.locator(".rt-pity-value")).toHaveText("2");
+  });
+
+  test("5★ lượt ngày ghi vào đúng ô đã mở: form không có ô ngày, lịch sử ghi tên lượt tiếng Việt", async ({ page }) => {
+    await seed(page, { tqcclRecruitTracker: RECRUIT_FIXTURE });
+    await page.goto("/theo-doi-chieu-mo/");
+    await waitForBoot(page);
+    const section = page.locator("#section-recruit-tracker");
+
+    await section.locator(".rt-slot").first().getByRole("button", { name: "Ra 5★", exact: true }).click();
+    const form = section.locator(".rt-form-section");
+    await expect(form.locator("h2")).toHaveText("Ghi 5★ · Miễn phí 1");
+    await expect(form.locator('input[type="date"], input[name="date"]')).toHaveCount(0);
+    await form.locator("[data-hero-input]").fill("SP Quan Vũ");
+    await form.getByRole("button", { name: "Lưu 5★", exact: true }).click();
+
+    const row = section.locator(".rt-history-item").filter({ hasText: "SP Quan Vũ" });
+    await expect(row.locator(".rt-history-date")).toHaveText(`${todayIso()} · Danh tướng PK · Miễn phí 1`);
+    await expect(row.locator(".rt-history-pulls")).toHaveText("lượt 2/30");
+    await expect(section.locator(".rt-slot").first().locator(".rt-slot-status")).toHaveText("Ra 5★");
+  });
+
+  test("qua nửa đêm khi trang còn mở: bốn ô ngày về Chưa quay và bấm được", async ({ page }) => {
+    await page.clock.install({ time: new Date(2026, 8, 27, 23, 59, 0) });
+    await page.goto("/theo-doi-chieu-mo/");
+    await waitForBoot(page);
+    const section = page.locator("#section-recruit-tracker");
+    const slots = section.locator(".rt-slot");
+    await expect(slots).toHaveCount(4);
+    for (let index = 0; index < 4; index++) {
+      await slots.nth(index).getByRole("button", { name: "Không ra", exact: true }).click();
+    }
+    await expect(section.locator(".rt-slot-status")).toHaveText(["Không ra", "Không ra", "Không ra", "Không ra"]);
+    await expect(slots.first().getByRole("button", { name: "Không ra", exact: true })).toBeDisabled();
+
+    await page.clock.runFor(2 * 60 * 1000);
+
+    await expect(section.locator(".rt-slot-status")).toHaveText(["Chưa quay", "Chưa quay", "Chưa quay", "Chưa quay"]);
+    await expect(slots.first().getByRole("button", { name: "Không ra", exact: true })).toBeEnabled();
+    await expect(section.locator(".rt-pity-meta")).toContainText("Hôm nay 0/4");
   });
 });
 
@@ -584,6 +623,104 @@ test.describe("Gợi ý đội", () => {
       if (line.startsWith("Chiến pháp:") || line.startsWith("Biến thể:")) expect(line).not.toContain("tactic:");
     }
   });
+
+  test("kho rỗng: nút Xác nhận khoá, bước Kiểm tra và Gợi ý còn chờ", async ({ page }) => {
+    await page.goto("/goi-y-doi-tu-kho/");
+    await waitForBoot(page);
+    const section = page.locator("#section-roster-recommend");
+    await expect(section.locator(".roster-scan-count")).toHaveText(["Chưa đọc", "Chưa đọc", "Chưa đọc"]);
+    await expect(section.getByRole("button", { name: "Xác nhận dữ liệu đã đọc" })).toBeDisabled();
+    await expect(section.getByRole("button", { name: "Gợi ý 5 đội", exact: true })).toBeDisabled();
+    await expect(section.locator('.roster-step[data-step="scan"]')).toHaveAttribute("data-state", "current");
+    await expect(section.locator('.roster-step[data-step="review"]')).toHaveAttribute("data-state", "pending");
+    await expect(section.locator('.roster-step[data-step="suggest"]')).toHaveAttribute("data-state", "pending");
+  });
+
+  test("Nên thêm: đủ 5 đội khóa và không đội nào thêm được là hai câu khác nhau", async ({ page }) => {
+    const lockedTeams = [1, 2, 3, 4, 5].map((index) => ({
+      teamName: `Đội khóa ${index}`,
+      heroes: [`Tướng khóa ${index}`],
+      tactics: [`Chiến pháp khóa ${index}`],
+    }));
+    await seed(page, {
+      "tqccl.rosterRecommend.scanState.v1": {
+        ownedHeroes: [{ name: "Lưu Bị" }],
+        ownedTactics: [{ name: "Nhân Đức" }],
+        lockedTeams,
+        confirmed: false,
+        updatedAt: "2026-07-25T00:00:00.000Z",
+      },
+    });
+    await page.goto("/goi-y-doi-tu-kho/");
+    await waitForBoot(page);
+    const section = page.locator("#section-roster-recommend");
+    const addSection = section.locator(".roster-results section").filter({ has: page.locator("h3", { hasText: "Nên thêm" }) });
+    const suggest = async () => {
+      await section.getByRole("button", { name: "Xác nhận dữ liệu đã đọc" }).click();
+      await section.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
+    };
+
+    await suggest();
+    await expect(section.locator(".roster-team-list").first().locator(".roster-result-team")).toHaveCount(5);
+    await expect(addSection.locator(".roster-empty")).toHaveText("Đã đủ 5 đội.");
+
+    // Bỏ hết đội khóa: kho chỉ còn một tướng, không đội nào xây được.
+    const removeButtons = section.locator(".roster-locked-team").getByRole("button", { name: /^Bỏ đội / });
+    while (await removeButtons.count()) await removeButtons.first().click();
+    await suggest();
+    const noneText = (await addSection.locator(".roster-empty").innerText()).trim();
+    expect(noneText).not.toBe("");
+    expect(noneText).not.toContain("Đã đủ");
+  });
+
+  test("ô chọn ảnh: không lộ input file hệ thống, mỗi thẻ có nút Chọn ảnh mở hộp chọn tệp", async ({ page }) => {
+    await page.goto("/goi-y-doi-tu-kho/");
+    await waitForBoot(page);
+    const section = page.locator("#section-roster-recommend");
+    const cards = section.locator(".roster-scan-card");
+    await expect(cards).toHaveCount(3);
+    await expect(section.locator('input[type="file"]:visible')).toHaveCount(0);
+    for (let index = 0; index < 3; index++) {
+      const pick = cards.nth(index).getByRole("button", { name: "Chọn ảnh", exact: true });
+      await expect(pick).toBeVisible();
+      const chooser = page.waitForEvent("filechooser");
+      await pick.click();
+      await (await chooser).setFiles({ name: `kho-${index}.png`, mimeType: "image/png", buffer: transparentPng });
+      await expect(cards.nth(index)).toContainText(`kho-${index}.png`);
+    }
+  });
+
+  test("tên đọc từ ảnh không khớp từ điển có dấu kiểm tra và nằm đầu danh sách", async ({ page }) => {
+    await page.route("https://challenges.cloudflare.com/**", (route) =>
+      route.fulfill({ contentType: "application/javascript", body: TURNSTILE_STUB }));
+    await page.route(WORKER_ROUTE, (route) => route.fulfill({ json: { heroes: [{ nameCn: "SP荀彧" }, { nameCn: "陌生武将" }] } }));
+    await seed(page, {
+      "tqccl.rosterRecommend.scanState.v1": {
+        ownedHeroes: [{ name: "Lưu Bị", confidence: "high" }, { name: "Tào Tháo", confidence: "manual" }],
+        ownedTactics: [],
+        lockedTeams: [],
+        confirmed: false,
+        updatedAt: "2026-07-25T00:00:00.000Z",
+      },
+    });
+    await page.goto("/goi-y-doi-tu-kho/");
+    await waitForBoot(page);
+    const section = page.locator("#section-roster-recommend");
+    const card = section.locator(".roster-scan-card").first();
+    await card.locator('input[type="file"]').setInputFiles({ name: "kho.png", mimeType: "image/png", buffer: transparentPng });
+    await section.getByRole("button", { name: "Đọc Tướng", exact: true }).click();
+    await expect(card.locator(".ana-note")).toContainText("Đã đọc xong");
+
+    const heroPanel = section.locator(".roster-review-panel").filter({ has: page.locator("h3", { hasText: "Tướng đã đọc" }) });
+    const chips = heroPanel.locator(".roster-chip-list li");
+    await expect(chips).toHaveCount(4);
+    await expect(chips.filter({ hasText: "kiểm tra" })).toHaveCount(1);
+    await expect(chips.first()).toContainText("kiểm tra");
+    await expect(chips.first().getByText("kiểm tra", { exact: true })).toBeVisible();
+    for (const name of ["Lưu Bị", "Tào Tháo", "Tuân Úc"]) {
+      await expect(chips.filter({ hasText: name })).not.toContainText("kiểm tra");
+    }
+  });
 });
 
 /* ---------- Vòng sửa P09: huỷ kết quả khi kho đổi, nhập JSON cùng id, bố cục hàng có dữ liệu ---------- */
@@ -830,5 +967,65 @@ test.describe("Vòng sửa P09", () => {
         });
       }
     }
+  });
+});
+
+/**
+ * Turnstile giả lỗi như widget thật (ví dụ 110200 khi domain không nằm trong allowlist): cấp token rồi báo lỗi;
+ * widget thật ném `TurnstileError` ra ngoài khi trang không có `error-callback` hoặc callback không trả `true`.
+ */
+const TURNSTILE_ERROR_STUB = [
+  "window.turnstile={",
+  "render:(node,options)=>{options.callback('fixture-token');setTimeout(()=>{",
+  "const handler=options['error-callback'];",
+  "if(typeof handler!=='function'||handler('110200')!==true)throw new Error('[Cloudflare Turnstile] Error: 110200.');",
+  "},0);},",
+  "reset:()=>{},",
+  "};",
+].join("");
+
+test.describe("Turnstile báo lỗi", () => {
+  test("Soi đội: không có lỗi trang, báo câu tiếng Việt và bỏ token", async ({ page }) => {
+    const pageErrors = [];
+    page.on("pageerror", (error) => pageErrors.push(error.message));
+    await page.route("https://challenges.cloudflare.com/**", (route) =>
+      route.fulfill({ contentType: "application/javascript", body: TURNSTILE_ERROR_STUB }));
+    let workerCalls = 0;
+    await page.route(WORKER_ROUTE, (route) => { workerCalls += 1; return route.fulfill({ json: { heroes: [] } }); });
+
+    await page.goto("/soi-doi-tu-anh/");
+    await waitForBoot(page);
+    const section = page.locator("#section-analyze");
+    await page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 50)));
+    expect(pageErrors).toEqual([]);
+    await expect(section.locator(".ana-status")).toHaveText("Xác thực chống bot không thành công. Tải lại trang rồi thử lại.");
+    await expect(section.locator(".ana-step").nth(1)).toHaveAttribute("data-state", "pending");
+    await section.locator("input[type=file]").setInputFiles({ name: "doi-hinh.png", mimeType: "image/png", buffer: transparentPng });
+    await expect(section.locator(".ana-step").nth(0)).toHaveAttribute("data-state", "done");
+    await expect(section.getByRole("button", { name: "Soi đội", exact: true })).toBeDisabled();
+    expect(workerCalls).toBe(0);
+    expect(pageErrors).toEqual([]);
+  });
+
+  test("Gợi ý đội: không có lỗi trang, báo câu tiếng Việt và bỏ token", async ({ page }) => {
+    const pageErrors = [];
+    page.on("pageerror", (error) => pageErrors.push(error.message));
+    await page.route("https://challenges.cloudflare.com/**", (route) =>
+      route.fulfill({ contentType: "application/javascript", body: TURNSTILE_ERROR_STUB }));
+    let workerCalls = 0;
+    await page.route(WORKER_ROUTE, (route) => { workerCalls += 1; return route.fulfill({ json: { heroes: [] } }); });
+
+    await page.goto("/goi-y-doi-tu-kho/");
+    await waitForBoot(page);
+    const section = page.locator("#section-roster-recommend");
+    await page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 50)));
+    expect(pageErrors).toEqual([]);
+    await expect(section.locator(".roster-controls .ana-status")).toHaveText("Xác thực chống bot không thành công. Tải lại trang rồi thử lại.");
+    const card = section.locator(".roster-scan-card").first();
+    await card.locator('input[type="file"]').setInputFiles({ name: "kho.png", mimeType: "image/png", buffer: transparentPng });
+    await section.getByRole("button", { name: "Đọc Tướng", exact: true }).click();
+    await expect(card.locator(".ana-note")).toHaveText("Xác thực Turnstile trước.");
+    expect(workerCalls).toBe(0);
+    expect(pageErrors).toEqual([]);
   });
 });

@@ -529,7 +529,16 @@ test('config-detail inventory link opens the roster tool without season keys', a
   await expect(page.locator('#section-roster-recommend .tool-head')).toBeVisible();
 });
 
-test('tool pages drop old season links and run on the legacy teams', async ({page}) => {
+test('tool pages drop old season links and run on the legacy teams', async ({page, request}) => {
+  // Gợi ý đội chỉ chạy trên kho đã đọc (kho rỗng khoá nút Xác nhận): gieo tướng/chiến pháp của một đội legacy.
+  const [team] = await (await request.get('/data/teams.json')).json();
+  await page.addInitScript(state => localStorage.setItem('tqccl.rosterRecommend.scanState.v1', JSON.stringify(state)), {
+    ownedHeroes: team.heroes.map(hero => ({name: hero.name || hero.baseName})),
+    ownedTactics: team.heroes.flatMap(hero => (hero.tactics || []).map(tactic => ({name: tactic.name}))),
+    lockedTeams: [],
+    confirmed: false,
+    updatedAt: '2026-07-25T00:00:00.000Z',
+  });
   await page.goto('/soi-doi-tu-anh/?scenario=x&ruleset=y&config=z&q=giu');
   await expect(page.locator('body')).toHaveAttribute('data-boot', 'ready');
   await expect(page).toHaveURL('/soi-doi-tu-anh/?q=giu');

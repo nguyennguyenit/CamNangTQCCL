@@ -103,3 +103,86 @@ E2E chạy trên `astro build` + `astro preview` (cổng 4174, config Playwright
 | `team_route_handles --check` | pass |
 | `worker` vitest | 6 file, 53 test |
 | `mcp-worker` check | 43 file, 374 test |
+
+## Part 3b — Công cụ, Chiêu mộ
+
+### Test đỏ → xanh
+
+E2E chạy trên `astro build` + `astro preview` (cổng 4174, config Playwright tạm ở `/tmp`, đã xoá). Unit dùng `node --experimental-strip-types --test <file>`, MCP dùng `npx vitest run <file>` trong `mcp-worker/`.
+
+| Mục | Test | Đỏ trước sửa | Sau sửa |
+|---|---|---|---|
+| Kho rỗng (AuditUiLive#2) | `beta-tools.spec` "kho rỗng: nút Xác nhận khoá, bước Kiểm tra và Gợi ý còn chờ" | `toBeDisabled` `Received: enabled` (nút "Xác nhận dữ liệu đã đọc") | xanh; bước `review`/`suggest` = `pending` |
+| | "Nên thêm: đủ 5 đội khóa và không đội nào thêm được là hai câu khác nhau" | `Expected: "Đã đủ 5 đội."` `Received: "Đã đủ 5 đội hoặc chưa có đội phù hợp."` | xanh; kho không xây được đội báo "Chưa có đội phù hợp để thêm từ kho hiện tại." |
+| Turnstile `error-callback` (AuditUiLive#6) | `beta-tools.spec` "Turnstile báo lỗi › Soi đội…", "…› Gợi ý đội…" (stub cấp token rồi gọi `error-callback("110200")`, ném nếu thiếu callback hoặc callback không trả `true`) | `pageErrors` `Received: ["[Cloudflare Turnstile] Error: 110200."]` ở cả hai trang | xanh: không `pageerror`, dòng trạng thái báo câu tiếng Việt, Soi đội giữ nút khoá sau khi chọn ảnh, Gợi ý đội báo "Xác thực Turnstile trước." và không gọi Worker |
+| Ô chọn file (AuditUiLive#7) | `beta-tools.spec` "ô chọn ảnh: không lộ input file hệ thống…" | `input[type="file"]:visible` `Expected: 0` `Received: 3` | xanh: mỗi thẻ có nút "Chọn ảnh" mở `filechooser`, tên tệp hiện trong thẻ; `setInputFiles` trên input ẩn vẫn chạy (các ca cũ xanh) |
+| Độ tin cậy OCR (ReviewJsTools#15) | `beta-tools.spec` "tên đọc từ ảnh không khớp từ điển có dấu kiểm tra và nằm đầu danh sách" | chip có "kiểm tra" `Expected: 1` `Received: 0` | xanh: chip `confidence: "low"` có chữ "kiểm tra" nhìn thấy và đứng đầu; `Tuân Úc` (medium), `Lưu Bị`, `Tào Tháo` không có dấu |
+| Nhiều hột (ReviewJsTools#14, Q2 = A) | `team-recommend-engine.test` "Nhiều hột xếp số hột trước bậc; Meta vẫn xếp bậc trước" (greedy và full-box) | `redStars` `actual: ['a-t0-no-red']` `expected: ['b-t1-red']`; ca `meta` xanh cả trước và sau | xanh |
+| | "full-box Nhiều hột chọn danh sách tổng hột cao hơn khi cùng số đội" (A+B tổng 5 hột, C+D tổng 6, A một mình nhiều hột nhất) | `actual: ['a','b']` `expected: ['c','d']`; `meta` giữ `['a','b']` | xanh |
+| `sure`/`total` (ReviewJsTools#16) | `analyze-map.test` "tướng đoán từ chân dung không tính là khớp nhưng vẫn vào mẫu số" | `heroHit` `actual: 3` `expected: 2` | xanh: `heroHit = 2`, `total = 3` |
+| | MCP `test/domain/legacy-domain-adapter.test.ts` "counts a portrait-guessed hero in the total but not as a similar-team hit" | `"heroHit": 3` (mong `2`) | xanh |
+| "bên phải" (ReviewJsTools#17) | Chỉ đổi chữ, không test đỏ | — | — |
+| Nhãn slot, mẫu số (ReviewJsTools#11) | `recruit-tracker-ui.test` "history rows name the daily slot in Vietnamese and count pulls against each banner's own pity limit" | `slotText` `actual: undefined` `expected: 'Miễn phí 1'` (view model chưa có nhãn; DOM ghép thẳng `drawSlot` và `/30`) | xanh: `lượt 1/30` cho lượt ngày, `lượt 12/40` cho gói `pityLimit = 40` |
+| | `beta-tools.spec` "form 5★ nhận focus…" (sửa kỳ vọng cũ ghim `free_1`) | `Expected: "Ghi 5★ · Miễn phí 1"` `Received: "Ghi 5★ · free_1"` | xanh |
+| 5★ trên slot đã xong (ReviewJsTools#12) | `recruit-tracker-store.test` "5★ on a daily slot that is already done records nothing…" | `actual: 2` `expected: 1` (thêm sự kiện 5★ trùng lên ô `miss`) | xanh |
+| | `beta-tools.spec` "5★ lượt ngày ghi vào đúng ô đã mở: form không có ô ngày…" | đỏ ở tiêu đề `Received: "Ghi 5★ · free_1"` (form còn ô `Ngày`) | xanh: không có ô ngày, lịch sử `<hôm nay> · Danh tướng PK · Miễn phí 1`, `lượt 2/30` |
+| Qua nửa đêm (ReviewJsTools#13) | `beta-tools.spec` "qua nửa đêm khi trang còn mở…" (`page.clock` 23:59, ghi đủ 4 ô, chạy đồng hồ 2 phút) | `.rt-slot-status` `Received: ["Không ra" ×4]` (mong "Chưa quay") | xanh: 4 ô "Chưa quay", nút bấm được, "Hôm nay 0/4" |
+
+### Quyết định khi làm
+- **`total` của đội tương tự:** mẫu số là số tướng nhận diện được (khớp từ điển, kể cả không chắc); tướng không khớp từ điển vẫn ngoài mẫu số như ca `[M1]` có sẵn. Tướng chỉ được tính khớp khi `sure !== false`: bản ghi canonical của MCP `tqccl_match_team` không mang cờ `sure` nên vẫn coi là chắc chắn (lượt đầu dùng `sure === true` làm đỏ 2 test MCP `research-handlers.test.ts`; đã sửa theo cách này, test MCP không phải đổi).
+- **Nhiều hột:** `compareCandidates(a, b, mode)` so `redCopyScore` trước bậc khi `mode === "redStars"`; `portfolioIsBetter` (full-box) so số đội trước, rồi tổng hột của các đội không khoá, rồi thứ tự cũ. Không test MCP nào ghim danh sách `redStars` cũ.
+- **Turnstile:** `renderTurnstileWidget(box, {onToken, onExpire, onError})` ở `js/analyze.js`; `error-callback` gọi `onExpire` (bỏ token), `onError(câu báo)` và trả `true`. Gợi ý đội thêm dòng `p.ana-status` trong hàng điều khiển; token mới thì ẩn dòng này. Soi đội ghi vào dòng trạng thái có sẵn (chọn ảnh sau đó thay dòng này như mọi trạng thái khác, nút vẫn khoá).
+- **Ô chọn file:** input dùng class `.ana-file` (ẩn), nút "Chọn ảnh" (`aria-describedby` = tiêu đề thẻ) gọi `fileInput.click()`, tên tệp ở `.ana-file-name`. Bỏ luật CSS 44px cho input native (`css/styles.css`, khối mobile) vì input không còn hiện.
+- **Chiêu mộ:** `dailySlotLabel` export từ `js/recruit-tracker-store.js` (giá trị lạ, gồm bản ghi cũ đã lưu nhãn, giữ nguyên); `getFiveStarHistory` thêm `pityLimit` của gói. Form 5★ lượt ngày lấy ngày của lưới lúc mở form. Vẽ lại khi đổi ngày: hẹn giờ tới nửa đêm địa phương kế tiếp và kiểm lại ở `visibilitychange`/`focus`.
+
+### G0: tuple của file sửa
+| File | Số tuple (trước) | Ghi chú |
+|---|---|---|
+| `js/roster-recommend-ui.js` | 46 (10 `translate`) | 10 tuple `translate` không đụng (gồm 2 binding) |
+| `js/analyze.js` | 28 (4 `translate`) | giữ nguyên binding `localizeWorkerError(data?.error, res.status)`, `describeAnalyzeError(e, ANALYZE_ACTION_ERROR)` |
+| `js/recruit-tracker.js` | 44 (21 `translate`) | `translate` không đụng |
+| `js/recruit-tracker-store.js` | 6 (6 `translate`) | không đụng |
+| `js/analyze-map.js`, `js/team-recommend-engine.js`, `css/styles.css` | 0 | `analyze-map.js`, `team-recommend-engine.js` thuộc bao đóng MCP |
+
+### G1: tuple
+- **Đổi chữ** 2 tuple `authored-vi`:
+  - `ui:analyze/step-done`: `Đã đọc xong — kiểm tra lại kết quả đã đọc`
+  - `ui:roster/add-empty`: `Chưa có đội phù hợp để thêm từ kho hiện tại.`
+- **Thêm** 4 tuple `authored-vi`:
+  - `ui:roster/add-full` (`Đã đủ 5 đội.`, `renderRecommendation`)
+  - `ui:roster/scan-pick-action` (`"Chọn ảnh")`, `initRosterRecommend`; có dấu ngoặc vì `Chọn ảnh` là chuỗi con của `Chọn ảnh trước.`)
+  - `ui:roster/flag-check` (`"kiểm tra")`, `itemList`)
+  - `ui:analyze/turnstile-error` (`Xác thực chống bot không thành công. Tải lại trang rồi thử lại.`, `renderTurnstileWidget`)
+- **Không** thêm, đổi hay bỏ tuple `translate` nào.
+
+### Mốc
+- `policyVersion`: `site-vi-260927-ui-ux-a` → `site-vi-260927-ui-ux-b`.
+- `baseline.notes`:
+  - `concreteLocationCount` 56665 → 56669
+  - `concreteInventorySha256` `abe264a4…` → `1473c276…`
+  - `siteLedgerObligations` 2088, `translationObligations` 5591, `uiTranslateObligations` 68 (không đổi)
+- **Generation mới:** `f1fcb066ab7f941c797386814342cd9a330c001c2b018392397abe0b628569c4`.
+  - G6: `git rm` generation `17a9c663…` do phần 3a tạo.
+  - Generation `a7a46727…` sinh ở lượt publish đầu của phần này, bị thay khi sửa bộ lọc `sure` cho MCP; đã xoá, chưa từng commit.
+  - `pipeline/team-route-handles.json` đã re-pin; `--check` pass.
+- **`WORKFLOW_BUILD_ID`:** `build:sha256b64:qHn02bMBS3j-EM1Snk1N6QLK9yLx-m8NrwSGD6gy0-I` → `build:sha256b64:16lthgms6OS6yKbBUjEd-ca3F-XW76my0UXhZLYDCNE` (`js/analyze-map.js`, `js/team-recommend-engine.js` thuộc bao đóng).
+- **Số ghim `tests/test_site_localization.py`:** không đổi.
+
+### Docs
+- `docs/project-changelog.md`: thêm mục phần 3b.
+
+### Sửa test hiện có theo hành vi mới (có chủ đích)
+- `beta-tools.spec` "form 5★ nhận focus…": kỳ vọng tiêu đề `Ghi 5★ · free_1` (ghim lỗi) đổi thành `Ghi 5★ · Miễn phí 1`.
+- `season-lookup.spec` "tool pages drop old season links and run on the legacy teams": ca này bấm "Xác nhận" trên kho rỗng (chính lỗi AuditUiLive#2) nên đỏ sau khi sửa (`element is not enabled`); nay gieo tướng/chiến pháp của một đội legacy trước khi mở `/goi-y-doi-tu-kho/`, kiểm hành vi giữ nguyên (URL bỏ khoá mùa, gợi ý chạy trên đội legacy).
+
+### Gate A2 (exit 0, 188 s)
+| Bộ | Kết quả |
+|---|---|
+| `npm run verify` | `Verified 1730 dist files` |
+| `npm run test:dist` | 28/28 |
+| `npm run test:node` | 367/367 |
+| `npm run test:e2e` | 308 passed |
+| `python3 -m unittest discover -s tests` | 383 OK |
+| `team_route_handles --check` | pass |
+| `worker` vitest | 6 file, 53 test |
+| `mcp-worker` check | 43 file, 375 test |

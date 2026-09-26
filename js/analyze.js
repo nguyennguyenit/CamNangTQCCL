@@ -168,6 +168,28 @@ export function loadTurnstile() {
   return turnstileLoading;
 }
 
+/** Câu báo khi widget Turnstile lỗi (mạng, domain không nằm trong danh sách site key, …). */
+export const TURNSTILE_ERROR_MESSAGE = "Xác thực chống bot không thành công. Tải lại trang rồi thử lại.";
+
+/**
+ * Nạp Turnstile rồi vẽ widget vào `box`. Lỗi của widget đi qua `error-callback`: bỏ token (`onExpire`),
+ * báo câu tiếng Việt (`onError`) và trả `true` để widget không ném `TurnstileError` ra trang.
+ * Promise bị từ chối khi không tải được script.
+ */
+export async function renderTurnstileWidget(box, { onToken, onExpire, onError }) {
+  const ts = await loadTurnstile();
+  return ts.render(box, {
+    sitekey: ANALYZE_CONFIG.turnstileSiteKey,
+    callback: (tok) => onToken(tok),
+    "expired-callback": () => onExpire(),
+    "error-callback": () => {
+      onExpire();
+      onError(TURNSTILE_ERROR_MESSAGE);
+      return true;
+    },
+  });
+}
+
 /* ---------- Gọi Worker ---------- */
 export async function callWorker(imageDataUrl, token, mode = "analyzeTeamImage") {
   const res = await fetch(ANALYZE_CONFIG.workerUrl, {
@@ -329,7 +351,7 @@ export function initAnalyze(deps, mount) {
   const steps = [
     { label: "Nén ảnh", done: () => Boolean(state.imageDataUrl) },
     { label: "Xác thực chống bot", done: () => Boolean(state.token) },
-    { label: "Soi đội và đối chiếu", doneLabel: "Đã đọc xong — kiểm tra lại kết quả bên phải", done: () => state.done },
+    { label: "Soi đội và đối chiếu", doneLabel: "Đã đọc xong — kiểm tra lại kết quả đã đọc", done: () => state.done },
   ].map((step) => {
     const mark = checkIcon();
     const labelNode = el("span", {}, step.label);
@@ -434,17 +456,16 @@ export function initAnalyze(deps, mount) {
     if (turnstileRendered) return;
     turnstileRendered = true;
     try {
-      const ts = await loadTurnstile();
-      ts.render(tsBox, {
-        sitekey: ANALYZE_CONFIG.turnstileSiteKey,
-        callback: (tok) => {
+      await renderTurnstileWidget(tsBox, {
+        onToken: (tok) => {
           state.token = tok;
           paint();
         },
-        "expired-callback": () => {
+        onExpire: () => {
           state.token = null;
           paint();
         },
+        onError: (message) => setStatus(message, "err"),
       });
     } catch (e) {
       setStatus(e.message, "err");

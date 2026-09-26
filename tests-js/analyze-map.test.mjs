@@ -265,3 +265,19 @@ test("findSimilarTeams chỉ tính tactic khi đúng holder và tie theo team ID
     ],
   );
 });
+
+test("findSimilarTeams: tướng đoán từ chân dung không tính là khớp nhưng vẫn vào mẫu số", () => {
+  const teams = [{ id: "ba-tuong", heroes: [{ baseName: "Tào Tháo", tactics: [] }, { baseName: "Quan Vũ", tactics: [] }, { baseName: "Trương Phi", tactics: [] }] }];
+  const mapped = mapTeamRead(
+    [
+      { nameCn: "曹操", tacticsCn: [], statFocusCn: "" },
+      { nameCn: "关羽", tacticsCn: [], statFocusCn: "" },
+      { nameCn: "张飞", tacticsCn: [], statFocusCn: "", nameFromPortrait: true },
+    ],
+    DICTS,
+  );
+  const res = findSimilarTeams(mapped, teams, { minHeroes: 2 });
+  assert.equal(res.length, 1);
+  assert.equal(res[0].heroHit, 2);
+  assert.equal(res[0].total, 3);
+});

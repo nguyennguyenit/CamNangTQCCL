@@ -154,10 +154,19 @@ function matchReadHeroesToSlots(readHeroes, slots) {
  * @param mapped kết quả mapTeamRead
  */
 export function findSimilarTeams(mapped, teams, { minHeroes = 2, limit = 5 } = {}) {
-  // [M1] CHỈ tính tướng đã nhận diện (matched) — tên Hán không khớp không vào mẫu số.
+  // [M1] Mẫu số là số tướng nhận diện được (matched) — tên Hán không khớp không vào mẫu số.
+  const recognized = new Set(
+    mapped
+      .filter((item) => item.hero.matched && item.hero.canonicalId)
+      .map((item) => item.hero.canonicalId),
+  );
+  // Chỉ tướng chắc chắn mới được tính khớp: tên đoán từ chân dung hay khớp mơ hồ (`sure: false`) cần
+  // người dùng kiểm lại, nên vẫn nằm trong mẫu số nhưng không tạo điểm khớp. Bản ghi canonical đã xác
+  // nhận (MCP `tqccl_match_team`) không mang cờ `sure` và được coi là chắc chắn.
   const identified = mapped.filter(
     (item) =>
       item.hero.matched &&
+      item.hero.sure !== false &&
       item.hero.canonicalId &&
       item.hero.reviewRequired !== true,
   );
@@ -199,7 +208,7 @@ export function findSimilarTeams(mapped, teams, { minHeroes = 2, limit = 5 } = {
       if (tTacticsByHolder.has(tactic)) tacticHit++;
     }
 
-    scored.push({ team, heroHit, tacticHit, total: readHeroes.size });
+    scored.push({ team, heroHit, tacticHit, total: recognized.size });
   }
   scored.sort(
     (a, b) =>

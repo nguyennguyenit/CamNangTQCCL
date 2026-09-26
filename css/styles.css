@@ -7659,7 +7659,8 @@ body[data-page-section="roster-recommend"] .layout {
   gap: var(--space-10);
 }
 
-.roster-controls .ana-turnstile {
+.roster-controls .ana-turnstile,
+.roster-controls .ana-status {
   flex: 1 1 100%;
 }
 
@@ -7693,6 +7694,19 @@ body[data-page-section="roster-recommend"] .layout {
 .roster-scan-title {
   margin: 0;
   font: var(--type-tool-step-title);
+}
+
+/* Nút "Chọn ảnh" (ô chọn tệp hệ thống ẩn như `.ana-file`) và tên tệp đã chọn. */
+.roster-file-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.roster-file-row .ana-file-name {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .roster-scan-count {
@@ -8181,8 +8195,6 @@ body[data-page-section="roster-recommend"] .layout {
   .kh-sources a { display: inline-flex; align-items: center; min-height: var(--control-44); }
   /* Link nguồn SGSDeck đứng riêng một dòng trong thân chi tiết (không nằm trong câu). */
   .detail-source > p > a { display: inline-flex; align-items: center; min-height: var(--control-44); }
-  /* Ô chọn ảnh native của Gợi ý đội (Phase 9 giữ control hệ thống). */
-  .roster-scan-card input[type="file"] { min-height: var(--control-44); }
   /* Ô nhập bên trong nhãn ô tìm: bản thân control cũng đủ 44px (nhãn 48px vẫn là vùng bấm chính). */
   .search > input,
   .lookup-search > input { min-height: var(--control-44); }

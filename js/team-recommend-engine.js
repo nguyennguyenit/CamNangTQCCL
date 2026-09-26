@@ -118,8 +118,10 @@ export function normalizeTeamCandidate(
   };
 }
 
-function compareCandidates(a, b) {
+/** "Nhiều hột" (`redStars`) xếp số hột đỏ trước bậc; "Meta" giữ bậc trước, hột chỉ để phân định. */
+function compareCandidates(a, b, mode) {
   return (
+    (mode === "redStars" ? b.redCopyScore - a.redCopyScore : 0) ||
     (TIER_RANK.get(a.tier) ?? Number.MAX_SAFE_INTEGER) -
       (TIER_RANK.get(b.tier) ?? Number.MAX_SAFE_INTEGER) ||
     b.redCopyScore - a.redCopyScore ||
@@ -133,7 +135,7 @@ function candidatePool(candidates, { mode, fullBox, experimentalUntiered, season
     if (META_TIERS.has(candidate.tier)) return true;
     return experimentalUntiered === true && candidate.tier === "";
   });
-  const sorted = eligible.sort(compareCandidates);
+  const sorted = eligible.sort((a, b) => compareCandidates(a, b, mode));
   // Seasonal configs are already bounded by the shared projector; check resources before search limits.
   return seasonContext ? sorted : sorted.slice(0, fullBox ? 80 : 60);
 }
@@ -422,6 +424,7 @@ function searchPortfolio(
   maxTeams,
   experimentalUntiered,
   seasonContext,
+  mode,
 ) {
   // Keep a feasible whole-pool result even when DFS only explores its bounded prefix.
   let best = seasonContext
@@ -446,6 +449,12 @@ function searchPortfolio(
   function portfolioIsBetter(portfolio, currentBest) {
     if (portfolio.length !== currentBest.length) {
       return portfolio.length > currentBest.length;
+    }
+    if (mode === "redStars") {
+      // rankingTuple[3] = -redCopyScore của đội (xem normalizeTeamCandidate); đội khóa không tính.
+      const redTotal = (entries) => entries.reduce((sum, entry) => sum - (entry.locked ? 0 : entry.rankingTuple[3]), 0);
+      const difference = redTotal(portfolio) - redTotal(currentBest);
+      if (difference !== 0) return difference > 0;
     }
     const tuples = portfolio
       .filter((entry) => !entry.locked)
@@ -643,6 +652,7 @@ export function recommendTeams({
       maxTeams,
       experimentalUntiered,
       seasonContext,
+      mode,
     );
     portfolio = searched.portfolio;
     diagnostics.searchedCandidates = searched.searched;

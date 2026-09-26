@@ -232,6 +232,44 @@ describe("legacy domain adapter characterization", () => {
     expect(similar.length).toBeGreaterThan(0);
   });
 
+  it("counts a portrait-guessed hero in the total but not as a similar-team hit", () => {
+    const dicts = {
+      heroesDict: [
+        { chinese: "曹操", viet: "Tào Tháo" },
+        { chinese: "关羽", viet: "Quan Vũ" },
+        { chinese: "张飞", viet: "Trương Phi" },
+      ],
+      tacticsDict: [],
+      booksDict: [],
+    };
+    const mapped = legacyDomainAdapter.mapTeamRead(
+      [
+        { nameCn: "曹操", tacticsCn: [], statFocusCn: "" },
+        { nameCn: "关羽", tacticsCn: [], statFocusCn: "" },
+        { nameCn: "张飞", tacticsCn: [], statFocusCn: "", nameFromPortrait: true },
+      ],
+      dicts,
+    );
+    const similar = legacyDomainAdapter.findSimilarTeams(
+      mapped,
+      [
+        {
+          id: "ba-tuong",
+          name: "Ba tướng",
+          heroes: [
+            { name: "Tào Tháo", tactics: [] },
+            { name: "Quan Vũ", tactics: [] },
+            { name: "Trương Phi", tactics: [] },
+          ],
+        },
+      ],
+      { minHeroes: 2, limit: 3 },
+    );
+
+    expect(similar).toHaveLength(1);
+    expect(similar[0]).toMatchObject({ heroHit: 2, total: 3 });
+  });
+
   it("executes tactic, built-team, and browser-state adapters", () => {
     const tacticScan = legacyDomainAdapter.mapTacticsScan(
       { tactics: [{ nameCn: "草船借箭" }] },

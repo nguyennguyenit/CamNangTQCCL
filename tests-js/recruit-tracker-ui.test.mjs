@@ -4,6 +4,7 @@ import {
   createDefaultRecruitTrackerState,
   createLimitedBanner,
   getRecruitTrackerSummary,
+  recordBannerFiveStar,
   recordBannerMiss,
   recordDailySlotFiveStar,
   recordDailySlotMiss,
@@ -49,4 +50,25 @@ test("recruit tracker view model exposes compact daily, limited, history, and he
   assert.equal(viewModel.daily.warning, "");
   assert.equal(viewModel.history[0].heroName, "SP Quan Vũ");
   assert.deepEqual(viewModel.heroOptions, ["Lưu Bị", "SP Mã Siêu"]);
+});
+
+test("history rows name the daily slot in Vietnamese and count pulls against each banner's own pity limit", () => {
+  let state = createDefaultRecruitTrackerState("2026-07-10T03:30:00+07:00");
+  const accountId = state.activeAccountId;
+  state = recordDailySlotFiveStar(state, { accountId, date: TODAY, slotKey: "free_1", heroName: "SP Quan Vũ" });
+  state = createLimitedBanner(state, { name: "Kỳ Tật Như Phong" });
+  const limited = state.banners.find((banner) => banner.name === "Kỳ Tật Như Phong");
+  limited.pityLimit = 40;
+  state = recordBannerMiss(state, { accountId, bannerId: limited.id, pulls: 11, date: "2026-07-11" });
+  state = recordBannerFiveStar(state, { accountId, bannerId: limited.id, pulls: 1, heroName: "Lưu Bị", date: "2026-07-11" });
+
+  const viewModel = buildRecruitTrackerViewModel(getRecruitTrackerSummary(state, { accountId, date: "2026-07-11" }));
+  const [limitedRow, dailyRow] = viewModel.history;
+
+  assert.equal(dailyRow.heroName, "SP Quan Vũ");
+  assert.equal(dailyRow.slotText, "Miễn phí 1");
+  assert.equal(dailyRow.pullsText, "lượt 1/30");
+  assert.equal(limitedRow.heroName, "Lưu Bị");
+  assert.equal(limitedRow.slotText, "");
+  assert.equal(limitedRow.pullsText, "lượt 12/40");
 });

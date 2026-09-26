@@ -1,5 +1,5 @@
-import { ANALYZE_CONFIG, isAnalyzeConfigured } from "./config.js";
-import { callWorker, compressImage, describeAnalyzeError, loadTurnstile } from "./analyze.js";
+import { isAnalyzeConfigured } from "./config.js";
+import { callWorker, compressImage, describeAnalyzeError, renderTurnstileWidget } from "./analyze.js";
 import { el, icon, svgNode } from "./render.js";
 import { mapBuiltTeamsScan, mapHeroesScan, mapTacticsScan } from "./roster-scan-map.js";
 import {
@@ -68,10 +68,11 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   let token = "";
   let preference = "meta";
   const tsBox = el("div", { class: "ana-turnstile" });
+  const tsStatus = el("p", { class: "ana-status err", role: "status", hidden: "" });
   const heroOptions = (heroesDict || []).map((h) => h.viet).filter(Boolean).sort();
   const tacticOptions = (tacticsDict || []).map((t) => t.viet).filter(Boolean).sort();
   const recommendBtn = el("button", { type: "button", class: "ana-btn primary", disabled: "" }, "Gợi ý 5 đội");
-  const confirmBtn = el("button", { type: "button", class: "ana-btn" }, "Xác nhận dữ liệu đã đọc");
+  const confirmBtn = el("button", { type: "button", class: "ana-btn", disabled: "" }, "Xác nhận dữ liệu đã đọc");
   const resultsSlot = el("div", { class: "roster-results-slot" });
 
   /* ---------- Bước 1–2–3: tóm tắt tiến trình đọc kho → kiểm tra → gợi ý ---------- */
@@ -91,10 +92,13 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   const scanned = () => (state.ownedHeroes?.length || 0) + (state.ownedTactics?.length || 0) + (state.lockedTeams?.length || 0) > 0;
 
   function paintSteps() {
+    // Kho rỗng: chưa có gì để kiểm tra hay gợi ý, dù bản lưu cũ còn cờ đã xác nhận.
+    const hasScan = scanned();
+    const confirmed = hasScan && state.confirmed;
     const states = {
-      scan: scanned() ? "done" : "current",
-      review: state.confirmed ? "done" : scanned() ? "current" : "pending",
-      suggest: recommended ? "done" : state.confirmed ? "current" : "pending",
+      scan: hasScan ? "done" : "current",
+      review: confirmed ? "done" : hasScan ? "current" : "pending",
+      suggest: confirmed && recommended ? "done" : confirmed ? "current" : "pending",
     };
     for (const step of stepNodes) {
       step.node.dataset.state = states[step.key];
@@ -107,10 +111,14 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
 
   /* ---------- Ba thẻ đọc ảnh: đếm kết quả đã đọc, trạng thái Xong / Chưa đọc ---------- */
   const scanControls = SCAN_TYPES.map((scan, index) => {
-    // Ô chọn ảnh native giữ nhãn hệ thống (chấp nhận ở Phase 9) nhưng phải có tên truy cập được:
-    // trỏ `aria-labelledby` vào chính tiêu đề thẻ, không thêm chuỗi UI mới.
+    // Ô chọn tệp hệ thống ẩn như `.ana-file` của Soi đội; nút "Chọn ảnh" mở hộp chọn tệp, tên tệp hiện cạnh nút.
     const titleId = `roster-scan-title-${scan.id}`;
-    const fileInput = el("input", { type: "file", accept: "image/*", "aria-labelledby": titleId });
+    const fileInput = el("input", { type: "file", accept: "image/*", class: "ana-file", "aria-labelledby": titleId });
+    const fileName = el("span", { class: "ana-file-name" });
+    fileInput.addEventListener("change", () => {
+      fileName.textContent = fileInput.files?.[0]?.name || "";
+    });
+    const pickBtn = el("button", { type: "button", class: "ana-btn", "aria-describedby": titleId, onClick: () => fileInput.click() }, "Chọn ảnh");
     const btn = el("button", { type: "button", class: "ana-btn" }, `Đọc ${scan.label}`);
     const status = el("p", { class: "ana-note" }, "");
     const count = el("span", { class: "roster-scan-count" });
@@ -155,6 +163,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       ]),
       el("h3", { class: "roster-scan-title", id: titleId }, scan.label),
       count,
+      el("div", { class: "roster-file-row" }, [pickBtn, fileName]),
       fileInput,
       btn,
       status,
@@ -183,11 +192,15 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     const list = el("ul", { class: "roster-chip-list" });
     function paint() {
       const items = getItems() || [];
-      list.replaceChildren(...items.map((item) => {
+      // Tên đọc từ ảnh độ tin thấp (không khớp từ điển, chỉ phiên âm) gắn dấu "kiểm tra" và lên đầu danh sách.
+      const needsCheck = (item) => item?.confidence === "low";
+      const ordered = [...items.filter(needsCheck), ...items.filter((item) => !needsCheck(item))];
+      list.replaceChildren(...ordered.map((item) => {
         const name = item.name || item;
         const remove = el("button", { type: "button", class: "roster-remove", "aria-label": `Bỏ ${name}` }, [closeIcon()]);
         remove.addEventListener("click", () => onRemove(type, name, remove));
-        return el("li", {}, [el("span", {}, name), remove]);
+        const flag = needsCheck(item) ? el("span", { class: "ana-flag" }, "kiểm tra") : null;
+        return el("li", needsCheck(item) ? { class: "roster-chip-check" } : {}, [el("span", {}, name), flag, remove]);
       }));
       list.hidden = items.length === 0;
       empty.hidden = items.length > 0;
@@ -324,7 +337,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   });
 
   recommendBtn.addEventListener("click", () => {
-    if (!state.confirmed) return;
+    if (!state.confirmed || !scanned()) return;
     const result = recommendTeams({
       teams,
       teamTier,
@@ -341,7 +354,8 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   });
 
   const refreshRecommend = () => {
-    recommendBtn.disabled = !state.confirmed;
+    confirmBtn.disabled = !scanned();
+    recommendBtn.disabled = !(state.confirmed && scanned());
   };
 
   const rerender = () => {
@@ -380,7 +394,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
         el("h3", {}, "Nên thêm"),
         ...(addTeams.length
           ? [el("ol", { class: "roster-team-list" }, addTeams.map(teamRow))]
-          : [el("p", { class: "roster-empty" }, "Đã đủ 5 đội hoặc chưa có đội phù hợp.")]),
+          : [el("p", { class: "roster-empty" }, portfolio.length >= 5 ? "Đã đủ 5 đội." : "Chưa có đội phù hợp để thêm từ kho hiện tại.")]),
       ]),
       el("section", {}, [
         el("h3", {}, "Đội mạnh nhưng chưa thể xây dựng"),
@@ -394,12 +408,16 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     ]);
   }
 
-  loadTurnstile().then((ts) => {
-    ts.render(tsBox, {
-      sitekey: ANALYZE_CONFIG.turnstileSiteKey,
-      callback: (tok) => { token = tok; },
-      "expired-callback": () => { token = ""; },
-    });
+  renderTurnstileWidget(tsBox, {
+    onToken: (tok) => {
+      token = tok;
+      tsStatus.hidden = true;
+    },
+    onExpire: () => { token = ""; },
+    onError: (message) => {
+      tsStatus.textContent = message;
+      tsStatus.hidden = false;
+    },
   }).catch(() => {
     tsBox.textContent = "Không tải được Turnstile.";
   });
@@ -420,6 +438,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       stepList,
       el("div", { class: "roster-controls" }, [
         tsBox,
+        tsStatus,
         modeSelect,
         confirmBtn,
         recommendBtn,

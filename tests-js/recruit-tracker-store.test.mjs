@@ -195,3 +195,20 @@ test("any import accepted by validation can be summarized without throwing", () 
     assert.doesNotThrow(() => getRecruitTrackerSummary(candidate, { date: TODAY }), label);
   }
 });
+
+test("5★ on a daily slot that is already done records nothing and keeps the slot result", () => {
+  let state = createDefaultRecruitTrackerState(NOW);
+  const accountId = state.activeAccountId;
+  state = recordDailySlotMiss(state, { accountId, date: TODAY, slotKey: "free_1" });
+  const before = state.pullEvents.length;
+
+  const next = recordDailySlotFiveStar(state, { accountId, date: TODAY, slotKey: "free_1", heroName: "SP Quan Vũ" });
+
+  assert.equal(next.pullEvents.length, before);
+  assert.deepEqual(
+    next.pullEvents.map((event) => [event.date, event.drawSlot, event.result]),
+    [[TODAY, "free_1", "miss"]],
+  );
+  const slot = getRecruitTrackerSummary(next, { accountId, date: TODAY }).daily.slots.find((item) => item.key === "free_1");
+  assert.equal(slot.status, "miss");
+});

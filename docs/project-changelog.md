@@ -1,5 +1,24 @@
 # Project Changelog
 
+## 2026-09-27 (UI/UX phần 3b: công cụ, Chiêu mộ)
+
+### Fixed
+
+- Gợi ý đội: kho rỗng thì nút "Xác nhận dữ liệu đã đọc" và "Gợi ý 5 đội" khoá, bước Kiểm tra/Gợi ý ở trạng thái chờ (không còn ✓ khi chưa đọc gì). Mục "Nên thêm" trống báo "Đã đủ 5 đội." khi danh sách đã đủ 5 đội, "Chưa có đội phù hợp để thêm từ kho hiện tại." khi không đội nào thêm được.
+- Soi đội, Gợi ý đội: widget Turnstile lỗi (ví dụ 110200) không còn ném `TurnstileError` ra trang; token bị bỏ và trang báo "Xác thực chống bot không thành công. Tải lại trang rồi thử lại." (hàm dùng chung `renderTurnstileWidget` trong `js/analyze.js`).
+- Gợi ý đội: ô chọn tệp hệ thống ("Choose File") ẩn như Soi đội; mỗi thẻ đọc ảnh có nút "Chọn ảnh" mở hộp chọn tệp và hiện tên tệp đã chọn.
+- Gợi ý đội: tên đọc từ ảnh có độ tin thấp (không khớp từ điển, chỉ phiên âm) gắn dấu "kiểm tra" và đứng đầu danh sách ở bước Kiểm tra.
+- Soi đội: tướng đoán từ chân dung (`sure: false`) không còn được tính là tướng khớp khi tìm đội tương tự nhưng vẫn vào mẫu số (đọc 3 tướng, 1 không chắc → `2/3`, không còn `2/2` với dấu đủ). MCP `tqccl_match_team` nhận tướng canonical đã xác nhận nên kết quả không đổi.
+- Soi đội: bước cuối ghi "Đã đọc xong — kiểm tra lại kết quả đã đọc" (kết quả nằm dưới form ở bề rộng hẹp, không phải "bên phải").
+- Chiêu mộ: tiêu đề form và lịch sử 5★ ghi tên lượt tiếng Việt (`Miễn phí 1`, không còn `free_1`); số lượt trong lịch sử so với mốc bảo hiểm của chính gói (không còn cố định `/30`).
+- Chiêu mộ: form 5★ của lượt ngày không còn ô Ngày, ghi vào đúng ô của lưới đã mở; lượt ngày đã ghi (Không ra/Ra 5★) không nhận thêm 5★, nên không còn sự kiện trùng.
+- Chiêu mộ: trang để mở qua nửa đêm tự vẽ lại lưới ngày mới (hẹn giờ tới nửa đêm địa phương, kiểm lại khi quay về tab), bốn ô về "Chưa quay" và bấm được.
+
+### Changed
+
+- Gợi ý đội: chế độ "Nhiều hột" xếp số hột đỏ trước bậc (cả lượt chọn tham lam lẫn tìm kiếm full-box, full-box so tổng hột của danh sách khi cùng số đội); "Meta T0 → T1" giữ thứ tự cũ. Engine dùng chung với MCP nên output gợi ý đội MCP ở chế độ `redStars` đổi theo; `WORKFLOW_BUILD_ID` đổi.
+- Bản dịch: đổi chữ `ui:analyze/step-done`, `ui:roster/add-empty`; thêm `ui:roster/add-full`, `ui:roster/scan-pick-action`, `ui:roster/flag-check`, `ui:analyze/turnstile-error` (đều `authored-vi`); policy `site-vi-260927-ui-ux-b`, publish generation `f1fcb066…` (xoá generation `17a9c663…` của phần 3a) và re-pin `pipeline/team-route-handles.json`.
+
 ## 2026-09-27 (UI/UX phần 3a: danh sách đội, Cùng Tồn, Tra cứu)
 
 ### Fixed

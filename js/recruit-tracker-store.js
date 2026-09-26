@@ -38,6 +38,11 @@ function dailySlotDef(slotKey) {
   return DAILY_SLOT_DEFS.find((slot) => slot.key === slotKey);
 }
 
+/** Tên tiếng Việt của một lượt ngày (`free_1` → "Miễn phí 1"); giá trị lạ (bản ghi cũ đã lưu nhãn) giữ nguyên. */
+export function dailySlotLabel(slotKey) {
+  return dailySlotDef(slotKey)?.label || String(slotKey || "");
+}
+
 function defaultDailyBanner() {
   return {
     id: DAILY_BANNER_ID,
@@ -217,7 +222,7 @@ export function recordDailySlotFiveStar(state, { accountId, date = localDateFrom
   if (!slotDef) return next;
   const daily = ensureDailyState(next, actualAccountId, date);
   const slot = daily.slots.find((item) => item.key === slotKey);
-  if (!slot) return next;
+  if (!slot || slot.status !== "pending") return next;
   const pulls = 1;
   const pullCount = getPity(next, actualAccountId, DAILY_BANNER_ID).pullsSinceFiveStar + pulls;
   slot.status = "fiveStar";
@@ -282,6 +287,7 @@ export function getFiveStarHistory(state) {
       ...event,
       accountName: accountById.get(event.accountId)?.name || "",
       bannerName: bannerById.get(event.bannerId)?.name || event.bannerId,
+      pityLimit: Number(bannerById.get(event.bannerId)?.pityLimit) || defaultDailyBanner().pityLimit,
       pullCount: event.pullCount || Number(event.pulls) || 1,
     }))
     .sort((a, b) => {

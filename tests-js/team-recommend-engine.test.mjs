@@ -622,3 +622,72 @@ test("blocked strong team names each missing slot with its display alternatives,
   assert.equal(blocked.missingHeroSlotNames.flat().some((name) => name.startsWith("hero:")), false);
   assert.deepEqual(result.diagnostics.missingHeroes[0].heroes, ["hero:ma-sieu", "hero:hoang-phu-tung", "hero:sp-hoang-phu-tung"]);
 });
+
+test("Nhiều hột xếp số hột trước bậc; Meta vẫn xếp bậc trước", () => {
+  const teams = [
+    { id: "a-t0-no-red", name: "A", heroes: [
+      { name: "Tướng Chung", tactics: [{ name: "Chiến Pháp A", alternatives: [] }] },
+      { name: "Tướng A", tactics: [{ name: "Chiến Pháp A2", alternatives: [] }] },
+    ] },
+    { id: "b-t1-red", name: "B", heroes: [
+      { name: "Tướng Chung", tactics: [{ name: "Chiến Pháp B", alternatives: [] }] },
+      { name: "Tướng B", tactics: [{ name: "Chiến Pháp B2", alternatives: [] }] },
+    ] },
+  ];
+  const input = {
+    teams,
+    teamTier: [
+      { teamId: "a-t0-no-red", rankings: [{ tier: "T0" }] },
+      { teamId: "b-t1-red", rankings: [{ tier: "T1" }] },
+    ],
+    ownedHeroes: [
+      { name: "Tướng Chung", redStars: 0 },
+      { name: "Tướng A", redStars: 0 },
+      { name: "Tướng B", redStars: 5 },
+    ],
+    ownedTactics: ["Chiến Pháp A", "Chiến Pháp A2", "Chiến Pháp B", "Chiến Pháp B2"],
+    maxTeams: 5,
+  };
+
+  for (const fullBox of [false, true]) {
+    assert.deepEqual(recommendTeams({ ...input, fullBox, mode: "meta" }).portfolioTeams.map((entry) => entry.team.id), ["a-t0-no-red"]);
+    assert.deepEqual(recommendTeams({ ...input, fullBox, mode: "redStars" }).portfolioTeams.map((entry) => entry.team.id), ["b-t1-red"]);
+  }
+});
+
+test("full-box Nhiều hột chọn danh sách tổng hột cao hơn khi cùng số đội", () => {
+  // A+B và C+D là hai danh sách 2 đội duy nhất (chiến pháp chéo nhau). A có nhiều hột nhất một mình,
+  // nhưng C+D có tổng hột cao hơn A+B.
+  const makeTeam = (id, hero, tactics) => ({
+    id,
+    name: id,
+    heroes: [{ name: hero, tactics: tactics.map((name) => ({ name, alternatives: [] })) }],
+  });
+  const input = {
+    teams: [
+      makeTeam("a", "Tướng A", ["CP 1", "CP 3"]),
+      makeTeam("b", "Tướng B", ["CP 2", "CP 4"]),
+      makeTeam("c", "Tướng C", ["CP 1", "CP 2"]),
+      makeTeam("d", "Tướng D", ["CP 3", "CP 4"]),
+    ],
+    teamTier: [
+      { teamId: "a", rankings: [{ tier: "T0" }] },
+      { teamId: "b", rankings: [{ tier: "T1" }] },
+      { teamId: "c", rankings: [{ tier: "T1" }] },
+      { teamId: "d", rankings: [{ tier: "T1" }] },
+    ],
+    ownedHeroes: [
+      { name: "Tướng A", redStars: 5 },
+      { name: "Tướng B", redStars: 0 },
+      { name: "Tướng C", redStars: 3 },
+      { name: "Tướng D", redStars: 3 },
+    ],
+    ownedTactics: ["CP 1", "CP 2", "CP 3", "CP 4"],
+    maxTeams: 2,
+    fullBox: true,
+  };
+  const ids = (mode) => recommendTeams({ ...input, mode }).portfolioTeams.map((entry) => entry.team.id).sort();
+
+  assert.deepEqual(ids("meta"), ["a", "b"]);
+  assert.deepEqual(ids("redStars"), ["c", "d"]);
+});

@@ -3,6 +3,7 @@ import { createDropdownMenu } from "./site-nav.js";
 import {
   createAccount,
   createLimitedBanner,
+  dailySlotLabel,
   deleteAccount,
   getRecruitTrackerSummary,
   loadRecruitTrackerState,
@@ -104,7 +105,12 @@ export function buildRecruitTrackerViewModel(summary, heroesDict = []) {
       pity: pityView(item.pity),
       warning: item.pity.isOverLimit ? "Kiểm tra lại dữ liệu/quy tắc game" : "",
     })),
-    history: summary.history,
+    // Lịch sử: tên lượt ngày bằng tiếng Việt, số lượt so với mốc bảo hiểm của chính gói đó.
+    history: summary.history.map((item) => ({
+      ...item,
+      slotText: item.drawSlot ? dailySlotLabel(item.drawSlot) : "",
+      pullsText: `lượt ${item.pullCount || item.pulls || 1}/${item.pityLimit}`,
+    })),
   };
 }
 
@@ -116,6 +122,8 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
   const doc = mount.ownerDocument ?? globalThis.document;
   const compact = globalThis.matchMedia?.(COMPACT_QUERY) ?? null;
   const currentDate = () => todayLocalDate();
+  /** Ngày của lưới lượt ngày đang vẽ: đổi ngày (qua nửa đêm) thì vẽ lại để 4 ô về "Chưa quay". */
+  let renderedDate = "";
 
   const persist = () => saveRecruitTrackerState(storage, state);
   const refresh = () => render();
@@ -276,7 +284,8 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
   /* ---------- Cập nhật tại chỗ ---------- */
 
   function render() {
-    const summary = getRecruitTrackerSummary(state, { date: currentDate() });
+    renderedDate = currentDate();
+    const summary = getRecruitTrackerSummary(state, { date: renderedDate });
     const viewModel = buildRecruitTrackerViewModel(summary, heroesDict);
     paintAccounts(viewModel);
     messageNode.textContent = message || "";
@@ -336,7 +345,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
         const fiveStarButton = el("button", {
           class: "rt-btn rt-btn-small",
           type: "button",
-          onclick: () => openFiveStarForm({ mode: "daily", slotKey: slot.key, pulls: 1 }),
+          onclick: () => openFiveStarForm({ mode: "daily", slotKey: slot.key, date: renderedDate, pulls: 1 }),
         }, "Ra 5★");
         const statusNode = el("span", { class: "rt-slot-status" });
         const node = el("div", { class: "rt-slot" }, [
@@ -452,8 +461,8 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     return el("li", { class: "rt-history-item" }, [
       el("span", { class: "rt-history-hero" }, item.heroName || "Tướng chưa ghi"),
       el("span", { class: `badge rt-value ${VALUE_BADGE_CLASS[item.heroValueClass] || ""}`.trim() }, item.heroValueClass || "Chưa phân loại"),
-      el("span", { class: "rt-history-date" }, [item.date, " · ", item.bannerName, item.drawSlot ? ` · ${item.drawSlot}` : ""]),
-      el("span", { class: "rt-history-pulls" }, `lượt ${item.pullCount || item.pulls || 1}/30`),
+      el("span", { class: "rt-history-date" }, [item.date, " · ", item.bannerName, item.slotText ? ` · ${item.slotText}` : ""]),
+      el("span", { class: "rt-history-pulls" }, item.pullsText),
       item.note ? el("p", { class: "rt-note" }, item.note) : null,
     ]);
   }
@@ -465,7 +474,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
       return;
     }
     const title = pendingFiveStar.mode === "daily"
-      ? `Ghi 5★ · ${pendingFiveStar.slotKey}`
+      ? `Ghi 5★ · ${dailySlotLabel(pendingFiveStar.slotKey)}`
       : `Ghi 5★ · ${pendingFiveStar.bannerName}`;
     const signature = `${pendingFiveStar.mode}|${pendingFiveStar.slotKey || pendingFiveStar.bannerId}`;
     if (formSlot.dataset.signature === signature) return;
@@ -481,11 +490,14 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
           el("input", { name: "heroName", list: "rt-hero-options", required: "required", autocomplete: "off", "data-hero-input": "true" }),
         ]),
         el("datalist", { id: "rt-hero-options" }, viewModel.heroOptions.map((name) => el("option", { value: name }))),
-        el("label", {}, [el("span", {}, "Ngày"), el("input", { name: "date", type: "date", value: currentDate() })]),
-        pendingFiveStar.mode === "limited" ? el("label", {}, [
-          el("span", {}, "Số lượt"),
-          el("input", { name: "pulls", type: "number", min: "1", value: "1" }),
-        ]) : null,
+        // Lượt ngày ghi vào đúng ô của lưới đã mở form, nên chỉ gói hạn giờ mới chọn ngày.
+        ...(pendingFiveStar.mode === "limited" ? [
+          el("label", {}, [el("span", {}, "Ngày"), el("input", { name: "date", type: "date", value: currentDate() })]),
+          el("label", {}, [
+            el("span", {}, "Số lượt"),
+            el("input", { name: "pulls", type: "number", min: "1", value: "1" }),
+          ]),
+        ] : []),
         el("label", {}, [
           el("span", {}, "Phân loại"),
           el("select", { name: "heroValueClass" }, VALUE_CLASSES.map((entry) => el("option", { value: entry }, entry))),
@@ -541,10 +553,10 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     const form = new FormData(event.currentTarget);
     const heroName = String(form.get("heroName") || "").trim();
     if (!heroName) return;
-    const date = String(form.get("date") || currentDate());
+    const context = pendingFiveStar;
+    const date = context.mode === "daily" ? context.date : String(form.get("date") || currentDate());
     const note = String(form.get("note") || "");
     const heroValueClass = String(form.get("heroValueClass") || "Chưa phân loại");
-    const context = pendingFiveStar;
     pendingFiveStar = null;
     if (context.mode === "daily") {
       mutate(recordDailySlotFiveStar(state, {
@@ -602,6 +614,26 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     }
   }
 
+  /* ---------- Qua ngày khi trang vẫn mở ---------- */
+
+  const refreshIfNewDay = () => {
+    if (currentDate() !== renderedDate) render();
+  };
+  // Hẹn giờ tới nửa đêm địa phương kế tiếp; tab ngủ có thể trễ hẹn nên vẫn kiểm lại khi quay về trang.
+  const scheduleMidnight = () => {
+    const now = new Date();
+    const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    setTimeout(() => {
+      refreshIfNewDay();
+      scheduleMidnight();
+    }, midnight.getTime() - now.getTime());
+  };
+  doc?.addEventListener("visibilitychange", () => {
+    if (doc.visibilityState === "visible") refreshIfNewDay();
+  });
+  globalThis.addEventListener?.("focus", refreshIfNewDay);
+
   render();
+  scheduleMidnight();
   return { refresh, getState: () => state };
 }

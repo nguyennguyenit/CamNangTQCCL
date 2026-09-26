@@ -12,8 +12,8 @@
     "notes": {
       "approvedDisplaySlots": 11,
       "blocks": 1967,
-      "concreteInventorySha256": "abe264a461a8a5949631b696eaac4b3fa4a9e8aab3c6c2837668f75de5059a27",
-      "concreteLocationCount": 56665,
+      "concreteInventorySha256": "1473c276f5bf791e3cd419ad9fd0f52d2dff617905afeaaf7cbde63371e83489",
+      "concreteLocationCount": 56669,
       "hanBlocks": 1928,
       "lookupReviewObligations": 3503,
       "siteLedgerObligations": 2088,
@@ -75,7 +75,7 @@
       "hột": "red-copy count"
     }
   },
-  "policyVersion": "site-vi-260927-ui-ux-a",
+  "policyVersion": "site-vi-260927-ui-ux-b",
   "routeFamilies": [
     {
       "entrypoints": [
@@ -741,8 +741,8 @@
     "data/khaihoang.json": "973b252b08ef9332f19866e7321389bd952d03d8156c586718674db8a09de211",
     "data/season-content-links.json": "c87e87e6984c5a39af11248c2125620477852aa1c82b299da339e262e2c881d9",
     "data/teams.json": "45e13dca78877abc13d2ef2213be9432c8307aa558d99783498279f7563cf283",
-    "js/analyze-map.js": "35a9cd5ee36fdfa2891762d2664607f6f63226bea43b2280b059b679adf2a500",
-    "js/analyze.js": "b5ffbd867b49e516987bd7719d0121e5fa3ed70ee2a95285ad67f86d9a729b3f",
+    "js/analyze-map.js": "9613ccabc904bd342bd7d7e0f33f770a9668c0f1983e0770d54a962d8e3e0ab7",
+    "js/analyze.js": "b47d9eaa2554233dfd6840f7efb810601df071d1a63b925af2d4db155be74d4b",
     "js/app.js": "45c3b38049c0a7cd67c5ee18784660d6edacbf527de7ddf1fb3966dfc0468a5f",
     "js/detail-actions.js": "ac410e1c6accabcb9d94bcf4cfc6b0a8b6a3e29f10af93f5aef51c7d3e0aa6c3",
     "js/hero-portrait.js": "5abbe063592abaa25f3f22334456a7de3784b9c330de3bb9abbe77d47de11e2b",
@@ -753,10 +753,10 @@
     "js/lookup-detail.js": "4a29c5db0d506cf2784c04d3306b5a5e1f773c32b3c1111c92dd69ed735bc659",
     "js/recommended-reference-render.js": "496d3ef055c9e978b8c04e75e36cf55d403e88d7453913ee235198d85cf752b0",
     "js/recommended-reference-state.js": "4850f177ab5039d45c9298a5912717570a1c6b9dd074498abdf51938f33bc417",
-    "js/recruit-tracker-store.js": "83ce5751bb7a40fe504e42df073ca5eac61c1129381d805ea0229c1924848c52",
-    "js/recruit-tracker.js": "12bb7650d991adf08d032c098ff46747644691237e35574238fcb8da389907a8",
+    "js/recruit-tracker-store.js": "21d4bdc4a760ae67b9ab925f4d4c9babbdcca539d6aca77d025c66051ae70bc5",
+    "js/recruit-tracker.js": "cdcd434e7798f9d143ec697ec473d6b2fcb6c665d4b5a664c4415774c3d934be",
     "js/render.js": "8288871d723ec515a1005b87066978b7257fdea616f563c13919a45b4662ffe8",
-    "js/roster-recommend-ui.js": "c30c5a43cb8c10982624878cd37e8259acf9b851a431fcce9730f969d3219b42",
+    "js/roster-recommend-ui.js": "af3825a732ed552354e138854b621e70c406a16453025b388f5456eb455c779a",
     "js/roster-scan-map.js": "e79071426c09ad63a6ffebac07fa0e7cec00f17ed072027c678404042faf82ce",
     "js/roster-scan-state.js": "4ff55cc4a98b3fa9d7dc648c9dee5983e32bbdd45e70506275770cecad1084f5",
     "js/site-chrome.js": "9b32d605705d8579720a46c3371cc05bff33d45a73b80e3d754f0e586c859f12",
