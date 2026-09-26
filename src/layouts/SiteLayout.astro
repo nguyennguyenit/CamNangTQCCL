@@ -22,6 +22,7 @@ interface Props {
   description: string;
   pageKind: 'landing' | 'section' | 'detail' | 'not-found';
   activeSection?: 'team-chuan' | 'team-khac' | 'coexist' | 'khaihoang' | 'lookup' | 'recruit-tracker' | 'analyze' | 'roster-recommend' | null;
+  /** Chỉ trang chi tiết và 404: trang mục lấy mô tả của chính mục, Landing không có tagline. */
   tagline?: string;
   canonicalUrl?: URL | string;
   ogType?: 'website' | 'article';
@@ -33,7 +34,7 @@ const {
   description,
   pageKind,
   activeSection = null,
-  tagline = 'Tất cả — tham khảo',
+  tagline,
   canonicalUrl,
   ogType = 'website',
   robots,
@@ -98,6 +99,11 @@ const GAME_STRIP_SUBTITLE = 'Liên kết của nhà phát hành';
 const COMMUNITY_TITLE = 'Cộng đồng game';
 const DOWNLOAD_TITLE = 'Tải game';
 const UPDATED_LABEL = 'Dữ liệu cập nhật';
+/** Tên cố định của nút đổi giao diện; trạng thái bật/tắt nằm ở `aria-pressed` (mẫu nút bật/tắt WAI-ARIA). */
+const THEME_TOGGLE_LABEL = 'Giao diện tối';
+/** Trang mục dựng nội dung bằng JavaScript: không có JS thì vẫn có tiêu đề mục và lời nhắn này. */
+const SECTION_NOSCRIPT_MESSAGE = 'Mục này cần JavaScript để hiển thị nội dung. Hãy bật JavaScript rồi tải lại trang.';
+const OG_IMAGE_PATH = '/og-image.png';
 
 // `:root` không đặt sẵn data-theme: script inline dưới đây quyết định trước khi stylesheet chạy.
 const pageSection = pageKind === 'section' ? activeSection : null;
@@ -116,6 +122,12 @@ const updatedOn = buildDateVi();
 const topSections = SECTIONS.slice(0, 5);
 const toolSections = SECTIONS.slice(5);
 const landing = pageKind === 'landing';
+/** Tagline dưới logo: trang mục dùng đúng mô tả của mục trong menu; Landing không vẽ tagline. */
+const headerTagline = pageKind === 'section' && activeSection ? SECTION_DESCRIPTIONS[activeSection] : landing ? null : tagline;
+const sectionLabel = pageKind === 'section' ? SECTIONS.find((section) => section.id === activeSection)?.label : null;
+/** Công cụ là menu thả chứ không phải link: đánh dấu nút khi trang đang xem là một công cụ. */
+const toolsActive = toolSections.some((section) => section.id === activeSection);
+const ogImageHref = new URL(OG_IMAGE_PATH, Astro.site).href;
 /** Mục điều hướng: `data-section` chỉ đặt ở menu desktop để danh sách shell giữ đúng 8 mục. */
 const sectionEntry = (section: (typeof SECTIONS)[number]) => ({
   id: section.id,
@@ -210,6 +222,11 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
     <meta property="og:description" content={description} />
     <meta property="og:type" content={ogType} />
     {canonicalHref ? <meta property="og:url" content={canonicalHref} /> : null}
+    <meta property="og:site_name" content={LOGO_TITLE} />
+    <meta property="og:locale" content="vi_VN" />
+    <meta property="og:image" content={ogImageHref} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <link rel="icon" type="image/png" sizes="128x128" href="/favicon.png" />
     <slot name="head" />
     <script is:inline>
@@ -233,6 +250,9 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
     <link rel="stylesheet" href="/css/styles.css" />
     <link rel="preload" href="/fonts/be-vietnam-pro-400-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/noto-serif-display-700-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Chữ có dấu nằm ở subset vietnamese: tải sớm để chữ Việt không hiện font dự phòng rồi mới đổi. -->
+    <link rel="preload" href="/fonts/be-vietnam-pro-400-vietnamese.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/noto-serif-display-700-vietnamese.woff2" as="font" type="font/woff2" crossorigin />
   </head>
   <body data-page-section={pageSection}>
     <a class="skip-link" href="#main-content">Bỏ qua điều hướng</a>
@@ -242,8 +262,8 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
           <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg>
         </button>
         {landing
-          ? <div class="brand"><span class="seal seal-header" aria-hidden="true"><svg viewBox={SEAL_VIEW_BOX}><path d={SEAL_PATH} fill="currentColor"></path></svg></span><span class="brand-text"><span class="site-title">{LOGO_TITLE}</span><span class="tagline">{tagline}</span></span></div>
-          : <a class="brand" href="/"><span class="seal seal-header" aria-hidden="true"><svg viewBox={SEAL_VIEW_BOX}><path d={SEAL_PATH} fill="currentColor"></path></svg></span><span class="brand-text"><span class="site-title">{LOGO_TITLE}</span><span class="tagline">{tagline}</span></span></a>}
+          ? <div class="brand"><span class="seal seal-header" aria-hidden="true"><svg viewBox={SEAL_VIEW_BOX}><path d={SEAL_PATH} fill="currentColor"></path></svg></span><span class="brand-text"><span class="site-title">{LOGO_TITLE}</span></span></div>
+          : <a class="brand" href="/"><span class="seal seal-header" aria-hidden="true"><svg viewBox={SEAL_VIEW_BOX}><path d={SEAL_PATH} fill="currentColor"></path></svg></span><span class="brand-text"><span class="site-title">{LOGO_TITLE}</span>{headerTagline ? <span class="tagline">{headerTagline}</span> : null}</span></a>}
 
         <nav class="site-nav" aria-label={MENU_LABEL}>
           <ul class="site-nav-list">
@@ -261,7 +281,7 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
               <li class:list={['nav-dropdown', menu.key === 'game' && 'nav-dropdown-game']} data-dropdown>
                 <button
                   id={`nav-toggle-${menu.key}`}
-                  class="nav-tab nav-tab-toggle"
+                  class:list={['nav-tab nav-tab-toggle', {active: menu.key === 'cong-cu' && toolsActive}]}
                   type="button"
                   aria-expanded="false"
                   aria-controls={`nav-menu-${menu.key}`}
@@ -303,7 +323,7 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
         </nav>
 
         <div class="header-actions">
-          <button id="theme-toggle" class="icon-btn theme-toggle" type="button" data-theme-toggle title="Đổi giao diện sáng/tối" aria-label="Chuyển sang giao diện tối" aria-pressed="false">
+          <button id="theme-toggle" class="icon-btn theme-toggle" type="button" data-theme-toggle title="Đổi giao diện sáng/tối" aria-label={THEME_TOGGLE_LABEL} aria-pressed="false">
             <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
           </button>
           {landing ? <a class="header-cta" href="/doi-chuan/"><span class="header-cta-label">{OPEN_GUIDE_LABEL}</span><span class="header-cta-short" aria-hidden="true">{OPEN_GUIDE_SHORT_LABEL}</span></a> : null}
@@ -318,7 +338,7 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
         </button>
         <span class="seal seal-menu" aria-hidden="true"><svg viewBox={SEAL_VIEW_BOX}><path d={SEAL_PATH} fill="currentColor"></path></svg></span>
         <span class="site-menu-title">{LOGO_TITLE}</span>
-        <button id="theme-toggle-menu" class="icon-btn theme-toggle" type="button" data-theme-toggle title="Đổi giao diện sáng/tối" aria-label="Chuyển sang giao diện tối" aria-pressed="false">
+        <button id="theme-toggle-menu" class="icon-btn theme-toggle" type="button" data-theme-toggle title="Đổi giao diện sáng/tối" aria-label={THEME_TOGGLE_LABEL} aria-pressed="false">
           <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
         </button>
       </div>
@@ -361,7 +381,8 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
 
     <main id="main-content" class:list={['layout', landing && 'layout-landing']}>
       <div class={contentClass}>
-        {seasonScope ? <div id="season-controls" class="season-controls" aria-label="Phạm vi đội hình"></div> : null}
+        {sectionLabel ? <noscript><h1 class="reference-title">{sectionLabel}</h1><p class="scope-note">{SECTION_NOSCRIPT_MESSAGE}</p></noscript> : null}
+        {seasonScope ? <div id="season-controls" class="season-controls" role="group" aria-label="Phạm vi đội hình"></div> : null}
         <slot />
       </div>
     </main>

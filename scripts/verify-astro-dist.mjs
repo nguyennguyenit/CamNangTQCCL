@@ -15,6 +15,7 @@ export const DEPLOYMENT_CONTROL_ARTIFACTS = Object.freeze([
 
 export const STATIC_PUBLIC_ARTIFACTS = Object.freeze([
   Object.freeze({ sourcePath: "public/favicon.png", outputPath: "favicon.png" }),
+  Object.freeze({ sourcePath: "public/og-image.png", outputPath: "og-image.png" }),
   Object.freeze({ sourcePath: "public/robots.txt", outputPath: "robots.txt" }),
 ]);
 

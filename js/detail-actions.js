@@ -9,6 +9,20 @@ export const COPY_FALLBACK_LABEL = 'Liên kết đội';
 export const COPIED_MESSAGE = 'Đã sao chép liên kết';
 export const COPY_FAILED_MESSAGE = 'Không sao chép tự động được. Liên kết đã được chọn sẵn để bạn tự sao chép.';
 
+/**
+ * Lỗi mạng/HTTP khi tải dữ liệu chi tiết: fetch bị chặn (TypeError của trình duyệt) hoặc bộ nạp báo
+ * `<đường dẫn>: <mã HTTP>`. Mọi lỗi khác (byte lệch pin, dữ liệu sai dạng, thiếu đội) là lỗi xác minh.
+ */
+export const isNetworkError = (error) => /Failed to fetch|NetworkError|load failed|: \d{3}$/i.test(error?.message || '');
+
+/** URL để chia sẻ: chính trang chi tiết, bỏ `from` (trạng thái danh sách riêng của người gửi). */
+function shareableUrl(href) {
+  if (!href) return '';
+  const url = new URL(href);
+  url.searchParams.delete('from');
+  return url.href;
+}
+
 const externalIcon = () => icon([
   svgNode('path', {d: 'M14 4h6v6'}),
   svgNode('path', {d: 'M20 4l-9 9'}),
@@ -31,8 +45,9 @@ function sourceLink({href, label}) {
 }
 
 /**
- * Nút "Sao chép liên kết": ghi đúng URL đang xem vào clipboard; không có clipboard hoặc bị từ chối thì
- * hiện ô chỉ đọc đã chọn sẵn URL và báo bằng `role="status"`, không báo thành công giả.
+ * Nút "Sao chép liên kết": ghi URL chia sẻ của trang đang xem (giữ `variant`, bỏ `from`) vào clipboard;
+ * không có clipboard hoặc bị từ chối thì hiện ô chỉ đọc đã chọn sẵn URL và báo bằng `role="status"`,
+ * không báo thành công giả.
  */
 function copyControl() {
   const fallback = el('input', {
@@ -47,7 +62,7 @@ function copyControl() {
     id: 'team-copy-link', class: 'detail-copy-btn', type: 'button', 'aria-label': COPY_LINK_LABEL,
   }, copyIcon());
   button.addEventListener('click', async () => {
-    const href = globalThis.location?.href || '';
+    const href = shareableUrl(globalThis.location?.href);
     fallback.value = href;
     try {
       if (typeof navigator?.clipboard?.writeText !== 'function') throw new Error('clipboard-unavailable');

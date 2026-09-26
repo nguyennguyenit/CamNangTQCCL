@@ -1437,6 +1437,16 @@ a.lookup-more:hover {
   text-decoration: none;
 }
 
+/* Mục đang xem (hoặc mục cha của trang chi tiết): vạch son bên trái và nhãn son như tab nav desktop. */
+.site-menu-row[aria-current] {
+  padding-inline-start: var(--space-12);
+  border-left: var(--border-underline) solid var(--nav-underline);
+}
+
+.site-menu-row[aria-current] .site-menu-label {
+  color: var(--nav-underline);
+}
+
 .site-menu-text {
   display: flex;
   flex-direction: column;
@@ -1985,8 +1995,9 @@ a.lookup-more:hover {
   color: var(--accent);
 }
 
+/* `--accent-ink` có giá trị tối riêng; `--accent-strong` chỉ khai cho nền sáng nên chữ tối mất tương phản. */
 .landing-inline-link:hover {
-  color: var(--accent-strong);
+  color: var(--accent-ink);
 }
 
 /* ---------- Dải số liệu ---------- */
@@ -4088,7 +4099,8 @@ main.layout:has(> .detail-content) {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 340px;
   gap: var(--space-48);
-  align-items: end;
+  /* Đầu cột: panel nguồn cao (Khai hoang nhiều link) không đẩy tiêu đề xuống xa link Quay lại. */
+  align-items: start;
   padding-bottom: var(--space-36);
   border-bottom: var(--border-hair) solid var(--line);
 }
@@ -4163,6 +4175,13 @@ main.layout:has(> .detail-content) {
   justify-self: end;
   gap: var(--space-12);
   padding: var(--space-16);
+}
+
+/* Chỉ còn nút sao chép (không điểm, không link nguồn): nút đứng trơn, không bọc khung trông như ô trống. */
+.detail-score-panel:not(:has(.detail-score, .detail-source-link)) {
+  padding: 0;
+  background: none;
+  border: none;
 }
 
 /* Artboard TeamDetail.dc.html:53: nhãn caps rồi "theo SGSDeck" xếp dọc, cách 6px. */

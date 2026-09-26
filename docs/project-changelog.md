@@ -1,5 +1,26 @@
 # Project Changelog
 
+## 2026-09-27 (UI/UX phần 3c: trang chi tiết, shell)
+
+### Fixed
+
+- Trang chi tiết Đội chuẩn/Đội khác: byte dữ liệu lệch pin (ví dụ `data/teams.json` đổi sau deploy) báo "Không thể xác minh dữ liệu đội hình…", không còn "Hãy kiểm tra kết nối"; chỉ lỗi fetch/HTTP mới là lỗi mạng (hàm dùng chung `isNetworkError` trong `js/detail-actions.js`, Khai hoang dùng cùng hàm).
+- "Sao chép liên kết đội" chép URL của trang chi tiết không kèm `from` (trạng thái danh sách của người gửi); Khai hoang giữ `variant` đang chọn. Ô dự phòng khi clipboard lỗi cũng hiện URL này.
+- Trang chi tiết: đầu trang canh trên (`align-items: start`), panel nguồn cao của Khai hoang không còn đẩy tiêu đề xuống cách link "Quay lại" ~200px.
+- Panel đầu trang chỉ còn nút sao chép (Đội khác, cấu hình Khai hoang không có nguồn) không còn khung viền trông như ô trống.
+- Tagline dưới logo của 8 trang mục là mô tả một dòng của chính mục trong menu (ví dụ Tra cứu "Xem tướng, chiến pháp, trang bị, quân sư"), không còn "Tra cứu đội hình theo kịch bản" chép ở 5 trang; Landing không còn tagline "Tất cả — tham khảo".
+- Mục đang xem nổi bật: dòng menu mobile có `aria-current` có vạch và nhãn son; nút "Công cụ" trên header được đánh dấu khi đang ở một trong ba công cụ.
+- Theme tối: link "website chính thức" ở mục Tải game khi hover dùng `--accent-ink` (không còn 1,77:1).
+- Nút đổi giao diện giữ tên "Giao diện tối", chỉ `aria-pressed` đổi theo trạng thái.
+- 8 trang mục có `<noscript>` với `h1` tên mục và lời nhắn cần JavaScript; khối phạm vi mùa có `role="group"` để nhãn "Phạm vi đội hình" có hiệu lực.
+
+### Changed
+
+- Mô tả `/cung-ton/` bỏ "và phiên bản luật" (trang không còn bộ chọn luật).
+- Preload thêm subset vietnamese của Be Vietnam Pro 400 và Noto Serif Display 700.
+- Mọi trang khai `og:site_name`, `og:locale=vi_VN` và `og:image` tuyệt đối trỏ `public/og-image.png` (1200×630, ấn 兵 + tên logo; lệnh sinh ở `docs/design/so-binh-phap/README.md`); `_headers` thêm luật `/og-image.png` (17 luật), verifier khoá byte ảnh.
+- Bản dịch: đổi chữ `ui:section-page/cung-ton` metaDescription; thêm `ui:layout/theme-toggle`, `ui:layout/section-noscript` (đều `authored-vi`); policy `site-vi-260927-ui-ux-c`, publish generation `b3636bad…` (xoá generation trung gian `f1fcb066…` của phần 3b).
+
 ## 2026-09-27 (UI/UX phần 3b: công cụ, Chiêu mộ)
 
 ### Fixed

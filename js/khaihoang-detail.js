@@ -2,7 +2,7 @@
 // Không khởi động app gốc và không ghi ngược trạng thái danh sách.
 
 import { el, khaihoangBuildContent, khaihoangConfigRow, khaihoangGuide } from './render.js';
-import { detailPanelActions } from './detail-actions.js';
+import { detailPanelActions, isNetworkError } from './detail-actions.js';
 import { detailBadges } from './recommended-reference-render.js';
 import { validateHttpSourceUrl } from './recommended-reference-state.js';
 import { khaiHoangDetailVariantUrl, returnHrefFor } from './team-detail-navigation.js';
@@ -22,8 +22,6 @@ const decoder = new TextDecoder();
 const asBytes = (value) => (value instanceof Uint8Array ? value : new Uint8Array(value));
 const sha256Hex = async (bytes) => [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))]
   .map((value) => value.toString(16).padStart(2, '0')).join('');
-// Lỗi mạng/HTTP của chính module này kết thúc bằng mã trạng thái.
-const isNetworkError = (error) => /Failed to fetch|NetworkError|load failed|: \d{3}$/i.test(error?.message || '');
 
 /** Bộ nạp byte dùng chung cho publication và nguồn dữ liệu, mỗi đường dẫn gọi mạng một lần. */
 function byteLoader() {

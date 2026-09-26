@@ -186,3 +186,98 @@ E2E chạy trên `astro build` + `astro preview` (cổng 4174, config Playwright
 | `team_route_handles --check` | pass |
 | `worker` vitest | 6 file, 53 test |
 | `mcp-worker` check | 43 file, 375 test |
+
+## Part 3c — Trang chi tiết, Shell
+
+### Test đỏ → xanh
+
+E2E chạy trên `astro build` + `astro preview` (cổng 4174, config Playwright tạm ở gốc repo vì `/tmp` không resolve được `@playwright/test`; đã xoá). Unit dùng `node --experimental-strip-types --test <file>`.
+
+| Mục | Test | Đỏ trước sửa | Sau sửa |
+|---|---|---|---|
+| Phân loại lỗi (ReviewJsCore#8) | `detail-actions.test` "fetch bị chặn hoặc HTTP lỗi là lỗi mạng", "dữ liệu đổi, sai hoặc thiếu là lỗi xác minh…" | `SyntaxError: The requested module '../js/detail-actions.js' does not provide an export named 'isNetworkError'` (hàm còn là bản riêng trong `khaihoang-detail.js`) | xanh |
+| | `team-detail-pages.spec` "a changed teams.json reads as a verification failure and an unreachable one as a network failure" (route trả `teams.json` thêm `\n`, rồi abort) | `Expected substring: "Không thể xác minh dữ liệu đội hình"` `Received: "Không tải được chi tiết đội hình. Hãy kiểm tra kết nối rồi thử lại.Thử lại"` | xanh: byte lệch → thông điệp xác minh; abort → "Hãy kiểm tra kết nối" |
+| Copy link (ReviewJsCore#14) | `team-detail-pages.spec` "copy link reports the real clipboard result…" (sửa kỳ vọng cũ ghim URL có `from`) | `Expected: ".../doi-chuan/pk-s24-tiem-long-dieu-thuyen/"` `Received: "...?from=%2Fdoi-chuan%2F%3Fseason%3Dpk-s24"` | xanh; ô dự phòng khi clipboard lỗi cũng là URL không `from` |
+| | "copy link on a Khai hoang detail keeps the chosen variant and drops from" | `Expected: ".../gia-cat-khac-sp-ma-sieu-phap-chinh/?variant=cn-thoi-phong"` `Received: "...?from=%2Fkhai-hoang%2F%3Fq%3Dx&variant=cn-thoi-phong"` | xanh |
+| Khoảng trống đầu Khai hoang (AuditUiLive#10) | "Khai hoang detail with a tall source panel keeps the title right under the back link" (1280px, đo `h1.top − #team-return-link.bottom` trên trang Đội chuẩn `index.records[0]` rồi `/khai-hoang/chu-thai-truong-phi-truong-xuan-hoa/`, panel 4 link nguồn) | `Expected: <= 158.39` `Received: 166.41` | xanh |
+| Khung chỉ có nút copy (AuditUiLive#11) | "Đội khác detail drops the score panel content…" (kiểm `#team-detail-panel` thay `.detail-score-panel`, thêm viền) | `borderTopStyle` `Expected: "none"` `Received: "solid"` | xanh |
+| Tagline (AuditUiLive#4, ReviewAstroCss#5, Q1 = A) | `spa-parity.spec` "tagline trang mục là mô tả của chính mục trong menu; Landing không có tagline" (bảng 8 dòng, dòng menu `aria-current` cùng chữ, Landing 0 `.tagline`, chi tiết Đội chuẩn "Chi tiết đội chuẩn", 404 "Không tìm thấy trang") | `/doi-chuan/` `Expected: "Cấu hình đội theo mùa nguồn"` `Received: "Duyệt đội hình theo mùa nguồn"` | xanh |
+| | "320px: tagline một dòng…" viết lại: 8 trang, một dòng, không tràn header, `overflow: hidden`, `text-overflow: ellipsis`, `white-space: nowrap`; bỏ ghim `clipped: true` và ca 1024px "hiện trọn chữ" | — (viết lại, không có đỏ riêng) | xanh |
+| Mục hiện tại trong nav (AuditUiLive#5) | "mục đang xem nổi bật: dòng menu mobile có aria-current và nút Công cụ trên trang công cụ" | style dòng `Đội khác` = `Đội chuẩn`: `Expected: not "0px\|rgb(243, 238, 227)\|rgba(0, 0, 0, 0)\|rgb(243, 238, 227)\|600"` | xanh: dòng hiện tại có vạch trái và nhãn son; ở 3 trang công cụ nút `Công cụ` khác `Game`, ở `/doi-chuan/` giống `Game` |
+| Tương phản tối (ReviewAstroCss#6) | `selected-state-contrast.spec` "link "website chính thức" ở #tai-game khi hover vẫn đọc được ở cả hai theme" | `dark: chữ link khi hover` `Expected: >= 4.5` `Received: 1.7726659849954718` | xanh ở cả hai theme; `design-tokens.mjs --check` ok |
+| Nút theme (ReviewAstroCss#11) | `spa-parity.spec` "nút giao diện giữ tên 'Giao diện tối'…" | `toHaveAccessibleName` `Expected: "Giao diện tối"` `Received: "Chuyển sang giao diện tối"` | xanh: tên không đổi, `aria-pressed` false → true ở cả hai nút |
+| h1/noscript (ReviewAstroCss#12) | "không có JavaScript: 8 trang mục vẫn có h1 tên mục…" (context `javaScriptEnabled: false`, rồi trang bật JS) | `/doi-chuan/` `h1` `Expected: 1` `Received: 0` | xanh: không JS có `h1` tên mục + lời nhắn; có JS đúng 1 `h1` |
+| `aria-label` trên `div` (ReviewAstroCss#13) | "khối phạm vi mùa là nhóm có tên 'Phạm vi đội hình'" (`/doi-chuan/`, `/cung-ton/`; `includeHidden` vì JS ẩn khối này sau khi dựng) | `/doi-chuan/` `Expected: 1` `Received: 0` | xanh |
+| Mô tả Cùng Tồn (ReviewAstroCss#14, phần trang) | Chỉ đổi chữ, không test đỏ | — | — |
+| Preload font Việt (ReviewAstroCss#19) | Không test đỏ; `dist/doi-chuan/index.html` có 4 preload (`be-vietnam-pro-400-{latin,vietnamese}`, `noto-serif-display-700-{latin,vietnamese}`), `npm run verify` xanh | — | — |
+| Thẻ `og:` (ReviewAstroCss#21) | `astro-dist-contract.test` "every canonical page declares site name, Vietnamese locale and an absolute og:image shipped in dist" (1558 trang trong sitemap) | `actual: null` `expected: 'Cẩm Nang Tam Quốc Chí'` | xanh |
+| | `pages-headers-contract.test` (thêm `/og-image.png` vào bảng luật và đường dẫn công khai) | `deepEqual` thiếu `'/og-image.png'`; `policyFor('/og-image.png')` `actual: undefined` | xanh |
+
+### Quyết định khi làm
+- **Phân loại lỗi:** `isNetworkError` (regex cũ của Khai hoang: `Failed to fetch|NetworkError|load failed|: \d{3}$`) export từ `js/detail-actions.js`; `team-detail.js` chỉ báo lỗi mạng khi hàm này đúng, mọi lỗi khác là lỗi xác minh. Khai hoang giữ ba thông điệp xác minh riêng như cũ.
+- **Copy link:** URL chia sẻ = URL đang xem bỏ `from`; giữ mọi tham số khác (`variant` của Khai hoang và biến thể Đội khác).
+- **Khung chỉ có nút copy:** sửa bằng CSS `.detail-score-panel:not(:has(.detail-score, .detail-source-link))` (không khung, không đệm), không sửa `src/pages/doi-khac/[team].astro`. Lý do: Đội khác luôn chỉ có nút copy, còn Khai hoang cũng rơi vào đúng trường hợp này khi cấu hình đang chọn không có nguồn; một luật theo nội dung phủ cả hai. 4 tuple `translate` của `doi-khac/[team].astro` không bị chạm.
+- **Nút Công cụ:** chỉ thêm class `active` (cùng kiểu tab nav đang ở mục), không đặt `aria-current` lên nút mở menu; link công cụ trong menu vẫn mang `aria-current="page"`.
+- **noscript:** layout phát `<noscript><h1 class="reference-title">{nhãn SECTIONS}</h1><p class="scope-note">…</p></noscript>` cho `pageKind="section"`; khi JS bật, trình duyệt không dựng nội dung `noscript` nên vẫn chỉ có `h1` do JS vẽ.
+- **og:image:** thêm `og:image:width`/`og:image:height` (1200×630). Ảnh sinh bằng Chromium của Playwright, lệnh ghi ở `docs/design/so-binh-phap/README.md` (mục "Ảnh chia sẻ `og:image`"). Fixture của `astro-dist-contract.test` dùng helper `writeStaticImages` (favicon + og-image) thay 5 khối chép favicon.
+
+### G0: tuple của file sửa
+| File | Số tuple (trước) | Ghi chú |
+|---|---|---|
+| `src/layouts/SiteLayout.astro` | 42 (4 `translate`) | `label: 'Team chuẩn'`, `label: 'Team khác'`, `>Beta<`, `Build bởi` không đụng; 8 mô tả `SECTION_DESCRIPTIONS` giữ nguyên chữ |
+| `js/detail-actions.js` | 5 | 0 `translate` |
+| `src/pages/cung-ton/index.astro` | 2 | 0 `translate`; metaDescription là `authored-vi` nên được đổi chữ |
+| 7 `src/pages/*/index.astro` còn lại | 2 mỗi file | 0 `translate`; chỉ bỏ prop `tagline` |
+| `js/site-chrome.js`, `js/team-detail.js`, `js/khaihoang-detail.js`, `css/styles.css`, `scripts/verify-astro-dist.mjs` | 0 | — |
+| `src/pages/doi-khac/[team].astro` | 4 `translate` | không sửa file |
+
+### G1: tuple
+- **Đổi chữ** 1 tuple `authored-vi`: `ui:section-page/cung-ton` metaDescription → `Các nhóm tướng Cùng Tồn theo kịch bản, kèm cấu hình áp dụng và phần tham khảo.`
+- **Thêm** 2 tuple `authored-vi` ở `src/layouts/SiteLayout.astro`:
+  - `ui:layout/theme-toggle` (`Giao diện tối`, `header`)
+  - `ui:layout/section-noscript` (`Mục này cần JavaScript để hiển thị nội dung. Hãy bật JavaScript rồi tải lại trang.`, `noscript`, trạng thái `no-js`)
+- Bỏ 8 prop `tagline` và mặc định `'Tất cả — tham khảo'` không đổi inventory ngoài hash file (G2 xác nhận: số location +2 đúng bằng 2 tuple mới).
+- **Không** thêm, đổi hay bỏ tuple `translate` nào.
+
+### Mốc
+- `policyVersion`: `site-vi-260927-ui-ux-b` → `site-vi-260927-ui-ux-c`.
+- `baseline.notes`:
+  - `concreteLocationCount` 56669 → 56671
+  - `concreteInventorySha256` `1473c276…` → `6ba7478a…`
+  - `siteLedgerObligations` 2088, `translationObligations` 5591, `uiTranslateObligations` 68 (không đổi)
+- **Generation mới:** `b3636badcbbbea55adade7b9c6ed2a0640801c779e9a4aa3e44dfc71d5bbdcd9`.
+  - G6: `git rm` generation `f1fcb066…` do phần 3b tạo.
+  - `pipeline/team-route-handles.json` đã re-pin; `--check` pass.
+- **`WORKFLOW_BUILD_ID`:** không đổi (`build:sha256b64:16lthgms6OS6yKbBUjEd-ca3F-XW76my0UXhZLYDCNE`), không file nào thuộc bao đóng MCP bị sửa.
+- **Số ghim `tests/test_site_localization.py`:** không đổi.
+
+### Docs
+- `docs/code-standards.md`: `public/og-image.png` trong nhóm file tĩnh verifier so byte, `_headers` 17 luật (thêm `/og-image.png`), thẻ `og:site_name`/`og:locale`/`og:image`.
+- `docs/design/so-binh-phap/README.md`: preload 4 file font; mục "Ảnh chia sẻ `og:image`" kèm lệnh sinh.
+- `docs/design-guidelines.md`: tên cố định của nút đổi giao diện.
+- `docs/project-changelog.md`: thêm mục phần 3c.
+
+### Sửa test hiện có theo hành vi mới (có chủ đích)
+- `team-detail-pages.spec` "copy link reports the real clipboard result…": kỳ vọng cũ ghim URL gồm `from` (chính lỗi ReviewJsCore#14) đổi thành URL không `from`, cả clipboard lẫn ô dự phòng.
+- `team-detail-pages.spec` "Đội khác detail drops the score panel content…": kiểm `#team-detail-panel` (panel không còn là ô có khung) và thêm kiểm không viền.
+- `spa-parity.spec` "320px: tagline…": viết lại theo Q1 = A (xem bảng trên).
+
+### Gate A2
+Exit 0, 194 s.
+
+| Bộ | Kết quả |
+|---|---|
+| `npm run verify` | `Verified 1731 dist files (58 raw assets, 16 static public files)` |
+| `npm run test:dist` | 29/29 |
+| `npm run test:node` | 370/370 |
+| `npm run test:e2e` | 317 passed |
+| `python3 -m unittest discover -s tests` | 383 OK |
+| `team_route_handles --check` | pass (generation `b3636bad…`) |
+| `worker` vitest | 6 file, 53 test |
+| `mcp-worker` check | 43 file, 375 test |
+
+## Tóm tắt Phase 3
+
+- 3 phần (3a `e91b9b3`, 3b `6107e66`, 3c) phủ toàn bộ finding của Phase 3: Đội chuẩn/Đội khác, Cùng Tồn, Tra cứu (3a); Công cụ, Chiêu mộ (3b); Trang chi tiết, Shell (3c). Không mục nào bị chặn; không tuple `translate` nào bị đổi.
+- Quyết định Q1 (tagline = mô tả mục), Q2 (Nhiều hột xếp hột trước bậc), Q7 (Thẻ / Thẻ gọn / Bảng) đã áp dụng.
+- `policyVersion` cuối `site-vi-260927-ui-ux-c`, generation đang pin `b3636bad…`; generation trung gian của 3a, 3b đã xoá. `WORKFLOW_BUILD_ID` đổi một lần ở 3b.

@@ -1,7 +1,7 @@
 // Entry tối giản cho trang chi tiết: chỉ tải đúng payload đã pin, không khởi động app gốc.
 
 import { el } from './render.js';
-import { detailPanelActions } from './detail-actions.js';
+import { detailPanelActions, isNetworkError } from './detail-actions.js';
 import {
   loadRecommendedDetailView,
   loadVerifiedLegacyTeams,
@@ -143,8 +143,8 @@ export async function initTeamDetail({documentTarget = document} = {}) {
       if (family === 'recommended') await loadRecommended();
       else await loadLegacy();
     } catch (error) {
-      const verification = /xác minh|không khớp|hợp lệ|định danh|đúng một/i.test(error?.message || '');
-      showError(verification ? VERIFY_MESSAGE : NETWORK_MESSAGE);
+      // Chỉ lỗi tải mạng/HTTP mới gợi ý kiểm tra kết nối; byte lệch pin hay dữ liệu sai là lỗi xác minh.
+      showError(isNetworkError(error) ? NETWORK_MESSAGE : VERIFY_MESSAGE);
     } finally {
       pending = false;
     }

@@ -22,6 +22,7 @@ const expectedRules = [
   "/fonts/*",
   "/data/*",
   "/favicon.png",
+  "/og-image.png",
 ];
 
 function parseHeaders(source) {
@@ -83,6 +84,7 @@ test("_headers covers every published shell and mutable raw asset", async () => 
     "/",
     "/index.html",
     "/favicon.png",
+    "/og-image.png",
     ...PUBLIC_ARTIFACTS.map((artifact) => `/${artifact.kind}/${artifact.sourceBasename}`),
     "/fonts/be-vietnam-pro-400-latin.woff2",
     "/fonts/noto-serif-display-700-vietnamese.woff2",

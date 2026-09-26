@@ -56,7 +56,7 @@ Quy tắc:
 
 ## Font self-host
 
-Font nằm ở `public/fonts/` (deployment copy nguyên trạng vào `dist/fonts/`, `_headers` có rule `/fonts/*`, verifier khóa từng byte). `@font-face` khai trong `css/styles.css` với `font-display: swap`, giữ đúng `unicode-range` ba subset của Google Fonts; `index.astro` và `SiteLayout.astro` preload 2 file dùng ngay màn đầu (Be Vietnam Pro 400 latin, Noto Serif Display 700 latin).
+Font nằm ở `public/fonts/` (deployment copy nguyên trạng vào `dist/fonts/`, `_headers` có rule `/fonts/*`, verifier khóa từng byte). `@font-face` khai trong `css/styles.css` với `font-display: swap`, giữ đúng `unicode-range` ba subset của Google Fonts; `SiteLayout.astro` (mọi trang, kể cả Landing) preload 4 file dùng ngay màn đầu: Be Vietnam Pro 400 và Noto Serif Display 700, mỗi font hai subset latin và vietnamese (chữ có dấu nằm ở subset vietnamese).
 
 **Nguồn gốc (tải 2026-09-25)** bằng `curl` với User-Agent Chrome hiện đại (Chrome/140):
 
@@ -123,6 +123,39 @@ print(pen.getCommands())
 ```
 
 Kết quả: `viewBox="0 0 939.199 940.119"`, 7 subpath (U+5175, `wght=700`). Phase 3 chép path vào SVG tĩnh trong Astro.
+
+### Ảnh chia sẻ `og:image`
+
+`public/og-image.png` (1200×630, khai ở `og:image` mọi trang) là ấn 兵 trên nền `--bg` sáng cùng tên logo "Cẩm Nang Tam Quốc Chí" bằng Noto Serif Display 700 self-host. Sinh một lần (2026-09-27) bằng Chromium của Playwright, chạy ở gốc repo; path ấn đọc từ `src/lib/seal.ts`, màu theo token sáng (`--bg`, `--accent`, `--seal-ink`, `--ink`):
+
+```bash
+node --input-type=module <<'EOF'
+import { readFile } from 'node:fs/promises';
+import { chromium } from '@playwright/test';
+
+const seal = await readFile('src/lib/seal.ts', 'utf8');
+const viewBox = seal.match(/SEAL_VIEW_BOX = '([^']+)'/)[1];
+const path = seal.match(/SEAL_PATH =\s*'([^']+)'/)[1];
+const font = async (name) => (await readFile(`public/fonts/${name}`)).toString('base64');
+const faces = await Promise.all(['latin', 'latin-ext', 'vietnamese'].map(async (subset) =>
+  `@font-face{font-family:"Noto Serif Display";font-weight:700;src:url(data:font/woff2;base64,${await font(`noto-serif-display-700-${subset}.woff2`)}) format("woff2");}`));
+const html = `<!doctype html><html lang="vi"><head><meta charset="utf-8"><style>${faces.join('')}
+html,body{margin:0;width:1200px;height:630px;background:#F3EEE3;}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:48px;}
+.seal{display:flex;align-items:center;justify-content:center;width:220px;height:220px;padding:36px;box-sizing:border-box;border-radius:24px;background:#A8202A;color:#F9F3E6;}
+.seal svg{width:100%;height:100%;display:block;}
+h1{margin:0;font:700 76px/1.1 "Noto Serif Display",serif;color:#1E1B16;}
+</style></head><body><div class="seal"><svg viewBox="${viewBox}"><path d="${path}" fill="currentColor"/></svg></div><h1>Cẩm Nang Tam Quốc Chí</h1></body></html>`;
+const browser = await chromium.launch();
+const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 });
+await page.setContent(html);
+await page.evaluate(() => document.fonts.ready);
+await page.screenshot({ path: 'public/og-image.png', type: 'png' });
+await browser.close();
+EOF
+```
+
+Sinh lại ảnh thì chạy `npm run verify` (verifier so byte `public/og-image.png` với `dist/og-image.png`).
 
 ## Artboard → bước trong plan
 

@@ -145,3 +145,19 @@ test('chip phe đang bật: ô vuông phe và số đếm đọc được ở c�
     }
   }
 });
+
+test('link "website chính thức" ở #tai-game khi hover vẫn đọc được ở cả hai theme', async ({ page }) => {
+  for (const theme of ['dark', 'light']) {
+    await page.addInitScript((value) => { try { localStorage.setItem('theme', value); } catch { /* storage bị chặn */ } }, theme);
+    await page.goto('/');
+    const link = page.locator('#tai-game .landing-inline-link');
+    await link.hover();
+    const measured = await link.evaluate((node) => {
+      let bg = 'rgba(0, 0, 0, 0)';
+      for (let el = node; el && /rgba\(0, 0, 0, 0\)|transparent/.test(bg); el = el.parentElement) bg = getComputedStyle(el).backgroundColor;
+      if (/rgba\(0, 0, 0, 0\)|transparent/.test(bg)) bg = getComputedStyle(document.documentElement).backgroundColor;
+      return { ink: getComputedStyle(node).color, bg };
+    });
+    expect(contrast(measured.ink, measured.bg), `${theme}: chữ link khi hover`).toBeGreaterThanOrEqual(MIN_TEXT);
+  }
+});

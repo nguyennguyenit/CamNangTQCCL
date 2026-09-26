@@ -41,10 +41,8 @@ export function initSiteChrome({documentTarget = document, windowTarget = global
   const applyTheme = (theme) => {
     root.dataset.theme = theme;
     const dark = theme === 'dark';
-    for (const toggle of toggles) {
-      toggle.setAttribute('aria-pressed', String(dark));
-      toggle.setAttribute('aria-label', dark ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối');
-    }
+    // Tên nút cố định ("Giao diện tối" ở layout); trạng thái chỉ nằm ở `aria-pressed`.
+    for (const toggle of toggles) toggle.setAttribute('aria-pressed', String(dark));
   };
   const syncTheme = () => applyTheme(readStoredTheme() || systemTheme());
   syncTheme();

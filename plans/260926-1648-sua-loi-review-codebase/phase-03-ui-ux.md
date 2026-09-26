@@ -1,7 +1,7 @@
 ---
 phase: 3
 title: "UI/UX và lỗi logic giao diện"
-status: pending
+status: completed
 priority: P2
 effort: "5d"
 dependencies: [2]

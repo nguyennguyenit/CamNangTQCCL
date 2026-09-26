@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { mkdtemp, mkdir, readFile, readdir, symlink, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, readdir, stat, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -96,6 +96,15 @@ async function writeStaticFonts(projectDir, distDir) {
     const bytes = await readFile(new URL(`public/fonts/${name}`, projectRoot));
     await writeFile(join(projectDir, "public", "fonts", name), bytes);
     await writeFile(join(distDir, "fonts", name), bytes);
+  }
+}
+
+/** Ảnh tĩnh của public (favicon, ảnh chia sẻ og:image) được copy nguyên byte như Astro làm. */
+async function writeStaticImages(projectDir, distDir) {
+  for (const name of ["favicon.png", "og-image.png"]) {
+    const bytes = await readFile(new URL(`public/${name}`, projectRoot));
+    await writeFile(join(projectDir, "public", name), bytes);
+    await writeFile(join(distDir, name), bytes);
   }
 }
 
@@ -479,9 +488,7 @@ test("dist verifier rejects missing, unexpected, and symlinked output", async (t
   await writeFile(join(projectDir, "public", "_headers"), FIXTURE_HEADERS);
   await writeFile(join(distDir, "index.html"), "<!doctype html>\n");
   await writeFile(join(distDir, "_headers"), FIXTURE_HEADERS);
-  const favicon = await readFile(new URL("public/favicon.png", projectRoot));
-  await writeFile(join(projectDir, "public", "favicon.png"), favicon);
-  await writeFile(join(distDir, "favicon.png"), favicon);
+  await writeStaticImages(projectDir, distDir);
   await writeStaticFonts(projectDir, distDir);
   await writeRecommendedFixture(projectDir, distDir);
 
@@ -542,9 +549,7 @@ test("dist verifier admits exactly the catalog team pages, the 404 and no stale 
   await mkdir(join(projectDir, "public"), { recursive: true });
   await writeFile(join(projectDir, "public", "_headers"), FIXTURE_HEADERS);
   await writeFile(join(distDir, "_headers"), FIXTURE_HEADERS);
-  const favicon = await readFile(new URL("public/favicon.png", projectRoot));
-  await writeFile(join(projectDir, "public", "favicon.png"), favicon);
-  await writeFile(join(distDir, "favicon.png"), favicon);
+  await writeStaticImages(projectDir, distDir);
   await writeStaticFonts(projectDir, distDir);
   const fixture = await writeRecommendedFixture(projectDir, distDir);
   const verify = () => verifyAstroDist({
@@ -773,6 +778,28 @@ test("built dist declares canonical, article metadata, robots and the catalog si
   }
 });
 
+test("every canonical page declares site name, Vietnamese locale and an absolute og:image shipped in dist", async () => {
+  const origin = new URL(await configuredSite()).origin;
+  const sitemap = await readFile(new URL("../dist/sitemap.xml", import.meta.url), "utf8");
+  const pages = [...sitemap.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => new URL(location).pathname);
+  const images = new Set();
+  for (const pathname of pages) {
+    const html = await readFile(new URL(`../dist${pathname}index.html`, import.meta.url), "utf8");
+    assert.ok(linkHref(html, "canonical"), pathname);
+    assert.equal(metaContent(html, "og:site_name"), "Cẩm Nang Tam Quốc Chí", pathname);
+    assert.equal(metaContent(html, "og:locale"), "vi_VN", pathname);
+    const image = metaContent(html, "og:image");
+    assert.ok(image, `${pathname} lacks og:image`);
+    const url = new URL(image);
+    assert.equal(url.origin, origin, pathname);
+    images.add(url.pathname);
+  }
+  for (const pathname of images) {
+    const info = await stat(new URL(`../dist${pathname}`, import.meta.url));
+    assert.ok(info.isFile() && info.size > 0, `${pathname} must ship in dist`);
+  }
+});
+
 test("sitemap endpoint publishes exactly the root page plus the catalog routes", async () => {
   const site = await configuredSite();
   const origin = new URL(site).origin;
@@ -830,9 +857,7 @@ test("dist verifier locks the emitted sitemap to the catalog route set", async (
   await mkdir(join(projectDir, "public"), { recursive: true });
   await writeFile(join(projectDir, "public", "_headers"), FIXTURE_HEADERS);
   await writeFile(join(distDir, "_headers"), FIXTURE_HEADERS);
-  const favicon = await readFile(new URL("public/favicon.png", projectRoot));
-  await writeFile(join(projectDir, "public", "favicon.png"), favicon);
-  await writeFile(join(distDir, "favicon.png"), favicon);
+  await writeStaticImages(projectDir, distDir);
   await writeStaticFonts(projectDir, distDir);
   await writeRecommendedFixture(projectDir, distDir);
   const verify = () => verifyAstroDist({
@@ -1013,9 +1038,7 @@ test("dist verifier byte-locks the self-hosted font directory", async (t) => {
   await mkdir(join(projectDir, "public"), { recursive: true });
   await writeFile(join(projectDir, "public", "_headers"), FIXTURE_HEADERS);
   await writeFile(join(distDir, "_headers"), FIXTURE_HEADERS);
-  const favicon = await readFile(new URL("public/favicon.png", projectRoot));
-  await writeFile(join(projectDir, "public", "favicon.png"), favicon);
-  await writeFile(join(distDir, "favicon.png"), favicon);
+  await writeStaticImages(projectDir, distDir);
   await writeStaticFonts(projectDir, distDir);
   await writeRecommendedFixture(projectDir, distDir);
   const verify = () => verifyAstroDist({
@@ -1057,9 +1080,7 @@ async function lookupDistFixture(t) {
   const headers = "/\n  Cache-Control: max-age=0\n";
   await writeFile(join(projectDir, "public", "_headers"), headers);
   await writeFile(join(distDir, "_headers"), headers);
-  const favicon = await readFile(new URL("public/favicon.png", projectRoot));
-  await writeFile(join(projectDir, "public", "favicon.png"), favicon);
-  await writeFile(join(distDir, "favicon.png"), favicon);
+  await writeStaticImages(projectDir, distDir);
   await writeStaticFonts(projectDir, distDir);
   await writeRecommendedFixture(projectDir, distDir);
   // Pin mùa sống ở cả 5 trang mục có phạm vi mùa; fixture phải đổi đồng bộ mọi trang.

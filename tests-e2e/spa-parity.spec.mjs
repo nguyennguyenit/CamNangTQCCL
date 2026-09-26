@@ -1156,6 +1156,37 @@ test("resize 1024 → 1280 đóng lớp phủ mobile và mở khóa cuộn", asy
   await expect(page.locator("#section-menu-toggle")).toBeHidden();
 });
 
+/** Tên mục và mô tả một dòng của mục (dòng người dùng thấy trong menu). */
+const SECTION_SHELL = [
+  ["/doi-chuan/", "Đội chuẩn", "Cấu hình đội theo mùa nguồn"],
+  ["/doi-khac/", "Đội khác", "Đội người chơi tổng hợp và đối chiếu"],
+  ["/cung-ton/", "Cùng Tồn", "Các nhóm đội dùng cùng lúc"],
+  ["/khai-hoang/", "Khai hoang", "Hướng dẫn đánh đất theo từng đội"],
+  ["/tra-cuu/", "Tra cứu", "Xem tướng, chiến pháp, trang bị, quân sư"],
+  ["/theo-doi-chieu-mo/", "Theo dõi chiêu mộ", "Mốc bảo hiểm 5★, nhiều tài khoản"],
+  ["/soi-doi-tu-anh/", "Soi đội từ ảnh", "Đọc đội từ ảnh chụp màn hình"],
+  ["/goi-y-doi-tu-kho/", "Gợi ý đội từ kho", "Tối đa 5 đội không trùng tài nguyên"],
+];
+
+test("tagline trang mục là mô tả của chính mục trong menu; Landing không có tagline", async ({ page, request }) => {
+  for (const [path, , description] of SECTION_SHELL) {
+    await page.goto(path);
+    await expect(page.locator(".site-header .tagline"), path).toHaveText(description);
+    const row = page.locator('#section-menu-items .site-menu-row[aria-current="page"]');
+    if (await row.count()) await expect(row.locator(".site-menu-desc"), path).toHaveText(description);
+  }
+  await page.goto("/");
+  await expect(page.locator(".tagline")).toHaveCount(0);
+  const sitemap = await (await request.get("/sitemap.xml")).text();
+  const recommendedDetail = [...sitemap.matchAll(/<loc>([^<]*)<\/loc>/g)]
+    .map(([, location]) => new URL(location).pathname)
+    .find((pathname) => /^\/doi-chuan\/[^/]+\/$/.test(pathname));
+  await page.goto(recommendedDetail);
+  await expect(page.locator(".site-header .tagline")).toHaveText("Chi tiết đội chuẩn");
+  await page.goto("/khong-co-trang/");
+  await expect(page.locator(".site-header .tagline")).toHaveText("Không tìm thấy trang");
+});
+
 test("320px: tagline một dòng, nằm gọn trong dải header và cắt bằng ellipsis", async ({ page }) => {
   const measure = (page) => page.evaluate(() => {
     const node = document.querySelector(".tagline");
@@ -1168,27 +1199,86 @@ test("320px: tagline một dòng, nằm gọn trong dải header và cắt bằn
       headerBottom: Math.round(header.bottom),
       lineHeight: Number.parseFloat(style.lineHeight),
       overflow: style.overflow,
-      clipped: node.scrollWidth > node.clientWidth,
+      textOverflow: style.textOverflow,
+      whiteSpace: style.whiteSpace,
     };
   });
   await page.setViewportSize({ width: 320, height: 800 });
-  for (const path of ["/doi-chuan/", "/cung-ton/"]) {
+  for (const [path] of SECTION_SHELL) {
     await page.goto(path);
     const measured = await measure(page);
     // Một hộp dòng duy nhất (chiều cao đúng một dòng) và không tràn khỏi dải header.
-    expect(measured.taglineHeight).toBeLessThanOrEqual(measured.lineHeight + 1);
-    expect(measured.taglineBottom).toBeLessThanOrEqual(measured.headerBottom);
-    expect(measured.overflow).toBe("hidden");
-    expect(measured.clipped).toBe(true);
-    expect(await page.evaluate(() => document.documentElement.scrollWidth === document.documentElement.clientWidth)).toBe(true);
+    expect(measured.taglineHeight, path).toBeLessThanOrEqual(measured.lineHeight + 1);
+    expect(measured.taglineBottom, path).toBeLessThanOrEqual(measured.headerBottom);
+    expect(measured.overflow, path).toBe("hidden");
+    expect(measured.textOverflow, path).toBe("ellipsis");
+    expect(measured.whiteSpace, path).toBe("nowrap");
+    expect(await page.evaluate(() => document.documentElement.scrollWidth === document.documentElement.clientWidth), path).toBe(true);
   }
-  // Đủ chỗ thì tagline hiện trọn chữ, không cắt.
-  await page.setViewportSize({ width: 1024, height: 800 });
+});
+
+test("mục đang xem nổi bật: dòng menu mobile có aria-current và nút Công cụ trên trang công cụ", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 800 });
+  await page.goto("/doi-khac/");
+  await page.locator("#section-menu-toggle").click();
+  const rowLook = (locator) => locator.evaluate((node) => {
+    const row = getComputedStyle(node);
+    const label = getComputedStyle(node.querySelector(".site-menu-label"));
+    return [row.borderLeftWidth, row.borderLeftColor, row.backgroundColor, label.color, label.fontWeight].join("|");
+  });
+  const current = page.locator('#section-menu-items .site-menu-row[aria-current="page"]');
+  await expect(current).toHaveCount(1);
+  await expect(current).toHaveAttribute("href", "/doi-khac/");
+  expect(await rowLook(current)).not.toBe(await rowLook(page.locator('#section-menu-items .site-menu-row[href="/doi-chuan/"]')));
+
+  await page.setViewportSize({ width: 1280, height: 800 });
+  const toggleLook = (key) => page.locator(`#nav-toggle-${key}`).evaluate((node) => {
+    const style = getComputedStyle(node);
+    return [style.borderBottomColor, style.color, style.fontWeight].join("|");
+  });
+  for (const path of ["/theo-doi-chieu-mo/", "/soi-doi-tu-anh/", "/goi-y-doi-tu-kho/"]) {
+    await page.goto(path);
+    expect(await toggleLook("cong-cu"), path).not.toBe(await toggleLook("game"));
+  }
+  await page.goto("/doi-chuan/");
+  expect(await toggleLook("cong-cu")).toBe(await toggleLook("game"));
+});
+
+test("nút giao diện giữ tên 'Giao diện tối', chỉ aria-pressed đổi theo trạng thái", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "light" });
+  await page.goto("/doi-chuan/");
+  // Nút trong menu mobile nằm trong hộp thoại đang ẩn nên đọc nhãn thay cho tên truy cập.
+  const expectToggles = async (pressed) => {
+    await expect(page.locator("#theme-toggle")).toHaveAccessibleName("Giao diện tối");
+    await expect(page.locator("#theme-toggle-menu")).toHaveAttribute("aria-label", "Giao diện tối");
+    for (const id of ["#theme-toggle", "#theme-toggle-menu"]) await expect(page.locator(id)).toHaveAttribute("aria-pressed", pressed);
+  };
+  await expectToggles("false");
+  await page.locator("#theme-toggle").click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expectToggles("true");
+});
+
+test("không có JavaScript: 8 trang mục vẫn có h1 tên mục và lời nhắn cần JavaScript; có JavaScript chỉ một h1", async ({ browser, baseURL, page }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const nojs = await context.newPage();
+  for (const [path, label] of SECTION_SHELL) {
+    await nojs.goto(new URL(path, baseURL).href);
+    await expect(nojs.locator("h1"), path).toHaveCount(1);
+    await expect(nojs.locator("h1"), path).toHaveText(label);
+    await expect(nojs.locator("main p").filter({ hasText: "JavaScript" }), path).toHaveCount(1);
+
+    await page.goto(path);
+    await expect(page.locator("h1").first(), path).toBeVisible();
+    await expect(page.locator("h1"), path).toHaveCount(1);
+  }
+  await context.close();
+});
+
+test("khối phạm vi mùa là nhóm có tên 'Phạm vi đội hình'", async ({ page }) => {
   for (const path of ["/doi-chuan/", "/cung-ton/"]) {
     await page.goto(path);
-    const measured = await measure(page);
-    expect(measured.clipped).toBe(false);
-    expect(measured.taglineBottom).toBeLessThanOrEqual(measured.headerBottom);
+    await expect(page.getByRole("group", { name: "Phạm vi đội hình", includeHidden: true }), path).toHaveCount(1);
   }
 });
 

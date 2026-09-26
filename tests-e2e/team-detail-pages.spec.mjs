@@ -125,9 +125,11 @@ test('Đội khác detail drops the score panel content and Chinese name instead
   await expect(detail.locator('.detail-title-zh')).toHaveCount(0);
   await expect(detail.locator('.detail-kicker')).toHaveCount(0);
   await expect(detail.locator('.detail-hero-role')).toHaveCount(0);
-  // Panel vẫn có hàng hành động (sao chép liên kết) và huy hiệu có dữ liệu.
-  await expect(detail.locator('.detail-score-panel')).toBeVisible();
-  await expect(detail.locator('#team-copy-link')).toBeVisible();
+  // Panel không có điểm/nguồn: nút sao chép liên kết đứng trơn, không bọc trong khung có viền.
+  const panel=detail.locator('#team-detail-panel');
+  await expect(panel).toBeVisible();
+  await expect(panel.locator('#team-copy-link')).toBeVisible();
+  expect(await panel.evaluate(node=>getComputedStyle(node).borderTopStyle)).toBe('none');
   if (team.faction) await expect(detail.locator('.detail-badges .badge.faction')).toHaveText(team.faction);
   for (const unit of team.unitType || []) await expect(detail.locator('.detail-badges .badge.unit')).toContainText(unit);
   await expect(detail.locator('.detail-source-link')).toHaveCount(0);
@@ -146,8 +148,11 @@ test('copy link reports the real clipboard result and offers a selected fallback
   await button.click();
   await expect(page.locator('#team-copy-status')).toHaveText('Đã sao chép liên kết');
   await expect(page.locator('#team-copy-fallback')).toBeHidden();
-  // Đúng URL đang xem, gồm cả `from` (không phải URL canonical hay origin).
-  await expect.poll(()=>page.evaluate(()=>navigator.clipboard.readText())).toBe(new URL(page.url()).href);
+  // URL chia sẻ là trang chi tiết, không mang `from` (trạng thái danh sách riêng của người gửi).
+  const shared=new URL(page.url());
+  shared.searchParams.delete('from');
+  await expect.poll(()=>page.evaluate(()=>navigator.clipboard.readText())).toBe(shared.href);
+  expect(shared.search).toBe('');
 
   // Clipboard lỗi: không được báo thành công, phải chọn sẵn URL trong ô chỉ đọc.
   await page.addInitScript(()=>{
@@ -158,14 +163,14 @@ test('copy link reports the real clipboard result and offers a selected fallback
   await page.locator('#team-copy-link').click();
   const fallback=page.locator('#team-copy-fallback');
   await expect(fallback).toBeVisible();
-  await expect(fallback).toHaveValue(page.url());
+  await expect(fallback).toHaveValue(shared.href);
   await expect(page.locator('#team-copy-status')).toHaveText('Không sao chép tự động được. Liên kết đã được chọn sẵn để bạn tự sao chép.');
   const selection=await page.evaluate(()=>{
     const input=document.querySelector('#team-copy-fallback');
     return {focused:document.activeElement === input,selected:input.value.slice(input.selectionStart,input.selectionEnd)};
   });
   expect(selection.focused).toBe(true);
-  expect(selection.selected).toBe(page.url());
+  expect(selection.selected).toBe(shared.href);
 });
 
 test('Recommended detail renders note ownership once per source occurrence',async({page,request})=>{
@@ -872,4 +877,55 @@ test('a source-empty third seat reads as an empty seat on the Recommended detail
   const seat=body.locator('.detail-hero-card').nth(2);
   await expect(seat.locator('.detail-hero-role')).toHaveText('Phó tướng 2');
   await expect(seat.getByRole('img',{name:'Nguồn để trống'})).toHaveText('—');
+});
+
+test('copy link on a Khai hoang detail keeps the chosen variant and drops from',async({context,page,request})=>{
+  const handles=await routeHandles(request);
+  const {teams}=await (await request.get('/data/khaihoang.json')).json();
+  const team=teams.find(item=>(item.variants||[]).length && handles.k[item.id]);
+  const variant=team.variants[0].id;
+  await context.grantPermissions(['clipboard-read','clipboard-write']);
+  const path=khaiHoangPath(handles,team.id);
+  await page.goto(`${path}?from=${encodeURIComponent('/khai-hoang/?q=x')}&variant=${encodeURIComponent(variant)}`);
+  await expect(page.locator('#team-detail-body')).toBeVisible();
+  await page.locator('#team-copy-link').click();
+  await expect(page.locator('#team-copy-status')).toHaveText('Đã sao chép liên kết');
+  const expected=new URL(path,page.url());
+  expected.searchParams.set('variant',variant);
+  await expect.poll(()=>page.evaluate(()=>navigator.clipboard.readText())).toBe(expected.href);
+});
+
+test('a changed teams.json reads as a verification failure and an unreachable one as a network failure',async({page,request})=>{
+  const teams=await rawTeams(request);
+  const path=legacyPath(await routeHandles(request),teams[0].id);
+  await page.route('**/data/teams.json',async route=>{
+    const response=await route.fetch();
+    return route.fulfill({response,body:`${await response.text()}\n`});
+  });
+  await page.goto(path);
+  const alert=page.locator('#team-detail-status [role="alert"]');
+  await expect(alert).toContainText('Không thể xác minh dữ liệu đội hình');
+  await expect(alert).not.toContainText('Hãy kiểm tra kết nối');
+
+  await page.unroute('**/data/teams.json');
+  await page.route('**/data/teams.json',route=>route.abort());
+  await page.goto(path);
+  await expect(alert).toContainText('Hãy kiểm tra kết nối');
+});
+
+test('Khai hoang detail with a tall source panel keeps the title right under the back link',async({page,request})=>{
+  await page.setViewportSize({width:1280,height:900});
+  const gap=async()=>{
+    await expect(page.locator('#team-detail-body')).toBeVisible();
+    await expect(page.locator('#team-detail-panel')).toBeVisible();
+    return page.evaluate(()=>document.querySelector('h1#team-detail-title').getBoundingClientRect().top
+      - document.querySelector('#team-return-link').getBoundingClientRect().bottom);
+  };
+  const {index}=await publication(request);
+  await page.goto(recommendedPath(await routeHandles(request),index.records[0].sourceConfigId));
+  const recommendedGap=await gap();
+  await page.goto('/khai-hoang/chu-thai-truong-phi-truong-xuan-hoa/');
+  const khaiHoangGap=await gap();
+  expect(await page.locator('#team-detail-panel .detail-source-link').count()).toBeGreaterThan(1);
+  expect(khaiHoangGap).toBeLessThanOrEqual(recommendedGap);
 });
