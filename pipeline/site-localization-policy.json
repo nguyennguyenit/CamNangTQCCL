@@ -75,7 +75,7 @@
       "hột": "red-copy count"
     }
   },
-  "policyVersion": "site-vi-260926-cong-cu-beta",
+  "policyVersion": "site-vi-260926-toi-a11y-docs",
   "routeFamilies": [
     {
       "entrypoints": [
@@ -756,7 +756,7 @@
     "js/recruit-tracker-store.js": "bfa36cb736b5a5c3a51e857624fe5226c5c18a56a049fa34920364a3f4aaf3a2",
     "js/recruit-tracker.js": "8df06bf26c67b7c642102417eca9fa66e6eda4141bed969e8900f397065ea9e0",
     "js/render.js": "a92f37acbf6a35e6ce4525d7ef21a2bdcf5284382a4e8697b866161b359693e3",
-    "js/roster-recommend-ui.js": "78c17b38e5ba8f83ce1ca2b9f2c8e101429dee112a262b59762a9b8f0a00b06d",
+    "js/roster-recommend-ui.js": "cbc7cd3b6cda685f7abda3ec12dd5d5279c05bff1fe8ca525666188a9594362a",
     "js/roster-scan-map.js": "e79071426c09ad63a6ffebac07fa0e7cec00f17ed072027c678404042faf82ce",
     "js/roster-scan-state.js": "7993f0515697de1d44861c4f54c0d69dea2da1d3e49d8021e609a582da73c5bd",
     "js/site-chrome.js": "dbc3de6827695125ce4692d0c8bdf2ba54be052063652a654e5514af2c6ae056",

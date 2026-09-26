@@ -1,7 +1,7 @@
 ---
 phase: 10
 title: "Giao diện tối, a11y, responsive, docs, full test"
-status: pending
+status: completed
 priority: P1
 effort: "2d"
 dependencies: [1, 2, 3, 4, 5, 6, 7, 8, 9]

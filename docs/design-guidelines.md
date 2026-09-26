@@ -2,179 +2,138 @@
 
 ## Tổng quan
 
-Giao diện là dashboard dữ liệu tĩnh: nhanh, rõ, gọn. Card, badge và chip giúp quét thông tin; interaction phải hoạt động trên mobile và không che dữ liệu sau nhiều lớp UI.
+Giao diện là dashboard dữ liệu tĩnh: nhanh, rõ, gọn. Thẻ, badge và chip giúp quét thông tin; interaction phải hoạt động trên mobile và không che dữ liệu sau nhiều lớp UI. Toàn site dùng chung một shell và một stylesheet; mọi giá trị vi mô lấy từ token, không viết tay.
 
-## Cấu trúc trải nghiệm
+## Nguồn chuẩn thiết kế
 
-8 section cùng một shell header/navigation. Hash URL giữ deep-link. Mỗi section nên có intro ngắn, control chính và nội dung ngay sau đó; tránh dashboard trang trí không phục vụ quyết định.
+**`docs/design/so-binh-phap/tokens.json` là nguồn duy nhất** cho giá trị vi mô (màu, chữ, khoảng cách, bán kính, control, bóng, focus, z-index, chuyển động) **và cho danh mục component** (`components`). Không chép bảng giá trị vào tài liệu này; đọc thẳng JSON.
 
-Trang chi tiết đội và trang 404 dùng chung shell đó nhưng là trang riêng, không phải hash section: navigation của chúng là link về `/#<section>`.
+Ba tầng golden master (plan quyết định #15):
 
-Các tab Theo dõi chiêu mộ, Soi đội từ ảnh và Gợi ý đội từ kho hiển thị nhãn `Beta` cạnh tên trong navigation desktop và menu mobile.
+| Tầng | Golden master | Cách soát |
+|---|---|---|
+| Vi mô | `tokens.json` | `node scripts/design-tokens.mjs --check` (khối `:root` phải khớp token; 0 mã màu/giá trị thô ngoài khối token) và `node scripts/design-compare.mjs --tokens --phase NN [--theme light\|dark]` (đo `getComputedStyle` trên trang thật) |
+| Cấu trúc | DOM thật | test trình duyệt trong `tests-e2e/` (thứ tự khối, anchor, aria, hành vi bàn phím) |
+| Bố cục | ảnh `docs/design/so-binh-phap/screens/*.png` | `node scripts/design-compare.mjs --phase NN [--theme dark]` ghép ảnh cạnh tranh thật; **người duyệt ghi "đã sửa / giữ, lý do"**, không pass/fail pixel |
 
-| Nhóm | Pattern hiện tại |
-|---|---|
-| Team chuẩn / Team khác | Cùng một browser: search + select mùa/danh mục + chip facet + card grid |
-| Team chuẩn / Team khác | Shared inline search + dynamic chip groups + card grid |
+Artboard không phải golden master pixel: dữ liệu trong artboard là mẫu, chiều cao là ước tính và có chỗ contract cố ý thắng artboard (brainstorm §11.4). Bản chụp commit hiện dùng: `1790191281-3a81`; canvas đổi thì chụp lại có chủ đích rồi cập nhật `tokens.json` bằng `--extract`.
 
-| Cùng Tồn / Khai hoang | Nhóm card và bảng dữ liệu local |
-| Tra cứu | Một search, sáu chip nhóm, card grid có paging và dialog hồ sơ |
-| Tracker | Account/banner/slot/action nhỏ gọn, lịch sử và import/export |
-| Soi đội | Drop-zone, preview, Turnstile, trạng thái, kết quả match |
-| Gợi ý kho | Scan theo loại, review canonical data, portfolio và diagnostics |
+**Thêm token**: chỉ thêm khi giá trị chưa có token nào phù hợp; ghi `source` (artboard nào, hoặc "giữ đúng pixel từ CSS cũ" khi Phase 10 token hoá khối legacy) rồi phát lại `:root` theo đúng thứ tự trong JSON (lệnh `--check` bắt lệch). Token không còn selector nào dùng thì xoá.
 
-## Browser Team chuẩn và Team khác
+**Thêm component**: khai trong `components` của `tokens.json` (selector, cấu tạo, biến thể, trạng thái, thuộc tính → token, artboard nguồn, phase sở hữu/dùng) **trước hoặc cùng commit** với CSS; mỗi component nên có `probe` để `design-compare --tokens` đo được. Không viết CSS riêng cho một trang khi đã có component dùng chung.
 
-- Hai tab dùng cùng một factory và cùng bộ style; wrapper chỉ chọn family, nguồn dữ liệu và nhãn.
-- Hàng control gồm search, `Xóa lọc`, nút `Bộ lọc` và số đếm `n / m đội`; select mùa nguồn và danh mục luôn nằm ngoài vùng thu gọn.
-- Nhóm chính trong vùng lọc là Loại binh → Điểm → Phe; Nhóm và Nguồn là nhóm phụ. Chip đếm theo phạm vi mùa/danh mục đang chọn, không theo toàn bộ dữ liệu.
-- Điểm chỉ lọc, không sắp xếp: thứ tự thẻ luôn là thứ tự nguồn. Nhóm Điểm hiện tám mức đầu; mức đang chọn nằm ngoài tám mức vẫn hiển thị và vẫn lọc, phần còn lại mở bằng `Xem tất cả mức điểm (n)`.
-- `Xóa lọc` reset query và toàn bộ facet nhưng giữ mùa/danh mục đang xem.
-- Thẻ giữ dạng gọn và vẫn đủ nội dung nguồn: tên đội + điểm nguồn, badge loại binh/phe, các holder với chiến pháp và binh thư, disclosure `Phương án thay thế (n)`, chip khắc chế và CTA `Xem chi tiết`. Không đặt caption Tier hoặc caption mùa/danh mục lên thẻ; caption phạm vi chỉ thuộc trang chi tiết.
-- Chip khắc chế và tag trong holder là hành vi tìm kiếm, không điều hướng; chỉ tên đội và CTA là link.
-- Trên mobile, `.team-filters.collapsed` ẩn nhóm sau nút `Bộ lọc`; đây là inline collapse, không phải drawer/module riêng.
-- Menu điều hướng (menu thả desktop + menu mobile toàn màn hình) do `js/site-nav.js` quản lý, tách khỏi filter collapse.
+## Mô hình đường dẫn
 
-## Tra cứu thống nhất
+- **Landing** ở `/` (`pageKind="landing"`, có `#tai-game`, `#nguon-du-lieu`, `#dau-trang`).
+- **8 trang mục tĩnh**, mỗi trang một mount `#section-<id>` và `data-page-section` trên `<body>`: `/doi-chuan/` (`team-chuan`), `/doi-khac/` (`team-khac`), `/cung-ton/` (`coexist`), `/khai-hoang/` (`khaihoang`), `/tra-cuu/` (`lookup`), `/chieu-mo/` (`recruit-tracker`), `/soi-doi/` (`analyze`), `/goi-y-doi/` (`roster-recommend`). Trạng thái nằm trên query của đúng trang, không còn hash SPA.
+- **Ba họ trang chi tiết** sinh sẵn: `/doi-chuan/<mùa>-<handle>/`, `/doi-khac/<handle>/`, `/khai-hoang/<handle>/`; URL đóng băng trong `pipeline/team-route-handles.json`. Trang 404 tĩnh ở `/404.html`.
+- **Hash cũ** (`#team-pk`, `#meta-cu`, `#lookup?group=&id=`, `#heroes`, `#tactics`, `?detail=`, `?legacyTeam=`…) do Landing chuyển tiếp trước khi vẽ trang bằng bảng duy nhất `js/legacy-routes.js`; `safeReturnUrl` dùng cùng bảng để chuẩn hoá `from`/snapshot cũ.
+- Link điều hướng luôn là anchor thật (`<a href>`), không `preventDefault`, không router tự viết.
 
-`Tra cứu` là một tab cho sáu nhóm; không tạo lại tab tướng/chiến pháp riêng.
-`#heroes` và `#tactics` là alias tương thích, còn link canonical dùng `#lookup`
-với `group`, `q` và `id` khi cần. Search chạy toàn corpus, bỏ dấu tiếng Việt và
-đọc alias Hán đã review. Sáu chip nhóm là button có `aria-pressed`; navigation
-chính là `tablist`/`tab` điều khiển được bằng phím mũi tên.
+## Shell dùng chung
 
-Grid hiển thị tối đa 60 kết quả mỗi lượt và phải có `Xem thêm` để tới record
-cuối. Card mở dialog hồ sơ theo canonical ID; dialog trap focus, đóng bằng
-Escape/nền/nút đóng và trả focus về trigger. Quan hệ tướng–chiến pháp cùng
-equipment special, troop option và building level phải đi qua ID đã validate,
-không ghép theo text. Trường thiếu hiển thị “Đang cập nhật”; không biến `0` hoặc
-`false` thành dấu gạch.
+Header, menu thả desktop, menu mobile toàn màn hình và footer do `src/layouts/SiteLayout.astro` + `js/site-nav.js` sở hữu, dùng cho Landing, 8 trang mục và cả ba họ chi tiết; chỉ trang 404 khai báo riêng (không boot `app.js`). Menu mở/đóng bằng `aria-expanded`, Escape trả focus về nút, bấm ngoài đóng, menu mobile là `role="dialog"` `aria-modal`.
 
-Lỗi lookup phải cụ thể trong đúng section và khóa các feature thật sự phụ thuộc,
-không làm mất Team chuẩn hay nội dung local độc lập. Catalog không hiển thị
-provenance/source nội bộ. Team chuẩn/Team khác vẫn giữ link nguồn và điểm đã
-review theo contract riêng. Ma trận hành vi nằm ở
-[`tests-e2e/unified-lookup.spec.mjs`](../tests-e2e/unified-lookup.spec.mjs).
+**Theme** theo thứ tự: `localStorage.theme` → `prefers-color-scheme`. Một script inline chặn trong `<head>` đặt `data-theme` **trước** stylesheet (không nháy sáng khi chuyển trang); `js/site-chrome.js` giữ nút đổi giao diện, áp lại theme ở `pageshow` và đồng bộ khi tab khác đổi (`storage`). **Theme theo hệ điều hành chỉ được quyết định ở mỗi lần tải trang**: trang đang mở không tự đổi khi OS đổi (không có listener `matchMedia`), muốn theo lại thì tải lại trang/cửa sổ mới — nút đổi trong UI là đường đổi tức thời. Storage lỗi (bị chặn) thì rơi về `prefers-color-scheme`, không chặn render.
 
-## Tra cứu theo kịch bản
+## Component dùng chung
 
-Chọn kịch bản và phiên bản luật ở control dùng chung; Khai hoang giữ bản bảo trì
-mới nhất. Chỉ chọn kịch bản là đọc tham khảo, chưa đủ để gợi ý hoặc so đội theo
-luật. Phân biệt vùng áp dụng đúng luật, tham khảo cùng kịch bản và chưa rõ kịch
-bản; mỗi vùng có số lượng riêng. Phạm vi rỗng không lấy dữ liệu mùa khác thay thế.
+Danh mục đầy đủ ở `tokens.json` → `components`. Nhóm chính: thẻ (`.team-card`/`.kh-card`/`.lookup-card`/`.rt-section`/`.ana-card`…), thẻ đội và dòng tướng, badge (phe, loại binh, điểm nguồn, trạng thái), chip lọc, ô tìm, select + nhãn caps, nút chính/phụ/nút chữ, bảng, hộp thoại, thanh điểm, thẻ công cụ Beta và bước công cụ.
 
-URL giữ phạm vi, search/filter và cấu hình đang mở; back/forward phải phục hồi
-đúng trạng thái. Mở lại URL chỉ có kịch bản không tự chọn luật. Đổi phạm vi giữ
-kho nhưng yêu cầu xác nhận lại và bỏ kết quả cũ. Khi bộ dữ liệu mùa không xác
-thực được, hiển thị thông báo tham khảo legacy và khóa thao tác theo mùa.
-
-Card và chi tiết cấu hình gameplay thuộc đúng cấu hình; chi tiết giữ thứ tự
-holder, chiến pháp, binh thư, điều kiện và nguồn. Ở các surface gameplay này,
-“Điểm SGSDeck” là điểm nguồn của lựa chọn khớp, có thể lớn hơn 100; thiếu bằng
-chứng ghi “Chưa có điểm SGSDeck”, còn Tier legacy ghi “Tier lịch sử — tham
-khảo” và không được coi là tier của mùa đang chọn. Browser Team chuẩn/Team khác
-dùng nhãn “Điểm nguồn”/“Chưa có điểm nguồn” và không có Tier. Bỏ sao đánh giá
-đội; sao phẩm chất tướng vẫn có ý nghĩa riêng.
-
-Cùng Tồn giữ ghi chú nhiều dòng và các slot nguồn dưới dạng text. So kho nêu
-tài nguyên thiếu/đang khóa và điều kiện chưa xác minh; đủ tướng/chiến pháp
-không chứng minh binh thư hoặc điều kiện đặc biệt đã thỏa. Điều kiện tùy chọn
-chưa xác minh chỉ là thông tin, không được diễn đạt như điều kiện chặn bắt buộc.
-
-Control phải có focus rõ, giữ focus khi toggle filter và khi đóng chi tiết;
-chi tiết không bị header che. Nguồn hành vi nằm ở
-[state adapter](../js/season-ui-state.js), [renderer](../js/render.js) và
-[kiểm thử trình duyệt](../tests-e2e/season-lookup.spec.mjs).
-
-## Trang chi tiết đội và 404
-
-- Mỗi đội có route tĩnh riêng. Tên đội và CTA trên thẻ là cùng một anchor thật, nên middle-click hoặc Cmd/Ctrl-click mở tab mới đúng hành vi trình duyệt.
-- Trang chi tiết dùng chung shell, navigation và stylesheet với root; nav trên trang con là link `/#<section>` và đánh dấu section đang thuộc.
-- Luôn có link quay lại: mặc định về `/#team-chuan` hoặc `/#team-khac`, và dùng `from` khi giá trị đó là một trạng thái root hợp lệ. Link chia sẻ không có `from` vẫn về đúng family.
-- Quay lại bằng back hoặc bằng link phục hồi query, tab, vị trí cuộn và disclosure đã mở — chỉ khi snapshot khớp đúng URL đó. Snapshot không được ghi đè history và không phục hồi cho URL khác.
-- Trạng thái tải/lỗi nằm trong live region; không có JavaScript thì trang vẫn còn tiêu đề, điểm nguồn và link quay lại.
-- URL đội không tồn tại dẫn tới trang 404 tĩnh có tiêu đề rõ và link về trang chủ/danh sách, không phải shell rỗng hay danh sách sai phạm vi.
-- Nguồn hành vi: [browser](../js/team-filter-section.js), [renderer thẻ/chi tiết](../js/recommended-reference-render.js), [điều hướng](../js/team-detail-navigation.js), cùng kiểm thử trình duyệt [recommended-browser](../tests-e2e/recommended-browser.spec.mjs) và [team-detail-pages](../tests-e2e/team-detail-pages.spec.mjs).
-
-## Hierarchy, màu và typography
-
-- Tiêu đề section rõ hơn subtitle; stats/filter là secondary; nội dung card là primary.
-- Giữ palette phe và badge status/tier hiện có để người dùng nhận diện nhanh.
-- Không dùng màu là tín hiệu duy nhất: badge phải có text/tier/status.
-- Label, button, error và empty state dùng tiếng Việt ngắn, cụ thể.
-- Spacing giữa intro, filter và grid phải ổn định giữa hai tab team.
-- Motion tối thiểu; tôn trọng `prefers-reduced-motion` khi thêm animation.
+- **Thẻ/Bảng** của danh sách đội là hai chế độ của cùng một component, chuyển bằng `?view=bang` với nút `aria-pressed`; mỗi chế độ chỉ hiện một cây DOM đúng chế độ đó (desktop bảng 5 cột, mobile hàng thu gọn).
+- **Nhãn biến thể** (`SP`/`CO`/`40Y`) luôn là chữ trên nền đủ tương phản; `.pre.y40` và badge loại binh dùng nền giấy + mực (không dùng màu phe làm nền).
+- Màu phe/trạng thái **luôn đi kèm chữ**: chấm màu là `aria-hidden`, không phải tín hiệu duy nhất.
+- Bảng rộng bắt buộc (bảng xem trước Landing) phải nằm trong container cuộn rõ (`.landing-table-preview`), không đẩy tràn trang.
 
 ## Responsive và touch
 
-- Mobile-first: một cột/card vừa viewport, control wrap hợp lý, không cần hover.
-- Chip/button/drop-zone có touch target đủ lớn và focus-visible rõ.
-- Section không phải team vẫn dùng full content width khi phù hợp.
-- Không tạo horizontal scroll cho filter, tracker hoặc bảng; nếu bảng bắt buộc rộng, cung cấp container scroll rõ.
-- Theme sáng/tối giữ contrast và không làm mất meaning của faction/tier/status.
+- Mobile-first: một cột/thẻ vừa viewport, control wrap hợp lý, không cần hover.
+- **Vùng bấm ≥ 44px trên mobile** cho mọi control (nút, chip, select, ô nhập, nút icon, menu item). Control bên trong nhãn bọc (ô tìm) hoặc checkbox native cũng phải đạt 44px ở phần tử bấm được.
+- **Ngoại lệ có ý thức**: link nằm trong câu/dòng chữ (tên tướng trong hàng, chiến pháp, nguồn trong đoạn văn) giữ dòng chữ theo ngoại lệ "inline target" của WCAG 2.5.8; các link đứng riêng (thương hiệu header/footer, danh sách nguồn Khai hoang) vẫn phải đạt 44px.
+- Không tạo cuộn ngang ở 320/390: `document.documentElement.scrollWidth` phải bằng `innerWidth` ở 320, 390, 768, 1440. Phần tử chạm mép phải phải nằm trong container `overflow-x: auto` có chủ đích (bảng xem trước, khung Turnstile 300px ở bề rộng hẹp).
+- Theme sáng/tối giữ contrast và không làm mất nghĩa của phe/tier/trạng thái.
 
 ## Accessibility contract
 
-Hiện có button semantic, một số ARIA, alt text và `aria-expanded`. Khi chạm UI liên quan, hoàn thiện các gap sau:
+Đã có và **phải giữ**: focus-visible token hoá (`--focus-width`, `--focus-ring`, `--focus-outline-offset`) trên mọi control kể cả input file phủ trong suốt; `aria-expanded` cho menu thả/menu mobile/panel lọc; hộp thoại hồ sơ trap focus, Escape đóng và trả focus về thẻ vừa bấm; live region cho tải/lỗi; `prefers-reduced-motion` tắt chuyển động; mọi control có tên truy cập được (kể cả ô chọn ảnh native — gắn `aria-labelledby` vào tiêu đề thẻ, không thêm chuỗi mới).
 
-- section navigation dùng `tablist`/`tab`/`tabpanel`, trạng thái selected và keyboard arrows;
-- modal trap focus, Escape để đóng, trả focus về trigger;
-- drop-zone có `tabindex`/button semantics và Enter/Space activation;
-- trạng thái nén/upload/analyze/error dùng live region phù hợp;
-- menu/filter collapse đồng bộ `aria-expanded` và control target;
-- mọi image informative có alt; decorative image dùng alt rỗng.
+- Giữ điều hướng bàn phím theo thứ tự DOM; Tab/Shift+Tab phải thấy vòng focus ở cả hai theme.
+- Nhãn nút chỉ có icon phải có `aria-label`; nhãn Beta dùng `.badge-beta`.
+- Không tuyên bố accessibility hoàn chỉnh ngoài phần đã có bằng chứng ở `plans/260923-1949-so-binh-phap-redesign/reports/`.
 
-Không tuyên bố accessibility hoàn chỉnh trước khi các contract trên có kiểm thử.
+## Bộ lọc danh sách đội
+
+- URL sở hữu bộ lọc: `season, category, q, faction, unit, subcategory, source, view`; `score` đã bỏ. Khóa lạ của trang khác bị bỏ lặng lẽ, khóa được phép của đúng trang được giữ (bảng `safeReturnUrl` theo pathname).
+- Hàng control: ô tìm + nút `Bộ lọc` (chỉ mobile) + số đếm `n / m đội` + chuyển Thẻ/Bảng; hai select phạm vi (mùa nguồn, danh mục) nằm ngoài vùng thu gọn.
+- Nhóm chính trong vùng lọc: Loại binh → Phe → Nhóm; Nguồn là nhóm phụ (mặc định thu gọn). Chip đếm theo phạm vi mùa/danh mục đang chọn.
+- Điểm nguồn **chỉ hiển thị** (badge số), không có chip lọc điểm và không dùng để sắp xếp: thứ tự thẻ luôn theo nguồn; khóa `?score=` đã nghỉ và bị bỏ lặng lẽ khi gặp. `Xóa lọc` reset query + facet nhưng giữ mùa/danh mục, và trả focus về ô tìm.
+- Thẻ giữ dạng gọn: tên đội + điểm nguồn, badge loại binh/phe, dòng tướng với chiến pháp/binh thư, khối "Sợ …"/"Thay thế (n)", CTA `Chi tiết`. Không caption Tier trên thẻ.
+
+## Tra cứu thống nhất
+
+`/tra-cuu/` là một trang cho sáu nhóm (`heroes`, `tactics`, `equipment`, `advisors`, `troop-mods`, `buildings`); **route canonical là `/tra-cuu/?group=<nhóm>&id=<id>`** — hash cũ `#heroes`, `#tactics` và dạng query trong hash `#lookup?group=<nhóm>&id=<id>` được Landing chuyển tiếp (dạng `#lookup/<nhóm>/<id>` **không** thuộc contract và ở lại Landing). Sáu chip nhóm là button có `aria-pressed` (không phải tablist); search chạy toàn corpus, bỏ dấu tiếng Việt và đọc alias Hán đã review.
+
+Grid phân trang và phải có `Xem thêm` để tới record cuối. Thẻ mở hộp thoại hồ sơ theo canonical ID; hộp thoại trap focus, đóng bằng Escape/nút đóng/nền và trả focus về thẻ. Hồ sơ tướng có khối "Trong cẩm nang" lấy từ artifact tính lúc build (`hero-summaries.json` trong generation Recommended đang pin), không tải kho đội chuẩn khi mở hồ sơ. Quan hệ tướng–chiến pháp và các trường catalog phải đi qua ID đã validate; trường thiếu hiển thị "Đang cập nhật", không biến `0`/`false` thành dấu gạch.
+
+## Phạm vi mùa và chi tiết cấu hình
+
+Không có artboard cho hai surface này; chúng theo StyleGuide và bảng token. Select Mùa (và Phiên bản luật khi có) nằm trong đầu mục của 5 trang (`team-chuan`, `team-khac`, `coexist`, `analyze`, `roster-recommend`) qua `#season-controls`; chi tiết cấu hình `?config=` mở trong `#season-config-detail` với select 44px, nhãn caps, hàng slot theo holder và nút `Đối chiếu kho của tôi`.
+
+Chọn kịch bản là đọc tham khảo, chưa đủ để gợi ý hoặc so đội theo luật. Phân biệt vùng áp dụng đúng luật, tham khảo cùng kịch bản và chưa rõ kịch bản; mỗi vùng có số lượng riêng. Đổi phạm vi giữ kho nhưng yêu cầu xác nhận lại và bỏ kết quả cũ.
+
+## Trang chi tiết đội và 404
+
+- Mỗi đội có route tĩnh riêng; tên đội và CTA trên thẻ là cùng một anchor thật (middle-click/Cmd-click mở tab mới đúng hành vi trình duyệt).
+- Trang chi tiết dùng chung shell, navigation và stylesheet với phần còn lại; nav đánh dấu mục đang thuộc.
+- Luôn có link quay lại: mặc định về danh sách của đúng họ, dùng `from` khi giá trị đó hợp lệ; snapshot quay lại chỉ phục hồi khi khớp đúng URL hiện tại.
+- Trạng thái tải/lỗi nằm trong live region; không có JavaScript thì trang vẫn còn tiêu đề, điểm nguồn và link quay lại.
+- URL đội không tồn tại dẫn tới `/404.html` tĩnh có tiêu đề rõ và link về trang chủ/danh sách.
+
+## Render an toàn
+
+- Nội dung động chỉ qua `el()`/`textContent`; **không** `innerHTML`/`insertAdjacentHTML`/`outerHTML` với dữ liệu. Chuỗi HTML còn lại trong `js/` phải là hằng tĩnh (liệt kê ở báo cáo Phase 10).
+- SVG tĩnh viết trong Astro hoặc dựng bằng `createElementNS`.
+- `href` lấy từ dữ liệu phải qua kiểm scheme `http(s)`; link ngoài `target="_blank" rel="noopener noreferrer"`; query link dựng bằng `URLSearchParams`.
+- Lỗi provider/network không đổ nguyên văn message upstream; thông báo tiếng Việt hữu hạn.
 
 ## Local-first tracker
 
 - Giải thích dữ liệu lưu trong trình duyệt hiện tại và có thể mất nếu clear storage.
-- Đặt `Xuất JSON`/`Nhập JSON` gần luồng backup/restore, có validation và confirm trước ghi đè.
-- Pity, lượt còn lại và lịch sử 5★ phải dùng nhãn số rõ, không chỉ màu.
-- Account/banner destructive action cần guard chống xóa nhầm.
-- Không gửi tracker data ra Worker hoặc provider nếu không có feature/user consent mới.
+- `Xuất JSON`/`Nhập JSON` nằm gần luồng backup/restore, có validation và confirm trước ghi đè; ô chọn tệp native nằm trên nhãn nút với vòng focus nhìn thấy được khi Tab.
+- Pity, lượt còn lại và lịch sử 5★ dùng nhãn số rõ, không chỉ màu.
+- Không gửi tracker data ra Worker/provider nếu không có tính năng hoặc đồng ý mới.
 
 ## Soi đội từ ảnh
 
 - Luôn hiển thị disclaimer: ảnh gửi tới Alibaba Cloud DashScope, không chủ động lưu; khuyến nghị crop tên account.
-- Preview giúp người dùng xác nhận ảnh trước gửi; trạng thái nén, Turnstile, upload và lỗi phải tách bạch.
-- Tên đoán từ portrait hoặc confidence thấp phải gắn cờ `kiểm tra`.
-- Kết quả canonical Việt và icon chỉ là hỗ trợ đối chiếu; icon lỗi không được làm mất text.
-- Team tương tự hiển thị số tướng/chiến pháp trùng; người dùng có quyền mở team nguồn để kiểm tra.
-- Không diễn đạt quota KV như giới hạn tuyệt đối.
+- Preview giúp người dùng xác nhận ảnh trước gửi; trạng thái nén, Turnstile, upload và lỗi tách bạch.
+- Kết quả canonical Việt và icon chỉ là hỗ trợ đối chiếu; icon lỗi không được làm mất text; thiếu dữ liệu thì ghi rõ chứ không bịa điểm/mùa.
 
 ## Gợi ý đội từ kho
 
-- Quy trình bắt buộc: scan → map canonical → người dùng review/sửa → xác nhận → recommend.
+- Quy trình bắt buộc: scan → map canonical → người dùng review/sửa → xác nhận → recommend; mọi thay đổi kho (thêm/bỏ tướng, đọc ảnh xong) huỷ kết quả cũ ngay.
 - Phân biệt rõ team đã khóa, portfolio sau build, team nên thêm, missing hero/tactic và conflict.
-- Nói rõ AI chỉ đọc screenshot; local engine dùng data curate để chọn team.
-- State persist chỉ chứa tên/thuộc tính cần thiết; không ảnh, base64, blob hoặc Turnstile token.
-- Cho phép người dùng quay lại review mà không phải scan lại ảnh nếu canonical state còn hợp lệ.
+- Ảnh chỉ đọc để trích xuất; engine local dùng dữ liệu curate để chọn đội.
+- State persist chỉ chứa dữ liệu canonical cần thiết; không ảnh, base64, blob hoặc Turnstile token.
 
 ## Content safety và error state
 
-- Render dữ liệu bằng DOM/text, không inject HTML nguồn.
 - Empty state nói bộ lọc không có kết quả và giữ control để người dùng reset.
-- Network/provider error không đổ raw upstream message nhạy cảm.
+- Network/provider error không lộ chi tiết upstream; KV quota là best-effort, không diễn đạt như giới hạn cứng.
 - Disclaimer dữ liệu meta phải nhắc đây là nguồn tham khảo, không phải phương án duy nhất.
 
 ## Không nên làm
 
 - Không thêm framework-looking component chỉ để đổi thẩm mỹ.
-- Không tạo filter UI khác nhau cho hai tab cùng contract.
-- Không tham chiếu `facets.json` như runtime source hoặc module mobile drawer không tồn tại.
-- Không đặt caption Tier hoặc caption mùa/danh mục lên thẻ đội của hai tab Team.
-- Không biến tên đội/CTA thành button, không chặn click có modifier và không tự viết router cho trang chi tiết.
-- Không giấu privacy notice, scan review hoặc conflict diagnostics.
-- Không để AI wording khiến người dùng hiểu model tự sáng tạo đội.
-
-## Bước tiếp theo
-
-Ưu tiên tab semantics, modal focus, keyboard drop-zone và live regions; sau đó audit contrast/touch target trên cả light/dark và mobile.
+- Không chép giá trị màu/kích thước vào CSS/tài liệu khi đã có token.
+- Không tạo filter UI khác nhau cho hai trang danh sách đội cùng contract.
+- Không biến tên đội/CTA thành button, không chặn click có modifier, không tự viết router cho trang chi tiết.
+- Không dùng `overflow: hidden` để "chữa" tràn ngang thay vì sửa bố cục.
+- Không tham chiếu `data/facets.json` như runtime source hoặc module điều hướng không tồn tại.
 
 ## Tham chiếu
 
-- [PDR](project-overview-pdr.md)
-- [System Architecture](system-architecture.md)
-- [Code Standards](code-standards.md)
-- [Roadmap](project-roadmap.md)
+- Token và danh mục component: [`docs/design/so-binh-phap/tokens.json`](design/so-binh-phap/tokens.json)
+- Công cụ: [`scripts/design-tokens.mjs`](../scripts/design-tokens.mjs), [`scripts/design-compare.mjs`](../scripts/design-compare.mjs)
+- Báo cáo từng phase: [`plans/260923-1949-so-binh-phap-redesign/reports/`](../plans/260923-1949-so-binh-phap-redesign/reports/)
+- [PDR](project-overview-pdr.md) · [System Architecture](system-architecture.md) · [Code Standards](code-standards.md)

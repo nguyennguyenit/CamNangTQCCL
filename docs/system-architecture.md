@@ -77,8 +77,7 @@ thuộc [manifest của site](../src/lib/public-artifact-manifest.mjs).
 
 ## Static runtime
 
-[`src/pages/index.astro`](../src/pages/index.astro) là document authority của
-tám section cùng hash dữ liệu mùa, pin Recommended và pin website-display.
+[`src/pages/index.astro`](../src/pages/index.astro) là Landing; tám trang mục tĩnh (`/doi-chuan/`, `/doi-khac/`, `/cung-ton/`, `/khai-hoang/`, `/tra-cuu/`, `/chieu-mo/`, `/soi-doi/`, `/goi-y-doi/`) dùng chung `src/layouts/SiteLayout.astro`, mỗi trang một mount `#section-<id>` và `data-page-section` trên `<body>`. Layout phát pin Recommended, pin website-display, bảng route handle và hash dữ liệu mùa cho đúng trang cần (bảng ở [chuẩn code](code-standards.md)).
 [`js/app.js`](../js/app.js) sở hữu khởi tạo runtime; nó capture từng response byte
 một lần, xác minh sidecar cùng toàn bộ source hash rồi mới áp overlay tiếng Việt.
 [`season-ui-state.js`](../js/season-ui-state.js) sở hữu query và kiểm hash toàn bộ
@@ -87,12 +86,13 @@ kiểm inventory/hash/generation của ba payload Tra cứu. Thay đổi ở b�
 dependency đã được website-display pin đều dừng toàn bộ khởi tạo; lỗi semantic
 Lookup trong một publication byte-coherent mới chỉ khóa các feature phụ thuộc.
 
-Scope, filter/search và chi tiết cấu hình cùng đi qua query owner; hash xác
-định section đang áp dụng. Restore scenario-only không tự nâng sang luật đã
+Scope, filter/search, thứ tự hiển thị và chi tiết cấu hình cùng đi qua query owner của đúng trang; mục đang mở do đường dẫn quyết định, hash cũ chỉ được Landing chuyển tiếp qua `js/legacy-routes.js`. Restore scenario-only không tự nâng sang luật đã
 review. Đổi scope vô hiệu confirmation, portfolio và kết quả scan đến muộn,
 đồng thời giữ kho để người dùng review lại. UI không dùng MCP để suy thêm luật.
 
-Hai tab team đều gọi `team-filter-section.js`. Module này tính facet trực tiếp từ tập source, tạo search/chip, thu gọn bộ lọc trên mobile và render card. `data/facets.json` không được load runtime.
+Hồ sơ tướng của Tra cứu đọc thêm artifact tính lúc build `hero-summaries.json` sinh trong chính generation Recommended đang pin (khóa nối chính xác theo từng nguồn, descriptor mang hash kho Tra cứu), nên mở hồ sơ chỉ cần `manifest.json` + `hero-summaries.json` thay vì nạp toàn bộ kho đội chuẩn. Phạm vi và ngân sách tải của đường này ghi ở [quyết định #12 của plan redesign](../plans/260923-1949-so-binh-phap-redesign/plan.md).
+
+Hai trang danh sách đội đều gọi `team-filter-section.js`. Module này tính facet trực tiếp từ tập source, tạo search/chip, thu gọn bộ lọc trên mobile và render card. `data/facets.json` không được load runtime.
 
 Tra cứu và gợi ý cốt lõi chạy local:
 
@@ -108,10 +108,10 @@ Tra cứu và gợi ý cốt lõi chạy local:
 
 Trong [`data/khaihoang.json`](../data/khaihoang.json), `chamSuTeams` là trường top-level bổ sung cho bảng nguồn “Team Chạm Sứ------mang 1 lính”, độc lập với đội khai hoang chính. Bỏ `teams[].transforms` để sửa liên kết sai do trước đây ghép hai bảng theo hàng: consumer đọc trường cũ cần chuyển sang danh sách độc lập, không coi đây là phương án chuyển hình của từng đội. Mỗi nhóm giữ `id`, `title`, `heroes: [{name, tactic}]`, `note` và `sources: [{label, url}]`; ghi chú tướng thay thế thuộc cả nhóm khi ô nguồn phủ nhiều tướng. Không suy diễn tướng thứ ba, chủ tướng, binh chủng, tier hoặc cơ chế từ nhãn “mang 1 lính”.
 
-Hướng dẫn khai hoang curate thuộc tùy chọn `teams[].guide`, sở hữu bởi đúng bộ ba tướng và không thuộc `variants[]`. Guide có thể chứa tổng quan, điểm mở đất/chuyển đội, yêu cầu đỏ, thứ tự quân thủ đất 4/5, cảnh báo, tách đội và các bước chuyển hình. Card tại `/#khaihoang` chỉ dựng build, `buildNote` và anchor thật; `openingNote` cùng guide chỉ nằm trên `/khai-hoang/<handle>/`. `js/render.js` dùng chung phần build, còn `js/khaihoang-detail.js` xác minh pin nguồn/publication và đặt guide ngoài subtree thay thế khi đổi variant, nên nội dung và trạng thái mở giữ nguyên. `buildNote`/`openingNote` giữ owner team/hero/variant gốc; không ghép note của default vào variant. UI Khai hoang không trình bày mùa, khu vực hoặc link nguồn của đội chính; nguồn Chạm Sứ tiếp tục hiển thị theo contract riêng.
+Hướng dẫn khai hoang curate thuộc tùy chọn `teams[].guide`, sở hữu bởi đúng bộ ba tướng và không thuộc `variants[]`. Guide có thể chứa tổng quan, điểm mở đất/chuyển đội, yêu cầu đỏ, thứ tự quân thủ đất 4/5, cảnh báo, tách đội và các bước chuyển hình. Card tại `/khai-hoang/` chỉ dựng build, `buildNote` và anchor thật; `openingNote` cùng guide chỉ nằm trên `/khai-hoang/<handle>/`. `js/render.js` dùng chung phần build, còn `js/khaihoang-detail.js` xác minh pin nguồn/publication và đặt guide ngoài subtree thay thế khi đổi variant, nên nội dung và trạng thái mở giữ nguyên. `buildNote`/`openingNote` giữ owner team/hero/variant gốc; không ghép note của default vào variant. UI Khai hoang không trình bày mùa, khu vực hoặc link nguồn của đội chính; nguồn Chạm Sứ tiếp tục hiển thị theo contract riêng.
 
 Owner hiển thị là [`khaihoangTable` trong `js/render.js`](../js/render.js): thứ tự ba khối là đội chính (`teams`) → **Đội Chạm Sứ / Ăn vạ** (`chamSuTeams`) → quân thủ mỏ (`mines`). Contract tương thích giữ object thiếu/rỗng `chamSuTeams` và input mảng mỏ legacy; chỉ ẩn khối Chạm Sứ khi không có dữ liệu. Kiểm chứng nằm ở [`tests-e2e/khaihoang-options.spec.mjs`](../tests-e2e/khaihoang-options.spec.mjs).
-Handle Khai hoang đóng băng theo `teams[].id` trong `pipeline/team-route-handles.json` (ledger v2, Recommended publication vẫn v1); trang detail canonical theo pathname. `variant` chỉ hiện cho cấu hình khác mặc định và `from` chỉ chấp nhận URL root an toàn. Root dùng `khTeam`/`khVariant` và map `khaihoangVariants` trong snapshot history/session hiện có; context key Khai hoang bỏ đúng hai query này để phục hồi các card khác, còn Team chuẩn/Team khác vẫn so URL chính xác. Source hash `data/khaihoang.json` và bản dịch `data/website-display.json` phải khớp trước khi dựng nội dung.
+Handle Khai hoang đóng băng theo `teams[].id` trong `pipeline/team-route-handles.json` (ledger v2, Recommended publication vẫn v1); trang detail canonical theo pathname. `variant` chỉ hiện cho cấu hình khác mặc định và `from` chỉ được nhận khi trỏ tới pathname trang mục có trong allowlist `SECTION_QUERY_KEYS`, giữ đúng khóa của pathname đó (URL gốc cũ dạng `/?…#<tab>` được chuẩn hoá trước khi so). Root dùng `khTeam`/`khVariant` và map `khaihoangVariants` trong snapshot history/session hiện có; context key Khai hoang bỏ đúng hai query này để phục hồi các card khác, còn Team chuẩn/Team khác vẫn so URL chính xác. Source hash `data/khaihoang.json` và bản dịch `data/website-display.json` phải khớp trước khi dựng nội dung.
 
 JSON đã curate là dữ liệu runtime cần bảo toàn. [`build_khaihoang_payload` trong `pipeline/build_json.py`](../pipeline/build_json.py) chỉ phản ánh HTML đầu vào: HTML cũ có sáu nhóm Chạm Sứ, còn bản CSV được đối chiếu có tám nhóm và một chiến pháp đã đổi. CSV chưa phải input tự động của pipeline HTML; không chạy full rebuild để nhập phần này vì có thể mất đội bổ sung, variants/options, mùa và mỏ đã curate. [Báo cáo đối chiếu nguồn](../plans/260907-0236-cham-su-khai-hoang/reports/source-reconciliation.md) giữ chi tiết khác biệt và bằng chứng bảo toàn; [fixture parser](../tests/fixtures/khaihoang-cham-su-source.html) giữ boundary kiểm thử không phụ thuộc HTML local bị ignore.
 

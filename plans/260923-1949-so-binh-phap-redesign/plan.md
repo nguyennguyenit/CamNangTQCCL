@@ -1,7 +1,7 @@
 ---
 title: "Redesign Sổ binh pháp toàn site"
 description: "Đưa toàn bộ Cẩm Nang TQCCL sang giao diện Sổ binh pháp đúng canvas: Landing ở /, mỗi mục một đường dẫn, header/footer dùng chung, token sáng/tối, font self-host."
-status: pending
+status: completed
 priority: P1
 effort: "23.5d"
 branch: main
@@ -116,13 +116,13 @@ Một người thực thi tuần tự 1 → 10. Phase 4, 5, 7 cùng phụ thuộ
 
 ## Acceptance (theo brainstorm §4)
 
-- [ ] A1: Vi mô — `design-tokens.mjs --check` pass với khối legacy đã xóa (`ceiling` = 0) và `design-compare.mjs --tokens` trên mọi trang × 2 theme có 0 lệch chưa giải thích so với `tokens.json`. Bố cục — mỗi artboard trang có báo cáo so ảnh ở đúng bề rộng artboard (1440 hoặc 390), mọi chỗ lệch đã xử lý hoặc có lý do; artboard không phải golden master pixel (quyết định #15). StyleGuide (1280, không có trang tương ứng) soát bằng `tokens.json` + tương phản ở Phase 1.
-- [ ] A2: `npm run check`, `npm run build`, `npm run verify`, `npm run test:dist`, `npm run test:node`, `npm run test:e2e`, `python3 -m unittest discover -s tests` pass ở **mọi** commit phase; test chỉ đổi khi hành vi đổi có chủ đích.
-- [ ] A3: `site_localization check --stage public` pass, không problem; số obligation mới được ghi trong báo cáo Phase 10.
-- [ ] A4: Giao diện tối: chữ thường ≥ 4.5:1, chữ ≥ 24px ≥ 3:1; màu phe/binh/trạng thái luôn có chữ đi kèm.
-- [ ] A5: Mobile vùng bấm ≥ 44px, không cuộn ngang ở 320/390; focus-visible rõ; menu thả và hộp thoại: `aria-expanded`, Escape đóng, focus quay về nút, bấm ngoài để đóng, hộp thoại khóa focus.
-- [ ] A6: Mọi hash cũ (§ bảng Phase 2) và URL `/` không hash có khóa root cũ chuyển đúng đường dẫn mới, giữ query, kể cả khi dán vào tab đang ở `/`; `?detail=` / `?legacyTeam=` cũ vẫn mở đúng trang chi tiết; URL chi tiết đội không đổi và `from` cũ dạng `/…#<tab>` vẫn quay về đúng trang mục + query.
-- [ ] A7: `docs/design-guidelines.md`, `docs/code-standards.md`, `docs/system-architecture.md`, `docs/deployment-guide.md`, `docs/unified-lookup.md`, `README.md` mô tả đúng mô hình đường dẫn + token mới; `docs/project-changelog.md` có mục cho redesign.
+- [x] A1: Vi mô — `design-tokens.mjs --check` pass với khối legacy đã xóa (`ceiling` = 0) và `design-compare.mjs --tokens` trên mọi trang × 2 theme có 0 lệch chưa giải thích so với `tokens.json`. Bố cục — mỗi artboard trang có báo cáo so ảnh ở đúng bề rộng artboard (1440 hoặc 390), mọi chỗ lệch đã xử lý hoặc có lý do; artboard không phải golden master pixel (quyết định #15). StyleGuide (1280, không có trang tương ứng) soát bằng `tokens.json` + tương phản ở Phase 1.
+- [x] A2: `npm run check`, `npm run build`, `npm run verify`, `npm run test:dist`, `npm run test:node`, `npm run test:e2e`, `python3 -m unittest discover -s tests` pass ở **mọi** commit phase; test chỉ đổi khi hành vi đổi có chủ đích.
+- [x] A3: `site_localization check --stage public` pass, không problem; số obligation mới được ghi trong báo cáo Phase 10.
+- [x] A4: Giao diện tối: chữ thường ≥ 4.5:1, chữ ≥ 24px ≥ 3:1; màu phe/binh/trạng thái luôn có chữ đi kèm.
+- [x] A5: Mobile vùng bấm ≥ 44px, không cuộn ngang ở 320/390; focus-visible rõ; menu thả và hộp thoại: `aria-expanded`, Escape đóng, focus quay về nút, bấm ngoài để đóng, hộp thoại khóa focus.
+- [x] A6: Mọi hash cũ (§ bảng Phase 2) và URL `/` không hash có khóa root cũ chuyển đúng đường dẫn mới, giữ query, kể cả khi dán vào tab đang ở `/`; `?detail=` / `?legacyTeam=` cũ vẫn mở đúng trang chi tiết; URL chi tiết đội không đổi và `from` cũ dạng `/…#<tab>` vẫn quay về đúng trang mục + query.
+- [x] A7: `docs/design-guidelines.md`, `docs/code-standards.md`, `docs/system-architecture.md`, `docs/deployment-guide.md`, `docs/unified-lookup.md`, `README.md` mô tả đúng mô hình đường dẫn + token mới; `docs/project-changelog.md` có mục cho redesign.
 
 ## Rủi ro
 

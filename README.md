@@ -6,19 +6,16 @@ Website tĩnh tra cứu đội hình, tướng, chiến pháp và hỗ trợ qu�
 
 ## Tính năng
 
-- 9 section có deep-link bằng hash: Team chuẩn, Team khác, Cùng Tồn, Khai hoang, tướng, chiến pháp, tracker chiêu mộ, soi đội và gợi ý đội từ kho. Hash cũ `#team-pk`/`#meta-cu` được chuẩn hóa về `#team-khac`.
-- Hai tab team dùng chung một browser: search toàn văn, select mùa/danh mục nguồn và chip facet (loại binh, điểm, phe, nhóm, nguồn) đếm theo phạm vi đang chọn; mobile thu gọn vùng lọc sau nút `Bộ lọc`.
-- Mỗi đội có trang chi tiết tĩnh riêng dưới `/doi-chuan/<mùa>-<handle>/` hoặc `/doi-khac/<handle>/`; handle tiếng Việt đóng băng trong `pipeline/team-route-handles.json` nên sửa `displayNameVi` không đổi URL. URL cũ `/teams/…` và URL ngoài danh sách sinh sẵn trả trang 404 tĩnh, không redirect.
-- Chọn kịch bản/phiên bản luật dùng chung cho tra cứu, Cùng Tồn và gợi ý; URL giữ phạm vi, bộ lọc và cấu hình đang mở. Khai hoang dùng bản bảo trì mới nhất.
-- Tra cứu 112 tướng và 239 chiến pháp bằng dữ liệu local, hỗ trợ tên Việt/Hán-Việt/Hán.
-- 8 section có deep-link bằng hash: Team chuẩn, Team khác, Cùng Tồn, Khai hoang, Tra cứu, tracker chiêu mộ, soi đội và gợi ý đội từ kho.
-- Hai tab team dùng chung bộ lọc inline: search toàn văn + chip động theo dữ liệu từng tab; mobile thu gọn vùng lọc sau nút `☰ Bộ lọc`.
-- Chọn kịch bản/phiên bản luật dùng chung cho Team chuẩn, Team khác, Cùng Tồn và gợi ý; URL giữ phạm vi, bộ lọc và cấu hình đang mở. Khai hoang dùng bản bảo trì mới nhất.
-- Tra cứu local thống nhất 202 tướng, 406 chiến pháp và bốn nhóm catalog bổ sung; hỗ trợ tên Việt/Hán-Việt/Hán, deep-link và hồ sơ liên quan.
-
+- Landing ở `/` và **8 trang mục tĩnh** có đường dẫn riêng: `/doi-chuan/`, `/doi-khac/`, `/cung-ton/`, `/khai-hoang/`, `/tra-cuu/`, `/chieu-mo/`, `/soi-doi/`, `/goi-y-doi/`. Trạng thái nằm trên query của đúng trang (`?season=`, `?q=`, `?group=&id=`, `?view=bang`, `?config=`…).
+- Hash cũ của SPA (`#team-pk`, `#meta-cu`, `#khaihoang`, `#lookup?group=…`, `#heroes`, `#tactics`…) và URL `/` không hash có khóa cũ được Landing chuyển tiếp sang đường dẫn mới, giữ query; bảng chuyển tiếp ở `js/legacy-routes.js`.
+- Hai trang danh sách đội dùng chung một browser: search toàn văn, select mùa/danh mục nguồn và chip facet (loại binh, phe, nhóm, nguồn) đếm theo phạm vi đang chọn, chuyển **Thẻ / Bảng** (`?view=bang`), mobile thu gọn vùng lọc sau nút `Bộ lọc`.
+- Mỗi đội có trang chi tiết tĩnh riêng dưới `/doi-chuan/<mùa>-<handle>/`, `/doi-khac/<handle>/` hoặc `/khai-hoang/<handle>/`; handle tiếng Việt đóng băng trong `pipeline/team-route-handles.json` nên sửa `displayNameVi` không đổi URL. URL cũ `/teams/…` và URL ngoài danh sách sinh sẵn trả trang 404 tĩnh, không redirect.
+- Chọn kịch bản/phiên bản luật dùng chung cho Đội chuẩn, Đội khác, Cùng Tồn, Soi đội và Gợi ý đội; URL giữ phạm vi, bộ lọc và cấu hình đang mở. Khai hoang dùng bản bảo trì mới nhất.
+- Tra cứu local 202 tướng, 406 chiến pháp và bốn nhóm catalog bổ sung; sáu chip nhóm, hỗ trợ tên Việt/Hán-Việt/Hán, paging, hộp thoại hồ sơ và khối "Trong cẩm nang" tính lúc build.
 - Tracker chiêu mộ lưu nhiều account, pity và lịch sử trong `localStorage`; có xuất/nhập JSON.
-- Soi screenshot qua Worker + DashScope Qwen; frontend map kết quả và đối chiếu 166 team local.
-- Gợi ý portfolio tối đa 5 team bằng engine local. AI chỉ trích xuất dữ liệu từ ảnh, không chọn team.
+- Soi screenshot qua Worker + DashScope Qwen; frontend map kết quả và đối chiếu đội local. AI chỉ trích xuất dữ liệu từ ảnh, không chọn team.
+- Gợi ý portfolio tối đa 5 team bằng engine local.
+- Giao diện Sổ binh pháp dùng chung một shell (header, menu thả, menu mobile, footer), một stylesheet và bộ token ở `docs/design/so-binh-phap/tokens.json`; theme sáng/tối theo lựa chọn đã lưu hoặc hệ điều hành, không nháy khi chuyển trang.
 - Research MCP chỉ đọc có JSON CLI, stdio và authenticated Streamable HTTP dùng chung tám tool.
 
 Dữ liệu theo kịch bản hiện có Binh Diễn Xuân Thu ở mức tham khảo; chưa có luật,
@@ -64,6 +61,14 @@ npm run test:node
 python3 -m unittest discover -s tests
 (cd worker && npm ci && npm test && npm run typecheck)
 (cd mcp-worker && npm ci && npm run test:coverage && npm run check:repository)
+```
+
+Soát thiết kế (token là nguồn duy nhất, ảnh artboard chỉ để người duyệt so bố cục):
+
+```bash
+node scripts/design-tokens.mjs --check
+node scripts/design-compare.mjs --tokens --phase 05 --theme dark
+node scripts/design-compare.mjs --phase 05 --theme dark   # cần npm run preview trước
 ```
 
 Playwright cần Chromium cài một lần bằng `npx playwright install chromium`.
@@ -117,20 +122,23 @@ Xem [Deployment Guide](docs/deployment-guide.md) và bản ghi triển khai có 
 ## Cấu trúc
 
 ```text
-src/pages/index.astro  # document shell Astro
-src/pages/404.astro    # trang 404 top-level
-src/pages/doi-chuan/   # trang chi tiết Đội chuẩn sinh từ catalog
-src/pages/doi-khac/    # trang chi tiết Đội khác sinh từ catalog
-src/lib/, src/pages/   # manifest + static endpoints byte-exact
-css/, js/, data/       # source runtime canonical
-public/_headers        # Pages deployment-control source
-scripts/               # shared dist verifier
-pipeline/              # build/normalize dữ liệu bằng Python stdlib
-worker/                # Cloudflare Worker TypeScript, deploy riêng
-mcp-worker/            # Research MCP CLI/stdio/HTTP và release tooling
+src/pages/index.astro      # Landing
+src/pages/<mục>/index.astro # 8 trang mục tĩnh (doi-chuan, doi-khac, cung-ton, khai-hoang, tra-cuu, chieu-mo, soi-doi, goi-y-doi)
+src/pages/404.astro        # trang 404 top-level
+src/pages/doi-chuan|doi-khac|khai-hoang/  # ba họ trang chi tiết sinh từ catalog
+src/layouts/SiteLayout.astro # shell dùng chung (head, header, menu, footer, payload)
+src/lib/, src/pages/       # manifest + static endpoints byte-exact
+css/, js/, data/           # source runtime canonical
+js/legacy-routes.js        # bảng chuyển tiếp hash/URL cũ (một nguồn)
+public/_headers, public/fonts/  # Pages deployment-control + font self-host
+docs/design/so-binh-phap/tokens.json # token + danh mục component (nguồn duy nhất)
+scripts/design-tokens.mjs, scripts/design-compare.mjs # soát token và so ảnh
+pipeline/                  # build/normalize dữ liệu bằng Python stdlib
+worker/                    # Cloudflare Worker TypeScript, deploy riêng
+mcp-worker/                # Research MCP CLI/stdio/HTTP và release tooling
 tests/, tests-js/, tests-e2e/
-docs/                  # tài liệu evergreen
-plans/                 # kế hoạch/báo cáo lịch sử, không phải runtime truth
+docs/                      # tài liệu evergreen
+plans/                     # kế hoạch/báo cáo lịch sử, không phải runtime truth
 ```
 
 ## Tài liệu
@@ -149,7 +157,9 @@ plans/                 # kế hoạch/báo cáo lịch sử, không phải runti
 
 ## Ghi chú vận hành
 
-- `data/facets.json` không được frontend load; các tab team tự tính facet runtime. File hiện phản ánh 165 team, lệch 1 so với `teams.json`.
+- `data/facets.json` không được frontend load; hai trang danh sách đội tự tính facet runtime. File hiện phản ánh 165 team, lệch 1 so với `teams.json`.
+- Sửa giao diện thì sửa token/component trong `docs/design/so-binh-phap/tokens.json` trước, rồi chạy `node scripts/design-tokens.mjs --check`; CSS không giữ mã màu hay giá trị vi mô ngoài khối token.
+- Theme lưu ở `localStorage.theme`; không có giá trị thì theo `prefers-color-scheme` của hệ điều hành.
 - `data/tactics-generic.json` có 29 nguồn bổ sung; 27 record đang mang trạng thái `pending` sau merge vào `tactics.json`.
 - Tracker và scan state lưu local. Scan state loại bỏ ảnh, base64, blob và Turnstile token; ảnh chỉ giữ trong bộ nhớ của phiên UI.
 - Ảnh soi đội được gửi tới Alibaba Cloud DashScope; nên crop thông tin tài khoản trước khi dùng.

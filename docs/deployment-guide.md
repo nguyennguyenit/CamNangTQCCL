@@ -94,13 +94,14 @@ Build output: dist
 Node: 24.20.0
 ```
 
-Astro dùng static output, không adapter và không có Pages Functions. `dist/` phải chỉ chứa `index.html`, `404.html`, `sitemap.xml`, `robots.txt`, đúng bộ trang chi tiết đội sinh từ catalog, manifest-approved `js/`, `css/`, `data/` và `_headers`. Shared verifier đối chiếu raw bytes với source và từ chối `pipeline/`, `worker/`, tests, plans, symlink, secret-like hoặc file lạ.
+Astro dùng static output, không adapter và không có Pages Functions. `dist/` phải chỉ chứa `index.html` (Landing), `404.html`, `sitemap.xml`, `robots.txt`, đúng bộ tám trang mục (`<mục>/index.html`), đúng bộ trang chi tiết đội sinh từ catalog, manifest-approved `js/`, `css/`, `fonts/`, `data/` và `_headers`. Shared verifier đối chiếu raw bytes với source và từ chối `pipeline/`, `worker/`, tests, plans, symlink, secret-like hoặc file lạ.
 
 Publication hiển thị là một snapshot fail-closed: `data/website-display.json` pin source JSON, generation Recommended và generation/hash Lookup đã review. `npm run build` kiểm publication hiện hành trước Astro; `npm run verify` kiểm lại publication và exact `dist/`. Không publish candidate site nếu Lookup công khai chưa được promote đúng candidate.
 
 Trang chi tiết đội là route tĩnh sinh sẵn: `/doi-chuan/<mùa>-<handle>/` cho mỗi bản ghi Recommended, `/doi-khac/<handle>/` cho mỗi đội gốc trong `data/teams.json`, và `/khai-hoang/<handle>/` cho mỗi đội Khai hoang trong publication đã xác minh. [`src/lib/team-detail-routes.ts`](../src/lib/team-detail-routes.ts) là inventory dùng chung cho build và verifier, đọc handle đóng băng trong `pipeline/team-route-handles.json` (ledger v2, publication Recommended v1) và **fail** nếu ledger lệch generation/hash/key-set, handle không routable hoặc route trùng; `dist/` không được thừa/thiếu trang. Handle gán một lần; khi publication sinh successor chỉ rebind `generationId`, không sinh lại handle, rồi `python3 -m pipeline.team_route_handles --check` trước `npm run build`. Không có SPA fallback/redirect: `404.html` top-level giữ `not-found-title`, không boot `app.js` hoặc detail entry; URL cũ `/teams/...` hay bất kỳ handle ngoài catalog phải trả 404 tĩnh thay vì root shell.
 
-`public/_headers` đặt `Cache-Control: public, max-age=0, must-revalidate` cho đúng mười rule:
+`public/_headers` đặt `Cache-Control: public, max-age=0, must-revalidate` cho đúng **mười sáu** rule (Landing, 8 trang mục,
+3 họ trang chi tiết, 404, JS/CSS/font/data và favicon):
 
 ```text
 /
@@ -108,14 +109,20 @@ Trang chi tiết đội là route tĩnh sinh sẵn: `/doi-chuan/<mùa>-<handle>/
 /doi-chuan/*
 /doi-khac/*
 /khai-hoang/*
+/cung-ton/*
+/tra-cuu/*
+/chieu-mo/*
+/soi-doi/*
+/goi-y-doi/*
 /404.html
 /js/*
 /css/*
+/fonts/*
 /data/*
 /favicon.png
 ```
 
-Local test chỉ xác nhận syntax, coverage của mọi shell/trang chi tiết/raw asset đã publish và exact copy vào `dist/_headers`; phải quan sát header response thật trên Pages preview trước promotion. Pages parse `_headers` như deployment control, không phục vụ file này như static asset.
+Local test chỉ xác nhận syntax, coverage của mọi shell/trang mục/trang chi tiết/raw asset (gồm `fonts/`) đã publish và exact copy vào `dist/_headers`; phải quan sát header response thật trên Pages preview trước promotion. Pages parse `_headers` như deployment control, không phục vụ file này như static asset.
 
 Trước deploy:
 
@@ -222,6 +229,28 @@ npm run deploy
 
 Config hiện dùng region `intl`, model `qwen3.7-plus`, endpoint DashScope Model Studio theo region. Chỉ đặt `MODEL_ENDPOINT` khi chủ đích đổi endpoint/provider; không dùng Coding Plan endpoint cho Vision.
 
+## Publish lại bản dịch hiển thị
+
+Mọi thay đổi chữ UI hoặc file trong `sourceFiles` của `pipeline/site-localization-policy.json` đều phải đi qua chuỗi
+dựng/kiểm/publish (policy nằm trong `localizationInputsHash` nên mỗi lần đổi sinh generation Recommended mới):
+
+```bash
+# 1) ghim lại ĐÚNG hash nguồn đã sửa trong policy.sourceFiles (dùng sha256_hex trên bytes của file),
+#    rồi cập nhật baseline.notes từ inventory nếu số obligation/digest đổi:
+python3 -m pipeline.site_localization inventory --root . --report <file>
+python3 -m pipeline.site_localization build --root . --stage all --output .cache/site-localization-candidate
+python3 -m pipeline.site_localization check --root . --stage all --candidate .cache/site-localization-candidate
+python3 -m pipeline.site_localization publish --root . --candidate .cache/site-localization-candidate
+python3 -m pipeline.site_localization check --root . --stage public
+# re-pin generationId trong pipeline/team-route-handles.json theo data/website-display.json rồi:
+python3 -m pipeline.team_route_handles --check
+npm run build && npm run verify && npm run test:dist
+```
+
+`inventory` chỉ **báo** số mới: policy phải được sửa (hash nguồn + `baseline.notes`) trước khi dựng candidate, nếu không `check` sẽ báo `reviewed source hash is stale` hoặc baseline lệch. Chỉ đổi hash nguồn (không thêm/dời/đổi chữ) thì vẫn phải publish lại và re-pin; đổi fingerprint của obligation lớp
+`translate` cần receipt người duyệt độc lập, còn lớp `authored-vi` không cần. Dev server giữ snapshot pin trong bộ nhớ
+nên phải khởi động lại sau khi publish.
+
 ## Verification sau deploy
 
 Preflight:
@@ -236,8 +265,8 @@ Kỳ vọng `204` và `access-control-allow-origin: https://tqccl.pages.dev`.
 
 Smoke checklist sau promotion được ủy quyền:
 
-1. Mở production, chuyển đủ 9 hash section và kiểm tra JSON/network không lỗi.
-2. Kiểm tra Team chuẩn và Team khác load đúng generation đang pin, bộ lọc mùa/danh mục/điểm hoạt động, không có tab/asset/team Đô Úy và filter mobile collapse.
+1. Mở production, đi qua Landing và đủ tám đường dẫn mục (`/doi-chuan/`, `/doi-khac/`, `/cung-ton/`, `/khai-hoang/`, `/tra-cuu/`, `/chieu-mo/`, `/soi-doi/`, `/goi-y-doi/`), kiểm tra JSON/network không lỗi; dán một hash cũ (ví dụ `/#khaihoang`, `/#lookup?group=heroes`) và một URL `/` có khóa cũ vào tab đang mở `/` để xác nhận chuyển tiếp đúng.
+2. Kiểm tra Đội chuẩn và Đội khác load đúng generation đang pin, bộ lọc mùa/danh mục/phe/loại binh và chuyển Thẻ/Bảng hoạt động, không có asset/team Đô Úy, panel lọc mobile mở/đóng đúng; đổi theme sáng/tối và tải lại một trang mục để xác nhận không nháy và giữ lựa chọn.
 3. Mở trực tiếp một `/doi-chuan/…`, một `/doi-khac/…` và một `/khai-hoang/…`, reload, rồi dùng link quay lại; một handle không tồn tại và một URL `/teams/…` cũ phải trả trang 404 tĩnh.
 4. Test tra cứu, theme, tracker export/import bằng dữ liệu không nhạy cảm.
 5. Upload screenshot đã crop; xác nhận Turnstile, analyze và map/team match.

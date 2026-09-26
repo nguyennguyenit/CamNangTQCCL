@@ -101,7 +101,10 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
 
   /* ---------- Ba thẻ đọc ảnh: đếm kết quả đã đọc, trạng thái Xong / Chưa đọc ---------- */
   const scanControls = SCAN_TYPES.map((scan, index) => {
-    const fileInput = el("input", { type: "file", accept: "image/*" });
+    // Ô chọn ảnh native giữ nhãn hệ thống (chấp nhận ở Phase 9) nhưng phải có tên truy cập được:
+    // trỏ `aria-labelledby` vào chính tiêu đề thẻ, không thêm chuỗi UI mới.
+    const titleId = `roster-scan-title-${scan.id}`;
+    const fileInput = el("input", { type: "file", accept: "image/*", "aria-labelledby": titleId });
     const btn = el("button", { type: "button", class: "ana-btn" }, `Đọc ${scan.label}`);
     const status = el("p", { class: "ana-note" }, "");
     const count = el("span", { class: "roster-scan-count" });
@@ -149,7 +152,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
         el("span", { class: "roster-step-caps" }, `BƯỚC ${index + 1}`),
         badge,
       ]),
-      el("h3", { class: "roster-scan-title" }, scan.label),
+      el("h3", { class: "roster-scan-title", id: titleId }, scan.label),
       count,
       fileInput,
       btn,

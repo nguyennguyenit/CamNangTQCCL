@@ -6,16 +6,34 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
 
 ## Frontend JavaScript
 
-- `src/layouts/SiteLayout.astro` sở hữu document shell; `src/pages/index.astro` là trang root và không tạo lại root `index.html`.
+- `src/layouts/SiteLayout.astro` sở hữu document shell cho **mọi** loại trang (`pageKind: landing | section | detail | not-found`); không trang nào tự viết lại head/header/footer.
+- **Mô hình trang:** Landing ở `src/pages/index.astro`; 8 trang mục tĩnh `src/pages/<đường-dẫn>/index.astro` (`/doi-chuan/`, `/doi-khac/`, `/cung-ton/`, `/khai-hoang/`, `/tra-cuu/`, `/chieu-mo/`, `/soi-doi/`, `/goi-y-doi/`) mỗi trang đúng một mount `<section id="section-<id>">`; ba họ trang chi tiết sinh từ `src/lib/team-detail-routes.ts`; `src/pages/404.astro` không boot `app.js`/`team-detail.js`.
+- Trang mục khai `activeSection` (một trong 8 id); layout gắn `data-page-section="<id>"` lên `<body>` (không dùng `data-section` — nav đã dùng) và `js/app.js` chỉ mount mục đó, không còn tab/hash/`switchSection`.
+- `js/app.js` gắn `document.body.dataset.boot = 'ready'` sau khi mount xong (kể cả nhánh lỗi) — tín hiệu cho e2e.
 - Astro chỉ làm static build. Không thêm SSR, adapter, renderer UI hoặc Pages Functions khi chưa có yêu cầu riêng.
 - Dùng vanilla ES modules; không thêm framework/bundler nếu không có yêu cầu sản phẩm rõ.
 - `app.js` chỉ điều phối load/init. Behavior section đặt trong module riêng.
+- **Payload mỗi trang mục** do layout phát; Landing là `pageKind="landing"` và **chỉ có hai pin publication**, không có `#team-route-handles`, `#season-artifact-hashes` hay `#season-controls`:
+
+  | Payload | Người đọc | Trang cần |
+  |---|---|---|
+  | `#recommended-publication`, `#website-display-publication` | `app.js` (verify pin trước khi render) | mọi trang |
+  | `#team-route-handles` đủ `{r,l,k}` | `app.js` (href chi tiết, migrate `detail`/`legacyTeam`, migrate `khTeam`/`khVariant`) | cả 8 trang mục; trang chi tiết chỉ `{l}`; **Landing không có** |
+  | `#season-artifact-hashes` | `app.js` (model mùa) | Đội chuẩn, Đội khác, Cùng Tồn, Soi đội, Gợi ý đội |
+  | `<div id="season-controls">` | `app.js` (`placeSeasonControls`) | 5 trang như trên |
+
+- **Fetch dữ liệu bằng đường dẫn tuyệt đối** `/data/…` (không dùng `./data/…`: dưới `/<mục>/` sẽ thành `/doi-chuan/data/…` → 404).
+- **Bảng chuyển tiếp hash cũ** nằm ở một nguồn `js/legacy-routes.js` (ESM thuần, không import): `index.astro` nhúng `resolveLegacyRoute.toString()` vào script inline chặn trong `<head>`, `js/team-detail-navigation.js` dùng cùng hàm để chuẩn hoá `from` và snapshot cũ. Thêm mục/hash mới thì sửa bảng đó, không viết nhánh riêng.
+- **`safeReturnUrl` giữ khóa theo trang**: `SECTION_QUERY_KEYS` là allowlist theo pathname của trang mục (`/doi-chuan/`, `/doi-khac/`, `/cung-ton/`, `/soi-doi/`, `/goi-y-doi/`, `/khai-hoang/`, `/tra-cuu/`, `/chieu-mo/`), chỉ giữ khóa có trong allowlist của **đúng** pathname đó và bỏ lặng lẽ mọi khóa khác (`fbclid`, `gclid`, `msclkid`, `utm_*`, `score`), không loại cả URL. URL gốc cũ dạng `/?…#<tab>` được chuẩn hoá về pathname + query của trang mục trước khi so allowlist, nên `from` cũ vẫn quay về đúng trang.
+- **Bộ chọn theme/điều hướng**: `js/site-nav.js` sở hữu menu thả + menu mobile và `createDropdownMenu` (dùng lại ở menu tài khoản công cụ); `js/site-chrome.js` sở hữu nút đổi theme, `pageshow` và sự kiện `storage`; theme theo hệ điều hành chỉ đọc ở mỗi lần tải trang (không có listener `matchMedia` cho trang đang mở).
+- **Artifact tính lúc build**: hồ sơ Tra cứu đọc `hero-summaries.json` sinh trong generation Recommended đang pin (kèm `provenance.catalogSha256`); không tải kho đội chuẩn khi mở hồ sơ.
 - Hai tab Team chuẩn/Team khác dùng cùng `createRecommendedSection()` trong `js/team-filter-section.js`; không fork filter UI theo family.
 - Đội chuẩn/Đội khác dùng chung `js/recommended-reference-render.js`; Khai hoang dùng `js/render.js` cho build ở cả card và trang detail, guide chỉ nằm trên detail và ngoài subtree build bị thay khi đổi variant. Không fork markup build.
 - Href, snapshot quay lại và migrate URL tham chiếu cũ thuộc `js/team-detail-navigation.js`; không tự nối path `/doi-chuan/...`, `/doi-khac/...` hoặc `/khai-hoang/...` ở chỗ khác. Bảng route handle do build nhúng (`#team-route-handles`) đăng ký trước lần dựng href đầu tiên, validate và thay nguyên khối; thiếu identity trả `null`, không fallback URL ID cũ. Root Khai hoang dùng `khTeam`/`khVariant`, snapshot cùng map `khaihoangVariants`; chỉ context key của tab Khai hoang bỏ cặp query này, surface khác so full URL.
 - Liên kết sang trang chi tiết là anchor thật: chỉ ghi snapshot ở click primary không modifier, không `preventDefault` và không router tự viết.
 - Ưu tiên pure function cho normalize, filter, map, score và state transition.
-- Render dữ liệu bằng DOM API/`textContent`; không đưa dữ liệu nguồn thô vào `innerHTML`.
+- Render dữ liệu bằng DOM API/`textContent`; **không** `innerHTML`/`insertAdjacentHTML`/`outerHTML` với dữ liệu (chuỗi HTML còn lại trong `js/` phải là hằng tĩnh).
+- `href` lấy từ dữ liệu phải qua kiểm scheme `http(s)`; link ngoài `target="_blank" rel="noopener noreferrer"`; query link dựng bằng `URLSearchParams`.
 - Public config đặt trong `js/config.js`; không coi Worker URL hoặc Turnstile site key là secret.
 - Nếu code file vượt khoảng 200 dòng và đang tăng complexity, cân nhắc tách theo boundary thật; không tách cơ học.
 
@@ -31,17 +49,19 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
 - Ba route `/doi-chuan/<mùa>-<handle>/`, `/doi-khac/<handle>/` và `/khai-hoang/<handle>/` sinh từ `src/lib/team-detail-routes.ts`; handle đóng băng trong `pipeline/team-route-handles.json`, inventory HTML dùng chung cho build và verifier, ID/handle không routable bị loại. `sourceConfigId`/`legacyTeamId`/`khaiHoangTeamId` vẫn là định danh nguồn, không đổi theo route; Khai hoang chỉ render từ publication và pin source hash khớp, không fallback JSON thô.
 - `public/_headers` phải phủ cả `/doi-chuan/*`, `/doi-khac/*`, `/khai-hoang/*`, `/404.html` và `/favicon.png`.
 - Root và trang con dùng chung `src/layouts/SiteLayout.astro` cùng một `/css/styles.css`; không thêm stylesheet hoặc shell riêng cho trang chi tiết.
-- `link rel="canonical"` và `og:url` chỉ khai cho URL công khai ổn định và luôn cùng một giá trị: `src/layouts/SiteLayout.astro` phát từ prop `canonicalUrl`, cả ba họ trang chi tiết truyền pathname chính nó kèm `og:type="article"`; root khai trực tiếp trong `<head>` của `src/pages/index.astro` (không dùng layout) để gom mọi biến thể query. `src/pages/404.astro` chỉ khai `robots=noindex`, không canonical/`og:url`.
-- `public/robots.txt` và `src/pages/sitemap.xml.ts` là surface crawl công khai: sitemap phát đúng root cộng inventory route của `src/lib/team-detail-routes.ts`, và origin công khai duy nhất khai ở `site` của `astro.config.mjs` — robots, sitemap, canonical và `og:url` đều phải khớp origin đó. Không thêm `Disallow` cho `/js/`, `/css/`, `/data/` vì crawler cần chúng để render.
+- **Font self-host** nằm ở `public/fonts/` (Be Vietnam Pro 400/500/600/700 + Noto Serif Display 700, subset latin/latin-ext/vietnamese, `font-display: swap`), khai `@font-face` trong `css/styles.css`, và phải có rule cache trong `public/_headers` cùng entry trong verifier; `public/fonts/OFL.txt` giữ license.
+- **CSS chỉ dùng token**: mọi giá trị vi mô lấy từ `docs/design/so-binh-phap/tokens.json` (nguồn duy nhất); `node scripts/design-tokens.mjs --check` phải pass và `node scripts/design-compare.mjs --tokens --phase NN` phải 0 lệch chưa giải thích. Không viết mã màu/px trực tiếp và không giữ lại khối legacy.
+- `link rel="canonical"` và `og:url` chỉ khai cho URL công khai ổn định và luôn cùng một giá trị: `src/layouts/SiteLayout.astro` phát từ prop `canonicalUrl`; Landing (`pageKind="landing"`) và 8 trang mục cũng đi qua chính layout đó và truyền pathname sạch của mình (gom mọi biến thể query), cả ba họ trang chi tiết truyền pathname chính nó kèm `og:type="article"`. `src/pages/404.astro` chỉ khai `robots=noindex`, không canonical/`og:url`.
+- `public/robots.txt` và `src/pages/sitemap.xml.ts` là surface crawl công khai: sitemap phát đúng root, 8 đường dẫn mục (`/doi-chuan/`, `/doi-khac/`, `/cung-ton/`, `/khai-hoang/`, `/tra-cuu/`, `/chieu-mo/`, `/soi-doi/`, `/goi-y-doi/`) cộng inventory route của `src/lib/team-detail-routes.ts`, và origin công khai duy nhất khai ở `site` của `astro.config.mjs` — robots, sitemap, canonical và `og:url` đều phải khớp origin đó. Không thêm `Disallow` cho `/js/`, `/css/`, `/data/` vì crawler cần chúng để render.
 
 ## UI và accessibility
 
 - Nhãn tiếng Việt ngắn, trạng thái rõ; mọi control dùng `button`/`input` phù hợp và có tên truy cập được.
 - Filter count phải tính từ tập dữ liệu tab hiện tại. Không phụ thuộc `data/facets.json` ở runtime.
-- URL sở hữu bộ lọc Team: `season`, `category`, `q`, `faction`, `unit`, `score`, `subcategory`, `source`. Selector cũ `tier`, `stars`, `sort`, `point` đã nghỉ; gặp thì báo notice và bỏ, không map sang điểm nguồn và không đổi thứ tự nguồn.
+- URL sở hữu bộ lọc Team: `season`, `category`, `q`, `faction`, `unit`, `subcategory`, `source`, `view`. Khóa `score`, selector cũ `tier`, `stars`, `sort`, `point` đã nghỉ; gặp thì bỏ lặng lẽ, không map sang điểm nguồn và không đổi thứ tự nguồn.
 - Query gameplay (`config`, `tier`, `sort`, `stars`) thuộc Cùng Tồn/soi đội/gợi ý kho; snapshot theo từng surface, không rò giữa hai nhóm.
-- Thu gọn là trình bày: mức điểm đang chọn vẫn hiển thị và vẫn lọc dù nằm ngoài tám mức đầu.
-- Disclosure phục hồi (`filters`, `score`, `alternatives`) chỉ nhận snapshot khớp đúng một URL root; storage lỗi không được chặn điều hướng.
+- Bộ lọc điểm đã nghỉ: không còn nhóm facet Điểm, không còn khóa `score` trên URL; điểm nguồn chỉ hiển thị trên thẻ/bảng và không đổi thứ tự nguồn.
+- Disclosure phục hồi (`filters`, `alternatives`, `view`) chỉ nhận snapshot khớp đúng pathname + query hiện tại; storage lỗi không được chặn điều hướng.
 - Mobile dùng shared inline filter collapse và `js/site-nav.js` (menu toàn màn hình); không tham chiếu drawer/module điều hướng không tồn tại.
 - Không thiết kế tương tác chỉ dựa vào hover; giữ touch target đủ dùng.
 - Khi thêm dialog/upload/status async: bổ sung focus management, keyboard activation và live region, kèm test.

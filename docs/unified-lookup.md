@@ -77,7 +77,7 @@ review; không xóa lock hoặc chép preimage thủ công.
 
 ## Consumer và publication contract
 
-`#lookup` là route canonical. `#heroes`, `#tactics` và deep link `#lookup/<group>/<id>` tương thích mà không rewrite history ngoài navigation do người dùng thực hiện. Sáu chip nhóm, tìm Việt bỏ dấu/Hán/Hán-Việt, phân trang, modal focus trap, Escape, Back/Forward, mobile và light/dark thuộc contract trình duyệt.
+Route canonical của Tra cứu là `/tra-cuu/?group=<nhóm>&id=<id>`; hash cũ `#lookup`, `#heroes`, `#tactics` và dạng query trong hash `#lookup?group=<nhóm>&id=<id>` được Landing chuyển tiếp sang đường dẫn đó (dạng `#lookup/<nhóm>/<id>` không thuộc contract) mà không rewrite history ngoài navigation do người dùng thực hiện. Sáu chip nhóm, tìm Việt bỏ dấu/Hán/Hán-Việt, phân trang, modal focus trap, Escape, Back/Forward, mobile và light/dark thuộc contract trình duyệt.
 
 Astro build capture một website-display publication snapshot. Sidecar pin exact bytes/generation của Lookup cùng source JSON hiển thị và generation Recommended; HTML và mọi route raw đều dùng snapshot đó. Candidate strict của `site_localization` tự dựng/validate Lookup từ review inputs và chỉ publish khi bốn file Lookup công khai đã trùng candidate. Nếu source hash, HTML pin, route hoặc generation bị interleave, build/verifier dừng toàn bộ khởi tạo thay vì phát hành artifact trộn hoặc render raw.
 
