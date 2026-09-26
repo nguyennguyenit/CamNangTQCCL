@@ -57,3 +57,18 @@ test('mode validators accept nonempty Worker envelopes including tactics-only te
     assert.deepEqual(await callWorker('data:image/png;base64,AA==', 'token', mode), payload);
   }
 });
+
+test('Worker AI and configuration failures get their own Vietnamese sentences', () => {
+  const overloaded = localizeWorkerError('Dịch vụ AI đang quá tải, thử lại sau', 503);
+  const upstream = localizeWorkerError('Dịch vụ AI tạm lỗi, thử lại sau', 502);
+  const unknown502 = localizeWorkerError('unexpected gateway text', 502);
+  const unconfigured = localizeWorkerError('Dịch vụ soi ảnh chưa được cấu hình', 503);
+  const paused = localizeWorkerError('unexpected text', 503);
+  const sentences = [overloaded, upstream, unconfigured, paused];
+  for (const sentence of sentences) {
+    assert.notEqual(sentence, ANALYZE_GENERIC_ERROR);
+    assert.doesNotMatch(sentence, /\d/u);
+  }
+  assert.equal(new Set(sentences).size, sentences.length);
+  assert.equal(unknown502, upstream);
+});

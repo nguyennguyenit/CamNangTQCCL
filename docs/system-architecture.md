@@ -190,12 +190,13 @@ Luồng Worker:
 
 1. Trả preflight hoặc kiểm tra `POST /analyze`.
 2. Nếu request có `Origin`, yêu cầu khớp chính xác `ALLOWED_ORIGIN`; request không `Origin` vẫn được phép.
-3. Parse body/mode; hash IP.
-4. Kiểm tra kill-switch, per-hour/day/month qua KV best-effort.
-5. Xác thực Turnstile và chống replay.
-6. Validate image MIME, magic bytes và size sau decode.
-7. Commit global usage, gọi DashScope Qwen, tolerant-parse và validate output theo mode.
-8. Browser tiếp tục kiểm envelope tương ứng với mode cho cả response `200`; JSON lỗi hoặc sai shape được đổi thành thông báo tiếng Việt hữu hạn, không đi vào state review.
+3. Thiếu `IP_HASH_SECRET` → `503` fail-closed (không đụng KV, siteverify hay model); `Content-Length` vượt trần body → `413` trước khi đọc body.
+4. Parse body/mode; băm IP bằng HMAC-SHA256 có khoá (IPv6 gom /64).
+5. Kiểm tra kill-switch, per-hour/day/month qua KV best-effort (lỗi đọc coi như 0, lỗi ghi bỏ qua).
+6. Xác thực Turnstile bằng siteverify (một lần dùng, `hostname` phải khớp `ALLOWED_ORIGIN`); không có lớp replay KV.
+7. Validate image MIME, magic bytes và size (tính từ độ dài base64, chỉ giải mã phần đầu).
+8. Commit global usage, gọi DashScope Qwen, tolerant-parse và validate output theo mode. Upstream lỗi → `502`/`503` với thông điệp cố định; lỗi bất ngờ → `500` JSON có CORS.
+9. Browser tiếp tục kiểm envelope tương ứng với mode cho cả response `200`; JSON lỗi hoặc sai shape được đổi thành thông báo tiếng Việt hữu hạn, không đi vào state review.
 
 ## Deployment boundary
 

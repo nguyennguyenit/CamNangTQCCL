@@ -459,6 +459,55 @@ test.describe("Gợi ý đội", () => {
     expect(tokens).toEqual(["fixture-token", "fixture-token-1"]);
   });
 
+  test("ba nút đọc ảnh không dùng chung một token: đang đọc thì khoá cả ba, nén ảnh lỗi không bỏ token", async ({ page }) => {
+    await page.route("https://challenges.cloudflare.com/**", (route) =>
+      route.fulfill({ contentType: "application/javascript", body: TURNSTILE_STUB }));
+    const tokens = [];
+    let release;
+    const held = new Promise((resolve) => { release = resolve; });
+    await page.route(WORKER_ROUTE, async (route) => {
+      tokens.push(route.request().postDataJSON().turnstileToken);
+      await held;
+      return route.fulfill({ json: { heroes: [{ nameCn: "SP荀彧" }] } });
+    });
+
+    await page.goto("/goi-y-doi-tu-kho/");
+    await waitForBoot(page);
+    const section = page.locator("#section-roster-recommend");
+    const [heroCard, tacticCard] = [section.locator(".roster-scan-card").nth(0), section.locator(".roster-scan-card").nth(1)];
+    const scanHeroes = section.getByRole("button", { name: "Đọc Tướng", exact: true });
+    const scanTactics = section.getByRole("button", { name: "Đọc Chiến pháp", exact: true });
+    const resets = () => turnstileResets(page, "#section-roster-recommend .ana-turnstile");
+
+    // Nén ảnh lỗi (tệp hỏng): chưa gửi gì nên widget không bị reset và token vẫn dùng được.
+    await heroCard.locator('input[type="file"]').setInputFiles({ name: "hong.png", mimeType: "image/png", buffer: Buffer.from("not an image") });
+    await scanHeroes.click();
+    await expect(heroCard.locator(".ana-note")).not.toHaveText(/Đang đọc/u);
+    await expect(heroCard.locator(".ana-note")).not.toHaveText("");
+    expect(await resets()).toBe(0);
+    expect(tokens).toEqual([]);
+
+    await heroCard.locator('input[type="file"]').setInputFiles({ name: "kho.png", mimeType: "image/png", buffer: transparentPng });
+    await tacticCard.locator('input[type="file"]').setInputFiles({ name: "cp.png", mimeType: "image/png", buffer: transparentPng });
+    await scanHeroes.click();
+    await expect.poll(() => tokens.length).toBe(1);
+    // Đang đọc: cả ba nút khoá; bấm nút thứ hai không gửi thêm request nào.
+    await expect(scanTactics).toBeDisabled();
+    await expect(section.getByRole("button", { name: /^Đọc / })).toHaveCount(3);
+    for (const button of await section.getByRole("button", { name: /^Đọc / }).all()) await expect(button).toBeDisabled();
+    await scanTactics.click({ force: true });
+    release();
+    await expect(heroCard.locator(".ana-note")).toContainText("Đã đọc xong");
+    await expect(scanTactics).toBeEnabled();
+    expect(tokens).toEqual(["fixture-token"]);
+    await expect.poll(resets).toBe(1);
+
+    // Token đã dùng: thẻ thứ hai phải chờ token mới.
+    await scanTactics.click();
+    await expect(tacticCard.locator(".ana-note")).toHaveText("Xác thực Turnstile trước.");
+    expect(tokens).toEqual(["fixture-token"]);
+  });
+
   test("tiến trình 1–2–3, danh sách 5 đội đánh số và nút sửa kho giữ focus", async ({ page, request }) => {
     await seedRoster(page, request);
     await page.goto("/goi-y-doi-tu-kho/");

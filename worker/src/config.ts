@@ -5,10 +5,12 @@ export interface Env {
   // Secrets (wrangler secret put) — KHÔNG commit.
   QWEN_API_KEY: string;
   TURNSTILE_SECRET: string;
+  // Khoá HMAC băm IP cho bộ đếm per-IP; thiếu/rỗng -> Worker trả 503 (fail-closed).
+  IP_HASH_SECRET?: string;
   // KV (rate-limit + đếm cap).
   RL: KVNamespace;
   // Vars (wrangler.toml) — có thể override.
-  ALLOWED_ORIGIN?: string; // domain site, vd https://user.github.io
+  ALLOWED_ORIGIN?: string; // origin site, vd https://tqccl.pages.dev
   REGION?: string; // "intl" (Singapore, mặc định) | "cn" (mainland)
   MODEL_ENDPOINT?: string; // set để override hẳn endpoint (ưu tiên hơn REGION)
   MODEL_ID?: string;

@@ -1,5 +1,6 @@
 # Cloudflare Worker proxy Vision LLM. Hạ tầng TÁCH BIỆT site (không deploy lên Pages).
-# Secrets đặt qua `wrangler secret put` — KHÔNG ghi ở đây.
+# Secrets bắt buộc, đặt qua `wrangler secret put` — KHÔNG ghi ở đây:
+#   QWEN_API_KEY, TURNSTILE_SECRET, IP_HASH_SECRET (thiếu IP_HASH_SECRET -> /analyze trả 503).
 name = "tqccl-vision-proxy"
 main = "src/index.ts"
 compatibility_date = "2026-01-01"

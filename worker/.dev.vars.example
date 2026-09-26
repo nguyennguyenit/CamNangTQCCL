@@ -2,3 +2,5 @@
 # `wrangler secret put <NAME>`. KHÔNG commit secret thật.
 QWEN_API_KEY=sk-xxxxxxxxxxxxxxxx
 TURNSTILE_SECRET=0x4xxxxxxxxxxxxxxxxxxx
+# Khoá HMAC băm IP (ngẫu nhiên >= 32 byte, vd `openssl rand -base64 48`); thiếu -> /analyze trả 503.
+IP_HASH_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx

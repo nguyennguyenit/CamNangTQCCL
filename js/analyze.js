@@ -18,6 +18,7 @@ const DISCLAIMER =
 // chung, không bao giờ render nguyên văn.
 export const ANALYZE_GENERIC_ERROR = "Không thể phân tích ảnh. Vui lòng thử lại.";
 export const ANALYZE_ACTION_ERROR = "Không thể hoàn tất thao tác. Vui lòng thử lại.";
+const AI_SERVICE_ERROR = "Dịch vụ AI đang gặp sự cố. Thử lại sau ít phút.";
 
 
 const STATUS_ERRORS = {
@@ -29,6 +30,7 @@ const STATUS_ERRORS = {
   422: "Không đọc được đội từ ảnh. Thử ảnh rõ hơn.",
   429: "Hết lượt soi hôm nay. Thử lại sau.",
   500: ANALYZE_GENERIC_ERROR,
+  502: AI_SERVICE_ERROR,
   503: "Tính năng soi ảnh đang tạm nghỉ. Thử lại sau.",
 };
 
@@ -49,7 +51,9 @@ const UPSTREAM_ERRORS = new Map(Object.entries({
   "hết lượt hôm nay": "Hết lượt soi hôm nay. Thử lại vào ngày mai.",
   "bạn thử quá nhiều lần, đợi chút": "Bạn thử quá nhiều lần. Đợi một lát rồi thử lại.",
   "thiếu xác thực chống bot": "Cần xác thực chống bot trước khi soi ảnh.",
-  "token xác thực đã dùng": "Phiên xác thực đã dùng. Xác thực lại rồi thử.",
+  "dịch vụ ai tạm lỗi, thử lại sau": AI_SERVICE_ERROR,
+  "dịch vụ ai đang quá tải, thử lại sau": "Dịch vụ AI đang quá tải. Đợi vài phút rồi thử lại.",
+  "dịch vụ soi ảnh chưa được cấu hình": "Dịch vụ soi ảnh chưa sẵn sàng. Thử lại sau.",
   "lỗi xác thực, thử lại": "Xác thực chống bot lỗi. Thử lại.",
   "xác thực chống bot thất bại": "Xác thực chống bot thất bại. Thử lại.",
   "lỗi xử lý, thử lại sau": ANALYZE_GENERIC_ERROR,

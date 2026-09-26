@@ -85,7 +85,7 @@ export function extractContent(data: any): string {
 
 /**
  * Gọi model vision -> AnalyzeResult đã validate.
- * Ném Error có .status để handler map sang HTTP (502 upstream / 422 không đọc được).
+ * Ném Error có .status để handler map sang HTTP (502/503 upstream / 422 không đọc được).
  */
 export async function callModel(imageDataUri: string, opts: ModelOptions, mode: AnalyzeMode = "analyzeTeamImage"): Promise<AnalyzeModeResult> {
   const fetchImpl = opts.fetchImpl || fetch;
@@ -98,8 +98,11 @@ export async function callModel(imageDataUri: string, opts: ModelOptions, mode: 
     body: JSON.stringify(buildRequestBody(opts.modelId, imageDataUri, mode)),
   });
   if (!resp.ok) {
-    const err: any = new Error(`Model upstream lỗi ${resp.status}`);
-    err.status = 502;
+    // Thông điệp cố định, không mang mã upstream: 429 là quá tải (503), còn lại
+    // (khoá sai 401/403, 5xx…) là dịch vụ AI tạm lỗi (502).
+    const overloaded = resp.status === 429;
+    const err: any = new Error(overloaded ? "Dịch vụ AI đang quá tải, thử lại sau" : "Dịch vụ AI tạm lỗi, thử lại sau");
+    err.status = overloaded ? 503 : 502;
     throw err;
   }
   const data = await resp.json();

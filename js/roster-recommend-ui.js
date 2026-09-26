@@ -133,11 +133,22 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
         status.textContent = "Xác thực Turnstile trước.";
         return;
       }
-      btn.disabled = true;
+      // Token Turnstile chỉ dùng được một lần: khoá cả ba nút trong lúc đọc để không
+      // thẻ nào gửi lại token đang dùng.
+      setScanBusy(true);
       status.textContent = "Đang đọc ảnh...";
+      let sent = false;
       try {
         const imageDataUrl = await compressImage(file);
-        const raw = await callWorker(imageDataUrl, token, scan.mode);
+        // Lấy token và xoá ngay trong cùng một bước (không có await ở giữa).
+        const scanToken = token;
+        token = "";
+        if (!scanToken) {
+          status.textContent = "Xác thực Turnstile trước.";
+          return;
+        }
+        sent = true;
+        const raw = await callWorker(imageDataUrl, scanToken, scan.mode);
         const mapped = scan.id === "heroes"
           ? mapHeroesScan(raw, { heroesDict, tacticsDict })
           : scan.id === "tactics"
@@ -151,9 +162,9 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       } catch (err) {
         status.textContent = describeAnalyzeError(err, ROSTER_PROVIDER_ERROR);
       } finally {
-        token = "";
-        if (window.turnstile) window.turnstile.reset(tsBox);
-        btn.disabled = false;
+        // Chỉ reset widget khi token đã thật sự gửi đi; nén ảnh lỗi thì token còn nguyên.
+        if (sent && window.turnstile) window.turnstile.reset(tsBox);
+        setScanBusy(false);
       }
     });
     const card = el("section", { class: "roster-scan-card" }, [
@@ -168,8 +179,11 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       btn,
       status,
     ]);
-    return { scan, card, status, count, badge };
+    return { scan, card, status, count, badge, btn };
   });
+  function setScanBusy(busy) {
+    for (const control of scanControls) control.btn.disabled = busy;
+  }
 
   function paintScanCards() {
     const counts = {

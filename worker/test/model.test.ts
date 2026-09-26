@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildRequestBody, promptByMode } from "../src/model";
+import { buildRequestBody, callModel, promptByMode } from "../src/model";
 
 describe("vision prompt", () => {
   it("đọc binh thư vào booksCn riêng + cho phép đoán tướng từ chân dung khi tên vắng", () => {
@@ -46,4 +46,27 @@ describe("scan mode prompts", () => {
     expect(text).toContain("heroesCn");
     expect(text).toContain("tacticsCn");
   });
+});
+
+describe("callModel khi upstream lỗi", () => {
+  const opts = (status: number) => ({
+    endpoint: "https://model.test/v1/chat/completions",
+    apiKey: "key",
+    modelId: "vision-model",
+    fetchImpl: (async () => new Response("provider detail", { status })) as typeof fetch,
+  });
+
+  for (const [upstream, status, message] of [
+    [401, 502, "Dịch vụ AI tạm lỗi, thử lại sau"],
+    [403, 502, "Dịch vụ AI tạm lỗi, thử lại sau"],
+    [500, 502, "Dịch vụ AI tạm lỗi, thử lại sau"],
+    [503, 502, "Dịch vụ AI tạm lỗi, thử lại sau"],
+    [429, 503, "Dịch vụ AI đang quá tải, thử lại sau"],
+  ] as const) {
+    it(`upstream ${upstream} -> lỗi ${status} thông điệp cố định, không mang mã số`, async () => {
+      const error = await callModel("data:image/png;base64,AA==", opts(upstream)).catch((e) => e);
+      expect(error).toMatchObject({ status, message });
+      expect(error.message).not.toMatch(/\d/u);
+    });
+  }
 });

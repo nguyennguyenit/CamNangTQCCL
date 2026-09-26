@@ -194,7 +194,7 @@ npm run dev
 
 Commit trong `worker/wrangler.toml`:
 
-- `ALLOWED_ORIGIN`: exact production origin.
+- `ALLOWED_ORIGIN`: exact production origin; hostname của origin này cũng phải trùng `hostname` siteverify trả về (widget Turnstile cấu hình cho đúng hostname Pages). Để `*` (chỉ dev) thì Worker bỏ kiểm hostname.
 - `REGION`, `MODEL_ID`, tùy chọn `MODEL_ENDPOINT`.
 - `FEATURE_ENABLED` kill-switch.
 - `RL_PER_HOUR`, `DAILY_CAP`, `MONTHLY_CAP`, `MAX_IMAGE_BYTES`.
@@ -214,7 +214,10 @@ Các giá trị này công khai, không phải secret.
 cd worker
 npx wrangler secret put QWEN_API_KEY
 npx wrangler secret put TURNSTILE_SECRET
+openssl rand -base64 48 | npx wrangler secret put IP_HASH_SECRET
 ```
+
+Cả ba secret phải có trước `npm run deploy`. `IP_HASH_SECRET` là khoá HMAC băm IP cho bộ đếm per-IP (giá trị ngẫu nhiên ≥ 32 byte); thiếu hoặc rỗng thì mọi `POST /analyze` trả `503` `Dịch vụ soi ảnh chưa được cấu hình` và công cụ đọc ảnh báo "Dịch vụ soi ảnh chưa sẵn sàng". Đổi secret chỉ làm bộ đếm per-IP bắt đầu lại (TTL 2 giờ), không cần migrate.
 
 Không commit API key, Turnstile secret, token, `.dev.vars` hoặc credential Cloudflare.
 

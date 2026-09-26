@@ -1,37 +1,67 @@
 # TQCCL Vision Proxy (Cloudflare Worker)
 
-Proxy giữ API key Qwen + guardrail cho tính năng **Soi đội từ ảnh**. Hạ tầng
-**tách biệt** site tĩnh (KHÔNG deploy lên GitHub Pages). Site gọi `POST /analyze`.
+Proxy giữ API key Qwen + guardrail cho các công cụ đọc ảnh (**Soi đội từ ảnh**,
+**Gợi ý đội từ kho**). Hạ tầng **tách biệt** site tĩnh: site chạy trên Cloudflare
+Pages `https://tqccl.pages.dev` (`wrangler.toml` `ALLOWED_ORIGIN`), Worker deploy
+riêng bằng `wrangler`. Site gọi `POST /analyze`.
 
 ## Kiến trúc
 
 ```
-Site (Pages) ──POST /analyze {image, turnstileToken}──► Worker
-   Worker: OPTIONS → origin → cap/kill-switch/rate-limit → Turnstile → input guard → Qwen → validate → JSON
-   Trả: { heroes: [{ nameCn, tacticsCn[], statFocusCn }] }   (Hán; site map sang Việt qua dict)
+Site (Pages) ──POST /analyze {image, turnstileToken, mode}──► Worker
+   Worker: OPTIONS → origin → IP_HASH_SECRET → Content-Length → cap/kill-switch/rate-limit
+           → Turnstile (siteverify: một lần dùng + đúng hostname) → input guard → Qwen → validate → JSON
 ```
 
-KHÔNG lưu ảnh. Log tối thiểu (đếm, không nội dung). IP chỉ lưu dạng hash.
+Request JSON:
+
+| Trường | Kiểu | Ý nghĩa |
+|---|---|---|
+| `image` | string | Base64 chuẩn hoặc data URI `data:image/...;base64,...` (PNG/JPEG/WebP, ≤ `MAX_IMAGE_BYTES` sau giải mã) |
+| `turnstileToken` | string | Token Turnstile, dùng một lần |
+| `mode` | string (tuỳ chọn) | Một trong 4 chế độ dưới đây; thiếu/rỗng = `analyzeTeamImage` |
+
+Response 200 theo `mode` (chữ Hán Giản thể; site map sang tiếng Việt qua từ điển):
+
+| `mode` | Công cụ | Response |
+|---|---|---|
+| `analyzeTeamImage` | Soi đội từ ảnh | `{ heroes: [{ nameCn, tacticsCn[], booksCn[], statFocusCn, nameFromPortrait? }] }` |
+| `scanHeroes` | Gợi ý đội: đọc kho tướng | `{ heroes: [{ nameCn, level?, redStars? }] }` |
+| `scanTactics` | Gợi ý đội: đọc kho chiến pháp | `{ tactics: [{ nameCn }] }` |
+| `scanBuiltTeams` | Gợi ý đội: đọc đội đã build | `{ teams: [{ teamName, heroesCn[], tacticsCn[] }] }` |
+
+Lỗi luôn là JSON `{ error: "<thông điệp cố định>" }` kèm header CORS: 400 (body/mode/base64/ảnh hỏng),
+403 (origin, Turnstile), 404, 413 (ảnh hoặc `Content-Length` quá lớn), 415, 422 (model không đọc được),
+429 (hết lượt ngày, quá nhiều lần/giờ), 502 (`Dịch vụ AI tạm lỗi, thử lại sau`),
+503 (`Dịch vụ AI đang quá tải, thử lại sau`, kill-switch/cap tháng, `Dịch vụ soi ảnh chưa được cấu hình`),
+500 (lỗi bất ngờ, `Lỗi xử lý, thử lại sau`). Không trả mã hay nội dung từ upstream.
+
+KHÔNG lưu ảnh. Log tối thiểu (đếm, không nội dung). IP chỉ lưu dạng HMAC có khoá
+(`IP_HASH_SECRET`), IPv6 gom theo /64. Bộ đếm KV là best-effort: KV lỗi đọc coi như
+0, lỗi ghi bị bỏ qua.
 
 ## Setup deploy
 
 1. **Cloudflare account** + cài wrangler: `npm i -g wrangler` rồi `wrangler login`.
 2. **KV namespace**: `wrangler kv namespace create RL` → dán `id` vào `wrangler.toml` (`[[kv_namespaces]] id`).
-3. **Turnstile** (Cloudflare dashboard → Turnstile): tạo site → lấy **site-key** (public, để vào site `config.js`) + **secret**.
+3. **Turnstile** (Cloudflare dashboard → Turnstile): tạo site với hostname của site Pages → lấy **site-key** (public, để vào `js/config.js`) + **secret**.
 4. **Qwen key**: tạo trên Alibaba Model Studio / DashScope → API key.
-5. **Vars**: sửa `wrangler.toml` → `ALLOWED_ORIGIN` = URL site thật (vd `https://user.github.io`); chốt `REGION`/`MODEL_ID` (xem §Region).
-6. **Secrets** (KHÔNG commit):
+5. **Vars**: `wrangler.toml` → `ALLOWED_ORIGIN` = origin site thật (`https://tqccl.pages.dev`); hostname của origin này cũng là hostname Turnstile phải khớp. Chốt `REGION`/`MODEL_ID` (xem §Region).
+6. **Secrets** (KHÔNG commit), cả ba bắt buộc:
    ```bash
    wrangler secret put QWEN_API_KEY
    wrangler secret put TURNSTILE_SECRET
+   openssl rand -base64 48 | wrangler secret put IP_HASH_SECRET
    ```
+   Thiếu hoặc rỗng `IP_HASH_SECRET` → mọi `POST /analyze` trả **503** `Dịch vụ soi ảnh chưa được cấu hình`
+   (không đọc/ghi KV, không gọi Turnstile hay model). Đổi secret làm bộ đếm per-IP bắt đầu lại (TTL 2 giờ).
 7. **Deploy**: `npm install && npm run deploy`. Dev: copy `.dev.vars.example`→`.dev.vars`, `npm run dev`.
 
 ## Test
 
 ```bash
 npm install
-npm test          # vitest: schema (tolerant parse M1), guard (H4), rate-limit/cap (H5)
+npm test          # vitest: handler, schema (M1), guard (H4), rate-limit/cap (H5), Turnstile, danh sách tướng
 npm run typecheck
 ```
 

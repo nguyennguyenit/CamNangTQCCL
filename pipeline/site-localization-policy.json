@@ -12,8 +12,8 @@
     "notes": {
       "approvedDisplaySlots": 11,
       "blocks": 1967,
-      "concreteInventorySha256": "abc4f153092630e5ca048061cfb631225765d20d5f8179626640f618f0e317df",
-      "concreteLocationCount": 56669,
+      "concreteInventorySha256": "71ac9352a689d37a6e049fc969c520d6f2e87b4b609314fe4beb2813ac9eabec",
+      "concreteLocationCount": 56672,
       "hanBlocks": 1928,
       "lookupReviewObligations": 3503,
       "siteLedgerObligations": 2086,
@@ -75,7 +75,7 @@
       "hột": "red-copy count"
     }
   },
-  "policyVersion": "site-vi-260927-hieu-nang",
+  "policyVersion": "site-vi-260927-worker",
   "routeFamilies": [
     {
       "entrypoints": [
@@ -742,7 +742,7 @@
     "data/season-content-links.json": "c87e87e6984c5a39af11248c2125620477852aa1c82b299da339e262e2c881d9",
     "data/teams.json": "45e13dca78877abc13d2ef2213be9432c8307aa558d99783498279f7563cf283",
     "js/analyze-map.js": "f463c3ba472af8f8fcd18697180e48fb8b3323effdc0ee6d4ba240597b089039",
-    "js/analyze.js": "674c2d1b532e21df5704fd013ccdcda07e084caa5056a3f9f24d9d8dff94b4df",
+    "js/analyze.js": "d2bc2d8679992d82a47ee2e166ea6f2ee44caf30c25188113180dc73c09665a9",
     "js/app.js": "0e59287f2a10c33ac65f9c61643fe978b321bf120ecf3c63a6f8c556e51aacef",
     "js/detail-actions.js": "6fd2fbfd9b8ad73b6e4cfe0c4a907897b0e79e3d60437bacb0a8f2ee97c41104",
     "js/hero-portrait.js": "5abbe063592abaa25f3f22334456a7de3784b9c330de3bb9abbe77d47de11e2b",
@@ -756,7 +756,7 @@
     "js/recruit-tracker-store.js": "19fe4dba7c8da644b1e3481f4ddef0adc4e48c5ae04fea3e88f7a0ef50c909d9",
     "js/recruit-tracker.js": "cdcd434e7798f9d143ec697ec473d6b2fcb6c665d4b5a664c4415774c3d934be",
     "js/render.js": "0b95e9739049f043e83dda83ef81052d25ad6343ae7b3ba6eb79934f9bd72f20",
-    "js/roster-recommend-ui.js": "af3825a732ed552354e138854b621e70c406a16453025b388f5456eb455c779a",
+    "js/roster-recommend-ui.js": "cd4b32e4c005e3c7c50318e08ee0c81b4ddd7b599c2f1e89a172e799187af094",
     "js/roster-scan-map.js": "e79071426c09ad63a6ffebac07fa0e7cec00f17ed072027c678404042faf82ce",
     "js/roster-scan-state.js": "d93f94758c68557802b3ea682aeabe3c0f8bf33b5abf3635efbe8c8148b9788c",
     "js/site-chrome.js": "f0d56b54055b9734bf6ecba49108c52c795aa7b4c5bba3375f04bc388d7e3a14",

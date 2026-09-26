@@ -7,17 +7,26 @@ export interface LimitResult {
   message?: string;
 }
 
-/** Tăng counter KV theo key, đặt TTL khi tạo mới. Trả giá trị sau khi tăng. */
-async function incr(kv: KVNamespace, key: string, ttlSeconds: number): Promise<number> {
-  const cur = parseInt((await kv.get(key)) || "0", 10) || 0;
-  const next = cur + 1;
-  await kv.put(key, String(next), { expirationTtl: ttlSeconds });
-  return next;
+/**
+ * Tăng counter KV theo key, đặt TTL khi tạo mới. Best-effort: lỗi đọc coi như 0,
+ * lỗi ghi (vd KV 429 vượt hạn mức ghi) bị bỏ qua để request vẫn được phục vụ.
+ */
+async function incr(kv: KVNamespace, key: string, ttlSeconds: number): Promise<void> {
+  const next = (await read(kv, key)) + 1;
+  try {
+    await kv.put(key, String(next), { expirationTtl: ttlSeconds });
+  } catch {
+    // Counter là best-effort (H1): mất một lần đếm tốt hơn trả lỗi cho người dùng.
+  }
 }
 
-/** Đọc counter (không tăng). */
+/** Đọc counter (không tăng); lỗi đọc KV coi như 0. */
 async function read(kv: KVNamespace, key: string): Promise<number> {
-  return parseInt((await kv.get(key)) || "0", 10) || 0;
+  try {
+    return parseInt((await kv.get(key)) || "0", 10) || 0;
+  } catch {
+    return 0;
+  }
 }
 
 /** Mốc thời gian UTC dạng YYYY-MM-DD và YYYY-MM (truyền vào để test tất định). */
@@ -78,9 +87,27 @@ export async function commitGlobalUsage(kv: KVNamespace, now: Date): Promise<voi
   await incr(kv, `m:${month}`, 3456000); // ~40 ngày
 }
 
-/** Hash IP (SHA-256, hex 16 ký tự đầu) — không lưu IP thô. */
-export async function hashIp(ip: string): Promise<string> {
-  const data = new TextEncoder().encode(ip || "unknown");
-  const buf = await crypto.subtle.digest("SHA-256", data);
-  return [...new Uint8Array(buf)].slice(0, 8).map((b) => b.toString(16).padStart(2, "0")).join("");
+/**
+ * Khoá bucket của IP: IPv4 giữ nguyên địa chỉ, IPv6 gom theo /64 (4 nhóm đầu) vì
+ * một thuê bao thường được cấp cả dải /64.
+ */
+function ipBucket(ip: string): string {
+  const address = ip.trim().toLowerCase().split("%", 1)[0];
+  if (!address.includes(":")) return address || "unknown";
+  // IPv4 nhúng (vd `::ffff:1.2.3.4`) chiếm 2 nhóm cuối, luôn nằm ngoài /64.
+  const split = (part: string) => (part ? part.split(":") : []).flatMap((group) => (group.includes(".") ? ["0", "0"] : [group]));
+  const [head, tail] = address.split("::", 2);
+  const headGroups = split(head);
+  const tailGroups = tail === undefined ? [] : split(tail);
+  const zeros = tail === undefined ? 0 : Math.max(0, 8 - headGroups.length - tailGroups.length);
+  const groups = [...headGroups, ...Array<string>(zeros).fill("0"), ...tailGroups];
+  return groups.slice(0, 4).map((group) => (parseInt(group, 16) || 0).toString(16)).join(":") + "::/64";
+}
+
+/** HMAC-SHA256(secret, bucket IP), hex 16 byte đầu — không lưu IP thô hay hash trần đoán ngược được. */
+export async function hashIp(ip: string, secret: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey("raw", encoder.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const signature = await crypto.subtle.sign("HMAC", key, encoder.encode(ipBucket(ip)));
+  return [...new Uint8Array(signature)].slice(0, 16).map((b) => b.toString(16).padStart(2, "0")).join("");
 }

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { checkLimits, commitGlobalUsage, timeKeys } from "../src/ratelimit";
+import { checkLimits, commitGlobalUsage, hashIp, timeKeys } from "../src/ratelimit";
 
 // Mock KVNamespace tối thiểu (Map trong bộ nhớ, bỏ qua TTL).
 function mockKV(seed: Record<string, string> = {}): any {
@@ -64,5 +64,35 @@ describe("checkLimits (H5)", () => {
     expect(r.status).toBe(429);
     // daily/monthly không tăng khi bị chặn ở tầng IP.
     expect(await kv.get("d:2026-06-22")).toBeNull();
+  });
+});
+
+describe("hashIp (HMAC có khoá, IPv6 gom /64)", () => {
+  const SECRET = "secret-a-for-tests";
+  const hex = (buf: ArrayBuffer) => [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+
+  it("khác nhau với hai secret khác nhau", async () => {
+    expect(await hashIp("203.0.113.7", SECRET)).not.toBe(await hashIp("203.0.113.7", "secret-b-for-tests"));
+  });
+
+  it("IPv6 cùng /64 cho cùng giá trị, khác /64 cho giá trị khác", async () => {
+    const bucket = await hashIp("2001:db8:1:2::1", SECRET);
+    expect(await hashIp("2001:db8:1:2:ffff::9", SECRET)).toBe(bucket);
+    expect(await hashIp("2001:0DB8:0001:0002:0:0:0:abcd", SECRET)).toBe(bucket);
+    expect(await hashIp("2001:db8:1:3::1", SECRET)).not.toBe(bucket);
+    expect(await hashIp("2001:db8::1", SECRET)).not.toBe(bucket);
+  });
+
+  it("IPv4 tách theo từng địa chỉ", async () => {
+    expect(await hashIp("203.0.113.7", SECRET)).not.toBe(await hashIp("203.0.113.8", SECRET));
+    expect(await hashIp("203.0.113.7", SECRET)).toBe(await hashIp("203.0.113.7", SECRET));
+  });
+
+  it("không phải SHA-256 trần của IP", async () => {
+    const ip = "203.0.113.7";
+    const plain = hex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(ip)));
+    const hashed = await hashIp(ip, SECRET);
+    expect(hashed).toMatch(/^[0-9a-f]{32}$/);
+    expect(plain.startsWith(hashed)).toBe(false);
   });
 });

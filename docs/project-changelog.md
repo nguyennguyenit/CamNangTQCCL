@@ -1,5 +1,25 @@
 # Project Changelog
 
+## 2026-09-27 (Vision Worker và Research MCP)
+
+### Fixed
+
+- Vision Worker: lỗi KV (vd `KV PUT failed: 429`) không còn làm request rơi ra 500 thô của Cloudflare không có CORS: đọc KV lỗi coi như 0, ghi KV lỗi bị bỏ qua; mọi lỗi bất ngờ trả JSON 500 `Lỗi xử lý, thử lại sau` có CORS.
+- Vision Worker: không còn trả `Model upstream lỗi <mã>`; upstream 429 → 503 `Dịch vụ AI đang quá tải, thử lại sau`, lỗi khác (401/403/5xx) → 502 `Dịch vụ AI tạm lỗi, thử lại sau`. Soi đội và Gợi ý đội hiển thị câu tiếng Việt riêng cho 502, quá tải và Worker chưa cấu hình.
+- Vision Worker: `Content-Length` vượt `ceil(MAX_IMAGE_BYTES·4/3) + 4096` bị trả 413 trước khi đọc body, ghi KV hay gọi siteverify.
+- Vision Worker: siteverify phải trả `hostname` đúng host của `ALLOWED_ORIGIN`; bỏ lớp replay KV (siteverify đã bảo đảm token dùng một lần), mỗi lượt bớt một đọc và một ghi KV. Bỏ ánh xạ "Token xác thực đã dùng" ở site.
+- Vision Worker: IP băm bằng HMAC-SHA256 với secret `IP_HASH_SECRET`, IPv6 gom theo /64; thiếu hoặc rỗng secret → 503 `Dịch vụ soi ảnh chưa được cấu hình` có CORS, không đụng KV, siteverify hay model. **Deploy cần `wrangler secret put IP_HASH_SECRET` trước `wrangler deploy`** (`docs/deployment-guide.md`); bộ đếm per-IP cũ tự hết hạn sau 2 giờ.
+- Vision Worker: danh sách tướng cho nhận diện chân dung đủ 202 tướng Giản thể (trước 112, lệnh sinh cũ in tên Phồn thể có khoảng trắng); `worker/test/hero-names.test.ts` báo lệch khi `data/heroes-dict.json` đổi.
+- Gợi ý đội từ kho: ba nút đọc ảnh khoá cùng lúc khi một thẻ đang đọc và lấy token Turnstile một lần, nên không còn gửi cùng một token hai lần; nén ảnh lỗi không còn reset widget và bỏ token.
+- Research MCP: sau `TQCCL_MCP_NEXT_TOKEN_NOT_AFTER` token NEXT hết hiệu lực (401) còn CURRENT vẫn 200, thay vì cả dịch vụ trả 503 `SERVICE_MISCONFIGURED`. Origin không được phép trả 403 (trước 400), kết quả vượt `TQCCL_MCP_MAX_RESULT_BYTES` trả 413 (trước 500); bảng mã lỗi trong `docs/mcp-research-server.md`.
+- Test e2e `gameplay config keeps precedence over old reference selectors` so URL Cùng Tồn kèm `scenario` mà boot tự ghi (trước đỏ ngẫu nhiên tuỳ thời điểm so).
+
+### Changed
+
+- Guard ảnh của Vision Worker không giải mã rồi mã hoá lại toàn ảnh: kiểm ký tự bằng regex, tính kích thước từ độ dài và padding, chỉ giải mã 12 byte đầu cho magic bytes (ảnh 1,4 MB: ~12,4 ms → ~1,7 ms). Base64 không chuẩn (thiếu padding, có khoảng trắng bên trong) nay bị 400; trình duyệt luôn gửi base64 chuẩn.
+- `worker/README.md`: contract `{image, turnstileToken, mode}`, 4 chế độ và shape response, mã lỗi, Cloudflare Pages thay GitHub Pages, ba secret bắt buộc.
+- Policy `site-vi-260927-worker` (hash `js/analyze.js`, `js/roster-recommend-ui.js`; thêm 3 tuple `authored-vi`), publish generation `0cb3ba92…` (xoá generation `eeaa9c42…` của Phase 5), re-pin `pipeline/team-route-handles.json`. `WORKFLOW_BUILD_ID` không đổi.
+
 ## 2026-09-27 (Hiệu năng runtime)
 
 ### Changed

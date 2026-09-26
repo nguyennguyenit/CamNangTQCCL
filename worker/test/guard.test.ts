@@ -45,6 +45,37 @@ describe("validateImage (H4 input guard)", () => {
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.status).toBe(400);
   });
+
+  // Bảo toàn hành vi (tối ưu guard không được đổi kết quả với base64 chuẩn trình duyệt tạo).
+  it("biên kích thước giải mã đúng maxBytes với 0/1/2 ký tự '='", () => {
+    for (const size of [300, 301, 302]) {
+      const encoded = b64(pad([0x89, 0x50, 0x4e, 0x47], size));
+      expect(encoded.match(/=*$/)![0].length).toBe([0, 2, 1][size % 3]);
+      expect(validateImage(encoded, size).ok).toBe(true);
+      const over = validateImage(encoded, size - 1);
+      expect(over.ok).toBe(false);
+      if (!over.ok) expect(over.status).toBe(413);
+    }
+  });
+  it("ký tự base64 sai ở giữa chuỗi -> 400", () => {
+    const encoded = b64(PNG);
+    for (const bad of ["*", "=", "-"]) {
+      const middle = Math.floor(encoded.length / 2);
+      const r = validateImage(encoded.slice(0, middle) + bad + encoded.slice(middle + 1), 1_500_000);
+      expect(r.ok).toBe(false);
+      if (!r.ok) expect(r.status).toBe(400);
+    }
+  });
+  it("nhận diện PNG/JPEG/WebP qua magic bytes và dataUri giữ nguyên phần base64 của input", () => {
+    const WEBP = pad([0x52, 0x49, 0x46, 0x46, 0x10, 0x00, 0x00, 0x00, 0x57, 0x45, 0x42, 0x50]);
+    for (const [bytes, mime] of [[PNG, "image/png"], [JPEG, "image/jpeg"], [WEBP, "image/webp"]] as const) {
+      const encoded = b64(bytes);
+      for (const input of [encoded, `data:image/gif;base64,${encoded}`]) {
+        const r = validateImage(input, 1_500_000);
+        expect(r).toEqual({ ok: true, mime, dataUri: `data:${mime};base64,${encoded}` });
+      }
+    }
+  });
 });
 
 describe("CORS", () => {
