@@ -150,4 +150,4 @@ Exit 0, 194 s.
 | `mcp-worker` check | 43 file, 336 test (bỏ ca ghim method/tautology/hàm đã xoá); workflow build, typecheck, build, `test:node-min`, `verify:control-plane` ok |
 
 ## Tổng kết phase 4
-Hai commit (4a `8a2a021`, 4b). Toàn bộ finding của phase đã xoá theo contract: ReviewJsCore#2, #3, #7 (phần chết), #11, #12, #15 (phần module); ReviewJsTools#18–#23, #19 (phần module); ReviewAstroCss#1, #2, #9, #10, #15, #16; ReviewWorkers#6, #7, #8; ReviewPipeline#8–#13 (phần xoá của #12). Phần "render một lần" của ReviewJsCore#7 ở Phase 5; phần CLI/docs của `parse_coexist_csv` (#12) ở Phase 7.
+Hai commit (4a `8a2a021`, 4b `9fad687`). Toàn bộ finding của phase đã xoá theo contract: ReviewJsCore#2, #3, #7 (phần chết), #11, #12, #15 (phần module); ReviewJsTools#18–#23, #19 (phần module); ReviewAstroCss#1, #2, #9, #10, #15, #16; ReviewWorkers#6, #7, #8; ReviewPipeline#8–#13 (phần xoá của #12). Phần "render một lần" của ReviewJsCore#7 ở Phase 5; phần CLI/docs của `parse_coexist_csv` (#12) ở Phase 7.
