@@ -92,10 +92,10 @@ test('Landing dựng đủ 7 khối theo thứ tự, CTA tối đứng sau cùng
   // Khối điều hướng là thẻ link tới đúng trang mục.
   const links = await page.$$eval('main .landing-card, main .landing-vault', (anchors) => anchors.map((a) => a.getAttribute('href')));
   expect(links).toEqual([
-    '/doi-chuan/', '/goi-y-doi/', '/tra-cuu/',
+    '/doi-chuan/', '/goi-y-doi-tu-kho/', '/tra-cuu/',
     '/doi-chuan/', '/doi-khac/',
     '/cung-ton/', '/khai-hoang/',
-    '/chieu-mo/', '/soi-doi/', '/goi-y-doi/',
+    '/theo-doi-chieu-mo/', '/soi-doi-tu-anh/', '/goi-y-doi-tu-kho/',
   ]);
   await expect(page.locator('#landing-cta a.landing-btn')).toHaveAttribute('href', '/doi-chuan/');
 });

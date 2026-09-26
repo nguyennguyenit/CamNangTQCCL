@@ -19,13 +19,13 @@
 /tra-cuu/*
   Cache-Control: public, max-age=0, must-revalidate
 
-/chieu-mo/*
+/theo-doi-chieu-mo/*
   Cache-Control: public, max-age=0, must-revalidate
 
-/soi-doi/*
+/soi-doi-tu-anh/*
   Cache-Control: public, max-age=0, must-revalidate
 
-/goi-y-doi/*
+/goi-y-doi-tu-kho/*
   Cache-Control: public, max-age=0, must-revalidate
 
 /404.html

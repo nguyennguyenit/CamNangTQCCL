@@ -19,9 +19,9 @@ export function resolveLegacyRoute(href, origin) {
     'meta-cu': '/doi-khac/',
     coexist: '/cung-ton/',
     khaihoang: '/khai-hoang/',
-    'recruit-tracker': '/chieu-mo/',
-    analyze: '/soi-doi/',
-    'roster-recommend': '/goi-y-doi/',
+    'recruit-tracker': '/theo-doi-chieu-mo/',
+    analyze: '/soi-doi-tu-anh/',
+    'roster-recommend': '/goi-y-doi-tu-kho/',
   };
   // Alias tra cứu cũ `#heroes`/`#tactics` → `group` của trang Tra cứu.
   const LOOKUP_ALIAS_GROUP = { heroes: 'heroes', tactics: 'tactics' };

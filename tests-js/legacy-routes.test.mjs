@@ -12,9 +12,9 @@ const SECTION_PATHS = new Set([
   '/cung-ton/',
   '/khai-hoang/',
   '/tra-cuu/',
-  '/chieu-mo/',
-  '/soi-doi/',
-  '/goi-y-doi/',
+  '/theo-doi-chieu-mo/',
+  '/soi-doi-tu-anh/',
+  '/goi-y-doi-tu-kho/',
 ]);
 const resolve = (href) => resolveLegacyRoute(href, ORIGIN);
 
@@ -31,9 +31,9 @@ test('mỗi hash cũ đi đúng trang mục mới', () => {
   assertSectionTarget(resolve('/#team-khac'), '/doi-khac/');
   assertSectionTarget(resolve('/#coexist'), '/cung-ton/');
   assertSectionTarget(resolve('/#khaihoang'), '/khai-hoang/');
-  assertSectionTarget(resolve('/#recruit-tracker'), '/chieu-mo/');
-  assertSectionTarget(resolve('/#analyze'), '/soi-doi/');
-  assertSectionTarget(resolve('/#roster-recommend'), '/goi-y-doi/');
+  assertSectionTarget(resolve('/#recruit-tracker'), '/theo-doi-chieu-mo/');
+  assertSectionTarget(resolve('/#analyze'), '/soi-doi-tu-anh/');
+  assertSectionTarget(resolve('/#roster-recommend'), '/goi-y-doi-tu-kho/');
 });
 
 test('alias cũ giữ nguyên nguồn như canonicalizeSectionHash trước đây', () => {
@@ -76,7 +76,7 @@ test('không hash: chỉ query mang khóa root cũ mới suy ra Đội chuẩn',
 
 test('query trước hash được giữ nguyên khi chuyển mục', () => {
   assertSectionTarget(resolve('/?season=s26#team-chuan'), '/doi-chuan/?season=s26');
-  assertSectionTarget(resolve('/?config=x&legacyTeam=y#analyze'), '/soi-doi/?config=x&legacyTeam=y');
+  assertSectionTarget(resolve('/?config=x&legacyTeam=y#analyze'), '/soi-doi-tu-anh/?config=x&legacyTeam=y');
   // `URLSearchParams` mã hóa khoảng trắng thành `+` khi dựng lại query.
   assertSectionTarget(resolve(`/?q=${encodeURIComponent('mã siêu')}#khaihoang`), '/khai-hoang/?q=m%C3%A3+si%C3%AAu');
   assertSectionTarget(resolve('/?faction=Th%E1%BB%A5c#team-pk'), `/doi-khac/?faction=${encodeURIComponent('Thục')}&source=team-intro`);
@@ -152,7 +152,7 @@ test('chỉ nhận URL cùng origin, phần còn lại trả null', () => {
   // Cùng origin dạng tuyệt đối vẫn chuyển được.
   assertSectionTarget(resolve(`${ORIGIN}/#team-chuan`), '/doi-chuan/');
   // Origin rỗng vẫn dựng đích root-relative an toàn.
-  assert.equal(resolveLegacyRoute('/#analyze'), '/soi-doi/');
+  assert.equal(resolveLegacyRoute('/#analyze'), '/soi-doi-tu-anh/');
   assert.equal(resolveLegacyRoute('https://evil.example/#analyze', ''), null);
 });
 

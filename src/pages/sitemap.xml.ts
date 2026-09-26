@@ -12,9 +12,9 @@ export const SECTION_PATHS = [
   "/cung-ton/",
   "/khai-hoang/",
   "/tra-cuu/",
-  "/chieu-mo/",
-  "/soi-doi/",
-  "/goi-y-doi/",
+  "/theo-doi-chieu-mo/",
+  "/soi-doi-tu-anh/",
+  "/goi-y-doi-tu-kho/",
 ] as const;
 
 const XML_ESCAPES: Record<string, string> = {

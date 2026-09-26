@@ -25,7 +25,7 @@ Artboard không phải golden master pixel: dữ liệu trong artboard là mẫu
 ## Mô hình đường dẫn
 
 - **Landing** ở `/` (`pageKind="landing"`, có `#tai-game`, `#nguon-du-lieu`, `#dau-trang`).
-- **8 trang mục tĩnh**, mỗi trang một mount `#section-<id>` và `data-page-section` trên `<body>`: `/doi-chuan/` (`team-chuan`), `/doi-khac/` (`team-khac`), `/cung-ton/` (`coexist`), `/khai-hoang/` (`khaihoang`), `/tra-cuu/` (`lookup`), `/chieu-mo/` (`recruit-tracker`), `/soi-doi/` (`analyze`), `/goi-y-doi/` (`roster-recommend`). Trạng thái nằm trên query của đúng trang, không còn hash SPA.
+- **8 trang mục tĩnh**, mỗi trang một mount `#section-<id>` và `data-page-section` trên `<body>`: `/doi-chuan/` (`team-chuan`), `/doi-khac/` (`team-khac`), `/cung-ton/` (`coexist`), `/khai-hoang/` (`khaihoang`), `/tra-cuu/` (`lookup`), `/theo-doi-chieu-mo/` (`recruit-tracker`), `/soi-doi-tu-anh/` (`analyze`), `/goi-y-doi-tu-kho/` (`roster-recommend`). Trạng thái nằm trên query của đúng trang, không còn hash SPA.
 - **Ba họ trang chi tiết** sinh sẵn: `/doi-chuan/<mùa>-<handle>/`, `/doi-khac/<handle>/`, `/khai-hoang/<handle>/`; URL đóng băng trong `pipeline/team-route-handles.json`. Trang 404 tĩnh ở `/404.html`.
 - **Hash cũ** (`#team-pk`, `#meta-cu`, `#lookup?group=&id=`, `#heroes`, `#tactics`, `?detail=`, `?legacyTeam=`…) do Landing chuyển tiếp trước khi vẽ trang bằng bảng duy nhất `js/legacy-routes.js`; `safeReturnUrl` dùng cùng bảng để chuẩn hoá `from`/snapshot cũ.
 - Link điều hướng luôn là anchor thật (`<a href>`), không `preventDefault`, không router tự viết.

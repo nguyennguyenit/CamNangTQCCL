@@ -77,7 +77,7 @@ thuộc [manifest của site](../src/lib/public-artifact-manifest.mjs).
 
 ## Static runtime
 
-[`src/pages/index.astro`](../src/pages/index.astro) là Landing; tám trang mục tĩnh (`/doi-chuan/`, `/doi-khac/`, `/cung-ton/`, `/khai-hoang/`, `/tra-cuu/`, `/chieu-mo/`, `/soi-doi/`, `/goi-y-doi/`) dùng chung `src/layouts/SiteLayout.astro`, mỗi trang một mount `#section-<id>` và `data-page-section` trên `<body>`. Layout phát pin Recommended, pin website-display, bảng route handle và hash dữ liệu mùa cho đúng trang cần (bảng ở [chuẩn code](code-standards.md)).
+[`src/pages/index.astro`](../src/pages/index.astro) là Landing; tám trang mục tĩnh (`/doi-chuan/`, `/doi-khac/`, `/cung-ton/`, `/khai-hoang/`, `/tra-cuu/`, `/theo-doi-chieu-mo/`, `/soi-doi-tu-anh/`, `/goi-y-doi-tu-kho/`) dùng chung `src/layouts/SiteLayout.astro`, mỗi trang một mount `#section-<id>` và `data-page-section` trên `<body>`. Layout phát pin Recommended, pin website-display, bảng route handle và hash dữ liệu mùa cho đúng trang cần (bảng ở [chuẩn code](code-standards.md)).
 [`js/app.js`](../js/app.js) sở hữu khởi tạo runtime; nó capture từng response byte
 một lần, xác minh sidecar cùng toàn bộ source hash rồi mới áp overlay tiếng Việt.
 [`season-ui-state.js`](../js/season-ui-state.js) sở hữu query và kiểm hash toàn bộ

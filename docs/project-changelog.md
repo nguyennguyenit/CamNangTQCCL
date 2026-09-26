@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-09-27 (đường dẫn công cụ)
+
+### Changed
+
+- Ba trang Công cụ dùng đường dẫn ghi rõ tên: `/chieu-mo/` → `/theo-doi-chieu-mo/`, `/soi-doi/` → `/soi-doi-tu-anh/`, `/goi-y-doi/` → `/goi-y-doi-tu-kho/` (menu, Landing, sitemap, canonical, `_headers`, allowlist `safeReturnUrl`, hash cũ `#recruit-tracker`/`#analyze`/`#roster-recommend`). Đường dẫn cũ không redirect, trả trang 404 tĩnh như URL ngoài inventory. Bản dịch: đổi id obligation `ui:section-page/<đường dẫn>` + entrypoint, ghim lại hash nguồn và digest inventory trong policy; cần publish generation mới + re-pin `pipeline/team-route-handles.json`.
+
 ## 2026-09-26 (thẻ đội + lưới 4 cột)
 
 ### Changed

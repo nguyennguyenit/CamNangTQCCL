@@ -21,11 +21,11 @@ export const SECTION_QUERY_KEYS = Object.freeze({
   '/doi-chuan/': ['season','q','faction','unit','view','subcategory','source','scenario','ruleset','config'],
   '/doi-khac/': ['season','q','faction','unit','view','subcategory','source','scenario','ruleset','config'],
   '/cung-ton/': ['group','config','q','faction','unit','tier','source','sort','stars','scenario','ruleset'],
-  '/soi-doi/': ['q','faction','unit','tier','source','sort','stars'],
-  '/goi-y-doi/': ['q','faction','unit','tier','source','sort','stars'],
+  '/soi-doi-tu-anh/': ['q','faction','unit','tier','source','sort','stars'],
+  '/goi-y-doi-tu-kho/': ['q','faction','unit','tier','source','sort','stars'],
   '/khai-hoang/': [KHAIHOANG_TEAM_QUERY_KEY,KHAIHOANG_VARIANT_QUERY_KEY],
   '/tra-cuu/': ['group','id'],
-  '/chieu-mo/': [],
+  '/theo-doi-chieu-mo/': [],
 });
 
 /** Selectors that would send the detail page straight back to itself. */

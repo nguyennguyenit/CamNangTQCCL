@@ -59,9 +59,9 @@ const SECTION_PAGE_SPECS = [
   { path: "cung-ton", section: "coexist", season: true },
   { path: "khai-hoang", section: "khaihoang", season: false },
   { path: "tra-cuu", section: "lookup", season: false },
-  { path: "chieu-mo", section: "recruit-tracker", season: false },
-  { path: "soi-doi", section: "analyze", season: false },
-  { path: "goi-y-doi", section: "roster-recommend", season: false },
+  { path: "theo-doi-chieu-mo", section: "recruit-tracker", season: false },
+  { path: "soi-doi-tu-anh", section: "analyze", season: false },
+  { path: "goi-y-doi-tu-kho", section: "roster-recommend", season: false },
 ];
 const SECTION_LOCATIONS = SECTION_PAGE_SPECS.map(({ path }) => `${FIXTURE_ORIGIN}/${path}/`);
 const SEASON_MARKER = {

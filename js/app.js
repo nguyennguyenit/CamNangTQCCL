@@ -209,7 +209,7 @@ async function main() {
       sections[pageSection]?.focus?.();
     });
     /** Nút nhập kho của chi tiết cấu hình là link thật tới công cụ Gợi ý đội (không mang phạm vi mùa). */
-    const rosterImportHref = () => '/goi-y-doi/';
+    const rosterImportHref = () => '/goi-y-doi-tu-kho/';
     const coexistUI = pageSection === 'coexist' ? createSeasonCoexistSection({
       mount,
       // Nhãn kịch bản lấy từ registry đã xác thực; nhóm không gắn kịch bản dùng nhãn riêng của mục.

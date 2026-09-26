@@ -67,9 +67,9 @@ const sectionPaths = {
   coexist: "/cung-ton/",
   khaihoang: "/khai-hoang/",
   lookup: "/tra-cuu/",
-  "recruit-tracker": "/chieu-mo/",
-  analyze: "/soi-doi/",
-  "roster-recommend": "/goi-y-doi/",
+  "recruit-tracker": "/theo-doi-chieu-mo/",
+  analyze: "/soi-doi-tu-anh/",
+  "roster-recommend": "/goi-y-doi-tu-kho/",
 };
 const transparentPng = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAEAQH/XP8W3QAAAABJRU5ErkJggg==",
@@ -268,9 +268,9 @@ for (const [hash, destination] of [
   ["#tactics", "/tra-cuu/?group=tactics"],
   ["#lookup?group=tactics", "/tra-cuu/?group=tactics"],
   ["#heroes", "/tra-cuu/?group=heroes"],
-  ["#recruit-tracker", "/chieu-mo/"],
-  ["#analyze", "/soi-doi/"],
-  ["#roster-recommend", "/goi-y-doi/"],
+  ["#recruit-tracker", "/theo-doi-chieu-mo/"],
+  ["#analyze", "/soi-doi-tu-anh/"],
+  ["#roster-recommend", "/goi-y-doi-tu-kho/"],
 ]) {
   test(`legacy hash ${hash} redirects to ${destination}`, async ({ page }) => {
     await page.goto(`/${hash}`);
@@ -324,7 +324,7 @@ test("a real legacy detail query reaches its dedicated source detail", async ({ 
 test("legacy analyze hash lands on Soi đội and drops retired season keys", async ({ page }) => {
   await page.goto("/?config=x&legacyTeam=y#analyze");
   await waitForBoot(page);
-  await expect(page).toHaveURL("/soi-doi/?legacyTeam=y");
+  await expect(page).toHaveURL("/soi-doi-tu-anh/?legacyTeam=y");
   await expectActiveSection(page, "analyze");
 });
 
@@ -349,7 +349,7 @@ test("empty and unknown-only Landing queries do not enter a section", async ({ p
 test("pasting a legacy hash on Landing redirects through hashchange", async ({ page }) => {
   await page.goto("/");
   await page.evaluate(() => { location.hash = "#analyze"; });
-  await expect(page).toHaveURL("/soi-doi/");
+  await expect(page).toHaveURL("/soi-doi-tu-anh/");
   await waitForBoot(page);
   await expectActiveSection(page, "analyze");
 });
@@ -558,7 +558,7 @@ test("legacy storage payloads survive load and sanitize forbidden roster fields 
     }
   }, serialized);
 
-  await page.goto("/chieu-mo/");
+  await page.goto("/theo-doi-chieu-mo/");
   await waitForBoot(page);
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await expect(page.locator("#section-recruit-tracker")).toContainText("Sentinel Account");
@@ -577,7 +577,7 @@ test("legacy storage payloads survive load and sanitize forbidden roster fields 
   expect(savedTracker.pullEvents).toHaveLength(1);
 
   await clickSectionLink(page, "roster-recommend");
-  await expect(page).toHaveURL("/goi-y-doi/");
+  await expect(page).toHaveURL("/goi-y-doi-tu-kho/");
   await waitForBoot(page);
   await expectActiveSection(page, "roster-recommend");
   await expect(page.locator("#section-roster-recommend")).toContainText("Sentinel Hero");
@@ -603,7 +603,7 @@ test("legacy storage payloads survive load and sanitize forbidden roster fields 
   expect(reloadedStorage.tracker.pullEvents).toHaveLength(1);
   expect(reloadedStorage.roster.ownedHeroes.map((hero) => hero.name)).toContain("Sentinel Hero Two");
 
-  await page.goto("/chieu-mo/");
+  await page.goto("/theo-doi-chieu-mo/");
   await waitForBoot(page);
   await expect(page.locator("#section-recruit-tracker")).toContainText("Sentinel Account");
   await expect(page.locator("#section-recruit-tracker .rt-slot-miss")).toHaveCount(1);
@@ -651,12 +651,12 @@ test("a hanging optional tier request retains the legacy blocked-render behavior
 test("Turnstile failure is surfaced only on its protected section pages", async ({ page }) => {
   await page.route("https://challenges.cloudflare.com/**", (route) => route.abort("blockedbyclient"));
 
-  await page.goto("/soi-doi/");
+  await page.goto("/soi-doi-tu-anh/");
   await waitForBoot(page);
   await expect(page.locator("#section-analyze .ana-status")).toContainText("Không tải được Turnstile");
   await expect(page.locator("script[src*='turnstile']")).toHaveCount(1);
 
-  await page.goto("/goi-y-doi/");
+  await page.goto("/goi-y-doi-tu-kho/");
   await waitForBoot(page);
   await expect(page.locator("#section-roster-recommend .ana-turnstile")).toContainText("Không tải được Turnstile");
   await expect(page.locator("script[src*='turnstile']")).toHaveCount(1);
@@ -716,7 +716,7 @@ test("opening a roster recommendation preserves its section and opens the exact 
   await page.addInitScript((state) => {
     localStorage.setItem("tqccl.rosterRecommend.scanState.v1", JSON.stringify(state));
   }, rosterState);
-  await page.goto("/goi-y-doi/");
+  await page.goto("/goi-y-doi-tu-kho/");
   await waitForBoot(page);
   await page.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
   const recommendation = page.locator(".roster-result-team").filter({
@@ -730,7 +730,7 @@ test("opening a roster recommendation preserves its section and opens the exact 
   await expect(page).toHaveURL(new RegExp(legacyRoute(selectedTeam.id)));
   await expect(page.locator("#team-detail-body")).toBeVisible();
   await expect(page.locator("h1#team-detail-title")).toHaveText(selectedTeam.nickname || selectedTeam.name);
-  await expect(page.locator("#team-return-link")).toHaveAttribute("href", "/goi-y-doi/");
+  await expect(page.locator("#team-return-link")).toHaveAttribute("href", "/goi-y-doi-tu-kho/");
 });
 
 

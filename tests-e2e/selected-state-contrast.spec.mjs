@@ -39,8 +39,8 @@ const CASES = [
   // Tab Tra cứu ở desktop giữ hợp đồng cũ: chữ mực trên nền giấy + gạch chân son, KHÔNG dùng nền chọn
   // (tương phản chữ của nó đã có test riêng trong unified-lookup.spec.mjs). Chỉ viên mobile dùng `--select`.
   { path: '/tra-cuu/?group=heroes', selected: '.lookup-chip[aria-pressed="true"]', unselected: '.lookup-chip[aria-pressed="false"]', kids: ['.lookup-chip-count'], widths: [390] },
-  { path: '/goi-y-doi/', selected: '.roster-step[data-state="current"]', unselected: '.roster-step[data-state="pending"]', kids: [] },
-  { path: '/soi-doi/', selected: '.ana-btn.primary', unselected: '.ana-btn:not(.primary):not(:disabled)', kids: [] },
+  { path: '/goi-y-doi-tu-kho/', selected: '.roster-step[data-state="current"]', unselected: '.roster-step[data-state="pending"]', kids: [] },
+  { path: '/soi-doi-tu-anh/', selected: '.ana-btn.primary', unselected: '.ana-btn:not(.primary):not(:disabled)', kids: [] },
 ];
 
 /** Bảng lọc phe chỉ có ở /doi-chuan/ và chỉ đúng sau khi người dùng bật một chip: giữ riêng vì cần click. */

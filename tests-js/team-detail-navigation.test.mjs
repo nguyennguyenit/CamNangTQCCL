@@ -179,7 +179,7 @@ test('return origin accepts section URLs, normalizes old root state, and rejects
   assert.equal(safeReturnUrl('/cung-ton/?group=coexist-bdx-group-0fb69f7aa19a&q=B%C3%ACnh&fbclid=1'),'/cung-ton/?group=coexist-bdx-group-0fb69f7aa19a&q=B%C3%ACnh');
   assert.equal(safeReturnUrl('/cung-ton/?group=3&scenario=binh-dien-xuan-thu'),'/cung-ton/?group=3&scenario=binh-dien-xuan-thu');
   assert.equal(safeReturnUrl('/cung-ton/?group=a&detail=x'),'/cung-ton/?group=a');
-  assert.equal(safeReturnUrl('/chieu-mo/?q=x'),'/chieu-mo/');
+  assert.equal(safeReturnUrl('/theo-doi-chieu-mo/?q=x'),'/theo-doi-chieu-mo/');
   // Absolute URLs are accepted only for the page's own origin.
   assert.equal(safeReturnUrl(`${ROOT}/doi-chuan/?q=a`,{origin:ROOT}),'/doi-chuan/?q=a');
   assert.equal(safeReturnUrl(`${ROOT}/#team-chuan`,{origin:ROOT}),'/doi-chuan/');
@@ -442,7 +442,7 @@ test('Khai hoang recovery context drops exactly the active pair',()=>{
   assert.equal(matchesReturnSnapshot(snapshot,'/khai-hoang/?khTeam=other&khVariant=other'),true);
   assert.equal(matchesReturnSnapshot(snapshot,'/khai-hoang/?q=vien'),true);
   assert.equal(matchesReturnSnapshot(snapshot,'/doi-chuan/'),false);
-  assert.equal(matchesReturnSnapshot(snapshot,'/soi-doi/'),false);
+  assert.equal(matchesReturnSnapshot(snapshot,'/soi-doi-tu-anh/'),false);
   // Snapshot surface khác vẫn exact URL như trước.
   const reference=captureReturnSnapshot({href:'/doi-chuan/?q=vien',scrollY:0,tab:'team-chuan'});
   assert.equal(matchesReturnSnapshot(reference,'/doi-chuan/?q=vien'),true);

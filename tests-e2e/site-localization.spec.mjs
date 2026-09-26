@@ -56,7 +56,7 @@ test("localization-red-provider-error: Analyze does not expose upstream prose", 
     body: JSON.stringify({ error: "服务器内部错误" }),
   }));
 
-  await page.goto("/soi-doi/");
+  await page.goto("/soi-doi-tu-anh/");
   await page.locator("#section-analyze input[type=file]").setInputFiles({
     name: "team.png",
     mimeType: "image/png",

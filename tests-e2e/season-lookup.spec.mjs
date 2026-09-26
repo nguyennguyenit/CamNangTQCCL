@@ -133,7 +133,7 @@ async function controlledBundle(page, data = null) {
     if (key in routeBodies) return route.fulfill({contentType:'application/json',body:routeBodies[key]});
     return route.continue();
   });
-  await page.route(/^http:\/\/(?:localhost|127\.0\.0\.1):\d+\/(?:doi-chuan|doi-khac|cung-ton|soi-doi|goi-y-doi)\/(?:\?.*)?$/, async route => {
+  await page.route(/^http:\/\/(?:localhost|127\.0\.0\.1):\d+\/(?:doi-chuan|doi-khac|cung-ton|soi-doi-tu-anh|goi-y-doi-tu-kho)\/(?:\?.*)?$/, async route => {
     const response = await route.fetch();
     const html = replaceWebsiteDisplayPin(
       (await response.text()).replace(/(<script[^>]*id="season-artifact-hashes"[^>]*>)[\s\S]*?(<\/script>)/, (_,start,end)=> start + JSON.stringify(hashes) + end),
@@ -557,23 +557,23 @@ test('config-detail inventory link opens the roster tool without season keys', a
   await page.getByRole('button', {name: 'Đối chiếu kho của tôi'}).click();
   await expect(page.locator('.season-inventory-comparison')).toContainText('Chưa có kho để đối chiếu.');
   const link = page.getByRole('link', {name: 'Mở scan / nhập kho'});
-  await expect(link).toHaveAttribute('href', '/goi-y-doi/');
+  await expect(link).toHaveAttribute('href', '/goi-y-doi-tu-kho/');
   await link.click();
-  await expect(page).toHaveURL('/goi-y-doi/');
+  await expect(page).toHaveURL('/goi-y-doi-tu-kho/');
   await expect(page.locator('#section-roster-recommend .tool-head')).toBeVisible();
 });
 
 test('tool pages drop old season links and run on the legacy teams', async ({page}) => {
-  await page.goto('/soi-doi/?scenario=x&ruleset=y&config=z&q=giu');
+  await page.goto('/soi-doi-tu-anh/?scenario=x&ruleset=y&config=z&q=giu');
   await expect(page.locator('body')).toHaveAttribute('data-boot', 'ready');
-  await expect(page).toHaveURL('/soi-doi/?q=giu');
+  await expect(page).toHaveURL('/soi-doi-tu-anh/?q=giu');
   await expect(page.locator('#season-controls, #season-scenario, #season-ruleset, #season-summary')).toHaveCount(0);
   await expect(page.locator('#section-analyze .ana-drop')).toBeVisible();
   await expect(page.locator('#section-analyze')).not.toContainText('Tất cả — tham khảo');
 
-  await page.goto('/goi-y-doi/?scenario=x&ruleset=y');
+  await page.goto('/goi-y-doi-tu-kho/?scenario=x&ruleset=y');
   await expect(page.locator('body')).toHaveAttribute('data-boot', 'ready');
-  await expect(page).toHaveURL('/goi-y-doi/');
+  await expect(page).toHaveURL('/goi-y-doi-tu-kho/');
   await expect(page.locator('#season-controls, #season-scenario, #season-ruleset, #season-summary')).toHaveCount(0);
   await page.getByRole('button', {name: 'Xác nhận dữ liệu đã đọc'}).click();
   await page.getByRole('button', {name: 'Gợi ý 5 đội', exact: true}).click();

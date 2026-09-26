@@ -6803,8 +6803,8 @@ body[data-page-section="khaihoang"] .layout {
    `season-config-detail` (Phase 2/8). Component mới của phase (xem mục `components`): tool-head,
    tool-notice, tool-text-action, thanh-tien-do, buoc-cong-cu, the-doc-anh, hang-doi-tuong-tu,
    menu-tai-khoan.
-   Artboard: Recruit/RecruitMobile, Analyze/AnalyzeMobile, Roster/RosterMobile. Hai công cụ /soi-doi/,
-   /goi-y-doi/ chạy trên dữ liệu đội cũ, không có bộ chọn Mùa / Phiên bản luật. */
+   Artboard: Recruit/RecruitMobile, Analyze/AnalyzeMobile, Roster/RosterMobile. Hai công cụ /soi-doi-tu-anh/,
+   /goi-y-doi-tu-kho/ chạy trên dữ liệu đội cũ, không có bộ chọn Mùa / Phiên bản luật. */
 body[data-page-section="recruit-tracker"] .layout,
 body[data-page-section="analyze"] .layout,
 body[data-page-section="roster-recommend"] .layout {

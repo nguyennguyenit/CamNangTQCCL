@@ -11,7 +11,7 @@ async function waitForBoot(page) {
 test("scan được lưu/hiển thị và recommendation giữ assignment theo holder", async ({
   page,
 }) => {
-  await page.goto("/goi-y-doi/");
+  await page.goto("/goi-y-doi-tu-kho/");
   await waitForBoot(page);
 
   const compatibility = await page.evaluate(async () => {
@@ -80,7 +80,7 @@ test("scan được lưu/hiển thị và recommendation giữ assignment theo h
 test("analyze-map chạy trong Astro preview và đối chiếu đúng full hero identity", async ({
   page,
 }) => {
-  await page.goto("/soi-doi/");
+  await page.goto("/soi-doi-tu-anh/");
   await waitForBoot(page);
 
   const result = await page.evaluate(async () => {

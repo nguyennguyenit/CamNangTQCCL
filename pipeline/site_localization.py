@@ -405,12 +405,12 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:section-page/khai-hoang", "metaDescription", "Hướng dẫn khai hoang theo từng đội: build trước và sau, thanh điểm mốc và cách đánh đất.", "src/pages/khai-hoang/index.astro", "page metadata", "static", "authored-vi"),
     ("ui:section-page/tra-cuu", "title", "Tra cứu — Cẩm Nang Game Tam Quốc Chí - Chiến Lược", "src/pages/tra-cuu/index.astro", "page metadata", "static", "authored-vi"),
     ("ui:section-page/tra-cuu", "metaDescription", "Tra cứu tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng và công trình theo tên Việt hoặc chữ Hán.", "src/pages/tra-cuu/index.astro", "page metadata", "static", "authored-vi"),
-    ("ui:section-page/chieu-mo", "title", "Theo dõi chiêu mộ — Cẩm Nang Game Tam Quốc Chí - Chiến Lược", "src/pages/chieu-mo/index.astro", "page metadata", "static", "authored-vi"),
-    ("ui:section-page/chieu-mo", "metaDescription", "Theo dõi chiêu mộ theo tài khoản: lịch sử, mốc bảo hiểm và số lượt còn lại của từng đợt.", "src/pages/chieu-mo/index.astro", "page metadata", "static", "authored-vi"),
-    ("ui:section-page/soi-doi", "title", "Soi đội từ ảnh — Cẩm Nang Game Tam Quốc Chí - Chiến Lược", "src/pages/soi-doi/index.astro", "page metadata", "static", "authored-vi"),
-    ("ui:section-page/soi-doi", "metaDescription", "Soi đội hình từ ảnh chụp và đối chiếu với dữ liệu đội đã được tuyển chọn.", "src/pages/soi-doi/index.astro", "page metadata", "static", "authored-vi"),
-    ("ui:section-page/goi-y-doi", "title", "Gợi ý đội từ kho — Cẩm Nang Game Tam Quốc Chí - Chiến Lược", "src/pages/goi-y-doi/index.astro", "page metadata", "static", "authored-vi"),
-    ("ui:section-page/goi-y-doi", "metaDescription", "Gợi ý đội từ kho tướng và chiến pháp của bạn, kèm điều kiện và hiệu ứng cần kiểm chứng.", "src/pages/goi-y-doi/index.astro", "page metadata", "static", "authored-vi"),
+    ("ui:section-page/theo-doi-chieu-mo", "title", "Theo dõi chiêu mộ — Cẩm Nang Game Tam Quốc Chí - Chiến Lược", "src/pages/theo-doi-chieu-mo/index.astro", "page metadata", "static", "authored-vi"),
+    ("ui:section-page/theo-doi-chieu-mo", "metaDescription", "Theo dõi chiêu mộ theo tài khoản: lịch sử, mốc bảo hiểm và số lượt còn lại của từng đợt.", "src/pages/theo-doi-chieu-mo/index.astro", "page metadata", "static", "authored-vi"),
+    ("ui:section-page/soi-doi-tu-anh", "title", "Soi đội từ ảnh — Cẩm Nang Game Tam Quốc Chí - Chiến Lược", "src/pages/soi-doi-tu-anh/index.astro", "page metadata", "static", "authored-vi"),
+    ("ui:section-page/soi-doi-tu-anh", "metaDescription", "Soi đội hình từ ảnh chụp và đối chiếu với dữ liệu đội đã được tuyển chọn.", "src/pages/soi-doi-tu-anh/index.astro", "page metadata", "static", "authored-vi"),
+    ("ui:section-page/goi-y-doi-tu-kho", "title", "Gợi ý đội từ kho — Cẩm Nang Game Tam Quốc Chí - Chiến Lược", "src/pages/goi-y-doi-tu-kho/index.astro", "page metadata", "static", "authored-vi"),
+    ("ui:section-page/goi-y-doi-tu-kho", "metaDescription", "Gợi ý đội từ kho tướng và chiến pháp của bạn, kèm điều kiện và hiệu ứng cần kiểm chứng.", "src/pages/goi-y-doi-tu-kho/index.astro", "page metadata", "static", "authored-vi"),
     # Header/menu/footer dùng chung (Phase 3): chữ tác giả mới — lớp `authored-vi`, không cần receipt.
     # Nguồn liên kết chính thức: plans/reports/brainstorm-260923-2033-official-game-links-menu.md §1.
     ("ui:layout/logo-title", "brand", "Cẩm Nang Tam Quốc Chí", "src/layouts/SiteLayout.astro", "header", "static", "authored-vi"),

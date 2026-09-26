@@ -6,7 +6,7 @@ Website tĩnh tra cứu đội hình, tướng, chiến pháp và hỗ trợ qu�
 
 ## Tính năng
 
-- Landing ở `/` và **8 trang mục tĩnh** có đường dẫn riêng: `/doi-chuan/`, `/doi-khac/`, `/cung-ton/`, `/khai-hoang/`, `/tra-cuu/`, `/chieu-mo/`, `/soi-doi/`, `/goi-y-doi/`. Trạng thái nằm trên query của đúng trang (`?season=`, `?q=`, `?group=&id=`, `?view=luoi|bang`, `?config=`…).
+- Landing ở `/` và **8 trang mục tĩnh** có đường dẫn riêng: `/doi-chuan/`, `/doi-khac/`, `/cung-ton/`, `/khai-hoang/`, `/tra-cuu/`, `/theo-doi-chieu-mo/`, `/soi-doi-tu-anh/`, `/goi-y-doi-tu-kho/`. Trạng thái nằm trên query của đúng trang (`?season=`, `?q=`, `?group=&id=`, `?view=luoi|bang`, `?config=`…).
 - Hash cũ của SPA (`#team-pk`, `#meta-cu`, `#khaihoang`, `#lookup?group=…`, `#heroes`, `#tactics`…) và URL `/` không hash có khóa cũ được Landing chuyển tiếp sang đường dẫn mới, giữ query; bảng chuyển tiếp ở `js/legacy-routes.js`.
 - Hai trang danh sách đội dùng chung một browser và một kiểu thẻ: search toàn văn, một ô chọn mùa nguồn và chip facet (loại binh, phe, nhóm, nguồn) đếm theo mùa đang chọn, chuyển **2 cột / 4 cột / Bảng** (`?view=luoi`, `?view=bang`), mobile thu gọn vùng lọc sau nút `Bộ lọc`.
 - Mỗi đội có trang chi tiết tĩnh riêng dưới `/doi-chuan/<mùa>-<handle>/`, `/doi-khac/<handle>/` hoặc `/khai-hoang/<handle>/`; handle tiếng Việt đóng băng trong `pipeline/team-route-handles.json` nên sửa `displayNameVi` không đổi URL. URL cũ `/teams/…` và URL ngoài danh sách sinh sẵn trả trang 404 tĩnh, không redirect.
@@ -123,7 +123,7 @@ Xem [Deployment Guide](docs/deployment-guide.md) và bản ghi triển khai có 
 
 ```text
 src/pages/index.astro      # Landing
-src/pages/<mục>/index.astro # 8 trang mục tĩnh (doi-chuan, doi-khac, cung-ton, khai-hoang, tra-cuu, chieu-mo, soi-doi, goi-y-doi)
+src/pages/<mục>/index.astro # 8 trang mục tĩnh (doi-chuan, doi-khac, cung-ton, khai-hoang, tra-cuu, theo-doi-chieu-mo, soi-doi-tu-anh, goi-y-doi-tu-kho)
 src/pages/404.astro        # trang 404 top-level
 src/pages/doi-chuan|doi-khac|khai-hoang/  # ba họ trang chi tiết sinh từ catalog
 src/layouts/SiteLayout.astro # shell dùng chung (head, header, menu, footer, payload)

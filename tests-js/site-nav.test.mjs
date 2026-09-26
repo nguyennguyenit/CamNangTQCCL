@@ -136,7 +136,7 @@ function fakeShell() {
     return {root, button, panel};
   };
 
-  const tools = dropdown("cong-cu", ["chieu-mo", "soi-doi"]);
+  const tools = dropdown("cong-cu", ["theo-doi-chieu-mo", "soi-doi-tu-anh"]);
   const game = dropdown("game", ["trang-chu"]);
 
   const toggle = body.append(createElement("button"));
@@ -328,7 +328,7 @@ test("menu thả dùng chung: Escape trả focus, bấm ngoài/focusout đóng, 
   button.setAttribute("aria-expanded", "false");
   const panel = root.append(createElement("div"));
   const link = panel.append(createElement("a"));
-  link.setAttribute("href", "/chieu-mo/");
+  link.setAttribute("href", "/theo-doi-chieu-mo/");
   bind(root);
   let hideWhenClosed = true;
   const menu = createDropdownMenu({ root, button, panel, shouldHidePanel: () => hideWhenClosed });

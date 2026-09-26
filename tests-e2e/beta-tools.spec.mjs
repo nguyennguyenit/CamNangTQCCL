@@ -100,7 +100,7 @@ const RECRUIT_FIXTURE = {
 test.describe("Chiêu mộ", () => {
   test("đồng hồ pity đọc từ store (kể cả quá mốc), lịch sử và lượt đã ghi giữ nguyên hành vi", async ({ page }) => {
     await seed(page, { tqcclRecruitTracker: RECRUIT_FIXTURE });
-    await page.goto("/chieu-mo/");
+    await page.goto("/theo-doi-chieu-mo/");
     await waitForBoot(page);
 
     const section = page.locator("#section-recruit-tracker");
@@ -155,7 +155,7 @@ test.describe("Chiêu mộ", () => {
   test("form 5★ nhận focus và tổng đài thao tác tài khoản nằm sau nút ⋯ trên mobile", async ({ page }) => {
     await seed(page, { tqcclRecruitTracker: RECRUIT_FIXTURE });
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/chieu-mo/");
+    await page.goto("/theo-doi-chieu-mo/");
     await waitForBoot(page);
 
     const section = page.locator("#section-recruit-tracker");
@@ -210,7 +210,7 @@ test.describe("Soi đội", () => {
     }));
     await page.route(WORKER_ROUTE, (route) => route.fulfill({ json: { heroes: reads } }));
 
-    await page.goto("/soi-doi/");
+    await page.goto("/soi-doi-tu-anh/");
     await waitForBoot(page);
     const section = page.locator("#section-analyze");
     await expect(section.locator("h1.reference-title")).toHaveText("Soi đội từ ảnh");
@@ -297,7 +297,7 @@ test.describe("Soi đội", () => {
       return route.fulfill({ json: { heroes: [{ nameCn: "SP荀彧" }] } });
     });
 
-    await page.goto("/soi-doi/");
+    await page.goto("/soi-doi-tu-anh/");
     await waitForBoot(page);
     const section = page.locator("#section-analyze");
     const steps = section.locator(".ana-step");
@@ -343,7 +343,7 @@ test.describe("Gợi ý đội", () => {
       return route.fulfill({ json: { heroes: [{ nameCn: "SP荀彧" }] } });
     });
 
-    await page.goto("/goi-y-doi/");
+    await page.goto("/goi-y-doi-tu-kho/");
     await waitForBoot(page);
     const section = page.locator("#section-roster-recommend");
     const card = section.locator(".roster-scan-card").first();
@@ -369,7 +369,7 @@ test.describe("Gợi ý đội", () => {
 
   test("tiến trình 1–2–3, danh sách 5 đội đánh số và nút sửa kho giữ focus", async ({ page, request }) => {
     await seedRoster(page, request);
-    await page.goto("/goi-y-doi/");
+    await page.goto("/goi-y-doi-tu-kho/");
     await waitForBoot(page);
 
     const section = page.locator("#section-roster-recommend");
@@ -434,7 +434,7 @@ test.describe("Gợi ý đội", () => {
   test("mobile: nút Sửa kho đã đọc mở/đóng khu kiểm tra và giữ focus; thêm/bỏ chip giữ focus", async ({ page, request }) => {
     await seedRoster(page, request, { single: true });
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/goi-y-doi/");
+    await page.goto("/goi-y-doi-tu-kho/");
     await waitForBoot(page);
 
     const section = page.locator("#section-roster-recommend");
@@ -508,7 +508,7 @@ test.describe("Vòng sửa P09", () => {
       route.fulfill({ contentType: "application/javascript", body: TURNSTILE_STUB }));
     await page.route(WORKER_ROUTE, (route) => route.fulfill({ json: { heroes: [{ nameCn: "SP荀彧" }] } }));
     await seedRoster20(page, request);
-    await page.goto("/goi-y-doi/");
+    await page.goto("/goi-y-doi-tu-kho/");
     await waitForBoot(page);
     const section = page.locator("#section-roster-recommend");
     const confirm = section.getByRole("button", { name: "Xác nhận dữ liệu đã đọc" });
@@ -564,7 +564,7 @@ test.describe("Vòng sửa P09", () => {
     await seed(page, { tqcclRecruitTracker: RECRUIT_FIXTURE });
     let exported = null;
     page.on("dialog", async (dialog) => { await dialog.accept(); });
-    await page.goto("/chieu-mo/");
+    await page.goto("/theo-doi-chieu-mo/");
     await waitForBoot(page);
     const section = page.locator("#section-recruit-tracker");
     const banner = section.locator(".rt-banner");
@@ -641,7 +641,7 @@ test.describe("Vòng sửa P09", () => {
       for (const theme of ["light", "dark"]) {
         await page.setViewportSize({ width, height: 1000 });
         await ensureTheme(page, theme);
-        await page.goto("/goi-y-doi/");
+        await page.goto("/goi-y-doi-tu-kho/");
         await waitForBoot(page);
         await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
         const section = page.locator("#section-roster-recommend");
@@ -708,7 +708,7 @@ test.describe("Vòng sửa P09", () => {
       for (const theme of ["light", "dark"]) {
         await page.setViewportSize({ width, height: 1000 });
         await ensureTheme(page, theme);
-        await page.goto("/soi-doi/");
+        await page.goto("/soi-doi-tu-anh/");
         await waitForBoot(page);
         await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
         const section = page.locator("#section-analyze");

@@ -13,9 +13,9 @@ const expectedRules = [
   "/khai-hoang/*",
   "/cung-ton/*",
   "/tra-cuu/*",
-  "/chieu-mo/*",
-  "/soi-doi/*",
-  "/goi-y-doi/*",
+  "/theo-doi-chieu-mo/*",
+  "/soi-doi-tu-anh/*",
+  "/goi-y-doi-tu-kho/*",
   "/404.html",
   "/js/*",
   "/css/*",
@@ -98,7 +98,7 @@ test("_headers covers every published shell and mutable raw asset", async () => 
     "/khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/",
     "/khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/index.html",
     // Mọi trang mục mới đều phải revalidate như nhau.
-    ...["doi-chuan", "doi-khac", "cung-ton", "khai-hoang", "tra-cuu", "chieu-mo", "soi-doi", "goi-y-doi"]
+    ...["doi-chuan", "doi-khac", "cung-ton", "khai-hoang", "tra-cuu", "theo-doi-chieu-mo", "soi-doi-tu-anh", "goi-y-doi-tu-kho"]
       .flatMap((section) => [`/${section}/`, `/${section}/index.html`]),
   ];
   for (const path of publicPaths) {

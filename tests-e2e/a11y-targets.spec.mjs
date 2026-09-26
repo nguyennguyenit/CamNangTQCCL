@@ -85,7 +85,7 @@ test.describe("A5 — control đứng riêng phải đủ 44px ở mobile", () =
         route.fulfill({ contentType: "application/javascript", body: TURNSTILE_STUB }));
       await context.route(WORKER_ROUTE, (route) => route.fulfill({ json: { heroes: reads } }));
       const page = await context.newPage();
-      await page.goto("/soi-doi/");
+      await page.goto("/soi-doi-tu-anh/");
       await expect(page.locator('body[data-boot="ready"]')).toBeAttached();
       await page.locator("#section-analyze input[type=file]").setInputFiles({ name: "doi-hinh.png", mimeType: "image/png", buffer: transparentPng });
       const run = page.locator("#section-analyze").getByRole("button", { name: "Soi đội", exact: true });
