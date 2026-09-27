@@ -270,7 +270,7 @@ Kỳ vọng `204` và `access-control-allow-origin: https://tqccl.pages.dev`.
 Smoke checklist sau promotion được ủy quyền:
 
 1. Mở production, đi qua Landing và đủ tám đường dẫn mục (`/doi-chuan/`, `/doi-khac/`, `/cung-ton/`, `/khai-hoang/`, `/tra-cuu/`, `/theo-doi-chieu-mo/`, `/soi-doi-tu-anh/`, `/goi-y-doi-tu-kho/`), kiểm tra JSON/network không lỗi; dán một hash cũ (ví dụ `/#khaihoang`, `/#lookup?group=heroes`) và một URL `/` có khóa cũ vào tab đang mở `/` để xác nhận chuyển tiếp đúng.
-2. Kiểm tra Đội chuẩn và Đội khác load đúng generation đang pin, bộ lọc mùa/danh mục/phe/loại binh và chuyển Thẻ/Thẻ gọn/Bảng hoạt động, không có asset/team Đô Úy, panel lọc mobile mở/đóng đúng; đổi theme sáng/tối và tải lại một trang mục để xác nhận không nháy và giữ lựa chọn.
+2. Kiểm tra Đội chuẩn và Đội khác load đúng generation đang pin, bộ lọc mùa/phe/loại binh và chuyển Thẻ/Thẻ gọn/Bảng hoạt động, không có asset/team Đô Úy, panel lọc mobile mở/đóng đúng; đổi theme sáng/tối và tải lại một trang mục để xác nhận không nháy và giữ lựa chọn.
 3. Mở trực tiếp một `/doi-chuan/…`, một `/doi-khac/…` và một `/khai-hoang/…`, reload, rồi dùng link quay lại; một handle không tồn tại và một URL `/teams/…` cũ phải trả trang 404 tĩnh.
 4. Test tra cứu, theme, tracker export/import bằng dữ liệu không nhạy cảm.
 5. Upload screenshot đã crop; xác nhận Turnstile, analyze và map/team match.

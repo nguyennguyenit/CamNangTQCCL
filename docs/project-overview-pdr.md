@@ -18,7 +18,7 @@ Người dùng chính: người chơi tra meta; người quản lý nhiều acco
 
 | Khối | Phạm vi |
 |---|---|
-| Static SPA | `src/pages/index.astro` build ra `dist/index.html`; root `css/*.css`, `js/*.js`, 9 section hash-addressed |
+| Static site | Astro build ra Landing `dist/index.html` + 8 trang mục theo đường dẫn (`src/pages/<mục>/index.astro`, ví dụ `/doi-chuan/`, `/tra-cuu/`) và trang chi tiết đội; root `css/*.css`, `js/*.js`; hash cũ (`#lookup`, …) chỉ còn được Landing chuyển tiếp sang đường dẫn |
 | Runtime data | `data/*.json`, commit và publish cùng site |
 | Public artifact | Astro static endpoints theo manifest; `public/_headers` là cache deployment-control |
 | Build-time | `pipeline/*.py`, Python stdlib, nguồn HTML/cache local |
@@ -31,13 +31,13 @@ Ngoài phạm vi: backend chung, database server, cloud sync tracker, AI tự qu
 
 | ID | Yêu cầu |
 |---|---|
-| FR-01 | Điều hướng 9 section bằng tab và hash URL. |
+| FR-01 | Điều hướng 8 trang mục theo đường dẫn; hash URL cũ được chuyển tiếp sang đường dẫn tương ứng. |
 | FR-02 | Render 56 Team PK và 110 Meta phe cũ theo tab nguồn; không công khai team Đô Úy. |
 | FR-03 | Hai tab team dùng chung search toàn văn và chip facet tính động trong phạm vi tab. |
 | FR-04 | Trên mobile, menu section và vùng lọc team có thể thu gọn; không phụ thuộc hover. |
-| FR-05 | Render 5 nhóm/25 team Cùng Tồn và 11 team/5 mỏ khai hoang từ JSON local. |
-| FR-06 | Tra cứu 112 tướng và mở chi tiết stats, thích tính, chiến pháp liên quan. |
-| FR-07 | Tra cứu 239 chiến pháp bằng search Việt bỏ dấu, Hán-Việt và Hán. |
+| FR-05 | Render 5 nhóm/25 team Cùng Tồn và 17 team/5 mỏ khai hoang từ JSON local. |
+| FR-06 | Tra cứu 202 tướng và mở chi tiết stats, thích tính, chiến pháp liên quan. |
+| FR-07 | Tra cứu 406 chiến pháp bằng search Việt bỏ dấu, Hán-Việt và Hán. |
 | FR-08 | Hiển thị tier tốt nhất và mọi nguồn xếp hạng cho team khi có dữ liệu tier. |
 | FR-09 | Tracker hỗ trợ nhiều account, 4 slot Danh tướng PK/ngày, banner hạn giờ, pity 30, lịch sử 5★ và import/export JSON. |
 | FR-10 | Soi đội nhận ảnh, xác thực Turnstile, gọi Worker, map kết quả về canonical Việt và tìm team local tương tự. |
@@ -60,11 +60,11 @@ Ngoài phạm vi: backend chung, database server, cloud sync tracker, AI tự qu
 
 ## Dữ liệu chấp nhận
 
-Snapshot công khai 2026-08-25:
+Snapshot công khai 2026-09-27:
 
 - 166 team: 56 `team-intro`, 110 `moi-phe`; 48 team `do-uy` từng công khai đã được retire khỏi website, public artifact và Research MCP.
-- 31 team có tier, tổng 39 rankings; 112 tướng; 239 chiến pháp; 66 map binh thư.
-- 5 nhóm/25 team Cùng Tồn; 11 team/5 mỏ khai hoang.
+- 31 team có tier, tổng 39 rankings; 202 tướng; 406 chiến pháp; 66 map binh thư.
+- 5 nhóm/25 team Cùng Tồn; 17 team/5 mỏ khai hoang.
 - `facets.json` có tổng source 166, bằng `teams.json` (test chặn lệch); frontend không load file này.
 
 ## Tiêu chí chấp nhận

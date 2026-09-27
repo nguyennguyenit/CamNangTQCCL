@@ -62,15 +62,15 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 
 ## Dữ liệu runtime
 
-| Artifact | Snapshot công khai 2026-08-25 |
+| Artifact | Snapshot công khai 2026-09-27 |
 |---|---:|
 | `data/teams.json` | 166: 56 team-intro, 110 moi-phe |
 | `data/team-tier.json` | 31 team, 39 rankings |
-| `data/tactics.json` | 239, gồm 27 record pending sau merge generic |
-| `data/heroes-dict.json` | 112 |
+| `data/tactics.json` | 406 (Tra cứu thống nhất, [unified-lookup.md](unified-lookup.md)) |
+| `data/heroes-dict.json` | 202 (Tra cứu thống nhất) |
 | `data/books-dict.json` | 66 |
 | `data/coexist.json` | 5 nhóm, 25 team |
-| `data/khaihoang.json` | 11 team, 5 mỏ |
+| `data/khaihoang.json` | 17 team, 5 mỏ |
 | `data/tactics-generic.json` | 29 record nguồn |
 
 Ngày 2026-09-06, `data/khaihoang.json` trong repository có **15 team, 5 mỏ**: thêm Gia Cát Khác · Thái Sử Từ · Tả Từ theo [research](../plans/reports/research-260906-1347-gia-cat-khac-thai-su-tu-ta-tu.md), hai bộ ba còn thiếu theo [đối chiếu Google Sheet](../plans/reports/import-260906-1413-khaihoang-google-sheet.md), và Chu Thái · Trương Phi · Trương Xuân Hoa theo [nguồn Nhật Global](../plans/reports/research-260906-1533-chu-thai-truong-phi-truong-xuan-hoa-global.md). Đội mới dùng bản Kazten với Trương Phi chủ tướng và Kích Kỳ Nọa Quy sau thức tỉnh; khác biệt S20 được ghi chú, chưa gán tên Việt cho 疾風豪雨 hoặc tier mùa hiện tại. Bốn đội bổ sung được curate trực tiếp trong JSON canonical; khi chạy lại pipeline HTML phải giữ lại vì nguồn HTML cũ chưa chứa các đội này. Đây là trạng thái local, không xác nhận đã deploy.
