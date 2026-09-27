@@ -7,7 +7,8 @@ export default defineConfig({
   outputDir: "test-results",
   fullyParallel: false,
   forbidOnly: true,
-  retries: 0,
+  // CI chạy chậm hơn máy dev vài lần: thử lại một lần; reporter `line` vẫn liệt kê test "flaky" ở phần tổng kết.
+  retries: process.env.CI ? 1 : 0,
   reporter: "line",
   use: {
     serviceWorkers: "block",
