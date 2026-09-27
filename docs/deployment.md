@@ -12,24 +12,25 @@ Project deploy is split into three surfaces:
 
 - Date: 2026-09-27
 - Worker: `tqccl-vision-proxy`
-- Version ID: `1e0a3b95-f14a-4151-9dca-8f81931d9460`
-- Source commit: `877adf1` (clean worktree of `origin/main`); Worker tests 85/85 and typecheck passed before deploy.
-- Secrets: `QWEN_API_KEY`, `TURNSTILE_SECRET`, `IP_HASH_SECRET` (the last one set on 2026-09-27, secret-change version `454cf5e5-9148-441c-a9b6-423f4c3428f6`).
-- Previous version / rollback target: `454cf5e5-9148-441c-a9b6-423f4c3428f6` (code from `7bf5797`).
-- Live verification: `OPTIONS /analyze` from `https://tqccl.pages.dev` → 204 with CORS; `POST` with an invalid Turnstile token → 403 "Xác thực chống bot thất bại" (secret present, no 503); foreign origin → 403; 3 MB body → 413 with CORS before any KV or siteverify call.
-- Known gap: `https://tqccl.com` and `https://www.tqccl.com` are attached to the Pages project, but `ALLOWED_ORIGIN` is `https://tqccl.pages.dev`, so Vision requests from those hosts return 403.
+- Version ID: `404205e2-eb4c-4928-892f-e726dbb6a773`
+- Source commit: `ae0932d` (clean worktree of `origin/main`); Worker tests 104/104 passed before deploy.
+- Config: `ALLOWED_ORIGINS = "https://tqccl.com,https://www.tqccl.com,https://tqccl.pages.dev"`; secrets `QWEN_API_KEY`, `TURNSTILE_SECRET`, `IP_HASH_SECRET`.
+- Previous versions / rollback targets: `1e0a3b95-f14a-4151-9dca-8f81931d9460` (`877adf1`, single origin), `454cf5e5-9148-441c-a9b6-423f4c3428f6` (`7bf5797`).
+- Live verification: each of the three origins gets its own `Access-Control-Allow-Origin` plus `Vary: Origin` and reaches the Turnstile check (403 on a fake token, no 503); a foreign origin gets 403 "Origin không được phép"; a 3 MB body gets 413 with CORS.
+- Turnstile widget hostnames include `tqccl.com`, `www.tqccl.com`, `tqccl.pages.dev` (dashboard, 2026-09-27); a headless load of the Gợi ý đội page on each host rendered the widget without error 110200.
 
 ## Latest Static Pages Deploy
 
 - Date: 2026-09-27
-- Production URL: `https://tqccl.pages.dev` (also served on `https://tqccl.com`, `https://www.tqccl.com`)
-- Deployment URL: `https://c72f8f75.tqccl.pages.dev`
-- Deployment ID: `c72f8f75-4028-4572-82c2-709f52b7ec76`
-- Source commit: `877adf1` (clean worktree of `origin/main`; CI run `36322467887` green, 324 e2e passed)
+- Production URL: `https://tqccl.com` (primary; `https://www.tqccl.com` and `https://tqccl.pages.dev` hand over to it through the head bridge script)
+- Deployment URL: `https://d3b75ea5.tqccl.pages.dev`
+- Deployment ID: `d3b75ea5-86fa-46c8-9917-596d30808b89`
+- Source commit: `7422a5d` (clean worktree of `origin/main`; CI run `36333537098` green, 329 e2e passed)
 - Method: Wrangler direct upload of `dist/` after `npm run build` and `npm run verify` (1725 files).
-- Preview verified: `https://7bcc5c60.tqccl.pages.dev` (alias `https://release-260927.tqccl.pages.dev`)
-- Previous production / rollback target: `4e35bd85-0759-4e39-ae20-e785300c9757` (`0a57801`)
-- Verification: 12 section/detail routes 200 with `public, max-age=0, must-revalidate`; unknown, private and retired paths (`/teams/…`, `/_headers`, `/pipeline/…`) 404 `no-store`; `robots.txt` points at the production sitemap; `sitemap.xml` 1558 URLs; 10 legacy hash links (`/#analyze`, `/#team-pk`, …) redirect to the new paths; no page errors on 10 pages; the same routes return 200 on all three hosts after promotion.
+- Preview verified: `https://2809167a.tqccl.pages.dev` (alias `https://release-260927b.tqccl.pages.dev`)
+- Previous production / rollback targets: `c72f8f75-4028-4572-82c2-709f52b7ec76` (`877adf1`, same day, canonical still `tqccl.pages.dev`), `4e35bd85-0759-4e39-ae20-e785300c9757` (`0a57801`).
+- Verification: `https://tqccl.pages.dev/theo-doi-chieu-mo/?x=1` lands on `https://tqccl.com/theo-doi-chieu-mo/?x=1` and carries `tqcclRecruitTracker` and `theme`; a key that already exists on `tqccl.com` is not overwritten; `https://www.tqccl.com/#analyze` ends on `https://tqccl.com/soi-doi-tu-anh/`; canonical, `robots.txt` and `sitemap.xml` use `https://tqccl.com`; no page errors.
+- Earlier the same day: `c72f8f75` (`877adf1`) replaced the 2-week-old `4e35bd85`; preview `7bcc5c60` passed 12 routes, headers, 404s, sitemap (1558 URLs) and 10 legacy hash redirects.
 
 ## Latest Research MCP Deploy
 
