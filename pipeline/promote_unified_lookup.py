@@ -12,7 +12,6 @@ import re
 import tempfile
 import stat
 import shutil
-import subprocess
 import uuid
 from pathlib import Path
 
@@ -433,21 +432,7 @@ def _restore(root, transaction, journal, hooks, *, strict):
     _write_durable(transaction / "journal.json", journal)
     return journal
 
-def _legacy_writer_pids():
-    listing = subprocess.run(
-        ["ps", "-axo", "pid=,command="],
-        check=True,
-        capture_output=True,
-        text=True,
-    ).stdout.splitlines()
-    return [
-        int(line.strip().split(maxsplit=1)[0])
-        for line in listing
-        if "build_dict.py" in line or "pipeline.build_dict" in line
-    ]
-
-
-def promote(*, candidate, root, activation, transaction_id, validate=None, hooks=None, writer_probe=None):
+def promote(*, candidate, root, activation, transaction_id, validate=None, hooks=None):
     _validate_transaction_id(transaction_id)
     hooks = hooks or {}
     root = _safe_root(root)
@@ -456,8 +441,6 @@ def promote(*, candidate, root, activation, transaction_id, validate=None, hooks
     activation_rows, activation_bytes = _activation_rows(root, activation)
     data_rows, manifest = _candidate_rows(root, candidate)
     input_hashes = {name: _sha(_regular_bytes(candidate / name)) for name in PUBLIC_DATA_FILES}
-    if (writer_probe or _legacy_writer_pids)():
-        raise ConflictError("a pre-guard dictionary writer is running")
     lock = _acquire_lock(root, transaction_id)
     hooks.get("lock-acquired", lambda _ctx: None)({"transaction": transaction_id})
     transaction = None

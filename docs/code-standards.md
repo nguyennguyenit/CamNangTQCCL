@@ -93,7 +93,7 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
 - Team join tier bằng `team.id`; tên team không bảo đảm unique.
 - Tier hợp lệ: `T0`, `T0.5`, `T1`, `T1.5`, `T2`, `T3`; một team có thể có nhiều rankings.
 - Chiến pháp giữ field nguồn `effect`/`target`; bản dịch review dùng `effectViet`/`targetViet` tùy chọn.
-- Bảng curate đang publish nằm trong `pipeline/aliases.json`, `team-nicknames.json`, `tactic-name-overrides.json`, `team-tier-map.json`, `books-han-viet-map.json` và `role-tag-map.json`; `pipeline/do-uy-ss18-source.json` chỉ là archive nguồn thô, không phải input public.
+- Bảng curate đang publish nằm trong `pipeline/aliases.json`, `team-nicknames.json`, `team-tier-map.json` và `books-han-viet-map.json`; `pipeline/do-uy-ss18-source.json` chỉ là archive nguồn thô, không phải input public.
 - Nếu đổi schema: cập nhật builder/normalizer, consumer JS, import validation và test contract liên quan.
 
 ## Local state và privacy

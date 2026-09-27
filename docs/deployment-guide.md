@@ -56,7 +56,6 @@ Các lệnh dự án:
 ```bash
 python3 -m pipeline.build_json
 python3 -m pipeline.suggest_aliases
-python3 -m pipeline.build_dict
 python3 -m pipeline.build_books_dict
 python3 -m pipeline.build_team_tier
 ```

@@ -55,7 +55,6 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | [`mcp-worker/scripts/`](../mcp-worker/scripts/) | Deterministic asset build/evidence, exact-version deployment controller, live/edge verifier và repository gate credential-free. |
 | `pipeline/site_localization.py`, `pipeline/site-localization-policy.json` | Inventory/review gate, candidate private và publication pin chung cho display, Recommended và Lookup. |
 | `pipeline/build_json.py` | Build team, facet, Cùng Tồn, khai hoang từ HTML export. |
-| `pipeline/build_dict.py` | Crawl/cache/link và merge chiến pháp generic, build tướng/chiến pháp. |
 | `pipeline/build_books_dict.py` | Validate bảng map Hán→Việt với facet binh thư. |
 | `pipeline/build_team_tier.py` | Join tier curate theo team ID, validate tier fail-loud. |
 | `worker/src/index.ts` | `POST /analyze`: origin, limits, Turnstile, image guard, model, response. |
@@ -80,7 +79,7 @@ Tab Khai hoang hỗ trợ `variants[]` tùy chọn trên từng đội: cấu h�
 
 `season`/`seasonNote` ở root khai hoang ghi mùa mục tiêu Binh Diễn Xuân Thu theo xác nhận người dùng; nguồn mùa khác vẫn được ghi riêng, không tự nâng thành tier mùa hiện tại. Các cấu hình chưa mô tả nhánh binh chủng tùy chỉnh.
 
-Đồng Lòng Hợp Sức được xác minh bằng ảnh client Việt 06/09/2026 là 勠力同心, chiến pháp sự kiện Chủ động trị liệu/tăng Thống Soái; nguồn chi tiết nằm trong `data/tactics-generic.json` để `build_dict` merge lại. 戮力上国 giữ nguyên hiệu ứng Nội chính và tên Hán-Việt Lục Lực Thượng Quốc; override cũ gán Đồng Lòng Hợp Sức đã được sửa.
+Đồng Lòng Hợp Sức được xác minh bằng ảnh client Việt 06/09/2026 là 勠力同心, chiến pháp sự kiện Chủ động trị liệu/tăng Thống Soái; bản ghi hiện nằm trong từ điển do Tra cứu thống nhất sở hữu ([unified-lookup.md](unified-lookup.md)); `data/tactics-generic.json` chỉ còn là artifact công khai cũ (`legacy-public/build-input`). 戮力上国 giữ nguyên hiệu ứng Nội chính và tên Hán-Việt Lục Lực Thượng Quốc; override cũ gán Đồng Lòng Hợp Sức đã được sửa.
 
 `data/facets.json` có 74 tướng, 106 chiến pháp, 67 binh thư, 4 loại binh, 3 mức sao, 5 phe, 2 trạng thái, 2 nguồn; tổng source là 166 (bằng `teams.json`, `tests/test_build.py` chặn lệch). Frontend không fetch artifact này: tab team tính facet trực tiếp từ tập team runtime.
 

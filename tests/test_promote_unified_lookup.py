@@ -256,20 +256,6 @@ class CandidatePreflightTest(PromotionCase):
 
 
 class ExclusionTest(PromotionCase):
-    def test_running_pre_guard_writer_blocks_promotion_without_signalling_it(self):
-        root, candidate, activation = self.scenario()
-        writer = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"])
-        self.addCleanup(lambda: (writer.kill(), writer.wait()))
-        before = snapshot(root)
-
-        with self.assertRaises(promotion.ConflictError):
-            self.promote(root, candidate, activation, writer_probe=lambda: [writer.pid])
-
-        self.assertIsNone(writer.poll())
-        self.assertEqual(snapshot(root), before)
-        self.assertFalse(self.lock_path(root).exists())
-        self.assertFalse(self.transaction(root).exists())
-
     def test_live_lock_owner_blocks_promotion_before_any_journal_or_mutation(self):
         root, candidate, activation = self.scenario()
         lock = self.lock_path(root)
