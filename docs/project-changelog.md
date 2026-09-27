@@ -1,5 +1,15 @@
 # Project Changelog
 
+## 2026-09-27 (Pipeline: rebuild teams.json tái tạo được)
+
+### Fixed
+
+- `python3 -m pipeline.build_json` nay tái tạo trùng byte `data/teams.json` và `data/facets.json` (trước dừng với 8 ID mất). Nguyên nhân và sửa: 6 Team PK `team-intro-50…55` (thêm tay 2026-07-03/07-08, không có trong HTML) chuyển sang input curate `pipeline/team-intro-supplement.json`, nối sau các nguồn HTML; `normalize.clean_text` bỏ dấu thanh kết hợp thừa (`Giả Hụ̉`, `Lục Tốṇ`, `Lỗ Túc̣` trong HTML, khác dạng Unicode với khoá alias) và chuẩn NFC; `aliases.json` thêm `heroNames` (sửa cả tên hiển thị: `Hoàng Phổ Tung`, `Đổng Trách`) và 4 alias chiến pháp/binh thư đã sửa tay trong artifact; ô CP1/CP2 gộp `A+B/C+D` tách theo ô; nickname dạng chuỗi chỉ áp cho Team PK, dạng `{nickname, sources}` ghi rõ nguồn (`Hổ Thần Cung` cả hai nguồn); sao nguyên ghi `4` thay vì `4.0`. Không đổi byte `data/`.
+
+### Changed
+
+- `pipeline.build_json` mặc định chỉ ghi `teams.json`, `facets.json`; `--overwrite-curated` mới ghi đè `coexist.json`/`khaihoang.json` từ HTML; `--check` so với `data/` không ghi (exit 1 nếu lệch). Docs `README.md`, `deployment-guide.md`, `system-architecture.md`, `codebase-summary.md`, `project-overview-pdr.md`.
+
 ## 2026-09-27 (Pipeline: nghỉ build_dict, prune generation, dọn repo, CI, docs)
 
 ### Removed

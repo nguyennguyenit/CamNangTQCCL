@@ -21,10 +21,11 @@ from .parse_team_intro import parse_team_intro
 
 def collect_counts() -> Dict[str, Counter]:
     aliases = load_aliases()
+    known = {**aliases, "heroes": {**aliases["heroes"], **aliases["heroNames"]}}
     counts: Dict[str, Counter] = {"tactics": Counter(), "books": Counter(), "heroes": Counter()}
 
     def add(kind: str, name: str) -> None:
-        if name and name not in aliases[kind]:
+        if name and name not in known[kind]:
             counts[kind][name] += 1
 
     for fname, src, hint, _expected in _TEAM_FILES:

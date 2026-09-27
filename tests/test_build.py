@@ -3,6 +3,7 @@
 import json
 import os
 import sys
+import tempfile
 import unittest
 from unittest import mock
 
@@ -24,7 +25,7 @@ class TestBuild(unittest.TestCase):
         cls.teams = build_json.build_teams()
 
     def test_total_count(self):
-        self.assertEqual(len(self.teams), 160)
+        self.assertEqual(len(self.teams), 166)
 
     def test_published_sources_exclude_do_uy(self):
         self.assertEqual({t["source"] for t in self.teams}, {"team-intro", "moi-phe"})
@@ -62,6 +63,24 @@ class TestBuild(unittest.TestCase):
         self.assertTrue(all(t["status"] == "out-meta" for t in moi))
 
 
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def _read_data(name):
+    with open(os.path.join(ROOT, "data", name), encoding="utf-8") as fh:
+        return fh.read()
+
+
+@unittest.skipUnless(_has_sources(), "nguồn HTML không có")
+class TestRebuildReproducesCommitted(unittest.TestCase):
+    """Rebuild từ HTML + input curate phải trùng byte artifact đang commit."""
+
+    def test_teams_and_facets_bytes_match_committed(self):
+        teams = build_json.build_teams(committed=build_json.load_committed_teams())
+        self.assertEqual(build_json.render_json(teams), _read_data("teams.json"))
+        self.assertEqual(build_json.render_json(build_json.build_facets(teams)), _read_data("facets.json"))
+
+
 def _raw(source, *names):
     return {
         "source": source,
@@ -78,7 +97,7 @@ def _committed(team_id, *names):
 class TestStableTeamIds(unittest.TestCase):
     """Rebuild giữ ID đã công khai theo (nguồn, tập tướng), không đánh số lại."""
 
-    def _build(self, raw_by_source, committed):
+    def _build(self, raw_by_source, committed, supplement=()):
         files = [
             ("intro.html", "team-intro", None, len(raw_by_source["team-intro"])),
             ("moi.html", "moi-phe", "out-meta", len(raw_by_source["moi-phe"])),
@@ -87,6 +106,7 @@ class TestStableTeamIds(unittest.TestCase):
         with mock.patch.object(build_json, "_TEAM_FILES", files), \
                 mock.patch.object(build_json, "load_aliases", return_value=empty), \
                 mock.patch.object(build_json, "load_nicknames", return_value={}), \
+                mock.patch.object(build_json, "load_supplement", return_value=list(supplement)), \
                 mock.patch.object(build_json, "parse_team_intro",
                                   side_effect=lambda _path, src, _hint: raw_by_source[src]):
             return build_json.build_teams(committed=committed)
@@ -124,6 +144,97 @@ class TestStableTeamIds(unittest.TestCase):
             self._build({"team-intro": [], "moi-phe": [_raw("moi-phe", "D", "E", "F")]}, committed)
         self.assertIn("moi-phe-99", str(ctx.exception))
         self.assertNotIn("moi-phe-62", str(ctx.exception))
+
+    def test_supplement_teams_follow_html_sources_and_keep_ids(self):
+        record = {"source": "team-intro", "name": "Curated", "heroes": [{"baseName": "P"}, {"baseName": "Q"}]}
+        new = {"source": "team-intro", "name": "New", "heroes": [{"baseName": "R"}]}
+        committed = [_committed("team-intro-0", "A"), _committed("moi-phe-62", "D"), _committed("team-intro-1", "Q", "P")]
+        teams = self._build(
+            {"team-intro": [_raw("team-intro", "A")], "moi-phe": [_raw("moi-phe", "D")]},
+            committed,
+            supplement=[record, new],
+        )
+        self.assertEqual([t["id"] for t in teams], ["team-intro-0", "moi-phe-62", "team-intro-1", "team-intro-2"])
+        self.assertEqual(teams[2], {"id": "team-intro-1", **record})
+        self.assertEqual(list(teams[2])[:2], ["id", "source"])
+
+
+class TestNicknameScope(unittest.TestCase):
+    """Nickname chuỗi chỉ đặt tên Team PK; nickname có ``sources`` áp đúng các nguồn đó."""
+
+    def test_string_nickname_names_team_pk_only_and_sources_widen_scope(self):
+        files = [("intro.html", "team-intro", None, 2), ("moi.html", "moi-phe", "out-meta", 2)]
+        empty = {"heroes": {}, "tactics": {}, "books": {}}
+        raw_by_source = {
+            "team-intro": [_raw("team-intro", "A", "B"), _raw("team-intro", "C", "D")],
+            "moi-phe": [_raw("moi-phe", "B", "A"), _raw("moi-phe", "D", "C")],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "nicknames.json")
+            with open(path, "w", encoding="utf-8") as fh:
+                json.dump({"B|A": "PK", "C|D": {"nickname": "Both", "sources": ["team-intro", "moi-phe"]}}, fh)
+            real_load = build_json.load_nicknames
+            with mock.patch.object(build_json, "_TEAM_FILES", files), \
+                    mock.patch.object(build_json, "load_aliases", return_value=empty), \
+                    mock.patch.object(build_json, "load_nicknames",
+                                      side_effect=lambda source: real_load(path, source=source)), \
+                    mock.patch.object(build_json, "load_supplement", return_value=[]), \
+                    mock.patch.object(build_json, "parse_team_intro",
+                                      side_effect=lambda _path, src, _hint: raw_by_source[src]):
+                teams = build_json.build_teams()
+        self.assertEqual(
+            [(t["source"], t["nickname"]) for t in teams],
+            [("team-intro", "PK"), ("team-intro", "Both"), ("moi-phe", None), ("moi-phe", "Both")],
+        )
+
+
+class TestMainOutputs(unittest.TestCase):
+    """Mặc định chỉ ghi teams/facets; coexist/khaihoang curate chỉ bị ghi khi có cờ."""
+
+    TEAMS = [{"id": "team-intro-0", "source": "team-intro", "unitType": [], "stars": None, "faction": None,
+              "status": "meta", "heroes": []}]
+
+    def _run(self, out, argv):
+        with mock.patch.object(build_json, "_OUT", out), \
+                mock.patch.object(build_json, "build_teams", return_value=self.TEAMS), \
+                mock.patch.object(build_json, "parse_coexist", return_value=[]) as parse_coexist, \
+                mock.patch.object(build_json, "group_coexist", return_value=[{"g": 1}]), \
+                mock.patch.object(build_json, "build_khaihoang_payload",
+                                  return_value={"teams": [1], "mines": [1], "chamSuTeams": []}):
+            code = build_json.main(argv)
+        return code, parse_coexist.called
+
+    def test_default_leaves_curated_files_untouched(self):
+        with tempfile.TemporaryDirectory() as out:
+            with open(os.path.join(out, "coexist.json"), "w", encoding="utf-8") as fh:
+                fh.write("curated")
+            code, parsed = self._run(out, [])
+            self.assertEqual(code, 0)
+            self.assertFalse(parsed)
+            self.assertEqual(sorted(os.listdir(out)), ["coexist.json", "facets.json", "teams.json"])
+            with open(os.path.join(out, "coexist.json"), encoding="utf-8") as fh:
+                self.assertEqual(fh.read(), "curated")
+            with open(os.path.join(out, "teams.json"), encoding="utf-8") as fh:
+                self.assertEqual(fh.read(), build_json.render_json(self.TEAMS))
+
+    def test_explicit_flag_overwrites_curated_files(self):
+        with tempfile.TemporaryDirectory() as out:
+            code, _ = self._run(out, ["--overwrite-curated"])
+            self.assertEqual(code, 0)
+            self.assertEqual(
+                sorted(os.listdir(out)),
+                ["coexist.json", "facets.json", "khaihoang.json", "teams.json"],
+            )
+
+    def test_check_reports_drift_without_writing(self):
+        with tempfile.TemporaryDirectory() as out:
+            self.assertEqual(self._run(out, []), (0, False))
+            self.assertEqual(self._run(out, ["--check"])[0], 0)
+            with open(os.path.join(out, "facets.json"), "w", encoding="utf-8") as fh:
+                fh.write("stale")
+            self.assertEqual(self._run(out, ["--check"])[0], 1)
+            with open(os.path.join(out, "facets.json"), encoding="utf-8") as fh:
+                self.assertEqual(fh.read(), "stale")
 
 
 class TestCommittedFacets(unittest.TestCase):

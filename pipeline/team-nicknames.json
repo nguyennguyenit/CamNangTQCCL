@@ -1,8 +1,7 @@
 {
   "Bàng Thống|Gia Cát Lượng|Khương Duy": "Kỳ Lân Cung",
-  "Cam Ninh|Chu Thái|Thái Sử Từ": "Hổ Thần Cung",
+  "Cam Ninh|Chu Thái|Thái Sử Từ": {"nickname": "Hổ Thần Cung", "sources": ["team-intro", "moi-phe"]},
   "Cam Ninh|Lữ Mông|Thái Sử Từ": "Khảng Khái Cung",
-  "Cam Ninh|Thái Sử Từ|Chu Thái": "Hổ Thần Cung",
   "Chu Du|Lỗ Túc|Lục Tốn": "Đô Đốc Cung",
   "Chu Du|Lục Tốn|Lữ Mông": "Đô Đốc Cung SP Chu Du",
   "Chu Du|Tào Tháo|Điêu Thuyền": "SP Chu Du Cung",

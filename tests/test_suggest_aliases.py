@@ -15,8 +15,8 @@ def _hero(name_raw):
 class SuggestAliasesTest(unittest.TestCase):
     def test_variants_and_known_aliases_are_not_suggested(self):
         raw = {
-            "team-intro": [{"heroesRaw": [_hero("SP Tuân Úc"), _hero("Tôn Thương Hương")]}],
-            "moi-phe": [{"heroesRaw": [_hero("SP Tuân Úc(S)"), _hero("Tôn Thượng Hương")]}],
+            "team-intro": [{"heroesRaw": [_hero("SP Tuân Úc"), _hero("Tôn Thương Hương"), _hero("SP Đổng Trách")]}],
+            "moi-phe": [{"heroesRaw": [_hero("SP Tuân Úc(S)"), _hero("Tôn Thượng Hương"), _hero("Đổng Trác")]}],
         }
         scanned = []
 
@@ -24,7 +24,12 @@ class SuggestAliasesTest(unittest.TestCase):
             scanned.append(path)
             return raw[source]
 
-        aliases = {"heroes": {"Tôn Thương Hương": "Tôn Thượng Hương"}, "tactics": {}, "books": {}}
+        aliases = {
+            "heroes": {"Tôn Thương Hương": "Tôn Thượng Hương"},
+            "heroNames": {"Đổng Trách": "Đổng Trác"},
+            "tactics": {},
+            "books": {},
+        }
         with mock.patch.object(suggest_aliases, "parse_team_intro", side_effect=parse), \
                 mock.patch.object(suggest_aliases, "load_aliases", return_value=aliases):
             counts = suggest_aliases.collect_counts()
@@ -35,6 +40,7 @@ class SuggestAliasesTest(unittest.TestCase):
         )
         self.assertEqual(suggest_aliases.clusters(counts["heroes"]), [])
         self.assertNotIn("Tôn Thương Hương", counts["heroes"])
+        self.assertNotIn("Đổng Trách", counts["heroes"])
 
 
 if __name__ == "__main__":

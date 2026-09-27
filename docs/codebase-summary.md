@@ -54,7 +54,7 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | [`mcp-worker/workflow-source-manifest.json`](../mcp-worker/workflow-source-manifest.json), [`generate-workflow-build.ts`](../mcp-worker/scripts/generate-workflow-build.ts) | Owner của semantic closure và `workflowBuildId`; `workflowVersion` ghép identity này với full `releaseId`. |
 | [`mcp-worker/scripts/`](../mcp-worker/scripts/) | Deterministic asset build/evidence, exact-version deployment controller, live/edge verifier và repository gate credential-free. |
 | `pipeline/site_localization.py`, `pipeline/site-localization-policy.json` | Inventory/review gate, candidate private và publication pin chung cho display, Recommended và Lookup. |
-| `pipeline/build_json.py` | Build team, facet, Cùng Tồn, khai hoang từ HTML export. |
+| `pipeline/build_json.py` | Build team, facet từ HTML export + `team-intro-supplement.json` (trùng byte bản commit, `--check`); Cùng Tồn, khai hoang chỉ với `--overwrite-curated`. |
 | `pipeline/build_books_dict.py` | Validate bảng map Hán→Việt với facet binh thư. |
 | `pipeline/build_team_tier.py` | Join tier curate theo team ID, validate tier fail-loud. |
 | `worker/src/index.ts` | `POST /analyze`: origin, limits, Turnstile, image guard, model, response. |
@@ -103,7 +103,7 @@ Gate thống nhất nằm ở `.github/workflows/mcp-worker.yml`: `mcp-worker/sc
 
 ## Điểm cần chú ý
 
-- `build_json.py` cố ý loại Đô Úy nhưng chỉ dựng 50 Team PK + 110 meta cũ; builder giữ ID đội đã commit và dừng khi thiếu đội, nên chưa tái tạo được artifact 56 + 110.
+- `build_json.py` cố ý loại Đô Úy; từ HTML + input curate (`aliases.json`, `team-nicknames.json`, `team-intro-supplement.json`) tái tạo trùng byte `teams.json` 56 + 110 và `facets.json`. `khaihoang.json` curate vượt HTML, không rebuild.
 - 48 team Đô Úy từng công khai đã được retire; chỉ còn nguồn thô/archive 40 record tại `pipeline/do-uy-ss18-source.json`, không tham gia build/publication.
 - `plans/` có thể chứa mô tả cũ; kiểm chứng bằng code, config và JSON commit.
 - Remote MCP bearer là pre-shared credential cho managed client, không phải OAuth access token. Production release chỉ tiếp tục khi live edge rate control, exact candidate identity và ownership-safe rollback gate đạt.

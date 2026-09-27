@@ -34,8 +34,8 @@ local MCP client ───────────stdio────────�
 ## Build-time data flow
 
 1. HTML export trong `Meta Team PK/` được parser grid/team/Cùng Tồn/khai hoang đọc.
-2. `normalize.py` áp aliases, nickname và chuẩn hóa team.
-3. `build_json.py` ghi đè `teams.json`, `facets.json`, `coexist.json`, `khaihoang.json`; giữ ID đội đã commit và dừng nếu một ID công khai sẽ mất ([cảnh báo rebuild](deployment-guide.md#cảnh-báo-bắt-buộc)).
+2. `normalize.py` sửa chữ nguồn (bỏ dấu thanh kết hợp thừa, NFC), áp aliases, nickname theo nguồn và chuẩn hóa team.
+3. `build_json.py` nối Team PK curate `pipeline/team-intro-supplement.json`, ghi đè `teams.json`, `facets.json` (trùng byte bản commit; `--check` chỉ so); `coexist.json`, `khaihoang.json` chỉ khi có `--overwrite-curated`; giữ ID đội đã commit và dừng nếu một ID công khai sẽ mất ([cảnh báo rebuild](deployment-guide.md#cảnh-báo-bắt-buộc)).
 4. Từ điển tướng/chiến pháp (`heroes-dict.json`, `tactics.json`) do Tra cứu thống nhất sở hữu: `build_unified_lookup.py` dựng candidate, `promote_unified_lookup.py` kích hoạt ([unified-lookup.md](unified-lookup.md)); legacy builder không ghi hai file này.
 5. `build_books_dict.py` validate map binh thư curate với facet; dòng `outsideTeams` (sách không đội nào dùng) phải nằm ngoài facet.
 6. `build_team_tier.py` join bảng tier curate vào team ID.
@@ -53,7 +53,7 @@ generation công khai có thể recover. Xem [quy trình vận hành](unified-lo
 
 `textRaw` và identity nguồn không bị sửa. `textVi` chỉ đi vào projection hiển thị sau review; dữ liệu root dùng overlay theo exact entity/field path. `npm run build` và `npm run verify` chạy gate public fail-closed trước khi tạo hoặc chấp nhận `dist/`.
 
-Đường build cố ý không đưa `Team Đô Úy.html` vào artifact nên pipeline dựng ra ít Team PK hơn artifact công khai; các Team PK bổ sung vẫn chưa có đường tái tạo nhìn thấy. `pipeline/do-uy-ss18-source.json` giữ nguồn Đô Úy thô làm archive, không phải input publication. HTML/cache còn bị ignore. Vì vậy pipeline là công cụ bảo trì có điều kiện, chưa phải clean-clone reproducible build; số lượng hiện tại và quy trình an toàn thuộc [cảnh báo rebuild](deployment-guide.md).
+Đường build cố ý không đưa `Team Đô Úy.html` vào artifact. 6 Team PK không có trong HTML nằm ở `pipeline/team-intro-supplement.json` (bản ghi đã chuẩn hóa, curate), nên từ HTML hiện có `teams.json`/`facets.json` tái tạo trùng byte. `pipeline/do-uy-ss18-source.json` giữ nguồn Đô Úy thô làm archive, không phải input publication. HTML/cache còn bị ignore và `coexist.json`/`khaihoang.json` curate vượt HTML. Vì vậy pipeline là công cụ bảo trì có điều kiện, chưa phải clean-clone reproducible build; quy trình an toàn thuộc [cảnh báo rebuild](deployment-guide.md).
 
 ### Dữ liệu đội theo kịch bản
 

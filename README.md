@@ -105,7 +105,7 @@ tiếng Việt đã review: 202 tướng, 406 chiến pháp và catalog bổ sun
 [contract SGSDeck private/public](docs/sgsdeck-catalog.md). Chủ project xác nhận
 quyền import trong phạm vi sáu catalog ngày 2026-09-12; đây không phải open license.
 
-Không chạy máy móc trên dữ liệu đang dùng: `build_json.py` cố ý loại nguồn Đô Úy nhưng hiện chỉ dựng `50 + 110`, trong khi artifact công khai có `56 + 110`; builder giữ ID đội đã commit và dừng (liệt kê ID) thay vì ghi đè khi đội đã commit không còn trong nguồn. `pipeline/do-uy-ss18-source.json` giữ 40 mục làm archive nguồn thô và không tham gia publication. Clone sạch thường cũng thiếu HTML nguồn và cache crawl bị ignore. Trước khi rebuild: backup `data/`, bảo đảm đủ nguồn, chạy từng bước, rồi review toàn bộ diff và test ([cảnh báo](docs/deployment-guide.md#cảnh-báo-bắt-buộc)).
+`python3 -m pipeline.build_json` tái tạo trùng byte `data/teams.json` (56 Team PK + 110 meta cũ) và `data/facets.json` từ HTML trong `Meta Team PK/` cộng input curate: `pipeline/aliases.json`, `pipeline/team-nicknames.json` và `pipeline/team-intro-supplement.json` (6 Team PK nghiên cứu thêm, không có trong HTML). Mặc định lệnh chỉ ghi hai file đó; `--check` so với `data/` mà không ghi (exit 1 nếu lệch); `--overwrite-curated` mới ghi đè `coexist.json`/`khaihoang.json` từ HTML và làm mất phần curate (hiện `khaihoang.json` lệch HTML). Builder cố ý loại nguồn Đô Úy; `pipeline/do-uy-ss18-source.json` giữ 40 mục làm archive nguồn thô và không tham gia publication. Builder giữ ID đội đã commit và dừng (liệt kê ID) khi đội đã commit không còn trong nguồn. Clone sạch thường thiếu HTML nguồn và cache crawl bị ignore. Trước khi ghi: chạy `--check`, review toàn bộ diff và test ([cảnh báo](docs/deployment-guide.md#cảnh-báo-bắt-buộc)).
 
 ## Deploy
 

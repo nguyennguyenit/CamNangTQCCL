@@ -1,6 +1,7 @@
 """Chuẩn hóa team thô (team-intro) -> model Team cuối.
 
-Gồm: apply alias (sửa typo), tách biến thể "/" + tiền tố Tinh·/Thác·,
+Gồm: sửa chữ nguồn (dấu thanh kết hợp thừa + NFC), apply alias (sửa typo),
+tách biến thể "/" + tiền tố Tinh·/Thác·, tách ô chiến pháp bị gộp "A+B/C+D",
 parse tướng (SP/CO/variant), split counter Chạm/Tránh + tách rating-điều-kiện,
 classify (unitType/stars/faction/status).
 
@@ -12,6 +13,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import unicodedata
 from typing import List, Optional, Tuple
 
 _ALIASES_PATH = os.path.join(os.path.dirname(__file__), "aliases.json")
@@ -23,21 +25,68 @@ _UNIT_TYPES = ("Kỵ", "Cung", "Thương", "Khiên")
 # Trận pháp cho phép trộn phe -> team gắn phe "Hỗn hợp" (ưu tiên hơn banner).
 _MIX_FACTION = "Hỗn hợp"
 _MIX_FORMATIONS = ("Tam Thế Trận", "Tiềm Long Trận")
+# Nickname dạng chuỗi trong team-nicknames.json là tên meta của Team PK.
+_DEFAULT_NICKNAME_SOURCES = ("team-intro",)
 _BOOK_PREFIX_RE = re.compile(r"^(?:Tinh|Thác)·\s*")
 # Rating điều kiện trong cột Thêm, vd "Có Gian Hùng, Viễn Trợ-★★★★★".
 _COND_RATING_RE = re.compile(r"Có[^★]*-?[★☆]{2,}")
 _COUNTER_SPLIT_RE = re.compile(r"(Chạm|Tránh)\s*:")
 _STAR_RE = re.compile(r"[★☆]+")
+# Dấu thanh tiếng Việt dạng kết hợp: huyền, sắc, ngã, hỏi, nặng.
+_TONE_MARKS = frozenset("\u0300\u0301\u0303\u0309\u0323")
+
+
+def clean_text(text: str) -> str:
+    """Sửa chữ nguồn: bỏ dấu thanh kết hợp thừa rồi chuẩn NFC.
+
+    Một âm tiết chỉ mang một dấu thanh; dấu thanh kết hợp đứng sau âm tiết đã có dấu
+    (HTML export có "Hủ" + U+0323, "Tốn" + U+0323) là gõ thừa nên bị bỏ. NFC để tên và
+    khoá ``aliases.json`` so khớp bất kể dạng Unicode của nguồn.
+    """
+    out = []
+    toned = False
+    for ch in text or "":
+        if unicodedata.combining(ch):
+            if ch in _TONE_MARKS:
+                if toned:
+                    continue
+                toned = True
+        elif ch.isalpha():
+            toned = toned or any(m in _TONE_MARKS for m in unicodedata.normalize("NFD", ch))
+        else:
+            toned = False
+        out.append(ch)
+    return unicodedata.normalize("NFC", "".join(out))
 
 
 def load_aliases(path: str = _ALIASES_PATH) -> dict:
     if not os.path.exists(path):
-        return {"tactics": {}, "books": {}, "heroes": {}}
+        return {"tactics": {}, "books": {}, "heroes": {}, "heroNames": {}}
     with open(path, "r", encoding="utf-8") as fh:
         data = json.load(fh)
-    for key in ("tactics", "books", "heroes"):
+    for key in ("tactics", "books", "heroes", "heroNames"):
         data.setdefault(key, {})
     return data
+
+
+def fix_hero_name(name: str, fixes: dict) -> str:
+    """Sửa chính tả trong ô tên tướng (``aliases.json`` ``heroNames``), đổi cả tên hiển thị."""
+    for wrong, right in fixes.items():
+        name = name.replace(wrong, right)
+    return name
+
+
+def split_merged_pair(cp1: Optional[str], cp2: Optional[str]) -> Tuple[Optional[str], Optional[str]]:
+    """Ô CP1/CP2 bị gộp trong export: cả hai cùng "A+B/C+D" -> ("A/C", "B/D").
+
+    Mỗi lựa chọn là một cặp (CP1+CP2); ô khác nhau hoặc không đủ cặp thì giữ nguyên.
+    """
+    if not cp1 or cp1 != cp2:
+        return cp1, cp2
+    pairs = [p.split("+") for p in cp1.split("/") if p.strip()]
+    if not pairs or any(len(p) != 2 for p in pairs):
+        return cp1, cp2
+    return "/".join(p[0].strip() for p in pairs), "/".join(p[1].strip() for p in pairs)
 
 
 def apply_alias(name: str, table: dict) -> str:
@@ -49,10 +98,12 @@ def _nickname_key(base_names: List[str]) -> str:
     return "|".join(sorted(n.strip() for n in base_names if n.strip()))
 
 
-def load_nicknames(path: str = _NICKNAMES_PATH) -> dict:
-    """Map thủ công bộ-3-tướng -> tên gọi khác. Key chuẩn hóa theo _nickname_key.
+def load_nicknames(path: str = _NICKNAMES_PATH, source: str = "team-intro") -> dict:
+    """Map thủ công bộ-3-tướng -> tên gọi khác cho đội thuộc ``source``.
 
-    File rỗng/không tồn tại -> {}. Chỉ một số team có nickname.
+    Key chuẩn hóa theo _nickname_key. Giá trị chuỗi là tên meta của Team PK nên chỉ
+    áp cho ``_DEFAULT_NICKNAME_SOURCES``; giá trị ``{"nickname", "sources"}`` ghi rõ
+    nguồn được áp. File rỗng/không tồn tại -> {}. Chỉ một số team có nickname.
     LƯU Ý: key trong file phải dùng tên tướng CHUẨN (sau alias), vì lookup so khớp
     với baseName đã rewrite alias — nếu thêm alias cho tướng trong key, nickname sẽ
     lặng lẽ không match.
@@ -61,7 +112,15 @@ def load_nicknames(path: str = _NICKNAMES_PATH) -> dict:
         return {}
     with open(path, "r", encoding="utf-8") as fh:
         data = json.load(fh)
-    return {_nickname_key(k.split("|")): v.strip() for k, v in data.items() if v and v.strip()}
+    out = {}
+    for key, value in data.items():
+        if isinstance(value, dict):
+            nickname, sources = value.get("nickname"), value.get("sources", [])
+        else:
+            nickname, sources = value, _DEFAULT_NICKNAME_SOURCES
+        if nickname and nickname.strip() and source in sources:
+            out[_nickname_key(key.split("|"))] = nickname.strip()
+    return out
 
 
 def auto_team_name(base_names: List[str]) -> str:
@@ -74,7 +133,7 @@ def split_variants(cell: str, alias_table: Optional[dict] = None, strip_book_pre
 
     Trả None nếu rỗng.
     """
-    cell = (cell or "").strip()
+    cell = clean_text(cell).strip()
     if not cell:
         return None
     parts = [p.strip() for p in cell.split("/") if p.strip()]
@@ -92,7 +151,7 @@ def split_variants(cell: str, alias_table: Optional[dict] = None, strip_book_pre
 
 def parse_hero(name_raw: str) -> dict:
     """Tách tên tướng -> baseName, alternatives ("/"), variant (ngoặc), cờ SP/CO, note."""
-    raw = (name_raw or "").strip()
+    raw = clean_text(name_raw).strip()
     is_sp = raw.startswith("SP ")
     is_co = raw.startswith("CO ")
     work = raw
@@ -170,7 +229,9 @@ def classify(raw_type: str, status_hint: Optional[str] = None, banner_faction: O
     sm = _STAR_RE.search(rt)
     if sm:
         s = sm.group(0)
-        stars = s.count("★") + 0.5 * s.count("☆")
+        full, half = s.count("★"), s.count("☆")
+        # Số nguyên khi không có nửa sao: JSON "4" như artifact, không "4.0".
+        stars = full + 0.5 * half if half else full
 
     faction = banner_faction or next((f for f in _FACTIONS if f in rt), None)
 
@@ -202,15 +263,15 @@ def _has_mix_formation(heroes: list) -> bool:
 
 def normalize_team(raw: dict, alias_table: dict, team_id: str, nicknames: Optional[dict] = None) -> dict:
     """Team thô -> Team model cuối; ``team_id`` do ``build_json`` cấp (giữ ID đã commit)."""
-    meta = classify(raw.get("rawType", ""), raw.get("statusHint"), raw.get("bannerFaction"))
-    good, avoid, counter_notes = split_counters(raw.get("notesRaw", ""))
+    meta = classify(clean_text(raw.get("rawType", "")), raw.get("statusHint"), raw.get("bannerFaction"))
+    good, avoid, counter_notes = split_counters(clean_text(raw.get("notesRaw", "")))
 
     heroes = []
     for h in raw.get("heroesRaw", []):
-        info = parse_hero(h["nameRaw"])
+        info = parse_hero(fix_hero_name(clean_text(h["nameRaw"]), alias_table.get("heroNames", {})))
         info["alternatives"] = [apply_alias(a, alias_table["heroes"]) for a in info["alternatives"]]
         tactics = []
-        for cp in (h.get("cp1Raw"), h.get("cp2Raw")):
+        for cp in split_merged_pair(clean_text(h.get("cp1Raw")), clean_text(h.get("cp2Raw"))):
             v = split_variants(cp, alias_table["tactics"])
             if v:
                 tactics.append(v)

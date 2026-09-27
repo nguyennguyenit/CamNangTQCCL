@@ -1,13 +1,12 @@
 {
-  "_note": "Bảng sửa typo review thủ công từ suggest_aliases.py. Áp deterministic lúc build. heroes áp cho baseName (đã strip SP/CO/ngoặc).",
+  "_note": "Bảng sửa typo review thủ công từ suggest_aliases.py. Áp deterministic lúc build, sau khi normalize.clean_text bỏ dấu thanh kết hợp thừa và chuẩn NFC (khoá viết NFC). heroes chỉ áp cho baseName (đã strip SP/CO/ngoặc), name giữ chữ nguồn; heroNames sửa chính tả trong ô tên tướng nên đổi cả name hiển thị lẫn baseName.",
   "heroes": {
     "Tôn Thương Hương": "Tôn Thượng Hương",
     "Viên Thiẹu": "Viên Thiệu",
-    "Giả Hụ̉": "Giả Hủ",
     "Giả Hư": "Giả Hủ",
-    "Lỗ Túc̣": "Lỗ Túc",
-    "Lăm Thống": "Lăng Thống",
-    "Lục Tốṇ": "Lục Tốn",
+    "Lăm Thống": "Lăng Thống"
+  },
+  "heroNames": {
     "Hoàng Phổ Tung": "Hoàng Phủ Tung",
     "Đổng Trách": "Đổng Trác"
   },
@@ -25,12 +24,16 @@
     "Tam Lánh Sóng Gió": "Tạm Lánh Sóng Gió",
     "Phơng Trợ Họa Thế": "Phong Trợ Hỏa Thế",
     "Hoành Tào Thiên Quân": "Hoành Tảo Thiên Quân",
-    "Thịnh Khí": "Thịnh Khí Linh Địch"
+    "Thịnh Khí": "Thịnh Khí Linh Địch",
+    "Mê hoặc": "Mê Hoặc",
+    "Tạm Lánh Cắt Xương": "Tạm Lánh Sóng Gió"
   },
   "books": {
     "Đánh Sau Trúng Trươc": "Đánh Sau Trúng Trước",
     "Thắng Càng Mạnh": "Thắng Sẽ Càng Mạnh",
     "Rèn Luyền": "Rèn Luyện",
-    "Khép Hở": "Khép Hờ"
+    "Khép Hở": "Khép Hờ",
+    "Dũng Nghĩa": "Nghĩa Dũng",
+    "Chuẩn Xác": "Tinh Chuẩn"
   }
 }

@@ -82,7 +82,7 @@ Snapshot công khai 2026-09-27:
 
 ## Rủi ro và giới hạn
 
-- `build_json.py` cố ý loại `Team Đô Úy.html` và hiện chỉ dựng `50 + 110`; artifact công khai có `56 + 110`. Builder giữ ID đội đã commit và dừng (liệt kê ID) thay vì ghi đè khi đội đã commit không còn trong nguồn, nên hiện chưa rebuild được `teams.json`.
+- `build_json.py` cố ý loại `Team Đô Úy.html`; từ HTML + input curate (gồm `pipeline/team-intro-supplement.json` cho 6 Team PK ngoài HTML) tái tạo trùng byte `teams.json` (`56 + 110`) và `facets.json`. Builder giữ ID đội đã commit và dừng (liệt kê ID) khi đội đã commit không còn trong nguồn; mặc định không ghi `coexist.json`/`khaihoang.json`.
 - 48 team Đô Úy từng công khai đã được retire; `pipeline/do-uy-ss18-source.json` vẫn giữ 40 record nguồn thô làm archive và không tham gia build/publication.
 - HTML nguồn và raw crawl cache bị ignore; clone sạch không bảo đảm rebuild đầy đủ.
 - KV không atomic, nên quota Worker là best-effort. Request không có header `Origin` vẫn được chấp nhận; Turnstile là rào chính ngoài browser.
