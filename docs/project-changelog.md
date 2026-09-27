@@ -1,5 +1,23 @@
 # Project Changelog
 
+## 2026-09-27 (Pipeline: nghỉ build_dict, prune generation, dọn repo, CI, docs)
+
+### Removed
+
+- Chuỗi `pipeline.build_dict` (đã bị chặn vĩnh viễn từ khi Tra cứu thống nhất sở hữu `heroes-dict.json`/`tactics.json`): `build_dict.py`, `crawl_tactics.py`, `link_tactics.py`, test và fixture `tests/fixtures/lingxi/`, hai bảng chỉ chúng đọc `pipeline/tactic-name-overrides.json`, `pipeline/role-tag-map.json`; rào `promote_unified_lookup` dò tiến trình `build_dict` đang chạy. `data/tactics-generic.json` giữ nguyên (artifact công khai `legacy-public/build-input`).
+- Script npm `test:contracts`, `test:dev-contract` (hai file đã chạy trong `test:node`) và `test:e2e:astro` (project Playwright duy nhất là `astro`).
+
+### Added
+
+- `python3 -m pipeline.site_localization prune --root .` xoá mọi thư mục generation dưới `src/data/recommended-reference/` khác `generationId` mà `current.json` pin; từ chối và không xoá gì nếu thư mục được pin không tồn tại. Thêm vào quy trình publish (`docs/season-team-data.md`) sau `check --stage public`.
+- `pipeline/common.py`: `canonical_json` (luôn `allow_nan=False`) và `sha256_hex`; thay 4 hàm `sha256` hex, 3 hàm và 5 chỗ inline `canonical_json` trùng lặp. Bốn file builder Tra cứu (`build_unified_lookup.py`, `lookup_translations.py`, `sgsdeck_identity.py`, `unified_lookup_identity.py`) giữ bản riêng vì byte của chúng nằm trong `executionHashes` của generation Tra cứu (sửa là phải publish lại); slug handle của `team_route_handles.py` giữ riêng (mirror `S(x)` của `src/lib/team-detail-routes.ts`). Không đổi byte output (`check --stage public`, `team_route_handles --check`, `build_season_data` trùng byte).
+
+### Changed
+
+- **Dọn repo theo Q5 = A: chỉ untrack + `.gitignore`, không viết lại lịch sử, không force-push** (blob cũ vẫn trong `.git`). Repo chỉ còn track generation Recommended đang pin (`0cb3ba92…`; xoá 36 generation cũ, 3284 file, ~211 MiB khỏi cây làm việc); ngừng track `pipeline/lookup-output/site-vi-candidate/`, `site-vi-activation/` (ignore `pipeline/lookup-output/*candidate*/`, `*activation*/`), `pipeline/recommended-missing-translations.json` (worksheet nay ghi ra `.cache/`), và 53 file media `assets/videos/team-info-from-download-260701/` (ignore `*.mp4`, `*.jpg`; `team-list.md` giữ lại, bỏ đường dẫn máy). Bản trên đĩa của media, `_site/`, `.wrangler/` gốc chuyển vào `~/.Trash/CamNangTQCCL-cleanup-260927/`.
+- CI `mcp-worker.yml` chạy cả khi đổi `css/**`, `public/**`, `tsconfig.json`.
+- Docs: `README.md`, `docs/deployment-guide.md` bỏ `build_dict` khỏi lệnh thường; `docs/system-architecture.md` ghi từ điển do Tra cứu thống nhất sở hữu, lỗi JSON hiện ở mount trang mục; `docs/project-overview-pdr.md` 8 trang mục theo đường dẫn (hash chỉ chuyển tiếp), 202 tướng/406 chiến pháp, 17 đội khai hoang; `docs/codebase-summary.md` số liệu tương ứng; `docs/unified-lookup.md` evidence hiện tại là transaction `site-vi-260926-1928` (`committed`, `lookup:064fd2d5…`), `--activation <activation-manifest>`; `docs/season-team-data.md` `parse_coexist_csv` là thư viện không CLI (cách gọi `build_content_links` bằng Python), bước `prune`; plan `260907-2333` đánh dấu `completed`.
+
 ## 2026-09-27 (Pipeline: ID ổn định, binh thư, crawler, khoá mùa, alias)
 
 ### Fixed

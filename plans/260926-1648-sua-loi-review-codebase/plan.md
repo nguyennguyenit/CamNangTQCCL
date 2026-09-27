@@ -1,7 +1,7 @@
 ---
 title: "Sửa lỗi theo review toàn codebase"
 description: "Xử lý đủ 109 finding của 6 báo cáo review (JS lõi, công cụ, Astro/CSS, UI live, pipeline, Worker/MCP) theo 7 phase, test trước mỗi lỗi, giữ gate bản dịch xanh."
-status: in-progress
+status: completed
 priority: P1
 effort: "18.5d"
 branch: main
@@ -192,9 +192,9 @@ Người dùng chốt qua phiên chính ngày 2026-09-27. Các phương án khô
 - [ ] `js/team-pk.js`, `meta-cu.js`, `tactics.js`, `hero-list.js`, `hero-detail.js` và `src/lib/recommended-reference-data.mjs` không còn; `dist/js/` không có 5 file này.
 - [ ] Trang `/khai-hoang/` và `/doi-chuan/<đội>/` không tải nguồn dữ liệu trang không dùng; `/data/teams.json` tải tối đa 1 lần mỗi trang (e2e đếm request).
 - [ ] Vision Worker: lỗi KV không làm response mất CORS; `HERO_NAMES_CN` khớp 202 tướng (test drift).
-- [ ] `src/data/recommended-reference/` chỉ còn generation đang pin (Q5 = A, lịch sử giữ nguyên); `pipeline/lookup-output/site-vi-*` và media `assets/videos/` không còn được track; CI chạy khi đổi `css/**`, `public/**`, `tsconfig.json`.
+- [x] `src/data/recommended-reference/` chỉ còn generation đang pin (Q5 = A, lịch sử giữ nguyên); `pipeline/lookup-output/site-vi-*` và media `assets/videos/` không còn được track; CI chạy khi đổi `css/**`, `public/**`, `tsconfig.json`.
 - [ ] Vision Worker thiếu `IP_HASH_SECRET` trả 503 JSON có CORS và không ghi KV; MCP sau `NEXT_NOT_AFTER` vẫn nhận token CURRENT (200).
 - [ ] `data/teams.json` không còn dấu kết hợp; slot không sở hữu được chỉ còn các tên trong `PENDING_SOURCE_NAMES` (3 tên không có nguồn + 2 tên Bái Sư).
-- [ ] Docs (`README.md`, `docs/codebase-summary.md`, `docs/system-architecture.md`, `docs/project-overview-pdr.md`, `docs/deployment-guide.md`, `docs/season-team-data.md`, `docs/unified-lookup.md`, `docs/code-standards.md`, `docs/mcp-research-server.md`, `worker/README.md`) mô tả đúng code; `docs/project-changelog.md` có mục cho từng phase.
+- [x] Docs (`README.md`, `docs/codebase-summary.md`, `docs/system-architecture.md`, `docs/project-overview-pdr.md`, `docs/deployment-guide.md`, `docs/season-team-data.md`, `docs/unified-lookup.md`, `docs/code-standards.md`, `docs/mcp-research-server.md`, `worker/README.md`) mô tả đúng code; `docs/project-changelog.md` có mục cho từng phase.
 
 <!-- slug: sua-loi-review-codebase -->

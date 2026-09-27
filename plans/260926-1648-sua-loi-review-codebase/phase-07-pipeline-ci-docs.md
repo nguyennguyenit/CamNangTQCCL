@@ -1,7 +1,7 @@
 ---
 phase: 7
 title: "Pipeline, CI, hygiene và docs"
-status: pending
+status: completed
 priority: P2
 effort: "3d"
 dependencies: [6]
@@ -53,31 +53,32 @@ Pipeline rebuild không đổi ID đã công khai, các lệnh trong runbook ch�
 - [x] **Sửa.** Gom theo `parse_hero(nameRaw)["baseName"]`, bỏ tên đã là khoá trong `aliases.json`, dùng `_TEAM_FILES`; `hanviet.py:135` duyệt `sorted(COMPOUND_READINGS, key=len, reverse=True)`.
 
 ### G. Nghỉ chuỗi `build_dict` (ReviewPipeline#2) — dọn, miễn test-first
-- [ ] Xoá 3 module + 3 test + 2 bảng (danh sách ở Files); grep lại `build_dict|crawl_tactics|link_tactics|tactic-name-overrides|role-tag-map` trên `pipeline/ tests/ scripts/ mcp-worker/ docs/ README.md` → chỉ còn changelog. Docs: bỏ khỏi lệnh thường (`README.md:86`, `docs/deployment-guide.md:59`), `docs/system-architecture.md:39` ghi từ điển do Unified Lookup sở hữu, `docs/codebase-summary.md:58,83`, `docs/code-standards.md:83` không coi hai bảng đã xoá là input đang publish.
+- [x] Xoá 3 module + 3 test + 2 bảng (danh sách ở Files); grep lại `build_dict|crawl_tactics|link_tactics|tactic-name-overrides|role-tag-map` trên `pipeline/ tests/ scripts/ mcp-worker/ docs/ README.md` → chỉ còn changelog. Docs: bỏ khỏi lệnh thường (`README.md:86`, `docs/deployment-guide.md:59`), `docs/system-architecture.md:39` ghi từ điển do Unified Lookup sở hữu, `docs/codebase-summary.md:58,83`, `docs/code-standards.md:83` không coi hai bảng đã xoá là input đang publish.
 
 ### H. Dữ liệu dẫn xuất và riêng tư (ReviewPipeline#5, #14, #15, #12 docs)
-- [ ] `git rm -r --cached pipeline/lookup-output/site-vi-candidate pipeline/lookup-output/site-vi-activation` (file trên đĩa giữ nguyên, tái tạo được); `.gitignore` đổi `:29-34` thành `pipeline/lookup-output/*candidate*/`, `pipeline/lookup-output/*activation*/`. Theo Q5 = A không purge lịch sử (hai blob ~23 MB còn trong `.git`).
-- [ ] `pipeline/recommended-missing-translations.json`: ngừng commit (không file nào đọc, đã grep); `docs/season-team-data.md:224` ghi ra `.cache/recommended-missing-translations.json` sau mỗi publish.
-- [ ] `docs/unified-lookup.md`: `:73` evidence hiện tại là transaction `site-vi-260926-1928` (`committed`, khớp `lookup:064fd2d5…`); `:50` dùng `<activation-manifest>`.
-- [ ] `docs/season-team-data.md` mục Cùng Tồn: `parse_coexist_csv` là thư viện không CLI, `build_content_links` là bộ sinh `season-content-links.json`, cách gọi bằng Python.
+- [x] `git rm -r --cached pipeline/lookup-output/site-vi-candidate pipeline/lookup-output/site-vi-activation` (file trên đĩa giữ nguyên, tái tạo được); `.gitignore` đổi `:29-34` thành `pipeline/lookup-output/*candidate*/`, `pipeline/lookup-output/*activation*/`. Theo Q5 = A không purge lịch sử (hai blob ~23 MB còn trong `.git`).
+- [x] `pipeline/recommended-missing-translations.json`: ngừng commit (không file nào đọc, đã grep); `docs/season-team-data.md:224` ghi ra `.cache/recommended-missing-translations.json` sau mỗi publish.
+- [x] `docs/unified-lookup.md`: `:73` evidence hiện tại là transaction `site-vi-260926-1928` (`committed`, khớp `lookup:064fd2d5…`); `:50` dùng `<activation-manifest>`.
+- [x] `docs/season-team-data.md` mục Cùng Tồn: `parse_coexist_csv` là thư viện không CLI, `build_content_links` là bộ sinh `season-content-links.json`, cách gọi bằng Python.
 
 ### I. Prune generation (ReviewAstroCss#4) — Q5 = A
-- [ ] **Test trước.** `tests/test_site_localization.py`: root tạm có 3 thư mục generation + `current.json` trỏ một cái → `main(["prune", "--root", tmp])` chỉ còn thư mục đang pin; `current.json` trỏ thư mục không tồn tại → từ chối, không xoá gì. Đỏ: lệnh chưa có.
-- [ ] **Sửa.** Lệnh `prune` trong `pipeline/site_localization.py` (xoá thư mục generation ≠ `current.generationId`, không tham số giữ thêm); thêm vào quy trình publish trong `docs/season-team-data.md:184-193` (sau `check --stage public`) và thay G6 của plan này. Chạy `python3 -m pipeline.site_localization prune --root .` → `git add -A src/data/recommended-reference` (35 generation cũ thành xoá trong commit). Không `git filter-repo`, không force-push: lịch sử giữ nguyên, cây làm việc và clone nông nhỏ đi; `.git` không đổi kích thước.
+- [x] **Test trước.** `tests/test_site_localization.py`: root tạm có 3 thư mục generation + `current.json` trỏ một cái → `main(["prune", "--root", tmp])` chỉ còn thư mục đang pin; `current.json` trỏ thư mục không tồn tại → từ chối, không xoá gì. Đỏ: lệnh chưa có.
+- [x] **Sửa.** Lệnh `prune` trong `pipeline/site_localization.py` (xoá thư mục generation ≠ `current.generationId`, không tham số giữ thêm); thêm vào quy trình publish trong `docs/season-team-data.md:184-193` (sau `check --stage public`) và thay G6 của plan này. Chạy `python3 -m pipeline.site_localization prune --root .` → `git add -A src/data/recommended-reference` (35 generation cũ thành xoá trong commit). Không `git filter-repo`, không force-push: lịch sử giữ nguyên, cây làm việc và clone nông nhỏ đi; `.git` không đổi kích thước.
 
 ### J. Repo, CI, docs còn lại (ReviewAstroCss#7, #14, #17, #18, #20; ReviewJsCore#15; ReviewJsTools#19)
-- [ ] `.github/workflows/mcp-worker.yml` thêm `"css/**"`, `"public/**"`, `"tsconfig.json"` vào cả `pull_request.paths` và `push.paths`; chạy `npm --prefix mcp-worker test -- test/release/repository-gate.test.ts`.
-- [ ] `package.json` bỏ `test:contracts`, `test:dev-contract`, `test:e2e:astro` (hai file test vẫn chạy trong `test:node`; project Playwright duy nhất là `astro`).
-- [ ] `assets/videos/…`: `git rm --cached` 53 file media (19 `.mp4`, 34 `.jpg`), chuyển bản trên đĩa sang `~/.Trash/CamNangTQCCL-cleanup-<yymmdd>/assets-videos/` (khôi phục được); `.gitignore` thêm `assets/videos/**/*.mp4`, `assets/videos/**/*.jpg`; giữ `team-list.md` (được 2 báo cáo `plans/reports/research-260703-*` trỏ tới), dòng `:3` chỉ giữ tên file gốc, bỏ đường dẫn máy. Lịch sử giữ nguyên (Q5 = A).
-- [ ] `_site/`, `.wrangler/` gốc chuyển vào Thùng rác (ignored, không ai tham chiếu); plan `260907-2333` `status: completed` (skill `tqccl-research` đã commit ở `82076bb`).
-- [ ] Docs: `docs/project-overview-pdr.md:21,34-36` (8 trang mục theo đường dẫn, hash chỉ còn chuyển tiếp), `docs/system-architecture.md:218` (lỗi JSON hiện ở mount của trang mục), `docs/codebase-summary.md:70-71` (202 tướng, 406 chiến pháp, theo `docs/unified-lookup.md:7-8`), `docs/deployment-guide.md:269` (bỏ "danh mục"; "chuyển Thẻ/Thẻ gọn/Bảng" theo Q7 = A đã làm ở Phase 3).
+- [x] `.github/workflows/mcp-worker.yml` thêm `"css/**"`, `"public/**"`, `"tsconfig.json"` vào cả `pull_request.paths` và `push.paths`; chạy `npm --prefix mcp-worker test -- test/release/repository-gate.test.ts`.
+- [x] `package.json` bỏ `test:contracts`, `test:dev-contract`, `test:e2e:astro` (hai file test vẫn chạy trong `test:node`; project Playwright duy nhất là `astro`).
+- [x] `assets/videos/…`: `git rm --cached` 53 file media (19 `.mp4`, 34 `.jpg`), chuyển bản trên đĩa sang `~/.Trash/CamNangTQCCL-cleanup-<yymmdd>/assets-videos/` (khôi phục được); `.gitignore` thêm `assets/videos/**/*.mp4`, `assets/videos/**/*.jpg`; giữ `team-list.md` (được 2 báo cáo `plans/reports/research-260703-*` trỏ tới), dòng `:3` chỉ giữ tên file gốc, bỏ đường dẫn máy. Lịch sử giữ nguyên (Q5 = A).
+- [x] `_site/`, `.wrangler/` gốc chuyển vào Thùng rác (ignored, không ai tham chiếu); plan `260907-2333` `status: completed` (skill `tqccl-research` đã commit ở `82076bb`).
+- [x] Docs: `docs/project-overview-pdr.md:21,34-36` (8 trang mục theo đường dẫn, hash chỉ còn chuyển tiếp), `docs/system-architecture.md:218` (lỗi JSON hiện ở mount của trang mục), `docs/codebase-summary.md:70-71` (202 tướng, 406 chiến pháp, theo `docs/unified-lookup.md:7-8`), `docs/deployment-guide.md:269` (bỏ "danh mục"; "chuyển Thẻ/Thẻ gọn/Bảng" theo Q7 = A đã làm ở Phase 3).
 
 ### K. Helper dùng chung (ReviewPipeline#16) — ưu tiên thấp, làm cuối
-- [ ] **Test trước (đặc tả hiện trạng).** Chạy mọi bản `slug` hiện có trên toàn bộ tên thật (`data/heroes-dict.json`, `data/tactics.json`, `data/lookup-catalog.json`, `pipeline/team-route-handles.json` giá trị, tên đội `data/teams.json`) và ghi cặp nào cho kết quả giống hệt nhau; test mới khẳng định helper chung cho **đúng** kết quả của từng bản được gộp trên cùng tập tên (xanh trước khi thay, bảo toàn). Bản nào khác ngữ nghĩa (vd. slug handle của `team_route_handles.py:121`) → **không gộp**, ghi lý do trong báo cáo.
-- [ ] **Sửa.** `pipeline/common.py`: `canonical_json` (luôn `allow_nan=False`), `sha256_hex`, các slug đã chứng minh trùng, `lookup_exclusion(root)` (khoá + journal, dùng ở bước E); thay các bản sao đã chứng minh tương đương. Mọi test Python + `site_localization check --stage public` (byte generation không đổi) + `team_route_handles --check` xanh.
+- [x] **Test trước (đặc tả hiện trạng).** Chạy mọi bản `slug` hiện có trên toàn bộ tên thật (`data/heroes-dict.json`, `data/tactics.json`, `data/lookup-catalog.json`, `pipeline/team-route-handles.json` giá trị, tên đội `data/teams.json`) và ghi cặp nào cho kết quả giống hệt nhau; test mới khẳng định helper chung cho **đúng** kết quả của từng bản được gộp trên cùng tập tên (xanh trước khi thay, bảo toàn). Bản nào khác ngữ nghĩa (vd. slug handle của `team_route_handles.py:121`) → **không gộp**, ghi lý do trong báo cáo.
+- [x] **Sửa.** `pipeline/common.py`: `canonical_json` (luôn `allow_nan=False`), `sha256_hex`, các slug đã chứng minh trùng, `lookup_exclusion(root)` (khoá + journal, dùng ở bước E); thay các bản sao đã chứng minh tương đương. Mọi test Python + `site_localization check --stage public` (byte generation không đổi) + `team_route_handles --check` xanh.
+  Kết quả (2026-09-27): chỉ gộp `canonical_json`/`sha256_hex`; slug, `lookup_exclusion` và bốn module builder Tra cứu không gộp — lý do trong `reports/phase-07.md` Part 7b mục K.
 
 ### L. Kết phase
-- [ ] G2 xác nhận không file bị ghim nào stale (phase này không sửa file `sourceFiles`; `pipeline/site_localization.py` thêm lệnh `prune` không nằm trong `sourceFiles` và không đổi output candidate — `check --stage public` phải vẫn exit 0). Changelog ghi rõ dọn theo Q5 = A (chỉ untrack, lịch sử giữ nguyên); `reports/phase-07.md` (dung lượng `src/data/recommended-reference` trước/sau, danh sách file untrack, đường dẫn Thùng rác).
+- [x] G2 xác nhận không file bị ghim nào stale (phase này không sửa file `sourceFiles`; `pipeline/site_localization.py` thêm lệnh `prune` không nằm trong `sourceFiles` và không đổi output candidate — `check --stage public` phải vẫn exit 0). Changelog ghi rõ dọn theo Q5 = A (chỉ untrack, lịch sử giữ nguyên); `reports/phase-07.md` (dung lượng `src/data/recommended-reference` trước/sau, danh sách file untrack, đường dẫn Thùng rác).
 
 ## Verification
 - `python3 -m unittest discover -s tests` → pass (các test mới đã thấy đỏ trước sửa).
