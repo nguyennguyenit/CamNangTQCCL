@@ -3,6 +3,7 @@ import { teamDetailCatalog } from "../lib/team-detail-routes.ts";
 import { blogIndexPath, loadBlogPosts, translationOf, type BlogLocale } from "../lib/blog-posts.ts";
 import { alternatePaths, type AlternateLink } from "../lib/locale-routes.ts";
 import { localePath } from "../../js/i18n.js";
+import { POLICY_PAGES } from "../lib/policy-pages.ts";
 
 export const prerender = true;
 
@@ -20,8 +21,8 @@ export const SECTION_PATHS = [
   "/goi-y-doi-tu-kho/",
 ] as const;
 
-/** Trang nội dung tĩnh có bản gương `/zh`, được index (không phải trang mục của app.js). */
-export const STATIC_PAGE_PATHS = ["/chinh-sach-bao-mat/"] as const;
+/** Trang nội dung tĩnh có bản gương `/zh`, được index (không phải trang mục của app.js): các trang chính sách. */
+export const STATIC_PAGE_PATHS: readonly string[] = POLICY_PAGES.map((page) => page.path);
 
 /**
  * Một URL của sitemap; `lastmod` (ISO 8601) chỉ khai khi biết chắc thời điểm sửa — hiện là blog.

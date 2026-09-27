@@ -1,0 +1,146 @@
+---
+// Điều khoản sử dụng dùng chung cho `/dieu-khoan-su-dung/` và `/zh/dieu-khoan-su-dung/`.
+import PolicyPage, { type PolicySection } from './PolicyPage.astro';
+import { pick } from '../../../js/i18n.js';
+import type { SiteLocale } from '../../lib/locale-routes';
+
+interface Props {
+  locale: SiteLocale;
+}
+
+const { locale } = Astro.props;
+const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+
+const sections: PolicySection[] = [
+  {
+    id: 'pham-vi',
+    heading: t('Phạm vi áp dụng', '适用范围'),
+    paragraphs: [
+      t(
+        'Cẩm Nang TQCCL (tqccl.com) là trang tra cứu miễn phí do người chơi xây dựng cho cộng đồng Tam Quốc Chí – Chiến Lược. Khi truy cập hoặc dùng bất kỳ tính năng nào của site, bạn đồng ý với các điều khoản này, cùng Chính sách bảo mật, Quy tắc cộng đồng và Miễn trừ trách nhiệm.',
+        '《三国志战略版攻略手册》（tqccl.com）是玩家为《三国志·战略版》社区搭建的免费查询网站。访问或使用本站任何功能，即表示你同意本条款，以及隐私政策、社区规范和免责声明。',
+      ),
+    ],
+  },
+  {
+    id: 'noi-dung-cam-nang',
+    heading: t('Sử dụng nội dung cẩm nang', '手册内容的使用'),
+    items: [
+      t(
+        'Bạn được tự do xem, chia sẻ liên kết và trích dẫn nội dung cho mục đích cá nhân, phi thương mại, kèm ghi nguồn tqccl.com.',
+        '你可以出于个人、非商业目的自由浏览、分享链接和引用内容，并注明来源 tqccl.com。',
+      ),
+      t(
+        'Không sao chép hàng loạt để đăng lại, bán lại hoặc dùng vào mục đích thương mại khi chưa được đồng ý bằng văn bản.',
+        '未经书面同意，不得批量复制后转载、转售或用于商业用途。',
+      ),
+      t(
+        'Không truy cập tự động với tần suất gây quá tải máy chủ; dùng các file dữ liệu công khai và llms.txt đúng như cách site cung cấp.',
+        '不得以造成服务器过载的频率进行自动访问；请按本站提供的方式使用公开数据文件和 llms.txt。',
+      ),
+    ],
+  },
+  {
+    id: 'tai-khoan',
+    heading: t('Tài khoản', '账号'),
+    paragraphs: [
+      t(
+        'Đăng nhập bằng Google là tuỳ chọn và chỉ cần cho bình luận, chiến báo; gửi góp ý không cần đăng nhập. Bạn chịu trách nhiệm về mọi hoạt động diễn ra qua tài khoản của mình. Site có thể tạm khoá hoặc xoá tài khoản vi phạm điều khoản hay Quy tắc cộng đồng.',
+        '使用 Google 登录是可选的，仅在发表评论和战报时需要；提交反馈无需登录。你需对通过自己账号进行的所有活动负责。对于违反本条款或社区规范的账号，本站可暂停或删除。',
+      ),
+    ],
+  },
+  {
+    id: 'noi-dung-cua-ban',
+    heading: t('Nội dung bạn đăng', '你发布的内容'),
+    items: [
+      t(
+        'Bạn giữ quyền đối với bình luận, ảnh và ghi chú chiến báo của mình, đồng thời cho phép site lưu trữ, hiển thị công khai và dùng số liệu tổng hợp (như tỉ lệ thắng) trên site.',
+        '你保留对自己的评论、截图和战报备注的权利，同时授权本站存储、公开展示，并在站内使用汇总数据（如胜率）。',
+      ),
+      t(
+        'Bạn cam kết có quyền đăng những nội dung đó và chúng không vi phạm pháp luật hay quyền của người khác.',
+        '你保证有权发布这些内容，且其不违反法律或侵犯他人权利。',
+      ),
+      t(
+        'Bạn tự xoá được bình luận; muốn xoá chiến báo hoặc toàn bộ tài khoản, xem mục yêu cầu xoá trong Chính sách bảo mật.',
+        '你可以自行删除评论；如需删除战报或整个账号，请参阅隐私政策中的删除申请部分。',
+      ),
+      t(
+        'Góp ý gửi qua nút "Góp ý, sửa lỗi" không hiển thị công khai; site dùng nội dung đó để sửa lỗi, cập nhật dữ liệu và cải thiện tính năng.',
+        '通过“意见反馈”按钮提交的反馈不会公开显示；本站会用这些内容修复错误、更新数据和改进功能。',
+      ),
+    ],
+  },
+  {
+    id: 'cong-cu',
+    heading: t('Công cụ AI và tính năng Beta', 'AI 工具与 Beta 功能'),
+    paragraphs: [
+      t(
+        'Kết quả của "Soi đội từ ảnh", "Gợi ý đội từ kho" và phần đọc ảnh chiến báo do AI tạo ra nên có thể sai; hãy kiểm tra lại trước khi dùng. Các tính năng gắn nhãn Beta có thể thay đổi, bị giới hạn lượt dùng hoặc ngừng mà không báo trước.',
+        '“截图识阵”“武将库配队”以及战报截图识别的结果由 AI 生成，可能有误，请在使用前自行核对。标有 Beta 的功能可能随时变更、限制使用次数或停止提供，恕不另行通知。',
+      ),
+    ],
+  },
+  {
+    id: 'hanh-vi-cam',
+    heading: t('Hành vi bị cấm', '禁止行为'),
+    items: [
+      t('Tấn công, dò lỗ hổng hoặc làm gián đoạn site và máy chủ API.', '攻击、探测漏洞或干扰本站及 API 服务器。'),
+      t('Né giới hạn lượt dùng, vượt qua Turnstile bằng bot hoặc dùng nhiều tài khoản để lạm dụng.', '规避使用次数限制、用机器人绕过 Turnstile，或利用多个账号滥用服务。'),
+      t('Tải lên mã độc, nội dung trái pháp luật hoặc mạo danh quản trị viên, nhà phát hành.', '上传恶意代码、违法内容，或冒充管理员、发行商。'),
+      t('Gửi góp ý hàng loạt, quảng cáo hoặc nội dung không liên quan qua nút góp ý.', '通过反馈按钮批量发送、投放广告或提交无关内容。'),
+    ],
+  },
+  {
+    id: 'lien-ket-ngoai',
+    heading: t('Liên kết bên ngoài', '外部链接'),
+    paragraphs: [
+      t(
+        'Site có liên kết tới trang của nhà phát hành, cửa hàng ứng dụng và cộng đồng game. Các trang đó có điều khoản riêng; site không chịu trách nhiệm về nội dung hay giao dịch diễn ra ở đó.',
+        '本站包含指向发行商页面、应用商店和游戏社区的链接。这些网站有各自的条款，本站不对其内容或在其上进行的交易负责。',
+      ),
+    ],
+  },
+  {
+    id: 'gioi-han-trach-nhiem',
+    heading: t('Không bảo đảm và giới hạn trách nhiệm', '不作保证与责任限制'),
+    paragraphs: [
+      t(
+        'Site được cung cấp miễn phí theo hiện trạng, không bảo đảm luôn hoạt động liên tục hay mọi thông tin đều chính xác. Trong phạm vi pháp luật cho phép, site không chịu trách nhiệm cho thiệt hại phát sinh từ việc dùng nội dung hoặc công cụ, kể cả thất bại trong game. Xem thêm trang Miễn trừ trách nhiệm.',
+        '本站按现状免费提供，不保证持续可用，也不保证所有信息准确。在法律允许的范围内，本站不对因使用内容或工具而产生的损失负责，包括游戏中的失利。详见免责声明页面。',
+      ),
+    ],
+  },
+  {
+    id: 'thay-doi-lien-he',
+    heading: t('Thay đổi và liên hệ', '条款变更与联系方式'),
+    paragraphs: [
+      t(
+        'Khi điều khoản thay đổi, nội dung và ngày hiệu lực trên trang này sẽ được cập nhật; tiếp tục dùng site nghĩa là bạn đồng ý với bản mới.',
+        '条款如有变更，本页内容和生效日期将随之更新；继续使用本站即表示你同意新版条款。',
+      ),
+    ],
+    contact: {
+      before: t('Mọi câu hỏi về điều khoản, gửi email tới', '如对本条款有任何疑问，请发送邮件至'),
+      after: t('.', '。'),
+    },
+  },
+];
+---
+<PolicyPage
+  locale={locale}
+  path="/dieu-khoan-su-dung/"
+  idPrefix="terms"
+  title={t('Điều khoản sử dụng', '使用条款')}
+  description={t(
+    'Điều khoản khi dùng Cẩm Nang TQCCL: sử dụng nội dung, tài khoản, nội dung bạn đăng, công cụ AI, hành vi bị cấm và giới hạn trách nhiệm.',
+    '使用《三国志战略版攻略手册》的条款：内容使用、账号、你发布的内容、AI 工具、禁止行为与责任限制。',
+  )}
+  lead={t(
+    'Các quy định áp dụng khi bạn xem cẩm nang, dùng công cụ, đăng nhập, bình luận, gửi chiến báo hoặc gửi góp ý trên tqccl.com.',
+    '本条款适用于你在 tqccl.com 浏览手册、使用工具、登录、发表评论、提交战报或提交反馈的全部行为。',
+  )}
+  effectiveDate="2026-09-28"
+  sections={sections}
+/>

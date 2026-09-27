@@ -1,0 +1,68 @@
+---
+// Khung chung của các trang chính sách (src/lib/policy-pages.ts): bài viết tĩnh, index được,
+// canonical theo ngôn ngữ. Mỗi trang chỉ khai nội dung; chữ đã chọn đúng ngôn ngữ trước khi truyền vào.
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { localePath, pick } from '../../../js/i18n.js';
+import type { SiteLocale } from '../../lib/locale-routes';
+import { POLICY_CONTACT_EMAIL } from '../../lib/policy-pages';
+
+/**
+ * Mỗi mục: đoạn mở đầu, danh sách gạch đầu dòng, đoạn kết, rồi câu liên hệ (đều tuỳ chọn, theo đúng
+ * thứ tự này). `contact` chèn link email liên hệ giữa `before` và `after`.
+ */
+export type PolicySection = {
+  id: string;
+  heading: string;
+  paragraphs?: string[];
+  items?: string[];
+  closing?: string[];
+  contact?: {before: string; after: string};
+};
+
+interface Props {
+  locale: SiteLocale;
+  /** Đường dẫn bản Việt của trang (`/chinh-sach-bao-mat/`). */
+  path: string;
+  /** Tiền tố id của tiêu đề và các mục (`privacy` → `privacy-title`, `privacy-<id>`). */
+  idPrefix: string;
+  title: string;
+  description: string;
+  lead: string;
+  /** Ngày hiệu lực ISO `yyyy-mm-dd`. */
+  effectiveDate: string;
+  sections: PolicySection[];
+}
+
+const { locale, path, idPrefix, title, description, lead, effectiveDate, sections } = Astro.props;
+const canonicalUrl = new URL(localePath(path, locale), Astro.site);
+const effectiveLabel = locale === 'zh' ? effectiveDate : effectiveDate.split('-').reverse().join('/');
+const effectiveText = pick(locale, 'Có hiệu lực từ', '生效日期');
+const pageTitle = pick(locale, `${title} — Cẩm Nang Game Tam Quốc Chí - Chiến Lược`, `${title} — 三国志战略版攻略手册`);
+---
+<SiteLayout
+  title={pageTitle}
+  description={description}
+  pageKind="detail"
+  tagline={title}
+  canonicalUrl={canonicalUrl}
+  locale={locale}
+>
+  <article class="blog-article" aria-labelledby={`${idPrefix}-title`}>
+    <header class="blog-article-head">
+      <h1 id={`${idPrefix}-title`} class="detail-title">{title}</h1>
+      <p class="blog-card-meta">{effectiveText} <time datetime={effectiveDate}>{effectiveLabel}</time></p>
+      <p class="blog-lead">{lead}</p>
+    </header>
+    <div class="blog-body">
+      {sections.map((section) => (
+        <section aria-labelledby={`${idPrefix}-${section.id}`}>
+          <h2 id={`${idPrefix}-${section.id}`}>{section.heading}</h2>
+          {section.paragraphs?.map((paragraph) => <p>{paragraph}</p>)}
+          {section.items ? <ul>{section.items.map((item) => <li>{item}</li>)}</ul> : null}
+          {section.closing?.map((paragraph) => <p>{paragraph}</p>)}
+          {section.contact ? <p>{section.contact.before} <a href={`mailto:${POLICY_CONTACT_EMAIL}`}>{POLICY_CONTACT_EMAIL}</a>{section.contact.after}</p> : null}
+        </section>
+      ))}
+    </div>
+  </article>
+</SiteLayout>

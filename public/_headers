@@ -41,6 +41,15 @@
 /chinh-sach-bao-mat/*
   Cache-Control: public, max-age=0, must-revalidate
 
+/dieu-khoan-su-dung/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/quy-tac-cong-dong/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/mien-tru-trach-nhiem/*
+  Cache-Control: public, max-age=0, must-revalidate
+
 /bai-viet/*
   Cache-Control: public, max-age=0, must-revalidate
 
@@ -72,6 +81,9 @@
   Cache-Control: public, max-age=0, must-revalidate
 
 /logo.png
+  Cache-Control: public, max-age=0, must-revalidate
+
+/logo-cam-nang.svg
   Cache-Control: public, max-age=0, must-revalidate
 
 /donate-qr.png

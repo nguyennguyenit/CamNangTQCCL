@@ -1,0 +1,97 @@
+---
+// Quy tắc cộng đồng dùng chung cho `/quy-tac-cong-dong/` và `/zh/quy-tac-cong-dong/`.
+// Mô tả kiểm duyệt phải khớp community-worker/ (chiến báo chờ duyệt, admin xoá bình luận/từ chối chiến báo).
+import PolicyPage, { type PolicySection } from './PolicyPage.astro';
+import { pick } from '../../../js/i18n.js';
+import type { SiteLocale } from '../../lib/locale-routes';
+
+interface Props {
+  locale: SiteLocale;
+}
+
+const { locale } = Astro.props;
+const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+
+const sections: PolicySection[] = [
+  {
+    id: 'pham-vi',
+    heading: t('Phạm vi', '适用范围'),
+    paragraphs: [
+      t(
+        'Quy tắc này áp dụng cho mọi bình luận và chiến báo trên site. Mục đích là giữ không gian trao đổi đội hình hữu ích, văn minh cho mọi người chơi.',
+        '本规范适用于本站所有评论和战报，目的是为所有玩家维护一个有益、文明的阵容交流空间。',
+      ),
+    ],
+  },
+  {
+    id: 'ton-trong',
+    heading: t('Tôn trọng người khác', '尊重他人'),
+    items: [
+      t('Không xúc phạm, chửi bới, quấy rối hay công kích cá nhân, bang hội, máy chủ.', '不得辱骂、骚扰或人身攻击任何玩家、同盟或服务器。'),
+      t('Không phân biệt vùng miền, giới tính, dân tộc, tôn giáo.', '不得发表地域、性别、民族、宗教歧视言论。'),
+      t('Không đăng thông tin cá nhân của người khác và không mạo danh quản trị viên hay nhà phát hành.', '不得公开他人个人信息，不得冒充管理员或发行商。'),
+    ],
+  },
+  {
+    id: 'dung-chu-de',
+    heading: t('Đúng chủ đề, không spam', '紧扣主题，禁止刷屏'),
+    items: [
+      t('Bình luận nên liên quan tới đội hình, tướng, chiến pháp hoặc bài viết đang xem.', '评论应与当前页面的阵容、武将、战法或文章相关。'),
+      t('Không quảng cáo, mua bán tài khoản, cày thuê, nạp giá rẻ hay đăng link lạ, link lừa đảo.', '不得发布广告、买卖账号、代练、低价充值或可疑、诈骗链接。'),
+      t('Không đăng lặp lại cùng một nội dung.', '不得重复发布相同内容。'),
+    ],
+  },
+  {
+    id: 'noi-dung-cam',
+    heading: t('Nội dung không được phép', '禁止发布的内容'),
+    items: [
+      t('Nội dung vi phạm pháp luật, khiêu dâm, bạo lực hoặc kích động thù ghét.', '违法、色情、暴力或煽动仇恨的内容。'),
+      t('Hướng dẫn hack, phần mềm gian lận hoặc khai thác lỗi game.', '外挂、作弊软件或利用游戏漏洞的教程。'),
+      t('Nội dung vi phạm bản quyền của người khác.', '侵犯他人版权的内容。'),
+    ],
+  },
+  {
+    id: 'chien-bao',
+    heading: t('Chiến báo trung thực', '如实提交战报'),
+    items: [
+      t('Chỉ gửi ảnh chụp màn hình thật của trận bạn đánh; không chỉnh sửa ảnh hay sửa kết quả, tướng hai bên cho sai lệch.', '只提交你亲自对战的真实截图；不得修改截图，也不得篡改对局结果或双方武将。'),
+      t('Kiểm tra lại phần AI đọc từ ảnh trước khi gửi và không gửi trùng một trận.', '提交前请核对 AI 从截图中识别的内容，同一场对局不要重复提交。'),
+      t('Ảnh được duyệt sẽ hiện công khai: hãy che thông tin trên ảnh mà bạn không muốn người khác thấy.', '通过审核的截图会公开显示：请遮挡截图中你不希望他人看到的信息。'),
+    ],
+  },
+  {
+    id: 'kiem-duyet',
+    heading: t('Kiểm duyệt và xử lý vi phạm', '审核与违规处理'),
+    paragraphs: [
+      t(
+        'Chiến báo chỉ công khai sau khi quản trị viên duyệt. Quản trị viên có thể xoá bình luận và từ chối chiến báo vi phạm quy tắc mà không cần báo trước; vi phạm nghiêm trọng hoặc lặp lại có thể dẫn tới khoá tài khoản.',
+        '战报须经管理员审核后才会公开。管理员可在不事先通知的情况下删除违规评论、拒绝违规战报；严重或屡次违规的账号可能被封禁。',
+      ),
+    ],
+  },
+  {
+    id: 'bao-cao',
+    heading: t('Báo cáo vi phạm', '举报违规'),
+    contact: {
+      before: t('Thấy bình luận hoặc chiến báo vi phạm, hãy gửi đường dẫn trang và mô tả ngắn tới', '如发现违规评论或战报，请将页面链接和简要说明发送至'),
+      after: t('.', '。'),
+    },
+  },
+];
+---
+<PolicyPage
+  locale={locale}
+  path="/quy-tac-cong-dong/"
+  idPrefix="community-rules"
+  title={t('Quy tắc cộng đồng', '社区规范')}
+  description={t(
+    'Nội quy bình luận và chiến báo trên Cẩm Nang TQCCL: tôn trọng người khác, đúng chủ đề, chiến báo trung thực, kiểm duyệt và cách báo cáo vi phạm.',
+    '《三国志战略版攻略手册》评论与战报规范：尊重他人、紧扣主题、如实提交战报、审核机制与违规举报方式。',
+  )}
+  lead={t(
+    'Vài quy tắc ngắn để phần bình luận và chiến báo luôn hữu ích cho người chơi.',
+    '几条简短的规范，让评论和战报始终对玩家有所帮助。',
+  )}
+  effectiveDate="2026-09-28"
+  sections={sections}
+/>

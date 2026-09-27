@@ -20,6 +20,9 @@ const expectedRules = [
   "/chien-bao/*",
   "/quan-tri/*",
   "/chinh-sach-bao-mat/*",
+  "/dieu-khoan-su-dung/*",
+  "/quy-tac-cong-dong/*",
+  "/mien-tru-trach-nhiem/*",
   "/bai-viet/*",
   "/rss.xml",
   "/llms.txt",
@@ -31,6 +34,7 @@ const expectedRules = [
   "/favicon.png",
   "/og-image.png",
   "/logo.png",
+  "/logo-cam-nang.svg",
   "/donate-qr.png",
 ];
 
@@ -95,6 +99,7 @@ test("_headers covers every published shell and mutable raw asset", async () => 
     "/favicon.png",
     "/og-image.png",
     "/logo.png",
+    "/logo-cam-nang.svg",
     "/donate-qr.png",
     ...PUBLIC_ARTIFACTS.map((artifact) => `/${artifact.kind}/${artifact.sourceBasename}`),
     "/fonts/be-vietnam-pro-400-latin.woff2",
@@ -112,9 +117,9 @@ test("_headers covers every published shell and mutable raw asset", async () => 
     "/khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/index.html",
     // Trang cộng đồng (noindex) vẫn là HTML tĩnh phải revalidate.
     ...["chien-bao", "quan-tri"].flatMap((page) => [`/${page}/`, `/${page}/index.html`]),
-    // Chính sách bảo mật (URL khai với màn hình đồng ý OAuth của Google).
-    "/chinh-sach-bao-mat/",
-    "/chinh-sach-bao-mat/index.html",
+    // Trang chính sách (bảo mật là URL khai với màn hình đồng ý OAuth của Google).
+    ...["chinh-sach-bao-mat", "dieu-khoan-su-dung", "quy-tac-cong-dong", "mien-tru-trach-nhiem"]
+      .flatMap((page) => [`/${page}/`, `/${page}/index.html`]),
     // Mọi trang mục mới đều phải revalidate như nhau.
     ...["doi-chuan", "doi-khac", "cung-ton", "khai-hoang", "tra-cuu", "theo-doi-chieu-mo", "soi-doi-tu-anh", "goi-y-doi-tu-kho"]
       .flatMap((section) => [`/${section}/`, `/${section}/index.html`]),
@@ -129,7 +134,7 @@ test("_headers covers every published shell and mutable raw asset", async () => 
     // Bản tiếng Trung: Landing, trang mục, ba họ trang chi tiết và trang cộng đồng dưới cùng một quy tắc.
     "/zh/",
     "/zh/index.html",
-    ...["doi-chuan", "doi-khac", "cung-ton", "khai-hoang", "tra-cuu", "theo-doi-chieu-mo", "soi-doi-tu-anh", "goi-y-doi-tu-kho", "chien-bao", "quan-tri", "chinh-sach-bao-mat"]
+    ...["doi-chuan", "doi-khac", "cung-ton", "khai-hoang", "tra-cuu", "theo-doi-chieu-mo", "soi-doi-tu-anh", "goi-y-doi-tu-kho", "chien-bao", "quan-tri", "chinh-sach-bao-mat", "dieu-khoan-su-dung", "quy-tac-cong-dong", "mien-tru-trach-nhiem"]
       .flatMap((section) => [`/zh/${section}/`, `/zh/${section}/index.html`]),
     "/zh/doi-chuan/pk-s24-tu-ma-phi-hung/index.html",
     "/zh/doi-khac/hoang-ma-thuong/",

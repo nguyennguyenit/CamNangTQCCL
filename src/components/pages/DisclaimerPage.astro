@@ -1,0 +1,89 @@
+---
+// Miễn trừ trách nhiệm và bản quyền dùng chung cho `/mien-tru-trach-nhiem/` và `/zh/mien-tru-trach-nhiem/`.
+import PolicyPage, { type PolicySection } from './PolicyPage.astro';
+import { pick } from '../../../js/i18n.js';
+import type { SiteLocale } from '../../lib/locale-routes';
+
+interface Props {
+  locale: SiteLocale;
+}
+
+const { locale } = Astro.props;
+const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+
+const sections: PolicySection[] = [
+  {
+    id: 'khong-chinh-thuc',
+    heading: t('Trang không chính thức', '非官方网站'),
+    paragraphs: [
+      t(
+        'Cẩm Nang TQCCL là trang do người chơi xây dựng, không liên kết, không được tài trợ hay xác nhận bởi nhà phát triển hoặc nhà phát hành Tam Quốc Chí – Chiến Lược. Thông tin trên site không phải thông báo chính thức của game.',
+        '本手册由玩家搭建，与《三国志·战略版》的开发商或发行商无任何关联，也未获其赞助或认可。本站信息并非游戏官方公告。',
+      ),
+    ],
+  },
+  {
+    id: 'ban-quyen',
+    heading: t('Bản quyền game', '游戏版权'),
+    paragraphs: [
+      t(
+        'Tên game, tên tướng, chiến pháp, hình ảnh và nhãn hiệu liên quan thuộc về chủ sở hữu tương ứng. Site chỉ dùng chúng để tra cứu, hướng dẫn và bình luận, không nhằm mục đích thương mại.',
+        '游戏名称、武将、战法名称、图片及相关商标均归各自权利人所有。本站仅将其用于查询、攻略与评论，不作商业用途。',
+      ),
+    ],
+    contact: {
+      before: t('Nếu bạn là chủ sở hữu và muốn gỡ nội dung nào, hãy gửi email tới', '如你是权利人并希望下架任何内容，请发送邮件至'),
+      after: t('; chúng tôi sẽ xem xét và phản hồi sớm.', '，我们会尽快核查并回复。'),
+    },
+  },
+  {
+    id: 'nguon-du-lieu',
+    heading: t('Nguồn dữ liệu và bản dịch', '数据来源与译名'),
+    paragraphs: [
+      t(
+        'Đội hình, tier và điểm nguồn được tổng hợp từ nguồn cộng đồng người chơi, giữ đúng thứ tự của nguồn. Tên tướng và chiến pháp ở bản tiếng Việt dùng âm Hán Việt và có thể khác tên trong game; bản tiếng Trung giữ chữ Hán gốc. Sau mỗi lần game cập nhật, số liệu trên site có thể chưa kịp khớp.',
+        '阵容、等级和来源评分汇总自玩家社区资料，并保留来源顺序。越南语版武将与战法名称采用汉越音译，可能与游戏内名称不同；中文版保留原始汉字。游戏每次更新后，本站数据可能未能及时同步。',
+      ),
+    ],
+  },
+  {
+    id: 'tham-khao',
+    heading: t('Chỉ mang tính tham khảo', '仅供参考'),
+    items: [
+      t('Đội hình và gợi ý là ý kiến tham khảo, không bảo đảm thắng trong mọi hoàn cảnh.', '阵容与建议仅供参考，不保证在任何情况下都能获胜。'),
+      t('Kết quả do AI đọc ảnh hoặc gợi ý có thể sai; hãy đối chiếu với game.', 'AI 识别或推荐的结果可能有误，请以游戏内为准。'),
+      t('Bình luận và chiến báo là ý kiến của người đăng, không phải quan điểm của cẩm nang.', '评论和战报代表发布者本人观点，不代表本手册立场。'),
+    ],
+  },
+  {
+    id: 'giao-dich',
+    heading: t('Giao dịch và an toàn tài khoản game', '交易与游戏账号安全'),
+    items: [
+      t('Site không bán vật phẩm, không nhận nạp thẻ và không bao giờ hỏi mật khẩu tài khoản game của bạn.', '本站不出售道具、不代充值，也绝不会索要你的游戏账号密码。'),
+      t('Chỉ tải game và nạp qua liên kết chính thức của nhà phát hành; site không chịu trách nhiệm cho giao dịch với bên thứ ba.', '请仅通过发行商官方链接下载游戏和充值；本站不对与第三方的交易负责。'),
+      t('Ủng hộ tác giả là hoàn toàn tự nguyện và không kèm quyền lợi nào trên site hay trong game.', '支持作者完全出于自愿，不附带任何站内或游戏内权益。'),
+    ],
+  },
+  {
+    id: 'thay-doi',
+    heading: t('Thay đổi', '内容变更'),
+    paragraphs: [t('Khi nội dung trang này thay đổi, ngày hiệu lực phía trên sẽ được cập nhật.', '本页内容如有变更，上方生效日期将随之更新。')],
+  },
+];
+---
+<PolicyPage
+  locale={locale}
+  path="/mien-tru-trach-nhiem/"
+  idPrefix="disclaimer"
+  title={t('Miễn trừ trách nhiệm', '免责声明')}
+  description={t(
+    'Cẩm Nang TQCCL là trang không chính thức: bản quyền game, nguồn dữ liệu và bản dịch, nội dung chỉ mang tính tham khảo và an toàn giao dịch.',
+    '《三国志战略版攻略手册》为非官方网站：游戏版权、数据来源与译名、内容仅供参考及交易安全说明。',
+  )}
+  lead={t(
+    'Những điều bạn nên biết về tính chất không chính thức, bản quyền và giới hạn của thông tin trên cẩm nang.',
+    '关于本手册的非官方性质、版权归属以及信息局限，你需要了解的事项。',
+  )}
+  effectiveDate="2026-09-28"
+  sections={sections}
+/>

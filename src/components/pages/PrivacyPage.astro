@@ -2,8 +2,8 @@
 // Chính sách bảo mật dùng chung cho bản Việt (`/chinh-sach-bao-mat/`) và bản Trung (`/zh/chinh-sach-bao-mat/`).
 // Đây là URL khai trên màn hình đồng ý OAuth của Google: nội dung phải khớp dữ liệu mà code thực sự
 // thu thập (community-worker/, worker/, js/community-*.js, bảng trạng thái cục bộ ở docs/system-architecture.md).
-import SiteLayout from '../../layouts/SiteLayout.astro';
-import { localePath, pick } from '../../../js/i18n.js';
+import PolicyPage, { type PolicySection } from './PolicyPage.astro';
+import { pick } from '../../../js/i18n.js';
 import type { SiteLocale } from '../../lib/locale-routes';
 
 interface Props {
@@ -12,11 +12,6 @@ interface Props {
 
 const { locale } = Astro.props;
 const t = (vi: string, zh: string): string => pick(locale, vi, zh);
-const canonicalUrl = new URL(localePath('/chinh-sach-bao-mat/', locale), Astro.site);
-
-const CONTACT_EMAIL = 'nguyennlt.ncc@gmail.com';
-const EFFECTIVE_DATE = '2026-09-27';
-const effectiveLabel = locale === 'zh' ? EFFECTIVE_DATE : EFFECTIVE_DATE.split('-').reverse().join('/');
 
 const title = t('Chính sách bảo mật', '隐私政策');
 const lead = t(
@@ -24,10 +19,7 @@ const lead = t(
   '本页说明《三国志战略版攻略手册》（tqccl.com）收集哪些数据、用途是什么、存放在哪里，以及你如何申请删除。',
 );
 
-/** Mỗi mục: đoạn mở đầu, danh sách gạch đầu dòng, đoạn kết (đều tuỳ chọn, theo đúng thứ tự này). */
-type Section = { id: string; heading: string; paragraphs?: string[]; items?: string[]; closing?: string[] };
-
-const sections: Section[] = [
+const sections: PolicySection[] = [
   {
     id: 'khi-duyet-web',
     heading: t('Khi bạn chỉ xem cẩm nang', '仅浏览手册时'),
@@ -93,12 +85,30 @@ const sections: Section[] = [
     ],
   },
   {
+    id: 'gop-y',
+    heading: t('Góp ý, sửa lỗi', '意见反馈'),
+    paragraphs: [
+      t(
+        'Nút "Góp ý, sửa lỗi" ở chân trang không cần đăng nhập. Site lưu loại góp ý, tiêu đề, nội dung, đường dẫn trang bạn đang xem, ngôn ngữ, thời điểm gửi và email nếu bạn để lại (khi đã đăng nhập, email tài khoản được điền sẵn và bạn có thể xoá). Góp ý không hiển thị công khai; chỉ quản trị viên xem được.',
+        '页脚的“意见反馈”按钮无需登录。本站会保存反馈类型、标题、内容、你正在浏览的页面路径、语言、提交时间，以及你留下的邮箱（已登录时会自动填入账号邮箱，你可以删除）。反馈不会公开显示，仅管理员可见。',
+      ),
+      t(
+        'Mỗi góp ý được gửi thành một email tới hộp thư của quản trị viên qua Cloudflare Email Service. Email bạn để lại chỉ dùng để trả lời góp ý đó.',
+        '每条反馈都会通过 Cloudflare Email Service 以邮件形式发送到管理员邮箱。你留下的邮箱仅用于回复该条反馈。',
+      ),
+      t(
+        'Khi chưa đăng nhập, Cloudflare Turnstile kiểm tra để chặn bot; script Turnstile chỉ được nạp lúc bạn mở hộp thoại góp ý.',
+        '未登录时由 Cloudflare Turnstile 进行人机验证；Turnstile 脚本只在你打开反馈对话框时加载。',
+      ),
+    ],
+  },
+  {
     id: 'cong-cu-doc-anh',
     heading: t('Công cụ đọc ảnh', '图片识别工具'),
     paragraphs: [
       t(
-        'Công cụ "Soi đội từ ảnh" và "Gợi ý đội từ kho" nén ảnh ngay trong trình duyệt rồi gửi qua Cloudflare Worker tới Alibaba Cloud DashScope (Qwen) để nhận diện tướng và chiến pháp. Ảnh chỉ dùng cho lần đọc đó, site không lưu lại. Trước khi gửi, Cloudflare Turnstile kiểm tra để chặn bot; script Turnstile chỉ được nạp trên hai trang này.',
-        '“截图识阵”和“武将库配队”两个工具会先在浏览器中压缩图片，再经 Cloudflare Worker 发送至阿里云 DashScope（Qwen）识别武将和战法。图片仅用于本次识别，本站不会保存。发送前由 Cloudflare Turnstile 进行人机验证；Turnstile 脚本只在这两个页面加载。',
+        'Công cụ "Soi đội từ ảnh" và "Gợi ý đội từ kho" nén ảnh ngay trong trình duyệt rồi gửi qua Cloudflare Worker tới Alibaba Cloud DashScope (Qwen) để nhận diện tướng và chiến pháp. Ảnh chỉ dùng cho lần đọc đó, site không lưu lại. Trước khi gửi, Cloudflare Turnstile kiểm tra để chặn bot; script Turnstile chỉ được nạp trên hai trang này và khi mở hộp thoại góp ý.',
+        '“截图识阵”和“武将库配队”两个工具会先在浏览器中压缩图片，再经 Cloudflare Worker 发送至阿里云 DashScope（Qwen）识别武将和战法。图片仅用于本次识别，本站不会保存。发送前由 Cloudflare Turnstile 进行人机验证；Turnstile 脚本只在这两个页面以及打开反馈对话框时加载。',
       ),
     ],
   },
@@ -107,8 +117,8 @@ const sections: Section[] = [
     heading: t('Giới hạn lượt dùng', '使用频率限制'),
     paragraphs: [
       t(
-        'Để chống lạm dụng, site đếm số lượt thao tác: công cụ đọc ảnh đếm theo địa chỉ IP đã được băm (không lưu IP gốc), bình luận và chiến báo đếm theo tài khoản, đăng nhập đếm theo IP. Bộ đếm tự hết hạn và bị xoá định kỳ.',
-        '为防止滥用，本站会统计操作次数：图片识别工具按经过哈希处理的 IP 地址计数（不保存原始 IP），评论和战报按账号计数，登录按 IP 计数。计数器到期自动失效并定期清除。',
+        'Để chống lạm dụng, site đếm số lượt thao tác: công cụ đọc ảnh và góp ý khi chưa đăng nhập đếm theo địa chỉ IP đã được băm (không lưu IP gốc), bình luận, chiến báo và góp ý khi đã đăng nhập đếm theo tài khoản, đăng nhập đếm theo IP. Bộ đếm tự hết hạn và bị xoá định kỳ.',
+        '为防止滥用，本站会统计操作次数：图片识别工具和未登录时的反馈按经过哈希处理的 IP 地址计数（不保存原始 IP），评论、战报和已登录时的反馈按账号计数，登录按 IP 计数。计数器到期自动失效并定期清除。',
       ),
     ],
   },
@@ -133,8 +143,8 @@ const sections: Section[] = [
     heading: t('Nơi lưu trữ và bên xử lý', '存储位置与处理方'),
     items: [
       t(
-        'Cloudflare: lưu trữ site (Pages), máy chủ API (Workers), cơ sở dữ liệu tài khoản, bình luận, chiến báo (D1), ảnh chiến báo (R2), bộ đếm giới hạn (KV) và Turnstile.',
-        'Cloudflare：网站托管（Pages）、API 服务（Workers）、账号/评论/战报数据库（D1）、战报截图（R2）、频率计数（KV）以及 Turnstile。',
+        'Cloudflare: lưu trữ site (Pages), máy chủ API (Workers), cơ sở dữ liệu tài khoản, bình luận, chiến báo, góp ý (D1), ảnh chiến báo (R2), bộ đếm giới hạn (KV), Turnstile và gửi email góp ý (Email Service).',
+        'Cloudflare：网站托管（Pages）、API 服务（Workers）、账号/评论/战报/反馈数据库（D1）、战报截图（R2）、频率计数（KV）、Turnstile 以及反馈邮件发送（Email Service）。',
       ),
       t('Google: xác thực đăng nhập.', 'Google：登录身份验证。'),
       t('Alibaba Cloud (DashScope, khu vực quốc tế): AI đọc ảnh.', '阿里云（DashScope 国际站）：AI 图片识别。'),
@@ -151,60 +161,39 @@ const sections: Section[] = [
     heading: t('Thời gian lưu', '保存期限'),
     paragraphs: [
       t(
-        'Tài khoản, bình luận và chiến báo được lưu cho đến khi bạn tự xoá hoặc yêu cầu xoá. Ảnh tải lên chưa gửi bị xoá sau 24 giờ; phiên đăng nhập và bộ đếm giới hạn tự hết hạn.',
-        '账号、评论和战报会一直保存，直到你自行删除或申请删除。已上传但未提交的截图在 24 小时后删除；登录会话和频率计数器到期自动失效。',
+        'Tài khoản, bình luận, chiến báo và góp ý được lưu cho đến khi bạn tự xoá hoặc yêu cầu xoá. Ảnh tải lên chưa gửi bị xoá sau 24 giờ; phiên đăng nhập và bộ đếm giới hạn tự hết hạn.',
+        '账号、评论、战报和反馈会一直保存，直到你自行删除或申请删除。已上传但未提交的截图在 24 小时后删除；登录会话和频率计数器到期自动失效。',
       ),
     ],
   },
+  {
+    id: 'yeu-cau-xoa',
+    heading: t('Quyền của bạn và yêu cầu xoá dữ liệu', '你的权利与删除数据申请'),
+    contact: {
+      before: t(
+        'Bạn có thể đăng xuất bất cứ lúc nào, tự xoá bình luận của mình và thu hồi quyền truy cập của site tại trang quản lý tài khoản Google. Để xem, sửa hoặc xoá toàn bộ tài khoản cùng bình luận, chiến báo và ảnh liên quan, hãy gửi email từ địa chỉ Gmail bạn dùng để đăng nhập tới',
+        '你可以随时退出登录、自行删除评论，并在 Google 账号管理页面撤销本站的访问权限。如需查看、更正或删除整个账号及相关评论、战报和截图，请使用登录所用的 Gmail 地址发送邮件至',
+      ),
+      after: t('. Chúng tôi sẽ xoá dữ liệu và phản hồi qua email khi hoàn tất.', '。我们会删除相关数据，并在完成后通过邮件回复你。'),
+    },
+  },
+  {
+    id: 'thay-doi',
+    heading: t('Thay đổi chính sách', '政策变更'),
+    paragraphs: [t('Khi chính sách thay đổi, nội dung và ngày hiệu lực trên trang này sẽ được cập nhật.', '政策如有变更，本页内容和生效日期将随之更新。')],
+  },
 ];
-
-const deletionHeading = t('Quyền của bạn và yêu cầu xoá dữ liệu', '你的权利与删除数据申请');
-const deletionIntro = t(
-  'Bạn có thể đăng xuất bất cứ lúc nào, tự xoá bình luận của mình và thu hồi quyền truy cập của site tại trang quản lý tài khoản Google. Để xem, sửa hoặc xoá toàn bộ tài khoản cùng bình luận, chiến báo và ảnh liên quan, hãy gửi email từ địa chỉ Gmail bạn dùng để đăng nhập tới',
-  '你可以随时退出登录、自行删除评论，并在 Google 账号管理页面撤销本站的访问权限。如需查看、更正或删除整个账号及相关评论、战报和截图，请使用登录所用的 Gmail 地址发送邮件至',
-);
-const deletionOutro = t('. Chúng tôi sẽ xoá dữ liệu và phản hồi qua email khi hoàn tất.', '。我们会删除相关数据，并在完成后通过邮件回复你。');
-const changesHeading = t('Thay đổi chính sách', '政策变更');
-const changesText = t(
-  'Khi chính sách thay đổi, nội dung và ngày hiệu lực trên trang này sẽ được cập nhật.',
-  '政策如有变更，本页内容和生效日期将随之更新。',
-);
-const effectiveText = t('Có hiệu lực từ', '生效日期');
 ---
-<SiteLayout
-  title={t('Chính sách bảo mật — Cẩm Nang Tam Quốc Chí - Chiến Lược', '隐私政策 — 三国志战略版攻略手册')}
-  description={t(
-    'Cẩm Nang TQCCL thu thập dữ liệu gì khi bạn đăng nhập Google, bình luận, gửi chiến báo hoặc dùng công cụ đọc ảnh, lưu ở đâu và cách yêu cầu xoá.',
-    '《三国志战略版攻略手册》在你使用 Google 登录、发表评论、提交战报或使用图片识别工具时收集哪些数据、存放在哪里以及如何申请删除。',
-  )}
-  pageKind="detail"
-  tagline={title}
-  canonicalUrl={canonicalUrl}
+<PolicyPage
   locale={locale}
->
-  <article class="blog-article" aria-labelledby="privacy-title">
-    <header class="blog-article-head">
-      <h1 id="privacy-title" class="detail-title">{title}</h1>
-      <p class="blog-card-meta">{effectiveText} <time datetime={EFFECTIVE_DATE}>{effectiveLabel}</time></p>
-      <p class="blog-lead">{lead}</p>
-    </header>
-    <div class="blog-body">
-      {sections.map((section) => (
-        <section aria-labelledby={`privacy-${section.id}`}>
-          <h2 id={`privacy-${section.id}`}>{section.heading}</h2>
-          {section.paragraphs?.map((paragraph) => <p>{paragraph}</p>)}
-          {section.items ? <ul>{section.items.map((item) => <li>{item}</li>)}</ul> : null}
-          {section.closing?.map((paragraph) => <p>{paragraph}</p>)}
-        </section>
-      ))}
-      <section aria-labelledby="privacy-yeu-cau-xoa">
-        <h2 id="privacy-yeu-cau-xoa">{deletionHeading}</h2>
-        <p>{deletionIntro} <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>{deletionOutro}</p>
-      </section>
-      <section aria-labelledby="privacy-thay-doi">
-        <h2 id="privacy-thay-doi">{changesHeading}</h2>
-        <p>{changesText}</p>
-      </section>
-    </div>
-  </article>
-</SiteLayout>
+  path="/chinh-sach-bao-mat/"
+  idPrefix="privacy"
+  title={title}
+  description={t(
+    'Cẩm Nang TQCCL thu thập dữ liệu gì khi bạn đăng nhập Google, bình luận, gửi chiến báo, gửi góp ý hoặc dùng công cụ đọc ảnh, lưu ở đâu và cách yêu cầu xoá.',
+    '《三国志战略版攻略手册》在你使用 Google 登录、发表评论、提交战报、提交反馈或使用图片识别工具时收集哪些数据、存放在哪里以及如何申请删除。',
+  )}
+  lead={lead}
+  effectiveDate="2026-09-28"
+  sections={sections}
+/>
