@@ -1,4 +1,4 @@
-// TDD js/unified-lookup.js + js/lookup-detail.js — một cửa tra cứu sáu nhóm.
+// TDD js/unified-lookup.js + js/lookup-detail.js — một cửa tra cứu bảy nhóm.
 // Route Tra cứu dùng query `?group=<...>&id=<...>` để chọn nhóm và hồ sơ.
 // Tìm kiếm toàn corpus trước khi phân trang, hồ sơ chỉ tiếng Việt và liên kết theo ID.
 import { test } from "node:test";
@@ -129,12 +129,19 @@ const CATALOG = {
   ],
 };
 
-const corpus = () => buildLookupCorpus({ heroes: HERO_POOL, tactics: TACTIC_POOL, catalog: CATALOG });
+// Dạng thật của `data/books-dict.json`: không có `id`, `hanViet` có thể vắng hoặc khác tên dịch nghĩa.
+const BOOKS = [
+  { chinese: "百战", viet: "Bách Chiến", hanViet: "Bách Chiến" },
+  { chinese: "守而有道", viet: "Biết Cách Phòng Thủ" },
+  { chinese: "无名" },
+];
+
+const corpus = () => buildLookupCorpus({ heroes: HERO_POOL, tactics: TACTIC_POOL, catalog: CATALOG, books: BOOKS });
 
 /* ---------- Route ---------- */
 
-test("sáu nhóm theo đúng thứ tự công bố", () => {
-  assert.deepEqual(LOOKUP_GROUPS, ["heroes", "tactics", "equipment", "advisors", "troop-mods", "buildings"]);
+test("bảy nhóm theo đúng thứ tự công bố", () => {
+  assert.deepEqual(LOOKUP_GROUPS, ["heroes", "tactics", "equipment", "advisors", "troop-mods", "buildings", "books"]);
 });
 
 test("query trống mở toàn bộ corpus, group/id đều tùy chọn", () => {
@@ -202,7 +209,7 @@ test("bỏ qua khóa khác và chỉ xét group/id", () => {
 });
 
 test("group lạ hoặc rỗng bị từ chối", () => {
-  assertLookupError("?group=books", "unknown-group");
+  assertLookupError("?group=scrolls", "unknown-group");
   assertLookupError("?group=", "unknown-group");
   assertLookupError("?group=HEROES", "unknown-group");
 });
@@ -251,7 +258,7 @@ test("query được serialize ổn định và encode ID", () => {
 
 /* ---------- Corpus, tìm kiếm, phân trang ---------- */
 
-test("corpus phủ đủ sáu nhóm và mọi bản ghi con", () => {
+test("corpus phủ đủ bảy nhóm và mọi bản ghi con", () => {
   const built = corpus();
   assert.deepEqual(Object.keys(built.groups).sort(), [...LOOKUP_GROUPS].sort());
   assert.equal(built.groups.heroes.length, HERO_POOL.length);
@@ -260,6 +267,8 @@ test("corpus phủ đủ sáu nhóm và mọi bản ghi con", () => {
   assert.equal(built.groups.advisors.length, CATALOG.advisors.length);
   assert.equal(built.groups["troop-mods"].length, CATALOG.troopMods.length);
   assert.equal(built.groups.buildings.length, CATALOG.buildings.length);
+  // Dòng binh thư không có tên Việt thì không có mã hồ sơ nên bị bỏ.
+  assert.deepEqual(built.groups.books.map((entry) => entry.id), ["book:bach-chien", "book:biet-cach-phong-thu"]);
 
   const equipmentIds = built.groups.equipment.map((entry) => entry.id);
   assert.ok(equipmentIds.includes("equipment-special:mo-coi"), "đặc hiệu chưa biết trang bị cha vẫn phải tìm được");
@@ -361,6 +370,7 @@ test("chữ Hán chỉ là alias tìm kiếm cho mọi nhóm", () => {
     ["advisors", "恩服兵心", "advisor:an-phuc-binh-tam"],
     ["troop-mods", "丹陽兵", "troop-mod:dan-duong-binh"],
     ["buildings", "八陣圖", "building:bat-tran-do"],
+    ["books", "守而有道", "book:biet-cach-phong-thu"],
   ];
   for (const [group, query, id] of cases) {
     const found = searchLookupGroup(built, { group, query });
@@ -375,6 +385,17 @@ test("không có kết quả trả tổng 0 và không còn trang", () => {
   assert.equal(empty.total, 0);
   assert.deepEqual(empty.items, []);
   assert.equal(empty.hasMore, false);
+});
+
+test("deep link binh thư `?id=book:<slug>` mở đúng hồ sơ, hiệu ứng để trạng thái trống", () => {
+  const route = parseLookupQuery("?id=book%3Abach-chien");
+  assert.equal(route.error, null);
+  assert.equal(route.id, "book:bach-chien");
+  assert.equal(parseLookupQuery("?group=books&id=book%3Abach-chien").error, null);
+  assert.equal(parseLookupQuery("?group=tactics&id=book%3Abach-chien").error, "id-kind-mismatch");
+  const profile = lookupProfile(corpus(), route.id);
+  assert.equal(profile.titleVi, "Bách Chiến");
+  assert.deepEqual(profile.fields.map((field) => [field.key, field.value]), [["effect", null]]);
 });
 
 /* ---------- Hồ sơ chi tiết ---------- */

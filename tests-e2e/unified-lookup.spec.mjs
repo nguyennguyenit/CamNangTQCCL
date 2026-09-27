@@ -5,11 +5,11 @@ import { test, expect } from '@playwright/test';
 
 /** Link điều hướng của mục: bảng desktop trong header hoặc menu mobile đang mở (footer cũng có link cùng tên). */
 function navLink(page, name, mobile = false) {
-  return (mobile ? page.locator('#section-menu-items') : page.locator('.site-nav')).getByRole('link', { name, exact: true });
+  return (mobile ? page.locator('#section-menu-items') : page.locator('.quick-nav')).getByRole('link', { name, exact: true });
 }
 
 const CJK = /[\u3400-\u9fff]/;
-const GROUPS = ['heroes', 'tactics', 'equipment', 'advisors', 'troop-mods', 'buildings'];
+const GROUPS = ['heroes', 'tactics', 'equipment', 'advisors', 'troop-mods', 'buildings', 'books'];
 
 const lookup = (page) => page.locator('#section-lookup');
 const chip = (page, group) => lookup(page).locator(`.lookup-chip[data-group="${group}"]`);
@@ -38,7 +38,7 @@ test('nav link Tra cứu hỗ trợ điều hướng bằng bàn phím', async (
   await expect(navLink(page, 'Tra cứu', false)).toHaveAttribute('aria-current', 'page');
 });
 
-test('sáu chip nhóm là nút có aria-pressed và deep link chọn đúng nhóm', async ({ page }) => {
+test('bảy chip nhóm là nút có aria-pressed và deep link chọn đúng nhóm', async ({ page }) => {
   for (const group of GROUPS) {
     await page.goto(`/tra-cuu/?group=${group}`);
     await expect(lookup(page).getByRole('button', { pressed: true })).toHaveCount(1);
@@ -70,13 +70,13 @@ test('quay lại Tra cứu bằng liên kết cập nhật route và bộ lọc'
   await navLink(page, 'Tra cứu').click();
   await expect(page).toHaveURL('/tra-cuu/');
   await expect(lookup(page).locator('.lookup-chip[aria-pressed="true"]')).toHaveCount(0);
-  await expect(lookup(page).locator('[data-lookup-total]')).toContainText(/^\d+ (?:kết quả|tướng|chiến pháp|trang bị|quân sư|cải tạo binh chủng|công trình) · bấm/);
+  await expect(lookup(page).locator('[data-lookup-total]')).toContainText(/^\d+ (?:kết quả|tướng|chiến pháp|trang bị|quân sư|cải tạo binh chủng|công trình|binh thư) · bấm/);
 });
 test('route tra cứu sai bị từ chối bằng lỗi tiếng Việt', async ({ page }) => {
   for (const [route, message] of [
     ['/tra-cuu/?group=heroes&group=tactics', 'Mỗi tham số tra cứu chỉ được xuất hiện một lần.'],
     ['/tra-cuu/?group=heroes&id=hero%3Aone&id=hero%3Atwo', 'Mỗi tham số tra cứu chỉ được xuất hiện một lần.'],
-    ['/tra-cuu/?group=books', 'Nhóm tra cứu không hợp lệ.'],
+    ['/tra-cuu/?group=scrolls', 'Nhóm tra cứu không hợp lệ.'],
     ['/tra-cuu/?group=heroes&id=tactic%3Anhan-duc', 'Mục tra cứu không thuộc nhóm đã chọn.'],
     ['/tra-cuu/?id=https%3A%2F%2Fevil.example%2Fx.json', 'Mã mục tra cứu không hợp lệ.'],
   ]) {

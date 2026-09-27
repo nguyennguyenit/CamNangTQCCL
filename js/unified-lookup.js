@@ -1,4 +1,4 @@
-// Cửa tra cứu sáu nhóm: lưới tướng 6 cột, bảng chiến pháp, hộp thoại hồ sơ theo artboard
+// Cửa tra cứu bảy nhóm: lưới tướng 6 cột, bảng chiến pháp, hộp thoại hồ sơ theo artboard
 // Lookup/LookupTactics/LookupProfile/LookupMobile.
 //
 // Quy tắc render (plan.md quyết định #14): dữ liệu động chỉ qua `el()`/`textContent`, không `innerHTML`.
@@ -14,17 +14,18 @@ import { heroPortrait } from "./hero-portrait.js";
 import { createHeroSummaryLoader } from "./hero-summaries.js";
 import { teamDetailHref } from "./team-detail-navigation.js";
 import { normalizeText } from "./filters.js";
+import { bookLookupId } from "./lookup-ids.js";
 
-export const LOOKUP_GROUPS = Object.freeze(["heroes", "tactics", "equipment", "advisors", "troop-mods", "buildings"]);
+export const LOOKUP_GROUPS = Object.freeze(["heroes", "tactics", "equipment", "advisors", "troop-mods", "buildings", "books"]);
 /** Nhãn nhóm dùng chung cho chip ở trang Tra cứu và menu điều hướng (SiteLayout, bản Việt). */
 export const LOOKUP_GROUP_LABELS = Object.freeze({
   heroes: "Tướng", tactics: "Chiến pháp", equipment: "Trang bị",
-  advisors: "Quân sư", "troop-mods": "Cải tạo binh chủng", buildings: "Công trình",
+  advisors: "Quân sư", "troop-mods": "Cải tạo binh chủng", buildings: "Công trình", books: "Binh thư",
 });
 /** Nhãn nhóm bản Trung (`/zh/`): SiteLayout chọn theo `locale`, trang Tra cứu chọn theo `<html lang>`. */
 export const LOOKUP_GROUP_LABELS_ZH = Object.freeze({
   heroes: "武将", tactics: "战法", equipment: "装备",
-  advisors: "军师", "troop-mods": "兵种进阶", buildings: "建筑",
+  advisors: "军师", "troop-mods": "兵种进阶", buildings: "建筑", books: "兵书",
 });
 /** Nhãn nhóm theo ngôn ngữ chỉ định (`vi` | `zh`). */
 export function lookupGroupLabels(locale = currentLocale()) {
@@ -33,19 +34,19 @@ export function lookupGroupLabels(locale = currentLocale()) {
 /** Đơn vị đếm của từng nhóm cho dòng trạng thái ("n tướng · bấm để mở hồ sơ"). */
 export const LOOKUP_GROUP_UNITS = Object.freeze({
   heroes: "tướng", tactics: "chiến pháp", equipment: "trang bị",
-  advisors: "quân sư", "troop-mods": "cải tạo binh chủng", buildings: "công trình",
+  advisors: "quân sư", "troop-mods": "cải tạo binh chủng", buildings: "công trình", books: "binh thư",
 });
 /** Lượng từ + đơn vị bản Trung ("12 名武将"). */
 const LOOKUP_GROUP_UNITS_ZH = Object.freeze({
   heroes: "名武将", tactics: "个战法", equipment: "件装备",
-  advisors: "位军师", "troop-mods": "项兵种进阶", buildings: "座建筑",
+  advisors: "位军师", "troop-mods": "项兵种进阶", buildings: "座建筑", books: "本兵书",
 });
 /** Thứ tự vai trò trong khối "Trong cẩm nang" (khớp `index.json` heroes[].roleRaw). */
 export const POSITION_LABELS = Object.freeze([L("Chủ tướng", "主将"), L("Phó tướng 1", "副将 1"), L("Phó tướng 2", "副将 2")]);
 
 const GROUP_BY_KIND = Object.freeze({
   hero: "heroes", tactic: "tactics", equipment: "equipment", "equipment-special": "equipment",
-  advisor: "advisors", "troop-mod": "troop-mods", building: "buildings",
+  advisor: "advisors", "troop-mod": "troop-mods", building: "buildings", book: "books",
 });
 // `<html lang>` cố định theo trang nên hằng dịch lúc nạp module vẫn đúng ngôn ngữ.
 const ROUTE_ERRORS = Object.freeze({
@@ -106,7 +107,18 @@ function entry(group, record) {
   return { id: record.id, group, nameVi, aliases, searchKeys, record };
 }
 
-export function buildLookupCorpus({ heroes, tactics, catalog }) {
+/**
+ * Binh thư (`books-dict.json`) không có `id` trong dữ liệu: mã hồ sơ dựng bằng `bookLookupId` (dùng chung
+ * với trang chi tiết đội), dòng không dựng được mã thì bỏ. Tên Hán-Việt và chữ Hán là khóa tìm phụ.
+ */
+function bookRecords(books) {
+  return (Array.isArray(books) ? books : []).flatMap((row) => {
+    const id = bookLookupId(row);
+    return id ? [{ ...row, id, aliases: typeof row.hanViet === "string" && row.hanViet ? [row.hanViet] : [] }] : [];
+  });
+}
+
+export function buildLookupCorpus({ heroes, tactics, catalog, books = [] }) {
   const groups = {
     heroes: heroes.map((record) => entry("heroes", record)),
     tactics: tactics.map((record) => entry("tactics", record)),
@@ -114,6 +126,7 @@ export function buildLookupCorpus({ heroes, tactics, catalog }) {
     advisors: catalog.advisors.map((record) => entry("advisors", record)),
     "troop-mods": catalog.troopMods.map((record) => entry("troop-mods", record)),
     buildings: catalog.buildings.map((record) => entry("buildings", record)),
+    books: bookRecords(books).map((record) => entry("books", record)),
   };
   const byId = new Map();
   for (const rows of Object.values(groups)) for (const row of rows) byId.set(row.id, row);
@@ -195,7 +208,8 @@ export function lookupCardView(group, item) {
   const meta = parts.filter(Boolean);
   return {
     variant,
-    chinese: recordChinese(record),
+    // Binh thư bản Việt dùng tên dịch nghĩa: không hiện chữ Hán (kể cả ô chân dung), chữ Hán chỉ là khóa tìm.
+    chinese: kind === "books" && currentLocale() !== "zh" ? "" : recordChinese(record),
     faction: hero && shown(record.faction) ? shown(record.faction) : null,
     stars: hero && Number.isFinite(Number(record.stars)) ? L(`${record.stars} sao`, `${record.stars} 星`) : null,
     meta,
@@ -306,7 +320,7 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
     el("div", { class: "reference-head-text" }, [
       el("span", { class: "reference-kicker" }, L("Tra cứu", "图鉴查询")),
       el("h1", { class: "reference-title" }, L("Tra cứu", "图鉴查询")),
-      el("p", { class: "reference-lead" }, L("Tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng và công trình — tìm bằng tên Việt, Hán-Việt hoặc chữ Hán.", "武将、战法、装备、军师、兵种进阶与建筑——可用中文名、越南语名或汉越音搜索。")),
+      el("p", { class: "reference-lead" }, L("Tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng, công trình và binh thư — tìm bằng tên Việt, Hán-Việt hoặc chữ Hán.", "武将、战法、装备、军师、兵种进阶、建筑与兵书——可用中文名、越南语名或汉越音搜索。")),
     ]),
   ]);
   const search = el("input", {
@@ -437,8 +451,8 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
   /** Ảnh + tên + huy hiệu của hộp thoại (mọi nhóm). */
   function dialogHeader(entryRow, profile) {
     const record = entryRow.record ?? {};
-    const chinese = recordChinese(record);
     const view = lookupCardView(entryRow.group, entryRow);
+    const chinese = view.chinese;
     const eyebrow = [labels[entryRow.group], shown(record.lookup?.categoryVi ?? record.qualityVi ?? record.slotVi ?? record.elementVi ?? record.appliesToVi)]
       .filter(Boolean).join(" · ");
     const badges = el("div", { class: "lookup-dialog-badges" });

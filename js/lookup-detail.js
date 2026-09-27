@@ -338,6 +338,18 @@ function buildingProfile(_corpus, entry) {
   return profile;
 }
 
+/**
+ * Binh thư: dữ liệu chỉ có tên (Việt, Hán-Việt, chữ Hán), chưa có hiệu ứng — ô hiệu ứng hiện trạng thái
+ * trống chung, không bịa. Tên Hán-Việt chỉ hiện ở bản Việt khi khác tên dịch nghĩa.
+ */
+function bookProfile(_corpus, entry) {
+  const row = entry.record;
+  const profile = base(entry);
+  if (!ZH() && row.hanViet && row.hanViet !== row.viet) pushField(profile, "hanViet", row.hanViet, L("Tên Hán-Việt", "汉越名"));
+  pushField(profile, "effect", null, L("Hiệu ứng", "效果"));
+  return profile;
+}
+
 export function lookupProfile(corpus, id) {
   const entry = corpus?.byId?.get(id);
   if (!entry) return null;
@@ -348,5 +360,6 @@ export function lookupProfile(corpus, id) {
   if (entry.id.startsWith("advisor:")) return advisorProfile(corpus, entry);
   if (entry.id.startsWith("troop-mod:")) return troopProfile(corpus, entry);
   if (entry.id.startsWith("building:")) return buildingProfile(corpus, entry);
+  if (entry.id.startsWith("book:")) return bookProfile(corpus, entry);
   return null;
 }

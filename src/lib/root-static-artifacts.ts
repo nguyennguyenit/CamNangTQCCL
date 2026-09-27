@@ -311,3 +311,9 @@ export async function seasonArtifactHashes(options: ArtifactOptions = {}) {
     return [name, 'sha256:' + createHash('sha256').update(bytes).digest('hex')];
   })));
 }
+
+/** Byte hash pins the lookup page's Binh thư group (`books-dict`, outside the lookup manifest) to this publication. */
+export async function lookupBooksHash(options: ArtifactOptions = {}) {
+  const { bytes } = await readPublicArtifact({ ...options, kind: 'data', routeParam: 'books-dict' });
+  return 'sha256:' + createHash('sha256').update(bytes).digest('hex');
+}
