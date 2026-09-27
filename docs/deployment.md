@@ -21,16 +21,21 @@ Project deploy is split into three surfaces:
 
 ## Latest Static Pages Deploy
 
-- Date: 2026-09-27
-- Production URL: `https://tqccl.com` (primary). `https://www.tqccl.com` returns `301` to the same path and query through a zone Redirect Rule (2026-09-28, verified with curl on page, JSON and 404 paths; hash links such as `/#analyze` still reach `/soi-doi-tu-anh/`). `https://tqccl.pages.dev` hands over through the head bridge script.
-- Deployment URL: `https://d3b75ea5.tqccl.pages.dev`
-- Deployment ID: `d3b75ea5-86fa-46c8-9917-596d30808b89`
-- Source commit: `7422a5d` (clean worktree of `origin/main`; CI run `36333537098` green, 329 e2e passed)
-- Method: Wrangler direct upload of `dist/` after `npm run build` and `npm run verify` (1725 files).
-- Preview verified: `https://2809167a.tqccl.pages.dev` (alias `https://release-260927b.tqccl.pages.dev`)
-- Previous production / rollback targets: `c72f8f75-4028-4572-82c2-709f52b7ec76` (`877adf1`, same day, canonical still `tqccl.pages.dev`), `4e35bd85-0759-4e39-ae20-e785300c9757` (`0a57801`).
-- Verification: `https://tqccl.pages.dev/theo-doi-chieu-mo/?x=1` lands on `https://tqccl.com/theo-doi-chieu-mo/?x=1` and carries `tqcclRecruitTracker` and `theme`; a key that already exists on `tqccl.com` is not overwritten; `https://www.tqccl.com/#analyze` ends on `https://tqccl.com/soi-doi-tu-anh/`; canonical, `robots.txt` and `sitemap.xml` use `https://tqccl.com`; no page errors.
-- Earlier the same day: `c72f8f75` (`877adf1`) replaced the 2-week-old `4e35bd85`; preview `7bcc5c60` passed 12 routes, headers, 404s, sitemap (1558 URLs) and 10 legacy hash redirects.
+- Date: 2026-09-28
+- Production URL: `https://tqccl.com` (primary). `https://www.tqccl.com` returns `301` to the same path and query through a zone Redirect Rule; `https://tqccl.pages.dev` hands over through the head bridge script.
+- Deployment URL: `https://3a856c2d.tqccl.pages.dev`
+- Deployment ID: `3a856c2d-f1ef-4d79-8d0f-9efd75f103c2`
+- Source commit: `ad2ceb7` (clean `main` = `origin/main`; CI run `36334247045` green on `9a2dc7e`, later commits docs-only). First release with the `/zh/` mirror, community features, blog, privacy page and book logo.
+- Method: `COMMUNITY_API_ORIGIN=https://tqccl-community.nguyennlt-ncc.workers.dev npm run build`, `npm run verify` (3305 files), Wrangler direct upload from the repository root so `functions/api/[[path]].ts` ships with the site. Pages service binding `COMMUNITY` → `tqccl-community`.
+- Preview verified: `https://fb5ec929.tqccl.pages.dev` (alias `https://release-260928.tqccl.pages.dev`): 21 routes incl. `/zh/`, `/chien-bao/`, `/quan-tri/`, `/bai-viet/`, `/chinh-sach-bao-mat/`, `/rss.xml`, `/llms.txt`, `/api/me`, `/api/posts`, 404; canonical `https://tqccl.com/`; Chromium load of landing, zh landing, Đội chuẩn, zh Đội khác, Tra cứu, Khai hoang and a team detail with its community section, no page errors.
+- Production verified: `/`, `/zh/`, `/chinh-sach-bao-mat/`, `/bai-viet/`, `/api/me`, `/logo.png` return 200; `https://www.tqccl.com/zh/` → 301 `https://tqccl.com/zh/`; Google sign-in start on `tqccl.com` returns redirect URI `https://tqccl.com/api/auth/callback/google`.
+- Previous production / rollback targets: `d3b75ea5-86fa-46c8-9917-596d30808b89` (`7422a5d`, primary-domain release), `c72f8f75-4028-4572-82c2-709f52b7ec76` (`877adf1`).
+
+## Latest Community Worker Deploy
+
+- Date: 2026-09-28
+- Worker: `tqccl-community` (`https://tqccl-community.nguyennlt-ncc.workers.dev`), version `576f5f6e-df58-4a88-9726-e1653b656dc5`, source `ad2ceb7`; `tsc` clean, vitest 46/46.
+- Secrets set: `BETTER_AUTH_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`. Not yet set: `QWEN_API_KEY` (battle-report AI reading returns 503), `GITHUB_DISPATCH_TOKEN` (blog publish does not trigger `pages-deploy.yml`).
 
 ## Latest Research MCP Deploy
 
