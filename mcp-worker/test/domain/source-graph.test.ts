@@ -4,6 +4,8 @@ import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
+import { L, currentLocale } from "../../../js/i18n.js";
+
 const repositoryRoot = fileURLToPath(new URL("../../..", import.meta.url));
 const entrypoints = [
   "js/match-dict.js",
@@ -56,6 +58,7 @@ describe("legacy semantic source graph", () => {
       "js/filters.js",
       "js/hanviet.js",
       "js/hero-identity.js",
+      "js/i18n.js",
       "js/match-dict.js",
       "js/roster-scan-map.js",
       "js/roster-scan-state.js",
@@ -68,6 +71,9 @@ describe("legacy semantic source graph", () => {
     for (const relativePath of semanticClosure()) {
       const source = readFileSync(resolve(repositoryRoot, relativePath), "utf8");
       for (const pattern of forbidden) {
+        // js/i18n.js đọc `globalThis.document` có guard để lấy <html lang>; ngoài DOM phải về `vi`
+        // (kiểm bằng hành vi cuối test) nên chỉ file này được miễn quy tắc biến toàn cục trình duyệt.
+        if (relativePath === "js/i18n.js" && pattern === forbidden[0]) continue;
         expect(
           pattern.test(relativePath) || pattern.test(source),
           `${relativePath} matched forbidden ${pattern}`,
@@ -81,5 +87,8 @@ describe("legacy semantic source graph", () => {
         `${relativePath} imports filesystem/path primitives`,
       ).toBe(false);
     }
+    expect(globalThis).not.toHaveProperty("document");
+    expect(currentLocale()).toBe("vi");
+    expect(L("vi", "zh")).toBe("vi");
   });
 });

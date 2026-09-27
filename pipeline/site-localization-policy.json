@@ -12,8 +12,8 @@
     "notes": {
       "approvedDisplaySlots": 11,
       "blocks": 1967,
-      "concreteInventorySha256": "71ac9352a689d37a6e049fc969c520d6f2e87b4b609314fe4beb2813ac9eabec",
-      "concreteLocationCount": 56672,
+      "concreteInventorySha256": "9fbc1092e98a816d71974a341432688b83a63ce39fbd6a7abba1d7b80f24959c",
+      "concreteLocationCount": 56648,
       "hanBlocks": 1928,
       "lookupReviewObligations": 3503,
       "siteLedgerObligations": 2086,
@@ -80,6 +80,7 @@
     {
       "entrypoints": [
         "src/pages/doi-chuan/[team].astro",
+        "src/components/pages/RecommendedDetail.astro",
         "js/team-detail.js",
         "js/recommended-reference-render.js"
       ],
@@ -93,7 +94,7 @@
           "fieldPattern": "title/meta/messages",
           "glossary": [],
           "owner": {
-            "file": "src/pages/doi-chuan/[team].astro",
+            "file": "src/components/pages/RecommendedDetail.astro",
             "symbol": "page template"
           },
           "states": [
@@ -136,6 +137,7 @@
     {
       "entrypoints": [
         "src/pages/doi-khac/[team].astro",
+        "src/components/pages/LegacyDetail.astro",
         "js/team-detail.js",
         "js/recommended-reference-render.js"
       ],
@@ -149,7 +151,7 @@
           "fieldPattern": "title/meta/messages",
           "glossary": [],
           "owner": {
-            "file": "src/pages/doi-khac/[team].astro",
+            "file": "src/components/pages/LegacyDetail.astro",
             "symbol": "page template"
           },
           "states": [
@@ -192,6 +194,7 @@
     {
       "entrypoints": [
         "src/pages/khai-hoang/[team].astro",
+        "src/components/pages/KhaiHoangDetail.astro",
         "js/khaihoang-detail.js",
         "js/render.js",
         "js/team-detail-navigation.js"
@@ -206,7 +209,7 @@
           "fieldPattern": "title/meta/messages",
           "glossary": [],
           "owner": {
-            "file": "src/pages/khai-hoang/[team].astro",
+            "file": "src/components/pages/KhaiHoangDetail.astro",
             "symbol": "page template"
           },
           "states": [
@@ -252,6 +255,7 @@
     {
       "entrypoints": [
         "src/pages/doi-chuan/index.astro",
+        "src/components/pages/SectionPage.astro",
         "js/team-filter-section.js",
         "js/recommended-reference-render.js"
       ],
@@ -326,6 +330,7 @@
     {
       "entrypoints": [
         "src/pages/doi-khac/index.astro",
+        "src/components/pages/SectionPage.astro",
         "js/team-filter-section.js",
         "js/recommended-reference-render.js"
       ],
@@ -380,6 +385,7 @@
     {
       "entrypoints": [
         "src/pages/cung-ton/index.astro",
+        "src/components/pages/SectionPage.astro",
         "js/team-filter-section.js",
         "js/render.js"
       ],
@@ -432,6 +438,7 @@
     {
       "entrypoints": [
         "src/pages/khai-hoang/index.astro",
+        "src/components/pages/SectionPage.astro",
         "js/render.js"
       ],
       "id": "khaihoang",
@@ -496,6 +503,7 @@
     {
       "entrypoints": [
         "src/pages/tra-cuu/index.astro",
+        "src/components/pages/SectionPage.astro",
         "js/unified-lookup.js",
         "js/lookup-detail.js"
       ],
@@ -557,6 +565,7 @@
     {
       "entrypoints": [
         "src/pages/theo-doi-chieu-mo/index.astro",
+        "src/components/pages/SectionPage.astro",
         "js/recruit-tracker.js"
       ],
       "id": "recruit-tracker",
@@ -633,6 +642,7 @@
     {
       "entrypoints": [
         "src/pages/soi-doi-tu-anh/index.astro",
+        "src/components/pages/SectionPage.astro",
         "js/analyze.js"
       ],
       "id": "analyze",
@@ -675,6 +685,7 @@
     {
       "entrypoints": [
         "src/pages/goi-y-doi-tu-kho/index.astro",
+        "src/components/pages/SectionPage.astro",
         "js/roster-recommend-ui.js",
         "js/roster-scan-map.js",
         "worker/src/schema.ts"
@@ -741,54 +752,58 @@
     "data/khaihoang.json": "973b252b08ef9332f19866e7321389bd952d03d8156c586718674db8a09de211",
     "data/season-content-links.json": "c87e87e6984c5a39af11248c2125620477852aa1c82b299da339e262e2c881d9",
     "data/teams.json": "45e13dca78877abc13d2ef2213be9432c8307aa558d99783498279f7563cf283",
-    "js/analyze-map.js": "f463c3ba472af8f8fcd18697180e48fb8b3323effdc0ee6d4ba240597b089039",
-    "js/analyze.js": "d2bc2d8679992d82a47ee2e166ea6f2ee44caf30c25188113180dc73c09665a9",
-    "js/app.js": "0e59287f2a10c33ac65f9c61643fe978b321bf120ecf3c63a6f8c556e51aacef",
-    "js/detail-actions.js": "6fd2fbfd9b8ad73b6e4cfe0c4a907897b0e79e3d60437bacb0a8f2ee97c41104",
+    "js/analyze-map.js": "1c3b0415b7f8bf9d1a2ba298b15eb2ffab2a233467a7bb6bda27e8c69d8a463c",
+    "js/analyze.js": "7d3501a71222bda0dcfe438438eb54057e1759aed78ef8592f1edef9ec276ed5",
+    "js/app.js": "7103b40cc062f9eb88f104bfb8a9bb92053481948e0870cd9945f339532a5113",
+    "js/detail-actions.js": "5160b798ee5d779cfb0c7b05f8b5b9b883997d65bb22de23749c67024611e1dc",
     "js/hero-portrait.js": "5abbe063592abaa25f3f22334456a7de3784b9c330de3bb9abbe77d47de11e2b",
     "js/hero-summaries.js": "6853ba62d68d4185d11044edca7a6c53b9c6a16aaf6228cd4f86f2b3d66bab9a",
-    "js/khaihoang-detail.js": "f4a2e3ff0c8d5261480a85012e689ed11fbde16c4a526aa3eb2577c8917b5973",
-    "js/legacy-routes.js": "f9d766d671613275d8e0fe1a263d1cb6e1a6288d47d32f2f172531d6fdee0668",
+    "js/khaihoang-detail.js": "cee8b8fa3cd47286d206de8f3712a62486d8337f53ebc56161caf9c3d848a7c2",
+    "js/legacy-routes.js": "9b7397aa940cab78029e9d5e428b53d99d7a55ec5d973b679148ebcd9f276774",
     "js/lookup-data.js": "d15b64ac8419453c2d49874da5f07c4db303f59091d512af80aa8b16158ffdd5",
-    "js/lookup-detail.js": "4a29c5db0d506cf2784c04d3306b5a5e1f773c32b3c1111c92dd69ed735bc659",
-    "js/recommended-reference-render.js": "7817d6c33802da92ef03a9b1097f0f5c91cc26e5125932a5d517567efddeecc5",
-    "js/recommended-reference-state.js": "807a32681c04793f47acdf327ed342145bb18c53bc1ffa1aeb7ac36d0f198bcd",
-    "js/recruit-tracker-store.js": "19fe4dba7c8da644b1e3481f4ddef0adc4e48c5ae04fea3e88f7a0ef50c909d9",
-    "js/recruit-tracker.js": "cdcd434e7798f9d143ec697ec473d6b2fcb6c665d4b5a664c4415774c3d934be",
-    "js/render.js": "0b95e9739049f043e83dda83ef81052d25ad6343ae7b3ba6eb79934f9bd72f20",
-    "js/roster-recommend-ui.js": "cd4b32e4c005e3c7c50318e08ee0c81b4ddd7b599c2f1e89a172e799187af094",
-    "js/roster-scan-map.js": "e79071426c09ad63a6ffebac07fa0e7cec00f17ed072027c678404042faf82ce",
-    "js/roster-scan-state.js": "d93f94758c68557802b3ea682aeabe3c0f8bf33b5abf3635efbe8c8148b9788c",
-    "js/site-chrome.js": "f0d56b54055b9734bf6ecba49108c52c795aa7b4c5bba3375f04bc388d7e3a14",
+    "js/lookup-detail.js": "b1fd76107226b51662dd84f75e9fa9ab8f0668869318916a2007f98d0b72ca55",
+    "js/recommended-reference-render.js": "bd9f88b040ab7f2c34fc797e0d2629fc4708c9307d3e85970ac2a2d6e24dc6ff",
+    "js/recommended-reference-state.js": "40555df90addb5d861561e51c7351e662d7879d920183fb4175d34871fd226dd",
+    "js/recruit-tracker-store.js": "92d7201737ce3f0609494bbf0a289ae8633c4af4899840cb69ac1c28064445a7",
+    "js/recruit-tracker.js": "f59affada9a145332e8a13ab1008650dd129b22fc28e1df468688122a26e815c",
+    "js/render.js": "81dbb1f22b32803a8942d296e7b570fc2dbab75b57f17f5c920b85f86d3139b6",
+    "js/roster-recommend-ui.js": "8874b20590aa1e74f712cb28dc3ff9474a6a4e91ca82e18dcdf5a5494055d37c",
+    "js/roster-scan-map.js": "fbdd016418bd09408ef2c4a5b87c8d923f1eb945446809d0a719cb16d098f0c5",
+    "js/roster-scan-state.js": "f8310fa4a646aa124724e94ba9c04637d6602e48f9ff7969fe0ecdb42cf36454",
+    "js/site-chrome.js": "cea2dd593c2f0c7788b67cef1c2d318b81b4394dbe049f1dbfa6d2230d1fcc97",
     "js/site-nav.js": "768e351063f7fcf8a093ef279686406677f5acc6e92455665f644d28964abc41",
-    "js/team-detail-navigation.js": "7cd09631129c123fbfea2737154d352458c2b3d066f49302c1e8d3ab9a70b120",
-    "js/team-detail.js": "e96a1ebc5bf392316dab4664269aa1711422eb165fa39b2650d2011803348be8",
-    "js/team-filter-section.js": "252f803094cd55f7e38e509b97be9e82a600aa926bda3a94849a9ec0734a788c",
-    "js/unified-lookup.js": "2088f63898b9c0073d202f1957bec8ca3408d906e73b56e0f5117679c9c6847d",
-    "js/website-display.js": "b663990ea9006206d4404cbc505df4ddc4f53c84fd6f6e871c109ca250990908",
+    "js/team-detail-navigation.js": "7b404340ffdcb7061730ce1e6d1cfb55dc86c9e83be974b76781f161a64340ab",
+    "js/team-detail.js": "08de30ffb31122a6056aa901403b415579396b9d905ede1b74a7920ad92b48e7",
+    "js/team-filter-section.js": "3d1ae9c5d9fa68b73bc63bd497f6c759e8456f39f8a41ed30a2aedadfbfc335d",
+    "js/unified-lookup.js": "b98ba35f6f3a4fc4cb6a52911e33d23c90680bbe2d094b66ea4a2f6e13342a1e",
+    "js/website-display.js": "d298f432feee016745295cab830ba048a274b490ab553377289815572b795054",
     "pipeline/lookup-identity.json": "cff3228ddcfd4be39fa7c0ad3746d18a6495fa11fc6d8e4480795181f82f38b1",
     "pipeline/recommended-display-map.json": "88ecb8b452ab3292e861ddd879c218a728c16f31734160f6959072bf0be19cd3",
     "pipeline/recommended-identity-map.json": "bac1cc7062288c81f399286fd58a73e83eaaba5cf29add663c8fb24590550cfa",
     "pipeline/sgsdeck-name-map.json": "0d178ea02ec9a58bbb35382fe6d0c4d93ab8f1952658b60fe61c87b787eb15cc",
-    "src/layouts/SiteLayout.astro": "712bdc41244f00e7b6ca217c3a9abae0c7db1c27c1277f07a96ccf9fa70e4cc0",
+    "src/components/landing/Landing.astro": "19c52da06526ac262ae01db6c9e0fb0fb41caf403b3fc3cd50d59bb6dcf405a7",
+    "src/components/pages/KhaiHoangDetail.astro": "2f83dd64d4a761ac3eb4a2b75921f67ee210eb2e8ab4842bf5f0c8323909dee4",
+    "src/components/pages/LegacyDetail.astro": "d0a22227bf201cd16461a2515700a561bb653088b942b90eeecf4085ab8a60d7",
+    "src/components/pages/RecommendedDetail.astro": "4cf1064a014fa50d49e5a95868c01da3226d8babe008b790950b2d927a871337",
+    "src/components/pages/SectionPage.astro": "6e6567427a1a72b5165ce9769f282480be743b3b6f2325000f9fc1c654083695",
+    "src/layouts/SiteLayout.astro": "70378a17167d76e1f38ece228539853654650703b6e20d60a18407044de38808",
     "src/lib/build-date.ts": "2c46966da5db7675f1f092f79a540dd345125211dea16238fa779bea58c9773f",
-    "src/lib/landing-stats.ts": "c5a942180774cf8b4b97b156c40cdc1c77c096d93e218d739fcf7a155b1ba2c4",
-    "src/lib/official-links.ts": "110cd1aac6a10fbba270d81ab2a93e721bbd3250ff0d7a6fe305315734fcedeb",
+    "src/lib/landing-stats.ts": "3e0aa3393cdbc16ce61251cb4477ecbccf0708af371689754a1ba54de8468932",
+    "src/lib/official-links.ts": "e7d3c82b4f2f978c05f6038305c997395c749e86b063d3c4a990cd3e7dc6f039",
     "src/lib/root-static-artifacts.ts": "40576c4eeaf368388ee00fad7e4e4a4f065f325a80d6c6f3da61326a5b46f5bf",
-    "src/lib/seal.ts": "b6d6da691439b6da88ea37e7bae694151acd1dc25127f72302cb94304d9991d1",
     "src/lib/team-detail-routes.ts": "15924698dbbefcec57bbf086050e61b68bad05f887282c54871d63824e475788",
-    "src/pages/cung-ton/index.astro": "599ad9c29a116562c75375eb8d83fea512c016d47552c7799e4bd61bd4bf42d2",
-    "src/pages/doi-chuan/[team].astro": "535cdf89dc8954e457cd0a990bdf77edfe0437e42b72773550c001c5cc158899",
-    "src/pages/doi-chuan/index.astro": "21fa89eb207b2ef8845e858758e480eb94cd9c5f71bb151e23fd87520e52ac20",
-    "src/pages/doi-khac/[team].astro": "5454ad43dcd920f58ec4053edc07e9fb2de19d236b626516cf22c5f70ba4bad9",
-    "src/pages/doi-khac/index.astro": "405f7073fe287a49842c7a5b375bbbbe296c3ff1a66932fb015fdb2306191c18",
-    "src/pages/goi-y-doi-tu-kho/index.astro": "9fb7404023001f78626611bb8beb33de9c8782f1a2f3e0053f65a8a5278278a8",
-    "src/pages/index.astro": "ba92b97e8cb05eba70c22e8cc84f99127e456f7123019a753157b0aa60217507",
-    "src/pages/khai-hoang/[team].astro": "fbb1527b53ae43adfd26cf6b688598f54ccbca4f510cd48a407f6df05c6178a1",
-    "src/pages/khai-hoang/index.astro": "2bfe4fe003867cba9854a74286e5debb895535f1392051d7abb078deb137c2f2",
-    "src/pages/soi-doi-tu-anh/index.astro": "f0dda9440cabd164ac4588e8383a35b3db90f74191c600c443be869d944b20d5",
-    "src/pages/theo-doi-chieu-mo/index.astro": "4502c945663a6ddc634dde90005e8d48a55eb92893a85f8a4aa85c7c9bbdca5a",
-    "src/pages/tra-cuu/index.astro": "070918708812d7053f0c9f81b1d68a4c6e6903e734a7bf518d51a6e1eca2f226",
+    "src/pages/cung-ton/index.astro": "061ca1d1f2cec3065d1111103758c5e602cb0f1a1d7bc42cbe3629093dab4292",
+    "src/pages/doi-chuan/[team].astro": "b75f24edb3a523f8d06530fe6d5ab28fff5441d63cb48612bd6c3109fcd62ee4",
+    "src/pages/doi-chuan/index.astro": "cb880c3af9bb631a57696af648bc2d6699bc6a543454be0e1c18e88ef493253f",
+    "src/pages/doi-khac/[team].astro": "90a28941a5c00fc074460db40399b4c15c2366d55b0c8175fb0b8676e31fdddb",
+    "src/pages/doi-khac/index.astro": "957cb489055e4447f34c0f725444375e428e2ba3cea9335b1b54e85a2dd8dd9b",
+    "src/pages/goi-y-doi-tu-kho/index.astro": "b6fd9f0c678d6153e9a7ee0e5de33d77594c520dc70347b103ec89fb1625f910",
+    "src/pages/index.astro": "104fd2b1ca93ce72ddc8a4283e891839facd19af695544d165f0be4a95ff0dc8",
+    "src/pages/khai-hoang/[team].astro": "0ecdf79513609418e62f701890251d0bf3541007fdc4c6410e6f76cd8dc741d5",
+    "src/pages/khai-hoang/index.astro": "f1ea91d80a412d30091d2dfb784b5b418d13a761d3f6b8aafe0e091371390e70",
+    "src/pages/soi-doi-tu-anh/index.astro": "f834042861f7a9646546f74a3bdc1c4f88a3eeaf8f2ebec92a23c4b3b87cc542",
+    "src/pages/theo-doi-chieu-mo/index.astro": "59d012ae952241b338ad8dc7d9d8ad01fa0bde4364a5b44d5183b8cea5bf2e51",
+    "src/pages/tra-cuu/index.astro": "2651ce8b4c1f1533d150fd3adbbc5f322681f978067ca24d484a60838701de75",
     "worker/src/schema.ts": "1b454723f6bfbb705358c9bd2d12428bdb86ca6e6964e8a1e291526371a5c1fc"
   }
 }

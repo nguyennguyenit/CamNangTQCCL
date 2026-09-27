@@ -10981,7 +10981,7 @@
       "reviewerSession": "cmp-157eeaaa81cbc1df",
       "reviewedAt": "2026-09-14T00:00:00Z",
       "outputPath": "pipeline/localization-reviews/site-review-v5-056.json",
-      "outputSha256": "257dc005b2d858fbe525191bda0ad110a1adeded755ad82ec6a7babd9b8d17c9",
+      "outputSha256": "ab069a9c44d24531f546efed593c96f7d75da18882677d23e40c622b1dd1afdb",
       "items": [
         {
           "entityId": "ui:recruit-store/main-default",
@@ -10997,30 +10997,6 @@
           "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
           "inputFingerprint": "42169645beb6bff8c038d01608b7e530334c0dac51acbd18343fab41dade5f59",
           "textSha256": "09128ce8ce340441b989ed6d1db012965a7d3a7f406b3d1e9f8714b2bfc161ed",
-          "verdict": "accepted"
-        },
-        {
-          "entityId": "ui:root/team-chuan",
-          "fieldPath": "navLabel",
-          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-          "inputFingerprint": "da73286b14cc254de1436b393672b619616d2aef6151c6b0333e65f51a647be9",
-          "textSha256": "7f61d985b36c274deea080dd79e98eb3da176378f4a49810c482dff1ad8610a1",
-          "verdict": "accepted"
-        },
-        {
-          "entityId": "ui:root/team-khac",
-          "fieldPath": "navLabel",
-          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-          "inputFingerprint": "4e6e43cff6f8f16a1d32ca3e05e8f1875c2a66f1784901e56c18b7c10070ba0c",
-          "textSha256": "2013f90b1231bb72ac5934ceced0d92412726afb1b88fbc99f0cae08d16950b8",
-          "verdict": "accepted"
-        },
-        {
-          "entityId": "ui:root/beta",
-          "fieldPath": "statusLabel",
-          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-          "inputFingerprint": "786037d0c35ddf177fe0de18ef0abb9cb0160cb7c5de6b3a6b9e95c0c26de052",
-          "textSha256": "c15dfb0abbea5d4b36e0e61668db15c083a4218ad820004b0b9611ed196092f4",
           "verdict": "accepted"
         },
         {
@@ -11141,86 +11117,6 @@
           "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
           "inputFingerprint": "f8982d01230407351e7e092dc2cea863d97dd31a6076da27ef40ff8cb113591a",
           "textSha256": "f643d1ec755def83e5e0b41527f00b4137dab1fe932a2932c883defe09a61ec8",
-          "verdict": "accepted"
-        },
-        {
-          "entityId": "ui:route-recommended/title-team",
-          "fieldPath": "title",
-          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-          "inputFingerprint": "88958ed8e7c27e4deeee43cd8e7feb3f095ab9f5b65a4f777c85533caa281f11",
-          "textSha256": "8fa1db60bf58858180b04107cf8e3d221a7830fa48a12c25f9711b084058bb1c",
-          "verdict": "accepted"
-        },
-        {
-          "entityId": "ui:route-recommended/description",
-          "fieldPath": "metaDescription",
-          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-          "inputFingerprint": "5bf51bf7bc13b8e174c22d22b50bfe2baeb230ddc095a63a5ddf47af1f666371",
-          "textSha256": "0db9c94523a80d292d0820e11ef38703cc106f2af53168dec9e2b68f70c8f08f",
-          "verdict": "accepted"
-        },
-        {
-          "entityId": "ui:route-recommended/tagline",
-          "fieldPath": "tagline",
-          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-          "inputFingerprint": "8ac48858a1e2eb2c62c3f77c14054c5751268de5447e6299372a02806081277a",
-          "textSha256": "c0d99a84d9dfb396fa5217ee4bcbd6c0b89211a2ace1009b4e6b4cf15dfdb31b",
-          "verdict": "accepted"
-        },
-        {
-          "entityId": "ui:route-recommended/back",
-          "fieldPath": "backLink",
-          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-          "inputFingerprint": "46b5a9899602a42ee040b00061aa99ca6a8c6cc84196c0ce1e041c5bb6ce025b",
-          "textSha256": "e55480168048888ddf3583aba77e799111fa8d9db2c67217a4560680764b6051",
-          "verdict": "accepted"
-        },
-        {
-          "entityId": "ui:route-recommended/noscript",
-          "fieldPath": "noscript",
-          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-          "inputFingerprint": "221766df5967bcfcdf552203f1396e7954e21523a6ae9c4d4e1bc9a83f0139b2",
-          "textSha256": "9a41318acee8b68c6b79fffbd328cccf29987f9a4c674dbfcaa831654cebb955",
-          "verdict": "accepted"
-        },
-        {
-          "entityId": "ui:route-legacy/title-team",
-          "fieldPath": "title",
-          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-          "inputFingerprint": "c04675911a91c838e31c1292dadefca6f300bebc99447d7c2d8cee95fa344e92",
-          "textSha256": "cae26258e37a40049136ecd2a6a8b1bf020eb95b20212e4d2836db4adee9fd46",
-          "verdict": "accepted"
-        },
-        {
-          "entityId": "ui:route-legacy/tagline",
-          "fieldPath": "tagline",
-          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-          "inputFingerprint": "355add735209102c23c975d2830dcf9d57569c9894a15bcbc2e92e6b5a826db2",
-          "textSha256": "05fe20354bf612f1f85116e3157f36b2fe5a7e8e37755664359b4cdb2d3bbc15",
-          "verdict": "accepted"
-        },
-        {
-          "entityId": "ui:route-legacy/back",
-          "fieldPath": "backLink",
-          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-          "inputFingerprint": "ac7fd9f40341389abef777ea48ab7d767a96ad97190290dc185d25a9ebb07e0a",
-          "textSha256": "884e7957292c1d4058bb814c4c9d0333b1d0a0df416e53e621e31692160a66ae",
-          "verdict": "accepted"
-        },
-        {
-          "entityId": "ui:route-legacy/noscript",
-          "fieldPath": "noscript",
-          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-          "inputFingerprint": "23f000e5dd4337286d9d262ae52b109f9b04b9b13437e01a115db7b892899b99",
-          "textSha256": "90269445c449808b93d26c046ddcb9f9c5d8922974409c069202e17bdda7c374",
-          "verdict": "accepted"
-        },
-        {
-          "entityId": "ui:root/brand",
-          "fieldPath": "brand",
-          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-          "inputFingerprint": "1606f9dbfe37e1950d5de0e25703c52abcd649f36bc22500b2099728218107f6",
-          "textSha256": "d5655de5a39e8f4f52c3fc0b48e871fb85cf3e73c635ce5961920d0fefc57e8e",
           "verdict": "accepted"
         },
         {
@@ -12309,7 +12205,7 @@
       "reviewerSession": "cmp-157eeaaa978bc1ed",
       "reviewedAt": "2026-09-14T00:00:00Z",
       "outputPath": "pipeline/localization-reviews/site-review-v5-070.json",
-      "outputSha256": "4b6658c289324fce36c8576c668a2e924a38c48ab01e5fc71a7f5f18d83f7577",
+      "outputSha256": "bca58bf2f2630659931e3c954630e5bf43e7b775f840304226fb79249fb87861",
       "items": [
         {
           "entityId": "recommended:s-f112be20e3af7ab7f08afb4260cd5493368108448bb05d018ce6ef69c02921eb/s19-shanhe-dun",
@@ -12317,14 +12213,6 @@
           "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
           "inputFingerprint": "5a46de3741d8e659cc9b5ee71d06a3505ccb97a14db3c41e4595ed3958decd81",
           "textSha256": "97580649ebe2caa94e8ca18ba3f19dbfa33793a4f893d01d1e0fd80f6744154e",
-          "verdict": "accepted"
-        },
-        {
-          "entityId": "ui:recommended/introduction",
-          "fieldPath": "introduction",
-          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-          "inputFingerprint": "4f12b35c85025fcd353cbff4dc52ac903efa4c94458e58fd7a30cbcfdfaf8030",
-          "textSha256": "bcc54031034adfa2f9f8e4ef86dff05b32e130fc9ed56021b0021471806d724a",
           "verdict": "accepted"
         },
         {
@@ -44721,7 +44609,7 @@
       "reviewerSession": "reviewer:rereview-094-2026-09-23",
       "reviewedAt": "2026-09-23T18:06:05+07:00",
       "outputPath": "pipeline/localization-reviews/site-review-v5-094.json",
-      "outputSha256": "12787fe72d3fb5d4817ca735ad98501b4eed8a3114f0028f428c45cf7396fdc0",
+      "outputSha256": "480b1d71f53275a0fe35222677d215269e20757df6fd1df41048e53e6bdf225d",
       "items": [
         {
           "entityId": "ui:recruit/account-default",
@@ -45505,14 +45393,6 @@
           "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
           "inputFingerprint": "7f3dd627b4d953bc333c11595e0434bc1ebbde2700e37ebec97002c708d5c7b4",
           "textSha256": "b2aa5dd2cff4e02c88d7b8499b65f48d42ea140f185a16dbe62b138aad6ecc37",
-          "verdict": "accepted"
-        },
-        {
-          "entityId": "ui:root/meta-description",
-          "fieldPath": "metaDescription",
-          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-          "inputFingerprint": "6690456e1d5657d50f2f343a9bd4c101ce5948463411744ee861b44292eb8162",
-          "textSha256": "6d01f8fff2776f37ee8eda59c8aef3c15a848094905d703c765484d34c26f0bb",
           "verdict": "accepted"
         },
         {
@@ -46639,6 +46519,136 @@
           "inputFingerprint": "bdd9ef7ba7797b094c6cbe8de6d7b50e009740a86d0572018f9b41b19e7f8f00",
           "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
           "textSha256": "b1f4eff85fbcc6e5c6d6060d89db52b5ba9288a2a620de8e3749302e0639960c",
+          "verdict": "accepted"
+        }
+      ]
+    },
+    {
+      "batchId": "site-review-zh-cutover-20260927",
+      "draftSession": "Integrator:zh-cutover-2026-09-27",
+      "reviewerSession": "reviewer:ZhCutoverL10nReview-2026-09-27",
+      "reviewedAt": "2026-09-27T15:10:00+07:00",
+      "outputPath": "pipeline/localization-reviews/site-review-zh-cutover-20260927.json",
+      "outputSha256": "67a304f4493ebfe89c34b76f9f892a0912d32f97f7d8c3b872b3aefd6640d4d7",
+      "items": [
+        {
+          "entityId": "ui:recommended/introduction",
+          "fieldPath": "introduction",
+          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+          "inputFingerprint": "7ec73eaadd936c1f4827770381e2182a3111fd2a31e894b2d3f0185b8583ee91",
+          "textSha256": "dd456156cbacaae8b37f5801fe39abd7620b6c5f34ed643a424869cf000400cd",
+          "verdict": "accepted"
+        },
+        {
+          "entityId": "ui:root/team-chuan",
+          "fieldPath": "navLabel",
+          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+          "inputFingerprint": "14e58758167242db8d47c4e7497f18680aa3a76aed770585595bc0be0b69a1a2",
+          "textSha256": "7f61d985b36c274deea080dd79e98eb3da176378f4a49810c482dff1ad8610a1",
+          "verdict": "accepted"
+        },
+        {
+          "entityId": "ui:root/team-khac",
+          "fieldPath": "navLabel",
+          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+          "inputFingerprint": "6aae9433939ba38fe59151b29b7fc1984df745dff58359231e5d6abe5f0cd66d",
+          "textSha256": "2013f90b1231bb72ac5934ceced0d92412726afb1b88fbc99f0cae08d16950b8",
+          "verdict": "accepted"
+        },
+        {
+          "entityId": "ui:root/beta",
+          "fieldPath": "statusLabel",
+          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+          "inputFingerprint": "04e5bb9214977e901ccd4540fc6daeeb73e841e90cdc6bf1ad24b22052c5abda",
+          "textSha256": "c15dfb0abbea5d4b36e0e61668db15c083a4218ad820004b0b9611ed196092f4",
+          "verdict": "accepted"
+        },
+        {
+          "entityId": "ui:route-recommended/title-team",
+          "fieldPath": "title",
+          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+          "inputFingerprint": "d4f91ab8c18ee41175774766f7ba1f6b056dd234be35f5e0844c454c633809a0",
+          "textSha256": "8fa1db60bf58858180b04107cf8e3d221a7830fa48a12c25f9711b084058bb1c",
+          "verdict": "accepted"
+        },
+        {
+          "entityId": "ui:route-recommended/description",
+          "fieldPath": "metaDescription",
+          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+          "inputFingerprint": "e59dcea90ecee21b5ccdc3e1427b81ef2c0f013e284905036825f917bc8ccd83",
+          "textSha256": "63cfa958a7c99e73bcd7e74d69ad37d9eeecc7589ccdf90db1c56983310eb532",
+          "verdict": "accepted"
+        },
+        {
+          "entityId": "ui:route-recommended/tagline",
+          "fieldPath": "tagline",
+          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+          "inputFingerprint": "771234daf3265071c48a093627f07640421ecb64a59aa9193502b866474fa00f",
+          "textSha256": "c0d99a84d9dfb396fa5217ee4bcbd6c0b89211a2ace1009b4e6b4cf15dfdb31b",
+          "verdict": "accepted"
+        },
+        {
+          "entityId": "ui:route-recommended/back",
+          "fieldPath": "backLink",
+          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+          "inputFingerprint": "92274f5c65f62e4b0039b79a7fbc464c0c4ff1f46485426266380e34492cc5f3",
+          "textSha256": "e55480168048888ddf3583aba77e799111fa8d9db2c67217a4560680764b6051",
+          "verdict": "accepted"
+        },
+        {
+          "entityId": "ui:route-recommended/noscript",
+          "fieldPath": "noscript",
+          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+          "inputFingerprint": "9e67a203ffed4288c6ef114053077647015af7e1b4b4efb9fc435845e0a83a27",
+          "textSha256": "9a41318acee8b68c6b79fffbd328cccf29987f9a4c674dbfcaa831654cebb955",
+          "verdict": "accepted"
+        },
+        {
+          "entityId": "ui:route-legacy/title-team",
+          "fieldPath": "title",
+          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+          "inputFingerprint": "106978a81c9fa126dfd16cc0b0a03105a9014d7bbf9009ef27c00ad7b563cf82",
+          "textSha256": "cae26258e37a40049136ecd2a6a8b1bf020eb95b20212e4d2836db4adee9fd46",
+          "verdict": "accepted"
+        },
+        {
+          "entityId": "ui:route-legacy/tagline",
+          "fieldPath": "tagline",
+          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+          "inputFingerprint": "6c5a07f32cbc549f74a8b3a3d2a7380c4756d734ded593500b5ad0f46dc8cb00",
+          "textSha256": "05fe20354bf612f1f85116e3157f36b2fe5a7e8e37755664359b4cdb2d3bbc15",
+          "verdict": "accepted"
+        },
+        {
+          "entityId": "ui:route-legacy/back",
+          "fieldPath": "backLink",
+          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+          "inputFingerprint": "f85b4189305512bd38a6c36a88c7fd8f5ff063bd7b46b78728fa6bbb2e5ce576",
+          "textSha256": "884e7957292c1d4058bb814c4c9d0333b1d0a0df416e53e621e31692160a66ae",
+          "verdict": "accepted"
+        },
+        {
+          "entityId": "ui:route-legacy/noscript",
+          "fieldPath": "noscript",
+          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+          "inputFingerprint": "788d55a06985bae69ecac4d03d2bf3042b2e8cede1e28d84fe95a9f160642d18",
+          "textSha256": "90269445c449808b93d26c046ddcb9f9c5d8922974409c069202e17bdda7c374",
+          "verdict": "accepted"
+        },
+        {
+          "entityId": "ui:root/brand",
+          "fieldPath": "brand",
+          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+          "inputFingerprint": "2e00cfdccddd545817f777fbbc60c27762640382b67fd073bbf20b326b2500f5",
+          "textSha256": "d5655de5a39e8f4f52c3fc0b48e871fb85cf3e73c635ce5961920d0fefc57e8e",
+          "verdict": "accepted"
+        },
+        {
+          "entityId": "ui:root/meta-description",
+          "fieldPath": "metaDescription",
+          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+          "inputFingerprint": "941a69ca12056bb18be4f3c6740009294a2e7019a4637efcaacd37a2897a105a",
+          "textSha256": "6d01f8fff2776f37ee8eda59c8aef3c15a848094905d703c765484d34c26f0bb",
           "verdict": "accepted"
         }
       ]

@@ -819,14 +819,6 @@
       "verdict": "accepted"
     },
     {
-      "entityId": "ui:root/meta-description",
-      "fieldPath": "metaDescription",
-      "inputFingerprint": "6690456e1d5657d50f2f343a9bd4c101ce5948463411744ee861b44292eb8162",
-      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-      "textSha256": "6d01f8fff2776f37ee8eda59c8aef3c15a848094905d703c765484d34c26f0bb",
-      "verdict": "accepted"
-    },
-    {
       "entityId": "ui:recruit/banner-name-prompt",
       "fieldPath": "prompt",
       "inputFingerprint": "e63bd8c4f424ef220e1b91016fbe3b0da701691de496a04b03bd207599c3b873",

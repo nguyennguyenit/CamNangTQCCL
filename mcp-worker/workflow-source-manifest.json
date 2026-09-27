@@ -11,6 +11,7 @@
     "js/filters.js",
     "js/hanviet.js",
     "js/hero-identity.js",
+    "js/i18n.js",
     "js/lookup-data.js",
     "js/match-dict.js",
     "js/season-context.js",
