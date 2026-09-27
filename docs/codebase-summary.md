@@ -37,7 +37,7 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | `js/team-filter-section.js` | Mục Đội chuẩn/Đội khác (`createRecommendedSection`: search, chip động, stats, xoá lọc, thu gọn trên mobile, Thẻ/Thẻ gọn/Bảng) và mục Cùng Tồn (`createSeasonCoexistSection`). |
 | `js/render.js` | DOM builder dùng chung (`el`, icon), nhóm Cùng Tồn, bảng Khai hoang và chi tiết cấu hình mùa. |
 | `js/filters.js` | Chuẩn hoá chữ bỏ dấu và blob tìm kiếm của một đội, dùng chung với MCP. |
-| `js/unified-lookup.js`, `js/lookup-data.js`, `js/lookup-detail.js` | Tra cứu sáu nhóm: nạp và xác minh snapshot, tìm kiếm, hồ sơ và quan hệ theo ID. |
+| `js/unified-lookup.js`, `js/lookup-data.js`, `js/lookup-detail.js` | Tra cứu bảy nhóm (thêm binh thư): nạp và xác minh snapshot, tìm kiếm, hồ sơ và quan hệ theo ID. |
 | `js/recruit-tracker-store.js` | State schema v1, nhiều account, banner, pity, import/export localStorage. |
 | `js/analyze.js`, `js/analyze-map.js` | Nén ảnh, Turnstile, Worker call, canonical map và team similarity. |
 | `js/hero-identity.js` | Canonical identity tướng: SP/CO/base tách biệt, `familyId` riêng và combined slot là alternatives. |

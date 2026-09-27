@@ -1,5 +1,62 @@
 # Project Changelog
 
+## 2026-09-28 (Khai hoang gọn: danh sách chỉ đội + phiên bản)
+
+### Changed
+
+- `/khai-hoang/` chỉ còn đầu mục, lọc loại binh (kèm đếm `N / 17 đội`) và lưới thẻ dùng khung thẻ Đội chuẩn: tên đội (link), loại binh, ấn điểm tổng (đội chưa chấm: ấn viền đứt "—"), hàng phiên bản chip gọn 32px (đội không biến thể vẫn có "Mặc định"), dòng tướng `tên | Trước · … → Sau · …` với chip chiến pháp gọn và ấn "C" ở chủ tướng, chân "Chi tiết". Lưới tối đa 2 cột, thẻ cùng hàng cao bằng nhau.
+- Trang chi tiết `/khai-hoang/<handle>/` nhận mọi phần còn lại: thẻ tướng như chi tiết Đội chuẩn (vai trò chủ/phó tướng theo chủ tướng trước/sau cấp 20, "Chiến pháp trước"/"Chiến pháp sau" đánh số, đổi loại binh), khối Ghi chú, Điểm đánh giá (thanh 6 mốc), Hướng dẫn khai hoang mở sẵn (không còn mục gập), Đội Chạm Sứ / Ăn vạ và Quân thủ các mỏ.
+- `variantNameNodes` (nhãn SP/CO/40Y) chuyển sang `js/render.js`, `js/recommended-reference-render.js` dùng lại.
+- Quy ước chủ tướng mọi phiên bản (kể cả Mặc định): tướng đứng đầu là chủ tướng trước cấp 20 (`commanderBefore`, thiếu thì tướng đầu của dữ liệu); chủ tướng sau cấp 20 là `commanderAfter`, thiếu thì vẫn là tướng đầu. Ấn "C" của chủ tướng trước cấp 20 luôn đứng sau tên; đổi chủ tướng thì chủ tướng sau cấp 20 có thêm ấn trước nhãn "Sau" (các dòng giữ chỗ ấn để nhãn "Sau" thẳng cột), ở trang chi tiết là nhãn "Chiến pháp sau". `data/khaihoang.json` bổ sung chủ tướng cho 3 cấu hình mặc định theo đúng ghi chú đã curate (Pháp Chính sau cấp 20; Gia Cát Khác sau cấp 20 ở đội Khương Duy · Hạ Hầu Uyên · Gia Cát Khác; Gia Cát Khác trước và sau cấp 20 ở đội Gia Cát Khác · Thái Sử Từ · Tả Từ).
+- Policy `site-vi-260928-khai-hoang-gon` (thay tuple UI Khai hoang, ghim lại file nguồn, baseline 56664 location), publish generation `a6e3b605…`, re-pin `pipeline/team-route-handles.json`.
+
+### Removed
+
+- Mọi nội dung nguồn ở Khai hoang: khối "Lưu ý nguồn", link nguồn của Chạm Sứ, link nguồn trong panel chi tiết; cùng nút nhảy khối, tiêu đề "Đội khai hoang đề xuất", thanh điểm và ghi chú trên thẻ danh sách.
+
+## 2026-09-28 (Góp ý, sửa lỗi ở footer)
+
+### Added
+
+- Nút **Góp ý, sửa lỗi** ở footer mọi trang (vi/zh) mở hộp thoại gồm Loại (Đề xuất tính năng, Báo cáo lỗi, Thông tin sai, Khác), Tiêu đề, Nội dung và Email tuỳ chọn; tự gửi kèm đường dẫn trang đang xem và ngôn ngữ (`js/feedback.js`). Không cần đăng nhập: khách ẩn danh qua Cloudflare Turnstile (chỉ nạp khi mở hộp thoại), người đã đăng nhập được điền sẵn email tài khoản.
+- `community-worker`: `POST /api/feedback` lưu bảng D1 `feedback` (migration `0003_feedback.sql`) rồi gửi thư báo tới `nguyennlt.ncc@gmail.com` qua binding `send_email` `FEEDBACK_MAIL` (Email Routing của `tqccl.com`), `Reply-To` là email người gửi; thư lỗi không làm mất góp ý. Giới hạn 5 lần/giờ theo IP đã băm (ẩn danh) và 10 lần/giờ theo tài khoản. Secret mới `TURNSTILE_SECRET`, `IP_HASH_SECRET`; cách bật Email Routing ở [community-worker.md](./community-worker.md).
+- Trang quản trị có tab **Góp ý**: lọc theo trạng thái/loại, chuyển Chưa xử lý ⇄ Đã xử lý (`GET /api/admin/feedback`, `POST /api/admin/feedback/:id/status`).
+
+### Changed
+
+- `GET /api/me` trả thêm `email` của chính người dùng.
+- Turnstile nạp lười chuyển sang `js/turnstile.js` dùng chung cho công cụ đọc ảnh và hộp thoại góp ý; hành vi mở/đóng hộp thoại footer chuyển sang `js/modal-dialog.js` (Ủng hộ tác giả dùng chung).
+- Chính sách bảo mật và Điều khoản sử dụng mô tả dữ liệu góp ý, thư báo qua Cloudflare Email Service và phạm vi nạp Turnstile.
+
+## 2026-09-28 (Cùng Tồn: ô chọn Mùa, hàng phiên bản, thẻ Đội chuẩn)
+
+### Changed
+
+- Cùng Tồn dùng ô chọn Mùa của Đội chuẩn thay hàng nút kịch bản: mùa mới nhất (`binh-dien-xuan-thu`, OG · Binh Diễn Xuân Thu) đứng đầu, là mặc định khi URL thiếu `scenario` (replaceState, `COEXIST_LATEST_SCENARIO_ID` trong `js/app.js`) và mang nhãn "Mới nhất"; đổi mùa ghi `?scenario=` bằng pushState. Link cũ chỉ có `?group=` vẫn mở đúng mùa của nhóm đó.
+- Hàng phiên bản "Cùng tồn 1–5" là chip viên (mobile: 5 nút số chia đều), ghi `?group=` bằng replaceState; chip không còn dòng tóm tắt đội.
+- Phiên bản đang xem: một dòng tóm tắt (chuỗi đội của nguồn, "5 đội · 15 tướng · không trùng", link Nguồn) và ghi chú/gợi ý khai hoang/lưu ý nguồn gập trong `details` mặc định đóng; đội hiện bằng thẻ Đội chuẩn (`coexistTeamCard`: cấp độ, Cải tạo, CHỦ/PHÓ 1/PHÓ 2, chiến pháp, binh thư, nhãn phụ tướng).
+
+### Removed
+
+- Hàng nút kịch bản, ô tổng quan ba cột, thẻ đội riêng của Cùng Tồn và dòng tóm tắt đội dưới chip nhóm; hai vai trò chữ số liệu Cùng Tồn (30px serif desktop, 13px mobile) cùng biến CSS của chúng vì không còn dùng.
+
+## 2026-09-28 (Trang chi tiết Đội chuẩn: một ngôn ngữ, Tier, link Tra cứu; Tra cứu thêm Binh thư)
+
+### Added
+
+- Tra cứu có nhóm thứ bảy **Binh thư** (`books`, mã `book:<slug tên Việt>` từ `js/lookup-ids.js`, nguồn `data/books-dict.json` được pin sha256 lúc build qua `#lookup-books-hash`). Hồ sơ binh thư chỉ có tên; hiệu ứng hiện "Đang cập nhật" vì dữ liệu nguồn chưa có mô tả.
+- Trang chi tiết Đội chuẩn: dấu **Tier** nguồn ở đầu trang (render lúc build); chiến pháp và binh thư trong thẻ tướng là link tới hồ sơ Tra cứu. Mã hồ sơ tính lúc build (`recordLookupLinks` trong `src/lib/team-detail-pages.ts`, nhúng `#team-lookup-links`); tên không có hồ sơ (vd. `異族弓`) giữ dạng chữ.
+
+### Changed
+
+- Trang chi tiết Đội chuẩn chỉ một ngôn ngữ: bản Việt bỏ tên Hán của đội, tướng, chiến pháp và binh thư; bản `/zh/` giữ nguyên chữ Hán.
+- Ghi chú từng tướng rời khỏi thẻ tướng, gom vào khối "Ghi chú" dưới đội hình kèm nhãn tên tướng (cả cấu hình thay thế và nội dung đội gốc).
+- Giao diện trang chi tiết: thẻ tướng cao bằng nhau, gáy son cho chủ tướng, ô chiến pháp/binh thư dạng hàng có mũi tên khi là link, khối "Ghi chú" viền son, "Nguồn & phạm vi" thành chú thích nhỏ cuối trang.
+
+### Removed
+
+- Link nguồn ngoài của trang Đội chuẩn ("Xem nguồn" ở panel điểm và "Mở nguồn tham khảo") cùng `validateReferenceSourceUrl`; Đội khác/Khai hoang vẫn dẫn link nguồn qua `validateHttpSourceUrl`.
+
 ## 2026-09-27 (Hợp nhất `origin/main`: domain chính + danh sách theo trang vào bản song ngữ)
 
 ### Changed

@@ -76,13 +76,13 @@ Danh mục đầy đủ ở `tokens.json` → `components`. Nhóm chính: thẻ 
 
 ## Tra cứu thống nhất
 
-`/tra-cuu/` là một trang cho sáu nhóm (`heroes`, `tactics`, `equipment`, `advisors`, `troop-mods`, `buildings`); **route canonical là `/tra-cuu/?group=<nhóm>&id=<id>`** — hash cũ `#heroes`, `#tactics` và dạng query trong hash `#lookup?group=<nhóm>&id=<id>` được Landing chuyển tiếp (dạng `#lookup/<nhóm>/<id>` **không** thuộc contract và ở lại Landing). Sáu chip nhóm là button có `aria-pressed` (không phải tablist); search chạy toàn corpus, bỏ dấu tiếng Việt và đọc alias Hán đã review.
+`/tra-cuu/` là một trang cho bảy nhóm (`heroes`, `tactics`, `equipment`, `advisors`, `troop-mods`, `buildings`, `books`); **route canonical là `/tra-cuu/?group=<nhóm>&id=<id>`** — hash cũ `#heroes`, `#tactics` và dạng query trong hash `#lookup?group=<nhóm>&id=<id>` được Landing chuyển tiếp (dạng `#lookup/<nhóm>/<id>` **không** thuộc contract và ở lại Landing). Bảy chip nhóm là button có `aria-pressed` (không phải tablist); search chạy toàn corpus, bỏ dấu tiếng Việt và đọc alias Hán đã review. Mã binh thư là `book:<slug tên Việt>` (`js/lookup-ids.js`), dựng từ `data/books-dict.json`.
 
 Grid phân trang và phải có `Xem thêm` để tới record cuối. Thẻ mở hộp thoại hồ sơ theo canonical ID; hộp thoại trap focus, đóng bằng Escape/nút đóng/nền và trả focus về thẻ. Hồ sơ tướng có khối "Trong cẩm nang" lấy từ artifact tính lúc build (`hero-summaries.json` trong generation Recommended đang pin), không tải kho đội chuẩn khi mở hồ sơ. Quan hệ tướng–chiến pháp và các trường catalog phải đi qua ID đã validate; trường thiếu hiển thị "Đang cập nhật", không biến `0`/`false` thành dấu gạch.
 
 ## Phạm vi mùa và chi tiết cấu hình
 
-Không có artboard cho hai surface này; chúng theo StyleGuide và bảng token. `#season-controls` chỉ có ở 3 trang (`team-chuan`, `team-khac`, `coexist`) và luôn ẩn; Cùng Tồn không có select Mùa, hàng nút kịch bản (`.coexist-scenarios`, thứ tự registry) là điều khiển phạm vi duy nhất và ghi `?scenario=` bằng pushState. Chi tiết cấu hình `?config=` mở trong `#season-config-detail` với select 44px, nhãn caps, hàng slot theo holder và nút `Đối chiếu kho của tôi`.
+Không có artboard cho hai surface này; chúng theo StyleGuide và bảng token. `#season-controls` chỉ có ở 3 trang (`team-chuan`, `team-khac`, `coexist`) và luôn ẩn. Cùng Tồn dùng ô chọn Mùa của Đội chuẩn (`.reference-season-field` trong `.coexist-head`): mùa mới nhất `binh-dien-xuan-thu` đứng đầu và là mặc định khi URL thiếu `scenario` (ghi bằng replaceState), nhãn "Mới nhất" chỉ hiện khi đang xem mùa đó; đổi mùa ghi `?scenario=` bằng pushState. Hàng phiên bản `Cùng tồn 1–5` (`.coexist-group-chip`, `aria-pressed`) ghi `?group=` bằng replaceState. Chi tiết cấu hình `?config=` mở trong `#season-config-detail` với select 44px, nhãn caps, hàng slot theo holder và nút `Đối chiếu kho của tôi`.
 
 Chọn kịch bản là đọc tham khảo, chưa đủ để gợi ý hoặc so đội theo luật. Phân biệt vùng áp dụng đúng luật, tham khảo cùng kịch bản và chưa rõ kịch bản; mỗi vùng có số lượng riêng.
 
@@ -94,6 +94,8 @@ Hai công cụ Soi đội và Gợi ý đội không có bộ chọn Mùa / Phi�
 - Trang chi tiết dùng chung shell, navigation và stylesheet với phần còn lại; nav đánh dấu mục đang thuộc.
 - Luôn có link quay lại: mặc định về danh sách của đúng họ, dùng `from` khi giá trị đó hợp lệ; snapshot quay lại chỉ phục hồi khi khớp đúng URL hiện tại.
 - Trạng thái tải/lỗi nằm trong live region; không có JavaScript thì trang vẫn còn tiêu đề, điểm nguồn và link quay lại.
+- Trang Đội chuẩn chỉ một ngôn ngữ: bản Việt không kèm tên Hán của đội/tướng/chiến pháp/binh thư, bản `/zh/` không kèm tên Việt. Đầu trang có dấu Tier nguồn (render lúc build); không dẫn link nguồn ngoài.
+- Chiến pháp và binh thư trong thẻ tướng là link hồ sơ Tra cứu (`/tra-cuu/?id=tactic:…|book:…`) khi có hồ sơ; mã tính lúc build (`team-lookup-links`, `js/lookup-ids.js`), tên không có hồ sơ giữ dạng chữ. Ghi chú tướng không nằm trong thẻ mà gom xuống khối "Ghi chú" dưới đội hình, gắn nhãn tên tướng.
 - URL đội không tồn tại dẫn tới `/404.html` tĩnh có tiêu đề rõ và link về trang chủ/danh sách.
 
 ## Render an toàn
