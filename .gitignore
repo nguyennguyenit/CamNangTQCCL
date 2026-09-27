@@ -35,3 +35,7 @@ pipeline/lookup-output/transactions/
 
 # Cache tạm của công cụ design (ảnh so sánh, báo cáo trích token, venv fontTools)
 .cache/
+
+# Media trích từ video tải tay (frame, clip, contact sheet) — giữ ngoài repo; chỉ commit ghi chú .md
+assets/videos/**/*.mp4
+assets/videos/**/*.jpg

@@ -1,8 +1,8 @@
 # T0 Team List From Video
 
-Source: `/Users/plateau/Downloads/0ef29f388864429384908036610b6474_14165938.mp4`
+Source: `0ef29f388864429384908036610b6474_14165938.mp4`
 
-Outputs:
+Outputs (media trích xuất không commit vào repo):
 
 - `segments-3s-reencoded/`: 12 clip nhỏ, gần 3s/clip.
 - `frames/`: frame 1 fps.

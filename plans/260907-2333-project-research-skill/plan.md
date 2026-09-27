@@ -1,7 +1,7 @@
 ---
 title: "Project research skill cho CamNangTQCCL"
 description: "Kế hoạch --deep --tdd cho skill tqccl-research và handoff cùng tồn đã chốt."
-status: in-progress
+status: completed
 priority: P2
 effort: "8h"
 tags: [skills, research, tdd]
