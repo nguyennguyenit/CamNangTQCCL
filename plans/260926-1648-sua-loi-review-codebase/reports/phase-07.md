@@ -24,7 +24,7 @@ Smoke:
 ### Việc còn lại
 
 - **Drift `hanViet` của `data/books-dict.json`.** `python3 -m pipeline.build_books_dict` nay exit 0 nhưng output thêm 3 trường `hanViet` so với bản commit: `合变` "Hợp Biến", `蛮勇非勇` "Man Dũng Phi Dũng", `攻其不备` "Công Kỳ Bất Bị". Nguyên nhân có từ trước: bảng `pipeline/hanviet.py` được bổ sung ký tự (`e35a19b`, `b535d62`) sau lần build cuối của file (`8862c22`). Theo quyết định 2026-09-27 giữ nguyên byte vì `data/books-dict.json` là artifact công khai trong `seasonArtifactHashes` (`src/lib/root-static-artifacts.ts`) và catalog của `build_season_data`/`season_validation`; đổi file trong phase dọn dẹp kéo theo chuỗi hash mùa. Muốn cập nhật sau này: chạy `python3 -m pipeline.build_books_dict`, xác nhận diff chỉ là 3 trường trên (thứ tự/`evidenceRef` `books-dict.json#N` của `pipeline/recommended-identity-map.json` không đổi vì sắp theo `viet`), rồi chạy gate A2 + `site_localization check --stage public`; nếu check đỏ theo hash thì đi G2–G7.
-- **Rebuild `teams.json`** vẫn không làm được (8 ID ở trên) cho tới khi có nguồn 6 Team PK bổ sung và sửa `Giả Hụ̉` ở nguồn hoặc thêm alias `Giả Hụ̉ → Giả Hủ` vào `pipeline/aliases.json`.
+- **Rebuild `teams.json`** — đã xử lý ở `c3f0728`: 6 Team PK bổ sung nằm trong `pipeline/team-intro-supplement.json` (curate), `clean_text` bỏ dấu thanh thừa + NFC, alias `heroNames`; `python3 -m pipeline.build_json` ra `data/teams.json`, `data/facets.json` trùng byte và mặc định không ghi `coexist.json`/`khaihoang.json` (cần `--overwrite-curated`).
 
 ### Gate A2
 Exit 0, 200 s (trước đó dọn 3 preview server mồ côi ở cổng 4174/4321). `test:dist` 29/29, `test:node` 347/347, e2e 320 passed, Python 391 OK, `team_route_handles --check` pass, worker 9 file / 85 test, mcp-worker 43 file / 338 test. `site_localization check --stage public` exit 0.
@@ -64,3 +64,8 @@ Finding: ReviewPipeline#2, #5, #12 (docs), #14, #15, #16; ReviewAstroCss#4 (prun
 ### Gate A2 (Part 7b)
 
 Exit 0, 208 s, trên cây `e068902` (sau đó chỉ commit docs/plan). Lần chạy đầu exit 1: 8 test e2e timeout (`page.goto` 30 s, locator không thấy) khi load average của máy lên ~188 do tiến trình ngoài repo; chạy lại riêng 8 test → 8/8 pass, rồi chạy lại cả gate khi load giảm → xanh. Trước mỗi lần chạy đã dọn preview server mồ côi ở cổng 4174/4321. `astro check` 0 lỗi (32 file), `test:dist` 29/29, `test:node` 347/347, e2e 320 passed, Python 371 OK, `team_route_handles --check` pass (generation `0cb3ba92…`), worker 9 file / 85 test + typecheck, mcp-worker 43 file / 338 test. `site_localization check --stage public` exit 0.
+
+## Sau khi đóng plan (2026-09-27)
+
+- Secret `IP_HASH_SECRET` đã đặt cho Worker `tqccl-vision-proxy` (`wrangler secret put`, giá trị ngẫu nhiên 48 byte, không ghi lại ở đâu). Worker đang chạy bản cũ nên chưa dùng secret; bản mới deploy được ngay.
+- Ba thư mục `~/.Trash/CamNangTQCCL-cleanup-2609{25,26,27}` đã xoá vĩnh viễn theo yêu cầu. Lịch sử git giữ nguyên (không filter-repo).
