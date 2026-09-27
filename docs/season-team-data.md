@@ -17,7 +17,10 @@ node --test tests-js/season-context.test.mjs
 ```
 
 Review candidate và các bằng chứng liên quan trước khi chạy builder không có
-`--output-dir` để ghi năm file vào `data/`. Publisher có rollback khi một lần
+`--output-dir` để ghi năm file vào `data/`. Mọi lần ghi (kể cả ra `/tmp`) giữ
+khoá `pipeline/lookup-output/promotion.lock` của repo, cùng khoá với promotion
+Tra cứu thống nhất, và từ chối khi khoá đang có hoặc còn transaction Tra cứu ở
+trạng thái `activation-prepared`/`writing` (recover trước). Publisher có rollback khi một lần
 thay file phát sinh lỗi được xử lý; đây không phải transaction chống mất điện
 giữa các lần thay file. Triển khai và rollback website phải dùng nguyên bộ
 shell/JS/JSON tương thích, theo [deployment guide](deployment-guide.md).
@@ -76,13 +79,18 @@ Recommended có adapter/parser offline trong
 có cache/checkpoint trong
 [`pipeline/crawl_sgsdeck_recommended.py`](../pipeline/crawl_sgsdeck_recommended.py).
 Crawler chỉ nhận URL `https://sgsdeck.com/recommended`, kiểm tra redirect trước
-khi theo, đóng băng danh sách mùa/danh mục và lưu checksum từng trang. Chạy lại
-với `--resume`; scope chỉ được xuất bản khi có trạng thái `complete`,
-`empty-category` hoặc `uncollected-season`.
+khi theo, đóng băng danh sách mùa/danh mục và lưu checksum từng trang. Bước đầu
+là lưu trang chọn mùa đã render (trình duyệt) rồi đóng băng inventory bằng
+`--freeze-inventory`; lệnh ghi `<cache>/scope-inventory.json`. Chạy lại
+`--all-source-scopes` là tiếp tục: trang đã có trong `manifest.json` của cache
+được đọc lại, không tải lại (không còn cờ `--resume`). Scope chỉ được xuất bản
+khi có trạng thái `complete`, `empty-category` hoặc `uncollected-season`.
 
 ```bash
 python3 -m pipeline.crawl_sgsdeck_recommended \
-  --cache .cache/sgsdeck-recommended --all-source-scopes --resume
+  --cache .cache/sgsdeck-recommended --freeze-inventory <picker.html>
+python3 -m pipeline.crawl_sgsdeck_recommended \
+  --cache .cache/sgsdeck-recommended --all-source-scopes
 python3 -m pipeline.recommended_team_dedup \
   --teams data/teams.json --team-tier data/team-tier.json \
   --cache .cache/sgsdeck-recommended \
@@ -94,8 +102,12 @@ python3 -m pipeline.build_recommended_reference \
   --other-ledger pipeline/recommended-other-teams.json \
   --teams data/teams.json \
   --content-links pipeline/recommended-content-links.json \
+  --catalog data/heroes-dict.json \
   --output src/data/recommended-reference
 ```
+
+`--catalog` bắt buộc: là `heroes-dict.json` mà khoá nối "Trong cẩm nang" dựa
+vào (quy trình publish dùng bản của kho Tra cứu vừa dựng trong candidate).
 
 Khi máy không có cache crawler (chỉ sửa `data/teams.json` hoặc identity map),
 sinh lại ledger Đội khác từ source pack đã capture thay cho `--cache`. Pack phải

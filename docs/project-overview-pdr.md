@@ -65,7 +65,7 @@ Snapshot công khai 2026-08-25:
 - 166 team: 56 `team-intro`, 110 `moi-phe`; 48 team `do-uy` từng công khai đã được retire khỏi website, public artifact và Research MCP.
 - 31 team có tier, tổng 39 rankings; 112 tướng; 239 chiến pháp; 66 map binh thư.
 - 5 nhóm/25 team Cùng Tồn; 11 team/5 mỏ khai hoang.
-- `facets.json` đang có tổng source 165, lệch 1 so với `teams.json`; frontend không load file này.
+- `facets.json` có tổng source 166, bằng `teams.json` (test chặn lệch); frontend không load file này.
 
 ## Tiêu chí chấp nhận
 
@@ -82,7 +82,7 @@ Snapshot công khai 2026-08-25:
 
 ## Rủi ro và giới hạn
 
-- `build_json.py` cố ý loại `Team Đô Úy.html` và hiện chỉ dựng `50 + 110`; artifact công khai có `56 + 110`, nên chạy thẳng vẫn có thể ghi đè sáu Team PK bổ sung.
+- `build_json.py` cố ý loại `Team Đô Úy.html` và hiện chỉ dựng `50 + 110`; artifact công khai có `56 + 110`. Builder giữ ID đội đã commit và dừng (liệt kê ID) thay vì ghi đè khi đội đã commit không còn trong nguồn, nên hiện chưa rebuild được `teams.json`.
 - 48 team Đô Úy từng công khai đã được retire; `pipeline/do-uy-ss18-source.json` vẫn giữ 40 record nguồn thô làm archive và không tham gia build/publication.
 - HTML nguồn và raw crawl cache bị ignore; clone sạch không bảo đảm rebuild đầy đủ.
 - KV không atomic, nên quota Worker là best-effort. Request không có header `Origin` vẫn được chấp nhận; Turnstile là rào chính ngoài browser.

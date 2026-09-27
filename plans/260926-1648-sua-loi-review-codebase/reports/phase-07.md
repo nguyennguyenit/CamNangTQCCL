@@ -1,0 +1,30 @@
+# Phase 7 — Pipeline, CI, hygiene và docs (2026-09-27)
+
+## Part 7a — pipeline logic (A–F)
+
+Finding: ReviewPipeline#1, #3, #4, #6, #7, #17, #18, #19, #20. Không file nào trong `policy.sourceFiles` bị sửa (các file pin dưới `pipeline/` chỉ là 4 map JSON); `site_localization check --root . --stage public` exit 0 trước và sau; không chạy G0–G8, không generation mới, `WORKFLOW_BUILD_ID` không đổi.
+
+| Mục | Test đỏ (lệnh + trích) | Sửa |
+|---|---|---|
+| A. ID ổn định (#1, #19) | `python3 -m unittest tests.test_build.TestStableTeamIds`: `TypeError: build_teams() got an unexpected keyword argument 'committed'` (3/3; code cũ đánh số toàn cục nên `moi-phe` bắt đầu ở 50 bất kể ID đã commit) | `build_json.build_teams(committed=…)` ghép (nguồn, tập `baseName` đã sắp; trùng → theo thứ tự), số mới = max ID của nguồn + 1, đội đã commit biến mất → `SystemExit` liệt kê ID; `main` đọc `data/teams.json` (`load_committed_teams`); `normalize_team` nhận `team_id` thay vì chỉ số. Docstring nói đúng (ghi đè, `sort_keys=False`). Docs: `system-architecture.md` bước 3, `deployment-guide.md` "Cảnh báo bắt buộc" (ID công khai + lệnh xem trước chỉ đọc), `README.md`, `codebase-summary.md`, `project-overview-pdr.md`. |
+| B. books-dict (#3) | `tests.test_build_books_dict`: `ValueError: [fail-loud] viet 'Quy Thuận' (Hán '归心') không thuộc facets.json.books`; 2 test cờ mới: `TypeError: unhashable type: 'dict'` | Dòng map `{"viet", "outsideTeams": true}` cho `归心`, `兵行诡道`; validator bỏ kiểm facet cho dòng có cờ và từ chối cờ khi sách đã có trong facet. Test thật: tập (chinese, viet) của output = `data/books-dict.json` (quyết định Main: phương án 2). |
+| C. facets (#4) | `tests.test_build.TestCommittedFacets` chạy trong worktree tạm với `data/facets.json` của `39facd3^` (trước Phase 2): `AssertionError: 165 != 166`; xanh trên cây hiện tại | Chỉ test (facets đã sinh lại ở Phase 2). Docs bỏ "lệch 1 đội" (`README.md`, `codebase-summary.md` + số facet mới 74/106/67, `deployment-guide.md`, `project-overview-pdr.md`), roadmap mục facets `[x]`. |
+| D. crawler (#7) + builder (#6) | `tests.test_crawl_sgsdeck_recommended`: `TypeError: main() takes 0 positional arguments but 1 was given` (2 test) | `main(argv)`; bỏ `--resume`; `--freeze-inventory <picker.html>` ghi `<cache>/scope-inventory.json` = `discover_scopes()`; thiếu inventory → thông điệp chỉ `--freeze-inventory`. `docs/season-team-data.md`: bước freeze, bỏ `--resume`, thêm `--catalog data/heroes-dict.json`. |
+| E. khoá mùa (#17) | `tests.test_build_season_data.SeasonLockLocationTest`: `TypeError: build_season_data() got an unexpected keyword argument 'root'` (5 ca; code cũ đặt khoá ở `output_dir.parent/pipeline/lookup-output`) | `dictionary_exclusion(root)` dùng `LOCK_RELATIVE`, `TRANSACTIONS_RELATIVE`, `JOURNAL_STATES` của `promote_unified_lookup`; từ chối journal `activation-prepared`/`writing`; `publish_season_data(..., root=ROOT)`. Test cũ truyền `root` tạm riêng (không đụng khoá thật của repo). Docs `season-team-data.md` mục Bảo trì. |
+| F. suggest_aliases (#18) | `tests.test_suggest_aliases` (bản tạm có `create=True` để qua lỗi thuộc tính): `KeyError: 'do-uy'` — code cũ quét `Team Đô Úy.html` | Quét `build_json._TEAM_FILES`, gom tướng theo `parse_hero(...)["baseName"]` + alternatives, bỏ tên là khoá `aliases.json`. |
+| F. hanviet (#20) | `tests.test_hanviet`: `AssertionError: 'x C' != 'y'` | `transliterate` sắp `COMPOUND_READINGS` theo độ dài giảm dần một lần mỗi lời gọi. Bảng thật có 2 cụm không lồng nhau → output không đổi. |
+
+Smoke:
+- `python3 -c "…build_teams(committed=load_committed_teams())"` (chỉ đọc) → `[build] 8 đội đã commit không còn trong nguồn …: moi-phe-73, moi-phe-86, team-intro-50, …, team-intro-55`. Nguyên nhân: HTML chỉ có 50 Team PK (artifact 56), và HTML còn `Giả Hụ̉` (dấu kết hợp) trong 2 đội `moi-phe` mà Phase 2 đã sửa trong `data/teams.json`. `python3 -m pipeline.suggest_aliases` nay đề xuất đúng cụm này: `Giả Hủ (19) | Giả Hụ̉ (2)`.
+- `python3 -m pipeline.crawl_sgsdeck_recommended --cache /tmp/… --freeze-inventory tests/fixtures/sgsdeck-recommended/source-season-picker.html` → 87 scope; `--all-source-scopes` trên cache rỗng → exit 1 với hướng dẫn freeze.
+- `python3 -m pipeline.build_recommended_reference` đúng lệnh docs với `--output /tmp/rr-out`: qua parse tham số, dừng ở `FileNotFoundError: .cache/sgsdeck-recommended/scope-inventory.json` (máy không có cache crawler). Bỏ `--catalog` → `error: the following arguments are required: --catalog`.
+- `python3 -m pipeline.build_season_data --output-dir /tmp/tqccl-season-candidate` → 5 file trùng byte `data/`; không tạo `/tmp/pipeline`.
+- `python3 -m unittest discover -s tests` → 391 test OK.
+
+### Việc còn lại
+
+- **Drift `hanViet` của `data/books-dict.json`.** `python3 -m pipeline.build_books_dict` nay exit 0 nhưng output thêm 3 trường `hanViet` so với bản commit: `合变` "Hợp Biến", `蛮勇非勇` "Man Dũng Phi Dũng", `攻其不备` "Công Kỳ Bất Bị". Nguyên nhân có từ trước: bảng `pipeline/hanviet.py` được bổ sung ký tự (`e35a19b`, `b535d62`) sau lần build cuối của file (`8862c22`). Theo quyết định 2026-09-27 giữ nguyên byte vì `data/books-dict.json` là artifact công khai trong `seasonArtifactHashes` (`src/lib/root-static-artifacts.ts`) và catalog của `build_season_data`/`season_validation`; đổi file trong phase dọn dẹp kéo theo chuỗi hash mùa. Muốn cập nhật sau này: chạy `python3 -m pipeline.build_books_dict`, xác nhận diff chỉ là 3 trường trên (thứ tự/`evidenceRef` `books-dict.json#N` của `pipeline/recommended-identity-map.json` không đổi vì sắp theo `viet`), rồi chạy gate A2 + `site_localization check --stage public`; nếu check đỏ theo hash thì đi G2–G7.
+- **Rebuild `teams.json`** vẫn không làm được (8 ID ở trên) cho tới khi có nguồn 6 Team PK bổ sung và sửa `Giả Hụ̉` ở nguồn hoặc thêm alias `Giả Hụ̉ → Giả Hủ` vào `pipeline/aliases.json`.
+
+### Gate A2
+Exit 0, 200 s (trước đó dọn 3 preview server mồ côi ở cổng 4174/4321). `test:dist` 29/29, `test:node` 347/347, e2e 320 passed, Python 391 OK, `team_route_handles --check` pass, worker 9 file / 85 test, mcp-worker 43 file / 338 test. `site_localization check --stage public` exit 0.

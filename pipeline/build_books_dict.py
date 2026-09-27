@@ -1,8 +1,10 @@
 """Build từ điển binh thư: bảng map thủ công -> data/books-dict.json.
 
 Khác tướng/chiến pháp: binh thư game VN dùng tên DỊCH NGHĨA (vd 铁甲->"Giáp Sắt",
-统军->"Dẫn Quân"), KHÔNG phải Hán-Việt, nên KHÔNG auto-link qua link_tactics. Map
-bằng bảng thủ công `books-han-viet-map.json`, validate `viet` ∈ facets.json.books.
+统军->"Dẫn Quân"), KHÔNG phải Hán-Việt, nên KHÔNG auto-link. Map bằng bảng thủ
+công `books-han-viet-map.json`, validate `viet` ∈ facets.json.books; dòng dạng
+`{"viet": ..., "outsideTeams": true}` là sách có trong game nhưng không đội nào
+dùng (được bỏ qua kiểm facet, và phải KHÔNG có trong facet).
 
 `hanViet` chỉ là field tham khảo hiển thị: sinh best-effort qua hanviet.to_viet,
 BỎ field nếu tên có ký tự ngoài bảng (tôn trọng "không ship phiên âm thiếu").
@@ -26,15 +28,20 @@ _OUT = os.path.join(_DATA, "books-dict.json")
 
 
 def build_books_dict(han_viet_map: dict, facet_books: list) -> list:
-    """Bảng {chinese: viet} -> list record {chinese, [hanViet], viet}, sort theo viet.
+    """Bảng {chinese: viet | {viet, outsideTeams}} -> list record {chinese, [hanViet], viet}, sort theo viet.
 
-    - viet PHẢI ∈ facet_books, nếu không -> ValueError (fail-loud chống map lệch).
+    - viet thường PHẢI ∈ facet_books, nếu không -> ValueError (fail-loud chống map lệch).
+    - viet có cờ outsideTeams PHẢI ∉ facet_books (cờ cũ -> ValueError để gỡ cờ).
     - hanViet: best-effort; bỏ nếu thiếu ký tự.
     """
     facet_set = set(facet_books)
     records = []
-    for chinese, viet in han_viet_map.items():
-        if viet not in facet_set:
+    for chinese, entry in han_viet_map.items():
+        outside = isinstance(entry, dict) and entry.get("outsideTeams") is True
+        viet = entry["viet"] if isinstance(entry, dict) else entry
+        if outside and viet in facet_set:
+            raise ValueError(f"[fail-loud] viet '{viet}' (Hán '{chinese}') đã có trong facets.json.books, gỡ cờ outsideTeams")
+        if not outside and viet not in facet_set:
             raise ValueError(f"[fail-loud] viet '{viet}' (Hán '{chinese}') không thuộc facets.json.books")
         rec = {"chinese": chinese, "viet": viet}
         missing: set = set()
@@ -59,7 +66,9 @@ def build() -> list:
         json.dump(records, fh, ensure_ascii=False, indent=2)
         fh.write("\n")
     print(f"books-dict: {len(records)} mục -> {_OUT}")
-    print(f"  (facet có {len(facet_books)} binh thư; còn {len(facet_books) - len(records)} chưa map)")
+    facet_set = set(facet_books)
+    in_facet = sum(1 for r in records if r["viet"] in facet_set)
+    print(f"  (facet có {len(facet_books)} binh thư; còn {len(facet_books) - in_facet} chưa map)")
     return records
 
 

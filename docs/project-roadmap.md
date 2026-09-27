@@ -9,7 +9,7 @@ Roadmap ưu tiên duy trì dữ liệu đúng và vận hành an toàn trước 
 - [ ] Hợp nhất augmentation đã tạo 56 Team PK vào pipeline nhìn thấy, có test fixture rõ.
 - [x] Giữ `pipeline/do-uy-ss18-source.json` (40 mục) làm archive nguồn thô và loại Đô Úy khỏi đường build/publication.
 - [ ] Cập nhật expected count trong `build_json.py` chỉ sau khi đường nguồn đã đầy đủ; không sửa số đơn lẻ.
-- [ ] Rebuild `facets.json` từ đúng 166 team; thêm test phát hiện lệch tổng source.
+- [x] Rebuild `facets.json` từ đúng 166 team; thêm test phát hiện lệch tổng source.
 - [ ] Tài liệu hóa artifact nguồn cần thiết cho clean clone hoặc cung cấp source snapshot hợp lệ.
 - [ ] Xác định chiến lược cache crawl: checkpoint có checksum, export được phép commit, hoặc quy trình recrawl có kiểm soát.
 - [ ] Review 27 chiến pháp pending trong `tactics.json`; giữ provenance cho mỗi bổ sung.

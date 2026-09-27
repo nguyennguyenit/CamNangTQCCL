@@ -1,14 +1,17 @@
 """Orchestrate toàn pipeline -> data/{teams,coexist,khaihoang,facets}.json.
 
-Verify per-file count, log diff fail-fast. Deterministic output (UTF-8, sort key).
+Verify per-file count, fail-fast. Ghi đè 4 file output (UTF-8, indent 2,
+``sort_keys=False``: giữ thứ tự khoá theo code). ID đội đã commit trong
+``data/teams.json`` được giữ theo (nguồn, tập tên tướng đã sắp); đội mới nhận
+số kế tiếp của đúng nguồn; đội đã commit biến mất khỏi nguồn -> dừng.
 """
 
 from __future__ import annotations
 
 import json
 import os
-from collections import Counter
-from typing import Dict, List
+from collections import Counter, defaultdict, deque
+from typing import Deque, Dict, List, Optional, Tuple
 
 from .normalize import load_aliases, load_nicknames, normalize_team
 from .parse_coexist import group_coexist, parse_coexist
@@ -26,11 +29,35 @@ _TEAM_FILES = [
 ]
 
 
-def build_teams() -> List[dict]:
+def _team_key(source: str, heroes: List[dict]) -> Tuple[str, Tuple[str, ...]]:
+    return source, tuple(sorted(h["baseName"] for h in heroes))
+
+
+def _id_number(team_id: str) -> int:
+    return int(team_id.rsplit("-", 1)[1])
+
+
+def load_committed_teams(path: str = os.path.join(_OUT, "teams.json")) -> List[dict]:
+    if not os.path.exists(path):
+        return []
+    with open(path, "r", encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def build_teams(committed: Optional[List[dict]] = None) -> List[dict]:
+    """Parse + normalize các nguồn đội, giữ ID của ``committed``.
+
+    Ghép theo (nguồn, tập tên tướng đã sắp); trùng khoá thì theo thứ tự xuất hiện.
+    """
     aliases = load_aliases()
     nicknames = load_nicknames()
+    known: Dict[Tuple[str, Tuple[str, ...]], Deque[str]] = defaultdict(deque)
+    next_number: Dict[str, int] = defaultdict(int)
+    for team in committed or []:
+        known[_team_key(team["source"], team["heroes"])].append(team["id"])
+        next_number[team["source"]] = max(next_number[team["source"]], _id_number(team["id"]) + 1)
+
     teams: List[dict] = []
-    idx = 0
     for fname, src, hint, expected in _TEAM_FILES:
         raw = parse_team_intro(os.path.join(_SRC, fname), src, hint)
         if len(raw) != expected:
@@ -38,8 +65,21 @@ def build_teams() -> List[dict]:
                 f"[build] COUNT MISMATCH {fname}: got {len(raw)} expected {expected}"
             )
         for r in raw:
-            teams.append(normalize_team(r, aliases, idx, nicknames))
-            idx += 1
+            team = normalize_team(r, aliases, "", nicknames)
+            matches = known.get(_team_key(src, team["heroes"]))
+            if matches:
+                team["id"] = matches.popleft()
+            else:
+                team["id"] = f"{src}-{next_number[src]}"
+                next_number[src] += 1
+            teams.append(team)
+
+    missing = sorted((i for ids in known.values() for i in ids), key=lambda i: (i.rsplit("-", 1)[0], _id_number(i)))
+    if missing:
+        raise SystemExit(
+            f"[build] {len(missing)} đội đã commit không còn trong nguồn (ID công khai sẽ mất): "
+            + ", ".join(missing)
+        )
     return teams
 
 
@@ -106,7 +146,7 @@ def build_khaihoang_payload(html_path: str) -> dict:
 
 
 def main() -> None:
-    teams = build_teams()
+    teams = build_teams(committed=load_committed_teams())
     facets = build_facets(teams)
     coexist = group_coexist(parse_coexist(os.path.join(_SRC, "Team Cùng Tồn.html")))
     kh_path = os.path.join(_SRC, "Khai hoang.html")

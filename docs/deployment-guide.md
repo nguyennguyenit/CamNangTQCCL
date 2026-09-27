@@ -71,11 +71,13 @@ python3 -m pipeline.suggest_team_tier path/to/saved-tier-list.html
 
 ### Cảnh báo bắt buộc
 
-Không chạy `pipeline.build_json` trực tiếp trên artifact production mà chưa backup. Builder cố ý loại `Team Đô Úy.html` và hiện dựng 50 Team PK + 110 meta cũ, trong khi `data/teams.json` công khai có 56 + 110. `pipeline/do-uy-ss18-source.json` giữ 40 record nguồn thô làm archive và không được publish. `facets.json` vẫn lệch một team. Một clone sạch thường thiếu HTML nguồn và raw crawl cache vì chúng bị ignore.
+Không chạy `pipeline.build_json` trực tiếp trên artifact production mà chưa backup. Lệnh **ghi đè** `data/{teams,facets,coexist,khaihoang}.json`. Builder cố ý loại `Team Đô Úy.html` và hiện dựng 50 Team PK + 110 meta cũ, trong khi `data/teams.json` công khai có 56 + 110. `pipeline/do-uy-ss18-source.json` giữ 40 record nguồn thô làm archive và không được publish. Một clone sạch thường thiếu HTML nguồn và raw crawl cache vì chúng bị ignore.
+
+**ID đội là ID công khai** (handle trong `pipeline/team-route-handles.json`, tier, ledger Đội khác đều neo vào đó). `build_teams` đọc `data/teams.json` đang commit và giữ ID theo (nguồn, tập tên tướng đã sắp; trùng thì theo thứ tự xuất hiện); đội mới nhận số kế tiếp của đúng nguồn. Đội đã commit không còn trong nguồn (kể cả khi tên tướng trong HTML khác tên đã sửa trong `data/teams.json`) làm lệnh dừng và liệt kê ID, không ghi file nào. Hiện lệnh dừng với 8 ID (`team-intro-50…55` chỉ có trong artifact; `moi-phe-73`, `moi-phe-86` vì HTML còn `Giả Hụ̉` có dấu kết hợp). Muốn chạy an toàn: xem trước bằng `python3 -c "from pipeline.build_json import build_teams, load_committed_teams; build_teams(committed=load_committed_teams())"` (chỉ đọc), sửa nguồn/alias đến khi không còn ID bị mất, rồi mới chạy lệnh ghi.
 
 Quy trình an toàn:
 
-1. Copy/backup `data/` ngoài worktree hoặc tạo branch/worktree riêng.
+1. Copy/backup `data/` ngoài worktree hoặc tạo branch/worktree riêng; chạy bản xem trước ở trên, phải không còn ID bị mất.
 2. Xác nhận HTML/cache/map nguồn đủ và expected count đã phản ánh đường build thực.
 3. Chạy từng builder; không dùng `--recrawl` nếu chưa chấp nhận network/source drift.
 4. So sánh schema, count, ID, source distribution và nội dung diff; không chỉ nhìn test pass.

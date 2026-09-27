@@ -125,10 +125,11 @@ def transliterate(chinese: str, missing: Optional[Set[str]] = None) -> str:
             out.append("".join(latin))
             latin.clear()
 
+    compounds = sorted(COMPOUND_READINGS, key=len, reverse=True)
     i = 0
     while i < len(s):
         # Cụm đọc đặc biệt (đa âm theo cụm) — ưu tiên longest-match.
-        matched = next((c for c in COMPOUND_READINGS if s.startswith(c, i)), None)
+        matched = next((c for c in compounds if s.startswith(c, i)), None)
         if matched:
             _flush()
             out.append(COMPOUND_READINGS[matched])

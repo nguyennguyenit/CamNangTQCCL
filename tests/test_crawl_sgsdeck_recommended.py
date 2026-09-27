@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from pipeline.crawl_sgsdeck_recommended import SafeRecommendedRedirect, crawl_scope, discover_scopes, safe_scope_key
+from pipeline.crawl_sgsdeck_recommended import SafeRecommendedRedirect, crawl_scope, discover_scopes, main, safe_scope_key
 FIXTURE = Path(__file__).parent / "fixtures/sgsdeck-recommended/source-season-picker.html"
 
 
@@ -32,6 +32,18 @@ class CrawlRecommendedTest(unittest.TestCase):
             Path(directory, "manifest.json").write_text(json.dumps({"inventoryHash": "sha256:wrong", "pages": {}, "scopes": []}))
             with self.assertRaisesRegex(ValueError, "inventory changed"):
                 crawl_scope(inventory, directory, inventory["scopes"][0], minimum_interval=0)
+
+    def test_freeze_inventory_writes_discovered_scopes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            main(["--cache", directory, "--freeze-inventory", str(FIXTURE)])
+            written = json.loads(Path(directory, "scope-inventory.json").read_text(encoding="utf-8"))
+        self.assertEqual(written, discover_scopes(FIXTURE.read_text()))
+
+    def test_crawl_without_frozen_inventory_explains_freeze_step(self):
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(SystemExit, "--freeze-inventory"):
+                main(["--cache", directory, "--all-source-scopes"])
+            self.assertFalse(Path(directory, "scope-inventory.json").exists())
 
 
 if __name__ == "__main__":

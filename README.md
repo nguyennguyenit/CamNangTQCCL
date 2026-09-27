@@ -106,7 +106,7 @@ tiếng Việt đã review: 202 tướng, 406 chiến pháp và catalog bổ sun
 [contract SGSDeck private/public](docs/sgsdeck-catalog.md). Chủ project xác nhận
 quyền import trong phạm vi sáu catalog ngày 2026-09-12; đây không phải open license.
 
-Không chạy máy móc trên dữ liệu đang dùng: `build_json.py` cố ý loại nguồn Đô Úy nhưng hiện chỉ dựng `50 + 110`, trong khi artifact công khai có `56 + 110`. `pipeline/do-uy-ss18-source.json` giữ 40 mục làm archive nguồn thô và không tham gia publication. Clone sạch thường cũng thiếu HTML nguồn và cache crawl bị ignore. Trước khi rebuild: backup `data/`, bảo đảm đủ nguồn, chạy từng bước, rồi review toàn bộ diff và test.
+Không chạy máy móc trên dữ liệu đang dùng: `build_json.py` cố ý loại nguồn Đô Úy nhưng hiện chỉ dựng `50 + 110`, trong khi artifact công khai có `56 + 110`; builder giữ ID đội đã commit và dừng (liệt kê ID) thay vì ghi đè khi đội đã commit không còn trong nguồn. `pipeline/do-uy-ss18-source.json` giữ 40 mục làm archive nguồn thô và không tham gia publication. Clone sạch thường cũng thiếu HTML nguồn và cache crawl bị ignore. Trước khi rebuild: backup `data/`, bảo đảm đủ nguồn, chạy từng bước, rồi review toàn bộ diff và test ([cảnh báo](docs/deployment-guide.md#cảnh-báo-bắt-buộc)).
 
 ## Deploy
 
@@ -157,7 +157,7 @@ plans/                     # kế hoạch/báo cáo lịch sử, không phải r
 
 ## Ghi chú vận hành
 
-- `data/facets.json` không được frontend load; hai trang danh sách đội tự tính facet runtime. File hiện phản ánh 165 team, lệch 1 so với `teams.json`.
+- `data/facets.json` không được frontend load; hai trang danh sách đội tự tính facet runtime. File là `build_facets(data/teams.json)` của 166 team; `tests/test_build.py` chặn lệch.
 - Sửa giao diện thì sửa token/component trong `docs/design/so-binh-phap/tokens.json` trước, rồi chạy `node scripts/design-tokens.mjs --check`; CSS không giữ mã màu hay giá trị vi mô ngoài khối token.
 - Theme lưu ở `localStorage.theme`; không có giá trị thì theo `prefers-color-scheme` của hệ điều hành.
 - `data/tactics-generic.json` có 29 nguồn bổ sung; 27 record đang mang trạng thái `pending` sau merge vào `tactics.json`.

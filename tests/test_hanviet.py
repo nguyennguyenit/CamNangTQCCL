@@ -1,6 +1,7 @@
 """TDD pipeline/hanviet.py — phiên âm Hán-Việt + map chất tướng/phe/binh chủng."""
 
 import unittest
+from unittest import mock
 
 from pipeline import hanviet
 
@@ -12,6 +13,11 @@ class TransliterateTest(unittest.TestCase):
         self.assertEqual(hanviet.transliterate("百骑劫营"), "bách kỵ kiếp doanh")
         self.assertEqual(hanviet.transliterate("夺魂挟魄"), "đoạt hồn hiệp phách")
         self.assertEqual(hanviet.transliterate("八门金锁阵"), "bát môn kim tỏa trận")
+
+    def test_compound_reading_prefers_longest_match(self):
+        with mock.patch.object(hanviet, "COMPOUND_READINGS", {"AB": "x", "ABC": "y"}):
+            self.assertEqual(hanviet.transliterate("ABC"), "y")
+            self.assertEqual(hanviet.transliterate("ABD"), "x D")
 
     def test_polyphone_locked(self):
         # M4: đa âm chốt theo cộng đồng VN (âm thứ 2).

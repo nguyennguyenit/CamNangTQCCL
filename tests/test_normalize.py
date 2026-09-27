@@ -85,7 +85,7 @@ class TestNormalize(unittest.TestCase):
                 {"nameRaw": "Lữ Bố", "cp1Raw": "Tam Thế Trận", "cp2Raw": "", "booksRaw": []},
             ],
         }
-        team = normalize.normalize_team(raw, aliases, 0)
+        team = normalize.normalize_team(raw, aliases, "team-intro-0")
         self.assertEqual(team["faction"], "Hỗn hợp")
 
     def test_no_mix_formation_keeps_faction(self):
@@ -98,7 +98,7 @@ class TestNormalize(unittest.TestCase):
                 {"nameRaw": "Khương Duy", "cp1Raw": "Vô Đương Phi Quân", "cp2Raw": "", "booksRaw": []},
             ],
         }
-        team = normalize.normalize_team(raw, aliases, 0)
+        team = normalize.normalize_team(raw, aliases, "team-intro-0")
         self.assertEqual(team["faction"], "Thục")
 
     def test_auto_team_name_last_syllable(self):
@@ -127,7 +127,7 @@ class TestNormalize(unittest.TestCase):
                 {"nameRaw": "Chu Thái", "cp1Raw": "", "cp2Raw": "", "booksRaw": []},
             ],
         }
-        team = normalize.normalize_team(raw, aliases, 0, nicks)
+        team = normalize.normalize_team(raw, aliases, "team-intro-0", nicks)
         self.assertEqual(team["name"], "Ninh Từ Thái")
         self.assertEqual(team["nickname"], "Hổ Thần Cung")
 
@@ -140,7 +140,7 @@ class TestNormalize(unittest.TestCase):
                 {"nameRaw": "Quan Vũ", "cp1Raw": "", "cp2Raw": "", "booksRaw": []},
             ],
         }
-        team = normalize.normalize_team(raw, aliases, 0, {})
+        team = normalize.normalize_team(raw, aliases, "team-intro-0", {})
         self.assertEqual(team["name"], "Vũ")
         self.assertIsNone(team["nickname"])
 

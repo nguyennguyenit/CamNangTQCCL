@@ -16,8 +16,12 @@ import tempfile
 import unicodedata
 from urllib.parse import urlsplit
 
+from pipeline.promote_unified_lookup import JOURNAL_STATES, LOCK_RELATIVE, TRANSACTIONS_RELATIVE
+
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_VERSION = 1
+# Giao dịch Tra cứu chưa kết thúc (chưa committed/rolled-back) -> từ điển đang đổi.
+OPEN_JOURNAL_STATES = JOURNAL_STATES - {"committed", "rolled-back"}
 
 def lookup_generation(output_dir):
     manifest_path = Path(output_dir) / "lookup-manifest.json"
@@ -31,9 +35,14 @@ def lookup_generation(output_dir):
 
 
 @contextlib.contextmanager
-def dictionary_exclusion(output_dir):
-    output_dir = Path(output_dir)
-    lock = output_dir.parent / "pipeline/lookup-output/promotion.lock"
+def dictionary_exclusion(root):
+    """Giữ khoá promotion của repo ``root`` (cùng khoá với promote_unified_lookup)."""
+    root = Path(root)
+    for journal_path in sorted((root / TRANSACTIONS_RELATIVE).glob("*/journal.json")):
+        state = json.loads(journal_path.read_text(encoding="utf-8")).get("state")
+        if state in OPEN_JOURNAL_STATES:
+            raise RuntimeError(f"lookup transaction {journal_path.parent.name} is {state}; recover it first")
+    lock = root / LOCK_RELATIVE
     lock.parent.mkdir(parents=True, exist_ok=True)
     try:
         descriptor = os.open(lock, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
@@ -279,10 +288,13 @@ def encode_payloads(payloads):
     return {name: (json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True, allow_nan=False) + "\n").encode("utf-8") for name, payload in payloads.items()}
 
 
-def publish_season_data(registry, evidence, output_dir, **options):
-    """Validate and publish sidecars while the lookup generation is excluded."""
+def publish_season_data(registry, evidence, output_dir, *, root=ROOT, **options):
+    """Validate and publish sidecars while the lookup generation is excluded.
+
+    The exclusion is the promotion lock of repository ``root``, whatever ``output_dir`` is.
+    """
     output_dir = Path(output_dir)
-    with dictionary_exclusion(output_dir):
+    with dictionary_exclusion(root):
         generation = lookup_generation(output_dir)
         payloads = build_season_data(registry, evidence, **options)
         encoded = encode_payloads(payloads)

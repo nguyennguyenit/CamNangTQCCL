@@ -23,6 +23,13 @@ def fixtures():
     return registry, evidence
 
 
+def lock_root(test):
+    """Repo root tạm cho khoá promotion, tách khỏi thư mục output của test."""
+    directory = tempfile.TemporaryDirectory()
+    test.addCleanup(directory.cleanup)
+    return Path(directory.name)
+
+
 def with_ruleset():
     registry, evidence = fixtures()
     rule = {"id": "reviewed-rules", "label": "Verified rule fixture", "reviewStatus": "reviewed", "evidenceRefs": ["rules-proof"]}
@@ -159,9 +166,9 @@ class BuildSeasonDataTest(unittest.TestCase):
             legacy = output / "coexist.json"
             legacy.write_bytes(b'[{"legacy":true}]\n')
             before = legacy.read_bytes()
-            seasons.publish_season_data(registry, evidence, output)
+            seasons.publish_season_data(registry, evidence, output, root=lock_root(self))
             first = {path.name: path.read_bytes() for path in output.iterdir()}
-            seasons.publish_season_data(registry, evidence, output)
+            seasons.publish_season_data(registry, evidence, output, root=lock_root(self))
             self.assertEqual(first, {path.name: path.read_bytes() for path in output.iterdir()})
             self.assertEqual(legacy.read_bytes(), before)
             for name in ("season-registry.json", "season-evidence.json"):
@@ -172,18 +179,18 @@ class BuildSeasonDataTest(unittest.TestCase):
         registry, evidence = fixtures()
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory)
-            seasons.publish_season_data(registry, evidence, output)
+            seasons.publish_season_data(registry, evidence, output, root=lock_root(self))
             before = {path.name: path.read_bytes() for path in output.iterdir()}
             registry[0]["labelVi"] = "Changed label"
             evidence[0]["provenance"]["fetchedAt"] = "invalid"
-            with self.assertRaises(ValueError): seasons.publish_season_data(registry, evidence, output)
+            with self.assertRaises(ValueError): seasons.publish_season_data(registry, evidence, output, root=lock_root(self))
             self.assertEqual(before, {path.name: path.read_bytes() for path in output.iterdir()})
 
     def test_committed_corpus_preserved_during_candidate_build(self):
         paths = sorted((ROOT / "data").glob("*.json"))
         before = {str(path): hashlib.sha256(path.read_bytes()).hexdigest() for path in paths}
         with tempfile.TemporaryDirectory() as directory:
-            seasons.publish_season_data(*fixtures(), Path(directory))
+            seasons.publish_season_data(*fixtures(), Path(directory), root=lock_root(self))
         self.assertEqual(before, {str(path): hashlib.sha256(path.read_bytes()).hexdigest() for path in paths})
 
     def test_handled_second_replace_failure_restores_existing_and_new_outputs(self):
@@ -193,7 +200,7 @@ class BuildSeasonDataTest(unittest.TestCase):
                 output = Path(directory)
                 registry, evidence = fixtures()
                 if existed:
-                    seasons.publish_season_data(registry, evidence, output)
+                    seasons.publish_season_data(registry, evidence, output, root=lock_root(self))
                 (output / "coexist.json").write_bytes(b"legacy\n")
                 before = {path.name: path.read_bytes() for path in output.iterdir()}
                 registry[0]["labelVi"] = "Changed label"
@@ -206,7 +213,7 @@ class BuildSeasonDataTest(unittest.TestCase):
                     return replace(source, destination)
                 with patch.object(seasons.os, "replace", side_effect=fail_second):
                     with self.assertRaises(OSError):
-                        seasons.publish_season_data(registry, evidence, output)
+                        seasons.publish_season_data(registry, evidence, output, root=lock_root(self))
                 self.assertEqual(before, {path.name: path.read_bytes() for path in output.iterdir()})
 
 
@@ -344,7 +351,7 @@ class CuratedSeasonBundleTest(unittest.TestCase):
         for existed in (False,True):
             with self.subTest(existed=existed),tempfile.TemporaryDirectory() as directory:
                 output=Path(directory);registry,evidence,options=self.bundle()
-                if existed:seasons.publish_season_data(registry,evidence,output,**options)
+                if existed:seasons.publish_season_data(registry,evidence,output,**options,root=lock_root(self))
                 (output/'coexist.json').write_bytes(b'legacy\n')
                 before={path.name:path.read_bytes() for path in output.iterdir()}
                 registry[0]['labelVi']='Changed label';calls=[];replace=os.replace
@@ -353,7 +360,7 @@ class CuratedSeasonBundleTest(unittest.TestCase):
                     if len(calls)==2:raise OSError('second replace fails')
                     return replace(source,destination)
                 with patch.object(seasons.os,'replace',side_effect=fail_second),self.assertRaises(OSError):
-                    seasons.publish_season_data(registry,evidence,output,**options)
+                    seasons.publish_season_data(registry,evidence,output,**options,root=lock_root(self))
                 self.assertEqual(before,{path.name:path.read_bytes() for path in output.iterdir()})
 
 
@@ -435,7 +442,7 @@ class LookupGenerationGateTest(unittest.TestCase):
             lock.write_text('{"transaction":"lookup-first-activation"}\n', encoding="utf-8")
 
             with self.assertRaises(RuntimeError):
-                seasons.publish_season_data(registry, evidence, output)
+                seasons.publish_season_data(registry, evidence, output, root=root)
 
             self.assertFalse((output / "season-registry.json").exists())
 
@@ -460,6 +467,63 @@ class LookupGenerationGateTest(unittest.TestCase):
         self.assertEqual(generation_gate.call_count, 2)
         self.assertNotIn("replace", events)
         self.assertEqual(events, ["enter", "exit"])
+
+
+class SeasonLockLocationTest(unittest.TestCase):
+    """Khoá mùa nằm ở <root>/pipeline/lookup-output, không phụ thuộc --output-dir."""
+
+    def test_lock_is_held_under_repo_root_not_output_parent(self):
+        registry, evidence = fixtures()
+        seen = []
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory, "repo")
+            output = Path(directory, "elsewhere", "data")
+            lock = root / "pipeline/lookup-output/promotion.lock"
+
+            def generation(*_args):
+                seen.append(lock.exists())
+                return "legacy"
+
+            with patch.object(seasons, "lookup_generation", generation):
+                seasons.publish_season_data(registry, evidence, output, root=root)
+            self.assertEqual(seen, [True, True])
+            self.assertFalse(lock.exists())
+            self.assertFalse(Path(directory, "elsewhere", "pipeline").exists())
+            self.assertTrue((output / "season-registry.json").exists())
+
+    def test_existing_lock_or_open_transaction_refuses_publication(self):
+        cases = [
+            ("lock", None),
+            ("journal", "activation-prepared"),
+            ("journal", "writing"),
+        ]
+        for kind, state in cases:
+            with self.subTest(kind=kind, state=state), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory, "repo")
+                output = Path(directory, "out")
+                lookup_output = root / "pipeline/lookup-output"
+                if kind == "lock":
+                    lookup_output.mkdir(parents=True)
+                    (lookup_output / "promotion.lock").write_text('{"transaction":"other"}\n', encoding="utf-8")
+                else:
+                    journal = lookup_output / "transactions/site-vi-x/journal.json"
+                    journal.parent.mkdir(parents=True)
+                    journal.write_text(json.dumps({"state": state}), encoding="utf-8")
+                with self.assertRaises(RuntimeError):
+                    seasons.publish_season_data(*fixtures(), output, root=root)
+                self.assertFalse((output / "season-registry.json").exists())
+                self.assertEqual((lookup_output / "promotion.lock").exists(), kind == "lock")
+
+    def test_settled_transactions_do_not_block_publication(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory, "repo")
+            output = Path(directory, "out")
+            for index, state in enumerate(("committed", "rolled-back")):
+                journal = root / f"pipeline/lookup-output/transactions/tx-{index}/journal.json"
+                journal.parent.mkdir(parents=True)
+                journal.write_text(json.dumps({"state": state}), encoding="utf-8")
+            seasons.publish_season_data(*fixtures(), output, root=root)
+            self.assertTrue((output / "season-registry.json").exists())
 
 
 if __name__ == "__main__":

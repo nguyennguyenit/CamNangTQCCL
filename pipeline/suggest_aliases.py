@@ -1,44 +1,45 @@
 """Gợi ý cụm tên gần-trùng (typo) cho con người review vào aliases.json.
 
 KHÔNG tự áp dụng fuzzy — chỉ in cluster + count để người chọn.
-Dùng difflib cutoff cao để giảm false positive.
+Dùng difflib cutoff cao để giảm false positive. Quét đúng các nguồn đội mà
+``build_json`` publish; tướng gom theo ``baseName`` (bỏ SP/biến thể); tên đã là
+khoá trong ``aliases.json`` (typo đã xử lý) không được đề xuất lại.
 """
 
 from __future__ import annotations
 
 import difflib
+import os
 import sys
 from collections import Counter
 from typing import Dict, List
 
+from .build_json import _SRC, _TEAM_FILES
+from .normalize import load_aliases, parse_hero
 from .parse_team_intro import parse_team_intro
-
-_FILES = [
-    ("Meta Team PK/Team giới thiệu(mới).html", "team-intro", None),
-    ("Meta Team PK/Team Đô Úy.html", "do-uy", None),
-    ("Meta Team PK/Meta mỗi phe (cũ).html", "moi-phe", "out-meta"),
-]
 
 
 def collect_counts() -> Dict[str, Counter]:
-    tactics: Counter = Counter()
-    books: Counter = Counter()
-    heroes: Counter = Counter()
-    for path, src, hint in _FILES:
-        for team in parse_team_intro(path, src, hint):
+    aliases = load_aliases()
+    counts: Dict[str, Counter] = {"tactics": Counter(), "books": Counter(), "heroes": Counter()}
+
+    def add(kind: str, name: str) -> None:
+        if name and name not in aliases[kind]:
+            counts[kind][name] += 1
+
+    for fname, src, hint, _expected in _TEAM_FILES:
+        for team in parse_team_intro(os.path.join(_SRC, fname), src, hint):
             for h in team["heroesRaw"]:
-                heroes[h["nameRaw"].strip()] += 1
+                hero = parse_hero(h["nameRaw"])
+                for name in [hero["baseName"], *hero["alternatives"]]:
+                    add("heroes", name.strip())
                 for cp in (h["cp1Raw"], h["cp2Raw"]):
                     for part in str(cp).split("/"):
-                        part = part.strip()
-                        if part:
-                            tactics[part] += 1
+                        add("tactics", part.strip())
                 for b in h["booksRaw"]:
                     for part in str(b).split("/"):
-                        part = part.strip().replace("Tinh·", "").replace("Thác·", "").strip()
-                        if part:
-                            books[part] += 1
-    return {"tactics": tactics, "books": books, "heroes": heroes}
+                        add("books", part.strip().replace("Tinh·", "").replace("Thác·", "").strip())
+    return counts
 
 
 def clusters(counter: Counter, cutoff: float = 0.86) -> List[List[str]]:

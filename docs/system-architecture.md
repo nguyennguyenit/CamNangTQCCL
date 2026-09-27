@@ -35,9 +35,9 @@ local MCP client ───────────stdio────────�
 
 1. HTML export trong `Meta Team PK/` được parser grid/team/Cùng Tồn/khai hoang đọc.
 2. `normalize.py` áp aliases, nickname và chuẩn hóa team.
-3. `build_json.py` dự kiến ghi `teams.json`, `facets.json`, `coexist.json`, `khaihoang.json`.
+3. `build_json.py` ghi đè `teams.json`, `facets.json`, `coexist.json`, `khaihoang.json`; giữ ID đội đã commit và dừng nếu một ID công khai sẽ mất ([cảnh báo rebuild](deployment-guide.md#cảnh-báo-bắt-buộc)).
 4. `build_dict.py` đọc cache/crawl Lingxi, link với facet và merge `tactics-generic.json` để ghi từ điển tướng/chiến pháp.
-5. `build_books_dict.py` validate map binh thư curate với facet.
+5. `build_books_dict.py` validate map binh thư curate với facet; dòng `outsideTeams` (sách không đội nào dùng) phải nằm ngoài facet.
 6. `build_team_tier.py` join bảng tier curate vào team ID.
 7. Maintainer review diff và chạy test trước khi publish artifact.
 

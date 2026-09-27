@@ -1,5 +1,20 @@
 # Project Changelog
 
+## 2026-09-27 (Pipeline: ID ổn định, binh thư, crawler, khoá mùa, alias)
+
+### Fixed
+
+- `pipeline.build_json` không còn đánh số lại ID đội theo chỉ số toàn cục (rebuild từng đổi 110 ID `moi-phe`): `build_teams` giữ ID của `data/teams.json` đang commit theo (nguồn, tập tên tướng đã sắp; trùng thì theo thứ tự), đội mới nhận số kế tiếp của đúng nguồn, đội đã commit biến mất khỏi nguồn làm lệnh dừng và liệt kê ID. Hiện lệnh dừng với 8 ID (`team-intro-50…55`, `moi-phe-73`, `moi-phe-86`), nên không ghi đè artifact.
+- `pipeline.build_books_dict` không còn ném `ValueError` với `归心` (Quy Thuận) và `兵行诡道` (Binh Hành Quỷ Đạo): hai dòng map mang cờ `outsideTeams: true` (sách không đội nào dùng), validator từ chối cờ khi sách đã có trong facet. `data/books-dict.json` giữ nguyên byte.
+- `pipeline.crawl_sgsdeck_recommended`: bỏ cờ `--resume` không dùng (cache manifest là điểm tiếp tục), thêm `--freeze-inventory <picker.html>` ghi `scope-inventory.json` (trước không lệnh nào ghi file này); thiếu inventory thì báo đúng bước cần chạy.
+- `pipeline.build_season_data` giữ khoá `pipeline/lookup-output/promotion.lock` của repo thay vì của cha `--output-dir` (ghi ra `/tmp/…` từng tạo khoá ở `/tmp/pipeline/…`, không loại trừ promotion Tra cứu), và từ chối khi còn transaction Tra cứu `activation-prepared`/`writing`.
+- `pipeline.suggest_aliases` quét đúng `_TEAM_FILES` của `build_json` (bỏ `Team Đô Úy.html`), gom tướng theo `baseName` (không đề xuất `SP Tuân Úc` ~ `SP Tuân Úc(S)`) và bỏ tên đã là khoá trong `aliases.json`.
+- `pipeline.hanviet.transliterate` chọn cụm đọc đặc biệt dài nhất (trước lấy cụm khớp đầu tiên theo thứ tự khai báo); bảng hiện tại không có cụm lồng nhau nên output không đổi.
+
+### Changed
+
+- Test `data/facets.json` = `build_facets(data/teams.json)` và tổng `sources` = tổng `statuses` = số đội; docs bỏ câu "facets lệch 1 đội". Docs lệnh builder Recommended thêm `--catalog data/heroes-dict.json` (bắt buộc), quy trình crawler thêm bước freeze.
+
 ## 2026-09-27 (Vision Worker và Research MCP)
 
 ### Fixed

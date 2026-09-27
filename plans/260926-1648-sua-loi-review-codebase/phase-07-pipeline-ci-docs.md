@@ -30,27 +30,27 @@ Pipeline rebuild không đổi ID đã công khai, các lệnh trong runbook ch�
 ## Tasks & Steps
 
 ### A. ID ổn định khi rebuild (ReviewPipeline#1)
-- [ ] **Test trước.** `tests/test_build.py`: patch `pipeline.build_json.parse_team_intro` trả raw fixture cho 2 nguồn (thứ tự như `_TEAM_FILES`, `:23-26`), truyền danh sách đội đã commit có `moi-phe-62…` → `build_teams(committed=…)` giữ đúng ID theo tập tướng; đội mới nhận số kế tiếp của đúng nguồn; đội đã commit biến mất khỏi nguồn → `SystemExit` liệt kê ID. Đỏ: trả `moi-phe-50…`.
-- [ ] **Sửa.** `build_json` đọc `data/teams.json` đang commit, ghép theo (nguồn, tập tên tướng đã sắp; trùng thì theo thứ tự), `normalize_team` nhận ID thay vì chỉ số toàn cục (`normalize.py:237`); docstring `build_json.py:3` nói đúng (ghi đè, `sort_keys=False`) (ReviewPipeline#19); `docs/system-architecture.md:38` "ghi đè" + link cảnh báo; `docs/deployment-guide.md:74` thêm cảnh báo ID và cách chạy an toàn.
+- [x] **Test trước.** `tests/test_build.py`: patch `pipeline.build_json.parse_team_intro` trả raw fixture cho 2 nguồn (thứ tự như `_TEAM_FILES`, `:23-26`), truyền danh sách đội đã commit có `moi-phe-62…` → `build_teams(committed=…)` giữ đúng ID theo tập tướng; đội mới nhận số kế tiếp của đúng nguồn; đội đã commit biến mất khỏi nguồn → `SystemExit` liệt kê ID. Đỏ: trả `moi-phe-50…`.
+- [x] **Sửa.** `build_json` đọc `data/teams.json` đang commit, ghép theo (nguồn, tập tên tướng đã sắp; trùng thì theo thứ tự), `normalize_team` nhận ID thay vì chỉ số toàn cục (`normalize.py:237`); docstring `build_json.py:3` nói đúng (ghi đè, `sort_keys=False`) (ReviewPipeline#19); `docs/system-architecture.md:38` "ghi đè" + link cảnh báo; `docs/deployment-guide.md:74` thêm cảnh báo ID và cách chạy an toàn.
 
 ### B. `build_books_dict` với dữ liệu thật (ReviewPipeline#3)
-- [ ] **Test trước.** `tests/test_build_books_dict.py`: `build_books_dict(_load_map(), <facets.json thật>.books)` không ném. Đỏ: `ValueError … 'Quy Thuận' … không thuộc facets.json.books`.
-- [ ] **Sửa.** Hai sách có trong `data/books-dict.json` (đã đếm) nên không xoá: validator chấp nhận dòng map có cờ `"outsideTeams": true` (hoặc bảng phụ trong cùng file) cho sách không đội nào dùng; `data/books-dict.json` sau `python3 -m pipeline.build_books_dict` phải trùng byte bản đang commit.
+- [x] **Test trước.** `tests/test_build_books_dict.py`: `build_books_dict(_load_map(), <facets.json thật>.books)` không ném. Đỏ: `ValueError … 'Quy Thuận' … không thuộc facets.json.books`.
+- [x] **Sửa.** Hai sách có trong `data/books-dict.json` (đã đếm) nên không xoá: dòng map có cờ `"outsideTeams": true` cho sách không đội nào dùng (validator bỏ qua kiểm facet và từ chối nếu sách đã có trong facet). Theo quyết định 2026-09-27 (phương án 2): giữ nguyên byte `data/books-dict.json` đang commit; output builder trùng tập (chinese, viet), còn lệch 3 trường `hanViet` (xem `reports/phase-07.md` "Việc còn lại").
 
 ### C. `facets.json` (ReviewPipeline#4)
-- [ ] `data/facets.json` đã được sinh lại ở Phase 2 bước G (Q4 = A) nên bước này chỉ thêm test giữ nó không trôi. **Test:** `tests/test_build.py` — `data/facets.json` bằng `build_facets(data/teams.json)` và tổng `sources` = tổng `statuses` = `len(teams)`. Test viết xong chạy trên `data/facets.json` của commit trước Phase 2 (`git stash`/worktree tạm) để thấy đỏ (213 ≠ 166), rồi xanh trên cây hiện tại. Docs: bỏ câu "lệch 1 đội" (`README.md:160`, `docs/codebase-summary.md:85,110`, `docs/deployment-guide.md:74`, `docs/project-overview-pdr.md:68`), đánh dấu xong mục `docs/project-roadmap.md:12`.
+- [x] `data/facets.json` đã được sinh lại ở Phase 2 bước G (Q4 = A) nên bước này chỉ thêm test giữ nó không trôi. **Test:** `tests/test_build.py` — `data/facets.json` bằng `build_facets(data/teams.json)` và tổng `sources` = tổng `statuses` = `len(teams)`. Test viết xong chạy trên `data/facets.json` của commit trước Phase 2 (`git stash`/worktree tạm) để thấy đỏ (213 ≠ 166), rồi xanh trên cây hiện tại. Docs: bỏ câu "lệch 1 đội" (`README.md:160`, `docs/codebase-summary.md:85,110`, `docs/deployment-guide.md:74`, `docs/project-overview-pdr.md:68`), đánh dấu xong mục `docs/project-roadmap.md:12`.
 
 ### D. Crawler (ReviewPipeline#7) và lệnh builder (ReviewPipeline#6)
-- [ ] **Test trước.** `tests/test_crawl_sgsdeck_recommended.py`: `main(["--cache", tmp, "--freeze-inventory", <fixture picker HTML trong tests/fixtures/sgsdeck-recommended>])` ghi `scope-inventory.json` bằng đúng inventory `discover_scopes()` trả; chạy lại không có inventory vẫn báo hướng dẫn. Đỏ: tham số lạ.
-- [ ] **Sửa.** Bỏ `--resume` (cache đã là điểm tiếp tục), thêm `--freeze-inventory`; `docs/season-team-data.md:79-85` bỏ `--resume`, thêm bước freeze; `:91-97` thêm `--catalog data/heroes-dict.json` (catalog mà `compile_candidate` dùng, `site_localization.py:1957`) — chạy thử lệnh với `--output /tmp/…` để xác nhận.
+- [x] **Test trước.** `tests/test_crawl_sgsdeck_recommended.py`: `main(["--cache", tmp, "--freeze-inventory", <fixture picker HTML trong tests/fixtures/sgsdeck-recommended>])` ghi `scope-inventory.json` bằng đúng inventory `discover_scopes()` trả; chạy lại không có inventory vẫn báo hướng dẫn. Đỏ: tham số lạ.
+- [x] **Sửa.** Bỏ `--resume` (cache đã là điểm tiếp tục), thêm `--freeze-inventory`; `docs/season-team-data.md:79-85` bỏ `--resume`, thêm bước freeze; `:91-97` thêm `--catalog data/heroes-dict.json` (catalog mà `compile_candidate` dùng, `site_localization.py:1957`) — chạy thử lệnh với `--output /tmp/…` để xác nhận.
 
 ### E. Khoá mùa (ReviewPipeline#17)
-- [ ] **Test trước.** `tests/test_build_season_data.py`: `dictionary_exclusion` với `root` tạm và `output_dir` ở thư mục khác → khoá nằm ở `<root>/pipeline/lookup-output/promotion.lock`, không tạo `pipeline/` dưới cha của `output_dir`; khoá đã có hoặc journal `activation-prepared`/`writing` → từ chối. Đỏ: khoá ở cha `output_dir`.
-- [ ] **Sửa.** Dùng `LOCK_RELATIVE`, `JOURNAL_STATES` của `pipeline/promote_unified_lookup.py:23-25` với `root` của repo.
+- [x] **Test trước.** `tests/test_build_season_data.py`: `dictionary_exclusion` với `root` tạm và `output_dir` ở thư mục khác → khoá nằm ở `<root>/pipeline/lookup-output/promotion.lock`, không tạo `pipeline/` dưới cha của `output_dir`; khoá đã có hoặc journal `activation-prepared`/`writing` → từ chối. Đỏ: khoá ở cha `output_dir`.
+- [x] **Sửa.** Dùng `LOCK_RELATIVE`, `JOURNAL_STATES` của `pipeline/promote_unified_lookup.py:23-25` với `root` của repo.
 
 ### F. `suggest_aliases` (ReviewPipeline#18) và `hanviet` (ReviewPipeline#20)
-- [ ] **Test trước.** `tests/test_suggest_aliases.py`: raw fixture có `SP Tuân Úc` và `SP Tuân Úc(S)`, `Tôn Thương Hương` (đã là khoá alias) → không cụm nào được đề xuất cho hai trường hợp này; file quét = `_TEAM_FILES` của `build_json` (không có `Team Đô Úy.html`). `tests/test_hanviet.py`: patch `COMPOUND_READINGS` = `{"AB": "x", "ABC": "y"}` → đọc `"ABC"` ra `"y"`. Đỏ cả hai.
-- [ ] **Sửa.** Gom theo `parse_hero(nameRaw)["baseName"]`, bỏ tên đã là khoá trong `aliases.json`, dùng `_TEAM_FILES`; `hanviet.py:135` duyệt `sorted(COMPOUND_READINGS, key=len, reverse=True)`.
+- [x] **Test trước.** `tests/test_suggest_aliases.py`: raw fixture có `SP Tuân Úc` và `SP Tuân Úc(S)`, `Tôn Thương Hương` (đã là khoá alias) → không cụm nào được đề xuất cho hai trường hợp này; file quét = `_TEAM_FILES` của `build_json` (không có `Team Đô Úy.html`). `tests/test_hanviet.py`: patch `COMPOUND_READINGS` = `{"AB": "x", "ABC": "y"}` → đọc `"ABC"` ra `"y"`. Đỏ cả hai.
+- [x] **Sửa.** Gom theo `parse_hero(nameRaw)["baseName"]`, bỏ tên đã là khoá trong `aliases.json`, dùng `_TEAM_FILES`; `hanviet.py:135` duyệt `sorted(COMPOUND_READINGS, key=len, reverse=True)`.
 
 ### G. Nghỉ chuỗi `build_dict` (ReviewPipeline#2) — dọn, miễn test-first
 - [ ] Xoá 3 module + 3 test + 2 bảng (danh sách ở Files); grep lại `build_dict|crawl_tactics|link_tactics|tactic-name-overrides|role-tag-map` trên `pipeline/ tests/ scripts/ mcp-worker/ docs/ README.md` → chỉ còn changelog. Docs: bỏ khỏi lệnh thường (`README.md:86`, `docs/deployment-guide.md:59`), `docs/system-architecture.md:39` ghi từ điển do Unified Lookup sở hữu, `docs/codebase-summary.md:58,83`, `docs/code-standards.md:83` không coi hai bảng đã xoá là input đang publish.
@@ -81,7 +81,7 @@ Pipeline rebuild không đổi ID đã công khai, các lệnh trong runbook ch�
 
 ## Verification
 - `python3 -m unittest discover -s tests` → pass (các test mới đã thấy đỏ trước sửa).
-- `python3 -m pipeline.build_books_dict` → exit 0 và `git diff --exit-code data/books-dict.json`.
+- `python3 -m unittest tests.test_build_books_dict` → `build_books_dict` trên map + `facets.json` thật không ném và tập (chinese, viet) trùng `data/books-dict.json`; `data/books-dict.json` giữ nguyên byte đang commit (không chạy `python3 -m pipeline.build_books_dict` để ghi: output hiện thêm 3 `hanViet`, xem báo cáo).
 - `python3 -m pipeline.build_recommended_reference <lệnh đúng như docs, --output /tmp/rr-out>` → không lỗi thiếu tham số.
 - `git ls-files src/data/recommended-reference | awk -F/ '{print $4}' | sort -u` → `current.json` + đúng 1 generation; `git ls-files pipeline/lookup-output assets/videos` → chỉ `assets/videos/team-info-from-download-260701/team-list.md`; `git check-ignore pipeline/lookup-output/site-vi-candidate/ledger.json` → bị ignore; `git log --oneline | wc -l` không giảm (không viết lại lịch sử).
 - `grep -n '"css/\*\*"\|"public/\*\*"\|"tsconfig.json"' .github/workflows/mcp-worker.yml` → 6 dòng.

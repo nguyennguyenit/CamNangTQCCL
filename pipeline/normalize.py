@@ -200,8 +200,8 @@ def _has_mix_formation(heroes: list) -> bool:
     return False
 
 
-def normalize_team(raw: dict, alias_table: dict, index: int, nicknames: Optional[dict] = None) -> dict:
-    """Team thô -> Team model cuối."""
+def normalize_team(raw: dict, alias_table: dict, team_id: str, nicknames: Optional[dict] = None) -> dict:
+    """Team thô -> Team model cuối; ``team_id`` do ``build_json`` cấp (giữ ID đã commit)."""
     meta = classify(raw.get("rawType", ""), raw.get("statusHint"), raw.get("bannerFaction"))
     good, avoid, counter_notes = split_counters(raw.get("notesRaw", ""))
 
@@ -234,7 +234,7 @@ def normalize_team(raw: dict, alias_table: dict, index: int, nicknames: Optional
     nickname = (nicknames or {}).get(_nickname_key(base_names))
 
     return {
-        "id": f"{raw['source']}-{index}",
+        "id": team_id,
         "source": raw["source"],
         "name": auto_team_name(base_names),
         "nickname": nickname,

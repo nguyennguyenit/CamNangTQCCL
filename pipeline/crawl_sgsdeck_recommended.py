@@ -222,20 +222,28 @@ def crawl_scope(inventory, cache, scope, minimum_interval=1):
     return manifest
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--cache", type=Path, required=True)
+    parser.add_argument("--freeze-inventory", type=Path, metavar="PICKER_HTML",
+                        help="write <cache>/scope-inventory.json from a rendered season-picker page")
     parser.add_argument("--all-source-scopes", action="store_true")
-    parser.add_argument("--resume", action="store_true")
     parser.add_argument("--import-rendered-page", type=Path)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     inventory_path = args.cache / "scope-inventory.json"
+    if args.freeze_inventory:
+        _atomic_json(inventory_path, discover_scopes(args.freeze_inventory.read_text(encoding="utf-8")))
+        return
     if not inventory_path.exists():
-        raise SystemExit("scope-inventory.json is required; freeze a rendered picker first")
+        raise SystemExit(
+            "scope-inventory.json is required; save the rendered picker page and run "
+            "--freeze-inventory <picker.html> first"
+        )
     inventory = json.loads(inventory_path.read_text())
     if args.import_rendered_page:
         record_rendered_page(inventory, args.cache, args.import_rendered_page)
     elif args.all_source_scopes:
+        # Cache manifest là điểm tiếp tục: trang đã lưu được đọc lại, không tải lại.
         for scope in inventory["scopes"]:
             if scope["state"] != "uncollected-season":
                 crawl_scope(inventory, args.cache, scope)

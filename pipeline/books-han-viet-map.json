@@ -1,5 +1,5 @@
 {
-  "_note": "Bảng map binh thư Hán -> tên Việt game (facets.json.books). Binh thư VN dùng tên DỊCH NGHĨA nên KHÔNG auto-link Hán-Việt. Tên Hán neo theo nguồn 9game/7724 (hiệu ứng binh thư) + đối chiếu ảnh client VN. Tên Việt PHẢI khớp facets.json.books.",
+  "_note": "Bảng map binh thư Hán -> tên Việt game (facets.json.books). Binh thư VN dùng tên DỊCH NGHĨA nên KHÔNG auto-link Hán-Việt. Tên Hán neo theo nguồn 9game/7724 (hiệu ứng binh thư) + đối chiếu ảnh client VN. Tên Việt PHẢI khớp facets.json.books; dòng {\"viet\", \"outsideTeams\": true} là sách không đội nào dùng (không có trong facet, vẫn giữ trong books-dict).",
   "_dup_facet_names": "Các tên facet là BIẾN THỂ của binh thư đã map (cùng Hán, không map lại): Chuẩn Xác=Tinh Chuẩn(精准), Dũng Nghĩa=Nghĩa Dũng(勇毅), Thận Trọng=Trì Trọng(持重), Thắng Chiến=Thắng Trận(胜战), Thắng mà càng mạnh=Thắng Sẽ Càng Mạnh(胜而益强), Tàng Đao=Giấu Đao(藏刀).",
   "_unresolved": "Chưa rõ tên Hán (đã có hiệu ứng VN, search chưa ra): Chia Lời (chịu Binh Đao→Thống+1%/Mưu Lược→Trí+1% x5; ~分利?), Tinh Thần Sảng Khoái (tích 2 khống chế→xóa bất lợi 1 đơn vị; ~神清气爽?).",
   "books": {
@@ -57,8 +57,8 @@
     "藏刀": "Giấu Đao",
     "胜战": "Thắng Trận",
     "胜而益强": "Thắng Sẽ Càng Mạnh",
-    "归心": "Quy Thuận",
-    "兵行诡道": "Binh Hành Quỷ Đạo",
+    "归心": {"viet": "Quy Thuận", "outsideTeams": true},
+    "兵行诡道": {"viet": "Binh Hành Quỷ Đạo", "outsideTeams": true},
     "以直报怨": "Dĩ Trực Báo Oán",
     "攻其不备": "Đánh Vào Chỗ Hiểm",
     "援其必攻": "Tấn Công Điểm Yếu",
