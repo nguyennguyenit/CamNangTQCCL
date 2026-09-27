@@ -13,7 +13,7 @@ const PNG_1X1 = Buffer.from(
 const EMPTY_STATS = { total: 0, wins: 0, losses: 0, draws: 0, winRate: null, topOpponents: [] };
 
 /** Giả lập API cộng đồng; trả về nhật ký lời gọi để kiểm request body. */
-async function mockCommunityApi(page, { user = null, stats = EMPTY_STATS, comments = [], reports = [], adminReports = [] } = {}) {
+async function mockCommunityApi(page, { user = null, stats = EMPTY_STATS, comments = [], reports = [], adminReports = [], adminFeedback = [], feedbackStatus = 201 } = {}) {
   const calls = [];
   await page.route((url) => url.pathname.startsWith("/api/"), async (route) => {
     const request = route.request();
@@ -42,6 +42,15 @@ async function mockCommunityApi(page, { user = null, stats = EMPTY_STATS, commen
       });
     }
     if (method === "POST" && url.pathname === "/api/reports") return json({ id: "r-new", status: "pending" }, 201);
+    if (method === "POST" && url.pathname === "/api/feedback") {
+      return feedbackStatus === 201 ? json({ ok: true }, 201) : json({ error: { code: "rate_limited", message: "x" } }, feedbackStatus);
+    }
+    if (method === "GET" && url.pathname === "/api/admin/feedback") {
+      const status = url.searchParams.get("status");
+      return json({ items: adminFeedback.filter((item) => !status || item.status === status), nextCursor: null });
+    }
+    const feedbackStatusMatch = url.pathname.match(/^\/api\/admin\/feedback\/([^/]+)\/status$/);
+    if (method === "POST" && feedbackStatusMatch) return json({ id: feedbackStatusMatch[1], status: body.status });
     if (method === "GET" && url.pathname === "/api/admin/reports") return json({ items: adminReports, nextCursor: null });
     const approve = url.pathname.match(/^\/api\/admin\/reports\/([^/]+)\/approve$/);
     if (method === "POST" && approve) return json({ id: approve[1], status: "approved", rejectReason: null });
@@ -177,4 +186,125 @@ test("admin approves a pending report through the API", async ({ page }) => {
   await expect.poll(() => calls.some((call) => call.method === "POST" && call.path === "/api/admin/reports/r7/approve")).toBe(true);
   await expect(panel.locator(".cm-admin-report")).toHaveCount(0);
   await expect(panel.getByText("Không còn chiến báo nào chờ duyệt.")).toBeVisible();
+});
+
+/* ---------- Góp ý, sửa lỗi (nút ở footer) ---------- */
+
+/** Stub Turnstile: widget cấp ngay token "fixture-token"; đếm số lần script được nạp. */
+async function stubTurnstile(page) {
+  const loads = { count: 0 };
+  await page.route("https://challenges.cloudflare.com/**", (route) => {
+    loads.count += 1;
+    return route.fulfill({
+      contentType: "application/javascript",
+      body: "window.turnstile={render(box,o){o.callback('fixture-token');return 'w'},reset(){}};",
+    });
+  });
+  return loads;
+}
+
+test("khách ẩn danh gửi góp ý qua Turnstile nạp khi mở hộp thoại", async ({ page }) => {
+  const calls = await mockCommunityApi(page);
+  const turnstile = await stubTurnstile(page);
+  await page.goto("/doi-chuan/");
+
+  const opener = page.locator(".site-footer [data-feedback-open]");
+  await expect(opener).toHaveText(/Góp ý, sửa lỗi/);
+  await expect(page.locator("script[src*='turnstile']")).toHaveCount(0);
+  await opener.click();
+
+  const dialog = page.getByRole("dialog", { name: "Góp ý, sửa lỗi" });
+  await expect(dialog).toBeVisible();
+  await expect(page.locator("script[src*='turnstile']")).toHaveCount(1);
+  await expect(dialog.getByLabel("Loại")).toHaveValue("feature");
+  await expect(dialog.getByLabel("Loại").locator("option")).toHaveText(["Đề xuất tính năng", "Báo cáo lỗi", "Thông tin sai", "Khác"]);
+
+  await dialog.getByLabel("Loại").selectOption("bug");
+  await dialog.getByLabel("Tiêu đề").fill("Bảng tướng không lọc được");
+  await dialog.getByLabel("Nội dung").fill("Bấm lọc Ngụy thì danh sách trống.");
+  await dialog.getByLabel(/Email/).fill("player@example.com");
+  await dialog.getByRole("button", { name: "Gửi góp ý" }).click();
+
+  await expect(dialog.getByRole("status")).toHaveText("Cảm ơn bạn! Góp ý đã được gửi.");
+  const sent = calls.find((call) => call.method === "POST" && call.path === "/api/feedback");
+  expect(sent.body).toEqual({
+    kind: "bug",
+    title: "Bảng tướng không lọc được",
+    body: "Bấm lọc Ngụy thì danh sách trống.",
+    email: "player@example.com",
+    page: "/doi-chuan/",
+    lang: "vi",
+    turnstileToken: "fixture-token",
+  });
+  await expect(dialog.getByLabel("Tiêu đề")).toHaveValue("");
+  expect(turnstile.count).toBe(1);
+
+  await page.keyboard.press("Escape");
+  await expect(dialog).not.toBeVisible();
+  await expect(opener).toBeFocused();
+});
+
+test("góp ý: thiếu tiêu đề/nội dung thì không gửi; lỗi 429 giữ nguyên nội dung đã nhập", async ({ page }) => {
+  const calls = await mockCommunityApi(page, { feedbackStatus: 429 });
+  await stubTurnstile(page);
+  await page.goto("/doi-chuan/");
+  await page.locator(".site-footer [data-feedback-open]").click();
+  const dialog = page.getByRole("dialog", { name: "Góp ý, sửa lỗi" });
+
+  await dialog.getByRole("button", { name: "Gửi góp ý" }).click();
+  await expect(dialog.getByLabel("Tiêu đề")).toHaveAttribute("aria-invalid", "true");
+  expect(calls.some((call) => call.path === "/api/feedback")).toBe(false);
+
+  await dialog.getByLabel("Tiêu đề").fill("Sai chỉ số");
+  await dialog.getByLabel("Nội dung").fill("Chỉ số Trí sai.");
+  await dialog.getByRole("button", { name: "Gửi góp ý" }).click();
+  await expect(dialog.getByRole("status")).toHaveText("Bạn thao tác quá nhanh. Hãy thử lại sau ít phút.");
+  await expect(dialog.getByLabel("Tiêu đề")).toHaveValue("Sai chỉ số");
+});
+
+test("người đã đăng nhập: email điền sẵn, không nạp Turnstile", async ({ page }) => {
+  const calls = await mockCommunityApi(page, { user: { ...PLAYER, email: "luubi@example.com" } });
+  const turnstile = await stubTurnstile(page);
+  await page.goto("/zh/doi-chuan/");
+  await page.locator(".site-footer [data-feedback-open]").click();
+  const dialog = page.getByRole("dialog", { name: "意见反馈" });
+  await expect(dialog.getByLabel(/邮箱/)).toHaveValue("luubi@example.com");
+
+  await dialog.getByLabel("标题").fill("数据有误");
+  await dialog.getByLabel("内容").fill("武将属性不对");
+  await dialog.getByRole("button", { name: "提交反馈" }).click();
+  await expect(dialog.getByRole("status")).toHaveText("感谢反馈！已成功提交。");
+  const sent = calls.find((call) => call.method === "POST" && call.path === "/api/feedback");
+  expect(sent.body).toEqual({ kind: "feature", title: "数据有误", body: "武将属性不对", email: "luubi@example.com", page: "/zh/doi-chuan/", lang: "zh" });
+  expect(turnstile.count).toBe(0);
+});
+
+test("admin xem góp ý, lọc theo trạng thái và đánh dấu đã xử lý", async ({ page }) => {
+  const calls = await mockCommunityApi(page, {
+    user: ADMIN,
+    adminFeedback: [
+      { id: "f2", kind: "wrong_info", title: "Sai chỉ số", body: "Chỉ số Trí sai.", email: null, page: "/zh/tra-cuu/", lang: "zh", status: "new", createdAt: "2026-09-26T08:00:00.000Z", author: null },
+      { id: "f1", kind: "bug", title: "Lỗi lọc", body: "Danh sách trống.", email: "player@example.com", page: "/doi-chuan/", lang: "vi", status: "done", createdAt: "2026-09-25T08:00:00.000Z", author: { id: "u2", name: "Tào Tháo" } },
+    ],
+  });
+  await page.goto("/quan-tri/");
+  await page.getByRole("tab", { name: "Góp ý" }).click();
+  const panel = page.getByRole("tabpanel", { name: "Góp ý" });
+
+  await expect(panel.getByLabel("Trạng thái")).toHaveValue("new");
+  await expect(panel.locator(".cm-feedback-item")).toHaveCount(1);
+  const item = panel.locator(".cm-feedback-item").first();
+  await expect(item).toContainText("Sai chỉ số");
+  await expect(item).toContainText("Thông tin sai");
+  await expect(item.getByRole("link", { name: "/zh/tra-cuu/" })).toHaveAttribute("href", "/zh/tra-cuu/");
+
+  await item.getByRole("button", { name: "Đánh dấu đã xử lý" }).click();
+  await expect.poll(() => calls.find((call) => call.path === "/api/admin/feedback/f2/status")?.body).toEqual({ status: "done" });
+  await expect(item.getByRole("button", { name: "Đánh dấu chưa xử lý" })).toBeVisible();
+
+  await panel.getByLabel("Trạng thái").selectOption("");
+  await expect(panel.locator(".cm-feedback-item")).toHaveCount(2);
+  const answered = panel.locator(".cm-feedback-item").nth(1);
+  await expect(answered).toContainText("Tào Tháo");
+  await expect(answered.getByRole("link", { name: "player@example.com" })).toHaveAttribute("href", /^mailto:player@example\.com/);
 });

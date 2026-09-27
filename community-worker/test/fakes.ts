@@ -125,6 +125,12 @@ export interface ApiJson {
   deploy: ApiJson | null;
   user: ApiJson;
   isAdmin: boolean;
+  email: string;
+  kind: string;
+  title: string;
+  page: string | null;
+  lang: string;
+  author: ApiJson | null;
 }
 
 export const ORIGIN = "https://tqccl.com";
@@ -135,8 +141,14 @@ export interface Harness {
   objects: Map<string, StoredObject>;
   clock: { now: number };
   fetchCalls: { url: string; init?: RequestInit }[];
+  /** Thư đã gửi qua binding FEEDBACK_MAIL (fake). */
+  mails: EmailMessageBuilder[];
+  /** Đặt lỗi để lần gửi thư sau ném ra; null = gửi bình thường. */
+  mailError: Error | null;
   setFetch(handler: (url: string, init?: RequestInit) => Response | Promise<Response>): void;
   request(path: string, opts?: { method?: string; as?: keyof typeof USERS; json?: unknown; body?: BodyInit; headers?: Record<string, string> }): Promise<Response>;
+  /** Chờ mọi việc nền `waitUntil` của các request đã gửi. */
+  settle(): Promise<void>;
 }
 
 export function createHarness(envOverrides: Partial<Env> = {}): Harness {
@@ -162,22 +174,21 @@ export function createHarness(envOverrides: Partial<Env> = {}): Harness {
     now: () => clock.now,
     newId: () => `id-${String(++seq).padStart(4, "0")}`,
   });
-  const env: Env = {
-    DB: d1,
-    MEDIA: bucket,
-    SITE_ORIGIN: ORIGIN,
-    ADMIN_EMAILS: "admin@example.com, other@example.com",
-    QWEN_API_KEY: "test-key",
-    GITHUB_DISPATCH_TOKEN: "gh-test-token",
-    GITHUB_REPOSITORY: "owner/repo",
-    ...envOverrides,
-  };
-  return {
-    env,
+  const mails: EmailMessageBuilder[] = [];
+  const waiting: Promise<unknown>[] = [];
+  const executionCtx = {
+    waitUntil: (promise: Promise<unknown>) => void waiting.push(promise),
+    passThroughOnException: () => {},
+    props: {},
+  } as unknown as ExecutionContext;
+  const harness: Harness = {
+    env: undefined as unknown as Env,
     sqlite,
     objects,
     clock,
     fetchCalls,
+    mails,
+    mailError: null,
     setFetch(handler) {
       fetchHandler = handler;
     },
@@ -189,9 +200,35 @@ export function createHarness(envOverrides: Partial<Env> = {}): Harness {
         headers["content-type"] = "application/json";
         body = JSON.stringify(opts.json);
       }
-      return app.request(path, { method: opts.method ?? (body ? "POST" : "GET"), headers, body }, env);
+      return app.request(path, { method: opts.method ?? (body ? "POST" : "GET"), headers, body }, harness.env, executionCtx);
+    },
+    async settle() {
+      while (waiting.length) await Promise.allSettled(waiting.splice(0));
     },
   };
+  const mail = {
+    async send(message: EmailMessageBuilder) {
+      if (harness.mailError) throw harness.mailError;
+      mails.push(message);
+      return { messageId: `mail-${mails.length}` };
+    },
+  } as unknown as SendEmail;
+  harness.env = {
+    DB: d1,
+    MEDIA: bucket,
+    FEEDBACK_MAIL: mail,
+    SITE_ORIGIN: ORIGIN,
+    ADMIN_EMAILS: "admin@example.com, other@example.com",
+    FEEDBACK_FROM: "gopy@tqccl.com",
+    FEEDBACK_TO: "owner@example.com",
+    QWEN_API_KEY: "test-key",
+    GITHUB_DISPATCH_TOKEN: "gh-test-token",
+    GITHUB_REPOSITORY: "owner/repo",
+    TURNSTILE_SECRET: "ts-secret",
+    IP_HASH_SECRET: "ip-secret",
+    ...envOverrides,
+  };
+  return harness;
 }
 
 export const PNG_BYTES = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 13, 1, 2, 3]);

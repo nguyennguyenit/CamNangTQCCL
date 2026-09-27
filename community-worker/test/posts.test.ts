@@ -119,7 +119,7 @@ describe("/api/me", () => {
     const h = createHarness();
     expect(await (await h.request("/api/me")).json<ApiJson>()).toEqual({ user: null });
     expect(await (await h.request("/api/me", { as: "admin" })).json<ApiJson>()).toEqual({
-      user: { id: "u-admin", name: "Admin", image: null, isAdmin: true },
+      user: { id: "u-admin", name: "Admin", email: "Admin@Example.com", image: null, isAdmin: true },
     });
     expect((await (await h.request("/api/me", { as: "bob" })).json<ApiJson>()).user.isAdmin).toBe(false);
     expect((await h.request("/api/me")).headers.get("Cache-Control")).toBe("no-store");

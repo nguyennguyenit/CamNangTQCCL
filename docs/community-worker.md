@@ -1,6 +1,6 @@
-# Community Worker (đăng nhập, bình luận, chiến báo, bài viết)
+# Community Worker (đăng nhập, bình luận, chiến báo, bài viết, góp ý)
 
-`community-worker/` là Cloudflare Worker (Hono) tách biệt site tĩnh: Better Auth với Google, D1 cho dữ liệu, R2 cho ảnh, Qwen Vision (DashScope) để đọc ảnh chiến báo, và GitHub `repository_dispatch` để build lại site khi xuất bản bài viết. Hợp đồng API nằm trong [`plans/260927-cong-dong-song-ngu/plan.md`](../plans/260927-cong-dong-song-ngu/plan.md).
+`community-worker/` là Cloudflare Worker (Hono) tách biệt site tĩnh: Better Auth với Google, D1 cho dữ liệu, R2 cho ảnh, Qwen Vision (DashScope) để đọc ảnh chiến báo, GitHub `repository_dispatch` để build lại site khi xuất bản bài viết, và Cloudflare Email Service (binding `send_email`) để gửi thư báo góp ý. Hợp đồng API nằm trong [`plans/260927-cong-dong-song-ngu/plan.md`](../plans/260927-cong-dong-song-ngu/plan.md).
 
 Trình duyệt không gọi thẳng `workers.dev`. Mọi request `/api/*` trên `tqccl.com`, `www.tqccl.com` và `tqccl.pages.dev` đi qua Pages Function [`functions/api/[[path]].ts`](../functions/api/[[path]].ts), nên cookie phiên là cookie first-party của đúng domain đó.
 
@@ -8,7 +8,9 @@ Trình duyệt không gọi thẳng `workers.dev`. Mọi request `/api/*` trên 
 Trình duyệt ──/api/*──► Pages Function (proxy) ──service binding COMMUNITY──► community-worker ─┬─ D1  DB
                                                 (dự phòng: COMMUNITY_API_ORIGIN)                ├─ R2  MEDIA
                                                                                                 ├─ DashScope (Qwen Vision)
-                                                                                                └─ GitHub repository_dispatch → .github/workflows/pages-deploy.yml
+                                                                                                ├─ GitHub repository_dispatch → .github/workflows/pages-deploy.yml
+                                                                                                ├─ Turnstile siteverify (góp ý ẩn danh)
+                                                                                                └─ send_email FEEDBACK_MAIL → hộp thư admin
 ```
 
 ## Cấu hình
@@ -26,6 +28,10 @@ Trình duyệt ──/api/*──► Pages Function (proxy) ──service bindin
 | `QWEN_API_KEY` | secret | Khoá DashScope. Nếu thiếu, analyze trả 503 `ai_not_configured` |
 | `GITHUB_REPOSITORY` | var | `nguyennguyenit/CamNangTQCCL`, repo nhận `repository_dispatch` |
 | `GITHUB_DISPATCH_TOKEN` | secret | Fine-grained PAT chỉ cho repo trên, quyền **Contents: Read and write** (bắt buộc cho `repository_dispatch`). Nếu thiếu, publish vẫn lưu DB nhưng trả `deploy.ok=false` |
+| `FEEDBACK_MAIL` | send_email binding | Gửi thư báo góp ý; `destination_address` khoá cứng người nhận `nguyennlt.ncc@gmail.com`. Thiếu binding hoặc gửi lỗi thì góp ý vẫn lưu D1 (chỉ ghi log) |
+| `FEEDBACK_FROM`, `FEEDBACK_TO` | var | Địa chỉ gửi `gopy@tqccl.com` (domain đã bật Email Routing) và địa chỉ nhận (trùng `destination_address`) |
+| `TURNSTILE_SECRET` | secret | Secret của widget Turnstile có site key trong `js/config.js` (dùng chung với công cụ đọc ảnh). Thiếu thì khách ẩn danh gửi góp ý nhận 503 `feedback_unavailable` |
+| `IP_HASH_SECRET` | secret | Khoá HMAC băm IP cho giới hạn góp ý ẩn danh (≥ 32 byte ngẫu nhiên). Thiếu thì khách ẩn danh nhận 503 `feedback_unavailable`; người đã đăng nhập vẫn gửi được |
 
 Cron `17 * * * *` chạy mỗi giờ để xoá object R2 `pending/` cũ hơn 24 giờ, bản ghi upload `pending` quá hạn và bộ đếm rate limit đã hết cửa sổ.
 
@@ -81,6 +87,25 @@ Service binding `COMMUNITY` (Production và Preview) đã được đặt qua Cl
 
 Nếu không có cả hai, `/api/*` trả 503 `{"error":{"code":"community_unavailable",...}}`. Proxy chuyển tiếp nguyên method, header và body với `redirect: "manual"`, rồi trả nguyên response, nên giữ đủ mọi `Set-Cookie` và `Location` của luồng OAuth. Better Auth lấy IP client từ `cf-connecting-ip` để rate limit.
 
+### Góp ý, sửa lỗi: gửi thư qua Email Routing
+
+Thư báo góp ý chỉ đi tới một địa chỉ đã xác minh, nên dùng Email Routing của `tqccl.com` (miễn phí, không tính vào quota gửi) thay vì dịch vụ mail bên thứ ba. Người gửi để lại email thì thư có `Reply-To` là email đó: bấm Reply trong Gmail là trả lời thẳng người gửi. Làm một lần trên dashboard Cloudflare:
+
+1. `tqccl.com` → **Email** → **Email Routing** → **Enable**. Cloudflare thay MX/SPF cũ của Porkbun (`fwd1/fwd2.porkbun.com`, `include:_spf.porkbun.com`) bằng bản ghi của nó; tắt luôn email forwarding bên Porkbun.
+2. **Destination addresses** → thêm `nguyennlt.ncc@gmail.com` rồi bấm link xác minh trong Gmail.
+3. Tuỳ chọn: **Routing rules** → `gopy@tqccl.com` chuyển về Gmail, để thư gửi tới địa chỉ gửi đi vẫn nhận được.
+4. Turnstile → widget của site key trong `js/config.js` → **Hostname management** phải có `tqccl.com`, `www.tqccl.com`, `tqccl.pages.dev` (thêm `preview-community.tqccl.pages.dev` nếu thử trên preview). Worker chỉ nhận token có hostname thuộc `SITE_ORIGIN`.
+5. Trong `community-worker/`:
+
+```bash
+npx wrangler secret put TURNSTILE_SECRET                               # cùng secret với worker/
+openssl rand -base64 48 | tr -d '\n' | npx wrangler secret put IP_HASH_SECRET
+npx wrangler d1 migrations apply tqccl-community --remote              # 0003_feedback
+npx wrangler deploy
+```
+
+Deploy Worker **trước** khi deploy Pages để nút góp ý không gọi vào route chưa có. Kiểm tra sau deploy: gửi thử một góp ý khi chưa đăng nhập, xem thư về Gmail, bấm Reply thấy đúng email người gửi, và `npx wrangler d1 execute tqccl-community --remote --command "select id, kind, status from feedback order by created_at desc limit 5"` có dòng mới.
+
 ## Dev cục bộ
 
 ```bash
@@ -109,13 +134,15 @@ npx tsc --noEmit
 npx vitest run
 ```
 
-Test dùng D1 giả chạy trên `node:sqlite` (áp dụng migration thật) và R2 giả trong bộ nhớ. Test bao phủ pageKey/lang, quyền xoá và kiểm duyệt, quyền xem ảnh chưa duyệt, thống kê, ngưỡng rate limit, slug trùng, deploy hook và cách parse kết quả phân tích.
+Test dùng D1 giả chạy trên `node:sqlite` (áp dụng migration thật), R2 giả trong bộ nhớ và binding thư giả. Test bao phủ pageKey/lang, quyền xoá và kiểm duyệt, quyền xem ảnh chưa duyệt, thống kê, ngưỡng rate limit, slug trùng, deploy hook, cách parse kết quả phân tích, và góp ý (Turnstile, giới hạn theo IP/user, thư báo, lỗi gửi thư, lọc và đổi trạng thái của admin).
 
 ## Hành vi cần biết
 
-- Lỗi luôn có dạng `{error:{code,message}}`. `message` viết bằng tiếng Việt cho log, còn UI phải dựa vào `code` để dịch bằng `L()`. Các code gồm `unauthorized` (401), `forbidden` và `forbidden_origin` (403), `not_found` (404), `rate_limited` (429, kèm `Retry-After`), `invalid_*` (400), `invalid_upload`, `image_too_large` (413), `unsupported_media_type` và `invalid_image_type` (415), `slug_taken` và `translation_key_taken` (409), `feature_disabled`, `ai_not_configured` và `ai_overloaded` (503), `ai_unavailable` (502).
+- Lỗi luôn có dạng `{error:{code,message}}`. `message` viết bằng tiếng Việt cho log, còn UI phải dựa vào `code` để dịch bằng `L()`. Các code gồm `unauthorized` (401), `forbidden`, `forbidden_origin`, `turnstile_required` và `turnstile_failed` (403), `not_found` (404), `rate_limited` (429, kèm `Retry-After`), `invalid_*` (400), `invalid_upload`, `image_too_large` (413), `unsupported_media_type` và `invalid_image_type` (415), `slug_taken` và `translation_key_taken` (409), `feature_disabled`, `ai_not_configured`, `ai_overloaded` và `feedback_unavailable` (503), `ai_unavailable` (502).
 - Request `POST`/`PUT`/`DELETE` có `Origin` không nằm trong `SITE_ORIGIN` và danh sách localhost dev sẽ bị chặn với 403 `forbidden_origin`. Body JSON bắt buộc có `Content-Type: application/json`.
-- Rate limit theo user, lưu trong bảng D1 `rate_limits`: bình luận 10 lần/giờ, analyze 20 lần/ngày, gửi chiến báo 30 lần/ngày, admin upload 100 lần/ngày. Better Auth có thêm rate limit riêng cho `/api/auth/*`, lưu trong bảng `rateLimit`.
+- Rate limit lưu trong bảng D1 `rate_limits`: bình luận 10 lần/giờ, analyze 20 lần/ngày, gửi chiến báo 30 lần/ngày, admin upload 100 lần/ngày (theo user); góp ý 10 lần/giờ theo user khi đã đăng nhập, 5 lần/giờ theo IP đã băm HMAC khi ẩn danh (IPv6 gom theo /64, đếm trước siteverify). Better Auth có thêm rate limit riêng cho `/api/auth/*`, lưu trong bảng `rateLimit`.
+- `POST /api/feedback` nhận `{kind, title, body, email?, page?, lang, turnstileToken?}`: `kind` là `feature`/`bug`/`wrong_info`/`other`, tiêu đề 1–120 ký tự (gộp khoảng trắng thành một dòng), nội dung 1–4000 ký tự, email tuỳ chọn, `page` là đường dẫn cùng site (bắt đầu bằng `/`). Khách ẩn danh bắt buộc có `turnstileToken`; người đã đăng nhập bỏ qua Turnstile. Trả 201 `{ok:true}` sau khi lưu; thư gửi nền bằng `waitUntil`. `GET /api/me` trả thêm `email` để hộp thoại điền sẵn.
+- Admin: `GET /api/admin/feedback?status=new|done&kind=&cursor=` (mới nhất trước, 20/trang) và `POST /api/admin/feedback/:id/status` với `{status}`.
 - Nếu model không đọc được ảnh, `analyze` vẫn trả 200 với `analysis` rỗng (`result:null`, không có tướng) và vẫn giữ `uploadId` để người dùng tự nhập. Nếu upstream lỗi, endpoint trả 502/503 và xoá ảnh.
 - `POST /api/reports` nhận `allyHeroes` từ 1 đến 5 tên, `enemyHeroes` từ 0 đến 5 tên, mỗi tên dài 1 đến 20 ký tự và không trùng nhau; `note` tối đa 500 ký tự, `season` tối đa 40 ký tự. Ảnh được chuyển từ `pending/` sang `reports/`.
 - Ảnh chiến báo chưa duyệt trả 404 cho mọi người trừ chủ báo cáo và admin (`Cache-Control: private, no-store`). Ảnh đã duyệt được cache công khai 1 giờ. Media bài viết `/api/media/posts/...` được cache `immutable` 1 năm. Các khoá R2 khác không đọc được qua đường này.

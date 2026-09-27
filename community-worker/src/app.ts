@@ -5,6 +5,7 @@ import { createAuth, getSessionUser } from "./auth";
 import { currentUser, type AppDeps, type AppEnv } from "./context";
 import { isAdminEmail, requestOrigin, trustedOrigins } from "./env";
 import { ApiError, errorResponse } from "./http";
+import { feedback } from "./routes/feedback";
 import { comments } from "./routes/comments";
 import { posts } from "./routes/posts";
 import { reports } from "./routes/reports";
@@ -58,11 +59,14 @@ export function createApp(overrides: Partial<AppDeps> = {}) {
   app.get("/api/me", async (c) => {
     const user = await currentUser(c);
     return c.json({
-      user: user ? { id: user.id, name: user.name, image: user.image, isAdmin: isAdminEmail(c.env, user.email) } : null,
+      user: user
+        ? { id: user.id, name: user.name, email: user.email, image: user.image, isAdmin: isAdminEmail(c.env, user.email) }
+        : null,
     });
   });
 
   app.route("/", comments);
+  app.route("/", feedback);
   app.route("/", reports);
   app.route("/", posts);
   return app;

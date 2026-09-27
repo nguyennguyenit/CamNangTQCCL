@@ -9,6 +9,7 @@ import { ANALYZE_CONFIG, isAnalyzeConfigured } from "./config.js";
 import { mapTeamRead, findSimilarTeams } from "./analyze-map.js";
 import { L, currentLocale } from "./i18n.js";
 import { createRawNameResolver, localName } from "./website-display.js";
+import { renderTurnstileWidget, TURNSTILE_ERROR_MESSAGE } from "./turnstile.js";
 
 // `<html lang>` cố định theo trang nên các hằng dịch lúc nạp module vẫn đúng ngôn ngữ.
 const DISCLAIMER = L(
@@ -164,43 +165,6 @@ export function compressImage(file) {
       reject(localizedError(L("Không đọc được ảnh", "无法读取图片")));
     };
     img.src = url;
-  });
-}
-
-/* ---------- Turnstile (lazy) ---------- */
-let turnstileLoading = null;
-export function loadTurnstile() {
-  if (turnstileLoading) return turnstileLoading;
-  turnstileLoading = new Promise((resolve, reject) => {
-    const s = document.createElement("script");
-    s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-    s.async = true;
-    s.onload = () => resolve(window.turnstile);
-    s.onerror = () => reject(localizedError(L("Không tải được Turnstile", "Turnstile 加载失败")));
-    document.head.append(s);
-  });
-  return turnstileLoading;
-}
-
-/** Câu báo khi widget Turnstile lỗi (mạng, domain không nằm trong danh sách site key, …). */
-export const TURNSTILE_ERROR_MESSAGE = L("Xác thực chống bot không thành công. Tải lại trang rồi thử lại.", "人机验证未通过，请刷新页面后重试。");
-
-/**
- * Nạp Turnstile rồi vẽ widget vào `box`. Lỗi của widget đi qua `error-callback`: bỏ token (`onExpire`),
- * báo câu theo ngôn ngữ trang (`onError`) và trả `true` để widget không ném `TurnstileError` ra trang.
- * Promise bị từ chối khi không tải được script.
- */
-export async function renderTurnstileWidget(box, { onToken, onExpire, onError }) {
-  const ts = await loadTurnstile();
-  return ts.render(box, {
-    sitekey: ANALYZE_CONFIG.turnstileSiteKey,
-    callback: (tok) => onToken(tok),
-    "expired-callback": () => onExpire(),
-    "error-callback": () => {
-      onExpire();
-      onError(TURNSTILE_ERROR_MESSAGE);
-      return true;
-    },
   });
 }
 

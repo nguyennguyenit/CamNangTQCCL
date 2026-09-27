@@ -16,6 +16,9 @@ export const RATE_RULES: Record<string, RateRule> = {
   analyze: { limit: 20, windowMs: DAY },
   report: { limit: 30, windowMs: DAY },
   upload: { limit: 100, windowMs: DAY },
+  // Góp ý: khách ẩn danh đếm theo IP đã băm, người đăng nhập theo user.
+  feedback_anon: { limit: 5, windowMs: HOUR },
+  feedback_user: { limit: 10, windowMs: HOUR },
 };
 
 /** Tăng bộ đếm; vượt ngưỡng -> ApiError 429 kèm retryAfter (giây). */

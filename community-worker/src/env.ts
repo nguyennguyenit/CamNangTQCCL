@@ -3,6 +3,8 @@
 export interface Env {
   DB: D1Database;
   MEDIA: R2Bucket;
+  // Thư báo góp ý (Cloudflare Email Service trên Email Routing); binding khoá cứng người nhận.
+  FEEDBACK_MAIL?: SendEmail;
   // Vars (wrangler.jsonc).
   // Một hoặc nhiều origin site, phân tách dấu phẩy; origin đầu tiên là mặc định.
   SITE_ORIGIN?: string;
@@ -11,11 +13,17 @@ export interface Env {
   MODEL_ID?: string;
   MODEL_ENDPOINT?: string;
   FEATURE_ENABLED?: string;
+  // Địa chỉ gửi (thuộc domain đã bật Email Routing) và hộp thư nhận thư báo góp ý.
+  FEEDBACK_FROM?: string;
+  FEEDBACK_TO?: string;
   // Secrets (wrangler secret put) — KHÔNG commit.
   BETTER_AUTH_SECRET?: string;
   GOOGLE_CLIENT_ID?: string;
   GOOGLE_CLIENT_SECRET?: string;
   QWEN_API_KEY?: string;
+  // Góp ý của khách ẩn danh: secret Turnstile + khoá HMAC băm IP. Thiếu một trong hai -> khách nhận 503.
+  TURNSTILE_SECRET?: string;
+  IP_HASH_SECRET?: string;
   // Token GitHub fine-grained (Actions: write trên đúng repo) để kích hoạt workflow build lại site.
   GITHUB_DISPATCH_TOKEN?: string;
   // Var: "owner/repo" nhận repository_dispatch.

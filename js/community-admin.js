@@ -1,6 +1,6 @@
-// Trang /quan-tri/ (noindex): ba tab — "Duyệt chiến báo" (ảnh, dữ liệu AI đã xác nhận, duyệt / từ chối kèm lý do),
-// "Bài viết" (danh sách, soạn/sửa Markdown có xem trước an toàn, FAQ, lưu nháp, xuất bản/gỡ xuất bản)
-// và "Bình luận" (xoá bình luận vi phạm trên mọi trang).
+// Trang /quan-tri/ (noindex): bốn tab — "Duyệt chiến báo" (ảnh, dữ liệu AI đã xác nhận, duyệt / từ chối kèm lý do),
+// "Bài viết" (danh sách, soạn/sửa Markdown có xem trước an toàn, FAQ, lưu nháp, xuất bản/gỡ xuất bản),
+// "Bình luận" (xoá bình luận vi phạm trên mọi trang) và "Góp ý" (góp ý/báo lỗi từ footer, đánh dấu đã xử lý).
 // Server mới là nơi kiểm quyền; trang chỉ ẩn giao diện với người không phải admin.
 
 import { L, currentLocale, localePath } from './i18n.js';
@@ -19,6 +19,7 @@ import {
   unavailableNotice,
 } from './community-api.js';
 import { reportSummary } from './community-reports.js';
+import { FEEDBACK_KINDS } from './feedback-kinds.js';
 
 const SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,100}$/;
 
@@ -375,6 +376,118 @@ function openCommentsPanel(panel) {
   load()
     .catch((error) => status.set(describeError(error), 'error'))
     .finally(() => panel.removeAttribute('aria-busy'));
+}
+
+/* ---------- Góp ý, sửa lỗi ---------- */
+// Góp ý gửi từ hộp thoại ở footer (cả khách ẩn danh). Admin lọc theo trạng thái/loại và chuyển Mới ⇄ Đã xử lý;
+// trả lời người gửi bằng thư (link mailto hoặc Reply ngay trong thư báo).
+
+const FEEDBACK_STATUS_LABEL = { new: L('Chưa xử lý', '未处理'), done: L('Đã xử lý', '已处理') };
+
+function feedbackItem(entry, { status }) {
+  const kind = FEEDBACK_KINDS.find((candidate) => candidate.id === entry.kind);
+  const badge = el('span', { class: 'cm-badge' });
+  const toggle = el('button', { class: 'cm-text-btn', type: 'button' });
+  let current = entry.status === 'done' ? 'done' : 'new';
+  const paint = () => {
+    badge.textContent = FEEDBACK_STATUS_LABEL[current];
+    badge.dataset.status = current === 'done' ? 'approved' : 'pending';
+    toggle.textContent = current === 'done' ? L('Đánh dấu chưa xử lý', '标记为未处理') : L('Đánh dấu đã xử lý', '标记为已处理');
+  };
+  paint();
+  const email = typeof entry.email === 'string' && entry.email ? entry.email : null;
+  const mailto = email ? `mailto:${email}?subject=${encodeURIComponent(`Re: ${entry.title}`)}` : null;
+  const row = el('li', { class: 'cm-comment cm-feedback-item' }, [
+    el('div', { class: 'cm-comment-main' }, [
+      el('p', { class: 'cm-comment-meta' }, [
+        el('span', { class: 'cm-badge' }, kind ? L(kind.vi, kind.zh) : String(entry.kind || '')),
+        badge,
+        el('span', { class: 'cm-comment-author' }, entry.author ? displayName(entry.author) : L('Ẩn danh', '匿名')),
+        timeNode(entry.createdAt),
+        el('span', { class: 'cm-badge' }, entry.lang === 'zh' ? '中文' : 'Tiếng Việt'),
+        typeof entry.page === 'string' && entry.page.startsWith('/') ? el('a', { class: 'cm-link', href: entry.page }, entry.page) : null,
+        mailto ? el('a', { class: 'cm-link', href: mailto }, email) : null,
+      ]),
+      el('p', { class: 'cm-comment-author' }, String(entry.title || '')),
+      el('p', { class: 'cm-comment-body', lang: entry.lang === 'zh' ? 'zh-Hans' : 'vi' }, String(entry.body || '')),
+      toggle,
+    ]),
+  ]);
+  toggle.addEventListener('click', async () => {
+    const next = current === 'done' ? 'new' : 'done';
+    toggle.disabled = true;
+    try {
+      await api(`/api/admin/feedback/${encodeURIComponent(entry.id)}/status`, { method: 'POST', json: { status: next } });
+      current = next;
+      paint();
+      status.set(next === 'done' ? L('Đã đánh dấu đã xử lý.', '已标记为已处理。') : L('Đã đánh dấu chưa xử lý.', '已标记为未处理。'));
+    } catch (error) {
+      status.set(describeError(error), 'error');
+    } finally {
+      toggle.disabled = false;
+    }
+  });
+  return row;
+}
+
+function openFeedbackPanel(panel) {
+  const status = liveStatus();
+  const statusFilter = el('select', { id: 'cm-feedback-status', class: 'cm-select' }, [
+    el('option', { value: 'new' }, FEEDBACK_STATUS_LABEL.new),
+    el('option', { value: 'done' }, FEEDBACK_STATUS_LABEL.done),
+    el('option', { value: '' }, L('Tất cả', '全部')),
+  ]);
+  const kindFilter = el('select', { id: 'cm-feedback-kind', class: 'cm-select' }, [
+    el('option', { value: '' }, L('Tất cả', '全部')),
+    ...FEEDBACK_KINDS.map((kind) => el('option', { value: kind.id }, L(kind.vi, kind.zh))),
+  ]);
+  const filters = el('div', { class: 'cm-field-grid' }, [
+    el('div', { class: 'cm-field' }, [el('label', { class: 'cm-label', for: 'cm-feedback-status' }, L('Trạng thái', '状态')), statusFilter]),
+    el('div', { class: 'cm-field' }, [el('label', { class: 'cm-label', for: 'cm-feedback-kind' }, L('Loại', '类型')), kindFilter]),
+  ]);
+  const list = el('ol', { class: 'cm-comment-list', 'aria-label': L('Góp ý', '意见反馈') });
+  const empty = el('p', { class: 'scope-note cm-empty', hidden: '' }, L('Không có góp ý nào.', '没有反馈。'));
+  const more = el('button', { class: 'ana-btn cm-more', type: 'button', hidden: '' }, L('Tải thêm', '加载更多'));
+  let cursor = null;
+  // Đổi bộ lọc khi trang trước chưa về: chỉ kết quả của lần tải mới nhất được vẽ.
+  let generation = 0;
+  const load = async ({ reset = false } = {}) => {
+    const current = reset ? ++generation : generation;
+    if (reset) cursor = null;
+    const params = new URLSearchParams();
+    if (statusFilter.value) params.set('status', statusFilter.value);
+    if (kindFilter.value) params.set('kind', kindFilter.value);
+    if (cursor) params.set('cursor', cursor);
+    const query = params.toString();
+    const body = await api(`/api/admin/feedback${query ? `?${query}` : ''}`);
+    if (current !== generation) return;
+    const items = (Array.isArray(body?.items) ? body.items : []).map((entry) => feedbackItem(entry, { status }));
+    if (reset) list.replaceChildren(...items);
+    else list.append(...items);
+    cursor = typeof body?.nextCursor === 'string' && body.nextCursor ? body.nextCursor : null;
+    more.hidden = !cursor;
+    empty.hidden = list.childElementCount > 0;
+  };
+  const reload = () => {
+    panel.setAttribute('aria-busy', 'true');
+    load({ reset: true })
+      .catch((error) => status.set(describeError(error), 'error'))
+      .finally(() => panel.removeAttribute('aria-busy'));
+  };
+  statusFilter.addEventListener('change', reload);
+  kindFilter.addEventListener('change', reload);
+  more.addEventListener('click', async () => {
+    more.disabled = true;
+    try {
+      await load();
+    } catch (error) {
+      status.set(describeError(error), 'error');
+    } finally {
+      more.disabled = false;
+    }
+  });
+  panel.append(filters, status, list, empty, more);
+  reload();
 }
 
 /* ---------- Bài viết ---------- */
@@ -736,6 +849,7 @@ export async function initCommunityAdmin(mount = document.getElementById('commun
     { id: 'reports', label: L('Duyệt chiến báo', '审核战报'), open: openReportsPanel },
     { id: 'posts', label: L('Bài viết', '文章'), open: openPostsPanel },
     { id: 'comments', label: L('Bình luận', '评论'), open: openCommentsPanel },
+    { id: 'feedback', label: L('Góp ý', '意见反馈'), open: openFeedbackPanel },
   ]);
   mount.replaceChildren(view.node);
   view.start();
