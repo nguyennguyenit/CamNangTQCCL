@@ -7288,6 +7288,15 @@ body[data-page-section="roster-recommend"] .layout {
   display: none;
 }
 
+/* Desktop, chưa có kết quả: bỏ cột phải rỗng, căn giữa thẻ 1 thay vì dạt trái để ~65% bên phải trống ở 1440.
+   (Không lồng :has — thẻ 2 và 3 luôn ẩn/hiện cùng nhau nên chỉ cần xét con của .ana-col.) */
+@media (min-width: 981px) {
+  .ana-layout:not(:has(> .ana-col > :not([hidden]))) {
+    grid-template-columns: minmax(0, 440px);
+    justify-content: center;
+  }
+}
+
 .ana-col {
   display: flex;
   flex-direction: column;

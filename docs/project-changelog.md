@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-09-27 (Soi đội từ ảnh: căn giữa thẻ chọn ảnh)
+
+### Fixed
+
+- Trang Soi đội từ ảnh, từ 981px trở lên: trước lượt soi đầu (thẻ 2 và 3 còn ẩn), `.ana-layout` chỉ còn một cột 440px căn giữa. Trước đây thẻ 1 dạt trái, để trống khoảng 67% bên phải ở 1440px. Khi có kết quả thì quay lại hai cột 440px + 1fr; dưới 981px giữ nguyên một cột full-width.
+
 ## 2026-09-27 (Pipeline: rebuild teams.json tái tạo được)
 
 ### Fixed
