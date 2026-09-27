@@ -1,6 +1,8 @@
+import contextlib
 import copy
 import hashlib
 import json
+import io
 import tempfile
 import shutil
 import unittest
@@ -474,6 +476,44 @@ class SiteLocalizationTest(unittest.TestCase):
             (public / "lookup-manifest.json").write_bytes(b'{"generationId":"lookup:replacement"}')
             with self.assertRaisesRegex(ValueError, "heroes-dict"):
                 _assert_lookup_publication(root, candidate)
+
+
+class PruneGenerationsTest(unittest.TestCase):
+    def reference_root(self, root, generations, pinned):
+        reference = root / "src/data/recommended-reference"
+        for generation in generations:
+            (reference / generation).mkdir(parents=True)
+            (reference / generation / "manifest.json").write_text(generation, encoding="utf-8")
+        (reference / "current.json").write_bytes(canonical_json_bytes({
+            "generationId": pinned, "manifestSha256": "0" * 64, "schemaVersion": 1,
+        }))
+        return reference
+
+    def prune(self, root):
+        with contextlib.redirect_stdout(io.StringIO()):
+            return main(["prune", "--root", str(root)])
+
+    def test_prune_keeps_only_the_pinned_generation(self):
+        generations = ["a" * 64, "b" * 64, "c" * 64]
+        with tempfile.TemporaryDirectory() as temporary:
+            reference = self.reference_root(Path(temporary), generations, "b" * 64)
+            current = (reference / "current.json").read_bytes()
+
+            self.assertEqual(self.prune(Path(temporary)), 0)
+
+            self.assertEqual(sorted(path.name for path in reference.iterdir()), ["b" * 64, "current.json"])
+            self.assertEqual((reference / ("b" * 64) / "manifest.json").read_text(encoding="utf-8"), "b" * 64)
+            self.assertEqual((reference / "current.json").read_bytes(), current)
+
+    def test_prune_refuses_a_pin_without_its_generation_and_deletes_nothing(self):
+        generations = ["a" * 64, "b" * 64]
+        with tempfile.TemporaryDirectory() as temporary:
+            reference = self.reference_root(Path(temporary), generations, "d" * 64)
+
+            with self.assertRaisesRegex(ValueError, "pinned Recommended generation"):
+                self.prune(Path(temporary))
+
+            self.assertEqual(sorted(path.name for path in reference.iterdir()), ["a" * 64, "b" * 64, "current.json"])
 
 
 if __name__ == "__main__":

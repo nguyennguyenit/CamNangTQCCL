@@ -2098,6 +2098,24 @@ def check_publication(root):
         return manifest
 
 
+def prune_generations(root):
+    """Delete every Recommended generation directory except the one current.json pins."""
+    root = Path(root).resolve(strict=True)
+    recommended_root = _repo_member(root, "src/data/recommended-reference")
+    generation_id = json.loads((recommended_root / "current.json").read_bytes())["generationId"]
+    if not isinstance(generation_id, str) or not re.fullmatch(r"[0-9a-f]{64}", generation_id):
+        raise ValueError(f"invalid pinned Recommended generation id: {generation_id!r}")
+    if not (recommended_root / generation_id).is_dir():
+        raise ValueError(f"pinned Recommended generation is missing: {generation_id}")
+    removed = sorted(
+        entry.name for entry in recommended_root.iterdir()
+        if entry.is_dir() and not entry.is_symlink() and entry.name != generation_id
+    )
+    for name in removed:
+        shutil.rmtree(recommended_root / name)
+    return {"kept": generation_id, "removed": removed}
+
+
 # --------------------------------------------------------------------------------------
 # Reports and CLI
 # --------------------------------------------------------------------------------------
@@ -2456,6 +2474,9 @@ def main(argv=None):
     checker.add_argument("--stage", choices=("data", "all", "public"))
     checker.add_argument("--candidate", type=Path)
 
+    pruner = commands.add_parser("prune", help="delete Recommended generations other than the pinned one")
+    pruner.add_argument("--root", default=ROOT, type=Path)
+
     args = parser.parse_args(argv)
     if args.command == "capture":
         policy = load_policy(args.root)
@@ -2488,6 +2509,9 @@ def main(argv=None):
     if args.command == "publish":
         manifest = publish_candidate(args.root, args.candidate)
         _emit({"schemaVersion": SCHEMA_VERSION, "command": "publish", "candidate": manifest})
+        return 0
+    if args.command == "prune":
+        _emit({"schemaVersion": SCHEMA_VERSION, "command": "prune", **prune_generations(args.root)})
         return 0
     report = check(args.root, stage=args.stage, candidate=args.candidate)
     _emit(report)

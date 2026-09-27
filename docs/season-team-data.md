@@ -240,6 +240,8 @@ python3 -m pipeline.site_localization build --root . --stage all --output .cache
 python3 -m pipeline.site_localization check --root . --stage all --candidate .cache/site-localization-candidate
 python3 -m pipeline.site_localization publish --root . --candidate .cache/site-localization-candidate
 python3 -m pipeline.site_localization check --root . --stage public
+python3 -m pipeline.site_localization prune --root .
+git add -A src/data/recommended-reference
 python3 -m unittest tests.test_build_recommended_reference
 npm run build
 npm run verify
@@ -248,7 +250,10 @@ npm run test:dist
 
 Candidate strict cũng dựng và pin Lookup từ cùng review inputs. Publish không thay
 Lookup; bốn file Lookup công khai phải đã trùng candidate, nếu không lệnh dừng.
-Xóa candidate private sau khi public check đạt.
+Xóa candidate private sau khi public check đạt. `prune` xóa mọi thư mục
+generation dưới `src/data/recommended-reference/` khác `generationId` mà
+`current.json` đang pin (từ chối, không xóa gì, nếu thư mục được pin không tồn
+tại); repo chỉ track generation đang pin, generation cũ vẫn còn trong lịch sử git.
 
 Publication đã chọn cũng là inventory của route chi tiết đội; phần route tĩnh và
 trang 404 nằm ở [deployment guide](deployment-guide.md). Publish generation mới
