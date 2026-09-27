@@ -22,7 +22,7 @@ import {
   safeKhaiHoangVariants,
 } from '../js/team-detail-navigation.js';
 
-const ROOT='https://tqccl.pages.dev';
+const ROOT='https://tqccl.com';
 const RECOMMENDED='team-epoddo';
 const LEGACY='team-intro-4';
 const RECOMMENDED_SEGMENT='pk-s24-tiem-long-dieu-thuyen';

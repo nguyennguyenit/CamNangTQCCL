@@ -84,7 +84,7 @@ Quy trình an toàn:
 
 ## Static Pages
 
-Production origin hiện tại: `https://tqccl.pages.dev`.
+Production origin: `https://tqccl.com` (domain chính). `https://www.tqccl.com` và `https://tqccl.pages.dev` gắn cùng Pages project, phục vụ cùng bản build và chuyển về domain chính (xem [Chuyển domain chính sang tqccl.com](#chuyển-domain-chính-sang-tqcclcom)).
 
 Build contract:
 
@@ -145,8 +145,28 @@ Không thực hiện các bước sau trong build/local verification. Khi releas
 5. Quan sát `Cache-Control` thật cho shell, trang chi tiết đội, `404.html`, JS/CSS/JSON và xác nhận `_headers` không được phục vụ như asset.
 6. Preview origin khác production nên Vision POST bị Worker từ chối theo danh sách exact `ALLOWED_ORIGINS`; không nới origin để làm preview canary.
 7. Sau phê duyệt promotion, kiểm tra production-origin `POST /analyze` được phép, origin lạ bị từ chối, và `OPTIONS` trả CORS headers đã cấu hình. Preflight chỉ là CORS transport, không xác thực caller.
-8. Giữ production origin `https://tqccl.pages.dev`, nên origin của localStorage production không đổi; preview có storage origin riêng.
+8. Production origin là `https://tqccl.com`; dữ liệu localStorage của người dùng trên hai host cũ được cầu chuyển domain mang sang (không đè khóa đã có trên tqccl.com). Preview `*.tqccl.pages.dev` có storage origin riêng và không bị cầu chuyển đụng tới.
 9. Kiểm tra client mới và client đã cache đều nhận cùng deployment sau revalidation. Chỉ ghi facts vào Deployment Record sau khi có bằng chứng thực.
+
+## Chuyển domain chính sang tqccl.com
+
+`https://tqccl.com` là domain chính từ 2026-09-27: `site` trong `astro.config.mjs` quyết định canonical, `og:url`, `og:image` và `sitemap.xml`; `public/robots.txt` trỏ `Sitemap: https://tqccl.com/sitemap.xml`. Pages project `tqccl` vẫn gắn `tqccl.com`, `www.tqccl.com` và `tqccl.pages.dev` cho cùng một bản build.
+
+Điều kiện trên Cloudflare dashboard (không nằm trong repo, phải làm tay trước release):
+
+- **Turnstile widget hostnames phải gồm `tqccl.com`, `www.tqccl.com`, `tqccl.pages.dev`.** Thiếu hostname nào thì widget trên host đó không cấp token, hoặc siteverify trả hostname mà Worker không nhận.
+- Custom domain `tqccl.com` và `www.tqccl.com` của Pages project ở trạng thái Active (SSL đã cấp).
+
+Thứ tự release:
+
+1. Deploy Vision Worker trước (`worker/wrangler.toml` `ALLOWED_ORIGINS` = ba origin), để cả ba host đều soi ảnh được ngay khi Pages mới lên. Kiểm preflight cả ba origin theo [Verification sau deploy](#verification-sau-deploy).
+2. Deploy Pages. Từ lúc này mọi trang trên `tqccl.pages.dev`/`www.tqccl.com` chuyển ngay về `https://tqccl.com` cùng path, query và hash.
+
+Cầu chuyển dữ liệu (`src/lib/host-bridge.ts`, script inline đầu tiên trong `<head>`): trên host cũ, bốn khóa localStorage bền (`tqcclRecruitTracker`, `tqccl.rosterRecommend.scanState.v1`, `theme`, `tqccl.teamView.v1`) được đóng gói vào fragment `#tqccl-migrate=`; trên `tqccl.com`, khóa nào chưa có mới được ghi (không đè dữ liệu mới hơn), rồi URL được trả về hash gốc trước mọi script khác. Fragment không được trình duyệt gửi đi trong request nên dữ liệu tracker/kho không đi qua server hay log nào. Preview `*.tqccl.pages.dev` và local không bị chuyển.
+
+Kiểm sau release: mở `https://tqccl.pages.dev/theo-doi-chieu-mo/` trên trình duyệt đã có tracker cũ → URL cuối là `https://tqccl.com/theo-doi-chieu-mo/` (không còn `#tqccl-migrate=`) và tracker hiển thị đủ; `https://www.tqccl.com/#khaihoang` → `https://tqccl.com/khai-hoang/`; `https://tqccl.com/robots.txt` và `/sitemap.xml` trỏ `https://tqccl.com`. Rollback Pages về bản trước chỉ tắt việc chuyển; dữ liệu đã sang `tqccl.com` vẫn nằm ở đó, dữ liệu gốc trên host cũ không bị xoá.
+
+Test: `tests-js/host-bridge.test.mjs` (logic thuần + script inline trong cửa sổ giả), `tests-js/astro-dist-contract.test.mjs` (mọi trang build có bridge là script đầu `<head>` và chạy đúng), `tests-e2e/host-bridge.spec.mjs` (Playwright route `https://tqccl.com`, `https://tqccl.pages.dev`, `https://www.tqccl.com` về bản build local, nên trình duyệt chạy với hostname và localStorage thật của từng origin mà không cần hook tiêm hostname).
 
 ## Research MCP Worker
 

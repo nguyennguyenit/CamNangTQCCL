@@ -4,6 +4,7 @@ import { mkdtemp, mkdir, readFile, readdir, stat, symlink, writeFile } from "nod
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
+import vm from "node:vm";
 import {
   PUBLIC_ARTIFACTS,
   artifactEntriesFor,
@@ -39,7 +40,7 @@ const KHAIHOANG_HANDLE = KHAIHOANG_TEAM_ID;
 const KHAIHOANG_ROUTE_SEGMENT = KHAIHOANG_HANDLE;
 const KHAIHOANG_TITLE = "Gia Cát Khác · SP Mã Siêu · Pháp Chính";
 
-const FIXTURE_ORIGIN = "https://tqccl.pages.dev";
+const FIXTURE_ORIGIN = "https://tqccl.com";
 
 /** The fixture dist mirrors the built sitemap: the root page plus every catalog route, XML-escaped. */
 const fixtureSitemapXml = (locations) => `<?xml version="1.0" encoding="UTF-8"?>
@@ -576,7 +577,7 @@ test("dist verifier admits exactly the catalog team pages, the 404 and no stale 
     join(distDir, "404.html"),
     validNotFound.replace(
       "</head>",
-      '<link rel="canonical" href="https://tqccl.pages.dev/404/"><meta property="og:url" content="https://tqccl.pages.dev/404/"></head>',
+      '<link rel="canonical" href="https://tqccl.com/404/"><meta property="og:url" content="https://tqccl.com/404/"></head>',
     ),
   );
   await assert.rejects(verify(), /404.*canonical|404.*og:url/i);
@@ -725,6 +726,8 @@ test("built dist is allowlisted and every emitted asset is byte-identical", asyn
 test("built dist declares canonical, article metadata, robots and the catalog sitemap", async () => {
   const site = await configuredSite();
   const origin = new URL(site).origin;
+  // tqccl.com là domain chính: canonical, og, sitemap và robots đều trỏ về đây.
+  assert.equal(origin, "https://tqccl.com");
   const rootHref = new URL("/", origin).href;
   const read = (relative) => readFile(new URL(`../dist/${relative}`, import.meta.url), "utf8");
   const catalog = await teamDetailCatalog();
@@ -800,6 +803,53 @@ test("every canonical page declares site name, Vietnamese locale and an absolute
   }
 });
 
+test("every built page runs the host bridge as the first head script", async () => {
+  const distDir = new URL("../dist/", import.meta.url);
+  const pages = (await readdir(distDir, { recursive: true })).filter((path) => path.endsWith(".html"));
+  assert.ok(pages.length > 1500, `only ${pages.length} HTML pages`);
+  const sources = new Set();
+  for (const path of pages) {
+    const html = await readFile(new URL(path, distDir), "utf8");
+    const head = html.match(/<head>([\s\S]*?)<\/head>/u)?.[1] ?? "";
+    const first = head.match(/<script\b([^>]*)>([\s\S]*?)<\/script>/u);
+    assert.ok(first, `${path} has no head script`);
+    assert.match(first[1], /\bid="host-bridge"/u, `${path}: the first head script must be the host bridge`);
+    assert.ok(head.indexOf("<script") < head.indexOf('rel="stylesheet"'), path);
+    sources.add(first[2]);
+  }
+  assert.equal(sources.size, 1, "every page must ship the same bridge");
+  const [source] = sources;
+
+  // Chạy đúng byte đã build trong cửa sổ giả: host cũ mang dữ liệu đi, host chính nhận lại.
+  const fakeWindow = (href, entries) => {
+    const url = new URL(href);
+    const store = new Map(Object.entries(entries));
+    const calls = [];
+    return {
+      store,
+      calls,
+      window: {
+        localStorage: { getItem: (key) => store.get(key) ?? null, setItem: (key, value) => store.set(key, value) },
+        location: { hostname: url.hostname, pathname: url.pathname, search: url.search, hash: url.hash, replace: (to) => calls.push(to) },
+        history: { replaceState: (_state, _title, to) => calls.push(to) },
+      },
+    };
+  };
+  const legacy = fakeWindow("https://tqccl.pages.dev/theo-doi-chieu-mo/?a=1#x", { tqcclRecruitTracker: "{}", other: "no" });
+  vm.runInNewContext(source, { window: legacy.window });
+  assert.equal(legacy.calls.length, 1);
+  assert.match(legacy.calls[0], /^https:\/\/tqccl\.com\/theo-doi-chieu-mo\/\?a=1#tqccl-migrate=/u);
+  const primary = fakeWindow(legacy.calls[0], {});
+  vm.runInNewContext(source, { window: primary.window });
+  assert.deepEqual(primary.calls, ["/theo-doi-chieu-mo/?a=1#x"]);
+  assert.deepEqual(Object.fromEntries(primary.store), { tqcclRecruitTracker: "{}" });
+  for (const href of ["https://preview.tqccl.pages.dev/", "http://127.0.0.1:4174/", "http://localhost:4321/"]) {
+    const other = fakeWindow(href, { theme: "dark" });
+    vm.runInNewContext(source, { window: other.window });
+    assert.deepEqual(other.calls, [], href);
+  }
+});
+
 test("sitemap endpoint publishes exactly the root page plus the catalog routes", async () => {
   const site = await configuredSite();
   const origin = new URL(site).origin;
@@ -840,7 +890,7 @@ test("sitemap endpoint fails closed on a missing origin, duplicates and the reti
 test("sitemap XML escapes loc metacharacters", () => {
   // `&` and `'` survive URL normalization in a path, so the emitted text must escape them.
   const xml = sitemapDocument(FIXTURE_ORIGIN, ["/doi-chuan/a&b'c/"]);
-  assert.match(xml, /<loc>https:\/\/tqccl\.pages\.dev\/doi-chuan\/a&amp;b&apos;c\/<\/loc>/u);
+  assert.match(xml, /<loc>https:\/\/tqccl\.com\/doi-chuan\/a&amp;b&apos;c\/<\/loc>/u);
   assert.doesNotMatch(xml, /&(?!amp;|lt;|gt;|quot;|apos;)/u);
 });
 

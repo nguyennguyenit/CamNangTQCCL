@@ -31,6 +31,7 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | `src/lib/public-artifact-manifest.mjs` | Allowlist route/source/class cho mọi JS/CSS/JSON public. |
 | `public/favicon.png` | Logo PNG 128×128, góc trong suốt; ảnh gốc từ [Thiên Thượng Hỏa](https://thienthuonghoa.com/assets/uploads/images/tqccl-logo.jpg). `STATIC_PUBLIC_ARTIFACTS` trong dist verifier kiểm byte parity; `/favicon.png` phải revalidate. |
 | `src/lib/root-static-artifacts.ts` | Đọc raw artifact an toàn và trả bytes/MIME cho static endpoint. |
+| `src/lib/host-bridge.ts` | Script inline đầu `<head>`: host cũ (`tqccl.pages.dev`, `www.tqccl.com`) chuyển về `https://tqccl.com` kèm localStorage bền trong fragment `#tqccl-migrate=`; host chính nhập khóa còn thiếu rồi trả hash gốc. |
 | `scripts/verify-astro-dist.mjs` | Kiểm toàn bộ `dist/`, byte parity và deployment-control artifact. |
 | `js/app.js`, `js/website-display.js` | Capture byte runtime, xác minh publication/source hash và áp overlay tiếng Việt trước khi khởi tạo mục của trang đang mở. |
 | `js/team-filter-section.js` | Mục Đội chuẩn/Đội khác (`createRecommendedSection`: search, chip động, stats, xoá lọc, thu gọn trên mobile, Thẻ/Thẻ gọn/Bảng) và mục Cùng Tồn (`createSeasonCoexistSection`). |
@@ -88,6 +89,8 @@ Tab Khai hoang hỗ trợ `variants[]` tùy chọn trên từng đội: cấu h�
 - `theme`: light/dark trong `localStorage`.
 - `tqcclRecruitTracker`: tracker schema version 1; có export/import JSON.
 - `tqccl.rosterRecommend.scanState.v1`: tên tướng/chiến pháp/team khóa, xác nhận và timestamp; không ảnh/base64/blob/token.
+- `tqccl.teamView.v1`: kiểu xem Thẻ/Thẻ gọn/Bảng của Đội chuẩn/Đội khác.
+- Bốn khóa trên là allowlist `HOST_BRIDGE_KEYS` mà cầu chuyển domain (`src/lib/host-bridge.ts`) mang từ host cũ sang `https://tqccl.com`.
 - Ảnh preview giữ trong memory/data URL của phiên UI, gửi tới Worker khi người dùng xác thực.
 - Worker dùng KV cho replay/rate/cap; secret và API key chỉ ở Worker environment.
 

@@ -5,7 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { resolveLegacyRoute } from '../js/legacy-routes.js';
 
-const ORIGIN = 'https://tqccl.pages.dev';
+const ORIGIN = 'https://tqccl.com';
 const SECTION_PATHS = new Set([
   '/doi-chuan/',
   '/doi-khac/',

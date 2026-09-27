@@ -177,6 +177,16 @@ Boundary này fail closed và có bounds trước xử lý: chuỗi/control char
 
 Roster serializer loại `image`, `imageDataUrl`, `base64`, `blob`, `turnstileToken`. Tracker có validate import và JSON export/import để backup.
 
+### Cầu chuyển domain
+
+localStorage gắn theo origin, nên khi `https://tqccl.com` thành domain chính, dữ liệu người dùng đã lưu trên `tqccl.pages.dev`/`www.tqccl.com` phải được mang sang. [`src/lib/host-bridge.ts`](../src/lib/host-bridge.ts) sinh script inline **đầu tiên** trong `<head>` của mọi trang (`SiteLayout.astro`, gồm cả 404):
+
+- Hostname đúng `tqccl.pages.dev` hoặc `www.tqccl.com`: đọc bốn khóa bền `tqcclRecruitTracker`, `tqccl.rosterRecommend.scanState.v1`, `theme`, `tqccl.teamView.v1` (khóa sessionStorage `tqccl:team-return:v1` không mang), rồi `location.replace("https://tqccl.com" + pathname + search + "#tqccl-migrate=" + encodeURIComponent({v:1, hash, items}))`. Không có khóa nào hoặc storage lỗi → chuyển thẳng, giữ hash gốc.
+- Hostname `tqccl.com` với fragment `#tqccl-migrate=`: kiểm `v === 1`, `hash` là chuỗi rỗng hoặc bắt đầu `#`, mọi khóa thuộc allowlist và mọi giá trị là chuỗi; ghi **chỉ** khóa tqccl.com chưa có (không đè dữ liệu mới hơn), rồi `history.replaceState` về `pathname + search + hash gốc` trước khi script theme, script hash cũ của Landing hay `app.js` đọc URL. Payload sai → chỉ bỏ fragment.
+- Host preview `*.tqccl.pages.dev`, `localhost`, `127.0.0.1` và host khác: không làm gì.
+
+Payload nằm trong fragment nên trình duyệt không gửi nó trong request HTTP: dữ liệu không tới server Pages, access log hay Worker. Allowlist khóa lấy từ hằng của `js/recruit-tracker-store.js`, `js/roster-scan-state.js`, `js/team-view.js` cộng `theme`; thêm khóa localStorage bền mới phải thêm vào `HOST_BRIDGE_KEYS`.
+
 ## Vision request flow
 
 Các mode của `POST /analyze`:
@@ -208,7 +218,7 @@ Luồng Worker:
 | Research MCP local | `mcp-worker/src/stdio.ts` | filesystem snapshot; stdout protocol-only |
 | Maintainer local | `pipeline/*.py`, HTML/cache/maps | không publish nguồn/cache riêng tư |
 
-Config commit hiện trỏ Pages `https://tqccl.pages.dev` tới Worker `https://tqccl-vision-proxy.nguyennlt-ncc.workers.dev/analyze`. Đây là public config hoạt động, không phải placeholder.
+Config commit hiện trỏ Pages (domain chính `https://tqccl.com`, cùng `https://www.tqccl.com` và `https://tqccl.pages.dev`) tới Worker `https://tqccl-vision-proxy.nguyennlt-ncc.workers.dev/analyze`. Đây là public config hoạt động, không phải placeholder.
 
 Astro dùng `output: "static"` và không có Cloudflare adapter/Pages Functions. Manifest explicit trong `src/lib/public-artifact-manifest.mjs` cho phép đúng các route JS/CSS/JSON; helper từ chối file lạ, symlink và path thoát root. `scripts/verify-astro-dist.mjs` là policy output duy nhất: kiểm allowlist, byte parity của raw asset và của mọi artifact trong `public/` (deployment-control lẫn static public) → `dist/`, đối chiếu `dist/sitemap.xml` với document sinh từ chính inventory route, đồng thời từ chối source/private/secret-like output.
 

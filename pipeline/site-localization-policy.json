@@ -75,7 +75,7 @@
       "hột": "red-copy count"
     }
   },
-  "policyVersion": "site-vi-260927-progressive-list",
+  "policyVersion": "site-vi-260927-primary-domain",
   "routeFamilies": [
     {
       "entrypoints": [
@@ -770,7 +770,7 @@
     "pipeline/recommended-display-map.json": "88ecb8b452ab3292e861ddd879c218a728c16f31734160f6959072bf0be19cd3",
     "pipeline/recommended-identity-map.json": "bac1cc7062288c81f399286fd58a73e83eaaba5cf29add663c8fb24590550cfa",
     "pipeline/sgsdeck-name-map.json": "0d178ea02ec9a58bbb35382fe6d0c4d93ab8f1952658b60fe61c87b787eb15cc",
-    "src/layouts/SiteLayout.astro": "712bdc41244f00e7b6ca217c3a9abae0c7db1c27c1277f07a96ccf9fa70e4cc0",
+    "src/layouts/SiteLayout.astro": "45eac4d6d04a5942b65a124aad89000bb3ab9cd8eeb009543d16ddb9492ee563",
     "src/lib/build-date.ts": "2c46966da5db7675f1f092f79a540dd345125211dea16238fa779bea58c9773f",
     "src/lib/landing-stats.ts": "c5a942180774cf8b4b97b156c40cdc1c77c096d93e218d739fcf7a155b1ba2c4",
     "src/lib/official-links.ts": "110cd1aac6a10fbba270d81ab2a93e721bbd3250ff0d7a6fe305315734fcedeb",
