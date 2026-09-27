@@ -1,0 +1,27 @@
+{
+  "name": "tqccl-community-worker",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cloudflare Worker cộng đồng TQCCL: đăng nhập Google (Better Auth), bình luận, chiến báo, bài viết (D1 + R2).",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --port 8788",
+    "deploy": "wrangler deploy",
+    "db:migrate:local": "wrangler d1 migrations apply tqccl-community --local",
+    "db:migrate:remote": "wrangler d1 migrations apply tqccl-community --remote",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "better-auth": "^1.7.6",
+    "hono": "^4.13.9",
+    "kysely": "^0.29.6"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260927.1",
+    "@types/node": "^24.19.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0",
+    "wrangler": "^4.141.0"
+  }
+}

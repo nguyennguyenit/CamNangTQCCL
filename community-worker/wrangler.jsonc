@@ -1,0 +1,41 @@
+// Worker cộng đồng TQCCL — hạ tầng TÁCH BIỆT site tĩnh; site gọi qua Pages Function
+// functions/api/[[path]].ts (service binding COMMUNITY) để cookie phiên là first-party.
+// Secrets bắt buộc, đặt bằng `wrangler secret put` — KHÔNG ghi ở đây:
+//   BETTER_AUTH_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, QWEN_API_KEY, GITHUB_DISPATCH_TOKEN
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "tqccl-community",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-01-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  // D1 tạo bằng `npx wrangler d1 create tqccl-community` (APAC).
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "tqccl-community",
+      "database_id": "3289bb76-b190-4f92-b154-adb91917fdf0",
+      "migrations_dir": "migrations"
+    }
+  ],
+  // R2: `npx wrangler r2 bucket create tqccl-community-media`.
+  "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "tqccl-community-media" }],
+  // Dọn ảnh chiến báo chờ gửi quá 24 giờ + bộ đếm rate limit hết hạn (mỗi giờ).
+  "triggers": { "crons": ["17 * * * *"] },
+  "vars": {
+    // Mọi domain của site, phân tách dấu phẩy; domain đầu là mặc định. Better Auth lấy baseURL theo
+    // domain của request (trong danh sách này) để callback OAuth/cookie quay về đúng domain.
+    // preview-community.tqccl.pages.dev: alias preview để thử đăng nhập trước khi lên production.
+    "SITE_ORIGIN": "https://tqccl.com,https://www.tqccl.com,https://tqccl.pages.dev,https://preview-community.tqccl.pages.dev",
+    // Email admin, phân tách bằng dấu phẩy.
+    "ADMIN_EMAILS": "nguyennlt.ncc@gmail.com",
+    // Repo nhận repository_dispatch "blog-publish" -> .github/workflows/pages-deploy.yml.
+    "GITHUB_REPOSITORY": "nguyennguyenit/CamNangTQCCL",
+    // Qwen DashScope — "intl" (Singapore, free tier) | "cn" (mainland). MODEL_ENDPOINT rỗng = theo REGION.
+    "REGION": "intl",
+    "MODEL_ID": "qwen3.7-plus",
+    "MODEL_ENDPOINT": "",
+    // "false" -> tắt phân tích ảnh chiến báo bằng AI (kill-switch chi phí).
+    "FEATURE_ENABLED": "true"
+  }
+}

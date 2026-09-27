@@ -1,0 +1,53 @@
+# Build lại site tĩnh và deploy lên Cloudflare Pages (project direct upload `tqccl`).
+# Kích hoạt: community-worker gửi repository_dispatch "blog-publish" khi admin xuất bản/gỡ/sửa bài,
+# hoặc chạy tay (workflow_dispatch). Luôn build từ nhánh main.
+# Secret bắt buộc: CLOUDFLARE_PAGES_API_TOKEN (quyền Account › Cloudflare Pages › Edit).
+name: Pages deploy
+
+on:
+  repository_dispatch:
+    types: [blog-publish]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Nhiều lần xuất bản liên tiếp: chỉ bản mới nhất cần chạy xong.
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_ACCOUNT_ID: e2ab96bb7fa53e5ad848286816d344a5
+      # Astro đọc bài viết đã xuất bản lúc build (src/lib/blog-posts.ts).
+      COMMUNITY_API_ORIGIN: https://tqccl-community.nguyennlt-ncc.workers.dev
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            community-worker/package-lock.json
+      - run: npm ci
+      # Wrangler lấy từ lockfile của community-worker để version được ghim.
+      - run: npm ci
+        working-directory: community-worker
+      - run: npm run build
+      - run: npm run verify
+      # Chạy ở root để wrangler đóng gói cả Pages Function trong functions/ (proxy /api).
+      - name: Deploy Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_PAGES_API_TOKEN }}
+        run: >-
+          community-worker/node_modules/.bin/wrangler pages deploy dist
+          --project-name tqccl --branch main --commit-hash "$(git rev-parse HEAD)"
