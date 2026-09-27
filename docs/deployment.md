@@ -22,7 +22,7 @@ Project deploy is split into three surfaces:
 ## Latest Static Pages Deploy
 
 - Date: 2026-09-27
-- Production URL: `https://tqccl.com` (primary; `https://www.tqccl.com` and `https://tqccl.pages.dev` hand over to it through the head bridge script)
+- Production URL: `https://tqccl.com` (primary). `https://www.tqccl.com` returns `301` to the same path and query through a zone Redirect Rule (2026-09-28, verified with curl on page, JSON and 404 paths; hash links such as `/#analyze` still reach `/soi-doi-tu-anh/`). `https://tqccl.pages.dev` hands over through the head bridge script.
 - Deployment URL: `https://d3b75ea5.tqccl.pages.dev`
 - Deployment ID: `d3b75ea5-86fa-46c8-9917-596d30808b89`
 - Source commit: `7422a5d` (clean worktree of `origin/main`; CI run `36333537098` green, 329 e2e passed)
