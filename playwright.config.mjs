@@ -13,6 +13,9 @@ export default defineConfig({
   use: {
     serviceWorkers: "block",
     trace: "retain-on-failure",
+    // E2E không phụ thuộc mạng ngoài: Turnstile thật tải chậm trên CI làm xô layout đúng lúc test bấm.
+    // Test cần widget tự stub bằng `page.route("https://challenges.cloudflare.com/**", …)`; route chạy trước DNS.
+    launchOptions: { args: ["--host-resolver-rules=MAP challenges.cloudflare.com ~NOTFOUND"] },
   },
   webServer: {
     command: `npm run build && npm run preview -- --host 127.0.0.1 --port ${astroPort}`,
