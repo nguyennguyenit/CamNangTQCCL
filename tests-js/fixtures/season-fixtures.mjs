@@ -3,11 +3,11 @@ import { seasonFingerprint, configFingerprintProjection, contentFingerprintProje
 export const context = { scenarioId: 'scenario-a', rulesetId: 'rules-a' };
 
 export function seasonFixture() {
-  const provenance = { provider: 'fixture', region: 'VN', sourceUrl: 'https://example.org/season', fetchedAt: '2026-09-12' };
+  const provenance = { region: 'VN', fetchedAt: '2026-09-12' };
   const evidence = [
     { id: 'scenario-proof', kind: 'scenario-attribution', rulesetId: null },
     { id: 'rule-proof', kind: 'ruleset-applicability', rulesetId: 'rules-a' },
-  ].map(({ id, kind, rulesetId }) => ({ schemaVersion: 1, id, provenance: { ...provenance }, canonicalRef: null, note: 'Test evidence only.', reviewStatus: 'reviewed', claim: { kind, scenarioId: 'scenario-a', rulesetId } }));
+  ].map(({ id, kind, rulesetId }) => ({ schemaVersion: 1, id, provenance: { ...provenance }, canonicalRef: null, reviewStatus: 'reviewed', claim: { kind, scenarioId: 'scenario-a', rulesetId } }));
   const heroes = ['Anh', 'Bình', 'Cường', 'Dũng', 'Em', 'Giang'].map((viet) => ({ viet, chinese: viet, faction: 'Thục' }));
   const tactics = ['Một', 'Hai', 'Ba', 'Bốn', 'Năm', 'Sáu', 'Bảy'].map((viet) => ({ viet, chinese: viet }));
   const books = ['Binh thư một', 'Binh thư hai', 'Binh thư ba'].map((viet) => ({ viet, chinese: viet }));
@@ -65,15 +65,15 @@ export async function seasonConsumerFixture() {
   refreshConfigProofs(data);
   const selection = scoredSelection(config);
   const score = {
-    provider: 'sgsdeck', value: 132.5, sourceConfigId: 'source-a', sourceSeason: { label: 'Fixture' },
-    provenance: { provider: 'sgsdeck', region: 'VN', sourceUrl: 'https://example.org/recommended', fetchedAt: '2026-09-12' },
+    value: 132.5, sourceConfigId: 'source-a', sourceSeason: { label: 'Fixture' },
+    provenance: { region: 'VN', fetchedAt: '2026-09-12' },
     evidenceRefs: ['score-proof'], sourceSnapshotHash: `sha256:${'a'.repeat(64)}`,
     configFingerprint: await seasonFingerprint(configFingerprintProjection(config)),
     selectionFingerprint: await seasonFingerprint(selection), scoredSelection: selection,
   };
   originalEvaluation.sourceScore = score;
   data['season-evidence'].push({ ...structuredClone(data['season-evidence'].find(proof => proof.id === config.evidenceRefs[0])), id: 'score-proof', provenance: { ...score.provenance }, snapshotHash: score.sourceSnapshotHash, sourceSeason: { ...score.sourceSeason } });
-  const source = { id: 'fixture-sheet', url: 'https://example.org/sheet', sheetId: 'sheet-fixture', gid: '123', format: 'csv', snapshotHash: `sha256:${'c'.repeat(64)}`, disclaimerRaw: 'Tham khảo nguồn\nGiữ nguyên điều kiện.' };
+  const source = { id: 'fixture-sheet', format: 'csv', snapshotHash: `sha256:${'c'.repeat(64)}`, disclaimerRaw: 'Tham khảo nguồn\nGiữ nguyên điều kiện.' };
   const team = {
     recordId: 'source-team-a', sourceLocator: { csvRecordStart: 2, csvRecordEnd: 4, lineStart: 2, lineEnd: 7 },
     teamNameRaw: 'Đội A (chủ lực)', teamName: 'Đội A', unitTacticEffectsRaw: 'Cải tạo\nGiữ điều kiện',
@@ -81,8 +81,8 @@ export async function seasonConsumerFixture() {
   };
   team.contentFingerprint = await seasonFingerprint(contentFingerprintProjection(team));
   const payload = { groupLabel: 'Nhóm A', summaryRaw: 'Dòng một\nDòng hai', openingSuggestionsRaw: 'Gợi ý khai hoang', notesRaw: '<img src=x onerror=alert(1)>', teams: [team] };
-  const sourceProvenance = { provider: 'google-sheets', region: 'VN', sourceUrl: source.url, fetchedAt: '2026-09-12' };
-  data['season-evidence'].push({ schemaVersion: 1, id: 'source-proof', provenance: sourceProvenance, canonicalRef: null, note: 'Source fixture only', reviewStatus: 'reviewed', claim: { kind: 'source-observation', scenarioId: null, rulesetId: null }, snapshotHash: source.snapshotHash });
+  const sourceProvenance = { region: 'VN', fetchedAt: '2026-09-12' };
+  data['season-evidence'].push({ schemaVersion: 1, id: 'source-proof', provenance: sourceProvenance, canonicalRef: null, reviewStatus: 'reviewed', claim: { kind: 'source-observation', scenarioId: null, rulesetId: null }, snapshotHash: source.snapshotHash });
   data['season-evidence'].push({ ...structuredClone(data['season-evidence'][0]), id: 'source-attribution', provenance: { ...sourceProvenance } });
   data['season-content-links'] = [{ schemaVersion: 1, id: 'link-a', kind: 'coexist', recordId: 'source-group-a', scenarioId: context.scenarioId, rulesetId: null, configIds: [], reviewStatus: 'reviewed', evidenceRefs: ['source-attribution', 'source-proof'], target: { type: 'source-owned-coexist', source, payload, contentFingerprint: await seasonFingerprint(contentFingerprintProjection(payload)) } }];
   data.coexist = [{ groupLabel: 'Unknown old group', teams: [] }];

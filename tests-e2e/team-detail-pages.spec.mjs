@@ -76,13 +76,12 @@ test('Recommended detail uses the TeamDetail shell: scope line, Tier seal, badge
 
   // Panel điểm: nhãn caps, số serif son + đơn vị; trang đội chuẩn không dẫn link nguồn ngoài.
   const panel=page.locator('#team-detail-root .detail-score-panel');
-  await expect(panel.locator('.detail-panel-kicker')).toHaveText('Điểm nguồn');
+  await expect(panel.locator('.detail-panel-kicker')).toHaveText('Điểm');
   // Nguồn ghi chung, không nêu tên site nguồn trong panel điểm.
   await expect(panel.locator('.detail-panel-note')).not.toContainText('SGSDeck');
   await expect(panel.locator('.detail-score-value')).toHaveText(String(row.value));
   await expect(panel.locator('.detail-score-unit')).toHaveText('điểm');
-  await expect(page.locator('#team-detail-root .detail-source-link')).toHaveCount(0);
-  await expect(page.locator(`#team-detail-root a[href="${row.sourceUrl}"]`)).toHaveCount(0);
+  await expect(page.locator('#team-detail-root a[target="_blank"]')).toHaveCount(0);
   // Chỉ một URL chi tiết cho mỗi đội: canonical là pathname, không kèm query/hash.
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href',new RegExp(`${recommendedPath(handles,row.sourceConfigId)}$`));
 });
@@ -134,7 +133,7 @@ test('Đội khác detail drops the score panel content and Chinese name instead
   expect(await panel.evaluate(node=>getComputedStyle(node).borderTopStyle)).toBe('none');
   if (team.faction) await expect(detail.locator('.detail-badges .badge.faction')).toHaveText(team.faction);
   for (const unit of team.unitType || []) await expect(detail.locator('.detail-badges .badge.unit')).toContainText(unit);
-  await expect(detail.locator('.detail-source-link')).toHaveCount(0);
+  await expect(detail.locator('a[target="_blank"]')).toHaveCount(0);
 });
 
 test('copy link reports the real clipboard result and offers a selected fallback',async({context,page,request})=>{
@@ -193,7 +192,7 @@ test('Recommended detail renders note ownership once per source occurrence',asyn
     const {recommendedTeamDetailContent}=await import('/js/recommended-reference-render.js');
     const holder=name=>({displayNameVi:name,tacticSlotsRaw:[],tacticSlotsVi:[],bookSlotsRaw:[],bookSlotsVi:[],statFocusRaw:'',roleRaw:''});
     const fragment=recommendedTeamDetailContent({
-      sourceConfigId:'ownership-probe',sourceUrl:'https://sgsdeck.com/recommended/ownership-probe',
+      sourceConfigId:'ownership-probe',
       heroes:[holder('A'),holder('B'),holder('C')],
       alternativeHoldersRaw:[holder('D')],
       displayNotes:{schemaVersion:1,blocks:[
@@ -244,7 +243,6 @@ test('Recommended detail distinguishes absent slots from untranslated populated 
     });
     const fragment=recommendedTeamDetailContent({
       sourceConfigId:'slot-state-probe',
-      sourceUrl:'https://sgsdeck.com/recommended/slot-state-probe',
       heroes:[
         holder('A',[''],[null],['','',''],[null,null,null],'',null),
         holder('B',['突陣'],[null],['破陣'],[null],'全武',null),
@@ -346,7 +344,7 @@ test('duplicate legacy content renders once while every reviewed locator remains
     };
     const fingerprint='sha256:'+'a'.repeat(64);
     const fragment=recommendedTeamDetailContent({
-      sourceConfigId:'recommended-probe',sourceUrl:'https://sgsdeck.com/recommended/recommended-probe',
+      sourceConfigId:'recommended-probe',
       heroes:[],alternativeHoldersRaw:[],displayNotes:{schemaVersion:1,blocks:[]},
       legacyReferences:[
         {legacyTeamId:'legacy-probe',legacyVariantId:'variant-a',legacyContentSha256:fingerprint,evidenceRef:'review-a',legacyContent:content},
@@ -846,7 +844,7 @@ test('a source-empty third seat reads as an empty seat on the Recommended detail
   await expect(body).not.toContainText('Nội dung tiếng Việt chưa sẵn sàng');
   const seat=body.locator('.detail-hero-card').nth(2);
   await expect(seat.locator('.detail-hero-role')).toHaveText('Phó tướng 2');
-  await expect(seat.getByRole('img',{name:'Nguồn để trống'})).toHaveText('—');
+  await expect(seat.getByRole('img',{name:'Để trống'})).toHaveText('—');
 });
 
 test('copy link on a Khai hoang detail keeps the chosen variant and drops from',async({context,page,request})=>{

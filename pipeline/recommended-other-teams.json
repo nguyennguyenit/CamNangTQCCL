@@ -173,7 +173,6 @@
       "faction": "Ngụy",
       "historicalRankings": [
         {
-          "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0.5 · 遼姬騎",
           "tier": "T0.5",
           "updatedAt": "2026-07-03"
         }
@@ -515,12 +514,10 @@
       "faction": "Ngụy",
       "historicalRankings": [
         {
-          "source": "video-260701 · T0 · 太尉盾",
           "tier": "T0",
           "updatedAt": "2026-07-03"
         },
         {
-          "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0 · 太尉盾",
           "tier": "T0",
           "updatedAt": "2026-07-03"
         }
@@ -610,7 +607,6 @@
       "faction": "Ngụy",
       "historicalRankings": [
         {
-          "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0.5 · 墩墩盾",
           "tier": "T0.5",
           "updatedAt": "2026-07-03"
         }
@@ -700,7 +696,6 @@
       "faction": "Hỗn hợp",
       "historicalRankings": [
         {
-          "source": "sangokushi.zeabur.app PK-S26 Anh Hùng Mệnh Thế · T0.5 · 詩詩盾",
           "tier": "T0.5",
           "updatedAt": "2026-07-03"
         }
@@ -3311,7 +3306,6 @@
       "faction": "Hỗn hợp",
       "historicalRankings": [
         {
-          "source": "video-260701 · T0 · 天公盾",
           "tier": "T0",
           "updatedAt": "2026-07-07"
         }
@@ -4532,7 +4526,7 @@
   ],
   "dedupKeyVersion": 1,
   "inputTeamRows": 166,
-  "localTeamsSha256": "sha256:45e13dca78877abc13d2ef2213be9432c8307aa558d99783498279f7563cf283",
+  "localTeamsSha256": "sha256:bd6b4925ad4d20620951d304358d39313031db0d9859e81ec9049c5370e1ed2f",
   "mappingFileSha256": "sha256:bac1cc7062288c81f399286fd58a73e83eaaba5cf29add663c8fb24590550cfa",
   "pending": [
     {
@@ -5605,7 +5599,7 @@
   "recommendedCorpusHash": "sha256:f50833b3e201ecabc29fc1c88fd87b1b2ecc0d376805bf1d35cc20d929b772db",
   "schemaVersion": 1,
   "sourceInventoryHash": "sha256:591857173405450f9972faad1b6ce3b1abbd9641608a8c1a8ea8e843fba15ff5",
-  "teamTierSha256": "sha256:056c58b16ba195ee1491c053cfbb5ddd020bb7d89ea13a5554f38df42e1795ca",
+  "teamTierSha256": "sha256:1603613ccdcf44b787cad064eacae88d0516fb863cd09c75803fca5e5caec684",
   "unresolvedRecommended": [
     "2-1nsjj7f",
     "2-jh7wzr",

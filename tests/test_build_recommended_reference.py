@@ -99,6 +99,31 @@ class BuildRecommendedReferenceTest(unittest.TestCase):
                 _publish(inputs, root)
             self.assertEqual((root / "current.json").read_bytes(), before)
 
+    def test_source_urls_check_list_order_but_never_publish(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            scope_key = "s-" + "3" * 64
+            records = [
+                {"sourceConfigId": key, "sourceUrl": "https://source.example/" + key, "safeScopeKey": scope_key, "sourceScopeId": "s|交戰", "sourceSeasonId": "s", "sourceSeasonLabel": "S", "sourceCategoryId": "交戰", "tierRaw": "T1", "tierOrder": 2, "value": None, "listIndex": index, "heroes": []}
+                for index, key in enumerate(("a", "b"))
+            ]
+            scope = {"safeScopeKey": scope_key, "sourceScopeId": "s|交戰", "sourceSeasonId": "s", "sourceCategoryId": "交戰", "state": "complete",
+                     "listUrl": "https://source.example/list", "orderedDetailUrls": ["https://source.example/b", "https://source.example/a"], "missingUrls": []}
+            inputs = {
+                "inventory": {"inventoryHash": "a", "seasonOptions": [{"sourceSeasonId": "s", "label": "S", "status": "available"}], "scopes": [scope]},
+                "records": records,
+                "details": {scope_key: list(records)}, "otherTeams": [], "mappingHash": "b", "decisionSnapshotHash": "c", "dedupKeyVersion": 1,
+            }
+            with self.assertRaisesRegex(ValueError, "source URL order"):
+                _publish(inputs, root)
+            scope["orderedDetailUrls"].reverse()
+            generation = root / _publish(inputs, root)["generationId"]
+            published = "".join(path.read_text() for path in sorted(generation.iterdir()))
+            self.assertNotIn("source.example", published)
+            seasons = json.loads((generation / "seasons.json").read_text())
+            self.assertEqual(seasons["scopes"][0]["state"], "complete")
+            self.assertEqual({row["sourceConfigId"] for row in json.loads((generation / "index.json").read_text())["records"]}, {"a", "b"})
+
     def test_incomplete_scope_preserves_last_good_selector(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)

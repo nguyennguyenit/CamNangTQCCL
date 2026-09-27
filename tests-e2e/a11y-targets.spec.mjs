@@ -80,32 +80,6 @@ test.describe("A5 — control đứng riêng phải đủ 44px ở mobile", () =
   });
 });
 
-test.describe("A5 — vòng sửa Opus round 2", () => {
-  test("link nguồn tham khảo trong thân chi tiết Đội chuẩn: đủ 44px, Enter mở được", async ({ browser }) => {
-    const path = "/doi-chuan/pk-s24-tiem-long-dieu-thuyen/";
-    for (const { width, colorScheme } of CASES) {
-      const context = await browser.newContext({ viewport: { width, height: 900 }, colorScheme });
-      await context.route("**/*", (route) => new URL(route.request().url()).hostname === "127.0.0.1"
-        ? route.continue() : route.abort());
-      const page = await context.newPage();
-      await page.goto(path);
-      const link = page.locator(".detail-source > p > a").first();
-      await expect(link).toBeVisible();
-      const box = await link.boundingBox();
-      expect(box.height, `${width}/${colorScheme}: chiều cao link nguồn`).toBeGreaterThanOrEqual(44);
-      expect(box.width, `${width}/${colorScheme}: chiều rộng link nguồn`).toBeGreaterThanOrEqual(44);
-      // Không còn màu link mặc định của trình duyệt (P06-B2).
-      const colour = await link.evaluate((node) => getComputedStyle(node).color);
-      expect(["rgb(0, 0, 238)", "rgb(85, 26, 139)", "rgb(158, 158, 255)"]).not.toContain(colour);
-      const [popup] = await Promise.all([page.waitForEvent("popup"), link.press("Enter")]);
-      expect(popup, `${width}/${colorScheme}: Enter mở tab mới`).toBeTruthy();
-      await popup.close();
-      expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
-      await context.close();
-    }
-  });
-});
-
 test.describe("A5 — vòng sửa Opus round 3", () => {
   test("nút tên chiến pháp trong bảng Tra cứu: đủ 44px và Enter mở hồ sơ", async ({ browser }) => {
     for (const { width, colorScheme } of CASES) {

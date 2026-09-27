@@ -194,7 +194,7 @@ test('return origin accepts section URLs, normalizes old root state, and rejects
   assert.equal(safeReturnUrl('/doi-khac/?legacyTeam=team-intro-4&legacyVariant=v1&from=%2F'),'/doi-khac/');
   // Landing không phải đích quay lại hợp lệ của trang chi tiết.
   assert.equal(safeReturnUrl('/'),null);
-  assert.equal(safeReturnUrl('/#nguon-du-lieu'),null);
+  assert.equal(safeReturnUrl('/#so-lieu'),null);
 
   for (const hostile of [
     'https://evil.example/',

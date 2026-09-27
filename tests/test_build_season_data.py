@@ -44,8 +44,11 @@ class BuildSeasonDataTest(unittest.TestCase):
     def test_confirmed_scenario_remains_without_ruleset(self):
         registry, evidence = fixtures()
         result = seasons.build_season_data(registry, evidence)
-        self.assertEqual(result["season-registry.json"], registry)
-        self.assertEqual(result["season-evidence.json"], evidence)
+        self.assertEqual(result["season-registry.json"], seasons.public_projection(registry))
+        # Bản phát không mang nơi lấy dữ liệu: provenance chỉ còn vùng/ngày, ghi chú review ở lại pipeline.
+        self.assertEqual([proof["provenance"] for proof in result["season-evidence.json"]], [{"region": "VN", "fetchedAt": "2026-09-07"}])
+        self.assertEqual(result["season-registry.json"][0]["sourceMappings"][0]["provenance"], {"region": "VN", "fetchedAt": "2026-09-07"})
+        self.assertNotIn("note", result["season-evidence.json"][0])
         self.assertEqual(result["season-registry.json"][0]["rulesets"], [])
         self.assertIsNone(result["season-registry.json"][0]["sourceMappings"][0]["rulesetId"])
         result["season-registry.json"][0]["aliases"].append("independent")
@@ -119,7 +122,7 @@ class BuildSeasonDataTest(unittest.TestCase):
         registry[0].update(reviewStatus="pending", evidenceRefs=[])
         registry[0]["sourceMappings"][0].update(reviewStatus="pending", evidenceRefs=[])
         evidence[0]["reviewStatus"] = "pending"
-        self.assertEqual(seasons.build_season_data(registry, evidence)["season-registry.json"], registry)
+        self.assertEqual(seasons.build_season_data(registry, evidence)["season-registry.json"], seasons.public_projection(registry))
 
     def test_same_source_season_number_in_different_regions_stays_unmapped(self):
         registry, evidence = fixtures()
@@ -128,8 +131,8 @@ class BuildSeasonDataTest(unittest.TestCase):
             provenance = dict(evidence[0]["provenance"], region=region)
             registry[0]["sourceMappings"].append({"sourceSeason": {"number": 18}, "provenance": provenance, "rulesetId": None, "reviewStatus": "pending", "evidenceRefs": []})
         result = seasons.build_season_data(registry, evidence)["season-registry.json"]
-        self.assertEqual(result, registry)
-        self.assertEqual(len(result[0]["sourceMappings"]), 3)
+        self.assertEqual(result, seasons.public_projection(registry))
+        self.assertEqual([mapping["provenance"]["region"] for mapping in result[0]["sourceMappings"]], ["CN", "TW", "VN"])
         self.assertTrue(all(item["rulesetId"] is None for item in result[0]["sourceMappings"]))
 
     def test_reviewed_mapping_requires_same_source_provenance(self):
@@ -157,7 +160,7 @@ class BuildSeasonDataTest(unittest.TestCase):
     def test_reviewed_exact_ruleset_mapping_is_accepted(self):
         registry, evidence = with_ruleset()
         registry[0]["sourceMappings"][0].update(rulesetId="reviewed-rules", evidenceRefs=["rules-proof"])
-        self.assertEqual(seasons.build_season_data(registry, evidence)["season-registry.json"], registry)
+        self.assertEqual(seasons.build_season_data(registry, evidence)["season-registry.json"], seasons.public_projection(registry))
 
     def test_repeat_publish_preserves_bytes_and_unrelated_corpus(self):
         registry, evidence = fixtures()
@@ -325,6 +328,8 @@ class CuratedSeasonBundleTest(unittest.TestCase):
         source=[link for link in links if link['target']['type']=='source-owned-coexist']
         self.assertEqual(len(source),5)
         self.assertEqual(sum(len(link['target']['payload']['teams']) for link in source),25)
+        self.assertEqual({key for link in source for key in link['target']['source']},{'id','format','snapshotHash','disclaimerRaw'})
+        self.assertNotRegex(json.dumps(result,ensure_ascii=False),r'https?://|sourceUrl|"provider"')
         scenarios={link['scenarioId'] for link in links}
         self.assertEqual(scenarios,{'anh-hung-menh-the','binh-dien-xuan-thu'})
         legacy=[link for link in links if link['target']['type']=='legacy-locator']

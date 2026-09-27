@@ -17,7 +17,7 @@ const qualifier = [entry.sourceSeasonCode, ordinal > 1 ? String(ordinal) : null]
 const pageLabel = qualifier ? `${title} (${qualifier})` : title;
 const describedName = ordinal > 1 ? `${title} (${ordinal})` : title;
 const hasScore = entry.value != null;
-// Nhãn tier nguồn như js/recommended-reference-state.js (`sourceTierLabel`): đội chức năng có nhãn riêng.
+// Nhãn tier như js/recommended-reference-state.js (`sourceTierLabel`): đội chức năng có nhãn riêng.
 const tier = entry.tierRaw
   ? (entry.tierRaw === 'FUNC' || entry.tierRaw === '功能隊' ? t('Đội chức năng', '功能队') : entry.tierRaw)
   : null;
@@ -28,8 +28,8 @@ const lookupLinksJson = JSON.stringify(lookupLinks).replace(/</g, '\\u003c');
 <SiteLayout
   title={`${pageLabel}${t(' — Đội chuẩn — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', ' — 推荐阵容 — 三国志战略版攻略手册')}`}
   description={locale === 'zh'
-    ? `${describedName}阵容详情，汇总自中国玩家网站与论坛${scopeLine ? `（${scopeLine}）` : ''}。`
-    : `Chi tiết đội hình ${describedName} tổng hợp từ các website và diễn đàn của game thủ Trung Quốc${scopeLine ? ` (${scopeLine})` : ''}.`}
+    ? `${describedName}阵容详情${scopeLine ? `（${scopeLine}）` : ''}：武将、战法、兵书与参考评分。`
+    : `Chi tiết đội hình ${describedName}${scopeLine ? ` (${scopeLine})` : ''}: tướng, chiến pháp, binh thư và điểm tham khảo.`}
   pageKind="detail"
   activeSection="team-chuan"
   tagline={t('Chi tiết đội chuẩn', '推荐阵容详情')}
@@ -62,7 +62,7 @@ const lookupLinksJson = JSON.stringify(lookupLinks).replace(/</g, '\\u003c');
         <h1 id="team-detail-title" class="detail-title">{title}</h1>
         <div class="detail-meta-row">
           {tier ? (
-            <span class="detail-tier" title={t('Tier nguồn', '来源等级')}>
+            <span class="detail-tier" title="Tier">
               <span class="detail-tier-label">Tier</span>
               <span class="detail-tier-value">{tier}</span>
             </span>
@@ -74,14 +74,14 @@ const lookupLinksJson = JSON.stringify(lookupLinks).replace(/</g, '\\u003c');
       <div id="team-detail-panel" class="detail-score-panel">
         {hasScore ? (
           <p class="detail-panel-label">
-            <span class="detail-panel-kicker">{t('Điểm nguồn', '来源评分')}</span>
+            <span class="detail-panel-kicker">{t('Điểm', '评分')}</span>
             <span class="detail-panel-note">{t('tổng hợp', '汇总')}</span>
           </p>
         ) : null}
         <p class="detail-score">
-          {hasScore ? <><span class="detail-score-value">{entry.value}</span> <span class="detail-score-unit">{t('điểm', '分')}</span></> : t('Chưa có điểm nguồn', '暂无来源评分')}
+          {hasScore ? <><span class="detail-score-value">{entry.value}</span> <span class="detail-score-unit">{t('điểm', '分')}</span></> : t('Chưa có điểm', '暂无评分')}
         </p>
-        <!-- Nút sao chép liên kết do js/team-detail.js gắn; trang đội chuẩn không dẫn link nguồn ngoài. -->
+        <!-- Nút sao chép liên kết do js/team-detail.js gắn; trang đội chuẩn không dẫn link ra ngoài. -->
         <div id="team-detail-actions" class="detail-panel-actions"></div>
       </div>
     </div>
@@ -89,8 +89,8 @@ const lookupLinksJson = JSON.stringify(lookupLinks).replace(/</g, '\\u003c');
     <div id="team-detail-status" class="detail-state" role="status" aria-live="polite" aria-atomic="true">{t('Đang tải chi tiết…', '正在加载详情…')}</div>
     <noscript>
       <p class="scope-note">{t(
-        'Trang chi tiết cần JavaScript để đọc dữ liệu nguồn đã xác minh. Bạn vẫn có thể quay lại danh sách đội chuẩn bằng liên kết phía trên.',
-        '详情页需要 JavaScript 才能读取已验证的来源数据。你仍可通过上方链接返回推荐阵容列表。',
+        'Trang chi tiết cần JavaScript để đọc dữ liệu đã xác minh. Bạn vẫn có thể quay lại danh sách đội chuẩn bằng liên kết phía trên.',
+        '详情页需要 JavaScript 才能读取已验证的数据。你仍可通过上方链接返回推荐阵容列表。',
       )}</p>
     </noscript>
     <div id="team-detail-body" hidden></div>

@@ -1,5 +1,16 @@
 # Project Changelog
 
+## 2026-09-28 (Gỡ nguồn dữ liệu khỏi dữ liệu công khai)
+
+### Changed
+
+- Builder Recommended chỉ dùng `sourceUrl`, `listUrl`, `orderedDetailUrls`, `missingUrls` để kiểm nội bộ; `index.json`, `details-*.json`, `seasons.json` phát ra không còn các trường này.
+- `pipeline.build_season_data` ghi bản chiếu công khai: provenance chỉ còn vùng/ngày; bỏ `provider`, `sourceUrl`, `note` của bằng chứng, `provider` của điểm, `url`/`sheetId`/`gid` của nguồn Cùng Tồn. `js/season-context.js` kiểm theo hình dạng mới (không còn đòi `provider === 'sgsdeck'`).
+- `data/team-tier.json` bỏ `source` của từng xếp hạng (map pipeline vẫn giữ); ledger Team khác dựng lại theo tier và `teams.json` mới.
+- `data/khaihoang.json` bỏ mọi `sources[]` và tên nguồn trong ghi chú/nhãn; ghi chú 6 đội PK-S26 (`pipeline/team-intro-supplement.json`) bỏ tên site và URL nguồn; `data/tactics-generic.json` bỏ URL đối chiếu.
+- Tra cứu: 8 chiến pháp bỏ hậu tố trích dẫn ` (Bahamut bsn=36815)` ngay trong `pipeline/lookup-translations.json`; promote transaction `site-vi-260928-source-strip` (`lookup:356b4a3c…`). Bỏ `acquisitionDisplayText` (ẩn hậu tố lúc hiển thị) khỏi `js/lookup-detail.js`.
+- Bản dịch: batch review `site-review-public-source-strip-20260928` thay `site-review-v5-054`, `-061`, `-096`; batch `lookup-public-source-strip-20260928` thay `lookup-final-current-066`, `-071`, `-074`, `-078`, `-080`, `-082`, `-087`; baseline 56588 location, publish generation `83f3a955…`, re-pin `pipeline/team-route-handles.json`.
+
 ## 2026-09-28 (Khai hoang gọn: danh sách chỉ đội + phiên bản)
 
 ### Changed
@@ -45,6 +56,7 @@
 ### Added
 
 - Tra cứu có nhóm thứ bảy **Binh thư** (`books`, mã `book:<slug tên Việt>` từ `js/lookup-ids.js`, nguồn `data/books-dict.json` được pin sha256 lúc build qua `#lookup-books-hash`). Hồ sơ binh thư chỉ có tên; hiệu ứng hiện "Đang cập nhật" vì dữ liệu nguồn chưa có mô tả.
+- Nhóm Binh thư đọc thêm tên Hán nguồn từ `pipeline/recommended-identity-map.json` (tính lúc build, nhúng `#lookup-book-aliases`, `bookSourceAliases` trong `js/lookup-ids.js`): tìm được bằng chữ phồn thể và tên cũ (`以退為進` → `以直报怨`); hồ sơ bản zh có dòng `旧名` cho 4 binh thư đổi tên (`以治擊亂`, `以退為進`, `出奇制勝`, `開闔`).
 - Trang chi tiết Đội chuẩn: dấu **Tier** nguồn ở đầu trang (render lúc build); chiến pháp và binh thư trong thẻ tướng là link tới hồ sơ Tra cứu. Mã hồ sơ tính lúc build (`recordLookupLinks` trong `src/lib/team-detail-pages.ts`, nhúng `#team-lookup-links`); tên không có hồ sơ (vd. `異族弓`) giữ dạng chữ.
 
 ### Changed

@@ -14,8 +14,8 @@ const SOURCE_HASH = /^[0-9a-f]{64}$/;
 const LOADING_MESSAGE = L('Đang tải chi tiết…', '正在加载详情…');
 const NETWORK_MESSAGE = L('Không tải được chi tiết khai hoang. Hãy kiểm tra kết nối rồi thử lại.', '无法加载开荒详情。请检查网络连接后重试。');
 const VERIFY_MESSAGE = L('Không thể xác minh dữ liệu khai hoang. Hãy tải lại trang hoặc quay lại danh sách.', '无法验证开荒数据。请刷新页面或返回列表。');
-const MISSING_PIN_MESSAGE = L('Trang chi tiết thiếu mã kiểm tra nguồn dữ liệu khai hoang.', '详情页缺少开荒数据来源的校验码。');
-const CHANGED_SOURCE_MESSAGE = L('Nguồn dữ liệu khai hoang đã thay đổi so với bản đã phát hành.', '开荒数据来源与已发布版本不一致。');
+const MISSING_PIN_MESSAGE = L('Trang chi tiết thiếu mã kiểm tra dữ liệu khai hoang.', '详情页缺少开荒数据的校验码。');
+const CHANGED_SOURCE_MESSAGE = L('Dữ liệu khai hoang đã thay đổi so với bản đã phát hành.', '开荒数据与已发布版本不一致。');
 const MISSING_TEAM_MESSAGE = L('Không tìm thấy đúng một đội khai hoang với mã này.', '未找到与此编号唯一对应的开荒阵容。');
 const VERIFY_FAILURES = new Set([MISSING_PIN_MESSAGE, CHANGED_SOURCE_MESSAGE, MISSING_TEAM_MESSAGE]);
 

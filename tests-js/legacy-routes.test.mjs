@@ -56,7 +56,7 @@ test('hash Tra cứu chỉ mang group/id, gộp với query ngoài', () => {
 });
 
 test('hash giữ tại chỗ để trình duyệt cuộn anchor', () => {
-  for (const hash of ['#nguon-du-lieu', '#tai-game', '#dau-trang']) {
+  for (const hash of ['#so-lieu', '#tai-game', '#dau-trang']) {
     assert.equal(resolve(`/${hash}`), null, `${hash} phải ở lại /`);
   }
 });
@@ -181,7 +181,7 @@ test('URL gốc bản Trung chuyển tới trang mục bản Trung', () => {
   assert.equal(resolve('/zh/#meta-cu'), '/zh/doi-khac/?source=moi-phe');
   assert.equal(resolve('/zh/#heroes'), '/zh/tra-cuu/?group=heroes');
   assert.equal(resolve('/zh/?q=abc'), '/zh/doi-chuan/?q=abc');
-  assert.equal(resolve('/zh/#nguon-du-lieu'), null);
+  assert.equal(resolve('/zh/#so-lieu'), null);
   // Tiền tố phải là đúng đoạn `/zh`, không phải mọi đường bắt đầu bằng "zh".
   assert.equal(resolve('/zhx/#team-khac'), '/doi-khac/');
 });

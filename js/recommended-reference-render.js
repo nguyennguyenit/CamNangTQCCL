@@ -60,7 +60,7 @@ function holderNameNodes(holder) {
 /** Nguồn để trống ô tướng (đội hai tướng, parser đệm ô thứ ba): không phải bản dịch còn thiếu. */
 const isSourceEmpty=holder=>holder?.slotState === 'source-empty';
 function sourceEmptySeat(className) {
-  const label=L('Nguồn để trống','来源留空');
+  const label=L('Để trống','留空');
   return el('span',{class:`${className} source-empty-seat`,role:'img','aria-label':label,title:label},'—');
 }
 
@@ -110,7 +110,7 @@ function tacticTag(entry,onTag) {
 
 /**
  * Một dòng tướng của thẻ gọn: vai trò, tên, chiến pháp (nút tìm), binh thư dạng dòng.
- * Binh thư trống ghi một dòng nghiêng "Nguồn chưa ghi" thay cho ba tag "Chưa có dữ liệu".
+ * Binh thư trống ghi một dòng nghiêng "Chưa ghi" thay cho ba tag "Chưa có dữ liệu".
  */
 function holderView(holder,onTag,{index=0}={}) {
   const role=heroRoles()[index] || '';
@@ -135,7 +135,7 @@ function holderView(holder,onTag,{index=0}={}) {
     ]) : null,
     el('p',{class:'line books'},books.length
       ? el('span',{class:'reference-book-values'},books.join(' · '))
-      : el('span',{class:'reference-books-missing'},L('Nguồn chưa ghi','来源未注明'))),
+      : el('span',{class:'reference-books-missing'},L('Chưa ghi','未注明'))),
   ]);
 }
 
@@ -334,24 +334,24 @@ function metaLine(row,labels) {
     .map(value=>kindLabel(labels,'unit',value))
     .filter(Boolean);
   const nodes=[];
-  if (row.sourceConfigId && row.tierRaw) nodes.push(el('span',{class:'badge tier reference-tier',title:L('Tier nguồn','来源等级')},sourceTierLabel(row.tierRaw)));
+  if (row.sourceConfigId && row.tierRaw) nodes.push(el('span',{class:'badge tier reference-tier',title:'Tier'},sourceTierLabel(row.tierRaw)));
   if (faction.label) nodes.push(el('span',{class:`reference-faction f-${faction.code}`},faction.label));
   if (units.length) nodes.push(el('span',{class:'reference-units'},units.join(' · ')));
   if (!nodes.length) return null;
   return el('p',{class:'reference-meta'},nodes.flatMap((node,index)=>index ? [' · ',node] : [node]));
 }
 
-// Điểm nguồn giữ đúng độ chính xác nguồn; thiếu điểm là ô ấn trống "—" (không phải 0) cùng khuôn với
+// Điểm giữ đúng độ chính xác của dữ liệu; thiếu điểm là ô ấn trống "—" (không phải 0) cùng khuôn với
 // ô có điểm, để thẻ Đội chuẩn và Đội khác chung một bố cục đầu thẻ.
 const scoreBadge=row=>row.value != null
   ? el('span',{class:'reference-score-wrap'},[
-    el('span',{class:'badge score reference-score',title:L('Điểm nguồn','来源评分')},String(row.value)),
+    el('span',{class:'badge score reference-score',title:L('Điểm','评分')},String(row.value)),
     ' ',
     el('span',{class:'reference-score-unit'},L('điểm','分')),
   ])
-  : el('span',{class:'reference-score-wrap is-missing',title:L('Chưa có điểm nguồn','暂无来源评分')},[
+  : el('span',{class:'reference-score-wrap is-missing',title:L('Chưa có điểm','暂无评分')},[
     el('span',{class:'badge score reference-score missing-score','aria-hidden':'true'},'—'),
-    el('span',{class:'visually-hidden'},L('Chưa có điểm nguồn','暂无来源评分')),
+    el('span',{class:'visually-hidden'},L('Chưa có điểm','暂无评分')),
     el('span',{class:'reference-score-unit','aria-hidden':'true'},L('điểm','分')),
   ]);
 
@@ -445,7 +445,7 @@ export function coexistTeamCard(team) {
         hero.tactics.length ? el('div',{class:'line tactics'},hero.tactics.map(value=>el('span',{class:'tag t-tactic'},value))) : null,
         el('p',{class:'line books'},hero.books.length
           ? el('span',{class:'reference-book-values'},hero.books.join(' · '))
-          : el('span',{class:'reference-books-missing'},L('Nguồn chưa ghi','来源未注明'))),
+          : el('span',{class:'reference-books-missing'},L('Chưa ghi','未注明'))),
         hero.tag || extra.length ? el('p',{class:'line books coexist-hero-extra'},[
           hero.tag ? el('span',{class:'coexist-hero-tag'},hero.tag) : null,
           extra.join(' · '),
@@ -636,18 +636,17 @@ export function recommendedTeamDetailContent(record,{legacyTeams=[],labels=null,
     : [record.sourceSeasonCode || record.sourceSeasonId,record.sourceSeasonNameVi].filter(Boolean).join(' · ');
   const categoryValue=isZh() ? record.sourceCategoryId : record.sourceCategoryNameVi || record.sourceCategoryId;
   fragment.append(el('section',{class:'detail-section detail-source'},[
-    el('h2',{},L('Nguồn & phạm vi','来源与范围')),
+    el('h2',{},L('Phạm vi','范围')),
     el('dl',{class:'detail-facts'},[
-      seasonValue ? fact('source-season',L('Mùa nguồn','来源赛季'),seasonValue) : null,
+      seasonValue ? fact('source-season',L('Mùa','赛季'),seasonValue) : null,
       categoryValue ? fact('source-category',L('Danh mục','分类'),categoryValue) : null,
-      record.authorRaw ? fact('source-author',L('Tác giả','作者'),record.authorRaw) : null,
     ].filter(Boolean)),
     record.introRaw ? noteParagraph(record.introRaw) : null,
   ].filter(Boolean)));
   return fragment;
 }
 
-/** Loại binh nguồn của đội cũ (`"Thương(★★★★)"`, `"Kỵ/Cung(…)"`): bản zh đổi từng tên binh sang chữ Hán, giữ phần sao. */
+/** Loại binh gốc của đội cũ (`"Thương(★★★★)"`, `"Kỵ/Cung(…)"`): bản zh đổi từng tên binh sang chữ Hán, giữ phần sao. */
 const rawTypeLabel=value=>isZh()
   ? String(value).replace(/^[^(（]+/u,names=>names.split('/').map(name=>unitLabel(name.trim())).join('/'))
   : value;
@@ -657,11 +656,11 @@ export function legacyOriginalDetailContent(team,{variant}={}) {
   const fragment=document.createDocumentFragment();
   fragment.append(...legacyContentSections(team,{}));
   fragment.append(el('section',{class:'detail-section detail-source'},[
-    el('h2',{},L('Nguồn & phạm vi','来源与范围')),
+    el('h2',{},L('Phạm vi','范围')),
     el('dl',{class:'detail-facts'},[
       fact('source-legacy-id',L('Mã đội gốc','原始队伍编号'),el('code',{translate:'no'},team.id || L('Chưa có','暂无'))),
-      fact('source-label',L('Nguồn','来源'),team.source ? sourceLabel(team.source) : L('Nguồn chưa xác định','来源不明')),
-      team.rawType ? fact('source-raw-type',L('Loại binh nguồn','来源兵种'),rawTypeLabel(team.rawType)) : null,
+      fact('source-label',L('Bộ đội hình','阵容合集'),team.source ? sourceLabel(team.source) : L('Chưa xác định','不明')),
+      team.rawType ? fact('source-raw-type',L('Loại binh gốc','原始兵种'),rawTypeLabel(team.rawType)) : null,
       variant ? fact('source-variant',L('Biến thể đã đối chiếu','已核对的变体'),el('code',{translate:'no'},variant.legacyVariantId)) : null,
       variant?.legacyContentSha256 ? fact('source-variant-proof',L('Vân tay nội dung','内容指纹'),el('code',{translate:'no'},variant.legacyContentSha256)) : null,
     ].filter(Boolean)),

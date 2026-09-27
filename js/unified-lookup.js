@@ -109,16 +109,26 @@ function entry(group, record) {
 
 /**
  * Binh thư (`books-dict.json`) không có `id` trong dữ liệu: mã hồ sơ dựng bằng `bookLookupId` (dùng chung
- * với trang chi tiết đội), dòng không dựng được mã thì bỏ. Tên Hán-Việt và chữ Hán là khóa tìm phụ.
+ * với trang chi tiết đội), dòng không dựng được mã thì bỏ. Tên Hán-Việt và chữ Hán là khóa tìm phụ; `aliases`
+ * (`{[id]: {aliases, formerNames}}`, tính lúc build từ bảng danh tính) thêm tên Hán nguồn và tên cũ đã xác nhận.
  */
-function bookRecords(books) {
+function bookRecords(books, aliases) {
   return (Array.isArray(books) ? books : []).flatMap((row) => {
     const id = bookLookupId(row);
-    return id ? [{ ...row, id, aliases: typeof row.hanViet === "string" && row.hanViet ? [row.hanViet] : [] }] : [];
+    if (!id) return [];
+    const extra = aliases && Object.hasOwn(aliases, id) ? aliases[id] : null;
+    const names = (value) => (Array.isArray(value) ? value.filter((name) => typeof name === "string" && name.trim()) : []);
+    return [{
+      ...row,
+      id,
+      aliases: typeof row.hanViet === "string" && row.hanViet ? [row.hanViet] : [],
+      aliasesZh: names(extra?.aliases),
+      formerNames: names(extra?.formerNames),
+    }];
   });
 }
 
-export function buildLookupCorpus({ heroes, tactics, catalog, books = [] }) {
+export function buildLookupCorpus({ heroes, tactics, catalog, books = [], bookAliases = null }) {
   const groups = {
     heroes: heroes.map((record) => entry("heroes", record)),
     tactics: tactics.map((record) => entry("tactics", record)),
@@ -126,7 +136,7 @@ export function buildLookupCorpus({ heroes, tactics, catalog, books = [] }) {
     advisors: catalog.advisors.map((record) => entry("advisors", record)),
     "troop-mods": catalog.troopMods.map((record) => entry("troop-mods", record)),
     buildings: catalog.buildings.map((record) => entry("buildings", record)),
-    books: bookRecords(books).map((record) => entry("books", record)),
+    books: bookRecords(books, bookAliases).map((record) => entry("books", record)),
   };
   const byId = new Map();
   for (const rows of Object.values(groups)) for (const row of rows) byId.set(row.id, row);
@@ -339,7 +349,7 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
   const chips = el("div", { class: "lookup-chips", role: "group", "aria-label": L("Nhóm tra cứu", "查询分类") });
   const summary = el("p", { class: "lookup-summary", role: "status", "aria-live": "polite" });
   summary.dataset.lookupTotal = "0";
-  const statusRow = el("div", { class: "lookup-status-row" }, [summary, el("span", { class: "lookup-order" }, L("Thứ tự theo nguồn", "按来源排序"))]);
+  const statusRow = el("div", { class: "lookup-status-row" }, [summary]);
   const grid = el("div", { class: "lookup-grid" });
   const feedback = el("div", { class: "lookup-feedback", "aria-live": "polite" });
   const detailMount = el("div", { class: "lookup-detail-mount" });
@@ -755,7 +765,7 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
       const block = el("section", { class: "cam-nang", "aria-labelledby": "cam-nang-title" }, [
         el("div", { class: "cam-nang-head" }, [
           el("h3", { class: "cam-nang-heading", id: "cam-nang-title" }, L("Trong cẩm nang", "攻略收录")),
-          el("span", { class: "cam-nang-note" }, L("Tính từ đội chuẩn và đội khác đang có · mọi mùa nguồn", "统计自现有推荐阵容与其他阵容 · 全部来源赛季")),
+          el("span", { class: "cam-nang-note" }, L("Tính từ đội chuẩn và đội khác đang có · mọi mùa", "统计自现有推荐阵容与其他阵容 · 全部赛季")),
         ]),
       ]);
       dialog.append(block);

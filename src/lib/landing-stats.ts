@@ -371,9 +371,9 @@ export function landingCopy(stats: LandingStatistics, locale: LandingLocale = 'v
   if (locale === 'zh') {
     const n = (value: number) => localeNumber(value, 'zh');
     return {
-      heroLead: `${n(stats.standardConfigs)} 套推荐配将，覆盖 ${n(stats.sourceSeasons)} 个来源赛季；另有 ${n(stats.otherTeams)} 支玩家汇总阵容，以及 ${n(stats.heroes)} 名武将、${n(stats.tactics)} 个战法可供查询——免费使用，无需注册。`,
+      heroLead: `${n(stats.standardConfigs)} 套推荐配将，覆盖 ${n(stats.sourceSeasons)} 个赛季；另有 ${n(stats.otherTeams)} 支玩家汇总阵容，以及 ${n(stats.heroes)} 名武将、${n(stats.tactics)} 个战法可供查询——免费使用，无需注册。`,
       standardCount: `${n(stats.standardConfigs)} 套配将`,
-      standardNote: '，按赛季与分类整理，保留来源顺序并附来源评分。',
+      standardNote: '，按赛季与分类整理，附参考评分。',
       otherCount: `${n(stats.otherTeams)} 支阵容`,
       otherNote: `，均为玩家汇总：${n(stats.otherTeamsWithCounters)} 支注明畏惧阵容，${n(stats.otherTeamsWithAlternatives)} 支附有替换方案。`,
       coexistNote: `${n(coexist.groups)} 组，每组 ${n(coexist.teamsPerGroup)} 支队伍可同时上阵——共 ${n(coexist.heroesPerGroup)} 名武将互不重复。`,
@@ -381,9 +381,9 @@ export function landingCopy(stats: LandingStatistics, locale: LandingLocale = 'v
     };
   }
   return {
-    heroLead: `${viNumber(stats.standardConfigs)} cấu hình đội từ ${viNumber(stats.sourceSeasons)} mùa nguồn, ${viNumber(stats.otherTeams)} đội người chơi tổng hợp, cùng ${viNumber(stats.heroes)} tướng và ${viNumber(stats.tactics)} chiến pháp để tra cứu — miễn phí, không cần tài khoản.`,
+    heroLead: `${viNumber(stats.standardConfigs)} cấu hình đội từ ${viNumber(stats.sourceSeasons)} mùa, ${viNumber(stats.otherTeams)} đội người chơi tổng hợp, cùng ${viNumber(stats.heroes)} tướng và ${viNumber(stats.tactics)} chiến pháp để tra cứu — miễn phí, không cần tài khoản.`,
     standardCount: `${viNumber(stats.standardConfigs)} cấu hình`,
-    standardNote: 'theo mùa và danh mục, giữ đúng thứ tự nguồn, kèm điểm nguồn.',
+    standardNote: 'theo mùa và danh mục, kèm điểm tham khảo.',
     otherCount: `${viNumber(stats.otherTeams)} đội`,
     otherNote: `người chơi tổng hợp: ${viNumber(stats.otherTeamsWithCounters)} đội ghi đội sợ, ${viNumber(stats.otherTeamsWithAlternatives)} đội có phương án thay thế.`,
     coexistNote: `${viNumber(coexist.groups)} nhóm, mỗi nhóm ${viNumber(coexist.teamsPerGroup)} đội dùng cùng lúc — ${viNumber(coexist.heroesPerGroup)} tướng không trùng nhau.`,

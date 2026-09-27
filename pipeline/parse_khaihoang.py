@@ -28,11 +28,6 @@ TM_COL_TYPE_AFTER = 3
 TM_COL_CP1_AFTER = 4
 TM_COL_CP2_AFTER = 5
 TM_COL_NOTE = 6
-_CHAM_SU_SOURCE_URL = (
-    "https://docs.google.com/spreadsheets/d/"
-    "1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw/"
-    "edit?gid=562317106#gid=562317106"
-)
 
 
 def _split_enemy(text: str) -> dict:
@@ -144,7 +139,6 @@ def parse_cham_su_teams(html_path: str) -> List[dict]:
             "title": title,
             "heroes": list(heroes),
             "note": note,
-            "sources": [{"label": "Google Sheet — snapshot HTML", "url": _CHAM_SU_SOURCE_URL}],
         })
         heroes.clear()
         alternatives.clear()

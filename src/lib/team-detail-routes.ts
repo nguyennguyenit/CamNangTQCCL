@@ -42,7 +42,6 @@ export interface RecommendedRouteEntry {
   sourceSeasonTranslationStatus: string | null;
   sourceCategoryId: string | null;
   sourceCategoryNameVi: string | null;
-  sourceUrl: string | null;
 }
 
 export interface LegacyRouteEntry {
@@ -337,7 +336,6 @@ async function buildCatalogFromSnapshot(
       sourceSeasonTranslationStatus: text(row.sourceSeasonTranslationStatus),
       sourceCategoryId: text(row.sourceCategoryId),
       sourceCategoryNameVi: text(row.sourceCategoryNameVi),
-      sourceUrl: text(row.sourceUrl),
     };
   });
 

@@ -1,8 +1,8 @@
 """Build data/team-tier.json từ bảng curate thủ công pipeline/team-tier-map.json.
 
 Tier gắn vào **team** (nguồn TQ rank đội hình, không rank tướng lẻ). Khóa join =
-team `id` (`team-intro-N`, unique; `name` KHÔNG unique). Multi-source: mỗi team 1
-list `rankings:[{source,tier,updatedAt}]` để đối chiếu nhiều nguồn.
+team `id` (`team-intro-N`, unique; `name` KHÔNG unique). Multi-source: map giữ
+`source` của từng xếp hạng để đối chiếu nội bộ; bản phát chỉ có `rankings:[{tier,updatedAt}]`.
 
 Fail-loud: id trong map không có trong teams.json (chống typo) / tier ngoài tập
 hợp lệ. Chạy OFFLINE lúc build, stdlib, KHÔNG vào runtime site.
@@ -42,7 +42,7 @@ def build_team_tier(tier_map: dict, teams: list) -> list:
         out.append({
             "teamId": team_id,
             "rankings": [
-                {"source": r["source"], "tier": r["tier"], "updatedAt": r["updatedAt"]}
+                {"tier": r["tier"], "updatedAt": r["updatedAt"]}
                 for r in rankings
             ],
         })

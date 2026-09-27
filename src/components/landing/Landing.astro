@@ -1,7 +1,7 @@
 ---
 // Nội dung Landing dùng chung cho bản Việt (`/`) và bản Trung (`/zh/`): route chỉ là vỏ mỏng truyền `locale`.
 // Mọi chữ tác giả đi qua `pick(locale, vi, zh)`; mọi con số tính lúc build từ dữ liệu đã publish
-// (src/lib/landing-stats.ts). Bản zh hiển thị chữ Hán gốc của nguồn trong thẻ/bảng xem trước.
+// (src/lib/landing-stats.ts). Bản zh hiển thị chữ Hán gốc của dữ liệu trong thẻ/bảng xem trước.
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import DownloadQr from '../DownloadQr.astro';
 import { resolveLegacyRoute } from '../../../js/legacy-routes.js';
@@ -53,8 +53,8 @@ const splitVariant = (name: string) => {
 };
 const factionCode = (team: {factionKeyVi: string | null}) =>
   (FACTION_CODE as Record<string, string>)[team.factionKeyVi ?? ''] ?? 'none';
-const TIER_TITLE = t('Tier nguồn', '来源等级');
-const SCORE_TITLE = t('Điểm nguồn', '来源评分');
+const TIER_TITLE = 'Tier';
+const SCORE_TITLE = t('Điểm', '评分');
 const TABLE_HEADS = [t('Chủ tướng', '主将'), t('Phó 1', '副将1'), t('Phó 2', '副将2')];
 /** Dòng meta như `metaLine` của danh sách: tier · phe (màu phe) · loại binh, nối bằng " · ". */
 const metaParts = (team: (typeof previews)['team']) => [
@@ -154,7 +154,7 @@ const communityCards = [
 const statItems = [
   {value: stats.standardConfigs, label: t('cấu hình Đội chuẩn', '套推荐配将')},
   {value: stats.standardTier0, label: t('cấu hình xếp T0', '套 T0 配将')},
-  {value: stats.sourceSeasons, label: t('mùa nguồn', '个来源赛季')},
+  {value: stats.sourceSeasons, label: t('mùa', '个赛季')},
   {value: stats.heroes, label: t('tướng', '名武将')},
   {value: stats.tactics, label: t('chiến pháp', '个战法')},
 ];
@@ -210,7 +210,7 @@ const featureChecks = [
                 <span class="reference-role">{PREVIEW_ROLES[index] ?? ''}</span>
                 <div class="hero-name">{variant.prefix ? <><span class={`pre ${variant.variantClass}`}>{variant.prefix}</span> </> : null}<span class="hn">{variant.name}</span></div>
                 {holder.tactics.length ? <div class="line tactics">{holder.tactics.map((tactic) => <span class="tag t-tactic">{tactic}</span>)}</div> : null}
-                <p class="line books">{holder.books.length ? <span class="reference-book-values">{holder.books.join(' · ')}</span> : <span class="reference-books-missing">{t('Nguồn chưa ghi', '来源未注明')}</span>}</p>
+                <p class="line books">{holder.books.length ? <span class="reference-book-values">{holder.books.join(' · ')}</span> : <span class="reference-books-missing">{t('Chưa ghi', '未注明')}</span>}</p>
               </div>
             );
           })}
@@ -222,7 +222,7 @@ const featureChecks = [
     </div>
   </section>
 
-  <section id="nguon-du-lieu" class="landing-section landing-stats" aria-labelledby="landing-stats-title">
+  <section id="so-lieu" class="landing-section landing-stats" aria-labelledby="landing-stats-title">
     <h2 id="landing-stats-title" class="visually-hidden">{t('Số liệu cẩm nang', '手册数据')}</h2>
     <ul class="landing-stat-list">
       {statItems.map((item) => (
@@ -230,8 +230,8 @@ const featureChecks = [
       ))}
     </ul>
     <p class="landing-stats-note">{t(
-      'Tổng hợp từ các website và diễn đàn của game thủ Trung Quốc · tham khảo, không phải phương án duy nhất.',
-      '汇总自中国玩家网站与论坛 · 仅供参考，并非唯一方案。',
+      'Số liệu mang tính tham khảo, không phải phương án duy nhất.',
+      '数据仅供参考，并非唯一方案。',
     )}</p>
   </section>
 

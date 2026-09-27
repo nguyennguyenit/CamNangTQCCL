@@ -65,7 +65,7 @@ const EXPECTED = {
   mines: vi(khaiHoang.mines.length),
 };
 
-const LANDING_BLOCKS = ['dau-trang', 'nguon-du-lieu', 'landing-sections', 'landing-vaults', 'landing-community', 'tai-game'];
+const LANDING_BLOCKS = ['dau-trang', 'so-lieu', 'landing-sections', 'landing-vaults', 'landing-community', 'tai-game'];
 
 /** Cuộn anchor có thể mượt (`scroll-behavior: smooth`); chờ vị trí đứng yên rồi mới đo. */
 async function scrollSettled(page) {
@@ -108,15 +108,15 @@ test('số liệu Landing khớp dữ liệu đã publish', async ({ page }) => 
   expect(numbers).toEqual([EXPECTED.configs, EXPECTED.tier0, EXPECTED.seasons, EXPECTED.heroes, EXPECTED.tactics]);
 
   await expect(page.locator('.landing-lead')).toHaveText(
-    `${EXPECTED.configs} cấu hình đội từ ${EXPECTED.seasons} mùa nguồn, ${EXPECTED.otherTeams} đội người chơi tổng hợp, `
+    `${EXPECTED.configs} cấu hình đội từ ${EXPECTED.seasons} mùa, ${EXPECTED.otherTeams} đội người chơi tổng hợp, `
     + `cùng ${EXPECTED.heroes} tướng và ${EXPECTED.tactics} chiến pháp để tra cứu — miễn phí, không cần tài khoản.`,
   );
-  // Nguồn ghi chung, không nêu tên site nguồn.
-  await expect(page.locator('main')).not.toContainText('SGSDeck');
+  // Không nêu nơi lấy dữ liệu.
+  await expect(page.locator('main')).not.toContainText(/SGSDeck|nguồn|Trung Quốc/);
 
   const vaults = page.locator('#landing-sections .landing-tile-desc');
   await expect(vaults.nth(0)).toHaveText(
-    `${EXPECTED.configs} cấu hình theo mùa và danh mục, giữ đúng thứ tự nguồn, kèm điểm nguồn.`,
+    `${EXPECTED.configs} cấu hình theo mùa và danh mục, kèm điểm tham khảo.`,
   );
   await expect(vaults.nth(1)).toHaveText(
     `${EXPECTED.otherTeams} đội người chơi tổng hợp: ${EXPECTED.avoid} đội ghi đội sợ, `
@@ -136,7 +136,7 @@ test('số liệu Landing khớp dữ liệu đã publish', async ({ page }) => 
 test('anchor Landing cuộn tới đúng khối, không nằm dưới header dính', async ({ page }) => {
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 900 });
-    for (const hash of ['#nguon-du-lieu', '#tai-game']) {
+    for (const hash of ['#so-lieu', '#tai-game']) {
       await page.goto(`/${hash}`);
       await scrollSettled(page);
       const measured = await page.evaluate((id) => {
@@ -150,14 +150,14 @@ test('anchor Landing cuộn tới đúng khối, không nằm dưới header dí
     await page.goto('/');
     if (width === 1440) {
       await page.click('#nav-toggle-ve-cam-nang');
-      await page.click('.site-nav a[href="/#nguon-du-lieu"]');
+      await page.click('.site-nav a[href="/#so-lieu"]');
     } else {
       await page.click('#section-menu-toggle');
       await page.locator('#section-menu-items summary', { hasText: 'Về cẩm nang' }).click();
-      await page.click('#section-menu-items a[href="/#nguon-du-lieu"]');
+      await page.click('#section-menu-items a[href="/#so-lieu"]');
     }
     await scrollSettled(page);
-    expect(await page.evaluate(() => Math.round(document.querySelector('#nguon-du-lieu').getBoundingClientRect().top)))
+    expect(await page.evaluate(() => Math.round(document.querySelector('#so-lieu').getBoundingClientRect().top)))
       .toBeGreaterThanOrEqual(await page.evaluate(() => Math.round(document.querySelector('.site-header').getBoundingClientRect().bottom)) - 1);
     await page.click('.footer-game-list a[href="/#tai-game"]');
     await scrollSettled(page);

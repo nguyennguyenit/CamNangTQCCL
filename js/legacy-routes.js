@@ -10,7 +10,7 @@
  */
 export function resolveLegacyRoute(href, origin) {
   // Hash cũ giữ nguyên tại chỗ để trình duyệt tự cuộn tới anchor (Phase 3/4 mới đổi phần này).
-  const ANCHOR_HASHES = ['nguon-du-lieu', 'tai-game', 'dau-trang'];
+  const ANCHOR_HASHES = ['so-lieu', 'tai-game', 'dau-trang'];
   // Nguồn cũ của hai alias Đội khác, đúng như `canonicalizeSectionHash` trước đây ghi.
   const ALIAS_SOURCE = { 'team-pk': 'team-intro', 'meta-cu': 'moi-phe' };
   const HASH_TARGETS = {

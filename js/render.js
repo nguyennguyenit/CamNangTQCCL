@@ -1,6 +1,6 @@
 // DOM builders thuần — nhận data, trả HTMLElement. Không state, không innerHTML data thô.
 
-import { legacyLabelZh, sourceName, validateHttpSourceUrl } from './recommended-reference-state.js';
+import { legacyLabelZh, sourceName } from './recommended-reference-state.js';
 import { L, currentLocale } from './i18n.js';
 
 /** Helper tạo element gọn. */
@@ -119,15 +119,14 @@ export function coexistCounts(teams = []) {
 }
 
 /**
- * Chuẩn hóa hai nhánh dữ liệu Cùng Tồn về cùng một khung hiển thị: nhánh nguồn gốc giữ nguyên văn
- * mọi trường có trong nguồn, nhánh legacy chỉ dùng đúng những trường nó có. Tên đội/tướng tách phần phụ ở
+ * Chuẩn hóa hai nhánh dữ liệu Cùng Tồn về cùng một khung hiển thị: nhánh bảng gốc giữ nguyên văn
+ * mọi trường nội dung, nhánh legacy chỉ dùng đúng những trường nó có. Tên đội/tướng tách phần phụ ở
  * dòng cuối (`level` "19C", `tag` "Thương S") để thẻ hiện thành nhãn riêng.
  */
 function coexistModel(reference) {
   const content = reference?.content || {};
   if (reference?.source) {
     return {
-      source: reference.source,
       groupLabel: publicText(content.groupLabel),
       raw: { summary: content.summaryRaw, opening: content.openingSuggestionsRaw, notes: content.notesRaw },
       teams: (content.teams || []).map((team) => ({
@@ -146,7 +145,6 @@ function coexistModel(reference) {
   // dựng lại từ tên tướng, còn văn xuôi và thích tính (chưa có bản Trung) bị bỏ.
   const zh = isZh();
   return {
-    source: null,
     groupLabel: coexistGroupLabel(content.groupLabel),
     raw: { summary: viProse(content.summary), opening: "", notes: "" },
     teams: (content.teams || []).map((team) => ({
@@ -184,7 +182,7 @@ export function coexistGroupLabel(label) {
 }
 
 /**
- * 1 phiên bản Cùng Tồn: dòng tóm tắt + kiểm tra trùng tướng, phần ghi chú/gợi ý khai hoang/lưu ý nguồn gập
+ * 1 phiên bản Cùng Tồn: dòng tóm tắt + kiểm tra trùng tướng, phần ghi chú/gợi ý khai hoang gập
  * trong một disclosure, rồi lưới thẻ đội. `teamCard(team)` dựng thẻ (dùng chung khung thẻ Đội chuẩn).
  */
 export function seasonCoexistGroup(reference, { teamCard } = {}) {
@@ -204,9 +202,7 @@ export function seasonCoexistGroup(reference, { teamCard } = {}) {
   const noteBlocks = [
     rawBlock(L("Ghi chú", "备注"), model.raw.notes),
     rawBlock(L("Gợi ý khai hoang", "开荒建议"), model.raw.opening),
-    rawBlock(L("Lưu ý nguồn", "来源说明"), model.source?.disclaimerRaw),
   ].filter(Boolean);
-  const sourceUrl = validateHttpSourceUrl(model.source?.url);
   const props = { class: "coexist-group" };
   if (reference?.recordId) props.dataset = { recordId: reference.recordId };
   return el("section", props, [
@@ -218,10 +214,6 @@ export function seasonCoexistGroup(reference, { teamCard } = {}) {
         counts.duplicates.length
           ? el("span", { class: "coexist-count-dup" }, L(`có trùng: ${counts.duplicates.join(", ")}`, `有重复：${counts.duplicates.join("、")}`))
           : el("span", { class: "coexist-count-ok" }, L("không trùng", "无重复")),
-        sourceUrl ? " · " : null,
-        sourceUrl ? el("a", {
-          class: "coexist-source", href: sourceUrl, target: "_blank", rel: "noopener noreferrer",
-        }, L("Nguồn", "来源")) : null,
       ].filter(Boolean)),
     ].filter(Boolean)),
     noteBlocks.length
@@ -884,11 +876,11 @@ export function seasonConfigDetail(row, model, {onClose,importHref}) {
     names.set(ref,zh && item.chinese ? item.chinese : item.viet);
   }
   const selection = defaultSeasonSelection(config);
-  const score = el('p',{class:'sgsdeck-score'});
+  const score = el('p',{class:'config-score'});
   const comparison = el('div',{class:'season-inventory-comparison',role:'status'});
   function refreshScore() {
     const value = resolveSelectionScore(model,config.id,selection);
-    score.textContent = value ? L(`Điểm nguồn: ${value.value}`, `来源评分：${value.value}`) : L('Chưa có điểm nguồn', '暂无来源评分');
+    score.textContent = value ? L(`Điểm: ${value.value}`, `评分：${value.value}`) : L('Chưa có điểm', '暂无评分');
     comparison.replaceChildren();
   }
   function chooser(label,refs,change) {
@@ -918,7 +910,6 @@ export function seasonConfigDetail(row, model, {onClose,importHref}) {
   const detail = el('div',{id:'season-config-detail',class:'season-config-detail',role:'region','aria-label':L('Chi tiết cấu hình','配置详情'),tabindex:'-1'},[
     el('button',{type:'button',class:'ana-link-btn',onClick:onClose},L('Đóng chi tiết','关闭详情')),
     el('h3',{},team.name), el('p',{class:'scope-note'},L(`Cấu hình: ${config.id} · ${config.scenarioId} · ${config.rulesetId || 'Tham khảo kịch bản'}`,`配置：${config.id} · ${config.scenarioId} · ${config.rulesetId || '剧本参考'}`)),score,
-    row.evaluation?.sourceScore ? el('p',{},[el('a',{href:row.evaluation.sourceScore.provenance.sourceUrl,target:'_blank',rel:'noopener noreferrer'},L('Nguồn điểm','评分来源')),` · ${row.evaluation.sourceScore.provenance.region} · ${row.evaluation.sourceScore.sourceSeason?.label || L('Chưa rõ mùa tại nguồn','来源赛季不明')}`]) : null,
     chooser(L('Loại binh','兵种'),config.unitTypes,value=>{selection.unitType=value;}),
     ...config.heroSlots.map((slot,index)=>el('fieldset',{class:'season-hero-slot'},[
       el('legend',{},L(`Tướng ${index+1} · ${index === 0 ? 'Chủ tướng' : 'Phó tướng ' + index}`,`武将 ${index+1} · ${index === 0 ? '主将' : '副将 ' + index}`)),chooser(L(`Tướng ${index+1} · Tướng`,`武将 ${index+1} · 武将`),slot.heroRefs,value=>{selection.heroSlots[index].heroRef=value;}),
@@ -927,10 +918,9 @@ export function seasonConfigDetail(row, model, {onClose,importHref}) {
       el('p',{class:'season-detail-text'},L(`Cộng điểm: ${publicText(slot.statFocusRaw)}`,`加点：${publicText(slot.statFocusRaw)}`)),
     ])),
     el('details',{},[
-      el('summary',{},L('Nguồn và đánh giá cấu hình','配置来源与评价')),
-      ...model.data['season-evidence'].filter(proof=>[...config.evidenceRefs,...(row.evaluation?.rankings.flatMap(rank=>rank.evidenceRefs) || [])].includes(proof.id)).map(proof=>el('p',{},[el('a',{href:proof.provenance.sourceUrl,target:'_blank',rel:'noopener noreferrer'},L('Nguồn tham khảo','参考来源')),` · ${proof.provenance.region} · ${proof.provenance.fetchedAt} · ${publicText(proof.note)}`])),
+      el('summary',{},L('Đánh giá cấu hình','配置评价')),
       el('p',{},publicText(row.evaluation?.reviewNote, L('Chưa có đánh giá cấu hình.','暂无配置评价。'))),
-      ...(row.evaluation?.rankings || []).map(rank=>el('p',{},`${rank.tier}${rank.id === row.evaluation.defaultRankingId ? L(' · Đánh giá được chọn',' · 已选评价') : L(' · Tham khảo nguồn khác',' · 其他来源参考')}`)),
+      ...(row.evaluation?.rankings || []).map(rank=>el('p',{},`${rank.tier}${rank.id === row.evaluation.defaultRankingId ? L(' · Đánh giá được chọn',' · 已选评价') : L(' · Đánh giá khác',' · 其他评价')}`)),
     ]),
     el('h4',{},L('Điều kiện và hiệu ứng','条件与效果')),
     ...config.requirements.map(item=>el('p',{class:'season-detail-text'},`${publicText(item.descriptionRaw)} · ${L('Chưa xác minh điều kiện','条件尚未核实')}${item.mandatory ? L(' · Bắt buộc',' · 必要') : ''}`)),

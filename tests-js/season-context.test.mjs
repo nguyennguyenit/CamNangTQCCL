@@ -94,7 +94,7 @@ async function scoreFixture(){
   const data=seasonFixture(),config=data['season-team-configs'][0];config.heroSlots[0].tacticSlots[0].tacticRefs.push('tactic:bay');
   refreshConfigProofs(data);
   const selection=scoredSelection(config);
-  data['season-team-evaluations'][0].sourceScore={provider:'sgsdeck',value:132.5,sourceConfigId:'source-a',sourceSeason:{label:'Fixture'},provenance:{provider:'sgsdeck',region:'VN',sourceUrl:'https://example.org/recommended',fetchedAt:'2026-09-12'},evidenceRefs:['score-proof'],sourceSnapshotHash:`sha256:${'a'.repeat(64)}`,configFingerprint:await seasonFingerprint(configFingerprintProjection(config)),selectionFingerprint:await seasonFingerprint(selection),scoredSelection:selection};
+  data['season-team-evaluations'][0].sourceScore={value:132.5,sourceConfigId:'source-a',sourceSeason:{label:'Fixture'},provenance:{region:'VN',fetchedAt:'2026-09-12'},evidenceRefs:['score-proof'],sourceSnapshotHash:`sha256:${'a'.repeat(64)}`,configFingerprint:await seasonFingerprint(configFingerprintProjection(config)),selectionFingerprint:await seasonFingerprint(selection),scoredSelection:selection};
   data['season-evidence'].push({...structuredClone(data['season-evidence'].find(p=>p.id===config.evidenceRefs[0])),id:'score-proof',provenance:{...data['season-team-evaluations'][0].sourceScore.provenance},snapshotHash:data['season-team-evaluations'][0].sourceScore.sourceSnapshotHash,sourceSeason:structuredClone(data['season-team-evaluations'][0].sourceScore.sourceSeason)});
   return data;
 }
@@ -128,11 +128,11 @@ test('current real registry without reviewed rules remains valid scenario refere
 
 async function referenceFixture(){
   const data=seasonFixture();
-  const source={id:'fixture-sheet',url:'https://example.org/sheet',sheetId:'sheet-fixture',gid:'123',format:'csv',snapshotHash:`sha256:${'c'.repeat(64)}`,disclaimerRaw:'Tham khảo nguồn\nGiữ nguyên điều kiện.'};
+  const source={id:'fixture-sheet',format:'csv',snapshotHash:`sha256:${'c'.repeat(64)}`,disclaimerRaw:'Tham khảo nguồn\nGiữ nguyên điều kiện.'};
   const team={recordId:'source-team-a',sourceLocator:{csvRecordStart:2,csvRecordEnd:4,lineStart:2,lineEnd:7},teamNameRaw:'Đội A (chủ lực)',teamName:'Đội A',unitTacticEffectsRaw:'Cải tạo\nGiữ điều kiện',heroes:['Anh (quân sư)','Bình','Cường'].map(name=>({nameRaw:name,tacticSlotsRaw:['Lựa chọn A / B',''],statFocusRaw:'1/2 Trí\n1/2 Thống',bookSlotsRaw:['Binh thư','','']}))};
   team.contentFingerprint=await seasonFingerprint(contentFingerprintProjection(team));
   const payload={groupLabel:'Nhóm A',summaryRaw:'Dòng một\nDòng hai',openingSuggestionsRaw:'Gợi ý khai hoang',notesRaw:'<img src=x onerror=alert(1)>',teams:[team]};
-  data['season-evidence'].push({schemaVersion:1,id:'source-proof',provenance:{provider:'google-sheets',region:'VN',sourceUrl:source.url,fetchedAt:'2026-09-12'},canonicalRef:null,note:'Source only',reviewStatus:'reviewed',claim:{kind:'source-observation',scenarioId:null,rulesetId:null},snapshotHash:source.snapshotHash});
+  data['season-evidence'].push({schemaVersion:1,id:'source-proof',provenance:{region:'VN',fetchedAt:'2026-09-12'},canonicalRef:null,reviewStatus:'reviewed',claim:{kind:'source-observation',scenarioId:null,rulesetId:null},snapshotHash:source.snapshotHash});
   data['season-evidence'].push({...structuredClone(data['season-evidence'][0]),id:'source-attribution',provenance:{...data['season-evidence'].at(-1).provenance}});
   data['season-content-links']=[{schemaVersion:1,id:'link-a',kind:'coexist',recordId:'source-group-a',scenarioId:'scenario-a',rulesetId:null,configIds:[],reviewStatus:'reviewed',evidenceRefs:['source-attribution','source-proof'],target:{type:'source-owned-coexist',source,payload,contentFingerprint:await seasonFingerprint(contentFingerprintProjection(payload))}}];
   data.coexist=[{groupLabel:'Unknown old group',teams:[]}];
@@ -149,16 +149,16 @@ test('source reference stays out of applicable counts, preserves raw text, and u
   const scenario=projectSeasonBrowse(model,resolveBrowseState(model,{scenarioId:'scenario-a'}));assert.equal(scenario.coexist.scenarioReference.length,1);
 });
 
-test('source discriminator, nested slots, unsafe URLs and stale content hashes reject the whole bundle',async()=>{
-  for(const mutate of [d=>d['season-content-links'][0].target.locator={groupIndex:0},d=>d['season-content-links'][0].target.source.url='javascript:alert(1)',d=>d['season-content-links'][0].target.payload.teams[0].heroes.pop(),d=>d['season-content-links'][0].target.payload.notesRaw='Changed',d=>d['season-content-links'][0].recordId='source-team-a']){
+test('source discriminator, nested slots, published source URLs and stale content hashes reject the whole bundle',async()=>{
+  for(const mutate of [d=>d['season-content-links'][0].target.locator={groupIndex:0},d=>d['season-content-links'][0].target.source.url='https://example.org/sheet',d=>d['season-content-links'][0].target.payload.teams[0].heroes.pop(),d=>d['season-content-links'][0].target.payload.notesRaw='Changed',d=>d['season-content-links'][0].recordId='source-team-a']){
     const data=await referenceFixture();mutate(data);await assert.rejects(validateSeasonBundle(data),SeasonContextError);
   }
 });
 
-test('reference requires both same-source scenario attribution and matching snapshot observation',async()=>{
+test('reference requires both reviewed scenario attribution and matching snapshot observation',async()=>{
   for(const change of ['attribution','observation']){
     const data=await referenceFixture();const proof=data['season-evidence'].find(p=>p.id===(change==='attribution'?'source-attribution':'source-proof'));
-    if(change==='attribution')proof.provenance.sourceUrl='https://example.org/other';else proof.claim={kind:'scenario-attribution',scenarioId:'scenario-a',rulesetId:null};
+    if(change==='attribution')proof.claim={kind:'scenario-attribution',scenarioId:'scenario-b',rulesetId:null};else proof.claim={kind:'scenario-attribution',scenarioId:'scenario-a',rulesetId:null};
     await assert.rejects(validateSeasonBundle(data),SeasonContextError);
   }
 });
@@ -225,8 +225,8 @@ test('locked context warning depends on applicability, not recommendation tier f
   assert.equal(outside.diagnostics[0].code,'LOCKED_TEAM_OUT_OF_SCOPE');
 });
 
-test('provenance rejects browser-normalized non-authority URLs and invalid clock times',async()=>{
-  for(const update of [{sourceUrl:'https:example.org/path'},{fetchedAt:'2026-09-12T24:00:00Z'}]){
+test('provenance rejects source-identifying fields and invalid clock times',async()=>{
+  for(const update of [{sourceUrl:'https://example.org/path'},{provider:'fixture'},{fetchedAt:'2026-09-12T24:00:00Z'}]){
     const data=seasonFixture();Object.assign(data['season-evidence'][0].provenance,update);
     await assert.rejects(validateSeasonBundle(data),SeasonContextError);
   }

@@ -55,7 +55,6 @@ function bestTier(rankings) {
     (a, b) =>
       (TIER_RANK.get(a.tier) ?? Number.MAX_SAFE_INTEGER) -
         (TIER_RANK.get(b.tier) ?? Number.MAX_SAFE_INTEGER) ||
-      String(a.source || "").localeCompare(String(b.source || "")) ||
       String(a.updatedAt || "").localeCompare(String(b.updatedAt || "")),
   )[0]?.tier || "";
 }

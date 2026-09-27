@@ -11,6 +11,7 @@ import {
   recommendedPublicationSnapshot,
   type RecommendedPublicationSnapshot,
 } from "./recommended-reference-artifacts.ts";
+import { bookSourceAliases } from "../../js/lookup-ids.js";
 
 type ArtifactKind = "js" | "css" | "data";
 type PublicArtifactManifest = Parameters<typeof validatePublicArtifactManifest>[0];
@@ -316,4 +317,17 @@ export async function seasonArtifactHashes(options: ArtifactOptions = {}) {
 export async function lookupBooksHash(options: ArtifactOptions = {}) {
   const { bytes } = await readPublicArtifact({ ...options, kind: 'data', routeParam: 'books-dict' });
   return 'sha256:' + createHash('sha256').update(bytes).digest('hex');
+}
+
+/**
+ * Tên chữ Hán nguồn của binh thư (phồn thể, tên cũ đã xác nhận) cho nhóm Binh thư của Tra cứu, tính lúc build từ
+ * `pipeline/recommended-identity-map.json` — tệp riêng của pipeline, không publish — nên nhúng thẳng vào trang.
+ */
+export async function lookupBookAliases(options: ArtifactOptions = {}) {
+  const rootDir = options.rootDir ?? DEFAULT_PROJECT_ROOT;
+  const [{ bytes }, identity] = await Promise.all([
+    readPublicArtifact({ ...options, kind: 'data', routeParam: 'books-dict' }),
+    readFile(join(rootDir, 'pipeline', 'recommended-identity-map.json')),
+  ]);
+  return bookSourceAliases(JSON.parse(Buffer.from(bytes).toString('utf8')), JSON.parse(identity.toString('utf8')).entries);
 }

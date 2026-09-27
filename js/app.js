@@ -530,7 +530,9 @@ async function main() {
     window.addEventListener('pageshow', event => { if (event.persisted) restoreReturnState(); });
     // Scroll mới nhất phải vào snapshot trước khi rời trang bằng paste/copy URL.
     window.addEventListener('pagehide', rememberReturn);
-    if (pageSection === 'lookup' && catalog) initUnifiedLookup({ heroes: heroesDict, tactics, catalog, books: lookupBooks }, mount, {
+    // Tên Hán nguồn của binh thư (phồn thể, tên cũ) do build nhúng từ bảng danh tính đã duyệt.
+    const bookAliases = JSON.parse($('#lookup-book-aliases')?.textContent || 'null') ?? {};
+    if (pageSection === 'lookup' && catalog) initUnifiedLookup({ heroes: heroesDict, tactics, catalog, books: lookupBooks, bookAliases }, mount, {
       summary: {
         pin: recommendedPin,
         loadBytes: loadRecommendedBytes,

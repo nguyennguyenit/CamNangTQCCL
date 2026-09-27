@@ -18,9 +18,7 @@
         ],
         "provenance": {
           "fetchedAt": "2026-09-23",
-          "provider": "project-maintainer",
-          "region": "VN",
-          "sourceUrl": "https://github.com/nguyennguyenit/CamNangTQCCL/blob/main/data/coexist.json"
+          "region": "VN"
         },
         "reviewStatus": "reviewed",
         "rulesetId": null,
@@ -49,9 +47,7 @@
         ],
         "provenance": {
           "fetchedAt": "2026-09-07",
-          "provider": "google-sheets",
-          "region": "VN",
-          "sourceUrl": "https://docs.google.com/spreadsheets/d/1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw/edit?gid=190730430#gid=190730430"
+          "region": "VN"
         },
         "reviewStatus": "reviewed",
         "rulesetId": null,

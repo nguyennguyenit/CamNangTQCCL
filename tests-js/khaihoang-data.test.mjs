@@ -59,7 +59,7 @@ test("Khác Bình Tiến uses spears in both opening phases", () => {
   }
 });
 
-test("sourced options are complete for each declared phase and preserve the roster", () => {
+test("curated options are complete for each declared phase and preserve the roster", () => {
   assert.equal(data.season, "Binh Diễn Xuân Thu");
   for (const team of data.teams) {
     const variants = team.variants || [];
@@ -68,11 +68,7 @@ test("sourced options are complete for each declared phase and preserve the rost
       const key = `${team.title}: ${variant.id}`;
       assert.ok(variant.id && variant.label && variant.region && variant.period && variant.note, key);
       assert.deepEqual(variant.heroes.map((h) => h.name).sort(), team.heroes.map((h) => h.name).sort(), key);
-      assert.ok(variant.sources.length, key);
-      for (const source of variant.sources) {
-        assert.equal(new URL(source.url).protocol, "https:", key);
-        assert.ok(source.label, key);
-      }
+      assert.equal(Object.hasOwn(variant, "sources"), false, key);
       for (const phase of ["Before", "After"]) {
         const names = [];
         let populated = 0;
@@ -122,14 +118,11 @@ test("Chạm Sứ groups match the separate sheet table without opening-team lin
     assert.equal(group.title, group.heroes.map((h) => h.name).join(" · "));
     assert.match(group.note, /mang 1 lính/i);
     assert.equal(group.unitType, undefined);
-    assert.ok(group.sources.length);
-    for (const source of group.sources) {
-      assert.ok(source.label);
-      assert.equal(new URL(source.url).protocol, "https:");
-    }
+    assert.equal(Object.hasOwn(group, "sources"), false);
   }
   assert.match(data.chamSuTeams[0].note, /Điêu Thuyền, Hoàng Cái, Phùng Kỷ/);
   for (const team of data.teams) assert.equal(Object.hasOwn(team, "transforms"), false);
+  for (const team of data.teams) assert.equal(Object.hasOwn(team, "sources"), false, team.title);
 });
 
 test("Yaojing opening guides stay on their three-hero roster, not on a tactic variant", () => {

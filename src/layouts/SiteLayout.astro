@@ -1,12 +1,12 @@
 ---
-import { lookupBooksHash, seasonArtifactHashes, websiteDisplayPublicationSnapshot } from '../lib/root-static-artifacts';
+import { lookupBookAliases, lookupBooksHash, seasonArtifactHashes, websiteDisplayPublicationSnapshot } from '../lib/root-static-artifacts';
 import { teamDetailCatalog } from '../lib/team-detail-routes';
 import { buildDateVi } from '../lib/build-date';
 import SealMark from '../components/SealMark.astro';
 import BrandName from '../components/BrandName.astro';
 import {
   COMMUNITY_LINKS,
-  DATA_SOURCE_HREF,
+  STATS_HREF,
   DOWNLOAD_HREF,
   DOWNLOAD_LINKS,
   EXTERNAL_REL,
@@ -92,7 +92,7 @@ const SECTIONS = [
 const SEASON_SECTIONS = ['team-chuan', 'team-khac', 'coexist'];
 /** Mô tả một dòng cho mục menu (artboard LandingMenu · LandingMenuMobile). */
 const SECTION_DESCRIPTIONS: Record<string, string> = {
-  'team-chuan': t('Cấu hình đội theo mùa nguồn', '按来源赛季整理的阵容配置'),
+  'team-chuan': t('Cấu hình đội theo từng mùa', '按赛季整理的阵容配置'),
   'team-khac': t('Đội người chơi tổng hợp và đối chiếu', '玩家阵容汇总与对照'),
   coexist: t('Các nhóm đội dùng cùng lúc', '可同时使用的阵容组合'),
   khaihoang: t('Hướng dẫn đánh đất theo từng đội', '按队伍整理的打地攻略'),
@@ -133,8 +133,8 @@ const COPYRIGHT = t(
 /** Nhóm tác giả: tên người và tên bang giữ nguyên, chỉ phần mô tả ("Team 2 bang") theo ngôn ngữ trang. */
 const CREDIT = t('Nguyễn Nguyên · HLxThanos · Team 2 bang Huynh Đệ', 'Nguyễn Nguyên · HLxThanos · Huynh Đệ 帮会二队');
 const CREDIT_LABEL = t('Được xây dựng bởi', '制作');
-const DATA_SOURCE_LABEL = t('Nguồn dữ liệu', '数据来源');
-const DATA_SOURCE_DESCRIPTION = t('Số liệu và nguồn của cẩm nang', '手册的数据规模与来源');
+const STATS_LABEL = t('Số liệu cẩm nang', '手册数据');
+const STATS_DESCRIPTION = t('Quy mô dữ liệu của cẩm nang', '手册的数据规模');
 const OPEN_GUIDE_LABEL = t('Mở cẩm nang', '打开手册');
 const OPEN_GUIDE_MOBILE_LABEL = t('Mở Đội chuẩn', '打开推荐阵容');
 const ABOUT_LABEL = t('Về cẩm nang', '关于手册');
@@ -202,8 +202,11 @@ const currentMark = (id: string | undefined | false | null) =>
   id && id === activeSection ? (pageKind === 'detail' ? 'true' : 'page') : null;
 const website = await websiteDisplayPublicationSnapshot();
 const seasonHashes = seasonScope ? await seasonArtifactHashes() : null;
-// Nhóm Binh thư của trang Tra cứu đọc `books-dict` (ngoài lookup manifest): pin byte ngay trên trang.
-const booksHash = pageKind === 'section' && activeSection === 'lookup' ? await lookupBooksHash() : null;
+// Nhóm Binh thư của trang Tra cứu đọc `books-dict` (ngoài lookup manifest): pin byte ngay trên trang; tên Hán nguồn
+// (phồn thể, tên cũ) từ bảng danh tính của pipeline nhúng kèm, `<` chặn để chuỗi không đóng thẻ sớm.
+const lookupPage = pageKind === 'section' && activeSection === 'lookup';
+const booksHash = lookupPage ? await lookupBooksHash() : null;
+const bookAliasesJson = lookupPage ? JSON.stringify(await lookupBookAliases()).replace(/</g, '\\u003c') : null;
 // Ngày build `dd/mm/yyyy` (giờ Việt Nam); bản Trung viết theo thứ tự năm-tháng-ngày.
 const updatedOn = locale === 'zh' ? buildDateVi().split('/').reverse().join('-') : buildDateVi();
 const topSections = SECTIONS.slice(0, 5);
@@ -242,9 +245,9 @@ const communityEntries: Entry[] = [
 ];
 const communityActive = communityEntries.some((entry) => entry.ariaCurrent);
 const communityMenuSection: MenuSection = {entries: communityEntries};
-/** Nhóm "Về cẩm nang": nguồn dữ liệu trên Landing rồi các trang chính sách (src/lib/policy-pages.ts). */
+/** Nhóm "Về cẩm nang": số liệu trên Landing rồi các trang chính sách (src/lib/policy-pages.ts). */
 const aboutEntries: Entry[] = [
-  {label: DATA_SOURCE_LABEL, href: href(DATA_SOURCE_HREF), description: DATA_SOURCE_DESCRIPTION},
+  {label: STATS_LABEL, href: href(STATS_HREF), description: STATS_DESCRIPTION},
   ...POLICY_PAGES.map((page): Entry => ({
     label: pick(locale, page.label.vi, page.label.zh),
     href: href(page.path),
@@ -688,6 +691,7 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
     <script is:inline type="application/json" id="website-display-publication" set:html={JSON.stringify(website.pin)}></script>
     {seasonHashes && <script is:inline type="application/json" id="season-artifact-hashes" set:html={JSON.stringify(seasonHashes)}></script>}
     {booksHash && <script is:inline type="application/json" id="lookup-books-hash" set:html={JSON.stringify(booksHash)}></script>}
+    {bookAliasesJson && <script is:inline type="application/json" id="lookup-book-aliases" set:html={bookAliasesJson}></script>}
     {routeHandles && <script is:inline type="application/json" id="team-route-handles" set:html={JSON.stringify(routeHandles)}></script>}
     <script is:inline type="module">
       import { initSiteChrome } from '/js/site-chrome.js';

@@ -276,11 +276,41 @@ def build_season_data(registry, evidence, *, configs=None, evaluations=None, con
             if legacy_data is None:
                 legacy_data = {name: json.loads((ROOT / 'data' / (name + '.json')).read_text(encoding='utf-8')) for name in ('teams', 'coexist')}
             validate_bundle(configs, evaluations, content_links, scenarios, proofs, legacy_data, identity_catalog)
-    payloads = {"season-registry.json": copy.deepcopy(registry), "season-evidence.json": copy.deepcopy(evidence)}
+    payloads = {"season-registry.json": public_projection(registry), "season-evidence.json": [public_evidence(proof) for proof in evidence]}
     for name, value in (("season-team-configs.json", configs), ("season-team-evaluations.json", evaluations), ("season-content-links.json", content_links)):
         if value is not None:
-            payloads[name] = copy.deepcopy(value)
+            payloads[name] = public_projection(value)
     return payloads
+
+
+# Bản phát công khai không mang nơi lấy dữ liệu: đầu vào pipeline giữ đủ provenance và đã được
+# kiểm chéo ở trên; bản phát chỉ giữ vùng/ngày của provenance và mã băm snapshot của nguồn.
+# Ghi chú review của bằng chứng (`note`) mô tả nơi lấy dữ liệu nên cũng chỉ nằm ở đầu vào pipeline.
+PRIVATE_PROVENANCE_FIELDS = ("provider", "sourceUrl")
+PRIVATE_SCORE_FIELDS = ("provider",)
+PRIVATE_SOURCE_FIELDS = ("url", "sheetId", "gid")
+
+
+def public_projection(value):
+    if isinstance(value, list):
+        return [public_projection(item) for item in value]
+    if not isinstance(value, dict):
+        return copy.deepcopy(value)
+    result = {}
+    for key, item in value.items():
+        if key == "provenance" and isinstance(item, dict):
+            result[key] = {k: copy.deepcopy(v) for k, v in item.items() if k not in PRIVATE_PROVENANCE_FIELDS}
+        elif key == "sourceScore" and isinstance(item, dict):
+            result[key] = public_projection({k: v for k, v in item.items() if k not in PRIVATE_SCORE_FIELDS})
+        elif key == "source" and isinstance(item, dict) and value.get("type") == "source-owned-coexist":
+            result[key] = {k: copy.deepcopy(v) for k, v in item.items() if k not in PRIVATE_SOURCE_FIELDS}
+        else:
+            result[key] = public_projection(item)
+    return result
+
+
+def public_evidence(proof):
+    return {key: value for key, value in public_projection(proof).items() if key != "note"}
 
 
 def encode_payloads(payloads):

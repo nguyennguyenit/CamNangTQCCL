@@ -122,8 +122,7 @@ class ReportRecommendedTranslationsTest(unittest.TestCase):
             self.assertEqual([context["sourceConfigId"] for context in missing_hero["contextExamples"]],
                              ["team-b", "team-c", "team-d"])
             self.assertEqual(missing_hero["contextExamples"][0],
-                             {"sourceConfigId": "team-b", "teamNameRaw": "隊二",
-                              "sourceUrl": "https://sgsdeck.com/recommended/team-b"})
+                             {"sourceConfigId": "team-b", "teamNameRaw": "隊二"})
             tactic = next(item for item in report["items"] if item["kind"] == "tactic")
             self.assertEqual(len(tactic["contextExamples"]), 3)
             self.assertEqual(tactic["occurrences"], 4)

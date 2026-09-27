@@ -27,7 +27,7 @@ export function localizedLinkDescription(link: SiteLink, locale: 'vi' | 'zh'): s
 export const EXTERNAL_REL = 'noopener noreferrer';
 
 /** Link tới khu vực trong Landing (Phase 4 dựng hai anchor này). */
-export const DATA_SOURCE_HREF = '/#nguon-du-lieu';
+export const STATS_HREF = '/#so-lieu';
 export const DOWNLOAD_HREF = '/#tai-game';
 
 function link(label: string, href: string, description?: string, zh?: {label: string; description?: string}): SiteLink {

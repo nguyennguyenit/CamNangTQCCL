@@ -70,8 +70,8 @@ python3 -m pipeline.promote_unified_lookup recover \
 Recovery chỉ sửa transaction bị gián đoạn và restore path khi current bytes vẫn
 bằng postimage owned; edit ngoài transaction làm nó dừng trước partial restore.
 Nó kiểm dependent season refs, giữ file mùa và WIP không thuộc ownership. Nó
-không hoàn tác một activation đã `committed`: transaction `site-vi-260926-1928`
-(`committed`, khớp `lookup:064fd2d5…` trong `data/lookup-manifest.json`) là
+không hoàn tác một activation đã `committed`: transaction `site-vi-260928-source-strip`
+(`committed`, khớp `lookup:356b4a3c…` trong `data/lookup-manifest.json`) là
 evidence hiện tại; journal nằm dưới `pipeline/lookup-output/transactions/`
 (ignored, chỉ có trên máy đã chạy promotion). Muốn chuyển khỏi generation đã commit cần một activation mới đã
 review; không xóa lock hoặc chép preimage thủ công.

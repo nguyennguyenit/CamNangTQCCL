@@ -19765,7 +19765,7 @@
         "Cự Mã Cung"
       ]
     },
-    "notes": "法關盾(劉備) — Zeabur PK-S26 xếp T0; 17173 ghi SP Pháp Chính giúp SP Quan Vũ ổn định, cấu hình SP Quan Vũ: 以寡敌众+击其惰归, Lưu Bị: 鱼鳞阵+藤甲兵, SP Pháp Chính: 蓄势待发+非攻制胜. Nguồn: https://sangokushi.zeabur.app/recommended và https://news.17173.com/content/01142025/015701714.shtml",
+    "notes": "法關盾(劉備) — PK-S26 xếp T0; SP Pháp Chính giúp SP Quan Vũ ổn định, cấu hình SP Quan Vũ: 以寡敌众+击其惰归, Lưu Bị: 鱼鳞阵+藤甲兵, SP Pháp Chính: 蓄势待发+非攻制胜.",
     "recommended": true
   },
   {
@@ -19892,7 +19892,7 @@
         "đội tốc công có khống chế sớm"
       ]
     },
-    "notes": "法關盾(馬岱) — Zeabur PK-S26 xếp T0; dùng khi cần giữ Lưu Bị cho đội khác, vẫn giữ lõi SP Quan Vũ + SP Pháp Chính + Khiên S. Nguồn: https://sangokushi.zeabur.app/recommended; build tham chiếu từ dữ liệu cùng tồn Mã Đại Pháp Quan Khiên trong repo.",
+    "notes": "法關盾(馬岱) — PK-S26 xếp T0; dùng khi cần giữ Lưu Bị cho đội khác, vẫn giữ lõi SP Quan Vũ + SP Pháp Chính + Khiên S. Build tham chiếu từ dữ liệu cùng tồn Mã Đại Pháp Quan Khiên trong repo.",
     "recommended": true
   },
   {
@@ -20019,7 +20019,7 @@
         "Cung Ngô kiểm soát tốt"
       ]
     },
-    "notes": "冠軍槍 — Zeabur PK-S26 xếp T0 với core SP Quan Vũ + SP Tuân Úc + SP Lữ Mông. Bản này bổ sung đúng core còn thiếu; chiến pháp lấy theo pattern SP Quan Vũ thương hiện có trong repo. Nguồn: https://sangokushi.zeabur.app/recommended",
+    "notes": "冠軍槍 — PK-S26 xếp T0 với core SP Quan Vũ + SP Tuân Úc + SP Lữ Mông. Bản này bổ sung đúng core còn thiếu; chiến pháp lấy theo pattern SP Quan Vũ thương hiện có trong repo.",
     "recommended": true
   },
   {
@@ -20146,7 +20146,7 @@
         "đội pháp bạo phát cao"
       ]
     },
-    "notes": "太師弓 — Zeabur PK-S26 Anh Hùng Mệnh Thế xếp T0, core SP Lô Trực + SP Điêu Thuyền + SP Đổng Trác. Chiến pháp theo detail Zeabur: SP Lô Trực 雁行陣+剛柔並濟, SP Điêu Thuyền 勠力同心+深藏若虛, SP Đổng Trác 上兵伐謀+熯天熾地. Nguồn: https://sangokushi.zeabur.app/recommended/yxms-045-太師弓",
+    "notes": "太師弓 — PK-S26 Anh Hùng Mệnh Thế xếp T0, core SP Lô Trực + SP Điêu Thuyền + SP Đổng Trác. Chiến pháp: SP Lô Trực 雁行陣+剛柔並濟, SP Điêu Thuyền 勠力同心+深藏若虛, SP Đổng Trác 上兵伐謀+熯天熾地.",
     "recommended": true
   },
   {
@@ -20275,7 +20275,7 @@
         "đội sát thương pháp bùng nổ"
       ]
     },
-    "notes": "拒馬弓 — Zeabur PK-S26 Anh Hùng Mệnh Thế xếp T0.5, core SP Lô Trực + Tiêu Chỉ + SP Điêu Thuyền. Raw local cũng ghi đội Rào Cản Ngựa/Cự Mã Cung dùng SP Lô Trực, Tiêu Chỉ, SP Điêu Thuyền. Nguồn: https://sangokushi.zeabur.app/recommended/yxms-044-拒馬弓",
+    "notes": "拒馬弓 — PK-S26 Anh Hùng Mệnh Thế xếp T0.5, core SP Lô Trực + Tiêu Chỉ + SP Điêu Thuyền. Raw local cũng ghi đội Rào Cản Ngựa/Cự Mã Cung dùng SP Lô Trực, Tiêu Chỉ, SP Điêu Thuyền.",
     "recommended": true
   },
   {
@@ -20383,7 +20383,7 @@
       "good": [],
       "avoid": []
     },
-    "notes": "天公盾 — Ali213/9Game ghi cấu hình 张角: 太平道法+士别三日, 刘备: 锋矢阵+暂避其锋, 曹操: 草船借箭+藤甲兵; Xiaomi cũng gọi đội này là 天公盾. Nguồn: https://m.ali213.net/news/gl2205/843063.html, https://game.xiaomi.com/viewpoint/1430123701_1682176832711_13",
+    "notes": "天公盾 — Cấu hình 张角: 太平道法+士别三日, 刘备: 锋矢阵+暂避其锋, 曹操: 草船借箭+藤甲兵.",
     "recommended": true
   }
 ]

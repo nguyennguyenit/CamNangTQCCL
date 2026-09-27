@@ -54,7 +54,7 @@ const sectionData = {
   "team-khac": ["website-display.json", ...SEASON_BUNDLE],
   coexist: ["website-display.json", ...SEASON_BUNDLE],
   khaihoang: ["website-display.json", "khaihoang.json"],
-  lookup: ["website-display.json", ...LOOKUP_BUNDLE],
+  lookup: ["website-display.json", ...LOOKUP_BUNDLE, "books-dict.json"],
   "recruit-tracker": ["website-display.json", ...LOOKUP_BUNDLE],
   analyze: ["website-display.json", ...LOOKUP_BUNDLE, "teams.json", "books-dict.json"],
   "roster-recommend": ["website-display.json", ...LOOKUP_BUNDLE, "teams.json", "team-tier.json"],
@@ -351,7 +351,7 @@ test("legacy analyze hash lands on Soi đội and drops retired season keys", as
 });
 
 test("unknown and retired hashes stay on the Landing page", async ({ page }) => {
-  for (const hash of ["#xyz", "#nguon-du-lieu", "#tai-game", "#dau-trang"]) {
+  for (const hash of ["#xyz", "#so-lieu", "#tai-game", "#dau-trang"]) {
     await page.goto(`/${hash}`);
     await expect(page).toHaveURL(`/${hash}`);
     expect(await page.locator("body").getAttribute("data-page-section")).toBeNull();
@@ -985,7 +985,7 @@ test("footer dùng chung có trên Landing, trang mục, trang chi tiết và 40
     expect(chip).toMatch(/^Dữ liệu cập nhật \d{2}\/\d{2}\/\d{4}$/);
     dates.add(chip);
     await expect(footer).toContainText("Được xây dựng bởi");
-    await expect(footer.locator('a[href="/#nguon-du-lieu"]')).toHaveCount(1);
+    await expect(footer.locator('a[href="/#so-lieu"]')).toHaveCount(1);
     // Nút sáng/tối chỉ ở header; footer không còn hàng ghi chú "Nguồn dữ liệu". Góp ý là nút mở hộp thoại thật.
     await expect(footer.locator('[data-theme-toggle]')).toHaveCount(0);
     await expect(footer.locator("[data-feedback-open]")).toHaveText("Góp ý, sửa lỗi");
@@ -993,7 +993,7 @@ test("footer dùng chung có trên Landing, trang mục, trang chi tiết và 40
   expect(dates.size).toBe(1);
 });
 
-test("menu mobile giữ đủ 6 dòng Tra cứu và tiêu đề nhóm là link tới /tra-cuu/", async ({ page }) => {
+test("menu mobile giữ đủ 7 dòng Tra cứu và tiêu đề nhóm là link tới /tra-cuu/", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/tra-cuu/");
   await waitForBoot(page);
@@ -1005,7 +1005,7 @@ test("menu mobile giữ đủ 6 dòng Tra cứu và tiêu đề nhóm là link t
   await expect(heading).toHaveAttribute("href", "/tra-cuu/");
   const box = await heading.boundingBox();
   expect(box.height).toBeGreaterThanOrEqual(44);
-  await expect(overlay.locator('a[href^="/tra-cuu/?group="]')).toHaveCount(6);
+  await expect(overlay.locator('a[href^="/tra-cuu/?group="]')).toHaveCount(7);
   // Bấm dòng con vẫn vào đúng nhóm và menu đóng lại.
   await overlay.locator('a[href="/tra-cuu/?group=tactics"]').click();
   await expect(page).toHaveURL("/tra-cuu/?group=tactics");
@@ -1161,36 +1161,37 @@ test("resize 1024 → 1280 đóng lớp phủ mobile và mở khóa cuộn", asy
   await expect(page.locator("#section-menu-toggle")).toBeHidden();
 });
 
-/** Tên mục và mô tả một dòng của mục (tagline trang mục). */
+/** Tên mục và mô tả một dòng của mục (tagline trang mục bản zh). */
 const SECTION_SHELL = [
-  ["/doi-chuan/", "Đội chuẩn", "Cấu hình đội theo mùa nguồn"],
-  ["/doi-khac/", "Đội khác", "Đội người chơi tổng hợp và đối chiếu"],
-  ["/cung-ton/", "Cùng Tồn", "Các nhóm đội dùng cùng lúc"],
-  ["/khai-hoang/", "Khai hoang", "Hướng dẫn đánh đất theo từng đội"],
-  ["/tra-cuu/", "Tra cứu", "Xem tướng, chiến pháp, trang bị, quân sư"],
-  ["/theo-doi-chieu-mo/", "Theo dõi chiêu mộ", "Mốc bảo hiểm 5★, nhiều tài khoản"],
-  ["/soi-doi-tu-anh/", "Soi đội từ ảnh", "Đọc đội từ ảnh chụp màn hình"],
-  ["/goi-y-doi-tu-kho/", "Gợi ý đội từ kho", "Tối đa 5 đội không trùng tài nguyên"],
+  ["/doi-chuan/", "Đội chuẩn", "Cấu hình đội theo từng mùa", "按赛季整理的阵容配置"],
+  ["/doi-khac/", "Đội khác", "Đội người chơi tổng hợp và đối chiếu", "玩家阵容汇总与对照"],
+  ["/cung-ton/", "Cùng Tồn", "Các nhóm đội dùng cùng lúc", "可同时使用的阵容组合"],
+  ["/khai-hoang/", "Khai hoang", "Hướng dẫn đánh đất theo từng đội", "按队伍整理的打地攻略"],
+  ["/tra-cuu/", "Tra cứu", "Xem tướng, chiến pháp, trang bị, quân sư", "查看武将、战法、装备、军师"],
+  ["/theo-doi-chieu-mo/", "Theo dõi chiêu mộ", "Mốc bảo hiểm 5★, nhiều tài khoản", "5★ 保底进度，支持多账号"],
+  ["/soi-doi-tu-anh/", "Soi đội từ ảnh", "Đọc đội từ ảnh chụp màn hình", "从截图识别阵容"],
+  ["/goi-y-doi-tu-kho/", "Gợi ý đội từ kho", "Tối đa 5 đội không trùng tài nguyên", "最多 5 队，武将战法不冲突"],
 ];
 
-test("tagline trang mục là mô tả của chính mục trong menu; Landing không có tagline", async ({ page, request }) => {
-  for (const [path, , description] of SECTION_SHELL) {
-    await page.goto(path);
-    await expect(page.locator(".site-header .tagline"), path).toHaveText(description);
-  }
-  await page.goto("/");
-  await expect(page.locator(".tagline")).toHaveCount(0);
+test("bản vi: logo chữ mang dòng phụ, không vẽ tagline; bản zh: tagline trang mục là mô tả của mục", async ({ page, request }) => {
   const sitemap = await (await request.get("/sitemap.xml")).text();
   const recommendedDetail = [...sitemap.matchAll(/<loc>([^<]*)<\/loc>/g)]
     .map(([, location]) => new URL(location).pathname)
     .find((pathname) => /^\/doi-chuan\/[^/]+\/$/.test(pathname));
-  await page.goto(recommendedDetail);
-  await expect(page.locator(".site-header .tagline")).toHaveText("Chi tiết đội chuẩn");
-  await page.goto("/khong-co-trang/");
-  await expect(page.locator(".site-header .tagline")).toHaveText("Không tìm thấy trang");
+  for (const path of ["/", ...SECTION_SHELL.map(([path]) => path), recommendedDetail, "/khong-co-trang/"]) {
+    await page.goto(path);
+    await expect(page.locator(".site-header .brand-lockup-sub"), path).toHaveText("Game Tam Quốc Chí – Chiến Lược");
+    await expect(page.locator(".tagline"), path).toHaveCount(0);
+  }
+  for (const [path, , , descriptionZh] of SECTION_SHELL) {
+    await page.goto(`/zh${path}`);
+    await expect(page.locator(".site-header .tagline"), path).toHaveText(descriptionZh);
+  }
+  await page.goto("/zh/");
+  await expect(page.locator(".tagline")).toHaveCount(0);
 });
 
-test("320px: tagline một dòng, nằm gọn trong dải header và cắt bằng ellipsis", async ({ page }) => {
+test("320px bản zh: tagline một dòng, nằm gọn trong dải header và cắt bằng ellipsis", async ({ page }) => {
   const measure = (page) => page.evaluate(() => {
     const node = document.querySelector(".tagline");
     const tagline = node.getBoundingClientRect();
@@ -1208,7 +1209,7 @@ test("320px: tagline một dòng, nằm gọn trong dải header và cắt bằn
   });
   await page.setViewportSize({ width: 320, height: 800 });
   for (const [path] of SECTION_SHELL) {
-    await page.goto(path);
+    await page.goto(`/zh${path}`);
     const measured = await measure(page);
     // Một hộp dòng duy nhất (chiều cao đúng một dòng) và không tràn khỏi dải header.
     expect(measured.taglineHeight, path).toBeLessThanOrEqual(measured.lineHeight + 1);

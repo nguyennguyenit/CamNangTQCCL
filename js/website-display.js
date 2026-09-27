@@ -70,7 +70,7 @@ function dataPathParts(path) {
  */
 export function localizeData(publication, sourcePath, source, locale = currentLocale()) {
   if (!verifiedSources.get(publication)?.has(sourcePath)) {
-    throw new Error(`${L("Nguồn dữ liệu chưa được xác minh", "数据来源尚未验证")}: ${sourcePath}`);
+    throw new Error(`${L("Dữ liệu chưa được xác minh", "数据尚未验证")}: ${sourcePath}`);
   }
   const localized = structuredClone(source);
   if (normalizeLocale(locale) === "zh") return localized;
@@ -128,13 +128,13 @@ export async function loadWebsiteDisplay(pin, loadBytes, recommendedPin, {paths}
     || expectedRecommended.manifestSha256 !== recommendedPin.manifestSha256
   ) throw new Error(L("Bản đội chuẩn không khớp dữ liệu hiển thị", "推荐阵容版本与显示数据不符"));
   for (const [path, expected] of Object.entries(document.sourceHashes)) {
-    if (!/^data\/[^/]+\.json$/.test(path) || !HASH.test(expected)) throw new Error(L("Nguồn dữ liệu hiển thị không hợp lệ", "显示数据来源无效"));
+    if (!/^data\/[^/]+\.json$/.test(path) || !HASH.test(expected)) throw new Error(L("Dữ liệu hiển thị không hợp lệ", "显示数据无效"));
   }
   const requested = [...new Set(paths ?? Object.keys(document.sourceHashes))];
-  if (requested.some(path => !Object.hasOwn(document.sourceHashes, path))) throw new Error(L("Nguồn dữ liệu hiển thị không hợp lệ", "显示数据来源无效"));
+  if (requested.some(path => !Object.hasOwn(document.sourceHashes, path))) throw new Error(L("Dữ liệu hiển thị không hợp lệ", "显示数据无效"));
   await Promise.all(requested.map(async path => {
     const sourceBytes = asBytes(await loadBytes(path));
-    if (await sha256(sourceBytes) !== document.sourceHashes[path]) throw new Error(`${L("Nguồn dữ liệu đã thay đổi", "数据来源已变更")}: ${path}`);
+    if (await sha256(sourceBytes) !== document.sourceHashes[path]) throw new Error(`${L("Dữ liệu đã thay đổi", "数据已变更")}: ${path}`);
   }));
   const publication = immutable(document);
   verifiedSources.set(publication, new Set(requested));

@@ -10,8 +10,9 @@ import {
   buildLookupCorpus,
   searchLookupGroup,
 } from "../js/unified-lookup.js";
-import { lookupProfile, acquisitionDisplayText } from "../js/lookup-detail.js";
+import { lookupProfile } from "../js/lookup-detail.js";
 import { resolveLegacyRoute } from "../js/legacy-routes.js";
+import { bookSourceAliases } from "../js/lookup-ids.js";
 import { readFile } from "node:fs/promises";
 
 const CJK = /[\u3400-\u9fff]/;
@@ -398,6 +399,29 @@ test("deep link binh thư `?id=book:<slug>` mở đúng hồ sơ, hiệu ứng �
   assert.deepEqual(profile.fields.map((field) => [field.key, field.value]), [["effect", null]]);
 });
 
+test("tên cũ của binh thư (bảng danh tính) tìm được và chỉ hiện trên hồ sơ bản zh", () => {
+  const books = [{ chinese: "以直报怨", viet: "Dĩ Trực Báo Oán" }];
+  const bookAliases = bookSourceAliases(books, [
+    { kind: "book", aliases: ["以退為進"], displayNameVi: "Dĩ Trực Báo Oán" },
+    { kind: "book", aliases: ["Dĩ Trực Báo Oán", "以直報怨", "以直报怨"], displayNameVi: "Dĩ Trực Báo Oán" },
+  ]);
+  // Tên phồn thể là alias tìm kiếm, nhưng chỉ tên nguồn đứng riêng (đổi tên) mới là "tên cũ".
+  assert.deepEqual(bookAliases, { "book:di-truc-bao-oan": { aliases: ["以退為進", "以直報怨"], formerNames: ["以退為進"] } });
+  const built = buildLookupCorpus({ heroes: [], tactics: [], catalog: { equipment: [], specials: [], advisors: [], troopMods: [], buildings: [] }, books, bookAliases });
+  for (const query of ["以退為進", "以直報怨"]) {
+    assert.equal(searchLookupGroup(built, { group: "books", query }).items[0]?.id, "book:di-truc-bao-oan", query);
+  }
+  assert.equal(lookupProfile(built, "book:di-truc-bao-oan").fields.some((field) => field.key === "formerNames"), false);
+  const previous = globalThis.document;
+  globalThis.document = { documentElement: { lang: "zh-CN" } };
+  try {
+    const former = lookupProfile(built, "book:di-truc-bao-oan").fields.find((field) => field.key === "formerNames");
+    assert.equal(former?.value, "以退為進");
+  } finally {
+    globalThis.document = previous;
+  }
+});
+
 /* ---------- Hồ sơ chi tiết ---------- */
 
 function profileFor(id) {
@@ -668,32 +692,6 @@ test("tỷ lệ kích hoạt là phần trăm; giá trị ngoài 0–1 không in
     console.warn = original;
   }
   assert.ok(warned.some((line) => line.includes("ngoài khoảng 0–1")), "tỷ lệ sai khoảng phải được cảnh báo cho dev");
-});
-
-const BAHAMUT_ACQUISITION = "Sự kiện liên động Chân Tam Quốc Vô Song máy chủ Đài Loan (Bahamut bsn=36815)";
-
-test("cách nhận ẩn đúng hậu tố trích dẫn Bahamut ở cuối, không đụng phần khác", () => {
-  assert.equal(acquisitionDisplayText(BAHAMUT_ACQUISITION), "Sự kiện liên động Chân Tam Quốc Vô Song máy chủ Đài Loan");
-  for (const plain of ["Truyền thừa", "Chư Hầu Thảo Đổng", "Sự kiện (Bahamut) cuối"]) {
-    assert.equal(acquisitionDisplayText(plain), plain);
-  }
-  const middle = "Sự kiện (Bahamut bsn=36815) rồi đổi thưởng";
-  assert.equal(acquisitionDisplayText(middle), middle);
-  // Chuỗi chỉ gồm trích dẫn không bị biến thành rỗng.
-  assert.equal(acquisitionDisplayText(" (Bahamut bsn=36815)"), " (Bahamut bsn=36815)");
-});
-
-test("ẩn trích dẫn chỉ ở phần hiển thị: field.value giữ nguyên chuỗi đầy đủ", () => {
-  const raw = [BAHAMUT_ACQUISITION, "Truyền thừa"];
-  const built = buildLookupCorpus({
-    heroes: [HERO_UI],
-    tactics: [tactic("tactic:lien-dong", "Liên Động", { lookup: { acquiredFromVi: raw } })],
-    catalog: CATALOG,
-  });
-  const field = fieldByKey(lookupProfile(built, "tactic:lien-dong"), "acquiredFromVi");
-  assert.deepEqual(field.value, raw);
-  assert.equal(field.textVi, "Sự kiện liên động Chân Tam Quốc Vô Song máy chủ Đài Loan, Truyền thừa");
-  assert.doesNotMatch(field.textVi, /bsn=/);
 });
 
 test("cách nhận của mọi chiến pháp đã công bố không lộ mã trích dẫn bsn", async () => {

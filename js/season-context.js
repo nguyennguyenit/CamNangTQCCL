@@ -94,10 +94,11 @@ function sourceSeason(value) {
   for (const key of ['label', 'scenarioName']) if (key in value) text(value[key]);
   if ('number' in value) ensure(Number.isSafeInteger(value.number) && value.number >= 0 && value.number <= 10000);
 }
-function sourceURL(value) {
-  text(value, 2048); ensure(/^https?:\/\//u.test(value) && !/\s/u.test(value));
-  let url; try { url = new URL(value); } catch { fail(); }
-  ensure(['http:', 'https:'].includes(url.protocol) && url.hostname && !url.username && !url.password);
+// Bản phát chỉ giữ vùng/ngày của provenance; pipeline đã kiểm khớp nơi lấy dữ liệu trước khi phát.
+function provenance(value) {
+  object(value, ['region', 'fetchedAt'], ['sourceUpdatedAt']);
+  text(value.region, 32); stamp(value.fetchedAt);
+  if ('sourceUpdatedAt' in value) stamp(value.sourceUpdatedAt);
 }
 function stamp(value) {
   text(value, 40); ensure(/^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2}))?$/u.test(value));
@@ -109,11 +110,6 @@ function stamp(value) {
     if (offset) ensure(Number(offset[1]) < 24 && Number(offset[2]) < 60);
   }
 }
-function provenance(value) {
-  object(value, ['provider', 'region', 'sourceUrl', 'fetchedAt'], ['sourceUpdatedAt']);
-  text(value.provider, 128); text(value.region, 32); sourceURL(value.sourceUrl); stamp(value.fetchedAt);
-  if ('sourceUpdatedAt' in value) stamp(value.sourceUpdatedAt);
-}
 function refs(value, proofs, reviewed = false) {
   ids(value, proofs, !reviewed); const resolved = value.map(key => proofs.get(key));
   if (reviewed) ensure(resolved.every(proof => proof.reviewStatus === 'reviewed'));
@@ -123,7 +119,7 @@ function claimMatches(proof, kind, scenarioId, rulesetId) {
   return proof.reviewStatus === 'reviewed' && proof.claim.kind === kind && proof.claim.scenarioId === scenarioId && proof.claim.rulesetId === rulesetId;
 }
 function requireClaim(proofs, kind, scenarioId, rulesetId = null, mapping) {
-  ensure(proofs.some(proof => claimMatches(proof, kind, scenarioId, rulesetId) && (!mapping || ['provider', 'region', 'sourceUrl'].every(k => proof.provenance[k] === mapping.provenance[k]) && canonicalSeasonJSON(proof.sourceSeason ?? null) === canonicalSeasonJSON(mapping.sourceSeason))));
+  ensure(proofs.some(proof => claimMatches(proof, kind, scenarioId, rulesetId) && (!mapping || proof.provenance.region === mapping.provenance.region && canonicalSeasonJSON(proof.sourceSeason ?? null) === canonicalSeasonJSON(mapping.sourceSeason))));
 }
 function scope(record, state, reviewed = false) {
   const { scenarioId, rulesetId } = record;
@@ -162,8 +158,8 @@ function validateRegistry(state) {
     }
   }
   for (const proof of proofs.values()) {
-    object(proof, ['schemaVersion', 'id', 'provenance', 'canonicalRef', 'note', 'reviewStatus', 'claim'], ['sourceSeason', 'snapshotHash', 'configFingerprint']);
-    version(proof.schemaVersion); provenance(proof.provenance); text(proof.note, 4096); review(proof.reviewStatus);
+    object(proof, ['schemaVersion', 'id', 'provenance', 'canonicalRef', 'reviewStatus', 'claim'], ['sourceSeason', 'snapshotHash', 'configFingerprint']);
+    version(proof.schemaVersion); provenance(proof.provenance); review(proof.reviewStatus);
     if ('sourceSeason' in proof) sourceSeason(proof.sourceSeason);
     if ('snapshotHash' in proof) hash(proof.snapshotHash);
     object(proof.claim, ['kind', 'scenarioId', 'rulesetId']); scope(proof.claim, state);
@@ -248,8 +244,8 @@ async function validateEvaluations(state) {
     if (evaluation.defaultRankingId !== null) ensure(rankings.has(evaluation.defaultRankingId) && evaluation.reviewStatus === 'reviewed' && evaluation.reviewNote.trim());
     const score = evaluation.sourceScore;
     if (score === null) continue;
-    object(score, ['provider', 'value', 'sourceConfigId', 'sourceSeason', 'provenance', 'evidenceRefs', 'sourceSnapshotHash', 'configFingerprint', 'selectionFingerprint', 'scoredSelection']);
-    ensure(evaluation.reviewStatus === 'reviewed' && score.provider === 'sgsdeck' && score.provenance.provider === 'sgsdeck' && typeof score.value === 'number' && Number.isFinite(score.value) && score.value >= 0); id(score.sourceConfigId); sourceSeason(score.sourceSeason); provenance(score.provenance); const scoreProofs = refs(score.evidenceRefs, state.proofs, true); ensure(scoreProofs.some(proof => claimMatches(proof, 'ruleset-applicability', config.scenarioId, config.rulesetId) && proof.configFingerprint === score.configFingerprint && ['provider', 'region', 'sourceUrl'].every(key => proof.provenance[key] === score.provenance[key]) && proof.snapshotHash === score.sourceSnapshotHash && canonicalSeasonJSON(proof.sourceSeason ?? null) === canonicalSeasonJSON(score.sourceSeason)));
+    object(score, ['value', 'sourceConfigId', 'sourceSeason', 'provenance', 'evidenceRefs', 'sourceSnapshotHash', 'configFingerprint', 'selectionFingerprint', 'scoredSelection']);
+    ensure(evaluation.reviewStatus === 'reviewed' && typeof score.value === 'number' && Number.isFinite(score.value) && score.value >= 0); id(score.sourceConfigId); sourceSeason(score.sourceSeason); provenance(score.provenance); const scoreProofs = refs(score.evidenceRefs, state.proofs, true); ensure(scoreProofs.some(proof => claimMatches(proof, 'ruleset-applicability', config.scenarioId, config.rulesetId) && proof.configFingerprint === score.configFingerprint && proof.provenance.region === score.provenance.region && proof.snapshotHash === score.sourceSnapshotHash && canonicalSeasonJSON(proof.sourceSeason ?? null) === canonicalSeasonJSON(score.sourceSeason)));
     hash(score.sourceSnapshotHash); hash(score.configFingerprint); hash(score.selectionFingerprint); validateSelection(score.scoredSelection, config);
     ensure(score.configFingerprint === state.configHashes.get(config.id) && score.selectionFingerprint === await seasonFingerprint(score.scoredSelection));
     state.scoreSelections.set(config.id, canonicalSeasonJSON(score.scoredSelection));
@@ -277,8 +273,8 @@ async function validateContent(state) {
       state.content.set(link.id, state.data.coexist[matches[0]]);
     } else if (target.type === 'source-owned-coexist') {
       object(target, ['type', 'source', 'contentFingerprint', 'payload']);
-      object(target.source, ['id', 'url', 'sheetId', 'gid', 'format', 'snapshotHash', 'disclaimerRaw']);
-      id(target.source.id); sourceURL(target.source.url); id(target.source.sheetId); text(target.source.gid, 128); ensure(target.source.format === 'csv'); hash(target.source.snapshotHash); text(target.source.disclaimerRaw, 20000, true); ensure(target.source.disclaimerRaw.trim());
+      object(target.source, ['id', 'format', 'snapshotHash', 'disclaimerRaw']);
+      id(target.source.id); ensure(target.source.format === 'csv'); hash(target.source.snapshotHash); text(target.source.disclaimerRaw, 20000, true); ensure(target.source.disclaimerRaw.trim());
       hash(target.contentFingerprint); const payload = target.payload;
       object(payload, ['groupLabel', 'summaryRaw', 'openingSuggestionsRaw', 'notesRaw', 'teams']);
       text(payload.groupLabel); for (const key of ['summaryRaw', 'openingSuggestionsRaw', 'notesRaw']) text(payload[key], 20000, true);
@@ -294,8 +290,7 @@ async function validateContent(state) {
         ensure(team.contentFingerprint === await seasonFingerprint(contentFingerprintProjection(team)));
       }
       ensure(target.contentFingerprint === await seasonFingerprint(contentFingerprintProjection(payload)));
-      ensure(evidence.some(proof => claimMatches(proof, 'source-observation', null, null) && proof.snapshotHash === target.source.snapshotHash && proof.provenance.sourceUrl === target.source.url));
-      if (link.reviewStatus === 'reviewed') ensure(evidence.some(proof => claimMatches(proof, link.rulesetId === null ? 'scenario-attribution' : 'ruleset-applicability', link.scenarioId, link.rulesetId) && proof.provenance.sourceUrl === target.source.url));
+      ensure(evidence.some(proof => claimMatches(proof, 'source-observation', null, null) && proof.snapshotHash === target.source.snapshotHash));
       state.content.set(link.id, payload);
     } else fail();
   }

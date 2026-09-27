@@ -71,7 +71,7 @@ test('rejects a requested source the publication does not pin', async () => {
   const fixture = publication();
   await assert.rejects(
     loadWebsiteDisplay(fixture.pin, fixture.load, recommendedPin, {paths: ['data/team-tier.json']}),
-    /Nguồn dữ liệu hiển thị không hợp lệ/,
+    /Dữ liệu hiển thị không hợp lệ/,
   );
 });
 

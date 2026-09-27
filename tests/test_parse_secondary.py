@@ -77,11 +77,9 @@ class TestChamSu(unittest.TestCase):
         self.assertEqual(groups[0]["note"], "Mang 1 lính. Tướng thay thế: Điêu Thuyền, Hoàng Cái, Phùng Kỷ.")
         self.assertEqual(groups[3]["heroes"][1]["tactic"], "Tây Lương Thiết Kỳ")
         for group in groups:
-            self.assertEqual(set(group), {"id", "title", "heroes", "note", "sources"})
+            self.assertEqual(set(group), {"id", "title", "heroes", "note"})
             self.assertEqual(len(group["heroes"]), 2)
             self.assertTrue(group["note"].startswith("Mang 1 lính."))
-            self.assertTrue(group["sources"][0]["label"])
-            self.assertIn("gid=562317106", group["sources"][0]["url"])
 
     def test_right_table_survives_left_boundary_perturbation(self):
         # Perturbation of the real fixture: blank left cells after its first hero.

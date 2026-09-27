@@ -26,7 +26,7 @@ for (const width of [320,375,768,1280]) {
       await expect(navLink(page, 'Đội khác', width < 1280)).toHaveAttribute('href','/doi-khac/');
       if (width < 1280) await page.locator('.site-menu-close').click();
       await expect(page.getByLabel('Phiên bản luật')).toBeHidden();
-      await expect(page.locator('#section-team-chuan').getByLabel('Mùa nguồn',{exact:true})).toBeVisible();
+      await expect(page.locator('#section-team-chuan').getByLabel('Mùa',{exact:true})).toBeVisible();
       await expect(page.getByLabel('Tìm Đội chuẩn')).toBeVisible();
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth)).toBe(true);
       await page.screenshot({path:test.info().outputPath(`recommended-${width}-${theme}.png`),fullPage:true});
@@ -57,7 +57,7 @@ test('cards expose holders tactics books and a native detail link',async({page})
 test('Team khác honors explicit factions and seasons',async({page})=>{
   await page.goto('/doi-khac/?faction=Thục');
   await expect(page.locator('#section-team-khac .reference-team-card').first()).toBeVisible();
-  const season=page.locator('#section-team-khac').getByLabel('Mùa nguồn',{exact:true});
+  const season=page.locator('#section-team-khac').getByLabel('Mùa',{exact:true});
   const known=await season.locator('option').evaluateAll(options=>options.map(option=>option.value).find(value=>value!=='all'&&value!=='unknown'));
   await season.selectOption(known);
   await expect(page.locator('#section-team-khac .reference-team-card')).toHaveCount(0);
@@ -75,7 +75,7 @@ test('season scope changes stay on the browser; a retired category key is stripp
   await expect(page).not.toHaveURL(/category=/);
   await expect(section.locator('.reference-team-card')).toHaveCount(inDefault.length);
   await expect(section.getByLabel('Danh mục nguồn')).toHaveCount(0);
-  const season=section.getByLabel('Mùa nguồn',{exact:true});
+  const season=section.getByLabel('Mùa',{exact:true});
   const next=await season.locator('option').evaluateAll((options,current)=>options.map(option=>option.value).find(value=>value!==current),seasons.defaultSourceSeasonId);
   await season.selectOption(next);
   await expect(page).toHaveURL(new RegExp(`season=${encodeURIComponent(next)}`));
@@ -191,8 +191,8 @@ test('mobile keeps search and the native season select outside the collapsed fil
   await page.setViewportSize({width:375,height:812});
   await page.goto('/doi-chuan/');
   const section=page.locator('#section-team-chuan');
-  const season=section.getByLabel('Mùa nguồn',{exact:true});
-  await expect(section.getByLabel('Tìm mùa nguồn')).toHaveCount(0);
+  const season=section.getByLabel('Mùa',{exact:true});
+  await expect(section.getByLabel('Tìm mùa')).toHaveCount(0);
   await expect(section.locator('#section-team-chuan-filters')).toHaveClass(/collapsed/);
   await expect(season).toBeVisible();
   await expect(section.getByLabel('Tìm Đội chuẩn')).toBeVisible();
@@ -217,7 +217,7 @@ test('uncollected season and an unmatched filter read as different states',async
   const seasonUrl=scope=>`/doi-chuan/?season=${encodeURIComponent(scope.sourceSeasonId)}`;
   if (uncollected) {
     await page.goto(seasonUrl(uncollected));
-    await expect(section.locator('.empty')).toHaveText('Mùa nguồn chưa được thu thập.');
+    await expect(section.locator('.empty')).toHaveText('Mùa này chưa được thu thập.');
     await expect(section.locator('.scope-note')).toContainText('chưa được thu thập');
   }
   const complete=scopes.find(scope=>scope.state==='complete');
@@ -318,7 +318,7 @@ test('compact cards keep complete source content, native links and non-navigatin
   const card=page.locator(`#section-team-chuan .reference-team-card[data-source-config-id="${row.sourceConfigId}"]`);
   await expect(card).toBeVisible();
 
-  // Tier nguồn hiện trong metadata; điểm nguồn vẫn ở góc phải trên.
+  // Tier hiện trong metadata; điểm vẫn ở góc phải trên.
   await expect(card.locator('.badge.tier')).toHaveText(row.tierRaw);
   await expect(card.locator('.scope-note')).toHaveCount(0);
   const score=card.locator('.reference-score');
@@ -390,7 +390,7 @@ test('absent book slots stay noninteractive and distinct from missing translatio
   await expect(card).toBeVisible();
   await expect(card.locator('.books button')).toHaveCount(0);
   await expect(card.locator('.books')).toHaveCount(3);
-  await expect(card.locator('.books .reference-books-missing')).toHaveText(['Nguồn chưa ghi','Nguồn chưa ghi','Nguồn chưa ghi']);
+  await expect(card.locator('.books .reference-books-missing')).toHaveText(['Chưa ghi','Chưa ghi','Chưa ghi']);
   await expect(card.locator('.books').filter({hasText:'Nội dung tiếng Việt chưa sẵn sàng'})).toHaveCount(0);
   await card.getByRole('link',{name:'Chi tiết'}).click();
   // Chi tiết giữ nguyên phân biệt "nguồn trống" với "chưa dịch": cả ba thẻ đều ghi nhãn trống, không bịa chữ.
@@ -617,10 +617,10 @@ test('Thẻ / Thẻ gọn / Bảng share one remembered choice and one card anat
   const khac=page.locator('#section-team-khac');
   await expect(khac.locator('.team-grid-dense > .reference-team-card').first()).toBeVisible();
   await expect(khac.locator('.view-btn[data-view="luoi"]')).toHaveAttribute('aria-pressed','true');
-  // Thẻ thiếu điểm vẫn có ô ấn cùng khuôn, đọc được là "Chưa có điểm nguồn" (không phải 0).
+  // Thẻ thiếu điểm vẫn có ô ấn cùng khuôn, đọc được là "Chưa có điểm" (không phải 0).
   const missing=khac.locator('.reference-team-card .reference-score-wrap.is-missing').first();
   await expect(missing).toBeVisible();
-  await expect(missing.locator('.visually-hidden')).toHaveText('Chưa có điểm nguồn');
+  await expect(missing.locator('.visually-hidden')).toHaveText('Chưa có điểm');
   await expect(missing.locator('.reference-score')).toHaveText('—');
   // Hai trang cùng cấu tạo thẻ: gáy phe, đầu thẻ, ba hàng tướng, chân thẻ có CTA.
   const anatomy=section=>page.locator(section).locator('.reference-team-card').first().evaluate(card=>({
@@ -683,7 +683,7 @@ test('list to detail and Back from the table view restores view, filters, exact 
 test('same-document season history re-renders the same records on Back and Forward',async({page,request})=>{
   const {seasons,index}=await referenceData(request);
   const section=page.locator('#section-team-chuan');
-  const season=section.getByLabel('Mùa nguồn',{exact:true});
+  const season=section.getByLabel('Mùa',{exact:true});
   const recordKey=row=>row.sourceConfigId||row.legacyVariantId||row.legacyTeamId;
   const sorted=keys=>[...new Set(keys)].sort();
   const recordsFor=sourceSeasonId=>index.records.filter(row=>row.sourceSeasonId===sourceSeasonId);
@@ -852,7 +852,7 @@ test('N5-4: panel lọc mobile đóng bằng Escape và trả focus về nút "B
   await expect(firstChip).toBeFocused();
 });
 
-// Mỗi ô "Mùa nguồn" và mỗi nút mở facet vẽ mũi tên riêng: một node SVG dùng chung chỉ còn ở ô dựng sau cùng.
+// Mỗi ô "Mùa" và mỗi nút mở facet vẽ mũi tên riêng: một node SVG dùng chung chỉ còn ở ô dựng sau cùng.
 for (const [path,section] of [['/doi-chuan/','#section-team-chuan'],['/doi-khac/','#section-team-khac']]) {
   test(`every chevron and filter icon on ${path} draws its own strokes`,async({page})=>{
     await page.setViewportSize({width:1280,height:900});
@@ -876,7 +876,7 @@ test('?season=all keeps every Đội chuẩn season and the select says so',asyn
     .then(pin=>page.request.get(`/data/recommended/${pin.generationId}/index.json`)).then(response=>response.json())
     .then(index=>index.records.length);
   await page.goto('/doi-chuan/?season=all');
-  const season=section.getByLabel('Mùa nguồn',{exact:true});
+  const season=section.getByLabel('Mùa',{exact:true});
   await expect(season).toHaveValue('all');
   await expect(season.locator('option:checked')).toHaveText('Tất cả');
   await expect(section.locator('.reference-count')).toHaveText(`${total} / ${total} đội`);
@@ -905,7 +905,7 @@ test('?season=all stays usable on a 6x slower CPU',async({page,request})=>{
   await throttleCpu(page,6);
   await page.goto('/doi-chuan/?season=all');
   const section=page.locator('#section-team-chuan');
-  await expect(section.getByLabel('Mùa nguồn',{exact:true})).toHaveValue('all');
+  await expect(section.getByLabel('Mùa',{exact:true})).toHaveValue('all');
   await expect(section.locator('.reference-count')).toHaveText(`${total} / ${total} đội`);
   await expect(section.locator('.reference-team-card')).toHaveCount(PAGE);
 });
@@ -928,7 +928,7 @@ test('card view shows 60 teams at a time and "Xem thêm" appends the next 60 wit
   await expect(cards.nth(PAGE).locator('a[data-team-detail-link]').first()).toBeFocused();
   await expect(section.locator('.reference-count')).toHaveText(`${total} / ${total} đội`);
   // Đổi phạm vi (mùa) về lượt đầu.
-  const season=section.getByLabel('Mùa nguồn',{exact:true});
+  const season=section.getByLabel('Mùa',{exact:true});
   const values=await season.locator('option').evaluateAll(options=>options.map(option=>option.value).filter(value=>value!=='all'));
   const counts=Object.fromEntries(values.map(value=>[value,index.records.filter(row=>row.sourceSeasonId===value).length]));
   const target=values.find(value=>counts[value]>PAGE);
@@ -981,7 +981,7 @@ test('a source-empty third slot reads as an empty seat, not a missing translatio
   await expect(card).not.toContainText('Nội dung tiếng Việt chưa sẵn sàng');
   const seat=card.locator('.reference-holder').nth(2);
   await expect(seat.locator('.reference-role')).toHaveText('PHÓ 2');
-  await expect(seat.getByRole('img',{name:'Nguồn để trống'})).toHaveText('—');
+  await expect(seat.getByRole('img',{name:'Để trống'})).toHaveText('—');
   await page.goto('/doi-chuan/?season=pk-s26&view=bang');
   await revealAll(page.locator('#section-team-chuan'));
   const row=page.locator('#section-team-chuan tr[data-reference-key^="yxms-005"]');
@@ -1056,7 +1056,7 @@ test('recommended teams form source Tier sections in every view and regroup afte
 
 test('the ongoing source season is marked independently of the selected season',async({page})=>{
   await page.goto('/doi-chuan/');
-  const season=page.getByRole('combobox',{name:'Mùa nguồn',exact:true});
+  const season=page.getByRole('combobox',{name:'Mùa',exact:true});
   const status=page.locator('.reference-season-status');
   await expect(season).toHaveValue('og-兵演春秋');
   await expect(status).toBeVisible();

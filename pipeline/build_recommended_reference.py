@@ -359,11 +359,23 @@ def validate_generation_inputs(inputs):
             raise ValueError("Public Team khác legacy content fingerprint differs")
 
 
+# Trường chỉ phục vụ đối chiếu nội bộ (URL trang nguồn): kiểm ở validate_generation_inputs rồi bỏ khỏi bản phát công khai.
+PRIVATE_RECORD_FIELDS = ("sourceUrl",)
+PRIVATE_SCOPE_FIELDS = ("listUrl", "orderedDetailUrls", "missingUrls")
+
+
+def public_record(row):
+    return {key: value for key, value in row.items() if key not in PRIVATE_RECORD_FIELDS}
+
+
+def public_scope(scope):
+    return {key: value for key, value in scope.items() if key not in PRIVATE_SCOPE_FIELDS}
+
 
 def _build_generation_locked(inputs, output, catalog_bytes):
     inventory = inputs["inventory"]
-    records = sorted(inputs.get("records", []), key=_rank)
-    seasons = {"schemaVersion": SCHEMA_VERSION, "defaultSourceSeasonId": next((x["sourceSeasonId"] for x in inventory.get("seasonOptions", []) if x.get("status") == "available"), None), "seasonOptions": inventory.get("seasonOptions", []), "scopes": inventory["scopes"]}
+    records = [public_record(row) for row in sorted(inputs.get("records", []), key=_rank)]
+    seasons = {"schemaVersion": SCHEMA_VERSION, "defaultSourceSeasonId": next((x["sourceSeasonId"] for x in inventory.get("seasonOptions", []) if x.get("status") == "available"), None), "seasonOptions": inventory.get("seasonOptions", []), "scopes": [public_scope(scope) for scope in inventory["scopes"]]}
     if inventory.get("displayLabels") is not None:
         seasons["displayLabels"] = inventory["displayLabels"]
     index = {"schemaVersion": SCHEMA_VERSION, "records": records}
@@ -378,7 +390,7 @@ def _build_generation_locked(inputs, output, catalog_bytes):
     payloads = {"seasons.json": seasons, "index.json": index, "other-teams.json": other, "hero-summaries.json": summaries}
     for scope in inventory["scopes"]:
         key = scope["safeScopeKey"]
-        payloads["details-" + key + ".json"] = {"schemaVersion": SCHEMA_VERSION, "records": details.get(key, [])}
+        payloads["details-" + key + ".json"] = {"schemaVersion": SCHEMA_VERSION, "records": [public_record(row) for row in details.get(key, [])]}
     descriptor = {"schemaVersion": SCHEMA_VERSION, "inventoryHash": inventory.get("inventoryHash"), "mappingHash": inputs.get("mappingHash"), "decisionSnapshotHash": inputs.get("decisionSnapshotHash"), "dedupKeyVersion": inputs.get("dedupKeyVersion"), "legacyTeamsHash": inputs["legacyTeamsHash"], "contentLinksHash": inputs["contentLinksHash"], "heroSummaryCatalogHash": inputs["heroCatalogHash"], "payloadHashes": {name: sha256_hex(canonical_bytes(value)) for name, value in sorted(payloads.items())}}
     if inputs.get("localizationInputsHash") is not None:
         descriptor["localizationInputsHash"] = inputs["localizationInputsHash"]

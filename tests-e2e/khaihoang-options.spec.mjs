@@ -476,7 +476,7 @@ for (const width of [1280, 375]) {
         heroes: [{ name: "Tôn Thượng Hương", tactic: "Lõa Y Huyết Chiến" }, { name: "Lăng Thống", tactic: "Phong Thi Trận" }],
         note: "mang 1 lính",
       },
-    ].map((team) => ({ ...team, sources: [{ label: "Bảng Khai hoang", url: "https://docs.google.com/spreadsheets/d/x/edit" }] }));
+    ];
     await routeDetailSource(page, (payload) => { payload.chamSuTeams = chamSuTeams; });
     await page.goto(detailPath(handles, data.teams[0].id));
     await expect(page.getByRole("heading", { name: "Đội Chạm Sứ / Ăn vạ", exact: true })).toBeVisible();
@@ -806,26 +806,6 @@ test("detail header carries the unit badge, the shared build block and the panel
   // Hành động: chỉ còn sao chép liên kết.
   await expect(page.locator("#team-detail-root #team-copy-link")).toBeVisible();
   await expect(page.locator("#team-detail-root #team-copy-fallback")).toBeHidden();
-  await expect(page.locator("#team-detail-root .detail-source-link")).toHaveCount(0);
-});
-
-test("detail never renders source links or labels, even when the payload carries them", async ({ page, request }) => {
-  const handles = await routeHandles(request);
-  const target = teamByTitle("Chu Thái · Trương Phi · Trương Xuân Hoa");
-  await routeDetailSource(page, (payload) => {
-    const team = payload.teams.find((item) => item.id === target.id);
-    team.sources = [
-      {label: "Nguồn hỏng", url: "javascript:document.title='pwned'"},
-      {label: "Nguồn thật", url: "https://example.test/nguon-that"},
-    ];
-    for (const group of payload.chamSuTeams) group.sources = [{label: "Nguồn Chạm Sứ", url: "https://example.test/cham-su"}];
-  });
-  await page.goto(detailPath(handles, target.id));
-  await expect(page.locator("#team-detail-body")).toBeVisible();
-  const root = page.locator("#team-detail-root");
-  await expect(root.locator(".detail-source-link, a[href^='https://example.test'], a[href^='javascript:']")).toHaveCount(0);
-  await expect(root).not.toContainText(/Nguồn hỏng|Nguồn thật|Nguồn Chạm Sứ|javascript:/);
-  await expect(page).toHaveTitle(/^(?!pwned).*/);
 });
 
 test("panel hành động của chi tiết Khai hoang và Đội khác không tràn khỏi khung (P06-B1)", async ({ page, request }) => {

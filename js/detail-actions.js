@@ -1,10 +1,9 @@
-// Khối hành động dùng chung cho ba trang chi tiết đội: link nguồn đã kiểm scheme và nút sao chép URL.
-// Không tự đọc dữ liệu: caller đưa danh sách `{href, label}` đã qua `validateHttpSourceUrl`.
+// Khối hành động dùng chung cho ba trang chi tiết đội: nút sao chép URL của trang.
+// Không tự đọc dữ liệu và không dẫn link ra ngoài.
 
 import { el, icon, svgNode } from './render.js';
 import { L } from './i18n.js';
 
-const SOURCE_LINK_LABEL = L('Xem nguồn', '查看来源');
 const COPY_LINK_LABEL = L('Sao chép liên kết đội', '复制阵容链接');
 const COPY_FALLBACK_LABEL = L('Liên kết đội', '阵容链接');
 const COPIED_MESSAGE = L('Đã sao chép liên kết', '链接已复制');
@@ -24,26 +23,10 @@ function shareableUrl(href) {
   return url.href;
 }
 
-const externalIcon = () => icon([
-  svgNode('path', {d: 'M14 4h6v6'}),
-  svgNode('path', {d: 'M20 4l-9 9'}),
-  svgNode('path', {d: 'M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5'}),
-], {size: 15, stroke: 2});
-
 const copyIcon = () => icon([
   svgNode('path', {d: 'M10 14a5 5 0 0 0 7.1 0l3-3a5 5 0 0 0-7.1-7.1l-1 1'}),
   svgNode('path', {d: 'M14 10a5 5 0 0 0-7.1 0l-3 3a5 5 0 0 0 7.1 7.1l1-1'}),
 ]);
-
-/** Một link nguồn ngoài đã kiểm scheme: mở thẻ mới, `rel` đầy đủ như quy ước hiện có. */
-function sourceLink({href, label}) {
-  return el('a', {
-    class: 'detail-action detail-source-link',
-    href,
-    target: '_blank',
-    rel: 'noopener noreferrer',
-  }, [label || SOURCE_LINK_LABEL, externalIcon()]);
-}
 
 /**
  * Nút "Sao chép liên kết": ghi URL chia sẻ của trang đang xem (giữ `variant`, bỏ `from`) vào clipboard;
@@ -81,12 +64,10 @@ function copyControl() {
 }
 
 /**
- * Nội dung panel điểm: link nguồn (nếu có) rồi nút sao chép, ô chọn sẵn và vùng trạng thái.
+ * Nội dung panel điểm: nút sao chép, ô chọn sẵn và vùng trạng thái.
  * Trả fragment để entry page tự gắn vào `#team-detail-actions` của shell.
  */
-export function detailPanelActions({sources = []} = {}) {
+export function detailPanelActions() {
   const {button, fallback, status} = copyControl();
-  // Không render markdown lạ: mọi link đã được caller kiểm `http(s)` trước khi tới đây.
-  const links = sources.filter(source => typeof source?.href === 'string' && source.href).map(sourceLink);
-  return el('div', {class: 'detail-actions-body'}, [...links, button, fallback, status]);
+  return el('div', {class: 'detail-actions-body'}, [button, fallback, status]);
 }

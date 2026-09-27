@@ -60,7 +60,7 @@ export function readRecommendedQuery(href, registry = {}) {
     if (values.length > 1) notices.push(L(`Tham số ${key} bị lặp; chỉ dùng giá trị đầu.`, `参数 ${key} 重复，仅使用第一个值。`));
     scalar[key] = values[0] || null;
   }
-  if (legacyTier || RETIRED.some(key=>url.searchParams.has(key))) notices.push(L('Bộ lọc sao và tham số sắp xếp cũ không còn áp dụng; đội giữ thứ tự nguồn cố định.', '旧的星级筛选和排序参数已不再适用；阵容保持来源的固定顺序。'));
+  if (legacyTier || RETIRED.some(key=>url.searchParams.has(key))) notices.push(L('Bộ lọc sao và tham số sắp xếp cũ không còn áp dụng; đội giữ thứ tự cố định.', '旧的星级筛选和排序参数已不再适用；阵容保持固定顺序。'));
   const viewValues = url.searchParams.getAll('view').filter(Boolean);
   if (viewValues.length > 1) notices.push(L('Tham số view bị lặp; chỉ dùng giá trị đầu.', '参数 view 重复，仅使用第一个值。'));
   const view = canonicalTeamView(viewValues[0]);

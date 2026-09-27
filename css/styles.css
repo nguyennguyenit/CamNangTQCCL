@@ -3632,7 +3632,7 @@ body[data-page-section="team-khac"] .layout {
   .reference-filters .fchip.f-honhop[aria-pressed="true"] { --chip-dot: var(--f-honhop); }
 }
 
-/* Nhóm phụ (Nhóm, Nguồn) thu gọn mặc định; chip vẫn nằm trong DOM khi đóng. */
+/* Nhóm phụ (Nhóm, Bộ đội hình) thu gọn mặc định; chip vẫn nằm trong DOM khi đóng. */
 .reference-filters .flabel-toggle {
   display: flex;
   align-items: center;
@@ -4541,7 +4541,7 @@ main.layout:has(> .detail-content) {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 340px;
   gap: var(--space-48);
-  /* Đầu cột: panel nguồn cao (Khai hoang nhiều link) không đẩy tiêu đề xuống xa link Quay lại. */
+  /* Đầu cột: panel cao không đẩy tiêu đề xuống xa link Quay lại. */
   align-items: start;
   padding-bottom: var(--space-36);
   border-bottom: var(--border-hair) solid var(--line);
@@ -4627,7 +4627,7 @@ main.layout:has(> .detail-content) {
   font: var(--type-card-title);
 }
 
-/* Panel điểm: nhãn caps, số serif son, hàng hành động (link nguồn nếu trang có + sao chép liên kết). */
+/* Panel điểm: nhãn caps, số serif son, hàng hành động (sao chép liên kết). */
 .detail-score-panel {
   display: flex;
   flex-direction: column;
@@ -4642,24 +4642,20 @@ main.layout:has(> .detail-content) {
   display: none;
 }
 
-/* Đội khác / Khai hoang không có điểm nguồn: panel co theo hàng hành động, không phải ô trống 340px. */
+/* Đội khác / Khai hoang không có điểm, chỉ còn nút sao chép: panel co theo hàng hành động và nút đứng trơn,
+   không bọc khung trông như ô trống 340px. */
 .detail-score-panel:not(:has(.detail-score)) {
   width: fit-content;
   max-width: 100%;
   min-width: 0;
   justify-self: end;
   gap: var(--space-12);
-  padding: var(--space-16);
-}
-
-/* Chỉ còn nút sao chép (không điểm, không link nguồn): nút đứng trơn, không bọc khung trông như ô trống. */
-.detail-score-panel:not(:has(.detail-score, .detail-source-link)) {
   padding: 0;
   background: none;
   border: none;
 }
 
-/* Artboard TeamDetail.dc.html:53: nhãn caps rồi "theo SGSDeck" xếp dọc, cách 6px. */
+/* Artboard TeamDetail.dc.html:53: nhãn caps rồi ghi chú phụ xếp dọc, cách 6px. */
 .detail-panel-label {
   display: flex;
   flex-direction: column;
@@ -4705,18 +4701,10 @@ main.layout:has(> .detail-content) {
   gap: var(--space-8);
 }
 
-/* Con của hàng hành động co được trong cột 340px (nút chép link, ô dự phòng, link nguồn dài). */
+/* Con của hàng hành động co được trong cột 340px (nút chép link, ô dự phòng). */
 .detail-actions-body > * {
   max-width: 100%;
   min-width: 0;
-}
-
-.detail-source-link {
-  flex: 1 1 auto;
-  gap: var(--space-8);
-  white-space: normal;
-  overflow-wrap: anywhere;
-  text-align: start;
 }
 
 .detail-copy-btn {
@@ -4876,7 +4864,7 @@ main.layout:has(> .detail-content) {
   font: var(--type-body);
 }
 
-/* "Nguồn & phạm vi" là chú thích cuối trang: tiêu đề caps nhỏ, các cặp nhãn–giá trị xếp ngang. */
+/* "Phạm vi" là chú thích cuối trang: tiêu đề caps nhỏ, các cặp nhãn–giá trị xếp ngang. */
 .detail-source {
   gap: var(--space-12);
   padding-top: var(--space-24);
@@ -5372,11 +5360,6 @@ body[data-page-section="lookup"] .layout {
 
 .lookup-summary strong {
   color: var(--ink);
-}
-
-.lookup-order {
-  color: var(--muted);
-  font: var(--type-small);
 }
 
 .lookup-feedback {
@@ -6216,17 +6199,6 @@ a.cam-nang-count .cam-nang-number {
     margin-top: var(--space-16);
   }
 
-  /* Dòng trạng thái giữ đủ hai mảnh (không ẩn nội dung): thiếu chỗ thì "Thứ tự theo nguồn" xuống dòng
-     nguyên khối thay vì cả hai mảnh cùng gãy làm hai dòng. */
-  .lookup-status-row {
-    flex-wrap: wrap;
-    row-gap: var(--space-4);
-  }
-
-  .lookup-order {
-    white-space: nowrap;
-  }
-
   /* Chip nhóm mobile: viên đầy như artboard LookupMobile (desktop vẫn là tab gạch chân). */
   .lookup-chips {
     gap: var(--space-8);
@@ -6538,12 +6510,6 @@ body[data-page-section="khaihoang"] .layout {
 
 .coexist-count-dup {
   color: var(--avoid);
-}
-
-.coexist-source {
-  color: var(--accent);
-  text-decoration: underline;
-  text-underline-offset: 3px;
 }
 
 .coexist-notes {
@@ -8383,7 +8349,7 @@ body[data-page-section="roster-recommend"] .layout {
 :root[data-theme="dark"] .landing-btn-primary:hover { color: var(--on-accent); }
 
 /* A5: vùng bấm của link/điều khiển đứng riêng trên mobile đạt 44px.
-   Link nằm trong câu (tên tướng, chiến pháp, nguồn trong đoạn văn) giữ dòng chữ theo ngoại lệ "inline target"
+   Link nằm trong câu (tên tướng, chiến pháp trong đoạn văn) giữ dòng chữ theo ngoại lệ "inline target"
    của WCAG 2.5.8; ở đây chỉ mở rộng vùng bấm cho control và link đứng riêng. */
 @media (max-width: 680px) {
   .brand,
@@ -8391,8 +8357,6 @@ body[data-page-section="roster-recommend"] .layout {
   /* Hai nút icon đầu menu mobile bị tiêu đề co lại ở 320px. */
   .site-menu-head .site-menu-close,
   .site-menu-head .icon-btn { flex: none; }
-  /* Link nguồn SGSDeck đứng riêng một dòng trong thân chi tiết (không nằm trong câu). */
-  .detail-source > p > a { display: inline-flex; align-items: center; min-height: var(--control-44); }
   /* Ô nhập bên trong nhãn ô tìm: bản thân control cũng đủ 44px (nhãn 48px vẫn là vùng bấm chính). */
   .search > input,
   .lookup-search > input { min-height: var(--control-44); }

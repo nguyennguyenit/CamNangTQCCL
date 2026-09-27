@@ -122,13 +122,13 @@ import { isNativeNavigationClick } from './team-detail-navigation.js';
 /** Danh sách dài dựng theo lượt: dựng cả 1366 thẻ một lần làm trang đứng vài giây trên máy chậm. */
 const PAGE_SIZE=60;
 
-// Nhóm chính Loại binh → Phe → Tier nguồn; Nhóm/Nguồn thu gọn trong accordion.
+// Nhóm chính Loại binh → Phe → Tier; Nhóm/Bộ đội hình thu gọn trong accordion.
 const PRIMARY_FACETS=['unit','faction','tier'];
-// Mùa nguồn đang diễn ra trên SGSDeck, đối chiếu ngày 2026-09-27; độc lập mùa đang xem.
+// Mùa đang diễn ra, đối chiếu ngày 2026-09-27; độc lập mùa đang xem.
 const CURRENT_SOURCE_SEASON_ID='og-兵演春秋';
 const SECONDARY_FACETS=['subcategory','source'];
-const FACET_LABEL={unit:'Loại binh',faction:'Phe',tier:'Tier',subcategory:'Nhóm',source:'Nguồn'};
-const FACET_LABEL_ZH={tier:'等级',unit:'兵种',faction:'阵营',subcategory:'分组',source:'来源'};
+const FACET_LABEL={unit:'Loại binh',faction:'Phe',tier:'Tier',subcategory:'Nhóm',source:'Bộ đội hình'};
+const FACET_LABEL_ZH={tier:'等级',unit:'兵种',faction:'阵营',subcategory:'分组',source:'阵容合集'};
 const facetLabel=key=>L(FACET_LABEL[key],FACET_LABEL_ZH[key]);
 
 /** Ba kiểu hiển thị: Thẻ (mặc định, không ghi URL), Thẻ gọn (lưới tối đa 4 cột, `?view=luoi`), Bảng (`?view=bang`). */
@@ -160,13 +160,13 @@ export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onN
   const kicker=el('span',{class:'reference-kicker'},L('Đội hình','阵容'));
   const intro=el('p',{class:'reference-lead'},family==='other'
     ? L('Các đội có sẵn, đã đối chiếu với đội chuẩn.','现有阵容，已与推荐阵容核对。')
-    : L('Tổng hợp từ các website và diễn đàn của game thủ Trung Quốc, chia theo mùa tương ứng.','汇总自中国玩家网站与论坛，按对应赛季分类。'));
+    : L('Đội hình tham khảo, chia theo mùa tương ứng.','参考阵容，按对应赛季分类。'));
   const searchInput=el('input',{type:'search',class:'reference-search-input','aria-label':L(`Tìm ${title}`,`搜索${title}`),placeholder:L('Tìm tướng, chiến pháp, binh thư…','搜索武将、战法、兵书…')});
   const search=el('label',{class:'search reference-search'},[
     icon([svgNode('circle',{cx:11,cy:11,r:7}),svgNode('line',{x1:16.5,y1:16.5,x2:21,y2:21})]),
     searchInput,
   ]);
-  const season=el('select',{'aria-label':L('Mùa nguồn','来源赛季')});
+  const season=el('select',{'aria-label':L('Mùa','赛季')});
   const seasonStatus=el('span',{class:'reference-season-status',hidden:''},L('Đang diễn ra','进行中'));
   const filters=el('aside',{class:'reference-filters collapsed',id:`${mount.id}-filters`,'aria-label':L('Bộ lọc','筛选')});
   const notice=el('p',{class:'scope-note reference-notice',role:'status'});
@@ -224,9 +224,9 @@ export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onN
   mount.replaceChildren(
     el('header',{class:'reference-head'},[
       el('div',{class:'reference-head-text'},[kicker,heading,intro]),
-      // Chỉ còn một phạm vi (mùa nguồn): ô chọn gói trong một khung có nhãn nhỏ phía trên giá trị.
+      // Chỉ còn một phạm vi (mùa): ô chọn gói trong một khung có nhãn nhỏ phía trên giá trị.
       el('label',{class:'reference-season-field'},[
-        el('span',{class:'reference-season-label'},L('Mùa nguồn','来源赛季')),
+        el('span',{class:'reference-season-label'},L('Mùa','赛季')),
         seasonStatus,
         season,
         icon(chevron(),{size:16}),
@@ -464,15 +464,15 @@ export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onN
     const key=JSON.stringify([state.season ?? null,state.query || '',state.filters || {},currentView()]);
     if (key!==listKey) { listKey=key; shown=PAGE_SIZE; }
     count.replaceChildren(el('strong',{},String(filtered.length)),L(` / ${scopeRows.length} đội`,` / ${scopeRows.length} 队`));
-    // Mùa chưa thu thập đánh dấu trên từng phạm vi nguồn của mùa đó; danh sách luôn gộp mọi danh mục.
+    // Mùa chưa thu thập đánh dấu trên từng phạm vi của mùa đó; danh sách luôn gộp mọi danh mục.
     const sourceScope=family==='recommended' ? registry.scopes?.find(scope=>scope.sourceSeasonId===state.season && scope.state==='uncollected-season') : null;
-    const scopeNotice=sourceScope?L('Mùa nguồn chưa được thu thập.','该来源赛季尚未收录。'):'';
+    const scopeNotice=sourceScope?L('Mùa này chưa được thu thập.','该赛季尚未收录。'):'';
     notice.textContent=[...(state.notices || []),scopeNotice].filter(Boolean).join(' ');
     notice.hidden=!notice.textContent;
     updateViewButtons();
     filteredRows=filtered;
     viewLabels=labels;
-    emptyText=scopeRows.length?L('Không có đội khớp bộ lọc.','没有符合筛选条件的阵容。'):sourceScope?L('Mùa nguồn chưa được thu thập.','该来源赛季尚未收录。'):family==='other' && state.season==='unknown'?L('Không có đội có thuộc tính nguồn chưa rõ trong phạm vi này.','此范围内没有来源属性不明的阵容。'):L('Mùa này chưa có dữ liệu.','本赛季暂无数据。');
+    emptyText=scopeRows.length?L('Không có đội khớp bộ lọc.','没有符合筛选条件的阵容。'):sourceScope?L('Mùa này chưa được thu thập.','该赛季尚未收录。'):family==='other' && state.season==='unknown'?L('Không có đội có thuộc tính chưa rõ trong phạm vi này.','此范围内没有属性不明的阵容。'):L('Mùa này chưa có dữ liệu.','本赛季暂无数据。');
     renderView();
   }
   return {

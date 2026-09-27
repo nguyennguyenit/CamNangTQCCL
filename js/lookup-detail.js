@@ -115,16 +115,6 @@ export function ratePercentText(value) {
 }
 
 /**
- * Ẩn mã trích dẫn máy ` (Bahamut bsn=<số>)` ở cuối chuỗi "Cách nhận" khi hiển thị (N8, Kongming ruling).
- * Chỉ bỏ đúng hậu tố neo cuối, không đụng phần giữa chuỗi, không bao giờ trả chuỗi rỗng. Dữ liệu và
- * ledger đã review vẫn giữ nguyên chuỗi đầy đủ làm provenance.
- */
-export function acquisitionDisplayText(text) {
-  const shown = String(text).replace(/ \(Bahamut bsn=\d+\)$/u, "");
-  return shown || String(text);
-}
-
-/**
  * Nhãn của một giá trị `type` chiến pháp theo ngôn ngữ trang, dùng chung cho mọi chỗ hiển thị (bảng, thẻ
  * chiến pháp, thẻ kết quả nhóm hỗn hợp). Giá trị đã Việt hoá giữ nguyên ở bản Việt; enum thô không có nhãn
  * bị bỏ (kèm cảnh báo dev) để UI không bao giờ in enum; giá trị khác trả nguyên văn (bản zh: bỏ).
@@ -250,7 +240,7 @@ function tacticProfile(corpus, entry) {
   for (const [key, label] of [["cooldown", L("Hồi chiêu", "冷却")], ["maxUsers", L("Số người dùng tối đa", "最多携带人数")], ["pointCost", L("Điểm chiến pháp", "战法点")]]) {
     optionalLocalized(profile, key, lookup[key], label);
   }
-  if (lookup.acquiredFromVi?.length) pushLocalized(profile, "acquiredFromVi", lookup.acquiredFromVi, L("Cách nhận", "获取方式"), listText(lookup.acquiredFromVi.map(acquisitionDisplayText)));
+  if (lookup.acquiredFromVi?.length) pushLocalized(profile, "acquiredFromVi", lookup.acquiredFromVi, L("Cách nhận", "获取方式"), listText(lookup.acquiredFromVi));
   optionalLocalized(profile, "conflictsVi", lookup.conflictsVi, L("Xung đột", "冲突"));
   for (const id of lookup.inheritedFromIds ?? []) profile.relations.push(relation(corpus, `inheritedFrom:${id}`, L("Truyền thừa từ", "传承自"), id, "heroes"));
   profile.conditions = viOnlyList(profile, conditions(lookup.conditions));
@@ -340,12 +330,14 @@ function buildingProfile(_corpus, entry) {
 
 /**
  * Binh thư: dữ liệu chỉ có tên (Việt, Hán-Việt, chữ Hán), chưa có hiệu ứng — ô hiệu ứng hiện trạng thái
- * trống chung, không bịa. Tên Hán-Việt chỉ hiện ở bản Việt khi khác tên dịch nghĩa.
+ * trống chung, không bịa. Tên Hán-Việt chỉ hiện ở bản Việt khi khác tên dịch nghĩa. Tên cũ trong nguồn
+ * (`formerNames`, chữ Hán) chỉ hiện ở bản zh để trang Việt không lẫn chữ Hán.
  */
 function bookProfile(_corpus, entry) {
   const row = entry.record;
   const profile = base(entry);
   if (!ZH() && row.hanViet && row.hanViet !== row.viet) pushField(profile, "hanViet", row.hanViet, L("Tên Hán-Việt", "汉越名"));
+  if (ZH() && row.formerNames?.length) pushField(profile, "formerNames", row.formerNames.join(" · "), L("Tên cũ", "旧名"));
   pushField(profile, "effect", null, L("Hiệu ứng", "效果"));
   return profile;
 }

@@ -64,8 +64,7 @@ def read_generation(reference_dir):
 def _observations(records):
     """Every raw source name occurrence, in deterministic record order."""
     for row in records:
-        context = {"sourceConfigId": row.get("sourceConfigId"), "teamNameRaw": row.get("nameZh"),
-                   "sourceUrl": row.get("sourceUrl")}
+        context = {"sourceConfigId": row.get("sourceConfigId"), "teamNameRaw": row.get("nameZh")}
         yield "team", row.get("nameZh"), "team", context
         for field, holderKind in HOLDER_FIELDS:
             for holder in row.get(field) or []:

@@ -11,7 +11,7 @@ test("fetch bị chặn hoặc HTTP lỗi là lỗi mạng", () => {
 
 test("dữ liệu đổi, sai hoặc thiếu là lỗi xác minh, không phải lỗi mạng", () => {
   for (const message of [
-    "Nguồn dữ liệu đã thay đổi: data/teams.json",
+    "Dữ liệu đã thay đổi: data/teams.json",
     "Dữ liệu đội gốc không khớp vân tay của trang.",
     "Thiếu vân tay dữ liệu đội gốc.",
     "Không tìm thấy vị trí nội dung tiếng Việt",

@@ -7,12 +7,9 @@
       "scenarioId": "anh-hung-menh-the"
     },
     "id": "coexist-anh-hung-menh-the-scenario-confirmation",
-    "note": "Chủ dự án xác nhận ngày 2026-09-23 rằng năm nhóm Cùng Tồn legacy trong data/coexist.json thuộc kịch bản Anh Hùng Mệnh Thế. Đây là xác nhận kịch bản, không phải bằng chứng phiên bản luật.",
     "provenance": {
       "fetchedAt": "2026-09-23",
-      "provider": "project-maintainer",
-      "region": "VN",
-      "sourceUrl": "https://github.com/nguyennguyenit/CamNangTQCCL/blob/main/data/coexist.json"
+      "region": "VN"
     },
     "reviewStatus": "reviewed",
     "schemaVersion": 1,
@@ -28,12 +25,9 @@
       "scenarioId": "binh-dien-xuan-thu"
     },
     "id": "coexist-binh-dien-scenario-confirmation",
-    "note": "Người dùng xác nhận sheet gid=190730430 thuộc Binh Diễn Xuân Thu ngày 2026-09-07. Đây là xác nhận kịch bản của nguồn, không phải bằng chứng phiên bản luật từ CSV.",
     "provenance": {
       "fetchedAt": "2026-09-07",
-      "provider": "google-sheets",
-      "region": "VN",
-      "sourceUrl": "https://docs.google.com/spreadsheets/d/1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw/edit?gid=190730430#gid=190730430"
+      "region": "VN"
     },
     "reviewStatus": "reviewed",
     "schemaVersion": 1,
@@ -47,12 +41,9 @@
       "scenarioId": null
     },
     "id": "coexist-binh-dien-source-snapshot",
-    "note": "Snapshot CSV kiểm chứng ngày 2026-09-07: 94 records, 220 dòng vật lý, 10 cột, 5 nhóm, 25 đội, 75 vị trí tướng. Nguồn không xác lập ruleset hay số mùa.",
     "provenance": {
       "fetchedAt": "2026-09-07",
-      "provider": "google-sheets",
-      "region": "VN",
-      "sourceUrl": "https://docs.google.com/spreadsheets/d/1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw/edit?gid=190730430#gid=190730430"
+      "region": "VN"
     },
     "reviewStatus": "reviewed",
     "schemaVersion": 1,

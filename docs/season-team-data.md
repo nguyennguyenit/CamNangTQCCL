@@ -16,6 +16,11 @@ python3 -m unittest tests.test_build_season_data tests.test_parse_coexist_csv
 node --test tests-js/season-context.test.mjs
 ```
 
+Bản ghi ra `data/` là bản chiếu công khai: provenance chỉ còn `region`,
+`fetchedAt`, `sourceUpdatedAt`; bỏ `provider`, `sourceUrl`, `note` của bằng
+chứng, `provider` của điểm và `url`/`sheetId`/`gid` của nguồn Cùng Tồn. Đầu vào
+dưới `pipeline/` giữ đủ provenance và được kiểm chéo trước khi chiếu.
+
 Review candidate và các bằng chứng liên quan trước khi chạy builder không có
 `--output-dir` để ghi năm file vào `data/`. Mọi lần ghi (kể cả ra `/tmp`) giữ
 khoá `pipeline/lookup-output/promotion.lock` của repo, cùng khoá với promotion

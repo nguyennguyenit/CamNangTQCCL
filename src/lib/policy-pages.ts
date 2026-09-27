@@ -27,7 +27,7 @@ export const POLICY_PAGES = [
   {
     path: '/mien-tru-trach-nhiem/',
     label: {vi: 'Miễn trừ trách nhiệm', zh: '免责声明'},
-    description: {vi: 'Bản quyền game, nguồn dữ liệu, giới hạn', zh: '游戏版权、数据来源与责任限制'},
+    description: {vi: 'Bản quyền game, bản dịch, giới hạn', zh: '游戏版权、译名与责任限制'},
   },
 ] as const satisfies readonly PolicyPage[];
 

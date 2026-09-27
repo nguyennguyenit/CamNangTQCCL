@@ -70,7 +70,7 @@ export function assertFrontendShellContract(html, {
   assert.match(html, /class=["'][^"']*site-footer/);
   assert.match(html, /class=["']footer-chip["'][^>]*>\s*<span[^>]*footer-dot[^>]*><\/span>Dữ liệu cập nhật \d{2}\/\d{2}\/\d{4}/);
   assert.match(html, /id=["']tai-game["']|href=["']\/#tai-game["']/);
-  assert.match(html, /href=["']\/#nguon-du-lieu["']/);
+  assert.match(html, /href=["']\/#so-lieu["']/);
   assert.match(html, /Được xây dựng bởi/);
   // Góp ý là kênh thật (hộp thoại gửi tới /api/feedback), không phải chữ giữ chỗ trỏ tới kênh chưa có.
   assert.match(html, /<button[^>]*data-feedback-open[^>]*aria-controls=["']feedback-dialog["'][^>]*hidden/);
