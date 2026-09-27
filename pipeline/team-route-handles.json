@@ -1,5 +1,5 @@
 {
-  "generationId": "078694937ff7d0f5da7cb893f2b91e70203c6814fb92520f22164958fb26dc79",
+  "generationId": "a6e3b6052e7e64b35cfa4fb9e5998896722140312831dd64e77c8c0e08019ec5",
   "handles": {
     "legacy": {
       "moi-phe-100": "vu-sieu-binh",
@@ -1558,7 +1558,7 @@
     }
   },
   "legacyTeamsSha256": "sha256:45e13dca78877abc13d2ef2213be9432c8307aa558d99783498279f7563cf283",
-  "khaihoangSha256": "sha256:973b252b08ef9332f19866e7321389bd952d03d8156c586718674db8a09de211",
+  "khaihoangSha256": "sha256:99b2fb2def7372ee621766403274c211b2338731c583e6c33e98c71f12889f8d",
   "note": "Handle URL đã review; gán một lần, không suy lại từ displayNameVi.",
   "schemaVersion": 2
 }
