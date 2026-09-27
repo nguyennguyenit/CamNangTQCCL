@@ -53,7 +53,7 @@ export interface RenderedBlogPost extends BlogPost {
   readingMinutes: number;
 }
 
-export const SITE_ORIGIN = 'https://tqccl.pages.dev';
+export const SITE_ORIGIN = 'https://tqccl.com';
 export const BLOG_BASE_PATH = '/bai-viet/';
 export const POST_SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,100}$/u;
 const TRANSLATION_KEY_PATTERN = /^[A-Za-z0-9][A-Za-z0-9_-]{0,120}$/u;

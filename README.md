@@ -109,7 +109,7 @@ quyền import trong phạm vi sáu catalog ngày 2026-09-12; đây không phả
 
 ## Deploy
 
-- Site production hiện tại: `https://tqccl.pages.dev`. Contract cho lần release được ủy quyền tiếp theo: repository root, `npm run build`, output `dist/`; settings thật phải được kiểm tra trước promotion.
+- Site production: domain chính `https://tqccl.com` (canonical, sitemap, robots). `https://www.tqccl.com` và `https://tqccl.pages.dev` phục vụ cùng bản build nhưng chuyển ngay về `https://tqccl.com`, mang theo dữ liệu localStorage (tracker, kho scan, theme, kiểu xem) qua fragment URL — xem [deployment guide](docs/deployment-guide.md#chuyển-domain-chính-sang-tqcclcom). Contract cho lần release được ủy quyền tiếp theo: repository root, `npm run build`, output `dist/`; settings thật phải được kiểm tra trước promotion.
 - `public/_headers` được Astro đưa vào `dist/_headers`; shared verifier yêu cầu byte parity và cache revalidation cho shell, trang chi tiết đội, `404.html`, JS/CSS/JSON.
 - Vision proxy: Worker tại `https://tqccl-vision-proxy.nguyennlt-ncc.workers.dev`, deploy riêng từ `worker/`.
 - Research MCP nằm trong `mcp-worker/`; code và data theo [manifest v1/v2](docs/mcp-research-server.md) được đóng trong cùng Worker Static Assets version. Production release chưa được ghi nhận cho đến khi exact-version smoke, edge control và rollback rehearsal đạt với ủy quyền riêng.

@@ -28,4 +28,4 @@ Disallow: /quan-tri/
 Disallow: /zh/quan-tri/
 Disallow: /api/
 
-Sitemap: https://tqccl.pages.dev/sitemap.xml
+Sitemap: https://tqccl.com/sitemap.xml

@@ -5307,6 +5307,11 @@ body[data-page-section="lookup"] .layout {
   font: var(--type-meta);
 }
 
+/* Đội chuẩn / Đội khác dùng chung hàng "Xem thêm"; hết đội thì bỏ cả khoảng trống của hàng. */
+.reference-more[hidden] {
+  display: none;
+}
+
 /* ---------- Hộp thoại hồ sơ ---------- */
 .lookup-dialog-open {
   overflow: hidden;

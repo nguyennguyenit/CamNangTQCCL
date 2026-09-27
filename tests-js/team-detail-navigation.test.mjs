@@ -22,7 +22,7 @@ import {
   safeKhaiHoangVariants,
 } from '../js/team-detail-navigation.js';
 
-const ROOT='https://tqccl.pages.dev';
+const ROOT='https://tqccl.com';
 const RECOMMENDED='team-epoddo';
 const LEGACY='team-intro-4';
 const RECOMMENDED_SEGMENT='pk-s24-tiem-long-dieu-thuyen';
@@ -264,6 +264,11 @@ test('return snapshots keep UI state only and match one exact section URL',()=>{
   assert.equal(captureReturnSnapshot({href:'/?q=vien#team-chuan',scrollY:0,tab:'team-chuan'}).url,'/doi-chuan/?q=vien');
   // Never persist a corpus or roster payload on the way out.
   assert.deepEqual(captureReturnSnapshot({href:'/doi-chuan/',scrollY:0,disclosures:{filters:'yes',roster:[1,2,3]}}).disclosures,{});
+  // Khóa thẻ đã mở (`target`) đi qua cùng rào khóa bản ghi với `alternatives`.
+  assert.deepEqual(captureReturnSnapshot({href:'/doi-chuan/',scrollY:0,disclosures:{target:'cfg-61'}}).disclosures,{target:'cfg-61'});
+  for (const target of ['',{},'x'.repeat(129),'cfg\n1']) {
+    assert.deepEqual(captureReturnSnapshot({href:'/doi-chuan/',scrollY:0,disclosures:{target}}).disclosures,{});
+  }
 });
 
 test('snapshot storage failures never block navigation and never restore a foreign entry',()=>{

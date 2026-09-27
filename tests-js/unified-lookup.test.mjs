@@ -232,8 +232,8 @@ test("group query đặt trạng thái preselect", () => {
 });
 
 test("alias hash cũ chuyển tới trang Tra cứu với group tương ứng", () => {
-  assert.equal(resolveLegacyRoute("https://tqccl.pages.dev/#heroes", "https://tqccl.pages.dev"), "/tra-cuu/?group=heroes");
-  assert.equal(resolveLegacyRoute("https://tqccl.pages.dev/#tactics", "https://tqccl.pages.dev"), "/tra-cuu/?group=tactics");
+  assert.equal(resolveLegacyRoute("https://tqccl.com/#heroes", "https://tqccl.com"), "/tra-cuu/?group=heroes");
+  assert.equal(resolveLegacyRoute("https://tqccl.com/#tactics", "https://tqccl.com"), "/tra-cuu/?group=tactics");
 });
 
 test("query được serialize ổn định và encode ID", () => {

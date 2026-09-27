@@ -1,5 +1,12 @@
 # Project Changelog
 
+## 2026-09-27 (Hợp nhất `origin/main`: domain chính + danh sách theo trang vào bản song ngữ)
+
+### Changed
+
+- Nút `Xem thêm` và ghi chú số đội mỗi lượt của danh sách Đội chuẩn/Đội khác đi qua `L()` (có bản tiếng Trung); lượt mới của Đội chuẩn nối vào nhóm Tier đã có (hoặc thêm nhóm mới ở cuối) thay vì dựng lại cả lưới, nên thẻ đã hiện giữ nguyên node; tuple `ui:recommended/more-note` bind biểu thức `` `Mỗi lượt hiện ${PAGE_SIZE} đội` ``. Policy `site-vi-260927-primary-domain`: ghim lại hash 4 file nguồn, baseline inventory 56650 vị trí; không fingerprint `translate` nào đổi nên không có receipt mới. Publish generation `07869493…` (xoá generation `d96e5c79…`), re-pin `pipeline/team-route-handles.json`.
+- Origin site của blog (`SITE_ORIGIN` trong `src/lib/blog-posts.ts`, phân biệt link nội bộ/ngoài), origin mặc định của community-worker (`DEFAULT_SITE_ORIGIN`) và test hreflang/sitemap bản `/zh/` chuyển sang `https://tqccl.com`.
+
 ## 2026-09-27 (Logo sách mở thay ấn quạt mưu)
 
 ### Changed
@@ -9,6 +16,27 @@
 ### Removed
 
 - Ấn quạt mưu ba lá: `src/lib/seal.ts`, CSS `.seal-blade-*`, icon quạt ở `docs/design/brand/` (`icon*.svg`, `app-icon*`) và `scripts/build-brand-logo.py` (sinh icon từ `seal.ts`). `public/brand-concept-v2.png` (606 KB) được thay bằng `public/logo.png` (44 KB).
+
+## 2026-09-27 (Domain chính `https://tqccl.com`)
+
+### Changed
+
+- Site: `https://tqccl.com` là domain chính. `site` của Astro, canonical/`og:url`/`og:image`, `sitemap.xml` và `Sitemap:` trong `robots.txt` đổi từ `https://tqccl.pages.dev` sang `https://tqccl.com`.
+- Cầu chuyển domain `src/lib/host-bridge.ts`: script inline đầu tiên trong `<head>` của mọi trang. Trên `tqccl.pages.dev`/`www.tqccl.com` chuyển về `https://tqccl.com` cùng path/query/hash, mang bốn khóa localStorage bền (`tqcclRecruitTracker`, `tqccl.rosterRecommend.scanState.v1`, `theme`, `tqccl.teamView.v1`) trong fragment `#tqccl-migrate=` (fragment không gửi lên server); trên `tqccl.com` chỉ ghi khóa chưa có, payload sai thì chỉ bỏ fragment. Preview `*.tqccl.pages.dev` và local không bị chuyển. Không có chữ UI mới; policy `site-vi-260927-primary-domain` (hash `SiteLayout.astro`), generation Recommended `3b08070d…` (thay `26f3dbd7…`, đã prune), `pipeline/team-route-handles.json` pin lại.
+- Vision Worker: `ALLOWED_ORIGIN` (một origin) thay bằng `ALLOWED_ORIGINS` (danh sách exact, phân cách dấu phẩy) = `https://tqccl.com,https://www.tqccl.com,https://tqccl.pages.dev`, nên cả ba host đều soi ảnh được trong và sau khi chuyển domain (trước đó `tqccl.com`/`www` nhận 403). CORS echo đúng origin gửi lên kèm `Vary: Origin`, origin lạ không nhận `Access-Control-Allow-Origin`; `hostname` siteverify phải là host của một origin trong danh sách. Thiếu/rỗng biến → `503` (trước đây mở thành `*`). Cần deploy lại Worker (trước Pages) và khai đủ ba hostname trong widget Turnstile (xem `docs/deployment-guide.md` § Chuyển domain chính sang tqccl.com).
+
+## 2026-09-27 (Đội chuẩn / Đội khác: dựng danh sách theo lượt; CI thử lại e2e một lần)
+
+### Fixed
+
+- `/doi-chuan/?season=all` dựng cả 1366 thẻ một lần: 3,6 s tới lúc ô `Mùa nguồn` hiện trên máy dev, 23 s khi CPU chậm 6 lần, nên CI (chậm ~5 lần) đỏ `?season=all keeps every Đội chuẩn season…`. Danh sách Đội chuẩn và Đội khác (Thẻ, Thẻ gọn, Bảng) nay hiện 60 đội đầu và nút `Xem thêm` nối 60 đội kế (cùng mẫu Tra cứu: chỉ nối lượt mới, focus đội đầu của lượt mới, số đếm `n / m đội` vẫn là cả danh sách); đổi mùa/lọc/từ khóa/kiểu hiển thị về lượt đầu. Sau sửa ô `Mùa nguồn` hiện sau ~0,15 s (CPU x1) / ~0,7 s (x6).
+- Quay lại từ trang chi tiết: snapshot trở về ghi thêm khóa thẻ đã mở (`disclosures.target`), danh sách dựng đủ lượt tới thẻ đó rồi trả focus về link của nó (mốc cuộn khôi phục như trước).
+
+### Changed
+
+- `playwright.config.mjs`: `retries` = 1 khi `CI` được đặt (0 ở máy dev); reporter `line` liệt kê test "flaky" ở phần tổng kết.
+- Test e2e P06-B1 (51 lần tải trang chi tiết trong một test) đánh dấu `test.slow()`: ở CPU chậm 6 lần vượt ngân sách 30 s mặc định (4/5 lần đỏ), sau đánh dấu 5/5 xanh.
+- Chữ UI mới `Xem thêm`, `Mỗi lượt hiện 60 đội` khai `authored-vi` (`ui:recommended/more`, `ui:recommended/more-note`); policy `site-vi-260927-progressive-list`, generation Recommended `26f3dbd7…` (thay `0cb3ba92…`, đã prune), `pipeline/team-route-handles.json` pin lại.
 
 ## 2026-09-27 (Soi đội từ ảnh: căn giữa thẻ chọn ảnh)
 

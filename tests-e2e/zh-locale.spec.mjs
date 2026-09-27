@@ -6,7 +6,7 @@ import { expect, test } from '@playwright/test';
  * (tên riêng đánh dấu `translate="no"` và nhãn nút chuyển ngôn ngữ `lang="vi"` là ngoại lệ có chủ đích),
  * khai `lang="zh-Hans"`, hreflang tới cặp trang và nút chuyển ngôn ngữ trỏ đúng bản còn lại.
  */
-const ORIGIN = 'https://tqccl.pages.dev';
+const ORIGIN = 'https://tqccl.com';
 const handles = JSON.parse(await readFile(new URL('../pipeline/team-route-handles.json', import.meta.url), 'utf8')).handles;
 const legacySegment = Object.values(handles.legacy)[0];
 const khaiHoangSegment = Object.values(handles.khaihoang)[0];
@@ -99,7 +99,7 @@ for (const [path, section] of SECTIONS) {
 test('ba họ trang chi tiết bản Trung: tiêu đề chữ Hán, link về danh sách bản Trung, cặp hreflang', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   const recommendedPath = await page.request.get('/sitemap.xml').then((response) => response.text())
-    .then((xml) => xml.match(/<loc>https:\/\/tqccl\.pages\.dev(\/doi-chuan\/[^<]+\/)<\/loc>/u)[1]);
+    .then((xml) => xml.match(/<loc>https:\/\/tqccl\.com(\/doi-chuan\/[^<]+\/)<\/loc>/u)[1]);
   const cases = [
     { viPath: recommendedPath, back: /^\/zh\/doi-chuan\/(\?season=[^&]+)?$/u },
     { viPath: `/doi-khac/${legacySegment}/`, back: /^\/zh\/doi-khac\/$/u },

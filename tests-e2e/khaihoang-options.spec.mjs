@@ -757,6 +757,8 @@ test("a javascript: source URL in the source data never becomes an anchor", asyn
 });
 
 test("panel hành động của chi tiết Khai hoang và Đội khác không tràn khỏi khung (P06-B1)", async ({ page, request }) => {
+  // 51 lần tải trang chi tiết trong một test: máy CI chậm vượt ngân sách 30 s mặc định.
+  test.slow();
   const handles = await routeHandles(request);
   const ids = data.teams.map((team) => team.id);
   expect(ids.length).toBe(17);

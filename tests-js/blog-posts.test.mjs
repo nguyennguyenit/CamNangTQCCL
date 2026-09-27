@@ -116,11 +116,11 @@ test("markdown drops raw HTML, comments and unsafe URLs", () => {
 
 test("markdown marks only off-site links as external and keeps same-site links in the tab", () => {
   const { html } = renderBlogMarkdown(
-    "[ngoài](https://example.com/a) [trong](/doi-chuan/) [tuyệt đối](https://tqccl.pages.dev/tra-cuu/) [thư](mailto:a@b.vn) ![ảnh](/api/media/k1)",
+    "[ngoài](https://example.com/a) [trong](/doi-chuan/) [tuyệt đối](https://tqccl.com/tra-cuu/) [thư](mailto:a@b.vn) ![ảnh](/api/media/k1)",
   );
   assert.match(html, /<a href="https:\/\/example\.com\/a" rel="noopener noreferrer" target="_blank">ngoài<\/a>/u);
   assert.match(html, /<a href="\/doi-chuan\/">trong<\/a>/u);
-  assert.match(html, /<a href="https:\/\/tqccl\.pages\.dev\/tra-cuu\/">tuyệt đối<\/a>/u);
+  assert.match(html, /<a href="https:\/\/tqccl\.com\/tra-cuu\/">tuyệt đối<\/a>/u);
   assert.match(html, /<a href="mailto:a@b\.vn" rel="noopener noreferrer">thư<\/a>/u);
   assert.match(html, /<img src="\/api\/media\/k1" alt="ảnh" loading="lazy" decoding="async">/u);
 });

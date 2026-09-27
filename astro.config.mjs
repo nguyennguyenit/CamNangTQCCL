@@ -28,7 +28,7 @@ function denyPrivateArtifacts() {
 }
 
 export default defineConfig({
-  site: "https://tqccl.pages.dev",
+  site: "https://tqccl.com",
   output: "static",
   vite: {
     plugins: [denyPrivateArtifacts()],

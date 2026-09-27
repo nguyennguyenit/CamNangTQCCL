@@ -22,7 +22,7 @@ export interface Env {
   GITHUB_REPOSITORY?: string;
 }
 
-export const DEFAULT_SITE_ORIGIN = "https://tqccl.pages.dev";
+export const DEFAULT_SITE_ORIGIN = "https://tqccl.com";
 
 // Origin dev cục bộ (astro dev 4321, astro preview 4322, wrangler dev 8788).
 export const DEV_ORIGINS = [

@@ -12,8 +12,8 @@
     "notes": {
       "approvedDisplaySlots": 11,
       "blocks": 1967,
-      "concreteInventorySha256": "9fbc1092e98a816d71974a341432688b83a63ce39fbd6a7abba1d7b80f24959c",
-      "concreteLocationCount": 56648,
+      "concreteInventorySha256": "89327220fbd40cb6e4c37939cb216fe52db90e0b66c4eabbff57ea27d90a01b3",
+      "concreteLocationCount": 56650,
       "hanBlocks": 1928,
       "lookupReviewObligations": 3503,
       "siteLedgerObligations": 2086,
@@ -75,7 +75,7 @@
       "hột": "red-copy count"
     }
   },
-  "policyVersion": "site-vi-260927-worker",
+  "policyVersion": "site-vi-260927-primary-domain",
   "routeFamilies": [
     {
       "entrypoints": [
@@ -762,7 +762,7 @@
     "js/legacy-routes.js": "9b7397aa940cab78029e9d5e428b53d99d7a55ec5d973b679148ebcd9f276774",
     "js/lookup-data.js": "d15b64ac8419453c2d49874da5f07c4db303f59091d512af80aa8b16158ffdd5",
     "js/lookup-detail.js": "b1fd76107226b51662dd84f75e9fa9ab8f0668869318916a2007f98d0b72ca55",
-    "js/recommended-reference-render.js": "bd9f88b040ab7f2c34fc797e0d2629fc4708c9307d3e85970ac2a2d6e24dc6ff",
+    "js/recommended-reference-render.js": "8019482ee971010fd49089ba19fc285d8a0bfdc3de118de4523d7c98c2f72dab",
     "js/recommended-reference-state.js": "40555df90addb5d861561e51c7351e662d7879d920183fb4175d34871fd226dd",
     "js/recruit-tracker-store.js": "92d7201737ce3f0609494bbf0a289ae8633c4af4899840cb69ac1c28064445a7",
     "js/recruit-tracker.js": "f59affada9a145332e8a13ab1008650dd129b22fc28e1df468688122a26e815c",
@@ -772,9 +772,9 @@
     "js/roster-scan-state.js": "f8310fa4a646aa124724e94ba9c04637d6602e48f9ff7969fe0ecdb42cf36454",
     "js/site-chrome.js": "cea2dd593c2f0c7788b67cef1c2d318b81b4394dbe049f1dbfa6d2230d1fcc97",
     "js/site-nav.js": "768e351063f7fcf8a093ef279686406677f5acc6e92455665f644d28964abc41",
-    "js/team-detail-navigation.js": "7b404340ffdcb7061730ce1e6d1cfb55dc86c9e83be974b76781f161a64340ab",
+    "js/team-detail-navigation.js": "333253e74cd7c5a810fd53794b057704d241ab311b7334d84492af80cc428986",
     "js/team-detail.js": "08de30ffb31122a6056aa901403b415579396b9d905ede1b74a7920ad92b48e7",
-    "js/team-filter-section.js": "3d1ae9c5d9fa68b73bc63bd497f6c759e8456f39f8a41ed30a2aedadfbfc335d",
+    "js/team-filter-section.js": "b8d601212df3a45555157e2281f0e64dbf54dd40a8895587366e39b18d8e99d0",
     "js/unified-lookup.js": "b98ba35f6f3a4fc4cb6a52911e33d23c90680bbe2d094b66ea4a2f6e13342a1e",
     "js/website-display.js": "d298f432feee016745295cab830ba048a274b490ab553377289815572b795054",
     "pipeline/lookup-identity.json": "cff3228ddcfd4be39fa7c0ad3746d18a6495fa11fc6d8e4480795181f82f38b1",
@@ -786,7 +786,7 @@
     "src/components/pages/LegacyDetail.astro": "d0a22227bf201cd16461a2515700a561bb653088b942b90eeecf4085ab8a60d7",
     "src/components/pages/RecommendedDetail.astro": "4cf1064a014fa50d49e5a95868c01da3226d8babe008b790950b2d927a871337",
     "src/components/pages/SectionPage.astro": "6e6567427a1a72b5165ce9769f282480be743b3b6f2325000f9fc1c654083695",
-    "src/layouts/SiteLayout.astro": "70378a17167d76e1f38ece228539853654650703b6e20d60a18407044de38808",
+    "src/layouts/SiteLayout.astro": "cd226c282951ca3458912a36f02d5a0b9c5a24590c7e15af9ecafcd0d5eded18",
     "src/lib/build-date.ts": "2c46966da5db7675f1f092f79a540dd345125211dea16238fa779bea58c9773f",
     "src/lib/landing-stats.ts": "3e0aa3393cdbc16ce61251cb4477ecbccf0708af371689754a1ba54de8468932",
     "src/lib/official-links.ts": "e7d3c82b4f2f978c05f6038305c997395c749e86b063d3c4a990cd3e7dc6f039",

@@ -1,5 +1,5 @@
 // Worker entry: POST /analyze proxy Vision LLM với guardrail đầy đủ.
-// Thứ tự (rẻ -> đắt): OPTIONS -> origin/method -> secret băm IP -> Content-Length ->
+// Thứ tự (rẻ -> đắt): OPTIONS -> method -> cấu hình origin -> origin -> secret băm IP -> Content-Length ->
 // kill-switch+cap+rate-limit -> Turnstile -> input guard -> callModel -> validate -> JSON.
 // Mọi lỗi (kể cả bất ngờ) đều trả JSON có CORS. KHÔNG lưu ảnh; log tối thiểu.
 
@@ -31,13 +31,18 @@ function maxRequestBytes(maxImageBytes: number): number {
 async function handle(request: Request, env: Env, cfg: Config, cors: Record<string, string>): Promise<Response> {
   const url = new URL(request.url);
 
-  if (request.method === "OPTIONS") return preflight(cfg.allowedOrigin);
+  if (request.method === "OPTIONS") return preflight(cors);
   if (request.method !== "POST" || url.pathname !== "/analyze") {
     return json({ error: "Not found" }, 404, cors);
   }
+  // Thiếu ALLOWED_ORIGINS -> không có origin/hostname nào hợp lệ; từ chối trước KV/siteverify.
+  const { allowedOrigins } = cfg;
+  if (allowedOrigins !== "*" && allowedOrigins.length === 0) {
+    return json({ error: "Dịch vụ soi ảnh chưa được cấu hình" }, 503, cors);
+  }
   // CORS origin enforcement (ngoài header) — chặn origin lạ ở tầng app.
   const origin = request.headers.get("Origin");
-  if (cfg.allowedOrigin !== "*" && origin && origin !== cfg.allowedOrigin) {
+  if (allowedOrigins !== "*" && origin && !allowedOrigins.includes(origin)) {
     return json({ error: "Origin không được phép" }, 403, cors);
   }
   // Thiếu khoá băm IP -> từ chối trước mọi thao tác KV/siteverify/model (fail-closed).
@@ -73,9 +78,9 @@ async function handle(request: Request, env: Env, cfg: Config, cors: Record<stri
     return json({ error: limit.message }, limit.status || 429, cors);
   }
 
-  // Turnstile (siteverify: một lần dùng + đúng hostname site).
-  const expectedHostname = cfg.allowedOrigin === "*" ? null : new URL(cfg.allowedOrigin).hostname;
-  const ts = await verifyTurnstile(payload?.turnstileToken, env.TURNSTILE_SECRET, ip, expectedHostname);
+  // Turnstile (siteverify: một lần dùng + hostname thuộc một origin của site).
+  const expectedHostnames = allowedOrigins === "*" ? null : allowedOrigins.map((allowed) => new URL(allowed).hostname);
+  const ts = await verifyTurnstile(payload?.turnstileToken, env.TURNSTILE_SECRET, ip, expectedHostnames);
   if (!ts.ok) {
     return json({ error: ts.message }, 403, cors);
   }
@@ -108,7 +113,7 @@ async function handle(request: Request, env: Env, cfg: Config, cors: Record<stri
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const cfg = loadConfig(env);
-    const cors = corsHeaders(cfg.allowedOrigin);
+    const cors = corsHeaders(cfg.allowedOrigins, request.headers.get("Origin"));
     try {
       return await handle(request, env, cfg, cors);
     } catch {

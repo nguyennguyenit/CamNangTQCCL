@@ -1,5 +1,5 @@
 // Pages Function: proxy same-origin /api/* -> community-worker, để cookie phiên Better Auth
-// là first-party trên tqccl.pages.dev. Ưu tiên service binding COMMUNITY; không có thì
+// là first-party trên domain site (tqccl.com, www.tqccl.com, tqccl.pages.dev). Ưu tiên service binding COMMUNITY; không có thì
 // dùng biến COMMUNITY_API_ORIGIN (vd https://tqccl-community.<tài-khoản>.workers.dev).
 
 interface Fetcher {

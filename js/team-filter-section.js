@@ -160,9 +160,13 @@ export function createSeasonCoexistSection({mount, scenarioLabel = () => coexist
 }
 
 import { SOURCE_TIER_ORDER, sourceTierLabel, legacyLabelZh, projectRecommendedRows, referenceFacetValues } from './recommended-reference-state.js';
-import { recommendedTeamCard, recommendedTeamTable } from './recommended-reference-render.js';
+import { recommendedTeamCard, recommendedTeamTable, recommendedTeamTableRow, referenceRowKey } from './recommended-reference-render.js';
 import { icon, svgNode } from './render.js';
 import { TEAM_VIEW_CARDS, TEAM_VIEW_GRID, TEAM_VIEW_TABLE, canonicalTeamView } from './team-view.js';
+import { isNativeNavigationClick } from './team-detail-navigation.js';
+
+/** Danh sách dài dựng theo lượt: dựng cả 1366 thẻ một lần làm trang đứng vài giây trên máy chậm. */
+const PAGE_SIZE=60;
 
 // Nhóm chính Loại binh → Phe → Tier nguồn; Nhóm/Nguồn thu gọn trong accordion.
 const PRIMARY_FACETS=['unit','faction','tier'];
@@ -195,6 +199,8 @@ const filterIcon=()=>[svgNode('line',{x1:4,y1:7,x2:20,y2:7}),svgNode('line',{x1:
 /** Shared-style Team chuẩn/Team khác browser: sidebar lọc, thẻ gọn và chế độ Bảng. */
 export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onNavigate}) {
   let rows=[], state={query:'',filters:{},view:TEAM_VIEW_CARDS}, registry={seasonOptions:[]}, currentScopeRows=[];
+  // Lượt đang hiện chỉ giữ khi danh sách không đổi (cùng mùa, lọc, từ khóa, kiểu hiển thị).
+  let filteredRows=[], viewLabels={}, emptyText='', shown=PAGE_SIZE, listKey=null, openedKey=null;
   const openFacets=new Set();
   const heading=el('h1',{class:'reference-title',tabindex:'-1'},title);
   const kicker=el('span',{class:'reference-kicker'},L('Đội hình','阵容'));
@@ -212,6 +218,7 @@ export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onN
   const notice=el('p',{class:'scope-note reference-notice',role:'status'});
   const count=el('span',{class:'stats reference-count',role:'status'});
   const view=el('div',{class:'reference-view'});
+  const more=el('div',{class:'lookup-more-row reference-more'});
   const empty=el('p',{class:'empty reference-empty'});
   const clear=el('button',{type:'button',class:'clear-btn',onClick:()=>{
     onQuery({q:null,faction:null,unit:null,tier:null,subcategory:null,source:null});
@@ -233,7 +240,10 @@ export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onN
   // Marker ổn định của link chi tiết, không pin path segment của route.
   view.addEventListener('click',event=>{
     const link=event.target.closest?.('a[data-team-detail-link]');
-    if (link) onNavigate?.(event,link);
+    if (!link) return;
+    // Ghi khóa thẻ trước snapshot để khi quay lại, danh sách dựng tới thẻ này và trả focus về nó.
+    if (isNativeNavigationClick(event)) openedKey=link.closest('[data-reference-key]')?.dataset.referenceKey || null;
+    onNavigate?.(event,link);
   });
   searchInput.addEventListener('input',()=>onQuery({q:searchInput.value || null}));
   season.addEventListener('change',()=>onQuery({season:season.value,detail:null,legacyTeam:null,legacyVariant:null},true));
@@ -246,7 +256,7 @@ export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onN
       el('div',{class:'reference-view-toggle',role:'group','aria-label':L('Kiểu hiển thị','显示方式')},viewButtons),
     ]),
     filters,
-    el('div',{class:'reference-results-body'},[notice,view,empty]),
+    el('div',{class:'reference-results-body'},[notice,view,more,empty]),
   ]);
   // A5: panel lọc mobile đóng bằng Escape và trả focus về nút "Bộ lọc", như menu thả ở header.
   // Desktop luôn hiện sidebar và nút này bị ẩn (`getClientRects` rỗng) nên Escape không đụng tới.
@@ -394,33 +404,99 @@ export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onN
     }
   }
 
-  function renderView(filtered,labels,sourceScope) {
+  const itemNode=(row,mode)=>mode===TEAM_VIEW_TABLE
+    ? recommendedTeamTableRow(row,{hrefFor,labels:viewLabels})
+    : recommendedTeamCard(row,{onTag:value=>onQuery({q:value}),href:hrefFor?.(row),labels:viewLabels});
+
+  /** Focus vào link chi tiết của thẻ/hàng; thẻ không có link thì chính thẻ nhận focus. */
+  function focusItem(node,options) {
+    if (!node) return;
+    const link=node.querySelector('a[data-team-detail-link]');
+    if (link) { link.focus(options); return; }
+    node.tabIndex=-1;
+    node.focus(options);
+  }
+
+  const renderRows=(items,mode)=>mode===TEAM_VIEW_TABLE
+    ? el('div',{class:'reference-table-frame'},recommendedTeamTable(items,{hrefFor,labels:viewLabels}))
+    : el('div',{class:mode===TEAM_VIEW_GRID?'team-grid team-grid-dense':'team-grid'},items.map(row=>itemNode(row,mode)));
+  const tierOf=row=>row.tierRaw || 'unranked';
+
+  /** Nhóm theo Tier, giữ nguyên thứ tự projector (đã xếp theo Tier nguồn và điểm). */
+  function tierGroups(items) {
+    const groups=new Map();
+    for (const row of items) {
+      if (!groups.has(tierOf(row))) groups.set(tierOf(row),[]);
+      groups.get(tierOf(row)).push(row);
+    }
+    return groups;
+  }
+
+  /** Một nhóm Tier; số đội của nhóm đếm trên toàn bộ danh sách đã lọc, không chỉ lượt đang hiện. */
+  function tierSection(tier,items,index,mode) {
+    const label=tier==='unranked' ? L('Chưa xếp hạng','未评级') : sourceTierLabel(tier);
+    const headingId=`${mount.id}-tier-heading-${index}`;
+    const total=filteredRows.filter(row=>tierOf(row)===tier).length;
+    return el('section',{class:'reference-tier-section',dataset:{tier},'aria-labelledby':headingId},[
+      el('h2',{class:'reference-tier-heading',id:headingId},[
+        el('span',{},label),
+        el('span',{class:'reference-tier-count'},L(` · ${total} đội`,` · ${total} 队`)),
+      ]),
+      renderRows(items,mode),
+    ]);
+  }
+
+  /** Dựng `shown` đội đầu của danh sách đã lọc; số đếm "N / M đội" vẫn là toàn bộ danh sách. */
+  function renderView() {
     const mode=currentView();
-    const renderRows=items=>mode===TEAM_VIEW_TABLE
-      ? el('div',{class:'reference-table-frame'},recommendedTeamTable(items,{hrefFor,labels}))
-      : el('div',{class:mode===TEAM_VIEW_GRID?'team-grid team-grid-dense':'team-grid'},items.map(row=>recommendedTeamCard(row,{onTag:value=>onQuery({q:value}),href:hrefFor?.(row),labels})));
+    const visible=filteredRows.slice(0,shown);
     if (family==='recommended') {
-      // Projector đã xếp theo Tier nguồn và điểm; nhóm giữ nguyên thứ tự đó sau khi lọc.
-      const groups=new Map();
-      for (const row of filtered) {
-        const tier=row.tierRaw || 'unranked';
-        if (!groups.has(tier)) groups.set(tier,[]);
-        groups.get(tier).push(row);
+      view.replaceChildren(...[...tierGroups(visible)].map(([tier,items],index)=>tierSection(tier,items,index,mode)));
+    } else view.replaceChildren(renderRows(visible,mode));
+    renderMore();
+    empty.textContent=emptyText;
+    empty.hidden=filteredRows.length>0;
+  }
+
+  /** Hàng "Xem thêm" khi còn đội chưa hiện (cùng mẫu với Tra cứu). */
+  function renderMore() {
+    more.replaceChildren();
+    more.hidden=shown>=filteredRows.length;
+    if (more.hidden) return;
+    more.append(
+      el('button',{type:'button',class:'lookup-more',onClick:appendNextPage},L('Xem thêm','查看更多')),
+      el('span',{class:'lookup-more-note'},L(`Mỗi lượt hiện ${PAGE_SIZE} đội`,`每次显示 ${PAGE_SIZE} 队`)),
+    );
+  }
+
+  /** Hiện thêm một lượt rồi đưa focus tới đội đầu của lượt mới; thẻ/hàng đã hiện giữ nguyên node.
+   *  Đội chuẩn nhóm theo Tier: đội của lượt mới nối vào nhóm Tier đã có, Tier mới thành nhóm mới ở cuối. */
+  function appendNextPage() {
+    const mode=currentView();
+    const batch=filteredRows.slice(shown,shown+PAGE_SIZE);
+    shown+=PAGE_SIZE;
+    const container=root=>root.querySelector('.reference-table tbody') ?? root.querySelector('.team-grid') ?? root.firstElementChild;
+    let first=null;
+    if (family==='recommended') {
+      for (const [tier,items] of tierGroups(batch)) {
+        const existing=[...view.children].find(section=>section.dataset.tier===tier);
+        if (existing) {
+          const nodes=items.map(row=>itemNode(row,mode));
+          container(existing).append(...nodes);
+          first??=nodes[0];
+        } else {
+          const section=tierSection(tier,items,view.children.length,mode);
+          view.append(section);
+          first??=section.querySelector('[data-reference-key]');
+        }
       }
-      view.replaceChildren(...[...groups].map(([tier,items],index)=>{
-        const label=tier==='unranked' ? L('Chưa xếp hạng','未评级') : sourceTierLabel(tier);
-        const headingId=`${mount.id}-tier-heading-${index}`;
-        return el('section',{class:'reference-tier-section',dataset:{tier},'aria-labelledby':headingId},[
-          el('h2',{class:'reference-tier-heading',id:headingId},[
-            el('span',{},label),
-            el('span',{class:'reference-tier-count'},L(` · ${items.length} đội`,` · ${items.length} 队`)),
-          ]),
-          renderRows(items),
-        ]);
-      }));
-    } else view.replaceChildren(renderRows(filtered));
-    empty.textContent=currentScopeRows.length?L('Không có đội khớp bộ lọc.','没有符合筛选条件的阵容。'):sourceScope?L('Mùa nguồn chưa được thu thập.','该来源赛季尚未收录。'):family==='other' && state.season==='unknown'?L('Không có đội có thuộc tính nguồn chưa rõ trong phạm vi này.','此范围内没有来源属性不明的阵容。'):L('Mùa này chưa có dữ liệu.','本赛季暂无数据。');
-    empty.hidden=filtered.length>0;
+    } else {
+      const nodes=batch.map(row=>itemNode(row,mode));
+      container(view).append(...nodes);
+      first=nodes[0];
+    }
+    renderMore();
+    focusItem(first);
   }
 
   function render() {
@@ -431,6 +507,8 @@ export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onN
     currentScopeRows=scopeRows;
     renderFacets(scopeRows);
     const filtered=projectRecommendedRows(rows,state,labels);
+    const key=JSON.stringify([state.season ?? null,state.query || '',state.filters || {},currentView()]);
+    if (key!==listKey) { listKey=key; shown=PAGE_SIZE; }
     count.replaceChildren(el('strong',{},String(filtered.length)),L(` / ${scopeRows.length} đội`,` / ${scopeRows.length} 队`));
     // Mùa chưa thu thập đánh dấu trên từng phạm vi nguồn của mùa đó; danh sách luôn gộp mọi danh mục.
     const sourceScope=family==='recommended' ? registry.scopes?.find(scope=>scope.sourceSeasonId===state.season && scope.state==='uncollected-season') : null;
@@ -438,7 +516,10 @@ export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onN
     notice.textContent=[...(state.notices || []),scopeNotice].filter(Boolean).join(' ');
     notice.hidden=!notice.textContent;
     updateViewButtons();
-    renderView(filtered,labels,sourceScope);
+    filteredRows=filtered;
+    viewLabels=labels;
+    emptyText=scopeRows.length?L('Không có đội khớp bộ lọc.','没有符合筛选条件的阵容。'):sourceScope?L('Mùa nguồn chưa được thu thập.','该来源赛季尚未收录。'):family==='other' && state.season==='unknown'?L('Không có đội có thuộc tính nguồn chưa rõ trong phạm vi này.','此范围内没有来源属性不明的阵容。'):L('Mùa này chưa có dữ liệu.','本赛季暂无数据。');
+    renderView();
   }
   return {
     update(nextRows,nextState,nextRegistry){rows=nextRows;state=nextState;registry=nextRegistry;render();},
@@ -450,15 +531,23 @@ export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onN
         filters:filters.classList.contains('collapsed') === false,
         alternatives:[...view.querySelectorAll('.reference-team-card[data-reference-key] > details.reference-alternatives[open]')]
           .map(details=>details.parentElement.dataset.referenceKey).filter(Boolean).slice(0,12),
+        ...(openedKey ? {target:openedKey} : {}),
       };
     },
     setDisclosureState(disclosures={}){
       setFiltersExpanded(disclosures.filters);
+      // Thẻ đã mở chi tiết nằm sau các lượt đầu: dựng đủ lượt tới nó để focus và mốc cuộn còn đúng chỗ.
+      const target=disclosures.target ? filteredRows.findIndex(row=>referenceRowKey(row)===disclosures.target) : -1;
+      if (target>=shown) {
+        shown=Math.ceil((target+1)/PAGE_SIZE)*PAGE_SIZE;
+        renderView();
+      }
       const open=new Set(disclosures.alternatives || []);
       for (const card of view.querySelectorAll('.reference-team-card[data-reference-key]')) {
         const details=card.querySelector(':scope > details.reference-alternatives');
         if (details) details.open=open.has(card.dataset.referenceKey);
       }
+      if (target>=0) focusItem([...view.querySelectorAll('[data-reference-key]')].find(node=>node.dataset.referenceKey===disclosures.target),{preventScroll:true});
     },
   };
 }

@@ -127,7 +127,7 @@ export interface ApiJson {
   isAdmin: boolean;
 }
 
-export const ORIGIN = "https://tqccl.pages.dev";
+export const ORIGIN = "https://tqccl.com";
 
 export interface Harness {
   env: Env;

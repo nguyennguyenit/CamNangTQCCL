@@ -111,7 +111,7 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
 
 - Giữ thứ tự guard rẻ → đắt: route/method/origin, secret băm IP, `Content-Length`, limit/kill-switch, Turnstile (siteverify một lần + đúng hostname), image guard, commit usage, model, schema validation.
 - Mọi response kể cả lỗi bất ngờ đều là JSON có CORS (handler bọc một `try/catch` ngoài cùng).
-- Origin lạ phải bị từ chối khi header có mặt và khác `ALLOWED_ORIGIN`; hiểu rằng request không có `Origin` vẫn qua, nên không xem CORS là authentication.
+- Origin lạ phải bị từ chối khi header có mặt và không khớp exact một mục trong `ALLOWED_ORIGINS` (CORS chỉ echo origin khớp, luôn kèm `Vary: Origin`; thiếu/rỗng biến → `503` fail-closed); hiểu rằng request không có `Origin` vẫn qua, nên không xem CORS là authentication.
 - Kiểm tra MIME, magic bytes và size server-side; không tin nén client.
 - Không leak upstream detail: lỗi model trả thông điệp cố định (502 tạm lỗi, 503 quá tải khi upstream 429), không kèm mã upstream; lỗi ngoài dự kiến trả thông báo chung.
 - Không log ảnh; IP chỉ lưu dạng HMAC có khoá (`IP_HASH_SECRET`), IPv6 gom /64. Thiếu secret → 503 fail-closed trước mọi thao tác KV/siteverify/model.

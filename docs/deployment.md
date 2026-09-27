@@ -10,24 +10,26 @@ Project deploy is split into three surfaces:
 
 ## Latest Worker Deploy
 
-- Date: 2026-07-11
+- Date: 2026-09-27
 - Worker: `tqccl-vision-proxy`
-- Version ID: `47bff736-95ab-4a51-88c7-514c0cb7b88b`
-- Source commit deployed from local main: `7bf5797`
+- Version ID: `1e0a3b95-f14a-4151-9dca-8f81931d9460`
+- Source commit: `877adf1` (clean worktree of `origin/main`); Worker tests 85/85 and typecheck passed before deploy.
+- Secrets: `QWEN_API_KEY`, `TURNSTILE_SECRET`, `IP_HASH_SECRET` (the last one set on 2026-09-27, secret-change version `454cf5e5-9148-441c-a9b6-423f4c3428f6`).
+- Previous version / rollback target: `454cf5e5-9148-441c-a9b6-423f4c3428f6` (code from `7bf5797`).
+- Live verification: `OPTIONS /analyze` from `https://tqccl.pages.dev` → 204 with CORS; `POST` with an invalid Turnstile token → 403 "Xác thực chống bot thất bại" (secret present, no 503); foreign origin → 403; 3 MB body → 413 with CORS before any KV or siteverify call.
+- Known gap: `https://tqccl.com` and `https://www.tqccl.com` are attached to the Pages project, but `ALLOWED_ORIGIN` is `https://tqccl.pages.dev`, so Vision requests from those hosts return 403.
 
 ## Latest Static Pages Deploy
 
-- Date: 2026-09-07
-- Production URL: `https://tqccl.pages.dev`
-- Deployment URL: `https://4e35bd85.tqccl.pages.dev`
-- Deployment ID: `4e35bd85-0759-4e39-ae20-e785300c9757`
-- Source commit: `0a5780155d7aa3fcb1869b4f5bb11912ead3db2f` (clean detached checkout of local main)
-- Method: Wrangler direct upload; no Git provider integration or Git push required.
-- Published files: 35 public assets plus deployment header control.
-- Preview verified: `https://505fb655.tqccl.pages.dev`
-- Previous production / rollback target: `cc23dd7a-c1ad-4bc0-b920-634fa7436e23`
-- Verification: all public bytes and cache headers matched; 8 standalone Cham Su groups, 15 opening teams, 9 sections, reload and 375px layout passed. Vision canaries returned 204/400/403 without model requests.
-- Release evidence and checksums: [Pages release report](../plans/reports/deploy-260907-cham-su-pages.md).
+- Date: 2026-09-27
+- Production URL: `https://tqccl.pages.dev` (also served on `https://tqccl.com`, `https://www.tqccl.com`)
+- Deployment URL: `https://c72f8f75.tqccl.pages.dev`
+- Deployment ID: `c72f8f75-4028-4572-82c2-709f52b7ec76`
+- Source commit: `877adf1` (clean worktree of `origin/main`; CI run `36322467887` green, 324 e2e passed)
+- Method: Wrangler direct upload of `dist/` after `npm run build` and `npm run verify` (1725 files).
+- Preview verified: `https://7bcc5c60.tqccl.pages.dev` (alias `https://release-260927.tqccl.pages.dev`)
+- Previous production / rollback target: `4e35bd85-0759-4e39-ae20-e785300c9757` (`0a57801`)
+- Verification: 12 section/detail routes 200 with `public, max-age=0, must-revalidate`; unknown, private and retired paths (`/teams/…`, `/_headers`, `/pipeline/…`) 404 `no-store`; `robots.txt` points at the production sitemap; `sitemap.xml` 1558 URLs; 10 legacy hash links (`/#analyze`, `/#team-pk`, …) redirect to the new paths; no page errors on 10 pages; the same routes return 200 on all three hosts after promotion.
 
 ## Latest Research MCP Deploy
 

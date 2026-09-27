@@ -100,6 +100,14 @@ jobs:
         working-directory: mcp-worker
       - run: npm run check:repository
         working-directory: mcp-worker
+      - name: Upload Playwright failure traces
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-failures-${{ github.sha }}
+          if-no-files-found: ignore
+          retention-days: 7
+          path: test-results/
       - uses: actions/upload-artifact@v4
         with:
           name: tqccl-mcp-release-${{ github.sha }}
