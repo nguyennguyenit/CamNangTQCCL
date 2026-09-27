@@ -70,6 +70,35 @@ pháp binh chủng”; không tự chuyển thành quân sư. Payload nguồn m�
 tách ID ổn định khỏi fingerprint nội dung và tọa độ dòng; thay nội dung cần
 review mapping, không đổi ID theo vị trí CSV.
 
+`parse_coexist_csv.py` là thư viện, không có CLI. `parse_coexist_csv(csv_text,
+expected_hash=...)` parse snapshot; `build_content_links(...)` là bộ sinh các link
+`source-owned-coexist` của `pipeline/season-content-links.json` từ CSV, bản đồ
+record đã review và metadata nguồn. Gọi bằng Python; đọc CSV bằng
+`read_bytes().decode("utf-8")` để giữ nguyên xuống dòng mà hash snapshot đã ghi:
+
+```bash
+python3 - <<'EOF'
+import json
+from pathlib import Path
+from pipeline.parse_coexist_csv import build_content_links
+links = json.loads(Path("pipeline/season-content-links.json").read_text(encoding="utf-8"))
+current = [link for link in links if link["target"]["type"] == "source-owned-coexist"]
+rebuilt = build_content_links(
+    Path("plans/260907-0233-season-team-lookup/research/coexist-binh-dien-xuan-thu.csv").read_bytes().decode("utf-8"),
+    json.loads(Path("pipeline/coexist-source-record-map.json").read_text(encoding="utf-8")),
+    current[0]["target"]["source"],
+    scenario_id=current[0]["scenarioId"],
+    evidence_refs=current[0]["evidenceRefs"],
+)
+print(len(rebuilt), rebuilt == current)  # 5 True với snapshot đang commit
+EOF
+```
+
+Với snapshot mới: cập nhật `snapshotHash` trong metadata nguồn và review bản đồ
+record trước, thay các link `source-owned-coexist` trong
+`pipeline/season-content-links.json` bằng kết quả, rồi publish bằng
+`python3 -m pipeline.build_season_data` như mục Bảo trì.
+
 Khai hoang dùng hướng dẫn được bảo trì mới nhất và không thuộc sidecar mùa.
 Text gợi ý khai hoang trong nguồn Cùng Tồn không tự thêm đội hoặc liên kết
 chuyển hình vào dữ liệu Khai hoang.
@@ -240,13 +269,15 @@ mới hoặc tên nguồn đổi phải được đối chiếu trong map trư�
 
 ### Danh sách tên còn thiếu bản Việt
 
-Xuất worksheet nội bộ từ generation đã công bố, không cần crawler hoặc mạng:
+Sau mỗi publish, xuất worksheet nội bộ từ generation đã công bố, không cần
+crawler hoặc mạng. Worksheet là file dẫn xuất, ghi vào `.cache/` (ignored), không
+commit:
 
 ```sh
 python3 -m pipeline.report_recommended_translations \
   --reference-dir src/data/recommended-reference \
   --identity-map pipeline/recommended-identity-map.json \
-  --output pipeline/recommended-missing-translations.json
+  --output .cache/recommended-missing-translations.json
 ```
 
 Report hiện không còn tên thiếu bản Việt sau bản duyệt ngày 2026-09-14:

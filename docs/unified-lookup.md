@@ -47,16 +47,16 @@ Promotion là local activation có lock/journal/backup, không phải deployment
 ```bash
 python3 -m pipeline.promote_unified_lookup promote \
   --candidate pipeline/lookup-output/candidate \
-  --activation pipeline/lookup-output/activation-phase3-final/activation-manifest.json \
+  --activation <activation-manifest> \
   --transaction <transaction-id> \
   --root .
 ```
 
-`--activation` là đường dẫn file JSON manifest, không phải thư mục. Các `source`
+`--activation` là đường dẫn file JSON manifest (`<activation-manifest>`, ví dụ `pipeline/lookup-output/<tên>-activation/activation-manifest.json`; thư mục `*candidate*`/`*activation*` dưới `pipeline/lookup-output/` là dẫn xuất, không commit), không phải thư mục. Các `source`
 trong manifest resolve tương đối từ thư mục chứa file đó; file phải bind code/
 config/test postimage đã review cùng preimage checkpoint. Promotion tạo journal
 bền trước mutation, kiểm preimage dưới shared lock, rồi thay đúng các path owned.
-Browser, build, legacy dictionary writer, season publisher và MCP raw reader từ
+Browser, build, season publisher và MCP raw reader từ
 chối transaction chưa hoàn tất hoặc bundle trộn.
 
 Sau process interruption, dùng đúng transaction đã ghi:
@@ -70,9 +70,10 @@ python3 -m pipeline.promote_unified_lookup recover \
 Recovery chỉ sửa transaction bị gián đoạn và restore path khi current bytes vẫn
 bằng postimage owned; edit ngoài transaction làm nó dừng trước partial restore.
 Nó kiểm dependent season refs, giữ file mùa và WIP không thuộc ownership. Nó
-không hoàn tác một activation đã `committed`: `phase3-final-2` là evidence
-committed hiện tại, còn `phase3-certified-first-activation` chỉ là rehearsal
-`rolled-back`. Muốn chuyển khỏi generation đã commit cần một activation mới đã
+không hoàn tác một activation đã `committed`: transaction `site-vi-260926-1928`
+(`committed`, khớp `lookup:064fd2d5…` trong `data/lookup-manifest.json`) là
+evidence hiện tại; journal nằm dưới `pipeline/lookup-output/transactions/`
+(ignored, chỉ có trên máy đã chạy promotion). Muốn chuyển khỏi generation đã commit cần một activation mới đã
 review; không xóa lock hoặc chép preimage thủ công.
 
 ## Consumer và publication contract
