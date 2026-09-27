@@ -1,0 +1,96 @@
+---
+// Trang chi tiết Đội chuẩn dùng chung cho bản Việt (`/doi-chuan/<seg>/`) và bản Trung (`/zh/doi-chuan/<seg>/`).
+// Props (tiêu đề, dòng phạm vi, thứ hạng) do src/lib/team-detail-pages.ts tính theo ngôn ngữ.
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { familyReturnHref } from '../../../js/team-detail-navigation.js';
+import { pick } from '../../../js/i18n.js';
+import type { RecommendedDetailProps } from '../../lib/team-detail-pages';
+import type { SiteLocale } from '../../lib/locale-routes';
+
+type Props = RecommendedDetailProps & { locale: SiteLocale };
+
+const {entry, title, ordinal, scopeLine, generationId, manifestSha256, legacyTeamsSha256, locale} = Astro.props;
+const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+// Canonical bỏ query/hash: mọi biến thể deep-link vẫn trỏ về đúng một URL chi tiết.
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
+const qualifier = [entry.sourceSeasonCode, ordinal > 1 ? String(ordinal) : null].filter(Boolean).join(' · ');
+const pageLabel = qualifier ? `${title} (${qualifier})` : title;
+const describedName = ordinal > 1 ? `${title} (${ordinal})` : title;
+// Bản vi: tên Trung là chữ phụ của tiêu đề (artboard TeamDetail), chỉ hiện khi nguồn thật có chữ Hán.
+// Bản zh: tiêu đề đã là chữ Hán gốc nên không lặp lại.
+const nameZh = locale === 'vi' && entry.nameZh && /[\u3400-\u9fff\uf900-\ufaff]/u.test(entry.nameZh) ? entry.nameZh : null;
+const hasScore = entry.value != null;
+const fallbackReturn = familyReturnHref('recommended', { sourceSeasonId: entry.sourceSeasonId, locale });
+---
+<SiteLayout
+  title={`${pageLabel}${t(' — Đội chuẩn — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', ' — 推荐阵容 — 三国志战略版攻略手册')}`}
+  description={locale === 'zh'
+    ? `${describedName}阵容详情，汇总自中国玩家网站与论坛${scopeLine ? `（${scopeLine}）` : ''}。`
+    : `Chi tiết đội hình ${describedName} tổng hợp từ các website và diễn đàn của game thủ Trung Quốc${scopeLine ? ` (${scopeLine})` : ''}.`}
+  pageKind="detail"
+  activeSection="team-chuan"
+  tagline={t('Chi tiết đội chuẩn', '推荐阵容详情')}
+  canonicalUrl={canonicalUrl}
+  ogType="article"
+  locale={locale}
+>
+  <nav class="detail-back-row" aria-label={t('Quay lại danh sách đội', '返回阵容列表')}>
+    <a id="team-return-link" class="detail-link detail-back-link" href={fallbackReturn} data-family-href={fallbackReturn}>
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="11 6 5 12 11 18"></polyline></svg>
+      {t('Quay lại đội chuẩn', '返回推荐阵容')}
+    </a>
+  </nav>
+
+  <article
+    id="team-detail-root"
+    class="reference-detail"
+    aria-labelledby="team-detail-title"
+    aria-busy="true"
+    data-family="recommended"
+    data-source-config-id={entry.sourceConfigId}
+    data-scope-key={entry.safeScopeKey}
+    data-generation-id={generationId}
+    data-manifest-sha256={manifestSha256}
+    data-legacy-teams-sha256={legacyTeamsSha256}
+  >
+    <div class="detail-header">
+      <div class="detail-head-main">
+        {scopeLine ? <p class="scope-note detail-kicker">{scopeLine}</p> : null}
+        <div class="detail-title-row">
+          <h1 id="team-detail-title" class="detail-title">{title}</h1>
+          {nameZh ? <span class="detail-title-zh" lang="zh-Hant">{nameZh}</span> : null}
+        </div>
+        <!-- Huy hiệu phe/loại binh do js/team-detail.js gắn từ bản ghi đã xác minh. -->
+        <div id="team-detail-badges" class="detail-badges" hidden></div>
+      </div>
+      <div id="team-detail-panel" class="detail-score-panel">
+        {hasScore ? (
+          <p class="detail-panel-label">
+            <span class="detail-panel-kicker">{t('Điểm nguồn', '来源评分')}</span>
+            <span class="detail-panel-note">{t('tổng hợp', '汇总')}</span>
+          </p>
+        ) : null}
+        <p class="detail-score">
+          {hasScore ? <><span class="detail-score-value">{entry.value}</span> <span class="detail-score-unit">{t('điểm', '分')}</span></> : t('Chưa có điểm nguồn', '暂无来源评分')}
+        </p>
+        <!-- Link nguồn đã kiểm scheme và nút sao chép liên kết do js/team-detail.js gắn. -->
+        <div id="team-detail-actions" class="detail-panel-actions"></div>
+      </div>
+    </div>
+
+    <div id="team-detail-status" class="detail-state" role="status" aria-live="polite" aria-atomic="true">{t('Đang tải chi tiết…', '正在加载详情…')}</div>
+    <noscript>
+      <p class="scope-note">{t(
+        'Trang chi tiết cần JavaScript để đọc dữ liệu nguồn đã xác minh. Bạn vẫn có thể quay lại danh sách đội chuẩn bằng liên kết phía trên.',
+        '详情页需要 JavaScript 才能读取已验证的来源数据。你仍可通过上方链接返回推荐阵容列表。',
+      )}</p>
+    </noscript>
+    <div id="team-detail-body" hidden></div>
+  </article>
+
+  <!-- Chiến báo thực chiến + bình luận do js/community-page.js dựng; dịch vụ cộng đồng lỗi thì chỉ khối này báo. -->
+  <section id="community-root" class="cm-root"></section>
+
+  <script is:inline type="module" src="/js/team-detail.js" slot="scripts"></script>
+  <script is:inline type="module" src="/js/community-page.js" slot="scripts"></script>
+</SiteLayout>

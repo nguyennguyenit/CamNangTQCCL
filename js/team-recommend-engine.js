@@ -1,6 +1,7 @@
 import { normalizeText } from "./filters.js";
 import { canonicalHeroId, normalizeHeroSlot } from "./hero-identity.js";
 import { compareSeasonIds } from "./season-context.js";
+import { L } from "./i18n.js";
 
 const TIER_RANK = new Map([
   ["T0", 0],
@@ -315,7 +316,7 @@ function lockedEntry(team, index) {
     locked: true,
     team: {
       id: team.teamId || `locked-${index}`,
-      name: team.teamName || team.teamId || `Đội đã xây dựng ${index + 1}`,
+      name: team.teamName || team.teamId || L(`Đội đã xây dựng ${index + 1}`, `已组建队伍 ${index + 1}`),
     },
     tier: "",
     tierRankings: [],

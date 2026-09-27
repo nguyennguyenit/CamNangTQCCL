@@ -6,6 +6,7 @@ import { normalizeText } from "./filters.js";
 import { canonicalHeroId, normalizeHeroSlot } from "./hero-identity.js";
 import { matchDict } from "./match-dict.js";
 import { toVietHanViet } from "./hanviet.js";
+import { L } from "./i18n.js";
 
 // Chất tướng Hán -> Việt.
 const STAT_MAP = {
@@ -93,7 +94,7 @@ export function mapRead(read, { heroesDict, tacticsDict, booksDict = [] }) {
     .map((t) => mapName(t, tacticsDict, { kind: "tactic" }));
   const books = (read.booksCn || []).map((b) => mapName(b, booksDict, { kind: "book" }));
   const hero = mapName(read.nameCn || "", heroesDict, {
-    unknownLabel: "Chưa rõ",
+    unknownLabel: L("Chưa rõ", "未知"),
     kind: "hero",
   });
   // B0: tên đoán từ chân dung -> luôn gắn cờ kiểm tra (chống auto-accept sai).
@@ -103,6 +104,8 @@ export function mapRead(read, { heroesDict, tacticsDict, booksDict = [] }) {
     tactics,
     books,
     statFocus: statFocusVn(read.statFocusCn || ""),
+    // Bản zh hiển thị nguyên văn chất tướng chữ Hán đọc được.
+    statFocusCn: (read.statFocusCn || "").trim(),
   };
 }
 

@@ -2,6 +2,7 @@ import { matchDict } from "./match-dict.js";
 import { normalizeText } from "./filters.js";
 import { canonicalHeroId, heroFamilyId } from "./hero-identity.js";
 import { toVietHanViet } from "./hanviet.js";
+import { L } from "./i18n.js";
 
 const MAX_UNTRUSTED_TEXT = 256;
 
@@ -110,7 +111,7 @@ export function mapTacticsScanRich(result, context) {
 export function mapBuiltTeamsScan(result, { heroesDict, tacticsDict }) {
   return {
     teams: (result?.teams || []).map((team) => ({
-      teamName: team.teamName || team.name || "Đội đã được lập",
+      teamName: team.teamName || team.name || L("Đội đã được lập", "已组建的队伍"),
       heroes: (team.heroesCn || team.heroes || []).map((name) => mapName(name, heroesDict).name).filter(Boolean),
       tactics: (team.tacticsCn || team.tactics || []).map((name) => mapName(name, tacticsDict).name).filter(Boolean),
     })),
@@ -120,7 +121,7 @@ export function mapBuiltTeamsScan(result, { heroesDict, tacticsDict }) {
 export function mapBuiltTeamsScanRich(result, context) {
   return {
     teams: (result?.teams || []).map((team) => ({
-      teamName: sanitizeText(team.teamName || team.name || "Đội đã được lập"),
+      teamName: sanitizeText(team.teamName || team.name || L("Đội đã được lập", "已组建的队伍")),
       heroSlots: (team.heroes || team.heroesCn || []).map((hero) => ({
         hero: richName(hero, context.heroesDict, "hero", context),
         tactics: (hero.tacticsCn || hero.tactics || []).map((tactic) =>

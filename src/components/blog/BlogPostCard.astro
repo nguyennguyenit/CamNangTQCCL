@@ -1,0 +1,28 @@
+---
+// Thẻ bài viết dùng chung cho danh sách và mục "Bài viết liên quan": tiêu đề là link, ngày đăng hiện rõ.
+import type { RenderedBlogPost } from '../../lib/blog-posts.ts';
+import { blogCopy, formatPostDate } from '../../lib/blog-seo.ts';
+
+interface Props {
+  post: RenderedBlogPost;
+  headingLevel?: 2 | 3;
+}
+
+const { post, headingLevel = 2 } = Astro.props;
+const copy = blogCopy(post.lang);
+const Heading = headingLevel === 2 ? 'h2' : 'h3';
+---
+<article class="blog-card">
+  <Heading class="blog-card-title"><a href={post.path}>{post.title}</a></Heading>
+  <p class="blog-card-meta">
+    <time datetime={post.publishedAt}>{formatPostDate(post.publishedAt, post.lang)}</time>
+    <span aria-hidden="true">·</span>
+    <span>{copy.readingTime(post.readingMinutes)}</span>
+  </p>
+  <p class="blog-card-desc">{post.description}</p>
+  {post.tags.length > 0 && (
+    <ul class="blog-tags" aria-label={copy.tags}>
+      {post.tags.map((tag) => <li class="blog-tag">{tag}</li>)}
+    </ul>
+  )}
+</article>

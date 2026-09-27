@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { mkdtemp, mkdir, readFile, readdir, stat, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { test } from "node:test";
 import {
   PUBLIC_ARTIFACTS,
@@ -21,8 +21,13 @@ import {
   SITEMAP_MIME,
   sitemapDocument,
   sitemapLocations,
+  blogSitemapRoutes,
+  mirroredSitemapPaths,
+  mirroredSitemapRoutes,
 } from "../src/pages/sitemap.xml.ts";
-import { verifyAstroDist } from "../scripts/verify-astro-dist.mjs";
+import { COMMUNITY_PAGES, verifyAstroDist } from "../scripts/verify-astro-dist.mjs";
+import { jsonLd } from "../src/lib/blog-posts.ts";
+import { articleJsonLd, blogIndexJsonLd, llmsDocument, rssDocument } from "../src/lib/blog-seo.ts";
 import { assertFrontendShellContract } from "./frontend-shell-contract-assertions.mjs";
 
 const projectRoot = new URL("../", import.meta.url);
@@ -41,16 +46,66 @@ const KHAIHOANG_TITLE = "Gia Cát Khác · SP Mã Siêu · Pháp Chính";
 
 const FIXTURE_ORIGIN = "https://tqccl.pages.dev";
 
-/** The fixture dist mirrors the built sitemap: the root page plus every catalog route, XML-escaped. */
-const fixtureSitemapXml = (locations) => `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${locations.map((location) => `  <url>\n    <loc>${location}</loc>\n  </url>`).join("\n")}
+/**
+ * The fixture dist mirrors the built sitemap: the root page plus every catalog route, XML-escaped. Một mục là
+ * URL trần hoặc `{loc, pair: [viHref, zhHref]}` — trang có bản gương khai ba `xhtml:link` (vi, zh-Hans, x-default).
+ */
+const fixtureSitemapXml = (entries) => `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+${entries.map((entry) => {
+  const { loc, pair } = typeof entry === "string" ? { loc: entry, pair: null } : entry;
+  const links = pair
+    ? [["vi", pair[0]], ["zh-Hans", pair[1]], ["x-default", pair[0]]]
+      .map(([lang, href]) => `    <xhtml:link rel="alternate" hreflang="${lang}" href="${href}"/>\n`).join("")
+    : "";
+  return `  <url>\n    <loc>${loc}</loc>\n${links}  </url>`;
+}).join("\n")}
 </urlset>
 `;
+
+/** Bản Việt của một đường dẫn và bản Trung dưới `/zh`. */
+const zhPathOf = (viPath) => (viPath === "/" ? "/zh/" : `/zh${viPath}`);
+
+/** Cặp mục sitemap (vi + zh) của một route có bản gương; `/` (Landing) được xếp riêng ở đầu. */
+const mirroredEntries = (viPaths) => viPaths.flatMap((viPath) => {
+  const pair = [`${FIXTURE_ORIGIN}${viPath}`, `${FIXTURE_ORIGIN}${zhPathOf(viPath)}`];
+  return [{ loc: pair[0], pair }, { loc: pair[1], pair }];
+});
+
+/** Sitemap như generator phát: root trước, rồi mọi mục còn lại theo thứ tự URL. */
+const orderedSitemap = (entries) => {
+  const locOf = (entry) => (typeof entry === "string" ? entry : entry.loc);
+  const root = entries.filter((entry) => locOf(entry) === `${FIXTURE_ORIGIN}/`);
+  const rest = entries.filter((entry) => locOf(entry) !== `${FIXTURE_ORIGIN}/`).sort((a, b) => (locOf(a) < locOf(b) ? -1 : 1));
+  return fixtureSitemapXml([...root, ...rest]);
+};
+
+/** `<html lang>` và bộ hreflang mà verifier đòi ở mọi trang có bản gương. */
+const pairHead = (locale, viPath) => [
+  `<html lang="${locale === "zh" ? "zh-Hans" : "vi"}">`,
+  `<link rel="alternate" hreflang="vi" href="${FIXTURE_ORIGIN}${viPath}">`,
+  `<link rel="alternate" hreflang="zh-Hans" href="${FIXTURE_ORIGIN}${zhPathOf(viPath)}">`,
+  `<link rel="alternate" hreflang="x-default" href="${FIXTURE_ORIGIN}${viPath}">`,
+].join("");
 
 const FIXTURE_ROBOTS = `User-agent: *\nAllow: /\n\nSitemap: ${FIXTURE_ORIGIN}/sitemap.xml\n`;
 
 const FIXTURE_HEADERS = "/\n  Cache-Control: max-age=0\n";
+
+/** Output blog đúng như build sinh ra từ một tập bài (rỗng khi không có API). */
+async function writeBlogOutputs(distDir, posts = []) {
+  for (const lang of ["vi", "zh"]) {
+    const prefix = lang === "zh" ? join(distDir, "zh") : distDir;
+    const own = posts.filter((post) => post.lang === lang);
+    await mkdir(join(prefix, "bai-viet"), { recursive: true });
+    await writeFile(
+      join(prefix, "bai-viet", "index.html"),
+      `<!doctype html><script type="application/ld+json">${jsonLd(blogIndexJsonLd(lang, own, FIXTURE_ORIGIN))}</script>\n`,
+    );
+    await writeFile(join(prefix, "rss.xml"), rssDocument(lang, own, FIXTURE_ORIGIN));
+  }
+  await writeFile(join(distDir, "llms.txt"), llmsDocument(posts, FIXTURE_ORIGIN));
+}
 
 /** Tám trang mục tĩnh của mô hình đường dẫn mới; 5 trang đầu có phạm vi mùa. */
 const SECTION_PAGE_SPECS = [
@@ -63,16 +118,28 @@ const SECTION_PAGE_SPECS = [
   { path: "soi-doi-tu-anh", section: "analyze", season: false },
   { path: "goi-y-doi-tu-kho", section: "roster-recommend", season: false },
 ];
+/** Trang nội dung tĩnh có bản gương (chính sách bảo mật): được index, canonical theo ngôn ngữ. */
+const STATIC_PAGE_PATHS = ["/chinh-sach-bao-mat/"];
+const staticPageHtml = (locale, viPath) =>
+  `<!doctype html>${pairHead(locale, viPath)}<link rel="canonical" href="${FIXTURE_ORIGIN}${locale === "zh" ? zhPathOf(viPath) : viPath}"><body>\n`;
 const SECTION_LOCATIONS = SECTION_PAGE_SPECS.map(({ path }) => `${FIXTURE_ORIGIN}/${path}/`);
+/** Hai trang danh sách blog luôn có và là cặp dịch của nhau. */
+const BLOG_INDEX_ENTRIES = [`${FIXTURE_ORIGIN}/bai-viet/`, `${FIXTURE_ORIGIN}/zh/bai-viet/`]
+  .map((loc) => ({ loc, pair: [`${FIXTURE_ORIGIN}/bai-viet/`, `${FIXTURE_ORIGIN}/zh/bai-viet/`] }));
+/** Mọi mục sitemap của fixture: Landing, 8 trang mục, trang tĩnh, 2 trang chi tiết (mỗi route hai ngôn ngữ) và blog. */
+const FIXTURE_SITEMAP_ENTRIES = [
+  ...mirroredEntries(["/", ...SECTION_PAGE_SPECS.map(({ path }) => `/${path}/`), ...STATIC_PAGE_PATHS, `/doi-khac/${LEGACY_ROUTE_SEGMENT}/`, `/khai-hoang/${KHAIHOANG_ROUTE_SEGMENT}/`]),
+  ...BLOG_INDEX_ENTRIES,
+];
 const SEASON_MARKER = {
   "heroes-dict": `sha256:${"0".repeat(64)}`,
   tactics: `sha256:${"0".repeat(64)}`,
 };
 
 /** Trang mục trong fixture mang đúng payload mà verifier khóa theo bảng của phase. */
-function sectionPageHtml({ section, season, registry, pin, seasonHashes }) {
+function sectionPageHtml({ path, locale, section, season, registry, pin, seasonHashes }) {
   return [
-    `<!doctype html><body data-page-section="${section}">`,
+    `<!doctype html>${pairHead(locale, `/${path}/`)}<body data-page-section="${section}">`,
     `<section id="section-${section}" class="section active"></section>`,
     season ? '<div id="season-controls"></div>' : "",
     `<script id="team-route-handles" type="application/json">${JSON.stringify(registry)}</script>`,
@@ -83,8 +150,18 @@ function sectionPageHtml({ section, season, registry, pin, seasonHashes }) {
   ].join("");
 }
 
-/** Landing chỉ còn script chuyển tiếp hash cũ; không payload, không app.js. */
-const LANDING_HTML = '<!doctype html><body><script id="legacy-route-redirect">(function(){})();</script>\n';
+/** Mọi trang chi tiết đội mang khối cộng đồng (chiến báo + bình luận) và entry của nó. */
+const COMMUNITY_MOUNT_HTML = '<section id="community-root"></section><script type="module" src="/js/community-page.js"></script>';
+/** Trang cộng đồng tĩnh: noindex, không canonical, chỉ mount + entry riêng. */
+const communityPageHtml = (mount, entry) =>
+  `<!doctype html><head><meta name="robots" content="noindex"></head><div ${mount}></div><script type="module" src="${entry}"></script>\n`;
+
+/** Landing chỉ còn script chuyển tiếp hash cũ (bản Việt); không payload, không app.js. */
+const LANDING_HTML = `<!doctype html>${pairHead("vi", "/")}<body><script id="legacy-route-redirect">(function(){})();</script>\n`;
+const LANDING_ZH_HTML = `<!doctype html>${pairHead("zh", "/")}<body>\n`;
+
+/** 404 duy nhất của Pages: khối Việt, khối Trung dựng sẵn và script chọn khối Trung dưới /zh/. */
+const NOT_FOUND_HTML = '<!doctype html><head><meta name="robots" content="noindex"></head><h1 id="not-found-title">Không tìm thấy trang</h1><section data-not-found="zh" hidden><h1 id="not-found-title-zh">页面不存在</h1></section><script id="not-found-locale">(function(){})();</script>\n';
 
 /** Font self-host là thư mục public tĩnh; fixture dist phải có bản sao byte-equal ở cả hai phía. */
 async function writeStaticFonts(projectDir, distDir) {
@@ -99,9 +176,9 @@ async function writeStaticFonts(projectDir, distDir) {
   }
 }
 
-/** Ảnh tĩnh của public (favicon, ảnh chia sẻ og:image) được copy nguyên byte như Astro làm. */
+/** Ảnh tĩnh của public (favicon, ảnh chia sẻ og:image, logo, QR ủng hộ) được copy nguyên byte như Astro làm. */
 async function writeStaticImages(projectDir, distDir) {
-  for (const name of ["favicon.png", "og-image.png"]) {
+  for (const name of ["favicon.png", "og-image.png", "logo.png", "donate-qr.png"]) {
     const bytes = await readFile(new URL(`public/${name}`, projectRoot));
     await writeFile(join(projectDir, "public", name), bytes);
     await writeFile(join(distDir, name), bytes);
@@ -177,14 +254,27 @@ async function writeRecommendedFixture(projectDir, distDir, { legacyTeamsHash } 
     k: { [KHAIHOANG_TEAM_ID]: KHAIHOANG_HANDLE },
   };
   await writeFile(join(distDir, "index.html"), LANDING_HTML);
-  for (const spec of SECTION_PAGE_SPECS) {
-    await mkdir(join(distDir, spec.path), { recursive: true });
-    await writeFile(join(distDir, spec.path, "index.html"), sectionPageHtml({ ...spec, registry, pin, seasonHashes: SEASON_MARKER }));
+  await mkdir(join(distDir, "zh"), { recursive: true });
+  await writeFile(join(distDir, "zh", "index.html"), LANDING_ZH_HTML);
+  for (const locale of ["vi", "zh"]) {
+    for (const spec of SECTION_PAGE_SPECS) {
+      const dir = locale === "zh" ? join(distDir, "zh", spec.path) : join(distDir, spec.path);
+      await mkdir(dir, { recursive: true });
+      await writeFile(join(dir, "index.html"), sectionPageHtml({ ...spec, locale, registry, pin, seasonHashes: SEASON_MARKER }));
+    }
   }
-  await writeFile(
-    join(distDir, "404.html"),
-    '<!doctype html><head><meta name="robots" content="noindex"></head><h1 id="not-found-title">Không tìm thấy trang</h1>\n',
-  );
+  for (const locale of ["vi", "zh"]) {
+    for (const viPath of STATIC_PAGE_PATHS) {
+      const dir = join(distDir, ...(locale === "zh" ? ["zh"] : []), viPath.slice(1, -1));
+      await mkdir(dir, { recursive: true });
+      await writeFile(join(dir, "index.html"), staticPageHtml(locale, viPath));
+    }
+  }
+  await writeFile(join(distDir, "404.html"), NOT_FOUND_HTML);
+  for (const { htmlPath, mount, entry } of COMMUNITY_PAGES) {
+    await mkdir(join(distDir, dirname(htmlPath)), { recursive: true });
+    await writeFile(join(distDir, htmlPath), communityPageHtml(mount, entry));
+  }
   // The route cutover reads its frozen handles from the ledger of the same project root.
   await mkdir(join(projectDir, "pipeline"), { recursive: true });
   const khaiHoangBytes = jsonBytes({ teams: [{ id: KHAIHOANG_TEAM_ID, title: KHAIHOANG_TITLE }] });
@@ -206,25 +296,23 @@ async function writeRecommendedFixture(projectDir, distDir, { legacyTeamsHash } 
   await mkdir(join(projectDir, "public"), { recursive: true });
   await writeFile(join(projectDir, "public", "robots.txt"), FIXTURE_ROBOTS);
   await writeFile(join(distDir, "robots.txt"), FIXTURE_ROBOTS);
-  const sitemap = fixtureSitemapXml([
-    `${FIXTURE_ORIGIN}/`,
-    ...[
-      ...SECTION_LOCATIONS,
-      `${FIXTURE_ORIGIN}/doi-khac/${LEGACY_ROUTE_SEGMENT}/`,
-      `${FIXTURE_ORIGIN}/khai-hoang/${KHAIHOANG_ROUTE_SEGMENT}/`,
-    ].sort(),
-  ]);
+  const sitemap = orderedSitemap(FIXTURE_SITEMAP_ENTRIES);
   await writeFile(join(distDir, "sitemap.xml"), sitemap);
-  await mkdir(join(distDir, "doi-khac", LEGACY_ROUTE_SEGMENT), { recursive: true });
-  await writeFile(
-    join(distDir, "doi-khac", LEGACY_ROUTE_SEGMENT, "index.html"),
-    `<!doctype html><article id="team-detail-root" data-legacy-team-id="${LEGACY_TEAM_ID}" data-legacy-teams-sha256="sha256:${sha256(teamsBytes)}" data-generation-id="${generationId}" data-manifest-sha256="${sha256(manifest)}"></article><script type="module" src="/js/team-detail.js"></script>\n`,
-  );
-  await mkdir(join(distDir, "khai-hoang", KHAIHOANG_ROUTE_SEGMENT), { recursive: true });
-  await writeFile(
-    join(distDir, "khai-hoang", KHAIHOANG_ROUTE_SEGMENT, "index.html"),
-    `<!doctype html><article id="team-detail-root" data-family="khaihoang" data-khaihoang-team-id="${KHAIHOANG_TEAM_ID}" data-khaihoang-sha256="sha256:${sha256(khaiHoangBytes)}"></article><script type="module" src="/js/khaihoang-detail.js"></script>\n`,
-  );
+  await writeBlogOutputs(distDir);
+  // Trang chi tiết có bản Trung cùng pin identity dưới `zh/`.
+  for (const locale of ["vi", "zh"]) {
+    const base = locale === "zh" ? join(distDir, "zh") : distDir;
+    await mkdir(join(base, "doi-khac", LEGACY_ROUTE_SEGMENT), { recursive: true });
+    await writeFile(
+      join(base, "doi-khac", LEGACY_ROUTE_SEGMENT, "index.html"),
+      `<!doctype html>${pairHead(locale, `/doi-khac/${LEGACY_ROUTE_SEGMENT}/`)}<article id="team-detail-root" data-legacy-team-id="${LEGACY_TEAM_ID}" data-legacy-teams-sha256="sha256:${sha256(teamsBytes)}" data-generation-id="${generationId}" data-manifest-sha256="${sha256(manifest)}"></article><script type="module" src="/js/team-detail.js"></script>${COMMUNITY_MOUNT_HTML}\n`,
+    );
+    await mkdir(join(base, "khai-hoang", KHAIHOANG_ROUTE_SEGMENT), { recursive: true });
+    await writeFile(
+      join(base, "khai-hoang", KHAIHOANG_ROUTE_SEGMENT, "index.html"),
+      `<!doctype html>${pairHead(locale, `/khai-hoang/${KHAIHOANG_ROUTE_SEGMENT}/`)}<article id="team-detail-root" data-family="khaihoang" data-khaihoang-team-id="${KHAIHOANG_TEAM_ID}" data-khaihoang-sha256="sha256:${sha256(khaiHoangBytes)}"></article><script type="module" src="/js/khaihoang-detail.js"></script>${COMMUNITY_MOUNT_HTML}\n`,
+    );
+  }
   return { ledger, generationId, manifest, sitemap };
 }
 
@@ -646,6 +734,25 @@ test("dist verifier admits exactly the catalog team pages, the 404 and no stale 
     validLegacyPage.replace(/data-manifest-sha256="[^"]+"/, `data-manifest-sha256="${"0".repeat(64)}"`),
   );
   await assert.rejects(verify(), /lacks its validated pin/i);
+  // Trang chi tiết thiếu khối cộng đồng, hay trang cộng đồng bị index, đều làm hỏng build.
+  await writeFile(legacyPagePath, validLegacyPage.replace('<section id="community-root"></section>', ""));
+  await assert.rejects(verify(), /lacks its community section/i);
+  await writeFile(legacyPagePath, validLegacyPage);
+  const adminPath = join(distDir, "quan-tri", "index.html");
+  const validAdmin = await readFile(adminPath, "utf8");
+  await writeFile(adminPath, validAdmin.replace('<meta name="robots" content="noindex">', ""));
+  await assert.rejects(verify(), /community page must declare robots=noindex/i);
+  await writeFile(adminPath, validAdmin);
+  // Chính sách bảo mật là URL khai với Google OAuth: phải index được và canonical đúng bản ngôn ngữ.
+  const privacyZhPath = join(distDir, "zh", "chinh-sach-bao-mat", "index.html");
+  const validPrivacyZh = await readFile(privacyZhPath, "utf8");
+  await writeFile(privacyZhPath, validPrivacyZh.replace("<body>", '<meta name="robots" content="noindex"><body>'));
+  await assert.rejects(verify(), /static page must stay indexable/i);
+  await writeFile(privacyZhPath, validPrivacyZh.replace(`rel="canonical" href="${FIXTURE_ORIGIN}/zh/`, `rel="canonical" href="${FIXTURE_ORIGIN}/`));
+  await assert.rejects(verify(), /static page lacks its own canonical/i);
+  await writeFile(privacyZhPath, validPrivacyZh);
+  await rm(join(distDir, "chien-bao"), { recursive: true });
+  await assert.rejects(verify(), /missing: chien-bao\/index\.html/i);
 
   // A selected publication built from different raw originals must fail the build.
   const stale = await mkdtemp(join(tmpdir(), "tqccl-astro-teams-stale-"));
@@ -718,8 +825,10 @@ test("built dist is allowlisted and every emitted asset is byte-identical", asyn
     "QR SVG in dist/index.html lacks the generation command comment",
   );
   assert.match(qrProvenance, /qrcode@1\.5\.4/);
-  // Bộ lọc điểm đã bỏ từ Phase 5: mô tả /doi-chuan/ không còn nhắc "điểm".
-  assert.match(html, /<meta name="description" content="Danh sách đội hình Đội chuẩn theo dữ liệu SGSDeck Recommended, lọc theo phe, loại binh và mùa nguồn\."/);
+  // Mô tả /doi-chuan/ không nhắc bộ lọc điểm (đã bỏ từ Phase 5) và không nêu tên SGSDeck (nguồn ghi chung).
+  const doiChuanDescription = html.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? "";
+  assert.ok(doiChuanDescription, "/doi-chuan/ phải có meta description");
+  assert.doesNotMatch(doiChuanDescription, /SGSDeck|điểm/i);
 });
 
 test("built dist declares canonical, article metadata, robots and the catalog sitemap", async () => {
@@ -736,11 +845,14 @@ test("built dist declares canonical, article metadata, robots and the catalog si
 
   for (const entry of [catalog.recommended[0], catalog.legacy[0], catalog.khaiHoang[0]]) {
     assert.ok(entry, "the catalog must publish all three detail families");
-    const html = await read(entry.htmlPath);
-    const canonical = new URL(entry.routePath, origin).href;
-    assert.equal(linkHref(html, "canonical"), canonical, entry.htmlPath);
-    assert.equal(metaContent(html, "og:url"), canonical, entry.htmlPath);
-    assert.equal(metaContent(html, "og:type"), "article", entry.htmlPath);
+    // Canonical theo ngôn ngữ: bản Trung trỏ chính URL `/zh/…` của nó, không gộp về bản Việt.
+    for (const [htmlPath, routePath] of [[entry.htmlPath, entry.routePath], [`zh/${entry.htmlPath}`, zhPathOf(entry.routePath)]]) {
+      const html = await read(htmlPath);
+      const canonical = new URL(routePath, origin).href;
+      assert.equal(linkHref(html, "canonical"), canonical, htmlPath);
+      assert.equal(metaContent(html, "og:url"), canonical, htmlPath);
+      assert.equal(metaContent(html, "og:type"), "article", htmlPath);
+    }
   }
 
   const notFound = await read("404.html");
@@ -753,22 +865,32 @@ test("built dist declares canonical, article metadata, robots and the catalog si
     await readFile(new URL("../dist/robots.txt", import.meta.url)),
     await readFile(new URL("../public/robots.txt", import.meta.url)),
   );
-  assert.deepEqual(
-    robots.split(/\r?\n/u).filter(Boolean),
-    ["User-agent: *", "Allow: /", `Sitemap: ${rootHref}sitemap.xml`],
-  );
-  assert.doesNotMatch(robots, /Disallow/iu);
+  // Mỗi nhóm (mọi bot + bot AI khai tường minh) cho phép toàn site, chỉ chặn trang quản trị và API.
+  const groups = robots.split(/\n\s*\n/u).map((block) => block.split(/\r?\n/u).filter(Boolean));
+  const sitemapLine = groups.pop();
+  assert.deepEqual(sitemapLine, [`Sitemap: ${rootHref}sitemap.xml`]);
+  assert.deepEqual(groups.map((group) => group[0]), ["User-agent: *", "User-agent: GPTBot", "User-agent: ClaudeBot", "User-agent: PerplexityBot", "User-agent: Google-Extended"]);
+  for (const group of groups) {
+    assert.deepEqual(group.slice(1), ["Allow: /", "Disallow: /quan-tri/", "Disallow: /zh/quan-tri/", "Disallow: /api/"], group[0]);
+  }
 
   const sitemap = await read("sitemap.xml");
   assert.match(sitemap, /^<\?xml version="1\.0" encoding="UTF-8"\?>/u);
   const locations = [...sitemap.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
-  // Release baseline: Landing, 8 trang mục, 1366 Recommended, 166 legacy và 17 Khai hoang.
-  assert.equal(locations.length, 1558);
+  // Release baseline: Landing, 8 trang mục, chính sách bảo mật, 1366 Recommended, 166 legacy, 17 Khai hoang — mỗi route hai ngôn ngữ —
+  // và 2 trang danh sách blog (build không khai COMMUNITY_API_ORIGIN nên chưa có bài).
+  assert.equal(locations.length, 3120);
   assert.deepEqual(
     locations,
     [rootHref, ...[
-      ...SECTION_PAGE_SPECS.map(({ path }) => `/${path}/`),
-      ...[...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath),
+      "/zh/",
+      ...[
+        ...SECTION_PAGE_SPECS.map(({ path }) => `/${path}/`),
+        ...STATIC_PAGE_PATHS,
+        ...[...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath),
+      ].flatMap((path) => [path, zhPathOf(path)]),
+      "/bai-viet/",
+      "/zh/bai-viet/",
     ].sort().map((path) => new URL(path, origin).href)],
   );
   for (const location of locations) {
@@ -778,7 +900,7 @@ test("built dist declares canonical, article metadata, robots and the catalog si
   }
 });
 
-test("every canonical page declares site name, Vietnamese locale and an absolute og:image shipped in dist", async () => {
+test("every canonical page declares its own-language site name, locale and an absolute og:image shipped in dist", async () => {
   const origin = new URL(await configuredSite()).origin;
   const sitemap = await readFile(new URL("../dist/sitemap.xml", import.meta.url), "utf8");
   const pages = [...sitemap.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => new URL(location).pathname);
@@ -786,8 +908,10 @@ test("every canonical page declares site name, Vietnamese locale and an absolute
   for (const pathname of pages) {
     const html = await readFile(new URL(`../dist${pathname}index.html`, import.meta.url), "utf8");
     assert.ok(linkHref(html, "canonical"), pathname);
-    assert.equal(metaContent(html, "og:site_name"), "Cẩm Nang Tam Quốc Chí", pathname);
-    assert.equal(metaContent(html, "og:locale"), "vi_VN", pathname);
+    const zh = pathname.startsWith("/zh/");
+    assert.equal(metaContent(html, "og:site_name"), zh ? "三国志战略版攻略手册" : "Cẩm Nang Tam Quốc Chí", pathname);
+    assert.equal(metaContent(html, "og:locale"), zh ? "zh_CN" : "vi_VN", pathname);
+    assert.match(html, zh ? /<html lang="zh-Hans"/u : /<html lang="vi"/u, pathname);
     const image = metaContent(html, "og:image");
     assert.ok(image, `${pathname} lacks og:image`);
     const url = new URL(image);
@@ -809,22 +933,38 @@ test("sitemap endpoint publishes exactly the root page plus the catalog routes",
   assert.equal(response.headers.get("content-type"), SITEMAP_MIME);
   const xml = await response.text();
   assert.match(xml, /^<\?xml version="1\.0" encoding="UTF-8"\?>/u);
-  assert.match(xml, /<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9">/u);
-  assert.doesNotMatch(xml, /<lastmod>|<changefreq>|<priority>/u);
+  assert.match(xml, /<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9" xmlns:xhtml="http:\/\/www\.w3\.org\/1999\/xhtml">/u);
+  assert.doesNotMatch(xml, /<changefreq>|<priority>/u);
 
   const locations = [...xml.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
-  const routePaths = [
+  // Mỗi route bản Việt có bản Trung cùng đường dẫn dưới /zh (Landing, 8 trang mục, trang tĩnh, 3 họ chi tiết).
+  const mirrored = [
+    "/",
     ...SECTION_PAGE_SPECS.map(({ path }) => `/${path}/`),
+    ...STATIC_PAGE_PATHS,
     ...[...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath),
   ];
+  const routePaths = [...mirrored.flatMap((path) => [path, zhPathOf(path)]), "/bai-viet/", "/zh/bai-viet/"].filter((path) => path !== "/");
   assert.equal(catalog.recommended.length, 1366);
   assert.equal(catalog.legacy.length, 166);
   assert.equal(catalog.khaiHoang.length, 17);
-  assert.equal(locations.length, 1558);
+  assert.equal(locations.length, 3120);
   assert.deepEqual(
     locations,
     [new URL("/", origin).href, ...routePaths.sort().map((path) => new URL(path, origin).href)],
   );
+  // Mọi URL có bản gương khai đủ bộ hreflang trỏ cặp trang, x-default là bản Việt.
+  const urls = xml.split("<url>").slice(1);
+  for (const block of urls) {
+    const loc = block.match(/<loc>([^<]*)<\/loc>/u)[1];
+    const viPath = new URL(loc).pathname.replace(/^\/zh(?=\/)/u, "");
+    const alternates = [...block.matchAll(/<xhtml:link rel="alternate" hreflang="([^"]+)" href="([^"]+)"\/>/gu)].map(([, lang, href]) => `${lang} ${href}`);
+    assert.deepEqual(alternates, [
+      `vi ${new URL(viPath, origin).href}`,
+      `zh-Hans ${new URL(zhPathOf(viPath), origin).href}`,
+      `x-default ${new URL(viPath, origin).href}`,
+    ], loc);
+  }
   assert.equal(new Set(locations).size, locations.length);
   assert.equal(locations.filter((location) => new URL(location).pathname.startsWith("/teams/")).length, 0);
 });
@@ -842,6 +982,66 @@ test("sitemap XML escapes loc metacharacters", () => {
   const xml = sitemapDocument(FIXTURE_ORIGIN, ["/doi-chuan/a&b'c/"]);
   assert.match(xml, /<loc>https:\/\/tqccl\.pages\.dev\/doi-chuan\/a&amp;b&apos;c\/<\/loc>/u);
   assert.doesNotMatch(xml, /&(?!amp;|lt;|gt;|quot;|apos;)/u);
+});
+
+test("sitemap dates blog posts and each blog index by its newest post", () => {
+  const xml = sitemapDocument(FIXTURE_ORIGIN, blogSitemapRoutes([
+    { path: "/bai-viet/cu/", lang: "vi", updatedAt: "2026-09-01T00:00:00.000Z" },
+    { path: "/bai-viet/moi/", lang: "vi", updatedAt: "2026-09-20T08:00:00.000Z" },
+  ]));
+  const entry = (path) => xml.match(new RegExp(`<loc>${FIXTURE_ORIGIN}${path}</loc>\\n(?:    <lastmod>([^<]+)</lastmod>\\n)?`, "u"));
+  assert.equal(entry("/bai-viet/")[1], "2026-09-20T08:00:00.000Z");
+  assert.equal(entry("/bai-viet/cu/")[1], "2026-09-01T00:00:00.000Z");
+  // Bản zh chưa có bài: trang danh sách vẫn được publish nhưng không có ngày sửa.
+  assert.ok(entry("/zh/bai-viet/"));
+  assert.equal(entry("/zh/bai-viet/")[1], undefined);
+});
+
+/** Một bài đã render tối thiểu cho fixture dist (các trường mà JSON-LD, RSS và llms.txt dùng). */
+const FIXTURE_POST = {
+  id: "p1", slug: "cach-danh-dat", lang: "vi", translationKey: null, title: "Cách đánh đất", description: "Mẹo đánh đất cấp 6.",
+  bodyMarkdown: "Nội dung", faq: [], tags: ["khai hoang"], coverImage: null, author: { name: "Nguyên" },
+  publishedAt: "2026-09-10T00:00:00.000Z", updatedAt: "2026-09-12T00:00:00.000Z", createdAt: "2026-09-09T00:00:00.000Z",
+  path: "/bai-viet/cach-danh-dat/", html: "<p>Nội dung</p>", headings: [], readingMinutes: 1,
+};
+
+test("dist verifier admits blog posts only with consistent JSON-LD, index, feed and dated sitemap", async (t) => {
+  const { rm } = await import("node:fs/promises");
+  const projectDir = await mkdtemp(join(tmpdir(), "tqccl-blog-project-"));
+  const distDir = await mkdtemp(join(tmpdir(), "tqccl-blog-dist-"));
+  t.after(() => Promise.all([rm(projectDir, { recursive: true, force: true }), rm(distDir, { recursive: true, force: true })]));
+  await mkdir(join(projectDir, "public"), { recursive: true });
+  await writeFile(join(projectDir, "public", "_headers"), FIXTURE_HEADERS);
+  await writeFile(join(distDir, "_headers"), FIXTURE_HEADERS);
+  await writeStaticImages(projectDir, distDir);
+  await writeStaticFonts(projectDir, distDir);
+  await writeRecommendedFixture(projectDir, distDir);
+  const verify = () => verifyAstroDist({
+    projectRoot: new URL(`file://${projectDir}/`),
+    distDir: new URL(`file://${distDir}/`),
+    manifest: [],
+  });
+  await verify();
+
+  const postHtml = (data) => `<!doctype html><link rel="canonical" href="${FIXTURE_ORIGIN}${FIXTURE_POST.path}"><script type="application/ld+json">${jsonLd(data)}</script>\n`;
+  await mkdir(join(distDir, "bai-viet", FIXTURE_POST.slug), { recursive: true });
+  await writeFile(join(distDir, "bai-viet", FIXTURE_POST.slug, "index.html"), postHtml(articleJsonLd(FIXTURE_POST, FIXTURE_ORIGIN)));
+  // Bài mới trong dist mà danh sách, feed, sitemap chưa nhắc tới là output lệch.
+  await assert.rejects(verify(), /Blog index does not list/u);
+  await writeBlogOutputs(distDir, [FIXTURE_POST]);
+  await assert.rejects(verify(), /sitemap/iu);
+  const detailPaths = [`/doi-khac/${LEGACY_ROUTE_SEGMENT}/`, `/khai-hoang/${KHAIHOANG_ROUTE_SEGMENT}/`];
+  await writeFile(join(distDir, "sitemap.xml"), sitemapDocument(FIXTURE_ORIGIN, [
+    ...mirroredSitemapRoutes(mirroredSitemapPaths(detailPaths)),
+    ...blogSitemapRoutes([FIXTURE_POST]),
+  ]));
+  await verify();
+
+  // JSON-LD sai ngôn ngữ hoặc thiếu hẳn đều bị từ chối.
+  await writeFile(join(distDir, "bai-viet", FIXTURE_POST.slug, "index.html"), postHtml({ ...articleJsonLd(FIXTURE_POST, FIXTURE_ORIGIN), inLanguage: "en" }));
+  await assert.rejects(verify(), /BlogPosting JSON-LD/u);
+  await writeFile(join(distDir, "bai-viet", FIXTURE_POST.slug, "index.html"), "<!doctype html><p>bài</p>\n");
+  await assert.rejects(verify(), /BlogPosting JSON-LD/u);
 });
 
 test("dist verifier locks the emitted sitemap to the catalog route set", async (t) => {
@@ -870,18 +1070,22 @@ test("dist verifier locks the emitted sitemap to the catalog route set", async (
   const root = `${FIXTURE_ORIGIN}/`;
   const detail = `${FIXTURE_ORIGIN}/doi-khac/${LEGACY_ROUTE_SEGMENT}/`;
   const khaiHoang = `${FIXTURE_ORIGIN}/khai-hoang/${KHAIHOANG_ROUTE_SEGMENT}/`;
-  // Generator: root trước, rồi toàn bộ route (trang mục + chi tiết) đã sort.
-  const sitemapFor = (locations) => fixtureSitemapXml([root, ...[...locations].sort()]);
-  const catalogLocations = [...SECTION_LOCATIONS, detail, khaiHoang];
-  const complete = sitemapFor(catalogLocations);
-  const without = (location) => sitemapFor(catalogLocations.filter((item) => item !== location));
+  const locOf = (entry) => entry.loc;
+  // Generator: root trước, rồi toàn bộ route (trang mục + chi tiết, mỗi route hai ngôn ngữ) đã sort.
+  const complete = orderedSitemap(FIXTURE_SITEMAP_ENTRIES);
+  const without = (location) => orderedSitemap(FIXTURE_SITEMAP_ENTRIES.filter((entry) => locOf(entry) !== location));
   const rejected = {
-    "the root page is missing": fixtureSitemapXml([...catalogLocations].sort()),
+    "the root page is missing": fixtureSitemapXml(FIXTURE_SITEMAP_ENTRIES.filter((entry) => locOf(entry) !== root).sort((a, b) => (a.loc < b.loc ? -1 : 1))),
     "a section page is missing": without(SECTION_LOCATIONS[0]),
+    "a Chinese section page is missing": without(`${FIXTURE_ORIGIN}/zh/doi-chuan/`),
+    "the Chinese Landing is missing": without(`${FIXTURE_ORIGIN}/zh/`),
     "a legacy route is missing": without(detail),
+    "a Chinese legacy route is missing": without(`${FIXTURE_ORIGIN}/zh/doi-khac/${LEGACY_ROUTE_SEGMENT}/`),
     "a Khai hoang route is missing": without(khaiHoang),
-    "the retired family is published": sitemapFor([...catalogLocations, `${FIXTURE_ORIGIN}/teams/legacy/${LEGACY_TEAM_ID}/`]),
-    "a URL is published twice": sitemapFor([...catalogLocations, khaiHoang]),
+    "a blog index is missing": without(`${FIXTURE_ORIGIN}/zh/bai-viet/`),
+    "a page loses its hreflang alternates": orderedSitemap(FIXTURE_SITEMAP_ENTRIES.map((entry) => (entry.loc === detail ? entry.loc : entry))),
+    "the retired family is published": orderedSitemap([...FIXTURE_SITEMAP_ENTRIES, `${FIXTURE_ORIGIN}/teams/legacy/${LEGACY_TEAM_ID}/`]),
+    "a URL is published twice": orderedSitemap([...FIXTURE_SITEMAP_ENTRIES, khaiHoang]),
   };
   for (const [label, xml] of Object.entries(rejected)) {
     await writeFile(join(distDir, "sitemap.xml"), xml);
@@ -1083,10 +1287,10 @@ async function lookupDistFixture(t) {
   await writeStaticImages(projectDir, distDir);
   await writeStaticFonts(projectDir, distDir);
   await writeRecommendedFixture(projectDir, distDir);
-  // Pin mùa sống ở cả 5 trang mục có phạm vi mùa; fixture phải đổi đồng bộ mọi trang.
+  // Pin mùa sống ở mọi trang mục có phạm vi mùa, cả bản Việt lẫn bản Trung; fixture phải đổi đồng bộ mọi trang.
   const marker = async (hashes) => {
-    for (const spec of SECTION_PAGE_SPECS.filter((entry) => entry.season)) {
-      const pagePath = join(distDir, spec.path, "index.html");
+    for (const pagePath of SECTION_PAGE_SPECS.filter((entry) => entry.season)
+      .flatMap((spec) => [join(distDir, spec.path, "index.html"), join(distDir, "zh", spec.path, "index.html")])) {
       const html = await readFile(pagePath, "utf8");
       const stripped = html.replace(/<script id="season-artifact-hashes"[^>]*>[^<]*<\/script>\n?/, "");
       await writeFile(pagePath, `${stripped.trimEnd()}<script id="season-artifact-hashes" type="application/json">${JSON.stringify(hashes)}</script>\n`);

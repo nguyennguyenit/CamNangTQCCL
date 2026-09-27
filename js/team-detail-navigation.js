@@ -3,6 +3,7 @@
 // handle do caller bơm vào qua setTeamRouteHandles.
 
 import { resolveLegacyRoute } from './legacy-routes.js';
+import { currentLocale, localeFromPath, localePath, stripLocale } from './i18n.js';
 
 export const TEAM_RETURN_STORAGE_KEY = 'tqccl:team-return:v1';
 
@@ -19,7 +20,7 @@ export const KHAIHOANG_VARIANT_QUERY_KEY = 'khVariant';
  * Cùng Tồn chỉ có nhóm, cấu hình và phạm vi kịch bản/luật; hai công cụ không có trạng thái URL.
  */
 export const SECTION_QUERY_KEYS = Object.freeze({
-  '/doi-chuan/': ['season','q','faction','unit','view','subcategory','source','scenario','ruleset','config'],
+  '/doi-chuan/': ['season','q','faction','unit','tier','view','subcategory','source','scenario','ruleset','config'],
   '/doi-khac/': ['season','q','faction','unit','view','subcategory','source','scenario','ruleset','config'],
   '/cung-ton/': ['group','config','scenario','ruleset'],
   '/soi-doi-tu-anh/': [],
@@ -94,7 +95,11 @@ export function setTeamRouteHandlesFromJSON(raw) {
   return setTeamRouteHandles(payload);
 }
 
-export function teamDetailPath(target) {
+/**
+ * Đường dẫn trang chi tiết theo ngôn ngữ (`locale` mặc định là ngôn ngữ trang hiện tại):
+ * bản Trung nằm dưới `/zh/`, cùng route handle với bản Việt.
+ */
+export function teamDetailPath(target, locale = currentLocale()) {
   const families = teamRouteHandles;
   if (!families) return null;
   const [prefix, family, identity] = routableIdentifier(target?.sourceConfigId)
@@ -106,11 +111,11 @@ export function teamDetailPath(target) {
         : [];
   if (!prefix) return null;
   const segment = families[family]?.get(identity);
-  return segment ? `/${prefix}/${encodeURIComponent(segment)}/` : null;
+  return segment ? localePath(`/${prefix}/${encodeURIComponent(segment)}/`, locale) : null;
 }
 
-export function teamDetailHref(target, {from, origin} = {}) {
-  const path = teamDetailPath(target);
+export function teamDetailHref(target, {from, origin, locale = currentLocale()} = {}) {
+  const path = teamDetailPath(target, locale);
   if (!path) return null;
   const query = new URLSearchParams();
   // Khai hoang chỉ phát `variant` cho cấu hình nondefault; legacy giữ nguyên hành vi cũ.
@@ -128,7 +133,8 @@ export function teamDetailHref(target, {from, origin} = {}) {
 }
 
 /**
- * Chuẩn hóa URL quay lại: chỉ chấp nhận cùng origin và pathname thuộc 8 trang mục.
+ * Chuẩn hóa URL quay lại: chỉ chấp nhận cùng origin và pathname thuộc 8 trang mục, ở bản Việt
+ * hoặc bản Trung (tiền tố `/zh/`, xét tương đương bản Việt và giữ nguyên tiền tố).
  * URL gốc cũ (`/` + hash tab, hoặc `/` + khóa root cũ) được chuyển qua bảng của Landing rồi
  * xét như URL mới, nên link chi tiết đã chia sẻ trước cutover vẫn quay về đúng trang.
  * Bỏ hash của URL mục và bỏ selector mở lại chính trang chi tiết (không tạo vòng lặp).
@@ -154,9 +160,10 @@ function normalizedSectionTarget(raw, origin) {
     return null;
   }
   let candidate = url;
-  if (pathname === '/') {
+  const locale = localeFromPath(pathname);
+  if (stripLocale(pathname) === '/') {
     // Root cũ: chuẩn hóa bằng đúng bảng chuyển tiếp của Landing trước khi xét allowlist.
-    if (url.pathname !== '/') return null;
+    if (url.pathname !== localePath('/', locale)) return null;
     const normalized = resolveLegacyRoute(`${url.pathname}${url.search}${url.hash}`, RETURN_ORIGIN);
     if (!normalized) return null;
     try {
@@ -166,13 +173,16 @@ function normalizedSectionTarget(raw, origin) {
       return null;
     }
   }
-  if (!Object.hasOwn(SECTION_QUERY_KEYS, pathname) || candidate.pathname !== pathname) return null;
+  // Cùng một trang ở hai ngôn ngữ: allowlist xét trên pathname gốc tiếng Việt.
+  if (localeFromPath(pathname) !== locale || candidate.pathname !== pathname) return null;
+  const sectionPath = stripLocale(pathname);
+  if (!Object.hasOwn(SECTION_QUERY_KEYS, sectionPath)) return null;
   const params = new URLSearchParams();
   for (const [key, value] of candidate.searchParams) {
     if (LOOP_QUERY_KEYS.includes(key)) continue;
     params.append(key, value);
   }
-  return {pathname, params};
+  return {pathname: sectionPath, locale, params};
 }
 
 /** URL quay lại: giữ khóa được phép của đúng trang, bỏ lặng lẽ mọi khóa khác. */
@@ -186,17 +196,22 @@ export function safeReturnUrl(raw, {origin = globalThis.location?.origin} = {}) 
     params.append(key, value);
   }
   const search = params.toString();
-  return `${target.pathname}${search ? `?${search}` : ''}`;
+  return `${localePath(target.pathname, target.locale)}${search ? `?${search}` : ''}`;
 }
 
-export function familyReturnHref(family, {sourceSeasonId} = {}) {
-  if (family === 'khaihoang') return '/khai-hoang/';
+/**
+ * Trang danh sách của family theo ngôn ngữ (`locale` mặc định là ngôn ngữ trang hiện tại).
+ * @param {string} family
+ * @param {{sourceSeasonId?: string | null, locale?: string}} [options]
+ */
+export function familyReturnHref(family, {sourceSeasonId, locale = currentLocale()} = {}) {
+  if (family === 'khaihoang') return localePath('/khai-hoang/', locale);
   const params = new URLSearchParams();
   if (family === 'recommended') {
     if (sourceSeasonId && sourceSeasonId !== 'all') params.set('season', sourceSeasonId);
   }
   const search = params.toString();
-  const path = family === 'recommended' ? '/doi-chuan/' : '/doi-khac/';
+  const path = localePath(family === 'recommended' ? '/doi-chuan/' : '/doi-khac/', locale);
   return `${path}${search ? `?${search}` : ''}`;
 }
 
@@ -214,7 +229,7 @@ export function khaiHoangContextKey(raw, {origin = globalThis.location?.origin} 
   const url = safeReturnUrl(raw, {origin});
   if (!url) return null;
   const target = new URL(url, RETURN_ORIGIN);
-  if (target.pathname !== '/khai-hoang/') return null;
+  if (stripLocale(target.pathname) !== '/khai-hoang/') return null;
   target.searchParams.delete(KHAIHOANG_TEAM_QUERY_KEY);
   target.searchParams.delete(KHAIHOANG_VARIANT_QUERY_KEY);
   const search = target.searchParams.toString();
@@ -411,12 +426,14 @@ export function migrateLegacyReferenceUrl(href, resolver = {}) {
   const legacyTeamId = url.searchParams.get('legacyTeam');
   const legacyVariantId = url.searchParams.get('legacyVariant');
   const from = safeReturnUrl(`${url.pathname}${url.search}${url.hash}`);
+  // Trang chi tiết cùng ngôn ngữ với URL cũ đang mở.
+  const locale = localeFromPath(url.pathname);
   if (detail && resolver.hasRecommended?.(detail)) {
-    const target = teamDetailHref({sourceConfigId: detail}, {from});
+    const target = teamDetailHref({sourceConfigId: detail}, {from, locale});
     if (target) return {target, replace: true};
   }
   if (legacyTeamId && resolver.hasLegacy?.(legacyTeamId)) {
-    const target = teamDetailHref({legacyTeamId, legacyVariantId}, {from});
+    const target = teamDetailHref({legacyTeamId, legacyVariantId}, {from, locale});
     if (target) return {target, replace: true};
   }
   return null;

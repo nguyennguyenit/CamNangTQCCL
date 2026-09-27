@@ -1,15 +1,5 @@
 ---
-import SiteLayout from '../../layouts/SiteLayout.astro';
-const canonicalUrl = new URL('/theo-doi-chieu-mo/', Astro.site);
+// Trang mục bản Việt: nội dung ở src/components/pages/SectionPage.astro (dùng chung với bản `/zh/`).
+import SectionPage from '../../components/pages/SectionPage.astro';
 ---
-<SiteLayout
-  title="Theo dõi chiêu mộ — Cẩm Nang Game Tam Quốc Chí - Chiến Lược"
-  description="Theo dõi chiêu mộ theo tài khoản: lịch sử, mốc bảo hiểm và số lượt còn lại của từng đợt."
-  pageKind="section"
-  activeSection="recruit-tracker"
-  canonicalUrl={canonicalUrl}
->
-  <section id="section-recruit-tracker" class="section active"></section>
-
-  <script is:inline type="module" src="/js/app.js" slot="scripts"></script>
-</SiteLayout>
+<SectionPage section="recruit-tracker" locale="vi" />

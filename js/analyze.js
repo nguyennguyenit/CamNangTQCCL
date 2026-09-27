@@ -1,4 +1,4 @@
-import { SOURCE_LABEL } from "./render.js";
+import { sourceLabel as legacySourceLabel } from "./render.js";
 // Section "Soi đội từ ảnh" (Phase 4): upload/paste ảnh -> nén client -> Turnstile
 // (lazy-load) -> gọi Worker -> map 3 trục (analyze-map) -> render + đối chiếu team.
 // Turnstile script chỉ nạp khi mở trang này.
@@ -7,69 +7,79 @@ import { el, icon, svgNode } from "./render.js";
 import { heroPortrait } from "./hero-portrait.js";
 import { ANALYZE_CONFIG, isAnalyzeConfigured } from "./config.js";
 import { mapTeamRead, findSimilarTeams } from "./analyze-map.js";
+import { L, currentLocale } from "./i18n.js";
+import { createRawNameResolver, localName } from "./website-display.js";
 
-const DISCLAIMER =
+// `<html lang>` cố định theo trang nên các hằng dịch lúc nạp module vẫn đúng ngôn ngữ.
+const DISCLAIMER = L(
   "Ảnh được gửi tới Alibaba Cloud DashScope để phân tích (không lưu lại). " +
-  "Tránh ảnh lộ tên tài khoản; nên crop chỉ phần đội hình.";
+  "Tránh ảnh lộ tên tài khoản; nên crop chỉ phần đội hình.",
+  "图片将发送至阿里云 DashScope 进行分析（不会保存）。请避免截图中出现账号名称，建议只裁剪阵容部分。",
+);
 
 /* ---------- Thông điệp lỗi (không để lọt văn bản upstream) ---------- */
 // Mọi câu lỗi hiển thị cho người dùng đều lấy từ các bảng dưới đây. Văn bản lạ
 // từ Worker/model (tiếng Trung, tiếng Anh, stack trace…) luôn bị thay bằng câu
 // chung, không bao giờ render nguyên văn.
-export const ANALYZE_GENERIC_ERROR = "Không thể phân tích ảnh. Vui lòng thử lại.";
-export const ANALYZE_ACTION_ERROR = "Không thể hoàn tất thao tác. Vui lòng thử lại.";
-const AI_SERVICE_ERROR = "Dịch vụ AI đang gặp sự cố. Thử lại sau ít phút.";
+export const ANALYZE_GENERIC_ERROR = L("Không thể phân tích ảnh. Vui lòng thử lại.", "无法分析图片，请重试。");
+export const ANALYZE_ACTION_ERROR = L("Không thể hoàn tất thao tác. Vui lòng thử lại.", "无法完成操作，请重试。");
+const AI_SERVICE_ERROR = L("Dịch vụ AI đang gặp sự cố. Thử lại sau ít phút.", "AI 服务出现故障，请几分钟后再试。");
+const INVALID_REQUEST_ERROR = L("Yêu cầu không hợp lệ. Tải lại trang rồi thử lại.", "请求无效，请刷新页面后重试。");
+const IMAGE_TOO_LARGE_ERROR = L("Ảnh quá lớn. Hãy crop hoặc giảm kích thước rồi thử lại.", "图片过大，请裁剪或缩小尺寸后重试。");
+const IMAGE_TYPE_ERROR = L("Chỉ nhận ảnh PNG, JPEG hoặc WebP.", "仅支持 PNG、JPEG 或 WebP 图片。");
+const SERVICE_NOT_FOUND_ERROR = L("Không tìm thấy dịch vụ soi ảnh. Thử lại sau.", "未找到识图服务，请稍后再试。");
+const TOO_MANY_TRIES_ERROR = L("Bạn thử quá nhiều lần. Đợi một lát rồi thử lại.", "尝试次数过多，请稍等片刻后重试。");
 
 
 const STATUS_ERRORS = {
-  400: "Yêu cầu không hợp lệ. Tải lại trang rồi thử lại.",
-  403: "Xác thực chống bot chưa hợp lệ. Xác thực lại rồi thử.",
-  404: "Không tìm thấy dịch vụ soi ảnh. Thử lại sau.",
-  413: "Ảnh quá lớn. Hãy crop hoặc giảm kích thước rồi thử lại.",
-  415: "Chỉ nhận ảnh PNG, JPEG hoặc WebP.",
-  422: "Không đọc được đội từ ảnh. Thử ảnh rõ hơn.",
-  429: "Hết lượt soi hôm nay. Thử lại sau.",
+  400: INVALID_REQUEST_ERROR,
+  403: L("Xác thực chống bot chưa hợp lệ. Xác thực lại rồi thử.", "人机验证无效，请重新验证后再试。"),
+  404: SERVICE_NOT_FOUND_ERROR,
+  413: IMAGE_TOO_LARGE_ERROR,
+  415: IMAGE_TYPE_ERROR,
+  422: L("Không đọc được đội từ ảnh. Thử ảnh rõ hơn.", "无法从图片中识别队伍，请换一张更清晰的图片。"),
+  429: L("Hết lượt soi hôm nay. Thử lại sau.", "今日识图次数已用完，请稍后再试。"),
   500: ANALYZE_GENERIC_ERROR,
   502: AI_SERVICE_ERROR,
-  503: "Tính năng soi ảnh đang tạm nghỉ. Thử lại sau.",
+  503: L("Tính năng soi ảnh đang tạm nghỉ. Thử lại sau.", "识图功能暂停服务，请稍后再试。"),
 };
 
-// Chuỗi lỗi ĐÃ BIẾT (Worker hiện tại + upstream DashScope) -> câu tiếng Việt cố
-// định. Khóa là chuỗi đã chuẩn hóa (trim + lowercase).
+// Chuỗi lỗi ĐÃ BIẾT (Worker hiện tại + upstream DashScope) -> câu cố định theo ngôn ngữ
+// trang. Khóa là chuỗi đã chuẩn hóa (trim + lowercase).
 const UPSTREAM_ERRORS = new Map(Object.entries({
-  "thiếu ảnh": "Chưa có ảnh để soi. Chọn ảnh rồi thử lại.",
-  "ảnh quá lớn": "Ảnh quá lớn. Hãy crop hoặc giảm kích thước rồi thử lại.",
-  "base64 không hợp lệ": "Ảnh gửi lên bị lỗi. Chọn lại ảnh rồi thử.",
-  "ảnh quá nhỏ / hỏng": "Ảnh quá nhỏ hoặc bị hỏng. Chọn ảnh khác.",
-  "chỉ nhận ảnh png/jpeg/webp": "Chỉ nhận ảnh PNG, JPEG hoặc WebP.",
-  "body json không hợp lệ": "Yêu cầu không hợp lệ. Tải lại trang rồi thử lại.",
-  "mode không hợp lệ": "Yêu cầu không hợp lệ. Tải lại trang rồi thử lại.",
-  "origin không được phép": "Trang chưa được phép gọi dịch vụ soi ảnh.",
-  "not found": "Không tìm thấy dịch vụ soi ảnh. Thử lại sau.",
-  "tính năng đang tắt": "Tính năng soi ảnh đang tạm tắt. Thử lại sau.",
-  "đã đạt giới hạn tháng, tạm dừng": "Đã hết lượt soi của tháng này. Thử lại sau.",
-  "hết lượt hôm nay": "Hết lượt soi hôm nay. Thử lại vào ngày mai.",
-  "bạn thử quá nhiều lần, đợi chút": "Bạn thử quá nhiều lần. Đợi một lát rồi thử lại.",
-  "thiếu xác thực chống bot": "Cần xác thực chống bot trước khi soi ảnh.",
+  "thiếu ảnh": L("Chưa có ảnh để soi. Chọn ảnh rồi thử lại.", "尚未选择图片，请选择图片后重试。"),
+  "ảnh quá lớn": IMAGE_TOO_LARGE_ERROR,
+  "base64 không hợp lệ": L("Ảnh gửi lên bị lỗi. Chọn lại ảnh rồi thử.", "上传的图片有误，请重新选择图片再试。"),
+  "ảnh quá nhỏ / hỏng": L("Ảnh quá nhỏ hoặc bị hỏng. Chọn ảnh khác.", "图片过小或已损坏，请换一张图片。"),
+  "chỉ nhận ảnh png/jpeg/webp": IMAGE_TYPE_ERROR,
+  "body json không hợp lệ": INVALID_REQUEST_ERROR,
+  "mode không hợp lệ": INVALID_REQUEST_ERROR,
+  "origin không được phép": L("Trang chưa được phép gọi dịch vụ soi ảnh.", "本页面无权调用识图服务。"),
+  "not found": SERVICE_NOT_FOUND_ERROR,
+  "tính năng đang tắt": L("Tính năng soi ảnh đang tạm tắt. Thử lại sau.", "识图功能已暂时关闭，请稍后再试。"),
+  "đã đạt giới hạn tháng, tạm dừng": L("Đã hết lượt soi của tháng này. Thử lại sau.", "本月识图次数已用完，请稍后再试。"),
+  "hết lượt hôm nay": L("Hết lượt soi hôm nay. Thử lại vào ngày mai.", "今日识图次数已用完，请明天再试。"),
+  "bạn thử quá nhiều lần, đợi chút": TOO_MANY_TRIES_ERROR,
+  "thiếu xác thực chống bot": L("Cần xác thực chống bot trước khi soi ảnh.", "识图前需先完成人机验证。"),
   "dịch vụ ai tạm lỗi, thử lại sau": AI_SERVICE_ERROR,
-  "dịch vụ ai đang quá tải, thử lại sau": "Dịch vụ AI đang quá tải. Đợi vài phút rồi thử lại.",
-  "dịch vụ soi ảnh chưa được cấu hình": "Dịch vụ soi ảnh chưa sẵn sàng. Thử lại sau.",
-  "lỗi xác thực, thử lại": "Xác thực chống bot lỗi. Thử lại.",
-  "xác thực chống bot thất bại": "Xác thực chống bot thất bại. Thử lại.",
+  "dịch vụ ai đang quá tải, thử lại sau": L("Dịch vụ AI đang quá tải. Đợi vài phút rồi thử lại.", "AI 服务繁忙，请几分钟后再试。"),
+  "dịch vụ soi ảnh chưa được cấu hình": L("Dịch vụ soi ảnh chưa sẵn sàng. Thử lại sau.", "识图服务尚未就绪，请稍后再试。"),
+  "lỗi xác thực, thử lại": L("Xác thực chống bot lỗi. Thử lại.", "人机验证出错，请重试。"),
+  "xác thực chống bot thất bại": L("Xác thực chống bot thất bại. Thử lại.", "人机验证失败，请重试。"),
   "lỗi xử lý, thử lại sau": ANALYZE_GENERIC_ERROR,
   "lỗi xử lý": ANALYZE_GENERIC_ERROR,
   // Upstream tiếng Trung / tiếng Anh đã gặp: gộp về câu chung, không render gốc.
   "服务器内部错误": ANALYZE_GENERIC_ERROR,
   "internal server error": ANALYZE_GENERIC_ERROR,
-  "请求过于频繁": "Bạn thử quá nhiều lần. Đợi một lát rồi thử lại.",
-  "too many requests": "Bạn thử quá nhiều lần. Đợi một lát rồi thử lại.",
+  "请求过于频繁": TOO_MANY_TRIES_ERROR,
+  "too many requests": TOO_MANY_TRIES_ERROR,
 }));
 
 function normalizeUpstreamError(value) {
   return typeof value === "string" ? value.trim().toLowerCase() : "";
 }
 
-/** Đổi lỗi Worker (status + message thô) thành câu tiếng Việt trong danh sách. */
+/** Đổi lỗi Worker (status + message thô) thành câu cố định trong danh sách, theo ngôn ngữ trang. */
 export function localizeWorkerError(rawError, status) {
   return (
     UPSTREAM_ERRORS.get(normalizeUpstreamError(rawError)) ||
@@ -85,7 +95,7 @@ function localizedError(message, extra) {
   return err;
 }
 
-/** Câu tiếng Việt an toàn cho bất kỳ lỗi nào trước khi đưa lên UI. */
+/** Câu an toàn (theo ngôn ngữ trang) cho bất kỳ lỗi nào trước khi đưa lên UI. */
 export function describeAnalyzeError(error, fallback = ANALYZE_GENERIC_ERROR) {
   return error?.localized && error.message ? error.message : fallback;
 }
@@ -151,7 +161,7 @@ export function compressImage(file) {
     };
     img.onerror = () => {
       URL.revokeObjectURL(url);
-      reject(new Error("Không đọc được ảnh"));
+      reject(localizedError(L("Không đọc được ảnh", "无法读取图片")));
     };
     img.src = url;
   });
@@ -166,18 +176,18 @@ export function loadTurnstile() {
     s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
     s.async = true;
     s.onload = () => resolve(window.turnstile);
-    s.onerror = () => reject(new Error("Không tải được Turnstile"));
+    s.onerror = () => reject(localizedError(L("Không tải được Turnstile", "Turnstile 加载失败")));
     document.head.append(s);
   });
   return turnstileLoading;
 }
 
 /** Câu báo khi widget Turnstile lỗi (mạng, domain không nằm trong danh sách site key, …). */
-export const TURNSTILE_ERROR_MESSAGE = "Xác thực chống bot không thành công. Tải lại trang rồi thử lại.";
+export const TURNSTILE_ERROR_MESSAGE = L("Xác thực chống bot không thành công. Tải lại trang rồi thử lại.", "人机验证未通过，请刷新页面后重试。");
 
 /**
  * Nạp Turnstile rồi vẽ widget vào `box`. Lỗi của widget đi qua `error-callback`: bỏ token (`onExpire`),
- * báo câu tiếng Việt (`onError`) và trả `true` để widget không ném `TurnstileError` ra trang.
+ * báo câu theo ngôn ngữ trang (`onError`) và trả `true` để widget không ném `TurnstileError` ra trang.
  * Promise bị từ chối khi không tải được script.
  */
 export async function renderTurnstileWidget(box, { onToken, onExpire, onError }) {
@@ -234,10 +244,19 @@ const shieldIcon = () => icon([
   svgNode("path", { d: "M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" }),
 ], { size: 16 });
 
+/**
+ * Tên hiển thị của một ô đã map: bản Việt dùng tên Việt canonical; bản zh dùng chữ Hán đọc được
+ * từ ảnh (đúng như trong game); ô trống giữ nhãn "chưa rõ" đã dịch.
+ */
+function shownName(item) {
+  if (currentLocale() !== "zh") return item.viet;
+  return (item.cn || "").trim() || item.viet;
+}
+
 function heroResultCard(m) {
   const flag = m.hero.sure
     ? null
-    : el("span", { class: "ana-flag", title: "Độ tin thấp, kiểm tra lại" }, [alertIcon(), "kiểm tra"]);
+    : el("span", { class: "ana-flag", title: L("Độ tin thấp, kiểm tra lại", "置信度低，请核对") }, [alertIcon(), L("kiểm tra", "待核对")]);
   // Icon official (hotlink) để mắt thường xác nhận; dùng helper chân dung chung (nâng https, no-referrer),
   // gãy/403 -> bỏ ảnh, không chặn text.
   const portrait = m.hero.icon
@@ -250,22 +269,22 @@ function heroResultCard(m) {
     : null;
   const tactics = el("div", { class: "ana-tactics" },
     m.tactics.map((t) =>
-      el("span", { class: `ana-tac${t.sure ? "" : " unsure"}`, title: t.sure ? "" : "Không chắc" }, t.viet),
+      el("span", { class: `ana-tac${t.sure ? "" : " unsure"}`, title: t.sure ? "" : L("Không chắc", "不确定") }, shownName(t)),
     ),
   );
   // Binh thư (dòng vàng) — hiển thị, không tính điểm so khớp.
   const books = (m.books && m.books.length)
     ? el("div", { class: "ana-books" },
         m.books.map((b) =>
-          el("span", { class: `ana-book${b.sure ? "" : " unsure"}`, title: b.sure ? "" : "Không chắc" }, b.viet),
+          el("span", { class: `ana-book${b.sure ? "" : " unsure"}`, title: b.sure ? "" : L("Không chắc", "不确定") }, shownName(b)),
         ),
       )
     : null;
   return el("div", { class: "ana-hero" }, [
     el("div", { class: "ana-hero-head" }, [
       portrait,
-      el("span", { class: "ana-hero-name" }, m.hero.viet),
-      m.statFocus ? el("span", { class: "ana-stat" }, m.statFocus) : null,
+      el("span", { class: "ana-hero-name" }, shownName(m.hero)),
+      m.statFocus ? el("span", { class: "ana-stat" }, currentLocale() === "zh" ? m.statFocusCn || m.statFocus : m.statFocus) : null,
       flag,
     ]),
     tactics,
@@ -278,13 +297,18 @@ function heroResultCard(m) {
  * (`team.name`, thiếu thì mã đội) và số khớp tướng/chiến pháp. Điểm, mùa và trạng thái khớp theo
  * artboard không có trong dữ liệu này nên giữ cách hiển thị cũ (xem báo cáo phase 9).
  */
-function similarTeamRow(s, onOpen) {
+function similarTeamRow(s, onOpen, resolveRaw) {
   const team = s.team || {};
+  // Tên đội trong dữ liệu chỉ có bản Việt: bản zh gọi đội bằng tên chữ Hán của các tướng trong đội.
+  const zhName = currentLocale() === "zh" && team.heroes?.length
+    ? team.heroes.map((hero) => localName(hero?.name, resolveRaw)).filter(Boolean).join(" · ")
+    : "";
   // Nhãn nguồn tách các đội trùng tên (22 tên dùng chung cho 48/166 đội).
-  const sourceLabel = SOURCE_LABEL[team.source] || team.source || "";
-  const label = `${s.heroHit}/${s.total} tướng` + (s.tacticHit ? ` · ${s.tacticHit} chiến pháp` : "")
+  const sourceLabel = team.source ? legacySourceLabel(team.source) : "";
+  const label = L(`${s.heroHit}/${s.total} tướng`, `${s.heroHit}/${s.total} 名武将`)
+    + (s.tacticHit ? L(` · ${s.tacticHit} chiến pháp`, ` · ${s.tacticHit} 个战法`) : "")
     + (sourceLabel ? ` · ${sourceLabel}` : "");
-  const btn = el("button", { class: "ana-team-link", type: "button" }, team.name || team.id || "team");
+  const btn = el("button", { class: "ana-team-link", type: "button" }, zhName || team.name || team.id || "team");
   if (onOpen) btn.addEventListener("click", () => onOpen(team));
   return el("li", { class: "ana-team-row", dataset: team.id ? { teamId: team.id } : {} }, [
     btn,
@@ -301,10 +325,12 @@ function renderResults(readBox, similarBox, result, deps) {
   readBox.append(el("div", { class: "ana-heroes" }, mapped.map(heroResultCard)));
 
   const similar = findSimilarTeams(mapped, deps.teams, { minHeroes: 2 });
+  const resolveRaw = currentLocale() === "zh" ? createRawNameResolver(deps.heroesDict) : null;
   if (similar.length) {
-    similarBox.append(el("ol", { class: "ana-teams" }, similar.map((s) => similarTeamRow(s, deps.onOpenTeam))));
+    similarBox.append(el("ol", { class: "ana-teams" }, similar.map((s) => similarTeamRow(s, deps.onOpenTeam, resolveRaw))));
   } else {
-    similarBox.append(el("p", { class: "ana-note" }, "Không tìm thấy đội có sẵn nào có mức độ tương đồng đủ cao (≥2 tướng trùng)."));
+    similarBox.append(el("p", { class: "ana-note" }, L("Không tìm thấy đội có sẵn nào có mức độ tương đồng đủ cao (≥2 tướng trùng)."
+      , "未找到相似度足够高的现有队伍（需至少 2 名武将相同）。")));
   }
   return true;
 }
@@ -314,8 +340,8 @@ export function initAnalyze(deps, mount) {
   if (!isAnalyzeConfigured()) {
     mount.replaceChildren(
       el("div", { class: "ana-setup" }, [
-        el("p", {}, "Tính năng soi đội chưa được cấu hình."),
-        el("p", { class: "ana-note" }, "Cần deploy Worker (worker/) + điền workerUrl & turnstileSiteKey trong js/config.js."),
+        el("p", {}, L("Tính năng soi đội chưa được cấu hình.", "“截图识阵”功能尚未配置。")),
+        el("p", { class: "ana-note" }, L("Cần deploy Worker (worker/) + điền workerUrl & turnstileSiteKey trong js/config.js.", "需部署 Worker（worker/），并在 js/config.js 中填写 workerUrl 与 turnstileSiteKey。")),
       ]),
     );
     return;
@@ -325,37 +351,37 @@ export function initAnalyze(deps, mount) {
   const state = { imageDataUrl: null, fileName: '', token: null, busy: false, done: false };
   const drop = el("button", { type: "button", class: "ana-drop" }, [
     cameraIcon(),
-    el("span", { class: "ana-drop-title" }, "Kéo thả ảnh, dán (Ctrl+V) hoặc bấm để chọn"),
-    el("span", { class: "ana-drop-note" }, "PNG, JPEG hoặc WebP · nên crop chỉ phần đội hình"),
+    el("span", { class: "ana-drop-title" }, L("Kéo thả ảnh, dán (Ctrl+V) hoặc bấm để chọn", "拖放图片、粘贴（Ctrl+V）或点击选择")),
+    el("span", { class: "ana-drop-note" }, L("PNG, JPEG hoặc WebP · nên crop chỉ phần đội hình", "PNG、JPEG 或 WebP · 建议只裁剪阵容部分")),
   ]);
   const fileInput = el("input", { type: "file", accept: "image/*", class: "ana-file" });
-  const preview = el("img", { class: "ana-preview", alt: "Ảnh đã chọn" });
+  const preview = el("img", { class: "ana-preview", alt: L("Ảnh đã chọn", "已选图片") });
   const fileName = el("span", { class: "ana-file-name" });
   const fileRow = el("div", { class: "ana-file-row", hidden: "" }, [
     el("span", { class: "ana-thumb" }, [preview]),
     el("div", { class: "ana-file-info" }, [
       fileName,
-      el("span", { class: "rt-sub" }, "Đã nén · sẵn sàng gửi"),
-      el("button", { class: "tool-text-action", type: "button", onclick: () => fileInput.click() }, "Chọn ảnh khác"),
+      el("span", { class: "rt-sub" }, L("Đã nén · sẵn sàng gửi", "已压缩 · 可发送")),
+      el("button", { class: "tool-text-action", type: "button", onclick: () => fileInput.click() }, L("Chọn ảnh khác", "换一张图片")),
     ]),
   ]);
   const tsBox = el("div", { class: "ana-turnstile" });
-  const analyzeBtn = el("button", { class: "ana-btn primary ana-run", type: "button", disabled: "" }, "Soi đội");
+  const analyzeBtn = el("button", { class: "ana-btn primary ana-run", type: "button", disabled: "" }, L("Soi đội", "识别阵容"));
   const status = el("p", { class: "ana-status", role: "status" });
   const heroBox = el("div", { class: "ana-read-body" });
   const similarBox = el("div", { class: "ana-similar-body" });
   const similarCard = el("section", { class: "ana-card ana-similar", hidden: "" }, [
     el("header", { class: "ana-card-head" }, [
-      el("h2", { class: "ana-card-title" }, "3 · Đội có sẵn tương tự"),
-      el("span", { class: "rt-sub" }, "Theo số tướng và chiến pháp trùng"),
+      el("h2", { class: "ana-card-title" }, L("3 · Đội có sẵn tương tự", "3 · 相似的现有队伍")),
+      el("span", { class: "rt-sub" }, L("Theo số tướng và chiến pháp trùng", "按相同武将与战法数量排序")),
     ]),
     similarBox,
   ]);
 
   const steps = [
-    { label: "Nén ảnh", done: () => Boolean(state.imageDataUrl) },
-    { label: "Xác thực chống bot", done: () => Boolean(state.token) },
-    { label: "Soi đội và đối chiếu", doneLabel: "Đã đọc xong — kiểm tra lại kết quả đã đọc", done: () => state.done },
+    { label: L("Nén ảnh", "压缩图片"), done: () => Boolean(state.imageDataUrl) },
+    { label: L("Xác thực chống bot", "人机验证"), done: () => Boolean(state.token) },
+    { label: L("Soi đội và đối chiếu", "识别阵容并比对"), doneLabel: L("Đã đọc xong — kiểm tra lại kết quả đã đọc", "识别完成——请核对识别结果"), done: () => state.done },
   ].map((step) => {
     const mark = checkIcon();
     const labelNode = el("span", {}, step.label);
@@ -364,19 +390,19 @@ export function initAnalyze(deps, mount) {
     const node = el("li", { class: "ana-step" }, [markWrap, labelNode]);
     return { ...step, node, markWrap, labelNode };
   });
-  const stepList = el("ol", { class: "ana-steps", "aria-label": "Trạng thái" }, steps.map((step) => step.node));
+  const stepList = el("ol", { class: "ana-steps", "aria-label": L("Trạng thái", "状态") }, steps.map((step) => step.node));
 
   // Thẻ "2 · Đội đọc được" ẩn tới khi có kết quả như thẻ 3; lỗi/tiến trình vẫn báo qua dòng `role=status` ở thẻ 1.
   const readCard = el("section", { class: "ana-card ana-read", hidden: "" }, [
     el("header", { class: "ana-card-head" }, [
-      el("h2", { class: "ana-card-title" }, "2 · Đội đọc được"),
-      el("span", { class: "rt-sub" }, "Tên Việt chuẩn · icon chỉ để đối chiếu"),
+      el("h2", { class: "ana-card-title" }, L("2 · Đội đọc được", "2 · 识别出的队伍")),
+      el("span", { class: "rt-sub" }, L("Tên Việt chuẩn · icon chỉ để đối chiếu", "原版中文名 · 头像仅供比对")),
     ]),
     heroBox,
   ]);
 
   const pickCard = el("section", { class: "ana-card ana-pick" }, [
-    el("h2", { class: "ana-card-title" }, "1 · Chọn ảnh"),
+    el("h2", { class: "ana-card-title" }, L("1 · Chọn ảnh", "1 · 选择图片")),
     el("p", { class: "tool-notice" }, [
       el("span", { class: "tool-notice-icon", "aria-hidden": "true" }, [shieldIcon()]),
       el("span", { class: "ana-disclaimer-text" }, DISCLAIMER),
@@ -392,9 +418,9 @@ export function initAnalyze(deps, mount) {
 
   const head = el("header", { class: "tool-head" }, [
     el("div", { class: "reference-head-text" }, [
-      el("span", { class: "reference-kicker" }, "Công cụ · Beta"),
-      el("h1", { class: "reference-title", tabindex: "-1" }, "Soi đội từ ảnh"),
-      el("p", { class: "reference-lead" }, "Chụp màn hình đội hình, AI đọc tên tướng và chiến pháp, rồi đối chiếu với các đội trong cẩm nang."),
+      el("span", { class: "reference-kicker" }, L("Công cụ · Beta", "工具 · Beta")),
+      el("h1", { class: "reference-title", tabindex: "-1" }, L("Soi đội từ ảnh", "截图识阵")),
+      el("p", { class: "reference-lead" }, L("Chụp màn hình đội hình, AI đọc tên tướng và chiến pháp, rồi đối chiếu với các đội trong cẩm nang.", "截取阵容画面，AI 识别武将与战法名称，再与攻略中的队伍进行比对。")),
     ]),
   ]);
 
@@ -439,17 +465,17 @@ export function initAnalyze(deps, mount) {
     if (!file || !file.type.startsWith("image/")) return;
     const started = ++generation;
     clearResults();
-    setStatus("Đang nén ảnh…");
+    setStatus(L("Đang nén ảnh…", "正在压缩图片…"));
     try {
       const compressed = await compressImage(file);
       if (started !== generation) return;
       state.imageDataUrl = compressed;
-      state.fileName = file.name || "ảnh đã chọn";
+      state.fileName = file.name || L("ảnh đã chọn", "已选图片");
       preview.src = state.imageDataUrl;
       fileName.textContent = state.fileName;
       setStatus("");
     } catch (e) {
-      setStatus(e.message, "err");
+      setStatus(describeAnalyzeError(e), "err");
     }
     paint();
   }
@@ -472,7 +498,7 @@ export function initAnalyze(deps, mount) {
         onError: (message) => setStatus(message, "err"),
       });
     } catch (e) {
-      setStatus(e.message, "err");
+      setStatus(describeAnalyzeError(e, TURNSTILE_ERROR_MESSAGE), "err");
     }
   }
 
@@ -499,12 +525,12 @@ export function initAnalyze(deps, mount) {
     const started = generation;
     state.busy = true;
     paint();
-    setStatus("Đang soi đội…");
+    setStatus(L("Đang soi đội…", "正在识别阵容…"));
     try {
       const result = await callWorker(state.imageDataUrl, state.token);
       if (started !== generation) return;
       if (!applyResult(result)) {
-        setStatus("Phản hồi không hợp lệ, thử lại.", "err");
+        setStatus(L("Phản hồi không hợp lệ, thử lại.", "返回结果无效，请重试。"), "err");
         return;
       }
       setStatus("");

@@ -5,7 +5,7 @@ import {join} from 'node:path';
 import {tmpdir} from 'node:os';
 import test from 'node:test';
 import {readPublicArtifact, websiteDisplayPublicationSnapshot} from '../src/lib/root-static-artifacts.ts';
-import {displayLocationKey, displayValue, loadWebsiteDisplay, localizeData} from '../js/website-display.js';
+import {createRawNameResolver, displayLocationKey, displayText, displayValue, loadWebsiteDisplay, localName, localizeData} from '../js/website-display.js';
 
 const bytes = value => new TextEncoder().encode(typeof value === 'string' ? value : JSON.stringify(value));
 const hash = value => createHash('sha256').update(value).digest('hex');
@@ -201,4 +201,48 @@ test('applies reviewed data bindings without mutating source identities or order
   const localized = localizeData(verified, 'data/teams.json', source);
   assert.deepEqual(localized, [{id: 'first', notes: 'Bản dịch đã duyệt'}, {id: 'second', notes: 'Giữ nguyên'}]);
   assert.deepEqual(source, [{id: 'first', notes: '原文'}, {id: 'second', notes: 'Giữ nguyên'}]);
+});
+
+test('Chinese pages keep the verified source text and never apply the Vietnamese overlay', async () => {
+  const fixture = publication();
+  fixture.document.values[displayLocationKey('data:data/teams.json:[0]', '[0].notes')] = 'Ghi chú tiếng Việt';
+  fixture.display = bytes(fixture.document);
+  fixture.pin.sha256 = hash(fixture.display);
+  const loaded = await loadWebsiteDisplay(fixture.pin, fixture.load, recommendedPin, {paths: ['data/teams.json']});
+  const source = [{id: 'team-1', notes: '原文'}];
+  assert.deepEqual(localizeData(loaded, 'data/teams.json', source, 'vi'), [{id: 'team-1', notes: 'Ghi chú tiếng Việt'}]);
+  const raw = localizeData(loaded, 'data/teams.json', source, 'zh-Hans');
+  assert.deepEqual(raw, source);
+  assert.notEqual(raw, source);
+  // Bản Trung vẫn đòi nguồn đã xác minh.
+  assert.throws(() => localizeData(loaded, 'data/coexist.json', [], 'zh'), /chưa được xác minh/);
+});
+
+test('display text prefers the page language and falls back to the other side', () => {
+  assert.equal(displayText('Tào Tháo', '曹操', 'vi'), 'Tào Tháo');
+  assert.equal(displayText('Tào Tháo', '曹操', 'zh'), '曹操');
+  assert.equal(displayText('Tào Tháo', ' ', 'zh'), 'Tào Tháo');
+  assert.equal(displayText('', '曹操', 'vi'), '曹操');
+});
+
+test('raw-name resolver maps Hán-Việt names back to source Chinese only on Chinese pages', () => {
+  const resolve = createRawNameResolver(
+    [{chinese: 'SP 關羽', hanViet: 'SP Quan Vũ', viet: 'SP Quan Vũ'}, {chinese: '', viet: 'Rỗng'}],
+    [{chinese: '以逸待勞', viet: 'Lấy Nhàn Chờ Mệt', hanViet: 'Dĩ Dật Đãi Lao'}],
+  );
+  assert.equal(resolve('SP Quan Vũ'), 'SP 關羽');
+  assert.equal(resolve('sp quan vũ (S)'), 'SP 關羽');
+  assert.equal(resolve('Dĩ Dật Đãi Lao'), '以逸待勞');
+  assert.equal(resolve('Rỗng'), null);
+  assert.equal(resolve('Không có'), null);
+  assert.equal(localName('Lấy Nhàn Chờ Mệt', resolve, 'zh'), '以逸待勞');
+  assert.equal(localName('Lấy Nhàn Chờ Mệt', resolve, 'vi'), 'Lấy Nhàn Chờ Mệt');
+  assert.equal(localName('Không có', resolve, 'zh'), 'Không có');
+});
+
+test('combined "A/B" slots resolve only when every part resolves', () => {
+  const resolve = createRawNameResolver([{chinese: '呂蒙', viet: 'Lữ Mông'}, {chinese: '程普', viet: 'Trình Phổ'}]);
+  assert.equal(resolve('Lữ Mông/Trình Phổ'), '呂蒙/程普');
+  assert.equal(resolve('Lữ Mông/Không có'), null);
+  assert.equal(resolve('Lữ Mông/'), null);
 });

@@ -4,6 +4,10 @@
 /index.html
   Cache-Control: public, max-age=0, must-revalidate
 
+# Bản tiếng Trung: mọi route (Landing, trang mục, chi tiết, cộng đồng, blog, RSS) nằm dưới /zh/.
+/zh/*
+  Cache-Control: public, max-age=0, must-revalidate
+
 /doi-chuan/*
   Cache-Control: public, max-age=0, must-revalidate
 
@@ -28,6 +32,24 @@
 /goi-y-doi-tu-kho/*
   Cache-Control: public, max-age=0, must-revalidate
 
+/chien-bao/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/quan-tri/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/chinh-sach-bao-mat/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/bai-viet/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/rss.xml
+  Cache-Control: public, max-age=0, must-revalidate
+
+/llms.txt
+  Cache-Control: public, max-age=0, must-revalidate
+
 /404.html
   Cache-Control: public, max-age=0, must-revalidate
 
@@ -47,4 +69,10 @@
   Cache-Control: public, max-age=0, must-revalidate
 
 /og-image.png
+  Cache-Control: public, max-age=0, must-revalidate
+
+/logo.png
+  Cache-Control: public, max-age=0, must-revalidate
+
+/donate-qr.png
   Cache-Control: public, max-age=0, must-revalidate

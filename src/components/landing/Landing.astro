@@ -1,0 +1,355 @@
+---
+// Nội dung Landing dùng chung cho bản Việt (`/`) và bản Trung (`/zh/`): route chỉ là vỏ mỏng truyền `locale`.
+// Mọi chữ tác giả đi qua `pick(locale, vi, zh)`; mọi con số tính lúc build từ dữ liệu đã publish
+// (src/lib/landing-stats.ts). Bản zh hiển thị chữ Hán gốc của nguồn trong thẻ/bảng xem trước.
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import DownloadQr from '../DownloadQr.astro';
+import { resolveLegacyRoute } from '../../../js/legacy-routes.js';
+import { localePath, pick } from '../../../js/i18n.js';
+import { FACTION_CODE } from '../../../js/render.js';
+import {
+  landingCopy,
+  landingPreviews,
+  landingStatistics,
+  localeNumber,
+  type LandingLocale,
+} from '../../lib/landing-stats';
+import {
+  APP_STORE_LINK,
+  DESKTOP_DOWNLOAD_LINK,
+  EXTERNAL_REL,
+  GOOGLE_PLAY_LINK,
+  OFFICIAL_GAME_SITE_HREF,
+} from '../../lib/official-links';
+import SealMark from '../SealMark.astro';
+
+interface Props {
+  locale: LandingLocale;
+}
+
+const { locale } = Astro.props;
+const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+const href = (path: string): string => localePath(path, locale);
+const num = (value: number): string => localeNumber(value, locale);
+
+const canonicalUrl = new URL(href('/'), Astro.site);
+// Mọi con số của Landing tính lúc build từ dữ liệu đã publish (xem src/lib/landing-stats.ts).
+const stats = await landingStatistics();
+const copy = landingCopy(stats, locale);
+// Hai khối xem trước dựng từ dữ liệu publish thật (thẻ đội + bảng phạm vi mặc định).
+const previews = await landingPreviews(locale);
+/** Vai trò viết tắt của thẻ gọn — cùng ba nhãn với thẻ danh sách (js/recommended-reference-render.js). */
+const PREVIEW_ROLES = locale === 'zh' ? ['主将', '副将1', '副将2'] : ['CHỦ', 'PHÓ 1', 'PHÓ 2'];
+/** Tiền tố biến thể thành chip `nhan-bien-the` như thẻ danh sách; chữ Hán gốc viết liền (`SP貂蟬`). */
+const VARIANT_CLASS: Record<string, string> = {SP: 'sp', CO: 'co', '40Y': 'y40'};
+const splitVariant = (name: string) => {
+  const match = name.match(/^(SP|CO|40Y)(?:\s+|(?=[\u3400-\u9fff\uf900-\ufaff]))(.+)$/u);
+  return match ? {prefix: match[1], variantClass: VARIANT_CLASS[match[1]], name: match[2].trim()} : {prefix: null, variantClass: null, name};
+};
+const previewFactionCode = previews.team.faction
+  ? (FACTION_CODE as Record<string, string>)[previews.team.factionKeyVi ?? ''] ?? 'none'
+  : null;
+const previewMetaTail = [previews.team.units.join(' · '), previews.table.scopeLabel].filter(Boolean);
+const storeButtons = [APP_STORE_LINK, GOOGLE_PLAY_LINK];
+const NEW_TAB = t('(mở tab mới)', '(在新标签页打开)');
+/** Tiếng Việt cách số và câu bằng dấu cách; câu tiếng Trung tự mang dấu phẩy mở đầu. */
+const joiner = locale === 'zh' ? '' : ' ';
+
+// Hash cũ phải chuyển trước khi vẽ trang: nhúng nguyên hàm thuần của js/legacy-routes.js vào một
+// script inline chặn trong <head>. Listener `hashchange` phủ trường hợp dán link cũ khi đang ở `/`.
+// Chỉ bản Việt có hash cũ (URL trước khi có bản Trung).
+const redirectSource = locale === 'vi'
+  ? `(function(){var resolve=${resolveLegacyRoute.toString()};var go=function(){var target=resolve(window.location.href,window.location.origin);if(target)window.location.replace(target);};go();window.addEventListener('hashchange',go);})();`
+  : null;
+
+/** Icon nét 24×24 của từng mục (SVG tĩnh, `aria-hidden`). */
+const ICONS: Record<string, string> = {
+  standard: '<path d="M5 21V4"></path><path d="M5 4h11l-2 4 2 4H5"></path>',
+  other: '<circle cx="9" cy="8" r="3.5"></circle><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"></path><path d="M16 4.5a3.5 3.5 0 0 1 0 7"></path><path d="M18 14c2 .8 3 2.8 3 6"></path>',
+  coexist: '<path d="M12 3 3 8l9 5 9-5-9-5z"></path><path d="m3 13 9 5 9-5"></path>',
+  khaihoang: '<path d="m3 20 6-11 4 7 3-4 5 8z"></path><circle cx="16" cy="6" r="2"></circle>',
+  lookup: '<circle cx="11" cy="11" r="6.5"></circle><path d="m20 20-4.2-4.2"></path>',
+  recruit: '<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path>',
+  analyze: '<path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle>',
+  roster: '<rect x="3.5" y="3.5" width="7" height="7" rx="1.5"></rect><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"></rect><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"></rect><path d="M17 14v6M14 17h6"></path>',
+  report: '<path d="M8 4h8v5a4 4 0 0 1-8 0z"></path><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4"></path><path d="M12 13v4M8 20h8"></path>',
+  post: '<path d="M4 20h4L19 9l-4-4L4 16z"></path><path d="m13.5 6.5 4 4"></path>',
+  comment: '<path d="M4 5h16v11H9l-5 4z"></path><path d="M8 9h8M8 12h5"></path>',
+};
+const ARROW = '<line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline>';
+const CHECK = '<polyline points="5 12 10 17 19 7"></polyline>';
+const EXTERNAL_ARROW = '<path d="M14 4h6v6"></path><path d="M20 4l-9 9"></path>';
+
+/** Lưới lối vào: tám mục của cẩm nang, câu có số lấy từ `landingCopy`. */
+const tiles = [
+  {path: '/doi-chuan/', icon: 'standard', title: t('Đội chuẩn', '推荐阵容'), count: copy.standardCount, desc: copy.standardNote},
+  {path: '/doi-khac/', icon: 'other', title: t('Đội khác', '其他阵容'), count: copy.otherCount, desc: copy.otherNote},
+  {path: '/cung-ton/', icon: 'coexist', title: t('Cùng Tồn', '共存阵容'), desc: copy.coexistNote},
+  {path: '/khai-hoang/', icon: 'khaihoang', title: t('Khai hoang', '开荒'), desc: copy.khaiHoangNote},
+  {
+    path: '/tra-cuu/',
+    icon: 'lookup',
+    title: t('Tra cứu', '图鉴查询'),
+    desc: t(
+      `${num(stats.heroes)} tướng, ${num(stats.tactics)} chiến pháp. Gõ tên Việt, Hán-Việt hay chữ Hán để xem chỉ số, binh chủng và hiệu quả.`,
+      `${num(stats.heroes)} 名武将、${num(stats.tactics)} 个战法，支持越南语、汉越音或汉字搜索，查看属性、兵种适性与战法效果。`,
+    ),
+  },
+  {
+    path: '/theo-doi-chieu-mo/',
+    icon: 'recruit',
+    title: t('Theo dõi chiêu mộ', '招募记录'),
+    beta: true,
+    desc: t('Đếm lượt tới mốc bảo hiểm 5★ cho nhiều tài khoản, lưu ngay trong trình duyệt.', '多账号统计距五星保底的抽数，数据只保存在你的浏览器中。'),
+  },
+  {
+    path: '/soi-doi-tu-anh/',
+    icon: 'analyze',
+    title: t('Soi đội từ ảnh', '截图识阵'),
+    beta: true,
+    desc: t('Gửi ảnh đội hình, nhận tên tướng, chiến pháp và các đội tương tự trong cẩm nang.', '上传阵容截图，识别武将与战法，并匹配手册中的相似阵容。'),
+  },
+  {
+    path: '/goi-y-doi-tu-kho/',
+    icon: 'roster',
+    title: t('Gợi ý đội từ kho', '武将库配队'),
+    beta: true,
+    desc: t('Đọc ảnh kho tướng, cho bạn sửa lại rồi chọn tối đa 5 đội không trùng tài nguyên.', '识别武将库截图，确认修改后，最多推荐 5 支资源互不冲突的队伍。'),
+  },
+];
+
+const communityCards = [
+  {
+    path: '/chien-bao/',
+    icon: 'report',
+    title: t('Chiến báo thực chiến', '实战战报'),
+    desc: t(
+      'Gửi ảnh kết quả trận, AI đọc đội hình hai bên. Chiến báo được duyệt sẽ góp vào tỉ lệ thắng hiện trên trang đội.',
+      '上传对战结果截图，AI 识别双方阵容。审核通过的战报会计入阵容页面显示的胜率。',
+    ),
+    action: t('Xem chiến báo', '查看战报'),
+  },
+  {
+    path: '/bai-viet/',
+    icon: 'post',
+    title: t('Bài viết', '攻略文章'),
+    desc: t(
+      'Phân tích meta, hướng dẫn mùa mới và mẹo ghép đội do ban biên tập chọn lọc.',
+      '编辑精选的环境分析、新赛季指南与配将技巧。',
+    ),
+    action: t('Đọc bài viết', '阅读文章'),
+  },
+  {
+    path: '/doi-chuan/',
+    icon: 'comment',
+    title: t('Bình luận dưới từng đội', '阵容评论'),
+    desc: t(
+      'Hỏi cách thay tướng, chia sẻ kinh nghiệm đánh — mỗi trang chi tiết đội có khu bình luận riêng.',
+      '询问替换武将、分享实战心得——每个阵容详情页都有独立的评论区。',
+    ),
+    action: t('Chọn một đội', '挑选阵容'),
+  },
+];
+
+const statItems = [
+  {value: stats.standardConfigs, label: t('cấu hình Đội chuẩn', '套推荐配将')},
+  {value: stats.standardTier0, label: t('cấu hình xếp T0', '套 T0 配将')},
+  {value: stats.sourceSeasons, label: t('mùa nguồn', '个来源赛季')},
+  {value: stats.heroes, label: t('tướng', '名武将')},
+  {value: stats.tactics, label: t('chiến pháp', '个战法')},
+];
+const featureChecks = [
+  t('Lọc theo mùa, binh, phe', '按赛季、兵种、阵营筛选'),
+  t('Tên tướng theo bản game VN', '武将名沿用原版汉字'),
+  t('Sáng / tối', '明暗主题'),
+];
+---
+<SiteLayout
+  title={t('Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '三国志战略版攻略手册')}
+  description={t(
+    'Tổng hợp đội hình meta, đội hình Cùng Tồn và Khai hoang game Tam Quốc Chí Chiến Lược, có đầy đủ bộ lọc theo tướng, chiến pháp, binh thư, bậc.',
+    '汇总《三国志·战略版》各赛季推荐阵容、共存阵容与开荒攻略，支持按武将、战法、兵书与阵营筛选。',
+  )}
+  pageKind="landing"
+  canonicalUrl={canonicalUrl}
+  locale={locale}
+>
+  {redirectSource ? <script is:inline id="legacy-route-redirect" slot="head" set:html={redirectSource}></script> : null}
+
+  <section id="dau-trang" class="landing-hero">
+    <span class="landing-hero-watermark" aria-hidden="true"><SealMark /></span>
+    <div class="landing-hero-copy">
+      <p class="landing-hero-kicker">{t('Cẩm nang cộng đồng', '玩家社区攻略手册')}<span class="landing-hero-kicker-extra">{t(' · Tam Quốc Chí Chiến Lược', ' · 三国志·战略版')}</span></p>
+      <h1 class="landing-hero-title">{t('Mùa này chơi đội nào?', '这个赛季玩什么阵容？')}{' '}<br class="landing-hero-break" /><span class="landing-hero-title-accent">{t('Mở sổ là thấy.', '翻开手册就知道。')}</span></h1>
+      <p class="landing-lead">{copy.heroLead}</p>
+      <div class="landing-hero-actions">
+        <a class="landing-btn landing-btn-primary" href={href('/doi-chuan/')}>{t('Mở Đội chuẩn', '查看推荐阵容')}<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={ARROW}></svg></a>
+        <a class="landing-btn landing-btn-ghost" href={href('/goi-y-doi-tu-kho/')}>{t('Gợi ý đội từ kho', '武将库配队')}</a>
+      </div>
+      <ul class="landing-checks">
+        {featureChecks.map((label) => (
+          <li><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" set:html={CHECK}></svg>{label}</li>
+        ))}
+      </ul>
+    </div>
+    <div class="landing-hero-stage">
+      <p class="landing-stage-label"><span class="seal seal-stage" aria-hidden="true"><SealMark /></span>{t('Đội mở màn mùa này', '本赛季首推阵容')}</p>
+      <article class="team-card reference-team-card landing-preview-card" aria-label={t('Ví dụ một thẻ đội', '阵容卡示例')}>
+        <header class="reference-card-head">
+          <div class="reference-card-title">
+            <h2 class="team-name"><a href={href(previews.team.href)}>{previews.team.name}</a></h2>
+            <p class="reference-meta">{previewFactionCode ? <span class={`reference-faction f-${previewFactionCode}`}>{previews.team.faction}</span> : null}{previewMetaTail.map((part, index) => (
+              <>{index || previewFactionCode ? ' · ' : null}{index === 0 && previews.team.units.length ? <strong class="reference-units">{part}</strong> : part}</>
+            ))}</p>
+          </div>
+          <span class="reference-score-wrap"><span class="badge score reference-score" title={t('Điểm nguồn', '来源评分')}>{previews.team.score ?? '—'}</span><span class="reference-score-unit">{t('điểm', '分')}</span></span>
+        </header>
+        <div class="heroes">
+          {previews.team.holders.map((holder, index) => {
+            const variant = splitVariant(holder.name);
+            return (
+              <div class="hero reference-holder">
+                <span class="reference-role">{PREVIEW_ROLES[index] ?? ''}</span>
+                <div class="hero-name">{variant.prefix ? <><span class={`pre ${variant.variantClass}`}>{variant.prefix}</span> </> : null}<span class="hn">{variant.name}</span></div>
+                {holder.tactics.length ? <div class="line tactics">{holder.tactics.map((tactic) => <span class="tag t-tactic">{tactic}</span>)}</div> : null}
+                <p class="line books">{t('Binh thư', '兵书')} · {holder.books.length ? <span class="reference-book-values">{holder.books.join(' · ')}</span> : <span class="reference-books-missing">{t('Nguồn chưa ghi', '来源未注明')}</span>}</p>
+              </div>
+            );
+          })}
+        </div>
+        <footer class="reference-card-foot">
+          <a class="landing-preview-link" href={href(previews.team.href)}>{t('Chi tiết', '详情')}<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={ARROW}></svg></a>
+        </footer>
+      </article>
+    </div>
+  </section>
+
+  <section id="nguon-du-lieu" class="landing-section landing-stats" aria-labelledby="landing-stats-title">
+    <h2 id="landing-stats-title" class="visually-hidden">{t('Số liệu cẩm nang', '手册数据')}</h2>
+    <ul class="landing-stat-list">
+      {statItems.map((item) => (
+        <li class="landing-stat"><span class="landing-stat-number">{num(item.value)}</span><span class="landing-stat-label">{item.label}</span></li>
+      ))}
+    </ul>
+    <p class="landing-stats-note">{t(
+      'Tổng hợp từ các website và diễn đàn của game thủ Trung Quốc · tham khảo, không phải phương án duy nhất.',
+      '汇总自中国玩家网站与论坛 · 仅供参考，并非唯一方案。',
+    )}</p>
+  </section>
+
+  <section id="landing-sections" class="landing-section landing-sections" aria-labelledby="landing-sections-title">
+    <div class="landing-section-head">
+      <p class="landing-kicker">{t('Lối vào nhanh', '快速入口')}</p>
+      <h2 id="landing-sections-title" class="landing-section-title">{t('Mọi thứ cho một mùa giải', '一个赛季所需，尽在于此')}</h2>
+      <p class="landing-section-sub">{t('Tám mục dùng chung một bộ dữ liệu đã đối chiếu — chọn đúng câu hỏi bạn đang có.', '八个板块共用同一套核对过的数据——按你的问题直接进入。')}</p>
+    </div>
+    <ul class="landing-tile-grid">
+      {tiles.map((tile) => (
+        <li>
+          <a class="landing-tile" href={href(tile.path)}>
+            <span class="landing-tile-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={ICONS[tile.icon]}></svg></span>
+            <span class="landing-tile-title">{tile.title}{tile.beta ? <span class="landing-beta">Beta</span> : null}</span>
+            <span class="landing-tile-desc">{tile.count ? <><strong>{tile.count}</strong>{joiner}</> : null}{tile.desc}</span>
+            <span class="landing-tile-go" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={ARROW}></svg></span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section id="landing-vaults" class="landing-section landing-vaults" aria-labelledby="landing-vaults-title">
+    <div class="landing-vaults-intro">
+      <div class="landing-section-head">
+        <p class="landing-kicker">{t('Kho đội', '阵容库')}</p>
+        <h2 id="landing-vaults-title" class="landing-section-title landing-section-title-sm">{t('Hai kho đội, một bộ lọc chung', '两个阵容库，一套筛选')}</h2>
+        <p class="landing-section-sub">{t(
+          'Lọc theo mùa, loại binh, phe hoặc gõ tên tướng, chiến pháp, binh thư. Xem dạng thẻ để đọc kỹ, dạng bảng để so nhiều đội cùng lúc.',
+          '按赛季、兵种、阵营筛选，或直接搜索武将、战法、兵书。卡片视图便于细读，表格视图一次对比多支队伍。',
+        )}</p>
+      </div>
+      <ul class="landing-feature-checks">
+        {featureChecks.map((label) => (
+          <li><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" set:html={CHECK}></svg>{label}</li>
+        ))}
+      </ul>
+      <a class="landing-text-link" href={`${href('/doi-chuan/')}?view=bang`}>{t('Mở chế độ Bảng', '打开表格视图')}<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={ARROW}></svg></a>
+    </div>
+    <div class="landing-table-preview">
+      <p class="landing-table-bar"><span class="landing-table-scope">{t('Chế độ Bảng', '表格视图')} · {previews.table.scopeLabel}</span><span class="landing-table-count">{previews.table.count}</span></p>
+      <div class="landing-table-scroll" role="region" tabindex="0" aria-label={t('Bảng ví dụ đội hình', '阵容表格示例')}>
+        <table class="reference-table">
+          <caption class="visually-hidden">{t('Ví dụ chế độ Bảng', '表格视图示例')}</caption>
+          <tbody>
+            {previews.table.rows.map((row) => (
+              <tr>
+                <th scope="row">{row.name}{row.meta ? <span class="landing-table-meta">{row.meta}</span> : null}</th>
+                <td>{row.holders}</td>
+                <td class="landing-table-score">{row.score}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="landing-community" class="landing-section landing-community" aria-labelledby="landing-community-title">
+    <div class="landing-section-head">
+      <p class="landing-kicker landing-kicker-band">{t('Cộng đồng', '社区')}</p>
+      <h2 id="landing-community-title" class="landing-section-title">{t('Cùng người chơi mài giũa đội hình', '与玩家一起打磨阵容')}</h2>
+      <p class="landing-section-sub landing-section-sub-band">{t(
+        'Đăng nhập bằng Google để gửi chiến báo và bình luận dưới từng đội; đọc bài phân tích không cần đăng nhập.',
+        '使用 Google 账号登录即可提交战报、在阵容下发表评论；阅读文章无需登录。',
+      )}</p>
+    </div>
+    <ul class="landing-community-grid">
+      {communityCards.map((card) => (
+        <li>
+          <a class="landing-community-card" href={href(card.path)}>
+            <span class="landing-tile-icon landing-community-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={ICONS[card.icon]}></svg></span>
+            <span class="landing-community-title">{card.title}</span>
+            <span class="landing-community-desc">{card.desc}</span>
+            <span class="landing-community-action">{card.action}<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={ARROW}></svg></span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section id="tai-game" class="landing-section landing-download" aria-labelledby="tai-game-title">
+    <div class="landing-section-head">
+      <p class="landing-kicker">{t('Tải game chính thức', '官方下载')}</p>
+      <h2 id="tai-game-title" class="landing-section-title">{t('Chưa cài game? Tải Tam Quốc Chí – Chiến Lược', '还没安装？下载越南服《三国志·战略版》')}</h2>
+      <p class="landing-section-sub">{t('Liên kết lấy từ ', '链接取自发行商')}<a class="landing-inline-link" href={OFFICIAL_GAME_SITE_HREF} target="_blank" rel={EXTERNAL_REL}>{t('website chính thức', '官方网站')}<svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={EXTERNAL_ARROW}></svg><span class="visually-hidden">{NEW_TAB}</span></a>{t(' của nhà phát hành. Cẩm nang không phân phối bản cài.', '，本手册不提供安装包。')}</p>
+    </div>
+    <div class="landing-download-panel">
+      <figure class="landing-qr">
+        <span class="landing-qr-frame" role="img" aria-label={t('Mã QR tải game', '游戏下载二维码')}><DownloadQr /></span>
+        <figcaption class="landing-qr-caption">{t('Quét để tải trên điện thoại', '手机扫码下载')}</figcaption>
+      </figure>
+      <div class="landing-store">
+        {storeButtons.map((entry) => (
+          <a class="landing-store-btn" href={entry.href} target="_blank" rel={EXTERNAL_REL}>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"></rect><line x1="11" y1="18" x2="13" y2="18"></line></svg>
+            <span class="landing-store-text"><span class="landing-store-kicker">{t('Tải về trên', '下载于')}</span><span class="landing-store-name">{entry.label}</span></span>
+            <span class="landing-store-arrow"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={EXTERNAL_ARROW}></svg></span>
+            <span class="visually-hidden">{NEW_TAB}</span>
+          </a>
+        ))}
+      </div>
+      <a class="landing-exe" href={DESKTOP_DOWNLOAD_LINK.href} target="_blank" rel={EXTERNAL_REL}>
+        <svg aria-hidden="true" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="3.5" width="19" height="13" rx="2"></rect><line x1="8" y1="20.5" x2="16" y2="20.5"></line><line x1="12" y1="16.5" x2="12" y2="20.5"></line><line x1="12" y1="6.5" x2="12" y2="12.5"></line><polyline points="9.5 10 12 12.5 14.5 10"></polyline></svg>
+        <span class="landing-exe-text"><span class="landing-exe-title">{t('Tải xuống phiên bản máy tính', '下载电脑版')}</span><span class="landing-exe-note">{t('Windows · tệp cài .exe từ nhà phát hành', 'Windows · 发行商提供的 .exe 安装包')}</span></span>
+        <span class="landing-exe-arrow"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={EXTERNAL_ARROW}></svg></span>
+        <span class="visually-hidden">{NEW_TAB}</span>
+      </a>
+    </div>
+  </section>
+
+  <section id="landing-cta" class="landing-section landing-cta" aria-labelledby="landing-cta-title">
+    <span class="seal seal-cta" aria-hidden="true"><SealMark /></span>
+    <h2 id="landing-cta-title" class="landing-cta-title">{t('Mở cẩm nang, chọn đội cho mùa này.', '打开手册，为本赛季挑选阵容。')}</h2>
+    <p class="landing-cta-lead">{t('Chạy ngay trên trình duyệt, dùng tốt trên điện thoại, có giao diện sáng và tối.', '浏览器即开即用，手机上同样流畅，支持明暗主题。')}</p>
+    <a class="landing-btn landing-btn-primary" href={href('/doi-chuan/')}>{t('Mở cẩm nang', '打开手册')}<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={ARROW}></svg></a>
+  </section>
+</SiteLayout>

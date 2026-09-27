@@ -121,10 +121,12 @@ Xem [Deployment Guide](docs/deployment-guide.md) và bản ghi triển khai có 
 ## Cấu trúc
 
 ```text
-src/pages/index.astro      # Landing
+src/pages/index.astro      # Landing (vỏ mỏng → src/components/landing/Landing.astro)
 src/pages/<mục>/index.astro # 8 trang mục tĩnh (doi-chuan, doi-khac, cung-ton, khai-hoang, tra-cuu, theo-doi-chieu-mo, soi-doi-tu-anh, goi-y-doi-tu-kho)
-src/pages/404.astro        # trang 404 top-level
+src/pages/404.astro        # trang 404 top-level (khối Việt + khối Trung cho /zh/)
 src/pages/doi-chuan|doi-khac|khai-hoang/  # ba họ trang chi tiết sinh từ catalog
+src/pages/zh/              # bản tiếng Trung: cùng đường dẫn, cùng component với bản Việt
+src/components/pages/      # nội dung trang mục/chi tiết/cộng đồng nhận `locale` (route chỉ là vỏ mỏng)
 src/layouts/SiteLayout.astro # shell dùng chung (head, header, menu, footer, payload)
 src/lib/, src/pages/       # manifest + static endpoints byte-exact
 css/, js/, data/           # source runtime canonical

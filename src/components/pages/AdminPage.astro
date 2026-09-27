@@ -1,0 +1,24 @@
+---
+// Trang Quản trị dùng chung cho bản Việt (`/quan-tri/`) và bản Trung (`/zh/quan-tri/`).
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import AdminConsole from '../community/AdminConsole.astro';
+import { pick } from '../../../js/i18n.js';
+import type { SiteLocale } from '../../lib/locale-routes';
+
+interface Props {
+  locale: SiteLocale;
+}
+
+const { locale } = Astro.props;
+---
+<SiteLayout
+  title={pick(locale, 'Quản trị — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '管理 — 三国志战略版攻略手册')}
+  description={pick(locale, 'Khu quản trị cộng đồng của Cẩm Nang TQCCL.', '三国志战略版攻略手册的社区管理区。')}
+  pageKind="detail"
+  tagline={pick(locale, 'Quản trị cộng đồng', '社区管理')}
+  robots="noindex"
+  locale={locale}
+>
+  <AdminConsole locale={locale} />
+  <script is:inline type="module" src="/js/community-admin.js" slot="scripts"></script>
+</SiteLayout>

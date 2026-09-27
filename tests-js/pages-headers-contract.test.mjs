@@ -8,6 +8,7 @@ const cachePolicy = "public, max-age=0, must-revalidate";
 const expectedRules = [
   "/",
   "/index.html",
+  "/zh/*",
   "/doi-chuan/*",
   "/doi-khac/*",
   "/khai-hoang/*",
@@ -16,6 +17,12 @@ const expectedRules = [
   "/theo-doi-chieu-mo/*",
   "/soi-doi-tu-anh/*",
   "/goi-y-doi-tu-kho/*",
+  "/chien-bao/*",
+  "/quan-tri/*",
+  "/chinh-sach-bao-mat/*",
+  "/bai-viet/*",
+  "/rss.xml",
+  "/llms.txt",
   "/404.html",
   "/js/*",
   "/css/*",
@@ -23,6 +30,8 @@ const expectedRules = [
   "/data/*",
   "/favicon.png",
   "/og-image.png",
+  "/logo.png",
+  "/donate-qr.png",
 ];
 
 function parseHeaders(source) {
@@ -85,6 +94,8 @@ test("_headers covers every published shell and mutable raw asset", async () => 
     "/index.html",
     "/favicon.png",
     "/og-image.png",
+    "/logo.png",
+    "/donate-qr.png",
     ...PUBLIC_ARTIFACTS.map((artifact) => `/${artifact.kind}/${artifact.sourceBasename}`),
     "/fonts/be-vietnam-pro-400-latin.woff2",
     "/fonts/noto-serif-display-700-vietnamese.woff2",
@@ -99,9 +110,30 @@ test("_headers covers every published shell and mutable raw asset", async () => 
     "/doi-khac/hoang-ma-thuong/index.html",
     "/khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/",
     "/khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/index.html",
+    // Trang cộng đồng (noindex) vẫn là HTML tĩnh phải revalidate.
+    ...["chien-bao", "quan-tri"].flatMap((page) => [`/${page}/`, `/${page}/index.html`]),
+    // Chính sách bảo mật (URL khai với màn hình đồng ý OAuth của Google).
+    "/chinh-sach-bao-mat/",
+    "/chinh-sach-bao-mat/index.html",
     // Mọi trang mục mới đều phải revalidate như nhau.
     ...["doi-chuan", "doi-khac", "cung-ton", "khai-hoang", "tra-cuu", "theo-doi-chieu-mo", "soi-doi-tu-anh", "goi-y-doi-tu-kho"]
       .flatMap((section) => [`/${section}/`, `/${section}/index.html`]),
+    // Blog: danh sách, bài (vi/zh), feed và llms.txt đổi mỗi lần xuất bản.
+    "/bai-viet/",
+    "/bai-viet/cach-danh-dat/index.html",
+    "/zh/bai-viet/",
+    "/zh/bai-viet/kai-huang/",
+    "/rss.xml",
+    "/zh/rss.xml",
+    "/llms.txt",
+    // Bản tiếng Trung: Landing, trang mục, ba họ trang chi tiết và trang cộng đồng dưới cùng một quy tắc.
+    "/zh/",
+    "/zh/index.html",
+    ...["doi-chuan", "doi-khac", "cung-ton", "khai-hoang", "tra-cuu", "theo-doi-chieu-mo", "soi-doi-tu-anh", "goi-y-doi-tu-kho", "chien-bao", "quan-tri", "chinh-sach-bao-mat"]
+      .flatMap((section) => [`/zh/${section}/`, `/zh/${section}/index.html`]),
+    "/zh/doi-chuan/pk-s24-tu-ma-phi-hung/index.html",
+    "/zh/doi-khac/hoang-ma-thuong/",
+    "/zh/khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/index.html",
   ];
   for (const path of publicPaths) {
     assert.equal(policyFor(rules, path), cachePolicy, `${path} must revalidate`);

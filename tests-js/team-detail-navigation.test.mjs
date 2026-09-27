@@ -535,3 +535,30 @@ test('a Khai hoang share link without origin returns to the Khai hoang page',()=
   // Snapshot và `from` cũ dạng `/#khaihoang` vẫn quay về đúng trang.
   assert.equal(returnHrefFor('khaihoang',{from:'/#khaihoang'}),'/khai-hoang/');
 });
+
+test('Chinese pages keep detail, return and migration links under /zh/ with the same allowlist',()=>{
+  handles();
+  assert.equal(teamDetailPath({sourceConfigId:RECOMMENDED},'zh'),`/zh/doi-chuan/${RECOMMENDED_SEGMENT}/`);
+  assert.equal(teamDetailPath({sourceConfigId:RECOMMENDED},'vi'),`/doi-chuan/${RECOMMENDED_SEGMENT}/`);
+  // `from` giữ đúng ngôn ngữ của trang nguồn và lọc khóa như bản Việt.
+  assert.equal(
+    teamDetailHref({legacyTeamId:LEGACY},{from:`${ROOT}/zh/doi-khac/?q=abc&utm_source=x&detail=y`,origin:ROOT,locale:'zh'}),
+    `/zh/doi-khac/${LEGACY_SEGMENT}/?from=%2Fzh%2Fdoi-khac%2F%3Fq%3Dabc`,
+  );
+  assert.equal(safeReturnUrl('/zh/khai-hoang/?khTeam=a&x=1',{origin:ROOT}),'/zh/khai-hoang/?khTeam=a');
+  assert.equal(safeReturnUrl('/zh/#team-khac',{origin:ROOT}),'/zh/doi-khac/');
+  for (const bad of ['/zh/','/zh','/zh/zh/doi-chuan/','/zh/bai-viet/','/zhx/doi-chuan/','/ZH/doi-chuan/']) {
+    assert.equal(safeReturnUrl(bad,{origin:ROOT}),null,bad);
+  }
+  assert.equal(familyReturnHref('recommended',{sourceSeasonId:'pk-s24',locale:'zh'}),'/zh/doi-chuan/?season=pk-s24');
+  assert.equal(familyReturnHref('khaihoang',{locale:'zh'}),'/zh/khai-hoang/');
+  assert.equal(returnHrefFor('other',{from:'https://evil.example/zh/doi-khac/',origin:ROOT,locale:'zh'}),'/zh/doi-khac/');
+  // Khóa phục hồi Khai hoang tách theo ngôn ngữ: snapshot bản Việt không khớp trang bản Trung.
+  assert.equal(khaiHoangContextKey('/zh/khai-hoang/?khTeam=a',{origin:ROOT}),'/zh/khai-hoang/');
+  const snapshot=captureReturnSnapshot({href:'/khai-hoang/',scrollY:10,tab:'khaihoang',origin:ROOT});
+  assert.equal(matchesReturnSnapshot(snapshot,'/zh/khai-hoang/',{origin:ROOT}),false);
+  assert.deepEqual(
+    migrateLegacyReferenceUrl(`${ROOT}/zh/doi-chuan/?detail=${RECOMMENDED}`,{hasRecommended:()=>true}),
+    {target:`/zh/doi-chuan/${RECOMMENDED_SEGMENT}/?from=%2Fzh%2Fdoi-chuan%2F`,replace:true},
+  );
+});

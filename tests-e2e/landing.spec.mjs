@@ -65,7 +65,7 @@ const EXPECTED = {
   mines: vi(khaiHoang.mines.length),
 };
 
-const LANDING_BLOCKS = ['dau-trang', 'nguon-du-lieu', 'landing-need', 'landing-vaults', 'landing-land', 'landing-tools', 'tai-game'];
+const LANDING_BLOCKS = ['dau-trang', 'nguon-du-lieu', 'landing-sections', 'landing-vaults', 'landing-community', 'tai-game'];
 
 /** Cuộn anchor có thể mượt (`scroll-behavior: smooth`); chờ vị trí đứng yên rồi mới đo. */
 async function scrollSettled(page) {
@@ -83,20 +83,22 @@ async function scrollSettled(page) {
   }));
 }
 
-test('Landing dựng đủ 7 khối theo thứ tự, CTA tối đứng sau cùng', async ({ page }) => {
+test('Landing dựng đủ các khối theo thứ tự, CTA tối đứng sau cùng', async ({ page }) => {
   await page.goto('/');
   const order = await page.$$eval('main .landing-hero, main .landing-section', (elements) => elements.map((el) => el.id));
   expect(order.slice(0, LANDING_BLOCKS.length)).toEqual(LANDING_BLOCKS);
   expect(order.at(-1)).toBe('landing-cta');
 
   // Khối điều hướng là thẻ link tới đúng trang mục.
-  const links = await page.$$eval('main .landing-card, main .landing-vault', (anchors) => anchors.map((a) => a.getAttribute('href')));
+  const links = await page.$$eval('main .landing-tile, main .landing-community-card', (anchors) => anchors.map((a) => a.getAttribute('href')));
   expect(links).toEqual([
-    '/doi-chuan/', '/goi-y-doi-tu-kho/', '/tra-cuu/',
-    '/doi-chuan/', '/doi-khac/',
-    '/cung-ton/', '/khai-hoang/',
-    '/theo-doi-chieu-mo/', '/soi-doi-tu-anh/', '/goi-y-doi-tu-kho/',
+    '/doi-chuan/', '/doi-khac/', '/cung-ton/', '/khai-hoang/',
+    '/tra-cuu/', '/theo-doi-chieu-mo/', '/soi-doi-tu-anh/', '/goi-y-doi-tu-kho/',
+    '/chien-bao/', '/bai-viet/', '/doi-chuan/',
   ]);
+  // Hai nút hero: Đội chuẩn là CTA chính, Gợi ý đội từ kho là lối phụ.
+  expect(await page.$$eval('#dau-trang .landing-hero-actions a', (anchors) => anchors.map((a) => a.getAttribute('href'))))
+    .toEqual(['/doi-chuan/', '/goi-y-doi-tu-kho/']);
   await expect(page.locator('#landing-cta a.landing-btn')).toHaveAttribute('href', '/doi-chuan/');
 });
 
@@ -105,18 +107,14 @@ test('số liệu Landing khớp dữ liệu đã publish', async ({ page }) => 
   const numbers = await page.$$eval('.landing-stat-number', (nodes) => nodes.map((node) => node.textContent.trim()));
   expect(numbers).toEqual([EXPECTED.configs, EXPECTED.tier0, EXPECTED.seasons, EXPECTED.heroes, EXPECTED.tactics]);
 
-  const labels = await page.$$eval('.landing-stat-label', (nodes) => nodes.map((node) => node.textContent.trim()));
-  expect(labels).toEqual(['cấu hình Đội chuẩn', 'cấu hình xếp T0', 'mùa nguồn', 'tướng', 'chiến pháp']);
-
   await expect(page.locator('.landing-lead')).toHaveText(
     `${EXPECTED.configs} cấu hình đội từ ${EXPECTED.seasons} mùa nguồn, ${EXPECTED.otherTeams} đội người chơi tổng hợp, `
     + `cùng ${EXPECTED.heroes} tướng và ${EXPECTED.tactics} chiến pháp để tra cứu — miễn phí, không cần tài khoản.`,
   );
-  await expect(page.locator('.landing-stats-note')).toHaveText(
-    'Tổng hợp từ SGSDeck và người chơi · tham khảo, không phải phương án duy nhất.',
-  );
+  // Nguồn ghi chung, không nêu tên site nguồn.
+  await expect(page.locator('main')).not.toContainText('SGSDeck');
 
-  const vaults = page.locator('.landing-vault-desc');
+  const vaults = page.locator('#landing-sections .landing-tile-desc');
   await expect(vaults.nth(0)).toHaveText(
     `${EXPECTED.configs} cấu hình theo mùa và danh mục, giữ đúng thứ tự nguồn, kèm điểm nguồn.`,
   );
@@ -125,11 +123,11 @@ test('số liệu Landing khớp dữ liệu đã publish', async ({ page }) => 
     + `${EXPECTED.alternatives} đội có phương án thay thế.`,
   );
 
-  await expect(page.locator('#landing-land .landing-body').nth(0)).toHaveText(
+  await expect(page.locator('#landing-sections .landing-tile-desc').nth(2)).toHaveText(
     `${EXPECTED.coexistGroups} nhóm, mỗi nhóm ${EXPECTED.coexistTeams} đội dùng cùng lúc — `
     + `${EXPECTED.coexistHeroes} tướng không trùng nhau.`,
   );
-  await expect(page.locator('#landing-land .landing-body').nth(1)).toHaveText(
+  await expect(page.locator('#landing-sections .landing-tile-desc').nth(3)).toHaveText(
     `${EXPECTED.khaiHoangTeams} đội mở đất, ${EXPECTED.khaiHoangBeforeAfter} đội có đủ cấu hình trước/sau, `
     + `${EXPECTED.chamSu} đội Chạm Sứ, cùng quân thủ của ${EXPECTED.mines} mỏ.`,
   );
@@ -190,7 +188,9 @@ test('mục Tải game: QR quét được, link ngoài đủ target/rel, không 
     'https://play.google.com/store/apps/details?id=com.vntth.sgzzlb.gp.vn&gl=vn',
     'https://global-package-publish.qookkagames.com/s3gsource/13/s3g_vn_0610.pc.exe',
   ]);
-  expect(await page.locator('main img').count()).toBe(0);
+  // Ảnh duy nhất được phép trong main là logo trang trí của site (alt rỗng), không ảnh nhà phát hành.
+  const images = await page.$$eval('main img', (nodes) => nodes.map((img) => [img.getAttribute('src'), img.getAttribute('alt')]));
+  expect(images.filter(([src, alt]) => src !== '/logo.png' || alt !== '')).toEqual([]);
 });
 
 test('Landing không cuộn ngang ở 320/390 và QR vẫn nền sáng trong theme tối', async ({ page }) => {
@@ -222,7 +222,7 @@ test('Khải hoang: chỉ đếm đội có đủ cấu hình trước/sau, đú
   expect(EXPECTED.khaiHoangBeforeAfter).toBe('16');
 
   await page.goto('/');
-  await expect(page.locator('#landing-land .landing-body').nth(1)).toHaveText(
+  await expect(page.locator('#landing-sections .landing-tile-desc').nth(3)).toHaveText(
     `${EXPECTED.khaiHoangTeams} đội mở đất, ${EXPECTED.khaiHoangBeforeAfter} đội có đủ cấu hình trước/sau, `
     + `${EXPECTED.chamSu} đội Chạm Sứ, cùng quân thủ của ${EXPECTED.mines} mỏ.`,
   );
@@ -353,4 +353,38 @@ test('Landing không nạp ứng dụng mục và giữ chuyển tiếp hash cũ
   await expect(page.locator('script#legacy-route-redirect')).toHaveCount(1);
   await page.goto('/#team-pk');
   await expect(page).toHaveURL('/doi-khac/?source=team-intro');
+});
+
+test('footer: nút Ủng hộ tác giả mở hộp thoại QR, Escape/nút đóng trả focus về nút', async ({ page }) => {
+  for (const path of ['/', '/doi-chuan/']) {
+    await page.goto(path);
+    const opener = page.locator('.site-footer [data-donate-open]');
+    const dialog = page.locator('#donate-dialog');
+    await expect(opener).toBeVisible();
+    await expect(dialog).not.toBeVisible();
+
+    await opener.click();
+    await expect(dialog).toBeVisible();
+    await expect(dialog.locator('.donate-dialog-qr')).toHaveAttribute('src', '/donate-qr.png');
+    await expect(dialog.locator('.donate-dialog-qr')).toHaveAttribute('alt', /\S/);
+    await expect(dialog.locator('.donate-dialog-recipient')).toContainText('NGUYEN LE THAI NGUYEN');
+    await expect(dialog.locator('.donate-dialog-recipient')).toContainText('*******096');
+    await page.keyboard.press('Escape');
+    await expect(dialog).not.toBeVisible();
+    await expect(opener).toBeFocused();
+
+    await opener.click();
+    await dialog.locator('[data-donate-close]').click();
+    await expect(dialog).not.toBeVisible();
+    await expect(opener).toBeFocused();
+  }
+});
+
+test('điều hướng có mục Chiến báo và Bài viết ở menu, menu mobile và footer', async ({ page }) => {
+  await page.goto('/doi-chuan/');
+  for (const scope of ['.site-nav', '#section-menu-items', '.site-footer']) {
+    for (const href of ['/chien-bao/', '/bai-viet/']) {
+      await expect(page.locator(`${scope} a[href="${href}"]`)).toHaveCount(1);
+    }
+  }
 });

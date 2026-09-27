@@ -6,15 +6,17 @@ import {
   loadRecommendedDetailView,
   loadVerifiedLegacyTeams,
   loadVerifiedRecommendedManifest,
+  setZhNameResolver,
   validateReferenceSourceUrl,
 } from './recommended-reference-state.js';
 import { detailBadges, legacyOriginalDetailContent, recommendedTeamDetailContent } from './recommended-reference-render.js';
 import { safeReturnUrl, setTeamRouteHandlesFromJSON, teamDetailPath } from './team-detail-navigation.js';
-import { createByteLoader, loadWebsiteDisplay, localizeData } from './website-display.js';
+import { createByteLoader, loadRawNameResolver, loadWebsiteDisplay, localizeData } from './website-display.js';
+import { L } from './i18n.js';
 
 const TEAMS_SOURCE = 'data/teams.json';
-const VERIFY_MESSAGE = 'Không thể xác minh dữ liệu đội hình. Hãy tải lại trang hoặc quay lại danh sách.';
-const NETWORK_MESSAGE = 'Không tải được chi tiết đội hình. Hãy kiểm tra kết nối rồi thử lại.';
+const VERIFY_MESSAGE = L('Không thể xác minh dữ liệu đội hình. Hãy tải lại trang hoặc quay lại danh sách.', '无法验证阵容数据。请刷新页面或返回列表。');
+const NETWORK_MESSAGE = L('Không tải được chi tiết đội hình. Hãy kiểm tra kết nối rồi thử lại.', '无法加载阵容详情。请检查网络连接后重试。');
 
 async function fetchBytes(path) {
   const response = await fetch(path);
@@ -69,13 +71,13 @@ export async function initTeamDetail({documentTarget = document} = {}) {
     root.setAttribute('aria-busy', 'true');
     body.hidden = true;
     status.hidden = false;
-    status.replaceChildren('Đang tải chi tiết…');
+    status.replaceChildren(L('Đang tải chi tiết…', '正在加载详情…'));
   };
   const showError = (message, {actions = []} = {}) => {
     root.setAttribute('aria-busy', 'false');
     body.hidden = true;
     status.hidden = false;
-    const retry = el('button', {id: 'team-detail-retry', class: 'detail-action', type: 'button'}, 'Thử lại');
+    const retry = el('button', {id: 'team-detail-retry', class: 'detail-action', type: 'button'}, L('Thử lại', '重试'));
     retry.addEventListener('click', () => { if (!pending) load(); });
     status.replaceChildren(el('div', {class: 'error', role: 'alert'}, [
       el('p', {}, message),
@@ -108,14 +110,14 @@ export async function initTeamDetail({documentTarget = document} = {}) {
   async function loadLegacy() {
     const teams = await localizedLegacyTeams();
     const matches = teams.filter(candidate => candidate.id === legacyTeamId);
-    if (matches.length !== 1) throw new Error('Không tìm thấy đúng một đội gốc với mã này.');
+    if (matches.length !== 1) throw new Error(L('Không tìm thấy đúng một đội gốc với mã này.', '未找到与此编号唯一对应的原始阵容。'));
     const team = matches[0];
     if (!requestedVariantPresent) {
       paintHeader(team, null, []);
       showContent(legacyOriginalDetailContent(team));
       return;
     }
-    const originalLink = el('a', {class: 'detail-link', href: teamDetailPath({legacyTeamId})}, 'Xem đội gốc');
+    const originalLink = el('a', {class: 'detail-link', href: teamDetailPath({legacyTeamId})}, L('Xem đội gốc', '查看原始阵容'));
     let admitted;
     try {
       const {load} = await loadVerifiedRecommendedManifest(pin, name => fetchBytes(`/data/recommended/${name}`));
@@ -123,11 +125,11 @@ export async function initTeamDetail({documentTarget = document} = {}) {
       admitted = (other.records || []).find(row => row.legacyTeamId === legacyTeamId && row.legacyVariantId === requestedVariant) || null;
     } catch {
       // Không xác minh được biến thể thì báo rõ, không hiển thị đội gốc như thể là biến thể.
-      showError('Không xác minh được biến thể được yêu cầu.', {actions: [originalLink]});
+      showError(L('Không xác minh được biến thể được yêu cầu.', '无法验证所请求的变体。'), {actions: [originalLink]});
       return;
     }
     if (!admitted) {
-      showError('Biến thể này không có trong dữ liệu đội khác đã xác minh.', {actions: [originalLink]});
+      showError(L('Biến thể này không có trong dữ liệu đội khác đã xác minh.', '已验证的其他阵容数据中没有此变体。'), {actions: [originalLink]});
       return;
     }
     const content = {...(admitted.legacyContent || team), notes: team.notes};
@@ -141,6 +143,10 @@ export async function initTeamDetail({documentTarget = document} = {}) {
     showLoading();
     try {
       websiteDisplay ??= await loadWebsiteDisplay(websitePin, loadBytes, pin, {paths: [TEAMS_SOURCE]});
+      // Bản Trung: tên tướng/chiến pháp/binh thư của đội gốc tra ngược về chữ Hán trước khi dựng nội dung;
+      // từ điển lỗi chỉ làm tên lùi về Hán-Việt, không chặn trang.
+      const rawNames = await loadRawNameResolver(loadBytes).catch(() => null);
+      if (rawNames) setZhNameResolver(rawNames);
       if (family === 'recommended') await loadRecommended();
       else await loadLegacy();
     } catch (error) {

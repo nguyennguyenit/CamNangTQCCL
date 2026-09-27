@@ -1,0 +1,80 @@
+---
+// Trang danh sách bài viết của một ngôn ngữ. Route `/bai-viet/` và `/zh/bai-viet/` chỉ truyền locale.
+// Không có bài nào vẫn là một trang đầy đủ (trạng thái rỗng) để link menu không dẫn vào 404.
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import BlogPostCard from './BlogPostCard.astro';
+import { blogIndexPath, jsonLd, postsForLocale, type BlogLocale } from '../../lib/blog-posts.ts';
+import { blogCopy, blogIndexJsonLd, breadcrumbJsonLd } from '../../lib/blog-seo.ts';
+import { localePath } from '../../../js/i18n.js';
+
+interface Props {
+  locale: BlogLocale;
+}
+
+const { locale } = Astro.props;
+const copy = blogCopy(locale);
+const site = Astro.site!;
+const posts = await postsForLocale(locale);
+const canonicalUrl = new URL(blogIndexPath(locale), site);
+const feedPath = locale === 'zh' ? '/zh/rss.xml' : '/rss.xml';
+const structured = [
+  blogIndexJsonLd(locale, posts, site),
+  breadcrumbJsonLd([
+    { name: copy.home, path: localePath('/', locale) },
+    { name: copy.blogName, path: blogIndexPath(locale) },
+  ], site),
+];
+---
+<SiteLayout
+  title={copy.indexTitle}
+  description={copy.indexDescription}
+  pageKind="detail"
+  tagline={copy.tagline}
+  canonicalUrl={canonicalUrl}
+  locale={locale}
+>
+  <!-- Cặp hreflang vi/zh-Hans/x-default và nút chuyển ngôn ngữ do SiteLayout khai (hai trang danh sách luôn có). -->
+  <Fragment slot="head">
+    <link rel="alternate" type="application/rss+xml" title={copy.rssTitle} href={new URL(feedPath, site).href} />
+    {structured.map((data) => <script is:inline type="application/ld+json" set:html={jsonLd(data)}></script>)}
+  </Fragment>
+
+  <nav class="blog-breadcrumb" aria-label={copy.breadcrumbLabel}>
+    <ol>
+      <li><a href={localePath('/', locale)}>{copy.home}</a></li>
+      <li><span aria-current="page">{copy.blogName}</span></li>
+    </ol>
+  </nav>
+
+  <section class="blog-index" aria-labelledby="blog-list-title">
+    <header class="blog-index-head">
+      <p class="detail-kicker">{copy.indexKicker}</p>
+      <h1 id="blog-list-title" class="detail-title">{copy.indexHeading}</h1>
+      <p class="blog-lead">{copy.indexDescription}</p>
+      {posts.length > 0 && (
+        <p class="blog-card-meta">
+          <span>{copy.postCount(posts.length)}</span>
+          <span aria-hidden="true">·</span>
+          <a href={feedPath}>{copy.rssLabel}</a>
+        </p>
+      )}
+    </header>
+
+    {posts.length > 0
+      ? (
+        <div class="blog-list">
+          {posts.map((post) => <BlogPostCard post={post} />)}
+        </div>
+      )
+      : (
+        <div class="blog-empty detail-state">
+          <h2 class="blog-empty-title">{copy.emptyTitle}</h2>
+          <p>{copy.emptyBody}</p>
+          <div class="detail-actions">
+            <a class="detail-link" href={localePath('/doi-chuan/', locale)}>{copy.emptyTeams}</a>
+            <a class="detail-link" href={localePath('/tra-cuu/', locale)}>{copy.emptyLookup}</a>
+          </div>
+        </div>
+      )}
+  </section>
+</SiteLayout>

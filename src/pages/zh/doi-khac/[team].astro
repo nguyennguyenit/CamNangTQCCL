@@ -1,0 +1,12 @@
+---
+// Route bản Trung: cùng component với bản Việt, props (tiêu đề chữ Hán…) tính theo `zh`.
+import LegacyDetail from '../../../components/pages/LegacyDetail.astro';
+import { legacyDetailPaths } from '../../../lib/team-detail-pages';
+
+export const prerender = true;
+
+export function getStaticPaths() {
+  return legacyDetailPaths('zh');
+}
+---
+<LegacyDetail {...Astro.props} locale="zh" />

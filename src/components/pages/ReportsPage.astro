@@ -1,0 +1,24 @@
+---
+// Trang Chiến báo dùng chung cho bản Việt (`/chien-bao/`) và bản Trung (`/zh/chien-bao/`).
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import ReportsHub from '../community/ReportsHub.astro';
+import { pick } from '../../../js/i18n.js';
+import type { SiteLocale } from '../../lib/locale-routes';
+
+interface Props {
+  locale: SiteLocale;
+}
+
+const { locale } = Astro.props;
+---
+<SiteLayout
+  title={pick(locale, 'Chiến báo — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '战报 — 三国志战略版攻略手册')}
+  description={pick(locale, 'Chiến báo thực chiến do người chơi gửi và trạng thái duyệt chiến báo của bạn.', '玩家提交的实战战报及你的战报审核状态。')}
+  pageKind="detail"
+  tagline={pick(locale, 'Chiến báo thực chiến', '实战战报')}
+  robots="noindex"
+  locale={locale}
+>
+  <ReportsHub locale={locale} />
+  <script is:inline type="module" src="/js/community-hub.js" slot="scripts"></script>
+</SiteLayout>

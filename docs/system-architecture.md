@@ -117,6 +117,23 @@ Handle Khai hoang đóng băng theo `teams[].id` trong `pipeline/team-route-hand
 
 JSON đã curate là dữ liệu runtime cần bảo toàn. [`build_khaihoang_payload` trong `pipeline/build_json.py`](../pipeline/build_json.py) chỉ phản ánh HTML đầu vào: HTML cũ có sáu nhóm Chạm Sứ, còn bản CSV được đối chiếu có tám nhóm và một chiến pháp đã đổi. CSV chưa phải input tự động của pipeline HTML; không chạy full rebuild để nhập phần này vì có thể mất đội bổ sung, variants/options, mùa và mỏ đã curate. [Báo cáo đối chiếu nguồn](../plans/260907-0236-cham-su-khai-hoang/reports/source-reconciliation.md) giữ chi tiết khác biệt và bằng chứng bảo toàn; [fixture parser](../tests/fixtures/khaihoang-cham-su-source.html) giữ boundary kiểm thử không phụ thuộc HTML local bị ignore.
 
+### Cộng đồng phía trình duyệt
+
+Mọi lời gọi cộng đồng đi same-origin `/api/*` qua [`js/community-api.js`](../js/community-api.js): lỗi server (`{error:{code,message}}`) luôn đổi sang câu song ngữ theo mã, không hiện nguyên văn; 5xx, lỗi mạng hoặc phản hồi không phải JSON là "không khả dụng" và chỉ khối cộng đồng đổi thành một lời nhắn ngắn. Ảnh chiến báo/ảnh bìa được thu nhỏ ≤ 1600px JPEG 0.82 trước khi tải lên.
+
+- Header mọi trang có `#community-auth` ([`js/community-auth.js`](../js/community-auth.js)): chỉ hỏi `/api/me` khi `localStorage['tqccl:community-session']` cho biết trình duyệt từng đăng nhập (khách vãng lai không tốn lượt gọi API); trang cộng đồng luôn hỏi phiên và phát sự kiện `community:session` để header cập nhật. Menu tài khoản dùng `createDropdownMenu` của `js/site-nav.js`.
+- Ba họ trang chi tiết đội có `<section id="community-root">` sau bài chi tiết, dựng bởi [`js/community-page.js`](../js/community-page.js) với `pageKey = stripLocale(pathname)`: "Chiến báo thực chiến" (số trận, tỉ lệ thắng, đối thủ thường gặp — tính mọi ngôn ngữ; danh sách chỉ cùng `lang`; luồng ảnh → AI → xác nhận → chờ duyệt) rồi bình luận (chỉ cùng `lang`).
+- `/chien-bao/` ([`js/community-hub.js`](../js/community-hub.js)) và `/quan-tri/` ([`js/community-admin.js`](../js/community-admin.js): duyệt chiến báo, soạn bài Markdown có xem trước an toàn dựng bằng DOM, kiểm duyệt bình luận) là trang tĩnh `noindex`, ngoài sitemap; nội dung Astro nằm ở `src/components/community/*.astro` nhận `locale`. `scripts/verify-astro-dist.mjs` khoá mount/entry/noindex của hai trang và khối cộng đồng trên mọi trang chi tiết.
+
+### Bản tiếng Trung (`/zh/`)
+
+- Mọi route bản Việt có bản gương cùng đường dẫn dưới `/zh`: `/zh/`, 8 trang mục, `/zh/doi-chuan|doi-khac|khai-hoang/<seg>/` (cùng segment, cùng pin identity), `/zh/chien-bao/`, `/zh/quan-tri/`; blog `/zh/bai-viet/` là nội dung riêng. Route file vi/zh là vỏ mỏng, nội dung ở `src/components/pages/*.astro` nhận `locale`; `getStaticPaths` chi tiết ở `src/lib/team-detail-pages.ts`.
+- `SiteLayout` phát `<html lang="zh-Hans">`, `og:locale` `zh_CN`, canonical theo URL của chính bản đó và hreflang vi/zh-Hans/x-default (x-default = bản Việt); header và menu mobile có nút chuyển ngôn ngữ tới trang tương ứng. JS runtime chọn ngôn ngữ theo `<html lang>` (`js/i18n.js`).
+- Bản zh không preload subset font tiếng Việt; token `--font-han`/`--font-han-serif` chèn font CJK hệ thống (PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans SC) trên `:root:lang(zh)`.
+- Nhãn kịch bản/phiên bản luật: `season-registry.json` chỉ có `labelVi`, nên bản zh hiện mã mùa trung tính (`PK-S26`); tên mùa nguồn của Đội chuẩn dùng `seasonOptions[].nameRaw` (chữ Hán gốc).
+- Pages chỉ phục vụ một `404.html`: trang dựng sẵn khối Việt và khối Trung, script inline chọn khối Trung (và `lang`, tiêu đề, nút chuyển ngôn ngữ) cho đường dẫn dưới `/zh/`; vỏ header/footer của 404 vẫn là bản Việt.
+- Sitemap phát cả hai bản kèm `xhtml:link` hreflang; `_headers` có một quy tắc `/zh/*`; `scripts/verify-astro-dist.mjs` khoá danh sách file zh, `<html lang>` và hreflang của từng cặp trang.
+
 ## Research MCP boundary
 
 Luồng dùng chung hiện có:

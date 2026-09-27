@@ -1,87 +1,12 @@
 ---
-import SiteLayout from '../../layouts/SiteLayout.astro';
-import { detailTitleRanks, teamDetailCatalog, type LegacyRouteEntry } from '../../lib/team-detail-routes';
-import { SOURCE_LABEL } from '../../../js/render.js';
+// Route bản Việt: nội dung ở src/components/pages/LegacyDetail.astro, props do src/lib/team-detail-pages.ts tính.
+import LegacyDetail from '../../components/pages/LegacyDetail.astro';
+import { legacyDetailPaths } from '../../lib/team-detail-pages';
 
 export const prerender = true;
 
-export async function getStaticPaths() {
-  const catalog = await teamDetailCatalog();
-  // Tên đội gốc trùng nhau giữa các nguồn (và cả trong một nguồn): tiêu đề mang nhãn nguồn, còn trùng thì số thứ tự.
-  const nameKey = (entry: LegacyRouteEntry) => entry.nickname || entry.name || entry.legacyTeamId;
-  const byName = detailTitleRanks(catalog.legacy, nameKey);
-  const bySource = detailTitleRanks(catalog.legacy, (entry) => JSON.stringify([nameKey(entry), entry.source]));
-  return catalog.legacy.map((entry) => ({
-    params: {team: entry.routeSegment},
-    props: {
-      entry,
-      sharedName: byName(entry).size > 1,
-      ordinal: bySource(entry).ordinal,
-      generationId: catalog.generationId,
-      manifestSha256: catalog.manifestSha256,
-      legacyTeamsSha256: catalog.legacyTeamsSha256,
-    },
-  }));
+export function getStaticPaths() {
+  return legacyDetailPaths('vi');
 }
-
-const {entry, sharedName, ordinal, generationId, manifestSha256, legacyTeamsSha256} = Astro.props;
-// Canonical bỏ query/hash: mọi biến thể deep-link vẫn trỏ về đúng một URL chi tiết.
-const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
-const rawTitle = entry.nickname || entry.name || entry.legacyTeamId;
-const title = /[\u3400-\u9fff\uf900-\ufaff]/u.test(rawTitle) ? 'Nội dung tiếng Việt chưa sẵn sàng' : rawTitle;
-const pageLabel = [
-  title,
-  sharedName && entry.source ? (SOURCE_LABEL as Record<string, string>)[entry.source] || entry.source : null,
-  ordinal > 1 ? String(ordinal) : null,
-].filter(Boolean).join(' · ');
 ---
-<SiteLayout
-  title={`${pageLabel} — Đội khác — Cẩm Nang Game Tam Quốc Chí - Chiến Lược`}
-  description={`Nội dung gốc của đội ${pageLabel} trong dữ liệu đội hình sẵn có.`}
-  pageKind="detail"
-  activeSection="team-khac"
-  tagline="Chi tiết đội khác"
-  canonicalUrl={canonicalUrl}
-  ogType="article"
->
-  <nav class="detail-back-row" aria-label="Quay lại danh sách đội">
-    <a id="team-return-link" class="detail-link detail-back-link" href="/doi-khac/" data-family-href="/doi-khac/">
-      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="11 6 5 12 11 18"></polyline></svg>
-      Quay lại đội khác
-    </a>
-  </nav>
-
-  <article
-    id="team-detail-root"
-    class="reference-detail"
-    aria-labelledby="team-detail-title"
-    aria-busy="true"
-    data-family="legacy"
-    data-legacy-team-id={entry.legacyTeamId}
-    data-legacy-teams-sha256={legacyTeamsSha256}
-    data-generation-id={generationId}
-    data-manifest-sha256={manifestSha256}
-  >
-    <div class="detail-header">
-      <div class="detail-head-main">
-        <div class="detail-title-row">
-          <h1 id="team-detail-title" class="detail-title">{title}</h1>
-        </div>
-        <!-- Huy hiệu phe/loại binh do js/team-detail.js gắn từ đội gốc đã xác minh. -->
-        <div id="team-detail-badges" class="detail-badges" hidden></div>
-      </div>
-      <!-- Đội khác không có điểm nguồn và tên Trung: panel chỉ giữ hành động (nguồn, sao chép link). -->
-      <div id="team-detail-panel" class="detail-score-panel" hidden>
-        <div id="team-detail-actions" class="detail-panel-actions"></div>
-      </div>
-    </div>
-
-    <div id="team-detail-status" class="detail-state" role="status" aria-live="polite" aria-atomic="true">Đang tải chi tiết…</div>
-    <noscript>
-      <p class="scope-note">Trang chi tiết cần JavaScript để đọc dữ liệu gốc đã xác minh. Bạn vẫn có thể quay lại danh sách đội khác bằng liên kết phía trên.</p>
-    </noscript>
-    <div id="team-detail-body" hidden></div>
-  </article>
-
-  <script is:inline type="module" src="/js/team-detail.js" slot="scripts"></script>
-</SiteLayout>
+<LegacyDetail {...Astro.props} locale="vi" />

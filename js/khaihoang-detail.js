@@ -4,18 +4,19 @@
 import { el, khaihoangBuildContent, khaihoangConfigRow, khaihoangGuide } from './render.js';
 import { detailPanelActions, isNetworkError } from './detail-actions.js';
 import { detailBadges } from './recommended-reference-render.js';
-import { validateHttpSourceUrl } from './recommended-reference-state.js';
+import { setZhNameResolver, validateHttpSourceUrl } from './recommended-reference-state.js';
 import { khaiHoangDetailVariantUrl, returnHrefFor } from './team-detail-navigation.js';
-import { createByteLoader, loadWebsiteDisplay, localizeData } from './website-display.js';
+import { createByteLoader, loadRawNameResolver, loadWebsiteDisplay, localizeData } from './website-display.js';
+import { L } from './i18n.js';
 
 const KHAIHOANG_SOURCE = 'data/khaihoang.json';
 const SOURCE_HASH = /^[0-9a-f]{64}$/;
-const LOADING_MESSAGE = 'Đang tải chi tiết…';
-const NETWORK_MESSAGE = 'Không tải được chi tiết khai hoang. Hãy kiểm tra kết nối rồi thử lại.';
-const VERIFY_MESSAGE = 'Không thể xác minh dữ liệu khai hoang. Hãy tải lại trang hoặc quay lại danh sách.';
-const MISSING_PIN_MESSAGE = 'Trang chi tiết thiếu mã kiểm tra nguồn dữ liệu khai hoang.';
-const CHANGED_SOURCE_MESSAGE = 'Nguồn dữ liệu khai hoang đã thay đổi so với bản đã phát hành.';
-const MISSING_TEAM_MESSAGE = 'Không tìm thấy đúng một đội khai hoang với mã này.';
+const LOADING_MESSAGE = L('Đang tải chi tiết…', '正在加载详情…');
+const NETWORK_MESSAGE = L('Không tải được chi tiết khai hoang. Hãy kiểm tra kết nối rồi thử lại.', '无法加载开荒详情。请检查网络连接后重试。');
+const VERIFY_MESSAGE = L('Không thể xác minh dữ liệu khai hoang. Hãy tải lại trang hoặc quay lại danh sách.', '无法验证开荒数据。请刷新页面或返回列表。');
+const MISSING_PIN_MESSAGE = L('Trang chi tiết thiếu mã kiểm tra nguồn dữ liệu khai hoang.', '详情页缺少开荒数据来源的校验码。');
+const CHANGED_SOURCE_MESSAGE = L('Nguồn dữ liệu khai hoang đã thay đổi so với bản đã phát hành.', '开荒数据来源与已发布版本不一致。');
+const MISSING_TEAM_MESSAGE = L('Không tìm thấy đúng một đội khai hoang với mã này.', '未找到与此编号唯一对应的开荒阵容。');
 const VERIFY_FAILURES = new Set([MISSING_PIN_MESSAGE, CHANGED_SOURCE_MESSAGE, MISSING_TEAM_MESSAGE]);
 
 const decoder = new TextDecoder();
@@ -83,7 +84,7 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
     root.setAttribute('aria-busy', 'false');
     body.hidden = true;
     status.hidden = false;
-    const retry = retryable ? el('button', {id: 'team-detail-retry', class: 'detail-action', type: 'button'}, 'Thử lại') : null;
+    const retry = retryable ? el('button', {id: 'team-detail-retry', class: 'detail-action', type: 'button'}, L('Thử lại', '重试')) : null;
     retry?.addEventListener('click', () => { if (!pending) load(); });
     status.replaceChildren(el('div', {class: 'error', role: 'alert'}, [
       el('p', {}, message),
@@ -96,8 +97,8 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
     const link = el('a', {
       id: 'team-detail-default-variant', class: 'detail-link',
       href: khaiHoangDetailVariantUrl(location.href, ''),
-    }, 'Xem cấu hình mặc định');
-    showError(`Cấu hình “${variantId}” không thuộc đội này.`, {actions: [link], retryable: false});
+    }, L('Xem cấu hình mặc định', '查看默认配置'));
+    showError(L(`Cấu hình “${variantId}” không thuộc đội này.`, `配置“${variantId}”不属于此阵容。`), {actions: [link], retryable: false});
   };
 
   const applyVariant = (variantId) => {
@@ -144,6 +145,9 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
       const publication = await loadWebsiteDisplay(websitePin, loadBytes, recommendedPin, {paths: [KHAIHOANG_SOURCE]});
       const source = JSON.parse(decoder.decode(bytes));
       const data = localizeData(publication, KHAIHOANG_SOURCE, source);
+      // Bản Trung: tên Hán-Việt của build tra ngược về chữ Hán; từ điển lỗi chỉ làm tên lùi về Hán-Việt.
+      const rawNames = await loadRawNameResolver(loadBytes).catch(() => null);
+      if (rawNames) setZhNameResolver(rawNames);
       const matches = (Array.isArray(data) ? [] : (data.teams || [])).filter((item) => item?.id === teamId);
       if (matches.length !== 1) throw new Error(MISSING_TEAM_MESSAGE);
       team = matches[0];

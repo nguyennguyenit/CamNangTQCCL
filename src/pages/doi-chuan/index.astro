@@ -1,15 +1,5 @@
 ---
-import SiteLayout from '../../layouts/SiteLayout.astro';
-const canonicalUrl = new URL('/doi-chuan/', Astro.site);
+// Trang mục bản Việt: nội dung ở src/components/pages/SectionPage.astro (dùng chung với bản `/zh/`).
+import SectionPage from '../../components/pages/SectionPage.astro';
 ---
-<SiteLayout
-  title="Đội chuẩn — Cẩm Nang Game Tam Quốc Chí - Chiến Lược"
-  description="Danh sách đội hình Đội chuẩn theo dữ liệu SGSDeck Recommended, lọc theo phe, loại binh và mùa nguồn."
-  pageKind="section"
-  activeSection="team-chuan"
-  canonicalUrl={canonicalUrl}
->
-  <section id="section-team-chuan" class="section active"></section>
-
-  <script is:inline type="module" src="/js/app.js" slot="scripts"></script>
-</SiteLayout>
+<SectionPage section="team-chuan" locale="vi" />

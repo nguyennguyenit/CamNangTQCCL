@@ -1,10 +1,52 @@
 # Project Changelog
 
+## 2026-09-27 (Logo sách mở thay ấn quạt mưu)
+
+### Changed
+
+- Logo site (header, menu mobile, footer, thẻ Landing, dải CTA, hình mờ hero, hộp thoại ủng hộ) là `public/logo.png` 256px nền trong suốt, dựng từ `docs/design/brand/logo-concept-v2.png`; `public/favicon.png` (128px) và `public/og-image.png` dùng cùng logo. `public/logo.png` vào danh sách static public của verifier và có rule `_headers`.
+
+### Removed
+
+- Ấn quạt mưu ba lá: `src/lib/seal.ts`, CSS `.seal-blade-*`, icon quạt ở `docs/design/brand/` (`icon*.svg`, `app-icon*`) và `scripts/build-brand-logo.py` (sinh icon từ `seal.ts`). `public/brand-concept-v2.png` (606 KB) được thay bằng `public/logo.png` (44 KB).
+
 ## 2026-09-27 (Soi đội từ ảnh: căn giữa thẻ chọn ảnh)
 
 ### Fixed
 
 - Trang Soi đội từ ảnh, từ 981px trở lên: trước lượt soi đầu (thẻ 2 và 3 còn ẩn), `.ana-layout` chỉ còn một cột 440px căn giữa. Trước đây thẻ 1 dạt trái, để trống khoảng 67% bên phải ở 1440px. Khi có kết quả thì quay lại hai cột 440px + 1fr; dưới 981px giữ nguyên một cột full-width.
+
+## 2026-09-27 (Bản tiếng Trung toàn site `/zh/`)
+
+### Added
+
+- Bản tiếng Trung giản thể cho mọi route: `/zh/`, 8 trang mục, 3 họ trang chi tiết đội (1366 + 166 + 17 trang), `/zh/chien-bao/`, `/zh/quan-tri/`. Tiêu đề chi tiết bản zh dùng tên chữ Hán gốc (đội chuẩn) hoặc ghép tên tướng chữ Hán (đội khác, Khai hoang); dòng phạm vi dùng mã mùa + tên mùa chữ Hán gốc.
+- `SiteLayout`: `<html lang>`, `og:locale`, hreflang vi/zh-Hans/x-default, nút chuyển ngôn ngữ ở header và menu mobile (giữ query/hash), toàn bộ chữ header/menu/footer theo ngôn ngữ trang; link game/cộng đồng có nhãn tiếng Trung.
+- 404 chọn khối tiếng Trung cho đường dẫn dưới `/zh/`; sitemap thêm bản zh và `xhtml:link` hreflang; `llms.txt` liệt kê các mục bản Trung; `_headers` thêm `/zh/*`.
+
+### Changed
+
+- Trang mục và trang chi tiết chuyển nội dung vào `src/components/pages/*.astro` (route chỉ là vỏ mỏng); blog khai hreflang qua `SiteLayout`.
+- Token font `--font-sans`/`--font-serif` dùng `--font-han`/`--font-han-serif`: bản Việt giữ nguyên, bản Trung thêm font CJK hệ thống; bản Trung không preload subset tiếng Việt.
+- Bản dịch: 15 obligation `translate` đổi fingerprint (13 do dời nguồn sang `src/components/landing/Landing.astro`, `src/components/pages/RecommendedDetail.astro`, `LegacyDetail.astro`; `ui:recommended/introduction` và `ui:route-recommended/description` đổi chữ, bỏ tên SGSDeck) được duyệt lại độc lập ở batch receipt mới `site-review-zh-cutover-20260927` (gỡ item tương ứng khỏi batch `site-review-v5-056`, `-070`, `-094`). Policy ghim lại hash 36 file nguồn, thêm `Landing.astro` vào `sourceFiles`, baseline inventory 56648 vị trí (bỏ `src/lib/seal.ts` khỏi `sourceFiles` khi đổi logo); publish generation `d96e5c79…` (xoá các generation `0cb3ba92…`, `5a717307…`), re-pin `pipeline/team-route-handles.json`. `WORKFLOW_BUILD_ID` đổi vì bao đóng MCP thêm `js/i18n.js` (output MCP không đổi).
+
+## 2026-09-27 (Bộ logo thương hiệu)
+
+### Added
+
+- Bộ logo `docs/design/brand/`: chữ "Cẩm Nang" (Noto Serif Display 700) + dòng phụ "GAME TAM QUỐC CHÍ – CHIẾN LƯỢC" (Be Vietnam Pro 600), tên đầy đủ "Cẩm Nang Game Tam Quốc Chí - Chiến Lược" ở `<title>`/`aria-label`; ở chữ "ẩ", dấu mũ thay bằng ba chấm Ngụy · Thục · Ngô xếp thế chân vạc (màu phe `--f-nguy`/`--f-thuc`/`--f-ngo`), dấu hỏi giữ nguyên. Tệp: `logo.svg`/`logo-dark.svg` (+ PNG), mark "ẩ" `logo-mark.svg`/`logo-mark-dark.svg` nền trong suốt, `app-icon.svg` nền giấy (+ PNG 512/180) cho favicon/app icon. Chữ outline từ `public/fonts` nên không phụ thuộc phông máy xem. Sinh lại bằng `scripts/build-brand-logo.py`.
+
+## 2026-09-27 (Blog tĩnh song ngữ + SEO/AEO/GEO)
+
+### Added
+
+- Blog `/bai-viet/` và `/zh/bai-viet/` (danh sách + trang bài `/bai-viet/<slug>/`, `/zh/bai-viet/<slug>/`) sinh tĩnh lúc build từ `GET ${COMMUNITY_API_ORIGIN}/api/posts`; không khai biến → blog rỗng (trang trạng thái rỗng song ngữ), khai mà API/payload lỗi → build dừng. Markdown qua Sätteri, bỏ HTML thô, lọc scheme link/ảnh.
+- Trang bài: breadcrumb, tác giả + ngày đăng/cập nhật + phút đọc, hộp tóm tắt, mục lục h2/h3, FAQ dạng `<details>`, bài liên quan theo thẻ, link bản dịch + hreflang; JSON-LD `BlogPosting`, `BreadcrumbList`, `FAQPage`; meta `article:*`, Twitter card, `og:image` = ảnh bìa. Trang danh sách: JSON-LD `CollectionPage` + `Blog` + `ItemList`.
+- `rss.xml`, `zh/rss.xml`, `llms.txt` (tổng quan site và danh sách bài cho trình thu thập AI); sitemap thêm trang blog kèm `<lastmod>`; `_headers` revalidate các output mới; verifier kiểm blog tự nhất quán.
+
+### Changed
+
+- `robots.txt` khai tường minh `GPTBot`, `ClaudeBot`, `PerplexityBot`, `Google-Extended`; chặn `/quan-tri/`, `/zh/quan-tri/`, `/api/`.
 
 ## 2026-09-27 (Pipeline: rebuild teams.json tái tạo được)
 

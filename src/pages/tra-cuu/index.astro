@@ -1,15 +1,5 @@
 ---
-import SiteLayout from '../../layouts/SiteLayout.astro';
-const canonicalUrl = new URL('/tra-cuu/', Astro.site);
+// Trang mục bản Việt: nội dung ở src/components/pages/SectionPage.astro (dùng chung với bản `/zh/`).
+import SectionPage from '../../components/pages/SectionPage.astro';
 ---
-<SiteLayout
-  title="Tra cứu — Cẩm Nang Game Tam Quốc Chí - Chiến Lược"
-  description="Tra cứu tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng và công trình theo tên Việt hoặc chữ Hán."
-  pageKind="section"
-  activeSection="lookup"
-  canonicalUrl={canonicalUrl}
->
-  <section id="section-lookup" class="section active"></section>
-
-  <script is:inline type="module" src="/js/app.js" slot="scripts"></script>
-</SiteLayout>
+<SectionPage section="lookup" locale="vi" />

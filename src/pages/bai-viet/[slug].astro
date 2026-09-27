@@ -1,0 +1,14 @@
+---
+import BlogArticle from '../../components/blog/BlogArticle.astro';
+import { postsForLocale } from '../../lib/blog-posts.ts';
+
+export const prerender = true;
+
+// Chỉ bài tiếng Việt; bài tiếng Trung sinh ở /zh/bai-viet/<slug>/.
+export async function getStaticPaths() {
+  return (await postsForLocale('vi')).map((post) => ({ params: {slug: post.slug}, props: {post} }));
+}
+
+const {post} = Astro.props;
+---
+<BlogArticle post={post} />

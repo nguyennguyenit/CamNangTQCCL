@@ -1,68 +1,12 @@
 ---
-import SiteLayout from '../../layouts/SiteLayout.astro';
-import { teamDetailCatalog } from '../../lib/team-detail-routes';
+// Route bản Việt: nội dung ở src/components/pages/KhaiHoangDetail.astro, props do src/lib/team-detail-pages.ts tính.
+import KhaiHoangDetail from '../../components/pages/KhaiHoangDetail.astro';
+import { khaiHoangDetailPaths } from '../../lib/team-detail-pages';
 
 export const prerender = true;
 
-export async function getStaticPaths() {
-  const catalog = await teamDetailCatalog();
-  return catalog.khaiHoang.map((entry) => ({
-    params: {team: entry.routeSegment},
-    props: {entry, khaiHoangSha256: catalog.khaiHoangSha256},
-  }));
+export function getStaticPaths() {
+  return khaiHoangDetailPaths('vi');
 }
-
-const {entry, khaiHoangSha256} = Astro.props;
-// Canonical bỏ query/hash: `variant` và `from` là trạng thái deep-link, không phải URL riêng.
-const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
-// Nguồn chưa dịch xong không được lộ chữ Hán ra tiêu đề công khai.
-const title = /[\u3400-\u9fff\uf900-\ufaff]/u.test(entry.title) ? 'Nội dung tiếng Việt chưa sẵn sàng' : entry.title;
 ---
-<SiteLayout
-  title={`${title} — Khai hoang — Cẩm Nang Game Tam Quốc Chí - Chiến Lược`}
-  description={`Hướng dẫn khai hoang của đội ${title}: cấu hình đang chọn và toàn bộ ghi chú đã xác minh.`}
-  pageKind="detail"
-  activeSection="khaihoang"
-  tagline="Chi tiết Khai hoang"
-  canonicalUrl={canonicalUrl}
-  ogType="article"
->
-  <nav class="detail-back-row" aria-label="Quay lại danh sách Khai hoang">
-    <a id="team-return-link" class="detail-link detail-back-link" href="/khai-hoang/" data-family-href="/khai-hoang/">
-      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="11 6 5 12 11 18"></polyline></svg>
-      Quay lại Khai hoang
-    </a>
-  </nav>
-
-  <article
-    id="team-detail-root"
-    class="reference-detail"
-    aria-labelledby="team-detail-title"
-    aria-busy="true"
-    data-family="khaihoang"
-    data-khaihoang-team-id={entry.khaiHoangTeamId}
-    data-khaihoang-sha256={khaiHoangSha256}
-  >
-    <div class="detail-header">
-      <div class="detail-head-main">
-        <div class="detail-title-row">
-          <h1 id="team-detail-title" class="detail-title">{title}</h1>
-        </div>
-        <!-- Huy hiệu loại binh của cấu hình đang chọn do js/khaihoang-detail.js gắn. -->
-        <div id="team-detail-badges" class="detail-badges" hidden></div>
-      </div>
-      <!-- Panel của Khai hoang không có điểm nguồn; hành động (nguồn, sao chép link) do JS gắn. -->
-      <div id="team-detail-panel" class="detail-score-panel" hidden>
-        <div id="team-detail-actions" class="detail-panel-actions"></div>
-      </div>
-    </div>
-
-    <div id="team-detail-status" class="detail-state" role="status" aria-live="polite" aria-atomic="true">Đang tải chi tiết…</div>
-    <noscript>
-      <p class="scope-note">Trang chi tiết cần JavaScript để đọc dữ liệu Khai hoang đã xác minh. Bạn vẫn có thể quay lại danh sách Khai hoang bằng liên kết phía trên.</p>
-    </noscript>
-    <div id="team-detail-body" hidden></div>
-  </article>
-
-  <script is:inline type="module" src="/js/khaihoang-detail.js" slot="scripts"></script>
-</SiteLayout>
+<KhaiHoangDetail {...Astro.props} locale="vi" />

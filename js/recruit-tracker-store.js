@@ -1,13 +1,17 @@
+import { L } from "./i18n.js";
+
 const STORAGE_KEY = "tqcclRecruitTracker";
 const SCHEMA_VERSION = 1;
 const DAILY_BANNER_ID = "danh-tuong-pk";
 
 const DAILY_SLOT_DEFS = [
-  { key: "free_1", label: "Miễn phí 1", drawKind: "free" },
-  { key: "half_1", label: "Nửa giá 1", drawKind: "half" },
-  { key: "free_2", label: "Miễn phí 2", drawKind: "free" },
-  { key: "half_2", label: "Nửa giá 2", drawKind: "half" },
+  { key: "free_1", label: "Miễn phí 1", labelZh: "免费 1", drawKind: "free" },
+  { key: "half_1", label: "Nửa giá 1", labelZh: "半价 1", drawKind: "half" },
+  { key: "free_2", label: "Miễn phí 2", labelZh: "免费 2", drawKind: "free" },
+  { key: "half_2", label: "Nửa giá 2", labelZh: "半价 2", drawKind: "half" },
 ];
+// Tên gói ngày mặc định lưu trong kho luôn là bản Việt (dữ liệu, không đổi theo ngôn ngữ).
+const DAILY_BANNER_NAME = "Danh tướng PK";
 
 function clone(value) {
   return JSON.parse(JSON.stringify(value));
@@ -38,15 +42,22 @@ function dailySlotDef(slotKey) {
   return DAILY_SLOT_DEFS.find((slot) => slot.key === slotKey);
 }
 
-/** Tên tiếng Việt của một lượt ngày (`free_1` → "Miễn phí 1"); giá trị lạ (bản ghi cũ đã lưu nhãn) giữ nguyên. */
+/** Tên một lượt ngày theo ngôn ngữ trang (`free_1` → "Miễn phí 1" / "免费 1"); giá trị lạ (bản ghi cũ đã lưu nhãn) giữ nguyên. */
 export function dailySlotLabel(slotKey) {
-  return dailySlotDef(slotKey)?.label || String(slotKey || "");
+  const def = dailySlotDef(slotKey);
+  return def ? L(def.label, def.labelZh) : String(slotKey || "");
+}
+
+/** Tên gói để hiển thị: gói ngày còn giữ tên mặc định thì dịch theo ngôn ngữ trang; tên người dùng đặt giữ nguyên. */
+export function bannerDisplayName(banner) {
+  if (banner?.id === DAILY_BANNER_ID && banner.name === DAILY_BANNER_NAME) return L(DAILY_BANNER_NAME, "PK名将招募");
+  return banner?.name || "";
 }
 
 function defaultDailyBanner() {
   return {
     id: DAILY_BANNER_ID,
-    name: "Danh tướng PK",
+    name: DAILY_BANNER_NAME,
     type: "normal",
     drawMode: "daily",
     hasFiveStar: true,
@@ -56,7 +67,7 @@ function defaultDailyBanner() {
 }
 
 export function createDefaultRecruitTrackerState(now = new Date()) {
-  const account = { id: "acc_main", name: "Chính", createdAt: typeof now === "string" ? now : nowIso() };
+  const account = { id: "acc_main", name: L("Chính", "主号"), createdAt: typeof now === "string" ? now : nowIso() };
   return {
     schemaVersion: SCHEMA_VERSION,
     activeAccountId: account.id,
@@ -150,7 +161,8 @@ function pityOf(next, accountId, bannerId) {
 
 export function createAccount(state, name) {
   const next = withState(state);
-  const account = { id: makeId("acc"), name: String(name || "Tài khoản").trim() || "Tài khoản", createdAt: nowIso() };
+  const fallback = L("Tài khoản", "账号");
+  const account = { id: makeId("acc"), name: String(name || fallback).trim() || fallback, createdAt: nowIso() };
   next.accounts.push(account);
   next.activeAccountId = account.id;
   return next;
@@ -183,7 +195,8 @@ export function setActiveAccount(state, accountId) {
 
 export function createLimitedBanner(state, attrs = {}) {
   const next = withState(state);
-  const name = String(attrs.name || "Gói hạn giờ").trim() || "Gói hạn giờ";
+  const fallback = L("Gói hạn giờ", "限时卡包");
+  const name = String(attrs.name || fallback).trim() || fallback;
   next.banners.push({
     id: makeId("banner"),
     name,
@@ -239,7 +252,7 @@ export function recordDailySlotFiveStar(state, { accountId, date = localDateFrom
     pulls,
     pullCount,
     result: "fiveStar",
-    heroName: String(heroName || "Tướng chưa ghi").trim() || "Tướng chưa ghi",
+    heroName: String(heroName || L("Tướng chưa ghi", "未记录武将")).trim() || L("Tướng chưa ghi", "未记录武将"),
     heroValueClass,
     note,
   });
@@ -274,7 +287,7 @@ export function recordBannerFiveStar(state, { accountId, bannerId, pulls = 1, he
     pulls: actualPulls,
     pullCount,
     result: "fiveStar",
-    heroName: String(heroName || "Tướng chưa ghi").trim() || "Tướng chưa ghi",
+    heroName: String(heroName || L("Tướng chưa ghi", "未记录武将")).trim() || L("Tướng chưa ghi", "未记录武将"),
     heroValueClass,
     note,
   });
@@ -294,7 +307,7 @@ function fiveStarHistoryOf(next) {
     .map((event) => ({
       ...event,
       accountName: accountById.get(event.accountId)?.name || "",
-      bannerName: bannerById.get(event.bannerId)?.name || event.bannerId,
+      bannerName: bannerDisplayName(bannerById.get(event.bannerId)) || event.bannerId,
       pityLimit: Number(bannerById.get(event.bannerId)?.pityLimit) || defaultDailyBanner().pityLimit,
       pullCount: event.pullCount || Number(event.pulls) || 1,
     }))
@@ -358,16 +371,17 @@ function recordsAreConsistent(value) {
 }
 
 export function validateRecruitTrackerImport(value) {
-  if (!value || typeof value !== "object") return { ok: false, error: "Dữ liệu không hợp lệ." };
-  if (value.schemaVersion !== SCHEMA_VERSION) return { ok: false, error: "Sai phiên bản dữ liệu." };
-  if (!Array.isArray(value.accounts) || value.accounts.length === 0) return { ok: false, error: "Thiếu tài khoản." };
+  const invalid = L("Dữ liệu không hợp lệ.", "数据无效。");
+  if (!value || typeof value !== "object") return { ok: false, error: invalid };
+  if (value.schemaVersion !== SCHEMA_VERSION) return { ok: false, error: L("Sai phiên bản dữ liệu.", "数据版本不符。") };
+  if (!Array.isArray(value.accounts) || value.accounts.length === 0) return { ok: false, error: L("Thiếu tài khoản.", "缺少账号。") };
   if (!value.accounts.every((account) => isRecord(account) && isId(account.id) && typeof account.name === "string")) {
-    return { ok: false, error: "Tài khoản không hợp lệ." };
+    return { ok: false, error: L("Tài khoản không hợp lệ.", "账号无效。") };
   }
-  if (!value.accounts.some((account) => account.id === value.activeAccountId)) return { ok: false, error: "Tài khoản hiện tại không hợp lệ." };
-  if (!Array.isArray(value.banners)) return { ok: false, error: "Thiếu banner." };
-  if (!Array.isArray(value.pullEvents)) return { ok: false, error: "Thiếu lịch sử quay." };
-  if (!recordsAreConsistent(value)) return { ok: false, error: "Dữ liệu không hợp lệ." };
+  if (!value.accounts.some((account) => account.id === value.activeAccountId)) return { ok: false, error: L("Tài khoản hiện tại không hợp lệ.", "当前账号无效。") };
+  if (!Array.isArray(value.banners)) return { ok: false, error: L("Thiếu banner.", "缺少卡池。") };
+  if (!Array.isArray(value.pullEvents)) return { ok: false, error: L("Thiếu lịch sử quay.", "缺少抽卡记录。") };
+  if (!recordsAreConsistent(value)) return { ok: false, error: invalid };
   return { ok: true, summary: { accounts: value.accounts.length, banners: value.banners.length, events: value.pullEvents.length } };
 }
 

@@ -61,6 +61,30 @@ export function initSiteChrome({documentTarget = document, windowTarget = global
     if (!event || event.key === THEME_KEY || event.key === null) syncTheme();
   });
 
+  syncLanguageSwitch({documentTarget, windowTarget});
   const nav = createSiteNav({documentTarget, windowTarget});
   return {nav, applyTheme, syncTheme};
+}
+
+/**
+ * Nút chuyển ngôn ngữ (`[data-lang-switch]`, header + menu mobile) là link thật tới bản gương của trang.
+ * Bộ lọc, biến thể và deep-link nằm ở query/hash và đổi tại chỗ (history API), nên href được ghép lại với
+ * query/hash của lúc bấm; href gốc do layout phát được giữ ở `data-lang-base` để không cộng dồn.
+ */
+export function syncLanguageSwitch({documentTarget = document, windowTarget = globalThis} = {}) {
+  const links = [...documentTarget.querySelectorAll('[data-lang-switch]')];
+  const refresh = (link) => {
+    const location = windowTarget.location;
+    if (!location) return;
+    link.dataset.langBase ??= link.getAttribute('href') || '/';
+    const target = new URL(link.dataset.langBase, location.href);
+    if (target.origin !== location.origin) return;
+    link.setAttribute('href', `${target.pathname}${target.search || location.search}${target.hash || location.hash}`);
+  };
+  for (const link of links) {
+    refresh(link);
+    // Cập nhật ngay trước khi điều hướng: chuột (kể cả mở tab mới), bàn phím và chạm đều đi qua các sự kiện này.
+    for (const type of ['pointerdown', 'focus', 'click']) link.addEventListener(type, () => refresh(link));
+  }
+  return links;
 }

@@ -144,12 +144,12 @@ async function controlledBundle(page, data = null) {
 test('verified fixture preserves exact config identity, ordered detail and source score', async ({page}) => {
   await controlledBundle(page);
   await page.goto('/cung-ton/?scenario=scenario-a&ruleset=rules-a&config=config-a');
-  await expect(page.locator('#season-config-detail')).toContainText('Điểm SGSDeck: 132.5');
+  await expect(page.locator('#season-config-detail')).toContainText('Điểm nguồn: 132.5');
   await expect(page.locator('#season-config-detail')).toContainText('Cấu hình: config-a · scenario-a · rules-a');
   await page.goto('/cung-ton/?scenario=scenario-a&ruleset=rules-a&config=config-b');
   await expect(page).toHaveURL(/config=config-b/);
   await expect(page.locator('#season-config-detail')).toContainText('Chiến pháp 1: Hai');
-  await expect(page.locator('#season-config-detail')).toContainText('Chưa có điểm SGSDeck');
+  await expect(page.locator('#season-config-detail')).toContainText('Chưa có điểm nguồn');
   await page.getByRole('button',{name:'Đóng chi tiết'}).click();
   expect(new URL(page.url()).searchParams.has('config')).toBe(false);
   await page.goto('/doi-khac/?q=cuong');
@@ -165,7 +165,7 @@ test('detail compares real inventory and changing a selected tactic removes its 
   await expect(page.locator('.season-inventory-comparison')).toContainText('Đủ tướng và chiến pháp');
   await expect(page.locator('.season-inventory-comparison')).toContainText('Binh thư: chưa kiểm chứng');
   await page.getByLabel('Tướng 1 · Chiến pháp 1',{exact:true}).selectOption('tactic:bay');
-  await expect(page.locator('#season-config-detail .sgsdeck-score')).toContainText('Chưa có điểm SGSDeck');
+  await expect(page.locator('#season-config-detail .sgsdeck-score')).toContainText('Chưa có điểm nguồn');
   await page.getByRole('button',{name:'Đối chiếu kho của tôi'}).click();
   await expect(page.locator('.season-inventory-comparison')).toContainText('Thiếu chiến pháp: Bảy');
 });
@@ -245,10 +245,10 @@ test('card score follows its displayed hero selection rather than another valid 
   data['season-evidence'].find(item=>item.id==='score-proof').configFingerprint=score.configFingerprint;
   await controlledBundle(page,data);
   await page.goto('/cung-ton/?scenario=scenario-a&ruleset=rules-a&config=config-a');
-  await expect(page.locator('#season-config-detail .sgsdeck-score')).toHaveText('Chưa có điểm SGSDeck');
+  await expect(page.locator('#season-config-detail .sgsdeck-score')).toHaveText('Chưa có điểm nguồn');
   await page.getByLabel('Tướng 1 · Tướng',{exact:true}).selectOption('hero:dung');
-  await expect(page.locator('#season-config-detail .sgsdeck-score')).toHaveText('Điểm SGSDeck: 132.5');
-  await expect(page.locator('#season-config-detail').getByRole('link',{name:'Nguồn điểm SGSDeck'})).toBeVisible();
+  await expect(page.locator('#season-config-detail .sgsdeck-score')).toHaveText('Điểm nguồn: 132.5');
+  await expect(page.locator('#season-config-detail').getByRole('link',{name:'Nguồn điểm'})).toBeVisible();
 });
 test('configuration details retain raw effect labels, multiline mechanics and required conditions',async({page})=>{
   const data=await seasonConsumerFixture();const config=data['season-team-configs'].find(item=>item.id==='config-conditional');
@@ -264,7 +264,7 @@ test('validated source score with unknown upstream season still opens its exact 
   const data=await seasonConsumerFixture();data['season-team-evaluations'][0].sourceScore.sourceSeason=null;data['season-evidence'].find(item=>item.id==='score-proof').sourceSeason=null;
   await controlledBundle(page,data);await page.goto('/doi-khac/?scenario=scenario-a&ruleset=rules-a&config=config-a');
   await expect(page.locator('#season-config-detail')).toBeVisible();
-  await expect(page.locator('#season-config-detail .sgsdeck-score')).toHaveText('Điểm SGSDeck: 132.5');
+  await expect(page.locator('#season-config-detail .sgsdeck-score')).toHaveText('Điểm nguồn: 132.5');
   await expect(page.locator('#section-team-khac .error')).toHaveCount(0);
 });
 for(const width of [375,1280]) test(`real Binh Dien review screenshot at ${width}px`,async({page},testInfo)=>{

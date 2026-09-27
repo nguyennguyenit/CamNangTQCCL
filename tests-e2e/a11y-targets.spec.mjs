@@ -107,7 +107,7 @@ test.describe("A5 — control đứng riêng phải đủ 44px ở mobile", () =
 });
 
 test.describe("A5 — vòng sửa Opus round 2", () => {
-  test("link nguồn SGSDeck trong thân chi tiết Đội chuẩn: đủ 44px, Enter mở được", async ({ browser }) => {
+  test("link nguồn tham khảo trong thân chi tiết Đội chuẩn: đủ 44px, Enter mở được", async ({ browser }) => {
     const path = "/doi-chuan/pk-s24-tiem-long-dieu-thuyen/";
     for (const { width, colorScheme } of CASES) {
       const context = await browser.newContext({ viewport: { width, height: 900 }, colorScheme });

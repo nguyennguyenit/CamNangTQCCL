@@ -75,7 +75,8 @@ test('Recommended detail uses the TeamDetail shell: scope line, Chinese title, b
   // Panel điểm: nhãn caps, số serif son + đơn vị, link nguồn đã kiểm scheme.
   const panel=page.locator('#team-detail-root .detail-score-panel');
   await expect(panel.locator('.detail-panel-kicker')).toHaveText('Điểm nguồn');
-  await expect(panel.locator('.detail-panel-note')).toHaveText('theo SGSDeck');
+  // Nguồn ghi chung, không nêu tên site nguồn trong panel điểm.
+  await expect(panel.locator('.detail-panel-note')).not.toContainText('SGSDeck');
   await expect(panel.locator('.detail-score-value')).toHaveText(String(row.value));
   await expect(panel.locator('.detail-score-unit')).toHaveText('điểm');
   const source=panel.locator('.detail-source-link');

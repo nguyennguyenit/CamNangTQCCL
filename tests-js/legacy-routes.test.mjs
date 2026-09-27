@@ -175,3 +175,13 @@ test('resolveLegacyRoute tự đủ để nhúng vào script inline của Landin
   // Bản nhúng không được kéo theo cú pháp module (import/export).
   assert.doesNotMatch(resolveLegacyRoute.toString(), /\b(?:import|export)\b/);
 });
+
+test('URL gốc bản Trung chuyển tới trang mục bản Trung', () => {
+  assert.equal(resolve('/zh/#team-khac'), '/zh/doi-khac/');
+  assert.equal(resolve('/zh/#meta-cu'), '/zh/doi-khac/?source=moi-phe');
+  assert.equal(resolve('/zh/#heroes'), '/zh/tra-cuu/?group=heroes');
+  assert.equal(resolve('/zh/?q=abc'), '/zh/doi-chuan/?q=abc');
+  assert.equal(resolve('/zh/#nguon-du-lieu'), null);
+  // Tiền tố phải là đúng đoạn `/zh`, không phải mọi đường bắt đầu bằng "zh".
+  assert.equal(resolve('/zhx/#team-khac'), '/doi-khac/');
+});

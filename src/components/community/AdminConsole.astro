@@ -1,0 +1,18 @@
+---
+// Nội dung trang /quan-tri/: khung tĩnh; js/community-admin.js kiểm phiên và dựng các tab quản trị.
+import { pick } from '../../../js/i18n.js';
+
+interface Props {
+  locale: 'vi' | 'zh';
+}
+
+const { locale } = Astro.props;
+const t = (vi: string, zh: string) => pick(locale, vi, zh);
+---
+<section class="cm-page cm-admin" aria-labelledby="cm-admin-title">
+  <h1 id="cm-admin-title" class="detail-title">{t('Quản trị cộng đồng', '社区管理')}</h1>
+  <p class="scope-note">{t('Duyệt chiến báo, kiểm duyệt bình luận và soạn bài viết. Chỉ tài khoản quản trị mới dùng được trang này.', '审核战报、管理评论并撰写文章。仅管理员账号可使用此页面。')}</p>
+  <div id="community-admin" class="cm-admin-root">
+    <noscript><p class="scope-note">{t('Trang quản trị cần JavaScript.', '管理页面需要启用 JavaScript。')}</p></noscript>
+  </div>
+</section>

@@ -13,21 +13,26 @@ import {
   serializeRosterScanState,
 } from "./roster-scan-state.js";
 import { recommendTeams } from "./team-recommend-engine.js";
+import { L, currentLocale } from "./i18n.js";
+import { createRawNameResolver, localName } from "./website-display.js";
 
+// `<html lang>` cố định theo trang nên nhãn dịch lúc nạp module vẫn đúng ngôn ngữ.
+// `unit` dùng cho câu đếm tiếng Việt, `unitZh` là lượng từ + danh từ cho câu đếm tiếng Trung.
 const SCAN_TYPES = [
-  { id: "heroes", label: "Tướng", mode: "scanHeroes", unit: "tướng" },
-  { id: "tactics", label: "Chiến pháp", mode: "scanTactics", unit: "chiến pháp" },
-  { id: "builtTeams", label: "Đội đã xây dựng", mode: "scanBuiltTeams", unit: "đội" },
+  { id: "heroes", label: L("Tướng", "武将"), mode: "scanHeroes", unit: "tướng", unitZh: "名武将" },
+  { id: "tactics", label: L("Chiến pháp", "战法"), mode: "scanTactics", unit: "chiến pháp", unitZh: "个战法" },
+  { id: "builtTeams", label: L("Đội đã xây dựng", "已组建队伍"), mode: "scanBuiltTeams", unit: "đội", unitZh: "支队伍" },
 ];
 
-const ROSTER_PROVIDER_ERROR = "Không đọc được ảnh. Vui lòng thử lại.";
+const ROSTER_PROVIDER_ERROR = L("Không đọc được ảnh. Vui lòng thử lại.", "无法识别图片，请重试。");
 const ROSTER_STATUS_LABELS = {
-  "missing-tactic": "Thiếu chiến pháp",
-  "move-tactic": "Cần điều chuyển chiến pháp",
-  variant: "Dùng biến thể",
-  "build-now": "Có thể xây dựng ngay",
-  locked: "Đã khóa",
+  "missing-tactic": L("Thiếu chiến pháp", "缺少战法"),
+  "move-tactic": L("Cần điều chuyển chiến pháp", "需调配战法"),
+  variant: L("Dùng biến thể", "使用替代配置"),
+  "build-now": L("Có thể xây dựng ngay", "可立即组建"),
+  locked: L("Đã khóa", "已锁定"),
 };
+
 
 /** Bề rộng hẹp: nút "Sửa kho đã đọc" mở/đóng khu kiểm tra kho. */
 const COMPACT_QUERY = "(max-width: 680px)";
@@ -54,8 +59,8 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   if (!isAnalyzeConfigured()) {
     mount.replaceChildren(
       el("div", { class: "ana-setup" }, [
-        el("p", {}, "Tính năng gợi ý đội từ kho chưa được cấu hình."),
-        el("p", { class: "ana-note" }, "Cần deploy Worker (worker/) + điền workerUrl & turnstileSiteKey trong js/config.js."),
+        el("p", {}, L("Tính năng gợi ý đội từ kho chưa được cấu hình.", "“武将库配队”功能尚未配置。")),
+        el("p", { class: "ana-note" }, L("Cần deploy Worker (worker/) + điền workerUrl & turnstileSiteKey trong js/config.js.", "需部署 Worker（worker/），并在 js/config.js 中填写 workerUrl 与 turnstileSiteKey。")),
       ]),
     );
     return;
@@ -69,17 +74,30 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   let preference = "meta";
   const tsBox = el("div", { class: "ana-turnstile" });
   const tsStatus = el("p", { class: "ana-status err", role: "status", hidden: "" });
-  const heroOptions = (heroesDict || []).map((h) => h.viet).filter(Boolean).sort();
-  const tacticOptions = (tacticsDict || []).map((t) => t.viet).filter(Boolean).sort();
-  const recommendBtn = el("button", { type: "button", class: "ana-btn primary", disabled: "" }, "Gợi ý 5 đội");
-  const confirmBtn = el("button", { type: "button", class: "ana-btn", disabled: "" }, "Xác nhận dữ liệu đã đọc");
+  // Bản zh hiển thị tên chữ Hán gốc; kho vẫn lưu tên Việt chuẩn nên chỉ đổi lúc vẽ.
+  const zh = currentLocale() === "zh";
+  const resolveRaw = createRawNameResolver(heroesDict, tacticsDict);
+  const shown = (name) => localName(name, resolveRaw);
+  // Tên đội trong dữ liệu chỉ có bản Việt: bản zh gọi đội bằng tên chữ Hán của các tướng trong đội.
+  const teamLabel = (team) => {
+    if (!zh || !team?.heroes?.length) return team?.name;
+    return team.heroes.map((hero) => shown(typeof hero === "string" ? hero : hero?.name)).filter(Boolean).join(" · ");
+  };
+  // Gợi ý thêm thủ công: bản zh liệt kê tên chữ Hán; khi thêm, tên Hán được đổi về tên Việt chuẩn để kho
+  // vẫn lưu cùng một dạng như ảnh đã đọc.
+  const optionPairs = (dict) => (dict || []).filter((item) => item?.viet).map((item) => [shown(item.viet), item.viet]);
+  const canonicalByShown = new Map([...optionPairs(heroesDict), ...optionPairs(tacticsDict)].reverse());
+  const heroOptions = [...new Set(optionPairs(heroesDict).map(([label]) => label))].sort();
+  const tacticOptions = [...new Set(optionPairs(tacticsDict).map(([label]) => label))].sort();
+  const recommendBtn = el("button", { type: "button", class: "ana-btn primary", disabled: "" }, L("Gợi ý 5 đội", "推荐 5 支队伍"));
+  const confirmBtn = el("button", { type: "button", class: "ana-btn", disabled: "" }, L("Xác nhận dữ liệu đã đọc", "确认识别结果"));
   const resultsSlot = el("div", { class: "roster-results-slot" });
 
   /* ---------- Bước 1–2–3: tóm tắt tiến trình đọc kho → kiểm tra → gợi ý ---------- */
   const stepNodes = [
-    { key: "scan", label: "Đọc kho" },
-    { key: "review", label: "Kiểm tra" },
-    { key: "suggest", label: "Gợi ý" },
+    { key: "scan", label: L("Đọc kho", "识别库存") },
+    { key: "review", label: L("Kiểm tra", "核对") },
+    { key: "suggest", label: L("Gợi ý", "推荐") },
   ].map((step, index) => {
     const mark = el("span", { class: "roster-step-mark", "aria-hidden": "true" });
     return {
@@ -88,7 +106,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       node: el("li", { class: "roster-step", dataset: { step: step.key } }, [mark, `${index + 1} · ${step.label}`]),
     };
   });
-  const stepList = el("ol", { class: "roster-steps", "aria-label": "Các bước" }, stepNodes.map((step) => step.node));
+  const stepList = el("ol", { class: "roster-steps", "aria-label": L("Các bước", "步骤") }, stepNodes.map((step) => step.node));
   const scanned = () => (state.ownedHeroes?.length || 0) + (state.ownedTactics?.length || 0) + (state.lockedTeams?.length || 0) > 0;
 
   function paintSteps() {
@@ -118,25 +136,25 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     fileInput.addEventListener("change", () => {
       fileName.textContent = fileInput.files?.[0]?.name || "";
     });
-    const pickBtn = el("button", { type: "button", class: "ana-btn", "aria-describedby": titleId, onClick: () => fileInput.click() }, "Chọn ảnh");
-    const btn = el("button", { type: "button", class: "ana-btn" }, `Đọc ${scan.label}`);
+    const pickBtn = el("button", { type: "button", class: "ana-btn", "aria-describedby": titleId, onClick: () => fileInput.click() }, L("Chọn ảnh", "选择图片"));
+    const btn = el("button", { type: "button", class: "ana-btn" }, L(`Đọc ${scan.label}`, `识别${scan.label}`));
     const status = el("p", { class: "ana-note" }, "");
     const count = el("span", { class: "roster-scan-count" });
     const badge = el("span", { class: "badge roster-scan-state" });
     btn.addEventListener("click", async () => {
       const file = fileInput.files?.[0];
       if (!file) {
-        status.textContent = "Chọn ảnh trước.";
+        status.textContent = L("Chọn ảnh trước.", "请先选择图片。");
         return;
       }
       if (!token) {
-        status.textContent = "Xác thực Turnstile trước.";
+        status.textContent = L("Xác thực Turnstile trước.", "请先完成 Turnstile 验证。");
         return;
       }
       // Token Turnstile chỉ dùng được một lần: khoá cả ba nút trong lúc đọc để không
       // thẻ nào gửi lại token đang dùng.
       setScanBusy(true);
-      status.textContent = "Đang đọc ảnh...";
+      status.textContent = L("Đang đọc ảnh...", "正在识别图片…");
       let sent = false;
       try {
         const imageDataUrl = await compressImage(file);
@@ -144,7 +162,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
         const scanToken = token;
         token = "";
         if (!scanToken) {
-          status.textContent = "Xác thực Turnstile trước.";
+          status.textContent = L("Xác thực Turnstile trước.", "请先完成 Turnstile 验证。");
           return;
         }
         sent = true;
@@ -158,7 +176,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
         saveState(state);
         // Đọc xong là thay đổi kho: huỷ kết quả gợi ý cũ và khoá lại nút cho tới khi xác nhận lại.
         rerender();
-        status.textContent = "Đã đọc xong. Kiểm tra lại dữ liệu bên dưới.";
+        status.textContent = L("Đã đọc xong. Kiểm tra lại dữ liệu bên dưới.", "识别完成，请核对下方数据。");
       } catch (err) {
         status.textContent = describeAnalyzeError(err, ROSTER_PROVIDER_ERROR);
       } finally {
@@ -169,7 +187,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     });
     const card = el("section", { class: "roster-scan-card" }, [
       el("header", { class: "roster-scan-head" }, [
-        el("span", { class: "roster-step-caps" }, `BƯỚC ${index + 1}`),
+        el("span", { class: "roster-step-caps" }, L(`BƯỚC ${index + 1}`, `第 ${index + 1} 步`)),
         badge,
       ]),
       el("h3", { class: "roster-scan-title", id: titleId }, scan.label),
@@ -194,8 +212,8 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     for (const control of scanControls) {
       const total = counts[control.scan.id] || 0;
       // Chưa đọc: chỉ dòng đếm báo "Chưa đọc"; pill "Xong" chỉ hiện khi đã đọc (Roster.dc.html thẻ BƯỚC 3).
-      control.count.textContent = total ? `${total} ${control.scan.unit} đã đọc` : "Chưa đọc";
-      control.badge.textContent = "Xong";
+      control.count.textContent = total ? L(`${total} ${control.scan.unit} đã đọc`, `已识别 ${total} ${control.scan.unitZh}`) : L("Chưa đọc", "未识别");
+      control.badge.textContent = L("Xong", "完成");
       control.badge.hidden = !total;
     }
   }
@@ -211,10 +229,11 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       const ordered = [...items.filter(needsCheck), ...items.filter((item) => !needsCheck(item))];
       list.replaceChildren(...ordered.map((item) => {
         const name = item.name || item;
-        const remove = el("button", { type: "button", class: "roster-remove", "aria-label": `Bỏ ${name}` }, [closeIcon()]);
+        const label = shown(name);
+        const remove = el("button", { type: "button", class: "roster-remove", "aria-label": L(`Bỏ ${label}`, `移除${label}`) }, [closeIcon()]);
         remove.addEventListener("click", () => onRemove(type, name, remove));
-        const flag = needsCheck(item) ? el("span", { class: "ana-flag" }, "kiểm tra") : null;
-        return el("li", needsCheck(item) ? { class: "roster-chip-check" } : {}, [el("span", {}, name), flag, remove]);
+        const flag = needsCheck(item) ? el("span", { class: "ana-flag" }, L("kiểm tra", "待核对")) : null;
+        return el("li", needsCheck(item) ? { class: "roster-chip-check" } : {}, [el("span", {}, label), flag, remove]);
       }));
       list.hidden = items.length === 0;
       empty.hidden = items.length > 0;
@@ -223,16 +242,16 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   }
 
   function teamList(getItems, onRemove) {
-    const empty = el("p", { class: "roster-empty" }, "Chưa có đội khóa. Đội khóa giữ nguyên tài nguyên đang dùng khi gợi ý.");
+    const empty = el("p", { class: "roster-empty" }, L("Chưa có đội khóa. Đội khóa giữ nguyên tài nguyên đang dùng khi gợi ý.", "暂无锁定队伍。锁定队伍在推荐时会保留其正在使用的资源。"));
     const list = el("div", { class: "roster-locked-list" });
     function paint() {
       const items = getItems() || [];
       list.replaceChildren(...items.map((team, index) =>
         el("article", { class: "roster-locked-team" }, [
           el("strong", {}, team.teamName),
-          el("p", {}, `Tướng: ${(team.heroes || []).join(", ") || "-"}`),
-          el("p", {}, `Chiến pháp: ${(team.tactics || []).join(", ") || "-"}`),
-          el("button", { type: "button", class: "ana-btn", "aria-label": `Bỏ đội ${team.teamName}`, onClick: () => onRemove(index) }, "Bỏ đội"),
+          el("p", {}, L(`Tướng: ${(team.heroes || []).join(", ") || "-"}`, `武将：${(team.heroes || []).map(shown).join("、") || "-"}`)),
+          el("p", {}, L(`Chiến pháp: ${(team.tactics || []).join(", ") || "-"}`, `战法：${(team.tactics || []).map(shown).join("、") || "-"}`)),
+          el("button", { type: "button", class: "ana-btn", "aria-label": L(`Bỏ đội ${team.teamName}`, `移除队伍 ${team.teamName}`), onClick: () => onRemove(index) }, L("Bỏ đội", "移除队伍")),
         ]),
       ));
       list.hidden = items.length === 0;
@@ -242,38 +261,38 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   }
 
   function addControl(type, options) {
-    const input = el("input", { class: "ana-input", type: "search", list: `roster-${type}-options`, placeholder: "Thêm thủ công" });
+    const input = el("input", { class: "ana-input", type: "search", list: `roster-${type}-options`, placeholder: L("Thêm thủ công", "手动添加") });
     const datalist = el("datalist", { id: `roster-${type}-options` }, options.map((name) => el("option", { value: name })));
     const button = el("button", { type: "button", class: "ana-btn", onclick: () => {
       const value = input.value.trim();
       if (!value) return;
-      addItem(type, value);
+      addItem(type, canonicalByShown.get(value) ?? value);
       input.value = "";
-    } }, "Thêm");
+    } }, L("Thêm", "添加"));
     return el("div", { class: "roster-add-row" }, [input, datalist, button]);
   }
 
-  const heroList = itemList(() => state.ownedHeroes, "Chưa đọc tướng.", "heroes", removeItemAt);
-  const tacticList = itemList(() => state.ownedTactics, "Chưa đọc chiến pháp.", "tactics", removeItemAt);
+  const heroList = itemList(() => state.ownedHeroes, L("Chưa đọc tướng.", "尚未识别武将。"), "heroes", removeItemAt);
+  const tacticList = itemList(() => state.ownedTactics, L("Chưa đọc chiến pháp.", "尚未识别战法。"), "tactics", removeItemAt);
   const lockedList = teamList(() => state.lockedTeams, (index) => {
     state = removeLockedTeam(state, index);
     saveState(state);
     rerender();
   });
   const heroPanel = el("section", { class: "roster-review-panel" }, [
-    el("h3", {}, "Tướng đã đọc"),
+    el("h3", {}, L("Tướng đã đọc", "已识别武将")),
     heroList.list,
     heroList.empty,
     addControl("heroes", heroOptions),
   ]);
   const tacticPanel = el("section", { class: "roster-review-panel" }, [
-    el("h3", {}, "Chiến pháp đã đọc"),
+    el("h3", {}, L("Chiến pháp đã đọc", "已识别战法")),
     tacticList.list,
     tacticList.empty,
     addControl("tactics", tacticOptions),
   ]);
   const lockedPanel = el("section", { class: "roster-review-panel" }, [
-    el("h3", {}, "Đội đang khóa"),
+    el("h3", {}, L("Đội đang khóa", "锁定中的队伍")),
     lockedList.list,
     lockedList.empty,
   ]);
@@ -289,7 +308,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       reviewExpanded = !reviewExpanded;
       applyReviewVisibility();
     },
-  }, "Sửa kho đã đọc");
+  }, L("Sửa kho đã đọc", "编辑已识别库存"));
 
   function applyReviewVisibility() {
     const collapsed = Boolean(compact?.matches) && !reviewExpanded;
@@ -330,19 +349,19 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
 
   const modeSelect = el("select", {
     class: "ana-input",
-    "aria-label": "Ưu tiên gợi ý",
+    "aria-label": L("Ưu tiên gợi ý", "推荐优先级"),
     onChange: (event) => { preference = event.target.value; rerender(); },
   }, [
     el("option", { value: "meta" }, "Meta T0 → T1"),
-    el("option", { value: "redStars" }, "Nhiều hột"),
+    el("option", { value: "redStars" }, L("Nhiều hột", "红度优先")),
   ]);
 
   const clearBtn = el("button", { type: "button", class: "ana-btn", onClick: () => {
-    if (!confirm("Xóa toàn bộ kho đã đọc (tướng, chiến pháp, đội khóa)? Không hoàn tác được.")) return;
+    if (!confirm(L("Xóa toàn bộ kho đã đọc (tướng, chiến pháp, đội khóa)? Không hoàn tác được.", "清空全部已识别库存（武将、战法、锁定队伍）？此操作无法撤销。"))) return;
     state = clearRosterScanState();
     saveState(state);
     rerender();
-  } }, "Xóa toàn bộ kho");
+  } }, L("Xóa toàn bộ kho", "清空全部库存"));
 
   confirmBtn.addEventListener("click", () => {
     state = { ...serializeRosterScanState(state), confirmed: true, updatedAt: new Date().toISOString() };
@@ -384,38 +403,43 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     const teamRow = (entry, index) => el("li", { class: "roster-result-team" }, [
       el("span", { class: "roster-rank", "aria-hidden": "true" }, String(index + 1)),
       el("div", { class: "roster-result-main" }, [
-        el("strong", { class: "roster-result-name" }, entry.team?.name || "Đội đã xây dựng"),
-        el("span", { class: "roster-status", dataset: { status: entry.status || "locked" } }, ROSTER_STATUS_LABELS[entry.status] || "Đã khóa"),
-        entry.tier ? el("p", { class: "roster-result-meta" }, `Bậc: ${entry.tier}`) : null,
-        entry.selectedTactics?.length ? el("p", { class: "roster-result-meta" }, `Chiến pháp: ${entry.selectedTactics.join(", ")}`) : null,
+        el("strong", { class: "roster-result-name" }, teamLabel(entry.team) || L("Đội đã xây dựng", "已组建队伍")),
+        el("span", { class: "roster-status", dataset: { status: entry.status || "locked" } }, ROSTER_STATUS_LABELS[entry.status] || ROSTER_STATUS_LABELS.locked),
+        entry.tier ? el("p", { class: "roster-result-meta" }, L(`Bậc: ${entry.tier}`, `梯度：${entry.tier}`)) : null,
+        entry.selectedTactics?.length ? el("p", { class: "roster-result-meta" }, L(`Chiến pháp: ${entry.selectedTactics.join(", ")}`, `战法：${entry.selectedTactics.map(shown).join("、")}`)) : null,
         entry.usedAlternatives?.length
-          ? el("p", { class: "roster-result-meta" }, `Biến thể: ${entry.usedAlternatives.map((a) => `${a.from} -> ${a.to}`).join(", ")}`)
+          ? el("p", { class: "roster-result-meta" }, L(
+            `Biến thể: ${entry.usedAlternatives.map((a) => `${a.from} -> ${a.to}`).join(", ")}`,
+            `替代：${entry.usedAlternatives.map((a) => `${shown(a.from)} -> ${shown(a.to)}`).join("、")}`,
+          ))
           : null,
       ]),
-      entry.team && !entry.locked ? el("button", { type: "button", class: "ana-link-btn", onClick: () => onOpenTeam?.(entry.team) }, "Mở đội") : null,
+      entry.team && !entry.locked ? el("button", { type: "button", class: "ana-link-btn", onClick: () => onOpenTeam?.(entry.team) }, L("Mở đội", "查看队伍")) : null,
     ]);
 
     const portfolio = result.portfolioTeams || [];
     const addTeams = result.addTeams || [];
     return el("div", { class: "roster-results" }, [
       el("section", {}, [
-        el("h3", {}, "Danh sách đội sau khi xây dựng"),
+        el("h3", {}, L("Danh sách đội sau khi xây dựng", "组建后的队伍列表")),
         ...(portfolio.length
           ? [el("ol", { class: "roster-team-list" }, portfolio.map(teamRow))]
-          : [el("p", { class: "roster-empty" }, "Chưa có đội nào xây dựng được từ kho hiện tại.")]),
+          : [el("p", { class: "roster-empty" }, L("Chưa có đội nào xây dựng được từ kho hiện tại.", "当前库存暂无可组建的队伍。"))]),
       ]),
       el("section", {}, [
-        el("h3", {}, "Nên thêm"),
+        el("h3", {}, L("Nên thêm", "建议新增")),
         ...(addTeams.length
           ? [el("ol", { class: "roster-team-list" }, addTeams.map(teamRow))]
-          : [el("p", { class: "roster-empty" }, portfolio.length >= 5 ? "Đã đủ 5 đội." : "Chưa có đội phù hợp để thêm từ kho hiện tại.")]),
+          : [el("p", { class: "roster-empty" }, portfolio.length >= 5 ? L("Đã đủ 5 đội.", "已满 5 支队伍。") : L("Chưa có đội phù hợp để thêm từ kho hiện tại.", "当前库存暂无适合新增的队伍。"))]),
       ]),
       el("section", {}, [
-        el("h3", {}, "Đội mạnh nhưng chưa thể xây dựng"),
+        el("h3", {}, L("Đội mạnh nhưng chưa thể xây dựng", "强势但暂无法组建的队伍")),
         ...(result.blockedStrongTeams || []).slice(0, 5).map((entry) =>
           el("article", { class: "roster-result-team muted" }, [
-            el("strong", { class: "roster-result-name" }, entry.team.name),
-            el("p", { class: "roster-result-meta" }, entry.missingHeroSlotNames?.length ? `Thiếu tướng: ${entry.missingHeroSlotNames.map((names) => names.join(" / ")).join(", ")}` : `Thiếu chiến pháp: ${(entry.missingTactics || []).join(", ")}`),
+            el("strong", { class: "roster-result-name" }, teamLabel(entry.team)),
+            el("p", { class: "roster-result-meta" }, entry.missingHeroSlotNames?.length
+              ? L(`Thiếu tướng: ${entry.missingHeroSlotNames.map((names) => names.join(" / ")).join(", ")}`, `缺少武将：${entry.missingHeroSlotNames.map((names) => names.map(shown).join(" / ")).join("、")}`)
+              : L(`Thiếu chiến pháp: ${(entry.missingTactics || []).join(", ")}`, `缺少战法：${(entry.missingTactics || []).map(shown).join("、")}`)),
           ]),
         ),
       ]),
@@ -433,21 +457,21 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       tsStatus.hidden = false;
     },
   }).catch(() => {
-    tsBox.textContent = "Không tải được Turnstile.";
+    tsBox.textContent = L("Không tải được Turnstile.", "Turnstile 加载失败。");
   });
 
   mount.replaceChildren(
     el("div", { class: "analyze-panel roster-recommend" }, [
       el("header", { class: "tool-head" }, [
         el("div", { class: "reference-head-text" }, [
-          el("span", { class: "reference-kicker" }, "Công cụ · Beta"),
-          el("h1", { class: "reference-title", tabindex: "-1" }, "Gợi ý đội từ kho"),
-          el("p", { class: "reference-lead" }, "Đọc ảnh kho tướng và chiến pháp, kiểm tra lại, rồi để công cụ cục bộ chọn tối đa 5 đội không trùng tài nguyên."),
+          el("span", { class: "reference-kicker" }, L("Công cụ · Beta", "工具 · Beta")),
+          el("h1", { class: "reference-title", tabindex: "-1" }, L("Gợi ý đội từ kho", "武将库配队")),
+          el("p", { class: "reference-lead" }, L("Đọc ảnh kho tướng và chiến pháp, kiểm tra lại, rồi để công cụ cục bộ chọn tối đa 5 đội không trùng tài nguyên.", "识别武将与战法库存截图并核对后，由本地工具挑选最多 5 支资源不冲突的队伍。")),
         ]),
       ]),
       el("p", { class: "tool-notice" }, [
         el("span", { class: "tool-notice-icon", "aria-hidden": "true" }, [shieldIcon()]),
-        el("span", {}, "AI chỉ đọc ảnh. Đội được chọn bằng công cụ cục bộ từ dữ liệu đã tuyển chọn."),
+        el("span", {}, L("AI chỉ đọc ảnh. Đội được chọn bằng công cụ cục bộ từ dữ liệu đã tuyển chọn.", "AI 仅负责识别图片，队伍由本地工具依据精选数据挑选。")),
       ]),
       stepList,
       el("div", { class: "roster-controls" }, [

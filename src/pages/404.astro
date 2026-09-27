@@ -1,6 +1,11 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
 export const prerender = true;
+
+// Cloudflare Pages chỉ phục vụ một 404.html cho mọi đường dẫn: trang dựng sẵn cả khối Việt lẫn khối Trung,
+// script nhỏ dưới đây chọn khối Trung khi đường dẫn nằm dưới `/zh/` (chỉ một khối được hiển thị).
+const ZH_TITLE = '页面不存在 — 三国志战略版攻略手册';
+const pickZh = `(function(){if(!/^\\/zh(\\/|$)/.test(location.pathname))return;var root=document.documentElement;root.lang='zh-Hans';document.title=${JSON.stringify(ZH_TITLE)};var vi=document.querySelector('[data-not-found="vi"]');var zh=document.querySelector('[data-not-found="zh"]');if(vi)vi.remove();if(zh){zh.hidden=false;zh.removeAttribute('lang');}var sw=document.querySelectorAll('[data-lang-switch]');for(var i=0;i<sw.length;i++){sw[i].href='/';sw[i].hreflang='vi';sw[i].lang='vi';sw[i].textContent='Tiếng Việt';}})();`;
 ---
 <SiteLayout
   title="Không tìm thấy trang — Cẩm Nang Game Tam Quốc Chí - Chiến Lược"
@@ -8,8 +13,11 @@ export const prerender = true;
   pageKind="not-found"
   tagline="Không tìm thấy trang"
   robots="noindex"
+  locale="vi"
+  alternates={false}
+  counterpartPath="/zh/"
 >
-  <section class="season-config-detail detail-state" aria-labelledby="not-found-title">
+  <section class="season-config-detail detail-state" aria-labelledby="not-found-title" data-not-found="vi">
     <h1 id="not-found-title" class="detail-title">Không tìm thấy trang</h1>
     <p>Đường dẫn này không có trong cẩm nang. Đội hình có thể đã đổi mã nguồn hoặc liên kết bị sao chép thiếu.</p>
     <div class="detail-actions">
@@ -18,4 +26,14 @@ export const prerender = true;
       <a class="detail-link" href="/doi-khac/">Danh sách đội khác</a>
     </div>
   </section>
+  <section class="season-config-detail detail-state" aria-labelledby="not-found-title-zh" data-not-found="zh" lang="zh-Hans" hidden>
+    <h1 id="not-found-title-zh" class="detail-title">页面不存在</h1>
+    <p>手册中没有这个地址。阵容可能已更换来源编号，或链接复制不完整。</p>
+    <div class="detail-actions">
+      <a class="detail-action" href="/zh/">返回首页</a>
+      <a class="detail-link" href="/zh/doi-chuan/">推荐阵容列表</a>
+      <a class="detail-link" href="/zh/doi-khac/">其他阵容列表</a>
+    </div>
+  </section>
+  <script is:inline id="not-found-locale" set:html={pickZh}></script>
 </SiteLayout>

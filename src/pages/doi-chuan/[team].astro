@@ -1,93 +1,12 @@
 ---
-import SiteLayout from '../../layouts/SiteLayout.astro';
-import { detailTitleRanks, teamDetailCatalog } from '../../lib/team-detail-routes';
-import { familyReturnHref } from '../../../js/team-detail-navigation.js';
+// Route bản Việt: nội dung ở src/components/pages/RecommendedDetail.astro, props do src/lib/team-detail-pages.ts tính.
+import RecommendedDetail from '../../components/pages/RecommendedDetail.astro';
+import { recommendedDetailPaths } from '../../lib/team-detail-pages';
 
 export const prerender = true;
 
-export async function getStaticPaths() {
-  const catalog = await teamDetailCatalog();
-  // Cùng tên đội có ở nhiều mùa (và đôi khi nhiều cấu hình trong một mùa): tiêu đề mang mã mùa, còn trùng thì số thứ tự.
-  const ranks = detailTitleRanks(catalog.recommended, (entry) => JSON.stringify([entry.displayNameVi, entry.sourceSeasonCode]));
-  return catalog.recommended.map((entry) => ({
-    params: {team: entry.routeSegment},
-    props: {entry, rank: ranks(entry), generationId: catalog.generationId, manifestSha256: catalog.manifestSha256, legacyTeamsSha256: catalog.legacyTeamsSha256},
-  }));
+export function getStaticPaths() {
+  return recommendedDetailPaths('vi');
 }
-
-const {entry, rank, generationId, manifestSha256, legacyTeamsSha256} = Astro.props;
-// Canonical bỏ query/hash: mọi biến thể deep-link vẫn trỏ về đúng một URL chi tiết.
-const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
-const title = entry.displayNameVi || 'Nội dung tiếng Việt chưa sẵn sàng';
-const qualifier = [entry.sourceSeasonCode, rank.ordinal > 1 ? String(rank.ordinal) : null].filter(Boolean).join(' · ');
-const pageLabel = qualifier ? `${title} (${qualifier})` : title;
-const scopeLine = [entry.sourceSeasonCode, entry.sourceSeasonNameVi, entry.sourceCategoryNameVi]
-  .filter(Boolean)
-  .join(' · ');
-// Tên Trung là chữ phụ của tiêu đề (artboard TeamDetail); chỉ hiện khi nguồn thật có chữ Hán.
-const nameZh = entry.nameZh && /[\u3400-\u9fff\uf900-\ufaff]/u.test(entry.nameZh) ? entry.nameZh : null;
-const hasScore = entry.value != null;
-const fallbackReturn = familyReturnHref('recommended', { sourceSeasonId: entry.sourceSeasonId });
 ---
-<SiteLayout
-  title={`${pageLabel} — Đội chuẩn — Cẩm Nang Game Tam Quốc Chí - Chiến Lược`}
-  description={`Chi tiết đội hình ${rank.ordinal > 1 ? `${title} (${rank.ordinal})` : title} theo dữ liệu nguồn SGSDeck Recommended${scopeLine ? ` (${scopeLine})` : ''}.`}
-  pageKind="detail"
-  activeSection="team-chuan"
-  tagline="Chi tiết đội chuẩn"
-  canonicalUrl={canonicalUrl}
-  ogType="article"
->
-  <nav class="detail-back-row" aria-label="Quay lại danh sách đội">
-    <a id="team-return-link" class="detail-link detail-back-link" href={fallbackReturn} data-family-href={fallbackReturn}>
-      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="11 6 5 12 11 18"></polyline></svg>
-      Quay lại đội chuẩn
-    </a>
-  </nav>
-
-  <article
-    id="team-detail-root"
-    class="reference-detail"
-    aria-labelledby="team-detail-title"
-    aria-busy="true"
-    data-family="recommended"
-    data-source-config-id={entry.sourceConfigId}
-    data-scope-key={entry.safeScopeKey}
-    data-generation-id={generationId}
-    data-manifest-sha256={manifestSha256}
-    data-legacy-teams-sha256={legacyTeamsSha256}
-  >
-    <div class="detail-header">
-      <div class="detail-head-main">
-        {scopeLine ? <p class="scope-note detail-kicker">{scopeLine}</p> : null}
-        <div class="detail-title-row">
-          <h1 id="team-detail-title" class="detail-title">{title}</h1>
-          {nameZh ? <span class="detail-title-zh" lang="zh-Hant">{nameZh}</span> : null}
-        </div>
-        <!-- Huy hiệu phe/loại binh do js/team-detail.js gắn từ bản ghi đã xác minh. -->
-        <div id="team-detail-badges" class="detail-badges" hidden></div>
-      </div>
-      <div id="team-detail-panel" class="detail-score-panel">
-        {hasScore ? (
-          <p class="detail-panel-label">
-            <span class="detail-panel-kicker">Điểm nguồn</span>
-            <span class="detail-panel-note">theo SGSDeck</span>
-          </p>
-        ) : null}
-        <p class="detail-score">
-          {hasScore ? <><span class="detail-score-value">{entry.value}</span> <span class="detail-score-unit">điểm</span></> : 'Chưa có điểm nguồn'}
-        </p>
-        <!-- Link nguồn đã kiểm scheme và nút sao chép liên kết do js/team-detail.js gắn. -->
-        <div id="team-detail-actions" class="detail-panel-actions"></div>
-      </div>
-    </div>
-
-    <div id="team-detail-status" class="detail-state" role="status" aria-live="polite" aria-atomic="true">Đang tải chi tiết…</div>
-    <noscript>
-      <p class="scope-note">Trang chi tiết cần JavaScript để đọc dữ liệu nguồn đã xác minh. Bạn vẫn có thể quay lại danh sách đội chuẩn bằng liên kết phía trên.</p>
-    </noscript>
-    <div id="team-detail-body" hidden></div>
-  </article>
-
-  <script is:inline type="module" src="/js/team-detail.js" slot="scripts"></script>
-</SiteLayout>
+<RecommendedDetail {...Astro.props} locale="vi" />

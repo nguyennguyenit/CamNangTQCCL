@@ -1,0 +1,38 @@
+---
+// Nội dung trang /chien-bao/: hướng dẫn đóng góp chiến báo (tĩnh) + "Chiến báo của tôi" do js/community-hub.js dựng.
+// Nhận `locale` để bản /zh/ dùng lại nguyên component.
+import { localePath, pick } from '../../../js/i18n.js';
+
+interface Props {
+  locale: 'vi' | 'zh';
+}
+
+const { locale } = Astro.props;
+const t = (vi: string, zh: string) => pick(locale, vi, zh);
+const steps = [
+  t('Mở trang chi tiết của đội bạn đã dùng (Đội chuẩn, Đội khác hoặc Khai hoang).', '打开你使用过的阵容详情页（推荐阵容、其他阵容或开荒）。'),
+  t('Ở mục "Chiến báo thực chiến", đăng nhập bằng Google rồi chọn ảnh chụp màn hình kết quả trận.', '在“实战战报”区域使用 Google 登录，然后选择战斗结果截图。'),
+  t('AI đọc kết quả và tướng hai bên; bạn kiểm tra, sửa nếu sai rồi gửi.', 'AI 识别胜负和双方武将；你核对并修正后提交。'),
+  t('Quản trị viên duyệt chiến báo. Sau khi duyệt, trận đấu được tính vào số trận, tỉ lệ thắng và đối thủ thường gặp của đội.', '管理员审核战报。通过后，该场战斗会计入阵容的场次、胜率和常见对手统计。'),
+];
+---
+<section class="cm-page" aria-labelledby="cm-hub-title">
+  <h1 id="cm-hub-title" class="detail-title">{t('Chiến báo', '战报')}</h1>
+  <p class="scope-note">{t('Chiến báo là kết quả trận thật do người chơi gửi, giúp mọi người biết đội hình nào đang thắng trong thực chiến.', '战报是玩家提交的真实战斗结果，帮助大家了解哪些阵容在实战中表现更好。')}</p>
+
+  <section class="cm-block" aria-labelledby="cm-hub-how">
+    <h2 id="cm-hub-how" class="cm-title">{t('Cách đóng góp', '如何贡献')}</h2>
+    <ol class="cm-steps">
+      {steps.map((step) => <li>{step}</li>)}
+    </ol>
+    <p class="scope-note">{t('Ảnh chỉ dùng để xác minh trận đấu. Hãy cắt bỏ tên tài khoản và thông tin cá nhân trước khi gửi.', '截图仅用于核实战斗结果。提交前请裁掉账号名称和个人信息。')}</p>
+    <p><a class="ana-btn" href={localePath('/doi-chuan/', locale)}>{t('Chọn đội để gửi chiến báo', '选择阵容提交战报')}</a></p>
+  </section>
+
+  <section class="cm-block" aria-labelledby="cm-hub-mine">
+    <h2 id="cm-hub-mine" class="cm-title">{t('Chiến báo của tôi', '我的战报')}</h2>
+    <div id="community-hub" class="cm-hub">
+      <noscript><p class="scope-note">{t('Mục này cần JavaScript để hiển thị.', '此部分需要启用 JavaScript 才能显示。')}</p></noscript>
+    </div>
+  </section>
+</section>

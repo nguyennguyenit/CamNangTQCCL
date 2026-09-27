@@ -6,6 +6,7 @@
 /**
  * Trả về đích root-relative cùng origin cho một URL gốc, hoặc `null` khi URL phải ở lại `/`.
  * Không bao giờ dựng đích ngoài origin truyền vào; mọi đích đều thuộc 8 trang mục.
+ * URL gốc bản Trung (`/zh/`) chuyển tới đúng trang mục bản Trung (giữ tiền tố `/zh`).
  */
 export function resolveLegacyRoute(href, origin) {
   // Hash cũ giữ nguyên tại chỗ để trình duyệt tự cuộn tới anchor (Phase 3/4 mới đổi phần này).
@@ -42,6 +43,8 @@ export function resolveLegacyRoute(href, origin) {
     return null;
   }
   if (url.origin !== baseUrl.origin) return null;
+  // Tiền tố ngôn ngữ của trang nguồn; mục đích luôn cùng ngôn ngữ với trang gốc.
+  const prefix = url.pathname === '/zh' || url.pathname.indexOf('/zh/') === 0 ? '/zh' : '';
 
   const rawHash = url.hash ? url.hash.slice(1) : '';
   const split = rawHash.indexOf('?');
@@ -50,7 +53,7 @@ export function resolveLegacyRoute(href, origin) {
   // Không hash: chỉ query mang khóa root cũ mới suy ra mục mặc định cũ (Đội chuẩn).
   if (!name) {
     const carriesRootState = ROOT_KEYS.some((key) => url.searchParams.has(key));
-    return carriesRootState ? `/doi-chuan/${url.search}` : null;
+    return carriesRootState ? `${prefix}/doi-chuan/${url.search}` : null;
   }
   if (ANCHOR_HASHES.indexOf(name) !== -1) return null;
 
@@ -69,11 +72,11 @@ export function resolveLegacyRoute(href, origin) {
       }
     }
     const search = params.toString();
-    return `/tra-cuu/${search ? `?${search}` : ''}`;
+    return `${prefix}/tra-cuu/${search ? `?${search}` : ''}`;
   }
   if (!Object.prototype.hasOwnProperty.call(HASH_TARGETS, name)) return null;
   const target = HASH_TARGETS[name];
   if (Object.prototype.hasOwnProperty.call(ALIAS_SOURCE, name)) params.set('source', ALIAS_SOURCE[name]);
   const search = params.toString();
-  return `${target}${search ? `?${search}` : ''}`;
+  return `${prefix}${target}${search ? `?${search}` : ''}`;
 }

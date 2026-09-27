@@ -142,3 +142,27 @@ test('search reads declared domain fields only and never hashes or source URLs',
   assert.deepEqual(ids('sgsdeck.com'), []);
   assert.deepEqual(ids('aaaaaaaa'), []);
 });
+
+
+test('source Tier facets preserve repeated selections and sort before source score', () => {
+  const ranked = [
+    {...rows[0], sourceConfigId:'t1', tierRaw:'T1', tierOrder:2, value:150},
+    {...rows[1], sourceConfigId:'t0', tierRaw:'T0', tierOrder:0, value:100},
+    {...rows[0], sourceConfigId:'unranked', tierRaw:null, tierOrder:999},
+  ];
+  const state=readRecommendedQuery('https://x.test/?season=s28&tier=T1&tier=T0&tier=T1');
+  assert.deepEqual(state.filters.tier,['T1','T0']);
+  assert.deepEqual(state.notices,[]);
+  assert.deepEqual(projectRecommendedRows(ranked,state).map(row=>row.sourceConfigId),['t0','t1']);
+  assert.deepEqual(projectRecommendedRows(ranked,{...state,filters:{tier:['T1'],faction:['魏']}}),[]);
+});
+
+
+test('legacy teams ignore source Tier selectors and never borrow historical tiers', () => {
+  const state=readRecommendedQuery('https://x.test/doi-khac/?tier=T0');
+  assert.deepEqual(state.filters.tier,[]);
+  assert.match(state.notices.join(' '),/không còn áp dụng/);
+  const legacy=[{legacyTeamId:'legacy',historicalTier:'T0'}];
+  assert.deepEqual(projectRecommendedRows(legacy,state),legacy);
+  assert.deepEqual(projectRecommendedRows(legacy,{...state,filters:{tier:['T0']}}),[]);
+});

@@ -1,0 +1,100 @@
+---
+// Trang mục dùng chung cho bản Việt và bản Trung: route `/…/` và `/zh/…/` chỉ là vỏ mỏng truyền `section` + `locale`.
+// Nội dung mục do js/app.js dựng theo `<html lang>`; ở đây chỉ có tiêu đề, mô tả, canonical và mount.
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { localePath, pick } from '../../../js/i18n.js';
+import type { SiteLocale } from '../../lib/locale-routes';
+
+type SectionId = 'team-chuan' | 'team-khac' | 'coexist' | 'khaihoang' | 'lookup' | 'recruit-tracker' | 'analyze' | 'roster-recommend';
+
+interface Props {
+  section: SectionId;
+  locale: SiteLocale;
+}
+
+const { section, locale } = Astro.props;
+const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+
+/** Tiêu đề và mô tả của từng trang mục (chữ tác giả); đường dẫn là bản Việt, bản Trung thêm tiền tố `/zh`. */
+const PAGES: Record<SectionId, { path: string; title: string; description: string }> = {
+  'team-chuan': {
+    path: '/doi-chuan/',
+    title: t('Đội chuẩn — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '推荐阵容 — 三国志战略版攻略手册'),
+    description: t(
+      'Danh sách đội hình Đội chuẩn tổng hợp từ các website và diễn đàn của game thủ Trung Quốc, lọc theo phe, loại binh và mùa nguồn.',
+      '汇总自中国玩家网站与论坛的推荐阵容，可按阵营、兵种与来源赛季筛选。',
+    ),
+  },
+  'team-khac': {
+    path: '/doi-khac/',
+    title: t('Đội khác — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '其他阵容 — 三国志战略版攻略手册'),
+    description: t(
+      'Danh sách đội hình Đội khác đã đối chiếu với đội chuẩn, lọc theo phe, loại binh và mùa nguồn.',
+      '与推荐阵容对照过的其他阵容，可按阵营、兵种与来源赛季筛选。',
+    ),
+  },
+  coexist: {
+    path: '/cung-ton/',
+    title: t('Cùng Tồn — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '共存阵容 — 三国志战略版攻略手册'),
+    description: t(
+      'Các nhóm tướng Cùng Tồn theo kịch bản, kèm cấu hình áp dụng và phần tham khảo.',
+      '按剧本整理的共存阵容组合，附适用配置与参考说明。',
+    ),
+  },
+  khaihoang: {
+    path: '/khai-hoang/',
+    title: t('Khai hoang — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '开荒 — 三国志战略版攻略手册'),
+    description: t(
+      'Hướng dẫn khai hoang theo từng đội: build trước và sau, thanh điểm mốc và cách đánh đất.',
+      '按队伍整理的开荒攻略：换战法前后的配置、各级土地评分与打地方法。',
+    ),
+  },
+  lookup: {
+    path: '/tra-cuu/',
+    title: t('Tra cứu — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '图鉴查询 — 三国志战略版攻略手册'),
+    description: t(
+      'Tra cứu tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng và công trình theo tên Việt hoặc chữ Hán.',
+      '按名称查询武将、战法、装备、军师、兵种进阶与建筑。',
+    ),
+  },
+  'recruit-tracker': {
+    path: '/theo-doi-chieu-mo/',
+    title: t('Theo dõi chiêu mộ — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '招募记录 — 三国志战略版攻略手册'),
+    description: t(
+      'Theo dõi chiêu mộ theo tài khoản: lịch sử, mốc bảo hiểm và số lượt còn lại của từng đợt.',
+      '按账号记录招募：历史记录、保底进度与各卡池剩余次数。',
+    ),
+  },
+  analyze: {
+    path: '/soi-doi-tu-anh/',
+    title: t('Soi đội từ ảnh — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '截图识阵 — 三国志战略版攻略手册'),
+    description: t(
+      'Soi đội hình từ ảnh chụp và đối chiếu với dữ liệu đội đã được tuyển chọn.',
+      '从截图识别阵容，并与精选阵容数据对照。',
+    ),
+  },
+  'roster-recommend': {
+    path: '/goi-y-doi-tu-kho/',
+    title: t('Gợi ý đội từ kho — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '武将库配队 — 三国志战略版攻略手册'),
+    description: t(
+      'Gợi ý đội từ kho tướng và chiến pháp của bạn, kèm điều kiện và hiệu ứng cần kiểm chứng.',
+      '根据你的武将与战法库推荐阵容，并列出需核实的条件与效果。',
+    ),
+  },
+};
+
+const page = PAGES[section];
+const canonicalUrl = new URL(localePath(page.path, locale), Astro.site);
+---
+<SiteLayout
+  title={page.title}
+  description={page.description}
+  pageKind="section"
+  activeSection={section}
+  canonicalUrl={canonicalUrl}
+  locale={locale}
+>
+  <section id={`section-${section}`} class="section active"></section>
+
+  <script is:inline type="module" src="/js/app.js" slot="scripts"></script>
+</SiteLayout>

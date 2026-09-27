@@ -1,5 +1,6 @@
 import { normalizeText } from './filters.js';
 import { canonicalHeroId } from './hero-identity.js';
+import { L } from './i18n.js';
 
 const ARTIFACTS = ['season-registry', 'season-evidence', 'season-team-configs', 'season-team-evaluations', 'season-content-links'];
 const DATASETS = ['teams', 'coexist', 'heroes-dict', 'tactics', 'books-dict'];
@@ -7,18 +8,20 @@ const CONFIG_KEYS = ['schemaVersion', 'id', 'teamId', 'scenarioId', 'rulesetId',
 const TIERS = new Set(['T0', 'T0.5', 'T1', 'T1.5', 'T2', 'T3']);
 const META_TIERS = new Set(['T0', 'T0.5', 'T1']);
 const MODELS = new WeakMap();
+/** Thông báo theo mã lỗi, mỗi mã một cặp [tiếng Việt, tiếng Trung]; chọn theo ngôn ngữ trang lúc tạo lỗi. */
 const MESSAGES = {
-  SEASON_BUNDLE_INVALID: 'Dữ liệu kịch bản không hợp lệ hoặc không đồng bộ.',
-  SEASON_CONTEXT_INVALID: 'Kịch bản hoặc phiên bản luật không hợp lệ.',
-  SEASON_CONTEXT_REQUIRED: 'Chọn phiên bản luật đã xác minh để thực hiện thao tác này.',
-  CONFIG_NOT_FOUND: 'Không tìm thấy cấu hình phù hợp phạm vi.',
-  CONFIG_AMBIGUOUS: 'Đội có nhiều cấu hình phù hợp; hãy chọn cấu hình cụ thể.',
-  CANDIDATE_LIMIT_EXCEEDED: 'Quá nhiều cấu hình phù hợp phạm vi; chưa thể tạo gợi ý.',
+  SEASON_BUNDLE_INVALID: ['Dữ liệu kịch bản không hợp lệ hoặc không đồng bộ.', '剧本数据无效或不同步。'],
+  SEASON_CONTEXT_INVALID: ['Kịch bản hoặc phiên bản luật không hợp lệ.', '剧本或规则版本无效。'],
+  SEASON_CONTEXT_REQUIRED: ['Chọn phiên bản luật đã xác minh để thực hiện thao tác này.', '请选择已验证的规则版本以执行此操作。'],
+  CONFIG_NOT_FOUND: ['Không tìm thấy cấu hình phù hợp phạm vi.', '未找到符合范围的配置。'],
+  CONFIG_AMBIGUOUS: ['Đội có nhiều cấu hình phù hợp; hãy chọn cấu hình cụ thể.', '该阵容有多个符合的配置，请选择具体配置。'],
+  CANDIDATE_LIMIT_EXCEEDED: ['Quá nhiều cấu hình phù hợp phạm vi; chưa thể tạo gợi ý.', '符合范围的配置过多，暂时无法生成推荐。'],
 };
+const message = code => L(...(MESSAGES[code] || MESSAGES.SEASON_BUNDLE_INVALID));
 
 export class SeasonContextError extends Error {
   constructor(code = 'SEASON_BUNDLE_INVALID') {
-    super(MESSAGES[code] || MESSAGES.SEASON_BUNDLE_INVALID);
+    super(message(code));
     this.name = 'SeasonContextError';
     this.code = Object.hasOwn(MESSAGES, code) ? code : 'SEASON_BUNDLE_INVALID';
   }
@@ -53,7 +56,7 @@ function pairKey(scenarioId, rulesetId) { return JSON.stringify([scenarioId, rul
 function hash(value) { ensure(typeof value === 'string' && /^sha256:[a-f0-9]{64}$/u.test(value)); }
 function freeze(value) { if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value); } return value; }
 function modelIndex(model) { const value = MODELS.get(model); if (!value) fail(); return value; }
-function resultError(code, extra = {}) { return { ok: false, code, message: MESSAGES[code], ...extra }; }
+function resultError(code, extra = {}) { return { ok: false, code, message: message(code), ...extra }; }
 
 /** Locale-independent Unicode code point order, matching Python sorted strings. */
 export function compareSeasonIds(left, right) {

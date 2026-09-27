@@ -1,15 +1,5 @@
 ---
-import SiteLayout from '../../layouts/SiteLayout.astro';
-const canonicalUrl = new URL('/goi-y-doi-tu-kho/', Astro.site);
+// Trang mục bản Việt: nội dung ở src/components/pages/SectionPage.astro (dùng chung với bản `/zh/`).
+import SectionPage from '../../components/pages/SectionPage.astro';
 ---
-<SiteLayout
-  title="Gợi ý đội từ kho — Cẩm Nang Game Tam Quốc Chí - Chiến Lược"
-  description="Gợi ý đội từ kho tướng và chiến pháp của bạn, kèm điều kiện và hiệu ứng cần kiểm chứng."
-  pageKind="section"
-  activeSection="roster-recommend"
-  canonicalUrl={canonicalUrl}
->
-  <section id="section-roster-recommend" class="section active"></section>
-
-  <script is:inline type="module" src="/js/app.js" slot="scripts"></script>
-</SiteLayout>
+<SectionPage section="roster-recommend" locale="vi" />

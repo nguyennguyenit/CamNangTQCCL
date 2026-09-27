@@ -16,8 +16,6 @@ import { readFile } from "node:fs/promises";
 
 const CJK = /[\u3400-\u9fff]/;
 const SOURCE_SENTINELS = ["sgsdeck", "https://sentinel.example/tra-cuu", ".card > .name"];
-const lookupPagePath = new URL("../src/pages/tra-cuu/index.astro", import.meta.url);
-const siteLayoutPath = new URL("../src/layouts/SiteLayout.astro", import.meta.url);
 
 function sourceNoise() {
   return { source: "sgsdeck", sourceUrl: "https://sentinel.example/tra-cuu", selector: ".card > .name" };
@@ -316,6 +314,25 @@ test("tìm tiếng Việt bỏ dấu và không phân biệt hoa thường", () 
   assert.equal(searchLookupGroup(built, { group: "heroes", query: "Lưu Bị" }).items[0].id, "hero:luu-bi");
 });
 
+test("bản zh xếp mục khớp tên chữ Hán trước, bản Việt giữ thứ tự nguồn", () => {
+  const built = buildLookupCorpus({
+    heroes: [
+      { id: "hero:quan-binh", viet: "Quan Bình", chinese: "關平", aliases: ["关平"] },
+      { id: "hero:sp-quan-vu", viet: "SP Quan Vũ", chinese: "SP 關羽", aliases: ["SP关羽"] },
+      { id: "hero:quan-vu", viet: "Quan Vũ", chinese: "關羽", aliases: ["关羽"] },
+    ],
+    tactics: [],
+    catalog: { equipment: [], specials: [], advisors: [], troopMods: [], buildings: [] },
+  });
+  const ids = (query, locale) => searchLookupGroup(built, { group: "heroes", query, locale }).items.map((item) => item.id);
+  // Gõ giản thể khớp bí danh; trùng hẳn tên Hán đứng đầu, khớp một phần xếp sau.
+  assert.deepEqual(ids("关羽", "zh"), ["hero:quan-vu", "hero:sp-quan-vu"]);
+  assert.deepEqual(ids("關", "zh"), ["hero:quan-binh", "hero:quan-vu", "hero:sp-quan-vu"]);
+  assert.deepEqual(ids("关羽", "vi"), ["hero:sp-quan-vu", "hero:quan-vu"]);
+  // Tên Việt vẫn tìm được ở bản zh, sau các mục khớp chữ Hán.
+  assert.deepEqual(ids("quan vu", "zh"), ["hero:sp-quan-vu", "hero:quan-vu"]);
+});
+
 test("tìm không dấu coi đ/Đ là d/D", () => {
   const built = buildLookupCorpus({
     heroes: [
@@ -552,36 +569,6 @@ test("hồ sơ mọi nhóm ẩn nguồn và chỉ hiện tiếng Việt", () => 
       assert.equal(serialized.includes(sentinel), false, `${id} lộ nguồn: ${sentinel}`);
     }
   }
-});
-
-test("trang Tra cứu chỉ còn một tab và một mount lookup", async () => {
-  const [page, layout] = await Promise.all([
-    readFile(lookupPagePath, "utf8"),
-    readFile(siteLayoutPath, "utf8"),
-  ]);
-  const sections = layout.match(/const SECTIONS = \[([\s\S]*?)\n\];/);
-  assert.ok(sections, "thiếu danh sách nav trong SiteLayout");
-  assert.match(sections[1], /\{id:\s*'lookup',\s*label:\s*'Tra cứu',/);
-  assert.doesNotMatch(sections[1], /\bid:\s*'(?:heroes|tactics)'/);
-
-  const navLink = layout.match(/\{!landing && topSections\.map\(\(section\) => \([\s\S]*?<a\b([\s\S]*?)<\/a>/);
-  assert.ok(navLink, "nav phải kết xuất mỗi mục thành liên kết <a>");
-  assert.match(navLink[1], /data-section=\{section\.id\}/);
-  assert.match(navLink[1], /href=\{section\.path\}/);
-  assert.match(navLink[1], /aria-current=\{currentMark\(section\.id\)\}/);
-  assert.match(navLink[1], />\{section\.label\}/);
-  // Ba mục Beta nằm trong menu thả "Công cụ": vẫn là liên kết thật, cùng bộ thuộc tính nav.
-  const toolLink = layout.match(/section\.entries\.map\(\(entry\) => \([\s\S]*?<a\b([\s\S]*?)>\s*<span class="nav-menu-label"/);
-  assert.ok(toolLink, "mục trong menu thả phải là liên kết <a>");
-  assert.match(toolLink[1], /data-section=\{entry\.id\}/);
-  assert.match(toolLink[1], /href=\{entry\.href\}/);
-  assert.match(toolLink[1], /aria-current=\{currentMark\(entry\.id\)\}/);
-
-  const mounts = [...page.matchAll(/<section\b[^>]*\bid=["'](section-[^"']+)["'][^>]*>/g)]
-    .map((match) => match[1]);
-  assert.deepEqual(mounts, ["section-lookup"], "trang Tra cứu chỉ có một mount");
-  assert.match(page, /<section\b[^>]*id=["']section-lookup["'][^>]*>/);
-  assert.match(page, /<script[^>]+type=["']module["'][^>]+src=["']\/js\/app\.js["']/);
 });
 
 /* ---------- Phase 7: giao diện mới, nhãn tiếng Việt, khối "Trong cẩm nang" ---------- */

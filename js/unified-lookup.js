@@ -7,35 +7,52 @@
 // số liệu khi mở hồ sơ đầu tiên, không kéo `index.json`/`other-teams.json` về trang Tra cứu.
 
 import { el, icon, svgNode } from "./render.js";
-import { lookupProfile, tacticTypeLabel } from "./lookup-detail.js";
+import { LOOKUP_EMPTY, lookupDisplayName, lookupProfile, tacticTypeLabel, zhSafeValue } from "./lookup-detail.js";
+import { L, currentLocale, localePath } from "./i18n.js";
+import { createRawNameResolver } from "./website-display.js";
 import { heroPortrait } from "./hero-portrait.js";
 import { createHeroSummaryLoader } from "./hero-summaries.js";
 import { teamDetailHref } from "./team-detail-navigation.js";
 import { normalizeText } from "./filters.js";
 
 export const LOOKUP_GROUPS = Object.freeze(["heroes", "tactics", "equipment", "advisors", "troop-mods", "buildings"]);
-/** Nhãn nhóm dùng chung cho chip ở trang Tra cứu và menu điều hướng (SiteLayout). */
+/** Nhãn nhóm dùng chung cho chip ở trang Tra cứu và menu điều hướng (SiteLayout, bản Việt). */
 export const LOOKUP_GROUP_LABELS = Object.freeze({
   heroes: "Tướng", tactics: "Chiến pháp", equipment: "Trang bị",
   advisors: "Quân sư", "troop-mods": "Cải tạo binh chủng", buildings: "Công trình",
 });
+/** Nhãn nhóm bản Trung (`/zh/`): SiteLayout chọn theo `locale`, trang Tra cứu chọn theo `<html lang>`. */
+export const LOOKUP_GROUP_LABELS_ZH = Object.freeze({
+  heroes: "武将", tactics: "战法", equipment: "装备",
+  advisors: "军师", "troop-mods": "兵种进阶", buildings: "建筑",
+});
+/** Nhãn nhóm theo ngôn ngữ chỉ định (`vi` | `zh`). */
+export function lookupGroupLabels(locale = currentLocale()) {
+  return locale === "zh" ? LOOKUP_GROUP_LABELS_ZH : LOOKUP_GROUP_LABELS;
+}
 /** Đơn vị đếm của từng nhóm cho dòng trạng thái ("n tướng · bấm để mở hồ sơ"). */
 export const LOOKUP_GROUP_UNITS = Object.freeze({
   heroes: "tướng", tactics: "chiến pháp", equipment: "trang bị",
   advisors: "quân sư", "troop-mods": "cải tạo binh chủng", buildings: "công trình",
 });
+/** Lượng từ + đơn vị bản Trung ("12 名武将"). */
+const LOOKUP_GROUP_UNITS_ZH = Object.freeze({
+  heroes: "名武将", tactics: "个战法", equipment: "件装备",
+  advisors: "位军师", "troop-mods": "项兵种进阶", buildings: "座建筑",
+});
 /** Thứ tự vai trò trong khối "Trong cẩm nang" (khớp `index.json` heroes[].roleRaw). */
-export const POSITION_LABELS = Object.freeze(["Chủ tướng", "Phó tướng 1", "Phó tướng 2"]);
+export const POSITION_LABELS = Object.freeze([L("Chủ tướng", "主将"), L("Phó tướng 1", "副将 1"), L("Phó tướng 2", "副将 2")]);
 
 const GROUP_BY_KIND = Object.freeze({
   hero: "heroes", tactic: "tactics", equipment: "equipment", "equipment-special": "equipment",
   advisor: "advisors", "troop-mod": "troop-mods", building: "buildings",
 });
+// `<html lang>` cố định theo trang nên hằng dịch lúc nạp module vẫn đúng ngôn ngữ.
 const ROUTE_ERRORS = Object.freeze({
-  "duplicate-param": "Mỗi tham số tra cứu chỉ được xuất hiện một lần.",
-  "unknown-group": "Nhóm tra cứu không hợp lệ.",
-  "id-kind-mismatch": "Mục tra cứu không thuộc nhóm đã chọn.",
-  "unknown-id-kind": "Mã mục tra cứu không hợp lệ.",
+  "duplicate-param": L("Mỗi tham số tra cứu chỉ được xuất hiện một lần.", "每个查询参数只能出现一次。"),
+  "unknown-group": L("Nhóm tra cứu không hợp lệ.", "查询分类无效。"),
+  "id-kind-mismatch": L("Mục tra cứu không thuộc nhóm đã chọn.", "该条目不属于所选分类。"),
+  "unknown-id-kind": L("Mã mục tra cứu không hợp lệ.", "条目编号无效。"),
 });
 const CJK_CHAR = /[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]/u;
 const MISSING = "—";
@@ -103,12 +120,32 @@ export function buildLookupCorpus({ heroes, tactics, catalog }) {
   return { groups, byId, heroes, tactics, catalog };
 }
 
-export function searchLookupGroup(corpus, { group = null, query = "", page = 1, pageSize = PAGE_SIZE } = {}) {
+/**
+ * Hạng khớp theo tên chữ Hán (bản zh): 0 trùng hẳn, 1 khớp đầu, 2 chứa, 3 chỉ khớp tên Việt/bí danh khác.
+ * Sắp xếp ổn định nên trong cùng hạng vẫn giữ thứ tự nguồn.
+ */
+function chineseRank(item, needle) {
+  const record = item.record ?? {};
+  const names = [recordChinese(record), ...(Array.isArray(record.aliasesZh) ? record.aliasesZh : []), ...(Array.isArray(record.aliases) ? record.aliases : [])]
+    .filter((name) => typeof name === "string" && CJK_CHAR.test(name)).map(normalizeText);
+  if (names.some((name) => name === needle)) return 0;
+  if (names.some((name) => name.startsWith(needle))) return 1;
+  if (names.some((name) => name.includes(needle))) return 2;
+  return 3;
+}
+
+export function searchLookupGroup(corpus, { group = null, query = "", page = 1, pageSize = PAGE_SIZE, locale = currentLocale() } = {}) {
   const source = group ? (corpus.groups[group] ?? []) : LOOKUP_GROUPS.flatMap((key) => corpus.groups[key]);
   const needle = normalizeText(query);
-  const matches = needle
+  const filtered = needle
     ? source.filter((item) => item.searchKeys.some((key) => key.includes(needle)))
     : source;
+  // Bản zh ưu tiên mục khớp tên chữ Hán; bản Việt giữ nguyên thứ tự nguồn.
+  const matches = needle && locale === "zh"
+    ? filtered.map((item, index) => ({ item, index, rank: chineseRank(item, needle) }))
+      .sort((a, b) => a.rank - b.rank || a.index - b.index)
+      .map(({ item }) => item)
+    : filtered;
   const safePage = Number.isInteger(page) && page > 0 ? page : 1;
   const start = (safePage - 1) * pageSize;
   return { items: matches.slice(start, start + pageSize), total: matches.length, page: safePage, hasMore: start + pageSize < matches.length };
@@ -125,6 +162,13 @@ export function recordChinese(record) {
 
 const VARIANT_LABEL = { sp: "SP", co: "CO", "40y": "40Y", base: null };
 const FACTION_CODE = { "Ngụy": "nguy", "Thục": "thuc", "Ngô": "ngo", "Quần": "quan", "Hỗn hợp": "honhop" };
+/** Giá trị chữ của dữ liệu theo ngôn ngữ trang: bản zh chỉ giữ giá trị dịch được, còn lại rỗng (bị bỏ). */
+const shown = (value) => {
+  if (value === null || value === undefined || value === "") return "";
+  return String(zhSafeValue(value) ?? "");
+};
+/** Mã phe cho class màu: dữ liệu luôn lưu phe bằng tiếng Việt, nhãn hiển thị có thể là chữ Trung. */
+const FACTION_CODE_BY_LABEL = { ...FACTION_CODE, "魏": "nguy", "蜀": "thuc", "吴": "ngo", "群": "quan" };
 
 /** Thẻ kết quả: huy hiệu biến thể, dòng phụ theo nhóm (phe/vai trò, phẩm/loại, vị trí…). */
 export function lookupCardView(group, item) {
@@ -136,24 +180,24 @@ export function lookupCardView(group, item) {
   const hero = kind === "heroes";
   const parts = hero
     ? [
-        record.faction ? { kind: "faction", text: String(record.faction), code: FACTION_CODE[record.faction] ?? "none" } : null,
-        record.cost ? { kind: "text", text: `Thống ngự ${record.cost}` } : null,
-        record.roleTagViet ? { kind: "role", text: String(record.roleTagViet) } : null,
+        shown(record.faction) ? { kind: "faction", text: shown(record.faction), code: FACTION_CODE[record.faction] ?? "none" } : null,
+        record.cost ? { kind: "text", text: L(`Thống ngự ${record.cost}`, `统御 ${record.cost}`) } : null,
+        shown(record.roleTagViet) ? { kind: "role", text: shown(record.roleTagViet) } : null,
       ]
     : [
-        (record.qualityVi ?? record.quality) ? { kind: "text", text: String(record.qualityVi ?? record.quality) } : null,
+        shown(record.qualityVi ?? record.quality) ? { kind: "text", text: shown(record.qualityVi ?? record.quality) } : null,
         kind === "tactics" && tacticTypeLabel(record.type) ? { kind: "text", text: tacticTypeLabel(record.type) } : null,
-        kind === "equipment" && record.slotVi ? { kind: "text", text: String(record.slotVi) } : null,
-        kind === "advisors" && record.elementVi ? { kind: "text", text: String(record.elementVi) } : null,
-        kind === "troop-mods" && record.appliesToVi ? { kind: "text", text: String(record.appliesToVi) } : null,
-        kind === "buildings" && Number.isFinite(Number(record.maxLevel)) ? { kind: "text", text: "Cấp tối đa " + String(record.maxLevel) } : null,
+        kind === "equipment" && shown(record.slotVi) ? { kind: "text", text: shown(record.slotVi) } : null,
+        kind === "advisors" && shown(record.elementVi) ? { kind: "text", text: shown(record.elementVi) } : null,
+        kind === "troop-mods" && shown(record.appliesToVi) ? { kind: "text", text: shown(record.appliesToVi) } : null,
+        kind === "buildings" && Number.isFinite(Number(record.maxLevel)) ? { kind: "text", text: L("Cấp tối đa ", "最高等级 ") + String(record.maxLevel) } : null,
       ];
   const meta = parts.filter(Boolean);
   return {
     variant,
     chinese: recordChinese(record),
-    faction: hero && record.faction ? String(record.faction) : null,
-    stars: hero && Number.isFinite(Number(record.stars)) ? `${record.stars} sao` : null,
+    faction: hero && shown(record.faction) ? shown(record.faction) : null,
+    stars: hero && Number.isFinite(Number(record.stars)) ? L(`${record.stars} sao`, `${record.stars} 星`) : null,
     meta,
   };
 }
@@ -215,11 +259,40 @@ export function camNangView(summary) {
   };
 }
 
+/** Tiêu đề cột bảng chiến pháp (cũng là nhãn `data-label` của ô trên mobile). */
+const TABLE_HEADS = Object.freeze({
+  name: L("Chiến pháp", "战法"),
+  quality: L("Phẩm", "品质"),
+  type: L("Loại", "类型"),
+  effectType: L("Hiệu quả", "效果类型"),
+  target: L("Mục tiêu", "目标"),
+  rate: L("Tỷ lệ", "发动率"),
+});
+
+/** Hướng điểm (tên Việt từ số liệu build) → chữ Trung; dạng không nhận ra trả rỗng để bản zh bỏ qua. */
+const STAT_ZH = { "Trí Lực": "智力", "Võ Lực": "武力", "Thống Soái": "统率", "Tốc Độ": "速度", "Chính Trị": "政治", "Mị Lực": "魅力" };
+function statFocusZh(name) {
+  const value = String(name ?? "").trim();
+  const full = /^Toàn (.+)$/u.exec(value);
+  if (full) return STAT_ZH[full[1]] ? `全${STAT_ZH[full[1]]}` : "";
+  const pair = /^(.+) và (.+)$/u.exec(value);
+  if (pair) return STAT_ZH[pair[1]] && STAT_ZH[pair[2]] ? `${STAT_ZH[pair[1]]}、${STAT_ZH[pair[2]]}` : "";
+  return STAT_ZH[value] ?? "";
+}
+
 /* ---------- Giao diện ---------- */
 
 export function initUnifiedLookup(bundle, mount, options = {}) {
   const corpus = buildLookupCorpus(bundle);
-  const labels = LOOKUP_GROUP_LABELS;
+  const labels = lookupGroupLabels();
+  const zh = currentLocale() === "zh";
+  // Tên Việt trong số liệu "Trong cẩm nang" → chữ Hán nguồn (bản zh). `options.rawNameResolver` (heroes-dict,
+  // tactics, books-dict) phủ cả binh thư; thiếu thì tự dựng từ tướng/chiến pháp của bundle.
+  const rawName = zh ? (options.rawNameResolver ?? createRawNameResolver(bundle.heroes, bundle.tactics)) : null;
+  /** Danh sách tên cho bản đang xem; bản zh bỏ tên không tra được chữ Hán để không trộn ngôn ngữ. */
+  const localNames = (items) => zh
+    ? items.map((item) => ({ ...item, name: rawName(item.name) })).filter((item) => item.name)
+    : items;
   const summaries = options.summary ? createHeroSummaryLoader(options.summary) : null;
   let page = 1;
   let query = "";
@@ -231,16 +304,16 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
 
   const heading = el("header", { class: "reference-head lookup-head" }, [
     el("div", { class: "reference-head-text" }, [
-      el("span", { class: "reference-kicker" }, "Tra cứu"),
-      el("h1", { class: "reference-title" }, "Tra cứu"),
-      el("p", { class: "reference-lead" }, "Tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng và công trình — tìm bằng tên Việt, Hán-Việt hoặc chữ Hán."),
+      el("span", { class: "reference-kicker" }, L("Tra cứu", "图鉴查询")),
+      el("h1", { class: "reference-title" }, L("Tra cứu", "图鉴查询")),
+      el("p", { class: "reference-lead" }, L("Tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng và công trình — tìm bằng tên Việt, Hán-Việt hoặc chữ Hán.", "武将、战法、装备、军师、兵种进阶与建筑——可用中文名、越南语名或汉越音搜索。")),
     ]),
   ]);
   const search = el("input", {
     type: "search",
     class: "lookup-search-input",
-    "aria-label": "Tìm trong Tra cứu",
-    placeholder: "Tìm tướng, chiến pháp, trang bị, quân sư… (gõ không dấu hoặc chữ Hán đều được)",
+    "aria-label": L("Tìm trong Tra cứu", "在图鉴中搜索"),
+    placeholder: L("Tìm tướng, chiến pháp, trang bị, quân sư… (gõ không dấu hoặc chữ Hán đều được)", "搜索武将、战法、装备、军师……（支持中文名）"),
   });
   const searchBox = el("label", { class: "search lookup-search" }, [
     icon([
@@ -249,10 +322,10 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
     ], { size: 20 }),
     search,
   ]);
-  const chips = el("div", { class: "lookup-chips", role: "group", "aria-label": "Nhóm tra cứu" });
+  const chips = el("div", { class: "lookup-chips", role: "group", "aria-label": L("Nhóm tra cứu", "查询分类") });
   const summary = el("p", { class: "lookup-summary", role: "status", "aria-live": "polite" });
   summary.dataset.lookupTotal = "0";
-  const statusRow = el("div", { class: "lookup-status-row" }, [summary, el("span", { class: "lookup-order" }, "Thứ tự theo nguồn")]);
+  const statusRow = el("div", { class: "lookup-status-row" }, [summary, el("span", { class: "lookup-order" }, L("Thứ tự theo nguồn", "按来源排序"))]);
   const grid = el("div", { class: "lookup-grid" });
   const feedback = el("div", { class: "lookup-feedback", "aria-live": "polite" });
   const detailMount = el("div", { class: "lookup-detail-mount" });
@@ -344,18 +417,20 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
       el("span", { class: "lookup-relation-label" }, relation.labelVi),
     ]);
     if (!relation.resolved || !target) {
-      card.append(el("p", { class: "lookup-relation-pending" }, relation.statusVi ?? "Đang cập nhật"));
+      card.append(el("p", { class: "lookup-relation-pending" }, relation.statusVi ?? LOOKUP_EMPTY));
       return card;
     }
     const record = target.record ?? {};
-    const relationButton = routeButton(target.nameVi, { group: target.group, id: target.id }, "lookup-relation-name");
+    const relationButton = routeButton(lookupDisplayName(record, target.nameVi), { group: target.group, id: target.id }, "lookup-relation-name");
     relationButton.dataset.lookupRelation = target.id;
     const head = el("div", { class: "lookup-relation-head" }, [relationButton]);
     if (record.quality) head.append(el("span", { class: "lookup-quality" }, String(record.quality).toUpperCase()));
-    const sub = [tacticTypeLabel(record.type), record.lookup?.effectTypeVi].filter(Boolean).join(" · ");
+    const sub = [tacticTypeLabel(record.type), shown(record.lookup?.effectTypeVi)].filter(Boolean).join(" · ");
     if (sub) head.append(el("span", { class: "lookup-relation-sub" }, sub));
     card.append(head);
-    if (record.effectViet) card.append(el("p", { class: "lookup-relation-effect" }, String(record.effectViet)));
+    // Bản zh dùng hiệu ứng chữ Hán nguồn (`effect`), bản Việt dùng bản dịch.
+    const effect = zh ? record.effect : record.effectViet;
+    if (effect) card.append(el("p", { class: "lookup-relation-effect" }, String(effect)));
     return card;
   }
 
@@ -364,19 +439,19 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
     const record = entryRow.record ?? {};
     const chinese = recordChinese(record);
     const view = lookupCardView(entryRow.group, entryRow);
-    const eyebrow = [labels[entryRow.group], record.lookup?.categoryVi ?? record.qualityVi ?? record.slotVi ?? record.elementVi ?? record.appliesToVi]
+    const eyebrow = [labels[entryRow.group], shown(record.lookup?.categoryVi ?? record.qualityVi ?? record.slotVi ?? record.elementVi ?? record.appliesToVi)]
       .filter(Boolean).join(" · ");
     const badges = el("div", { class: "lookup-dialog-badges" });
     if (view.variant) badges.append(el("span", { class: "badge badge-band" }, view.variant));
-    if (view.faction) badges.append(el("span", { class: `badge faction f-${FACTION_CODE[view.faction] ?? "none"}` }, view.faction));
+    if (view.faction) badges.append(el("span", { class: `badge faction f-${FACTION_CODE_BY_LABEL[view.faction] ?? "none"}` }, view.faction));
     if (view.stars) badges.append(el("span", { class: "badge badge-fill" }, view.stars));
-    if (record.cost) badges.append(el("span", { class: "badge badge-fill" }, `Thống ngự ${record.cost}`));
+    if (record.cost) badges.append(el("span", { class: "badge badge-fill" }, L(`Thống ngự ${record.cost}`, `统御 ${record.cost}`)));
     // Tướng: hạng mục (badge 'Quân sự' của artboard); nhóm khác: phẩm của chính mục.
-    const grade = entryRow.group === "heroes" ? record.lookup?.categoryVi : record.quality;
+    const grade = shown(entryRow.group === "heroes" ? record.lookup?.categoryVi : record.quality);
     if (grade) badges.append(entryRow.group === "heroes"
       ? el("span", { class: "badge badge-fill" }, String(grade))
       : el("span", { class: "lookup-quality" }, String(grade)));
-    const close = el("button", { type: "button", class: "lookup-close", "aria-label": "Đóng hồ sơ" }, [
+    const close = el("button", { type: "button", class: "lookup-close", "aria-label": L("Đóng hồ sơ", "关闭详情") }, [
       icon([
         svgNode("line", { x1: 6, y1: 6, x2: 18, y2: 18 }),
         svgNode("line", { x1: 18, y1: 6, x2: 6, y2: 18 }),
@@ -394,7 +469,8 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
         el("span", { class: "lookup-dialog-eyebrow" }, eyebrow),
         el("div", { class: "lookup-dialog-titles" }, [
           el("h2", { class: "lookup-dialog-title", id: "lookup-dialog-title" }, profile.titleVi),
-          chinese ? el("span", { class: "lookup-dialog-zh", lang: "zh-Hant" }, chinese) : null,
+          // Bản zh: tiêu đề đã là chữ Hán, không lặp lại dòng chữ Hán phụ.
+          chinese && !zh ? el("span", { class: "lookup-dialog-zh", lang: "zh-Hant" }, chinese) : null,
         ]),
         badges.childElementCount ? badges : null,
         heroFacts(profile),
@@ -407,9 +483,9 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
   /** Bảng vai trò / danh hiệu / đặc tính theo artboard LookupProfile, cùng các trường hồ sơ tướng khác khi có. */
   function heroFacts(profile) {
     const rows = [
-      ["Vai trò", valueText(fieldByKey(profile, "roleTagViet"), "")],
-      ["Danh hiệu độc quyền", valueText(fieldByKey(profile, "exclusiveTitleVi"), "")],
-      ["Đặc tính", valueText(fieldByKey(profile, "flags"), "")],
+      [L("Vai trò", "定位"), valueText(fieldByKey(profile, "roleTagViet"), "")],
+      [L("Danh hiệu độc quyền", "专属称号"), valueText(fieldByKey(profile, "exclusiveTitleVi"), "")],
+      [L("Đặc tính", "特性"), valueText(fieldByKey(profile, "flags"), "")],
       // Nhãn do hồ sơ (`lookup-detail.js`) đặt; trường vắng thì `fieldByKey` trả null và dòng bị bỏ.
       ...["civilInnatePoints", "collectibleBonusVi", "redRulesVi"].map((key) => {
         const field = fieldByKey(profile, key);
@@ -431,16 +507,16 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
       const perLevel = growth.get(key);
       const growthText = perLevel === null || perLevel === undefined || perLevel === ""
         ? MISSING
-        : `${Number(perLevel) > 0 ? "+" : ""}${perLevel} / cấp`;
+        : `${Number(perLevel) > 0 ? "+" : ""}${perLevel} ${L("/ cấp", "/ 级")}`;
       return statRow(field.labelVi, field.value, growthText);
     }).filter(Boolean);
     const block = el("section", { class: "lookup-profile-section" }, [
-      el("h3", { class: "lookup-section-title" }, "Chỉ số"),
+      el("h3", { class: "lookup-section-title" }, L("Chỉ số", "属性")),
       el("div", { class: "lookup-stats" }, rows),
     ]);
     const aptitudes = profile.aptitudes.filter((item) => item && item.value);
     if (aptitudes.length) {
-      block.append(el("h3", { class: "lookup-section-title" }, "Thích tính binh chủng"));
+      block.append(el("h3", { class: "lookup-section-title" }, L("Thích tính binh chủng", "兵种适性")));
       block.append(el("div", { class: "lookup-aptitudes" }, aptitudes.map((item) => el("div", {
         class: "lookup-aptitude",
         dataset: { grade: String(item.textVi) },
@@ -460,7 +536,7 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
     if (!filled.length) {
       return el("div", { class: "lookup-civil" }, [
         el("span", { class: "lookup-civil-label" }, section.titleVi),
-        el("span", { class: "lookup-civil-empty" }, "Đang cập nhật"),
+        el("span", { class: "lookup-civil-empty" }, LOOKUP_EMPTY),
       ]);
     }
     return el("section", { class: "lookup-profile-section" }, [
@@ -488,14 +564,14 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
         continue;
       }
       const details = [
-        item.titleVi ?? (item.level ? `Cấp ${item.level}` : null),
+        item.titleVi ?? (item.level ? L(`Cấp ${item.level}`, `${item.level} 级`) : null),
         item.tierVi,
         item.descriptionVi,
         item.convertsToVi,
         item.costs ? costText(item.costs) : null,
         item.durationVi,
         item.effectVi,
-      ].filter((value) => value && value !== "Đang cập nhật");
+      ].filter((value) => value && value !== LOOKUP_EMPTY);
       if (!details.length) continue;
       list.append(el("p", { class: "lookup-child-row" }, details.join(" · ")));
     }
@@ -515,36 +591,36 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
   /** Khối "Trong cẩm nang": số liệu tính lúc build, chỉ tải khi mở hồ sơ đầu tiên. */
   function renderSummaryBlock(block, identifier, token) {
     if (!summaries) return;
-    const status = el("p", { class: "lookup-summary-status", role: "status" }, "Đang tải số liệu đội hình…");
+    const status = el("p", { class: "lookup-summary-status", role: "status" }, L("Đang tải số liệu đội hình…", "正在加载阵容数据…"));
     block.append(status);
     summaries().then((table) => {
       if (token !== dialogToken || !block.isConnected) return;
       const view = camNangView(table[identifier]);
       if (!view) {
-        status.textContent = "Chưa có trong đội nào.";
+        status.textContent = L("Chưa có trong đội nào.", "尚未出现在任何阵容中。");
         return;
       }
       status.remove();
       block.append(camNangCards(view));
     }).catch(() => {
       if (token !== dialogToken || !block.isConnected) return;
-      status.textContent = "Chưa tải được số liệu Trong cẩm nang.";
+      status.textContent = L("Chưa tải được số liệu Trong cẩm nang.", "无法加载“攻略收录”数据。");
     });
   }
 
   function camNangCards(view) {
     const appearance = el("article", { class: "cam-nang-card" }, [
-      el("h4", { class: "cam-nang-title" }, "Xuất hiện trong"),
+      el("h4", { class: "cam-nang-title" }, L("Xuất hiện trong", "出现于")),
       // Số đếm chỉ là số liệu: link "Tìm tướng này trong Đội chuẩn" (thẻ Đội tiêu biểu) mới dẫn sang danh sách,
       // vì kết quả tìm theo tên không trùng khớp con số đếm theo vị trí tướng.
       el("div", { class: "cam-nang-counts" }, [
         el("div", { class: "cam-nang-count" }, [
           el("span", { class: "cam-nang-number" }, String(view.standard)),
-          el("span", { class: "cam-nang-unit" }, "đội chuẩn"),
+          el("span", { class: "cam-nang-unit" }, L("đội chuẩn", "支推荐阵容")),
         ]),
         el("div", { class: "cam-nang-count" }, [
           el("span", { class: "cam-nang-number" }, String(view.other)),
-          el("span", { class: "cam-nang-unit" }, "đội khác"),
+          el("span", { class: "cam-nang-unit" }, L("đội khác", "支其他阵容")),
         ]),
       ]),
       el("ul", { class: "cam-nang-bars" }, view.positions.map((row) => el("li", { class: "cam-nang-bar" }, [
@@ -555,9 +631,11 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
         ]),
       ]))),
     ]);
+    const books = localNames(view.books.items);
+    const statFocus = zh ? view.statFocus.items.map((item) => ({ ...item, name: statFocusZh(item.name) })).filter((item) => item.name) : view.statFocus.items;
     const tactics = el("article", { class: "cam-nang-card" }, [
-      el("h4", { class: "cam-nang-title" }, "Chiến pháp hay mang"),
-      el("ul", { class: "cam-nang-bars" }, view.tactics.map((item) => el("li", { class: "cam-nang-bar" }, [
+      el("h4", { class: "cam-nang-title" }, L("Chiến pháp hay mang", "常带战法")),
+      el("ul", { class: "cam-nang-bars" }, localNames(view.tactics).map((item) => el("li", { class: "cam-nang-bar" }, [
         el("span", { class: "cam-nang-bar-label" }, item.name),
         el("span", { class: "cam-nang-bar-value" }, String(item.teams)),
         el("span", { class: "cam-nang-bar-track", "aria-hidden": "true" }, [
@@ -565,32 +643,39 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
         ]),
       ]))),
       el("div", { class: "cam-nang-facts" }, [
-        view.books.items.length ? el("span", { class: "cam-nang-fact" }, [
-          el("span", { class: "cam-nang-fact-label" }, ["Binh thư hay dùng (", String(view.books.teams), " đội)"]),
-          el("span", { class: "cam-nang-fact-value" }, view.books.items.map((item) => item.name).join(" · ")),
+        books.length ? el("span", { class: "cam-nang-fact" }, [
+          el("span", { class: "cam-nang-fact-label" }, zh
+            ? `常用兵书（${view.books.teams} 支阵容）`
+            : ["Binh thư hay dùng (", String(view.books.teams), " đội)"]),
+          el("span", { class: "cam-nang-fact-value" }, books.map((item) => item.name).join(" · ")),
         ]) : null,
-        view.statFocus.items.length ? el("span", { class: "cam-nang-fact" }, [
-          el("span", { class: "cam-nang-fact-label" }, ["Hướng điểm hay dùng (", String(view.statFocus.teams), " đội)"]),
-          el("span", { class: "cam-nang-fact-value" }, view.statFocus.items.map((item) => item.name).join(" · ")),
+        statFocus.length ? el("span", { class: "cam-nang-fact" }, [
+          el("span", { class: "cam-nang-fact-label" }, zh
+            ? `常用加点（${view.statFocus.teams} 支阵容）`
+            : ["Hướng điểm hay dùng (", String(view.statFocus.teams), " đội)"]),
+          el("span", { class: "cam-nang-fact-value" }, statFocus.map((item) => item.name).join(" · ")),
         ]) : null,
       ].filter(Boolean)),
     ]);
     const teams = el("article", { class: "cam-nang-card" }, [
-      el("h4", { class: "cam-nang-title" }, "Đội tiêu biểu"),
+      el("h4", { class: "cam-nang-title" }, L("Đội tiêu biểu", "代表阵容")),
       el("ul", { class: "cam-nang-teams" }, view.representative.map((team) => {
-        const href = team.family === "recommended"
+        const detail = team.family === "recommended"
           ? teamDetailHref({ sourceConfigId: team.sourceConfigId }, { from: location.href })
           : teamDetailHref({ legacyTeamId: team.legacyTeamId, legacyVariantId: team.legacyVariantId }, { from: location.href });
+        const href = detail ? localePath(detail) : detail;
+        // Tên đội chỉ có bản Việt: bản zh dùng nhãn chung, mùa/vị trí ở dòng phụ vẫn phân biệt từng đội.
+        const name = zh ? "查看阵容" : team.name;
         return el("li", { class: "cam-nang-team" }, [
           href
-            ? el("a", { class: "cam-nang-team-name", href }, team.name)
-            : el("span", { class: "cam-nang-team-name" }, team.name),
+            ? el("a", { class: "cam-nang-team-name", href }, name)
+            : el("span", { class: "cam-nang-team-name" }, name),
           el("span", { class: "cam-nang-team-score" }, team.score === null ? MISSING : String(team.score)),
           el("span", { class: "cam-nang-team-meta" }, [team.seasonLabel, team.positionLabel].filter(Boolean).join(" · ")),
         ]);
       })),
-      el("a", { class: "cam-nang-link", href: `/doi-chuan/?${new URLSearchParams({ season: "all", q: view.searchName })}` }, [
-        "Tìm tướng này trong Đội chuẩn",
+      el("a", { class: "cam-nang-link", href: localePath(`/doi-chuan/?${new URLSearchParams({ season: "all", q: view.searchName })}`) }, [
+        L("Tìm tướng này trong Đội chuẩn", "在推荐阵容中查找该武将"),
         icon([svgNode("line", { x1: 5, y1: 12, x2: 19, y2: 12 }), svgNode("polyline", { points: "13 6 19 12 13 18" })], { size: 15, stroke: 2 }),
       ]),
     ]);
@@ -601,7 +686,7 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
     const profile = lookupProfile(corpus, id);
     const entryRow = corpus.byId.get(id);
     if (!profile || !entryRow) {
-      feedback.textContent = "Mục tra cứu đang được cập nhật.";
+      feedback.textContent = L("Mục tra cứu đang được cập nhật.", "该条目正在更新。");
       feedback.setAttribute("role", "alert");
       return;
     }
@@ -644,17 +729,19 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
       body.append(left, right);
     }
 
-    const conditions = listBlock("Điều kiện", profile.conditions.map((text) => el("p", { class: "lookup-child-row" }, text)), "lookup-children");
-    const revisions = listBlock("Lịch sử cập nhật", profile.revisions.map((revision) => el("p", { class: "lookup-child-row" }, revisionText(revision))), "lookup-children");
+    const conditions = listBlock(L("Điều kiện", "条件"), profile.conditions.map((text) => el("p", { class: "lookup-child-row" }, text)), "lookup-children");
+    const revisions = listBlock(L("Lịch sử cập nhật", "更新记录"), profile.revisions.map((revision) => el("p", { class: "lookup-child-row" }, revisionText(revision))), "lookup-children");
     if (conditions) body.append(conditions);
     if (revisions) body.append(revisions);
+    // Bản zh đã bỏ nội dung chỉ có chữ Việt: báo một dòng để người đọc biết hồ sơ chưa đầy đủ.
+    if (profile.viOnly) body.append(el("p", { class: "lookup-child-row lookup-zh-note" }, "部分说明暂无中文原文，未在此显示。"));
 
     dialog.append(header, body);
     if (entryRow.group === "heroes" && summaries) {
       const block = el("section", { class: "cam-nang", "aria-labelledby": "cam-nang-title" }, [
         el("div", { class: "cam-nang-head" }, [
-          el("h3", { class: "cam-nang-heading", id: "cam-nang-title" }, "Trong cẩm nang"),
-          el("span", { class: "cam-nang-note" }, "Tính từ đội chuẩn và đội khác đang có · mọi mùa nguồn"),
+          el("h3", { class: "cam-nang-heading", id: "cam-nang-title" }, L("Trong cẩm nang", "攻略收录")),
+          el("span", { class: "cam-nang-note" }, L("Tính từ đội chuẩn và đội khác đang có · mọi mùa nguồn", "统计自现有推荐阵容与其他阵容 · 全部来源赛季")),
         ]),
       ]);
       dialog.append(block);
@@ -679,10 +766,11 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
   function cardView(group, item) {
     const view = lookupCardView(group, item);
     const button = el("button", { type: "button", class: "lookup-card-button", dataset: { lookupId: item.id } });
+    const title = lookupDisplayName(item.record, item.nameVi);
     const portraitWrap = el("span", { class: "lookup-card-portrait" }, [
       heroPortrait({
         chinese: view.chinese,
-        nameVi: item.nameVi,
+        nameVi: title,
         iconUrl: item.record?.iconUrl,
         className: "lookup-portrait",
       }),
@@ -695,7 +783,7 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
     const role = view.meta.find((part) => part.kind === "role");
     button.append(portraitWrap);
     button.append(el("span", { class: "lookup-card-body" }, [
-      el("span", { class: "lookup-card-name" }, item.nameVi),
+      el("span", { class: "lookup-card-name" }, title),
       meta.childElementCount ? meta : null,
       role ? el("span", { class: "lookup-card-role" }, role.text) : null,
     ]));
@@ -714,18 +802,18 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
       opener = nameButton;
       setRoute({ section: "lookup", group: "tactics", id: item.id, error: null });
     });
-    const zh = recordChinese(item.record ?? {});
-    const head = el("th", { scope: "row", class: "lookup-table-cell-name", dataset: { label: "Chiến pháp" } }, [
+    const chineseName = zh ? "" : recordChinese(item.record ?? {});
+    const head = el("th", { scope: "row", class: "lookup-table-cell-name", dataset: { label: TABLE_HEADS.name } }, [
       nameButton,
-      zh ? el("span", { class: "lookup-table-zh", lang: "zh-Hant" }, zh) : null,
+      chineseName ? el("span", { class: "lookup-table-zh", lang: "zh-Hant" }, chineseName) : null,
       row.effect ? el("p", { class: "lookup-table-effect" }, row.effect) : null,
     ]);
     const cells = [
-      el("td", { class: "lookup-table-quality", dataset: { label: "Phẩm" } }, [el("span", { class: "lookup-quality" }, row.quality)]),
-      el("td", { dataset: { label: "Loại" } }, row.type),
-      el("td", { dataset: { label: "Hiệu quả" } }, row.effectType),
-      el("td", { dataset: { label: "Mục tiêu" } }, row.target),
-      el("td", { class: "lookup-table-rate", dataset: { label: "Tỷ lệ" } }, row.rate),
+      el("td", { class: "lookup-table-quality", dataset: { label: TABLE_HEADS.quality } }, [el("span", { class: "lookup-quality" }, row.quality)]),
+      el("td", { dataset: { label: TABLE_HEADS.type } }, row.type),
+      el("td", { dataset: { label: TABLE_HEADS.effectType } }, row.effectType),
+      el("td", { dataset: { label: TABLE_HEADS.target } }, row.target),
+      el("td", { class: "lookup-table-rate", dataset: { label: TABLE_HEADS.rate } }, row.rate),
     ];
     return el("tr", {}, [head, ...cells]);
   }
@@ -738,19 +826,19 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
     grid.classList.toggle("lookup-grid-table", useTable);
     if (!total) {
       feedback.setAttribute("role", "status");
-      feedback.textContent = "Không có kết quả phù hợp.";
+      feedback.textContent = L("Không có kết quả phù hợp.", "没有符合条件的结果。");
       return;
     }
     if (useTable) {
       grid.append(el("div", { class: "lookup-table-panel" }, [
         el("table", { class: "lookup-table" }, [
           el("thead", {}, [el("tr", {}, [
-            el("th", { scope: "col" }, "Chiến pháp"),
-            el("th", { scope: "col" }, "Phẩm"),
-            el("th", { scope: "col" }, "Loại"),
-            el("th", { scope: "col" }, "Hiệu quả"),
-            el("th", { scope: "col" }, "Mục tiêu"),
-            el("th", { scope: "col", class: "lookup-table-rate" }, "Tỷ lệ"),
+            el("th", { scope: "col" }, TABLE_HEADS.name),
+            el("th", { scope: "col" }, TABLE_HEADS.quality),
+            el("th", { scope: "col" }, TABLE_HEADS.type),
+            el("th", { scope: "col" }, TABLE_HEADS.effectType),
+            el("th", { scope: "col" }, TABLE_HEADS.target),
+            el("th", { scope: "col", class: "lookup-table-rate" }, TABLE_HEADS.rate),
           ])]),
           el("tbody", {}, items.map(tableRow)),
         ]),
@@ -765,9 +853,9 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
   function renderMore(shown, total) {
     more.replaceChildren();
     if (shown >= total) return;
-    const button = el("button", { type: "button", class: "lookup-more" }, "Xem thêm");
+    const button = el("button", { type: "button", class: "lookup-more" }, L("Xem thêm", "查看更多"));
     button.addEventListener("click", appendNextPage);
-    more.append(button, el("span", { class: "lookup-more-note" }, "Mỗi lượt hiện 60 kết quả"));
+    more.append(button, el("span", { class: "lookup-more-note" }, L("Mỗi lượt hiện 60 kết quả", "每次显示 60 条结果")));
   }
 
   /**
@@ -831,8 +919,8 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
       items.push(...searchLookupGroup(corpus, { group, query, page: current }).items);
     }
     summary.dataset.lookupTotal = String(result.total);
-    const unit = group ? LOOKUP_GROUP_UNITS[group] : "kết quả";
-    const hint = group === "tactics" ? " · bấm tên để mở hồ sơ" : " · bấm để mở hồ sơ";
+    const unit = group ? L(LOOKUP_GROUP_UNITS[group], LOOKUP_GROUP_UNITS_ZH[group]) : L("kết quả", "条结果");
+    const hint = group === "tactics" ? L(" · bấm tên để mở hồ sơ", " · 点击名称查看详情") : L(" · bấm để mở hồ sơ", " · 点击查看详情");
     summary.replaceChildren(el("strong", {}, String(result.total)), ` ${unit}${hint}`);
     renderResults({ group, items, total: result.total });
     if (route?.id) renderDialog(route.id);
@@ -849,7 +937,7 @@ export function initUnifiedLookup(bundle, mount, options = {}) {
   return { corpus, render };
 }
 
-const COST_LABELS = { wood: "Gỗ", iron: "Sắt", stone: "Đá" };
+const COST_LABELS = { wood: L("Gỗ", "木材"), iron: L("Sắt", "铁矿"), stone: L("Đá", "石料") };
 
 /**
  * Chi phí của một cấp công trình (`lookup-data.js` bắt buộc đúng ba khóa `wood`/`iron`/`stone`): bỏ ô không có
@@ -874,5 +962,5 @@ function revisionText(revision) {
   const parts = Object.entries(revision ?? {})
     .filter(([key, value]) => value && (key.endsWith("Vi") || ["date", "effectiveDate", "version"].includes(key)))
     .map(([, value]) => String(value));
-  return parts.join(" · ") || "Đã ghi nhận cập nhật";
+  return parts.join(" · ") || L("Đã ghi nhận cập nhật", "已记录更新");
 }

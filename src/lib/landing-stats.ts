@@ -37,7 +37,10 @@ export interface LandingStatistics {
   khaiHoang: { teams: number; mines: number; chamSuTeams: number; beforeAfterTeams: number };
 }
 
-/** Một tướng trong thẻ xem trước; mọi chuỗi đã là bản Việt hoặc đã bị bỏ. */
+/** Ngôn ngữ của Landing: `vi` dùng bản Việt đã duyệt, `zh` dùng chữ Hán gốc của dữ liệu nguồn. */
+export type LandingLocale = 'vi' | 'zh';
+
+/** Một tướng trong thẻ xem trước; chuỗi đã đúng ngôn ngữ trang (Việt đã duyệt hoặc chữ Hán gốc). */
 export interface LandingPreviewHolder {
   name: string;
   tactics: string[];
@@ -49,7 +52,10 @@ export interface LandingTeamPreview {
   href: string;
   name: string;
   score: string | null;
+  /** Tên phe hiển thị theo ngôn ngữ trang. */
   faction: string | null;
+  /** Nhãn phe tiếng Việt: khoá tra màu phe (`FACTION_CODE`) dùng chung cho cả hai ngôn ngữ. */
+  factionKeyVi: string | null;
   units: string[];
   holders: LandingPreviewHolder[];
 }
@@ -115,16 +121,35 @@ function displayString(value: unknown): string | null {
   return trimmed;
 }
 
+/** Chuỗi nguồn nguyên bản (bản zh hiển thị chữ Hán gốc): chỉ bỏ ô trống. */
+function rawString(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  return trimmed || null;
+}
+
 /** Mảng chuỗi hiển thị, bỏ ô trống/chữ Hán; độ dài giữ theo vị trí nguồn. */
 function displaySlots(value: unknown): (string | null)[] {
   if (!Array.isArray(value)) return [];
   return value.map((slot) => displayString(slot));
 }
 
+/** Mảng chuỗi nguồn nguyên bản, bỏ ô trống. */
+function rawSlots(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.map((slot) => rawString(slot)).filter((slot): slot is string => Boolean(slot));
+}
+
 /** `vi-NN`: dấu chấm phân cách nghìn, không phụ thuộc ICU của môi trường build. */
 export function viNumber(value: number): string {
   if (!Number.isInteger(value) || value < 0) throw new Error(`Số liệu Landing phải là số nguyên không âm: ${value}`);
   return String(value).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+/** Số theo ngôn ngữ trang: `vi` chấm phân cách nghìn, `zh` dấu phẩy (zh-CN); cùng luật kiểm như `viNumber`. */
+export function localeNumber(value: number, locale: LandingLocale): string {
+  const vi = viNumber(value);
+  return locale === 'zh' ? vi.replaceAll('.', ',') : vi;
 }
 
 /** Số phương án thay thế trong `legacyContent` của một đội (tướng, chiến pháp, binh thư). */
@@ -200,6 +225,7 @@ function parseRecommendedRecords(index: unknown) {
     scopeKey: optionalString(field(row, 'safeScopeKey'), `index.records[${at}].safeScopeKey`),
     listIndex: optionalNumber(field(row, 'listIndex'), `index.records[${at}].listIndex`) ?? at,
     name: displayString(field(row, 'displayNameVi')),
+    nameZh: rawString(field(row, 'nameZh')),
     score: optionalNumber(field(row, 'value'), `index.records[${at}].value`),
     factionRaw: optionalString(field(row, 'factionRaw'), `index.records[${at}].factionRaw`),
     unitsRaw: fieldArray(row, 'unitTypesRaw', `index.records[${at}]`).map((unit) => String(unit)),
@@ -207,6 +233,9 @@ function parseRecommendedRecords(index: unknown) {
       name: displayString(field(holder, 'displayNameVi')),
       tactics: displaySlots(field(holder, 'tacticSlotsVi')).filter(Boolean) as string[],
       books: displaySlots(field(holder, 'bookSlotsVi')).filter(Boolean) as string[],
+      nameZh: rawString(field(holder, 'nameRaw')),
+      tacticsZh: rawSlots(field(holder, 'tacticSlotsRaw')),
+      booksZh: rawSlots(field(holder, 'bookSlotsRaw')),
     })),
   }));
 }
@@ -265,8 +294,11 @@ export async function landingStatistics(): Promise<LandingStatistics> {
 /**
  * Hai khối xem trước của Landing dựng từ dữ liệu publish thật: thẻ đội đầu tiên và bảng 4 dòng đầu của
  * phạm vi mặc định (`seasons.defaultSourceSeasonId` + scope đầu tiên), kèm link chi tiết tính lúc build.
+ * Bản `zh` hiển thị chữ Hán gốc của nguồn (tên đội, tướng, chiến pháp, binh thư, phe, loại binh);
+ * `href` luôn là đường canonical tiếng Việt — nơi render thêm tiền tố ngôn ngữ.
  */
-export async function landingPreviews(): Promise<LandingPreviews> {
+export async function landingPreviews(locale: LandingLocale = 'vi'): Promise<LandingPreviews> {
+  const zh = locale === 'zh';
   const snapshot = await websiteDisplayPublicationSnapshot();
   const seasons = publishedJson(snapshot.recommended.files, 'seasons.json');
   const recommended = parseRecommendedRecords(publishedJson(snapshot.recommended.files, 'index.json'));
@@ -281,7 +313,9 @@ export async function landingPreviews(): Promise<LandingPreviews> {
     .find((option) => field(option, 'sourceSeasonId') === defaultSeasonId);
   // Mã mùa hiển thị (OG, PK-S28…) — không dùng `label`/`sourceSeasonId` vì với mùa OG chúng còn chữ Hán.
   const seasonLabel = displayString(field(season, 'displayCode')) ?? displayString(field(season, 'label')) ?? '';
-  const seasonNameVi = displayString(field(season, 'nameVi')) ?? displayString(field(season, 'displayNameVi')) ?? '';
+  const seasonName = zh
+    ? rawString(field(season, 'nameRaw')) ?? ''
+    : displayString(field(season, 'nameVi')) ?? displayString(field(season, 'displayNameVi')) ?? '';
 
   const routeByConfig = new Map(
     (await teamDetailCatalog()).recommended.map((entry) => [entry.sourceConfigId, recommendedRoutePath(entry.routeSegment)]),
@@ -291,39 +325,47 @@ export async function landingPreviews(): Promise<LandingPreviews> {
   const detailHref = first.sourceConfigId ? routeByConfig.get(first.sourceConfigId) : undefined;
   if (!detailHref) throw new Error(`Số liệu Landing: không có route chi tiết cho ${first.sourceConfigId ?? '(thiếu id)'}`);
 
-  const metaOf = (row: (typeof recommended)[number]): string | null => {
-    const parts = [
-      row.factionRaw ? labels.faction[row.factionRaw] : null,
-      ...row.unitsRaw.map((unit) => labels.unit[unit]).filter(Boolean),
-    ].filter(Boolean);
+  type Row = (typeof recommended)[number];
+  type Holder = Row['holders'][number];
+  // Bản zh: khoá nguồn của phe/loại binh chính là chữ Hán hiển thị.
+  const factionOf = (row: Row): string | null =>
+    row.factionRaw ? (zh ? row.factionRaw : labels.faction[row.factionRaw] ?? null) : null;
+  const unitsOf = (row: Row): string[] =>
+    zh ? row.unitsRaw.filter(Boolean) : row.unitsRaw.map((unit) => labels.unit[unit]).filter(Boolean);
+  const teamName = (row: Row): string => (zh ? row.nameZh ?? row.name : row.name) ?? '';
+  const holderName = (holder: Holder): string => (zh ? holder.nameZh ?? holder.name : holder.name) ?? '';
+  const metaOf = (row: Row): string | null => {
+    const parts = [factionOf(row), ...unitsOf(row)].filter(Boolean);
     return parts.length ? parts.join(' · ') : null;
   };
-  const scoreOf = (row: (typeof recommended)[number]): string => (row.score === null ? '—' : String(row.score));
+  const scoreOf = (row: Row): string => (row.score === null ? '—' : String(row.score));
 
-  const toTableRow = (row: (typeof recommended)[number]): LandingTableRow => ({
-    name: row.name ?? '',
+  const toTableRow = (row: Row): LandingTableRow => ({
+    name: teamName(row),
     meta: metaOf(row),
-    holders: row.holders.map((holder) => holder.name).filter(Boolean).join(' · '),
+    holders: row.holders.map(holderName).filter(Boolean).join(' · '),
     score: scoreOf(row),
   });
+  const count = localeNumber(scopeRows.length, locale);
 
   return {
     team: {
       href: detailHref,
-      name: first.name ?? '',
+      name: teamName(first),
       score: first.score === null ? null : String(first.score),
-      faction: first.factionRaw ? labels.faction[first.factionRaw] ?? null : null,
-      units: first.unitsRaw.map((unit) => labels.unit[unit]).filter(Boolean),
+      faction: factionOf(first),
+      factionKeyVi: first.factionRaw ? labels.faction[first.factionRaw] ?? null : null,
+      units: unitsOf(first),
       holders: first.holders.map((holder, index) => ({
-        name: holder.name ?? '',
-        tactics: holder.tactics,
-        books: holder.books,
+        name: holderName(holder),
+        tactics: zh ? holder.tacticsZh : holder.tactics,
+        books: zh ? holder.booksZh : holder.books,
         isMain: index === 0,
       })),
     },
     table: {
-      scopeLabel: [seasonLabel, seasonNameVi].filter(Boolean).join(' · '),
-      count: `${viNumber(scopeRows.length)} / ${viNumber(scopeRows.length)} đội`,
+      scopeLabel: [seasonLabel, seasonName].filter(Boolean).join(' · '),
+      count: zh ? `${count} / ${count} 支` : `${count} / ${count} đội`,
       rows: [...scopeRows].sort((left, right) => left.listIndex - right.listIndex).slice(0, 4).map(toTableRow),
     },
   };
@@ -340,8 +382,20 @@ export interface LandingCopy {
   khaiHoangNote: string;
 }
 
-export function landingCopy(stats: LandingStatistics): LandingCopy {
+export function landingCopy(stats: LandingStatistics, locale: LandingLocale = 'vi'): LandingCopy {
   const { coexist, khaiHoang } = stats;
+  if (locale === 'zh') {
+    const n = (value: number) => localeNumber(value, 'zh');
+    return {
+      heroLead: `${n(stats.standardConfigs)} 套推荐配将，覆盖 ${n(stats.sourceSeasons)} 个来源赛季；另有 ${n(stats.otherTeams)} 支玩家汇总阵容，以及 ${n(stats.heroes)} 名武将、${n(stats.tactics)} 个战法可供查询——免费使用，无需注册。`,
+      standardCount: `${n(stats.standardConfigs)} 套配将`,
+      standardNote: '，按赛季与分类整理，保留来源顺序并附来源评分。',
+      otherCount: `${n(stats.otherTeams)} 支阵容`,
+      otherNote: `，均为玩家汇总：${n(stats.otherTeamsWithCounters)} 支注明畏惧阵容，${n(stats.otherTeamsWithAlternatives)} 支附有替换方案。`,
+      coexistNote: `${n(coexist.groups)} 组，每组 ${n(coexist.teamsPerGroup)} 支队伍可同时上阵——共 ${n(coexist.heroesPerGroup)} 名武将互不重复。`,
+      khaiHoangNote: `${n(khaiHoang.teams)} 支开荒队伍，其中 ${n(khaiHoang.beforeAfterTeams)} 支配有完整的前后期配置、${n(khaiHoang.chamSuTeams)} 支碰瓷队，另附 ${n(khaiHoang.mines)} 座矿的守军信息。`,
+    };
+  }
   return {
     heroLead: `${viNumber(stats.standardConfigs)} cấu hình đội từ ${viNumber(stats.sourceSeasons)} mùa nguồn, ${viNumber(stats.otherTeams)} đội người chơi tổng hợp, cùng ${viNumber(stats.heroes)} tướng và ${viNumber(stats.tactics)} chiến pháp để tra cứu — miễn phí, không cần tài khoản.`,
     standardCount: `${viNumber(stats.standardConfigs)} cấu hình`,

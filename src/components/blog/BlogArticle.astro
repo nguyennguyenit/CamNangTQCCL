@@ -1,0 +1,159 @@
+---
+// Trang một bài viết. Thứ tự nội dung phục vụ cả người đọc lẫn máy trả lời (AEO/GEO):
+// breadcrumb → tiêu đề + tác giả + ngày → hộp tóm tắt → mục lục → thân bài → FAQ → bài liên quan.
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import BlogPostCard from './BlogPostCard.astro';
+import {
+  blogIndexPath,
+  jsonLd,
+  loadBlogPosts,
+  relatedPosts,
+  translationOf,
+  type RenderedBlogPost,
+} from '../../lib/blog-posts.ts';
+import { articleJsonLd, blogCopy, breadcrumbJsonLd, faqJsonLd, formatPostDate, postImage } from '../../lib/blog-seo.ts';
+import { localePath } from '../../../js/i18n.js';
+import { otherLocale } from '../../lib/locale-routes';
+
+interface Props {
+  post: RenderedBlogPost;
+}
+
+const { post } = Astro.props;
+const locale = post.lang;
+const copy = blogCopy(locale);
+const site = Astro.site!;
+const allPosts = await loadBlogPosts();
+const translation = translationOf(post, allPosts);
+const related = relatedPosts(post, allPosts);
+const canonicalUrl = new URL(post.path, site);
+const indexPath = blogIndexPath(locale);
+const updated = post.updatedAt.slice(0, 10) !== post.publishedAt.slice(0, 10);
+const structured = [
+  articleJsonLd(post, site),
+  breadcrumbJsonLd([
+    { name: copy.home, path: localePath('/', locale) },
+    { name: copy.blogName, path: indexPath },
+    { name: post.title, path: post.path },
+  ], site),
+  ...(post.faq.length ? [faqJsonLd(post)] : []),
+];
+const image = postImage(post, site);
+/** Câu trả lời FAQ là văn bản thuần; dòng trống tách đoạn. */
+const faqItems = post.faq.map((entry) => ({ q: entry.q, paragraphs: entry.a.split(/\n{2,}/u) }));
+---
+<SiteLayout
+  title={copy.articleTitle(post.title)}
+  description={post.description}
+  pageKind="detail"
+  tagline={copy.tagline}
+  canonicalUrl={canonicalUrl}
+  ogType="article"
+  ogImage={post.coverImage ? image : undefined}
+  locale={locale}
+  alternates={translation ? {vi: (locale === 'vi' ? post : translation).path, zh: (locale === 'zh' ? post : translation).path} : false}
+  counterpartPath={translation ? translation.path : blogIndexPath(otherLocale(locale))}
+>
+  <!-- Hreflang chỉ khi có bản dịch cùng translationKey (SiteLayout khai); không có thì nút chuyển ngôn ngữ về danh sách bài bản kia. -->
+  <Fragment slot="head">
+    <meta property="article:published_time" content={post.publishedAt} />
+    <meta property="article:modified_time" content={post.updatedAt} />
+    <meta property="article:author" content={post.author.name} />
+    {post.tags.map((tag) => <meta property="article:tag" content={tag} />)}
+    <meta name="author" content={post.author.name} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={post.title} />
+    <meta name="twitter:description" content={post.description} />
+    <meta name="twitter:image" content={image} />
+    {structured.map((data) => <script is:inline type="application/ld+json" set:html={jsonLd(data)}></script>)}
+  </Fragment>
+
+  <nav class="blog-breadcrumb" aria-label={copy.breadcrumbLabel}>
+    <ol>
+      <li><a href={localePath('/', locale)}>{copy.home}</a></li>
+      <li><a href={indexPath}>{copy.blogName}</a></li>
+      <li><span aria-current="page">{post.title}</span></li>
+    </ol>
+  </nav>
+
+  <article class="blog-article" aria-labelledby="blog-article-title">
+    <header class="blog-article-head">
+      <h1 id="blog-article-title" class="detail-title">{post.title}</h1>
+      <p class="blog-card-meta">
+        <span>{copy.author}: <span class="blog-author">{post.author.name}</span></span>
+        <span aria-hidden="true">·</span>
+        <span>{copy.published} <time datetime={post.publishedAt}>{formatPostDate(post.publishedAt, locale)}</time></span>
+        {updated && (
+          <>
+            <span aria-hidden="true">·</span>
+            <span>{copy.updated} <time datetime={post.updatedAt}>{formatPostDate(post.updatedAt, locale)}</time></span>
+          </>
+        )}
+        <span aria-hidden="true">·</span>
+        <span>{copy.readingTime(post.readingMinutes)}</span>
+      </p>
+      {post.tags.length > 0 && (
+        <ul class="blog-tags" aria-label={copy.tags}>
+          {post.tags.map((tag) => <li class="blog-tag">{tag}</li>)}
+        </ul>
+      )}
+      {translation && (
+        <p class="blog-translation">
+          <a href={translation.path} hreflang={copy.translationLang} lang={copy.translationLang}>{copy.translation}</a>
+        </p>
+      )}
+    </header>
+
+    {post.coverImage && (
+      <img class="blog-cover" src={post.coverImage} alt="" decoding="async" />
+    )}
+
+    <aside id="blog-summary" class="blog-summary" aria-label={copy.summary}>
+      <p class="blog-summary-label">{copy.summary}</p>
+      <p>{post.description}</p>
+    </aside>
+
+    {post.headings.length > 1 && (
+      <nav id="blog-toc" class="blog-toc" aria-label={copy.toc}>
+        <p class="blog-summary-label">{copy.toc}</p>
+        <ol>
+          {post.headings.map((heading) => (
+            <li class:list={[heading.depth === 3 && 'blog-toc-sub']}><a href={`#${heading.id}`}>{heading.text}</a></li>
+          ))}
+        </ol>
+      </nav>
+    )}
+
+    <div id="blog-body" class="blog-body">
+      <Fragment set:html={post.html} />
+    </div>
+
+    {post.faq.length > 0 && (
+      <section id="blog-faq" class="blog-faq" aria-labelledby="blog-faq-title">
+        <h2 id="blog-faq-title">{copy.faq}</h2>
+        {faqItems.map((entry) => (
+          <details class="blog-faq-item">
+            <summary>{entry.q}</summary>
+            {entry.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+          </details>
+        ))}
+      </section>
+    )}
+  </article>
+
+  {related.length > 0 && (
+    <section id="blog-related" class="blog-related" aria-labelledby="blog-related-title">
+      <h2 id="blog-related-title">{copy.related}</h2>
+      <div class="blog-list">
+        {related.map((other) => <BlogPostCard post={other} headingLevel={3} />)}
+      </div>
+    </section>
+  )}
+
+  <nav class="detail-back-row" aria-label={copy.backLabel}>
+    <a class="detail-link detail-back-link" href={indexPath}>
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="11 6 5 12 11 18"></polyline></svg>
+      {copy.back}
+    </a>
+  </nav>
+</SiteLayout>

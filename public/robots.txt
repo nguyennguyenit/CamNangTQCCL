@@ -1,4 +1,31 @@
 User-agent: *
 Allow: /
+Disallow: /quan-tri/
+Disallow: /zh/quan-tri/
+Disallow: /api/
+
+User-agent: GPTBot
+Allow: /
+Disallow: /quan-tri/
+Disallow: /zh/quan-tri/
+Disallow: /api/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /quan-tri/
+Disallow: /zh/quan-tri/
+Disallow: /api/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /quan-tri/
+Disallow: /zh/quan-tri/
+Disallow: /api/
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /quan-tri/
+Disallow: /zh/quan-tri/
+Disallow: /api/
 
 Sitemap: https://tqccl.pages.dev/sitemap.xml
