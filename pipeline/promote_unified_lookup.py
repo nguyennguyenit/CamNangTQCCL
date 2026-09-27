@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import fcntl
 import contextlib
-import hashlib
 import json
 import os
 import re
@@ -16,6 +15,7 @@ import uuid
 from pathlib import Path
 
 from pipeline.build_unified_lookup import validate_candidate
+from pipeline.common import sha256_hex
 from pipeline.lookup_translations import canonical_json_bytes
 
 PUBLIC_DATA_FILES = ("heroes-dict.json", "tactics.json", "lookup-catalog.json", "lookup-manifest.json")
@@ -39,10 +39,6 @@ class LockedError(PromotionError):
 
 class PreparationCleanupError(PromotionError):
     pass
-
-
-def _sha(payload):
-    return hashlib.sha256(payload).hexdigest()
 
 
 def _encode(value):
@@ -205,8 +201,8 @@ def _activation_rows(root, activation):
         _validate_destination(stage, source)
         payload = _regular_bytes(source)
         before = _regular_bytes(destination, optional=True)
-        before_hash = _sha(before) if before is not None else None
-        if before_hash != item["beforeHash"] or _sha(payload) != item["afterHash"]:
+        before_hash = sha256_hex(before) if before is not None else None
+        if before_hash != item["beforeHash"] or sha256_hex(payload) != item["afterHash"]:
             raise ConflictError("activation preimage or postimage changed")
         rows.append((str(relative), payload, before, item["beforeHash"], item["afterHash"]))
     return rows, _regular_bytes(activation)
@@ -225,16 +221,16 @@ def _candidate_rows(root, candidate):
     if set(manifest or {}) != {"schemaVersion", "generationId", "files"} or manifest["schemaVersion"] != 1 or set(manifest["files"]) != expected_names:
         raise PromotionError("candidate manifest shape is invalid")
     for name in expected_names:
-        if manifest["files"].get(name) != _sha(payloads[name]):
+        if manifest["files"].get(name) != sha256_hex(payloads[name]):
             raise PromotionError("candidate hash mismatch")
-    if manifest["generationId"] != "lookup:" + _sha(canonical_json_bytes(manifest["files"])):
+    if manifest["generationId"] != "lookup:" + sha256_hex(canonical_json_bytes(manifest["files"])):
         raise PromotionError("candidate generation ID mismatch")
     rows = []
     for name in PUBLIC_DATA_FILES:
         destination = root / "data" / name
         _validate_destination(root, destination)
         before = _regular_bytes(destination, optional=True)
-        rows.append((f"data/{name}", payloads[name], before, _sha(before) if before is not None else None, _sha(payloads[name])))
+        rows.append((f"data/{name}", payloads[name], before, sha256_hex(before) if before is not None else None, sha256_hex(payloads[name])))
     return rows, manifest
 
 
@@ -287,7 +283,7 @@ def _prepare_transaction(root, transaction_id, activation_bytes, rows, generatio
         journal = {
             "schemaVersion": 1, "id": transaction_id, "state": "activation-prepared",
             "generationId": generation_id, "inputHashes": input_hashes,
-            "activationCodeManifestHash": _sha(activation_bytes), "paths": journal_rows,
+            "activationCodeManifestHash": sha256_hex(activation_bytes), "paths": journal_rows,
         }
         _write_durable(transaction / "journal.json", journal)
         hooks.get("journal-prepared", lambda _ctx: None)({"transaction": transaction_id})
@@ -302,7 +298,7 @@ def _prepare_transaction(root, transaction_id, activation_bytes, rows, generatio
 
 def _current_hash(path):
     payload = _regular_bytes(path, optional=True)
-    return _sha(payload) if payload is not None else None
+    return sha256_hex(payload) if payload is not None else None
 
 
 def _season_refs_are_compatible(root, journal, transaction):
@@ -361,7 +357,7 @@ def _validate_journal(root, transaction_id):
     ):
         raise PromotionError("journal shape is invalid")
     activation_bytes = _regular_bytes(transaction / "activation-code.json")
-    if _sha(activation_bytes) != journal["activationCodeManifestHash"]:
+    if sha256_hex(activation_bytes) != journal["activationCodeManifestHash"]:
         raise PromotionError("activation manifest hash mismatch")
     try:
         activation = json.loads(activation_bytes)
@@ -400,7 +396,7 @@ def _validate_journal(root, transaction_id):
         if backup_path.is_absolute() or len(backup_path.parts) != 1:
             raise PromotionError("journal backup escapes transaction")
         payload = _regular_bytes(transaction / backup)
-        if _sha(payload) != row["beforeHash"]:
+        if sha256_hex(payload) != row["beforeHash"]:
             raise PromotionError("journal backup hash mismatch")
     return transaction, journal
 
@@ -440,7 +436,7 @@ def promote(*, candidate, root, activation, transaction_id, validate=None, hooks
     (validate or validate_candidate)(candidate)
     activation_rows, activation_bytes = _activation_rows(root, activation)
     data_rows, manifest = _candidate_rows(root, candidate)
-    input_hashes = {name: _sha(_regular_bytes(candidate / name)) for name in PUBLIC_DATA_FILES}
+    input_hashes = {name: sha256_hex(_regular_bytes(candidate / name)) for name in PUBLIC_DATA_FILES}
     lock = _acquire_lock(root, transaction_id)
     hooks.get("lock-acquired", lambda _ctx: None)({"transaction": transaction_id})
     transaction = None
@@ -460,7 +456,7 @@ def promote(*, candidate, root, activation, transaction_id, validate=None, hooks
                 _replace_bytes(root / path, payload)
                 hooks.get("after-replace", lambda _ctx: None)({"path": path})
             for _path, payload, _before, _before_hash, after_hash in rows:
-                if _sha(payload) != after_hash:
+                if sha256_hex(payload) != after_hash:
                     raise PromotionError("postimage evidence changed")
             for path, _payload, _before, _before_hash, after_hash in rows:
                 if _current_hash(root / path) != after_hash:

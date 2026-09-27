@@ -28,6 +28,7 @@ from pipeline.build_unified_lookup import (
     build_candidate as build_lookup_candidate,
     validate_candidate as validate_lookup_candidate,
 )
+from pipeline.common import canonical_json, sha256_hex
 from pipeline.lookup_translations import (
     CJK,
     HASH,
@@ -753,10 +754,6 @@ UI_LITERAL_OBLIGATIONS = (
 )
 
 
-def sha256_hex(data) -> str:
-    return hashlib.sha256(data).hexdigest()
-
-
 def text_digest(text) -> str:
     """SHA-256 of the exact reviewed Vietnamese text bytes."""
     if not isinstance(text, str):
@@ -774,7 +771,7 @@ def location_key(entity_id, field_path) -> str:
 
 def _corpus_bytes(corpus) -> bytes:
     """Exact byte form the Team khác ledger pins as `recommendedCorpusHash`."""
-    return json.dumps(corpus, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
+    return canonical_json(corpus).encode()
 
 
 def _repo_member(root, relative, *, label="repository path"):

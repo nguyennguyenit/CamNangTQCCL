@@ -1,6 +1,7 @@
 """Pure canonical fingerprints and seasonal configuration/link contracts."""
 import hashlib
-import json
+
+from pipeline.common import canonical_json
 
 CONFIG_FIELDS = ('schemaVersion', 'id', 'teamId', 'scenarioId', 'rulesetId', 'unitTypes', 'heroSlots', 'requirements', 'effectBundles')
 
@@ -19,7 +20,7 @@ def canonical_bytes(value):
             return
         raise ValueError('canonical fingerprint requires JSON with safe integer numbers')
     validate(value)
-    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(',', ':'), allow_nan=False).encode('utf-8')
+    return canonical_json(value).encode('utf-8')
 
 
 def fingerprint(value):

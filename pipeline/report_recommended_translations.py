@@ -7,7 +7,8 @@ import json
 import re
 from pathlib import Path
 
-from pipeline.build_recommended_reference import canonical_bytes, sha
+from pipeline.build_recommended_reference import canonical_bytes
+from pipeline.common import sha256_hex
 from pipeline.recommended_identity import (
     alias_key,
     build_display_mapping,
@@ -41,7 +42,7 @@ def read_generation(reference_dir):
     if manifest_path.is_symlink() or not manifest_path.is_file():
         raise ValueError("Invalid Recommended manifest file")
     manifest_bytes = manifest_path.read_bytes()
-    if sha(manifest_bytes) != selector["manifestSha256"]:
+    if sha256_hex(manifest_bytes) != selector["manifestSha256"]:
         raise ValueError("Recommended manifest hash mismatch")
     manifest = json.loads(manifest_bytes)
     if manifest.get("schemaVersion") != SCHEMA_VERSION or manifest.get("generationId") != selector["generationId"]:
@@ -51,13 +52,13 @@ def read_generation(reference_dir):
         raise ValueError("Invalid Recommended index file")
     index_bytes = index_path.read_bytes()
     declared = (manifest.get("files") or {}).get("index.json")
-    if not isinstance(declared, dict) or declared.get("sha256") != sha(index_bytes) or declared.get("bytes") != len(index_bytes):
+    if not isinstance(declared, dict) or declared.get("sha256") != sha256_hex(index_bytes) or declared.get("bytes") != len(index_bytes):
         raise ValueError("Recommended index payload differs from manifest")
     index = json.loads(index_bytes)
     if index.get("schemaVersion") != SCHEMA_VERSION or not isinstance(index.get("records"), list):
         raise ValueError("Unsupported Recommended index payload")
     return {"generationId": selector["generationId"], "manifestSha256": selector["manifestSha256"],
-            "indexSha256": sha(index_bytes), "records": index["records"]}
+            "indexSha256": sha256_hex(index_bytes), "records": index["records"]}
 
 
 def _observations(records):

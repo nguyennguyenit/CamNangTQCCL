@@ -7,10 +7,7 @@ import argparse
 import re
 from pathlib import Path
 
-
-
-def canonical_json(value):
-    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False)
+from pipeline.common import canonical_json
 
 
 def alias_key(raw):

@@ -18,7 +18,6 @@ and index payloads stay v1.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import re
@@ -28,6 +27,8 @@ import unicodedata
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
+
+from pipeline.common import sha256_hex
 
 PUBLICATION_SCHEMA_VERSION = 1
 LEDGER_SCHEMA_VERSION = 2
@@ -100,10 +101,6 @@ PINNED_BASELINE = {
 
 class TeamRouteHandleError(Exception):
     """A handle could not be derived, or the frozen ledger failed validation."""
-
-
-def sha256_hex(data: bytes) -> str:
-    return hashlib.sha256(data).hexdigest()
 
 
 def is_routable_identifier(value: object) -> bool:

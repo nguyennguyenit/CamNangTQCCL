@@ -3,12 +3,12 @@ from __future__ import annotations
 
 import copy
 import argparse
-import hashlib
 import json
 import os
 import re
 import tempfile
 from pathlib import Path
+from pipeline.common import canonical_json, sha256_hex
 from pipeline.hero_summaries import build_hero_summaries, validate_hero_summaries_shape
 from pipeline.lookup_translations import CJK as HAN_SCRIPT
 from pipeline.recommended_identity import (
@@ -34,13 +34,13 @@ TRANSLATION_STATUSES = ("existing-project-name", "reference-translation")
 
 
 def canonical_bytes(value):
-    return (json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False) + "\n").encode()
+    return (canonical_json(value) + "\n").encode()
 
 
 
 def canonical_object_hash(value):
-    data = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
-    return "sha256:" + sha(data)
+    data = canonical_json(value).encode()
+    return "sha256:" + sha256_hex(data)
 
 
 
@@ -134,7 +134,7 @@ def prepare_publication_inputs(inputs, *, teams_bytes, content_links_bytes, ledg
         if not isinstance(identifier, str) or not identifier or identifier in teams_by_id:
             raise ValueError("Legacy team ids must be unique and non-empty")
         teams_by_id[identifier] = team
-    teams_hash = "sha256:" + sha(bytes(teams_bytes))
+    teams_hash = "sha256:" + sha256_hex(bytes(teams_bytes))
     if ledger.get("localTeamsSha256") != teams_hash:
         raise ValueError("Team khác ledger legacy teams bytes differ")
     if links.get("schemaVersion") != 1 or not isinstance(links.get("entries"), list):
@@ -204,7 +204,7 @@ def prepare_publication_inputs(inputs, *, teams_bytes, content_links_bytes, ledg
         raise ValueError("Team khác ledger source inventory differs")
     if ledger.get("mappingFileSha256") != candidate.get("mappingHash"):
         raise ValueError("Team khác ledger identity map differs")
-    if candidate.get("decisionSnapshotHash") != "sha256:" + sha(bytes(ledger_bytes)):
+    if candidate.get("decisionSnapshotHash") != "sha256:" + sha256_hex(bytes(ledger_bytes)):
         raise ValueError("Team khác decision snapshot differs")
     decisions = ledger_decisions
     if len(decisions) != ledger.get("inputTeamRows"):
@@ -269,18 +269,14 @@ def prepare_publication_inputs(inputs, *, teams_bytes, content_links_bytes, ledg
         for key, rows in (candidate.get("details") or {}).items()
     }
     candidate["legacyTeamsHash"] = teams_hash
-    candidate["contentLinksHash"] = "sha256:" + sha(bytes(content_links_bytes))
+    candidate["contentLinksHash"] = "sha256:" + sha256_hex(bytes(content_links_bytes))
     # Hash kho Tra cứu (khóa nối) vào descriptor ⇒ đổi kho là generation đổi, không thể còn số liệu cũ.
-    candidate["heroCatalogHash"] = "sha256:" + sha(bytes(catalog_bytes))
+    candidate["heroCatalogHash"] = "sha256:" + sha256_hex(bytes(catalog_bytes))
     return candidate
-def sha(data):
-    return hashlib.sha256(data).hexdigest()
-
-
 def _write(path, value):
     data = canonical_bytes(value)
     path.write_bytes(data)
-    return {"sha256": sha(data), "bytes": len(data)}
+    return {"sha256": sha256_hex(data), "bytes": len(data)}
 
 
 def _rank(row):
@@ -383,10 +379,10 @@ def _build_generation_locked(inputs, output, catalog_bytes):
     for scope in inventory["scopes"]:
         key = scope["safeScopeKey"]
         payloads["details-" + key + ".json"] = {"schemaVersion": SCHEMA_VERSION, "records": details.get(key, [])}
-    descriptor = {"schemaVersion": SCHEMA_VERSION, "inventoryHash": inventory.get("inventoryHash"), "mappingHash": inputs.get("mappingHash"), "decisionSnapshotHash": inputs.get("decisionSnapshotHash"), "dedupKeyVersion": inputs.get("dedupKeyVersion"), "legacyTeamsHash": inputs["legacyTeamsHash"], "contentLinksHash": inputs["contentLinksHash"], "heroSummaryCatalogHash": inputs["heroCatalogHash"], "payloadHashes": {name: sha(canonical_bytes(value)) for name, value in sorted(payloads.items())}}
+    descriptor = {"schemaVersion": SCHEMA_VERSION, "inventoryHash": inventory.get("inventoryHash"), "mappingHash": inputs.get("mappingHash"), "decisionSnapshotHash": inputs.get("decisionSnapshotHash"), "dedupKeyVersion": inputs.get("dedupKeyVersion"), "legacyTeamsHash": inputs["legacyTeamsHash"], "contentLinksHash": inputs["contentLinksHash"], "heroSummaryCatalogHash": inputs["heroCatalogHash"], "payloadHashes": {name: sha256_hex(canonical_bytes(value)) for name, value in sorted(payloads.items())}}
     if inputs.get("localizationInputsHash") is not None:
         descriptor["localizationInputsHash"] = inputs["localizationInputsHash"]
-    generation_id = sha(canonical_bytes(descriptor))
+    generation_id = sha256_hex(canonical_bytes(descriptor))
     target = output / generation_id
     if not target.exists():
         with tempfile.TemporaryDirectory(prefix=".recommended-generation-", dir=output) as folder:
@@ -407,7 +403,7 @@ def _build_generation_locked(inputs, output, catalog_bytes):
             if path.is_symlink() or not path.is_file() or path.read_bytes() != canonical_bytes(payload):
                 raise ValueError("Existing Recommended generation bytes changed: " + name)
     manifest_bytes = (target / "manifest.json").read_bytes()
-    selector = {"schemaVersion": SCHEMA_VERSION, "generationId": generation_id, "manifestSha256": sha(manifest_bytes)}
+    selector = {"schemaVersion": SCHEMA_VERSION, "generationId": generation_id, "manifestSha256": sha256_hex(manifest_bytes)}
     with tempfile.NamedTemporaryFile(dir=output, delete=False) as handle:
         handle.write(canonical_bytes(selector)); temporary = Path(handle.name)
     os.replace(temporary, output / "current.json")
@@ -627,7 +623,7 @@ def inputs_from_cache(cache, identity_map=None, other_ledger=None, display_map=N
         if path.is_symlink() or not path.is_file():
             raise ValueError("Invalid cached Recommended file")
         data = path.read_bytes()
-        if sha(data) != item["sha256"]:
+        if sha256_hex(data) != item["sha256"]:
             raise ValueError("Cached Recommended hash mismatch")
         return data.decode("utf-8")
 
@@ -691,10 +687,10 @@ def inputs_from_cache(cache, identity_map=None, other_ledger=None, display_map=N
             raise ValueError("Unsupported Team khác dedup key version")
         if ledger.get("sourceInventoryHash") != inventory["inventoryHash"]:
             raise ValueError("Team khác ledger source inventory differs")
-        if ledger.get("mappingFileSha256") != "sha256:" + sha(map_bytes):
+        if ledger.get("mappingFileSha256") != "sha256:" + sha256_hex(map_bytes):
             raise ValueError("Team khác ledger identity map differs")
-        corpus_bytes = json.dumps(corpus, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
-        if ledger.get("recommendedCorpusHash") != "sha256:" + sha(corpus_bytes):
+        corpus_bytes = canonical_json(corpus).encode()
+        if ledger.get("recommendedCorpusHash") != "sha256:" + sha256_hex(corpus_bytes):
             raise ValueError("Team khác ledger Recommended corpus differs")
         if len(ledger.get("decisions", [])) != ledger.get("inputTeamRows"):
             raise ValueError("Team khác ledger decision cardinality differs")
@@ -720,8 +716,8 @@ def inputs_from_cache(cache, identity_map=None, other_ledger=None, display_map=N
         result["details"] = {key: localize_rows(rows, mapping, names, shared) for key, rows in details_with_notes.items()}
         result.update({
             "otherTeams": ledger["admitted"],
-            "mappingHash": "sha256:" + sha(map_bytes),
-            "decisionSnapshotHash": "sha256:" + sha(ledger_bytes),
+            "mappingHash": "sha256:" + sha256_hex(map_bytes),
+            "decisionSnapshotHash": "sha256:" + sha256_hex(ledger_bytes),
             "dedupKeyVersion": ledger["dedupKeyVersion"],
         })
     if display_map is not None:

@@ -14,6 +14,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote, unquote, urlparse
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
+from pipeline.common import canonical_json
 from pipeline.sgsdeck_recommended import (
     MAX_SOURCE_BYTES,
     RenderedPage,
@@ -33,10 +34,6 @@ class SafeRecommendedRedirect(HTTPRedirectHandler):
 
 SAFE_OPENER = build_opener(SafeRecommendedRedirect)
 
-
-
-def canonical_json(value):
-    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False)
 
 
 def safe_scope_key(season, category):

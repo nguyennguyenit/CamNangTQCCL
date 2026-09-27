@@ -8,13 +8,10 @@ import json
 from pathlib import Path
 
 
+from pipeline.common import canonical_json
 from pipeline.recommended_identity import build_mapping, resolve_identity
 
 DEDUP_KEY_VERSION = 1
-
-
-def _canonical(value):
-    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False)
 
 
 def dedup_key(config):
@@ -28,7 +25,7 @@ def dedup_key(config):
     if len(holders) != 3 or len({hero for hero, _ in holders}) != 3:
         raise ValueError("One explicit three-holder configuration is required")
     payload = {"version": DEDUP_KEY_VERSION, "holders": sorted(holders)}
-    return "sha256:" + hashlib.sha256(_canonical(payload).encode()).hexdigest()
+    return "sha256:" + hashlib.sha256(canonical_json(payload).encode()).hexdigest()
 
 
 def classify_candidates(candidates, recommended_corpus):
@@ -142,7 +139,7 @@ def build_other_team_ledger(teams, recommended_records, mapping_descriptor, team
     for row in teams:
         holders = [_resolved_holder(hero, mapping) for hero in row.get("heroes", [])]
         raw = {"legacyTeamId": row["id"], "teamName": row.get("name"), "holders": holders}
-        variant_id = "v-" + hashlib.sha256(_canonical(raw).encode()).hexdigest()
+        variant_id = "v-" + hashlib.sha256(canonical_json(raw).encode()).hexdigest()
         base = {"legacyTeamId": row["id"], "legacyVariantId": variant_id}
         has_alternatives = any(hero.get("alternatives") or any(item.get("alternatives") for item in hero.get("tactics", [])) for hero in row.get("heroes", []))
         if has_alternatives:
@@ -222,7 +219,7 @@ def main():
     result = build_other_team_ledger(teams, recommended, mapping, team_tiers)
     result.update({
         "sourceInventoryHash": inventory_hash,
-        "recommendedCorpusHash": "sha256:" + hashlib.sha256(_canonical(recommended).encode()).hexdigest(),
+        "recommendedCorpusHash": "sha256:" + hashlib.sha256(canonical_json(recommended).encode()).hexdigest(),
         "mappingFileSha256": "sha256:" + hashlib.sha256(mapping_bytes).hexdigest(),
         "localTeamsSha256": "sha256:" + hashlib.sha256(teams_bytes).hexdigest(),
         "teamTierSha256": "sha256:" + hashlib.sha256(tiers_bytes).hexdigest(),
