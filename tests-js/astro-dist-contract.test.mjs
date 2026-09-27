@@ -119,8 +119,8 @@ const SECTION_PAGE_SPECS = [
   { path: "soi-doi-tu-anh", section: "analyze", season: false },
   { path: "goi-y-doi-tu-kho", section: "roster-recommend", season: false },
 ];
-/** Trang nội dung tĩnh có bản gương (chính sách bảo mật): được index, canonical theo ngôn ngữ. */
-const STATIC_PAGE_PATHS = ["/chinh-sach-bao-mat/"];
+/** Trang nội dung tĩnh có bản gương (các trang chính sách): được index, canonical theo ngôn ngữ. */
+const STATIC_PAGE_PATHS = ["/dieu-khoan-su-dung/", "/chinh-sach-bao-mat/", "/quy-tac-cong-dong/", "/mien-tru-trach-nhiem/"];
 const staticPageHtml = (locale, viPath) =>
   `<!doctype html>${pairHead(locale, viPath)}<link rel="canonical" href="${FIXTURE_ORIGIN}${locale === "zh" ? zhPathOf(viPath) : viPath}"><body>\n`;
 const SECTION_LOCATIONS = SECTION_PAGE_SPECS.map(({ path }) => `${FIXTURE_ORIGIN}/${path}/`);
@@ -177,9 +177,9 @@ async function writeStaticFonts(projectDir, distDir) {
   }
 }
 
-/** Ảnh tĩnh của public (favicon, ảnh chia sẻ og:image, logo, QR ủng hộ) được copy nguyên byte như Astro làm. */
+/** Ảnh tĩnh của public (favicon, ảnh chia sẻ og:image, logo, logo chữ, QR ủng hộ) được copy nguyên byte như Astro làm. */
 async function writeStaticImages(projectDir, distDir) {
-  for (const name of ["favicon.png", "og-image.png", "logo.png", "donate-qr.png"]) {
+  for (const name of ["favicon.png", "og-image.png", "logo.png", "logo-cam-nang.svg", "donate-qr.png"]) {
     const bytes = await readFile(new URL(`public/${name}`, projectRoot));
     await writeFile(join(projectDir, "public", name), bytes);
     await writeFile(join(distDir, name), bytes);
@@ -880,9 +880,9 @@ test("built dist declares canonical, article metadata, robots and the catalog si
   const sitemap = await read("sitemap.xml");
   assert.match(sitemap, /^<\?xml version="1\.0" encoding="UTF-8"\?>/u);
   const locations = [...sitemap.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
-  // Release baseline: Landing, 8 trang mục, chính sách bảo mật, 1366 Recommended, 166 legacy, 17 Khai hoang — mỗi route hai ngôn ngữ —
+  // Release baseline: Landing, 8 trang mục, 4 trang chính sách, 1366 Recommended, 166 legacy, 17 Khai hoang — mỗi route hai ngôn ngữ —
   // và 2 trang danh sách blog (build không khai COMMUNITY_API_ORIGIN nên chưa có bài).
-  assert.equal(locations.length, 3120);
+  assert.equal(locations.length, 3126);
   assert.deepEqual(
     locations,
     [rootHref, ...[
@@ -912,7 +912,7 @@ test("every canonical page declares its own-language site name, locale and an ab
     const html = await readFile(new URL(`../dist${pathname}index.html`, import.meta.url), "utf8");
     assert.ok(linkHref(html, "canonical"), pathname);
     const zh = pathname.startsWith("/zh/");
-    assert.equal(metaContent(html, "og:site_name"), zh ? "三国志战略版攻略手册" : "Cẩm Nang Tam Quốc Chí", pathname);
+    assert.equal(metaContent(html, "og:site_name"), zh ? "三国志战略版攻略手册" : "Cẩm Nang Game Tam Quốc Chí - Chiến Lược", pathname);
     assert.equal(metaContent(html, "og:locale"), zh ? "zh_CN" : "vi_VN", pathname);
     assert.match(html, zh ? /<html lang="zh-Hans"/u : /<html lang="vi"/u, pathname);
     const image = metaContent(html, "og:image");
@@ -998,7 +998,7 @@ test("sitemap endpoint publishes exactly the root page plus the catalog routes",
   assert.equal(catalog.recommended.length, 1366);
   assert.equal(catalog.legacy.length, 166);
   assert.equal(catalog.khaiHoang.length, 17);
-  assert.equal(locations.length, 3120);
+  assert.equal(locations.length, 3126);
   assert.deepEqual(
     locations,
     [new URL("/", origin).href, ...routePaths.sort().map((path) => new URL(path, origin).href)],

@@ -22,6 +22,7 @@ import {
   OFFICIAL_GAME_SITE_HREF,
 } from '../../lib/official-links';
 import SealMark from '../SealMark.astro';
+import { SECTION_ICONS } from '../../lib/section-icons';
 
 interface Props {
   locale: LandingLocale;
@@ -36,20 +37,31 @@ const canonicalUrl = new URL(href('/'), Astro.site);
 // Mọi con số của Landing tính lúc build từ dữ liệu đã publish (xem src/lib/landing-stats.ts).
 const stats = await landingStatistics();
 const copy = landingCopy(stats, locale);
-// Hai khối xem trước dựng từ dữ liệu publish thật (thẻ đội + bảng phạm vi mặc định).
+// Hai khối xem trước dựng từ dữ liệu publish thật và dùng đúng markup/class của thẻ và chế độ Bảng
+// trong danh sách `/doi-chuan/` (js/recommended-reference-render.js), bọc trong `.reference-view` để
+// ăn chung CSS — xem trước trông y như trang thật.
 const previews = await landingPreviews(locale);
-/** Vai trò viết tắt của thẻ gọn — cùng ba nhãn với thẻ danh sách (js/recommended-reference-render.js). */
+/** Vai trò viết tắt — cùng ba nhãn với thẻ danh sách (js/recommended-reference-render.js). */
 const PREVIEW_ROLES = locale === 'zh' ? ['主将', '副将1', '副将2'] : ['CHỦ', 'PHÓ 1', 'PHÓ 2'];
-/** Tiền tố biến thể thành chip `nhan-bien-the` như thẻ danh sách; chữ Hán gốc viết liền (`SP貂蟬`). */
+/** Khoá `data-role` của hàng tướng (CSS tô son nhãn "CHỦ" theo khoá này, không theo chữ hiển thị). */
+const ROLE_KEYS = ['CHỦ', 'PHÓ 1', 'PHÓ 2'];
+/** Tiền tố biến thể thành chip `pre` như thẻ danh sách; chữ Hán gốc viết liền (`SP貂蟬`). */
 const VARIANT_CLASS: Record<string, string> = {SP: 'sp', CO: 'co', '40Y': 'y40'};
 const splitVariant = (name: string) => {
   const match = name.match(/^(SP|CO|40Y)(?:\s+|(?=[\u3400-\u9fff\uf900-\ufaff]))(.+)$/u);
   return match ? {prefix: match[1], variantClass: VARIANT_CLASS[match[1]], name: match[2].trim()} : {prefix: null, variantClass: null, name};
 };
-const previewFactionCode = previews.team.faction
-  ? (FACTION_CODE as Record<string, string>)[previews.team.factionKeyVi ?? ''] ?? 'none'
-  : null;
-const previewMetaTail = [previews.team.units.join(' · '), previews.table.scopeLabel].filter(Boolean);
+const factionCode = (team: {factionKeyVi: string | null}) =>
+  (FACTION_CODE as Record<string, string>)[team.factionKeyVi ?? ''] ?? 'none';
+const TIER_TITLE = t('Tier nguồn', '来源等级');
+const SCORE_TITLE = t('Điểm nguồn', '来源评分');
+const TABLE_HEADS = [t('Chủ tướng', '主将'), t('Phó 1', '副将1'), t('Phó 2', '副将2')];
+/** Dòng meta như `metaLine` của danh sách: tier · phe (màu phe) · loại binh, nối bằng " · ". */
+const metaParts = (team: (typeof previews)['team']) => [
+  team.tier ? {className: 'badge tier reference-tier', title: TIER_TITLE, text: team.tier} : null,
+  team.faction ? {className: `reference-faction f-${factionCode(team)}`, title: undefined, text: team.faction} : null,
+  team.units.length ? {className: 'reference-units', title: undefined, text: team.units.join(' · ')} : null,
+].filter((part) => part !== null);
 const storeButtons = [APP_STORE_LINK, GOOGLE_PLAY_LINK];
 const NEW_TAB = t('(mở tab mới)', '(在新标签页打开)');
 /** Tiếng Việt cách số và câu bằng dấu cách; câu tiếng Trung tự mang dấu phẩy mở đầu. */
@@ -62,20 +74,8 @@ const redirectSource = locale === 'vi'
   ? `(function(){var resolve=${resolveLegacyRoute.toString()};var go=function(){var target=resolve(window.location.href,window.location.origin);if(target)window.location.replace(target);};go();window.addEventListener('hashchange',go);})();`
   : null;
 
-/** Icon nét 24×24 của từng mục (SVG tĩnh, `aria-hidden`). */
-const ICONS: Record<string, string> = {
-  standard: '<path d="M5 21V4"></path><path d="M5 4h11l-2 4 2 4H5"></path>',
-  other: '<circle cx="9" cy="8" r="3.5"></circle><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"></path><path d="M16 4.5a3.5 3.5 0 0 1 0 7"></path><path d="M18 14c2 .8 3 2.8 3 6"></path>',
-  coexist: '<path d="M12 3 3 8l9 5 9-5-9-5z"></path><path d="m3 13 9 5 9-5"></path>',
-  khaihoang: '<path d="m3 20 6-11 4 7 3-4 5 8z"></path><circle cx="16" cy="6" r="2"></circle>',
-  lookup: '<circle cx="11" cy="11" r="6.5"></circle><path d="m20 20-4.2-4.2"></path>',
-  recruit: '<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"></path>',
-  analyze: '<path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle>',
-  roster: '<rect x="3.5" y="3.5" width="7" height="7" rx="1.5"></rect><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"></rect><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"></rect><path d="M17 14v6M14 17h6"></path>',
-  report: '<path d="M8 4h8v5a4 4 0 0 1-8 0z"></path><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4"></path><path d="M12 13v4M8 20h8"></path>',
-  post: '<path d="M4 20h4L19 9l-4-4L4 16z"></path><path d="m13.5 6.5 4 4"></path>',
-  comment: '<path d="M4 5h16v11H9l-5 4z"></path><path d="M8 9h8M8 12h5"></path>',
-};
+/** Icon nét của từng mục (src/lib/section-icons.ts), tra theo khoá `icon` của thẻ bên dưới. */
+const ICONS: Record<string, string> = SECTION_ICONS;
 const ARROW = '<line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline>';
 const CHECK = '<polyline points="5 12 10 17 19 7"></polyline>';
 const EXTERNAL_ARROW = '<path d="M14 4h6v6"></path><path d="M20 4l-9 9"></path>';
@@ -192,33 +192,31 @@ const featureChecks = [
         ))}
       </ul>
     </div>
-    <div class="landing-hero-stage">
+    <div class="landing-hero-stage reference-view">
       <p class="landing-stage-label"><span class="seal seal-stage" aria-hidden="true"><SealMark /></span>{t('Đội mở màn mùa này', '本赛季首推阵容')}</p>
-      <article class="team-card reference-team-card landing-preview-card" aria-label={t('Ví dụ một thẻ đội', '阵容卡示例')}>
+      <article class="team-card reference-team-card" data-faction-code={factionCode(previews.team)} aria-label={t('Ví dụ một thẻ đội', '阵容卡示例')}>
         <header class="reference-card-head">
           <div class="reference-card-title">
             <h2 class="team-name"><a href={href(previews.team.href)}>{previews.team.name}</a></h2>
-            <p class="reference-meta">{previewFactionCode ? <span class={`reference-faction f-${previewFactionCode}`}>{previews.team.faction}</span> : null}{previewMetaTail.map((part, index) => (
-              <>{index || previewFactionCode ? ' · ' : null}{index === 0 && previews.team.units.length ? <strong class="reference-units">{part}</strong> : part}</>
-            ))}</p>
+            <p class="reference-meta">{metaParts(previews.team).map((part, index) => <>{index ? ' · ' : null}<span class={part.className} title={part.title}>{part.text}</span></>)}</p>
           </div>
-          <span class="reference-score-wrap"><span class="badge score reference-score" title={t('Điểm nguồn', '来源评分')}>{previews.team.score ?? '—'}</span><span class="reference-score-unit">{t('điểm', '分')}</span></span>
+          <span class="reference-score-wrap"><span class="badge score reference-score" title={SCORE_TITLE}>{previews.team.score ?? '—'}</span> <span class="reference-score-unit">{t('điểm', '分')}</span></span>
         </header>
         <div class="heroes">
           {previews.team.holders.map((holder, index) => {
             const variant = splitVariant(holder.name);
             return (
-              <div class="hero reference-holder">
+              <div class="hero reference-holder" data-role={ROLE_KEYS[index] ?? ''}>
                 <span class="reference-role">{PREVIEW_ROLES[index] ?? ''}</span>
                 <div class="hero-name">{variant.prefix ? <><span class={`pre ${variant.variantClass}`}>{variant.prefix}</span> </> : null}<span class="hn">{variant.name}</span></div>
                 {holder.tactics.length ? <div class="line tactics">{holder.tactics.map((tactic) => <span class="tag t-tactic">{tactic}</span>)}</div> : null}
-                <p class="line books">{t('Binh thư', '兵书')} · {holder.books.length ? <span class="reference-book-values">{holder.books.join(' · ')}</span> : <span class="reference-books-missing">{t('Nguồn chưa ghi', '来源未注明')}</span>}</p>
+                <p class="line books">{holder.books.length ? <span class="reference-book-values">{holder.books.join(' · ')}</span> : <span class="reference-books-missing">{t('Nguồn chưa ghi', '来源未注明')}</span>}</p>
               </div>
             );
           })}
         </div>
         <footer class="reference-card-foot">
-          <a class="landing-preview-link" href={href(previews.team.href)}>{t('Chi tiết', '详情')}<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={ARROW}></svg></a>
+          <a class="ana-link-btn" href={href(previews.team.href)}>{t('Chi tiết', '详情')}<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={ARROW}></svg></a>
         </footer>
       </article>
     </div>
@@ -272,25 +270,48 @@ const featureChecks = [
           <li><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" set:html={CHECK}></svg>{label}</li>
         ))}
       </ul>
-      <a class="landing-text-link" href={`${href('/doi-chuan/')}?view=bang`}>{t('Mở chế độ Bảng', '打开表格视图')}<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={ARROW}></svg></a>
     </div>
-    <div class="landing-table-preview">
-      <p class="landing-table-bar"><span class="landing-table-scope">{t('Chế độ Bảng', '表格视图')} · {previews.table.scopeLabel}</span><span class="landing-table-count">{previews.table.count}</span></p>
-      <div class="landing-table-scroll" role="region" tabindex="0" aria-label={t('Bảng ví dụ đội hình', '阵容表格示例')}>
-        <table class="reference-table">
-          <caption class="visually-hidden">{t('Ví dụ chế độ Bảng', '表格视图示例')}</caption>
-          <tbody>
-            {previews.table.rows.map((row) => (
+    <div class="landing-table-preview reference-view">
+      <section class="reference-tier-section" aria-labelledby="landing-table-tier">
+        <h3 id="landing-table-tier" class="reference-tier-heading"><span>{previews.table.tier}</span><span class="reference-tier-count">{previews.table.count}</span></h3>
+        <div class="reference-table-frame">
+          <table class="reference-table">
+            <caption class="visually-hidden">{t('Ví dụ chế độ Bảng', '表格视图示例')}</caption>
+            <thead>
               <tr>
-                <th scope="row">{row.name}{row.meta ? <span class="landing-table-meta">{row.meta}</span> : null}</th>
-                <td>{row.holders}</td>
-                <td class="landing-table-score">{row.score}</td>
+                <th scope="col" class="reference-table-team">{t('Đội', '队伍')}</th>
+                {TABLE_HEADS.map((label) => <th scope="col">{label}</th>)}
+                <th scope="col" class="reference-table-score-head">{t('Điểm', '评分')}</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {previews.table.rows.map((row) => (
+                <tr>
+                  <th scope="row" class="reference-table-team">
+                    <a class="reference-table-name" href={href(row.href)}>{row.name}</a>
+                    <p class="reference-meta">{metaParts(row).map((part, index) => <>{index ? ' · ' : null}<span class={part.className} title={part.title}>{part.text}</span></>)}</p>
+                    <span class="reference-table-lineup">{row.holders.map((holder) => holder.name).filter(Boolean).join(' · ')}</span>
+                  </th>
+                  {[0, 1, 2].map((index) => {
+                    const holder = row.holders[index];
+                    if (!holder) return <td class="reference-table-hero">—</td>;
+                    const variant = splitVariant(holder.name);
+                    return (
+                      <td class="reference-table-hero">
+                        <span class="reference-table-holder">{variant.prefix ? <><span class={`pre ${variant.variantClass}`}>{variant.prefix}</span> </> : null}<span class="hn">{variant.name}</span></span>
+                        {holder.tactics.map((tactic) => <span class="reference-table-tactic">{tactic}</span>)}
+                      </td>
+                    );
+                  })}
+                  <td class="reference-table-score">{row.score ?? '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
     </div>
+    <a class="landing-text-link" href={`${href('/doi-chuan/')}?view=bang`}>{t('Mở chế độ Bảng', '打开表格视图')}<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={ARROW}></svg></a>
   </section>
 
   <section id="landing-community" class="landing-section landing-community" aria-labelledby="landing-community-title">

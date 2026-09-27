@@ -1,0 +1,15 @@
+---
+// Tên thương hiệu trên các dải tối (header, menu mobile, footer). Bản vi là lockup: chữ "Cẩm Nang" vẽ từ
+// public/logo-cam-nang.svg (cắt từ docs/design/brand/logo-dark.svg, bỏ dòng phụ, làm tròn tọa độ 1 chữ số
+// thập phân) và dòng phụ là chữ HTML thật — logo gốc thu về cao 40–52px thì dòng phụ vẽ sẵn chỉ còn ~5px,
+// không đọc được. Tên truy cập ghép từ `alt` + dòng phụ = tên đầy đủ (anchor text của link về trang chủ).
+// Bản zh chưa có logo chữ nên in chữ.
+interface Props {
+  locale: 'vi' | 'zh';
+  title: string;
+}
+const { locale, title } = Astro.props;
+---
+{locale === 'vi'
+  ? <span class="brand-lockup"><img class="brand-lockup-mark" src="/logo-cam-nang.svg" alt="Cẩm Nang" width="605" height="132" decoding="async" />{' '}<span class="brand-lockup-sub">Game Tam Quốc Chí – Chiến Lược</span></span>
+  : title}

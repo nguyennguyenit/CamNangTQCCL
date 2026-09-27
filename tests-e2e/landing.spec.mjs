@@ -148,9 +148,12 @@ test('anchor Landing cuộn tới đúng khối, không nằm dưới header dí
     }
     // Bấm từ điều hướng thật: header (desktop) hoặc menu mobile, rồi footer.
     await page.goto('/');
-    if (width === 1440) await page.click('.site-nav a[href="/#nguon-du-lieu"]');
-    else {
+    if (width === 1440) {
+      await page.click('#nav-toggle-ve-cam-nang');
+      await page.click('.site-nav a[href="/#nguon-du-lieu"]');
+    } else {
       await page.click('#section-menu-toggle');
+      await page.locator('#section-menu-items summary', { hasText: 'Về cẩm nang' }).click();
       await page.click('#section-menu-items a[href="/#nguon-du-lieu"]');
     }
     await scrollSettled(page);

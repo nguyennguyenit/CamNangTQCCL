@@ -5,8 +5,7 @@
 import { pick } from '../../js/i18n.js';
 import { blogIndexPath, type BlogLocale, type RenderedBlogPost } from './blog-posts.ts';
 
-export const SITE_NAME = { vi: 'Cẩm Nang Tam Quốc Chí', zh: '三国志战略版攻略手册' } as const;
-const PAGE_SUFFIX = { vi: 'Cẩm Nang Game Tam Quốc Chí - Chiến Lược', zh: '三国志战略版攻略手册' } as const;
+export const SITE_NAME = { vi: 'Cẩm Nang Game Tam Quốc Chí - Chiến Lược', zh: '三国志战略版攻略手册' } as const;
 
 export function blogCopy(locale: BlogLocale) {
   const p = (vi: string, zh: string): string => pick(locale, vi, zh);
@@ -17,7 +16,7 @@ export function blogCopy(locale: BlogLocale) {
     siteName: SITE_NAME[locale],
     blogName: p('Bài viết', '文章'),
     home: p('Trang chủ', '首页'),
-    indexTitle: p(`Bài viết — ${PAGE_SUFFIX.vi}`, `文章 — ${PAGE_SUFFIX.zh}`),
+    indexTitle: p(`Bài viết — ${SITE_NAME.vi}`, `文章 — ${SITE_NAME.zh}`),
     indexHeading: p('Bài viết', '文章'),
     indexDescription: p(
       'Bài viết hướng dẫn và phân tích Tam Quốc Chí Chiến Lược: đội hình, tướng, chiến pháp và cách chơi theo mùa.',
@@ -33,7 +32,7 @@ export function blogCopy(locale: BlogLocale) {
     emptyTeams: p('Xem Đội chuẩn', '查看推荐阵容'),
     emptyLookup: p('Tra cứu', '图鉴查询'),
     postCount: (count: number) => p(`${count} bài viết`, `共 ${count} 篇文章`),
-    articleTitle: (title: string) => p(`${title} — Bài viết — ${PAGE_SUFFIX.vi}`, `${title} — 文章 — ${PAGE_SUFFIX.zh}`),
+    articleTitle: (title: string) => p(`${title} — Bài viết — ${SITE_NAME.vi}`, `${title} — 文章 — ${SITE_NAME.zh}`),
     back: p('Tất cả bài viết', '全部文章'),
     backLabel: p('Quay lại danh sách bài viết', '返回文章列表'),
     breadcrumbLabel: p('Đường dẫn', '导航路径'),

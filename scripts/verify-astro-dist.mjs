@@ -26,6 +26,8 @@ export const STATIC_PUBLIC_ARTIFACTS = Object.freeze([
   Object.freeze({ sourcePath: "public/og-image.png", outputPath: "og-image.png" }),
   // Logo sách mở (header, menu, footer, hình mờ hero) — components/SealMark.astro.
   Object.freeze({ sourcePath: "public/logo.png", outputPath: "logo.png" }),
+  // Mark chữ "Cẩm Nang" của logo (header, menu, footer bản vi) — components/BrandName.astro.
+  Object.freeze({ sourcePath: "public/logo-cam-nang.svg", outputPath: "logo-cam-nang.svg" }),
   // Ảnh QR ủng hộ tác giả (hộp thoại footer); file do chủ site cung cấp.
   Object.freeze({ sourcePath: "public/donate-qr.png", outputPath: "donate-qr.png" }),
   Object.freeze({ sourcePath: "public/robots.txt", outputPath: "robots.txt" }),

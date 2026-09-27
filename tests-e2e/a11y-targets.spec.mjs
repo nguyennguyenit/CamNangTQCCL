@@ -1,6 +1,5 @@
-// Phase 10 (P10-1) — vùng bấm mobile của ba control từng dưới 44px và bị bỏ sót ở các phase trước:
-// mục lục hướng dẫn Khai hoang (`.kh-guide-details summary`), nút quan hệ trong hồ sơ Tra cứu
-// (`.lookup-relation-name`) và nút mở đội trong kết quả Soi đội (`.ana-team-link`).
+// Phase 10 (P10-1) — vùng bấm mobile của các control từng dưới 44px và bị bỏ sót ở các phase trước:
+// nút quan hệ trong hồ sơ Tra cứu (`.lookup-relation-name`) và nút mở đội trong kết quả Soi đội (`.ana-team-link`).
 // Mỗi ca dựng trạng thái thật (mở/có dữ liệu) ở 320/390 × 2 theme, đo CẢ HAI chiều và kiểm kích hoạt.
 import { expect, test } from "@playwright/test";
 
@@ -19,32 +18,7 @@ const CASES = [
   { width: 320, colorScheme: "dark" },
 ];
 
-/** Đội Khai hoang có `guide` trong dữ liệu thật (đo `.kh-guide-details`). */
-const GUIDE_TEAM_PATH = "/khai-hoang/gia-cat-khac-quan-ngan-binh-nhac-tien/";
-
 test.describe("A5 — control đứng riêng phải đủ 44px ở mobile", () => {
-  test("mục lục hướng dẫn Khai hoang: đủ 44px, mở được bằng Enter", async ({ browser }) => {
-    for (const { width, colorScheme } of CASES) {
-      const context = await browser.newContext({ viewport: { width, height: 900 }, colorScheme });
-      const page = await context.newPage();
-      await page.goto(GUIDE_TEAM_PATH);
-      const summary = page.locator(".kh-guide-details summary").first();
-      await expect(summary).toBeVisible();
-      const box = await summary.boundingBox();
-      expect(box.height, `${width}/${colorScheme}: chiều cao mục lục`).toBeGreaterThanOrEqual(44);
-      expect(box.width, `${width}/${colorScheme}: chiều rộng mục lục`).toBeGreaterThanOrEqual(44);
-
-      const details = page.locator(".kh-guide-details").first();
-      await expect(details).not.toHaveAttribute("open", "");
-      await summary.focus();
-      await page.keyboard.press("Enter");
-      await expect(details, `${width}/${colorScheme}: Enter phải mở mục lục`).toHaveAttribute("open", "");
-      await page.keyboard.press("Enter");
-      await expect(details).not.toHaveAttribute("open", "");
-      await context.close();
-    }
-  });
-
   test("nút quan hệ trong hồ sơ Tra cứu: đủ 44px, Enter mở hồ sơ liên quan", async ({ browser }) => {
     for (const { width, colorScheme } of CASES) {
       const context = await browser.newContext({ viewport: { width, height: 900 }, colorScheme });

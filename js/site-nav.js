@@ -1,5 +1,5 @@
-// Điều hướng dùng chung cho mọi trang: menu thả (Công cụ, Game; Landing thêm Đội hình, Tra cứu)
-// và menu mobile toàn màn hình. Không tải dữ liệu gameplay, không tự dựng href.
+// Điều hướng dùng chung cho mọi trang: menu thả (một bộ cho mọi trang, kể cả cột chuyển nhanh ở mép phải
+// của trang con) và menu mobile toàn màn hình. Không tải dữ liệu gameplay, không tự dựng href.
 //
 // Hợp đồng DOM do src/layouts/SiteLayout.astro phát:
 //   [data-dropdown] > [data-dropdown-button][aria-expanded][aria-controls] + [data-dropdown-panel][id][hidden]
