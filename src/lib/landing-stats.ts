@@ -40,18 +40,20 @@ export interface LandingStatistics {
 /** Ngôn ngữ của Landing: `vi` dùng bản Việt đã duyệt, `zh` dùng chữ Hán gốc của dữ liệu nguồn. */
 export type LandingLocale = 'vi' | 'zh';
 
-/** Một tướng trong thẻ xem trước; chuỗi đã đúng ngôn ngữ trang (Việt đã duyệt hoặc chữ Hán gốc). */
+/** Một tướng trong thẻ/bảng xem trước; chuỗi đã đúng ngôn ngữ trang (Việt đã duyệt hoặc chữ Hán gốc). */
 export interface LandingPreviewHolder {
   name: string;
   tactics: string[];
   books: string[];
-  isMain: boolean;
 }
 
+/** Một đội xem trước: đủ trường để Landing dựng đúng markup thẻ/hàng bảng của danh sách thật. */
 export interface LandingTeamPreview {
   href: string;
   name: string;
   score: string | null;
+  /** Nhãn tier nguồn như danh sách thật (`T0`, "Đội chức năng"…). */
+  tier: string | null;
   /** Tên phe hiển thị theo ngôn ngữ trang. */
   faction: string | null;
   /** Nhãn phe tiếng Việt: khoá tra màu phe (`FACTION_CODE`) dùng chung cho cả hai ngôn ngữ. */
@@ -60,17 +62,11 @@ export interface LandingTeamPreview {
   holders: LandingPreviewHolder[];
 }
 
-export interface LandingTableRow {
-  name: string;
-  meta: string | null;
-  holders: string;
-  score: string;
-}
-
+/** Nhóm tier đầu của phạm vi mặc định, dựng như một khối tier của chế độ Bảng. */
 export interface LandingTablePreview {
-  scopeLabel: string;
+  tier: string;
   count: string;
-  rows: LandingTableRow[];
+  rows: LandingTeamPreview[];
 }
 
 export interface LandingPreviews {
@@ -292,8 +288,9 @@ export async function landingStatistics(): Promise<LandingStatistics> {
 }
 
 /**
- * Hai khối xem trước của Landing dựng từ dữ liệu publish thật: thẻ đội đầu tiên và bảng 4 dòng đầu của
- * phạm vi mặc định (`seasons.defaultSourceSeasonId` + scope đầu tiên), kèm link chi tiết tính lúc build.
+ * Hai khối xem trước của Landing dựng từ dữ liệu publish thật của phạm vi mặc định
+ * (`seasons.defaultSourceSeasonId` + scope đầu tiên): thẻ đội đầu tiên và 4 hàng đầu của nhóm tier đầu —
+ * đúng dữ liệu mà thẻ và chế độ Bảng của `/doi-chuan/` hiển thị, kèm link chi tiết tính lúc build.
  * Bản `zh` hiển thị chữ Hán gốc của nguồn (tên đội, tướng, chiến pháp, binh thư, phe, loại binh);
  * `href` luôn là đường canonical tiếng Việt — nơi render thêm tiền tố ngôn ngữ.
  */
@@ -309,21 +306,9 @@ export async function landingPreviews(locale: LandingLocale = 'vi'): Promise<Lan
   const [first] = [...scoped].sort((left, right) => left.listIndex - right.listIndex);
   if (!first?.scopeKey) throw new Error('Số liệu Landing: không tìm thấy phạm vi mặc định để dựng khối xem trước');
 
-  const season = fieldArray(seasons, 'seasonOptions', 'seasons.json')
-    .find((option) => field(option, 'sourceSeasonId') === defaultSeasonId);
-  // Mã mùa hiển thị (OG, PK-S28…) — không dùng `label`/`sourceSeasonId` vì với mùa OG chúng còn chữ Hán.
-  const seasonLabel = displayString(field(season, 'displayCode')) ?? displayString(field(season, 'label')) ?? '';
-  const seasonName = zh
-    ? rawString(field(season, 'nameRaw')) ?? ''
-    : displayString(field(season, 'nameVi')) ?? displayString(field(season, 'displayNameVi')) ?? '';
-
   const routeByConfig = new Map(
     (await teamDetailCatalog()).recommended.map((entry) => [entry.sourceConfigId, recommendedRoutePath(entry.routeSegment)]),
   );
-
-  const scopeRows = scoped.filter((row) => row.scopeKey === first.scopeKey);
-  const detailHref = first.sourceConfigId ? routeByConfig.get(first.sourceConfigId) : undefined;
-  if (!detailHref) throw new Error(`Số liệu Landing: không có route chi tiết cho ${first.sourceConfigId ?? '(thiếu id)'}`);
 
   type Row = (typeof recommended)[number];
   type Holder = Row['holders'][number];
@@ -332,41 +317,40 @@ export async function landingPreviews(locale: LandingLocale = 'vi'): Promise<Lan
     row.factionRaw ? (zh ? row.factionRaw : labels.faction[row.factionRaw] ?? null) : null;
   const unitsOf = (row: Row): string[] =>
     zh ? row.unitsRaw.filter(Boolean) : row.unitsRaw.map((unit) => labels.unit[unit]).filter(Boolean);
-  const teamName = (row: Row): string => (zh ? row.nameZh ?? row.name : row.name) ?? '';
+  // Cùng quy tắc `sourceTierLabel` (js/recommended-reference-state.js): đội chức năng có nhãn riêng.
+  const tierOf = (row: Row): string | null =>
+    row.tierRaw === '功能隊' || row.tierRaw === 'FUNC' ? (zh ? '功能队' : 'Đội chức năng') : row.tierRaw ?? null;
   const holderName = (holder: Holder): string => (zh ? holder.nameZh ?? holder.name : holder.name) ?? '';
-  const metaOf = (row: Row): string | null => {
-    const parts = [factionOf(row), ...unitsOf(row)].filter(Boolean);
-    return parts.length ? parts.join(' · ') : null;
+  const toPreview = (row: Row): LandingTeamPreview => {
+    const href = row.sourceConfigId ? routeByConfig.get(row.sourceConfigId) : undefined;
+    if (!href) throw new Error(`Số liệu Landing: không có route chi tiết cho ${row.sourceConfigId ?? '(thiếu id)'}`);
+    return {
+      href,
+      name: (zh ? row.nameZh ?? row.name : row.name) ?? '',
+      score: row.score === null ? null : String(row.score),
+      tier: tierOf(row),
+      faction: factionOf(row),
+      factionKeyVi: row.factionRaw ? labels.faction[row.factionRaw] ?? null : null,
+      units: unitsOf(row),
+      holders: row.holders.map((holder) => ({
+        name: holderName(holder),
+        tactics: (zh ? holder.tacticsZh : holder.tactics).filter(Boolean) as string[],
+        books: (zh ? holder.booksZh : holder.books).filter(Boolean) as string[],
+      })),
+    };
   };
-  const scoreOf = (row: Row): string => (row.score === null ? '—' : String(row.score));
 
-  const toTableRow = (row: Row): LandingTableRow => ({
-    name: teamName(row),
-    meta: metaOf(row),
-    holders: row.holders.map(holderName).filter(Boolean).join(' · '),
-    score: scoreOf(row),
-  });
-  const count = localeNumber(scopeRows.length, locale);
+  const tierRows = scoped
+    .filter((row) => row.scopeKey === first.scopeKey && row.tierRaw === first.tierRaw)
+    .sort((left, right) => left.listIndex - right.listIndex);
+  const count = localeNumber(tierRows.length, locale);
 
   return {
-    team: {
-      href: detailHref,
-      name: teamName(first),
-      score: first.score === null ? null : String(first.score),
-      faction: factionOf(first),
-      factionKeyVi: first.factionRaw ? labels.faction[first.factionRaw] ?? null : null,
-      units: unitsOf(first),
-      holders: first.holders.map((holder, index) => ({
-        name: holderName(holder),
-        tactics: zh ? holder.tacticsZh : holder.tactics,
-        books: zh ? holder.booksZh : holder.books,
-        isMain: index === 0,
-      })),
-    },
+    team: toPreview(first),
     table: {
-      scopeLabel: [seasonLabel, seasonName].filter(Boolean).join(' · '),
-      count: zh ? `${count} / ${count} 支` : `${count} / ${count} đội`,
-      rows: [...scopeRows].sort((left, right) => left.listIndex - right.listIndex).slice(0, 4).map(toTableRow),
+      tier: tierOf(first) ?? '',
+      count: zh ? ` · ${count} 队` : ` · ${count} đội`,
+      rows: tierRows.slice(0, 4).map(toPreview),
     },
   };
 }

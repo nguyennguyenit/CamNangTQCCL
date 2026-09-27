@@ -1,18 +1,8 @@
-// Ba mục danh sách có bộ lọc: Cùng Tồn (hàng nút kịch bản + nhóm), Đội chuẩn và Đội khác (sidebar lọc,
+// Ba mục danh sách: Cùng Tồn (chọn mùa + phiên bản), Đội chuẩn và Đội khác (sidebar lọc,
 // chế độ Thẻ / Thẻ gọn / Bảng). Trên điện thoại, vùng nhóm lọc thu gọn sau nút "Bộ lọc".
 
 import { el, FACTION_CODE, coexistGroupLabel, seasonCoexistGroup, sourceLabel } from './render.js';
 import { L, currentLocale } from './i18n.js';
-
-/** Nhóm không gắn kịch bản (nhánh `unknown`) nằm trong mục riêng này. */
-const COEXIST_UNKNOWN_SCENARIO = '';
-const coexistUnknownLabel = () => L('Chưa xác định kịch bản', '剧本未确定');
-/** Thứ tự và câu chữ phân loại giữ nguyên như trước redesign. */
-const coexistScopes = () => [
-  ['applicable', L('Áp dụng theo phiên bản luật', '适用规则版本')],
-  ['scenarioReference', L('Tham khảo kịch bản', '剧本参考')],
-  ['unknown', L('Chưa xác định kịch bản — tham khảo', '剧本未确定 — 参考')],
-];
 
 /** Khóa nhận diện nhóm: `recordId` khi có, ngược lại số thứ tự 1-based trong danh sách nhận được. */
 function coexistGroupKey(group, index) {
@@ -20,136 +10,100 @@ function coexistGroupKey(group, index) {
 }
 
 /**
- * Mục Cùng Tồn: hàng nút kịch bản là điều khiển phạm vi duy nhất của trang (URL `scenario` sở hữu lựa chọn,
- * bấm nút gọi `onScenario(id)`), rồi chọn nhóm 1–5 trong phép chiếu của kịch bản đó; chỉ nhóm đang xem được dựng.
- * Tập nhóm đúng bằng tập `update(groups)` nhận, không lọc thêm ngoài phép chiếu phạm vi.
- * `onGroup(key | null)` được gọi khi URL phải đổi: chọn nhóm mới, hoặc bỏ `group` cũ không còn hợp lệ.
+ * Mục Cùng Tồn: đầu mục như Đội chuẩn (ô chọn mùa bên phải; URL `scenario` sở hữu lựa chọn, đổi mùa gọi
+ * `onScenario(id)`), một hàng nút phiên bản Cùng tồn 1–5 của mùa đó, rồi lưới thẻ đội của phiên bản đang xem.
+ * Tập phiên bản đúng bằng tập `update(groups)` nhận, không lọc thêm ngoài phép chiếu phạm vi.
+ * `onGroup(key | null)` được gọi khi URL phải đổi: chọn phiên bản mới, hoặc bỏ `group` cũ không còn hợp lệ.
  */
-export function createSeasonCoexistSection({mount, scenarioLabel = () => coexistUnknownLabel(), onGroup, onScenario} = {}) {
+export function createSeasonCoexistSection({mount, scenarioLabel = () => '', onGroup, onScenario} = {}) {
   const title = el('h1', {class: 'reference-title', tabindex: '-1'}, L('Cùng Tồn', '共存阵容'));
-  const head = el('header', {class: 'coexist-head'}, [
+  const season = el('select', {'aria-label': L('Mùa', '赛季')});
+  const seasonStatus = el('span', {class: 'reference-season-status', hidden: ''}, L('Mới nhất', '最新'));
+  const seasonField = el('label', {class: 'reference-season-field', hidden: ''}, [
+    el('span', {class: 'reference-season-label'}, L('Mùa', '赛季')),
+    seasonStatus,
+    season,
+    icon(chevron(), {size: 16}),
+  ]);
+  season.addEventListener('change', () => {
+    if (season.value !== selectedScenario && typeof onScenario === 'function') onScenario(season.value);
+  });
+  const head = el('header', {class: 'reference-head coexist-head'}, [
     el('div', {class: 'reference-head-text'}, [
       el('span', {class: 'reference-kicker'}, L('Đội hình', '阵容')),
       title,
-      el('p', {class: 'reference-lead'}, L('Năm đội dùng được cùng lúc trong một tài khoản. Mỗi nhóm là một tổ hợp 15 tướng không trùng nhau.', '同一账号可同时使用的五支队伍。每组由 15 名互不重复的武将组成。')),
+      el('p', {class: 'reference-lead'}, L('Năm đội dùng được cùng lúc trong một tài khoản, 15 tướng không trùng nhau. Chọn mùa rồi chọn phiên bản để tham khảo.', '同一账号可同时使用的五支队伍，15 名武将互不重复。先选赛季，再选版本参考。')),
     ]),
+    seasonField,
   ]);
-  const scenarioRow = el('div', {class: 'coexist-scenarios', role: 'group', 'aria-label': L('Chọn kịch bản', '选择剧本')});
-  const chooser = el('div', {class: 'coexist-groups'});
+  const versionRow = el('div', {class: 'coexist-group-row', role: 'group', 'aria-label': L('Chọn phiên bản Cùng Tồn', '选择共存版本')});
+  const chooser = el('div', {class: 'coexist-groups'}, [
+    el('span', {class: 'coexist-groups-label', 'aria-hidden': 'true'}, L('Phiên bản', '版本')),
+    versionRow,
+  ]);
   const groupView = el('div', {class: 'coexist-group-view'});
   const empty = el('p', {class: 'empty'}, L('Không có nhóm Cùng Tồn trong mùa này.', '本赛季暂无共存阵容分组。'));
-  mount.replaceChildren(head, scenarioRow, chooser, groupView, empty);
+  mount.replaceChildren(head, chooser, groupView, empty);
   let items = [];
   let selectedScenario = null;
   let selectedKey = '';
-  // Nút đang có trong DOM theo nhận diện (scenarioId / khóa nhóm) để bật/tắt `aria-pressed` tại chỗ.
-  let scenarioNodes = new Map();
+  // Nút phiên bản đang có trong DOM theo khóa nhóm để bật/tắt `aria-pressed` tại chỗ.
   let groupNodes = new Map();
-  // Dòng tóm tắt nhóm đang chọn (mobile) theo từng hàng phạm vi → các nhóm của hàng đó.
-  let groupNotes = new Map();
 
-  function scenarioTitle(scenario) {
-    return scenario === COEXIST_UNKNOWN_SCENARIO ? coexistUnknownLabel() : scenarioLabel(scenario) || coexistUnknownLabel();
-  }
-
-  /** Chọn nhóm: chip vừa kích hoạt được giữ nguyên trong DOM nên trình duyệt không mất focus. */
+  /** Chọn phiên bản: nút vừa kích hoạt được giữ nguyên trong DOM nên trình duyệt không mất focus. */
   function activate(key) {
     selectedKey = key;
-    syncPressed();
+    for (const [itemKey, button] of groupNodes) button.setAttribute('aria-pressed', String(itemKey === selectedKey));
     paintGroupView();
     if (typeof onGroup === 'function') onGroup(key);
   }
 
-  function syncPressed() {
-    for (const [scenario, button] of scenarioNodes) button.setAttribute('aria-pressed', String(scenario === selectedScenario));
-    for (const [key, button] of groupNodes) button.setAttribute('aria-pressed', String(key === selectedKey));
-    for (const [note, rowItems] of groupNotes) {
-      const text = groupSummary(rowItems.find((item) => item.key === selectedKey));
-      note.textContent = text;
-      note.hidden = !text;
-    }
+  /** Ô chọn mùa: `scenarios` theo thứ tự hiển thị (mùa mới nhất trước); chỉ còn một mùa thì ẩn. */
+  function paintSeasonField(scenarios, latest) {
+    season.replaceChildren(...scenarios.map((id) => el('option', {value: id}, scenarioLabel(id) || id)));
+    if (selectedScenario !== null) season.value = selectedScenario;
+    seasonField.hidden = scenarios.length < 2;
+    seasonStatus.hidden = !latest || selectedScenario !== latest;
   }
 
-  /**
-   * Nút kịch bản theo thứ tự registry. Tập nút không đổi thì giữ nguyên node (chỉ đổi `aria-pressed`) để nút
-   * vừa bấm bằng bàn phím vẫn giữ focus sau khi URL đổi và mục dựng lại nhóm.
-   */
-  function paintScenarioRow(scenarioIds) {
-    const unchanged = scenarioIds.length === scenarioNodes.size && [...scenarioNodes.keys()].every((id, index) => id === scenarioIds[index]);
-    if (!unchanged) {
-      scenarioNodes = new Map();
-      scenarioRow.replaceChildren(...scenarioIds.map((scenario) => {
-        const button = el('button', {
-          type: 'button', class: 'coexist-scenario', 'aria-pressed': String(scenario === selectedScenario),
-          dataset: { scenario },
-          onclick: () => { if (scenario !== selectedScenario && typeof onScenario === 'function') onScenario(scenario); },
-        }, scenarioTitle(scenario));
-        scenarioNodes.set(scenario, button);
-        return button;
-      }));
-    }
-    scenarioRow.hidden = scenarioIds.length < 2;
-  }
-
-  /** Tóm tắt đội của nguồn cho một nhóm (cùng chuỗi hiện trong chip); bản zh bỏ tóm tắt tiếng Việt của nhánh legacy. */
-  function groupSummary(item) {
-    const content = item?.group.content;
-    return content?.summaryRaw || (currentLocale() === 'zh' ? '' : content?.summary) || '';
-  }
-
-  /**
-   * Desktop: chip nhóm kèm tóm tắt. Mobile (artboard CoexistMobile): một hàng nút số 44px, tóm tắt của
-   * nhóm đang chọn hiện ở dòng ngay dưới hàng (`coexist-group-note`); nhãn nhóm vẫn là tên truy cập của nút.
-   */
+  /** Hàng nút "Cùng tồn N"; mobile chỉ hiện số, nhãn đầy đủ vẫn là tên truy cập của nút. */
   function paintGroupRow() {
     groupNodes = new Map();
-    groupNotes = new Map();
-    chooser.replaceChildren(...coexistScopes().map(([classification, label]) => {
-      const rowItems = items.filter((item) => (item.group.classification || 'unknown') === classification);
-      if (!rowItems.length) return null;
-      const note = el('p', {class: 'coexist-group-note'});
-      groupNotes.set(note, rowItems);
-      return el('div', {class: 'coexist-scope-group'}, [
-        el('h2', {class: 'coexist-scope-title'}, `${label} (${rowItems.length})`),
-        el('div', {class: 'coexist-group-row', role: 'group', 'aria-label': L('Chọn nhóm Cùng Tồn', '选择共存分组')}, rowItems.map((item, index) => {
-          const summary = groupSummary(item);
-          const chip = el('button', {
-            type: 'button', class: 'coexist-group-chip', 'aria-pressed': String(item.key === selectedKey),
-            dataset: { groupKey: item.key },
-            onclick: () => activate(item.key),
-          }, [
-            el('span', {class: 'coexist-chip-number', 'aria-hidden': 'true'}, String(index + 1)),
-            el('span', {class: 'coexist-chip-label'}, coexistGroupLabel(item.group.content?.groupLabel || item.group.groupLabel)),
-            summary ? el('span', {class: 'coexist-chip-note'}, summary) : null,
-          ].filter(Boolean));
-          groupNodes.set(item.key, chip);
-          return chip;
-        })),
-        note,
+    versionRow.replaceChildren(...items.map((item, index) => {
+      const button = el('button', {
+        type: 'button', class: 'coexist-group-chip', 'aria-pressed': String(item.key === selectedKey),
+        dataset: { groupKey: item.key },
+        onclick: () => activate(item.key),
+      }, [
+        el('span', {class: 'coexist-chip-number', 'aria-hidden': 'true'}, String(index + 1)),
+        el('span', {class: 'coexist-chip-label'}, coexistGroupLabel(item.group.content?.groupLabel || item.group.groupLabel)),
       ]);
-    }).filter(Boolean));
-    syncPressed();
+      groupNodes.set(item.key, button);
+      return button;
+    }));
+    chooser.hidden = items.length < 2;
   }
 
   function paintGroupView() {
     const selected = items.find((item) => item.key === selectedKey) || null;
-    groupView.replaceChildren(...(selected ? [seasonCoexistGroup(selected.group, {scenarioLabel: scenarioTitle(selected.scenario)})] : []));
+    groupView.replaceChildren(...(selected ? [seasonCoexistGroup(selected.group, {teamCard: coexistTeamCard})] : []));
   }
 
   return {
     /**
      * `groups`: phép chiếu của phạm vi đang chọn; `requested`: `group` của URL (`null` = không có);
-     * `scenarios`: id kịch bản đã review theo thứ tự registry; `selected`: kịch bản của URL (hoặc `null`).
+     * `scenarios`: id kịch bản đã review theo thứ tự hiển thị; `selected`: kịch bản của URL (hoặc `null`);
+     * `latest`: id mùa mới nhất (nhãn "Mới nhất" trên ô chọn mùa).
      */
-    update(groups = [], requested = null, {scenarios = [], selected = null} = {}) {
-      items = (groups || []).map((group, index) => ({group, scenario: group.scenarioId || COEXIST_UNKNOWN_SCENARIO, key: coexistGroupKey(group, index)}));
+    update(groups = [], requested = null, {scenarios = [], selected = null, latest = null} = {}) {
+      items = (groups || []).map((group, index) => ({group, key: coexistGroupKey(group, index)}));
       selectedScenario = selected;
       // `null` = URL không có `group`; chuỗi bất kỳ (kể cả rỗng) = có yêu cầu, phải kiểm hợp lệ.
       const requestedKey = typeof requested === 'string' ? requested : null;
       const hit = (requestedKey && items.find((item) => item.key === requestedKey)) || items[0] || null;
       selectedKey = hit ? hit.key : '';
       empty.hidden = items.length > 0;
-      paintScenarioRow(scenarios);
+      paintSeasonField(scenarios, latest);
       paintGroupRow();
       paintGroupView();
       // Nhóm cũ không còn trong phạm vi mới: về nhóm đầu và bỏ `group` khỏi URL.
@@ -160,7 +114,7 @@ export function createSeasonCoexistSection({mount, scenarioLabel = () => coexist
 }
 
 import { SOURCE_TIER_ORDER, sourceTierLabel, legacyLabelZh, projectRecommendedRows, referenceFacetValues } from './recommended-reference-state.js';
-import { recommendedTeamCard, recommendedTeamTable, recommendedTeamTableRow, referenceRowKey } from './recommended-reference-render.js';
+import { coexistTeamCard, recommendedTeamCard, recommendedTeamTable, recommendedTeamTableRow, referenceRowKey } from './recommended-reference-render.js';
 import { icon, svgNode } from './render.js';
 import { TEAM_VIEW_CARDS, TEAM_VIEW_GRID, TEAM_VIEW_TABLE, canonicalTeamView } from './team-view.js';
 import { isNativeNavigationClick } from './team-detail-navigation.js';

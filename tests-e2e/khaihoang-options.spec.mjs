@@ -33,15 +33,12 @@ function detailPath(handles, teamId, query = {}) {
 
 const khaihoangRequest = "**/data/khaihoang.json*";
 
-/**
- * Danh sách: nguồn và bản hiển thị do fixture cấp, không đụng dữ liệu đã phát hành.
- * `keepLocalization` giữ nguyên giá trị của bản phát hành cho hợp đồng nội dung đã dịch.
- */
-async function routeKhaihoang(page, payload, {keepLocalization = false} = {}) {
-  const khaihoangBody = keepLocalization ? khaihoangSource : JSON.stringify(payload);
+/** Danh sách: nguồn và bản hiển thị do fixture cấp, không đụng dữ liệu đã phát hành. */
+async function routeKhaihoang(page, payload) {
+  const khaihoangBody = JSON.stringify(payload);
   const website = websiteDisplayFixture(
     {"data/khaihoang.json": khaihoangBody},
-    {dropValuesFor: keepLocalization ? [] : ["data/khaihoang.json"]},
+    {dropValuesFor: ["data/khaihoang.json"]},
   );
   await page.route("**/data/website-display.json", (route) =>
     route.fulfill({contentType: "application/json", body: website.body}));
@@ -75,20 +72,35 @@ async function routeDetail(page, {dropKhaihoangValues = true} = {}) {
   return website;
 }
 
-test("every source option replaces only its card and restores the default", async ({ page, request }) => {
+/** Tên trong `.hn`: nhãn biến thể SP/CO/40Y đứng riêng trước tên như thẻ Đội chuẩn. */
+const heroName = (name) => name.replace(/^(?:SP|CO|40Y)\s+/u, "");
+/** Thẻ danh sách theo tên đội (tiêu đề thẻ là link tới trang chi tiết). */
+const cardByTitle = (page, title) => page.locator(".kh-card").filter({ has: page.getByRole("heading", { name: title, exact: true }) });
+/** Tướng của build theo thứ tự hiển thị: chủ tướng trước cấp 20 (`commanderBefore`, thiếu thì tướng đầu) đứng đầu. */
+const displayHeroes = (build) => {
+  const main = build.heroes.find((hero) => hero.name === build.commanderBefore);
+  return main ? [main, ...build.heroes.filter((hero) => hero !== main)] : build.heroes;
+};
+/** Chủ tướng trước / sau cấp 20: tướng đứng đầu; `commanderAfter` thiếu thì vẫn là tướng đứng đầu. */
+const commanders = (build) => {
+  const early = displayHeroes(build)[0].name;
+  return { early, late: build.commanderAfter || early };
+};
+
+test("every version replaces only its card and restores the default", async ({ page, request }) => {
   const handles = await routeHandles(request);
   await routeKhaihoang(page, data);
   await expect(page.locator(".kh-card")).toHaveCount(data.teams.length);
-  await expect(page.locator(".kh-season-context")).toHaveCount(0);
   for (const [index, team] of data.teams.entries()) {
     const card = page.locator(".kh-card").nth(index);
     const initial = await card.locator(".kh-build").textContent();
     const next = page.locator(".kh-card").nth((index + 1) % data.teams.length);
     const neighbor = await next.textContent();
     const neighborHref = await next.getByRole("link").first().getAttribute("href");
-    const chips = card.locator(".kh-config-chip");
-    await expect(chips).toHaveCount(team.variants?.length ? team.variants.length + 1 : 0);
-    await expect(card.locator(".kh-config-row")).toHaveCount(team.variants?.length ? 1 : 0);
+    // Mọi thẻ có cùng hàng phiên bản; đội không có biến thể chỉ có chip "Mặc định" đang chọn.
+    await expect(card.locator(".kh-config-row")).toHaveCount(1);
+    await expect(card.locator(".kh-config-chip")).toHaveCount((team.variants?.length ?? 0) + 1);
+    await expect(card.locator('.kh-config-chip[data-variant=""]')).toHaveAttribute("aria-pressed", "true");
     for (const variant of team.variants || []) {
       const chip = card.locator(`.kh-config-chip[data-variant="${variant.id}"]`);
       await expect(chip).toHaveText(variant.displayLabel);
@@ -96,11 +108,10 @@ test("every source option replaces only its card and restores the default", asyn
       await chip.click();
       await expect(chip).toHaveAttribute("aria-pressed", "true");
       await expect(card.locator('.kh-config-chip[aria-pressed="true"]')).toHaveCount(1);
-      await expect(card.locator(".kh-card-head .badge")).toHaveText(variant.unitType);
-      await expect(card.locator(".kh-transforms")).toHaveCount(0);
-      for (const [i, hero] of variant.heroes.entries()) {
-        const row = card.locator(".hero").nth(i);
-        await expect(row.locator(".hn")).toHaveText(hero.name);
+      await expect(card.locator(".kh-card-head .badge.unit")).toHaveText(variant.unitType);
+      for (const [i, hero] of displayHeroes(variant).entries()) {
+        const row = card.locator(".kh-build > .hero").nth(i);
+        await expect(row.locator(".hn")).toHaveText(heroName(hero.name));
         await expect(row.locator(".tag")).toHaveText([hero.tacticBefore, ...(hero.tacticsAfter || [])].filter(Boolean));
         await expect(row.locator(".kh-label")).toHaveText([
           hero.tacticBefore ? "Trước" : null, hero.tacticsAfter?.length ? "Sau" : null,
@@ -108,7 +119,7 @@ test("every source option replaces only its card and restores the default", asyn
       }
       await expect(next).toHaveText(neighbor);
       await expect(next.getByRole("link").first()).toHaveAttribute("href", neighborHref);
-      // Link của card đang chọn tự mang cặp đang hoạt động ngay khi đổi cấu hình.
+      // Link của card đang chọn tự mang cặp đang hoạt động ngay khi đổi phiên bản.
       for (const link of await card.getByRole("link").all()) {
         await expect(link).toHaveAttribute("href", new RegExp(`/khai-hoang/${handles.k[team.id]}/`));
         await expect(link).toHaveAttribute("href", new RegExp(`variant=${variant.id}`));
@@ -124,33 +135,51 @@ test("every source option replaces only its card and restores the default", asyn
       }
     }
   }
-  // Chọn cấu hình không điều hướng khỏi danh sách.
-  await expect(page.locator(".kh-card").first().locator(".kh-config-chip").first()).toHaveCount(1);
+  // Chọn phiên bản không điều hướng khỏi danh sách.
   expect(new URL(page.url()).pathname).toBe("/khai-hoang/");
   expect(new URL(page.url()).hash).toBe("");
 });
 
-test("cards never render guides or opening notes, even when the payload carries them", async ({ page }) => {
+test("the list shows only teams and versions; notes, ratings, guides and shared references stay on the detail page", async ({ page }) => {
   const payload = structuredClone(data);
-  payload.teams[0].guide = {ratings: {}, defenders: {}, transitions: []};
+  payload.teams[0].guide = {overview: "Hướng dẫn chỉ thuộc trang chi tiết.", ratings: {land4: 9, overall: 8}};
   const variantOnlyIndex = payload.teams.findIndex((team) => !team.guide && team.variants?.length);
   payload.teams[variantOnlyIndex].variants[0].guide = {overview: "Không được dùng làm fallback."};
   payload.teams[variantOnlyIndex].openingNote = "Ghi chú mở đất không thuộc danh sách.";
+  payload.teams[variantOnlyIndex].buildNote = "Ghi chú build không thuộc danh sách.";
   await routeKhaihoang(page, payload);
+  const section = page.locator("#section-khaihoang");
   await expect(page.locator(".kh-card")).toHaveCount(data.teams.length);
-  await expect(page.locator(".kh-guide")).toHaveCount(0);
-  await expect(page.locator(".kh-guide-details")).toHaveCount(0);
-  await expect(page.locator(".kh-opening-note")).toHaveCount(0);
-  await expect(page.locator("#section-khaihoang")).not.toContainText("Ghi chú mở đất không thuộc danh sách.");
-  await expect(page.locator("#section-khaihoang")).not.toContainText("Không được dùng làm fallback.");
+  await expect(section.locator(".kh-guide, .kh-ratings, .kh-build-note, .kh-opening-note, .kh-note, .detail-notes")).toHaveCount(0);
+  await expect(section.locator(".cham-su-card, .kh-mines, .kh-mine-card")).toHaveCount(0);
+  await expect(section.locator("h2")).toHaveCount(0);
+  for (const text of ["Hướng dẫn chỉ thuộc trang chi tiết.", "Không được dùng làm fallback.", "Ghi chú mở đất không thuộc danh sách.", "Ghi chú build không thuộc danh sách.", "Đội Chạm Sứ", "Quân thủ", "Lưu ý nguồn", "Nguồn"]) {
+    await expect(section).not.toContainText(text);
+  }
 });
 
-test("source selection works with keyboard on mobile without overflow", async ({ page }, testInfo) => {
+test("cards in one grid row share the same height and footer line", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await routeKhaihoang(page, data);
+  const boxes = await page.locator(".kh-card").evaluateAll((cards) => cards.map((card) => {
+    const box = card.getBoundingClientRect();
+    return { top: Math.round(box.top), height: Math.round(box.height), foot: Math.round(card.querySelector(".reference-card-foot").getBoundingClientRect().top) };
+  }));
+  const rows = new Map();
+  for (const box of boxes) rows.set(box.top, [...(rows.get(box.top) || []), box]);
+  expect(rows.size).toBeLessThan(boxes.length);
+  for (const row of rows.values()) {
+    expect(new Set(row.map((box) => box.height)).size).toBe(1);
+    expect(new Set(row.map((box) => box.foot)).size).toBe(1);
+  }
+});
+
+test("version selection works with keyboard on mobile without overflow", async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await routeKhaihoang(page, data);
   const team = data.teams.find((item) => item.variants?.length);
-  const card = page.locator(".kh-card").filter({ has: page.getByRole("heading", { name: team.title, exact: true }) });
-  // Chip cấu hình là button thật: bàn phím chọn bằng Tab + Enter, không cần type-ahead của select.
+  const card = cardByTitle(page, team.title);
+  // Chip phiên bản là button thật: bàn phím chọn bằng Tab + Enter.
   const chip = card.locator(`.kh-config-chip[data-variant="${team.variants[0].id}"]`);
   await chip.focus();
   await expect(chip).toBeFocused();
@@ -160,36 +189,7 @@ test("source selection works with keyboard on mobile without overflow", async ({
   await card.screenshot({ path: testInfo.outputPath("mobile-option.png") });
 });
 
-test("curated tactical build notes stay visible without source provenance", async ({ page }) => {
-  await routeKhaihoang(page, data);
-  const chipFor = (card, variantId) => card.locator(`.kh-config-chip[data-variant="${variantId}"]`);
-  const lucTon = page.locator(".kh-card").filter({ has: page.getByRole("heading", {
-    name: "Lục Tốn · Tả Từ · Trương Xuân Hoa", exact: true,
-  }) });
-  await expect(lucTon.locator(".kh-build-note")).toHaveCount(0);
-  await chipFor(lucTon, "jp-s23-si-biet").click();
-  await expect(lucTon.locator(".kh-build-note")).toContainText(/không trộn hai cấu hình/i);
-  await expect(lucTon.locator(".kh-build-note")).not.toContainText(/Nguồn|Dengeki|S23/);
-
-  const maSieu = page.locator(".kh-card").filter({ has: page.getByRole("heading", {
-    name: "Gia Cát Khác · SP Mã Siêu · Pháp Chính", exact: true,
-  }) });
-  await chipFor(maSieu, "cn-thoi-phong").click();
-  await expect(maSieu.locator(".kh-build-note")).toContainText("Pháp Chính mang Tiềm Long từ đầu; cần có Thôi Phong.");
-  await chipFor(maSieu, "").click();
-  await expect(maSieu.locator(".kh-build")).not.toContainText("Pháp Chính mang Tiềm Long từ đầu");
-
-  const chuThai = teamByTitle("Chu Thái · Trương Phi · Trương Xuân Hoa");
-  const chuThaiCard = page.locator(".kh-card").filter({ has: page.getByRole("heading", {
-    name: chuThai.title, exact: true,
-  }) });
-  // Card hiển thị đúng ghi chú build của team, không phải ghi chú mở đất hay ghi chú của variant.
-  await expect(chuThaiCard.locator(".kh-build-note")).toHaveText(chuThai.buildNote);
-  await expect(chuThaiCard.locator(".hero").filter({ has: page.getByText("Trương Xuân Hoa", { exact: true }) }).locator(".kh-note")).toHaveText("Cộng Trí Lực.");
-  await expect(chuThaiCard.locator(".kh-note").filter({ hasText: "Nguồn sát thương chính" })).toHaveCount(0);
-});
-
-test("main Khai hoang cards keep current-only wording and real detail links", async ({ page, request }) => {
+test("each card links its title and Chi tiết to the same detail route", async ({ page, request }) => {
   const handles = await routeHandles(request);
   await routeKhaihoang(page, data);
   const main = page.locator(".kh-card");
@@ -197,49 +197,31 @@ test("main Khai hoang cards keep current-only wording and real detail links", as
   for (let index = 0; index < await main.count(); index++) {
     const card = main.nth(index);
     const team = data.teams[index];
-    await expect(card).not.toContainText(/Kazten|CN\/KR|Nguồn:/);
+    await expect(card).not.toContainText(/Kazten|CN\/KR|Nguồn/);
     const links = card.getByRole("link");
-    await expect(links).toHaveCount(1);
-    const link = links.first();
-    await expect(link).toHaveAttribute("href", new RegExp(`/khai-hoang/${handles.k[team.id]}/`));
-    await expect(link).toHaveAttribute("href", /from=/);
-    // Chữ hướng dẫn đánh đất chỉ ở trang chi tiết: thẻ chỉ còn một dòng link tới đúng route.
-    await expect(link).toHaveText(team.guide && Object.keys(team.guide).length ? "Hướng dẫn đánh đất" : "Chi tiết");
+    await expect(links).toHaveText([team.title, "Chi tiết"]);
+    const href = await links.first().getAttribute("href");
+    expect(href).toMatch(new RegExp(`/khai-hoang/${handles.k[team.id]}/`));
+    expect(href).toMatch(/from=/);
+    await expect(links.nth(1)).toHaveAttribute("href", href);
   }
-  await expect(main.locator(".kh-guide, .kh-opening-note")).toHaveCount(0);
 });
 
-test("cards draw the six-mark rating bar only for the teams that have guide ratings", async ({ page }) => {
+test("the card stamp shows the overall rating, or a dashed empty stamp when the team is unrated", async ({ page }) => {
   await routeKhaihoang(page, data);
-  const withRatings = data.teams.filter((team) => team.guide?.ratings && Object.keys(team.guide.ratings).length);
-  expect(withRatings.length).toBeGreaterThan(0);
-  expect(withRatings.length).toBeLessThan(data.teams.length);
-  await expect(page.locator(".kh-card .kh-ratings")).toHaveCount(withRatings.length);
+  const rated = data.teams.filter((team) => Number.isFinite(Number(team.guide?.ratings?.overall)));
+  expect(rated.length).toBeGreaterThan(0);
+  expect(rated.length).toBeLessThan(data.teams.length);
   for (const [index, team] of data.teams.entries()) {
-    const card = page.locator(".kh-card").nth(index);
-    const bar = card.locator(".kh-ratings");
-    if (!team.guide?.ratings || !Object.keys(team.guide.ratings).length) {
-      await expect(bar).toHaveCount(0);
-      await expect(card.locator(".kh-ratings-block")).toBeHidden();
-      continue;
+    const stamp = page.locator(".kh-card").nth(index).locator(".kh-card-head .reference-score-wrap");
+    const overall = Number(team.guide?.ratings?.overall);
+    if (Number.isFinite(overall)) {
+      await expect(stamp).not.toHaveClass(/is-missing/);
+      await expect(stamp.locator(".reference-score")).toHaveText(String(overall).replace(".", ","));
+    } else {
+      await expect(stamp).toHaveClass(/is-missing/);
+      await expect(stamp.locator(".reference-score")).toHaveText("—");
     }
-    await expect(bar).toHaveCount(1);
-    const marks = bar.locator(".kh-rating");
-    const expected = [["Đất 4", "land4"], ["Đất 5", "land5"], ["Đất 6", "land6"], ["Đất 7–8", "land7to8"], ["Chuyển", "transition"], ["Tổng", "overall"]]
-      .filter(([, key]) => Number.isFinite(Number(team.guide.ratings[key])));
-    await expect(marks).toHaveCount(expected.length);
-    for (const [markIndex, [label, key]] of expected.entries()) {
-      const value = Number(team.guide.ratings[key]);
-      const mark = marks.nth(markIndex);
-      await expect(mark.locator(".kh-rating-label")).toHaveText(label);
-      await expect(mark.locator(".kh-rating-value")).toHaveText(String(value).replace(".", ","));
-      // Độ dài thanh là chính con số chia thang 10, không phải trang trí cố định.
-      const width = await mark.locator(".kh-rating-fill").evaluate((node) => node.style.width);
-      expect(width).toBe(`${Math.round(value * 10)}%`);
-    }
-    // Cột Tổng là mốc duy nhất dùng màu mực thay vì màu son.
-    await expect(bar.locator(".kh-rating-fill-total")).toHaveCount(expected.some(([, key]) => key === "overall") ? 1 : 0);
-    await expect(card.locator(".kh-ratings-note")).toHaveText("Điểm /10 cho cả bộ ba tướng · Tướng trắng vẫn dùng được; càng nhiều đỏ càng tốt.");
   }
 });
 
@@ -250,21 +232,287 @@ test("unit filter narrows the same rendered cards without touching their state",
   const all = page.locator(".kh-unit-chip").first();
   await expect(all).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator(".kh-unit-chip")).toHaveCount(counts.size + 1);
-  await expect(page.locator(".kh-anchor").first()).toHaveText(/Đội đề xuất/);
+  await expect(page.locator(".kh-result-count")).toHaveText(`${data.teams.length} / ${data.teams.length} đội`);
   for (const [unit, count] of counts) {
     await page.locator(`.kh-unit-chip[data-unit="${unit}"]`).click();
     await expect(page.locator(`.kh-unit-chip[data-unit="${unit}"]`)).toHaveAttribute("aria-pressed", "true");
     await expect(all).toHaveAttribute("aria-pressed", "false");
     const visible = page.locator(".kh-card:visible");
     await expect(visible).toHaveCount(count);
-    expect(await visible.evaluateAll((nodes) => nodes.every((node) => node.querySelector(".kh-card-head .badge").textContent.trim() === nodes[0].querySelector(".kh-card-head .badge").textContent.trim()))).toBe(true);
+    await expect(page.locator(".kh-result-count")).toHaveText(`${count} / ${data.teams.length} đội`);
+    await expect(visible.locator(".kh-card-head .badge.unit")).toHaveText(Array(count).fill(unit));
   }
   await all.click();
   await expect(page.locator(".kh-card:visible")).toHaveCount(data.teams.length);
 });
 
-test("mines render as a table on desktop and as one card per mine on mobile", async ({ page }) => {
+test("researched root builds mark their commanders and render stage-specific tactic slots", async ({ page }) => {
   await routeKhaihoang(page, data);
+  const cases = [
+    {
+      title: "Trương Xuân Hoa · Lữ Bố · Tả Từ", before: null, after: "Trương Xuân Hoa",
+      rows: [
+        ["Trương Xuân Hoa", ["Thịnh Khí Linh Địch", "Võ Phong Trận"]],
+        ["Lữ Bố", ["Thôi Phong Đoạn Nhẫn", "Mau Giành Lợi Thế"]],
+        ["Tả Từ", ["Lâm Nguy Cứu Chủ", "Tạm Lánh Sóng Gió"]],
+      ],
+    },
+    {
+      // Chủ tướng trước (SP Chu Tuấn, đứng đầu) và sau cấp 20 (Gia Cát Khác) khác nhau.
+      title: "SP Chu Tuấn · Hạ Hầu Uyên · Gia Cát Khác", before: "SP Chu Tuấn", after: "Gia Cát Khác",
+      rows: [
+        ["SP Chu Tuấn", ["Vô Đương Phi Quân", "Sợ Bóng Sợ Gió"]],
+        ["Hạ Hầu Uyên", ["Lõa Y Huyết Chiến", "Thôi Phong Đoạn Nhẫn"]],
+        ["Gia Cát Khác", ["Thịnh Khí Linh Địch", "Tiềm Long Trận"]],
+      ],
+    },
+  ];
+  for (const expected of cases) {
+    const card = cardByTitle(page, expected.title);
+    const rows = card.locator(".kh-build > .hero");
+    await expect(rows).toHaveCount(3);
+    // Chủ tướng trước cấp 20 (dòng đầu): ấn C sau tên. Đổi chủ tướng: thêm ấn trước nhãn "Sau" của chủ tướng sau cấp 20.
+    if (!expected.before) {
+      await expect(card.locator(".main-holder")).toHaveCount(1);
+      await expect(rows.first().locator(".hero-name .main-holder")).toHaveAttribute("title", "Chủ tướng");
+    } else {
+      await expect(card.locator(".main-holder")).toHaveCount(2);
+      await expect(rows.first().locator(".hero-name .main-holder")).toHaveAttribute("title", "Chủ tướng trước cấp 20");
+      const lateRow = rows.filter({ has: page.locator(".hn", { hasText: heroName(expected.after) }) });
+      await expect(lateRow.locator(".kh-after .main-holder")).toHaveAttribute("title", "Chủ tướng sau cấp 20");
+    }
+    for (const [index, [name, tactics]] of expected.rows.entries()) {
+      const row = rows.nth(index);
+      await expect(row.locator(".hn")).toHaveText(heroName(name));
+      // Loại binh của build đã ở badge đầu thẻ: hàng tướng không lặp lại khi trùng loại binh đó.
+      await expect(row.locator(".badge.unit.small")).toHaveCount(0);
+      await expect(row.locator(".tag")).toHaveText(expected.before ? [tactics[0], ...tactics] : tactics);
+    }
+    if (!expected.before) await expect(card.locator(".kh-label").filter({ hasText: "Trước" })).toHaveCount(0);
+  }
+});
+
+test("every version leads with its pre-level-20 commander marked after the name, plus a Sau mark when the commander changes", async ({ page }) => {
+  await routeKhaihoang(page, data);
+  for (const team of data.teams) {
+    const card = cardByTitle(page, team.title);
+    for (const [variantId, build] of [["", team], ...(team.variants || []).map((variant) => [variant.id, variant])]) {
+      await card.locator(`.kh-config-chip[data-variant="${variantId}"]`).click();
+      for (const commander of [build.commanderBefore, build.commanderAfter].filter(Boolean)) {
+        expect(build.heroes.map((hero) => hero.name), `${team.id}/${variantId}`).toContain(commander);
+      }
+      const rows = card.locator(".kh-build > .hero");
+      const { early, late } = commanders(build);
+      await expect(rows.first().locator(".hn")).toHaveText(heroName(early));
+      const rowOf = (name) => rows.filter({ has: page.locator(".hn", { hasText: new RegExp(`^${heroName(name)}$`) }) });
+      if (early === late) {
+        await expect(card.locator(".main-holder")).toHaveCount(1);
+        await expect(rows.first().locator(".hero-name .main-holder")).toHaveCount(1);
+      } else {
+        await expect(card.locator(".main-holder")).toHaveCount(2);
+        await expect(rows.first().locator(".hero-name .main-holder")).toHaveCount(1);
+        await expect(rowOf(late).locator(".kh-after .main-holder, .hero-name .main-holder")).toHaveCount(1);
+      }
+    }
+  }
+});
+
+test("a legacy mines-only payload renders an empty list without crashing", async ({ page }) => {
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error));
+  await routeKhaihoang(page, data.mines);
+  await expect(page.locator("#section-khaihoang .reference-title")).toHaveText("Khai hoang");
+  await expect(page.locator(".kh-card")).toHaveCount(0);
+  await expect(page.locator(".kh-mines, .cham-su-card")).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
+/* ---------- Trang chi tiết: hướng dẫn, ghi chú mở đất, URL và trạng thái lỗi ---------- */
+
+test("detail fetches only the display publication and khaihoang.json, each once", async ({ page, request }) => {
+  const handles = await routeHandles(request);
+  const requests = [];
+  page.on("request", (req) => {
+    const { pathname } = new URL(req.url());
+    if (pathname.startsWith("/data/")) requests.push(pathname);
+  });
+  await page.goto(detailPath(handles, data.teams[0].id));
+  await expect(page.locator("#team-detail-root")).toHaveAttribute("aria-busy", "false");
+  await expect(page.locator("#team-detail-body")).toBeVisible();
+  expect(requests.sort()).toEqual(["/data/khaihoang.json", "/data/website-display.json"]);
+});
+
+test("detail owns ratings, the roster guide and shared references outside the rebuilt build", async ({ page, request }) => {
+  const handles = await routeHandles(request);
+  const target = teamByTitle("Gia Cát Khác · Thái Sử Từ · Tả Từ");
+  await routeDetail(page);
+  await page.goto(detailPath(handles, target.id));
+
+  await expect(page.locator("#team-detail-root")).toHaveAttribute("aria-busy", "false");
+  await expect(page.locator("#team-detail-body")).toBeVisible();
+  await expect(page.locator("#team-detail-status")).toBeHidden();
+  const body = page.locator("#team-detail-body");
+  // Thứ tự khối: phiên bản + đội hình/ghi chú → điểm → hướng dẫn → Chạm Sứ → quân thủ mỏ; không còn mục lục thu gọn.
+  await expect(body.locator(":scope > section > h2")).toHaveText(["Điểm đánh giá", "Hướng dẫn khai hoang", "Đội Chạm Sứ / Ăn vạ", "Quân thủ các mỏ"]);
+  await expect(body.locator("details")).toHaveCount(0);
+  const guide = body.locator(".kh-guide");
+  await expect(guide).toContainText("Đất 4 · dễ → khó");
+  await expect(body.locator(".kh-ratings-block")).toContainText("chưa chấm riêng từng bộ chiến pháp");
+
+  // Điểm, hướng dẫn và tham khảo chung nằm ngoài subtree build: đổi phiên bản không dựng lại các node đó.
+  await page.evaluate(() => { for (const node of document.querySelectorAll("#team-detail-body > section")) node.dataset.probe = "kept"; });
+  const build = body.locator(".kh-detail-build");
+  const beforeBuild = await build.textContent();
+  await detailChip(page, target.variants[0].id).click();
+  await expect(build).not.toHaveText(beforeBuild);
+  await expect(body.locator(':scope > section[data-probe="kept"]')).toHaveCount(4);
+
+  // Trang chi tiết không boot ứng dụng gốc; mục cha chỉ được đánh dấu khu vực (`true`), không phải trang hiện tại.
+  await expect(page.locator('a[data-section="khaihoang"][aria-current="true"]')).toHaveCount(1);
+  await expect(page.locator('.site-nav a[aria-current="page"]')).toHaveCount(0);
+});
+
+test("detail draws the six-mark rating bar only for teams with guide ratings", async ({ page, request }) => {
+  const handles = await routeHandles(request);
+  await routeDetail(page);
+  const withRatings = data.teams.filter((team) => team.guide?.ratings && Object.keys(team.guide.ratings).length);
+  const unrated = data.teams.find((team) => !team.guide?.ratings);
+  expect(withRatings.length).toBeGreaterThan(0);
+  await page.goto(detailPath(handles, unrated.id));
+  await expect(page.locator("#team-detail-body")).toBeVisible();
+  await expect(page.locator(".kh-ratings, .kh-ratings-block")).toHaveCount(0);
+  for (const team of withRatings) {
+    await page.goto(detailPath(handles, team.id));
+    const bar = page.locator("#team-detail-body .kh-ratings");
+    await expect(bar).toHaveCount(1);
+    const marks = bar.locator(".kh-rating");
+    const expected = [["Đất 4", "land4"], ["Đất 5", "land5"], ["Đất 6", "land6"], ["Đất 7–8", "land7to8"], ["Chuyển", "transition"], ["Tổng", "overall"]]
+      .filter(([, key]) => Number.isFinite(Number(team.guide.ratings[key])));
+    await expect(marks.locator(".kh-rating-label")).toHaveText(expected.map(([label]) => label));
+    for (const [markIndex, [, key]] of expected.entries()) {
+      const value = Number(team.guide.ratings[key]);
+      const mark = marks.nth(markIndex);
+      await expect(mark.locator(".kh-rating-value")).toHaveText(String(value).replace(".", ","));
+      // Độ dài thanh là chính con số chia thang 10, không phải trang trí cố định.
+      expect(await mark.locator(".kh-rating-fill").evaluate((node) => node.style.width)).toBe(`${Math.round(value * 10)}%`);
+    }
+    // Cột Tổng là mốc duy nhất dùng màu mực thay vì màu son.
+    await expect(bar.locator(".kh-rating-fill-total")).toHaveCount(expected.some(([, key]) => key === "overall") ? 1 : 0);
+  }
+});
+
+test("detail keeps every opening note with its owner and never borrows from the default build", async ({ page, request }) => {
+  const handles = await routeHandles(request);
+  await routeDetail(page);
+
+  const lucTon = teamByTitle("Lục Tốn · Tả Từ · Trương Xuân Hoa");
+  await page.goto(detailPath(handles, lucTon.id));
+  const body = page.locator("#team-detail-body");
+  const notes = body.locator(".kh-build .detail-note-list");
+  // Ghi chú mở đất của team và của tướng giữ đúng owner của build mặc định (ghi chú tướng mang nhãn tên tướng).
+  await expect(notes.locator(".kh-opening-note:not(.detail-note-holder)")).toHaveText([lucTon.openingNote]);
+  await expect(body).toContainText("Thận trọng với thủ quân có tất trúng");
+  const heroOpening = notes.locator(".kh-opening-note.detail-note-holder");
+  await expect(heroOpening.locator(".detail-note-owner")).toHaveText([lucTon.heroes[0].name]);
+  await expect(heroOpening.locator(".detail-note-text")).toHaveText([lucTon.heroes[0].openingNote]);
+  await expect(notes.locator(".kh-note .detail-note-text").first()).toHaveText(lucTon.heroes[0].buildNote);
+
+  await detailChip(page, lucTon.variants[0].id).click();
+  await expect(body.locator(".kh-build-note")).toHaveText(lucTon.variants[0].buildNote);
+  await expect(body.locator(".kh-build-note")).not.toContainText(/Nguồn|Dengeki|S23/);
+  await expect(body).not.toContainText(lucTon.openingNote);
+  await expect(body.locator(".kh-opening-note")).toHaveCount(0);
+  await expect(body.locator(".kh-note")).toHaveCount(0);
+
+  const maSieu = teamByTitle("Gia Cát Khác · SP Mã Siêu · Pháp Chính");
+  await page.goto(detailPath(handles, maSieu.id, { variant: "cn-thoi-phong" }));
+  await expect(notes.locator(".kh-opening-note:not(.detail-note-holder)")).toHaveText([maSieu.variants[0].openingNote]);
+  await expect(body.locator(".kh-build-note")).toHaveText(maSieu.variants[0].buildNote);
+  await expect(body).not.toContainText("Nguồn mùa S23");
+  await detailChip(page, "").click();
+  await expect(body.locator(".kh-build")).not.toContainText("Pháp Chính mang Tiềm Long từ đầu");
+
+  const chuThai = teamByTitle("Chu Thái · Trương Phi · Trương Xuân Hoa");
+  await page.goto(detailPath(handles, chuThai.id));
+  // Ghi chú build của team, không phải ghi chú mở đất hay ghi chú của variant.
+  await expect(body.locator(".kh-build-note")).toHaveText(chuThai.buildNote);
+  await expect(notes.locator(".kh-note").filter({ hasText: "Trương Xuân Hoa" }).locator(".detail-note-text")).toHaveText("Cộng Trí Lực.");
+  await expect(notes.locator(".kh-note").filter({ hasText: "Nguồn sát thương chính" })).toHaveCount(0);
+});
+
+test("detail roles follow the build commanders and badge unit changes", async ({ page, request }) => {
+  const handles = await routeHandles(request);
+  await routeDetail(page);
+  const chuTuan = teamByTitle("SP Chu Tuấn · Hạ Hầu Uyên · Gia Cát Khác");
+  await page.goto(detailPath(handles, chuTuan.id));
+  const cards = page.locator("#team-detail-body .kh-hero-card");
+  // Tướng đầu là chủ tướng trước cấp 20; chủ tướng sau cấp 20 mang ấn C ở nhãn "Chiến pháp sau".
+  await expect(cards.locator(".detail-hero-role")).toHaveText(["Chủ tướng trước cấp 20", "Phó tướng", "Chủ tướng sau cấp 20"]);
+  await expect(cards.first().locator(".hn")).toHaveText("Chu Tuấn");
+  await expect(page.locator("#team-detail-body .kh-hero-card.is-main")).toHaveCount(1);
+  await expect(page.locator("#team-detail-body .main-holder")).toHaveCount(2);
+  await expect(cards.first().locator(".detail-hero-name .main-holder")).toHaveAttribute("title", "Chủ tướng trước cấp 20");
+  await expect(cards.nth(2).locator(".kh-after .detail-hero-label .main-holder")).toHaveAttribute("title", "Chủ tướng sau cấp 20");
+
+  const unitShift = data.teams.find((team) => team.heroes.some((hero) => hero.unitTypeBefore !== hero.unitTypeAfter));
+  const hero = unitShift.heroes.find((item) => item.unitTypeBefore !== item.unitTypeAfter);
+  await page.goto(detailPath(handles, unitShift.id));
+  await expect(cards.filter({ has: page.locator(".hn", { hasText: heroName(hero.name) }) }).locator(".detail-hero-stat"))
+    .toHaveText([hero.unitTypeBefore, hero.unitTypeAfter].join(" → "));
+});
+
+for (const width of [1280, 375]) {
+  test(`detail Chạm Sứ groups keep content and order without source links at ${width}px`, async ({ page, request }, testInfo) => {
+    const handles = await routeHandles(request);
+    await page.setViewportSize({ width, height: 812 });
+    const chamSuTeams = [
+      {
+        id: "lu-mong-gia-hu", title: "Lữ Mông – Giả Hủ",
+        heroes: [{ name: "Lữ Mông", tactic: "Bạch Mã Nghĩa Tòng" }, { name: "Giả Hủ", tactic: "Ngụy Thư Tương Gian" }],
+        note: "mang 1 lính. Tướng thay thế: Điêu Thuyền, Hoàng Cái, Phùng Kỷ.",
+      },
+      {
+        id: "ton-thuong-huong-lang-thong", title: "Tôn Thượng Hương – Lăng Thống",
+        heroes: [{ name: "Tôn Thượng Hương", tactic: "Lõa Y Huyết Chiến" }, { name: "Lăng Thống", tactic: "Phong Thi Trận" }],
+        note: "mang 1 lính",
+      },
+    ].map((team) => ({ ...team, sources: [{ label: "Bảng Khai hoang", url: "https://docs.google.com/spreadsheets/d/x/edit" }] }));
+    await routeDetailSource(page, (payload) => { payload.chamSuTeams = chamSuTeams; });
+    await page.goto(detailPath(handles, data.teams[0].id));
+    await expect(page.getByRole("heading", { name: "Đội Chạm Sứ / Ăn vạ", exact: true })).toBeVisible();
+    await expect(page.locator(".cham-su-card")).toHaveCount(chamSuTeams.length);
+    for (const [index, team] of chamSuTeams.entries()) {
+      const card = page.locator(".cham-su-card").nth(index);
+      await expect(card.getByRole("heading")).toHaveText(team.title);
+      await expect(card.locator(".cham-su-hero")).toHaveText(team.heroes.map((hero) => hero.name));
+      await expect(card.locator(".cham-su-tactic")).toHaveText(team.heroes.map((hero) => hero.tactic));
+      await expect(card.locator(".cham-su-note")).toHaveText(team.note);
+      await expect(card.getByRole("link")).toHaveCount(0);
+      await expect(card).not.toContainText("Nguồn");
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    await page.locator(".cham-su-card").first().screenshot({ path: testInfo.outputPath(`cham-su-${width}.png`) });
+  });
+}
+
+for (const shape of ["missing", "empty"]) {
+  test(`detail supports ${shape} Chạm Sứ data`, async ({ page, request }) => {
+    const handles = await routeHandles(request);
+    await routeDetailSource(page, (payload) => {
+      if (shape === "missing") delete payload.chamSuTeams;
+      else payload.chamSuTeams = [];
+    });
+    await page.goto(detailPath(handles, data.teams[0].id));
+    await expect(page.getByRole("heading", { name: "Quân thủ các mỏ", exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Đội Chạm Sứ \/ Ăn vạ/ })).toHaveCount(0);
+    await expect(page.locator(".cham-su-card")).toHaveCount(0);
+  });
+}
+
+test("detail mines render as a table on desktop and as one card per mine on mobile", async ({ page, request }) => {
+  const handles = await routeHandles(request);
+  await routeDetail(page);
+  await page.goto(detailPath(handles, data.teams[0].id));
   await expect(page.locator(".kh-mines tbody tr")).toHaveCount(data.mines.length);
   await expect(page.locator(".kh-mines caption")).toHaveText("Quân thủ từng mỏ");
   const firstMine = data.mines[0];
@@ -282,180 +530,6 @@ test("mines render as a table on desktop and as one card per mine on mobile", as
   await expect(page.locator(".kh-mine-card").first().locator("h3")).toHaveText(firstMine.name);
   await expect(page.locator(".kh-mine-enemy").first()).toHaveText(`${firstMine.enemies[0].hero} · ${firstMine.enemies[0].unitType}`);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-});
-
-test("researched root builds render their stage-specific leaders, units, and tactic slots", async ({ page }) => {
-  await routeKhaihoang(page, data);
-  const cases = [
-    {
-      title: "Trương Xuân Hoa · Lữ Bố · Tả Từ", before: null, after: "Trương Xuân Hoa",
-      rows: [
-        ["Trương Xuân Hoa", ["Thịnh Khí Linh Địch", "Võ Phong Trận"]],
-        ["Lữ Bố", ["Thôi Phong Đoạn Nhẫn", "Mau Giành Lợi Thế"]],
-        ["Tả Từ", ["Lâm Nguy Cứu Chủ", "Tạm Lánh Sóng Gió"]],
-      ],
-    },
-    {
-      title: "SP Chu Tuấn · Hạ Hầu Uyên · Gia Cát Khác", before: "SP Chu Tuấn", after: "Gia Cát Khác",
-      rows: [
-        ["SP Chu Tuấn", ["Vô Đương Phi Quân", "Sợ Bóng Sợ Gió"]],
-        ["Hạ Hầu Uyên", ["Lõa Y Huyết Chiến", "Thôi Phong Đoạn Nhẫn"]],
-        ["Gia Cát Khác", ["Thịnh Khí Linh Địch", "Tiềm Long Trận"]],
-      ],
-    },
-  ];
-  for (const expected of cases) {
-    const card = page.locator(".kh-card").filter({ has: page.getByRole("heading", { name: expected.title, exact: true }) });
-    await expect(card.locator(".kh-commander")).toHaveText([
-      expected.before ? `Chủ tướng trước cấp 20: ${expected.before}` : null,
-      `Chủ tướng sau cấp 20: ${expected.after}`,
-    ].filter(Boolean));
-    const rows = card.locator(".kh-build > .heroes > .hero");
-    await expect(rows).toHaveCount(3);
-    for (const [index, [name, tactics]] of expected.rows.entries()) {
-      await expect(rows.nth(index).locator(".hn")).toHaveText(name);
-      // Loại binh của build đã ở badge đầu thẻ: hàng tướng không lặp lại khi trùng loại binh đó.
-      await expect(rows.nth(index).locator(".badge.unit.small")).toHaveCount(0);
-      await expect(rows.nth(index).locator(".tag")).toHaveText(
-        expected.before ? [tactics[0], ...tactics] : tactics,
-      );
-    }
-    if (!expected.before) await expect(card.locator(".kh-label").filter({ hasText: "Trước" })).toHaveCount(0);
-  }
-});
-
-// Right-hand groups from source-260906-1413-khaihoang-google-sheet.csv,
-// rows 21–22 and 30–31; alternatives span the first pair in the HTML source.
-const chamSuTeams = [
-  {
-    id: "lu-mong-gia-hu", title: "Lữ Mông – Giả Hủ",
-    heroes: [{ name: "Lữ Mông", tactic: "Bạch Mã Nghĩa Tòng" }, { name: "Giả Hủ", tactic: "Ngụy Thư Tương Gian" }],
-    note: "mang 1 lính. Tướng thay thế: Điêu Thuyền, Hoàng Cái, Phùng Kỷ.",
-  },
-  {
-    id: "ton-thuong-huong-lang-thong", title: "Tôn Thượng Hương – Lăng Thống",
-    heroes: [{ name: "Tôn Thượng Hương", tactic: "Lõa Y Huyết Chiến" }, { name: "Lăng Thống", tactic: "Phong Thi Trận" }],
-    note: "mang 1 lính",
-  },
-].map((team) => ({ ...team, sources: [{
-  label: "Bảng Khai hoang", url: "https://docs.google.com/spreadsheets/d/1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw/edit#gid=562317106",
-}] }));
-
-for (const width of [1280, 375]) {
-  test(`standalone Chạm Sứ groups preserve source content and order at ${width}px`, async ({ page }, testInfo) => {
-    await page.setViewportSize({ width, height: 812 });
-    await routeKhaihoang(page, { ...data, chamSuTeams });
-    await expect(page.getByRole("heading", { name: `Đội Chạm Sứ / Ăn vạ ${chamSuTeams.length}`, exact: true })).toBeVisible();
-    await expect(page.locator(".kh-section-title")).toHaveText([
-      `Đội khai hoang đề xuất ${data.teams.length}`, `Đội Chạm Sứ / Ăn vạ ${chamSuTeams.length}`, `Quân thủ các mỏ ${data.mines.length}`,
-    ]);
-    await expect(page.locator(".kh-card")).toHaveCount(data.teams.length);
-    await expect(page.locator(".cham-su-card")).toHaveCount(chamSuTeams.length);
-    await expect(page.getByText("Chuyển hình đề xuất", { exact: true })).toHaveCount(0);
-    for (const [index, team] of chamSuTeams.entries()) {
-      const card = page.locator(".cham-su-card").nth(index);
-      await expect(card.getByRole("heading")).toHaveText(team.title);
-      await expect(card.locator(".cham-su-hero")).toHaveText(team.heroes.map((hero) => hero.name));
-      await expect(card.locator(".cham-su-tactic")).toHaveText(team.heroes.map((hero) => hero.tactic));
-      await expect(card.locator(".cham-su-note")).toHaveText(team.note);
-      await expect(card.getByRole("combobox")).toHaveCount(0);
-      await expect(card.locator(".kh-label, .badge.unit")).toHaveCount(0);
-      const link = card.getByRole("link", { name: team.sources[0].label, exact: true });
-      await expect(link).toHaveAttribute("href", team.sources[0].url);
-      await expect(link).toHaveAttribute("rel", "noopener noreferrer");
-    }
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-    await page.locator(".cham-su-card").first().screenshot({ path: testInfo.outputPath(`cham-su-${width}.png`) });
-  });
-}
-
-for (const shape of ["missing", "empty", "legacy"]) {
-  test(`Khai hoang supports ${shape} Chạm Sứ data`, async ({ page }) => {
-    const { chamSuTeams: ignored, ...withoutChamSu } = data;
-    const payload = shape === "legacy" ? data.mines
-      : shape === "empty" ? { ...withoutChamSu, chamSuTeams: [] } : withoutChamSu;
-    await routeKhaihoang(page, payload);
-    await expect(page.getByRole("heading", { name: `Quân thủ các mỏ ${data.mines.length}`, exact: true })).toBeVisible();
-    await expect(page.locator(".kh-mine-card")).toHaveCount(data.mines.length);
-    await expect(page.locator(".kh-card")).toHaveCount(shape === "legacy" ? 0 : data.teams.length);
-    await expect(page.getByRole("heading", { name: /Đội Chạm Sứ \/ Ăn vạ/ })).toHaveCount(0);
-    await expect(page.locator(".cham-su-card")).toHaveCount(0);
-    await expect(page.getByText("Chuyển hình đề xuất", { exact: true })).toHaveCount(0);
-    await expect(page.locator(".kh-guide")).toHaveCount(0);
-  });
-}
-
-/* ---------- Trang chi tiết: hướng dẫn, ghi chú mở đất, URL và trạng thái lỗi ---------- */
-
-test("detail fetches only the display publication and khaihoang.json, each once", async ({ page, request }) => {
-  const handles = await routeHandles(request);
-  const requests = [];
-  page.on("request", (req) => {
-    const { pathname } = new URL(req.url());
-    if (pathname.startsWith("/data/")) requests.push(pathname);
-  });
-  await page.goto(detailPath(handles, data.teams[0].id));
-  await expect(page.locator("#team-detail-root")).toHaveAttribute("aria-busy", "false");
-  await expect(page.locator("#team-detail-body")).toBeVisible();
-  expect(requests.sort()).toEqual(["/data/khaihoang.json", "/data/website-display.json"]);
-});
-
-test("detail owns the roster guide and keeps it open across variant changes", async ({ page, request }) => {
-  const handles = await routeHandles(request);
-  const target = teamByTitle("Gia Cát Khác · Thái Sử Từ · Tả Từ");
-  await routeDetail(page);
-  await page.goto(detailPath(handles, target.id));
-
-  await expect(page.locator("#team-detail-root")).toHaveAttribute("aria-busy", "false");
-  await expect(page.locator("#team-detail-body")).toBeVisible();
-  await expect(page.locator("#team-detail-status")).toBeHidden();
-  const guide = page.locator("#team-detail-body .kh-guide");
-  await expect(guide).toHaveCount(1);
-  await expect(guide).toContainText("Đánh giá chung cho bộ ba tướng; chưa chấm riêng từng bộ chiến pháp.");
-  await expect(guide).toContainText("Đất 4 · dễ → khó");
-  const details = guide.locator("details");
-  await details.locator("summary").click();
-  await expect(details).toHaveAttribute("open", "");
-  const before = await guide.textContent();
-
-  // Hướng dẫn nằm ngoài subtree build: đổi cấu hình không dựng lại, không đóng mục.
-  const build = page.locator("#team-detail-body .kh-detail-build");
-  const beforeBuild = await build.textContent();
-  await detailChip(page, target.variants[0].id).click();
-  await expect(build).not.toHaveText(beforeBuild);
-  await expect(guide).toHaveText(before);
-  await expect(details).toHaveAttribute("open", "");
-  await expect(guide.locator("summary")).toHaveCount(1);
-
-  // Trang chi tiết không boot ứng dụng gốc; mục cha chỉ được đánh dấu khu vực (`true`), không phải trang hiện tại.
-  await expect(page.locator('a[data-section="khaihoang"][aria-current="true"]')).toHaveCount(1);
-  await expect(page.locator('.site-nav a[aria-current="page"]')).toHaveCount(0);
-});
-
-test("detail keeps every opening note with its owner and never borrows from the default build", async ({ page, request }) => {
-  const handles = await routeHandles(request);
-  await routeDetail(page);
-
-  const lucTon = teamByTitle("Lục Tốn · Tả Từ · Trương Xuân Hoa");
-  await page.goto(detailPath(handles, lucTon.id));
-  const body = page.locator("#team-detail-body");
-  // Ghi chú mở đất của team và của tướng đang giữ đúng owner của build mặc định.
-  await expect(body.locator(".kh-build > .kh-opening-note")).toHaveText([lucTon.openingNote]);
-  await expect(body).toContainText("Thận trọng với thủ quân có tất trúng");
-  await expect(body.locator(".hero .kh-opening-note")).toHaveText([lucTon.heroes[0].openingNote]);
-  await expect(body.locator(".hero .kh-note").first()).toHaveText(lucTon.heroes[0].buildNote);
-
-  await detailChip(page, lucTon.variants[0].id).click();
-  await expect(body.locator(".kh-build-note")).toHaveText(lucTon.variants[0].buildNote);
-  await expect(body).not.toContainText(lucTon.openingNote);
-  await expect(body.locator(".kh-opening-note")).toHaveCount(0);
-  await expect(body.locator(".kh-note")).toHaveCount(0);
-
-  const maSieu = teamByTitle("Gia Cát Khác · SP Mã Siêu · Pháp Chính");
-  await page.goto(detailPath(handles, maSieu.id, { variant: "cn-thoi-phong" }));
-  await expect(body.locator(".kh-build > .kh-opening-note")).toHaveText([maSieu.variants[0].openingNote]);
-  await expect(body.locator(".kh-build-note")).toHaveText(maSieu.variants[0].buildNote);
-  await expect(body).not.toContainText("Nguồn mùa S23");
 });
 
 test("teams without a guide render build and notes only, with no empty guide group", async ({ page, request }) => {
@@ -631,7 +705,6 @@ test("detail stays readable at 320px in both themes with keyboard selection", as
   await page.goto(detailPath(handles, target.id));
 
   const body = page.locator("#team-detail-body");
-  await body.locator(".kh-guide-details summary").click();
   await expect(body).toContainText("Thái Sử Từ · từ 3 đỏ");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.screenshot({ path: testInfo.outputPath("detail-320-light.png"), fullPage: true });
@@ -643,7 +716,7 @@ test("detail stays readable at 320px in both themes with keyboard selection", as
   await page.keyboard.press("Enter");
   await expect(chip).toHaveAttribute("aria-pressed", "true");
   await expect(new URL(page.url()).searchParams.get("variant")).toBe(target.variants[0].id);
-  await expect(body.locator(".kh-guide-details")).toHaveAttribute("open", "");
+  await expect(body.locator(".kh-guide")).toContainText("Thái Sử Từ · từ 3 đỏ");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 
   await page.locator("#theme-toggle").click();
@@ -672,16 +745,15 @@ test("localized notes never render source Chinese characters", async ({ page, re
   );
   await expect(body).not.toContainText(HAN);
 
-  await routeKhaihoang(page, data, {keepLocalization: true});
-  const dongLong = page.locator(".kh-card").filter({ has: page.getByRole("heading", {
-    name: "SP Lô Trực · Thái Sử Từ · Trương Xuân Hoa", exact: true,
-  }) });
-  await expect(dongLong.locator(".kh-note")).not.toContainText(HAN);
+  const dongLong = teamByTitle("SP Lô Trực · Thái Sử Từ · Trương Xuân Hoa");
+  await page.goto(detailPath(handles, dongLong.id));
+  await expect(body.locator(".kh-build")).toBeVisible();
+  await expect(body.locator(".kh-build")).not.toContainText(HAN);
 });
 
-/* ---------- Phase 6: khung chi tiết dùng chung, khối build dùng chung, kiểm scheme nguồn ---------- */
+/* ---------- Phase 6: khung chi tiết dùng chung, thẻ tướng dùng chung, không hiển thị nguồn ---------- */
 
-/** Nguồn Khai hoang thay được URL để kiểm phép lọc scheme (byte nguồn vẫn phải khớp pin của trang). */
+/** Nguồn Khai hoang thay được nội dung (byte nguồn vẫn phải khớp pin của trang). */
 async function routeDetailSource(page, mutate) {
   const payload = structuredClone(data);
   mutate(payload);
@@ -717,42 +789,42 @@ test("detail header carries the unit badge, the shared build block and the panel
   await expect(page.locator("#team-detail-root .detail-score")).toHaveCount(0);
   await expect(page.locator("#team-detail-root .detail-title-zh")).toHaveCount(0);
 
-  // Khối build dùng chung: tên tướng rồi "Trước · … → Sau · …" theo đúng thứ tự đọc của artboard.
-  const first = body.locator(".kh-build .kh-hero").first();
-  await expect(first.locator(".hn")).toHaveText("Chu Thái");
-  await expect(first.locator(".kh-stages .kh-label")).toHaveText(["Trước", "Sau"]);
-  await expect(first.locator(".kh-arrow")).toHaveText("→");
-  await expect(first.locator(".kh-before .tag.t-tactic")).toHaveText(target.heroes[0].tacticBefore);
-  await expect(first.locator(".kh-after .tag.t-tactic")).toHaveText(target.heroes[0].tacticsAfter);
-  // Chiến pháp trong khối build là chữ son không nền, không phải nút tìm.
-  await expect(first.locator(".kh-stage .tag.t-tactic")).toHaveCount(3);
-  await expect(body.locator(".kh-build button")).toHaveCount(0);
+  // Thẻ tướng cùng khung trang chi tiết Đội chuẩn: tên, "Chiến pháp trước" rồi "Chiến pháp sau" đánh số.
+  const first = body.locator(".kh-build .kh-hero-card").first();
+  const lead = displayHeroes(target)[0];
+  await expect(first.locator(".hn")).toHaveText("Trương Phi");
+  // Trương Phi là chủ tướng trước và sau cấp 20: ấn C đứng sau tên.
+  await expect(first.locator(".detail-hero-label")).toHaveText(["Chiến pháp trước", "Chiến pháp sau"]);
+  await expect(first.locator(".detail-hero-name .main-holder")).toHaveAttribute("title", "Chủ tướng");
+  await expect(first.locator(".detail-hero-role")).toHaveText("Chủ tướng");
+  await expect(first.locator(".kh-before .detail-hero-tactics-vi")).toHaveText([lead.tacticBefore]);
+  await expect(first.locator(".kh-after .detail-hero-tactics-vi")).toHaveText(lead.tacticsAfter);
+  await expect(first.locator(".kh-after .detail-hero-tactics-index")).toHaveText(lead.tacticsAfter.map((_, index) => String(index + 1)));
+  // Chiến pháp chỉ hiển thị: không nút, không link trong khối build.
+  await expect(body.locator(".kh-build button, .kh-build a")).toHaveCount(0);
 
-  // Hành động: sao chép liên kết luôn có; nguồn chỉ hiện khi dữ liệu có URL hợp lệ.
+  // Hành động: chỉ còn sao chép liên kết.
   await expect(page.locator("#team-detail-root #team-copy-link")).toBeVisible();
   await expect(page.locator("#team-detail-root #team-copy-fallback")).toBeHidden();
+  await expect(page.locator("#team-detail-root .detail-source-link")).toHaveCount(0);
 });
 
-test("a javascript: source URL in the source data never becomes an anchor", async ({ page, request }) => {
+test("detail never renders source links or labels, even when the payload carries them", async ({ page, request }) => {
   const handles = await routeHandles(request);
   const target = teamByTitle("Chu Thái · Trương Phi · Trương Xuân Hoa");
   await routeDetailSource(page, (payload) => {
     const team = payload.teams.find((item) => item.id === target.id);
     team.sources = [
       {label: "Nguồn hỏng", url: "javascript:document.title='pwned'"},
-      {label: "Nguồn tương đối", url: "/relative/nguon"},
       {label: "Nguồn thật", url: "https://example.test/nguon-that"},
     ];
+    for (const group of payload.chamSuTeams) group.sources = [{label: "Nguồn Chạm Sứ", url: "https://example.test/cham-su"}];
   });
   await page.goto(detailPath(handles, target.id));
-  const panel = page.locator("#team-detail-root .detail-score-panel");
-  await expect(panel).toBeVisible();
-  const links = panel.locator(".detail-source-link");
-  await expect(links).toHaveCount(1);
-  await expect(links).toHaveAttribute("href", "https://example.test/nguon-that");
-  await expect(links).toHaveAttribute("rel", "noopener noreferrer");
-  await expect(panel.locator('a[href^="javascript:"]')).toHaveCount(0);
-  await expect(panel).not.toContainText("javascript:");
+  await expect(page.locator("#team-detail-body")).toBeVisible();
+  const root = page.locator("#team-detail-root");
+  await expect(root.locator(".detail-source-link, a[href^='https://example.test'], a[href^='javascript:']")).toHaveCount(0);
+  await expect(root).not.toContainText(/Nguồn hỏng|Nguồn thật|Nguồn Chạm Sứ|javascript:/);
   await expect(page).toHaveTitle(/^(?!pwned).*/);
 });
 

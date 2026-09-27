@@ -2,7 +2,7 @@ import {test,expect} from '@playwright/test';
 
 /** Link điều hướng của mục: bảng desktop trong header hoặc menu mobile đang mở (footer cũng có link cùng tên). */
 function navLink(page, name, mobile = false) {
-  return (mobile ? page.locator('#section-menu-items') : page.locator('.site-nav')).getByRole('link', { name, exact: true });
+  return (mobile ? page.locator('#section-menu-items') : page.locator('.quick-nav')).getByRole('link', { name, exact: true });
 }
 
 /** Detail routes come from the frozen inventory the build embedded, never from a re-derived slug. */
@@ -93,7 +93,7 @@ test('gameplay config keeps precedence over old reference selectors',async({page
   await page.goto('/doi-chuan/');
   await expect(page.locator('#section-team-chuan .reference-team-card').first()).toBeVisible();
   await navLink(page, 'Cùng Tồn').click();
-  // Cùng Tồn tự ghi kịch bản đầu tiên vào URL khi boot (replaceState); chỉ không được mang theo bộ chọn cũ.
+  // Cùng Tồn tự ghi mùa mới nhất vào URL khi boot (replaceState); chỉ không được mang theo bộ chọn cũ.
   await expect(page).toHaveURL(/\/cung-ton\/\?scenario=[a-z0-9-]+$/u);
   await expect(page).not.toHaveURL(/detail=/);
   await page.goto('/cung-ton/?config=missing&legacyTeam=team-intro-14');

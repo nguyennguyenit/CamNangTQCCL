@@ -197,24 +197,6 @@ export function validateHttpSourceUrl(raw) {
   } catch { return null; }
 }
 
-/**
- * URL nguồn theo từng họ: `recommended` giữ nguyên ràng buộc danh tính (https, host, path giải mã được,
- * không query/fragment); họ khác chỉ cần phép kiểm scheme ở trên. Mọi lỗi giải mã trả `null`, không ném.
- */
-export function validateReferenceSourceUrl(family, identity, raw) {
-  const href = validateHttpSourceUrl(raw);
-  if (!href) return null;
-  if (family !== 'recommended') return href;
-  try {
-    const url = new URL(href);
-    if (url.protocol !== 'https:' || url.hostname !== 'sgsdeck.com' || url.hash || url.search) return null;
-    return decodeURIComponent(url.pathname) === `/recommended/${identity.sourceConfigId}` ? href : null;
-  } catch {
-    // `%ZZ` trong path không giải mã được: không phải URL nguồn hợp lệ, không được làm hỏng trang chi tiết.
-    return null;
-  }
-}
-
 function bytesToJson(bytes) { return JSON.parse(new TextDecoder().decode(bytes)); }
 async function digest(bytes) { return [...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))].map(value=>value.toString(16).padStart(2,'0')).join(''); }
 

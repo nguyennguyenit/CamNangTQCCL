@@ -32,8 +32,7 @@ const contrast = (from, to) => {
 
 /** Mỗi ca: trang, selector đang chọn, selector chưa chọn cùng loại (nền so sánh), các selector con lấy màu chữ. */
 const CASES = [
-  { path: '/cung-ton/', selected: '.coexist-scenario[aria-pressed="true"]', unselected: '.coexist-scenario[aria-pressed="false"]', kids: [] },
-  { path: '/cung-ton/', selected: '.coexist-group-chip[aria-pressed="true"]', unselected: '.coexist-group-chip[aria-pressed="false"]', kids: ['.coexist-chip-note'] },
+  { path: '/cung-ton/', selected: '.coexist-group-chip[aria-pressed="true"]', unselected: '.coexist-group-chip[aria-pressed="false"]', kids: [] },
   { path: '/doi-chuan/', selected: '.view-btn[aria-pressed="true"]', unselected: '.view-btn[aria-pressed="false"]', kids: [] },
   { path: '/khai-hoang/', selected: '.kh-config-chip[aria-pressed="true"]', unselected: '.kh-config-chip[aria-pressed="false"]', kids: [] },
   // Tab Tra cứu ở desktop giữ hợp đồng cũ: chữ mực trên nền giấy + gạch chân son, KHÔNG dùng nền chọn

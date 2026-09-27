@@ -99,49 +99,6 @@ function splitSourceTag(value, pattern) {
 const TEAM_LEVEL_TAG = /^(\d+C)$/;
 const HERO_NOTE_TAG = /^[(（](.+)[)）]$/u;
 
-/** 1 tướng trong đội Cùng Tồn: tên + thích tính, chiến pháp chữ son, dòng binh thư (artboard Coexist). */
-function coexistHeroRow(h) {
-  const tactics = (h.tactics || []).length
-    ? el("div", { class: "coexist-hero-tactics" }, h.tactics.map((t) => el("span", { class: "coexist-tactic" }, t)))
-    : null;
-  const meta = [
-    (h.books || []).length ? el("span", { class: "coexist-hero-books" }, L(`Binh thư · ${h.books.join(" · ")}`, `兵书 · ${h.books.join(" · ")}`)) : null,
-    h.advisorSkill ? el("span", { class: "coexist-hero-advisor" }, L(`QS: ${h.advisorSkill}`, `军师：${h.advisorSkill}`)) : null,
-  ].filter(Boolean);
-  const name = splitSourceTag(h.name, HERO_NOTE_TAG);
-  return el("div", { class: "coexist-hero" }, [
-    el("div", { class: "coexist-hero-head" }, [
-      el("span", { class: "coexist-hero-name" }, [
-        name.name,
-        name.tag ? el("span", { class: "coexist-hero-tag" }, name.tag) : null,
-      ].filter(Boolean)),
-      h.statFocus ? el("span", { class: "coexist-hero-focus" }, `+ ${h.statFocus}`) : null,
-    ].filter(Boolean)),
-    tactics,
-    meta.length ? el("div", { class: "coexist-hero-meta" }, meta) : null,
-  ].filter(Boolean));
-}
-
-/** Lưới đội của một nhóm Cùng Tồn (dữ liệu đã chuẩn hóa qua `coexistModel`). */
-function coexistTeams(teams) {
-  return el("div", { class: "coexist-teams" }, teams.map((team) => {
-    const title = splitSourceTag(team.name, TEAM_LEVEL_TAG);
-    return el("article", { class: "coexist-subteam" }, [
-      el("header", { class: "coexist-subteam-head" }, [
-        el("h4", { class: "coexist-subteam-title" }, title.name),
-        title.tag ? el("span", { class: "badge coexist-level" }, title.tag) : null,
-      ].filter(Boolean)),
-      team.unitTacticEffects
-        ? el("div", { class: "coexist-subteam-tags" }, [
-            el("span", { class: "coexist-col-label" }, L("Cải tạo", "改造")),
-            el("span", { class: "coexist-tag" }, team.unitTacticEffects),
-          ])
-        : null,
-      el("div", { class: "coexist-heroes" }, (team.heroes || []).map(coexistHeroRow)),
-    ].filter(Boolean));
-  }));
-}
-
 /**
  * Số liệu kiểm tra trùng của một nhóm: số đội, số tướng khác nhau và tên tướng xuất hiện hơn một lần
  * (tính trực tiếp từ mảng tướng của từng đội, không đọc thêm trường dữ liệu nào).
@@ -161,16 +118,10 @@ export function coexistCounts(teams = []) {
   };
 }
 
-/** Dòng phân loại phạm vi của nhóm đang xem (giữ nguyên câu chữ của Phase 2). */
-const coexistScopeNote = (classification) => ({
-  applicable: L("Áp dụng theo phiên bản luật đã chọn", "适用于所选规则版本"),
-  scenarioReference: L("Tham khảo kịch bản — chưa xác nhận theo phiên bản luật", "剧本参考 — 尚未按规则版本确认"),
-  unknown: L("Chưa xác định kịch bản — tham khảo đội hình nguồn", "剧本未确定 — 参考来源阵容"),
-})[classification];
-
 /**
  * Chuẩn hóa hai nhánh dữ liệu Cùng Tồn về cùng một khung hiển thị: nhánh nguồn gốc giữ nguyên văn
- * mọi trường có trong nguồn, nhánh legacy chỉ dùng đúng những trường nó có.
+ * mọi trường có trong nguồn, nhánh legacy chỉ dùng đúng những trường nó có. Tên đội/tướng tách phần phụ ở
+ * dòng cuối (`level` "19C", `tag` "Thương S") để thẻ hiện thành nhãn riêng.
  */
 function coexistModel(reference) {
   const content = reference?.content || {};
@@ -180,10 +131,10 @@ function coexistModel(reference) {
       groupLabel: publicText(content.groupLabel),
       raw: { summary: content.summaryRaw, opening: content.openingSuggestionsRaw, notes: content.notesRaw },
       teams: (content.teams || []).map((team) => ({
-        name: publicText(team.teamNameRaw),
+        ...splitTeamName(publicText(team.teamNameRaw)),
         unitTacticEffects: publicText(team.unitTacticEffectsRaw, ""),
         heroes: (team.heroes || []).map((hero) => ({
-          name: publicText(hero.nameRaw),
+          ...splitHeroName(publicText(hero.nameRaw)),
           tactics: (hero.tacticSlotsRaw || []).map((value) => formatModifiedTactic(publicText(value, L("Chưa có dữ liệu", "暂无数据")))),
           books: (hero.bookSlotsRaw || []).map((value) => publicText(value, L("Chưa có dữ liệu", "暂无数据"))),
           statFocus: publicText(hero.statFocusRaw, L("Chưa có dữ liệu", "暂无数据")),
@@ -199,12 +150,12 @@ function coexistModel(reference) {
     groupLabel: coexistGroupLabel(content.groupLabel),
     raw: { summary: viProse(content.summary), opening: "", notes: "" },
     teams: (content.teams || []).map((team) => ({
-      name: zh
+      ...splitTeamName(zh
         ? (team.heroes || []).map((hero) => sourceName(hero.name || "")).filter(Boolean).join(" · ") || UNRESOLVED_NAME
-        : team.teamName || "",
+        : team.teamName || ""),
       unitTacticEffects: viProse(team.unitTacticEffects || ""),
       heroes: (team.heroes || []).map((hero) => ({
-        name: seatName(hero.name || ""),
+        ...splitHeroName(seatName(hero.name || "")),
         tactics: (hero.tactics || []).map((value) => sourceName(value)).filter(Boolean),
         books: (hero.books || []).map((value) => sourceName(value)).filter(Boolean),
         statFocus: viProse(hero.statFocus || ""),
@@ -213,6 +164,12 @@ function coexistModel(reference) {
     })),
   };
 }
+
+const splitTeamName = (value) => {
+  const { name, tag } = splitSourceTag(value, TEAM_LEVEL_TAG);
+  return { name, level: tag };
+};
+const splitHeroName = (value) => splitSourceTag(value, HERO_NOTE_TAG);
 
 /**
  * Nhãn nhóm Cùng Tồn theo ngôn ngữ trang. Bản vi: nhãn nguồn, thiếu thì "Nhóm". Bản zh: nhãn chữ Hán giữ nguyên,
@@ -226,72 +183,59 @@ export function coexistGroupLabel(label) {
   return number ? `共存 ${number}` : "分组";
 }
 
-/** Ô tổng quan gập trên mobile (artboard CoexistMobile); desktop luôn mở và ẩn dòng tóm tắt. */
-const COEXIST_FOLD_QUERY = "(max-width: 680px)";
-let coexistFoldMedia;
-function coexistFoldCompact() {
-  if (coexistFoldMedia === undefined) {
-    coexistFoldMedia = globalThis.matchMedia?.(COEXIST_FOLD_QUERY) ?? null;
-    // Rời mobile khi đang gập: desktop không có dòng tóm tắt để mở lại nên phải tự mở.
-    coexistFoldMedia?.addEventListener?.("change", (event) => {
-      if (!event.matches) for (const fold of document.querySelectorAll(".coexist-overview-fold")) fold.open = true;
-    });
-  }
-  return Boolean(coexistFoldMedia?.matches);
-}
-
-/** 1 nhóm Cùng Tồn: tiêu đề (nhãn nhóm · kịch bản), phân loại phạm vi, ô tổng quan nguyên văn, lưới đội. */
-export function seasonCoexistGroup(reference, { scenarioLabel = "" } = {}) {
+/**
+ * 1 phiên bản Cùng Tồn: dòng tóm tắt + kiểm tra trùng tướng, phần ghi chú/gợi ý khai hoang/lưu ý nguồn gập
+ * trong một disclosure, rồi lưới thẻ đội. `teamCard(team)` dựng thẻ (dùng chung khung thẻ Đội chuẩn).
+ */
+export function seasonCoexistGroup(reference, { teamCard } = {}) {
   const model = coexistModel(reference);
   const counts = coexistCounts(model.teams);
-  const column = (children) => (children.length ? el("div", { class: "coexist-overview-col" }, children) : null);
   const rawBlock = (label, value) => {
     const text = sourceFieldText(value);
-    if (text === null) return [];
+    if (text === null) return null;
     // Nguồn tự mở đầu bằng đúng nhãn (vd. "Ghi chú\n…"): giữ nguyên văn, bỏ nhãn trùng và tô dòng đầu như nhãn.
     const titled = text.split("\n")[0].trim().replace(/:$/, "").toLocaleLowerCase("vi") === label.toLocaleLowerCase("vi");
-    return [
+    return el("div", { class: "coexist-note-block" }, [
       titled ? null : el("span", { class: "coexist-col-label" }, label),
       el("p", { class: titled ? "coexist-raw-text coexist-raw-titled" : "coexist-raw-text" }, text),
-    ].filter(Boolean);
+    ].filter(Boolean));
   };
-  const summaryBlock = rawBlock(L("Tổng quan", "总览"), model.raw.summary).concat(rawBlock(L("Ghi chú", "备注"), model.raw.notes));
-  const openingBlock = rawBlock(L("Gợi ý khai hoang", "开荒建议"), model.raw.opening);
-  const disclaimerBlock = rawBlock(L("Lưu ý nguồn", "来源说明"), model.source?.disclaimerRaw);
+  const summary = sourceFieldText(model.raw.summary);
+  const noteBlocks = [
+    rawBlock(L("Ghi chú", "备注"), model.raw.notes),
+    rawBlock(L("Gợi ý khai hoang", "开荒建议"), model.raw.opening),
+    rawBlock(L("Lưu ý nguồn", "来源说明"), model.source?.disclaimerRaw),
+  ].filter(Boolean);
   const sourceUrl = validateHttpSourceUrl(model.source?.url);
-  const foldColumns = [column(summaryBlock), column(openingBlock)].filter(Boolean);
   const props = { class: "coexist-group" };
   if (reference?.recordId) props.dataset = { recordId: reference.recordId };
   return el("section", props, [
-    el("div", { class: "coexist-group-head" }, [
-      el("h3", { class: "coexist-group-title" }, scenarioLabel ? `${model.groupLabel} · ${scenarioLabel}` : model.groupLabel),
-      el("p", { class: "scope-note" }, coexistScopeNote(reference?.classification) || coexistScopeNote("unknown")),
-    ]),
-    el("div", { class: "coexist-overview", "aria-label": L("Tổng quan nhóm", "分组总览") }, [
-      foldColumns.length
-        ? el("details", { class: "coexist-overview-fold", open: coexistFoldCompact() ? null : "" }, [
-            el("summary", { class: "coexist-overview-summary" }, [
-              L("Tổng quan nhóm", "分组总览"),
-              icon([svgNode("polyline", { points: "6 9 12 15 18 9" })], { size: 16, stroke: 2 }),
-            ]),
-            el("div", { class: "coexist-overview-fold-body" }, foldColumns),
-          ])
-        : null,
-      column([
-        el("span", { class: "coexist-col-label" }, L("Kiểm tra trùng tướng", "武将重复检查")),
-        el("span", { class: "coexist-count-line" }, [
-          L(`${counts.teams} đội · ${counts.heroes} tướng · `, `${counts.teams} 队 · ${counts.heroes} 名武将 · `),
-          counts.duplicates.length
-            ? el("span", { class: "coexist-count-dup" }, L(`có trùng: ${counts.duplicates.join(", ")}`, `有重复：${counts.duplicates.join("、")}`))
-            : el("span", { class: "coexist-count-ok" }, L("không trùng", "无重复")),
-        ]),
-        ...disclaimerBlock,
+    el("h2", { class: "visually-hidden" }, model.groupLabel),
+    el("div", { class: "coexist-brief" }, [
+      summary ? el("p", { class: "coexist-summary" }, summary) : null,
+      el("p", { class: "coexist-count-line" }, [
+        L(`${counts.teams} đội · ${counts.heroes} tướng · `, `${counts.teams} 队 · ${counts.heroes} 名武将 · `),
+        counts.duplicates.length
+          ? el("span", { class: "coexist-count-dup" }, L(`có trùng: ${counts.duplicates.join(", ")}`, `有重复：${counts.duplicates.join("、")}`))
+          : el("span", { class: "coexist-count-ok" }, L("không trùng", "无重复")),
+        sourceUrl ? " · " : null,
         sourceUrl ? el("a", {
           class: "coexist-source", href: sourceUrl, target: "_blank", rel: "noopener noreferrer",
-        }, L("Nguồn Cùng Tồn", "共存阵容来源")) : null,
+        }, L("Nguồn", "来源")) : null,
       ].filter(Boolean)),
     ].filter(Boolean)),
-    coexistTeams(model.teams),
+    noteBlocks.length
+      ? el("details", { class: "coexist-notes" }, [
+          el("summary", { class: "coexist-notes-summary" }, [
+            L("Ghi chú & gợi ý khai hoang", "备注与开荒建议"),
+            icon([svgNode("polyline", { points: "6 9 12 15 18 9" })], { size: 16, stroke: 2 }),
+          ]),
+          el("div", { class: "coexist-notes-body" }, noteBlocks),
+        ])
+      : null,
+    el("div", { class: "reference-view coexist-team-view" }, [
+      el("div", { class: "team-grid" }, model.teams.map((team) => teamCard(team))),
+    ]),
   ].filter(Boolean));
 }
 
@@ -300,75 +244,243 @@ function tacticChip(name, cls = "t-tactic") {
   return name ? el("span", { class: `tag ${cls}` }, name) : null;
 }
 
-/**
- * Một hàng tướng của khối build khai hoang theo artboard Khaihoang: tên, "Trước · …" → "Sau · …",
- * chiến pháp chữ son, ghi chú build của đúng build đang chọn (ghi chú mở đất chỉ ở trang chi tiết).
- * Artboard không vẽ loại binh trong hàng: badge chỉ hiện khi khác loại binh của build (badge đầu thẻ),
- * tức là thông tin đổi binh chủng mà đầu thẻ không nói.
- */
-function khaihoangHeroRow(h, openingNotes = false, buildUnit = "") {
-  const unit = (unitType) => unitType && unitType !== buildUnit
-    ? el("span", { class: `badge unit small ${UNIT_CLASS[unitType] || ""}` }, unitLabel(unitType))
-    : null;
-  const stage = (cls, label, children) => children.length
-    ? el("span", { class: `kh-stage ${cls}` }, [el("span", { class: "kh-label" }, label), " · ", ...children])
-    : null;
-  const before = stage("kh-before", L("Trước", "前"), [
-    unit(h.unitTypeBefore), h.tacticBefore ? tacticChip(sourceName(h.tacticBefore)) : null,
-  ].filter(Boolean));
-  // Nhiều chiến pháp "Sau" nối bằng " + " như artboard (ký hiệu, không phải chữ).
-  const afterTactics = (h.tacticsAfter || []).map((t) => tacticChip(sourceName(t))).filter(Boolean)
-    .flatMap((chip, index) => (index ? [" + ", chip] : [chip]));
-  const after = stage("kh-after", L("Sau", "后"), [unit(h.unitTypeAfter), ...afterTactics].filter(Boolean));
-  const buildNote = viProse(h.buildNote);
-  const openingNote = viProse(h.openingNote);
-  return el("div", { class: "hero kh-hero" }, [
-    el("div", { class: "hero-name" }, [
-      el("span", { class: "hn" }, seatName(h.name)),
-    ]),
-    before || after ? el("div", { class: "kh-stages" }, [
-      before,
-      before && after ? el("span", { class: "kh-arrow", "aria-hidden": "true" }, "→") : null,
-      after,
-    ].filter(Boolean)) : null,
-    buildNote ? el("div", { class: "kh-note" }, buildNote) : null,
-    openingNotes && openingNote ? el("div", { class: "kh-opening-note" }, openingNote) : null,
-  ].filter(Boolean));
-}
+const VARIANT_CLASS = { SP: "sp", CO: "co", "40Y": "y40" };
 
-/**
- * Nội dung build khai hoang dùng chung cho card và trang chi tiết.
- * Ghi chú lấy đúng owner của build đang chọn — không mượn ghi chú của build mặc định;
- * `openingNotes` bật phần hướng dẫn mở đất chỉ dành cho trang chi tiết.
- */
-export function khaihoangBuildContent(build, openingNotes = false) {
+/** Tên tướng đã bản địa hoá → node; tiền tố biến thể (SP/CO/40Y) tách thành nhãn riêng như thẻ Đội chuẩn. */
+export function variantNameNodes(value) {
+  const match = value.match(VARIANT_NAME);
+  if (!match) return [el("span", { class: "hn" }, value)];
   return [
-    viProse(build.buildNote) ? el("p", { class: "kh-build-note" }, build.buildNote) : null,
-    openingNotes && viProse(build.openingNote) ? el("p", { class: "kh-opening-note" }, build.openingNote) : null,
-    build.commanderBefore ? el("p", { class: "kh-commander" }, L(`Chủ tướng trước cấp 20: ${build.commanderBefore}`, `20级前主将：${seatName(build.commanderBefore)}`)) : null,
-    build.commanderAfter ? el("p", { class: "kh-commander" }, L(`Chủ tướng sau cấp 20: ${build.commanderAfter}`, `20级后主将：${seatName(build.commanderAfter)}`)) : null,
-    el("div", { class: "heroes" }, (build.heroes || []).map((hero) => khaihoangHeroRow(hero, openingNotes, build.unitType))),
-  ].filter(Boolean);
+    el("span", { class: `pre ${VARIANT_CLASS[match[1]]}` }, match[1]),
+    " ",
+    el("span", { class: "hn" }, match[2].trim()),
+  ];
 }
 
-function guideRatings(ratings = {}) {
-  const values = ratingMarks().filter(([key]) => ratings[key] !== undefined && ratings[key] !== null)
-    .map(([key, label]) => el("span", { class: "kh-guide-rating" }, `${label}: ${ratings[key]}`));
-  return values.length ? el("div", { class: "kh-guide-ratings" }, values) : null;
+// Accept a separate prefix or one attached to Chinese text, never part of a Latin name.
+const VARIANT_NAME = /^(SP|CO|40Y)(?:\s+|(?=[\u3400-\u9fff]))(.+)$/u;
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const LATIN_EDGE = /[\p{Script=Latin}\p{N}]/u;
+
+/**
+ * Văn ghi chú → node: tên tướng trong đội (đủ tiền tố SP/CO/40Y hoặc tên gốc) in đậm.
+ * Tên chữ Latin chỉ khớp trọn từ; tên chữ Hán khớp liền văn vì chữ Hán không có khoảng trắng.
+ */
+export function heroMentionNodes(value, names = []) {
+  const terms = [...new Set(names.flatMap((name) => [name, name?.match(VARIANT_NAME)?.[2]?.trim()]))]
+    .filter((name) => typeof name === "string" && name.trim().length > 1 && name !== UNRESOLVED_NAME)
+    .sort((a, b) => b.length - a.length);
+  if (!terms.length) return [value];
+  const pattern = new RegExp(terms.map((term) => [
+    LATIN_EDGE.test(term.at(0)) ? "(?<![\\p{L}\\p{N}])" : "",
+    escapeRegExp(term),
+    LATIN_EDGE.test(term.at(-1)) ? "(?![\\p{L}\\p{N}])" : "",
+  ].join("")).join("|"), "gu");
+  const nodes = [];
+  let last = 0;
+  for (const match of value.matchAll(pattern)) {
+    if (match.index > last) nodes.push(value.slice(last, match.index));
+    nodes.push(el("strong", { class: "detail-note-hero" }, match[0]));
+    last = match.index + match[0].length;
+  }
+  if (last < value.length) nodes.push(value.slice(last));
+  return nodes;
+}
+
+/** Badge loại binh của một giai đoạn: chỉ hiện khi khác loại binh chung của build (đầu thẻ đã nói loại binh đó). */
+const stageUnit = (unitType, buildUnit) => unitType && unitType !== buildUnit
+  ? el("span", { class: `badge unit small ${UNIT_CLASS[unitType] || ""}` }, unitLabel(unitType))
+  : null;
+
+/** Chiến pháp "Trước" và "Sau" của một tướng; tên không tra được chữ Hán (bản zh) bị bỏ. */
+const stageTactics = (hero) => ({
+  before: [sourceName(hero.tacticBefore)].filter(Boolean),
+  after: (hero.tacticsAfter || []).map((tactic) => sourceName(tactic)).filter(Boolean),
+});
+
+/**
+ * Quy ước chủ tướng của một build: tướng đứng đầu là chủ tướng trước cấp 20 (`commanderBefore` nếu có,
+ * không thì tướng đầu của dữ liệu); `commanderAfter` là chủ tướng sau cấp 20, thiếu thì vẫn là tướng đầu.
+ */
+function commanderFirst(build) {
+  const heroes = build.heroes || [];
+  const index = heroes.findIndex((hero) => hero.name === build.commanderBefore);
+  return index > 0 ? [heroes[index], ...heroes.slice(0, index), ...heroes.slice(index + 1)] : heroes;
+}
+
+/** Tên chủ tướng trước và sau cấp 20 theo quy ước trên. */
+function buildCommanders(build) {
+  const early = commanderFirst(build)[0]?.name || "";
+  return { early, late: build.commanderAfter || early };
+}
+
+const COMMANDER_LABEL = () => L("Chủ tướng", "主将");
+const EARLY_COMMANDER_LABEL = () => L("Chủ tướng trước cấp 20", "20级前主将");
+const LATE_COMMANDER_LABEL = () => L("Chủ tướng sau cấp 20", "20级后主将");
+
+/** Ấn "C" chủ tướng (cùng badge với trang chi tiết Đội chuẩn). */
+const mainBadge = (label) => el("span", { class: "badge role main-holder", title: label, "aria-label": label }, L("C", "主"));
+
+/**
+ * Chỗ đặt ấn "C" của một tướng: chủ tướng trước cấp 20 (tướng đứng đầu) luôn mang ấn sau tên (`name`);
+ * đổi chủ tướng thì chủ tướng sau cấp 20 mang thêm ấn ở giai đoạn "Sau" (`after`).
+ */
+function commanderMarks(hero, build) {
+  const { early, late } = buildCommanders(build);
+  return {
+    changed: early !== late,
+    name: hero.name === early ? (early === late ? COMMANDER_LABEL() : EARLY_COMMANDER_LABEL()) : null,
+    after: early !== late && hero.name === late ? LATE_COMMANDER_LABEL() : null,
+  };
+}
+
+/**
+ * Một dòng tướng của thẻ danh sách theo hàng cũ `tên | Trước · … → Sau · …`: tên kèm nhãn SP/CO/40Y,
+ * chiến pháp là chip son. Tướng đứng đầu là chủ tướng trước cấp 20, ấn "C" đứng sau tên; đổi chủ tướng thì
+ * chủ tướng sau cấp 20 mang ấn trước nhãn "Sau". Thẻ hẹp xếp tên / Trước / Sau mỗi phần một dòng.
+ * Ghi chú chỉ ở trang chi tiết.
+ */
+function khaihoangHolder(hero, build) {
+  const { before, after } = stageTactics(hero);
+  const marks = commanderMarks(hero, build);
+  // Nhiều chiến pháp "Sau" nối bằng " + " (ký hiệu, không phải chữ).
+  const chips = (tactics) => tactics.map((name) => tacticChip(name))
+    .flatMap((chip, index) => (index ? [el("span", { class: "kh-plus", "aria-hidden": "true" }, "+"), chip] : [chip]));
+  const stage = (cls, label, unitType, tactics, slot = null) => tactics.length || stageUnit(unitType, build.unitType)
+    ? el("span", { class: `kh-stage ${cls}` }, [
+        slot,
+        el("span", { class: "kh-label" }, label),
+        el("span", { class: "kh-stage-chips" }, [stageUnit(unitType, build.unitType), ...chips(tactics)].filter(Boolean)),
+      ].filter(Boolean))
+    : null;
+  const beforeStage = stage("kh-before", L("Trước", "前"), hero.unitTypeBefore, before);
+  // Build đổi chủ tướng: mọi dòng giữ chỗ ấn trước nhãn "Sau" để nhãn các dòng vẫn thẳng cột.
+  const afterStage = stage("kh-after", L("Sau", "后"), hero.unitTypeAfter, after,
+    marks.changed ? el("span", { class: "kh-mark" }, marks.after ? mainBadge(marks.after) : []) : null);
+  // Chủ tướng sau cấp 20 không có dòng "Sau" (dữ liệu chỉ có một mốc): ấn lùi về sau tên.
+  const nameMark = marks.name || (marks.after && !afterStage ? marks.after : null);
+  return el("div", { class: "hero reference-holder kh-holder" }, [
+    el("div", { class: "hero-name" }, [...variantNameNodes(seatName(hero.name)), nameMark ? mainBadge(nameMark) : null].filter(Boolean)),
+    beforeStage || afterStage ? el("div", { class: "kh-stages" }, [
+      beforeStage,
+      beforeStage && afterStage ? el("span", { class: "kh-arrow", "aria-hidden": "true" }, "→") : null,
+      afterStage,
+    ].filter(Boolean)) : null,
+  ].filter(Boolean));
+}
+
+/** Ba dòng tướng của build đang chọn trên thẻ danh sách, chủ tướng trước cấp 20 ở dòng đầu. */
+function khaihoangHolders(build) {
+  return commanderFirst(build).map((hero) => khaihoangHolder(hero, build));
+}
+
+/**
+ * Một thẻ tướng của trang chi tiết Khai hoang, cùng khung `detail-hero-card` với trang chi tiết Đội chuẩn:
+ * đầu thẻ vai trò + loại binh đổi (nếu có), tên, chiến pháp "Trước" và "Sau" đánh số. Ấn "C" theo cùng quy tắc
+ * với thẻ danh sách: chủ tướng trước cấp 20 sau tên; đổi chủ tướng thì thêm ấn ở nhãn "Chiến pháp sau".
+ */
+function khaihoangHeroCard(hero, build) {
+  const { before, after } = stageTactics(hero);
+  const { early, late } = buildCommanders(build);
+  const isEarly = hero.name === early;
+  const isLate = hero.name === late;
+  const role = isEarly && isLate ? COMMANDER_LABEL()
+    : isEarly ? EARLY_COMMANDER_LABEL()
+    : isLate ? LATE_COMMANDER_LABEL()
+    : L("Phó tướng", "副将");
+  const isMain = isEarly;
+  const marks = commanderMarks(hero, build);
+  const nameMark = marks.name || (marks.after && !after.length ? marks.after : null);
+  const units = [hero.unitTypeBefore, hero.unitTypeAfter].filter(Boolean);
+  const unitShift = units.some((unit) => unit !== build.unitType)
+    ? [...new Set(units)].map((unit) => unitLabel(unit)).join(" → ")
+    : null;
+  const tacticList = (names) => el("ol", { class: "detail-hero-tactics" }, names.map((name, index) => el("li", {}, [
+    el("span", { class: "detail-hero-tactics-item" }, [
+      el("span", { class: "detail-hero-tactics-index", "aria-hidden": "true" }, String(index + 1)),
+      el("span", { class: "detail-hero-tactics-vi" }, name),
+    ]),
+  ])));
+  const block = (cls, label, names, badge = null) => names.length
+    ? el("div", { class: `detail-hero-block detail-hero-tactics-block ${cls}` }, [
+        el("span", { class: "detail-hero-label" }, [label, badge ? " " : null, badge].filter(Boolean)),
+        tacticList(names),
+      ])
+    : null;
+  const head = [
+    el("span", { class: "detail-hero-role" }, role),
+    unitShift ? el("span", { class: "detail-hero-stat" }, unitShift) : null,
+  ].filter(Boolean);
+  return el("section", { class: `reference-detail-holder detail-hero-card kh-hero-card${isMain ? " is-main" : ""}` }, [
+    el("header", { class: "detail-hero-head" }, head),
+    el("h3", { class: "detail-hero-name" }, [...variantNameNodes(seatName(hero.name)), nameMark ? mainBadge(nameMark) : null].filter(Boolean)),
+    block("kh-before", L("Chiến pháp trước", "前期战法"), before),
+    block("kh-after", L("Chiến pháp sau", "后期战法"), after, marks.after ? mainBadge(marks.after) : null),
+  ].filter(Boolean));
+}
+
+/**
+ * Nội dung build đang chọn ở trang chi tiết: khối "Đội hình" (ba thẻ tướng) rồi khối "Ghi chú".
+ * Ghi chú lấy đúng owner của build đang chọn — không mượn ghi chú của build mặc định.
+ */
+export function khaihoangBuildContent(build) {
+  const heroes = commanderFirst(build);
+  const cards = heroes.map((hero) => khaihoangHeroCard(hero, build));
+  const names = heroes.map((hero) => seatName(hero.name));
+  const note = (cls, value, owner = null) => viProse(value)
+    ? el("li", { class: `detail-note ${cls}${owner ? " detail-note-holder" : ""}` }, owner
+      ? [el("span", { class: "detail-note-owner" }, owner), el("span", { class: "detail-note-text" }, heroMentionNodes(value, names))]
+      : heroMentionNodes(value, names))
+    : null;
+  const notes = [
+    note("kh-build-note", build.buildNote),
+    note("kh-opening-note", build.openingNote),
+    ...heroes.flatMap((hero) => [
+      note("kh-note", hero.buildNote, seatName(hero.name)),
+      note("kh-opening-note", hero.openingNote, seatName(hero.name)),
+    ]),
+  ].filter(Boolean);
+  return [
+    cards.length ? el("section", { class: "detail-section" }, [
+      el("h2", {}, L("Đội hình", "阵容")),
+      el("div", { class: "detail-hero-grid" }, cards),
+    ]) : null,
+    notes.length ? el("section", { class: "detail-section detail-notes" }, [
+      el("h2", { class: "detail-notes-title" }, L("Ghi chú", "备注")),
+      el("ul", { class: "detail-note-list" }, notes),
+    ]) : null,
+  ].filter(Boolean);
 }
 
 function guideDefenders(defenders = {}) {
   const ordered = (title, rows) => rows?.length ? el("div", { class: "kh-guide-list" }, [
-    el("strong", {}, title),
-    el("ol", {}, rows.map((row) => el("li", {}, `${seatName(row.hero)}${row.unitType ? ` ${unitLabel(row.unitType)}` : ""}`))),
+    el("h3", {}, title),
+    el("ol", { class: "kh-guide-defenders" }, rows.map((row) => el("li", {}, `${seatName(row.hero)}${row.unitType ? ` ${unitLabel(row.unitType)}` : ""}`))),
   ]) : null;
   return [ordered(L("Đất 4 · dễ → khó", "4级地 · 易 → 难"), defenders.land4), ordered(L("Đất 5 · dễ → khó", "5级地 · 易 → 难"), defenders.land5),
     viProse(defenders.warning) ? el("p", { class: "kh-guide-warning" }, defenders.warning) : null].filter(Boolean);
 }
 
 /**
+ * Điểm đánh giá của một team khai hoang (owner theo bộ ba): thanh 6 mốc + thang điểm.
+ * Đội không có `guide.ratings` thì không dựng khối.
+ */
+export function khaihoangRatings(guide) {
+  const bar = khaihoangRatingBar(guide?.ratings);
+  if (!bar) return null;
+  return el("section", { class: "detail-section kh-ratings-block" }, [
+    el("h2", {}, L("Điểm đánh giá", "评分")),
+    bar,
+    el("p", { class: "kh-ratings-note" }, L(
+      "Điểm /10 cho cả bộ ba tướng, chưa chấm riêng từng bộ chiến pháp · Tướng trắng vẫn dùng được; càng nhiều đỏ càng tốt.",
+      "满分 10 分，针对三名武将整体，未单独评估各套战法 · 白板武将也可使用，红度越高越好。",
+    )),
+  ]);
+}
+
+/**
  * Hướng dẫn đánh đất của một team khai hoang (owner theo bộ ba, không theo build).
- * Bản zh chỉ giữ phần có cấu trúc (điểm, yêu cầu đỏ, danh sách tướng); văn xuôi tiếng Việt bị bỏ.
+ * Bản zh chỉ giữ phần có cấu trúc (yêu cầu đỏ, danh sách tướng); văn xuôi tiếng Việt bị bỏ.
  */
 export function khaihoangGuide(guide) {
   if (!guide || !Object.keys(guide).length) return null;
@@ -391,7 +503,7 @@ export function khaihoangGuide(guide) {
     ].filter(Boolean).join(" · ")))),
   ].filter(Boolean)));
   const splitTeams = split?.teams?.length ? el("div", { class: "kh-guide-list" }, [
-    el("strong", {}, L("Tách đội đánh đất", "分队打地")),
+    el("h3", {}, L("Tách đội đánh đất", "分队打地")),
     el("ul", {}, split.teams.map((item) => el("li", {}, [
       viProse(item.target) ? el("strong", {}, item.target) : null,
       item.heroes?.length ? el("ul", {}, item.heroes.map((hero) => el("li", {}, [
@@ -405,21 +517,15 @@ export function khaihoangGuide(guide) {
     ...guideDefenders(guide.defenders),
     viProse(split?.note) ? el("p", { class: "kh-guide-note" }, split.note) : null,
     splitTeams,
-    transitions.length ? el("div", { class: "kh-guide-list" }, [el("strong", {}, L("Chuyển hình", "转型")), el("ul", {}, transitions)]) : null,
+    transitions.length ? el("div", { class: "kh-guide-list" }, [el("h3", {}, L("Chuyển hình", "转型")), el("ul", {}, transitions)]) : null,
   ].filter(Boolean);
   const overview = viProse(guide.overview);
-  const hasContent = overview || guideRatings(guide.ratings) || red.length || details.length;
-  if (!hasContent) return null;
-  return el("section", { class: "kh-guide" }, [
+  if (!overview && !red.length && !details.length) return null;
+  return el("section", { class: "detail-section kh-guide" }, [
     el("h2", { class: "kh-guide-title" }, L("Hướng dẫn khai hoang", "开荒攻略")),
     overview ? el("p", { class: "kh-guide-overview" }, overview) : null,
-    guideRatings(guide.ratings),
-    el("p", { class: "kh-guide-scope" }, L("Đánh giá chung cho bộ ba tướng; chưa chấm riêng từng bộ chiến pháp.", "评分针对三名武将的整体组合，未单独评估各套战法。")),
     red.length ? el("p", { class: "kh-guide-red" }, [el("strong", {}, L("Yêu cầu đỏ: ", "红度要求：")), red.join("; ")]) : null,
-    details.length ? el("details", { class: "kh-guide-details" }, [
-      el("summary", {}, L("Hướng dẫn đánh đất và chuyển hình", "打地与转型攻略")),
-      ...details,
-    ]) : null,
+    ...details,
   ].filter(Boolean));
 }
 
@@ -449,19 +555,19 @@ function applyKhaihoangUnit(node, build) {
   node.className = `badge unit ${UNIT_CLASS[build.unitType] || ""}`;
 }
 
-/** 6 mốc điểm của thẻ Khai hoang (artboard Khaihoang.dc.html) và thang quy đổi chiều dài thanh. */
+/** 6 mốc điểm Khai hoang và thang quy đổi chiều dài thanh. */
 const ratingMarks = () => [
   ["land4", L("Đất 4", "4级地")], ["land5", L("Đất 5", "5级地")], ["land6", L("Đất 6", "6级地")],
   ["land7to8", L("Đất 7–8", "7–8级地")], ["transition", L("Chuyển", "转型")], ["overall", L("Tổng", "综合")],
 ];
 const RATING_SCALE = 10;
 
-/** Điểm hiển thị theo thập phân dấu phẩy như artboard ("8,5"). */
+/** Điểm hiển thị theo thập phân dấu phẩy ("8,5"). */
 const ratingText = (value) => String(value).replace(".", ",");
 
 /**
  * Thanh điểm 6 mốc đọc thẳng `guide.ratings`; đội không có `ratings` thì không vẽ thanh.
- * Cột "Tổng" dùng màu mực, các mốc còn lại màu son (artboard).
+ * Cột "Tổng" dùng màu mực, các mốc còn lại màu son.
  */
 export function khaihoangRatingBar(ratings) {
   const marks = ratingMarks().filter(([key]) => Number.isFinite(Number(ratings?.[key])));
@@ -480,6 +586,27 @@ export function khaihoangRatingBar(ratings) {
   }));
 }
 
+/**
+ * Ấn điểm tổng ở đầu thẻ, cùng khuôn ấn điểm của thẻ Đội chuẩn; đội chưa được chấm dùng khuôn viền đứt "—".
+ */
+function khaihoangScoreStamp(ratings) {
+  const value = Number(ratings?.overall);
+  const label = L("Điểm tổng khai hoang (thang 10)", "开荒综合评分（满分 10）");
+  if (!Number.isFinite(value)) {
+    const missing = L("Chưa có điểm khai hoang", "暂无开荒评分");
+    return el("span", { class: "reference-score-wrap is-missing", title: missing }, [
+      el("span", { class: "badge score reference-score missing-score", "aria-hidden": "true" }, "—"),
+      el("span", { class: "visually-hidden" }, missing),
+      el("span", { class: "reference-score-unit", "aria-hidden": "true" }, L("điểm", "分")),
+    ]);
+  }
+  return el("span", { class: "reference-score-wrap", title: label }, [
+    el("span", { class: "badge score reference-score" }, ratingText(value)),
+    " ",
+    el("span", { class: "reference-score-unit" }, L("điểm", "分")),
+  ]);
+}
+
 /** Một chip chọn cấu hình: cùng phần tử cho mặc định và từng biến thể. */
 function khaihoangConfigChip(label, variantId, onSelect) {
   const chip = el("button", {
@@ -493,8 +620,8 @@ function khaihoangConfigChip(label, variantId, onSelect) {
 }
 
 /**
- * Nhóm chip chọn cấu hình dùng chung cho thẻ danh sách và trang chi tiết (artboard Khaihoang).
- * `row` là null khi đội không có biến thể; `chips` luôn có chip mặc định để đồng bộ `aria-pressed`.
+ * Nhóm chip chọn phiên bản dùng chung cho thẻ danh sách và trang chi tiết. Đội không có biến thể vẫn có
+ * đúng một chip "Mặc định" để mọi thẻ cùng một bố cục; `chips` đồng bộ `aria-pressed`.
  */
 export function khaihoangConfigRow(team, onSelect) {
   const variants = team.variants || [];
@@ -503,58 +630,46 @@ export function khaihoangConfigRow(team, onSelect) {
       isZh() ? `配置 ${index + 1}` : v.displayLabel || `Cấu hình ${index + 1}`, v.id, onSelect,
     )),
   );
-  const row = variants.length
-    ? el("div", { class: "kh-config-row", role: "group", "aria-label": L(`Chọn cấu hình ${team.title}`, `选择配置：${khaihoangTitle(team)}`) }, chips)
-    : null;
+  const row = el("div", { class: "kh-config-row", role: "group", "aria-label": L(`Chọn cấu hình ${team.title}`, `选择配置：${khaihoangTitle(team)}`) }, chips);
   return { row, chips };
 }
 
-/** 1 card đội hình khai hoang đề xuất: build + thanh điểm; hướng dẫn chữ nằm ở trang chi tiết. */
+/**
+ * Thẻ một đội khai hoang, cùng khung thẻ Đội chuẩn: tên (link) + loại binh + ấn điểm tổng, các phiên bản,
+ * ba dòng tướng và chân "Chi tiết". Ghi chú, điểm từng mốc và hướng dẫn chỉ ở trang chi tiết.
+ */
 function khaihoangTeamCard(team, { onSelect, onActivate }) {
   const unit = el("span", { class: "badge unit" });
   applyKhaihoangUnit(unit, team);
-  const hasGuide = Boolean(team.guide && Object.keys(team.guide).length);
-  const detailLink = khaihoangCardLink("kh-detail-link", [
-    hasGuide ? L("Hướng dẫn đánh đất", "打地攻略") : L("Chi tiết", "详情"),
-    icon([svgNode("polyline", { points: "9 6 15 12 9 18" })], { size: 16, stroke: 2 }),
+  const titleLink = khaihoangCardLink("kh-title-link", khaihoangTitle(team), onActivate);
+  const detailLink = khaihoangCardLink("ana-link-btn kh-detail-link", [
+    L("Chi tiết", "详情"),
+    icon([svgNode("line", { x1: 5, y1: 12, x2: 19, y2: 12 }), svgNode("polyline", { points: "13 6 19 12 13 18" })], { size: 16 }),
   ], onActivate);
-  const head = el("div", { class: "kh-card-head" }, [
-    el("div", { class: "units" }, [unit]),
-    el("h3", { class: "kh-title" }, khaihoangTitle(team)),
-  ]);
   const { row: configRow, chips } = khaihoangConfigRow(team, onSelect);
-  const content = el("div", { class: "kh-build", "aria-live": "polite" });
-  const ratings = el("div", { class: "kh-ratings-block" });
-  const element = el("article", { class: "kh-card" }, [
-    head,
-    configRow,
+  const content = el("div", { class: "heroes kh-build", "aria-live": "polite" });
+  const element = el("article", { class: "team-card reference-team-card kh-card", dataset: { factionCode: "none" } }, [
+    el("header", { class: "reference-card-head kh-card-head" }, [
+      el("div", { class: "reference-card-title" }, [
+        el("h3", { class: "team-name kh-title" }, titleLink),
+        el("p", { class: "reference-meta" }, [unit]),
+      ]),
+      khaihoangScoreStamp(team.guide?.ratings),
+    ]),
+    el("div", { class: "kh-versions" }, [
+      el("span", { class: "kh-versions-label", "aria-hidden": "true" }, L("Phiên bản", "版本")),
+      configRow,
+    ]),
     content,
-    ratings,
-    el("div", { class: "kh-card-foot" }, [detailLink]),
-  ].filter(Boolean));
-  return { element, unit, chips, content, ratings, links: [detailLink] };
-}
-
-function khaihoangSources(sources = []) {
-  const links = sources
-    .map((source) => ({url: validateHttpSourceUrl(source.url), label: source.label}))
-    .filter((source) => source.url);
-  return links.length ? el("div", { class: "kh-sources" }, [
-    el("span", {}, L("Nguồn: ", "来源：")),
-    // Nhãn nguồn do tác giả ghi bằng tiếng Việt: bản zh dùng nhãn đánh số.
-    ...links.flatMap((source, index) => [
-      isZh() && index ? " · " : null,
-      el("a", {
-        href: source.url, target: "_blank", rel: "noopener noreferrer",
-      }, isZh() ? `参考来源 ${index + 1}` : source.label),
-    ].filter(Boolean)),
-  ]) : null;
+    el("footer", { class: "reference-card-foot" }, [detailLink]),
+  ]);
+  return { element, unit, chips, content, links: [titleLink, detailLink] };
 }
 
 /** Tên mỏ theo ngôn ngữ trang (`Mỏ 4` → `矿 4`). */
 const mineName = (value) => (isZh() ? String(value ?? "").replace(/^Mỏ\s*/u, "矿 ") : value);
 
-/** Nhóm Chạm Sứ độc lập, giữ nguyên tướng và chiến pháp từ nguồn. */
+/** Nhóm Chạm Sứ độc lập, giữ nguyên tướng và chiến pháp. */
 function chamSuTeamCard(team) {
   return el("article", { class: "cham-su-card" }, [
     el("h3", { class: "cham-su-title" }, khaihoangTitle(team)),
@@ -565,11 +680,10 @@ function chamSuTeamCard(team) {
         sourceName(hero.tactic) ? el("span", { class: "cham-su-tactic" }, sourceName(hero.tactic)) : null,
       ].filter(Boolean)))),
     viProse(team.note) ? el("p", { class: "cham-su-note" }, team.note) : null,
-    khaihoangSources(team.sources),
   ].filter(Boolean));
 }
 
-/** Bảng quân thủ các mỏ (desktop) theo artboard: mỗi mỏ một hàng, mỗi đội một ô. */
+/** Bảng quân thủ các mỏ (desktop): mỗi mỏ một hàng, mỗi đội một ô. */
 function minesTable(mines) {
   const squads = Math.max(...mines.map((mine) => (mine.enemies || []).length));
   return el("div", { class: "kh-table-frame" }, [
@@ -594,7 +708,7 @@ function minesTable(mines) {
   ]);
 }
 
-/** Cùng nội dung dạng thẻ cho mobile (artboard KhaihoangMobile: mỗi mỏ một thẻ). */
+/** Cùng nội dung dạng thẻ cho mobile: mỗi mỏ một thẻ. */
 function mineCards(mines) {
   return el("div", { class: "kh-mine-cards" }, mines.map((mine) =>
     el("article", { class: "kh-mine-card" }, [
@@ -607,23 +721,22 @@ function mineCards(mines) {
     ])));
 }
 
-/** Nút nhảy khối trên đầu trang: đếm lấy từ chính dữ liệu đang dựng. */
-function khaihoangAnchors({ teams, chamSuTeams, mines }) {
-  const anchor = (id, label, count) => el("a", { class: "kh-anchor", href: `#${id}` }, [
-    label, " ", el("span", { class: "kh-anchor-count" }, String(count)),
-  ]);
-  return el("nav", { class: "kh-anchors", "aria-label": L("Trong trang", "本页目录") }, [
-    anchor("de-xuat", L("Đội đề xuất", "推荐队伍"), teams),
-    anchor("cham-su", L("Chạm Sứ / Ăn vạ", "碰瓷队"), chamSuTeams),
-    anchor("mo", L("Quân thủ các mỏ", "各矿守军"), mines),
-  ]);
-}
-
-/** Tiêu đề khối kèm số đếm trong dấu ngoặc như artboard. */
-function khaihoangBlockTitle(id, label, count) {
-  return el("h2", { class: "kh-section-title", id }, [
-    label, " ", el("span", { class: "kh-section-count" }, String(count)),
-  ]);
+/**
+ * Tham khảo chung của mọi đội khai hoang ở trang chi tiết: nhóm Chạm Sứ rồi quân thủ các mỏ.
+ * Khối nào không có dữ liệu thì bỏ hẳn.
+ */
+export function khaihoangReference({ chamSuTeams = [], mines = [] } = {}) {
+  return [
+    chamSuTeams.length ? el("section", { class: "detail-section kh-reference" }, [
+      el("h2", {}, L("Đội Chạm Sứ / Ăn vạ", "碰瓷队伍")),
+      el("div", { class: "cham-su-cards" }, chamSuTeams.map(chamSuTeamCard)),
+    ]) : null,
+    mines.length ? el("section", { class: "detail-section kh-reference" }, [
+      el("h2", {}, L("Quân thủ các mỏ", "各矿守军")),
+      minesTable(mines),
+      mineCards(mines),
+    ]) : null,
+  ].filter(Boolean);
 }
 
 /** Tiêu đề đội khai hoang / Chạm Sứ (`"A · B · C"`): bản zh đổi từng tên tướng sang chữ Hán gốc. */
@@ -639,19 +752,15 @@ function seatName(value) {
 }
 
 /**
- * Section Khai hoang: đầu trang, nút nhảy khối, lọc loại binh, thẻ đội đề xuất (build + thanh điểm),
- * lưới Chạm Sứ và quân thủ các mỏ. Hướng dẫn đánh đất không nằm ở đây; trang chi tiết sở hữu phần đó.
+ * Section Khai hoang: đầu trang, lọc loại binh và lưới thẻ đội (các phiên bản + ba dòng tướng).
+ * Ghi chú, điểm từng mốc, hướng dẫn đánh đất, Chạm Sứ và quân thủ mỏ thuộc trang chi tiết.
  *
  * Trả `{element, getVariants, setVariants, updateLinks}`: phần điều phối URL/snapshot sở hữu
  * lựa chọn, controller chỉ dựng build/chip/href và báo thay đổi qua callback.
  */
 export function khaihoangTable(data, { hrefFor, onNavigate, onChange } = {}) {
-  // Tương thích ngược: nếu nhận mảng (cấu trúc cũ) thì coi là danh sách mỏ.
+  // Tương thích ngược: payload mảng (cấu trúc cũ chỉ có mỏ) không có đội nào.
   const teams = Array.isArray(data) ? [] : (data.teams || []);
-  const mines = Array.isArray(data) ? data : (data.mines || []);
-  const chamSuTeams = Array.isArray(data) ? [] : (data.chamSuTeams || []);
-  const season = Array.isArray(data) ? "" : (data.season || "");
-  const seasonNote = Array.isArray(data) ? "" : (data.seasonNote || "");
   const selections = new Map(teams.map((team) => [team.id, ""]));
   const readHref = (teamId, variantId) => (typeof hrefFor === "function" ? hrefFor(teamId, variantId) : null);
   let unitFilter = "";
@@ -669,12 +778,8 @@ export function khaihoangTable(data, { hrefFor, onNavigate, onChange } = {}) {
     const variantId = selections.get(entry.team.id) || "";
     const build = khaihoangBuildFor(entry.team, variantId);
     applyKhaihoangUnit(entry.unit, build);
-    entry.content.replaceChildren(...khaihoangBuildContent(build));
+    entry.content.replaceChildren(...khaihoangHolders(build));
     for (const chip of entry.chips) chip.setAttribute("aria-pressed", String((chip.dataset.variant || "") === variantId));
-    const bar = khaihoangRatingBar(entry.team.guide?.ratings);
-    entry.ratings.replaceChildren(...[bar,
-      bar ? el("span", { class: "kh-ratings-note" }, L("Điểm /10 cho cả bộ ba tướng · Tướng trắng vẫn dùng được; càng nhiều đỏ càng tốt.", "满分 10 分，针对三名武将整体 · 白板武将也可使用，红度越高越好。")) : null,
-    ].filter(Boolean));
     writeLinks(entry);
   }
 
@@ -697,17 +802,15 @@ export function khaihoangTable(data, { hrefFor, onNavigate, onChange } = {}) {
   // Lọc loại binh: chip đếm theo chính dữ liệu đang dựng; "Tất cả" luôn đứng đầu.
   const unitCounts = new Map();
   for (const team of teams) unitCounts.set(team.unitType, (unitCounts.get(team.unitType) ?? 0) + 1);
-  const cards = el("div", { class: "kh-cards" }, entries.map((entry) => entry.element));
-  // Giảm dần theo số đội như artboard; bằng nhau giữ thứ tự xuất hiện trong dữ liệu (sort ổn định).
+  const cards = el("div", { class: "team-grid kh-cards" }, entries.map((entry) => entry.element));
+  // Giảm dần theo số đội; bằng nhau giữ thứ tự xuất hiện trong dữ liệu (sort ổn định).
   const unitChips = [["", L("Tất cả", "全部"), teams.length], ...[...unitCounts].sort((a, b) => b[1] - a[1]).map(([unit, count]) => [unit, unitLabel(unit), count])]
-    .map(([value, label, count]) => {
-      const chip = el("button", {
-        type: "button", class: "fchip kh-unit-chip", "aria-pressed": String(unitFilter === value),
-        dataset: { unit: value },
-        onclick: () => { unitFilter = value; applyUnitFilter(); },
-      }, [label, " ", el("span", { class: "kh-unit-count" }, String(count))]);
-      return chip;
-    });
+    .map(([value, label, count]) => el("button", {
+      type: "button", class: "fchip kh-unit-chip", "aria-pressed": String(unitFilter === value),
+      dataset: { unit: value },
+      onclick: () => { unitFilter = value; applyUnitFilter(); },
+    }, [label, " ", el("span", { class: "kh-unit-count" }, String(count))]));
+  const shownCount = el("strong", {});
   const empty = el("p", { class: "empty" }, L("Không có đội khai hoang nào dùng loại binh này.", "没有使用该兵种的开荒队伍。"));
   function applyUnitFilter() {
     let shown = 0;
@@ -717,6 +820,7 @@ export function khaihoangTable(data, { hrefFor, onNavigate, onChange } = {}) {
       if (visible) shown += 1;
     }
     for (const chip of unitChips) chip.setAttribute("aria-pressed", String((chip.dataset.unit || "") === unitFilter));
+    shownCount.textContent = String(shown);
     empty.hidden = shown > 0;
   }
   applyUnitFilter();
@@ -726,35 +830,17 @@ export function khaihoangTable(data, { hrefFor, onNavigate, onChange } = {}) {
       el("div", { class: "reference-head-text" }, [
         el("span", { class: "reference-kicker" }, L("Đội hình", "阵容")),
         el("h1", { class: "reference-title", tabindex: "-1" }, L("Khai hoang", "开荒")),
-        el("p", { class: "reference-lead" }, L("Đội mở đất theo bản bảo trì mới nhất: cấu hình trước và sau khi đổi chiến pháp, điểm đánh giá từng mốc đất, đội chạm sứ và quân thủ từng mỏ.", "按最新维护版本整理的开荒队伍：换战法前后的配置、各级地评分、碰瓷队以及各矿守军。")),
+        el("p", { class: "reference-lead" }, L("Đội mở đất và các phiên bản chiến pháp. Mở Chi tiết để xem điểm từng mốc đất, ghi chú, hướng dẫn đánh đất, đội chạm sứ và quân thủ các mỏ.", "开荒队伍及其各版本战法。打开详情可查看各级地评分、备注、打地攻略、碰瓷队以及各矿守军。")),
       ]),
     ]),
-    // Lưu ý nguồn là văn xuôi tiếng Việt (tên mùa cũng là bản dịch): bản zh bỏ cả khối.
-    viProse(seasonNote) ? el("p", { class: "khaihoang-source-note" }, [
-      el("strong", {}, `${season ? `Lưu ý nguồn · ${season}` : "Lưu ý nguồn"}.`),
-      " ",
-      seasonNote,
-    ]) : null,
-    khaihoangAnchors({ teams: teams.length, chamSuTeams: chamSuTeams.length, mines: mines.length }),
     teams.length
-      ? el("section", { class: "kh-block" }, [
-          khaihoangBlockTitle("de-xuat", L("Đội khai hoang đề xuất", "推荐开荒队伍"), teams.length),
-          el("div", { class: "kh-unit-filter", role: "group", "aria-label": L("Lọc theo loại binh", "按兵种筛选") }, unitChips),
-          cards,
+      ? el("section", { class: "kh-block", "aria-label": L("Đội khai hoang", "开荒队伍") }, [
+          el("div", { class: "kh-toolbar" }, [
+            el("div", { class: "kh-unit-filter", role: "group", "aria-label": L("Lọc theo loại binh", "按兵种筛选") }, unitChips),
+            el("p", { class: "kh-result-count", "aria-live": "polite" }, [shownCount, L(` / ${teams.length} đội`, ` / ${teams.length} 队`)]),
+          ]),
+          el("div", { class: "reference-view kh-team-view" }, [cards]),
           empty,
-        ])
-      : null,
-    chamSuTeams.length
-      ? el("section", { class: "kh-block" }, [
-          khaihoangBlockTitle("cham-su", L("Đội Chạm Sứ / Ăn vạ", "碰瓷队伍"), chamSuTeams.length),
-          el("div", { class: "cham-su-cards" }, chamSuTeams.map(chamSuTeamCard)),
-        ])
-      : null,
-    mines.length
-      ? el("section", { class: "kh-block" }, [
-          khaihoangBlockTitle("mo", L("Quân thủ các mỏ", "各矿守军"), mines.length),
-          minesTable(mines),
-          mineCards(mines),
         ])
       : null,
   ].filter(Boolean));

@@ -6,6 +6,7 @@
  * tên Hán-Việt) ghép tên tướng chữ Hán tra qua từ điển có trường `chinese` — cùng cách js/recommended-reference-render.js
  * (`legacyTitle`) và js/render.js dựng tên đội ở bản zh. Tên không tra được bị bỏ để trang zh không lẫn tiếng Việt.
  */
+import { createLookupIdResolver } from '../../js/lookup-ids.js';
 import { createRawNameResolver } from '../../js/website-display.js';
 import { legacyLabelZh } from '../../js/recommended-reference-state.js';
 import { SOURCE_LABEL } from '../../js/render.js';
@@ -67,6 +68,78 @@ async function recommendedSeasonNamesRaw() {
   return names;
 }
 
+/** Bộ tra của js/lookup-ids.js (`createLookupIdResolver`): tên nguồn chữ Hán + tên Việt → mã hồ sơ Tra cứu. */
+interface LookupIdResolver {
+  tactic(raw: string | null, vi: string | null): string | null;
+  book(raw: string | null, vi: string | null): string | null;
+}
+/** Mã hồ sơ Tra cứu theo khoá tên (chữ Hán nguồn, thiếu thì tên Việt) — định dạng `team-lookup-links` mà js/team-detail.js đọc. */
+export interface TeamLookupLinks {
+  tactic: Record<string, string>;
+  book: Record<string, string>;
+}
+
+let lookupResolverPromise: Promise<LookupIdResolver> | undefined;
+
+/** Bộ tra mã hồ sơ chiến pháp / binh thư từ đúng hai từ điển mà trang Tra cứu dùng. */
+function lookupIdResolver() {
+  return lookupResolverPromise ??= (async () => {
+    const [tactics, books] = await Promise.all(['tactics', 'books-dict'].map(async (routeParam) =>
+      json((await readPublicArtifact({ kind: 'data', routeParam })).bytes)));
+    return createLookupIdResolver({ tactics, books });
+  })();
+}
+
+const detailScopes = new Map<string, Map<string, Record<string, unknown>>>();
+
+/** Bản ghi chi tiết của một cấu hình từ thế hệ Đội chuẩn đã pin — cùng tệp `details-<scope>.json` trình duyệt tải. */
+async function recommendedDetailRecord(entry: RecommendedRouteEntry) {
+  let scope = detailScopes.get(entry.safeScopeKey);
+  if (!scope) {
+    const website = await websiteDisplayPublicationSnapshot();
+    const bytes = website.recommended.files[`details-${entry.safeScopeKey}.json`];
+    if (!bytes) throw new Error(`Recommended detail scope missing: ${entry.safeScopeKey}`);
+    const records = json(bytes)?.records;
+    scope = new Map((Array.isArray(records) ? records : []).map((row: Record<string, unknown>) => [String(row.sourceConfigId), row]));
+    detailScopes.set(entry.safeScopeKey, scope);
+  }
+  return scope.get(entry.sourceConfigId) ?? null;
+}
+
+const strings = (value: unknown): unknown[] => (Array.isArray(value) ? value : []);
+
+/** Link Tra cứu của mọi ô chiến pháp / binh thư trong đội, cấu hình thay thế và nội dung đội gốc đã đối chiếu. */
+function recordLookupLinks(record: Record<string, unknown> | null, resolve: LookupIdResolver): TeamLookupLinks {
+  const links: TeamLookupLinks = { tactic: {}, book: {} };
+  const add = (kind: keyof TeamLookupLinks, raw: unknown, vi: unknown) => {
+    // Cùng khoá mà js/recommended-reference-render.js (`lookupHref`) tra: tên nguồn, thiếu thì tên Việt.
+    const key = [raw, vi].map((value) => (typeof value === 'string' ? value.trim() : '')).find(Boolean);
+    if (!key || Object.hasOwn(links[kind], key)) return;
+    const id = resolve[kind](typeof raw === 'string' ? raw : null, typeof vi === 'string' ? vi : null);
+    if (id) links[kind][key] = id;
+  };
+  if (!record) return links;
+  const holders = [...strings(record.heroes ?? record.holders), ...strings(record.alternativeHoldersRaw)] as Record<string, unknown>[];
+  for (const holder of holders) {
+    const raw = strings(holder?.tacticSlotsRaw);
+    const vi = strings(holder?.tacticSlotsVi);
+    const kinds = strings(holder?.tacticSlotKinds);
+    for (let index = 0; index < Math.max(raw.length, vi.length); index += 1) {
+      if (kinds[index] !== 'bond') add('tactic', raw[index], vi[index]);
+    }
+    const booksRaw = strings(holder?.bookSlotsRaw);
+    const booksVi = strings(holder?.bookSlotsVi);
+    for (let index = 0; index < Math.max(booksRaw.length, booksVi.length); index += 1) add('book', booksRaw[index], booksVi[index]);
+  }
+  for (const reference of strings(record.legacyReferences) as Record<string, any>[]) {
+    for (const hero of strings(reference?.legacyContent?.heroes) as Record<string, any>[]) {
+      for (const item of strings(hero?.tactics) as Record<string, unknown>[]) add('tactic', null, item?.name);
+      for (const item of strings(hero?.books) as Record<string, unknown>[]) add('book', null, item?.name);
+    }
+  }
+  return links;
+}
+
 const catalogPins = (catalog: TeamDetailRouteCatalog) => ({
   generationId: catalog.generationId,
   manifestSha256: catalog.manifestSha256,
@@ -83,6 +156,7 @@ export interface RecommendedDetailProps {
   generationId: string;
   manifestSha256: string;
   legacyTeamsSha256: string;
+  lookupLinks: TeamLookupLinks;
 }
 
 /** Tiêu đề đội chuẩn: bản vi dùng tên đã dịch, bản zh dùng tên chữ Hán gốc của nguồn. */
@@ -94,11 +168,12 @@ function recommendedTitle(entry: RecommendedRouteEntry, locale: SiteLocale) {
 export async function recommendedDetailPaths(locale: SiteLocale) {
   const catalog = await teamDetailCatalog();
   const seasonNames = locale === 'zh' ? await recommendedSeasonNamesRaw() : null;
+  const resolveLookupId = await lookupIdResolver();
   // Cùng tên đội có ở nhiều mùa (và đôi khi nhiều cấu hình trong một mùa): tiêu đề mang mã mùa, còn trùng thì số thứ tự.
   const ranks = detailTitleRanks(catalog.recommended, (entry) => JSON.stringify(
     locale === 'zh' ? [recommendedTitle(entry, locale), entry.sourceSeasonCode] : [entry.displayNameVi, entry.sourceSeasonCode],
   ));
-  return catalog.recommended.map((entry) => {
+  return Promise.all(catalog.recommended.map(async (entry) => {
     // Bản zh: mã mùa trung tính + tên mùa chữ Hán gốc + mã danh mục gốc (交戰/開荒); bản vi giữ nhãn đã dịch.
     const scope = locale === 'zh'
       ? [entry.sourceSeasonCode, entry.sourceSeasonId ? seasonNames!.get(entry.sourceSeasonId) : null, entry.sourceCategoryId]
@@ -109,9 +184,10 @@ export async function recommendedDetailPaths(locale: SiteLocale) {
       ordinal: ranks(entry).ordinal,
       scopeLine: scope.filter(Boolean).join(' · '),
       ...catalogPins(catalog),
+      lookupLinks: recordLookupLinks(await recommendedDetailRecord(entry), resolveLookupId),
     };
     return { params: { team: entry.routeSegment }, props };
-  });
+  }));
 }
 
 export interface LegacyDetailProps {

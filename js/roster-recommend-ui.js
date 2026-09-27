@@ -1,5 +1,6 @@
 import { isAnalyzeConfigured } from "./config.js";
-import { callWorker, compressImage, describeAnalyzeError, renderTurnstileWidget } from "./analyze.js";
+import { callWorker, compressImage, describeAnalyzeError } from "./analyze.js";
+import { renderTurnstileWidget } from "./turnstile.js";
 import { el, icon, svgNode } from "./render.js";
 import { mapBuiltTeamsScan, mapHeroesScan, mapTacticsScan } from "./roster-scan-map.js";
 import {

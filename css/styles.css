@@ -91,6 +91,7 @@
   --type-meta: 400 12.5px/1.45 'Be Vietnam Pro', var(--font-han), sans-serif;
   --type-small: 400 13px/1.5 'Be Vietnam Pro', var(--font-han), sans-serif;
   --type-control: 600 14px/1.2 'Be Vietnam Pro', var(--font-han), sans-serif;
+  --type-header-action: 600 13px/1.2 'Be Vietnam Pro', var(--font-han), sans-serif;
   --type-badge: 600 12px/1.2 'Be Vietnam Pro', var(--font-han), sans-serif;
   --type-tag: 500 12.5px/1.35 'Be Vietnam Pro', var(--font-han), sans-serif;
   --type-table-head: 700 11px/1.2 'Be Vietnam Pro', var(--font-han), sans-serif;
@@ -109,6 +110,12 @@
   --type-header-title: 700 19px/1.2 'Noto Serif Display', var(--font-han-serif), serif;
   --type-header-title-landing: 700 20px/1.2 'Noto Serif Display', var(--font-han-serif), serif;
   --type-header-title-mobile: 700 16px/1.2 'Noto Serif Display', var(--font-han-serif), serif;
+  --type-brand-sub: 600 8px/1.2 'Be Vietnam Pro', var(--font-han), sans-serif;
+  --type-brand-sub-spacing: 0.03em;
+  --type-brand-sub-mobile: 600 7.5px/1.2 'Be Vietnam Pro', var(--font-han), sans-serif;
+  --type-brand-sub-mobile-spacing: 0.02em;
+  --type-brand-sub-footer: 600 11.5px/1.2 'Be Vietnam Pro', var(--font-han), sans-serif;
+  --type-brand-sub-footer-spacing: 0.03em;
   --type-landing-hero: 700 76px/1.02 'Noto Serif Display', var(--font-han-serif), serif;
   --type-landing-hero-spacing: -0.01em;
   --type-landing-hero-mobile: 700 42px/1.05 'Noto Serif Display', var(--font-han-serif), serif;
@@ -161,8 +168,6 @@
   --type-portrait-han-mobile: 600 48px/1 'Songti TC', 'Noto Serif CJK TC', serif;
   --type-portrait-han-dialog: 600 84px/1 'Songti TC', 'Noto Serif CJK TC', serif;
   --type-cam-nang-number: 700 34px/1 'Noto Serif Display', var(--font-han-serif), serif;
-  --type-coexist-count: 700 30px/1.1 'Noto Serif Display', var(--font-han-serif), serif;
-  --type-coexist-count-mobile: 600 13px/1.5 'Be Vietnam Pro', var(--font-han), sans-serif;
   --type-card-title-sm: 700 17px/1.2 'Noto Serif Display', var(--font-han-serif), serif;
   --type-pity-unit: 400 18px/1.4 'Be Vietnam Pro', var(--font-han), sans-serif;
   --type-pity-value-mobile: 700 52px/0.9 'Noto Serif Display', var(--font-han-serif), serif;
@@ -215,6 +220,10 @@
   --size-fact-label: 156px;
   --size-col-hero-role: 38px;
   --size-col-hero-name: 128px;
+  /* Cột tên thẻ Khai hoang: đủ "Tôn Thượng Hương" + ấn C, "Hoàng Nguyệt Anh" trên một dòng. */
+  --size-col-kh-hero-name: 172px;
+  /* Trần cột "Trước" thẻ Khai hoang: cột co theo chip dài nhất của thẻ, chip dài hơn trần thì xuống dòng. */
+  --size-col-kh-before: 216px;
   --size-col-250: 250px;
   --size-col-64: 64px;
   --content-dot: "";
@@ -538,25 +547,29 @@ body { margin: 0; background: var(--bg); color: var(--ink); }
 /* Tên đội trong thẻ là link thật: chỉ gạch chân khi hover, không tự viết router. */
 .reference-team-card .team-name > a:hover { text-decoration: underline; }
 
-/* ---------- Khai hoang: cấu hình và hướng dẫn (thẻ danh sách + trang chi tiết) ---------- */
-.kh-build-note, .kh-commander, .kh-opening-note { margin: var(--space-6) 0; font: var(--type-small); overflow-wrap: anywhere; }
-.kh-guide { margin: var(--space-12) 0; padding: var(--space-10); border: var(--border-hair) solid var(--line); border-radius: var(--radius-8); background: var(--panel-3); min-width: 0; overflow-wrap: anywhere; }
-.kh-guide-title { margin: 0 0 var(--space-7); font: var(--type-tool-step-title); color: var(--ink); }
-.kh-guide-overview, .kh-guide-scope, .kh-guide-red, .kh-guide-warning, .kh-guide-note { margin: var(--space-6) 0; font: var(--type-small); }
-.kh-guide-scope { color: var(--muted); }
+/* ---------- Khai hoang: hàng phiên bản dùng chung (thẻ danh sách + trang chi tiết) ---------- */
+.kh-versions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8) var(--space-12); min-width: 0; }
+.kh-versions-label { font: var(--type-field-caps); letter-spacing: var(--type-field-caps-spacing); text-transform: uppercase; color: var(--muted); }
+.kh-config-row { display: flex; flex-wrap: wrap; gap: var(--space-6); min-width: 0; }
+/* Chip phiên bản gọn hơn chip lọc (32px ≥ 24px WCAG 2.5.8, cách nhau 6px). */
+.kh-config-row .kh-config-chip { min-height: var(--control-32); padding: 0 var(--space-10); font: var(--type-small); }
+
+/* ---------- Khai hoang: trang chi tiết (phiên bản, đội hình, điểm, hướng dẫn, tham khảo chung) ---------- */
+.kh-detail-build, .kh-detail-build > .kh-build { display: flex; flex-direction: column; min-width: 0; }
+.kh-detail-build { gap: var(--space-24); }
+.kh-detail-build > .kh-build { gap: var(--space-36); }
+/* Điểm và hướng dẫn: hộp giấy như khối "Ghi chú" nhưng không gạch son (không phải ghi chú của build). */
+.kh-ratings-block, .kh-guide { gap: var(--space-14); padding: var(--space-22) var(--space-28); border: var(--border-hair) solid var(--line); border-radius: var(--radius-14); background: var(--panel); min-width: 0; overflow-wrap: anywhere; }
+.kh-guide-overview, .kh-guide-red, .kh-guide-warning, .kh-guide-note, .kh-ratings-note { margin: 0; font: var(--type-small); }
+.kh-ratings-note { color: var(--muted); }
 .kh-guide-warning { color: var(--avoid); }
 :root[data-theme="dark"] .kh-guide-warning { color: var(--accent-ink); }
-.kh-guide-ratings { display: flex; flex-wrap: wrap; gap: var(--space-6); }
-.kh-guide-rating { padding: var(--space-2) var(--space-6); border-radius: var(--radius-5); background: var(--bg); font: var(--type-tag); }
-.kh-guide-details { margin-top: var(--space-8); }
-.kh-guide-details summary { cursor: pointer; font: var(--type-strong); }
-.kh-guide-list { margin-top: var(--space-9); }
-.kh-guide-list ol, .kh-guide-list ul { margin: var(--space-4) 0; padding-left: var(--space-20); }
-.kh-detail-build { margin: var(--space-12) 0; min-width: 0; }
-/* Trang chi tiết dùng cùng nhóm chip cấu hình của thẻ danh sách, không có lề trong thẻ. */
-.kh-detail-build .kh-config-row { padding: 0; margin-bottom: var(--space-6); }
-.kh-sources { display: flex; flex-wrap: wrap; gap: var(--space-5) var(--space-8); margin-top: var(--space-10); font: var(--type-tag); overflow-wrap: anywhere; }
-.kh-sources a { color: var(--accent); text-decoration: underline; }
+.kh-guide-list h3 { margin: 0 0 var(--space-6); font: var(--type-strong); color: var(--ink); }
+.kh-guide-list ol, .kh-guide-list ul { margin: 0; padding-left: var(--space-20); font: var(--type-small); }
+.kh-guide-list li + li { margin-top: var(--space-4); }
+/* Thứ tự quân thủ là danh sách tên ngắn: chia cột cho gọn, vẫn đọc theo thứ tự dọc. */
+.kh-guide-defenders { columns: 2; column-gap: var(--space-36); }
+.kh-guide-defenders > li { break-inside: avoid; }
 
 /* ---------- Bộ lọc dùng chung cho danh sách và bộ chọn phạm vi mùa ---------- */
 .fgroup { margin-bottom: var(--space-14); }
@@ -805,7 +818,6 @@ a.lookup-more:hover {
 }
 
 .detail-link,
-.kh-detail-link,
 .rt-btn:not(.rt-primary),
 .ana-btn {
   display: inline-flex;
@@ -822,7 +834,6 @@ a.lookup-more:hover {
 }
 
 .detail-link:hover,
-.kh-detail-link:hover,
 .rt-btn:not(.rt-primary):hover,
 .ana-btn:hover {
   border-color: var(--accent);
@@ -865,7 +876,6 @@ a.lookup-more:hover {
 
 /* ---------- Thẻ ---------- */
 .team-card,
-.kh-card,
 .lookup-card,
 .rt-section,
 .ana-card,
@@ -882,8 +892,7 @@ a.lookup-more:hover {
   box-shadow: var(--shadow-card);
 }
 
-.team-card:hover,
-.kh-card:hover {
+.team-card:hover {
   box-shadow: var(--shadow-hover);
 }
 
@@ -991,8 +1000,8 @@ a.lookup-more:hover {
 }
 
 .seal-header {
-  width: var(--space-40);
-  height: var(--space-40);
+  width: var(--space-36);
+  height: var(--space-36);
 }
 
 .seal-menu {
@@ -1021,7 +1030,7 @@ a.lookup-more:hover {
   display: flex;
   align-items: center;
   gap: var(--space-40);
-  height: var(--control-72);
+  height: var(--space-64);
   padding-block: 0;
   padding-inline: var(--space-48);
   background-color: var(--band);
@@ -1029,7 +1038,7 @@ a.lookup-more:hover {
 }
 
 .site-header-landing {
-  height: calc(var(--control-72) + var(--space-4));
+  height: var(--space-64);
   gap: var(--space-28);
   padding-inline: var(--space-64);
 }
@@ -1061,6 +1070,52 @@ a.lookup-more:hover {
 
 .site-header-landing .site-title {
   font: var(--type-header-title-landing);
+}
+
+/* Logo chữ (BrandName.astro) trên dải tối: mark "Cẩm Nang" (SVG, tỉ lệ 605×132) + dòng phụ chữ thật căn đều
+   đúng bề rộng mark (`width: 0; min-width: 100%` để dòng phụ không nới rộng khối). */
+.brand-lockup {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  vertical-align: middle;
+}
+
+.brand-lockup-mark {
+  display: block;
+  width: auto;
+  height: var(--control-36);
+}
+
+.brand-lockup-sub {
+  display: block;
+  width: 0;
+  min-width: 100%;
+  color: var(--band-dim);
+  font: var(--type-brand-sub);
+  letter-spacing: var(--type-brand-sub-spacing);
+  text-align: justify;
+  text-align-last: justify;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.footer-title .brand-lockup-mark {
+  height: var(--control-52);
+}
+
+.footer-title .brand-lockup-sub {
+  font: var(--type-brand-sub-footer);
+  letter-spacing: var(--type-brand-sub-footer-spacing);
+}
+
+.site-menu-title .brand-lockup-mark {
+  height: var(--control-32);
+}
+
+.site-menu-title .brand-lockup-sub {
+  font: var(--type-brand-sub-mobile);
+  letter-spacing: var(--type-brand-sub-mobile-spacing);
 }
 
 .tagline {
@@ -1135,44 +1190,89 @@ a.lookup-more:hover {
   border-color: var(--accent-strong);
 }
 
-.header-cta-short {
-  display: none;
-}
-
 /* ---------- Menu thả (điều hướng desktop) ---------- */
-/* Trang trong: nav đứng sát thương hiệu, chỉ nút sáng/tối bị đẩy sang phải (Main.dc.html);
-   Landing: nav tự đẩy sang phải và cụm nút đi liền sau (LandingMenu.dc.html). */
+/* Mọi trang dùng một bộ menu thả: nav tự đẩy sang phải và cụm nút đi liền sau (LandingMenu.dc.html). */
 .site-nav {
   display: flex;
   align-self: stretch;
-}
-
-.site-header-landing .site-nav {
   margin-left: auto;
 }
 
-.site-header-landing .header-actions {
-  gap: var(--space-28);
-  margin-left: 0;
+.site-nav + .header-actions {
+  gap: var(--space-4);
+  margin-left: var(--space-8);
+}
+
+/* Cụm nút header (ngôn ngữ, sáng/tối, đăng nhập): nút ma không viền, cùng cao 44px, nền sáng lên khi rê;
+   chỉ CTA "Mở cẩm nang" là nút tô màu. */
+.header-actions .icon-btn,
+.header-actions .lang-switch {
+  border-color: transparent;
+}
+
+.header-actions .icon-btn:hover,
+.header-actions .lang-switch:hover {
+  border-color: transparent;
+  background-color: var(--band-active);
+}
+
+.header-actions .cm-auth-login {
+  white-space: nowrap;
+}
+
+.site-header-landing .header-cta {
+  margin-left: var(--space-8);
+  border-radius: var(--radius-10);
+}
+
+/* Desktop (chuột): cụm nút header gọn 36px, chữ 13px — không lấn thanh menu. Màn cảm ứng (≤820px) giữ
+   vùng bấm 44px của các quy tắc gốc. */
+@media (min-width: 821px) {
+  .header-actions .icon-btn,
+  .header-actions .lang-switch {
+    width: auto;
+    min-width: var(--control-36);
+    height: var(--control-36);
+    border-radius: var(--radius-8);
+  }
+
+  .header-actions .lang-switch,
+  .header-actions .cm-auth-login {
+    padding-inline: var(--space-8);
+    font: var(--type-header-action);
+  }
+
+  .header-actions .cm-auth-login {
+    gap: var(--space-6);
+  }
+
+  .header-actions .header-cta {
+    min-height: var(--control-36);
+    padding-inline: var(--space-14);
+    border-radius: var(--radius-8);
+    font: var(--type-header-action);
+  }
 }
 
 .site-nav-list {
   display: flex;
-  align-items: stretch;
-  gap: 0;
+  align-items: center;
+  gap: var(--space-4);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+/* Nút menu thả: viên bo 44px; nhóm chứa trang đang xem có vạch son ngắn dưới nhãn. */
 .nav-tab {
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--space-6);
-  height: 100%;
-  padding-inline: var(--space-14);
+  min-height: var(--control-44);
+  padding-inline: var(--space-12);
   border: none;
-  border-bottom: var(--border-underline) solid transparent;
+  border-radius: var(--radius-10);
   background: none;
   color: var(--nav-idle);
   font: var(--type-nav);
@@ -1182,9 +1282,18 @@ a.lookup-more:hover {
 }
 
 .nav-tab.active {
-  border-bottom-color: var(--nav-underline);
   color: var(--band-ink);
   font: var(--type-nav-active);
+}
+
+.nav-tab.active::after {
+  position: absolute;
+  inset-inline: var(--space-12);
+  bottom: var(--space-4);
+  height: var(--border-underline);
+  border-radius: var(--radius-2);
+  background-color: var(--nav-underline);
+  content: "";
 }
 
 .nav-tab:hover {
@@ -1196,22 +1305,9 @@ a.lookup-more:hover {
   color: var(--band-ink);
 }
 
-.site-header-landing .site-nav-list {
-  align-items: center;
-  gap: var(--space-4);
-}
-
-/* Header Landing cao 76px, nút 44px: panel neo 16px dưới nút để mép trên trùng đáy header. */
-.site-header-landing .nav-menu {
-  top: calc(100% + var(--space-16));
-}
-
-.site-header-landing .nav-tab {
-  height: auto;
-  min-height: var(--control-44);
-  padding-inline: var(--space-12);
-  border-bottom: none;
-  border-radius: var(--radius-10);
+/* Header cao 64px, nút 44px: panel neo 10px dưới nút để mép trên trùng đáy header. */
+.site-nav .nav-menu {
+  top: calc(100% + var(--space-10));
 }
 
 .nav-dropdown {
@@ -1242,32 +1338,38 @@ a.lookup-more:hover {
   display: none;
 }
 
-.nav-dropdown-game .nav-menu {
+.nav-dropdown-game .nav-menu,
+.nav-dropdown-about .nav-menu {
   left: auto;
   right: 0;
 }
 
-/* Tiêu đề panel Tra cứu là link tới /tra-cuu/ (thay dòng "Tra cứu" lặp nhãn nút). */
-.nav-menu-title.nav-menu-title-link {
+/* Mỗi nhóm của panel: tiêu đề chữ hoa nhạt (nếu có) + danh sách. Panel không lặp lại nhãn nút đã bấm. */
+.nav-menu-section {
   display: flex;
-  align-items: center;
-  min-height: var(--control-44);
-  border-radius: var(--radius-10);
-  color: var(--accent-ink);
-  text-decoration: none;
-}
-
-.nav-menu-title.nav-menu-title-link:hover {
-  background-color: var(--accent-soft);
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
 .nav-menu-title {
   margin: 0;
-  padding-inline: var(--space-12);
+  padding: var(--space-6) var(--space-12) 0;
   color: var(--muted);
   font: var(--type-label-caps);
   letter-spacing: var(--type-label-caps-spacing);
   text-transform: uppercase;
+}
+
+/* Menu Game: nhóm link chính thức chiếm cột trái, "Cộng đồng game" và "Tải game" xếp chồng ở cột phải. */
+.nav-menu-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  align-content: start;
+  gap: var(--space-8);
+}
+
+.nav-menu-split > .nav-menu-section:first-child {
+  grid-row: span 2;
 }
 
 .nav-menu-list {
@@ -1283,13 +1385,6 @@ a.lookup-more:hover {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-2) var(--space-8);
-}
-
-.nav-menu-list.chips {
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: var(--space-8);
-  padding-inline: var(--space-12);
 }
 
 .nav-menu-item {
@@ -1317,17 +1412,6 @@ a.lookup-more:hover {
 .nav-menu-desc {
   color: var(--muted);
   font: var(--type-meta);
-}
-
-.nav-menu-list.chips .nav-menu-item {
-  flex-direction: row;
-  align-items: center;
-  gap: var(--space-6);
-  min-height: var(--control-36);
-  padding-block: 0;
-  border: var(--border-hair) solid var(--line);
-  border-radius: var(--radius-999);
-  font: var(--type-small);
 }
 
 /* ---------- Menu mobile toàn màn hình ---------- */
@@ -1378,11 +1462,16 @@ a.lookup-more:hover {
   font: var(--type-brand);
 }
 
-.site-menu-group-link {
+/* Tiêu đề nhóm Tra cứu là link tới trang mục: chữ son + mũi tên để khác tiêu đề thường. */
+.site-menu-group-title.site-menu-group-link {
   align-self: flex-start;
   min-height: var(--control-44);
   color: var(--nav-underline);
   text-decoration: none;
+}
+
+.site-menu-group-link::after {
+  content: "→" / "";
 }
 
 .site-menu-group-link[aria-current="page"] {
@@ -1393,15 +1482,15 @@ a.lookup-more:hover {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  gap: var(--space-26);
-  padding: var(--space-22) var(--space-16);
+  gap: var(--space-24);
+  padding: var(--space-20) var(--space-16) var(--space-28);
   overflow: auto;
 }
 
 .site-menu-group {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-10);
 }
 
 .site-menu-group-title {
@@ -1409,7 +1498,7 @@ a.lookup-more:hover {
   align-items: center;
   gap: var(--space-8);
   margin: 0;
-  color: var(--nav-underline);
+  color: var(--band-muted);
   font: var(--type-label-caps);
   letter-spacing: var(--type-label-caps-spacing);
   text-transform: uppercase;
@@ -1421,44 +1510,182 @@ a.lookup-more:hover {
   list-style: none;
 }
 
-.site-menu-row {
+/* Nhóm thu gọn (Về cẩm nang, Liên kết game): một hàng tiêu đề bấm để xổ, mũi tên xoay khi mở. */
+.site-menu-more {
+  gap: 0;
+  border: var(--border-hair) solid var(--band-line);
+  border-radius: var(--radius-12);
+  background-color: var(--band-active);
+}
+
+.site-menu-more-toggle {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-12);
   min-height: var(--control-52);
-  padding-inline: var(--space-4);
-  border-bottom: var(--border-hair) solid var(--band-row-line);
+  padding-inline: var(--space-14);
+  color: var(--band-ink);
+  font: var(--type-strong);
+  list-style: none;
+  cursor: pointer;
+}
+
+.site-menu-more-toggle::-webkit-details-marker {
+  display: none;
+}
+
+.site-menu-more-toggle svg {
+  flex: 0 0 auto;
+  color: var(--band-muted);
+  transition: transform var(--motion-base) ease;
+}
+
+.site-menu-more[open] > .site-menu-more-toggle svg {
+  transform: rotate(180deg);
+}
+
+.site-menu-more-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: 0 var(--space-14) var(--space-12);
+}
+
+.site-menu-more li:last-child > .site-menu-row {
+  border-bottom: none;
+}
+
+.site-menu-subtitle {
+  margin: var(--space-8) 0 0;
+  color: var(--band-muted);
+  font: var(--type-label-caps);
+  letter-spacing: var(--type-label-caps-spacing);
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-menu-more-toggle svg {
+    transition-duration: var(--motion-off);
+  }
+}
+
+.site-menu-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
   color: var(--band-ink);
   text-decoration: none;
 }
 
-/* Mục đang xem (hoặc mục cha của trang chi tiết): vạch son bên trái và nhãn son như tab nav desktop. */
+.site-menu-label {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--space-6);
+  min-width: 0;
+  font: var(--type-strong);
+}
+
+.site-menu-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: var(--control-36);
+  height: var(--control-36);
+  border-radius: var(--radius-10);
+  background-color: var(--band);
+  color: var(--nav-underline);
+}
+
+/* Đội hình: lưới 2 cột, mỗi ô có icon son — nhóm dùng nhiều nhất nằm trên cùng, bấm bằng ngón cái. */
+.site-menu-list-tiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-8);
+}
+
+.site-menu-tile {
+  min-height: var(--control-56);
+  padding: var(--space-10);
+  border: var(--border-hair) solid var(--band-line);
+  border-radius: var(--radius-12);
+  background-color: var(--band-active);
+}
+
+/* Tra cứu: chip viên bo xếp dòng. */
+.site-menu-list-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.site-menu-chip {
+  min-height: var(--control-44);
+  padding-inline: var(--space-14);
+  border: var(--border-hair) solid var(--band-line);
+  border-radius: var(--radius-999);
+}
+
+.site-menu-chip .site-menu-label {
+  font: var(--type-body);
+}
+
+/* Dòng (Công cụ, Cộng đồng, Về cẩm nang) và lưới link gọn 2 cột (Game, cộng đồng game, tải game). */
+.site-menu-row {
+  min-height: var(--control-48);
+  padding-inline: var(--space-4);
+  border-bottom: var(--border-hair) solid var(--band-row-line);
+}
+
+.site-menu-row .site-menu-icon {
+  width: var(--control-28);
+  height: var(--control-28);
+  background-color: transparent;
+}
+
+/* Link ngoài (Liên kết game): viên bo xếp dòng như chip Tra cứu, nhãn một dòng kèm ↗ — không mồ côi icon. */
+.site-menu-list-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.site-menu-list-links .site-menu-row,
+.site-menu-more .site-menu-list-links li:last-child > .site-menu-row {
+  min-height: var(--control-44);
+  padding-inline: var(--space-12);
+  border: var(--border-hair) solid var(--band-line);
+  border-radius: var(--radius-999);
+}
+
+.site-menu-list-links .site-menu-label {
+  flex: 0 0 auto;
+  color: var(--band-link);
+  font: var(--type-small);
+  white-space: nowrap;
+}
+
+.site-menu-tile:active,
+.site-menu-chip:active,
+.site-menu-row:active {
+  background-color: var(--band-active);
+}
+
+/* Mục đang xem (hoặc mục cha của trang chi tiết): viền/vạch son và nhãn son như thanh chuyển nhanh. */
+.site-menu-tile[aria-current],
+.site-menu-chip[aria-current] {
+  border-color: var(--nav-underline);
+}
+
 .site-menu-row[aria-current] {
   padding-inline-start: var(--space-12);
   border-left: var(--border-underline) solid var(--nav-underline);
 }
 
-.site-menu-row[aria-current] .site-menu-label {
+.site-menu-link[aria-current] .site-menu-label {
   color: var(--nav-underline);
-}
-
-.site-menu-text {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.site-menu-label {
-  display: flex;
-  align-items: center;
-  gap: var(--space-6);
-  font: var(--type-strong);
-}
-
-.site-menu-desc {
-  color: var(--band-muted);
-  font: var(--type-meta);
 }
 
 .site-menu-arrow {
@@ -1466,23 +1693,211 @@ a.lookup-more:hover {
   color: var(--band-faint);
 }
 
-.site-menu-about {
+/* Chân menu: nút chuyển ngôn ngữ + CTA son cùng một hàng, luôn nằm trong tầm ngón cái. */
+.site-menu-foot {
   display: flex;
-  align-items: center;
-  min-height: var(--control-48);
-  color: var(--band-ink);
-  font: var(--type-strong);
-  text-decoration: none;
-}
-
-.site-menu-cta {
-  padding: var(--space-16);
+  gap: var(--space-8);
+  padding: var(--space-12) var(--space-16) var(--space-16);
   border-top: var(--border-hair) solid var(--band-line);
 }
 
-.site-menu-cta .header-cta {
-  width: 100%;
+.site-menu-lang {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--control-52);
   min-height: var(--control-52);
+  padding-inline: var(--space-14);
+  border: var(--border-hair) solid var(--band-control-line);
+  border-radius: var(--radius-12);
+  color: var(--band-ink);
+  font: var(--type-control);
+  text-decoration: none;
+}
+
+.site-menu-foot .header-cta {
+  flex: 1 1 auto;
+  min-height: var(--control-52);
+}
+
+/* ---------- Cột chuyển nhanh (trang con, nổi ở mép phải) ---------- */
+/* Từ 821px: cột icon dính mép phải giữa màn hình, nằm gọn trong lề 48px của trang; rê chuột hoặc focus hiện
+   tên trang ở nhãn nổi bên trái; mục đang xem là ô son đặc. Danh sách mang `hidden` cho màn cảm ứng
+   (js/site-nav.js bật/tắt) nên ở đây ép hiện. Màn cảm ứng: nút tròn son góc dưới phải mở danh sách có chữ. */
+.quick-nav {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  z-index: var(--z-30);
+  transform: translateY(-50%);
+}
+
+.quick-nav-toggle {
+  display: none;
+}
+
+.quick-nav-list,
+.quick-nav .quick-nav-list[hidden] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-6) var(--space-4);
+  border: var(--border-hair) solid var(--band-line);
+  border-right: none;
+  border-radius: var(--radius-14) 0 0 var(--radius-14);
+  background-color: var(--band);
+  box-shadow: var(--shadow-float);
+  list-style: none;
+}
+
+.quick-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.quick-nav-group-start::before {
+  width: var(--space-20);
+  height: var(--border-hair);
+  margin-block: var(--space-4);
+  background-color: var(--band-line);
+  content: "";
+}
+
+.quick-nav-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--control-40);
+  height: var(--control-40);
+  border-radius: var(--radius-10);
+  color: var(--nav-idle);
+  text-decoration: none;
+  transition: background-color var(--motion-base) ease, color var(--motion-base) ease;
+}
+
+.quick-nav-icon {
+  display: inline-flex;
+}
+
+.quick-nav-link:hover,
+.quick-nav-link:focus-visible {
+  background-color: var(--band-active);
+  color: var(--band-ink);
+}
+
+.quick-nav-link.active,
+.quick-nav-link[aria-current] {
+  background-color: var(--accent);
+  color: var(--on-fill);
+}
+
+.quick-nav-label {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + var(--space-12));
+  padding: var(--space-6) var(--space-10);
+  border: var(--border-hair) solid var(--band-line);
+  border-radius: var(--radius-8);
+  background-color: var(--band);
+  color: var(--band-ink);
+  font: var(--type-header-action);
+  white-space: nowrap;
+  box-shadow: var(--shadow-menu);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-50%);
+  transition: opacity var(--motion-base) ease;
+}
+
+.quick-nav-link:hover .quick-nav-label,
+.quick-nav-link:focus-visible .quick-nav-label {
+  opacity: 1;
+}
+
+.quick-nav .quick-nav-link:focus-visible {
+  outline-offset: calc(-1 * var(--space-3));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quick-nav-link,
+  .quick-nav-label {
+    transition-duration: var(--motion-off);
+  }
+}
+
+@media (max-width: 820px) {
+  .quick-nav {
+    top: auto;
+    right: var(--space-16);
+    bottom: var(--space-16);
+    transform: none;
+  }
+
+  .quick-nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--control-52);
+    height: var(--control-52);
+    border: none;
+    border-radius: var(--radius-round);
+    background-color: var(--accent);
+    color: var(--on-fill);
+    box-shadow: var(--shadow-float);
+    cursor: pointer;
+  }
+
+  .quick-nav-toggle[aria-expanded="true"] {
+    background-color: var(--accent-strong);
+  }
+
+  .quick-nav .quick-nav-list[hidden] {
+    display: none;
+  }
+
+  .quick-nav-list {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + var(--space-10));
+    width: max-content;
+    padding: var(--space-6);
+    border-right: var(--border-hair) solid var(--band-line);
+    border-radius: var(--radius-14);
+  }
+
+  .quick-nav-item {
+    align-items: stretch;
+  }
+
+  .quick-nav-group-start::before {
+    width: auto;
+    margin-inline: var(--space-8);
+  }
+
+  .quick-nav-link {
+    justify-content: flex-start;
+    gap: var(--space-10);
+    width: auto;
+    height: auto;
+    min-height: var(--control-44);
+    padding-inline: var(--space-10) var(--space-16);
+  }
+
+  .quick-nav-label {
+    position: static;
+    padding: 0;
+    border: none;
+    background: none;
+    color: inherit;
+    font: var(--type-strong);
+    box-shadow: none;
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* ---------- Footer dùng chung ---------- */
@@ -1666,6 +2081,7 @@ a.lookup-more:hover {
 /* ---------- Focus trên nền dải tối ---------- */
 .top-header :where(a, button):focus-visible,
 .site-menu :where(a, button):focus-visible,
+.quick-nav :where(a, button):focus-visible,
 .site-footer :where(a, button):focus-visible {
   outline-color: var(--focus-ring-band);
   outline-offset: var(--space-3);
@@ -1682,7 +2098,7 @@ a.lookup-more:hover {
     display: inline-flex;
   }
 
-  .site-header-landing .header-actions {
+  .site-nav + .header-actions {
     margin-left: auto;
   }
 }
@@ -1731,6 +2147,15 @@ a.lookup-more:hover {
     font: var(--type-meta);
   }
 
+  .site-header .brand-lockup-mark {
+    height: var(--control-32);
+  }
+
+  .site-header .brand-lockup-sub {
+    font: var(--type-brand-sub-mobile);
+    letter-spacing: var(--type-brand-sub-mobile-spacing);
+  }
+
   .header-actions {
     gap: var(--space-6);
   }
@@ -1741,20 +2166,14 @@ a.lookup-more:hover {
     border-color: transparent;
   }
 
-  .site-header-landing .icon-btn {
+  /* Header mobile: ☰, thương hiệu và ba nút ngôn ngữ · sáng/tối · đăng nhập; CTA "Mở cẩm nang" chỉ ở desktop
+     (menu mobile đã có nút "Mở Đội chuẩn" ở chân). */
+  .header-actions .header-cta {
     display: none;
   }
 
-  .header-cta {
-    padding-inline: var(--space-14);
-  }
-
-  .header-cta-label {
-    display: none;
-  }
-
-  .header-cta-short {
-    display: inline;
+  .site-nav + .header-actions {
+    gap: var(--space-2);
   }
 
   .site-footer {
@@ -1834,10 +2253,37 @@ a.lookup-more:hover {
   }
 }
 
+/* ≤420px: header còn ☰ + thương hiệu + 3 nút (ngôn ngữ, sáng/tối, đăng nhập) — bỏ dòng phụ của logo chữ, thu
+   mark còn 28px. ≤365px: chỉ giữ ấn sách làm logo; chữ vẫn là tên truy cập của thương hiệu. */
+@media (max-width: 420px) {
+  .site-header .brand-lockup-sub {
+    display: none;
+  }
+
+  .site-header .brand-lockup-mark {
+    height: var(--control-28);
+  }
+}
+
+@media (max-width: 365px) {
+  .site-header .brand-text {
+    position: absolute;
+    width: var(--space-1);
+    height: var(--space-1);
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .site-menu-head .seal-menu {
+    display: none;
+  }
+}
+
 /* ===== Landing (Phase 4, redesign cộng đồng 260927) ===== */
 /* Danh mục component: tokens.json `khoi-hero`, `so-lieu`, `the-landing`, `the-tai-game`, `cta-toi`.
    Điểm vào trang bỏ padding khung để dải tối của hero liền mạch với header; mọi giá trị qua token
-   (riêng bề rộng nút tải 220px, mã QR 148px, dấu ấn chìm của hero là con số bố cục không thuộc thang
+   (riêng mã QR 148px, dấu ấn chìm của hero là con số bố cục không thuộc thang
    token — tiền lệ bề rộng panel menu thả của Phase 3). Nhịp nền: hero + số liệu tối → lối vào sáng →
    kho đội giấy → cộng đồng tối → tải game sáng → CTA tối. */
 
@@ -1854,7 +2300,7 @@ a.lookup-more:hover {
   padding: var(--space-72) var(--space-64) var(--space-96);
   background-color: var(--band);
   color: var(--band-ink);
-  scroll-margin-top: calc(var(--control-72) + var(--space-4));
+  scroll-margin-top: var(--space-64);
 }
 
 .landing-hero-copy {
@@ -2021,7 +2467,7 @@ a.lookup-more:hover {
   flex-direction: column;
   gap: var(--space-32);
   padding: var(--space-88) var(--space-64);
-  scroll-margin-top: calc(var(--control-72) + var(--space-4));
+  scroll-margin-top: var(--space-64);
 }
 
 .landing-section-head {
@@ -2206,18 +2652,19 @@ a.lookup-more:hover {
 }
 
 /* ---------- Hai kho đội ---------- */
+/* Khối dẫn ở trên, bảng xem trước chiếm trọn bề rộng bên dưới — bảng 5 cột cần đúng chỗ như trang thật. */
 .landing-vaults {
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  gap: var(--space-56);
-  align-items: center;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-32);
+  align-items: start;
   background-color: var(--panel-2);
 }
 
 .landing-feature-checks {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-10);
+  flex-wrap: wrap;
+  gap: var(--space-10) var(--space-24);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -2308,17 +2755,29 @@ a.lookup-more:hover {
 /* ---------- Tải game ---------- */
 .landing-download {
   display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: var(--space-56);
   align-items: center;
 }
 
+/* Cụm tải cần ~662px để 3 khối nằm một hàng: dưới 1200px xếp phần chữ lên trên, cụm tải xuống dưới. */
+@media (max-width: 1199px) {
+  .landing-download {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-28);
+  }
+}
+
+/* Cụm tải game ôm vừa nội dung (QR · 2 nút cửa hàng · thẻ bản máy tính vuông), không kéo giãn hết cột. */
 .landing-download-panel {
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;
-  gap: var(--space-24);
-  padding: var(--space-24);
+  justify-self: start;
+  gap: var(--space-20);
+  width: fit-content;
+  max-width: 100%;
+  padding: var(--space-20);
   border: var(--border-hair) solid var(--line);
   border-radius: var(--radius-18);
   background-color: var(--panel);
@@ -2357,13 +2816,14 @@ a.lookup-more:hover {
   flex-direction: column;
   justify-content: center;
   gap: var(--space-12);
+  width: 220px;
 }
 
 .landing-store-btn {
   display: flex;
   align-items: center;
   gap: var(--space-12);
-  width: 220px;
+  min-width: 0;
   min-height: var(--control-56);
   padding-inline: var(--space-18);
   border-radius: var(--radius-12);
@@ -2391,13 +2851,16 @@ a.lookup-more:hover {
   font: var(--type-landing-store);
 }
 
+/* Thẻ vuông: cạnh 194px = chiều cao khối QR (ô 166px + khoảng cách + chú thích) để 3 khối cùng hàng thẳng nhau. */
 .landing-exe {
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: var(--space-10);
-  width: 220px;
-  padding: var(--space-20);
+  flex: none;
+  aspect-ratio: 1;
+  width: 194px;
+  padding: var(--space-18);
   border: var(--border-hair) solid var(--line);
   border-radius: var(--radius-14);
   background-color: var(--accent-soft);
@@ -2449,217 +2912,30 @@ a.lookup-more:hover {
   font: var(--type-landing-cta-lead);
 }
 
-/* ---------- Thẻ đội xem trước: thẻ gọn của artboard Landing (cùng cấu trúc thẻ danh sách Phase 5) ---------- */
-.landing-preview-card {
-  display: flex;
-  flex-direction: column;
+/* ---------- Thẻ đội xem trước: đúng thẻ của danh sách thật (`.reference-view .reference-team-card`) ---------- */
+.landing-hero-stage > .reference-team-card {
   width: 100%;
-  max-width: 500px;
-  justify-self: center;
-  padding: 0;
-  border: var(--border-hair) solid var(--line);
-  border-radius: var(--radius-16);
-  background-color: var(--panel);
-  box-shadow: var(--shadow-float);
+  max-width: 540px;
   color: var(--ink);
-  overflow-wrap: anywhere;
 }
 
-.landing-preview-card .reference-card-head {
-  padding: var(--space-16) var(--space-20) var(--space-12);
-}
-
-.landing-preview-card .team-name {
-  margin: 0;
-  min-width: 0;
-  font: var(--type-dialog-title);
-}
-
-.landing-preview-card .team-name > a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.landing-preview-card .team-name > a:hover {
-  color: var(--accent);
-  text-decoration: underline;
-}
-
-/* Dòng meta là một câu chữ chảy dòng (dấu "·" không mồ côi ở cuối dòng như khi là ô flex). */
-.landing-preview-card .reference-meta {
-  display: block;
-}
-
-.landing-preview-card .reference-units {
-  color: var(--ink-2);
-}
-
-.landing-preview-card .heroes {
-  display: flex;
-  flex-direction: column;
-  padding: var(--space-2) var(--space-20);
-}
-
-/* Hàng tướng: cột nhãn vai trò 40px, cột nội dung gồm tên → chiến pháp chữ son → giá trị binh thư. */
-.landing-preview-card .reference-holder {
-  display: grid;
-  grid-template-columns: var(--space-40) minmax(0, 1fr);
-  column-gap: var(--space-10);
-  row-gap: var(--space-2);
-  align-items: baseline;
-  padding: var(--space-9) 0;
-  border-top: var(--border-hair) dashed var(--line-2);
-  border-radius: 0;
-  background-color: transparent;
-}
-
-.landing-preview-card .heroes > .reference-holder:first-child {
-  border-top: 0;
-}
-
-.landing-preview-card .reference-holder .hero-name {
-  min-width: 0;
-  font: var(--type-hero-name);
-}
-
-.landing-preview-card .reference-holder .tactics,
-.landing-preview-card .reference-holder .books {
-  grid-column: 2;
-}
-
-.landing-preview-card .reference-holder .tactics {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 var(--space-12);
-}
-
-/* Chiến pháp trong thẻ xem trước chỉ là chữ son (không bấm được), không phải chip. */
-.landing-preview-card .reference-holder .t-tactic {
-  min-height: 0;
-  padding: 0;
-  border: none;
-  background: none;
-  color: var(--accent-ink);
-  font: var(--type-tactic);
-  cursor: default;
-}
-
-.landing-preview-card .reference-holder .books {
-  display: block;
-  margin: 0;
-  color: var(--muted);
-  font: var(--type-meta);
-}
-
-.landing-preview-card .reference-card-foot {
-  justify-content: flex-end;
-  padding: 0 var(--space-20);
-}
-
-/* "Chi tiết →": link chữ son như artboard, vùng bấm 44px do chân thẻ (`control.44`). */
-.landing-preview-link {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-4);
-  min-height: var(--control-44);
-  color: var(--accent-ink);
-  font: var(--type-chip-pill);
-  text-decoration: none;
-}
-
-.landing-preview-link:hover {
-  text-decoration: underline;
-}
-
-/* ---------- Hai kho đội: cột trái = khối dẫn + 2 thẻ kho, cột phải = bảng xem trước ---------- */
+/* ---------- Hai kho đội: khối dẫn xếp dọc — tiêu đề + ý chính, dải dấu tích, link; rồi bảng xem trước ---------- */
 .landing-vaults-intro {
   display: flex;
   flex-direction: column;
-  gap: var(--space-22);
+  align-items: flex-start;
+  gap: var(--space-20);
   min-width: 0;
 }
 
-/* ---------- Bảng xem trước (component `bang` của Phase 5) ---------- */
-
+/* ---------- Bảng xem trước: đúng khối tier + bảng 5 cột của chế độ Bảng (`.reference-view`) ---------- */
 .landing-table-preview {
   min-width: 0;
-  border: var(--border-hair) solid var(--line);
-  border-radius: var(--radius-16);
-  background-color: var(--panel);
-  overflow: hidden;
 }
 
-/* Thanh tiêu đề bảng là dải tối chữ kem (artboard Landing: nền #1C1A17 = `--band`). */
-.landing-table-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-12);
-  margin: 0;
-  padding: var(--space-12) var(--space-16);
-  background-color: var(--band);
-  color: var(--band-ink);
-}
-
-.landing-table-scope {
-  font: var(--type-table-cell);
-  color: var(--band-ink);
-}
-
-.landing-table-count {
-  font: var(--type-meta);
-  color: var(--band-dim);
-  white-space: nowrap;
-}
-
-.landing-table-scroll {
-  overflow-x: auto;
-}
-
-/* Bảng xem trước của Landing: chỉ phần tử trong `.landing-table-preview` thừa hưởng vỏ này;
-   bảng danh sách thật do Phase 5 dựng trong `.reference-view`. */
-.landing-table-preview .reference-table {
-  width: 100%;
-  min-width: 420px;
-  border-collapse: collapse;
-  background-color: var(--panel-2);
-}
-
-.landing-table-preview .reference-table th,
-.landing-table-preview .reference-table td {
-  padding: var(--space-12) var(--space-16);
-  border-top: var(--border-hair) solid var(--line-2);
-  text-align: left;
-  vertical-align: top;
-}
-
-.landing-table-preview .reference-table tr:first-child th,
-.landing-table-preview .reference-table tr:first-child td {
-  border-top: 0;
-}
-
-.landing-table-preview .reference-table th {
-  font: var(--type-strong);
-  color: var(--ink);
-}
-
-.landing-table-preview .reference-table td {
-  font: var(--type-tactic);
-  color: var(--ink-2);
-}
-
-.landing-table-meta {
-  display: block;
-  margin-top: var(--space-2);
-  color: var(--muted);
-  font: var(--type-meta);
-}
-
-.landing-table-preview .reference-table td.landing-table-score {
-  font: var(--type-score-table);
-  color: var(--accent);
-  text-align: right;
-  white-space: nowrap;
+/* Link "Mở chế độ Bảng" nằm dưới bảng, là ô lưới của `.landing-vaults`: giữ vừa nội dung, không kéo hết hàng. */
+.landing-vaults > .landing-text-link {
+  justify-self: start;
 }
 
 /* ---------- Mũi tên link ngoài của nút tải ---------- */
@@ -2729,47 +3005,10 @@ a.lookup-more:hover {
   }
 
   .landing-vaults-intro {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
     gap: var(--space-14);
-  }
-
-  .landing-table-bar {
-    padding: var(--space-10) var(--space-12);
-  }
-
-  /* Bảng xem trước ở bề rộng hẹp (LandingMobile không vẽ bảng): xếp dọc theo MobileTable thay vì để
-     cột điểm nằm ngoài vùng nhìn rồi phải cuộn ngang trong khung. Bỏ `min-width: 420px` của bản rộng
-     để không còn cuộn ẩn; điểm nằm góc phải hàng 1, hai mảnh còn lại xếp dưới. */
-  .landing-table-preview .reference-table {
-    min-width: 0;
-  }
-
-  .landing-table-preview .reference-table,
-  .landing-table-preview .reference-table tbody {
-    display: block;
-  }
-
-  .landing-table-preview .reference-table tr {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: var(--space-12);
-    align-items: start;
-    padding: var(--space-12) var(--space-14);
-  }
-
-  .landing-table-preview .reference-table tr + tr {
-    border-top: var(--border-hair) solid var(--line-2);
-  }
-
-  .landing-table-preview .reference-table th,
-  .landing-table-preview .reference-table td {
-    display: block;
-    padding: 0;
-    border-top: none;
-  }
-
-  .landing-table-preview .reference-table td.landing-table-score {
-    grid-column: 2;
-    grid-row: 1;
   }
 
   .landing-hero-title {
@@ -2905,13 +3144,19 @@ a.lookup-more:hover {
     flex-direction: column;
     gap: var(--space-10);
     padding: 0;
+    width: auto;
     border: 0;
     background-color: transparent;
   }
 
+  .landing-store,
   .landing-store-btn,
   .landing-exe {
     width: 100%;
+  }
+
+  .landing-exe {
+    aspect-ratio: auto;
   }
 
   .landing-exe {
@@ -4291,7 +4536,7 @@ main.layout:has(> .detail-content) {
   text-decoration: underline;
 }
 
-/* ---------- Đầu trang: nhãn phạm vi, tiêu đề + tên Trung, huy hiệu, panel điểm 340px ---------- */
+/* ---------- Đầu trang: nhãn phạm vi, tiêu đề, dấu Tier + huy hiệu, panel điểm 340px ---------- */
 .detail-header {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 340px;
@@ -4334,11 +4579,6 @@ main.layout:has(> .detail-content) {
   color: var(--ink);
 }
 
-.detail-title-zh {
-  font: var(--type-detail-name-zh);
-  color: var(--muted);
-}
-
 .detail-badges {
   display: flex;
   flex-wrap: wrap;
@@ -4349,7 +4589,45 @@ main.layout:has(> .detail-content) {
   display: none;
 }
 
-/* Panel điểm: nhãn caps, số serif son, hàng hành động (Xem nguồn + sao chép liên kết). */
+/* Hàng dưới tiêu đề: dấu Tier (render lúc build) rồi huy hiệu phe/binh (JS gắn). */
+.detail-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-10);
+}
+
+/* Dấu Tier kiểu ấn son: nửa trái nền son chữ giấy, nửa phải số tier serif son trên giấy. */
+.detail-tier {
+  display: inline-flex;
+  align-items: stretch;
+  overflow: hidden;
+  border: var(--border-hair) solid var(--accent);
+  border-radius: var(--radius-6);
+  background: var(--panel);
+  line-height: 1;
+}
+
+.detail-tier-label {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-6) var(--space-8);
+  background: var(--accent);
+  color: var(--bg);
+  font: var(--type-field-caps);
+  letter-spacing: var(--type-field-caps-spacing);
+  text-transform: uppercase;
+}
+
+.detail-tier-value {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-4) var(--space-10);
+  color: var(--accent-ink);
+  font: var(--type-card-title);
+}
+
+/* Panel điểm: nhãn caps, số serif son, hàng hành động (link nguồn nếu trang có + sao chép liên kết). */
 .detail-score-panel {
   display: flex;
   flex-direction: column;
@@ -4507,27 +4785,48 @@ main.layout:has(> .detail-content) {
   color: var(--ink);
 }
 
+/* Khối "Ghi chú": ghi chú đội rồi ghi chú từng tướng (nhãn tên tướng), gạch son bên trái như lề sách. */
 .detail-notes {
-  padding: var(--space-24) var(--space-28);
+  gap: var(--space-14);
+  padding: var(--space-22) var(--space-28);
   background: var(--panel);
   border: var(--border-hair) solid var(--line);
+  border-left: var(--border-underline) solid var(--accent);
   border-radius: var(--radius-14);
 }
 
-.detail-notes > h2 {
-  font: var(--type-strong);
+.detail-notes > .detail-notes-title {
+  margin: 0;
+  font: var(--type-field-caps);
+  letter-spacing: var(--type-field-caps-spacing);
+  text-transform: uppercase;
+  color: var(--accent);
 }
 
 .detail-note-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-10);
+  gap: var(--space-12);
   margin: 0;
-  padding-left: var(--space-28);
+  padding: 0;
+  list-style: none;
 }
 
-.detail-note-list > .detail-note::marker {
-  color: var(--accent);
+.detail-note-list > .detail-note {
+  position: relative;
+  padding-left: var(--space-20);
+}
+
+/* Dấu thoi son thay chấm tròn mặc định. */
+.detail-note-list > .detail-note::before {
+  content: "";
+  position: absolute;
+  top: 0.62em;
+  left: var(--space-2);
+  width: var(--space-6);
+  height: var(--space-6);
+  background: var(--accent);
+  transform: rotate(45deg);
 }
 
 .detail-note {
@@ -4536,6 +4835,20 @@ main.layout:has(> .detail-content) {
   overflow-wrap: anywhere;
   font: var(--type-body);
   color: var(--ink);
+}
+
+/* Tên tướng trong ghi chú (chủ ghi chú và tên nhắc trong văn) cùng cỡ chữ nội dung, in đậm; chủ ghi chú thêm dấu hai chấm. */
+.detail-note-owner,
+.detail-note-hero {
+  font-weight: 600;
+}
+
+.detail-note-owner::after {
+  content: ": ";
+}
+
+:lang(zh) .detail-note-owner::after {
+  content: "：";
 }
 
 .detail-facts {
@@ -4563,6 +4876,38 @@ main.layout:has(> .detail-content) {
   font: var(--type-body);
 }
 
+/* "Nguồn & phạm vi" là chú thích cuối trang: tiêu đề caps nhỏ, các cặp nhãn–giá trị xếp ngang. */
+.detail-source {
+  gap: var(--space-12);
+  padding-top: var(--space-24);
+  border-top: var(--border-hair) solid var(--line);
+}
+
+.detail-section.detail-source > h2 {
+  font: var(--type-field-caps);
+  letter-spacing: var(--type-field-caps-spacing);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.detail-source .detail-facts {
+  flex-direction: row;
+  flex-wrap: wrap;
+  column-gap: var(--space-32);
+  row-gap: var(--space-8);
+}
+
+.detail-source .detail-facts > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.detail-source .detail-facts dd {
+  font: var(--type-small);
+  color: var(--ink-2);
+}
+
 .reference-detail .tag,
 .reference-detail .chip {
   cursor: default;
@@ -4587,7 +4932,7 @@ main.layout:has(> .detail-content) {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-20);
-  align-items: start;
+  align-items: stretch;
 }
 
 .detail-hero-card {
@@ -4597,7 +4942,13 @@ main.layout:has(> .detail-content) {
   background: var(--panel);
   border: var(--border-hair) solid var(--line);
   border-radius: var(--radius-14);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
+}
+
+/* Thẻ chủ tướng: gáy son phía trên, nhận ra ngay tướng chủ lực. */
+.detail-hero-card.is-main {
+  border-top: var(--border-underline) solid var(--accent);
 }
 
 .detail-hero-head {
@@ -4617,7 +4968,10 @@ main.layout:has(> .detail-content) {
 }
 
 .detail-hero-stat {
-  font: var(--type-meta);
+  padding: var(--space-2) var(--space-8);
+  border-radius: var(--radius-999);
+  background: var(--panel);
+  font: var(--type-badge);
   color: var(--ink-2);
   text-align: right;
 }
@@ -4628,16 +4982,9 @@ main.layout:has(> .detail-content) {
   align-items: center;
   gap: var(--space-8);
   margin: 0;
-  padding: var(--space-20) var(--space-22) 0;
+  padding: var(--space-20) var(--space-22) var(--space-4);
   font: var(--type-hero-card-title);
   color: var(--ink);
-}
-
-.detail-hero-zh {
-  display: block;
-  padding: 0 var(--space-22);
-  font: var(--type-hero-card-zh);
-  color: var(--muted);
 }
 
 .detail-hero-block {
@@ -4647,10 +4994,16 @@ main.layout:has(> .detail-content) {
   padding: var(--space-16) var(--space-22) 0;
 }
 
+/* Binh thư dồn đáy thẻ: ba thẻ cùng hàng có vạch binh thư thẳng hàng dù số chiến pháp khác nhau. */
 .detail-hero-books-block {
-  margin-top: var(--space-16);
-  padding-bottom: var(--space-22);
+  margin-top: auto;
+  padding-top: var(--space-16);
+  padding-bottom: var(--space-20);
   border-top: var(--border-hair) dashed var(--line-2);
+}
+
+.detail-hero-tactics-block {
+  padding-bottom: var(--space-16);
 }
 
 .detail-hero-label {
@@ -4669,24 +5022,24 @@ main.layout:has(> .detail-content) {
   list-style: none;
 }
 
+.detail-hero-books {
+  gap: 0;
+}
+
+/* Ô chiến pháp: số thứ tự son, tên chữ son; có hồ sơ Tra cứu thì cả ô là link kèm mũi tên. */
 .detail-hero-tactics-item {
   display: grid;
-  grid-template-columns: var(--control-26) minmax(0, 1fr);
+  grid-template-columns: var(--control-26) minmax(0, 1fr) auto;
   gap: var(--space-10);
   align-items: center;
-  padding: var(--space-10) var(--space-12);
+  min-height: var(--control-44);
+  padding: var(--space-8) var(--space-10) var(--space-8) var(--space-8);
+  border: var(--border-hair) solid transparent;
   border-radius: var(--radius-10);
   background: var(--accent-soft);
+  color: var(--accent-ink);
+  text-decoration: none;
 }
-
-/* Chữ Việt trên, chữ Hán dưới — như artboard, không để chữ Hán chảy ngang hàng. */
-.detail-hero-tactics-text {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  min-width: 0;
-}
-
 
 .detail-hero-tactics-index {
   display: inline-flex;
@@ -4702,24 +5055,52 @@ main.layout:has(> .detail-content) {
 }
 
 .detail-hero-tactics-vi {
+  min-width: 0;
   font: var(--type-hero-name);
   color: var(--accent-ink);
+  overflow-wrap: anywhere;
 }
 
-.detail-hero-tactics-zh,
-.detail-hero-books-zh {
-  font: var(--type-han-line);
-  color: var(--muted);
+/* Dòng binh thư: tên + mũi tên, vạch chấm ngăn dòng như mục lục sách. */
+.detail-hero-books > li + li {
+  border-top: var(--border-hair) dotted var(--line);
 }
 
-/* Dòng binh thư: tên Việt bên trái, chữ Hán bên phải (artboard), không có số thứ tự. */
 .detail-hero-books-item {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   gap: var(--space-12);
+  min-height: var(--control-36);
+  padding: var(--space-6) var(--space-4);
   font: var(--type-book-line);
   color: var(--ink);
+  text-decoration: none;
+}
+
+.detail-hero-tactics-item-go,
+.detail-hero-books-item-go {
+  display: inline-flex;
+  color: var(--muted);
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.detail-hero-tactics-item.is-link:hover,
+.detail-hero-tactics-item.is-link:focus-visible {
+  border-color: var(--accent);
+}
+
+.detail-hero-books-item.is-link:hover,
+.detail-hero-books-item.is-link:focus-visible {
+  color: var(--accent-ink);
+}
+
+.detail-hero-tactics-item.is-link:hover .detail-hero-tactics-item-go,
+.detail-hero-books-item.is-link:hover .detail-hero-books-item-go,
+.detail-hero-tactics-item.is-link:focus-visible .detail-hero-tactics-item-go,
+.detail-hero-books-item.is-link:focus-visible .detail-hero-books-item-go {
+  color: var(--accent);
+  transform: translateX(2px);
 }
 
 .detail-hero-bond-list {
@@ -4735,139 +5116,109 @@ main.layout:has(> .detail-content) {
   font-style: italic;
 }
 
-.detail-hero-card .detail-note {
-  padding: var(--space-12) var(--space-22) var(--space-22);
-}
-
-/* ---------- Khối build Khai hoang dùng chung (thẻ danh sách + trang chi tiết) ---------- */
-/* Artboard Khaihoang.dc.html: mỗi tướng "Trước · … → Sau · …", chiến pháp chữ son, ghi chú build. */
-.kh-build .heroes {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  min-width: 0;
-}
-
-.kh-build .kh-hero {
+/* ---------- Thẻ Khai hoang: hàng tướng `tên | Trước · … → Sau · …` trong khung thẻ Đội chuẩn ----------
+   Chiến pháp là chip son chỉ hiển thị (không bấm tìm). Thẻ hẹp xếp tên / Trước / Sau mỗi phần một dòng;
+   mũi tên trang trí (aria-hidden) bỏ để không rớt dòng riêng. */
+/* Ba hàng tướng chung một lưới (subgrid): cột "Trước" rộng theo chip dài nhất của thẻ để "Sau" sát lại mà vẫn thẳng cột. */
+.reference-view .heroes.kh-build {
   display: grid;
-  row-gap: var(--space-4);
-  align-items: baseline;
-  min-width: 0;
-  margin: 0;
-  padding: var(--space-10) 0;
-  border: none;
-  border-top: var(--border-hair) dashed var(--line-2);
-  border-radius: 0;
-  background: none;
+  grid-template-columns: var(--size-col-kh-hero-name) fit-content(var(--size-col-kh-before)) var(--space-14) minmax(0, 1fr);
+  column-gap: var(--space-8);
 }
 
-.kh-build .kh-hero:first-child {
-  border-top: none;
+.reference-view .kh-holder {
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: start;
 }
 
-.kh-build .kh-hero .hero-name {
-  margin: 0;
-  font: var(--type-hero-name);
-  color: var(--ink);
+.reference-view .kh-holder .hero-name {
+  grid-row: auto;
 }
 
-/* Artboard Khaihoang: thẻ danh sách và trang chi tiết cùng một hàng `tên | Trước · … → Sau · …`. */
-.kh-build {
-  container-type: inline-size;
-}
-
-.kh-build .kh-hero {
-  grid-template-columns: 140px minmax(0, 0.8fr) 20px minmax(0, 1.2fr);
-  column-gap: var(--space-12);
-}
-
-.kh-build .kh-stages {
+.reference-view .kh-holder .kh-stages {
   display: contents;
 }
 
-.kh-build .kh-before {
-  grid-column: 2;
-}
+.reference-view .kh-holder .kh-before { grid-column: 2; }
+.reference-view .kh-holder .kh-arrow { grid-column: 3; }
+.reference-view .kh-holder .kh-after { grid-column: 4; }
 
-.kh-build .kh-arrow {
-  grid-column: 3;
-}
-
-.kh-build .kh-after {
-  grid-column: 4;
-}
-
-/* Khối build hẹp (thẻ mobile, thẻ hai cột ở màn vừa, chi tiết mobile) theo KhaihoangMobile: tên / Trước / Sau
-   mỗi phần một dòng; mũi tên trang trí (aria-hidden) bỏ để không rớt dòng riêng ở 320px. */
-@container (max-width: 480px) {
-  .kh-build .kh-hero {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .kh-build .kh-before,
-  .kh-build .kh-after {
-    grid-column: 1;
-  }
-
-  .kh-build .kh-arrow {
-    display: none;
-  }
-}
-
-/* Chữ chảy dòng như artboard ("Trước · <chiến pháp> + <chiến pháp>"): xuống dòng giữa các từ, không tách
-   cả chiến pháp xuống dòng riêng như khi còn là flex item. */
-.kh-build .kh-stage {
-  display: block;
+/* Nhãn giai đoạn đứng trái, chip chiến pháp xuống dòng thẳng hàng dưới chip đầu. */
+.kh-stage {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-6);
   min-width: 0;
-  max-width: 100%;
-  overflow-wrap: anywhere;
-  font: var(--type-small);
-  color: var(--muted);
 }
 
-.kh-build .kh-stage .badge {
-  margin-right: var(--space-4);
+.kh-stage-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4) var(--space-6);
+  min-width: 0;
 }
 
-.kh-build .kh-stage .kh-label {
+/* Chỗ ấn "C" trước nhãn giai đoạn khi build đổi chủ tướng: rộng cố định để nhãn các dòng thẳng cột. */
+.kh-mark {
+  display: inline-flex;
+  flex: none;
+  justify-content: center;
+  width: var(--control-24);
+}
+
+.kh-stage .kh-label {
+  flex: none;
   font: var(--type-field-caps);
   letter-spacing: var(--type-field-caps-spacing);
   text-transform: uppercase;
   color: var(--muted);
 }
 
-/* Chiến pháp trong khối build là chữ son không nền, không phải nút tìm (biến thể của `nut-chien-phap`). */
-.kh-build .kh-stage .tag.t-tactic {
-  display: inline;
-  min-height: 0;
-  padding: 0;
-  border: none;
-  border-radius: 0;
-  background: none;
-  color: var(--accent-ink);
-  font: var(--type-tactic);
-}
-
-.kh-build .kh-arrow {
+.kh-plus,
+.kh-arrow {
   color: var(--accent);
   font: var(--type-small);
 }
 
-.kh-build .kh-note,
-.kh-build .kh-opening-note {
-  grid-column: 1 / -1;
-  margin: 0;
-  font: var(--type-meta);
-  color: var(--muted);
+.kh-arrow {
+  line-height: var(--control-24);
+  text-align: center;
 }
 
-.kh-build .kh-note {
-  font-style: italic;
+/* Chip chiến pháp gọn hơn chip bấm-tìm của Đội chuẩn: chỉ hiển thị nên không cần vùng bấm 26/44px. */
+.reference-view .kh-holder .t-tactic {
+  min-height: var(--control-24);
+  padding: 0 var(--space-6);
+  border-block: 0;
+  font: var(--type-tag);
+  white-space: normal;
+  cursor: default;
 }
 
-.kh-build .kh-build-note,
-.kh-build .kh-commander {
-  font: var(--type-meta);
+.reference-view .kh-holder .t-tactic:hover {
+  text-decoration: none;
+}
+
+@container team-card (max-width: 479px) {
+  .reference-view .heroes.kh-build,
+  .reference-view .kh-holder {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .reference-view .kh-holder {
+    row-gap: var(--space-6);
+  }
+
+  .reference-view .kh-holder .kh-before,
+  .reference-view .kh-holder .kh-after {
+    grid-column: 1;
+  }
+
+  .reference-view .kh-holder .kh-arrow {
+    display: none;
+  }
 }
 
 .detail-hero-books-block > .detail-hero-missing {
@@ -4914,24 +5265,19 @@ main.layout:has(> .detail-content) {
   }
 
   .detail-hero-name {
-    padding: var(--space-16) var(--space-16) 0;
+    padding: var(--space-16) var(--space-16) var(--space-4);
   }
 
-  .detail-hero-zh,
   .detail-hero-block {
     padding-inline: var(--space-16);
   }
 
-  .detail-hero-card .detail-note {
-    padding: var(--space-12) var(--space-16) var(--space-16);
+  .detail-notes {
+    padding: var(--space-18) var(--space-16);
   }
 
   .detail-section > h2 {
     font: var(--type-list-title);
-  }
-
-  .detail-note-list {
-    padding-left: var(--space-24);
   }
 
   .detail-facts > div {
@@ -5324,8 +5670,8 @@ body[data-page-section="lookup"] .layout {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  /* Hộp thoại bắt đầu 40px dưới thanh đầu trang 72px (artboard LookupProfile: y=112), không che nav. */
-  padding: calc(var(--control-72) + var(--space-40)) var(--space-16) var(--space-40);
+  /* Hộp thoại bắt đầu 40px dưới thanh đầu trang 64px, không che nav. */
+  padding: calc(var(--space-64) + var(--space-40)) var(--space-16) var(--space-40);
   overflow: auto;
   background: var(--overlay);
 }
@@ -6098,33 +6444,40 @@ body[data-page-section="khaihoang"] .layout {
   padding: var(--space-40) var(--space-48) var(--space-56);
 }
 
-/* ---------- Cùng Tồn: đầu mục (kicker + h1 serif + lead) ---------- */
-.coexist-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-40);
-  padding-bottom: var(--space-28);
-  border-bottom: var(--border-hair) solid var(--line);
-}
-
-/* Chip chọn kịch bản: cùng hình dạng chip viên, dùng lại vai trò chữ của `chip-loc`. */
-.coexist-scenarios {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-8);
-  margin-top: var(--space-24);
-}
-
-.coexist-scenarios[hidden] {
+/* ---------- Cùng Tồn: đầu mục dùng chung `.reference-head` + ô chọn mùa của Đội chuẩn ---------- */
+.coexist-head .reference-season-field[hidden],
+.coexist-groups[hidden] {
   display: none;
 }
 
-.coexist-scenario {
+/* ---------- Hàng chọn phiên bản Cùng tồn 1–5 (chip viên, vai trò chữ của `chip-loc`) ---------- */
+.coexist-groups {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-10) var(--space-16);
+  margin-top: var(--space-24);
+}
+
+.coexist-groups-label {
+  color: var(--muted);
+  font: var(--type-field-caps);
+  letter-spacing: var(--type-field-caps-spacing);
+  text-transform: uppercase;
+}
+
+.coexist-group-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.coexist-group-chip {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   min-height: var(--control-44);
-  padding: 0 var(--space-14);
+  padding: 0 var(--space-16);
   border: var(--border-hair) solid var(--line);
   border-radius: var(--radius-999);
   background: var(--panel-3);
@@ -6132,53 +6485,9 @@ body[data-page-section="khaihoang"] .layout {
   font: var(--type-control);
 }
 
-.coexist-scenario:hover {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-}
-
-.coexist-scenario[aria-pressed="true"] {
-  background: var(--select);
-  border-color: var(--select);
-  color: var(--select-ink);
-}
-
-/* ---------- Chọn nhóm 1–5 của kịch bản đang chọn ---------- */
-.coexist-groups {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-20);
-  margin-top: var(--space-24);
-}
-
-.coexist-scope-title {
-  margin: 0 0 var(--space-10);
-  font: var(--type-list-title);
-}
-
-.coexist-group-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
-  gap: var(--space-10);
-}
-
-.coexist-group-chip {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-4);
-  min-width: 0;
-  min-height: var(--control-44);
-  padding: var(--space-12) var(--space-14);
-  border: var(--border-hair) solid var(--line);
-  border-radius: var(--radius-12);
-  background: var(--panel);
-  color: var(--ink);
-  text-align: left;
-}
-
 .coexist-group-chip:hover {
   border-color: var(--accent);
+  background: var(--accent-soft);
 }
 
 .coexist-group-chip[aria-pressed="true"] {
@@ -6187,95 +6496,101 @@ body[data-page-section="khaihoang"] .layout {
   color: var(--select-ink);
 }
 
-.coexist-group-chip[aria-pressed="true"]:hover {
-  border-color: var(--select);
+/* Số thứ tự chỉ dùng ở hàng nút mobile; desktop hiện nhãn "Cùng tồn N". */
+.coexist-chip-number {
+  display: none;
 }
 
-.coexist-chip-label {
-  font: var(--type-control);
+/* ---------- Phiên bản đang xem: dòng tóm tắt, ghi chú gập, lưới thẻ Đội chuẩn ---------- */
+.coexist-group-view {
+  margin-top: var(--space-20);
 }
 
-.coexist-chip-note {
-  font: var(--type-meta);
-  color: var(--muted);
+.coexist-brief {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-6) var(--space-24);
+  padding: var(--space-14) var(--space-18);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-10);
+  background: var(--panel);
+}
+
+.coexist-summary {
+  flex: 1 1 320px;
+  margin: 0;
+  color: var(--ink-2);
+  font: var(--type-small);
   overflow-wrap: anywhere;
 }
 
-.coexist-group-chip[aria-pressed="true"] .coexist-chip-note {
-  color: var(--select-ink-2);
+.coexist-count-line {
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-meta);
 }
 
-/* Số thứ tự nhóm và dòng tóm tắt nhóm đang chọn chỉ dùng ở hàng nút số mobile (CoexistMobile). */
-.coexist-chip-number,
-.coexist-group-note {
+.coexist-count-ok {
+  color: var(--good);
+}
+
+.coexist-count-dup {
+  color: var(--avoid);
+}
+
+.coexist-source {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.coexist-notes {
+  margin-top: var(--space-10);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-10);
+  background: var(--panel);
+}
+
+.coexist-notes-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-10);
+  min-height: var(--control-44);
+  padding: 0 var(--space-18);
+  font: var(--type-control);
+  list-style: none;
+  cursor: pointer;
+}
+
+.coexist-notes-summary::-webkit-details-marker {
   display: none;
 }
 
-/* ---------- Nhóm đang xem: tiêu đề, phân loại, ô tổng quan, lưới đội ---------- */
-.coexist-group-view {
-  margin-top: var(--space-28);
+.coexist-notes-summary svg {
+  flex-shrink: 0;
+  color: var(--muted);
+  transition: transform var(--motion-fast) ease;
 }
 
-.coexist-group-head {
+.coexist-notes[open] .coexist-notes-summary svg {
+  transform: rotate(180deg);
+}
+
+.coexist-notes-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-20);
+  padding: var(--space-4) var(--space-18) var(--space-18);
+}
+
+.coexist-note-block {
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
-  margin-bottom: var(--space-16);
-}
-
-.coexist-group-title {
-  margin: 0;
-  font: var(--type-list-title);
-}
-
-/* Ô tổng quan: [Tổng quan + Ghi chú | Gợi ý khai hoang] nằm trong `details` gập được trên mobile,
-   cột Kiểm tra trùng tướng đứng ngoài; desktop luôn mở, tỉ lệ cột giữ 1 : 1.2 : 1 như artboard. */
-.coexist-overview {
-  display: grid;
-  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr);
-  background: var(--panel);
-  border: var(--border-hair) solid var(--line);
-  border-radius: var(--radius-14);
-  overflow: hidden;
-}
-
-.coexist-overview > .coexist-overview-col:only-child {
-  grid-column: 1 / -1;
-}
-
-.coexist-overview-fold {
   min-width: 0;
-  border-right: var(--border-hair) solid var(--line-2);
-}
-
-.coexist-overview-summary {
-  display: none;
-}
-
-.coexist-overview-fold-body {
-  display: flex;
-  height: 100%;
-}
-
-.coexist-overview-fold-body > .coexist-overview-col {
-  flex: 1 1 0;
-}
-
-.coexist-overview-fold-body > .coexist-overview-col:nth-child(2) {
-  flex-grow: 1.2;
-}
-
-.coexist-overview-col {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-10);
-  min-width: 0;
-  padding: var(--space-20) var(--space-24);
-  border-right: var(--border-hair) solid var(--line-2);
-}
-
-.coexist-overview-col:last-child {
-  border-right: none;
 }
 
 .coexist-col-label {
@@ -6301,160 +6616,23 @@ body[data-page-section="khaihoang"] .layout {
   color: var(--muted);
 }
 
-.coexist-count-line {
-  font: var(--type-coexist-count);
-  color: var(--ink);
+.coexist-team-view {
+  margin-top: var(--space-20);
 }
 
-.coexist-count-ok {
-  color: var(--good);
-}
-
-.coexist-count-dup {
-  color: var(--avoid);
-}
-
-.coexist-source {
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--control-44);
-  color: var(--accent);
-  font: var(--type-control);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.coexist-teams {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-18);
-  align-items: start;
-  margin-top: var(--space-18);
-}
-
-.coexist-subteam {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  border: var(--border-hair) solid var(--line);
-  border-radius: var(--radius-12);
-  background: var(--panel);
-  overflow: hidden;
-}
-
-/* Đầu thẻ: tên đội serif + pill cấp độ (dòng cuối `teamNameRaw`, vd. "19C") như artboard. */
-.coexist-subteam-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-10);
-  padding: var(--space-14) var(--space-18) var(--space-12);
-  border-bottom: var(--border-hair) solid var(--line-2);
-}
-
-.coexist-subteam-title {
-  margin: 0;
-  min-width: 0;
-  font: var(--type-card-title);
-}
-
-.coexist-level {
-  flex-shrink: 0;
-  background: var(--panel-2);
-  color: var(--ink-2);
-}
-
-.coexist-subteam-tags {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-6);
-  padding: var(--space-10) var(--space-18);
-  border-bottom: var(--border-hair) solid var(--line-2);
-  background: var(--panel-3);
-}
-
-.coexist-tag {
-  padding: var(--space-2) var(--space-8);
-  border: var(--border-hair) solid var(--line);
-  border-radius: var(--radius-6);
-  background: var(--panel);
-  color: var(--ink);
-  font: var(--type-meta);
-}
-
-.coexist-heroes {
-  display: flex;
-  flex-direction: column;
-  padding: var(--space-2) var(--space-18) var(--space-6);
-}
-
-.coexist-hero {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  min-width: 0;
-  padding: var(--space-10) 0;
-  border-top: var(--border-hair) dashed var(--line-2);
-}
-
-.coexist-hero:first-child {
-  border-top: none;
-}
-
-.coexist-hero-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--space-10);
-}
-
-.coexist-hero-name {
-  font: var(--type-hero-name);
-  color: var(--ink);
-}
-
-/* Nhãn phụ của tướng (dòng cuối `nameRaw` trong ngoặc, vd. "Thương S"): badge nhỏ nền giấy đậm như artboard. */
+/* Nhãn phụ của tướng (dòng cuối `nameRaw` trong ngoặc, vd. "Thương S"): badge nhỏ nền giấy đậm đầu dòng phụ. */
 .coexist-hero-tag {
   display: inline-block;
-  margin-left: var(--space-6);
+  margin-right: var(--space-6);
   padding: var(--space-1) var(--space-6);
   border-radius: var(--radius-4);
   background: var(--panel-2);
   color: var(--ink-2);
   font: var(--type-badge);
+  white-space: nowrap;
 }
 
-.coexist-hero-focus {
-  flex-shrink: 0;
-  font: var(--type-meta);
-  color: var(--muted);
-}
-
-.coexist-hero-tactics {
-  display: flex;
-  flex-wrap: wrap;
-  column-gap: var(--space-12);
-  row-gap: var(--space-2);
-  min-width: 0;
-}
-
-.coexist-tactic {
-  color: var(--accent-ink);
-  font: var(--type-tactic);
-}
-
-.coexist-hero-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-4) var(--space-12);
-  font: var(--type-meta);
-  color: var(--muted);
-  overflow-wrap: anywhere;
-}
-
-/* ---------- Khai hoang: đầu mục, lưu ý nguồn, nút nhảy khối ---------- */
+/* ---------- Khai hoang: đầu mục, thanh lọc, lưới thẻ (khung thẻ Đội chuẩn) ---------- */
 .khaihoang-head {
   padding-bottom: var(--space-28);
   border-bottom: var(--border-hair) solid var(--line);
@@ -6464,65 +6642,18 @@ body[data-page-section="khaihoang"] .layout {
   max-width: 720px; /* con số artboard (Khaihoang.dc.html:33) ngoài thang token — tiền lệ khối Landing */
 }
 
-.khaihoang-source-note {
-  margin: var(--space-24) 0 0;
-  padding: var(--space-14) var(--space-18);
-  border-radius: var(--radius-12);
-  background: var(--panel-2);
-  color: var(--ink-2);
-  font: var(--type-small);
-}
-
-.kh-anchors {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-8);
-  margin-top: var(--space-24);
-}
-
-.kh-anchor {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-6);
-  min-height: var(--control-44);
-  padding: 0 var(--space-14);
-  border: var(--border-hair) solid var(--line);
-  border-radius: var(--radius-10);
-  background: var(--panel);
-  color: var(--ink);
-  font: var(--type-control);
-  text-decoration: none;
-}
-
-.kh-anchor:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.kh-anchor-count {
-  font: var(--type-small);
-  color: var(--muted);
-}
-
 .kh-block {
   display: flex;
   flex-direction: column;
-  gap: var(--space-16);
-  margin-top: var(--space-40);
+  gap: var(--space-18);
+  margin-top: var(--space-28);
 }
 
-.kh-section-title {
+.kh-toolbar {
   display: flex;
-  align-items: baseline;
-  gap: var(--space-12);
-  margin: 0;
-  font: var(--type-detail-section-title);
-  scroll-margin-top: var(--space-88);
-}
-
-.kh-section-count {
-  font: var(--type-small);
-  color: var(--muted);
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-12) var(--space-18);
 }
 
 .kh-unit-filter {
@@ -6535,62 +6666,45 @@ body[data-page-section="khaihoang"] .layout {
   font: var(--type-small);
 }
 
-/* ---------- Thẻ đội khai hoang đề xuất ---------- */
-.kh-cards {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-18);
-  align-items: start;
-}
-
-.kh-card {
-  display: flex;
-  flex-direction: column;
-  border-radius: var(--radius-12);
-  overflow: hidden;
-}
-
-/* Bộ lọc loại binh ẩn thẻ bằng thuộc tính `hidden`: `display: flex` ở trên phải nhường UA rule. */
-.kh-card[hidden] {
-  display: none;
-}
-
-.kh-card-head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-10);
-  padding: var(--space-14) var(--space-20) 0;
-}
-
-.kh-title {
+.kh-result-count {
   margin: 0;
-  font: var(--type-card-title);
+  color: var(--muted);
+  font: var(--type-small);
+  white-space: nowrap;
 }
 
-.kh-config-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-6);
-  padding: var(--space-12) var(--space-20) 0;
+.kh-result-count strong {
+  color: var(--ink);
 }
 
-.kh-card .kh-build {
-  padding: var(--space-6) var(--space-20) var(--space-10);
+/* Lưới đều như Thẻ của Đội chuẩn: 1 cột hẹp, 2 cột từ 720px; thẻ cùng hàng cao bằng nhau, chân "Chi tiết" thẳng hàng. */
+.reference-view .team-grid.kh-cards {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-18);
+  align-items: stretch;
 }
 
-.kh-ratings-block {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-10);
-  padding: var(--space-14) var(--space-20);
-  border-top: var(--border-hair) solid var(--line-2);
-  background: var(--panel-3);
+@container team-view (min-width: 720px) {
+  .reference-view .team-grid.kh-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
-.kh-ratings-block:empty {
+/* Bộ lọc loại binh ẩn thẻ bằng thuộc tính `hidden`: `display: flex` của thẻ phải nhường UA rule. */
+.reference-view .kh-card[hidden] {
   display: none;
 }
 
+.reference-view .kh-card .kh-versions {
+  padding: var(--space-12) var(--space-18);
+  border-bottom: var(--border-hair) dashed var(--line-2);
+}
+
+.reference-view .kh-card .heroes {
+  flex: 1 1 auto;
+}
+
+/* ---------- Thanh điểm 6 mốc (trang chi tiết) ---------- */
 .kh-ratings {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -6632,38 +6746,6 @@ body[data-page-section="khaihoang"] .layout {
 
 .kh-rating-fill-total {
   background: var(--ink);
-}
-
-.kh-ratings-note {
-  color: var(--muted);
-  font: var(--type-meta);
-}
-
-.kh-card-foot {
-  margin-top: auto;
-  border-top: var(--border-hair) solid var(--line-2);
-}
-
-/* Chân thẻ theo artboard: nhãn trái, chevron sát phải (link sang trang chi tiết nên chevron chỉ sang phải). */
-.kh-card .kh-detail-link {
-  width: 100%;
-  justify-content: space-between;
-  min-height: var(--control-44);
-  padding: 0 var(--space-20);
-  border: none;
-  border-radius: 0;
-  background: none;
-  color: var(--ink);
-  font: var(--type-control);
-}
-
-.kh-card .kh-detail-link svg {
-  flex-shrink: 0;
-}
-
-.kh-card .kh-detail-link:hover {
-  border: none;
-  color: var(--accent);
 }
 
 /* ---------- Lưới Chạm Sứ ---------- */
@@ -6810,32 +6892,8 @@ body[data-page-section="khaihoang"] .layout {
 }
 
 @media (max-width: 980px) {
-  .coexist-teams,
   .cham-su-cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .coexist-overview {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .coexist-overview-col,
-  .coexist-overview-fold {
-    border-right: none;
-    border-bottom: var(--border-hair) solid var(--line-2);
-  }
-
-  .coexist-overview-fold-body {
-    flex-direction: column;
-  }
-
-  .coexist-overview-fold-body > .coexist-overview-col:last-child,
-  .coexist-overview > .coexist-overview-col:last-child {
-    border-bottom: none;
-  }
-
-  .kh-cards {
-    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -6851,36 +6909,29 @@ body[data-page-section="khaihoang"] .layout {
     font: var(--type-detail-title);
   }
 
-  .coexist-head {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-24);
-  }
-
-  .coexist-teams,
-  .kh-cards,
   .cham-su-cards {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  /* Hàng chọn nhóm mobile: một hàng nút số 44px chia đều; nhãn nhóm còn là tên truy cập (ẩn thị giác),
-     tóm tắt đội của nhóm đang chọn hiện ở dòng ngay dưới hàng. */
+  /* Hàng chọn phiên bản mobile: một hàng nút số 44px chia đều; nhãn "Cùng tồn N" còn là tên truy cập (ẩn thị giác). */
+  .coexist-groups-label {
+    display: none;
+  }
+
   .coexist-group-row {
-    display: flex;
+    flex: 1 1 100%;
+    flex-wrap: nowrap;
     gap: var(--space-6);
   }
 
   .coexist-group-chip {
     flex: 1 1 0;
-    align-items: center;
-    justify-content: center;
     padding: 0;
     border-radius: var(--radius-10);
   }
 
   .coexist-chip-number {
     display: inline;
-    font: var(--type-control);
   }
 
   .coexist-chip-label {
@@ -6892,93 +6943,18 @@ body[data-page-section="khaihoang"] .layout {
     white-space: nowrap;
   }
 
-  .coexist-chip-note {
-    display: none;
+  .coexist-brief,
+  .coexist-notes-summary {
+    padding-inline: var(--space-14);
   }
 
-  .coexist-group-note {
-    display: block;
-    margin: var(--space-8) 0 0;
-    font: var(--type-small);
-    color: var(--muted);
-    overflow-wrap: anywhere;
-  }
-
-  .coexist-group-note[hidden] {
-    display: none;
-  }
-
-  /* Ô tổng quan mobile: phần Tổng quan/Ghi chú/Gợi ý khai hoang gập trong disclosure (mặc định đóng),
-     dòng kiểm tra trùng đứng ngay dưới, chữ 13px như artboard. */
-  .coexist-overview {
-    gap: var(--space-16);
-    background: none;
-    border: none;
-    border-radius: 0;
-    overflow: visible;
-  }
-
-  .coexist-overview-fold {
-    border: var(--border-hair) solid var(--line);
-    border-radius: var(--radius-12);
-    background: var(--panel);
-  }
-
-  .coexist-overview-summary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-10);
-    min-height: var(--control-48);
-    padding: 0 var(--space-14);
-    font: var(--type-control);
-    list-style: none;
-    cursor: pointer;
-  }
-
-  .coexist-overview-summary::-webkit-details-marker {
-    display: none;
-  }
-
-  .coexist-overview-summary svg {
-    flex-shrink: 0;
-    transition: transform var(--motion-fast) ease;
-  }
-
-  .coexist-overview-fold[open] .coexist-overview-summary svg {
-    transform: rotate(180deg);
-  }
-
-  .coexist-overview-fold-body > .coexist-overview-col {
+  .coexist-notes-body {
     padding: var(--space-4) var(--space-14) var(--space-14);
-    border-bottom: none;
   }
 
-  .coexist-overview > .coexist-overview-col {
-    gap: var(--space-8);
-    padding: 0;
-    border: none;
-  }
-
-  .coexist-count-line {
-    font: var(--type-coexist-count-mobile);
-  }
-
-  /* KhaihoangMobile: badge loại binh nằm trên tên đội. */
-  .kh-card-head {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-8);
-  }
-
-  .coexist-scenarios {
-    flex-direction: column;
-  }
-
-  .coexist-scope-title,
-  .coexist-group-title,
-  .kh-section-title {
-    font: var(--type-list-title);
+  .kh-ratings-block,
+  .kh-guide {
+    padding: var(--space-18) var(--space-16);
   }
 
   .kh-ratings {
@@ -8415,16 +8391,13 @@ body[data-page-section="roster-recommend"] .layout {
   /* Hai nút icon đầu menu mobile bị tiêu đề co lại ở 320px. */
   .site-menu-head .site-menu-close,
   .site-menu-head .icon-btn { flex: none; }
-  /* Danh sách nguồn Khai hoang: mỗi link là một mục riêng, không nằm trong câu. */
-  .kh-sources a { display: inline-flex; align-items: center; min-height: var(--control-44); }
   /* Link nguồn SGSDeck đứng riêng một dòng trong thân chi tiết (không nằm trong câu). */
   .detail-source > p > a { display: inline-flex; align-items: center; min-height: var(--control-44); }
   /* Ô nhập bên trong nhãn ô tìm: bản thân control cũng đủ 44px (nhãn 48px vẫn là vùng bấm chính). */
   .search > input,
   .lookup-search > input { min-height: var(--control-44); }
-  /* A5 (P10-1): ba họ control dưới 44px khi đo ở 320/390 — mục lục hướng dẫn Khai hoang (giữ marker
-     `list-item`), nút quan hệ trong hồ sơ Tra cứu và nút mở đội trong kết quả Soi đội. */
-  .kh-guide-details summary,
+  /* A5 (P10-1): control dưới 44px khi đo ở 320/390 — nút quan hệ trong hồ sơ Tra cứu và nút mở đội
+     trong kết quả Soi đội. */
   .lookup-relation-name,
   .ana-team-link { min-height: var(--control-44); }
   /* Checkbox native của phạm vi mùa: nhãn bọc đã 44px, giữ nguyên control. */
@@ -9203,9 +9176,15 @@ body[data-page-section="roster-recommend"] .layout {
   .cm-form-row { justify-content: flex-start; }
 }
 
-/* ===== Ủng hộ tác giả: nút ở footer + hộp thoại QR (LandingDonate 260927) =====
-   `<dialog>` native mở bằng showModal (js/donate.js); thân hộp thoại phủ kín dialog nên bấm nền = đóng. */
-.footer-donate {
+/* ===== Nút ở footer + hộp thoại: Ủng hộ tác giả (QR, LandingDonate 260927) và Góp ý, sửa lỗi =====
+   `<dialog>` native mở bằng showModal (js/modal-dialog.js); thân hộp thoại phủ kín dialog nên bấm nền = đóng. */
+.footer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.footer-action {
   display: inline-flex;
   align-items: center;
   align-self: flex-start;
@@ -9221,17 +9200,17 @@ body[data-page-section="roster-recommend"] .layout {
   transition: background-color var(--motion-base) ease, color var(--motion-base) ease;
 }
 
-.footer-donate[hidden] {
+.footer-action[hidden] {
   display: none;
 }
 
-.footer-donate:hover {
+.footer-action:hover {
   background-color: var(--accent);
   border-color: var(--accent);
   color: var(--on-accent);
 }
 
-.donate-dialog {
+.footer-dialog {
   width: min(420px, calc(100vw - 32px));
   max-height: calc(100dvh - 32px);
   padding: 0;
@@ -9242,7 +9221,7 @@ body[data-page-section="roster-recommend"] .layout {
   box-shadow: var(--shadow-modal);
 }
 
-.donate-dialog::backdrop {
+.footer-dialog::backdrop {
   background-color: var(--overlay);
 }
 
@@ -9256,7 +9235,7 @@ body[data-page-section="roster-recommend"] .layout {
   text-align: center;
 }
 
-.donate-dialog-close {
+.footer-dialog-close {
   position: absolute;
   top: var(--space-10);
   right: var(--space-10);
@@ -9264,8 +9243,29 @@ body[data-page-section="roster-recommend"] .layout {
   color: var(--ink);
 }
 
-.donate-dialog-close:hover {
+.footer-dialog-close:hover {
   background-color: var(--panel-2);
+}
+
+.feedback-dialog {
+  width: min(520px, calc(100vw - 32px));
+}
+
+/* Form góp ý: căn trái, các trường xếp dọc; tiêu đề chừa chỗ cho nút ✕ ở góc. */
+.feedback-dialog-body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  padding: var(--space-28) var(--space-24) var(--space-24);
+}
+
+.feedback-dialog-body .donate-dialog-title {
+  padding-right: var(--space-44);
+}
+
+.feedback-turnstile[hidden] {
+  display: none;
 }
 
 .seal-donate {
@@ -9367,11 +9367,4 @@ body[data-page-section="roster-recommend"] .layout {
 
 .lang-switch:hover {
   border-color: var(--band-ink);
-}
-
-/* Header mobile đã chật (menu, thương hiệu, sáng/tối, đăng nhập): nút chuyển ngôn ngữ nằm trong menu mobile. */
-@media (max-width: 820px) {
-  .header-actions .lang-switch {
-    display: none;
-  }
 }

@@ -153,12 +153,9 @@ async function waitForBoot(page) {
   }
 }
 
-/** Ba mục Beta nằm trong menu thả "Công cụ": mở menu trước khi bấm link thật. */
-const MENU_SECTIONS = ["recruit-tracker", "analyze", "roster-recommend"];
+/** Thanh chuyển nhanh luôn hiện ở mọi bề rộng: bấm thẳng link thật của mục. */
 async function clickSectionLink(page, name) {
-  const link = page.locator(`a[data-section="${name}"]`);
-  if (MENU_SECTIONS.includes(name) && !(await link.isVisible())) await page.locator("#nav-toggle-cong-cu").click();
-  await link.click();
+  await page.locator(`a[data-section="${name}"]`).click();
 }
 
 async function expectActiveSection(page, name) {
@@ -989,9 +986,9 @@ test("footer dùng chung có trên Landing, trang mục, trang chi tiết và 40
     dates.add(chip);
     await expect(footer).toContainText("Được xây dựng bởi");
     await expect(footer.locator('a[href="/#nguon-du-lieu"]')).toHaveCount(1);
-    // Nút sáng/tối chỉ ở header; footer không còn hàng ghi chú "Nguồn dữ liệu"/"Góp ý".
+    // Nút sáng/tối chỉ ở header; footer không còn hàng ghi chú "Nguồn dữ liệu". Góp ý là nút mở hộp thoại thật.
     await expect(footer.locator('[data-theme-toggle]')).toHaveCount(0);
-    await expect(page.locator("body")).not.toContainText("Góp ý");
+    await expect(footer.locator("[data-feedback-open]")).toHaveText("Góp ý, sửa lỗi");
   }
   expect(dates.size).toBe(1);
 });
@@ -1016,16 +1013,16 @@ test("menu mobile giữ đủ 6 dòng Tra cứu và tiêu đề nhóm là link t
 });
 
 test("Back/Forward cùng tài liệu đóng menu mobile và mở khóa cuộn", async ({ page }) => {
-  // Cùng Tồn chọn kịch bản bằng hàng nút ở desktop; chọn kịch bản thứ hai rồi mới sang mobile mở lớp phủ.
+  // Cùng Tồn chọn mùa bằng ô chọn mùa ở đầu mục; chọn mùa thứ hai rồi mới sang mobile mở lớp phủ.
   await page.goto("/cung-ton/");
   await waitForBoot(page);
-  const scenarios = page.locator("#section-coexist .coexist-scenario");
-  const ids = await scenarios.evaluateAll((nodes) => nodes.map((node) => node.dataset.scenario));
+  const season = page.locator("#section-coexist .reference-season-field select");
+  const ids = await season.locator("option").evaluateAll((nodes) => nodes.map((node) => node.value));
   const [first, second] = ids;
   const seasonQuery = (value) => new RegExp(`scenario=${value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`);
-  const pressed = page.locator('#section-coexist .coexist-scenario[aria-pressed="true"]');
+  await expect(page).toHaveURL(seasonQuery(first));
 
-  await scenarios.nth(1).click();
+  await season.selectOption(second);
   await expect(page).toHaveURL(seasonQuery(second));
   await page.setViewportSize({ width: 390, height: 844 });
   await page.locator("#section-menu-toggle").click();
@@ -1055,9 +1052,9 @@ test("Back/Forward cùng tài liệu đóng menu mobile và mở khóa cuộn", 
 
   // Đối chiếu lại kịch bản do URL sở hữu ở bề rộng desktop.
   await page.setViewportSize({ width: 1280, height: 800 });
-  await expect(pressed).toHaveAttribute("data-scenario", second);
+  await expect(season).toHaveValue(second);
   await page.goBack();
-  await expect(pressed).toHaveAttribute("data-scenario", first);
+  await expect(season).toHaveValue(first);
 });
 
 test("rời trang bằng điều hướng khác tài liệu rồi quay lại không giữ lớp phủ hay khóa cuộn", async ({ page }) => {
@@ -1096,7 +1093,7 @@ test("menu thả Game neo phải và mọi panel nằm trong khung nhìn, không
     for (const path of ["/", "/doi-chuan/", detail]) {
       await page.goto(path);
       await expect(page.locator("#nav-toggle-game")).toBeVisible();
-      const buttons = await page.locator("[data-dropdown-button]").all();
+      const buttons = await page.locator(".site-nav [data-dropdown-button]").all();
       for (const button of buttons) {
         await button.click();
         const panel = page.locator(`#${await button.getAttribute("aria-controls")}`);
@@ -1164,7 +1161,7 @@ test("resize 1024 → 1280 đóng lớp phủ mobile và mở khóa cuộn", asy
   await expect(page.locator("#section-menu-toggle")).toBeHidden();
 });
 
-/** Tên mục và mô tả một dòng của mục (dòng người dùng thấy trong menu). */
+/** Tên mục và mô tả một dòng của mục (tagline trang mục). */
 const SECTION_SHELL = [
   ["/doi-chuan/", "Đội chuẩn", "Cấu hình đội theo mùa nguồn"],
   ["/doi-khac/", "Đội khác", "Đội người chơi tổng hợp và đối chiếu"],
@@ -1180,8 +1177,6 @@ test("tagline trang mục là mô tả của chính mục trong menu; Landing kh
   for (const [path, , description] of SECTION_SHELL) {
     await page.goto(path);
     await expect(page.locator(".site-header .tagline"), path).toHaveText(description);
-    const row = page.locator('#section-menu-items .site-menu-row[aria-current="page"]');
-    if (await row.count()) await expect(row.locator(".site-menu-desc"), path).toHaveText(description);
   }
   await page.goto("/");
   await expect(page.locator(".tagline")).toHaveCount(0);
@@ -1234,10 +1229,10 @@ test("mục đang xem nổi bật: dòng menu mobile có aria-current và nút C
     const label = getComputedStyle(node.querySelector(".site-menu-label"));
     return [row.borderLeftWidth, row.borderLeftColor, row.backgroundColor, label.color, label.fontWeight].join("|");
   });
-  const current = page.locator('#section-menu-items .site-menu-row[aria-current="page"]');
+  const current = page.locator('#section-menu-items .site-menu-link[aria-current="page"]');
   await expect(current).toHaveCount(1);
   await expect(current).toHaveAttribute("href", "/doi-khac/");
-  expect(await rowLook(current)).not.toBe(await rowLook(page.locator('#section-menu-items .site-menu-row[href="/doi-chuan/"]')));
+  expect(await rowLook(current)).not.toBe(await rowLook(page.locator('#section-menu-items .site-menu-link[href="/doi-chuan/"]')));
 
   await page.setViewportSize({ width: 1280, height: 800 });
   const toggleLook = (key) => page.locator(`#nav-toggle-${key}`).evaluate((node) => {
@@ -1315,11 +1310,11 @@ test("shell: Landing một h1, trang chi tiết đánh dấu mục cha là aria-
   await expect(page.locator("[aria-haspopup]")).toHaveCount(0);
   const detail = `/doi-khac/${encodeURIComponent(routeHandles.legacy[teamsFixture[0].id])}/`;
   await page.goto(detail);
-  const parent = page.locator('.site-nav a[data-section="team-khac"]');
+  const parent = page.locator('.quick-nav a[data-section="team-khac"]');
   await expect(parent).toHaveAttribute("aria-current", "true");
-  await expect(page.locator('.site-nav a[aria-current="page"]')).toHaveCount(0);
+  await expect(page.locator('.quick-nav a[aria-current="page"], .site-nav a[aria-current="page"]')).toHaveCount(0);
   await expect(page.locator("[aria-haspopup]")).toHaveCount(0);
   // Trang mục vẫn là "page" — không đổi hành vi cũ.
   await page.goto("/doi-khac/");
-  await expect(page.locator('.site-nav a[data-section="team-khac"]')).toHaveAttribute("aria-current", "page");
+  await expect(page.locator('.quick-nav a[data-section="team-khac"]')).toHaveAttribute("aria-current", "page");
 });

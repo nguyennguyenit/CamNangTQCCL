@@ -126,26 +126,23 @@ Kết quả: `viewBox="0 0 939.199 940.119"`, 7 subpath (U+5175, `wght=700`). Ph
 
 ### Ảnh chia sẻ `og:image`
 
-`public/og-image.png` (1200×630, khai ở `og:image` mọi trang) là ấn 兵 trên nền `--bg` sáng cùng tên logo "Cẩm Nang Tam Quốc Chí" bằng Noto Serif Display 700 self-host. Sinh một lần (2026-09-27) bằng Chromium của Playwright, chạy ở gốc repo; path ấn đọc từ `src/lib/seal.ts`, màu theo token sáng (`--bg`, `--accent`, `--seal-ink`, `--ink`):
+`public/og-image.png` (1200×630, khai ở `og:image` mọi trang) là logo `public/logo.png` trên nền `--bg` sáng cùng tên logo "Cẩm Nang Game Tam Quốc Chí - Chiến Lược" (ngắt 2 dòng sau "Game") bằng Noto Serif Display 700 self-host. Sinh lại 2026-09-28 bằng Chromium của Playwright, chạy ở gốc repo; màu theo token sáng (`--bg`, `--ink`):
 
 ```bash
 node --input-type=module <<'EOF'
 import { readFile } from 'node:fs/promises';
 import { chromium } from '@playwright/test';
 
-const seal = await readFile('src/lib/seal.ts', 'utf8');
-const viewBox = seal.match(/SEAL_VIEW_BOX = '([^']+)'/)[1];
-const path = seal.match(/SEAL_PATH =\s*'([^']+)'/)[1];
+const logo = (await readFile('public/logo.png')).toString('base64');
 const font = async (name) => (await readFile(`public/fonts/${name}`)).toString('base64');
 const faces = await Promise.all(['latin', 'latin-ext', 'vietnamese'].map(async (subset) =>
   `@font-face{font-family:"Noto Serif Display";font-weight:700;src:url(data:font/woff2;base64,${await font(`noto-serif-display-700-${subset}.woff2`)}) format("woff2");}`));
 const html = `<!doctype html><html lang="vi"><head><meta charset="utf-8"><style>${faces.join('')}
 html,body{margin:0;width:1200px;height:630px;background:#F3EEE3;}
-body{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:48px;}
-.seal{display:flex;align-items:center;justify-content:center;width:220px;height:220px;padding:36px;box-sizing:border-box;border-radius:24px;background:#A8202A;color:#F9F3E6;}
-.seal svg{width:100%;height:100%;display:block;}
-h1{margin:0;font:700 76px/1.1 "Noto Serif Display",serif;color:#1E1B16;}
-</style></head><body><div class="seal"><svg viewBox="${viewBox}"><path d="${path}" fill="currentColor"/></svg></div><h1>Cẩm Nang Tam Quốc Chí</h1></body></html>`;
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:36px;}
+img{width:200px;height:auto;display:block;}
+h1{margin:0;font:700 72px/1.15 "Noto Serif Display",serif;color:#1E1B16;text-align:center;}
+</style></head><body><img src="data:image/png;base64,${logo}" alt=""><h1>Cẩm Nang Game<br>Tam Quốc Chí - Chiến Lược</h1></body></html>`;
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 });
 await page.setContent(html);

@@ -1,10 +1,10 @@
-// Entry trang chi tiết Khai hoang: chỉ đọc nguồn đã pin rồi hiển thị build + hướng dẫn.
+// Entry trang chi tiết Khai hoang: chỉ đọc nguồn đã pin rồi hiển thị build, điểm, hướng dẫn và tham khảo chung.
 // Không khởi động app gốc và không ghi ngược trạng thái danh sách.
 
-import { el, khaihoangBuildContent, khaihoangConfigRow, khaihoangGuide } from './render.js';
+import { el, khaihoangBuildContent, khaihoangConfigRow, khaihoangGuide, khaihoangRatings, khaihoangReference } from './render.js';
 import { detailPanelActions, isNetworkError } from './detail-actions.js';
 import { detailBadges } from './recommended-reference-render.js';
-import { setZhNameResolver, validateHttpSourceUrl } from './recommended-reference-state.js';
+import { setZhNameResolver } from './recommended-reference-state.js';
 import { khaiHoangDetailVariantUrl, returnHrefFor } from './team-detail-navigation.js';
 import { createByteLoader, loadRawNameResolver, loadWebsiteDisplay, localizeData } from './website-display.js';
 import { L } from './i18n.js';
@@ -24,8 +24,9 @@ const sha256Hex = async (bytes) => [...new Uint8Array(await crypto.subtle.digest
   .map((value) => value.toString(16).padStart(2, '0')).join('');
 
 /**
- * Trang chi tiết một đội khai hoang: build đang chọn + hướng dẫn của team.
- * Selector và hướng dẫn nằm ngoài subtree build để đổi cấu hình không mất focus hoặc đóng mục.
+ * Trang chi tiết một đội khai hoang: phiên bản đang chọn (đội hình + ghi chú), rồi điểm, hướng dẫn của team
+ * và tham khảo chung (Chạm Sứ, quân thủ mỏ). Chỉ khối build bị dựng lại khi đổi phiên bản, nên các khối
+ * còn lại không mất focus hay vị trí đọc.
  */
 export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
   const root = documentTarget.querySelector('#team-detail-root');
@@ -46,21 +47,17 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
 
   let pending = false;
   let team = null;
+  let reference = {};
   let mount = null;
 
-  /** Nguồn của build đang chọn: chỉ link đã qua kiểm scheme `http(s)`, nhãn lấy từ dữ liệu. */
-  const buildSources = (build) => (build?.sources || [])
-    .map((source) => ({href: validateHttpSourceUrl(source.url), label: source.label}))
-    .filter((source) => source.href);
-
-  /** Đầu trang chi tiết: huy hiệu loại binh của build đang chọn + hành động (nguồn, sao chép link). */
+  /** Đầu trang chi tiết: huy hiệu loại binh của build đang chọn + nút sao chép link. */
   const paintHeader = (build) => {
     if (badges) {
       const nodes = detailBadges({unitType: build?.unitType ? [build.unitType] : []}, null);
       badges.replaceChildren(...nodes);
       badges.hidden = !nodes.length;
     }
-    if (panelActions) panelActions.replaceChildren(detailPanelActions({sources: buildSources(build)}));
+    if (panelActions && !panelActions.childElementCount) panelActions.replaceChildren(detailPanelActions());
     if (panel) panel.hidden = false;
   };
 
@@ -103,7 +100,7 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
 
   const applyVariant = (variantId) => {
     const build = variantFor(variantId) || team;
-    mount.content.replaceChildren(...khaihoangBuildContent(build, true));
+    mount.content.replaceChildren(...khaihoangBuildContent(build));
     paintHeader(build);
     for (const chip of mount.chips) chip.setAttribute('aria-pressed', String((chip.dataset.variant || '') === variantId));
   };
@@ -115,15 +112,26 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
   };
 
   /**
-   * Chọn cấu hình bằng cùng nhóm chip của thẻ danh sách; loại binh của build chỉ hiện một lần ở đầu trang
+   * Chọn phiên bản bằng cùng nhóm chip của thẻ danh sách; loại binh của build chỉ hiện một lần ở đầu trang
    * (`#team-detail-badges`), khối build không lặp lại huy hiệu đó.
    */
   const buildView = () => {
     const {row, chips} = khaihoangConfigRow(team, selectVariant);
     const content = el('div', {class: 'kh-build', 'aria-live': 'polite'});
-    const build = el('div', {class: 'kh-detail-build'}, [row, content].filter(Boolean));
-    // Hướng dẫn thuộc team và nằm ngoài subtree build: đổi cấu hình không dựng lại phần này.
-    body.replaceChildren(...[build, khaihoangGuide(team.guide)].filter(Boolean));
+    const build = el('div', {class: 'kh-detail-build'}, [
+      el('div', {class: 'kh-versions'}, [
+        el('span', {class: 'kh-versions-label', 'aria-hidden': 'true'}, L('Phiên bản', '版本')),
+        row,
+      ]),
+      content,
+    ]);
+    // Điểm, hướng dẫn và tham khảo chung thuộc team/trang, nằm ngoài subtree build: đổi phiên bản không dựng lại.
+    body.replaceChildren(...[
+      build,
+      khaihoangRatings(team.guide),
+      khaihoangGuide(team.guide),
+      ...khaihoangReference(reference),
+    ].filter(Boolean));
     return {chips, content};
   };
   const ensureMount = () => (mount ??= buildView());
@@ -151,6 +159,7 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
       const matches = (Array.isArray(data) ? [] : (data.teams || [])).filter((item) => item?.id === teamId);
       if (matches.length !== 1) throw new Error(MISSING_TEAM_MESSAGE);
       team = matches[0];
+      reference = {chamSuTeams: data.chamSuTeams || [], mines: data.mines || []};
       const requested = requestedVariant();
       if (requested && !variantFor(requested)) {
         showUnknownVariant(requested);

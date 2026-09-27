@@ -9,18 +9,21 @@ import type { SiteLocale } from '../../lib/locale-routes';
 
 type Props = RecommendedDetailProps & { locale: SiteLocale };
 
-const {entry, title, ordinal, scopeLine, generationId, manifestSha256, legacyTeamsSha256, locale} = Astro.props;
+const {entry, title, ordinal, scopeLine, generationId, manifestSha256, legacyTeamsSha256, lookupLinks, locale} = Astro.props;
 const t = (vi: string, zh: string): string => pick(locale, vi, zh);
 // Canonical bỏ query/hash: mọi biến thể deep-link vẫn trỏ về đúng một URL chi tiết.
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 const qualifier = [entry.sourceSeasonCode, ordinal > 1 ? String(ordinal) : null].filter(Boolean).join(' · ');
 const pageLabel = qualifier ? `${title} (${qualifier})` : title;
 const describedName = ordinal > 1 ? `${title} (${ordinal})` : title;
-// Bản vi: tên Trung là chữ phụ của tiêu đề (artboard TeamDetail), chỉ hiện khi nguồn thật có chữ Hán.
-// Bản zh: tiêu đề đã là chữ Hán gốc nên không lặp lại.
-const nameZh = locale === 'vi' && entry.nameZh && /[\u3400-\u9fff\uf900-\ufaff]/u.test(entry.nameZh) ? entry.nameZh : null;
 const hasScore = entry.value != null;
+// Nhãn tier nguồn như js/recommended-reference-state.js (`sourceTierLabel`): đội chức năng có nhãn riêng.
+const tier = entry.tierRaw
+  ? (entry.tierRaw === 'FUNC' || entry.tierRaw === '功能隊' ? t('Đội chức năng', '功能队') : entry.tierRaw)
+  : null;
 const fallbackReturn = familyReturnHref('recommended', { sourceSeasonId: entry.sourceSeasonId, locale });
+// JSON nhúng trong <script>: chặn `<` để chuỗi dữ liệu không đóng thẻ sớm.
+const lookupLinksJson = JSON.stringify(lookupLinks).replace(/</g, '\\u003c');
 ---
 <SiteLayout
   title={`${pageLabel}${t(' — Đội chuẩn — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', ' — 推荐阵容 — 三国志战略版攻略手册')}`}
@@ -56,12 +59,17 @@ const fallbackReturn = familyReturnHref('recommended', { sourceSeasonId: entry.s
     <div class="detail-header">
       <div class="detail-head-main">
         {scopeLine ? <p class="scope-note detail-kicker">{scopeLine}</p> : null}
-        <div class="detail-title-row">
-          <h1 id="team-detail-title" class="detail-title">{title}</h1>
-          {nameZh ? <span class="detail-title-zh" lang="zh-Hant">{nameZh}</span> : null}
+        <h1 id="team-detail-title" class="detail-title">{title}</h1>
+        <div class="detail-meta-row">
+          {tier ? (
+            <span class="detail-tier" title={t('Tier nguồn', '来源等级')}>
+              <span class="detail-tier-label">Tier</span>
+              <span class="detail-tier-value">{tier}</span>
+            </span>
+          ) : null}
+          <!-- Huy hiệu phe/loại binh do js/team-detail.js gắn từ bản ghi đã xác minh. -->
+          <div id="team-detail-badges" class="detail-badges" hidden></div>
         </div>
-        <!-- Huy hiệu phe/loại binh do js/team-detail.js gắn từ bản ghi đã xác minh. -->
-        <div id="team-detail-badges" class="detail-badges" hidden></div>
       </div>
       <div id="team-detail-panel" class="detail-score-panel">
         {hasScore ? (
@@ -73,7 +81,7 @@ const fallbackReturn = familyReturnHref('recommended', { sourceSeasonId: entry.s
         <p class="detail-score">
           {hasScore ? <><span class="detail-score-value">{entry.value}</span> <span class="detail-score-unit">{t('điểm', '分')}</span></> : t('Chưa có điểm nguồn', '暂无来源评分')}
         </p>
-        <!-- Link nguồn đã kiểm scheme và nút sao chép liên kết do js/team-detail.js gắn. -->
+        <!-- Nút sao chép liên kết do js/team-detail.js gắn; trang đội chuẩn không dẫn link nguồn ngoài. -->
         <div id="team-detail-actions" class="detail-panel-actions"></div>
       </div>
     </div>
@@ -91,6 +99,7 @@ const fallbackReturn = familyReturnHref('recommended', { sourceSeasonId: entry.s
   <!-- Chiến báo thực chiến + bình luận do js/community-page.js dựng; dịch vụ cộng đồng lỗi thì chỉ khối này báo. -->
   <section id="community-root" class="cm-root"></section>
 
+  <script is:inline type="application/json" id="team-lookup-links" set:html={lookupLinksJson}></script>
   <script is:inline type="module" src="/js/team-detail.js" slot="scripts"></script>
   <script is:inline type="module" src="/js/community-page.js" slot="scripts"></script>
 </SiteLayout>

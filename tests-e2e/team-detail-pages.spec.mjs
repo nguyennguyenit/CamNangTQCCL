@@ -50,11 +50,11 @@ test('Recommended detail loads directly, survives reload and shows verified sour
   await expect(page.locator('#team-detail-body')).toBeVisible();
 });
 
-test('Recommended detail uses the TeamDetail shell: scope line, Chinese title, badges and score panel',async({page,request})=>{
+test('Recommended detail uses the TeamDetail shell: scope line, Tier seal, badges and score panel',async({page,request})=>{
   const {index,seasons}=await publication(request);
   const handles=await routeHandles(request);
-  // Bản ghi đủ dữ liệu đầu trang: mùa/danh mục, phe, loại binh, tên Trung, điểm và URL nguồn.
-  const row=index.records.find(item=>item.factionRaw && item.unitTypesRaw?.length && item.nameZh && item.value!=null);
+  // Bản ghi đủ dữ liệu đầu trang: mùa/danh mục, tier, phe, loại binh, tên Trung và điểm.
+  const row=index.records.find(item=>item.tierRaw && item.tierRaw!=='FUNC' && item.factionRaw && item.unitTypesRaw?.length && item.nameZh && item.value!=null);
   expect(row).toBeTruthy();
   await page.goto(recommendedPath(handles,row.sourceConfigId));
   const detail=page.locator('#team-detail-root');
@@ -66,29 +66,28 @@ test('Recommended detail uses the TeamDetail shell: scope line, Chinese title, b
   for (const part of [row.sourceSeasonCode,row.sourceSeasonNameVi,row.sourceCategoryNameVi].filter(Boolean)) {
     await expect(kicker).toContainText(part);
   }
-  await expect(page.locator('#team-detail-root .detail-title-zh')).toHaveText(row.nameZh);
+  // Bản Việt chỉ một ngôn ngữ: tên Trung của nguồn không hiện kèm tiêu đề.
+  await expect(page.locator('#team-detail-root .detail-header')).not.toContainText(row.nameZh);
+  await expect(page.locator('#team-detail-root .detail-tier-value')).toHaveText(row.tierRaw);
 
   const badges=page.locator('#team-detail-root .detail-badges');
   await expect(badges.locator('.badge.faction')).toHaveText(seasons.displayLabels?.faction?.[row.factionRaw] || row.factionRaw);
   await expect(badges.locator('.badge.unit')).toHaveText(row.unitTypesRaw.map(unit=>seasons.displayLabels?.unit?.[unit] || unit));
 
-  // Panel điểm: nhãn caps, số serif son + đơn vị, link nguồn đã kiểm scheme.
+  // Panel điểm: nhãn caps, số serif son + đơn vị; trang đội chuẩn không dẫn link nguồn ngoài.
   const panel=page.locator('#team-detail-root .detail-score-panel');
   await expect(panel.locator('.detail-panel-kicker')).toHaveText('Điểm nguồn');
   // Nguồn ghi chung, không nêu tên site nguồn trong panel điểm.
   await expect(panel.locator('.detail-panel-note')).not.toContainText('SGSDeck');
   await expect(panel.locator('.detail-score-value')).toHaveText(String(row.value));
   await expect(panel.locator('.detail-score-unit')).toHaveText('điểm');
-  const source=panel.locator('.detail-source-link');
-  await expect(source).toHaveText('Xem nguồn');
-  await expect(source).toHaveAttribute('href',row.sourceUrl);
-  await expect(source).toHaveAttribute('target','_blank');
-  await expect(source).toHaveAttribute('rel','noopener noreferrer');
+  await expect(page.locator('#team-detail-root .detail-source-link')).toHaveCount(0);
+  await expect(page.locator(`#team-detail-root a[href="${row.sourceUrl}"]`)).toHaveCount(0);
   // Chỉ một URL chi tiết cho mỗi đội: canonical là pathname, không kèm query/hash.
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href',new RegExp(`${recommendedPath(handles,row.sourceConfigId)}$`));
 });
 
-test('recommended hero cards keep role, Chinese name, tactic ordinals and books',async({page,request})=>{
+test('recommended hero cards keep role, tactic ordinals and books, linked to Tra cứu, without Chinese text',async({page,request})=>{
   const {index}=await publication(request);
   const handles=await routeHandles(request);
   const row=index.records.find(item=>item.heroes?.length===3
@@ -103,10 +102,12 @@ test('recommended hero cards keep role, Chinese name, tactic ordinals and books'
   for (const [position,holder] of row.heroes.entries()) {
     const card=cards.nth(position);
     await expect(card.locator('.detail-hero-name .hn')).toHaveText((holder.displayNameVi || holder.nameRaw).replace(/^(?:SP|CO|40Y)\s+/,''));
-    await expect(card.locator('.detail-hero-zh')).toHaveText(holder.nameRaw);
     const tactics=(holder.tacticSlotsVi || []).map((vi,slot)=>holder.tacticSlotKinds?.[slot]==='bond' ? null : (vi || holder.tacticSlotsRaw?.[slot])).filter(Boolean);
     await expect(card.locator('.detail-hero-tactics-vi')).toHaveText(tactics);
-    await expect(card.locator('.detail-hero-tactics-zh')).toHaveText((holder.tacticSlotsRaw || []).filter((raw,slot)=>raw && holder.tacticSlotKinds?.[slot] !== 'bond'));
+    // Ô chiến pháp / binh thư có hồ sơ Tra cứu là link `/tra-cuu/?id=…`; bản vi không kèm chữ Hán.
+    await expect(card.locator('a.detail-hero-tactics-item').first()).toHaveAttribute('href',/^\/tra-cuu\/\?id=tactic%3A[a-z0-9-]+$/);
+    await expect(card.locator('a.detail-hero-books-item').first()).toHaveAttribute('href',/^\/tra-cuu\/\?id=book%3A[a-z0-9-]+$/);
+    expect(await card.innerText()).not.toMatch(/[\u3400-\u9fff]/u);
     const books=(holder.bookSlotsVi || []).map((vi,slot)=>vi || holder.bookSlotsRaw?.[slot]).filter(Boolean);
     await expect(card.locator('.detail-hero-books-vi')).toHaveText(books);
     await expect(card.locator('.detail-hero-label')).toHaveText(['Chiến pháp','Binh thư']);
@@ -185,8 +186,8 @@ test('Recommended detail renders note ownership once per source occurrence',asyn
   await page.goto(recommendedPath(handles,row.sourceConfigId));
   const paragraphs=page.locator('#team-detail-body .detail-note');
   await expect(paragraphs).toHaveCount(blocks.length);
-  // Mỗi occurrence hiển thị đúng một lần, kể cả khi hai occurrence có cùng nội dung.
-  const rendered=(await paragraphs.allTextContents()).map(value=>value.trim()).sort();
+  // Mỗi occurrence hiển thị đúng một lần, kể cả khi hai occurrence có cùng nội dung; nhãn tướng không tính vào văn bản.
+  const rendered=(await paragraphs.evaluateAll(nodes=>nodes.map(node=>(node.querySelector('.detail-note-text') || node).textContent.trim()))).sort();
   expect(rendered).toEqual(blocks.map(block=>block.textVi.trim()).sort());
   const ownership=await page.evaluate(async()=>{
     const {recommendedTeamDetailContent}=await import('/js/recommended-reference-render.js');
@@ -206,21 +207,24 @@ test('Recommended detail renders note ownership once per source occurrence',asyn
     });
     const host=document.createElement('div');
     host.append(fragment);
-    const sectionFor=label=>[...host.querySelectorAll('.detail-section')].find(section=>section.querySelector(':scope > h2')?.textContent===label);
+    const notesOf=root=>[...root.querySelectorAll('.detail-note')].map(node=>({
+      owner:node.querySelector('.detail-note-owner')?.textContent ?? null,
+      text:(node.querySelector('.detail-note-text') || node).textContent,
+    }));
+    const main=[...host.querySelectorAll(':scope > .detail-notes')];
     return {
       all:host.querySelectorAll('.detail-note').length,
-      team:sectionFor('Ghi chú nguồn').querySelectorAll('.detail-note').length,
-      primary:[...sectionFor('Đội hình').querySelectorAll('.reference-detail-holder')].map(node=>node.querySelectorAll('.detail-note').length),
-      alternative:[...sectionFor('Cấu hình thay thế').querySelectorAll('.reference-detail-holder')].map(node=>node.querySelectorAll('.detail-note').length),
-      texts:[...host.querySelectorAll('.detail-note')].map(node=>node.textContent),
+      insideCards:host.querySelectorAll('.detail-hero-card .detail-note').length,
+      main:main.flatMap(notesOf),
+      alternative:notesOf(host.querySelector('.reference-alternative-group')),
     };
   });
+  // Ghi chú tướng gom xuống khối "Ghi chú" (nhãn tên tướng), không nằm trong thẻ tướng.
   expect(ownership).toEqual({
     all:5,
-    team:1,
-    primary:[1,1,1],
-    alternative:[1],
-    texts:Array(5).fill('Ghi chú đã duyệt'),
+    insideCards:0,
+    main:[null,'A','B','C'].map(owner=>({owner,text:'Ghi chú đã duyệt'})),
+    alternative:[{owner:'D',text:'Ghi chú đã duyệt'}],
   });
 });
 
@@ -328,41 +332,6 @@ test('hostile source text is rendered as text and never executed',async({page,re
   expect(rendered.title).not.toBe('pwned');
   await expect(page).toHaveTitle(/^(?!pwned).*/);
 });
-test('a malformed source URL suppresses the anchor without breaking the render',async({page,request})=>{
-  const {index}=await publication(request);
-  const row=index.records[0];
-  await page.goto(recommendedPath(await routeHandles(request),row.sourceConfigId));
-  const result=await page.evaluate(async()=>{
-    const {recommendedTeamDetailContent}=await import('/js/recommended-reference-render.js');
-    const {validateReferenceSourceUrl,validateHttpSourceUrl}=await import('/js/recommended-reference-state.js');
-    const holder={displayNameVi:'A',tacticSlotsRaw:[],tacticSlotsVi:[],bookSlotsRaw:[],bookSlotsVi:[],statFocusRaw:'',roleRaw:''};
-    const host=document.createElement('div');
-    host.append(recommendedTeamDetailContent({
-      sourceConfigId:'malformed-probe',sourceUrl:'https://sgsdeck.com/recommended/%ZZ',
-      heroes:[holder],alternativeHoldersRaw:[],displayNotes:{schemaVersion:1,blocks:[]},legacyReferences:[],
-    }));
-    return {
-      cards:host.querySelectorAll('.detail-hero-card').length,
-      sourceAnchors:host.querySelectorAll('.detail-source a').length,
-      invalidSource:validateReferenceSourceUrl('recommended',{sourceConfigId:'malformed-probe'},'https://sgsdeck.com/recommended/%ZZ'),
-      fragmentSource:validateReferenceSourceUrl('recommended',{sourceConfigId:'malformed-probe'},'https://sgsdeck.com/recommended/malformed-probe#frag'),
-      exactlyValid:validateReferenceSourceUrl('recommended',{sourceConfigId:'malformed-probe'},'https://sgsdeck.com/recommended/malformed-probe'),
-      // Fragment của URL nguồn chung (Google Sheets) vẫn được giữ.
-      sheets:validateHttpSourceUrl('https://docs.google.com/spreadsheets/d/x/edit#gid=562317106'),
-      notice:host.textContent.includes('Liên kết nguồn không hợp lệ hoặc chưa có.'),
-    };
-  });
-  expect(result).toEqual({
-    cards:1,
-    sourceAnchors:0,
-    invalidSource:null,
-    fragmentSource:null,
-    exactlyValid:'https://sgsdeck.com/recommended/malformed-probe',
-    sheets:'https://docs.google.com/spreadsheets/d/x/edit#gid=562317106',
-    notice:true,
-  });
-});
-
 test('duplicate legacy content renders once while every reviewed locator remains visible',async({page,request})=>{
   const teams=await rawTeams(request);
   await page.goto(legacyPath(await routeHandles(request),teams[0].id));
@@ -930,7 +899,7 @@ test('Đội chuẩn and Đội khác details fetch only the display publication
   }
 });
 
-test('Khai hoang detail with a tall source panel keeps the title right under the back link',async({page,request})=>{
+test('Khai hoang detail keeps the title right under the back link',async({page,request})=>{
   await page.setViewportSize({width:1280,height:900});
   const gap=async()=>{
     await expect(page.locator('#team-detail-body')).toBeVisible();
@@ -943,6 +912,5 @@ test('Khai hoang detail with a tall source panel keeps the title right under the
   const recommendedGap=await gap();
   await page.goto('/khai-hoang/chu-thai-truong-phi-truong-xuan-hoa/');
   const khaiHoangGap=await gap();
-  expect(await page.locator('#team-detail-panel .detail-source-link').count()).toBeGreaterThan(1);
   expect(khaiHoangGap).toBeLessThanOrEqual(recommendedGap);
 });

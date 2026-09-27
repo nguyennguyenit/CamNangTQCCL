@@ -7,7 +7,6 @@ import {
   loadVerifiedLegacyTeams,
   loadVerifiedRecommendedManifest,
   setZhNameResolver,
-  validateReferenceSourceUrl,
 } from './recommended-reference-state.js';
 import { detailBadges, legacyOriginalDetailContent, recommendedTeamDetailContent } from './recommended-reference-render.js';
 import { safeReturnUrl, setTeamRouteHandlesFromJSON, teamDetailPath } from './team-detail-navigation.js';
@@ -42,16 +41,18 @@ export async function initTeamDetail({documentTarget = document} = {}) {
   const badges = documentTarget.querySelector('#team-detail-badges');
   const panel = documentTarget.querySelector('#team-detail-panel');
   const panelActions = documentTarget.querySelector('#team-detail-actions');
+  // Mã hồ sơ Tra cứu của chiến pháp / binh thư trong đội, tính lúc build (src/lib/team-detail-pages.ts).
+  const lookupLinks = JSON.parse(documentTarget.querySelector('#team-lookup-links')?.textContent || 'null');
   upgradeReturnLink(returnLink);
 
-  /** Đầu trang: huy hiệu phe/loại binh có dữ liệu (bỏ hẳn phần thiếu) và link nguồn đã kiểm scheme. */
-  const paintHeader = (record, labels, sources) => {
+  /** Đầu trang: huy hiệu phe/loại binh có dữ liệu (bỏ hẳn phần thiếu) và nút sao chép liên kết; không có link nguồn ngoài. */
+  const paintHeader = (record, labels) => {
     if (badges) {
       const nodes = detailBadges(record, labels);
       badges.replaceChildren(...nodes);
       badges.hidden = !nodes.length;
     }
-    if (panelActions) panelActions.replaceChildren(detailPanelActions({sources}));
+    if (panelActions) panelActions.replaceChildren(detailPanelActions());
     if (panel) panel.hidden = false;
   };
 
@@ -102,9 +103,8 @@ export async function initTeamDetail({documentTarget = document} = {}) {
       loadRecommendedDetailView(pin, {scopeKey, sourceConfigId}, name => fetchBytes(`/data/recommended/${name}`)),
       localizedLegacyTeams(),
     ]);
-    const source = validateReferenceSourceUrl('recommended', record, record.sourceUrl);
-    paintHeader(record, labels, source ? [{href: source}] : []);
-    showContent(recommendedTeamDetailContent(record, {legacyTeams, labels}));
+    paintHeader(record, labels);
+    showContent(recommendedTeamDetailContent(record, {legacyTeams, labels, lookupLinks}));
   }
 
   async function loadLegacy() {
@@ -113,7 +113,7 @@ export async function initTeamDetail({documentTarget = document} = {}) {
     if (matches.length !== 1) throw new Error(L('Không tìm thấy đúng một đội gốc với mã này.', '未找到与此编号唯一对应的原始阵容。'));
     const team = matches[0];
     if (!requestedVariantPresent) {
-      paintHeader(team, null, []);
+      paintHeader(team, null);
       showContent(legacyOriginalDetailContent(team));
       return;
     }
@@ -133,7 +133,7 @@ export async function initTeamDetail({documentTarget = document} = {}) {
       return;
     }
     const content = {...(admitted.legacyContent || team), notes: team.notes};
-    paintHeader(content, null, []);
+    paintHeader(content, null);
     showContent(legacyOriginalDetailContent(content, {variant: admitted}));
   }
 

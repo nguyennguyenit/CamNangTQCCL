@@ -40,6 +40,7 @@
         }
       ],
       "title": "Gia Cát Khác · SP Mã Siêu · Pháp Chính",
+      "commanderAfter": "Pháp Chính",
       "variants": [
         {
           "id": "cn-thoi-phong",
@@ -288,6 +289,7 @@
         }
       ],
       "title": "Khương Duy · Hạ Hầu Uyên · Gia Cát Khác",
+      "commanderAfter": "Gia Cát Khác",
       "guide": {
         "overview": "Một trong các đội khai hoang mạnh nhất khi không dùng Thái Sử Từ, Mã Siêu hoặc SP Lô Trực.",
         "ratings": {"land4": 8, "land5": 9, "land6": 8.5, "land7to8": 7, "transition": 8, "overall": 8.1},
@@ -1075,6 +1077,8 @@
         }
       ],
       "title": "Gia Cát Khác · Thái Sử Từ · Tả Từ",
+      "commanderBefore": "Gia Cát Khác",
+      "commanderAfter": "Gia Cát Khác",
       "guide": {
         "overview":"Đội khai hoang mạnh nhất cho người chơi không full đỏ.",
         "ratings":{"land4":9,"land5":10,"land6":10,"land7to8":8.5,"transition":8.5,"overall":9.2},

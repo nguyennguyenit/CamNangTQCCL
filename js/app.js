@@ -60,6 +60,21 @@ async function loadOptionalJSON(path, fallback) {
   }
 }
 
+/**
+ * Binh thư của Tra cứu: `books-dict` nằm ngoài lookup manifest nên byte phải khớp hash build pin trên
+ * chính trang (`#lookup-books-hash`); thiếu pin hoặc lệch hash thì nhóm Binh thư không nạp.
+ */
+async function loadLookupBooks(loadBytes) {
+  const pin = JSON.parse($('#lookup-books-hash')?.textContent ?? 'null');
+  if (typeof pin !== 'string') throw new Error('Thiếu pin binh thư');
+  const bytes = await loadBytes('data/books-dict.json');
+  const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', bytes));
+  if ('sha256:' + [...digest].map(byte => byte.toString(16).padStart(2, '0')).join('') !== pin) throw new Error('books-dict không khớp pin');
+  const books = JSON.parse(new TextDecoder('utf-8', {fatal: true}).decode(bytes));
+  if (!Array.isArray(books)) throw new Error('books-dict không hợp lệ');
+  return books;
+}
+
 /** URL trang mục sạch khóa theo dõi: `replaceState` để không thêm bước lịch sử. */
 function stripTrackingParams() {
   const url = new URL(location.href);
@@ -81,6 +96,8 @@ function scenarioText(scenario) {
   return /^[A-Z0-9]+(?:-[A-Z0-9]+)*$/.test(code) ? code : scenario.id;
 }
 const rulesetText = rule => (rule && currentLocale() === 'zh' ? rule.id : rule?.label || '');
+/** Mùa Cùng Tồn mới nhất (đang diễn ra): mặc định khi URL chưa chọn mùa và đứng đầu ô chọn mùa. */
+const COEXIST_LATEST_SCENARIO_ID = 'binh-dien-xuan-thu';
 
 const RETIRED_REFERENCE_PARAMS = ['score', 'category'];
 function stripRetiredReferenceParams(pageSection) {
@@ -168,7 +185,7 @@ async function main() {
         .map(team => [team.id, new Set((team.variants || []).map(variant => variant.id))]),
     );
     // Kho Tra cứu, tier (chỉ Gợi ý đội) và mô hình mùa độc lập nhau: tải song song, lỗi của từng phần tự xử lý.
-    const [lookupBundle, teamTier, seasonModel, rawNames] = await Promise.all([
+    const [lookupBundle, teamTier, seasonModel, rawNames, lookupBooks] = await Promise.all([
       needsLookup ? loadLookupBundle(loadBytes).catch(() => null) : null,
       pageSection === 'roster-recommend' ? loadOptionalJSON("/data/team-tier.json", []) : [],
       // Phạm vi mùa chỉ có payload ở 3 trang mục; thiếu hash là trang không dùng đến mô hình mùa.
@@ -178,6 +195,8 @@ async function main() {
         : null,
       // Bản Trung: bộ tra tên Hán gốc cho dữ liệu cũ chỉ lưu tên Hán-Việt; lỗi chỉ làm tên lùi về Hán-Việt.
       loadRawNameResolver(loadBytes).catch(() => null),
+      // Nhóm Binh thư chỉ có ở trang Tra cứu; lỗi chỉ làm nhóm này trống, các nhóm khác vẫn chạy.
+      pageSection === 'lookup' ? loadLookupBooks(loadBytes).catch(() => []) : [],
     ]);
     if (rawNames) setZhNameResolver(rawNames);
     if (needsLookup && !lookupBundle) {
@@ -214,18 +233,22 @@ async function main() {
       hasLegacy: id => teams?.some(team => team.id === id) ?? false,
     });
     if (migration) { location.replace(migration.target); return; }
-    // Cùng Tồn có đúng một điều khiển kịch bản (hàng nút của mục) và URL `scenario` sở hữu lựa chọn. URL chưa có
-    // `scenario` thì chọn kịch bản của nhóm trong `group` (link cũ đã chia sẻ), không thì kịch bản đầu tiên theo
-    // thứ tự registry; ghi bằng replaceState để không thêm bước lịch sử.
+    // Cùng Tồn có đúng một điều khiển mùa (ô chọn của mục) và URL `scenario` sở hữu lựa chọn. URL chưa có
+    // `scenario` thì chọn mùa của nhóm trong `group` (link cũ đã chia sẻ), không thì mùa mới nhất;
+    // ghi bằng replaceState để không thêm bước lịch sử.
     const reviewedScenarioIds = seasonModel
       ? seasonModel.data['season-registry'].filter(item => item.reviewStatus === 'reviewed').map(item => item.id)
       : [];
-    if (pageSection === 'coexist' && reviewedScenarioIds.length && !new URL(location.href).searchParams.has('scenario')) {
+    // Ô chọn mùa Cùng Tồn đặt mùa mới nhất lên đầu, các mùa còn lại giữ thứ tự registry.
+    const coexistScenarioIds = reviewedScenarioIds.includes(COEXIST_LATEST_SCENARIO_ID)
+      ? [COEXIST_LATEST_SCENARIO_ID, ...reviewedScenarioIds.filter(id => id !== COEXIST_LATEST_SCENARIO_ID)]
+      : reviewedScenarioIds;
+    if (pageSection === 'coexist' && coexistScenarioIds.length && !new URL(location.href).searchParams.has('scenario')) {
       const groupParam = new URL(location.href).searchParams.getAll('group');
       const linked = groupParam.length === 1
         ? seasonModel.data['season-content-links'].find(link => link.recordId === groupParam[0])?.scenarioId
         : null;
-      const scenario = reviewedScenarioIds.includes(linked) ? linked : reviewedScenarioIds[0];
+      const scenario = coexistScenarioIds.includes(linked) ? linked : coexistScenarioIds[0];
       history.replaceState(history.state, '', updateSeasonURL(location.href, {scenario}));
     }
     let browse = seasonModel ? readSeasonQuery(location.href, seasonModel).browse : null;
@@ -410,7 +433,7 @@ async function main() {
       if (meaningful) url.searchParams.set('view', canonical);
       history.replaceState(history.state, '', url);
     }
-    // Cùng Tồn không có select phạm vi: hàng nút kịch bản của mục là điều khiển duy nhất.
+    // Cùng Tồn không có select phạm vi: ô chọn mùa của mục là điều khiển duy nhất.
     const scopeSelects = seasonScoped && pageSection !== 'coexist';
     const scenarioSelect = scopeSelects ? el('select', {id:'season-scenario'}, [el('option',{value:''},L('Tất cả — tham khảo','全部 — 仅供参考')), ...reviewedScenarioIds.map(id => el('option',{value:id},scenarioText(seasonModel.data['season-registry'].find(scenario=>scenario.id===id))))]) : null;
     const rulesetSelect = scopeSelects ? el('select', {id:'season-ruleset', 'aria-label':L('Phiên bản luật','规则版本')}) : null;
@@ -446,8 +469,9 @@ async function main() {
         // `group` không hợp lệ (kể cả lặp khóa) được coi là "có yêu cầu": mục tự về nhóm đầu và bỏ khỏi URL.
         const groupParams = new URL(location.href).searchParams.getAll('group');
         coexistUI.update(groups, groupParams.length === 0 ? null : groupParams.length === 1 ? groupParams[0] : '', {
-          scenarios: reviewedScenarioIds,
+          scenarios: coexistScenarioIds,
           selected: browse?.scenarioId ?? null,
+          latest: coexistScenarioIds.includes(COEXIST_LATEST_SCENARIO_ID) ? COEXIST_LATEST_SCENARIO_ID : null,
         });
       }
       renderTeams();
@@ -506,7 +530,7 @@ async function main() {
     window.addEventListener('pageshow', event => { if (event.persisted) restoreReturnState(); });
     // Scroll mới nhất phải vào snapshot trước khi rời trang bằng paste/copy URL.
     window.addEventListener('pagehide', rememberReturn);
-    if (pageSection === 'lookup' && catalog) initUnifiedLookup({ heroes: heroesDict, tactics, catalog }, mount, {
+    if (pageSection === 'lookup' && catalog) initUnifiedLookup({ heroes: heroesDict, tactics, catalog, books: lookupBooks }, mount, {
       summary: {
         pin: recommendedPin,
         loadBytes: loadRecommendedBytes,
