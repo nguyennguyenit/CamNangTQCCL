@@ -11,14 +11,14 @@ export interface TurnstileResult {
 const SITEVERIFY = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
 /**
- * @param expectedHostname hostname site được phép (từ `ALLOWED_ORIGIN`); `null` khi
- *   origin là `*` (dev) thì chỉ dựa vào `success`.
+ * @param expectedHostnames hostname site được phép (host của từng origin trong
+ *   `ALLOWED_ORIGINS`); `null` khi cấu hình là `*` (dev) thì chỉ dựa vào `success`.
  */
 export async function verifyTurnstile(
   token: unknown,
   secret: string,
   ip: string,
-  expectedHostname: string | null,
+  expectedHostnames: readonly string[] | null,
   fetchImpl: typeof fetch = fetch,
 ): Promise<TurnstileResult> {
   if (typeof token !== "string" || !token.trim()) {
@@ -37,7 +37,7 @@ export async function verifyTurnstile(
   } catch {
     return { ok: false, message: "Lỗi xác thực, thử lại" };
   }
-  if (!data?.success || (expectedHostname !== null && data.hostname !== expectedHostname)) {
+  if (!data?.success || (expectedHostnames !== null && !expectedHostnames.includes(data.hostname))) {
     return { ok: false, message: "Xác thực chống bot thất bại" };
   }
   return { ok: true };

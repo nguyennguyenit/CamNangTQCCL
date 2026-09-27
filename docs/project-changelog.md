@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-09-27 (Domain chính `https://tqccl.com`)
+
+### Changed
+
+- Vision Worker: `ALLOWED_ORIGIN` (một origin) thay bằng `ALLOWED_ORIGINS` (danh sách exact, phân cách dấu phẩy) = `https://tqccl.com,https://www.tqccl.com,https://tqccl.pages.dev`, nên cả ba host đều soi ảnh được trong và sau khi chuyển domain (trước đó `tqccl.com`/`www` nhận 403). CORS echo đúng origin gửi lên kèm `Vary: Origin`, origin lạ không nhận `Access-Control-Allow-Origin`; `hostname` siteverify phải là host của một origin trong danh sách. Thiếu/rỗng biến → `503` (trước đây mở thành `*`). Cần deploy lại Worker và khai đủ ba hostname trong widget Turnstile.
+
 ## 2026-09-27 (Đội chuẩn / Đội khác: dựng danh sách theo lượt; CI thử lại e2e một lần)
 
 ### Fixed

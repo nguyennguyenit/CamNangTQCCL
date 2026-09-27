@@ -2,7 +2,8 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import worker from "../src/index";
 import type { Env } from "../src/config";
 
-const ORIGIN = "https://tqccl.pages.dev";
+const ORIGIN = "https://tqccl.com";
+const ORIGINS = ["https://tqccl.com", "https://www.tqccl.com", "https://tqccl.pages.dev"];
 const SITEVERIFY = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 const MODEL = "https://model.test/v1/chat/completions";
 const PNG = Buffer.from(
@@ -50,7 +51,7 @@ function env(kv: FakeKV, extra: Partial<Env> = {}): Env {
     QWEN_API_KEY: "qwen-key",
     TURNSTILE_SECRET: "turnstile-secret",
     IP_HASH_SECRET: "ip-hash-secret-for-tests",
-    ALLOWED_ORIGIN: ORIGIN,
+    ALLOWED_ORIGINS: ORIGINS.join(","),
     MODEL_ENDPOINT: MODEL,
     ...extra,
   };
@@ -65,7 +66,7 @@ function stubFetch({ siteverify, model }: Upstream = {}): string[] {
     const url = String(input);
     calls.push(url);
     if (url === SITEVERIFY) {
-      return siteverify ? siteverify() : Response.json({ success: true, hostname: "tqccl.pages.dev" });
+      return siteverify ? siteverify() : Response.json({ success: true, hostname: "tqccl.com" });
     }
     if (url === MODEL) {
       return model
@@ -196,4 +197,70 @@ describe("POST /analyze xác thực Turnstile", () => {
     const response = await worker.fetch(analyzeRequest(), env(fakeKV()));
     expect(await expectJson(response, 403)).toEqual({ error: "Xác thực chống bot thất bại" });
   });
+});
+
+describe("POST /analyze với nhiều origin (ALLOWED_ORIGINS)", () => {
+  for (const origin of ORIGINS) {
+    it(`${origin}: preflight và POST đều nhận, CORS trả đúng origin gửi lên`, async () => {
+      const hostname = new URL(origin).hostname;
+      stubFetch({ siteverify: () => Response.json({ success: true, hostname }) });
+      const preflight = await worker.fetch(
+        new Request("https://worker.test/analyze", { method: "OPTIONS", headers: { Origin: origin } }),
+        env(fakeKV()),
+      );
+      expect(preflight.status).toBe(204);
+      expect(preflight.headers.get("Access-Control-Allow-Origin")).toBe(origin);
+      expect(preflight.headers.get("Vary")).toBe("Origin");
+      const response = await worker.fetch(analyzeRequest(undefined, { Origin: origin }), env(fakeKV()));
+      expect(response.status).toBe(200);
+      expect(response.headers.get("Access-Control-Allow-Origin")).toBe(origin);
+      expect(response.headers.get("Vary")).toBe("Origin");
+    });
+  }
+
+  it("origin lạ -> 403, không cấp CORS cho origin đó, không gọi siteverify", async () => {
+    const calls = stubFetch();
+    const kv = fakeKV();
+    const response = await worker.fetch(analyzeRequest(undefined, { Origin: "https://evil.example" }), env(kv));
+    expect(response.status).toBe(403);
+    expect(response.headers.get("Access-Control-Allow-Origin")).toBeNull();
+    expect(response.headers.get("Vary")).toBe("Origin");
+    expect(calls).toEqual([]);
+    expect(kv.puts).toEqual([]);
+  });
+
+  it("preflight từ origin lạ không nhận Access-Control-Allow-Origin", async () => {
+    const response = await worker.fetch(
+      new Request("https://worker.test/analyze", { method: "OPTIONS", headers: { Origin: "https://tqccl.com.evil.example" } }),
+      env(fakeKV()),
+    );
+    expect(response.headers.get("Access-Control-Allow-Origin")).toBeNull();
+    expect(response.headers.get("Vary")).toBe("Origin");
+  });
+
+  it("token cấp cho host khác trong danh sách vẫn qua (đang chuyển domain)", async () => {
+    stubFetch({ siteverify: () => Response.json({ success: true, hostname: "tqccl.pages.dev" }) });
+    const response = await worker.fetch(analyzeRequest(), env(fakeKV()));
+    expect(await expectJson(response, 200)).toEqual({ heroes: [expect.objectContaining({ nameCn: "关羽" })] });
+  });
+
+  it("token cấp cho host ngoài danh sách -> 403", async () => {
+    stubFetch({ siteverify: () => Response.json({ success: true, hostname: "preview.tqccl.pages.dev" }) });
+    const response = await worker.fetch(analyzeRequest(), env(fakeKV()));
+    expect(await expectJson(response, 403)).toEqual({ error: "Xác thực chống bot thất bại" });
+  });
+
+  for (const value of [undefined, "", " , "]) {
+    it(`ALLOWED_ORIGINS=${JSON.stringify(value)} -> 503, không đụng KV, siteverify hay model`, async () => {
+      const calls = stubFetch();
+      const kv = fakeKV();
+      const response = await worker.fetch(analyzeRequest(), env(kv, { ALLOWED_ORIGINS: value }));
+      expect(response.status).toBe(503);
+      expect(await response.json()).toEqual({ error: "Dịch vụ soi ảnh chưa được cấu hình" });
+      expect(response.headers.get("Access-Control-Allow-Origin")).toBeNull();
+      expect(kv.gets).toEqual([]);
+      expect(kv.puts).toEqual([]);
+      expect(calls).toEqual([]);
+    });
+  }
 });

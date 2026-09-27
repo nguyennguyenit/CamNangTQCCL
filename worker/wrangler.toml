@@ -12,8 +12,9 @@ binding = "RL"
 id = "6fff7d73c885457dbb71756de99e66fa"
 
 [vars]
-# Domain site (CORS) — Cloudflare Pages (repo private nên không dùng GitHub Pages).
-ALLOWED_ORIGIN = "https://tqccl.pages.dev"
+# Origin exact của site (CORS + hostname Turnstile), phân cách dấu phẩy. tqccl.com là domain
+# chính; www và pages.dev vẫn nhận trong lúc chuyển domain (các host này tự chuyển về tqccl.com).
+ALLOWED_ORIGINS = "https://tqccl.com,https://www.tqccl.com,https://tqccl.pages.dev"
 # Qwen DashScope — chọn region: "intl" (Singapore, có free tier) | "cn" (mainland).
 # Key hiện dùng tạo từ console Singapore/free quota -> REGION="intl".
 # Để trống MODEL_ENDPOINT để dùng endpoint DashScope Model Studio theo REGION.

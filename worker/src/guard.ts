@@ -70,18 +70,24 @@ export function validateImage(image: unknown, maxBytes: number): GuardOk | Guard
   return { ok: true, mime: match.mime, dataUri: `data:${match.mime};base64,${b64}` };
 }
 
-/** Header CORS giới hạn theo origin site. */
-export function corsHeaders(allowedOrigin: string): Record<string, string> {
-  return {
-    "Access-Control-Allow-Origin": allowedOrigin,
+/**
+ * Header CORS cho một request: chỉ trả `Access-Control-Allow-Origin` khi origin gửi lên
+ * nằm trong danh sách (echo đúng origin đó) hoặc cấu hình là `"*"` (dev). `Vary: Origin`
+ * luôn có để cache không đem header của origin này trả cho origin khác.
+ */
+export function corsHeaders(allowedOrigins: string[] | "*", requestOrigin: string | null): Record<string, string> {
+  const headers: Record<string, string> = {
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
     "Access-Control-Max-Age": "86400",
     Vary: "Origin",
   };
+  if (allowedOrigins === "*") headers["Access-Control-Allow-Origin"] = "*";
+  else if (requestOrigin && allowedOrigins.includes(requestOrigin)) headers["Access-Control-Allow-Origin"] = requestOrigin;
+  return headers;
 }
 
 /** Phản hồi OPTIONS preflight (H4). */
-export function preflight(allowedOrigin: string): Response {
-  return new Response(null, { status: 204, headers: corsHeaders(allowedOrigin) });
+export function preflight(cors: Record<string, string>): Response {
+  return new Response(null, { status: 204, headers: cors });
 }

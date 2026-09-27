@@ -132,7 +132,7 @@ Trước deploy:
 - xác nhận `js/config.js` trỏ đúng Worker URL và Turnstile public site key;
 - chạy local HTTP/routed-HTTPS exposure probe và full gate;
 - xác nhận `.github/workflows/mcp-worker.yml` là workflow CI duy nhất và full `npm run check:repository` credential-free đã đạt; workflow này không deploy Pages;
-- xác nhận `worker/wrangler.toml` `ALLOWED_ORIGIN` khớp exact Pages origin.
+- xác nhận `worker/wrangler.toml` `ALLOWED_ORIGINS` chứa đủ ba origin exact của site (`https://tqccl.com`, `https://www.tqccl.com`, `https://tqccl.pages.dev`).
 
 ### Preview, promotion và canary
 
@@ -143,7 +143,7 @@ Không thực hiện các bước sau trong build/local verification. Khi releas
 3. Kiểm tra Pages settings khớp root/build/output/Node ở trên.
 4. Trên preview, xác nhận `/`, `/404.html`, vài route thuộc cả ba họ `/doi-chuan/…`, `/doi-khac/…`, `/khai-hoang/…`, JS/CSS và JSON public trả đúng artifact. Kiểm `/robots.txt` khớp byte source, trỏ đúng `Sitemap` production origin; `/sitemap.xml` trả MIME XML với đúng tập URL, không `/teams/…` hay trùng. ID/handle ngoài catalog, `/teams/…` cũ và private path phải trả 404 tĩnh, không shell root; status/body thật chỉ chứng minh trên preview.
 5. Quan sát `Cache-Control` thật cho shell, trang chi tiết đội, `404.html`, JS/CSS/JSON và xác nhận `_headers` không được phục vụ như asset.
-6. Preview origin khác production nên Vision POST bị Worker từ chối theo exact `ALLOWED_ORIGIN`; không nới origin để làm preview canary.
+6. Preview origin khác production nên Vision POST bị Worker từ chối theo danh sách exact `ALLOWED_ORIGINS`; không nới origin để làm preview canary.
 7. Sau phê duyệt promotion, kiểm tra production-origin `POST /analyze` được phép, origin lạ bị từ chối, và `OPTIONS` trả CORS headers đã cấu hình. Preflight chỉ là CORS transport, không xác thực caller.
 8. Giữ production origin `https://tqccl.pages.dev`, nên origin của localStorage production không đổi; preview có storage origin riêng.
 9. Kiểm tra client mới và client đã cache đều nhận cùng deployment sau revalidation. Chỉ ghi facts vào Deployment Record sau khi có bằng chứng thực.
@@ -195,7 +195,7 @@ npm run dev
 
 Commit trong `worker/wrangler.toml`:
 
-- `ALLOWED_ORIGIN`: exact production origin; hostname của origin này cũng phải trùng `hostname` siteverify trả về (widget Turnstile cấu hình cho đúng hostname Pages). Để `*` (chỉ dev) thì Worker bỏ kiểm hostname.
+- `ALLOWED_ORIGINS`: danh sách origin exact phân cách dấu phẩy (`https://tqccl.com,https://www.tqccl.com,https://tqccl.pages.dev`). CORS echo origin khớp kèm `Vary: Origin`; `hostname` siteverify trả về phải là host của một origin trong danh sách (widget Turnstile phải khai đủ các hostname đó). Thiếu/rỗng → mọi `POST /analyze` trả `503`; để `*` (chỉ dev) thì Worker bỏ kiểm origin và hostname.
 - `REGION`, `MODEL_ID`, tùy chọn `MODEL_ENDPOINT`.
 - `FEATURE_ENABLED` kill-switch.
 - `RL_PER_HOUR`, `DAILY_CAP`, `MONTHLY_CAP`, `MAX_IMAGE_BYTES`.
@@ -262,10 +262,10 @@ Preflight:
 ```bash
 curl -i -X OPTIONS \
   https://tqccl-vision-proxy.nguyennlt-ncc.workers.dev/analyze \
-  -H 'Origin: https://tqccl.pages.dev'
+  -H 'Origin: https://tqccl.com'
 ```
 
-Kỳ vọng `204` và `access-control-allow-origin: https://tqccl.pages.dev`.
+Kỳ vọng `204`, `access-control-allow-origin: https://tqccl.com` và `vary: Origin`; lặp lại với `https://www.tqccl.com` và `https://tqccl.pages.dev` (header echo đúng origin gửi lên), còn origin lạ không nhận `access-control-allow-origin`.
 
 Smoke checklist sau promotion được ủy quyền:
 

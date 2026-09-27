@@ -2,7 +2,8 @@
 
 Proxy giữ API key Qwen + guardrail cho các công cụ đọc ảnh (**Soi đội từ ảnh**,
 **Gợi ý đội từ kho**). Hạ tầng **tách biệt** site tĩnh: site chạy trên Cloudflare
-Pages `https://tqccl.pages.dev` (`wrangler.toml` `ALLOWED_ORIGIN`), Worker deploy
+Pages với domain chính `https://tqccl.com` (`wrangler.toml` `ALLOWED_ORIGINS` nhận cả
+`https://www.tqccl.com` và `https://tqccl.pages.dev`), Worker deploy
 riêng bằng `wrangler`. Site gọi `POST /analyze`.
 
 ## Kiến trúc
@@ -44,9 +45,9 @@ KHÔNG lưu ảnh. Log tối thiểu (đếm, không nội dung). IP chỉ lưu 
 
 1. **Cloudflare account** + cài wrangler: `npm i -g wrangler` rồi `wrangler login`.
 2. **KV namespace**: `wrangler kv namespace create RL` → dán `id` vào `wrangler.toml` (`[[kv_namespaces]] id`).
-3. **Turnstile** (Cloudflare dashboard → Turnstile): tạo site với hostname của site Pages → lấy **site-key** (public, để vào `js/config.js`) + **secret**.
+3. **Turnstile** (Cloudflare dashboard → Turnstile): tạo site với đủ hostname của site (`tqccl.com`, `www.tqccl.com`, `tqccl.pages.dev`) → lấy **site-key** (public, để vào `js/config.js`) + **secret**.
 4. **Qwen key**: tạo trên Alibaba Model Studio / DashScope → API key.
-5. **Vars**: `wrangler.toml` → `ALLOWED_ORIGIN` = origin site thật (`https://tqccl.pages.dev`); hostname của origin này cũng là hostname Turnstile phải khớp. Chốt `REGION`/`MODEL_ID` (xem §Region).
+5. **Vars**: `wrangler.toml` → `ALLOWED_ORIGINS` = các origin exact của site, phân cách dấu phẩy (`https://tqccl.com,https://www.tqccl.com,https://tqccl.pages.dev`); CORS echo đúng origin gửi lên kèm `Vary: Origin`, và `hostname` siteverify trả về phải là host của một origin trong danh sách. Thiếu/rỗng → `/analyze` trả `503` (fail-closed); `*` chỉ dùng khi dev. Chốt `REGION`/`MODEL_ID` (xem §Region).
 6. **Secrets** (KHÔNG commit), cả ba bắt buộc:
    ```bash
    wrangler secret put QWEN_API_KEY
@@ -103,7 +104,7 @@ Mặc định `qwen3.7-plus` theo free quota Singapore hiện dùng. **Xác minh
 - **KHÔNG gắn thẻ thanh toán** vào account Qwen, hoặc đặt budget alert nếu hỗ trợ. Đây là **backstop cứng thật**.
 - `MONTHLY_CAP` auto-disable khi chạm. Theo dõi KV counter `m:YYYY-MM`.
 - ⚠️ **Cap là best-effort, KHÔNG cứng (H1)**: counter KV không atomic (eventual consistency) → burst song song có thể vượt nhẹ. Đặt `MONTHLY_CAP` thấp hơn ngân sách thật (headroom). Cần giới hạn cứng tuyệt đối → dùng Durable Object cho counter tháng.
-- **Turnstile là rào chống lạm dụng CHÍNH** cho client không phải browser (CORS chỉ chặn browser). BẮT BUỘC set `ALLOWED_ORIGIN` đúng URL site (đừng để `*` ở production) + đảm bảo Turnstile secret/sitekey khớp.
+- **Turnstile là rào chống lạm dụng CHÍNH** cho client không phải browser (CORS chỉ chặn browser). BẮT BUỘC set `ALLOWED_ORIGINS` đúng các origin site (đừng để `*` ở production) + đảm bảo Turnstile secret/sitekey khớp.
 - Xoay API key định kỳ.
 
 ## Disclaimer (Phase 4, M3)

@@ -10,7 +10,9 @@ export interface Env {
   // KV (rate-limit + đếm cap).
   RL: KVNamespace;
   // Vars (wrangler.toml) — có thể override.
-  ALLOWED_ORIGIN?: string; // origin site, vd https://tqccl.pages.dev
+  // Các origin exact của site, phân cách dấu phẩy (vd "https://tqccl.com,https://www.tqccl.com").
+  // Thiếu/rỗng -> danh sách rỗng: /analyze trả 503 (fail-closed). "*" chỉ dùng khi dev.
+  ALLOWED_ORIGINS?: string;
   REGION?: string; // "intl" (Singapore, mặc định) | "cn" (mainland)
   MODEL_ENDPOINT?: string; // set để override hẳn endpoint (ưu tiên hơn REGION)
   MODEL_ID?: string;
@@ -22,7 +24,8 @@ export interface Env {
 }
 
 export interface Config {
-  allowedOrigin: string;
+  /** Origin exact được phép; `"*"` = dev (mọi origin, không kiểm hostname Turnstile). */
+  allowedOrigins: string[] | "*";
   modelEndpoint: string;
   modelId: string;
   featureEnabled: boolean;
@@ -49,9 +52,15 @@ export function resolveEndpoint(env: Env): string {
   return REGION_ENDPOINT[region] || REGION_ENDPOINT.intl;
 }
 
+export function parseAllowedOrigins(value: string | undefined): string[] | "*" {
+  const raw = (value ?? "").trim();
+  if (raw === "*") return "*";
+  return raw.split(",").map((origin) => origin.trim()).filter(Boolean);
+}
+
 export function loadConfig(env: Env): Config {
   return {
-    allowedOrigin: env.ALLOWED_ORIGIN || "*",
+    allowedOrigins: parseAllowedOrigins(env.ALLOWED_ORIGINS),
     // Qwen DashScope — region chọn qua REGION (intl mặc định: có free tier + data Singapore).
     modelEndpoint: resolveEndpoint(env),
     modelId: env.MODEL_ID || "qwen3.7-plus",

@@ -79,12 +79,21 @@ describe("validateImage (H4 input guard)", () => {
 });
 
 describe("CORS", () => {
-  it("preflight 204 + header origin", () => {
-    const res = preflight("https://x.github.io");
-    expect(res.status).toBe(204);
-    expect(res.headers.get("Access-Control-Allow-Origin")).toBe("https://x.github.io");
+  const allowed = ["https://tqccl.com", "https://www.tqccl.com"];
+  it("echo đúng origin gửi lên khi nằm trong danh sách", () => {
+    expect(corsHeaders(allowed, "https://www.tqccl.com")["Access-Control-Allow-Origin"]).toBe("https://www.tqccl.com");
   });
-  it("corsHeaders giới hạn methods", () => {
-    expect(corsHeaders("*")["Access-Control-Allow-Methods"]).toContain("POST");
+  it("origin lạ, gần giống hoặc thiếu Origin -> không có Access-Control-Allow-Origin", () => {
+    for (const origin of ["https://evil.example", "https://tqccl.com.evil.example", "http://tqccl.com", null]) {
+      expect(corsHeaders(allowed, origin)).not.toHaveProperty("Access-Control-Allow-Origin");
+    }
+  });
+  it("'*' (dev) trả '*'", () => {
+    expect(corsHeaders("*", "http://localhost:4321")["Access-Control-Allow-Origin"]).toBe("*");
+  });
+  it("preflight 204 mang header đã tính", () => {
+    const res = preflight(corsHeaders(allowed, "https://tqccl.com"));
+    expect(res.status).toBe(204);
+    expect(res.headers.get("Access-Control-Allow-Origin")).toBe("https://tqccl.com");
   });
 });
