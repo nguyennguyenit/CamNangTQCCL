@@ -12,8 +12,8 @@
     "notes": {
       "approvedDisplaySlots": 11,
       "blocks": 1967,
-      "concreteInventorySha256": "71ac9352a689d37a6e049fc969c520d6f2e87b4b609314fe4beb2813ac9eabec",
-      "concreteLocationCount": 56672,
+      "concreteInventorySha256": "73685f76884b09fe0f6a19f29ed52c704bd22a16e0a6d19d26d6bc28256f03a5",
+      "concreteLocationCount": 56674,
       "hanBlocks": 1928,
       "lookupReviewObligations": 3503,
       "siteLedgerObligations": 2086,
@@ -75,7 +75,7 @@
       "hột": "red-copy count"
     }
   },
-  "policyVersion": "site-vi-260927-worker",
+  "policyVersion": "site-vi-260927-progressive-list",
   "routeFamilies": [
     {
       "entrypoints": [
@@ -751,7 +751,7 @@
     "js/legacy-routes.js": "f9d766d671613275d8e0fe1a263d1cb6e1a6288d47d32f2f172531d6fdee0668",
     "js/lookup-data.js": "d15b64ac8419453c2d49874da5f07c4db303f59091d512af80aa8b16158ffdd5",
     "js/lookup-detail.js": "4a29c5db0d506cf2784c04d3306b5a5e1f773c32b3c1111c92dd69ed735bc659",
-    "js/recommended-reference-render.js": "7817d6c33802da92ef03a9b1097f0f5c91cc26e5125932a5d517567efddeecc5",
+    "js/recommended-reference-render.js": "b6635504ac842d001afa9479d3c5b45c13b6a940edac5a415d8582b7ed72d6d2",
     "js/recommended-reference-state.js": "807a32681c04793f47acdf327ed342145bb18c53bc1ffa1aeb7ac36d0f198bcd",
     "js/recruit-tracker-store.js": "19fe4dba7c8da644b1e3481f4ddef0adc4e48c5ae04fea3e88f7a0ef50c909d9",
     "js/recruit-tracker.js": "cdcd434e7798f9d143ec697ec473d6b2fcb6c665d4b5a664c4415774c3d934be",
@@ -761,9 +761,9 @@
     "js/roster-scan-state.js": "d93f94758c68557802b3ea682aeabe3c0f8bf33b5abf3635efbe8c8148b9788c",
     "js/site-chrome.js": "f0d56b54055b9734bf6ecba49108c52c795aa7b4c5bba3375f04bc388d7e3a14",
     "js/site-nav.js": "768e351063f7fcf8a093ef279686406677f5acc6e92455665f644d28964abc41",
-    "js/team-detail-navigation.js": "7cd09631129c123fbfea2737154d352458c2b3d066f49302c1e8d3ab9a70b120",
+    "js/team-detail-navigation.js": "60ce3592dd09ce73c807b7f0cbb3eafeca4292e90950d935db7f12d5b71be558",
     "js/team-detail.js": "e96a1ebc5bf392316dab4664269aa1711422eb165fa39b2650d2011803348be8",
-    "js/team-filter-section.js": "252f803094cd55f7e38e509b97be9e82a600aa926bda3a94849a9ec0734a788c",
+    "js/team-filter-section.js": "45d4987a18d8e7df8d35eb9b30a6456ea45c391d680ae9cb5f3fdfe0b550b496",
     "js/unified-lookup.js": "2088f63898b9c0073d202f1957bec8ca3408d906e73b56e0f5117679c9c6847d",
     "js/website-display.js": "b663990ea9006206d4404cbc505df4ddc4f53c84fd6f6e871c109ca250990908",
     "pipeline/lookup-identity.json": "cff3228ddcfd4be39fa7c0ad3746d18a6495fa11fc6d8e4480795181f82f38b1",

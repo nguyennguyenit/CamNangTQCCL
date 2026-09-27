@@ -564,6 +564,8 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:recommended/facet-source", "label", "source:'Nguồn'", "js/team-filter-section.js", "createRecommendedSection", "static", "authored-vi"),
     ("ui:recommended/search-placeholder", "placeholder", "'Tìm tướng, chiến pháp, binh thư…'", "js/team-filter-section.js", "createRecommendedSection", "static", "authored-vi"),
     ("ui:recommended/empty-match", "empty", "'Không có đội khớp bộ lọc.'", "js/team-filter-section.js", "createRecommendedSection", "empty", "authored-vi"),
+    ("ui:recommended/more", "action", "'Xem thêm'", "js/team-filter-section.js", "createRecommendedSection", "static", "authored-vi"),
+    ("ui:recommended/more-note", "note", "'Mỗi lượt hiện 60 đội'", "js/team-filter-section.js", "createRecommendedSection", "static", "authored-vi"),
     ("ui:recommended/table-team", "heading", "'Đội'", "js/recommended-reference-render.js", "recommendedTeamTable", "static", "authored-vi"),
     ("ui:recommended/table-main", "heading", "'Chủ tướng'", "js/recommended-reference-render.js", "recommendedTeamTable", "static", "authored-vi"),
     ("ui:recommended/table-vice1", "heading", "'Phó 1'", "js/recommended-reference-render.js", "recommendedTeamTable", "static", "authored-vi"),

@@ -310,15 +310,17 @@ export function isNativeNavigationClick(event) {
     && !event.defaultPrevented;
 }
 
+const safeRecordKey=item=>typeof item === 'string' && item.length > 0 && item.length <= 128 && !/[\u0000-\u001f]/.test(item);
+
+/** `target` là khóa thẻ đã mở chi tiết: danh sách dựng tới thẻ đó và trả focus về nó khi quay lại. */
 function safeDisclosures(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
   const result={};
   if (typeof value.filters === 'boolean') result.filters=value.filters;
   if (Array.isArray(value.alternatives)) {
-    result.alternatives=[...new Set(value.alternatives.filter(item=>
-      typeof item === 'string' && item.length > 0 && item.length <= 128 && !/[\u0000-\u001f]/.test(item),
-    ))].slice(0,12);
+    result.alternatives=[...new Set(value.alternatives.filter(safeRecordKey))].slice(0,12);
   }
+  if (safeRecordKey(value.target)) result.target=value.target;
   return result;
 }
 

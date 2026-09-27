@@ -1,5 +1,18 @@
 # Project Changelog
 
+## 2026-09-27 (Đội chuẩn / Đội khác: dựng danh sách theo lượt; CI thử lại e2e một lần)
+
+### Fixed
+
+- `/doi-chuan/?season=all` dựng cả 1366 thẻ một lần: 3,6 s tới lúc ô `Mùa nguồn` hiện trên máy dev, 23 s khi CPU chậm 6 lần, nên CI (chậm ~5 lần) đỏ `?season=all keeps every Đội chuẩn season…`. Danh sách Đội chuẩn và Đội khác (Thẻ, Thẻ gọn, Bảng) nay hiện 60 đội đầu và nút `Xem thêm` nối 60 đội kế (cùng mẫu Tra cứu: chỉ nối lượt mới, focus đội đầu của lượt mới, số đếm `n / m đội` vẫn là cả danh sách); đổi mùa/lọc/từ khóa/kiểu hiển thị về lượt đầu. Sau sửa ô `Mùa nguồn` hiện sau ~0,15 s (CPU x1) / ~0,7 s (x6).
+- Quay lại từ trang chi tiết: snapshot trở về ghi thêm khóa thẻ đã mở (`disclosures.target`), danh sách dựng đủ lượt tới thẻ đó rồi trả focus về link của nó (mốc cuộn khôi phục như trước).
+
+### Changed
+
+- `playwright.config.mjs`: `retries` = 1 khi `CI` được đặt (0 ở máy dev); reporter `line` liệt kê test "flaky" ở phần tổng kết.
+- Test e2e P06-B1 (51 lần tải trang chi tiết trong một test) đánh dấu `test.slow()`: ở CPU chậm 6 lần vượt ngân sách 30 s mặc định (4/5 lần đỏ), sau đánh dấu 5/5 xanh.
+- Chữ UI mới `Xem thêm`, `Mỗi lượt hiện 60 đội` khai `authored-vi` (`ui:recommended/more`, `ui:recommended/more-note`); policy `site-vi-260927-progressive-list`, generation Recommended `26f3dbd7…` (thay `0cb3ba92…`, đã prune), `pipeline/team-route-handles.json` pin lại.
+
 ## 2026-09-27 (Soi đội từ ảnh: căn giữa thẻ chọn ảnh)
 
 ### Fixed

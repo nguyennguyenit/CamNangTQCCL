@@ -285,12 +285,15 @@ const detailHrefFor=(href,children,cls)=>href
   ? el('a',{class:cls,href,dataset:{teamDetailLink:''}},children)
   : el('span',{class:cls},children);
 
+/** Khóa danh tính của một đội trong danh sách (`data-reference-key` của thẻ và hàng bảng). */
+export const referenceRowKey=row=>row.sourceConfigId || row.legacyVariantId || row.legacyTeamId || '';
+
 /** Title và CTA là link thật tới cùng href; click có modifier vẫn là hành vi trình duyệt.
  *  `data-faction-code` tô gáy thẻ theo màu phe (trang trí; tên phe vẫn là chữ trong dòng meta). */
 export function recommendedTeamCard(row,{onTag,href,labels}={}) {
   const name=rowDisplayName(row);
   const fear=fearLine(row);
-  return el('article',{class:'team-card reference-team-card',dataset:{referenceKey:row.sourceConfigId || row.legacyVariantId || row.legacyTeamId || '',sourceConfigId:row.sourceConfigId || '',legacyTeamId:row.legacyTeamId || '',faction:row.factionRaw || row.faction || '',factionCode:factionOf(row,labels).code}},[
+  return el('article',{class:'team-card reference-team-card',dataset:{referenceKey:referenceRowKey(row),sourceConfigId:row.sourceConfigId || '',legacyTeamId:row.legacyTeamId || '',faction:row.factionRaw || row.faction || '',factionCode:factionOf(row,labels).code}},[
     el('header',{class:'reference-card-head'},[
       el('div',{class:'reference-card-title'},[
         el('h3',{class:'team-name'},href ? el('a',{href,dataset:{teamDetailLink:''}},name) : name),
@@ -333,22 +336,24 @@ export function recommendedTeamTable(rows,{hrefFor,labels}={}) {
     el('th',{scope:'col'},'Phó 2'),
     el('th',{scope:'col',class:'reference-table-score-head'},'Điểm'),
   ]);
-  const body=rows.map(row=>{
-    const href=hrefFor?.(row);
-    const name=rowDisplayName(row);
-    const holders=(row.heroes || row.holders || []).slice(0,3);
-    const lineup=holders.filter(holder=>!isSourceEmpty(holder)).map(holder=>text(holder.displayNameVi || holder.nameRaw)).filter(Boolean).join(' · ');
-    return el('tr',{dataset:{referenceKey:row.sourceConfigId || row.legacyVariantId || row.legacyTeamId || ''}},[
-      el('th',{scope:'row',class:'reference-table-team'},[
-        detailHrefFor(href,name,'reference-table-name'),
-        metaLine(row,labels),
-        el('span',{class:'reference-table-lineup'},lineup),
-      ]),
-      ...Array.from({length:3},(_,index)=>tableHeroCell(holders[index])),
-      tableCell(row.value != null ? String(row.value) : '—','reference-table-score'),
-    ]);
-  });
-  return el('table',{class:'reference-table'},[el('thead',{},head),el('tbody',{},body)]);
+  return el('table',{class:'reference-table'},[el('thead',{},head),el('tbody',{},rows.map(row=>recommendedTeamTableRow(row,{hrefFor,labels})))]);
+}
+
+/** Một hàng của bảng; danh sách dựng theo lượt nối thêm hàng vào `tbody` sẵn có. */
+export function recommendedTeamTableRow(row,{hrefFor,labels}={}) {
+  const href=hrefFor?.(row);
+  const name=rowDisplayName(row);
+  const holders=(row.heroes || row.holders || []).slice(0,3);
+  const lineup=holders.filter(holder=>!isSourceEmpty(holder)).map(holder=>text(holder.displayNameVi || holder.nameRaw)).filter(Boolean).join(' · ');
+  return el('tr',{dataset:{referenceKey:referenceRowKey(row)}},[
+    el('th',{scope:'row',class:'reference-table-team'},[
+      detailHrefFor(href,name,'reference-table-name'),
+      metaLine(row,labels),
+      el('span',{class:'reference-table-lineup'},lineup),
+    ]),
+    ...Array.from({length:3},(_,index)=>tableHeroCell(holders[index])),
+    tableCell(row.value != null ? String(row.value) : '—','reference-table-score'),
+  ]);
 }
 
 function notesByOwner(record) {
