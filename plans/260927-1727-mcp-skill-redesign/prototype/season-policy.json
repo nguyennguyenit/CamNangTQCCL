@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "purpose": "design-example-not-active-policy",
+  "selectionOrder": [
+    "explicit-current-request",
+    "confirmed-session-same-account",
+    "confirmed-profile-same-account",
+    "latest-project-policy"
+  ],
+  "defaultSelector": "latest",
+  "initialPolicy": {
+    "deploymentScope": "VN",
+    "latestScenarioId": "binh-dien-xuan-thu",
+    "labelVi": "Binh Diễn Xuân Thu",
+    "provenance": {
+      "kind": "project-owner-decision",
+      "recordedAt": "2026-09-27",
+      "externalReleaseScheduleVerified": false
+    },
+    "reviewAfter": null,
+    "activationStatus": "design-only"
+  },
+  "onNewTask": "resolve-latest-if-not-explicitly-pinned",
+  "duringTask": "pin-resolved-scenario-and-policy-version",
+  "defaultSelectionStatus": "assumed",
+  "onUnsupportedScope": "scope-unavailable",
+  "onExpiredPolicy": "report-stale-and-verify",
+  "allowImplicitLegacyFallback": false
+}
