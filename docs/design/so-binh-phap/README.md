@@ -5,10 +5,10 @@ Bản chụp mã nguồn canvas Design dùng làm chuẩn thị giác cho đợt
 | | |
 |---|---|
 | Canvas gốc | <https://claude.ai/artifact/JshDEV8qspJo6VJ6rgiB71> (riêng tư — cần quyền của chủ canvas) |
-| Phiên bản chụp | `1790191281-3a81` (StyleGuide bổ sung component; hồ sơ tướng hiện đủ + khối "Trong cẩm nang") |
-| Ngày chụp | 2026-09-24 |
-| Nội dung | `project/canvas.json` (vị trí, kích thước, tiêu đề artboard) + 28 artboard `project/*.dc.html` + `project/support.js` (shim tự viết, xem dưới) + 25 ảnh chuẩn `screens/*.png` |
-| Ảnh chuẩn | Chụp lại 2026-09-24 bằng `scripts/design-capture.mjs` · **đã đối chiếu 2026-09-24 với canvas bản `1790202333-0a0d`** (xem mục đối chiếu) |
+| Phiên bản chụp | `1790621481-5b61` (thêm Chi tiết đội mobile, mọi link chi tiết đội trên mobile trỏ sang bản mobile; thêm Tra cứu trang bị/quân sư/cải tạo binh chủng/công trình mobile + màn chi tiết; cột mobile rộng 4 artboard; canvas chia cột: desktop bên trái, mobile bên phải, cùng dải theo nhóm; thẻ tướng ưu tiên ảnh chân dung; thêm hồ sơ tướng mobile, hồ sơ chiến pháp mobile; thêm Tra cứu: trang bị, quân sư, cải tạo binh chủng, công trình, hồ sơ chiến pháp; Logo — 5 phương án) |
+| Ngày chụp | 2026-09-29 |
+| Nội dung | `project/canvas.json` (vị trí, kích thước, tiêu đề artboard) + 45 artboard `project/*.dc.html` + `project/support.js` (shim tự viết, xem dưới) + 42 ảnh chuẩn `screens/*.png` |
+| Ảnh chuẩn | Chụp lại 2026-09-29 bằng `scripts/design-capture.mjs` (42 artboard) · đối chiếu gần nhất 2026-09-24 với canvas bản `1790202333-0a0d`; **17 artboard mới (chi tiết đội mobile, 4 nhóm Tra cứu, hồ sơ chiến pháp, hồ sơ tướng/chiến pháp mobile, 4 nhóm Tra cứu mobile + chi tiết, Logo) chưa đối chiếu với canvas** |
 
 ## Quy ước
 
@@ -23,6 +23,7 @@ Bản chụp mã nguồn canvas Design dùng làm chuẩn thị giác cho đợt
 - **Ảnh chuẩn** `screens/<Artboard>.png`: trạng thái mặc định của từng artboard, rộng đúng `w` trong `canvas.json`, DPR 1, chụp cả trang (nội dung dài hơn `h` vẫn giữ). Đây là ảnh đặt cạnh ảnh localhost khi soát mỗi bước.
 - **Xem trên trình duyệt:** `node scripts/design-capture.mjs --serve` rồi mở URL được in ra. Bấm được menu thả/nút có `onClick` như trên canvas. Mở trực tiếp `file://` không chạy (shim phải đọc lại mã nguồn trang qua HTTP).
 - **`project/support.js` là shim tự viết, không phải runtime gốc của canvas.** Nó chỉ hiểu `<x-dc>`, `<helmet>`, `<sc-if value>`, `<sc-for list as>`, `{{ đường.dẫn }}`, `onClick="{{ hàm }}"`, `baseVals()`/`renderVals()`, `this.props` (lấy `default` trong `data-props`), `this.state`/`this.setState`. Gặp thẻ `sc-*` lạ, biểu thức ngoài dạng đường dẫn, biến không có hoặc còn sót `{{` → hiện dải báo lỗi đỏ, script chụp dừng với mã lỗi 1.
+- **Ảnh chân dung tướng** trong `Lookup`/`LookupProfile`/`LookupMobile`/`LookupProfileMobile`/`LookupAdvisorsDetailMobile` là asset tải lên canvas (`/_blob/…`, lấy từ `iconUrl` của `data/heroes-dict.json`), **không lưu trong repo** (brainstorm §3: không self-host chân dung) → ảnh chuẩn của 5 artboard này thiếu ảnh; xem canvas gốc. Site thật vẫn dùng `iconUrl` + fallback ô màu phe chữ Hán.
 - Artboard tải font từ Google Fonts như canvas → chụp cần mạng (~35 giây cho 25 artboard). Script tải **mọi** lát unicode-range của các font trước khi chụp (lát nào lỗi mạng thì chụp lại artboard đó, tối đa 3 lần); dừng nếu Be Vietnam Pro hoặc Noto Serif Display chưa tải. Chụp lại nhiều lần vẫn có thể lệch dưới 1 px ở vị trí nét chữ serif/chữ Hán (Chrome), không đổi bố cục — đừng commit ảnh chỉ vì lệch kiểu này.
 
 ### Đối chiếu shim với canvas (2026-09-24)
@@ -162,8 +163,8 @@ Sinh lại ảnh thì chạy `npm run verify` (verifier so byte `public/og-image
 | 2 | Header 1 hàng + menu thả Công cụ/Game, menu mobile | header của mọi artboard trang trong, `LandingMenu`, `LandingMenuMobile` |
 | 2b | Landing `/`, footer toàn site, mục Tải game | `Landing`, `LandingMobile` |
 | 3 | Đội chuẩn/Đội khác: lọc, thẻ, Thẻ/Bảng | `Main`, `MainTable`, `MobileList`, `MobileTable`, `MobileFilters` |
-| 4 | Chi tiết đội | `TeamDetail` |
-| 5 | Tra cứu + hồ sơ | `Lookup`, `LookupTactics`, `LookupProfile`, `LookupMobile` |
+| 4 | Chi tiết đội | `TeamDetail`, `TeamDetailMobile` |
+| 5 | Tra cứu + hồ sơ | `Lookup`, `LookupTactics`, `LookupProfile`, `LookupTacticProfile`, `LookupEquipment`, `LookupAdvisors`, `LookupTroops`, `LookupBuildings`, `LookupMobile`, `LookupProfileMobile`, `LookupTacticProfileMobile`, `LookupEquipmentMobile`, `LookupEquipmentDetailMobile`, `LookupAdvisorsMobile`, `LookupAdvisorsDetailMobile`, `LookupTroopsMobile`, `LookupTroopsDetailMobile`, `LookupBuildingsMobile`, `LookupBuildingsDetailMobile` |
 | 6 | Cùng Tồn + Khai hoang | `Coexist`, `CoexistMobile`, `Khaihoang`, `KhaihoangMobile` |
 | 7 | 3 công cụ Beta | `Recruit`, `RecruitMobile`, `Analyze`, `AnalyzeMobile`, `Roster`, `RosterMobile` |
 

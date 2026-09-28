@@ -4,216 +4,341 @@
   "boards": {
     "Analyze.dc.html": {
       "h": 1272,
+      "is_interactive": true,
       "title": "Soi đội từ ảnh — desktop",
       "w": 1440,
-      "x": 1990,
-      "y": 11760,
-      "is_interactive": true
+      "x": 1520,
+      "y": 16143
     },
     "AnalyzeMobile.dc.html": {
       "h": 1600,
       "title": "Soi đội từ ảnh — mobile",
       "w": 390,
-      "x": 3510,
-      "y": 11760
+      "x": 5590,
+      "y": 16143
     },
     "Coexist.dc.html": {
       "h": 1832,
+      "is_interactive": true,
       "title": "Cùng Tồn — desktop",
       "w": 1440,
       "x": 0,
-      "y": 8460,
-      "is_interactive": true
+      "y": 12771
     },
     "CoexistMobile.dc.html": {
       "h": 1560,
       "title": "Cùng Tồn — mobile",
       "w": 390,
-      "x": 1520,
-      "y": 8460
+      "x": 5120,
+      "y": 12771
     },
     "DirA-ChienBao.dc.html": {
       "h": 1080,
       "title": "Hướng A — Chiến báo (tối, game HUD)",
       "w": 760,
       "x": 0,
-      "y": 2420
+      "y": 26623
     },
     "DirB-BangTra.dc.html": {
       "h": 480,
       "title": "Hướng B — Bảng tra (dữ liệu dày)",
       "w": 1120,
       "x": 840,
-      "y": 2420
+      "y": 26623
     },
     "DirC-ThuyMac.dc.html": {
       "h": 1080,
       "title": "Hướng C — Thủy mặc (tối giản)",
       "w": 760,
       "x": 2040,
-      "y": 2420
+      "y": 26623
     },
     "Khaihoang.dc.html": {
       "h": 2852,
+      "is_interactive": true,
       "title": "Khai hoang — desktop",
       "w": 1440,
-      "x": 1990,
-      "y": 8460,
-      "is_interactive": true
+      "x": 1520,
+      "y": 12771
     },
     "KhaihoangMobile.dc.html": {
       "h": 2000,
       "title": "Khai hoang — mobile",
       "w": 390,
-      "x": 3510,
-      "y": 8460
+      "x": 5590,
+      "y": 12771
     },
     "Landing.dc.html": {
       "h": 4420,
+      "is_interactive": true,
       "title": "Landing — giới thiệu (desktop)",
       "w": 1440,
       "x": 0,
-      "y": 13800,
-      "is_interactive": true
+      "y": 18303
+    },
+    "LandingMenu.dc.html": {
+      "h": 720,
+      "is_interactive": true,
+      "title": "Landing — menu đang mở (desktop)",
+      "w": 1440,
+      "x": 1520,
+      "y": 18303
+    },
+    "LandingMenuMobile.dc.html": {
+      "h": 1800,
+      "is_interactive": true,
+      "title": "Landing — menu mobile đang mở",
+      "w": 390,
+      "x": 5590,
+      "y": 18303
     },
     "LandingMobile.dc.html": {
       "h": 4136,
+      "is_interactive": true,
       "title": "Landing — giới thiệu (mobile)",
       "w": 390,
-      "x": 1520,
-      "y": 13800,
-      "is_interactive": true
+      "x": 5120,
+      "y": 18303
+    },
+    "Logo.dc.html": {
+      "h": 1400,
+      "title": "Logo — 5 phương án",
+      "w": 1440,
+      "x": 1360,
+      "y": 23243
     },
     "Lookup.dc.html": {
-      "h": 1592,
+      "h": 2141,
+      "is_interactive": true,
       "title": "Tra cứu — tướng",
       "w": 1440,
       "x": 0,
-      "y": 6340,
-      "is_interactive": true
+      "y": 5010
     },
-    "LookupMobile.dc.html": {
-      "h": 1720,
-      "title": "Tra cứu — mobile",
-      "w": 390,
-      "x": 4560,
-      "y": 6340
-    },
-    "LookupProfile.dc.html": {
-      "h": 1350,
-      "title": "Tra cứu — hồ sơ tướng",
+    "LookupAdvisors.dc.html": {
+      "h": 1330,
+      "is_interactive": true,
+      "title": "Tra cứu — quân sư",
       "w": 1440,
       "x": 3040,
-      "y": 6340,
-      "is_interactive": true
+      "y": 7271
+    },
+    "LookupBuildings.dc.html": {
+      "h": 1240,
+      "is_interactive": true,
+      "title": "Tra cứu — công trình",
+      "w": 1440,
+      "x": 1520,
+      "y": 8991
+    },
+    "LookupEquipment.dc.html": {
+      "h": 1600,
+      "is_interactive": true,
+      "title": "Tra cứu — trang bị",
+      "w": 1440,
+      "x": 1520,
+      "y": 7271
+    },
+    "LookupMobile.dc.html": {
+      "h": 1973,
+      "title": "Tra cứu — mobile",
+      "w": 390,
+      "x": 5120,
+      "y": 5010
+    },
+    "LookupProfile.dc.html": {
+      "h": 1300,
+      "is_interactive": true,
+      "title": "Tra cứu — hồ sơ tướng",
+      "w": 1440,
+      "x": 1520,
+      "y": 5010
+    },
+    "LookupTacticProfile.dc.html": {
+      "h": 1140,
+      "is_interactive": true,
+      "title": "Tra cứu — hồ sơ chiến pháp",
+      "w": 1440,
+      "x": 0,
+      "y": 7271
     },
     "LookupTactics.dc.html": {
       "h": 1672,
+      "is_interactive": true,
       "title": "Tra cứu — chiến pháp",
       "w": 1440,
-      "x": 1520,
-      "y": 6340,
-      "is_interactive": true
+      "x": 3040,
+      "y": 5010
+    },
+    "LookupTroops.dc.html": {
+      "h": 1530,
+      "is_interactive": true,
+      "title": "Tra cứu — cải tạo binh chủng",
+      "w": 1440,
+      "x": 0,
+      "y": 8991
     },
     "Main.dc.html": {
       "h": 1592,
+      "is_interactive": true,
       "title": "Đội chuẩn — desktop",
       "w": 1440,
       "x": 0,
-      "y": 0,
-      "is_interactive": true
+      "y": 0
     },
     "MainTable.dc.html": {
       "h": 1992,
+      "is_interactive": true,
       "title": "Đội chuẩn — desktop, dạng bảng",
       "w": 1440,
       "x": 0,
-      "y": 3900,
-      "is_interactive": true
+      "y": 2498
     },
     "MobileFilters.dc.html": {
       "h": 1240,
       "title": "Mobile — bộ lọc mở",
       "w": 390,
-      "x": 3510,
+      "x": 5590,
       "y": 0
     },
     "MobileList.dc.html": {
       "h": 1440,
       "title": "Đội chuẩn — mobile",
       "w": 390,
-      "x": 3040,
+      "x": 5120,
       "y": 0
     },
     "MobileTable.dc.html": {
       "h": 1760,
       "title": "Đội chuẩn — mobile, dạng bảng",
       "w": 390,
-      "x": 1520,
-      "y": 3900
+      "x": 5120,
+      "y": 2498
     },
     "Recruit.dc.html": {
       "h": 1452,
+      "is_interactive": true,
       "title": "Theo dõi chiêu mộ — desktop",
       "w": 1440,
       "x": 0,
-      "y": 11760,
-      "is_interactive": true
+      "y": 16143
     },
     "RecruitMobile.dc.html": {
       "h": 1640,
       "title": "Theo dõi chiêu mộ — mobile",
       "w": 390,
-      "x": 1520,
-      "y": 11760
+      "x": 5120,
+      "y": 16143
     },
     "Roster.dc.html": {
       "h": 1372,
+      "is_interactive": true,
       "title": "Gợi ý đội từ kho — desktop",
       "w": 1440,
-      "x": 3980,
-      "y": 11760,
-      "is_interactive": true
+      "x": 3040,
+      "y": 16143
     },
     "RosterMobile.dc.html": {
       "h": 1320,
       "title": "Gợi ý đội từ kho — mobile",
       "w": 390,
-      "x": 5500,
-      "y": 11760
+      "x": 6060,
+      "y": 16143
     },
     "StyleGuide.dc.html": {
       "h": 2860,
       "title": "Hệ thống thị giác",
       "w": 1280,
-      "x": 3980,
-      "y": 0
+      "x": 0,
+      "y": 23243
     },
     "TeamDetail.dc.html": {
       "h": 1392,
+      "is_interactive": true,
       "title": "Chi tiết đội — desktop",
       "w": 1440,
       "x": 1520,
-      "y": 0,
-      "is_interactive": true
+      "y": 0
     },
-    "LandingMenu.dc.html": {
-      "x": 2000,
-      "y": 13800,
-      "w": 1440,
-      "h": 720,
-      "title": "Landing — menu đang mở (desktop)",
-      "is_interactive": true
-    },
-    "LandingMenuMobile.dc.html": {
-      "x": 3520,
-      "y": 13800,
+    "LookupProfileMobile.dc.html": {
+      "h": 2666,
+      "title": "Tra cứu — hồ sơ tướng mobile",
       "w": 390,
-      "h": 1800,
-      "title": "Landing — menu mobile đang mở",
-      "is_interactive": true
+      "x": 5590,
+      "y": 5010
+    },
+    "LookupTacticProfileMobile.dc.html": {
+      "h": 2215,
+      "title": "Tra cứu — hồ sơ chiến pháp mobile",
+      "w": 390,
+      "x": 6060,
+      "y": 5010
+    },
+    "LookupEquipmentMobile.dc.html": {
+      "h": 1376,
+      "title": "Tra cứu — trang bị mobile",
+      "w": 390,
+      "x": 5120,
+      "y": 7796
+    },
+    "LookupEquipmentDetailMobile.dc.html": {
+      "h": 1383,
+      "title": "Tra cứu — chi tiết trang bị mobile",
+      "w": 390,
+      "x": 5590,
+      "y": 7796
+    },
+    "LookupAdvisorsMobile.dc.html": {
+      "h": 1596,
+      "title": "Tra cứu — quân sư mobile",
+      "w": 390,
+      "x": 6060,
+      "y": 7796
+    },
+    "LookupAdvisorsDetailMobile.dc.html": {
+      "h": 1184,
+      "title": "Tra cứu — chi tiết quân sư mobile",
+      "w": 390,
+      "x": 6530,
+      "y": 7796
+    },
+    "LookupTroopsMobile.dc.html": {
+      "h": 1912,
+      "title": "Tra cứu — cải tạo binh chủng mobile",
+      "w": 390,
+      "x": 5120,
+      "y": 9512
+    },
+    "LookupTroopsDetailMobile.dc.html": {
+      "h": 2739,
+      "title": "Tra cứu — chi tiết cải tạo mobile",
+      "w": 390,
+      "x": 5590,
+      "y": 9512
+    },
+    "LookupBuildingsMobile.dc.html": {
+      "h": 1670,
+      "title": "Tra cứu — công trình mobile",
+      "w": 390,
+      "x": 6060,
+      "y": 9512
+    },
+    "LookupBuildingsDetailMobile.dc.html": {
+      "h": 1276,
+      "title": "Tra cứu — chi tiết công trình mobile",
+      "w": 390,
+      "x": 6530,
+      "y": 9512
+    },
+    "TeamDetailMobile.dc.html": {
+      "h": 1978,
+      "title": "Chi tiết đội — mobile",
+      "w": 390,
+      "x": 6060,
+      "y": 0
     }
   },
+  "cover": "LookupTacticProfile.dc.html",
   "createdOnFiles": {
     "at": "2026-09-23T07:40:00Z",
     "v": 1
@@ -225,59 +350,83 @@
   "notes": {
     "coexistrow": {
       "kind": "title1",
-      "maxW": 3900,
+      "maxW": 6920,
       "text": "Cùng Tồn · Khai hoang",
       "w": 240,
       "x": 0,
-      "y": 8180
+      "y": 12491
     },
     "directions": {
       "kind": "title1",
-      "maxW": 2800,
-      "text": "Ba hướng khác để so sánh",
+      "maxW": 6920,
+      "text": "Ba hướng khác để so sánh (tham khảo)",
       "w": 240,
       "x": 0,
-      "y": 2120
+      "y": 26343
     },
     "heading": {
       "kind": "title1",
-      "maxW": 5260,
+      "maxW": 6920,
       "text": "Sổ binh pháp — thiết kế lại Cẩm Nang TQCCL",
       "w": 240,
       "x": 0,
-      "y": -300
+      "y": -640
     },
     "landingrow": {
       "kind": "title1",
-      "maxW": 3910,
+      "maxW": 6920,
       "text": "Landing page giới thiệu",
       "w": 240,
       "x": 0,
-      "y": 13520
+      "y": 18023
+    },
+    "logorow": {
+      "kind": "title1",
+      "maxW": 6920,
+      "text": "Hệ thống thị giác · Logo",
+      "w": 240,
+      "x": 0,
+      "y": 22963
     },
     "lookuprow": {
       "kind": "title1",
-      "maxW": 4950,
+      "maxW": 6920,
       "text": "Tra cứu",
       "w": 240,
       "x": 0,
-      "y": 6060
+      "y": 4730
     },
     "tableview": {
       "kind": "title1",
-      "maxW": 1910,
+      "maxW": 6920,
       "text": "Chế độ xem Bảng — chuyển Thẻ / Bảng",
       "w": 240,
       "x": 0,
-      "y": 3620
+      "y": 2218
     },
     "toolsrow": {
       "kind": "title1",
-      "maxW": 5890,
+      "maxW": 6920,
       "text": "Công cụ Beta · Chiêu mộ · Soi đội · Gợi ý kho",
       "w": 240,
       "x": 0,
-      "y": 11480
+      "y": 15863
+    },
+    "zonedesktop": {
+      "kind": "title1",
+      "w": 240,
+      "text": "Desktop",
+      "x": 0,
+      "y": -320,
+      "maxW": 4480
+    },
+    "zonemobile": {
+      "kind": "title1",
+      "w": 240,
+      "text": "Mobile",
+      "x": 5120,
+      "y": -320,
+      "maxW": 1800
     }
   },
   "order": [
@@ -308,7 +457,24 @@
     "Landing.dc.html",
     "LandingMobile.dc.html",
     "LandingMenu.dc.html",
-    "LandingMenuMobile.dc.html"
+    "LandingMenuMobile.dc.html",
+    "Logo.dc.html",
+    "LookupEquipment.dc.html",
+    "LookupAdvisors.dc.html",
+    "LookupTroops.dc.html",
+    "LookupBuildings.dc.html",
+    "LookupTacticProfile.dc.html",
+    "LookupProfileMobile.dc.html",
+    "LookupTacticProfileMobile.dc.html",
+    "LookupEquipmentMobile.dc.html",
+    "LookupEquipmentDetailMobile.dc.html",
+    "LookupAdvisorsMobile.dc.html",
+    "LookupAdvisorsDetailMobile.dc.html",
+    "LookupTroopsMobile.dc.html",
+    "LookupTroopsDetailMobile.dc.html",
+    "LookupBuildingsMobile.dc.html",
+    "LookupBuildingsDetailMobile.dc.html",
+    "TeamDetailMobile.dc.html"
   ],
   "pages": [],
   "title": "Cẩm Nang TQCCL — Redesign"
