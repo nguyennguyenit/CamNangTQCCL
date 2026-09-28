@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-09-28 (Thư báo góp ý)
+
+### Fixed
+
+- Thư báo góp ý không tới Gmail: Email Routing chưa bật cho `tqccl.com` nên `FEEDBACK_MAIL.send` lỗi (góp ý vẫn lưu D1). Bật Email Routing cho subdomain `mail.tqccl.com` (MX/SPF riêng, MX apex vẫn là forwarding Porkbun) và đổi `FEEDBACK_FROM` thành `gopy@mail.tqccl.com`; [community-worker.md](./community-worker.md) mô tả cách bật subdomain thay cho bật apex.
+
 ## 2026-09-28 (Theme tối rõ lớp, nút đổi giao diện theo chế độ)
 
 ### Changed

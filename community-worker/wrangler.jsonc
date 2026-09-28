@@ -21,7 +21,7 @@
   ],
   // R2: `npx wrangler r2 bucket create tqccl-community-media`.
   "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "tqccl-community-media" }],
-  // Thư báo góp ý: cần bật Email Routing cho tqccl.com và xác minh địa chỉ nhận (docs/community-worker.md).
+  // Thư báo góp ý: cần Email Routing cho mail.tqccl.com và xác minh địa chỉ nhận (docs/community-worker.md).
   // destination_address khoá cứng người nhận: binding không thể gửi thư đi nơi khác.
   "send_email": [{ "name": "FEEDBACK_MAIL", "destination_address": "nguyennlt.ncc@gmail.com" }],
   // Dọn ảnh chiến báo chờ gửi quá 24 giờ + bộ đếm rate limit hết hạn (mỗi giờ).
@@ -33,9 +33,9 @@
     "SITE_ORIGIN": "https://tqccl.com,https://www.tqccl.com,https://tqccl.pages.dev,https://preview-community.tqccl.pages.dev",
     // Email admin, phân tách bằng dấu phẩy.
     "ADMIN_EMAILS": "nguyennlt.ncc@gmail.com",
-    // Thư báo góp ý: gửi từ địa chỉ trên domain đã bật Email Routing, tới địa chỉ đích đã xác minh
-    // (trùng destination_address của binding FEEDBACK_MAIL).
-    "FEEDBACK_FROM": "gopy@tqccl.com",
+    // Thư báo góp ý: gửi từ mail.tqccl.com (subdomain bật Email Routing; MX apex vẫn của Porkbun),
+    // tới địa chỉ đích đã xác minh (trùng destination_address của binding FEEDBACK_MAIL).
+    "FEEDBACK_FROM": "gopy@mail.tqccl.com",
     "FEEDBACK_TO": "nguyennlt.ncc@gmail.com",
     // Repo nhận repository_dispatch "blog-publish" -> .github/workflows/pages-deploy.yml.
     "GITHUB_REPOSITORY": "nguyennguyenit/CamNangTQCCL",

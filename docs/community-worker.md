@@ -29,7 +29,7 @@ Trình duyệt ──/api/*──► Pages Function (proxy) ──service bindin
 | `GITHUB_REPOSITORY` | var | `nguyennguyenit/CamNangTQCCL`, repo nhận `repository_dispatch` |
 | `GITHUB_DISPATCH_TOKEN` | secret | Fine-grained PAT chỉ cho repo trên, quyền **Contents: Read and write** (bắt buộc cho `repository_dispatch`). Nếu thiếu, publish vẫn lưu DB nhưng trả `deploy.ok=false` |
 | `FEEDBACK_MAIL` | send_email binding | Gửi thư báo góp ý; `destination_address` khoá cứng người nhận `nguyennlt.ncc@gmail.com`. Thiếu binding hoặc gửi lỗi thì góp ý vẫn lưu D1 (chỉ ghi log) |
-| `FEEDBACK_FROM`, `FEEDBACK_TO` | var | Địa chỉ gửi `gopy@tqccl.com` (domain đã bật Email Routing) và địa chỉ nhận (trùng `destination_address`) |
+| `FEEDBACK_FROM`, `FEEDBACK_TO` | var | Địa chỉ gửi `gopy@mail.tqccl.com` (subdomain đã bật Email Routing) và địa chỉ nhận (trùng `destination_address`) |
 | `TURNSTILE_SECRET` | secret | Secret của widget Turnstile có site key trong `js/config.js` (dùng chung với công cụ đọc ảnh). Thiếu thì khách ẩn danh gửi góp ý nhận 503 `feedback_unavailable` |
 | `IP_HASH_SECRET` | secret | Khoá HMAC băm IP cho giới hạn góp ý ẩn danh (≥ 32 byte ngẫu nhiên). Thiếu thì khách ẩn danh nhận 503 `feedback_unavailable`; người đã đăng nhập vẫn gửi được |
 
@@ -89,11 +89,11 @@ Nếu không có cả hai, `/api/*` trả 503 `{"error":{"code":"community_unava
 
 ### Góp ý, sửa lỗi: gửi thư qua Email Routing
 
-Thư báo góp ý chỉ đi tới một địa chỉ đã xác minh, nên dùng Email Routing của `tqccl.com` (miễn phí, không tính vào quota gửi) thay vì dịch vụ mail bên thứ ba. Người gửi để lại email thì thư có `Reply-To` là email đó: bấm Reply trong Gmail là trả lời thẳng người gửi. Làm một lần trên dashboard Cloudflare:
+Thư báo góp ý chỉ đi tới một địa chỉ đã xác minh, nên dùng Email Routing (miễn phí, không tính vào quota gửi) thay vì dịch vụ mail bên thứ ba. Email Routing bật trên subdomain `mail.tqccl.com`, không bật trên apex: MX/SPF của `tqccl.com` vẫn là forwarding Porkbun (`fwd1/fwd2.porkbun.com`, `include:_spf.porkbun.com`). Địa chỉ gửi phải thuộc domain đã bật Email Routing; thiếu thì thư lỗi âm thầm (chỉ `console.error("feedback mail failed", …)`), góp ý vẫn lưu D1. Người gửi để lại email thì thư có `Reply-To` là email đó: bấm Reply trong Gmail là trả lời thẳng người gửi. Làm một lần:
 
-1. `tqccl.com` → **Email** → **Email Routing** → **Enable**. Cloudflare thay MX/SPF cũ của Porkbun (`fwd1/fwd2.porkbun.com`, `include:_spf.porkbun.com`) bằng bản ghi của nó; tắt luôn email forwarding bên Porkbun.
+1. Bật Email Routing cho subdomain. Dashboard: **Email Service** → **Email Routing** → `tqccl.com` → **Settings** → **Subdomains** → `mail.tqccl.com`. Hoặc API `POST /zones/{zone_id}/email/routing/dns` với `{"name":"mail.tqccl.com"}`. Cloudflare thêm MX `route{1,2,3}.mx.cloudflare.net` và SPF `include:_spf.mx.cloudflare.net` chỉ trên `mail.tqccl.com`.
 2. **Destination addresses** → thêm `nguyennlt.ncc@gmail.com` rồi bấm link xác minh trong Gmail.
-3. Tuỳ chọn: **Routing rules** → `gopy@tqccl.com` chuyển về Gmail, để thư gửi tới địa chỉ gửi đi vẫn nhận được.
+3. Tuỳ chọn: **Routing rules** → `gopy@mail.tqccl.com` chuyển về Gmail, để thư gửi tới địa chỉ gửi đi vẫn nhận được.
 4. Turnstile → widget của site key trong `js/config.js` → **Hostname management** phải có `tqccl.com`, `www.tqccl.com`, `tqccl.pages.dev` (thêm `preview-community.tqccl.pages.dev` nếu thử trên preview). Worker chỉ nhận token có hostname thuộc `SITE_ORIGIN`.
 5. Trong `community-worker/`:
 
