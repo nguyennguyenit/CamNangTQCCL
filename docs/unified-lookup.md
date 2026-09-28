@@ -9,7 +9,7 @@ Mục **Tra cứu** đọc một generation đã xác minh gồm bốn file côn
 - `data/lookup-catalog.json`: 114 trang bị với 90 đặc kỹ, 39 kỹ năng quân sư, 16 cải tạo binh chủng với 192 lựa chọn, và 41 công trình với 426 cấp;
 - `data/lookup-manifest.json`: hash của ba payload và `generationId`.
 
-Schema và kiểm tra quan hệ thuộc [`pipeline/build_unified_lookup.py`](../pipeline/build_unified_lookup.py). Loader trình duyệt thuộc [`js/lookup-data.js`](../js/lookup-data.js); nó kiểm đúng inventory, SHA-256, generation và quan hệ trước khi trả snapshot. UI không render một phần bundle lỗi.
+Schema và kiểm tra quan hệ thuộc [`pipeline/build_unified_lookup.py`](../pipeline/build_unified_lookup.py). Loader trình duyệt thuộc [`js/lookup-data.js`](../js/lookup-data.js): công cụ nạp trọn bộ (`loadLookupBundle`: inventory, SHA-256, generation và quan hệ), trang nhóm Tra cứu nạp từng payload theo nhu cầu (`createLookupPayloadLoader`: SHA-256 theo manifest đã pin, generation, shape của chính payload). Tham chiếu chéo giữa ba payload được kiểm trên trọn bộ lúc build (`src/lib/lookup-pages.ts`) và trong dist verifier. UI không render một phần bundle lỗi.
 
 `data/sgsdeck/`, `pipeline/sgsdeck-cache/`, `pipeline/lookup-inputs/`, registry danh tính, bản dịch, ledger và transaction journal là nguồn/evidence nội bộ. Chúng không phải public route và không được copy vào `dist/`. DTO công khai không chứa `provider`, `sourceUrl`, `provenance`, `sourceRecordId`, `sourceSnapshot` hay raw source object. `iconUrl` đã kiểm duyệt là trường hiển thị, không phải provenance.
 
@@ -78,7 +78,9 @@ review; không xóa lock hoặc chép preimage thủ công.
 
 ## Consumer và publication contract
 
-Route canonical của Tra cứu là `/tra-cuu/?group=<nhóm>&id=<id>`; hash cũ `#lookup`, `#heroes`, `#tactics` và dạng query trong hash `#lookup?group=<nhóm>&id=<id>` được Landing chuyển tiếp sang đường dẫn đó (dạng `#lookup/<nhóm>/<id>` không thuộc contract) mà không rewrite history ngoài navigation do người dùng thực hiện. Sáu chip nhóm, tìm Việt bỏ dấu/Hán/Hán-Việt, phân trang, modal focus trap, Escape, Back/Forward, mobile và light/dark thuộc contract trình duyệt.
+Route canonical của hồ sơ là `/tra-cuu/<slug>/?id=<id>` trên trang của đúng nhóm (`tuong`, `chien-phap`, `trang-bi`, `quan-su`, `cai-tao-binh-chung`, `cong-trinh`, `binh-thu`; bảng ở `js/lookup-ids.js`). Mục lục `/tra-cuu/` chuyển tiếp link cũ `?group=<nhóm>&id=<id>` (hoặc chỉ `?id=`) sang trang nhóm; hash cũ `#lookup`, `#heroes`, `#tactics` và `#lookup?group=<nhóm>&id=<id>` được Landing chuyển tới mục lục (dạng `#lookup/<nhóm>/<id>` không thuộc contract) mà không rewrite history ngoài navigation do người dùng thực hiện. Lúc vào trang nhóm chỉ tải manifest + payload của nhóm (Binh thư chỉ `books-dict`); payload hồ sơ cần thêm tải lười khi mở hồ sơ đầu tiên. Trang đầu 60 mục dựng lúc build, chip nhóm là link, tìm Việt bỏ dấu/Hán/Hán-Việt trong nhóm, phân trang, modal focus trap, Escape, Back/Forward, mobile và light/dark thuộc contract trình duyệt.
+
+Khối "Trong cẩm nang" của hồ sơ Tướng và Chiến pháp đọc `hero-summaries.json`/`tactic-summaries.json` của generation Recommended đang pin (chỉ `manifest.json` + đúng file đó, không tải `index.json`/`other-teams.json`); số liệu chiến pháp trả ID tướng/chiến pháp nên tên hiển thị lấy từ corpus theo ngôn ngữ trang.
 
 Astro build capture một website-display publication snapshot. Sidecar pin exact bytes/generation của Lookup cùng source JSON hiển thị và generation Recommended; HTML và mọi route raw đều dùng snapshot đó. Candidate strict của `site_localization` tự dựng/validate Lookup từ review inputs và chỉ publish khi bốn file Lookup công khai đã trùng candidate. Nếu source hash, HTML pin, route hoặc generation bị interleave, build/verifier dừng toàn bộ khởi tạo thay vì phát hành artifact trộn hoặc render raw.
 

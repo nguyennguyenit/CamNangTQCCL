@@ -132,10 +132,16 @@ function parseJson(name, bytes) {
   }
 }
 
-function validateDocuments(heroes, tactics, catalog) {
+function validateHeroesDocument(heroes) {
+  requireRecords("heroes-dict.json", heroes, "hero:", new Set(), validateHero);
+}
+
+function validateTacticsDocument(tactics) {
+  requireRecords("tactics.json", tactics, "tactic:", new Set(), validateTactic);
+}
+
+function validateCatalogDocument(catalog) {
   const allIds = new Set();
-  requireRecords("heroes-dict.json", heroes, "hero:", allIds, validateHero);
-  requireRecords("tactics.json", tactics, "tactic:", allIds, validateTactic);
   const catalogKeys = ["schemaVersion", "equipment", "specials", "advisors", "troopMods", "buildings"];
   if (!isPlainObject(catalog)) throw new Error("lookup-catalog.json có shape không hợp lệ");
   if (!keysEqual(catalog, catalogKeys)) {
@@ -198,6 +204,16 @@ function validateDocuments(heroes, tactics, catalog) {
       }
     }
   }
+}
+
+/** Shape của từng payload; tham chiếu chéo giữa các payload do `validateRelations` kiểm khi có đủ bộ. */
+const DOCUMENT_VALIDATORS = Object.freeze({
+  "heroes-dict.json": validateHeroesDocument,
+  "tactics.json": validateTacticsDocument,
+  "lookup-catalog.json": validateCatalogDocument,
+});
+
+function validateRelations(heroes, tactics, catalog) {
   const heroIds = new Set(heroes.map((row) => row.id));
   const tacticIds = new Set(tactics.map((row) => row.id));
   const advisorIds = new Set(catalog.advisors.map((row) => row.id));
@@ -220,7 +236,8 @@ function validateDocuments(heroes, tactics, catalog) {
   }
 }
 
-export async function validateLookupBundle(manifest, rawFiles) {
+/** Manifest đúng schema, digest hex và `generationId` suy ra từ chính bộ digest. */
+async function validateManifest(manifest) {
   if (!manifest || typeof manifest !== "object" || Array.isArray(manifest)) throw new Error("lookup manifest không hợp lệ");
   if (manifest.schemaVersion !== 1) throw new Error("lookup manifest schemaVersion không hợp lệ");
   if (!("generationId" in manifest)) throw new Error("lookup manifest thiếu generationId");
@@ -232,6 +249,34 @@ export async function validateLookupBundle(manifest, rawFiles) {
       ?? "files";
     throw new Error(`lookup manifest files không hợp lệ: ${differing}`);
   }
+  for (const name of PAYLOAD_NAMES) {
+    if (!HEX256.test(manifest.files[name])) throw new Error(`${name} có digest không hợp lệ`);
+  }
+  const orderedFiles = Object.fromEntries(Object.keys(manifest.files).sort().map((key) => [key, manifest.files[key]]));
+  const generationId = `lookup:${await digest(encoder.encode(`${JSON.stringify(orderedFiles)}\n`))}`;
+  if (generationId !== manifest.generationId) throw new Error("lookup manifest generationId không hợp lệ");
+}
+
+async function verifiedDocument(manifest, name, bytes) {
+  if (!(bytes instanceof Uint8Array)) throw new Error(`${name} phải là Uint8Array`);
+  if (await digest(bytes) !== manifest.files[name]) throw new Error(`${name} không khớp digest`);
+  const document = parseJson(name, bytes);
+  DOCUMENT_VALIDATORS[name](document);
+  return document;
+}
+
+/**
+ * Một payload Tra cứu khớp manifest đã pin: đúng tên, đúng digest, đúng shape của chính tài liệu đó.
+ * Tham chiếu chéo sang payload khác không được kiểm ở đây (đã kiểm lúc build trên cả bộ).
+ */
+export async function validateLookupPayload(manifest, name, bytes) {
+  if (!PAYLOAD_NAMES.includes(name)) throw new Error(`lookup payload không hợp lệ: ${name}`);
+  await validateManifest(manifest);
+  return verifiedDocument(manifest, name, bytes);
+}
+
+export async function validateLookupBundle(manifest, rawFiles) {
+  await validateManifest(manifest);
   if (!rawFiles || typeof rawFiles !== "object") throw new Error("lookup raw files không hợp lệ");
   if (!keysEqual(rawFiles, PAYLOAD_NAMES)) {
     const differing = PAYLOAD_NAMES.find((name) => !(name in rawFiles))
@@ -239,18 +284,10 @@ export async function validateLookupBundle(manifest, rawFiles) {
       ?? "raw files";
     throw new Error(`lookup raw files không hợp lệ: ${differing}`);
   }
-  for (const name of PAYLOAD_NAMES) {
-    if (!(rawFiles[name] instanceof Uint8Array)) throw new Error(`${name} phải là Uint8Array`);
-    if (!HEX256.test(manifest.files[name])) throw new Error(`${name} có digest không hợp lệ`);
-    if (await digest(rawFiles[name]) !== manifest.files[name]) throw new Error(`${name} không khớp digest`);
-  }
-  const orderedFiles = Object.fromEntries(Object.keys(manifest.files).sort().map((key) => [key, manifest.files[key]]));
-  const generationId = `lookup:${await digest(encoder.encode(`${JSON.stringify(orderedFiles)}\n`))}`;
-  if (generationId !== manifest.generationId) throw new Error("lookup manifest generationId không hợp lệ");
-  const heroes = parseJson("heroes-dict.json", rawFiles["heroes-dict.json"]);
-  const tactics = parseJson("tactics.json", rawFiles["tactics.json"]);
-  const catalog = parseJson("lookup-catalog.json", rawFiles["lookup-catalog.json"]);
-  validateDocuments(heroes, tactics, catalog);
+  const heroes = await verifiedDocument(manifest, "heroes-dict.json", rawFiles["heroes-dict.json"]);
+  const tactics = await verifiedDocument(manifest, "tactics.json", rawFiles["tactics.json"]);
+  const catalog = await verifiedDocument(manifest, "lookup-catalog.json", rawFiles["lookup-catalog.json"]);
+  validateRelations(heroes, tactics, catalog);
   Object.freeze(manifest.files);
   Object.freeze(manifest);
   Object.freeze(rawFiles);
@@ -264,13 +301,45 @@ export function loadLookupBundle(fetchFn) {
   const pending = (async () => {
     const names = [MANIFEST_NAME, ...PAYLOAD_NAMES];
     const values = await Promise.all(names.map((name) => fetchFn(name)));
-    const manifestBytes = values[0];
-    if (!(manifestBytes instanceof Uint8Array)) throw new Error(`${MANIFEST_NAME} phải là Uint8Array`);
-    const manifest = parseJson(MANIFEST_NAME, manifestBytes);
+    const manifest = manifestFrom(values[0]);
     const rawFiles = Object.fromEntries(PAYLOAD_NAMES.map((name, index) => [name, values[index + 1]]));
     return validateLookupBundle(manifest, rawFiles);
   })();
   loads.set(fetchFn, pending);
   pending.catch(() => { if (loads.get(fetchFn) === pending) loads.delete(fetchFn); });
   return pending;
+}
+
+function manifestFrom(bytes) {
+  if (!(bytes instanceof Uint8Array)) throw new Error(`${MANIFEST_NAME} phải là Uint8Array`);
+  return parseJson(MANIFEST_NAME, bytes);
+}
+
+/** Promise đã lưu cache; lần lỗi bị bỏ để lần gọi sau tải lại thật. */
+function remember(cache, key, start) {
+  if (!cache.has(key)) {
+    const pending = start();
+    cache.set(key, pending);
+    pending.catch(() => { if (cache.get(key) === pending) cache.delete(key); });
+  }
+  return cache.get(key);
+}
+
+/**
+ * Bộ nạp payload theo nhu cầu của một trang: manifest tải một lần, mỗi payload chỉ tải khi được hỏi
+ * và mỗi file đúng một request. Trả tài liệu đã xác minh, đông cứng.
+ */
+export function createLookupPayloadLoader(fetchFn) {
+  if (typeof fetchFn !== "function") throw new TypeError("fetchFn phải là hàm");
+  const cache = new Map();
+  const manifest = () => remember(cache, MANIFEST_NAME, async () => {
+    const value = manifestFrom(await fetchFn(MANIFEST_NAME));
+    await validateManifest(value);
+    return value;
+  });
+  return (name) => remember(cache, name, async () => {
+    if (!PAYLOAD_NAMES.includes(name)) throw new Error(`lookup payload không hợp lệ: ${name}`);
+    const [pinned, bytes] = await Promise.all([manifest(), fetchFn(name)]);
+    return Object.freeze(await verifiedDocument(pinned, name, bytes));
+  });
 }

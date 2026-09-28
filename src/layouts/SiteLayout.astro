@@ -18,7 +18,7 @@ import {
 } from '../lib/official-links';
 import { POLICY_PAGES } from '../lib/policy-pages';
 import { SECTION_ICONS, type SectionIcon } from '../lib/section-icons';
-import { LOOKUP_GROUPS, lookupGroupLabels } from '../../js/unified-lookup.js';
+import { lookupGroupLinks, type LookupGroup } from '../lib/lookup-pages';
 import { localeFromPath, localePath, pick, stripLocale } from '../../js/i18n.js';
 import { FEEDBACK_KINDS } from '../../js/feedback-kinds.js';
 import { HREFLANG, LOCALE_LABEL, alternatePaths, mirroredAlternates, otherLocale } from '../lib/locale-routes';
@@ -51,6 +51,8 @@ interface Props {
   counterpartPath?: string;
   /** Ảnh OG tuyệt đối (ảnh bìa bài viết); vắng thì dùng `/og-image.png` 1200×630. */
   ogImage?: string;
+  /** Trang nhóm Tra cứu (`/tra-cuu/<slug>/`): nhóm đang xem, gắn vào `<body data-lookup-group>` cho js/app.js. */
+  lookupGroup?: LookupGroup;
 }
 
 const {
@@ -63,6 +65,7 @@ const {
   ogType = 'website',
   robots,
   ogImage,
+  lookupGroup,
 } = Astro.props;
 const locale = Astro.props.locale ?? localeFromPath(Astro.url.pathname);
 const t = (vi: string, zh: string): string => pick(locale, vi, zh);
@@ -114,15 +117,6 @@ const SECTION_ICON: Record<string, SectionIcon> = {
   'roster-recommend': 'roster',
 };
 const QUICK_NAV_LABEL = t('Chuyển nhanh', '快速切换');
-const LOOKUP_DESCRIPTIONS: Record<string, string> = {
-  heroes: t('Chỉ số, binh chủng và chiến pháp', '属性、兵种与战法'),
-  tactics: t('Hiệu quả và cách dùng chiến pháp', '战法效果与用法'),
-  equipment: t('Trang bị theo ô và phẩm chất', '按部位与品质查看装备'),
-  advisors: t('Hiệu ứng và cách dùng quân sư', '军师效果与用法'),
-  'troop-mods': t('Cải tạo binh chủng và gợi ý build', '兵种进阶与搭配建议'),
-  buildings: t('Công trình theo cấp và hiệu quả', '按等级查看建筑效果'),
-  books: t('Binh thư theo tên Việt và chữ Hán', '按名称查询兵书'),
-};
 const FOOTER_INTRO = t(
   'Cẩm nang cộng đồng cho người chơi Tam Quốc Chí Chiến Lược: đội hình theo mùa, tra cứu tướng và chiến pháp, cùng vài công cụ tính giúp.',
   '面向《三国志·战略版》玩家的社区攻略手册：分赛季阵容、武将与战法查询，以及若干实用工具。',
@@ -203,11 +197,11 @@ const currentMark = (id: string | undefined | false | null) =>
   id && id === activeSection ? (pageKind === 'detail' ? 'true' : 'page') : null;
 const website = await websiteDisplayPublicationSnapshot();
 const seasonHashes = seasonScope ? await seasonArtifactHashes() : null;
-// Nhóm Binh thư của trang Tra cứu đọc `books-dict` (ngoài lookup manifest): pin byte ngay trên trang; tên Hán nguồn
+// Trang nhóm Binh thư đọc `books-dict` (ngoài lookup manifest): pin byte ngay trên trang; tên Hán nguồn
 // (phồn thể, tên cũ) từ bảng danh tính của pipeline nhúng kèm, `<` chặn để chuỗi không đóng thẻ sớm.
-const lookupPage = pageKind === 'section' && activeSection === 'lookup';
-const booksHash = lookupPage ? await lookupBooksHash() : null;
-const bookAliasesJson = lookupPage ? JSON.stringify(await lookupBookAliases()).replace(/</g, '\\u003c') : null;
+const booksPage = pageKind === 'section' && lookupGroup === 'books';
+const booksHash = booksPage ? await lookupBooksHash() : null;
+const bookAliasesJson = booksPage ? JSON.stringify(await lookupBookAliases()).replace(/</g, '\\u003c') : null;
 // Ngày build `dd/mm/yyyy` (giờ Việt Nam); bản Trung viết theo thứ tự năm-tháng-ngày.
 const updatedOn = locale === 'zh' ? buildDateVi().split('/').reverse().join('-') : buildDateVi();
 const topSections = SECTIONS.slice(0, 5);
@@ -266,11 +260,12 @@ const sectionEntry = (section: (typeof SECTIONS)[number]): Entry => ({
   beta: Boolean(section.beta),
   icon: SECTION_ICON[section.id],
 });
-const LOOKUP_LABELS: Record<string, string> = lookupGroupLabels(locale);
-const lookupEntries = LOOKUP_GROUPS.map((group: string) => ({
-  label: LOOKUP_LABELS[group],
-  href: href(`/tra-cuu/?group=${group}`),
-  description: LOOKUP_DESCRIPTIONS[group],
+/** Bảy trang nhóm Tra cứu: mục đang xem đánh dấu theo pathname như các trang con khác. */
+const lookupEntries: Entry[] = lookupGroupLinks(locale).map((entry) => ({
+  label: entry.label,
+  href: href(entry.path),
+  description: entry.description,
+  ariaCurrent: pathMark(entry.path),
 }));
 type Entry = {label: string; href: string; description?: string; id?: string; current?: boolean; ariaCurrent?: 'page' | 'true' | null; external?: boolean; offsite?: boolean; beta?: boolean; icon?: SectionIcon};
 /** `layout` chỉ dùng ở menu mobile: ô lưới có icon, chip, dòng (icon tuỳ mục) hoặc lưới link gọn 2 cột. */
@@ -415,7 +410,7 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
     {locale === 'vi' ? <link rel="preload" href="/fonts/be-vietnam-pro-400-vietnamese.woff2" as="font" type="font/woff2" crossorigin /> : null}
     {locale === 'vi' ? <link rel="preload" href="/fonts/noto-serif-display-700-vietnamese.woff2" as="font" type="font/woff2" crossorigin /> : null}
   </head>
-  <body data-page-section={pageSection}>
+  <body data-page-section={pageSection} data-lookup-group={lookupGroup}>
     <a class="skip-link" href="#main-content">{SKIP_LINK_LABEL}</a>
     <div class="top-header">
       <header class:list={['site-header', landing && 'site-header-landing']}>
@@ -574,7 +569,7 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
 
     <main id="main-content" class:list={['layout', landing && 'layout-landing']}>
       <div class={contentClass}>
-        {sectionLabel ? <noscript><h1 class="reference-title">{sectionLabel}</h1><p class="scope-note">{SECTION_NOSCRIPT_MESSAGE}</p></noscript> : null}
+        {sectionLabel && activeSection !== 'lookup' ? <noscript><h1 class="reference-title">{sectionLabel}</h1><p class="scope-note">{SECTION_NOSCRIPT_MESSAGE}</p></noscript> : null}
         {seasonScope ? <div id="season-controls" class="season-controls" role="group" aria-label={SCOPE_GROUP_LABEL}></div> : null}
         <slot />
       </div>

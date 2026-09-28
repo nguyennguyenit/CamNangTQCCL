@@ -174,6 +174,7 @@ test('return origin accepts section URLs, normalizes old root state, and rejects
   assert.equal(safeReturnUrl('/doi-chuan/?rogue=1'),'/doi-chuan/');
   assert.equal(safeReturnUrl('/khai-hoang/?khTeam=a&khVariant=b&q=x'),'/khai-hoang/?khTeam=a&khVariant=b');
   assert.equal(safeReturnUrl('/tra-cuu/?group=heroes&id=hero%3Aluu-bi&utm_source=z'),'/tra-cuu/?group=heroes&id=hero%3Aluu-bi');
+  assert.equal(safeReturnUrl('/tra-cuu/tuong/?id=hero%3Aluu-bi&group=heroes&utm_source=z'),'/tra-cuu/tuong/?id=hero%3Aluu-bi');
   // Cùng Tồn chỉ sở hữu nhóm đang xem, cấu hình đang mở và phạm vi kịch bản/luật; khóa lọc cũ bị bỏ.
   assert.equal(safeReturnUrl('/cung-ton/?group=coexist-bdx-group-0fb69f7aa19a&q=B%C3%ACnh&fbclid=1'),'/cung-ton/?group=coexist-bdx-group-0fb69f7aa19a');
   assert.equal(safeReturnUrl('/cung-ton/?group=2&q=x&tier=T0&scenario=a'),'/cung-ton/?group=2&scenario=a');

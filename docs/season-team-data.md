@@ -137,9 +137,11 @@ python3 -m pipeline.build_recommended_reference \
   --teams data/teams.json \
   --content-links pipeline/recommended-content-links.json \
   --catalog data/heroes-dict.json \
+  --tactic-catalog data/tactics.json \
   --output src/data/recommended-reference
 ```
 
+`--tactic-catalog` bắt buộc: `tactics.json` là khoá nối của `tactic-summaries.json` (hồ sơ chiến pháp).
 `--catalog` bắt buộc: là `heroes-dict.json` mà khoá nối "Trong cẩm nang" dựa
 vào (quy trình publish dùng bản của kho Tra cứu vừa dựng trong candidate).
 

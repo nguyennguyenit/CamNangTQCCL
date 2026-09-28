@@ -1,0 +1,84 @@
+---
+// Trang nhóm Tra cứu `/tra-cuu/<slug>/` dùng chung cho bản Việt và bản Trung. Khung (tiêu đề, ô tìm, chip nhóm,
+// dòng trạng thái) và trang đầu 60 mục dựng lúc build từ cùng cây markup với trình duyệt; js/app.js nạp đúng
+// payload của nhóm rồi `js/lookup-page.js` gắn vào khung này (tìm kiếm, "Xem thêm", hồ sơ theo `?id=`).
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { localePath, pick } from '../../../js/i18n.js';
+import { LOOKUP_GROUP_UNITS } from '../../../js/unified-lookup.js';
+import { lookupGroupEntries, lookupGroupFirstPage, type LookupGroup } from '../../lib/lookup-pages';
+import type { SiteLocale } from '../../lib/locale-routes';
+
+interface Props {
+  group: LookupGroup;
+  locale: SiteLocale;
+}
+
+const { group, locale } = Astro.props;
+const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+const entries = await lookupGroupEntries(locale);
+const current = entries.find((entry) => entry.group === group)!;
+const firstPage = await lookupGroupFirstPage(group, locale);
+const canonicalUrl = new URL(localePath(current.path, locale), Astro.site);
+const title = t(
+  `${current.label} — Tra cứu — Cẩm Nang Game Tam Quốc Chí - Chiến Lược`,
+  `${current.label} — 图鉴查询 — 三国志战略版攻略手册`,
+);
+const description = t(
+  `${current.label}: ${current.description}. Tìm theo tên Việt, Hán-Việt hoặc chữ Hán.`,
+  `${current.label}：${current.description}。可用中文名、越南语名或汉越音搜索。`,
+);
+const searchLabel = t(`Tìm ${LOOKUP_GROUP_UNITS[group]}`, `搜索${current.label}`);
+const searchPlaceholder = t(
+  `Tìm ${LOOKUP_GROUP_UNITS[group]}… (gõ không dấu hoặc chữ Hán đều được)`,
+  `搜索${current.label}……（支持中文名）`,
+);
+---
+<SiteLayout
+  title={title}
+  description={description}
+  pageKind="section"
+  activeSection="lookup"
+  lookupGroup={group}
+  canonicalUrl={canonicalUrl}
+  locale={locale}
+>
+  <section id="section-lookup" class="section active">
+    <header class="reference-head lookup-head">
+      <div class="reference-head-text">
+        <span class="reference-kicker">{t('Tra cứu', '图鉴查询')}</span>
+        <h1 class="reference-title">{current.label}</h1>
+        <p class="reference-lead">{t(
+          `${current.description} — tìm bằng tên Việt, Hán-Việt hoặc chữ Hán.`,
+          `${current.description}——可用中文名、越南语名或汉越音搜索。`,
+        )}</p>
+      </div>
+    </header>
+    <label class="search lookup-search">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+      <input type="search" class="lookup-search-input" aria-label={searchLabel} placeholder={searchPlaceholder} />
+    </label>
+    <nav class="lookup-chips" id="lookup-chips" aria-label={t('Nhóm tra cứu', '查询分类')}>
+      {entries.map((entry) => (
+        <a
+          class="lookup-chip"
+          href={localePath(entry.path, locale)}
+          data-group={entry.group}
+          aria-current={entry.group === group ? 'page' : undefined}
+        >{entry.label}<span class="lookup-chip-count">{entry.count}</span></a>
+      ))}
+    </nav>
+    {/* Thanh nhóm cuộn ngang khi hẹp: đưa nhóm đang xem vào giữa trước lần vẽ đầu (không cuộn trang) và ghi
+        `data-fade` để CSS làm mờ mép còn mục khuất; cập nhật khi cuộn và khi đổi cỡ màn hình. */}
+    <script is:inline>(function(){var nav=document.getElementById('lookup-chips');if(!nav)return;var current=nav.querySelector('[aria-current="page"]');if(current&&nav.scrollWidth>nav.clientWidth)nav.scrollLeft=current.offsetLeft-nav.offsetLeft-(nav.clientWidth-current.offsetWidth)/2;var fade=function(){var start=nav.scrollLeft>1,end=nav.scrollLeft+nav.clientWidth<nav.scrollWidth-1;var value=start&&end?'both':start?'start':end?'end':'';if(value)nav.dataset.fade=value;else delete nav.dataset.fade;};fade();nav.addEventListener('scroll',fade,{passive:true});window.addEventListener('resize',fade);})();</script>
+    <div class="lookup-status-row">
+      <p class="lookup-summary" role="status" aria-live="polite" data-lookup-total={firstPage.total} set:html={firstPage.summaryHtml}></p>
+      <span class="lookup-order-note" hidden={!firstPage.orderNote}>{firstPage.orderNote}</span>
+    </div>
+    <div class="lookup-feedback" aria-live="polite"></div>
+    <div class={firstPage.gridClass} set:html={firstPage.resultsHtml}></div>
+    <div class="lookup-more-row" set:html={firstPage.moreHtml}></div>
+    <div class="lookup-detail-mount"></div>
+  </section>
+
+  <script is:inline type="module" src="/js/app.js" slot="scripts"></script>
+</SiteLayout>

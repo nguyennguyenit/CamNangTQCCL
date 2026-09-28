@@ -37,7 +37,7 @@ const CASES = [
   { path: '/khai-hoang/', selected: '.kh-config-chip[aria-pressed="true"]', unselected: '.kh-config-chip[aria-pressed="false"]', kids: [] },
   // Tab Tra cứu ở desktop giữ hợp đồng cũ: chữ mực trên nền giấy + gạch chân son, KHÔNG dùng nền chọn
   // (tương phản chữ của nó đã có test riêng trong unified-lookup.spec.mjs). Chỉ viên mobile dùng `--select`.
-  { path: '/tra-cuu/?group=heroes', selected: '.lookup-chip[aria-pressed="true"]', unselected: '.lookup-chip[aria-pressed="false"]', kids: ['.lookup-chip-count'], widths: [390] },
+  { path: '/tra-cuu/tuong/', selected: '.lookup-chip[aria-current="page"]', unselected: '.lookup-chip:not([aria-current])', kids: ['.lookup-chip-count'], widths: [390] },
   { path: '/goi-y-doi-tu-kho/', selected: '.roster-step[data-state="current"]', unselected: '.roster-step[data-state="pending"]', kids: [] },
   { path: '/soi-doi-tu-anh/', selected: '.ana-btn.primary', unselected: '.ana-btn:not(.primary):not(:disabled)', kids: [] },
 ];

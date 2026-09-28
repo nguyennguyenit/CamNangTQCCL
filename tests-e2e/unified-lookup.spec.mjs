@@ -1,6 +1,6 @@
-// E2E giao diện Tra cứu hợp nhất: deep link sáu nhóm, alias không rewrite,
-// phân trang quá 60, hộp thoại hồ sơ có focus trap, live region tiếng Việt,
-// đồng thời giữ nguyên Team chuẩn mặc định, alias Team khác và history.
+// E2E giao diện Tra cứu: mục lục /tra-cuu/ + bảy trang nhóm /tra-cuu/<slug>/, chip nhóm là link giữa các trang,
+// phân trang quá 60, hộp thoại hồ sơ theo `?id=` có focus trap, live region tiếng Việt, link cũ `?group=&id=`
+// được mục lục chuyển tiếp, và mỗi trang nhóm chỉ tải đúng payload của nhóm mình.
 import { test, expect } from '@playwright/test';
 
 /** Link điều hướng của mục: bảng desktop trong header hoặc menu mobile đang mở (footer cũng có link cùng tên). */
@@ -10,23 +10,49 @@ function navLink(page, name, mobile = false) {
 
 const CJK = /[\u3400-\u9fff]/;
 const GROUPS = ['heroes', 'tactics', 'equipment', 'advisors', 'troop-mods', 'buildings', 'books'];
+/** Trang nhóm (bản Việt) — khớp `LOOKUP_GROUP_SLUGS` của js/lookup-ids.js. */
+const GROUP_PATH = {
+  heroes: '/tra-cuu/tuong/',
+  tactics: '/tra-cuu/chien-phap/',
+  equipment: '/tra-cuu/trang-bi/',
+  advisors: '/tra-cuu/quan-su/',
+  'troop-mods': '/tra-cuu/cai-tao-binh-chung/',
+  buildings: '/tra-cuu/cong-trinh/',
+  books: '/tra-cuu/binh-thu/',
+};
 
 const lookup = (page) => page.locator('#section-lookup');
 const chip = (page, group) => lookup(page).locator(`.lookup-chip[data-group="${group}"]`);
+const currentChip = (page) => lookup(page).locator('.lookup-chip[aria-current="page"]');
 const cards = (page) => lookup(page).locator('.lookup-card');
 const results = (page) => lookup(page).locator('.lookup-card, .lookup-table-panel');
 /** Nút mở hồ sơ của kết quả đầu tiên (thẻ tướng hoặc tên trong bảng chiến pháp). */
 const firstResult = (page) => lookup(page).locator('[data-lookup-id]').first();
 const groupResults = (page, group) => group === 'tactics' ? lookup(page).locator('.lookup-table tbody tr') : cards(page);
 
-test('Tra cứu mở đúng trang mục và không tách lại hai bảng tra cứu cũ', async ({ page }) => {
+/** Mở trang nhóm và chờ app.js gắn xong: mục dựng sẵn hiện ngay nhưng chỉ mở được hồ sơ sau boot. */
+async function openLookup(page, url) {
+  await page.goto(url);
+  await expect(page.locator('body[data-boot="ready"]')).toBeAttached();
+}
+
+test('mục lục Tra cứu là trang tĩnh bảy thẻ nhóm, không nạp app.js', async ({ page }) => {
   await page.goto('/tra-cuu/');
   await expect(navLink(page, 'Tra cứu', false)).toHaveAttribute('aria-current', 'page');
   await expect(lookup(page)).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Tra cứu tướng' })).toHaveCount(0);
-  await expect(page.getByRole('link', { name: 'Tra cứu chiến pháp' })).toHaveCount(0);
   await expect(page.locator('body')).toHaveAttribute('data-page-section', 'lookup');
   await expect(page.locator('.section')).toHaveCount(1);
+  await expect(page.locator('script[src="/js/app.js"]')).toHaveCount(0);
+  const hubCards = lookup(page).locator('a.lookup-hub-card');
+  await expect(hubCards).toHaveCount(GROUPS.length);
+  for (const [index, group] of GROUPS.entries()) {
+    await expect(hubCards.nth(index)).toHaveAttribute('data-group', group);
+    await expect(hubCards.nth(index)).toHaveAttribute('href', GROUP_PATH[group]);
+    await expect(hubCards.nth(index).locator('.lookup-hub-count')).toHaveText(/^\d+$/);
+  }
+  await hubCards.nth(1).click();
+  await expect(page).toHaveURL(GROUP_PATH.tactics);
+  await expect(currentChip(page)).toHaveAttribute('data-group', 'tactics');
 });
 
 test('nav link Tra cứu hỗ trợ điều hướng bằng bàn phím', async ({ page }) => {
@@ -38,79 +64,93 @@ test('nav link Tra cứu hỗ trợ điều hướng bằng bàn phím', async (
   await expect(navLink(page, 'Tra cứu', false)).toHaveAttribute('aria-current', 'page');
 });
 
-test('bảy chip nhóm là nút có aria-pressed và deep link chọn đúng nhóm', async ({ page }) => {
+test('bảy trang nhóm: chip là link, đúng một chip aria-current và kết quả của nhóm', async ({ page }) => {
   for (const group of GROUPS) {
-    await page.goto(`/tra-cuu/?group=${group}`);
-    await expect(lookup(page).getByRole('button', { pressed: true })).toHaveCount(1);
-    await expect(chip(page, group)).toHaveAttribute('aria-pressed', 'true');
+    await openLookup(page, GROUP_PATH[group]);
+    await expect(page.locator('body')).toHaveAttribute('data-lookup-group', group);
+    await expect(lookup(page).getByRole('navigation', { name: 'Nhóm tra cứu' }).getByRole('link')).toHaveCount(GROUPS.length);
+    await expect(currentChip(page)).toHaveCount(1);
+    await expect(currentChip(page)).toHaveAttribute('data-group', group);
+    for (const other of GROUPS) await expect(chip(page, other)).toHaveAttribute('href', GROUP_PATH[other]);
     await expect(groupResults(page, group).first()).toBeVisible();
   }
-  await expect(lookup(page).locator('.lookup-chip')).toHaveCount(GROUPS.length);
 });
 
-test('legacy aliases select lookup groups and query history restores each group', async ({ page }) => {
-  await page.goto('/tra-cuu/?group=heroes');
-  await expect(chip(page, 'heroes')).toHaveAttribute('aria-pressed', 'true');
-  await page.goto('/tra-cuu/?group=tactics');
-  await expect(chip(page, 'tactics')).toHaveAttribute('aria-pressed', 'true');
+test('chip nhóm chuyển trang nhóm; Back/Forward về đúng trang và chip đang chọn', async ({ page }) => {
+  await openLookup(page, GROUP_PATH.heroes);
+  await chip(page, 'tactics').click();
+  await expect(page).toHaveURL(GROUP_PATH.tactics);
+  await expect(currentChip(page)).toHaveAttribute('data-group', 'tactics');
+  await expect(groupResults(page, 'tactics').first()).toBeVisible();
 
   await page.goBack();
-  await expect(page).toHaveURL('/tra-cuu/?group=heroes');
-  await expect(chip(page, 'heroes')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page).toHaveURL(GROUP_PATH.heroes);
+  await expect(currentChip(page)).toHaveAttribute('data-group', 'heroes');
+  await expect(cards(page).first()).toBeVisible();
   await page.goForward();
-  await expect(page).toHaveURL('/tra-cuu/?group=tactics');
+  await expect(page).toHaveURL(GROUP_PATH.tactics);
+  await expect(currentChip(page)).toHaveAttribute('data-group', 'tactics');
 });
 
-
-test('quay lại Tra cứu bằng liên kết cập nhật route và bộ lọc', async ({ page }) => {
-  await page.goto('/tra-cuu/?group=tactics');
-  await expect(chip(page, 'tactics')).toHaveAttribute('aria-pressed', 'true');
-  await navLink(page, 'Đội chuẩn').click();
-  await expect(page).toHaveURL('/doi-chuan/');
-  await navLink(page, 'Tra cứu').click();
-  await expect(page).toHaveURL('/tra-cuu/');
-  await expect(lookup(page).locator('.lookup-chip[aria-pressed="true"]')).toHaveCount(0);
-  await expect(lookup(page).locator('[data-lookup-total]')).toContainText(/^\d+ (?:kết quả|tướng|chiến pháp|trang bị|quân sư|cải tạo binh chủng|công trình|binh thư) · bấm/);
-});
-test('route tra cứu sai bị từ chối bằng lỗi tiếng Việt', async ({ page }) => {
+test('route tra cứu sai trên trang nhóm bị từ chối bằng lỗi tiếng Việt', async ({ page }) => {
   for (const [route, message] of [
-    ['/tra-cuu/?group=heroes&group=tactics', 'Mỗi tham số tra cứu chỉ được xuất hiện một lần.'],
-    ['/tra-cuu/?group=heroes&id=hero%3Aone&id=hero%3Atwo', 'Mỗi tham số tra cứu chỉ được xuất hiện một lần.'],
-    ['/tra-cuu/?group=scrolls', 'Nhóm tra cứu không hợp lệ.'],
-    ['/tra-cuu/?group=heroes&id=tactic%3Anhan-duc', 'Mục tra cứu không thuộc nhóm đã chọn.'],
-    ['/tra-cuu/?id=https%3A%2F%2Fevil.example%2Fx.json', 'Mã mục tra cứu không hợp lệ.'],
+    ['/tra-cuu/tuong/?id=hero%3Aone&id=hero%3Atwo', 'Mỗi tham số tra cứu chỉ được xuất hiện một lần.'],
+    ['/tra-cuu/tuong/?id=https%3A%2F%2Fevil.example%2Fx.json', 'Mã mục tra cứu không hợp lệ.'],
+    ['/tra-cuu/trang-bi/?id=HERO%3Aluu-bi', 'Mã mục tra cứu không hợp lệ.'],
   ]) {
-    await page.goto(route);
+    await openLookup(page, route);
     await expect(lookup(page)).toBeVisible();
     await expect(lookup(page).locator('[role="alert"]')).toHaveText(message);
     await expect(lookup(page).getByRole('dialog')).toHaveCount(0);
+    expect(new URL(page.url()).pathname).toBe(new URL(route, page.url()).pathname);
   }
 });
+test('mã của nhóm khác trên trang nhóm chuyển sang trang nhóm đúng và mở hồ sơ', async ({ page }) => {
+  await page.goto('/tra-cuu/tuong/?id=tactic%3Aan-ui-quan-dan');
+  await expect(page).toHaveURL('/tra-cuu/chien-phap/?id=tactic%3Aan-ui-quan-dan');
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await expect(currentChip(page)).toHaveAttribute('data-group', 'tactics');
+});
+test('mục lục chuyển tiếp link cũ ?group=&id=, link sai thì ở lại và chỉ bỏ hai khóa đó', async ({ page }) => {
+  for (const [route, target] of [
+    ['/tra-cuu/?group=equipment&source=x', '/tra-cuu/trang-bi/?source=x'],
+    ['/tra-cuu/tuong/?id=hero%3Aluu-bi', '/tra-cuu/tuong/?id=hero%3Aluu-bi'],
+    ['/tra-cuu/?group=scrolls&foo=1', '/tra-cuu/?foo=1'],
+    ['/tra-cuu/?group=heroes&id=tactic%3Aan-ui-quan-dan', '/tra-cuu/'],
+    ['/tra-cuu/?group=heroes&group=tactics', '/tra-cuu/'],
+    ['/tra-cuu/?id=https%3A%2F%2Fevil.example%2Fx.json', '/tra-cuu/'],
+  ]) {
+    await page.goto(route);
+    await expect(page, route).toHaveURL(target);
+  }
+  await expect(lookup(page).locator('a.lookup-hub-card')).toHaveCount(GROUPS.length);
+});
 test('tra cứu bỏ qua query key không được hỗ trợ', async ({ page }) => {
-  await page.goto('/tra-cuu/?foo=1');
+  await openLookup(page, '/tra-cuu/tuong/?foo=1');
   await expect(results(page).first()).toBeVisible();
   await expect(lookup(page).locator('[role="alert"]')).toHaveCount(0);
   await expect(lookup(page).getByRole('dialog')).toHaveCount(0);
 });
-test('route updates preserve query keys outside lookup state', async ({ page }) => {
-  await page.goto('/tra-cuu/?group=heroes&source=campaign&view=compact');
-  await chip(page, 'tactics').click();
+test('mở và đóng hồ sơ giữ các query key ngoài id', async ({ page }) => {
+  await openLookup(page, '/tra-cuu/chien-phap/?source=campaign&view=compact');
+  await firstResult(page).click();
+  await expect(page.getByRole('dialog')).toBeVisible();
   let query = new URL(page.url()).searchParams;
-  expect(query.get('group')).toBe('tactics');
+  expect(query.get('id')).toMatch(/^tactic:/);
   expect(query.get('source')).toBe('campaign');
   expect(query.get('view')).toBe('compact');
 
-  await firstResult(page).click();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
   query = new URL(page.url()).searchParams;
-  expect(query.get('group')).toBe('tactics');
-  expect(query.get('id')).toMatch(/^tactic:/);
+  expect(query.has('id')).toBe(false);
   expect(query.get('source')).toBe('campaign');
   expect(query.get('view')).toBe('compact');
 });
 test('lookup dependency failure stays in its own section', async ({ page }) => {
   await page.route('**/data/lookup-manifest.json', (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: '{"schemaVersion":2}\n' }));
-  await page.goto('/tra-cuu/');
+  await openLookup(page, '/tra-cuu/tuong/');
   const error = lookup(page).locator('.error');
   await expect(error).toHaveText('Không thể tải dữ liệu. Hãy tải lại trang hoặc liên hệ quản trị viên nếu lỗi tiếp diễn.');
 });
@@ -137,7 +177,7 @@ test('chuyển sang Tra cứu rồi Back giữ nguyên truy vấn của Team kh�
 });
 
 test('quá 60 kết quả vẫn tới được bản ghi cuối bằng Xem thêm', async ({ page }) => {
-  await page.goto('/tra-cuu/?group=heroes');
+  await openLookup(page, '/tra-cuu/tuong/');
   const total = Number(await lookup(page).locator('[data-lookup-total]').getAttribute('data-lookup-total'));
   expect(total).toBeGreaterThan(60);
   await expect(cards(page)).toHaveCount(60);
@@ -153,7 +193,7 @@ test('quá 60 kết quả vẫn tới được bản ghi cuối bằng Xem thêm
 });
 
 test('tìm kiếm chạy trên toàn corpus, bỏ dấu và alias chữ Hán', async ({ page }) => {
-  await page.goto('/tra-cuu/?group=heroes');
+  await openLookup(page, '/tra-cuu/tuong/');
   const search = lookup(page).getByRole('searchbox');
   await search.fill('luu bi');
   await expect(cards(page).first()).toContainText('Lưu Bị');
@@ -169,7 +209,7 @@ test('tìm kiếm chạy trên toàn corpus, bỏ dấu và alias chữ Hán', a
 });
 
 test('hộp thoại hồ sơ bẫy focus, đóng bằng Escape và trả focus về thẻ mở', async ({ page }) => {
-  await page.goto('/tra-cuu/?group=heroes');
+  await openLookup(page, '/tra-cuu/tuong/');
   const opener = firstResult(page);
   await opener.click();
 
@@ -192,38 +232,44 @@ test('hộp thoại hồ sơ bẫy focus, đóng bằng Escape và trả focus v
 });
 
 test('bấm nền cũng đóng hộp thoại', async ({ page }) => {
-  await page.goto('/tra-cuu/?group=equipment');
+  await openLookup(page, '/tra-cuu/trang-bi/');
   await firstResult(page).click();
   await expect(page.getByRole('dialog')).toBeVisible();
   await page.locator('.lookup-backdrop').click({ position: { x: 5, y: 5 } });
   await expect(page.getByRole('dialog')).toHaveCount(0);
 });
 
-test('hồ sơ tướng đi tới chiến pháp liên quan và cập nhật query theo ID', async ({ page }) => {
-  await page.goto('/tra-cuu/?group=heroes');
+test('hồ sơ tướng đi tới chiến pháp liên quan trên trang Chiến pháp', async ({ page }) => {
+  await openLookup(page, '/tra-cuu/tuong/');
   await lookup(page).getByRole('searchbox').fill('luu bi');
   await firstResult(page).click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
-  await expect(page).toHaveURL(/\/tra-cuu\/\?group=heroes&id=hero%3A/);
+  await expect(page).toHaveURL(/\/tra-cuu\/tuong\/\?id=hero%3A/);
 
-  await dialog.locator('[data-lookup-relation]').first().click();
-  await expect(page).toHaveURL(/\/tra-cuu\/\?group=tactics&id=tactic%3A/);
+  const relation = dialog.locator('[data-lookup-relation]').first();
+  const target = await relation.getAttribute('data-lookup-relation');
+  await expect(relation).toHaveAttribute('href', `/tra-cuu/chien-phap/?id=${encodeURIComponent(target)}`);
+  await relation.click();
+  await expect(page).toHaveURL(`/tra-cuu/chien-phap/?id=${encodeURIComponent(target)}`);
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await page.goBack();
+  await expect(page).toHaveURL(/\/tra-cuu\/tuong\/\?id=hero%3A/);
   await expect(page.getByRole('dialog')).toBeVisible();
 });
 
 test('deep link tới một ID mở thẳng hồ sơ', async ({ page }) => {
-  await page.goto('/tra-cuu/?group=heroes');
+  await openLookup(page, '/tra-cuu/tuong/');
   await lookup(page).getByRole('searchbox').fill('luu bi');
   await firstResult(page).click();
   const deepLink = new URL(page.url()).search;
-  await page.goto(`/tra-cuu/${deepLink}`);
+  await openLookup(page, `/tra-cuu/tuong/${deepLink}`);
   await expect(page.getByRole('dialog')).toBeVisible();
-  await expect(page).toHaveURL(`/tra-cuu/${deepLink}`);
+  await expect(page).toHaveURL(`/tra-cuu/tuong/${deepLink}`);
 });
 
 test('hồ sơ công trình hiện cấp, chi phí, thời gian và hiệu ứng', async ({ page }) => {
-  await page.goto('/tra-cuu/?group=buildings');
+  await openLookup(page, '/tra-cuu/cong-trinh/');
   await firstResult(page).click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toContainText('Cấp 1');
@@ -240,9 +286,12 @@ for (const width of [320, 375, 768, 1280]) {
       if (width < 1280) await page.locator('#section-menu-toggle').click();
       await expect(navLink(page, 'Tra cứu', width < 1280)).toHaveAttribute('aria-current', 'page');
       if (width < 1280) await page.locator('.site-menu-close').click();
+      await openLookup(page, GROUP_PATH.heroes);
       for (const group of GROUPS) {
-        await chip(page, group).click();
-        await expect(chip(page, group)).toHaveAttribute('aria-pressed', 'true');
+        if (group !== 'heroes') await chip(page, group).click();
+        await expect(page).toHaveURL(GROUP_PATH[group]);
+        await expect(currentChip(page)).toHaveAttribute('data-group', group);
+        await expect(page.locator('body[data-boot="ready"]')).toBeAttached();
         await expect(groupResults(page, group).first()).toBeVisible();
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
         await firstResult(page).click();
@@ -264,7 +313,7 @@ async function portraitHosts(request) {
 }
 
 test('mọi ảnh chân dung là https + no-referrer + lazy; thiếu iconUrl thì hiện chữ Hán', async ({ page }) => {
-  await page.goto('/tra-cuu/');
+  await openLookup(page, '/tra-cuu/tuong/');
   await expect(cards(page)).toHaveCount(60);
   const portraits = await page.evaluate(() => [...document.querySelectorAll('#section-lookup .lookup-card img')].map((image) => ({
     src: image.getAttribute('src'), referrer: image.getAttribute('referrerpolicy'),
@@ -279,7 +328,7 @@ test('mọi ảnh chân dung là https + no-referrer + lazy; thiếu iconUrl th�
     expect(portrait.alt.length).toBeGreaterThan(0);
   }
   // Trang đầu toàn tướng có ảnh; ô chữ Hán kiểm trên hồ sơ của tướng thiếu iconUrl (Chu Thương).
-  await page.goto('/tra-cuu/?group=heroes&id=hero%3Achu-thuong');
+  await openLookup(page, '/tra-cuu/tuong/?id=hero%3Achu-thuong');
   await expect(page.getByRole('dialog')).toBeVisible();
   const han = await page.evaluate(() => [...document.querySelectorAll('#section-lookup .lookup-dialog-portrait .hero-portrait-han')].map((node) => ({
     char: node.textContent.trim(), lang: node.firstElementChild?.getAttribute('lang'), hidden: node.firstElementChild?.getAttribute('aria-hidden'),
@@ -299,7 +348,7 @@ test('chặn mọi host chân dung: mọi thẻ hiện fallback chữ Hán, khô
   const hosts = await portraitHosts(request);
   expect(hosts.length).toBeGreaterThan(0);
   await page.route('**/*', (route) => (hosts.some((host) => route.request().url().includes(host)) ? route.abort() : route.continue()));
-  await page.goto('/tra-cuu/');
+  await openLookup(page, '/tra-cuu/tuong/');
   await expect(cards(page)).toHaveCount(60);
   // Cuộn hết lưới để mọi ảnh lazy được yêu cầu (và lỗi) rồi mới kiểm fallback.
   await page.evaluate(async () => {
@@ -318,7 +367,7 @@ test('chặn mọi host chân dung: mọi thẻ hiện fallback chữ Hán, khô
 test('index.json không được tải khi chưa mở hồ sơ, chỉ tải số liệu khi mở', async ({ page }) => {
   const requested = [];
   page.on('request', (r) => { if (r.url().includes('/data/recommended/')) requested.push(r.url().split('/').at(-1)); });
-  await page.goto('/tra-cuu/');
+  await openLookup(page, '/tra-cuu/tuong/');
   await expect(cards(page)).toHaveCount(60);
   expect(requested).toEqual([]);
 
@@ -327,6 +376,38 @@ test('index.json không được tải khi chưa mở hồ sơ, chỉ tải số
   await expect.poll(() => requested.includes('hero-summaries.json'), { timeout: 15_000 }).toBe(true);
   expect(requested).toContain('manifest.json');
   expect(requested).toContain('hero-summaries.json');
+  expect(requested).not.toContain('index.json');
+  expect(requested).not.toContain('other-teams.json');
+});
+
+test('hồ sơ chiến pháp: chọn phiên bản hiệu ứng, số cấp in đậm và Trong cẩm nang khớp số liệu build', async ({ page, request }) => {
+  const requested = [];
+  page.on('request', (r) => { if (r.url().includes('/data/recommended/')) requested.push(r.url().split('/').at(-1)); });
+  await openLookup(page, '/tra-cuu/chien-phap/?id=tactic%3Aho-bao-ky');
+  const dialog = page.getByRole('dialog');
+  await expect(dialog.locator('.lookup-tactic-tile', { hasText: 'Người mang tối đa' })).toContainText('1');
+  await expect(dialog.locator('.lookup-source-hero')).toContainText('Tào Thuần');
+
+  // Bản hiện hành chọn sẵn; bấm "Bản gốc" đổi đoạn hiệu ứng và trạng thái nút.
+  const buttons = dialog.locator('.lookup-version-button');
+  await expect(buttons).toHaveCount(3);
+  await expect(buttons.first()).toHaveAttribute('aria-pressed', 'true');
+  await expect(dialog.locator('.lookup-tactic-level').first()).toHaveText('20→40');
+  await buttons.last().click();
+  await expect(buttons.last()).toHaveAttribute('aria-pressed', 'true');
+  await expect(buttons.first()).toHaveAttribute('aria-pressed', 'false');
+  await expect(dialog.locator('.lookup-tactic-level').first()).toHaveText('45%→90%');
+
+  // Số liệu hiển thị trùng file build của generation đang pin; không tải index/other-teams.
+  const pin = await (await request.get('/data/recommended/current.json')).json();
+  const summaries = await (await request.get(`/data/recommended/${pin.generationId}/tactic-summaries.json`)).json();
+  const expected = summaries.summaries['tactic:ho-bao-ky'];
+  const numbers = dialog.locator('.cam-nang-number');
+  await expect(numbers.first()).toHaveText(String(expected.standard.teams));
+  await expect(numbers.nth(1)).toHaveText(String(expected.other.teams));
+  await expect(dialog.locator('.cam-nang-card').nth(1).locator('.cam-nang-bar-value').first()).toHaveText(String(expected.carriers[0].teams));
+  await expect(dialog.locator('.cam-nang-team')).toHaveCount(expected.representative.length);
+  expect(requested).toContain('tactic-summaries.json');
   expect(requested).not.toContain('index.json');
   expect(requested).not.toContain('other-teams.json');
 });
@@ -377,7 +458,7 @@ test('số liệu Trong cẩm nang của SP Lữ Mông khớp phép đếm độ
   // Thứ tự hiển thị: điểm giảm dần rồi thứ tự nguồn (Đội chuẩn đứng trước khi cùng hạng).
   const topTactics = [...tactics.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3);
 
-  await page.goto(`/tra-cuu/?group=heroes&id=${encodeURIComponent(target)}`);
+  await openLookup(page, `/tra-cuu/tuong/?id=${encodeURIComponent(target)}`);
   await expect(page.getByRole('dialog')).toBeVisible();
   await expect(lookup(page).locator('.cam-nang-grid')).toBeVisible();
   const counts = await lookup(page).locator('.cam-nang-number').allTextContents();
@@ -407,8 +488,8 @@ test('số liệu Trong cẩm nang của SP Lữ Mông khớp phép đếm độ
 });
 
 test('từ đội tiêu biểu vào trang chi tiết rồi Quay lại về đúng hồ sơ', async ({ page }) => {
-  const profile = '/tra-cuu/?group=heroes&id=hero%3Asp-lu-mong';
-  await page.goto(profile);
+  const profile = '/tra-cuu/tuong/?id=hero%3Asp-lu-mong';
+  await openLookup(page, profile);
   await expect(lookup(page).locator('.cam-nang-grid')).toBeVisible();
   const team = lookup(page).locator('.cam-nang-team a').first();
   const href = await team.getAttribute('href');
@@ -416,13 +497,13 @@ test('từ đội tiêu biểu vào trang chi tiết rồi Quay lại về đún
   await team.click();
   await expect(page).toHaveURL(/\/doi-chuan\//);
   await page.locator('.detail-back-link, .detail-back-row a').first().click();
-  await expect(page).toHaveURL(new RegExp(`/tra-cuu/\\?group=heroes&id=hero%3Asp-lu-mong$`));
+  await expect(page).toHaveURL(new RegExp(`/tra-cuu/tuong/\\?id=hero%3Asp-lu-mong$`));
   await expect(page.getByRole('dialog')).toBeVisible();
   await expect(page.getByRole('dialog')).toContainText('SP Lữ Mông');
 });
 
 test('link Tìm tướng này trong Đội chuẩn giữ season=all và q theo tên', async ({ page }) => {
-  await page.goto('/tra-cuu/?group=heroes&id=hero%3Asp-lu-mong');
+  await openLookup(page, '/tra-cuu/tuong/?id=hero%3Asp-lu-mong');
   await expect(lookup(page).locator('.cam-nang-grid')).toBeVisible();
   const link = lookup(page).locator('.cam-nang-link');
   await expect(link).toHaveAttribute('href', /^\/doi-chuan\/\?season=all&q=/);
@@ -444,7 +525,7 @@ async function mobileTableLabels(page) {
 
 test('bảng chiến pháp chiếm toàn bộ chiều rộng và hiện đủ sáu cột ở desktop', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/tra-cuu/?group=tactics');
+  await openLookup(page, '/tra-cuu/chien-phap/');
   const panel = lookup(page).locator('.lookup-table-panel');
   await expect(panel).toBeVisible();
   const width = (await panel.boundingBox()).width;
@@ -468,7 +549,7 @@ test('bảng chiến pháp chiếm toàn bộ chiều rộng và hiện đủ s�
 for (const width of [390, 320]) {
   test(`bảng chiến pháp ở ${width}px bày đủ sáu trường với nhãn cột`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
-    await page.goto('/tra-cuu/?group=tactics');
+    await openLookup(page, '/tra-cuu/chien-phap/');
     await expect(lookup(page).locator('.lookup-table tbody tr').first()).toBeVisible();
     expect(await mobileTableLabels(page)).toEqual(tableHeaders);
     const sizes = await page.evaluate(() => {
@@ -493,7 +574,7 @@ for (const width of [390, 320]) {
     test(`đầu hồ sơ và bảng facts đọc được ở ${width}px nền ${theme}`, async ({ page }) => {
       await page.setViewportSize({ width, height: 900 });
       await page.addInitScript((value) => localStorage.setItem('theme', value), theme);
-      await page.goto('/tra-cuu/?group=heroes&id=hero%3Asp-lu-mong');
+      await openLookup(page, '/tra-cuu/tuong/?id=hero%3Asp-lu-mong');
       await expect(page.getByRole('dialog')).toBeVisible();
       const head = await page.evaluate(() => {
         const facts = [...document.querySelectorAll('#section-lookup .lookup-fact')].map((row) => ({
@@ -526,8 +607,8 @@ for (const width of [390, 320]) {
 for (const theme of ['light', 'dark']) {
   test(`tab nhóm đang chọn đủ tương phản ở nền ${theme}`, async ({ page }) => {
     await page.addInitScript((value) => localStorage.setItem('theme', value), theme);
-    await page.goto('/tra-cuu/?group=heroes');
-    await expect(lookup(page).locator('.lookup-chip[aria-pressed="true"]')).toBeVisible();
+    await openLookup(page, '/tra-cuu/tuong/');
+    await expect(lookup(page).locator('.lookup-chip[aria-current="page"]')).toBeVisible();
     const contrast = await page.evaluate(() => {
       const toRgb = (value) => value.match(/[\d.]+/g).slice(0, 3).map(Number);
       const lum = (rgb) => {
@@ -537,7 +618,7 @@ for (const theme of ['light', 'dark']) {
         });
         return 0.2126 * r + 0.7152 * g + 0.0722 * b;
       };
-      const chip = document.querySelector('#section-lookup .lookup-chip[aria-pressed="true"]');
+      const chip = document.querySelector('#section-lookup .lookup-chip[aria-current="page"]');
       const style = getComputedStyle(chip);
       let background = style.backgroundColor;
       for (let node = chip; node && /rgba?\([^)]*,\s*0\)|transparent/.test(background); node = node.parentElement) {
@@ -548,12 +629,12 @@ for (const theme of ['light', 'dark']) {
       return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
     });
     expect(contrast).toBeGreaterThanOrEqual(4.5);
-    await expect(lookup(page).locator('.lookup-chip[aria-pressed="true"] .lookup-chip-count')).toBeVisible();
+    await expect(lookup(page).locator('.lookup-chip[aria-current="page"] .lookup-chip-count')).toBeVisible();
   });
 }
 
-test('thẻ chiến pháp và kết quả hỗn hợp không in enum loại thô', async ({ page }) => {
-  await page.goto('/tra-cuu/?group=heroes&id=hero%3Asp-lu-mong');
+test('hồ sơ tướng và bảng chiến pháp không in enum loại thô', async ({ page }) => {
+  await openLookup(page, '/tra-cuu/tuong/?id=hero%3Asp-lu-mong');
   await expect(page.getByRole('dialog')).toBeVisible();
   const subs = await lookup(page).locator('.lookup-relation-sub').allTextContents();
   expect(subs.length).toBeGreaterThan(0);
@@ -561,38 +642,38 @@ test('thẻ chiến pháp và kết quả hỗn hợp không in enum loại thô
     expect(text).not.toMatch(/\b(?:ACTIVE|PASSIVE|COMMAND|INTERNAL|FORMATION|TROOP|BURST)\b/);
     expect(text).toMatch(/Chủ động|Bị động|Chỉ huy|Nội chính|Trận pháp|Binh chủng|Bùng nổ/);
   }
-  // Nhóm hỗn hợp: tìm không chọn nhóm để thẻ chiến pháp cũng đi qua đường thẻ kết quả.
-  await page.goto('/tra-cuu/');
-  await expect(cards(page).first()).toBeVisible();
+  // Cột Loại của bảng Chiến pháp đi qua cùng bảng nhãn loại.
+  await openLookup(page, '/tra-cuu/chien-phap/');
   await lookup(page).getByRole('searchbox').fill('An Ủi');
-  await expect(cards(page).first()).toContainText('An Ủi');
-  const meta = await lookup(page).locator('.lookup-card-meta-text').allTextContents();
-  expect(meta.length).toBeGreaterThan(0);
-  for (const text of meta) expect(text).not.toMatch(/^(?:ACTIVE|PASSIVE|COMMAND|INTERNAL|FORMATION|TROOP|BURST)$/);
-  expect(meta.some((text) => /Chủ động|Bị động|Chỉ huy|Nội chính|Trận pháp|Binh chủng|Bùng nổ/.test(text))).toBe(true);
+  await expect(lookup(page).locator('.lookup-table tbody tr').first()).toContainText('An Ủi');
+  const types = await lookup(page).locator('.lookup-table tbody td[data-label="Loại"]').allTextContents();
+  expect(types.length).toBeGreaterThan(0);
+  for (const text of types) expect(text).not.toMatch(/\b(?:ACTIVE|PASSIVE|COMMAND|INTERNAL|FORMATION|TROOP|BURST)\b/);
+  expect(types.every((text) => /Chủ động|Bị động|Chỉ huy|Nội chính|Trận pháp|Binh chủng|Bùng nổ/.test(text))).toBe(true);
 });
 
 test('hồ sơ giữ đủ trường đã có: bậc đặc kỹ, phẩm trang bị, loại và dạng hiệu ứng chiến pháp', async ({ page }) => {
-  await page.goto('/tra-cuu/?group=equipment&id=equipment-special%3Agian-hung');
+  await openLookup(page, '/tra-cuu/trang-bi/?id=equipment-special%3Agian-hung');
   await expect(page.getByRole('dialog')).toContainText('Bậc');
   await expect(page.getByRole('dialog')).toContainText('T0');
-  await page.goto('/tra-cuu/?group=equipment&id=equipment%3Ay-thien-kiem');
+  await openLookup(page, '/tra-cuu/trang-bi/?id=equipment%3Ay-thien-kiem');
   await expect(page.getByRole('dialog')).toContainText('Phẩm chất');
-  await page.goto('/tra-cuu/?group=tactics&id=tactic%3Aan-ui-quan-dan');
+  await openLookup(page, '/tra-cuu/chien-phap/?id=tactic%3Aan-ui-quan-dan');
   const dialog = page.getByRole('dialog');
-  await expect(dialog).toContainText('Loại');
-  await expect(dialog).toContainText('Chỉ huy');
-  await expect(dialog).toContainText('Dạng hiệu ứng');
-  await expect(dialog).toContainText('Tăng ích');
+  // Loại nằm ở eyebrow + huy hiệu nền mực; dạng hiệu ứng ở huy hiệu viền và bảng nguồn (artboard LookupTacticProfile).
+  await expect(dialog.locator('.lookup-dialog-eyebrow')).toContainText('Chỉ huy');
+  await expect(dialog.locator('.lookup-dialog-badges .badge-ink')).toHaveText('Chỉ huy');
+  await expect(dialog.locator('.lookup-tactic-facts')).toContainText('Dạng hiệu ứng');
+  await expect(dialog.locator('.lookup-tactic-facts')).toContainText('Tăng ích');
 });
 
 test('Back đóng hồ sơ và trả focus về nơi đã mở', async ({ page }) => {
-  await page.goto('/tra-cuu/?group=heroes');
+  await openLookup(page, '/tra-cuu/tuong/');
   await firstResult(page).click();
   await expect(page.getByRole('dialog')).toBeVisible();
   await page.goBack();
   await expect(page.getByRole('dialog')).toHaveCount(0);
-  await expect(page).toHaveURL('/tra-cuu/?group=heroes');
+  await expect(page).toHaveURL('/tra-cuu/tuong/');
   expect(await page.evaluate(() => document.activeElement !== document.body && document.activeElement !== document.documentElement)).toBe(true);
   await page.goForward();
   await expect(page.getByRole('dialog')).toBeVisible();
@@ -624,7 +705,7 @@ test('bảng chiến pháp: cột đúng artboard, đầu bảng một dòng, kh
   const declared = [60, 120, 230, 200, 80];
   for (const width of [1440, 1024]) {
     await page.setViewportSize({ width, height: 900 });
-    await page.goto('/tra-cuu/?group=tactics');
+    await openLookup(page, '/tra-cuu/chien-phap/');
     await expect(lookup(page).locator('.lookup-table tbody tr').first()).toBeVisible();
     const headers = lookup(page).locator('.lookup-table thead th');
     for (const [index, expected] of declared.entries()) {
@@ -651,7 +732,7 @@ test('bảng chiến pháp: cột đúng artboard, đầu bảng một dòng, kh
 });
 
 test('tỷ lệ kích hoạt trong bảng và hồ sơ không lộ số thập phân dài hay giá trị vô lý', async ({ page }) => {
-  await page.goto('/tra-cuu/?group=tactics');
+  await openLookup(page, '/tra-cuu/chien-phap/');
   await expect(lookup(page).locator('.lookup-table tbody tr').first()).toBeVisible();
   const rates = await lookup(page).locator('.lookup-table tbody .lookup-table-rate').allTextContents();
   expect(rates.length).toBeGreaterThan(20);
@@ -662,25 +743,27 @@ test('tỷ lệ kích hoạt trong bảng và hồ sơ không lộ số thập p
   }
   // Thiên Uy Khiếu Trận: nguồn ghi 50 (thang phần trăm), pipeline hiệu chỉnh đã review thành 0.5 → hiện 50%.
   // Nhánh gạch ngang cho giá trị ngoài 0–1 vẫn được unit test ratePercentText (50 / −1) phủ.
-  await page.goto('/tra-cuu/?group=tactics&id=tactic%3Athien-uy-khieu-tran');
+  await openLookup(page, '/tra-cuu/chien-phap/?id=tactic%3Athien-uy-khieu-tran');
   const dialog = page.getByRole('dialog');
   await expect(dialog).toContainText('Tỷ lệ kích hoạt');
   const profile = await dialog.textContent();
   expect(profile).not.toMatch(/\d\.\d{6,}/);
   expect(profile).not.toContain('5000');
-  await expect(dialog.locator('.lookup-fact', { hasText: 'Tỷ lệ kích hoạt' }).first()).toContainText('50%');
+  await expect(dialog.locator('.lookup-tactic-tile', { hasText: 'Tỷ lệ kích hoạt' }).first()).toContainText('50%');
 });
 
 test('cách nhận hiện tên sự kiện, ẩn mã trích dẫn bsn của nguồn', async ({ page }) => {
-  await page.goto('/tra-cuu/?group=tactics&id=tactic%3Akien-cuong-chi-hoa');
-  const fact = page.getByRole('dialog').locator('.lookup-fact', { hasText: 'Cách nhận' }).first();
-  await expect(fact).toContainText('Sự kiện liên động Chân Tam Quốc Vô Song máy chủ Đài Loan');
+  await openLookup(page, '/tra-cuu/chien-phap/?id=tactic%3Akien-cuong-chi-hoa');
+  // Chiến pháp tự mang của CO Đại Kiều: thẻ tướng không được che mất cách nhận qua sự kiện.
+  const fact = page.getByRole('dialog').locator('.lookup-tactic-source');
+  await expect(fact.locator('.lookup-source-hero')).toContainText('Đại Kiều');
+  await expect(fact.locator('.lookup-source-acquired')).toHaveText('Sự kiện liên động Chân Tam Quốc Vô Song máy chủ Đài Loan');
   expect(await fact.textContent()).not.toContain('bsn=');
 });
 
 test('chi phí công trình không in null hay khóa thô, ô rỗng bị bỏ hẳn', async ({ page }) => {
   for (const id of ['building%3Athai-thach-xu', 'building%3Aquan-xa']) {
-    await page.goto(`/tra-cuu/?group=buildings&id=${id}`);
+    await openLookup(page, `/tra-cuu/cong-trinh/?id=${id}`);
     const dialog = page.getByRole('dialog');
     await expect(dialog).toContainText('Cấp công trình');
     const text = await dialog.textContent();
@@ -688,14 +771,14 @@ test('chi phí công trình không in null hay khóa thô, ô rỗng bị bỏ h
     expect(text).not.toMatch(/\b(?:wood|stone|iron|food)\b/);
   }
   // Thái Thạch Xứ: Đá là null trong dữ liệu nên chỉ còn Sắt và Gỗ.
-  await page.goto('/tra-cuu/?group=buildings&id=building%3Athai-thach-xu');
-  const level = page.getByRole('dialog').locator('.lookup-child-row', { hasText: 'Cấp 1' }).first();
+  await openLookup(page, '/tra-cuu/cong-trinh/?id=building%3Athai-thach-xu');
+  const level = page.getByRole('dialog').locator('.lookup-level', { hasText: 'Cấp 1' }).first();
   await expect(level).toContainText('Sắt: 180');
   await expect(level).toContainText('Gỗ: 180');
   expect(await level.textContent()).not.toContain('Đá');
   // Quân Xá: cấp 1 chỉ có hiệu ứng, không có chi phí nào dùng được.
-  await page.goto('/tra-cuu/?group=buildings&id=building%3Aquan-xa');
-  const first = page.getByRole('dialog').locator('.lookup-child-row', { hasText: 'Cấp 1' }).first();
+  await openLookup(page, '/tra-cuu/cong-trinh/?id=building%3Aquan-xa');
+  const first = page.getByRole('dialog').locator('.lookup-level', { hasText: 'Cấp 1' }).first();
   await expect(first).toContainText('bố trí 1 bộ đội');
   expect(await first.textContent()).not.toMatch(/Sắt|Đá|Gỗ|Lương/);
 });
@@ -703,7 +786,7 @@ test('chi phí công trình không in null hay khóa thô, ô rỗng bị bỏ h
 for (const theme of ['light', 'dark']) {
   test(`ô thích tính bậc S và badge hồ sơ dùng đúng cặp token ở nền ${theme}`, async ({ page }) => {
     await page.addInitScript((value) => localStorage.setItem('theme', value), theme);
-    await page.goto('/tra-cuu/?group=heroes&id=hero%3Asp-lu-mong');
+    await openLookup(page, '/tra-cuu/tuong/?id=hero%3Asp-lu-mong');
     await expect(page.getByRole('dialog')).toBeVisible();
     const soft = tokenRgb(await tokenValue(page, '--accent-soft'));
     const ink = tokenRgb(await tokenValue(page, '--accent-ink'));
@@ -741,68 +824,84 @@ for (const theme of ['light', 'dark']) {
       expect(badge.height).toBe(26);
     }
     // Hộp thoại chiến pháp: phẩm dùng đúng viên hồng như bảng.
-    await page.goto('/tra-cuu/?group=tactics&id=tactic%3Aan-ui-quan-dan');
-    const quality = lookup(page).locator('.lookup-dialog-badges .lookup-quality');
-    await expect(quality).toBeVisible();
+    await openLookup(page, '/tra-cuu/chien-phap/?id=tactic%3Aan-ui-quan-dan');
+    const quality = lookup(page).locator('.lookup-dialog-badges .badge-accent');
+    await expect(quality).toHaveText('Phẩm S');
+    expect(Math.round(await quality.evaluate((node) => node.getBoundingClientRect().height))).toBe(26);
     expect(await quality.evaluate((node) => getComputedStyle(node).backgroundColor)).toBe(soft);
     expect(await quality.evaluate((node) => getComputedStyle(node).color)).toBe(ink);
   });
 }
 
-test('chip nhóm mobile là viên, cách ô tìm 16px; desktop vẫn là tab gạch chân cách 24px', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/tra-cuu/?group=heroes');
-  await expect(lookup(page).locator('.lookup-chip').first()).toBeVisible();
-  const gapOf = (page) => page.evaluate(() => {
-    const chips = document.querySelector('#section-lookup .lookup-chips').getBoundingClientRect();
+test('thanh nhóm một hàng ở mọi bề rộng: nhóm đang xem luôn trong khung, mép còn mục khuất thì mờ', async ({ page }) => {
+  const rail = (page) => page.evaluate(() => {
+    const nav = document.querySelector('#section-lookup .lookup-chips');
+    const box = nav.getBoundingClientRect();
+    const chips = [...nav.querySelectorAll('.lookup-chip')].map((node) => node.getBoundingClientRect());
+    const current = nav.querySelector('.lookup-chip[aria-current="page"]').getBoundingClientRect();
     const search = document.querySelector('#section-lookup .lookup-search').getBoundingClientRect();
-    return Math.round(chips.top - search.bottom);
+    return {
+      rows: new Set(chips.map((chip) => Math.round(chip.top))).size,
+      currentInside: current.left >= box.left - 1 && current.right <= box.right + 1,
+      overflowing: nav.scrollWidth > nav.clientWidth + 1,
+      fade: nav.dataset.fade ?? null,
+      gap: Math.round(box.top - search.bottom),
+      pageOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth,
+    };
   });
-  expect(await gapOf(page)).toBe(24);
-  const desktopRadius = await lookup(page).locator('.lookup-chip[aria-pressed="true"]').evaluate((node) => getComputedStyle(node).borderRadius);
-  expect(desktopRadius).toBe('0px');
-
+  // Công trình là nhóm thứ sáu: ở bề rộng hẹp nó chỉ lọt khung nếu thanh đã cuộn tới nó.
+  for (const width of [1440, 1024, 768, 390, 320]) {
+    await page.setViewportSize({ width, height: 844 });
+    await openLookup(page, '/tra-cuu/cong-trinh/');
+    const state = await rail(page);
+    expect(state.rows, `${width}`).toBe(1);
+    expect(state.currentInside, `${width}`).toBe(true);
+    expect(state.pageOverflow, `${width}`).toBe(false);
+    expect(state.gap, `${width}`).toBe(width <= 680 ? 16 : 24);
+    if (state.overflowing) expect(state.fade, `${width}`).toMatch(/^(start|end|both)$/);
+    else expect(state.fade, `${width}`).toBeNull();
+  }
+  // Cuộn hết về đầu thì chỉ còn mép phải mờ.
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/tra-cuu/?group=heroes');
-  await expect(lookup(page).locator('.lookup-chip').first()).toBeVisible();
-  expect(await gapOf(page)).toBe(16);
+  await openLookup(page, '/tra-cuu/cong-trinh/');
+  await lookup(page).locator('.lookup-chips').evaluate((nav) => { nav.scrollLeft = 0; nav.dispatchEvent(new Event('scroll')); });
+  await expect(lookup(page).locator('.lookup-chips')).toHaveAttribute('data-fade', 'end');
+
+  // Mobile: viên bo tròn, viên đang xem nền chọn + chữ chọn (cả số đếm), viên khác nền giấy.
   const band = tokenRgb(await tokenValue(page, '--band'));
   const bandInk = tokenRgb(await tokenValue(page, '--band-ink'));
   const panel3 = tokenRgb(await tokenValue(page, '--panel-3'));
-  const selected = await lookup(page).locator('.lookup-chip[aria-pressed="true"]').evaluate((node) => ({
+  const selected = await lookup(page).locator('.lookup-chip[aria-current="page"]').evaluate((node) => ({
     radius: getComputedStyle(node).borderRadius,
     background: getComputedStyle(node).backgroundColor,
     color: getComputedStyle(node).color,
     count: getComputedStyle(node.querySelector('.lookup-chip-count')).color,
-    height: Math.round(node.getBoundingClientRect().height),
   }));
   expect(selected.radius).toBe('999px');
   expect(selected.background).toBe(band);
   expect(selected.color).toBe(bandInk);
   expect(selected.count).toBe(bandInk);
-  expect(selected.height).toBeGreaterThanOrEqual(44);
-  const idle = await lookup(page).locator('.lookup-chip[aria-pressed="false"]').first().evaluate((node) => ({
+  const idle = await lookup(page).locator('.lookup-chip:not([aria-current])').first().evaluate((node) => ({
     radius: getComputedStyle(node).borderRadius,
     background: getComputedStyle(node).backgroundColor,
   }));
   expect(idle.radius).toBe('999px');
   expect(idle.background).toBe(panel3);
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
 });
 
 test('thẻ tướng có dòng phụ Thống ngự; nhãn facts một dòng; chỉ số mobile gắn thanh với tăng trưởng', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/tra-cuu/?group=heroes');
+  await openLookup(page, '/tra-cuu/tuong/');
   const card = lookup(page).locator('.lookup-card').filter({ hasText: 'SP Lữ Mông' }).first();
   await expect(card.locator('.lookup-card-meta')).toContainText('Thống ngự 7');
 
-  await page.goto('/tra-cuu/?group=heroes&id=hero%3Asp-lu-mong');
+  await openLookup(page, '/tra-cuu/tuong/?id=hero%3Asp-lu-mong');
   await expect(page.getByRole('dialog')).toBeVisible();
   const label = lookup(page).locator('.lookup-fact', { hasText: 'Danh hiệu độc quyền' }).first().locator('.lookup-fact-key');
   expect(await lineBoxes(label)).toBe(1);
 
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/tra-cuu/?group=heroes&id=hero%3Asp-lu-mong');
+  await openLookup(page, '/tra-cuu/tuong/?id=hero%3Asp-lu-mong');
   await expect(page.getByRole('dialog')).toBeVisible();
   const stats = await lookup(page).locator('.lookup-stat').evaluateAll((nodes) => nodes.map((node) => {
     const bar = node.querySelector('.lookup-stat-bar').getBoundingClientRect();
@@ -840,7 +939,7 @@ test('chip nhóm mobile đủ 44px và chữ căn giữa ở 390/320 × 2 theme 
     for (const theme of ['light', 'dark']) {
       await page.setViewportSize({ width, height: 844 });
       await page.addInitScript((value) => localStorage.setItem('theme', value), theme);
-      await page.goto('/tra-cuu/?group=tactics');
+      await openLookup(page, '/tra-cuu/chien-phap/');
       await expect(lookup(page).locator('.lookup-chip').first()).toBeVisible();
       const chips = await measure(page);
       expect(chips.length, `${width}/${theme}`).toBe(GROUPS.length);
@@ -856,7 +955,7 @@ test('chip nhóm mobile đủ 44px và chữ căn giữa ở 390/320 × 2 theme 
 test('hàng đội tiêu biểu: cả hàng là vùng bấm của link đội (P07-R2)', async ({ page }) => {
   for (const width of [390, 320]) {
     await page.setViewportSize({ width, height: 844 });
-    await page.goto('/tra-cuu/?group=heroes&id=hero%3Asp-lu-mong');
+    await openLookup(page, '/tra-cuu/tuong/?id=hero%3Asp-lu-mong');
     await expect(lookup(page).locator('.cam-nang-teams')).toBeVisible();
     const rows = lookup(page).locator('.cam-nang-team');
     const count = await rows.count();
@@ -888,33 +987,8 @@ test('hàng đội tiêu biểu: cả hàng là vùng bấm của link đội (P
 
 /* ---------- Phase 3: nhóm lọc tách khỏi hồ sơ, Back/đóng, focus Xem thêm ---------- */
 
-const lookupTotal = (page) => lookup(page).locator('[data-lookup-total]');
-
-test('mở thẻ từ chế độ tất cả giữ lưới tất cả; bấm lại chip đang nhấn về tất cả', async ({ page }) => {
-  await page.goto('/tra-cuu/');
-  const pressed = lookup(page).locator('.lookup-chip[aria-pressed="true"]');
-  await expect(pressed).toHaveCount(0);
-  const total = await lookupTotal(page).getAttribute('data-lookup-total');
-  await firstResult(page).click();
-  await expect(page.getByRole('dialog')).toBeVisible();
-  expect(new URL(page.url()).searchParams.has('group')).toBe(false);
-  await expect(pressed).toHaveCount(0);
-  await expect(lookupTotal(page)).toHaveAttribute('data-lookup-total', total);
-  await page.keyboard.press('Escape');
-  await expect(page.getByRole('dialog')).toHaveCount(0);
-  await expect(page).toHaveURL('/tra-cuu/');
-  await expect(lookupTotal(page)).toHaveAttribute('data-lookup-total', total);
-
-  await chip(page, 'heroes').click();
-  await expect(page).toHaveURL('/tra-cuu/?group=heroes');
-  await chip(page, 'heroes').click();
-  await expect(page).toHaveURL('/tra-cuu/');
-  await expect(pressed).toHaveCount(0);
-  await expect(lookupTotal(page)).toHaveAttribute('data-lookup-total', total);
-});
-
 test('Xem thêm hai lần, mở thẻ thứ 150 rồi Back giữ 180 thẻ và focus thẻ vừa mở', async ({ page }) => {
-  await page.goto('/tra-cuu/?group=heroes');
+  await openLookup(page, '/tra-cuu/tuong/');
   const more = lookup(page).getByRole('button', { name: 'Xem thêm' });
   await more.click();
   await expect(cards(page)).toHaveCount(120);
@@ -930,22 +1004,23 @@ test('Xem thêm hai lần, mở thẻ thứ 150 rồi Back giữ 180 thẻ và f
   await expect(lookup(page).locator(`[data-lookup-id="${openedId}"]`)).toBeFocused();
 });
 
-test('đóng hồ sơ bằng nút X rồi một lần Back về đúng trạng thái trước khi mở', async ({ page }) => {
-  await page.goto('/tra-cuu/');
+test('đóng hồ sơ bằng nút X rồi một lần Back về đúng trang nhóm trước khi mở', async ({ page }) => {
+  await openLookup(page, '/tra-cuu/tuong/');
   await chip(page, 'equipment').click();
-  await expect(page).toHaveURL('/tra-cuu/?group=equipment');
+  await expect(page).toHaveURL('/tra-cuu/trang-bi/');
+  await expect(page.locator('body[data-boot="ready"]')).toBeAttached();
   await firstResult(page).click();
   await expect(page.getByRole('dialog')).toBeVisible();
   await page.getByRole('button', { name: 'Đóng hồ sơ' }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
-  await expect(page).toHaveURL('/tra-cuu/?group=equipment');
+  await expect(page).toHaveURL('/tra-cuu/trang-bi/');
   await page.goBack();
-  await expect(page).toHaveURL('/tra-cuu/');
-  await expect(chip(page, 'equipment')).toHaveAttribute('aria-pressed', 'false');
+  await expect(page).toHaveURL('/tra-cuu/tuong/');
+  await expect(currentChip(page)).toHaveAttribute('data-group', 'heroes');
 });
 
 test('Enter trên Xem thêm đưa focus tới thẻ đầu của lượt mới', async ({ page }) => {
-  await page.goto('/tra-cuu/?group=heroes');
+  await openLookup(page, '/tra-cuu/tuong/');
   await lookup(page).getByRole('button', { name: 'Xem thêm' }).focus();
   await page.keyboard.press('Enter');
   await expect(cards(page)).toHaveCount(120);
@@ -953,7 +1028,7 @@ test('Enter trên Xem thêm đưa focus tới thẻ đầu của lượt mới',
 });
 
 test('số đội chuẩn trong Trong cẩm nang là chữ, link chữ vẫn dẫn sang Đội chuẩn', async ({ page }) => {
-  await page.goto('/tra-cuu/?id=hero%3Achu-du');
+  await openLookup(page, '/tra-cuu/tuong/?id=hero%3Achu-du');
   const block = page.getByRole('dialog').locator('.cam-nang');
   await expect(block.locator('.cam-nang-counts')).toBeVisible();
   await expect(block.locator('.cam-nang-counts a')).toHaveCount(0);
@@ -961,7 +1036,7 @@ test('số đội chuẩn trong Trong cẩm nang là chữ, link chữ vẫn d�
 });
 
 test('hồ sơ tướng hiện Điểm nội chính khi dữ liệu có', async ({ page }) => {
-  await page.goto('/tra-cuu/?id=hero%3Aluu-bi');
+  await openLookup(page, '/tra-cuu/tuong/?id=hero%3Aluu-bi');
   const fact = page.getByRole('dialog').locator('.lookup-dialog-facts .lookup-fact').filter({ hasText: 'Điểm nội chính' });
   await expect(fact).toHaveCount(1);
   await expect(fact.locator('dd')).toHaveText('0');
@@ -969,11 +1044,110 @@ test('hồ sơ tướng hiện Điểm nội chính khi dữ liệu có', async 
 
 test('nút đóng hồ sơ vẫn trong màn hình khi cuộn hộp thoại trên mobile', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
-  await page.goto('/tra-cuu/?id=hero%3Atao-thao');
+  await openLookup(page, '/tra-cuu/tuong/?id=hero%3Atao-thao');
   await expect(page.getByRole('dialog')).toBeVisible();
   const scrolled = await page.locator('.lookup-backdrop').evaluate((node) => { node.scrollTop = 1500; return node.scrollTop; });
   expect(scrolled).toBeGreaterThan(500);
   const box = await page.getByRole('button', { name: 'Đóng hồ sơ' }).boundingBox();
   expect(box.y).toBeGreaterThanOrEqual(0);
   expect(box.y + box.height).toBeLessThanOrEqual(812);
+});
+
+/* ---------- Hợp đồng hiệu năng: mỗi trang nhóm chỉ tải payload của nhóm mình ---------- */
+
+test.describe('tải dữ liệu theo trang nhóm', () => {
+  /** Payload `/data/*.json` (bỏ `/data/recommended/`) mỗi trang nhóm được tải trước khi boot xong. */
+  const BOOT_DATA = {
+    heroes: ['website-display.json', 'lookup-manifest.json', 'heroes-dict.json'],
+    tactics: ['website-display.json', 'lookup-manifest.json', 'tactics.json'],
+    equipment: ['website-display.json', 'lookup-manifest.json', 'lookup-catalog.json'],
+    advisors: ['website-display.json', 'lookup-manifest.json', 'lookup-catalog.json'],
+    'troop-mods': ['website-display.json', 'lookup-manifest.json', 'lookup-catalog.json'],
+    buildings: ['website-display.json', 'lookup-manifest.json', 'lookup-catalog.json'],
+    books: ['website-display.json', 'books-dict.json'],
+  };
+
+  /** Ghi lại tên file của mọi request `/data/*.json` cấp đầu (không tính generation `/data/recommended/`). */
+  function recordData(page) {
+    const names = [];
+    page.on('request', (request) => {
+      const { pathname } = new URL(request.url());
+      if (/^\/data\/[^/]+\.json$/.test(pathname)) names.push(pathname.slice('/data/'.length));
+    });
+    return names;
+  }
+
+  for (const prefix of ['', '/zh']) {
+    for (const group of GROUPS) {
+      test(`${prefix || '/vi'} ${group}: chỉ tải ${BOOT_DATA[group].join(', ')} khi vào trang`, async ({ page }) => {
+        const names = recordData(page);
+        await page.goto(`${prefix}${GROUP_PATH[group]}`);
+        await expect(page.locator('body[data-boot="ready"]')).toBeAttached();
+        await expect(lookup(page).locator('[data-lookup-id]').first()).toBeVisible();
+        expect([...names].sort()).toEqual([...BOOT_DATA[group]].sort());
+      });
+    }
+
+    test(`${prefix || '/vi'} mục lục Tra cứu không tải /data/ nào`, async ({ page }) => {
+      const requested = [];
+      page.on('request', (request) => { if (new URL(request.url()).pathname.startsWith('/data/')) requested.push(request.url()); });
+      await page.goto(`${prefix}/tra-cuu/`);
+      await expect(lookup(page).locator('a.lookup-hub-card')).toHaveCount(GROUPS.length);
+      await page.waitForLoadState('networkidle');
+      expect(requested).toEqual([]);
+    });
+  }
+
+  test('mở hồ sơ tướng mới tải chiến pháp + danh mục; mở hồ sơ chiến pháp mới tải tướng', async ({ page }) => {
+    const names = recordData(page);
+    await page.goto(GROUP_PATH.heroes);
+    await expect(page.locator('body[data-boot="ready"]')).toBeAttached();
+    const booted = names.length;
+    await firstResult(page).click();
+    await expect(page.getByRole('dialog')).toBeVisible();
+    await expect.poll(() => names.slice(booted).sort()).toEqual(['lookup-catalog.json', 'tactics.json']);
+
+    names.length = 0;
+    await page.goto(GROUP_PATH.tactics);
+    await expect(page.locator('body[data-boot="ready"]')).toBeAttached();
+    expect(names).not.toContain('heroes-dict.json');
+    const tacticsBooted = names.length;
+    await firstResult(page).click();
+    await expect(page.getByRole('dialog')).toBeVisible();
+    await expect.poll(() => names.slice(tacticsBooted)).toEqual(['heroes-dict.json']);
+  });
+
+  test('HTML dựng sẵn của trang Tướng có đúng 60 mục đầu và tổng số', async ({ request }) => {
+    const html = await (await request.get(GROUP_PATH.heroes)).text();
+    expect(html.match(/data-lookup-id="/g)).toHaveLength(60);
+    const heroes = await (await request.get('/data/heroes-dict.json')).json();
+    const total = Number(html.match(/data-lookup-total="(\d+)"/)?.[1]);
+    expect(total).toBeGreaterThan(60);
+    expect(total).toBeLessThanOrEqual(heroes.length);
+    expect(html).toContain('class="lookup-more');
+  });
+
+  test('link cũ ?group=tactics&id= qua mục lục tới trang Chiến pháp và mở hồ sơ', async ({ page, request }) => {
+    const tactics = await (await request.get('/data/tactics.json')).json();
+    const id = tactics.find((row) => typeof row.id === 'string' && row.id.startsWith('tactic:')).id;
+    await page.goto(`/tra-cuu/?group=tactics&id=${encodeURIComponent(id)}`);
+    await expect(page).toHaveURL(`/tra-cuu/chien-phap/?id=${encodeURIComponent(id)}`);
+    await expect(page.getByRole('dialog')).toBeVisible();
+    await expect(currentChip(page)).toHaveAttribute('data-group', 'tactics');
+  });
+
+  test('thẻ và tên chiến pháp dựng sẵn là link hồ sơ: bấm khi app chưa chạy vẫn tới đúng hồ sơ', async ({ page }) => {
+    // Chặn app.js: trang chỉ còn HTML dựng lúc build, như lúc người dùng bấm trước khi app sẵn sàng.
+    await page.route('**/js/app.js', (route) => route.abort());
+    for (const [group, selector] of [['heroes', '.lookup-card-button'], ['tactics', '.lookup-table-name']]) {
+      await page.goto(GROUP_PATH[group]);
+      const first = lookup(page).locator(selector).first();
+      const id = await first.getAttribute('data-lookup-id');
+      await first.click();
+      await expect(page).toHaveURL(`${GROUP_PATH[group]}?id=${encodeURIComponent(id)}`);
+    }
+    await page.unroute('**/js/app.js');
+    await page.reload();
+    await expect(page.getByRole('dialog')).toBeVisible();
+  });
 });

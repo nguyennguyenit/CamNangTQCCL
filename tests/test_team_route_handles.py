@@ -12,10 +12,12 @@ import unittest
 from pathlib import Path
 
 from pipeline.hero_summaries import build_hero_summaries
+from pipeline.tactic_summaries import build_tactic_summaries
 
 # Kho Tra cứu mẫu: fixture không có tướng khớp nên bảng số liệu rỗng nhưng đúng cấu trúc.
 CATALOG_BYTES = json.dumps([{"id": "hero:fixture", "viet": "Tướng mẫu", "hanViet": "Tướng mẫu",
     "chinese": "樣", "aliases": []}], ensure_ascii=False).encode()
+TACTIC_CATALOG_BYTES = json.dumps([{"id": "tactic:fixture", "viet": "Chiến pháp mẫu", "hanViet": "Chiến pháp mẫu", "chinese": "範例戰法", "aliases": []}], ensure_ascii=False).encode()
 
 from pipeline.team_route_handles import (
     DEFAULT_DISPLAY_MAP_PATH,
@@ -108,6 +110,10 @@ def write_publication(root, records, *, generation_id=FIXTURE_GENERATION_ID, oth
         "seasons.json": {"schemaVersion": 1, "seasons": []},
         "hero-summaries.json": build_hero_summaries(
             catalog_bytes=CATALOG_BYTES, records=list(records), other_records=list(other_teams),
+        ),
+        "tactic-summaries.json": build_tactic_summaries(
+            tactic_catalog_bytes=TACTIC_CATALOG_BYTES, hero_catalog_bytes=CATALOG_BYTES,
+            records=list(records), other_records=list(other_teams),
         ),
     }
     files = {}

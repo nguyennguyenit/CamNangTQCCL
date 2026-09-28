@@ -24,7 +24,7 @@ test('footer 821–1440px: khối thương hiệu không đè cột link đầu'
 test('bảng chiến pháp 681–1023px xếp dọc, không cột nào bị cắt khỏi khung', async ({ page }) => {
   for (const width of [768, 900, 1023]) {
     await page.setViewportSize({ width, height: 900 });
-    await page.goto('/tra-cuu/?group=tactics');
+    await page.goto('/tra-cuu/chien-phap/');
     const panel = page.locator('#section-lookup .lookup-table-panel');
     await expect(panel.locator('tbody tr').first()).toBeVisible();
     await expect(panel.locator('thead')).toBeHidden();

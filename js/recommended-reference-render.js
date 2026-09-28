@@ -153,8 +153,8 @@ function lookupHref(links,kind,raw,vi) {
   const key=[raw,vi].map(value=>typeof value === 'string' ? value.trim() : '').find(Boolean);
   const table=links?.[kind];
   if (!key || !table || typeof table !== 'object' || !Object.hasOwn(table,key)) return null;
-  const id=table[key];
-  return typeof id === 'string' && id ? localePath(lookupProfilePath(id)) : null;
+  const path=typeof table[key] === 'string' ? lookupProfilePath(table[key]) : null;
+  return path ? localePath(path) : null;
 }
 
 /** Nhãn hiển thị của một giá trị nguồn (phe, loại binh) từ `seasons.json`: own-property, chỉ nhận chuỗi. */

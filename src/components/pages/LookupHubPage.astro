@@ -1,0 +1,59 @@
+---
+// Trang mục lục Tra cứu `/tra-cuu/` (bản Việt và bản Trung): 7 thẻ link tới trang nhóm, số đếm tính lúc build.
+// Không nạp js/app.js và không tải dữ liệu. Link cũ `?group=<nhóm>&id=<mã>` (hoặc chỉ `?id=`) được chuyển tiếp
+// tới trang nhóm bằng script inline chặn trong <head>, chạy trước khi vẽ trang.
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { localePath, pick } from '../../../js/i18n.js';
+import { LOOKUP_HUB_TABLES, lookupHubTarget } from '../../../js/lookup-ids.js';
+import { lookupGroupEntries } from '../../lib/lookup-pages';
+import type { SiteLocale } from '../../lib/locale-routes';
+
+interface Props {
+  locale: SiteLocale;
+}
+
+const { locale } = Astro.props;
+const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+const entries = await lookupGroupEntries(locale);
+const canonicalUrl = new URL(localePath('/tra-cuu/', locale), Astro.site);
+const tables = JSON.stringify(LOOKUP_HUB_TABLES).replace(/</g, '\\u003c');
+const redirectSource = `(function(){var target=(${lookupHubTarget.toString()})(window.location.href,${tables}.slugs,${tables}.kinds);if(target!==null&&target!==window.location.pathname+window.location.search+window.location.hash){if(/^\\/(?:zh\\/)?tra-cuu\\/(?:\\?|#|$)/.test(target))window.history.replaceState(window.history.state,'',target);else window.location.replace(target);}})();`;
+---
+<SiteLayout
+  title={t('Tra cứu — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '图鉴查询 — 三国志战略版攻略手册')}
+  description={t(
+    'Tra cứu tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng, công trình và binh thư theo tên Việt hoặc chữ Hán.',
+    '按名称查询武将、战法、装备、军师、兵种进阶、建筑与兵书。',
+  )}
+  pageKind="section"
+  activeSection="lookup"
+  canonicalUrl={canonicalUrl}
+  locale={locale}
+>
+  <script is:inline id="lookup-hub-redirect" slot="head" set:html={redirectSource}></script>
+  <section id="section-lookup" class="section active">
+    <header class="reference-head lookup-head">
+      <div class="reference-head-text">
+        <span class="reference-kicker">{t('Tra cứu', '图鉴查询')}</span>
+        <h1 class="reference-title">{t('Tra cứu', '图鉴查询')}</h1>
+        <p class="reference-lead">{t(
+          'Tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng, công trình và binh thư — tìm bằng tên Việt, Hán-Việt hoặc chữ Hán.',
+          '武将、战法、装备、军师、兵种进阶、建筑与兵书——可用中文名、越南语名或汉越音搜索。',
+        )}</p>
+      </div>
+    </header>
+    <ul class="lookup-hub-grid">
+      {entries.map((entry) => (
+        <li>
+          <a class="lookup-hub-card" href={localePath(entry.path, locale)} data-group={entry.group}>
+            <span class="lookup-hub-head">
+              <span class="lookup-hub-name">{entry.label}</span>
+              <span class="lookup-hub-count">{entry.count}</span>
+            </span>
+            <span class="lookup-hub-desc">{entry.description}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</SiteLayout>

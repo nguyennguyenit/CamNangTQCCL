@@ -4,6 +4,7 @@
 
 import { resolveLegacyRoute } from './legacy-routes.js';
 import { currentLocale, localeFromPath, localePath, stripLocale } from './i18n.js';
+import { LOOKUP_GROUP_SLUGS, lookupGroupPath } from './lookup-ids.js';
 
 export const TEAM_RETURN_STORAGE_KEY = 'tqccl:team-return:v1';
 
@@ -18,6 +19,7 @@ export const KHAIHOANG_VARIANT_QUERY_KEY = 'khVariant';
  * Khóa query mỗi trang mục giữ lại khi dựng URL quay lại; khóa khác bị bỏ lặng lẽ.
  * Đội chuẩn/Đội khác không còn `score` (bộ lọc điểm đã bỏ) và `category` (bộ chọn danh mục đã bỏ); thêm `view` cho chế độ Thẻ/Bảng.
  * Cùng Tồn chỉ có nhóm, cấu hình và phạm vi kịch bản/luật; hai công cụ không có trạng thái URL.
+ * Trang nhóm Tra cứu giữ hồ sơ đang mở (`id`); mục lục `/tra-cuu/` giữ `group`/`id` của link cũ để chuyển tiếp.
  */
 export const SECTION_QUERY_KEYS = Object.freeze({
   '/doi-chuan/': ['season','q','faction','unit','tier','view','subcategory','source','scenario','ruleset','config'],
@@ -27,6 +29,7 @@ export const SECTION_QUERY_KEYS = Object.freeze({
   '/goi-y-doi-tu-kho/': [],
   '/khai-hoang/': [KHAIHOANG_TEAM_QUERY_KEY,KHAIHOANG_VARIANT_QUERY_KEY],
   '/tra-cuu/': ['group','id'],
+  ...Object.fromEntries(Object.keys(LOOKUP_GROUP_SLUGS).map(group => [lookupGroupPath(group), ['id']])),
   '/theo-doi-chieu-mo/': [],
 });
 

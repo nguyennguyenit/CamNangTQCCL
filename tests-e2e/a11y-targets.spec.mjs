@@ -23,9 +23,10 @@ test.describe("A5 — control đứng riêng phải đủ 44px ở mobile", () =
     for (const { width, colorScheme } of CASES) {
       const context = await browser.newContext({ viewport: { width, height: 900 }, colorScheme });
       const page = await context.newPage();
-      await page.goto("/tra-cuu/?group=heroes");
+      await page.goto("/tra-cuu/tuong/");
+      await expect(page.locator('body[data-boot="ready"]')).toBeAttached();
       await page.getByRole("searchbox").fill("luu bi");
-      await page.locator("#section-lookup .lookup-card").first().click();
+      await page.locator("#section-lookup .lookup-card [data-lookup-id]").first().click();
       const dialog = page.getByRole("dialog");
       await expect(dialog).toBeVisible();
       const relation = dialog.locator("[data-lookup-relation]").first();
@@ -36,7 +37,8 @@ test.describe("A5 — control đứng riêng phải đủ 44px ở mobile", () =
 
       await relation.focus();
       await page.keyboard.press("Enter");
-      await expect(page, `${width}/${colorScheme}: Enter phải mở hồ sơ liên quan`).toHaveURL(/group=tactics/);
+      await expect(page, `${width}/${colorScheme}: Enter phải mở hồ sơ liên quan`).toHaveURL(/\/tra-cuu\/chien-phap\/\?id=tactic%3A/);
+      await expect(dialog, `${width}/${colorScheme}: hồ sơ chiến pháp mở trên trang Chiến pháp`).toBeVisible();
       await context.close();
     }
   });
@@ -87,7 +89,8 @@ test.describe("A5 — vòng sửa Opus round 3", () => {
       await context.route("**/*", (route) => new URL(route.request().url()).hostname === "127.0.0.1"
         ? route.continue() : route.abort());
       const page = await context.newPage();
-      await page.goto("/tra-cuu/?group=tactics");
+      await page.goto("/tra-cuu/chien-phap/");
+      await expect(page.locator('body[data-boot="ready"]')).toBeAttached();
       const names = page.locator("#section-lookup .lookup-table-name");
       await expect(names.first()).toBeVisible();
       const boxes = await names.evaluateAll((nodes) => nodes.map((node) => {

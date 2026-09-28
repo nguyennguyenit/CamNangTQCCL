@@ -1,4 +1,4 @@
-import { L, currentLocale } from "./i18n.js";
+import { L, currentLocale, normalizeLocale, pick } from "./i18n.js";
 
 // Bản zh (`<html lang="zh-Hans">`): nhãn dịch sang tiếng Trung; giá trị chỉ hiện khi có chữ Hán nguồn
 // (tên, hiệu ứng/mục tiêu chiến pháp), là số, hoặc thuộc bộ giá trị đóng đã dịch bên dưới. Nội dung chỉ
@@ -12,9 +12,6 @@ const LABELS = {
   chinh: L("Chính trị", "政治"), mi: L("Mị lực", "魅力"),
   ky: L("Kỵ binh", "骑兵"), thuan: L("Khiên binh", "盾兵"), cung: L("Cung binh", "弓兵"), thuong: L("Thương binh", "枪兵"),
   khiGioi: L("Khí giới", "器械"), infantry: L("Bộ binh", "步兵"), navy: L("Thủy quân", "水军"),
-  // Nội chính: dữ liệu có thể trống từng phần, nhãn vẫn phải là chữ đã dịch (không bao giờ in khóa thô).
-  bonusVi: L("Thưởng nội chính", "内政加成"), roleVi: L("Chức vụ nội chính", "内政职务"), specialtyVi: L("Sở trường nội chính", "内政特长"),
-  tacticBonusVi: L("Thưởng chiến pháp", "战法加成"),
 };
 /** Khóa có giá trị là số/hạng chữ cái (chỉ số, tăng trưởng, thích tính) — hiện được ở bản zh. */
 const LANGUAGE_NEUTRAL_KEYS = new Set(["luc", "tri", "thong", "toc", "chinh", "mi", "ky", "thuan", "cung", "thuong", "khiGioi", "infantry", "navy"]);
@@ -31,10 +28,10 @@ const ZH_VALUES = {
 };
 /**
  * Giá trị hiển thị của bản zh: số và hạng giữ nguyên, giá trị trong bộ đóng được dịch, còn lại `null`
- * (bị bỏ). Bản Việt luôn trả chữ gốc.
+ * (bị bỏ). Bản Việt luôn trả chữ gốc. `locale` mặc định là ngôn ngữ trang (build truyền tường minh).
  */
-export function zhSafeValue(value) {
-  if (!ZH()) return value;
+export function zhSafeValue(value, locale = currentLocale()) {
+  if (normalizeLocale(locale) !== "zh") return value;
   if (value === null || value === undefined || value === "") return null;
   if (typeof value === "number" || /^[\d.,%+\-/ ~]+$/u.test(String(value)) || /^(?:[SABCD]|T\d|SP|CO|40Y)$/u.test(String(value))) return String(value);
   return ZH_VALUES[String(value)] ?? null;
@@ -86,10 +83,10 @@ const conditions = (rows) => (Array.isArray(rows) ? rows.map((row) => typeof row
 const unresolved = (key, labelVi) => ({ key, labelVi, resolved: false, targetId: null, targetGroup: null, titleVi: null, statusVi: L("Liên kết đang được cập nhật", "关联条目更新中") });
 const listText = (values, empty = EMPTY) => Array.isArray(values) && values.length ? values.join(", ") : empty;
 const VARIANT_LABELS = { base: L("Thường", "普通"), sp: "SP", co: "CO", "40y": "40Y" };
-/** Loại chiến pháp trong dữ liệu là enum tiếng Anh/đã Việt hoá; UI chỉ hiện nhãn đã dịch. */
+/** Loại chiến pháp trong dữ liệu là enum tiếng Anh/đã Việt hoá; UI chỉ hiện nhãn đã dịch (cặp vi/zh). */
 const TYPE_LABELS = {
-  ACTIVE: L("Chủ động", "主动"), PASSIVE: L("Bị động", "被动"), COMMAND: L("Chỉ huy", "指挥"), INTERNAL: L("Nội chính", "内政"),
-  FORMATION: L("Trận pháp", "阵法"), TROOP: L("Binh chủng", "兵种"), BURST: L("Bùng nổ", "突击"),
+  ACTIVE: ["Chủ động", "主动"], PASSIVE: ["Bị động", "被动"], COMMAND: ["Chỉ huy", "指挥"], INTERNAL: ["Nội chính", "内政"],
+  FORMATION: ["Trận pháp", "阵法"], TROOP: ["Binh chủng", "兵种"], BURST: ["Bùng nổ", "突击"],
 };
 /** Vài bản ghi lưu loại đã Việt hoá: bản zh đổi về cùng nhãn Trung với enum. */
 const VI_TYPE_TO_ENUM = { "Chủ động": "ACTIVE", "Bị động": "PASSIVE", "Chỉ huy": "COMMAND", "Nội chính": "INTERNAL", "Trận pháp": "FORMATION", "Binh chủng": "TROOP", "Bùng nổ": "BURST" };
@@ -114,16 +111,44 @@ export function ratePercentText(value) {
   return `${Number((rate * 100).toFixed(1))}%`;
 }
 
+/** Từ mở đầu nhãn phiên bản: bản Việt và chữ Hán nguồn mà bản zh hiển thị ("2021-06-09 更新（平衡）", "原始版本"). */
+const VERSION_WORD = "(?:Cập nhật|Phiên bản gốc|\\d{4}-\\d{2}-\\d{2}\\s*更新|原始版本)";
+/** Đoạn chỉ gồm nhãn phiên bản: "Cập nhật 2021-06-09 (cân bằng)", "Phiên bản gốc". */
+const VERSION_ONLY = new RegExp(`^${VERSION_WORD}[^:：.;。；]{0,60}$`, "u");
+/** Đoạn mở bằng nhãn phiên bản rồi dấu hai chấm: "Cập nhật ngày 2020-04-01: <hiệu ứng>". */
+const VERSION_INLINE = new RegExp(`^(${VERSION_WORD}[^:：.;。；]{0,60}?)\\s*[:：]\\s*([\\s\\S]+)$`, "u");
+
 /**
- * Nhãn của một giá trị `type` chiến pháp theo ngôn ngữ trang, dùng chung cho mọi chỗ hiển thị (bảng, thẻ
- * chiến pháp, thẻ kết quả nhóm hỗn hợp). Giá trị đã Việt hoá giữ nguyên ở bản Việt; enum thô không có nhãn
+ * Tách chữ hiệu ứng nhiều phiên bản thành các khối `{ labelVi, paragraphs }` theo thứ tự nguồn (bản hiện hành
+ * trước). Nguồn ngăn đoạn bằng " / " (có khi " / / ") hoặc xuống dòng, và mỗi phiên bản mở bằng một đoạn nhãn
+ * ("Cập nhật … / <hiệu ứng> / Phiên bản gốc / <hiệu ứng>"). Chữ không mở bằng nhãn phiên bản chỉ tách theo
+ * xuống dòng: " / " ở đó nghĩa là "hoặc" ("công thành / đánh khí giới").
+ */
+export function effectVersions(value) {
+  const source = String(value ?? "").trim();
+  if (!source) return [];
+  const parts = (pattern) => source.split(pattern).map((part) => part.trim()).filter(Boolean);
+  const first = source.split(/\s+\/\s+|\n/u, 1)[0].trim();
+  if (!VERSION_ONLY.test(first) && !VERSION_INLINE.test(first)) return [{ labelVi: null, paragraphs: parts(/\n+/u) }];
+  const blocks = [];
+  for (const part of parts(/\s+(?:\/\s+)+|\n+/u)) {
+    const head = VERSION_ONLY.test(part) ? [part, null] : VERSION_INLINE.exec(part)?.slice(1);
+    if (head) blocks.push({ labelVi: head[0].trim(), paragraphs: head[1] ? [head[1].trim()] : [] });
+    else blocks.at(-1).paragraphs.push(part);
+  }
+  return blocks.filter((block) => block.paragraphs.length);
+}
+
+/**
+ * Nhãn của một giá trị `type` chiến pháp theo ngôn ngữ, dùng chung cho mọi chỗ hiển thị (bảng, thẻ
+ * chiến pháp, thẻ kết quả). Giá trị đã Việt hoá giữ nguyên ở bản Việt; enum thô không có nhãn
  * bị bỏ (kèm cảnh báo dev) để UI không bao giờ in enum; giá trị khác trả nguyên văn (bản zh: bỏ).
  */
-export function tacticTypeLabel(value) {
+export function tacticTypeLabel(value, locale = currentLocale()) {
   if (value === null || value === undefined || value === "") return null;
   const text = String(value);
   const label = TYPE_LABELS[text];
-  if (label) return label;
+  if (label) return pick(locale, ...label);
   if (RAW_ENUM.test(text)) {
     if (!UNKNOWN_LABEL_KEYS.has(`type:${text}`)) {
       UNKNOWN_LABEL_KEYS.add(`type:${text}`);
@@ -131,7 +156,10 @@ export function tacticTypeLabel(value) {
     }
     return null;
   }
-  if (ZH()) return TYPE_LABELS[VI_TYPE_TO_ENUM[text]] ?? null;
+  if (normalizeLocale(locale) === "zh") {
+    const pair = TYPE_LABELS[VI_TYPE_TO_ENUM[text]];
+    return pair ? pair[1] : null;
+  }
   return text;
 }
 const FLAG_LABELS = {
@@ -142,8 +170,8 @@ const FLAG_LABELS = {
  * Tên hiển thị của một mục tra cứu: bản Việt dùng tên Việt, bản zh dùng tên chữ Hán nguồn
  * (`chinese` của tướng/chiến pháp, `aliasesZh` của catalog), thiếu thì lùi về tên Việt.
  */
-export function lookupDisplayName(record, nameVi) {
-  if (!ZH()) return nameVi;
+export function lookupDisplayName(record, nameVi, locale = currentLocale()) {
+  if (normalizeLocale(locale) !== "zh") return nameVi;
   if (typeof record?.chinese === "string" && record.chinese.trim()) return record.chinese.trim();
   for (const value of record?.aliasesZh ?? []) if (typeof value === "string" && /[\u3400-\u9fff]/u.test(value)) return value;
   return nameVi;
@@ -201,12 +229,7 @@ function heroProfile(corpus, entry) {
     ...["infantry", "navy"].map((key) => field(key, lookup.otherAptitudes?.[key])),
   ].filter(Boolean);
   const growth = Object.entries(lookup.growth ?? {}).map(([key, value]) => field(key, value)).filter(Boolean);
-  const civilEntries = Object.entries(lookup.civil ?? {});
-  // Nội chính chỉ có chữ Việt: bản zh giữ khối (nhãn + "chưa có dữ liệu") nhưng không in giá trị Việt.
-  if (ZH() && civilEntries.some(([, value]) => value !== null && value !== undefined && value !== "")) profile.viOnly = true;
-  const civil = civilEntries.map(([key, value]) => field(key, ZH() ? null : value)).filter(Boolean);
   profile.sections.push({ key: "growth", titleVi: L("Tăng trưởng", "成长"), fields: growth });
-  profile.sections.push({ key: "civil", titleVi: L("Nội chính", "内政"), fields: civil });
   const selfId = lookup.selfTacticId ?? uniqueChineseTactic(corpus, row.selfTacticCn);
   const inheritId = lookup.inheritTacticId ?? uniqueChineseTactic(corpus, row.inheritTacticCn);
   profile.relations.push(relation(corpus, "selfTactic", L("Chiến pháp bản thân", "自带战法"), selfId, "tactics"));

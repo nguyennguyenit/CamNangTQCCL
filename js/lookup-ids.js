@@ -1,5 +1,6 @@
-// Mã hồ sơ Tra cứu (`/tra-cuu/?id=…`) dùng chung cho trang Tra cứu và các trang liên kết vào đó.
-// Slug khớp hàm `_slug` của pipeline định danh: chiến pháp đã có `id` trong dữ liệu, binh thư dựng mã từ tên Việt.
+// Mã hồ sơ và đường dẫn Tra cứu (`/tra-cuu/<nhóm>/?id=…`) dùng chung cho trang Tra cứu, trang mục lục và các
+// trang liên kết vào đó. Slug mã khớp hàm `_slug` của pipeline định danh: chiến pháp đã có `id` trong dữ liệu,
+// binh thư dựng mã từ tên Việt. Mọi href Tra cứu đi qua module này, không tự nối chuỗi ở nơi khác.
 
 /** Slug ASCII của tên Việt: bỏ dấu, `đ` → `d`, cụm ký tự khác chữ/số thành một `-`. */
 export function lookupSlug(value) {
@@ -93,5 +94,66 @@ export function createLookupIdResolver({ tactics = [], books = [] } = {}) {
   };
 }
 
-/** Đường dẫn hồ sơ Tra cứu (chưa gắn tiền tố ngôn ngữ); mã hoá như `formatLookupQuery` của trang Tra cứu. */
-export const lookupProfilePath = (id) => `/tra-cuu/?${new URLSearchParams({ id })}`;
+/** Đường dẫn (bản Việt) của từng nhóm Tra cứu: `/tra-cuu/<slug>/`. Thứ tự là thứ tự công bố. */
+export const LOOKUP_GROUP_SLUGS = Object.freeze({
+  heroes: "tuong",
+  tactics: "chien-phap",
+  equipment: "trang-bi",
+  advisors: "quan-su",
+  "troop-mods": "cai-tao-binh-chung",
+  buildings: "cong-trinh",
+  books: "binh-thu",
+});
+
+const GROUP_BY_KIND = Object.freeze({
+  hero: "heroes", tactic: "tactics", equipment: "equipment", "equipment-special": "equipment",
+  advisor: "advisors", "troop-mod": "troop-mods", building: "buildings", book: "books",
+});
+
+/** Nhóm Tra cứu của một mã hồ sơ canonical (`hero:…`, `equipment-special:…`); mã sai dạng trả `null`. */
+export function groupForId(id) {
+  if (typeof id !== "string" || !/^[a-z0-9][a-z0-9-]*:[a-z0-9][a-z0-9-]*$/.test(id)) return null;
+  return GROUP_BY_KIND[id.slice(0, id.indexOf(":"))] ?? null;
+}
+
+/** Đường dẫn trang nhóm (chưa gắn tiền tố ngôn ngữ); nhóm lạ trả `null`. */
+export function lookupGroupPath(group) {
+  return Object.hasOwn(LOOKUP_GROUP_SLUGS, group) ? `/tra-cuu/${LOOKUP_GROUP_SLUGS[group]}/` : null;
+}
+
+/** Đường dẫn hồ sơ Tra cứu (chưa gắn tiền tố ngôn ngữ) trên trang của đúng nhóm; mã sai dạng trả `null`. */
+export function lookupProfilePath(id) {
+  const path = lookupGroupPath(groupForId(id));
+  return path ? `${path}?${new URLSearchParams({ id })}` : null;
+}
+
+/**
+ * Đích chuyển tiếp của trang mục lục `/tra-cuu/` cho link cũ `?group=<nhóm>&id=<mã>` (hoặc chỉ `?id=`):
+ * trang nhóm (kèm hồ sơ khi mã hợp lệ và thuộc nhóm), khóa khác của query đi tiếp. Không có `group`/`id`
+ * thì trả `null` (ở lại mục lục); giá trị lặp/lạ/lệch nhóm trả mục lục đã bỏ hai khóa đó.
+ * Tự đủ (không đóng gói biến ngoài) để trang mục lục nhúng `toString()` vào script inline chạy trước khi vẽ.
+ */
+export function lookupHubTarget(href, slugs, kinds) {
+  const url = new URL(href);
+  const params = url.searchParams;
+  if (!params.has("group") && !params.has("id")) return null;
+  const groups = params.getAll("group");
+  const ids = params.getAll("id");
+  params.delete("group");
+  params.delete("id");
+  const prefix = url.pathname.startsWith("/zh/") ? "/zh" : "";
+  const rest = params.toString();
+  const hub = `${prefix}/tra-cuu/${rest ? `?${rest}` : ""}${url.hash}`;
+  if (groups.length > 1 || ids.length > 1) return hub;
+  const id = ids[0] ?? null;
+  const idMatch = id !== null && /^[a-z0-9][a-z0-9-]*:[a-z0-9][a-z0-9-]*$/.test(id) ? id.slice(0, id.indexOf(":")) : null;
+  const idGroup = idMatch !== null && Object.hasOwn(kinds, idMatch) ? kinds[idMatch] : null;
+  const group = groups[0] ?? idGroup;
+  if (group === null || !Object.hasOwn(slugs, group) || (id !== null && idGroup !== group)) return hub;
+  if (id !== null) params.set("id", id);
+  const query = params.toString();
+  return `${prefix}/tra-cuu/${slugs[group]}/${query ? `?${query}` : ""}${url.hash}`;
+}
+
+/** Bảng tra `lookupHubTarget` cần (truyền tường minh để bản nhúng inline tự đủ). */
+export const LOOKUP_HUB_TABLES = Object.freeze({ slugs: LOOKUP_GROUP_SLUGS, kinds: GROUP_BY_KIND });

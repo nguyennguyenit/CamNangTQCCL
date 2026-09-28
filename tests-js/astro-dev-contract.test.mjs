@@ -98,10 +98,11 @@ test("Astro dev preserves module resolution, MIME types, refresh, and exact JSON
     await cp(new URL(`../${path}`, import.meta.url), new URL(path, fixtureUrl));
   }
   await mkdir(new URL("pipeline/", fixtureUrl), { recursive: true });
-  await cp(
-    new URL("../pipeline/team-route-handles.json", import.meta.url),
-    new URL("pipeline/team-route-handles.json", fixtureUrl),
-  );
+  // Every page renders the Tra cứu menu from the build-time lookup corpus, whose Binh thư source aliases come from
+  // the pipeline identity map, so the fixture needs it to render any page.
+  for (const path of ["pipeline/team-route-handles.json", "pipeline/recommended-identity-map.json"]) {
+    await cp(new URL(`../${path}`, import.meta.url), new URL(path, fixtureUrl));
+  }
   await symlink(new URL("../node_modules/", import.meta.url), new URL("node_modules", fixtureUrl), "dir");
   const privateSentinel = "lookup-private-sentinel";
   const privateFiles = [

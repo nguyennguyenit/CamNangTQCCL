@@ -30,6 +30,7 @@ import { COMMUNITY_PAGES, verifyAstroDist } from "../scripts/verify-astro-dist.m
 import { jsonLd } from "../src/lib/blog-posts.ts";
 import { articleJsonLd, blogIndexJsonLd, llmsDocument, rssDocument } from "../src/lib/blog-seo.ts";
 import { assertFrontendShellContract } from "./frontend-shell-contract-assertions.mjs";
+import { catalogDoc, heroesDoc, tacticsDoc } from "./fixtures/lookup-bundle-fixtures.mjs";
 
 const projectRoot = new URL("../", import.meta.url);
 
@@ -108,17 +109,28 @@ async function writeBlogOutputs(distDir, posts = []) {
   await writeFile(join(distDir, "llms.txt"), llmsDocument(posts, FIXTURE_ORIGIN));
 }
 
-/** Tám trang mục tĩnh của mô hình đường dẫn mới; 5 trang đầu có phạm vi mùa. */
+/** Tám trang mục tĩnh của mô hình đường dẫn mới; 5 trang đầu có phạm vi mùa. `/tra-cuu/` là mục lục tĩnh (không app). */
 const SECTION_PAGE_SPECS = [
   { path: "doi-chuan", section: "team-chuan", season: true },
   { path: "doi-khac", section: "team-khac", season: true },
   { path: "cung-ton", section: "coexist", season: true },
   { path: "khai-hoang", section: "khaihoang", season: false },
-  { path: "tra-cuu", section: "lookup", season: false },
+  { path: "tra-cuu", section: "lookup", season: false, hub: true },
   { path: "theo-doi-chieu-mo", section: "recruit-tracker", season: false },
   { path: "soi-doi-tu-anh", section: "analyze", season: false },
   { path: "goi-y-doi-tu-kho", section: "roster-recommend", season: false },
 ];
+/** Bảy trang nhóm Tra cứu (URL công khai), mỗi trang nạp app.js với nhóm của nó. */
+const LOOKUP_GROUP_SPECS = [
+  ["tuong", "heroes", "hero:luu-bi"],
+  ["chien-phap", "tactics", "tactic:phong-thi-tran"],
+  ["trang-bi", "equipment", "equipment:thanh-long-dao"],
+  ["quan-su", "advisors", "advisor:tuan-uc"],
+  ["cai-tao-binh-chung", "troop-mods", "troop-mod:ho-bao-ky"],
+  ["cong-trinh", "buildings", "building:thai-hoc"],
+  ["binh-thu", "books", "book:di-truc-bao-oan"],
+].map(([slug, group, sampleId]) => ({ path: `tra-cuu/${slug}`, section: "lookup", season: false, group, sampleId }));
+const LOOKUP_GROUP_PATHS = LOOKUP_GROUP_SPECS.map(({ path }) => `/${path}/`);
 /** Trang nội dung tĩnh có bản gương (các trang chính sách): được index, canonical theo ngôn ngữ. */
 const STATIC_PAGE_PATHS = ["/dieu-khoan-su-dung/", "/chinh-sach-bao-mat/", "/quy-tac-cong-dong/", "/mien-tru-trach-nhiem/"];
 const staticPageHtml = (locale, viPath) =>
@@ -127,9 +139,9 @@ const SECTION_LOCATIONS = SECTION_PAGE_SPECS.map(({ path }) => `${FIXTURE_ORIGIN
 /** Hai trang danh sách blog luôn có và là cặp dịch của nhau. */
 const BLOG_INDEX_ENTRIES = [`${FIXTURE_ORIGIN}/bai-viet/`, `${FIXTURE_ORIGIN}/zh/bai-viet/`]
   .map((loc) => ({ loc, pair: [`${FIXTURE_ORIGIN}/bai-viet/`, `${FIXTURE_ORIGIN}/zh/bai-viet/`] }));
-/** Mọi mục sitemap của fixture: Landing, 8 trang mục, trang tĩnh, 2 trang chi tiết (mỗi route hai ngôn ngữ) và blog. */
+/** Mọi mục sitemap của fixture: Landing, 8 trang mục, 7 trang nhóm Tra cứu, trang tĩnh, 2 trang chi tiết (mỗi route hai ngôn ngữ) và blog. */
 const FIXTURE_SITEMAP_ENTRIES = [
-  ...mirroredEntries(["/", ...SECTION_PAGE_SPECS.map(({ path }) => `/${path}/`), ...STATIC_PAGE_PATHS, `/doi-khac/${LEGACY_ROUTE_SEGMENT}/`, `/khai-hoang/${KHAIHOANG_ROUTE_SEGMENT}/`]),
+  ...mirroredEntries(["/", ...SECTION_PAGE_SPECS.map(({ path }) => `/${path}/`), ...LOOKUP_GROUP_PATHS, ...STATIC_PAGE_PATHS, `/doi-khac/${LEGACY_ROUTE_SEGMENT}/`, `/khai-hoang/${KHAIHOANG_ROUTE_SEGMENT}/`]),
   ...BLOG_INDEX_ENTRIES,
 ];
 const SEASON_MARKER = {
@@ -138,18 +150,29 @@ const SEASON_MARKER = {
 };
 
 /** Trang mục trong fixture mang đúng payload mà verifier khóa theo bảng của phase. */
-function sectionPageHtml({ path, locale, section, season, registry, pin, seasonHashes }) {
+function sectionPageHtml({ path, locale, section, season, group, sampleId, registry, pin, seasonHashes }) {
   return [
-    `<!doctype html>${pairHead(locale, `/${path}/`)}<body data-page-section="${section}">`,
-    `<section id="section-${section}" class="section active"></section>`,
+    `<!doctype html>${pairHead(locale, `/${path}/`)}<body data-page-section="${section}"${group ? ` data-lookup-group="${group}"` : ""}>`,
+    `<section id="section-${section}" class="section active">`,
+    group ? `<button type="button" class="lookup-card-button" data-lookup-id="${sampleId}"></button>` : "",
+    "</section>",
     season ? '<div id="season-controls"></div>' : "",
     `<script id="team-route-handles" type="application/json">${JSON.stringify(registry)}</script>`,
     `<script id="recommended-publication" type="application/json">${JSON.stringify(pin)}</script>`,
     season ? `<script id="season-artifact-hashes" type="application/json">${JSON.stringify(seasonHashes)}</script>` : "",
+    group === "books" ? `<script type="application/json" id="lookup-books-hash">"sha256:${"0".repeat(64)}"</script>` : "",
     '<script type="module" src="/js/app.js"></script>',
     "\n",
   ].join("");
 }
+
+/** Mục lục Tra cứu: tĩnh, chỉ script chuyển tiếp link cũ và thẻ link tới 7 trang nhóm; không app.js. */
+const lookupHubHtml = (locale) => [
+  `<!doctype html>${pairHead(locale, "/tra-cuu/")}<head><script id="lookup-hub-redirect">(function(){})();</script></head><body>`,
+  ...LOOKUP_GROUP_SPECS.map(({ path, group }) =>
+    `<a class="lookup-hub-card" href="${locale === "zh" ? "/zh" : ""}/${path}/" data-group="${group}"></a>`),
+  "\n",
+].join("");
 
 /** Mọi trang chi tiết đội mang khối cộng đồng (chiến báo + bình luận) và entry của nó. */
 const COMMUNITY_MOUNT_HTML = '<section id="community-root"></section><script type="module" src="/js/community-page.js"></script>';
@@ -227,6 +250,7 @@ async function writeRecommendedFixture(projectDir, distDir, { legacyTeamsHash } 
       recommendedJoin: "heroes[].nameRaw ↔ chinese|aliases", otherJoin: "holders[].nameRaw ↔ hanViet",
       unmatchedSlots: { recommended: 0, other: 0 }, ambiguousSlots: { recommended: 0, other: 0 },
     }, summaries: {} }),
+    "tactic-summaries.json": jsonBytes({schemaVersion:1,provenance:{tacticCatalogSha256:`sha256:${"0".repeat(64)}`,heroCatalogSha256:`sha256:${"0".repeat(64)}`,recommendedJoin:"heroes[].tacticSlotsRaw ↔ chinese|aliases",otherJoin:"holders[].tacticSlotsRaw ↔ viet|hanViet",unmatchedSlots:{recommended:0,other:0},ambiguousSlots:{recommended:0,other:0}},summaries:{}}),
     [`details-${scope}.json`]: jsonBytes({ schemaVersion: 1, records: [] }),
   };
   const files = Object.fromEntries(Object.entries(payloads).map(([name, bytes]) => [name, { sha256: sha256(bytes), bytes: bytes.length }]));
@@ -258,10 +282,13 @@ async function writeRecommendedFixture(projectDir, distDir, { legacyTeamsHash } 
   await mkdir(join(distDir, "zh"), { recursive: true });
   await writeFile(join(distDir, "zh", "index.html"), LANDING_ZH_HTML);
   for (const locale of ["vi", "zh"]) {
-    for (const spec of SECTION_PAGE_SPECS) {
+    for (const spec of [...SECTION_PAGE_SPECS, ...LOOKUP_GROUP_SPECS]) {
       const dir = locale === "zh" ? join(distDir, "zh", spec.path) : join(distDir, spec.path);
       await mkdir(dir, { recursive: true });
-      await writeFile(join(dir, "index.html"), sectionPageHtml({ ...spec, locale, registry, pin, seasonHashes: SEASON_MARKER }));
+      await writeFile(
+        join(dir, "index.html"),
+        spec.hub ? lookupHubHtml(locale) : sectionPageHtml({ ...spec, locale, registry, pin, seasonHashes: SEASON_MARKER }),
+      );
     }
   }
   for (const locale of ["vi", "zh"]) {
@@ -752,6 +779,26 @@ test("dist verifier admits exactly the catalog team pages, the 404 and no stale 
   await writeFile(privacyZhPath, validPrivacyZh.replace(`rel="canonical" href="${FIXTURE_ORIGIN}/zh/`, `rel="canonical" href="${FIXTURE_ORIGIN}/`));
   await assert.rejects(verify(), /static page lacks its own canonical/i);
   await writeFile(privacyZhPath, validPrivacyZh);
+  // Tra cứu: mục lục tĩnh không được nạp app, trang nhóm phải có trang đầu dựng sẵn, và thiếu trang nhóm nào cũng hỏng build.
+  const hubPath = join(distDir, "tra-cuu", "index.html");
+  const validHub = await readFile(hubPath, "utf8");
+  await writeFile(hubPath, `${validHub}<script type="module" src="/js/app.js"></script>`);
+  await assert.rejects(verify(), /lookup hub must not boot the root application/i);
+  await writeFile(hubPath, validHub.replace('href="/tra-cuu/binh-thu/"', 'href="/tra-cuu/?group=books"'));
+  await assert.rejects(verify(), /lookup hub lacks its card for \/tra-cuu\/binh-thu\//i);
+  await writeFile(hubPath, validHub);
+  const zhTacticsPath = join(distDir, "zh", "tra-cuu", "chien-phap", "index.html");
+  const validZhTactics = await readFile(zhTacticsPath, "utf8");
+  await writeFile(zhTacticsPath, validZhTactics.replace(/<button[^>]*data-lookup-id=[^>]*><\/button>/u, ""));
+  await assert.rejects(verify(), /lookup group page lacks its prerendered first page/i);
+  await writeFile(zhTacticsPath, validZhTactics);
+  const buildingsPath = join(distDir, "tra-cuu", "cong-trinh", "index.html");
+  const validBuildings = await readFile(buildingsPath, "utf8");
+  await rm(dirname(buildingsPath), { recursive: true });
+  await assert.rejects(verify(), /missing: tra-cuu\/cong-trinh\/index\.html/i);
+  await mkdir(dirname(buildingsPath));
+  await writeFile(buildingsPath, validBuildings);
+  await verify();
   await rm(join(distDir, "chien-bao"), { recursive: true });
   await assert.rejects(verify(), /missing: chien-bao\/index\.html/i);
 
@@ -880,15 +927,16 @@ test("built dist declares canonical, article metadata, robots and the catalog si
   const sitemap = await read("sitemap.xml");
   assert.match(sitemap, /^<\?xml version="1\.0" encoding="UTF-8"\?>/u);
   const locations = [...sitemap.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
-  // Release baseline: Landing, 8 trang mục, 4 trang chính sách, 1366 Recommended, 166 legacy, 17 Khai hoang — mỗi route hai ngôn ngữ —
-  // và 2 trang danh sách blog (build không khai COMMUNITY_API_ORIGIN nên chưa có bài).
-  assert.equal(locations.length, 3126);
+  // Release baseline: Landing, 8 trang mục, 7 trang nhóm Tra cứu, 4 trang chính sách, 1366 Recommended, 166 legacy, 17 Khai hoang
+  // — mỗi route hai ngôn ngữ — và 2 trang danh sách blog (build không khai COMMUNITY_API_ORIGIN nên chưa có bài).
+  assert.equal(locations.length, 3140);
   assert.deepEqual(
     locations,
     [rootHref, ...[
       "/zh/",
       ...[
         ...SECTION_PAGE_SPECS.map(({ path }) => `/${path}/`),
+        ...LOOKUP_GROUP_PATHS,
         ...STATIC_PAGE_PATHS,
         ...[...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath),
       ].flatMap((path) => [path, zhPathOf(path)]),
@@ -987,10 +1035,11 @@ test("sitemap endpoint publishes exactly the root page plus the catalog routes",
   assert.doesNotMatch(xml, /<changefreq>|<priority>/u);
 
   const locations = [...xml.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
-  // Mỗi route bản Việt có bản Trung cùng đường dẫn dưới /zh (Landing, 8 trang mục, trang tĩnh, 3 họ chi tiết).
+  // Mỗi route bản Việt có bản Trung cùng đường dẫn dưới /zh (Landing, 8 trang mục, 7 trang nhóm Tra cứu, trang tĩnh, 3 họ chi tiết).
   const mirrored = [
     "/",
     ...SECTION_PAGE_SPECS.map(({ path }) => `/${path}/`),
+    ...LOOKUP_GROUP_PATHS,
     ...STATIC_PAGE_PATHS,
     ...[...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath),
   ];
@@ -998,7 +1047,7 @@ test("sitemap endpoint publishes exactly the root page plus the catalog routes",
   assert.equal(catalog.recommended.length, 1366);
   assert.equal(catalog.legacy.length, 166);
   assert.equal(catalog.khaiHoang.length, 17);
-  assert.equal(locations.length, 3126);
+  assert.equal(locations.length, 3140);
   assert.deepEqual(
     locations,
     [new URL("/", origin).href, ...routePaths.sort().map((path) => new URL(path, origin).href)],
@@ -1165,11 +1214,12 @@ const dataEntry = (routeParam) => ({
   mimeType: "application/json; charset=utf-8",
 });
 
+/** Bundle Tra cứu hợp lệ trọn vẹn (verifier chạy `validateLookupBundle` trên bộ đã phát). */
 async function writeLookupBundle(dataDir, overrides = {}) {
   const payloads = {
-    "heroes-dict.json": jsonBytes([{ id: "hero:a", viet: "Tướng A" }]),
-    "tactics.json": jsonBytes([{ id: "tactic:a", viet: "Chiến pháp A" }]),
-    "lookup-catalog.json": jsonBytes({ schemaVersion: 1, equipment: [], specials: [] }),
+    "heroes-dict.json": jsonBytes(heroesDoc()),
+    "tactics.json": jsonBytes(tacticsDoc()),
+    "lookup-catalog.json": jsonBytes(catalogDoc()),
     ...overrides,
   };
   const files = {};

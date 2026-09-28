@@ -54,7 +54,8 @@ const sectionData = {
   "team-khac": ["website-display.json", ...SEASON_BUNDLE],
   coexist: ["website-display.json", ...SEASON_BUNDLE],
   khaihoang: ["website-display.json", "khaihoang.json"],
-  lookup: ["website-display.json", ...LOOKUP_BUNDLE, "books-dict.json"],
+  // Mục Tra cứu đo trên trang nhóm Tướng (mục lục /tra-cuu/ là trang tĩnh, không tải dữ liệu).
+  lookup: ["website-display.json", "lookup-manifest.json", "heroes-dict.json"],
   "recruit-tracker": ["website-display.json", ...LOOKUP_BUNDLE],
   analyze: ["website-display.json", ...LOOKUP_BUNDLE, "teams.json", "books-dict.json"],
   "roster-recommend": ["website-display.json", ...LOOKUP_BUNDLE, "teams.json", "team-tier.json"],
@@ -79,6 +80,10 @@ const sectionPaths = {
   analyze: "/soi-doi-tu-anh/",
   "roster-recommend": "/goi-y-doi-tu-kho/",
 };
+/** Mục lục /tra-cuu/ không nạp app.js; trang nhóm Tướng là trang Tra cứu có boot và dữ liệu. */
+const LOOKUP_HUB = sectionPaths.lookup;
+const LOOKUP_GROUP_PAGE = "/tra-cuu/tuong/";
+const bootPath = (section) => (section === "lookup" ? LOOKUP_GROUP_PAGE : sectionPaths[section]);
 const transparentPng = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAEAQH/XP8W3QAAAABJRU5ErkJggg==",
   "base64",
@@ -146,6 +151,8 @@ test.beforeEach(async ({ context }) => {
 });
 
 async function waitForBoot(page) {
+  // Mục lục Tra cứu là trang tĩnh (không app.js): không có tín hiệu boot để chờ.
+  if (new URL(page.url()).pathname.replace(/^\/zh\//, "/") === LOOKUP_HUB) return;
   await expect(page.locator('body[data-boot="ready"]')).toBeAttached();
   const section = await page.locator("body").getAttribute("data-page-section");
   if (section === "analyze" || section === "roster-recommend") {
@@ -245,7 +252,7 @@ test("each section page requests only the data sources it uses, each once", asyn
       if (hostname === "127.0.0.1" && pathname.startsWith("/data/")) requests.push(pathname);
     };
     page.on("request", record);
-    await page.goto(sectionPaths[section]);
+    await page.goto(bootPath(section));
     await waitForBoot(page);
     page.off("request", record);
     const flat = requests.filter((path) => !path.startsWith("/data/recommended/")).map((path) => path.slice("/data/".length));
@@ -286,10 +293,11 @@ for (const [hash, destination] of [
   ["#meta-cu", "/doi-khac/?source=moi-phe"],
   ["#coexist", "/cung-ton/"],
   ["#khaihoang", "/khai-hoang/"],
+  // Hash Tra cứu cũ vẫn trỏ /tra-cuu/?group=…; mục lục chuyển tiếp tiếp sang trang nhóm (hai bước).
   ["#lookup", "/tra-cuu/"],
-  ["#tactics", "/tra-cuu/?group=tactics"],
-  ["#lookup?group=tactics", "/tra-cuu/?group=tactics"],
-  ["#heroes", "/tra-cuu/?group=heroes"],
+  ["#tactics", "/tra-cuu/chien-phap/"],
+  ["#lookup?group=tactics", "/tra-cuu/chien-phap/"],
+  ["#heroes", "/tra-cuu/tuong/"],
   ["#recruit-tracker", "/theo-doi-chieu-mo/"],
   ["#analyze", "/soi-doi-tu-anh/"],
   ["#roster-recommend", "/goi-y-doi-tu-kho/"],
@@ -322,13 +330,9 @@ test("a legacy score query still redirects to Team chuẩn and is then retired",
 
 test("legacy lookup hash merges only supported hash keys over the outer query", async ({ page }) => {
   await page.goto("/?group=heroes&source=campaign#lookup?group=tactics&unsupported=ignored");
-  await expect(page).toHaveURL(/\/tra-cuu\/\?/);
-  const query = new URL(page.url()).searchParams;
-  expect(query.get("group")).toBe("tactics");
-  expect(query.get("source")).toBe("campaign");
-  expect(query.has("unsupported")).toBe(false);
+  await expect(page).toHaveURL("/tra-cuu/chien-phap/?source=campaign");
   await waitForBoot(page);
-  await expect(page.locator('#section-lookup .lookup-chip[data-group="tactics"]')).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator('#section-lookup .lookup-chip[data-group="tactics"]')).toHaveAttribute("aria-current", "page");
 });
 
 test("a real legacy detail query reaches its dedicated source detail", async ({ page, request }) => {
@@ -635,7 +639,7 @@ test("required JSON failure is shown on its own section page", async ({ page }) 
   await page.route("**/data/heroes-dict.json", (route) =>
     route.fulfill({ status: 503, contentType: "application/json", body: "{}" }));
 
-  await page.goto("/tra-cuu/");
+  await page.goto(LOOKUP_GROUP_PAGE);
   await waitForBoot(page);
   const error = page.locator("#section-lookup .error");
   await expect(error).toHaveText("Không thể tải dữ liệu. Hãy tải lại trang hoặc liên hệ quản trị viên nếu lỗi tiếp diễn.");
@@ -666,7 +670,7 @@ test("Turnstile failure is surfaced only on its protected section pages", async 
   await expect(page.locator("#section-roster-recommend .ana-turnstile")).toContainText("Không tải được Turnstile");
   await expect(page.locator("script[src*='turnstile']")).toHaveCount(1);
 
-  await page.goto("/tra-cuu/");
+  await page.goto(LOOKUP_GROUP_PAGE);
   await waitForBoot(page);
   await expect(page.locator("#section-lookup")).not.toBeEmpty();
   await expect(page.locator("script[src*='turnstile']")).toHaveCount(0);
@@ -994,7 +998,7 @@ test("footer dùng chung có trên Landing, trang mục, trang chi tiết và 40
   expect(dates.size).toBe(1);
 });
 
-test("menu mobile giữ đủ 7 dòng Tra cứu và tiêu đề nhóm là link tới /tra-cuu/", async ({ page }) => {
+test("menu mobile giữ đủ 7 dòng Tra cứu tới trang nhóm và tiêu đề nhóm là link tới /tra-cuu/", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/tra-cuu/");
   await waitForBoot(page);
@@ -1006,11 +1010,18 @@ test("menu mobile giữ đủ 7 dòng Tra cứu và tiêu đề nhóm là link t
   await expect(heading).toHaveAttribute("href", "/tra-cuu/");
   const box = await heading.boundingBox();
   expect(box.height).toBeGreaterThanOrEqual(44);
-  await expect(overlay.locator('a[href^="/tra-cuu/?group="]')).toHaveCount(7);
-  // Bấm dòng con vẫn vào đúng nhóm và menu đóng lại.
-  await overlay.locator('a[href="/tra-cuu/?group=tactics"]').click();
-  await expect(page).toHaveURL("/tra-cuu/?group=tactics");
+  const groupLinks = overlay.locator('a[href^="/tra-cuu/"]:not([href="/tra-cuu/"])');
+  expect(await groupLinks.evaluateAll((links) => links.map((link) => link.getAttribute("href")))).toEqual([
+    "/tra-cuu/tuong/", "/tra-cuu/chien-phap/", "/tra-cuu/trang-bi/", "/tra-cuu/quan-su/",
+    "/tra-cuu/cai-tao-binh-chung/", "/tra-cuu/cong-trinh/", "/tra-cuu/binh-thu/",
+  ]);
+  // Bấm dòng con vào đúng trang nhóm, menu đóng lại; trên trang nhóm dòng đó là trang hiện tại.
+  await overlay.locator('a[href="/tra-cuu/chien-phap/"]').click();
+  await expect(page).toHaveURL("/tra-cuu/chien-phap/");
   await expect(page.locator("#section-menu-items")).toBeHidden();
+  await page.locator("#section-menu-toggle").click();
+  await expect(overlay.locator('a[href="/tra-cuu/chien-phap/"]')).toHaveAttribute("aria-current", "page");
+  await expect(overlay.locator('a[href="/tra-cuu/tuong/"]')).not.toHaveAttribute("aria-current", /.+/);
 });
 
 test("Back/Forward cùng tài liệu đóng menu mobile và mở khóa cuộn", async ({ page }) => {
@@ -1065,7 +1076,7 @@ test("rời trang bằng điều hướng khác tài liệu rồi quay lại kh�
   await page.locator("#section-menu-toggle").click();
   await expect(page.locator("html")).toHaveClass(/site-menu-open/);
 
-  await page.goto("/tra-cuu/");
+  await page.goto(LOOKUP_GROUP_PAGE);
   await waitForBoot(page);
   await page.goBack();
   await waitForBoot(page);
@@ -1294,19 +1305,28 @@ test("icon nút giao diện theo theme mà không cần JS của trang (không n
   await context.close();
 });
 
-test("không có JavaScript: 8 trang mục vẫn có h1 tên mục và lời nhắn cần JavaScript; có JavaScript chỉ một h1", async ({ browser, baseURL, page }) => {
+test("không có JavaScript: trang mục có h1 tên mục và lời nhắn cần JavaScript, Tra cứu dựng sẵn thì không; có JavaScript chỉ một h1", async ({ browser, baseURL, page }) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
+  // Trang dựng sẵn chỉ cần HTML: chờ DOMContentLoaded, không chờ 60 ảnh chân dung ở host ngoài.
   const nojs = await context.newPage();
-  for (const [path, label] of SECTION_SHELL) {
-    await nojs.goto(new URL(path, baseURL).href);
+  const cases = [...SECTION_SHELL.map(([path, label]) => [path, label]), [LOOKUP_GROUP_PAGE, "Tướng"]];
+  for (const [path, label] of cases) {
+    // Mục lục và trang nhóm Tra cứu dựng sẵn nội dung lúc build: không cần (và không được nói cần) JavaScript.
+    const prerendered = path.startsWith(LOOKUP_HUB);
+    await nojs.goto(new URL(path, baseURL).href, { waitUntil: "domcontentloaded" });
     await expect(nojs.locator("h1"), path).toHaveCount(1);
     await expect(nojs.locator("h1"), path).toHaveText(label);
-    await expect(nojs.locator("main p").filter({ hasText: "JavaScript" }), path).toHaveCount(1);
+    await expect(nojs.locator("main p").filter({ hasText: "JavaScript" }), path).toHaveCount(prerendered ? 0 : 1);
 
-    await page.goto(path);
+    await page.goto(path, { waitUntil: "domcontentloaded" });
     await expect(page.locator("h1").first(), path).toBeVisible();
     await expect(page.locator("h1"), path).toHaveCount(1);
   }
+  await nojs.goto(new URL(LOOKUP_GROUP_PAGE, baseURL).href, { waitUntil: "domcontentloaded" });
+  await expect(nojs.locator("#section-lookup [data-lookup-id]")).toHaveCount(60);
+  await expect(nojs.locator("#section-lookup .lookup-card").first()).toBeVisible();
+  await nojs.goto(new URL(LOOKUP_HUB, baseURL).href, { waitUntil: "domcontentloaded" });
+  await expect(nojs.locator("#section-lookup a.lookup-hub-card")).toHaveCount(7);
   await context.close();
 });
 

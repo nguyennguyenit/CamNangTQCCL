@@ -54,6 +54,7 @@ def _publish(inputs, output, *, links=None):
         candidate,
         output,
         catalog_bytes=CATALOG_BYTES,
+        tactic_catalog_bytes=TACTIC_CATALOG_BYTES,
         teams_bytes=teams_bytes,
         content_links_bytes=json.dumps({"schemaVersion": 1, "entries": links or []}).encode(),
         ledger_bytes=ledger_bytes,
@@ -63,6 +64,7 @@ def _publish(inputs, output, *, links=None):
 # Kho Tra cứu mẫu: chỉ đủ để dựng khóa nối, bản ghi fixture không có tướng khớp.
 CATALOG_BYTES = json.dumps([{"id": "hero:fixture", "viet": "Tướng mẫu", "hanViet": "Tướng mẫu",
     "chinese": "樣", "aliases": []}], ensure_ascii=False).encode()
+TACTIC_CATALOG_BYTES = json.dumps([{"id": "tactic:fixture", "viet": "Chiến pháp mẫu", "hanViet": "Chiến pháp mẫu", "chinese": "範例戰法", "aliases": []}], ensure_ascii=False).encode()
 
 class BuildRecommendedReferenceTest(unittest.TestCase):
     def test_generation_is_deterministic_ranked_and_selected_atomically(self):
@@ -431,6 +433,7 @@ class BuildRecommendedReferenceTest(unittest.TestCase):
                 inputs,
                 root,
                 catalog_bytes=CATALOG_BYTES,
+                tactic_catalog_bytes=TACTIC_CATALOG_BYTES,
                 teams_bytes=teams_bytes,
                 content_links_bytes=json.dumps({"schemaVersion": 1, "entries": [link]}).encode(),
                 ledger_bytes=ledger_bytes,
@@ -451,6 +454,7 @@ class BuildRecommendedReferenceTest(unittest.TestCase):
                     inputs,
                     root,
                     catalog_bytes=CATALOG_BYTES,
+                    tactic_catalog_bytes=TACTIC_CATALOG_BYTES,
                     teams_bytes=teams_bytes,
                     content_links_bytes=b'{"schemaVersion":1,"entries":[]}',
                     ledger_bytes=json.dumps(stale).encode(),
@@ -461,6 +465,7 @@ class BuildRecommendedReferenceTest(unittest.TestCase):
                     inputs,
                     root,
                     catalog_bytes=CATALOG_BYTES,
+                    tactic_catalog_bytes=TACTIC_CATALOG_BYTES,
                     teams_bytes=teams_bytes,
                     content_links_bytes=json.dumps({"schemaVersion": 1, "entries": [stale_link]}).encode(),
                     ledger_bytes=ledger_bytes,
@@ -476,6 +481,7 @@ class BuildRecommendedReferenceTest(unittest.TestCase):
                     bad_notes,
                     root,
                     catalog_bytes=CATALOG_BYTES,
+                    tactic_catalog_bytes=TACTIC_CATALOG_BYTES,
                     teams_bytes=teams_bytes,
                     content_links_bytes=b'{"schemaVersion":1,"entries":[]}',
                     ledger_bytes=ledger_bytes,
@@ -490,6 +496,7 @@ class BuildRecommendedReferenceTest(unittest.TestCase):
                     stale_inputs,
                     root,
                     catalog_bytes=CATALOG_BYTES,
+                    tactic_catalog_bytes=TACTIC_CATALOG_BYTES,
                     teams_bytes=teams_bytes,
                     content_links_bytes=b'{"schemaVersion":1,"entries":[]}',
                     ledger_bytes=stale_corpus_bytes,

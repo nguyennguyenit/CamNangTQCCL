@@ -1,16 +1,15 @@
-// TDD js/unified-lookup.js + js/lookup-detail.js — một cửa tra cứu bảy nhóm.
-// Route Tra cứu dùng query `?group=<...>&id=<...>` để chọn nhóm và hồ sơ.
-// Tìm kiếm toàn corpus trước khi phân trang, hồ sơ chỉ tiếng Việt và liên kết theo ID.
+// TDD js/unified-lookup.js + js/lookup-detail.js — Tra cứu bảy nhóm, mỗi nhóm một trang.
+// Trang nhóm `/tra-cuu/<slug>/` chỉ đọc `?id=<mã>`; mã thuộc nhóm khác được chuyển sang đúng trang.
+// Tìm kiếm toàn nhóm trước khi phân trang, hồ sơ chỉ tiếng Việt và liên kết theo ID.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   LOOKUP_GROUPS,
   parseLookupQuery,
-  formatLookupQuery,
   buildLookupCorpus,
   searchLookupGroup,
 } from "../js/unified-lookup.js";
-import { lookupProfile } from "../js/lookup-detail.js";
+import { effectVersions, lookupProfile } from "../js/lookup-detail.js";
 import { resolveLegacyRoute } from "../js/legacy-routes.js";
 import { bookSourceAliases } from "../js/lookup-ids.js";
 import { readFile } from "node:fs/promises";
@@ -145,116 +144,50 @@ test("bảy nhóm theo đúng thứ tự công bố", () => {
   assert.deepEqual(LOOKUP_GROUPS, ["heroes", "tactics", "equipment", "advisors", "troop-mods", "buildings", "books"]);
 });
 
-test("query trống mở toàn bộ corpus, group/id đều tùy chọn", () => {
-  const route = parseLookupQuery("?");
-  assert.equal(route.section, "lookup");
-  assert.equal(route.group, null);
-  assert.equal(route.id, null);
-  assert.equal(route.error, null);
+test("trang nhóm không có id thì không mở hồ sơ, khóa khác của query bị bỏ qua", () => {
+  for (const search of ["", "?", "?q=luu", "?group=tactics", "?src=https://evil.example/x.json"]) {
+    assert.deepEqual(parseLookupQuery(search, "heroes"), { group: "heroes", id: null, otherGroup: null, error: null, messageVi: null }, search);
+  }
 });
 
-test("mỗi group hợp lệ được nhận, id được decode", () => {
-  for (const group of LOOKUP_GROUPS) {
-    const route = parseLookupQuery(`?group=${group}`);
-    assert.equal(route.group, group);
+test("id cùng nhóm được decode; đặc kỹ trang bị thuộc nhóm trang bị", () => {
+  assert.equal(parseLookupQuery("?id=hero%3Aluu-bi", "heroes").id, "hero:luu-bi");
+  const special = parseLookupQuery("?id=equipment-special%3Agian-hung", "equipment");
+  assert.equal(special.id, "equipment-special:gian-hung");
+  assert.equal(special.otherGroup, null);
+});
+
+test("id của nhóm khác trả nhóm đích để trang chuyển sang đúng trang", () => {
+  for (const [id, group] of [["tactic%3Anhan-duc", "tactics"], ["troop-mod%3Adan-duong-binh", "troop-mods"], ["equipment-special%3Agian-hung", "equipment"], ["book%3Abach-chien", "books"]]) {
+    const route = parseLookupQuery(`?id=${id}`, "heroes");
+    assert.equal(route.otherGroup, group, id);
+    assert.equal(route.id, decodeURIComponent(id));
     assert.equal(route.error, null);
   }
-  const withId = parseLookupQuery("?group=heroes&id=hero%3Aluu-bi");
-  assert.equal(withId.group, "heroes");
-  assert.equal(withId.id, "hero:luu-bi");
-  assert.equal(withId.error, null);
-});
-
-// `group` là bộ lọc lưới người dùng chọn, không suy từ `id`: mở hồ sơ từ chế độ tất cả vẫn ở chế độ tất cả.
-test("thiếu group thì lưới vẫn là tất cả, id mọi loại vẫn hợp lệ", () => {
-  for (const id of ["hero%3Atao-thao", "tactic%3Anhan-duc", "equipment-special%3Agian-hung", "troop-mod%3Adan-duong-binh", "building%3Abat-tran-do", "advisor%3Aan-phuc-binh-tam"]) {
-    const route = parseLookupQuery(`?id=${id}`);
-    assert.equal(route.error, null, id);
-    assert.equal(route.group, null, id);
-    assert.equal(route.id, decodeURIComponent(id));
-    assert.equal(formatLookupQuery(route), `id=${id}`);
-  }
-});
-
-test("trang bị đặc hiệu nằm cùng nhóm trang bị", () => {
-  const route = parseLookupQuery("?group=equipment&id=equipment-special%3Agian-hung");
-  assert.equal(route.error, null);
-  assert.equal(route.id, "equipment-special:gian-hung");
 });
 
 function assertLookupError(search, code) {
-  const route = parseLookupQuery(search);
-  assert.equal(route.section, "lookup", `${search} phải ở lại lookup để hiện lỗi bản địa hóa`);
+  const route = parseLookupQuery(search, "heroes");
   assert.equal(route.error, code, `${search} phải báo lỗi ${code}`);
   assert.equal(route.id, null);
   assert.ok(route.messageVi && route.messageVi.length > 0, `${search} thiếu thông báo tiếng Việt`);
   assert.doesNotMatch(route.messageVi, CJK, `${search} không được hiện chữ Hán`);
 }
 
-test("tham số trùng bị từ chối", () => {
-  assertLookupError("?group=heroes&group=tactics", "duplicate-param");
-  assertLookupError("?group=heroes&id=hero%3Aluu-bi&id=hero%3Atao-thao", "duplicate-param");
-});
-
-// Bước 4: parser chỉ xét `group`/`id`; khóa khác được bỏ qua thay vì báo `unknown-param`.
-test("bỏ qua khóa khác và chỉ xét group/id", () => {
-  const withUnknownKey = parseLookupQuery("?group=heroes&q=luu");
-  assert.equal(withUnknownKey.group, "heroes");
-  assert.equal(withUnknownKey.id, null);
-  assert.equal(withUnknownKey.error, null);
-
-  const withExternalSource = parseLookupQuery("?src=https://evil.example/x.json");
-  assert.equal(withExternalSource.group, null);
-  assert.equal(withExternalSource.id, null);
-  assert.equal(withExternalSource.error, null);
-});
-
-test("group lạ hoặc rỗng bị từ chối", () => {
-  assertLookupError("?group=scrolls", "unknown-group");
-  assertLookupError("?group=", "unknown-group");
-  assertLookupError("?group=HEROES", "unknown-group");
-});
-
-test("id sai loại so với group bị từ chối", () => {
-  assertLookupError("?group=heroes&id=tactic%3Anhan-duc", "id-kind-mismatch");
-  assertLookupError("?group=buildings&id=troop-mod%3Adan-duong-binh", "id-kind-mismatch");
-  assertLookupError("?group=tactics&id=equipment-special%3Agian-hung", "id-kind-mismatch");
+test("id lặp bị từ chối", () => {
+  assertLookupError("?id=hero%3Aluu-bi&id=hero%3Atao-thao", "duplicate-param");
 });
 
 test("id không phải canonical ID bị từ chối, không fetch URL từ query", () => {
   assertLookupError("?id=https%3A%2F%2Fevil.example%2Fx.json", "unknown-id-kind");
   assertLookupError("?id=..%2F..%2Fdata%2Fsdeck%2Findex.json", "unknown-id-kind");
   assertLookupError("?id=..%2F..%2Fdata%2Fsgsdeck%2Findex.json", "unknown-id-kind");
-  assertLookupError("?group=heroes&id=", "unknown-id-kind");
+  assertLookupError("?id=", "unknown-id-kind");
 });
 
-test("query rỗng luôn trả đủ shape route Tra cứu", () => {
-  assert.deepEqual(parseLookupQuery(""), {
-    section: "lookup", group: null, id: null, error: null, messageVi: null,
-  });
-});
-
-test("group query đặt trạng thái preselect", () => {
-  assert.equal(parseLookupQuery("?group=heroes").group, "heroes");
-  assert.equal(parseLookupQuery("?group=tactics").group, "tactics");
-});
-
-test("alias hash cũ chuyển tới trang Tra cứu với group tương ứng", () => {
+test("alias hash cũ chuyển tới trang mục lục Tra cứu với group tương ứng", () => {
   assert.equal(resolveLegacyRoute("https://tqccl.com/#heroes", "https://tqccl.com"), "/tra-cuu/?group=heroes");
   assert.equal(resolveLegacyRoute("https://tqccl.com/#tactics", "https://tqccl.com"), "/tra-cuu/?group=tactics");
-});
-
-test("query được serialize ổn định và encode ID", () => {
-  assert.equal(formatLookupQuery(parseLookupQuery("")), "");
-  assert.equal(formatLookupQuery(parseLookupQuery("?group=tactics")), "group=tactics");
-  assert.equal(
-    formatLookupQuery(parseLookupQuery("?group=heroes&id=hero%3Aluu-bi")),
-    "group=heroes&id=hero%3Aluu-bi",
-  );
-  assert.equal(
-    formatLookupQuery({ section: "lookup", group: "heroes", id: "hero:luu-bi", error: null }),
-    "group=heroes&id=hero%3Aluu-bi",
-  );
 });
 
 /* ---------- Corpus, tìm kiếm, phân trang ---------- */
@@ -357,7 +290,7 @@ test("tìm không dấu coi đ/Đ là d/D", () => {
   assert.deepEqual(ids("heroes", "dong trac"), ["hero:dong-trac"]);
   assert.deepEqual(ids("heroes", "DIEU"), ["hero:dieu-thuyen"]);
   assert.deepEqual(ids("tactics", "hiep dau"), ["tactic:doat-hon"]);
-  assert.deepEqual(ids(null, "doat hon"), ["tactic:doat-hon"]);
+  assert.deepEqual(ids("tactics", "doat hon"), ["tactic:doat-hon"]);
   assert.deepEqual(ids("heroes", "Điêu"), ["hero:dieu-thuyen"]);
 });
 
@@ -389,14 +322,24 @@ test("không có kết quả trả tổng 0 và không còn trang", () => {
 });
 
 test("deep link binh thư `?id=book:<slug>` mở đúng hồ sơ, hiệu ứng để trạng thái trống", () => {
-  const route = parseLookupQuery("?id=book%3Abach-chien");
+  const route = parseLookupQuery("?id=book%3Abach-chien", "books");
   assert.equal(route.error, null);
   assert.equal(route.id, "book:bach-chien");
-  assert.equal(parseLookupQuery("?group=books&id=book%3Abach-chien").error, null);
-  assert.equal(parseLookupQuery("?group=tactics&id=book%3Abach-chien").error, "id-kind-mismatch");
+  assert.equal(parseLookupQuery("?id=book%3Abach-chien", "tactics").otherGroup, "books");
   const profile = lookupProfile(corpus(), route.id);
   assert.equal(profile.titleVi, "Bách Chiến");
   assert.deepEqual(profile.fields.map((field) => [field.key, field.value]), [["effect", null]]);
+});
+
+test("corpus chỉ có payload đã tải: nhóm thiếu dữ liệu rỗng, quan hệ sang nhóm đó chưa giải được", () => {
+  const heroesOnly = buildLookupCorpus({ heroes: HERO_POOL });
+  assert.equal(heroesOnly.groups.heroes.length, HERO_POOL.length);
+  for (const group of LOOKUP_GROUPS.filter((key) => key !== "heroes")) assert.deepEqual(heroesOnly.groups[group], [], group);
+  const partial = lookupProfile(heroesOnly, "hero:luu-bi").relations.find((relation) => relation.key === "selfTactic");
+  assert.equal(partial.resolved, false);
+  const full = lookupProfile(buildLookupCorpus({ heroes: HERO_POOL, tactics: TACTIC_POOL, catalog: CATALOG }), "hero:luu-bi")
+    .relations.find((relation) => relation.key === "selfTactic");
+  assert.equal(full.resolved, true);
 });
 
 test("tên cũ của binh thư (bảng danh tính) tìm được và chỉ hiện trên hồ sơ bản zh", () => {
@@ -522,7 +465,6 @@ test("hồ sơ tướng có đủ chỉ số, thích tính và metadata đã duy
     assert.ok(profile.aptitudes.some((apt) => apt.key === key), `thiếu thích tính ${key}`);
   }
   assert.ok(profile.sections.some((section) => section.key === "growth"), "thiếu khối tăng trưởng");
-  assert.ok(profile.sections.some((section) => section.key === "civil"), "thiếu khối nội chính");
 });
 
 test("hồ sơ chiến pháp dùng bản Việt, không mượn effect gốc để lấp chỗ trống", () => {
@@ -618,7 +560,8 @@ test("hồ sơ mọi nhóm ẩn nguồn và chỉ hiện tiếng Việt", () => 
 
 /* ---------- Phase 7: giao diện mới, nhãn tiếng Việt, khối "Trong cẩm nang" ---------- */
 
-import { lookupCardView, tacticTableRow, camNangView, POSITION_LABELS, costText } from "../js/unified-lookup.js";
+import { lookupCardView, lookupOrderNote, tacticTableRow, camNangView, POSITION_LABELS, costText, lookupResultTrees } from "../js/unified-lookup.js";
+import { h, treeToHtml } from "../js/view-tree.js";
 import { portraitUrl, portraitChar } from "../js/hero-portrait.js";
 import { parseHeroSummaries } from "../js/hero-summaries.js";
 
@@ -639,12 +582,19 @@ test("thẻ kết quả Tra cứu hiện biến thể, phe, sao và tên Hán", 
   assert.equal(view.faction, "Ngô");
   assert.equal(view.stars, "5 sao");
   assert.equal(view.chinese, "SP 呂蒙");
-  assert.deepEqual(view.meta.map((part) => part.text), ["Ngô", "Thống ngự 7", "Khống chế / Kiêm nhiệm"]);
+  assert.deepEqual(view.meta.map((part) => part.text), ["Ngô", "5 sao", "Thống ngự 7", "Khống chế / Kiêm nhiệm"]);
+});
+
+test("ghi chú thứ tự nguồn chỉ ẩn khi bản zh xếp lại kết quả tìm", () => {
+  assert.equal(lookupOrderNote("", "vi"), "Thứ tự theo nguồn");
+  assert.equal(lookupOrderNote("lu mong", "vi"), "Thứ tự theo nguồn");
+  assert.equal(lookupOrderNote("", "zh"), "按来源顺序");
+  assert.equal(lookupOrderNote("呂蒙", "zh"), null);
+  assert.equal(lookupOrderNote("   ", "zh"), "按来源顺序");
 });
 
 test("bảng chiến pháp lấy phẩm, loại, dạng hiệu ứng, mục tiêu, tỷ lệ và để trống thành —", () => {
-  const corpus = heroUiCorpus();
-  const row = tacticTableRow(lookupProfile(corpus, "tactic:nhan-duc"));
+  const row = tacticTableRow(TACTIC_POOL.find((item) => item.id === "tactic:nhan-duc"));
   assert.equal(row.nameVi, "Nhân Đức Tải Thế");
   assert.equal(row.quality, "S");
   assert.equal(row.type, "Chủ động");
@@ -652,14 +602,8 @@ test("bảng chiến pháp lấy phẩm, loại, dạng hiệu ứng, mục tiê
   assert.equal(row.target, "Quân ta");
   assert.equal(row.rate, "100%");
 
-  const pending = tacticTableRow(lookupProfile(corpus, "tactic:cho-dich"));
-  assert.equal(pending.target, "—");
-  const missing = buildLookupCorpus({
-    heroes: [],
-    tactics: [tactic("tactic:thieu", "Thiếu Dữ Liệu", { lookup: { activationRate: null } })],
-    catalog: CATALOG,
-  });
-  assert.equal(tacticTableRow(lookupProfile(missing, "tactic:thieu")).rate, "—");
+  assert.equal(tacticTableRow(TACTIC_POOL.find((item) => item.id === "tactic:cho-dich")).target, "—");
+  assert.equal(tacticTableRow(tactic("tactic:thieu", "Thiếu Dữ Liệu", { lookup: { activationRate: null } })).rate, "—");
 });
 
 test("tỷ lệ kích hoạt là phần trăm; giá trị ngoài 0–1 không in số vô nghĩa", () => {
@@ -667,21 +611,18 @@ test("tỷ lệ kích hoạt là phần trăm; giá trị ngoài 0–1 không in
   const original = console.warn;
   console.warn = (message) => warned.push(String(message));
   try {
+    const rate = (value) => tacticTableRow(tactic(`tactic:ti-le-${String(value).replace(/\W/g, "")}`, "Tỷ Lệ", { lookup: { activationRate: value } })).rate;
+    assert.equal(rate(0.375), "37.5%");
+    assert.equal(rate(0.55), "55%");
+    // Dữ liệu sai khoảng (50 = 5000%) không được in ra: bảng hiện gạch ngang, hồ sơ cũng vậy.
+    assert.equal(rate(50), "—");
+    assert.equal(rate(-1), "—");
     const corpus = buildLookupCorpus({
-      heroes: [HERO_UI],
       tactics: [
-        tactic("tactic:ti-le-le", "Tỷ Lệ Lẻ", { lookup: { activationRate: 0.375 } }),
         tactic("tactic:ti-le-tron", "Tỷ Lệ Tròn", { lookup: { activationRate: 0.55 } }),
         tactic("tactic:ngoai-khoang", "Ngoài Khoảng", { lookup: { activationRate: 50 } }),
-        tactic("tactic:am", "Âm", { lookup: { activationRate: -1 } }),
       ],
-      catalog: CATALOG,
     });
-    assert.equal(tacticTableRow(lookupProfile(corpus, "tactic:ti-le-le")).rate, "37.5%");
-    assert.equal(tacticTableRow(lookupProfile(corpus, "tactic:ti-le-tron")).rate, "55%");
-    // Dữ liệu sai khoảng (50 = 5000%) không được in ra: bảng hiện gạch ngang, hồ sơ cũng vậy.
-    assert.equal(tacticTableRow(lookupProfile(corpus, "tactic:ngoai-khoang")).rate, "—");
-    assert.equal(tacticTableRow(lookupProfile(corpus, "tactic:am")).rate, "—");
     const field = lookupProfile(corpus, "tactic:ti-le-tron").fields.find((item) => item.key === "activationRate");
     assert.equal(field.labelVi, "Tỷ lệ kích hoạt");
     assert.equal(field.textVi, "55%");
@@ -692,6 +633,63 @@ test("tỷ lệ kích hoạt là phần trăm; giá trị ngoài 0–1 không in
     console.warn = original;
   }
   assert.ok(warned.some((line) => line.includes("ngoài khoảng 0–1")), "tỷ lệ sai khoảng phải được cảnh báo cho dev");
+});
+
+/** Chạy `run` như trang `/zh/` (các hàm mặc định đọc ngôn ngữ từ `<html lang>`). */
+function asZhPage(run) {
+  const previous = globalThis.document;
+  globalThis.document = { documentElement: { lang: "zh-Hans" } };
+  try { return run(); } finally { globalThis.document = previous; }
+}
+
+async function publishedLookup() {
+  const [heroes, tactics, catalog, books] = await Promise.all(
+    ["heroes-dict", "tactics", "lookup-catalog", "books-dict"].map(async (name) => JSON.parse(await readFile(new URL(`../data/${name}.json`, import.meta.url), "utf8"))),
+  );
+  return { heroes, tactics, catalog, books };
+}
+
+test("hàng bảng chiến pháp và hồ sơ cùng một giá trị cho mọi chiến pháp đã công bố, cả hai ngôn ngữ", async () => {
+  const data = await publishedLookup();
+  const built = buildLookupCorpus(data);
+  const cell = (profile, key, fallback = "—") => {
+    const field = fieldByKey(profile, key);
+    return !field || field.value === null || field.value === undefined || field.value === "" ? fallback : field.textVi;
+  };
+  for (const locale of ["vi", "zh"]) {
+    const expected = (id) => {
+      const profile = lookupProfile(built, id);
+      return {
+        nameVi: profile.titleVi, quality: cell(profile, "quality"), type: cell(profile, "type"),
+        effectType: cell(profile, "effectTypeVi"), target: cell(profile, "target"), effect: cell(profile, "effect", ""),
+        rate: cell(profile, "activationRate"),
+      };
+    };
+    for (const record of data.tactics) {
+      const want = locale === "zh" ? asZhPage(() => expected(record.id)) : expected(record.id);
+      assert.deepEqual(tacticTableRow(record, locale), want, `${locale} ${record.id}`);
+    }
+  }
+});
+
+test("thẻ và hàng bảng dựng lúc build với locale tường minh khớp bản dựng trên trang cùng ngôn ngữ", async () => {
+  const built = buildLookupCorpus(await publishedLookup());
+  for (const group of LOOKUP_GROUPS) {
+    const items = searchLookupGroup(built, { group, page: 1 }).items;
+    assert.ok(items.length > 0, group);
+    const onZhPage = asZhPage(() => treeToHtml(h("div", {}, lookupResultTrees(group, items))));
+    assert.equal(treeToHtml(h("div", {}, lookupResultTrees(group, items, "zh"))), onZhPage, `zh ${group}`);
+    assert.equal(treeToHtml(h("div", {}, lookupResultTrees(group, items, "vi"))), treeToHtml(h("div", {}, lookupResultTrees(group, items))), `vi ${group}`);
+  }
+});
+
+test("thẻ bản zh hiện tên chữ Hán và nhãn Trung, không lọt chữ Việt của bộ giá trị đóng", () => {
+  const entry = heroUiCorpus().byId.get("hero:sp-lu-mong");
+  const view = lookupCardView("heroes", entry, "zh");
+  assert.equal(view.title, "SP 呂蒙");
+  assert.equal(view.faction, "吴");
+  assert.equal(view.stars, "5 星");
+  assert.deepEqual(view.meta.map((part) => part.text), ["吴", "5 星", "统御 7"]);
 });
 
 test("cách nhận của mọi chiến pháp đã công bố không lộ mã trích dẫn bsn", async () => {
@@ -718,25 +716,27 @@ test("chi phí công trình bỏ ô rỗng, không in null", () => {
   assert.equal(costText("không phải đối tượng"), null);
 });
 
-test("nội chính hiện nhãn tiếng Việt, không bao giờ in khóa thô", () => {
-  const warned = [];
-  const original = console.warn;
-  console.warn = (message) => warned.push(String(message));
-  try {
-    const corpus = buildLookupCorpus({
-      heroes: [hero("hero:la-mat", "La Mật", { lookup: { civil: { bonusVi: "Thưởng A", khoaLanh: "X" } } })],
-      tactics: TACTIC_POOL,
-      catalog: CATALOG,
-    });
-    const civil = lookupProfile(corpus, "hero:la-mat").sections.find((section) => section.key === "civil");
-    assert.deepEqual(civil.fields.map((field) => field.labelVi), ["Thưởng nội chính"]);
-    const shown = civil.fields.map((field) => `${field.labelVi}=${field.textVi}`).join(" | ");
-    assert.equal(shown, "Thưởng nội chính=Thưởng A");
-    assert.doesNotMatch(shown, /khoaLanh|bonusVi|Đang cập nhật/);
-  } finally {
-    console.warn = original;
-  }
-  assert.ok(warned.some((line) => line.includes("khoaLanh")), "khóa không nhãn phải được cảnh báo cho dev");
+test("hiệu ứng nhiều phiên bản tách thành khối có nhãn, cả dạng ' / / ' lẫn dạng dòng trống", () => {
+  assert.deepEqual(effectVersions("Cập nhật 2021-06-09 (cân bằng) / Giảm 12% / Hồi 63% / / Phiên bản gốc / Giảm 13%"), [
+    { labelVi: "Cập nhật 2021-06-09 (cân bằng)", paragraphs: ["Giảm 12%", "Hồi 63%"] },
+    { labelVi: "Phiên bản gốc", paragraphs: ["Giảm 13%"] },
+  ]);
+  // Phiên bản nối bằng một " / " đơn, và nhãn chữ Hán nguồn của bản zh.
+  assert.deepEqual(effectVersions("Cập nhật 2024-09-11 (tăng cường) / Mới / Cập nhật 2024-03-20 (tăng cường) / Giữa / Phiên bản gốc / Cũ").map((block) => block.labelVi),
+    ["Cập nhật 2024-09-11 (tăng cường)", "Cập nhật 2024-03-20 (tăng cường)", "Phiên bản gốc"]);
+  assert.deepEqual(effectVersions("2021-06-09 更新（平衡） / 戰鬥前3回合 / / 原始版本 / 戰鬥前2回合"), [
+    { labelVi: "2021-06-09 更新（平衡）", paragraphs: ["戰鬥前3回合"] },
+    { labelVi: "原始版本", paragraphs: ["戰鬥前2回合"] },
+  ]);
+  assert.deepEqual(effectVersions("Cập nhật ngày 2020-04-01: Đánh thêm.\n\nCập nhật 2019-01-01 (tăng cường)\nĐánh.\nGhi chú: X"), [
+    { labelVi: "Cập nhật ngày 2020-04-01", paragraphs: ["Đánh thêm."] },
+    { labelVi: "Cập nhật 2019-01-01 (tăng cường)", paragraphs: ["Đánh.", "Ghi chú: X"] },
+  ]);
+  // Chữ thường: " / " nghĩa là "hoặc" nên giữ nguyên; đoạn cách dòng trống là đoạn tiếp, không phải phiên bản.
+  assert.deepEqual(effectVersions("Dùng khi công thành / đánh khí giới.\n\nĐoạn hai."), [
+    { labelVi: null, paragraphs: ["Dùng khi công thành / đánh khí giới.", "Đoạn hai."] },
+  ]);
+  assert.deepEqual(effectVersions(null), []);
 });
 
 test("khối Trong cẩm nang gộp vị trí hai họ, giữ trần 3 mục và gắn nhãn vị trí", () => {

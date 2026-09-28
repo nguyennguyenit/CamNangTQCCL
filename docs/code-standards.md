@@ -30,9 +30,11 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
   | Đội chuẩn, Đội khác | — (thêm `teams` khi URL có `legacyTeam` không kèm `config`) | bộ mùa 10 file (`#season-artifact-hashes`), generation Recommended |
   | Cùng Tồn | `coexist` | bộ mùa 10 file |
   | Khai hoang | `khaihoang` | — |
-  | Tra cứu, Theo dõi chiêu mộ | `heroes-dict`, `tactics`, `lookup-catalog`, `lookup-manifest` (Tra cứu dùng hash `heroes-dict` đã xác minh làm `catalogSha256`) | Recommended theo yêu cầu khi mở hồ sơ |
-  | Soi đội | như Tra cứu + `teams` | `books-dict` |
-  | Gợi ý đội | như Tra cứu + `teams` | `team-tier` (tuỳ chọn) |
+  | Tra cứu (trang nhóm) | `lookup-manifest` + payload của nhóm: Tướng `heroes-dict`, Chiến pháp `tactics`, Trang bị/Quân sư/Cải tạo/Công trình `lookup-catalog`; Binh thư không có (pin `books-dict` trên trang) | payload hồ sơ tải lười khi mở hồ sơ đầu tiên, kiểm theo manifest (Tướng: `tactics`, `lookup-catalog`, Recommended, bộ tra tên Hán bản zh; Chiến pháp/Trang bị/Quân sư: `heroes-dict`); hash `heroes-dict` của publication làm `catalogSha256` |
+  | Tra cứu (mục lục `/tra-cuu/`) | — (không nạp app) | — |
+  | Theo dõi chiêu mộ | `heroes-dict`, `tactics`, `lookup-catalog`, `lookup-manifest` | — |
+  | Soi đội | như Theo dõi chiêu mộ + `teams` | `books-dict` |
+  | Gợi ý đội | như Theo dõi chiêu mộ + `teams` | `team-tier` (tuỳ chọn) |
   | Chi tiết Đội chuẩn/Đội khác | `teams` (một request, dùng chung với kiểm `legacyTeamsSha256`) | generation Recommended |
   | Chi tiết Khai hoang | `khaihoang` (kiểm hash trang trước) | — |
 

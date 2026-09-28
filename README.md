@@ -6,12 +6,12 @@ Website tĩnh tra cứu đội hình, tướng, chiến pháp và hỗ trợ qu�
 
 ## Tính năng
 
-- Landing ở `/` và **8 trang mục tĩnh** có đường dẫn riêng: `/doi-chuan/`, `/doi-khac/`, `/cung-ton/`, `/khai-hoang/`, `/tra-cuu/`, `/theo-doi-chieu-mo/`, `/soi-doi-tu-anh/`, `/goi-y-doi-tu-kho/`. Trạng thái nằm trên query của đúng trang (`?season=`, `?q=`, `?group=&id=`, `?view=luoi|bang`, `?config=`…).
+- Landing ở `/` và **8 trang mục tĩnh** có đường dẫn riêng: `/doi-chuan/`, `/doi-khac/`, `/cung-ton/`, `/khai-hoang/`, `/tra-cuu/`, `/theo-doi-chieu-mo/`, `/soi-doi-tu-anh/`, `/goi-y-doi-tu-kho/`; Tra cứu có thêm 7 trang nhóm `/tra-cuu/<nhóm>/`. Trạng thái nằm trên query của đúng trang (`?season=`, `?q=`, `?id=`, `?view=luoi|bang`, `?config=`…).
 - Hash cũ của SPA (`#team-pk`, `#meta-cu`, `#khaihoang`, `#lookup?group=…`, `#heroes`, `#tactics`…) và URL `/` không hash có khóa cũ được Landing chuyển tiếp sang đường dẫn mới, giữ query; bảng chuyển tiếp ở `js/legacy-routes.js`.
 - Hai trang danh sách đội dùng chung một browser và một kiểu thẻ: search toàn văn, một ô chọn mùa nguồn và chip facet (loại binh, phe, nhóm, nguồn) đếm theo mùa đang chọn, chuyển **Thẻ / Thẻ gọn / Bảng** (`?view=luoi`, `?view=bang`), mobile thu gọn vùng lọc sau nút `Bộ lọc`.
 - Mỗi đội có trang chi tiết tĩnh riêng dưới `/doi-chuan/<mùa>-<handle>/`, `/doi-khac/<handle>/` hoặc `/khai-hoang/<handle>/`; handle tiếng Việt đóng băng trong `pipeline/team-route-handles.json` nên sửa `displayNameVi` không đổi URL. URL cũ `/teams/…` và URL ngoài danh sách sinh sẵn trả trang 404 tĩnh, không redirect.
 - Phạm vi kịch bản/phiên bản luật nằm trên URL (`scenario`, `ruleset`) cho Đội chuẩn, Đội khác và Cùng Tồn; Cùng Tồn chọn kịch bản bằng một hàng nút (mặc định kịch bản đầu theo registry). URL giữ phạm vi, bộ lọc và cấu hình đang mở. Soi đội và Gợi ý đội không có bộ chọn mùa, luôn chạy trên dữ liệu đội cũ. Khai hoang dùng bản bảo trì mới nhất.
-- Tra cứu local 202 tướng, 406 chiến pháp và bốn nhóm catalog bổ sung; sáu chip nhóm, hỗ trợ tên Việt/Hán-Việt/Hán, paging, hộp thoại hồ sơ và khối "Trong cẩm nang" tính lúc build.
+- Tra cứu local 202 tướng, 406 chiến pháp và bốn nhóm catalog bổ sung, mỗi nhóm một trang (`/tra-cuu/tuong/`, `/chien-phap/`, `/trang-bi/`, `/quan-su/`, `/cai-tao-binh-chung/`, `/cong-trinh/`, `/binh-thu/`) chỉ tải dữ liệu của nhóm; trang đầu dựng lúc build, tìm tên Việt/Hán-Việt/Hán, paging, hộp thoại hồ sơ (dữ liệu nhóm liên quan tải khi mở) và khối "Trong cẩm nang" tính lúc build. `/tra-cuu/` là mục lục.
 - Tracker chiêu mộ lưu nhiều account, pity và lịch sử trong `localStorage`; có xuất/nhập JSON.
 - Soi screenshot qua Worker + DashScope Qwen; frontend map kết quả và đối chiếu đội local. AI chỉ trích xuất dữ liệu từ ảnh, không chọn team.
 - Gợi ý portfolio tối đa 5 team bằng engine local.
@@ -123,6 +123,7 @@ Xem [Deployment Guide](docs/deployment-guide.md) và bản ghi triển khai có 
 ```text
 src/pages/index.astro      # Landing (vỏ mỏng → src/components/landing/Landing.astro)
 src/pages/<mục>/index.astro # 8 trang mục tĩnh (doi-chuan, doi-khac, cung-ton, khai-hoang, tra-cuu, theo-doi-chieu-mo, soi-doi-tu-anh, goi-y-doi-tu-kho)
+src/pages/tra-cuu/[group].astro # 7 trang nhóm Tra cứu (nội dung ở src/components/pages/LookupGroupPage.astro)
 src/pages/404.astro        # trang 404 top-level (khối Việt + khối Trung cho /zh/)
 src/pages/doi-chuan|doi-khac|khai-hoang/  # ba họ trang chi tiết sinh từ catalog
 src/pages/zh/              # bản tiếng Trung: cùng đường dẫn, cùng component với bản Việt

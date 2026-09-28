@@ -5,7 +5,7 @@
 // nâng lên `https:` lúc render. Ảnh lỗi hoặc thiếu `iconUrl` → ô nền `--accent-soft` với chữ Hán đầu tên
 // (`--font-cjk`, `lang="zh-Hant"`, `aria-hidden`) — không để lại ảnh vỡ hay ô trống.
 
-import { el } from "./render.js";
+import { h, treeToDom } from "./view-tree.js";
 import { validateHttpSourceUrl } from "./recommended-reference-state.js";
 
 const CJK = /[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]/u;
@@ -25,32 +25,46 @@ export function portraitChar(chinese, nameVi = "") {
 }
 
 /** Ô chữ Hán dự phòng: tên tướng đã có ở chỗ khác nên phần này ẩn khỏi cây trợ năng. */
-export function portraitFallback({ chinese, nameVi } = {}) {
-  return el("span", { class: "hero-portrait-han" }, [
-    el("span", { lang: "zh-Hant", "aria-hidden": "true" }, portraitChar(chinese, nameVi)),
+function portraitFallbackTree({ chinese, nameVi } = {}) {
+  return h("span", { class: "hero-portrait-han" }, [
+    h("span", { lang: "zh-Hant", "aria-hidden": "true" }, portraitChar(chinese, nameVi)),
   ]);
 }
 
 /**
- * Ô chân dung: ảnh khi có URL hợp lệ, chữ Hán khi thiếu ảnh hoặc ảnh lỗi.
- * `className` là class kích thước của nơi dùng; `alt` mặc định là tên hiển thị.
+ * Cây view của ô chân dung (dùng chung cho HTML dựng lúc build và DOM): ảnh khi có URL hợp lệ, chữ Hán
+ * khi thiếu ảnh hoặc ảnh lỗi. `className` là class kích thước của nơi dùng; `alt` mặc định là tên hiển thị.
  * `fallbackOnError: false` giữ hành vi cũ của Soi đội (gãy ảnh thì bỏ ảnh, không thêm ô chữ).
  */
-export function heroPortrait({ chinese, nameVi, iconUrl, className = "", alt, fallbackOnError = true } = {}) {
-  const box = el("span", { class: `hero-portrait${className ? ` ${className}` : ""}` });
+export function portraitTree({ chinese, nameVi, iconUrl, className = "", alt, fallbackOnError = true } = {}) {
   const href = portraitUrl(iconUrl);
-  // Chữ Hán nằm dưới ảnh: CDN treo (không lỗi, không tải xong) vẫn thấy ô chữ thay vì ô trống.
-  if (fallbackOnError) box.append(portraitFallback({ chinese, nameVi }));
-  if (!href) return box;
-  const image = el("img", {
-    src: href,
-    alt: alt ?? String(nameVi ?? "").trim(),
-    loading: "lazy",
-    decoding: "async",
-    referrerpolicy: "no-referrer",
-  });
-  image.addEventListener("load", () => box.classList.add("hero-portrait-loaded"));
-  image.addEventListener("error", () => image.remove());
-  box.append(image);
-  return box;
+  return h("span", { class: `hero-portrait${className ? ` ${className}` : ""}` }, [
+    // Chữ Hán nằm dưới ảnh: CDN treo (không lỗi, không tải xong) vẫn thấy ô chữ thay vì ô trống.
+    fallbackOnError ? portraitFallbackTree({ chinese, nameVi }) : null,
+    href ? h("img", {
+      src: href,
+      alt: alt ?? String(nameVi ?? "").trim(),
+      loading: "lazy",
+      decoding: "async",
+      referrerpolicy: "no-referrer",
+    }) : null,
+  ]);
+}
+
+/** Gắn xử lý tải/lỗi ảnh cho các ô chân dung trong `root` (DOM dựng từ `portraitTree`). */
+export function activatePortraits(root) {
+  const boxes = root.matches?.(".hero-portrait") ? [root] : [...root.querySelectorAll(".hero-portrait")];
+  for (const box of boxes) {
+    const image = box.querySelector(":scope > img");
+    if (!image) continue;
+    image.addEventListener("load", () => box.classList.add("hero-portrait-loaded"));
+    image.addEventListener("error", () => image.remove());
+    if (image.complete && image.naturalWidth > 0) box.classList.add("hero-portrait-loaded");
+  }
+  return root;
+}
+
+/** Ô chân dung DOM: `portraitTree` kèm xử lý tải/lỗi ảnh. */
+export function heroPortrait(options = {}) {
+  return activatePortraits(treeToDom(portraitTree(options)));
 }

@@ -42,6 +42,7 @@ def _holder(name, tactics=(), books=()):
 # Kho Tra cứu mẫu: chỉ đủ để dựng khóa nối, bản ghi fixture không có tướng khớp.
 CATALOG_BYTES = json.dumps([{"id": "hero:fixture", "viet": "Tướng mẫu", "hanViet": "Tướng mẫu",
     "chinese": "樣", "aliases": []}], ensure_ascii=False).encode()
+TACTIC_CATALOG_BYTES = json.dumps([{"id": "tactic:fixture", "viet": "Chiến pháp mẫu", "hanViet": "Chiến pháp mẫu", "chinese": "範例戰法", "aliases": []}], ensure_ascii=False).encode()
 
 class ReportRecommendedTranslationsTest(unittest.TestCase):
     def _generation(self, root, records):
@@ -86,6 +87,7 @@ class ReportRecommendedTranslationsTest(unittest.TestCase):
             inputs,
             root,
             catalog_bytes=CATALOG_BYTES,
+            tactic_catalog_bytes=TACTIC_CATALOG_BYTES,
             teams_bytes=teams_bytes,
             content_links_bytes=b'{"schemaVersion":1,"entries":[]}',
             ledger_bytes=ledger_bytes,

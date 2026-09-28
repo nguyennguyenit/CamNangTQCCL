@@ -67,12 +67,12 @@ test('Landing bản Trung chỉ có chữ Trung, lang zh-Hans, hreflang và nút
 
 test('trang mục bản Trung dựng nội dung bằng chữ Trung và giữ query khi chuyển ngôn ngữ', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/zh/tra-cuu/?group=tactics');
-  await expectPair(page, 'zh', '/tra-cuu/');
+  await page.goto('/zh/tra-cuu/chien-phap/?id=tactic%3Aan-ui-quan-dan');
+  await expectPair(page, 'zh', '/tra-cuu/chien-phap/');
   await expect(page.locator('#section-lookup')).not.toBeEmpty();
   await expectChineseOnly(page, 'header.site-header');
   await expectChineseOnly(page, 'footer.site-footer');
-  await expect(page.locator('.header-actions [data-lang-switch]')).toHaveAttribute('href', '/tra-cuu/?group=tactics');
+  await expect(page.locator('.header-actions [data-lang-switch]')).toHaveAttribute('href', '/tra-cuu/chien-phap/?id=tactic%3Aan-ui-quan-dan');
 
   await page.goto('/zh/doi-chuan/');
   await expectPair(page, 'zh', '/doi-chuan/');
@@ -84,6 +84,7 @@ test('trang mục bản Trung dựng nội dung bằng chữ Trung và giữ que
 const SECTIONS = [
   ['doi-chuan', 'team-chuan'], ['doi-khac', 'team-khac'], ['cung-ton', 'coexist'], ['khai-hoang', 'khaihoang'],
   ['tra-cuu', 'lookup'], ['theo-doi-chieu-mo', 'recruit-tracker'], ['soi-doi-tu-anh', 'analyze'], ['goi-y-doi-tu-kho', 'roster-recommend'],
+  ...['tuong', 'chien-phap', 'trang-bi', 'quan-su', 'cai-tao-binh-chung', 'cong-trinh', 'binh-thu'].map((slug) => [`tra-cuu/${slug}`, 'lookup']),
 ];
 for (const [path, section] of SECTIONS) {
   test(`trang mục /zh/${path}/ dựng xong vẫn chỉ có chữ Trung`, async ({ page }) => {

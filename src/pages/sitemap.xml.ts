@@ -3,6 +3,7 @@ import { teamDetailCatalog } from "../lib/team-detail-routes.ts";
 import { blogIndexPath, loadBlogPosts, translationOf, type BlogLocale } from "../lib/blog-posts.ts";
 import { alternatePaths, type AlternateLink } from "../lib/locale-routes.ts";
 import { localePath } from "../../js/i18n.js";
+import { LOOKUP_GROUP_SLUGS, lookupGroupPath } from "../../js/lookup-ids.js";
 import { POLICY_PAGES } from "../lib/policy-pages.ts";
 
 export const prerender = true;
@@ -20,6 +21,9 @@ export const SECTION_PATHS = [
   "/soi-doi-tu-anh/",
   "/goi-y-doi-tu-kho/",
 ] as const;
+
+/** Bảy trang nhóm Tra cứu (`/tra-cuu/<slug>/`), cùng cấp với trang mục. */
+export const LOOKUP_GROUP_PATHS: readonly string[] = Object.keys(LOOKUP_GROUP_SLUGS).map((group) => lookupGroupPath(group) as string);
 
 /** Trang nội dung tĩnh có bản gương `/zh`, được index (không phải trang mục của app.js): các trang chính sách. */
 export const STATIC_PAGE_PATHS: readonly string[] = POLICY_PAGES.map((page) => page.path);
@@ -54,9 +58,9 @@ export function mirroredSitemapRoutes(viPaths: readonly string[]): SitemapRoute[
   });
 }
 
-/** Tập route có bản gương của sitemap: Landing, 8 trang mục, trang tĩnh và mọi trang chi tiết của catalog. */
+/** Tập route có bản gương của sitemap: Landing, 8 trang mục, 7 trang nhóm Tra cứu, trang tĩnh và mọi trang chi tiết. */
 export function mirroredSitemapPaths(detailRoutePaths: readonly string[]): string[] {
-  return ["/", ...SECTION_PATHS, ...STATIC_PAGE_PATHS, ...detailRoutePaths];
+  return ["/", ...SECTION_PATHS, ...LOOKUP_GROUP_PATHS, ...STATIC_PAGE_PATHS, ...detailRoutePaths];
 }
 
 /**

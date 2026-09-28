@@ -1,5 +1,64 @@
 # Project Changelog
 
+## 2026-09-29 (Tra cứu: lưới Tướng theo artboard Lookup)
+
+### Changed
+
+- Trang `/tra-cuu/tuong/` (và `/zh/`): lưới 5 cột cách 20px (≤1023px 4 cột, ≤820px 3 cột, ≤680px 2 cột cách 12px), thẻ bo 14px; chân dung vuông phủ kín bề ngang thay ô cao 132px, vạch màu phe 3px dưới ảnh (ô dự phòng chữ Hán mang màu phe trên nền giấy đậm); tên serif 18px (mobile 16px); dòng phụ "■ Phe · N sao · Thống ngự N" (mobile bỏ số sao), vai trò dòng riêng. Thẻ không còn nhãn biến thể nổi trên ảnh (SP/CO/40Y đã có trong tên và ảnh). Nhóm catalog giữ lưới thẻ chung.
+- Dòng trạng thái Tướng thêm "· ảnh chân dung từ nguồn game"; mọi trang nhóm có ghi chú "Thứ tự theo nguồn" bên phải (ẩn trên mobile và khi bản zh xếp lại kết quả tìm theo tên chữ Hán) — `lookupOrderNote` trong `js/unified-lookup.js`.
+- Token chữ mới `--type-lookup-card-name`/`--type-lookup-card-name-mobile` (`tokens.json` → `type`).
+- Bản dịch: re-pin hash 4 nguồn Tra cứu trong policy, publish generation `afc632de…`, re-pin `pipeline/team-route-handles.json`.
+
+## 2026-09-29 (Tra cứu: hồ sơ chiến pháp theo artboard LookupTacticProfile)
+
+### Added
+
+- Hồ sơ chiến pháp dựng lại (`js/lookup-tactic-profile.js`, view thuần `js/lookup-tactic-view.js`): huy hiệu phẩm/loại/binh chủng/dạng hiệu ứng; 4 ô Tỷ lệ kích hoạt · Mục tiêu · Người mang tối đa · Xung đột; khung Hiệu ứng có nút chọn phiên bản (`aria-pressed`, bản hiện hành chọn sẵn) và số cấp 1 → cấp tối đa in đậm; cột Cách nhận gồm thẻ tướng truyền thừa/tự mang, cách nhận khác (sự kiện…) và bảng Nguồn/Dạng hiệu ứng/Hợp binh chủng/Hồi chiêu/Điểm/Điều kiện đổi.
+- Khối "Trong cẩm nang" cho chiến pháp: artifact build `tactic-summaries.json` trong generation Recommended (`pipeline/tactic_summaries.py`; nối chữ Hán `tacticSlotsRaw` ↔ `chinese|aliases` cho Đội chuẩn, tên Việt ↔ `viet|hanViet` cho Đội khác; 133 ô Đội chuẩn không khớp, 0 mơ hồ). Hiện số đội chuẩn/khác, vị trí, tướng hay mang, chiến pháp hay đi cùng trong đội, 3 đội tiêu biểu và link tìm trong Đội chuẩn. Loader `js/tactic-summaries.js` kiểm provenance theo hash `data/tactics.json` + `data/heroes-dict.json`.
+
+### Changed
+
+- `build_generation`/`build_recommended_reference` bắt buộc `tactic_catalog_bytes`/`--tactic-catalog`; descriptor thêm `tacticSummaryCatalogHash`; kho artifact (`team_route_handles.py`, `recommended-reference-artifacts.ts`) bắt buộc `tactic-summaries.json`.
+- Bản dịch: policy `site-vi-260929-lookup-tactic-profile` (thêm 3 module mới vào nguồn Tra cứu, baseline không đổi), publish generation `5d60cb1e…` (xoá generation trung gian `033859e5…`), re-pin `pipeline/team-route-handles.json`.
+
+### Tests
+
+- Python `tests/test_tactic_summaries.py` (đếm, quy tắc nối, cổng cấu trúc, generation đang pin khớp phép dựng lại); node `tests-js/lookup-tactic-view.test.mjs`; fixture generation trong test thêm `tactic-summaries.json`. E2E: hồ sơ chiến pháp dùng lớp mới, thêm ca chọn phiên bản + khớp số liệu build; ca Cách nhận ghim chiến pháp tự mang vẫn hiện tên sự kiện.
+
+## 2026-09-29 (Tra cứu: hộp thoại hồ sơ gọn lại)
+
+### Changed
+
+- Hồ sơ Chiến pháp, Trang bị, Quân sư, Cải tạo binh chủng, Công trình, Binh thư: bỏ bảng nhãn/giá trị một cột (chữ dài đậm dồn trong cột hẹp, bên phải trống). Nay là một cột đọc từ trên xuống: đoạn đầu (thường là Hiệu ứng) nằm trong khung nổi, các đoạn Cách dùng/Mô tả/Gợi ý/Tóm tắt chữ thường; bảng thông số hai cột hàng nhãn mờ/giá trị ngăn vạch mảnh (giá trị dài chiếm cả hai cột, giá trị trống chữ mờ; ≤ 820px một cột, mobile nhãn 120px cùng hàng giá trị); quan hệ/mục con dạng nút.
+- Hiệu ứng nhiều phiên bản (`effectVersions` trong `js/lookup-detail.js`, đọc cả dạng " / ", " / / ", dòng trống và nhãn chữ Hán `更新`/`原始版本` của bản zh): phiên bản hiện hành mở sẵn kèm nhãn ngày, bản cũ gập trong `<details>`; khối "Lịch sử cập nhật" không lặp lại khi đã tách được phiên bản. Thẻ chiến pháp trong hồ sơ tướng chỉ hiện phiên bản hiện hành.
+- Cấp công trình thành danh sách (nhãn cấp, hiệu ứng, dòng phụ chi phí · thời gian); lựa chọn cải tạo binh chủng gom theo bậc (Đặc biệt, Cơ bản, Trung cấp, Cao cấp), mỗi dòng tên + mô tả. Eyebrow hồ sơ không còn chuỗi "Áp dụng" dài (đã có ở bảng thông số).
+
+### Removed
+
+- Khối "Nội chính" của hồ sơ tướng (section `civil`, 4 nhãn, CSS `.lookup-civil*`): 201/202 tướng chỉ hiện "Đang cập nhật". Trường `lookup.civil` vẫn nằm trong payload; `Điểm nội chính` ở đầu hồ sơ giữ nguyên.
+- Bản dịch: bỏ 4 obligation `ui:lookup/civil-*`, thêm `ui:lookup/option-converts` (`authored-vi`); policy `site-vi-260929-lookup-profile-layout`, baseline 56589 location, publish generation `a4501b27…` (xoá generation trung gian `a135afa3…`), re-pin `pipeline/team-route-handles.json`.
+
+### Tests
+
+- Node: `effectVersions` tách đúng các dạng nguồn và giữ nguyên " / " nghĩa "hoặc" ở chữ thường; bỏ test ghim khối Nội chính. E2E: dòng cấp công trình dùng `.lookup-level`.
+
+## 2026-09-28 (Tra cứu: mỗi nhóm một trang)
+
+### Changed
+
+- Tra cứu tách thành 7 trang nhóm `/tra-cuu/tuong/`, `/chien-phap/`, `/trang-bi/`, `/quan-su/`, `/cai-tao-binh-chung/`, `/cong-trinh/`, `/binh-thu/` (và `/zh/…`), mỗi trang có title, mô tả, canonical, H1 và mục menu/footer `aria-current` riêng; search chạy trong nhóm. Hồ sơ là `/tra-cuu/<slug>/?id=<id>`; mã của nhóm khác được chuyển sang đúng trang.
+- Thanh chuyển nhóm vẽ lại: luôn một hàng ở mọi bề rộng (trước đây xuống 2 dòng ở 768–1024px và 4 dòng ở mobile). Desktop/tablet là thanh phân đoạn, mục đang xem nổi lên như thẻ, số đếm thành viên nhỏ (son ở mục đang xem); mobile là hàng viên cuộn ngang tràn mép màn hình. Nhóm đang xem được cuộn vào giữa trước lần vẽ đầu, mép còn mục khuất mờ dần.
+- Hiệu năng: lúc vào trang chỉ tải `lookup-manifest` + payload của nhóm (Tướng `heroes-dict`, Chiến pháp `tactics`, 4 nhóm catalog `lookup-catalog`, Binh thư chỉ `books-dict`), cả bản zh (bộ tra tên Hán tải khi mở hồ sơ tướng). Payload hồ sơ cần thêm tải lười ở lần mở hồ sơ đầu tiên và được tải trước khi rê/focus vào thẻ. `js/lookup-data.js` thêm `validateLookupPayload`/`createLookupPayloadLoader` (digest theo manifest đã pin + `generationId`); tham chiếu chéo được kiểm trọn bộ lúc build (`src/lib/lookup-pages.ts`) và trong `scripts/verify-astro-dist.mjs`.
+- Trang đầu 60 mục dựng lúc build từ cùng cây markup với trình duyệt (`js/view-tree.js`; thẻ/hàng bảng/chân dung trong `js/unified-lookup.js`, `js/hero-portrait.js`); thẻ và tên chiến pháp là link hồ sơ thật nên bấm trước khi app chạy (hoặc không có JS) vẫn tới đúng hồ sơ. Hàm hiển thị nhận `locale` tường minh; hàng bảng chiến pháp tính thẳng từ bản ghi.
+- Mã UI tách: `js/lookup-page.js` (khung trang, tìm, Xem thêm, hồ sơ, lịch sử), `js/lookup-profile.js` (hộp thoại theo nhóm); `initUnifiedLookup`, `formatLookupQuery` và chế độ "tất cả nhóm" bị bỏ.
+- `/tra-cuu/` thành mục lục tĩnh 7 thẻ (nhãn, mô tả, số đếm lúc build), không nạp app; script inline chuyển tiếp link cũ `?group=&id=`/`?id=`. Hash cũ ở Landing vẫn tới `/tra-cuu/?…` rồi được mục lục chuyển tiếp. Link hồ sơ từ trang chi tiết đội, `safeReturnUrl` và sitemap (thêm 14 URL) theo route mới; trang Tra cứu không còn khối noscript "cần JavaScript".
+- Bản dịch: rebind obligation `ui:lookup/*`, `ui:layout/lookup-desc-*`, `ui:section-page/tra-cuu` theo file mới, thêm `ui:lookup-page/*` và `ui:lookup/profile-loading`, bỏ `ui:lookup/unit-result` (`authored-vi`); policy `site-vi-260928-lookup-group-pages`, baseline 56592 location, publish generation `b840489e…`, re-pin `pipeline/team-route-handles.json`. MCP: `lookup-data.js` đổi nên `WORKFLOW_BUILD_ID` sinh lại.
+
+### Tests
+
+- Node: payload đơn (`lookup-data`), hàng bảng khớp hồ sơ cho mọi chiến pháp đã công bố ở cả hai ngôn ngữ, cây markup dựng lúc build khớp bản dựng trên trang, `view-tree` HTML/DOM cùng cấu trúc và luôn escape, `lookup-ids` (`groupForId`, `lookupProfilePath`, `lookupHubTarget`), fixture dist có mục lục + 14 trang nhóm và bundle hợp lệ.
+- E2E: request `/data/` đúng theo từng trang nhóm (vi + zh), mục lục không tải dữ liệu, tải lười khi mở hồ sơ, 60 mục dựng sẵn, chuyển tiếp link cũ, link hồ sơ dùng được khi app chưa chạy; spec cũ chuyển sang route mới, bỏ test ghim chế độ tất cả nhóm và chip `aria-pressed`.
+
 ## 2026-09-28 (Thư báo góp ý)
 
 ### Fixed

@@ -1,0 +1,12 @@
+---
+// Trang nhóm Tra cứu bản Việt: nội dung ở src/components/pages/LookupGroupPage.astro (dùng chung với bản `/zh/`).
+import LookupGroupPage from '../../components/pages/LookupGroupPage.astro';
+import { lookupGroupStaticPaths } from '../../lib/lookup-pages';
+
+export const prerender = true;
+
+export function getStaticPaths() {
+  return lookupGroupStaticPaths();
+}
+---
+<LookupGroupPage group={Astro.props.group} locale="vi" />

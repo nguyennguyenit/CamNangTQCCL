@@ -72,8 +72,8 @@ test('the migrated fragment is restored before the Landing legacy-hash redirect 
 
 test('an invalid migration payload on tqccl.com is stripped and writes nothing', async ({ page }) => {
   const payload = encodeURIComponent(JSON.stringify({ v: 1, hash: '', items: { theme: 'dark', evil: 'x' } }));
-  await page.goto(`https://tqccl.com/tra-cuu/?group=heroes${PREFIX}${payload}`);
-  await expect(page).toHaveURL('https://tqccl.com/tra-cuu/?group=heroes');
+  await page.goto(`https://tqccl.com/tra-cuu/tuong/?source=x${PREFIX}${payload}`);
+  await expect(page).toHaveURL('https://tqccl.com/tra-cuu/tuong/?source=x');
   expect(await storageOf(page, ['theme', 'evil'])).toEqual({ theme: null, evil: null });
 });
 

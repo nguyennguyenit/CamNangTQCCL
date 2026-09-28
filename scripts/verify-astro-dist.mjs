@@ -8,6 +8,7 @@ import { websiteDisplayPublicationSnapshot } from "../src/lib/root-static-artifa
 import { recommendedPublicationSnapshot } from "../src/lib/recommended-reference-artifacts.ts";
 import { teamDetailCatalog } from "../src/lib/team-detail-routes.ts";
 import {
+  LOOKUP_GROUP_PATHS,
   SECTION_PATHS,
   STATIC_PAGE_PATHS,
   blogSitemapRoutes,
@@ -16,6 +17,12 @@ import {
   sitemapDocument,
 } from "../src/pages/sitemap.xml.ts";
 import { HREFLANG, SITE_LOCALES, localizedHtmlPath, mirroredAlternates } from "../src/lib/locale-routes.ts";
+import { validateLookupBundle } from "../js/lookup-data.js";
+import { LOOKUP_GROUP_SLUGS } from "../js/lookup-ids.js";
+
+/** Mục lục Tra cứu: trang tĩnh, không nạp app; các trang có app là 7 trang mục khác cộng 7 trang nhóm Tra cứu. */
+const LOOKUP_HUB_PATH = "/tra-cuu/";
+const APP_PAGE_PATHS = [...SECTION_PATHS.filter((path) => path !== LOOKUP_HUB_PATH), ...LOOKUP_GROUP_PATHS];
 
 export const DEPLOYMENT_CONTROL_ARTIFACTS = Object.freeze([
   Object.freeze({ sourcePath: "public/_headers", outputPath: "_headers" }),
@@ -185,7 +192,7 @@ export async function verifyAstroDist({
     if (!files.length) throw new Error(`static public directory is empty: ${directory.sourcePath}`);
     for (const file of files) staticDirectoryFiles.push([`${directory.sourcePath}/${file}`, `${directory.outputPath}/${file}`]);
   }
-  const sectionHtmlPaths = SECTION_PATHS.map((path) => `${path.slice(1)}index.html`);
+  const sectionHtmlPaths = [...SECTION_PATHS, ...LOOKUP_GROUP_PATHS].map((path) => `${path.slice(1)}index.html`);
   // Mọi route bản Việt có bản Trung cùng đường dẫn dưới `zh/`: Landing, 8 trang mục và 3 họ trang chi tiết.
   const localizedHtml = (paths) => SITE_LOCALES.flatMap((locale) => paths.map((path) => localizedHtmlPath(path, locale)));
   const files = await listFiles(distPath);
@@ -276,10 +283,10 @@ export async function verifyAstroDist({
     l: Object.fromEntries(catalog.legacy.map((entry) => [entry.legacyTeamId, entry.routeSegment])),
     k: Object.fromEntries(catalog.khaiHoang.map((entry) => [entry.khaiHoangTeamId, entry.handle])),
   };
-  // Bảng payload của phase: cả 8 trang mục nhận `{r,l,k}`; chỉ 3 trang có phạm vi mùa.
+  // Bảng payload của phase: mọi trang có app nhận `{r,l,k}`; chỉ 3 trang có phạm vi mùa.
   const SEASON_SECTION_PATHS = new Set(["/doi-chuan/", "/doi-khac/", "/cung-ton/"]);
   const seasonHashesMarkers = [];
-  for (const [locale, sectionPath] of SITE_LOCALES.flatMap((locale) => SECTION_PATHS.map((path) => [locale, path]))) {
+  for (const [locale, sectionPath] of SITE_LOCALES.flatMap((locale) => APP_PAGE_PATHS.map((path) => [locale, path]))) {
     const htmlPath = localizedHtmlPath(`${sectionPath.slice(1)}index.html`, locale);
     const season = SEASON_SECTION_PATHS.has(sectionPath);
     const page = await readPage(htmlPath);
@@ -313,6 +320,28 @@ export async function verifyAstroDist({
     if (!season && seasonMarker) throw new Error(`Section page must not carry season artifact hashes: ${htmlPath}`);
     if (!season && page.includes('id="season-controls"')) throw new Error(`Section page must not carry a season controls mount: ${htmlPath}`);
     if (seasonMarker) seasonHashesMarkers.push(JSON.parse(seasonMarker[1]));
+    // Trang nhóm Tra cứu: khai nhóm cho app.js, lưới trang đầu dựng sẵn, pin binh thư chỉ ở trang Binh thư.
+    if (LOOKUP_GROUP_PATHS.includes(sectionPath)) {
+      const group = Object.keys(LOOKUP_GROUP_SLUGS).find((key) => `/tra-cuu/${LOOKUP_GROUP_SLUGS[key]}/` === sectionPath);
+      if (!page.includes(`data-lookup-group="${group}"`)) throw new Error(`Lookup group page does not declare its group: ${htmlPath}`);
+      if (!page.includes("data-lookup-id=")) throw new Error(`Lookup group page lacks its prerendered first page: ${htmlPath}`);
+      if ((group === "books") !== page.includes('id="lookup-books-hash"')) {
+        throw new Error(`Only the Binh thư page carries the books-dict pin: ${htmlPath}`);
+      }
+    }
+  }
+
+  // Mục lục Tra cứu: canonical chính nó, chuyển tiếp link cũ bằng script inline, link tới đủ 7 trang nhóm, không nạp app.
+  for (const locale of SITE_LOCALES) {
+    const htmlPath = localizedHtmlPath(`${LOOKUP_HUB_PATH.slice(1)}index.html`, locale);
+    const page = await readPage(htmlPath);
+    verifyLocalePair(page, htmlPath, locale, LOOKUP_HUB_PATH, site);
+    if (page.includes('src="/js/app.js"')) throw new Error(`Lookup hub must not boot the root application: ${htmlPath}`);
+    if (!page.includes('id="lookup-hub-redirect"')) throw new Error(`Lookup hub lacks its legacy query redirect: ${htmlPath}`);
+    for (const groupPath of LOOKUP_GROUP_PATHS) {
+      const href = locale === "zh" ? `/zh${groupPath}` : groupPath;
+      if (!page.includes(`class="lookup-hub-card" href="${href}"`)) throw new Error(`Lookup hub lacks its card for ${href}: ${htmlPath}`);
+    }
   }
 
   // Trang nội dung tĩnh (chính sách bảo mật): được index, canonical chính URL của mình, không nạp app gốc.
@@ -462,8 +491,14 @@ export async function verifyAstroDist({
         }
       }
     }
+    // Tham chiếu chéo giữa ba payload chỉ kiểm được trên trọn bộ: trình duyệt chỉ kiểm từng payload của trang.
+    const rawFiles = Object.fromEntries(await Promise.all(payloadNames.map(async (name) => [name, new Uint8Array(await readFile(resolve(distPath, `data/${name}`)))])));
+    try {
+      await validateLookupBundle(lookupManifest, rawFiles);
+    } catch (error) {
+      throw new Error(`Emitted lookup bundle is invalid: ${error.message}`);
+    }
     lookupGenerationId = lookupManifest.generationId;
-
   }
 
   for (const artifact of [...controlArtifacts, ...staticArtifacts]) {

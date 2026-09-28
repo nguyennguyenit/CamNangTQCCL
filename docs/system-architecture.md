@@ -77,7 +77,7 @@ thuộc [manifest của site](../src/lib/public-artifact-manifest.mjs).
 
 ## Static runtime
 
-[`src/pages/index.astro`](../src/pages/index.astro) là Landing; tám trang mục tĩnh (`/doi-chuan/`, `/doi-khac/`, `/cung-ton/`, `/khai-hoang/`, `/tra-cuu/`, `/theo-doi-chieu-mo/`, `/soi-doi-tu-anh/`, `/goi-y-doi-tu-kho/`) dùng chung `src/layouts/SiteLayout.astro`, mỗi trang một mount `#section-<id>` và `data-page-section` trên `<body>`. Layout phát pin Recommended, pin website-display, bảng route handle và hash dữ liệu mùa cho đúng trang cần (bảng ở [chuẩn code](code-standards.md)).
+[`src/pages/index.astro`](../src/pages/index.astro) là Landing; tám trang mục tĩnh (`/doi-chuan/`, `/doi-khac/`, `/cung-ton/`, `/khai-hoang/`, `/tra-cuu/`, `/theo-doi-chieu-mo/`, `/soi-doi-tu-anh/`, `/goi-y-doi-tu-kho/`) dùng chung `src/layouts/SiteLayout.astro`, mỗi trang một mount `#section-<id>` và `data-page-section` trên `<body>`. Tra cứu tách thành 7 trang nhóm `/tra-cuu/<slug>/` (`data-lookup-group` trên `<body>`) cộng trang mục lục tĩnh `/tra-cuu/` không nạp app. Layout phát pin Recommended, pin website-display, bảng route handle và hash dữ liệu mùa cho đúng trang cần (bảng ở [chuẩn code](code-standards.md)).
 [`js/app.js`](../js/app.js) sở hữu khởi tạo runtime; nó capture từng response byte
 một lần qua `createByteLoader()`, xác minh sidecar cùng hash của đúng các nguồn trang
 đang dùng (băm song song, bảng nguồn theo trang ở [chuẩn code](code-standards.md))
@@ -85,21 +85,22 @@ rồi mới áp overlay tiếng Việt; `localizeData` từ chối nguồn chưa
 Kho Tra cứu, `team-tier.json` và mô hình mùa chỉ tải ở trang dùng chúng và tải song song.
 [`season-ui-state.js`](../js/season-ui-state.js) sở hữu query và kiểm hash toàn bộ
 dữ liệu tham chiếu trước activation. [`lookup-data.js`](../js/lookup-data.js)
-kiểm inventory/hash/generation của ba payload Tra cứu. Thay đổi ở bất kỳ
+kiểm inventory/hash/generation của ba payload Tra cứu: trọn bộ (kèm tham chiếu chéo) cho
+công cụ, build và dist verifier; từng payload theo manifest cho trang nhóm Tra cứu. Thay đổi ở bất kỳ
 dependency đã được website-display pin đều dừng toàn bộ khởi tạo; lỗi semantic
 Lookup trong một publication byte-coherent mới chỉ khóa các feature phụ thuộc.
 
 Scope, filter/search, thứ tự hiển thị và chi tiết cấu hình cùng đi qua query owner của đúng trang; mục đang mở do đường dẫn quyết định, hash cũ chỉ được Landing chuyển tiếp qua `js/legacy-routes.js`. Restore scenario-only không tự nâng sang luật đã
 review. Hai công cụ Soi đội và Gợi ý đội không có phạm vi mùa: luôn đối chiếu/gợi ý trên dữ liệu đội cũ và bỏ `scenario`/`ruleset`/`config` khỏi URL khi tải. UI không dùng MCP để suy thêm luật.
 
-Hồ sơ tướng của Tra cứu đọc thêm artifact tính lúc build `hero-summaries.json` sinh trong chính generation Recommended đang pin (khóa nối chính xác theo từng nguồn, descriptor mang hash kho Tra cứu), nên mở hồ sơ chỉ cần `manifest.json` + `hero-summaries.json` thay vì nạp toàn bộ kho đội chuẩn. Phạm vi và ngân sách tải của đường này ghi ở [quyết định #12 của plan redesign](../plans/260923-1949-so-binh-phap-redesign/plan.md).
+Hồ sơ tướng của Tra cứu đọc thêm artifact tính lúc build `hero-summaries.json` sinh trong chính generation Recommended đang pin (khóa nối chính xác theo từng nguồn, descriptor mang hash kho Tra cứu), nên mở hồ sơ chỉ cần `manifest.json` + `hero-summaries.json` thay vì nạp toàn bộ kho đội chuẩn. Hồ sơ chiến pháp dùng cùng cơ chế với `tactic-summaries.json` (`pipeline/tactic_summaries.py`, loader `js/tactic-summaries.js`): số đội theo vị trí, tướng mang, chiến pháp đi cùng trong đội và đội tiêu biểu, trả ID để trang tự lấy tên theo ngôn ngữ; provenance mang hash của cả `tactics.json` lẫn `heroes-dict.json`. Phạm vi và ngân sách tải của đường này ghi ở [quyết định #12 của plan redesign](../plans/260923-1949-so-binh-phap-redesign/plan.md).
 
 Hai trang danh sách đội đều gọi `createRecommendedSection()` của `team-filter-section.js`; cùng module còn dựng mục Cùng Tồn (`createSeasonCoexistSection()`: ô chọn Mùa của Đội chuẩn, hàng phiên bản `Cùng tồn 1–5`). Module này tính facet trực tiếp từ tập source, tạo search/chip, thu gọn bộ lọc trên mobile; thẻ và bảng đội do `recommended-reference-render.js` dựng (kể cả thẻ Cùng Tồn `coexistTeamCard`, cùng vỏ thẻ Đội chuẩn). `data/facets.json` không được load runtime.
 
 Tra cứu và gợi ý cốt lõi chạy local:
 
-- `lookup-data.js`: load một snapshot bốn file đã xác minh; không chấp nhận partial/mixed generation.
-- `unified-lookup.js` và `lookup-detail.js`: một search/profile cho bảy nhóm (kể cả binh thư, mã từ `lookup-ids.js`), paging và quan hệ theo ID; không suy team/tier/availability từ catalog.
+- `lookup-data.js`: `loadLookupBundle` nạp trọn bốn file đã xác minh cho công cụ (không nhận partial/mixed generation); `createLookupPayloadLoader` nạp từng payload theo nhu cầu cho trang nhóm Tra cứu, mỗi payload kiểm digest trong manifest đã pin và `generationId`.
+- `unified-lookup.js`: corpus theo payload đã tải, tìm trong một nhóm, view thẻ/hàng bảng và cây markup (`view-tree.js`) dùng chung cho HTML dựng lúc build (`src/lib/lookup-pages.ts`, 60 mục đầu) và DOM; `lookup-page.js` gắn vào khung dựng sẵn (tìm, "Xem thêm", hồ sơ `?id=`, lịch sử); `lookup-profile.js` dựng hộp thoại theo nhóm; `lookup-detail.js` dựng hồ sơ và quan hệ theo ID (binh thư dùng mã từ `lookup-ids.js`); không suy team/tier/availability từ catalog.
 - `match-dict.js`: match Việt bỏ dấu/Hán-Việt/Hán.
 - `hero-identity.js`: SP, CO và bản thường có canonical ID riêng; `familyId` chỉ biểu diễn quan hệ cùng họ, không thay thế identity khi xét sở hữu. Mỗi combined slot là một tập alternatives và chỉ cần đúng một alternative để thỏa slot.
 - `filters.js`: chuẩn hoá chữ bỏ dấu (`normalizeText`) và blob tìm kiếm của một đội (`teamSearchBlob`), dùng chung giữa website và MCP.

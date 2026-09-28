@@ -106,9 +106,9 @@ test('recommended hero cards keep role, tactic ordinals and books, linked to Tra
     await expect(card.locator('.detail-hero-name .hn')).toHaveText((holder.displayNameVi || holder.nameRaw).replace(/^(?:SP|CO|40Y)\s+/,''));
     const tactics=(holder.tacticSlotsVi || []).map((vi,slot)=>holder.tacticSlotKinds?.[slot]==='bond' ? null : (vi || holder.tacticSlotsRaw?.[slot])).filter(Boolean);
     await expect(card.locator('.detail-hero-tactics-vi')).toHaveText(tactics);
-    // Ô chiến pháp / binh thư có hồ sơ Tra cứu là link `/tra-cuu/?id=…`; bản vi không kèm chữ Hán.
-    await expect(card.locator('a.detail-hero-tactics-item').first()).toHaveAttribute('href',/^\/tra-cuu\/\?id=tactic%3A[a-z0-9-]+$/);
-    await expect(card.locator('a.detail-hero-books-item').first()).toHaveAttribute('href',/^\/tra-cuu\/\?id=book%3A[a-z0-9-]+$/);
+    // Ô chiến pháp / binh thư có hồ sơ Tra cứu là link tới trang nhóm `/tra-cuu/<nhóm>/?id=…`; bản vi không kèm chữ Hán.
+    await expect(card.locator('a.detail-hero-tactics-item').first()).toHaveAttribute('href',/^\/tra-cuu\/chien-phap\/\?id=tactic%3A[a-z0-9-]+$/);
+    await expect(card.locator('a.detail-hero-books-item').first()).toHaveAttribute('href',/^\/tra-cuu\/binh-thu\/\?id=book%3A[a-z0-9-]+$/);
     expect(await card.innerText()).not.toMatch(/[\u3400-\u9fff]/u);
     const books=(holder.bookSlotsVi || []).map((vi,slot)=>vi || holder.bookSlotsRaw?.[slot]).filter(Boolean);
     await expect(card.locator('.detail-hero-books-vi')).toHaveText(books);

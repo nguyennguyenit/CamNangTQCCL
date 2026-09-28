@@ -5,7 +5,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { validateLookupBundle, loadLookupBundle } from "../js/lookup-data.js";
+import { validateLookupBundle, loadLookupBundle, validateLookupPayload, createLookupPayloadLoader } from "../js/lookup-data.js";
+import { catalogDoc, heroesDoc, tacticsDoc } from "./fixtures/lookup-bundle-fixtures.mjs";
 
 const MANIFEST_NAME = "lookup-manifest.json";
 const PAYLOAD_NAMES = ["heroes-dict.json", "lookup-catalog.json", "tactics.json"];
@@ -20,70 +21,6 @@ function manifestFor(rawFiles, overrides = {}) {
   for (const name of Object.keys(rawFiles).sort()) files[name] = sha256(rawFiles[name]);
   const generationId = "lookup:" + createHash("sha256").update(JSON.stringify(files) + "\n").digest("hex");
   return { schemaVersion: 1, generationId, files, ...overrides };
-}
-
-function heroesDoc(over = []) {
-  return [
-    {
-      id: "hero:luu-bi", chinese: "劉備", viet: "Lưu Bị", hanViet: "Lưu Bị", faction: "Thục", stars: 5, cost: "7",
-      aliases: ["劉備", "刘备"], stats: { luc: "71", tri: "81", thong: "79", toc: "62", chinh: "92", mi: "95" },
-      troopApt: { ky: "S", thuan: "S", cung: "A", thuong: "A", khiGioi: "B" },
-      selfTacticCn: "仁德載世", inheritTacticCn: "", roleTag: "support", roleTagViet: "Phụ trợ",
-      iconUrl: null, isSP: false, linkScore: null, pending: false,
-      lookup: {
-        selfTacticId: "tactic:nhan-duc", inheritTacticId: null, advisorId: "advisor:an-phuc-binh-tam",
-        variant: "base", categoryVi: "Quân sự", exclusiveTitleVi: null,
-        conditions: [], flags: { isCollectible: false, isDynamicOpen: false, isMusou: false, isCO: false, isSp: false },
-        growth: { luc: 0.98, tri: 1.71, thong: null, toc: null, chinh: null, mi: null },
-        otherAptitudes: { infantry: null, navy: null },
-        civil: { roleVi: null, bonusVi: null, specialtyVi: null, tacticBonusVi: null },
-        civilInnatePoints: null, collectibleBonusVi: null, redRulesVi: null,
-        revisions: [], missingFields: [],
-      },
-    },
-    ...over,
-  ];
-}
-
-function tacticsDoc(over = []) {
-  return [
-    {
-      id: "tactic:nhan-duc", chinese: "仁德載世", viet: "Nhân Đức Tải Thế", hanViet: "Nhân Đức Tải Thế",
-      aliases: [], type: "Bị động", quality: "S", effect: "戰鬥中", effectViet: "Trong trận đấu",
-      target: "友軍", targetViet: "Quân ta", troopFit: [], source: null, sourceHeroCn: null,
-      iconUrl: null, linkScore: null, pending: false,
-      lookup: {
-        activationRate: 1, cooldown: null, maxUsers: 1, pointCost: null,
-        effectTypeVi: null, exchangeConditionVi: null, acquiredFromVi: [], conflictsVi: null,
-        conditions: [], revisions: [], inheritedFromIds: [], missingFields: [],
-      },
-    },
-    ...over,
-  ];
-}
-
-function catalogDoc(over = {}) {
-  return {
-    schemaVersion: 1,
-    equipment: [{ id: "equipment:y-thien-kiem", nameVi: "Ỷ Thiên Kiếm", slotVi: "Vũ khí", qualityVi: "Cam", aliasesVi: [], aliasesZh: ["倚天劍"], conditions: [], missingFields: [] }],
-    specials: [
-      { id: "equipment-special:gian-hung", nameVi: "Gian Hùng", equipmentId: "equipment:y-thien-kiem", exclusiveHeroId: "hero:luu-bi", slotVi: "Vũ khí", tierVi: "T0", descriptionVi: "Mô tả", acquisitionVi: ["Rèn"], aliasesVi: [], aliasesZh: ["奸雄"], conditions: [], missingFields: [] },
-      { id: "equipment-special:mo-coi", nameVi: "Mồ Côi", equipmentId: null, exclusiveHeroId: null, slotVi: "Vũ khí", tierVi: "T1", descriptionVi: "Chưa rõ trang bị cha", acquisitionVi: [], aliasesVi: [], aliasesZh: [], conditions: [], missingFields: [] },
-    ],
-    advisors: [{ id: "advisor:an-phuc-binh-tam", nameVi: "An Phủ Bình Tâm", elementVi: "Phong", heroIds: ["hero:luu-bi"], effectVi: "Hiệu ứng", tacticPoints: 3, usageVi: "Dùng", aliasesVi: [], aliasesZh: ["恩服兵心"], conditions: [], missingFields: [] }],
-    troopMods: [{
-      id: "troop-mod:dan-duong-binh", nameVi: "Đan Dương Binh", appliesToVi: "Thuẫn binh", effectVi: "Hiệu ứng",
-      options: [{ id: "troop-option:dan-duong-binh:a", nameVi: "Xoay", convertsToVi: "Thương binh", descriptionVi: "Mô tả", tierVi: "Đặc biệt" }],
-      revisions: [{ effectiveDate: "2024-08-28", isCurrent: true, labelVi: "Bản hiện hành", textVi: "Nội dung" }],
-      suggestedBuildVi: "Gợi ý", troopLimitVi: [], aliasesVi: [], aliasesZh: ["丹陽兵"], conditions: [], missingFields: [],
-    }],
-    buildings: [{
-      id: "building:bat-tran-do", nameVi: "Bát Trận Đồ", summaryVi: "Tóm tắt", mainCityOnly: false, maxLevel: 1,
-      levels: [{ id: "building-level:bat-tran-do:1", level: 1, effectVi: "Hiệu ứng", durationVi: "2 giờ", costs: { wood: 32000, stone: 32000, iron: 16000 } }],
-      aliasesVi: [], aliasesZh: ["八陣圖"], conditions: [], missingFields: [],
-    }],
-    ...over,
-  };
 }
 
 /** Bundle mặc định: hợp lệ, mọi ID chéo giải được. */
@@ -415,4 +352,63 @@ test("manifest hỏng hoặc payload lệch làm loadLookupBundle fail, không f
     return payloads[name];
   };
   await assert.rejects(loadLookupBundle(drifted), /heroes-dict\.json/);
+});
+
+/* ---------- Payload đơn: trang Tra cứu chỉ tải và xác minh file của nhóm mình ---------- */
+
+test("validateLookupPayload trả tài liệu đã parse của đúng một payload khớp manifest", async () => {
+  const { manifest, rawFiles } = bundleFixture();
+  const heroes = await validateLookupPayload(manifest, "heroes-dict.json", rawFiles["heroes-dict.json"]);
+  assert.deepEqual(heroes.map((row) => row.id), ["hero:luu-bi"]);
+  const catalog = await validateLookupPayload(manifest, "lookup-catalog.json", rawFiles["lookup-catalog.json"]);
+  assert.deepEqual(catalog.advisors.map((row) => row.id), ["advisor:an-phuc-binh-tam"]);
+  // Tham chiếu chéo không được kiểm ở payload đơn: hero trỏ chiến pháp chưa tải vẫn hợp lệ.
+  const dangling = withRaw("heroes-dict.json", heroesDoc().map((h) => ({ ...h, lookup: { ...h.lookup, selfTacticId: "tactic:chua-tai" } })));
+  const accepted = await validateLookupPayload(dangling.manifest, "heroes-dict.json", dangling.rawFiles["heroes-dict.json"]);
+  assert.equal(accepted[0].lookup.selfTacticId, "tactic:chua-tai");
+});
+
+test("validateLookupPayload từ chối byte lệch, generation sai, tên lạ và shape sai", async () => {
+  const { manifest, rawFiles } = bundleFixture();
+  const tampered = new Uint8Array(rawFiles["tactics.json"]);
+  tampered[tampered.length - 2] ^= 1;
+  await assert.rejects(validateLookupPayload(manifest, "tactics.json", tampered), /tactics\.json/);
+  await assert.rejects(
+    validateLookupPayload({ ...manifest, generationId: "lookup:" + "0".repeat(64) }, "tactics.json", rawFiles["tactics.json"]),
+    /generationId/,
+  );
+  await assert.rejects(validateLookupPayload(manifest, "books-dict.json", rawFiles["tactics.json"]), /books-dict\.json/);
+  await assert.rejects(validateLookupPayload(manifest, "tactics.json", JSON.stringify(tacticsDoc())), /tactics\.json/);
+  const duplicated = withRaw("tactics.json", [...tacticsDoc(), ...tacticsDoc()]);
+  await assert.rejects(validateLookupPayload(duplicated.manifest, "tactics.json", duplicated.rawFiles["tactics.json"]), /tactic:nhan-duc/);
+  const badCatalog = withRaw("lookup-catalog.json", catalogDoc({ schemaVersion: 2 }));
+  await assert.rejects(validateLookupPayload(badCatalog.manifest, "lookup-catalog.json", badCatalog.rawFiles["lookup-catalog.json"]), /schemaVersion/);
+});
+
+test("createLookupPayloadLoader chỉ tải manifest và đúng payload được hỏi, mỗi file một lần", async () => {
+  const { fetchFn, calls } = fetchFnFor();
+  const load = createLookupPayloadLoader(fetchFn);
+  const [first, second] = await Promise.all([load("heroes-dict.json"), load("heroes-dict.json")]);
+  assert.equal(first, second, "cùng payload phải trả cùng tài liệu đã xác minh");
+  assert.deepEqual([...calls].sort(), [MANIFEST_NAME, "heroes-dict.json"].sort());
+  await load("tactics.json");
+  assert.deepEqual([...calls].sort(), [MANIFEST_NAME, "heroes-dict.json", "tactics.json"].sort());
+});
+
+test("createLookupPayloadLoader thử lại sau lỗi tải và từ chối payload lệch manifest", async () => {
+  const { payloads } = fetchFnFor();
+  let attempts = 0;
+  const flaky = async (name) => {
+    if (name === "tactics.json" && attempts++ === 0) throw new Error("./data/tactics.json: 503 sentinel");
+    return payloads[name];
+  };
+  const load = createLookupPayloadLoader(flaky);
+  await assert.rejects(load("tactics.json"), /sentinel/);
+  const tactics = await load("tactics.json");
+  assert.deepEqual(tactics.map((row) => row.id), ["tactic:nhan-duc"]);
+
+  const drifted = createLookupPayloadLoader(async (name) => (name === "heroes-dict.json"
+    ? encode(heroesDoc([{ ...heroesDoc()[0], id: "hero:khac" }]))
+    : payloads[name]));
+  await assert.rejects(drifted("heroes-dict.json"), /heroes-dict\.json/);
 });

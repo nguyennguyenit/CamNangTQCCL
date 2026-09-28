@@ -2,8 +2,9 @@
 // của mình. Không còn tab, hashchange hay switchSection — điều hướng giữa các mục là chuyển trang.
 
 import { seasonConfigDetail, el, khaihoangTable } from "./render.js";
-import { loadLookupBundle } from "./lookup-data.js";
-import { initUnifiedLookup } from "./unified-lookup.js";
+import { createLookupPayloadLoader, loadLookupBundle } from "./lookup-data.js";
+import { initLookupPage } from "./lookup-page.js";
+import { LOOKUP_GROUP_PAYLOADS } from "./unified-lookup.js";
 import { initAnalyze } from "./analyze.js";
 import { initRecruitTracker } from "./recruit-tracker.js";
 import { initRosterRecommend } from "./roster-recommend-ui.js";
@@ -38,10 +39,12 @@ const $ = (sel) => document.querySelector(sel);
 const REFERENCE_SECTIONS = ['team-chuan', 'team-khac'];
 /** Hai công cụ Beta chạy trên dữ liệu đội cũ, không có phạm vi mùa. */
 const TOOL_SECTIONS = ['analyze', 'roster-recommend'];
-/** Mục dùng kho Tra cứu (tướng, chiến pháp, catalog): Tra cứu và ba công cụ. */
-const LOOKUP_SECTIONS = ['lookup', 'recruit-tracker', ...TOOL_SECTIONS];
+/** Mục dùng cả kho Tra cứu (tướng, chiến pháp, catalog): Theo dõi chiêu mộ và hai công cụ. */
+const LOOKUP_SECTIONS = ['recruit-tracker', ...TOOL_SECTIONS];
 /** Nguồn của kho Tra cứu mà publication hiển thị pin: manifest neo ba payload, `heroes-dict` là khóa số liệu. */
 const LOOKUP_SOURCES = ['data/heroes-dict.json', 'data/tactics.json', 'data/lookup-catalog.json', 'data/lookup-manifest.json'];
+/** Payload Tra cứu → khóa tài liệu của corpus. */
+const LOOKUP_DOC_KEYS = Object.freeze({ 'heroes-dict.json': 'heroes', 'tactics.json': 'tactics', 'lookup-catalog.json': 'catalog' });
 /** Khóa theo dõi bị bỏ khỏi URL trang mục ngay khi khởi động; mọi khóa khác giữ nguyên. */
 const TRACKING_PARAM = /^(?:utm_.+|fbclid|gclid|msclkid)$/;
 
@@ -157,6 +160,10 @@ async function main() {
     const bootParams = new URL(location.href).searchParams;
     const needsTeams = TOOL_SECTIONS.includes(pageSection) || (bootParams.has('legacyTeam') && !bootParams.has('config'));
     const needsLookup = LOOKUP_SECTIONS.includes(pageSection);
+    // Trang nhóm Tra cứu chỉ xác minh manifest + payload của nhóm; payload hồ sơ tải lười khi mở hồ sơ.
+    const lookupGroup = pageSection === 'lookup' ? document.body.dataset.lookupGroup : null;
+    const lookupPayloads = lookupGroup ? LOOKUP_GROUP_PAYLOADS[lookupGroup] : null;
+    if (lookupGroup && !lookupPayloads) throw new Error(`Nhóm Tra cứu không hợp lệ: ${lookupGroup}`);
     websiteDisplay = await loadWebsiteDisplay(
       JSON.parse($('#website-display-publication').textContent),
       loadBytes,
@@ -166,7 +173,12 @@ async function main() {
         ...(pageSection === 'coexist' ? ['data/coexist.json'] : []),
         ...(pageSection === 'khaihoang' ? ['data/khaihoang.json'] : []),
         ...(needsLookup ? LOOKUP_SOURCES : []),
+        ...(lookupPayloads?.entry.length ? ['data/lookup-manifest.json', ...lookupPayloads.entry.map(name => `data/${name}`)] : []),
       ]},
+    );
+    const loadLookupPayload = createLookupPayloadLoader(loadBytes);
+    const loadLookupDocs = async names => Object.fromEntries(
+      await Promise.all(names.map(async name => [LOOKUP_DOC_KEYS[name], await loadLookupPayload(name)])),
     );
     const [teamsSource, coexistSource, khaihoangSource, booksDict] = await Promise.all([
       needsTeams ? loadData("data/teams.json") : null,
@@ -185,7 +197,7 @@ async function main() {
         .map(team => [team.id, new Set((team.variants || []).map(variant => variant.id))]),
     );
     // Kho Tra cứu, tier (chỉ Gợi ý đội) và mô hình mùa độc lập nhau: tải song song, lỗi của từng phần tự xử lý.
-    const [lookupBundle, teamTier, seasonModel, rawNames, lookupBooks] = await Promise.all([
+    const [lookupBundle, teamTier, seasonModel, rawNames, lookupBooks, lookupDocs] = await Promise.all([
       needsLookup ? loadLookupBundle(loadBytes).catch(() => null) : null,
       pageSection === 'roster-recommend' ? loadOptionalJSON("/data/team-tier.json", []) : [],
       // Phạm vi mùa chỉ có payload ở 3 trang mục; thiếu hash là trang không dùng đến mô hình mùa.
@@ -194,17 +206,18 @@ async function main() {
           .catch(() => null) // Legacy display stays available with an explicit notice.
         : null,
       // Bản Trung: bộ tra tên Hán gốc cho dữ liệu cũ chỉ lưu tên Hán-Việt; lỗi chỉ làm tên lùi về Hán-Việt.
-      loadRawNameResolver(loadBytes).catch(() => null),
-      // Nhóm Binh thư chỉ có ở trang Tra cứu; lỗi chỉ làm nhóm này trống, các nhóm khác vẫn chạy.
-      pageSection === 'lookup' ? loadLookupBooks(loadBytes).catch(() => []) : [],
+      // Trang Tra cứu chỉ cần bộ này khi mở hồ sơ tướng nên tải lười ở đó.
+      lookupGroup ? null : loadRawNameResolver(loadBytes).catch(() => null),
+      // Binh thư chỉ có ở trang nhóm Binh thư; lỗi chỉ làm lưới trống.
+      lookupGroup === 'books' ? loadLookupBooks(loadBytes).catch(() => []) : [],
+      lookupPayloads ? loadLookupDocs(lookupPayloads.entry).catch(() => null) : null,
     ]);
     if (rawNames) setZhNameResolver(rawNames);
-    if (needsLookup && !lookupBundle) {
+    if ((needsLookup && !lookupBundle) || (lookupPayloads && !lookupDocs)) {
       mount.append(el("p", { class: "error", role: "alert" }, L("Dữ liệu Tra cứu hiện không khả dụng. Các mục đội hình vẫn hoạt động.", "图鉴查询数据暂不可用。阵容相关栏目仍可正常使用。")));
     }
     const heroesDict = lookupBundle?.heroes ?? [];
     const tactics = lookupBundle?.tactics ?? [];
-    const catalog = lookupBundle?.catalog ?? null;
     // Generation Đội chuẩn chỉ tải khi trang thật sự cần: hai trang danh sách ngay lúc boot, các trang
     // khác (Tra cứu, Khai hoang, Công cụ) chỉ qua `loadRecommended()` nếu có nơi hỏi tới. Nhờ vậy trang
     // Tra cứu không kéo `index.json`/`other-teams.json` khi chưa mở hồ sơ; promise lỗi bị xóa để thử lại.
@@ -522,7 +535,7 @@ async function main() {
     restoreReturnState();
     // Back/Forward đổi URL: đọc lại và render trạng thái do URL sở hữu (mùa, bộ lọc, chi tiết
     // cấu hình) TRƯỚC khi khôi phục disclosure/lựa chọn/scroll.
-    // Tra cứu giữ listener popstate riêng của nó trong `initUnifiedLookup`.
+    // Tra cứu giữ listener popstate riêng của nó trong `initLookupPage`.
     window.addEventListener("popstate", () => {
       refresh();
       restoreReturnState();
@@ -532,15 +545,25 @@ async function main() {
     window.addEventListener('pagehide', rememberReturn);
     // Tên Hán nguồn của binh thư (phồn thể, tên cũ) do build nhúng từ bảng danh tính đã duyệt.
     const bookAliases = JSON.parse($('#lookup-book-aliases')?.textContent || 'null') ?? {};
-    if (pageSection === 'lookup' && catalog) initUnifiedLookup({ heroes: heroesDict, tactics, catalog, books: lookupBooks, bookAliases }, mount, {
-      summary: {
+    if (lookupGroup && lookupDocs) initLookupPage({
+      group: lookupGroup,
+      mount,
+      docs: { ...lookupDocs, books: lookupBooks, bookAliases },
+      loadProfileDocs: () => loadLookupDocs(lookupPayloads.profile),
+      summary: lookupGroup === 'heroes' ? {
         pin: recommendedPin,
         loadBytes: loadRecommendedBytes,
-        // Khóa nối của số liệu là chính kho Tra cứu đang phát; hash đã xác minh lúc boot.
+        // Khóa nối của số liệu là chính kho Tra cứu đang phát (hash `heroes-dict` của publication).
         catalogSha256: websiteDisplay?.sourceHashes?.["data/heroes-dict.json"] ?? null,
-      },
-      // Bản Trung: cùng bộ tra tên Hán gốc (có binh thư) với các mục khác; bản Việt là null.
-      rawNameResolver: rawNames,
+      } : lookupGroup === 'tactics' ? {
+        pin: recommendedPin,
+        loadBytes: loadRecommendedBytes,
+        // Số liệu chiến pháp nối qua cả kho chiến pháp lẫn kho tướng (ID tướng mang) của publication.
+        tacticCatalogSha256: websiteDisplay?.sourceHashes?.["data/tactics.json"] ?? null,
+        heroCatalogSha256: websiteDisplay?.sourceHashes?.["data/heroes-dict.json"] ?? null,
+      } : null,
+      // Bản Trung: bộ tra tên Hán gốc (có binh thư) cho khối "Trong cẩm nang"; bản Việt trả null, không tải gì.
+      loadRawNames: () => loadRawNameResolver(loadBytes),
     });
 
     // Kết quả công cụ giữ nguyên trang người dùng: đội gốc đi trang chi tiết riêng.

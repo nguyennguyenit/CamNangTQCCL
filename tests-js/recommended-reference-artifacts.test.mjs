@@ -25,6 +25,7 @@ async function fixture(){
     'index.json':bytes({records:[]}),
     'other-teams.json':bytes({records:[]}),
     'hero-summaries.json':summariesPayload(),
+    'tactic-summaries.json':bytes({schemaVersion:1,provenance:{tacticCatalogSha256:`sha256:${"0".repeat(64)}`,heroCatalogSha256:`sha256:${"0".repeat(64)}`,recommendedJoin:"heroes[].tacticSlotsRaw ↔ chinese|aliases",otherJoin:"holders[].tacticSlotsRaw ↔ viet|hanViet",unmatchedSlots:{recommended:0,other:0},ambiguousSlots:{recommended:0,other:0}},summaries:{}}),
     [`details-${scope}.json`]:bytes({records:[]}),
   };
   const files=Object.fromEntries(Object.entries(payloads).map(([name,data])=>[name,{sha256:hash(data),bytes:data.length}]));

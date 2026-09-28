@@ -10,6 +10,7 @@ import tempfile
 from pathlib import Path
 from pipeline.common import canonical_json, sha256_hex
 from pipeline.hero_summaries import build_hero_summaries, validate_hero_summaries_shape
+from pipeline.tactic_summaries import build_tactic_summaries, validate_tactic_summaries_shape
 from pipeline.lookup_translations import CJK as HAN_SCRIPT
 from pipeline.recommended_identity import (
     build_display_mapping,
@@ -118,9 +119,9 @@ def _validated_display_notes(value, row):
     return value
 
 
-def prepare_publication_inputs(inputs, *, teams_bytes, content_links_bytes, ledger_bytes, catalog_bytes):
+def prepare_publication_inputs(inputs, *, teams_bytes, content_links_bytes, ledger_bytes, catalog_bytes, tactic_catalog_bytes):
     """Re-derive display lineage from authoritative raw inputs at the publication boundary."""
-    if not all(isinstance(value, (bytes, bytearray)) for value in (teams_bytes, content_links_bytes, ledger_bytes, catalog_bytes)):
+    if not all(isinstance(value, (bytes, bytearray)) for value in (teams_bytes, content_links_bytes, ledger_bytes, catalog_bytes, tactic_catalog_bytes)):
         raise ValueError("Publication requires authoritative teams, content links, ledger and catalog bytes")
     candidate = copy.deepcopy(inputs)
     teams = json.loads(bytes(teams_bytes))
@@ -272,6 +273,7 @@ def prepare_publication_inputs(inputs, *, teams_bytes, content_links_bytes, ledg
     candidate["contentLinksHash"] = "sha256:" + sha256_hex(bytes(content_links_bytes))
     # Hash kho Tra cứu (khóa nối) vào descriptor ⇒ đổi kho là generation đổi, không thể còn số liệu cũ.
     candidate["heroCatalogHash"] = "sha256:" + sha256_hex(bytes(catalog_bytes))
+    candidate["tacticCatalogHash"] = "sha256:" + sha256_hex(bytes(tactic_catalog_bytes))
     return candidate
 def _write(path, value):
     data = canonical_bytes(value)
@@ -372,7 +374,7 @@ def public_scope(scope):
     return {key: value for key, value in scope.items() if key not in PRIVATE_SCOPE_FIELDS}
 
 
-def _build_generation_locked(inputs, output, catalog_bytes):
+def _build_generation_locked(inputs, output, catalog_bytes, tactic_catalog_bytes):
     inventory = inputs["inventory"]
     records = [public_record(row) for row in sorted(inputs.get("records", []), key=_rank)]
     seasons = {"schemaVersion": SCHEMA_VERSION, "defaultSourceSeasonId": next((x["sourceSeasonId"] for x in inventory.get("seasonOptions", []) if x.get("status") == "available"), None), "seasonOptions": inventory.get("seasonOptions", []), "scopes": [public_scope(scope) for scope in inventory["scopes"]]}
@@ -387,11 +389,17 @@ def _build_generation_locked(inputs, output, catalog_bytes):
         catalog_bytes=catalog_bytes, records=records, other_records=inputs.get("otherTeams") or [],
     )
     validate_hero_summaries_shape(summaries, records=records, other_records=inputs.get("otherTeams") or [])
-    payloads = {"seasons.json": seasons, "index.json": index, "other-teams.json": other, "hero-summaries.json": summaries}
+    # Cùng nguồn và thứ tự cho số liệu theo chiến pháp (hồ sơ chiến pháp).
+    tactic_summaries = build_tactic_summaries(
+        tactic_catalog_bytes=tactic_catalog_bytes, hero_catalog_bytes=catalog_bytes,
+        records=records, other_records=inputs.get("otherTeams") or [],
+    )
+    validate_tactic_summaries_shape(tactic_summaries, records=records, other_records=inputs.get("otherTeams") or [])
+    payloads = {"seasons.json": seasons, "index.json": index, "other-teams.json": other, "hero-summaries.json": summaries, "tactic-summaries.json": tactic_summaries}
     for scope in inventory["scopes"]:
         key = scope["safeScopeKey"]
         payloads["details-" + key + ".json"] = {"schemaVersion": SCHEMA_VERSION, "records": [public_record(row) for row in details.get(key, [])]}
-    descriptor = {"schemaVersion": SCHEMA_VERSION, "inventoryHash": inventory.get("inventoryHash"), "mappingHash": inputs.get("mappingHash"), "decisionSnapshotHash": inputs.get("decisionSnapshotHash"), "dedupKeyVersion": inputs.get("dedupKeyVersion"), "legacyTeamsHash": inputs["legacyTeamsHash"], "contentLinksHash": inputs["contentLinksHash"], "heroSummaryCatalogHash": inputs["heroCatalogHash"], "payloadHashes": {name: sha256_hex(canonical_bytes(value)) for name, value in sorted(payloads.items())}}
+    descriptor = {"schemaVersion": SCHEMA_VERSION, "inventoryHash": inventory.get("inventoryHash"), "mappingHash": inputs.get("mappingHash"), "decisionSnapshotHash": inputs.get("decisionSnapshotHash"), "dedupKeyVersion": inputs.get("dedupKeyVersion"), "legacyTeamsHash": inputs["legacyTeamsHash"], "contentLinksHash": inputs["contentLinksHash"], "heroSummaryCatalogHash": inputs["heroCatalogHash"], "tacticSummaryCatalogHash": inputs["tacticCatalogHash"], "payloadHashes": {name: sha256_hex(canonical_bytes(value)) for name, value in sorted(payloads.items())}}
     if inputs.get("localizationInputsHash") is not None:
         descriptor["localizationInputsHash"] = inputs["localizationInputsHash"]
     generation_id = sha256_hex(canonical_bytes(descriptor))
@@ -421,13 +429,14 @@ def _build_generation_locked(inputs, output, catalog_bytes):
     os.replace(temporary, output / "current.json")
     return selector
 
-def build_generation(inputs, output, *, teams_bytes, content_links_bytes, ledger_bytes, catalog_bytes):
+def build_generation(inputs, output, *, teams_bytes, content_links_bytes, ledger_bytes, catalog_bytes, tactic_catalog_bytes):
     candidate = prepare_publication_inputs(
         inputs,
         teams_bytes=teams_bytes,
         content_links_bytes=content_links_bytes,
         ledger_bytes=ledger_bytes,
         catalog_bytes=catalog_bytes,
+        tactic_catalog_bytes=tactic_catalog_bytes,
     )
     validate_generation_inputs(candidate)
     output = Path(output)
@@ -438,7 +447,7 @@ def build_generation(inputs, output, *, teams_bytes, content_links_bytes, ledger
     except FileExistsError as error:
         raise RuntimeError("Another Recommended generation writer is active") from error
     try:
-        return _build_generation_locked(candidate, output, catalog_bytes)
+        return _build_generation_locked(candidate, output, catalog_bytes, tactic_catalog_bytes)
     finally:
         lock.rmdir()
 
@@ -747,6 +756,7 @@ def main():
     parser.add_argument("--teams", type=Path, required=True)
     parser.add_argument("--content-links", type=Path, required=True)
     parser.add_argument("--catalog", type=Path, required=True)
+    parser.add_argument("--tactic-catalog", type=Path, required=True)
     parser.add_argument("--display-map", type=Path, default=DISPLAY_MAP_PATH)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
@@ -767,6 +777,7 @@ def main():
         content_links_bytes=content_links_bytes,
         ledger_bytes=ledger_bytes,
         catalog_bytes=catalog_bytes,
+        tactic_catalog_bytes=args.tactic_catalog.read_bytes(),
     )
 
 
