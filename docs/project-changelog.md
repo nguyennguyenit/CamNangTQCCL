@@ -1,5 +1,29 @@
 # Project Changelog
 
+## 2026-09-28 (Sửa lỗi responsive)
+
+### Fixed
+
+- Footer 821–1280px: khối thương hiệu (ấn 44px + logo chữ 238px) tràn đè cột "Đội hình" tới 153px. Cột giới thiệu giờ là `minmax(min-content, 2fr)`; 821–1279px giới thiệu chiếm cả hàng, năm cột link xuống dưới.
+- Tra cứu › Chiến pháp 681–1023px: năm cột cố định (~816px) vượt khung panel nên cột tên co về 0 và bảng bị cắt. Bảng xếp dọc có nhãn cột (như mobile) tới 1023px; từ 1024px giữ đủ cột theo artboard. Mô tả trong cột tên hẹp xuống dòng (`overflow-wrap: anywhere`) thay vì bị cắt ngang.
+- Đội chuẩn/Đội khác 821–900px: lề ngang 16px để cột chuyển nhanh cố định đè nút Bảng, ô mùa và điểm thẻ; nay giữ lề 48px.
+- Cột chuyển nhanh cao ~450px bị cắt đầu/cuối ở màn thấp (điện thoại xoay ngang 844×390, cửa sổ thấp): dưới 580px chiều cao dùng nút tròn như mobile; danh sách mở lên không vượt header dính và cuộn khi dài (kể cả 320×568).
+- Khai hoang bản zh: ấn "主" của chủ tướng rộng 30px tràn ô 24px; ấn giờ gọn trong ô.
+- Landing › Tải game ≤820px: cụm tải chỉ rộng theo nội dung (lưới vẫn `justify-self: start`) nên nút cửa hàng hụt mép phải và QR lệch giữa; cụm giờ trải hết cột, QR canh trái, thẻ bản máy tính thành hàng như nút cửa hàng (mũi tên ở mép phải). ≤680px ẩn QR vì không quét được trên chính điện thoại; tablet vẫn giữ.
+- Footer gọn lại: ≤820px năm nhóm link chảy theo hai cột báo (Đội hình + Tra cứu | Công cụ + Cộng đồng + Về cẩm nang) thay vì lưới theo hàng để lại khoảng trống lớn và nhóm "Về cẩm nang" đứng một mình (390px: cao 1674 → 1490px). Dải Game mobile: link nhà phát hành là lưới hai cột điền theo cột (nhãn ngắn một cột, nhãn dài một cột — không nhãn nào gãy dòng ở 320px), vạch ngang tách link cộng đồng cùng kiểu chữ (bỏ viên bo tròn). 821–1279px dải Game: tiêu đề một hàng, link game, link cộng đồng xuống hàng riêng — vạch ngăn không còn rớt đầu hàng.
+- Footer mobile (≤820px): dải "Game chính thức" thu gọn mặc định — chỉ còn tiêu đề + phụ đề và nút mũi tên 44px (cả đầu dải là vùng bấm, tên truy cập là tiêu đề dải qua `aria-labelledby`, `aria-expanded`); bấm mở lưới link game + link cộng đồng. `initFooterGameDisclosure` trong `js/site-chrome.js` chỉ bật nút khi JS chạy (không JS: link luôn hiện) và đưa về thu gọn khi qua lại mốc 820px; desktop CSS bỏ qua `hidden` và ẩn nút nên dải vẫn một hàng. Không thêm chữ UI mới: ghim lại hash `src/layouts/SiteLayout.astro`, `js/site-chrome.js` trong policy, publish generation `35657d5d…`, re-pin `pipeline/team-route-handles.json`.
+
+## 2026-09-28 (Cùng Tồn bản zh không còn chữ Việt)
+
+### Fixed
+
+- `/zh/cung-ton/` mở mặc định nhóm của bảng Cùng Tồn gốc (ghi bằng tiếng Việt) nên hiện nguyên tên tướng, chiến pháp, binh thư, ghi chú và gợi ý khai hoang tiếng Việt. `coexistModel` (`js/render.js`) giờ áp cùng quy tắc zh của nhánh legacy cho nhánh bảng gốc: tên tướng/chiến pháp/binh thư tra về chữ Hán (tướng không tra được hiện "—", chiến pháp/binh thư không tra được bị bỏ; tiền tố "Tinh·" thành "精 ·", hậu tố "40th" thành `40Y`), tên đội dựng lại từ tên tướng, nhãn "Cùng tồn N" thành "共存 N"; tóm tắt, ghi chú, gợi ý khai hoang, cải tạo, thuộc tính và ghi chú tướng bị bỏ. Bản vi giữ nguyên.
+- Ghim lại hash `js/render.js` trong policy, publish generation `85425612…`, re-pin `pipeline/team-route-handles.json`.
+
+### Tests
+
+- E2E cập nhật theo giao diện mới: header bản vi dùng logo chữ có dòng phụ (không tagline), tagline và phép đo 320px chỉ còn ở bản zh; menu Tra cứu 7 dòng và trang Tra cứu nạp `books-dict.json` (nhóm Binh thư); Landing kiểm thẻ đội ở hero và bảng mẫu khối tier đầu; chi tiết Đội chuẩn kiểm khối Phạm vi (mùa, danh mục) và không lộ mã cấu hình nguồn.
+
 ## 2026-09-28 (Gỡ nguồn dữ liệu khỏi dữ liệu công khai)
 
 ### Changed

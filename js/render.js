@@ -122,28 +122,44 @@ export function coexistCounts(teams = []) {
  * Chuẩn hóa hai nhánh dữ liệu Cùng Tồn về cùng một khung hiển thị: nhánh bảng gốc giữ nguyên văn
  * mọi trường nội dung, nhánh legacy chỉ dùng đúng những trường nó có. Tên đội/tướng tách phần phụ ở
  * dòng cuối (`level` "19C", `tag` "Thương S") để thẻ hiện thành nhãn riêng.
+ * Cả hai nhánh đều ghi bằng tiếng Việt: bản zh đổi tên tướng/chiến pháp/binh thư sang chữ Hán gốc, tên đội
+ * dựng lại từ tên tướng, còn văn xuôi, thích tính, cải tạo và ghi chú tướng (chưa có bản Trung) bị bỏ.
  */
 function coexistModel(reference) {
   const content = reference?.content || {};
+  const zh = isZh();
   if (reference?.source) {
+    const empty = () => L("Chưa có dữ liệu", "暂无数据");
+    // Ô trống giữ nhãn "chưa có dữ liệu"; bản zh bỏ ô có chữ mà không tra được chữ Hán.
+    const slot = (value, zhName) => (zh && typeof value === "string" && value.trim() ? zhName(value.trim()) : publicText(value, empty()));
     return {
-      groupLabel: publicText(content.groupLabel),
-      raw: { summary: content.summaryRaw, opening: content.openingSuggestionsRaw, notes: content.notesRaw },
-      teams: (content.teams || []).map((team) => ({
-        ...splitTeamName(publicText(team.teamNameRaw)),
-        unitTacticEffects: publicText(team.unitTacticEffectsRaw, ""),
-        heroes: (team.heroes || []).map((hero) => ({
-          ...splitHeroName(publicText(hero.nameRaw)),
-          tactics: (hero.tacticSlotsRaw || []).map((value) => formatModifiedTactic(publicText(value, L("Chưa có dữ liệu", "暂无数据")))),
-          books: (hero.bookSlotsRaw || []).map((value) => publicText(value, L("Chưa có dữ liệu", "暂无数据"))),
-          statFocus: publicText(hero.statFocusRaw, L("Chưa có dữ liệu", "暂无数据")),
-        })),
-      })),
+      groupLabel: zh ? coexistGroupLabel(content.groupLabel) : publicText(content.groupLabel),
+      raw: zh
+        ? { summary: "", opening: "", notes: "" }
+        : { summary: content.summaryRaw, opening: content.openingSuggestionsRaw, notes: content.notesRaw },
+      teams: (content.teams || []).map((team) => {
+        const heroes = (team.heroes || []).map((hero) => {
+          const { name, tag } = splitHeroName(publicText(hero.nameRaw));
+          return {
+            name: zh ? zhCoexistHeroName(name) : name,
+            tag: zh ? "" : tag,
+            tactics: (hero.tacticSlotsRaw || []).map((value) => slot(value, zhModifiedTactic) || null).filter(Boolean)
+              .map(formatModifiedTactic),
+            books: (hero.bookSlotsRaw || []).map((value) => slot(value, sourceName) || null).filter(Boolean),
+            statFocus: zh ? "" : publicText(hero.statFocusRaw, empty()),
+          };
+        });
+        const { name, level } = splitTeamName(publicText(team.teamNameRaw));
+        return {
+          name: zh ? heroes.map((hero) => hero.name).filter((value) => value !== UNRESOLVED_NAME).join(" · ") || UNRESOLVED_NAME : name,
+          level,
+          unitTacticEffects: zh ? "" : publicText(team.unitTacticEffectsRaw, ""),
+          heroes,
+        };
+      }),
     };
   }
-  // Nhánh legacy ghi bằng tiếng Việt: bản zh đổi tên tướng/chiến pháp/binh thư sang chữ Hán gốc, tên đội
-  // dựng lại từ tên tướng, còn văn xuôi và thích tính (chưa có bản Trung) bị bỏ.
-  const zh = isZh();
+  // Nhánh legacy: bản zh cũng tra chữ Hán từng tên; tên đội dựng lại từ tên tướng.
   return {
     groupLabel: coexistGroupLabel(content.groupLabel),
     raw: { summary: viProse(content.summary), opening: "", notes: "" },
@@ -168,6 +184,22 @@ const splitTeamName = (value) => {
   return { name, level: tag };
 };
 const splitHeroName = (value) => splitSourceTag(value, HERO_NOTE_TAG);
+
+/** Tiền tố bản cải tạo của chiến pháp theo chữ Hán của nguồn (cùng tập với `formatModifiedTactic`). */
+const MODIFIED_PREFIX_ZH = { Tinh: "精", Chuyển: "轉", Thác: "拓" };
+/** Bản zh: chiến pháp Hán-Việt → chữ Hán; tiền tố "Tinh·" đổi sang "精"; không tra được thì chuỗi rỗng. */
+function zhModifiedTactic(value) {
+  const match = value.match(/^(Tinh|Chuyển|Thác)\s*[·・]\s*(.+)$/su);
+  if (!match) return sourceName(value);
+  const name = sourceName(match[2]);
+  return name ? `${MODIFIED_PREFIX_ZH[match[1]]} · ${name}` : "";
+}
+/** Bản zh: tên tướng của bảng Cùng Tồn → chữ Hán; hậu tố "40th" của nguồn thành tiền tố `40Y` như chip biến thể. */
+function zhCoexistHeroName(value) {
+  const aged = value.match(/^(.+?)\s*40th$/iu);
+  const name = seatName(aged ? aged[1] : value);
+  return aged && name !== UNRESOLVED_NAME ? `40Y ${name}` : name;
+}
 
 /**
  * Nhãn nhóm Cùng Tồn theo ngôn ngữ trang. Bản vi: nhãn nguồn, thiếu thì "Nhóm". Bản zh: nhãn chữ Hán giữ nguyên,

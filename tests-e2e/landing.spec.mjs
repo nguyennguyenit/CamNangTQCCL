@@ -159,6 +159,8 @@ test('anchor Landing cuộn tới đúng khối, không nằm dưới header dí
     await scrollSettled(page);
     expect(await page.evaluate(() => Math.round(document.querySelector('#so-lieu').getBoundingClientRect().top)))
       .toBeGreaterThanOrEqual(await page.evaluate(() => Math.round(document.querySelector('.site-header').getBoundingClientRect().bottom)) - 1);
+    // Mobile: dải Game ở footer thu gọn sẵn — mở ra rồi mới bấm link.
+    if (width !== 1440) await page.getByRole('button', { name: 'Game chính thức' }).click();
     await page.click('.footer-game-list a[href="/#tai-game"]');
     await scrollSettled(page);
     expect(await page.evaluate(() => Math.round(document.querySelector('#tai-game').getBoundingClientRect().top)))
@@ -231,75 +233,55 @@ test('Khải hoang: chỉ đếm đội có đủ cấu hình trước/sau, đú
   );
 });
 
-test('hai khối xem trước dựng từ dữ liệu publish thật và link tới trang chi tiết có thật', async ({ page }) => {
+test('thẻ đội ở hero và bảng mẫu dựng từ dữ liệu publish thật, link tới trang chi tiết có thật', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/');
 
-  const card = page.locator('.landing-preview-card');
+  const tierLabel = (row) => (row.tierRaw === '功能隊' || row.tierRaw === 'FUNC' ? 'Đội chức năng' : row.tierRaw);
+  const meta = (row) => [tierLabel(row), factionLabels[row.factionRaw], ...row.unitTypesRaw.map((unit) => unitLabels[unit])]
+    .filter(Boolean).join(' · ');
+
+  const card = page.locator('.landing-hero-stage .reference-team-card');
   await expect(card).toBeVisible();
   await expect(card.locator('.team-name')).toHaveText(firstTeam.displayNameVi);
   await expect(card.locator('.reference-score')).toHaveText(String(firstTeam.value));
-  await expect(card.locator('.reference-units')).toHaveText(firstTeam.unitTypesRaw.map((unit) => unitLabels[unit]).join(' · '));
-  await expect(card.locator('.reference-faction')).toHaveText(factionLabels[firstTeam.factionRaw]);
+  await expect(card.locator('.reference-meta')).toHaveText(meta(firstTeam));
   await expect(card.locator('.reference-holder')).toHaveCount(firstTeam.heroes.length);
   await expect(card.locator('.reference-holder').first().locator('.hero-name')).toHaveText(firstTeam.heroes[0].displayNameVi);
   await expect(card.locator('.reference-holder').nth(1).locator('.tag.t-tactic').first())
     .toHaveText(firstTeam.heroes[1].tacticSlotsVi[0]);
 
-  const href = await card.locator('.landing-preview-link').getAttribute('href');
+  const href = await card.locator('.reference-card-foot a').getAttribute('href');
   expect(href).toMatch(/^\/doi-chuan\/[^/]+\/$/);
+  await expect(card.locator('.team-name a')).toHaveAttribute('href', href);
   const detail = await page.request.get(href);
   expect(detail.status()).toBe(200);
   expect(await detail.text()).toContain(firstTeam.displayNameVi);
 
-  const bar = page.locator('#landing-vaults .landing-table-bar');
-  await expect(bar).toContainText(seasonRegistry.seasonOptions.find((option) => option.sourceSeasonId === seasonRegistry.defaultSourceSeasonId).displayNameVi);
-  await expect(page.locator('#landing-vaults .landing-table-count')).toHaveText(`${vi(scopeRows.length)} / ${vi(scopeRows.length)} đội`);
-
-  const rows = page.locator('#landing-vaults .reference-table tbody tr');
-  await expect(rows).toHaveCount(4);
+  // Bảng mẫu = khối tier đầu của phạm vi mặc định, 4 hàng đầu theo thứ tự nguồn.
+  const tierRows = scopeRows.filter((row) => row.tierRaw === firstTeam.tierRaw).sort((left, right) => left.listIndex - right.listIndex);
+  const block = page.locator('#landing-vaults .landing-table-preview');
+  await expect(block.locator('.reference-tier-heading')).toHaveText(`${tierLabel(firstTeam)} · ${vi(tierRows.length)} đội`);
+  const rows = block.locator('.reference-table tbody tr');
+  await expect(rows).toHaveCount(Math.min(4, tierRows.length));
   const firstRow = rows.first();
-  await expect(firstRow.locator('th')).toContainText(firstTeam.displayNameVi);
-  await expect(firstRow.locator('th .landing-table-meta')).toHaveText(
-    [factionLabels[firstTeam.factionRaw], ...firstTeam.unitTypesRaw.map((unit) => unitLabels[unit])].join(' · '),
-  );
-  await expect(firstRow.locator('td').first()).toHaveText(firstTeam.heroes.map((holder) => holder.displayNameVi).join(' · '));
-  await expect(firstRow.locator('.landing-table-score')).toHaveText(String(firstTeam.value));
+  await expect(firstRow.locator('.reference-table-name')).toHaveText(firstTeam.displayNameVi);
+  await expect(firstRow.locator('.reference-table-name')).toHaveAttribute('href', href);
+  await expect(firstRow.locator('.reference-meta')).toHaveText(meta(firstTeam));
+  await expect(firstRow.locator('.reference-table-lineup')).toHaveText(firstTeam.heroes.map((holder) => holder.displayNameVi).join(' · '));
+  await expect(firstRow.locator('.reference-table-score')).toHaveText(String(firstTeam.value));
+  await expect(page.locator('#landing-vaults .landing-text-link')).toHaveAttribute('href', '/doi-chuan/?view=bang');
 
-  // N4-1: ở bề rộng hẹp bảng xếp dọc theo MobileTable nên cột điểm nằm ngay trong khung nhìn —
-  // không còn cuộn ngang bên trong khung và không đẩy trang rộng ra.
+  // Bề rộng hẹp: bảng không đẩy trang rộng ra và điểm hàng đầu vẫn nằm trong khung nhìn.
   for (const width of [390, 320]) {
     await page.setViewportSize({ width, height: 844 });
     await page.goto('/');
-    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
-    const measured = await page.evaluate(() => {
-      const region = document.querySelector('.landing-table-scroll');
-      const row = region.querySelector('tbody tr');
-      const score = row.querySelector('.landing-table-score');
-      const name = row.querySelector('th');
-      const box = region.getBoundingClientRect();
-      const scoreBox = score.getBoundingClientRect();
-      const nameBox = name.getBoundingClientRect();
-      return {
-        innerScroll: region.scrollWidth - region.clientWidth,
-        scoreLeft: Math.round(scoreBox.left),
-        scoreRight: Math.round(scoreBox.right),
-        regionLeft: Math.round(box.left),
-        regionRight: Math.round(box.right),
-        sameRow: Math.abs(scoreBox.top - nameBox.top) <= 4,
-        scoreBelowName: scoreBox.top >= nameBox.bottom,
-        nameLeft: Math.round(nameBox.left),
-        rowText: score.textContent.trim(),
-      };
-    });
-    // Không cuộn ẩn, và điểm nằm trong khung: không cần gợi ý cuộn.
-    expect(measured.innerScroll, `${width}: cuộn ngang trong khung`).toBe(0);
-    expect(measured.scoreRight, `${width}: mép phải điểm`).toBeLessThanOrEqual(measured.regionRight);
-    expect(measured.scoreLeft, `${width}: mép trái điểm`).toBeGreaterThanOrEqual(measured.regionLeft);
-    // Điểm cùng hàng với tên đội (không bị đẩy xuống dưới như một hàng xếp dọc).
-    expect(measured.sameRow, `${width}: điểm cùng hàng với tên đội`).toBe(true);
-    expect(measured.scoreBelowName, `${width}: điểm không nằm dưới tên`).toBe(false);
-    expect(measured.rowText, `${width}: vẫn in điểm`).toBe(String(firstTeam.value));
+    expect(await page.evaluate(() => document.documentElement.scrollWidth), `${width}: tràn ngang`).toBeLessThanOrEqual(width);
+    const score = page.locator('#landing-vaults .reference-table tbody tr').first().locator('.reference-table-score');
+    await expect(score, `${width}: vẫn in điểm`).toHaveText(String(firstTeam.value));
+    const box = await score.boundingBox();
+    expect(box.x, `${width}: mép trái điểm`).toBeGreaterThanOrEqual(0);
+    expect(box.x + box.width, `${width}: mép phải điểm`).toBeLessThanOrEqual(width);
   }
 });
 

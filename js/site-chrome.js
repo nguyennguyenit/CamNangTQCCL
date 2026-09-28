@@ -65,10 +65,34 @@ export function initSiteChrome({documentTarget = document, windowTarget = global
   const nav = createSiteNav({documentTarget, windowTarget});
   return {nav, applyTheme, syncTheme};
 }
+  initFooterGameDisclosure({documentTarget, windowTarget});
 
 /**
  * Nút chuyển ngôn ngữ (`[data-lang-switch]`, header + menu mobile) là link thật tới bản gương của trang.
  * Bộ lọc, biến thể và deep-link nằm ở query/hash và đổi tại chỗ (history API), nên href được ghép lại với
+/** Mốc footer mobile trong css/styles.css: từ 821px dải Game luôn hiện đủ link và nút thu gọn bị ẩn. */
+const FOOTER_COMPACT_QUERY = '(max-width: 820px)';
+
+/**
+ * Dải "Game chính thức" ở footer mobile: link nhà phát hành + cộng đồng thu gọn mặc định sau nút mũi tên
+ * (`[data-footer-game-toggle]`, tên truy cập là tiêu đề dải). Không có JS thì nút giữ `hidden` và link luôn hiện;
+ * ở desktop CSS ẩn nút và bỏ qua `hidden` của khối link. Qua lại mốc 820px trả về thu gọn để mobile luôn gọn.
+ */
+export function initFooterGameDisclosure({documentTarget = document, windowTarget = globalThis} = {}) {
+  const toggle = documentTarget.querySelector('[data-footer-game-toggle]');
+  const panel = toggle && documentTarget.getElementById(toggle.getAttribute('aria-controls'));
+  if (!toggle || !panel) return null;
+  const setOpen = (open) => {
+    toggle.setAttribute('aria-expanded', String(open));
+    panel.hidden = !open;
+  };
+  toggle.hidden = false;
+  setOpen(false);
+  toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+  windowTarget.matchMedia?.(FOOTER_COMPACT_QUERY)?.addEventListener?.('change', () => setOpen(false));
+  return {toggle, panel, setOpen};
+}
+
  * query/hash của lúc bấm; href gốc do layout phát được giữ ở `data-lang-base` để không cộng dồn.
  */
 export function syncLanguageSwitch({documentTarget = document, windowTarget = globalThis} = {}) {

@@ -1829,7 +1829,9 @@ a.lookup-more:hover {
   }
 }
 
-@media (max-width: 820px) {
+/* Thanh icon cao ~450px: màn thấp (điện thoại xoay ngang, cửa sổ laptop thấp) không đủ chỗ giữa header 64px và mép dưới
+   nên cũng dùng nút tròn như màn hẹp. */
+@media (max-width: 820px), (max-height: 579px) {
   .quick-nav {
     top: auto;
     right: var(--space-16);
@@ -1880,6 +1882,9 @@ a.lookup-more:hover {
 
   .quick-nav-link {
     justify-content: flex-start;
+    /* Danh sách mở lên trên: không vượt qua header dính (64px) ở màn thấp — phần dư cuộn trong danh sách. */
+    max-height: calc(100dvh - var(--space-64) - var(--space-16) - var(--control-52) - var(--space-10) - var(--space-8));
+    overflow-y: auto;
     gap: var(--space-10);
     width: auto;
     height: auto;
@@ -1912,7 +1917,7 @@ a.lookup-more:hover {
 
 .footer-grid {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) repeat(5, minmax(0, 1fr));
+  grid-template-columns: minmax(min-content, 2fr) repeat(5, minmax(0, 1fr));
   gap: var(--space-40);
 }
 
@@ -1925,12 +1930,39 @@ a.lookup-more:hover {
 .footer-brand {
   display: flex;
   align-items: center;
+/* Cột giới thiệu không co dưới bề rộng khối thương hiệu (ấn 44 + mark 238px); với `minmax(0, …)` khối tràn đè cột Đội hình. */
   gap: var(--space-12);
   color: var(--band-link);
   text-decoration: none;
 }
 
 .footer-title {
+/* 821–1279px (header ☰): sáu cột không đủ chỗ cho khối thương hiệu — giới thiệu chiếm cả hàng, năm cột link xuống dưới. */
+@media (min-width: 821px) and (max-width: 1279px) {
+  .footer-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--space-32) var(--space-24);
+  }
+
+  .footer-about {
+    grid-column: 1 / -1;
+  }
+
+  /* Dải Game: tiêu đề một hàng riêng, link game rồi link cộng đồng xuống hàng mới — không để vạch ngăn rớt đầu hàng. */
+  .footer-game {
+    row-gap: var(--space-4);
+  }
+
+  .footer-game-title,
+  .footer-community-list {
+    flex-basis: 100%;
+  }
+
+  .footer-game-divider {
+    display: none;
+  }
+}
+
   font: var(--type-list-title);
 }
 
@@ -2067,6 +2099,18 @@ a.lookup-more:hover {
 
 .footer-bottom {
   display: flex;
+/* Khối đầu dải và khối link chỉ để thu gọn ở mobile: desktop coi như không có (tiêu đề, link, vạch vẫn là mục flex
+   của `.footer-game`), bỏ qua `hidden` do js/site-chrome.js đặt và ẩn nút thu gọn. */
+.footer-game-head,
+.footer-game-links,
+.footer-game-links[hidden] {
+  display: contents;
+}
+
+.footer-game-toggle {
+  display: none;
+}
+
   align-items: center;
   justify-content: space-between;
   gap: var(--space-24);
@@ -2182,12 +2226,19 @@ a.lookup-more:hover {
   }
 
   .footer-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-24) var(--space-16);
+    display: block;
+    columns: 2;
+    column-gap: var(--space-16);
   }
 
   .footer-about {
-    grid-column: 1 / -1;
+    column-span: all;
+    margin-bottom: var(--space-24);
+  }
+
+  .footer-col {
+    break-inside: avoid;
+    padding-bottom: var(--space-20);
   }
 
   .footer-brand {
@@ -2196,6 +2247,8 @@ a.lookup-more:hover {
 
   .footer-title {
     font: var(--type-brand);
+  /* Cột link chảy theo hai cột báo (Đội hình + Tra cứu | Công cụ + Cộng đồng + Về cẩm nang) thay vì lưới
+     hai cột theo hàng: nhóm ngắn không để lại khoảng trống lớn cạnh nhóm dài, nhóm lẻ không đứng một mình. */
   }
 
   /* Vùng bấm link footer ≥ 44px (contract §11.4 thay 40px của artboard). */
@@ -2212,14 +2265,82 @@ a.lookup-more:hover {
   }
 
   .footer-game-divider {
+    align-self: stretch;
+    width: auto;
+    height: var(--border-hair);
+  }
+
+  /* Đầu dải: tiêu đề + phụ đề bên trái, nút mũi tên 44px bên phải; vùng bấm phủ cả đầu dải (::after). */
+  .footer-game-head {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: var(--space-12);
+    row-gap: var(--space-4);
+    width: 100%;
+  }
+
+  .footer-game-title,
+  .footer-game-subtitle {
+    grid-column: 1;
+  }
+
+  /* Vạch ngăn nằm ngang, tách link nhà phát hành với link cộng đồng. */
+  .footer-game-toggle:not([hidden]) {
+    display: inline-flex;
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-items: center;
+    justify-content: center;
+    width: var(--control-44);
+    height: var(--control-44);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-10);
+    background: none;
+    color: var(--band-link);
+    cursor: pointer;
+  }
+
+  .footer-game-toggle::after {
+    position: absolute;
+    inset: 0;
+    content: "";
+  }
+
+  .footer-game-toggle svg {
+    transition: transform var(--motion-base) ease;
+  }
+
+  .footer-game-toggle[aria-expanded="true"] svg {
+    transform: rotate(180deg);
+  }
+
+  .footer-game-links {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    width: 100%;
+  }
+
+  .footer-game-links[hidden] {
     display: none;
   }
 
+  /* Hai cột, điền theo cột: nhãn ngắn (Trang chủ game · Đổi quà · Web nạp) một cột, nhãn dài một cột — ở 320px
+     118 + 10 + 158px vẫn vừa 288px nên không nhãn nào gãy dòng; màn rộng hơn hai cột chia đều, thẳng mép giữa hai nhóm. */
   .footer-game-list {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0 var(--space-16);
+    grid-auto-flow: column;
+    grid-template-rows: repeat(3, auto);
+    grid-template-columns: repeat(2, minmax(max-content, 1fr));
+    gap: 0 var(--space-10);
     width: 100%;
+  }
+
+  .footer-community-list {
+    grid-template-rows: repeat(2, auto);
   }
 
   .footer-col-title {
@@ -2228,22 +2349,6 @@ a.lookup-more:hover {
 
   .footer-game-subtitle {
     display: block;
-  }
-
-  /* Link cộng đồng thành viên pill (LandingMobile.dc.html): viền dải, bo tròn, cao 44. */
-  .footer-community-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-8);
-    margin-top: var(--space-4);
-  }
-
-  .footer-community-list .footer-link {
-    gap: var(--space-6);
-    padding-inline: var(--space-10);
-    border: var(--border-hair) solid var(--band-line);
-    border-radius: var(--radius-999);
-    font: var(--type-small);
   }
 
   .footer-bottom {
@@ -3155,23 +3260,34 @@ a.lookup-more:hover {
     width: 100%;
   }
 
+  /* Cụm tải trải hết cột như ô chữ phía trên (lưới đặt `justify-self: start` nên phải kéo lại), QR canh trái cùng nút. */
   .landing-exe {
     aspect-ratio: auto;
+    justify-self: stretch;
   }
 
-  .landing-exe {
-    flex-direction: row;
-    align-items: center;
-    padding: var(--space-14) var(--space-16);
+  .landing-exe-arrow {
+    align-self: center;
+    margin-left: auto;
   }
+  .landing-qr {
+    align-items: flex-start;
+  }
+
 
   /* CTA tối liền footer tối như desktop: không chừa dải nền trang ở giữa. */
   .landing-cta {
     gap: var(--space-18);
     padding: var(--space-36) var(--space-16);
   }
+  /* Thẻ bản máy tính thành hàng như nút cửa hàng: nội dung canh trái, mũi tên ở mép phải giữa hàng. */
 }
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--space-12);
 
+    padding: var(--space-14) var(--space-18);
 /* Dải số liệu chỉ còn 2 cột ở màn rất hẹp; số không tràn. */
 @media (max-width: 380px) {
   .landing-stat-list {
@@ -3187,6 +3303,13 @@ a.lookup-more:hover {
   min-height: var(--control-26);
   padding: 0 var(--space-9);
   border: var(--border-hair) solid var(--line);
+/* Điện thoại: không thể quét QR trên chính màn hình đang xem — nút App Store / Google Play thay chỗ. Tablet vẫn giữ QR. */
+@media (max-width: 680px) {
+  .landing-qr {
+    display: none;
+  }
+}
+
   border-radius: var(--radius-6);
   background: var(--panel-3);
   color: var(--ink-2);
@@ -4497,6 +4620,15 @@ main.layout:has(> .detail-content) {
   flex-direction: column;
   gap: var(--space-36);
   max-width: none;
+/* 821–900px: danh sách đã về bố cục panel nhưng cột chuyển nhanh vẫn là thanh cố định 49px ở mép phải —
+   giữ lề ngang 48px như desktop để thanh không đè nút Bảng, ô mùa và điểm của thẻ. */
+@media (min-width: 821px) and (max-width: 900px) {
+  body[data-page-section="team-chuan"] .layout,
+  body[data-page-section="team-khac"] .layout {
+    padding-inline: var(--space-48);
+  }
+}
+
   margin-inline: 0;
 }
 
@@ -5171,6 +5303,13 @@ main.layout:has(> .detail-content) {
 }
 
 .kh-arrow {
+/* Ấn "主"/"C" gọn trong ô 24px: padding badge gốc (9px) làm chữ Hán tràn 3px mỗi bên. */
+.kh-mark .badge {
+  justify-content: center;
+  min-width: var(--control-24);
+  padding-inline: var(--space-4);
+}
+
   line-height: var(--control-24);
   text-align: center;
 }
@@ -5613,6 +5752,8 @@ body[data-page-section="lookup"] .layout {
   font: var(--type-badge);
 }
 
+  /* Cột tên hẹp nhất (~110px ở 1024px): ngày/tỷ lệ dài phải xuống dòng thay vì bị cắt ngang. */
+  overflow-wrap: anywhere;
 .lookup-table .lookup-table-rate {
   text-align: right;
   white-space: nowrap;
@@ -6246,75 +6387,6 @@ a.cam-nang-count .cam-nang-number {
     font: var(--type-portrait-han-mobile);
   }
 
-  /* Bảng chiến pháp trên mobile: mỗi hàng một khối, mỗi ô có nhãn cột để đủ cả sáu trường. */
-  .lookup-table thead {
-    display: none;
-  }
-
-  .lookup-table,
-  .lookup-table tbody,
-  .lookup-table tr,
-  .lookup-table th,
-  .lookup-table td {
-    display: block;
-  }
-
-  .lookup-table tbody tr {
-    padding: var(--space-14) var(--space-18);
-    border-top: var(--border-hair) solid var(--line-2);
-  }
-
-  .lookup-table tbody tr:first-child {
-    border-top: 0;
-  }
-
-  .lookup-table tbody th.lookup-table-cell-name,
-  .lookup-table tbody td {
-    padding: 0;
-    border: 0;
-  }
-
-  .lookup-table tbody td {
-    display: grid;
-    grid-template-columns: var(--space-96) minmax(0, 1fr);
-    gap: var(--space-10);
-    align-items: baseline;
-    justify-items: start;
-    padding-top: var(--space-6);
-  }
-
-  /* Ô tên chiến pháp: nhãn cột một dòng riêng rồi mới tới tên, chữ Hán và mô tả. */
-  .lookup-table tbody th.lookup-table-cell-name {
-    display: block;
-    padding-top: var(--space-6);
-  }
-
-  .lookup-table tbody th::before,
-  .lookup-table tbody td::before {
-    content: attr(data-label);
-    display: block;
-    color: var(--muted);
-    font: var(--type-field-caps);
-    letter-spacing: var(--type-field-caps-spacing);
-    text-transform: uppercase;
-  }
-
-  /* Nút tên chiến pháp là control duy nhất của hàng (bảng xếp dọc) nên phải đủ 44px. */
-  .lookup-table-name {
-    display: inline-flex;
-    align-items: center;
-    min-height: var(--control-44);
-  }
-
-  .lookup-table .lookup-table-rate {
-    text-align: left;
-  }
-
-  /* Hàng xếp dọc: bỏ lề phải 18px của cột Tỷ lệ desktop. */
-  .lookup-table tbody td:last-child {
-    padding-right: 0;
-  }
-
   /* Hộp thoại bắt đầu dưới thanh đầu trang mobile (44px + 16px) để không che nút menu/thương hiệu. */
   .lookup-backdrop {
     padding: calc(var(--control-44) + var(--space-16) + var(--space-8)) var(--space-8) var(--space-16);
@@ -6420,6 +6492,79 @@ body[data-page-section="khaihoang"] .layout {
 .coexist-head .reference-season-field[hidden],
 .coexist-groups[hidden] {
   display: none;
+/* 681–1023px: năm cột cố định (≈816px) vượt khung panel, cột tên co về 0 và bảng bị cắt — xếp dọc như mobile.
+   Từ 1024px bảng giữ đủ cột theo artboard LookupTactics. */
+@media (max-width: 1023px) {
+  /* Bảng chiến pháp xếp dọc: mỗi hàng một khối, mỗi ô có nhãn cột để đủ cả sáu trường. */
+  .lookup-table thead {
+    display: none;
+  }
+
+  .lookup-table,
+  .lookup-table tbody,
+  .lookup-table tr,
+  .lookup-table th,
+  .lookup-table td {
+    display: block;
+  }
+
+  .lookup-table tbody tr {
+    padding: var(--space-14) var(--space-18);
+    border-top: var(--border-hair) solid var(--line-2);
+  }
+
+  .lookup-table tbody tr:first-child {
+    border-top: 0;
+  }
+
+  .lookup-table tbody th.lookup-table-cell-name,
+  .lookup-table tbody td {
+    padding: 0;
+    border: 0;
+  }
+
+  .lookup-table tbody td {
+    display: grid;
+    grid-template-columns: var(--space-96) minmax(0, 1fr);
+    gap: var(--space-10);
+    align-items: baseline;
+    justify-items: start;
+    padding-top: var(--space-6);
+  }
+
+  /* Ô tên chiến pháp: nhãn cột một dòng riêng rồi mới tới tên, chữ Hán và mô tả. */
+  .lookup-table tbody th.lookup-table-cell-name {
+    display: block;
+    padding-top: var(--space-6);
+  }
+
+  .lookup-table tbody th::before,
+  .lookup-table tbody td::before {
+    content: attr(data-label);
+    display: block;
+    color: var(--muted);
+    font: var(--type-field-caps);
+    letter-spacing: var(--type-field-caps-spacing);
+    text-transform: uppercase;
+  }
+
+  /* Nút tên chiến pháp là control duy nhất của hàng (bảng xếp dọc) nên phải đủ 44px. */
+  .lookup-table-name {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--control-44);
+  }
+
+  .lookup-table .lookup-table-rate {
+    text-align: left;
+  }
+
+  /* Hàng xếp dọc: bỏ lề phải 18px của cột Tỷ lệ desktop. */
+  .lookup-table tbody td:last-child {
+    padding-right: 0;
+  }
+}
+
 }
 
 /* ---------- Hàng chọn phiên bản Cùng tồn 1–5 (chip viên, vai trò chữ của `chip-loc`) ---------- */

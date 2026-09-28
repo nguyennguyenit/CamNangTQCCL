@@ -39,7 +39,10 @@ test('Recommended detail loads directly, survives reload and shows verified sour
       if (raw && holder.tacticSlotKinds?.[slot]!=='bond') await expect(detail).toContainText(holder.tacticSlotsVi?.[slot] || raw);
     }
   }
-  await expect(detail.locator('.detail-source')).toContainText(row.sourceConfigId);
+  // Khối Phạm vi chỉ nêu mùa và danh mục; mã cấu hình nguồn không còn hiện công khai.
+  await expect(detail.locator('.detail-source')).toContainText(`${row.sourceSeasonCode || row.sourceSeasonId} · ${row.sourceSeasonNameVi}`);
+  await expect(detail.locator('.detail-source')).toContainText(row.sourceCategoryNameVi || row.sourceCategoryId);
+  await expect(detail.locator('.detail-source')).not.toContainText(row.sourceConfigId);
   await expect(page.locator('#team-return-link')).toHaveAttribute('href',/^\/(?:doi-chuan\/|doi-khac\/|khai-hoang\/)/);
   // Trang chi tiết không nạp ứng dụng mục hay dữ liệu gameplay.
   await expect(page.locator('script[type="module"][src="/js/app.js"]')).toHaveCount(0);
@@ -581,7 +584,7 @@ test('view mode, unit, faction and Vietnamese search survive detail reload and h
   expect(rootScroll).toBeGreaterThan(0);
   await tableRow.locator('.reference-table-name').click();
   await expect(page.locator('#team-detail-root')).toHaveAttribute('data-source-config-id',row.sourceConfigId);
-  await expect(page.locator('.detail-source')).toContainText(row.sourceConfigId);
+  await expect(page.locator('.detail-source')).toContainText(row.sourceCategoryNameVi || row.sourceCategoryId);
   await page.reload();
   await expect(page.locator('#team-detail-body')).toBeVisible();
 

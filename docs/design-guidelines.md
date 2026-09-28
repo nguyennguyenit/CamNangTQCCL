@@ -58,6 +58,8 @@ Danh mục đầy đủ ở `tokens.json` → `components`. Nhóm chính: thẻ 
 
 ## Accessibility contract
 
+- Cột chuyển nhanh là thanh icon cố định chỉ khi bề rộng ≥ 821px **và** chiều cao ≥ 580px; còn lại là nút tròn góc dưới phải, danh sách cuộn trong khoảng giữa header và nút. Trang nào có thanh cố định thì lề phải nội dung phải ≥ 48px.
+- Bảng chiến pháp Tra cứu chỉ là bảng 6 cột từ 1024px; dưới mốc đó xếp dọc có nhãn cột. Footer 821–1279px: khối giới thiệu một hàng riêng, năm cột link bên dưới, dải Game tiêu đề/link game/link cộng đồng mỗi phần một hàng. Footer ≤820px: nhóm link chảy hai cột báo (`columns: 2`, nhóm không bị cắt đôi); dải Game thu gọn mặc định sau nút mũi tên (cả đầu dải bấm được), mở ra là lưới hai cột điền theo cột, link cộng đồng ngăn bằng vạch ngang. Không JS thì dải luôn mở.
 Đã có và **phải giữ**: focus-visible token hoá (`--focus-width`, `--focus-ring`, `--focus-outline-offset`) trên mọi control kể cả input file phủ trong suốt; `aria-expanded` cho menu thả/menu mobile/panel lọc; hộp thoại hồ sơ trap focus, Escape đóng và trả focus về thẻ vừa bấm; live region cho tải/lỗi; `prefers-reduced-motion` tắt chuyển động; mọi control có tên truy cập được (kể cả ô chọn ảnh native — gắn `aria-labelledby` vào tiêu đề thẻ, không thêm chuỗi mới).
 
 - Giữ điều hướng bàn phím theo thứ tự DOM; Tab/Shift+Tab phải thấy vòng focus ở cả hai theme.
