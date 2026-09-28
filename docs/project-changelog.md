@@ -6,6 +6,10 @@
 
 - Thư báo góp ý không tới Gmail: Email Routing chưa bật cho `tqccl.com` nên `FEEDBACK_MAIL.send` lỗi (góp ý vẫn lưu D1). Bật Email Routing cho subdomain `mail.tqccl.com` (MX/SPF riêng, MX apex vẫn là forwarding Porkbun) và đổi `FEEDBACK_FROM` thành `gopy@mail.tqccl.com`; [community-worker.md](./community-worker.md) mô tả cách bật subdomain thay cho bật apex.
 
+### Changed
+
+- CI: `actions/checkout`, `setup-node`, `setup-python`, `upload-artifact` lên `@v7` (chạy Node 24; bản `@v4`/`@v5` chạy Node 20 đã deprecated) trong cả ba workflow. Runner ghim `ubuntu-24.04` thay `ubuntu-latest`, để đợt chuyển `ubuntu-latest` sang Ubuntu 26 (từ 2026-10-19) không đổi môi trường build/E2E; nâng Ubuntu là thay đổi chủ động sau này.
+
 ## 2026-09-28 (Theme tối rõ lớp, nút đổi giao diện theo chế độ)
 
 ### Changed

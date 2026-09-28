@@ -73,15 +73,15 @@ permissions:
 
 jobs:
   credential-free-release-gate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .node-version
           cache: npm
@@ -102,13 +102,13 @@ jobs:
         working-directory: mcp-worker
       - name: Upload Playwright failure traces
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-failures-${{ github.sha }}
           if-no-files-found: ignore
           retention-days: 7
           path: test-results/
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: tqccl-mcp-release-${{ github.sha }}
           if-no-files-found: error
@@ -119,14 +119,14 @@ jobs:
 
   production-release:
     if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.confirm_production == true
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     concurrency:
       group: tqccl-mcp-production-release
       cancel-in-progress: false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           ref: ${{ github.sha }}
@@ -143,10 +143,10 @@ jobs:
           if [[ "${{ inputs.bootstrap_first_release }}" == "true" ]]; then
             test "${{ inputs.rehearse_rollback }}" = "false"
           fi
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .node-version
           cache: npm
@@ -260,7 +260,7 @@ jobs:
             "${RUNNER_TEMP}/worker-release-evidence.json" \
             "test/fixtures/release-verification.json"
         working-directory: mcp-worker
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: tqccl-mcp-production-${{ github.sha }}

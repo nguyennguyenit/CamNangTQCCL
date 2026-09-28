@@ -19,19 +19,19 @@ concurrency:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       CLOUDFLARE_ACCOUNT_ID: e2ab96bb7fa53e5ad848286816d344a5
       # Astro đọc bài viết đã xuất bản lúc build (src/lib/blog-posts.ts).
       COMMUNITY_API_ORIGIN: https://tqccl-community.nguyennlt-ncc.workers.dev
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: main
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .node-version
           cache: npm
