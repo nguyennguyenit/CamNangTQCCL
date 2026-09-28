@@ -265,6 +265,8 @@
   --shadow-menu: 0 24px 60px rgba(0, 0, 0, 0.18);
   --shadow-seal: inset 0 0 0 1px rgba(30, 27, 22, 0.12);
   --shadow-focus: 0 0 0 3px var(--accent-soft);
+  --shadow-header-edge: none;
+  --shadow-footer-edge: none;
   --focus-width: 2px;
   --focus-outline-offset: 2px;
   --border-hair: 1px;
@@ -292,41 +294,42 @@
 }
 
 :root[data-theme="dark"] {
-  --bg: #16140F;
-  --panel: #201D18;
-  --panel-2: #2A2620;
-  --panel-3: #2A2620;
+  --bg: #0F0E0C;
+  --panel: #28251F;
+  --panel-2: #34302A;
+  --panel-3: #34302A;
   --ink: #EDE6D8;
-  --ink-2: #CFC6B6;
-  --muted: #A99F8E;
-  --line: #3A352D;
-  --line-2: #2E2A24;
-  --accent: #E3646A;
-  --accent-soft: #3A2023;
-  --accent-ink: #FF858B;
-  --band: #0F0E0B;
+  --ink-2: #D8CFBF;
+  --muted: #B5AB9A;
+  --line: #524B41;
+  --line-2: #3E3932;
+  --accent: #F07A80;
+  --accent-soft: #512328;
+  --accent-ink: #FFA3A8;
+  --band: #1A1814;
   --band-ink: #EDE6D8;
   --select: #EDE6D8;
-  --select-ink: #16140F;
+  --select-ink: #0F0E0C;
   --select-ink-2: #3A352D;
   --select-muted: #5F5A50;
   --select-hover: #CFC6B6;
-  --focus-ring: #E36A6F;
+  --focus-ring: #F2868B;
   --good: #5FCE95;
   --good-bg: #1C3328;
-  --avoid: #FF858B;
-  --avoid-bg: #362325;
+  --avoid: #FFA3A8;
+  --avoid-bg: #4D262A;
   --ky: #6AA6FF;
   --cung: #5FCE95;
   --thuong: #E0555D;
   --khien: #D6B85A;
   --khien-ink: #D6B85A;
-  --on-fill: #16140F;
+  --on-fill: #0F0E0C;
+  --footer-bg: #1A1814;
   --f-nguy: #4F74D6;
   --f-thuc: #5FCE95;
   --f-ngo: #E0555D;
   --f-quan: #E0B94E;
-  --f-honhop: #A884E0;
+  --f-honhop: #AE8BE3;
   --f-nguy-strong: #3C5CB8;
   --f-nguy-select: #1F3A93;
   --f-thuc-select: #1F7A4D;
@@ -334,6 +337,8 @@
   --f-quan-select: #8A6D1F;
   --f-honhop-select: #6B45A0;
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --shadow-header-edge: inset 0 -1px 0 var(--line);
+  --shadow-footer-edge: inset 0 1px 0 var(--line);
   --focus-outline-offset: 3px;
 }
 
@@ -1035,6 +1040,8 @@ a.lookup-more:hover {
   padding-inline: var(--space-48);
   background-color: var(--band);
   color: var(--band-ink);
+  /* Theme tối: vạch mép dưới tách header khỏi nền trang; theme sáng `none`. */
+  box-shadow: var(--shadow-header-edge);
 }
 
 .site-header-landing {
@@ -1146,6 +1153,12 @@ a.lookup-more:hover {
   color: var(--band-ink);
   cursor: pointer;
 }
+
+/* Nút đổi giao diện: icon nói theme đang bật — sáng hiện mặt trăng, tối hiện mặt trời. Chọn bằng CSS theo
+   `html[data-theme]` (đặt trước stylesheet) nên icon đúng ngay lần vẽ đầu, không chờ JS. */
+.theme-toggle .theme-icon-sun,
+:root[data-theme="dark"] .theme-toggle .theme-icon-moon { display: none; }
+:root[data-theme="dark"] .theme-toggle .theme-icon-sun { display: block; }
 
 .site-menu-toggle {
   display: none;
@@ -1869,6 +1882,9 @@ a.lookup-more:hover {
     padding: var(--space-6);
     border-right: var(--border-hair) solid var(--band-line);
     border-radius: var(--radius-14);
+    /* Danh sách mở lên trên: không vượt qua header dính (64px) ở màn thấp — phần dư cuộn trong danh sách. */
+    max-height: calc(100dvh - var(--space-64) - var(--space-16) - var(--control-52) - var(--space-10) - var(--space-8));
+    overflow-y: auto;
   }
 
   .quick-nav-item {
@@ -1882,9 +1898,6 @@ a.lookup-more:hover {
 
   .quick-nav-link {
     justify-content: flex-start;
-    /* Danh sách mở lên trên: không vượt qua header dính (64px) ở màn thấp — phần dư cuộn trong danh sách. */
-    max-height: calc(100dvh - var(--space-64) - var(--space-16) - var(--control-52) - var(--space-10) - var(--space-8));
-    overflow-y: auto;
     gap: var(--space-10);
     width: auto;
     height: auto;
@@ -1913,30 +1926,17 @@ a.lookup-more:hover {
   padding: var(--space-64) var(--space-64) var(--space-28);
   background-color: var(--footer-bg);
   color: var(--band-link);
+  /* Theme tối: vạch mép trên tách footer khỏi nội dung phía trên; theme sáng `none`. */
+  box-shadow: var(--shadow-footer-edge);
 }
 
+/* Cột giới thiệu không co dưới bề rộng khối thương hiệu (ấn 44 + mark 238px); với `minmax(0, …)` khối tràn đè cột Đội hình. */
 .footer-grid {
   display: grid;
   grid-template-columns: minmax(min-content, 2fr) repeat(5, minmax(0, 1fr));
   gap: var(--space-40);
 }
 
-.footer-about {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-16);
-}
-
-.footer-brand {
-  display: flex;
-  align-items: center;
-/* Cột giới thiệu không co dưới bề rộng khối thương hiệu (ấn 44 + mark 238px); với `minmax(0, …)` khối tràn đè cột Đội hình. */
-  gap: var(--space-12);
-  color: var(--band-link);
-  text-decoration: none;
-}
-
-.footer-title {
 /* 821–1279px (header ☰): sáu cột không đủ chỗ cho khối thương hiệu — giới thiệu chiếm cả hàng, năm cột link xuống dưới. */
 @media (min-width: 821px) and (max-width: 1279px) {
   .footer-grid {
@@ -1963,6 +1963,21 @@ a.lookup-more:hover {
   }
 }
 
+.footer-about {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  color: var(--band-link);
+  text-decoration: none;
+}
+
+.footer-title {
   font: var(--type-list-title);
 }
 
@@ -2084,6 +2099,18 @@ a.lookup-more:hover {
   flex: 0 0 auto;
 }
 
+/* Khối đầu dải và khối link chỉ để thu gọn ở mobile: desktop coi như không có (tiêu đề, link, vạch vẫn là mục flex
+   của `.footer-game`), bỏ qua `hidden` do js/site-chrome.js đặt và ẩn nút thu gọn. */
+.footer-game-head,
+.footer-game-links,
+.footer-game-links[hidden] {
+  display: contents;
+}
+
+.footer-game-toggle {
+  display: none;
+}
+
 .footer-game-list {
   flex-direction: row;
   flex-wrap: wrap;
@@ -2099,18 +2126,6 @@ a.lookup-more:hover {
 
 .footer-bottom {
   display: flex;
-/* Khối đầu dải và khối link chỉ để thu gọn ở mobile: desktop coi như không có (tiêu đề, link, vạch vẫn là mục flex
-   của `.footer-game`), bỏ qua `hidden` do js/site-chrome.js đặt và ẩn nút thu gọn. */
-.footer-game-head,
-.footer-game-links,
-.footer-game-links[hidden] {
-  display: contents;
-}
-
-.footer-game-toggle {
-  display: none;
-}
-
   align-items: center;
   justify-content: space-between;
   gap: var(--space-24);
@@ -2225,6 +2240,8 @@ a.lookup-more:hover {
     padding: var(--space-36) var(--space-16) var(--space-24);
   }
 
+  /* Cột link chảy theo hai cột báo (Đội hình + Tra cứu | Công cụ + Cộng đồng + Về cẩm nang) thay vì lưới
+     hai cột theo hàng: nhóm ngắn không để lại khoảng trống lớn cạnh nhóm dài, nhóm lẻ không đứng một mình. */
   .footer-grid {
     display: block;
     columns: 2;
@@ -2247,8 +2264,6 @@ a.lookup-more:hover {
 
   .footer-title {
     font: var(--type-brand);
-  /* Cột link chảy theo hai cột báo (Đội hình + Tra cứu | Công cụ + Cộng đồng + Về cẩm nang) thay vì lưới
-     hai cột theo hàng: nhóm ngắn không để lại khoảng trống lớn cạnh nhóm dài, nhóm lẻ không đứng một mình. */
   }
 
   /* Vùng bấm link footer ≥ 44px (contract §11.4 thay 40px của artboard). */
@@ -2264,6 +2279,7 @@ a.lookup-more:hover {
     padding: var(--space-18) 0;
   }
 
+  /* Vạch ngăn nằm ngang, tách link nhà phát hành với link cộng đồng. */
   .footer-game-divider {
     align-self: stretch;
     width: auto;
@@ -2286,7 +2302,6 @@ a.lookup-more:hover {
     grid-column: 1;
   }
 
-  /* Vạch ngăn nằm ngang, tách link nhà phát hành với link cộng đồng. */
   .footer-game-toggle:not([hidden]) {
     display: inline-flex;
     grid-column: 2;
@@ -3245,13 +3260,19 @@ a.lookup-more:hover {
     gap: var(--space-12);
   }
 
+  /* Cụm tải trải hết cột như ô chữ phía trên (lưới đặt `justify-self: start` nên phải kéo lại), QR canh trái cùng nút. */
   .landing-download-panel {
     flex-direction: column;
+    justify-self: stretch;
     gap: var(--space-10);
     padding: 0;
     width: auto;
     border: 0;
     background-color: transparent;
+  }
+
+  .landing-qr {
+    align-items: flex-start;
   }
 
   .landing-store,
@@ -3260,34 +3281,35 @@ a.lookup-more:hover {
     width: 100%;
   }
 
-  /* Cụm tải trải hết cột như ô chữ phía trên (lưới đặt `justify-self: start` nên phải kéo lại), QR canh trái cùng nút. */
+  /* Thẻ bản máy tính thành hàng như nút cửa hàng: nội dung canh trái, mũi tên ở mép phải giữa hàng. */
   .landing-exe {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--space-12);
     aspect-ratio: auto;
-    justify-self: stretch;
+    padding: var(--space-14) var(--space-18);
   }
 
   .landing-exe-arrow {
     align-self: center;
     margin-left: auto;
   }
-  .landing-qr {
-    align-items: flex-start;
-  }
-
 
   /* CTA tối liền footer tối như desktop: không chừa dải nền trang ở giữa. */
   .landing-cta {
     gap: var(--space-18);
     padding: var(--space-36) var(--space-16);
   }
-  /* Thẻ bản máy tính thành hàng như nút cửa hàng: nội dung canh trái, mũi tên ở mép phải giữa hàng. */
 }
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: var(--space-12);
 
-    padding: var(--space-14) var(--space-18);
+/* Điện thoại: không thể quét QR trên chính màn hình đang xem — nút App Store / Google Play thay chỗ. Tablet vẫn giữ QR. */
+@media (max-width: 680px) {
+  .landing-qr {
+    display: none;
+  }
+}
+
 /* Dải số liệu chỉ còn 2 cột ở màn rất hẹp; số không tràn. */
 @media (max-width: 380px) {
   .landing-stat-list {
@@ -3303,13 +3325,6 @@ a.lookup-more:hover {
   min-height: var(--control-26);
   padding: 0 var(--space-9);
   border: var(--border-hair) solid var(--line);
-/* Điện thoại: không thể quét QR trên chính màn hình đang xem — nút App Store / Google Play thay chỗ. Tablet vẫn giữ QR. */
-@media (max-width: 680px) {
-  .landing-qr {
-    display: none;
-  }
-}
-
   border-radius: var(--radius-6);
   background: var(--panel-3);
   color: var(--ink-2);
@@ -4605,6 +4620,15 @@ body[data-page-section="team-khac"] .layout {
   }
 }
 
+/* 821–900px: danh sách đã về bố cục panel nhưng cột chuyển nhanh vẫn là thanh cố định 49px ở mép phải —
+   giữ lề ngang 48px như desktop để thanh không đè nút Bảng, ô mùa và điểm của thẻ. */
+@media (min-width: 821px) and (max-width: 900px) {
+  body[data-page-section="team-chuan"] .layout,
+  body[data-page-section="team-khac"] .layout {
+    padding-inline: var(--space-48);
+  }
+}
+
 /* ===== Trang chi tiết đội (Phase 6) ===== */
 /* Khung, panel điểm, thẻ tướng và ghi chú nguồn theo artboard TeamDetail.dc.html:36-117.
    Ba họ chi tiết (Đội chuẩn, Đội khác, Khai hoang) dùng chung khung; phần thiếu dữ liệu bị bỏ hẳn.
@@ -4620,15 +4644,6 @@ main.layout:has(> .detail-content) {
   flex-direction: column;
   gap: var(--space-36);
   max-width: none;
-/* 821–900px: danh sách đã về bố cục panel nhưng cột chuyển nhanh vẫn là thanh cố định 49px ở mép phải —
-   giữ lề ngang 48px như desktop để thanh không đè nút Bảng, ô mùa và điểm của thẻ. */
-@media (min-width: 821px) and (max-width: 900px) {
-  body[data-page-section="team-chuan"] .layout,
-  body[data-page-section="team-khac"] .layout {
-    padding-inline: var(--space-48);
-  }
-}
-
   margin-inline: 0;
 }
 
@@ -5288,6 +5303,13 @@ main.layout:has(> .detail-content) {
   width: var(--control-24);
 }
 
+/* Ấn "主"/"C" gọn trong ô 24px: padding badge gốc (9px) làm chữ Hán tràn 3px mỗi bên. */
+.kh-mark .badge {
+  justify-content: center;
+  min-width: var(--control-24);
+  padding-inline: var(--space-4);
+}
+
 .kh-stage .kh-label {
   flex: none;
   font: var(--type-field-caps);
@@ -5303,13 +5325,6 @@ main.layout:has(> .detail-content) {
 }
 
 .kh-arrow {
-/* Ấn "主"/"C" gọn trong ô 24px: padding badge gốc (9px) làm chữ Hán tràn 3px mỗi bên. */
-.kh-mark .badge {
-  justify-content: center;
-  min-width: var(--control-24);
-  padding-inline: var(--space-4);
-}
-
   line-height: var(--control-24);
   text-align: center;
 }
@@ -5737,6 +5752,8 @@ body[data-page-section="lookup"] .layout {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  /* Cột tên hẹp nhất (~110px ở 1024px): ngày/tỷ lệ dài phải xuống dòng thay vì bị cắt ngang. */
+  overflow-wrap: anywhere;
 }
 
 .lookup-quality {
@@ -5752,8 +5769,6 @@ body[data-page-section="lookup"] .layout {
   font: var(--type-badge);
 }
 
-  /* Cột tên hẹp nhất (~110px ở 1024px): ngày/tỷ lệ dài phải xuống dòng thay vì bị cắt ngang. */
-  overflow-wrap: anywhere;
 .lookup-table .lookup-table-rate {
   text-align: right;
   white-space: nowrap;
@@ -6477,21 +6492,6 @@ a.cam-nang-count .cam-nang-number {
   }
 }
 
-/* ===== Cùng Tồn + Khai hoang (Phase 8) ===== */
-/* Component: tokens.json `chon-nhom`, `o-tong-quan-cung-ton`, `the-cung-ton`, `the-khai-hoang`,
-   `thanh-diem` (bản thẻ), `luoi-cham-su` (Phase 8 sở hữu) và các component dùng lại `the`, `bang`,
-   `chip-loc`, `nhan-caps`, `khung-chi-tiet`.
-   Artboard Coexist.dc.html, CoexistMobile.dc.html, Khaihoang.dc.html, KhaihoangMobile.dc.html.
-   Vỏ trang mục theo artboard: 40/48/56 desktop, 24/16/32 mobile. */
-body[data-page-section="coexist"] .layout,
-body[data-page-section="khaihoang"] .layout {
-  padding: var(--space-40) var(--space-48) var(--space-56);
-}
-
-/* ---------- Cùng Tồn: đầu mục dùng chung `.reference-head` + ô chọn mùa của Đội chuẩn ---------- */
-.coexist-head .reference-season-field[hidden],
-.coexist-groups[hidden] {
-  display: none;
 /* 681–1023px: năm cột cố định (≈816px) vượt khung panel, cột tên co về 0 và bảng bị cắt — xếp dọc như mobile.
    Từ 1024px bảng giữ đủ cột theo artboard LookupTactics. */
 @media (max-width: 1023px) {
@@ -6565,6 +6565,21 @@ body[data-page-section="khaihoang"] .layout {
   }
 }
 
+/* ===== Cùng Tồn + Khai hoang (Phase 8) ===== */
+/* Component: tokens.json `chon-nhom`, `o-tong-quan-cung-ton`, `the-cung-ton`, `the-khai-hoang`,
+   `thanh-diem` (bản thẻ), `luoi-cham-su` (Phase 8 sở hữu) và các component dùng lại `the`, `bang`,
+   `chip-loc`, `nhan-caps`, `khung-chi-tiet`.
+   Artboard Coexist.dc.html, CoexistMobile.dc.html, Khaihoang.dc.html, KhaihoangMobile.dc.html.
+   Vỏ trang mục theo artboard: 40/48/56 desktop, 24/16/32 mobile. */
+body[data-page-section="coexist"] .layout,
+body[data-page-section="khaihoang"] .layout {
+  padding: var(--space-40) var(--space-48) var(--space-56);
+}
+
+/* ---------- Cùng Tồn: đầu mục dùng chung `.reference-head` + ô chọn mùa của Đội chuẩn ---------- */
+.coexist-head .reference-season-field[hidden],
+.coexist-groups[hidden] {
+  display: none;
 }
 
 /* ---------- Hàng chọn phiên bản Cùng tồn 1–5 (chip viên, vai trò chữ của `chip-loc`) ---------- */

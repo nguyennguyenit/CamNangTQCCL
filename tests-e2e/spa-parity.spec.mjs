@@ -862,11 +862,12 @@ test("menu mobile toàn màn hình khóa cuộn nền và trả focus về ☰",
     return before === window.scrollY;
   })).toBe(true);
 
-  // Nút sáng/tối trong đầu menu cùng một trạng thái với nút ở header.
-  const headerBefore = await page.locator("#theme-toggle").getAttribute("aria-pressed");
+  // Nút sáng/tối trong đầu menu cùng một bộ điều khiển với nút ở header: đổi theme và tên hành động của cả hai.
+  const themeBefore = await page.locator("html").getAttribute("data-theme");
   await page.locator("#theme-toggle-menu").click();
-  await expect(page.locator("#theme-toggle")).not.toHaveAttribute("aria-pressed", headerBefore);
-  expect(await page.locator("html").getAttribute("data-theme")).toBe(headerBefore === "true" ? "light" : "dark");
+  const themeAfter = themeBefore === "dark" ? "light" : "dark";
+  await expect(page.locator("html")).toHaveAttribute("data-theme", themeAfter);
+  await expect(page.locator("#theme-toggle")).toHaveAttribute("aria-label", THEME_ACTION.vi[themeAfter]);
 
   await page.keyboard.press("Escape");
   await expect(overlay).toBeHidden();
@@ -1248,19 +1249,49 @@ test("mục đang xem nổi bật: dòng menu mobile có aria-current và nút C
   expect(await toggleLook("cong-cu")).toBe(await toggleLook("game"));
 });
 
-test("nút giao diện giữ tên 'Giao diện tối', chỉ aria-pressed đổi theo trạng thái", async ({ page }) => {
-  await page.emulateMedia({ colorScheme: "light" });
+/** Tên nút đổi giao diện nói hành động sẽ xảy ra, theo theme đang bật (không dùng aria-pressed). */
+const THEME_ACTION = {
+  vi: { light: "Chuyển sang giao diện tối", dark: "Chuyển sang giao diện sáng" },
+  zh: { light: "切换到深色模式", dark: "切换到浅色模式" },
+};
+
+/** Icon đang hiện của một nút đổi giao diện: "moon" hoặc "sun" (icon kia bị ẩn bằng CSS theo `html[data-theme]`). */
+const visibleThemeIcons = (page, id) => page.locator(`${id} svg`).evaluateAll((icons) =>
+  icons.filter((icon) => getComputedStyle(icon).display !== "none").map((icon) => icon.dataset.themeIcon));
+
+for (const [locale, path] of [["vi", "/doi-chuan/"], ["zh", "/zh/doi-chuan/"]]) {
+  test(`nút giao diện (${locale}): theme sáng hiện mặt trăng, tối hiện mặt trời, tên nói hành động sẽ làm`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme: "light" });
+    await page.goto(path);
+    const expectToggles = async (theme) => {
+      await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
+      // Nút trong menu mobile nằm trong hộp thoại đang ẩn nên đọc nhãn thay cho tên truy cập.
+      await expect(page.locator("#theme-toggle")).toHaveAccessibleName(THEME_ACTION[locale][theme]);
+      for (const id of ["#theme-toggle", "#theme-toggle-menu"]) {
+        const toggle = page.locator(id);
+        await expect(toggle).toHaveAttribute("aria-label", THEME_ACTION[locale][theme]);
+        await expect(toggle).toHaveAttribute("title", THEME_ACTION[locale][theme]);
+        await expect(toggle).not.toHaveAttribute("aria-pressed", /.*/);
+        expect(await visibleThemeIcons(page, id), `${id} (${theme})`).toEqual([theme === "dark" ? "sun" : "moon"]);
+      }
+    };
+    await expectToggles("light");
+    await page.locator("#theme-toggle").click();
+    await expectToggles("dark");
+    await page.reload();
+    await expectToggles("dark");
+  });
+}
+
+test("icon nút giao diện theo theme mà không cần JS của trang (không nháy icon khi tải)", async ({ browser }) => {
+  // Chỉ script chặn nháy inline trong <head> chạy; mọi module JS bị chặn nên icon phải do CSS quyết định.
+  const context = await browser.newContext({ colorScheme: "dark" });
+  await context.route("**/js/**", (route) => route.abort());
+  const page = await context.newPage();
   await page.goto("/doi-chuan/");
-  // Nút trong menu mobile nằm trong hộp thoại đang ẩn nên đọc nhãn thay cho tên truy cập.
-  const expectToggles = async (pressed) => {
-    await expect(page.locator("#theme-toggle")).toHaveAccessibleName("Giao diện tối");
-    await expect(page.locator("#theme-toggle-menu")).toHaveAttribute("aria-label", "Giao diện tối");
-    for (const id of ["#theme-toggle", "#theme-toggle-menu"]) await expect(page.locator(id)).toHaveAttribute("aria-pressed", pressed);
-  };
-  await expectToggles("false");
-  await page.locator("#theme-toggle").click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-  await expectToggles("true");
+  expect(await visibleThemeIcons(page, "#theme-toggle")).toEqual(["sun"]);
+  await context.close();
 });
 
 test("không có JavaScript: 8 trang mục vẫn có h1 tên mục và lời nhắn cần JavaScript; có JavaScript chỉ một h1", async ({ browser, baseURL, page }) => {

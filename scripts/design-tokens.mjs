@@ -191,6 +191,54 @@ export async function readTokens() {
   return JSON.parse(await readFile(TOKENS_PATH, 'utf8'));
 }
 
+const HEX_COLOR = /^#([0-9a-f]{6})$/i;
+
+/** Tỉ lệ tương phản WCAG giữa hai mã hex 6 chữ số. */
+export function contrastRatio(first, second) {
+  const luminance = (hex) => {
+    const [r, g, b] = [0, 2, 4].map((at) => {
+      const channel = Number.parseInt(hex.slice(1 + at, 3 + at), 16) / 255;
+      return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const [light, dark] = [luminance(first), luminance(second)].sort((a, b) => b - a);
+  return (light + 0.05) / (dark + 0.05);
+}
+
+/**
+ * Ngưỡng tương phản khai ở `meta.contrast` (`{theme, fg, bg, min, role}`): mỗi cặp custom property được giải
+ * theo theme (khối tối đè khối sáng, `var(--x)` được lần theo) rồi so với `min`. Cặp nào không giải ra mã hex
+ * cũng là lỗi, để ngưỡng không lặng lẽ biến mất khi đổi tên token.
+ */
+export function contrastProblems(tokens) {
+  const blocks = expectedTokenBlocks(tokens);
+  const resolved = {
+    light: new Map(blocks.light),
+    dark: new Map([...blocks.light, ...blocks.dark]),
+  };
+  const colorOf = (theme, name) => {
+    let value = resolved[theme].get(name);
+    for (let hops = 0; typeof value === 'string' && value.startsWith('var(') && hops < 8; hops += 1) {
+      value = resolved[theme].get(value.slice(4, -1).trim());
+    }
+    return HEX_COLOR.test(value ?? '') ? value : null;
+  };
+  const problems = [];
+  for (const { theme, fg, bg, min, role } of tokens.meta?.contrast ?? []) {
+    const [fgColor, bgColor] = [colorOf(theme, fg), colorOf(theme, bg)];
+    if (!fgColor || !bgColor) {
+      problems.push(`tương phản ${theme} ${fg} ↔ ${bg} (${role}): không giải được thành mã hex`);
+      continue;
+    }
+    const ratio = contrastRatio(fgColor, bgColor);
+    if (ratio < min) {
+      problems.push(`tương phản ${theme} ${fg} ${fgColor} ↔ ${bg} ${bgColor} (${role}): ${ratio.toFixed(2)}:1 < ${min}:1`);
+    }
+  }
+  return problems;
+}
+
 /** Mọi vấn đề của cây hiện tại; rỗng nghĩa là `--check` pass. */
 export async function checkDesignTokens(options = {}) {
   const tokens = options.tokens ?? await readTokens();
@@ -215,6 +263,7 @@ export async function checkDesignTokens(options = {}) {
   };
   compare(':root', light, expected.light);
   compare(':root[data-theme="dark"]', dark, expected.dark);
+  problems.push(...contrastProblems(tokens));
 
   // `@font-face` là descriptor của chính file font (font-weight/unicode-range), không phải giá trị thiết kế.
   const scannable = (rules) => rules.filter(({ selector }) => !selector.startsWith('@'));
@@ -424,7 +473,7 @@ if (invoked) {
       process.exit(1);
     }
     const selectors = [...legacyRaw.bySelector].sort((a, b) => b[1] - a[1]);
-    console.log(`ok   :root khớp tokens.json; 0 mã màu ngoài khối token; 0 giá trị thô ngoài khối legacy.`);
+    console.log(`ok   :root khớp tokens.json; đạt ngưỡng tương phản meta.contrast; 0 mã màu ngoài khối token; 0 giá trị thô ngoài khối legacy.`);
     console.log(`     mốc legacy: ${legacyRaw.total} giá trị thô trên ${selectors.length} selector (ceiling đã ghi trong file).`);
     for (const [selector, count] of selectors.slice(0, 20)) console.log(`     ${String(count).padStart(4)}  ${selector}`);
   } else {

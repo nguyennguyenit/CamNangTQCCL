@@ -4,6 +4,7 @@ import { teamDetailCatalog } from '../lib/team-detail-routes';
 import { buildDateVi } from '../lib/build-date';
 import SealMark from '../components/SealMark.astro';
 import BrandName from '../components/BrandName.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
 import {
   COMMUNITY_LINKS,
   STATS_HREF,
@@ -155,9 +156,9 @@ const UPDATED_LABEL = t('Dữ liệu cập nhật', '数据更新于');
 const SKIP_LINK_LABEL = t('Bỏ qua điều hướng', '跳过导航');
 const NEW_TAB_LABEL = t('(mở tab mới)', '(在新标签页打开)');
 const SCOPE_GROUP_LABEL = t('Phạm vi đội hình', '阵容范围');
-/** Tên cố định của nút đổi giao diện; trạng thái bật/tắt nằm ở `aria-pressed` (mẫu nút bật/tắt WAI-ARIA). */
-const THEME_TOGGLE_LABEL = t('Giao diện tối', '深色模式');
-const THEME_TOGGLE_TITLE = t('Đổi giao diện sáng/tối', '切换明暗主题');
+/** Nút đổi giao diện: tên nói hành động sẽ xảy ra (theo theme đang bật), không dùng `aria-pressed`. */
+const THEME_TO_DARK_LABEL = t('Chuyển sang giao diện tối', '切换到深色模式');
+const THEME_TO_LIGHT_LABEL = t('Chuyển sang giao diện sáng', '切换到浅色模式');
 /** Nút chuyển ngôn ngữ: nhãn viết bằng ngôn ngữ đích, tên truy cập nói rõ hành động bằng ngôn ngữ trang. */
 const SWITCH_LABEL = LOCALE_LABEL[switchLocale];
 const SWITCH_ARIA = t('Xem bản tiếng Trung (中文)', '切换到越南语版本 (Tiếng Việt)');
@@ -469,9 +470,7 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
         <div class="header-actions">
           <!-- Chuyển ngôn ngữ: link thật tới bản gương của trang; js/site-chrome.js giữ lại query/hash hiện tại. -->
           <a class="lang-switch" href={counterpartPath} hreflang={HREFLANG[switchLocale]} lang={HREFLANG[switchLocale]} aria-label={SWITCH_ARIA} data-lang-switch>{SWITCH_LABEL}</a>
-          <button id="theme-toggle" class="icon-btn theme-toggle" type="button" data-theme-toggle title={THEME_TOGGLE_TITLE} aria-label={THEME_TOGGLE_LABEL} aria-pressed="false">
-            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
-          </button>
+          <ThemeToggle id="theme-toggle" toDark={THEME_TO_DARK_LABEL} toLight={THEME_TO_LIGHT_LABEL} />
           <!-- Đăng nhập cộng đồng: js/community-auth.js dựng nút Đăng nhập hoặc ảnh đại diện + menu tài khoản. -->
           <div id="community-auth" class="cm-auth"></div>
           <script is:inline type="module" src="/js/community-auth.js"></script>
@@ -513,9 +512,7 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
         </button>
         <span class="seal seal-menu" aria-hidden="true"><SealMark /></span>
         <span class="site-menu-title"><BrandName locale={locale} title={LOGO_TITLE} /></span>
-        <button id="theme-toggle-menu" class="icon-btn theme-toggle" type="button" data-theme-toggle title={THEME_TOGGLE_TITLE} aria-label={THEME_TOGGLE_LABEL} aria-pressed="false">
-          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
-        </button>
+        <ThemeToggle id="theme-toggle-menu" toDark={THEME_TO_DARK_LABEL} toLight={THEME_TO_LIGHT_LABEL} />
       </div>
       <nav class="site-menu-nav" aria-label={MENU_LABEL}>
         {mobileGroups.map((group, groupIndex) => {
@@ -609,11 +606,11 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
                 <li><a class="footer-link" href={entry.href}>{entry.label}</a></li>
               ))}
             </ul>
-      <!-- ≤820px js/site-chrome.js thu gọn link game sau nút mũi tên (tên truy cập lấy từ tiêu đề dải); không JS hoặc
-           màn rộng thì luôn hiện đủ. Khối bọc là `display: contents` ở desktop nên dải vẫn một hàng như cũ. -->
           </nav>
         ))}
       </div>
+      <!-- ≤820px js/site-chrome.js thu gọn link game sau nút mũi tên (tên truy cập lấy từ tiêu đề dải); không JS hoặc
+           màn rộng thì luôn hiện đủ. Khối bọc là `display: contents` ở desktop nên dải vẫn một hàng như cũ. -->
       <nav class="footer-game" aria-label={GAME_STRIP_TITLE}>
         <div class="footer-game-head">
           <h2 id="footer-game-title" class="footer-game-title">{GAME_STRIP_TITLE}</h2>

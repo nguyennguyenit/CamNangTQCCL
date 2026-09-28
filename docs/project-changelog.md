@@ -1,5 +1,19 @@
 # Project Changelog
 
+## 2026-09-28 (Theme tối rõ lớp, nút đổi giao diện theo chế độ)
+
+### Changed
+
+- Nút đổi giao diện (header + menu mobile, `src/components/ThemeToggle.astro`): theme sáng hiện mặt trăng, theme tối hiện mặt trời (CSS chọn theo `html[data-theme]`, đúng ngay lần vẽ đầu). Tên truy cập + tooltip nói hành động: "Chuyển sang giao diện tối/sáng" (zh "切换到深色模式/切换到浅色模式"); bỏ tên cố định "Giao diện tối" và `aria-pressed`.
+- Theme tối giữ tông mực/son ấm nhưng tách lớp: nền `#16140F` → `#0F0E0C`, thẻ `#201D18` → `#28251F` (1,10 → 1,26:1), viền `#3A352D` → `#524B41` (1,51 → 2,24:1), thẻ đậm/hover `#34302A`, chữ phụ/mờ sáng hơn, son `#F07A80` + son nhạt `#512328` + chữ pill `#FFA3A8` (pill nổi hơn, chữ son trên son nhạt 4,81:1 — trước 4,46:1), vòng focus `#F2868B`. Header và footer tối dùng tông dải `#1A1814` cộng vạch mép `--line` (token `--shadow-header-edge`/`--shadow-footer-edge`, inset nên không đổi bố cục); footer trước đây `#141210` dùng chung hai theme chỉ 1,02:1 với nền tối. `--f-honhop` tối `#A884E0` → `#AE8BE3` để chữ phe trên thẻ đậm giữ 4,74:1. Theme sáng không đổi.
+- `tokens.json` có `meta.contrast` (22 cặp ngưỡng theme tối); `node scripts/design-tokens.mjs --check` báo cặp dưới ngưỡng hoặc không giải được.
+- Bản dịch: thay `ui:layout/theme-toggle` bằng `ui:layout/theme-toggle-to-dark`/`-to-light` (`authored-vi`); policy `site-vi-260928-theme-toggle`, baseline 56589 location, publish generation `6ded1637…`, re-pin `pipeline/team-route-handles.json`.
+
+### Tests
+
+- `tests-js/design-tokens.test.mjs`: bộ kiểm tương phản báo cặp dưới ngưỡng/tên token sai, và token đang commit đạt mọi ngưỡng.
+- E2E: nút đổi giao diện (vi/zh) đổi icon + tên theo theme và giữ sau tải lại; icon đúng khi JS trang bị chặn; theme tối đo thẻ/sidebar/viền/mép header/footer trên DOM thật, theme sáng không có mép. Bỏ test ghim tên "Giao diện tối".
+
 ## 2026-09-28 (Sửa lỗi responsive)
 
 ### Fixed

@@ -160,3 +160,45 @@ test('link "website chính thức" ở #tai-game khi hover vẫn đọc được
     expect(contrast(measured.ink, measured.bg), `${theme}: chữ link khi hover`).toBeGreaterThanOrEqual(MIN_TEXT);
   }
 });
+
+// Theme tối: thẻ, sidebar, header và footer phải tách khỏi nền trang (trước đây 1,10 / 1,05 / 1,02:1 nên dính vào nhau).
+// Header/footer tối hơn nền không thể đạt ngưỡng khi nền đã gần đen, nên chúng tách bằng một đường mép (box-shadow
+// không đổi bố cục); theme sáng không có đường mép đó (giữ nguyên pixel).
+const MIN_LAYER = 1.25;   // nền thẻ ↔ nền trang
+const MIN_EDGE = 1.8;     // viền thẻ/sidebar, mép header/footer ↔ nền trang
+
+const shadowColor = (value) => (String(value).match(/rgba?\([^)]*\)/) ?? [null])[0];
+
+test('theme tối: thẻ, sidebar, header và footer tách lớp khỏi nền trang; theme sáng không thêm mép', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  for (const theme of ['dark', 'light']) {
+    await page.addInitScript((value) => { try { localStorage.setItem('theme', value); } catch { /* storage bị chặn */ } }, theme);
+    await page.goto('/doi-chuan/');
+    await expect(page.locator('#section-team-chuan .team-card').first()).toBeVisible();
+    const measured = await page.evaluate(() => {
+      const style = (selector) => getComputedStyle(document.querySelector(selector));
+      const card = style('#section-team-chuan .team-card');
+      const sidebar = style('#section-team-chuan .reference-filters');
+      return {
+        page: getComputedStyle(document.body).backgroundColor,
+        cardBg: card.backgroundColor,
+        cardBorder: card.borderTopColor,
+        sidebarBg: sidebar.backgroundColor,
+        sidebarBorder: sidebar.borderTopColor,
+        headerShadow: style('.site-header').boxShadow,
+        footerShadow: style('.site-footer').boxShadow,
+      };
+    });
+    if (theme === 'light') {
+      expect(measured.headerShadow, 'light: header không có mép').toBe('none');
+      expect(measured.footerShadow, 'light: footer không có mép').toBe('none');
+      continue;
+    }
+    expect(contrast(measured.cardBg, measured.page), 'dark: nền thẻ ↔ nền trang').toBeGreaterThanOrEqual(MIN_LAYER);
+    expect(contrast(measured.sidebarBg, measured.page), 'dark: nền sidebar ↔ nền trang').toBeGreaterThanOrEqual(MIN_LAYER);
+    expect(contrast(measured.cardBorder, measured.page), 'dark: viền thẻ ↔ nền trang').toBeGreaterThanOrEqual(MIN_EDGE);
+    expect(contrast(measured.sidebarBorder, measured.page), 'dark: viền sidebar ↔ nền trang').toBeGreaterThanOrEqual(MIN_EDGE);
+    expect(contrast(shadowColor(measured.headerShadow), measured.page), 'dark: mép dưới header ↔ nền trang').toBeGreaterThanOrEqual(MIN_EDGE);
+    expect(contrast(shadowColor(measured.footerShadow), measured.page), 'dark: mép trên footer ↔ nền trang').toBeGreaterThanOrEqual(MIN_EDGE);
+  }
+});

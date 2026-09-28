@@ -40,9 +40,12 @@ export function initSiteChrome({documentTarget = document, windowTarget = global
   const toggles = [...documentTarget.querySelectorAll('[data-theme-toggle]')];
   const applyTheme = (theme) => {
     root.dataset.theme = theme;
-    const dark = theme === 'dark';
-    // Tên nút cố định ("Giao diện tối" ở layout); trạng thái chỉ nằm ở `aria-pressed`.
-    for (const toggle of toggles) toggle.setAttribute('aria-pressed', String(dark));
+    // Icon do CSS chọn theo `html[data-theme]`; tên truy cập + tooltip nói hành động sẽ xảy ra khi bấm.
+    for (const toggle of toggles) {
+      const label = theme === 'dark' ? toggle.dataset.labelToLight : toggle.dataset.labelToDark;
+      toggle.setAttribute('aria-label', label);
+      toggle.setAttribute('title', label);
+    }
   };
   const syncTheme = () => applyTheme(readStoredTheme() || systemTheme());
   syncTheme();
@@ -62,14 +65,11 @@ export function initSiteChrome({documentTarget = document, windowTarget = global
   });
 
   syncLanguageSwitch({documentTarget, windowTarget});
+  initFooterGameDisclosure({documentTarget, windowTarget});
   const nav = createSiteNav({documentTarget, windowTarget});
   return {nav, applyTheme, syncTheme};
 }
-  initFooterGameDisclosure({documentTarget, windowTarget});
 
-/**
- * Nút chuyển ngôn ngữ (`[data-lang-switch]`, header + menu mobile) là link thật tới bản gương của trang.
- * Bộ lọc, biến thể và deep-link nằm ở query/hash và đổi tại chỗ (history API), nên href được ghép lại với
 /** Mốc footer mobile trong css/styles.css: từ 821px dải Game luôn hiện đủ link và nút thu gọn bị ẩn. */
 const FOOTER_COMPACT_QUERY = '(max-width: 820px)';
 
@@ -93,6 +93,9 @@ export function initFooterGameDisclosure({documentTarget = document, windowTarge
   return {toggle, panel, setOpen};
 }
 
+/**
+ * Nút chuyển ngôn ngữ (`[data-lang-switch]`, header + menu mobile) là link thật tới bản gương của trang.
+ * Bộ lọc, biến thể và deep-link nằm ở query/hash và đổi tại chỗ (history API), nên href được ghép lại với
  * query/hash của lúc bấm; href gốc do layout phát được giữ ở `data-lang-base` để không cộng dồn.
  */
 export function syncLanguageSwitch({documentTarget = document, windowTarget = globalThis} = {}) {

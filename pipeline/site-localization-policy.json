@@ -12,8 +12,8 @@
     "notes": {
       "approvedDisplaySlots": 11,
       "blocks": 1967,
-      "concreteInventorySha256": "e679522deb3d4bd06d4f97e785bdbad0938db055f209eabfdb80dfff7a62e052",
-      "concreteLocationCount": 56588,
+      "concreteInventorySha256": "c035397153909aa36378cf05adf11ca677f63721ae38f119681b7b9cbceb4325",
+      "concreteLocationCount": 56589,
       "hanBlocks": 1928,
       "lookupReviewObligations": 3503,
       "siteLedgerObligations": 2075,
@@ -75,7 +75,7 @@
       "hột": "red-copy count"
     }
   },
-  "policyVersion": "site-vi-260928-public-source-strip",
+  "policyVersion": "site-vi-260928-theme-toggle",
   "routeFamilies": [
     {
       "entrypoints": [
@@ -766,11 +766,11 @@
     "js/recommended-reference-state.js": "9bc324aa0864fcb2ee6dcea7ede4d79b4483cfa30e45d5342533d8dde8d30b4a",
     "js/recruit-tracker-store.js": "92d7201737ce3f0609494bbf0a289ae8633c4af4899840cb69ac1c28064445a7",
     "js/recruit-tracker.js": "f59affada9a145332e8a13ab1008650dd129b22fc28e1df468688122a26e815c",
-    "js/render.js": "a094537053e67bc1dcbd7d27900654888314d092767862046aae8b7b25c50836",
+    "js/render.js": "b7f0a92606e7096eb3eeb229afd09f206ab7679ff70467930053764ff708b9f5",
     "js/roster-recommend-ui.js": "05c94f7c612bf2e1afebfa6e10ffd02025405479abb409131e6514e7293c7522",
     "js/roster-scan-map.js": "fbdd016418bd09408ef2c4a5b87c8d923f1eb945446809d0a719cb16d098f0c5",
     "js/roster-scan-state.js": "f8310fa4a646aa124724e94ba9c04637d6602e48f9ff7969fe0ecdb42cf36454",
-    "js/site-chrome.js": "cea2dd593c2f0c7788b67cef1c2d318b81b4394dbe049f1dbfa6d2230d1fcc97",
+    "js/site-chrome.js": "067886ae9ea13e635cf3fbca1d0de2a149eef80d79bf758aa1839b3fbf695c88",
     "js/site-nav.js": "4fe3f040f599dbd15b4eb2d734d7ce82281c887a399a4f7691769f4705c358aa",
     "js/team-detail-navigation.js": "333253e74cd7c5a810fd53794b057704d241ab311b7334d84492af80cc428986",
     "js/team-detail.js": "9be97906941c5dafd73d7897a89edd96bd97be88c15446079ed68d0e943b8774",
@@ -787,7 +787,7 @@
     "src/components/pages/LegacyDetail.astro": "efa4e96fe1ddd5fc1585752268c1680193db75cfc24b390c8a0ea87d9ae15174",
     "src/components/pages/RecommendedDetail.astro": "aaf7de19925491ff2357e1dc2bb91834353fe81c7eac7ad29448fc010347e43e",
     "src/components/pages/SectionPage.astro": "c7e97882f29b766e14831231b0bc17d14ecc77228c84b0d2a0c46b9a78b8e02a",
-    "src/layouts/SiteLayout.astro": "0f9636832ec8fcf2d51135a8297dc6aabc1c9889c1880be962c203215d498da6",
+    "src/layouts/SiteLayout.astro": "a69295af0afbe2b52cc0eacf3f109ec3dd8345bb2f7d24516930565152664712",
     "src/lib/build-date.ts": "2c46966da5db7675f1f092f79a540dd345125211dea16238fa779bea58c9773f",
     "src/lib/landing-stats.ts": "fd1db57a03189c7071bddf7a73862869e40d7dde71448c61e63993750f0f6ff4",
     "src/lib/official-links.ts": "af85bc97844e2dbf44449c4bf333811a622500d037514fbb6f04445037707eca",

@@ -48,7 +48,7 @@ Lần sau canvas đổi: chụp lại theo mục dưới và lặp lại một t
 Quy tắc:
 
 - **Thêm token trước, dùng sau.** Giá trị mới phải có mục trong `tokens.json` kèm `source`, rồi CSS mới dùng `var(--…)`; không viết px/hex/`rgba()` trực tiếp. `--check` chặn giá trị thô và mã màu ngoài khối token.
-- **Hai theme.** Token chỉ khai ở `color.light`/nhóm dùng chung = áp cho cả hai theme; chỉ khai `dark` khi bảng tối StyleGuide có giá trị tương ứng (ghi ở `source`/`note`).
+- **Hai theme.** Token chỉ khai ở `color.light`/nhóm dùng chung = áp cho cả hai theme; chỉ khai `dark` khi bảng tối StyleGuide có giá trị tương ứng, hoặc khi ngưỡng tách lớp/tương phản của theme tối (`meta.contrast`) đòi giá trị khác — ghi lý do và tỉ lệ đo được ở `source`/`note`. Theme tối 2026-09-28 đã rời `renderVals dark` ở nền/thẻ/viền/son để đạt các ngưỡng đó.
 - **Danh mục trước CSS.** Component mới phải có mục trong `components` trước khi viết CSS (thiếu thì bổ sung danh mục, không viết CSS riêng cho một trang).
 - **Khối `legacy`** trong `css/styles.css` là CSS cũ đang thu dần: mỗi phase xóa phần mình viết lại khỏi khối và hạ `ceiling` trong comment `/* legacy:start ceiling=N */` xuống đúng số còn lại (không phase nào được tăng); Phase 10 đưa về 0.
 - **Giá trị artboard không làm tròn**; chỗ contract thắng artboard (brainstorm §11.4) ghi ở `note` của token (ví dụ vùng bấm 40px → 44px).
