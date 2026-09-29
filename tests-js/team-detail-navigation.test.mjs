@@ -180,8 +180,10 @@ test('return origin accepts section URLs, normalizes old root state, and rejects
   assert.equal(safeReturnUrl('/cung-ton/?group=2&q=x&tier=T0&scenario=a'),'/cung-ton/?group=2&scenario=a');
   assert.equal(safeReturnUrl('/cung-ton/?group=3&scenario=binh-dien-xuan-thu&ruleset=r&config=c&sort=tier&stars=5'),'/cung-ton/?group=3&scenario=binh-dien-xuan-thu&ruleset=r&config=c');
   assert.equal(safeReturnUrl('/cung-ton/?group=a&detail=x'),'/cung-ton/?group=a');
-  // Hai công cụ không có trạng thái URL nào để quay lại.
+  // Soi đội quay về đúng mùa + đội đã xác nhận (dựng lại editor và diff); khóa khác bị bỏ.
   assert.equal(safeReturnUrl('/soi-doi-tu-anh/?q=x&faction=Thục'),'/soi-doi-tu-anh/');
+  assert.equal(safeReturnUrl('/soi-doi-tu-anh/?season=pk-s28&doi=v1.a___.b___.c___&q=x'),'/soi-doi-tu-anh/?season=pk-s28&doi=v1.a___.b___.c___');
+  // Gợi ý đội và Chiêu mộ không có trạng thái URL nào để quay lại.
   assert.equal(safeReturnUrl('/goi-y-doi-tu-kho/?q=x&tier=T0'),'/goi-y-doi-tu-kho/');
   assert.equal(safeReturnUrl('/theo-doi-chieu-mo/?q=x'),'/theo-doi-chieu-mo/');
   // Absolute URLs are accepted only for the page's own origin.

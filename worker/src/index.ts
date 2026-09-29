@@ -1,14 +1,20 @@
 // Worker entry: POST /analyze proxy Vision LLM với guardrail đầy đủ.
-// Thứ tự (rẻ -> đắt): OPTIONS -> method -> cấu hình origin -> origin -> secret băm IP -> Content-Length ->
-// kill-switch+cap+rate-limit -> Turnstile -> input guard -> callModel -> validate -> JSON.
+// Thứ tự (rẻ -> đắt): OPTIONS -> method -> cấu hình origin -> origin -> secret băm IP -> danh sách
+// nhà cung cấp AI (KV) -> Content-Length -> kill-switch+cap+rate-limit -> Turnstile -> input guard ->
+// callModel (failover) -> validate -> JSON.
 // Mọi lỗi (kể cả bất ngờ) đều trả JSON có CORS. KHÔNG lưu ảnh; log tối thiểu.
 
+import { activeProviders, loadProviders } from "../../shared/ai-config";
 import { Config, Env, loadConfig } from "./config";
 import { corsHeaders, preflight, validateImage } from "./guard";
 import { callModel } from "./model";
 import { checkLimits, commitGlobalUsage, hashIp } from "./ratelimit";
 import { ANALYZE_MODES, AnalyzeMode } from "./schema";
 import { verifyTurnstile } from "./turnstile";
+
+const NOT_CONFIGURED = "Dịch vụ soi ảnh chưa được cấu hình";
+// KV cache ở edge: đổi danh sách ở /quan-tri/ có hiệu lực trong khoảng 1 phút.
+const PROVIDERS_CACHE_TTL = 60;
 
 function json(body: unknown, status: number, cors: Record<string, string>): Response {
   return new Response(JSON.stringify(body), {
@@ -38,7 +44,7 @@ async function handle(request: Request, env: Env, cfg: Config, cors: Record<stri
   // Thiếu ALLOWED_ORIGINS -> không có origin/hostname nào hợp lệ; từ chối trước KV/siteverify.
   const { allowedOrigins } = cfg;
   if (allowedOrigins !== "*" && allowedOrigins.length === 0) {
-    return json({ error: "Dịch vụ soi ảnh chưa được cấu hình" }, 503, cors);
+    return json({ error: NOT_CONFIGURED }, 503, cors);
   }
   // CORS origin enforcement (ngoài header) — chặn origin lạ ở tầng app.
   const origin = request.headers.get("Origin");
@@ -48,7 +54,12 @@ async function handle(request: Request, env: Env, cfg: Config, cors: Record<stri
   // Thiếu khoá băm IP -> từ chối trước mọi thao tác KV/siteverify/model (fail-closed).
   const ipHashSecret = env.IP_HASH_SECRET;
   if (!ipHashSecret) {
-    return json({ error: "Dịch vụ soi ảnh chưa được cấu hình" }, 503, cors);
+    return json({ error: NOT_CONFIGURED }, 503, cors);
+  }
+  // Danh sách nhà cung cấp AI (mã hoá trong KV); thiếu secret/giải mã lỗi/không mục nào bật -> 503.
+  const providers = activeProviders(await loadProviders(env.RL, env.AI_CONFIG_SECRET, PROVIDERS_CACHE_TTL));
+  if (!providers.length) {
+    return json({ error: NOT_CONFIGURED }, 503, cors);
   }
   // Chặn body quá lớn theo header trước khi đọc; thiếu header thì guard ảnh vẫn kiểm.
   const declaredLength = Number(request.headers.get("Content-Length"));
@@ -95,11 +106,7 @@ async function handle(request: Request, env: Env, cfg: Config, cors: Record<stri
   await commitGlobalUsage(env.RL, new Date());
 
   try {
-    const result = await callModel(img.dataUri, {
-      endpoint: cfg.modelEndpoint,
-      apiKey: env.QWEN_API_KEY,
-      modelId: cfg.modelId,
-    }, mode);
+    const result = await callModel(img.dataUri, { providers }, mode);
     return json(result, 200, cors);
   } catch (e: any) {
     // callModel chỉ gắn `status` cho lỗi có thông điệp cố định, an toàn để trả nguyên.

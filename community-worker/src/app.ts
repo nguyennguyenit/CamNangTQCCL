@@ -5,11 +5,12 @@ import { createAuth, getSessionUser } from "./auth";
 import { currentUser, type AppDeps, type AppEnv } from "./context";
 import { isAdminEmail, requestOrigin, trustedOrigins } from "./env";
 import { ApiError, errorResponse } from "./http";
+import { ai } from "./routes/ai";
 import { feedback } from "./routes/feedback";
 import { comments } from "./routes/comments";
 import { posts } from "./routes/posts";
-import { reports } from "./routes/reports";
 import { recruit } from "./routes/recruit";
+import { reports } from "./routes/reports";
 
 export const defaultDeps: AppDeps = {
   getUser: getSessionUser,
@@ -70,7 +71,7 @@ export function createApp(overrides: Partial<AppDeps> = {}) {
   app.route("/", feedback);
   app.route("/", reports);
   app.route("/", posts);
-  return app;
   app.route("/", recruit);
   app.route("/", ai);
+  return app;
 }

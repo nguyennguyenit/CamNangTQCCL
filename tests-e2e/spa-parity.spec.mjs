@@ -57,7 +57,8 @@ const sectionData = {
   // Mục Tra cứu đo trên trang nhóm Tướng (mục lục /tra-cuu/ là trang tĩnh, không tải dữ liệu).
   lookup: ["website-display.json", "lookup-manifest.json", "heroes-dict.json"],
   "recruit-tracker": ["website-display.json", ...LOOKUP_BUNDLE],
-  analyze: ["website-display.json", ...LOOKUP_BUNDLE, "teams.json", "books-dict.json"],
+  // Soi đội đối chiếu với generation Đội chuẩn/Đội khác (tải lười, `/data/recommended/`), không còn kho đội gốc.
+  analyze: ["website-display.json", ...LOOKUP_BUNDLE, "books-dict.json"],
   "roster-recommend": ["website-display.json", ...LOOKUP_BUNDLE, "teams.json", "team-tier.json"],
 };
 const sections = [

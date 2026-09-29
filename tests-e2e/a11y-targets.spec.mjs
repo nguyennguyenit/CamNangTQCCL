@@ -3,12 +3,7 @@
 // Mỗi ca dựng trạng thái thật (mở/có dữ liệu) ở 320/390 × 2 theme, đo CẢ HAI chiều và kiểm kích hoạt.
 import { expect, test } from "@playwright/test";
 
-const transparentPng = Buffer.from(
-  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAF/gL+4gZ8WQAAAABJRU5ErkJggg==",
-  "base64",
-);
 const TURNSTILE_STUB = "window.turnstile={render:(_node,options)=>options.callback('fixture-token'),reset:()=>{}};";
-const WORKER_ROUTE = "https://tqccl-vision-proxy.nguyennlt-ncc.workers.dev/**";
 
 /** 320/390 × sáng/tối; theme lấy từ chính hệ điều hành mà trình duyệt mô phỏng (không ghi storage). */
 const CASES = [
@@ -43,38 +38,45 @@ test.describe("A5 — control đứng riêng phải đủ 44px ở mobile", () =
     }
   });
 
-  test("nút mở đội trong kết quả Soi đội: đủ 44px, Enter mở trang chi tiết", async ({ browser, request }) => {
-    const teams = await (await request.get("/data/teams.json")).json();
-    const target = teams.find((team) => Array.isArray(team.heroes) && team.heroes.length >= 3);
-    const heroesDict = await (await request.get("/data/heroes-dict.json")).json();
-    const tacticsDict = await (await request.get("/data/tactics.json")).json();
-    const reads = target.heroes.map((hero) => ({
-      nameCn: heroesDict.find((record) => record.viet === hero.name)?.chinese ?? hero.name,
-      tacticsCn: (hero.tactics || []).map((slot) => tacticsDict.find((record) => record.viet === slot.name)?.chinese ?? slot.name),
-      booksCn: [],
-      statFocusCn: "",
-    }));
+  test("nút mở đội trong kết quả Soi đội: đủ 44px, Enter mở trang chi tiết", async ({ browser }) => {
+    // Link chia sẻ `?doi=` của một Đội chuẩn mùa mặc định có đủ tướng trong từ điển: kết quả dựng không cần Worker.
+    const setup = await browser.newPage();
+    await setup.goto("/soi-doi-tu-anh/");
+    await expect(setup.locator('body[data-boot="ready"]')).toBeAttached();
+    const link = await setup.evaluate(async () => {
+      const [{ createEntityIndex, referenceTeam }, { encodeTeamParam }] = await Promise.all([import("/js/analyze-map.js"), import("/js/analyze-state.js")]);
+      const pin = JSON.parse(document.querySelector("#recommended-publication").textContent);
+      const json = (path) => fetch(path).then((response) => response.json());
+      const [seasons, index, heroes] = await Promise.all([
+        json(`/data/recommended/${pin.generationId}/seasons.json`), json(`/data/recommended/${pin.generationId}/index.json`), json("/data/heroes-dict.json"),
+      ]);
+      const known = createEntityIndex(heroes, "hero").byId;
+      for (const record of index.records.filter((item) => item.sourceSeasonId === seasons.defaultSourceSeasonId)) {
+        const ids = referenceTeam(record).slots.map((slot) => slot.alternatives[0]?.canonicalId);
+        if (ids.length !== 3 || !ids.every((id) => known.has(id))) continue;
+        const doi = encodeTeamParam({ heroes: ids.map((hero) => ({ hero, tactics: [null, null], book: null })) });
+        return `/soi-doi-tu-anh/?season=${encodeURIComponent(seasons.defaultSourceSeasonId)}&doi=${doi}`;
+      }
+      return null;
+    });
+    await setup.close();
+    expect(link).not.toBeNull();
 
     for (const { width, colorScheme } of CASES) {
       const context = await browser.newContext({ viewport: { width, height: 900 }, colorScheme });
       await context.route("https://challenges.cloudflare.com/**", (route) =>
         route.fulfill({ contentType: "application/javascript", body: TURNSTILE_STUB }));
-      await context.route(WORKER_ROUTE, (route) => route.fulfill({ json: { heroes: reads } }));
       const page = await context.newPage();
-      await page.goto("/soi-doi-tu-anh/");
+      await page.goto(link);
       await expect(page.locator('body[data-boot="ready"]')).toBeAttached();
-      await page.locator("#section-analyze input[type=file]").setInputFiles({ name: "doi-hinh.png", mimeType: "image/png", buffer: transparentPng });
-      const run = page.locator("#section-analyze").getByRole("button", { name: "Soi đội", exact: true });
-      await expect(run).toBeEnabled();
-      await run.click();
 
-      const link = page.locator("#section-analyze .ana-team-row .ana-team-link").first();
-      await expect(link).toBeVisible();
-      const box = await link.boundingBox();
+      const teamLink = page.locator("#section-analyze .ana-team-row .ana-team-link").first();
+      await expect(teamLink).toBeVisible();
+      const box = await teamLink.boundingBox();
       expect(box.height, `${width}/${colorScheme}: chiều cao nút mở đội`).toBeGreaterThanOrEqual(44);
       expect(box.width, `${width}/${colorScheme}: chiều rộng nút mở đội`).toBeGreaterThanOrEqual(44);
 
-      await link.focus();
+      await teamLink.focus();
       await page.keyboard.press("Enter");
       await expect(page, `${width}/${colorScheme}: Enter phải mở trang chi tiết đội`).toHaveURL(/\/doi-(khac|chuan)\//);
       await context.close();

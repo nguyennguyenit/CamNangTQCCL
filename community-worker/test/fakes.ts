@@ -8,6 +8,7 @@ import type { DatabaseSync as DatabaseSyncType, SQLInputValue } from "node:sqlit
 import { createApp } from "../src/app";
 import type { SessionUser } from "../src/auth";
 import type { Env } from "../src/env";
+import { AI_PROVIDERS_KEY, encryptProviders, type AiProvider } from "../../shared/ai-config";
 
 // Vite (vitest 2) bỏ tiền tố "node:" của node:sqlite khi phân giải import -> nạp bằng require.
 const { DatabaseSync } = createRequire(import.meta.url)("node:sqlite") as typeof import("node:sqlite");
@@ -131,9 +132,28 @@ export interface ApiJson {
   page: string | null;
   lang: string;
   author: ApiJson | null;
+  providers: ApiJson[];
+  configured: boolean;
+  keyLast4: string;
+  label: string;
+  endpoint: string;
+  modelId: string;
+  enabled: boolean;
 }
 
 export const ORIGIN = "https://tqccl.com";
+
+/** Secret + provider mặc định của harness (bản ghi `ai:providers` được seed sẵn). */
+export const AI_SECRET = "ai-config-secret-for-tests";
+export const TEST_PROVIDER: AiProvider = {
+  id: "deepseek",
+  label: "DeepSeek",
+  endpoint: "https://api.deepseek.com/chat/completions",
+  modelId: "deepseek-flash",
+  apiKey: "test-key",
+  enabled: true,
+};
+const TEST_PROVIDERS_BLOB = await encryptProviders([TEST_PROVIDER], AI_SECRET);
 
 export interface Harness {
   env: Env;
@@ -141,6 +161,8 @@ export interface Harness {
   objects: Map<string, StoredObject>;
   clock: { now: number };
   fetchCalls: { url: string; init?: RequestInit }[];
+  /** Nội dung KV AI_KV (fake); seed sẵn `ai:providers` = [TEST_PROVIDER]. */
+  aiStore: Map<string, string>;
   /** Thư đã gửi qua binding FEEDBACK_MAIL (fake). */
   mails: EmailMessageBuilder[];
   /** Đặt lỗi để lần gửi thư sau ném ra; null = gửi bình thường. */
@@ -175,6 +197,12 @@ export function createHarness(envOverrides: Partial<Env> = {}): Harness {
     newId: () => `id-${String(++seq).padStart(4, "0")}`,
   });
   const mails: EmailMessageBuilder[] = [];
+  const aiStore = new Map<string, string>([[AI_PROVIDERS_KEY, TEST_PROVIDERS_BLOB]]);
+  // Fake chỉ cài get/put mà mã nguồn dùng.
+  const aiKv = {
+    get: async (key: string) => aiStore.get(key) ?? null,
+    put: async (key: string, value: string) => void aiStore.set(key, value),
+  } as unknown as KVNamespace;
   const waiting: Promise<unknown>[] = [];
   const executionCtx = {
     waitUntil: (promise: Promise<unknown>) => void waiting.push(promise),
@@ -187,6 +215,7 @@ export function createHarness(envOverrides: Partial<Env> = {}): Harness {
     objects,
     clock,
     fetchCalls,
+    aiStore,
     mails,
     mailError: null,
     setFetch(handler) {
@@ -217,11 +246,12 @@ export function createHarness(envOverrides: Partial<Env> = {}): Harness {
     DB: d1,
     MEDIA: bucket,
     FEEDBACK_MAIL: mail,
+    AI_KV: aiKv,
     SITE_ORIGIN: ORIGIN,
     ADMIN_EMAILS: "admin@example.com, other@example.com",
     FEEDBACK_FROM: "gopy@tqccl.com",
     FEEDBACK_TO: "owner@example.com",
-    QWEN_API_KEY: "test-key",
+    AI_CONFIG_SECRET: AI_SECRET,
     GITHUB_DISPATCH_TOKEN: "gh-test-token",
     GITHUB_REPOSITORY: "owner/repo",
     TURNSTILE_SECRET: "ts-secret",

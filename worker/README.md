@@ -1,6 +1,6 @@
 # TQCCL Vision Proxy (Cloudflare Worker)
 
-Proxy giữ API key Qwen + guardrail cho các công cụ đọc ảnh (**Soi đội từ ảnh**,
+Proxy gọi AI + guardrail cho các công cụ đọc ảnh (**Soi đội từ ảnh**,
 **Gợi ý đội từ kho**). Hạ tầng **tách biệt** site tĩnh: site chạy trên Cloudflare
 Pages với domain chính `https://tqccl.com` (`wrangler.toml` `ALLOWED_ORIGINS` nhận cả
 `https://www.tqccl.com` và `https://tqccl.pages.dev`), Worker deploy
@@ -10,8 +10,9 @@ riêng bằng `wrangler`. Site gọi `POST /analyze`.
 
 ```
 Site (Pages) ──POST /analyze {image, turnstileToken, mode}──► Worker
-   Worker: OPTIONS → origin → IP_HASH_SECRET → Content-Length → cap/kill-switch/rate-limit
-           → Turnstile (siteverify: một lần dùng + đúng hostname) → input guard → Qwen → validate → JSON
+   Worker: OPTIONS → origin → IP_HASH_SECRET → danh sách nhà cung cấp AI (KV `ai:providers`) → Content-Length
+           → cap/kill-switch/rate-limit → Turnstile (siteverify: một lần dùng + đúng hostname) → input guard
+           → nhà cung cấp AI (failover theo thứ tự) → validate → JSON
 ```
 
 Request JSON:
@@ -26,10 +27,16 @@ Response 200 theo `mode` (chữ Hán Giản thể; site map sang tiếng Việt 
 
 | `mode` | Công cụ | Response |
 |---|---|---|
-| `analyzeTeamImage` | Soi đội từ ảnh | `{ heroes: [{ nameCn, tacticsCn[], booksCn[], statFocusCn, nameFromPortrait? }] }` |
+| `analyzeTeamImage` | Soi đội từ ảnh | `{ heroes: [{ nameCn, tacticsCn[2], booksCn[], statFocusCn }] }` |
 | `scanHeroes` | Gợi ý đội: đọc kho tướng | `{ heroes: [{ nameCn, level?, redStars? }] }` |
 | `scanTactics` | Gợi ý đội: đọc kho chiến pháp | `{ tactics: [{ nameCn }] }` |
 | `scanBuiltTeams` | Gợi ý đội: đọc đội đã build | `{ teams: [{ teamName, heroesCn[], tacticsCn[] }] }` |
+
+`analyzeTeamImage` chỉ chép chữ in trong ảnh: không nhận diện tướng qua chân dung và không gửi
+danh sách tên tướng cho model. Cột không có tên in đọc được trả `nameCn: "未知"`. `tacticsCn` luôn
+đúng 2 phần tử theo vị trí ô A/B; ô không đọc được hoặc trống là `"未知"` tại đúng vị trí đó (Worker
+đệm/cắt về 2 ô), để site gắn đúng slot trong editor xác nhận. `booksCn` giữ thứ tự in, binh thư
+chính trước.
 
 Lỗi luôn là JSON `{ error: "<thông điệp cố định>" }` kèm header CORS: 400 (body/mode/base64/ảnh hỏng),
 403 (origin, Turnstile), 404, 413 (ảnh hoặc `Content-Length` quá lớn), 415, 422 (model không đọc được),
@@ -46,16 +53,19 @@ KHÔNG lưu ảnh. Log tối thiểu (đếm, không nội dung). IP chỉ lưu 
 1. **Cloudflare account** + cài wrangler: `npm i -g wrangler` rồi `wrangler login`.
 2. **KV namespace**: `wrangler kv namespace create RL` → dán `id` vào `wrangler.toml` (`[[kv_namespaces]] id`).
 3. **Turnstile** (Cloudflare dashboard → Turnstile): tạo site với đủ hostname của site (`tqccl.com`, `www.tqccl.com`, `tqccl.pages.dev`) → lấy **site-key** (public, để vào `js/config.js`) + **secret**.
-4. **Qwen key**: tạo trên Alibaba Model Studio / DashScope → API key.
-5. **Vars**: `wrangler.toml` → `ALLOWED_ORIGINS` = các origin exact của site, phân cách dấu phẩy (`https://tqccl.com,https://www.tqccl.com,https://tqccl.pages.dev`); CORS echo đúng origin gửi lên kèm `Vary: Origin`, và `hostname` siteverify trả về phải là host của một origin trong danh sách. Thiếu/rỗng → `/analyze` trả `503` (fail-closed); `*` chỉ dùng khi dev. Chốt `REGION`/`MODEL_ID` (xem §Region).
+4. **Nhà cung cấp AI**: không nằm trong env. Admin nhập ở tab **AI** của `/quan-tri/` (community-worker ghi bản ghi
+   mã hoá `ai:providers` vào cùng KV namespace `RL`; Worker này chỉ đọc). Xem §Nhà cung cấp AI.
+5. **Vars**: `wrangler.toml` → `ALLOWED_ORIGINS` = các origin exact của site, phân cách dấu phẩy (`https://tqccl.com,https://www.tqccl.com,https://tqccl.pages.dev`); CORS echo đúng origin gửi lên kèm `Vary: Origin`, và `hostname` siteverify trả về phải là host của một origin trong danh sách. Thiếu/rỗng → `/analyze` trả `503` (fail-closed); `*` chỉ dùng khi dev.
 6. **Secrets** (KHÔNG commit), cả ba bắt buộc:
    ```bash
-   wrangler secret put QWEN_API_KEY
    wrangler secret put TURNSTILE_SECRET
    openssl rand -base64 48 | wrangler secret put IP_HASH_SECRET
+   wrangler secret put AI_CONFIG_SECRET   # CÙNG giá trị với community-worker
    ```
    Thiếu hoặc rỗng `IP_HASH_SECRET` → mọi `POST /analyze` trả **503** `Dịch vụ soi ảnh chưa được cấu hình`
    (không đọc/ghi KV, không gọi Turnstile hay model). Đổi secret làm bộ đếm per-IP bắt đầu lại (TTL 2 giờ).
+   Thiếu `AI_CONFIG_SECRET`, sai giá trị (giải mã lỗi), chưa có danh sách hoặc không mục nào bật → cũng **503**
+   `Dịch vụ soi ảnh chưa được cấu hình` (không ghi KV, không gọi Turnstile hay model).
 7. **Deploy**: `npm install && npm run deploy`. Dev: copy `.dev.vars.example`→`.dev.vars`, `npm run dev`.
 
 ## Test
@@ -76,36 +86,36 @@ npm run typecheck
 | `MAX_IMAGE_BYTES` | 1500000 | ≤1.5MB sau giải mã (H4) |
 | `FEATURE_ENABLED` | true | Đặt `false` để tắt feature ngay |
 
-> **Số liệu cap là placeholder** — chốt theo free tier thực (L2).
+> **Số liệu cap là placeholder** — chốt theo số dư/ngân sách thực (L2).
 
-## ⚠️ Gate C2 — ToS Alibaba (ĐIỀU KIỆN SHIP, không phải nice-to-have)
+## Nhà cung cấp AI
 
-Đọc kỹ trước khi public (chi tiết: `plans/reports/from-researcher-to-controller-dashscope-tos-vision-model-260622-2251-report.md`):
+Danh sách endpoint Chat Completions OpenAI-compatible (`{ id, label, endpoint, modelId, apiKey, enabled }`,
+thứ tự = ưu tiên) nằm trong KV `ai:providers`, mã hoá AES-GCM (IV ngẫu nhiên 12 byte, khoá HKDF-SHA-256 từ
+`AI_CONFIG_SECRET`). Code dùng chung một bản: `shared/ai-config.ts` (cả `worker/` lẫn `community-worker/`
+import tương đối; wrangler bundle luôn). Worker đọc với `cacheTtl` 60 giây → đổi ở `/quan-tri/` có hiệu lực
+trong khoảng 1 phút.
 
-- ✅ **Không train trên input**: DashScope cam kết KHÔNG dùng input để train (cả CN lẫn Singapore), mặc định, không cần opt-out.
-- ⚠️ **Ảnh game bản quyền**: KHÔNG có policy cấm rõ, nhưng chưa xác nhận chắc → **bắt buộc test 5–10 screenshot thật trước khi ship**; nếu bị khóa key → đổi provider (Gemini/GPT) qua `callModel()` (chỉ đổi `MODEL_ENDPOINT`/`MODEL_ID` + key).
-- ⚠️ **Data retention**: không công bố rõ thời hạn → coi là tạm thời, ghi disclaimer.
-- ✅ **Đăng ký từ VN**: được (email + SMS + passport).
+Mỗi request thử lần lượt các mục đang bật: 401/402/403/429/5xx, lỗi mạng hoặc timeout (45 giây/mục) → chuyển
+mục kế; 4xx khác → dừng (yêu cầu hỏng). Gặp 2xx là dừng — nội dung không đọc được thành 422, không thử mục khác.
+Hết mục: 429 cuối → 503 `Dịch vụ AI đang quá tải, thử lại sau`, còn lại → 502 `Dịch vụ AI tạm lỗi, thử lại sau`.
 
-### Region: hỗ trợ CẢ HAI — đổi bằng 1 biến `REGION`
-| | Singapore (`REGION=intl`, **mặc định**) | CN mainland (`REGION=cn`) |
-|---|---|---|
-| Endpoint | `dashscope-intl.aliyuncs.com/...` | `dashscope.aliyuncs.com/...` |
-| Free tier 1M token/90 ngày | ✅ **có** | ❌ không |
-| Data residency | Singapore (luật quốc tế) | Bắc Kinh (luật TQ) |
-| Giá | đắt hơn chút | rẻ hơn ~30% |
+Mẫu có sẵn trong tab AI: **DeepSeek** `https://api.deepseek.com/chat/completions` (model `deepseek-flash`,
+V4.1 Flash, đọc được ảnh) và **OpenCode Zen** `https://opencode.ai/zen/v1/chat/completions`
+(model `deepseek-v4.1-flash`). Ảnh gửi dạng `image_url` base64 data URI; `response_format: json_object`
+yêu cầu prompt có chữ "json" — mọi prompt đều có.
 
-Code chọn endpoint DashScope Model Studio theo `REGION` (`wrangler.toml [vars]`). Mặc định `intl` (khuyến nghị: free tier + data Singapore). Đặt `REGION = "cn"` để dùng mainland. Chỉ set `MODEL_ENDPOINT` khi cố ý đổi sang provider/endpoint khác; không dùng endpoint `coding-intl.dashscope.aliyuncs.com` cho tính năng Vision.
-
-### Model ID
-Mặc định `qwen3.7-plus` theo free quota Singapore hiện dùng. **Xác minh id model vision hiện hành trên DashScope console** trước khi ship — đặt qua `MODEL_ID`.
+Trước khi ship lần đầu với model/nhà cung cấp mới: **test 5–10 screenshot thật** cho cả bốn `mode`.
+Chính sách lưu giữ và dùng dữ liệu của từng nhà cung cấp: đọc privacy policy và cập nhật disclaimer nếu khác.
 
 ## Chi phí / chống bill sốc (H5)
-- **KHÔNG gắn thẻ thanh toán** vào account Qwen, hoặc đặt budget alert nếu hỗ trợ. Đây là **backstop cứng thật**.
+- DeepSeek tính phí trả trước: **không bật tự nạp**; hết số dư thì upstream trả 402 → Worker chuyển sang mục kế
+  trong danh sách; hết mục thì trả 502 `Dịch vụ AI tạm lỗi, thử lại sau`. Số dư trả trước là **backstop cứng thật**
+  cho từng nhà cung cấp.
 - `MONTHLY_CAP` auto-disable khi chạm. Theo dõi KV counter `m:YYYY-MM`.
 - ⚠️ **Cap là best-effort, KHÔNG cứng (H1)**: counter KV không atomic (eventual consistency) → burst song song có thể vượt nhẹ. Đặt `MONTHLY_CAP` thấp hơn ngân sách thật (headroom). Cần giới hạn cứng tuyệt đối → dùng Durable Object cho counter tháng.
 - **Turnstile là rào chống lạm dụng CHÍNH** cho client không phải browser (CORS chỉ chặn browser). BẮT BUỘC set `ALLOWED_ORIGINS` đúng các origin site (đừng để `*` ở production) + đảm bảo Turnstile secret/sitekey khớp.
 - Xoay API key định kỳ.
 
 ## Disclaimer (Phase 4, M3)
-UI phải nêu đích danh: *"Ảnh gửi tới Alibaba Cloud DashScope để xử lý, không lưu; tránh ảnh lộ tên tài khoản."* + link policy.
+UI phải nêu đích danh: *"Ảnh được gửi tới DeepSeek để AI phân tích; site không lưu ảnh. Tránh ảnh lộ tên tài khoản."* + link policy.

@@ -1,22 +1,22 @@
 // Lớp callModel() trung lập (R7/L3) — gọi Vision LLM qua endpoint OpenAI-compatible.
-// Mặc định Qwen DashScope OpenAI-compatible. Bao cả endpoint LẪN cách truyền ảnh
-// (base64 data URI) để dễ đổi sang GPT/Gemini sau.
+// Danh sách nhà cung cấp (endpoint/model/key, thứ tự ưu tiên) do admin nhập ở /quan-tri/ và
+// failover qua `callWithFailover` (shared/ai-config.ts); ảnh truyền dạng base64 data URI.
 
+import { callWithFailover, type AiProvider } from "../../shared/ai-config";
 import { AnalyzeMode, AnalyzeModeResult, parseAndValidateByMode } from "./schema";
-import { HERO_NAMES_CN } from "./hero-names";
 
 export const VISION_PROMPT =
-  "Đọc screenshot đội hình game Tam Quốc Chí Chiến Lược (三国志战略版). " +
+  "Chép chữ từ screenshot đội hình game Tam Quốc Chí Chiến Lược (三国志战略版). " +
   "Trả về JSON đúng schema: " +
-  '{"heroes":[{"nameCn":"tên tướng chữ Hán","tacticsCn":["chiến pháp chữ Hán"],"booksCn":["binh thư chữ Hán"],"statFocusCn":"chất tướng vd 全智力","nameFromPortrait":false}]}. ' +
-  "tacticsCn/booksCn/statFocusCn PHẢI là chữ Hán gốc trong ảnh. " +
+  '{"heroes":[{"nameCn":"tên tướng chữ Hán hoặc 未知","tacticsCn":["dòng chiến pháp 1","dòng chiến pháp 2","dòng chiến pháp 3"],"booksCn":["binh thư chữ Hán"],"statFocusCn":"chất tướng vd 全智力"}]}. ' +
+  "Mỗi cột tướng là MỘT phần tử heroes, theo thứ tự trái sang phải. " +
+  "CHỈ CHÉP CHỮ IN TRONG ẢNH: không nhận diện tướng qua chân dung, khuôn mặt, trang phục hay icon; không suy đoán, không bịa tên. " +
   "TẤT CẢ chữ Hán trong kết quả PHẢI là GIẢN THỂ (简体中文), tuyệt đối KHÔNG dùng phồn thể (繁体): vd phải ghi 连环计 chứ không phải 連環計, 夺魂挟魄 chứ không 奪魂挾魄. " +
-  "Tên tướng thường in NHỎ ở đáy mỗi chân dung (cạnh số cấp/binh chủng) — HÃY đọc kỹ dòng đó. Nếu có tên in: trả CHÍNH XÁC tên Hán in đó, KỂ CẢ khi không có trong danh sách bên dưới; nameFromPortrait=false. TUYỆT ĐỐI KHÔNG thay tên in bằng một tướng nổi tiếng trông giống (vd thấy 周劭 thì trả 周劭, KHÔNG trả 赵云). " +
-  "CHỈ KHI một cột KHÔNG có tên in rõ thì mới NHẬN DIỆN tướng từ chân dung (nhân vật Tam Quốc 三国志战略版, nhận qua khuôn mặt/trang phục/chiến pháp tự mang) và đặt nameFromPortrait=true; KHI ĐÓ nameCn phải chọn 1 tên trong DANH SÁCH HỢP LỆ sau (hoặc 未知), không bịa tên ngoài danh sách: " +
-  HERO_NAMES_CN.join("、") + ". " +
+  "Tên tướng thường in NHỎ ở đáy mỗi chân dung (cạnh số cấp/binh chủng) — HÃY đọc kỹ dòng đó và trả CHÍNH XÁC tên Hán in đó. TUYỆT ĐỐI KHÔNG thay tên in bằng một tướng nổi tiếng trông giống (vd thấy 周劭 thì trả 周劭, KHÔNG trả 赵云). " +
+  "Cột KHÔNG có tên in đọc được thì nameCn = 未知. Ô tướng trống (chỉ có hình bóng, không tướng, không chiến pháp) thì BỎ QUA, không thêm phần tử. Màn chiến báo có hai phe: chỉ chép phe 我方 (bên trái). " +
   "Không dùng tên trong dòng #帅选择/#师选择/天赋选择 làm tên tướng của từng cột; không đoán tên tướng từ tên đội. " +
-  "tacticsCn chỉ gồm chiến pháp (thường dòng trắng dạng A/B trên từng cột). " +
-  "booksCn gồm binh thư (dòng vàng dạng A/B, vd 三军之众/统军/锤炼/铁甲/防备); KHÔNG đưa binh thư vào tacticsCn và ngược lại. KHÔNG đưa thiên phú, quân sư, thuộc tính, hay binh chủng đặc biệt (vd 象兵/虎豹骑) vào booksCn. " +
+  "tacticsCn là MỌI dòng chiến pháp in dưới cột tướng đó, theo đúng thứ tự từ trên xuống, tối đa 3 dòng, KỂ CẢ dòng đầu là chiến pháp tự mang của tướng (vd màn chiến báo 战报 in 3 dòng: tự mang rồi 2 chiến pháp đã học). Dòng có icon 兵 (vd 精·青州兵) cũng là chiến pháp, chép vào tacticsCn. Dòng không đọc được thì ghi 未知 ở đúng vị trí đó, KHÔNG dồn dòng dưới lên. Không phân loại, không bỏ dòng nào. " +
+  "booksCn CHỈ gồm binh thư khi ảnh có in dòng binh thư riêng (thường màu vàng, vd 三军之众/统军/锤炼/铁甲/防备), theo thứ tự in. Màn chiến báo KHÔNG in binh thư: khi đó booksCn = []. KHÔNG đưa dòng chiến pháp nào vào booksCn và ngược lại. KHÔNG đưa thiên phú, quân sư, thuộc tính, hay binh chủng đặc biệt (vd 象兵/虎豹骑) vào booksCn. " +
   "Chỉ trả JSON, không giải thích.";
 
 const SCAN_HEROES_PROMPT =
@@ -48,9 +48,8 @@ export function promptByMode(mode: AnalyzeMode = "analyzeTeamImage") {
 }
 
 export interface ModelOptions {
-  endpoint: string;
-  apiKey: string;
-  modelId: string;
+  /** Toàn bộ danh sách provider (mục tắt bị bỏ qua), thứ tự = ưu tiên. */
+  providers: AiProvider[];
   fetchImpl?: typeof fetch;
 }
 
@@ -70,6 +69,9 @@ export function buildRequestBody(modelId: string, imageDataUri: string, mode: An
     // Thử ép JSON; nếu model không hỗ trợ, tolerantParse vẫn lo (M1).
     response_format: { type: "json_object" },
     temperature: 0,
+    // DeepSeek V4.1 bật thinking mặc định (effort high): chậm tới mức quá 45s timeout với ảnh, trong
+    // khi chép chữ không cần suy luận. Tắt hẳn; nhà cung cấp OpenAI-compatible khác bỏ qua trường lạ.
+    thinking: { type: "disabled" },
   };
 }
 
@@ -85,29 +87,27 @@ export function extractContent(data: any): string {
 
 /**
  * Gọi model vision -> AnalyzeResult đã validate.
- * Ném Error có .status để handler map sang HTTP (502/503 upstream / 422 không đọc được).
+ * Ném Error có .status để handler map sang HTTP (502/503 upstream / 422 không đọc được);
+ * lỗi upstream là `AiCallError` (thông điệp cố định, không mang mã/nội dung upstream).
  */
 export async function callModel(imageDataUri: string, opts: ModelOptions, mode: AnalyzeMode = "analyzeTeamImage"): Promise<AnalyzeModeResult> {
-  const fetchImpl = opts.fetchImpl || fetch;
-  const resp = await fetchImpl(opts.endpoint, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${opts.apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(buildRequestBody(opts.modelId, imageDataUri, mode)),
-  });
-  if (!resp.ok) {
-    // Thông điệp cố định, không mang mã upstream: 429 là quá tải (503), còn lại
-    // (khoá sai 401/403, 5xx…) là dịch vụ AI tạm lỗi (502).
-    const overloaded = resp.status === 429;
-    const err: any = new Error(overloaded ? "Dịch vụ AI đang quá tải, thử lại sau" : "Dịch vụ AI tạm lỗi, thử lại sau");
-    err.status = overloaded ? 503 : 502;
-    throw err;
-  }
-  const data = await resp.json();
+  const resp = await callWithFailover(
+    opts.providers,
+    (modelId) => buildRequestBody(modelId, imageDataUri, mode),
+    opts.fetchImpl || fetch,
+  );
+  const data = await resp.json().catch(() => null);
   const content = extractContent(data);
   if (!content) {
+    // Hình dạng response OpenAI-compatible; chỉ đọc vài trường để ghi log chẩn đoán.
+    const choice = (data as { choices?: Array<{ finish_reason?: unknown; message?: { content?: unknown; reasoning_content?: unknown } }> } | null)?.choices?.[0];
+    const message = choice?.message;
+    console.warn(JSON.stringify({
+      event: "ai_empty_content",
+      finishReason: choice?.finish_reason ?? null,
+      hasReasoning: typeof message?.reasoning_content === "string" && message.reasoning_content.length > 0,
+      contentType: Array.isArray(message?.content) ? "array" : typeof message?.content,
+    }));
     const err: any = new Error("Model trả rỗng");
     err.status = 502;
     throw err;

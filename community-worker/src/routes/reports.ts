@@ -1,9 +1,11 @@
-// Chiến báo: phân tích ảnh (Qwen), gửi, liệt kê đã duyệt, thống kê, ảnh, của tôi, kiểm duyệt admin.
+// Chiến báo: phân tích ảnh (AI, failover theo danh sách ở tab AI), gửi, liệt kê đã duyệt, thống kê, ảnh,
+// của tôi, kiểm duyệt admin.
 
 import { Hono } from "hono";
+import { activeProviders, loadProviders } from "../../../shared/ai-config";
 import { analyzeReportImage, EMPTY_ANALYSIS, ModelError, toDataUri, type ReportAnalysis } from "../analyze";
 import { currentUser, PAGE_SIZE, requireAdmin, requireUser, type AppEnv, type Ctx } from "../context";
-import { isAdminEmail, resolveModelEndpoint } from "../env";
+import { isAdminEmail } from "../env";
 import { ApiError, decodeCursor, iso, paginate } from "../http";
 import { consumeRateLimit } from "../ratelimit";
 import { aggregateStats } from "../stats";
@@ -89,7 +91,8 @@ reports.post("/api/reports/analyze", async (c) => {
   if ((c.env.FEATURE_ENABLED ?? "true") === "false") {
     throw new ApiError(503, "feature_disabled", "Tính năng phân tích ảnh đang tạm tắt");
   }
-  if (!c.env.QWEN_API_KEY) throw new ApiError(503, "ai_not_configured", "Chưa cấu hình dịch vụ AI");
+  const providers = activeProviders(await loadProviders(c.env.AI_KV, c.env.AI_CONFIG_SECRET));
+  if (!providers.length) throw new ApiError(503, "ai_not_configured", "Chưa cấu hình dịch vụ AI");
   const image = await parseImageUpload(c.req.raw, "image", REPORT_IMAGE_MAX_BYTES);
   const { now, newId, fetchImpl } = c.get("deps");
   const createdAt = now();
@@ -109,12 +112,7 @@ reports.post("/api/reports/analyze", async (c) => {
 
   let analysis: ReportAnalysis;
   try {
-    analysis = await analyzeReportImage(toDataUri(image.bytes, image.contentType), {
-      endpoint: resolveModelEndpoint(c.env),
-      apiKey: c.env.QWEN_API_KEY,
-      modelId: c.env.MODEL_ID || "qwen3.7-plus",
-      fetchImpl,
-    });
+    analysis = await analyzeReportImage(toDataUri(image.bytes, image.contentType), { providers, fetchImpl });
   } catch (e) {
     if (!(e instanceof ModelError)) throw e;
     // Ảnh không đọc được: vẫn giữ upload để người dùng tự nhập đội hình.

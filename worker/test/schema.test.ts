@@ -21,15 +21,21 @@ describe("validateResult", () => {
   it("chấp nhận shape đúng", () => {
     expect(validateResult(valid).heroes[0].nameCn).toBe("曹操");
   });
-  it("lọc tacticsCn rỗng/không phải string", () => {
-    const r = validateResult({ heroes: [{ nameCn: "x", tacticsCn: ["a", "", 5], statFocusCn: "" }] });
-    expect(r.heroes[0].tacticsCn).toEqual(["a"]);
+  it("tacticsCn giữ vị trí từng dòng: dòng rỗng/sai kiểu thành 未知 tại chỗ, không dồn dòng", () => {
+    const r = validateResult({ heroes: [{ nameCn: "x", tacticsCn: ["", "乱世奸雄"], statFocusCn: "" }] });
+    expect(r.heroes[0].tacticsCn).toEqual(["未知", "乱世奸雄"]);
+    const typed = validateResult({ heroes: [{ nameCn: "x", tacticsCn: [5, "a"], statFocusCn: "" }] });
+    expect(typed.heroes[0].tacticsCn).toEqual(["未知", "a"]);
+  });
+  it("tacticsCn thiếu -> [], không đệm (site tự coi ô thiếu là không rõ)", () => {
+    expect(validateResult({ heroes: [{ nameCn: "x", statFocusCn: "" }] }).heroes[0].tacticsCn).toEqual([]);
+    expect(validateResult({ heroes: [{ nameCn: "x", tacticsCn: ["a"], statFocusCn: "" }] }).heroes[0].tacticsCn).toEqual(["a"]);
   });
   it("ném khi thiếu heroes", () => {
     expect(() => validateResult({})).toThrow();
   });
-  it("ném khi nameCn rỗng", () => {
-    expect(() => validateResult({ heroes: [{ nameCn: "", tacticsCn: [], statFocusCn: "" }] })).toThrow();
+  it("nameCn rỗng thành 未知 (cột không có tên in đọc được)", () => {
+    expect(validateResult({ heroes: [{ nameCn: "", tacticsCn: [], statFocusCn: "" }] }).heroes[0].nameCn).toBe("未知");
   });
   it("ném khi heroes rỗng", () => {
     expect(() => validateResult({ heroes: [] })).toThrow();
@@ -42,9 +48,9 @@ describe("validateResult", () => {
     expect(r.heroes[0].nameCn.length).toBeLessThanOrEqual(40);
   });
 
-  it("[M2] cắt tacticsCn quá nhiều (>6)", () => {
-    const r = validateResult({ heroes: [{ nameCn: "曹操", tacticsCn: Array(20).fill("乱世奸雄"), statFocusCn: "" }] });
-    expect(r.heroes[0].tacticsCn.length).toBe(6);
+  it("[M2] tacticsCn giữ tối đa 3 dòng (tự mang + 2 ô đã học)", () => {
+    const r = validateResult({ heroes: [{ nameCn: "曹操", tacticsCn: ["a", "b", "c", "d"], statFocusCn: "" }] });
+    expect(r.heroes[0].tacticsCn).toEqual(["a", "b", "c"]);
   });
 
   it("parse booksCn (binh thư) thành mảng riêng", () => {
@@ -59,11 +65,9 @@ describe("validateResult", () => {
     const r = validateResult({ heroes: [{ nameCn: "曹操", tacticsCn: [], booksCn: Array(20).fill("铁甲"), statFocusCn: "" }] });
     expect(r.heroes[0].booksCn.length).toBe(6);
   });
-  it("nameFromPortrait=true giữ lại; mặc định vắng", () => {
+  it("bỏ trường lạ như nameFromPortrait (tên chỉ lấy từ chữ in)", () => {
     const r = validateResult({ heroes: [{ nameCn: "曹操", tacticsCn: [], statFocusCn: "", nameFromPortrait: true }] });
-    expect(r.heroes[0].nameFromPortrait).toBe(true);
-    const r2 = validateResult({ heroes: [{ nameCn: "曹操", tacticsCn: [], statFocusCn: "" }] });
-    expect(r2.heroes[0].nameFromPortrait).toBeUndefined();
+    expect(r.heroes[0]).toEqual({ nameCn: "曹操", tacticsCn: [], booksCn: [], statFocusCn: "" });
   });
 });
 

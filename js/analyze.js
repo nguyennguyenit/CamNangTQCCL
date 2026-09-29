@@ -1,21 +1,42 @@
-import { sourceLabel as legacySourceLabel } from "./render.js";
-// Section "Soi đội từ ảnh" (Phase 4): upload/paste ảnh -> nén client -> Turnstile
-// (lazy-load) -> gọi Worker -> map 3 trục (analyze-map) -> render + đối chiếu team.
+// Section "Soi đội từ ảnh": ảnh (nén client -> Turnstile lazy -> Worker chép chữ) hoặc nhập tay ->
+// editor xác nhận từng ô (3 trạng thái) -> đối chiếu Đội chuẩn theo mùa + Đội khác, diff từng ô.
+// Đội đã xác nhận đi vào link `?doi=`, lịch sử trên máy và thẻ PNG — chỉ ID canonical, không ảnh.
 // Turnstile script chỉ nạp khi mở trang này.
 
 import { el, icon, svgNode } from "./render.js";
-import { heroPortrait } from "./hero-portrait.js";
 import { ANALYZE_CONFIG, isAnalyzeConfigured } from "./config.js";
-import { mapTeamRead, findSimilarTeams } from "./analyze-map.js";
-import { L, currentLocale } from "./i18n.js";
+import {
+  cellFromInput,
+  compareTeams,
+  confirmedTeam,
+  createEntityIndex,
+  draftFromRead,
+  draftFromTeam,
+  draftReady,
+  emptyCell,
+  emptyDraft,
+  referenceTeam,
+  sureCell,
+} from "./analyze-map.js";
+import {
+  SEASON_QUERY_KEY,
+  TEAM_QUERY_KEY,
+  addHistoryEntry,
+  decodeTeamParam,
+  encodeTeamParam,
+  readHistory,
+  writeHistory,
+} from "./analyze-state.js";
+import { L, currentLocale, localePath } from "./i18n.js";
+import { readRecommendedQuery } from "./recommended-reference-state.js";
 import { createRawNameResolver, localName } from "./website-display.js";
 import { renderTurnstileWidget, TURNSTILE_ERROR_MESSAGE } from "./turnstile.js";
 
 // `<html lang>` cố định theo trang nên các hằng dịch lúc nạp module vẫn đúng ngôn ngữ.
 const DISCLAIMER = L(
-  "Ảnh được gửi tới Alibaba Cloud DashScope để phân tích (không lưu lại). " +
+  "Ảnh được gửi tới nhà cung cấp AI của site (DeepSeek hoặc OpenCode Zen) để phân tích; site không lưu ảnh. " +
   "Tránh ảnh lộ tên tài khoản; nên crop chỉ phần đội hình.",
-  "图片将发送至阿里云 DashScope 进行分析（不会保存）。请避免截图中出现账号名称，建议只裁剪阵容部分。",
+  "图片将发送至本站使用的 AI 服务商（DeepSeek 或 OpenCode Zen）进行分析，本站不保存图片。请避免截图中出现账号名称，建议只裁剪阵容部分。",
 );
 
 /* ---------- Thông điệp lỗi (không để lọt văn bản upstream) ---------- */
@@ -45,7 +66,7 @@ const STATUS_ERRORS = {
   503: L("Tính năng soi ảnh đang tạm nghỉ. Thử lại sau.", "识图功能暂停服务，请稍后再试。"),
 };
 
-// Chuỗi lỗi ĐÃ BIẾT (Worker hiện tại + upstream DashScope) -> câu cố định theo ngôn ngữ
+// Chuỗi lỗi ĐÃ BIẾT (Worker hiện tại + upstream model) -> câu cố định theo ngôn ngữ
 // trang. Khóa là chuỗi đã chuẩn hóa (trim + lowercase).
 const UPSTREAM_ERRORS = new Map(Object.entries({
   "thiếu ảnh": L("Chưa có ảnh để soi. Chọn ảnh rồi thử lại.", "尚未选择图片，请选择图片后重试。"),
@@ -138,8 +159,7 @@ export function validateWorkerResult(mode, data) {
     isNonblankString(hero.nameCn) &&
     isStringArray(hero.tacticsCn) &&
     isStringArray(hero.booksCn) &&
-    typeof hero.statFocusCn === "string" &&
-    (hero.nameFromPortrait === undefined || hero.nameFromPortrait === true)
+    typeof hero.statFocusCn === "string"
   );
 }
 
@@ -190,14 +210,14 @@ export async function callWorker(imageDataUrl, token, mode = "analyzeTeamImage")
   return data;
 }
 
-/* ---------- Render kết quả ---------- */
+/* ---------- Icon ---------- */
+const checkIcon = () => icon([svgNode("polyline", { points: "5 12 10 17 19 7" })], { size: 14, stroke: 2.2 });
+
 const alertIcon = () => icon([
   svgNode("path", { d: "M12 3l10 18H2z" }),
   svgNode("line", { x1: 12, y1: 10, x2: 12, y2: 14 }),
   svgNode("line", { x1: 12, y1: 17.5, x2: 12, y2: 17.6 }),
 ], { size: 14, stroke: 2 });
-
-const checkIcon = () => icon([svgNode("polyline", { points: "5 12 10 17 19 7" })], { size: 14, stroke: 2.2 });
 
 const cameraIcon = () => icon([
   svgNode("path", { d: "M4 8h3l2-3h6l2 3h3v11H4z" }),
@@ -208,111 +228,175 @@ const shieldIcon = () => icon([
   svgNode("path", { d: "M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" }),
 ], { size: 16 });
 
-/**
- * Tên hiển thị của một ô đã map: bản Việt dùng tên Việt canonical; bản zh dùng chữ Hán đọc được
- * từ ảnh (đúng như trong game); ô trống giữ nhãn "chưa rõ" đã dịch.
- */
-function shownName(item) {
-  if (currentLocale() !== "zh") return item.viet;
-  return (item.cn || "").trim() || item.viet;
-}
+/* ---------- Nhãn trạng thái ---------- */
+const CELL_FLAGS = {
+  unsure: L("Không chắc", "不确定"),
+  unknown: L("Không rõ", "无法识别"),
+};
+const TACTIC_STATUS_TITLES = {
+  match: L("Đúng", "一致"),
+  wrong: L("Khác đội", "与阵容不同"),
+  empty: L("Để trống", "留空"),
+  unchecked: L("Không so (tướng thừa)", "未比对（多出的武将）"),
+};
+const BOOK_STATUS_LABELS = {
+  match: L("Binh thư đúng", "兵书一致"),
+  mismatch: L("Binh thư lệch", "兵书不同"),
+  missing: L("Thiếu binh thư", "缺少兵书"),
+};
 
-function heroResultCard(m) {
-  const flag = m.hero.sure
-    ? null
-    : el("span", { class: "ana-flag", title: L("Độ tin thấp, kiểm tra lại", "置信度低，请核对") }, [alertIcon(), L("kiểm tra", "待核对")]);
-  // Icon official (hotlink) để mắt thường xác nhận; dùng helper chân dung chung (nâng https, no-referrer),
-  // gãy/403 -> bỏ ảnh, không chặn text.
-  const portrait = m.hero.icon
-    ? heroPortrait({
-        nameVi: m.hero.viet,
-        iconUrl: m.hero.icon,
-        className: "ana-hero-icon",
-        fallbackOnError: false,
-      })
-    : null;
-  const tactics = el("div", { class: "ana-tactics" },
-    m.tactics.map((t) =>
-      el("span", { class: `ana-tac${t.sure ? "" : " unsure"}`, title: t.sure ? "" : L("Không chắc", "不确定") }, shownName(t)),
-    ),
-  );
-  // Binh thư (dòng vàng) — hiển thị, không tính điểm so khớp.
-  const books = (m.books && m.books.length)
-    ? el("div", { class: "ana-books" },
-        m.books.map((b) =>
-          el("span", { class: `ana-book${b.sure ? "" : " unsure"}`, title: b.sure ? "" : L("Không chắc", "不确定") }, shownName(b)),
-        ),
-      )
-    : null;
-  return el("div", { class: "ana-hero" }, [
-    el("div", { class: "ana-hero-head" }, [
-      portrait,
-      el("span", { class: "ana-hero-name" }, shownName(m.hero)),
-      m.statFocus ? el("span", { class: "ana-stat" }, currentLocale() === "zh" ? m.statFocusCn || m.statFocus : m.statFocus) : null,
-      flag,
-    ]),
-    tactics,
-    books,
-  ]);
-}
-
-/**
- * Hàng "đội tương tự": chỉ hiện trường có thật trong dữ liệu `findSimilarTeams` trả về — tên đội
- * (`team.name`, thiếu thì mã đội) và số khớp tướng/chiến pháp. Điểm, mùa và trạng thái khớp theo
- * artboard không có trong dữ liệu này nên giữ cách hiển thị cũ (xem báo cáo phase 9).
- */
-function similarTeamRow(s, onOpen, resolveRaw) {
-  const team = s.team || {};
-  // Tên đội trong dữ liệu chỉ có bản Việt: bản zh gọi đội bằng tên chữ Hán của các tướng trong đội.
-  const zhName = currentLocale() === "zh" && team.heroes?.length
-    ? team.heroes.map((hero) => localName(hero?.name, resolveRaw)).filter(Boolean).join(" · ")
-    : "";
-  // Nhãn nguồn tách các đội trùng tên (22 tên dùng chung cho 48/166 đội).
-  const sourceLabel = team.source ? legacySourceLabel(team.source) : "";
-  const label = L(`${s.heroHit}/${s.total} tướng`, `${s.heroHit}/${s.total} 名武将`)
-    + (s.tacticHit ? L(` · ${s.tacticHit} chiến pháp`, ` · ${s.tacticHit} 个战法`) : "")
-    + (sourceLabel ? ` · ${sourceLabel}` : "");
-  const btn = el("button", { class: "ana-team-link", type: "button" }, zhName || team.name || team.id || "team");
-  if (onOpen) btn.addEventListener("click", () => onOpen(team));
-  return el("li", { class: "ana-team-row", dataset: team.id ? { teamId: team.id } : {} }, [
-    btn,
-    el("span", { class: `ana-team-hits${s.heroHit === s.total ? " full" : ""}` }, label),
-  ]);
-}
-
-function renderResults(readBox, similarBox, result, deps) {
-  readBox.replaceChildren();
-  similarBox.replaceChildren();
-  // Thông báo lỗi do dòng trạng thái của công cụ hiện (một lần), không lặp lại trong thẻ kết quả.
-  if (!result || !Array.isArray(result.heroes) || result.heroes.length === 0) return false;
-  const mapped = mapTeamRead(result.heroes, deps);
-  readBox.append(el("div", { class: "ana-heroes" }, mapped.map(heroResultCard)));
-
-  const similar = findSimilarTeams(mapped, deps.teams, { minHeroes: 2 });
-  const resolveRaw = currentLocale() === "zh" ? createRawNameResolver(deps.heroesDict) : null;
-  if (similar.length) {
-    similarBox.append(el("ol", { class: "ana-teams" }, similar.map((s) => similarTeamRow(s, deps.onOpenTeam, resolveRaw))));
-  } else {
-    similarBox.append(el("p", { class: "ana-note" }, L("Không tìm thấy đội có sẵn nào có mức độ tương đồng đủ cao (≥2 tướng trùng)."
-      , "未找到相似度足够高的现有队伍（需至少 2 名武将相同）。")));
+/** Nhãn mùa trong ô chọn: bản zh dùng tên mùa nguồn, bản vi dùng mã + tên dịch. */
+function seasonOptionText(option) {
+  if (currentLocale() === "zh") {
+    return [option.displayCode, option.nameRaw].filter(Boolean).join(" · ") || option.label || option.sourceSeasonId;
   }
-  return true;
+  return option.displayCode && option.displayNameVi
+    ? `${option.displayCode} · ${option.displayNameVi}`
+    : option.displayNameVi || option.displayCode || option.sourceSeasonId;
+}
+
+/** localStorage có thể bị chặn (chế độ riêng tư): lịch sử chỉ là ghi nhớ. */
+function localStore() {
+  try {
+    return globalThis.localStorage;
+  } catch {
+    return null;
+  }
+}
+
+/* ---------- Xuất PNG (chỉ chữ + màu, không ảnh ngoài để canvas không bị taint) ---------- */
+
+function wrapText(ctx, text, maxWidth) {
+  const lines = [];
+  let line = "";
+  // Chữ Việt tách theo khoảng trắng; chữ Hán không có khoảng trắng nên tách theo ký tự khi quá dài.
+  for (const word of String(text).split(/(\s+)/u)) {
+    const next = line + word;
+    if (ctx.measureText(next).width <= maxWidth || !line.trim()) {
+      line = next;
+      continue;
+    }
+    lines.push(line.trimEnd());
+    line = word.trimStart();
+  }
+  if (line.trim()) lines.push(line.trimEnd());
+  return lines.flatMap((item) => {
+    if (ctx.measureText(item).width <= maxWidth) return [item];
+    const parts = [];
+    let current = "";
+    for (const char of item) {
+      if (ctx.measureText(current + char).width > maxWidth && current) {
+        parts.push(current);
+        current = "";
+      }
+      current += char;
+    }
+    if (current) parts.push(current);
+    return parts;
+  });
+}
+
+/**
+ * Vẽ thẻ kết quả lên canvas: tiêu đề, mùa, đội đã xác nhận và các đội khớp nhất kèm số khớp.
+ * Màu lấy từ token CSS đang áp (theo theme), font từ token chữ.
+ * @param {{title: string, subtitle: string, members: string[], groups: {title: string, rows: string[]}[], footer: string}} card
+ */
+export function drawResultCard(canvas, card) {
+  const css = getComputedStyle(document.documentElement);
+  const token = (name) => css.getPropertyValue(name).trim();
+  const serif = token("--font-serif") || "serif";
+  const sans = token("--font-sans") || "sans-serif";
+  const width = 1080;
+  const pad = 64;
+  const inner = width - pad * 2;
+  const measure = canvas.getContext("2d");
+  const blocks = [];
+  const add = (text, font, color, gap) => {
+    measure.font = font;
+    for (const line of wrapText(measure, text, inner)) blocks.push({ text: line, font, color, size: Number.parseInt(font.match(/(\d+)px/u)[1], 10), gap: 0 });
+    if (blocks.length) blocks[blocks.length - 1].gap = gap;
+  };
+  add(card.title, `700 44px ${serif}`, token("--ink"), 8);
+  add(card.subtitle, `400 24px ${sans}`, token("--muted"), 28);
+  for (const member of card.members) add(member, `500 28px ${sans}`, token("--ink"), 12);
+  for (const group of card.groups) {
+    blocks[blocks.length - 1].gap = 32;
+    add(group.title, `700 28px ${serif}`, token("--accent"), 14);
+    for (const row of group.rows) add(row, `400 24px ${sans}`, token("--ink-2"), 10);
+  }
+  blocks[blocks.length - 1].gap = 36;
+  add(card.footer, `400 20px ${sans}`, token("--muted"), 0);
+  const height = pad * 2 + blocks.reduce((total, block) => total + Math.round(block.size * 1.3) + block.gap, 0);
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = token("--panel");
+  ctx.fillRect(0, 0, width, height);
+  ctx.fillStyle = token("--accent");
+  ctx.fillRect(0, 0, width, 12);
+  ctx.textBaseline = "top";
+  let y = pad;
+  for (const block of blocks) {
+    ctx.font = block.font;
+    ctx.fillStyle = block.color;
+    ctx.fillText(block.text, pad, y);
+    y += Math.round(block.size * 1.3) + block.gap;
+  }
+  return canvas;
 }
 
 /* ---------- Khởi tạo section ---------- */
+
+/**
+ * @param deps {heroesDict, tacticsDict, booksDict, loadRecommended: () => Promise<model>,
+ *   teamHref: (record) => string|null, onNavigate?: (event) => void}
+ */
 export function initAnalyze(deps, mount) {
-  if (!isAnalyzeConfigured()) {
-    mount.replaceChildren(
-      el("div", { class: "ana-setup" }, [
-        el("p", {}, L("Tính năng soi đội chưa được cấu hình.", "“截图识阵”功能尚未配置。")),
-        el("p", { class: "ana-note" }, L("Cần deploy Worker (worker/) + điền workerUrl & turnstileSiteKey trong js/config.js.", "需部署 Worker（worker/），并在 js/config.js 中填写 workerUrl 与 turnstileSiteKey。")),
-      ]),
-    );
-    return;
-  }
+  const configured = isAnalyzeConfigured();
+  const zh = currentLocale() === "zh";
+  const indexes = {
+    heroes: createEntityIndex(deps.heroesDict, "hero"),
+    tactics: createEntityIndex(deps.tacticsDict, "tactic"),
+    books: createEntityIndex(deps.booksDict || [], "book"),
+  };
+  const INDEX_BY_KIND = { hero: indexes.heroes, tactic: indexes.tactics, book: indexes.books };
+  const resolveRaw = zh ? createRawNameResolver(deps.heroesDict, deps.tacticsDict, deps.booksDict || []) : null;
+
+  /** Nhãn hiển thị của một mục từ điển: bản vi tên Việt chuẩn, bản zh chữ Hán gốc. */
+  const recordLabel = (record) => (zh ? (record.chinese || "").trim() || record.viet : record.viet);
+  /** Tên của một ID; ID ngoài từ điển (tên chỉ có trong đội tham chiếu) dùng tên nguồn. */
+  const nameOf = (kind, id, fallbackVi = "", fallbackRaw = "") => {
+    const record = id ? INDEX_BY_KIND[kind].byId.get(id) : null;
+    if (record) return recordLabel(record);
+    if (!zh) return fallbackVi;
+    return fallbackRaw || localName(fallbackVi, resolveRaw);
+  };
+  const hasId = (id) => {
+    const kind = String(id).split(":")[0];
+    return Boolean(INDEX_BY_KIND[kind]?.byId.has(id));
+  };
+  // Datalist mỗi loại: nhãn -> ID (nhãn trùng giữ mục đầu), sắp theo nhãn.
+  const optionLabels = {};
+  const datalists = Object.entries(INDEX_BY_KIND).map(([kind, index]) => {
+    const labels = new Map();
+    for (const [id, record] of index.byId) {
+      const label = recordLabel(record);
+      if (label && !labels.has(label)) labels.set(label, id);
+    }
+    optionLabels[kind] = labels;
+    const sorted = [...labels.keys()].sort((a, b) => a.localeCompare(b, zh ? "zh" : "vi"));
+    return el("datalist", { id: `ana-${kind}-options` }, sorted.map((label) => el("option", { value: label })));
+  });
 
   let generation = 0;
-  const state = { imageDataUrl: null, fileName: '', token: null, busy: false, done: false };
+  let draft = emptyDraft();
+  let draftFromImage = false;
+  let compared = null; // {team, season, standard, other} của lần đối chiếu đang hiện
+  let model = null;
+  let historyEntries = readHistory(localStore());
+  const state = { imageDataUrl: null, fileName: "", token: null, busy: false, done: false };
+
+  /* ----- Thẻ 1: chọn ảnh ----- */
   const drop = el("button", { type: "button", class: "ana-drop" }, [
     cameraIcon(),
     el("span", { class: "ana-drop-title" }, L("Kéo thả ảnh, dán (Ctrl+V) hoặc bấm để chọn", "拖放图片、粘贴（Ctrl+V）或点击选择")),
@@ -331,60 +415,111 @@ export function initAnalyze(deps, mount) {
   ]);
   const tsBox = el("div", { class: "ana-turnstile" });
   const analyzeBtn = el("button", { class: "ana-btn primary ana-run", type: "button", disabled: "" }, L("Soi đội", "识别阵容"));
+  const manualBtn = el("button", { class: "ana-btn ana-manual", type: "button" }, L("Nhập tay", "手动输入"));
   const status = el("p", { class: "ana-status", role: "status" });
-  const heroBox = el("div", { class: "ana-read-body" });
-  const similarBox = el("div", { class: "ana-similar-body" });
-  const similarCard = el("section", { class: "ana-card ana-similar", hidden: "" }, [
-    el("header", { class: "ana-card-head" }, [
-      el("h2", { class: "ana-card-title" }, L("3 · Đội có sẵn tương tự", "3 · 相似的现有队伍")),
-      el("span", { class: "rt-sub" }, L("Theo số tướng và chiến pháp trùng", "按相同武将与战法数量排序")),
-    ]),
-    similarBox,
-  ]);
 
   const steps = [
     { label: L("Nén ảnh", "压缩图片"), done: () => Boolean(state.imageDataUrl) },
     { label: L("Xác thực chống bot", "人机验证"), done: () => Boolean(state.token) },
     { label: L("Soi đội và đối chiếu", "识别阵容并比对"), doneLabel: L("Đã đọc xong — kiểm tra lại kết quả đã đọc", "识别完成——请核对识别结果"), done: () => state.done },
   ].map((step) => {
-    const mark = checkIcon();
     const labelNode = el("span", {}, step.label);
     // Dấu ✓ nằm trong span bọc: `hidden` chỉ có tác dụng trên phần tử HTML, không trên chính SVG.
-    const markWrap = el("span", { class: "ana-step-mark", "aria-hidden": "true" }, [mark]);
+    const markWrap = el("span", { class: "ana-step-mark", "aria-hidden": "true" }, [checkIcon()]);
     const node = el("li", { class: "ana-step" }, [markWrap, labelNode]);
     return { ...step, node, markWrap, labelNode };
   });
   const stepList = el("ol", { class: "ana-steps", "aria-label": L("Trạng thái", "状态") }, steps.map((step) => step.node));
 
-  // Thẻ "2 · Đội đọc được" ẩn tới khi có kết quả như thẻ 3; lỗi/tiến trình vẫn báo qua dòng `role=status` ở thẻ 1.
-  const readCard = el("section", { class: "ana-card ana-read", hidden: "" }, [
-    el("header", { class: "ana-card-head" }, [
-      el("h2", { class: "ana-card-title" }, L("2 · Đội đọc được", "2 · 识别出的队伍")),
-      el("span", { class: "rt-sub" }, L("Tên Việt chuẩn · icon chỉ để đối chiếu", "原版中文名 · 头像仅供比对")),
-    ]),
-    heroBox,
-  ]);
-
   const pickCard = el("section", { class: "ana-card ana-pick" }, [
     el("h2", { class: "ana-card-title" }, L("1 · Chọn ảnh", "1 · 选择图片")),
-    el("p", { class: "tool-notice" }, [
-      el("span", { class: "tool-notice-icon", "aria-hidden": "true" }, [shieldIcon()]),
-      el("span", { class: "ana-disclaimer-text" }, DISCLAIMER),
+    ...(configured
+      ? [
+          el("p", { class: "tool-notice" }, [
+            el("span", { class: "tool-notice-icon", "aria-hidden": "true" }, [shieldIcon()]),
+            el("span", { class: "ana-disclaimer-text" }, DISCLAIMER),
+          ]),
+          drop,
+          fileInput,
+          fileRow,
+          tsBox,
+          el("div", { class: "ana-pick-actions" }, [analyzeBtn, manualBtn]),
+          status,
+          stepList,
+        ]
+      : [
+          // Worker chưa cấu hình: chỉ tắt phần đọc ảnh; nhập tay, link chia sẻ và lịch sử vẫn dùng được.
+          el("div", { class: "ana-setup" }, [
+            el("p", {}, L("Tính năng soi đội chưa được cấu hình.", "“截图识阵”功能尚未配置。")),
+            el("p", { class: "ana-note" }, L("Cần deploy Worker (worker/) + điền workerUrl & turnstileSiteKey trong js/config.js.", "需部署 Worker（worker/），并在 js/config.js 中填写 workerUrl 与 turnstileSiteKey。")),
+          ]),
+          el("div", { class: "ana-pick-actions" }, [manualBtn]),
+          status,
+        ]),
+  ]);
+
+  /* ----- Lịch sử trên máy ----- */
+  const historyList = el("ol", { class: "ana-history-list" });
+  const historyClear = el("button", { type: "button", class: "tool-text-action" }, L("Xoá lịch sử", "清除记录"));
+  const historyCard = el("section", { class: "ana-card ana-history", hidden: "" }, [
+    el("header", { class: "ana-card-head" }, [
+      el("h2", { class: "ana-card-title" }, L("Lịch sử trên máy", "本机记录")),
+      historyClear,
     ]),
-    drop,
-    fileInput,
-    fileRow,
-    tsBox,
-    analyzeBtn,
-    status,
-    stepList,
+    el("p", { class: "ana-note" }, L("Tối đa 10 đội đã đối chiếu, chỉ lưu trên trình duyệt này; không lưu ảnh.", "最多保存 10 支已比对的阵容，仅存于本浏览器，不保存图片。")),
+    historyList,
+  ]);
+
+  /* ----- Thẻ 2: editor xác nhận ----- */
+  const editorGrid = el("div", { class: "ana-editor-grid" });
+  const seasonSelect = el("select", { id: "ana-season", class: "ana-input", disabled: "" }, [
+    el("option", { value: "" }, L("Đang tải mùa…", "正在加载赛季…")),
+  ]);
+  const compareBtn = el("button", { type: "button", class: "ana-btn primary ana-compare-run", disabled: "" }, L("Đối chiếu", "比对"));
+  const readyNote = el("p", { class: "ana-note ana-ready-note", role: "status" });
+  const resetBtn = el("button", { type: "button", class: "tool-text-action" }, L("Xoá hết", "全部清空"));
+  const editorCard = el("section", { class: "ana-card ana-editor", hidden: "" }, [
+    el("header", { class: "ana-card-head" }, [
+      el("h2", { class: "ana-card-title" }, L("2 · Kiểm tra đội", "2 · 核对阵容")),
+      resetBtn,
+    ]),
+    el("p", { class: "ana-note" }, L(
+      "Sửa mọi ô cho đúng game. Ô “Không chắc” chọn một gợi ý hoặc gõ lại; ô chiến pháp, binh thư có thể để trống.",
+      "请将各格改为与游戏一致。“不确定”的格可点选建议或重新输入；战法、兵书格可留空。",
+    )),
+    editorGrid,
+    el("div", { class: "ana-editor-foot" }, [
+      el("label", { class: "ana-season", for: "ana-season" }, [L("Mùa đối chiếu", "比对赛季"), seasonSelect]),
+      compareBtn,
+    ]),
+    readyNote,
+    ...datalists,
+  ]);
+
+  /* ----- Thẻ 3: đối chiếu ----- */
+  const compareBody = el("div", { class: "ana-compare-body" });
+  const compareSub = el("span", { class: "rt-sub" });
+  const shareBtn = el("button", { type: "button", class: "ana-btn ana-share" }, L("Chép link", "复制链接"));
+  const pngBtn = el("button", { type: "button", class: "ana-btn ana-png" }, L("Tải ảnh PNG", "下载 PNG 图片"));
+  const shareNote = el("p", { class: "ana-note ana-share-note", role: "status" });
+  const compareCard = el("section", { class: "ana-card ana-compare", hidden: "" }, [
+    el("header", { class: "ana-card-head" }, [
+      el("h2", { class: "ana-card-title" }, L("3 · Đội có sẵn tương tự", "3 · 相似的现有队伍")),
+      compareSub,
+    ]),
+    el("div", { class: "ana-compare-actions" }, [shareBtn, pngBtn]),
+    shareNote,
+    compareBody,
   ]);
 
   const head = el("header", { class: "tool-head" }, [
     el("div", { class: "reference-head-text" }, [
       el("span", { class: "reference-kicker" }, L("Công cụ · Beta", "工具 · Beta")),
       el("h1", { class: "reference-title", tabindex: "-1" }, L("Soi đội từ ảnh", "截图识阵")),
-      el("p", { class: "reference-lead" }, L("Chụp màn hình đội hình, AI đọc tên tướng và chiến pháp, rồi đối chiếu với các đội trong cẩm nang.", "截取阵容画面，AI 识别武将与战法名称，再与攻略中的队伍进行比对。")),
+      el("p", { class: "reference-lead" }, L(
+        "Chụp màn hình đội hình hoặc nhập tay, kiểm tra từng ô rồi đối chiếu với Đội chuẩn theo mùa và Đội khác.",
+        "截取阵容画面或手动输入，逐格核对后与当季推荐阵容及其他阵容比对。",
+      )),
     ]),
   ]);
 
@@ -393,8 +528,8 @@ export function initAnalyze(deps, mount) {
     status.textContent = msg || "";
   }
 
-  /** Trạng thái công cụ vẽ tại chỗ: nút chạy, hàng ảnh đã chọn và danh sách bước. */
-  function paint() {
+  /** Trạng thái thẻ 1 vẽ tại chỗ: nút chạy, hàng ảnh đã chọn và danh sách bước. */
+  function paintPick() {
     analyzeBtn.disabled = !(state.imageDataUrl && state.token && !state.busy);
     fileRow.hidden = !state.imageDataUrl;
     drop.classList.toggle("chosen", Boolean(state.imageDataUrl));
@@ -406,29 +541,456 @@ export function initAnalyze(deps, mount) {
     }
   }
 
-  /** Vẽ kết quả đã đọc: `false` khi phản hồi không hợp lệ. */
-  function applyResult(result) {
-    const ok = renderResults(heroBox, similarBox, result, deps);
-    readCard.hidden = !ok;
-    similarCard.hidden = !ok;
-    state.done = ok;
-    paint();
-    return ok;
+  /* ----- Editor ----- */
+  const memberTitle = (index) => L(`Tướng ${index + 1}`, `武将 ${index + 1}`);
+  const FIELD_LABELS = {
+    hero: L("Tướng", "武将"),
+    tactic: [L("Chiến pháp A", "战法 A"), L("Chiến pháp B", "战法 B")],
+    book: L("Binh thư", "兵书"),
+  };
+  let cellViews = [];
+
+  function readCell(ref) {
+    const member = draft.heroes[ref.heroIndex];
+    return ref.kind === "tactic" ? member.tactics[ref.slotIndex] : member[ref.kind];
   }
 
-  function clearResults() {
-    heroBox.replaceChildren();
-    similarBox.replaceChildren();
-    readCard.hidden = true;
-    similarCard.hidden = true;
+  function writeCell(ref, cell) {
+    const member = draft.heroes[ref.heroIndex];
+    if (ref.kind === "tactic") member.tactics[ref.slotIndex] = cell;
+    else member[ref.kind] = cell;
+  }
+
+  /** Chữ hiện trong ô: ID chắc -> nhãn; chữ đọc được chưa khớp -> nguyên văn (trừ `未知`). */
+  function cellText(kind, cell) {
+    if (cell.id) return nameOf(kind, cell.id);
+    return cell.raw && cell.raw !== "未知" ? cell.raw : "";
+  }
+
+  function cellView(ref) {
+    const kind = ref.kind;
+    const label = kind === "tactic" ? FIELD_LABELS.tactic[ref.slotIndex] : FIELD_LABELS[kind];
+    const input = el("input", {
+      class: "ana-input ana-cell-input",
+      type: "text",
+      list: `ana-${kind}-options`,
+      autocomplete: "off",
+      spellcheck: "false",
+      "aria-label": `${memberTitle(ref.heroIndex)} · ${label}`,
+    });
+    const flag = el("span", { class: "ana-cell-flag", hidden: "" });
+    const raw = el("span", { class: "ana-cell-raw", hidden: "" });
+    const candidates = el("div", { class: "ana-candidates", hidden: "" });
+    const clear = kind === "hero"
+      ? null
+      : el("button", { type: "button", class: "tool-text-action ana-cell-clear", hidden: "" }, L("Để trống", "留空"));
+    const node = el("div", { class: "ana-cell", dataset: { kind } }, [
+      el("div", { class: "ana-cell-head" }, [el("span", { class: "ana-cell-label" }, label), flag]),
+      input,
+      raw,
+      candidates,
+      clear,
+    ]);
+    const view = { ref, node, input, paint };
+
+    function paint() {
+      const cell = readCell(ref);
+      node.dataset.state = cell.state;
+      const flagged = cell.state === "unsure" || cell.state === "unknown" || (kind === "hero" && cell.state === "empty");
+      flag.hidden = !flagged;
+      flag.replaceChildren(...(flagged ? [alertIcon(), cell.state === "empty" ? L("Chưa chọn", "未选择") : CELL_FLAGS[cell.state]] : []));
+      input.setAttribute("aria-invalid", flagged ? "true" : "false");
+      // Chữ Worker chép được giữ để đối chiếu với ảnh khi ô chưa khớp chắc.
+      const showRaw = draftFromImage && cell.raw && cell.state !== "sure" && cell.state !== "empty";
+      raw.hidden = !showRaw;
+      raw.textContent = showRaw ? L(`Đọc được: ${cell.raw}`, `识别到：${cell.raw}`) : "";
+      candidates.hidden = !cell.candidates.length;
+      candidates.replaceChildren(...cell.candidates.map((id) =>
+        el("button", {
+          type: "button",
+          class: "ana-candidate",
+          onclick: () => {
+            writeCell(ref, sureCell(id, cell.raw));
+            input.value = nameOf(kind, id);
+            paint();
+            paintReady();
+            input.focus();
+          },
+        }, nameOf(kind, id)),
+      ));
+      if (clear) clear.hidden = !(cell.state === "unsure" || cell.state === "unknown");
+    }
+
+    const update = (commit) => {
+      const value = input.value.trim();
+      // Đang gõ dở: chỉ cập nhật khi khớp đúng một nhãn hoặc xoá trống; `change` (rời ô) mới khớp mờ.
+      if (!commit && value && !optionLabels[kind].has(value)) return;
+      writeCell(ref, cellFromInput(value, INDEX_BY_KIND[kind], optionLabels[kind]));
+      paint();
+      paintReady();
+    };
+    input.addEventListener("input", () => update(false));
+    input.addEventListener("change", () => update(true));
+    clear?.addEventListener("click", () => {
+      writeCell(ref, emptyCell());
+      input.value = "";
+      paint();
+      paintReady();
+      input.focus();
+    });
+    return view;
+  }
+
+  /** Dựng lại toàn bộ editor từ `draft` (ảnh mới, nhập tay, link, lịch sử). */
+  function renderEditor() {
+    cellViews = [];
+    editorGrid.replaceChildren(...draft.heroes.map((member, heroIndex) => {
+      const refs = [
+        { heroIndex, kind: "hero" },
+        ...member.tactics.map((_, slotIndex) => ({ heroIndex, kind: "tactic", slotIndex })),
+        { heroIndex, kind: "book" },
+      ];
+      const views = refs.map(cellView);
+      cellViews.push(...views);
+      for (const view of views) {
+        view.input.value = cellText(view.ref.kind, readCell(view.ref));
+        view.paint();
+      }
+      return el("fieldset", { class: "ana-member" }, [
+        el("legend", { class: "ana-member-title" }, memberTitle(heroIndex)),
+        ...views.map((view) => view.node),
+      ]);
+    }));
+    editorCard.hidden = false;
+    paintReady();
+  }
+
+  /** Nút Đối chiếu khoá tới khi đủ 3 tướng và không còn ô "không chắc"/"không rõ". */
+  function paintReady() {
+    const ready = draftReady(draft);
+    const pending = draft.heroes.reduce((total, member) =>
+      total + (member.hero.state === "sure" ? 0 : 1) +
+      [...member.tactics, member.book].filter((cell) => cell.state === "unsure" || cell.state === "unknown").length, 0);
+    compareBtn.disabled = !ready;
+    readyNote.textContent = ready
+      ? ""
+      : L(`Còn ${pending} ô cần xác nhận trước khi đối chiếu.`, `还有 ${pending} 格需确认后才能比对。`);
+  }
+
+  /* ----- Mùa + dữ liệu Đội chuẩn ----- */
+  let modelPending = null;
+  function ensureModel() {
+    if (model) return Promise.resolve(model);
+    if (!modelPending) {
+      modelPending = Promise.resolve()
+        .then(() => deps.loadRecommended())
+        .then((loaded) => {
+          model = loaded;
+          fillSeasons();
+          return model;
+        })
+        .catch(() => {
+          modelPending = null;
+          seasonSelect.replaceChildren(el("option", { value: "" }, L("Không tải được mùa", "无法加载赛季")));
+          return null;
+        });
+    }
+    return modelPending;
+  }
+
+  function currentSeason() {
+    if (!model) return null;
+    return readRecommendedQuery(location.href, model.seasons || {}).season;
+  }
+
+  function fillSeasons() {
+    const registry = model.seasons || {};
+    const options = (registry.seasonOptions || []).filter((option) => option.sourceSeasonId);
+    seasonSelect.replaceChildren(
+      ...options.map((option) => el("option", { value: option.sourceSeasonId }, seasonOptionText(option))),
+      el("option", { value: "all" }, L("Tất cả mùa", "全部赛季")),
+    );
+    const wanted = currentSeason();
+    seasonSelect.value = [...seasonSelect.options].some((option) => option.value === wanted)
+      ? wanted
+      : registry.defaultSourceSeasonId || seasonSelect.options[0]?.value || "all";
+    seasonSelect.disabled = false;
+    // Nhãn mùa của lịch sử có sau khi registry nạp xong.
+    renderHistory();
+  }
+
+  const seasonLabel = (season) => {
+    if (season === "all") return L("Tất cả mùa", "全部赛季");
+    const option = model?.seasons?.seasonOptions?.find((item) => item.sourceSeasonId === season);
+    return option ? seasonOptionText(option) : season || "";
+  };
+
+  /** URL của trang mang đúng `season` + `doi` (không ảnh, không token). */
+  function writeUrl(changes, push = false) {
+    const url = new URL(location.href);
+    for (const [key, value] of Object.entries(changes)) {
+      url.searchParams.delete(key);
+      if (value) url.searchParams.set(key, value);
+    }
+    if (url.href === location.href) return;
+    if (push) window.history.pushState(window.history.state, "", url);
+    else window.history.replaceState(window.history.state, "", url);
+  }
+
+  /* ----- Kết quả đối chiếu ----- */
+  const recordName = (record) => {
+    const reference = referenceTeam(record);
+    const heroNames = () => reference.slots.map((slot) => nameOf("hero", slot.alternatives[0]?.canonicalId, slot.name, slot.raw)).filter(Boolean).join(" · ");
+    if (record.sourceConfigId) return zh ? record.nameZh || heroNames() : record.displayNameVi || heroNames();
+    return zh ? heroNames() : record.name || heroNames();
+  };
+
+  const hitsText = (diff) => [
+    L(`${diff.heroHit}/${diff.heroTotal} tướng`, `${diff.heroHit}/${diff.heroTotal} 名武将`),
+    L(`${diff.tacticHit}/${diff.tacticTotal} chiến pháp`, `${diff.tacticHit}/${diff.tacticTotal} 个战法`),
+    ...(diff.bookDiff ? [L(`${diff.bookDiff} binh thư lệch`, `${diff.bookDiff} 本兵书不同`)] : []),
+  ].join(" · ");
+
+  function diffList(diff) {
+    const items = diff.heroes.map((hero) => {
+      const tactics = hero.tactics.map((tactic) =>
+        el("span", { class: "ana-diff-tac", dataset: { status: tactic.status }, title: TACTIC_STATUS_TITLES[tactic.status] },
+          [tactic.status === "match" ? checkIcon() : null, tactic.id ? nameOf("tactic", tactic.id) : TACTIC_STATUS_TITLES.empty]));
+      const missing = hero.missingTactics.length
+        ? el("span", { class: "ana-diff-missing" }, L(
+            `Đội dùng: ${hero.missingTactics.map((entry) => nameOf("tactic", entry.ids[0], entry.name, entry.raw)).join(", ")}`,
+            `阵容使用：${hero.missingTactics.map((entry) => nameOf("tactic", entry.ids[0], entry.name, entry.raw)).join("、")}`,
+          ))
+        : null;
+      const bookLabel = BOOK_STATUS_LABELS[hero.book.status];
+      const book = bookLabel
+        ? el("span", { class: "ana-diff-book", dataset: { status: hero.book.status } }, hero.book.status === "match"
+            ? bookLabel
+            : `${bookLabel}: ${nameOf("book", hero.book.expected.ids[0], hero.book.expected.name, hero.book.expected.raw)}`)
+        : null;
+      return el("li", { class: "ana-diff-hero", dataset: { status: hero.status } }, [
+        el("span", { class: "ana-diff-name" }, [
+          nameOf("hero", hero.hero),
+          hero.status === "extra" ? el("span", { class: "ana-diff-extra" }, L(" · thừa", " · 多出")) : null,
+        ]),
+        el("span", { class: "ana-diff-tacs" }, tactics),
+        missing,
+        book,
+      ]);
+    });
+    if (diff.missingHeroes.length) {
+      items.push(el("li", { class: "ana-diff-hero", dataset: { status: "missing" } }, L(
+        `Thiếu tướng: ${diff.missingHeroes.map((hero) => nameOf("hero", hero.id, hero.name, hero.raw)).join(", ")}`,
+        `缺少武将：${diff.missingHeroes.map((hero) => nameOf("hero", hero.id, hero.name, hero.raw)).join("、")}`,
+      )));
+    }
+    return el("ul", { class: "ana-diff" }, items);
+  }
+
+  function teamRow({ record, diff }) {
+    const href = deps.teamHref?.(record) || null;
+    const name = recordName(record);
+    const link = href
+      ? el("a", { class: "ana-team-link", href, onclick: (event) => deps.onNavigate?.(event) }, name)
+      : el("span", { class: "ana-team-link" }, name);
+    const full = diff.heroHit === diff.heroTotal && diff.tacticHit === diff.tacticTotal && !diff.bookDiff;
+    return el("li", { class: "ana-team-row", dataset: { teamId: record.sourceConfigId || record.legacyTeamId || record.id || "" } }, [
+      link,
+      el("span", { class: `ana-team-hits${full ? " full" : ""}` }, hitsText(diff)),
+      diffList(diff),
+    ]);
+  }
+
+  function group(title, matches, empty, className) {
+    return el("section", { class: `ana-group ${className}` }, [
+      el("h3", { class: "ana-group-title" }, title),
+      matches.length ? el("ol", { class: "ana-teams" }, matches.map(teamRow)) : el("p", { class: "ana-note" }, empty),
+    ]);
+  }
+
+  /**
+   * Đối chiếu đội đã xác nhận. `save` = người dùng bấm Đối chiếu (ghi lịch sử); mở link/lịch sử thì
+   * chỉ dựng lại, không ghi thêm. Không bao giờ gọi Worker.
+   */
+  async function runCompare({ save = false, push = false } = {}) {
+    const team = confirmedTeam(draft);
+    if (!team) return;
+    const started = ++generation;
+    compareCard.hidden = false;
+    shareNote.textContent = "";
+    compareSub.textContent = "";
+    compareBody.replaceChildren(el("p", { class: "ana-note" }, L("Đang tải dữ liệu đội…", "正在加载阵容数据…")));
+    const loaded = await ensureModel();
+    if (started !== generation) return;
+    if (!loaded) {
+      compared = null;
+      compareBody.replaceChildren(el("p", { class: "error", role: "status" }, L(
+        "Dữ liệu đội chuẩn hiện không khả dụng. Thử tải lại trang.", "推荐阵容数据暂不可用，请刷新页面重试。",
+      )));
+      return;
+    }
+    const season = seasonSelect.value || currentSeason() || "all";
+    const doi = encodeTeamParam(team);
+    writeUrl({ [SEASON_QUERY_KEY]: season, [TEAM_QUERY_KEY]: doi }, push);
+    const standardRecords = (loaded.index?.records || []).filter((record) => season === "all" || record.sourceSeasonId === season);
+    const standard = compareTeams(team, standardRecords, { minHeroes: 2, limit: 5 });
+    const other = compareTeams(team, loaded.other?.records || [], { minHeroes: 2, limit: 5 });
+    compared = { team, season, standard, other };
+    compareSub.textContent = L("Theo số tướng rồi số chiến pháp khớp", "按相同武将数、再按相同战法数排序");
+    compareBody.replaceChildren(
+      group(L(`Đội chuẩn · ${seasonLabel(season)}`, `推荐阵容 · ${seasonLabel(season)}`), standard,
+        L("Mùa này không có đội chuẩn nào trùng từ 2 tướng.", "本赛季没有至少 2 名武将相同的推荐阵容。"), "ana-group-standard"),
+      group(L("Đội khác · tham khảo", "其他阵容 · 仅供参考"), other,
+        L("Không tìm thấy đội có sẵn nào có mức độ tương đồng đủ cao (≥2 tướng trùng).", "未找到相似度足够高的现有队伍（需至少 2 名武将相同）。"), "ana-group-other"),
+    );
+    if (save) {
+      historyEntries = addHistoryEntry(historyEntries, { doi, season, savedAt: new Date().toISOString() });
+      writeHistory(localStore(), historyEntries);
+      renderHistory();
+    }
+  }
+
+  /* ----- Lịch sử ----- */
+  function renderHistory() {
+    historyCard.hidden = historyEntries.length === 0;
+    const formatter = new Intl.DateTimeFormat(zh ? "zh-CN" : "vi-VN", { dateStyle: "short", timeStyle: "short" });
+    historyList.replaceChildren(...historyEntries.map((entry) => {
+      const team = decodeTeamParam(entry.doi, { hasId });
+      if (!team) return null;
+      const heroes = team.heroes.map((member) => nameOf("hero", member.hero)).join(" · ");
+      return el("li", {}, [
+        el("button", { type: "button", class: "ana-history-item", onclick: () => openTeam(team, entry.season, { push: true }) }, [
+          el("span", { class: "ana-history-team" }, heroes),
+          el("span", { class: "ana-history-meta" }, `${entry.season ? `${seasonLabel(entry.season)} · ` : ""}${formatter.format(new Date(entry.savedAt))}`),
+        ]),
+      ]);
+    }));
+  }
+
+  historyClear.addEventListener("click", () => {
+    historyEntries = [];
+    writeHistory(localStore(), historyEntries);
+    renderHistory();
+  });
+
+  /** Mở một đội đã xác nhận (link chia sẻ / lịch sử): dựng editor + diff, không gọi Worker. */
+  async function openTeam(team, season, { push = false } = {}) {
+    draft = draftFromTeam(team);
+    draftFromImage = false;
+    renderEditor();
+    await ensureModel();
+    if (season && [...seasonSelect.options].some((option) => option.value === season)) seasonSelect.value = season;
+    await runCompare({ push });
+  }
+
+  /** Đọc `?doi=` của URL hiện tại; link hỏng bị bỏ lặng lẽ (xoá khỏi URL, editor rỗng). */
+  function applyUrlTeam() {
+    const params = new URL(location.href).searchParams;
+    if (!params.has(TEAM_QUERY_KEY)) return false;
+    const team = decodeTeamParam(params.get(TEAM_QUERY_KEY), { hasId });
+    if (!team) {
+      writeUrl({ [TEAM_QUERY_KEY]: null });
+      draft = emptyDraft();
+      draftFromImage = false;
+      renderEditor();
+      return false;
+    }
+    openTeam(team, params.get(SEASON_QUERY_KEY));
+    return true;
+  }
+
+  /* ----- Chia sẻ + PNG ----- */
+  shareBtn.addEventListener("click", async () => {
+    if (!compared) return;
+    const url = new URL(localePath("/soi-doi-tu-anh/"), location.origin);
+    url.searchParams.set(SEASON_QUERY_KEY, compared.season);
+    url.searchParams.set(TEAM_QUERY_KEY, encodeTeamParam(compared.team));
+    try {
+      await navigator.clipboard.writeText(url.href);
+      shareNote.replaceChildren(L("Đã chép link. Link chỉ chứa đội đã xác nhận, không chứa ảnh.", "已复制链接。链接仅包含已确认的阵容，不含图片。"));
+    } catch {
+      // Clipboard bị chặn: hiện link để người dùng tự chép.
+      const field = el("input", { class: "ana-input ana-share-url", type: "text", readonly: "", value: url.href, "aria-label": L("Link chia sẻ", "分享链接") });
+      shareNote.replaceChildren(field);
+      field.select();
+    }
+  });
+
+  pngBtn.addEventListener("click", () => {
+    if (!compared) return;
+    const memberLine = (member, index) => {
+      const tactics = member.tactics.map((id) => (id ? nameOf("tactic", id) : "—")).join(" · ");
+      const book = member.book ? ` · ${nameOf("book", member.book)}` : "";
+      return `${index + 1}. ${nameOf("hero", member.hero)} — ${tactics}${book}`;
+    };
+    const rows = (matches) => matches.slice(0, 3).map(({ record, diff }) => `${recordName(record)} — ${hitsText(diff)}`);
+    const canvas = drawResultCard(document.createElement("canvas"), {
+      title: L("Soi đội · Cẩm Nang TQCCL", "截图识阵 · 三国志战略版攻略手册"),
+      subtitle: L(`Mùa đối chiếu: ${seasonLabel(compared.season)}`, `比对赛季：${seasonLabel(compared.season)}`),
+      members: compared.team.heroes.map(memberLine),
+      groups: [
+        { title: L("Đội chuẩn gần nhất", "最接近的推荐阵容"), rows: rows(compared.standard) },
+        { title: L("Đội khác · tham khảo", "其他阵容 · 仅供参考"), rows: rows(compared.other) },
+      ].map((item) => (item.rows.length ? item : { ...item, rows: [L("Không có đội trùng từ 2 tướng.", "没有至少 2 名武将相同的阵容。")] })),
+      footer: location.host,
+    });
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const href = URL.createObjectURL(blob);
+      const link = el("a", { href, download: "soi-doi.png" });
+      document.body.append(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(href), 0);
+    }, "image/png");
+  });
+
+  /* ----- Sự kiện editor ----- */
+  compareBtn.addEventListener("click", () => runCompare({ save: true }));
+  seasonSelect.addEventListener("change", () => {
+    writeUrl({ [SEASON_QUERY_KEY]: seasonSelect.value });
+    if (compared) runCompare();
+  });
+  resetBtn.addEventListener("click", () => {
+    draft = emptyDraft();
+    draftFromImage = false;
+    compared = null;
+    compareCard.hidden = true;
+    writeUrl({ [TEAM_QUERY_KEY]: null });
+    renderEditor();
+    cellViews[0]?.input.focus();
+  });
+  manualBtn.addEventListener("click", () => {
+    // Ảnh và nhập tay dùng chung một editor: mở editor với dữ liệu đang có, không gọi Worker.
+    if (editorCard.hidden) renderEditor();
+    ensureModel();
+    (cellViews.find((view) => readCell(view.ref).state !== "sure") || cellViews[0])?.input.focus();
+  });
+
+  /** Kết quả Worker -> editor (ô không chắc/không rõ phải được xác nhận trước khi đối chiếu). */
+  function applyResult(result) {
+    if (!result || !Array.isArray(result.heroes) || result.heroes.length === 0) return false;
+    draft = draftFromRead(result, indexes);
+    draftFromImage = true;
+    compared = null;
+    compareCard.hidden = true;
+    writeUrl({ [TEAM_QUERY_KEY]: null });
+    renderEditor();
+    ensureModel();
+    state.done = true;
+    paintPick();
+    return true;
+  }
+
+  function clearRead() {
     state.done = false;
-    paint();
+    paintPick();
   }
 
   async function pickFile(file) {
     if (!file || !file.type.startsWith("image/")) return;
     const started = ++generation;
-    clearResults();
+    clearRead();
     setStatus(L("Đang nén ảnh…", "正在压缩图片…"));
     try {
       const compressed = await compressImage(file);
@@ -441,7 +1003,7 @@ export function initAnalyze(deps, mount) {
     } catch (e) {
       setStatus(describeAnalyzeError(e), "err");
     }
-    paint();
+    paintPick();
   }
 
   // Turnstile render (lazy khi mở section).
@@ -453,11 +1015,11 @@ export function initAnalyze(deps, mount) {
       await renderTurnstileWidget(tsBox, {
         onToken: (tok) => {
           state.token = tok;
-          paint();
+          paintPick();
         },
         onExpire: () => {
           state.token = null;
-          paint();
+          paintPick();
         },
         onError: (message) => setStatus(message, "err"),
       });
@@ -466,58 +1028,67 @@ export function initAnalyze(deps, mount) {
     }
   }
 
-  // Events.
-  drop.addEventListener("click", () => fileInput.click());
-  fileInput.addEventListener("change", (e) => pickFile(e.target.files[0]));
-  drop.addEventListener("dragover", (e) => {
-    e.preventDefault();
-    drop.classList.add("over");
-  });
-  drop.addEventListener("dragleave", () => drop.classList.remove("over"));
-  drop.addEventListener("drop", (e) => {
-    e.preventDefault();
-    drop.classList.remove("over");
-    pickFile(e.dataTransfer.files[0]);
-  });
-  document.addEventListener("paste", (e) => {
-    const item = [...(e.clipboardData?.items || [])].find((i) => i.type.startsWith("image/"));
-    if (item) pickFile(item.getAsFile());
-  });
+  if (configured) {
+    drop.addEventListener("click", () => fileInput.click());
+    fileInput.addEventListener("change", (e) => pickFile(e.target.files[0]));
+    drop.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      drop.classList.add("over");
+    });
+    drop.addEventListener("dragleave", () => drop.classList.remove("over"));
+    drop.addEventListener("drop", (e) => {
+      e.preventDefault();
+      drop.classList.remove("over");
+      pickFile(e.dataTransfer.files[0]);
+    });
+    document.addEventListener("paste", (e) => {
+      // Dán chữ vào ô editor giữ hành vi mặc định; chỉ ảnh mới được đưa đi soi.
+      const item = [...(e.clipboardData?.items || [])].find((i) => i.type.startsWith("image/"));
+      if (item) pickFile(item.getAsFile());
+    });
 
-  analyzeBtn.addEventListener("click", async () => {
-    if (state.busy || !state.imageDataUrl || !state.token) return;
-    const started = generation;
-    state.busy = true;
-    paint();
-    setStatus(L("Đang soi đội…", "正在识别阵容…"));
-    try {
-      const result = await callWorker(state.imageDataUrl, state.token);
-      if (started !== generation) return;
-      if (!applyResult(result)) {
-        setStatus(L("Phản hồi không hợp lệ, thử lại.", "返回结果无效，请重试。"), "err");
-        return;
+    analyzeBtn.addEventListener("click", async () => {
+      if (state.busy || !state.imageDataUrl || !state.token) return;
+      const started = generation;
+      state.busy = true;
+      paintPick();
+      setStatus(L("Đang soi đội…", "正在识别阵容…"));
+      try {
+        const result = await callWorker(state.imageDataUrl, state.token);
+        if (started !== generation) return;
+        if (!applyResult(result)) {
+          setStatus(L("Phản hồi không hợp lệ, thử lại.", "返回结果无效，请重试。"), "err");
+          return;
+        }
+        setStatus("");
+      } catch (e) {
+        if (started !== generation) return;
+        setStatus(describeAnalyzeError(e, ANALYZE_ACTION_ERROR), "err");
+      } finally {
+        // Luôn mở khoá, kể cả khi người dùng đã chọn ảnh khác: token Turnstile dùng 1 lần -> reset,
+        // yêu cầu xác thực lại. Lượt cũ chỉ bị bỏ kết quả/trạng thái ở trên, không được kẹt nút.
+        state.token = null;
+        state.busy = false;
+        if (turnstileRendered && window.turnstile) window.turnstile.reset(tsBox);
+        paintPick();
       }
-      setStatus("");
-    } catch (e) {
-      if (started !== generation) return;
-      setStatus(describeAnalyzeError(e, ANALYZE_ACTION_ERROR), "err");
-    } finally {
-      // Luôn mở khoá, kể cả khi người dùng đã chọn ảnh khác: token Turnstile dùng 1 lần -> reset,
-      // yêu cầu xác thực lại. Lượt cũ chỉ bị bỏ kết quả/trạng thái ở trên, không được kẹt nút.
-      state.token = null;
-      state.busy = false;
-      if (turnstileRendered && window.turnstile) window.turnstile.reset(tsBox);
-      paint();
-    }
+    });
+  }
+
+  // Back/Forward giữa các đội đã mở (lịch sử, link): đội theo URL; URL không có đội thì giữ editor.
+  window.addEventListener("popstate", () => {
+    if (new URL(location.href).searchParams.has(TEAM_QUERY_KEY)) applyUrlTeam();
   });
 
   mount.replaceChildren(
     head,
     el("div", { class: "ana-layout" }, [
-      pickCard,
-      el("div", { class: "ana-col" }, [readCard, similarCard]),
+      el("div", { class: "ana-col ana-col-pick" }, [pickCard, historyCard]),
+      el("div", { class: "ana-col ana-col-result" }, [editorCard, compareCard]),
     ]),
   );
-  paint();
-  ensureTurnstile();
+  paintPick();
+  renderHistory();
+  if (configured) ensureTurnstile();
+  applyUrlTeam();
 }

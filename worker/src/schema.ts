@@ -1,15 +1,21 @@
 // Schema kết quả vision + validate + tolerant parse (M1).
-// Model trả JSON: { heroes: [{ nameCn, tacticsCn[], booksCn[], statFocusCn, nameFromPortrait? }] }.
-// Site map Hán -> Việt qua dict (match-dict.js), Worker KHÔNG map.
+// Model trả JSON: { heroes: [{ nameCn, tacticsCn[≤3 dòng], booksCn[], statFocusCn }] }.
+// Chỉ chép chữ in trong ảnh: ô không đọc được là `未知`. Site map Hán -> Việt qua dict
+// (match-dict.js), Worker KHÔNG map.
+
+/** Chữ đánh dấu ô không đọc được (tên tướng hoặc một ô chiến pháp). */
+export const UNKNOWN_CN = "未知";
+/** Số dòng chiến pháp tối đa in dưới một tướng: tự mang + 2 ô tự chọn (màn chiến báo in đủ 3). */
+export const TACTIC_ROWS = 3;
 
 export interface HeroRead {
   nameCn: string;
+  // Mọi dòng chiến pháp in dưới tướng theo thứ tự (≤ TACTIC_ROWS), kể cả dòng tự mang; dòng không
+  // đọc được = `未知`. Site bỏ dòng tự mang bằng dữ liệu tướng (`selfTacticCn`), Worker không phân loại.
   tacticsCn: string[];
+  // Binh thư theo thứ tự in (binh thư chính trước); không có -> [].
   booksCn: string[];
   statFocusCn: string;
-  // True khi model SUY ĐOÁN tên tướng từ chân dung (không có tên in rõ). Site
-  // dùng để ép confidence xuống "low" + gắn cờ kiểm tra (chống auto-accept sai).
-  nameFromPortrait?: boolean;
 }
 export interface AnalyzeResult {
   heroes: HeroRead[];
@@ -74,7 +80,7 @@ export function tolerantParse(text: string): unknown {
 
 // [M2] Chặn output phình to (model lỗi/độc): đội ≤6 tướng, cắt chuỗi/ mảng.
 const MAX_HEROES = 12;
-const MAX_LIST = 6; // trần số phần tử mảng Hán (tacticsCn / booksCn)
+const MAX_LIST = 6; // trần số phần tử mảng Hán (booksCn và danh sách của các mode scan)
 const MAX_STR = 40; // tên Hán/chất tướng thực tế rất ngắn
 
 const cut = (s: string) => s.trim().slice(0, MAX_STR);
@@ -86,16 +92,11 @@ export function validateResult(parsed: unknown): AnalyzeResult {
   if (!Array.isArray(heroesRaw)) throw new TypeError("Thiếu mảng 'heroes'");
   const heroes: HeroRead[] = heroesRaw.slice(0, MAX_HEROES).map((h: any, i: number) => {
     if (!h || typeof h !== "object") throw new TypeError(`heroes[${i}] không hợp lệ`);
-    const nameCn = typeof h.nameCn === "string" ? cut(h.nameCn) : "";
-    if (!nameCn) throw new TypeError(`heroes[${i}].nameCn rỗng`);
-    const strList = (v: any) =>
-      Array.isArray(v) ? v.filter((t: any) => typeof t === "string" && t.trim()).slice(0, MAX_LIST).map(cut) : [];
-    const tacticsCn = strList(h.tacticsCn);
+    const nameCn = (typeof h.nameCn === "string" ? cut(h.nameCn) : "") || UNKNOWN_CN;
+    const tacticsCn = tacticRows(h.tacticsCn);
     const booksCn = strList(h.booksCn); // binh thư (field riêng; thiếu -> [] backward-compat)
     const statFocusCn = typeof h.statFocusCn === "string" ? cut(h.statFocusCn) : "";
-    const hero: HeroRead = { nameCn, tacticsCn, booksCn, statFocusCn };
-    if (h.nameFromPortrait === true) hero.nameFromPortrait = true;
-    return hero;
+    return { nameCn, tacticsCn, booksCn, statFocusCn };
   });
   if (heroes.length === 0) throw new TypeError("heroes rỗng");
   return { heroes };
@@ -103,6 +104,12 @@ export function validateResult(parsed: unknown): AnalyzeResult {
 
 function strList(v: any) {
   return Array.isArray(v) ? v.filter((t: any) => typeof t === "string" && t.trim()).slice(0, MAX_LIST).map(cut) : [];
+}
+
+/** Dòng chiến pháp theo vị trí (≤ TACTIC_ROWS): dòng trống/sai kiểu = `未知`, không dồn dòng. */
+function tacticRows(v: unknown): string[] {
+  const raw = Array.isArray(v) ? v.slice(0, TACTIC_ROWS) : [];
+  return raw.map((value: unknown) => (typeof value === "string" ? cut(value) : "") || UNKNOWN_CN);
 }
 
 function numberField(v: any) {

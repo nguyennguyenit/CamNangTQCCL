@@ -11,6 +11,7 @@ import {
 import { STORAGE_KEY as RECRUIT_TRACKER_KEY } from "../js/recruit-tracker-store.js";
 import { ROSTER_SCAN_STORAGE_KEY } from "../js/roster-scan-state.js";
 import { TEAM_VIEW_STORAGE_KEY } from "../js/team-view.js";
+import { HISTORY_STORAGE_KEY as ANALYZE_HISTORY_KEY } from "../js/analyze-state.js";
 
 const planHostBridge = (input) => planWithKeys(input, HOST_BRIDGE_KEYS);
 
@@ -51,11 +52,12 @@ function decodePayload(url) {
 test("allowlist is exactly the app's persistent localStorage keys", () => {
   assert.deepEqual([...HOST_BRIDGE_KEYS].sort(), [
     "theme",
+    "tqccl.analyze.history.v1",
     "tqccl.rosterRecommend.scanState.v1",
     "tqccl.teamView.v1",
     "tqcclRecruitTracker",
   ]);
-  for (const key of [RECRUIT_TRACKER_KEY, ROSTER_SCAN_STORAGE_KEY, TEAM_VIEW_STORAGE_KEY]) {
+  for (const key of [RECRUIT_TRACKER_KEY, ROSTER_SCAN_STORAGE_KEY, TEAM_VIEW_STORAGE_KEY, ANALYZE_HISTORY_KEY]) {
     assert.ok(HOST_BRIDGE_KEYS.includes(key), key);
   }
 });

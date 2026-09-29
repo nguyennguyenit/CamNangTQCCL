@@ -1,7 +1,21 @@
-// TDD js/analyze-map.js — map 3 trục Hán->Việt + đối chiếu team.
+// TDD js/analyze-map.js — map Hán->Việt, khớp 3 trạng thái cho editor, diff từng ô + đối chiếu team.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { statFocusVn, mapRead, mapTeamRead, findSimilarTeams } from "../js/analyze-map.js";
+import {
+  statFocusVn,
+  mapRead,
+  mapTeamRead,
+  findSimilarTeams,
+  classifyName,
+  createEntityIndex,
+  draftFromRead,
+  draftReady,
+  confirmedTeam,
+  cellFromInput,
+  emptyCell,
+  diffTeam,
+  compareTeams,
+} from "../js/analyze-map.js";
 
 const HEROES = [
   { chinese: "曹操", viet: "Tào Tháo", iconUrl: "https://cdn/tao.png" },
@@ -86,12 +100,6 @@ test("mapRead: thiếu booksCn -> books rỗng (backward-compat)", () => {
 test("mapRead: gắn iconUrl của tướng khi khớp dict", () => {
   const r = mapRead({ nameCn: "曹操", tacticsCn: [], statFocusCn: "" }, DICTS);
   assert.equal(r.hero.icon, "https://cdn/tao.png");
-});
-
-test("mapRead: nameFromPortrait -> ép sure=false dù khớp", () => {
-  const r = mapRead({ nameCn: "曹操", tacticsCn: [], statFocusCn: "", nameFromPortrait: true }, DICTS);
-  assert.equal(r.hero.matched, true);
-  assert.equal(r.hero.sure, false); // đoán từ chân dung -> luôn cờ kiểm tra
 });
 
 test("mapRead: ambiguity không được báo sure dù top match có confidence cao", () => {
@@ -266,18 +274,235 @@ test("findSimilarTeams chỉ tính tactic khi đúng holder và tie theo team ID
   );
 });
 
-test("findSimilarTeams: tướng đoán từ chân dung không tính là khớp nhưng vẫn vào mẫu số", () => {
-  const teams = [{ id: "ba-tuong", heroes: [{ baseName: "Tào Tháo", tactics: [] }, { baseName: "Quan Vũ", tactics: [] }, { baseName: "Trương Phi", tactics: [] }] }];
-  const mapped = mapTeamRead(
-    [
-      { nameCn: "曹操", tacticsCn: [], statFocusCn: "" },
-      { nameCn: "关羽", tacticsCn: [], statFocusCn: "" },
-      { nameCn: "张飞", tacticsCn: [], statFocusCn: "", nameFromPortrait: true },
+
+/* ---------- Khớp 3 trạng thái (editor Soi đội) ---------- */
+
+// Từ điển như dữ liệu thật: `chinese` Phồn thể, `aliases` mang bản Giản thể mà Worker chép từ ảnh.
+const EDITOR_HEROES = [
+  { chinese: "曹操", viet: "Tào Tháo" },
+  { chinese: "關羽", aliases: ["关羽"], viet: "Quan Vũ" },
+  { chinese: "張飛", aliases: ["张飞"], viet: "Trương Phi" },
+  { chinese: "劉備", aliases: ["刘备"], viet: "Lưu Bị" },
+  { chinese: "荀彧", viet: "Tuân Úc" },
+  { chinese: "荀攸", viet: "Tuân Du" },
+];
+const INDEXES = {
+  heroes: createEntityIndex(EDITOR_HEROES, "hero"),
+  tactics: createEntityIndex(TACTICS, "tactic"),
+  books: createEntityIndex(BOOKS, "book"),
+};
+
+test("classifyName: tên Giản thể in trong ảnh khớp chắc qua alias dù dict ghi Phồn thể", () => {
+  assert.deepEqual(classifyName("关羽", INDEXES.heroes), { state: "sure", raw: "关羽", id: "hero:quan-vu", candidates: [] });
+  // Gõ tên Việt không dấu cũng khớp chắc.
+  assert.equal(classifyName("truong phi", INDEXES.heroes).id, "hero:truong-phi");
+});
+
+test("classifyName: chữ chỉ gần giống -> không chắc, kèm vài ứng viên gần nhất", () => {
+  const cell = classifyName("荀", INDEXES.heroes);
+  assert.equal(cell.state, "unsure");
+  assert.equal(cell.id, null);
+  assert.deepEqual([...cell.candidates].sort(), ["hero:tuan-du", "hero:tuan-uc"]);
+  assert.ok(classifyName("荀", INDEXES.heroes, { candidateLimit: 1 }).candidates.length === 1);
+});
+
+test("classifyName: 未知, rỗng hoặc không có ứng viên -> không rõ", () => {
+  for (const raw of ["未知", "", "   ", "完全无关"]) {
+    const cell = classifyName(raw, INDEXES.heroes);
+    assert.equal(cell.state, "unknown", raw);
+    assert.deepEqual(cell.candidates, []);
+  }
+});
+
+test("classifyName: chữ Hán trùng hai ID khác nhau không bao giờ là khớp chắc", () => {
+  const index = createEntityIndex([
+    { chinese: "曹操", viet: "Tào Tháo A" },
+    { chinese: "曹操", viet: "Tào Tháo B" },
+  ], "hero");
+  assert.equal(classifyName("曹操", index).state, "unsure");
+});
+
+test("draftFromRead: chiến pháp giữ đúng ô A/B; ô 未知 là không rõ; binh thư lấy binh thư chính", () => {
+  const draft = draftFromRead({
+    heroes: [
+      { nameCn: "曹操", tacticsCn: ["未知", "魅惑"], booksCn: ["铁甲", "防备"], statFocusCn: "" },
+      { nameCn: "关羽", tacticsCn: ["三军之众", "夺魂挟魄"], booksCn: [], statFocusCn: "" },
     ],
-    DICTS,
-  );
-  const res = findSimilarTeams(mapped, teams, { minHeroes: 2 });
-  assert.equal(res.length, 1);
-  assert.equal(res[0].heroHit, 2);
-  assert.equal(res[0].total, 3);
+  }, INDEXES);
+  const [first, second, third] = draft.heroes;
+  assert.deepEqual(first.tactics.map((cell) => [cell.state, cell.id]), [["unknown", null], ["sure", "tactic:me-hoac"]]);
+  assert.deepEqual([first.book.state, first.book.id], ["sure", "book:giap-sat"]);
+  // Binh thư lọt vào ô chiến pháp không được map thành chiến pháp.
+  assert.equal(second.tactics[0].state, "unknown");
+  assert.equal(second.book.state, "empty");
+  // Ảnh chỉ có 2 cột: tướng thứ 3 chưa chọn.
+  assert.equal(third.hero.state, "empty");
+});
+
+test("draftFromRead: màn chiến báo 3 dòng — bỏ chiến pháp tự mang theo dữ liệu tướng, không lấy chiến pháp làm binh thư", () => {
+  // Dữ liệu tướng mang `selfTacticCn` (Phồn thể như từ điển thật); Worker chép Giản thể.
+  const tactics = [
+    ...TACTICS,
+    { chinese: "燕人咆哮", aliases: ["燕人咆哮"], viet: "Yến Nhân Bào Hao" },
+    { chinese: "國士將風", aliases: ["国士将风"], viet: "Quốc Sĩ Tướng Phong" },
+    { chinese: "禦敵屏障", aliases: ["御敌屏障"], viet: "Ngự Địch Bình Chướng" },
+    { chinese: "盛氣凌敵", aliases: ["盛气凌敌"], viet: "Thịnh Khí Lăng Địch" },
+    { chinese: "疾風驟雨", aliases: ["疾风骤雨"], viet: "Tật Phong Sậu Vũ" },
+    { chinese: "精·青州兵", aliases: ["精·青州兵"], viet: "Lính Thanh Châu" },
+  ];
+  const indexes = {
+    heroes: createEntityIndex([
+      { chinese: "張飛", aliases: ["张飞"], viet: "Trương Phi", selfTacticCn: "燕人咆哮" },
+      { chinese: "凌統", aliases: ["凌统"], viet: "Lăng Thống", selfTacticCn: "國士將風" },
+    ], "hero"),
+    tactics: createEntityIndex(tactics, "tactic"),
+    books: createEntityIndex(BOOKS, "book"),
+  };
+  const ids = (hero) => [hero.tactics.map((cell) => cell.id), hero.book.state];
+
+  // Prompt mới: đủ 3 dòng theo thứ tự in, không binh thư.
+  const rows = draftFromRead({ heroes: [
+    { nameCn: "凌统", tacticsCn: ["国士将风", "御敌屏障", "盛气凌敌"], booksCn: [], statFocusCn: "" },
+    { nameCn: "张飞", tacticsCn: ["燕人咆哮", "精·青州兵", "疾风骤雨"], booksCn: [], statFocusCn: "" },
+  ] }, indexes);
+  assert.deepEqual(ids(rows.heroes[0]), [["tactic:ngu-dich-binh-chuong", "tactic:thinh-khi-lang-dich"], "empty"]);
+  assert.deepEqual(ids(rows.heroes[1]), [["tactic:linh-thanh-chau", "tactic:tat-phong-sau-vu"], "empty"]);
+
+  // Output sai thường gặp: dòng tự mang chiếm ô A, dòng 3 bị xếp vào binh thư.
+  const misread = draftFromRead({ heroes: [
+    { nameCn: "张飞", tacticsCn: ["燕人咆哮", "精·青州兵"], booksCn: ["疾风骤雨"], statFocusCn: "" },
+  ] }, indexes);
+  assert.deepEqual(ids(misread.heroes[0]), [["tactic:linh-thanh-chau", "tactic:tat-phong-sau-vu"], "empty"]);
+
+  // Tướng chưa rõ mà có 3 dòng: game luôn in chiến pháp tự mang đầu tiên -> bỏ dòng đầu.
+  const unknownHero = draftFromRead({ heroes: [
+    { nameCn: "未知", tacticsCn: ["国士将风", "御敌屏障", "盛气凌敌"], booksCn: [], statFocusCn: "" },
+  ] }, indexes);
+  assert.deepEqual(unknownHero.heroes[0].tactics.map((cell) => cell.id), ["tactic:ngu-dich-binh-chuong", "tactic:thinh-khi-lang-dich"]);
+
+  // Ảnh đội hình chỉ có 2 ô đã học (không in tự mang): giữ nguyên A/B.
+  const formation = draftFromRead({ heroes: [
+    { nameCn: "张飞", tacticsCn: ["精·青州兵", "疾风骤雨"], booksCn: [], statFocusCn: "" },
+  ] }, indexes);
+  assert.deepEqual(formation.heroes[0].tactics.map((cell) => cell.id), ["tactic:linh-thanh-chau", "tactic:tat-phong-sau-vu"]);
+});
+
+test("draftReady/confirmedTeam: đủ 3 tướng chắc; chiến pháp/binh thư chắc hoặc để trống có chủ đích", () => {
+  const draft = draftFromRead({
+    heroes: [
+      { nameCn: "曹操", tacticsCn: ["未知", "魅惑"], booksCn: ["铁甲"], statFocusCn: "" },
+      { nameCn: "关羽", tacticsCn: ["夺魂挟魄", "未知"], booksCn: [], statFocusCn: "" },
+      { nameCn: "荀", tacticsCn: ["未知", "未知"], booksCn: [], statFocusCn: "" },
+    ],
+  }, INDEXES);
+  assert.equal(draftReady(draft), false);
+  assert.equal(confirmedTeam(draft), null);
+  // Người dùng xoá trống các ô không rõ: vẫn khoá vì tướng 3 còn "không chắc".
+  draft.heroes[0].tactics[0] = emptyCell();
+  draft.heroes[1].tactics[1] = emptyCell();
+  draft.heroes[2].tactics = [emptyCell(), emptyCell()];
+  assert.equal(draftReady(draft), false);
+  // Chọn đúng nhãn trong danh sách -> chắc.
+  draft.heroes[2].hero = cellFromInput("Tuân Úc", INDEXES.heroes, new Map([["Tuân Úc", "hero:tuan-uc"]]));
+  assert.equal(draftReady(draft), true);
+  assert.deepEqual(confirmedTeam(draft), {
+    heroes: [
+      { hero: "hero:tao-thao", tactics: [null, "tactic:me-hoac"], book: "book:giap-sat" },
+      { hero: "hero:quan-vu", tactics: ["tactic:doat-hon-hiep-phach", null], book: null },
+      { hero: "hero:tuan-uc", tactics: [null, null], book: null },
+    ],
+  });
+  // Xoá trống ô tướng -> khoá lại.
+  draft.heroes[1].hero = cellFromInput("", INDEXES.heroes, new Map());
+  assert.equal(draftReady(draft), false);
+});
+
+/* ---------- Diff từng ô ---------- */
+
+const TEAM = {
+  heroes: [
+    { hero: "hero:tao-thao", tactics: ["tactic:me-hoac", "tactic:nhanh-tri-dong-nao"], book: "book:giap-sat" },
+    { hero: "hero:quan-vu", tactics: [null, "tactic:doat-hon-hiep-phach"], book: null },
+    { hero: "hero:truong-phi", tactics: [null, null], book: null },
+  ],
+};
+// Bản ghi Đội chuẩn (index.json): tên Việt theo ô, binh thư chính ở `bookSlotsVi[0]`.
+const STANDARD = {
+  sourceConfigId: "team-std",
+  heroes: [
+    { displayNameVi: "Tào Tháo", nameRaw: "曹操", tacticSlotsVi: ["Mê Hoặc", "Thần Cơ Diệu Toán"], tacticSlotsRaw: ["魅惑", "神機妙算"], bookSlotsVi: ["Giáp Sắt", null, null], bookSlotsRaw: ["鐵甲", "", ""] },
+    { displayNameVi: "Quan Vũ", nameRaw: "關羽", tacticSlotsVi: ["Đoạt Hồn Hiệp Phách", "Đương Phong Thôi Quyết"], tacticSlotsRaw: ["", ""], bookSlotsVi: [null, null, null], bookSlotsRaw: ["", "", ""] },
+    { displayNameVi: "Lưu Bị", nameRaw: "劉備", tacticSlotsVi: ["Thời Cơ Chiến Thắng", null], tacticSlotsRaw: ["", ""], bookSlotsVi: ["Phòng Bị", null, null], bookSlotsRaw: ["", "", ""] },
+  ],
+};
+// Bản ghi Đội khác (other-teams.json): nội dung cũ mang `alternatives`.
+const OTHER = {
+  legacyTeamId: "team-old",
+  legacyContent: {
+    heroes: [
+      { name: "Tào Tháo", tactics: [{ name: "Thiêu Đốt Doanh Lũy", alternatives: ["Mê Hoặc"] }], books: [{ name: "Phòng Bị", alternatives: [] }] },
+      { name: "Quan Vũ", tactics: [], books: [{ name: "Giáp Sắt", alternatives: [] }] },
+      { name: "Trương Phi", tactics: [], books: [] },
+    ],
+  },
+};
+
+test("diffTeam: tướng khớp/thừa/thiếu, chiến pháp đúng/sai/thiếu theo từng tướng, binh thư đúng", () => {
+  const diff = diffTeam(TEAM, STANDARD);
+  assert.equal(diff.heroHit, 2);
+  assert.equal(diff.heroTotal, 3);
+  assert.equal(diff.tacticHit, 2);
+  assert.equal(diff.tacticTotal, 5);
+  const [cao, quan, truong] = diff.heroes;
+  assert.deepEqual(cao.tactics.map((cell) => cell.status), ["match", "wrong"]);
+  assert.deepEqual(cao.missingTactics.map((entry) => entry.name), ["Thần Cơ Diệu Toán"]);
+  assert.equal(cao.book.status, "match");
+  assert.deepEqual(quan.tactics.map((cell) => cell.status), ["empty", "match"]);
+  assert.deepEqual(quan.missingTactics.map((entry) => entry.name), ["Đương Phong Thôi Quyết"]);
+  assert.equal(quan.book.status, "none"); // đội không ghi binh thư -> không tính lệch
+  assert.equal(truong.status, "extra");
+  assert.deepEqual(truong.tactics.map((cell) => cell.status), ["empty", "empty"]);
+  assert.deepEqual(diff.missingHeroes.map((hero) => [hero.id, hero.name, hero.raw]), [["hero:luu-bi", "Lưu Bị", "劉備"]]);
+  assert.equal(diff.bookDiff, 0);
+});
+
+test("diffTeam: chiến pháp trong alternatives tính là đúng; binh thư lệch/thiếu được đếm", () => {
+  const diff = diffTeam(TEAM, OTHER);
+  assert.equal(diff.heroHit, 3);
+  const [cao, quan, truong] = diff.heroes;
+  assert.deepEqual(cao.tactics.map((cell) => cell.status), ["match", "wrong"]);
+  assert.deepEqual(cao.missingTactics, []);
+  assert.deepEqual([cao.book.status, cao.book.expected.name], ["mismatch", "Phòng Bị"]);
+  assert.deepEqual([quan.book.status, quan.book.expected.name], ["missing", "Giáp Sắt"]);
+  assert.deepEqual(quan.tactics.map((cell) => cell.status), ["empty", "wrong"]);
+  assert.equal(truong.book.status, "none");
+  assert.equal(diff.bookDiff, 2);
+  assert.deepEqual(diff.missingHeroes, []);
+});
+
+test("diffTeam: hoà số tướng thì ghép tướng vào ô có nhiều chiến pháp khớp hơn", () => {
+  const team = { heroes: [{ hero: "hero:tao-thao", tactics: ["tactic:me-hoac", null], book: null }] };
+  const record = {
+    heroes: [
+      { name: "Tào Tháo/Lưu Bị", tactics: [] },
+      { name: "Tào Tháo", tactics: [{ name: "Mê Hoặc" }] },
+    ],
+  };
+  const diff = diffTeam(team, record);
+  assert.equal(diff.heroes[0].slotIndex, 1);
+  assert.equal(diff.tacticHit, 1);
+});
+
+test("compareTeams: xếp theo số tướng khớp rồi chiến pháp khớp, hoà giữ thứ tự nguồn, lọc ngưỡng", () => {
+  const record = (id, heroes) => ({ sourceConfigId: id, heroes: heroes.map(([name, tactics = []]) => ({ displayNameVi: name, tacticSlotsVi: tactics, bookSlotsVi: [] })) });
+  const records = [
+    record("hai-tuong", [["Tào Tháo"], ["Quan Vũ"], ["Lưu Bị"]]),
+    record("hai-tuong-co-chien-phap", [["Tào Tháo", ["Mê Hoặc"]], ["Quan Vũ"], ["Lưu Bị"]]),
+    record("ba-tuong", [["Tào Tháo"], ["Quan Vũ"], ["Trương Phi"]]),
+    record("mot-tuong", [["Tào Tháo", ["Mê Hoặc"]], ["Lưu Bị"], ["Tuân Úc"]]),
+    record("hai-tuong-sau", [["Tào Tháo"], ["Trương Phi"], ["Lưu Bị"]]),
+  ];
+  const ranked = compareTeams(TEAM, records, { minHeroes: 2, limit: 5 });
+  assert.deepEqual(ranked.map(({ record: item }) => item.sourceConfigId), ["ba-tuong", "hai-tuong-co-chien-phap", "hai-tuong", "hai-tuong-sau"]);
+  assert.equal(compareTeams(TEAM, records, { minHeroes: 2, limit: 2 }).length, 2);
 });

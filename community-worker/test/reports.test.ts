@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { parseAnalysis, REPORT_PROMPT } from "../src/analyze";
 import { cleanup } from "../src/cleanup";
 import { aggregateStats } from "../src/stats";
-import { createHarness, imageForm, PNG_BYTES, type ApiJson, type Harness } from "./fakes";
+import { createHarness, imageForm, PNG_BYTES, TEST_PROVIDER, type ApiJson, type Harness } from "./fakes";
 
 const PAGE = "/doi-chuan/s18-abc/";
 
@@ -75,7 +75,8 @@ describe("POST /api/reports/analyze", () => {
     expect(h.objects.has(`pending/${body.uploadId}`)).toBe(true);
     const sent = JSON.parse(String(h.fetchCalls[0].init?.body));
     expect(sent.messages[0].content[1].image_url.url).toMatch(/^data:image\/png;base64,/u);
-    expect(h.fetchCalls[0].url).toContain("dashscope-intl");
+    expect(h.fetchCalls[0].url).toBe("https://api.deepseek.com/chat/completions");
+    expect(sent.model).toBe("deepseek-flash");
   });
 
   it("model trả rác -> vẫn giữ upload với analysis rỗng; upstream 429 -> 503 và xoá ảnh", async () => {
@@ -102,6 +103,24 @@ describe("POST /api/reports/analyze", () => {
     const off = createHarness({ FEATURE_ENABLED: "false" });
     expect((await off.request("/api/reports/analyze", { as: "alice", method: "POST", body: imageForm(PNG_BYTES, "image/png") })).status).toBe(503);
     expect(h.fetchCalls).toHaveLength(0);
+  });
+
+  it("chưa cấu hình AI (không có bản ghi / mọi mục tắt / thiếu secret) -> 503 ai_not_configured, không lưu ảnh", async () => {
+    const empty = createHarness();
+    empty.aiStore.clear();
+    const noSecret = createHarness({ AI_CONFIG_SECRET: undefined });
+    const allOff = createHarness();
+    expect(
+      (await allOff.request("/api/admin/ai/providers", { as: "admin", method: "PUT", json: { providers: [{ ...TEST_PROVIDER, enabled: false }] } }))
+        .status,
+    ).toBe(200);
+    for (const h of [empty, noSecret, allOff]) {
+      const res = await analyze(h);
+      expect(res.status).toBe(503);
+      expect((await res.json<ApiJson>()).error.code).toBe("ai_not_configured");
+      expect(h.objects.size).toBe(0);
+      expect(h.fetchCalls).toHaveLength(0);
+    }
   });
 });
 

@@ -5,13 +5,12 @@ export interface Env {
   MEDIA: R2Bucket;
   // Thư báo góp ý (Cloudflare Email Service trên Email Routing); binding khoá cứng người nhận.
   FEEDBACK_MAIL?: SendEmail;
+  // KV chung với worker/ (namespace RL): bản ghi mã hoá `ai:providers` (tab AI của /quan-tri/).
+  AI_KV: KVNamespace;
   // Vars (wrangler.jsonc).
   // Một hoặc nhiều origin site, phân tách dấu phẩy; origin đầu tiên là mặc định.
   SITE_ORIGIN?: string;
   ADMIN_EMAILS?: string;
-  REGION?: string;
-  MODEL_ID?: string;
-  MODEL_ENDPOINT?: string;
   FEATURE_ENABLED?: string;
   // Địa chỉ gửi (thuộc domain đã bật Email Routing) và hộp thư nhận thư báo góp ý.
   FEEDBACK_FROM?: string;
@@ -20,7 +19,8 @@ export interface Env {
   BETTER_AUTH_SECRET?: string;
   GOOGLE_CLIENT_ID?: string;
   GOOGLE_CLIENT_SECRET?: string;
-  QWEN_API_KEY?: string;
+  // Khoá mã hoá danh sách nhà cung cấp AI; PHẢI trùng giá trị ở worker/. Thiếu -> AI coi như chưa cấu hình.
+  AI_CONFIG_SECRET?: string;
   // Góp ý của khách ẩn danh: secret Turnstile + khoá HMAC băm IP. Thiếu một trong hai -> khách nhận 503.
   TURNSTILE_SECRET?: string;
   IP_HASH_SECRET?: string;
@@ -82,16 +82,4 @@ export function adminEmails(env: Env): Set<string> {
 export function isAdminEmail(env: Env, email: string | null | undefined): boolean {
   if (!email) return false;
   return adminEmails(env).has(email.trim().toLowerCase());
-}
-
-// Endpoint OpenAI-compatible của DashScope theo region (giống worker/src/config.ts).
-export const REGION_ENDPOINT: Record<string, string> = {
-  intl: "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions",
-  cn: "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
-};
-
-export function resolveModelEndpoint(env: Env): string {
-  if (env.MODEL_ENDPOINT) return env.MODEL_ENDPOINT;
-  const region = (env.REGION || "intl").toLowerCase();
-  return REGION_ENDPOINT[region] || REGION_ENDPOINT.intl;
 }

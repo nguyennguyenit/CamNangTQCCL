@@ -1,6 +1,7 @@
-// Phân tích ảnh chiến báo bằng Qwen Vision (DashScope OpenAI-compatible):
-// trích kết quả trận + tướng hai phe (chữ Hán giản thể như trong ảnh).
+// Phân tích ảnh chiến báo (Chat Completions OpenAI-compatible, danh sách nhà cung cấp + failover
+// từ shared/ai-config.ts): trích kết quả trận + tướng hai phe (chữ Hán giản thể như trong ảnh).
 
+import { AiCallError, callWithFailover, type AiProvider } from "../../shared/ai-config";
 import { MAX_HERO_CHARS, MAX_HEROES, type ReportResult } from "./validate";
 
 export interface ReportAnalysis {
@@ -30,9 +31,8 @@ export const REPORT_PROMPT =
   "notes = ghi chú rất ngắn (≤ 100 ký tự) nếu có điều bất thường, còn lại null. Chỉ trả JSON.";
 
 export interface ModelOptions {
-  endpoint: string;
-  apiKey: string;
-  modelId: string;
+  /** Danh sách provider (mục tắt bị bỏ qua), thứ tự = ưu tiên. */
+  providers: AiProvider[];
   fetchImpl?: typeof fetch;
 }
 
@@ -120,16 +120,14 @@ function extractContent(data: unknown): string {
   return "";
 }
 
-/** Gọi model; lỗi upstream -> ModelError 502/503; output không đọc được -> ModelError 422. */
+/** Gọi model (failover); lỗi upstream -> ModelError 502/503; output không đọc được -> ModelError 422. */
 export async function analyzeReportImage(imageDataUri: string, opts: ModelOptions): Promise<ReportAnalysis> {
-  const fetchImpl = opts.fetchImpl || fetch;
   let resp: Response;
   try {
-    resp = await fetchImpl(opts.endpoint, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${opts.apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: opts.modelId,
+    resp = await callWithFailover(
+      opts.providers,
+      (modelId) => ({
+        model: modelId,
         messages: [
           {
             role: "user",
@@ -141,14 +139,14 @@ export async function analyzeReportImage(imageDataUri: string, opts: ModelOption
         ],
         response_format: { type: "json_object" },
         temperature: 0,
+        // Tắt thinking mặc định của DeepSeek V4.1 (chậm, không cần cho việc chép chữ); xem worker/src/model.ts.
+        thinking: { type: "disabled" },
       }),
-    });
-  } catch {
-    throw new ModelError(502, "ai_unavailable", "Dịch vụ AI tạm lỗi, thử lại sau");
-  }
-  if (!resp.ok) {
-    if (resp.status === 429) throw new ModelError(503, "ai_overloaded", "Dịch vụ AI đang quá tải, thử lại sau");
-    throw new ModelError(502, "ai_unavailable", "Dịch vụ AI tạm lỗi, thử lại sau");
+      opts.fetchImpl || fetch,
+    );
+  } catch (e) {
+    if (e instanceof AiCallError) throw new ModelError(e.status, e.code, e.message);
+    throw e;
   }
   const content = extractContent(await resp.json().catch(() => null));
   try {

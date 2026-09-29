@@ -1,21 +1,20 @@
-// Cấu hình mặc định + đọc env. Số liệu cap là placeholder, chốt theo free tier
-// thực (L2). Provider mặc định: Qwen Alibaba DashScope OpenAI-compatible.
+// Cấu hình mặc định + đọc env. Số liệu cap là placeholder, chốt theo quota thực
+// (L2). Nhà cung cấp AI không nằm ở env: admin nhập ở /quan-tri/, lưu mã hoá trong KV `ai:providers`
+// (xem shared/ai-config.ts).
 
 export interface Env {
   // Secrets (wrangler secret put) — KHÔNG commit.
-  QWEN_API_KEY: string;
   TURNSTILE_SECRET: string;
   // Khoá HMAC băm IP cho bộ đếm per-IP; thiếu/rỗng -> Worker trả 503 (fail-closed).
   IP_HASH_SECRET?: string;
-  // KV (rate-limit + đếm cap).
+  // Khoá giải mã danh sách nhà cung cấp AI; PHẢI trùng giá trị ở community-worker. Thiếu -> 503.
+  AI_CONFIG_SECRET?: string;
+  // KV (rate-limit + đếm cap); chỉ ĐỌC bản ghi `ai:providers` do community-worker ghi.
   RL: KVNamespace;
   // Vars (wrangler.toml) — có thể override.
   // Các origin exact của site, phân cách dấu phẩy (vd "https://tqccl.com,https://www.tqccl.com").
   // Thiếu/rỗng -> danh sách rỗng: /analyze trả 503 (fail-closed). "*" chỉ dùng khi dev.
   ALLOWED_ORIGINS?: string;
-  REGION?: string; // "intl" (Singapore, mặc định) | "cn" (mainland)
-  MODEL_ENDPOINT?: string; // set để override hẳn endpoint (ưu tiên hơn REGION)
-  MODEL_ID?: string;
   FEATURE_ENABLED?: string; // "false" -> kill-switch tắt feature
   RL_PER_HOUR?: string;
   DAILY_CAP?: string;
@@ -26,8 +25,6 @@ export interface Env {
 export interface Config {
   /** Origin exact được phép; `"*"` = dev (mọi origin, không kiểm hostname Turnstile). */
   allowedOrigins: string[] | "*";
-  modelEndpoint: string;
-  modelId: string;
   featureEnabled: boolean;
   rlPerHour: number;
   dailyCap: number;
@@ -40,18 +37,6 @@ const num = (v: string | undefined, dflt: number): number => {
   return Number.isFinite(n) ? n : dflt;
 };
 
-// Endpoint OpenAI-compatible theo region (hỗ trợ cả 2 — chọn bằng REGION).
-export const REGION_ENDPOINT: Record<string, string> = {
-  intl: "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions", // Singapore (free tier)
-  cn: "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions", // mainland (rẻ hơn)
-};
-
-export function resolveEndpoint(env: Env): string {
-  if (env.MODEL_ENDPOINT) return env.MODEL_ENDPOINT; // override hẳn
-  const region = (env.REGION || "intl").toLowerCase();
-  return REGION_ENDPOINT[region] || REGION_ENDPOINT.intl;
-}
-
 export function parseAllowedOrigins(value: string | undefined): string[] | "*" {
   const raw = (value ?? "").trim();
   if (raw === "*") return "*";
@@ -61,9 +46,6 @@ export function parseAllowedOrigins(value: string | undefined): string[] | "*" {
 export function loadConfig(env: Env): Config {
   return {
     allowedOrigins: parseAllowedOrigins(env.ALLOWED_ORIGINS),
-    // Qwen DashScope — region chọn qua REGION (intl mặc định: có free tier + data Singapore).
-    modelEndpoint: resolveEndpoint(env),
-    modelId: env.MODEL_ID || "qwen3.7-plus",
     featureEnabled: (env.FEATURE_ENABLED ?? "true") !== "false",
     rlPerHour: num(env.RL_PER_HOUR, 10), // placeholder (L2)
     dailyCap: num(env.DAILY_CAP, 500), // placeholder (L2)

@@ -16,6 +16,7 @@ function entry(kind, routeParam, publicationClass = "runtime") {
 
 export const PUBLIC_ARTIFACTS = Object.freeze([
   entry("js", "analyze-map"),
+  entry("js", "analyze-state"),
   entry("js", "analyze"),
   entry("js", "app"),
   entry("js", "community-admin"),

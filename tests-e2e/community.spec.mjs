@@ -13,8 +13,14 @@ const PNG_1X1 = Buffer.from(
 const EMPTY_STATS = { total: 0, wins: 0, losses: 0, draws: 0, winRate: null, topOpponents: [] };
 
 /** Giả lập API cộng đồng; trả về nhật ký lời gọi để kiểm request body. */
-async function mockCommunityApi(page, { user = null, stats = EMPTY_STATS, comments = [], reports = [], adminReports = [], adminFeedback = [], feedbackStatus = 201 } = {}) {
+async function mockCommunityApi(page, { user = null, stats = EMPTY_STATS, comments = [], reports = [], adminReports = [], adminFeedback = [], feedbackStatus = 201, aiProviders = [] } = {}) {
   const calls = [];
+  // Bản lưu phía "server" của tab AI: có key thật, API chỉ trả keyLast4.
+  let storedProviders = aiProviders;
+  const providersView = () => ({
+    providers: storedProviders.map(({ apiKey, ...rest }) => ({ ...rest, keyLast4: apiKey.slice(-4) })),
+    configured: storedProviders.some((p) => p.enabled),
+  });
   await page.route((url) => url.pathname.startsWith("/api/"), async (route) => {
     const request = route.request();
     const url = new URL(request.url());
@@ -52,6 +58,12 @@ async function mockCommunityApi(page, { user = null, stats = EMPTY_STATS, commen
     const feedbackStatusMatch = url.pathname.match(/^\/api\/admin\/feedback\/([^/]+)\/status$/);
     if (method === "POST" && feedbackStatusMatch) return json({ id: feedbackStatusMatch[1], status: body.status });
     if (method === "GET" && url.pathname === "/api/admin/reports") return json({ items: adminReports, nextCursor: null });
+    if (method === "GET" && url.pathname === "/api/admin/ai/providers") return json(providersView());
+    if (method === "PUT" && url.pathname === "/api/admin/ai/providers") {
+      const previous = new Map(storedProviders.map((p) => [p.id, p.apiKey]));
+      storedProviders = body.providers.map((p) => ({ ...p, apiKey: p.apiKey || previous.get(p.id) }));
+      return json(providersView());
+    }
     const approve = url.pathname.match(/^\/api\/admin\/reports\/([^/]+)\/approve$/);
     if (method === "POST" && approve) return json({ id: approve[1], status: "approved", rejectReason: null });
     if (method === "GET" && url.pathname.startsWith("/api/reports/") && url.pathname.endsWith("/image")) {
@@ -307,4 +319,48 @@ test("admin xem góp ý, lọc theo trạng thái và đánh dấu đã xử lý
   const answered = panel.locator(".cm-feedback-item").nth(1);
   await expect(answered).toContainText("Tào Tháo");
   await expect(answered.getByRole("link", { name: "player@example.com" })).toHaveAttribute("href", /^mailto:player@example\.com/);
+});
+
+test("admin quản lý nhà cung cấp AI: thêm từ mẫu, đổi thứ tự, lưu cả danh sách không lộ key", async ({ page }) => {
+  const calls = await mockCommunityApi(page, {
+    user: ADMIN,
+    aiProviders: [
+      { id: "deepseek", label: "DeepSeek", endpoint: "https://api.deepseek.com/chat/completions", modelId: "deepseek-flash", apiKey: "sk-old-secret-abcd", enabled: true },
+    ],
+  });
+  await page.goto("/quan-tri/");
+  await page.getByRole("tab", { name: "AI" }).click();
+  const panel = page.getByRole("tabpanel", { name: "AI" });
+  const rows = panel.locator(".cm-ai-row");
+  await expect(rows).toHaveCount(1);
+  await expect(rows.first()).toContainText("••••abcd");
+  await expect(panel).toContainText("Có hiệu lực trong khoảng 1 phút");
+
+  await panel.getByRole("button", { name: "Thêm nhà cung cấp" }).click();
+  await panel.getByLabel("Endpoint mẫu").selectOption("opencode-zen");
+  await expect(panel.getByLabel("Endpoint", { exact: true })).toHaveValue("https://opencode.ai/zen/v1/chat/completions");
+  await expect(panel.getByLabel("Model id")).toHaveValue("deepseek-v4.1-flash");
+  await expect(panel.getByLabel("Nhãn")).toHaveValue("OpenCode Zen");
+  await expect(panel.getByLabel("API key")).toHaveAttribute("type", "password");
+  await panel.getByRole("button", { name: "Xong" }).click();
+  await expect(panel.getByRole("status")).toHaveText("Nhà cung cấp mới cần API key.");
+  await panel.getByLabel("API key").fill("sk-zen-new-5678");
+  await panel.getByRole("button", { name: "Xong" }).click();
+  await expect(rows).toHaveCount(2);
+
+  await panel.getByRole("button", { name: "Đưa OpenCode Zen lên trên" }).click();
+  await expect(rows.first()).toContainText("OpenCode Zen");
+  await rows.nth(1).getByRole("button", { name: "Tắt" }).click();
+  await panel.getByRole("button", { name: "Lưu", exact: true }).click();
+
+  await expect.poll(() => calls.find((call) => call.method === "PUT")?.body).toEqual({
+    providers: [
+      { id: expect.any(String), label: "OpenCode Zen", endpoint: "https://opencode.ai/zen/v1/chat/completions", modelId: "deepseek-v4.1-flash", enabled: true, apiKey: "sk-zen-new-5678" },
+      { id: "deepseek", label: "DeepSeek", endpoint: "https://api.deepseek.com/chat/completions", modelId: "deepseek-flash", enabled: false, apiKey: "" },
+    ],
+  });
+  await expect(panel.getByRole("status")).toContainText("Đã lưu");
+  await expect(rows.first()).toContainText("••••5678");
+  await expect(rows.nth(1)).toContainText("••••abcd");
+  await expect(panel).not.toContainText("sk-zen-new-5678");
 });

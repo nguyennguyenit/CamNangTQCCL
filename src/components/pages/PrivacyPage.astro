@@ -71,8 +71,8 @@ const sections: PolicySection[] = [
         '评论：保存内容、所在页面、语言和发表时间，并连同你的名称和头像公开显示。你可以自行删除自己的评论。',
       ),
       t(
-        'Ảnh chiến báo: ảnh chụp màn hình bạn tải lên được lưu trên Cloudflare R2 và gửi tới Alibaba Cloud Model Studio (DashScope, mô hình Qwen) để AI đọc kết quả trận và tướng hai bên. Ảnh đã tải lên nhưng không gửi thành chiến báo sẽ tự động bị xoá sau 24 giờ.',
-        '战报截图：你上传的截图保存在 Cloudflare R2，并发送至阿里云百炼（DashScope，通义千问 Qwen 模型），由 AI 识别对局结果和双方武将。已上传但未提交为战报的截图会在 24 小时后自动删除。',
+        'Ảnh chiến báo: ảnh chụp màn hình bạn tải lên được lưu trên Cloudflare R2 và gửi tới nhà cung cấp AI của site (DeepSeek hoặc OpenCode Zen, mô hình DeepSeek V4.1 Flash) để AI đọc kết quả trận và tướng hai bên. Ảnh đã tải lên nhưng không gửi thành chiến báo sẽ tự động bị xoá sau 24 giờ.',
+        '战报截图：你上传的截图保存在 Cloudflare R2，并发送至本站使用的 AI 服务商（DeepSeek 或 OpenCode Zen，DeepSeek V4.1 Flash 模型），由 AI 识别对局结果和双方武将。已上传但未提交为战报的截图会在 24 小时后自动删除。',
       ),
       t(
         'Chiến báo đã gửi (ảnh, kết quả, tướng, ghi chú, mùa) chờ quản trị viên duyệt. Chỉ chiến báo được duyệt mới công khai; trước đó ảnh chỉ bạn và quản trị viên xem được.',
@@ -107,8 +107,8 @@ const sections: PolicySection[] = [
     heading: t('Công cụ đọc ảnh', '图片识别工具'),
     paragraphs: [
       t(
-        'Công cụ "Soi đội từ ảnh" và "Gợi ý đội từ kho" nén ảnh ngay trong trình duyệt rồi gửi qua Cloudflare Worker tới Alibaba Cloud DashScope (Qwen) để nhận diện tướng và chiến pháp. Ảnh chỉ dùng cho lần đọc đó, site không lưu lại. Trước khi gửi, Cloudflare Turnstile kiểm tra để chặn bot; script Turnstile chỉ được nạp trên hai trang này và khi mở hộp thoại góp ý.',
-        '“截图识阵”和“武将库配队”两个工具会先在浏览器中压缩图片，再经 Cloudflare Worker 发送至阿里云 DashScope（Qwen）识别武将和战法。图片仅用于本次识别，本站不会保存。发送前由 Cloudflare Turnstile 进行人机验证；Turnstile 脚本只在这两个页面以及打开反馈对话框时加载。',
+        'Công cụ "Soi đội từ ảnh" và "Gợi ý đội từ kho" nén ảnh ngay trong trình duyệt rồi gửi qua Cloudflare Worker tới nhà cung cấp AI của site (DeepSeek hoặc OpenCode Zen, mô hình DeepSeek V4.1 Flash) để đọc chữ tên tướng và chiến pháp. Ảnh chỉ dùng cho lần đọc đó, site không lưu lại. Trước khi gửi, Cloudflare Turnstile kiểm tra để chặn bot; script Turnstile chỉ được nạp trên hai trang này và khi mở hộp thoại góp ý.',
+        '“截图识阵”和“武将库配队”两个工具会先在浏览器中压缩图片，再经 Cloudflare Worker 发送至本站使用的 AI 服务商（DeepSeek 或 OpenCode Zen，DeepSeek V4.1 Flash 模型）识别武将和战法文字。图片仅用于本次识别，本站不会保存。发送前由 Cloudflare Turnstile 进行人机验证；Turnstile 脚本只在这两个页面以及打开反馈对话框时加载。',
       ),
     ],
   },
@@ -150,7 +150,7 @@ const sections: PolicySection[] = [
         'Cloudflare：网站托管（Pages）、API 服务（Workers）、账号/评论/战报/反馈以及登录后同步的“招募记录”数据库（D1；随账号删除）、战报截图（R2）、频率计数（KV）、Turnstile 以及反馈邮件发送（Email Service）。',
       ),
       t('Google: xác thực đăng nhập.', 'Google：登录身份验证。'),
-      t('Alibaba Cloud (DashScope, khu vực quốc tế): AI đọc ảnh.', '阿里云（DashScope 国际站）：AI 图片识别。'),
+      t('DeepSeek (api.deepseek.com) và OpenCode Zen (opencode.ai): AI đọc ảnh, dùng theo thứ tự quản trị viên đặt.', 'DeepSeek（深度求索，api.deepseek.com）与 OpenCode Zen（opencode.ai）：AI 图片识别，按管理员设定的顺序使用。'),
     ],
     closing: [
       t(

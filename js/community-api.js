@@ -67,6 +67,12 @@ function codeMessage(code) {
       return L('Khoá bản dịch này đã có bài cùng ngôn ngữ.', '同一语言中已有文章使用此译文关联键。');
     case 'invalid_upload':
       return L('Ảnh đã tải lên không còn hợp lệ. Hãy chọn lại ảnh.', '上传的图片已失效，请重新选择。');
+    case 'ai_secret_missing':
+      return L('Worker chưa có secret AI_CONFIG_SECRET nên chưa lưu được nhà cung cấp AI.', 'Worker 尚未设置 AI_CONFIG_SECRET，无法保存 AI 服务商。');
+    case 'missing_api_key':
+      return L('Nhà cung cấp mới cần API key.', '新服务商需要 API 密钥。');
+    case 'invalid_endpoint':
+      return L('Endpoint phải là URL https hợp lệ.', 'Endpoint 必须是有效的 https URL。');
     default:
       return null;
   }

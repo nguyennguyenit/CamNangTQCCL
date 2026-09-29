@@ -9,6 +9,7 @@
 import { STORAGE_KEY as RECRUIT_TRACKER_KEY } from '../../js/recruit-tracker-store.js';
 import { ROSTER_SCAN_STORAGE_KEY } from '../../js/roster-scan-state.js';
 import { TEAM_VIEW_STORAGE_KEY } from '../../js/team-view.js';
+import { HISTORY_STORAGE_KEY as ANALYZE_HISTORY_KEY } from '../../js/analyze-state.js';
 
 /**
  * Mọi khóa localStorage bền mà app ghi. `theme` do js/site-chrome.js và script theme của layout
@@ -19,6 +20,7 @@ export const HOST_BRIDGE_KEYS: readonly string[] = Object.freeze([
   ROSTER_SCAN_STORAGE_KEY,
   'theme',
   TEAM_VIEW_STORAGE_KEY,
+  ANALYZE_HISTORY_KEY,
 ]);
 
 export interface HostBridgeStorage {

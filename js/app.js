@@ -37,7 +37,7 @@ const $ = (sel) => document.querySelector(sel);
 
 /** Đội chuẩn/Đội khác: hai trang danh sách tham chiếu. */
 const REFERENCE_SECTIONS = ['team-chuan', 'team-khac'];
-/** Hai công cụ Beta chạy trên dữ liệu đội cũ, không có phạm vi mùa. */
+/** Hai công cụ Beta: không có phạm vi mùa của layout (Soi đội tự chọn mùa Đội chuẩn trong công cụ). */
 const TOOL_SECTIONS = ['analyze', 'roster-recommend'];
 /** Mục dùng cả kho Tra cứu (tướng, chiến pháp, catalog): Theo dõi chiêu mộ và hai công cụ. */
 const LOOKUP_SECTIONS = ['recruit-tracker', ...TOOL_SECTIONS];
@@ -155,10 +155,11 @@ async function main() {
     const loadBytes = createByteLoader();
     const loadData = name => loadBytes(name).then(bytes => JSON.parse(new TextDecoder().decode(bytes)));
     const recommendedPin = JSON.parse($('#recommended-publication').textContent);
-    // Mỗi trang chỉ tải và xác minh nguồn chính nó đọc. Đội gốc: hai công cụ, hoặc link cũ `legacyTeam`
-    // cần nhận diện đội để chuyển tiếp (URL có `config` không chuyển tiếp).
+    // Mỗi trang chỉ tải và xác minh nguồn chính nó đọc. Đội gốc: Gợi ý đội, hoặc link cũ `legacyTeam`
+    // cần nhận diện đội để chuyển tiếp (URL có `config` không chuyển tiếp). Soi đội đối chiếu với
+    // generation Đội chuẩn/Đội khác nên không cần kho đội gốc.
     const bootParams = new URL(location.href).searchParams;
-    const needsTeams = TOOL_SECTIONS.includes(pageSection) || (bootParams.has('legacyTeam') && !bootParams.has('config'));
+    const needsTeams = pageSection === 'roster-recommend' || (bootParams.has('legacyTeam') && !bootParams.has('config'));
     const needsLookup = LOOKUP_SECTIONS.includes(pageSection);
     // Trang nhóm Tra cứu chỉ xác minh manifest + payload của nhóm; payload hồ sơ tải lười khi mở hồ sơ.
     const lookupGroup = pageSection === 'lookup' ? document.body.dataset.lookupGroup : null;
@@ -577,7 +578,8 @@ async function main() {
     };
     if (lookupBundle) {
       if (pageSection === 'recruit-tracker') initRecruitTracker({ heroesDict, mount });
-      if (pageSection === 'analyze') initAnalyze({ teams, heroesDict, tacticsDict: tactics, booksDict, onOpenTeam }, mount);
+      // Soi đội nạp generation Đội chuẩn lười (lần đầu cần đối chiếu); link đội qua route chi tiết chung.
+      if (pageSection === 'analyze') initAnalyze({ heroesDict, tacticsDict: tactics, booksDict, loadRecommended, teamHref: referenceHref, onNavigate: onReferenceNavigate }, mount);
       if (pageSection === 'roster-recommend') initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict: tactics, onOpenTeam }, mount);
     } else if (['recruit-tracker', 'analyze', 'roster-recommend'].includes(pageSection)) {
       mount.append(el("p", { class: "error", role: "status" }, L("Tính năng này cần dữ liệu Tra cứu đang không khả dụng.", "此功能需要的图鉴查询数据暂不可用。")));

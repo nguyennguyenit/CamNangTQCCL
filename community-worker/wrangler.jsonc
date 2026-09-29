@@ -1,8 +1,9 @@
 // Worker cộng đồng TQCCL — hạ tầng TÁCH BIỆT site tĩnh; site gọi qua Pages Function
 // functions/api/[[path]].ts (service binding COMMUNITY) để cookie phiên là first-party.
 // Secrets bắt buộc, đặt bằng `wrangler secret put` — KHÔNG ghi ở đây:
-//   BETTER_AUTH_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, QWEN_API_KEY, GITHUB_DISPATCH_TOKEN,
-//   TURNSTILE_SECRET, IP_HASH_SECRET (góp ý ẩn danh; thiếu -> khách nhận 503, người đăng nhập vẫn gửi được)
+//   BETTER_AUTH_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GITHUB_DISPATCH_TOKEN,
+//   TURNSTILE_SECRET, IP_HASH_SECRET (góp ý ẩn danh; thiếu -> khách nhận 503, người đăng nhập vẫn gửi được),
+//   AI_CONFIG_SECRET (mã hoá danh sách nhà cung cấp AI; PHẢI trùng giá trị ở worker/).
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "tqccl-community",
@@ -21,6 +22,8 @@
   ],
   // R2: `npx wrangler r2 bucket create tqccl-community-media`.
   "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "tqccl-community-media" }],
+  // KV dùng chung với worker/ (namespace RL): bản ghi mã hoá `ai:providers`, admin sửa ở tab AI của /quan-tri/.
+  "kv_namespaces": [{ "binding": "AI_KV", "id": "6fff7d73c885457dbb71756de99e66fa" }],
   // Thư báo góp ý: cần Email Routing cho mail.tqccl.com và xác minh địa chỉ nhận (docs/community-worker.md).
   // destination_address khoá cứng người nhận: binding không thể gửi thư đi nơi khác.
   "send_email": [{ "name": "FEEDBACK_MAIL", "destination_address": "nguyennlt.ncc@gmail.com" }],
@@ -39,10 +42,6 @@
     "FEEDBACK_TO": "nguyennlt.ncc@gmail.com",
     // Repo nhận repository_dispatch "blog-publish" -> .github/workflows/pages-deploy.yml.
     "GITHUB_REPOSITORY": "nguyennguyenit/CamNangTQCCL",
-    // Qwen DashScope — "intl" (Singapore, free tier) | "cn" (mainland). MODEL_ENDPOINT rỗng = theo REGION.
-    "REGION": "intl",
-    "MODEL_ID": "qwen3.7-plus",
-    "MODEL_ENDPOINT": "",
     // "false" -> tắt phân tích ảnh chiến báo bằng AI (kill-switch chi phí).
     "FEATURE_ENABLED": "true"
   }

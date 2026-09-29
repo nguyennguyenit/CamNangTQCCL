@@ -387,99 +387,301 @@ test.describe("Chiêu mộ", () => {
   });
 });
 
+/**
+ * Dữ liệu thật cho Soi đội: một Đội chuẩn của mùa mặc định có đủ tướng/chiến pháp/binh thư trong từ điển
+ * và có Đội khác trùng ≥2 tướng. Trả phản hồi Worker giả (chữ Hán in trong ảnh: một ô chiến pháp `未知`,
+ * một tướng lệch một chữ để thành "không chắc"), link `?doi=` và nhãn Việt/Trung của từng ô.
+ */
+async function analyzeFixture(page) {
+  const fixture = await page.evaluate(async () => {
+    const [{ createEntityIndex, diffTeam, referenceTeam }, { encodeTeamParam }] = await Promise.all([
+      import("/js/analyze-map.js"),
+      import("/js/analyze-state.js"),
+    ]);
+    const json = (path) => fetch(path).then((response) => response.json());
+    const pin = JSON.parse(document.querySelector("#recommended-publication").textContent);
+    const generation = (name) => json(`/data/recommended/${pin.generationId}/${name}`);
+    const [seasons, index, other, heroes, tactics, books] = await Promise.all([
+      generation("seasons.json"), generation("index.json"), generation("other-teams.json"),
+      json("/data/heroes-dict.json"), json("/data/tactics.json"), json("/data/books-dict.json"),
+    ]);
+    const indexes = { hero: createEntityIndex(heroes, "hero"), tactic: createEntityIndex(tactics, "tactic"), book: createEntityIndex(books, "book") };
+    const recordOf = (kind, id) => indexes[kind].byId.get(id);
+    const compact = (value) => String(value || "").replace(/\s+/gu, "");
+    // Chữ Giản thể như in trong game: alias không khoảng trắng khác `chinese`, không có thì `chinese`.
+    const printed = (record) => (record.aliases || []).find((alias) => !/\s/u.test(alias) && alias !== record.chinese) ?? compact(record.chinese);
+    for (const record of index.records.filter((item) => item.sourceSeasonId === seasons.defaultSourceSeasonId)) {
+      const slots = referenceTeam(record).slots;
+      if (slots.length !== 3) continue;
+      const team = {
+        heroes: slots.map((slot) => ({
+          hero: slot.alternatives[0]?.canonicalId ?? null,
+          tactics: [slot.tactics[0]?.ids[0] ?? null, slot.tactics[1]?.ids[0] ?? null],
+          book: slot.book?.ids[0] ?? null,
+        })),
+      };
+      const complete = team.heroes.every((member) =>
+        recordOf("hero", member.hero) && member.tactics.every((id) => id && recordOf("tactic", id)) && member.book && recordOf("book", member.book));
+      if (!complete) continue;
+      const unsureIndex = team.heroes.findIndex((member, position) => position > 0 && compact(recordOf("hero", member.hero).chinese).length >= 4);
+      const otherMatch = other.records.find((item) => diffTeam(team, item).heroHit >= 2);
+      if (unsureIndex < 0 || !otherMatch) continue;
+      const reads = team.heroes.map((member, position) => ({
+        nameCn: position === unsureIndex
+          ? `${compact(recordOf("hero", member.hero).chinese).slice(0, -1)}口`
+          : printed(recordOf("hero", member.hero)),
+        tacticsCn: member.tactics.map((id, slot) => (position === 0 && slot === 1 ? "未知" : printed(recordOf("tactic", id)))),
+        booksCn: [printed(recordOf("book", member.book))],
+        statFocusCn: "",
+      }));
+      const labels = (field) => team.heroes.map((member) => [
+        recordOf("hero", member.hero)[field], ...member.tactics.map((id) => recordOf("tactic", id)[field]), recordOf("book", member.book)[field],
+      ].map((value) => String(value).trim()));
+      return {
+        reads,
+        season: seasons.defaultSourceSeasonId,
+        doi: encodeTeamParam(team),
+        name: record.displayNameVi,
+        nameZh: record.nameZh,
+        otherName: otherMatch.name,
+        unsureIndex,
+        labels: labels("viet"),
+        labelsZh: labels("chinese"),
+      };
+    }
+    return null;
+  });
+  expect(fixture, "cần một Đội chuẩn mùa mặc định trùng ≥2 tướng với Đội khác").not.toBeNull();
+  return fixture;
+}
+
+/** Ô thứ `field` (0 tướng, 1–2 chiến pháp A/B, 3 binh thư) của tướng `member` trong editor. */
+const editorCell = (section, member, field) => section.locator(".ana-member").nth(member).locator(".ana-cell").nth(field);
+
+/** Đếm request tới Worker soi ảnh (mọi method), kể cả khi trang không route. */
+function countWorkerRequests(page) {
+  const calls = [];
+  page.on("request", (request) => { if (request.url().startsWith(WORKER_ROUTE.replace("/**", ""))) calls.push(request.url()); });
+  return calls;
+}
+
 test.describe("Soi đội", () => {
-  test("khung ảnh, các bước và kết quả chỉ hiện trường có thật; không còn emoji", async ({ page, request }) => {
+  test("ảnh -> editor: ô không chắc/không rõ phải xác nhận, rồi đối chiếu Đội chuẩn + Đội khác với diff từng ô", async ({ page }) => {
     await page.route("https://challenges.cloudflare.com/**", (route) =>
       route.fulfill({ contentType: "application/javascript", body: TURNSTILE_STUB }));
-    // Worker giả: trả đúng tướng của một đội thật để hàng "đội tương tự" có dữ liệu thật.
-    const teams = await (await request.get("/data/teams.json")).json();
-    const target = teams.find((team) => Array.isArray(team.heroes) && team.heroes.length >= 3);
-    const heroesDict = await (await request.get("/data/heroes-dict.json")).json();
-    const tacticsDict = await (await request.get("/data/tactics.json")).json();
-    const reads = target.heroes.map((hero) => ({
-      nameCn: heroesDict.find((record) => record.viet === hero.name)?.chinese ?? hero.name,
-      tacticsCn: (hero.tactics || []).map((slot) => tacticsDict.find((record) => record.viet === slot.name)?.chinese ?? slot.name),
-      booksCn: [],
-      statFocusCn: "",
-    }));
-    await page.route(WORKER_ROUTE, (route) => route.fulfill({ json: { heroes: reads } }));
-
     await page.goto("/soi-doi-tu-anh/");
     await waitForBoot(page);
+    const fixture = await analyzeFixture(page);
+    let workerCalls = 0;
+    await page.route(WORKER_ROUTE, (route) => { workerCalls += 1; return route.fulfill({ json: { heroes: fixture.reads } }); });
+
     const section = page.locator("#section-analyze");
     await expect(section.locator("h1.reference-title")).toHaveText("Soi đội từ ảnh");
-    await expect(section.locator(".tool-notice")).toContainText("Alibaba Cloud DashScope");
+    await expect(section.locator(".tool-notice")).toContainText("nhà cung cấp AI của site");
     await expect(section.locator("h2").first()).toHaveText("1 · Chọn ảnh");
     await expect(section.locator(".ana-drop")).toContainText("Kéo thả ảnh, dán (Ctrl+V) hoặc bấm để chọn");
+    await expect(section.getByRole("button", { name: "Nhập tay", exact: true })).toBeVisible();
+    await expect(section.locator(".ana-editor")).toBeHidden();
 
     const steps = section.locator(".ana-step");
     await expect(steps).toHaveCount(3);
-    // P9-B1: dấu ✓ là SVG nằm trong span bọc — bước CHƯA XONG phải ẩn dấu (trước đây mọi bước đều hiện ✓).
-    // Bước 2 (Turnstile) xong ngay ở stub nên dấu của nó hiện; bước 1 và 3 còn chờ nên phải ẩn.
+    // Dấu ✓ là SVG trong span bọc — bước CHƯA XONG phải ẩn dấu. Bước 2 (Turnstile) xong ngay ở stub.
     await expect(steps.nth(0).locator(".ana-step-mark")).toBeHidden();
     await expect(steps.nth(1).locator(".ana-step-mark")).toBeVisible();
     await expect(steps.nth(2).locator(".ana-step-mark")).toBeHidden();
-    await expect(steps.nth(0)).toHaveAttribute("data-state", "pending");
     await expect(section.locator(".ana-file-row")).toBeHidden();
 
     await section.locator("input[type=file]").setInputFiles({ name: "doi-hinh.png", mimeType: "image/png", buffer: transparentPng });
     await expect(steps.nth(0)).toHaveAttribute("data-state", "done");
-    await expect(section.locator(".ana-file-row")).toBeVisible();
     await expect(section.locator(".ana-file-name")).toHaveText("doi-hinh.png");
     await expect(section.locator(".ana-file-row")).toContainText("Đã nén · sẵn sàng gửi");
-    await expect(steps.nth(1)).toHaveAttribute("data-state", "done");
 
     const run = section.getByRole("button", { name: "Soi đội", exact: true });
     await expect(run).toBeEnabled();
     await run.click();
 
-    await expect(section.locator(".ana-similar")).toBeVisible();
+    // Editor: 3 tướng × (tướng + 2 chiến pháp + binh thư), điền sẵn từ chữ Worker chép.
+    const editor = section.locator(".ana-editor");
+    await expect(editor).toBeVisible();
     await expect(steps.nth(2)).toHaveAttribute("data-state", "done");
-
-    // P9-B1: token Turnstile dùng một lần nên sau lượt chạy bước 2 quay lại "chưa xong" và mất dấu ✓.
-    await expect(steps.nth(2).locator(".ana-step-mark")).toBeVisible();
     await expect(steps.nth(1)).toHaveAttribute("data-state", "pending");
-    await expect(steps.nth(1).locator(".ana-step-mark")).toBeHidden();
-    const hero = section.locator(".ana-read .ana-hero").first();
-    await expect(hero).toBeVisible();
-    await expect(hero.locator(".ana-hero-name")).not.toHaveText("");
-    await expect(hero.locator(".hero-portrait").first()).toBeAttached();
+    await expect(editor.locator(".ana-cell-input")).toHaveCount(12);
+    await expect(editorCell(section, 0, 0).locator("input")).toHaveValue(fixture.labels[0][0]);
+    await expect(editorCell(section, 0, 1)).toHaveAttribute("data-state", "sure");
+    // Ô chiến pháp B đọc được `未知`: không rõ, không bị dồn sang ô A.
+    const unknownCell = editorCell(section, 0, 2);
+    await expect(unknownCell).toHaveAttribute("data-state", "unknown");
+    await expect(unknownCell.locator(".ana-cell-flag")).toHaveText("Không rõ");
+    // Tên lệch một chữ: không chắc, kèm ứng viên gần nhất và chữ đọc được.
+    const unsureCell = editorCell(section, fixture.unsureIndex, 0);
+    await expect(unsureCell).toHaveAttribute("data-state", "unsure");
+    await expect(unsureCell.locator(".ana-cell-flag")).toHaveText("Không chắc");
+    await expect(unsureCell.locator(".ana-cell-raw")).toContainText(fixture.reads[fixture.unsureIndex].nameCn);
+    const compare = section.getByRole("button", { name: "Đối chiếu", exact: true });
+    await expect(compare).toBeDisabled();
+    await expect(section.locator(".ana-ready-note")).toHaveText("Còn 2 ô cần xác nhận trước khi đối chiếu.");
 
-    // Hàng kết quả: tên đội thật (không phải mã đội) + số khớp; artboard không vẽ được điểm/mùa vì dữ liệu không có.
-    await expect(section.locator(".ana-team-row").filter({ hasText: target.name }).first()).toBeVisible();
-    const row = section.locator(".ana-team-row").first();
-    await expect(row.locator(".ana-team-hits")).toContainText("tướng");
+    await unsureCell.getByRole("button", { name: fixture.labels[fixture.unsureIndex][0], exact: true }).click();
+    await expect(unsureCell).toHaveAttribute("data-state", "sure");
+    await expect(unsureCell.locator("input")).toHaveValue(fixture.labels[fixture.unsureIndex][0]);
+    await expect(compare).toBeDisabled();
+    await unknownCell.locator("input").fill(fixture.labels[0][2]);
+    await unknownCell.locator("input").press("Tab");
+    await expect(unknownCell).toHaveAttribute("data-state", "sure");
+    await expect(compare).toBeEnabled();
+    await compare.click();
 
-    // Hàng kết quả chỉ dùng giá trị token (thay cho probe không dựng được kết quả Worker).
+    const standard = section.locator(".ana-group-standard");
+    await expect(standard.locator(".ana-group-title")).toContainText("Đội chuẩn · ");
+    const row = standard.locator(".ana-team-row").first();
+    await expect(row.locator(".ana-team-link")).toHaveText(fixture.name);
+    await expect(row.locator(".ana-team-hits")).toHaveText("3/3 tướng · 6/6 chiến pháp");
+    await expect(row.locator(".ana-diff-tac[data-status=match]")).toHaveCount(6);
+    await expect(row.locator(".ana-diff-book[data-status=match]")).toHaveCount(3);
+    const other = section.locator(".ana-group-other");
+    await expect(other.locator(".ana-group-title")).toHaveText("Đội khác · tham khảo");
+    const otherRow = other.locator(".ana-team-row").filter({ hasText: fixture.otherName }).first();
+    await expect(otherRow).toBeVisible();
+    await expect(otherRow.locator(".ana-diff .ana-diff-hero").first()).toBeVisible();
+    // Link chia sẻ nằm trên URL: chỉ ID canonical, có tiền tố phiên bản, cùng mùa đang so.
+    const url = new URL(page.url());
+    expect(url.searchParams.get("doi")).toBe(fixture.doi);
+    expect(url.searchParams.get("season")).toBe(fixture.season);
+    expect(workerCalls).toBe(1);
+
+    // Hàng kết quả chỉ dùng giá trị token.
     const styles = await row.evaluate((node) => {
       const root = getComputedStyle(document.documentElement);
       const rowStyle = getComputedStyle(node);
-      const linkStyle = getComputedStyle(node.querySelector(".ana-team-link"));
       return {
         padding: `${rowStyle.paddingTop}/${rowStyle.paddingLeft}`,
         radius: rowStyle.borderRadius,
         border: rowStyle.borderTopColor,
-        accentBorder: root.getPropertyValue("--accent").trim() === "" ? null : rowStyle.borderTopColor,
-        panel: root.getPropertyValue("--panel").trim(),
         accent: root.getPropertyValue("--accent").trim(),
-        linkFont: linkStyle.fontFamily,
+        linkFont: getComputedStyle(node.querySelector(".ana-team-link")).fontFamily,
       };
     });
     expect(styles.padding).toBe("14px/16px");
     expect(styles.radius).toBe("12px");
-    expect(styles.accentBorder).toBe(toRgb(styles.accent));
+    expect(styles.border).toBe(toRgb(styles.accent));
     expect(styles.linkFont).toContain("Noto Serif Display");
-
-    // Không còn emoji trong công cụ; icon là SVG aria-hidden.
     const text = await section.innerText();
     expect(text).not.toContain("📷");
     expect(text).not.toContain("⚠");
 
-    // Mở đội từ hàng kết quả: điều hướng sang trang chi tiết thật.
-    await row.locator(".ana-team-link").click();
-    await expect(page).toHaveURL(/\/doi-khac\//);
-    await expect(page.locator("#team-detail-body")).toBeVisible();
+    // Thẻ PNG vẽ bằng chữ trên canvas và tải về được.
+    const download = page.waitForEvent("download");
+    await section.getByRole("button", { name: "Tải ảnh PNG", exact: true }).click();
+    expect((await download).suggestedFilename()).toBe("soi-doi.png");
 
+    // Mở đội: trang chi tiết thật; link quay lại giữ đội + mùa.
+    await row.locator(".ana-team-link").click();
+    await expect(page).toHaveURL(/\/doi-chuan\//);
+    await expect(page.locator("#team-detail-body")).toBeVisible();
+  });
+
+  test("Nhập tay không gọi Worker; đối chiếu ghi lịch sử trên máy, mở lại mục lịch sử như mở link", async ({ page }) => {
+    const workerRequests = countWorkerRequests(page);
+    await page.goto("/soi-doi-tu-anh/");
+    await waitForBoot(page);
+    const fixture = await analyzeFixture(page);
+    const section = page.locator("#section-analyze");
+    await expect(section.locator(".ana-history")).toBeHidden();
+    await section.getByRole("button", { name: "Nhập tay", exact: true }).click();
+    await expect(section.locator(".ana-editor")).toBeVisible();
+    const compare = section.getByRole("button", { name: "Đối chiếu", exact: true });
+    await expect(compare).toBeDisabled();
+    await expect(section.locator(".ana-ready-note")).toHaveText("Còn 3 ô cần xác nhận trước khi đối chiếu.");
+    for (const [member, labels] of fixture.labels.entries()) {
+      for (const [field, label] of labels.entries()) {
+        // Để trống có chủ đích: chiến pháp B của tướng 2 và binh thư của tướng 3.
+        if ((member === 1 && field === 2) || (member === 2 && field === 3)) continue;
+        const input = editorCell(section, member, field).locator("input");
+        await input.fill(label);
+        await input.press("Tab");
+        await expect(editorCell(section, member, field)).toHaveAttribute("data-state", "sure");
+      }
+    }
+    await expect(editorCell(section, 1, 2)).toHaveAttribute("data-state", "empty");
+    await expect(compare).toBeEnabled();
+    await compare.click();
+    const row = section.locator(".ana-group-standard .ana-team-row").first();
+    await expect(row.locator(".ana-team-link")).toHaveText(fixture.name);
+    await expect(row.locator(".ana-team-hits")).toHaveText("3/3 tướng · 5/6 chiến pháp · 1 binh thư lệch");
+    await expect(row.locator(".ana-diff-hero").nth(1).locator(".ana-diff-missing")).toContainText(fixture.labels[1][2]);
+    await expect(row.locator(".ana-diff-book[data-status=missing]")).toHaveCount(1);
+    const doi = new URL(page.url()).searchParams.get("doi");
+    expect(doi).toMatch(/^v1\.[a-z0-9._-]+$/);
+
+    // Lịch sử: chỉ đội + mùa + thời điểm, không ảnh/token.
+    const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("tqccl.analyze.history.v1")));
+    expect(stored).toHaveLength(1);
+    expect(Object.keys(stored[0]).sort()).toEqual(["doi", "savedAt", "season"]);
+    expect(stored[0]).toMatchObject({ doi, season: fixture.season });
+
+    await page.goto("/soi-doi-tu-anh/");
+    await waitForBoot(page);
+    await expect(section.locator(".ana-editor")).toBeHidden();
+    const item = section.locator(".ana-history-item");
+    await expect(item).toHaveCount(1);
+    await expect(item).toContainText(fixture.labels[0][0]);
+    await item.click();
+    await expect(section.locator(".ana-group-standard .ana-team-row").first().locator(".ana-team-hits"))
+      .toHaveText("3/3 tướng · 5/6 chiến pháp · 1 binh thư lệch");
+    await expect(editorCell(section, 1, 2).locator("input")).toHaveValue("");
+    expect(new URL(page.url()).searchParams.get("doi")).toBe(doi);
+    expect(workerRequests).toEqual([]);
+  });
+
+  test("mở link ?doi=v1… dựng lại editor + diff mà không gọi Worker; link hỏng bị bỏ qua, editor rỗng", async ({ page }) => {
+    const workerRequests = countWorkerRequests(page);
+    await page.goto("/soi-doi-tu-anh/");
+    await waitForBoot(page);
+    const fixture = await analyzeFixture(page);
+
+    await page.goto(`/soi-doi-tu-anh/?season=${encodeURIComponent(fixture.season)}&doi=${fixture.doi}`);
+    await waitForBoot(page);
+    const section = page.locator("#section-analyze");
+    const row = section.locator(".ana-group-standard .ana-team-row").first();
+    await expect(row.locator(".ana-team-link")).toHaveText(fixture.name);
+    await expect(row.locator(".ana-team-hits")).toHaveText("3/3 tướng · 6/6 chiến pháp");
+    await expect(section.locator(".ana-group-other .ana-team-row").filter({ hasText: fixture.otherName }).first()).toBeVisible();
+    await expect(section.locator("#ana-season")).toHaveValue(fixture.season);
+    for (const [member, labels] of fixture.labels.entries()) {
+      for (const [field, label] of labels.entries()) {
+        await expect(editorCell(section, member, field).locator("input")).toHaveValue(label);
+      }
+    }
+    // Mở link chỉ xem lại, không ghi lịch sử.
+    expect(await page.evaluate(() => localStorage.getItem("tqccl.analyze.history.v1"))).toBeNull();
+
+    await page.goto("/soi-doi-tu-anh/?doi=v1.khong-co-tuong___.a___.b___");
+    await waitForBoot(page);
+    await expect(section.locator(".ana-editor")).toBeVisible();
+    await expect(section.locator(".ana-compare")).toBeHidden();
+    for (const input of await section.locator(".ana-cell-input").all()) await expect(input).toHaveValue("");
+    await expect(page).toHaveURL("/soi-doi-tu-anh/");
+    expect(workerRequests).toEqual([]);
+  });
+
+  test("bản /zh/ render: chữ UI qua L(), editor và kết quả dùng tên chữ Hán gốc", async ({ page }) => {
+    const workerRequests = countWorkerRequests(page);
+    await page.goto("/soi-doi-tu-anh/");
+    await waitForBoot(page);
+    const fixture = await analyzeFixture(page);
+    await page.goto(`/zh/soi-doi-tu-anh/?season=${encodeURIComponent(fixture.season)}&doi=${fixture.doi}`);
+    await waitForBoot(page);
+    const section = page.locator("#section-analyze");
+    await expect(section.locator("h1.reference-title")).toHaveText("截图识阵");
+    await expect(section.getByRole("button", { name: "手动输入", exact: true })).toBeVisible();
+    await expect(section.locator(".ana-editor .ana-card-title")).toHaveText("2 · 核对阵容");
+    await expect(editorCell(section, 0, 0).locator("input")).toHaveValue(fixture.labelsZh[0][0]);
+    await expect(section.locator(".ana-group-other .ana-group-title")).toHaveText("其他阵容 · 仅供参考");
+    const row = section.locator(".ana-group-standard .ana-team-row").first();
+    await expect(row.locator(".ana-team-hits")).toHaveText("3/3 名武将 · 6/6 个战法");
+    if (fixture.nameZh) await expect(row.locator(".ana-team-link")).toHaveText(fixture.nameZh);
+    expect(await section.innerText()).not.toMatch(/Đối chiếu|Nhập tay|Kiểm tra đội/u);
+    expect(workerRequests).toEqual([]);
   });
 
   test("token Turnstile dùng một lần: widget reset sau lượt soi, nút chờ token mới rồi chạy lại được (N9-5)", async ({ page }) => {
@@ -541,8 +743,8 @@ test.describe("Soi đội", () => {
     await page.evaluate(() => window.__turnstileSolve());
     await expect(run).toBeEnabled();
     expect(await resets()).toBe(1);
-    await expect(section.locator(".ana-read")).toBeHidden();
-    await expect(section.locator(".ana-similar")).toBeHidden();
+    await expect(section.locator(".ana-editor")).toBeHidden();
+    await expect(section.locator(".ana-compare")).toBeHidden();
   });
 });
 
@@ -1139,27 +1341,18 @@ test.describe("Vòng sửa P09", () => {
   test("Soi đội có kết quả: chụp ảnh bằng chứng 1440/390/320 cả hai theme", async ({ page }) => {
     await page.route("https://challenges.cloudflare.com/**", (route) =>
       route.fulfill({ contentType: "application/javascript", body: TURNSTILE_STUB }));
-    const heroesDict = JSON.parse(await (await page.request.get("/data/heroes-dict.json")).text());
-    const tacticsDict = JSON.parse(await (await page.request.get("/data/tactics.json")).text());
-    const teams = JSON.parse(await (await page.request.get("/data/teams.json")).text());
-    const target = teams.find((team) => (team.heroes || []).length >= 3);
-    const reads = target.heroes.map((hero) => ({
-      nameCn: heroesDict.find((record) => record.viet === hero.name)?.chinese ?? hero.name,
-      tacticsCn: (hero.tactics || []).map((slot) => tacticsDict.find((record) => record.viet === slot.name)?.chinese ?? slot.name),
-      booksCn: [],
-      statFocusCn: "",
-    }));
-    await page.route(WORKER_ROUTE, (route) => route.fulfill({ json: { heroes: reads } }));
+    await page.goto("/soi-doi-tu-anh/");
+    await waitForBoot(page);
+    const fixture = await analyzeFixture(page);
     for (const width of [1440, 390, 320]) {
       for (const theme of ["light", "dark"]) {
         await page.setViewportSize({ width, height: 1000 });
         await ensureTheme(page, theme);
-        await page.goto("/soi-doi-tu-anh/");
+        // Kết quả dựng từ link chia sẻ: editor đủ ô + hai nhóm đối chiếu có diff.
+        await page.goto(`/soi-doi-tu-anh/?season=${encodeURIComponent(fixture.season)}&doi=${fixture.doi}`);
         await waitForBoot(page);
         await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
         const section = page.locator("#section-analyze");
-        await section.locator("input[type=file]").setInputFiles({ name: "doi-hinh.png", mimeType: "image/png", buffer: transparentPng });
-        await section.getByRole("button", { name: "Soi đội", exact: true }).click();
         await expect(section.locator(".ana-team-row").first()).toBeVisible();
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
         await page.screenshot({

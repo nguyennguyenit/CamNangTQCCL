@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { AI_PROVIDERS_KEY, encryptProviders, type AiProvider } from "../../shared/ai-config";
 import worker from "../src/index";
 import type { Env } from "../src/config";
 
@@ -6,6 +7,10 @@ const ORIGIN = "https://tqccl.com";
 const ORIGINS = ["https://tqccl.com", "https://www.tqccl.com", "https://tqccl.pages.dev"];
 const SITEVERIFY = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 const MODEL = "https://model.test/v1/chat/completions";
+const MODEL_BACKUP = "https://backup.test/v1/chat/completions";
+const AI_SECRET = "ai-config-secret-for-tests";
+const PROVIDER: AiProvider = { id: "main", label: "Main", endpoint: MODEL, modelId: "deepseek-flash", apiKey: "deepseek-key", enabled: true };
+const PROVIDERS_BLOB = await encryptProviders([PROVIDER], AI_SECRET);
 const PNG = Buffer.from(
   Uint8Array.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, ...Array(92).fill(0)]),
 ).toString("base64");
@@ -18,11 +23,15 @@ interface FakeKV {
   put(key: string, value: string): Promise<void>;
 }
 
-/** KV trong bộ nhớ, ghi lại mọi get/put; `failPut`/`failGet` quyết định lần nào ném lỗi. */
+/**
+ * KV trong bộ nhớ, ghi lại mọi get/put; `failPut`/`failGet` quyết định lần nào ném lỗi.
+ * `seed` = sẵn bản ghi `ai:providers` (một provider trỏ về MODEL).
+ */
 function fakeKV(
   { failPut, failGet }: { failPut?: (key: string, count: number) => boolean; failGet?: (key: string) => boolean } = {},
+  seed = true,
 ): FakeKV {
-  const store = new Map<string, string>();
+  const store = new Map<string, string>(seed ? [[AI_PROVIDERS_KEY, PROVIDERS_BLOB]] : []);
   const counts = new Map<string, number>();
   const kv: FakeKV = {
     store,
@@ -48,11 +57,10 @@ function fakeKV(
 function env(kv: FakeKV, extra: Partial<Env> = {}): Env {
   return {
     RL: kv as unknown as KVNamespace,
-    QWEN_API_KEY: "qwen-key",
     TURNSTILE_SECRET: "turnstile-secret",
     IP_HASH_SECRET: "ip-hash-secret-for-tests",
+    AI_CONFIG_SECRET: AI_SECRET,
     ALLOWED_ORIGINS: ORIGINS.join(","),
-    MODEL_ENDPOINT: MODEL,
     ...extra,
   };
 }
@@ -111,15 +119,53 @@ describe("POST /analyze khi KV lỗi", () => {
 
   it("lỗi đọc bộ đếm coi như 0 lượt, vẫn trả kết quả", async () => {
     stubFetch();
-    const kv = fakeKV({ failGet: () => true });
+    const kv = fakeKV({ failGet: (key) => key !== AI_PROVIDERS_KEY });
     const response = await worker.fetch(analyzeRequest(), env(kv));
     await expectJson(response, 200);
   });
 
-  it("lỗi bất ngờ khi gọi model -> JSON 500 có CORS, không lộ chi tiết", async () => {
+  it("lỗi mạng khi gọi model -> 502 thông điệp cố định, không lộ chi tiết", async () => {
     stubFetch({ model: () => { throw new Error("socket hang up at 10.0.0.1"); } });
     const response = await worker.fetch(analyzeRequest(), env(fakeKV()));
-    expect(await expectJson(response, 500)).toEqual({ error: "Lỗi xử lý, thử lại sau" });
+    expect(await expectJson(response, 502)).toEqual({ error: "Dịch vụ AI tạm lỗi, thử lại sau" });
+  });
+});
+
+describe("POST /analyze với danh sách nhà cung cấp AI", () => {
+  for (const [name, extra, seed] of [
+    ["thiếu AI_CONFIG_SECRET", { AI_CONFIG_SECRET: undefined }, true],
+    ["sai AI_CONFIG_SECRET", { AI_CONFIG_SECRET: "secret-khac" }, true],
+    ["chưa có bản ghi ai:providers", {}, false],
+  ] as const) {
+    it(`${name} -> 503 chưa cấu hình, không ghi KV, không gọi siteverify/model`, async () => {
+      const calls = stubFetch();
+      const kv = fakeKV({}, seed);
+      const response = await worker.fetch(analyzeRequest(), env(kv, extra));
+      expect(await expectJson(response, 503)).toEqual({ error: "Dịch vụ soi ảnh chưa được cấu hình" });
+      expect(kv.puts).toEqual([]);
+      expect(calls).toEqual([]);
+    });
+  }
+
+  it("mục đầu hết tiền (402) -> chuyển sang mục kế với model/key của mục đó", async () => {
+    const kv = fakeKV({}, false);
+    kv.store.set(
+      AI_PROVIDERS_KEY,
+      await encryptProviders([{ ...PROVIDER, id: "a", endpoint: MODEL_BACKUP, apiKey: "key-a", modelId: "m-a" }, PROVIDER], AI_SECRET),
+    );
+    const seen: { url: string; auth: string | null; model: string }[] = [];
+    vi.stubGlobal("fetch", async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url === SITEVERIFY) return Response.json({ success: true, hostname: "tqccl.com" });
+      seen.push({ url, auth: new Headers(init?.headers).get("Authorization"), model: JSON.parse(String(init?.body)).model });
+      if (url === MODEL_BACKUP) return new Response("insufficient balance", { status: 402 });
+      return Response.json({ choices: [{ message: { content: JSON.stringify({ heroes: [{ nameCn: "关羽", tacticsCn: [] }] }) } }] });
+    });
+    await expectJson(await worker.fetch(analyzeRequest(), env(kv)), 200);
+    expect(seen).toEqual([
+      { url: MODEL_BACKUP, auth: "Bearer key-a", model: "m-a" },
+      { url: MODEL, auth: "Bearer deepseek-key", model: "deepseek-flash" },
+    ]);
   });
 });
 
@@ -144,13 +190,15 @@ describe("POST /analyze kiểm Content-Length trước khi đọc body", () => {
 
 describe("POST /analyze khi model upstream lỗi", () => {
   for (const [upstream, status, message] of [
+    // DeepSeek trả 402 khi hết số dư: coi như dịch vụ AI tạm lỗi, không lộ mã upstream.
+    [402, 502, "Dịch vụ AI tạm lỗi, thử lại sau"],
     [401, 502, "Dịch vụ AI tạm lỗi, thử lại sau"],
     [403, 502, "Dịch vụ AI tạm lỗi, thử lại sau"],
     [500, 502, "Dịch vụ AI tạm lỗi, thử lại sau"],
     [429, 503, "Dịch vụ AI đang quá tải, thử lại sau"],
   ] as const) {
     it(`upstream ${upstream} -> ${status} với thông điệp cố định`, async () => {
-      stubFetch({ model: () => new Response("quota exceeded for key qwen-key", { status: upstream }) });
+      stubFetch({ model: () => new Response("quota exceeded for key deepseek-key", { status: upstream }) });
       const response = await worker.fetch(analyzeRequest(), env(fakeKV()));
       const text = await response.clone().text();
       expect(await expectJson(response, status)).toEqual({ error: message });
@@ -181,12 +229,12 @@ describe("POST /analyze khi thiếu IP_HASH_SECRET", () => {
     expect(perIp[0]).not.toContain("203.0.113.7");
   });
 
-  it("một lượt thành công chỉ đọc/ghi bộ đếm, không có khoá replay Turnstile", async () => {
+  it("một lượt thành công chỉ đọc danh sách AI + đọc/ghi bộ đếm, không có khoá replay Turnstile", async () => {
     stubFetch();
     const kv = fakeKV();
     await expectJson(await worker.fetch(analyzeRequest(), env(kv)), 200);
     expect([...kv.gets, ...kv.puts].map((key) => key.slice(0, 2)).sort()).toEqual(
-      ["d:", "d:", "d:", "h:", "h:", "h:", "m:", "m:", "m:"],
+      ["ai", "d:", "d:", "d:", "h:", "h:", "h:", "m:", "m:", "m:"],
     );
   });
 });

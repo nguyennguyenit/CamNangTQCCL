@@ -1,6 +1,7 @@
-// Trang /quan-tri/ (noindex): bốn tab — "Duyệt chiến báo" (ảnh, dữ liệu AI đã xác nhận, duyệt / từ chối kèm lý do),
+// Trang /quan-tri/ (noindex): năm tab — "Duyệt chiến báo" (ảnh, dữ liệu AI đã xác nhận, duyệt / từ chối kèm lý do),
 // "Bài viết" (danh sách, soạn/sửa Markdown có xem trước an toàn, FAQ, lưu nháp, xuất bản/gỡ xuất bản),
-// "Bình luận" (xoá bình luận vi phạm trên mọi trang) và "Góp ý" (góp ý/báo lỗi từ footer, đánh dấu đã xử lý).
+// "Bình luận" (xoá bình luận vi phạm trên mọi trang), "Góp ý" (góp ý/báo lỗi từ footer, đánh dấu đã xử lý)
+// và "AI" (danh sách nhà cung cấp AI + thứ tự failover cho mọi tính năng đọc ảnh).
 // Server mới là nơi kiểm quyền; trang chỉ ẩn giao diện với người không phải admin.
 
 import { L, currentLocale, localePath } from './i18n.js';
@@ -490,6 +491,245 @@ function openFeedbackPanel(panel) {
   reload();
 }
 
+/* ---------- Nhà cung cấp AI ---------- */
+// Danh sách endpoint OpenAI-compatible dùng chung cho Soi đội/Gợi ý đội (worker/) và chiến báo:
+// thứ tự = ưu tiên, mục lỗi (sai key, hết tiền, quá tải, máy chủ lỗi) tự chuyển sang mục kế.
+// Server không bao giờ trả key — chỉ 4 ký tự cuối; ô key để trống khi sửa = giữ key cũ.
+
+const AI_PRESETS = [
+  { id: 'deepseek', label: 'DeepSeek', endpoint: 'https://api.deepseek.com/chat/completions', model: 'deepseek-flash' },
+  { id: 'opencode-zen', label: 'OpenCode Zen', endpoint: 'https://opencode.ai/zen/v1/chat/completions', model: 'deepseek-v4.1-flash' },
+];
+const AI_MAX_PROVIDERS = 10;
+
+function isHttpsUrl(value) {
+  try {
+    return new URL(value).protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+function openAiPanel(panel) {
+  const status = liveStatus();
+  const note = el('p', { class: 'scope-note' }, L(
+    'Thứ tự trong danh sách là thứ tự ưu tiên: mục trên lỗi (sai key, hết tiền, quá tải, máy chủ lỗi) thì tự chuyển sang mục kế. Dùng cho Soi đội từ ảnh, Gợi ý đội và chiến báo. Có hiệu lực trong khoảng 1 phút.',
+    '列表顺序即优先级：上一项出错（密钥错误、余额不足、过载、服务器错误）时自动切换到下一项。用于看图识阵、阵容推荐和战报。约 1 分钟内生效。',
+  ));
+  const warning = el('p', { class: 'cm-notice', hidden: '' }, L(
+    'Chưa có nhà cung cấp nào đang bật — các tính năng đọc ảnh đang tạm dừng.',
+    '没有启用的服务商——图片识别功能已暂停。',
+  ));
+  const list = el('ol', { class: 'cm-post-list', 'aria-label': L('Nhà cung cấp AI', 'AI 服务商') });
+  const editorSlot = el('div');
+  // Chưa tải được danh sách thì không cho Thêm/Lưu (tránh ghi đè danh sách thật bằng danh sách rỗng).
+  const addButton = el('button', { class: 'ana-btn', type: 'button', disabled: '' }, L('Thêm nhà cung cấp', '添加服务商'));
+  const saveButton = el('button', { class: 'ana-btn primary', type: 'button', disabled: '' }, L('Lưu', '保存'));
+  // Mỗi mục: dữ liệu server (keyLast4) + `apiKey` vừa gõ, chỉ giữ trong bộ nhớ tới lần Lưu.
+  let items = [];
+
+  const markDirty = () => status.set(L('Có thay đổi chưa lưu — bấm Lưu để áp dụng.', '有未保存的更改——点击“保存”后生效。'));
+
+  const paint = (focusSelector) => {
+    const last = items.length - 1;
+    list.replaceChildren(...items.map((item, index) => {
+      const action = (name, text, attrs = {}) => el('button', { class: 'cm-text-btn', type: 'button', dataset: { action: name }, ...attrs }, text);
+      const up = action('up', '↑', { 'aria-label': L(`Đưa ${item.label} lên trên`, `上移 ${item.label}`) });
+      const down = action('down', '↓', { 'aria-label': L(`Đưa ${item.label} xuống dưới`, `下移 ${item.label}`) });
+      up.disabled = index === 0;
+      down.disabled = index === last;
+      const toggle = action('toggle', item.enabled ? L('Tắt', '停用') : L('Bật', '启用'));
+      const edit = el('button', { class: 'ana-btn', type: 'button', dataset: { action: 'edit' } }, L('Sửa', '编辑'));
+      const remove = action('remove', L('Xoá', '删除'), { class: 'cm-text-btn cm-danger' });
+      const move = (to) => {
+        [items[index], items[to]] = [items[to], items[index]];
+        markDirty();
+        paint(`[data-index="${to}"] [data-action="${to < index ? 'up' : 'down'}"]:not(:disabled), [data-index="${to}"] [data-action="edit"]`);
+      };
+      up.addEventListener('click', () => move(index - 1));
+      down.addEventListener('click', () => move(index + 1));
+      toggle.addEventListener('click', () => {
+        item.enabled = !item.enabled;
+        markDirty();
+        paint(`[data-index="${index}"] [data-action="toggle"]`);
+      });
+      edit.addEventListener('click', () => openEditor(index));
+      remove.addEventListener('click', () => {
+        items.splice(index, 1);
+        markDirty();
+        paint(items.length ? `[data-index="${Math.min(index, items.length - 1)}"] [data-action="edit"]` : null);
+        if (!items.length) addButton.focus();
+      });
+      const key = item.apiKey ? L('Key mới (chưa lưu)', '新密钥（未保存）') : `${L('Key', '密钥')} ••••${item.keyLast4 || ''}`;
+      return el('li', { class: 'cm-post-row cm-ai-row', dataset: { index: String(index) } }, [
+        el('div', { class: 'cm-post-main' }, [
+          el('p', { class: 'cm-post-title' }, `${index + 1}. ${item.label}`),
+          el('p', { class: 'cm-report-meta' }, [
+            el('span', { class: 'cm-badge', dataset: { status: item.enabled ? 'approved' : 'pending' } }, item.enabled ? L('Đang bật', '已启用') : L('Đang tắt', '已停用')),
+            el('code', {}, item.endpoint),
+            el('code', {}, item.modelId),
+            el('span', {}, key),
+          ]),
+        ]),
+        el('div', { class: 'cm-ai-actions' }, [up, down, toggle, edit, remove]),
+      ]);
+    }));
+    warning.hidden = items.some((item) => item.enabled);
+    addButton.disabled = items.length >= AI_MAX_PROVIDERS;
+    if (focusSelector) list.querySelector(focusSelector)?.focus();
+  };
+
+  const load = (body) => {
+    items = (Array.isArray(body?.providers) ? body.providers : []).map((p) => ({
+      id: String(p.id),
+      label: String(p.label ?? ''),
+      endpoint: String(p.endpoint ?? ''),
+      modelId: String(p.modelId ?? ''),
+      enabled: p.enabled === true,
+      keyLast4: typeof p.keyLast4 === 'string' ? p.keyLast4 : '',
+      apiKey: '',
+    }));
+    saveButton.disabled = false;
+    paint();
+  };
+
+  function openEditor(index) {
+    const current = index == null ? null : items[index];
+    const initialPreset = current ? AI_PRESETS.find((p) => p.endpoint === current.endpoint) : AI_PRESETS[0];
+    const field = (id, label, control, hint) => el('div', { class: 'cm-field' }, [
+      el('label', { class: 'cm-label', for: id }, label),
+      control,
+      hint ? el('p', { id: `${id}-hint`, class: 'scope-note' }, hint) : null,
+    ]);
+    const input = (id, value, attrs = {}) => {
+      const node = el('input', { id, class: 'cm-input', type: 'text', ...attrs });
+      node.value = value ?? '';
+      return node;
+    };
+    const presetSelect = el('select', { id: 'cm-ai-preset', class: 'cm-select' }, [
+      ...AI_PRESETS.map((p) => el('option', { value: p.id }, p.label)),
+      el('option', { value: 'custom' }, L('Tùy chỉnh', '自定义')),
+    ]);
+    presetSelect.value = initialPreset ? initialPreset.id : 'custom';
+    const label = input('cm-ai-label', current ? current.label : initialPreset.label, { maxlength: '80', required: '' });
+    const endpoint = input('cm-ai-endpoint', current ? current.endpoint : initialPreset.endpoint, {
+      type: 'url', inputmode: 'url', maxlength: '500', required: '', spellcheck: 'false',
+    });
+    const modelId = input('cm-ai-model', current ? current.modelId : initialPreset.model, {
+      maxlength: '120', required: '', spellcheck: 'false', 'aria-describedby': 'cm-ai-model-hint',
+    });
+    const apiKey = input('cm-ai-key', '', {
+      type: 'password', autocomplete: 'new-password', maxlength: '500', spellcheck: 'false', 'aria-describedby': 'cm-ai-key-hint',
+    });
+    const enabled = el('input', { id: 'cm-ai-enabled', type: 'checkbox' });
+    enabled.checked = current ? current.enabled : true;
+    const modelHint = el('p', { id: 'cm-ai-model-hint', class: 'scope-note' });
+    const paintPreset = () => {
+      const preset = AI_PRESETS.find((p) => p.id === presetSelect.value);
+      endpoint.readOnly = Boolean(preset);
+      modelHint.textContent = preset
+        ? L(`Gợi ý: ${preset.model}`, `建议：${preset.model}`)
+        : L('Model id theo tài liệu của nhà cung cấp (API OpenAI-compatible, nhận ảnh).', '按服务商文档填写模型 ID（兼容 OpenAI 接口，支持图片）。');
+    };
+    presetSelect.addEventListener('change', () => {
+      const preset = AI_PRESETS.find((p) => p.id === presetSelect.value);
+      if (preset) {
+        endpoint.value = preset.endpoint;
+        // Chỉ thay nhãn/model khi đang để trống hoặc còn là giá trị gợi ý của mẫu khác.
+        if (!modelId.value.trim() || AI_PRESETS.some((p) => p.model === modelId.value.trim())) modelId.value = preset.model;
+        if (!label.value.trim() || AI_PRESETS.some((p) => p.label === label.value.trim())) label.value = preset.label;
+      }
+      paintPreset();
+    });
+    paintPreset();
+
+    const keyHint = current
+      ? L(`Đang lưu key ••••${current.keyLast4 || ''}. Để trống = giữ key cũ.`, `已保存密钥 ••••${current.keyLast4 || ''}。留空则保留原密钥。`)
+      : L('Bắt buộc với nhà cung cấp mới.', '新服务商必须填写。');
+    const done = el('button', { class: 'ana-btn primary', type: 'submit' }, L('Xong', '完成'));
+    const cancel = el('button', { class: 'ana-btn', type: 'button' }, L('Huỷ', '取消'));
+    const form = el('form', { class: 'cm-post-form cm-ai-editor', novalidate: '' }, [
+      el('h2', { class: 'cm-title' }, current ? L('Sửa nhà cung cấp', '编辑服务商') : L('Nhà cung cấp mới', '新服务商')),
+      el('div', { class: 'cm-field-grid' }, [
+        field('cm-ai-preset', L('Endpoint mẫu', '接口模板'), presetSelect),
+        field('cm-ai-label', L('Nhãn', '名称'), label),
+      ]),
+      field('cm-ai-endpoint', L('Endpoint', 'Endpoint'), endpoint),
+      el('div', { class: 'cm-field' }, [el('label', { class: 'cm-label', for: 'cm-ai-model' }, L('Model id', '模型 ID')), modelId, modelHint]),
+      field('cm-ai-key', L('API key', 'API 密钥'), apiKey, keyHint),
+      el('label', { class: 'cm-check', for: 'cm-ai-enabled' }, [enabled, L('Bật nhà cung cấp này', '启用此服务商')]),
+      el('div', { class: 'cm-form-row' }, [cancel, done]),
+    ]);
+    const close = (focusSelector) => {
+      editorSlot.replaceChildren();
+      if (focusSelector) list.querySelector(focusSelector)?.focus();
+      else addButton.focus();
+    };
+    cancel.addEventListener('click', () => close(index == null ? null : `[data-index="${index}"] [data-action="edit"]`));
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const data = { label: label.value.trim(), endpoint: endpoint.value.trim(), modelId: modelId.value.trim(), apiKey: apiKey.value.trim() };
+      for (const node of [label, endpoint, modelId, apiKey]) node.removeAttribute('aria-invalid');
+      const [invalid, message] = !data.label ? [label, L('Hãy nhập nhãn.', '请填写名称。')]
+        : !isHttpsUrl(data.endpoint) ? [endpoint, L('Endpoint phải là URL https hợp lệ.', 'Endpoint 必须是有效的 https URL。')]
+          : !data.modelId ? [modelId, L('Hãy nhập model id.', '请填写模型 ID。')]
+            : !current && !data.apiKey ? [apiKey, L('Nhà cung cấp mới cần API key.', '新服务商需要 API 密钥。')]
+              : [null, ''];
+      if (invalid) {
+        invalid.setAttribute('aria-invalid', 'true');
+        status.set(message, 'error');
+        invalid.focus();
+        return;
+      }
+      const entry = {
+        id: current ? current.id : crypto.randomUUID(),
+        label: data.label,
+        endpoint: data.endpoint,
+        modelId: data.modelId,
+        enabled: enabled.checked,
+        keyLast4: current ? current.keyLast4 : '',
+        // Để trống khi sửa = giữ key cũ (hoặc key mới gõ trước đó mà chưa lưu).
+        apiKey: data.apiKey || (current ? current.apiKey : ''),
+      };
+      const target = index == null ? items.length : index;
+      items[target] = entry;
+      markDirty();
+      paint();
+      close(`[data-index="${target}"] [data-action="edit"]`);
+    });
+    editorSlot.replaceChildren(form);
+    label.focus();
+  }
+
+  addButton.addEventListener('click', () => openEditor(null));
+  saveButton.addEventListener('click', async () => {
+    saveButton.disabled = true;
+    status.set(L('Đang lưu…', '正在保存…'));
+    try {
+      const body = await api('/api/admin/ai/providers', {
+        method: 'PUT',
+        json: {
+          providers: items.map(({ id, label, endpoint, modelId, enabled, apiKey }) => ({ id, label, endpoint, modelId, enabled, apiKey })),
+        },
+      });
+      editorSlot.replaceChildren();
+      load(body);
+      status.set(L('Đã lưu. Có hiệu lực trong khoảng 1 phút.', '已保存，约 1 分钟内生效。'));
+    } catch (error) {
+      status.set(describeError(error), 'error');
+    } finally {
+      saveButton.disabled = false;
+    }
+  });
+
+  panel.append(note, warning, status, list, editorSlot, el('div', { class: 'cm-form-row' }, [addButton, saveButton]));
+  panel.setAttribute('aria-busy', 'true');
+  api('/api/admin/ai/providers')
+    .then(load)
+    .catch((error) => status.set(describeError(error), 'error'))
+    .finally(() => panel.removeAttribute('aria-busy'));
+}
+
 /* ---------- Bài viết ---------- */
 
 function statusLabel(post) {
@@ -850,6 +1090,7 @@ export async function initCommunityAdmin(mount = document.getElementById('commun
     { id: 'posts', label: L('Bài viết', '文章'), open: openPostsPanel },
     { id: 'comments', label: L('Bình luận', '评论'), open: openCommentsPanel },
     { id: 'feedback', label: L('Góp ý', '意见反馈'), open: openFeedbackPanel },
+    { id: 'ai', label: 'AI', open: openAiPanel },
   ]);
   mount.replaceChildren(view.node);
   view.start();

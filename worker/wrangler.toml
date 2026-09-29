@@ -1,12 +1,15 @@
 # Cloudflare Worker proxy Vision LLM. Hạ tầng TÁCH BIỆT site (không deploy lên Pages).
 # Secrets bắt buộc, đặt qua `wrangler secret put` — KHÔNG ghi ở đây:
-#   QWEN_API_KEY, TURNSTILE_SECRET, IP_HASH_SECRET (thiếu IP_HASH_SECRET -> /analyze trả 503).
+#   TURNSTILE_SECRET, IP_HASH_SECRET (thiếu -> /analyze trả 503),
+#   AI_CONFIG_SECRET (trùng giá trị với community-worker; thiếu -> /analyze trả 503).
+# Nhà cung cấp AI (endpoint/model/key, failover) do admin nhập ở tab AI của /quan-tri/.
 name = "tqccl-vision-proxy"
 main = "src/index.ts"
 compatibility_date = "2026-01-01"
 
 # KV cho rate-limit + đếm cap. Tạo: `wrangler kv namespace create RL`
-# rồi dán id thật vào đây.
+# rồi dán id thật vào đây. Cùng namespace chứa bản ghi mã hoá `ai:providers` (community-worker
+# ghi qua binding AI_KV; Worker này chỉ đọc).
 [[kv_namespaces]]
 binding = "RL"
 id = "6fff7d73c885457dbb71756de99e66fa"
@@ -15,13 +18,8 @@ id = "6fff7d73c885457dbb71756de99e66fa"
 # Origin exact của site (CORS + hostname Turnstile), phân cách dấu phẩy. tqccl.com là domain
 # chính; www và pages.dev vẫn nhận trong lúc chuyển domain (các host này tự chuyển về tqccl.com).
 ALLOWED_ORIGINS = "https://tqccl.com,https://www.tqccl.com,https://tqccl.pages.dev"
-# Qwen DashScope — chọn region: "intl" (Singapore, có free tier) | "cn" (mainland).
-# Key hiện dùng tạo từ console Singapore/free quota -> REGION="intl".
-# Để trống MODEL_ENDPOINT để dùng endpoint DashScope Model Studio theo REGION.
-REGION = "intl"
-MODEL_ID = "qwen3.7-plus"
 FEATURE_ENABLED = "true"
-# Placeholder — chốt theo free tier thực (L2).
+# Placeholder — chốt theo quota/số dư thực (L2).
 RL_PER_HOUR = "10"
 DAILY_CAP = "500"
 MONTHLY_CAP = "8000"
