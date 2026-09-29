@@ -1,5 +1,23 @@
 # Project Changelog
 
+## 2026-09-29 (Cấu hình AI theo tính năng: model, effort, timeout riêng; nhà cung cấp dùng chung)
+
+### Changed
+
+- **Bản ghi `ai:config` thay `ai:providers`** (`shared/ai-config.ts`, mã hoá như cũ): `providers` giữ endpoint + API key dùng chung, không còn `modelId`; mỗi nhà cung cấp có `preset` (catalog tĩnh `shared/ai-models.ts`: DeepSeek `deepseek-flash`, `deepseek-v4-pro`; OpenCode Zen `deepseek-v4.1-flash`, `deepseek-v4-flash-vision-exp`, `deepseek-v4-flash`, `deepseek-v4-pro`) và `extraModels` admin tự thêm (`vision`, `effortStyle`, `efforts`). `groups` có bốn nhóm — Soi đội (`teamScan`), Gợi ý đội (`rosterRecommend`: ba mode scan), Giải thích món bù (`explainSubstitute`), Chiến báo (`battleReport`) — mỗi nhóm một chuỗi failover `{providerId, modelId, effort}`, timeout mỗi lượt (5–120 s) và trần tổng (≤ 180 s). Nhóm rỗng trả chưa cấu hình, không kế thừa.
+- **Effort theo mắt xích:** bỏ `thinking: {type: "disabled"}` cứng ở `worker/src/model.ts` và `community-worker/src/analyze.ts`; `callWithFailover` thêm trường suy luận theo `effortStyle` của model (`deepseek`: `thinking` + `reasoning_effort` low/high/max; `openai`: `reasoning_effort`; `none`: không gửi). Mỗi lượt chờ `min(timeout, phần còn lại của trần tổng)`, còn dưới 3 s thì dừng failover. Log `ai_provider_failed` thêm `group`, `effort`.
+- **API:** `GET/PUT /api/admin/ai/config` thay `/api/admin/ai/providers`; GET kèm catalog mẫu, mức effort theo kiểu và nhóm cần ảnh. PUT validate mẫu/endpoint, model tự thêm (`duplicate_model`, `invalid_effort_style`, `invalid_efforts`), chuỗi (`unknown_provider`, `unknown_model`, `invalid_effort`, `model_not_vision`) và thời gian nguyên giây (`invalid_timeout`, `invalid_budget`). Key để trống chỉ được giữ khi cùng `id` và cùng `endpoint` (trước đây giữ theo `id` kể cả khi đổi endpoint).
+- **Tab AI** (`js/community-admin.js`): phần Nhà cung cấp (mẫu, model sẵn có, model tự thêm kèm kiểu tham số và mức effort) và phần Tính năng (mỗi nhóm: mắt xích chọn nhà cung cấp → model → effort, ↑↓/Bỏ, timeout, trần tổng, "Áp cho mọi nhóm", nhãn Chạy được/Chưa cấu hình). Nhóm đọc ảnh chỉ liệt kê model nhận ảnh; xoá nhà cung cấp/model thì bỏ mắt xích trỏ tới nó; Lưu chặn timeout/trần tổng sai.
+- **Chuyển dữ liệu:** khi chưa có `ai:config`, cả hai Worker đọc `ai:providers` và chuyển trong bộ nhớ (cả bốn nhóm cùng chuỗi theo thứ tự cũ, effort tắt, 45 s/lượt, trần tổng 45 s × số mục bật) nên hành vi gọi không đổi cho tới khi admin bấm Lưu. `scripts/scan-ai-models.mjs` so `/models` của mẫu với catalog.
+
+### Tests
+
+- `community-worker`: `ai-config.test.ts` (round-trip, chuyển v1 giữ nguyên thứ tự/key/body, phân giải chuỗi, effort → body, failover, trần tổng), `ai-admin.test.ts` (quyền, không lộ key, giữ key cũ, validate nhà cung cấp và nhóm, chuỗi chiến báo dùng đúng effort), `reports.test.ts` (chuỗi chiến báo rỗng → 503). `worker`: `index.test.ts` (mode → nhóm, nhóm rỗng → 503, effort từng mắt xích), `model.test.ts`. E2E `community.spec.mjs`: cấu hình tab AI end-to-end.
+
+### Deploy
+
+- Deploy `community-worker/` và `worker/` (giữa hai Worker thứ tự tuỳ ý) **trước** Pages vì tab AI mới gọi `/api/admin/ai/config` → tab **AI** → **Lưu** → xác nhận `ai:config` trong KV → gỡ đường đọc `ai:providers` (`LEGACY_PROVIDERS_KEY`, `migrateLegacy`), deploy lại, xoá khoá cũ (`docs/community-worker.md`).
+
 ## 2026-09-29 (Gợi ý đội từ kho theo mùa, mục Thiếu món, "Vì sao?")
 
 ### Changed

@@ -2,7 +2,7 @@
 // của tôi, kiểm duyệt admin.
 
 import { Hono } from "hono";
-import { activeProviders, loadProviders } from "../../../shared/ai-config";
+import { loadAiConfig, resolveRoute } from "../../../shared/ai-config";
 import { analyzeReportImage, EMPTY_ANALYSIS, ModelError, toDataUri, type ReportAnalysis } from "../analyze";
 import { currentUser, PAGE_SIZE, requireAdmin, requireUser, type AppEnv, type Ctx } from "../context";
 import { isAdminEmail } from "../env";
@@ -91,8 +91,8 @@ reports.post("/api/reports/analyze", async (c) => {
   if ((c.env.FEATURE_ENABLED ?? "true") === "false") {
     throw new ApiError(503, "feature_disabled", "Tính năng phân tích ảnh đang tạm tắt");
   }
-  const providers = activeProviders(await loadProviders(c.env.AI_KV, c.env.AI_CONFIG_SECRET));
-  if (!providers.length) throw new ApiError(503, "ai_not_configured", "Chưa cấu hình dịch vụ AI");
+  const route = resolveRoute(await loadAiConfig(c.env.AI_KV, c.env.AI_CONFIG_SECRET), "battleReport");
+  if (!route.targets.length) throw new ApiError(503, "ai_not_configured", "Chưa cấu hình dịch vụ AI");
   const image = await parseImageUpload(c.req.raw, "image", REPORT_IMAGE_MAX_BYTES);
   const { now, newId, fetchImpl } = c.get("deps");
   const createdAt = now();
@@ -112,7 +112,7 @@ reports.post("/api/reports/analyze", async (c) => {
 
   let analysis: ReportAnalysis;
   try {
-    analysis = await analyzeReportImage(toDataUri(image.bytes, image.contentType), { providers, fetchImpl });
+    analysis = await analyzeReportImage(toDataUri(image.bytes, image.contentType), { route, fetchImpl });
   } catch (e) {
     if (!(e instanceof ModelError)) throw e;
     // Ảnh không đọc được: vẫn giữ upload để người dùng tự nhập đội hình.

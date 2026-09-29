@@ -9,7 +9,7 @@ Deploy tách hai surface: static site trên Cloudflare Pages và Vision proxy tr
 - Node `24.20.0` theo `.node-version`, npm và Chromium cho Astro build/E2E.
 - Python 3 cho pipeline và test dữ liệu.
 - Cloudflare account, Wrangler login, Pages project, Worker và Turnstile widget.
-- API key của ít nhất một nhà cung cấp AI OpenAI-compatible đọc được ảnh (vd DeepSeek platform.deepseek.com, số dư trả trước; hoặc OpenCode Zen), nhập ở tab **AI** của `/quan-tri/` — không đặt trong env.
+- API key của ít nhất một nhà cung cấp AI OpenAI-compatible đọc được ảnh (vd DeepSeek platform.deepseek.com, số dư trả trước; hoặc OpenCode Zen), nhập ở tab **AI** của `/quan-tri/` rồi gán vào chuỗi của từng tính năng — không đặt trong env.
 - Khi rebuild: HTML export đúng tên trong `Meta Team PK/`; raw crawl cache hoặc quyền/network để recrawl.
 
 ## Preview và test local
@@ -222,7 +222,7 @@ Commit trong `worker/wrangler.toml`:
 - `ALLOWED_ORIGINS`: danh sách origin exact phân cách dấu phẩy (`https://tqccl.com,https://www.tqccl.com,https://tqccl.pages.dev`). CORS echo origin khớp kèm `Vary: Origin`; `hostname` siteverify trả về phải là host của một origin trong danh sách (widget Turnstile phải khai đủ các hostname đó). Thiếu/rỗng → mọi `POST /analyze` trả `503`; để `*` (chỉ dev) thì Worker bỏ kiểm origin và hostname.
 - `FEATURE_ENABLED` kill-switch.
 - `RL_PER_HOUR`, `DAILY_CAP`, `MONTHLY_CAP`, `MAX_IMAGE_BYTES`.
-- KV binding `RL` và namespace ID. Cùng namespace chứa bản ghi mã hoá `ai:providers` (danh sách nhà cung cấp AI, thứ tự failover) do `community-worker/` ghi qua binding `AI_KV`; Worker này chỉ đọc (cache 60 giây).
+- KV binding `RL` và namespace ID. Cùng namespace chứa bản ghi mã hoá `ai:config` (nhà cung cấp AI + chuỗi failover của từng nhóm tính năng) do `community-worker/` ghi qua binding `AI_KV`; Worker này chỉ đọc (cache 60 giây).
 
 Frontend public config trong `js/config.js`:
 
@@ -243,7 +243,7 @@ npx wrangler secret put AI_CONFIG_SECRET   # CÙNG giá trị với community-wo
 
 Cả ba secret phải có trước `npm run deploy`. `IP_HASH_SECRET` là khoá HMAC băm IP cho bộ đếm per-IP (giá trị ngẫu nhiên ≥ 32 byte); thiếu hoặc rỗng thì mọi `POST /analyze` trả `503` `Dịch vụ soi ảnh chưa được cấu hình` và công cụ đọc ảnh báo "Dịch vụ soi ảnh chưa sẵn sàng". Đổi secret chỉ làm bộ đếm per-IP bắt đầu lại (TTL 2 giờ), không cần migrate.
 
-`AI_CONFIG_SECRET` là khoá (HKDF → AES-GCM) giải mã `ai:providers`; phải trùng giá trị đặt cho `community-worker/`. Thiếu, sai giá trị, danh sách rỗng hoặc không mục nào bật → cũng `503` `Dịch vụ soi ảnh chưa được cấu hình`.
+`AI_CONFIG_SECRET` là khoá (HKDF → AES-GCM) giải mã `ai:config`; phải trùng giá trị đặt cho `community-worker/`. Thiếu, sai giá trị, chưa có cấu hình hoặc nhóm của mode không có mắt xích chạy được → cũng `503` `Dịch vụ soi ảnh chưa được cấu hình`.
 
 Không commit API key, Turnstile secret, token, `.dev.vars` hoặc credential Cloudflare.
 
@@ -256,9 +256,9 @@ npm run typecheck
 npm run deploy
 ```
 
-Endpoint/model/key không nằm trong config: admin nhập ở tab **AI** của `/quan-tri/` (mẫu DeepSeek `https://api.deepseek.com/chat/completions` + `deepseek-flash`, OpenCode Zen `https://opencode.ai/zen/v1/chat/completions` + `deepseek-v4.1-flash`, hoặc tuỳ chỉnh). Mỗi lượt thử các mục đang bật theo thứ tự, lỗi 401/402/403/429/5xx/mạng/timeout thì chuyển mục kế; xem [worker/README.md](../worker/README.md#nhà-cung-cấp-ai).
+Endpoint/model/key/effort không nằm trong config: admin cấu hình ở tab **AI** của `/quan-tri/` — nhà cung cấp dùng chung (mẫu DeepSeek, OpenCode Zen hoặc tuỳ chỉnh, catalog model ở `shared/ai-models.ts` cộng model tự thêm) và chuỗi (nhà cung cấp, model, effort) + timeout/trần tổng riêng cho Soi đội, Gợi ý đội, Giải thích món bù, Chiến báo. Mỗi lượt thử mắt xích theo thứ tự, lỗi 401/402/403/429/5xx/mạng/timeout thì chuyển mắt xích kế; xem [worker/README.md](../worker/README.md#nhà-cung-cấp-ai).
 
-Thứ tự triển khai khi chuyển từ secret khoá API cũ sang danh sách: đặt `AI_CONFIG_SECRET` (cùng giá trị) cho cả hai Worker → deploy `community-worker/` → nhập nhà cung cấp ở tab **AI** → deploy `worker/` → xoá secret cũ ở cả hai Worker. Lệnh cụ thể: [community-worker.md](community-worker.md#nhà-cung-cấp-ai-tab-ai).
+Thứ tự triển khai khi chuyển từ bản ghi cũ `ai:providers` sang `ai:config`: deploy cả hai Worker (chúng tự đọc `ai:providers` khi chưa có `ai:config`, hành vi không đổi) → mở tab **AI**, bấm **Lưu** → xác nhận `ai:config` có trong KV → gỡ code đọc bản ghi cũ, deploy lại, xoá khoá `ai:providers`. Lệnh cụ thể: [community-worker.md](community-worker.md#cấu-hình-ai-tab-ai).
 
 ## Publish lại bản dịch hiển thị
 

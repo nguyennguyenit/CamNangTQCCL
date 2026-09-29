@@ -8,7 +8,7 @@ import type { DatabaseSync as DatabaseSyncType, SQLInputValue } from "node:sqlit
 import { createApp } from "../src/app";
 import type { SessionUser } from "../src/auth";
 import type { Env } from "../src/env";
-import { AI_PROVIDERS_KEY, encryptProviders, type AiProvider } from "../../shared/ai-config";
+import { AI_CONFIG_KEY, AI_GROUPS, encryptConfig, type AiConfig, type AiGroupConfig, type AiGroupId, type AiProvider } from "../../shared/ai-config";
 
 // Vite (vitest 2) bỏ tiền tố "node:" của node:sqlite khi phân giải import -> nạp bằng require.
 const { DatabaseSync } = createRequire(import.meta.url)("node:sqlite") as typeof import("node:sqlite");
@@ -143,17 +143,27 @@ export interface ApiJson {
 
 export const ORIGIN = "https://tqccl.com";
 
-/** Secret + provider mặc định của harness (bản ghi `ai:providers` được seed sẵn). */
+/** Secret + cấu hình mặc định của harness (bản ghi `ai:config` được seed sẵn: mọi nhóm dùng TEST_PROVIDER). */
 export const AI_SECRET = "ai-config-secret-for-tests";
 export const TEST_PROVIDER: AiProvider = {
   id: "deepseek",
   label: "DeepSeek",
+  preset: "deepseek",
   endpoint: "https://api.deepseek.com/chat/completions",
-  modelId: "deepseek-flash",
   apiKey: "test-key",
   enabled: true,
+  extraModels: [],
 };
-const TEST_PROVIDERS_BLOB = await encryptProviders([TEST_PROVIDER], AI_SECRET);
+export const TEST_GROUP: AiGroupConfig = {
+  chain: [{ providerId: "deepseek", modelId: "deepseek-flash", effort: "off" }],
+  timeoutMs: 45_000,
+  budgetMs: 45_000,
+};
+export const TEST_CONFIG: AiConfig = {
+  providers: [TEST_PROVIDER],
+  groups: Object.fromEntries(AI_GROUPS.map((id) => [id, TEST_GROUP])) as Record<AiGroupId, AiGroupConfig>,
+};
+const TEST_CONFIG_BLOB = await encryptConfig(TEST_CONFIG, AI_SECRET);
 
 export interface Harness {
   env: Env;
@@ -161,7 +171,7 @@ export interface Harness {
   objects: Map<string, StoredObject>;
   clock: { now: number };
   fetchCalls: { url: string; init?: RequestInit }[];
-  /** Nội dung KV AI_KV (fake); seed sẵn `ai:providers` = [TEST_PROVIDER]. */
+  /** Nội dung KV AI_KV (fake); seed sẵn `ai:config` = TEST_CONFIG. */
   aiStore: Map<string, string>;
   /** Thư đã gửi qua binding FEEDBACK_MAIL (fake). */
   mails: EmailMessageBuilder[];
@@ -197,7 +207,7 @@ export function createHarness(envOverrides: Partial<Env> = {}): Harness {
     newId: () => `id-${String(++seq).padStart(4, "0")}`,
   });
   const mails: EmailMessageBuilder[] = [];
-  const aiStore = new Map<string, string>([[AI_PROVIDERS_KEY, TEST_PROVIDERS_BLOB]]);
+  const aiStore = new Map<string, string>([[AI_CONFIG_KEY, TEST_CONFIG_BLOB]]);
   // Fake chỉ cài get/put mà mã nguồn dùng.
   const aiKv = {
     get: async (key: string) => aiStore.get(key) ?? null,

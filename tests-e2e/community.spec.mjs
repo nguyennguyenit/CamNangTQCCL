@@ -12,14 +12,38 @@ const PNG_1X1 = Buffer.from(
 );
 const EMPTY_STATS = { total: 0, wins: 0, losses: 0, draws: 0, winRate: null, topOpponents: [] };
 
+/** Catalog mẫu mà GET /api/admin/ai/config trả (rút gọn từ shared/ai-models.ts). */
+const AI_PRESETS = [
+  {
+    id: "deepseek",
+    label: "DeepSeek",
+    endpoint: "https://api.deepseek.com/chat/completions",
+    models: [{ modelId: "deepseek-flash", vision: true, effortStyle: "deepseek", efforts: ["off", "low", "high", "max"] }],
+  },
+  {
+    id: "opencode-zen",
+    label: "OpenCode Zen",
+    endpoint: "https://opencode.ai/zen/v1/chat/completions",
+    models: [
+      { modelId: "deepseek-v4.1-flash", vision: true, effortStyle: "deepseek", efforts: ["off", "low", "high", "max"] },
+      { modelId: "deepseek-v4-flash", vision: false, effortStyle: "deepseek", efforts: ["off", "low", "high", "max"] },
+    ],
+  },
+];
+const AI_EFFORT_LEVELS = { deepseek: ["off", "low", "high", "max"], openai: ["none", "low", "medium", "high"], none: ["default"] };
+const AI_GROUP_NEEDS_VISION = { teamScan: true, rosterRecommend: true, explainSubstitute: false, battleReport: true };
+
 /** Giả lập API cộng đồng; trả về nhật ký lời gọi để kiểm request body. */
-async function mockCommunityApi(page, { user = null, stats = EMPTY_STATS, comments = [], reports = [], adminReports = [], adminFeedback = [], feedbackStatus = 201, aiProviders = [] } = {}) {
+async function mockCommunityApi(page, { user = null, stats = EMPTY_STATS, comments = [], reports = [], adminReports = [], adminFeedback = [], feedbackStatus = 201, aiConfig = { providers: [], groups: {} } } = {}) {
   const calls = [];
   // Bản lưu phía "server" của tab AI: có key thật, API chỉ trả keyLast4.
-  let storedProviders = aiProviders;
-  const providersView = () => ({
-    providers: storedProviders.map(({ apiKey, ...rest }) => ({ ...rest, keyLast4: apiKey.slice(-4) })),
-    configured: storedProviders.some((p) => p.enabled),
+  let storedAi = aiConfig;
+  const aiView = () => ({
+    providers: storedAi.providers.map(({ apiKey, ...rest }) => ({ ...rest, keyLast4: apiKey.slice(-4) })),
+    groups: storedAi.groups,
+    presets: AI_PRESETS,
+    effortLevels: AI_EFFORT_LEVELS,
+    groupNeedsVision: AI_GROUP_NEEDS_VISION,
   });
   await page.route((url) => url.pathname.startsWith("/api/"), async (route) => {
     const request = route.request();
@@ -58,11 +82,11 @@ async function mockCommunityApi(page, { user = null, stats = EMPTY_STATS, commen
     const feedbackStatusMatch = url.pathname.match(/^\/api\/admin\/feedback\/([^/]+)\/status$/);
     if (method === "POST" && feedbackStatusMatch) return json({ id: feedbackStatusMatch[1], status: body.status });
     if (method === "GET" && url.pathname === "/api/admin/reports") return json({ items: adminReports, nextCursor: null });
-    if (method === "GET" && url.pathname === "/api/admin/ai/providers") return json(providersView());
-    if (method === "PUT" && url.pathname === "/api/admin/ai/providers") {
-      const previous = new Map(storedProviders.map((p) => [p.id, p.apiKey]));
-      storedProviders = body.providers.map((p) => ({ ...p, apiKey: p.apiKey || previous.get(p.id) }));
-      return json(providersView());
+    if (method === "GET" && url.pathname === "/api/admin/ai/config") return json(aiView());
+    if (method === "PUT" && url.pathname === "/api/admin/ai/config") {
+      const previous = new Map(storedAi.providers.map((p) => [p.id, p.apiKey]));
+      storedAi = { providers: body.providers.map((p) => ({ ...p, apiKey: p.apiKey || previous.get(p.id) })), groups: body.groups };
+      return json(aiView());
     }
     const approve = url.pathname.match(/^\/api\/admin\/reports\/([^/]+)\/approve$/);
     if (method === "POST" && approve) return json({ id: approve[1], status: "approved", rejectReason: null });
@@ -321,46 +345,100 @@ test("admin xem góp ý, lọc theo trạng thái và đánh dấu đã xử lý
   await expect(answered.getByRole("link", { name: "player@example.com" })).toHaveAttribute("href", /^mailto:player@example\.com/);
 });
 
-test("admin quản lý nhà cung cấp AI: thêm từ mẫu, đổi thứ tự, lưu cả danh sách không lộ key", async ({ page }) => {
+test("admin cấu hình AI: thêm nhà cung cấp + model tự thêm, chuỗi riêng từng tính năng, lưu không lộ key", async ({ page }) => {
+  const DEEPSEEK_LINK = { providerId: "deepseek", modelId: "deepseek-flash", effort: "off" };
+  const group = { chain: [DEEPSEEK_LINK], timeoutMs: 45_000, budgetMs: 45_000 };
   const calls = await mockCommunityApi(page, {
     user: ADMIN,
-    aiProviders: [
-      { id: "deepseek", label: "DeepSeek", endpoint: "https://api.deepseek.com/chat/completions", modelId: "deepseek-flash", apiKey: "sk-old-secret-abcd", enabled: true },
-    ],
+    aiConfig: {
+      providers: [
+        { id: "deepseek", label: "DeepSeek", preset: "deepseek", endpoint: "https://api.deepseek.com/chat/completions", apiKey: "sk-old-secret-abcd", enabled: true, extraModels: [] },
+      ],
+      groups: { teamScan: group, rosterRecommend: group, explainSubstitute: group, battleReport: group },
+    },
   });
   await page.goto("/quan-tri/");
   await page.getByRole("tab", { name: "AI" }).click();
   const panel = page.getByRole("tabpanel", { name: "AI" });
-  const rows = panel.locator(".cm-ai-row");
+  const rows = panel.getByRole("list", { name: "Nhà cung cấp", exact: true }).locator(":scope > li");
   await expect(rows).toHaveCount(1);
   await expect(rows.first()).toContainText("••••abcd");
-  await expect(panel).toContainText("Có hiệu lực trong khoảng 1 phút");
+  await expect(panel).toContainText("có hiệu lực trong khoảng 1 phút");
+  await expect(panel.getByText("Chưa tính năng nào có mắt xích chạy được")).toBeHidden();
+  const section = (id) => panel.locator(`[data-group="${id}"]`);
+  await expect(section("battleReport")).toContainText("Chạy được");
 
+  // Nhà cung cấp mới từ mẫu Zen + một model tự thêm (kiểu OpenAI, chỉ văn bản).
   await panel.getByRole("button", { name: "Thêm nhà cung cấp" }).click();
   await panel.getByLabel("Endpoint mẫu").selectOption("opencode-zen");
   await expect(panel.getByLabel("Endpoint", { exact: true })).toHaveValue("https://opencode.ai/zen/v1/chat/completions");
-  await expect(panel.getByLabel("Model id")).toHaveValue("deepseek-v4.1-flash");
   await expect(panel.getByLabel("Nhãn")).toHaveValue("OpenCode Zen");
+  await expect(panel.getByRole("list", { name: "Model sẵn có" })).toContainText("deepseek-v4.1-flash");
   await expect(panel.getByLabel("API key")).toHaveAttribute("type", "password");
+  await panel.getByRole("button", { name: "Thêm model" }).click();
+  await panel.getByLabel("Model id").fill("glm-5.3-flash");
+  await panel.getByLabel("Kiểu tham số suy luận").selectOption("openai");
+  await expect(panel.getByLabel("Vừa")).toBeChecked();
   await panel.getByRole("button", { name: "Xong" }).click();
   await expect(panel.getByRole("status")).toHaveText("Nhà cung cấp mới cần API key.");
   await panel.getByLabel("API key").fill("sk-zen-new-5678");
   await panel.getByRole("button", { name: "Xong" }).click();
   await expect(rows).toHaveCount(2);
 
-  await panel.getByRole("button", { name: "Đưa OpenCode Zen lên trên" }).click();
-  await expect(rows.first()).toContainText("OpenCode Zen");
-  await rows.nth(1).getByRole("button", { name: "Tắt" }).click();
+  // Soi đội: thêm mắt xích Zen — nhóm đọc ảnh chỉ liệt kê model nhận ảnh.
+  await section("teamScan").getByRole("button", { name: "Thêm mắt xích" }).click();
+  const scanLink = section("teamScan").locator('[data-link="1"]');
+  await scanLink.getByLabel("Nhà cung cấp").selectOption({ label: "OpenCode Zen" });
+  await expect(scanLink.getByLabel("Model")).toHaveValue("deepseek-v4.1-flash");
+  await expect(scanLink.getByLabel("Model").locator("option")).toHaveText(["deepseek-v4.1-flash"]);
+
+  // Giải thích món bù: model văn bản của Zen, effort cao, đưa lên đầu; thời gian riêng.
+  const explain = section("explainSubstitute");
+  await explain.getByRole("button", { name: "Thêm mắt xích" }).click();
+  const explainLink = explain.locator('[data-link="1"]');
+  await explainLink.getByLabel("Nhà cung cấp").selectOption({ label: "OpenCode Zen" });
+  await explainLink.getByLabel("Model").selectOption("glm-5.3-flash");
+  await explainLink.getByLabel("Effort").selectOption({ label: "Cao" });
+  await explain.getByRole("button", { name: "Đưa mắt xích 2 lên trên" }).click();
+  await explain.getByLabel("Timeout mỗi lượt (giây)").fill("60");
+  await explain.getByLabel("Trần tổng (giây)").fill("90");
+
+  // Tắt DeepSeek: các nhóm chỉ còn DeepSeek báo chưa chạy được.
+  await rows.first().getByRole("button", { name: "Tắt" }).click();
+  await expect(section("battleReport")).toContainText("Chưa cấu hình");
+  await expect(section("teamScan")).toContainText("Chạy được");
+
+  // Trần tổng nhỏ hơn timeout -> chặn trước khi gửi.
+  await section("battleReport").getByLabel("Trần tổng (giây)").fill("10");
+  await panel.getByRole("button", { name: "Lưu", exact: true }).click();
+  await expect(panel.getByRole("status")).toContainText("trần tổng phải là số giây nguyên");
+  expect(calls.some((call) => call.method === "PUT")).toBe(false);
+  await section("battleReport").getByLabel("Trần tổng (giây)").fill("45");
   await panel.getByRole("button", { name: "Lưu", exact: true }).click();
 
+  const zenId = expect.any(String);
   await expect.poll(() => calls.find((call) => call.method === "PUT")?.body).toEqual({
     providers: [
-      { id: expect.any(String), label: "OpenCode Zen", endpoint: "https://opencode.ai/zen/v1/chat/completions", modelId: "deepseek-v4.1-flash", enabled: true, apiKey: "sk-zen-new-5678" },
-      { id: "deepseek", label: "DeepSeek", endpoint: "https://api.deepseek.com/chat/completions", modelId: "deepseek-flash", enabled: false, apiKey: "" },
+      { id: "deepseek", label: "DeepSeek", preset: "deepseek", endpoint: "https://api.deepseek.com/chat/completions", enabled: false, apiKey: "", extraModels: [] },
+      {
+        id: zenId,
+        label: "OpenCode Zen",
+        preset: "opencode-zen",
+        endpoint: "https://opencode.ai/zen/v1/chat/completions",
+        enabled: true,
+        apiKey: "sk-zen-new-5678",
+        extraModels: [{ modelId: "glm-5.3-flash", vision: false, effortStyle: "openai", efforts: ["none", "low", "medium", "high"] }],
+      },
     ],
+    groups: {
+      teamScan: { ...group, chain: [DEEPSEEK_LINK, { providerId: zenId, modelId: "deepseek-v4.1-flash", effort: "off" }] },
+      rosterRecommend: group,
+      explainSubstitute: { chain: [{ providerId: zenId, modelId: "glm-5.3-flash", effort: "high" }, DEEPSEEK_LINK], timeoutMs: 60_000, budgetMs: 90_000 },
+      battleReport: group,
+    },
   });
   await expect(panel.getByRole("status")).toContainText("Đã lưu");
-  await expect(rows.first()).toContainText("••••5678");
-  await expect(rows.nth(1)).toContainText("••••abcd");
+  await expect(rows.nth(1)).toContainText("••••5678");
+  await expect(rows.first()).toContainText("••••abcd");
   await expect(panel).not.toContainText("sk-zen-new-5678");
 });

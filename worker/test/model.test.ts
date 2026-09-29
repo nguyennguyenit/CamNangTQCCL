@@ -1,6 +1,16 @@
 import { describe, expect, it } from "vitest";
+import type { AiRoute } from "../../shared/ai-config";
 import { buildExplainRequestBody, buildRequestBody, callExplainModel, callModel, promptByMode } from "../src/model";
 import type { ExplainContext } from "../src/schema";
+
+function route(modelId: string, effort = "off"): AiRoute {
+  return {
+    group: "teamScan",
+    targets: [{ label: "P", endpoint: "https://model.test/v1/chat/completions", apiKey: "key", modelId, effortStyle: "deepseek", effort }],
+    timeoutMs: 45_000,
+    budgetMs: 45_000,
+  };
+}
 
 describe("vision prompt", () => {
   it("chỉ chép chữ in: không nhận diện chân dung, không có danh sách tên, chép mọi dòng chiến pháp", () => {
@@ -56,9 +66,7 @@ describe("scan mode prompts", () => {
 
 describe("callModel khi upstream lỗi", () => {
   const opts = (status: number) => ({
-    providers: [
-      { id: "p", label: "P", endpoint: "https://model.test/v1/chat/completions", apiKey: "key", modelId: "vision-model", enabled: true },
-    ],
+    route: route("vision-model"),
     fetchImpl: (async () => new Response("provider detail", { status })) as typeof fetch,
   });
 
@@ -85,7 +93,6 @@ describe("explainSubstitute (chỉ văn bản)", () => {
     substitute: { name: "Hoành Qua Dược Mã", effect: "Gây sát thương binh nhận 120% lên toàn địch." },
     configCount: 4,
   };
-  const provider = { id: "p", label: "P", endpoint: "https://model.test/v1/chat/completions", apiKey: "key", modelId: "text-model", enabled: true };
 
   function promptText(ctx: ExplainContext): string {
     const content = buildExplainRequestBody("text-model", ctx).messages[0].content;
@@ -93,12 +100,12 @@ describe("explainSubstitute (chỉ văn bản)", () => {
     return String(content);
   }
 
-  it("body chỉ có văn bản, không image_url; giữ json_object + tắt thinking như các mode ảnh", () => {
+  it("body chỉ có văn bản, không image_url; giữ json_object; không tự đặt thinking (effort do chuỗi quyết định)", () => {
     const body = buildExplainRequestBody("text-model", context);
     expect(body.model).toBe("text-model");
     expect(JSON.stringify(body)).not.toContain("image_url");
     expect(body.response_format).toEqual({ type: "json_object" });
-    expect(body.thinking).toEqual({ type: "disabled" });
+    expect(body).not.toHaveProperty("thinking");
   });
 
   it("prompt đưa đủ dữ kiện và ràng buộc: chỉ giải thích, 2-4 câu, không nêu chiến pháp khác, không khuyên đội", () => {
@@ -122,14 +129,14 @@ describe("explainSubstitute (chỉ văn bản)", () => {
     expect(text).not.toContain("Trả lời bằng tiếng Việt");
   });
 
-  it("callExplainModel gửi body văn bản và trả { explanation }", async () => {
+  it("callExplainModel gửi body văn bản kèm effort của mắt xích và trả { explanation }", async () => {
     const sent: unknown[] = [];
     const fetchImpl = (async (_url: RequestInfo | URL, init?: RequestInit) => {
       sent.push(JSON.parse(String(init?.body)));
       return Response.json({ choices: [{ message: { content: '{"explanation":" Cả hai đều gây sát thương. "}' } }] });
     }) as typeof fetch;
-    expect(await callExplainModel(context, { providers: [provider], fetchImpl })).toEqual({ explanation: "Cả hai đều gây sát thương." });
-    expect(sent).toEqual([buildExplainRequestBody("text-model", context)]);
+    expect(await callExplainModel(context, { route: route("text-model", "high"), fetchImpl })).toEqual({ explanation: "Cả hai đều gây sát thương." });
+    expect(sent).toEqual([{ ...buildExplainRequestBody("text-model", context), thinking: { type: "enabled" }, reasoning_effort: "high" }]);
   });
 
   for (const [name, content] of [
@@ -139,7 +146,7 @@ describe("explainSubstitute (chỉ văn bản)", () => {
   ] as const) {
     it(`${name} -> 422 thông điệp cố định`, async () => {
       const fetchImpl = (async () => Response.json({ choices: [{ message: { content } }] })) as typeof fetch;
-      const error = await callExplainModel(context, { providers: [provider], fetchImpl }).catch((e) => e);
+      const error = await callExplainModel(context, { route: route("text-model"), fetchImpl }).catch((e) => e);
       expect(error).toMatchObject({ status: 422, message: "Không giải thích được" });
     });
   }

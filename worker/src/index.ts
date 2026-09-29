@@ -1,10 +1,10 @@
 // Worker entry: POST /analyze proxy LLM với guardrail đầy đủ.
-// Thứ tự (rẻ -> đắt): OPTIONS -> method -> cấu hình origin -> origin -> secret băm IP -> danh sách
-// nhà cung cấp AI (KV) -> Content-Length -> kill-switch+cap+rate-limit -> Turnstile -> input guard
+// Thứ tự (rẻ -> đắt): OPTIONS -> method -> cấu hình origin -> origin -> secret băm IP -> Content-Length
+// -> mode -> chuỗi AI của nhóm ứng với mode (KV) -> kill-switch+cap+rate-limit -> Turnstile -> input guard
 // (ảnh cho mode đọc ảnh, `context` cho mode chỉ văn bản explainSubstitute) -> callModel (failover) -> validate -> JSON.
 // Mọi lỗi (kể cả bất ngờ) đều trả JSON có CORS. KHÔNG lưu ảnh; log tối thiểu.
 
-import { activeProviders, loadProviders } from "../../shared/ai-config";
+import { loadAiConfig, resolveRoute, type AiGroupId } from "../../shared/ai-config";
 import { Config, Env, loadConfig } from "./config";
 import { corsHeaders, preflight, validateImage } from "./guard";
 import { callExplainModel, callModel } from "./model";
@@ -21,8 +21,16 @@ import {
 import { verifyTurnstile } from "./turnstile";
 
 const NOT_CONFIGURED = "Dịch vụ soi ảnh chưa được cấu hình";
-// KV cache ở edge: đổi danh sách ở /quan-tri/ có hiệu lực trong khoảng 1 phút.
-const PROVIDERS_CACHE_TTL = 60;
+// KV cache ở edge: đổi cấu hình ở /quan-tri/ có hiệu lực trong khoảng 1 phút.
+const CONFIG_CACHE_TTL = 60;
+/** Nhóm cấu hình AI (tab AI của /quan-tri/) của từng mode. */
+const GROUP_BY_MODE: Record<AnalyzeMode, AiGroupId> = {
+  analyzeTeamImage: "teamScan",
+  scanHeroes: "rosterRecommend",
+  scanTactics: "rosterRecommend",
+  scanBuiltTeams: "rosterRecommend",
+  explainSubstitute: "explainSubstitute",
+};
 
 function json(body: unknown, status: number, cors: Record<string, string>): Response {
   return new Response(JSON.stringify(body), {
@@ -64,11 +72,6 @@ async function handle(request: Request, env: Env, cfg: Config, cors: Record<stri
   if (!ipHashSecret) {
     return json({ error: NOT_CONFIGURED }, 503, cors);
   }
-  // Danh sách nhà cung cấp AI (mã hoá trong KV); thiếu secret/giải mã lỗi/không mục nào bật -> 503.
-  const providers = activeProviders(await loadProviders(env.RL, env.AI_CONFIG_SECRET, PROVIDERS_CACHE_TTL));
-  if (!providers.length) {
-    return json({ error: NOT_CONFIGURED }, 503, cors);
-  }
   // Chặn body quá lớn theo header trước khi đọc; thiếu header thì guard ảnh vẫn kiểm.
   const declaredLength = Number(request.headers.get("Content-Length"));
   if (declaredLength > maxRequestBytes(cfg.maxImageBytes)) {
@@ -86,6 +89,11 @@ async function handle(request: Request, env: Env, cfg: Config, cors: Record<stri
     mode = resolveAnalyzeMode(payload?.mode);
   } catch (e: any) {
     return json({ error: e?.message || "Mode không hợp lệ" }, 400, cors);
+  }
+  // Chuỗi AI của nhóm (mã hoá trong KV); thiếu secret/giải mã lỗi/chuỗi rỗng/mọi mắt xích tắt -> 503.
+  const route = resolveRoute(await loadAiConfig(env.RL, env.AI_CONFIG_SECRET, CONFIG_CACHE_TTL), GROUP_BY_MODE[mode]);
+  if (!route.targets.length) {
+    return json({ error: NOT_CONFIGURED }, 503, cors);
   }
 
   const ip = request.headers.get("CF-Connecting-IP") || "";
@@ -114,13 +122,13 @@ async function handle(request: Request, env: Env, cfg: Config, cors: Record<stri
     } catch {
       return json({ error: INVALID_CONTEXT }, 400, cors);
     }
-    run = () => callExplainModel(context, { providers });
+    run = () => callExplainModel(context, { route });
   } else {
     const img = validateImage(payload?.image, cfg.maxImageBytes);
     if (!img.ok) {
       return json({ error: img.message }, img.status, cors);
     }
-    run = () => callModel(img.dataUri, { providers }, mode);
+    run = () => callModel(img.dataUri, { route }, mode);
   }
 
   // [H2] Đếm quota global CHỈ khi đã qua Turnstile + guard (sắp tốn tiền thật).

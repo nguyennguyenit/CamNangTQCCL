@@ -1,7 +1,7 @@
-// Phân tích ảnh chiến báo (Chat Completions OpenAI-compatible, danh sách nhà cung cấp + failover
+// Phân tích ảnh chiến báo (Chat Completions OpenAI-compatible, chuỗi failover của nhóm `battleReport`
 // từ shared/ai-config.ts): trích kết quả trận + tướng hai phe (chữ Hán giản thể như trong ảnh).
 
-import { AiCallError, callWithFailover, type AiProvider } from "../../shared/ai-config";
+import { AiCallError, callWithFailover, type AiRoute } from "../../shared/ai-config";
 import { MAX_HERO_CHARS, MAX_HEROES, type ReportResult } from "./validate";
 
 export interface ReportAnalysis {
@@ -31,8 +31,8 @@ export const REPORT_PROMPT =
   "notes = ghi chú rất ngắn (≤ 100 ký tự) nếu có điều bất thường, còn lại null. Chỉ trả JSON.";
 
 export interface ModelOptions {
-  /** Danh sách provider (mục tắt bị bỏ qua), thứ tự = ưu tiên. */
-  providers: AiProvider[];
+  /** Chuỗi failover (provider, model, effort) + timeout của nhóm `battleReport`. */
+  route: AiRoute;
   fetchImpl?: typeof fetch;
 }
 
@@ -125,7 +125,7 @@ export async function analyzeReportImage(imageDataUri: string, opts: ModelOption
   let resp: Response;
   try {
     resp = await callWithFailover(
-      opts.providers,
+      opts.route,
       (modelId) => ({
         model: modelId,
         messages: [
@@ -139,8 +139,6 @@ export async function analyzeReportImage(imageDataUri: string, opts: ModelOption
         ],
         response_format: { type: "json_object" },
         temperature: 0,
-        // Tắt thinking mặc định của DeepSeek V4.1 (chậm, không cần cho việc chép chữ); xem worker/src/model.ts.
-        thinking: { type: "disabled" },
       }),
       opts.fetchImpl || fetch,
     );

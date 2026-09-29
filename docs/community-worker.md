@@ -1,13 +1,13 @@
 # Community Worker (đăng nhập, bình luận, chiến báo, bài viết, góp ý)
 
-`community-worker/` là Cloudflare Worker (Hono) tách biệt site tĩnh: Better Auth với Google, D1 cho dữ liệu, R2 cho ảnh, nhà cung cấp AI OpenAI-compatible (danh sách + failover, quản lý ở tab **AI** của `/quan-tri/`) để đọc ảnh chiến báo, GitHub `repository_dispatch` để build lại site khi xuất bản bài viết, và Cloudflare Email Service (binding `send_email`) để gửi thư báo góp ý. Hợp đồng API nằm trong [`plans/260927-cong-dong-song-ngu/plan.md`](../plans/260927-cong-dong-song-ngu/plan.md).
+`community-worker/` là Cloudflare Worker (Hono) tách biệt site tĩnh: Better Auth với Google, D1 cho dữ liệu, R2 cho ảnh, nhà cung cấp AI OpenAI-compatible (cấu hình chung + chuỗi failover riêng từng tính năng, quản lý ở tab **AI** của `/quan-tri/`) để đọc ảnh chiến báo, GitHub `repository_dispatch` để build lại site khi xuất bản bài viết, và Cloudflare Email Service (binding `send_email`) để gửi thư báo góp ý. Hợp đồng API nằm trong [`plans/260927-cong-dong-song-ngu/plan.md`](../plans/260927-cong-dong-song-ngu/plan.md).
 
 Trình duyệt không gọi thẳng `workers.dev`. Mọi request `/api/*` trên `tqccl.com`, `www.tqccl.com` và `tqccl.pages.dev` đi qua Pages Function [`functions/api/[[path]].ts`](../functions/api/[[path]].ts), nên cookie phiên là cookie first-party của đúng domain đó.
 
 ```text
 Trình duyệt ──/api/*──► Pages Function (proxy) ──service binding COMMUNITY──► community-worker ─┬─ D1  DB
                                                 (dự phòng: COMMUNITY_API_ORIGIN)                ├─ R2  MEDIA
-                                                                                                ├─ KV  AI_KV (ai:providers) → nhà cung cấp AI (failover)
+                                                                                                ├─ KV  AI_KV (ai:config) → nhà cung cấp AI (chuỗi failover theo nhóm)
                                                                                                 ├─ GitHub repository_dispatch → .github/workflows/pages-deploy.yml
                                                                                                 ├─ Turnstile siteverify (góp ý ẩn danh)
                                                                                                 └─ send_email FEEDBACK_MAIL → hộp thư admin
@@ -21,8 +21,8 @@ Trình duyệt ──/api/*──► Pages Function (proxy) ──service bindin
 | `MEDIA` | R2 binding | `pending/<uploadId>` là ảnh chiến báo chờ gửi, `reports/<id>.<ext>` là ảnh chiến báo đã gửi, `posts/<id>.<ext>` là ảnh bài viết |
 | `SITE_ORIGIN` | var | Danh sách origin của site, phân tách dấu phẩy (`https://tqccl.com,https://www.tqccl.com,https://tqccl.pages.dev,https://preview-community.tqccl.pages.dev`). Origin đầu là mặc định. Better Auth lấy `baseURL` theo domain của request nếu domain đó nằm trong danh sách; tất cả đều là origin tin cậy |
 | `ADMIN_EMAILS` | var | Danh sách email admin, phân tách bằng dấu phẩy, không phân biệt hoa thường |
-| `AI_KV` | KV binding | Cùng namespace `RL` của `worker/` (`6fff7d73c885457dbb71756de99e66fa`). Khoá `ai:providers` chứa danh sách nhà cung cấp AI đã mã hoá; Worker này ghi (tab AI), `worker/` chỉ đọc |
-| `AI_CONFIG_SECRET` | secret | Khoá dẫn xuất (HKDF) để mã hoá/giải mã `ai:providers`; **phải trùng giá trị** với `worker/`. Thiếu thì analyze trả 503 `ai_not_configured` và API tab AI trả 503 `ai_secret_missing` |
+| `AI_KV` | KV binding | Cùng namespace `RL` của `worker/` (`6fff7d73c885457dbb71756de99e66fa`). Khoá `ai:config` chứa cấu hình AI đã mã hoá (nhà cung cấp + chuỗi của bốn nhóm tính năng); Worker này ghi (tab AI), `worker/` chỉ đọc. Khoá cũ `ai:providers` chỉ còn được đọc khi chưa có `ai:config` |
+| `AI_CONFIG_SECRET` | secret | Khoá dẫn xuất (HKDF) để mã hoá/giải mã `ai:config`; **phải trùng giá trị** với `worker/`. Thiếu thì analyze trả 503 `ai_not_configured` và API tab AI trả 503 `ai_secret_missing` |
 | `FEATURE_ENABLED` | var | Đặt `"false"` để tắt `POST /api/reports/analyze` (trả 503 `feature_disabled`) |
 | `BETTER_AUTH_SECRET` | secret | Chuỗi ngẫu nhiên từ 32 byte trở lên, ví dụ tạo bằng `openssl rand -base64 32` |
 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | secret | OAuth client loại Web application |
@@ -107,21 +107,26 @@ npx wrangler deploy
 
 Deploy Worker **trước** khi deploy Pages để nút góp ý không gọi vào route chưa có. Kiểm tra sau deploy: gửi thử một góp ý khi chưa đăng nhập, xem thư về Gmail, bấm Reply thấy đúng email người gửi, và `npx wrangler d1 execute tqccl-community --remote --command "select id, kind, status from feedback order by created_at desc limit 5"` có dòng mới.
 
-### Nhà cung cấp AI (tab AI)
+### Cấu hình AI (tab AI)
 
-Endpoint/model/key của mọi tính năng đọc ảnh (Soi đội, Gợi ý đội ở `worker/`; chiến báo ở đây) không nằm trong env mà trong một bản ghi KV `ai:providers`: danh sách `{id, label, endpoint, modelId, apiKey, enabled}`, thứ tự = ưu tiên, mã hoá AES-GCM (IV ngẫu nhiên 12 byte, khoá HKDF-SHA-256 từ `AI_CONFIG_SECRET`). Code dùng chung: [`shared/ai-config.ts`](../shared/ai-config.ts). Mỗi lượt gọi thử các mục đang bật theo thứ tự; 401/402/403/429/5xx, lỗi mạng, timeout → mục kế; gặp 2xx là dừng. Thiếu secret, giải mã lỗi, danh sách rỗng hoặc không mục nào bật → coi như chưa cấu hình.
+Endpoint/model/key và mức suy luận của mọi tính năng AI không nằm trong env mà trong một bản ghi KV `ai:config` `{providers, groups}`, mã hoá AES-GCM (IV ngẫu nhiên 12 byte, khoá HKDF-SHA-256 từ `AI_CONFIG_SECRET`). Code dùng chung: [`shared/ai-config.ts`](../shared/ai-config.ts) và catalog model [`shared/ai-models.ts`](../shared/ai-models.ts).
 
-- `GET /api/admin/ai/providers` (admin) → `{providers: [{id, label, endpoint, modelId, enabled, keyLast4}], configured}`. Không bao giờ trả key.
-- `PUT /api/admin/ai/providers` (admin) với `{providers: [...]}` ghi đè cả danh sách. Mục có `apiKey` rỗng/thiếu giữ key cũ theo `id`; mục mới thiếu key → 400 `missing_api_key`. Tối đa 10 mục; `id` 1–64 ký tự `[A-Za-z0-9_-]`, không trùng (`duplicate_id`); `endpoint` URL `https:` ≤ 500 ký tự (`invalid_endpoint`); `label` ≤ 80, `modelId` ≤ 120, `apiKey` ≤ 500.
+- **Nhà cung cấp** (chung): `{id, label, preset, endpoint, apiKey, enabled, extraModels}`. `preset` là mẫu trong catalog (`deepseek`, `opencode-zen`) hoặc `""` (tùy chỉnh); model chọn được = model của mẫu ∪ `extraModels` admin tự thêm. Mỗi model khai báo `vision` (nhận ảnh), `effortStyle` và `efforts` (các mức nhận được).
+- **Nhóm tính năng** (riêng): `teamScan` (Soi đội, mode `analyzeTeamImage`), `rosterRecommend` (Gợi ý đội: `scanHeroes`, `scanTactics`, `scanBuiltTeams`), `explainSubstitute` (giải thích món bù, chỉ văn bản) và `battleReport` (chiến báo). Mỗi nhóm: `chain` là danh sách có thứ tự `{providerId, modelId, effort}`, `timeoutMs` mỗi lượt (5–120 s, nguyên giây) và `budgetMs` trần tổng cho cả chuỗi (timeout–180 s, nguyên giây).
+- **Effort → body** theo `effortStyle` của model: `deepseek` → `thinking: {type: "disabled"}` khi `off`, còn lại `thinking: {type: "enabled"}` + `reasoning_effort` (`low`/`high`/`max`); `openai` → `reasoning_effort` (`none`/`low`/`medium`/`high`); `none` → không gửi trường nào.
+- **Failover:** thử lần lượt mắt xích của nhóm (bỏ mắt xích trỏ tới nhà cung cấp tắt/model không còn); 401/402/403/429/5xx, lỗi mạng, timeout → mắt xích kế; gặp 2xx là dừng. Mỗi lượt chờ `min(timeoutMs, thời gian còn lại của trần tổng)`; còn dưới 3 giây thì dừng. Chuỗi rỗng hoặc không mắt xích nào chạy được → nhóm đó trả chưa cấu hình (không kế thừa nhóm khác). Log `ai_provider_failed` có `group`, `model`, `effort`.
+
+- `GET /api/admin/ai/config` (admin) → `{providers: [{id, label, preset, endpoint, enabled, extraModels, keyLast4}], groups, presets, effortLevels, groupNeedsVision}`. Không bao giờ trả key.
+- `PUT /api/admin/ai/config` (admin) với `{providers, groups}` ghi đè cả bản ghi. Mục có `apiKey` rỗng/thiếu giữ key cũ khi cùng `id` **và** cùng `endpoint`; mục mới hoặc đổi endpoint mà thiếu key → 400 `missing_api_key` (key không tự đi theo sang host khác). Nhà cung cấp: tối đa 10; `id` 1–64 ký tự `[A-Za-z0-9_-]`, không trùng (`duplicate_id`); `preset` phải tồn tại (`invalid_preset`) và `endpoint` phải trùng endpoint của mẫu, hoặc là URL `https:` ≤ 500 ký tự khi tùy chỉnh (`invalid_endpoint`); `label` ≤ 80, `apiKey` ≤ 500; `extraModels` ≤ 20 (`invalid_models`), `modelId` ≤ 120 và không trùng catalog/nhau (`duplicate_model`), `effortStyle` hợp lệ (`invalid_effort_style`), `efforts` là tập con khác rỗng của mức theo kiểu (`invalid_efforts`). Nhóm: đủ bốn nhóm (`invalid_groups`), ≤ 10 mắt xích (`invalid_chain`), mắt xích trỏ tới nhà cung cấp có thật (`unknown_provider`), model có trong catalog của nó (`unknown_model`), effort model nhận (`invalid_effort`), nhóm đọc ảnh chỉ nhận model `vision` (`model_not_vision`), `timeoutMs` (`invalid_timeout`), `budgetMs` (`invalid_budget`).
 - `worker/` đọc với `cacheTtl` 60 giây nên thay đổi có hiệu lực trong khoảng 1 phút; chiến báo đọc mới mỗi lượt.
+- Catalog model tĩnh: `node scripts/scan-ai-models.mjs` (tuỳ chọn `DEEPSEEK_API_KEY`, `OPENCODE_API_KEY`) in model mới/đã mất so với `shared/ai-models.ts`; cờ `vision`/`effortStyle`/`efforts` điền tay theo tài liệu nhà cung cấp rồi deploy cả hai Worker. Model lẻ thì thêm ở tab AI (`extraModels`), không cần deploy.
 
-Chuyển từ `DEEPSEEK_API_KEY` sang danh sách (làm một lần, theo đúng thứ tự):
+**Chuyển từ `ai:providers` sang `ai:config`** (làm một lần, theo đúng thứ tự):
 
-1. Sinh một giá trị ngẫu nhiên (`openssl rand -base64 48 | tr -d '\n'`) và đặt **cùng giá trị** `AI_CONFIG_SECRET` cho cả hai Worker: `npx wrangler secret put AI_CONFIG_SECRET` trong `community-worker/` và trong `worker/`.
-2. Deploy `community-worker/` (`npx wrangler deploy`).
-3. Vào `/quan-tri/` → tab **AI** → thêm nhà cung cấp (mẫu DeepSeek hoặc OpenCode Zen, dán API key) → **Lưu**.
-4. Deploy `worker/` (`npm run deploy`).
-5. Xoá secret cũ ở cả hai Worker: `npx wrangler secret delete DEEPSEEK_API_KEY` trong `community-worker/` và trong `worker/`.
+1. Deploy `community-worker/` và `worker/` (giữa hai Worker thứ tự tuỳ ý), rồi deploy Pages — tab AI mới gọi `/api/admin/ai/config` nên Worker phải có trước. Khi chưa có `ai:config`, cả hai Worker đọc `ai:providers` và chuyển trong bộ nhớ: mỗi mục cũ thành một nhà cung cấp (mẫu nhận theo endpoint; model ngoài catalog thành `extraModels` kiểu `deepseek` chỉ mức `off`), cả bốn nhóm nhận chuỗi theo thứ tự cũ với effort `off`, timeout 45 s, trần tổng 45 s × số mục đang bật (không giới hạn, như vòng failover cũ) — hành vi gọi y như trước. Có trên 4 mục đang bật thì trần tổng vượt 180 s: tab AI chặn Lưu cho tới khi hạ xuống.
+2. Vào `/quan-tri/` → tab **AI** → kiểm tra rồi bấm **Lưu** để ghi `ai:config`.
+3. Xác nhận: `npx wrangler kv key get ai:config --namespace-id 6fff7d73c885457dbb71756de99e66fa --remote` có dữ liệu.
+4. Dọn dẹp: xoá `LEGACY_PROVIDERS_KEY`/`migrateLegacy` cùng test của nó trong `shared/ai-config.ts`, deploy lại cả hai Worker, rồi `npx wrangler kv key delete ai:providers --namespace-id 6fff7d73c885457dbb71756de99e66fa --remote`.
 
 ## Dev cục bộ
 
@@ -152,11 +157,11 @@ npx tsc --noEmit
 npx vitest run
 ```
 
-Test dùng D1 giả chạy trên `node:sqlite` (áp dụng migration thật), R2/KV giả trong bộ nhớ và binding thư giả. Test bao phủ pageKey/lang, quyền xoá và kiểm duyệt, quyền xem ảnh chưa duyệt, thống kê, ngưỡng rate limit, slug trùng, deploy hook, cách parse kết quả phân tích, góp ý (Turnstile, giới hạn theo IP/user, thư báo, lỗi gửi thư, lọc và đổi trạng thái của admin), nhà cung cấp AI (`test/ai-config.test.ts` cho mã hoá + failover của `shared/ai-config.ts`, `test/ai-admin.test.ts` cho API tab AI) và đồng bộ theo dõi chiêu mộ (`test/recruit.test.ts`: LWW, rev, phân trang, trần bản ghi). Client đồng bộ `js/recruit-sync.js` có test riêng `node --experimental-strip-types --test tests-js/recruit-sync.test.mjs`.
+Test dùng D1 giả chạy trên `node:sqlite` (áp dụng migration thật), R2/KV giả trong bộ nhớ và binding thư giả. Test bao phủ pageKey/lang, quyền xoá và kiểm duyệt, quyền xem ảnh chưa duyệt, thống kê, ngưỡng rate limit, slug trùng, deploy hook, cách parse kết quả phân tích, góp ý (Turnstile, giới hạn theo IP/user, thư báo, lỗi gửi thư, lọc và đổi trạng thái của admin), cấu hình AI (`test/ai-config.test.ts` cho mã hoá, chuyển bản ghi v1, phân giải chuỗi, effort → body, failover + trần tổng của `shared/ai-config.ts`; `test/ai-admin.test.ts` cho API tab AI) và đồng bộ theo dõi chiêu mộ (`test/recruit.test.ts`: LWW, rev, phân trang, trần bản ghi). Client đồng bộ `js/recruit-sync.js` có test riêng `node --experimental-strip-types --test tests-js/recruit-sync.test.mjs`.
 
 ## Hành vi cần biết
 
-- Lỗi luôn có dạng `{error:{code,message}}`. `message` viết bằng tiếng Việt cho log, còn UI phải dựa vào `code` để dịch bằng `L()`. Các code gồm `unauthorized` (401), `forbidden`, `forbidden_origin`, `turnstile_required` và `turnstile_failed` (403), `not_found` (404), `rate_limited` (429, kèm `Retry-After`), `invalid_*`, `duplicate_id` và `missing_api_key` (400), `invalid_upload`, `image_too_large`, `recruit_quota_exceeded` (413), `unsupported_media_type` và `invalid_image_type` (415), `slug_taken` và `translation_key_taken` (409), `feature_disabled`, `ai_not_configured`, `ai_secret_missing`, `ai_overloaded` và `feedback_unavailable` (503), `ai_unavailable` (502).
+- Lỗi luôn có dạng `{error:{code,message}}`. `message` viết bằng tiếng Việt cho log, còn UI phải dựa vào `code` để dịch bằng `L()`. Các code gồm `unauthorized` (401), `forbidden`, `forbidden_origin`, `turnstile_required` và `turnstile_failed` (403), `not_found` (404), `rate_limited` (429, kèm `Retry-After`), `invalid_*`, `duplicate_id`, `duplicate_model`, `unknown_provider`, `unknown_model`, `model_not_vision` và `missing_api_key` (400), `invalid_upload`, `image_too_large`, `recruit_quota_exceeded` (413), `unsupported_media_type` và `invalid_image_type` (415), `slug_taken` và `translation_key_taken` (409), `feature_disabled`, `ai_not_configured`, `ai_secret_missing`, `ai_overloaded` và `feedback_unavailable` (503), `ai_unavailable` (502).
 - Request `POST`/`PUT`/`DELETE` có `Origin` không nằm trong `SITE_ORIGIN` và danh sách localhost dev sẽ bị chặn với 403 `forbidden_origin`. Body JSON bắt buộc có `Content-Type: application/json`.
 - Rate limit lưu trong bảng D1 `rate_limits`: bình luận 10 lần/giờ, analyze 20 lần/ngày, gửi chiến báo 30 lần/ngày, admin upload 100 lần/ngày, đẩy đồng bộ chiêu mộ 600 lô/giờ (theo user); góp ý 10 lần/giờ theo user khi đã đăng nhập, 5 lần/giờ theo IP đã băm HMAC khi ẩn danh (IPv6 gom theo /64, đếm trước siteverify). Better Auth có thêm rate limit riêng cho `/api/auth/*`, lưu trong bảng `rateLimit`.
 - `POST /api/feedback` nhận `{kind, title, body, email?, page?, lang, turnstileToken?}`: `kind` là `feature`/`bug`/`wrong_info`/`other`, tiêu đề 1–120 ký tự (gộp khoảng trắng thành một dòng), nội dung 1–4000 ký tự, email tuỳ chọn, `page` là đường dẫn cùng site (bắt đầu bằng `/`). Khách ẩn danh bắt buộc có `turnstileToken`; người đã đăng nhập bỏ qua Turnstile. Trả 201 `{ok:true}` sau khi lưu; thư gửi nền bằng `waitUntil`. `GET /api/me` trả thêm `email` để hộp thoại điền sẵn.

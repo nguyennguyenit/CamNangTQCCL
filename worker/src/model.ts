@@ -1,9 +1,9 @@
 // Lớp callModel() trung lập (R7/L3) — gọi LLM qua endpoint OpenAI-compatible.
-// Danh sách nhà cung cấp (endpoint/model/key, thứ tự ưu tiên) do admin nhập ở /quan-tri/ và
-// failover qua `callWithFailover` (shared/ai-config.ts); mode ảnh truyền ảnh dạng base64 data URI,
+// Chuỗi failover (provider, model, effort) của từng nhóm tính năng do admin cấu hình ở /quan-tri/ và gọi
+// qua `callWithFailover` (shared/ai-config.ts); mode ảnh truyền ảnh dạng base64 data URI,
 // mode explainSubstitute chỉ gửi văn bản (ngữ cảnh đã validate).
 
-import { callWithFailover, type AiProvider } from "../../shared/ai-config";
+import { callWithFailover, type AiRoute } from "../../shared/ai-config";
 import {
   AnalyzeModeResult,
   ExplainContext,
@@ -57,18 +57,16 @@ export function promptByMode(mode: ImageMode = "analyzeTeamImage") {
 }
 
 export interface ModelOptions {
-  /** Toàn bộ danh sách provider (mục tắt bị bỏ qua), thứ tự = ưu tiên. */
-  providers: AiProvider[];
+  /** Chuỗi failover + timeout của nhóm ứng với mode. */
+  route: AiRoute;
   fetchImpl?: typeof fetch;
 }
 
-// Thử ép JSON; nếu model không hỗ trợ, tolerantParse vẫn lo (M1). DeepSeek V4.1 bật thinking mặc định
-// (effort high): chậm tới mức quá 45s timeout với ảnh, trong khi chép chữ/giải thích ngắn không cần suy
-// luận. Tắt hẳn; nhà cung cấp OpenAI-compatible khác bỏ qua trường lạ.
+// Thử ép JSON; nếu model không hỗ trợ, tolerantParse vẫn lo (M1). Trường suy luận (thinking/reasoning_effort)
+// do `callWithFailover` thêm theo effort của từng mắt xích.
 const COMMON_BODY = {
   response_format: { type: "json_object" },
   temperature: 0,
-  thinking: { type: "disabled" },
 } as const;
 
 /** Body OpenAI-compatible chat/completions với 1 ảnh (base64 data URI). */
@@ -138,11 +136,11 @@ export function extractContent(data: any): string {
  */
 async function complete<T>(
   opts: ModelOptions,
-  buildBody: (modelId: string) => unknown,
+  buildBody: (modelId: string) => Record<string, unknown>,
   parse: (content: string) => T,
   unreadableMessage: string,
 ): Promise<T> {
-  const resp = await callWithFailover(opts.providers, buildBody, opts.fetchImpl || fetch);
+  const resp = await callWithFailover(opts.route, buildBody, opts.fetchImpl || fetch);
   const data = await resp.json().catch(() => null);
   const content = extractContent(data);
   if (!content) {

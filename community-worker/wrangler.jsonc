@@ -22,7 +22,7 @@
   ],
   // R2: `npx wrangler r2 bucket create tqccl-community-media`.
   "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "tqccl-community-media" }],
-  // KV dùng chung với worker/ (namespace RL): bản ghi mã hoá `ai:providers`, admin sửa ở tab AI của /quan-tri/.
+  // KV dùng chung với worker/ (namespace RL): bản ghi mã hoá `ai:config` (bản cũ `ai:providers` chỉ đọc khi chưa có), admin sửa ở tab AI của /quan-tri/.
   "kv_namespaces": [{ "binding": "AI_KV", "id": "6fff7d73c885457dbb71756de99e66fa" }],
   // Thư báo góp ý: cần Email Routing cho mail.tqccl.com và xác minh địa chỉ nhận (docs/community-worker.md).
   // destination_address khoá cứng người nhận: binding không thể gửi thư đi nơi khác.

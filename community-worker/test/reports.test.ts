@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import { parseAnalysis, REPORT_PROMPT } from "../src/analyze";
 import { cleanup } from "../src/cleanup";
 import { aggregateStats } from "../src/stats";
-import { createHarness, imageForm, PNG_BYTES, TEST_PROVIDER, type ApiJson, type Harness } from "./fakes";
+import type { AiConfig } from "../../shared/ai-config";
+import { createHarness, imageForm, PNG_BYTES, TEST_CONFIG, TEST_GROUP, TEST_PROVIDER, type ApiJson, type Harness } from "./fakes";
 
 const PAGE = "/doi-chuan/s18-abc/";
 
@@ -105,16 +106,19 @@ describe("POST /api/reports/analyze", () => {
     expect(h.fetchCalls).toHaveLength(0);
   });
 
-  it("chưa cấu hình AI (không có bản ghi / mọi mục tắt / thiếu secret) -> 503 ai_not_configured, không lưu ảnh", async () => {
+  it("chưa cấu hình AI (không có bản ghi / mọi mục tắt / chuỗi chiến báo rỗng / thiếu secret) -> 503 ai_not_configured, không lưu ảnh", async () => {
     const empty = createHarness();
     empty.aiStore.clear();
     const noSecret = createHarness({ AI_CONFIG_SECRET: undefined });
     const allOff = createHarness();
+    const saveConfig = (h: Harness, config: AiConfig) =>
+      h.request("/api/admin/ai/config", { as: "admin", method: "PUT", json: config });
+    expect((await saveConfig(allOff, { ...TEST_CONFIG, providers: [{ ...TEST_PROVIDER, enabled: false }] })).status).toBe(200);
+    const noChain = createHarness();
     expect(
-      (await allOff.request("/api/admin/ai/providers", { as: "admin", method: "PUT", json: { providers: [{ ...TEST_PROVIDER, enabled: false }] } }))
-        .status,
+      (await saveConfig(noChain, { ...TEST_CONFIG, groups: { ...TEST_CONFIG.groups, battleReport: { ...TEST_GROUP, chain: [] } } })).status,
     ).toBe(200);
-    for (const h of [empty, noSecret, allOff]) {
+    for (const h of [empty, noSecret, allOff, noChain]) {
       const res = await analyze(h);
       expect(res.status).toBe(503);
       expect((await res.json<ApiJson>()).error.code).toBe("ai_not_configured");

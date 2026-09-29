@@ -68,11 +68,32 @@ function codeMessage(code) {
     case 'invalid_upload':
       return L('Ảnh đã tải lên không còn hợp lệ. Hãy chọn lại ảnh.', '上传的图片已失效，请重新选择。');
     case 'ai_secret_missing':
-      return L('Worker chưa có secret AI_CONFIG_SECRET nên chưa lưu được nhà cung cấp AI.', 'Worker 尚未设置 AI_CONFIG_SECRET，无法保存 AI 服务商。');
+      return L('Worker chưa có secret AI_CONFIG_SECRET nên chưa lưu được cấu hình AI.', 'Worker 尚未设置 AI_CONFIG_SECRET，无法保存 AI 配置。');
     case 'missing_api_key':
-      return L('Nhà cung cấp mới cần API key.', '新服务商需要 API 密钥。');
+      return L('Nhà cung cấp mới hoặc vừa đổi endpoint cần nhập API key.', '新服务商或更换了 endpoint 的服务商需要填写 API 密钥。');
     case 'invalid_endpoint':
-      return L('Endpoint phải là URL https hợp lệ.', 'Endpoint 必须是有效的 https URL。');
+      return L('Endpoint phải là URL https hợp lệ; nhà cung cấp theo mẫu phải dùng đúng endpoint của mẫu.', 'Endpoint 必须是有效的 https URL；使用模板的服务商须使用模板的 endpoint。');
+    case 'duplicate_id':
+      return L('Có hai nhà cung cấp trùng id. Hãy tải lại trang rồi thử lại.', '有两个服务商 ID 重复，请刷新页面后重试。');
+    case 'invalid_models':
+    case 'invalid_modelId':
+    case 'invalid_effort_style':
+    case 'invalid_efforts':
+      return L('Model tự thêm không hợp lệ: cần model id, kiểu tham số suy luận và ít nhất một mức effort.', '自定义模型无效：需填写模型 ID、推理参数类型并至少选择一个推理强度。');
+    case 'invalid_chain':
+    case 'invalid_groups':
+      return L('Chuỗi của một tính năng không hợp lệ (tối đa 10 mắt xích). Hãy tải lại trang rồi thử lại.', '某功能的调用链无效（最多 10 环），请刷新页面后重试。');
+    case 'duplicate_model':
+      return L('Model id bị trùng trong cùng nhà cung cấp.', '同一服务商中的模型 ID 重复。');
+    case 'unknown_provider':
+    case 'unknown_model':
+    case 'invalid_effort':
+      return L('Có mắt xích trỏ tới nhà cung cấp, model hoặc mức effort không còn tồn tại.', '有链节指向已不存在的服务商、模型或推理强度。');
+    case 'model_not_vision':
+      return L('Tính năng đọc ảnh chỉ dùng được model nhận ảnh.', '识图功能只能使用支持图片的模型。');
+    case 'invalid_timeout':
+    case 'invalid_budget':
+      return L('Timeout mỗi lượt phải từ 5 đến 120 giây; trần tổng không nhỏ hơn timeout và không quá 180 giây.', '单次超时须为 5–120 秒；总时限不小于单次超时且不超过 180 秒。');
     default:
       return null;
   }

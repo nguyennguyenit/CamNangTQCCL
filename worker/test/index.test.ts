@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { AI_PROVIDERS_KEY, encryptProviders, type AiProvider } from "../../shared/ai-config";
+import { AI_CONFIG_KEY, AI_GROUPS, emptyConfig, encryptConfig, type AiConfig, type AiProvider } from "../../shared/ai-config";
 import worker from "../src/index";
 import type { Env } from "../src/config";
 
@@ -9,8 +9,23 @@ const SITEVERIFY = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 const MODEL = "https://model.test/v1/chat/completions";
 const MODEL_BACKUP = "https://backup.test/v1/chat/completions";
 const AI_SECRET = "ai-config-secret-for-tests";
-const PROVIDER: AiProvider = { id: "main", label: "Main", endpoint: MODEL, modelId: "deepseek-flash", apiKey: "deepseek-key", enabled: true };
-const PROVIDERS_BLOB = await encryptProviders([PROVIDER], AI_SECRET);
+const PROVIDER: AiProvider = {
+  id: "main",
+  label: "Main",
+  preset: "",
+  endpoint: MODEL,
+  apiKey: "deepseek-key",
+  enabled: true,
+  extraModels: [{ modelId: "deepseek-flash", vision: true, effortStyle: "deepseek", efforts: ["off", "high"] }],
+};
+/** Mọi nhóm: một mắt xích `main/deepseek-flash`, effort tắt. */
+function configFor(providers: AiProvider[], chain = [{ providerId: "main", modelId: "deepseek-flash", effort: "off" }]): AiConfig {
+  const config = emptyConfig();
+  config.providers = providers;
+  for (const id of AI_GROUPS) config.groups[id] = { chain, timeoutMs: 45_000, budgetMs: 90_000 };
+  return config;
+}
+const CONFIG_BLOB = await encryptConfig(configFor([PROVIDER]), AI_SECRET);
 const PNG = Buffer.from(
   Uint8Array.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, ...Array(92).fill(0)]),
 ).toString("base64");
@@ -25,13 +40,13 @@ interface FakeKV {
 
 /**
  * KV trong bộ nhớ, ghi lại mọi get/put; `failPut`/`failGet` quyết định lần nào ném lỗi.
- * `seed` = sẵn bản ghi `ai:providers` (một provider trỏ về MODEL).
+ * `seed` = sẵn bản ghi `ai:config` (mọi nhóm gọi một provider trỏ về MODEL).
  */
 function fakeKV(
   { failPut, failGet }: { failPut?: (key: string, count: number) => boolean; failGet?: (key: string) => boolean } = {},
   seed = true,
 ): FakeKV {
-  const store = new Map<string, string>(seed ? [[AI_PROVIDERS_KEY, PROVIDERS_BLOB]] : []);
+  const store = new Map<string, string>(seed ? [[AI_CONFIG_KEY, CONFIG_BLOB]] : []);
   const counts = new Map<string, number>();
   const kv: FakeKV = {
     store,
@@ -119,7 +134,7 @@ describe("POST /analyze khi KV lỗi", () => {
 
   it("lỗi đọc bộ đếm coi như 0 lượt, vẫn trả kết quả", async () => {
     stubFetch();
-    const kv = fakeKV({ failGet: (key) => key !== AI_PROVIDERS_KEY });
+    const kv = fakeKV({ failGet: (key) => key !== AI_CONFIG_KEY });
     const response = await worker.fetch(analyzeRequest(), env(kv));
     await expectJson(response, 200);
   });
@@ -131,11 +146,11 @@ describe("POST /analyze khi KV lỗi", () => {
   });
 });
 
-describe("POST /analyze với danh sách nhà cung cấp AI", () => {
+describe("POST /analyze với cấu hình AI theo nhóm", () => {
   for (const [name, extra, seed] of [
     ["thiếu AI_CONFIG_SECRET", { AI_CONFIG_SECRET: undefined }, true],
     ["sai AI_CONFIG_SECRET", { AI_CONFIG_SECRET: "secret-khac" }, true],
-    ["chưa có bản ghi ai:providers", {}, false],
+    ["chưa có bản ghi ai:config", {}, false],
   ] as const) {
     it(`${name} -> 503 chưa cấu hình, không ghi KV, không gọi siteverify/model`, async () => {
       const calls = stubFetch();
@@ -147,25 +162,53 @@ describe("POST /analyze với danh sách nhà cung cấp AI", () => {
     });
   }
 
-  it("mục đầu hết tiền (402) -> chuyển sang mục kế với model/key của mục đó", async () => {
+  it("mắt xích đầu hết tiền (402) -> chuyển sang mắt xích kế với model/key/effort của mắt xích đó", async () => {
     const kv = fakeKV({}, false);
+    const backup: AiProvider = { ...PROVIDER, id: "a", endpoint: MODEL_BACKUP, apiKey: "key-a", extraModels: [{ ...PROVIDER.extraModels[0], modelId: "m-a" }] };
     kv.store.set(
-      AI_PROVIDERS_KEY,
-      await encryptProviders([{ ...PROVIDER, id: "a", endpoint: MODEL_BACKUP, apiKey: "key-a", modelId: "m-a" }, PROVIDER], AI_SECRET),
+      AI_CONFIG_KEY,
+      await encryptConfig(
+        configFor([backup, PROVIDER], [
+          { providerId: "a", modelId: "m-a", effort: "high" },
+          { providerId: "main", modelId: "deepseek-flash", effort: "off" },
+        ]),
+        AI_SECRET,
+      ),
     );
-    const seen: { url: string; auth: string | null; model: string }[] = [];
+    const seen: { url: string; auth: string | null; model: string; thinking: unknown; effort: unknown }[] = [];
     vi.stubGlobal("fetch", async (input: RequestInfo | URL, init?: RequestInit) => {
       const url = String(input);
       if (url === SITEVERIFY) return Response.json({ success: true, hostname: "tqccl.com" });
-      seen.push({ url, auth: new Headers(init?.headers).get("Authorization"), model: JSON.parse(String(init?.body)).model });
+      const body = JSON.parse(String(init?.body));
+      seen.push({ url, auth: new Headers(init?.headers).get("Authorization"), model: body.model, thinking: body.thinking, effort: body.reasoning_effort });
       if (url === MODEL_BACKUP) return new Response("insufficient balance", { status: 402 });
       return Response.json({ choices: [{ message: { content: JSON.stringify({ heroes: [{ nameCn: "关羽", tacticsCn: [] }] }) } }] });
     });
     await expectJson(await worker.fetch(analyzeRequest(), env(kv)), 200);
     expect(seen).toEqual([
-      { url: MODEL_BACKUP, auth: "Bearer key-a", model: "m-a" },
-      { url: MODEL, auth: "Bearer deepseek-key", model: "deepseek-flash" },
+      { url: MODEL_BACKUP, auth: "Bearer key-a", model: "m-a", thinking: { type: "enabled" }, effort: "high" },
+      { url: MODEL, auth: "Bearer deepseek-key", model: "deepseek-flash", thinking: { type: "disabled" }, effort: undefined },
     ]);
+  });
+
+  it("mỗi mode dùng chuỗi của nhóm mình: nhóm Soi đội rỗng -> 503, mode Gợi ý đội vẫn chạy", async () => {
+    const kv = fakeKV({}, false);
+    const config = configFor([PROVIDER]);
+    config.groups.teamScan = { ...config.groups.teamScan, chain: [] };
+    config.groups.rosterRecommend = { ...config.groups.rosterRecommend, chain: [{ providerId: "main", modelId: "deepseek-flash", effort: "high" }] };
+    kv.store.set(AI_CONFIG_KEY, await encryptConfig(config, AI_SECRET));
+    const calls = stubFetch();
+    expect(await expectJson(await worker.fetch(analyzeRequest(), env(kv)), 503)).toEqual({ error: "Dịch vụ soi ảnh chưa được cấu hình" });
+    expect(calls).toEqual([]);
+    const bodies: { reasoning_effort?: string }[] = [];
+    vi.stubGlobal("fetch", async (input: RequestInfo | URL, init?: RequestInit) => {
+      if (String(input) === SITEVERIFY) return Response.json({ success: true, hostname: "tqccl.com" });
+      bodies.push(JSON.parse(String(init?.body)));
+      return Response.json({ choices: [{ message: { content: JSON.stringify({ heroes: [{ nameCn: "关羽" }] }) } }] });
+    });
+    const scan = analyzeRequest({ image: PNG, turnstileToken: `token-${++issuedTokens}`, mode: "scanHeroes" });
+    await expectJson(await worker.fetch(scan, env(kv)), 200);
+    expect(bodies.map((b) => b.reasoning_effort)).toEqual(["high"]);
   });
 });
 

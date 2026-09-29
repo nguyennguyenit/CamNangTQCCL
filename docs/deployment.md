@@ -85,10 +85,11 @@ Worker secrets are managed in Cloudflare and must not be committed:
 - `IP_HASH_SECRET`
 - `AI_CONFIG_SECRET` (same value as `community-worker/`)
 
-AI providers (endpoint, model id, API key, failover order) are not env vars: admins manage them in the
-**AI** tab of `/quan-tri/`; `community-worker/` stores them encrypted in KV `ai:providers` (namespace `RL`,
-binding `AI_KV`) and `worker/` reads the same record. Rollout order and details:
-[community-worker.md](community-worker.md#nhà-cung-cấp-ai-tab-ai).
+AI configuration (shared providers with endpoint + API key, and per-feature failover chains of provider, model,
+effort, timeout and total budget) is not in env vars: admins manage it in the **AI** tab of `/quan-tri/`;
+`community-worker/` stores it encrypted in KV `ai:config` (namespace `RL`, binding `AI_KV`) and `worker/` reads the
+same record. Rollout order from the legacy `ai:providers` record and details:
+[community-worker.md](community-worker.md#cấu-hình-ai-tab-ai).
 
 ## Verification
 

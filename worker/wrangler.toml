@@ -8,7 +8,7 @@ main = "src/index.ts"
 compatibility_date = "2026-01-01"
 
 # KV cho rate-limit + đếm cap. Tạo: `wrangler kv namespace create RL`
-# rồi dán id thật vào đây. Cùng namespace chứa bản ghi mã hoá `ai:providers` (community-worker
+# rồi dán id thật vào đây. Cùng namespace chứa bản ghi mã hoá `ai:config` (community-worker
 # ghi qua binding AI_KV; Worker này chỉ đọc).
 [[kv_namespaces]]
 binding = "RL"

@@ -5,7 +5,7 @@ export interface Env {
   MEDIA: R2Bucket;
   // Thư báo góp ý (Cloudflare Email Service trên Email Routing); binding khoá cứng người nhận.
   FEEDBACK_MAIL?: SendEmail;
-  // KV chung với worker/ (namespace RL): bản ghi mã hoá `ai:providers` (tab AI của /quan-tri/).
+  // KV chung với worker/ (namespace RL): bản ghi mã hoá `ai:config` (tab AI của /quan-tri/).
   AI_KV: KVNamespace;
   // Vars (wrangler.jsonc).
   // Một hoặc nhiều origin site, phân tách dấu phẩy; origin đầu tiên là mặc định.

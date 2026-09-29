@@ -10,9 +10,9 @@ riêng bằng `wrangler`. Site gọi `POST /analyze`.
 
 ```
 Site (Pages) ──POST /analyze {image | context, turnstileToken, mode}──► Worker
-   Worker: OPTIONS → origin → IP_HASH_SECRET → danh sách nhà cung cấp AI (KV `ai:providers`) → Content-Length
+   Worker: OPTIONS → origin → IP_HASH_SECRET → Content-Length → mode → chuỗi AI của nhóm ứng với mode (KV `ai:config`)
            → cap/kill-switch/rate-limit → Turnstile (siteverify: một lần dùng + đúng hostname) → input guard
-           (ảnh cho mode đọc ảnh; `context` cho `explainSubstitute`) → nhà cung cấp AI (failover theo thứ tự) → validate → JSON
+           (ảnh cho mode đọc ảnh; `context` cho `explainSubstitute`) → chuỗi failover của nhóm → validate → JSON
 ```
 
 Request JSON:
@@ -74,8 +74,8 @@ KHÔNG lưu ảnh. Log tối thiểu (đếm, không nội dung). IP chỉ lưu 
 1. **Cloudflare account** + cài wrangler: `npm i -g wrangler` rồi `wrangler login`.
 2. **KV namespace**: `wrangler kv namespace create RL` → dán `id` vào `wrangler.toml` (`[[kv_namespaces]] id`).
 3. **Turnstile** (Cloudflare dashboard → Turnstile): tạo site với đủ hostname của site (`tqccl.com`, `www.tqccl.com`, `tqccl.pages.dev`) → lấy **site-key** (public, để vào `js/config.js`) + **secret**.
-4. **Nhà cung cấp AI**: không nằm trong env. Admin nhập ở tab **AI** của `/quan-tri/` (community-worker ghi bản ghi
-   mã hoá `ai:providers` vào cùng KV namespace `RL`; Worker này chỉ đọc). Xem §Nhà cung cấp AI.
+4. **Nhà cung cấp AI**: không nằm trong env. Admin cấu hình ở tab **AI** của `/quan-tri/` (community-worker ghi bản ghi
+   mã hoá `ai:config` vào cùng KV namespace `RL`; Worker này chỉ đọc). Xem §Nhà cung cấp AI.
 5. **Vars**: `wrangler.toml` → `ALLOWED_ORIGINS` = các origin exact của site, phân cách dấu phẩy (`https://tqccl.com,https://www.tqccl.com,https://tqccl.pages.dev`); CORS echo đúng origin gửi lên kèm `Vary: Origin`, và `hostname` siteverify trả về phải là host của một origin trong danh sách. Thiếu/rỗng → `/analyze` trả `503` (fail-closed); `*` chỉ dùng khi dev.
 6. **Secrets** (KHÔNG commit), cả ba bắt buộc:
    ```bash
@@ -85,8 +85,8 @@ KHÔNG lưu ảnh. Log tối thiểu (đếm, không nội dung). IP chỉ lưu 
    ```
    Thiếu hoặc rỗng `IP_HASH_SECRET` → mọi `POST /analyze` trả **503** `Dịch vụ soi ảnh chưa được cấu hình`
    (không đọc/ghi KV, không gọi Turnstile hay model). Đổi secret làm bộ đếm per-IP bắt đầu lại (TTL 2 giờ).
-   Thiếu `AI_CONFIG_SECRET`, sai giá trị (giải mã lỗi), chưa có danh sách hoặc không mục nào bật → cũng **503**
-   `Dịch vụ soi ảnh chưa được cấu hình` (không ghi KV, không gọi Turnstile hay model).
+   Thiếu `AI_CONFIG_SECRET`, sai giá trị (giải mã lỗi), chưa có cấu hình hoặc nhóm của mode không có mắt xích chạy
+   được → cũng **503** `Dịch vụ soi ảnh chưa được cấu hình` (không ghi KV, không gọi Turnstile hay model).
 7. **Deploy**: `npm install && npm run deploy`. Dev: copy `.dev.vars.example`→`.dev.vars`, `npm run dev`.
 
 ## Test
@@ -111,20 +111,31 @@ npm run typecheck
 
 ## Nhà cung cấp AI
 
-Danh sách endpoint Chat Completions OpenAI-compatible (`{ id, label, endpoint, modelId, apiKey, enabled }`,
-thứ tự = ưu tiên) nằm trong KV `ai:providers`, mã hoá AES-GCM (IV ngẫu nhiên 12 byte, khoá HKDF-SHA-256 từ
-`AI_CONFIG_SECRET`). Code dùng chung một bản: `shared/ai-config.ts` (cả `worker/` lẫn `community-worker/`
-import tương đối; wrangler bundle luôn). Worker đọc với `cacheTtl` 60 giây → đổi ở `/quan-tri/` có hiệu lực
-trong khoảng 1 phút.
+Cấu hình nằm trong KV `ai:config`, mã hoá AES-GCM (IV ngẫu nhiên 12 byte, khoá HKDF-SHA-256 từ `AI_CONFIG_SECRET`):
+nhà cung cấp dùng chung (endpoint + key + model tự thêm) và chuỗi failover riêng của từng nhóm tính năng
+(`{providerId, modelId, effort}`, timeout mỗi lượt, trần tổng). Code dùng chung một bản: `shared/ai-config.ts` và
+catalog model `shared/ai-models.ts` (cả `worker/` lẫn `community-worker/` import tương đối; wrangler bundle luôn).
+Worker đọc với `cacheTtl` 60 giây → đổi ở `/quan-tri/` có hiệu lực trong khoảng 1 phút. Chi tiết schema, validate
+và thứ tự chuyển từ khoá cũ `ai:providers`: [docs/community-worker.md](../docs/community-worker.md#cấu-hình-ai-tab-ai).
 
-Mỗi request thử lần lượt các mục đang bật: 401/402/403/429/5xx, lỗi mạng hoặc timeout (45 giây/mục) → chuyển
-mục kế; 4xx khác → dừng (yêu cầu hỏng). Gặp 2xx là dừng — nội dung không đọc được thành 422, không thử mục khác.
-Hết mục: 429 cuối → 503 `Dịch vụ AI đang quá tải, thử lại sau`, còn lại → 502 `Dịch vụ AI tạm lỗi, thử lại sau`.
+Nhóm theo `mode`: `analyzeTeamImage` → `teamScan`; `scanHeroes`/`scanTactics`/`scanBuiltTeams` → `rosterRecommend`;
+`explainSubstitute` → `explainSubstitute`. Nhóm rỗng hoặc không mắt xích nào chạy được → `503`
+`Dịch vụ soi ảnh chưa được cấu hình` (không kế thừa nhóm khác).
 
-Mẫu có sẵn trong tab AI: **DeepSeek** `https://api.deepseek.com/chat/completions` (model `deepseek-flash`,
-V4.1 Flash, đọc được ảnh) và **OpenCode Zen** `https://opencode.ai/zen/v1/chat/completions`
-(model `deepseek-v4.1-flash`). Ảnh gửi dạng `image_url` base64 data URI; `response_format: json_object`
-yêu cầu prompt có chữ "json" — mọi prompt đều có.
+Mỗi request thử lần lượt mắt xích của nhóm: 401/402/403/429/5xx, lỗi mạng hoặc timeout → mắt xích kế; 4xx khác → dừng
+(yêu cầu hỏng). Mỗi lượt chờ tối đa `min(timeout, phần còn lại của trần tổng)`; còn dưới 3 giây thì dừng. Gặp 2xx là
+dừng — nội dung không đọc được thành 422, không thử tiếp. Hết mắt xích: 429 cuối → 503 `Dịch vụ AI đang quá tải, thử
+lại sau`, còn lại → 502 `Dịch vụ AI tạm lỗi, thử lại sau`.
+
+Effort của mắt xích quyết định trường suy luận trong body (theo `effortStyle` của model): DeepSeek `off` →
+`thinking: {type: "disabled"}`, `low`/`high`/`max` → `thinking: {type: "enabled"}` + `reasoning_effort`; kiểu OpenAI
+chỉ gửi `reasoning_effort`. Bật suy luận cho nhóm đọc ảnh làm lượt gọi chậm hơn nhiều — nâng timeout/trần tổng
+tương ứng.
+
+Mẫu có sẵn trong tab AI: **DeepSeek** `https://api.deepseek.com/chat/completions` (`deepseek-flash` đọc ảnh,
+`deepseek-v4-pro`) và **OpenCode Zen** `https://opencode.ai/zen/v1/chat/completions` (`deepseek-v4.1-flash`,
+`deepseek-v4-flash-vision-exp` đọc ảnh; `deepseek-v4-flash`, `deepseek-v4-pro`). Ảnh gửi dạng `image_url` base64
+data URI; `response_format: json_object` yêu cầu prompt có chữ "json" — mọi prompt đều có.
 
 Trước khi ship lần đầu với model/nhà cung cấp mới: **test 5–10 screenshot thật** cho cả bốn `mode`.
 Chính sách lưu giữ và dùng dữ liệu của từng nhà cung cấp: đọc privacy policy và cập nhật disclaimer nếu khác.

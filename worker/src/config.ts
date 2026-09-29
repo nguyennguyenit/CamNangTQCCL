@@ -1,5 +1,5 @@
 // Cấu hình mặc định + đọc env. Số liệu cap là placeholder, chốt theo quota thực
-// (L2). Nhà cung cấp AI không nằm ở env: admin nhập ở /quan-tri/, lưu mã hoá trong KV `ai:providers`
+// (L2). Nhà cung cấp AI không nằm ở env: admin cấu hình ở /quan-tri/, lưu mã hoá trong KV `ai:config`
 // (xem shared/ai-config.ts).
 
 export interface Env {
@@ -7,9 +7,9 @@ export interface Env {
   TURNSTILE_SECRET: string;
   // Khoá HMAC băm IP cho bộ đếm per-IP; thiếu/rỗng -> Worker trả 503 (fail-closed).
   IP_HASH_SECRET?: string;
-  // Khoá giải mã danh sách nhà cung cấp AI; PHẢI trùng giá trị ở community-worker. Thiếu -> 503.
+  // Khoá giải mã cấu hình AI; PHẢI trùng giá trị ở community-worker. Thiếu -> 503.
   AI_CONFIG_SECRET?: string;
-  // KV (rate-limit + đếm cap); chỉ ĐỌC bản ghi `ai:providers` do community-worker ghi.
+  // KV (rate-limit + đếm cap); chỉ ĐỌC bản ghi `ai:config` (hoặc bản cũ `ai:providers`) do community-worker ghi.
   RL: KVNamespace;
   // Vars (wrangler.toml) — có thể override.
   // Các origin exact của site, phân cách dấu phẩy (vd "https://tqccl.com,https://www.tqccl.com").
