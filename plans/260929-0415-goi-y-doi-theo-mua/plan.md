@@ -4,7 +4,7 @@ description: >-
   Đổi nguồn ứng viên của /goi-y-doi-tu-kho/ sang đội chuẩn theo mùa
   (recommended-reference), lấp bằng teams.json cũ khi thiếu, thêm mục Thiếu món
   với món bù suy từ dữ liệu và nút "Vì sao?" gọi Worker mode explainSubstitute.
-status: pending
+status: completed
 priority: P1
 branch: main
 tags: [frontend, worker, team-recommendation, localization, tdd]
@@ -14,11 +14,9 @@ source: ak-advise → ak-cook --tdd
 
 # Gợi ý đội từ kho theo mùa
 
-## Blocker
-Worktree đang có một phiên khác chưa commit (~200 file, gồm `js/app.js`, `js/analyze.js`,
-`worker/src/*`, `tests-e2e/beta-tools.spec.mjs`, `pipeline/site-localization-policy.json`,
-generation Recommended mới `3f6b33cf…`). Người dùng chọn **đợi phiên đó commit** rồi mới làm.
-Trước khi bắt đầu: `git status` sạch ở các file trên, đọc lại số liệu dữ liệu ở generation đang pin.
+## Blocker (đã gỡ)
+Phiên song song đã commit (`b80e5ff`, generation `f85b83dd…`) trước khi triển khai; việc làm trên HEAD đó.
+Đo lại trên generation đang pin: 1317/1336 cấu hình Giao chiến ánh xạ được (98,6%).
 
 ## Confirmed outcome (ak-advise)
 1. Một ô "Mùa bạn đang chơi" (không Phiên bản luật), mặc định `defaultSourceSeasonId`, nhớ qua `?season=`.
@@ -42,11 +40,11 @@ khôi phục `projectSeasonCandidates` / scope `season-context`.
 ## Phases
 | # | Phase | Status |
 |---|-------|--------|
-| 1 | [Season candidate adapter (TDD)](./phase-01-season-candidate-adapter.md) | Pending |
-| 2 | [Engine: fallback, overrides, substitutes (TDD)](./phase-02-engine-fallback-substitutes.md) | Pending |
-| 3 | [Worker mode explainSubstitute (TDD)](./phase-03-worker-explain-substitute.md) | Pending |
-| 4 | [UI: season select, Thiếu món, Vì sao?](./phase-04-roster-ui.md) | Pending |
-| 5 | [Localization, e2e, docs, cleanup](./phase-05-localization-e2e-docs.md) | Pending |
+| 1 | [Season candidate adapter (TDD)](./phase-01-season-candidate-adapter.md) | Completed |
+| 2 | [Engine: fallback, overrides, substitutes (TDD)](./phase-02-engine-fallback-substitutes.md) | Completed |
+| 3 | [Worker mode explainSubstitute (TDD)](./phase-03-worker-explain-substitute.md) | Completed |
+| 4 | [UI: season select, Thiếu món, Vì sao?](./phase-04-roster-ui.md) | Completed |
+| 5 | [Localization, e2e, docs, cleanup](./phase-05-localization-e2e-docs.md) | Completed |
 
 ## Validation gates
 - `npm run test:node`; `cd worker && npm test && npm run typecheck`; `python3 -m unittest discover -s tests`

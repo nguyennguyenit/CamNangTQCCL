@@ -95,7 +95,7 @@ Không có artboard cho hai surface này; chúng theo StyleGuide và bảng toke
 
 Chọn kịch bản là đọc tham khảo, chưa đủ để gợi ý hoặc so đội theo luật. Phân biệt vùng áp dụng đúng luật, tham khảo cùng kịch bản và chưa rõ kịch bản; mỗi vùng có số lượng riêng.
 
-Hai công cụ Soi đội và Gợi ý đội không có bộ chọn Mùa / Phiên bản luật của layout; `scenario`, `ruleset`, `config` trên URL cũ của hai trang bị bỏ lặng lẽ khi tải. Gợi ý đội chạy trên dữ liệu đội cũ (tất cả — tham khảo); Soi đội có ô chọn mùa riêng của Đội chuẩn (`season`, mặc định mùa mới nhất của registry) trong editor.
+Hai công cụ Soi đội và Gợi ý đội không có bộ chọn Mùa / Phiên bản luật của layout; `scenario`, `ruleset`, `config` trên URL cũ của hai trang bị bỏ lặng lẽ khi tải. Mỗi công cụ tự có ô chọn mùa của Đội chuẩn (`season`, mặc định `defaultSourceSeasonId`): Soi đội trong editor, Gợi ý đội ở hàng điều khiển ("Mùa bạn đang chơi", nhớ trong kho đã lưu). Kết quả Gợi ý đội: danh sách đội (đội cũ gắn nhãn "Tham khảo – đội cũ", luôn sau đội của mùa), "Nên thêm", rồi mục "Thiếu món" (thẻ nền `panel-3`, mỗi ô thiếu một hàng: "Tôi có…", món bù kèm số cấu hình cùng mùa, "Dùng món này", "Vì sao?" với lời giải thích `aria-live` ngay dưới).
 
 ## Trang chi tiết đội và 404
 

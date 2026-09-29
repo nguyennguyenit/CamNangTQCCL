@@ -21,7 +21,7 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
   | `#recommended-publication`, `#website-display-publication` | `app.js` (verify pin trước khi render) | mọi trang |
   | `#team-route-handles` đủ `{r,l,k}` | `app.js` (href chi tiết, migrate `detail`/`legacyTeam`, migrate `khTeam`/`khVariant`) | cả 8 trang mục; trang chi tiết chỉ `{l}`; **Landing không có** |
   | `#season-artifact-hashes` | `app.js` (model mùa) | Đội chuẩn, Đội khác, Cùng Tồn |
-  | `<div id="season-controls">` | `app.js` (`placeSeasonControls`) | 3 trang như trên; Soi đội, Gợi ý đội **không có** (bỏ `scenario`/`ruleset`/`config` khỏi URL khi tải; Soi đội tự có ô chọn mùa Đội chuẩn `season` trong editor) |
+  | `<div id="season-controls">` | `app.js` (`placeSeasonControls`) | 3 trang như trên; Soi đội, Gợi ý đội **không có** (bỏ `scenario`/`ruleset`/`config` khỏi URL khi tải; hai công cụ tự có ô chọn mùa Đội chuẩn `season` trong công cụ) |
 
 - **Nguồn dữ liệu theo trang**: mỗi trang chỉ tải và xác minh nguồn chính nó đọc. `loadWebsiteDisplay(pin, loadBytes, recommendedPin, {paths})` băm song song đúng các nguồn trong `paths` (mặc định mọi nguồn trong `sourceHashes`; đường không được pin → lỗi) và `localizeData` từ chối nguồn chưa được chính publication đó xác minh. Byte đi qua `createByteLoader()` của `js/website-display.js`: một request mỗi đường dẫn cho cả publication, mô hình mùa và kho Tra cứu; lần tải lỗi bị bỏ để "Thử lại" tải lại. Thêm nguồn cho một trang thì thêm cả vào `paths` của trang đó.
 
@@ -34,7 +34,7 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
   | Tra cứu (mục lục `/tra-cuu/`) | — (không nạp app) | — |
   | Theo dõi chiêu mộ | `heroes-dict`, `tactics`, `lookup-catalog`, `lookup-manifest` | — |
   | Soi đội | như Theo dõi chiêu mộ | `books-dict`; generation Recommended (`index.json`, `other-teams.json`) tải lười khi cần đối chiếu |
-  | Gợi ý đội | như Theo dõi chiêu mộ + `teams` | `team-tier` (tuỳ chọn) |
+  | Gợi ý đội | như Theo dõi chiêu mộ + `teams` (đội cũ lấp chỗ trống) | `team-tier` (tuỳ chọn); generation Recommended (`index.json`, `seasons.json`) tải lười khi mở công cụ |
   | Chi tiết Đội chuẩn/Đội khác | `teams` (một request, dùng chung với kiểm `legacyTeamsSha256`) | generation Recommended |
   | Chi tiết Khai hoang | `khaihoang` (kiểm hash trang trước) | — |
 

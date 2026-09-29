@@ -1,5 +1,20 @@
 # Project Changelog
 
+## 2026-09-29 (Gợi ý đội từ kho theo mùa, mục Thiếu món, "Vì sao?")
+
+### Changed
+
+- `/goi-y-doi-tu-kho/` gợi ý từ **Đội chuẩn của mùa đang chọn** thay cho đội cũ: ô "Mùa bạn đang chơi" (một ô, không có Phiên bản luật), mặc định `defaultSourceSeasonId`, ghi `?season=` (thêm vào `SECTION_QUERY_KEYS` của trang) và nhớ trong kho đã lưu. `js/roster-season-candidates.js` dựng ứng viên từ `index.json` của generation đang pin: tên gốc chữ Hán → tên Việt của từ điển Tra cứu (98,6% cấu hình Giao chiến ánh xạ được; cấu hình có tướng không nhận diện bị loại), chỉ cấu hình Giao chiến, ô chiến pháp trống/`bond`/không nhận diện không tính là thiếu.
+- Mùa thiếu đội thì **đội cũ `teams.json` lấp chỗ trống**, gắn nhãn "Tham khảo – đội cũ", luôn xếp sau đội của mùa, không dùng lại tướng/chiến pháp đã chọn và bỏ đội cũ trùng bộ tướng đội mùa. Engine nhận thêm `seedEntries` (đội đã chọn ở lượt trước) và trả `missingTacticSlots` (tướng giữ ô, vị trí ô) cho đội thiếu chiến pháp.
+- Mục **"Thiếu món"** thay "Đội mạnh nhưng chưa thể xây dựng", đội thiếu ít món nhất đứng trước: thiếu tướng → "Tôi có tướng này"; thiếu chiến pháp → "Tôi có chiến pháp này" + món bù (chiến pháp tướng đó mang ở cấu hình khác cùng mùa, có trong kho, chưa bị đội khác hay ô khác của cùng đội dùng) kèm số cấu hình; "Dùng món này" lưu vào kho (`tacticOverrides`, tối đa 20, quá trần bỏ lựa chọn cũ nhất) và đội vào danh sách với dòng "Đã thay: A → B", "Bỏ món thay" để gỡ (kể cả khi đội vẫn chưa vào danh sách). Các thao tác này giữ trạng thái đã xác nhận, gợi ý lại ngay và đưa focus về đầu mục; "Xóa toàn bộ kho" giữ mùa đang chọn.
+- Nút **"Vì sao?"** (chỉ gọi khi bấm, cache theo cặp món + tướng + ngôn ngữ): Worker mode mới `explainSubstitute` chỉ văn bản (không ảnh; vẫn qua rate-limit + Turnstile), prompt chỉ giải thích, cấm nêu chiến pháp/tướng khác; frontend `callWorkerExplain` và bỏ lời giải thích nhắc tới chiến pháp ngoài hai món được hỏi. Bốn mode đọc ảnh không đổi.
+- `seasonOptionText`/`seasonOptionTitle` tách khỏi closure của `createRecommendedSection` để ô mùa của Đội chuẩn và công cụ dùng chung nhãn.
+- Bản dịch: bỏ 2 obligation `translate` không còn nguồn (`ui:roster/blocked-team`, `ui:roster/local-engine-note`, cùng ledger entry và receipt), bỏ `result-missing-heroes`/`-tactics`, sửa `ui:roster/lead`/`result-variants`, thêm 28 obligation `authored-vi` cho chữ mới; policy `site-vi-260929-goi-y-doi-theo-mua`, publish generation `aff82729…`, re-pin `pipeline/team-route-handles.json`, sinh lại `WORKFLOW_BUILD_ID` MCP.
+
+### Tests
+
+- Node: adapter mùa (tên gốc/alias, lọc mùa + Giao chiến, ô có điều kiện, thống kê chiến pháp theo tướng, ≥98% cấu hình của generation đang pin ánh xạ được), `recommendRoster` (đội cũ chỉ lấp chỗ trống và xếp sau, bỏ đội cũ trùng bộ tướng, món bù đã chọn thành biến thể, ghi đè không còn ô bị bỏ qua), `suggestTacticSubstitutes`, engine `seedEntries` + `missingTacticSlots`, state `tacticOverrides`/`seasonId`, `safeReturnUrl` giữ `season` ở Gợi ý đội. Worker: schema/model/index cho `explainSubstitute`. E2E: `beta-tools`, `season-lookup` theo hành vi mới.
+
 ## 2026-09-29 (Theo dõi chiêu mộ: thiết kế lại, store v2, đồng bộ tuỳ chọn)
 
 ### Changed
