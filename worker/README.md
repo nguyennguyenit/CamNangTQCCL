@@ -28,17 +28,20 @@ Response 200 theo `mode` (các mode đọc ảnh trả chữ Hán Giản thể; 
 
 | `mode` | Công cụ | Response |
 |---|---|---|
-| `analyzeTeamImage` | Soi đội từ ảnh | `{ heroes: [{ nameCn, tacticsCn[2], booksCn[], statFocusCn }] }` |
+| `analyzeTeamImage` | Soi đội từ ảnh | `{ screen: "battleReport"\|"teamDetail"\|"other", sides: [{ side: "left"\|"right", heroes: [{ nameCn, tacticsCn[≤3], booksCn[], statFocusCn }] }] }` |
 | `scanHeroes` | Gợi ý đội: đọc kho tướng | `{ heroes: [{ nameCn, level?, redStars? }] }` |
 | `scanTactics` | Gợi ý đội: đọc kho chiến pháp | `{ tactics: [{ nameCn }] }` |
 | `scanBuiltTeams` | Gợi ý đội: đọc đội đã build | `{ teams: [{ teamName, heroesCn[], tacticsCn[] }] }` |
 | `explainSubstitute` | Gợi ý đội: "Vì sao?" chiến pháp thay thế | `{ explanation }` (1–600 ký tự, đúng `context.locale`) |
 
-`analyzeTeamImage` chỉ chép chữ in trong ảnh: không nhận diện tướng qua chân dung và không gửi
-danh sách tên tướng cho model. Cột không có tên in đọc được trả `nameCn: "未知"`. `tacticsCn` luôn
-đúng 2 phần tử theo vị trí ô A/B; ô không đọc được hoặc trống là `"未知"` tại đúng vị trí đó (Worker
-đệm/cắt về 2 ô), để site gắn đúng slot trong editor xác nhận. `booksCn` giữ thứ tự in, binh thư
-chính trước.
+`analyzeTeamImage` đọc MỌI phe trong ảnh trong 1 lượt AI: `sides` có 1–2 phần tử (`left` đứng trước
+`right`, mỗi phe 1–6 tướng, tổng ≤12; phe không còn tướng bị bỏ, không còn phe nào → 422). Mỗi phe
+xếp 主将 trước rồi 副将 (phe phải đọc phải → trái). Output dạng cũ `{ heroes }` được chuẩn hoá thành
+`{ screen: "other", sides: [{ side: "left", heroes }] }`; `screen` lạ → `other`.
+Chỉ chép chữ in trong ảnh: không nhận diện tướng qua chân dung và không gửi danh sách tên tướng
+cho model. Cột không có tên in đọc được trả `nameCn: "未知"`. `tacticsCn` giữ vị trí từng dòng in
+(tối đa 3, kể cả chiến pháp tự mang); dòng không đọc được là `"未知"` tại đúng vị trí đó, không dồn
+dòng. `booksCn` giữ thứ tự in (màn chiến báo không in binh thư → `[]`).
 
 `explainSubstitute` là mode **chỉ văn bản** (không ảnh; bỏ qua input guard ảnh, mọi bước còn lại giữ nguyên
 thứ tự: origin, băm IP, cap/rate-limit, Turnstile, đếm quota global). `context` phải đúng các khoá sau, khoá lạ
@@ -97,6 +100,19 @@ npm test          # vitest: handler, schema (M1), guard (H4), rate-limit/cap (H5
 npm run typecheck
 ```
 
+## Bộ ảnh chuẩn Soi đội (`eval/`)
+
+`eval/images/` chứa ảnh đã nén như client (cạnh dài ≤ 1600 px, JPEG 0.82) và đã che tên tài khoản/liên minh; `eval/fixtures/<tên>.json` là đáp án theo ID canonical (hợp đồng trong `eval/score.ts`: `screen` và `sideCount` tuỳ chọn — thiếu thì không chấm; mỗi phe 1–3 tướng × chiến pháp đã học A/B + binh thư, ô `null` không chấm). Script gọi AI thật cho từng ảnh, cho kết quả qua cùng bộ khớp từ điển của Soi đội (`draftFromRead`) rồi in độ chính xác theo loại màn hình × trường (màn hình, số phe, tướng, chiến pháp, binh thư) và thời gian p50/p95:
+
+```bash
+EVAL_ENDPOINT=https://api.deepseek.com/chat/completions EVAL_API_KEY=… EVAL_MODEL=deepseek-flash \
+  npm run eval:vision -- --save base                 # lưu output AI vào eval/.cache/base/ (gitignored)
+npm run eval:vision -- --from base                   # chấm lại không tốn token (sau khi sửa từ điển/bộ khớp)
+npm run eval:vision -- --effort high --runs 3        # so effort; --only <tên> chạy một ảnh
+```
+
+Model ngoài catalog `shared/ai-models.ts` cần `EVAL_EFFORT_STYLE=deepseek|openai|none`; `EVAL_TIMEOUT_MS` mặc định 45000. Sửa `VISION_PROMPT` hay đổi effort/timeout của nhóm `teamScan` ở tab AI thì chạy trước với cấu hình cũ (`--save`) làm mốc rồi so. Ảnh người dùng gửi qua nút "Gửi ảnh này" được duyệt ở tab **Soi đội** của `/quan-tri/`; nút "Tải fixture" xuất JSON không có `screen`/`sideCount` (nhãn AI tự đoán không phải đáp án) — tải ảnh, che tên tài khoản, lưu vào `eval/images/` với tên trong trường `image`, điền `screen` (và `sideCount` nếu ảnh có hai phe) sau khi tự xem ảnh.
+
 ## Cấu hình guardrail (`wrangler.toml [vars]`)
 
 | Var | Mặc định | Ý nghĩa |
@@ -150,4 +166,4 @@ Chính sách lưu giữ và dùng dữ liệu của từng nhà cung cấp: đ�
 - Xoay API key định kỳ.
 
 ## Disclaimer (Phase 4, M3)
-UI phải nêu đích danh: *"Ảnh được gửi tới DeepSeek để AI phân tích; site không lưu ảnh. Tránh ảnh lộ tên tài khoản."* + link policy.
+UI phải nêu đích danh nhà cung cấp AI nhận ảnh và rằng site chỉ đếm ẩn danh số ô phải sửa (không ảnh, không tên); ảnh chỉ được lưu khi người dùng tự bấm "Gửi ảnh này". Tránh ảnh lộ tên tài khoản. Chữ hiện hành: `DISCLAIMER` trong `js/analyze.js`.

@@ -476,7 +476,7 @@ test.describe("Soi đội", () => {
     await waitForBoot(page);
     const fixture = await analyzeFixture(page);
     let workerCalls = 0;
-    await page.route(WORKER_ROUTE, (route) => { workerCalls += 1; return route.fulfill({ json: { heroes: fixture.reads } }); });
+    await page.route(WORKER_ROUTE, (route) => { workerCalls += 1; return route.fulfill({ json: { screen: "teamDetail", sides: [{ side: "left", heroes: fixture.reads }] } }); });
 
     const section = page.locator("#section-analyze");
     await expect(section.locator("h1.reference-title")).toHaveText("Soi đội từ ảnh");
@@ -506,6 +506,9 @@ test.describe("Soi đội", () => {
     // Editor: 3 tướng × (tướng + 2 chiến pháp + binh thư), điền sẵn từ chữ Worker chép.
     const editor = section.locator(".ana-editor");
     await expect(editor).toBeVisible();
+    // Ảnh một đội: không có bước chọn phe, không có nút đổi phe.
+    await expect(section.locator(".ana-side-pick")).toBeHidden();
+    await expect(section.locator(".ana-side-switch")).toBeHidden();
     await expect(steps.nth(2)).toHaveAttribute("data-state", "done");
     await expect(steps.nth(1)).toHaveAttribute("data-state", "pending");
     await expect(editor.locator(".ana-cell-input")).toHaveCount(12);
@@ -581,6 +584,68 @@ test.describe("Soi đội", () => {
     await row.locator(".ana-team-link").click();
     await expect(page).toHaveURL(/\/doi-chuan\//);
     await expect(page.locator("#team-detail-body")).toBeVisible();
+  });
+
+  test("ảnh hai phe: chọn phe rồi mới nạp editor, đổi phe không gọi lại Worker, link không mang phe, đếm ẩn danh một lần", async ({ page }) => {
+    await page.route("https://challenges.cloudflare.com/**", (route) =>
+      route.fulfill({ contentType: "application/javascript", body: TURNSTILE_STUB }));
+    await page.goto("/soi-doi-tu-anh/");
+    await waitForBoot(page);
+    const fixture = await analyzeFixture(page);
+    // Phe trái: 2 tướng đầu của đội (ô thứ ba trống như màn chiến báo thiếu tướng); phe phải: đủ đội.
+    const right = fixture.reads.map((read) => ({ ...read, nameCn: read.nameCn.endsWith("口") ? fixture.labelsZh[fixture.unsureIndex][0] : read.nameCn }));
+    let workerCalls = 0;
+    await page.route(WORKER_ROUTE, (route) => {
+      workerCalls += 1;
+      return route.fulfill({ json: { screen: "battleReport", sides: [{ side: "left", heroes: fixture.reads.slice(0, 2) }, { side: "right", heroes: right }] } });
+    });
+    const stats = [];
+    await page.route("**/api/scan-stats", (route) => {
+      stats.push(route.request().postDataJSON());
+      return route.fulfill({ status: 201, json: { ok: true } });
+    });
+
+    const section = page.locator("#section-analyze");
+    await section.locator("input[type=file]").setInputFiles({ name: "chien-bao.png", mimeType: "image/png", buffer: transparentPng });
+    await section.getByRole("button", { name: "Soi đội", exact: true }).click();
+
+    const picker = section.locator(".ana-side-pick");
+    await expect(picker).toBeVisible();
+    await expect(section.locator(".ana-editor")).toBeHidden();
+    const runSide = picker.getByRole("button", { name: "Soi phe này", exact: true });
+    await expect(runSide).toBeDisabled();
+    await expect(picker.locator(".ana-side-option")).toHaveCount(2);
+    await expect(picker.locator(".ana-side-option").nth(1)).toContainText(fixture.labels[0][0]);
+    await picker.getByRole("radio", { name: /Phe phải/u }).check();
+    await runSide.click();
+
+    await expect(picker).toBeHidden();
+    await expect(section.locator(".ana-editor")).toBeVisible();
+    for (const member of [0, 1, 2]) await expect(editorCell(section, member, 0).locator("input")).toHaveValue(fixture.labels[member][0]);
+    // Sửa ô không rõ ở phe phải, sang phe trái rồi quay lại: bản sửa của từng phe còn nguyên.
+    const unknownCell = editorCell(section, 0, 2);
+    await unknownCell.locator("input").fill(fixture.labels[0][2]);
+    await unknownCell.locator("input").press("Tab");
+    const switcher = section.locator(".ana-side-switch");
+    await switcher.getByRole("button", { name: /Phe trái/u }).click();
+    await expect(editorCell(section, 2, 0).locator("input")).toHaveValue("");
+    await expect(section.getByRole("button", { name: "Đối chiếu", exact: true })).toBeDisabled();
+    await switcher.getByRole("button", { name: /Phe phải/u }).click();
+    await expect(switcher.getByRole("button", { name: /Phe phải/u })).toHaveAttribute("aria-pressed", "true");
+    await expect(unknownCell.locator("input")).toHaveValue(fixture.labels[0][2]);
+
+    const compare = section.getByRole("button", { name: "Đối chiếu", exact: true });
+    await expect(compare).toBeEnabled();
+    await compare.click();
+    await expect(section.locator(".ana-group-standard .ana-team-row").first().locator(".ana-team-link")).toHaveText(fixture.name);
+    expect(new URL(page.url()).searchParams.get("doi")).toBe(fixture.doi);
+    await compare.click();
+    await expect.poll(() => stats.length).toBe(1);
+    // 12 ô đều có chữ; ô chiến pháp `未知` là ô không rõ duy nhất và là ô duy nhất phải sửa.
+    expect(stats[0]).toEqual({ screen: "battleReport", side: "right", read: 12, edited: 1, unclear: 1 });
+    expect(workerCalls).toBe(1);
+    // Khối gửi ảnh tự nguyện chỉ hiện sau đối chiếu từ ảnh; nút khoá tới khi tick đồng ý.
+    await expect(section.locator(".ana-sample")).toBeVisible();
   });
 
   test("Nhập tay không gọi Worker; đối chiếu ghi lịch sử trên máy, mở lại mục lịch sử như mở link", async ({ page }) => {

@@ -1,5 +1,24 @@
 # Project Changelog
 
+## 2026-09-29 (Soi đội đọc cả hai phe; đếm ẩn danh, gửi ảnh tự nguyện, bộ ảnh chuẩn)
+
+### Changed
+
+- **Worker `analyzeTeamImage`** trả `{screen: battleReport|teamDetail|other, sides: [{side: left|right, heroes}]}`: một lượt AI chép mọi phe (bỏ quy tắc "chỉ chép phe 我方"), mỗi phe 主将 trước (phe phải đọc từ phải sang trái), bản game tiếng Việt chép nguyên chữ Việt. `validateResult` chịu output dạng cũ `{heroes}`, `screen` lạ, `side` thiếu/trùng, bỏ phe rỗng; trần 6 tướng/phe, 12 tổng.
+- **Soi đội** (`js/analyze.js`): ảnh hai phe hiện bước "Chọn phe" (xem trước tên tướng mỗi phe) trước editor; editor có nút đổi phe, dùng lại kết quả đã đọc và giữ draft đã sửa của từng phe. Editor, `?doi=v1`, lịch sử, PNG giữ hợp đồng 3 tướng, không mang phe. Chờ Worker quá 15 s thì báo AI đang đọc kỹ. Frontend tạm nhận cả dạng cũ `{heroes}` để Pages deploy trước Worker.
+- **Đếm ẩn danh** `POST /api/scan-stats` (community-worker, không đăng nhập, 60/giờ theo IP đã băm): lần Đối chiếu đầu của mỗi (lượt đọc, phe) gửi số ô AI chép/phải sửa/không rõ, cộng dồn theo ngày UTC ở bảng `scan_stats`.
+- **Gửi ảnh tự nguyện** `POST /api/scan-samples` (đăng nhập + đồng ý, 10/ngày): ảnh + chữ AI đọc + đội đã xác nhận vào R2/`scan_samples` chờ duyệt. Tab **Soi đội** ở `/quan-tri/`: tỷ lệ ô sửa/không rõ theo màn hình × phe (7/30/90 ngày), duyệt/từ chối mẫu (từ chối xoá ảnh), "Tải fixture" cho bộ ảnh chuẩn.
+- **Bộ ảnh chuẩn** `worker/eval/` (5 ảnh đã che tên: 4 chiến báo phồn thể/giản thể/tiếng Việt, 1 màn chi tiết đội) + `npm run eval:vision` chấm theo ID canonical qua `draftFromRead`, in độ chính xác theo màn hình × trường và p50/p95, có `--effort`, `--save/--from`.
+- Bản dịch: thêm 17 obligation `authored-vi` cho chữ mới của `js/analyze.js` (`ui:analyze/side-*`, `sample-*`, `slow-read`, `disclaimer`), không đổi obligation `translate`; `PrivacyPage.astro` không nằm trong `sourceFiles`/obligation nên đoạn mới không cần khai thêm; policy `site-vi-260929-soi-doi-hai-phe` (re-pin hash `js/analyze.js`, `js/analyze-map.js`), publish generation `5f23f4df…` (thay `e5a3b519…`, đã prune), re-pin `pipeline/team-route-handles.json`, sinh lại `WORKFLOW_BUILD_ID` MCP (`findSimilarTeams` trong `js/analyze-map.js`).
+
+### Tests
+
+- `worker`: `schema.test.ts` (dạng mới/cũ, screen, side, trần), `model.test.ts`, `index.test.ts` (2 phe), `eval-score.test.ts`. `tests-js`: `normalizeTeamRead`, `readStats`, `validateWorkerResult` hai phe. `community-worker`: `scan.test.ts` (validate, rate, 503 thiếu `IP_HASH_SECRET`, quyền admin, duyệt/từ chối xoá R2, fixture).
+
+### Deploy
+
+- `community-worker`: `npm run db:migrate:remote` (0005) rồi deploy. Pages deploy **trước** `worker/` (frontend mới đọc được cả dạng cũ); sau khi Worker mới chạy, gỡ nhánh dạng cũ `{heroes}` trong `normalizeTeamRead` (`js/analyze-map.js`). Nhánh `{heroes}` của `validateResult` (`worker/src/schema.ts`) ở lại: nó chịu output model, không phải tương thích deploy.
+
 ## 2026-09-29 (Cấu hình AI theo tính năng: model, effort, timeout riêng; nhà cung cấp dùng chung)
 
 ### Changed

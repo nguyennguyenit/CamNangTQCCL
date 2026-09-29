@@ -1,0 +1,60 @@
+{
+  "image": "battle-trad-2.jpg",
+  "source": "Chiến báo phồn thể, cùng hai đội với battle-trad-1 nhưng thứ tự chiến pháp phe phải khác; đã che tên. 精·丹陽兵 để null.",
+  "expected": {
+    "screen": "battleReport",
+    "sideCount": 2,
+    "sides": [
+      {
+        "side": "left",
+        "heroes": [
+          {
+            "hero": "hero:lang-thong",
+            "tactics": [
+              "tactic:ngu-dich-binh-chuong",
+              "tactic:thinh-khi-linh-dich"
+            ],
+            "book": null
+          },
+          {
+            "hero": "hero:truong-phi",
+            "tactics": [
+              "tactic:linh-thanh-chau",
+              "tactic:tat-phong-sau-vu"
+            ],
+            "book": null
+          }
+        ]
+      },
+      {
+        "side": "right",
+        "heroes": [
+          {
+            "hero": "hero:sp-gia-cat-luong",
+            "tactics": [
+              "tactic:duong-suc-doi-chien",
+              "tactic:biet-minh-biet-ta"
+            ],
+            "book": null
+          },
+          {
+            "hero": "hero:quan-hung",
+            "tactics": [
+              "tactic:cuoi-ngua-nghin-dam",
+              "tactic:van-vo-song-toan"
+            ],
+            "book": null
+          },
+          {
+            "hero": "hero:truong-bao",
+            "tactics": [
+              "tactic:nhan-loi-che-quyen",
+              null
+            ],
+            "book": null
+          }
+        ]
+      }
+    ]
+  }
+}

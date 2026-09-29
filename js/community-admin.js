@@ -1,6 +1,7 @@
-// Trang /quan-tri/ (noindex): năm tab — "Duyệt chiến báo" (ảnh, dữ liệu AI đã xác nhận, duyệt / từ chối kèm lý do),
+// Trang /quan-tri/ (noindex): sáu tab — "Duyệt chiến báo" (ảnh, dữ liệu AI đã xác nhận, duyệt / từ chối kèm lý do),
 // "Bài viết" (danh sách, soạn/sửa Markdown có xem trước an toàn, FAQ, lưu nháp, xuất bản/gỡ xuất bản),
-// "Bình luận" (xoá bình luận vi phạm trên mọi trang), "Góp ý" (góp ý/báo lỗi từ footer, đánh dấu đã xử lý)
+// "Bình luận" (xoá bình luận vi phạm trên mọi trang), "Góp ý" (góp ý/báo lỗi từ footer, đánh dấu đã xử lý),
+// "Soi đội" (tỷ lệ ô sửa/không rõ ẩn danh, duyệt ảnh gửi tự nguyện, xuất fixture bộ ảnh chuẩn)
 // và "AI" (danh sách nhà cung cấp AI + thứ tự failover cho mọi tính năng đọc ảnh).
 // Server mới là nơi kiểm quyền; trang chỉ ẩn giao diện với người không phải admin.
 
@@ -488,6 +489,218 @@ function openFeedbackPanel(panel) {
     }
   });
   panel.append(filters, status, list, empty, more);
+  reload();
+}
+
+/* ---------- Soi đội: tín hiệu lỗi ---------- */
+// (a) Đếm ẩn danh theo màn hình × phe; (b) ảnh người dùng gửi tự nguyện: duyệt rồi tải fixture cho bộ ảnh chuẩn.
+
+const SCAN_SCREEN_LABEL = {
+  battleReport: L('Chiến báo', '战报'),
+  teamDetail: L('Chi tiết đội', '队伍详情'),
+  other: L('Khác', '其他'),
+};
+const SCAN_SIDE_LABEL = { left: L('Trái (ta)', '左（我方）'), right: L('Phải (đối thủ)', '右（对手）') };
+const SCAN_STATUS_LABEL = {
+  pending: L('Chờ duyệt', '待审核'),
+  approved: L('Đã duyệt', '已通过'),
+  rejected: L('Đã từ chối', '已拒绝'),
+};
+
+const percent = (part, whole) => (whole > 0 ? `${Math.round((part / whole) * 1000) / 10}%` : '—');
+
+function scanStatsTable(rows) {
+  const head = el('tr', {}, [
+    L('Màn hình', '界面'),
+    L('Phe', '阵营'),
+    L('Số lượt', '次数'),
+    L('% ô sửa', '修改占比'),
+    L('% ô không rõ', '不确定占比'),
+  ].map((text) => el('th', { scope: 'col' }, text)));
+  const body = rows.map((row) => el('tr', {}, [
+    SCAN_SCREEN_LABEL[row.screen] || String(row.screen),
+    SCAN_SIDE_LABEL[row.side] || String(row.side),
+    String(row.events),
+    percent(row.edited, row.read),
+    percent(row.unclear, row.read),
+  ].map((cell) => el('td', {}, cell))));
+  return el('table', { class: 'reference-table' }, [el('thead', {}, head), el('tbody', {}, body)]);
+}
+
+/** Bảng so AI đọc (tên Hán) với đội xác nhận (ID), theo thứ tự ô. */
+function scanCompareTable(sample) {
+  const ai = Array.isArray(sample.aiRead?.heroes) ? sample.aiRead.heroes : [];
+  const confirmed = Array.isArray(sample.confirmed?.heroes) ? sample.confirmed.heroes : [];
+  const head = el('tr', {}, [L('Tướng', '武将'), L('AI đọc', 'AI 识别'), L('Đội xác nhận', '队伍确认')].map((text) => el('th', { scope: 'col' }, text)));
+  const rows = confirmed.map((entry, index) => {
+    const read = ai[index];
+    const readText = read
+      ? [read.nameCn, ...(Array.isArray(read.tacticsCn) ? read.tacticsCn : []), ...(Array.isArray(read.booksCn) ? read.booksCn : [])].filter(Boolean).join(' · ')
+      : '—';
+    const confirmedText = [entry.hero, ...(Array.isArray(entry.tactics) ? entry.tactics : []), entry.book].filter(Boolean).join(' · ');
+    return el('tr', {}, [
+      el('td', {}, String(index + 1)),
+      el('td', { lang: 'zh-Hans' }, readText),
+      el('td', {}, confirmedText),
+    ]);
+  });
+  return el('table', { class: 'reference-table' }, [el('thead', {}, head), el('tbody', {}, rows)]);
+}
+
+function scanSampleItem(sample, { status, onChange }) {
+  const id = encodeURIComponent(sample.id);
+  const imageUrl = `/api/admin/scan-samples/${id}/image`;
+  const badge = el('span', { class: 'cm-badge', dataset: { status: sample.status } }, SCAN_STATUS_LABEL[sample.status] || String(sample.status));
+  const actions = el('div', { class: 'cm-form-row' });
+  const setBusy = (busy) => actions.querySelectorAll('button').forEach((button) => { button.disabled = busy; });
+  const act = async (action, message) => {
+    setBusy(true);
+    try {
+      await api(`/api/admin/scan-samples/${id}/${action}`, { method: 'POST', json: {} });
+      status.set(message);
+      onChange(item);
+    } catch (error) {
+      setBusy(false);
+      status.set(describeError(error), 'error');
+    }
+  };
+  if (sample.status === 'pending') {
+    const approve = el('button', { class: 'ana-btn primary', type: 'button' }, L('Duyệt', '通过'));
+    const reject = el('button', { class: 'ana-btn', type: 'button' }, L('Từ chối', '拒绝'));
+    approve.addEventListener('click', () => act('approve', L('Đã duyệt mẫu.', '样本已通过。')));
+    reject.addEventListener('click', () => act('reject', L('Đã từ chối mẫu và xoá ảnh.', '样本已拒绝并删除图片。')));
+    actions.append(approve, reject);
+  } else if (sample.status === 'approved') {
+    const download = el('button', { class: 'ana-btn primary', type: 'button' }, L('Tải fixture', '下载 fixture'));
+    download.addEventListener('click', async () => {
+      download.disabled = true;
+      try {
+        const fixture = await api(`/api/admin/scan-samples/${id}/fixture`);
+        const url = URL.createObjectURL(new Blob([`${JSON.stringify(fixture, null, 2)}\n`], { type: 'application/json' }));
+        const link = el('a', { href: url, download: `${sample.id}.json` });
+        document.body.append(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        status.set(L('Đã tải fixture.', '已下载 fixture。'));
+      } catch (error) {
+        status.set(describeError(error), 'error');
+      } finally {
+        download.disabled = false;
+      }
+    });
+    actions.append(
+      download,
+      el('p', { class: 'scope-note' }, L(
+        'Nhớ tải ảnh, che tên tài khoản, đặt vào worker/eval/images/.',
+        '记得下载图片，遮住账号名，放入 worker/eval/images/。',
+      )),
+    );
+  }
+  const item = el('li', { class: 'cm-report cm-admin-report', dataset: { sampleId: String(sample.id) } }, [
+    sample.hasImage
+      ? el('a', { class: 'cm-report-image-link', href: imageUrl, target: '_blank', rel: 'noopener' }, [
+        el('img', { class: 'cm-report-image', src: imageUrl, alt: L('Ảnh soi đội người dùng gửi', '用户提交的识阵截图'), loading: 'lazy' }),
+        el('span', { class: 'visually-hidden' }, L('(mở tab mới)', '（在新标签页打开）')),
+      ])
+      : el('p', { class: 'scope-note' }, L('Ảnh đã bị xoá.', '图片已删除。')),
+    el('div', { class: 'cm-admin-report-main' }, [
+      el('p', { class: 'cm-report-meta' }, [
+        badge,
+        avatar(sample.author),
+        el('span', {}, displayName(sample.author)),
+        timeNode(sample.createdAt),
+        el('span', { class: 'cm-badge' }, SCAN_SCREEN_LABEL[sample.screen] || String(sample.screen)),
+        el('span', { class: 'cm-badge' }, SCAN_SIDE_LABEL[sample.side] || String(sample.side)),
+      ]),
+      scanCompareTable(sample),
+      actions,
+    ]),
+  ]);
+  return item;
+}
+
+function openScanPanel(panel) {
+  const status = liveStatus();
+
+  // (a) Tỷ lệ theo screen × side.
+  const daysSelect = el('select', { id: 'cm-scan-days', class: 'cm-select' }, [
+    el('option', { value: '7' }, L('7 ngày', '7 天')),
+    el('option', { value: '30', selected: '' }, L('30 ngày', '30 天')),
+    el('option', { value: '90' }, L('90 ngày', '90 天')),
+  ]);
+  const statsBox = el('div', {});
+  let statsGeneration = 0;
+  const loadStats = async () => {
+    const current = ++statsGeneration;
+    const body = await api(`/api/admin/scan-stats?days=${encodeURIComponent(daysSelect.value)}`);
+    if (current !== statsGeneration) return;
+    const rows = Array.isArray(body?.rows) ? body.rows : [];
+    statsBox.replaceChildren(rows.length
+      ? scanStatsTable(rows)
+      : el('p', { class: 'scope-note cm-empty' }, L('Chưa có lượt đối chiếu nào trong khoảng này.', '该时间段内还没有对照记录。')));
+  };
+  daysSelect.addEventListener('change', () => loadStats().catch((error) => status.set(describeError(error), 'error')));
+
+  // (b) Mẫu theo trạng thái.
+  const statusSelect = el('select', { id: 'cm-scan-status', class: 'cm-select' },
+    Object.entries(SCAN_STATUS_LABEL).map(([value, label]) => el('option', { value }, label)));
+  const list = el('ol', { class: 'cm-report-list', 'aria-label': L('Ảnh soi đội người dùng gửi', '用户提交的识阵截图') });
+  const empty = el('p', { class: 'scope-note cm-empty', hidden: '' }, L('Không có mẫu nào.', '没有样本。'));
+  const more = el('button', { class: 'ana-btn cm-more', type: 'button', hidden: '' }, L('Tải thêm', '加载更多'));
+  let cursor = null;
+  let generation = 0;
+  // Duyệt/từ chối xong thì mẫu rời danh sách trạng thái đang xem.
+  const onChange = (item) => {
+    const next = item.nextElementSibling || item.previousElementSibling;
+    item.remove();
+    empty.hidden = list.childElementCount > 0;
+    (next?.querySelector('button') || panel).focus();
+  };
+  const load = async ({ reset = false } = {}) => {
+    const current = reset ? ++generation : generation;
+    if (reset) cursor = null;
+    const params = new URLSearchParams({ status: statusSelect.value });
+    if (cursor) params.set('cursor', cursor);
+    const body = await api(`/api/admin/scan-samples?${params}`);
+    if (current !== generation) return;
+    const items = (Array.isArray(body?.items) ? body.items : []).map((sample) => scanSampleItem(sample, { status, onChange }));
+    if (reset) list.replaceChildren(...items);
+    else list.append(...items);
+    cursor = typeof body?.nextCursor === 'string' && body.nextCursor ? body.nextCursor : null;
+    more.hidden = !cursor;
+    empty.hidden = list.childElementCount > 0;
+  };
+  const reload = () => {
+    panel.setAttribute('aria-busy', 'true');
+    load({ reset: true })
+      .catch((error) => status.set(describeError(error), 'error'))
+      .finally(() => panel.removeAttribute('aria-busy'));
+  };
+  statusSelect.addEventListener('change', reload);
+  more.addEventListener('click', async () => {
+    more.disabled = true;
+    try {
+      await load();
+    } catch (error) {
+      status.set(describeError(error), 'error');
+    } finally {
+      more.disabled = false;
+    }
+  });
+
+  panel.append(
+    el('h2', { class: 'cm-title' }, L('Tỷ lệ sửa / không rõ (ẩn danh)', '修改 / 不确定占比（匿名）')),
+    el('div', { class: 'cm-field' }, [el('label', { class: 'cm-label', for: 'cm-scan-days' }, L('Khoảng thời gian', '时间范围')), daysSelect]),
+    statsBox,
+    el('h2', { class: 'cm-title' }, L('Ảnh người dùng gửi', '用户提交的截图')),
+    el('div', { class: 'cm-field' }, [el('label', { class: 'cm-label', for: 'cm-scan-status' }, L('Trạng thái', '状态')), statusSelect]),
+    status,
+    list,
+    empty,
+    more,
+  );
+  loadStats().catch((error) => status.set(describeError(error), 'error'));
   reload();
 }
 
@@ -1445,6 +1658,7 @@ export async function initCommunityAdmin(mount = document.getElementById('commun
     { id: 'posts', label: L('Bài viết', '文章'), open: openPostsPanel },
     { id: 'comments', label: L('Bình luận', '评论'), open: openCommentsPanel },
     { id: 'feedback', label: L('Góp ý', '意见反馈'), open: openFeedbackPanel },
+    { id: 'scan', label: L('Soi đội', '截图识阵'), open: openScanPanel },
     { id: 'ai', label: 'AI', open: openAiPanel },
   ]);
   mount.replaceChildren(view.node);

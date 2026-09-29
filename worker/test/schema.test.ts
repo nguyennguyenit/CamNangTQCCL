@@ -24,71 +24,121 @@ describe("tolerantParse", () => {
 });
 
 describe("validateResult", () => {
+  // Dạng cũ {heroes} vẫn vào được (chuẩn hoá thành 1 phe left) nên các test từng tướng dùng dạng này.
+  const heroesOf = (r: ReturnType<typeof validateResult>) => r.sides[0].heroes;
+  const one = (h: object) => validateResult({ heroes: [h] });
+  const hero = (nameCn: string) => ({ nameCn, tacticsCn: [], statFocusCn: "" });
   const valid = { heroes: [{ nameCn: "曹操", tacticsCn: ["乱世奸雄"], statFocusCn: "全智力" }] };
   it("chấp nhận shape đúng", () => {
-    expect(validateResult(valid).heroes[0].nameCn).toBe("曹操");
+    expect(heroesOf(validateResult(valid))[0].nameCn).toBe("曹操");
   });
   it("tacticsCn giữ vị trí từng dòng: dòng rỗng/sai kiểu thành 未知 tại chỗ, không dồn dòng", () => {
-    const r = validateResult({ heroes: [{ nameCn: "x", tacticsCn: ["", "乱世奸雄"], statFocusCn: "" }] });
-    expect(r.heroes[0].tacticsCn).toEqual(["未知", "乱世奸雄"]);
-    const typed = validateResult({ heroes: [{ nameCn: "x", tacticsCn: [5, "a"], statFocusCn: "" }] });
-    expect(typed.heroes[0].tacticsCn).toEqual(["未知", "a"]);
+    const r = one({ nameCn: "x", tacticsCn: ["", "乱世奸雄"], statFocusCn: "" });
+    expect(heroesOf(r)[0].tacticsCn).toEqual(["未知", "乱世奸雄"]);
+    const typed = one({ nameCn: "x", tacticsCn: [5, "a"], statFocusCn: "" });
+    expect(heroesOf(typed)[0].tacticsCn).toEqual(["未知", "a"]);
   });
   it("tacticsCn thiếu -> [], không đệm (site tự coi ô thiếu là không rõ)", () => {
-    expect(validateResult({ heroes: [{ nameCn: "x", statFocusCn: "" }] }).heroes[0].tacticsCn).toEqual([]);
-    expect(validateResult({ heroes: [{ nameCn: "x", tacticsCn: ["a"], statFocusCn: "" }] }).heroes[0].tacticsCn).toEqual(["a"]);
+    expect(heroesOf(one({ nameCn: "x", statFocusCn: "" }))[0].tacticsCn).toEqual([]);
+    expect(heroesOf(one({ nameCn: "x", tacticsCn: ["a"], statFocusCn: "" }))[0].tacticsCn).toEqual(["a"]);
   });
-  it("ném khi thiếu heroes", () => {
+  it("ném khi thiếu sides và heroes", () => {
     expect(() => validateResult({})).toThrow();
   });
   it("nameCn rỗng thành 未知 (cột không có tên in đọc được)", () => {
-    expect(validateResult({ heroes: [{ nameCn: "", tacticsCn: [], statFocusCn: "" }] }).heroes[0].nameCn).toBe("未知");
+    expect(heroesOf(one({ nameCn: "", tacticsCn: [], statFocusCn: "" }))[0].nameCn).toBe("未知");
   });
   it("ném khi heroes rỗng", () => {
     expect(() => validateResult({ heroes: [] })).toThrow();
   });
 
-  it("[M2] chặn heroes phình to (>12) + cắt chuỗi dài", () => {
+  it("[M2] chặn heroes phình to (>6 một phe) + cắt chuỗi dài", () => {
     const many = Array.from({ length: 50 }, () => ({ nameCn: "x".repeat(200), tacticsCn: [], statFocusCn: "" }));
     const r = validateResult({ heroes: many });
-    expect(r.heroes.length).toBe(12);
-    expect(r.heroes[0].nameCn.length).toBeLessThanOrEqual(40);
+    expect(heroesOf(r).length).toBe(6);
+    expect(heroesOf(r)[0].nameCn.length).toBeLessThanOrEqual(40);
   });
 
   it("[M2] tacticsCn giữ tối đa 3 dòng (tự mang + 2 ô đã học)", () => {
-    const r = validateResult({ heroes: [{ nameCn: "曹操", tacticsCn: ["a", "b", "c", "d"], statFocusCn: "" }] });
-    expect(r.heroes[0].tacticsCn).toEqual(["a", "b", "c"]);
+    const r = one({ nameCn: "曹操", tacticsCn: ["a", "b", "c", "d"], statFocusCn: "" });
+    expect(heroesOf(r)[0].tacticsCn).toEqual(["a", "b", "c"]);
   });
 
   it("parse booksCn (binh thư) thành mảng riêng", () => {
-    const r = validateResult({ heroes: [{ nameCn: "曹操", tacticsCn: ["乱世奸雄"], booksCn: ["铁甲", "防备"], statFocusCn: "" }] });
-    expect(r.heroes[0].booksCn).toEqual(["铁甲", "防备"]);
+    const r = one({ nameCn: "曹操", tacticsCn: ["乱世奸雄"], booksCn: ["铁甲", "防备"], statFocusCn: "" });
+    expect(heroesOf(r)[0].booksCn).toEqual(["铁甲", "防备"]);
   });
   it("thiếu booksCn -> [] (backward-compat client cũ)", () => {
-    const r = validateResult({ heroes: [{ nameCn: "曹操", tacticsCn: [], statFocusCn: "" }] });
-    expect(r.heroes[0].booksCn).toEqual([]);
+    expect(heroesOf(one(hero("曹操")))[0].booksCn).toEqual([]);
   });
   it("cắt booksCn quá nhiều (>6)", () => {
-    const r = validateResult({ heroes: [{ nameCn: "曹操", tacticsCn: [], booksCn: Array(20).fill("铁甲"), statFocusCn: "" }] });
-    expect(r.heroes[0].booksCn.length).toBe(6);
+    const r = one({ nameCn: "曹操", tacticsCn: [], booksCn: Array(20).fill("铁甲"), statFocusCn: "" });
+    expect(heroesOf(r)[0].booksCn.length).toBe(6);
   });
   it("bỏ trường lạ như nameFromPortrait (tên chỉ lấy từ chữ in)", () => {
-    const r = validateResult({ heroes: [{ nameCn: "曹操", tacticsCn: [], statFocusCn: "", nameFromPortrait: true }] });
-    expect(r.heroes[0]).toEqual({ nameCn: "曹操", tacticsCn: [], booksCn: [], statFocusCn: "" });
+    const r = one({ nameCn: "曹操", tacticsCn: [], statFocusCn: "", nameFromPortrait: true });
+    expect(heroesOf(r)[0]).toEqual({ nameCn: "曹操", tacticsCn: [], booksCn: [], statFocusCn: "" });
+  });
+
+  describe("hai phe (C1)", () => {
+    const side = (s: string | undefined, ...names: string[]) => ({ side: s, heroes: names.map(hero) });
+    it("nhận dạng mới, giữ screen và thứ tự tướng", () => {
+      const r = validateResult({ screen: "battleReport", sides: [side("left", "甲", "乙", "丙"), side("right", "丁", "戊")] });
+      expect(r.screen).toBe("battleReport");
+      expect(r.sides.map((s) => s.side)).toEqual(["left", "right"]);
+      expect(r.sides[1].heroes.map((h) => h.nameCn)).toEqual(["丁", "戊"]);
+    });
+    it("dạng cũ {heroes} -> screen other + 1 phe left", () => {
+      const r = validateResult(valid);
+      expect(r.screen).toBe("other");
+      expect(r.sides).toEqual([{ side: "left", heroes: [expect.objectContaining({ nameCn: "曹操" })] }]);
+    });
+    it("screen lạ/thiếu -> other", () => {
+      expect(validateResult({ screen: "zzz", sides: [side("left", "甲")] }).screen).toBe("other");
+      expect(validateResult({ sides: [side("left", "甲")] }).screen).toBe("other");
+    });
+    it("side thiếu/sai theo vị trí (0 -> left, 1 -> right)", () => {
+      const r = validateResult({ sides: [side(undefined, "甲"), side("giữa", "乙")] });
+      expect(r.sides.map((s) => s.side)).toEqual(["left", "right"]);
+    });
+    it("side trùng giữ phần tử đầu", () => {
+      const r = validateResult({ sides: [side("right", "甲"), side("right", "乙")] });
+      expect(r.sides).toHaveLength(1);
+      expect(r.sides[0].heroes[0].nameCn).toBe("甲");
+    });
+    it("phe đến sau trả về đứng sau left dù model in ngược", () => {
+      const r = validateResult({ sides: [side("right", "甲"), side("left", "乙")] });
+      expect(r.sides.map((s) => s.side)).toEqual(["left", "right"]);
+    });
+    it(">2 phe lấy 2 đầu", () => {
+      const r = validateResult({ sides: [side("left", "甲"), side("right", "乙"), side("left", "丙")] });
+      expect(r.sides.map((s) => s.heroes[0].nameCn)).toEqual(["甲", "乙"]);
+    });
+    it("phe rỗng bị bỏ; không còn phe nào -> ném", () => {
+      const r = validateResult({ sides: [side("left"), side("right", "乙")] });
+      expect(r.sides).toEqual([{ side: "right", heroes: [expect.objectContaining({ nameCn: "乙" })] }]);
+      expect(() => validateResult({ sides: [side("left"), side("right")] })).toThrow();
+      expect(() => validateResult({ sides: [] })).toThrow();
+    });
+    it("mỗi phe ≤6 tướng, tổng ≤12", () => {
+      const nine = Array.from({ length: 9 }, (_, i) => `t${i}`);
+      const r = validateResult({ sides: [side("left", ...nine), side("right", ...nine)] });
+      expect(r.sides.map((s) => s.heroes.length)).toEqual([6, 6]);
+    });
   });
 });
 
 describe("parseAndValidateByMode fenced output (M1 end-to-end)", () => {
   it("fence + validate", () => {
     const out = parseAndValidateByMode("analyzeTeamImage", '```json\n{"heroes":[{"nameCn":"关羽","tacticsCn":[],"statFocusCn":"武力"}]}\n```');
-    expect("heroes" in out && out.heroes[0].nameCn).toBe("关羽");
+    expect("sides" in out && out.sides[0].heroes[0].nameCn).toBe("关羽");
   });
 });
 
 describe("parseAndValidateByMode", () => {
-  it("default analyzeTeamImage keeps existing analyze result shape", () => {
-    const out = parseAndValidateByMode("analyzeTeamImage", '{"heroes":[{"nameCn":"关羽","tacticsCn":[],"statFocusCn":"武力"}]}');
-    expect("heroes" in out).toBe(true);
+  it("default analyzeTeamImage returns sides shape", () => {
+    const out = parseAndValidateByMode("analyzeTeamImage", '{"screen":"teamDetail","sides":[{"side":"left","heroes":[{"nameCn":"关羽","tacticsCn":[],"statFocusCn":"武力"}]}]}');
+    expect(out).toMatchObject({ screen: "teamDetail", sides: [{ side: "left" }] });
   });
 
   it("validates scanHeroes mode", () => {

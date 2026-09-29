@@ -266,6 +266,57 @@ export function draftFromRead(result, indexes) {
   return draft;
 }
 
+/**
+ * Kết quả Worker `analyzeTeamImage` -> `{screen, sides:[{side, heroes}]}` (left trước right); hỏng -> null.
+ * Nhận cả dạng cũ `{heroes}` (Pages có thể deploy trước Worker) thành 1 phe `left`, screen "other".
+ * Nhánh dạng cũ gỡ đi sau khi Worker mới đã deploy.
+ */
+export function normalizeTeamRead(data) {
+  if (!data || typeof data !== "object" || Array.isArray(data)) return null;
+  const isHeroList = (value) => Array.isArray(value) && value.every((hero) => hero && typeof hero === "object" && !Array.isArray(hero));
+  if (!Array.isArray(data.sides)) {
+    return isHeroList(data.heroes) && data.heroes.length
+      ? { screen: "other", sides: [{ side: "left", heroes: data.heroes }] }
+      : null;
+  }
+  const screen = ["battleReport", "teamDetail"].includes(data.screen) ? data.screen : "other";
+  const taken = new Set();
+  const sides = [];
+  for (const [index, entry] of data.sides.slice(0, 2).entries()) {
+    if (!entry || typeof entry !== "object" || !isHeroList(entry.heroes)) return null;
+    const side = entry.side === "left" || entry.side === "right" ? entry.side : index === 0 ? "left" : "right";
+    if (taken.has(side) || !entry.heroes.length) continue;
+    taken.add(side);
+    sides.push({ side, heroes: entry.heroes });
+  }
+  if (!sides.length) return null;
+  return { screen, sides: sides.sort((a, b) => (a.side === "left" ? -1 : 1) - (b.side === "left" ? -1 : 1)) };
+}
+
+/** 12 ô của một editor theo thứ tự cố định: mỗi tướng = tướng, chiến pháp A/B, binh thư. */
+const draftCells = (draft) => (draft?.heroes || []).flatMap((member) => [member.hero, ...member.tactics, member.book]);
+
+/**
+ * Tín hiệu lỗi ẩn danh của một lượt đọc (chỉ số đếm, không tên/ảnh): so draft ban đầu từ AI với draft
+ * lúc bấm Đối chiếu, chỉ trên ô AI có chép (ô trống ban đầu người dùng tự điền — ô tướng thiếu, binh thư
+ * màn chiến báo — không phải lỗi đọc). read = ô AI có chép; unclear = trong đó ô không chắc/không rõ;
+ * edited = trong đó ô mà ID cuối khác ID AI đưa chắc ban đầu. Luôn có unclear ≤ read, edited ≤ read.
+ */
+export function readStats(initialDraft, finalDraft) {
+  const after = draftCells(finalDraft);
+  let read = 0;
+  let edited = 0;
+  let unclear = 0;
+  draftCells(initialDraft).forEach((cell, index) => {
+    if (cell.state === "empty") return;
+    read += 1;
+    if (cell.state === "unsure" || cell.state === "unknown") unclear += 1;
+    const initialId = cell.state === "sure" ? cell.id : null;
+    if (initialId !== (after[index]?.id || null)) edited += 1;
+  });
+  return { read, edited, unclear };
+}
+
 /** Đội đã xác nhận (chỉ ID canonical) -> editor toàn ô chắc/trống. */
 export function draftFromTeam(team) {
   const draft = emptyDraft();

@@ -1,5 +1,5 @@
 // Schema kết quả vision + validate + tolerant parse (M1).
-// Model trả JSON: { heroes: [{ nameCn, tacticsCn[≤3 dòng], booksCn[], statFocusCn }] }.
+// Model trả JSON: { screen, sides: [{ side, heroes: [{ nameCn, tacticsCn[≤3 dòng], booksCn[], statFocusCn }] }] }.
 // Chỉ chép chữ in trong ảnh: ô không đọc được là `未知`. Site map Hán -> Việt qua dict
 // (match-dict.js), Worker KHÔNG map.
 
@@ -17,8 +17,16 @@ export interface HeroRead {
   booksCn: string[];
   statFocusCn: string;
 }
-export interface AnalyzeResult {
+/** Loại màn ảnh: chiến báo (2 phe), chi tiết một đội, hoặc khác. */
+export type ScreenKind = "battleReport" | "teamDetail" | "other";
+export type SideId = "left" | "right";
+export interface AnalyzeSide {
+  side: SideId;
   heroes: HeroRead[];
+}
+export interface AnalyzeResult {
+  screen: ScreenKind;
+  sides: AnalyzeSide[];
 }
 
 export type AnalyzeMode = "analyzeTeamImage" | "scanHeroes" | "scanTactics" | "scanBuiltTeams" | "explainSubstitute";
@@ -97,28 +105,59 @@ export function tolerantParse(text: string): unknown {
   }
 }
 
-// [M2] Chặn output phình to (model lỗi/độc): đội ≤6 tướng, cắt chuỗi/ mảng.
+// [M2] Chặn output phình to (model lỗi/độc): mỗi phe ≤6 tướng, tổng ≤12, cắt chuỗi/ mảng.
+const MAX_SIDE_HEROES = 6;
 const MAX_HEROES = 12;
+const MAX_SIDES = 2;
 const MAX_LIST = 6; // trần số phần tử mảng Hán (booksCn và danh sách của các mode scan)
 const MAX_STR = 40; // tên Hán/chất tướng thực tế rất ngắn
 
 const cut = (s: string) => s.trim().slice(0, MAX_STR);
 
-/** Ép parsed về AnalyzeResult; ném nếu thiếu/sai cấu trúc bắt buộc. */
+const SCREEN_KINDS: readonly ScreenKind[] = ["battleReport", "teamDetail", "other"];
+const SIDE_IDS: readonly SideId[] = ["left", "right"];
+
+function heroRead(h: any, label: string): HeroRead {
+  if (!h || typeof h !== "object") throw new TypeError(`${label} không hợp lệ`);
+  const nameCn = (typeof h.nameCn === "string" ? cut(h.nameCn) : "") || UNKNOWN_CN;
+  const tacticsCn = tacticRows(h.tacticsCn);
+  const booksCn = strList(h.booksCn); // binh thư (field riêng; thiếu -> [] backward-compat)
+  const statFocusCn = typeof h.statFocusCn === "string" ? cut(h.statFocusCn) : "";
+  return { nameCn, tacticsCn, booksCn, statFocusCn };
+}
+
+/**
+ * Ép parsed về AnalyzeResult; ném nếu không còn phe nào có tướng.
+ * Chịu lỗi: dạng cũ `{heroes}` -> 1 phe left; screen lạ -> other; side thiếu/sai theo vị trí;
+ * side trùng giữ phần tử đầu; >2 phe lấy 2 đầu; phe rỗng bị bỏ.
+ */
 export function validateResult(parsed: unknown): AnalyzeResult {
   if (!parsed || typeof parsed !== "object") throw new TypeError("Kết quả không phải object");
-  const heroesRaw = (parsed as any).heroes;
-  if (!Array.isArray(heroesRaw)) throw new TypeError("Thiếu mảng 'heroes'");
-  const heroes: HeroRead[] = heroesRaw.slice(0, MAX_HEROES).map((h: any, i: number) => {
-    if (!h || typeof h !== "object") throw new TypeError(`heroes[${i}] không hợp lệ`);
-    const nameCn = (typeof h.nameCn === "string" ? cut(h.nameCn) : "") || UNKNOWN_CN;
-    const tacticsCn = tacticRows(h.tacticsCn);
-    const booksCn = strList(h.booksCn); // binh thư (field riêng; thiếu -> [] backward-compat)
-    const statFocusCn = typeof h.statFocusCn === "string" ? cut(h.statFocusCn) : "";
-    return { nameCn, tacticsCn, booksCn, statFocusCn };
+  const p = parsed as any;
+  const screen: ScreenKind = SCREEN_KINDS.includes(p.screen) ? p.screen : "other";
+  let rawSides: any[];
+  if (Array.isArray(p.sides)) rawSides = p.sides.slice(0, MAX_SIDES);
+  else if (Array.isArray(p.heroes)) rawSides = [{ side: "left", heroes: p.heroes }]; // dạng cũ
+  else throw new TypeError("Thiếu mảng 'sides'");
+
+  const seen = new Set<SideId>();
+  const sides: AnalyzeSide[] = [];
+  let total = 0;
+  rawSides.forEach((s: any, i: number) => {
+    if (!s || typeof s !== "object" || !Array.isArray(s.heroes)) throw new TypeError(`sides[${i}] không hợp lệ`);
+    const side: SideId = SIDE_IDS.includes(s.side) ? s.side : SIDE_IDS[i];
+    if (seen.has(side)) return;
+    seen.add(side);
+    const heroes = s.heroes
+      .slice(0, Math.min(MAX_SIDE_HEROES, MAX_HEROES - total))
+      .map((h: any, j: number) => heroRead(h, `sides[${i}].heroes[${j}]`));
+    if (heroes.length === 0) return;
+    total += heroes.length;
+    sides.push({ side, heroes });
   });
-  if (heroes.length === 0) throw new TypeError("heroes rỗng");
-  return { heroes };
+  if (sides.length === 0) throw new TypeError("sides rỗng");
+  sides.sort((a, b) => SIDE_IDS.indexOf(a.side) - SIDE_IDS.indexOf(b.side));
+  return { screen, sides };
 }
 
 function strList(v: any) {

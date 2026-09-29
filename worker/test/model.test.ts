@@ -33,6 +33,11 @@ describe("vision prompt", () => {
     // Giữ guard chống nhầm dòng chọn tướng + binh chủng.
     expect(text).toContain("Không dùng tên trong dòng #帅选择");
     expect(text).toContain("象兵");
+    // Hai phe: schema mới, chép cả hai phe, không còn câu chỉ chép phe trái.
+    expect(text).toContain('"sides"');
+    expect(text).toContain('"screen"');
+    expect(text).toContain("chép CẢ HAI phe");
+    expect(text).not.toContain("chỉ chép phe 我方");
   });
 });
 

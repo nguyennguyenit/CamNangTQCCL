@@ -15,6 +15,8 @@ import {
   draftReady,
   emptyCell,
   emptyDraft,
+  normalizeTeamRead,
+  readStats,
   referenceTeam,
   sureCell,
 } from "./analyze-map.js";
@@ -27,6 +29,7 @@ import {
   readHistory,
   writeHistory,
 } from "./analyze-state.js";
+import { api, describeError, loadSession, signInPrompt } from "./community-api.js";
 import { L, currentLocale, localePath } from "./i18n.js";
 import { readRecommendedQuery } from "./recommended-reference-state.js";
 import { createRawNameResolver, localName } from "./website-display.js";
@@ -34,9 +37,9 @@ import { renderTurnstileWidget, TURNSTILE_ERROR_MESSAGE } from "./turnstile.js";
 
 // `<html lang>` cố định theo trang nên các hằng dịch lúc nạp module vẫn đúng ngôn ngữ.
 const DISCLAIMER = L(
-  "Ảnh được gửi tới nhà cung cấp AI của site (DeepSeek hoặc OpenCode Zen) để phân tích; site không lưu ảnh. " +
-  "Tránh ảnh lộ tên tài khoản; nên crop chỉ phần đội hình.",
-  "图片将发送至本站使用的 AI 服务商（DeepSeek 或 OpenCode Zen）进行分析，本站不保存图片。请避免截图中出现账号名称，建议只裁剪阵容部分。",
+  "Ảnh được gửi tới nhà cung cấp AI của site (DeepSeek hoặc OpenCode Zen) để phân tích. Site chỉ đếm ẩn danh số ô bạn phải sửa (không ảnh, không tên); " +
+  "ảnh chỉ được lưu khi bạn tự bấm gửi. Tránh ảnh lộ tên tài khoản; nên crop chỉ phần đội hình.",
+  "图片将发送至本站使用的 AI 服务商（DeepSeek 或 OpenCode Zen）进行分析。本站仅匿名统计您需要修改的格数（不含图片和名称）；只有您主动点击发送时才会保存图片。请避免截图中出现账号名称，建议只裁剪阵容部分。",
 );
 
 /* ---------- Thông điệp lỗi (không để lọt văn bản upstream) ---------- */
@@ -161,13 +164,16 @@ export function validateWorkerResult(mode, data) {
     );
   }
   if (mode !== "analyzeTeamImage") return false;
-  return Array.isArray(data.heroes) && data.heroes.length > 0 && data.heroes.every(hero =>
-    hero && typeof hero === "object" &&
-    isNonblankString(hero.nameCn) &&
+  // Nhận cả dạng C1 `{screen, sides}` lẫn dạng cũ `{heroes}` (gỡ nhánh cũ sau khi Worker mới đã deploy).
+  const read = normalizeTeamRead(data);
+  return Boolean(read) && read.sides.every(side => side.heroes.every(isValidHeroRead));
+}
+
+function isValidHeroRead(hero) {
+  return isNonblankString(hero.nameCn) &&
     isStringArray(hero.tacticsCn) &&
     isStringArray(hero.booksCn) &&
-    typeof hero.statFocusCn === "string"
-  );
+    typeof hero.statFocusCn === "string";
 }
 
 
@@ -409,10 +415,17 @@ export function initAnalyze(deps, mount) {
     return el("datalist", { id: `ana-${kind}-options` }, sorted.map((label) => el("option", { value: label })));
   });
 
+  // `generation` huỷ lượt nén ảnh/đọc Worker cũ; `compareGeneration` chỉ huỷ lượt đối chiếu cũ (đổi phe,
+  // ảnh mới), để đổi phe khi đang chờ Worker không làm mất kết quả đọc.
   let generation = 0;
+  let compareGeneration = 0;
   let draft = emptyDraft();
   let draftFromImage = false;
   let compared = null; // {team, season, standard, other} của lần đối chiếu đang hiện
+  // Lượt đọc ảnh đang giữ: {id, screen, imageDataUrl, active, sides: Map<side, {heroes, initial, draft, statsSent, sampleSent}>}.
+  // Mỗi phe giữ draft riêng đã sửa trong phiên; `initial` là bản AI đọc gốc để đo số ô phải sửa.
+  let scan = null;
+  let scanSeq = 0;
   let model = null;
   let historyEntries = readHistory(localStore());
   const state = { imageDataUrl: null, fileName: "", token: null, busy: false, done: false };
@@ -491,6 +504,25 @@ export function initAnalyze(deps, mount) {
     historyList,
   ]);
 
+  /* ----- Chọn phe (ảnh có 2 phe) ----- */
+  const SIDE_LABELS = {
+    left: L("Phe trái · ta", "左侧 · 我方"),
+    right: L("Phe phải · đối thủ", "右侧 · 对手"),
+  };
+  const sideChooser = el("div", { class: "ana-side-options", role: "radiogroup", "aria-label": L("Chọn phe cần soi", "选择要识别的一方") });
+  const sideRun = el("button", { type: "button", class: "ana-btn primary ana-side-run", disabled: "" }, L("Soi phe này", "识别这一方"));
+  const sideCard = el("section", { class: "ana-card ana-side-pick", hidden: "" }, [
+    el("h2", { class: "ana-card-title" }, L("2 · Chọn phe", "2 · 选择一方")),
+    el("p", { class: "ana-note" }, L(
+      "Ảnh có cả hai phe. Chọn phe muốn soi; có thể đổi sang phe kia sau mà không cần đọc lại ảnh.",
+      "截图包含双方。请选择要识别的一方；之后可切换到另一方，无需重新读取图片。",
+    )),
+    sideChooser,
+    sideRun,
+  ]);
+  let chosenSide = null;
+  const sideSwitch = el("div", { class: "ana-side-switch", role: "group", "aria-label": L("Đổi phe", "切换一方"), hidden: "" });
+
   /* ----- Thẻ 2: editor xác nhận ----- */
   const editorGrid = el("div", { class: "ana-editor-grid" });
   const seasonSelect = el("select", { id: "ana-season", class: "ana-input", disabled: "" }, [
@@ -504,6 +536,7 @@ export function initAnalyze(deps, mount) {
       el("h2", { class: "ana-card-title" }, L("2 · Kiểm tra đội", "2 · 核对阵容")),
       resetBtn,
     ]),
+    sideSwitch,
     el("p", { class: "ana-note" }, L(
       "Sửa mọi ô cho đúng game. Ô “Không chắc” chọn một gợi ý hoặc gõ lại; ô chiến pháp, binh thư có thể để trống.",
       "请将各格改为与游戏一致。“不确定”的格可点选建议或重新输入；战法、兵书格可留空。",
@@ -516,6 +549,36 @@ export function initAnalyze(deps, mount) {
     readyNote,
     ...datalists,
   ]);
+
+  /* ----- Gửi ảnh tự nguyện (chỉ khi người dùng bấm) ----- */
+  const sampleConsent = el("input", { type: "checkbox", class: "ana-sample-check" });
+  const sampleSend = el("button", { type: "button", class: "ana-btn ana-sample-send", disabled: "" }, L("Gửi ảnh này", "发送这张图片"));
+  const sampleNote = el("p", { class: "ana-note ana-sample-note", role: "status" });
+  const sampleLogin = el("div", { class: "ana-sample-login", hidden: "" });
+  const sampleControls = el("div", { class: "ana-sample-controls" }, [
+    el("label", { class: "ana-sample-consent" }, [
+      sampleConsent,
+      el("span", {}, L(
+        "Tôi đồng ý gửi ảnh này cùng đội đã xác nhận cho quản trị viên để cải thiện AI đọc ảnh. Chỉ quản trị viên xem; nên che tên tài khoản trong ảnh trước khi gửi.",
+        "我同意将这张图片及已确认的阵容发送给管理员，用于改进 AI 识图。仅管理员可见；发送前建议遮住图片中的账号名称。",
+      )),
+    ]),
+    sampleSend,
+  ]);
+  const sampleBox = el("section", { class: "ana-sample", hidden: "" }, [
+    el("h3", { class: "ana-group-title" }, L("Giúp AI đọc đúng hơn", "帮助 AI 读得更准")),
+    el("p", { class: "ana-note" }, L(
+      "Tuỳ chọn. Ảnh chỉ được lưu khi bạn bấm gửi và được quản trị viên duyệt trước khi dùng.",
+      "可选。只有您点击发送才会保存图片，且需管理员审核后才会使用。",
+    )),
+    sampleLogin,
+    sampleControls,
+    sampleNote,
+  ]);
+  let sampleKey = "";
+  let sampleUser; // undefined = chưa hỏi phiên; null = chưa đăng nhập
+  let sampleAsked = false;
+  let sampleBusy = false;
 
   /* ----- Thẻ 3: đối chiếu ----- */
   const compareBody = el("div", { class: "ana-compare-body" });
@@ -531,6 +594,7 @@ export function initAnalyze(deps, mount) {
     el("div", { class: "ana-compare-actions" }, [shareBtn, pngBtn]),
     shareNote,
     compareBody,
+    sampleBox,
   ]);
 
   const head = el("header", { class: "tool-head" }, [
@@ -836,13 +900,13 @@ export function initAnalyze(deps, mount) {
   async function runCompare({ save = false, push = false } = {}) {
     const team = confirmedTeam(draft);
     if (!team) return;
-    const started = ++generation;
+    const started = ++compareGeneration;
     compareCard.hidden = false;
     shareNote.textContent = "";
     compareSub.textContent = "";
     compareBody.replaceChildren(el("p", { class: "ana-note" }, L("Đang tải dữ liệu đội…", "正在加载阵容数据…")));
     const loaded = await ensureModel();
-    if (started !== generation) return;
+    if (started !== compareGeneration) return;
     if (!loaded) {
       compared = null;
       compareBody.replaceChildren(el("p", { class: "error", role: "status" }, L(
@@ -864,12 +928,178 @@ export function initAnalyze(deps, mount) {
       group(L("Đội khác · tham khảo", "其他阵容 · 仅供参考"), other,
         L("Không tìm thấy đội có sẵn nào có mức độ tương đồng đủ cao (≥2 tướng trùng).", "未找到相似度足够高的现有队伍（需至少 2 名武将相同）。"), "ana-group-other"),
     );
+    paintSample();
     if (save) {
+      sendScanStats();
       historyEntries = addHistoryEntry(historyEntries, { doi, season, savedAt: new Date().toISOString() });
       writeHistory(localStore(), historyEntries);
       renderHistory();
     }
   }
+
+  /* ----- Phe của ảnh đọc + tín hiệu lỗi ----- */
+  const activeSide = () => (scan?.active ? scan.sides.get(scan.active) : null);
+
+  function resetScan() {
+    scan = null;
+    chosenSide = null;
+    sideCard.hidden = true;
+    sideChooser.replaceChildren();
+    paintSideSwitch();
+    paintSample();
+  }
+
+  /** Tên tướng của phe để xem trước: khớp chắc dùng tên chuẩn, chưa khớp dùng chữ đọc được, 未知 hiện "?". */
+  function sidePreviewText(entry) {
+    return entry.initial.heroes
+      .filter((member) => member.hero.state !== "empty")
+      .map((member) => cellText("hero", member.hero) || "?")
+      .join(" · ");
+  }
+
+  function paintSideChooser() {
+    sideRun.disabled = !chosenSide;
+    sideChooser.replaceChildren(...[...scan.sides].map(([side, entry]) => {
+      const input = el("input", { type: "radio", name: "ana-side", value: side, class: "ana-side-radio" });
+      input.checked = chosenSide === side;
+      input.addEventListener("change", () => {
+        chosenSide = side;
+        sideRun.disabled = false;
+      });
+      return el("label", { class: "ana-side-option" }, [
+        input,
+        el("span", { class: "ana-side-text" }, [
+          el("span", { class: "ana-side-name" }, SIDE_LABELS[side]),
+          el("span", { class: "ana-side-heroes" }, sidePreviewText(entry)),
+        ]),
+      ]);
+    }));
+  }
+
+  /** Nút đổi phe trong thẻ editor: chỉ khi ảnh có 2 phe và một phe đang nạp. */
+  function paintSideSwitch() {
+    const two = Boolean(scan && scan.active && scan.sides.size > 1);
+    sideSwitch.hidden = !two;
+    if (!two) {
+      sideSwitch.replaceChildren();
+      return;
+    }
+    sideSwitch.replaceChildren(...[...scan.sides.keys()].map((side) =>
+      el("button", {
+        type: "button",
+        class: "ana-btn ana-side-tab",
+        "aria-pressed": String(scan.active === side),
+        onclick: () => switchSide(side),
+      }, SIDE_LABELS[side])));
+  }
+
+  /** Nạp editor bằng phe `side` của lượt đọc: dùng lại kết quả đã đọc, mỗi phe giữ draft đã sửa. */
+  function activateSide(side) {
+    const entry = scan.sides.get(side);
+    if (!entry) return;
+    const previous = activeSide();
+    if (previous) previous.draft = draft;
+    scan.active = side;
+    entry.draft ||= draftFromRead({ heroes: entry.heroes }, indexes);
+    draft = entry.draft;
+    draftFromImage = true;
+    compared = null;
+    compareGeneration += 1;
+    compareCard.hidden = true;
+    writeUrl({ [TEAM_QUERY_KEY]: null });
+    sideCard.hidden = true;
+    renderEditor();
+    paintSideSwitch();
+    paintSample();
+    ensureModel();
+  }
+
+  function switchSide(side) {
+    if (scan?.active === side) return;
+    activateSide(side);
+    cellViews[0]?.input.focus();
+  }
+
+  /** Đếm ẩn danh số ô phải sửa, 1 lần cho mỗi (lượt đọc, phe); lỗi bỏ qua lặng lẽ. */
+  function sendScanStats() {
+    const entry = activeSide();
+    if (!entry || !draftFromImage || entry.statsSent) return;
+    entry.statsSent = true;
+    api("/api/scan-stats", {
+      method: "POST",
+      json: { screen: scan.screen, side: scan.active, ...readStats(entry.initial, draft) },
+    }).catch(() => {});
+  }
+
+  /** Khối gửi ảnh tự nguyện: chỉ hiện khi có kết quả đối chiếu từ ảnh còn trong bộ nhớ. */
+  function paintSample() {
+    const entry = activeSide();
+    const visible = Boolean(entry && draftFromImage && compared && scan.imageDataUrl);
+    sampleBox.hidden = !visible;
+    if (!visible) return;
+    const key = `${scan.id}:${scan.active}`;
+    if (key !== sampleKey) {
+      sampleKey = key;
+      sampleConsent.checked = false;
+      sampleNote.textContent = "";
+    }
+    if (sampleUser === undefined && !sampleAsked) {
+      sampleAsked = true;
+      // Phiên không hỏi được (dịch vụ cộng đồng lỗi): vẫn hiện nút, lỗi gửi sẽ báo bằng câu chuẩn.
+      loadSession({ probe: true }).then((user) => { sampleUser = user; paintSample(); }, () => { sampleUser = {}; paintSample(); });
+    }
+    const loggedOut = sampleUser === null;
+    sampleLogin.hidden = !loggedOut;
+    if (loggedOut && !sampleLogin.firstChild) {
+      sampleLogin.replaceChildren(signInPrompt(L(
+        "Đăng nhập để gửi ảnh cho quản trị viên.", "登录后才能向管理员发送图片。",
+      )));
+    }
+    sampleControls.hidden = loggedOut || sampleUser === undefined;
+    if (entry.sampleSent) sampleNote.textContent = L("Đã gửi, cảm ơn bạn.", "已发送，谢谢！");
+    sampleConsent.disabled = entry.sampleSent || sampleBusy;
+    sampleSend.disabled = !sampleConsent.checked || entry.sampleSent || sampleBusy;
+  }
+
+  sampleConsent.addEventListener("change", paintSample);
+  sampleSend.addEventListener("click", async () => {
+    const entry = activeSide();
+    if (!entry || entry.sampleSent || sampleBusy || !sampleConsent.checked) return;
+    const confirmed = confirmedTeam(draft);
+    if (!confirmed) {
+      sampleNote.textContent = L("Hãy xác nhận đủ đội trước khi gửi ảnh.", "请先确认完整阵容再发送图片。");
+      return;
+    }
+    const current = scan;
+    const side = current.active;
+    sampleBusy = true;
+    sampleNote.textContent = L("Đang gửi…", "正在发送…");
+    paintSample();
+    try {
+      const image = await (await fetch(current.imageDataUrl)).blob();
+      const form = new FormData();
+      form.append("image", image, "scan");
+      form.append("payload", JSON.stringify({
+        screen: current.screen,
+        side,
+        lang: currentLocale(),
+        aiRead: { heroes: entry.heroes },
+        confirmed,
+      }));
+      await api("/api/scan-samples", { method: "POST", form });
+      entry.sampleSent = true;
+      if (scan === current && current.active === side) sampleNote.textContent = L("Đã gửi, cảm ơn bạn.", "已发送，谢谢！");
+    } catch (error) {
+      if (scan === current && current.active === side) sampleNote.textContent = describeError(error);
+    } finally {
+      sampleBusy = false;
+      paintSample();
+    }
+  });
+
+  sideRun.addEventListener("click", () => {
+    if (scan && chosenSide) activateSide(chosenSide);
+  });
 
   /* ----- Lịch sử ----- */
   function renderHistory() {
@@ -896,6 +1126,7 @@ export function initAnalyze(deps, mount) {
 
   /** Mở một đội đã xác nhận (link chia sẻ / lịch sử): dựng editor + diff, không gọi Worker. */
   async function openTeam(team, season, { push = false } = {}) {
+    resetScan();
     draft = draftFromTeam(team);
     draftFromImage = false;
     renderEditor();
@@ -911,6 +1142,7 @@ export function initAnalyze(deps, mount) {
     const team = decodeTeamParam(params.get(TEAM_QUERY_KEY), { hasId });
     if (!team) {
       writeUrl({ [TEAM_QUERY_KEY]: null });
+      resetScan();
       draft = emptyDraft();
       draftFromImage = false;
       renderEditor();
@@ -973,6 +1205,7 @@ export function initAnalyze(deps, mount) {
     if (compared) runCompare();
   });
   resetBtn.addEventListener("click", () => {
+    resetScan();
     draft = emptyDraft();
     draftFromImage = false;
     compared = null;
@@ -983,21 +1216,52 @@ export function initAnalyze(deps, mount) {
   });
   manualBtn.addEventListener("click", () => {
     // Ảnh và nhập tay dùng chung một editor: mở editor với dữ liệu đang có, không gọi Worker.
-    if (editorCard.hidden) renderEditor();
+    if (editorCard.hidden) {
+      resetScan();
+      draft = emptyDraft();
+      draftFromImage = false;
+      renderEditor();
+    } else if (scan) {
+      resetScan();
+    }
     ensureModel();
     (cellViews.find((view) => readCell(view.ref).state !== "sure") || cellViews[0])?.input.focus();
   });
 
-  /** Kết quả Worker -> editor (ô không chắc/không rõ phải được xác nhận trước khi đối chiếu). */
+  /**
+   * Kết quả Worker -> lượt đọc. 1 phe: nạp editor như cũ (ô không chắc/không rõ phải được xác nhận trước
+   * khi đối chiếu). 2 phe: chưa nạp editor, hiện khối chọn phe.
+   */
   function applyResult(result) {
-    if (!result || !Array.isArray(result.heroes) || result.heroes.length === 0) return false;
-    draft = draftFromRead(result, indexes);
-    draftFromImage = true;
+    const read = normalizeTeamRead(result);
+    if (!read) return false;
+    resetScan();
+    scan = {
+      id: ++scanSeq,
+      screen: read.screen,
+      imageDataUrl: state.imageDataUrl,
+      active: null,
+      sides: new Map(read.sides.map(({ side, heroes }) => [side, {
+        heroes,
+        initial: draftFromRead({ heroes }, indexes),
+        draft: null,
+        statsSent: false,
+        sampleSent: false,
+      }])),
+    };
     compared = null;
     compareCard.hidden = true;
     writeUrl({ [TEAM_QUERY_KEY]: null });
-    renderEditor();
-    ensureModel();
+    if (scan.sides.size === 1) {
+      activateSide([...scan.sides.keys()][0]);
+    } else {
+      draft = emptyDraft();
+      draftFromImage = true;
+      editorCard.hidden = true;
+      paintSideChooser();
+      sideCard.hidden = false;
+      ensureModel();
+    }
     state.done = true;
     paintPick();
     return true;
@@ -1011,7 +1275,9 @@ export function initAnalyze(deps, mount) {
   async function pickFile(file) {
     if (!file || !file.type.startsWith("image/")) return;
     const started = ++generation;
+    compareGeneration += 1;
     clearRead();
+    resetScan();
     setStatus(L("Đang nén ảnh…", "正在压缩图片…"));
     try {
       const compressed = await compressImage(file);
@@ -1074,6 +1340,15 @@ export function initAnalyze(deps, mount) {
       state.busy = true;
       paintPick();
       setStatus(L("Đang soi đội…", "正在识别阵容…"));
+      // Ảnh khó khiến AI đọc lâu: sau 15 s báo rõ để người dùng không tưởng treo.
+      const slowTimer = setTimeout(() => {
+        if (started === generation) {
+          setStatus(L(
+            "AI đang đọc kỹ ảnh này, có thể mất thêm chút thời gian…",
+            "AI 正在仔细阅读这张图片，可能需要多等一会儿…",
+          ));
+        }
+      }, 15000);
       try {
         const result = await callWorker(state.imageDataUrl, state.token);
         if (started !== generation) return;
@@ -1088,6 +1363,7 @@ export function initAnalyze(deps, mount) {
       } finally {
         // Luôn mở khoá, kể cả khi người dùng đã chọn ảnh khác: token Turnstile dùng 1 lần -> reset,
         // yêu cầu xác thực lại. Lượt cũ chỉ bị bỏ kết quả/trạng thái ở trên, không được kẹt nút.
+        clearTimeout(slowTimer);
         state.token = null;
         state.busy = false;
         if (turnstileRendered && window.turnstile) window.turnstile.reset(tsBox);
@@ -1105,7 +1381,7 @@ export function initAnalyze(deps, mount) {
     head,
     el("div", { class: "ana-layout" }, [
       el("div", { class: "ana-col ana-col-pick" }, [pickCard, historyCard]),
-      el("div", { class: "ana-col ana-col-result" }, [editorCard, compareCard]),
+      el("div", { class: "ana-col ana-col-result" }, [sideCard, editorCard, compareCard]),
     ]),
   );
   paintPick();

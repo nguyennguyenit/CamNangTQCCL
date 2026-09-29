@@ -1,0 +1,68 @@
+{
+  "image": "battle-simplified-1.jpg",
+  "source": "Chiến báo giản thể (bài đăng 三国志战略版吧, còn watermark), bật 显示战法详情 nên có dòng 发动/杀敌/救援 xen giữa; đã che tên. Phe phải là quân thủ đất (NPC). 骁军定北, 顿兵坚城 chưa có trong từ điển nên để null.",
+  "expected": {
+    "screen": "battleReport",
+    "sideCount": 2,
+    "sides": [
+      {
+        "side": "left",
+        "heroes": [
+          {
+            "hero": "hero:gia-cat-khac",
+            "tactics": [
+              "tactic:vo-phong-tran",
+              "tactic:thinh-khi-linh-dich"
+            ],
+            "book": null
+          },
+          {
+            "hero": "hero:thai-su-tu",
+            "tactics": [
+              "tactic:thoi-phong-doan-nhan",
+              "tactic:mau-gianh-loi-the"
+            ],
+            "book": null
+          },
+          {
+            "hero": "hero:ta-tu",
+            "tactics": [
+              "tactic:vo-duong-phi-quan",
+              "tactic:thoi-co-chien-thang"
+            ],
+            "book": null
+          }
+        ]
+      },
+      {
+        "side": "right",
+        "heroes": [
+          {
+            "hero": "hero:dinh-phung",
+            "tactics": [
+              null,
+              "tactic:khinh-dung-phi-yen"
+            ],
+            "book": null
+          },
+          {
+            "hero": "hero:tran-vo",
+            "tactics": [
+              "tactic:ti-thuc-kich-hu",
+              "tactic:ngu-dich-binh-chuong"
+            ],
+            "book": null
+          },
+          {
+            "hero": "hero:dong-tap",
+            "tactics": [
+              null,
+              "tactic:lac-phuong"
+            ],
+            "book": null
+          }
+        ]
+      }
+    ]
+  }
+}

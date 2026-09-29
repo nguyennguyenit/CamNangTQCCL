@@ -15,6 +15,9 @@ import {
   emptyCell,
   diffTeam,
   compareTeams,
+  normalizeTeamRead,
+  readStats,
+  sureCell,
 } from "../js/analyze-map.js";
 
 const HEROES = [
@@ -505,4 +508,71 @@ test("compareTeams: xếp theo số tướng khớp rồi chiến pháp khớp, 
   const ranked = compareTeams(TEAM, records, { minHeroes: 2, limit: 5 });
   assert.deepEqual(ranked.map(({ record: item }) => item.sourceConfigId), ["ba-tuong", "hai-tuong-co-chien-phap", "hai-tuong", "hai-tuong-sau"]);
   assert.equal(compareTeams(TEAM, records, { minHeroes: 2, limit: 2 }).length, 2);
+});
+
+/* ---------- 2 phe + tín hiệu lỗi ---------- */
+
+const H = (nameCn) => ({ nameCn, tacticsCn: [], booksCn: [], statFocusCn: "" });
+
+test("normalizeTeamRead: dạng C1 giữ 2 phe, left trước right", () => {
+  const read = normalizeTeamRead({
+    screen: "battleReport",
+    sides: [{ side: "right", heroes: [H("关羽")] }, { side: "left", heroes: [H("曹操")] }],
+  });
+  assert.equal(read.screen, "battleReport");
+  assert.deepEqual(read.sides.map((s) => s.side), ["left", "right"]);
+  assert.equal(read.sides[0].heroes[0].nameCn, "曹操");
+});
+
+test("normalizeTeamRead: side thiếu/trùng, screen lạ, >2 phe được chịu lỗi", () => {
+  const read = normalizeTeamRead({
+    screen: "???",
+    sides: [{ heroes: [H("曹操")] }, { side: "left", heroes: [H("关羽")] }, { heroes: [H("张飞")] }],
+  });
+  assert.equal(read.screen, "other");
+  assert.deepEqual(read.sides.map((s) => [s.side, s.heroes[0].nameCn]), [["left", "曹操"]]);
+});
+
+test("normalizeTeamRead: dạng cũ {heroes} thành 1 phe left", () => {
+  assert.deepEqual(normalizeTeamRead({ heroes: [H("曹操")] }), { screen: "other", sides: [{ side: "left", heroes: [H("曹操")] }] });
+});
+
+test("normalizeTeamRead: dữ liệu hỏng -> null", () => {
+  for (const bad of [null, [], "x", {}, { heroes: [] }, { heroes: ["x"] }, { sides: [] }, { sides: [{ side: "left", heroes: [] }] }, { sides: [null] }, { sides: [{ heroes: "x" }] }]) {
+    assert.equal(normalizeTeamRead(bad), null, JSON.stringify(bad));
+  }
+});
+
+const cellsOf = (...specs) => {
+  const draft = { heroes: Array.from({ length: 3 }, () => ({ hero: emptyCell(), tactics: [emptyCell(), emptyCell()], book: emptyCell() })) };
+  specs.forEach(([hero, cell, key, slot]) => {
+    if (key === "tactic") draft.heroes[hero].tactics[slot] = cell;
+    else draft.heroes[hero][key] = cell;
+  });
+  return draft;
+};
+const unsure = { state: "unsure", raw: "曹", id: null, candidates: ["hero:cao-cao"] };
+
+test("readStats: ô chắc giữ nguyên -> không có ô sửa", () => {
+  const draft = cellsOf([0, sureCell("hero:a"), "hero"], [0, sureCell("tactic:x"), "tactic", 0]);
+  assert.deepEqual(readStats(draft, structuredClone(draft)), { read: 2, edited: 0, unclear: 0 });
+});
+
+test("readStats: ô chắc bị đổi hoặc bị xoá tính là đã sửa", () => {
+  const initial = cellsOf([0, sureCell("hero:a"), "hero"], [0, sureCell("tactic:x"), "tactic", 0]);
+  const final = cellsOf([0, sureCell("hero:b"), "hero"]);
+  assert.deepEqual(readStats(initial, final), { read: 2, edited: 2, unclear: 0 });
+});
+
+test("readStats: ô không chắc được chọn ứng viên = đã sửa + không rõ; bỏ trống thì chỉ không rõ", () => {
+  const initial = cellsOf([0, unsure, "hero"], [1, { state: "unknown", raw: "未知", id: null, candidates: [] }, "book"]);
+  const final = cellsOf([0, sureCell("hero:cao-cao"), "hero"]);
+  assert.deepEqual(readStats(initial, final), { read: 2, edited: 1, unclear: 2 });
+});
+
+test("readStats: ô AI để trống không tính, kể cả khi người dùng tự điền (ô tướng thiếu, binh thư màn chiến báo)", () => {
+  assert.deepEqual(readStats(cellsOf(), cellsOf()), { read: 0, edited: 0, unclear: 0 });
+  const initial = cellsOf([0, sureCell("hero:a"), "hero"]);
+  const final = cellsOf([0, sureCell("hero:a"), "hero"], [1, sureCell("hero:b"), "hero"], [2, sureCell("book:z"), "book"]);
+  assert.deepEqual(readStats(initial, final), { read: 1, edited: 0, unclear: 0 });
 });

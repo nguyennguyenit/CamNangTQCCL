@@ -1,0 +1,68 @@
+{
+  "image": "battle-vi-1.jpg",
+  "source": "Chiến báo bản game tiếng Việt (tên in chữ Việt); đã che tên tài khoản/liên minh. Ô chưa chắc tên chuẩn (Vạn Quân Đoạt Sư, Tinh • Đại Kích Sĩ, Tinh • Lính Đan Dương) để null.",
+  "expected": {
+    "screen": "battleReport",
+    "sideCount": 2,
+    "sides": [
+      {
+        "side": "left",
+        "heroes": [
+          {
+            "hero": "hero:sp-ma-sieu",
+            "tactics": [
+              "tactic:duong-phong-thoi-quyet",
+              "tactic:thoi-phong-doan-nhan"
+            ],
+            "book": null
+          },
+          {
+            "hero": "hero:sp-hoang-phu-tung",
+            "tactics": [
+              "tactic:thuyen-co-muon-ten",
+              null
+            ],
+            "book": null
+          },
+          {
+            "hero": "hero:hua-du",
+            "tactics": [
+              null,
+              "tactic:lam-nguy-cuu-chu"
+            ],
+            "book": null
+          }
+        ]
+      },
+      {
+        "side": "right",
+        "heroes": [
+          {
+            "hero": "hero:sp-gia-cat-luong",
+            "tactics": [
+              "tactic:duong-suc-doi-chien",
+              "tactic:biet-minh-biet-ta"
+            ],
+            "book": null
+          },
+          {
+            "hero": "hero:quan-hung",
+            "tactics": [
+              "tactic:cuoi-ngua-nghin-dam",
+              "tactic:van-vo-song-toan"
+            ],
+            "book": null
+          },
+          {
+            "hero": "hero:truong-bao",
+            "tactics": [
+              null,
+              "tactic:nhan-loi-che-quyen"
+            ],
+            "book": null
+          }
+        ]
+      }
+    ]
+  }
+}

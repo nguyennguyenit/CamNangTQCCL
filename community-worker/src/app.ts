@@ -11,6 +11,7 @@ import { comments } from "./routes/comments";
 import { posts } from "./routes/posts";
 import { recruit } from "./routes/recruit";
 import { reports } from "./routes/reports";
+import { scan } from "./routes/scan";
 
 export const defaultDeps: AppDeps = {
   getUser: getSessionUser,
@@ -73,5 +74,6 @@ export function createApp(overrides: Partial<AppDeps> = {}) {
   app.route("/", posts);
   app.route("/", recruit);
   app.route("/", ai);
+  app.route("/", scan);
   return app;
 }

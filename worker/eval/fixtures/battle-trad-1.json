@@ -1,0 +1,60 @@
+{
+  "image": "battle-trad-1.jpg",
+  "source": "Chiến báo phồn thể (người dùng gửi, 2026-09); đã che tên tài khoản/liên minh và dòng thông báo. Phe trái thiếu ô thứ 3. 精·丹陽兵 chưa có trong từ điển nên để null (không chấm).",
+  "expected": {
+    "screen": "battleReport",
+    "sideCount": 2,
+    "sides": [
+      {
+        "side": "left",
+        "heroes": [
+          {
+            "hero": "hero:lang-thong",
+            "tactics": [
+              "tactic:ngu-dich-binh-chuong",
+              "tactic:thinh-khi-linh-dich"
+            ],
+            "book": null
+          },
+          {
+            "hero": "hero:truong-phi",
+            "tactics": [
+              "tactic:linh-thanh-chau",
+              "tactic:tat-phong-sau-vu"
+            ],
+            "book": null
+          }
+        ]
+      },
+      {
+        "side": "right",
+        "heroes": [
+          {
+            "hero": "hero:sp-gia-cat-luong",
+            "tactics": [
+              "tactic:biet-minh-biet-ta",
+              "tactic:duong-suc-doi-chien"
+            ],
+            "book": null
+          },
+          {
+            "hero": "hero:quan-hung",
+            "tactics": [
+              "tactic:van-vo-song-toan",
+              "tactic:cuoi-ngua-nghin-dam"
+            ],
+            "book": null
+          },
+          {
+            "hero": "hero:truong-bao",
+            "tactics": [
+              "tactic:pho-thang-dao-hoa",
+              null
+            ],
+            "book": null
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -8859,6 +8859,107 @@ body[data-page-section="roster-recommend"] .layout {
   display: none;
 }
 
+/* Ảnh có 2 phe: chọn phe trước khi nạp editor; nút đổi phe nằm trong thẻ editor. */
+.ana-side-options {
+  display: grid;
+  gap: var(--space-10);
+}
+
+.ana-side-option {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-12);
+  min-height: var(--control-44);
+  padding: var(--space-10) var(--space-14);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-10);
+  background: var(--panel);
+  cursor: pointer;
+}
+
+.ana-side-option:has(.ana-side-radio:checked) {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.ana-side-radio {
+  flex: none;
+  margin: var(--space-4) 0 0;
+}
+
+.ana-side-text {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.ana-side-name {
+  font: var(--type-control);
+}
+
+.ana-side-heroes {
+  color: var(--muted);
+  font: var(--type-meta);
+  overflow-wrap: anywhere;
+}
+
+.ana-side-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.ana-side-switch[hidden] {
+  display: none;
+}
+
+.ana-side-tab[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+/* Gửi ảnh tự nguyện: nút khoá tới khi tick đồng ý. */
+.ana-sample {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+  padding-top: var(--space-14);
+  border-top: var(--border-hair) solid var(--line);
+}
+
+.ana-sample[hidden],
+.ana-sample-login[hidden],
+.ana-sample-controls[hidden] {
+  display: none;
+}
+
+.ana-sample-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-10);
+}
+
+.ana-sample-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-10);
+  min-height: var(--control-44);
+  color: var(--muted);
+  font: var(--type-meta);
+  cursor: pointer;
+}
+
+.ana-sample-check {
+  flex: none;
+  margin: var(--space-2) 0 0;
+}
+
+.ana-sample-note:empty {
+  display: none;
+}
+
 /* Đối chiếu: nhóm Đội chuẩn theo mùa + Đội khác, mỗi hàng kèm diff từng ô. */
 .ana-compare-body {
   display: flex;
@@ -10490,6 +10591,34 @@ body[data-page-section="roster-recommend"] .layout {
   border-radius: var(--radius-12);
 }
 
+/* Tab AI: phần Tính năng — mỗi nhóm một khung; mắt xích = số thứ tự + 3 ô chọn + nút; model tự thêm cùng bố cục. */
+.cm-ai-groups { display: grid; gap: var(--space-16); }
+
+.cm-ai-group { display: grid; gap: var(--space-12); }
+
+.cm-ai-link,
+.cm-ai-model {
+  display: grid;
+  grid-template-columns: auto repeat(3, minmax(0, 1fr)) auto;
+  align-items: end;
+  gap: var(--space-12);
+}
+
+.cm-ai-model { grid-template-columns: repeat(2, minmax(0, 1fr)) minmax(0, 1.4fr) auto auto; }
+
+.cm-ai-efforts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-12);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.cm-ai-catalog { display: grid; gap: var(--space-4); margin: 0; padding-left: var(--space-16); color: var(--ink-2); font: var(--type-body); }
+
+.cm-ai-catalog code { overflow-wrap: anywhere; }
+
 .cm-check {
   display: inline-flex;
   align-items: center;
@@ -10504,6 +10633,8 @@ body[data-page-section="roster-recommend"] .layout {
   .cm-block { padding: var(--space-16); }
   .cm-admin-report { grid-template-columns: minmax(0, 1fr); }
   .cm-form-row { justify-content: flex-start; }
+  .cm-ai-link,
+  .cm-ai-model { grid-template-columns: minmax(0, 1fr); align-items: stretch; }
 }
 
 /* ===== Nút ở footer + hộp thoại: Ủng hộ tác giả (QR, LandingDonate 260927) và Góp ý, sửa lỗi =====

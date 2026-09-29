@@ -17,12 +17,15 @@ import {
 export const VISION_PROMPT =
   "Chép chữ từ screenshot đội hình game Tam Quốc Chí Chiến Lược (三国志战略版). " +
   "Trả về JSON đúng schema: " +
-  '{"heroes":[{"nameCn":"tên tướng chữ Hán hoặc 未知","tacticsCn":["dòng chiến pháp 1","dòng chiến pháp 2","dòng chiến pháp 3"],"booksCn":["binh thư chữ Hán"],"statFocusCn":"chất tướng vd 全智力"}]}. ' +
-  "Mỗi cột tướng là MỘT phần tử heroes, theo thứ tự trái sang phải. " +
+  '{"screen":"battleReport|teamDetail|other","sides":[{"side":"left|right","heroes":[{"nameCn":"tên tướng chữ Hán hoặc 未知","tacticsCn":["dòng chiến pháp 1","dòng chiến pháp 2","dòng chiến pháp 3"],"booksCn":["binh thư chữ Hán"],"statFocusCn":"chất tướng vd 全智力"}]}]}. ' +
+  "screen: battleReport = màn chiến báo 战报 có hai phe 我方/敌方 và chữ 胜/败; teamDetail = màn chi tiết MỘT đội/bố trận; other = còn lại. " +
+  "Màn có hai phe thì chép CẢ HAI phe: phe trái (我方, bên trái) là side left, phe phải (敌方, bên phải) là side right. Ảnh chỉ có một đội thì sides có đúng MỘT phần tử với side left. " +
+  "Bản game tiếng Việt in chữ Việt (vd Quân ta/Bên địch, Thắng/Thua, Tướng Chính/Phó Tướng): tên tướng và chiến pháp in chữ Việt thì chép NGUYÊN chữ Việt đang in vào nameCn/tacticsCn, không dịch sang chữ Hán; Quân ta là left, Bên địch là right. " +
+  "Mỗi cột tướng là MỘT phần tử heroes; thứ tự trong mỗi phe: 主将 trước rồi các 副将 — phe trái đọc từ trái sang phải; phe phải đọc từ phải sang trái (màn chiến báo in phe phải đối xứng: 副将 副将 主将, nên đọc ngược để 主将 đứng đầu). " +
   "CHỈ CHÉP CHỮ IN TRONG ẢNH: không nhận diện tướng qua chân dung, khuôn mặt, trang phục hay icon; không suy đoán, không bịa tên. " +
   "TẤT CẢ chữ Hán trong kết quả PHẢI là GIẢN THỂ (简体中文), tuyệt đối KHÔNG dùng phồn thể (繁体): vd phải ghi 连环计 chứ không phải 連環計, 夺魂挟魄 chứ không 奪魂挾魄. " +
   "Tên tướng thường in NHỎ ở đáy mỗi chân dung (cạnh số cấp/binh chủng) — HÃY đọc kỹ dòng đó và trả CHÍNH XÁC tên Hán in đó. TUYỆT ĐỐI KHÔNG thay tên in bằng một tướng nổi tiếng trông giống (vd thấy 周劭 thì trả 周劭, KHÔNG trả 赵云). " +
-  "Cột KHÔNG có tên in đọc được thì nameCn = 未知. Ô tướng trống (chỉ có hình bóng, không tướng, không chiến pháp) thì BỎ QUA, không thêm phần tử. Màn chiến báo có hai phe: chỉ chép phe 我方 (bên trái). " +
+  "Cột KHÔNG có tên in đọc được thì nameCn = 未知. Ô tướng trống (chỉ có hình bóng, không tướng, không chiến pháp) thì BỎ QUA, không thêm phần tử. " +
   "Không dùng tên trong dòng #帅选择/#师选择/天赋选择 làm tên tướng của từng cột; không đoán tên tướng từ tên đội. " +
   "tacticsCn là MỌI dòng chiến pháp in dưới cột tướng đó, theo đúng thứ tự từ trên xuống, tối đa 3 dòng, KỂ CẢ dòng đầu là chiến pháp tự mang của tướng (vd màn chiến báo 战报 in 3 dòng: tự mang rồi 2 chiến pháp đã học). Dòng có icon 兵 (vd 精·青州兵) cũng là chiến pháp, chép vào tacticsCn. Dòng không đọc được thì ghi 未知 ở đúng vị trí đó, KHÔNG dồn dòng dưới lên. Không phân loại, không bỏ dòng nào. " +
   "booksCn CHỈ gồm binh thư khi ảnh có in dòng binh thư riêng (thường màu vàng, vd 三军之众/统军/锤炼/铁甲/防备), theo thứ tự in. Màn chiến báo KHÔNG in binh thư: khi đó booksCn = []. KHÔNG đưa dòng chiến pháp nào vào booksCn và ngược lại. KHÔNG đưa thiên phú, quân sư, thuộc tính, hay binh chủng đặc biệt (vd 象兵/虎豹骑) vào booksCn. " +

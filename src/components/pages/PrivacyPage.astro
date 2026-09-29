@@ -110,6 +110,14 @@ const sections: PolicySection[] = [
         'Công cụ "Soi đội từ ảnh" và "Gợi ý đội từ kho" nén ảnh ngay trong trình duyệt rồi gửi qua Cloudflare Worker tới nhà cung cấp AI của site (DeepSeek hoặc OpenCode Zen, mô hình DeepSeek V4.1 Flash) để đọc chữ tên tướng và chiến pháp. Ảnh chỉ dùng cho lần đọc đó, site không lưu lại. Trước khi gửi, Cloudflare Turnstile kiểm tra để chặn bot; script Turnstile chỉ được nạp trên hai trang này và khi mở hộp thoại góp ý.',
         '“截图识阵”和“武将库配队”两个工具会先在浏览器中压缩图片，再经 Cloudflare Worker 发送至本站使用的 AI 服务商（DeepSeek 或 OpenCode Zen，DeepSeek V4.1 Flash 模型）识别武将和战法文字。图片仅用于本次识别，本站不会保存。发送前由 Cloudflare Turnstile 进行人机验证；Turnstile 脚本只在这两个页面以及打开反馈对话框时加载。',
       ),
+      t(
+        'Khi bạn bấm Đối chiếu trong "Soi đội từ ảnh", site ghi một bộ đếm ẩn danh: loại màn hình, phe đã chọn và số ô AI đọc được, số ô bạn phải sửa, số ô không rõ. Bộ đếm chỉ cộng dồn theo ngày, không kèm ảnh, tên tướng, tài khoản hay IP, và chỉ dùng để đo độ chính xác của AI.',
+        '在“截图识阵”中点击比对时，本站会记录一条匿名计数：画面类型、所选一方，以及 AI 识别的格数、你需要修改的格数和无法识别的格数。计数只按天累计，不含图片、武将名称、账号或 IP，仅用于衡量 AI 的准确度。',
+      ),
+      t(
+        'Nếu bạn đăng nhập, tick đồng ý và tự bấm "Gửi ảnh này", ảnh đó cùng chữ AI đọc được và đội bạn đã xác nhận được lưu trên Cloudflare R2/D1 để quản trị viên duyệt và dùng làm bộ ảnh kiểm tra độ chính xác của AI. Chỉ quản trị viên xem được; mẫu bị từ chối sẽ bị xoá ảnh. Không bấm gửi thì ảnh không bao giờ được lưu.',
+        '如果你登录、勾选同意并主动点击“发送这张图片”，该图片连同 AI 识别的文字和你确认的阵容会保存在 Cloudflare R2/D1，供管理员审核并用作检验 AI 准确度的图片集。仅管理员可见；被拒绝的样本会删除图片。不点击发送，图片永远不会被保存。',
+      ),
     ],
   },
   {
@@ -146,8 +154,8 @@ const sections: PolicySection[] = [
     heading: t('Nơi lưu trữ và bên xử lý', '存储位置与处理方'),
     items: [
       t(
-        'Cloudflare: lưu trữ site (Pages), máy chủ API (Workers), cơ sở dữ liệu tài khoản, bình luận, chiến báo, góp ý và nhật ký "Theo dõi chiêu mộ" đã đồng bộ khi bạn đăng nhập (D1; xoá theo tài khoản), ảnh chiến báo (R2), bộ đếm giới hạn (KV), Turnstile và gửi email góp ý (Email Service).',
-        'Cloudflare：网站托管（Pages）、API 服务（Workers）、账号/评论/战报/反馈以及登录后同步的“招募记录”数据库（D1；随账号删除）、战报截图（R2）、频率计数（KV）、Turnstile 以及反馈邮件发送（Email Service）。',
+        'Cloudflare: lưu trữ site (Pages), máy chủ API (Workers), cơ sở dữ liệu tài khoản, bình luận, chiến báo, góp ý, bộ đếm ẩn danh Soi đội và nhật ký "Theo dõi chiêu mộ" đã đồng bộ khi bạn đăng nhập (D1; xoá theo tài khoản), ảnh chiến báo và ảnh Soi đội bạn tự gửi (R2), bộ đếm giới hạn (KV), Turnstile và gửi email góp ý (Email Service).',
+        'Cloudflare：网站托管（Pages）、API 服务（Workers）、账号/评论/战报/反馈、截图识阵匿名计数以及登录后同步的“招募记录”数据库（D1；随账号删除）、战报截图和你主动发送的识阵截图（R2）、频率计数（KV）、Turnstile 以及反馈邮件发送（Email Service）。',
       ),
       t('Google: xác thực đăng nhập.', 'Google：登录身份验证。'),
       t('DeepSeek (api.deepseek.com) và OpenCode Zen (opencode.ai): AI đọc ảnh, dùng theo thứ tự quản trị viên đặt.', 'DeepSeek（深度求索，api.deepseek.com）与 OpenCode Zen（opencode.ai）：AI 图片识别，按管理员设定的顺序使用。'),
@@ -164,8 +172,8 @@ const sections: PolicySection[] = [
     heading: t('Thời gian lưu', '保存期限'),
     paragraphs: [
       t(
-        'Tài khoản, bình luận, chiến báo và góp ý được lưu cho đến khi bạn tự xoá hoặc yêu cầu xoá. Ảnh tải lên chưa gửi bị xoá sau 24 giờ; phiên đăng nhập và bộ đếm giới hạn tự hết hạn.',
-        '账号、评论、战报和反馈会一直保存，直到你自行删除或申请删除。已上传但未提交的截图在 24 小时后删除；登录会话和频率计数器到期自动失效。',
+        'Tài khoản, bình luận, chiến báo, góp ý và ảnh Soi đội bạn tự gửi được lưu cho đến khi bạn tự xoá hoặc yêu cầu xoá (ảnh Soi đội bị từ chối thì xoá ngay). Ảnh tải lên chưa gửi bị xoá sau 24 giờ; phiên đăng nhập và bộ đếm giới hạn tự hết hạn. Bộ đếm ẩn danh Soi đội không gắn với ai nên được giữ lâu dài.',
+        '账号、评论、战报、反馈以及你主动发送的识阵截图会一直保存，直到你自行删除或申请删除（被拒绝的识阵截图会立即删除）。已上传但未提交的截图在 24 小时后删除；登录会话和频率计数器到期自动失效。截图识阵匿名计数不关联任何人，因此会长期保存。',
       ),
     ],
   },
@@ -197,6 +205,6 @@ const sections: PolicySection[] = [
     '《三国志战略版攻略手册》在你使用 Google 登录、发表评论、提交战报、提交反馈或使用图片识别工具时收集哪些数据、存放在哪里以及如何申请删除。',
   )}
   lead={lead}
-  effectiveDate="2026-09-28"
+  effectiveDate="2026-09-29"
   sections={sections}
 />

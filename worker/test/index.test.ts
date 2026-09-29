@@ -81,6 +81,9 @@ function env(kv: FakeKV, extra: Partial<Env> = {}): Env {
 }
 
 type Upstream = { siteverify?: () => Response; model?: () => Response | Promise<Response> };
+/** Model trả dạng cũ `{heroes}` -> chuẩn hoá thành 1 phe left, screen other. */
+const LEFT_ONLY = { screen: "other", sides: [{ side: "left", heroes: [expect.objectContaining({ nameCn: "关羽" })] }] };
+
 
 /** `fetch` toàn cục giả cho siteverify và model; trả danh sách URL đã gọi. */
 function stubFetch({ siteverify, model }: Upstream = {}): string[] {
@@ -127,9 +130,9 @@ describe("POST /analyze khi KV lỗi", () => {
     stubFetch();
     const kv = fakeKV({ failPut: (key, count) => key.startsWith("d:") && count === 2 });
     const first = await worker.fetch(analyzeRequest(), env(kv));
-    expect(await expectJson(first, 200)).toEqual({ heroes: [expect.objectContaining({ nameCn: "关羽" })] });
+    expect(await expectJson(first, 200)).toEqual(LEFT_ONLY);
     const second = await worker.fetch(analyzeRequest(), env(kv));
-    expect(await expectJson(second, 200)).toEqual({ heroes: [expect.objectContaining({ nameCn: "关羽" })] });
+    expect(await expectJson(second, 200)).toEqual(LEFT_ONLY);
   });
 
   it("lỗi đọc bộ đếm coi như 0 lượt, vẫn trả kết quả", async () => {
@@ -332,7 +335,26 @@ describe("POST /analyze với nhiều origin (ALLOWED_ORIGINS)", () => {
   it("token cấp cho host khác trong danh sách vẫn qua (đang chuyển domain)", async () => {
     stubFetch({ siteverify: () => Response.json({ success: true, hostname: "tqccl.pages.dev" }) });
     const response = await worker.fetch(analyzeRequest(), env(fakeKV()));
-    expect(await expectJson(response, 200)).toEqual({ heroes: [expect.objectContaining({ nameCn: "关羽" })] });
+    expect(await expectJson(response, 200)).toEqual(LEFT_ONLY);
+  });
+
+  it("model trả hai phe -> response giữ cả hai phe theo C1", async () => {
+    const hero = (nameCn: string) => ({ nameCn, tacticsCn: [], booksCn: [], statFocusCn: "" });
+    const content = JSON.stringify({
+      screen: "battleReport",
+      sides: [
+        { side: "left", heroes: [hero("关羽")] },
+        { side: "right", heroes: [hero("曹操"), hero("张辽")] },
+      ],
+    });
+    stubFetch({ model: () => Response.json({ choices: [{ message: { content } }] }) });
+    const response = await worker.fetch(analyzeRequest(), env(fakeKV()));
+    const body = await expectJson(response, 200);
+    expect(body.screen).toBe("battleReport");
+    expect(body.sides.map((s: any) => [s.side, s.heroes.map((h: any) => h.nameCn)])).toEqual([
+      ["left", ["关羽"]],
+      ["right", ["曹操", "张辽"]],
+    ]);
   });
 
   it("token cấp cho host ngoài danh sách -> 403", async () => {

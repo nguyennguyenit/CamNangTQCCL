@@ -7,6 +7,7 @@ import {
   callWorkerExplain,
   describeAnalyzeError,
   localizeWorkerError,
+  validateWorkerResult,
 } from '../js/analyze.js';
 
 test('known and unknown upstream errors never expose provider text', () => {
@@ -134,4 +135,22 @@ test('callWorkerExplain maps Worker errors to fixed localized sentences', async 
       return true;
     });
   }
+});
+
+const HERO_READ = {nameCn: '曹操', tacticsCn: ['魅惑'], booksCn: [], statFocusCn: ''};
+
+test('validateWorkerResult analyzeTeamImage: dạng {heroes} hợp lệ, hero hỏng bị loại', () => {
+  assert.equal(validateWorkerResult('analyzeTeamImage', {heroes: [HERO_READ]}), true);
+  assert.equal(validateWorkerResult('analyzeTeamImage', {heroes: []}), false);
+  assert.equal(validateWorkerResult('analyzeTeamImage', {heroes: [{...HERO_READ, nameCn: ' '}]}), false);
+  assert.equal(validateWorkerResult('analyzeTeamImage', {heroes: [{...HERO_READ, tacticsCn: 'x'}]}), false);
+  assert.equal(validateWorkerResult('analyzeTeamImage', null), false);
+});
+
+test('validateWorkerResult analyzeTeamImage: nhận 2 phe, từ chối khi một tướng hỏng hoặc thiếu phe', () => {
+  const two = {screen: 'battleReport', sides: [{side: 'left', heroes: [HERO_READ]}, {side: 'right', heroes: [HERO_READ]}]};
+  assert.equal(validateWorkerResult('analyzeTeamImage', two), true);
+  const bad = {sides: [{side: 'left', heroes: [HERO_READ]}, {side: 'right', heroes: [{...HERO_READ, booksCn: [1]}]}]};
+  assert.equal(validateWorkerResult('analyzeTeamImage', bad), false);
+  assert.equal(validateWorkerResult('analyzeTeamImage', {screen: 'other', sides: []}), false);
 });

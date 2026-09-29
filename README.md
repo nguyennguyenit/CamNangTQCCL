@@ -164,7 +164,7 @@ plans/                     # kế hoạch/báo cáo lịch sử, không phải r
 - Theme lưu ở `localStorage.theme`; không có giá trị thì theo `prefers-color-scheme` của hệ điều hành.
 - `data/tactics-generic.json` có 29 nguồn bổ sung; 27 record đang mang trạng thái `pending` sau merge vào `tactics.json`.
 - Tracker lưu local; chỉ khi người dùng đăng nhập mới đồng bộ bản ghi chiêu mộ lên D1 của `community-worker`. Scan state lưu local, loại bỏ ảnh, base64, blob và Turnstile token; ảnh chỉ giữ trong bộ nhớ của phiên UI.
-- Ảnh soi đội và ảnh chiến báo được gửi tới nhà cung cấp AI trong chuỗi của tính năng đó ở tab AI của `/quan-tri/` (mặc định DeepSeek); nên crop thông tin tài khoản trước khi dùng.
+- Ảnh soi đội và ảnh chiến báo được gửi tới nhà cung cấp AI trong chuỗi của tính năng đó ở tab AI của `/quan-tri/` (mặc định DeepSeek); nên crop thông tin tài khoản trước khi dùng. Soi đội chỉ lưu đếm ẩn danh số ô phải sửa theo ngày (không ảnh, không tên, không IP); ảnh chỉ được lưu khi người dùng đăng nhập, tick đồng ý và tự bấm "Gửi ảnh này" (admin duyệt, từ chối thì xoá ảnh).
 
 ## Tham chiếu
 

@@ -1,0 +1,39 @@
+{
+  "image": "team-detail-1.jpg",
+  "source": "Màn chi tiết đội giản thể (bài đăng 三国志战略版吧, thanh tài nguyên/chat đã bị làm mờ sẵn). Binh thư chính theo cột 作战/九变.",
+  "expected": {
+    "screen": "teamDetail",
+    "sideCount": 1,
+    "sides": [
+      {
+        "side": "left",
+        "heroes": [
+          {
+            "hero": "hero:khuong-duy",
+            "tactics": [
+              "tactic:si-biet-tam-nhat",
+              "tactic:thoi-co-chien-thang"
+            ],
+            "book": "book:man-dung-phi-dung"
+          },
+          {
+            "hero": "hero:luu-bi",
+            "tactics": [
+              "tactic:cat-xuong-tri-doc",
+              "tactic:phi-hung-quan"
+            ],
+            "book": "book:tan-cong-diem-yeu"
+          },
+          {
+            "hero": "hero:quan-ngan-binh",
+            "tactics": [
+              "tactic:phong-thi-tran",
+              "tactic:thuyen-co-muon-ten"
+            ],
+            "book": "book:chia-nho-danh-nhanh"
+          }
+        ]
+      }
+    ]
+  }
+}
