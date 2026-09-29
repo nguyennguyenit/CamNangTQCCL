@@ -682,3 +682,44 @@ test("full-box Nhiều hột chọn danh sách tổng hột cao hơn khi cùng s
   assert.deepEqual(ids("meta"), ["a", "b"]);
   assert.deepEqual(ids("redStars"), ["c", "d"]);
 });
+
+test("seed entries reserve their heroes and tactics and count toward the team limit", () => {
+  const makeTeam = (id, hero, tactic) => ({ id, name: id, heroes: [{ name: hero, tactics: [{ name: tactic, alternatives: [] }] }] });
+  const base = {
+    teamTier: ["a", "b", "c", "d"].map((teamId) => ({ teamId, rankings: [{ tier: "T0" }] })),
+    ownedHeroes: ["Tướng A", "Tướng B", "Tướng C"],
+    ownedTactics: ["CP 1", "CP 2", "CP 3"],
+  };
+  const first = recommendTeams({ ...base, teams: [makeTeam("a", "Tướng A", "CP 1")] });
+  for (const fullBox of [false, true]) {
+    const result = recommendTeams({
+      ...base,
+      fullBox,
+      maxTeams: 2,
+      seedEntries: first.addTeams,
+      teams: [makeTeam("b", "Tướng A", "CP 2"), makeTeam("c", "Tướng C", "CP 1"), makeTeam("d", "Tướng B", "CP 3")],
+    });
+    // b dùng lại tướng, c dùng lại chiến pháp của đội đã chọn ở lượt trước: chỉ d còn hợp lệ.
+    assert.deepEqual(result.portfolioTeams.map((entry) => entry.team.id), ["a", "d"]);
+    assert.deepEqual(result.addTeams.map((entry) => entry.team.id), ["a", "d"]);
+  }
+});
+
+test("missing tactic blocks name the holder hero and the slot to fill", () => {
+  const team = { id: "x", name: "X", heroes: [
+    { name: "Tướng A", tactics: [{ name: "CP 1", alternatives: [] }, { name: "CP 2", alternatives: [] }] },
+    { name: "Tướng B", tactics: [{ name: "CP 3", alternatives: [] }] },
+  ] };
+  const result = recommendTeams({
+    teams: [team],
+    teamTier: [{ teamId: "x", rankings: [{ tier: "T0" }] }],
+    ownedHeroes: ["Tướng A", "Tướng B"],
+    ownedTactics: ["CP 1"],
+  });
+  const [blocked] = result.blockedStrongTeams;
+  assert.deepEqual(blocked.missingTactics, ["CP 2", "CP 3"]);
+  assert.deepEqual(blocked.missingTacticSlots, [
+    { tactic: "CP 2", heroIndex: 0, holderName: "Tướng A", slotIndex: 1 },
+    { tactic: "CP 3", heroIndex: 1, holderName: "Tướng B", slotIndex: 0 },
+  ]);
+});

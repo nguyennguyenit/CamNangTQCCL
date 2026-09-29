@@ -5,8 +5,11 @@ import {
   addCanonicalItem,
   applyScanResult,
   createInitialRosterScanState,
+  clearRosterScanState,
+  deserializeRosterScanState,
   removeItem,
   serializeRosterScanState,
+  setTacticOverride,
 } from "../js/roster-scan-state.js";
 
 test("storage key is stable", () => {
@@ -140,4 +143,55 @@ test("đọc lại cùng ảnh đội đã xây không nhân đôi đội khóa 
   state = applyScanResult(state, "builtTeams", { teams: [{ teamName: "Đội Thục (đọc lại)", heroes: ["Quan Vũ", "Lưu Bị"], tactics: ["Uy Chấn", "Nhân Đức"] }] });
   assert.equal(state.lockedTeams.length, 1);
   assert.equal(serializeRosterScanState({ lockedTeams: [...scan.teams, ...scan.teams] }).lockedTeams.length, 1);
+});
+
+test("chosen substitutes persist per slot, survive scans and are cleared with the roster", () => {
+  let state = createInitialRosterScanState();
+  state = setTacticOverride(state, { teamId: "cfg-1", heroIndex: 0, slotIndex: 1, tactic: "CP A" });
+  state = setTacticOverride(state, { teamId: "cfg-1", heroIndex: 0, slotIndex: 1, tactic: "CP B" });
+  state = setTacticOverride(state, { teamId: "cfg-2", heroIndex: 2, slotIndex: 0, tactic: "CP C" });
+  assert.deepEqual(state.tacticOverrides, [
+    { teamId: "cfg-1", heroIndex: 0, slotIndex: 1, tactic: "CP B" },
+    { teamId: "cfg-2", heroIndex: 2, slotIndex: 0, tactic: "CP C" },
+  ]);
+  const saved = JSON.stringify(serializeRosterScanState(state));
+  state = applyScanResult(deserializeRosterScanState(saved), "tactics", { tactics: [{ name: "CP D" }] });
+  assert.equal(state.tacticOverrides.length, 2);
+  state = setTacticOverride(state, { teamId: "cfg-2", heroIndex: 2, slotIndex: 0, tactic: null });
+  assert.deepEqual(state.tacticOverrides.map((o) => o.teamId), ["cfg-1"]);
+  assert.deepEqual(clearRosterScanState().tacticOverrides, []);
+});
+
+test("malformed stored substitutes are dropped, extra keys stripped", () => {
+  const stored = {
+    tacticOverrides: [
+      { teamId: "ok", heroIndex: 1, slotIndex: 0, tactic: "CP", image: "data:..." },
+      { teamId: "", heroIndex: 0, slotIndex: 0, tactic: "CP" },
+      { teamId: "bad-index", heroIndex: -1, slotIndex: 0, tactic: "CP" },
+      { teamId: "bad-slot", heroIndex: 0, slotIndex: 1.5, tactic: "CP" },
+      { teamId: "no-tactic", heroIndex: 0, slotIndex: 0, tactic: "" },
+      "junk",
+    ],
+  };
+  const { tacticOverrides } = deserializeRosterScanState(JSON.stringify(stored));
+  assert.deepEqual(tacticOverrides, [{ teamId: "ok", heroIndex: 1, slotIndex: 0, tactic: "CP" }]);
+});
+
+test("at the cap the oldest substitute is dropped so the newest choice always sticks", () => {
+  let state = createInitialRosterScanState();
+  for (let i = 0; i < 20; i++) state = setTacticOverride(state, { teamId: `t${i}`, heroIndex: 0, slotIndex: 0, tactic: "CP" });
+  state = setTacticOverride(state, { teamId: "newest", heroIndex: 0, slotIndex: 0, tactic: "CP" });
+  const ids = serializeRosterScanState(state).tacticOverrides.map((o) => o.teamId);
+  assert.equal(ids.length, 20);
+  assert.equal(ids.at(-1), "newest");
+  assert.equal(ids.includes("t0"), false);
+});
+
+test("the chosen season is remembered with the roster, and junk values are dropped", () => {
+  const saved = JSON.stringify(serializeRosterScanState({ ...createInitialRosterScanState(), seasonId: "pk-s28" }));
+  assert.equal(deserializeRosterScanState(saved).seasonId, "pk-s28");
+  assert.equal(applyScanResult(deserializeRosterScanState(saved), "heroes", { heroes: [] }).seasonId, "pk-s28");
+  for (const seasonId of ["", 42, "x".repeat(200), null]) {
+    assert.equal(serializeRosterScanState({ seasonId }).seasonId, null);
+  }
 });

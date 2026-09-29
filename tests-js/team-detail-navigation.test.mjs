@@ -183,8 +183,9 @@ test('return origin accepts section URLs, normalizes old root state, and rejects
   // Soi đội quay về đúng mùa + đội đã xác nhận (dựng lại editor và diff); khóa khác bị bỏ.
   assert.equal(safeReturnUrl('/soi-doi-tu-anh/?q=x&faction=Thục'),'/soi-doi-tu-anh/');
   assert.equal(safeReturnUrl('/soi-doi-tu-anh/?season=pk-s28&doi=v1.a___.b___.c___&q=x'),'/soi-doi-tu-anh/?season=pk-s28&doi=v1.a___.b___.c___');
-  // Gợi ý đội và Chiêu mộ không có trạng thái URL nào để quay lại.
+  // Gợi ý đội quay về đúng mùa đang chọn; Chiêu mộ không có trạng thái URL nào để quay lại.
   assert.equal(safeReturnUrl('/goi-y-doi-tu-kho/?q=x&tier=T0'),'/goi-y-doi-tu-kho/');
+  assert.equal(safeReturnUrl('/goi-y-doi-tu-kho/?season=pk-s28&scenario=a'),'/goi-y-doi-tu-kho/?season=pk-s28');
   assert.equal(safeReturnUrl('/theo-doi-chieu-mo/?q=x'),'/theo-doi-chieu-mo/');
   // Absolute URLs are accepted only for the page's own origin.
   assert.equal(safeReturnUrl(`${ROOT}/doi-chuan/?q=a`,{origin:ROOT}),'/doi-chuan/?q=a');

@@ -1,6 +1,9 @@
 // Phase 9 — 3 công cụ Beta (Chiêu mộ, Soi đội, Gợi ý đội): hành vi giữ nguyên (store/Worker/engine) và
 // giao diện theo artboard. Fixture localStorage/route mô phỏng đúng dữ liệu người dùng đã có từ trước phase.
 import { expect, test } from "@playwright/test";
+import { readFileSync } from "node:fs";
+import { canonicalHeroId } from "../js/hero-identity.js";
+import { buildSeasonCandidates, seasonTacticUsage } from "../js/roster-season-candidates.js";
 
 const transparentPng = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAF/gL+4gZ8WQAAAABJRU5ErkJggg==",
@@ -853,7 +856,7 @@ test.describe("Gợi ý đội", () => {
 
     const section = page.locator("#section-roster-recommend");
     await expect(section.locator("h1.reference-title")).toHaveText("Gợi ý đội từ kho");
-    await expect(section.locator(".tool-notice")).toContainText("AI chỉ đọc ảnh");
+    await expect(section.locator(".tool-notice")).toContainText("AI đọc ảnh, và chỉ giải thích món bù khi bạn hỏi");
 
     const steps = section.locator(".roster-step");
     await expect(steps).toHaveCount(3);
@@ -992,7 +995,7 @@ test.describe("Gợi ý đội", () => {
     await expect(heroPanel).toContainText("Tướng thử nghiệm");
   });
 
-  test("đội mạnh chưa xây được ghi tên tướng thiếu theo slot, không lộ mã canonical", async ({ page, request }) => {
+  test("mục Thiếu món ghi tên tướng thiếu theo slot, không lộ mã canonical", async ({ page, request }) => {
     await seedRoster(page, request);
     await page.goto("/goi-y-doi-tu-kho/");
     await waitForBoot(page);
@@ -1000,15 +1003,114 @@ test.describe("Gợi ý đội", () => {
     await section.getByRole("button", { name: "Xác nhận dữ liệu đã đọc" }).click();
     await section.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
 
-    const blocked = section.locator(".roster-results section").filter({ has: page.locator("h3", { hasText: "Đội mạnh nhưng chưa thể xây dựng" }) });
-    const missingHeroes = blocked.locator(".roster-result-meta").filter({ hasText: "Thiếu tướng:" });
+    const missing = section.locator(".roster-missing-section");
+    await expect(missing.locator("h3")).toHaveText("Thiếu món");
+    const missingHeroes = missing.locator(".roster-missing-slot .roster-result-meta").filter({ hasText: /^Thiếu tướng / });
     await expect(missingHeroes.first()).toBeVisible();
-    await expect(blocked).not.toContainText("hero:");
+    await expect(missing).not.toContainText("hero:");
+    await expect(missing).not.toContainText("tactic:");
     const recommended = section.locator(".roster-team-list .roster-result-meta");
     await expect(recommended.first()).toBeVisible();
     for (const line of await recommended.allInnerTexts()) {
-      if (line.startsWith("Chiến pháp:") || line.startsWith("Biến thể:")) expect(line).not.toContain("tactic:");
+      if (line.startsWith("Chiến pháp:") || line.startsWith("Đã thay:")) expect(line).not.toContain("tactic:");
     }
+  });
+
+  /**
+   * Kho dựng từ đúng một đội chuẩn của mùa mặc định: bỏ một chiến pháp của một tướng còn món khác ở
+   * cấu hình cùng mùa, và có sẵn các món đó trong kho — đội rơi vào Thiếu món với món bù.
+   */
+  function seasonMissingFixture() {
+    const read = (path) => JSON.parse(readFileSync(new URL(`../${path}`, import.meta.url), "utf8"));
+    const { generationId } = read("src/data/recommended-reference/current.json");
+    const { records } = read(`src/data/recommended-reference/${generationId}/index.json`);
+    const { defaultSourceSeasonId } = read(`src/data/recommended-reference/${generationId}/seasons.json`);
+    const dicts = { heroesDict: read("data/heroes-dict.json"), tacticsDict: read("data/tactics.json") };
+    const { teams } = buildSeasonCandidates(records, defaultSourceSeasonId, dicts);
+    const usage = seasonTacticUsage(teams);
+    // Chế độ Meta chỉ xét T0–T1: đội ngoài bậc đó không vào Thiếu món.
+    for (const team of teams.filter((item) => ["T0", "T0.5", "T1"].includes(item.tier))) {
+      const teamTactics = team.heroes.flatMap((hero) => hero.tactics.map((tactic) => tactic.name));
+      for (const hero of team.heroes) {
+        const extras = [...(usage.get(canonicalHeroId(hero.name)) || new Map()).keys()].filter((name) => !teamTactics.includes(name));
+        if (!hero.tactics.length || !extras.length) continue;
+        const missing = hero.tactics[0].name;
+        return {
+          seasonId: defaultSourceSeasonId,
+          team,
+          hero: hero.name,
+          missing,
+          substitutes: extras,
+          state: {
+            ownedHeroes: team.heroes.map((item) => ({ name: item.name })),
+            ownedTactics: [...teamTactics.filter((name) => name !== missing), ...extras].map((name) => ({ name })),
+            lockedTeams: [],
+            confirmed: true,
+            updatedAt: "2026-09-29T00:00:00.000Z",
+          },
+        };
+      }
+    }
+    throw new Error("no season team with a substitutable tactic");
+  }
+
+  test("mùa mặc định, Thiếu món: Vì sao? gọi Worker không ảnh, Dùng món này rồi Bỏ món thay, Tôi có…, đổi mùa ghi URL", async ({ page }) => {
+    const fixture = seasonMissingFixture();
+    await page.route("https://challenges.cloudflare.com/**", (route) =>
+      route.fulfill({ contentType: "application/javascript", body: TURNSTILE_STUB }));
+    const bodies = [];
+    await page.route(WORKER_ROUTE, (route) => {
+      bodies.push(route.request().postDataJSON());
+      return route.fulfill({ json: { explanation: "Món bù không có hiệu ứng hồi phục như món gốc." } });
+    });
+    await seed(page, { "tqccl.rosterRecommend.scanState.v1": fixture.state });
+    await page.goto("/goi-y-doi-tu-kho/");
+    await waitForBoot(page);
+    const section = page.locator("#section-roster-recommend");
+    const season = section.getByLabel("Mùa bạn đang chơi");
+    await expect(season).toBeEnabled();
+    await expect(season).toHaveValue(fixture.seasonId);
+    await section.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
+
+    const card = section.locator(".roster-missing").filter({ hasText: fixture.team.name });
+    const slot = card.locator(".roster-missing-slot").filter({ hasText: `Thiếu chiến pháp ${fixture.missing} (${fixture.hero})` });
+    await expect(slot).toBeVisible();
+    const firstSubstitute = slot.locator(".roster-substitutes li").first();
+    const substitute = await firstSubstitute.locator(".roster-substitute-name").innerText();
+    expect(fixture.substitutes).toContain(substitute);
+
+    await firstSubstitute.getByRole("button", { name: "Vì sao?" }).click();
+    await expect(firstSubstitute.locator(".roster-explain")).toHaveText("Món bù không có hiệu ứng hồi phục như món gốc.");
+    expect(bodies).toHaveLength(1);
+    expect(bodies[0].mode).toBe("explainSubstitute");
+    expect(bodies[0]).not.toHaveProperty("image");
+    expect(bodies[0].context).toMatchObject({ locale: "vi", hero: fixture.hero, missing: { name: fixture.missing }, substitute: { name: substitute } });
+    // Cùng câu hỏi lần hai dùng kết quả đã có, không tốn thêm lượt Worker.
+    await firstSubstitute.getByRole("button", { name: "Vì sao?" }).click();
+    expect(bodies).toHaveLength(1);
+
+    await firstSubstitute.getByRole("button", { name: `Dùng ${substitute} thay ${fixture.missing}` }).click();
+    const portfolio = section.locator(".roster-results section").first();
+    const row = portfolio.locator(".roster-result-team").filter({ hasText: fixture.team.name });
+    await expect(row).toContainText(`Đã thay: ${fixture.missing} → ${substitute}`);
+    await expect(section.locator(".roster-missing").filter({ hasText: fixture.team.name })).toHaveCount(0);
+    const stored = () => page.evaluate(() => JSON.parse(localStorage.getItem("tqccl.rosterRecommend.scanState.v1")));
+    expect((await stored()).tacticOverrides).toEqual([expect.objectContaining({ teamId: fixture.team.id, tactic: substitute })]);
+
+    await row.getByRole("button", { name: "Bỏ món thay" }).click();
+    await expect(slot).toBeVisible();
+    expect((await stored()).tacticOverrides).toEqual([]);
+
+    await slot.getByRole("button", { name: `Tôi có chiến pháp ${fixture.missing}` }).click();
+    await expect(portfolio.locator(".roster-result-team").filter({ hasText: fixture.team.name }).locator(".roster-status")).toHaveText("Có thể xây dựng ngay");
+    expect((await stored()).ownedTactics.map((item) => item.name)).toContain(fixture.missing);
+
+    await season.selectOption("pk-s28");
+    await expect(page).toHaveURL(/\/goi-y-doi-tu-kho\/\?season=pk-s28$/);
+    await expect(section.locator(".roster-results")).toHaveCount(0);
+    await page.reload();
+    await waitForBoot(page);
+    await expect(season).toHaveValue("pk-s28");
   });
 
   test("kho rỗng: nút Xác nhận khoá, bước Kiểm tra và Gợi ý còn chờ", async ({ page }) => {
@@ -1309,7 +1411,7 @@ test.describe("Vòng sửa P09", () => {
         expect(geometry.action).not.toBeNull();
         if (width > 680) expect(geometry.action.x).toBeGreaterThan(geometry.main.x);
         else expect(geometry.action.y).toBeGreaterThan(geometry.name.y);
-        const blocked = section.locator(".roster-result-team.muted").first();
+        const blocked = section.locator(".roster-result-team.roster-missing").first();
         if (await blocked.count()) {
           const blockedName = await blocked.locator(".roster-result-name").evaluate((node) => node.getBoundingClientRect().width);
           expect(blockedName).toBeGreaterThan(100);

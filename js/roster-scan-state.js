@@ -79,6 +79,8 @@ export function createInitialRosterScanState() {
     ownedHeroes: [],
     ownedTactics: [],
     lockedTeams: [],
+    tacticOverrides: [],
+    seasonId: null,
     confirmed: false,
     updatedAt: null,
   };
@@ -225,6 +227,35 @@ export function removeLockedTeam(state, index) {
   };
 }
 
+const MAX_TACTIC_OVERRIDES = 20;
+const overrideKey = (override) => `${override.teamId}\u0000${override.heroIndex}\u0000${override.slotIndex}`;
+const boundedIndex = (value) => Number.isInteger(value) && value >= 0 && value < 10;
+const boundedText = (value, max) => typeof value === "string" && value.trim() !== "" && value.length <= max;
+
+/** Món bù đã chọn: mỗi ô (đội + tướng + ô chiến pháp) một món, lần chọn sau thay lần trước. */
+function cleanTacticOverrides(overrides) {
+  const bySlot = new Map();
+  for (const item of Array.isArray(overrides) ? overrides : []) {
+    if (!item || typeof item !== "object") continue;
+    const { teamId, heroIndex, slotIndex, tactic } = item;
+    if (!boundedText(teamId, 128) || !boundedIndex(heroIndex) || !boundedIndex(slotIndex) || !boundedText(tactic, 80)) continue;
+    const override = { teamId, heroIndex, slotIndex, tactic };
+    bySlot.delete(overrideKey(override));
+    bySlot.set(overrideKey(override), override);
+  }
+  // Quá trần thì bỏ lựa chọn cũ nhất: lần chọn mới luôn được giữ.
+  return [...bySlot.values()].slice(-MAX_TACTIC_OVERRIDES);
+}
+
+/** Đặt (hoặc bỏ, khi `tactic` rỗng) món bù cho một ô thiếu. */
+export function setTacticOverride(state, { teamId, heroIndex, slotIndex, tactic }) {
+  const others = (state?.tacticOverrides || []).filter((item) => overrideKey(item) !== overrideKey({ teamId, heroIndex, slotIndex }));
+  return {
+    ...state,
+    tacticOverrides: cleanTacticOverrides(tactic ? [...others, { teamId, heroIndex, slotIndex, tactic }] : others),
+  };
+}
+
 /** Kho trống như lần đầu mở công cụ (tướng, chiến pháp, đội khóa đều bỏ). */
 export function clearRosterScanState() {
   return createInitialRosterScanState();
@@ -235,6 +266,8 @@ export function serializeRosterScanState(state) {
     ownedHeroes: uniqByName(state?.ownedHeroes || []),
     ownedTactics: uniqByName(state?.ownedTactics || []),
     lockedTeams: uniqLockedTeams(state?.lockedTeams),
+    tacticOverrides: cleanTacticOverrides(state?.tacticOverrides),
+    seasonId: boundedText(state?.seasonId, 64) ? state.seasonId : null,
     confirmed: state?.confirmed === true,
     updatedAt: state?.updatedAt || null,
   };

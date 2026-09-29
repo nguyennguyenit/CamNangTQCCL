@@ -551,9 +551,12 @@ test('config-detail inventory link opens the roster tool without season keys', a
   await expect(page.locator('#section-roster-recommend .tool-head')).toBeVisible();
 });
 
-test('tool pages drop old season links and run on the legacy teams', async ({page, request}) => {
+test('tool pages drop old scenario links; Gợi ý đội keeps ?season= and fills from legacy teams only as reference', async ({page, request}) => {
   // Gợi ý đội chỉ chạy trên kho đã đọc (kho rỗng khoá nút Xác nhận): gieo tướng/chiến pháp của một đội legacy.
-  const [team] = await (await request.get('/data/teams.json')).json();
+  // Chế độ Meta chỉ xét đội cũ có bậc T0–T1 trong team-tier.
+  const tiers = await (await request.get('/data/team-tier.json')).json();
+  const metaIds = new Set(tiers.filter(entry => entry.rankings.some(ranking => ['T0', 'T0.5', 'T1'].includes(ranking.tier))).map(entry => entry.teamId));
+  const team = (await (await request.get('/data/teams.json')).json()).find(item => metaIds.has(item.id));
   await page.addInitScript(state => localStorage.setItem('tqccl.rosterRecommend.scanState.v1', JSON.stringify(state)), {
     ownedHeroes: team.heroes.map(hero => ({name: hero.name || hero.baseName})),
     ownedTactics: team.heroes.flatMap(hero => (hero.tactics || []).map(tactic => ({name: tactic.name}))),
@@ -568,13 +571,21 @@ test('tool pages drop old season links and run on the legacy teams', async ({pag
   await expect(page.locator('#section-analyze .ana-drop')).toBeVisible();
   await expect(page.locator('#section-analyze')).not.toContainText('Tất cả — tham khảo');
 
-  await page.goto('/goi-y-doi-tu-kho/?scenario=x&ruleset=y');
+  await page.goto('/goi-y-doi-tu-kho/?scenario=x&ruleset=y&season=pk-s28');
   await expect(page.locator('body')).toHaveAttribute('data-boot', 'ready');
-  await expect(page).toHaveURL('/goi-y-doi-tu-kho/');
+  await expect(page).toHaveURL('/goi-y-doi-tu-kho/?season=pk-s28');
   await expect(page.locator('#season-controls, #season-scenario, #season-ruleset, #season-summary')).toHaveCount(0);
+  await expect(page.getByLabel('Mùa bạn đang chơi')).toHaveValue('pk-s28');
   await page.getByRole('button', {name: 'Xác nhận dữ liệu đã đọc'}).click();
   await page.getByRole('button', {name: 'Gợi ý 5 đội', exact: true}).click();
-  await expect(page.locator('#section-roster-recommend .roster-results')).toBeVisible();
+  const results = page.locator('#section-roster-recommend .roster-results');
+  await expect(results).toBeVisible();
+  // Đội cũ chỉ lấp chỗ trống của mùa: mọi hàng mang nhãn "Tham khảo – đội cũ" đứng sau mọi hàng của mùa.
+  const rows = results.locator('.roster-team-list').first().locator('.roster-result-team');
+  await expect(rows.first()).toBeVisible();
+  const legacyFlags = await rows.evaluateAll(nodes => nodes.map(node => node.querySelector('.roster-source-legacy')?.textContent ?? null));
+  const firstLegacy = legacyFlags.findIndex(flag => flag !== null);
+  if (firstLegacy >= 0) expect(legacyFlags.slice(firstLegacy)).toEqual(legacyFlags.slice(firstLegacy).map(() => 'Tham khảo – đội cũ'));
 });
 
 test('Cùng Tồn has exactly one scenario control and it owns the URL, reload and Back', async ({page}) => {

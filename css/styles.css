@@ -7800,7 +7800,7 @@ body[data-page-section="khaihoang"] .layout {
    tool-notice, tool-text-action, thanh-tien-do, buoc-cong-cu, the-doc-anh, hang-doi-tuong-tu,
    menu-tai-khoan.
    Artboard: Recruit/RecruitMobile, Analyze/AnalyzeMobile, Roster/RosterMobile. Hai công cụ /soi-doi-tu-anh/,
-   /goi-y-doi-tu-kho/ chạy trên dữ liệu đội cũ, không có bộ chọn Mùa / Phiên bản luật. */
+   /goi-y-doi-tu-kho/ không có bộ chọn Mùa / Phiên bản luật của layout; mỗi công cụ tự có ô chọn mùa Đội chuẩn. */
 body[data-page-section="recruit-tracker"] .layout,
 body[data-page-section="analyze"] .layout,
 body[data-page-section="roster-recommend"] .layout {
@@ -9370,15 +9370,100 @@ body[data-page-section="roster-recommend"] .layout {
   justify-self: end;
 }
 
-/* Hàng đội mạnh nhưng chưa xây dựng: không có số thứ tự và không có nút -> một cột nội dung. */
-.roster-result-team.muted {
-  grid-template-columns: minmax(0, 1fr);
+/* Thẻ Thiếu món: không có số thứ tự; nội dung cột 1, "Mở đội" cột 2. */
+.roster-result-team.roster-missing {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  background: var(--panel-3);
 }
 
-.roster-result-team.muted .roster-result-name,
-.roster-result-team.muted .roster-result-meta {
+.roster-result-team.roster-missing .roster-result-main {
   grid-column: 1;
   grid-row: auto;
+}
+
+.roster-result-team.roster-missing > .ana-link-btn {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.roster-missing-list,
+.roster-substitutes {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: var(--space-10);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.roster-missing-slot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-6) var(--space-10);
+}
+
+.roster-missing-slot > .roster-result-meta {
+  flex: 1 1 100%;
+  color: var(--ink-2);
+}
+
+.roster-substitutes {
+  flex: 1 1 100%;
+  gap: var(--space-6);
+}
+
+.roster-substitutes > li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4) var(--space-10);
+}
+
+.roster-substitute-name {
+  font: var(--type-strong);
+}
+
+.roster-explain {
+  flex: 1 1 100%;
+  margin: 0;
+}
+
+.roster-explain:empty {
+  display: none;
+}
+
+.roster-source-legacy {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
+.roster-undo {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
+.roster-season-control {
+  display: flex;
+  flex: 1 1 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-6) var(--space-10);
+  min-width: 0;
+  font: var(--type-meta);
+  color: var(--ink-2);
+}
+
+/* Tên mùa dài: ô chọn co theo hàng, không đẩy trang rộng hơn màn hình 320px. */
+.roster-season-control select {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+}
+
+.roster-season-note {
+  margin: 0;
 }
 
 .roster-result-team:first-child {
@@ -9433,12 +9518,8 @@ body[data-page-section="roster-recommend"] .layout {
   color: var(--accent-ink);
 }
 
-.roster-result-team.muted {
-  background: var(--panel-3);
-}
-
-.roster-result-team.muted .roster-result-name {
-  font: var(--type-strong);
+.roster-season-note[hidden] {
+  display: none;
 }
 
 

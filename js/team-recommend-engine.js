@@ -22,7 +22,7 @@ const DEFAULT_DIAGNOSTICS = () => ({
   prunedCandidates: [],
 });
 
-function canonicalTacticId(name) {
+export function canonicalTacticId(name) {
   const slug = normalizeText(name)
     .replace(/[^a-z0-9]+/gu, "-")
     .replace(/^-+|-+$/gu, "");
@@ -202,9 +202,18 @@ function selectTactics(candidate, heroAssignments, ownedTactics, usedTactics) {
       owned: candidates.filter(({ id }) => ownedTactics.has(id)),
     };
   });
-  const missing = choicesBySlot
-    .filter(({ owned }) => owned.length === 0)
-    .map(({ slot }) => slot.primary);
+  const missingChoices = choicesBySlot.filter(({ owned }) => owned.length === 0);
+  const missing = missingChoices.map(({ slot }) => slot.primary);
+  // Chỗ cần lấp: tướng giữ ô (theo thứ tự trong đội) và vị trí ô, để UI gợi ý món bù đúng ô.
+  const missingSlots = missingChoices.map(({ slot }) => {
+    const heroIndex = candidate.heroSlots.findIndex((heroSlot) => heroSlot.slotId === slot.holderSlotId);
+    return {
+      tactic: slot.primary,
+      heroIndex,
+      holderName: candidate.heroSlots[heroIndex]?.alternatives[0].displayName ?? "",
+      slotIndex: slot.slotIndex,
+    };
+  });
 
   function visit(index, reserved, choices) {
     if (index >= choicesBySlot.length) return choices;
@@ -254,6 +263,7 @@ function selectTactics(candidate, heroAssignments, ownedTactics, usedTactics) {
           ? "variant"
           : "build-now",
     missing,
+    missingSlots,
     conflicts,
     selected,
     selections,
@@ -511,6 +521,7 @@ export function recommendTeams({
   fullBox = false,
   experimentalUntiered = false,
   seasonContext = null,
+  seedEntries = [],
 } = {}) {
   const diagnostics = DEFAULT_DIAGNOSTICS();
   if (seasonContext) {
@@ -563,6 +574,12 @@ export function recommendTeams({
       addEntry(entry, seed.usedHeroes, seed.usedTactics);
     }
   }
+  // Đội đã chọn ở lượt trước (vd. lượt đội chuẩn trước lượt đội cũ): giữ tài nguyên và tính vào giới hạn.
+  for (const entry of seedEntries) {
+    if (seed.portfolio.length >= maxTeams) break;
+    seed.portfolio.push(entry);
+    addEntry(entry, seed.usedHeroes, seed.usedTactics);
+  }
 
   const candidates = candidatePool(
     teams.map((team) => normalizeTeamCandidate(team, tierByTeam, redByHero, seasonContext)),
@@ -614,6 +631,7 @@ export function recommendTeams({
           tier: candidate.tier,
           status: "missing-tactic",
           missingTactics: built.tacticUse.missing,
+          missingTacticSlots: built.tacticUse.missingSlots,
         });
       } else {
         diagnostics.tacticConflicts.push({

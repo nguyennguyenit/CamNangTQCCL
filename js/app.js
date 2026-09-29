@@ -569,9 +569,9 @@ async function main() {
       loadRawNames: () => loadRawNameResolver(loadBytes),
     });
 
-    // Kết quả công cụ giữ nguyên trang người dùng: đội gốc đi trang chi tiết riêng.
+    // Kết quả công cụ giữ nguyên trang người dùng: đội chuẩn theo mùa và đội gốc đi trang chi tiết riêng.
     const onOpenTeam = (team) => {
-      const href = teamDetailHref({legacyTeamId:team.id},{from:location.href});
+      const href = teamDetailHref(team.source === 'season' ? {sourceConfigId:team.id} : {legacyTeamId:team.id},{from:location.href});
       if (!href) return;
       rememberReturn();
       location.assign(href);
@@ -580,7 +580,7 @@ async function main() {
       if (pageSection === 'recruit-tracker') initRecruitTracker({ heroesDict, mount });
       // Soi đội nạp generation Đội chuẩn lười (lần đầu cần đối chiếu); link đội qua route chi tiết chung.
       if (pageSection === 'analyze') initAnalyze({ heroesDict, tacticsDict: tactics, booksDict, loadRecommended, teamHref: referenceHref, onNavigate: onReferenceNavigate }, mount);
-      if (pageSection === 'roster-recommend') initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict: tactics, onOpenTeam }, mount);
+      if (pageSection === 'roster-recommend') initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict: tactics, loadRecommended, onOpenTeam }, mount);
     } else if (['recruit-tracker', 'analyze', 'roster-recommend'].includes(pageSection)) {
       mount.append(el("p", { class: "error", role: "status" }, L("Tính năng này cần dữ liệu Tra cứu đang không khả dụng.", "此功能需要的图鉴查询数据暂不可用。")));
     }

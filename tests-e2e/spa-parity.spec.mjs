@@ -732,8 +732,9 @@ test("opening a roster recommendation preserves its section and opens the exact 
   await page.goto("/goi-y-doi-tu-kho/");
   await waitForBoot(page);
   await page.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
-  const recommendation = page.locator(".roster-result-team").filter({
-    has: page.getByRole("button", { name: "Mở đội", exact: true }),
+  // Kho dựng từ đội cũ: đội cũ lấp chỗ trống sau đội của mùa và mang nhãn "Tham khảo – đội cũ".
+  const recommendation = page.locator(".roster-team-list .roster-result-team").filter({
+    has: page.locator(".roster-source-legacy"),
   }).first();
   const selectedName = await recommendation.locator("strong").textContent();
   const selectedTeam = teamsFixture.find((team) => team.name === selectedName);
@@ -744,6 +745,24 @@ test("opening a roster recommendation preserves its section and opens the exact 
   await expect(page.locator("#team-detail-body")).toBeVisible();
   await expect(page.locator("h1#team-detail-title")).toHaveText(selectedTeam.nickname || selectedTeam.name);
   await expect(page.locator("#team-return-link")).toHaveAttribute("href", "/goi-y-doi-tu-kho/");
+});
+
+test("opening a season recommendation from the roster tool lands on its Đội chuẩn detail page", async ({ page }) => {
+  await page.addInitScript((state) => {
+    localStorage.setItem("tqccl.rosterRecommend.scanState.v1", JSON.stringify(state));
+  }, {
+    ownedHeroes: [{ name: "Tào Tháo" }], ownedTactics: [], lockedTeams: [], confirmed: true, updatedAt: "2026-09-29T00:00:00.000Z",
+  });
+  // Kho gần trống: đội của mùa nằm ở Thiếu món; "Mở đội" mở trang chi tiết Đội chuẩn và quay lại đúng mùa.
+  await page.goto("/goi-y-doi-tu-kho/?season=pk-s28");
+  await waitForBoot(page);
+  await expect(page.getByLabel("Mùa bạn đang chơi")).toHaveValue("pk-s28");
+  await page.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
+  const card = page.locator(".roster-missing").first();
+  await card.getByRole("button", { name: "Mở đội", exact: true }).click();
+  await expect(page).toHaveURL(/\/doi-chuan\/pk-s28-[^/?]+\/(\?|$)/);
+  await expect(page.locator("#team-detail-body")).toBeVisible();
+  await expect(page.locator("#team-return-link")).toHaveAttribute("href", "/goi-y-doi-tu-kho/?season=pk-s28");
 });
 
 
