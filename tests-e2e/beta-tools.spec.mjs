@@ -63,13 +63,17 @@ function seed(page, entries) {
   }, entries);
 }
 
-/** Chiêu mộ: một tài khoản, 1 lượt ngày (sau 1 lần ra 5★) và 1 gói hạn giờ đã quá mốc 30 lượt. */
 /** Ngày hôm nay theo giờ máy chạy test — khớp `todayLocalDate()` của công cụ. */
 function todayIso() {
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 }
 
+/**
+ * Chiêu mộ: dữ liệu v1 người dùng đã có (chuyển sang v2 khi nạp) — một tài khoản, 1 lượt ngày hôm nay sau lần
+ * ra 5★ gần nhất và 1 gói hạn giờ đã quá mốc 30 lượt. Ở v2 "Hôm nay x/4" đếm từ các lượt ghi ngày hôm nay
+ * (không còn `dailyStates`), nên lượt không ra mang ngày hôm nay để giữ đúng các con số cũ: 1/30, hôm nay 1/4.
+ */
 const RECRUIT_FIXTURE = {
   schemaVersion: 1,
   activeAccountId: "acc_main",
@@ -78,27 +82,35 @@ const RECRUIT_FIXTURE = {
     { id: "danh-tuong-pk", name: "Danh tướng PK", type: "normal", drawMode: "daily", hasFiveStar: true, pityLimit: 30, dailyCheapPullLimit: 4 },
     { id: "banner-limited", name: "Gói hạn giờ A", type: "limited", drawMode: "banner", hasFiveStar: true, pityLimit: 30 },
   ],
-  dailyStates: [{
-    date: todayIso(),
-    accountId: "acc_main",
-    bannerId: "danh-tuong-pk",
-    slots: [
-      { key: "free_1", label: "Miễn phí 1", status: "pending" },
-      { key: "half_1", label: "Nửa giá 1", status: "pending" },
-      { key: "free_2", label: "Miễn phí 2", status: "pending" },
-      { key: "half_2", label: "Nửa giá 2", status: "miss" },
-    ],
-    nextFreeAt: "",
-  }],
   pullEvents: [
     { id: "evt_five", accountId: "acc_main", bannerId: "danh-tuong-pk", pulls: 1, result: "fiveStar", date: "2026-07-09", heroName: "SP Lữ Mông", heroValueClass: "Chủ lực", pullCount: 30, drawSlot: "Miễn phí 1" },
-    { id: "evt_miss", accountId: "acc_main", bannerId: "danh-tuong-pk", pulls: 1, result: "miss", date: "2026-07-10" },
+    { id: "evt_miss", accountId: "acc_main", bannerId: "danh-tuong-pk", pulls: 1, result: "miss", date: todayIso() },
     { id: "evt_over", accountId: "acc_main", bannerId: "banner-limited", pulls: 31, result: "miss", date: "2026-07-10" },
   ],
 };
 
+/** Công cụ không còn dùng `prompt`/`confirm`/`alert`: mọi hộp thoại native bật lên đều là lỗi. */
+function forbidNativeDialogs(page) {
+  const opened = [];
+  page.on("dialog", async (dialog) => {
+    opened.push(dialog.type());
+    await dialog.dismiss();
+  });
+  return opened;
+}
+
+const liveDailyPulls = (stored) => stored.pullEvents
+  .filter((event) => !event.deletedAt && event.bannerId === "danh-tuong-pk" && event.result !== "set" && event.date === todayIso())
+  .reduce((sum, event) => sum + event.pulls, 0);
+
 test.describe("Chiêu mộ", () => {
-  test("đồng hồ pity đọc từ store (kể cả quá mốc), lịch sử và lượt đã ghi giữ nguyên hành vi", async ({ page }) => {
+  test("đồng hồ pity đọc từ store (kể cả quá mốc), nhật ký, và Đủ 4 kẹp theo lượt còn lại rồi Hoàn tác", async ({ page }) => {
+    const apiCalls = [];
+    await page.route("**/api/**", (route) => {
+      apiCalls.push(route.request().url());
+      return route.fulfill({ status: 401, contentType: "application/json", body: "{}" });
+    });
+    const nativeDialogs = forbidNativeDialogs(page);
     await seed(page, { tqcclRecruitTracker: RECRUIT_FIXTURE });
     await page.goto("/theo-doi-chieu-mo/");
     await waitForBoot(page);
@@ -106,8 +118,12 @@ test.describe("Chiêu mộ", () => {
     const section = page.locator("#section-recruit-tracker");
     await expect(section.locator("h1.reference-title")).toHaveText("Theo dõi chiêu mộ");
     await expect(section.locator(".rt-account-bar #rt-account-select")).toHaveValue("acc_main");
+    // Khách chưa từng đăng nhập: chip ☁ mời đăng nhập, không gọi /api/me.
+    await expect(section.locator(".rt-sync")).toContainText("Chưa đồng bộ");
+    await expect(section.locator(".rt-sync").getByRole("button", { name: "Đăng nhập", exact: true })).toBeVisible();
+    await expect(section.locator(".tool-notice")).toContainText("Dữ liệu chỉ lưu trong trình duyệt này");
 
-    // Hằng ngày: 1 lượt sau lần ra 5★ gần nhất -> 1/30, còn 29 lượt.
+    // Hằng ngày: 1 lượt sau lần ra 5★ gần nhất -> 1/30, còn 29 lượt, hôm nay 1/4.
     const dailyMeter = section.locator(".rt-pity-block [role='meter']");
     await expect(dailyMeter).toHaveAttribute("aria-valuemin", "0");
     await expect(dailyMeter).toHaveAttribute("aria-valuemax", "30");
@@ -127,32 +143,69 @@ test.describe("Chiêu mộ", () => {
     await expect(banner.locator("[role='meter']")).toHaveAttribute("aria-valuetext", "31 / 30 lượt");
     await expect(banner.locator(".rt-warning")).toHaveText("Kiểm tra lại dữ liệu/quy tắc game");
 
-    // Lịch sử: tên serif + badge phân loại + ngày · gói + số lượt.
-    const history = section.locator(".rt-history-item");
-    await expect(history).toHaveCount(1);
-    await expect(history.locator(".rt-history-hero")).toHaveText("SP Lữ Mông");
-    await expect(history.locator(".rt-value")).toHaveText("Chủ lực");
-    await expect(history.locator(".rt-history-date")).toContainText("Danh tướng PK");
-    await expect(history.locator(".rt-history-pulls")).toHaveText("lượt 30/30");
+    // Nhật ký: dòng 5★ giữ số lượt tới 5★ của dữ liệu cũ, badge phân loại, tên gói.
+    const fiveRow = section.locator(".rt-log-item[data-result='fiveStar']");
+    await expect(fiveRow).toHaveCount(1);
+    await expect(fiveRow.locator(".rt-log-text")).toHaveText("★ SP Lữ Mông · lượt 30");
+    await expect(fiveRow.locator(".rt-value")).toHaveText("Chủ lực");
+    await expect(fiveRow.locator(".rt-log-banner")).toContainText("Danh tướng PK");
+    await expect(section.locator(".rt-stats")).toContainText("30");
 
-    // Ghi một lượt mới: nút vừa bấm hiện trạng thái đã ghi, store nhận đúng một sự kiện, meter tăng.
-    const firstSlot = section.locator(".rt-slot").first();
-    const missButton = firstSlot.getByRole("button", { name: "Không ra", exact: true });
-    await missButton.click();
-    await expect(missButton).toHaveAttribute("aria-pressed", "true");
-    // Sau khi ghi, cả hai nút của ô khoá lại (hành vi cũ) nên focus rời nút — giữ nguyên như trước phase.
-    await expect(missButton).toBeDisabled();
-    await expect(section.locator(".rt-pity-value")).toHaveText("2");
-    await expect(section.locator(".rt-pity-meta")).toContainText("Còn 28 lượt");
-    const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("tqcclRecruitTracker")));
-    expect(stored.pullEvents.filter((event) => event.result === "miss" && event.bannerId === "danh-tuong-pk")).toHaveLength(2);
-    expect(stored.schemaVersion).toBe(1);
+    // "Đủ 4": một chạm ghi đúng số lượt còn lại hôm nay (3), cả hai nút nhanh khoá, toast có Hoàn tác.
+    const fill = section.getByRole("button", { name: /^Đủ 4/ });
+    await expect(fill).toHaveAttribute("aria-label", "Đủ 4 (ghi 3 lượt không ra)");
+    await fill.click();
+    await expect(section.locator(".rt-pity-value")).toHaveText("4");
+    await expect(section.locator(".rt-pity-meta")).toContainText("Hôm nay 4/4");
+    await expect(fill).toBeDisabled();
+    await expect(section.getByRole("button", { name: /^2 miễn phí/ })).toBeDisabled();
+    await expect(section.locator(".rt-today-hint")).toHaveText("Hôm nay đã ghi đủ 4 lượt.");
+    await expect(section.locator(".rt-toast[role='status']")).toContainText("Đã ghi +3 lượt");
+    let stored = await page.evaluate(() => JSON.parse(localStorage.getItem("tqcclRecruitTracker")));
+    expect(stored.schemaVersion).toBe(2);
+    expect(liveDailyPulls(stored)).toBe(4);
 
-    // Đổi tài khoản vẫn ghi đúng tài khoản đang chọn (hành vi cũ).
-    await expect(section.locator(".rt-slot").first().locator(".rt-slot-status")).toHaveText("Không ra");
+    await section.getByRole("button", { name: "Hoàn tác", exact: true }).click();
+    await expect(section.locator(".rt-pity-value")).toHaveText("1");
+    await expect(section.locator(".rt-pity-meta")).toContainText("Hôm nay 1/4");
+    await expect(fill).toBeEnabled();
+    stored = await page.evaluate(() => JSON.parse(localStorage.getItem("tqcclRecruitTracker")));
+    expect(liveDailyPulls(stored)).toBe(1);
+    expect(apiCalls).toEqual([]);
+    expect(nativeDialogs).toEqual([]);
   });
 
-  test("form 5★ nhận focus và tổng đài thao tác tài khoản nằm sau nút ⋯ trên mobile", async ({ page }) => {
+  test("tài khoản mới: màn bắt đầu, một chạm Đủ 4 ghi 4 lượt và Hoàn tác xóa đúng 4 lượt đó", async ({ page }) => {
+    const nativeDialogs = forbidNativeDialogs(page);
+    await page.goto("/theo-doi-chieu-mo/");
+    await waitForBoot(page);
+    const section = page.locator("#section-recruit-tracker");
+
+    const onboard = section.locator(".rt-onboard");
+    await expect(onboard).toBeVisible();
+    await expect(onboard).toContainText("Trong game bạn đang ở lượt mấy?");
+    await onboard.locator("input[type='number']").fill("17");
+    await onboard.getByRole("button", { name: "Bắt đầu", exact: true }).click();
+    await expect(onboard).toBeHidden();
+    await expect(section.locator(".rt-pity-value")).toHaveText("17");
+    await expect(section.locator(".rt-log-item .rt-log-text")).toHaveText(["Đồng bộ 17 lượt"]);
+
+    await section.getByRole("button", { name: /^Đủ 4/ }).click();
+    await expect(section.locator(".rt-pity-value")).toHaveText("21");
+    await expect(section.locator(".rt-toast")).toContainText("Đã ghi +4 lượt");
+    await expect(section.locator(".rt-log-item .rt-log-text")).toHaveText(["+4 không ra", "Đồng bộ 17 lượt"]);
+    let stored = await page.evaluate(() => JSON.parse(localStorage.getItem("tqcclRecruitTracker")));
+    expect(liveDailyPulls(stored)).toBe(4);
+
+    await section.getByRole("button", { name: "Hoàn tác", exact: true }).click();
+    await expect(section.locator(".rt-pity-value")).toHaveText("17");
+    await expect(section.locator(".rt-log-item .rt-log-text")).toHaveText(["Đồng bộ 17 lượt"]);
+    stored = await page.evaluate(() => JSON.parse(localStorage.getItem("tqcclRecruitTracker")));
+    expect(liveDailyPulls(stored)).toBe(0);
+    expect(nativeDialogs).toEqual([]);
+  });
+
+  test("menu ⋯ tài khoản: aria-expanded, Escape và Tab ra ngoài đóng; hộp thoại 5★ nhận focus và trả focus khi đóng", async ({ page }) => {
     await seed(page, { tqcclRecruitTracker: RECRUIT_FIXTURE });
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/theo-doi-chieu-mo/");
@@ -168,6 +221,7 @@ test.describe("Chiêu mộ", () => {
     await toggle.click();
     await expect(toggle).toHaveAttribute("aria-expanded", "true");
     await expect(actions).toBeVisible();
+    await expect(actions.getByRole("button", { name: "Đổi tên", exact: true })).toBeVisible();
     await expect(toggle).toBeFocused();
 
     await page.keyboard.press("Escape");
@@ -176,25 +230,30 @@ test.describe("Chiêu mộ", () => {
     await expect(toggle).toBeFocused();
 
     await toggle.click();
-    await section.locator(".rt-account-pick #rt-account-select").focus();
-    await page.keyboard.press("Tab");
+    await section.locator("#rt-account-select").focus();
     await expect(actions).toBeHidden();
 
-    // Bề rộng lớn: hàng thao tác hiện thẳng, nút ⋯ ẩn.
-    await page.setViewportSize({ width: 1280, height: 900 });
-    await expect(toggle).toBeHidden();
-    await expect(actions).toBeVisible();
-    await expect(actions.getByRole("button", { name: "Đổi tên", exact: true })).toBeVisible();
-
-    // Mở form 5★: focus vào ô tướng (hành vi cũ).
-    await section.locator(".rt-slot").first().getByRole("button", { name: "Ra 5★", exact: true }).click();
-    await expect(section.locator("[data-hero-input]")).toBeFocused();
-    await expect(section.locator(".rt-form-section h2")).toHaveText("Ghi 5★ · Miễn phí 1");
+    // Hộp thoại 5★ lượt ngày: native `<dialog>`, focus vào ô đầu, Escape đóng và trả focus về nút đã mở.
+    const fiveButton = section.locator(".rt-today .rt-five-btn");
+    await fiveButton.click();
+    const dialog = page.locator("dialog.rt-dialog");
+    await expect(dialog).toBeVisible();
+    await expect(dialog.locator("h2")).toHaveText("Ghi 5★ · Danh tướng PK");
+    await expect(dialog.locator("select[name='hitAt']")).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+    await expect(fiveButton).toBeFocused();
+    // Vùng bấm 44px trên mobile cho mọi nút hiện trong công cụ.
+    const small = await section.evaluate((root) => [...root.querySelectorAll("button, select, input:not([type='file'])")]
+      .filter((node) => node.offsetParent && !node.closest("dialog"))
+      .filter((node) => node.getBoundingClientRect().height < 44)
+      .map((node) => node.className));
+    expect(small).toEqual([]);
   });
 
   test("nhập JSON hỏng: localStorage giữ nguyên, báo lỗi, công cụ vẫn ghi lượt được", async ({ page }) => {
     await seed(page, { tqcclRecruitTracker: RECRUIT_FIXTURE });
-    page.on("dialog", async (dialog) => { await dialog.accept(); });
+    const nativeDialogs = forbidNativeDialogs(page);
     await page.goto("/theo-doi-chieu-mo/");
     await waitForBoot(page);
     const section = page.locator("#section-recruit-tracker");
@@ -204,50 +263,127 @@ test.describe("Chiêu mộ", () => {
     broken.pullEvents = [null];
     await section.locator(".rt-file").setInputFiles({ name: "hong.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(broken)) });
 
-    await expect(section.locator(".rt-message")).toHaveText("Dữ liệu không hợp lệ.");
+    await expect(section.locator(".rt-toast")).toContainText("Dữ liệu không hợp lệ.");
+    await expect(page.locator("dialog.rt-dialog")).toBeHidden();
     expect(await page.evaluate(() => localStorage.getItem("tqcclRecruitTracker"))).toBe(before);
     await expect(section.locator(".rt-pity-value")).toHaveText("1");
-    await section.locator(".rt-slot").first().getByRole("button", { name: "Không ra", exact: true }).click();
-    await expect(section.locator(".rt-pity-value")).toHaveText("2");
+    await section.getByRole("button", { name: /^2 miễn phí/ }).click();
+    await expect(section.locator(".rt-pity-value")).toHaveText("3");
+    expect(nativeDialogs).toEqual([]);
   });
 
-  test("5★ lượt ngày ghi vào đúng ô đã mở: form không có ô ngày, lịch sử ghi tên lượt tiếng Việt", async ({ page }) => {
+  test("Có 5★ lượt ngày: chọn lượt trúng trong số lượt còn lại, nhật ký ghi tên tướng và số lượt tới 5★", async ({ page }) => {
     await seed(page, { tqcclRecruitTracker: RECRUIT_FIXTURE });
     await page.goto("/theo-doi-chieu-mo/");
     await waitForBoot(page);
     const section = page.locator("#section-recruit-tracker");
 
-    await section.locator(".rt-slot").first().getByRole("button", { name: "Ra 5★", exact: true }).click();
-    const form = section.locator(".rt-form-section");
-    await expect(form.locator("h2")).toHaveText("Ghi 5★ · Miễn phí 1");
-    await expect(form.locator('input[type="date"], input[name="date"]')).toHaveCount(0);
-    await form.locator("[data-hero-input]").fill("SP Quan Vũ");
-    await form.getByRole("button", { name: "Lưu 5★", exact: true }).click();
+    await section.locator(".rt-today .rt-five-btn").click();
+    const dialog = page.locator("dialog.rt-dialog");
+    // Hôm nay đã quay 1 lượt: còn 3 lượt để chọn; hộp thoại lượt ngày không có ô ngày.
+    await expect(dialog.locator("select[name='hitAt'] option")).toHaveText(["Lượt 2/4 hôm nay", "Lượt 3/4 hôm nay", "Lượt 4/4 hôm nay"]);
+    await expect(dialog.locator("input[type='date']")).toHaveCount(0);
+    await dialog.locator("select[name='hitAt']").selectOption("2");
+    await expect(dialog.locator("select[name='pullsAfter'] option")).toHaveCount(2);
+    await dialog.locator("select[name='pullsAfter']").selectOption("0");
+    await dialog.locator("input[name='heroName']").fill("SP Quan Vũ");
+    await dialog.getByRole("button", { name: "Lưu 5★", exact: true }).click();
+    await expect(dialog).toBeHidden();
 
-    const row = section.locator(".rt-history-item").filter({ hasText: "SP Quan Vũ" });
-    await expect(row.locator(".rt-history-date")).toHaveText(`${todayIso()} · Danh tướng PK · Miễn phí 1`);
-    await expect(row.locator(".rt-history-pulls")).toHaveText("lượt 2/30");
-    await expect(section.locator(".rt-slot").first().locator(".rt-slot-status")).toHaveText("Ra 5★");
+    const row = section.locator(".rt-log-item").first();
+    await expect(row.locator(".rt-log-text")).toHaveText("★ SP Quan Vũ · lượt 3");
+    await expect(row.locator(".rt-log-date")).toHaveText(todayIso());
+    await expect(row.locator(".rt-log-banner")).toContainText("Danh tướng PK");
+    await expect(section.locator(".rt-pity-value")).toHaveText("0");
+    await expect(section.locator(".rt-pity-meta")).toContainText("Hôm nay 3/4");
+    // Khách vừa ghi 5★ đầu tiên trong phiên: lời mời đăng nhập hiện, "Để sau" nhớ lựa chọn.
+    await expect(section.locator(".rt-invite")).toBeVisible();
+    await section.locator(".rt-invite").getByRole("button", { name: "Để sau", exact: true }).click();
+    await expect(section.locator(".rt-invite")).toBeHidden();
+    expect(await page.evaluate(() => localStorage.getItem("tqcclRecruitTracker:invite"))).toBe("dismissed");
   });
 
-  test("qua nửa đêm khi trang còn mở: bốn ô ngày về Chưa quay và bấm được", async ({ page }) => {
+  test("nhật ký: sửa và xóa bất kỳ dòng nào, pity tính lại ngay, Hoàn tác khôi phục dòng đã xóa", async ({ page }) => {
+    await seed(page, { tqcclRecruitTracker: RECRUIT_FIXTURE });
+    const nativeDialogs = forbidNativeDialogs(page);
+    await page.goto("/theo-doi-chieu-mo/");
+    await waitForBoot(page);
+    const section = page.locator("#section-recruit-tracker");
+    const missRow = section.locator(".rt-log-item[data-result='miss']").filter({ hasText: "Danh tướng PK" });
+
+    await missRow.locator(".rt-log-edit").click();
+    const dialog = page.locator("dialog.rt-dialog");
+    await dialog.locator("input[name='pulls']").fill("3");
+    await dialog.getByRole("button", { name: "Lưu", exact: true }).click();
+    await expect(section.locator(".rt-pity-value")).toHaveText("3");
+    await expect(missRow.locator(".rt-log-text")).toHaveText("+3 không ra");
+
+    await missRow.locator(".rt-log-delete").click();
+    await expect(section.locator(".rt-pity-value")).toHaveText("0");
+    await expect(missRow).toHaveCount(0);
+    await section.getByRole("button", { name: "Hoàn tác", exact: true }).click();
+    await expect(section.locator(".rt-pity-value")).toHaveText("3");
+    await expect(missRow).toHaveCount(1);
+    expect(nativeDialogs).toEqual([]);
+  });
+
+  test("gói hạn giờ: thêm bằng hộp thoại, đếm ngược hết hạn, +5, lưu trữ và xóa có hộp thoại xác nhận", async ({ page }) => {
+    const nativeDialogs = forbidNativeDialogs(page);
+    await page.goto("/theo-doi-chieu-mo/");
+    await waitForBoot(page);
+    const section = page.locator("#section-recruit-tracker");
+    const dialog = page.locator("dialog.rt-dialog");
+    const inThreeDays = (() => {
+      const date = new Date();
+      date.setDate(date.getDate() + 3);
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    })();
+
+    await section.getByRole("button", { name: "Thêm gói", exact: true }).click();
+    await dialog.locator("input[name='name']").fill("Kỳ Tật Như Phong");
+    await dialog.locator("input[name='expiresAt']").fill(inThreeDays);
+    await dialog.getByRole("button", { name: "Thêm gói", exact: true }).click();
+
+    const banner = section.locator(".rt-banner");
+    await expect(banner.locator(".rt-banner-name")).toHaveText("Kỳ Tật Như Phong");
+    await expect(banner.locator(".rt-banner-expiry")).toHaveText("còn 3 ngày");
+    await banner.getByRole("button", { name: "+5", exact: true }).click();
+    await expect(banner.locator(".rt-banner-count")).toHaveText("5/30");
+
+    await banner.locator(".rt-menu-toggle").click();
+    await banner.getByRole("button", { name: "Lưu trữ", exact: true }).click();
+    await expect(section.locator(".rt-archived")).toBeVisible();
+    await expect(section.locator(".rt-archived-summary")).toHaveText("Đã lưu trữ (1)");
+    await section.getByRole("button", { name: "Hoàn tác", exact: true }).click();
+    await expect(section.locator(".rt-archived")).toBeHidden();
+
+    await banner.locator(".rt-menu-toggle").click();
+    await banner.getByRole("button", { name: "Xóa gói", exact: true }).click();
+    await expect(dialog.locator(".donate-dialog-lead")).toContainText('Xóa gói "Kỳ Tật Như Phong"?');
+    await dialog.getByRole("button", { name: "Xóa", exact: true }).click();
+    await expect(banner).toHaveCount(0);
+    await expect(section.locator(".rt-log-item")).toHaveCount(0);
+    expect(nativeDialogs).toEqual([]);
+  });
+
+  test("qua nửa đêm khi trang còn mở: Hôm nay về 0/4 và nút nhanh bấm được lại", async ({ page }) => {
     await page.clock.install({ time: new Date(2026, 8, 27, 23, 59, 0) });
     await page.goto("/theo-doi-chieu-mo/");
     await waitForBoot(page);
     const section = page.locator("#section-recruit-tracker");
-    const slots = section.locator(".rt-slot");
-    await expect(slots).toHaveCount(4);
-    for (let index = 0; index < 4; index++) {
-      await slots.nth(index).getByRole("button", { name: "Không ra", exact: true }).click();
-    }
-    await expect(section.locator(".rt-slot-status")).toHaveText(["Không ra", "Không ra", "Không ra", "Không ra"]);
-    await expect(slots.first().getByRole("button", { name: "Không ra", exact: true })).toBeDisabled();
+    await section.getByRole("button", { name: "Bắt đầu từ 0", exact: true }).click();
+    const fill = section.getByRole("button", { name: /^Đủ 4/ });
+    await fill.click();
+    await expect(section.locator(".rt-pity-meta")).toContainText("Hôm nay 4/4");
+    await expect(fill).toBeDisabled();
 
     await page.clock.runFor(2 * 60 * 1000);
 
-    await expect(section.locator(".rt-slot-status")).toHaveText(["Chưa quay", "Chưa quay", "Chưa quay", "Chưa quay"]);
-    await expect(slots.first().getByRole("button", { name: "Không ra", exact: true })).toBeEnabled();
     await expect(section.locator(".rt-pity-meta")).toContainText("Hôm nay 0/4");
+    await expect(fill).toBeEnabled();
+    await expect(fill).toHaveAttribute("aria-label", "Đủ 4 (ghi 4 lượt không ra)");
+    // Bảo hiểm cộng dồn qua ngày.
+    await expect(section.locator(".rt-pity-value")).toHaveText("4");
   });
 });
 
@@ -854,22 +990,27 @@ test.describe("Vòng sửa P09", () => {
     await expect(section.locator(".roster-review-panel").first()).toBeVisible();
   });
 
-  test("nhập JSON cùng id nhưng đổi tên gói: mọi chỗ hiện tên mới ngay, không cần tải lại", async ({ page }) => {
+  test("nhập JSON gộp theo bản sửa mới nhất: gói cùng id đổi tên hiện tên mới ngay, không cần tải lại", async ({ page }) => {
     await seed(page, { tqcclRecruitTracker: RECRUIT_FIXTURE });
     let exported = null;
-    page.on("dialog", async (dialog) => { await dialog.accept(); });
+    const nativeDialogs = forbidNativeDialogs(page);
     await page.goto("/theo-doi-chieu-mo/");
     await waitForBoot(page);
     const section = page.locator("#section-recruit-tracker");
     const banner = section.locator(".rt-banner");
     await expect(banner.locator(".rt-banner-name")).toHaveText("Gói hạn giờ A");
 
+    // Nhập là GỘP (không ghi đè): bản trong file phải mới hơn bản tại chỗ mới thắng. File v1 không có
+    // `updatedAt`, nên gói đổi tên mang `createdAt` mới hơn (dữ liệu tại chỗ không có mốc = cũ nhất).
     const imported = structuredClone(RECRUIT_FIXTURE);
-    imported.banners.find((item) => item.id === "banner-limited").name = "Gói hạn giờ B";
-    imported.banners.find((item) => item.id === "banner-limited").pityLimit = 45;
+    const importedBanner = imported.banners.find((item) => item.id === "banner-limited");
+    importedBanner.name = "Gói hạn giờ B";
+    importedBanner.pityLimit = 45;
+    importedBanner.createdAt = "2026-07-02T00:00:00.000Z";
     imported.exportedAt = null;
 
-    // Input file trong suốt: Tab từ "Xuất JSON" phải để lại vòng focus nhìn thấy được trên nhãn "Nhập JSON".
+    // Input file trong suốt trong menu ⋯: Tab từ "Xuất JSON" phải để lại vòng focus nhìn thấy được trên "Nhập JSON".
+    await section.locator(".rt-account-toggle").click();
     await section.getByRole("button", { name: "Xuất JSON", exact: true }).focus();
     await page.keyboard.press("Tab");
     await expect(section.locator(".rt-file")).toBeFocused();
@@ -885,7 +1026,12 @@ test.describe("Vòng sửa P09", () => {
       buffer: Buffer.from(JSON.stringify(imported)),
     });
 
-    await expect(section.locator(".rt-message")).toHaveText("Đã nhập JSON.");
+    // Hộp thoại xác nhận trong trang (không `confirm()`), kèm số bản ghi của file.
+    const dialog = page.locator("dialog.rt-dialog");
+    await expect(dialog.locator("h2")).toHaveText("Gộp dữ liệu từ file?");
+    await expect(dialog.locator(".donate-dialog-lead")).toContainText("File có 1 tài khoản, 2 đợt chiêu mộ, 3 lượt quay.");
+    await dialog.getByRole("button", { name: "Gộp dữ liệu", exact: true }).click();
+    await expect(section.locator(".rt-toast")).toContainText("Đã nhập JSON.");
     const afterImport = await page.evaluate(() => {
       const banners = [...document.querySelectorAll("#section-recruit-tracker .rt-banner")];
       return {
@@ -896,6 +1042,7 @@ test.describe("Vòng sửa P09", () => {
         meterMax: banners[0]?.querySelector("[role='meter']")?.getAttribute("aria-valuemax"),
         meterText: banners[0]?.querySelector("[role='meter']")?.getAttribute("aria-valuetext"),
         stored: JSON.parse(localStorage.getItem("tqcclRecruitTracker")).banners.map((item) => item.name),
+        events: JSON.parse(localStorage.getItem("tqcclRecruitTracker")).pullEvents.length,
       };
     });
     expect(afterImport.stored).toEqual(["Danh tướng PK", "Gói hạn giờ B"]);
@@ -904,11 +1051,15 @@ test.describe("Vòng sửa P09", () => {
     expect(afterImport.meterLabel).toBe("Tiến độ bảo hiểm 5★ · Gói hạn giờ B");
     expect(afterImport.meterMax).toBe("45");
     expect(afterImport.meterText).toBe("31 / 45 lượt");
-    await section.locator(".rt-banner").first().getByRole("button", { name: "Ra 5★", exact: true }).click();
-    await expect(section.locator(".rt-form-section h2")).toHaveText("Ghi 5★ · Gói hạn giờ B");
-    await section.getByRole("button", { name: "Đóng", exact: true }).click();
+    // Lượt cùng id không nhân đôi khi gộp.
+    expect(afterImport.events).toBe(3);
+    await section.locator(".rt-banner").first().locator(".rt-five-btn").click();
+    await expect(dialog.locator("h2")).toHaveText("Ghi 5★ · Gói hạn giờ B");
+    await dialog.getByRole("button", { name: "Đóng", exact: true }).click();
+    await expect(dialog).toBeHidden();
 
     // Xuất JSON (tải về) phải khớp trạng thái đang hiện.
+    await section.locator(".rt-account-toggle").click();
     const download = await Promise.all([
       page.waitForEvent("download"),
       section.getByRole("button", { name: "Xuất JSON", exact: true }).click(),
@@ -927,6 +1078,7 @@ test.describe("Vòng sửa P09", () => {
       stored: JSON.parse(localStorage.getItem("tqcclRecruitTracker")).banners.map((item) => item.name),
     }));
     expect(afterReload).toEqual({ dom: "Gói hạn giờ B", stored: ["Danh tướng PK", "Gói hạn giờ B"] });
+    expect(nativeDialogs).toEqual([]);
   });
 
   test("hàng kết quả có dữ liệu: số thứ tự, tên đội và nút Mở đội đúng cột; pill đúng màu theo trạng thái", async ({ page, request }) => {

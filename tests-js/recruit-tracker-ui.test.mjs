@@ -1,74 +1,156 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
+  DAILY_BANNER_ID,
   createDefaultRecruitTrackerState,
   createLimitedBanner,
   getRecruitTrackerSummary,
   recordBannerFiveStar,
   recordBannerMiss,
-  recordDailySlotFiveStar,
-  recordDailySlotMiss,
+  recordDailyFiveStar,
+  recordDailyMisses,
   renameAccount,
+  setBannerArchived,
+  setPity,
+  updateBanner,
 } from "../js/recruit-tracker-store.js";
-import { buildRecruitTrackerViewModel } from "../js/recruit-tracker.js";
+import { buildRecruitTrackerViewModel, expiryView } from "../js/recruit-tracker.js";
 
 const TODAY = "2026-07-10";
+const CJK = /[\u3400-\u9fff\uf900-\ufaff]/u;
+let tick = Date.parse("2026-07-10T03:30:00.000Z");
+/** Mốc thời gian tăng dần cho từng thao tác: thứ tự bảo hiểm của store theo `occurredAt`. */
+const now = () => new Date((tick += 1000));
 
-test("recruit tracker view model exposes compact daily, limited, history, and hero options", () => {
-  let state = createDefaultRecruitTrackerState("2026-07-10T03:30:00+07:00");
-  state = renameAccount(state, state.activeAccountId, "主账号 Main");
-  const accountId = state.activeAccountId;
-  state = recordDailySlotMiss(state, { accountId, date: TODAY, slotKey: "free_1" });
-  state = recordDailySlotFiveStar(state, { accountId, date: TODAY, slotKey: "half_1", heroName: "SP Quan Vũ" });
-  state = createLimitedBanner(state, { name: "Kỳ Tật Như Phong" });
-  const limited = state.banners.find((banner) => banner.name === "Kỳ Tật Như Phong");
-  state = recordBannerMiss(state, { accountId, bannerId: limited.id, pulls: 31, date: TODAY });
+function viewOf(state, heroes = [], date = TODAY) {
+  return buildRecruitTrackerViewModel(getRecruitTrackerSummary(state, { date }), heroes, { today: date });
+}
 
-  const summary = getRecruitTrackerSummary(state, { accountId, date: TODAY });
-  const viewModel = buildRecruitTrackerViewModel(summary, [
-    { name: "Lưu Bị", chinese: "刘备" },
-    { name: "SP Mã Siêu", chinese: "SP马超" },
+function withLimited(state, fields) {
+  const next = createLimitedBanner(state, { ...fields, now: now() });
+  return { state: next, id: next.banners.at(-1).id };
+}
+
+test("empty account shows onboarding and quick buttons offer the full day", () => {
+  const view = viewOf(createDefaultRecruitTrackerState());
+  assert.equal(view.isEmpty, true);
+  assert.equal(view.daily.title, "Danh tướng PK · Hôm nay");
+  assert.deepEqual(view.daily.quick.map(({ label, pulls, disabled, countText }) => ({ label, pulls, disabled, countText })), [
+    { label: "2 miễn phí", pulls: 2, disabled: false, countText: "+2" },
+    { label: "Đủ 4", pulls: 4, disabled: false, countText: "+4" },
   ]);
-
-  assert.equal(viewModel.daily.title, "Danh tướng PK - Hằng ngày");
-  assert.equal(viewModel.daily.pityText, "0/30");
-  assert.deepEqual(viewModel.daily.slots.map((slot) => [slot.label, slot.statusLabel]), [
-    ["Miễn phí 1", "Không ra"],
-    ["Nửa giá 1", "Ra 5★"],
-    ["Miễn phí 2", "Chưa quay"],
-    ["Nửa giá 2", "Chưa quay"],
-  ]);
-  // Giá trị cho đồng hồ pity (thanh role=meter) lấy thẳng từ store: quá mốc vẫn hiện số thật, phần trăm kẹp 100.
-  assert.deepEqual(viewModel.daily.pity, { value: 0, limit: 30, remaining: 30, isOverLimit: false, percent: 0 });
-  assert.equal(viewModel.daily.todayDone, 2);
-  assert.equal(viewModel.daily.pityText, `${viewModel.daily.pity.value}/${viewModel.daily.pity.limit}`);
-  assert.equal(viewModel.limitedBanners[0].name, "Kỳ Tật Như Phong");
-  assert.deepEqual(viewModel.limitedBanners[0].pity, { value: 31, limit: 30, remaining: 0, isOverLimit: true, percent: 100 });
-  assert.equal(viewModel.limitedBanners[0].pityText, "31/30");
-  assert.ok(viewModel.limitedBanners[0].warning);
-  assert.doesNotMatch(viewModel.limitedBanners[0].warning, /[\u3400-\u9fff\uf900-\ufaff]/u);
-  assert.equal(viewModel.daily.warning, "");
-  assert.equal(viewModel.history[0].heroName, "SP Quan Vũ");
-  assert.deepEqual(viewModel.heroOptions, ["Lưu Bị", "SP Mã Siêu"]);
+  assert.equal(view.daily.fiveStarDisabled, false);
+  assert.equal(view.daily.hint, "");
+  assert.equal(view.stats.text, "TB — lượt/5★ · 0× 5★ · chuỗi 0 ngày");
 });
 
-test("history rows name the daily slot in Vietnamese and count pulls against each banner's own pity limit", () => {
-  let state = createDefaultRecruitTrackerState("2026-07-10T03:30:00+07:00");
+test("quick buttons clamp to the pulls left today and disable with a hint once the day is full", () => {
+  let state = createDefaultRecruitTrackerState();
   const accountId = state.activeAccountId;
-  state = recordDailySlotFiveStar(state, { accountId, date: TODAY, slotKey: "free_1", heroName: "SP Quan Vũ" });
-  state = createLimitedBanner(state, { name: "Kỳ Tật Như Phong" });
-  const limited = state.banners.find((banner) => banner.name === "Kỳ Tật Như Phong");
-  limited.pityLimit = 40;
-  state = recordBannerMiss(state, { accountId, bannerId: limited.id, pulls: 11, date: "2026-07-11" });
-  state = recordBannerFiveStar(state, { accountId, bannerId: limited.id, pulls: 1, heroName: "Lưu Bị", date: "2026-07-11" });
+  state = recordDailyMisses(state, { accountId, date: TODAY, pulls: 3, now: now() });
+  let view = viewOf(state);
+  assert.equal(view.isEmpty, false);
+  assert.equal(view.daily.todayDone, 3);
+  assert.equal(view.daily.todayText, "Hôm nay 3/4");
+  const [free, fill] = view.daily.quick;
+  assert.equal(free.pulls, 1);
+  assert.equal(free.countText, "+1");
+  assert.equal(free.ariaLabel, "2 miễn phí (ghi 1 lượt không ra)");
+  assert.equal(fill.pulls, 1);
+  assert.equal(fill.disabled, false);
 
-  const viewModel = buildRecruitTrackerViewModel(getRecruitTrackerSummary(state, { accountId, date: "2026-07-11" }));
-  const [limitedRow, dailyRow] = viewModel.history;
+  state = recordDailyMisses(state, { accountId, date: TODAY, pulls: fill.pulls, now: now() });
+  view = viewOf(state);
+  assert.deepEqual(view.daily.quick.map((quick) => [quick.pulls, quick.disabled, quick.countText]), [[0, true, ""], [0, true, ""]]);
+  assert.equal(view.daily.quick[1].ariaLabel, "Đủ 4 (hôm nay đã đủ 4 lượt)");
+  assert.equal(view.daily.fiveStarDisabled, true);
+  assert.equal(view.daily.hint, "Hôm nay đã ghi đủ 4 lượt.");
+  // Hôm sau: lượt rẻ về lại 4, bảo hiểm vẫn cộng dồn.
+  const tomorrow = viewOf(state, [], "2026-07-11");
+  assert.equal(tomorrow.daily.quick[1].pulls, 4);
+  assert.equal(tomorrow.daily.pity.value, 4);
+});
 
-  assert.equal(dailyRow.heroName, "SP Quan Vũ");
-  assert.equal(dailyRow.slotText, "Miễn phí 1");
-  assert.equal(dailyRow.pullsText, "lượt 1/30");
-  assert.equal(limitedRow.heroName, "Lưu Bị");
-  assert.equal(limitedRow.slotText, "");
-  assert.equal(limitedRow.pullsText, "lượt 12/40");
+test("pity keeps the real count but clamps the percent, and warns only at or past the limit", () => {
+  let state = createDefaultRecruitTrackerState();
+  const accountId = state.activeAccountId;
+  state = setPity(state, { accountId, bannerId: DAILY_BANNER_ID, value: 17, date: TODAY, now: now() });
+  let limited;
+  ({ state, id: limited } = withLimited(state, { name: "Kỳ Tật Như Phong" }));
+  state = recordBannerMiss(state, { accountId, bannerId: limited, pulls: 31, date: TODAY, now: now() });
+
+  const view = viewOf(state);
+  assert.deepEqual(view.daily.pity, { value: 17, limit: 30, remaining: 13, isOverLimit: false, percent: 57 });
+  assert.equal(view.daily.pityText, "17/30");
+  assert.equal(view.daily.remainingText, "Còn 13 lượt");
+  assert.equal(view.daily.warning, "");
+  // Đồng bộ số không tính là lượt quay hôm nay.
+  assert.equal(view.daily.todayDone, 0);
+
+  const [banner] = view.limitedBanners;
+  assert.equal(banner.name, "Kỳ Tật Như Phong");
+  assert.deepEqual(banner.pity, { value: 31, limit: 30, remaining: 0, isOverLimit: true, percent: 100 });
+  assert.equal(banner.pityText, "31/30");
+  assert.equal(banner.warning, "Kiểm tra lại dữ liệu/quy tắc game");
+  assert.doesNotMatch(banner.warning, CJK);
+});
+
+test("log rows read as miss, 5★ with its pull count, and pity sync, newest first", () => {
+  let state = createDefaultRecruitTrackerState();
+  state = renameAccount(state, state.activeAccountId, "主账号 Main", { now: now() });
+  const accountId = state.activeAccountId;
+  state = setPity(state, { accountId, bannerId: DAILY_BANNER_ID, value: 23, date: "2026-07-09", now: now() });
+  state = recordDailyMisses(state, { accountId, date: TODAY, pulls: 2, now: now() });
+  state = recordDailyFiveStar(state, { accountId, date: TODAY, hitAt: 2, pullsAfter: 0, heroName: "Tào Tháo", heroValueClass: "Chủ lực", note: "đẹp", now: now() });
+
+  const view = viewOf(state, [{ name: "Lưu Bị", chinese: "刘备" }, { name: "SP Mã Siêu", chinese: "SP马超" }]);
+  assert.deepEqual(view.log.map((row) => [row.date, row.text, row.bannerName]), [
+    [TODAY, "★ Tào Tháo · lượt 27", "Danh tướng PK"],
+    [TODAY, "+2 không ra", "Danh tướng PK"],
+    ["2026-07-09", "Đồng bộ 23 lượt", "Danh tướng PK"],
+  ]);
+  assert.equal(view.log[0].valueLabel, "Chủ lực");
+  assert.equal(view.log[0].valueBadgeClass, "rt-value-accent");
+  assert.equal(view.log[0].note, "đẹp");
+  assert.equal(view.log[1].valueLabel, "");
+  // Sau 5★ bảo hiểm về 0; hôm nay đã quay 4 lượt.
+  assert.equal(view.daily.pity.value, 0);
+  assert.equal(view.daily.todayDone, 4);
+  assert.deepEqual(view.heroOptions, ["Lưu Bị", "SP Mã Siêu"]);
+  for (const row of view.log) assert.doesNotMatch(row.text, CJK);
+});
+
+test("stats summarise average pulls per 5★, total 5★ and the daily streak", () => {
+  let state = createDefaultRecruitTrackerState();
+  const accountId = state.activeAccountId;
+  state = recordDailyMisses(state, { accountId, date: "2026-07-08", pulls: 4, now: now() });
+  state = recordDailyMisses(state, { accountId, date: "2026-07-09", pulls: 4, now: now() });
+  state = recordDailyFiveStar(state, { accountId, date: TODAY, hitAt: 2, pullsAfter: 2, heroName: "Lưu Bị", now: now() });
+  let limited;
+  ({ state, id: limited } = withLimited(state, { name: "Gói A" }));
+  state = recordBannerFiveStar(state, { accountId, bannerId: limited, pulls: 21, heroName: "Tôn Quyền", date: TODAY, now: now() });
+
+  const view = viewOf(state);
+  assert.equal(view.stats.fiveStars, 2);
+  assert.equal(view.stats.averagePulls, 15.5);
+  assert.equal(view.stats.streakDays, 3);
+  assert.equal(view.stats.text, "TB 15.5 lượt/5★ · 2× 5★ · chuỗi 3 ngày");
+});
+
+test("limited banners show the expiry countdown and split archived ones out", () => {
+  let state = createDefaultRecruitTrackerState();
+  let soon;
+  let past;
+  ({ state, id: soon } = withLimited(state, { name: "Sắp hết", expiresAt: "2026-07-13" }));
+  ({ state, id: past } = withLimited(state, { name: "Đã qua", expiresAt: "2026-07-01" }));
+  state = setBannerArchived(state, past, true, { now: now() });
+  let view = viewOf(state);
+  assert.deepEqual(view.activeBanners.map((item) => [item.name, item.expiry.text, item.expiry.expired]), [["Sắp hết", "còn 3 ngày", false]]);
+  assert.deepEqual(view.archivedBanners.map((item) => [item.name, item.expiry.text, item.expiry.expired]), [["Đã qua", "hết hạn", true]]);
+
+  state = updateBanner(state, soon, { expiresAt: "" }, { now: now() });
+  view = viewOf(state);
+  assert.deepEqual(view.activeBanners[0].expiry, { text: "", expired: false });
+  assert.deepEqual(expiryView("2026-07-10", TODAY), { text: "hết hạn hôm nay", expired: false });
+  assert.deepEqual(expiryView("2026-07-11", TODAY), { text: "còn 1 ngày", expired: false });
 });

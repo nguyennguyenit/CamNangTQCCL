@@ -38,7 +38,7 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | `js/render.js` | DOM builder dùng chung (`el`, icon), nhóm Cùng Tồn, bảng Khai hoang và chi tiết cấu hình mùa. |
 | `js/filters.js` | Chuẩn hoá chữ bỏ dấu và blob tìm kiếm của một đội, dùng chung với MCP. |
 | `js/unified-lookup.js`, `js/lookup-page.js`, `js/lookup-profile.js`, `js/lookup-data.js`, `js/lookup-detail.js`, `js/view-tree.js`, `src/lib/lookup-pages.ts` | Tra cứu bảy nhóm, mỗi nhóm một trang: nạp và xác minh payload theo trang, tìm kiếm, cây markup dùng chung build/DOM, hồ sơ và quan hệ theo ID. |
-| `js/recruit-tracker-store.js` | State schema v1, nhiều account, banner, pity, import/export localStorage. |
+| `js/recruit-tracker-store.js`, `js/recruit-tracker.js`, `js/recruit-sync.js` | Theo dõi chiêu mộ: store schema v2 (bản ghi có `id`/`updatedAt`/dấu xóa, chuyển v1→v2, bảo hiểm tính từ lượt theo `occurredAt`, gộp LWW theo bản ghi), UI (ghi nhanh, Hoàn tác, nhật ký, hộp thoại `<dialog>`), client đồng bộ tuỳ chọn với `/api/recruit`. |
 | `js/analyze.js`, `js/analyze-map.js` | Nén ảnh, Turnstile, Worker call, canonical map và team similarity. |
 | `js/hero-identity.js` | Canonical identity tướng: SP/CO/base tách biệt, `familyId` riêng và combined slot là alternatives. |
 | `js/roster-scan-state.js` | Serialize scan state, loại dữ liệu ảnh/token. |
@@ -87,7 +87,7 @@ Tab Khai hoang hỗ trợ `variants[]` tùy chọn trên từng đội: cấu h�
 ## Local state và external state
 
 - `theme`: light/dark trong `localStorage`.
-- `tqcclRecruitTracker`: tracker schema version 1; có export/import JSON.
+- `tqcclRecruitTracker`: tracker schema version 2 (v1 tự chuyển khi đọc); có export/import JSON (nhập = gộp). `tqcclRecruitTracker:sync` (`{userId, cursor, pushedAt}`) và `tqcclRecruitTracker:invite` là khóa phụ, không mang qua cầu chuyển domain.
 - `tqccl.rosterRecommend.scanState.v1`: tên tướng/chiến pháp/team khóa, xác nhận và timestamp; không ảnh/base64/blob/token.
 - `tqccl.teamView.v1`: kiểu xem Thẻ/Thẻ gọn/Bảng của Đội chuẩn/Đội khác.
 - Bốn khóa trên là allowlist `HOST_BRIDGE_KEYS` mà cầu chuyển domain (`src/lib/host-bridge.ts`) mang từ host cũ sang `https://tqccl.com`.

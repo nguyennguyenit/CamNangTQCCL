@@ -19,6 +19,8 @@ export const RATE_RULES: Record<string, RateRule> = {
   // Góp ý: khách ẩn danh đếm theo IP đã băm, người đăng nhập theo user.
   feedback_anon: { limit: 5, windowMs: HOUR },
   feedback_user: { limit: 10, windowMs: HOUR },
+  // Đồng bộ chiêu mộ: lần đầu có thể đẩy ~40 lô 500 bản ghi, sau đó mỗi thay đổi (debounce 1,5 s) một lô.
+  recruit_push: { limit: 600, windowMs: HOUR },
 };
 
 /** Tăng bộ đếm; vượt ngưỡng -> ApiError 429 kèm retryAfter (giây). */

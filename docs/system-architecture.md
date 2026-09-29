@@ -189,11 +189,11 @@ Boundary này fail closed và có bounds trước xử lý: chuỗi/control char
 | State | Storage | Nội dung |
 |---|---|---|
 | Theme | `localStorage.theme` | `light` hoặc `dark` |
-| Recruit tracker | `localStorage.tqcclRecruitTracker` | schema v1, account, banner, daily state, pull events |
+| Recruit tracker | `localStorage.tqcclRecruitTracker` | schema v2: account, banner, pull events (mỗi bản ghi `id`, `updatedAt`, `deletedAt`); đồng bộ tuỳ chọn lên D1 `recruit_records` khi đăng nhập |
 | Roster scan | `localStorage.tqccl.rosterRecommend.scanState.v1` | tướng, chiến pháp, team khóa, confirmed, updatedAt |
 | Ảnh | memory phiên UI | data URL preview/request; không serialize vào roster state |
 
-Roster serializer loại `image`, `imageDataUrl`, `base64`, `blob`, `turnstileToken`. Tracker có validate import và JSON export/import để backup.
+Roster serializer loại `image`, `imageDataUrl`, `base64`, `blob`, `turnstileToken`. Tracker có validate import, JSON export/import (nhập = gộp theo bản ghi) và, khi đã đăng nhập, đồng bộ `GET/POST /api/recruit`: kéo theo con trỏ `rev` của server, đẩy bản ghi sửa sau `pushedAt`, gộp "bản sửa sau cùng thắng" theo `updatedAt`. Store đóng dấu mọi thay đổi tại chỗ lớn hơn `updatedAt` lớn nhất nó đã thấy nên đồng hồ máy lệch không làm mất thay đổi.
 
 ### Cầu chuyển domain
 
@@ -253,7 +253,7 @@ Browser CI chỉ do `.github/workflows/mcp-worker.yml` sở hữu. Pull request/
 - Research MCP HTTP lỗi: CLI/stdio local vẫn độc lập; recommendation fail closed, không tự bịa đội hình.
 - Research MCP trả `401/429/503` trước dữ liệu khi bearer, quota hoặc cấu hình không hợp lệ; `/healthz` không đại diện data readiness.
 - Worker có `FEATURE_ENABLED` kill-switch; rollback Worker/Pages độc lập. Pages rollback phải promote toàn artifact known-good, purge cache bị ảnh hưởng và kiểm tra client mới/cũ.
-- Mất localStorage: tracker/scan mất nếu người dùng chưa export backup.
+- Mất localStorage: tracker/scan mất nếu người dùng chưa export backup; tracker của người đã đăng nhập kéo lại được từ `/api/recruit`.
 
 ## Bước tiếp theo
 

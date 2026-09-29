@@ -114,7 +114,7 @@ Hai công cụ Soi đội và Gợi ý đội không có bộ chọn Mùa / Phi�
 - `href` lấy từ dữ liệu phải qua kiểm scheme `http(s)`; link ngoài `target="_blank" rel="noopener noreferrer"`; query link dựng bằng `URLSearchParams`.
 - Lỗi provider/network không đổ nguyên văn message upstream; thông báo tiếng Việt hữu hạn.
 
-## Local-first tracker
+## Theo dõi chiêu mộ (local-first, đồng bộ tuỳ chọn)
 
 - Giải thích dữ liệu lưu trong trình duyệt hiện tại và có thể mất nếu clear storage.
 - `Xuất JSON`/`Nhập JSON` nằm gần luồng backup/restore, có validation và confirm trước ghi đè; ô chọn tệp native nằm trên nhãn nút với vòng focus nhìn thấy được khi Tab.

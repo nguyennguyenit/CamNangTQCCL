@@ -8,7 +8,7 @@
 
 - Tra cứu nhanh team, tướng, chiến pháp, Cùng Tồn và khai hoang.
 - Lọc/search trên dữ liệu curate đã commit, dùng tốt trên mobile.
-- Theo dõi chiêu mộ và kho scan theo hướng local-first.
+- Theo dõi chiêu mộ và kho scan theo hướng local-first; tracker có đồng bộ cloud tuỳ chọn khi đăng nhập.
 - Dùng Vision để đọc ảnh, nhưng giữ quyết định gợi ý team ở engine local minh bạch hơn.
 - Duy trì kiến trúc nhỏ: Astro static shell + SPA vanilla + pipeline offline + Worker tùy chọn.
 
@@ -25,7 +25,7 @@ Người dùng chính: người chơi tra meta; người quản lý nhiều acco
 | Vision | `worker/`, Cloudflare Worker + KV + Turnstile + DashScope Qwen |
 | Local state | theme, tracker chiêu mộ, roster scan đã chuẩn hóa |
 
-Ngoài phạm vi: backend chung, database server, cloud sync tracker, AI tự quyết đội, bundler/framework frontend.
+Ngoài phạm vi: backend chung cho dữ liệu game, AI tự quyết đội, bundler/framework frontend. Tracker chỉ đồng bộ qua `community-worker` khi người dùng đăng nhập.
 
 ## Yêu cầu chức năng
 
@@ -39,7 +39,7 @@ Ngoài phạm vi: backend chung, database server, cloud sync tracker, AI tự qu
 | FR-06 | Tra cứu 202 tướng và mở chi tiết stats, thích tính, chiến pháp liên quan. |
 | FR-07 | Tra cứu 406 chiến pháp bằng search Việt bỏ dấu, Hán-Việt và Hán. |
 | FR-08 | Hiển thị tier tốt nhất và mọi nguồn xếp hạng cho team khi có dữ liệu tier. |
-| FR-09 | Tracker hỗ trợ nhiều account, 4 slot Danh tướng PK/ngày, banner hạn giờ, pity 30, lịch sử 5★ và import/export JSON. |
+| FR-09 | Tracker hỗ trợ nhiều account, ghi lượt ngày một chạm (4 lượt rẻ Danh tướng PK/ngày), Hoàn tác, nhật ký sửa/xóa, đồng bộ số lượt từ game, gói hạn giờ (hết hạn, lưu trữ, xóa), pity 30, lịch sử 5★, thống kê, import (gộp)/export JSON và đồng bộ cloud tuỳ chọn. |
 | FR-10 | Soi đội nhận ảnh, xác thực Turnstile, gọi Worker, map kết quả về canonical Việt và tìm team local tương tự. |
 | FR-11 | Scan tướng, chiến pháp và team đã build; người dùng review trước khi gợi ý. |
 | FR-12 | Engine local chọn portfolio tối đa 5 team, xét tướng/chiến pháp/tier và team đã khóa. |

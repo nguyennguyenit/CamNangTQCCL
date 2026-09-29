@@ -1,5 +1,23 @@
 # Project Changelog
 
+## 2026-09-29 (Theo dõi chiêu mộ: thiết kế lại, store v2, đồng bộ tuỳ chọn)
+
+### Changed
+
+- **Store schema v2** (`js/recruit-tracker-store.js`): một luồng bản ghi (tài khoản, gói, lượt) làm nguồn sự thật; mỗi bản ghi có `id`, `updatedAt`, `deletedAt`. Bảo hiểm, "Hôm nay x/4", số lượt tới 5★ và thống kê tính lại từ lượt sắp theo `occurredAt` (trước đây cộng theo thứ tự mảng, lưu song song `dailyStates`). Dữ liệu v1 tự chuyển khi đọc: giữ nguyên bảo hiểm và số lượt tới 5★ đã lưu, bỏ `dailyStates`. Thay đổi tại chỗ được đóng dấu lớn hơn mọi `updatedAt` kho đã thấy (Lamport) để gộp đúng khi đồng hồ máy lệch.
+- **Trang `/theo-doi-chieu-mo/` làm lại** (`js/recruit-tracker.js`, CSS `.rt-*`, artboard `Recruit`/`RecruitMobile`): ghi lượt ngày một chạm "2 miễn phí" / "Đủ 4" (kẹp theo lượt rẻ còn lại) và "Có 5★" (lượt trúng trong ngày, lượt quay tiếp, tướng, phân loại); toast Hoàn tác cho mọi thao tác ghi/xóa; nhật ký sửa/xóa từng dòng; màn khởi đầu "Trong game bạn đang ở lượt mấy?" và "Chỉnh số" bất cứ lúc nào (dòng "Đồng bộ N lượt"); gói hạn giờ đổi tên, ngày hết hạn + đếm ngược, lưu trữ, xóa; thống kê TB lượt/5★, tổng 5★, chuỗi ngày. Mọi `prompt()`/`confirm()` thay bằng `<dialog>`. Nhập JSON gộp vào dữ liệu hiện có thay vì ghi đè.
+- **Đồng bộ cloud tuỳ chọn:** khách vẫn chỉ dùng `localStorage` (không gọi `/api/*` khi chưa từng đăng nhập); đăng nhập Google thì `js/recruit-sync.js` kéo theo con trỏ `rev` rồi đẩy bản ghi mới (debounce 1,5 s), gộp "bản sửa sau cùng thắng" theo bản ghi; sau Nhập JSON đẩy lại toàn bộ. Chip ☁ cạnh ô tài khoản; lời mời đăng nhập một lần sau lượt 5★ đầu tiên. `community-worker`: bảng D1 `recruit_records` (migration `0004_recruit.sql`), `GET/POST /api/recruit`, rate limit `recruit_push` 600 lô/giờ, trần 20000 bản ghi/user (413 `recruit_quota_exceeded`).
+- Trang Quyền riêng tư (vi/zh) nêu nhật ký chiêu mộ được đồng bộ lên D1 khi người dùng đăng nhập.
+- Bản dịch: re-pin hash `js/recruit-tracker.js`, `js/recruit-tracker-store.js` (không đổi obligation); policy `site-vi-260929-theo-doi-chieu-mo-v2`, publish generation `f85b83dd…`, re-pin `pipeline/team-route-handles.json`. `js/recruit-sync.js` thêm vào manifest artifact công khai.
+
+### Tests
+
+- Node: store v2 (nút nhanh kẹp lượt, 5★ trong ngày, đồng bộ số lượt, sửa/xóa/khôi phục, hoàn tác, gói hạn giờ, thống kê, chuyển v1→v2 theo fixture sinh từ store v1, gộp hai máy offline, LWW, máy mới không đè tên đã đổi, đồng hồ lệch), sync client (khách không gọi API, lần đầu kéo rồi đẩy, debounce, phân trang, offline/online, đổi user, 401, đẩy toàn bộ sau nhập, đăng nhập lỗi giữ trạng thái khách), view model UI. `community-worker`: `recruit.test.ts` (auth, LWW, rev, phân trang, cô lập user, validate, trần, CSRF, rate limit). E2E: `beta-tools` (Đủ 4 một chạm + Hoàn tác, không mở hộp thoại native), `spa-parity` (dữ liệu v1 cũ qua cầu chuyển domain).
+
+### Deploy
+
+- Áp migration trước khi deploy Worker: `cd community-worker && npm run db:migrate:remote && npm run deploy`, rồi deploy Pages.
+
 ## 2026-09-29 (Tra cứu: lưới Tướng theo artboard Lookup)
 
 ### Changed

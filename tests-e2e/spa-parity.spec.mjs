@@ -594,13 +594,15 @@ test("legacy storage payloads survive load and sanitize forbidden roster fields 
   ), Object.keys(serialized));
   expect(before).toEqual(serialized);
 
-  await page.locator("#section-recruit-tracker .rt-slot").first()
-    .getByRole("button", { name: "Không ra", exact: true }).click();
+  // Tài khoản chưa có lượt nào: màn bắt đầu, rồi một chạm "2 miễn phí" ghi 2 lượt không ra.
+  await page.locator("#section-recruit-tracker").getByRole("button", { name: "Bắt đầu từ 0", exact: true }).click();
+  await page.locator("#section-recruit-tracker").getByRole("button", { name: /^2 miễn phí/ }).click();
   const savedTracker = await page.evaluate(() =>
     JSON.parse(localStorage.getItem("tqcclRecruitTracker")));
-  expect(savedTracker.schemaVersion).toBe(1);
+  // Lần ghi đầu chuyển dữ liệu v1 sang v2; tài khoản đang chọn giữ nguyên.
+  expect(savedTracker.schemaVersion).toBe(2);
   expect(savedTracker.activeAccountId).toBe("acc_sentinel");
-  expect(savedTracker.pullEvents).toHaveLength(1);
+  expect(savedTracker.pullEvents.map((event) => event.result)).toEqual(["set", "miss"]);
 
   await clickSectionLink(page, "roster-recommend");
   await expect(page).toHaveURL("/goi-y-doi-tu-kho/");
@@ -626,13 +628,14 @@ test("legacy storage payloads survive load and sanitize forbidden roster fields 
     tracker: JSON.parse(localStorage.getItem("tqcclRecruitTracker")),
     roster: JSON.parse(localStorage.getItem("tqccl.rosterRecommend.scanState.v1")),
   }));
-  expect(reloadedStorage.tracker.pullEvents).toHaveLength(1);
+  expect(reloadedStorage.tracker.pullEvents).toHaveLength(2);
   expect(reloadedStorage.roster.ownedHeroes.map((hero) => hero.name)).toContain("Sentinel Hero Two");
 
   await page.goto("/theo-doi-chieu-mo/");
   await waitForBoot(page);
   await expect(page.locator("#section-recruit-tracker")).toContainText("Sentinel Account");
-  await expect(page.locator("#section-recruit-tracker .rt-slot-miss")).toHaveCount(1);
+  await expect(page.locator("#section-recruit-tracker .rt-log-item")).toHaveCount(2);
+  await expect(page.locator("#section-recruit-tracker .rt-pity-meta")).toContainText("Hôm nay 2/4");
 });
 
 test("required JSON failure is shown on its own section page", async ({ page }) => {

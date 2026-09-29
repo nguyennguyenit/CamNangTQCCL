@@ -12,8 +12,8 @@ Website tĩnh tra cứu đội hình, tướng, chiến pháp và hỗ trợ qu�
 - Mỗi đội có trang chi tiết tĩnh riêng dưới `/doi-chuan/<mùa>-<handle>/`, `/doi-khac/<handle>/` hoặc `/khai-hoang/<handle>/`; handle tiếng Việt đóng băng trong `pipeline/team-route-handles.json` nên sửa `displayNameVi` không đổi URL. URL cũ `/teams/…` và URL ngoài danh sách sinh sẵn trả trang 404 tĩnh, không redirect.
 - Phạm vi kịch bản/phiên bản luật nằm trên URL (`scenario`, `ruleset`) cho Đội chuẩn, Đội khác và Cùng Tồn; Cùng Tồn chọn kịch bản bằng một hàng nút (mặc định kịch bản đầu theo registry). URL giữ phạm vi, bộ lọc và cấu hình đang mở. Soi đội và Gợi ý đội không có bộ chọn mùa, luôn chạy trên dữ liệu đội cũ. Khai hoang dùng bản bảo trì mới nhất.
 - Tra cứu local 202 tướng, 406 chiến pháp và bốn nhóm catalog bổ sung, mỗi nhóm một trang (`/tra-cuu/tuong/`, `/chien-phap/`, `/trang-bi/`, `/quan-su/`, `/cai-tao-binh-chung/`, `/cong-trinh/`, `/binh-thu/`) chỉ tải dữ liệu của nhóm; trang đầu dựng lúc build, tìm tên Việt/Hán-Việt/Hán, paging, hộp thoại hồ sơ (dữ liệu nhóm liên quan tải khi mở) và khối "Trong cẩm nang" tính lúc build. `/tra-cuu/` là mục lục.
-- Tracker chiêu mộ lưu nhiều account, pity và lịch sử trong `localStorage`; có xuất/nhập JSON.
-- Soi screenshot qua Worker + DashScope Qwen; frontend map kết quả và đối chiếu đội local. AI chỉ trích xuất dữ liệu từ ảnh, không chọn team.
+- Theo dõi chiêu mộ (store schema v2, `js/recruit-tracker-store.js`): nhiều tài khoản, ghi lượt ngày một chạm ("2 miễn phí", "Đủ 4", "Có 5★"), Hoàn tác, nhật ký sửa/xóa từng dòng, đồng bộ số lượt từ game, gói hạn giờ (đổi tên, ngày hết hạn, lưu trữ, xóa), thống kê; dữ liệu nằm trong `localStorage`, xuất/nhập JSON (nhập = gộp). Đăng nhập Google là tuỳ chọn: bật đồng bộ cloud qua `community-worker` (`/api/recruit`, gộp theo từng bản ghi).
+- Soi screenshot qua Worker + nhà cung cấp AI OpenAI-compatible (admin quản lý danh sách + thứ tự failover ở tab AI của `/quan-tri/`; mẫu DeepSeek V4.1 Flash, OpenCode Zen). AI chỉ chép chữ in trong ảnh (không đoán tướng qua chân dung, không chọn team); người dùng xác nhận từng ô trong editor (hoặc nhập tay), rồi frontend diff từng ô với Đội chuẩn theo mùa và Đội khác. Đội đã xác nhận chia sẻ qua link `?doi=v1.…` (chỉ ID canonical), lưu lịch sử 10 mục trên máy và xuất thẻ PNG.
 - Gợi ý portfolio tối đa 5 team bằng engine local.
 - Giao diện Sổ binh pháp dùng chung một shell (header, menu thả, menu mobile, footer), một stylesheet và bộ token ở `docs/design/so-binh-phap/tokens.json`; theme sáng/tối theo lựa chọn đã lưu hoặc hệ điều hành, không nháy khi chuyển trang.
 - Research MCP chỉ đọc có JSON CLI, stdio và authenticated Streamable HTTP dùng chung tám tool.
@@ -163,8 +163,8 @@ plans/                     # kế hoạch/báo cáo lịch sử, không phải r
 - Sửa giao diện thì sửa token/component trong `docs/design/so-binh-phap/tokens.json` trước, rồi chạy `node scripts/design-tokens.mjs --check`; CSS không giữ mã màu hay giá trị vi mô ngoài khối token.
 - Theme lưu ở `localStorage.theme`; không có giá trị thì theo `prefers-color-scheme` của hệ điều hành.
 - `data/tactics-generic.json` có 29 nguồn bổ sung; 27 record đang mang trạng thái `pending` sau merge vào `tactics.json`.
-- Tracker và scan state lưu local. Scan state loại bỏ ảnh, base64, blob và Turnstile token; ảnh chỉ giữ trong bộ nhớ của phiên UI.
-- Ảnh soi đội được gửi tới Alibaba Cloud DashScope; nên crop thông tin tài khoản trước khi dùng.
+- Tracker lưu local; chỉ khi người dùng đăng nhập mới đồng bộ bản ghi chiêu mộ lên D1 của `community-worker`. Scan state lưu local, loại bỏ ảnh, base64, blob và Turnstile token; ảnh chỉ giữ trong bộ nhớ của phiên UI.
+- Ảnh soi đội và ảnh chiến báo được gửi tới nhà cung cấp AI đang bật trong tab AI của `/quan-tri/` (mặc định DeepSeek); nên crop thông tin tài khoản trước khi dùng.
 
 ## Tham chiếu
 

@@ -133,7 +133,10 @@ const sections: PolicySection[] = [
     ],
     items: [
       t('Giao diện sáng/tối và cách hiển thị đội hình (thẻ/bảng).', '明暗主题和阵容显示方式（卡片/表格）。'),
-      t('Nhật ký "Theo dõi chiêu mộ" (tài khoản, banner, lượt chiêu mộ).', '“招募记录”的数据（账号、卡池、招募次数）。'),
+      t(
+        'Nhật ký "Theo dõi chiêu mộ" (tài khoản, banner, lượt chiêu mộ). Nếu bạn đăng nhập trên trang này, nhật ký còn được đồng bộ lên máy chủ (xem mục "Nơi lưu trữ và bên xử lý"); khi chưa đăng nhập, nhật ký không rời trình duyệt.',
+        '“招募记录”的数据（账号、卡池、招募次数）。如果你在该页面登录，记录还会同步到服务器（见“存储位置与处理方”）；未登录时记录不会离开浏览器。',
+      ),
       t('Kho tướng và chiến pháp đã quét ở "Gợi ý đội từ kho".', '在“武将库配队”中扫描得到的武将与战法库。'),
       t('Dấu hiệu "đã từng đăng nhập" để chỉ kiểm tra phiên khi cần.', '“曾经登录过”的标记，仅在需要时才检查会话。'),
     ],
@@ -143,8 +146,8 @@ const sections: PolicySection[] = [
     heading: t('Nơi lưu trữ và bên xử lý', '存储位置与处理方'),
     items: [
       t(
-        'Cloudflare: lưu trữ site (Pages), máy chủ API (Workers), cơ sở dữ liệu tài khoản, bình luận, chiến báo, góp ý (D1), ảnh chiến báo (R2), bộ đếm giới hạn (KV), Turnstile và gửi email góp ý (Email Service).',
-        'Cloudflare：网站托管（Pages）、API 服务（Workers）、账号/评论/战报/反馈数据库（D1）、战报截图（R2）、频率计数（KV）、Turnstile 以及反馈邮件发送（Email Service）。',
+        'Cloudflare: lưu trữ site (Pages), máy chủ API (Workers), cơ sở dữ liệu tài khoản, bình luận, chiến báo, góp ý và nhật ký "Theo dõi chiêu mộ" đã đồng bộ khi bạn đăng nhập (D1; xoá theo tài khoản), ảnh chiến báo (R2), bộ đếm giới hạn (KV), Turnstile và gửi email góp ý (Email Service).',
+        'Cloudflare：网站托管（Pages）、API 服务（Workers）、账号/评论/战报/反馈以及登录后同步的“招募记录”数据库（D1；随账号删除）、战报截图（R2）、频率计数（KV）、Turnstile 以及反馈邮件发送（Email Service）。',
       ),
       t('Google: xác thực đăng nhập.', 'Google：登录身份验证。'),
       t('Alibaba Cloud (DashScope, khu vực quốc tế): AI đọc ảnh.', '阿里云（DashScope 国际站）：AI 图片识别。'),

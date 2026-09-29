@@ -104,7 +104,7 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
 
 ## Local state và privacy
 
-- Tracker phải giữ `schemaVersion`, validate import và có đường export/import backup.
+- Tracker phải giữ `schemaVersion` (hiện 2, có đường chuyển v1→v2), validate import, có đường export/import backup, và mọi bản ghi mang `id`/`updatedAt`/`deletedAt` để gộp; bảo hiểm và số lượt tới 5★ luôn tính lại từ lượt, không lưu riêng.
 - Roster scan chỉ serialize dữ liệu canonical cần cho gợi ý; loại ảnh, data URL/base64, blob và Turnstile token.
 - Không log hoặc persist nội dung screenshot ngoài yêu cầu rõ của người dùng.
 - UI phải nói rõ ảnh gửi tới DashScope và khuyến nghị crop tên tài khoản.

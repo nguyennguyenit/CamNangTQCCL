@@ -1,0 +1,471 @@
+{
+  "state": {
+    "schemaVersion": 1,
+    "activeAccountId": "acc_main",
+    "accounts": [
+      {
+        "id": "acc_main",
+        "name": "Chính S1",
+        "createdAt": "2026-07-01T00:00:00.000Z"
+      },
+      {
+        "id": "acc_alt",
+        "name": "Alt",
+        "createdAt": "2026-07-02T00:00:00.000Z"
+      }
+    ],
+    "banners": [
+      {
+        "id": "danh-tuong-pk",
+        "name": "Danh tướng PK",
+        "type": "normal",
+        "drawMode": "daily",
+        "hasFiveStar": true,
+        "pityLimit": 30,
+        "dailyCheapPullLimit": 4
+      },
+      {
+        "id": "banner_ktnp",
+        "name": "Kỳ Tật Như Phong",
+        "type": "limited",
+        "drawMode": "adHoc",
+        "hasFiveStar": true,
+        "pityLimit": 30,
+        "expiresAt": "2026-07-20T13:40:00+07:00",
+        "note": "",
+        "createdAt": "2026-07-03T00:00:00.000Z"
+      }
+    ],
+    "dailyStates": [
+      {
+        "date": "2026-07-08",
+        "accountId": "acc_main",
+        "bannerId": "danh-tuong-pk",
+        "slots": [
+          {
+            "key": "free_1",
+            "label": "Miễn phí 1",
+            "status": "miss"
+          },
+          {
+            "key": "half_1",
+            "label": "Nửa giá 1",
+            "status": "miss"
+          },
+          {
+            "key": "free_2",
+            "label": "Miễn phí 2",
+            "status": "miss"
+          },
+          {
+            "key": "half_2",
+            "label": "Nửa giá 2",
+            "status": "miss"
+          }
+        ],
+        "nextFreeAt": ""
+      },
+      {
+        "date": "2026-07-09",
+        "accountId": "acc_main",
+        "bannerId": "danh-tuong-pk",
+        "slots": [
+          {
+            "key": "free_1",
+            "label": "Miễn phí 1",
+            "status": "miss"
+          },
+          {
+            "key": "half_1",
+            "label": "Nửa giá 1",
+            "status": "miss"
+          },
+          {
+            "key": "free_2",
+            "label": "Miễn phí 2",
+            "status": "miss"
+          },
+          {
+            "key": "half_2",
+            "label": "Nửa giá 2",
+            "status": "miss"
+          }
+        ],
+        "nextFreeAt": ""
+      },
+      {
+        "date": "2026-07-10",
+        "accountId": "acc_main",
+        "bannerId": "danh-tuong-pk",
+        "slots": [
+          {
+            "key": "free_1",
+            "label": "Miễn phí 1",
+            "status": "miss"
+          },
+          {
+            "key": "half_1",
+            "label": "Nửa giá 1",
+            "status": "miss"
+          },
+          {
+            "key": "free_2",
+            "label": "Miễn phí 2",
+            "status": "miss"
+          },
+          {
+            "key": "half_2",
+            "label": "Nửa giá 2",
+            "status": "miss"
+          }
+        ],
+        "nextFreeAt": ""
+      },
+      {
+        "date": "2026-07-11",
+        "accountId": "acc_main",
+        "bannerId": "danh-tuong-pk",
+        "slots": [
+          {
+            "key": "free_1",
+            "label": "Miễn phí 1",
+            "status": "miss"
+          },
+          {
+            "key": "half_1",
+            "label": "Nửa giá 1",
+            "status": "fiveStar"
+          },
+          {
+            "key": "free_2",
+            "label": "Miễn phí 2",
+            "status": "miss"
+          },
+          {
+            "key": "half_2",
+            "label": "Nửa giá 2",
+            "status": "pending"
+          }
+        ],
+        "nextFreeAt": ""
+      },
+      {
+        "date": "2026-07-11",
+        "accountId": "acc_alt",
+        "bannerId": "danh-tuong-pk",
+        "slots": [
+          {
+            "key": "free_1",
+            "label": "Miễn phí 1",
+            "status": "miss"
+          },
+          {
+            "key": "half_1",
+            "label": "Nửa giá 1",
+            "status": "pending"
+          },
+          {
+            "key": "free_2",
+            "label": "Miễn phí 2",
+            "status": "pending"
+          },
+          {
+            "key": "half_2",
+            "label": "Nửa giá 2",
+            "status": "pending"
+          }
+        ],
+        "nextFreeAt": ""
+      }
+    ],
+    "pullEvents": [
+      {
+        "id": "evt_00",
+        "pulls": 1,
+        "result": "miss",
+        "date": "2026-07-08",
+        "createdAt": "2026-07-11T01:00:00.000Z",
+        "updatedAt": "2026-07-11T01:00:00.000Z",
+        "accountId": "acc_main",
+        "bannerId": "danh-tuong-pk",
+        "drawSlot": "free_1",
+        "drawKind": "free"
+      },
+      {
+        "id": "evt_01",
+        "pulls": 1,
+        "result": "miss",
+        "date": "2026-07-08",
+        "createdAt": "2026-07-11T01:00:01.000Z",
+        "updatedAt": "2026-07-11T01:00:01.000Z",
+        "accountId": "acc_main",
+        "bannerId": "danh-tuong-pk",
+        "drawSlot": "half_1",
+        "drawKind": "half"
+      },
+      {
+        "id": "evt_02",
+        "pulls": 1,
+        "result": "miss",
+        "date": "2026-07-08",
+        "createdAt": "2026-07-11T01:00:02.000Z",
+        "updatedAt": "2026-07-11T01:00:02.000Z",
+        "accountId": "acc_main",
+        "bannerId": "danh-tuong-pk",
+        "drawSlot": "free_2",
+        "drawKind": "free"
+      },
+      {
+        "id": "evt_03",
+        "pulls": 1,
+        "result": "miss",
+        "date": "2026-07-08",
+        "createdAt": "2026-07-11T01:00:03.000Z",
+        "updatedAt": "2026-07-11T01:00:03.000Z",
+        "accountId": "acc_main",
+        "bannerId": "danh-tuong-pk",
+        "drawSlot": "half_2",
+        "drawKind": "half"
+      },
+      {
+        "id": "evt_04",
+        "pulls": 1,
+        "result": "miss",
+        "date": "2026-07-09",
+        "createdAt": "2026-07-11T01:00:04.000Z",
+        "updatedAt": "2026-07-11T01:00:04.000Z",
+        "accountId": "acc_main",
+        "bannerId": "danh-tuong-pk",
+        "drawSlot": "free_1",
+        "drawKind": "free"
+      },
+      {
+        "id": "evt_05",
+        "pulls": 1,
+        "result": "miss",
+        "date": "2026-07-09",
+        "createdAt": "2026-07-11T01:00:05.000Z",
+        "updatedAt": "2026-07-11T01:00:05.000Z",
+        "accountId": "acc_main",
+        "bannerId": "danh-tuong-pk",
+        "drawSlot": "half_1",
+        "drawKind": "half"
+      },
+      {
+        "id": "evt_06",
+        "pulls": 1,
+        "result": "miss",
+        "date": "2026-07-09",
+        "createdAt": "2026-07-11T01:00:06.000Z",
+        "updatedAt": "2026-07-11T01:00:06.000Z",
+        "accountId": "acc_main",
+        "bannerId": "danh-tuong-pk",
+        "drawSlot": "free_2",
+        "drawKind": "free"
+      },
+      {
+        "id": "evt_07",
+        "pulls": 1,
+        "result": "miss",
+        "date": "2026-07-09",
+        "createdAt": "2026-07-11T01:00:07.000Z",
+        "updatedAt": "2026-07-11T01:00:07.000Z",
+        "accountId": "acc_main",
+        "bannerId": "danh-tuong-pk",
+        "drawSlot": "half_2",
+        "drawKind": "half"
+      },
+      {
+        "id": "evt_08",
+        "pulls": 1,
+        "result": "miss",
+        "date": "2026-07-10",
+        "createdAt": "2026-07-11T01:00:08.000Z",
+        "updatedAt": "2026-07-11T01:00:08.000Z",
+        "accountId": "acc_main",
+        "bannerId": "danh-tuong-pk",
+        "drawSlot": "free_1",
+        "drawKind": "free"
+      },
+      {
+        "id": "evt_09",
+        "pulls": 1,
+        "result": "miss",
+        "date": "2026-07-10",
+        "createdAt": "2026-07-11T01:00:09.000Z",
+        "updatedAt": "2026-07-11T01:00:09.000Z",
+        "accountId": "acc_main",
+        "bannerId": "danh-tuong-pk",
+        "drawSlot": "half_1",
+        "drawKind": "half"
+      },
+      {
+        "id": "evt_10",
+        "pulls": 1,
+        "result": "miss",
+        "date": "2026-07-10",
+        "createdAt": "2026-07-11T01:00:10.000Z",
+        "updatedAt": "2026-07-11T01:00:10.000Z",
+        "accountId": "acc_main",
+        "bannerId": "danh-tuong-pk",
+        "drawSlot": "free_2",
+        "drawKind": "free"
+      },
+      {
+        "id": "evt_11",
+        "pulls": 1,
+        "result": "miss",
+        "date": "2026-07-10",
+        "createdAt": "2026-07-11T01:00:11.000Z",
+        "updatedAt": "2026-07-11T01:00:11.000Z",
+        "accountId": "acc_main",
+        "bannerId": "danh-tuong-pk",
+        "drawSlot": "half_2",
+        "drawKind": "half"
+      },
+      {
+        "id": "evt_12",
+        "pulls": 1,
+        "result": "miss",
+        "date": "2026-07-11",
+        "createdAt": "2026-07-11T01:00:12.000Z",
+        "updatedAt": "2026-07-11T01:00:12.000Z",
+        "accountId": "acc_main",
+        "bannerId": "danh-tuong-pk",
+        "drawSlot": "free_1",
+        "drawKind": "free"
+      },
+      {
+        "id": "evt_13",
+        "pulls": 1,
+        "result": "fiveStar",
+        "date": "2026-07-11",
+        "createdAt": "2026-07-11T01:00:13.000Z",
+        "updatedAt": "2026-07-11T01:00:13.000Z",
+        "accountId": "acc_main",
+        "bannerId": "danh-tuong-pk",
+        "drawSlot": "half_1",
+        "drawKind": "half",
+        "pullCount": 14,
+        "heroName": "SP Quan Vũ",
+        "heroValueClass": "Chủ lực",
+        "note": "n1"
+      },
+      {
+        "id": "evt_14",
+        "pulls": 1,
+        "result": "miss",
+        "date": "2026-07-11",
+        "createdAt": "2026-07-11T01:00:14.000Z",
+        "updatedAt": "2026-07-11T01:00:14.000Z",
+        "accountId": "acc_main",
+        "bannerId": "danh-tuong-pk",
+        "drawSlot": "free_2",
+        "drawKind": "free"
+      },
+      {
+        "id": "evt_15",
+        "pulls": 1,
+        "result": "miss",
+        "date": "2026-07-11",
+        "createdAt": "2026-07-11T01:00:15.000Z",
+        "updatedAt": "2026-07-11T01:00:15.000Z",
+        "accountId": "acc_alt",
+        "bannerId": "danh-tuong-pk",
+        "drawSlot": "free_1",
+        "drawKind": "free"
+      },
+      {
+        "id": "evt_16",
+        "pulls": 5,
+        "result": "miss",
+        "date": "2026-07-11",
+        "createdAt": "2026-07-11T01:00:16.000Z",
+        "updatedAt": "2026-07-11T01:00:16.000Z",
+        "accountId": "acc_main",
+        "bannerId": "banner_ktnp",
+        "drawKind": "adHoc"
+      },
+      {
+        "id": "evt_17",
+        "pulls": 3,
+        "result": "fiveStar",
+        "date": "2026-07-12",
+        "createdAt": "2026-07-11T01:00:17.000Z",
+        "updatedAt": "2026-07-11T01:00:17.000Z",
+        "accountId": "acc_main",
+        "bannerId": "banner_ktnp",
+        "drawKind": "adHoc",
+        "pullCount": 8,
+        "heroName": "Lưu Bị",
+        "heroValueClass": "Chưa phân loại",
+        "note": ""
+      },
+      {
+        "id": "evt_18",
+        "pulls": 31,
+        "result": "miss",
+        "date": "2026-07-12",
+        "createdAt": "2026-07-11T01:00:18.000Z",
+        "updatedAt": "2026-07-11T01:00:18.000Z",
+        "accountId": "acc_main",
+        "bannerId": "banner_ktnp",
+        "drawKind": "adHoc"
+      },
+      {
+        "id": "evt_19",
+        "pulls": 2,
+        "result": "fiveStar",
+        "date": "2026-07-12",
+        "createdAt": "2026-07-11T01:00:19.000Z",
+        "updatedAt": "2026-07-11T01:00:19.000Z",
+        "accountId": "acc_alt",
+        "bannerId": "danh-tuong-pk",
+        "drawKind": "adHoc",
+        "pullCount": 3,
+        "heroName": "Tào Tháo",
+        "heroValueClass": "Chưa phân loại",
+        "note": ""
+      }
+    ]
+  },
+  "expect": {
+    "acc_main": {
+      "daily": 1,
+      "limited": {
+        "banner_ktnp": 31
+      },
+      "history": [
+        [
+          "Lưu Bị",
+          "Kỳ Tật Như Phong",
+          8,
+          "2026-07-12",
+          "Chưa phân loại"
+        ],
+        [
+          "SP Quan Vũ",
+          "Danh tướng PK",
+          14,
+          "2026-07-11",
+          "Chủ lực"
+        ]
+      ]
+    },
+    "acc_alt": {
+      "daily": 0,
+      "limited": {
+        "banner_ktnp": 0
+      },
+      "history": [
+        [
+          "Tào Tháo",
+          "Danh tướng PK",
+          3,
+          "2026-07-12",
+          "Chưa phân loại"
+        ]
+      ]
+    }
+  }
+}
