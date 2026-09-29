@@ -746,21 +746,28 @@ function mineCards(mines) {
 }
 
 /**
- * Tham khảo chung của mọi đội khai hoang ở trang chi tiết: nhóm Chạm Sứ rồi quân thủ các mỏ.
- * Khối nào không có dữ liệu thì bỏ hẳn.
+ * Tham khảo chung của cả mục Khai hoang (trang danh sách, sau lưới đội): nhóm Chạm Sứ rồi quân thủ các mỏ.
+ * Không thuộc đội nào nên không theo bộ lọc loại binh. Khối nào không có dữ liệu thì bỏ hẳn.
  */
-export function khaihoangReference({ chamSuTeams = [], mines = [] } = {}) {
+function khaihoangReference({ chamSuTeams, mines }) {
   return [
-    chamSuTeams.length ? el("section", { class: "detail-section kh-reference" }, [
+    chamSuTeams.length ? el("section", { class: "kh-reference", id: "cham-su" }, [
       el("h2", {}, L("Đội Chạm Sứ / Ăn vạ", "碰瓷队伍")),
       el("div", { class: "cham-su-cards" }, chamSuTeams.map(chamSuTeamCard)),
     ]) : null,
-    mines.length ? el("section", { class: "detail-section kh-reference" }, [
+    mines.length ? el("section", { class: "kh-reference", id: "mo" }, [
       el("h2", {}, L("Quân thủ các mỏ", "各矿守军")),
       minesTable(mines),
       mineCards(mines),
     ]) : null,
   ].filter(Boolean);
+}
+
+/** Nút nhảy trong trang: một link cho mỗi khối đang có, kèm số mục của khối; không khối nào thì không có nav. */
+function khaihoangJumpNav(links) {
+  const shown = links.filter(([, , count]) => count > 0);
+  return shown.length ? el("nav", { class: "kh-jump", "aria-label": L("Trong trang", "页内导航") }, shown
+    .map(([href, label, count]) => el("a", { class: "kh-jump-link", href }, [label, " ", el("span", { class: "kh-jump-count" }, String(count))]))) : null;
 }
 
 /** Tiêu đề đội khai hoang / Chạm Sứ (`"A · B · C"`): bản zh đổi từng tên tướng sang chữ Hán gốc. */
@@ -776,8 +783,8 @@ function seatName(value) {
 }
 
 /**
- * Section Khai hoang: đầu trang, lọc loại binh và lưới thẻ đội (các phiên bản + ba dòng tướng).
- * Ghi chú, điểm từng mốc, hướng dẫn đánh đất, Chạm Sứ và quân thủ mỏ thuộc trang chi tiết.
+ * Section Khai hoang: đầu trang, nút nhảy trong trang, lọc loại binh và lưới thẻ đội (các phiên bản + ba dòng
+ * tướng), rồi tham khảo chung (Chạm Sứ, quân thủ mỏ). Ghi chú, điểm từng mốc và hướng dẫn đánh đất thuộc trang chi tiết.
  *
  * Trả `{element, getVariants, setVariants, updateLinks}`: phần điều phối URL/snapshot sở hữu
  * lựa chọn, controller chỉ dựng build/chip/href và báo thay đổi qua callback.
@@ -785,6 +792,9 @@ function seatName(value) {
 export function khaihoangTable(data, { hrefFor, onNavigate, onChange } = {}) {
   // Tương thích ngược: payload mảng (cấu trúc cũ chỉ có mỏ) không có đội nào.
   const teams = Array.isArray(data) ? [] : (data.teams || []);
+  const shared = Array.isArray(data) ? {} : data;
+  const chamSuTeams = shared.chamSuTeams || [];
+  const mines = shared.mines || [];
   const selections = new Map(teams.map((team) => [team.id, ""]));
   const readHref = (teamId, variantId) => (typeof hrefFor === "function" ? hrefFor(teamId, variantId) : null);
   let unitFilter = "";
@@ -854,11 +864,16 @@ export function khaihoangTable(data, { hrefFor, onNavigate, onChange } = {}) {
       el("div", { class: "reference-head-text" }, [
         el("span", { class: "reference-kicker" }, L("Đội hình", "阵容")),
         el("h1", { class: "reference-title", tabindex: "-1" }, L("Khai hoang", "开荒")),
-        el("p", { class: "reference-lead" }, L("Đội mở đất và các phiên bản chiến pháp. Mở Chi tiết để xem điểm từng mốc đất, ghi chú, hướng dẫn đánh đất, đội chạm sứ và quân thủ các mỏ.", "开荒队伍及其各版本战法。打开详情可查看各级地评分、备注、打地攻略、碰瓷队以及各矿守军。")),
+        el("p", { class: "reference-lead" }, L("Đội mở đất và các phiên bản chiến pháp. Mở Chi tiết để xem điểm từng mốc đất, ghi chú và hướng dẫn đánh đất.", "开荒队伍及其各版本战法。打开详情可查看各级地评分、备注和打地攻略。")),
       ]),
     ]),
+    khaihoangJumpNav([
+      ["#de-xuat", L("Đội đề xuất", "推荐队伍"), teams.length],
+      ["#cham-su", L("Chạm Sứ / Ăn vạ", "碰瓷队伍"), chamSuTeams.length],
+      ["#mo", L("Quân thủ mỏ", "各矿守军"), mines.length],
+    ]),
     teams.length
-      ? el("section", { class: "kh-block", "aria-label": L("Đội khai hoang", "开荒队伍") }, [
+      ? el("section", { class: "kh-block", id: "de-xuat", "aria-label": L("Đội khai hoang", "开荒队伍") }, [
           el("div", { class: "kh-toolbar" }, [
             el("div", { class: "kh-unit-filter", role: "group", "aria-label": L("Lọc theo loại binh", "按兵种筛选") }, unitChips),
             el("p", { class: "kh-result-count", "aria-live": "polite" }, [shownCount, L(` / ${teams.length} đội`, ` / ${teams.length} 队`)]),
@@ -867,6 +882,7 @@ export function khaihoangTable(data, { hrefFor, onNavigate, onChange } = {}) {
           empty,
         ])
       : null,
+    ...khaihoangReference({ chamSuTeams, mines }),
   ].filter(Boolean));
 
   return {

@@ -7413,6 +7413,58 @@ body[data-page-section="khaihoang"] .layout {
   margin-top: var(--space-28);
 }
 
+/* Nút nhảy trong trang (artboard Khaihoang.dc.html:41): link viền mảnh bo 10px, số mục chữ thường màu mờ. */
+.kh-jump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+  margin-top: var(--space-28);
+}
+
+.kh-jump-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  min-height: var(--control-44);
+  padding: 0 var(--space-14);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-10);
+  background: var(--panel);
+  color: var(--ink);
+  font: var(--type-control);
+  text-decoration: none;
+}
+
+.kh-jump-link:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.kh-jump-count {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* Đích của nút nhảy không nằm dưới header dính. */
+.kh-block,
+.kh-reference {
+  scroll-margin-top: var(--space-88);
+}
+
+/* Tham khảo chung sau lưới đội: Chạm Sứ, quân thủ mỏ (tiêu đề như khối trang chi tiết). */
+.kh-reference {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-18);
+  margin-top: var(--space-48);
+}
+
+.kh-reference > h2 {
+  margin: 0;
+  font: var(--type-detail-section-title);
+  color: var(--ink);
+}
+
 .kh-toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -7675,6 +7727,14 @@ body[data-page-section="khaihoang"] .layout {
 
   .cham-su-cards {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .kh-reference {
+    margin-top: var(--space-36);
+  }
+
+  .kh-reference > h2 {
+    font: var(--type-list-title);
   }
 
   /* Hàng chọn phiên bản mobile: một hàng nút số 44px chia đều; nhãn "Cùng tồn N" còn là tên truy cập (ẩn thị giác). */

@@ -530,6 +530,8 @@ async function main() {
         },
       });
       mount.append(khaiHoangUI.element);
+      // Khối đích của link `#cham-su`/`#mo` chỉ có sau khi dựng: trình duyệt đã bỏ qua hash lúc tải trang.
+      if (location.hash.length > 1) document.getElementById(location.hash.slice(1))?.scrollIntoView();
     }
     refresh();
     restoreReturnState();

@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { expect, test } from "@playwright/test";
 import { replaceWebsiteDisplayPin, websiteDisplayFixture } from "./fixtures/website-display-fixture.mjs";
@@ -34,7 +33,7 @@ function detailPath(handles, teamId, query = {}) {
 const khaihoangRequest = "**/data/khaihoang.json*";
 
 /** Danh sách: nguồn và bản hiển thị do fixture cấp, không đụng dữ liệu đã phát hành. */
-async function routeKhaihoang(page, payload) {
+async function routeKhaihoang(page, payload, path = "/khai-hoang/") {
   const khaihoangBody = JSON.stringify(payload);
   const website = websiteDisplayFixture(
     {"data/khaihoang.json": khaihoangBody},
@@ -48,7 +47,7 @@ async function routeKhaihoang(page, payload) {
     const response = await route.fetch();
     await route.fulfill({response, body: replaceWebsiteDisplayPin(await response.text(), website.pin)});
   });
-  await page.goto("/khai-hoang/");
+  await page.goto(path);
 }
 
 const DETAIL_DOCUMENT = /^http:\/\/(?:localhost|127\.0\.0\.1):\d+\/khai-hoang\/[^/?]+\/(?:\?.*)?$/;
@@ -140,7 +139,7 @@ test("every version replaces only its card and restores the default", async ({ p
   expect(new URL(page.url()).hash).toBe("");
 });
 
-test("the list shows only teams and versions; notes, ratings, guides and shared references stay on the detail page", async ({ page }) => {
+test("the list shows teams, versions and the shared Chạm Sứ and mine references; notes, ratings and guides stay on the detail page", async ({ page }) => {
   const payload = structuredClone(data);
   payload.teams[0].guide = {overview: "Hướng dẫn chỉ thuộc trang chi tiết.", ratings: {land4: 9, overall: 8}};
   const variantOnlyIndex = payload.teams.findIndex((team) => !team.guide && team.variants?.length);
@@ -151,11 +150,39 @@ test("the list shows only teams and versions; notes, ratings, guides and shared 
   const section = page.locator("#section-khaihoang");
   await expect(page.locator(".kh-card")).toHaveCount(data.teams.length);
   await expect(section.locator(".kh-guide, .kh-ratings, .kh-build-note, .kh-opening-note, .kh-note, .detail-notes")).toHaveCount(0);
-  await expect(section.locator(".cham-su-card, .kh-mines, .kh-mine-card")).toHaveCount(0);
-  await expect(section.locator("h2")).toHaveCount(0);
-  for (const text of ["Hướng dẫn chỉ thuộc trang chi tiết.", "Không được dùng làm fallback.", "Ghi chú mở đất không thuộc danh sách.", "Ghi chú build không thuộc danh sách.", "Đội Chạm Sứ", "Quân thủ", "Lưu ý nguồn", "Nguồn"]) {
+  for (const text of ["Hướng dẫn chỉ thuộc trang chi tiết.", "Không được dùng làm fallback.", "Ghi chú mở đất không thuộc danh sách.", "Ghi chú build không thuộc danh sách.", "Lưu ý nguồn", "Nguồn"]) {
     await expect(section).not.toContainText(text);
   }
+
+  // Tham khảo chung của cả mục: sau lưới đội, mỗi khối một lần; nút nhảy dẫn tới đúng khối.
+  await expect(section.locator("h2")).toHaveText(["Đội Chạm Sứ / Ăn vạ", "Quân thủ các mỏ"]);
+  await expect(section.locator(".cham-su-card")).toHaveCount(data.chamSuTeams.length);
+  await expect(section.locator(".kh-mines tbody tr")).toHaveCount(data.mines.length);
+  const jump = section.getByRole("navigation", { name: "Trong trang" });
+  await expect(jump.getByRole("link")).toHaveText([
+    `Đội đề xuất ${data.teams.length}`, `Chạm Sứ / Ăn vạ ${data.chamSuTeams.length}`, `Quân thủ mỏ ${data.mines.length}`,
+  ]);
+  expect(await jump.getByRole("link").evaluateAll((links) => links.map((link) => link.getAttribute("href")))).toEqual(["#de-xuat", "#cham-su", "#mo"]);
+  for (const id of ["de-xuat", "cham-su", "mo"]) await expect(section.locator(`#${id}`)).toHaveCount(1);
+  const order = await section.evaluate((root) => ["#de-xuat", "#cham-su", "#mo"]
+    .map((selector) => root.querySelector(selector))
+    .every((node, index, nodes) => index === 0 || (nodes[index - 1].compareDocumentPosition(node) & Node.DOCUMENT_POSITION_FOLLOWING)));
+  expect(order).toBe(true);
+  await jump.getByRole("link", { name: /Quân thủ mỏ/ }).click();
+  await expect(page.getByRole("heading", { name: "Quân thủ các mỏ", exact: true })).toBeInViewport();
+
+  // Lọc loại binh chỉ lọc thẻ đội: Chạm Sứ và quân thủ mỏ là quân địch/đội phụ, không theo loại binh.
+  const unit = data.teams[0].unitType;
+  await section.locator(`.kh-unit-chip[data-unit="${unit}"]`).click();
+  await expect(section.locator(".kh-card:visible")).toHaveCount(data.teams.filter((team) => team.unitType === unit).length);
+  await expect(section.locator(".cham-su-card:visible")).toHaveCount(data.chamSuTeams.length);
+  await expect(section.locator(".kh-mines")).toBeVisible();
+});
+
+test("a deep link to a shared reference block scrolls to it once the list is built", async ({ page }) => {
+  await routeKhaihoang(page, data, "/khai-hoang/#mo");
+  await expect(page.locator("#section-khaihoang .kh-mines")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Quân thủ các mỏ", exact: true })).toBeInViewport();
 });
 
 test("cards in one grid row share the same height and footer line", async ({ page }) => {
@@ -352,20 +379,21 @@ test("detail owns ratings, the roster guide and shared references outside the re
   await expect(page.locator("#team-detail-body")).toBeVisible();
   await expect(page.locator("#team-detail-status")).toBeHidden();
   const body = page.locator("#team-detail-body");
-  // Thứ tự khối: phiên bản + đội hình/ghi chú → điểm → hướng dẫn → Chạm Sứ → quân thủ mỏ; không còn mục lục thu gọn.
-  await expect(body.locator(":scope > section > h2")).toHaveText(["Điểm đánh giá", "Hướng dẫn khai hoang", "Đội Chạm Sứ / Ăn vạ", "Quân thủ các mỏ"]);
+  // Thứ tự khối: phiên bản + đội hình/ghi chú → điểm → hướng dẫn; Chạm Sứ và quân thủ mỏ chỉ ở trang danh sách.
+  await expect(body.locator(":scope > section > h2")).toHaveText(["Điểm đánh giá", "Hướng dẫn khai hoang"]);
+  await expect(page.locator(".cham-su-card, .kh-mines, .kh-mine-card")).toHaveCount(0);
   await expect(body.locator("details")).toHaveCount(0);
   const guide = body.locator(".kh-guide");
   await expect(guide).toContainText("Đất 4 · dễ → khó");
   await expect(body.locator(".kh-ratings-block")).toContainText("chưa chấm riêng từng bộ chiến pháp");
 
-  // Điểm, hướng dẫn và tham khảo chung nằm ngoài subtree build: đổi phiên bản không dựng lại các node đó.
+  // Điểm và hướng dẫn nằm ngoài subtree build: đổi phiên bản không dựng lại các node đó.
   await page.evaluate(() => { for (const node of document.querySelectorAll("#team-detail-body > section")) node.dataset.probe = "kept"; });
   const build = body.locator(".kh-detail-build");
   const beforeBuild = await build.textContent();
   await detailChip(page, target.variants[0].id).click();
   await expect(build).not.toHaveText(beforeBuild);
-  await expect(body.locator(':scope > section[data-probe="kept"]')).toHaveCount(4);
+  await expect(body.locator(':scope > section[data-probe="kept"]')).toHaveCount(2);
 
   // Trang chi tiết không boot ứng dụng gốc; mục cha chỉ được đánh dấu khu vực (`true`), không phải trang hiện tại.
   await expect(page.locator('a[data-section="khaihoang"][aria-current="true"]')).toHaveCount(1);
@@ -462,8 +490,7 @@ test("detail roles follow the build commanders and badge unit changes", async ({
 });
 
 for (const width of [1280, 375]) {
-  test(`detail Chạm Sứ groups keep content and order without source links at ${width}px`, async ({ page, request }, testInfo) => {
-    const handles = await routeHandles(request);
+  test(`list Chạm Sứ groups keep content and order without source links at ${width}px`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: 812 });
     const chamSuTeams = [
       {
@@ -477,9 +504,9 @@ for (const width of [1280, 375]) {
         note: "mang 1 lính",
       },
     ];
-    await routeDetailSource(page, (payload) => { payload.chamSuTeams = chamSuTeams; });
-    await page.goto(detailPath(handles, data.teams[0].id));
+    await routeKhaihoang(page, {...structuredClone(data), chamSuTeams});
     await expect(page.getByRole("heading", { name: "Đội Chạm Sứ / Ăn vạ", exact: true })).toBeVisible();
+    await expect(page.getByRole("link", { name: `Chạm Sứ / Ăn vạ ${chamSuTeams.length}` })).toHaveAttribute("href", "#cham-su");
     await expect(page.locator(".cham-su-card")).toHaveCount(chamSuTeams.length);
     for (const [index, team] of chamSuTeams.entries()) {
       const card = page.locator(".cham-su-card").nth(index);
@@ -496,23 +523,22 @@ for (const width of [1280, 375]) {
 }
 
 for (const shape of ["missing", "empty"]) {
-  test(`detail supports ${shape} Chạm Sứ data`, async ({ page, request }) => {
-    const handles = await routeHandles(request);
-    await routeDetailSource(page, (payload) => {
-      if (shape === "missing") delete payload.chamSuTeams;
-      else payload.chamSuTeams = [];
-    });
-    await page.goto(detailPath(handles, data.teams[0].id));
+  test(`list drops the Chạm Sứ block and its jump link for ${shape} data`, async ({ page }) => {
+    const payload = structuredClone(data);
+    if (shape === "missing") delete payload.chamSuTeams;
+    else payload.chamSuTeams = [];
+    await routeKhaihoang(page, payload);
     await expect(page.getByRole("heading", { name: "Quân thủ các mỏ", exact: true })).toBeVisible();
     await expect(page.getByRole("heading", { name: /Đội Chạm Sứ \/ Ăn vạ/ })).toHaveCount(0);
-    await expect(page.locator(".cham-su-card")).toHaveCount(0);
+    await expect(page.locator(".cham-su-card, #cham-su, a[href='#cham-su']")).toHaveCount(0);
+    await expect(page.getByRole("navigation", { name: "Trong trang" }).getByRole("link")).toHaveText([
+      `Đội đề xuất ${data.teams.length}`, `Quân thủ mỏ ${data.mines.length}`,
+    ]);
   });
 }
 
-test("detail mines render as a table on desktop and as one card per mine on mobile", async ({ page, request }) => {
-  const handles = await routeHandles(request);
-  await routeDetail(page);
-  await page.goto(detailPath(handles, data.teams[0].id));
+test("list mines render as a table on desktop and as one card per mine on mobile", async ({ page }) => {
+  await routeKhaihoang(page, data);
   await expect(page.locator(".kh-mines tbody tr")).toHaveCount(data.mines.length);
   await expect(page.locator(".kh-mines caption")).toHaveText("Quân thủ từng mỏ");
   const firstMine = data.mines[0];
@@ -752,29 +778,6 @@ test("localized notes never render source Chinese characters", async ({ page, re
 });
 
 /* ---------- Phase 6: khung chi tiết dùng chung, thẻ tướng dùng chung, không hiển thị nguồn ---------- */
-
-/** Nguồn Khai hoang thay được nội dung (byte nguồn vẫn phải khớp pin của trang). */
-async function routeDetailSource(page, mutate) {
-  const payload = structuredClone(data);
-  mutate(payload);
-  const body = JSON.stringify(payload);
-  const website = websiteDisplayFixture(
-    {"data/khaihoang.json": body},
-    {dropValuesFor: ["data/khaihoang.json"]},
-  );
-  await page.route("**/data/website-display.json", (route) =>
-    route.fulfill({contentType: "application/json", body: website.body}));
-  await page.route(khaihoangRequest, (route) =>
-    route.fulfill({contentType: "application/json", body}));
-  // Trang chi tiết ghim sha256 của nguồn: thay pin theo đúng byte đã định tuyến.
-  const sourceSha = createHash("sha256").update(body).digest("hex");
-  await page.route(DETAIL_DOCUMENT, async (route) => {
-    const response = await route.fetch();
-    const html = replaceWebsiteDisplayPin(await response.text(), website.pin)
-      .replace(/data-khaihoang-sha256="sha256:[0-9a-f]{64}"/, `data-khaihoang-sha256="sha256:${sourceSha}"`);
-    await route.fulfill({response, body: html});
-  });
-}
 
 test("detail header carries the unit badge, the shared build block and the panel actions", async ({ page, request }) => {
   const handles = await routeHandles(request);

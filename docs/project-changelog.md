@@ -18,6 +18,20 @@
 
 - Áp migration trước khi deploy Worker: `cd community-worker && npm run db:migrate:remote && npm run deploy`, rồi deploy Pages.
 
+## 2026-09-29 (Khai hoang: Chạm Sứ và quân thủ mỏ về trang danh sách)
+
+### Changed
+
+- **Đội Chạm Sứ / Ăn vạ** và **Quân thủ các mỏ** là dữ liệu chung của cả mục (`chamSuTeams`, `mines` top-level trong `data/khaihoang.json`) nên chuyển từ 17 trang chi tiết `/khai-hoang/<handle>/` về `/khai-hoang/`, nằm sau lưới đội. Bộ lọc loại binh chỉ lọc thẻ đội, không ảnh hưởng hai khối này.
+- `/khai-hoang/` có nút nhảy trong trang dưới đầu mục: `Đội đề xuất 17 · Chạm Sứ / Ăn vạ 8 · Quân thủ mỏ 5` (`#de-xuat`, `#cham-su`, `#mo`); khối rỗng thì bỏ luôn nút nhảy. Mở thẳng `/khai-hoang/#mo` cuộn tới khối sau khi danh sách dựng xong (`js/app.js`).
+- Trang chi tiết chỉ còn đội hình + ghi chú, Điểm đánh giá, Hướng dẫn khai hoang; `khaihoangReference` không còn export, `js/khaihoang-detail.js` bỏ phần tham khảo chung. Câu dẫn danh sách (vi/zh) bỏ "đội chạm sứ và quân thủ các mỏ" khỏi phần phải mở Chi tiết.
+- `tokens.json`: probe `luoi-cham-su` đo trên `/khai-hoang/`, ghi chú `the-khai-hoang` theo bố cục mới.
+- Bản dịch: thêm `ui:khaihoang/jump-aria`, `jump-teams`, `jump-chamsu`, `jump-mines`, đổi chữ `ui:khaihoang/lead` (`authored-vi`); policy `site-vi-260929-khai-hoang-tham-khao`, baseline 56593 location, publish generation `f71e22b6…` (xoá generation `afc632de…`), re-pin `pipeline/team-route-handles.json`.
+
+### Tests
+
+- E2E `khaihoang-options.spec.mjs`: danh sách có hai khối sau lưới đội, nút nhảy đúng thứ tự/href/số đếm và cuộn tới khối, bộ lọc loại binh không ẩn Chạm Sứ/mỏ, deep link `#mo`; ca Chạm Sứ (1280/375px, thiếu/rỗng) và bảng/thẻ mỏ chuyển sang trang danh sách; trang chi tiết không còn `.cham-su-card`/`.kh-mines`. Bỏ helper `routeDetailSource` không còn dùng.
+
 ## 2026-09-29 (Tra cứu: lưới Tướng theo artboard Lookup)
 
 ### Changed

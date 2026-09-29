@@ -1,7 +1,7 @@
-// Entry trang chi tiết Khai hoang: chỉ đọc nguồn đã pin rồi hiển thị build, điểm, hướng dẫn và tham khảo chung.
+// Entry trang chi tiết Khai hoang: chỉ đọc nguồn đã pin rồi hiển thị build, điểm và hướng dẫn.
 // Không khởi động app gốc và không ghi ngược trạng thái danh sách.
 
-import { el, khaihoangBuildContent, khaihoangConfigRow, khaihoangGuide, khaihoangRatings, khaihoangReference } from './render.js';
+import { el, khaihoangBuildContent, khaihoangConfigRow, khaihoangGuide, khaihoangRatings } from './render.js';
 import { detailPanelActions, isNetworkError } from './detail-actions.js';
 import { detailBadges } from './recommended-reference-render.js';
 import { setZhNameResolver } from './recommended-reference-state.js';
@@ -24,9 +24,9 @@ const sha256Hex = async (bytes) => [...new Uint8Array(await crypto.subtle.digest
   .map((value) => value.toString(16).padStart(2, '0')).join('');
 
 /**
- * Trang chi tiết một đội khai hoang: phiên bản đang chọn (đội hình + ghi chú), rồi điểm, hướng dẫn của team
- * và tham khảo chung (Chạm Sứ, quân thủ mỏ). Chỉ khối build bị dựng lại khi đổi phiên bản, nên các khối
- * còn lại không mất focus hay vị trí đọc.
+ * Trang chi tiết một đội khai hoang: phiên bản đang chọn (đội hình + ghi chú), rồi điểm và hướng dẫn của team.
+ * Chạm Sứ và quân thủ mỏ là tham khảo chung của cả mục nên chỉ nằm ở trang danh sách. Chỉ khối build bị dựng
+ * lại khi đổi phiên bản, nên các khối còn lại không mất focus hay vị trí đọc.
  */
 export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
   const root = documentTarget.querySelector('#team-detail-root');
@@ -47,7 +47,6 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
 
   let pending = false;
   let team = null;
-  let reference = {};
   let mount = null;
 
   /** Đầu trang chi tiết: huy hiệu loại binh của build đang chọn + nút sao chép link. */
@@ -125,12 +124,11 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
       ]),
       content,
     ]);
-    // Điểm, hướng dẫn và tham khảo chung thuộc team/trang, nằm ngoài subtree build: đổi phiên bản không dựng lại.
+    // Điểm và hướng dẫn thuộc team, nằm ngoài subtree build: đổi phiên bản không dựng lại.
     body.replaceChildren(...[
       build,
       khaihoangRatings(team.guide),
       khaihoangGuide(team.guide),
-      ...khaihoangReference(reference),
     ].filter(Boolean));
     return {chips, content};
   };
@@ -159,7 +157,6 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
       const matches = (Array.isArray(data) ? [] : (data.teams || [])).filter((item) => item?.id === teamId);
       if (matches.length !== 1) throw new Error(MISSING_TEAM_MESSAGE);
       team = matches[0];
-      reference = {chamSuTeams: data.chamSuTeams || [], mines: data.mines || []};
       const requested = requestedVariant();
       if (requested && !variantFor(requested)) {
         showUnknownVariant(requested);
