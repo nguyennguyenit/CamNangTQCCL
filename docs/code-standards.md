@@ -21,7 +21,7 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
   | `#recommended-publication`, `#website-display-publication` | `app.js` (verify pin trước khi render) | mọi trang |
   | `#team-route-handles` đủ `{r,l,k}` | `app.js` (href chi tiết, migrate `detail`/`legacyTeam`, migrate `khTeam`/`khVariant`) | cả 8 trang mục; trang chi tiết chỉ `{l}`; **Landing không có** |
   | `#season-artifact-hashes` | `app.js` (model mùa) | Đội chuẩn, Đội khác, Cùng Tồn |
-  | `<div id="season-controls">` | `app.js` (`placeSeasonControls`) | 3 trang như trên; Soi đội, Gợi ý đội **không có** (công cụ luôn chạy dữ liệu đội cũ, bỏ `scenario`/`ruleset`/`config` khỏi URL khi tải) |
+  | `<div id="season-controls">` | `app.js` (`placeSeasonControls`) | 3 trang như trên; Soi đội, Gợi ý đội **không có** (bỏ `scenario`/`ruleset`/`config` khỏi URL khi tải; Soi đội tự có ô chọn mùa Đội chuẩn `season` trong editor) |
 
 - **Nguồn dữ liệu theo trang**: mỗi trang chỉ tải và xác minh nguồn chính nó đọc. `loadWebsiteDisplay(pin, loadBytes, recommendedPin, {paths})` băm song song đúng các nguồn trong `paths` (mặc định mọi nguồn trong `sourceHashes`; đường không được pin → lỗi) và `localizeData` từ chối nguồn chưa được chính publication đó xác minh. Byte đi qua `createByteLoader()` của `js/website-display.js`: một request mỗi đường dẫn cho cả publication, mô hình mùa và kho Tra cứu; lần tải lỗi bị bỏ để "Thử lại" tải lại. Thêm nguồn cho một trang thì thêm cả vào `paths` của trang đó.
 
@@ -33,7 +33,7 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
   | Tra cứu (trang nhóm) | `lookup-manifest` + payload của nhóm: Tướng `heroes-dict`, Chiến pháp `tactics`, Trang bị/Quân sư/Cải tạo/Công trình `lookup-catalog`; Binh thư không có (pin `books-dict` trên trang) | payload hồ sơ tải lười khi mở hồ sơ đầu tiên, kiểm theo manifest (Tướng: `tactics`, `lookup-catalog`, Recommended, bộ tra tên Hán bản zh; Chiến pháp/Trang bị/Quân sư: `heroes-dict`); hash `heroes-dict` của publication làm `catalogSha256` |
   | Tra cứu (mục lục `/tra-cuu/`) | — (không nạp app) | — |
   | Theo dõi chiêu mộ | `heroes-dict`, `tactics`, `lookup-catalog`, `lookup-manifest` | — |
-  | Soi đội | như Theo dõi chiêu mộ + `teams` | `books-dict` |
+  | Soi đội | như Theo dõi chiêu mộ | `books-dict`; generation Recommended (`index.json`, `other-teams.json`) tải lười khi cần đối chiếu |
   | Gợi ý đội | như Theo dõi chiêu mộ + `teams` | `team-tier` (tuỳ chọn) |
   | Chi tiết Đội chuẩn/Đội khác | `teams` (một request, dùng chung với kiểm `legacyTeamsSha256`) | generation Recommended |
   | Chi tiết Khai hoang | `khaihoang` (kiểm hash trang trước) | — |
@@ -76,7 +76,7 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
 - Nhãn tiếng Việt ngắn, trạng thái rõ; mọi control dùng `button`/`input` phù hợp và có tên truy cập được.
 - Filter count phải tính từ tập dữ liệu của mục đang mở. Không phụ thuộc `data/facets.json` ở runtime.
 - URL sở hữu bộ lọc Team: `season`, `q`, `faction`, `unit`, `tier`, `subcategory`, `source`, `view`. Khóa `score`, `category`, selector cũ `stars`, `sort`, `point` đã nghỉ; gặp thì bỏ lặng lẽ, không map sang điểm nguồn và không đổi thứ tự nguồn. Trang chi tiết Đội chuẩn quay lại chỉ mang `season`.
-- Query của Cùng Tồn chỉ gồm `group`, `config`, `scenario`, `ruleset` (ô chọn Mùa là điều khiển phạm vi duy nhất, URL thiếu `scenario` được ghi mùa của `group` trong link cũ, không thì mùa mới nhất `COEXIST_LATEST_SCENARIO_ID` bằng `replaceState`); soi đội/gợi ý kho không có khóa URL nào được giữ khi quay lại (`SECTION_QUERY_KEYS` rỗng) và không nhận `config`/`scenario`/`ruleset`. Snapshot theo từng surface, không rò giữa hai nhóm.
+- Query của Cùng Tồn chỉ gồm `group`, `config`, `scenario`, `ruleset` (ô chọn Mùa là điều khiển phạm vi duy nhất, URL thiếu `scenario` được ghi mùa của `group` trong link cũ, không thì mùa mới nhất `COEXIST_LATEST_SCENARIO_ID` bằng `replaceState`); Soi đội chỉ giữ `season` và `doi` (đội đã xác nhận `v1.…`, chỉ ID canonical) khi quay lại, gợi ý kho không giữ khóa nào (`SECTION_QUERY_KEYS`); cả hai không nhận `config`/`scenario`/`ruleset`. Snapshot theo từng surface, không rò giữa hai nhóm.
 - Tier Đội chuẩn lấy nguyên `tierRaw` của nguồn, hiện trên thẻ/thẻ gọn/bảng và lọc bằng `tier` (OR trong nhóm, AND với facet khác). Cả ba kiểu hiển thị chia thành khối Tier có tiêu đề và số đội sau lọc; hàng thiếu Tier nằm ở khối “Chưa xếp hạng”. Thứ tự giữ `tierOrder` tăng dần, điểm giảm dần, thứ tự nguồn; không suy Tier từ điểm hoặc Tier lịch sử của Đội khác.
 - Dấu mùa nguồn hiện tại dùng `CURRENT_SOURCE_SEASON_ID` trong `js/team-filter-section.js`, đối chiếu SGSDeck ngày 2026-09-27 là Binh Diễn Xuân Thu (`og-兵演春秋`). Option ghi “Hiện tại”; ô chọn hiện “Đang diễn ra” chỉ khi đang xem đúng mùa đó. Không suy trạng thái từ mùa người dùng chọn hoặc coi đây là mùa hiện tại của server VN. Cập nhật hằng này khi nguồn đổi mùa.
 - Bộ lọc điểm đã nghỉ: không còn nhóm facet Điểm, không còn khóa `score` trên URL; điểm nguồn chỉ hiển thị trên thẻ/bảng và không đổi thứ tự nguồn.
@@ -107,7 +107,7 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
 - Tracker phải giữ `schemaVersion` (hiện 2, có đường chuyển v1→v2), validate import, có đường export/import backup, và mọi bản ghi mang `id`/`updatedAt`/`deletedAt` để gộp; bảo hiểm và số lượt tới 5★ luôn tính lại từ lượt, không lưu riêng.
 - Roster scan chỉ serialize dữ liệu canonical cần cho gợi ý; loại ảnh, data URL/base64, blob và Turnstile token.
 - Không log hoặc persist nội dung screenshot ngoài yêu cầu rõ của người dùng.
-- UI phải nói rõ ảnh gửi tới DashScope và khuyến nghị crop tên tài khoản.
+- UI phải nói rõ ảnh gửi tới nhà cung cấp AI nào (hiện DeepSeek hoặc OpenCode Zen) và khuyến nghị crop tên tài khoản. Thêm nhà cung cấp mới vào tab AI thì phải cập nhật disclaimer và trang Quyền riêng tư.
 
 ## Worker TypeScript
 

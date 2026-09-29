@@ -18,7 +18,7 @@ OPTIONAL EXTERNAL VISION PATH
 Browser image + Turnstile ──POST /analyze──► Cloudflare Worker
                                              │ guards + best-effort KV
                                              ▼
-                                      DashScope Qwen Vision
+                        nhà cung cấp AI OpenAI-compatible (KV ai:providers, failover theo thứ tự)
                                              │ structured Chinese JSON
                                              ▼
 Browser canonical mapping + local matching/recommendation
@@ -91,7 +91,7 @@ dependency đã được website-display pin đều dừng toàn bộ khởi t�
 Lookup trong một publication byte-coherent mới chỉ khóa các feature phụ thuộc.
 
 Scope, filter/search, thứ tự hiển thị và chi tiết cấu hình cùng đi qua query owner của đúng trang; mục đang mở do đường dẫn quyết định, hash cũ chỉ được Landing chuyển tiếp qua `js/legacy-routes.js`. Restore scenario-only không tự nâng sang luật đã
-review. Hai công cụ Soi đội và Gợi ý đội không có phạm vi mùa: luôn đối chiếu/gợi ý trên dữ liệu đội cũ và bỏ `scenario`/`ruleset`/`config` khỏi URL khi tải. UI không dùng MCP để suy thêm luật.
+review. Hai công cụ Soi đội và Gợi ý đội không có phạm vi mùa của layout và bỏ `scenario`/`ruleset`/`config` khỏi URL khi tải. Gợi ý đội gợi ý trên dữ liệu đội cũ; Soi đội đối chiếu với generation Đội chuẩn đang pin (`index.json` lọc theo `season`, mặc định `defaultSourceSeasonId`) và `other-teams.json` (Đội khác · tham khảo), tải lười qua `loadRecommended()` khi lần đầu cần đối chiếu. UI không dùng MCP để suy thêm luật.
 
 Hồ sơ tướng của Tra cứu đọc thêm artifact tính lúc build `hero-summaries.json` sinh trong chính generation Recommended đang pin (khóa nối chính xác theo từng nguồn, descriptor mang hash kho Tra cứu), nên mở hồ sơ chỉ cần `manifest.json` + `hero-summaries.json` thay vì nạp toàn bộ kho đội chuẩn. Hồ sơ chiến pháp dùng cùng cơ chế với `tactic-summaries.json` (`pipeline/tactic_summaries.py`, loader `js/tactic-summaries.js`): số đội theo vị trí, tướng mang, chiến pháp đi cùng trong đội và đội tiêu biểu, trả ID để trang tự lấy tên theo ngôn ngữ; provenance mang hash của cả `tactics.json` lẫn `heroes-dict.json`. Phạm vi và ngân sách tải của đường này ghi ở [quyết định #12 của plan redesign](../plans/260923-1949-so-binh-phap-redesign/plan.md).
 
@@ -124,7 +124,7 @@ Mọi lời gọi cộng đồng đi same-origin `/api/*` qua [`js/community-api
 
 - Header mọi trang có `#community-auth` ([`js/community-auth.js`](../js/community-auth.js)): chỉ hỏi `/api/me` khi `localStorage['tqccl:community-session']` cho biết trình duyệt từng đăng nhập (khách vãng lai không tốn lượt gọi API); trang cộng đồng luôn hỏi phiên và phát sự kiện `community:session` để header cập nhật. Menu tài khoản dùng `createDropdownMenu` của `js/site-nav.js`.
 - Ba họ trang chi tiết đội có `<section id="community-root">` sau bài chi tiết, dựng bởi [`js/community-page.js`](../js/community-page.js) với `pageKey = stripLocale(pathname)`: "Chiến báo thực chiến" (số trận, tỉ lệ thắng, đối thủ thường gặp — tính mọi ngôn ngữ; danh sách chỉ cùng `lang`; luồng ảnh → AI → xác nhận → chờ duyệt) rồi bình luận (chỉ cùng `lang`).
-- `/chien-bao/` ([`js/community-hub.js`](../js/community-hub.js)) và `/quan-tri/` ([`js/community-admin.js`](../js/community-admin.js): duyệt chiến báo, soạn bài Markdown có xem trước an toàn dựng bằng DOM, kiểm duyệt bình luận) là trang tĩnh `noindex`, ngoài sitemap; nội dung Astro nằm ở `src/components/community/*.astro` nhận `locale`. `scripts/verify-astro-dist.mjs` khoá mount/entry/noindex của hai trang và khối cộng đồng trên mọi trang chi tiết.
+- `/chien-bao/` ([`js/community-hub.js`](../js/community-hub.js)) và `/quan-tri/` ([`js/community-admin.js`](../js/community-admin.js): duyệt chiến báo, soạn bài Markdown có xem trước an toàn dựng bằng DOM, kiểm duyệt bình luận, góp ý, tab **AI** quản lý danh sách nhà cung cấp AI dùng chung cho mọi tính năng đọc ảnh) là trang tĩnh `noindex`, ngoài sitemap; nội dung Astro nằm ở `src/components/community/*.astro` nhận `locale`. `scripts/verify-astro-dist.mjs` khoá mount/entry/noindex của hai trang và khối cộng đồng trên mọi trang chi tiết.
 
 ### Bản tiếng Trung (`/zh/`)
 
@@ -199,11 +199,11 @@ Roster serializer loại `image`, `imageDataUrl`, `base64`, `blob`, `turnstileTo
 
 localStorage gắn theo origin, nên khi `https://tqccl.com` thành domain chính, dữ liệu người dùng đã lưu trên `tqccl.pages.dev`/`www.tqccl.com` phải được mang sang. [`src/lib/host-bridge.ts`](../src/lib/host-bridge.ts) sinh script inline **đầu tiên** trong `<head>` của mọi trang (`SiteLayout.astro`, gồm cả 404):
 
-- Hostname đúng `tqccl.pages.dev` hoặc `www.tqccl.com`: đọc bốn khóa bền `tqcclRecruitTracker`, `tqccl.rosterRecommend.scanState.v1`, `theme`, `tqccl.teamView.v1` (khóa sessionStorage `tqccl:team-return:v1` không mang), rồi `location.replace("https://tqccl.com" + pathname + search + "#tqccl-migrate=" + encodeURIComponent({v:1, hash, items}))`. Không có khóa nào hoặc storage lỗi → chuyển thẳng, giữ hash gốc.
+- Hostname đúng `tqccl.pages.dev` hoặc `www.tqccl.com`: đọc năm khóa bền `tqcclRecruitTracker`, `tqccl.rosterRecommend.scanState.v1`, `theme`, `tqccl.teamView.v1`, `tqccl.analyze.history.v1` (khóa sessionStorage `tqccl:team-return:v1` không mang), rồi `location.replace("https://tqccl.com" + pathname + search + "#tqccl-migrate=" + encodeURIComponent({v:1, hash, items}))`. Không có khóa nào hoặc storage lỗi → chuyển thẳng, giữ hash gốc.
 - Hostname `tqccl.com` với fragment `#tqccl-migrate=`: kiểm `v === 1`, `hash` là chuỗi rỗng hoặc bắt đầu `#`, mọi khóa thuộc allowlist và mọi giá trị là chuỗi; ghi **chỉ** khóa tqccl.com chưa có (không đè dữ liệu mới hơn), rồi `history.replaceState` về `pathname + search + hash gốc` trước khi script theme, script hash cũ của Landing hay `app.js` đọc URL. Payload sai → chỉ bỏ fragment.
 - Host preview `*.tqccl.pages.dev`, `localhost`, `127.0.0.1` và host khác: không làm gì.
 
-Payload nằm trong fragment nên trình duyệt không gửi nó trong request HTTP: dữ liệu không tới server Pages, access log hay Worker. Allowlist khóa lấy từ hằng của `js/recruit-tracker-store.js`, `js/roster-scan-state.js`, `js/team-view.js` cộng `theme`; thêm khóa localStorage bền mới phải thêm vào `HOST_BRIDGE_KEYS`.
+Payload nằm trong fragment nên trình duyệt không gửi nó trong request HTTP: dữ liệu không tới server Pages, access log hay Worker. Allowlist khóa lấy từ hằng của `js/recruit-tracker-store.js`, `js/roster-scan-state.js`, `js/team-view.js`, `js/analyze-state.js` cộng `theme`; thêm khóa localStorage bền mới phải thêm vào `HOST_BRIDGE_KEYS`.
 
 ## Vision request flow
 
@@ -218,20 +218,22 @@ Luồng Worker:
 
 1. Trả preflight hoặc kiểm tra `POST /analyze`.
 2. `ALLOWED_ORIGINS` (danh sách origin exact, phân cách dấu phẩy) thiếu/rỗng → `503` fail-closed. Nếu request có `Origin`, yêu cầu khớp chính xác một mục; request không `Origin` vẫn được phép. CORS chỉ echo origin khớp, luôn kèm `Vary: Origin`.
-3. Thiếu `IP_HASH_SECRET` → `503` fail-closed (không đụng KV, siteverify hay model); `Content-Length` vượt trần body → `413` trước khi đọc body.
+3. Thiếu `IP_HASH_SECRET` → `503` fail-closed (không đụng KV, siteverify hay model). Đọc danh sách nhà cung cấp AI từ KV `ai:providers` (mã hoá AES-GCM, khoá HKDF từ `AI_CONFIG_SECRET`, cache 60 giây; module chung `shared/ai-config.ts`): thiếu secret/giải mã lỗi/không mục nào bật → `503` `Dịch vụ soi ảnh chưa được cấu hình`. `Content-Length` vượt trần body → `413` trước khi đọc body.
 4. Parse body/mode; băm IP bằng HMAC-SHA256 có khoá (IPv6 gom /64).
 5. Kiểm tra kill-switch, per-hour/day/month qua KV best-effort (lỗi đọc coi như 0, lỗi ghi bỏ qua).
 6. Xác thực Turnstile bằng siteverify (một lần dùng, `hostname` phải là host của một origin trong `ALLOWED_ORIGINS`); không có lớp replay KV.
 7. Validate image MIME, magic bytes và size (tính từ độ dài base64, chỉ giải mã phần đầu).
-8. Commit global usage, gọi DashScope Qwen, tolerant-parse và validate output theo mode. Upstream lỗi → `502`/`503` với thông điệp cố định; lỗi bất ngờ → `500` JSON có CORS.
+8. Commit global usage, gọi các nhà cung cấp đang bật theo thứ tự (401/402/403/429/5xx/lỗi mạng/timeout → mục kế; 2xx → dừng), tolerant-parse và validate output theo mode. Hết mục → `502`/`503` với thông điệp cố định (429 cuối → `503`); lỗi bất ngờ → `500` JSON có CORS.
 9. Browser tiếp tục kiểm envelope tương ứng với mode cho cả response `200`; JSON lỗi hoặc sai shape được đổi thành thông báo tiếng Việt hữu hạn, không đi vào state review.
+
+Soi đội sau bước 9: `analyzeTeamImage` chỉ chép chữ in (`tacticsCn` đúng 2 ô A/B, ô không đọc được `未知`). `js/analyze-map.js` phân loại từng ô thành khớp chắc / không chắc (kèm ứng viên) / không rõ và dựng editor 3 tướng × (tướng, 2 chiến pháp, binh thư); người dùng xác nhận (hoặc nhập tay, không gọi Worker) rồi `diffTeam`/`compareTeams` so từng ô với Đội chuẩn theo mùa và Đội khác. Đội đã xác nhận đi vào URL `?season=…&doi=v1.…` (`js/analyze-state.js`, chỉ ID canonical; `SECTION_QUERY_KEYS` giữ hai khóa này khi quay lại từ trang chi tiết), lịch sử localStorage tối đa 10 mục và thẻ PNG vẽ trên canvas; mở link/lịch sử dựng lại editor + diff mà không request Worker, link hỏng bị bỏ qua lặng lẽ.
 
 ## Deployment boundary
 
 | Surface | Artifact | Config |
 |---|---|---|
 | Cloudflare Pages | `dist/` từ `npm run build` | `public/_headers`, public Worker URL + Turnstile site key |
-| Cloudflare Worker | `worker/src/*.ts` | vars trong `wrangler.toml`, KV binding, secrets trong Worker env |
+| Cloudflare Worker | `worker/src/*.ts` + `shared/ai-config.ts` | vars trong `wrangler.toml`, KV binding (gồm bản ghi `ai:providers`), secrets trong Worker env |
 | Research MCP Worker | `mcp-worker/src/worker.ts` | `wrangler.jsonc`, `ASSETS`, version metadata, managed bearer secret, Origin/limit vars |
 | Research MCP local | `mcp-worker/src/stdio.ts` | filesystem snapshot; stdout protocol-only |
 | Maintainer local | `pipeline/*.py`, HTML/cache/maps | không publish nguồn/cache riêng tư |

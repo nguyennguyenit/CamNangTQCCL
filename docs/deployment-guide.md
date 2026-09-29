@@ -9,7 +9,7 @@ Deploy tách hai surface: static site trên Cloudflare Pages và Vision proxy tr
 - Node `24.20.0` theo `.node-version`, npm và Chromium cho Astro build/E2E.
 - Python 3 cho pipeline và test dữ liệu.
 - Cloudflare account, Wrangler login, Pages project, Worker và Turnstile widget.
-- Alibaba DashScope/Qwen API key phù hợp region/model.
+- API key của ít nhất một nhà cung cấp AI OpenAI-compatible đọc được ảnh (vd DeepSeek platform.deepseek.com, số dư trả trước; hoặc OpenCode Zen), nhập ở tab **AI** của `/quan-tri/` — không đặt trong env.
 - Khi rebuild: HTML export đúng tên trong `Meta Team PK/`; raw crawl cache hoặc quyền/network để recrawl.
 
 ## Preview và test local
@@ -164,7 +164,7 @@ Thứ tự release:
 1. Deploy Vision Worker trước (`worker/wrangler.toml` `ALLOWED_ORIGINS` = ba origin), để cả ba host đều soi ảnh được ngay khi Pages mới lên. Kiểm preflight cả ba origin theo [Verification sau deploy](#verification-sau-deploy).
 2. Deploy Pages. Từ lúc này mọi trang trên `tqccl.pages.dev`/`www.tqccl.com` chuyển ngay về `https://tqccl.com` cùng path, query và hash.
 
-Cầu chuyển dữ liệu (`src/lib/host-bridge.ts`, script inline đầu tiên trong `<head>`): trên host cũ, bốn khóa localStorage bền (`tqcclRecruitTracker`, `tqccl.rosterRecommend.scanState.v1`, `theme`, `tqccl.teamView.v1`) được đóng gói vào fragment `#tqccl-migrate=`; trên `tqccl.com`, khóa nào chưa có mới được ghi (không đè dữ liệu mới hơn), rồi URL được trả về hash gốc trước mọi script khác. Fragment không được trình duyệt gửi đi trong request nên dữ liệu tracker/kho không đi qua server hay log nào. Preview `*.tqccl.pages.dev` và local không bị chuyển.
+Cầu chuyển dữ liệu (`src/lib/host-bridge.ts`, script inline đầu tiên trong `<head>`): trên host cũ, năm khóa localStorage bền (`tqcclRecruitTracker`, `tqccl.rosterRecommend.scanState.v1`, `theme`, `tqccl.teamView.v1`, `tqccl.analyze.history.v1`) được đóng gói vào fragment `#tqccl-migrate=`; trên `tqccl.com`, khóa nào chưa có mới được ghi (không đè dữ liệu mới hơn), rồi URL được trả về hash gốc trước mọi script khác. Fragment không được trình duyệt gửi đi trong request nên dữ liệu tracker/kho không đi qua server hay log nào. Preview `*.tqccl.pages.dev` và local không bị chuyển.
 
 Kiểm sau release: mở `https://tqccl.pages.dev/theo-doi-chieu-mo/` trên trình duyệt đã có tracker cũ → URL cuối là `https://tqccl.com/theo-doi-chieu-mo/` (không còn `#tqccl-migrate=`) và tracker hiển thị đủ; `https://www.tqccl.com/#khaihoang` → `https://tqccl.com/khai-hoang/`; `https://tqccl.com/robots.txt` và `/sitemap.xml` trỏ `https://tqccl.com`. Rollback Pages về bản trước chỉ tắt việc chuyển; dữ liệu đã sang `tqccl.com` vẫn nằm ở đó, dữ liệu gốc trên host cũ không bị xoá.
 
@@ -220,10 +220,9 @@ npm run dev
 Commit trong `worker/wrangler.toml`:
 
 - `ALLOWED_ORIGINS`: danh sách origin exact phân cách dấu phẩy (`https://tqccl.com,https://www.tqccl.com,https://tqccl.pages.dev`). CORS echo origin khớp kèm `Vary: Origin`; `hostname` siteverify trả về phải là host của một origin trong danh sách (widget Turnstile phải khai đủ các hostname đó). Thiếu/rỗng → mọi `POST /analyze` trả `503`; để `*` (chỉ dev) thì Worker bỏ kiểm origin và hostname.
-- `REGION`, `MODEL_ID`, tùy chọn `MODEL_ENDPOINT`.
 - `FEATURE_ENABLED` kill-switch.
 - `RL_PER_HOUR`, `DAILY_CAP`, `MONTHLY_CAP`, `MAX_IMAGE_BYTES`.
-- KV binding `RL` và namespace ID.
+- KV binding `RL` và namespace ID. Cùng namespace chứa bản ghi mã hoá `ai:providers` (danh sách nhà cung cấp AI, thứ tự failover) do `community-worker/` ghi qua binding `AI_KV`; Worker này chỉ đọc (cache 60 giây).
 
 Frontend public config trong `js/config.js`:
 
@@ -237,12 +236,14 @@ Các giá trị này công khai, không phải secret.
 
 ```bash
 cd worker
-npx wrangler secret put QWEN_API_KEY
 npx wrangler secret put TURNSTILE_SECRET
 openssl rand -base64 48 | npx wrangler secret put IP_HASH_SECRET
+npx wrangler secret put AI_CONFIG_SECRET   # CÙNG giá trị với community-worker
 ```
 
 Cả ba secret phải có trước `npm run deploy`. `IP_HASH_SECRET` là khoá HMAC băm IP cho bộ đếm per-IP (giá trị ngẫu nhiên ≥ 32 byte); thiếu hoặc rỗng thì mọi `POST /analyze` trả `503` `Dịch vụ soi ảnh chưa được cấu hình` và công cụ đọc ảnh báo "Dịch vụ soi ảnh chưa sẵn sàng". Đổi secret chỉ làm bộ đếm per-IP bắt đầu lại (TTL 2 giờ), không cần migrate.
+
+`AI_CONFIG_SECRET` là khoá (HKDF → AES-GCM) giải mã `ai:providers`; phải trùng giá trị đặt cho `community-worker/`. Thiếu, sai giá trị, danh sách rỗng hoặc không mục nào bật → cũng `503` `Dịch vụ soi ảnh chưa được cấu hình`.
 
 Không commit API key, Turnstile secret, token, `.dev.vars` hoặc credential Cloudflare.
 
@@ -255,7 +256,9 @@ npm run typecheck
 npm run deploy
 ```
 
-Config hiện dùng region `intl`, model `qwen3.7-plus`, endpoint DashScope Model Studio theo region. Chỉ đặt `MODEL_ENDPOINT` khi chủ đích đổi endpoint/provider; không dùng Coding Plan endpoint cho Vision.
+Endpoint/model/key không nằm trong config: admin nhập ở tab **AI** của `/quan-tri/` (mẫu DeepSeek `https://api.deepseek.com/chat/completions` + `deepseek-flash`, OpenCode Zen `https://opencode.ai/zen/v1/chat/completions` + `deepseek-v4.1-flash`, hoặc tuỳ chỉnh). Mỗi lượt thử các mục đang bật theo thứ tự, lỗi 401/402/403/429/5xx/mạng/timeout thì chuyển mục kế; xem [worker/README.md](../worker/README.md#nhà-cung-cấp-ai).
+
+Thứ tự triển khai khi chuyển từ secret khoá API cũ sang danh sách: đặt `AI_CONFIG_SECRET` (cùng giá trị) cho cả hai Worker → deploy `community-worker/` → nhập nhà cung cấp ở tab **AI** → deploy `worker/` → xoá secret cũ ở cả hai Worker. Lệnh cụ thể: [community-worker.md](community-worker.md#nhà-cung-cấp-ai-tab-ai).
 
 ## Publish lại bản dịch hiển thị
 

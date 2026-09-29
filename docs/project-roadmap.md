@@ -27,7 +27,7 @@ Tiêu chí hoàn thành: một checkout có các prerequisite đã mô tả có 
 
 ## Ưu tiên 3 — Privacy và security vận hành
 
-- [ ] Làm rõ retention/policy DashScope trong UI và deployment checklist; giữ cảnh báo crop tên tài khoản.
+- [ ] Làm rõ retention/policy dữ liệu của DeepSeek và OpenCode Zen trong UI và deployment checklist; giữ cảnh báo crop tên tài khoản.
 - [ ] Kiểm tra định kỳ `ALLOWED_ORIGINS`, Turnstile site/secret pair, model ID và endpoint theo production.
 - [ ] Đặt budget/backstop ở provider; xem KV caps là cảnh báo best-effort, không guarantee.
 - [ ] Đánh giá Durable Object nếu quota tháng phải cứng/atomic.

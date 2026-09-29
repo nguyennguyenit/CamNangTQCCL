@@ -39,7 +39,7 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | `js/filters.js` | Chuẩn hoá chữ bỏ dấu và blob tìm kiếm của một đội, dùng chung với MCP. |
 | `js/unified-lookup.js`, `js/lookup-page.js`, `js/lookup-profile.js`, `js/lookup-data.js`, `js/lookup-detail.js`, `js/view-tree.js`, `src/lib/lookup-pages.ts` | Tra cứu bảy nhóm, mỗi nhóm một trang: nạp và xác minh payload theo trang, tìm kiếm, cây markup dùng chung build/DOM, hồ sơ và quan hệ theo ID. |
 | `js/recruit-tracker-store.js`, `js/recruit-tracker.js`, `js/recruit-sync.js` | Theo dõi chiêu mộ: store schema v2 (bản ghi có `id`/`updatedAt`/dấu xóa, chuyển v1→v2, bảo hiểm tính từ lượt theo `occurredAt`, gộp LWW theo bản ghi), UI (ghi nhanh, Hoàn tác, nhật ký, hộp thoại `<dialog>`), client đồng bộ tuỳ chọn với `/api/recruit`. |
-| `js/analyze.js`, `js/analyze-map.js` | Nén ảnh, Turnstile, Worker call, canonical map và team similarity. |
+| `js/analyze.js`, `js/analyze-map.js`, `js/analyze-state.js` | Soi đội: nén ảnh, Turnstile, Worker call; khớp 3 trạng thái cho editor xác nhận, diff từng ô với Đội chuẩn theo mùa/Đội khác (`findSimilarTeams` giữ cho MCP); link `?doi=v1.…`, lịch sử trên máy, thẻ PNG. |
 | `js/hero-identity.js` | Canonical identity tướng: SP/CO/base tách biệt, `familyId` riêng và combined slot là alternatives. |
 | `js/roster-scan-state.js` | Serialize scan state, loại dữ liệu ảnh/token. |
 | `js/team-recommend-engine.js` | Chấm tier, kiểm tra conflict, greedy/DFS và tạo portfolio local. |
@@ -90,7 +90,8 @@ Tab Khai hoang hỗ trợ `variants[]` tùy chọn trên từng đội: cấu h�
 - `tqcclRecruitTracker`: tracker schema version 2 (v1 tự chuyển khi đọc); có export/import JSON (nhập = gộp). `tqcclRecruitTracker:sync` (`{userId, cursor, pushedAt}`) và `tqcclRecruitTracker:invite` là khóa phụ, không mang qua cầu chuyển domain.
 - `tqccl.rosterRecommend.scanState.v1`: tên tướng/chiến pháp/team khóa, xác nhận và timestamp; không ảnh/base64/blob/token.
 - `tqccl.teamView.v1`: kiểu xem Thẻ/Thẻ gọn/Bảng của Đội chuẩn/Đội khác.
-- Bốn khóa trên là allowlist `HOST_BRIDGE_KEYS` mà cầu chuyển domain (`src/lib/host-bridge.ts`) mang từ host cũ sang `https://tqccl.com`.
+- `tqccl.analyze.history.v1`: tối đa 10 đội Soi đội đã đối chiếu (`doi` chỉ ID canonical, mùa, thời điểm); không ảnh/token.
+- Năm khóa trên là allowlist `HOST_BRIDGE_KEYS` mà cầu chuyển domain (`src/lib/host-bridge.ts`) mang từ host cũ sang `https://tqccl.com`.
 - Ảnh preview giữ trong memory/data URL của phiên UI, gửi tới Worker khi người dùng xác thực.
 - Worker dùng KV cho replay/rate/cap; secret và API key chỉ ở Worker environment.
 

@@ -95,7 +95,7 @@ Không có artboard cho hai surface này; chúng theo StyleGuide và bảng toke
 
 Chọn kịch bản là đọc tham khảo, chưa đủ để gợi ý hoặc so đội theo luật. Phân biệt vùng áp dụng đúng luật, tham khảo cùng kịch bản và chưa rõ kịch bản; mỗi vùng có số lượng riêng.
 
-Hai công cụ Soi đội và Gợi ý đội không có bộ chọn Mùa / Phiên bản luật: luôn chạy trên dữ liệu đội cũ (tất cả — tham khảo); `scenario`, `ruleset`, `config` trên URL cũ của hai trang bị bỏ lặng lẽ khi tải.
+Hai công cụ Soi đội và Gợi ý đội không có bộ chọn Mùa / Phiên bản luật của layout; `scenario`, `ruleset`, `config` trên URL cũ của hai trang bị bỏ lặng lẽ khi tải. Gợi ý đội chạy trên dữ liệu đội cũ (tất cả — tham khảo); Soi đội có ô chọn mùa riêng của Đội chuẩn (`season`, mặc định mùa mới nhất của registry) trong editor.
 
 ## Trang chi tiết đội và 404
 
@@ -116,16 +116,19 @@ Hai công cụ Soi đội và Gợi ý đội không có bộ chọn Mùa / Phi�
 
 ## Theo dõi chiêu mộ (local-first, đồng bộ tuỳ chọn)
 
-- Giải thích dữ liệu lưu trong trình duyệt hiện tại và có thể mất nếu clear storage.
-- `Xuất JSON`/`Nhập JSON` nằm gần luồng backup/restore, có validation và confirm trước ghi đè; ô chọn tệp native nằm trên nhãn nút với vòng focus nhìn thấy được khi Tab.
-- Pity, lượt còn lại và lịch sử 5★ dùng nhãn số rõ, không chỉ màu.
-- Không gửi tracker data ra Worker/provider nếu không có tính năng hoặc đồng ý mới.
+- Không bắt đăng nhập: khách dùng dữ liệu trong trình duyệt; thông báo nói rõ dữ liệu có thể mất khi xóa dữ liệu trang và gợi ý đăng nhập để đồng bộ hoặc Xuất JSON. Chip ☁ cạnh ô tài khoản hiện trạng thái đồng bộ; lời mời đăng nhập chỉ hiện một lần sau lượt 5★ đầu tiên.
+- Ghi lượt ngày một chạm ("2 miễn phí", "Đủ 4", kẹp theo số lượt rẻ còn lại hôm nay); mỗi thao tác ghi/xóa có toast `role="status"` kèm Hoàn tác.
+- Mọi hỏi/xác nhận là `<dialog>` trong trang (không `prompt`/`confirm`/`alert`); `Nhập JSON` hiện số tài khoản/gói/lượt rồi gộp vào dữ liệu hiện có.
+- Bảo hiểm, lượt còn lại, nhật ký và thống kê dùng nhãn số rõ, không chỉ màu; thanh tiến độ `role="meter"` giữ số thật trong `aria-valuetext`.
+- Không gửi dữ liệu tracker ra ngoài khi người dùng chưa đăng nhập.
 
 ## Soi đội từ ảnh
 
-- Luôn hiển thị disclaimer: ảnh gửi tới Alibaba Cloud DashScope, không chủ động lưu; khuyến nghị crop tên account.
-- Preview giúp người dùng xác nhận ảnh trước gửi; trạng thái nén, Turnstile, upload và lỗi tách bạch.
-- Kết quả canonical Việt và icon chỉ là hỗ trợ đối chiếu; icon lỗi không được làm mất text; thiếu dữ liệu thì ghi rõ chứ không bịa điểm/mùa.
+- Luôn hiển thị disclaimer: ảnh gửi tới nhà cung cấp AI của site (DeepSeek hoặc OpenCode Zen) để phân tích, site không lưu ảnh; khuyến nghị crop tên account.
+- Preview giúp người dùng xác nhận ảnh trước gửi; trạng thái nén, Turnstile, upload và lỗi tách bạch. Nút phụ **Nhập tay** cạnh nút Soi đội mở cùng editor, không gọi Worker, không cần Turnstile; Worker chưa cấu hình thì chỉ phần đọc ảnh tắt.
+- AI chỉ chép chữ in trong ảnh; mọi tên qua editor xác nhận 3 tướng × (tướng, chiến pháp A/B, binh thư). Mỗi ô là `input` + `datalist` từ từ điển (bản zh liệt kê chữ Hán gốc) và có một trong ba trạng thái: khớp chắc, **Không chắc** (viền/nền đỏ nhạt, chữ đọc được và tối đa 3 ứng viên bấm chọn), **Không rõ**. Nút Đối chiếu khoá tới khi đủ 3 tướng khớp chắc và không còn ô Không chắc/Không rõ; chiến pháp/binh thư được để trống có chủ đích (nút “Để trống”).
+- Kết quả đối chiếu gồm hai nhóm: **Đội chuẩn · <mùa>** (theo ô chọn mùa) và **Đội khác · tham khảo**; mỗi hàng là link thật tới trang chi tiết, số tướng/chiến pháp khớp, binh thư lệch và diff từng tướng (chiến pháp đúng xanh, khác đội gạch đứt đỏ, “Đội dùng: …” cho ô thiếu, chip binh thư, tướng thừa/thiếu). Chỉ dùng trường có thật trong dữ liệu; thiếu thì ghi rõ chứ không bịa điểm/mùa.
+- Link chia sẻ `?doi=v1.…` + `season` chỉ mang ID canonical; lịch sử trên máy tối đa 10 đội (không ảnh/token). Thẻ PNG vẽ bằng chữ + màu token trên canvas, không chân dung (tránh canvas bị taint).
 
 ## Gợi ý đội từ kho
 

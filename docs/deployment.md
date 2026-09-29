@@ -72,9 +72,7 @@ npm run deploy
 
 Worker config uses non-secret vars from `worker/wrangler.toml`:
 
-- `ALLOWED_ORIGIN`
-- `REGION`
-- `MODEL_ID`
+- `ALLOWED_ORIGINS`
 - `FEATURE_ENABLED`
 - `RL_PER_HOUR`
 - `DAILY_CAP`
@@ -83,8 +81,14 @@ Worker config uses non-secret vars from `worker/wrangler.toml`:
 
 Worker secrets are managed in Cloudflare and must not be committed:
 
-- `QWEN_API_KEY`
 - `TURNSTILE_SECRET`
+- `IP_HASH_SECRET`
+- `AI_CONFIG_SECRET` (same value as `community-worker/`)
+
+AI providers (endpoint, model id, API key, failover order) are not env vars: admins manage them in the
+**AI** tab of `/quan-tri/`; `community-worker/` stores them encrypted in KV `ai:providers` (namespace `RL`,
+binding `AI_KV`) and `worker/` reads the same record. Rollout order and details:
+[community-worker.md](community-worker.md#nhà-cung-cấp-ai-tab-ai).
 
 ## Verification
 

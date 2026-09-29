@@ -22,7 +22,7 @@ Người dùng chính: người chơi tra meta; người quản lý nhiều acco
 | Runtime data | `data/*.json`, commit và publish cùng site |
 | Public artifact | Astro static endpoints theo manifest; `public/_headers` là cache deployment-control |
 | Build-time | `pipeline/*.py`, Python stdlib, nguồn HTML/cache local |
-| Vision | `worker/`, Cloudflare Worker + KV + Turnstile + DashScope Qwen |
+| Vision | `worker/`, Cloudflare Worker + KV + Turnstile + nhà cung cấp AI OpenAI-compatible do admin quản lý (DeepSeek, OpenCode Zen) |
 | Local state | theme, tracker chiêu mộ, roster scan đã chuẩn hóa |
 
 Ngoài phạm vi: backend chung cho dữ liệu game, AI tự quyết đội, bundler/framework frontend. Tracker chỉ đồng bộ qua `community-worker` khi người dùng đăng nhập.
@@ -86,7 +86,7 @@ Snapshot công khai 2026-09-27:
 - 48 team Đô Úy từng công khai đã được retire; `pipeline/do-uy-ss18-source.json` vẫn giữ 40 record nguồn thô làm archive và không tham gia build/publication.
 - HTML nguồn và raw crawl cache bị ignore; clone sạch không bảo đảm rebuild đầy đủ.
 - KV không atomic, nên quota Worker là best-effort. Request không có header `Origin` vẫn được chấp nhận; Turnstile là rào chính ngoài browser.
-- Phụ thuộc dịch vụ ngoài: Cloudflare, Turnstile và Alibaba DashScope.
+- Phụ thuộc dịch vụ ngoài: Cloudflare, Turnstile và nhà cung cấp AI đang bật (DeepSeek/OpenCode Zen).
 - Accessibility còn thiếu tab semantics hoàn chỉnh, focus management dialog, drop-zone keyboard và live-region nhất quán.
 
 ## Bước tiếp theo

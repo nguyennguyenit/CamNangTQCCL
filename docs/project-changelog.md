@@ -18,6 +18,27 @@
 
 - Áp migration trước khi deploy Worker: `cd community-worker && npm run db:migrate:remote && npm run deploy`, rồi deploy Pages.
 
+## 2026-09-29 (Đọc ảnh: nhà cung cấp AI quản lý ở /quan-tri/, làm lại Soi đội từ ảnh)
+
+### Changed
+
+- **Nhà cung cấp AI thay Qwen DashScope.** Cả `worker/` (Soi đội, Gợi ý đội — bốn `mode`) và `community-worker/` (đọc ảnh chiến báo) đọc một danh sách ưu tiên chung `ai:providers` (mỗi mục: nhãn, endpoint Chat Completions OpenAI-compatible, model id, key, bật/tắt) lưu mã hoá AES-GCM trong KV `RL` (id `6fff7d73…`, `community-worker` bind thành `AI_KV`), khoá dẫn xuất HKDF từ secret mới `AI_CONFIG_SECRET` (cùng giá trị cho cả hai Worker). Code dùng chung một bản ở `shared/ai-config.ts`.
+- **Failover:** thử mục đang bật theo thứ tự; 401/402/403/429/5xx/lỗi mạng/timeout 45s → mục kế tiếp; 2xx dừng (nội dung không đọc được → 422, không thử tiếp). Danh sách rỗng/giải mã lỗi → 503 "chưa cấu hình".
+- Request tới model tắt thinking (`thinking: {type: "disabled"}`): DeepSeek V4.1 bật thinking mặc định nên lượt đọc ảnh quá timeout 45s. Mỗi lần một nhà cung cấp lỗi, Worker ghi log `ai_provider_failed` (nhãn, host, model, mã HTTP, 300 ký tự đầu thông báo lỗi; không ghi key); model trả rỗng ghi `ai_empty_content`. Xem bằng `npx wrangler tail`.
+- **Soi ảnh chiến báo:** prompt chép MỌI dòng chiến pháp dưới mỗi tướng theo thứ tự (≤3, kể cả dòng tự mang; dòng `兵` là chiến pháp), `booksCn = []` khi ảnh không in binh thư, bỏ qua ô tướng trống, chỉ chép phe 我方. Site bỏ dòng tự mang bằng `selfTacticCn` của từ điển tướng (tướng chưa rõ mà đủ 3 dòng thì bỏ dòng đầu); chữ AI xếp vào binh thư mà là tên chiến pháp được trả về hàng chiến pháp. Trước đây chiến pháp tự mang chiếm ô A và chiến pháp thứ ba bị hiện thành binh thư.
+- **Tab AI trong `/quan-tri/`** (`js/community-admin.js`, `GET/PUT /api/admin/ai/providers` qua `requireAdmin`): thêm/sửa/xoá/bật tắt/↑↓, mẫu endpoint DeepSeek (`deepseek-flash`) và OpenCode Zen (`deepseek-v4.1-flash`) hoặc Tùy chỉnh; key chỉ ghi, GET chỉ trả `keyLast4`; để trống key khi sửa = giữ key cũ. Worker đọc với `cacheTtl` 60s.
+- Bỏ hẳn `QWEN_API_KEY`/`DEEPSEEK_API_KEY`, `REGION`, `MODEL_ID`, `MODEL_ENDPOINT` và endpoint DashScope. Thứ tự deploy: đặt `AI_CONFIG_SECRET` cho cả hai Worker → deploy `community-worker` → nhập provider ở tab AI → deploy `worker/` → xoá secret cũ (`docs/community-worker.md`).
+- **Soi đội từ ảnh làm lại:** prompt chỉ chép chữ in trong ảnh (bỏ nhận diện chân dung, bỏ `HERO_NAMES_CN`/`nameFromPortrait`, chiến pháp theo ô A/B, không đọc được → `未知`); mỗi ô khớp từ điển ra 3 trạng thái (khớp chắc/Không chắc kèm ≤3 ứng viên/Không rõ); editor xác nhận 3 tướng × (2 chiến pháp + binh thư) bằng `input` + `datalist`, nút **Nhập tay** không gọi Worker; Đối chiếu khoá tới khi hết ô chưa chắc.
+- Đối chiếu với **Đội chuẩn** theo ô chọn mùa (`?season=`, mặc định mùa mới nhất) và **Đội khác · tham khảo**, diff từng ô (tướng thiếu/thừa, chiến pháp đúng/sai/thiếu tính cả `alternatives`, binh thư lệch). Trang không còn tải `data/teams.json`.
+- Link chia sẻ `?doi=v1.…` (chỉ ID canonical, mở không gọi Worker), lịch sử trên máy `tqccl.analyze.history.v1` (≤10 mục, không ảnh), xuất PNG vẽ bằng canvas (chỉ chữ). Code mới `js/analyze-state.js`.
+- Disclaimer Soi đội và trang Quyền riêng tư (vi/zh) nêu ảnh gửi tới nhà cung cấp AI của site (DeepSeek hoặc OpenCode Zen).
+- Bản dịch: re-pin hash `js/analyze.js`, `js/analyze-map.js`, `js/app.js`, `js/team-detail-navigation.js`, `worker/src/schema.ts`; đổi chữ các obligation `ui:analyze/*` (`authored-vi`); tiêu đề thẻ 3 giữ "3 · Đội có sẵn tương tự" (khớp bản dịch đã duyệt `ui:analyze/similar-team`); baseline digest mới; publish generation `3f6b33cf…`, re-pin `pipeline/team-route-handles.json`.
+
+### Tests
+
+- `community-worker`: `ai-config` (mã hoá round-trip, sai secret, failover thứ tự/bỏ mục tắt/không chuyển ở 2xx), `ai-admin` (403 non-admin, GET không lộ key, PUT giữ key cũ, mục mới thiếu key → 400), chiến báo thiếu cấu hình → 503. `worker/`: prompt không còn chân dung/danh sách tên, schema ô A/B, thiếu cấu hình → 503.
+- Node: `analyze-map` (3 trạng thái, diff), `analyze-state` (codec `?doi=`, lịch sử ≤10). E2E: `beta-tools` (ảnh → editor → đối chiếu, Nhập tay không gọi Worker, `?doi=` không gọi Worker, bản zh), `community` (tab AI).
+
 ## 2026-09-29 (Khai hoang: Chạm Sứ và quân thủ mỏ về trang danh sách)
 
 ### Changed
