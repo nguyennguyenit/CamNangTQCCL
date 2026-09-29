@@ -41970,22 +41970,6 @@
           "verdict": "accepted"
         },
         {
-          "entityId": "ui:roster/blocked-team",
-          "fieldPath": "heading",
-          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-          "inputFingerprint": "2d45fd6dadc8db5a82be431381d629b601618cef83006fa7f96d43d6dbd8f0ba",
-          "textSha256": "c6c3217875bd3df7c189176d34f935d23c94ea21cc442e3a40fb992a30140030",
-          "verdict": "accepted"
-        },
-        {
-          "entityId": "ui:roster/local-engine-note",
-          "fieldPath": "note",
-          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-          "inputFingerprint": "b841d713a6132da4db4d2a03d57af74f9b3fa5ef200d06327a53acd20450fdc6",
-          "textSha256": "0fe9e7754217eacfeaaf5cd2a5477be189ae64f6f7cfb0e9042b63ee702cbc7b",
-          "verdict": "accepted"
-        },
-        {
           "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-shu-wuhu-qiang",
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",

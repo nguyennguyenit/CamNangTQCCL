@@ -12,13 +12,13 @@
     "notes": {
       "approvedDisplaySlots": 11,
       "blocks": 1967,
-      "concreteInventorySha256": "60cab501fbe8cda3b822eb3992c82d8635eb5e0ff93341823d8bfe353eaa63fd",
-      "concreteLocationCount": 56593,
+      "concreteInventorySha256": "1b7b1ff4b18491f625537cbf2f23709492d5d21f43da641d464e8f2222de817f",
+      "concreteLocationCount": 56617,
       "hanBlocks": 1928,
       "lookupReviewObligations": 3503,
-      "siteLedgerObligations": 2075,
-      "translationObligations": 5578,
-      "uiTranslateObligations": 64,
+      "siteLedgerObligations": 2073,
+      "translationObligations": 5576,
+      "uiTranslateObligations": 62,
       "uniqueRawTexts": 1123
     },
     "recommended": {
@@ -75,7 +75,7 @@
       "hột": "red-copy count"
     }
   },
-  "policyVersion": "site-vi-260929-theo-doi-chieu-mo-v2",
+  "policyVersion": "site-vi-260929-goi-y-doi-theo-mua",
   "routeFamilies": [
     {
       "entrypoints": [
@@ -760,8 +760,8 @@
     "data/season-content-links.json": "1dd183dc85a9a833336c76a79626d6c176fc9447fe746f11184c437054d8b3aa",
     "data/teams.json": "bd6b4925ad4d20620951d304358d39313031db0d9859e81ec9049c5370e1ed2f",
     "js/analyze-map.js": "3f9df5e96192f9d40bdfe3ab15dc174c55081c141f1639d9a3829b7e3af4d427",
-    "js/analyze.js": "4f757ddb0dd81e8a67bbe7dab0b6d1fc6e241c8379c2a29fa10f4012eb97ac7b",
-    "js/app.js": "791f703ecb3bab97585f882ce1766fd36b692467d638ab4b50f796fc463bacc5",
+    "js/analyze.js": "db948e7dce52509ce41a51162a53a11fce1572171972bd52fe64a0ae02565470",
+    "js/app.js": "9083abbbbabf34bf7cd44bd2b9d3cdb14ab3b97cfaec903d647cf25274a8d74a",
     "js/detail-actions.js": "773843c3611450654b4205e6048d364125a7f5e25d98d9ed41d6bdb5f03fbd4e",
     "js/hero-portrait.js": "f1024cc3686cb2a4e33e3568e219bf53ec18ef26b29f63f194e6eb54c9750eb3",
     "js/hero-summaries.js": "6853ba62d68d4185d11044edca7a6c53b9c6a16aaf6228cd4f86f2b3d66bab9a",
@@ -778,15 +778,15 @@
     "js/recruit-tracker-store.js": "0f0bcab223298ff4584d941c196bf85202a26ff6428a76730cffe5f4cb6c71c2",
     "js/recruit-tracker.js": "d4280558999e4fa22bb05c1001d16726c62482550bcbe0d4350bb2fec0f3800a",
     "js/render.js": "0329756e28c70cd3dd417415f17dedbd4a90dd848e3aeaa1e7b04b448a8e1f6d",
-    "js/roster-recommend-ui.js": "05c94f7c612bf2e1afebfa6e10ffd02025405479abb409131e6514e7293c7522",
+    "js/roster-recommend-ui.js": "3a2a0f2e8443ba63f2e0256468476c57b131d0b9af442a10b1209d9ead322666",
     "js/roster-scan-map.js": "fbdd016418bd09408ef2c4a5b87c8d923f1eb945446809d0a719cb16d098f0c5",
-    "js/roster-scan-state.js": "f8310fa4a646aa124724e94ba9c04637d6602e48f9ff7969fe0ecdb42cf36454",
+    "js/roster-scan-state.js": "7e42ad5f79a7af529609e745551dc1aa4031d0ccb83145e30257dd97f5bd4f8d",
     "js/site-chrome.js": "067886ae9ea13e635cf3fbca1d0de2a149eef80d79bf758aa1839b3fbf695c88",
     "js/site-nav.js": "4fe3f040f599dbd15b4eb2d734d7ce82281c887a399a4f7691769f4705c358aa",
     "js/tactic-summaries.js": "19c2baa46f3e3db9c82b544c64f514cb62891eea01b47819afff654fbc281e76",
-    "js/team-detail-navigation.js": "679d8d6476985582d4bfd95d7f975a91455aae6a98a25fab028a099185d2efa5",
+    "js/team-detail-navigation.js": "c987cb8ca7923037c27f4f0a3de9f64ce093622c1e127a298f7b2c451c3bc792",
     "js/team-detail.js": "9be97906941c5dafd73d7897a89edd96bd97be88c15446079ed68d0e943b8774",
-    "js/team-filter-section.js": "240d9f564e89fd8d1d16bbd3bdb1dc6cbf31eb0b44582f1e09f3b3ac6ecec762",
+    "js/team-filter-section.js": "3357771e51763a2933af2cbc7717c5e170221fd00d50145e68b42d72ab5d6787",
     "js/turnstile.js": "df16e104800e4b50ef22d306309d8287423fb2bae19947dd89ce508e8825e23f",
     "js/unified-lookup.js": "39a00f8d58304de8ad75e99c6328c1bbd3ba8a9fe5bc73095168d666bb750d01",
     "js/website-display.js": "f21707872c3977401c68d0705adeaa868edb071a43dd7701f01854e8ff1a8533",
@@ -821,6 +821,6 @@
     "src/pages/theo-doi-chieu-mo/index.astro": "59d012ae952241b338ad8dc7d9d8ad01fa0bde4364a5b44d5183b8cea5bf2e51",
     "src/pages/tra-cuu/[group].astro": "f0e077bdf54ac811cb887ee5c091511dd690f202096704d512d2a839aea03943",
     "src/pages/tra-cuu/index.astro": "57e0156dc6684728afb9fa43ebcac6255e46302f7903c8a9801a4a8813591fcc",
-    "worker/src/schema.ts": "05bd519e62685b237ab6f4a47c189fc54ef18fe4d82a1966d99b5ec086cc5022"
+    "worker/src/schema.ts": "f20fae86dc7d45efa0fb82e317c1215815a019da8868b596f79ac8990364fb6d"
   }
 }
