@@ -767,6 +767,23 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:roster/explain-rejected", "error", "Chưa giải thích được món bù này. Hãy đối chiếu hiệu ứng trong Tra cứu.", "js/roster-recommend-ui.js", "explainSubstitute", "error", "authored-vi"),
     ("ui:roster/explain-error", "error", "Chưa giải thích được lúc này. Thử lại sau.", "js/roster-recommend-ui.js", "explainSubstitute", "error", "authored-vi"),
     ("ui:analyze/explain-error", "error", "Chưa giải thích được lúc này. Thử lại sau.", "js/analyze.js", "localizeWorkerError", "error", "authored-vi"),
+    ("ui:analyze/disclaimer", "note", "Site chỉ đếm ẩn danh số ô bạn phải sửa (không ảnh, không tên); ", "js/analyze.js", "initAnalyze", "static", "authored-vi"),
+    ("ui:analyze/side-left", "label", "Phe trái · ta", "js/analyze.js", "initAnalyze", "static", "authored-vi"),
+    ("ui:analyze/side-right", "label", "Phe phải · đối thủ", "js/analyze.js", "initAnalyze", "static", "authored-vi"),
+    ("ui:analyze/side-aria", "ariaLabel", "Chọn phe cần soi", "js/analyze.js", "initAnalyze", "static", "authored-vi"),
+    ("ui:analyze/side-run", "action", "Soi phe này", "js/analyze.js", "initAnalyze", "static", "authored-vi"),
+    ("ui:analyze/side-step", "title", "2 · Chọn phe", "js/analyze.js", "initAnalyze", "static", "authored-vi"),
+    ("ui:analyze/side-note", "note", "Ảnh có cả hai phe. Chọn phe muốn soi; có thể đổi sang phe kia sau mà không cần đọc lại ảnh.", "js/analyze.js", "initAnalyze", "static", "authored-vi"),
+    ("ui:analyze/side-switch-aria", "ariaLabel", "Đổi phe", "js/analyze.js", "initAnalyze", "static", "authored-vi"),
+    ("ui:analyze/sample-send", "action", "Gửi ảnh này", "js/analyze.js", "initAnalyze", "static", "authored-vi"),
+    ("ui:analyze/sample-consent", "label", "Tôi đồng ý gửi ảnh này cùng đội đã xác nhận cho quản trị viên để cải thiện AI đọc ảnh.", "js/analyze.js", "initAnalyze", "static", "authored-vi"),
+    ("ui:analyze/sample-title", "title", "Giúp AI đọc đúng hơn", "js/analyze.js", "initAnalyze", "static", "authored-vi"),
+    ("ui:analyze/sample-note", "note", "Tuỳ chọn. Ảnh chỉ được lưu khi bạn bấm gửi và được quản trị viên duyệt trước khi dùng.", "js/analyze.js", "initAnalyze", "static", "authored-vi"),
+    ("ui:analyze/sample-login", "message", "Đăng nhập để gửi ảnh cho quản trị viên.", "js/analyze.js", "initAnalyze", "static", "authored-vi"),
+    ("ui:analyze/sample-sent", "status", "Đã gửi, cảm ơn bạn.", "js/analyze.js", "initAnalyze", "status", "authored-vi"),
+    ("ui:analyze/sample-need-confirm", "status", "Hãy xác nhận đủ đội trước khi gửi ảnh.", "js/analyze.js", "initAnalyze", "status", "authored-vi"),
+    ("ui:analyze/sample-sending", "status", "Đang gửi…", "js/analyze.js", "initAnalyze", "status", "authored-vi"),
+    ("ui:analyze/slow-read", "status", "AI đang đọc kỹ ảnh này, có thể mất thêm chút thời gian…", "js/analyze.js", "initAnalyze", "status", "authored-vi"),
 )
 
 
