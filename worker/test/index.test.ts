@@ -312,3 +312,119 @@ describe("POST /analyze với nhiều origin (ALLOWED_ORIGINS)", () => {
     });
   }
 });
+
+describe("POST /analyze mode explainSubstitute (chỉ văn bản, không ảnh)", () => {
+  const context = {
+    locale: "vi",
+    hero: "Quan Vũ",
+    missing: { name: "Uy Chấn Hoa Hạ", effect: "Gây sát thương binh nhận và làm choáng." },
+    substitute: { name: "Hoành Qua Dược Mã", effect: "Gây sát thương binh nhận lên toàn địch." },
+    configCount: 2,
+  };
+  const explainBody = (ctx: unknown) => ({ mode: "explainSubstitute", turnstileToken: `token-${++issuedTokens}`, context: ctx });
+  const explainModel = () => Response.json({ choices: [{ message: { content: '{"explanation":"Cả hai gây sát thương binh nhận."}' } }] });
+
+  /** fetch giả ghi lại body gửi model. */
+  function stubExplainFetch(siteverify?: () => Response) {
+    const calls: string[] = [];
+    const modelBodies: unknown[] = [];
+    vi.stubGlobal("fetch", async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      calls.push(url);
+      if (url === SITEVERIFY) return siteverify ? siteverify() : Response.json({ success: true, hostname: "tqccl.com" });
+      if (url === MODEL) {
+        modelBodies.push(JSON.parse(String(init?.body)));
+        return explainModel();
+      }
+      throw new Error(`unexpected fetch ${url}`);
+    });
+    return { calls, modelBodies };
+  }
+
+  it("không có ảnh vẫn qua: gọi model bằng văn bản, đếm quota global, trả { explanation }", async () => {
+    const { calls, modelBodies } = stubExplainFetch();
+    const kv = fakeKV();
+    const response = await worker.fetch(analyzeRequest(explainBody(context)), env(kv));
+    expect(await expectJson(response, 200)).toEqual({ explanation: "Cả hai gây sát thương binh nhận." });
+    expect(calls).toEqual([SITEVERIFY, MODEL]);
+    expect(JSON.stringify(modelBodies)).not.toContain("image_url");
+    expect(JSON.stringify(modelBodies)).toContain("Hoành Qua Dược Mã");
+    expect([...kv.gets, ...kv.puts].map((key) => key.slice(0, 2)).sort()).toEqual(
+      ["ai", "d:", "d:", "d:", "h:", "h:", "h:", "m:", "m:", "m:"],
+    );
+  });
+
+  for (const mode of ["analyzeTeamImage", "scanHeroes", "scanTactics", "scanBuiltTeams", undefined]) {
+    it(`mode ảnh ${mode ?? "(mặc định)"} vẫn bắt buộc ảnh: thiếu ảnh -> 400, kể cả có context`, async () => {
+      const calls = stubFetch();
+      const response = await worker.fetch(
+        analyzeRequest({ mode, turnstileToken: `token-${++issuedTokens}`, context }),
+        env(fakeKV()),
+      );
+      expect(await expectJson(response, 400)).toEqual({ error: "Thiếu ảnh" });
+      expect(calls).not.toContain(MODEL);
+    });
+  }
+
+  for (const [name, ctx] of [
+    ["thiếu context", undefined],
+    ["context không phải object", "Quan Vũ"],
+    ["khoá lạ", { ...context, extra: true }],
+    ["khoá lạ lồng", { ...context, missing: { ...context.missing, note: "x" } }],
+    ["tên quá dài", { ...context, hero: "x".repeat(41) }],
+    ["hiệu ứng quá dài", { ...context, substitute: { ...context.substitute, effect: "x".repeat(1201) } }],
+    ["locale lạ", { ...context, locale: "en" }],
+    ["configCount sai", { ...context, configCount: 1000 }],
+  ] as const) {
+    it(`${name} -> 400, không gọi model, không đếm quota global`, async () => {
+      const { calls } = stubExplainFetch();
+      const kv = fakeKV();
+      const response = await worker.fetch(analyzeRequest(explainBody(ctx)), env(kv));
+      expect(await expectJson(response, 400)).toEqual({ error: "Ngữ cảnh không hợp lệ" });
+      expect(calls).not.toContain(MODEL);
+      expect(kv.puts.filter((key) => key.startsWith("d:") || key.startsWith("m:"))).toEqual([]);
+    });
+  }
+
+  it("Turnstile thất bại -> 403, không gọi model", async () => {
+    const { calls } = stubExplainFetch(() => Response.json({ success: false }));
+    const response = await worker.fetch(analyzeRequest(explainBody(context)), env(fakeKV()));
+    expect(await expectJson(response, 403)).toEqual({ error: "Xác thực chống bot thất bại" });
+    expect(calls).not.toContain(MODEL);
+  });
+
+  it("thiếu token Turnstile -> 403, không gọi siteverify hay model", async () => {
+    const { calls } = stubExplainFetch();
+    const response = await worker.fetch(analyzeRequest({ mode: "explainSubstitute", context }), env(fakeKV()));
+    expect(response.status).toBe(403);
+    expect(calls).toEqual([]);
+  });
+
+  it("kill-switch -> 503 trước Turnstile", async () => {
+    const { calls } = stubExplainFetch();
+    const response = await worker.fetch(analyzeRequest(explainBody(context)), env(fakeKV(), { FEATURE_ENABLED: "false" }));
+    expect(await expectJson(response, 503)).toEqual({ error: "Tính năng đang tắt" });
+    expect(calls).toEqual([]);
+  });
+
+  it("vượt lượt/giờ theo IP -> 429 trước Turnstile", async () => {
+    const { calls } = stubExplainFetch();
+    const kv = fakeKV();
+    const extra = { RL_PER_HOUR: "1" };
+    await expectJson(await worker.fetch(analyzeRequest(explainBody(context)), env(kv, extra)), 200);
+    calls.length = 0;
+    const response = await worker.fetch(analyzeRequest(explainBody(context)), env(kv, extra));
+    expect(await expectJson(response, 429)).toEqual({ error: "Bạn thử quá nhiều lần, đợi chút" });
+    expect(calls).toEqual([]);
+  });
+
+  it("model trả explanation quá dài -> 422 thông điệp cố định", async () => {
+    vi.stubGlobal("fetch", async (input: RequestInfo | URL) =>
+      String(input) === SITEVERIFY
+        ? Response.json({ success: true, hostname: "tqccl.com" })
+        : Response.json({ choices: [{ message: { content: JSON.stringify({ explanation: "x".repeat(601) }) } }] }),
+    );
+    const response = await worker.fetch(analyzeRequest(explainBody(context)), env(fakeKV()));
+    expect(await expectJson(response, 422)).toEqual({ error: "Không giải thích được" });
+  });
+});

@@ -10,6 +10,7 @@ describe("resolveAnalyzeMode", () => {
     expect(resolveAnalyzeMode("scanHeroes")).toBe("scanHeroes");
     expect(resolveAnalyzeMode("scanTactics")).toBe("scanTactics");
     expect(resolveAnalyzeMode("scanBuiltTeams")).toBe("scanBuiltTeams");
+    expect(resolveAnalyzeMode("explainSubstitute")).toBe("explainSubstitute");
   });
 
   it("rejects invalid mode before model call", () => {

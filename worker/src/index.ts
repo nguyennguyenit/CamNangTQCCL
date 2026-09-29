@@ -1,15 +1,23 @@
-// Worker entry: POST /analyze proxy Vision LLM với guardrail đầy đủ.
+// Worker entry: POST /analyze proxy LLM với guardrail đầy đủ.
 // Thứ tự (rẻ -> đắt): OPTIONS -> method -> cấu hình origin -> origin -> secret băm IP -> danh sách
-// nhà cung cấp AI (KV) -> Content-Length -> kill-switch+cap+rate-limit -> Turnstile -> input guard ->
-// callModel (failover) -> validate -> JSON.
+// nhà cung cấp AI (KV) -> Content-Length -> kill-switch+cap+rate-limit -> Turnstile -> input guard
+// (ảnh cho mode đọc ảnh, `context` cho mode chỉ văn bản explainSubstitute) -> callModel (failover) -> validate -> JSON.
 // Mọi lỗi (kể cả bất ngờ) đều trả JSON có CORS. KHÔNG lưu ảnh; log tối thiểu.
 
 import { activeProviders, loadProviders } from "../../shared/ai-config";
 import { Config, Env, loadConfig } from "./config";
 import { corsHeaders, preflight, validateImage } from "./guard";
-import { callModel } from "./model";
+import { callExplainModel, callModel } from "./model";
 import { checkLimits, commitGlobalUsage, hashIp } from "./ratelimit";
-import { ANALYZE_MODES, AnalyzeMode } from "./schema";
+import {
+  ANALYZE_MODES,
+  AnalyzeMode,
+  AnalyzeModeResult,
+  ExplainContext,
+  ExplainResult,
+  INVALID_CONTEXT,
+  validateExplainContext,
+} from "./schema";
 import { verifyTurnstile } from "./turnstile";
 
 const NOT_CONFIGURED = "Dịch vụ soi ảnh chưa được cấu hình";
@@ -96,20 +104,32 @@ async function handle(request: Request, env: Env, cfg: Config, cors: Record<stri
     return json({ error: ts.message }, 403, cors);
   }
 
-  // Input guard (size/MIME/magic bytes) — KHÔNG tin nén client.
-  const img = validateImage(payload?.image, cfg.maxImageBytes);
-  if (!img.ok) {
-    return json({ error: img.message }, img.status, cors);
+  // Input guard — KHÔNG tin client. Mode ảnh: size/MIME/magic bytes (không tin nén client);
+  // explainSubstitute: `context` đúng khoá + độ dài, không cần ảnh.
+  let run: () => Promise<AnalyzeModeResult | ExplainResult>;
+  if (mode === "explainSubstitute") {
+    let context: ExplainContext;
+    try {
+      context = validateExplainContext(payload?.context);
+    } catch {
+      return json({ error: INVALID_CONTEXT }, 400, cors);
+    }
+    run = () => callExplainModel(context, { providers });
+  } else {
+    const img = validateImage(payload?.image, cfg.maxImageBytes);
+    if (!img.ok) {
+      return json({ error: img.message }, img.status, cors);
+    }
+    run = () => callModel(img.dataUri, { providers }, mode);
   }
 
   // [H2] Đếm quota global CHỈ khi đã qua Turnstile + guard (sắp tốn tiền thật).
   await commitGlobalUsage(env.RL, new Date());
 
   try {
-    const result = await callModel(img.dataUri, { providers }, mode);
-    return json(result, 200, cors);
+    return json(await run(), 200, cors);
   } catch (e: any) {
-    // callModel chỉ gắn `status` cho lỗi có thông điệp cố định, an toàn để trả nguyên.
+    // callModel/callExplainModel chỉ gắn `status` cho lỗi có thông điệp cố định, an toàn để trả nguyên.
     if (typeof e?.status === "number" && typeof e?.message === "string") {
       return json({ error: e.message }, e.status, cors);
     }

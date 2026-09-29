@@ -21,8 +21,10 @@ export interface AnalyzeResult {
   heroes: HeroRead[];
 }
 
-export type AnalyzeMode = "analyzeTeamImage" | "scanHeroes" | "scanTactics" | "scanBuiltTeams";
-export const ANALYZE_MODES: AnalyzeMode[] = ["analyzeTeamImage", "scanHeroes", "scanTactics", "scanBuiltTeams"];
+export type AnalyzeMode = "analyzeTeamImage" | "scanHeroes" | "scanTactics" | "scanBuiltTeams" | "explainSubstitute";
+export const ANALYZE_MODES: AnalyzeMode[] = ["analyzeTeamImage", "scanHeroes", "scanTactics", "scanBuiltTeams", "explainSubstitute"];
+/** Mode đọc ảnh (bắt buộc `image`); `explainSubstitute` chỉ văn bản, nhận `context`. */
+export type ImageMode = Exclude<AnalyzeMode, "explainSubstitute">;
 
 export interface RosterHeroRead {
   nameCn: string;
@@ -45,6 +47,23 @@ export interface BuiltTeamRead {
 }
 export interface BuiltTeamsScanResult {
   teams: BuiltTeamRead[];
+}
+/** Một chiến pháp trong ngữ cảnh giải thích: tên + mô tả hiệu ứng (do site cung cấp). */
+export interface ExplainTactic {
+  name: string;
+  effect: string;
+}
+/** Ngữ cảnh mode explainSubstitute: vì sao `substitute` thay được `missing` trên tướng `hero`. */
+export interface ExplainContext {
+  locale: "vi" | "zh";
+  hero: string;
+  missing: ExplainTactic;
+  substitute: ExplainTactic;
+  /** Số cấu hình cùng mùa tướng này mang chiến pháp thay thế (0..999). */
+  configCount: number;
+}
+export interface ExplainResult {
+  explanation: string;
 }
 export type AnalyzeModeResult = AnalyzeResult | RosterHeroesScanResult | TacticsScanResult | BuiltTeamsScanResult;
 
@@ -164,10 +183,67 @@ export function validateBuiltTeamsScanResult(parsed: unknown): BuiltTeamsScanRes
   return { teams };
 }
 
-export function parseAndValidateByMode(mode: AnalyzeMode, text: string): AnalyzeModeResult {
+export function parseAndValidateByMode(mode: ImageMode, text: string): AnalyzeModeResult {
   const parsed = tolerantParse(text);
   if (mode === "scanHeroes") return validateRosterHeroesResult(parsed);
   if (mode === "scanTactics") return validateTacticsScanResult(parsed);
   if (mode === "scanBuiltTeams") return validateBuiltTeamsScanResult(parsed);
   return validateResult(parsed);
+}
+
+export const INVALID_CONTEXT = "Ngữ cảnh không hợp lệ";
+const MAX_NAME = 40;
+const MAX_EFFECT = 1200;
+const MAX_CONFIG_COUNT = 999;
+export const MAX_EXPLANATION = 600;
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+/** Đúng tập khoá `keys` (không thiếu, không thừa). */
+function hasExactKeys(value: Record<string, unknown>, keys: readonly string[]): boolean {
+  const own = Object.keys(value);
+  return own.length === keys.length && keys.every((key) => Object.hasOwn(value, key));
+}
+
+/** Chuỗi đã trim, độ dài trong [min, max]; sai -> ném. */
+function boundedString(value: unknown, min: number, max: number): string {
+  if (typeof value !== "string") throw new TypeError(INVALID_CONTEXT);
+  const trimmed = value.trim();
+  if (trimmed.length < min || trimmed.length > max) throw new TypeError(INVALID_CONTEXT);
+  return trimmed;
+}
+
+function explainTactic(value: unknown): ExplainTactic {
+  if (!isPlainObject(value) || !hasExactKeys(value, ["name", "effect"])) throw new TypeError(INVALID_CONTEXT);
+  return { name: boundedString(value.name, 1, MAX_NAME), effect: boundedString(value.effect, 0, MAX_EFFECT) };
+}
+
+/** Validate `context` client gửi cho explainSubstitute (không tin client): sai/thừa khoá/quá dài -> ném. */
+export function validateExplainContext(value: unknown): ExplainContext {
+  if (!isPlainObject(value) || !hasExactKeys(value, ["locale", "hero", "missing", "substitute", "configCount"])) {
+    throw new TypeError(INVALID_CONTEXT);
+  }
+  const { locale, configCount } = value;
+  if (locale !== "vi" && locale !== "zh") throw new TypeError(INVALID_CONTEXT);
+  if (typeof configCount !== "number" || !Number.isInteger(configCount) || configCount < 0 || configCount > MAX_CONFIG_COUNT) {
+    throw new TypeError(INVALID_CONTEXT);
+  }
+  return {
+    locale,
+    hero: boundedString(value.hero, 1, MAX_NAME),
+    missing: explainTactic(value.missing),
+    substitute: explainTactic(value.substitute),
+    configCount,
+  };
+}
+
+/** Output model explainSubstitute -> `{ explanation }` (1..600 ký tự sau trim); rỗng/quá dài -> ném. */
+export function validateExplanation(parsed: unknown): ExplainResult {
+  if (!isPlainObject(parsed) || typeof parsed.explanation !== "string") throw new TypeError("Thiếu 'explanation'");
+  const explanation = parsed.explanation.trim();
+  if (!explanation) throw new TypeError("explanation rỗng");
+  if (explanation.length > MAX_EXPLANATION) throw new TypeError("explanation quá dài");
+  return { explanation };
 }

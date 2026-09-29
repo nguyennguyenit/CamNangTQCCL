@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { buildRequestBody, callModel, promptByMode } from "../src/model";
+import { buildExplainRequestBody, buildRequestBody, callExplainModel, callModel, promptByMode } from "../src/model";
+import type { ExplainContext } from "../src/schema";
 
 describe("vision prompt", () => {
   it("chỉ chép chữ in: không nhận diện chân dung, không có danh sách tên, chép mọi dòng chiến pháp", () => {
@@ -72,6 +73,74 @@ describe("callModel khi upstream lỗi", () => {
       const error = await callModel("data:image/png;base64,AA==", opts(upstream)).catch((e) => e);
       expect(error).toMatchObject({ status, message });
       expect(error.message).not.toMatch(/\d/u);
+    });
+  }
+});
+
+describe("explainSubstitute (chỉ văn bản)", () => {
+  const context: ExplainContext = {
+    locale: "vi",
+    hero: "Quan Vũ",
+    missing: { name: "Uy Chấn Hoa Hạ", effect: "Gây sát thương binh nhận 150% và làm choáng 1 lượt." },
+    substitute: { name: "Hoành Qua Dược Mã", effect: "Gây sát thương binh nhận 120% lên toàn địch." },
+    configCount: 4,
+  };
+  const provider = { id: "p", label: "P", endpoint: "https://model.test/v1/chat/completions", apiKey: "key", modelId: "text-model", enabled: true };
+
+  function promptText(ctx: ExplainContext): string {
+    const content = buildExplainRequestBody("text-model", ctx).messages[0].content;
+    expect(typeof content).toBe("string");
+    return String(content);
+  }
+
+  it("body chỉ có văn bản, không image_url; giữ json_object + tắt thinking như các mode ảnh", () => {
+    const body = buildExplainRequestBody("text-model", context);
+    expect(body.model).toBe("text-model");
+    expect(JSON.stringify(body)).not.toContain("image_url");
+    expect(body.response_format).toEqual({ type: "json_object" });
+    expect(body.thinking).toEqual({ type: "disabled" });
+  });
+
+  it("prompt đưa đủ dữ kiện và ràng buộc: chỉ giải thích, 2-4 câu, không nêu chiến pháp khác, không khuyên đội", () => {
+    const text = promptText(context);
+    for (const value of [context.hero, context.missing.name, context.missing.effect, context.substitute.name, context.substitute.effect]) {
+      expect(text).toContain(value);
+    }
+    expect(text).toContain('"configCount":4');
+    expect(text).toContain("JSON");
+    expect(text).toContain('{"explanation"');
+    expect(text).toContain("2-4 câu");
+    expect(text).toContain("KHÁC BIỆT RÕ");
+    expect(text).toContain("KHÔNG nêu tên bất kỳ chiến pháp nào khác");
+    expect(text).toContain("KHÔNG khuyên");
+    expect(text).toContain("tiếng Việt");
+  });
+
+  it("locale zh yêu cầu trả lời bằng tiếng Trung giản thể", () => {
+    const text = promptText({ ...context, locale: "zh" });
+    expect(text).toContain("简体中文");
+    expect(text).not.toContain("Trả lời bằng tiếng Việt");
+  });
+
+  it("callExplainModel gửi body văn bản và trả { explanation }", async () => {
+    const sent: unknown[] = [];
+    const fetchImpl = (async (_url: RequestInfo | URL, init?: RequestInit) => {
+      sent.push(JSON.parse(String(init?.body)));
+      return Response.json({ choices: [{ message: { content: '{"explanation":" Cả hai đều gây sát thương. "}' } }] });
+    }) as typeof fetch;
+    expect(await callExplainModel(context, { providers: [provider], fetchImpl })).toEqual({ explanation: "Cả hai đều gây sát thương." });
+    expect(sent).toEqual([buildExplainRequestBody("text-model", context)]);
+  });
+
+  for (const [name, content] of [
+    ["explanation rỗng", '{"explanation":"  "}'],
+    ["explanation quá dài", JSON.stringify({ explanation: "x".repeat(601) })],
+    ["không phải JSON", "Không biết."],
+  ] as const) {
+    it(`${name} -> 422 thông điệp cố định`, async () => {
+      const fetchImpl = (async () => Response.json({ choices: [{ message: { content } }] })) as typeof fetch;
+      const error = await callExplainModel(context, { providers: [provider], fetchImpl }).catch((e) => e);
+      expect(error).toMatchObject({ status: 422, message: "Không giải thích được" });
     });
   }
 });

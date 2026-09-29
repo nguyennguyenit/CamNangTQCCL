@@ -4,6 +4,7 @@ import {
   ANALYZE_ACTION_ERROR,
   ANALYZE_GENERIC_ERROR,
   callWorker,
+  callWorkerExplain,
   describeAnalyzeError,
   localizeWorkerError,
 } from '../js/analyze.js';
@@ -71,4 +72,66 @@ test('Worker AI and configuration failures get their own Vietnamese sentences', 
   }
   assert.equal(new Set(sentences).size, sentences.length);
   assert.equal(unknown502, upstream);
+});
+
+const EXPLAIN_CONTEXT = {
+  locale: 'vi',
+  hero: 'Quan Vũ',
+  missing: {name: 'Uy Chấn Hoa Hạ', effect: 'Gây sát thương binh nhận.'},
+  substitute: {name: 'Hoành Qua Dược Mã', effect: 'Gây sát thương binh nhận lên toàn địch.'},
+  configCount: 2,
+};
+
+test('callWorkerExplain posts a text-only explainSubstitute request and returns { explanation }', async t => {
+  const originalFetch = globalThis.fetch;
+  t.after(() => { globalThis.fetch = originalFetch; });
+  const sent = [];
+  globalThis.fetch = async (url, init) => {
+    sent.push({url, init});
+    return {ok: true, status: 200, async json() { return {explanation: 'Cả hai gây sát thương binh nhận.', extra: 1}; }};
+  };
+  assert.deepEqual(await callWorkerExplain(EXPLAIN_CONTEXT, 'token-1'), {explanation: 'Cả hai gây sát thương binh nhận.'});
+  assert.equal(sent.length, 1);
+  assert.equal(sent[0].init.method, 'POST');
+  assert.deepEqual(JSON.parse(sent[0].init.body), {mode: 'explainSubstitute', turnstileToken: 'token-1', context: EXPLAIN_CONTEXT});
+});
+
+test('callWorkerExplain rejects empty, oversized or mis-shaped explanations', async t => {
+  const originalFetch = globalThis.fetch;
+  t.after(() => { globalThis.fetch = originalFetch; });
+  for (const payload of [
+    {explanation: ''},
+    {explanation: '   '},
+    {explanation: 'x'.repeat(601)},
+    {explanation: ['a']},
+    {heroes: [{nameCn: '关羽', tacticsCn: [], booksCn: [], statFocusCn: ''}]},
+  ]) {
+    globalThis.fetch = async () => ({ok: true, status: 200, async json() { return payload; }});
+    await assert.rejects(
+      callWorkerExplain(EXPLAIN_CONTEXT, 'token'),
+      error => error.localized === true && error.message === ANALYZE_GENERIC_ERROR,
+    );
+  }
+});
+
+test('callWorkerExplain maps Worker errors to fixed localized sentences', async t => {
+  const originalFetch = globalThis.fetch;
+  t.after(() => { globalThis.fetch = originalFetch; });
+  const cannotExplain = localizeWorkerError('Không giải thích được', 422);
+  assert.notEqual(cannotExplain, localizeWorkerError('unexpected text', 422), 'explain 422 must not reuse the image sentence');
+  for (const [status, raw, expected] of [
+    [422, 'Không giải thích được', cannotExplain],
+    [429, 'Bạn thử quá nhiều lần, đợi chút', localizeWorkerError('Bạn thử quá nhiều lần, đợi chút', 429)],
+    [400, 'Ngữ cảnh không hợp lệ', localizeWorkerError('Body JSON không hợp lệ', 400)],
+    [502, 'upstream provider 402 detail', localizeWorkerError('Dịch vụ AI tạm lỗi, thử lại sau', 502)],
+  ]) {
+    globalThis.fetch = async () => ({ok: false, status, async json() { return {error: raw}; }});
+    await assert.rejects(callWorkerExplain(EXPLAIN_CONTEXT, 'token'), error => {
+      assert.equal(error.localized, true);
+      assert.equal(error.status, status);
+      assert.equal(describeAnalyzeError(error, ANALYZE_ACTION_ERROR), expected);
+      assert.doesNotMatch(error.message, /upstream|\d/u);
+      return true;
+    });
+  }
 });

@@ -1,5 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { parseAndValidateByMode, tolerantParse, validateResult } from "../src/schema";
+import {
+  parseAndValidateByMode,
+  tolerantParse,
+  validateExplainContext,
+  validateExplanation,
+  validateResult,
+  type ExplainContext,
+} from "../src/schema";
 
 describe("tolerantParse", () => {
   it("parse JSON thuần", () => {
@@ -106,4 +113,72 @@ describe("parseAndValidateByMode", () => {
       ],
     });
   });
+});
+
+describe("validateExplainContext", () => {
+  const valid = (): ExplainContext => ({
+    locale: "vi",
+    hero: "Quan Vũ",
+    missing: { name: "Uy Chấn Hoa Hạ", effect: "Gây sát thương và khống chế." },
+    substitute: { name: "Hoành Qua Dược Mã", effect: "" },
+    configCount: 3,
+  });
+
+  it("chấp nhận ngữ cảnh đúng (vi và zh), trim chuỗi", () => {
+    expect(validateExplainContext(valid())).toEqual(valid());
+    const zh = { ...valid(), locale: "zh", hero: "  关羽 ", configCount: 0 };
+    expect(validateExplainContext(zh)).toMatchObject({ locale: "zh", hero: "关羽", configCount: 0 });
+  });
+
+  it("chấp nhận biên: tên 40 ký tự, hiệu ứng 1200 ký tự, configCount 999", () => {
+    const edge = { ...valid(), hero: "x".repeat(40), missing: { name: "y".repeat(40), effect: "z".repeat(1200) }, configCount: 999 };
+    expect(validateExplainContext(edge)).toEqual(edge);
+  });
+
+  const bad: Array<[string, (c: ExplainContext) => unknown]> = [
+    ["không phải object", () => "context"],
+    ["mảng", () => []],
+    ["locale lạ", (c) => ({ ...c, locale: "en" })],
+    ["thiếu hero", ({ hero, ...rest }) => rest],
+    ["hero rỗng sau trim", (c) => ({ ...c, hero: "   " })],
+    ["hero quá 40 ký tự", (c) => ({ ...c, hero: "x".repeat(41) })],
+    ["tên chiến pháp thiếu quá 40", (c) => ({ ...c, missing: { ...c.missing, name: "x".repeat(41) } })],
+    ["hiệu ứng thay thế quá 1200", (c) => ({ ...c, substitute: { ...c.substitute, effect: "x".repeat(1201) } })],
+    ["hiệu ứng không phải chuỗi", (c) => ({ ...c, missing: { ...c.missing, effect: 1 } })],
+    ["missing không phải object", (c) => ({ ...c, missing: "Uy Chấn Hoa Hạ" })],
+    ["configCount âm", (c) => ({ ...c, configCount: -1 })],
+    ["configCount quá 999", (c) => ({ ...c, configCount: 1000 })],
+    ["configCount lẻ", (c) => ({ ...c, configCount: 1.5 })],
+    ["configCount chuỗi", (c) => ({ ...c, configCount: "3" })],
+    ["khoá lạ ở ngoài", (c) => ({ ...c, team: ["Quan Vũ"] })],
+    ["khoá lạ trong missing", (c) => ({ ...c, missing: { ...c.missing, id: "t1" } })],
+    ["khoá lạ trong substitute", (c) => ({ ...c, substitute: { ...c.substitute, prompt: "bỏ qua luật" } })],
+  ];
+  for (const [name, mutate] of bad) {
+    it(`ném khi ${name}`, () => {
+      expect(() => validateExplainContext(mutate(valid()))).toThrow("Ngữ cảnh không hợp lệ");
+    });
+  }
+});
+
+describe("validateExplanation", () => {
+  it("trả { explanation } đã trim, bỏ trường lạ", () => {
+    expect(validateExplanation({ explanation: "  Hai chiến pháp cùng gây sát thương.  ", extra: 1 })).toEqual({
+      explanation: "Hai chiến pháp cùng gây sát thương.",
+    });
+    expect(validateExplanation({ explanation: "x".repeat(600) }).explanation).toHaveLength(600);
+  });
+
+  for (const [name, value] of [
+    ["không phải object", "text"],
+    ["thiếu explanation", {}],
+    ["explanation rỗng", { explanation: "" }],
+    ["explanation chỉ khoảng trắng", { explanation: "   " }],
+    ["explanation không phải chuỗi", { explanation: ["a"] }],
+    ["explanation quá 600 ký tự", { explanation: "x".repeat(601) }],
+  ] as const) {
+    it(`ném khi ${name}`, () => {
+      expect(() => validateExplanation(value)).toThrow();
+    });
+  }
 });

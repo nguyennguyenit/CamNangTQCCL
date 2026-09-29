@@ -88,6 +88,7 @@ const UPSTREAM_ERRORS = new Map(Object.entries({
   "dịch vụ soi ảnh chưa được cấu hình": L("Dịch vụ soi ảnh chưa sẵn sàng. Thử lại sau.", "识图服务尚未就绪，请稍后再试。"),
   "lỗi xác thực, thử lại": L("Xác thực chống bot lỗi. Thử lại.", "人机验证出错，请重试。"),
   "xác thực chống bot thất bại": L("Xác thực chống bot thất bại. Thử lại.", "人机验证失败，请重试。"),
+  "không giải thích được": L("Chưa giải thích được lúc này. Thử lại sau.", "暂时无法给出解释，请稍后再试。"),
   "lỗi xử lý, thử lại sau": ANALYZE_GENERIC_ERROR,
   "lỗi xử lý": ANALYZE_GENERIC_ERROR,
   // Upstream tiếng Trung / tiếng Anh đã gặp: gộp về câu chung, không render gốc.
@@ -129,8 +130,14 @@ function isStringArray(value) {
   return Array.isArray(value) && value.every(isNonblankString);
 }
 
+/** Trần độ dài lời giải thích (khớp Worker `MAX_EXPLANATION`). */
+const MAX_EXPLANATION = 600;
+
 export function validateWorkerResult(mode, data) {
   if (!data || typeof data !== "object" || Array.isArray(data)) return false;
+  if (mode === "explainSubstitute") {
+    return isNonblankString(data.explanation) && data.explanation.trim().length <= MAX_EXPLANATION;
+  }
   if (mode === "scanHeroes") {
     return Array.isArray(data.heroes) && data.heroes.length > 0 && data.heroes.every(hero =>
       hero && typeof hero === "object" &&
@@ -189,11 +196,12 @@ export function compressImage(file) {
 }
 
 /* ---------- Gọi Worker ---------- */
-export async function callWorker(imageDataUrl, token, mode = "analyzeTeamImage") {
+/** POST một body tới Worker; lỗi HTTP/JSON/sai shape theo `mode` -> Error đã bản địa hoá. */
+async function postWorker(body) {
   const res = await fetch(ANALYZE_CONFIG.workerUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ image: imageDataUrl, turnstileToken: token, mode }),
+    body: JSON.stringify(body),
   });
   let data = null;
   try {
@@ -204,10 +212,23 @@ export async function callWorker(imageDataUrl, token, mode = "analyzeTeamImage")
   if (!res.ok) {
     throw localizedError(localizeWorkerError(data?.error, res.status), { status: res.status });
   }
-  if (!validateWorkerResult(mode, data)) {
+  if (!validateWorkerResult(body.mode, data)) {
     throw localizedError(ANALYZE_GENERIC_ERROR, {status: res.status});
   }
   return data;
+}
+
+export function callWorker(imageDataUrl, token, mode = "analyzeTeamImage") {
+  return postWorker({ image: imageDataUrl, turnstileToken: token, mode });
+}
+
+/**
+ * "Vì sao?": Worker (mode chỉ văn bản `explainSubstitute`) giải thích vì sao `context.substitute`
+ * thay được `context.missing` trên `context.hero`. Không gửi ảnh. Trả `{ explanation }`.
+ */
+export async function callWorkerExplain(context, token) {
+  const data = await postWorker({ mode: "explainSubstitute", turnstileToken: token, context });
+  return { explanation: data.explanation.trim() };
 }
 
 /* ---------- Icon ---------- */

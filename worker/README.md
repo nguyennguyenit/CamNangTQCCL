@@ -1,7 +1,7 @@
 # TQCCL Vision Proxy (Cloudflare Worker)
 
 Proxy gọi AI + guardrail cho các công cụ đọc ảnh (**Soi đội từ ảnh**,
-**Gợi ý đội từ kho**). Hạ tầng **tách biệt** site tĩnh: site chạy trên Cloudflare
+**Gợi ý đội từ kho**) và lời giải thích "Vì sao?" cho chiến pháp thay thế. Hạ tầng **tách biệt** site tĩnh: site chạy trên Cloudflare
 Pages với domain chính `https://tqccl.com` (`wrangler.toml` `ALLOWED_ORIGINS` nhận cả
 `https://www.tqccl.com` và `https://tqccl.pages.dev`), Worker deploy
 riêng bằng `wrangler`. Site gọi `POST /analyze`.
@@ -9,21 +9,22 @@ riêng bằng `wrangler`. Site gọi `POST /analyze`.
 ## Kiến trúc
 
 ```
-Site (Pages) ──POST /analyze {image, turnstileToken, mode}──► Worker
+Site (Pages) ──POST /analyze {image | context, turnstileToken, mode}──► Worker
    Worker: OPTIONS → origin → IP_HASH_SECRET → danh sách nhà cung cấp AI (KV `ai:providers`) → Content-Length
            → cap/kill-switch/rate-limit → Turnstile (siteverify: một lần dùng + đúng hostname) → input guard
-           → nhà cung cấp AI (failover theo thứ tự) → validate → JSON
+           (ảnh cho mode đọc ảnh; `context` cho `explainSubstitute`) → nhà cung cấp AI (failover theo thứ tự) → validate → JSON
 ```
 
 Request JSON:
 
 | Trường | Kiểu | Ý nghĩa |
 |---|---|---|
-| `image` | string | Base64 chuẩn hoặc data URI `data:image/...;base64,...` (PNG/JPEG/WebP, ≤ `MAX_IMAGE_BYTES` sau giải mã) |
+| `image` | string | Mode đọc ảnh (bắt buộc): base64 chuẩn hoặc data URI `data:image/...;base64,...` (PNG/JPEG/WebP, ≤ `MAX_IMAGE_BYTES` sau giải mã). `explainSubstitute` không gửi ảnh |
 | `turnstileToken` | string | Token Turnstile, dùng một lần |
-| `mode` | string (tuỳ chọn) | Một trong 4 chế độ dưới đây; thiếu/rỗng = `analyzeTeamImage` |
+| `mode` | string (tuỳ chọn) | Một trong 5 chế độ dưới đây; thiếu/rỗng = `analyzeTeamImage` |
+| `context` | object | Chỉ `explainSubstitute` (bắt buộc), xem dưới |
 
-Response 200 theo `mode` (chữ Hán Giản thể; site map sang tiếng Việt qua từ điển):
+Response 200 theo `mode` (các mode đọc ảnh trả chữ Hán Giản thể; site map sang tiếng Việt qua từ điển):
 
 | `mode` | Công cụ | Response |
 |---|---|---|
@@ -31,6 +32,7 @@ Response 200 theo `mode` (chữ Hán Giản thể; site map sang tiếng Việt 
 | `scanHeroes` | Gợi ý đội: đọc kho tướng | `{ heroes: [{ nameCn, level?, redStars? }] }` |
 | `scanTactics` | Gợi ý đội: đọc kho chiến pháp | `{ tactics: [{ nameCn }] }` |
 | `scanBuiltTeams` | Gợi ý đội: đọc đội đã build | `{ teams: [{ teamName, heroesCn[], tacticsCn[] }] }` |
+| `explainSubstitute` | Gợi ý đội: "Vì sao?" chiến pháp thay thế | `{ explanation }` (1–600 ký tự, đúng `context.locale`) |
 
 `analyzeTeamImage` chỉ chép chữ in trong ảnh: không nhận diện tướng qua chân dung và không gửi
 danh sách tên tướng cho model. Cột không có tên in đọc được trả `nameCn: "未知"`. `tacticsCn` luôn
@@ -38,8 +40,27 @@ danh sách tên tướng cho model. Cột không có tên in đọc được tr�
 đệm/cắt về 2 ô), để site gắn đúng slot trong editor xác nhận. `booksCn` giữ thứ tự in, binh thư
 chính trước.
 
-Lỗi luôn là JSON `{ error: "<thông điệp cố định>" }` kèm header CORS: 400 (body/mode/base64/ảnh hỏng),
-403 (origin, Turnstile), 404, 413 (ảnh hoặc `Content-Length` quá lớn), 415, 422 (model không đọc được),
+`explainSubstitute` là mode **chỉ văn bản** (không ảnh; bỏ qua input guard ảnh, mọi bước còn lại giữ nguyên
+thứ tự: origin, băm IP, cap/rate-limit, Turnstile, đếm quota global). `context` phải đúng các khoá sau, khoá lạ
+hoặc sai kiểu/độ dài → 400 `Ngữ cảnh không hợp lệ`:
+
+```ts
+context = {
+  locale: "vi" | "zh",
+  hero: string,                                  // 1..40 ký tự (sau trim)
+  missing: { name: string, effect: string },     // name 1..40, effect 0..1200
+  substitute: { name: string, effect: string },  // name 1..40, effect 0..1200
+  configCount: number,                           // số nguyên 0..999: số cấu hình cùng mùa tướng mang `substitute`
+}
+```
+
+Site đã chọn chiến pháp thay thế bằng dữ liệu; LLM CHỈ giải thích (2–4 câu, so sánh hiệu ứng, nói rõ khi
+khác biệt đáng kể), không nêu chiến pháp nào khác ngoài hai món đã cho và không khuyên về đội hình.
+Output rỗng hoặc quá 600 ký tự → 422 `Không giải thích được`.
+
+Lỗi luôn là JSON `{ error: "<thông điệp cố định>" }` kèm header CORS: 400 (body/mode/base64/ảnh hỏng/thiếu ảnh ở mode
+đọc ảnh/`context` sai), 403 (origin, Turnstile), 404, 413 (ảnh hoặc `Content-Length` quá lớn), 415, 422 (model không
+đọc được / không giải thích được),
 429 (hết lượt ngày, quá nhiều lần/giờ), 502 (`Dịch vụ AI tạm lỗi, thử lại sau`),
 503 (`Dịch vụ AI đang quá tải, thử lại sau`, kill-switch/cap tháng, `Dịch vụ soi ảnh chưa được cấu hình`),
 500 (lỗi bất ngờ, `Lỗi xử lý, thử lại sau`). Không trả mã hay nội dung từ upstream.
