@@ -5,10 +5,10 @@ Bản chụp mã nguồn canvas Design dùng làm chuẩn thị giác cho đợt
 | | |
 |---|---|
 | Canvas gốc | <https://claude.ai/artifact/JshDEV8qspJo6VJ6rgiB71> (riêng tư — cần quyền của chủ canvas) |
-| Phiên bản chụp | `1790621481-5b61` (thêm Chi tiết đội mobile, mọi link chi tiết đội trên mobile trỏ sang bản mobile; thêm Tra cứu trang bị/quân sư/cải tạo binh chủng/công trình mobile + màn chi tiết; cột mobile rộng 4 artboard; canvas chia cột: desktop bên trái, mobile bên phải, cùng dải theo nhóm; thẻ tướng ưu tiên ảnh chân dung; thêm hồ sơ tướng mobile, hồ sơ chiến pháp mobile; thêm Tra cứu: trang bị, quân sư, cải tạo binh chủng, công trình, hồ sơ chiến pháp; Logo — 5 phương án) |
+| Phiên bản chụp | `1790630266-caa5` (thêm thiết kế khu Quản trị — 12 artboard `Admin*`; 47 artboard dựng từ site thật, thêm Tra cứu mục lục + Binh thư, 19 artboard Tra cứu thay header/footer theo site — xem mục "Artboard dựng từ site thật"; thêm Chi tiết đội mobile, mọi link chi tiết đội trên mobile trỏ sang bản mobile; thêm Tra cứu trang bị/quân sư/cải tạo binh chủng/công trình mobile + màn chi tiết; cột mobile rộng 4 artboard; canvas chia cột: desktop bên trái, mobile bên phải, cùng dải theo nhóm; thẻ tướng ưu tiên ảnh chân dung; thêm hồ sơ tướng mobile, hồ sơ chiến pháp mobile; thêm Tra cứu: trang bị, quân sư, cải tạo binh chủng, công trình, hồ sơ chiến pháp; Logo — 5 phương án) |
 | Ngày chụp | 2026-09-29 |
-| Nội dung | `project/canvas.json` (vị trí, kích thước, tiêu đề artboard) + 45 artboard `project/*.dc.html` + `project/support.js` (shim tự viết, xem dưới) + 42 ảnh chuẩn `screens/*.png` |
-| Ảnh chuẩn | Chụp lại 2026-09-29 bằng `scripts/design-capture.mjs` (42 artboard) · đối chiếu gần nhất 2026-09-24 với canvas bản `1790202333-0a0d`; **17 artboard mới (chi tiết đội mobile, 4 nhóm Tra cứu, hồ sơ chiến pháp, hồ sơ tướng/chiến pháp mobile, 4 nhóm Tra cứu mobile + chi tiết, Logo) chưa đối chiếu với canvas** |
+| Nội dung | `project/canvas.json` (vị trí, kích thước, tiêu đề artboard) + 83 artboard `project/*.dc.html` + `project/support.js` (shim tự viết, xem dưới) + `project/_blob/` (stylesheet, font, logo mà các artboard dựng từ site thật tham chiếu) + 80 ảnh chuẩn `screens/*.png` |
+| Ảnh chuẩn | Chụp lại 2026-09-29 bằng `scripts/design-capture.mjs` (80 artboard) · đối chiếu gần nhất 2026-09-24 với canvas bản `1790202333-0a0d`; **17 artboard mới (chi tiết đội mobile, 4 nhóm Tra cứu, hồ sơ chiến pháp, hồ sơ tướng/chiến pháp mobile, 4 nhóm Tra cứu mobile + chi tiết, Logo) chưa đối chiếu với canvas** |
 
 ## Quy ước
 
@@ -34,6 +34,26 @@ Canvas chỉ mở được trong Chrome profile của chủ canvas (tài khoản
 - **Canvas đang chạy:** Export PDF toàn bộ 28 artboard từ canvas bản `1790202333-0a0d`, raster 96 dpi, so với ảnh shim cắt đúng `h`: kích thước 28/28 khớp `canvas.json`; sau khi thu nhỏ 25% để bỏ nhiễu khử răng cưa, lệch ≤ 0,3% ở mọi artboard (chỉ viền chữ Hán) → nội dung canvas hiện tại trùng bản chụp `1790191281-3a81`.
 
 Lần sau canvas đổi: chụp lại theo mục dưới và lặp lại một trong hai cách trên. Lệch → sửa `support.js` rồi chụp lại; không sửa `.dc.html`.
+
+## Artboard dựng từ site thật (2026-09-29)
+
+Theo yêu cầu "đồng bộ mockup với repo, trừ Tra cứu": các artboard trang là **DOM của site thật** (build cây làm việc `main` lúc 02:44 ngày 2026-09-29, sau commit `a1d60c4` + phần Khai hoang Chạm Sứ/quân thủ mỏ) chụp ở 1440/390, giữ nguyên class và dùng stylesheet của site. `StyleGuide`, `Logo`, `DirA/B/C` giữ bản vẽ tay.
+
+- **47 artboard trang:** `Landing`, `LandingMenu`, `LandingZh`, `Main`, `MainTable`, `TeamDetail`, `DoiKhac`, `DoiKhacDetail`, `Coexist`, `Khaihoang`, `KhaihoangDetail`, `Recruit`, `Analyze`, `Roster`, `ChienBao`, `BaiViet`, `Terms`, `Privacy`, `CommunityRules`, `Disclaimer`, `NotFound`, `LookupHub` (mục lục `/tra-cuu/`), `LookupBooks` (`/tra-cuu/binh-thu/`, 20 thẻ desktop / 12 mobile) (mỗi trang có bản `…Mobile` 390; Đội chuẩn mobile là `MobileList`, `MobileTable`, `MobileFilters`).
+- **19 artboard Tra cứu** (desktop + mobile): phần `<main>` vẫn là bản vẽ tay đang thiết kế; chỉ header + footer (và menu mobile, rail nhảy nhanh) thay bằng DOM site của `/tra-cuu/tuong/`. `LookupProfile`, `LookupTacticProfile` là hộp thoại phủ lưới nên không gắn footer.
+- Stylesheet là `css/styles.css` tải lên canvas làm asset (`/_blob/9eebe14a…`): font trỏ về asset canvas, `body[data-page-section]` đổi thành `.dc-body[data-page-section]` (gốc artboard mang class `dc-body` + thuộc tính của `<body>`). Bản sao trong `project/_blob/`; `scripts/design-artboards.mjs` đoán kiểu nội dung cho `/_blob/…` để shim áp được stylesheet/font.
+- Danh sách dài đã cắt: Đội chuẩn và Đội khác 6 thẻ (desktop) / 3 (mobile) / 2 (bộ lọc mở); Khai hoang 6 / 3. `LandingMenu` 1440×900 và `LandingMenuMobile` 390×844 chỉ minh họa menu mở.
+- Nút mở/đóng có `aria-controls` (menu thả, menu mobile, bộ lọc, quick-nav, footer "Game chính thức") chạy được trong Play qua state của `DCLogic`; link nội bộ trỏ sang artboard tương ứng, link không có artboard (các trang `/zh/…` khác Landing) thành `#`.
+- Mẫu: chi tiết Đội chuẩn `/doi-chuan/pk-s24-tiem-long-dieu-thuyen/`, chi tiết Đội khác `/doi-khac/tan-ngo-thuong/`, chi tiết Khai hoang `/khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/` (cặp mà `scripts/design-compare.mjs` dùng). Bản build tĩnh không có Worker nên khối cộng đồng ở trang chi tiết đội hiện "tạm thời không khả dụng"; `BaiViet` là trạng thái chưa có bài viết.
+- Site đổi sau này: chụp lại DOM rồi thay các artboard này; không sửa tay class/markup trong artboard (sửa ở repo).
+
+## Khu Quản trị (thiết kế mới, 2026-09-29)
+
+12 artboard `AdminReports`, `AdminPosts`, `AdminPostEditor`, `AdminComments`, `AdminFeedback`, `AdminAI` (+ bản `…Mobile`) là **thiết kế đề xuất** cho `/quan-tri/`; site hiện dựng trang này bằng `js/community-admin.js` với tab và class `cm-*`, gần như chưa có CSS riêng. Header/footer là DOM site của `/quan-tri/` (nút đăng nhập thay bằng ảnh đại diện quản trị); phần thân vẽ tay theo token Sổ binh pháp.
+
+- Nội dung bám đúng chức năng hiện có của `community-admin.js`: duyệt/từ chối chiến báo kèm lý do; danh sách + soạn bài (ngôn ngữ, slug, khoá bản dịch, tiêu đề, mô tả SEO, thẻ, ảnh bìa, Markdown + xem trước, FAQ, lưu nháp/xuất bản/xoá); xoá bình luận; lọc góp ý theo trạng thái/loại, đánh dấu đã xử lý; nhà cung cấp AI theo thứ tự failover (lên/xuống, bật/tắt, sửa, xoá, key chỉ hiện 4 số cuối).
+- Khác bản code hiện tại: desktop dùng cột điều hướng trái có số chờ xử lý thay cho hàng tab; mobile dùng hàng chip cuộn ngang; trình soạn bài mobile có công tắc Soạn / Xem trước. Số đếm trên điều hướng là đề xuất — API hiện chưa trả số tổng.
+- Dữ liệu trong artboard là mẫu (tên người chơi, email `@example.com`, bài viết, endpoint dự phòng `api.example-ai.com`).
 
 ## Token & component
 

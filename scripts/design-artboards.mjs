@@ -40,6 +40,17 @@ export async function pageArtboards() {
   return (await artboards()).filter((board) => board.name !== STYLE_GUIDE);
 }
 
+/**
+ * Asset canvas (`/_blob/<id>`, không có đuôi file) được lưu kèm trong `project/_blob/`: đoán kiểu theo nội dung
+ * để trình duyệt chịu áp stylesheet (kiểm MIME nghiêm) và font của các artboard dựng từ site thật.
+ */
+function blobType(body) {
+  if (body.subarray(0, 4).toString('latin1') === 'wOF2') return 'font/woff2';
+  if (body[0] === 0x89 && body.subarray(1, 4).toString('latin1') === 'PNG') return 'image/png';
+  if (/^\s*<(svg|\?xml)/.test(body.subarray(0, 64).toString('utf8'))) return 'image/svg+xml';
+  return 'text/css; charset=utf-8';
+}
+
 /** Server tĩnh chỉ trong thư mục `root`; dùng cho artboard và trang so ảnh tạm. */
 export function serve(root = PROJECT_DIR) {
   const base = resolve(root);
@@ -52,7 +63,8 @@ export function serve(root = PROJECT_DIR) {
     }
     try {
       const body = await readFile(file);
-      response.writeHead(200, { 'content-type': MIME_TYPES[extname(file)] ?? 'application/octet-stream' }).end(body);
+      const type = MIME_TYPES[extname(file)] ?? (path.startsWith('/_blob/') ? blobType(body) : 'application/octet-stream');
+      response.writeHead(200, { 'content-type': type }).end(body);
     } catch {
       response.writeHead(404).end();
     }
