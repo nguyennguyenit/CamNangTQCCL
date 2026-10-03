@@ -2,21 +2,149 @@
   "v": 3,
   "attachments": {},
   "boards": {
-    "Analyze.dc.html": {
-      "h": 1368,
+    "AdminAI.dc.html": {
+      "h": 2078,
       "is_interactive": true,
-      "title": "Soi đội từ ảnh — desktop",
+      "title": "Quản trị — nhà cung cấp AI",
       "w": 1440,
-      "x": 1520,
-      "y": 37931
+      "x": 3040,
+      "y": 72206
     },
-    "AnalyzeMobile.dc.html": {
-      "h": 2112,
-      "title": "Soi đội từ ảnh — mobile",
+    "AdminAIMobile.dc.html": {
+      "h": 3304,
+      "is_interactive": true,
+      "title": "Quản trị — nhà cung cấp AI (mobile)",
       "w": 390,
       "x": 5590,
-      "y": 37931,
-      "is_interactive": true
+      "y": 73742
+    },
+    "AdminComments.dc.html": {
+      "h": 1739,
+      "is_interactive": true,
+      "title": "Quản trị — bình luận",
+      "w": 1440,
+      "x": 0,
+      "y": 72206
+    },
+    "AdminCommentsMobile.dc.html": {
+      "h": 2793,
+      "is_interactive": true,
+      "title": "Quản trị — bình luận (mobile)",
+      "w": 390,
+      "x": 6530,
+      "y": 69715
+    },
+    "AdminFeedback.dc.html": {
+      "h": 1953,
+      "is_interactive": true,
+      "title": "Quản trị — góp ý",
+      "w": 1440,
+      "x": 1520,
+      "y": 72206
+    },
+    "AdminFeedbackMobile.dc.html": {
+      "h": 2965,
+      "is_interactive": true,
+      "title": "Quản trị — góp ý (mobile)",
+      "w": 390,
+      "x": 5120,
+      "y": 73742
+    },
+    "AdminPostEditor.dc.html": {
+      "h": 2371,
+      "is_interactive": true,
+      "title": "Quản trị — soạn bài viết",
+      "w": 1440,
+      "x": 3040,
+      "y": 69715
+    },
+    "AdminPostEditorMobile.dc.html": {
+      "h": 3907,
+      "is_interactive": true,
+      "title": "Quản trị — soạn bài viết (mobile)",
+      "w": 390,
+      "x": 6060,
+      "y": 69715
+    },
+    "AdminPosts.dc.html": {
+      "h": 1418,
+      "is_interactive": true,
+      "title": "Quản trị — bài viết",
+      "w": 1440,
+      "x": 1520,
+      "y": 69715
+    },
+    "AdminPostsMobile.dc.html": {
+      "h": 2538,
+      "is_interactive": true,
+      "title": "Quản trị — bài viết (mobile)",
+      "w": 390,
+      "x": 5590,
+      "y": 69715
+    },
+    "AdminReports.dc.html": {
+      "h": 2113,
+      "is_interactive": true,
+      "title": "Quản trị — duyệt chiến báo",
+      "w": 1440,
+      "x": 0,
+      "y": 69715
+    },
+    "AdminReportsMobile.dc.html": {
+      "h": 3689,
+      "is_interactive": true,
+      "title": "Quản trị — duyệt chiến báo (mobile)",
+      "w": 390,
+      "x": 5120,
+      "y": 69715
+    },
+    "Analyze.dc.html": {
+      "h": 1793,
+      "is_interactive": true,
+      "title": "Soi đội từ ảnh — chọn ảnh (thiết kế mới)",
+      "w": 1440,
+      "x": 0,
+      "y": 42038
+    },
+    "AnalyzeMobile.dc.html": {
+      "h": 3081,
+      "is_interactive": true,
+      "title": "Soi đội từ ảnh — chọn ảnh (thiết kế mới) (mobile)",
+      "w": 390,
+      "x": 5120,
+      "y": 42038
+    },
+    "BaiViet.dc.html": {
+      "h": 1113,
+      "is_interactive": true,
+      "title": "Bài viết — desktop",
+      "w": 1440,
+      "x": 1520,
+      "y": 52091
+    },
+    "BaiVietMobile.dc.html": {
+      "h": 1790,
+      "is_interactive": true,
+      "title": "Bài viết — mobile",
+      "w": 390,
+      "x": 5590,
+      "y": 52091
+    },
+    "ChienBao.dc.html": {
+      "h": 1351,
+      "is_interactive": true,
+      "title": "Chiến báo — desktop",
+      "w": 1440,
+      "x": 0,
+      "y": 52091
+    },
+    "ChienBaoMobile.dc.html": {
+      "h": 2184,
+      "is_interactive": true,
+      "title": "Chiến báo — mobile",
+      "w": 390,
+      "x": 5120,
+      "y": 52091
     },
     "Coexist.dc.html": {
       "h": 2243,
@@ -28,32 +156,96 @@
     },
     "CoexistMobile.dc.html": {
       "h": 5167,
+      "is_interactive": true,
       "title": "Cùng Tồn — mobile",
       "w": 390,
       "x": 5120,
-      "y": 31196,
-      "is_interactive": true
+      "y": 31196
+    },
+    "CommunityRules.dc.html": {
+      "h": 1978,
+      "is_interactive": true,
+      "title": "Quy tắc cộng đồng — desktop",
+      "w": 1440,
+      "x": 3040,
+      "y": 62003
+    },
+    "CommunityRulesMobile.dc.html": {
+      "h": 3125,
+      "is_interactive": true,
+      "title": "Quy tắc cộng đồng — mobile",
+      "w": 390,
+      "x": 6060,
+      "y": 62003
     },
     "DirA-ChienBao.dc.html": {
       "h": 1080,
       "title": "Hướng A — Chiến báo (tối, game HUD)",
       "w": 760,
       "x": 0,
-      "y": 70902
+      "y": 80946
     },
     "DirB-BangTra.dc.html": {
       "h": 480,
       "title": "Hướng B — Bảng tra (dữ liệu dày)",
       "w": 1120,
       "x": 840,
-      "y": 70902
+      "y": 80946
     },
     "DirC-ThuyMac.dc.html": {
       "h": 1080,
       "title": "Hướng C — Thủy mặc (tối giản)",
       "w": 760,
       "x": 2040,
-      "y": 70902
+      "y": 80946
+    },
+    "Disclaimer.dc.html": {
+      "h": 1866,
+      "is_interactive": true,
+      "title": "Miễn trừ trách nhiệm — desktop",
+      "w": 1440,
+      "x": 0,
+      "y": 65460
+    },
+    "DisclaimerMobile.dc.html": {
+      "h": 3016,
+      "is_interactive": true,
+      "title": "Miễn trừ trách nhiệm — mobile",
+      "w": 390,
+      "x": 6530,
+      "y": 62003
+    },
+    "DoiKhac.dc.html": {
+      "h": 2481,
+      "is_interactive": true,
+      "title": "Đội khác — desktop",
+      "w": 1440,
+      "x": 0,
+      "y": 12365
+    },
+    "DoiKhacDetail.dc.html": {
+      "h": 1944,
+      "is_interactive": true,
+      "title": "Chi tiết Đội khác — desktop",
+      "w": 1440,
+      "x": 1520,
+      "y": 12365
+    },
+    "DoiKhacDetailMobile.dc.html": {
+      "h": 3327,
+      "is_interactive": true,
+      "title": "Chi tiết Đội khác — mobile",
+      "w": 390,
+      "x": 5590,
+      "y": 12365
+    },
+    "DoiKhacMobile.dc.html": {
+      "h": 3674,
+      "is_interactive": true,
+      "title": "Đội khác — mobile",
+      "w": 390,
+      "x": 5120,
+      "y": 12365
     },
     "Khaihoang.dc.html": {
       "h": 3237,
@@ -63,13 +255,29 @@
       "x": 1520,
       "y": 31196
     },
+    "KhaihoangDetail.dc.html": {
+      "h": 1754,
+      "is_interactive": true,
+      "title": "Chi tiết Khai hoang — desktop",
+      "w": 1440,
+      "x": 3040,
+      "y": 31196
+    },
+    "KhaihoangDetailMobile.dc.html": {
+      "h": 3154,
+      "is_interactive": true,
+      "title": "Chi tiết Khai hoang — mobile",
+      "w": 390,
+      "x": 6060,
+      "y": 31196
+    },
     "KhaihoangMobile.dc.html": {
       "h": 6215,
+      "is_interactive": true,
       "title": "Khai hoang — mobile",
       "w": 390,
       "x": 5590,
-      "y": 31196,
-      "is_interactive": true
+      "y": 31196
     },
     "Landing.dc.html": {
       "h": 4668,
@@ -77,7 +285,7 @@
       "title": "Landing — giới thiệu (desktop)",
       "w": 1440,
       "x": 0,
-      "y": 44751
+      "y": 54795
     },
     "LandingMenu.dc.html": {
       "h": 900,
@@ -85,7 +293,7 @@
       "title": "Landing — menu đang mở (desktop)",
       "w": 1440,
       "x": 1520,
-      "y": 44751
+      "y": 54795
     },
     "LandingMenuMobile.dc.html": {
       "h": 844,
@@ -93,7 +301,7 @@
       "title": "Landing — menu mobile đang mở",
       "w": 390,
       "x": 5590,
-      "y": 44751
+      "y": 54795
     },
     "LandingMobile.dc.html": {
       "h": 6688,
@@ -101,14 +309,30 @@
       "title": "Landing — giới thiệu (mobile)",
       "w": 390,
       "x": 5120,
-      "y": 44751
+      "y": 54795
+    },
+    "LandingZh.dc.html": {
+      "h": 4460,
+      "is_interactive": true,
+      "title": "Landing tiếng Trung — desktop",
+      "w": 1440,
+      "x": 3040,
+      "y": 54795
+    },
+    "LandingZhMobile.dc.html": {
+      "h": 6207,
+      "is_interactive": true,
+      "title": "Landing tiếng Trung — mobile",
+      "w": 390,
+      "x": 6060,
+      "y": 54795
     },
     "Logo.dc.html": {
       "h": 1400,
       "title": "Logo — 5 phương án",
       "w": 1440,
       "x": 1360,
-      "y": 67522
+      "y": 77566
     },
     "Lookup.dc.html": {
       "h": 2685,
@@ -126,6 +350,38 @@
       "x": 0,
       "y": 21874
     },
+    "LookupAdvisorsDetailMobile.dc.html": {
+      "h": 2455,
+      "is_interactive": true,
+      "title": "Tra cứu — chi tiết quân sư mobile",
+      "w": 390,
+      "x": 6530,
+      "y": 20794
+    },
+    "LookupAdvisorsMobile.dc.html": {
+      "h": 2860,
+      "is_interactive": true,
+      "title": "Tra cứu — quân sư mobile",
+      "w": 390,
+      "x": 6060,
+      "y": 20794
+    },
+    "LookupBooks.dc.html": {
+      "h": 1949,
+      "is_interactive": true,
+      "title": "Tra cứu — binh thư",
+      "w": 1440,
+      "x": 0,
+      "y": 24066
+    },
+    "LookupBooksMobile.dc.html": {
+      "h": 2704,
+      "is_interactive": true,
+      "title": "Tra cứu — binh thư mobile",
+      "w": 390,
+      "x": 5120,
+      "y": 27972
+    },
     "LookupBuildings.dc.html": {
       "h": 1733,
       "is_interactive": true,
@@ -133,6 +389,22 @@
       "w": 1440,
       "x": 3040,
       "y": 21874
+    },
+    "LookupBuildingsDetailMobile.dc.html": {
+      "h": 2584,
+      "is_interactive": true,
+      "title": "Tra cứu — chi tiết công trình mobile",
+      "w": 390,
+      "x": 6530,
+      "y": 23774
+    },
+    "LookupBuildingsMobile.dc.html": {
+      "h": 2711,
+      "is_interactive": true,
+      "title": "Tra cứu — công trình mobile",
+      "w": 390,
+      "x": 6060,
+      "y": 23774
     },
     "LookupEquipment.dc.html": {
       "h": 2161,
@@ -142,13 +414,45 @@
       "x": 3040,
       "y": 19364
     },
+    "LookupEquipmentDetailMobile.dc.html": {
+      "h": 2697,
+      "is_interactive": true,
+      "title": "Tra cứu — chi tiết trang bị mobile",
+      "w": 390,
+      "x": 5590,
+      "y": 20794
+    },
+    "LookupEquipmentMobile.dc.html": {
+      "h": 2689,
+      "is_interactive": true,
+      "title": "Tra cứu — trang bị mobile",
+      "w": 390,
+      "x": 5120,
+      "y": 20794
+    },
+    "LookupHub.dc.html": {
+      "h": 1110,
+      "is_interactive": true,
+      "title": "Tra cứu — mục lục (desktop)",
+      "w": 1440,
+      "x": 0,
+      "y": 16559
+    },
+    "LookupHubMobile.dc.html": {
+      "h": 2209,
+      "is_interactive": true,
+      "title": "Tra cứu — mục lục mobile",
+      "w": 390,
+      "x": 5120,
+      "y": 16559
+    },
     "LookupMobile.dc.html": {
       "h": 3262,
+      "is_interactive": true,
       "title": "Tra cứu — mobile",
       "w": 390,
       "x": 5590,
-      "y": 16559,
-      "is_interactive": true
+      "y": 16559
     },
     "LookupProfile.dc.html": {
       "h": 1360,
@@ -158,6 +462,14 @@
       "x": 3040,
       "y": 16559
     },
+    "LookupProfileMobile.dc.html": {
+      "h": 4115,
+      "is_interactive": true,
+      "title": "Tra cứu — hồ sơ tướng mobile",
+      "w": 390,
+      "x": 6060,
+      "y": 16559
+    },
     "LookupTacticProfile.dc.html": {
       "h": 1179,
       "is_interactive": true,
@@ -165,6 +477,14 @@
       "w": 1440,
       "x": 1520,
       "y": 19364
+    },
+    "LookupTacticProfileMobile.dc.html": {
+      "h": 3619,
+      "is_interactive": true,
+      "title": "Tra cứu — hồ sơ chiến pháp mobile",
+      "w": 390,
+      "x": 6530,
+      "y": 16559
     },
     "LookupTactics.dc.html": {
       "h": 2390,
@@ -181,6 +501,22 @@
       "w": 1440,
       "x": 1520,
       "y": 21874
+    },
+    "LookupTroopsDetailMobile.dc.html": {
+      "h": 4078,
+      "is_interactive": true,
+      "title": "Tra cứu — chi tiết cải tạo mobile",
+      "w": 390,
+      "x": 5590,
+      "y": 23774
+    },
+    "LookupTroopsMobile.dc.html": {
+      "h": 2940,
+      "is_interactive": true,
+      "title": "Tra cứu — cải tạo binh chủng mobile",
+      "w": 390,
+      "x": 5120,
+      "y": 23774
     },
     "Main.dc.html": {
       "h": 4495,
@@ -200,66 +536,98 @@
     },
     "MobileFilters.dc.html": {
       "h": 5561,
+      "is_interactive": true,
       "title": "Mobile — bộ lọc mở",
       "w": 390,
       "x": 5590,
-      "y": 0,
-      "is_interactive": true
+      "y": 0
     },
     "MobileList.dc.html": {
       "h": 6438,
+      "is_interactive": true,
       "title": "Đội chuẩn — mobile",
       "w": 390,
       "x": 5120,
-      "y": 0,
-      "is_interactive": true
+      "y": 0
     },
     "MobileTable.dc.html": {
       "h": 4887,
+      "is_interactive": true,
       "title": "Đội chuẩn — mobile, dạng bảng",
       "w": 390,
       "x": 5120,
-      "y": 6958,
-      "is_interactive": true
+      "y": 6958
+    },
+    "NotFound.dc.html": {
+      "h": 953,
+      "is_interactive": true,
+      "title": "Trang 404 — desktop",
+      "w": 1440,
+      "x": 1520,
+      "y": 65460
+    },
+    "NotFoundMobile.dc.html": {
+      "h": 1690,
+      "is_interactive": true,
+      "title": "Trang 404 — mobile",
+      "w": 390,
+      "x": 5120,
+      "y": 67505
+    },
+    "Privacy.dc.html": {
+      "h": 3337,
+      "is_interactive": true,
+      "title": "Chính sách bảo mật — desktop",
+      "w": 1440,
+      "x": 1520,
+      "y": 62003
+    },
+    "PrivacyMobile.dc.html": {
+      "h": 5382,
+      "is_interactive": true,
+      "title": "Chính sách bảo mật — mobile",
+      "w": 390,
+      "x": 5590,
+      "y": 62003
     },
     "Recruit.dc.html": {
-      "h": 1901,
+      "h": 2098,
       "is_interactive": true,
-      "title": "Theo dõi chiêu mộ — desktop",
+      "title": "Theo dõi chiêu mộ — bảng theo dõi (thiết kế mới)",
       "w": 1440,
       "x": 0,
       "y": 37931
     },
     "RecruitMobile.dc.html": {
-      "h": 3588,
-      "title": "Theo dõi chiêu mộ — mobile",
+      "h": 3987,
+      "is_interactive": true,
+      "title": "Theo dõi chiêu mộ — bảng theo dõi (thiết kế mới) (mobile)",
       "w": 390,
       "x": 5120,
-      "y": 37931,
-      "is_interactive": true
-    },
-    "Roster.dc.html": {
-      "h": 1553,
-      "is_interactive": true,
-      "title": "Gợi ý đội từ kho — desktop",
-      "w": 1440,
-      "x": 3040,
       "y": 37931
     },
+    "Roster.dc.html": {
+      "h": 2276,
+      "is_interactive": true,
+      "title": "Gợi ý đội từ kho — đọc và kiểm tra kho (thiết kế mới)",
+      "w": 1440,
+      "x": 0,
+      "y": 46225
+    },
     "RosterMobile.dc.html": {
-      "h": 2645,
-      "title": "Gợi ý đội từ kho — mobile",
+      "h": 4664,
+      "is_interactive": true,
+      "title": "Gợi ý đội từ kho — đọc và kiểm tra kho (thiết kế mới) (mobile)",
       "w": 390,
-      "x": 6060,
-      "y": 37931,
-      "is_interactive": true
+      "x": 5120,
+      "y": 46225
     },
     "StyleGuide.dc.html": {
       "h": 2860,
       "title": "Hệ thống thị giác",
       "w": 1280,
       "x": 0,
-      "y": 67522
+      "y": 77566
     },
     "TeamDetail.dc.html": {
       "h": 1924,
@@ -269,396 +637,92 @@
       "x": 1520,
       "y": 0
     },
-    "LookupProfileMobile.dc.html": {
-      "h": 4115,
-      "title": "Tra cứu — hồ sơ tướng mobile",
-      "w": 390,
-      "x": 6060,
-      "y": 16559,
-      "is_interactive": true
-    },
-    "LookupTacticProfileMobile.dc.html": {
-      "h": 3619,
-      "title": "Tra cứu — hồ sơ chiến pháp mobile",
-      "w": 390,
-      "x": 6530,
-      "y": 16559,
-      "is_interactive": true
-    },
-    "LookupEquipmentMobile.dc.html": {
-      "h": 2689,
-      "title": "Tra cứu — trang bị mobile",
-      "w": 390,
-      "x": 5120,
-      "y": 20794,
-      "is_interactive": true
-    },
-    "LookupEquipmentDetailMobile.dc.html": {
-      "h": 2697,
-      "title": "Tra cứu — chi tiết trang bị mobile",
-      "w": 390,
-      "x": 5590,
-      "y": 20794,
-      "is_interactive": true
-    },
-    "LookupAdvisorsMobile.dc.html": {
-      "h": 2860,
-      "title": "Tra cứu — quân sư mobile",
-      "w": 390,
-      "x": 6060,
-      "y": 20794,
-      "is_interactive": true
-    },
-    "LookupAdvisorsDetailMobile.dc.html": {
-      "h": 2455,
-      "title": "Tra cứu — chi tiết quân sư mobile",
-      "w": 390,
-      "x": 6530,
-      "y": 20794,
-      "is_interactive": true
-    },
-    "LookupTroopsMobile.dc.html": {
-      "h": 2940,
-      "title": "Tra cứu — cải tạo binh chủng mobile",
-      "w": 390,
-      "x": 5120,
-      "y": 23774,
-      "is_interactive": true
-    },
-    "LookupTroopsDetailMobile.dc.html": {
-      "h": 4078,
-      "title": "Tra cứu — chi tiết cải tạo mobile",
-      "w": 390,
-      "x": 5590,
-      "y": 23774,
-      "is_interactive": true
-    },
-    "LookupBuildingsMobile.dc.html": {
-      "h": 2711,
-      "title": "Tra cứu — công trình mobile",
-      "w": 390,
-      "x": 6060,
-      "y": 23774,
-      "is_interactive": true
-    },
-    "LookupBuildingsDetailMobile.dc.html": {
-      "h": 2584,
-      "title": "Tra cứu — chi tiết công trình mobile",
-      "w": 390,
-      "x": 6530,
-      "y": 23774,
-      "is_interactive": true
-    },
     "TeamDetailMobile.dc.html": {
       "h": 3398,
+      "is_interactive": true,
       "title": "Chi tiết đội — mobile",
       "w": 390,
       "x": 6060,
-      "y": 0,
-      "is_interactive": true
-    },
-    "DoiKhac.dc.html": {
-      "title": "Đội khác — desktop",
-      "w": 1440,
-      "x": 0,
-      "y": 12365,
-      "h": 2481,
-      "is_interactive": true
-    },
-    "DoiKhacMobile.dc.html": {
-      "title": "Đội khác — mobile",
-      "w": 390,
-      "x": 5120,
-      "y": 12365,
-      "h": 3674,
-      "is_interactive": true
-    },
-    "DoiKhacDetail.dc.html": {
-      "title": "Chi tiết Đội khác — desktop",
-      "w": 1440,
-      "x": 1520,
-      "y": 12365,
-      "h": 1944,
-      "is_interactive": true
-    },
-    "DoiKhacDetailMobile.dc.html": {
-      "title": "Chi tiết Đội khác — mobile",
-      "w": 390,
-      "x": 5590,
-      "y": 12365,
-      "h": 3327,
-      "is_interactive": true
-    },
-    "KhaihoangDetail.dc.html": {
-      "title": "Chi tiết Khai hoang — desktop",
-      "w": 1440,
-      "x": 3040,
-      "y": 31196,
-      "h": 1754,
-      "is_interactive": true
-    },
-    "KhaihoangDetailMobile.dc.html": {
-      "title": "Chi tiết Khai hoang — mobile",
-      "w": 390,
-      "x": 6060,
-      "y": 31196,
-      "h": 3154,
-      "is_interactive": true
-    },
-    "ChienBao.dc.html": {
-      "title": "Chiến báo — desktop",
-      "w": 1440,
-      "x": 0,
-      "y": 42047,
-      "h": 1351,
-      "is_interactive": true
-    },
-    "ChienBaoMobile.dc.html": {
-      "title": "Chiến báo — mobile",
-      "w": 390,
-      "x": 5120,
-      "y": 42047,
-      "h": 2184,
-      "is_interactive": true
-    },
-    "BaiViet.dc.html": {
-      "title": "Bài viết — desktop",
-      "w": 1440,
-      "x": 1520,
-      "y": 42047,
-      "h": 1113,
-      "is_interactive": true
-    },
-    "BaiVietMobile.dc.html": {
-      "title": "Bài viết — mobile",
-      "w": 390,
-      "x": 5590,
-      "y": 42047,
-      "h": 1790,
-      "is_interactive": true
+      "y": 0
     },
     "Terms.dc.html": {
+      "h": 2516,
+      "is_interactive": true,
       "title": "Điều khoản sử dụng — desktop",
       "w": 1440,
       "x": 0,
-      "y": 51959,
-      "h": 2516,
-      "is_interactive": true
+      "y": 62003
     },
     "TermsMobile.dc.html": {
+      "h": 4024,
+      "is_interactive": true,
       "title": "Điều khoản sử dụng — mobile",
       "w": 390,
       "x": 5120,
-      "y": 51959,
-      "h": 4024,
-      "is_interactive": true
+      "y": 62003
     },
-    "Privacy.dc.html": {
-      "title": "Chính sách bảo mật — desktop",
+    "RecruitFiveStar.dc.html": {
+      "title": "Theo dõi chiêu mộ — ghi 5★ (thiết kế mới)",
       "w": 1440,
       "x": 1520,
-      "y": 51959,
-      "h": 3337,
+      "y": 37931,
+      "h": 2098,
       "is_interactive": true
     },
-    "PrivacyMobile.dc.html": {
-      "title": "Chính sách bảo mật — mobile",
+    "RecruitFiveStarMobile.dc.html": {
+      "title": "Theo dõi chiêu mộ — ghi 5★ (thiết kế mới) (mobile)",
       "w": 390,
       "x": 5590,
-      "y": 51959,
-      "h": 5382,
-      "is_interactive": true
-    },
-    "CommunityRules.dc.html": {
-      "title": "Quy tắc cộng đồng — desktop",
-      "w": 1440,
-      "x": 3040,
-      "y": 51959,
-      "h": 1978,
-      "is_interactive": true
-    },
-    "CommunityRulesMobile.dc.html": {
-      "title": "Quy tắc cộng đồng — mobile",
-      "w": 390,
-      "x": 6060,
-      "y": 51959,
-      "h": 3125,
-      "is_interactive": true
-    },
-    "Disclaimer.dc.html": {
-      "title": "Miễn trừ trách nhiệm — desktop",
-      "w": 1440,
-      "x": 0,
-      "y": 55416,
-      "h": 1866,
-      "is_interactive": true
-    },
-    "DisclaimerMobile.dc.html": {
-      "title": "Miễn trừ trách nhiệm — mobile",
-      "w": 390,
-      "x": 6530,
-      "y": 51959,
-      "h": 3016,
-      "is_interactive": true
-    },
-    "NotFound.dc.html": {
-      "title": "Trang 404 — desktop",
-      "w": 1440,
-      "x": 1520,
-      "y": 55416,
-      "h": 953,
-      "is_interactive": true
-    },
-    "NotFoundMobile.dc.html": {
-      "title": "Trang 404 — mobile",
-      "w": 390,
-      "x": 5120,
-      "y": 57461,
-      "h": 1690,
-      "is_interactive": true
-    },
-    "LandingZh.dc.html": {
-      "title": "Landing tiếng Trung — desktop",
-      "w": 1440,
-      "x": 3040,
-      "y": 44751,
-      "h": 4460,
-      "is_interactive": true
-    },
-    "LandingZhMobile.dc.html": {
-      "title": "Landing tiếng Trung — mobile",
-      "w": 390,
-      "x": 6060,
-      "y": 44751,
-      "h": 6207,
-      "is_interactive": true
-    },
-    "LookupHub.dc.html": {
-      "title": "Tra cứu — mục lục (desktop)",
-      "w": 1440,
-      "x": 0,
-      "y": 16559,
-      "h": 1110,
-      "is_interactive": true
-    },
-    "LookupHubMobile.dc.html": {
-      "title": "Tra cứu — mục lục mobile",
-      "w": 390,
-      "x": 5120,
-      "y": 16559,
-      "h": 2209,
-      "is_interactive": true
-    },
-    "LookupBooks.dc.html": {
-      "title": "Tra cứu — binh thư",
-      "w": 1440,
-      "x": 0,
-      "y": 24066,
-      "h": 1949,
-      "is_interactive": true
-    },
-    "LookupBooksMobile.dc.html": {
-      "title": "Tra cứu — binh thư mobile",
-      "w": 390,
-      "x": 5120,
-      "y": 27972,
-      "h": 2704,
-      "is_interactive": true
-    },
-    "AdminReports.dc.html": {
-      "title": "Quản trị — duyệt chiến báo",
-      "w": 1440,
-      "x": 0,
-      "y": 59671,
-      "h": 2113,
-      "is_interactive": true
-    },
-    "AdminReportsMobile.dc.html": {
-      "title": "Quản trị — duyệt chiến báo (mobile)",
-      "w": 390,
-      "x": 5120,
-      "y": 59671,
-      "h": 3689,
-      "is_interactive": true
-    },
-    "AdminPosts.dc.html": {
-      "title": "Quản trị — bài viết",
-      "w": 1440,
-      "x": 1520,
-      "y": 59671,
-      "h": 1418,
-      "is_interactive": true
-    },
-    "AdminPostsMobile.dc.html": {
-      "title": "Quản trị — bài viết (mobile)",
-      "w": 390,
-      "x": 5590,
-      "y": 59671,
-      "h": 2538,
-      "is_interactive": true
-    },
-    "AdminPostEditor.dc.html": {
-      "title": "Quản trị — soạn bài viết",
-      "w": 1440,
-      "x": 3040,
-      "y": 59671,
-      "h": 2371,
-      "is_interactive": true
-    },
-    "AdminPostEditorMobile.dc.html": {
-      "title": "Quản trị — soạn bài viết (mobile)",
-      "w": 390,
-      "x": 6060,
-      "y": 59671,
+      "y": 37931,
       "h": 3907,
       "is_interactive": true
     },
-    "AdminComments.dc.html": {
-      "title": "Quản trị — bình luận",
-      "w": 1440,
-      "x": 0,
-      "y": 62162,
-      "h": 1739,
-      "is_interactive": true
-    },
-    "AdminCommentsMobile.dc.html": {
-      "title": "Quản trị — bình luận (mobile)",
-      "w": 390,
-      "x": 6530,
-      "y": 59671,
-      "h": 2793,
-      "is_interactive": true
-    },
-    "AdminFeedback.dc.html": {
-      "title": "Quản trị — góp ý",
+    "AnalyzeReview.dc.html": {
+      "title": "Soi đội từ ảnh — kiểm tra đội (thiết kế mới)",
       "w": 1440,
       "x": 1520,
-      "y": 62162,
-      "h": 1953,
+      "y": 42038,
+      "h": 2049,
       "is_interactive": true
     },
-    "AdminFeedbackMobile.dc.html": {
-      "title": "Quản trị — góp ý (mobile)",
-      "w": 390,
-      "x": 5120,
-      "y": 63698,
-      "h": 2965,
-      "is_interactive": true
-    },
-    "AdminAI.dc.html": {
-      "title": "Quản trị — nhà cung cấp AI",
+    "AnalyzeResult.dc.html": {
+      "title": "Soi đội từ ảnh — đối chiếu (thiết kế mới)",
       "w": 1440,
       "x": 3040,
-      "y": 62162,
-      "h": 2078,
+      "y": 42038,
+      "h": 2118,
       "is_interactive": true
     },
-    "AdminAIMobile.dc.html": {
-      "title": "Quản trị — nhà cung cấp AI (mobile)",
+    "AnalyzeReviewMobile.dc.html": {
+      "title": "Soi đội từ ảnh — kiểm tra đội (thiết kế mới) (mobile)",
       "w": 390,
       "x": 5590,
-      "y": 63698,
-      "h": 3304,
+      "y": 42038,
+      "h": 3944,
+      "is_interactive": true
+    },
+    "AnalyzeResultMobile.dc.html": {
+      "title": "Soi đội từ ảnh — đối chiếu (thiết kế mới) (mobile)",
+      "w": 390,
+      "x": 6060,
+      "y": 42038,
+      "h": 4067,
+      "is_interactive": true
+    },
+    "RosterResult.dc.html": {
+      "title": "Gợi ý đội từ kho — kết quả (thiết kế mới)",
+      "w": 1440,
+      "x": 1520,
+      "y": 46225,
+      "h": 2542,
+      "is_interactive": true
+    },
+    "RosterResultMobile.dc.html": {
+      "title": "Gợi ý đội từ kho — kết quả (thiết kế mới) (mobile)",
+      "w": 390,
+      "x": 5590,
+      "y": 46225,
+      "h": 5346,
       "is_interactive": true
     }
   },
@@ -672,6 +736,14 @@
     "view": "canvas"
   },
   "notes": {
+    "adminrow": {
+      "kind": "title1",
+      "maxW": 6920,
+      "text": "Quản trị (/quan-tri/) · thiết kế mới",
+      "w": 240,
+      "x": 0,
+      "y": 69435
+    },
     "coexistrow": {
       "kind": "title1",
       "maxW": 6920,
@@ -680,13 +752,29 @@
       "x": 0,
       "y": 30916
     },
+    "communityrow": {
+      "kind": "title1",
+      "maxW": 6920,
+      "text": "Cộng đồng · Chiến báo · Bài viết",
+      "w": 240,
+      "x": 0,
+      "y": 51811
+    },
     "directions": {
       "kind": "title1",
       "maxW": 6920,
       "text": "Ba hướng khác để so sánh (tham khảo)",
       "w": 240,
       "x": 0,
-      "y": 70622
+      "y": 80666
+    },
+    "doikhacrow": {
+      "kind": "title1",
+      "maxW": 6920,
+      "text": "Đội khác",
+      "w": 240,
+      "x": 0,
+      "y": 12085
     },
     "heading": {
       "kind": "title1",
@@ -702,7 +790,7 @@
       "text": "Landing page giới thiệu · bản tiếng Trung",
       "w": 240,
       "x": 0,
-      "y": 44471
+      "y": 54515
     },
     "logorow": {
       "kind": "title1",
@@ -710,7 +798,7 @@
       "text": "Hệ thống thị giác · Logo",
       "w": 240,
       "x": 0,
-      "y": 67242
+      "y": 77286
     },
     "lookuprow": {
       "kind": "title1",
@@ -719,6 +807,14 @@
       "w": 240,
       "x": 0,
       "y": 16279
+    },
+    "policyrow": {
+      "kind": "title1",
+      "maxW": 6920,
+      "text": "Trang chính sách · 404",
+      "w": 240,
+      "x": 0,
+      "y": 61723
     },
     "tableview": {
       "kind": "title1",
@@ -731,58 +827,26 @@
     "toolsrow": {
       "kind": "title1",
       "maxW": 6920,
-      "text": "Công cụ Beta · Chiêu mộ · Soi đội · Gợi ý kho",
+      "text": "Công cụ Beta · Chiêu mộ · Soi đội · Gợi ý kho · thiết kế mới",
       "w": 240,
       "x": 0,
       "y": 37651
     },
     "zonedesktop": {
       "kind": "title1",
-      "w": 240,
+      "maxW": 4480,
       "text": "Desktop",
+      "w": 240,
       "x": 0,
-      "y": -320,
-      "maxW": 4480
+      "y": -320
     },
     "zonemobile": {
       "kind": "title1",
-      "w": 240,
+      "maxW": 1800,
       "text": "Mobile",
+      "w": 240,
       "x": 5120,
-      "y": -320,
-      "maxW": 1800
-    },
-    "doikhacrow": {
-      "kind": "title1",
-      "w": 240,
-      "text": "Đội khác",
-      "x": 0,
-      "y": 12085,
-      "maxW": 6920
-    },
-    "communityrow": {
-      "kind": "title1",
-      "w": 240,
-      "text": "Cộng đồng · Chiến báo · Bài viết",
-      "x": 0,
-      "y": 41767,
-      "maxW": 6920
-    },
-    "policyrow": {
-      "kind": "title1",
-      "w": 240,
-      "text": "Trang chính sách · 404",
-      "x": 0,
-      "y": 51679,
-      "maxW": 6920
-    },
-    "adminrow": {
-      "kind": "title1",
-      "w": 240,
-      "text": "Quản trị (/quan-tri/) · thiết kế mới",
-      "x": 0,
-      "y": 59391,
-      "maxW": 6920
+      "y": -320
     }
   },
   "order": [
@@ -868,7 +932,15 @@
     "AdminFeedback.dc.html",
     "AdminFeedbackMobile.dc.html",
     "AdminAI.dc.html",
-    "AdminAIMobile.dc.html"
+    "AdminAIMobile.dc.html",
+    "RecruitFiveStar.dc.html",
+    "RecruitFiveStarMobile.dc.html",
+    "AnalyzeReview.dc.html",
+    "AnalyzeResult.dc.html",
+    "AnalyzeReviewMobile.dc.html",
+    "AnalyzeResultMobile.dc.html",
+    "RosterResult.dc.html",
+    "RosterResultMobile.dc.html"
   ],
   "pages": [],
   "title": "Cẩm Nang TQCCL — Redesign"

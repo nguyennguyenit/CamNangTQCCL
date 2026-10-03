@@ -5,10 +5,10 @@ Bản chụp mã nguồn canvas Design dùng làm chuẩn thị giác cho đợt
 | | |
 |---|---|
 | Canvas gốc | <https://claude.ai/artifact/JshDEV8qspJo6VJ6rgiB71> (riêng tư — cần quyền của chủ canvas) |
-| Phiên bản chụp | `1790630266-caa5` (thêm thiết kế khu Quản trị — 12 artboard `Admin*`; 47 artboard dựng từ site thật, thêm Tra cứu mục lục + Binh thư, 19 artboard Tra cứu thay header/footer theo site — xem mục "Artboard dựng từ site thật"; thêm Chi tiết đội mobile, mọi link chi tiết đội trên mobile trỏ sang bản mobile; thêm Tra cứu trang bị/quân sư/cải tạo binh chủng/công trình mobile + màn chi tiết; cột mobile rộng 4 artboard; canvas chia cột: desktop bên trái, mobile bên phải, cùng dải theo nhóm; thẻ tướng ưu tiên ảnh chân dung; thêm hồ sơ tướng mobile, hồ sơ chiến pháp mobile; thêm Tra cứu: trang bị, quân sư, cải tạo binh chủng, công trình, hồ sơ chiến pháp; Logo — 5 phương án) |
+| Phiên bản chụp | `1790682380-6420` (thiết kế lại 3 công cụ Chiêu mộ · Soi đội · Gợi ý kho — 14 artboard; thêm thiết kế khu Quản trị — 12 artboard `Admin*`; 47 artboard dựng từ site thật, thêm Tra cứu mục lục + Binh thư, 19 artboard Tra cứu thay header/footer theo site — xem mục "Artboard dựng từ site thật"; thêm Chi tiết đội mobile, mọi link chi tiết đội trên mobile trỏ sang bản mobile; thêm Tra cứu trang bị/quân sư/cải tạo binh chủng/công trình mobile + màn chi tiết; cột mobile rộng 4 artboard; canvas chia cột: desktop bên trái, mobile bên phải, cùng dải theo nhóm; thẻ tướng ưu tiên ảnh chân dung; thêm hồ sơ tướng mobile, hồ sơ chiến pháp mobile; thêm Tra cứu: trang bị, quân sư, cải tạo binh chủng, công trình, hồ sơ chiến pháp; Logo — 5 phương án) |
 | Ngày chụp | 2026-09-29 |
-| Nội dung | `project/canvas.json` (vị trí, kích thước, tiêu đề artboard) + 83 artboard `project/*.dc.html` + `project/support.js` (shim tự viết, xem dưới) + `project/_blob/` (stylesheet, font, logo mà các artboard dựng từ site thật tham chiếu) + 80 ảnh chuẩn `screens/*.png` |
-| Ảnh chuẩn | Chụp lại 2026-09-29 bằng `scripts/design-capture.mjs` (80 artboard) · đối chiếu gần nhất 2026-09-24 với canvas bản `1790202333-0a0d`; **17 artboard mới (chi tiết đội mobile, 4 nhóm Tra cứu, hồ sơ chiến pháp, hồ sơ tướng/chiến pháp mobile, 4 nhóm Tra cứu mobile + chi tiết, Logo) chưa đối chiếu với canvas** |
+| Nội dung | `project/canvas.json` (vị trí, kích thước, tiêu đề artboard) + 91 artboard `project/*.dc.html` + `project/support.js` (shim tự viết, xem dưới) + `project/_blob/` (stylesheet, font, logo mà các artboard dựng từ site thật tham chiếu) + 88 ảnh chuẩn `screens/*.png` |
+| Ảnh chuẩn | Chụp lại 2026-09-29 bằng `scripts/design-capture.mjs` (88 artboard) · đối chiếu gần nhất 2026-09-24 với canvas bản `1790202333-0a0d`; **17 artboard mới (chi tiết đội mobile, 4 nhóm Tra cứu, hồ sơ chiến pháp, hồ sơ tướng/chiến pháp mobile, 4 nhóm Tra cứu mobile + chi tiết, Logo) chưa đối chiếu với canvas** |
 
 ## Quy ước
 
@@ -54,6 +54,15 @@ Theo yêu cầu "đồng bộ mockup với repo, trừ Tra cứu": các artboard
 - Nội dung bám đúng chức năng hiện có của `community-admin.js`: duyệt/từ chối chiến báo kèm lý do; danh sách + soạn bài (ngôn ngữ, slug, khoá bản dịch, tiêu đề, mô tả SEO, thẻ, ảnh bìa, Markdown + xem trước, FAQ, lưu nháp/xuất bản/xoá); xoá bình luận; lọc góp ý theo trạng thái/loại, đánh dấu đã xử lý; nhà cung cấp AI theo thứ tự failover (lên/xuống, bật/tắt, sửa, xoá, key chỉ hiện 4 số cuối).
 - Khác bản code hiện tại: desktop dùng cột điều hướng trái có số chờ xử lý thay cho hàng tab; mobile dùng hàng chip cuộn ngang; trình soạn bài mobile có công tắc Soạn / Xem trước. Số đếm trên điều hướng là đề xuất — API hiện chưa trả số tổng.
 - Dữ liệu trong artboard là mẫu (tên người chơi, email `@example.com`, bài viết, endpoint dự phòng `api.example-ai.com`).
+
+## Công cụ Beta — thiết kế lại (2026-09-29)
+
+14 artboard vẽ tay (thân trang) trong khung header/footer thật của site, bám đúng tính năng hiện có trong repo cùng ngày: `Recruit`, `RecruitFiveStar` (`js/recruit-tracker.js`, store v2: tài khoản + đồng bộ ☁, "2 miễn phí" / "Đủ 4" / "Có 5★", tiến độ bảo hiểm 30, Chỉnh số, Hoàn tác, gói hạn giờ, thống kê, nhật ký sửa/xoá, Xuất/Nhập JSON); `Analyze`, `AnalyzeReview`, `AnalyzeResult` (`js/analyze.js`: chọn ảnh/Nhập tay, lịch sử trên máy, kiểm tra 3 tướng × chiến pháp A/B + binh thư với Khớp/Không chắc/Không rõ, đối chiếu Đội chuẩn theo mùa + Đội khác, chép link, tải PNG); `Roster`, `RosterResult` (`js/roster-recommend-ui.js`: mùa + ưu tiên, 3 bước đọc ảnh, kiểm tra kho và đội khóa, 5 đội với nhãn trạng thái và "Đã thay", mục Thiếu món với món bù, "Vì sao?", "Dùng món này"). Mỗi artboard có bản `…Mobile`.
+
+- Thay các artboard chụp từ site trước đó cho ba trang này; giao diện đang chạy xem ở commit `ba564b5` (Chiêu mộ) và trang build.
+- Stylesheet asset mới `/_blob/a3951dbf…` (css/styles.css cùng ngày); các artboard khác vẫn dùng `/_blob/9eebe14a…`.
+- `AnalyzeReview` (2026-10-03) sửa tay ngoài canvas: khối tình trạng đọc (đếm Khớp/Để trống/Không chắc/Không rõ + link tới ô cần xác nhận), ô khớp chỉ còn dấu ✓ trong ô nhập, ô lỗi tô nền và gợi ý gần nhất kèm nút Để trống, thanh Đối chiếu dính đáy có tiến độ x/12 ô; cao 2049. Chưa đưa lên canvas, `AnalyzeReviewMobile` chưa đổi theo.
+- Dữ liệu trong artboard là mẫu (tên tài khoản, lượt, gói, kho, lời giải thích AI).
 
 ## Token & component
 
