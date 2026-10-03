@@ -62,6 +62,8 @@ Theo yêu cầu "đồng bộ mockup với repo, trừ Tra cứu": các artboard
 - Thay các artboard chụp từ site trước đó cho ba trang này; giao diện đang chạy xem ở commit `ba564b5` (Chiêu mộ) và trang build.
 - Stylesheet asset mới `/_blob/a3951dbf…` (css/styles.css cùng ngày); các artboard khác vẫn dùng `/_blob/9eebe14a…`.
 - `AnalyzeReview` (2026-10-03) sửa tay ngoài canvas: khối tình trạng đọc (đếm Khớp/Để trống/Không chắc/Không rõ + link tới ô cần xác nhận), ô khớp chỉ còn dấu ✓ trong ô nhập, ô lỗi tô nền và gợi ý gần nhất kèm nút Để trống, thanh Đối chiếu dính đáy có tiến độ x/12 ô; cao 2049. Chưa đưa lên canvas, `AnalyzeReviewMobile` chưa đổi theo.
+- `Analyze` (2026-10-04) sửa tay ngoài canvas cùng hướng với `AnalyzeReview`: tiêu đề + dải bước gọn một hàng, khung thả ảnh ngang kèm phím dán, mục "Ảnh đọc được" (màn đội hình 1 đội / màn chiến báo 2 phe), disclaimer theo `docs/design-guidelines.md` (đếm ẩn danh, chỉ lưu ảnh khi tự bấm Gửi ảnh này), "Cách hoạt động" dời vào khung chính, lịch sử dạng danh sách có số đội 4/10; cao 1638. Chưa đưa lên canvas, `AnalyzeMobile` chưa đổi theo.
+- `AnalyzeResult` (2026-10-04) sửa tay ngoài canvas cùng hướng: dải bước 1–2 xong, cột trái dính đầu trang (đội đã xác nhận + Sửa đội, Chép link/Tải ảnh PNG, khối "Giúp AI đọc đúng hơn" có checkbox đồng ý + Gửi ảnh này), mỗi đội là bảng Tướng × Chiến pháp A/B × Binh thư (đúng xanh, khác đội viền đứt đỏ, "Đội dùng: …", tướng thừa, Thiếu tướng), số khớp x/3 tướng · x/6 chiến pháp thay cho con số không nhãn (113/98, không có trong dữ liệu); cao 2158. Chưa đưa lên canvas, `AnalyzeResultMobile` chưa đổi theo.
 - Dữ liệu trong artboard là mẫu (tên tài khoản, lượt, gói, kho, lời giải thích AI).
 
 ## Token & component
