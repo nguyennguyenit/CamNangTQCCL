@@ -75,7 +75,7 @@
       "hột": "red-copy count"
     }
   },
-  "policyVersion": "site-vi-260929-soi-doi-hai-phe",
+  "policyVersion": "site-vi-261004-soi-doi-redesign",
   "routeFamilies": [
     {
       "entrypoints": [
@@ -760,7 +760,7 @@
     "data/season-content-links.json": "1dd183dc85a9a833336c76a79626d6c176fc9447fe746f11184c437054d8b3aa",
     "data/teams.json": "bd6b4925ad4d20620951d304358d39313031db0d9859e81ec9049c5370e1ed2f",
     "js/analyze-map.js": "ed938c393ee57136b09886b8ee96fbe75dab21e22cd62e96be9c74f1cb54088e",
-    "js/analyze.js": "e4098418495d8136e88ffde23e345c579d3fb7586e58e1dc028ef2a34bc28e6d",
+    "js/analyze.js": "68a361b7ea15e37a282ec0003345f6de94b5fff4bfd13bf9e0cd7a32a6063131",
     "js/app.js": "9083abbbbabf34bf7cd44bd2b9d3cdb14ab3b97cfaec903d647cf25274a8d74a",
     "js/detail-actions.js": "773843c3611450654b4205e6048d364125a7f5e25d98d9ed41d6bdb5f03fbd4e",
     "js/hero-portrait.js": "f1024cc3686cb2a4e33e3568e219bf53ec18ef26b29f63f194e6eb54c9750eb3",
