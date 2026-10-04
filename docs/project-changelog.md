@@ -1,5 +1,19 @@
 # Project Changelog
 
+## 2026-10-04 (Soi đội: giao diện theo thiết kế mới)
+
+### Changed
+
+- **Soi đội** (`js/analyze.js`, `css/styles.css`) theo artboard `Analyze`/`AnalyzeReview`/`AnalyzeResult` (sửa tay 2026-10-03/04): đầu trang có dải 3 bước Chọn ảnh · Kiểm tra đội · Đối chiếu (`.ana-flow`, `aria-current="step"`). Bước 1: thẻ chọn ảnh rộng + cột Lịch sử bên phải; khung thả ngang (vòng icon son nhạt, chữ serif), mục "Ảnh đọc được" (màn đội hình / màn chiến báo), chip tiến độ đọc ảnh, "Cách hoạt động" 3 bước. Từ bước 2 (`.ana-layout[data-stage=work]`) trang thành một cột: hàng ảnh đã chọn + nút, chọn phe, editor, kết quả, lịch sử.
+- Editor: tóm tắt lượt đọc ảnh (đếm Khớp/Để trống/Không chắc/Không rõ + nút tới từng ô cần xác nhận), mỗi tướng là thẻ có ấn phe chữ Hán + tên đã chọn + số ô ổn, ô khớp có ✓ trong ô nhập, ô lỗi tô nền với "Gợi ý gần nhất" và nút Để trống cạnh ứng viên; thanh Đối chiếu dính đáy (desktop) có tiến độ x/12 ô, mùa, lời nhắc, nút.
+- Kết quả: diff mỗi đội là bảng Tướng | Chiến pháp A | Chiến pháp B | Binh thư (chiến pháp khác đội viền đứt đỏ, "Đội dùng" dưới đúng tướng, dòng Thiếu tướng viền đứt); đội khớp trọn viền lục + chip "Khớp trọn" thay cho viền son của hàng đầu.
+- Danh mục component `o-doc-anh`, `o-sua-doi`, `hang-doi-tuong-tu` trong `tokens.json` cập nhật theo cấu tạo mới; không thêm token.
+- Bản dịch: chữ obligation cũ giữ nguyên trong nguồn, không thêm/đổi obligation; policy `site-vi-261004-soi-doi-redesign` (re-pin hash `js/analyze.js`), publish generation `54b1dae5…` (thay `5f23f4df…`, đã prune), re-pin `pipeline/team-route-handles.json`; `WORKFLOW_BUILD_ID` MCP không đổi.
+
+### Tests
+
+- `tests-e2e/beta-tools.spec.mjs`: hàng khớp trọn viền `--good` + chip "Khớp trọn" (thay viền `--accent`); tóm tắt lượt đọc có đúng 2 ô cần xác nhận, bấm mục đưa focus vào đúng ô; dải bước chuyển Kiểm tra đội → Đối chiếu.
+
 ## 2026-09-29 (Soi đội đọc cả hai phe; đếm ẩn danh, gửi ảnh tự nguyện, bộ ảnh chuẩn)
 
 ### Changed

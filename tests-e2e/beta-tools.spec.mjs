@@ -526,6 +526,13 @@ test.describe("Soi đội", () => {
     const compare = section.getByRole("button", { name: "Đối chiếu", exact: true });
     await expect(compare).toBeDisabled();
     await expect(section.locator(".ana-ready-note")).toHaveText("Còn 2 ô cần xác nhận trước khi đối chiếu.");
+    // Tóm tắt lượt đọc liệt kê đúng 2 ô cần xác nhận; bấm một mục đưa con trỏ vào đúng ô đó.
+    const flowCurrent = section.locator('.ana-flow-step[aria-current="step"]');
+    await expect(flowCurrent).toHaveText("2Kiểm tra đội");
+    const jumps = section.locator(".ana-summary-jump");
+    await expect(jumps).toHaveCount(2);
+    await jumps.filter({ hasText: "Tướng 1 · Chiến pháp B" }).click();
+    await expect(unknownCell.locator("input")).toBeFocused();
 
     await unsureCell.getByRole("button", { name: fixture.labels[fixture.unsureIndex][0], exact: true }).click();
     await expect(unsureCell).toHaveAttribute("data-state", "sure");
@@ -536,6 +543,8 @@ test.describe("Soi đội", () => {
     await expect(unknownCell).toHaveAttribute("data-state", "sure");
     await expect(compare).toBeEnabled();
     await compare.click();
+    await expect(jumps).toHaveCount(0);
+    await expect(flowCurrent).toHaveText("3Đối chiếu");
 
     const standard = section.locator(".ana-group-standard");
     await expect(standard.locator(".ana-group-title")).toContainText("Đội chuẩn · ");
@@ -555,7 +564,8 @@ test.describe("Soi đội", () => {
     expect(url.searchParams.get("season")).toBe(fixture.season);
     expect(workerCalls).toBe(1);
 
-    // Hàng kết quả chỉ dùng giá trị token.
+    // Hàng kết quả chỉ dùng giá trị token; đội khớp trọn viền lục kèm chip "Khớp trọn".
+    await expect(row.locator(".ana-team-full")).toHaveText("Khớp trọn");
     const styles = await row.evaluate((node) => {
       const root = getComputedStyle(document.documentElement);
       const rowStyle = getComputedStyle(node);
@@ -563,13 +573,13 @@ test.describe("Soi đội", () => {
         padding: `${rowStyle.paddingTop}/${rowStyle.paddingLeft}`,
         radius: rowStyle.borderRadius,
         border: rowStyle.borderTopColor,
-        accent: root.getPropertyValue("--accent").trim(),
+        good: root.getPropertyValue("--good").trim(),
         linkFont: getComputedStyle(node.querySelector(".ana-team-link")).fontFamily,
       };
     });
     expect(styles.padding).toBe("14px/16px");
     expect(styles.radius).toBe("12px");
-    expect(styles.border).toBe(toRgb(styles.accent));
+    expect(styles.border).toBe(toRgb(styles.good));
     expect(styles.linkFont).toContain("Noto Serif Display");
     const text = await section.innerText();
     expect(text).not.toContain("📷");

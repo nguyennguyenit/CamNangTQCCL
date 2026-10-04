@@ -8534,32 +8534,114 @@ body[data-page-section="roster-recommend"] .layout {
   color: var(--on-accent);
 }
 
-/* ---------- Soi đội (Analyze, AnalyzeMobile) ---------- */
+/* ---------- Soi đội (Analyze, AnalyzeReview, AnalyzeResult + bản Mobile) ---------- */
+/* Dải 3 bước của trang, nằm bên phải đầu mục công cụ (Analyze.dc.html: Chọn ảnh — Kiểm tra đội — Đối chiếu). */
+.ana-flow {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-8);
+  margin: 0 0 var(--space-6);
+  padding: 0;
+  list-style: none;
+}
+
+.ana-flow-step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  color: var(--muted);
+  font: var(--type-tactic);
+  white-space: nowrap;
+}
+
+.ana-flow-step + .ana-flow-step::before {
+  content: "";
+  width: var(--space-40);
+  height: var(--border-heavy);
+  margin: 0 var(--space-4);
+  background: var(--line-2);
+}
+
+.ana-flow-step[data-state="done"] + .ana-flow-step::before {
+  background: var(--good);
+}
+
+.ana-flow-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--control-26);
+  height: var(--control-26);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-round);
+  background: var(--panel);
+  font: var(--type-badge);
+}
+
+.ana-flow-step[data-state="done"] {
+  color: var(--ink);
+}
+
+.ana-flow-step[data-state="done"] .ana-flow-mark {
+  border-color: var(--good);
+  background: var(--good);
+  color: var(--on-fill);
+}
+
+.ana-flow-step[data-state="current"] {
+  color: var(--ink);
+  font: var(--type-control);
+}
+
+.ana-flow-step[data-state="current"] .ana-flow-mark {
+  border-color: var(--select);
+  background: var(--select);
+  color: var(--select-ink);
+}
+
+/* Bước 1 (chưa có editor/kết quả): thẻ chọn ảnh rộng + cột lịch sử bên phải (Analyze.dc.html). */
 .ana-layout {
   display: grid;
-  grid-template-columns: minmax(0, 440px) minmax(0, 1fr);
-  gap: var(--space-22);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 400px);
+  gap: var(--space-24);
   align-items: start;
 }
+
+/* Chưa có lịch sử: thẻ chọn ảnh đứng một mình, không để cột phải rỗng. */
+.ana-layout[data-stage="pick"]:not(:has(.ana-history:not([hidden]))) {
+  grid-template-columns: minmax(0, 880px);
+}
+
+.ana-layout[data-stage="pick"] .ana-col-pick {
+  display: contents;
+}
+
+/* Bước 2–3: một cột rộng — hàng ảnh đã chọn, chọn phe, editor, kết quả, rồi lịch sử (AnalyzeReview/AnalyzeResult). */
+.ana-layout[data-stage="work"] {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-24);
+}
+
+.ana-layout[data-stage="work"] .ana-col {
+  display: contents;
+}
+
+.ana-layout[data-stage="work"] .ana-pick { order: 1; }
+.ana-layout[data-stage="work"] .ana-col-result > * { order: 2; }
+.ana-layout[data-stage="work"] .ana-history { order: 3; }
 
 /* Cột kết quả chưa có thẻ nào hiện (trước lượt soi đầu): không chiếm chỗ/khoảng cách. */
 .ana-col:not(:has(> :not([hidden]))) {
   display: none;
 }
 
-/* Desktop, chưa có editor/kết quả: bỏ cột phải rỗng, căn giữa cột chọn ảnh thay vì dạt trái để ~65% bên phải
-   trống ở 1440. (Chỉ xét cột kết quả; cột chọn ảnh luôn có thẻ 1.) */
-@media (min-width: 981px) {
-  .ana-layout:not(:has(> .ana-col-result > :not([hidden]))) {
-    grid-template-columns: minmax(0, 440px);
-    justify-content: center;
-  }
-}
-
 .ana-col {
   display: flex;
   flex-direction: column;
-  gap: var(--space-22);
+  gap: var(--space-24);
   min-width: 0;
 }
 
@@ -8597,19 +8679,17 @@ body[data-page-section="roster-recommend"] .layout {
 
 .ana-drop {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: var(--space-10);
-  min-height: var(--space-132);
-  padding: var(--space-20);
+  gap: var(--space-24);
+  min-height: var(--space-164);
+  padding: var(--space-28) var(--space-32);
   border: var(--border-heavy) dashed var(--line);
   border-radius: var(--radius-14);
   background: var(--panel-3);
   color: var(--ink-2);
   font: inherit;
   cursor: pointer;
-  text-align: center;
+  text-align: left;
   text-wrap: pretty;
   transition: border-color .15s ease, background .15s ease;
 }
@@ -8621,13 +8701,189 @@ body[data-page-section="roster-recommend"] .layout {
   color: var(--ink);
 }
 
+.ana-drop-icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--control-72);
+  height: var(--control-72);
+  border-radius: var(--radius-round);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.ana-drop-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 0;
+}
+
 .ana-drop-title {
-  font: var(--type-strong);
+  color: var(--ink);
+  font: var(--type-card-title-sm);
 }
 
 .ana-drop-note {
   color: var(--muted);
   font: var(--type-meta);
+}
+
+/* Đã có ảnh (hoặc đang ở bước 2–3): khung thả thu về một dòng, hàng ảnh đã chọn đứng thay. */
+.ana-drop.chosen,
+.ana-layout[data-stage="work"] .ana-drop {
+  gap: var(--space-14);
+  min-height: var(--control-56);
+  padding: var(--space-10) var(--space-16);
+}
+
+.ana-drop.chosen .ana-drop-icon,
+.ana-layout[data-stage="work"] .ana-drop-icon {
+  width: var(--control-36);
+  height: var(--control-36);
+}
+
+.ana-drop.chosen .ana-drop-icon svg,
+.ana-layout[data-stage="work"] .ana-drop-icon svg {
+  width: var(--space-18);
+  height: var(--space-18);
+}
+
+.ana-drop.chosen .ana-drop-title,
+.ana-layout[data-stage="work"] .ana-drop-title {
+  font: var(--type-strong);
+}
+
+/* Hai loại ảnh đọc được: sơ đồ 3 ô tướng (1 hoặc 2 phe) + chữ. */
+.ana-kinds {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.ana-kinds-title {
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-label-caps);
+  letter-spacing: var(--type-label-caps-spacing);
+  text-transform: uppercase;
+}
+
+.ana-kinds-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-10);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ana-kind {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  padding: var(--space-12);
+  border: var(--border-hair) solid var(--line-2);
+  border-radius: var(--radius-10);
+  background: var(--panel);
+}
+
+.ana-kind-slots {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-8);
+  height: var(--control-40);
+  padding: 0 var(--space-10);
+  border-radius: var(--radius-8);
+  background: var(--panel-2);
+}
+
+.ana-kind-group {
+  display: inline-flex;
+  gap: var(--space-3);
+}
+
+.ana-kind-group + .ana-kind-group {
+  padding-left: var(--space-8);
+  border-left: var(--border-hair) solid var(--line);
+}
+
+.ana-kind-group > span {
+  width: var(--space-16);
+  height: var(--space-22);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-3);
+  background: var(--panel);
+}
+
+.ana-kind-text,
+.ana-how-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.ana-kind-name,
+.ana-how-title {
+  font: var(--type-strong);
+}
+
+.ana-kind-note,
+.ana-how-note {
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+/* Cách hoạt động: 3 bước đánh số son ở chân thẻ chọn ảnh. */
+.ana-how {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-20);
+  margin: 0;
+  padding: var(--space-16) 0 0;
+  border-top: var(--border-hair) solid var(--line-2);
+  list-style: none;
+}
+
+.ana-how-step {
+  display: grid;
+  grid-template-columns: var(--space-24) minmax(0, 1fr);
+  gap: var(--space-8);
+}
+
+.ana-how-num {
+  color: var(--accent);
+  font: var(--type-card-title-sm);
+}
+
+/* Bước 2–3: thẻ chọn ảnh thu gọn — bỏ phần giới thiệu, giữ khung thả/hàng ảnh, nút và trạng thái. */
+.ana-layout[data-stage="work"] .ana-pick {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-12) var(--space-16);
+}
+
+.ana-layout[data-stage="work"] .ana-pick > :not(.ana-drop, .ana-file-row, .ana-pick-actions, .ana-status, .ana-turnstile, .ana-setup) {
+  display: none;
+}
+
+.ana-layout[data-stage="work"] .ana-pick > .ana-drop.chosen {
+  display: none;
+}
+
+.ana-layout[data-stage="work"] .ana-pick > .ana-status,
+.ana-layout[data-stage="work"] .ana-pick > .ana-turnstile,
+.ana-layout[data-stage="work"] .ana-pick > .ana-setup {
+  order: 1;
+  grid-column: 1 / -1;
+}
+
+.ana-layout[data-stage="work"] .ana-pick > .ana-status:empty {
+  display: none;
 }
 
 .ana-file {
@@ -8655,6 +8911,18 @@ body[data-page-section="roster-recommend"] .layout {
   border-radius: var(--radius-8);
   background: var(--panel-2);
   overflow: hidden;
+}
+
+/* Bước 2–3: hàng ảnh đã chọn gọn như đầu trang AnalyzeReview (ảnh nhỏ + tên + Chọn ảnh khác). */
+.ana-layout[data-stage="work"] .ana-file-row {
+  grid-template-columns: minmax(0, 88px) minmax(0, 1fr);
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+.ana-layout[data-stage="work"] .ana-thumb {
+  height: var(--control-56);
 }
 
 .ana-preview {
@@ -8690,24 +8958,31 @@ body[data-page-section="roster-recommend"] .layout {
   color: var(--avoid);
 }
 
+/* Tiến độ đọc ảnh: hàng chip (nén ảnh · chống bot · đọc xong). Chữ lục trên giấy nhạt như `.roster-step`. */
 .ana-steps {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-8);
+  flex-wrap: wrap;
+  gap: var(--space-6);
   margin: 0;
   padding: 0;
   list-style: none;
-  font: var(--type-tactic);
+  font: var(--type-badge);
 }
 
 .ana-step {
-  display: flex;
-  gap: var(--space-8);
+  display: inline-flex;
+  gap: var(--space-5);
   align-items: center;
+  min-height: var(--control-28);
+  padding: 0 var(--space-10);
+  border: var(--border-hair) solid var(--line-2);
+  border-radius: var(--radius-999);
   color: var(--muted);
 }
 
 .ana-step[data-state="done"] {
+  border-color: var(--transparent);
+  background: var(--panel-3);
   color: var(--good);
 }
 
@@ -8723,41 +8998,140 @@ body[data-page-section="roster-recommend"] .layout {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-10);
+  padding-top: var(--space-16);
+  border-top: var(--border-hair) solid var(--line-2);
 }
 
 .ana-pick-actions > .ana-btn {
-  flex: 1 1 auto;
+  min-height: var(--control-48);
+  padding: 0 var(--space-22);
 }
 
-/* Editor xác nhận: 3 tướng × (tướng, chiến pháp A/B, binh thư). */
+.ana-layout[data-stage="work"] .ana-pick-actions {
+  padding-top: 0;
+  border-top: none;
+}
+
+/* Editor xác nhận: 3 thẻ tướng × (tướng, chiến pháp A/B, binh thư) (AnalyzeReview.dc.html). */
 .ana-editor-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--space-12);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-16);
+  align-items: stretch;
 }
 
 .ana-member {
   display: flex;
   flex-direction: column;
-  gap: var(--space-10);
   min-width: 0;
   margin: 0;
-  padding: var(--space-14);
-  border: var(--border-hair) solid var(--line-2);
-  border-radius: var(--radius-12);
-  background: var(--panel-3);
+  padding: 0;
+  overflow: hidden;
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-14);
+  background: var(--panel);
 }
 
-.ana-member-title {
-  padding: 0 var(--space-4);
-  font: var(--type-strong);
+.ana-member[data-state="unsure"],
+.ana-member[data-state="unknown"] {
+  border-color: var(--avoid);
+}
+
+/* Đầu thẻ tướng: ấn phe | (Tướng N / tên đã chọn) | số ô ổn. Legend chỉ để đọc màn hình (`.visually-hidden`). */
+.ana-member-head {
+  display: grid;
+  grid-template-columns: var(--control-44) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-2) var(--space-12);
+  padding: var(--space-14) var(--space-16);
+  background: var(--panel-2);
+}
+
+.ana-member-seal {
+  --seal-color: var(--muted);
+  display: inline-flex;
+  grid-row: 1 / span 2;
+  align-items: center;
+  justify-content: center;
+  width: var(--control-44);
+  height: var(--control-44);
+  box-sizing: border-box;
+  border-bottom: var(--border-underline) solid var(--seal-color);
+  border-radius: var(--radius-10);
+  background: var(--panel-3);
+  color: var(--seal-color);
+  font: var(--type-card-title-sm);
+}
+
+.ana-member-seal[data-faction="nguy"] { --seal-color: var(--f-nguy); }
+.ana-member-seal[data-faction="thuc"] { --seal-color: var(--f-thuc); }
+.ana-member-seal[data-faction="ngo"] { --seal-color: var(--f-ngo); }
+.ana-member-seal[data-faction="quan"] { --seal-color: var(--f-quan); }
+.ana-member-seal[data-faction="honhop"] { --seal-color: var(--f-honhop); }
+
+.ana-member-seal[data-faction="none"] {
+  border: var(--border-hair) dashed var(--line);
+}
+
+.ana-member-eyebrow {
+  grid-column: 2;
+  color: var(--muted);
+  font: var(--type-label-caps);
+  letter-spacing: var(--type-label-caps-spacing);
+  text-transform: uppercase;
+}
+
+.ana-member-name {
+  grid-column: 2;
+  min-width: 0;
+  color: var(--ink);
+  font: var(--type-card-title-sm);
+  overflow-wrap: anywhere;
+}
+
+.ana-member-name[data-empty="true"] {
+  color: var(--muted);
+}
+
+.ana-member-tally {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-24);
+  padding: 0 var(--space-9);
+  border-radius: var(--radius-999);
+  background: var(--panel-3);
+  color: var(--good);
+  font: var(--type-badge);
+  white-space: nowrap;
+}
+
+.ana-member:not([data-state="ok"]) .ana-member-tally {
+  background: var(--panel);
+  color: var(--ink-2);
+}
+
+.ana-member[data-state="unsure"] .ana-member-tally,
+.ana-member[data-state="unknown"] .ana-member-tally {
+  background: var(--avoid-bg);
+  color: var(--avoid);
 }
 
 .ana-cell {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-8);
   min-width: 0;
+  padding: var(--space-12) var(--space-16);
+  border-top: var(--border-hair) solid var(--line-2);
+}
+
+.ana-cell[data-state="unsure"],
+.ana-cell[data-state="unknown"],
+.ana-member[data-state="unknown"] .ana-cell[data-kind="hero"][data-state="empty"] {
+  background: var(--avoid-bg);
+  box-shadow: inset var(--border-underline) 0 0 var(--avoid);
 }
 
 .ana-cell-head {
@@ -8766,29 +9140,64 @@ body[data-page-section="roster-recommend"] .layout {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4) var(--space-8);
+  min-height: var(--control-24);
 }
 
 .ana-cell-label {
-  color: var(--muted);
-  font: var(--type-meta);
+  color: var(--ink-2);
+  font: var(--type-badge);
+}
+
+.ana-cell-field {
+  position: relative;
 }
 
 .ana-cell .ana-input {
   width: 100%;
   min-width: 0;
+  padding-right: var(--space-40);
 }
 
-.ana-cell[data-state="unsure"] .ana-input,
+.ana-cell-ok {
+  position: absolute;
+  top: 50%;
+  right: var(--space-12);
+  display: none;
+  color: var(--good);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.ana-cell[data-state="sure"] .ana-cell-ok {
+  display: inline-flex;
+}
+
+.ana-cell[data-state="unsure"] .ana-input {
+  border-style: dashed;
+  border-color: var(--avoid);
+  background: var(--panel);
+}
+
 .ana-cell[data-state="unknown"] .ana-input,
 .ana-cell[data-kind="hero"][data-state="empty"] .ana-input {
   border-color: var(--avoid);
-  background: var(--avoid-bg);
+  background: var(--panel);
+}
+
+/* Chiến pháp/binh thư để trống có chủ đích: ô viền đứt, nền giấy nhạt. */
+.ana-cell:not([data-kind="hero"])[data-state="empty"] .ana-input {
+  border-style: dashed;
+  background: var(--panel-3);
 }
 
 .ana-cell-flag {
   display: inline-flex;
   align-items: center;
   gap: var(--space-5);
+  min-height: var(--control-24);
+  padding: 0 var(--space-9);
+  border-radius: var(--radius-999);
+  background: var(--panel);
   color: var(--avoid);
   font: var(--type-badge);
 }
@@ -8796,7 +9205,8 @@ body[data-page-section="roster-recommend"] .layout {
 .ana-cell-flag[hidden],
 .ana-cell-raw[hidden],
 .ana-candidates[hidden],
-.ana-cell-clear[hidden] {
+.ana-cell-clear[hidden],
+.ana-cell-fix-title[hidden] {
   display: none;
 }
 
@@ -8805,16 +9215,31 @@ body[data-page-section="roster-recommend"] .layout {
   font: var(--type-meta);
 }
 
-.ana-candidates {
+.ana-cell-fix-title {
+  color: var(--avoid);
+  font: var(--type-label-caps);
+  letter-spacing: var(--type-label-caps-spacing);
+  text-transform: uppercase;
+}
+
+.ana-cell-fix {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-6);
 }
 
+.ana-cell-fix:not(:has(> :not([hidden]))) {
+  display: none;
+}
+
+.ana-candidates {
+  display: contents;
+}
+
 .ana-candidate {
-  min-height: var(--control-44);
+  min-height: var(--control-36);
   padding: 0 var(--space-12);
-  border: var(--border-hair) dashed var(--avoid);
+  border: var(--border-hair) solid var(--line);
   border-radius: var(--radius-999);
   background: var(--panel);
   color: var(--ink);
@@ -8822,36 +9247,223 @@ body[data-page-section="roster-recommend"] .layout {
   cursor: pointer;
 }
 
+.ana-candidate:first-child {
+  border-color: var(--avoid);
+}
+
 .ana-candidate:hover {
-  border-style: solid;
+  border-color: var(--accent);
   background: var(--accent-soft);
 }
 
 .ana-cell-clear {
-  align-self: flex-start;
+  min-height: var(--control-36);
+  padding: 0 var(--space-10);
+  border: var(--border-hair) dashed var(--line);
+  border-radius: var(--radius-999);
+  color: var(--muted);
 }
 
-.ana-editor-foot {
+/* Tóm tắt lượt đọc ảnh: đếm ô theo trạng thái + nút tới từng ô cần xác nhận. */
+.ana-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  padding: var(--space-14) var(--space-16);
+  border: var(--border-hair) solid var(--line-2);
+  border-radius: var(--radius-12);
+  background: var(--panel-3);
+}
+
+.ana-summary[hidden] {
+  display: none;
+}
+
+.ana-summary-counts {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
-  gap: var(--space-10) var(--space-14);
+  gap: var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.ana-season {
+.ana-summary-count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-6);
+  min-height: var(--control-36);
+  padding: var(--space-6) var(--space-12);
+  box-sizing: border-box;
+  border-radius: var(--radius-10);
+  background: var(--panel);
+  color: var(--ink-2);
+  font: var(--type-badge);
+}
+
+.ana-summary-count strong {
+  font: var(--type-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.ana-summary-count[data-state="sure"] { color: var(--good); }
+.ana-summary-count[data-state="unsure"],
+.ana-summary-count[data-state="unknown"] { color: var(--avoid); }
+
+.ana-summary-pending {
   display: flex;
-  flex: 1 1 220px;
-  min-width: 0;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-8);
+}
+
+.ana-summary-title {
+  margin: 0;
+  color: var(--ink-2);
+  font: var(--type-badge);
+}
+
+.ana-summary:has(.ana-summary-todo:empty) .ana-summary-title {
+  color: var(--good);
+}
+
+.ana-summary-todo {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ana-summary-todo:empty {
+  display: none;
+}
+
+.ana-summary-jump {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-2) var(--space-10);
+  width: 100%;
+  min-height: var(--control-52);
+  padding: var(--space-8) var(--space-14);
+  border: var(--border-hair) solid var(--avoid);
+  border-radius: var(--radius-10);
+  background: var(--panel);
+  box-shadow: inset var(--border-underline) 0 0 var(--avoid);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ana-summary-jump[data-state="unsure"] {
+  border-style: dashed;
+}
+
+.ana-summary-jump:hover {
+  background: var(--avoid-bg);
+}
+
+.ana-summary-where {
+  font: var(--type-strong);
+}
+
+.ana-summary-why {
+  grid-column: 1;
   color: var(--muted);
   font: var(--type-meta);
 }
 
-/* Tên mùa dài: ô chọn co theo cột thay vì đẩy tràn ngang ở 320px. */
-.ana-season .ana-input {
-  width: 100%;
+.ana-summary-go {
+  display: inline-flex;
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  color: var(--ink-2);
+}
+
+/* Thanh Đối chiếu dính đáy màn hình: tiến độ x/12 ô, mùa, lời nhắc, nút. */
+.ana-editor-foot {
+  position: sticky;
+  bottom: var(--space-16);
+  z-index: var(--z-5);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-12) var(--space-20);
+  padding: var(--space-14) var(--space-16);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-14);
+  background: var(--panel);
+  box-shadow: var(--shadow-pop);
+}
+
+.ana-progress {
+  display: flex;
+  flex: 0 1 240px;
+  flex-direction: column;
+  gap: var(--space-8);
   min-width: 0;
+}
+
+.ana-progress-head {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-8);
+  color: var(--ink-2);
+  font: var(--type-badge);
+}
+
+.ana-progress-value {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.ana-progress-bar {
+  display: flex;
+  gap: var(--space-3);
+  height: var(--space-8);
+}
+
+.ana-progress-seg {
+  flex: 1;
+  border-radius: var(--radius-2);
+  background: var(--line-2);
+}
+
+.ana-progress-seg[data-on="true"] {
+  background: var(--good);
+}
+
+.ana-season {
+  display: flex;
+  flex: 0 1 auto;
+  align-items: center;
+  gap: var(--space-10);
+  min-width: 0;
+  color: var(--ink-2);
+  font: var(--type-badge);
+  white-space: nowrap;
+}
+
+/* Tên mùa dài: ô chọn co theo hàng thay vì đẩy tràn ngang ở 320px. */
+.ana-season .ana-input {
+  width: 280px;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.ana-editor-foot .ana-ready-note {
+  flex: 1 1 200px;
+  color: var(--avoid);
+  font: var(--type-badge);
+  text-align: right;
+}
+
+.ana-editor-foot .ana-compare-run {
+  min-height: var(--control-48);
+  margin-left: auto;
+  padding: 0 var(--space-22);
 }
 
 .ana-ready-note:empty,
@@ -8985,32 +9597,48 @@ body[data-page-section="roster-recommend"] .layout {
 
 .ana-group-title {
   margin: 0;
-  font: var(--type-card-title-sm);
+  color: var(--muted);
+  font: var(--type-label-caps);
+  letter-spacing: var(--type-label-caps-spacing);
+  text-transform: uppercase;
 }
 
+/* Diff từng tướng là bảng 4 cột: Tướng | Chiến pháp A | Chiến pháp B | Binh thư (AnalyzeResult.dc.html). */
 .ana-diff {
   display: grid;
   grid-column: 1 / -1;
-  gap: var(--space-6);
-  margin: 0;
+  margin: var(--space-6) 0 0;
   padding: 0;
   list-style: none;
 }
 
-.ana-diff-hero {
-  display: flex;
-  flex-wrap: wrap;
+.ana-diff-head,
+.ana-diff-hero:not([data-status="missing"]) {
+  display: grid;
+  grid-template-columns: minmax(0, 170px) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 190px);
   align-items: center;
-  gap: var(--space-4) var(--space-10);
+  gap: var(--space-6) var(--space-14);
+}
+
+.ana-diff-head {
+  padding-bottom: var(--space-6);
+  color: var(--muted);
+  font: var(--type-label-caps);
+  letter-spacing: var(--type-label-caps-spacing);
+  text-transform: uppercase;
+}
+
+.ana-diff-hero {
+  padding: var(--space-10) 0;
+  border-top: var(--border-hair) solid var(--line-2);
   color: var(--ink-2);
   font: var(--type-small);
 }
 
-.ana-diff-hero[data-status="missing"] {
-  color: var(--avoid);
-}
-
 .ana-diff-name {
+  grid-row: 1;
+  grid-column: 1;
+  color: var(--ink);
   font: var(--type-strong);
 }
 
@@ -9020,56 +9648,74 @@ body[data-page-section="roster-recommend"] .layout {
 }
 
 .ana-diff-tacs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-4) var(--space-10);
+  display: contents;
 }
 
 .ana-diff-tac {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-4);
+  justify-self: start;
+  gap: var(--space-5);
+  min-height: var(--control-28);
+  padding: var(--space-2) var(--space-10);
+  box-sizing: border-box;
+  border: var(--border-hair) solid var(--transparent);
+  border-radius: var(--radius-8);
   font: var(--type-tactic);
 }
 
 .ana-diff-tac[data-status="match"] {
+  background: var(--panel-3);
   color: var(--good);
 }
 
 .ana-diff-tac[data-status="wrong"] {
-  border-bottom: var(--border-hair) dashed var(--avoid);
+  border-style: dashed;
+  border-color: var(--avoid);
+  background: var(--avoid-bg);
   color: var(--avoid);
 }
 
 .ana-diff-tac[data-status="empty"],
-.ana-diff-tac[data-status="unchecked"],
+.ana-diff-tac[data-status="unchecked"] {
+  background: var(--panel-2);
+  color: var(--ink-2);
+}
+
 .ana-diff-missing {
+  grid-row: 2;
+  grid-column: 2 / -1;
   color: var(--muted);
+  font: var(--type-meta);
 }
 
 .ana-diff-book {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--control-24);
-  padding: 0 var(--space-9);
-  border: var(--border-hair) solid var(--f-quan);
-  border-radius: var(--radius-999);
-  background: var(--panel-2);
-  color: var(--ink-2);
+  grid-row: 1;
+  grid-column: 4;
+  color: var(--good);
   font: var(--type-badge);
 }
 
-.ana-diff-book[data-status="mismatch"],
-.ana-diff-book[data-status="missing"] {
-  border-style: dashed;
-  border-color: var(--avoid);
+.ana-diff-book[data-status="mismatch"] {
   color: var(--avoid);
 }
 
-/* Lịch sử trên máy. */
+.ana-diff-book[data-status="missing"] {
+  color: var(--ink-2);
+}
+
+/* Tướng đội có mà đội đã xác nhận thiếu: dòng viền đứt riêng. */
+.ana-diff-hero[data-status="missing"] {
+  margin-top: var(--space-6);
+  padding: var(--space-10) var(--space-12);
+  border: var(--border-hair) dashed var(--line);
+  border-radius: var(--radius-10);
+  color: var(--ink-2);
+}
+
+/* Lịch sử trên máy: danh sách hàng kẻ dòng (Analyze.dc.html cột phải). */
 .ana-history-list {
   display: grid;
-  gap: var(--space-6);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -9078,21 +9724,21 @@ body[data-page-section="roster-recommend"] .layout {
 .ana-history-item {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-4);
   width: 100%;
-  min-height: var(--control-44);
-  padding: var(--space-8) var(--space-12);
-  border: var(--border-hair) solid var(--line-2);
-  border-radius: var(--radius-10);
-  background: var(--panel-3);
+  min-height: var(--control-56);
+  padding: var(--space-10) var(--space-8) var(--space-10) 0;
+  border: none;
+  border-top: var(--border-hair) solid var(--line-2);
+  background: none;
   color: var(--ink);
   font: inherit;
   text-align: left;
   cursor: pointer;
 }
 
-.ana-history-item:hover {
-  border-color: var(--accent);
+.ana-history-item:hover .ana-history-team {
+  color: var(--accent);
 }
 
 .ana-history-team {
@@ -9104,9 +9750,14 @@ body[data-page-section="roster-recommend"] .layout {
   font: var(--type-meta);
 }
 
+.ana-layout[data-stage="work"] .ana-history-list {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0 var(--space-20);
+}
+
 .ana-teams {
   display: grid;
-  gap: var(--space-10);
+  gap: var(--space-12);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -9123,9 +9774,30 @@ body[data-page-section="roster-recommend"] .layout {
   background: var(--panel);
 }
 
-.ana-team-row:first-child {
-  border-color: var(--accent);
-  background: var(--avoid-bg);
+/* Khớp trọn (đủ tướng, đủ chiến pháp, không lệch binh thư): viền lục đậm. */
+.ana-team-row[data-full="true"] {
+  border-color: var(--good);
+  box-shadow: 0 0 0 var(--border-hair) var(--good);
+}
+
+.ana-team-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-6) var(--space-10);
+  min-width: 0;
+}
+
+.ana-team-full {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-5);
+  min-height: var(--control-24);
+  padding: 0 var(--space-9);
+  border-radius: var(--radius-999);
+  background: var(--good);
+  color: var(--on-fill);
+  font: var(--type-badge);
 }
 
 .ana-team-link {
@@ -9146,8 +9818,9 @@ body[data-page-section="roster-recommend"] .layout {
 
 .ana-team-hits {
   color: var(--ink-2);
-  font: var(--type-meta);
+  font: var(--type-badge);
   text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 .ana-team-hits.full {
@@ -9641,6 +10314,11 @@ body[data-page-section="roster-recommend"] .layout {
     grid-template-columns: minmax(0, 1fr);
   }
 
+  body[data-page-section="analyze"] .tool-head {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
   .roster-scan-grid {
     grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
   }
@@ -9750,6 +10428,94 @@ body[data-page-section="roster-recommend"] .layout {
 
   .ana-team-hits {
     text-align: left;
+  }
+
+  /* Dải bước: chỉ bước đang làm giữ chữ, bước khác còn số/dấu ✓. */
+  .ana-flow-step:not([data-state="current"]) .ana-flow-label {
+    display: none;
+  }
+
+  .ana-flow-step + .ana-flow-step::before {
+    width: var(--space-16);
+  }
+
+  .ana-drop {
+    gap: var(--space-14);
+    padding: var(--space-20) var(--space-16);
+  }
+
+  .ana-drop-icon {
+    width: var(--control-48);
+    height: var(--control-48);
+  }
+
+  .ana-kinds-list,
+  .ana-how {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ana-pick-actions > .ana-btn {
+    flex: 1 1 auto;
+  }
+
+  .ana-layout[data-stage="work"] .ana-pick {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Bảng diff: tên tướng đủ hàng, 2 chiến pháp chung hàng, binh thư + "Đội dùng" xuống dưới. */
+  .ana-diff-head {
+    display: none;
+  }
+
+  .ana-diff-hero:not([data-status="missing"]) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .ana-diff-name {
+    grid-column: 1 / -1;
+  }
+
+  .ana-diff-hero .ana-diff-tac {
+    grid-row: 2;
+  }
+
+  .ana-diff-book {
+    grid-row: 3;
+    grid-column: 1 / -1;
+  }
+
+  .ana-diff-missing {
+    grid-row: 4;
+    grid-column: 1 / -1;
+  }
+
+  .ana-editor-foot {
+    flex-direction: column;
+    align-items: stretch;
+    position: static;
+    box-shadow: none;
+  }
+
+  .ana-progress {
+    flex: none;
+  }
+
+  .ana-season {
+    flex-wrap: wrap;
+    white-space: normal;
+  }
+
+  .ana-season .ana-input {
+    width: 100%;
+  }
+
+  .ana-editor-foot .ana-ready-note {
+    flex: none;
+    text-align: left;
+  }
+
+  .ana-editor-foot .ana-compare-run {
+    margin-left: 0;
   }
 
   .roster-scan-grid,
