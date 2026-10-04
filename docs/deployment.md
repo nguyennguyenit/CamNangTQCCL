@@ -21,15 +21,15 @@ Project deploy is split into three surfaces:
 
 ## Latest Static Pages Deploy
 
-- Date: 2026-09-28
+- Date: 2026-10-04
 - Production URL: `https://tqccl.com` (primary). `https://www.tqccl.com` returns `301` to the same path and query through a zone Redirect Rule; `https://tqccl.pages.dev` hands over through the head bridge script.
-- Deployment URL: `https://3a856c2d.tqccl.pages.dev`
-- Deployment ID: `3a856c2d-f1ef-4d79-8d0f-9efd75f103c2`
-- Source commit: `ad2ceb7` (clean `main` = `origin/main`; CI run `36334247045` green on `9a2dc7e`, later commits docs-only). First release with the `/zh/` mirror, community features, blog, privacy page and book logo.
-- Method: `COMMUNITY_API_ORIGIN=https://tqccl-community.nguyennlt-ncc.workers.dev npm run build`, `npm run verify` (3305 files), Wrangler direct upload from the repository root so `functions/api/[[path]].ts` ships with the site. Pages service binding `COMMUNITY` → `tqccl-community`.
-- Preview verified: `https://fb5ec929.tqccl.pages.dev` (alias `https://release-260928.tqccl.pages.dev`): 21 routes incl. `/zh/`, `/chien-bao/`, `/quan-tri/`, `/bai-viet/`, `/chinh-sach-bao-mat/`, `/rss.xml`, `/llms.txt`, `/api/me`, `/api/posts`, 404; canonical `https://tqccl.com/`; Chromium load of landing, zh landing, Đội chuẩn, zh Đội khác, Tra cứu, Khai hoang and a team detail with its community section, no page errors.
-- Production verified: `/`, `/zh/`, `/chinh-sach-bao-mat/`, `/bai-viet/`, `/api/me`, `/logo.png` return 200; `https://www.tqccl.com/zh/` → 301 `https://tqccl.com/zh/`; Google sign-in start on `tqccl.com` returns redirect URI `https://tqccl.com/api/auth/callback/google`.
-- Previous production / rollback targets: `d3b75ea5-86fa-46c8-9917-596d30808b89` (`7422a5d`, primary-domain release), `c72f8f75-4028-4572-82c2-709f52b7ec76` (`877adf1`).
+- Deployment URL: `https://356b1c3d.tqccl.pages.dev`
+- Deployment ID: `356b1c3d-f215-43f4-99e4-3b6517e4bc92`
+- Source commit: `d72d6fc` (clean `main` = `origin/main`). Soi đội redesign (`e346ac4`) + localization generation `54b1dae5…`.
+- Method: `pages-deploy.yml` (workflow_dispatch, run `37192041466`): `npm ci`, `npm run build` with `COMMUNITY_API_ORIGIN=https://tqccl-community.nguyennlt-ncc.workers.dev`, `npm run verify`, Wrangler direct upload from the repository root so `functions/api/[[path]].ts` ships with the site. Local gate before release: `npm run check`, `build`, `verify` (3342 files), `test:dist` 32/32, `test:node` 471/471, `test:e2e` 403/403, `python3 -m unittest discover -s tests` 393 OK, `team_route_handles --check`.
+- Preview verified: `https://92435c10.tqccl.pages.dev` (alias `https://release-261004.tqccl.pages.dev`, local Wrangler upload of the same tree): `/`, `/soi-doi-tu-anh/`, `/zh/soi-doi-tu-anh/`, `/api/me`, `/doi-chuan/` return 200; Chromium run of the Soi đội flow (image → review with Không chắc/Không rõ → compare) with stubbed Turnstile/Vision Worker, no layout overflow.
+- Production verified: `/`, `/soi-doi-tu-anh/`, `/zh/soi-doi-tu-anh/`, `/api/me`, `/bai-viet/` return 200; `css/styles.css` and `js/analyze.js` serve the redesign; the same Chromium Soi đội flow passes at 1440 light and 390 dark.
+- Previous production / rollback targets: `0751d514-426f-423b-90ac-5123af3348aa` (`391dae7`, two-side Soi đội), `3a856c2d-f1ef-4d79-8d0f-9efd75f103c2` (`ad2ceb7`).
 
 ## Latest Community Worker Deploy
 
