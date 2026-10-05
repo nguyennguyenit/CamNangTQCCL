@@ -12,8 +12,8 @@
     "notes": {
       "approvedDisplaySlots": 11,
       "blocks": 1967,
-      "concreteInventorySha256": "1abf251257fd03cac1ee6f7d20472ea1da4e6bd4427e949dbf66c4cad178a8f3",
-      "concreteLocationCount": 56634,
+      "concreteInventorySha256": "cfeb07cc60d2de7a5898864d09dd6e512fc2c62ab69212fab238ca156334924a",
+      "concreteLocationCount": 56661,
       "hanBlocks": 1928,
       "lookupReviewObligations": 3503,
       "siteLedgerObligations": 2073,
@@ -75,7 +75,7 @@
       "hột": "red-copy count"
     }
   },
-  "policyVersion": "site-vi-261005-chieu-mo-goi-y-kho-redesign",
+  "policyVersion": "site-vi-261005-goi-y-kho-chu-moi",
   "routeFamilies": [
     {
       "entrypoints": [

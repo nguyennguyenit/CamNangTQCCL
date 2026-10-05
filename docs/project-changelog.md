@@ -9,7 +9,7 @@
 - Đội khóa đọc từ ảnh không có tướng giữ chiến pháp: thẻ kết quả hiện hai hàng Tướng / Chiến pháp thay vì đoán.
 - Kho lưu thêm `scans.{heroes,tactics,builtTeams} = {images, at}` (số ảnh đã đọc, lần đọc gần nhất; giá trị lạ bị bỏ khi đọc lại). `seasonNameText` (tên mùa không kèm số đội) tách khỏi `seasonOptionText`.
 - Token: thêm `--warn`/`--warn-bg` (hổ phách: Dùng biến thể, Thiếu N món, Đã thay; theme tối tự suy, ≥ 4,5:1). Danh mục `buoc-cong-cu` viết lại cho `.roster-flow`; `the`, `the-cong-cu`, `tool-notice`, `tool-text-action`, `chip-bo-tuong` cập nhật selector/probe.
-- Bản dịch: đổi chữ 14 obligation `authored-vi` `ui:roster/*` theo chữ mới (giữ số obligation); chưa thêm obligation cho chữ mới. Publish chung với Chiêu mộ (xem mục Chiêu mộ 2026-10-05).
+- Bản dịch: đổi chữ 14 obligation `authored-vi` `ui:roster/*` theo chữ mới, publish chung với Chiêu mộ (xem mục Chiêu mộ 2026-10-05). Sau đó thêm 27 obligation `authored-vi` cho chữ mới (thẻ thiết lập, thẻ đọc ảnh, đếm chip / Hiện tất cả, kiểm tra kho, tóm tắt kho, pill bậc / `n/5 đội` / Thiếu N món, "Dùng X thay Y", nguồn lời giải thích); không đổi obligation `translate`. Policy `site-vi-261005-goi-y-kho-chu-moi` (baseline 56661 vị trí cụ thể), publish generation `ae77c9c3…` (thay `2919664e…`, đã prune), re-pin `pipeline/team-route-handles.json`; `WORKFLOW_BUILD_ID` MCP không đổi.
 
 ### Tests
 
