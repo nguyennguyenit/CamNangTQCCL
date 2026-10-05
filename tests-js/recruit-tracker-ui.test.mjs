@@ -14,7 +14,7 @@ import {
   setPity,
   updateBanner,
 } from "../js/recruit-tracker-store.js";
-import { buildRecruitTrackerViewModel, expiryView } from "../js/recruit-tracker.js";
+import { buildRecruitTrackerViewModel, expiryView, logDateLabel } from "../js/recruit-tracker.js";
 
 const TODAY = "2026-07-10";
 const CJK = /[\u3400-\u9fff\uf900-\ufaff]/u;
@@ -35,13 +35,13 @@ test("empty account shows onboarding and quick buttons offer the full day", () =
   const view = viewOf(createDefaultRecruitTrackerState());
   assert.equal(view.isEmpty, true);
   assert.equal(view.daily.title, "Danh tướng PK · Hôm nay");
-  assert.deepEqual(view.daily.quick.map(({ label, pulls, disabled, countText }) => ({ label, pulls, disabled, countText })), [
-    { label: "2 miễn phí", pulls: 2, disabled: false, countText: "+2" },
-    { label: "Đủ 4", pulls: 4, disabled: false, countText: "+4" },
+  assert.deepEqual(view.daily.quick.map(({ label, pulls, disabled, sub }) => ({ label, pulls, disabled, sub })), [
+    { label: "2 miễn phí", pulls: 2, disabled: false, sub: "Ghi +2 lượt không ra" },
+    { label: "Đủ 4", pulls: 4, disabled: false, sub: "Ghi 4 lượt rẻ còn lại" },
   ]);
   assert.equal(view.daily.fiveStarDisabled, false);
   assert.equal(view.daily.hint, "");
-  assert.equal(view.stats.text, "TB — lượt/5★ · 0× 5★ · chuỗi 0 ngày");
+  assert.deepEqual([view.stats.averageText, view.stats.averageSub], ["—", "chưa có 5★"]);
 });
 
 test("quick buttons clamp to the pulls left today and disable with a hint once the day is full", () => {
@@ -54,16 +54,21 @@ test("quick buttons clamp to the pulls left today and disable with a hint once t
   assert.equal(view.daily.todayText, "Hôm nay 3/4");
   const [free, fill] = view.daily.quick;
   assert.equal(free.pulls, 1);
-  assert.equal(free.countText, "+1");
+  assert.equal(free.sub, "Ghi +1 lượt không ra");
   assert.equal(free.ariaLabel, "2 miễn phí (ghi 1 lượt không ra)");
   assert.equal(fill.pulls, 1);
   assert.equal(fill.disabled, false);
+  assert.equal(view.daily.cheapText, "hôm nay còn 1 lượt rẻ");
 
   state = recordDailyMisses(state, { accountId, date: TODAY, pulls: fill.pulls, now: now() });
   view = viewOf(state);
-  assert.deepEqual(view.daily.quick.map((quick) => [quick.pulls, quick.disabled, quick.countText]), [[0, true, ""], [0, true, ""]]);
+  assert.deepEqual(view.daily.quick.map((quick) => [quick.pulls, quick.disabled, quick.sub]), [
+    [0, true, "Hôm nay đã đủ 4 lượt"],
+    [0, true, "Hôm nay đã đủ 4 lượt"],
+  ]);
   assert.equal(view.daily.quick[1].ariaLabel, "Đủ 4 (hôm nay đã đủ 4 lượt)");
   assert.equal(view.daily.fiveStarDisabled, true);
+  assert.equal(view.daily.cheapText, "hôm nay đã đủ 4 lượt");
   assert.equal(view.daily.hint, "Hôm nay đã ghi đủ 4 lượt.");
   // Hôm sau: lượt rẻ về lại 4, bảo hiểm vẫn cộng dồn.
   const tomorrow = viewOf(state, [], "2026-07-11");
@@ -81,7 +86,9 @@ test("pity keeps the real count but clamps the percent, and warns only at or pas
 
   const view = viewOf(state);
   assert.deepEqual(view.daily.pity, { value: 17, limit: 30, remaining: 13, isOverLimit: false, percent: 57 });
-  assert.equal(view.daily.pityText, "17/30");
+  assert.equal(view.daily.pityText, "17 / 30");
+  // Ô chọn tài khoản mang bảo hiểm gói ngày của từng tài khoản.
+  assert.deepEqual(view.accounts.map((account) => account.optionText), ["Chính · 17/30"]);
   assert.equal(view.daily.remainingText, "Còn 13 lượt");
   assert.equal(view.daily.warning, "");
   // Đồng bộ số không tính là lượt quay hôm nay.
@@ -90,12 +97,12 @@ test("pity keeps the real count but clamps the percent, and warns only at or pas
   const [banner] = view.limitedBanners;
   assert.equal(banner.name, "Kỳ Tật Như Phong");
   assert.deepEqual(banner.pity, { value: 31, limit: 30, remaining: 0, isOverLimit: true, percent: 100 });
-  assert.equal(banner.pityText, "31/30");
+  assert.equal(banner.pityText, "31 / 30");
   assert.equal(banner.warning, "Kiểm tra lại dữ liệu/quy tắc game");
   assert.doesNotMatch(banner.warning, CJK);
 });
 
-test("log rows read as miss, 5★ with its pull count, and pity sync, newest first", () => {
+test("log rows read as miss, 5★ with its pull count, and pity sync, newest first, with relative dates and daily slots", () => {
   let state = createDefaultRecruitTrackerState();
   state = renameAccount(state, state.activeAccountId, "主账号 Main", { now: now() });
   const accountId = state.activeAccountId;
@@ -104,10 +111,10 @@ test("log rows read as miss, 5★ with its pull count, and pity sync, newest fir
   state = recordDailyFiveStar(state, { accountId, date: TODAY, hitAt: 2, pullsAfter: 0, heroName: "Tào Tháo", heroValueClass: "Chủ lực", note: "đẹp", now: now() });
 
   const view = viewOf(state, [{ name: "Lưu Bị", chinese: "刘备" }, { name: "SP Mã Siêu", chinese: "SP马超" }]);
-  assert.deepEqual(view.log.map((row) => [row.date, row.text, row.bannerName]), [
-    [TODAY, "★ Tào Tháo · lượt 27", "Danh tướng PK"],
-    [TODAY, "+2 không ra", "Danh tướng PK"],
-    ["2026-07-09", "Đồng bộ 23 lượt", "Danh tướng PK"],
+  assert.deepEqual(view.log.map((row) => [row.date, row.dateLabel, row.text, row.bannerName, row.slotText]), [
+    [TODAY, "Hôm nay", "★ Tào Tháo · lượt 27", "Danh tướng PK", ""],
+    [TODAY, "Hôm nay", "+2 không ra", "Danh tướng PK", "Lượt 1–2/4"],
+    ["2026-07-09", "Hôm qua", "Đồng bộ 23 lượt", "Danh tướng PK", ""],
   ]);
   assert.equal(view.log[0].valueLabel, "Chủ lực");
   assert.equal(view.log[0].valueBadgeClass, "rt-value-accent");
@@ -134,7 +141,10 @@ test("stats summarise average pulls per 5★, total 5★ and the daily streak", 
   assert.equal(view.stats.fiveStars, 2);
   assert.equal(view.stats.averagePulls, 15.5);
   assert.equal(view.stats.streakDays, 3);
-  assert.equal(view.stats.text, "TB 15.5 lượt/5★ · 2× 5★ · chuỗi 3 ngày");
+  assert.deepEqual(
+    [view.stats.averageText, view.stats.averageSub, view.stats.fiveStarsSub, view.stats.streakSub],
+    ["15,5", "thấp hơn mốc 30", "0 Chủ lực", "ngày liên tiếp"],
+  );
 });
 
 test("limited banners show the expiry countdown and split archived ones out", () => {
@@ -145,12 +155,19 @@ test("limited banners show the expiry countdown and split archived ones out", ()
   ({ state, id: past } = withLimited(state, { name: "Đã qua", expiresAt: "2026-07-01" }));
   state = setBannerArchived(state, past, true, { now: now() });
   let view = viewOf(state);
-  assert.deepEqual(view.activeBanners.map((item) => [item.name, item.expiry.text, item.expiry.expired]), [["Sắp hết", "còn 3 ngày", false]]);
-  assert.deepEqual(view.archivedBanners.map((item) => [item.name, item.expiry.text, item.expiry.expired]), [["Đã qua", "hết hạn", true]]);
+  assert.deepEqual(view.activeBanners.map((item) => [item.name, item.expiry.text, item.expiry.tone]), [["Sắp hết", "còn 3 ngày", ""]]);
+  assert.deepEqual(view.archivedBanners.map((item) => [item.name, item.expiry.text, item.expiry.expired, item.expiry.tone]), [["Đã qua", "hết hạn", true, "avoid"]]);
 
   state = updateBanner(state, soon, { expiresAt: "" }, { now: now() });
   view = viewOf(state);
-  assert.deepEqual(view.activeBanners[0].expiry, { text: "", expired: false });
-  assert.deepEqual(expiryView("2026-07-10", TODAY), { text: "hết hạn hôm nay", expired: false });
-  assert.deepEqual(expiryView("2026-07-11", TODAY), { text: "còn 1 ngày", expired: false });
+  assert.deepEqual(view.activeBanners[0].expiry, { text: "", expired: false, tone: "" });
+  assert.deepEqual(expiryView("2026-07-10", TODAY), { text: "hết hạn hôm nay", expired: false, tone: "warn" });
+  assert.deepEqual(expiryView("2026-07-11", TODAY), { text: "còn 1 ngày", expired: false, tone: "" });
+});
+
+test("log dates read as today, yesterday, day/month this year and the full date for older years", () => {
+  assert.deepEqual(
+    ["2026-07-10", "2026-07-09", "2026-01-31", "2025-12-31"].map((date) => logDateLabel(date, TODAY)),
+    ["Hôm nay", "Hôm qua", "31/01", "31/12/2025"],
+  );
 });

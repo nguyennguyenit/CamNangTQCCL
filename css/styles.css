@@ -44,6 +44,8 @@
   --overlay: rgba(0, 0, 0, 0.5);
   --good: #1F7A4D;
   --good-bg: #E0EFE6;
+  --warn: #7A4B00;
+  --warn-bg: #FBEBD0;
   --avoid: #B8232C;
   --avoid-bg: #FBF1EE;
   --ky: #2563B8;
@@ -57,6 +59,7 @@
   --focus-ring-band: #E36A6F;
   --qr-panel: #FFFFFF;
   --transparent: rgba(0, 0, 0, 0);
+  --gold: #C9A23A;
   --f-nguy: #1F3A93;
   --f-thuc: #1F7A4D;
   --f-ngo: #B8232C;
@@ -169,8 +172,8 @@
   --type-portrait-han-dialog: 600 84px/1 'Songti TC', 'Noto Serif CJK TC', serif;
   --type-cam-nang-number: 700 34px/1 'Noto Serif Display', var(--font-han-serif), serif;
   --type-card-title-sm: 700 17px/1.2 'Noto Serif Display', var(--font-han-serif), serif;
-  --type-pity-unit: 400 18px/1.4 'Be Vietnam Pro', var(--font-han), sans-serif;
-  --type-pity-value-mobile: 700 52px/0.9 'Noto Serif Display', var(--font-han-serif), serif;
+  --type-pity-unit: 600 18px/1.4 'Be Vietnam Pro', var(--font-han), sans-serif;
+  --type-pity-value: 700 84px/0.9 'Noto Serif Display', var(--font-han-serif), serif;
   --type-tool-step-title: 700 16px/1.2 'Be Vietnam Pro', var(--font-han), sans-serif;
   --type-variant-label: 700 9.6px/1.2 'Be Vietnam Pro', var(--font-han), sans-serif;
   --type-badge-small: 600 9.92px/1.2 'Be Vietnam Pro', var(--font-han), sans-serif;
@@ -318,6 +321,8 @@
   --focus-ring: #F2868B;
   --good: #5FCE95;
   --good-bg: #1C3328;
+  --warn: #E8B65A;
+  --warn-bg: #3A2C12;
   --avoid: #FFA3A8;
   --avoid-bg: #4D262A;
   --ky: #6AA6FF;
@@ -889,8 +894,8 @@ a.lookup-more:hover {
 .cham-su-card,
 .roster-scan-card,
 .roster-review-panel,
-.roster-locked-team,
 .roster-result-team,
+.roster-missing,
 .season-config-detail {
   border: var(--border-hair) solid var(--line);
   border-radius: var(--radius-10);
@@ -7891,24 +7896,29 @@ body[data-page-section="roster-recommend"] .layout {
   cursor: not-allowed;
 }
 
-/* ---------- Chiêu mộ (Recruit, RecruitMobile) ---------- */
-/* Bố cục: hàng tài khoản (+ chip ☁ đồng bộ) → lưới [thẻ Hôm nay, lời mời đăng nhập, gói hạn giờ | thống kê,
-   nhật ký]; ≤980px một cột theo đúng thứ tự đó. Hộp thoại dùng lại `.footer-dialog` + `.cm-field`. */
+/* ---------- Chiêu mộ (Recruit, RecruitFiveStar + bản Mobile) ---------- */
+/* Bố cục: đầu mục → hàng tài khoản → lưới [Hôm nay, lời mời đăng nhập, Nhật ký | Thống kê, Gói hạn giờ, thông báo
+   lưu dữ liệu]; ≤980px một cột theo thứ tự RecruitMobile: Hôm nay, lời mời, Thống kê, Gói hạn giờ, Nhật ký,
+   thông báo. Hộp thoại dùng lại `.footer-dialog` + `.cm-field`. */
 .rt-shell {
   display: grid;
-  gap: var(--space-22);
+  gap: var(--space-28);
 }
 
 /* Mọi phần tử của công cụ ẩn bằng `hidden` phải ẩn thật, kể cả khi class của nó đặt `display`. */
-.rt-shell [hidden] {
+.rt-shell [hidden],
+.rt-dialog [hidden] {
   display: none;
 }
 
+/* Thẻ công cụ của Chiêu mộ: phẳng (không bóng), bo 14 như artboard. */
 .rt-section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-14);
-  padding: var(--space-24);
+  gap: var(--space-12);
+  padding: var(--space-18);
+  border-radius: var(--radius-14);
+  box-shadow: none;
 }
 
 .rt-section-head {
@@ -7918,83 +7928,161 @@ body[data-page-section="roster-recommend"] .layout {
   gap: var(--space-12);
 }
 
-/* Tiêu đề + meta cùng hàng, meta canh phải; hẹp thì meta xuống dòng. */
-.rt-section-head-inline {
-  flex-wrap: wrap;
-  align-items: baseline;
-}
-
-.rt-section-head-inline .rt-sub {
-  text-align: right;
-}
-
-.rt-section-head > div {
+.rt-section-heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
   min-width: 0;
 }
 
-/* Nút trong đầu thẻ ("+ Thêm gói") giữ một dòng; tiêu đề bên trái co và xuống dòng. */
+.rt-log .rt-section-heading {
+  gap: var(--space-2);
+}
+
+/* Nút trong đầu thẻ ("+ Thêm gói", "Chỉnh số") giữ một dòng; tiêu đề bên trái co và xuống dòng. */
 .rt-section-head > .rt-btn {
   flex: none;
-  gap: var(--space-6);
   white-space: nowrap;
 }
 
-.rt-section-title {
+.rt-section-title,
+.rt-card-title {
   margin: 0;
-  font: var(--type-list-title);
+  font: var(--type-tool-step-title);
 }
 
 .rt-sub {
   margin: 0;
   color: var(--muted);
-  font: var(--type-meta);
+  font: var(--type-small);
 }
 
 .rt-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
-  gap: var(--space-22);
+  grid-template-columns: minmax(0, 1fr) 380px; /* cột phụ 380px — con số artboard (Recruit.dc.html) */
+  gap: var(--space-24);
   align-items: start;
 }
 
 .rt-col {
   display: flex;
   flex-direction: column;
-  gap: var(--space-22);
+  gap: var(--space-18);
   min-width: 0;
 }
 
-/* Hàng tài khoản: nhãn + select + nút ⋯, chip đồng bộ dạt phải (xuống dòng khi hẹp). */
+/* ---------- Nút của công cụ ---------- */
+.rt-btn {
+  gap: var(--space-8);
+  cursor: pointer;
+}
+
+/* Nút chữ không viền (Xuất/Nhập JSON, Chỉnh số). */
+.rt-btn.rt-ghost {
+  padding: 0 var(--space-10);
+  border-color: var(--transparent);
+  background: var(--transparent);
+}
+
+.rt-btn.rt-ghost:hover {
+  border-color: var(--transparent);
+  background: var(--panel-2);
+  color: var(--ink);
+}
+
+/* Nút son ("Có 5★", "Lưu 5★"): chữ mực giấy `--bg` — cặp `--on-accent` trên `--accent` chỉ đạt 3,33:1 ở theme tối. */
+.rt-btn.rt-accent,
+.ana-btn.primary.rt-accent {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.rt-btn.rt-accent:hover,
+.ana-btn.primary.rt-accent:hover {
+  border-color: var(--accent-ink);
+  background: var(--accent-ink);
+  color: var(--bg);
+}
+
+/* Nút vuông chỉ có icon: 40px (sửa/xóa nhật ký, ⋯ của gói), 44px ở menu tài khoản, đóng hộp thoại và nút −/+. */
+.rt-icon-btn {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--control-40);
+  height: var(--control-40);
+  padding: 0;
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-10);
+  background: var(--panel);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.rt-icon-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.rt-account-toggle,
+.rt-dialog-close,
+.rt-stepper-btn {
+  width: var(--control-44);
+  height: var(--control-44);
+}
+
+/* ---------- Hàng tài khoản: [nhãn + select] | chip ☁, + Tài khoản, Xuất/Nhập JSON, ⋯ ---------- */
 .rt-account-bar {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-10);
-  padding: var(--space-12) var(--space-16);
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-14);
+  padding: var(--space-14) var(--space-18);
   border: var(--border-hair) solid var(--line);
   border-radius: var(--radius-14);
   background: var(--panel);
 }
 
-.rt-account-pick {
+.rt-account-field {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-width: 240px; /* con số artboard (Recruit.dc.html) */
 }
 
-.rt-account-bar .rt-select {
-  min-width: var(--size-col-200);
+.rt-field-label {
+  color: var(--ink-2);
+  font: var(--type-header-action);
+}
+
+.rt-account-field .rt-select {
+  width: 100%;
+}
+
+.rt-account-tools,
+.rt-account-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-10);
+}
+
+.rt-account-buttons {
+  gap: var(--space-6);
+}
+
+.rt-account-buttons .rt-btn {
+  padding: 0 var(--space-10);
 }
 
 /* ---------- Menu ⋯ (tài khoản, từng gói) ---------- */
 .rt-menu {
   position: relative;
   display: inline-flex;
-}
-
-/* Selector hai lớp để thắng `.rt-btn:not(.rt-primary)`: nút vuông 44px chỉ có icon. */
-.rt-menu .rt-menu-toggle {
-  width: var(--control-44);
-  padding: 0;
 }
 
 .rt-menu-panel {
@@ -8010,11 +8098,6 @@ body[data-page-section="roster-recommend"] .layout {
   border-radius: var(--radius-12);
   background: var(--panel);
   box-shadow: var(--shadow-menu);
-}
-
-.rt-account-menu .rt-menu-panel {
-  right: auto;
-  left: 0;
 }
 
 .rt-menu-item {
@@ -8041,14 +8124,7 @@ body[data-page-section="roster-recommend"] .layout {
   color: var(--avoid);
 }
 
-.rt-menu-sep {
-  width: 100%;
-  margin: var(--space-4) 0;
-  border: none;
-  border-top: var(--border-hair) solid var(--line-2);
-}
-
-/* Ô nhập JSON: input file phủ trong suốt trên nhãn mục menu — vẫn bấm/focus được. */
+/* Nút Nhập JSON: input file phủ trong suốt trên nhãn — vẫn bấm/focus được. */
 .rt-import {
   position: relative;
   overflow: hidden;
@@ -8069,20 +8145,31 @@ body[data-page-section="roster-recommend"] .layout {
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-6);
-  margin-left: auto;
+}
+
+.rt-sync-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  min-height: var(--control-32);
+  padding: 0 var(--space-12);
+  border-radius: var(--radius-999);
+  background: var(--panel-2);
   color: var(--muted);
-  font: var(--type-small);
+  font: var(--type-badge-chip);
 }
 
 .rt-sync-icon {
   display: inline-flex;
 }
 
-.rt-sync[data-status="synced"] .rt-sync-icon {
+.rt-sync[data-status="synced"] .rt-sync-pill {
+  background: var(--good-bg);
   color: var(--good);
 }
 
-.rt-sync[data-status="error"] {
+.rt-sync[data-status="error"] .rt-sync-pill {
+  background: var(--avoid-bg);
   color: var(--avoid);
 }
 
@@ -8092,43 +8179,47 @@ body[data-page-section="roster-recommend"] .layout {
 }
 
 /* ---------- Thẻ Hôm nay (gói ngày) ---------- */
-.rt-today-title {
-  margin: 0;
+.rt-today {
+  gap: var(--space-18);
+  padding: var(--space-24);
 }
 
-.rt-today-body {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-14);
-}
-
+.rt-today-body,
 .rt-pity-block {
   display: flex;
   flex-direction: column;
-  gap: var(--space-10);
+  gap: var(--space-18);
 }
 
 .rt-pity-figures {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
-  gap: var(--space-12);
+  gap: var(--space-10);
 }
 
 .rt-pity-value {
   color: var(--accent);
-  font: var(--type-score-panel);
+  font: var(--type-pity-value);
   font-variant-numeric: tabular-nums;
 }
 
 .rt-pity-unit {
-  color: var(--muted);
+  color: var(--ink-2);
   font: var(--type-pity-unit);
 }
 
+.rt-pity-caption {
+  color: var(--muted);
+  font: var(--type-book-line);
+}
+
+/* Thanh bảo hiểm: nền giấy đậm, phần đã quay chuyển vàng → son, vạch mốc 1/3 và 2/3. */
 .rt-pity-meter {
+  position: relative;
   display: block;
-  height: var(--space-10);
-  border-radius: var(--radius-5);
+  height: var(--space-14);
+  border-radius: var(--radius-999);
   background: var(--panel-2);
   overflow: hidden;
 }
@@ -8136,20 +8227,59 @@ body[data-page-section="roster-recommend"] .layout {
 .rt-pity-fill {
   display: block;
   height: 100%;
-  background: var(--accent);
+  border-radius: var(--radius-999);
+  background: linear-gradient(to right, var(--gold), var(--accent));
+}
+
+.rt-pity-tick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 33.333%;
+  width: var(--border-hair);
+  background: var(--line);
+}
+
+.rt-pity-tick:last-child {
+  left: 66.667%;
 }
 
 .rt-pity-meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  margin: 0;
+  justify-content: space-between;
+  gap: var(--space-12);
   color: var(--muted);
   font: var(--type-small);
 }
 
-.rt-pity-meta strong {
+.rt-today-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-10);
+}
+
+.rt-today-count {
   color: var(--ink);
+  font: var(--type-chip-pill);
+}
+
+/* 4 vạch lượt rẻ hôm nay: đã quay tô mực, còn lại giấy viền. */
+.rt-pips {
+  display: inline-flex;
+  gap: var(--space-4);
+}
+
+.rt-pip {
+  width: 34px; /* con số artboard (Recruit.dc.html) */
+  height: var(--space-8);
+  border-radius: var(--radius-999);
+  background: var(--line);
+}
+
+.rt-pip.is-on {
+  background: var(--select);
 }
 
 .rt-warning {
@@ -8158,35 +8288,80 @@ body[data-page-section="roster-recommend"] .layout {
   font: var(--type-badge);
 }
 
-/* Hai nút nhanh chia đôi hàng; số lượt thật sẽ ghi (+2/+4, đã kẹp) hiện son bên cạnh nhãn. */
+/* 3 nút ghi nhanh: "2 miễn phí" (giấy), "Đủ 4" (mực), "Có 5★" (son); mỗi nút có dòng phụ nói số sẽ ghi. */
 .rt-quick {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-10);
 }
 
-.rt-quick .rt-quick-btn {
-  gap: var(--space-8);
+.rt-quick-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--space-64);
+  padding: var(--space-10) var(--space-14);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-12);
+  background: var(--panel);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
-.rt-quick-count {
-  color: var(--accent);
-  font-variant-numeric: tabular-nums;
-}
-
-.rt-btn:disabled .rt-quick-count {
-  color: inherit;
-}
-
-.rt-section .rt-five-btn,
-.rt-section .rt-adjust {
+.rt-quick-label {
+  display: inline-flex;
+  align-items: center;
   gap: var(--space-6);
+  font: var(--type-tool-step-title);
 }
 
-.rt-section .rt-five-btn {
-  border-color: var(--accent-soft);
-  background: var(--accent-soft);
-  color: var(--accent-ink);
+.rt-quick-sub {
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+.rt-quick-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.rt-quick-fill {
+  border-color: var(--select);
+  background: var(--select);
+  color: var(--select-ink);
+}
+
+.rt-quick-fill .rt-quick-sub {
+  color: var(--select-ink-2);
+}
+
+.rt-quick-fill:hover:not(:disabled) {
+  border-color: var(--select-hover);
+  background: var(--select-hover);
+}
+
+.rt-quick-btn.rt-five-btn {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.rt-quick-btn.rt-five-btn .rt-quick-sub {
+  color: var(--bg);
+  opacity: .85;
+}
+
+.rt-quick-btn.rt-five-btn:hover:not(:disabled) {
+  border-color: var(--accent-ink);
+  background: var(--accent-ink);
+}
+
+.rt-quick-btn:disabled {
+  opacity: .55;
+  cursor: not-allowed;
 }
 
 .rt-today-hint {
@@ -8200,6 +8375,11 @@ body[data-page-section="roster-recommend"] .layout {
   display: flex;
   flex-direction: column;
   gap: var(--space-10);
+}
+
+.rt-onboard-title {
+  margin: 0;
+  font: var(--type-card-title-sm);
 }
 
 .rt-onboard-label {
@@ -8223,7 +8403,8 @@ body[data-page-section="roster-recommend"] .layout {
   bottom: var(--space-24);
   left: 50%;
   z-index: var(--z-30);
-  max-width: calc(100vw - var(--space-32));
+  width: max-content;
+  max-width: min(420px, calc(100vw - var(--space-32))); /* 420px — con số artboard (Recruit.dc.html) */
   transform: translateX(-50%);
   pointer-events: none;
 }
@@ -8232,16 +8413,18 @@ body[data-page-section="roster-recommend"] .layout {
   display: flex;
   align-items: center;
   gap: var(--space-12);
-  padding: var(--space-6) var(--space-6) var(--space-6) var(--space-16);
+  padding: var(--space-10) var(--space-10) var(--space-10) var(--space-16);
   border-radius: var(--radius-12);
   background: var(--band);
   color: var(--band-ink);
   box-shadow: var(--shadow-pop);
-  font: var(--type-small);
+  font: var(--type-control);
   pointer-events: auto;
 }
 
 .rt-toast-mark {
+  display: inline-flex;
+  flex: none;
   color: var(--band-good);
 }
 
@@ -8251,14 +8434,17 @@ body[data-page-section="roster-recommend"] .layout {
 }
 
 .rt-toast-undo {
+  display: inline-flex;
   flex: none;
+  align-items: center;
+  gap: var(--space-6);
   min-height: var(--control-44);
-  padding: 0 var(--space-14);
-  border: var(--border-hair) solid var(--band-control-line);
-  border-radius: var(--radius-8);
+  padding: 0 var(--space-12);
+  border: var(--border-hair) solid var(--band-btn-line);
+  border-radius: var(--radius-9);
   background: var(--transparent);
   color: var(--band-ink);
-  font: var(--type-control);
+  font: var(--type-chip-pill);
   cursor: pointer;
 }
 
@@ -8294,21 +8480,27 @@ body[data-page-section="roster-recommend"] .layout {
   gap: var(--space-12);
 }
 
-/* ---------- Gói hạn giờ ---------- */
+/* ---------- Gói hạn giờ (thẻ giấy nhạt: tên + hạn | ⋯, tiến độ, + Lượt / Có 5★) ---------- */
 .rt-limited-list {
-  display: grid;
-  gap: var(--space-12);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
 }
 
 .rt-banner {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 200px);
-  gap: var(--space-12) var(--space-16);
-  align-items: center;
-  padding: var(--space-14) var(--space-16);
-  border: var(--border-hair) solid var(--line-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+  padding: var(--space-14);
   border-radius: var(--radius-12);
   background: var(--panel-3);
+}
+
+.rt-banner-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-10);
 }
 
 .rt-banner-main {
@@ -8323,71 +8515,107 @@ body[data-page-section="roster-recommend"] .layout {
   overflow-wrap: anywhere;
 }
 
-.rt-banner-expiry {
+.rt-banner-expiry-row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
   color: var(--muted);
-  font: var(--type-small);
 }
 
-.rt-banner-expired .rt-banner-expiry {
+.rt-banner-clock {
+  display: inline-flex;
+}
+
+/* Chip hạn: giấy đậm khi còn ngày, vàng ở ngày cuối, đỏ khi đã quá hạn. */
+.rt-banner-expiry {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-24);
+  padding: 0 var(--space-9);
+  border-radius: var(--radius-999);
+  background: var(--panel-2);
+  color: var(--ink-2);
+  font: var(--type-badge);
+  white-space: nowrap;
+}
+
+.rt-banner-expiry[data-tone="warn"] {
+  background: var(--warn-bg);
+  color: var(--warn);
+}
+
+.rt-banner-expiry[data-tone="avoid"] {
+  background: var(--avoid-bg);
   color: var(--avoid);
 }
 
 .rt-banner-progress {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-}
-
-.rt-banner-count {
-  color: var(--ink);
-  font: var(--type-strong);
-  font-variant-numeric: tabular-nums;
-  text-align: right;
+  align-items: center;
+  gap: var(--space-10);
 }
 
 .rt-banner-meter {
+  flex: 1 1 auto;
   height: var(--space-8);
-  border-radius: var(--radius-4);
+}
+
+.rt-banner-count {
+  flex: none;
+  color: var(--ink);
+  font: var(--type-header-action);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .rt-banner-actions {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
   gap: var(--space-6);
-  grid-column: 1 / -1;
 }
 
-.rt-banner-actions .rt-menu {
-  margin-left: auto;
-}
-
-.rt-banner .rt-warning {
-  grid-column: 1 / -1;
+.rt-banner-actions .rt-btn {
+  padding: 0 var(--space-10);
 }
 
 /* Gói đã lưu trữ: chỉ còn tên, tiến độ và menu ⋯ (bỏ lưu trữ, xóa). */
 .rt-banner-archived {
+  border: var(--border-hair) solid var(--line-2);
   background: var(--panel);
 }
 
-.rt-banner-archived .rt-banner-actions > .rt-btn {
+.rt-banner-archived .rt-banner-actions {
   display: none;
 }
 
 .rt-archived-summary {
   display: flex;
   align-items: center;
+  justify-content: center;
   min-height: var(--control-44);
-  color: var(--muted);
+  border-radius: var(--radius-10);
+  color: var(--ink);
   font: var(--type-control);
+  list-style: none;
   cursor: pointer;
 }
 
-/* ---------- Thống kê ---------- */
+.rt-archived-summary::-webkit-details-marker {
+  display: none;
+}
+
+.rt-archived-summary:hover {
+  background: var(--panel-2);
+}
+
+.rt-archived[open] .rt-archived-summary {
+  margin-bottom: var(--space-10);
+}
+
+/* ---------- Thống kê (cột phụ: 3 ô xếp dọc; mobile 3 cột) ---------- */
 .rt-stats-list {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-10);
   margin: 0;
 }
@@ -8396,20 +8624,25 @@ body[data-page-section="roster-recommend"] .layout {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  padding: var(--space-12);
-  border: var(--border-hair) solid var(--line-2);
-  border-radius: var(--radius-10);
+  padding: var(--space-14) var(--space-16);
+  border-radius: var(--radius-12);
   background: var(--panel-3);
 }
 
 .rt-stat-value {
   margin: 0;
-  color: var(--accent);
+  color: var(--ink);
   font: var(--type-score-card);
   font-variant-numeric: tabular-nums;
 }
 
-/* ---------- Nhật ký ---------- */
+.rt-stat-sub {
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+/* ---------- Nhật ký: [ngày 64px | chữ + gói · lượt/badge | sửa, xóa] ---------- */
 .rt-log-list {
   display: flex;
   flex-direction: column;
@@ -8420,12 +8653,8 @@ body[data-page-section="roster-recommend"] .layout {
 
 .rt-log-item {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  grid-template-areas:
-    "date text actions"
-    ". banner actions"
-    ". note note";
-  gap: var(--space-2) var(--space-12);
+  grid-template-columns: var(--size-col-64) minmax(0, 1fr) auto;
+  gap: var(--space-4) var(--space-12);
   align-items: center;
   padding: var(--space-10) 0;
   border-top: var(--border-hair) dashed var(--line-2);
@@ -8436,71 +8665,49 @@ body[data-page-section="roster-recommend"] .layout {
 }
 
 .rt-log-date {
-  grid-area: date;
   color: var(--muted);
   font: var(--type-meta);
   font-variant-numeric: tabular-nums;
 }
 
+.rt-log-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
 .rt-log-text {
-  grid-area: text;
+  color: var(--ink);
   font: var(--type-hero-name);
   overflow-wrap: anywhere;
 }
 
 .rt-log-item[data-result="fiveStar"] .rt-log-text {
-  color: var(--accent-ink);
-}
-
-.rt-log-item[data-result="set"] .rt-log-text {
-  color: var(--ink-2);
+  color: var(--accent);
 }
 
 .rt-log-banner {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-6);
-  grid-area: banner;
+  gap: var(--space-4);
   color: var(--muted);
   font: var(--type-meta);
 }
 
-.rt-log-item .rt-note {
-  grid-area: note;
-}
-
 .rt-log-actions {
   display: flex;
-  gap: var(--space-2);
-  grid-area: actions;
-}
-
-.rt-icon-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--control-36);
-  height: var(--control-36);
-  padding: 0;
-  border: none;
-  border-radius: var(--radius-8);
-  background: none;
-  color: var(--muted);
-  cursor: pointer;
-}
-
-.rt-icon-btn:hover {
-  background: var(--panel-2);
-  color: var(--ink);
+  gap: var(--space-4);
 }
 
 .rt-log-delete:hover {
+  border-color: var(--avoid);
   color: var(--avoid);
 }
 
 .rt-log-more {
-  align-self: flex-start;
+  align-self: center;
 }
 
 .rt-empty {
@@ -8526,7 +8733,206 @@ body[data-page-section="roster-recommend"] .layout {
   font: var(--type-meta);
 }
 
-/* ---------- Hộp thoại (form trong `.footer-dialog`) ---------- */
+/* ---------- Hộp thoại (form trong `.footer-dialog`; 5★ rộng hơn, RecruitFiveStar) ---------- */
+.rt-dialog {
+  width: min(480px, calc(100vw - 32px));
+}
+
+.rt-dialog-wide {
+  width: min(560px, calc(100vw - 32px)); /* 560px — con số artboard (RecruitFiveStar.dc.html) */
+}
+
+.rt-dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-18);
+  padding: var(--space-28);
+}
+
+.rt-dialog-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-12);
+}
+
+.rt-dialog-heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.rt-dialog-kicker {
+  color: var(--accent);
+  font: var(--type-field-caps);
+  letter-spacing: var(--type-field-caps-spacing);
+  text-transform: uppercase;
+}
+
+.rt-dialog-title {
+  margin: 0;
+  font: var(--type-hero-card-title);
+  overflow-wrap: anywhere;
+}
+
+.rt-dialog-lead {
+  margin: 0;
+  color: var(--ink-2);
+  font: var(--type-small);
+}
+
+.rt-dialog-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+.rt-dialog .cm-field {
+  gap: var(--space-6);
+  min-width: 0;
+}
+
+/* Nhãn trường trong hộp thoại: chữ thường 13/600 như artboard, không caps. */
+.rt-dialog .cm-label {
+  color: var(--ink-2);
+  font: var(--type-header-action);
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.rt-dialog .cm-input,
+.rt-dialog .cm-select {
+  background-color: var(--panel);
+  font: var(--type-select);
+}
+
+.rt-dialog .rt-input-readonly {
+  background-color: var(--panel-3);
+  color: var(--muted);
+}
+
+.rt-field-help {
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+.rt-field-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-12);
+}
+
+/* Thanh chọn "Ra 5★ ở lượt": radio native ẩn trên nhãn, ô đang chọn nổi giấy sáng. */
+.rt-seg {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.rt-seg > legend {
+  margin-bottom: var(--space-6);
+  padding: 0;
+}
+
+.rt-seg-track {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-self: start;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-radius: var(--radius-12);
+  background: var(--panel-2);
+}
+
+.rt-seg-option {
+  position: relative;
+  display: inline-flex;
+}
+
+.rt-seg-input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.rt-seg-text {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-38);
+  padding: 0 var(--space-14);
+  border-radius: var(--radius-9);
+  color: var(--muted);
+  font: var(--type-chip-pill);
+  white-space: nowrap;
+}
+
+.rt-seg-input:checked + .rt-seg-text {
+  background: var(--panel);
+  color: var(--ink);
+  box-shadow: var(--shadow-card);
+}
+
+.rt-seg-input:focus-visible + .rt-seg-text {
+  outline: var(--focus-width) solid var(--focus-ring);
+  outline-offset: var(--focus-outline-offset);
+}
+
+/* Ô số có nút −/+ ("Quay tiếp sau đó", số lượt của gói). */
+.rt-stepper {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: var(--space-8);
+}
+
+.rt-dialog .rt-stepper-input {
+  width: var(--control-72);
+  padding: 0;
+  font: var(--type-pity-unit);
+  text-align: center;
+  appearance: textfield;
+}
+
+.rt-stepper-input::-webkit-inner-spin-button,
+.rt-stepper-input::-webkit-outer-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+/* Khung "Sẽ ghi 5★ ở lượt N …": nền son nhạt, cập nhật mỗi lần đổi ô. */
+.rt-dialog-preview {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+  padding: var(--space-12) var(--space-14);
+  border-radius: var(--radius-12);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font: var(--type-tactic);
+}
+
+.rt-dialog-preview-icon {
+  display: inline-flex;
+  flex: none;
+  color: var(--accent);
+}
+
+.rt-dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-8);
+}
+
+.rt-dialog-actions .ana-btn {
+  gap: var(--space-8);
+}
+
 .ana-btn.primary.rt-danger,
 .ana-btn.primary.rt-danger:hover {
   border-color: var(--avoid);
@@ -8958,7 +9364,7 @@ body[data-page-section="roster-recommend"] .layout {
   color: var(--avoid);
 }
 
-/* Tiến độ đọc ảnh: hàng chip (nén ảnh · chống bot · đọc xong). Chữ lục trên giấy nhạt như `.roster-step`. */
+/* Tiến độ đọc ảnh: hàng chip (nén ảnh · chống bot · đọc xong). Chữ lục trên giấy nhạt như `.roster-pill[data-tone="good"]`. */
 .ana-steps {
   display: flex;
   flex-wrap: wrap;
@@ -9842,69 +10248,160 @@ body[data-page-section="roster-recommend"] .layout {
   font: var(--type-badge);
 }
 
-/* ---------- Gợi ý đội (Roster, RosterMobile) ---------- */
+/* ---------- Gợi ý đội (Roster, RosterResult + bản Mobile) ---------- */
+/* Hai màn trong cùng một trang: `review` (thiết lập, 3 thẻ đọc ảnh, kiểm tra kho, thanh thao tác dính đáy)
+   và `result` (dải tóm tắt kho, danh sách đội | Thiếu món). */
 .roster-recommend {
   display: flex;
   flex-direction: column;
-  gap: var(--space-22);
+  gap: var(--space-28);
 }
 
-.roster-steps {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-6);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  font: var(--type-table-cell);
-  text-align: center;
+.roster-recommend .tool-head {
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
-.roster-step {
-  padding: var(--space-8) var(--space-4);
-  border: var(--border-hair) solid var(--line);
-  border-radius: var(--radius-8);
-  background: var(--panel-3);
-  color: var(--muted);
+.roster-stage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-28);
 }
 
-/* Chữ lục trên nền giấy nhạt: cặp --good/--good-bg của StyleGuide chỉ đạt 4,47:1 ở theme sáng (< 4,5). */
-.roster-step[data-state="done"] {
-  border-color: transparent;
-  background: var(--panel-3);
-  color: var(--good);
-}
-
-.roster-step[data-state="current"] {
-  background: var(--select);
-  color: var(--select-ink);
-}
-
-.roster-step-mark {
-  display: inline-flex;
-  margin-right: var(--space-4);
-}
-
-.roster-step-mark::before {
-  content: "✓";
-}
-
-.roster-step-mark[hidden] {
+.roster-stage[hidden] {
   display: none;
 }
 
-.roster-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+/* Dải bước trải hết bề ngang: vạch nối co giãn sau mỗi bước, xanh khi bước trước đã xong (Roster.dc.html). */
+.roster-flow {
+  gap: var(--space-10);
+  margin: 0;
+}
+
+.roster-flow .ana-flow-step {
   gap: var(--space-10);
 }
 
-.roster-controls .ana-turnstile,
-.roster-controls .ana-status {
-  flex: 1 1 100%;
+.roster-flow .ana-flow-step:not(:last-child) {
+  flex: 1;
 }
 
+.roster-flow .ana-flow-step + .ana-flow-step::before {
+  content: none;
+}
+
+.roster-flow .ana-flow-step:not(:last-child)::after {
+  content: "";
+  flex: 1;
+  height: var(--border-heavy);
+  margin: 0 var(--space-6);
+  background: var(--line-2);
+}
+
+.roster-flow .ana-flow-step[data-state="done"]::after {
+  background: var(--good);
+}
+
+/* ---------- Thiết lập: mùa · ưu tiên · lời nhắc AI ---------- */
+.roster-settings {
+  display: grid;
+  grid-template-columns: minmax(0, 360px) auto minmax(0, 1fr);
+  gap: var(--space-16);
+  align-items: end;
+  padding: var(--space-18) var(--space-20);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-14);
+  background: var(--panel);
+}
+
+.roster-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.roster-field-label {
+  padding: 0;
+  margin: 0 0 var(--space-6);
+  color: var(--ink-2);
+  font: var(--type-header-action);
+}
+
+.roster-season-control .roster-field-label {
+  margin: 0;
+}
+
+/* Tên mùa dài: ô chọn co theo cột, không đẩy trang rộng hơn màn hình 320px. */
+.roster-season-control select {
+  width: 100%;
+  min-width: 0;
+}
+
+.roster-field-hint {
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
+.roster-season-note {
+  margin: 0;
+}
+
+.roster-season-note[hidden] {
+  display: none;
+}
+
+/* Ưu tiên gợi ý: radio thật, vẽ thành hai nút phân đoạn. */
+.roster-seg {
+  display: inline-flex;
+  align-self: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-radius: var(--radius-12);
+  background: var(--panel-2);
+}
+
+.roster-seg-option {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-38);
+  padding: 0 var(--space-14);
+  border-radius: var(--radius-9);
+  color: var(--muted);
+  font: var(--type-control);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.roster-seg-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.roster-seg-option:has(.roster-seg-input:checked) {
+  background: var(--panel);
+  color: var(--ink);
+  box-shadow: var(--shadow-card);
+}
+
+.roster-seg-option:has(.roster-seg-input:focus-visible) {
+  outline: var(--focus-width) solid var(--focus-ring);
+  outline-offset: var(--focus-outline-offset);
+}
+
+.roster-settings .tool-notice {
+  padding: 0;
+  border-radius: 0;
+  background: none;
+}
+
+/* ---------- Ba thẻ đọc ảnh ---------- */
 .roster-scan-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -9914,8 +10411,9 @@ body[data-page-section="roster-recommend"] .layout {
 .roster-scan-card {
   display: flex;
   flex-direction: column;
-  gap: var(--space-8);
+  gap: var(--space-12);
   padding: var(--space-16);
+  border-radius: var(--radius-14);
 }
 
 .roster-scan-head {
@@ -9925,10 +10423,17 @@ body[data-page-section="roster-recommend"] .layout {
   gap: var(--space-8);
 }
 
+.roster-scan-heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
 .roster-step-caps {
-  color: var(--accent);
-  font: var(--type-label-caps);
-  letter-spacing: var(--type-label-caps-spacing);
+  color: var(--muted);
+  font: var(--type-field-caps);
+  letter-spacing: var(--type-field-caps-spacing);
   text-transform: uppercase;
 }
 
@@ -9937,58 +10442,196 @@ body[data-page-section="roster-recommend"] .layout {
   font: var(--type-tool-step-title);
 }
 
-/* Nút "Chọn ảnh" (ô chọn tệp hệ thống ẩn như `.ana-file`) và tên tệp đã chọn. */
-.roster-file-row {
+/* Khung ảnh đã đọc: dải tối như ảnh chụp màn game, ghi số ảnh và lần đọc gần nhất. */
+.roster-scan-preview {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: var(--space-8);
-}
-
-.roster-file-row .ana-file-name {
-  min-width: 0;
+  min-height: var(--space-88);
+  padding: 0 var(--space-12);
+  border-radius: var(--radius-10);
+  background: var(--band);
+  color: var(--band-dim);
+  font: var(--type-small);
+  text-align: center;
   overflow-wrap: anywhere;
 }
 
-.roster-scan-count {
-  color: var(--muted);
-  font: var(--type-small);
+.roster-scan-preview svg {
+  flex: none;
 }
 
-.roster-scan-state {
+.roster-scan-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.roster-scan-actions .ana-btn {
+  gap: var(--space-8);
+  padding: 0 var(--space-10);
+}
+
+.roster-verify:empty {
+  display: none;
+}
+
+.roster-scan-status {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+  font: var(--type-control);
+}
+
+.roster-scan-status:empty {
+  display: none;
+}
+
+.roster-scan-status[data-kind="ok"] {
+  color: var(--good);
+}
+
+.roster-scan-status[data-kind="err"] {
+  color: var(--avoid);
+}
+
+/* ---------- Pill (số đã đọc, bậc, trạng thái, tóm tắt kho) ---------- */
+.roster-pill,
+.roster-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-5);
+  min-height: var(--control-24);
+  padding: 0 var(--space-9);
+  border: var(--border-hair) solid var(--transparent);
+  border-radius: var(--radius-999);
+  background: var(--panel-2);
+  color: var(--ink-2);
+  font: var(--type-badge);
+  white-space: nowrap;
+}
+
+.roster-pill[data-tone="outline"],
+.roster-status[data-status="legacy"] {
+  border-color: var(--line);
+  background: var(--panel);
+}
+
+/* Chữ lục trên giấy nhạt: cặp --good/--good-bg của StyleGuide chỉ đạt 4,47:1 ở theme sáng (< 4,5). */
+.roster-pill[data-tone="good"],
+.roster-status[data-status="build-now"] {
   background: var(--panel-3);
   color: var(--good);
 }
 
-.roster-scan-state[hidden] {
+.roster-pill[data-tone="warn"],
+.roster-status[data-status="variant"] {
+  background: var(--warn-bg);
+  color: var(--warn);
+}
+
+.roster-status[data-status="missing-tactic"],
+.roster-status[data-status="move-tactic"] {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+
+.roster-status[data-status="locked"] {
+  background: var(--select);
+  color: var(--select-ink);
+}
+
+/* ---------- Nút chữ không viền (Đọc lại, Vì sao?, Bỏ đội, Xóa toàn bộ kho) ---------- */
+.roster-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  min-height: var(--control-44);
+  padding: 0 var(--space-10);
+  border: var(--border-hair) solid var(--transparent);
+  border-radius: var(--radius-10);
+  background: none;
+  color: var(--ink);
+  font: var(--type-control);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.roster-ghost:hover {
+  color: var(--accent);
+}
+
+.roster-ghost:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.roster-ghost[hidden] {
   display: none;
 }
 
-/* Nút mở khu sửa kho chỉ có ở bề rộng hẹp; selector hai lớp để thắng `.rt-btn:not(.rt-primary)`. */
-.roster-recommend .roster-review-toggle {
-  display: none;
+.roster-danger,
+.roster-danger:hover {
+  color: var(--avoid);
 }
 
-.roster-review[hidden] {
-  display: none;
+/* ---------- Kiểm tra kho đã đọc ---------- */
+.roster-review {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-14);
+}
+
+.roster-section-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.roster-section-title {
+  margin: 0;
+  font: var(--type-list-title);
+}
+
+.roster-section-lead {
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-small);
 }
 
 .roster-review-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-14);
+  align-items: start;
 }
 
 .roster-review-panel {
   display: flex;
   flex-direction: column;
-  gap: var(--space-8);
+  gap: var(--space-12);
   padding: var(--space-16);
+  border-radius: var(--radius-14);
 }
 
-.roster-review-panel h3 {
+.roster-panel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-8);
+}
+
+.roster-panel-head h3 {
   margin: 0;
-  font: var(--type-list-title);
+  font: var(--type-tool-step-title);
+}
+
+.roster-panel-count {
+  color: var(--muted);
+  font: var(--type-small);
+  white-space: nowrap;
 }
 
 .roster-chip-list {
@@ -10008,11 +10651,11 @@ body[data-page-section="roster-recommend"] .layout {
   display: inline-flex;
   align-items: center;
   gap: var(--space-6);
-  min-height: var(--control-32);
-  padding: 0 var(--space-6) 0 var(--space-12);
+  min-height: var(--control-36);
+  padding: 0 var(--space-4) 0 var(--space-12);
   border: var(--border-hair) solid var(--line);
   border-radius: var(--radius-999);
-  background: var(--panel-3);
+  background: var(--panel);
   font: var(--type-tactic);
 }
 
@@ -10033,6 +10676,10 @@ body[data-page-section="roster-recommend"] .layout {
   color: var(--avoid);
 }
 
+.roster-more {
+  align-self: flex-start;
+}
+
 .roster-add-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -10050,9 +10697,18 @@ body[data-page-section="roster-recommend"] .layout {
   font: var(--type-select);
 }
 
+.roster-add-row .ana-btn {
+  gap: var(--space-8);
+  padding: 0 var(--space-10);
+}
+
 .roster-locked-list {
-  display: grid;
-  gap: var(--space-10);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .roster-locked-list[hidden] {
@@ -10061,242 +10717,395 @@ body[data-page-section="roster-recommend"] .layout {
 
 .roster-locked-team {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
+  align-items: flex-start;
+  gap: var(--space-12);
   padding: var(--space-12);
-  font: var(--type-small);
+  border-radius: var(--radius-10);
+  background: var(--panel-3);
 }
 
-.roster-locked-team strong {
+.roster-locked-icon {
+  display: inline-flex;
+  flex: none;
+  color: var(--accent);
+}
+
+.roster-locked-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.roster-locked-name {
   font: var(--type-strong);
 }
 
-.roster-locked-team p {
+.roster-locked-heroes {
+  font: var(--type-small);
+}
+
+.roster-locked-tactics,
+.roster-locked-note {
   margin: 0;
   color: var(--muted);
+  font: var(--type-meta);
 }
 
-/* Nút "Bỏ đội": nút phụ theo nội dung, không kéo hết bề ngang thẻ. */
-.roster-locked-team > .ana-btn {
-  align-self: flex-start;
-  margin-top: var(--space-4);
+/* Thanh thao tác dính đáy màn hình (Roster.dc.html: Xóa toàn bộ kho | Xác nhận · Gợi ý 5 đội). */
+.roster-actionbar {
+  position: sticky;
+  bottom: var(--space-16);
+  z-index: var(--z-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-12);
+  padding: var(--space-16);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-14);
+  background: var(--panel);
+  box-shadow: var(--shadow-pop);
 }
 
-.roster-results-slot {
-  display: grid;
-  gap: var(--space-22);
+.roster-actionbar-main {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-10);
+}
+
+.roster-actionbar .ana-btn,
+.roster-actionbar .roster-ghost {
+  gap: var(--space-8);
+  padding: 0 var(--space-16);
+}
+
+/* ---------- Màn kết quả ---------- */
+.roster-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-12);
+  padding: var(--space-16) var(--space-18);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-14);
+  background: var(--panel);
+}
+
+.roster-summary-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.roster-summary .roster-pill {
+  min-height: var(--control-28);
+  padding: 0 var(--space-11);
+  font: var(--type-header-action);
+}
+
+.roster-summary .ana-btn {
+  flex: none;
+  gap: var(--space-8);
+  padding: 0 var(--space-10);
+}
+
+.roster-results-slot:empty {
+  display: none;
 }
 
 .roster-results {
   display: grid;
-  gap: var(--space-22);
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: var(--space-24);
+  align-items: start;
 }
 
-.roster-results section {
-  display: grid;
+.roster-portfolio,
+.roster-missing-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-14);
+  min-width: 0;
+}
+
+.roster-portfolio-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: var(--space-10);
 }
 
-.roster-results h3 {
+.roster-portfolio-head .roster-pill {
+  min-height: var(--control-28);
+  padding: 0 var(--space-11);
+}
+
+.roster-legacy-note {
+  display: flex;
+  gap: var(--space-8);
   margin: 0;
-  font: var(--type-list-title);
+  padding: var(--space-10) var(--space-14);
+  border-radius: var(--radius-10);
+  background: var(--panel-2);
+  color: var(--ink-2);
+  font: var(--type-small);
+}
+
+.roster-legacy-note svg {
+  flex: none;
 }
 
 .roster-team-list {
-  display: grid;
-  gap: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
   margin: 0;
   padding: 0;
-  border: var(--border-hair) solid var(--line);
-  border-radius: var(--radius-12);
-  background: var(--panel);
   list-style: none;
-  overflow: hidden;
 }
 
 .roster-result-team {
-  display: grid;
-  grid-template-columns: var(--control-32) minmax(0, 1fr) auto;
-  gap: var(--space-4) var(--space-14);
-  align-items: center;
-  padding: var(--space-14) var(--space-16);
-  border-top: var(--border-hair) solid var(--line-2);
-  background: var(--panel);
+  display: flex;
+  gap: var(--space-16);
+  padding: var(--space-18);
+  border-radius: var(--radius-14);
 }
 
-/* Hàng có số thứ tự: số ở cột đầu, nội dung ở giữa, "Mở đội" ở cột cuối (không để auto-placement
-   chiếm cột số như bản trước). */
+/* Đội cũ chỉ để tham khảo: nền giấy nhạt, viền đứt, số thứ tự mờ. */
+.roster-result-team[data-source="legacy"] {
+  border-style: dashed;
+  background: var(--panel-3);
+  box-shadow: none;
+}
+
 .roster-rank {
-  grid-column: 1;
-  grid-row: 1 / span 2;
+  flex: none;
+  width: var(--control-28);
+  color: var(--accent);
+  font: var(--type-score-card);
+}
+
+.roster-result-team[data-source="legacy"] .roster-rank {
   color: var(--muted);
-  font: var(--type-list-title);
 }
 
 .roster-result-main {
-  grid-column: 2;
-  grid-row: 1 / span 2;
-}
-
-.roster-result-team > .ana-link-btn {
-  grid-column: 3;
-  grid-row: 1 / span 2;
-  justify-self: end;
-}
-
-/* Thẻ Thiếu món: không có số thứ tự; nội dung cột 1, "Mở đội" cột 2. */
-.roster-result-team.roster-missing {
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: start;
-  background: var(--panel-3);
-}
-
-.roster-result-team.roster-missing .roster-result-main {
-  grid-column: 1;
-  grid-row: auto;
-}
-
-.roster-result-team.roster-missing > .ana-link-btn {
-  grid-column: 2;
-  grid-row: 1;
-}
-
-.roster-missing-list,
-.roster-substitutes {
-  grid-column: 1 / -1;
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   gap: var(--space-10);
+  min-width: 0;
+}
+
+.roster-result-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.roster-result-name {
+  min-width: 0;
+  font: var(--type-card-title);
+  overflow-wrap: anywhere;
+}
+
+.roster-hero-rows {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.roster-hero-rows li {
+  display: grid;
+  grid-template-columns: minmax(0, 160px) minmax(0, 1fr);
+  gap: var(--space-2) var(--space-12);
+  padding: var(--space-8) 0;
+  border-top: var(--border-hair) dashed var(--line-2);
+}
+
+.roster-hero-rows li:first-child {
+  border-top: none;
+}
+
+.roster-hero-name {
+  font: var(--type-hero-name);
+}
+
+.roster-hero-tactics {
+  color: var(--accent-ink);
+  font: var(--type-tactic);
+}
+
+.roster-hero-list {
+  font: var(--type-tactic);
+}
+
+.roster-swap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8) var(--space-12);
+  padding: var(--space-10) var(--space-12);
+  border-radius: var(--radius-10);
+  background: var(--warn-bg);
+  color: var(--warn);
+  font: var(--type-tactic);
+}
+
+.roster-swap svg {
+  flex: none;
+}
+
+.roster-swap .roster-undo {
+  color: var(--ink);
+}
+
+.roster-open {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: var(--space-6);
+  min-height: var(--control-36);
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font: var(--type-control);
+  cursor: pointer;
+}
+
+.roster-open:hover {
+  color: var(--accent-strong);
+}
+
+/* ---------- Thiếu món ---------- */
+.roster-missing {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  padding: var(--space-18);
+  border-radius: var(--radius-14);
 }
 
 .roster-missing-slot {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-6) var(--space-10);
+  flex-direction: column;
+  gap: var(--space-12);
 }
 
-.roster-missing-slot > .roster-result-meta {
-  flex: 1 1 100%;
-  color: var(--ink-2);
+.roster-missing-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-10);
+}
+
+.roster-missing-text {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+  margin: 0;
+  color: var(--warn);
+  font: var(--type-control);
+}
+
+.roster-missing-text svg {
+  flex: none;
+}
+
+.roster-missing-line .ana-btn,
+.roster-substitute .ana-btn {
+  flex: none;
+  gap: var(--space-8);
+  padding: 0 var(--space-10);
+}
+
+.roster-subs-title {
+  margin: var(--space-4) 0 0;
+  color: var(--muted);
+  font: var(--type-field-caps);
+  letter-spacing: var(--type-field-caps-spacing);
+  text-transform: uppercase;
 }
 
 .roster-substitutes {
-  flex: 1 1 100%;
-  gap: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.roster-substitutes > li {
+.roster-substitute {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-4) var(--space-10);
+  gap: var(--space-10);
+  padding: var(--space-12);
+  border-radius: var(--radius-10);
+  background: var(--panel-3);
 }
 
-.roster-substitute-name {
-  font: var(--type-strong);
-}
-
-.roster-explain {
-  flex: 1 1 100%;
-  margin: 0;
-}
-
-.roster-explain:empty {
-  display: none;
-}
-
-.roster-source-legacy {
-  grid-column: 1 / -1;
-  justify-self: start;
-}
-
-.roster-undo {
-  grid-column: 1 / -1;
-  justify-self: start;
-}
-
-.roster-season-control {
+.roster-substitute-text {
   display: flex;
-  flex: 1 1 100%;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-6) var(--space-10);
-  min-width: 0;
-  font: var(--type-meta);
-  color: var(--ink-2);
-}
-
-/* Tên mùa dài: ô chọn co theo hàng, không đẩy trang rộng hơn màn hình 320px. */
-.roster-season-control select {
-  flex: 1 1 auto;
-  width: 100%;
+  flex-direction: column;
+  flex: 1 1 12rem;
+  gap: var(--space-2);
   min-width: 0;
 }
 
-.roster-season-note {
-  margin: 0;
+.roster-substitute-title {
+  font: var(--type-hero-name);
 }
 
-.roster-result-team:first-child {
-  border-top: none;
-}
-
-
-
-.roster-result-main {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: var(--space-4) var(--space-14);
-  align-items: center;
-  min-width: 0;
-}
-
-.roster-result-name {
-  font: var(--type-card-title-sm);
-}
-
-.roster-result-meta {
-  grid-column: 1 / -1;
-  margin: 0;
+.roster-substitute-meta {
   color: var(--muted);
   font: var(--type-meta);
 }
 
-.roster-status {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--control-24);
-  padding: 0 var(--space-9);
-  border-radius: var(--radius-999);
-  background: var(--panel-2);
+.roster-substitute-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+}
+
+.roster-explain-box {
+  display: flex;
+  flex: 1 1 100%;
+  gap: var(--space-10);
+  padding: var(--space-12) var(--space-14);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-10);
+  background: var(--panel);
   color: var(--ink-2);
-  font: var(--type-badge);
-  justify-self: end;
+  font: var(--type-small);
 }
 
-.roster-status[data-status="build-now"] {
-  background: var(--panel-3);
-  color: var(--good);
-}
-
-.roster-status[data-status="variant"] {
-  color: var(--ky);
-}
-
-.roster-status[data-status="missing-tactic"],
-.roster-status[data-status="move-tactic"] {
-  background: var(--accent-soft);
-  color: var(--accent-ink);
-}
-
-.roster-season-note[hidden] {
+.roster-explain-box[hidden] {
   display: none;
 }
 
+.roster-explain-box svg {
+  flex: none;
+  color: var(--accent);
+}
 
+.roster-explain-source {
+  color: var(--muted);
+}
+
+.roster-idle-override {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-6);
+  margin: 0;
+}
 
 .roster-empty {
   margin: 0;
@@ -10314,6 +11123,22 @@ body[data-page-section="roster-recommend"] .layout {
     grid-template-columns: minmax(0, 1fr);
   }
 
+  /* Một cột theo thứ tự RecruitMobile: hai cột tan ra để `order` xếp lại thẻ của cả hai. */
+  .rt-col {
+    display: contents;
+  }
+
+  .rt-today { order: 1; }
+  .rt-invite { order: 2; }
+  .rt-stats { order: 3; }
+  .rt-limited { order: 4; }
+  .rt-log { order: 5; }
+  .rt-notice { order: 6; }
+
+  .rt-stats-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   body[data-page-section="analyze"] .tool-head {
     flex-wrap: wrap;
     align-items: flex-start;
@@ -10321,6 +11146,15 @@ body[data-page-section="roster-recommend"] .layout {
 
   .roster-scan-grid {
     grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  }
+
+  .roster-settings {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: stretch;
+  }
+
+  .roster-results {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -10349,57 +11183,53 @@ body[data-page-section="roster-recommend"] .layout {
     min-height: var(--control-44);
   }
 
-  .rt-section {
+  .rt-shell {
+    gap: var(--space-20);
+  }
+
+  .rt-section,
+  .rt-today {
     padding: var(--space-16);
   }
 
   .rt-pity-value {
-    font: var(--type-pity-value-mobile);
+    font: var(--type-score-panel);
   }
 
-  /* Hàng tài khoản bề rộng hẹp: [nhãn | select co giãn | ⋯ 44px], chip đồng bộ xuống dòng dưới. */
-  .rt-account-bar .rt-select {
-    flex: 1 1 0;
+  /* Hàng tài khoản hẹp: select rộng hết hàng, chip đồng bộ rồi các nút xuống dòng dưới. */
+  .rt-account-bar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--space-14);
+  }
+
+  .rt-account-field {
     min-width: 0;
   }
 
-  .rt-sync {
-    flex-basis: 100%;
-    margin-left: 0;
+  .rt-account-tools,
+  .rt-account-buttons {
+    justify-content: flex-start;
   }
 
-  /* Meta đầu thẻ xuống dòng dưới tiêu đề ở bề rộng hẹp: canh trái theo tiêu đề. */
-  .rt-section-head-inline .rt-sub {
-    text-align: left;
+  /* Nút nhanh: "2 miễn phí" | "Đủ 4", "Có 5★" rộng hết hàng dưới. */
+  .rt-quick {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .rt-banner {
-    grid-template-columns: minmax(0, 1fr);
+  .rt-quick .rt-five-btn {
+    grid-column: 1 / -1;
   }
 
-  .rt-banner-count {
-    text-align: left;
-  }
-
-  .rt-banner-actions .rt-btn-small {
-    flex: 1 1 auto;
+  .rt-stat {
+    padding: var(--space-12);
   }
 
   .rt-onboard .rt-onboard-input {
     max-width: none;
   }
 
-  /* Dòng nhật ký hẹp: ngày trên chữ, cột thao tác bên phải. */
-  .rt-log-item {
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas:
-      "date actions"
-      "text actions"
-      "banner actions"
-      "note note";
-  }
-
-  /* Nút sửa/xóa dòng nhật ký đạt vùng bấm 44px trên mobile. */
+  /* Nút icon (sửa/xóa nhật ký, ⋯ của gói) đạt vùng bấm 44px trên mobile. */
   .rt-icon-btn {
     width: var(--control-44);
     height: var(--control-44);
@@ -10408,6 +11238,23 @@ body[data-page-section="roster-recommend"] .layout {
   .rt-toast {
     bottom: var(--space-16);
     width: calc(100vw - var(--space-32));
+  }
+
+  .rt-dialog-form {
+    padding: var(--space-20);
+  }
+
+  .rt-field-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Hộp thoại hẹp: nút chính rộng hết hàng ở trên, Hủy bên dưới (RecruitFiveStarMobile). */
+  .rt-dialog-actions {
+    flex-direction: column-reverse;
+  }
+
+  .rt-dialog-actions .ana-btn {
+    width: 100%;
   }
 
   .ana-card {
@@ -10523,29 +11370,44 @@ body[data-page-section="roster-recommend"] .layout {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .roster-recommend .roster-review-toggle {
-    display: inline-flex;
-    width: 100%;
+  /* Dải bước mobile vẫn giữ chữ cả ba bước (RosterMobile.dc.html). */
+  .roster-flow .ana-flow-step:not([data-state="current"]) .ana-flow-label {
+    display: inline;
+  }
+
+  .roster-flow .ana-flow-step:not(:last-child)::after {
+    margin: 0;
+  }
+
+  /* Thanh thao tác không dính đáy trên mobile: Xóa toàn bộ kho ở trên, hai nút chính trải hết bề ngang. */
+  .roster-actionbar {
+    position: static;
+    flex-direction: column;
+    align-items: stretch;
+    box-shadow: var(--shadow-card);
+  }
+
+  .roster-actionbar-main {
+    flex-direction: column;
+  }
+
+  .roster-summary {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .roster-result-team {
-    grid-template-columns: var(--control-28) minmax(0, 1fr);
+    gap: var(--space-12);
+    padding: var(--space-16);
   }
 
-  .roster-result-team > .ana-link-btn {
-    grid-column: 2;
-    grid-row: auto;
-    justify-self: start;
-  }
-
-  /* Tên đội phải còn bề rộng dùng được: pill trạng thái xuống dòng dưới tên. */
-  .roster-result-main {
+  .roster-hero-rows li {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .roster-status {
-    grid-column: 1;
-    justify-self: start;
+  .roster-missing-line {
+    flex-direction: column;
+    align-items: stretch;
   }
 }
 

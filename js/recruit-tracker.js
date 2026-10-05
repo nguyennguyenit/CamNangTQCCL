@@ -35,6 +35,8 @@ import {
 // Theo dõi chiêu mộ (schema v2): mọi con số đọc từ `getRecruitTrackerSummary`; mỗi thao tác ghi là một hàm
 // thuần của store rồi lưu localStorage, báo đồng bộ cloud (nếu đã đăng nhập) và vẽ lại tại chỗ.
 // Hộp thoại dùng `<dialog>` native theo mẫu `.footer-dialog` của site (không `prompt`/`confirm`).
+// Bố cục theo artboard Recruit / RecruitFiveStar (+ Mobile): cột chính [Hôm nay, lời mời, Nhật ký],
+// cột phụ [Thống kê, Gói hạn giờ, thông báo lưu dữ liệu].
 
 const VALUE_CLASSES = ["Chưa phân loại", "Chủ lực", "Dùng đội", "Tình huống", "Nội chính", "Vật liệu"];
 const DEFAULT_VALUE_CLASS = VALUE_CLASSES[0];
@@ -76,47 +78,68 @@ const plusIcon = (size = 16) => icon([
   svgNode("line", { x1: 5, y1: 12, x2: 19, y2: 12 }),
 ], { size, stroke: 2 });
 
+const minusIcon = () => icon([
+  svgNode("line", { x1: 5, y1: 12, x2: 19, y2: 12 }),
+], { size: 16, stroke: 2 });
+
 const downloadIcon = () => icon([
-  svgNode("path", { d: "M12 4v11" }),
-  svgNode("polyline", { points: "7 10 12 15 17 10" }),
-  svgNode("path", { d: "M5 20h14" }),
+  svgNode("path", { d: "M12 4v12" }),
+  svgNode("path", { d: "M7 11l5 5 5-5" }),
+  svgNode("path", { d: "M4 20h16" }),
 ], { size: 16 });
 
 const uploadIcon = () => icon([
-  svgNode("path", { d: "M12 20V9" }),
-  svgNode("polyline", { points: "7 14 12 9 17 14" }),
-  svgNode("path", { d: "M5 4h14" }),
+  svgNode("path", { d: "M12 16V4" }),
+  svgNode("path", { d: "M7 9l5-5 5 5" }),
+  svgNode("path", { d: "M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" }),
 ], { size: 16 });
 
 const shieldIcon = () => icon([
   svgNode("path", { d: "M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" }),
-], { size: 16 });
+], { size: 17 });
 
 const cloudIcon = () => icon([
-  svgNode("path", { d: "M7 18h10a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.2 9.2 4.5 4.5 0 0 0 7 18z" }),
+  svgNode("path", { d: "M7 18a5 5 0 0 1-.6-10A6 6 0 0 1 18 9a4.5 4.5 0 0 1-.5 9z" }),
+], { size: 15 });
+
+const starIcon = () => icon([
+  svgNode("path", { d: "M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z" }),
 ], { size: 16 });
 
+const clockIcon = () => icon([
+  svgNode("circle", { cx: 12, cy: 12, r: 9 }),
+  svgNode("path", { d: "M12 7v5l3 2" }),
+], { size: 14 });
+
+const checkIcon = () => icon([
+  svgNode("path", { d: "M5 12l5 5L20 7" }),
+], { size: 16 });
+
+const undoIcon = () => icon([
+  svgNode("path", { d: "M9 14L4 9l5-5" }),
+  svgNode("path", { d: "M4 9h10a6 6 0 0 1 0 12h-3" }),
+], { size: 15 });
+
 const moreIcon = () => icon([
-  svgNode("circle", { cx: 5, cy: 12, r: 1.2 }),
-  svgNode("circle", { cx: 12, cy: 12, r: 1.2 }),
-  svgNode("circle", { cx: 19, cy: 12, r: 1.2 }),
-], { size: 18, stroke: 2 });
+  svgNode("circle", { cx: 5, cy: 12, r: 1.5 }),
+  svgNode("circle", { cx: 12, cy: 12, r: 1.5 }),
+  svgNode("circle", { cx: 19, cy: 12, r: 1.5 }),
+], { size: 16 });
 
 const editIcon = () => icon([
   svgNode("path", { d: "M4 20h4L19 9l-4-4L4 16z" }),
-  svgNode("path", { d: "M14 6l4 4" }),
 ], { size: 16 });
 
 const trashIcon = () => icon([
-  svgNode("path", { d: "M5 7h14" }),
+  svgNode("path", { d: "M4 7h16" }),
   svgNode("path", { d: "M9 7V4h6v3" }),
-  svgNode("path", { d: "M7 7l1 13h8l1-13" }),
+  svgNode("path", { d: "M6 7l1 13h10l1-13" }),
 ], { size: 16 });
 
 const closeIcon = () => icon([
-  svgNode("line", { x1: 6, y1: 6, x2: 18, y2: 18 }),
-  svgNode("line", { x1: 18, y1: 6, x2: 6, y2: 18 }),
-], { size: 18 });
+  svgNode("path", { d: "M6 6l12 12" }),
+  svgNode("path", { d: "M18 6L6 18" }),
+], { size: 16 });
 
 function todayLocalDate() {
   const now = new Date();
@@ -156,16 +179,39 @@ const dayNumber = (date) => {
   return match ? Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])) / DAY_MS : null;
 };
 
-/** Đếm ngược tới ngày hết hạn của gói (ngày cuối vẫn quay được). Không đặt ngày thì không hiện gì. */
+/**
+ * Đếm ngược tới ngày hết hạn của gói (ngày cuối vẫn quay được). Không đặt ngày thì không hiện gì.
+ * `tone` chọn màu chip hạn: "warn" ngày cuối, "avoid" đã quá hạn.
+ */
 export function expiryView(expiresAt, today) {
   const end = dayNumber(expiresAt);
   const now = dayNumber(today);
-  if (end === null || now === null) return { text: "", expired: false };
+  if (end === null || now === null) return { text: "", expired: false, tone: "" };
   const days = end - now;
-  if (days < 0) return { text: L("hết hạn", "已过期"), expired: true };
-  if (days === 0) return { text: L("hết hạn hôm nay", "今日截止"), expired: false };
-  return { text: L(`còn ${days} ngày`, `剩 ${days} 天`), expired: false };
+  if (days < 0) return { text: L("hết hạn", "已过期"), expired: true, tone: "avoid" };
+  if (days === 0) return { text: L("hết hạn hôm nay", "今日截止"), expired: false, tone: "warn" };
+  return { text: L(`còn ${days} ngày`, `剩 ${days} 天`), expired: false, tone: "" };
 }
+
+/** Ngày của dòng nhật ký: "Hôm nay", "Hôm qua", "27/09" (cùng năm với hôm nay) hoặc "27/09/2025". */
+export function logDateLabel(date, today) {
+  const day = dayNumber(date);
+  const now = dayNumber(today);
+  if (day === null || now === null) return String(date || "");
+  if (day === now) return L("Hôm nay", "今天");
+  if (day === now - 1) return L("Hôm qua", "昨天");
+  const [year, month, dayOfMonth] = date.slice(0, 10).split("-");
+  return year === today.slice(0, 4) ? `${dayOfMonth}/${month}` : `${dayOfMonth}/${month}/${year}`;
+}
+
+/** Ngày đầy đủ dd/mm/yyyy (ô Ngày chỉ đọc của hộp thoại 5★ gói ngày, tooltip ngày nhật ký). */
+function fullDate(date) {
+  const [year, month, day] = String(date || "").slice(0, 10).split("-");
+  return day ? `${day}/${month}/${year}` : "";
+}
+
+/** Số thập phân theo ngôn ngữ trang: "21,4" (vi) / "21.4" (zh). */
+const decimal = (value) => L(String(value).replace(".", ","), String(value));
 
 /** Chữ một dòng nhật ký: "+4 không ra", "★ Tào Tháo · lượt 27", "Đồng bộ 17 lượt". */
 function logText(row) {
@@ -177,19 +223,58 @@ function logText(row) {
   return L(`+${row.pulls} không ra`, `+${row.pulls} 未出`);
 }
 
-/** Nút nhanh của gói ngày: số lượt thật sẽ ghi đã kẹp theo lượt rẻ còn lại hôm nay. */
+/**
+ * Vị trí lượt rẻ trong ngày của mỗi dòng không ra ở gói ngày ("Lượt 1–2/4"): cộng dồn các dòng gói ngày cùng ngày
+ * theo thứ tự xảy ra. Ngày có dữ liệu cũ vượt 4 lượt thì bỏ nhãn của các dòng vượt thay vì hiện số sai.
+ */
+function dailySlotTexts(log) {
+  const byDate = new Map();
+  for (const row of log) {
+    if (row.bannerId !== DAILY_BANNER_ID || row.result === "set") continue;
+    if (!byDate.has(row.date)) byDate.set(row.date, []);
+    byDate.get(row.date).push(row);
+  }
+  const texts = new Map();
+  for (const rows of byDate.values()) {
+    rows.sort((a, b) => String(a.occurredAt || "").localeCompare(String(b.occurredAt || "")));
+    let done = 0;
+    for (const row of rows) {
+      const start = done + 1;
+      done += row.pulls;
+      if (row.result !== "miss" || done > DAILY_PULL_LIMIT) continue;
+      const range = start === done ? String(done) : `${start}–${done}`;
+      texts.set(row.id, L(`Lượt ${range}/${DAILY_PULL_LIMIT}`, `第 ${range}/${DAILY_PULL_LIMIT} 抽`));
+    }
+  }
+  return texts;
+}
+
+/** Nút nhanh của gói ngày: số lượt thật sẽ ghi đã kẹp theo lượt rẻ còn lại hôm nay; dòng phụ nói đúng số đó. */
 function quickButton(key, label, wanted, remainingToday) {
   const pulls = Math.max(Math.min(wanted, remainingToday), 0);
+  let sub = L(`Hôm nay đã đủ ${DAILY_PULL_LIMIT} lượt`, `今日 ${DAILY_PULL_LIMIT} 次已记满`);
+  if (pulls && key === "free") sub = L(`Ghi +${pulls} lượt không ra`, `记录 +${pulls} 次未出`);
+  else if (pulls) sub = L(`Ghi ${pulls} lượt rẻ còn lại`, `记录剩余 ${pulls} 次低价招募`);
   return {
     key,
     label,
     pulls,
     disabled: pulls < 1,
-    countText: pulls ? `+${pulls}` : "",
+    sub,
     ariaLabel: pulls
       ? L(`${label} (ghi ${pulls} lượt không ra)`, `${label}（记录 ${pulls} 次未出）`)
       : L(`${label} (hôm nay đã đủ ${DAILY_PULL_LIMIT} lượt)`, `${label}（今日 ${DAILY_PULL_LIMIT} 次已记满）`),
   };
+}
+
+const pityText = (pity) => `${pity.value} / ${pity.limit}`;
+
+/** Dòng phụ của ô "TB lượt / 5★": so trung bình với mốc bảo hiểm gói ngày. */
+function averageSub(average, limit) {
+  if (average === null) return L("chưa có 5★", "暂无 5★");
+  if (average < limit) return L(`thấp hơn mốc ${limit}`, `低于保底 ${limit}`);
+  if (average > limit) return L(`cao hơn mốc ${limit}`, `高于保底 ${limit}`);
+  return L(`bằng mốc ${limit}`, `等于保底 ${limit}`);
 }
 
 export function buildRecruitTrackerViewModel(summary, heroesDict = [], { today = todayLocalDate() } = {}) {
@@ -206,22 +291,32 @@ export function buildRecruitTrackerViewModel(summary, heroesDict = [], { today =
       archived: Boolean(item.archived),
       expiry: expiryView(item.banner.expiresAt, today),
       pity,
-      pityText: `${pity.value}/${pity.limit}`,
+      pityText: pityText(pity),
       warning: pity.isOverLimit ? RULE_WARNING : "",
     };
   });
   const average = stats.averagePulls;
+  const slotTexts = dailySlotTexts(summary.log);
+  const mainForces = summary.history.filter((row) => row.heroValueClass === "Chủ lực").length;
+  const dailyFull = remainingToday < 1;
   return {
-    accounts: summary.accounts,
+    accounts: summary.accounts.map((account) => {
+      const pity = pityView(account.dailyPity);
+      return { id: account.id, name: account.name, optionText: `${account.name} · ${pity.value}/${pity.limit}` };
+    }),
     activeAccountId: summary.account?.id || "",
+    accountName: summary.account?.name || "",
     heroOptions: uniqueSorted(heroes.map(heroName)),
     isEmpty: Boolean(summary.isEmpty),
     daily: {
       title: L(`${bannerDisplayName(daily.banner)} · Hôm nay`, `${bannerDisplayName(daily.banner)} · 今日`),
       name: bannerDisplayName(daily.banner),
       pity: dailyPity,
-      pityText: `${dailyPity.value}/${dailyPity.limit}`,
+      pityText: pityText(dailyPity),
       remainingText: L(`Còn ${dailyPity.remaining} lượt`, `还差 ${dailyPity.remaining} 抽`),
+      cheapText: dailyFull
+        ? L(`hôm nay đã đủ ${DAILY_PULL_LIMIT} lượt`, `今日 ${DAILY_PULL_LIMIT} 次已记满`)
+        : L(`hôm nay còn ${remainingToday} lượt rẻ`, `今日还剩 ${remainingToday} 次低价招募`),
       todayDone: daily.todayDone,
       remainingToday,
       todayText: L(`Hôm nay ${daily.todayDone}/${DAILY_PULL_LIMIT}`, `今日 ${daily.todayDone}/${DAILY_PULL_LIMIT}`),
@@ -230,8 +325,11 @@ export function buildRecruitTrackerViewModel(summary, heroesDict = [], { today =
         quickButton("free", L("2 miễn phí", "2 次免费"), 2, remainingToday),
         quickButton("fill", L(`Đủ ${DAILY_PULL_LIMIT}`, `补满 ${DAILY_PULL_LIMIT}`), DAILY_PULL_LIMIT, remainingToday),
       ],
-      fiveStarDisabled: remainingToday < 1,
-      hint: remainingToday < 1 ? L(`Hôm nay đã ghi đủ ${DAILY_PULL_LIMIT} lượt.`, `今日 ${DAILY_PULL_LIMIT} 次已记满。`) : "",
+      fiveStarDisabled: dailyFull,
+      fiveStarSub: dailyFull
+        ? L(`Hôm nay đã đủ ${DAILY_PULL_LIMIT} lượt`, `今日 ${DAILY_PULL_LIMIT} 次已记满`)
+        : L("Ghi tướng vừa ra", "记录刚出的武将"),
+      hint: dailyFull ? L(`Hôm nay đã ghi đủ ${DAILY_PULL_LIMIT} lượt.`, `今日 ${DAILY_PULL_LIMIT} 次已记满。`) : "",
     },
     limitedBanners,
     activeBanners: limitedBanners.filter((item) => !item.archived),
@@ -239,6 +337,7 @@ export function buildRecruitTrackerViewModel(summary, heroesDict = [], { today =
     log: summary.log.map((row) => ({
       id: row.id,
       date: row.date,
+      dateLabel: logDateLabel(row.date, today),
       result: row.result,
       bannerId: row.bannerId,
       bannerName: row.bannerName,
@@ -248,6 +347,7 @@ export function buildRecruitTrackerViewModel(summary, heroesDict = [], { today =
       heroValueClass: row.heroValueClass || "",
       note: row.note || "",
       text: logText(row),
+      slotText: slotTexts.get(row.id) || "",
       valueLabel: row.result === "fiveStar" ? valueClassLabel(row.heroValueClass || DEFAULT_VALUE_CLASS) : "",
       valueBadgeClass: row.result === "fiveStar" ? VALUE_BADGE_CLASS[row.heroValueClass] || "" : "",
     })),
@@ -255,12 +355,10 @@ export function buildRecruitTrackerViewModel(summary, heroesDict = [], { today =
       fiveStars: stats.fiveStars,
       averagePulls: average,
       streakDays: stats.streakDays,
-      averageText: average === null ? "—" : String(average),
-      text: [
-        L(`TB ${average === null ? "—" : average} lượt/5★`, `平均 ${average === null ? "—" : average} 抽/5★`),
-        `${stats.fiveStars}× 5★`,
-        L(`chuỗi ${stats.streakDays} ngày`, `连续 ${stats.streakDays} 天`),
-      ].join(" · "),
+      averageText: average === null ? "—" : decimal(average),
+      averageSub: averageSub(average, dailyPity.limit),
+      fiveStarsSub: L(`${mainForces} Chủ lực`, `${mainForces} 个主力`),
+      streakSub: L("ngày liên tiếp", "天连续记录"),
     },
   };
 }
@@ -279,6 +377,20 @@ function writeFlag(storage, key, value) {
   } catch {
     // Storage bị chặn: lời mời chỉ hiện lại ở lần tải sau, không ảnh hưởng dữ liệu.
   }
+}
+
+/** Thanh tiến độ bảo hiểm: phần tô + 2 vạch mốc 1/3, 2/3 (vẽ bằng CSS). */
+function meterNode(className, fill, label) {
+  return el("span", {
+    class: className,
+    role: "meter",
+    "aria-label": label,
+    "aria-valuemin": "0",
+  }, [
+    fill,
+    el("span", { class: "rt-pity-tick", "aria-hidden": "true" }),
+    el("span", { class: "rt-pity-tick", "aria-hidden": "true" }),
+  ]);
 }
 
 export function initRecruitTracker({ heroesDict = [], mount, storage = localStorage } = {}) {
@@ -321,9 +433,9 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
       hideToast();
       showToast(L("Đã hoàn tác.", "已撤销。"));
     },
-  }, L("Hoàn tác", "撤销"));
+  }, [undoIcon(), L("Hoàn tác", "撤销")]);
   const toastCard = el("div", { class: "rt-toast-card", hidden: "" }, [
-    el("span", { class: "rt-toast-mark", "aria-hidden": "true" }, "✓"),
+    el("span", { class: "rt-toast-mark", "aria-hidden": "true" }, [checkIcon()]),
     toastText,
     toastUndoButton,
   ]);
@@ -385,7 +497,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
 
   /* ---------- Hộp thoại (một `<dialog>` dùng lại) ---------- */
 
-  const dialog = el("dialog", { class: "footer-dialog feedback-dialog rt-dialog", "aria-labelledby": "rt-dialog-title" });
+  const dialog = el("dialog", { class: "footer-dialog rt-dialog", "aria-labelledby": "rt-dialog-title" });
   let dialogOpener = null;
   const closeDialog = () => {
     if (dialog.open && typeof dialog.close === "function") dialog.close();
@@ -408,14 +520,73 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
   });
   dialog.addEventListener("close", restoreDialogFocus);
 
+  const numberValue = (value, fallback = 0) => {
+    const number = Number(value);
+    return Number.isFinite(number) ? Math.floor(number) : fallback;
+  };
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+  /** Ô số có nút −/+ (vùng bấm 44px); đổi số bằng nút cũng bắn `input` để phần xem trước cập nhật. */
+  function stepper(spec, id, describedBy) {
+    const input = el("input", {
+      id,
+      name: spec.name,
+      class: "cm-input rt-stepper-input",
+      type: "number",
+      value: spec.value ?? "",
+      min: spec.min ?? null,
+      max: spec.max ?? null,
+      step: "1",
+      inputmode: "numeric",
+      required: spec.required ? "required" : null,
+      autocomplete: "off",
+      "aria-describedby": describedBy,
+    });
+    const nudge = (delta) => {
+      const min = input.min === "" ? -Infinity : Number(input.min);
+      const max = input.max === "" ? Infinity : Number(input.max);
+      input.value = String(clamp(numberValue(input.value, 0) + delta, min, max));
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    };
+    return el("div", { class: "rt-stepper" }, [
+      el("button", { class: "rt-icon-btn rt-stepper-btn", type: "button", "aria-label": L("Bớt 1 lượt", "减 1 抽"), onclick: () => nudge(-1) }, [minusIcon()]),
+      input,
+      el("button", { class: "rt-icon-btn rt-stepper-btn", type: "button", "aria-label": L("Thêm 1 lượt", "加 1 抽"), onclick: () => nudge(1) }, [plusIcon()]),
+    ]);
+  }
+
   function field(spec) {
-    const id = `rt-field-${spec.name}`;
+    if (spec.type === "row") return el("div", { class: "rt-field-row" }, spec.fields.map(field));
+    const id = `rt-field-${spec.name || spec.key}`;
+    const helpId = spec.help ? `${id}-help` : null;
+    const help = spec.help ? el("p", { class: "rt-field-help", id: helpId }, spec.help) : null;
+    if (spec.type === "segmented") {
+      // Nhóm radio native dựng thành thanh chọn: phím mũi tên, FormData và nhãn đọc màn hình có sẵn.
+      return el("fieldset", { class: "cm-field rt-seg", "aria-describedby": helpId }, [
+        el("legend", { class: "cm-label" }, spec.label),
+        el("div", { class: "rt-seg-track" }, spec.options.map((option) => el("label", { class: "rt-seg-option" }, [
+          el("input", {
+            class: "rt-seg-input",
+            type: "radio",
+            name: spec.name,
+            value: String(option.value),
+            checked: String(option.value) === String(spec.value) ? "checked" : null,
+          }),
+          el("span", { class: "rt-seg-text" }, option.label),
+        ]))),
+        help,
+      ]);
+    }
     let control;
     if (spec.type === "select") {
-      control = el("select", { id, name: spec.name, class: "cm-select" }, spec.options.map((option) => el("option", {
+      control = el("select", { id, name: spec.name, class: "cm-select", "aria-describedby": helpId }, spec.options.map((option) => el("option", {
         value: String(option.value),
         selected: String(option.value) === String(spec.value ?? "") ? "selected" : null,
       }, option.label)));
+    } else if (spec.type === "stepper") {
+      control = stepper(spec, id, helpId);
+    } else if (spec.type === "readonly") {
+      control = el("input", { id, class: "cm-input rt-input-readonly", type: "text", value: spec.value, readonly: "readonly" });
     } else {
       control = el("input", {
         id,
@@ -429,39 +600,56 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
         inputmode: spec.type === "number" ? "numeric" : null,
         list: spec.list ?? null,
         maxlength: spec.maxlength ?? (spec.type === "text" || !spec.type ? "80" : null),
+        placeholder: spec.placeholder ?? null,
         required: spec.required ? "required" : null,
         autocomplete: "off",
+        "aria-describedby": helpId,
       });
     }
-    return el("div", { class: "cm-field" }, [el("label", { class: "cm-label", for: id }, spec.label), control]);
+    return el("div", { class: "cm-field" }, [el("label", { class: "cm-label", for: id }, spec.label), control, help]);
   }
 
   /**
    * Mở hộp thoại form: `onSubmit(values, form)` trả `false` để giữ hộp thoại mở. Enter gửi form,
    * Escape/✕/bấm nền đóng và trả focus về `opener` (mặc định: phần tử đang focus).
+   * `preview(form)` (tuỳ chọn) trả nội dung khung "Sẽ ghi …", vẽ lại mỗi lần đổi ô.
    */
-  function openDialog({ title, lead = "", fields = [], submitLabel, danger = false, onSubmit, onChange, opener }) {
-    const form = el("form", { class: "feedback-dialog-body rt-dialog-form" }, [
-      el("button", {
-        class: "icon-btn footer-dialog-close",
-        type: "button",
-        "data-rt-dialog-close": "",
-        "aria-label": L("Đóng", "关闭"),
-      }, [closeIcon()]),
-      el("h2", { id: "rt-dialog-title", class: "donate-dialog-title" }, title),
-      lead ? el("p", { class: "donate-dialog-lead" }, lead) : null,
-      ...fields.map(field),
-      el("div", { class: "cm-form-row" }, [
+  function openDialog({ kicker = "", title, lead = "", fields = [], submitLabel, submitIcon = null, tone = "", wide = false, preview, onSubmit, onChange, opener }) {
+    const previewBox = preview ? el("div", { class: "rt-dialog-preview", "aria-live": "polite" }) : null;
+    const form = el("form", { class: "rt-dialog-form" }, [
+      el("div", { class: "rt-dialog-head" }, [
+        el("div", { class: "rt-dialog-heading" }, [
+          kicker ? el("span", { class: "rt-dialog-kicker" }, kicker) : null,
+          el("h2", { id: "rt-dialog-title", class: "rt-dialog-title" }, title),
+        ]),
+        el("button", {
+          class: "rt-icon-btn rt-dialog-close",
+          type: "button",
+          "data-rt-dialog-close": "",
+          "aria-label": L("Đóng", "关闭"),
+        }, [closeIcon()]),
+      ]),
+      lead ? el("p", { class: "rt-dialog-lead" }, lead) : null,
+      fields.length ? el("div", { class: "rt-dialog-fields" }, fields.map(field)) : null,
+      previewBox,
+      el("div", { class: "rt-dialog-actions" }, [
         el("button", { class: "ana-btn", type: "button", "data-rt-dialog-close": "" }, L("Hủy", "取消")),
-        el("button", { class: `ana-btn primary${danger ? " rt-danger" : ""}`, type: "submit" }, submitLabel),
+        el("button", { class: `ana-btn primary${tone ? ` rt-${tone}` : ""}`, type: "submit" }, [submitIcon?.(), submitLabel]),
       ]),
     ]);
+    const paintPreview = () => previewBox?.replaceChildren(...preview(form));
     form.addEventListener("submit", (event) => {
       event.preventDefault();
       const values = Object.fromEntries(new FormData(form));
       if (onSubmit(values, form) !== false) closeDialog();
     });
-    if (onChange) form.addEventListener("change", (event) => onChange(event, form));
+    form.addEventListener("change", (event) => {
+      onChange?.(event, form);
+      paintPreview();
+    });
+    form.addEventListener("input", paintPreview);
+    paintPreview();
+    dialog.className = `footer-dialog rt-dialog${wide ? " rt-dialog-wide" : ""}`;
     dialog.replaceChildren(form);
     dialogOpener = opener || doc?.activeElement || null;
     if (typeof dialog.showModal === "function") {
@@ -469,26 +657,41 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     } else {
       dialog.setAttribute("open", "");
     }
-    (form.querySelector("input, select") || form.querySelector("[type=submit]"))?.focus();
+    const first = form.querySelector("input:checked, input:not([type=radio]):not([readonly]), select") || form.querySelector("[type=submit]");
+    first?.focus();
+    if (first?.type === "number") first.select();
     return form;
   }
 
-  const numberValue = (value, fallback = 0) => {
-    const number = Number(value);
-    return Number.isFinite(number) ? Math.floor(number) : fallback;
-  };
   const valueClassOptions = VALUE_CLASSES.map((value) => ({ value, label: valueClassLabel(value) }));
-  const heroField = (value = "") => ({ name: "heroName", label: L("Tướng", "武将"), value, list: "rt-hero-options", required: true });
+  const heroField = (value = "") => ({
+    name: "heroName",
+    label: L("Tướng", "武将"),
+    value,
+    list: "rt-hero-options",
+    required: true,
+    help: L("Gõ để chọn từ danh sách tướng 5★.", "输入以从 5★ 武将列表中选择。"),
+  });
   const classField = (value = DEFAULT_VALUE_CLASS) => ({ name: "heroValueClass", label: L("Phân loại", "分类"), type: "select", value, options: valueClassOptions });
-  const noteField = (value = "") => ({ name: "note", label: L("Ghi chú", "备注"), value, maxlength: "200" });
+  const noteField = (value = "") => ({ name: "note", label: L("Ghi chú", "备注"), value, maxlength: "200", placeholder: L("Không bắt buộc", "选填") });
   const dateField = (value = currentDate()) => ({ name: "date", label: L("Ngày", "日期"), type: "date", value, required: true });
+  const dialogKicker = (bannerName) => `${bannerName} · ${view.accountName}`;
+
+  /** Khung xem trước của hộp thoại 5★: lượt ra 5★ tính trên mốc bảo hiểm và tiến độ sau khi lưu. */
+  const fiveStarPreview = (count, after, limit) => [
+    el("span", { class: "rt-dialog-preview-icon", "aria-hidden": "true" }, [starIcon()]),
+    el("span", {}, L(
+      ["Sẽ ghi 5★ ở ", el("strong", {}, `lượt ${count}`), " của mốc bảo hiểm", after ? `, rồi +${after} lượt không ra` : "", " · tiến độ về ", el("strong", {}, `${after} / ${limit}`), "."],
+      ["将在保底第 ", el("strong", {}, String(count)), " 抽记录 5★", after ? `，之后 +${after} 次未出` : "", " · 进度回到 ", el("strong", {}, `${after} / ${limit}`), "。"],
+    )),
+  ];
 
   /* ---------- Menu ⋯ (tài khoản, từng gói) ---------- */
 
   const menus = [];
   function createMenu({ label, panelClass = "" }) {
     const button = el("button", {
-      class: "rt-btn rt-menu-toggle",
+      class: "rt-icon-btn rt-menu-toggle",
       type: "button",
       "aria-label": label,
       "data-dropdown-button": "",
@@ -525,7 +728,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     for (const menu of menus) menu.handleEscape();
   });
 
-  /* ---------- Hàng tài khoản + trạng thái đồng bộ ---------- */
+  /* ---------- Hàng tài khoản: chọn tài khoản | chip ☁, + Tài khoản, Xuất/Nhập JSON, ⋯ ---------- */
 
   const accountSelect = el("select", {
     class: "rt-select",
@@ -538,20 +741,28 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
   accountMenu.button.classList.add("rt-account-toggle");
   accountMenu.panel.id = "rt-account-actions";
   accountMenu.button.setAttribute("aria-controls", "rt-account-actions");
+  accountMenu.panel.append(
+    menuItem(L("Đổi tên", "重命名"), () => renameActiveAccount()),
+    menuItem(L("Xóa tài khoản", "删除账号"), () => deleteActiveAccount(), "rt-menu-danger"),
+  );
+  const addAccountButton = el("button", {
+    class: "rt-btn rt-add-account",
+    type: "button",
+    "aria-label": L("Thêm tài khoản", "添加账号"),
+    onclick: (event) => addAccount(event.currentTarget),
+  }, [plusIcon(), L("Tài khoản", "账号")]);
+  const exportButton = el("button", {
+    class: "rt-btn rt-ghost",
+    type: "button",
+    onclick: () => exportJson(),
+  }, [downloadIcon(), L("Xuất JSON", "导出 JSON")]);
   const importInput = el("input", {
     type: "file",
     accept: "application/json,.json",
     class: "rt-file",
     onchange: importJson,
   });
-  accountMenu.panel.append(
-    menuItem(L("+ Tài khoản", "+ 账号"), () => addAccount()),
-    menuItem(L("Đổi tên", "重命名"), () => renameActiveAccount()),
-    menuItem(L("Xóa tài khoản", "删除账号"), () => deleteActiveAccount(), "rt-menu-danger"),
-    el("hr", { class: "rt-menu-sep" }),
-    menuItem([downloadIcon(), L("Xuất JSON", "导出 JSON")], () => exportJson()),
-    el("label", { class: "rt-menu-item rt-import" }, [uploadIcon(), L("Nhập JSON", "导入 JSON"), importInput]),
-  );
+  const importLabel = el("label", { class: "rt-btn rt-ghost rt-import" }, [uploadIcon(), L("Nhập JSON", "导入 JSON"), importInput]);
 
   const syncText = el("span", { class: "rt-sync-text" });
   const syncSignIn = el("button", {
@@ -560,91 +771,91 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     onclick: () => startSignIn(syncSignIn),
   }, L("Đăng nhập", "登录"));
   const syncChip = el("div", { class: "rt-sync", "data-status": "guest" }, [
-    el("span", { class: "rt-sync-icon", "aria-hidden": "true" }, [cloudIcon()]),
-    syncText,
+    el("span", { class: "rt-sync-pill" }, [
+      el("span", { class: "rt-sync-icon", "aria-hidden": "true" }, [cloudIcon()]),
+      syncText,
+    ]),
     syncSignIn,
   ]);
 
   const accountBar = el("div", { class: "rt-account-bar" }, [
-    el("label", { class: "rt-account-pick", for: "rt-account-select" }, [
-      el("span", { class: "rt-kicker" }, L("Tài khoản", "账号")),
+    el("div", { class: "rt-account-field" }, [
+      el("label", { class: "rt-field-label", for: "rt-account-select" }, L("Tài khoản", "账号")),
+      accountSelect,
     ]),
-    accountSelect,
-    accountMenu.root,
-    syncChip,
+    el("div", { class: "rt-account-tools" }, [
+      syncChip,
+      el("div", { class: "rt-account-buttons" }, [addAccountButton, exportButton, importLabel, accountMenu.root]),
+    ]),
   ]);
 
-  const notice = el("p", { class: "tool-notice" }, [
+  const notice = el("p", { class: "tool-notice rt-notice" }, [
     el("span", { class: "tool-notice-icon", "aria-hidden": "true" }, [shieldIcon()]),
-    el("span", {}, L([
-      "Dữ liệu chỉ lưu trong trình duyệt này và có thể mất khi xóa dữ liệu trang. Dùng ",
-      el("strong", {}, "Xuất JSON"),
-      " để sao lưu, ",
-      el("strong", {}, "Nhập JSON"),
-      " để gộp lại, hoặc đăng nhập để đồng bộ giữa các máy.",
-    ], [
-      "数据仅保存在本浏览器中，清除网站数据后可能丢失。请用",
-      el("strong", {}, "导出 JSON"),
-      "备份，用",
-      el("strong", {}, "导入 JSON"),
-      "合并恢复，或登录以在多台设备间同步。",
-    ])),
+    el("span", {}, L(
+      "Dữ liệu chỉ lưu trong trình duyệt này và có thể mất khi xóa dữ liệu trang. Dùng Xuất JSON để sao lưu, Nhập JSON để gộp lại, hoặc đăng nhập để đồng bộ giữa các máy.",
+      "数据仅保存在本浏览器中，清除网站数据后可能丢失。请用“导出 JSON”备份，用“导入 JSON”合并恢复，或登录以在多台设备间同步。",
+    )),
   ]);
 
   /* ---------- Thẻ Hôm nay (gói ngày) ---------- */
 
-  const todayKicker = el("span", { class: "rt-kicker" });
+  const todayTitle = el("h2", { class: "rt-card-title", id: "rt-today-title" });
+  const adjustDaily = el("button", {
+    class: "rt-btn rt-ghost rt-adjust",
+    type: "button",
+    onclick: (event) => openAdjust({ bannerId: DAILY_BANNER_ID, name: view.daily.name, pity: view.daily.pity, opener: event.currentTarget }),
+  }, [editIcon(), L("Chỉnh số", "调整")]);
   const pityValue = el("strong", { class: "rt-pity-value" });
   const pityUnit = el("span", { class: "rt-pity-unit" });
   const pityFill = el("span", { class: "rt-pity-fill" });
-  const pityMeter = el("span", {
-    class: "rt-pity-meter",
-    role: "meter",
-    "aria-label": L("Tiến độ bảo hiểm 5★", "5★ 保底进度"),
-    "aria-valuemin": "0",
-  }, [pityFill]);
-  const pityMetaText = el("span", {});
-  const adjustDaily = el("button", {
-    class: "tool-text-action rt-adjust",
-    type: "button",
-    onclick: (event) => openAdjust({ bannerId: DAILY_BANNER_ID, name: view.daily.name, pity: view.daily.pity, opener: event.currentTarget }),
-  }, [L("Chỉnh số", "调整"), el("span", { "aria-hidden": "true" }, "✎")]);
-  const pityMeta = el("p", { class: "rt-pity-meta" }, [pityMetaText, adjustDaily]);
+  const pityMeter = meterNode("rt-pity-meter", pityFill, L("Tiến độ bảo hiểm 5★", "5★ 保底进度"));
+  const todayCount = el("span", { class: "rt-today-count" });
+  const pips = Array.from({ length: DAILY_PULL_LIMIT }, () => el("span", { class: "rt-pip" }));
+  const remainingLine = el("span", { class: "rt-pity-remaining" });
+  const pityMeta = el("div", { class: "rt-pity-meta" }, [
+    el("span", { class: "rt-today-progress" }, [todayCount, el("span", { class: "rt-pips", "aria-hidden": "true" }, pips)]),
+    remainingLine,
+  ]);
   const pityWarning = el("p", { class: "rt-warning", hidden: "" });
 
   const quickButtons = new Map();
   const quickRow = el("div", { class: "rt-quick" });
   for (const key of ["free", "fill"]) {
     const label = el("span", { class: "rt-quick-label" });
-    const count = el("span", { class: "rt-quick-count", "aria-hidden": "true" });
+    const sub = el("span", { class: "rt-quick-sub" });
     const button = el("button", {
-      class: "rt-btn rt-quick-btn",
+      class: `rt-quick-btn rt-quick-${key}`,
       type: "button",
       onclick: () => {
         const quick = view.daily.quick.find((item) => item.key === key);
         if (!quick?.pulls) return;
         record(recordDailyMisses(state, { accountId: state.activeAccountId, date: currentDate(), pulls: quick.pulls }), pulledText);
       },
-    }, [label, count]);
-    quickButtons.set(key, { button, label, count });
+    }, [label, sub]);
+    quickButtons.set(key, { button, label, sub });
     quickRow.append(button);
   }
+  const dailyFiveSub = el("span", { class: "rt-quick-sub" });
   const dailyFiveStar = el("button", {
-    class: "rt-btn rt-five-btn",
+    class: "rt-quick-btn rt-five-btn",
     type: "button",
     onclick: (event) => openDailyFiveStar(event.currentTarget),
-  }, [el("span", { "aria-hidden": "true" }, "★"), FIVE_STAR_LABEL]);
+  }, [el("span", { class: "rt-quick-label" }, [starIcon(), FIVE_STAR_LABEL]), dailyFiveSub]);
+  quickRow.append(dailyFiveStar);
   const todayHint = el("p", { class: "rt-today-hint", hidden: "" });
 
   const todayBody = el("div", { class: "rt-today-body" }, [
     el("div", { class: "rt-pity-block" }, [
-      el("div", { class: "rt-pity-figures" }, [pityValue, pityUnit]),
+      el("div", { class: "rt-pity-figures" }, [
+        pityValue,
+        pityUnit,
+        el("span", { class: "rt-pity-caption" }, L("tới mốc bảo hiểm", "距保底")),
+      ]),
       pityMeter,
       pityMeta,
       pityWarning,
     ]),
     quickRow,
-    dailyFiveStar,
     todayHint,
   ]);
 
@@ -668,7 +879,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
       startFrom(numberValue(onboardInput.value, 0));
     },
   }, [
-    el("h2", { class: "rt-section-title" }, L("Bắt đầu theo dõi", "开始记录")),
+    el("h3", { class: "rt-onboard-title" }, L("Bắt đầu theo dõi", "开始记录")),
     el("label", { class: "rt-onboard-label", for: "rt-onboard-value" }, L("Trong game bạn đang ở lượt mấy?", "游戏里你现在是第几抽？")),
     el("p", { class: "rt-sub" }, L(
       "Xem số lượt đã quay từ lần ra 5★ gần nhất trong màn chiêu mộ Danh tướng PK (0–29).",
@@ -682,9 +893,12 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
   ]);
 
   const todaySection = el("section", { class: "rt-section rt-today", "aria-labelledby": "rt-today-title" }, [
-    el("header", { class: "rt-section-head rt-section-head-inline" }, [
-      el("h2", { class: "rt-today-title", id: "rt-today-title" }, [todayKicker]),
-      el("p", { class: "rt-sub" }, L("4 lượt miễn phí / nửa giá mỗi ngày", "每日 4 次免费 / 半价招募")),
+    el("header", { class: "rt-section-head" }, [
+      el("div", { class: "rt-section-heading" }, [
+        todayTitle,
+        el("p", { class: "rt-sub" }, L("4 lượt miễn phí / nửa giá mỗi ngày", "每日 4 次免费 / 半价招募")),
+      ]),
+      adjustDaily,
     ]),
     todayBody,
     onboard,
@@ -727,17 +941,15 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     archivedList,
   ]);
   const bannerNodes = new Map();
-  const limitedSection = el("section", { class: "rt-section rt-limited" }, [
+  const limitedSection = el("section", { class: "rt-section rt-limited", "aria-labelledby": "rt-limited-title" }, [
     el("header", { class: "rt-section-head" }, [
-      el("div", {}, [
-        el("h2", { class: "rt-section-title" }, L("Gói hạn giờ / Đột xuất", "限时 / 临时卡包")),
-        el("p", { class: "rt-sub" }, L(
-          "Tạo riêng cho banner có thời hạn hoặc gói theo giai đoạn. Bảo hiểm riêng của gói: 30 lượt.",
-          "为限时卡池或阶段性卡包单独创建。每个卡包独立保底：30 抽。",
-        )),
-      ]),
+      el("h2", { class: "rt-section-title", id: "rt-limited-title" }, L("Gói hạn giờ / Đột xuất", "限时 / 临时卡包")),
       el("button", { class: "rt-btn", type: "button", onclick: (event) => addLimitedBanner(event.currentTarget) }, [plusIcon(), L("Thêm gói", "添加卡包")]),
     ]),
+    el("p", { class: "rt-sub rt-limited-lead" }, L(
+      "Tạo riêng cho banner có thời hạn hoặc gói theo giai đoạn. Bảo hiểm riêng của gói: 30 lượt.",
+      "为限时卡池或阶段性卡包单独创建。每个卡包独立保底：30 抽。",
+    )),
     bannerList,
     bannerEmpty,
     archived,
@@ -745,21 +957,21 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
 
   /* ---------- Thống kê + nhật ký ---------- */
 
-  const statValues = {
-    average: el("dd", { class: "rt-stat-value" }),
-    fiveStars: el("dd", { class: "rt-stat-value" }),
-    streak: el("dd", { class: "rt-stat-value" }),
+  const statNodes = {};
+  const statCard = (key, label) => {
+    statNodes[key] = { value: el("dd", { class: "rt-stat-value" }), sub: el("dd", { class: "rt-stat-sub" }) };
+    return el("div", { class: "rt-stat" }, [el("dt", { class: "rt-kicker" }, label), statNodes[key].value, statNodes[key].sub]);
   };
-  const statsSection = el("section", { class: "rt-section rt-stats" }, [
-    el("h2", { class: "rt-section-title" }, L("Thống kê", "统计")),
+  const statsSection = el("section", { class: "rt-section rt-stats", "aria-labelledby": "rt-stats-title" }, [
+    el("h2", { class: "rt-section-title", id: "rt-stats-title" }, L("Thống kê", "统计")),
     el("dl", { class: "rt-stats-list" }, [
-      el("div", { class: "rt-stat" }, [el("dt", { class: "rt-kicker" }, L("TB lượt / 5★", "平均抽数 / 5★")), statValues.average]),
-      el("div", { class: "rt-stat" }, [el("dt", { class: "rt-kicker" }, L("Tổng 5★", "5★ 总数")), statValues.fiveStars]),
-      el("div", { class: "rt-stat" }, [el("dt", { class: "rt-kicker" }, L("Chuỗi ngày", "连续天数")), statValues.streak]),
+      statCard("average", L("TB lượt / 5★", "平均抽数 / 5★")),
+      statCard("fiveStars", L("Tổng 5★", "5★ 总数")),
+      statCard("streak", L("Chuỗi ngày", "连续天数")),
     ]),
   ]);
 
-  const logTitle = el("h2", { class: "rt-section-title", tabindex: "-1" }, L("Nhật ký", "记录"));
+  const logTitle = el("h2", { class: "rt-section-title", id: "rt-log-title", tabindex: "-1" }, L("Nhật ký", "记录"));
   const logList = el("ol", { class: "rt-log-list" });
   const logEmpty = el("p", { class: "rt-empty" }, L("Chưa có lượt nào.", "暂无记录。"));
   const logMore = el("button", {
@@ -771,8 +983,8 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
       render();
     },
   }, L("Xem thêm", "查看更多"));
-  const logSection = el("section", { class: "rt-section rt-log" }, [
-    el("header", { class: "rt-section-head rt-section-head-inline" }, [
+  const logSection = el("section", { class: "rt-section rt-log", "aria-labelledby": "rt-log-title" }, [
+    el("header", { class: "rt-section-heading" }, [
       logTitle,
       el("p", { class: "rt-sub" }, L("Mới nhất trước, lọc theo tài khoản đang chọn.", "最新在前，仅显示当前账号。")),
     ]),
@@ -793,11 +1005,10 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
 
   mount.replaceChildren(el("div", { class: "rt-shell" }, [
     head,
-    notice,
     accountBar,
     el("div", { class: "rt-grid" }, [
-      el("div", { class: "rt-col" }, [todaySection, invite, limitedSection]),
-      el("div", { class: "rt-col rt-col-side" }, [statsSection, logSection]),
+      el("div", { class: "rt-col rt-col-main" }, [todaySection, invite, logSection]),
+      el("div", { class: "rt-col rt-col-side" }, [statsSection, limitedSection, notice]),
     ]),
     heroOptions,
     toastRegion,
@@ -820,13 +1031,13 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
   }
 
   function paintAccounts() {
-    const signature = `${state.activeAccountId}|${view.accounts.map((account) => `${account.id}:${account.name}`).join("|")}`;
+    const signature = `${state.activeAccountId}|${view.accounts.map((account) => `${account.id}:${account.optionText}`).join("|")}`;
     if (accountSelect.dataset.signature !== signature) {
       accountSelect.dataset.signature = signature;
       accountSelect.replaceChildren(...view.accounts.map((account) => el("option", {
         value: account.id,
         selected: account.id === state.activeAccountId ? "selected" : null,
-      }, account.name)));
+      }, account.optionText)));
       accountSelect.value = state.activeAccountId;
     }
     if (heroOptions.dataset.count !== String(view.heroOptions.length)) {
@@ -854,27 +1065,28 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
 
   function paintToday() {
     const { daily } = view;
-    todayKicker.textContent = daily.title;
+    todayTitle.textContent = daily.title;
     todayBody.hidden = view.isEmpty;
     onboard.hidden = !view.isEmpty;
+    adjustDaily.hidden = view.isEmpty;
     if (view.isEmpty) return;
     pityValue.textContent = String(daily.pity.value);
     pityUnit.textContent = L(`/ ${daily.pity.limit} lượt`, `/ ${daily.pity.limit} 抽`);
     paintMeter(pityMeter, pityFill, daily.pity);
-    pityMetaText.replaceChildren(
-      el("strong", {}, daily.remainingText),
-      L(` tới mốc bảo hiểm · Hôm nay ${daily.todayDone}/${DAILY_PULL_LIMIT} · `, `即达保底 · 今日 ${daily.todayDone}/${DAILY_PULL_LIMIT} · `),
-    );
+    todayCount.textContent = daily.todayText;
+    pips.forEach((pip, index) => pip.classList.toggle("is-on", index < daily.todayDone));
+    remainingLine.textContent = `${daily.remainingText} · ${daily.cheapText}`;
     pityWarning.textContent = daily.warning;
     pityWarning.hidden = !daily.warning;
     for (const quick of daily.quick) {
       const entry = quickButtons.get(quick.key);
       entry.label.textContent = quick.label;
-      entry.count.textContent = quick.countText;
+      entry.sub.textContent = quick.sub;
       entry.button.disabled = quick.disabled;
       entry.button.setAttribute("aria-label", quick.ariaLabel);
     }
     dailyFiveStar.disabled = daily.fiveStarDisabled;
+    dailyFiveSub.textContent = daily.fiveStarSub;
     todayHint.textContent = daily.hint;
     todayHint.hidden = !daily.hint;
   }
@@ -886,16 +1098,14 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
   function createBannerNode(id) {
     const name = el("strong", { class: "rt-banner-name" });
     const expiry = el("span", { class: "rt-banner-expiry" });
+    const expiryRow = el("span", { class: "rt-banner-expiry-row" }, [
+      el("span", { class: "rt-banner-clock", "aria-hidden": "true" }, [clockIcon()]),
+      expiry,
+    ]);
     const count = el("strong", { class: "rt-banner-count" });
     const fill = el("span", { class: "rt-pity-fill" });
-    const meter = el("span", { class: "rt-pity-meter rt-banner-meter", role: "meter" }, [fill]);
+    const meter = meterNode("rt-pity-meter rt-banner-meter", fill, "");
     const warning = el("p", { class: "rt-warning", hidden: "" });
-    const bannerRecord = (pulls) => record(recordBannerMiss(state, {
-      accountId: state.activeAccountId,
-      bannerId: id,
-      pulls,
-      date: currentDate(),
-    }), pulledText);
     const menu = createMenu({ label: "" });
     const archiveItem = menuItem("", () => {
       const item = bannerView(id);
@@ -917,22 +1127,23 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
       menuItem(L("Xóa gói", "删除卡包"), () => removeBanner(id, menu.button), "rt-menu-danger"),
     );
     const actions = el("div", { class: "rt-banner-actions" }, [
-      el("button", { class: "rt-btn rt-btn-small", type: "button", onclick: () => bannerRecord(1) }, "+1"),
-      el("button", { class: "rt-btn rt-btn-small", type: "button", onclick: () => bannerRecord(5) }, "+5"),
+      el("button", { class: "rt-btn rt-banner-add", type: "button", onclick: (event) => openBannerMiss(id, event.currentTarget) }, L("+ Lượt", "+ 抽数")),
       el("button", {
-        class: "rt-btn rt-btn-small rt-five-btn",
+        class: "rt-btn rt-accent rt-five-btn",
         type: "button",
         onclick: (event) => openBannerFiveStar(id, event.currentTarget),
-      }, [el("span", { "aria-hidden": "true" }, "★"), FIVE_STAR_LABEL]),
-      menu.root,
+      }, [starIcon(), FIVE_STAR_LABEL]),
     ]);
     const node = el("article", { class: "rt-banner" }, [
-      el("div", { class: "rt-banner-main" }, [name, expiry]),
-      el("div", { class: "rt-banner-progress" }, [count, meter]),
+      el("div", { class: "rt-banner-head" }, [
+        el("div", { class: "rt-banner-main" }, [name, expiryRow]),
+        menu.root,
+      ]),
+      el("div", { class: "rt-banner-progress" }, [meter, count]),
       actions,
       warning,
     ]);
-    return { node, name, expiry, count, meter, fill, warning, menu, archiveItem };
+    return { node, name, expiry, expiryRow, count, meter, fill, warning, menu, archiveItem };
   }
 
   const bannerView = (id) => view.limitedBanners.find((item) => item.id === id);
@@ -947,10 +1158,10 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
         bannerNodes.set(item.id, entry);
       }
       entry.node.classList.toggle("rt-banner-archived", item.archived);
-      entry.node.classList.toggle("rt-banner-expired", item.expiry.expired);
       entry.name.textContent = item.name;
       entry.expiry.textContent = item.expiry.text;
-      entry.expiry.hidden = !item.expiry.text;
+      entry.expiry.dataset.tone = item.expiry.tone;
+      entry.expiryRow.hidden = !item.expiry.text;
       entry.count.textContent = item.pityText;
       entry.meter.setAttribute("aria-label", L("Tiến độ bảo hiểm 5★ · ", "5★ 保底进度 · ") + item.name);
       paintMeter(entry.meter, entry.fill, item.pity);
@@ -973,9 +1184,13 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
   }
 
   function paintStats() {
-    statValues.average.textContent = view.stats.averageText;
-    statValues.fiveStars.textContent = String(view.stats.fiveStars);
-    statValues.streak.textContent = String(view.stats.streakDays);
+    const { stats } = view;
+    statNodes.average.value.textContent = stats.averageText;
+    statNodes.average.sub.textContent = stats.averageSub;
+    statNodes.fiveStars.value.textContent = String(stats.fiveStars);
+    statNodes.fiveStars.sub.textContent = stats.fiveStarsSub;
+    statNodes.streak.value.textContent = String(stats.streakDays);
+    statNodes.streak.sub.textContent = stats.streakSub;
   }
 
   function paintLog() {
@@ -986,26 +1201,36 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     logMore.hidden = view.log.length <= logLimit;
   }
 
+  const logSeparator = () => el("span", { class: "rt-log-sep", "aria-hidden": "true" }, "·");
+
+  /** Dòng phụ của nhật ký: tên gói · vị trí lượt trong ngày, badge phân loại 5★ hoặc badge "Chỉnh số". */
+  function logMeta(row) {
+    const parts = [el("span", {}, row.bannerName)];
+    if (row.slotText) parts.push(logSeparator(), el("span", {}, row.slotText));
+    if (row.valueLabel) parts.push(logSeparator(), el("span", { class: `badge rt-value ${row.valueBadgeClass}`.trim() }, row.valueLabel));
+    if (row.result === "set") parts.push(logSeparator(), el("span", { class: "badge rt-value" }, L("Chỉnh số", "调整")));
+    return parts;
+  }
+
   function renderLogRow(row) {
     return el("li", { class: "rt-log-item", "data-result": row.result }, [
-      el("span", { class: "rt-log-date" }, row.date),
-      el("span", { class: "rt-log-text" }, row.text),
-      el("span", { class: "rt-log-banner" }, [
-        row.bannerName,
-        row.valueLabel ? el("span", { class: `badge rt-value ${row.valueBadgeClass}`.trim() }, row.valueLabel) : null,
+      el("time", { class: "rt-log-date", datetime: row.date, title: fullDate(row.date) }, row.dateLabel),
+      el("div", { class: "rt-log-body" }, [
+        el("span", { class: "rt-log-text" }, row.text),
+        el("span", { class: "rt-log-banner" }, logMeta(row)),
+        row.note ? el("p", { class: "rt-note" }, row.note) : null,
       ]),
-      row.note ? el("p", { class: "rt-note" }, row.note) : null,
       el("span", { class: "rt-log-actions" }, [
         el("button", {
           class: "rt-icon-btn rt-log-edit",
           type: "button",
-          "aria-label": L(`Sửa dòng ${row.date} ${row.text}`, `编辑 ${row.date} ${row.text}`),
+          "aria-label": L(`Sửa dòng ${row.dateLabel} ${row.text}`, `编辑 ${row.dateLabel} ${row.text}`),
           onclick: (event) => editLogRow(row.id, event.currentTarget),
         }, [editIcon()]),
         el("button", {
           class: "rt-icon-btn rt-log-delete",
           type: "button",
-          "aria-label": L(`Xóa dòng ${row.date} ${row.text}`, `删除 ${row.date} ${row.text}`),
+          "aria-label": L(`Xóa dòng ${row.dateLabel} ${row.text}`, `删除 ${row.dateLabel} ${row.text}`),
           onclick: () => deleteLogRow(row),
         }, [trashIcon()]),
       ]),
@@ -1036,41 +1261,47 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     });
   }
 
-  function hitAtOptions(remaining, todayDone) {
-    return Array.from({ length: remaining }, (_, index) => ({
-      value: index + 1,
-      label: L(`Lượt ${todayDone + index + 1}/${DAILY_PULL_LIMIT} hôm nay`, `今日第 ${todayDone + index + 1}/${DAILY_PULL_LIMIT} 抽`),
-    }));
-  }
-
-  function afterOptions(count) {
-    return Array.from({ length: count + 1 }, (_, value) => ({
-      value,
-      label: L(`${value} lượt`, `${value} 抽`),
-    }));
-  }
-
   function openDailyFiveStar(opener) {
-    const { remainingToday, todayDone, name } = view.daily;
+    const { remainingToday, todayDone, name, pity } = view.daily;
     if (remainingToday < 1) return;
+    const hitAtOf = (form) => clamp(numberValue(form.elements.namedItem("hitAt")?.value, 1), 1, remainingToday);
     openDialog({
-      title: L("Ghi 5★ · ", "记录 5★ · ") + name,
-      lead: L(`Hôm nay còn ${remainingToday} lượt rẻ.`, `今日还剩 ${remainingToday} 次低价招募。`),
+      kicker: dialogKicker(name),
+      title: FIVE_STAR_LABEL,
+      wide: true,
       fields: [
-        { name: "hitAt", label: L("Ra 5★ ở lượt", "出 5★ 的是"), type: "select", value: 1, options: hitAtOptions(remainingToday, todayDone) },
-        { name: "pullsAfter", label: L("Quay tiếp sau đó (không ra)", "之后继续抽（未出）"), type: "select", value: remainingToday - 1, options: afterOptions(remainingToday - 1) },
+        {
+          name: "hitAt",
+          label: L("Ra 5★ ở lượt", "出 5★ 的是"),
+          type: "segmented",
+          value: 1,
+          options: Array.from({ length: remainingToday }, (_, index) => ({
+            value: index + 1,
+            label: L(`Lượt ${todayDone + index + 1}/${DAILY_PULL_LIMIT}`, `第 ${todayDone + index + 1}/${DAILY_PULL_LIMIT} 抽`),
+          })),
+          help: L(`Hôm nay còn ${remainingToday} lượt rẻ.`, `今日还剩 ${remainingToday} 次低价招募。`),
+        },
+        { name: "pullsAfter", label: L("Quay tiếp sau đó (không ra)", "之后继续抽（未出）"), type: "stepper", value: remainingToday - 1, min: "0", max: String(remainingToday - 1) },
         heroField(),
-        classField(),
+        { type: "row", fields: [classField(), { key: "date-shown", label: L("Ngày", "日期"), type: "readonly", value: fullDate(currentDate()) }] },
         noteField(),
       ],
       submitLabel: L("Lưu 5★", "保存 5★"),
+      submitIcon: starIcon,
+      tone: "accent",
       opener,
       onChange: (event, form) => {
         if (event.target.name !== "hitAt") return;
-        const max = remainingToday - numberValue(event.target.value, 1);
+        // Mặc định coi như quay hết số lượt rẻ còn lại sau lượt ra 5★.
+        const max = remainingToday - hitAtOf(form);
         const after = form.elements.namedItem("pullsAfter");
-        after.replaceChildren(...afterOptions(max).map((option) => el("option", { value: String(option.value) }, option.label)));
+        after.max = String(max);
         after.value = String(max);
+      },
+      preview: (form) => {
+        const hitAt = hitAtOf(form);
+        const after = clamp(numberValue(form.elements.namedItem("pullsAfter").value, 0), 0, remainingToday - hitAt);
+        return fiveStarPreview(pity.value + hitAt, after, pity.limit);
       },
       onSubmit: (values) => {
         record(recordDailyFiveStar(state, {
@@ -1090,16 +1321,29 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     const item = bannerView(id);
     if (!item) return;
     openDialog({
-      title: L("Ghi 5★ · ", "记录 5★ · ") + item.name,
+      kicker: dialogKicker(item.name),
+      title: FIVE_STAR_LABEL,
+      wide: true,
       fields: [
-        { name: "pulls", label: L("Số lượt", "抽数"), type: "number", value: 1, min: "1", max: String(SET_PITY_MAX), required: true },
-        dateField(),
+        {
+          name: "pulls",
+          label: L("Số lượt quay lần này", "本次抽数"),
+          type: "stepper",
+          value: 1,
+          min: "1",
+          max: String(SET_PITY_MAX),
+          required: true,
+          help: L("Gồm cả lượt ra 5★.", "包含出 5★ 的那一抽。"),
+        },
         heroField(),
-        classField(),
+        { type: "row", fields: [classField(), dateField()] },
         noteField(),
       ],
       submitLabel: L("Lưu 5★", "保存 5★"),
+      submitIcon: starIcon,
+      tone: "accent",
       opener,
+      preview: (form) => fiveStarPreview(item.pity.value + Math.max(numberValue(form.elements.namedItem("pulls").value, 1), 1), 0, item.pity.limit),
       onSubmit: (values) => {
         record(recordBannerFiveStar(state, {
           accountId: state.activeAccountId,
@@ -1114,6 +1358,34 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     });
   }
 
+  /** "+ Lượt" của gói hạn giờ: ghi N lượt không ra (mặc định 1, Enter là lưu). */
+  function openBannerMiss(id, opener) {
+    const item = bannerView(id);
+    if (!item) return;
+    openDialog({
+      kicker: dialogKicker(item.name),
+      title: L("Ghi lượt không ra", "记录未出"),
+      fields: [{ name: "pulls", label: L("Số lượt", "抽数"), type: "stepper", value: 1, min: "1", max: String(SET_PITY_MAX), required: true }],
+      submitLabel: L("Ghi lượt", "记录"),
+      opener,
+      preview: (form) => {
+        const pulls = Math.max(numberValue(form.elements.namedItem("pulls").value, 1), 1);
+        return [el("span", {}, L(
+          ["Tiến độ về ", el("strong", {}, `${item.pity.value + pulls} / ${item.pity.limit}`), "."],
+          ["进度变为 ", el("strong", {}, `${item.pity.value + pulls} / ${item.pity.limit}`), "。"],
+        ))];
+      },
+      onSubmit: (values) => {
+        record(recordBannerMiss(state, {
+          accountId: state.activeAccountId,
+          bannerId: id,
+          pulls: numberValue(values.pulls, 1),
+          date: currentDate(),
+        }), pulledText);
+      },
+    });
+  }
+
   function editLogRow(id, opener) {
     const row = view.log.find((item) => item.id === id);
     if (!row) return;
@@ -1121,8 +1393,8 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
       ? { name: "pulls", label: L("Số lượt tích lũy", "累计抽数"), type: "number", value: row.pulls, min: "0", max: String(SET_PITY_MAX), required: true }
       : { name: "pulls", label: L("Số lượt", "抽数"), type: "number", value: row.pulls, min: "1", required: true };
     const fields = row.result === "fiveStar"
-      ? [pullsField, heroField(row.heroName), classField(row.heroValueClass || DEFAULT_VALUE_CLASS), noteField(row.note), dateField(row.date)]
-      : [pullsField, noteField(row.note), dateField(row.date)];
+      ? [pullsField, heroField(row.heroName), { type: "row", fields: [classField(row.heroValueClass || DEFAULT_VALUE_CLASS), dateField(row.date)] }, noteField(row.note)]
+      : [pullsField, dateField(row.date), noteField(row.note)];
     openDialog({
       title: L(`Sửa dòng · ${row.bannerName}`, `编辑记录 · ${row.bannerName}`),
       lead: row.result === "fiveStar"
@@ -1160,12 +1432,12 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     (logList.querySelector(".rt-log-edit") || logTitle).focus();
   }
 
-  function addAccount() {
+  function addAccount(opener) {
     openDialog({
       title: L("Thêm tài khoản", "添加账号"),
       fields: [{ name: "name", label: L("Tên tài khoản mới:", "新账号名称："), required: true }],
       submitLabel: L("Thêm", "添加"),
-      opener: accountMenu.button,
+      opener,
       onSubmit: ({ name }) => {
         commit(createAccount(state, String(name || "").trim()));
         showToast(L("Đã thêm tài khoản.", "已添加账号。"));
@@ -1200,7 +1472,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
         `删除账号“${current.name}”及其招募数据？`,
       ),
       submitLabel: L("Xóa", "删除"),
-      danger: true,
+      tone: "danger",
       opener: accountMenu.button,
       onSubmit: () => {
         commit(deleteAccount(state, current.id));
@@ -1254,7 +1526,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
         `删除卡包“${item.name}”？该卡包的记录将从记录和统计中移除。`,
       ),
       submitLabel: L("Xóa", "删除"),
-      danger: true,
+      tone: "danger",
       opener,
       onSubmit: () => {
         commit(deleteBanner(state, id));
@@ -1285,7 +1557,6 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
   async function importJson(event) {
     const file = event.target.files?.[0];
     event.target.value = "";
-    accountMenu.close();
     if (!file) return;
     let parsed;
     let validation;
@@ -1310,7 +1581,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
         `文件包含 ${summary.accounts} 个账号、${summary.banners} 个卡池、${summary.events} 条抽卡记录。重复记录保留最后修改的版本，现有数据不会被覆盖。如不确定，请先导出 JSON 备份。`,
       ),
       submitLabel: L("Gộp dữ liệu", "合并数据"),
-      opener: accountMenu.button,
+      opener: importInput,
       onSubmit: () => {
         // Gộp lại trên state hiện tại (có thể đã đổi khi hộp thoại mở, ví dụ tab khác vừa ghi).
         commit(mergeRecruitTrackerState(state, parsed));

@@ -620,7 +620,11 @@ export function getRecruitTrackerSummary(state, { accountId, date = localDateFro
   return {
     state: next,
     account: next.accounts.find((account) => account.id === actualAccountId),
-    accounts: next.accounts.filter(isLive),
+    // Mỗi tài khoản kèm bảo hiểm gói ngày để ô chọn tài khoản hiện "Tên · x/30".
+    accounts: next.accounts.filter(isLive).map((account) => ({
+      ...account,
+      dailyPity: pityFor(dailyBanner, analyze(accountEvents(next, account.id)).running.get(DAILY_BANNER_ID) || 0),
+    })),
     daily: {
       banner: dailyBanner,
       todayDone,

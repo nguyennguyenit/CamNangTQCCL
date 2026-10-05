@@ -583,7 +583,7 @@ test('tool pages drop old scenario links; Gợi ý đội keeps ?season= and fil
   // Đội cũ chỉ lấp chỗ trống của mùa: mọi hàng mang nhãn "Tham khảo – đội cũ" đứng sau mọi hàng của mùa.
   const rows = results.locator('.roster-team-list').first().locator('.roster-result-team');
   await expect(rows.first()).toBeVisible();
-  const legacyFlags = await rows.evaluateAll(nodes => nodes.map(node => node.querySelector('.roster-source-legacy')?.textContent ?? null));
+  const legacyFlags = await rows.evaluateAll(nodes => nodes.map(node => node.querySelector('.roster-status[data-status="legacy"]')?.textContent ?? null));
   const firstLegacy = legacyFlags.findIndex(flag => flag !== null);
   if (firstLegacy >= 0) expect(legacyFlags.slice(firstLegacy)).toEqual(legacyFlags.slice(firstLegacy).map(() => 'Tham khảo – đội cũ'));
 });

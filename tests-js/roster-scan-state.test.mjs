@@ -195,3 +195,24 @@ test("the chosen season is remembered with the roster, and junk values are dropp
     assert.equal(serializeRosterScanState({ seasonId }).seasonId, null);
   }
 });
+
+test("each successful read counts one image per type and keeps the latest read time; junk is dropped", () => {
+  let state = applyScanResult(createInitialRosterScanState(), "heroes", { heroes: [{ name: "Mã Siêu" }] });
+  state = applyScanResult(state, "heroes", { heroes: [] });
+  state = applyScanResult(state, "builtTeams", { teams: [] });
+  const saved = deserializeRosterScanState(JSON.stringify(state));
+  assert.equal(saved.scans.heroes.images, 2);
+  assert.equal(saved.scans.heroes.at, state.updatedAt);
+  assert.equal(saved.scans.builtTeams.images, 1);
+  assert.equal(saved.scans.tactics, undefined);
+  // Xoá chip không phải lượt đọc ảnh: số ảnh giữ nguyên.
+  assert.equal(removeItem(saved, "heroes", "Mã Siêu").scans.heroes.images, 2);
+  assert.deepEqual(clearRosterScanState().scans, {});
+  const junk = serializeRosterScanState({ scans: {
+    heroes: { images: 0, at: "2026-10-05T00:00:00.000Z" },
+    tactics: { images: 2, at: "not a date" },
+    builtTeams: { images: 1.5, at: "2026-10-05T00:00:00.000Z" },
+    other: { images: 1, at: "2026-10-05T00:00:00.000Z" },
+  } });
+  assert.deepEqual(junk.scans, {});
+});

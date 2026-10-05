@@ -95,7 +95,7 @@ Không có artboard cho hai surface này; chúng theo StyleGuide và bảng toke
 
 Chọn kịch bản là đọc tham khảo, chưa đủ để gợi ý hoặc so đội theo luật. Phân biệt vùng áp dụng đúng luật, tham khảo cùng kịch bản và chưa rõ kịch bản; mỗi vùng có số lượng riêng.
 
-Hai công cụ Soi đội và Gợi ý đội không có bộ chọn Mùa / Phiên bản luật của layout; `scenario`, `ruleset`, `config` trên URL cũ của hai trang bị bỏ lặng lẽ khi tải. Mỗi công cụ tự có ô chọn mùa của Đội chuẩn (`season`, mặc định `defaultSourceSeasonId`): Soi đội trong editor, Gợi ý đội ở hàng điều khiển ("Mùa bạn đang chơi", nhớ trong kho đã lưu). Kết quả Gợi ý đội: danh sách đội (đội cũ gắn nhãn "Tham khảo – đội cũ", luôn sau đội của mùa), "Nên thêm", rồi mục "Thiếu món" (thẻ nền `panel-3`, mỗi ô thiếu một hàng: "Tôi có…", món bù kèm số cấu hình cùng mùa, "Dùng món này", "Vì sao?" với lời giải thích `aria-live` ngay dưới).
+Hai công cụ Soi đội và Gợi ý đội không có bộ chọn Mùa / Phiên bản luật của layout; `scenario`, `ruleset`, `config` trên URL cũ của hai trang bị bỏ lặng lẽ khi tải. Mỗi công cụ tự có ô chọn mùa của Đội chuẩn (`season`, mặc định `defaultSourceSeasonId`): Soi đội trong editor, Gợi ý đội ở thẻ thiết lập đầu trang ("Mùa bạn đang chơi", nhớ trong kho đã lưu). Kết quả Gợi ý đội (màn riêng, có dải tóm tắt kho + nút "Sửa kho đã đọc"): cột trái "Danh sách đội sau khi xây dựng" (pill "Đã đủ 5 đội" hoặc `n/5 đội`; mỗi đội một thẻ có số thứ tự, pill bậc + trạng thái, hàng tướng → chiến pháp, khối "Đã thay" hổ phách; đội cũ viền đứt, nhãn "Tham khảo – đội cũ", luôn sau đội của mùa), cột phải "Thiếu món" (pill "Thiếu N món", mỗi ô thiếu một dòng cảnh báo + "Tôi có…", mục "Món bù có trong kho": "Dùng X thay Y", số cấu hình cùng mùa, "Vì sao?" với lời giải thích `aria-live` trong khung ngay dưới, "Dùng món này").
 
 ## Trang chi tiết đội và 404
 
@@ -117,7 +117,9 @@ Hai công cụ Soi đội và Gợi ý đội không có bộ chọn Mùa / Phi�
 ## Theo dõi chiêu mộ (local-first, đồng bộ tuỳ chọn)
 
 - Không bắt đăng nhập: khách dùng dữ liệu trong trình duyệt; thông báo nói rõ dữ liệu có thể mất khi xóa dữ liệu trang và gợi ý đăng nhập để đồng bộ hoặc Xuất JSON. Chip ☁ cạnh ô tài khoản hiện trạng thái đồng bộ; lời mời đăng nhập chỉ hiện một lần sau lượt 5★ đầu tiên.
-- Ghi lượt ngày một chạm ("2 miễn phí", "Đủ 4", kẹp theo số lượt rẻ còn lại hôm nay); mỗi thao tác ghi/xóa có toast `role="status"` kèm Hoàn tác.
+- Ghi lượt ngày một chạm ("2 miễn phí", "Đủ 4", kẹp theo số lượt rẻ còn lại hôm nay; dòng phụ của nút nói đúng số sẽ ghi); mỗi thao tác ghi/xóa có toast `role="status"` kèm Hoàn tác.
+- Bố cục theo artboard `Recruit`/`RecruitMobile`: hàng tài khoản (select "Tên · x/30", chip ☁, + Tài khoản, Xuất/Nhập JSON, ⋯ đổi tên/xóa); cột chính là thẻ **Hôm nay** (số bảo hiểm serif lớn, thanh vàng → son có vạch 1/3 · 2/3, "Hôm nay x/4" + 4 vạch lượt rẻ, 3 nút ghi nhanh) và **Nhật ký** (ngày "Hôm nay"/"Hôm qua"/dd/mm, dòng phụ "Lượt a–b/4" hoặc badge phân loại/Chỉnh số); cột phụ 380px là Thống kê (số + dòng phụ), Gói hạn giờ ("+ Lượt" mở hộp thoại số lượt, "Có 5★"), thông báo lưu dữ liệu. ≤980px một cột: Hôm nay, Thống kê (3 cột), Gói hạn giờ, Nhật ký, thông báo.
+- Hộp thoại **Có 5★** (`RecruitFiveStar`): kicker "Gói · Tài khoản", thanh chọn lượt trúng trong số lượt rẻ còn lại, ô −/+ "Quay tiếp sau đó", khung xem trước "Sẽ ghi 5★ ở lượt N của mốc bảo hiểm … tiến độ về x / 30" cập nhật theo ô; ngày của gói ngày chỉ đọc (luôn là hôm nay).
 - Mọi hỏi/xác nhận là `<dialog>` trong trang (không `prompt`/`confirm`/`alert`); `Nhập JSON` hiện số tài khoản/gói/lượt rồi gộp vào dữ liệu hiện có.
 - Bảo hiểm, lượt còn lại, nhật ký và thống kê dùng nhãn số rõ, không chỉ màu; thanh tiến độ `role="meter"` giữ số thật trong `aria-valuetext`.
 - Không gửi dữ liệu tracker ra ngoài khi người dùng chưa đăng nhập.
@@ -137,8 +139,10 @@ Hai công cụ Soi đội và Gợi ý đội không có bộ chọn Mùa / Phi�
 
 ## Gợi ý đội từ kho
 
-- Quy trình bắt buộc: scan → map canonical → người dùng review/sửa → xác nhận → recommend; mọi thay đổi kho (thêm/bỏ tướng, đọc ảnh xong) huỷ kết quả cũ ngay.
-- Phân biệt rõ team đã khóa, portfolio sau build, team nên thêm, missing hero/tactic và conflict.
+- Quy trình bắt buộc: scan → map canonical → người dùng review/sửa → xác nhận → recommend; mọi thay đổi kho (thêm/bỏ tướng, đọc ảnh xong) bỏ xác nhận và khoá nút gợi ý ngay.
+- Hai màn theo artboard `Roster`/`RosterResult`: màn kho (dải 3 bước Đọc kho · Kiểm tra · Gợi ý dùng `.ana-flow` trải hết bề ngang; thẻ thiết lập mùa + "Ưu tiên gợi ý" dạng radio phân đoạn + lời nhắc AI; 3 thẻ đọc ảnh, chọn ảnh là đọc ngay, khung tối ghi "N ảnh · <lúc đọc>", nút "Đọc lại"; kiểm tra kho hai cột chip, tối đa 16 tướng / 12 chiến pháp trước "Hiện tất cả"; đội đang khóa; thanh thao tác dính đáy ở desktop) và màn kết quả. Bước 3 là bước đang làm khi đang xem kết quả.
+- Phân biệt rõ team đã khóa, danh sách sau build, đội cũ tham khảo, missing hero/tactic và conflict.
+- Đội khóa đọc từ ảnh không ghi tướng nào giữ chiến pháp nào: thẻ kết quả hiện hai hàng Tướng / Chiến pháp, không đoán.
 - Ảnh chỉ đọc để trích xuất; engine local dùng dữ liệu curate để chọn đội.
 - State persist chỉ chứa dữ liệu canonical cần thiết; không ảnh, base64, blob hoặc Turnstile token.
 

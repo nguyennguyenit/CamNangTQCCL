@@ -1,5 +1,39 @@
 # Project Changelog
 
+## 2026-10-05 (Gợi ý đội từ kho: giao diện theo thiết kế mới)
+
+### Changed
+
+- **Gợi ý đội từ kho** (`js/roster-recommend-ui.js`, `css/styles.css`) theo artboard `Roster`/`RosterResult` (+ Mobile), chia hai màn. Màn kho: dải 3 bước Đọc kho · Kiểm tra · Gợi ý (`.ana-flow.roster-flow`, trải hết bề ngang, giữ chữ trên mobile); thẻ thiết lập gồm "Mùa bạn đang chơi" + dòng phụ, "Ưu tiên gợi ý" thành radio phân đoạn (thay select), lời nhắc AI; 3 thẻ đọc ảnh có pill "N … đã đọc", khung tối "N ảnh · <lúc đọc>", nút Chọn ảnh (chọn là đọc ngay) + "Đọc lại"/"Đọc ảnh" (gửi lại ảnh vừa chọn); một dòng trạng thái chung dưới thẻ; "Kiểm tra kho đã đọc" hai cột chip (đếm "48 tướng · hiện 16", tối đa 16 tướng / 12 chiến pháp trước "Hiện tất cả"), đội đang khóa có icon khóa + "Bỏ đội"; thanh thao tác Xóa toàn bộ kho | Xác nhận · Gợi ý 5 đội dính đáy ở desktop.
+- Màn kết quả: dải tóm tắt kho (mùa, ưu tiên, số tướng/chiến pháp, số đội khóa) + "Sửa kho đã đọc" quay lại màn kho (thay nút đóng/mở khu kiểm tra chỉ có trên mobile); hai cột "Danh sách đội sau khi xây dựng" (pill "Đã đủ 5 đội" hoặc `n/5 đội`, thẻ đội có số thứ tự, pill bậc + trạng thái, hàng tướng → chiến pháp, khối "Đã thay" hổ phách, "Mở đội →"; đội cũ viền đứt) | "Thiếu món" (pill "Thiếu N món", dòng cảnh báo + "Tôi có…", "Món bù có trong kho" dạng "Dùng X thay Y", "Vì sao?" mở khung giải thích). Bỏ mục "Nên thêm" (trùng danh sách trừ đội khóa). Bước 3 là bước đang làm khi xem kết quả.
+- Đội khóa đọc từ ảnh không có tướng giữ chiến pháp: thẻ kết quả hiện hai hàng Tướng / Chiến pháp thay vì đoán.
+- Kho lưu thêm `scans.{heroes,tactics,builtTeams} = {images, at}` (số ảnh đã đọc, lần đọc gần nhất; giá trị lạ bị bỏ khi đọc lại). `seasonNameText` (tên mùa không kèm số đội) tách khỏi `seasonOptionText`.
+- Token: thêm `--warn`/`--warn-bg` (hổ phách: Dùng biến thể, Thiếu N món, Đã thay; theme tối tự suy, ≥ 4,5:1). Danh mục `buoc-cong-cu` viết lại cho `.roster-flow`; `the`, `the-cong-cu`, `tool-notice`, `tool-text-action`, `chip-bo-tuong` cập nhật selector/probe.
+- Bản dịch: đổi chữ 14 obligation `authored-vi` `ui:roster/*` theo chữ mới (giữ số obligation); chưa thêm obligation cho chữ mới. Publish chung với Chiêu mộ (xem mục Chiêu mộ 2026-10-05).
+
+### Tests
+
+- `tests-e2e/beta-tools.spec.mjs` (Gợi ý đội, Vòng sửa P09, Turnstile báo lỗi): chọn ảnh là đọc, "Đọc lại" chờ token mới, dòng trạng thái chung, khung "N ảnh · vừa xong", dải bước `.roster-flow`, màn kết quả + "Sửa kho đã đọc" giữ focus, pill "Đã đủ 5 đội" / `0/5 đội`, hàng Tướng / Chiến pháp của đội khóa, mobile không tràn ngang và thanh thao tác không dính; `spa-parity`, `season-lookup`, `selected-state-contrast` theo selector mới.
+- `tests-js/roster-scan-state.test.mjs`: đếm ảnh theo loại, giữ khi bỏ chip, xoá khi xoá kho, bỏ giá trị lạ.
+
+## 2026-10-05 (Chiêu mộ: giao diện theo thiết kế mới)
+
+### Changed
+
+- **Theo dõi chiêu mộ** (`js/recruit-tracker.js`, `css/styles.css`) theo artboard `Recruit`/`RecruitFiveStar` (+ Mobile): hàng tài khoản có nhãn trên select (mỗi mục "Tên · x/30"), chip ☁ dạng pill, nút + Tài khoản / Xuất JSON / Nhập JSON trên hàng, menu ⋯ chỉ còn Đổi tên / Xóa tài khoản. Lưới 2 cột: thẻ Hôm nay + Nhật ký | Thống kê, Gói hạn giờ, thông báo lưu dữ liệu (cột phụ 380px); ≤980px một cột theo thứ tự RecruitMobile.
+- Thẻ Hôm nay: số bảo hiểm serif 84px (mobile 64px), thanh vàng → son có vạch 1/3 · 2/3, "Hôm nay x/4" + 4 vạch lượt rẻ, dòng "Còn N lượt · hôm nay còn M lượt rẻ", "Chỉnh số" lên đầu thẻ; 3 nút ghi nhanh (2 miễn phí, Đủ 4, Có 5★) có dòng phụ nói đúng số sẽ ghi.
+- Nhật ký: ngày "Hôm nay"/"Hôm qua"/dd/mm (ngày đủ ở tooltip), dòng phụ "tên gói · Lượt a–b/4" cho lượt rẻ gói ngày, badge phân loại 5★ hoặc "Chỉnh số"; nút sửa/xóa có viền. Thống kê có dòng phụ (so mốc 30, số Chủ lực, ngày liên tiếp), số thập phân theo ngôn ngữ trang.
+- Gói hạn giờ: thẻ giấy nhạt, chip hạn (vàng ở ngày cuối, đỏ khi quá hạn), "+ Lượt" mở hộp thoại số lượt (thay hai nút +1/+5), "Có 5★" nền son.
+- Hộp thoại Có 5★: kicker "Gói · Tài khoản", thanh chọn lượt trúng (radio native), ô −/+ "Quay tiếp sau đó", gợi ý dưới ô Tướng, Phân loại | Ngày (gói ngày: chỉ đọc, hôm nay), khung xem trước "Sẽ ghi 5★ ở lượt N … tiến độ về x / 30". Mọi hộp thoại của công cụ dùng chung đầu/nút mới; mobile Lưu rộng hết hàng trên Hủy.
+- Store: `getRecruitTrackerSummary().accounts[]` kèm `dailyPity` của từng tài khoản (cho ô chọn tài khoản).
+- Token: thêm `--gold` (đầu dải thanh bảo hiểm), `--type-pity-value` (84px); `--type-pity-unit` lên 600; bỏ `--type-pity-value-mobile`; chip hạn dùng `--warn`/`--warn-bg` có sẵn. Danh mục `menu-tai-khoan`, `thanh-tien-do`, `the-cong-cu`, `toast-hoan-tac`, `nhat-ky-chieu-mo` cập nhật cấu tạo/probe; thêm `the-goi-han-gio`, `hop-thoai-5-sao`.
+- Bản dịch: đổi chữ của 2 obligation `authored-vi` (`ui:recruit/pity-meta-lead`, `ui:recruit/form-title`) theo chữ mới, không đổi obligation `translate` (baseline giữ nguyên). Policy `site-vi-261005-chieu-mo-goi-y-kho-redesign` re-pin hash `js/recruit-tracker.js`, `js/recruit-tracker-store.js` cùng `js/roster-recommend-ui.js`, `js/roster-scan-state.js`, `js/team-filter-section.js` (Gợi ý kho); publish generation `2919664e…` (thay `54b1dae5…`, đã prune), re-pin `pipeline/team-route-handles.json`; `WORKFLOW_BUILD_ID` MCP không đổi.
+
+### Tests
+
+- `tests-js/recruit-tracker-ui.test.mjs`: dòng phụ nút nhanh, "hôm nay còn/đã đủ", `optionText` tài khoản, ngày nhật ký tương đối, nhãn "Lượt a–b/4", dòng phụ thống kê, `tone` chip hạn.
+- `tests-e2e/beta-tools.spec.mjs`: hộp thoại 5★ (thanh chọn lượt, ô −/+ đổi trần theo lượt trúng, khung xem trước), "+ Lượt" qua hộp thoại, ngày "Hôm nay", "x / y", Xuất/Nhập JSON trên hàng tài khoản.
+
 ## 2026-10-04 (Soi đội: giao diện theo thiết kế mới)
 
 ### Changed

@@ -38,7 +38,7 @@ const CASES = [
   // Tab Tra cứu ở desktop giữ hợp đồng cũ: chữ mực trên nền giấy + gạch chân son, KHÔNG dùng nền chọn
   // (tương phản chữ của nó đã có test riêng trong unified-lookup.spec.mjs). Chỉ viên mobile dùng `--select`.
   { path: '/tra-cuu/tuong/', selected: '.lookup-chip[aria-current="page"]', unselected: '.lookup-chip:not([aria-current])', kids: ['.lookup-chip-count'], widths: [390] },
-  { path: '/goi-y-doi-tu-kho/', selected: '.roster-step[data-state="current"]', unselected: '.roster-step[data-state="pending"]', kids: [] },
+  { path: '/goi-y-doi-tu-kho/', selected: '.roster-flow [data-state="current"] .ana-flow-mark', unselected: '.roster-flow [data-state="pending"] .ana-flow-mark', kids: [] },
   { path: '/soi-doi-tu-anh/', selected: '.ana-btn.primary', unselected: '.ana-btn:not(.primary):not(:disabled)', kids: [] },
 ];
 

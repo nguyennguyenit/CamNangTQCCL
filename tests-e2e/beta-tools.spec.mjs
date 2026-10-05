@@ -134,14 +134,14 @@ test.describe("Chiêu mộ", () => {
     await expect(dailyMeter).toHaveAttribute("aria-valuetext", "1 / 30 lượt");
     await expect(section.locator(".rt-pity-value")).toHaveText("1");
     await expect(section.locator(".rt-pity-unit")).toHaveText("/ 30 lượt");
-    await expect(section.locator(".rt-pity-meta")).toContainText("Còn 29 lượt tới mốc bảo hiểm");
+    await expect(section.locator(".rt-pity-meta")).toContainText("Còn 29 lượt · hôm nay còn 3 lượt rẻ");
     await expect(section.locator(".rt-pity-meta")).toContainText("Hôm nay 1/4");
 
     // Gói hạn giờ quá mốc: chữ hiện số thật, meter kẹp trong [0, limit], cảnh báo quy tắc vẫn hiện.
     const banner = section.locator(".rt-banner");
     await expect(banner).toHaveCount(1);
     await expect(banner.locator(".rt-banner-name")).toHaveText("Gói hạn giờ A");
-    await expect(banner.locator(".rt-banner-count")).toHaveText("31/30");
+    await expect(banner.locator(".rt-banner-count")).toHaveText("31 / 30");
     await expect(banner.locator("[role='meter']")).toHaveAttribute("aria-valuenow", "30");
     await expect(banner.locator("[role='meter']")).toHaveAttribute("aria-valuetext", "31 / 30 lượt");
     await expect(banner.locator(".rt-warning")).toHaveText("Kiểm tra lại dữ liệu/quy tắc game");
@@ -241,8 +241,9 @@ test.describe("Chiêu mộ", () => {
     await fiveButton.click();
     const dialog = page.locator("dialog.rt-dialog");
     await expect(dialog).toBeVisible();
-    await expect(dialog.locator("h2")).toHaveText("Ghi 5★ · Danh tướng PK");
-    await expect(dialog.locator("select[name='hitAt']")).toBeFocused();
+    await expect(dialog.locator("h2")).toHaveText("Có 5★");
+    await expect(dialog.locator(".rt-dialog-kicker")).toHaveText("Danh tướng PK · Tài khoản chính");
+    await expect(dialog.locator("input[name='hitAt']:checked")).toBeFocused();
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
     await expect(fiveButton).toBeFocused();
@@ -283,19 +284,25 @@ test.describe("Chiêu mộ", () => {
 
     await section.locator(".rt-today .rt-five-btn").click();
     const dialog = page.locator("dialog.rt-dialog");
-    // Hôm nay đã quay 1 lượt: còn 3 lượt để chọn; hộp thoại lượt ngày không có ô ngày.
-    await expect(dialog.locator("select[name='hitAt'] option")).toHaveText(["Lượt 2/4 hôm nay", "Lượt 3/4 hôm nay", "Lượt 4/4 hôm nay"]);
+    // Hôm nay đã quay 1 lượt: còn 3 lượt để chọn; hộp thoại lượt ngày chỉ hiện ngày hôm nay (không sửa được).
+    await expect(dialog.locator(".rt-seg-text")).toHaveText(["Lượt 2/4", "Lượt 3/4", "Lượt 4/4"]);
     await expect(dialog.locator("input[type='date']")).toHaveCount(0);
-    await dialog.locator("select[name='hitAt']").selectOption("2");
-    await expect(dialog.locator("select[name='pullsAfter'] option")).toHaveCount(2);
-    await dialog.locator("select[name='pullsAfter']").selectOption("0");
+    const after = dialog.locator("input[name='pullsAfter']");
+    await expect(after).toHaveValue("2");
+    await dialog.getByRole("radio", { name: "Lượt 3/4" }).check();
+    // Đổi lượt trúng: số lượt quay tiếp mặc định là hết số lượt rẻ còn lại, trần theo đó.
+    await expect(after).toHaveValue("1");
+    await expect(after).toHaveAttribute("max", "1");
+    await dialog.getByRole("button", { name: "Bớt 1 lượt", exact: true }).click();
+    await expect(after).toHaveValue("0");
+    await expect(dialog.locator(".rt-dialog-preview")).toHaveText("Sẽ ghi 5★ ở lượt 3 của mốc bảo hiểm · tiến độ về 0 / 30.");
     await dialog.locator("input[name='heroName']").fill("SP Quan Vũ");
     await dialog.getByRole("button", { name: "Lưu 5★", exact: true }).click();
     await expect(dialog).toBeHidden();
 
     const row = section.locator(".rt-log-item").first();
     await expect(row.locator(".rt-log-text")).toHaveText("★ SP Quan Vũ · lượt 3");
-    await expect(row.locator(".rt-log-date")).toHaveText(todayIso());
+    await expect(row.locator(".rt-log-date")).toHaveText("Hôm nay");
     await expect(row.locator(".rt-log-banner")).toContainText("Danh tướng PK");
     await expect(section.locator(".rt-pity-value")).toHaveText("0");
     await expect(section.locator(".rt-pity-meta")).toContainText("Hôm nay 3/4");
@@ -330,7 +337,7 @@ test.describe("Chiêu mộ", () => {
     expect(nativeDialogs).toEqual([]);
   });
 
-  test("gói hạn giờ: thêm bằng hộp thoại, đếm ngược hết hạn, +5, lưu trữ và xóa có hộp thoại xác nhận", async ({ page }) => {
+  test("gói hạn giờ: thêm bằng hộp thoại, đếm ngược hết hạn, + Lượt, lưu trữ và xóa có hộp thoại xác nhận", async ({ page }) => {
     const nativeDialogs = forbidNativeDialogs(page);
     await page.goto("/theo-doi-chieu-mo/");
     await waitForBoot(page);
@@ -350,8 +357,12 @@ test.describe("Chiêu mộ", () => {
     const banner = section.locator(".rt-banner");
     await expect(banner.locator(".rt-banner-name")).toHaveText("Kỳ Tật Như Phong");
     await expect(banner.locator(".rt-banner-expiry")).toHaveText("còn 3 ngày");
-    await banner.getByRole("button", { name: "+5", exact: true }).click();
-    await expect(banner.locator(".rt-banner-count")).toHaveText("5/30");
+    await banner.getByRole("button", { name: "+ Lượt", exact: true }).click();
+    await expect(dialog.locator("input[name='pulls']")).toBeFocused();
+    await dialog.locator("input[name='pulls']").fill("5");
+    await expect(dialog.locator(".rt-dialog-preview")).toHaveText("Tiến độ về 5 / 30.");
+    await page.keyboard.press("Enter");
+    await expect(banner.locator(".rt-banner-count")).toHaveText("5 / 30");
 
     await banner.locator(".rt-menu-toggle").click();
     await banner.getByRole("button", { name: "Lưu trữ", exact: true }).click();
@@ -362,7 +373,7 @@ test.describe("Chiêu mộ", () => {
 
     await banner.locator(".rt-menu-toggle").click();
     await banner.getByRole("button", { name: "Xóa gói", exact: true }).click();
-    await expect(dialog.locator(".donate-dialog-lead")).toContainText('Xóa gói "Kỳ Tật Như Phong"?');
+    await expect(dialog.locator(".rt-dialog-lead")).toContainText('Xóa gói "Kỳ Tật Như Phong"?');
     await dialog.getByRole("button", { name: "Xóa", exact: true }).click();
     await expect(banner).toHaveCount(0);
     await expect(section.locator(".rt-log-item")).toHaveCount(0);
@@ -855,24 +866,27 @@ test.describe("Gợi ý đội", () => {
     await waitForBoot(page);
     const section = page.locator("#section-roster-recommend");
     const card = section.locator(".roster-scan-card").first();
-    const scan = section.getByRole("button", { name: "Đọc Tướng", exact: true });
+    const status = section.locator(".roster-scan-status");
+    const rescan = section.getByRole("button", { name: "Đọc lại ảnh Tướng", exact: true });
     const resets = () => turnstileResets(page, "#section-roster-recommend .ana-turnstile");
 
+    // Chọn ảnh là đọc ngay.
     await card.locator('input[type="file"]').setInputFiles({ name: "kho.png", mimeType: "image/png", buffer: transparentPng });
-    await scan.click();
-    await expect(card.locator(".ana-note")).toContainText("Đã đọc xong");
+    await expect(status).toContainText("Đã đọc xong");
+    await expect(card.locator(".roster-scan-preview")).toContainText("1 ảnh · vừa xong");
     // Token dùng một lần: sau lượt đọc widget bị reset đúng một lần; người dùng giải lại để có token.
     await expect.poll(resets).toBe(1);
-    // Chưa có token mới: bấm đọc bị chặn, không gọi Worker.
-    await scan.click();
-    await expect(card.locator(".ana-note")).toHaveText("Xác thực Turnstile trước.");
+    // Chưa có token mới: bấm đọc lại bị chặn, không gọi Worker.
+    await rescan.click();
+    await expect(status).toHaveText("Xác thực Turnstile trước.");
     expect(tokens).toEqual(["fixture-token"]);
 
     // Widget cấp token mới -> đọc lại được và Worker nhận token mới, không phải token đã bỏ.
     await page.evaluate(() => window.__turnstileSolve());
-    await scan.click();
-    await expect(card.locator(".ana-note")).toContainText("Đã đọc xong");
+    await rescan.click();
+    await expect(status).toContainText("Đã đọc xong");
     expect(tokens).toEqual(["fixture-token", "fixture-token-1"]);
+    await expect(card.locator(".roster-scan-preview")).toContainText("2 ảnh · vừa xong");
   });
 
   test("ba nút đọc ảnh không dùng chung một token: đang đọc thì khoá cả ba, nén ảnh lỗi không bỏ token", async ({ page }) => {
@@ -891,36 +905,34 @@ test.describe("Gợi ý đội", () => {
     await waitForBoot(page);
     const section = page.locator("#section-roster-recommend");
     const [heroCard, tacticCard] = [section.locator(".roster-scan-card").nth(0), section.locator(".roster-scan-card").nth(1)];
-    const scanHeroes = section.getByRole("button", { name: "Đọc Tướng", exact: true });
-    const scanTactics = section.getByRole("button", { name: "Đọc Chiến pháp", exact: true });
+    const status = section.locator(".roster-scan-status");
+    const readTactics = section.getByRole("button", { name: "Đọc ảnh Chiến pháp", exact: true });
     const resets = () => turnstileResets(page, "#section-roster-recommend .ana-turnstile");
 
     // Nén ảnh lỗi (tệp hỏng): chưa gửi gì nên widget không bị reset và token vẫn dùng được.
     await heroCard.locator('input[type="file"]').setInputFiles({ name: "hong.png", mimeType: "image/png", buffer: Buffer.from("not an image") });
-    await scanHeroes.click();
-    await expect(heroCard.locator(".ana-note")).not.toHaveText(/Đang đọc/u);
-    await expect(heroCard.locator(".ana-note")).not.toHaveText("");
+    await expect(status).not.toHaveText(/Đang đọc/u);
+    await expect(status).not.toHaveText("");
     expect(await resets()).toBe(0);
     expect(tokens).toEqual([]);
 
     await heroCard.locator('input[type="file"]').setInputFiles({ name: "kho.png", mimeType: "image/png", buffer: transparentPng });
-    await tacticCard.locator('input[type="file"]').setInputFiles({ name: "cp.png", mimeType: "image/png", buffer: transparentPng });
-    await scanHeroes.click();
     await expect.poll(() => tokens.length).toBe(1);
-    // Đang đọc: cả ba nút khoá; bấm nút thứ hai không gửi thêm request nào.
-    await expect(scanTactics).toBeDisabled();
+    // Đang đọc: chọn ảnh ở thẻ khác không gửi thêm request, mọi nút đọc đều khoá.
+    await tacticCard.locator('input[type="file"]').setInputFiles({ name: "cp.png", mimeType: "image/png", buffer: transparentPng });
+    await expect(readTactics).toBeDisabled();
     await expect(section.getByRole("button", { name: /^Đọc / })).toHaveCount(3);
     for (const button of await section.getByRole("button", { name: /^Đọc / }).all()) await expect(button).toBeDisabled();
-    await scanTactics.click({ force: true });
+    await readTactics.click({ force: true });
     release();
-    await expect(heroCard.locator(".ana-note")).toContainText("Đã đọc xong");
-    await expect(scanTactics).toBeEnabled();
+    await expect(status).toContainText("Đã đọc xong");
+    await expect(readTactics).toBeEnabled();
     expect(tokens).toEqual(["fixture-token"]);
     await expect.poll(resets).toBe(1);
 
     // Token đã dùng: thẻ thứ hai phải chờ token mới.
-    await scanTactics.click();
-    await expect(tacticCard.locator(".ana-note")).toHaveText("Xác thực Turnstile trước.");
+    await readTactics.click();
+    await expect(status).toHaveText("Xác thực Turnstile trước.");
     expect(tokens).toEqual(["fixture-token"]);
   });
 
@@ -931,24 +943,31 @@ test.describe("Gợi ý đội", () => {
 
     const section = page.locator("#section-roster-recommend");
     await expect(section.locator("h1.reference-title")).toHaveText("Gợi ý đội từ kho");
-    await expect(section.locator(".tool-notice")).toContainText("AI đọc ảnh, và chỉ giải thích món bù khi bạn hỏi");
+    await expect(section.locator(".tool-notice")).toContainText("AI chỉ đọc ảnh, và chỉ giải thích món bù khi bạn hỏi");
 
-    const steps = section.locator(".roster-step");
+    const steps = section.locator(".roster-flow .ana-flow-step");
     await expect(steps).toHaveCount(3);
-    await expect(steps.nth(0)).toHaveText("1 · Đọc kho");
-    await expect(steps.nth(1)).toHaveText("2 · Kiểm tra");
-    await expect(steps.nth(2)).toHaveText("3 · Gợi ý");
+    await expect(steps.nth(0)).toHaveText("Đọc kho");
+    await expect(steps.nth(1)).toHaveText("2Kiểm tra");
+    await expect(steps.nth(2)).toHaveText("3Gợi ý");
     await expect(steps.nth(0)).toHaveAttribute("data-state", "done");
     await expect(steps.nth(1)).toHaveAttribute("data-state", "current");
-    await expect(section.locator(".roster-scan-card").first()).toContainText("BƯỚC 1");
-    await expect(section.locator(".roster-scan-state").first()).toHaveText("Xong");
+    await expect(steps.nth(1)).toHaveAttribute("aria-current", "step");
+    await expect(section.locator(".roster-scan-card").first().locator(".roster-step-caps")).toHaveText("Bước 1");
+    await expect(section.locator(".roster-scan-count").first()).toHaveAttribute("data-tone", "good");
+    await expect(section.locator(".roster-scan-count").first()).toContainText("tướng đã đọc");
 
     await section.getByRole("button", { name: "Xác nhận dữ liệu đã đọc" }).click();
     await expect(steps.nth(1)).toHaveAttribute("data-state", "done");
     await expect(steps.nth(2)).toHaveAttribute("data-state", "current");
 
-    await section.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
-    await expect(steps.nth(2)).toHaveAttribute("data-state", "done");
+    const recommend = section.getByRole("button", { name: "Gợi ý 5 đội", exact: true });
+    await recommend.click();
+    // Màn kết quả: bước 3 đang làm, phần đọc/kiểm tra kho ẩn sau dải tóm tắt.
+    await expect(steps.nth(2)).toHaveAttribute("data-state", "current");
+    await expect(section.locator("#roster-list-title")).toBeFocused();
+    await expect(section.locator("#roster-review-area")).toBeHidden();
+    await expect(section.locator(".roster-summary")).toContainText("Meta T0 → T1");
     const results = section.locator(".roster-results");
     await expect(results).toHaveCount(1);
     const firstList = results.locator(".roster-team-list").first();
@@ -975,10 +994,17 @@ test.describe("Gợi ý đội", () => {
         pillBackground: pill.backgroundColor,
       };
     });
-    expect(styles.padding).toBe("14px/16px");
+    expect(styles.padding).toBe("18px/18px");
     expect(styles.rankFont).toContain("Noto Serif Display");
     expect(styles.pillRadius).toBe("999px");
     expect(styles.pillHeight).toBe("24px");
+
+    // "Sửa kho đã đọc" quay lại màn kiểm tra, focus tiêu đề kho; gợi ý lại không cần xác nhận lại.
+    await section.getByRole("button", { name: "Sửa kho đã đọc", exact: true }).click();
+    await expect(section.locator("#roster-review-title")).toBeFocused();
+    await expect(results).toHaveCount(0);
+    await recommend.click();
+    await expect(results).toHaveCount(1);
 
     // Chi tiết cấu hình mở từ hàng kết quả (hành vi cũ).
     const openTeam = results.getByRole("button", { name: "Mở đội", exact: true }).first();
@@ -1024,30 +1050,28 @@ test.describe("Gợi ý đội", () => {
     await expect(section.locator(".roster-scan-count")).toHaveText(["Chưa đọc", "Chưa đọc", "Chưa đọc"]);
   });
 
-  test("mobile: nút Sửa kho đã đọc mở/đóng khu kiểm tra và giữ focus; thêm/bỏ chip giữ focus", async ({ page, request }) => {
+  test("mobile: kho kiểm tra hiện ngay, Sửa kho đã đọc từ màn kết quả quay lại kho; thêm/bỏ chip giữ focus", async ({ page, request }) => {
     await seedRoster(page, request, { single: true });
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/goi-y-doi-tu-kho/");
     await waitForBoot(page);
 
     const section = page.locator("#section-roster-recommend");
-    const toggle = section.locator(".roster-review-toggle");
     const review = section.locator("#roster-review-area");
-    await expect(toggle).toBeVisible();
-    await expect(toggle).toHaveText("Sửa kho đã đọc");
-    await expect(toggle).toHaveAttribute("aria-expanded", "false");
-    await expect(review).toBeHidden();
+    await expect(review).toBeVisible();
+    // Ba bước giữ chữ trên mobile; thanh thao tác không dính đáy để không che chip.
+    await expect(section.locator(".roster-flow .ana-flow-label").nth(0)).toBeVisible();
+    await expect(section.locator(".roster-actionbar")).toHaveCSS("position", "static");
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
 
-    await toggle.click();
-    await expect(review).toBeVisible();
-    await expect(toggle).toHaveAttribute("aria-expanded", "true");
-    await expect(toggle).toBeFocused();
-    await toggle.click();
+    await section.getByRole("button", { name: "Xác nhận dữ liệu đã đọc" }).click();
+    await section.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
     await expect(review).toBeHidden();
-    await expect(toggle).toHaveAttribute("aria-expanded", "false");
-    await expect(toggle).toBeFocused();
-    await toggle.click();
+    const edit = section.getByRole("button", { name: "Sửa kho đã đọc", exact: true });
+    await edit.focus();
+    await page.keyboard.press("Enter");
     await expect(review).toBeVisible();
+    await expect(section.locator("#roster-review-title")).toBeFocused();
 
     // Xoá chip: focus chuyển sang chip kế tiếp, không rơi về BODY.
     const heroPanel = section.locator(".roster-review-panel").filter({ has: page.locator("h3", { hasText: "Tướng đã đọc" }) });
@@ -1059,7 +1083,7 @@ test.describe("Gợi ý đội", () => {
     await expect(removes.nth(0)).toBeFocused();
 
     // Thêm chip: nút "Thêm" giữ focus, ô nhập được xoá.
-    const input = heroPanel.locator('input[placeholder="Thêm thủ công"]');
+    const input = heroPanel.getByPlaceholder("Thêm tướng ảnh chưa đọc ra…");
     await input.fill("Tướng thử nghiệm");
     const addButton = heroPanel.getByRole("button", { name: "Thêm", exact: true });
     await addButton.focus();
@@ -1079,16 +1103,16 @@ test.describe("Gợi ý đội", () => {
     await section.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
 
     const missing = section.locator(".roster-missing-section");
-    await expect(missing.locator("h3")).toHaveText("Thiếu món");
-    const missingHeroes = missing.locator(".roster-missing-slot .roster-result-meta").filter({ hasText: /^Thiếu tướng / });
+    await expect(missing.locator("h2")).toHaveText("Thiếu món");
+    const missingHeroes = missing.locator(".roster-missing-text").filter({ hasText: /^Thiếu tướng / });
     await expect(missingHeroes.first()).toBeVisible();
     await expect(missing).not.toContainText("hero:");
     await expect(missing).not.toContainText("tactic:");
-    const recommended = section.locator(".roster-team-list .roster-result-meta");
-    await expect(recommended.first()).toBeVisible();
-    for (const line of await recommended.allInnerTexts()) {
-      if (line.startsWith("Chiến pháp:") || line.startsWith("Đã thay:")) expect(line).not.toContain("tactic:");
-    }
+    // Hàng tướng → chiến pháp và khối "Đã thay" dùng tên hiển thị, không lộ mã canonical.
+    const portfolio = section.locator(".roster-team-list");
+    await expect(portfolio.locator(".roster-hero-tactics").first()).toBeVisible();
+    await expect(portfolio).not.toContainText("hero:");
+    await expect(portfolio).not.toContainText("tactic:");
   });
 
   /**
@@ -1180,6 +1204,8 @@ test.describe("Gợi ý đội", () => {
     await expect(portfolio.locator(".roster-result-team").filter({ hasText: fixture.team.name }).locator(".roster-status")).toHaveText("Có thể xây dựng ngay");
     expect((await stored()).ownedTactics.map((item) => item.name)).toContain(fixture.missing);
 
+    // Ô chọn mùa nằm ở màn kho: quay lại kho rồi đổi mùa.
+    await section.getByRole("button", { name: "Sửa kho đã đọc", exact: true }).click();
     await season.selectOption("pk-s28");
     await expect(page).toHaveURL(/\/goi-y-doi-tu-kho\/\?season=pk-s28$/);
     await expect(section.locator(".roster-results")).toHaveCount(0);
@@ -1195,12 +1221,14 @@ test.describe("Gợi ý đội", () => {
     await expect(section.locator(".roster-scan-count")).toHaveText(["Chưa đọc", "Chưa đọc", "Chưa đọc"]);
     await expect(section.getByRole("button", { name: "Xác nhận dữ liệu đã đọc" })).toBeDisabled();
     await expect(section.getByRole("button", { name: "Gợi ý 5 đội", exact: true })).toBeDisabled();
-    await expect(section.locator('.roster-step[data-step="scan"]')).toHaveAttribute("data-state", "current");
-    await expect(section.locator('.roster-step[data-step="review"]')).toHaveAttribute("data-state", "pending");
-    await expect(section.locator('.roster-step[data-step="suggest"]')).toHaveAttribute("data-state", "pending");
+    await expect(section.locator('.roster-flow [data-step="scan"]')).toHaveAttribute("data-state", "current");
+    await expect(section.locator('.roster-flow [data-step="review"]')).toHaveAttribute("data-state", "pending");
+    await expect(section.locator('.roster-flow [data-step="suggest"]')).toHaveAttribute("data-state", "pending");
+    await expect(section.locator(".roster-scan-preview").first()).toHaveText("Chưa có ảnh");
+    await expect(section.getByRole("button", { name: "Đọc ảnh Tướng", exact: true })).toBeDisabled();
   });
 
-  test("Nên thêm: đủ 5 đội khóa và không đội nào thêm được là hai câu khác nhau", async ({ page }) => {
+  test("đủ 5 đội: pill Đã đủ 5 đội; kho không xây được đội nào thì báo trống, không báo đủ", async ({ page }) => {
     const lockedTeams = [1, 2, 3, 4, 5].map((index) => ({
       teamName: `Đội khóa ${index}`,
       heroes: [`Tướng khóa ${index}`],
@@ -1218,23 +1246,29 @@ test.describe("Gợi ý đội", () => {
     await page.goto("/goi-y-doi-tu-kho/");
     await waitForBoot(page);
     const section = page.locator("#section-roster-recommend");
-    const addSection = section.locator(".roster-results section").filter({ has: page.locator("h3", { hasText: "Nên thêm" }) });
+    const portfolio = section.locator(".roster-portfolio");
     const suggest = async () => {
       await section.getByRole("button", { name: "Xác nhận dữ liệu đã đọc" }).click();
       await section.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
     };
 
     await suggest();
-    await expect(section.locator(".roster-team-list").first().locator(".roster-result-team")).toHaveCount(5);
-    await expect(addSection.locator(".roster-empty")).toHaveText("Đã đủ 5 đội.");
+    await expect(section.locator(".roster-team-list .roster-result-team")).toHaveCount(5);
+    await expect(portfolio.locator(".roster-portfolio-count")).toHaveText("Đã đủ 5 đội");
+    await expect(portfolio.locator(".roster-portfolio-count")).toHaveAttribute("data-tone", "good");
+    // Đội khóa đọc từ ảnh không ghi tướng giữ chiến pháp: hai hàng Tướng / Chiến pháp, không đoán.
+    await expect(section.locator(".roster-result-team").first().locator(".roster-hero-rows li")).toHaveText([
+      "TướngTướng khóa 1",
+      "Chiến phápChiến pháp khóa 1",
+    ]);
 
     // Bỏ hết đội khóa: kho chỉ còn một tướng, không đội nào xây được.
+    await section.getByRole("button", { name: "Sửa kho đã đọc", exact: true }).click();
     const removeButtons = section.locator(".roster-locked-team").getByRole("button", { name: /^Bỏ đội / });
     while (await removeButtons.count()) await removeButtons.first().click();
     await suggest();
-    const noneText = (await addSection.locator(".roster-empty").innerText()).trim();
-    expect(noneText).not.toBe("");
-    expect(noneText).not.toContain("Đã đủ");
+    await expect(portfolio.locator(".roster-portfolio-count")).toHaveText("0/5 đội");
+    await expect(portfolio.locator(".roster-empty")).toHaveText("Chưa có đội nào xây dựng được từ kho hiện tại.");
   });
 
   test("ô chọn ảnh: không lộ input file hệ thống, mỗi thẻ có nút Chọn ảnh mở hộp chọn tệp", async ({ page }) => {
@@ -1272,8 +1306,7 @@ test.describe("Gợi ý đội", () => {
     const section = page.locator("#section-roster-recommend");
     const card = section.locator(".roster-scan-card").first();
     await card.locator('input[type="file"]').setInputFiles({ name: "kho.png", mimeType: "image/png", buffer: transparentPng });
-    await section.getByRole("button", { name: "Đọc Tướng", exact: true }).click();
-    await expect(card.locator(".ana-note")).toContainText("Đã đọc xong");
+    await expect(section.locator(".roster-scan-status")).toContainText("Đã đọc xong");
 
     const heroPanel = section.locator(".roster-review-panel").filter({ has: page.locator("h3", { hasText: "Tướng đã đọc" }) });
     const chips = heroPanel.locator(".roster-chip-list li");
@@ -1306,13 +1339,13 @@ test.describe("Vòng sửa P09", () => {
 
   const expectInvalidated = async (page, section) => {
     await expect(section.locator(".roster-results")).toHaveCount(0);
-    await expect(section.locator('.roster-step[data-step="suggest"]')).toHaveAttribute("data-state", "pending");
+    await expect(section.locator('.roster-flow [data-step="suggest"]')).toHaveAttribute("data-state", "pending");
     await expect(section.getByRole("button", { name: "Gợi ý 5 đội", exact: true })).toBeDisabled();
     const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("tqccl.rosterRecommend.scanState.v1")));
     expect(stored.confirmed).toBe(false);
   };
 
-  test("mọi thay đổi kho (bỏ, thêm, đọc ảnh) huỷ kết quả gợi ý cũ ngay lập tức", async ({ page, request }) => {
+  test("mọi thay đổi kho (bỏ, thêm, đọc ảnh) bỏ xác nhận và khoá nút gợi ý ngay lập tức", async ({ page, request }) => {
     await page.route("https://challenges.cloudflare.com/**", (route) =>
       route.fulfill({ contentType: "application/javascript", body: TURNSTILE_STUB }));
     await page.route(WORKER_ROUTE, (route) => route.fulfill({ json: { heroes: [{ nameCn: "SP荀彧" }] } }));
@@ -1322,14 +1355,17 @@ test.describe("Vòng sửa P09", () => {
     const section = page.locator("#section-roster-recommend");
     const confirm = section.getByRole("button", { name: "Xác nhận dữ liệu đã đọc" });
     const recommend = section.getByRole("button", { name: "Gợi ý 5 đội", exact: true });
+    const edit = section.getByRole("button", { name: "Sửa kho đã đọc", exact: true });
 
     await confirm.click();
     await recommend.click();
     await expect(section.locator(".roster-results")).toHaveCount(1);
-    await expect(section.locator('.roster-step[data-step="suggest"]')).toHaveAttribute("data-state", "done");
+    await expect(section.locator('.roster-flow [data-step="suggest"]')).toHaveAttribute("data-state", "current");
+    await edit.click();
+    // Quay lại kho mà chưa đổi gì: vẫn đã xác nhận, gợi ý lại được ngay.
     await expect(recommend).toBeEnabled();
 
-    // 1) Bỏ một chip: kết quả biến mất, tiến trình không còn "xong", nút Gợi ý khoá lại.
+    // 1) Bỏ một chip: bước Gợi ý về chờ, nút Gợi ý khoá lại.
     const heroPanel = section.locator(".roster-review-panel").filter({ has: page.locator("h3", { hasText: "Tướng đã đọc" }) });
     const removes = heroPanel.locator(".roster-remove");
     await removes.first().focus();
@@ -1339,9 +1375,10 @@ test.describe("Vòng sửa P09", () => {
     await confirm.click();
     await recommend.click();
     await expect(section.locator(".roster-results")).toHaveCount(1);
+    await edit.click();
 
     // 2) Thêm một chip thủ công.
-    const input = heroPanel.locator('input[placeholder="Thêm thủ công"]');
+    const input = heroPanel.getByPlaceholder("Thêm tướng ảnh chưa đọc ra…");
     await input.fill("Tướng thử nghiệm");
     const add = heroPanel.getByRole("button", { name: "Thêm", exact: true });
     await add.focus();
@@ -1351,11 +1388,11 @@ test.describe("Vòng sửa P09", () => {
     await confirm.click();
     await recommend.click();
     await expect(section.locator(".roster-results")).toHaveCount(1);
+    await edit.click();
 
     // 3) Đọc ảnh thành công cũng là thay đổi kho.
     await section.locator('.roster-scan-card input[type="file"]').first().setInputFiles({ name: "kho.png", mimeType: "image/png", buffer: transparentPng });
-    await section.getByRole("button", { name: "Đọc Tướng", exact: true }).click();
-    await expect(section.locator(".roster-scan-card").first()).toContainText("Đã đọc xong");
+    await expect(section.locator(".roster-scan-status")).toContainText("Đã đọc xong");
     await expectInvalidated(page, section);
 
     // Xác nhận lại thì gợi ý chạy được trên kho đã đổi.
@@ -1388,8 +1425,7 @@ test.describe("Vòng sửa P09", () => {
     importedBanner.createdAt = "2026-07-02T00:00:00.000Z";
     imported.exportedAt = null;
 
-    // Input file trong suốt trong menu ⋯: Tab từ "Xuất JSON" phải để lại vòng focus nhìn thấy được trên "Nhập JSON".
-    await section.locator(".rt-account-toggle").click();
+    // Input file trong suốt trên nút "Nhập JSON": Tab từ "Xuất JSON" phải để lại vòng focus nhìn thấy được.
     await section.getByRole("button", { name: "Xuất JSON", exact: true }).focus();
     await page.keyboard.press("Tab");
     await expect(section.locator(".rt-file")).toBeFocused();
@@ -1408,7 +1444,7 @@ test.describe("Vòng sửa P09", () => {
     // Hộp thoại xác nhận trong trang (không `confirm()`), kèm số bản ghi của file.
     const dialog = page.locator("dialog.rt-dialog");
     await expect(dialog.locator("h2")).toHaveText("Gộp dữ liệu từ file?");
-    await expect(dialog.locator(".donate-dialog-lead")).toContainText("File có 1 tài khoản, 2 đợt chiêu mộ, 3 lượt quay.");
+    await expect(dialog.locator(".rt-dialog-lead")).toContainText("File có 1 tài khoản, 2 đợt chiêu mộ, 3 lượt quay.");
     await dialog.getByRole("button", { name: "Gộp dữ liệu", exact: true }).click();
     await expect(section.locator(".rt-toast")).toContainText("Đã nhập JSON.");
     const afterImport = await page.evaluate(() => {
@@ -1426,19 +1462,19 @@ test.describe("Vòng sửa P09", () => {
     });
     expect(afterImport.stored).toEqual(["Danh tướng PK", "Gói hạn giờ B"]);
     expect(afterImport.names).toEqual(["Gói hạn giờ B"]);
-    expect(afterImport.counts).toEqual(["31/45"]);
+    expect(afterImport.counts).toEqual(["31 / 45"]);
     expect(afterImport.meterLabel).toBe("Tiến độ bảo hiểm 5★ · Gói hạn giờ B");
     expect(afterImport.meterMax).toBe("45");
     expect(afterImport.meterText).toBe("31 / 45 lượt");
     // Lượt cùng id không nhân đôi khi gộp.
     expect(afterImport.events).toBe(3);
     await section.locator(".rt-banner").first().locator(".rt-five-btn").click();
-    await expect(dialog.locator("h2")).toHaveText("Ghi 5★ · Gói hạn giờ B");
+    await expect(dialog.locator("h2")).toHaveText("Có 5★");
+    await expect(dialog.locator(".rt-dialog-kicker")).toHaveText("Gói hạn giờ B · Tài khoản chính");
     await dialog.getByRole("button", { name: "Đóng", exact: true }).click();
     await expect(dialog).toBeHidden();
 
     // Xuất JSON (tải về) phải khớp trạng thái đang hiện.
-    await section.locator(".rt-account-toggle").click();
     const download = await Promise.all([
       page.waitForEvent("download"),
       section.getByRole("button", { name: "Xuất JSON", exact: true }).click(),
@@ -1460,7 +1496,7 @@ test.describe("Vòng sửa P09", () => {
     expect(nativeDialogs).toEqual([]);
   });
 
-  test("hàng kết quả có dữ liệu: số thứ tự, tên đội và nút Mở đội đúng cột; pill đúng màu theo trạng thái", async ({ page, request }) => {
+  test("hàng kết quả có dữ liệu: số thứ tự cạnh nội dung, Mở đội dưới các hàng tướng; pill đúng màu theo trạng thái", async ({ page, request }) => {
     await seedRoster20(page, request);
     for (const width of [1440, 390, 320]) {
       for (const theme of ["light", "dark"]) {
@@ -1479,16 +1515,16 @@ test.describe("Vòng sửa P09", () => {
             const el = node.querySelector(selector);
             return el ? { x: el.getBoundingClientRect().x, y: el.getBoundingClientRect().y, w: el.getBoundingClientRect().width } : null;
           };
-          return { rank: rect(".roster-rank"), main: rect(".roster-result-main"), action: rect(".ana-link-btn"), name: rect(".roster-result-name") };
+          return { rank: rect(".roster-rank"), main: rect(".roster-result-main"), action: rect(".roster-open"), head: rect(".roster-result-head"), rows: rect(".roster-hero-rows") };
         });
         expect(geometry.rank.x).toBeLessThan(geometry.main.x);
-        expect(geometry.name.w).toBeGreaterThan(100);
+        expect(geometry.head.w).toBeGreaterThan(100);
         expect(geometry.action).not.toBeNull();
-        if (width > 680) expect(geometry.action.x).toBeGreaterThan(geometry.main.x);
-        else expect(geometry.action.y).toBeGreaterThan(geometry.name.y);
-        const blocked = section.locator(".roster-result-team.roster-missing").first();
+        expect(geometry.action.x).toBeGreaterThanOrEqual(geometry.main.x);
+        expect(geometry.action.y).toBeGreaterThan(geometry.rows.y);
+        const blocked = section.locator(".roster-missing").first();
         if (await blocked.count()) {
-          const blockedName = await blocked.locator(".roster-result-name").evaluate((node) => node.getBoundingClientRect().width);
+          const blockedName = await blocked.locator(".roster-result-head").evaluate((node) => node.getBoundingClientRect().width);
           expect(blockedName).toBeGreaterThan(100);
         }
         // Pill trạng thái phải ăn rule màu (trước vòng sửa thiếu `data-status` nên rơi về cặp trung tính).
@@ -1591,11 +1627,10 @@ test.describe("Turnstile báo lỗi", () => {
     const section = page.locator("#section-roster-recommend");
     await page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 50)));
     expect(pageErrors).toEqual([]);
-    await expect(section.locator(".roster-controls .ana-status")).toHaveText("Xác thực chống bot không thành công. Tải lại trang rồi thử lại.");
+    await expect(section.locator(".roster-verify .ana-status")).toHaveText("Xác thực chống bot không thành công. Tải lại trang rồi thử lại.");
     const card = section.locator(".roster-scan-card").first();
     await card.locator('input[type="file"]').setInputFiles({ name: "kho.png", mimeType: "image/png", buffer: transparentPng });
-    await section.getByRole("button", { name: "Đọc Tướng", exact: true }).click();
-    await expect(card.locator(".ana-note")).toHaveText("Xác thực Turnstile trước.");
+    await expect(section.locator(".roster-scan-status")).toHaveText("Xác thực Turnstile trước.");
     expect(workerCalls).toBe(0);
     expect(pageErrors).toEqual([]);
   });

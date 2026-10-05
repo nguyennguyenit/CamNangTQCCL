@@ -155,15 +155,14 @@ const zh=()=>currentLocale()==='zh';
 const safeLabel=value=>typeof value === 'string' && value.trim() && !cjk.test(value)
   ? value.trim()
   : 'Nội dung tiếng Việt chưa sẵn sàng';
+/** Tên mùa không kèm số đội (chip tóm tắt của Gợi ý đội). */
+export const seasonNameText=item=>zh()
+  ? [item.displayCode,item.nameRaw].filter(Boolean).join(' · ') || item.label || item.sourceSeasonId
+  : item.displayCode && item.displayNameVi
+    ? `${item.displayCode} · ${item.displayNameVi}`
+    : safeLabel(item.displayNameVi);
 /** Nhãn một mùa trong ô chọn mùa (Đội chuẩn và công cụ Gợi ý đội dùng chung). */
-export const seasonOptionText=item=>{
-  const base=zh()
-    ? [item.displayCode,item.nameRaw].filter(Boolean).join(' · ') || item.label || item.sourceSeasonId
-    : item.displayCode && item.displayNameVi
-      ? `${item.displayCode} · ${item.displayNameVi}`
-      : safeLabel(item.displayNameVi);
-  return `${base}${item.advertisedCountRaw != null ? ` (${item.advertisedCountRaw})` : ''}${item.sourceSeasonId===CURRENT_SOURCE_SEASON_ID ? L(' · Hiện tại',' · 当前') : ''}`;
-};
+export const seasonOptionText=item=>`${seasonNameText(item)}${item.advertisedCountRaw != null ? ` (${item.advertisedCountRaw})` : ''}${item.sourceSeasonId===CURRENT_SOURCE_SEASON_ID ? L(' · Hiện tại',' · 当前') : ''}`;
 // Bản zh hiện đúng tên mùa nguồn nên không cần chú thích tên dịch.
 export const seasonOptionTitle=item=>zh() ? null : [
   item.label && !cjk.test(item.label) ? item.label : null,

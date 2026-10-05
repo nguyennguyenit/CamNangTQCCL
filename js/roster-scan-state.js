@@ -80,6 +80,7 @@ export function createInitialRosterScanState() {
     ownedTactics: [],
     lockedTeams: [],
     tacticOverrides: [],
+    scans: {},
     seasonId: null,
     confirmed: false,
     updatedAt: null,
@@ -196,8 +197,12 @@ export function applyScanResult(state, type, result) {
   } else if (type === "builtTeams") {
     next.lockedTeams = uniqLockedTeams([...(next.lockedTeams || []), ...(result?.teams || [])]);
   }
+  const now = new Date().toISOString();
+  if (SCAN_TYPES.includes(type)) {
+    next.scans = { ...next.scans, [type]: { images: Math.min((next.scans[type]?.images || 0) + 1, MAX_SCAN_IMAGES), at: now } };
+  }
   next.confirmed = false;
-  next.updatedAt = new Date().toISOString();
+  next.updatedAt = now;
   return next;
 }
 
@@ -231,6 +236,22 @@ const MAX_TACTIC_OVERRIDES = 20;
 const overrideKey = (override) => `${override.teamId}\u0000${override.heroIndex}\u0000${override.slotIndex}`;
 const boundedIndex = (value) => Number.isInteger(value) && value >= 0 && value < 10;
 const boundedText = (value, max) => typeof value === "string" && value.trim() !== "" && value.length <= max;
+
+const SCAN_TYPES = ["heroes", "tactics", "builtTeams"];
+const MAX_SCAN_IMAGES = 999;
+
+/** Số ảnh đã đọc + lần đọc gần nhất của từng loại (thẻ đọc ảnh hiện "3 ảnh · 2 phút trước"). */
+function cleanScans(scans) {
+  const out = {};
+  for (const type of SCAN_TYPES) {
+    const item = scans?.[type];
+    if (!item || typeof item !== "object") continue;
+    const images = Number.isInteger(item.images) && item.images > 0 ? Math.min(item.images, MAX_SCAN_IMAGES) : 0;
+    const at = boundedText(item.at, 40) && !Number.isNaN(Date.parse(item.at)) ? item.at : null;
+    if (images && at) out[type] = { images, at };
+  }
+  return out;
+}
 
 /** Món bù đã chọn: mỗi ô (đội + tướng + ô chiến pháp) một món, lần chọn sau thay lần trước. */
 function cleanTacticOverrides(overrides) {
@@ -267,6 +288,7 @@ export function serializeRosterScanState(state) {
     ownedTactics: uniqByName(state?.ownedTactics || []),
     lockedTeams: uniqLockedTeams(state?.lockedTeams),
     tacticOverrides: cleanTacticOverrides(state?.tacticOverrides),
+    scans: cleanScans(state?.scans),
     seasonId: boundedText(state?.seasonId, 64) ? state.seasonId : null,
     confirmed: state?.confirmed === true,
     updatedAt: state?.updatedAt || null,

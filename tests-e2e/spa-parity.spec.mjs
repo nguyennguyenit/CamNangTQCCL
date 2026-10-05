@@ -613,7 +613,7 @@ test("legacy storage payloads survive load and sanitize forbidden roster fields 
   const heroPanel = page.locator("#section-roster-recommend .roster-review-panel").filter({
     has: page.locator("h3", { hasText: "Tướng đã đọc" }),
   });
-  await heroPanel.locator('input[placeholder="Thêm thủ công"]').fill("Sentinel Hero Two");
+  await heroPanel.getByPlaceholder("Thêm tướng ảnh chưa đọc ra…").fill("Sentinel Hero Two");
   await heroPanel.getByRole("button", { name: "Thêm", exact: true }).click();
 
   const savedRoster = await page.evaluate(() =>
@@ -734,9 +734,9 @@ test("opening a roster recommendation preserves its section and opens the exact 
   await page.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
   // Kho dựng từ đội cũ: đội cũ lấp chỗ trống sau đội của mùa và mang nhãn "Tham khảo – đội cũ".
   const recommendation = page.locator(".roster-team-list .roster-result-team").filter({
-    has: page.locator(".roster-source-legacy"),
+    has: page.locator('.roster-status[data-status="legacy"]'),
   }).first();
-  const selectedName = await recommendation.locator("strong").textContent();
+  const selectedName = await recommendation.locator(".roster-result-name").textContent();
   const selectedTeam = teamsFixture.find((team) => team.name === selectedName);
   expect(selectedTeam).toBeTruthy();
 
