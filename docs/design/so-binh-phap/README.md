@@ -5,10 +5,10 @@ Bản chụp mã nguồn canvas Design dùng làm chuẩn thị giác cho đợt
 | | |
 |---|---|
 | Canvas gốc | <https://claude.ai/artifact/JshDEV8qspJo6VJ6rgiB71> (riêng tư — cần quyền của chủ canvas) |
-| Phiên bản chụp | `1790682380-6420` (thiết kế lại 3 công cụ Chiêu mộ · Soi đội · Gợi ý kho — 14 artboard; thêm thiết kế khu Quản trị — 12 artboard `Admin*`; 47 artboard dựng từ site thật, thêm Tra cứu mục lục + Binh thư, 19 artboard Tra cứu thay header/footer theo site — xem mục "Artboard dựng từ site thật"; thêm Chi tiết đội mobile, mọi link chi tiết đội trên mobile trỏ sang bản mobile; thêm Tra cứu trang bị/quân sư/cải tạo binh chủng/công trình mobile + màn chi tiết; cột mobile rộng 4 artboard; canvas chia cột: desktop bên trái, mobile bên phải, cùng dải theo nhóm; thẻ tướng ưu tiên ảnh chân dung; thêm hồ sơ tướng mobile, hồ sơ chiến pháp mobile; thêm Tra cứu: trang bị, quân sư, cải tạo binh chủng, công trình, hồ sơ chiến pháp; Logo — 5 phương án) |
+| Phiên bản chụp | `1791139258-59c3` (Soi đội chụp lại từ site sau `e346ac4`/`2bdee17`, thêm `AnalyzeSides`; thiết kế lại 3 công cụ Chiêu mộ · Soi đội · Gợi ý kho — 14 artboard; thêm thiết kế khu Quản trị — 12 artboard `Admin*`; 47 artboard dựng từ site thật, thêm Tra cứu mục lục + Binh thư, 19 artboard Tra cứu thay header/footer theo site — xem mục "Artboard dựng từ site thật"; thêm Chi tiết đội mobile, mọi link chi tiết đội trên mobile trỏ sang bản mobile; thêm Tra cứu trang bị/quân sư/cải tạo binh chủng/công trình mobile + màn chi tiết; cột mobile rộng 4 artboard; canvas chia cột: desktop bên trái, mobile bên phải, cùng dải theo nhóm; thẻ tướng ưu tiên ảnh chân dung; thêm hồ sơ tướng mobile, hồ sơ chiến pháp mobile; thêm Tra cứu: trang bị, quân sư, cải tạo binh chủng, công trình, hồ sơ chiến pháp; Logo — 5 phương án) |
 | Ngày chụp | 2026-09-29 |
-| Nội dung | `project/canvas.json` (vị trí, kích thước, tiêu đề artboard) + 91 artboard `project/*.dc.html` + `project/support.js` (shim tự viết, xem dưới) + `project/_blob/` (stylesheet, font, logo mà các artboard dựng từ site thật tham chiếu) + 88 ảnh chuẩn `screens/*.png` |
-| Ảnh chuẩn | Chụp lại 2026-09-29 bằng `scripts/design-capture.mjs` (88 artboard) · đối chiếu gần nhất 2026-09-24 với canvas bản `1790202333-0a0d`; **17 artboard mới (chi tiết đội mobile, 4 nhóm Tra cứu, hồ sơ chiến pháp, hồ sơ tướng/chiến pháp mobile, 4 nhóm Tra cứu mobile + chi tiết, Logo) chưa đối chiếu với canvas** |
+| Nội dung | `project/canvas.json` (vị trí, kích thước, tiêu đề artboard) + 93 artboard `project/*.dc.html` + `project/support.js` (shim tự viết, xem dưới) + `project/_blob/` (stylesheet, font, logo mà các artboard dựng từ site thật tham chiếu) + 90 ảnh chuẩn `screens/*.png` |
+| Ảnh chuẩn | Chụp lại 2026-09-29 bằng `scripts/design-capture.mjs` (90 artboard) · đối chiếu gần nhất 2026-09-24 với canvas bản `1790202333-0a0d`; **17 artboard mới (chi tiết đội mobile, 4 nhóm Tra cứu, hồ sơ chiến pháp, hồ sơ tướng/chiến pháp mobile, 4 nhóm Tra cứu mobile + chi tiết, Logo) chưa đối chiếu với canvas** |
 
 ## Quy ước
 
@@ -65,6 +65,12 @@ Theo yêu cầu "đồng bộ mockup với repo, trừ Tra cứu": các artboard
 - `Analyze` (2026-10-04) sửa tay ngoài canvas cùng hướng với `AnalyzeReview`: tiêu đề + dải bước gọn một hàng, khung thả ảnh ngang kèm phím dán, mục "Ảnh đọc được" (màn đội hình 1 đội / màn chiến báo 2 phe), disclaimer theo `docs/design-guidelines.md` (đếm ẩn danh, chỉ lưu ảnh khi tự bấm Gửi ảnh này), "Cách hoạt động" dời vào khung chính, lịch sử dạng danh sách có số đội 4/10; cao 1638. Chưa đưa lên canvas, `AnalyzeMobile` chưa đổi theo.
 - `AnalyzeResult` (2026-10-04) sửa tay ngoài canvas cùng hướng: dải bước 1–2 xong, cột trái dính đầu trang (đội đã xác nhận + Sửa đội, Chép link/Tải ảnh PNG, khối "Giúp AI đọc đúng hơn" có checkbox đồng ý + Gửi ảnh này), mỗi đội là bảng Tướng × Chiến pháp A/B × Binh thư (đúng xanh, khác đội viền đứt đỏ, "Đội dùng: …", tướng thừa, Thiếu tướng), số khớp x/3 tướng · x/6 chiến pháp thay cho con số không nhãn (113/98, không có trong dữ liệu); cao 2158. Chưa đưa lên canvas, `AnalyzeResultMobile` chưa đổi theo.
 - Dữ liệu trong artboard là mẫu (tên tài khoản, lượt, gói, kho, lời giải thích AI).
+
+## Soi đội từ ảnh — chụp theo code (2026-10-05)
+
+Code đã làm theo thiết kế công cụ ngày 29/09 rồi đi xa hơn (commit `e346ac4`, `2bdee17`), nên 8 artboard `Analyze`, `AnalyzeSides` (mới: ảnh có hai phe → "2 · Chọn phe"), `AnalyzeReview`, `AnalyzeResult` (+ `…Mobile`) được **chụp lại từ trang thật** bằng `scripts/design-canvas/capture-analyze.mjs`: Turnstile và Worker được giả lập, lượt đọc mẫu là màn chiến báo hai phe có ô Không chắc/Không rõ; kết quả đối chiếu sau khi chọn gợi ý gần nhất/Để trống. Ảnh mẫu là `public/og-image.png` (asset canvas `cc0f0448…`), stylesheet `27571042…`.
+
+Công cụ dựng artboard từ site nằm ở `scripts/design-canvas/` (chụp DOM, đổi link sang artboard, asset `/_blob`, kiểm tra qua shim); thư mục làm việc `.cache/design-canvas/` (gitignore).
 
 ## Token & component
 
