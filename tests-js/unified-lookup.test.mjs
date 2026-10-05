@@ -197,7 +197,8 @@ test("corpus phủ đủ bảy nhóm và mọi bản ghi con", () => {
   assert.deepEqual(Object.keys(built.groups).sort(), [...LOOKUP_GROUPS].sort());
   assert.equal(built.groups.heroes.length, HERO_POOL.length);
   assert.equal(built.groups.tactics.length, TACTIC_POOL.length);
-  assert.equal(built.groups.equipment.length, CATALOG.equipment.length + CATALOG.specials.length);
+  // Trang bị chỉ liệt kê trang bị; đặc kỹ nằm trong chi tiết trang bị cha và vẫn tra được theo mã.
+  assert.equal(built.groups.equipment.length, CATALOG.equipment.length);
   assert.equal(built.groups.advisors.length, CATALOG.advisors.length);
   assert.equal(built.groups["troop-mods"].length, CATALOG.troopMods.length);
   assert.equal(built.groups.buildings.length, CATALOG.buildings.length);
@@ -205,7 +206,11 @@ test("corpus phủ đủ bảy nhóm và mọi bản ghi con", () => {
   assert.deepEqual(built.groups.books.map((entry) => entry.id), ["book:bach-chien", "book:biet-cach-phong-thu"]);
 
   const equipmentIds = built.groups.equipment.map((entry) => entry.id);
-  assert.ok(equipmentIds.includes("equipment-special:mo-coi"), "đặc hiệu chưa biết trang bị cha vẫn phải tìm được");
+  assert.ok(!equipmentIds.some((id) => id.startsWith("equipment-special:")), "đặc kỹ không phải mục của danh sách trang bị");
+  for (const special of CATALOG.specials) {
+    assert.equal(built.byId.get(special.id)?.record, special, `${special.id} vẫn tra được theo mã (kể cả đặc kỹ mồ côi)`);
+  }
+  assert.deepEqual(built.groups.equipment[0].exclusives.map((special) => special.id), ["equipment-special:gian-hung", "equipment-special:kien-co"]);
 });
 
 test("tên hiển thị trong kết quả chỉ tiếng Việt", () => {
@@ -300,7 +305,8 @@ test("chữ Hán chỉ là alias tìm kiếm cho mọi nhóm", () => {
     ["heroes", "劉備", "hero:luu-bi"],
     ["tactics", "仁德載世", "tactic:nhan-duc"],
     ["equipment", "倚天劍", "equipment:y-thien-kiem"],
-    ["equipment", "奸雄", "equipment-special:gian-hung"],
+    // Tên đặc kỹ gắn trang bị là khóa tìm phụ của trang bị đó.
+    ["equipment", "奸雄", "equipment:y-thien-kiem"],
     ["advisors", "恩服兵心", "advisor:an-phuc-binh-tam"],
     ["troop-mods", "丹陽兵", "troop-mod:dan-duong-binh"],
     ["buildings", "八陣圖", "building:bat-tran-do"],
@@ -560,7 +566,7 @@ test("hồ sơ mọi nhóm ẩn nguồn và chỉ hiện tiếng Việt", () => 
 
 /* ---------- Phase 7: giao diện mới, nhãn tiếng Việt, khối "Trong cẩm nang" ---------- */
 
-import { lookupCardView, lookupOrderNote, tacticTableRow, camNangView, POSITION_LABELS, costText, lookupResultTrees } from "../js/unified-lookup.js";
+import { lookupCardView, lookupOrderNote, tacticTableRow, camNangView, POSITION_LABELS, lookupResultTrees } from "../js/unified-lookup.js";
 import { h, treeToHtml } from "../js/view-tree.js";
 import { portraitUrl, portraitChar } from "../js/hero-portrait.js";
 import { parseHeroSummaries } from "../js/hero-summaries.js";
@@ -705,15 +711,6 @@ test("cách nhận của mọi chiến pháp đã công bố không lộ mã tr�
     assert.doesNotMatch(field.textVi, /bsn=\d+/, row.id);
   }
   assert.ok(checked > 0, "dữ liệu thật phải có chiến pháp mang cách nhận");
-});
-
-test("chi phí công trình bỏ ô rỗng, không in null", () => {
-  assert.equal(costText({ wood: 180, stone: null, iron: 180 }), "Gỗ: 180, Sắt: 180");
-  assert.equal(costText({ wood: 0, iron: undefined, stone: "" }), "Gỗ: 0");
-  // Không còn ô nào dùng được thì bỏ hẳn phần chi phí thay vì hiện chuỗi rỗng.
-  assert.equal(costText({ stone: null, iron: null }), null);
-  assert.equal(costText(null), null);
-  assert.equal(costText("không phải đối tượng"), null);
 });
 
 test("hiệu ứng nhiều phiên bản tách thành khối có nhãn, cả dạng ' / / ' lẫn dạng dòng trống", () => {

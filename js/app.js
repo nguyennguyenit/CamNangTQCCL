@@ -548,10 +548,12 @@ async function main() {
     window.addEventListener('pagehide', rememberReturn);
     // Tên Hán nguồn của binh thư (phồn thể, tên cũ) do build nhúng từ bảng danh tính đã duyệt.
     const bookAliases = JSON.parse($('#lookup-book-aliases')?.textContent || 'null') ?? {};
+    // Trang Trang bị / Quân sư: tên tướng mang đặc kỹ độc quyền / kỹ năng do build nhúng sẵn (không tải heroes-dict).
+    const ownerHeroes = JSON.parse($('#lookup-owner-heroes')?.textContent || 'null');
     if (lookupGroup && lookupDocs) initLookupPage({
       group: lookupGroup,
       mount,
-      docs: { ...lookupDocs, books: lookupBooks, bookAliases },
+      docs: { ...lookupDocs, ...(ownerHeroes ? { heroes: ownerHeroes } : {}), books: lookupBooks, bookAliases },
       loadProfileDocs: () => loadLookupDocs(lookupPayloads.profile),
       summary: lookupGroup === 'heroes' ? {
         pin: recommendedPin,

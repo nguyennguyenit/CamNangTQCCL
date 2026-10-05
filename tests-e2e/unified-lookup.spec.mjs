@@ -1,6 +1,7 @@
 // E2E giao diện Tra cứu: mục lục /tra-cuu/ + bảy trang nhóm /tra-cuu/<slug>/, chip nhóm là link giữa các trang,
-// phân trang quá 60, hộp thoại hồ sơ theo `?id=` có focus trap, live region tiếng Việt, link cũ `?group=&id=`
-// được mục lục chuyển tiếp, và mỗi trang nhóm chỉ tải đúng payload của nhóm mình.
+// phân trang quá 60, hộp thoại hồ sơ theo `?id=` có focus trap (tướng, chiến pháp, binh thư), bốn nhóm catalog dạng
+// danh sách + chi tiết (chọn sẵn mục đầu, chip lọc, màn chi tiết mobile), live region tiếng Việt, link cũ
+// `?group=&id=` được mục lục chuyển tiếp, và mỗi trang nhóm chỉ tải đúng payload của nhóm mình.
 import { test, expect } from '@playwright/test';
 
 /** Link điều hướng của mục: bảng desktop trong header hoặc menu mobile đang mở (footer cũng có link cùng tên). */
@@ -28,7 +29,13 @@ const cards = (page) => lookup(page).locator('.lookup-card');
 const results = (page) => lookup(page).locator('.lookup-card, .lookup-table-panel');
 /** Nút mở hồ sơ của kết quả đầu tiên (thẻ tướng hoặc tên trong bảng chiến pháp). */
 const firstResult = (page) => lookup(page).locator('[data-lookup-id]').first();
-const groupResults = (page, group) => group === 'tactics' ? lookup(page).locator('.lookup-table tbody tr') : cards(page);
+/** Bốn nhóm catalog dùng danh sách + chi tiết thay cho hộp thoại hồ sơ. */
+const MASTER_GROUPS = new Set(['equipment', 'advisors', 'troop-mods', 'buildings']);
+const panel = (page) => lookup(page).locator('.lookup-detail-panel');
+const selectedItem = (page) => lookup(page).locator('.lookup-master-item[aria-current="true"]');
+const groupResults = (page, group) => group === 'tactics'
+  ? lookup(page).locator('.lookup-table tbody tr')
+  : MASTER_GROUPS.has(group) ? lookup(page).locator('.lookup-master-item') : cards(page);
 
 /** Mở trang nhóm và chờ app.js gắn xong: mục dựng sẵn hiện ngay nhưng chỉ mở được hồ sơ sau boot. */
 async function openLookup(page, url) {
@@ -232,7 +239,7 @@ test('hộp thoại hồ sơ bẫy focus, đóng bằng Escape và trả focus v
 });
 
 test('bấm nền cũng đóng hộp thoại', async ({ page }) => {
-  await openLookup(page, '/tra-cuu/trang-bi/');
+  await openLookup(page, '/tra-cuu/chien-phap/');
   await firstResult(page).click();
   await expect(page.getByRole('dialog')).toBeVisible();
   await page.locator('.lookup-backdrop').click({ position: { x: 5, y: 5 } });
@@ -268,13 +275,16 @@ test('deep link tới một ID mở thẳng hồ sơ', async ({ page }) => {
   await expect(page).toHaveURL(`/tra-cuu/tuong/${deepLink}`);
 });
 
-test('hồ sơ công trình hiện cấp, chi phí, thời gian và hiệu ứng', async ({ page }) => {
+test('chi tiết công trình hiện cấp, chi phí, thời gian và hiệu ứng', async ({ page }) => {
   await openLookup(page, '/tra-cuu/cong-trinh/');
-  await firstResult(page).click();
-  const dialog = page.getByRole('dialog');
-  await expect(dialog).toContainText('Cấp 1');
-  await expect(dialog).toContainText(/Gỗ|Sắt|Đá|Lương/);
-  await expect(dialog).toContainText(/giờ|phút/);
+  await lookup(page).locator('.lookup-master-item').nth(1).click();
+  const detail = panel(page);
+  await expect(detail.locator('.lookup-levels-table thead')).toContainText(/Gỗ/);
+  await expect(detail.locator('.lookup-levels-table thead')).toContainText(/Sắt/);
+  await expect(detail.locator('.lookup-levels-table thead')).toContainText(/Thời gian/);
+  await expect(detail.locator('.lookup-level-row').first()).toContainText(/phút|giờ/);
+  await expect(detail.locator('.lookup-level-row').first().locator('.lookup-level-effect')).not.toHaveText('—');
+  await expect(detail).not.toContainText('Cấp công trình');
 });
 
 for (const width of [320, 375, 768, 1280]) {
@@ -294,9 +304,26 @@ for (const width of [320, 375, 768, 1280]) {
         await expect(page.locator('body[data-boot="ready"]')).toBeAttached();
         await expect(groupResults(page, group).first()).toBeVisible();
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+        const noOverflow = () => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth);
         await firstResult(page).click();
+        if (MASTER_GROUPS.has(group)) {
+          // Chi tiết cạnh danh sách (desktop) hoặc màn riêng có nút quay lại (hẹp hơn 1024px).
+          await expect(panel(page)).toBeVisible();
+          expect(await noOverflow()).toBe(true);
+          if (width < 1024) {
+            await expect(lookup(page).locator('.lookup-master-list')).toBeHidden();
+            await lookup(page).locator('[data-lookup-back]').click();
+            await expect(lookup(page).locator('.lookup-master-list')).toBeVisible();
+            await expect(panel(page)).toBeHidden();
+            await expect(page).toHaveURL(GROUP_PATH[group]);
+          } else {
+            await expect(lookup(page).locator('.lookup-master-list')).toBeVisible();
+          }
+          expect(await noOverflow()).toBe(true);
+          continue;
+        }
         await expect(page.getByRole('dialog')).toBeVisible();
-        expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+        expect(await noOverflow()).toBe(true);
         await page.keyboard.press('Escape');
         await expect(page.getByRole('dialog')).toHaveCount(0);
       }
@@ -653,11 +680,15 @@ test('hồ sơ tướng và bảng chiến pháp không in enum loại thô', as
 });
 
 test('hồ sơ giữ đủ trường đã có: bậc đặc kỹ, phẩm trang bị, loại và dạng hiệu ứng chiến pháp', async ({ page }) => {
+  // Mã đặc kỹ mở trang bị cha: đặc kỹ được tô khung và giữ bậc T0, trang bị cha là mục đang chọn.
   await openLookup(page, '/tra-cuu/trang-bi/?id=equipment-special%3Agian-hung');
-  await expect(page.getByRole('dialog')).toContainText('Bậc');
-  await expect(page.getByRole('dialog')).toContainText('T0');
+  await expect(panel(page).locator('.lookup-detail-title')).toHaveText('Ỷ Thiên Kiếm');
+  await expect(panel(page).locator('.lookup-special.is-target')).toContainText('Gian Hùng');
+  await expect(panel(page).locator('.lookup-special.is-target .badge-tier')).toHaveText('T0');
+  await expect(selectedItem(page)).toHaveAttribute('data-lookup-id', 'equipment:y-thien-kiem');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
   await openLookup(page, '/tra-cuu/trang-bi/?id=equipment%3Ay-thien-kiem');
-  await expect(page.getByRole('dialog')).toContainText('Phẩm chất');
+  await expect(panel(page).locator('.badge-tone')).toHaveText('Cam');
   await openLookup(page, '/tra-cuu/chien-phap/?id=tactic%3Aan-ui-quan-dan');
   const dialog = page.getByRole('dialog');
   // Loại nằm ở eyebrow + huy hiệu nền mực; dạng hiệu ứng ở huy hiệu viền và bảng nguồn (artboard LookupTacticProfile).
@@ -761,26 +792,27 @@ test('cách nhận hiện tên sự kiện, ẩn mã trích dẫn bsn của ngu�
   expect(await fact.textContent()).not.toContain('bsn=');
 });
 
-test('chi phí công trình không in null hay khóa thô, ô rỗng bị bỏ hẳn', async ({ page }) => {
+test('chi phí công trình không in null hay khóa thô, ô rỗng hiện gạch ngang', async ({ page }) => {
   for (const id of ['building%3Athai-thach-xu', 'building%3Aquan-xa']) {
     await openLookup(page, `/tra-cuu/cong-trinh/?id=${id}`);
-    const dialog = page.getByRole('dialog');
-    await expect(dialog).toContainText('Cấp công trình');
-    const text = await dialog.textContent();
-    expect(text).not.toMatch(/\bnull\b/);
+    await expect(panel(page).locator('.lookup-levels-table')).toBeVisible();
+    const text = await panel(page).textContent();
+    expect(text).not.toMatch(/\b(?:null|undefined|NaN)\b/);
     expect(text).not.toMatch(/\b(?:wood|stone|iron|food)\b/);
   }
-  // Thái Thạch Xứ: Đá là null trong dữ liệu nên chỉ còn Sắt và Gỗ.
+  // Thái Thạch Xứ: Đá là null trong dữ liệu nên ô Đá là gạch ngang, Gỗ và Sắt có số.
   await openLookup(page, '/tra-cuu/cong-trinh/?id=building%3Athai-thach-xu');
-  const level = page.getByRole('dialog').locator('.lookup-level', { hasText: 'Cấp 1' }).first();
-  await expect(level).toContainText('Sắt: 180');
-  await expect(level).toContainText('Gỗ: 180');
-  expect(await level.textContent()).not.toContain('Đá');
-  // Quân Xá: cấp 1 chỉ có hiệu ứng, không có chi phí nào dùng được.
+  const level = panel(page).locator('.lookup-level-row').first();
+  await expect(level.locator('td[data-label="Gỗ"]')).toHaveText('180');
+  await expect(level.locator('td[data-label="Sắt"]')).toHaveText('180');
+  await expect(level.locator('td[data-label="Đá"]')).toHaveText('—');
+  await expect(level.locator('.lookup-level-effect')).toContainText('Sản lượng đá');
+  // Quân Xá: cấp 1 chỉ có hiệu ứng, không có chi phí nào dùng được; dòng tổng chỉ cộng các ô có số.
   await openLookup(page, '/tra-cuu/cong-trinh/?id=building%3Aquan-xa');
-  const first = page.getByRole('dialog').locator('.lookup-level', { hasText: 'Cấp 1' }).first();
+  const first = panel(page).locator('.lookup-level-row').first();
   await expect(first).toContainText('bố trí 1 bộ đội');
-  expect(await first.textContent()).not.toMatch(/Sắt|Đá|Gỗ|Lương/);
+  for (const label of ['Gỗ', 'Đá', 'Sắt']) await expect(first.locator(`td[data-label="${label}"]`)).toHaveText('—');
+  await expect(panel(page).locator('.lookup-detail-footnote')).not.toContainText(/null|undefined|NaN/);
 });
 
 for (const theme of ['light', 'dark']) {
@@ -1006,14 +1038,14 @@ test('Xem thêm hai lần, mở thẻ thứ 150 rồi Back giữ 180 thẻ và f
 
 test('đóng hồ sơ bằng nút X rồi một lần Back về đúng trang nhóm trước khi mở', async ({ page }) => {
   await openLookup(page, '/tra-cuu/tuong/');
-  await chip(page, 'equipment').click();
-  await expect(page).toHaveURL('/tra-cuu/trang-bi/');
+  await chip(page, 'tactics').click();
+  await expect(page).toHaveURL('/tra-cuu/chien-phap/');
   await expect(page.locator('body[data-boot="ready"]')).toBeAttached();
   await firstResult(page).click();
   await expect(page.getByRole('dialog')).toBeVisible();
   await page.getByRole('button', { name: 'Đóng hồ sơ' }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
-  await expect(page).toHaveURL('/tra-cuu/trang-bi/');
+  await expect(page).toHaveURL('/tra-cuu/chien-phap/');
   await page.goBack();
   await expect(page).toHaveURL('/tra-cuu/tuong/');
   await expect(currentChip(page)).toHaveAttribute('data-group', 'heroes');
@@ -1051,6 +1083,184 @@ test('nút đóng hồ sơ vẫn trong màn hình khi cuộn hộp thoại trên
   const box = await page.getByRole('button', { name: 'Đóng hồ sơ' }).boundingBox();
   expect(box.y).toBeGreaterThanOrEqual(0);
   expect(box.y + box.height).toBeLessThanOrEqual(812);
+});
+
+/* ---------- Bốn nhóm catalog: danh sách + chi tiết (Trang bị, Quân sư, Cải tạo binh chủng, Công trình) ---------- */
+
+test.describe('danh sách + chi tiết của bốn nhóm catalog', () => {
+  test('HTML dựng sẵn đã có danh sách, chip lọc và chi tiết của mục đầu (không cần JS)', async ({ browser }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false });
+    const page = await context.newPage();
+    for (const [group, items] of [['equipment', 24], ['advisors', 18], ['troop-mods', 16], ['buildings', 20]]) {
+      await page.goto(GROUP_PATH[group]);
+      await expect(lookup(page).locator('.lookup-master-item')).toHaveCount(items);
+      await expect(selectedItem(page)).toHaveCount(1);
+      await expect(selectedItem(page)).toHaveAttribute('data-lookup-id', await lookup(page).locator('.lookup-master-item').first().getAttribute('data-lookup-id'));
+      await expect(panel(page).locator('.lookup-detail-title')).not.toBeEmpty();
+      await expect(lookup(page).locator('.lookup-filters button')).not.toHaveCount(0);
+      await expect(lookup(page).locator('.lookup-dialog')).toHaveCount(0);
+    }
+    await context.close();
+  });
+
+  test('bấm một mục đổi chi tiết và mục đang chọn, Back về mục trước; không mở hộp thoại', async ({ page }) => {
+    await openLookup(page, GROUP_PATH.equipment);
+    const first = await selectedItem(page).getAttribute('data-lookup-id');
+    const second = lookup(page).locator('.lookup-master-item').nth(1);
+    const secondId = await second.getAttribute('data-lookup-id');
+    const secondName = await second.locator('.lookup-eq-name').textContent();
+    await second.click();
+    await expect(page).toHaveURL(`${GROUP_PATH.equipment}?id=${encodeURIComponent(secondId)}`);
+    await expect(selectedItem(page)).toHaveAttribute('data-lookup-id', secondId);
+    await expect(panel(page).locator('.lookup-detail-title')).toHaveText(secondName);
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+    await page.goBack();
+    await expect(page).toHaveURL(GROUP_PATH.equipment);
+    await expect(selectedItem(page)).toHaveAttribute('data-lookup-id', first);
+  });
+
+  test('Xem thêm nối thêm một lượt thẻ trang bị/quân sư, giữ mục đang chọn và đưa focus tới thẻ đầu lượt mới', async ({ page }) => {
+    await openLookup(page, GROUP_PATH.equipment);
+    const items = lookup(page).locator('.lookup-master-item');
+    await expect(items).toHaveCount(24);
+    const selected = await selectedItem(page).getAttribute('data-lookup-id');
+    await lookup(page).getByRole('button', { name: 'Xem thêm' }).click();
+    await expect(items).toHaveCount(48);
+    await expect(items.nth(24)).toBeFocused();
+    await expect(selectedItem(page)).toHaveAttribute('data-lookup-id', selected);
+    await expect(lookup(page).locator('.lookup-more-note')).toHaveText('Mỗi lượt hiện 24 kết quả');
+    await openLookup(page, GROUP_PATH.advisors);
+    await expect(items).toHaveCount(18);
+    await lookup(page).getByRole('button', { name: 'Xem thêm' }).click();
+    await expect(items).toHaveCount(36);
+  });
+
+  test('chip lọc trang bị: ô và phẩm giao nhau, bấm lại để tắt, Tất cả bỏ lọc', async ({ page }) => {
+    await openLookup(page, GROUP_PATH.equipment);
+    const facet = (key, value) => lookup(page).locator(`button[data-facet="${key}"][data-value="${value}"]`);
+    const summary = lookup(page).locator('.lookup-summary');
+    await expect(summary).toContainText(/^114 trang bị/);
+    await expect(facet('slot', '')).toHaveAttribute('aria-pressed', 'true');
+    await facet('slot', 'Vũ khí').click();
+    await expect(facet('slot', 'Vũ khí')).toHaveAttribute('aria-pressed', 'true');
+    await expect(facet('slot', '')).toHaveAttribute('aria-pressed', 'false');
+    await expect(summary).toContainText(/^31 vũ khí/);
+    await expect(lookup(page).locator('.lookup-eq-card')).toHaveCount(24);
+    await facet('quality', 'Tím').click();
+    await expect(summary).toContainText(/^6 vũ khí/);
+    await expect(lookup(page).locator('.lookup-eq-card')).toHaveCount(6);
+    await facet('quality', 'Tím').click();
+    await expect(facet('quality', 'Tím')).toHaveAttribute('aria-pressed', 'false');
+    await expect(summary).toContainText(/^31 vũ khí/);
+    await facet('slot', '').click();
+    await expect(summary).toContainText(/^114 trang bị/);
+  });
+
+  test('chip hệ của quân sư lọc danh sách và dòng trạng thái', async ({ page }) => {
+    await openLookup(page, GROUP_PATH.advisors);
+    await lookup(page).locator('button[data-facet="element"][data-value="Sơn"]').click();
+    await expect(lookup(page).locator('.lookup-summary')).toContainText(/^6 kỹ năng quân sư/);
+    await expect(lookup(page).locator('.lookup-adv-card')).toHaveCount(6);
+    for (const meta of await lookup(page).locator('.lookup-adv-card .lookup-adv-meta').allTextContents()) expect(meta).toMatch(/hệ Sơn$/);
+  });
+
+  test('mã đặc kỹ mở trang bị cha; đặc kỹ chung và mồ côi vẫn mở được; mã lạ báo đang cập nhật', async ({ page }) => {
+    await openLookup(page, `${GROUP_PATH.equipment}?id=equipment-special%3Agian-hung`);
+    await expect(panel(page).locator('.lookup-special.is-target')).toContainText('Gian Hùng');
+    await expect(panel(page).locator('.lookup-special.is-target')).toContainText('Tào Tháo');
+    await expect(panel(page).locator('.lookup-special.is-target a.lookup-detail-link')).toHaveAttribute('href', '/tra-cuu/tuong/?id=hero%3Atao-thao');
+    await openLookup(page, `${GROUP_PATH.equipment}?id=equipment-special%3Aphu-chu`);
+    await expect(panel(page).locator('.lookup-detail-title')).toHaveText('Phù Chú');
+    await openLookup(page, `${GROUP_PATH.equipment}?id=equipment%3Akhong-co`);
+    await expect(lookup(page).locator('[role="alert"]')).toHaveText('Mục tra cứu đang được cập nhật.');
+  });
+
+  test('đặc kỹ độc quyền xếp bậc mạnh trước và đặc kỹ chung liệt kê đủ bậc T1–T3', async ({ page }) => {
+    await openLookup(page, `${GROUP_PATH.equipment}?id=equipment%3Ay-thien-kiem`);
+    await expect(panel(page).locator('.lookup-eq-exclusive .badge-tier').first()).toHaveText('T0');
+    const tiers = await panel(page).locator('.lookup-eq-common .badge-tier').allTextContents();
+    expect(tiers.length).toBeGreaterThan(5);
+    expect([...tiers].sort()).toEqual(tiers);
+    expect(new Set(tiers)).toEqual(new Set(['T1', 'T2', 'T3']));
+    await expect(panel(page).locator('.lookup-eq-common .lookup-detail-footnote')).toContainText(`${tiers.length} đặc kỹ chung`);
+  });
+
+  test('cải tạo binh chủng: nhóm theo binh chủng, đổi phiên bản hiệu quả, đánh dấu lộ trình gợi ý', async ({ page }) => {
+    await openLookup(page, `${GROUP_PATH['troop-mods']}?id=troop-mod%3Adan-duong-binh`);
+    const groups = lookup(page).locator('.lookup-row-group-title');
+    await expect(groups).toHaveCount(4);
+    await expect(groups.first()).toContainText('Khiên binh');
+    await expect(selectedItem(page)).toContainText('Đan Dương Binh');
+    await expect(panel(page).locator('.lookup-option-card')).toHaveCount(12);
+    await expect(panel(page).locator('.lookup-option-card.is-suggested')).toHaveCount(4);
+    await expect(panel(page).locator('.lookup-option-card.is-suggested .badge-suggest')).toHaveCount(4);
+    const tabs = panel(page).locator('[data-effect-tab]');
+    await expect(tabs).toHaveCount(2);
+    const visible = panel(page).locator('.lookup-effect-text:not([hidden])');
+    const current = await visible.textContent();
+    await tabs.nth(1).click();
+    await expect(tabs.nth(1)).toHaveAttribute('aria-pressed', 'true');
+    await expect(tabs.nth(0)).toHaveAttribute('aria-pressed', 'false');
+    await expect(visible).toHaveCount(1);
+    expect(await visible.textContent()).not.toBe(current);
+    // Mục không có gợi ý build thì không đánh dấu và không có thanh gợi ý.
+    await openLookup(page, `${GROUP_PATH['troop-mods']}?id=troop-mod%3Aho-bao-ky`);
+    await expect(panel(page).locator('.lookup-option-card.is-suggested')).toHaveCount(0);
+    await expect(panel(page).locator('.lookup-build-bar')).toHaveCount(0);
+  });
+
+  test('công trình: ô số liệu, bảng theo cấp tăng dần, cấp cuối nổi và tổng tài nguyên', async ({ page }) => {
+    await openLookup(page, `${GROUP_PATH.buildings}?id=building%3Abat-tran-do`);
+    await expect(panel(page).locator('.lookup-stat-tile')).toHaveCount(4);
+    const rows = panel(page).locator('.lookup-level-row');
+    await expect(rows).toHaveCount(5);
+    await expect(rows.first().locator('th')).toHaveText('1');
+    await expect(rows.last().locator('th')).toHaveText('5');
+    await expect(rows.last()).toHaveClass(/is-max/);
+    await expect(rows.last().locator('td[data-label="Gỗ"]')).toHaveText('480.000');
+    await expect(panel(page).locator('.lookup-detail-footnote')).toContainText('Tổng tài nguyên lên cấp 5: gỗ 1.024.000 · đá 1.024.000 · sắt 512.000');
+  });
+
+  test('mobile: danh sách một cột, mở mục thành màn chi tiết có nút quay lại và trả focus về mục đã mở', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await openLookup(page, GROUP_PATH.buildings);
+    await expect(panel(page)).toBeHidden();
+    const opener = lookup(page).locator('.lookup-master-item').nth(3);
+    const openerId = await opener.getAttribute('data-lookup-id');
+    await opener.click();
+    await expect(page.locator('#section-lookup')).toHaveAttribute('data-lookup-detail-open', 'true');
+    await expect(panel(page)).toBeVisible();
+    await expect(lookup(page).locator('.lookup-master-list')).toBeHidden();
+    await expect(lookup(page).locator('.lookup-detail-back')).toBeFocused();
+    await lookup(page).locator('.lookup-detail-back').click();
+    await expect(page).toHaveURL(GROUP_PATH.buildings);
+    await expect(lookup(page).locator('.lookup-master-list')).toBeVisible();
+    await expect(lookup(page).locator(`[data-lookup-id="${openerId}"]`)).toBeFocused();
+    // Back của trình duyệt cũng đóng màn chi tiết.
+    await opener.click();
+    await expect(panel(page)).toBeVisible();
+    await page.goBack();
+    await expect(page).toHaveURL(GROUP_PATH.buildings);
+    await expect(panel(page)).toBeHidden();
+  });
+
+  test('bản zh: danh sách và chi tiết dùng chữ Hán, không lọt chữ Việt của dữ liệu', async ({ page }) => {
+    const VIETNAMESE = /[ăâđêôơưàáảãạằắẳẵặầấẩẫậèéẻẽẹềếểễệìíỉĩịòóỏõọồốổỗộờớởỡợùúủũụừứửữựỳýỷỹỵ]/i;
+    for (const url of [
+      '/zh/tra-cuu/trang-bi/?id=equipment%3Ay-thien-kiem',
+      '/zh/tra-cuu/quan-su/',
+      '/zh/tra-cuu/cai-tao-binh-chung/?id=troop-mod%3Adan-duong-binh',
+      '/zh/tra-cuu/cong-trinh/?id=building%3Abat-tran-do',
+    ]) {
+      await page.goto(url);
+      await expect(page.locator('body[data-boot="ready"]')).toBeAttached();
+      await expect(lookup(page).locator('.lookup-master-item').first()).toBeVisible();
+      const text = `${await lookup(page).locator('.lookup-master').textContent()}`;
+      expect(text, url).not.toMatch(VIETNAMESE);
+      expect(text, url).toMatch(CJK);
+      await expect(panel(page).locator('.lookup-detail-title')).toHaveText(CJK);
+    }
+  });
 });
 
 /* ---------- Hợp đồng hiệu năng: mỗi trang nhóm chỉ tải payload của nhóm mình ---------- */

@@ -1,6 +1,7 @@
-// Hộp thoại hồ sơ Tra cứu theo nhóm (artboard LookupProfile): tướng có cột chỉ số + thẻ chiến pháp + khối
-// "Trong cẩm nang"; nhóm khác là một cột: đoạn văn hiệu ứng theo phiên bản (đoạn đầu nổi trong khung), bảng
-// thông số hai cột, quan hệ/mục con dạng nút, cấp và lựa chọn. Chỉ dựng DOM, không giữ state trang: `js/lookup-page.js` sở hữu
+// Hộp thoại hồ sơ Tra cứu (artboard LookupProfile) của tướng, chiến pháp và binh thư: tướng có cột chỉ số + thẻ
+// chiến pháp + khối "Trong cẩm nang"; binh thư là một cột: đoạn văn hiệu ứng theo phiên bản (đoạn đầu nổi trong
+// khung) và bảng thông số hai cột. Bốn nhóm catalog (trang bị, quân sư, cải tạo, công trình) không dùng hộp thoại mà
+// có panel chi tiết riêng (`js/lookup-master.js`). Chỉ dựng DOM, không giữ state trang: `js/lookup-page.js` sở hữu
 // route, lịch sử và focus.
 //
 // Quy tắc render (plan.md quyết định #14): dữ liệu động chỉ qua `el()`/`textContent`, không `innerHTML`.
@@ -10,7 +11,7 @@ import { LOOKUP_EMPTY, effectVersions, lookupDisplayName, lookupProfile, tacticT
 import { L, currentLocale, localePath } from "./i18n.js";
 import { heroPortrait } from "./hero-portrait.js";
 import { lookupProfilePath } from "./lookup-ids.js";
-import { barPercent, camNangView, costText, lookupCardView, lookupGroupLabels } from "./unified-lookup.js";
+import { barPercent, camNangView, lookupCardView, lookupGroupLabels } from "./unified-lookup.js";
 import { representativeTeamHref, tacticBadges, tacticProfileBody, tacticSummaryBlock } from "./lookup-tactic-profile.js";
 
 const MISSING = "—";
@@ -21,7 +22,7 @@ const STAT_BAR_MAX = 120;
 /** Hướng điểm (tên Việt từ số liệu build) → chữ Trung; dạng không nhận ra trả rỗng để bản zh bỏ qua. */
 const STAT_ZH = { "Trí Lực": "智力", "Võ Lực": "武力", "Thống Soái": "统率", "Tốc Độ": "速度", "Chính Trị": "政治", "Mị Lực": "魅力" };
 /** Trường chữ dài: hiện thành đoạn văn thay vì một hàng của bảng thông số. */
-const PROSE_KEYS = new Set(["effect", "usage", "description", "suggestedBuild", "summary"]);
+const PROSE_KEYS = new Set(["effect"]);
 /** Hàng thông số có giá trị dài hơn ngưỡng này chiếm cả hai cột của bảng. */
 const WIDE_FACT_CHARS = 28;
 
@@ -159,23 +160,6 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
     return row;
   }
 
-  /** Nhóm link (quan hệ hoặc mục con đều mở được): tiêu đề + các nút dạng thẻ nhỏ. */
-  function linkSection(titleVi, links) {
-    return el("section", { class: "lookup-profile-section lookup-link-section" }, [
-      el("h3", { class: "lookup-section-title" }, titleVi),
-      el("div", { class: "lookup-link-chips" }, links),
-    ]);
-  }
-
-  /** Quan hệ của hồ sơ (không phải tướng), gom theo nhãn: "Truyền thừa từ" có thể trỏ tới nhiều tướng. */
-  function relationSections(relations) {
-    const groups = new Map();
-    for (const relation of relations) groups.set(relation.labelVi, [...(groups.get(relation.labelVi) ?? []), relation]);
-    return [...groups].map(([labelVi, rows]) => linkSection(labelVi, rows.map((relation) => (relation.resolved
-      ? relationLink(relation.titleVi, relation.targetGroup, relation.targetId, "lookup-child-link")
-      : el("p", { class: "lookup-relation-pending" }, relation.statusVi)))));
-  }
-
   /** Bảng vai trò / danh hiệu / đặc tính theo artboard LookupProfile, cùng các trường hồ sơ tướng khác khi có. */
   function heroFacts(profile) {
     const rows = [
@@ -265,71 +249,6 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
       ]))));
     }
     return block;
-  }
-
-  /** Cấp công trình: huy hiệu cấp, hiệu ứng, dòng phụ chi phí · thời gian; cấp không có gì để hiện thì bỏ. */
-  function levelList(items) {
-    const rows = items.map((item) => {
-      const effect = isEmptyText(item.effectVi) ? null : item.effectVi;
-      const meta = [item.costs ? costText(item.costs) : null, item.durationVi].filter((value) => !isEmptyText(value)).join(" · ");
-      if (!effect && !meta) return null;
-      return el("li", { class: "lookup-level" }, [
-        el("span", { class: "lookup-level-badge" }, L(`Cấp ${item.level}`, `${item.level} 级`)),
-        el("div", { class: "lookup-level-body" }, [
-          effect ? el("p", { class: "lookup-level-effect" }, effect) : null,
-          meta ? el("p", { class: "lookup-level-meta" }, meta) : null,
-        ]),
-      ]);
-    }).filter(Boolean);
-    return rows.length ? el("ol", { class: "lookup-levels" }, rows) : null;
-  }
-
-  /** Lựa chọn cải tạo gom theo bậc (Đặc biệt, Cơ bản…) theo thứ tự nguồn; mỗi dòng là tên + mô tả. */
-  function optionList(items) {
-    const tiers = new Map();
-    for (const item of items) tiers.set(item.tierVi ?? "", [...(tiers.get(item.tierVi ?? "") ?? []), item]);
-    const groups = [...tiers].map(([tierVi, rows]) => el("div", { class: "lookup-option-group" }, [
-      tierVi ? el("h4", { class: "lookup-option-tier" }, tierVi) : null,
-      el("ul", { class: "lookup-options" }, rows.map((item) => el("li", { class: "lookup-option" }, [
-        el("span", { class: "lookup-option-name" }, item.titleVi),
-        el("span", { class: "lookup-option-desc" }, [
-          isEmptyText(item.descriptionVi) ? null : item.descriptionVi,
-          isEmptyText(item.convertsToVi) ? null : el("span", { class: "lookup-option-meta" }, L(`Chuyển thành ${item.convertsToVi}`, `转为${item.convertsToVi}`)),
-        ]),
-      ]))),
-    ]));
-    return groups.length ? el("div", { class: "lookup-option-groups" }, groups) : null;
-  }
-
-  /** Mục con: mục mở được thành nhóm nút; cấp công trình và lựa chọn cải tạo thành danh sách. */
-  function childrenBlock(corpus, child) {
-    if (!child.items.length) return null;
-    const linked = child.items.map((item) => corpus.byId.get(item.id));
-    if (child.key !== "levels" && linked.every(Boolean)) {
-      return linkSection(child.titleVi, child.items.map((item, index) => relationLink(item.titleVi, linked[index].group, linked[index].id, "lookup-child-link")));
-    }
-    const list = child.key === "levels" ? levelList(child.items) : optionList(child.items);
-    if (!list) return null;
-    return el("section", { class: "lookup-profile-section" }, [
-      el("h3", { class: "lookup-section-title" }, child.titleVi),
-      list,
-    ]);
-  }
-
-  /** Lịch sử cập nhật: nhãn ngày · bản (hiện hành/gốc) trên đoạn hiệu ứng của bản đó. */
-  function revisionBlock(revisions) {
-    if (!revisions.length) return null;
-    return el("section", { class: "lookup-prose" }, [
-      el("h3", { class: "lookup-section-title" }, L("Lịch sử cập nhật", "更新记录")),
-      ...revisions.flatMap((revision) => {
-        const tag = [revision.effectiveDate, revision.labelVi].filter(Boolean).join(" · ");
-        const textVi = isEmptyText(revision.textVi) ? null : String(revision.textVi);
-        return [
-          tag && textVi ? el("span", { class: "lookup-version-tag" }, tag) : null,
-          el("p", { class: "lookup-prose-text" }, textVi ?? revisionText(revision)),
-        ].filter(Boolean);
-      }),
-    ]);
   }
 
   function listBlock(titleVi, rows, className) {
@@ -466,21 +385,14 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
       for (const relation of profile.relations.filter((item) => !tacticRelations.includes(item))) right.append(relationRow(relation));
       body.append(el("div", { class: "lookup-profile-column" }, [heroStats(profile)]), right, ...tail);
     } else {
-      // Chỉ bỏ trường đã hiện ở chỗ khác trong hộp thoại: "Phẩm chất" nằm ở badge đầu hồ sơ.
-      const fields = profile.fields.filter((item) => !(entryRow.group === "tactics" && item.key === "quality"));
-      const prose = fields.filter((item) => PROSE_KEYS.has(item.key));
-      const facts = fields.filter((item) => !PROSE_KEYS.has(item.key));
-      // Lịch sử cập nhật chép lại đúng các phiên bản của hiệu ứng: hiệu ứng đã tách phiên bản thì không lặp lại.
-      const versioned = prose.some((item) => !isEmptyText(item.value) && effectVersions(item.textVi).length > 1);
-      // Một cột đọc từ trên xuống: đoạn văn (đoạn đầu nổi trong khung), bảng thông số, quan hệ, mục con.
+      // Binh thư (bốn nhóm catalog dùng panel chi tiết của `js/lookup-master.js`): đoạn văn hiệu ứng rồi bảng thông số.
+      const prose = profile.fields.filter((item) => PROSE_KEYS.has(item.key));
+      const facts = profile.fields.filter((item) => !PROSE_KEYS.has(item.key));
       body.classList.add("lookup-profile-entry");
       body.append(...[
         ...prose.map(proseSection),
         facts.length ? el("dl", { class: "lookup-fact-grid" }, facts.map(factTile)) : null,
-        ...relationSections(profile.relations),
-        ...profile.children.map((child) => childrenBlock(corpus, child)),
         conditions,
-        versioned ? null : revisionBlock(profile.revisions),
         zhNote,
       ].filter(Boolean));
       body.querySelector(".lookup-prose")?.classList.add("is-lead");

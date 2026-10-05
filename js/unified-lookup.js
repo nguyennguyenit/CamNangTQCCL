@@ -10,6 +10,7 @@ import { normalizeText } from "./filters.js";
 import { bookLookupId, groupForId, lookupProfilePath } from "./lookup-ids.js";
 import { h } from "./view-tree.js";
 import { portraitTree } from "./hero-portrait.js";
+import { isMasterGroup, masterResultTrees, masterSummaryTrees } from "./lookup-master.js";
 
 export const LOOKUP_GROUPS = Object.freeze(["heroes", "tactics", "equipment", "advisors", "troop-mods", "buildings", "books"]);
 /** Nhãn nhóm dùng chung cho trang Tra cứu và menu điều hướng (SiteLayout, bản Việt). */
@@ -46,8 +47,9 @@ export const POSITION_LABELS = Object.freeze([L("Chủ tướng", "主将"), L("
 export const LOOKUP_GROUP_PAYLOADS = Object.freeze({
   heroes: Object.freeze({ entry: ["heroes-dict.json"], profile: ["tactics.json", "lookup-catalog.json"] }),
   tactics: Object.freeze({ entry: ["tactics.json"], profile: ["heroes-dict.json"] }),
-  equipment: Object.freeze({ entry: ["lookup-catalog.json"], profile: ["heroes-dict.json"] }),
-  advisors: Object.freeze({ entry: ["lookup-catalog.json"], profile: ["heroes-dict.json"] }),
+  // Trang bị và Quân sư cần tên tướng ngay trên danh sách: build nhúng sẵn các tướng liên quan (`lookupGroupOwners`).
+  equipment: Object.freeze({ entry: ["lookup-catalog.json"], profile: [] }),
+  advisors: Object.freeze({ entry: ["lookup-catalog.json"], profile: [] }),
   "troop-mods": Object.freeze({ entry: ["lookup-catalog.json"], profile: [] }),
   buildings: Object.freeze({ entry: ["lookup-catalog.json"], profile: [] }),
   books: Object.freeze({ entry: [], profile: [] }),
@@ -61,6 +63,12 @@ const ROUTE_ERRORS = Object.freeze({
 const CJK_CHAR = /[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]/u;
 const MISSING = "—";
 export const PAGE_SIZE = 60;
+/**
+ * Cỡ trang theo nhóm: thẻ trang bị/quân sư dày hơn nên trang đầu ngắn hơn (artboard hiện 12/9 thẻ rồi "Xem thêm"),
+ * cải tạo binh chủng hiện trọn một lượt vì danh sách chia khối theo binh chủng.
+ */
+const PAGE_SIZES = Object.freeze({ equipment: 24, advisors: 18, buildings: 20 });
+export const lookupPageSize = (group) => PAGE_SIZES[group] ?? PAGE_SIZE;
 
 /**
  * Hồ sơ trên query của trang nhóm (`/tra-cuu/<nhóm>/?id=<mã>`): chỉ `id` được xét, khóa khác bị bỏ qua
@@ -120,17 +128,34 @@ const EMPTY_CATALOG = Object.freeze({ equipment: [], specials: [], advisors: [],
  */
 export function buildLookupCorpus({ heroes = [], tactics = [], catalog = null, books = [], bookAliases = {} } = {}) {
   const source = catalog ?? EMPTY_CATALOG;
+  // Đặc kỹ không có nhóm riêng: chúng nằm trong chi tiết trang bị cha (`exclusives`) hoặc ở danh sách đặc kỹ chung,
+  // còn mã `equipment-special:*` vẫn tra được qua `byId`. Tên đặc kỹ gắn trang bị là khóa tìm phụ của trang bị đó.
+  const specials = source.specials.map((record) => entry("equipment", record));
+  const exclusivesOf = new Map();
+  for (const special of specials) {
+    const parent = special.record.equipmentId;
+    if (parent) exclusivesOf.set(parent, [...(exclusivesOf.get(parent) ?? []), special]);
+  }
+  const equipment = source.equipment.map((record) => {
+    const row = entry("equipment", record);
+    const own = exclusivesOf.get(record.id) ?? [];
+    return {
+      ...row,
+      exclusives: own.map((special) => special.record),
+      searchKeys: [...row.searchKeys, ...own.flatMap((special) => special.searchKeys)],
+    };
+  });
   const groups = {
     heroes: heroes.map((record) => entry("heroes", record)),
     tactics: tactics.map((record) => entry("tactics", record)),
-    equipment: [...source.equipment, ...source.specials].map((record) => entry("equipment", record)),
+    equipment,
     advisors: source.advisors.map((record) => entry("advisors", record)),
     "troop-mods": source.troopMods.map((record) => entry("troop-mods", record)),
     buildings: source.buildings.map((record) => entry("buildings", record)),
     books: bookRecords(books, bookAliases).map((record) => entry("books", record)),
   };
   const byId = new Map();
-  for (const rows of Object.values(groups)) for (const row of rows) byId.set(row.id, row);
+  for (const rows of [...Object.values(groups), specials]) for (const row of rows) byId.set(row.id, row);
   return { groups, byId, heroes, tactics, catalog: source };
 }
 
@@ -153,13 +178,17 @@ function chineseRank(item, needle) {
   return 3;
 }
 
-/** Tìm trong đúng một nhóm (toàn nhóm trước khi cắt trang); trang tính từ 1. */
-export function searchLookupGroup(corpus, { group, query = "", page = 1, pageSize = PAGE_SIZE, locale = currentLocale() }) {
+/**
+ * Tìm trong đúng một nhóm (toàn nhóm trước khi cắt trang); trang tính từ 1. `filter(item)` (nếu có) giữ lại các mục
+ * thỏa điều kiện sau bước tìm, trước khi cắt trang (bộ lọc chip của bốn nhóm catalog).
+ */
+export function searchLookupGroup(corpus, { group, query = "", page = 1, pageSize = lookupPageSize(group), locale = currentLocale(), filter = null }) {
   const source = corpus.groups[group] ?? [];
   const needle = normalizeText(query);
-  const filtered = needle
+  const searched = needle
     ? source.filter((item) => item.searchKeys.some((key) => key.includes(needle)))
     : source;
+  const filtered = filter ? searched.filter(filter) : searched;
   // Bản zh ưu tiên mục khớp tên chữ Hán; bản Việt giữ nguyên thứ tự nguồn.
   const matches = needle && normalizeLocale(locale) === "zh"
     ? filtered.map((item, index) => ({ item, index, rank: chineseRank(item, needle) }))
@@ -309,9 +338,17 @@ export function lookupTableRowTree(item, locale = currentLocale()) {
   ]);
 }
 
-/** Lưới kết quả của một nhóm: bảng cho chiến pháp, thẻ cho nhóm khác; không có kết quả trả `[]`. */
-export function lookupResultTrees(group, items, locale = currentLocale()) {
+/**
+ * Lưới kết quả của một nhóm: bảng cho chiến pháp, danh sách/thẻ chọn được cho bốn nhóm catalog (`selectedId` là mục
+ * đang mở, `byId` để tra tên tướng của quân sư), thẻ cho nhóm khác; không có kết quả trả `[]`.
+ * @param {string} group
+ * @param {any[]} items
+ * @param {string} [locale]
+ * @param {{selectedId?: string | null, byId?: Map<string, any> | null}} [options]
+ */
+export function lookupResultTrees(group, items, locale = currentLocale(), { selectedId = null, byId = null } = {}) {
   if (!items.length) return [];
+  if (isMasterGroup(group)) return masterResultTrees(group, items, locale, { selectedId, byId });
   if (group !== "tactics") return items.map((item) => lookupCardTree(group, item, locale));
   return [h("div", { class: "lookup-table-panel" }, [
     h("table", { class: "lookup-table" }, [
@@ -328,8 +365,12 @@ export function lookupResultTrees(group, items, locale = currentLocale()) {
   ])];
 }
 
-/** Nội dung dòng trạng thái: "<strong>n</strong> tướng · bấm để mở hồ sơ · ảnh chân dung từ nguồn game". */
-export function lookupSummaryTrees(group, total, locale = currentLocale()) {
+/**
+ * Nội dung dòng trạng thái: "<strong>n</strong> tướng · bấm để mở hồ sơ · ảnh chân dung từ nguồn game"; bốn nhóm
+ * catalog có dòng riêng theo bố cục (`selected` là bộ lọc đang chọn).
+ */
+export function lookupSummaryTrees(group, total, locale = currentLocale(), selected = {}) {
+  if (isMasterGroup(group)) return masterSummaryTrees(group, total, locale, selected);
   const unit = pick(locale, LOOKUP_GROUP_UNITS[group], LOOKUP_GROUP_UNITS_ZH[group]);
   const hint = group === "tactics" ? pick(locale, " · bấm tên để mở hồ sơ", " · 点击名称查看详情") : pick(locale, " · bấm để mở hồ sơ", " · 点击查看详情");
   const source = group === "heroes" ? pick(locale, " · ảnh chân dung từ nguồn game", " · 头像取自游戏素材") : "";
@@ -346,11 +387,11 @@ export function lookupOrderNote(query = "", locale = currentLocale()) {
 }
 
 /** Hàng "Xem thêm" khi còn kết quả chưa hiện; hết thì `[]`. */
-export function lookupMoreTrees(shownCount, total, locale = currentLocale()) {
+export function lookupMoreTrees(shownCount, total, locale = currentLocale(), pageSize = PAGE_SIZE) {
   if (shownCount >= total) return [];
   return [
     h("button", { type: "button", class: "lookup-more" }, pick(locale, "Xem thêm", "查看更多")),
-    h("span", { class: "lookup-more-note" }, pick(locale, `Mỗi lượt hiện ${PAGE_SIZE} kết quả`, `每次显示 ${PAGE_SIZE} 条结果`)),
+    h("span", { class: "lookup-more-note" }, pick(locale, `Mỗi lượt hiện ${pageSize} kết quả`, `每次显示 ${pageSize} 条结果`)),
   ];
 }
 
@@ -385,19 +426,4 @@ export function camNangView(summary) {
     representative: summary.representative.map((team) => ({ ...team, positionLabel: POSITION_LABELS[team.position] })),
     searchName: summary.searchName,
   };
-}
-
-const COST_LABELS = { wood: L("Gỗ", "木材"), iron: L("Sắt", "铁矿"), stone: L("Đá", "石料") };
-
-/**
- * Chi phí của một cấp công trình (`lookup-data.js` bắt buộc đúng ba khóa `wood`/`iron`/`stone`): bỏ ô không có
- * giá trị (`null`/`undefined`/rỗng) nên UI không bao giờ in `null`. Không còn ô nào thì trả `null` để bỏ hẳn phần
- * chi phí khỏi dòng.
- */
-export function costText(costs) {
-  if (!costs || typeof costs !== "object") return null;
-  const parts = Object.entries(costs)
-    .filter(([, value]) => value !== null && value !== undefined && value !== "")
-    .map(([key, value]) => `${COST_LABELS[key]}: ${value}`);
-  return parts.length ? parts.join(", ") : null;
 }

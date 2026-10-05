@@ -70,13 +70,34 @@ const searchPlaceholder = t(
     {/* Thanh nhóm cuộn ngang khi hẹp: đưa nhóm đang xem vào giữa trước lần vẽ đầu (không cuộn trang) và ghi
         `data-fade` để CSS làm mờ mép còn mục khuất; cập nhật khi cuộn và khi đổi cỡ màn hình. */}
     <script is:inline>(function(){var nav=document.getElementById('lookup-chips');if(!nav)return;var current=nav.querySelector('[aria-current="page"]');if(current&&nav.scrollWidth>nav.clientWidth)nav.scrollLeft=current.offsetLeft-nav.offsetLeft-(nav.clientWidth-current.offsetWidth)/2;var fade=function(){var start=nav.scrollLeft>1,end=nav.scrollLeft+nav.clientWidth<nav.scrollWidth-1;var value=start&&end?'both':start?'start':end?'end':'';if(value)nav.dataset.fade=value;else delete nav.dataset.fade;};fade();nav.addEventListener('scroll',fade,{passive:true});window.addEventListener('resize',fade);})();</script>
-    <div class="lookup-status-row">
-      <p class="lookup-summary" role="status" aria-live="polite" data-lookup-total={firstPage.total} set:html={firstPage.summaryHtml}></p>
-      <span class="lookup-order-note" hidden={!firstPage.orderNote}>{firstPage.orderNote}</span>
-    </div>
-    <div class="lookup-feedback" aria-live="polite"></div>
-    <div class={firstPage.gridClass} set:html={firstPage.resultsHtml}></div>
-    <div class="lookup-more-row" set:html={firstPage.moreHtml}></div>
+    {firstPage.master ? (
+      <div class={`lookup-master lookup-master-${group}`} data-lookup-master>
+        <Fragment set:html={firstPage.filtersHtml} />
+        <div class="lookup-master-body">
+          <div class="lookup-master-list">
+            <div class="lookup-status-row">
+              <p class="lookup-summary" role="status" aria-live="polite" data-lookup-total={firstPage.total} set:html={firstPage.summaryHtml}></p>
+              <span class="lookup-order-note" hidden></span>
+            </div>
+            <div class="lookup-feedback" aria-live="polite"></div>
+            <div class={firstPage.gridClass} set:html={firstPage.resultsHtml}></div>
+            <div class="lookup-more-row" set:html={firstPage.moreHtml}></div>
+          </div>
+          <aside class="lookup-detail-panel" aria-label={firstPage.panelLabel} data-lookup-panel set:html={firstPage.detailHtml}></aside>
+        </div>
+      </div>
+    ) : (
+      <>
+        <div class="lookup-status-row">
+          <p class="lookup-summary" role="status" aria-live="polite" data-lookup-total={firstPage.total} set:html={firstPage.summaryHtml}></p>
+          <span class="lookup-order-note" hidden={!firstPage.orderNote}>{firstPage.orderNote}</span>
+        </div>
+        <div class="lookup-feedback" aria-live="polite"></div>
+        <div class={firstPage.gridClass} set:html={firstPage.resultsHtml}></div>
+        <div class="lookup-more-row" set:html={firstPage.moreHtml}></div>
+      </>
+    )}
+    {firstPage.owners && <script is:inline type="application/json" id="lookup-owner-heroes" set:html={firstPage.owners}></script>}
     <div class="lookup-detail-mount"></div>
   </section>
 

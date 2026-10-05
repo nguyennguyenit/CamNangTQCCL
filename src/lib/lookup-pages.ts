@@ -5,16 +5,24 @@ import { validateLookupBundle } from '../../js/lookup-data.js';
 import { LOOKUP_GROUP_SLUGS, lookupGroupPath } from '../../js/lookup-ids.js';
 import {
   LOOKUP_GROUPS,
-  PAGE_SIZE,
   buildLookupCorpus,
   lookupGroupCounts,
   lookupGroupLabels,
   lookupMoreTrees,
   lookupOrderNote,
+  lookupPageSize,
   lookupResultTrees,
   lookupSummaryTrees,
   searchLookupGroup,
 } from '../../js/unified-lookup.js';
+import {
+  isMasterGroup,
+  masterDefaultId,
+  masterDetailTree,
+  masterFilterTree,
+  masterPanelLabel,
+  masterTargetFor,
+} from '../../js/lookup-master.js';
 import { treeToHtml } from '../../js/view-tree.js';
 import { pick } from '../../js/i18n.js';
 import { lookupBookAliases, lookupPublicationSnapshot, readPublicArtifact } from './root-static-artifacts';
@@ -91,21 +99,54 @@ export async function lookupGroupEntries(locale: SiteLocale) {
 }
 
 /**
- * HTML dựng sẵn của trang nhóm: trang đầu (60 mục) của lưới, dòng trạng thái và hàng "Xem thêm", cùng cây
- * markup mà `js/lookup-page.js` dựng lại trong trình duyệt.
+ * Tướng liên quan của trang Trang bị (tướng độc quyền của đặc kỹ) và Quân sư (tướng mang kỹ năng): bản ghi tối
+ * thiểu `{id, viet, chinese, iconUrl}` nhúng vào trang để danh sách ghi được tên tướng mà không tải `heroes-dict`.
+ * Nhóm khác trả `null`.
+ */
+async function lookupGroupOwners(group: LookupGroup): Promise<string | null> {
+  if (group !== 'equipment' && group !== 'advisors') return null;
+  const corpus = await lookupBuildCorpus();
+  const catalog = (corpus as unknown as { catalog: { specials: {exclusiveHeroId: string | null}[]; advisors: {heroIds: string[]}[] } }).catalog;
+  const ids = new Set<string>(
+    group === 'equipment'
+      ? catalog.specials.map((special) => special.exclusiveHeroId).filter((id): id is string => Boolean(id))
+      : catalog.advisors.flatMap((advisor) => advisor.heroIds),
+  );
+  const heroes = [...ids].sort().flatMap((id) => {
+    const record = (corpus.byId.get(id) as { record?: {viet?: string; chinese?: string; iconUrl?: string | null} } | undefined)?.record;
+    return record ? [{ id, viet: record.viet, chinese: record.chinese, iconUrl: record.iconUrl ?? null }] : [];
+  });
+  return JSON.stringify(heroes).replace(/</g, '\\u003c');
+}
+
+/**
+ * HTML dựng sẵn của trang nhóm: trang đầu của lưới, dòng trạng thái và hàng "Xem thêm", cùng cây markup mà
+ * `js/lookup-page.js` dựng lại trong trình duyệt. Bốn nhóm catalog thêm hàng chip lọc và chi tiết của mục đầu.
  */
 export async function lookupGroupFirstPage(group: LookupGroup, locale: SiteLocale) {
   const corpus = await lookupBuildCorpus();
-  const { items, total } = searchLookupGroup(corpus, { group, page: 1, pageSize: PAGE_SIZE, locale });
+  const pageSize = lookupPageSize(group);
+  const { items, total } = searchLookupGroup(corpus, { group, page: 1, pageSize, locale });
+  const master = isMasterGroup(group);
+  // Bốn nhóm catalog chọn sẵn mục đầu (artboard): chi tiết của nó dựng sẵn cạnh danh sách.
+  const selectedId = master ? masterDefaultId(group, items as { id: string }[]) : null;
+  const target = selectedId ? masterTargetFor(corpus, selectedId) : null;
   return {
     total,
+    master,
     // Tướng có bố cục riêng (artboard Lookup: 5 cột, chân dung vuông, vạch phe); nhóm catalog giữ lưới thẻ chung.
     gridClass: group === 'tactics'
       ? 'lookup-grid lookup-grid-table'
-      : `lookup-grid lookup-grid-cards${group === 'heroes' ? ' lookup-grid-heroes' : ''}`,
-    resultsHtml: lookupResultTrees(group, items, locale).map(treeToHtml).join(''),
+      : master
+        ? `lookup-grid lookup-master-grid lookup-master-grid-${group}`
+        : `lookup-grid lookup-grid-cards${group === 'heroes' ? ' lookup-grid-heroes' : ''}`,
+    resultsHtml: lookupResultTrees(group, items, locale, { selectedId, byId: corpus.byId }).map(treeToHtml).join(''),
     summaryHtml: lookupSummaryTrees(group, total, locale).map(treeToHtml).join(''),
-    orderNote: total ? lookupOrderNote('', locale) : null,
-    moreHtml: lookupMoreTrees(items.length, total, locale).map(treeToHtml).join(''),
+    orderNote: total && !master ? lookupOrderNote('', locale) : null,
+    moreHtml: lookupMoreTrees(items.length, total, locale, pageSize).map(treeToHtml).join(''),
+    filtersHtml: master ? treeToHtml(masterFilterTree(group, corpus.groups[group], {}, locale)) : '',
+    panelLabel: master ? masterPanelLabel(group, locale) : '',
+    detailHtml: target ? treeToHtml(masterDetailTree(group, target.item, corpus, locale, { targetId: target.targetId })) : '',
+    owners: await lookupGroupOwners(group),
   };
 }

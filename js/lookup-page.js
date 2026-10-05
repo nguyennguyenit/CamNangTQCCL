@@ -1,9 +1,11 @@
-// Trang nhóm Tra cứu `/tra-cuu/<slug>/` (artboard Lookup/LookupTactics/LookupMobile): gắn vào khung do build
-// dựng sẵn (ô tìm, dòng trạng thái, lưới 60 mục đầu), rồi sở hữu tìm kiếm, "Xem thêm", hồ sơ theo `?id=`,
+// Trang nhóm Tra cứu `/tra-cuu/<slug>/` (artboard Lookup/LookupTactics/LookupMobile và 4 nhóm catalog): gắn vào khung do
+// build dựng sẵn (ô tìm, dòng trạng thái, lưới mục đầu), rồi sở hữu tìm kiếm, "Xem thêm", hồ sơ theo `?id=`,
 // lịch sử và focus. Payload hồ sơ cần thêm (quan hệ sang nhóm khác) tải lười ở lần mở hồ sơ đầu tiên.
+// Tướng, chiến pháp và binh thư mở hồ sơ bằng hộp thoại; Trang bị, Quân sư, Cải tạo binh chủng và Công trình là
+// danh sách + panel chi tiết (`js/lookup-master.js`), chi tiết hiện cạnh danh sách (desktop) hoặc thành màn riêng (mobile).
 
 import { el } from "./render.js";
-import { L, localePath } from "./i18n.js";
+import { L, currentLocale, localePath } from "./i18n.js";
 import { lookupProfilePath } from "./lookup-ids.js";
 import { treeToDom } from "./view-tree.js";
 import { activatePortraits } from "./hero-portrait.js";
@@ -11,10 +13,12 @@ import { createHeroSummaryLoader } from "./hero-summaries.js";
 import { createTacticSummaryLoader } from "./tactic-summaries.js";
 import { isNativeNavigationClick } from "./team-detail-navigation.js";
 import { createProfileRenderer } from "./lookup-profile.js";
+import { isMasterGroup, masterDefaultId, masterDetailTree, masterFilterMatches, masterTargetFor } from "./lookup-master.js";
 import {
   buildLookupCorpus,
   lookupMoreTrees,
   lookupOrderNote,
+  lookupPageSize,
   lookupResultTrees,
   lookupSummaryTrees,
   lookupTableRowTree,
@@ -42,8 +46,14 @@ export function initLookupPage({ group, mount, docs, loadProfileDocs = async () 
   const grid = required(mount, ".lookup-grid");
   const more = required(mount, ".lookup-more-row");
   const detailMount = required(mount, ".lookup-detail-mount");
+  const master = isMasterGroup(group);
+  const panel = master ? required(mount, "[data-lookup-panel]") : null;
+  const filtersBar = master ? required(mount, ".lookup-filters") : null;
+  const pageSize = lookupPageSize(group);
   let profileDocs = null;
   let profileReady = false;
+  // Đã thử tải payload hồ sơ (thành công hay lỗi): danh sách/chi tiết catalog chờ tới lúc này để có tên tướng.
+  let profileSettled = false;
   let corpus = buildLookupCorpus(docs);
   const summaries = !summary ? null : group === "tactics" ? createTacticSummaryLoader(summary) : createHeroSummaryLoader(summary);
   let query = search.value;
@@ -53,6 +63,12 @@ export function initLookupPage({ group, mount, docs, loadProfileDocs = async () 
   let dialogToken = 0;
   // Đóng hồ sơ bằng history.go(): lượt render của popstate kế tiếp phải trả focus về thẻ đã mở.
   let restoreAfterPop = false;
+  // Bốn nhóm catalog: bộ lọc chip đang chọn (`{khóa: giá trị}`), mục đang tô trong danh sách và màn chi tiết đang mở (mobile).
+  let filters = {};
+  let listSelectedId = null;
+  let detailWasOpen = false;
+  let rendered = false;
+  const filterFn = master ? (item) => masterFilterMatches(group, item.record ?? {}, filters) : null;
 
   /** Payload hồ sơ: tải một lần, dựng lại corpus khi về tới; lỗi tải không chặn mở hồ sơ. */
   function ensureProfileDocs() {
@@ -60,7 +76,8 @@ export function initLookupPage({ group, mount, docs, loadProfileDocs = async () 
       profileDocs = Promise.resolve()
         .then(() => loadProfileDocs())
         .then((extra) => { corpus = buildLookupCorpus({ ...docs, ...extra }); profileReady = true; })
-        .catch((error) => { profileDocs = null; console.error(error); });
+        .catch((error) => { profileDocs = null; console.error(error); })
+        .finally(() => { profileSettled = true; });
     }
     return profileDocs;
   }
@@ -158,11 +175,12 @@ export function initLookupPage({ group, mount, docs, loadProfileDocs = async () 
     });
   }
 
-  /** Link hồ sơ trong các nút vừa dựng (thẻ hoặc tên trong bảng chiến pháp): click thường mở hồ sơ tại chỗ, click có phím bổ trợ để trình duyệt mở tab mới. */
+  /** Link hồ sơ trong các nút vừa dựng (thẻ, hàng danh sách hoặc tên trong bảng chiến pháp): click thường mở hồ sơ tại chỗ, click có phím bổ trợ để trình duyệt mở tab mới. */
   function wire(nodes) {
     for (const node of nodes) {
       activatePortraits(node);
-      for (const link of node.querySelectorAll?.("[data-lookup-id]") ?? []) {
+      const links = [...(node.matches?.("[data-lookup-id]") ? [node] : []), ...(node.querySelectorAll?.("[data-lookup-id]") ?? [])];
+      for (const link of links) {
         link.addEventListener("click", (event) => {
           if (!isNativeNavigationClick(event)) return;
           event.preventDefault();
@@ -175,20 +193,21 @@ export function initLookupPage({ group, mount, docs, loadProfileDocs = async () 
   }
 
   function renderMore(shownCount, total) {
-    const nodes = lookupMoreTrees(shownCount, total).map((tree) => treeToDom(tree));
+    const nodes = lookupMoreTrees(shownCount, total, undefined, pageSize).map((tree) => treeToDom(tree));
     nodes.find((node) => node.classList.contains("lookup-more"))?.addEventListener("click", appendNextPage);
     more.replaceChildren(...nodes);
   }
 
   function appendNextPage() {
     page += 1;
-    const { items, total } = searchLookupGroup(corpus, { group, query, page });
+    const { items, total } = searchLookupGroup(corpus, { group, query, page, filter: filterFn });
     const nodes = group === "tactics"
       ? items.map((item) => treeToDom(lookupTableRowTree(item)))
-      : lookupResultTrees(group, items).map((tree) => treeToDom(tree));
+      : lookupResultTrees(group, items, undefined, { selectedId: listSelectedId, byId: corpus.byId }).map((tree) => treeToDom(tree));
     (grid.querySelector(".lookup-table tbody") ?? grid).append(...wire(nodes));
     renderMore(grid.querySelectorAll("[data-lookup-id]").length, total);
-    nodes[0]?.querySelector("[data-lookup-id]")?.focus();
+    const first = nodes[0];
+    (first?.matches?.("[data-lookup-id]") ? first : first?.querySelector("[data-lookup-id]"))?.focus();
   }
 
   /** Trả focus về thẻ/nút đã mở hồ sơ (hoặc ô tìm) sau khi hộp thoại biến mất. */
@@ -198,7 +217,72 @@ export function initLookupPage({ group, mount, docs, loadProfileDocs = async () 
     (restored ?? search).focus();
   }
 
+  /** Chip lọc đồng bộ với bộ lọc đang chọn (số đếm không đổi theo ô tìm nên không dựng lại chip). */
+  function syncFilters() {
+    for (const chip of filtersBar.querySelectorAll("button[data-facet]")) {
+      chip.setAttribute("aria-pressed", String((filters[chip.dataset.facet] ?? "") === chip.dataset.value));
+    }
+  }
+
+  /** Panel chi tiết của bốn nhóm catalog: mục đang mở, hoặc mục đầu của danh sách khi chưa mở mục nào. */
+  function paintPanel(target) {
+    if (!target) {
+      panel.replaceChildren();
+      return;
+    }
+    const node = treeToDom(masterDetailTree(group, target.item, corpus, currentLocale(), { targetId: target.targetId }));
+    activatePortraits(node);
+    panel.replaceChildren(node);
+    panel.querySelector(".is-target")?.scrollIntoView?.({ block: "nearest" });
+  }
+
+  /** Dựng lại danh sách + panel của bốn nhóm catalog theo ô tìm, bộ lọc và `?id=`. */
+  function renderMaster(hadDetail) {
+    const result = searchLookupGroup(corpus, { group, query, page: 1, filter: filterFn });
+    const items = [...result.items];
+    for (let current = 2; current <= page && items.length < result.total; current += 1) {
+      items.push(...searchLookupGroup(corpus, { group, query, page: current, filter: filterFn }).items);
+    }
+    const target = route.id ? masterTargetFor(corpus, route.id) : null;
+    listSelectedId = target ? target.item.id : masterDefaultId(group, items);
+    const shown = target ?? (listSelectedId ? masterTargetFor(corpus, listSelectedId) : null);
+    syncFilters();
+    summaryLine.dataset.lookupTotal = String(result.total);
+    summaryLine.replaceChildren(...lookupSummaryTrees(group, result.total, undefined, filters).map((tree) => treeToDom(tree)));
+    orderNote.hidden = true;
+    grid.replaceChildren(...wire(lookupResultTrees(group, items, undefined, { selectedId: listSelectedId, byId: corpus.byId }).map((tree) => treeToDom(tree))));
+    if (!result.total) {
+      feedback.setAttribute("role", "status");
+      feedback.textContent = L("Không có kết quả phù hợp.", "没有符合条件的结果。");
+    }
+    renderMore(items.length, result.total);
+    if (route.id && !target) {
+      feedback.textContent = L("Mục tra cứu đang được cập nhật.", "该条目正在更新。");
+      feedback.setAttribute("role", "alert");
+    }
+    paintPanel(shown);
+    // Mobile: chi tiết là màn riêng; mở thì về đầu trang và đưa focus vào nút quay lại, đóng thì trả focus về mục đã bấm.
+    const open = Boolean(target);
+    mount.dataset.lookupDetailOpen = String(open);
+    if (open && !detailWasOpen && rendered) {
+      const back = panel.querySelector("[data-lookup-back]");
+      if (back && back.offsetParent !== null) {
+        window.scrollTo(0, 0);
+        back.focus();
+      }
+    } else if (!open && (detailWasOpen || hadDetail)) {
+      restoreOpenerFocus();
+    }
+    detailWasOpen = open;
+    rendered = true;
+  }
+
   function render() {
+    // Danh sách và chi tiết catalog cần tên tướng (payload hồ sơ): chờ tải xong rồi dựng, trong lúc đó HTML dựng sẵn vẫn hiện.
+    if (master && !profileSettled) {
+      ensureProfileDocs().then(() => render());
+      return;
+    }
     const hadDialog = detailMount.querySelector(".lookup-dialog") !== null || restoreAfterPop;
     restoreAfterPop = false;
     route = parseLookupQuery(location.search, group);
@@ -212,11 +296,16 @@ export function initLookupPage({ group, mount, docs, loadProfileDocs = async () 
     if (route.error) {
       grid.replaceChildren();
       more.replaceChildren();
+      panel?.replaceChildren();
       summaryLine.dataset.lookupTotal = "0";
       summaryLine.textContent = "";
       feedback.setAttribute("role", "alert");
       feedback.textContent = route.messageVi;
       orderNote.hidden = true;
+      return;
+    }
+    if (master) {
+      renderMaster(hadDialog);
       return;
     }
     const result = searchLookupGroup(corpus, { group, query, page: 1 });
@@ -246,6 +335,32 @@ export function initLookupPage({ group, mount, docs, loadProfileDocs = async () 
   search.addEventListener("input", () => { query = search.value; page = 1; render(); });
   // Back/Forward giữ số lượt "Xem thêm" đã mở (đóng/mở hồ sơ không đổi lưới).
   window.addEventListener("popstate", render);
+  if (master) {
+    // Chip lọc: bấm chip đang bật thì tắt (về "Tất cả"); "Tất cả" (giá trị rỗng) bỏ lọc của khía cạnh đó.
+    filtersBar.addEventListener("click", (event) => {
+      const chip = event.target.closest?.("button[data-facet]");
+      if (!chip) return;
+      const { facet, value } = chip.dataset;
+      filters = { ...filters, [facet]: value && filters[facet] !== value ? value : "" };
+      page = 1;
+      render();
+    });
+    // Panel chi tiết: đổi phiên bản hiệu quả (cải tạo binh chủng) và nút quay lại danh sách (màn chi tiết mobile).
+    panel.addEventListener("click", (event) => {
+      const tab = event.target.closest?.("[data-effect-tab]");
+      if (tab) {
+        const section = tab.closest(".lookup-detail-section");
+        for (const other of section.querySelectorAll("[data-effect-tab]")) other.setAttribute("aria-pressed", String(other === tab));
+        for (const body of section.querySelectorAll("[data-effect-panel]")) body.hidden = body.dataset.effectPanel !== tab.dataset.effectTab;
+        return;
+      }
+      const back = event.target.closest?.("[data-lookup-back]");
+      if (back && isNativeNavigationClick(event)) {
+        event.preventDefault();
+        closeDialog();
+      }
+    });
+  }
   render();
   return { render };
 }

@@ -1,5 +1,26 @@
 # Project Changelog
 
+## 2026-10-05 (Tra cứu: Trang bị, Quân sư, Cải tạo binh chủng, Công trình theo thiết kế mới)
+
+### Changed
+
+- **Bốn trang nhóm catalog** (`/tra-cuu/trang-bi/`, `/quan-su/`, `/cai-tao-binh-chung/`, `/cong-trinh/` và `/zh/…`) bỏ lưới thẻ chữ Hán chung và hộp thoại hồ sơ, dùng bố cục danh sách + chi tiết theo artboard `LookupEquipment`/`LookupAdvisors`/`LookupTroops`/`LookupBuildings` (+ `…Mobile`, `…DetailMobile`). Khung đầu trang (tiêu đề, ô tìm, chip bảy nhóm, dòng trạng thái) giữ nguyên; tướng, chiến pháp, binh thư giữ nguyên hộp thoại.
+- Mã mới `js/lookup-master.js` (view thuần dựng bằng cây view, dùng chung build và trình duyệt): chip lọc (trang bị: ô + phẩm; quân sư: hệ; cải tạo: binh chủng; công trình: thành chính/mọi thành), thẻ/hàng danh sách, panel chi tiết. Trang bị: thẻ nhuộm theo phẩm, panel có đặc kỹ độc quyền (T0–T3) và danh sách đặc kỹ chung; mã `equipment-special:*` mở trang bị cha với đặc kỹ tô khung, đặc kỹ không có cha mở chi tiết riêng. Quân sư: thẻ ô chữ hệ + mô tả rút, panel Võ tướng/Điểm chiến pháp/Hiệu quả/Cách dùng. Cải tạo binh chủng: danh sách chia khối theo binh chủng, phiên bản hiệu quả (hiện hành/gốc), cây 4 bậc có dấu "Gợi ý" suy từ tên trong 【…】 của `suggestedBuildVi` (`troopSuggestedIds`, không khớp thì không đánh dấu) và thanh gợi ý build. Công trình: bốn ô số liệu, bảng theo cấp, dòng tổng tài nguyên (`buildingTotals`).
+- Desktop chọn sẵn mục đầu (chi tiết dựng sẵn lúc build, không cần JS); bấm mục đổi `?id=` (push, Back về mục trước). Từ 1023px trở xuống danh sách một cột và chi tiết là màn riêng có nút quay lại (`data-lookup-detail-open`), focus vào nút quay lại khi mở và về mục đã bấm khi đóng.
+- Corpus: nhóm trang bị chỉ còn 114 trang bị (trước đây gộp 90 đặc kỹ thành 204 mục, chip và mục lục giờ ghi 114 đúng artboard); đặc kỹ vẫn tra được theo mã (`byId`) và tên đặc kỹ gắn trang bị là khóa tìm phụ của trang bị đó. **Đổi có chủ ý:** đặc kỹ chung/chưa rõ trang bị cha không còn là kết quả tìm riêng, chỉ xuất hiện trong chi tiết trang bị (danh sách "Đặc kỹ chung có thể rèn") hoặc qua mã.
+- Bỏ mã chết của hộp thoại: `lookup-profile.js` không còn dựng cấp công trình, lựa chọn cải tạo, mục con và quan hệ dạng nút cho nhóm catalog (nhánh hồ sơ "nhóm khác" chỉ còn binh thư), xoá `costText` và CSS `.lookup-level*`/`.lookup-option*`/`.lookup-link-chips`. Hồ sơ dữ liệu của các nhóm này trong `lookup-detail.js` (`lookupProfile`) giữ nguyên.
+- Cỡ trang theo nhóm (`lookupPageSize`): trang bị 24, quân sư 18, công trình 20, nhóm khác 60; `lookupMoreTrees` nhận cỡ trang.
+- Trang Trang bị và Quân sư nhúng sẵn tướng liên quan (`#lookup-owner-heroes`, `{id, viet, chinese, iconUrl}`) để danh sách và chi tiết ghi tên tướng mà vẫn chỉ tải `lookup-catalog.json` lúc vào (hợp đồng "mỗi trang nhóm chỉ tải payload của nhóm mình" giữ nguyên); `LOOKUP_GROUP_PAYLOADS` của hai nhóm này không còn payload hồ sơ.
+- Token: nhóm `color.tint` (`--tint-cam|tim|hoa|phong|lam|son` + `-ink`, `--tint-cam-line`, `--tint-tim-line`; có bản tối), `--ink-body`, `--line-3`, `--accent-line`, `--shadow-selected`, `--size-tile-76|panel-420|panel-440|list-280|col-34|col-36`, 27 vai trò chữ `--type-lookup-*`/`--type-chip-count`. Danh mục component thêm `tra-cuu-danh-sach-chi-tiet`, `the-trang-bi`, `the-quan-su`, `hang-danh-sach`, `panel-chi-tiet-tra-cuu`, `khoi-dac-ky`, `cay-cai-tao`, `bang-cap-cong-trinh`. Bảng màu và vai trò chữ cho Tím/Hỏa/Lâm là suy từ chấm lọc của artboard (artboard chỉ vẽ Cam, Phong, Sơn); chữ tối tự suy.
+- `node scripts/design-tokens.mjs --check` đang đỏ sẵn ở HEAD vì 5 giá trị thô (`font-weight` 400/600/700, `line-height: 1`): thêm nhóm token `weight` (`--weight-regular|semibold|bold`) và `leading` (`--leading-solid`), thay 5 chỗ đó, và cho `scripts/design-tokens.mjs` đọc thêm nhóm màu `tint`. Khối legacy vẫn ceiling 0.
+- Bản dịch: thêm 66 obligation `authored-vi` `ui:lookup-master/*` cho chữ mới, gỡ `ui:lookup/option-converts` (giao diện lựa chọn cải tạo trong hộp thoại đã bỏ) và đổi biểu thức của `ui:lookup/more-note` (`${pageSize}`); policy `site-vi-261005-tra-cuu-danh-sach-chi-tiet`, baseline 56661 → 56726 location, `js/lookup-master.js` vào `entrypoints`/`sourceFiles` của họ `lookup`, re-pin hash 6 nguồn; publish generation `499c044a…` (xoá `ae77c9c3…`), re-pin `pipeline/team-route-handles.json` (xem commit republish).
+
+### Tests
+
+- `tests-js/lookup-master.test.mjs` (mới): chip lọc và số đếm, bộ lọc giao nhau trước khi cắt trang, thứ tự gom theo binh chủng và mục chọn mặc định, `masterTargetFor` cho mã đặc kỹ (có cha/mồ côi/lạ), đặc kỹ chung theo ô, dấu "Gợi ý", phiên bản hiệu quả, tổng tài nguyên/số nổi bật của công trình, chi tiết bản zh không lọt chữ Việt.
+- `tests-js/unified-lookup.test.mjs`: nhóm trang bị chỉ có trang bị (đặc kỹ còn tra được theo mã và là khóa tìm phụ của trang bị cha) — đổi có chủ ý.
+- `tests-e2e/unified-lookup.spec.mjs`: các test mở "hồ sơ" của Trang bị/Công trình đổi sang panel chi tiết; thêm nhóm test danh sách + chi tiết (HTML dựng sẵn không JS, chọn mục + Back, chip lọc, mã đặc kỹ, cây gợi ý và thẻ phiên bản, bảng công trình, màn chi tiết mobile + focus, bản zh).
+
 ## 2026-10-05 (Gợi ý đội từ kho: giao diện theo thiết kế mới)
 
 ### Changed

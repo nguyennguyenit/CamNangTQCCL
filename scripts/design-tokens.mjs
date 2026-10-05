@@ -169,7 +169,7 @@ export function expectedTokenBlocks(tokens) {
       // `color.light` chỉ vào khối sáng, `color.dark` chỉ vào khối tối, `unit`/`faction`/… có cả hai.
       for (const token of Object.values(value.light)) light.push([token.var, lightOf(token)]);
       for (const token of Object.values(value.dark)) dark.push([token.var, lightOf(token)]);
-      for (const sub of ['unit', 'faction', 'status', 'tier']) {
+      for (const sub of ['unit', 'faction', 'status', 'tier', 'tint']) {
         for (const token of Object.values(value[sub] ?? {})) push(token);
       }
       continue;
