@@ -10,14 +10,13 @@ Project deploy is split into three surfaces:
 
 ## Latest Worker Deploy
 
-- Date: 2026-09-27
+- Date: 2026-10-07
 - Worker: `tqccl-vision-proxy`
-- Version ID: `404205e2-eb4c-4928-892f-e726dbb6a773`
-- Source commit: `ae0932d` (clean worktree of `origin/main`); Worker tests 104/104 passed before deploy.
-- Config: `ALLOWED_ORIGINS = "https://tqccl.com,https://www.tqccl.com,https://tqccl.pages.dev"`; secrets `QWEN_API_KEY`, `TURNSTILE_SECRET`, `IP_HASH_SECRET`.
-- Previous versions / rollback targets: `1e0a3b95-f14a-4151-9dca-8f81931d9460` (`877adf1`, single origin), `454cf5e5-9148-441c-a9b6-423f4c3428f6` (`7bf5797`).
-- Live verification: each of the three origins gets its own `Access-Control-Allow-Origin` plus `Vary: Origin` and reaches the Turnstile check (403 on a fake token, no 503); a foreign origin gets 403 "Origin không được phép"; a 3 MB body gets 413 with CORS.
-- Turnstile widget hostnames include `tqccl.com`, `www.tqccl.com`, `tqccl.pages.dev` (dashboard, 2026-09-27); a headless load of the Gợi ý đội page on each host rendered the widget without error 110200.
+- Version ID: `96d4738b-fd5e-45c6-8bed-cee1ee6944b9`
+- Source commit: `9efe0da` (`origin/main`); drops the legacy `ai:providers` read path (`714622c`). Worker tests 167/167 and `tsc` clean before deploy; `ai:config` confirmed present in KV `RL` first.
+- Config: `ALLOWED_ORIGINS = "https://tqccl.com,https://www.tqccl.com,https://tqccl.pages.dev"`; secrets `TURNSTILE_SECRET`, `IP_HASH_SECRET`, `AI_CONFIG_SECRET`.
+- Previous versions / rollback targets: `fe53709a-e455-4c76-a700-cadeecedd150` (2026-09-29), `404205e2-eb4c-4928-892f-e726dbb6a773` (`ae0932d`).
+- Live verification: `OPTIONS /analyze` from `https://tqccl.com` returns 204; `POST /analyze` with a fake token for `analyzeTeamImage`, `scanHeroes`, `explainSubstitute` reaches the Turnstile check (403, no 503), so `ai:config` decrypts and every group has a route.
 
 ## Latest Static Pages Deploy
 
@@ -31,9 +30,10 @@ Project deploy is split into three surfaces:
 
 ## Latest Community Worker Deploy
 
-- Date: 2026-09-28
-- Worker: `tqccl-community` (`https://tqccl-community.nguyennlt-ncc.workers.dev`), version `576f5f6e-df58-4a88-9726-e1653b656dc5`, source `ad2ceb7`; `tsc` clean, vitest 46/46.
-- Secrets set: `BETTER_AUTH_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`. Not yet set: `QWEN_API_KEY` (battle-report AI reading returns 503), `GITHUB_DISPATCH_TOKEN` (blog publish does not trigger `pages-deploy.yml`).
+- Date: 2026-10-07
+- Worker: `tqccl-community` (`https://tqccl-community.nguyennlt-ncc.workers.dev`), version `b89d7f9f-dfe1-4e51-a0d7-5815d15a4933`, source `9efe0da` (legacy `ai:providers` path removed in `714622c`); `tsc` clean, vitest 129/129. Rollback target: `f0431e38-a85b-4069-91b5-13546472554e` (2026-09-29).
+- Live verification: `/api/me` returns 200 directly and through `https://tqccl.com/api/me`.
+- KV `RL` still holds the unused `ai:providers` key; deleting it is a separate manual step (`npx wrangler kv key delete ai:providers --namespace-id 6fff7d73c885457dbb71756de99e66fa --remote`).
 
 ## Latest Research MCP Deploy
 
