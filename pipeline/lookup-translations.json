@@ -22479,6 +22479,25 @@
     },
     {
       "entityId": "hero:dien-vi",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "f36602e59998702389314263af30e051972c74e8865eb6bfb9bfe24a93797071",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "USAGE_REASSIGNMENTS: SP record carried the base hero's advice (source list 2022-01-24, SP released S13-S25, dismantle target is the base inherited tactic)"
+        ],
+        "reviewedAt": "2026-10-07T16:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "text unchanged from the approved translation",
+          "owner reported SP Tuân Úc advice belongs to Tuân Úc thường"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Đánh Bại Quân Địch, tùy tình hình đổi Hổ Vệ Quân, sau đó thăng sao."
+    },
+    {
+      "entityId": "hero:dien-vi",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "02b009e400ba34fc754c69dffc15c79458c450b07d4590b7d666d4af51cbb9e4",
       "review": {
@@ -22514,6 +22533,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:dieu-thuyen",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "45fec4b662a7f0071940b81e6ed790234a87bf913e532b69fcf5eca3f5608c07",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "USAGE_REASSIGNMENTS: SP record carried the base hero's advice (source list 2022-01-24, SP released S13-S25, dismantle target is the base inherited tactic)"
+        ],
+        "reviewedAt": "2026-10-07T16:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "text unchanged from the approved translation",
+          "owner reported SP Tuân Úc advice belongs to Tuân Úc thường"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Khuynh Quốc Khuynh Thành, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm."
     },
     {
       "entityId": "hero:dieu-thuyen",
@@ -22685,6 +22723,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:dong-trac",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "0a1af85ac65630fc707fa130400f80efc3bf8456f801d64d75eb88d21b030d01",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "USAGE_REASSIGNMENTS: SP record carried the base hero's advice (source list 2022-01-24, SP released S13-S25, dismantle target is the base inherited tactic)"
+        ],
+        "reviewedAt": "2026-10-07T16:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "text unchanged from the approved translation",
+          "owner reported SP Tuân Úc advice belongs to Tuân Úc thường"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Bạo Lệ Vô Nhân, đổi Hỏa Sí Nguyên Liệu, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm."
     },
     {
       "entityId": "hero:dong-trac",
@@ -23429,6 +23486,25 @@
     },
     {
       "entityId": "hero:hoang-nguyet-anh",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "274a1da729eb8586febe180ba14a398ae386d45b874a709f8a5a13b6b691a59b",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "USAGE_REASSIGNMENTS: SP record carried the base hero's advice (source list 2022-01-24, SP released S13-S25, dismantle target is the base inherited tactic)"
+        ],
+        "reviewedAt": "2026-10-07T16:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "text unchanged from the approved translation",
+          "owner reported SP Tuân Úc advice belongs to Tuân Úc thường"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Phong Thi Trận, sau đó thăng sao, thức tỉnh."
+    },
+    {
+      "entityId": "hero:hoang-nguyet-anh",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "7b03680a993648e20419074dfbcee288e8b44d6031bc8721537d1e77ad088eea",
       "review": {
@@ -23486,6 +23562,25 @@
     },
     {
       "entityId": "hero:hoang-trung",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "e29fb6f02caa74f97edb73bdc18dd7199625511690a0d7c8c895ee0f78c442cd",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "USAGE_REASSIGNMENTS: SP record carried the base hero's advice (source list 2022-01-24, SP released S13-S25, dismantle target is the base inherited tactic)"
+        ],
+        "reviewedAt": "2026-10-07T16:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "text unchanged from the approved translation",
+          "owner reported SP Tuân Úc advice belongs to Tuân Úc thường"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Vạn Tiễn Tề Phát, sau đó đổi Kích Kỳ Nọa Quy."
+    },
+    {
+      "entityId": "hero:hoang-trung",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "11077a33f987670f584261d5718c8ab543fbe436c0b4a431eb0b8411d6611c30",
       "review": {
@@ -23521,6 +23616,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:hua-chu",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "d6d84ce9642353e886c25910f9346462443cfa21f8587c3340b0783c4287ac16",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "USAGE_REASSIGNMENTS: SP record carried the base hero's advice (source list 2022-01-24, SP released S13-S25, dismantle target is the base inherited tactic)"
+        ],
+        "reviewedAt": "2026-10-07T16:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "text unchanged from the approved translation",
+          "owner reported SP Tuân Úc advice belongs to Tuân Úc thường"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Thẻ thừa ưu tiên đổi Lõa Y Huyết Chiến, sau đó tùy tình hình rã lấy Đánh Đâu Thắng Đó."
     },
     {
       "entityId": "hero:hua-chu",
@@ -24740,6 +24854,25 @@
     },
     {
       "entityId": "hero:ma-sieu",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "d3ac721ed950c0c02764ba27cd01ef5fe6399bca9b3e042a444932ece664cdbb",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "USAGE_REASSIGNMENTS: SP record carried the base hero's advice (source list 2022-01-24, SP released S13-S25, dismantle target is the base inherited tactic)"
+        ],
+        "reviewedAt": "2026-10-07T16:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "text unchanged from the approved translation",
+          "owner reported SP Tuân Úc advice belongs to Tuân Úc thường"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên đổi Lõa Y Huyết Chiến, sau đó ưu tiên rã lấy Đánh Đâu Thắng Đó, tùy tình hình đổi Thiết Kỵ Khu Trì."
+    },
+    {
+      "entityId": "hero:ma-sieu",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "fa6095300458f82907f64be3fba4061d1190fd3f9de7ca962d7700e1a503ca95",
       "review": {
@@ -25424,6 +25557,25 @@
     },
     {
       "entityId": "hero:phap-chinh",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "e7832c6742cedd98003c0a5bccd01d51a6044f1e0c752088567c5e6ff4d62104",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "USAGE_REASSIGNMENTS: SP record carried the base hero's advice (source list 2022-01-24, SP released S13-S25, dismantle target is the base inherited tactic)"
+        ],
+        "reviewedAt": "2026-10-07T16:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "text unchanged from the approved translation",
+          "owner reported SP Tuân Úc advice belongs to Tuân Úc thường"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên đổi Kích Kỳ Nọa Quy, tùy tình hình rã lấy Trầm Sa Quyết Thủy, sau đó thăng sao, thức tỉnh."
+    },
+    {
+      "entityId": "hero:phap-chinh",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "2970d321c9a5de3d17b1d4323c97114fa19aa738c12b5dbe52d548365c5f4318",
       "review": {
@@ -25804,6 +25956,25 @@
     },
     {
       "entityId": "hero:quan-vu",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "daa215838af5315e6a5cfc54a7218fa0831be08e72028624235a7b5ba1b4bcc3",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "USAGE_REASSIGNMENTS: SP record carried the base hero's advice (source list 2022-01-24, SP released S13-S25, dismantle target is the base inherited tactic)"
+        ],
+        "reviewedAt": "2026-10-07T16:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "text unchanged from the approved translation",
+          "owner reported SP Tuân Úc advice belongs to Tuân Úc thường"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Nếu có Lưu Bị và Trương Phi thì bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Hoành Tảo Thiên Quân, sau đó thăng sao."
+    },
+    {
+      "entityId": "hero:quan-vu",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "f0cd21e1322b5b973bb84d74ba5492d9ddbab8172e830490b3f6956b1a4db7b2",
       "review": {
@@ -26070,25 +26241,6 @@
     },
     {
       "entityId": "hero:sp-dien-vi",
-      "fieldPath": "lookup.usageVi",
-      "inputFingerprint": "db7ceb0e799c6e8aa8577f978e1da84e8f403aaa75935a128412a5eaacbb3a8b",
-      "review": {
-        "evidence": [
-          "captured SGSDeck guide.usage value",
-          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
-        ],
-        "reviewedAt": "2026-10-07T12:00:00+07:00",
-        "reviewer": "Project owner review of agent draft",
-        "semanticChecks": [
-          "keep/dismantle/exchange verbs and priority order preserved",
-          "tactic and hero names use the published Vietnamese names"
-        ]
-      },
-      "status": "reviewed",
-      "textVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Đánh Bại Quân Địch, tùy tình hình đổi Hổ Vệ Quân, sau đó thăng sao."
-    },
-    {
-      "entityId": "hero:sp-dien-vi",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "1f134439b02c07bcebc76cb6a0c69f2e3eb97694be24b672a108dfd59eb1cf10",
       "review": {
@@ -26127,25 +26279,6 @@
     },
     {
       "entityId": "hero:sp-dieu-thuyen",
-      "fieldPath": "lookup.usageVi",
-      "inputFingerprint": "32192e5df07262ed98e84278f37e1833abc26a431c15050ee7cd1be4089edeae",
-      "review": {
-        "evidence": [
-          "captured SGSDeck guide.usage value",
-          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
-        ],
-        "reviewedAt": "2026-10-07T12:00:00+07:00",
-        "reviewer": "Project owner review of agent draft",
-        "semanticChecks": [
-          "keep/dismantle/exchange verbs and priority order preserved",
-          "tactic and hero names use the published Vietnamese names"
-        ]
-      },
-      "status": "reviewed",
-      "textVi": "Có thể giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Khuynh Quốc Khuynh Thành, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm."
-    },
-    {
-      "entityId": "hero:sp-dieu-thuyen",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "64734a2f112ac05f31a196da70cc59aa5645f867b13a0e5355cf71eb04f32e82",
       "review": {
@@ -26181,25 +26314,6 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
-    },
-    {
-      "entityId": "hero:sp-dong-trac",
-      "fieldPath": "lookup.usageVi",
-      "inputFingerprint": "7fed3adce37c56b816445e522fbef1fd8d9879fb9cb6634ac9bdc0e344844a60",
-      "review": {
-        "evidence": [
-          "captured SGSDeck guide.usage value",
-          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
-        ],
-        "reviewedAt": "2026-10-07T12:00:00+07:00",
-        "reviewer": "Project owner review of agent draft",
-        "semanticChecks": [
-          "keep/dismantle/exchange verbs and priority order preserved",
-          "tactic and hero names use the published Vietnamese names"
-        ]
-      },
-      "status": "reviewed",
-      "textVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Bạo Lệ Vô Nhân, đổi Hỏa Sí Nguyên Liệu, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm."
     },
     {
       "entityId": "hero:sp-dong-trac",
@@ -26317,25 +26431,6 @@
     },
     {
       "entityId": "hero:sp-hoang-nguyet-anh",
-      "fieldPath": "lookup.usageVi",
-      "inputFingerprint": "a5fc274ba47d937f8f1c563c1a6cb997b1e82389b4876eba528081fbe7d4098e",
-      "review": {
-        "evidence": [
-          "captured SGSDeck guide.usage value",
-          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
-        ],
-        "reviewedAt": "2026-10-07T12:00:00+07:00",
-        "reviewer": "Project owner review of agent draft",
-        "semanticChecks": [
-          "keep/dismantle/exchange verbs and priority order preserved",
-          "tactic and hero names use the published Vietnamese names"
-        ]
-      },
-      "status": "reviewed",
-      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Phong Thi Trận, sau đó thăng sao, thức tỉnh."
-    },
-    {
-      "entityId": "hero:sp-hoang-nguyet-anh",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "1f5d962c10ff6dc2591c5774b14ed0338a10208f531c48aa24fb66ac76ba83c3",
       "review": {
@@ -26412,25 +26507,6 @@
     },
     {
       "entityId": "hero:sp-hoang-trung",
-      "fieldPath": "lookup.usageVi",
-      "inputFingerprint": "6763dd900889eb571b8cb4397afd544bd9a5044f964c01de0b4d33bc126257b9",
-      "review": {
-        "evidence": [
-          "captured SGSDeck guide.usage value",
-          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
-        ],
-        "reviewedAt": "2026-10-07T12:00:00+07:00",
-        "reviewer": "Project owner review of agent draft",
-        "semanticChecks": [
-          "keep/dismantle/exchange verbs and priority order preserved",
-          "tactic and hero names use the published Vietnamese names"
-        ]
-      },
-      "status": "reviewed",
-      "textVi": "Có thể giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Vạn Tiễn Tề Phát, sau đó đổi Kích Kỳ Nọa Quy."
-    },
-    {
-      "entityId": "hero:sp-hoang-trung",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "21bfe433c7f0670946398a730dcf51ead549e2cd0a84e082a22ed5054daf9acb",
       "review": {
@@ -26466,25 +26542,6 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
-    },
-    {
-      "entityId": "hero:sp-hua-chu",
-      "fieldPath": "lookup.usageVi",
-      "inputFingerprint": "554ba06ec8b1af443d692da2e574253349ba03197b52427557aff16eafabf137",
-      "review": {
-        "evidence": [
-          "captured SGSDeck guide.usage value",
-          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
-        ],
-        "reviewedAt": "2026-10-07T12:00:00+07:00",
-        "reviewer": "Project owner review of agent draft",
-        "semanticChecks": [
-          "keep/dismantle/exchange verbs and priority order preserved",
-          "tactic and hero names use the published Vietnamese names"
-        ]
-      },
-      "status": "reviewed",
-      "textVi": "Có thể giữ 1 thẻ. Thẻ thừa ưu tiên đổi Lõa Y Huyết Chiến, sau đó tùy tình hình rã lấy Đánh Đâu Thắng Đó."
     },
     {
       "entityId": "hero:sp-hua-chu",
@@ -26678,25 +26735,6 @@
     },
     {
       "entityId": "hero:sp-ma-sieu",
-      "fieldPath": "lookup.usageVi",
-      "inputFingerprint": "379abfa3d3777f90babee145f5bbb93b070fa86517ca66d3b71380553a67c2bf",
-      "review": {
-        "evidence": [
-          "captured SGSDeck guide.usage value",
-          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
-        ],
-        "reviewedAt": "2026-10-07T12:00:00+07:00",
-        "reviewer": "Project owner review of agent draft",
-        "semanticChecks": [
-          "keep/dismantle/exchange verbs and priority order preserved",
-          "tactic and hero names use the published Vietnamese names"
-        ]
-      },
-      "status": "reviewed",
-      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên đổi Lõa Y Huyết Chiến, sau đó ưu tiên rã lấy Đánh Đâu Thắng Đó, tùy tình hình đổi Thiết Kỵ Khu Trì."
-    },
-    {
-      "entityId": "hero:sp-ma-sieu",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "ba742f9c59db0b126b5c2c3d7ce269fbf82c7e67da926e287e62bb387319f831",
       "review": {
@@ -26770,25 +26808,6 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
-    },
-    {
-      "entityId": "hero:sp-phap-chinh",
-      "fieldPath": "lookup.usageVi",
-      "inputFingerprint": "9086590724fdd487b03c19fc739ad70cdadff3351255fffd7a63854deb10ee1e",
-      "review": {
-        "evidence": [
-          "captured SGSDeck guide.usage value",
-          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
-        ],
-        "reviewedAt": "2026-10-07T12:00:00+07:00",
-        "reviewer": "Project owner review of agent draft",
-        "semanticChecks": [
-          "keep/dismantle/exchange verbs and priority order preserved",
-          "tactic and hero names use the published Vietnamese names"
-        ]
-      },
-      "status": "reviewed",
-      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên đổi Kích Kỳ Nọa Quy, tùy tình hình rã lấy Trầm Sa Quyết Thủy, sau đó thăng sao, thức tỉnh."
     },
     {
       "entityId": "hero:sp-phap-chinh",
@@ -26925,25 +26944,6 @@
     },
     {
       "entityId": "hero:sp-quan-vu",
-      "fieldPath": "lookup.usageVi",
-      "inputFingerprint": "530560ce1441f727d96cbff5f5794bcfafb8f877c47b810916094a75176dee24",
-      "review": {
-        "evidence": [
-          "captured SGSDeck guide.usage value",
-          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
-        ],
-        "reviewedAt": "2026-10-07T12:00:00+07:00",
-        "reviewer": "Project owner review of agent draft",
-        "semanticChecks": [
-          "keep/dismantle/exchange verbs and priority order preserved",
-          "tactic and hero names use the published Vietnamese names"
-        ]
-      },
-      "status": "reviewed",
-      "textVi": "Nếu có Lưu Bị và Trương Phi thì bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Hoành Tảo Thiên Quân, sau đó thăng sao."
-    },
-    {
-      "entityId": "hero:sp-quan-vu",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "53019ba394a18c623710c8cc7021d357dfa186f1c8ee5aad36f9f111ed8e7bdd",
       "review": {
@@ -27077,25 +27077,6 @@
     },
     {
       "entityId": "hero:sp-ton-kien",
-      "fieldPath": "lookup.usageVi",
-      "inputFingerprint": "7494d69a61a510ba05e5bbe32359fb70689cc6fc4e9ed9c05330e5c3cdecef43",
-      "review": {
-        "evidence": [
-          "captured SGSDeck guide.usage value",
-          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
-        ],
-        "reviewedAt": "2026-10-07T12:00:00+07:00",
-        "reviewer": "Project owner review of agent draft",
-        "semanticChecks": [
-          "keep/dismantle/exchange verbs and priority order preserved",
-          "tactic and hero names use the published Vietnamese names"
-        ]
-      },
-      "status": "reviewed",
-      "textVi": "Có thể giữ 1 thẻ. Ưu tiên đổi Tam Thế Trận, tùy tình hình rã lấy Tỏa Nhuệ, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm."
-    },
-    {
-      "entityId": "hero:sp-ton-kien",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "e4cd07cf342384486338e50cb26fa074b912607bfc4262f35aacd4742da5cbdb",
       "review": {
@@ -27207,25 +27188,6 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
-    },
-    {
-      "entityId": "hero:sp-tuan-uc",
-      "fieldPath": "lookup.usageVi",
-      "inputFingerprint": "bc9be1fbc65cb5045345ea4e72615d121d299bc45445933267e5ffa873ca209d",
-      "review": {
-        "evidence": [
-          "captured SGSDeck guide.usage value",
-          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
-        ],
-        "reviewedAt": "2026-10-07T12:00:00+07:00",
-        "reviewer": "Project owner review of agent draft",
-        "semanticChecks": [
-          "keep/dismantle/exchange verbs and priority order preserved",
-          "tactic and hero names use the published Vietnamese names"
-        ]
-      },
-      "status": "reviewed",
-      "textVi": "Không cần giữ. Ưu tiên rã lấy Tứ Diện Sở Ca, tùy tình hình đổi Quyết Thủy Hội Thành, Lính Thanh Châu, sau đó dùng làm nội chính, thức tỉnh."
     },
     {
       "entityId": "hero:sp-tuan-uc",
@@ -28024,6 +27986,25 @@
       },
       "status": "reviewed",
       "textVi": "Giang Đông mãnh hổ"
+    },
+    {
+      "entityId": "hero:ton-kien",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "df48852326ed8830afe843bf4a4b19e873a542cdd17277926673e8e2e46cf0bb",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "USAGE_REASSIGNMENTS: SP record carried the base hero's advice (source list 2022-01-24, SP released S13-S25, dismantle target is the base inherited tactic)"
+        ],
+        "reviewedAt": "2026-10-07T16:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "text unchanged from the approved translation",
+          "owner reported SP Tuân Úc advice belongs to Tuân Úc thường"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Ưu tiên đổi Tam Thế Trận, tùy tình hình rã lấy Tỏa Nhuệ, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm."
     },
     {
       "entityId": "hero:ton-kien",
@@ -29696,6 +29677,25 @@
       },
       "status": "reviewed",
       "textVi": "Nội chính"
+    },
+    {
+      "entityId": "hero:tuan-uc",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "0e7095b237e51343ff8c998bf78b95ecfb792cee4940905ed29fd36c88a56196",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "USAGE_REASSIGNMENTS: SP record carried the base hero's advice (source list 2022-01-24, SP released S13-S25, dismantle target is the base inherited tactic)"
+        ],
+        "reviewedAt": "2026-10-07T16:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "text unchanged from the approved translation",
+          "owner reported SP Tuân Úc advice belongs to Tuân Úc thường"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Không cần giữ. Ưu tiên rã lấy Tứ Diện Sở Ca, tùy tình hình đổi Quyết Thủy Hội Thành, Lính Thanh Châu, sau đó dùng làm nội chính, thức tỉnh."
     },
     {
       "entityId": "hero:tuan-uc",

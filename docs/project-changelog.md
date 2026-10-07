@@ -1,5 +1,12 @@
 # Project Changelog
 
+## 2026-10-07 (Tra cứu tướng: Đánh giá của bản thường bị gắn vào bản SP)
+
+### Fixed
+
+- SGSDeck gắn 評價 của bản thường vào bản SP ở 11 tướng (Quan Vũ, Điển Vi, Hứa Chử, Tuân Úc, Mã Siêu, Hoàng Trung, Hoàng Nguyệt Anh, Pháp Chính, Tôn Kiên, Đổng Trác, Điêu Thuyền): nguồn 評價 là danh sách 遊民星空 ngày 2022-01-24 (tới khoảng S11), các bản SP này ra mắt S13–S25, chiến pháp "rã lấy" là truyền thừa của bản thường và bản thường không có 評價 riêng. Người dùng phát hiện ở SP Tuân Úc ("rã lấy Tứ Diện Sở Ca" là truyền thừa của Tuân Úc thường). Bảng `USAGE_REASSIGNMENTS` của `build_unified_lookup` chuyển 11 đoạn sang hồ sơ bản thường, bản SP không còn mục Đánh giá; chữ nguồn lệch, bản thường đã có 評價 riêng hay mục không dùng làm build dừng. SP Chu Du, SP Gia Cát Lượng, SP Viên Thiệu, SP Quách Gia, SP Chu Tuấn (ra mắt ≤ S11) giữ nguyên.
+- 11 mục `lookup.usageVi` đổi `entityId` sang bản thường, chữ giữ nguyên; receipt `lookup-tuong-danh-gia-reassign-20261007`, batch cũ bỏ 11 mục tương ứng. Policy `site-vi-261007-danh-gia-ban-thuong` (chỉ đổi digest inventory). Generation Tra cứu `lookup:29322cab…`, Đội chuẩn `a973b093…` (prune `8a5f4b2c…`), re-pin `pipeline/team-route-handles.json`.
+
 ## 2026-10-07 (Tra cứu tướng: Đánh giá giữ/rã thẻ và Cách nhận theo gói)
 
 ### Added

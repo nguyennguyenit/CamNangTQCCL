@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "batchId": "lookup-tuong-danh-gia-reassign-20261007",
+  "reviewerSession": "owner:sp-usage-reassignment-2026-10-07",
+  "items": [
+    {
+      "entityId": "hero:dien-vi",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "f36602e59998702389314263af30e051972c74e8865eb6bfb9bfe24a93797071",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "ce845d839f88833588cc218b892ca0a0cf8e3a6169b48ffade90e0101b452a33",
+      "verdict": "accepted",
+      "notes": "Owner reported SP Tuân Úc carried Tuân Úc thường's advice; the same evidence moves this approved text from the SP record to the base hero (USAGE_REASSIGNMENTS)."
+    },
+    {
+      "entityId": "hero:dieu-thuyen",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "45fec4b662a7f0071940b81e6ed790234a87bf913e532b69fcf5eca3f5608c07",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "2c4d03e9c96e626ae81576ad82e90cc69f8065f5e438ebb8a053b95bdf645e07",
+      "verdict": "accepted",
+      "notes": "Owner reported SP Tuân Úc carried Tuân Úc thường's advice; the same evidence moves this approved text from the SP record to the base hero (USAGE_REASSIGNMENTS)."
+    },
+    {
+      "entityId": "hero:dong-trac",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "0a1af85ac65630fc707fa130400f80efc3bf8456f801d64d75eb88d21b030d01",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "def8dd98f010b32315a4d4e6933e7a61773ee13caaa7e8bab83d53efe0e043f1",
+      "verdict": "accepted",
+      "notes": "Owner reported SP Tuân Úc carried Tuân Úc thường's advice; the same evidence moves this approved text from the SP record to the base hero (USAGE_REASSIGNMENTS)."
+    },
+    {
+      "entityId": "hero:hoang-nguyet-anh",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "274a1da729eb8586febe180ba14a398ae386d45b874a709f8a5a13b6b691a59b",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "f47ac1c49c26f07e8010f24e5815ce2fa7fc87fee40bb3f6130acb4bf2dd41e2",
+      "verdict": "accepted",
+      "notes": "Owner reported SP Tuân Úc carried Tuân Úc thường's advice; the same evidence moves this approved text from the SP record to the base hero (USAGE_REASSIGNMENTS)."
+    },
+    {
+      "entityId": "hero:hoang-trung",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "e29fb6f02caa74f97edb73bdc18dd7199625511690a0d7c8c895ee0f78c442cd",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "efc098ac737a19f40ad3557a0ea8ec7c61b838aee2778d3b99d91301bf379f3d",
+      "verdict": "accepted",
+      "notes": "Owner reported SP Tuân Úc carried Tuân Úc thường's advice; the same evidence moves this approved text from the SP record to the base hero (USAGE_REASSIGNMENTS)."
+    },
+    {
+      "entityId": "hero:hua-chu",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "d6d84ce9642353e886c25910f9346462443cfa21f8587c3340b0783c4287ac16",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "bea8f134476109a5e2e4778bc169ca6962b1b83cadb2198ed8e67cff9ef83de1",
+      "verdict": "accepted",
+      "notes": "Owner reported SP Tuân Úc carried Tuân Úc thường's advice; the same evidence moves this approved text from the SP record to the base hero (USAGE_REASSIGNMENTS)."
+    },
+    {
+      "entityId": "hero:ma-sieu",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "d3ac721ed950c0c02764ba27cd01ef5fe6399bca9b3e042a444932ece664cdbb",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "70d900888a143f46d6e16f5241a8e040b14c19d656d7eeb686ed2def7da40a43",
+      "verdict": "accepted",
+      "notes": "Owner reported SP Tuân Úc carried Tuân Úc thường's advice; the same evidence moves this approved text from the SP record to the base hero (USAGE_REASSIGNMENTS)."
+    },
+    {
+      "entityId": "hero:phap-chinh",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "e7832c6742cedd98003c0a5bccd01d51a6044f1e0c752088567c5e6ff4d62104",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "f06db55b955315aa338351576bda698be91be3b6e9e948b110fad75f1f02efd1",
+      "verdict": "accepted",
+      "notes": "Owner reported SP Tuân Úc carried Tuân Úc thường's advice; the same evidence moves this approved text from the SP record to the base hero (USAGE_REASSIGNMENTS)."
+    },
+    {
+      "entityId": "hero:quan-vu",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "daa215838af5315e6a5cfc54a7218fa0831be08e72028624235a7b5ba1b4bcc3",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "b752499b2762cd07c8a5654e54ec3ec63524f8af36902394658ac8014d4d33c9",
+      "verdict": "accepted",
+      "notes": "Owner reported SP Tuân Úc carried Tuân Úc thường's advice; the same evidence moves this approved text from the SP record to the base hero (USAGE_REASSIGNMENTS)."
+    },
+    {
+      "entityId": "hero:ton-kien",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "df48852326ed8830afe843bf4a4b19e873a542cdd17277926673e8e2e46cf0bb",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "bfaf8c8c312ea7e2cab8cbde7429b407bb65df4b200a890919e5500549a19194",
+      "verdict": "accepted",
+      "notes": "Owner reported SP Tuân Úc carried Tuân Úc thường's advice; the same evidence moves this approved text from the SP record to the base hero (USAGE_REASSIGNMENTS)."
+    },
+    {
+      "entityId": "hero:tuan-uc",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "0e7095b237e51343ff8c998bf78b95ecfb792cee4940905ed29fd36c88a56196",
+      "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
+      "textSha256": "015f3de667b1a634cb3b4337485d85020c28056a7816413350325d586030ca8a",
+      "verdict": "accepted",
+      "notes": "Owner reported SP Tuân Úc carried Tuân Úc thường's advice; the same evidence moves this approved text from the SP record to the base hero (USAGE_REASSIGNMENTS)."
+    }
+  ]
+}

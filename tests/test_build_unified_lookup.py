@@ -244,8 +244,14 @@ class BuildUnifiedLookupTest(unittest.TestCase):
             heroes = json.loads((output / "heroes-dict.json").read_bytes())
             by_id = {row["id"]: row for row in heroes}
             dien_vi = by_id["hero:sp-dien-vi"]["lookup"]
-            self.assertEqual(dien_vi["usageZh"], "可留一個，優先拆折衝禦侮、酌情換虎衛軍，其次升星")
-            self.assertIn("Đánh Bại Quân Địch", dien_vi["usageVi"])
+            # SGSDeck gắn lời khuyên của Điển Vi thường (truyền thừa 折衝禦侮) vào bản SP: hồ sơ thường mang nó.
+            self.assertEqual((dien_vi["usageVi"], dien_vi["usageZh"]), (None, None))
+            base = by_id["hero:dien-vi"]["lookup"]
+            self.assertEqual(base["usageZh"], "可留一個，優先拆折衝禦侮、酌情換虎衛軍，其次升星")
+            self.assertIn("Đánh Bại Quân Địch", base["usageVi"])
+            self.assertIsNone(by_id["hero:sp-tuan-uc"]["lookup"]["usageZh"])
+            self.assertIn("Tứ Diện Sở Ca", by_id["hero:tuan-uc"]["lookup"]["usageVi"])
+            self.assertIn("Lửa Đuổi Gió Bay", by_id["hero:sp-chu-du"]["lookup"]["usageVi"])
             self.assertEqual(
                 [(row["packVi"], row["categoryVi"], row["isCore"], row["coreRate"], row["nonCoreRate"]) for row in dien_vi["cardPacks"]],
                 [
@@ -264,12 +270,30 @@ class BuildUnifiedLookupTest(unittest.TestCase):
                 (row["entityId"], row["fieldPath"]): row
                 for row in json.loads((output / "ledger.json").read_bytes())
             }
-            usage = ledger[("hero:sp-dien-vi", "guide.usage")]
-            self.assertEqual(usage["disposition"], "translated-public")
-            self.assertIsNotNone(usage["translationInputFingerprint"])
+            moved = ledger[("hero:sp-dien-vi", "guide.usage")]
+            self.assertEqual(moved["disposition"], "corrected-public")
+            self.assertEqual(moved["translationInputFingerprint"], ledger[("hero:dien-vi", "guide.usage")]["translationInputFingerprint"])
+            self.assertEqual(ledger[("hero:sp-chu-du", "guide.usage")]["disposition"], "translated-public")
             pack = ledger[("hero:sp-dien-vi", "guide.cardPacks[0].tier")]
             self.assertEqual(pack["disposition"], "typed-public")
-            self.assertEqual(ledger[("hero:tuan-uc", "guide.usage")]["disposition"], "missing-source")
+            self.assertEqual(ledger[("hero:tuan-uc", "guide.cardPacks")]["disposition"], "missing-source")
+
+    def test_stale_usage_reassignment_fails_the_build(self):
+        with tempfile.TemporaryDirectory() as directory:
+            directory = Path(directory)
+
+            def reword(document):
+                next(row for row in document["generals"] if row["sourceId"] == "cmnzwge0b000l94f8usar7du4")["usage"] = "必留一個"
+
+            source_copy, identity = self._input_copy(directory, mutate_guide=reword)
+            with self.assertRaisesRegex(ValueError, "stale usage reassignment"):
+                build_candidate(
+                    inputs=ROOT / "pipeline" / "lookup-inputs",
+                    source=source_copy,
+                    identity=identity,
+                    translations=ROOT / "pipeline" / "lookup-translations.json",
+                    output=directory / "candidate",
+                )
 
     def test_unknown_card_pack_name_fails_the_build(self):
         with tempfile.TemporaryDirectory() as directory:

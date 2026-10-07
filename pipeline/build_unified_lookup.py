@@ -67,6 +67,24 @@ SOURCE_VALUE_CORRECTIONS = {
         "reason": "Reviewed unit correction: SGSDeck capture has activationRate 50 (percent scale) for 天威嘯陣; every other tactic uses a 0–1 fraction, so 50% is published as 0.5.",
     },
 }
+# SGSDeck gắn lời khuyên 評價 của bản thường vào bản SP ở các tướng dưới đây: nguồn của 評價 là danh sách
+# 遊民星空 (爆炸冰整理) ngày 2022-01-24 (tới khoảng S11), các bản SP này ra mắt S13–S25, chiến pháp "拆" là
+# truyền thừa của bản thường, và bản thường không có 評價 riêng. Lời khuyên được công bố trên hồ sơ bản thường.
+# Khóa: sourceId bản SP → (sourceId bản thường, chữ nguồn đã review). Chữ nguồn lệch, bản thường đã có 評價
+# riêng hoặc mục không được tiêu thụ đều làm build thất bại.
+USAGE_REASSIGNMENTS = {
+    "cmnzuqkaz000x3wf8bc0cefo4": ("cmo4dvzyw0001u4f8uwgelgts", "有劉備張飛必留一個，多餘將優先拆橫掃千軍，其次升星"),  # SP 關羽 → 關羽
+    "cmnzwg57f000194f8v1ioc6w5": ("cmo4dw5uj0007u4f89kj91p0u", "可留一個，優先拆折衝禦侮、酌情換虎衛軍，其次升星"),  # SP 典韋 → 典韋
+    "cmnzwgb8u000c94f8xrd4ltkp": ("cmo4dw4bo0005u4f8lmtwgmy5", "可留一個，多餘將優先換裸衣血戰，其次酌情拆所向披靡"),  # SP 許褚 → 許褚
+    "cmnzwge0b000l94f8usar7du4": ("cmo4dw5gq0006u4f8hxql2g4s", "可不留，優先拆四面楚歌、酌情換決水潰城、青州兵，其次作內政、覺醒"),  # SP 荀彧 → 荀彧
+    "cmnzwgt8u001l94f8v36ax3uo": ("cmo4dvzle0000u4f8f3f0fole", "必留一個，多餘將優先換裸衣血戰，其次優先拆所向披靡，酌情換鐵騎驅馳"),  # SP 馬超 → 馬超
+    "cmnzwh56z002694f8llexs8hk": ("cmo4dw92e0009u4f8ijttaffh", "可留一個，多餘將優先拆萬箭齊發，其次換擊其惰歸"),  # SP 黃忠 → 黃忠
+    "cmnzwha93002h94f8kd9xsq6t": ("cmo4dwlcp000bu4f8v51ct8sg", "必留一個，多餘將優先拆鋒矢陣，其次升星、覺醒"),  # SP 黃月英 → 黃月英
+    "cmnzwhb1x002j94f8u36vy1yl": ("cmo4dwljk000cu4f83x2niuuv", "必留一個，多餘將優先換擊其惰歸、酌情拆沉沙決水，其次升星、覺醒"),  # SP 法正 → 法正
+    "cmnzwi1xd003594f85vkg2qra": ("cmo4dwblm000au4f8udljhjcp", "可留一個，優先換三勢陣、酌情拆挫銳，其次酌情升星、覺醒、換典藏"),  # SP 孫堅 → 孫堅
+    "cmnzwift1003s94f8kzfwqxnw": ("cmo4dw21v0002u4f8z2ig608e", "可留一個，優先拆暴戾無仁、換火熾原燎，其次酌情升星、覺醒、換典藏"),  # SP 董卓 → 董卓
+    "cmnzwiybn004t94f8572lb26a": ("cmo4dwm41000eu4f8zf9w5clv", "可留一個，多餘將酌情拆傾國傾城，其次酌情升星、覺醒、換典藏"),  # SP 貂蟬 → 貂蟬
+}
 QUALITY = {"橙": "Cam", "紫": "Tím", "藍": "Lam", "綠": "Lục"}
 ELEMENTS = {"風": "Phong", "火": "Hỏa", "水": "Thủy", "土": "Thổ", "雷": "Lôi", "山": "Sơn", "林": "Lâm"}
 TIERS = {"SPECIAL": "Đặc biệt", "BASIC": "Cơ bản", "INTERMEDIATE": "Trung cấp", "ADVANCED": "Cao cấp", "T0": "T0", "T1": "T1", "T2": "T2", "T3": "T3"}
@@ -256,7 +274,7 @@ def _revisions(source_text, translated_text):
     return rows
 
 
-def _translation_specs(source_docs, source_owner, child_ids, glossary, baseline_heroes, baseline_tactics, identity_hash, guide_by_source):
+def _translation_specs(source_docs, source_owner, child_ids, glossary, baseline_heroes, baseline_tactics, identity_hash, published_usage):
     specs = {}
     baseline_hero_by_owner = {canonical_id("hero", row.get("viet") or row["hanViet"]): row for row in baseline_heroes}
     baseline_tactic_by_owner = {canonical_id("tactic", row.get("viet") or row["hanViet"]): row for row in baseline_tactics}
@@ -349,13 +367,12 @@ def _translation_specs(source_docs, source_owner, child_ids, glossary, baseline_
                         acquisition_context,
                     )
 
-    for record in source_docs["generals"]["records"]:
-        add(
-            source_owner[f"generals:{record['sourceId']}"],
-            "lookup.usageVi",
-            guide_by_source[record["sourceId"]]["usage"],
-            record_context(record, "guide.usage"),
-        )
+    general_by_source = {record["sourceId"]: record for record in source_docs["generals"]["records"]}
+    for source_id, (usage, origin_id) in published_usage.items():
+        context = record_context(general_by_source[origin_id], "guide.usage")
+        if origin_id != source_id:
+            context = {**context, "publishedOn": source_id}
+        add(source_owner[f"generals:{source_id}"], "lookup.usageVi", usage, context)
 
     tactic_record_by_owner = {
         source_owner[f"tactics:{record['sourceId']}"]: record
@@ -519,6 +536,21 @@ def _enum(table, value, field):
     if value not in table:
         raise ValueError(f"unknown nonempty enum {field}: {value}")
     return table[value]
+
+
+def _published_usage(guide_by_source):
+    """`{sourceId: (usage, originSourceId)}` after moving SP-misattached advice to its base hero."""
+    published = {source_id: (row["usage"], source_id) for source_id, row in guide_by_source.items() if row["usage"]}
+    for source_id, (target_id, reviewed_usage) in USAGE_REASSIGNMENTS.items():
+        source = guide_by_source.get(source_id)
+        target = guide_by_source.get(target_id)
+        if source is None or target is None or source["usage"] != reviewed_usage:
+            raise ValueError(f"stale usage reassignment: {source_id} -> {target_id}")
+        if target["usage"] is not None:
+            raise ValueError(f"usage reassignment target already has its own advice: {target_id}")
+        del published[source_id]
+        published[target_id] = (reviewed_usage, source_id)
+    return published
 
 
 def _public_card_packs(guide_doc):
@@ -721,6 +753,7 @@ def _build_model(capture):
     translations = _json(capture["translations"])
     guide_doc = _json(capture["guide"])
     guide_by_source = {row["sourceId"]: row for row in guide_doc["generals"]}
+    published_usage = _published_usage(guide_by_source)
     source_owner, decision_by_owner, decisions, _unused = _lookup_maps(identity, mapping)
     child_ids = _child_id_map(identity, source_docs, source_owner)
     corrections = _resolved_source_value_corrections(source_docs, source_owner)
@@ -730,7 +763,7 @@ def _build_model(capture):
         "relations": [{key: row.get(key) for key in ("ownerId", "fieldPath", "targetId")} for row in identity["relationDecisions"]],
         "childIds": [{key: row.get(key) for key in ("id", "parentId", "kind", "inputKey")} for row in identity["childIds"]],
     }))
-    specs = _translation_specs(source_docs, source_owner, child_ids, translations["glossaryVersion"], baseline_heroes, baseline_tactics, identity_translation_context, guide_by_source)
+    specs = _translation_specs(source_docs, source_owner, child_ids, translations["glossaryVersion"], baseline_heroes, baseline_tactics, identity_translation_context, published_usage)
     legacy_owners = {
         f"{row['category']}:{row['sourceId']}": canonical_id(
             "hero" if row["category"] == "generals" else "tactic",
@@ -802,7 +835,7 @@ def _build_model(capture):
             "civil": {"roleVi": translated.get((owner, "lookup.civil.roleVi")), "bonusVi": translated.get((owner, "lookup.civil.bonusVi")), "specialtyVi": translated.get((owner, "lookup.civil.specialtyVi")), "tacticBonusVi": translated.get((owner, "lookup.civil.tacticBonusVi"))},
             "civilInnatePoints": _number_or_none(attrs.get("civilInnatePoints")), "collectibleBonusVi": translated.get((owner, "lookup.collectibleBonusVi")), "redRulesVi": translated.get((owner, "lookup.redRulesVi")),
             "flags": {"isCollectible": attrs.get("isCollectible"), "isDynamicOpen": attrs.get("isDynamicOpen"), "isMusou": attrs.get("isMusou"), "isCO": attrs.get("isCO"), "isSp": attrs.get("isSp")},
-            "usageVi": translated.get((owner, "lookup.usageVi")), "usageZh": guide_by_source[source["sourceId"]]["usage"],
+            "usageVi": translated.get((owner, "lookup.usageVi")), "usageZh": published_usage.get(source["sourceId"], (None, None))[0],
             "cardPacks": [{**card_packs[pack["packId"]], "isCore": pack["tier"] == "core"} for pack in guide_by_source[source["sourceId"]]["cardPacks"]],
         }
         heroes.append(row)
@@ -930,18 +963,28 @@ def _build_model(capture):
             for path, value in _flatten({key: value for key, value in record.items() if key != "attributes"}, "sourceRecord"):
                 translation_key = (owner, "conditions.scenarioVi") if path == "sourceRecord.sourceSeason.scenarioName" else None
                 ledger.append({"entityId": owner, "fieldPath": path, "disposition": "translated-public" if translation_key else "private-evidence", "chosenInput": "source", "sourceRecordId": record["sourceId"], "sourceFieldPath": path, "sourceValueHash": _sha(canonical_json_bytes(value)), "localValueHash": None, "reason": "Scenario condition translated for public display." if translation_key else "Provider/top-level source value retained only in private evidence.", "translationInputFingerprint": specs.get(translation_key) if translation_key else None, "reviewEvidence": ["captured source manifest", "private identity/translation ledgers"]})
+    reassigned_to = {source_id: target_id for source_id, (target_id, _usage) in USAGE_REASSIGNMENTS.items()}
+    reassigned_from = {target_id: source_id for source_id, target_id in reassigned_to.items()}
     for record in source_docs["generals"]["records"]:
         owner = source_owner[f"generals:{record['sourceId']}"]
         guide = guide_by_source[record["sourceId"]]
         for path, value in _flatten({"usage": guide["usage"], "cardPacks": guide["cardPacks"]}, "guide"):
             fingerprint = specs.get((owner, "lookup.usageVi")) if path == "guide.usage" else None
-            if value is None or value == []:
+            local_value = None
+            if path == "guide.usage" and record["sourceId"] in reassigned_to:
+                target_owner = source_owner[f"generals:{reassigned_to[record['sourceId']]}"]
+                fingerprint = specs[(target_owner, "lookup.usageVi")]
+                disposition, reason = "corrected-public", f"Source attached the base hero's advice to this SP record; published on {target_owner}."
+            elif path == "guide.usage" and record["sourceId"] in reassigned_from:
+                local_value = published_usage[record["sourceId"]][0]
+                disposition, reason = "corrected-public", f"Advice captured on SP record {reassigned_from[record['sourceId']]} belongs to this base hero."
+            elif value is None or value == []:
                 disposition, reason = "missing-source", "Source guide has no value for this general."
             elif fingerprint:
                 disposition, reason = "translated-public", "Captured guide usage bound to reviewed Vietnamese output."
             else:
                 disposition, reason = "typed-public", "Captured card pack appearance selected for the typed public card pack list."
-            ledger.append({"entityId": owner, "fieldPath": path, "disposition": disposition, "chosenInput": "source" if disposition != "missing-source" else "none", "sourceRecordId": record["sourceId"], "sourceFieldPath": path, "sourceValueHash": _sha(canonical_json_bytes(value)), "localValueHash": None, "reason": reason, "translationInputFingerprint": fingerprint, "reviewEvidence": ["captured SGSDeck guide", "private translation ledger"]})
+            ledger.append({"entityId": owner, "fieldPath": path, "disposition": disposition, "chosenInput": "source" if disposition != "missing-source" else "none", "sourceRecordId": record["sourceId"], "sourceFieldPath": path, "sourceValueHash": _sha(canonical_json_bytes(value)), "localValueHash": _sha(canonical_json_bytes(local_value)) if local_value is not None else None, "reason": reason, "translationInputFingerprint": fingerprint, "reviewEvidence": ["captured SGSDeck guide", "private translation ledger"]})
     for kind, baseline_rows in (("hero", baseline_heroes), ("tactic", baseline_tactics)):
         for baseline in baseline_rows:
             owner = canonical_id(kind, baseline.get("viet") or baseline["hanViet"])

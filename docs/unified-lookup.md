@@ -29,7 +29,7 @@ Hồ sơ tướng có thêm **Đánh giá** (`lookup.usageVi`, chữ nguồn `us
 python3 -m pipeline.build_sgsdeck_catalog --cache pipeline/sgsdeck-cache --guide-only
 ```
 
-Tên gói và loại gói dịch trong bảng `CARD_PACKS`/`CARD_PACK_CATEGORIES` của builder; gói nguồn chưa có trong bảng làm build dừng.
+Tên gói và loại gói dịch trong bảng `CARD_PACKS`/`CARD_PACK_CATEGORIES` của builder; gói nguồn chưa có trong bảng làm build dừng. SGSDeck gắn 評價 của bản thường vào 11 bản SP ra mắt sau danh sách nguồn (2022-01-24); bảng `USAGE_REASSIGNMENTS` chuyển chúng sang hồ sơ bản thường và làm build dừng khi chữ nguồn đổi hoặc bản thường đã có 評價 riêng.
 
 ## Build và validate candidate
 

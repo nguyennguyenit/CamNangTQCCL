@@ -12,7 +12,7 @@
     "notes": {
       "approvedDisplaySlots": 11,
       "blocks": 1967,
-      "concreteInventorySha256": "1f11fe7cb74b07c3c6885e0a7381aef7dd3c8ceb0ffd1c595d6b86ffa3dd60e5",
+      "concreteInventorySha256": "a779dda4d1d952979d3daeee23210e7ee538b6bd1e1e468a7d044cf21b6a5c27",
       "concreteLocationCount": 56826,
       "hanBlocks": 1928,
       "lookupReviewObligations": 3597,
@@ -75,7 +75,7 @@
       "hột": "red-copy count"
     }
   },
-  "policyVersion": "site-vi-261007-tuong-danh-gia-cach-nhan",
+  "policyVersion": "site-vi-261007-danh-gia-ban-thuong",
   "routeFamilies": [
     {
       "entrypoints": [

@@ -144,3 +144,12 @@ Nguồn gõ sai 4 tên, bản dịch dùng tên đúng của chiến pháp truy�
 | Hoàng Cái | 黃蓋 | 可留一個，優先拆風助火勢，其次酌情升星、覺醒、換典藏 | Có thể giữ 1 thẻ. Ưu tiên rã lấy Phong Trợ Hỏa Thế, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm. |
 | Bàng Đức | 龐德 | 可不留，優先拆暫避其鋒、酌情換鐵騎驅馳，其次覺醒、換典藏 | Không cần giữ. Ưu tiên rã lấy Tạm Lánh Sóng Gió, tùy tình hình đổi Thiết Kỵ Khu Trì, sau đó thức tỉnh, đổi bản sưu tầm. |
 | Bàng Thống | 龐統 | 必留一個，多餘將優先升星 | Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên thăng sao. |
+
+## Sửa sau duyệt (2026-10-07)
+
+Chủ repo báo đoạn của SP Tuân Úc là lời khuyên cho Tuân Úc thường. Kiểm tra cho thấy SGSDeck gắn 評價 của bản
+thường vào bản SP ở 11 tướng: SP Quan Vũ, SP Điển Vi, SP Hứa Chử, SP Tuân Úc, SP Mã Siêu, SP Hoàng Trung,
+SP Hoàng Nguyệt Anh, SP Pháp Chính, SP Tôn Kiên, SP Đổng Trác, SP Điêu Thuyền. Bằng chứng: danh sách nguồn ngày
+2022-01-24 (tới khoảng S11), các bản SP này ra mắt S13–S25; chiến pháp "拆" là truyền thừa của bản thường; bản
+thường không có 評價 riêng. Bản dịch giữ nguyên chữ, chỉ chuyển sang hồ sơ bản thường (`USAGE_REASSIGNMENTS`
+trong `pipeline/build_unified_lookup.py`).
