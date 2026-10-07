@@ -23,11 +23,11 @@ Project deploy is split into three surfaces:
 
 - Date: 2026-10-07
 - Production URL: `https://tqccl.com` (primary). `https://www.tqccl.com` returns `301` to the same path and query through a zone Redirect Rule; `https://tqccl.pages.dev` hands over through the head bridge script.
-- Deployment URL: `https://2df49a17.tqccl.pages.dev`
-- Source commit: `e4f7225` (`origin/main`). Binh thư effects (`9c8c10e`) + hero Đánh giá/Cách nhận (`e4f7225`); lookup generation `lookup:8878e4fc…`, Recommended generation `8a5f4b2c…`.
-- Method: `pages-deploy.yml` (workflow_dispatch, run `37587202755`). Local gate on a clean worktree of `e4f7225`: localization `check --stage public`, `team_route_handles --check`, `build`, `verify` (3342 files), `test:dist` 32/32, `test:node` 493/493, pytest 392 passed (13 skipped without ignored caches), MCP `check:workflow-build`; full working tree `test:e2e` 414/414.
-- Production verified: `/`, `/tra-cuu/tuong/`, `/zh/tra-cuu/tuong/`, `/data/lookup-manifest.json` return 200 with `lookup:8878e4fc…`; Chromium on `hero:sp-dien-vi` shows Đánh giá + 4 card packs at 1440 (vi) and 390 (zh) without overflow; `books-dict.json` serves effects for 68/68 books.
-- Previous production / rollback targets: `356b1c3d-f215-43f4-99e4-3b6517e4bc92` (`d72d6fc`, Soi đội redesign), `0751d514-426f-423b-90ac-5123af3348aa` (`391dae7`).
+- Deployment URL: `https://3df41c83.tqccl.pages.dev`
+- Source commit: `9f2ff78` (`origin/main`). Moves 11 SP-misattached 評價 to their base heroes; lookup generation `lookup:29322cab…`, Recommended generation `a973b093…`. Builds on `e4f7225` (hero Đánh giá/Cách nhận) and `9c8c10e` (Binh thư effects), deployed earlier the same day as `2df49a17`.
+- Method: `pages-deploy.yml` (workflow_dispatch, run `37600149764`). Local gate: localization `check --stage public`, `team_route_handles --check`, `build`, `verify` (3342 files), `test:dist` 32/32, `test:node` 493/493, pytest 406 passed, MCP `check:workflow-build`, lookup `test:e2e` 144/144 (full suite 414/414 on `e4f7225`).
+- Production verified: `/data/lookup-manifest.json` serves `lookup:29322cab…`; `hero:sp-tuan-uc` has no Đánh giá and `hero:tuan-uc` carries the Tứ Diện Sở Ca advice.
+- Previous production / rollback targets: `2df49a17` (`e4f7225`, SP-attached advice), `356b1c3d-f215-43f4-99e4-3b6517e4bc92` (`d72d6fc`).
 
 ## Latest Community Worker Deploy
 
