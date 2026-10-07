@@ -33,7 +33,7 @@ Project deploy is split into three surfaces:
 - Date: 2026-10-07
 - Worker: `tqccl-community` (`https://tqccl-community.nguyennlt-ncc.workers.dev`), version `b89d7f9f-dfe1-4e51-a0d7-5815d15a4933`, source `9efe0da` (legacy `ai:providers` path removed in `714622c`); `tsc` clean, vitest 129/129. Rollback target: `f0431e38-a85b-4069-91b5-13546472554e` (2026-09-29).
 - Live verification: `/api/me` returns 200 directly and through `https://tqccl.com/api/me`.
-- KV `RL` still holds the unused `ai:providers` key; deleting it is a separate manual step (`npx wrangler kv key delete ai:providers --namespace-id 6fff7d73c885457dbb71756de99e66fa --remote`).
+- KV `RL`: unused legacy key `ai:providers` deleted 2026-10-07 after both deploys; only `ai:config` remains under `ai:`. `/analyze` still reaches the Turnstile check (403) afterwards.
 
 ## Latest Research MCP Deploy
 
