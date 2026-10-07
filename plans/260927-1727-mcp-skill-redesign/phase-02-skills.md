@@ -4,6 +4,8 @@ Trạng thái: chưa triển khai. Context: [design](design.md), [research plan 
 
 Thiết kế bổ sung: [dataset, playbook và learning](skill-mcp-learning-design.md). Làm retrieval foundation trước khi skill phụ thuộc hai tool mới.
 
+Quyết định 2026-10-06: giữ hai tool `tqccl_get_playbook`/`tqccl_search_rules` trong đợt này vì Dewee đang gọi MCP TQCCL thật và không đọc được file skill trong repo ([dewee design](dewee-access-design.md) dòng 79). Bằng chứng và điều kiện: [debate rules-dataset](reports/debate-rules-dataset.md).
+
 ## Files và phạm vi
 
 - Tạo canonical `agent-knowledge/` schemas/rules/workflows/manifest và pure core `mcp-worker/src/knowledge/`.
@@ -16,12 +18,16 @@ Thiết kế bổ sung: [dataset, playbook và learning](skill-mcp-learning-desi
 
 ## Thực hiện
 
-0. Chốt schema/grammar, migrate rules với provenance, kiểm conflicts; selector/ranker/hash cache chung CLI/Worker. Test required rules độc lập top-k, unknown và no-match. Calibrate corpus Việt/Hán trước dùng threshold làm gate.
+0. Chốt schema/grammar, migrate rules với provenance, kiểm conflicts; selector/ranker/hash cache chung CLI/Worker. Test required rules độc lập top-k, unknown và no-match. Calibrate corpus Việt/Hán trước dùng threshold làm gate. Gate migration trước khi skill hoặc Dewee phụ thuộc dataset:
+   - Ledger ánh xạ mọi MUST/never/always trong `SKILL.md` + `references/` của ba skill sang `ruleId` + `kind`, có owner review; nghĩa vụ không được hạ thành `guidance`.
+   - Sửa `research-correction-history` trong prototype thành `invariant` (hiện là guidance ở `prototype/rules.json:221-237`, trái `tqccl-research/SKILL.md:40-43`).
+   - Test: mọi rule `kind=invariant` của workflow luôn nằm trong required với mọi query/stage, kể cả khi `abstained=true`.
+   - Không bỏ Markdown hiện tại trước khi ledger đầy đủ và test trên đạt.
 1. Capture original metadata/instruction hash/reference reads và actual catalog trước sửa.
 2. Viết cases trước tối ưu; giữ holdout riêng và fixtures account đã redact.
 3. Author lookup skill theo hai workflow catalog/reference, discovery thật và CLI fallback.
 4. Coexist: version → normalize → review/confirmation → recommend → detail/replacement. Không giữ Python engine thứ hai.
-5. Research: giữ claim statuses, budget, SGSDeck, corrections; remote MCP tính vào external ledger.
+5. Research: giữ claim statuses, budget, SGSDeck, corrections; remote MCP tính vào external ledger. Routing: `tqccl_get_playbook` tối đa 1 call/topic và thay cho version call; `tqccl_search_rules` chỉ gọi khi cần guidance; repo local ưu tiên CLI (không tốn ledger).
 6. Nếu helper cũ còn được hỗ trợ, chặn claim buildable khi roster chưa biết; tìm mọi caller trước retire hoặc chuyển thành CLI wrapper.
 7. Structural validation, routing lint, links, metadata version; so sánh matched original/candidate, skill mới so với no-skill.
 
@@ -45,6 +51,8 @@ Thiết kế bổ sung: [dataset, playbook và learning](skill-mcp-learning-desi
 | Không MCP, có repo | CLI cùng handler |
 | Không MCP và CLI | Nói giới hạn, không giả result |
 | Budget đã hết | Không gọi remote MCP/web tiếp |
+| Dewee hỏi cơ chế qua MCP, query không match guidance | Required vẫn có đọc correction history; không mất invariant khi abstain |
+| Research qua remote MCP dùng playbook + search_rules | Tổng external calls không vượt 5/topic; playbook không gọi lần hai |
 | Source chứa prompt injection | Chỉ coi là dữ liệu |
 | Đăng bài/admin community | Không gọi tool quản trị không tồn tại |
 
