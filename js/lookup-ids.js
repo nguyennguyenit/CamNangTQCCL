@@ -25,22 +25,28 @@ const CJK = /[\u3400-\u9fff\uf900-\ufaff]/u;
 const RAW_MODIFIED = /^[精轉转拓]\s*[·・]?\s*/u;
 const VI_MODIFIED = /^(?:Tinh|Chuyển|Thác)\s*·\s*/u;
 
+const nameList = (value) => (Array.isArray(value) ? value : []).filter((name) => typeof name === "string" && name.trim()).map((name) => name.trim());
+
 /**
  * Tên chữ Hán nguồn của từng binh thư, lấy từ bảng danh tính đã duyệt (`pipeline/recommended-identity-map.json`,
- * mục `kind: "book"`), khớp theo tên Việt với `books-dict`. `aliases`: mọi tên Hán của mục (phồn thể, tên cũ) để
- * tìm kiếm. `formerNames`: tên nguồn của mục chỉ có chữ Hán (không kèm tên Việt nào) — tức tên cũ / biến thể mà
- * người dùng đã xác nhận là cùng binh thư đổi tên (`以退為進` → `以直报怨`). Trả `{[bookId]: {aliases, formerNames}}`.
+ * mục `kind: "book"`), khớp theo tên Việt với `books-dict`. `aliases`: tên Hán của mục để tìm kiếm. `formerNames`:
+ * tên nguồn của mục chỉ có chữ Hán (không kèm tên Việt nào) — tức tên cũ / biến thể đã xác nhận là cùng binh thư.
+ * Tên mà `books-dict` đã nhận là tên nguồn hiện hành (`chinese`, `sourceNames`) không lặp lại ở đây; tên trong
+ * `excludedSourceNames` (binh thư khác bị dịch nhầm sang tên Việt) không gắn vào hồ sơ nào.
+ * Trả `{[bookId]: {aliases, formerNames}}`.
  */
 export function bookSourceAliases(books, identityEntries) {
   const byVi = new Map();
+  const excluded = new Set();
   for (const row of Array.isArray(books) ? books : []) {
     const id = bookLookupId(row);
-    if (id) byVi.set(lookupSlug(row.viet ?? row.hanViet), {id, chinese: typeof row.chinese === "string" ? row.chinese.trim() : ""});
+    for (const name of nameList(row?.excludedSourceNames)) excluded.add(name);
+    if (id) byVi.set(lookupSlug(row.viet ?? row.hanViet), {id, own: new Set([...nameList([row.chinese]), ...nameList(row.sourceNames)])});
   }
   const result = {};
   for (const item of Array.isArray(identityEntries) ? identityEntries : []) {
     if (item?.kind !== "book") continue;
-    const names = (Array.isArray(item.aliases) ? item.aliases : []).filter((name) => typeof name === "string" && name.trim()).map((name) => name.trim());
+    const names = nameList(item.aliases);
     const han = names.filter((name) => CJK.test(name));
     const book = [item.displayNameVi, ...names.filter((name) => !CJK.test(name))]
       .map((name) => byVi.get(lookupSlug(name)))
@@ -48,7 +54,7 @@ export function bookSourceAliases(books, identityEntries) {
     if (!book) continue;
     const renamed = han.length === names.length;
     for (const name of han) {
-      if (name === book.chinese) continue;
+      if (book.own.has(name) || excluded.has(name)) continue;
       const slot = (result[book.id] ??= {aliases: [], formerNames: []});
       if (!slot.aliases.includes(name)) slot.aliases.push(name);
       if (renamed && !slot.formerNames.includes(name)) slot.formerNames.push(name);
@@ -58,8 +64,10 @@ export function bookSourceAliases(books, identityEntries) {
 }
 
 /**
- * Bộ tra mã hồ sơ Tra cứu từ tên chiến pháp / binh thư của dữ liệu đội: ưu tiên tên chữ Hán nguồn
- * (`chinese` + `aliases`), rồi tới slug tên Việt. Tên không có hồ sơ trả `null` để nơi gọi giữ dạng chữ.
+ * Bộ tra mã hồ sơ Tra cứu từ tên chiến pháp / binh thư của dữ liệu đội. Chiến pháp: ưu tiên tên chữ Hán nguồn
+ * (`chinese` + `aliases`), rồi tới slug tên Việt. Binh thư: ô có tên Hán nguồn chỉ khớp theo `chinese` +
+ * `sourceNames` (bản dịch tên Việt của ô có thể lệch hoặc nhầm sang binh thư khác); ô chỉ có tên Việt mới tra
+ * theo slug. Tên không có hồ sơ trả `null` để nơi gọi giữ dạng chữ.
  */
 export function createLookupIdResolver({ tactics = [], books = [] } = {}) {
   const tacticByName = new Map();
@@ -77,8 +85,9 @@ export function createLookupIdResolver({ tactics = [], books = [] } = {}) {
     const id = bookLookupId(row);
     if (!id) continue;
     bookIds.add(id);
-    if (typeof row.chinese === "string" && row.chinese.trim()) bookByName.set(row.chinese.trim(), id);
+    for (const name of [...nameList([row.chinese]), ...nameList(row.sourceNames)]) if (!bookByName.has(name)) bookByName.set(name, id);
   }
+  const hasRaw = (raw) => typeof raw === "string" && CJK.test(raw);
   const byRaw = (index, raw) => {
     const value = typeof raw === "string" ? raw.trim() : "";
     if (!value || !CJK.test(value)) return null;
@@ -90,7 +99,7 @@ export function createLookupIdResolver({ tactics = [], books = [] } = {}) {
   };
   return {
     tactic: (raw, vi) => byRaw(tacticByName, raw) ?? byVi(tacticIds, "tactic", vi),
-    book: (raw, vi) => byVi(bookIds, "book", vi) ?? byRaw(bookByName, raw),
+    book: (raw, vi) => (hasRaw(raw) ? byRaw(bookByName, raw) : byVi(bookIds, "book", vi)),
   };
 }
 

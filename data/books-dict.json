@@ -1,295 +1,681 @@
 [
   {
     "chinese": "兵行诡道",
-    "viet": "Binh Hành Quỷ Đạo"
+    "viet": "Binh Hành Quỷ Đạo",
+    "sourceNames": [
+      "兵行詭道"
+    ],
+    "effect": "戰鬥第2回合,我軍單體與敵軍隨機單體造成傷害降低75%,持續1回合",
+    "effectViet": "Hiệp 2 của trận, một tướng quân ta và một tướng địch ngẫu nhiên giảm 75% sát thương gây ra, kéo dài 1 hiệp.",
+    "effectVersion": "2024-07"
   },
   {
     "chinese": "守而有道",
-    "viet": "Biết Cách Phòng Thủ"
+    "viet": "Biết Cách Phòng Thủ",
+    "effect": "自身受到的謀略傷害降低5%(受統率影響)",
+    "effectViet": "Bản thân giảm 5% sát thương mưu lược phải chịu (chịu ảnh hưởng của Thống suất).",
+    "effectVersion": "2024-07"
   },
   {
     "chinese": "百战",
     "viet": "Bách Chiến",
-    "hanViet": "Bách Chiến"
+    "hanViet": "Bách Chiến",
+    "sourceNames": [
+      "百戰"
+    ],
+    "effect": "自帶戰法的發動機率提高3%",
+    "effectViet": "Tỷ lệ phát động của chiến pháp tự mang tăng 3%.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "严阵以待",
     "viet": "Bố Trận Chờ Đợi",
-    "hanViet": "Nghiêm Trận Dĩ Đãi"
+    "hanViet": "Nghiêm Trận Dĩ Đãi",
+    "sourceNames": [
+      "嚴陣以待"
+    ],
+    "effect": "戰鬥前2回合，爲友軍群體(2人)分擔15%的傷害",
+    "effectViet": "Trong 2 hiệp đầu trận, gánh 15% sát thương thay cho nhóm quân ta (2 người).",
+    "effectVersion": "2021-11"
+  },
+  {
+    "chinese": "分利",
+    "viet": "Chia Lời",
+    "effect": "自身受到兵刃傷害後，統率提升1%，受到謀略傷害則智力提升1%,分別可疊加5次",
+    "effectViet": "Sau khi chịu sát thương binh khí, bản thân tăng 1% Thống suất; sau khi chịu sát thương mưu lược, tăng 1% Trí lực. Mỗi loại cộng dồn tối đa 5 lần.",
+    "effectVersion": "2024-07"
   },
   {
     "chinese": "分而疾战",
-    "viet": "Chia Nhỏ Đánh Nhanh"
+    "viet": "Chia Nhỏ Đánh Nhanh",
+    "sourceNames": [
+      "分而疾戰"
+    ],
+    "effect": "自身受到的傷害降低3.5% (受速度屬性影響)",
+    "effectViet": "Bản thân giảm 3,5% sát thương phải chịu (chịu ảnh hưởng của Tốc độ).",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "久战",
-    "viet": "Chiến Đấu Trường Kỳ"
+    "viet": "Chiến Đấu Trường Kỳ",
+    "sourceNames": [
+      "久戰"
+    ],
+    "effect": "自身獲得3%攻心和倒戈",
+    "effectViet": "Bản thân nhận 3% công tâm và Đảo Qua.",
+    "effectVersion": "2024-07"
   },
   {
     "chinese": "枕戈坐甲",
-    "viet": "Chẩm Qua Tọa Giáp"
+    "viet": "Chẩm Qua Tọa Giáp",
+    "effect": "戰鬥第2-6回合,自身每回合有25%概率獲得1次抵禦",
+    "effectViet": "Từ hiệp 2 đến hiệp 6, mỗi hiệp bản thân có 25% xác suất nhận 1 lần chống đỡ.",
+    "effectVersion": "2024-07"
   },
   {
     "chinese": "刚柔",
     "viet": "Cương Nhu",
-    "hanViet": "Cương Nhu"
+    "hanViet": "Cương Nhu",
+    "sourceNames": [
+      "剛柔"
+    ],
+    "effect": "受到治療時,提高9%治療效果",
+    "effectViet": "Khi được trị liệu, hiệu quả trị liệu nhận được tăng 9%.",
+    "effectVersion": "2024-07"
   },
   {
     "chinese": "执锐",
-    "viet": "Cầm Binh Khí"
+    "viet": "Cầm Binh Khí",
+    "sourceNames": [
+      "執銳"
+    ],
+    "effect": "使自身造成的兵刃傷害和謀略傷害提高3%",
+    "effectViet": "Bản thân tăng 3% sát thương binh khí và sát thương mưu lược gây ra.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "救主",
     "viet": "Cứu Chủ",
-    "hanViet": "Cứu Chủ"
+    "hanViet": "Cứu Chủ",
+    "effect": "戰鬥中，使我軍主將受到的傷害降低7%，自身受到的傷害提高7%；註：多人携帶效果無法叠加",
+    "effectViet": "Trong trận, chủ tướng quân ta giảm 7% sát thương phải chịu, bản thân tăng 7% sát thương phải chịu. Nhiều tướng cùng mang không cộng dồn.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "驰援",
-    "viet": "Cứu Viện"
+    "viet": "Cứu Viện",
+    "sourceNames": [
+      "馳援"
+    ],
+    "effect": "戰鬥中，隨機援護一名友軍，持續1回合",
+    "effectViet": "Trong trận, viện hộ ngẫu nhiên một tướng đồng minh, kéo dài 1 hiệp.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "妙算",
     "viet": "Diệu Toán",
-    "hanViet": "Diệu Toán"
+    "hanViet": "Diệu Toán",
+    "effect": "造成控制效果時，50%機率減低目標16點智力和統率，持續1回合",
+    "effectViet": "Khi gây hiệu ứng khống chế, có 50% xác suất giảm 16 điểm Trí lực và Thống suất của mục tiêu, kéo dài 1 hiệp.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "以直报怨",
-    "viet": "Dĩ Trực Báo Oán"
+    "viet": "Dĩ Trực Báo Oán",
+    "sourceNames": [
+      "以直報怨"
+    ],
+    "excludedSourceNames": [
+      "以退為進"
+    ],
+    "effect": "自身受到控制狀態時,有50%概率對敵軍單體造成1次兵刃傷害(傷害率70%)",
+    "effectViet": "Khi bản thân bị khống chế, có 50% xác suất gây 1 lần sát thương binh khí lên một tướng địch (tỷ lệ sát thương 70%).",
+    "effectVersion": "2024-07"
   },
   {
     "chinese": "统军",
     "viet": "Dẫn Quân",
-    "hanViet": "Thống Quân"
+    "hanViet": "Thống Quân",
+    "sourceNames": [
+      "統軍"
+    ],
+    "effect": "自身統率提升20",
+    "effectViet": "Bản thân tăng 20 Thống suất.",
+    "effectVersion": "2024-07"
   },
   {
     "chinese": "铁甲",
     "viet": "Giáp Sắt",
-    "hanViet": "Thiết Giáp"
+    "hanViet": "Thiết Giáp",
+    "sourceNames": [
+      "鐵甲"
+    ],
+    "effect": "使自身受到普通攻擊以及突擊戰法傷害降低6%",
+    "effectViet": "Bản thân giảm 6% sát thương phải chịu từ đánh thường và chiến pháp đột kích.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "示敌以弱",
-    "viet": "Giả Nai Trước Địch"
+    "viet": "Giả Nai Trước Địch",
+    "sourceNames": [
+      "示敵以弱"
+    ],
+    "effect": "戰鬥前4回合,使自身造成傷害降低15%,第4回合開始自身主動戰法發動率提升7%",
+    "effectViet": "Trong 4 hiệp đầu trận, bản thân giảm 15% sát thương gây ra; từ hiệp 4, tỷ lệ phát động chiến pháp chủ động của bản thân tăng 7%.",
+    "effectVersion": "2024-07"
   },
   {
     "chinese": "藏刀",
     "viet": "Giấu Đao",
-    "hanViet": "Tàng Đao"
+    "hanViet": "Tàng Đao",
+    "effect": "自身突擊戰法傷害下降5%，突擊戰法發動率增加3%",
+    "effectViet": "Sát thương chiến pháp đột kích của bản thân giảm 5%, tỷ lệ phát động chiến pháp đột kích tăng 3%.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "临敌不乱",
     "viet": "Gặp Địch Không Loạn",
-    "hanViet": "Lâm Địch Bất Loạn"
+    "hanViet": "Lâm Địch Bất Loạn",
+    "sourceNames": [
+      "臨敵不亂"
+    ],
+    "effect": "戰鬥第4回合，移除友軍單體所有的負面狀態",
+    "effectViet": "Hiệp 4 của trận, xoá mọi trạng thái bất lợi của một tướng đồng minh.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "应机立断",
-    "viet": "Hành Động Theo Thời"
+    "viet": "Hành Động Theo Thời",
+    "sourceNames": [
+      "應機立斷"
+    ],
+    "effect": "自身每回合首次造成傷害提升12%",
+    "effectViet": "Mỗi hiệp, lần gây sát thương đầu tiên của bản thân tăng 12%.",
+    "effectVersion": "2024-07"
   },
   {
     "chinese": "合变",
-    "viet": "Hợp Biến"
+    "viet": "Hợp Biến",
+    "hanViet": "Hợp Biến",
+    "sourceNames": [
+      "合變"
+    ],
+    "effect": "每回合結束時，若本回合自身未發動主動戰法，則使自身受到的兵刃和謀略傷害降低6%，持續1回合；註：準備發動並不算作發動",
+    "effectViet": "Cuối mỗi hiệp, nếu trong hiệp đó bản thân không phát động chiến pháp chủ động thì giảm 6% sát thương binh khí và sát thương mưu lược phải chịu, kéo dài 1 hiệp. Đang chuẩn bị không tính là đã phát động.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "开合",
-    "viet": "Khai Hạp"
+    "viet": "Khai Hạp",
+    "sourceNames": [
+      "開闔"
+    ],
+    "effect": "成功發動主動戰法後,自身受到傷害降低6%,持續1回合",
+    "effectViet": "Sau khi phát động thành công chiến pháp chủ động, bản thân giảm 6% sát thương phải chịu, kéo dài 1 hiệp.",
+    "effectVersion": "2024-07"
   },
   {
     "chinese": "掩虚",
-    "viet": "Khép Hờ"
+    "viet": "Khép Hờ",
+    "sourceNames": [
+      "掩虛"
+    ],
+    "effect": "每回合行動時，若自身為我軍損失兵力最多者，自身受到的兵刃和謀略傷害降低6%",
+    "effectViet": "Mỗi lượt hành động, nếu bản thân là tướng quân ta mất nhiều binh lực nhất thì giảm 6% sát thương binh khí và sát thương mưu lược phải chịu.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "励军",
-    "viet": "Khích Lệ Lòng Quân"
+    "viet": "Khích Lệ Lòng Quân",
+    "sourceNames": [
+      "勵軍",
+      "厲軍"
+    ],
+    "effect": "戰鬥中，使隨機友軍單體造成傷害提高3%",
+    "effectViet": "Trong trận, một tướng đồng minh ngẫu nhiên tăng 3% sát thương gây ra.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "无战而胜",
     "viet": "Không Chiến Mà Thắng",
-    "hanViet": "Vô Chiến Nhi Thắng"
+    "hanViet": "Vô Chiến Nhi Thắng",
+    "sourceNames": [
+      "無戰而勝"
+    ],
+    "effect": "造成控制效果時，自身受到的兵刃傷害和謀略傷害降低10%，持續1回合",
+    "effectViet": "Khi gây hiệu ứng khống chế, bản thân giảm 10% sát thương binh khí và sát thương mưu lược phải chịu, kéo dài 1 hiệp.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "不勇则死",
-    "viet": "Không Chiến Sẽ Chết"
+    "viet": "Không Chiến Sẽ Chết",
+    "sourceNames": [
+      "不勇則死"
+    ],
+    "effect": "戰鬥第5回合開始，每回合有40%進入連擊，禁療狀態",
+    "effectViet": "Từ hiệp 5 của trận, mỗi hiệp có 40% xác suất vào trạng thái Liên kích và cấm trị liệu.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "大谋不谋",
     "viet": "Không Lộ Tài Năng",
-    "hanViet": "Đại Mưu Bất Mưu"
+    "hanViet": "Đại Mưu Bất Mưu",
+    "sourceNames": [
+      "大謀不謀"
+    ],
+    "effect": "戰鬥中，每次成功發動主動戰法時，有50%機率增加4.5%奇謀和會心，持續2回合，可叠加兩次",
+    "effectViet": "Trong trận, mỗi lần phát động thành công chiến pháp chủ động có 50% xác suất tăng 4,5% kỳ mưu và hội tâm, kéo dài 2 hiệp, cộng dồn tối đa 2 lần.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "诱敌之策",
     "viet": "Kế Sách Dụ Địch",
-    "hanViet": "Dụ Địch Chi Sách"
+    "hanViet": "Dụ Địch Chi Sách",
+    "sourceNames": [
+      "誘敵之策"
+    ],
+    "effect": "自身受到的傷害提高16%，友軍造成的傷害提高5%；註：多人携帶效果無法叠加",
+    "effectViet": "Bản thân tăng 16% sát thương phải chịu, tướng đồng minh tăng 5% sát thương gây ra. Nhiều tướng cùng mang không cộng dồn.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "奇正相生",
     "viet": "Kỳ Chính Tương Sinh",
-    "hanViet": "Kỳ Chính Tương Sinh"
+    "hanViet": "Kỳ Chính Tương Sinh",
+    "effect": "每回合有15%(受智力屬性加成)的機率獲得連擊狀態",
+    "effectViet": "Mỗi hiệp có 15% xác suất (chịu ảnh hưởng của Trí lực) nhận trạng thái Liên kích.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "一鼓作气",
-    "viet": "Liền Mạch Một Hơi"
+    "viet": "Liền Mạch Một Hơi",
+    "sourceNames": [
+      "一鼓作氣"
+    ],
+    "effect": "增加突擊戰法18%的傷害，隨後每次發動突擊戰法該戰法效果降低1/3；註：沒有傷害的突擊戰法也會消耗1/3此兵書的效果，例如彎弓和折衝",
+    "effectViet": "Tăng 18% sát thương chiến pháp đột kích; sau mỗi lần phát động chiến pháp đột kích, hiệu quả này giảm 1/3. Chiến pháp đột kích không gây sát thương cũng làm giảm 1/3.",
+    "effectVersion": "2021-11"
   },
   {
-    "chinese": "以武止戈",
-    "viet": "Lấy Võ Dẹp Loạn"
+    "chinese": "以治击乱",
+    "viet": "Lấy Võ Dẹp Loạn",
+    "sourceNames": [
+      "以治擊亂"
+    ],
+    "effect": "對處於控制狀態的武將造成的傷害提高12%",
+    "effectViet": "Đối với võ tướng trong trạng thái khống chế, sát thương gây ra tăng 12%.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "蛮勇非勇",
-    "viet": "Man Dũng Phi Dũng"
+    "viet": "Man Dũng Phi Dũng",
+    "hanViet": "Man Dũng Phi Dũng",
+    "sourceNames": [
+      "蠻勇非勇"
+    ],
+    "effect": "提高自身智力屬性，其值等於自身武力屬性的16%",
+    "effectViet": "Bản thân tăng Trí lực, bằng 16% Vũ lực của bản thân.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "远谋",
     "viet": "Mưu Kế Sâu Xa",
-    "hanViet": "Viễn Mưu"
+    "hanViet": "Viễn Mưu",
+    "sourceNames": [
+      "遠謀"
+    ],
+    "effect": "自身造成持續性狀態傷害提升6%",
+    "effectViet": "Bản thân tăng 6% sát thương trạng thái kéo dài gây ra.",
+    "effectVersion": "2024-07"
   },
   {
     "chinese": "勇毅",
     "viet": "Nghĩa Dũng",
-    "hanViet": "Dũng Nghị"
+    "hanViet": "Dũng Nghị",
+    "effect": "受到克制兵種的傷害減少15%",
+    "effectViet": "Giảm 15% sát thương phải chịu từ binh chủng khắc chế.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "洞若观火",
-    "viet": "Nhìn Rõ Mồn Một"
+    "viet": "Nhìn Rõ Mồn Một",
+    "sourceNames": [
+      "洞若觀火"
+    ],
+    "effect": "自身受到屬性降低效果時,有20%概率免疫",
+    "effectViet": "Khi bản thân bị giảm thuộc tính, có 20% xác suất miễn nhiễm.",
+    "effectVersion": "2024-07"
   },
   {
     "chinese": "分险",
-    "viet": "Phân Hiểm"
+    "viet": "Phân Hiểm",
+    "sourceNames": [
+      "分險"
+    ],
+    "effect": "成功發動突擊戰法后，使自身受到的兵刃傷害和謀略傷害降低6%，持續1回合；註：不可叠加",
+    "effectViet": "Sau khi phát động thành công chiến pháp đột kích, bản thân giảm 6% sát thương binh khí và sát thương mưu lược phải chịu, kéo dài 1 hiệp. Không cộng dồn.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "防备",
     "viet": "Phòng Bị",
-    "hanViet": "Phòng Bị"
+    "hanViet": "Phòng Bị",
+    "sourceNames": [
+      "防備"
+    ],
+    "effect": "使自身受到的傷害降低3%",
+    "effectViet": "Bản thân giảm 3% sát thương phải chịu.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "归心",
     "viet": "Quy Thuận",
-    "hanViet": "Quy Tâm"
+    "hanViet": "Quy Tâm",
+    "sourceNames": [
+      "歸心"
+    ],
+    "effect": "自身準備戰法發動率提升3%",
+    "effectViet": "Tỷ lệ phát động chiến pháp cần chuẩn bị của bản thân tăng 3%.",
+    "effectVersion": "2024-07"
   },
   {
     "chinese": "鬼谋",
     "viet": "Quỷ Mưu",
-    "hanViet": "Quỷ Mưu"
+    "hanViet": "Quỷ Mưu",
+    "sourceNames": [
+      "鬼謀"
+    ],
+    "effect": "提升4.5%主動戰法傷害",
+    "effectViet": "Tăng 4,5% sát thương chiến pháp chủ động.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "锤炼",
-    "viet": "Rèn Luyện"
+    "viet": "Rèn Luyện",
+    "sourceNames": [
+      "錘煉",
+      "錘鍊"
+    ],
+    "effect": "自身受到持續性狀態傷害降低10%",
+    "effectViet": "Bản thân giảm 10% sát thương trạng thái kéo dài phải chịu.",
+    "effectVersion": "2024-07"
   },
   {
     "chinese": "锐利",
     "viet": "Sắc Bén",
-    "hanViet": "Nhuệ Lợi"
+    "hanViet": "Nhuệ Lợi",
+    "sourceNames": [
+      "銳利"
+    ],
+    "effect": "自身突擊戰法發動率提升2%",
+    "effectViet": "Tỷ lệ phát động chiến pháp đột kích của bản thân tăng 2%.",
+    "effectVersion": "2024-07"
   },
   {
     "chinese": "三里而还",
-    "viet": "Tam Lý Nhĩ Hoàn"
+    "viet": "Tam Lý Nhĩ Hoàn",
+    "sourceNames": [
+      "三里而還"
+    ],
+    "effect": "戰鬥第3回合,自身獲得反擊狀態(傷害率50%),持續3回合",
+    "effectViet": "Hiệp 3 của trận, bản thân nhận trạng thái phản kích (tỷ lệ sát thương 50%), kéo dài 3 hiệp.",
+    "effectVersion": "2024-07"
   },
   {
     "chinese": "三军之众",
     "viet": "Tam Quân Chi Chúng",
-    "hanViet": "Tam Quân Chi Chúng"
+    "hanViet": "Tam Quân Chi Chúng",
+    "sourceNames": [
+      "三軍之眾"
+    ],
+    "effect": "戰鬥第2-4回合,自身獲得急救(治療率25%,受智力影響)",
+    "effectViet": "Từ hiệp 2 đến hiệp 4, bản thân nhận cấp cứu (tỷ lệ trị liệu 25%, chịu ảnh hưởng của Trí lực).",
+    "effectVersion": "2024-07"
   },
   {
     "chinese": "善战",
-    "viet": "Thiện Chiến"
+    "viet": "Thiện Chiến",
+    "sourceNames": [
+      "善戰"
+    ],
+    "effect": "自身每次造成傷害後,造成傷害提升0.5%,可疊加8次",
+    "effectViet": "Sau mỗi lần gây sát thương, bản thân tăng 0,5% sát thương gây ra, cộng dồn tối đa 8 lần.",
+    "effectVersion": "2024-07"
   },
   {
-    "chinese": "顺应天时",
-    "viet": "Thuận Thiên Thuận Tời"
+    "chinese": "顺天应时",
+    "viet": "Thuận Thiên Thuận Tời",
+    "sourceNames": [
+      "順天應時"
+    ],
+    "effect": "施加持續性狀態時，有35%的機率增加1回合持續時間；註：不包括奪魂，智計",
+    "effectViet": "Khi gây trạng thái kéo dài, có 35% xác suất tăng thêm 1 hiệp thời gian duy trì. Không áp dụng cho Đoạt Hồn và Trí Kế.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "乐善好施",
-    "viet": "Thích Làm Việc Thiện"
+    "viet": "Thích Làm Việc Thiện",
+    "sourceNames": [
+      "樂善好施"
+    ],
+    "effect": "自身造成治療時有概率(取會心和奇謀幾率更高一項)使此次治療提升100%(取會心傷害和奇謀傷害更高一項)",
+    "effectViet": "Khi bản thân trị liệu, có xác suất (lấy mức cao hơn giữa tỷ lệ hội tâm và kỳ mưu) tăng 100% lượng trị liệu của lần đó (lấy mức cao hơn giữa sát thương hội tâm và kỳ mưu).",
+    "effectVersion": "2024-07"
   },
   {
     "chinese": "神机",
     "viet": "Thần Cơ",
-    "hanViet": "Thần Cơ"
+    "hanViet": "Thần Cơ",
+    "sourceNames": [
+      "神機"
+    ],
+    "effect": "戰鬥首回合，使自身獲得先攻狀態(優先行動)",
+    "effectViet": "Hiệp đầu của trận, bản thân nhận trạng thái Tiên công (hành động trước).",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "胜而益强",
-    "viet": "Thắng Sẽ Càng Mạnh"
+    "viet": "Thắng Sẽ Càng Mạnh",
+    "sourceNames": [
+      "勝而益強"
+    ],
+    "effect": "使自身在成功發動普通攻擊後，有40%機率恢復一定兵力(治療率65%)",
+    "effectViet": "Sau khi đánh thường thành công, bản thân có 40% xác suất hồi phục binh lực (tỷ lệ trị liệu 65%).",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "胜战",
     "viet": "Thắng Trận",
-    "hanViet": "Thắng Chiến"
+    "hanViet": "Thắng Chiến",
+    "sourceNames": [
+      "勝戰"
+    ],
+    "effect": "戰鬥第2回合，自身獲得65%破陣狀態(造成傷害時無視目標的統帥和智力)",
+    "effectViet": "Hiệp 2 của trận, bản thân nhận 65% Phá trận (khi gây sát thương bỏ qua Thống suất và Trí lực của mục tiêu).",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "守势",
     "viet": "Thế Phòng Thủ",
-    "hanViet": "Thủ Thế"
+    "hanViet": "Thủ Thế",
+    "sourceNames": [
+      "守勢"
+    ],
+    "effect": "戰鬥前3回合，自身受到的所有傷害降低5%",
+    "effectViet": "Trong 3 hiệp đầu trận, bản thân giảm 5% mọi sát thương phải chịu.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "精准",
-    "viet": "Tinh Chuẩn"
+    "viet": "Tinh Chuẩn",
+    "sourceNames": [
+      "精準"
+    ],
+    "effect": "戰鬥第2、3回合,自身獲得必中狀態",
+    "effectViet": "Hiệp 2 và hiệp 3 của trận, bản thân nhận trạng thái Tất trúng.",
+    "effectVersion": "2024-07"
+  },
+  {
+    "chinese": "神清气净",
+    "viet": "Tinh Thần Sảng Khoái",
+    "sourceNames": [
+      "神清氣凈"
+    ],
+    "effect": "自身累計受到2次控制狀態時,清除我軍單體負面狀態,僅觸發1次",
+    "effectViet": "Khi bản thân đã bị khống chế tổng cộng 2 lần, xoá trạng thái bất lợi của một tướng quân ta; chỉ kích hoạt 1 lần.",
+    "effectVersion": "2024-07"
   },
   {
     "chinese": "避其锐气",
     "viet": "Tránh Thế Mạnh Của Địch",
-    "hanViet": "Tị Kỳ Nhuệ Khí"
+    "hanViet": "Tị Kỳ Nhuệ Khí",
+    "sourceNames": [
+      "避其銳氣"
+    ],
+    "effect": "自身為主將時，戰鬥前2回合，獲得10%規避",
+    "effectViet": "Khi bản thân là chủ tướng, trong 2 hiệp đầu trận nhận 10% né tránh.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "持重",
     "viet": "Trì Trọng",
-    "hanViet": "Trì Trọng"
+    "hanViet": "Trì Trọng",
+    "effect": "戰鬥第4、5回合,自身免疫混亂狀態",
+    "effectViet": "Hiệp 4 và hiệp 5 của trận, bản thân miễn nhiễm Hỗn loạn.",
+    "effectVersion": "2024-07"
   },
   {
     "chinese": "静心",
-    "viet": "Tĩnh Tâm"
+    "viet": "Tĩnh Tâm",
+    "sourceNames": [
+      "靜心"
+    ],
+    "effect": "使自身受到主動戰法傷害降低7%",
+    "effectViet": "Bản thân giảm 7% sát thương chiến pháp chủ động phải chịu.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "将威",
     "viet": "Tướng Uy",
-    "hanViet": "Tướng Uy"
+    "hanViet": "Tướng Uy",
+    "sourceNames": [
+      "將威"
+    ],
+    "effect": "提高自身2.5%會心和奇謀機率",
+    "effectViet": "Bản thân tăng 2,5% tỷ lệ hội tâm và kỳ mưu.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "散仙",
-    "viet": "Tản Tiên"
+    "viet": "Tản Tiên",
+    "effect": "獲得6%規避效果",
+    "effectViet": "Nhận 6% né tránh.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "援其必攻",
-    "viet": "Tấn Công Điểm Yếu"
+    "viet": "Tấn Công Điểm Yếu",
+    "effect": "爲損失兵力最多的友軍恢復兵力時，使其受到的傷害降低12%，持續1回合",
+    "effectViet": "Khi hồi phục binh lực cho tướng đồng minh mất nhiều binh lực nhất, tướng đó giảm 12% sát thương phải chịu, kéo dài 1 hiệp.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "速战",
     "viet": "Tốc Chiến",
-    "hanViet": "Tốc Chiến"
+    "hanViet": "Tốc Chiến",
+    "sourceNames": [
+      "速戰"
+    ],
+    "effect": "戰鬥中，提高自身24點速度",
+    "effectViet": "Trong trận, bản thân tăng 24 Tốc độ.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "武略",
     "viet": "Võ Lược",
-    "hanViet": "Võ Lược"
+    "hanViet": "Võ Lược",
+    "effect": "提高8%普通攻擊傷害",
+    "effectViet": "Tăng 8% sát thương đánh thường.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "文韬",
-    "viet": "Văn Thao"
+    "viet": "Văn Thao",
+    "sourceNames": [
+      "文韜"
+    ],
+    "effect": "使自身造成的謀略傷害提高2.8% (受智力屬性影響)",
+    "effectViet": "Bản thân tăng 2,8% sát thương mưu lược gây ra (chịu ảnh hưởng của Trí lực).",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "占卜",
-    "viet": "Xem Bói"
+    "viet": "Xem Bói",
+    "effect": "每回合行動時，自身隨機獲得受到兵刃傷害降低6%或受到謀略傷害降低6%效果中的一種，持續1回合",
+    "effectViet": "Mỗi lượt hành động, bản thân ngẫu nhiên nhận một trong hai hiệu ứng: giảm 6% sát thương binh khí phải chịu hoặc giảm 6% sát thương mưu lược phải chịu, kéo dài 1 hiệp.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "惜兵爱民",
-    "viet": "Yêu Lính Thương Dân"
+    "viet": "Yêu Lính Thương Dân",
+    "sourceNames": [
+      "惜兵愛民"
+    ],
+    "effect": "每回合有50%機率回復一定兵力(恢復率65%)",
+    "effectViet": "Mỗi hiệp có 50% xác suất hồi phục binh lực (tỷ lệ hồi phục 65%).",
+    "effectVersion": "2021-11"
   },
   {
-    "chinese": "出其不意",
-    "viet": "Đánh Bất Ngờ Thắng"
+    "chinese": "出奇制胜",
+    "viet": "Đánh Bất Ngờ Thắng",
+    "hanViet": "Xuất Kỳ Chế Thắng",
+    "sourceNames": [
+      "出奇制勝"
+    ],
+    "effect": "自身造成傷害降低50%,會心傷害和奇謀傷害降低50%,第2回合起自帶主動戰法發動率提升30%",
+    "effectViet": "Bản thân giảm 50% sát thương gây ra, sát thương hội tâm và sát thương kỳ mưu giảm 50%; từ hiệp 2, tỷ lệ phát động chiến pháp chủ động tự mang tăng 30%.",
+    "effectVersion": "2024-07"
   },
   {
     "chinese": "审时度势",
-    "viet": "Đánh Giá Tình Hình"
+    "viet": "Đánh Giá Tình Hình",
+    "sourceNames": [
+      "審時度勢"
+    ],
+    "effect": "自身受到傷害提升3%,造成治療提升12%",
+    "effectViet": "Bản thân tăng 3% sát thương phải chịu, tăng 12% lượng trị liệu gây ra.",
+    "effectVersion": "2024-07"
   },
   {
     "chinese": "疾战突围",
     "viet": "Đánh Phá Vòng Vây",
-    "hanViet": "Tật Chiến Đột Vi"
+    "hanViet": "Tật Chiến Đột Vi",
+    "sourceNames": [
+      "疾戰突圍"
+    ],
+    "effect": "發動需要準備的戰法時，有20%的機率跳過1回合準備",
+    "effectViet": "Khi phát động chiến pháp cần chuẩn bị, có 20% xác suất bỏ qua 1 hiệp chuẩn bị.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "后发先至",
-    "viet": "Đánh Sau Trúng Trước"
+    "viet": "Đánh Sau Trúng Trước",
+    "sourceNames": [
+      "後發先至"
+    ],
+    "effect": "發動需要準備的戰法時，使自身獲得先攻狀態，持續1回合",
+    "effectViet": "Khi phát động chiến pháp cần chuẩn bị, bản thân nhận trạng thái Tiên công, kéo dài 1 hiệp.",
+    "effectVersion": "2021-11"
   },
   {
     "chinese": "攻其不备",
-    "viet": "Đánh Vào Chỗ Hiểm"
+    "viet": "Đánh Vào Chỗ Hiểm",
+    "hanViet": "Công Kỳ Bất Bị",
+    "sourceNames": [
+      "攻其不備"
+    ],
+    "effect": "對敵軍兵力最高者造成的傷害提高10%",
+    "effectViet": "Tăng 10% sát thương gây ra lên tướng địch có binh lực cao nhất.",
+    "effectVersion": "2021-11"
   }
 ]

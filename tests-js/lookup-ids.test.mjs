@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  LOOKUP_HUB_TABLES, bookLookupId, createLookupIdResolver, groupForId, lookupHubTarget, lookupProfilePath, lookupSlug,
+  LOOKUP_HUB_TABLES, bookLookupId, bookSourceAliases, createLookupIdResolver, groupForId, lookupHubTarget, lookupProfilePath, lookupSlug,
 } from '../js/lookup-ids.js';
 
 test('slug matches pipeline canonical ids (đ, dấu, ký tự lạ)', () => {
@@ -14,19 +14,49 @@ test('slug matches pipeline canonical ids (đ, dấu, ký tự lạ)', () => {
 test('resolver maps source Chinese (incl. aliases, modified prefixes) and Vietnamese names to lookup ids', () => {
   const resolve = createLookupIdResolver({
     tactics: [{id: 'tactic:phong-thi-tran', chinese: '锋矢阵', aliases: ['鋒矢陣'], viet: 'Phong Thỉ Trận'}],
-    books: [{chinese: '以退为进', viet: 'Dĩ Trực Báo Oán'}],
+    books: [{chinese: '顺天应时', viet: 'Thuận Thiên Thuận Tời'}],
   });
   assert.equal(resolve.tactic('鋒矢陣', null), 'tactic:phong-thi-tran');
   // Chiến pháp cải tạo (`精・`) dẫn về hồ sơ chiến pháp gốc.
   assert.equal(resolve.tactic('精・鋒矢陣', 'Tinh · Phong Thỉ Trận'), 'tactic:phong-thi-tran');
   assert.equal(resolve.tactic(null, 'Tinh · Phong Thỉ Trận'), 'tactic:phong-thi-tran');
-  // Nguồn chữ phồn thể không khớp `chinese` giản thể của binh thư: tên Việt vẫn tra được.
-  assert.equal(resolve.book('以退為進', 'Dĩ Trực Báo Oán'), 'book:di-truc-bao-oan');
-  assert.equal(resolve.book('以退为进', null), 'book:di-truc-bao-oan');
+  assert.equal(resolve.book('顺天应时', null), 'book:thuan-thien-thuan-toi');
   // Không có hồ sơ thì trả null để trang giữ dạng chữ, không dựng link hỏng.
   assert.equal(resolve.tactic('異族弓', 'Cung Dị Tộc'), null);
   assert.equal(resolve.book('—', null), null);
   assert.equal(lookupProfilePath('book:di-truc-bao-oan'), '/tra-cuu/binh-thu/?id=book%3Adi-truc-bao-oan');
+});
+
+test('binh thư: tên Hán nguồn quyết định hồ sơ; tên Việt chỉ dùng khi ô không có tên nguồn', () => {
+  const resolve = createLookupIdResolver({
+    books: [
+      {chinese: '顺天应时', viet: 'Thuận Thiên Thuận Tời', sourceNames: ['順天應時']},
+      {chinese: '以直报怨', viet: 'Dĩ Trực Báo Oán', sourceNames: ['以直報怨'], excludedSourceNames: ['以退為進']},
+    ],
+  });
+  // Bản dịch ô lệch tên Việt của từ điển: tên nguồn vẫn dẫn đúng hồ sơ.
+  assert.equal(resolve.book('順天應時', 'Thuận Thiên Ứng Thời'), 'book:thuan-thien-thuan-toi');
+  // Binh thư khác bị dịch nhầm sang tên Việt của một hồ sơ có sẵn: không dựng link sai.
+  assert.equal(resolve.book('以退為進', 'Dĩ Trực Báo Oán'), null);
+  assert.equal(resolve.book('以直報怨', 'Dĩ Trực Báo Oán'), 'book:di-truc-bao-oan');
+  // Nội dung đội gốc chỉ có tên Việt.
+  assert.equal(resolve.book(null, 'Dĩ Trực Báo Oán'), 'book:di-truc-bao-oan');
+  assert.equal(resolve.book('—', 'Dĩ Trực Báo Oán'), 'book:di-truc-bao-oan');
+});
+
+test('bookSourceAliases: tên nguồn hiện hành không thành "tên cũ", tên loại trừ không gắn vào hồ sơ', () => {
+  const books = [
+    {chinese: '出奇制胜', viet: 'Đánh Bất Ngờ Thắng', sourceNames: ['出奇制勝']},
+    {chinese: '以直报怨', viet: 'Dĩ Trực Báo Oán', sourceNames: ['以直報怨'], excludedSourceNames: ['以退為進']},
+    {chinese: '开合', viet: 'Khai Hạp'},
+  ];
+  const aliases = bookSourceAliases(books, [
+    {kind: 'book', aliases: ['出奇制勝'], displayNameVi: 'Đánh Bất Ngờ Thắng'},
+    {kind: 'book', aliases: ['以退為進'], displayNameVi: 'Dĩ Trực Báo Oán'},
+    {kind: 'book', aliases: ['開闔'], displayNameVi: 'Khai Hạp'},
+  ]);
+  // Chỉ tên đứng riêng chưa được từ điển nhận là tên nguồn mới còn là "tên cũ".
+  assert.deepEqual(aliases, {'book:khai-hap': {aliases: ['開闔'], formerNames: ['開闔']}});
 });
 
 test('groupForId và lookupProfilePath đưa mỗi loại mã về đúng trang nhóm; mã sai dạng trả null', () => {

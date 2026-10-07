@@ -101,8 +101,9 @@ function entry(group, record) {
 
 /**
  * Binh thư (`books-dict.json`) không có `id` trong dữ liệu: mã hồ sơ dựng bằng `bookLookupId` (dùng chung
- * với trang chi tiết đội), dòng không dựng được mã thì bỏ. Tên Hán-Việt và chữ Hán là khóa tìm phụ; `aliases`
- * (`{[id]: {aliases, formerNames}}`, tính lúc build từ bảng danh tính) thêm tên Hán nguồn và tên cũ đã xác nhận.
+ * với trang chi tiết đội), dòng không dựng được mã thì bỏ. Tên Hán-Việt và chữ Hán là khóa tìm phụ; tên nguồn
+ * phồn thể (`sourceNames`) và `aliases` (`{[id]: {aliases, formerNames}}`, tính lúc build từ bảng danh tính)
+ * thêm tên Hán nguồn và tên cũ đã xác nhận.
  */
 function bookRecords(books, aliases) {
   return (Array.isArray(books) ? books : []).flatMap((row) => {
@@ -114,7 +115,7 @@ function bookRecords(books, aliases) {
       ...row,
       id,
       aliases: typeof row.hanViet === "string" && row.hanViet ? [row.hanViet] : [],
-      aliasesZh: names(extra?.aliases),
+      aliasesZh: [...names(row.sourceNames), ...names(extra?.aliases)],
       formerNames: names(extra?.formerNames),
     }];
   });

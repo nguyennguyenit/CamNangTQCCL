@@ -60,16 +60,41 @@ class BuildBooksDictTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             bbd.build_books_dict({"铁甲": {"viet": "Giáp Sắt", "outsideTeams": True}}, FACET)
 
+    def test_effect_fields_carried_to_record(self):
+        effect = {"effect": "使自身受到的傷害降低 3%", "effectViet": "Bản thân giảm 3% sát thương phải chịu.", "effectVersion": "2021-11"}
+        recs = bbd.build_books_dict({"防备": {"viet": "Phòng Bị", **effect}}, FACET)
+        self.assertEqual({key: recs[0][key] for key in effect}, effect)
+
+    def test_partial_effect_rejected(self):
+        # Có chữ Hán mà thiếu bản dịch (hoặc phiên bản) thì hồ sơ hai ngôn ngữ lệch nhau -> ném.
+        for partial in ({"effect": "x"}, {"effect": "x", "effectViet": "y"}, {"effectViet": "y", "effectVersion": "2021-11"}):
+            with self.assertRaises(ValueError, msg=partial):
+                bbd.build_books_dict({"防备": {"viet": "Phòng Bị", **partial}}, FACET)
+
+    def test_source_names_carried_sorted(self):
+        recs = bbd.build_books_dict({"防备": {"viet": "Phòng Bị", "sourceNames": ["防備"]}}, FACET)
+        self.assertEqual(recs[0]["sourceNames"], ["防備"])
+
+    def test_excluded_source_name_cannot_belong_to_a_book(self):
+        # Tên loại trừ (binh thư khác bị dịch nhầm) mà lại là tên nguồn của một binh thư -> mâu thuẫn, ném.
+        m = {"防备": {"viet": "Phòng Bị", "sourceNames": ["防備"]}, "铁甲": {"viet": "Giáp Sắt", "excludedSourceNames": ["防備"]}}
+        with self.assertRaises(ValueError):
+            bbd.build_books_dict(m, FACET)
+
     def test_real_map_against_real_facets(self):
         with open(os.path.join(_ROOT, "data", "facets.json"), encoding="utf-8") as fh:
             facet_books = [b["value"] for b in json.load(fh)["books"]]
         with open(os.path.join(_ROOT, "data", "books-dict.json"), encoding="utf-8") as fh:
             committed = json.load(fh)
         built = bbd.build_books_dict(bbd._load_map(), facet_books)
-        self.assertEqual(
-            [(r["chinese"], r["viet"]) for r in built],
-            [(r["chinese"], r["viet"]) for r in committed],
-        )
+        self.assertEqual(built, committed)
+
+    def test_every_published_book_has_effect(self):
+        # Hồ sơ Binh thư không còn ô hiệu ứng "Đang cập nhật" ở cả bản Việt lẫn bản zh.
+        with open(os.path.join(_ROOT, "data", "books-dict.json"), encoding="utf-8") as fh:
+            built = json.load(fh)
+        missing = [r["viet"] for r in built if not (r.get("effect") and r.get("effectViet") and r.get("effectVersion"))]
+        self.assertEqual(missing, [])
 
 
 if __name__ == "__main__":

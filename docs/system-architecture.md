@@ -37,7 +37,7 @@ local MCP client ───────────stdio────────�
 2. `normalize.py` sửa chữ nguồn (bỏ dấu thanh kết hợp thừa, NFC), áp aliases, nickname theo nguồn và chuẩn hóa team.
 3. `build_json.py` nối Team PK curate `pipeline/team-intro-supplement.json`, ghi đè `teams.json`, `facets.json` (trùng byte bản commit; `--check` chỉ so); `coexist.json`, `khaihoang.json` chỉ khi có `--overwrite-curated`; giữ ID đội đã commit và dừng nếu một ID công khai sẽ mất ([cảnh báo rebuild](deployment-guide.md#cảnh-báo-bắt-buộc)).
 4. Từ điển tướng/chiến pháp (`heroes-dict.json`, `tactics.json`) do Tra cứu thống nhất sở hữu: `build_unified_lookup.py` dựng candidate, `promote_unified_lookup.py` kích hoạt ([unified-lookup.md](unified-lookup.md)); legacy builder không ghi hai file này.
-5. `build_books_dict.py` validate map binh thư curate với facet; dòng `outsideTeams` (sách không đội nào dùng) phải nằm ngoài facet.
+5. `build_books_dict.py` validate map binh thư curate với facet; dòng `outsideTeams` (sách không đội nào dùng) phải nằm ngoài facet; hiệu ứng phải đủ chữ Hán nguồn, bản dịch đã duyệt và mốc số liệu. `sourceNames` là khóa nối ô Đội chuẩn có tên Hán nguồn với hồ sơ (`createLookupIdResolver` trong `js/lookup-ids.js`); ô chỉ có tên Việt mới tra theo slug.
 6. `build_team_tier.py` join bảng tier curate vào team ID.
 7. Maintainer review diff và chạy test trước khi publish artifact.
 

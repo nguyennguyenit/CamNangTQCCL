@@ -57,7 +57,7 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | [`mcp-worker/scripts/`](../mcp-worker/scripts/) | Deterministic asset build/evidence, exact-version deployment controller, live/edge verifier và repository gate credential-free. |
 | `pipeline/site_localization.py`, `pipeline/site-localization-policy.json` | Inventory/review gate, candidate private và publication pin chung cho display, Recommended và Lookup. |
 | `pipeline/build_json.py` | Build team, facet từ HTML export + `team-intro-supplement.json` (trùng byte bản commit, `--check`); Cùng Tồn, khai hoang chỉ với `--overwrite-curated`. |
-| `pipeline/build_books_dict.py` | Validate bảng map Hán→Việt với facet binh thư. |
+| `pipeline/build_books_dict.py` | Validate bảng map Hán→Việt với facet binh thư; mang hiệu ứng (`effect`/`effectViet`/`effectVersion`, đủ cả ba) và tên nguồn (`sourceNames`/`excludedSourceNames`). |
 | `pipeline/build_team_tier.py` | Join tier curate theo team ID, validate tier fail-loud. |
 | `worker/src/index.ts` | `POST /analyze`: origin, limits, Turnstile, image guard, model, response. |
 | `worker/src/config.ts`, `schema.ts` | Env config và schema kết quả cho 4 mode. |
@@ -70,7 +70,7 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | `data/team-tier.json` | 31 team, 39 rankings |
 | `data/tactics.json` | 406 (Tra cứu thống nhất, [unified-lookup.md](unified-lookup.md)) |
 | `data/heroes-dict.json` | 202 (Tra cứu thống nhất) |
-| `data/books-dict.json` | 66 |
+| `data/books-dict.json` | 68 |
 | `data/coexist.json` | 5 nhóm, 25 team |
 | `data/khaihoang.json` | 17 team, 5 mỏ |
 | `data/tactics-generic.json` | 29 record nguồn |

@@ -11,7 +11,7 @@
 3. [Tên chưa có link: danh tính](#tên-chưa-có-link-danh-tính)
 4. [Lỗi phát hiện trong dữ liệu hiện có](#lỗi-phát-hiện-trong-dữ-liệu-hiện-có)
 5. [Giới hạn](#giới-hạn)
-6. [Bước tiếp theo](#bước-tiếp-theo)
+6. [Trạng thái sau triển khai (2026-10-07)](#trạng-thái-sau-triển-khai-2026-10-07)
 7. [Câu hỏi còn mở](#câu-hỏi-còn-mở)
 
 ## Kết quả chính
@@ -85,20 +85,26 @@ Ngoài ra còn 5 binh thư có trong nguồn nhưng chưa có trong từ điển
 - Nguồn là bài của người chơi và trang tin, không phải mô tả trong game. Bahamut 9596 là bản chép lại thông tin bên CN.
 - Không tìm được nguồn tiếng Việt nào có tên binh thư. Tên VN của các binh thư mới chỉ lấy được từ ảnh client.
 
-## Bước tiếp theo
+## Trạng thái sau triển khai (2026-10-07)
 
-1. Sửa dữ liệu tên, không cần research thêm:
-   - `pipeline/books-han-viet-map.json`: đổi `出其不意` → `出奇制胜` và `顺应天时` → `顺天应时`; thêm `分利` → Chia Lời và `神清气净` → Tinh Thần Sảng Khoái (cả hai đã khớp hiệu ứng, tên đã có trong facet); cập nhật `_unresolved`.
-   - `pipeline/recommended-identity-map.json`: sửa `以退為進` không còn trỏ về Dĩ Trực Báo Oán; ghép `順天應時`; bỏ nhãn tên cũ của `出奇制勝`.
-   - Thêm alias `拓濟世救貧` → `tactic:te-ban-hao-thi`, với tiền tố `拓` giữ như `精`/`轉`.
-   - Kết quả: 3 ô chiến pháp và 29 ô binh thư có link (21 + 8). Còn lại 3 ô `無功而厲` và 6 ô `以退為進` (tách khỏi hồ sơ sai), chờ tên VN.
-2. Thêm trường hiệu ứng cho `books-dict`: đọc file JSON kèm theo trong `build_books_dict.py`, dịch sang tiếng Việt, rồi hiển thị trong hồ sơ Tra cứu, ghi rõ phiên bản số liệu.
-3. Chụp màn hình client VN của các binh thư `無功而厲`, `以退為進`, `千里疾行`, `仙姿`, `謀定後動`, `以治擊亂` để có tên game VN.
-4. Quyết định cách hiển thị `異族弓` / `異族盾`: một hồ sơ chung, hoặc giữ dạng chữ kèm chú thích.
+Đã làm (xem changelog 2026-10-07):
+
+- 68 binh thư có `effect`/`effectViet`/`effectVersion` trong `pipeline/books-han-viet-map.json` → `data/books-dict.json`; hồ sơ Tra cứu hiện hiệu ứng và mốc số liệu ở cả bản Việt và zh.
+- Sửa tên Hán `出其不意` → `出奇制胜`, `顺应天时` → `顺天应时`, `以武止戈` → `以治击乱` (người dùng xác nhận hiệu ứng client VN của Lấy Võ Dẹp Loạn: "Đối với võ tướng trong trạng thái khống chế, sát thương gây ra tăng 12%"); thêm Chia Lời (`分利`) và Tinh Thần Sảng Khoái (`神清气净`).
+- Link Đội chuẩn tra binh thư theo tên Hán nguồn (`sourceNames`): 21 ô `順天應時` và 8 ô `分利` có link; 6 ô `以退為進` (`excludedSourceNames` của Dĩ Trực Báo Oán) không còn link sai.
+
+Không làm, vì `pipeline/recommended-identity-map.json` là nguồn glossary của gate bản dịch (sửa là stale toàn bộ review receipt):
+
+- Chữ Việt trên ô Đội chuẩn vẫn là bản dịch cũ: "Thuận Thiên Ứng Thời" (21 ô), "Dĩ Trực Báo Oán" cho `以退為進` (6 ô).
+- 3 ô `拓濟世救貧` chưa có link.
+- Các alias cũ trong mục danh tính (`以武止戈`, `顺应天时`, `出其不意`) vẫn là khóa tìm của nhóm Binh thư.
+
+Bản đề xuất sửa identity map (đã thử, bị gate chặn) không được lưu; khi có lần duyệt lại toàn bộ bản dịch thì làm cùng: `displayNameVi` của `順天應時` → Thuận Thiên Thuận Tời, `以退為進` không trỏ Dĩ Trực Báo Oán, `拓濟世救貧` → "Thác · Tế Bần Hảo Thi", cập nhật ba mục `reviewed` theo tên Hán mới của `books-dict` và thêm hai mục Chia Lời / Tinh Thần Sảng Khoái.
 
 ## Câu hỏi còn mở
 
-- `以武止戈` trong từ điển là tên Hán sai của `以治擊亂`, hay là một binh thư mới chưa có nguồn công khai?
-- `以退為進` hiện còn trong game không, hay đã được thay bằng `以直報怨`? Bảng danh tính ghi đó là đổi tên, nhưng nguồn 2024 cho thấy hai binh thư tồn tại song song.
+- `以退為進` hiện còn trong game không, hay đã được thay bằng `以直報怨`? Nguồn 2024 cho thấy hai binh thư tồn tại song song; dữ liệu hiện coi là hai binh thư khác nhau.
+- Tên game VN của `無功而厲`, `以退為進`, `千里疾行`, `仙姿`, `謀定後動` (cần ảnh client).
 - Số liệu binh thư sau 2024-07 có đổi không? Cần một nguồn trong game hoặc thông báo chính thức mới hơn.
 - "Thuận Thiên Thuận Tời" là tên trên client VN hay lỗi gõ?
+- Tên Hán `开合` (Khai Hạp) lệch nguồn `開闔`/`开阖`; chưa sửa (link không bị ảnh hưởng vì `開闔` đã là `sourceNames`).
