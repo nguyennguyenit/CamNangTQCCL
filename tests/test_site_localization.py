@@ -62,7 +62,7 @@ class SiteLocalizationTest(unittest.TestCase):
         self.assertEqual(report["capturedSourcePack"]["records"], 1366)
         self.assertEqual(report["capturedSourcePack"]["noteBlocks"], 1967)
         self.assertEqual(report["translation"]["recommendedObligations"], 1967)
-        self.assertEqual(report["translation"]["lookupReviewObligations"], 3503)
+        self.assertEqual(report["translation"]["lookupReviewObligations"], 3597)
         self.assertGreater(report["translation"]["expectedObligations"], 5470)
         self.assertEqual(report["translation"]["missing"], 0)
         obligations = site_translation_obligations(ROOT, self.pack)
@@ -70,7 +70,7 @@ class SiteLocalizationTest(unittest.TestCase):
         lookup = json.loads((ROOT / "pipeline/lookup-translations.json").read_bytes())
         lookup_keys = {(item["entityId"], item["fieldPath"]) for item in lookup["entries"]}
         self.assertEqual(len(site_keys), 2073)
-        self.assertEqual(len(lookup_keys), 3503)
+        self.assertEqual(len(lookup_keys), 3597)
         self.assertTrue(site_keys.isdisjoint(lookup_keys))
         self.assertEqual(len(site_keys | lookup_keys), report["translation"]["expectedObligations"])
 
@@ -235,8 +235,8 @@ class SiteLocalizationTest(unittest.TestCase):
             }))
             report = check(root, policy=self.policy)
             self.assertEqual(report["exitCode"], 1)
-            self.assertEqual(report["coverage"]["expected"], 5576)
-            self.assertEqual(report["coverage"]["translated"], 5470)
+            self.assertEqual(report["coverage"]["expected"], 5670)
+            self.assertEqual(report["coverage"]["translated"], 5564)
             self.assertEqual(report["coverage"]["missing"], 106)
             self.assertTrue(any("coverage does not match" in item["reason"] for item in report["problems"]))
 

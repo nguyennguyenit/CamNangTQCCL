@@ -193,31 +193,97 @@ class BuildUnifiedLookupTest(unittest.TestCase):
             self.assertEqual(corrected["sourceValueHash"], canonical_sha(50))
             self.assertEqual(corrected["localValueHash"], canonical_sha(0.5))
 
+    def _input_copy(self, directory, category=None, mutate=None, mutate_guide=None):
+        """Copy the captured snapshot + sibling inputs, mutate them and rebind manifest, identity and guide hashes."""
+        source_copy = directory / "source"
+        shutil.copytree(ROOT / "data" / "sgsdeck", source_copy)
+        manifest = json.loads((source_copy / "manifest.json").read_bytes())
+        if category is not None:
+            document = json.loads((source_copy / f"{category}.json").read_bytes())
+            mutate(document)
+            body = json.dumps(document, ensure_ascii=False).encode()
+            (source_copy / f"{category}.json").write_bytes(body)
+            manifest["files"][category] = hashlib.sha256(body).hexdigest()
+        manifest_bytes = json.dumps(manifest, ensure_ascii=False).encode()
+        (source_copy / "manifest.json").write_bytes(manifest_bytes)
+        identity_dir = directory / "identity"
+        identity_dir.mkdir()
+        identity = json.loads((ROOT / "pipeline" / "lookup-identity.json").read_bytes())
+        identity["sourceManifestHash"] = hashlib.sha256(manifest_bytes).hexdigest()
+        (identity_dir / "lookup-identity.json").write_text(json.dumps(identity, ensure_ascii=False), encoding="utf-8")
+        shutil.copy2(ROOT / "pipeline" / "sgsdeck-name-map.json", identity_dir / "sgsdeck-name-map.json")
+        guide = json.loads((ROOT / "pipeline" / "sgsdeck-guide.json").read_bytes())
+        guide["snapshotManifestHash"] = hashlib.sha256(manifest_bytes).hexdigest()
+        if mutate_guide is not None:
+            mutate_guide(guide)
+        (identity_dir / "sgsdeck-guide.json").write_text(json.dumps(guide, ensure_ascii=False), encoding="utf-8")
+        return source_copy, identity_dir / "lookup-identity.json"
+
     def test_stale_source_value_correction_fails_the_build(self):
         with tempfile.TemporaryDirectory() as directory:
             directory = Path(directory)
-            source_copy = directory / "source"
-            shutil.copytree(ROOT / "data" / "sgsdeck", source_copy)
-            tactics_doc = json.loads((source_copy / "tactics.json").read_bytes())
-            record = next(row for row in tactics_doc["records"] if row["sourceId"] == "cmtb9e3c6000058f84ugbcun5")
-            record["attributes"]["activationRate"] = 0.5
-            tactics_bytes = json.dumps(tactics_doc, ensure_ascii=False).encode()
-            (source_copy / "tactics.json").write_bytes(tactics_bytes)
-            manifest = json.loads((source_copy / "manifest.json").read_bytes())
-            manifest["files"]["tactics"] = hashlib.sha256(tactics_bytes).hexdigest()
-            manifest_bytes = json.dumps(manifest, ensure_ascii=False).encode()
-            (source_copy / "manifest.json").write_bytes(manifest_bytes)
-            identity_dir = directory / "identity"
-            identity_dir.mkdir()
-            identity = json.loads((ROOT / "pipeline" / "lookup-identity.json").read_bytes())
-            identity["sourceManifestHash"] = hashlib.sha256(manifest_bytes).hexdigest()
-            (identity_dir / "lookup-identity.json").write_text(json.dumps(identity, ensure_ascii=False), encoding="utf-8")
-            shutil.copy2(ROOT / "pipeline" / "sgsdeck-name-map.json", identity_dir / "sgsdeck-name-map.json")
+
+            def drift(document):
+                record = next(row for row in document["records"] if row["sourceId"] == "cmtb9e3c6000058f84ugbcun5")
+                record["attributes"]["activationRate"] = 0.5
+
+            source_copy, identity = self._input_copy(directory, "tactics", drift)
             with self.assertRaisesRegex(ValueError, "stale source value correction"):
                 build_candidate(
                     inputs=ROOT / "pipeline" / "lookup-inputs",
                     source=source_copy,
-                    identity=identity_dir / "lookup-identity.json",
+                    identity=identity,
+                    translations=ROOT / "pipeline" / "lookup-translations.json",
+                    output=directory / "candidate",
+                )
+
+    def test_hero_guide_publishes_reviewed_usage_and_card_packs(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "candidate"
+            self._build(output)
+            heroes = json.loads((output / "heroes-dict.json").read_bytes())
+            by_id = {row["id"]: row for row in heroes}
+            dien_vi = by_id["hero:sp-dien-vi"]["lookup"]
+            self.assertEqual(dien_vi["usageZh"], "可留一個，優先拆折衝禦侮、酌情換虎衛軍，其次升星")
+            self.assertIn("Đánh Bại Quân Địch", dien_vi["usageVi"])
+            self.assertEqual(
+                [(row["packVi"], row["categoryVi"], row["isCore"], row["coreRate"], row["nonCoreRate"]) for row in dien_vi["cardPacks"]],
+                [
+                    ("Danh tướng", "Gói Danh tướng", True, 0.34, 0.66),
+                    ("Sưu tầm", "Gói Sưu tầm", False, 0.36, 0.64),
+                    ("Động Như Lôi Đình", "Gói EX (Quyền Âm Lôi)", True, 0.41, 0.59),
+                    ("PK Danh tướng III", "Gói Danh tướng PK", True, 0.47, 0.53),
+                ],
+            )
+            self.assertEqual(dien_vi["cardPacks"][0]["packZh"], "名將")
+            self.assertEqual(sum(row["lookup"]["usageVi"] is not None for row in heroes), 94)
+            self.assertEqual(sum(bool(row["lookup"]["cardPacks"]) for row in heroes), 126)
+            for row in heroes:
+                self.assertEqual(row["lookup"]["usageVi"] is None, row["lookup"]["usageZh"] is None, row["id"])
+            ledger = {
+                (row["entityId"], row["fieldPath"]): row
+                for row in json.loads((output / "ledger.json").read_bytes())
+            }
+            usage = ledger[("hero:sp-dien-vi", "guide.usage")]
+            self.assertEqual(usage["disposition"], "translated-public")
+            self.assertIsNotNone(usage["translationInputFingerprint"])
+            pack = ledger[("hero:sp-dien-vi", "guide.cardPacks[0].tier")]
+            self.assertEqual(pack["disposition"], "typed-public")
+            self.assertEqual(ledger[("hero:tuan-uc", "guide.usage")]["disposition"], "missing-source")
+
+    def test_unknown_card_pack_name_fails_the_build(self):
+        with tempfile.TemporaryDirectory() as directory:
+            directory = Path(directory)
+
+            def rename_pack(document):
+                document["cardPacks"][0]["nameZh"] = "新卡包"
+
+            source_copy, identity = self._input_copy(directory, mutate_guide=rename_pack)
+            with self.assertRaisesRegex(ValueError, "unknown nonempty enum card pack"):
+                build_candidate(
+                    inputs=ROOT / "pipeline" / "lookup-inputs",
+                    source=source_copy,
+                    identity=identity,
                     translations=ROOT / "pipeline" / "lookup-translations.json",
                     output=directory / "candidate",
                 )
@@ -284,6 +350,7 @@ class BuildUnifiedLookupTest(unittest.TestCase):
             shutil.copy2(ROOT / "pipeline" / "lookup-identity.json", copied_identity)
             shutil.copy2(ROOT / "pipeline" / "lookup-translations.json", copied_translations)
             shutil.copy2(ROOT / "pipeline" / "sgsdeck-name-map.json", protected_root / "sgsdeck-name-map.json")
+            shutil.copy2(ROOT / "pipeline" / "sgsdeck-guide.json", protected_root / "sgsdeck-guide.json")
             with self.assertRaisesRegex(ValueError, "overlaps"):
                 build_candidate(
                     inputs=copied_inputs,
@@ -367,6 +434,11 @@ class BuildUnifiedLookupTest(unittest.TestCase):
                 ("troop option text", lambda h, t, c: c["troopMods"][0]["options"][0].update(descriptionVi={})),
                 ("max level", lambda h, t, c: c["buildings"][0].update(maxLevel="invalid")),
                 ("building level text", lambda h, t, c: c["buildings"][0]["levels"][0].update(effectVi={})),
+                ("usage text", lambda h, t, c: h[0]["lookup"].update(usageVi={})),
+                ("usage without source", lambda h, t, c: next(row for row in h if row["lookup"]["usageVi"])["lookup"].update(usageZh=None)),
+                ("card pack rate", lambda h, t, c: next(row for row in h if row["lookup"]["cardPacks"])["lookup"]["cardPacks"][0].update(coreRate="invalid")),
+                ("card pack shape", lambda h, t, c: next(row for row in h if row["lookup"]["cardPacks"])["lookup"]["cardPacks"][0].update(packId="p1")),
+                ("card pack list", lambda h, t, c: h[0]["lookup"].update(cardPacks=None)),
             ]
             for label, mutate in cases:
                 candidate_heroes = copy.deepcopy(heroes)

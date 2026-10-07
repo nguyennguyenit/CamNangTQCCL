@@ -264,6 +264,16 @@ test("nested DTO sai shape bị từ chối trước khi tới profile renderer"
   const heroBundle = withRaw("heroes-dict.json", malformedHero);
   await assert.rejects(validateLookupBundle(heroBundle.manifest, heroBundle.rawFiles), /revisions|hero:luu-bi/);
 
+  for (const [label, lookupOver] of [
+    ["usage chỉ một nửa", { usageZh: null }],
+    ["gói thiếu tỉ lệ", { cardPacks: [{ ...heroesDoc()[0].lookup.cardPacks[0], coreRate: null }] }],
+    ["gói tỉ lệ ngoài 0–1", { cardPacks: [{ ...heroesDoc()[0].lookup.cardPacks[0], nonCoreRate: 66 }] }],
+    ["gói thừa khóa", { cardPacks: [{ ...heroesDoc()[0].lookup.cardPacks[0], packId: "p1" }] }],
+  ]) {
+    const bundle = withRaw("heroes-dict.json", heroesDoc().map((hero) => ({ ...hero, lookup: { ...hero.lookup, ...lookupOver } })));
+    await assert.rejects(validateLookupBundle(bundle.manifest, bundle.rawFiles), /hero:luu-bi/, label);
+  }
+
   const malformedTactic = tacticsDoc().map((tactic) => ({
     ...tactic,
     lookup: { ...tactic.lookup, activationRate: {} },

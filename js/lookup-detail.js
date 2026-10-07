@@ -204,6 +204,15 @@ function base(entry) {
   return { id: entry.id, group: entry.group, titleVi: entryTitle(entry), fields: [], aptitudes: [], sections: [], relations: [], children: [], conditions: [], revisions: [], viOnly: false };
 }
 
+const percentText = (rate) => `${Number((rate * 100).toFixed(1))}%`;
+/** Một dòng "Cách nhận": loại gói · tên gói, tướng có phải tướng lõi không và tỉ lệ ra tướng lõi/thường của cả gói. */
+function cardPackField(pack, index) {
+  const labelVi = ZH() ? `${pack.categoryZh} · ${pack.packZh}` : `${pack.categoryVi} · ${pack.packVi}`;
+  const tier = pack.isCore ? L("Tướng lõi", "核心") : L("Thường", "非核心");
+  const rates = `${L("lõi", "核心")} ${percentText(pack.coreRate)} / ${L("thường", "非核心")} ${percentText(pack.nonCoreRate)}`;
+  return field(`cardPack${index}`, pack.isCore, labelVi, `${tier} · ${rates}`);
+}
+
 function heroProfile(corpus, entry) {
   const row = entry.record;
   const lookup = row.lookup ?? {};
@@ -223,6 +232,8 @@ function heroProfile(corpus, entry) {
   ]) optionalLocalized(profile, key, value, label);
   const enabledFlags = Object.entries(lookup.flags ?? {}).filter(([, enabled]) => enabled === true).map(([key]) => FLAG_LABELS[key] ?? key);
   if (enabledFlags.length) pushField(profile, "flags", enabledFlags, L("Đặc tính", "特性"), enabledFlags.join(" · "));
+  // Đánh giá giữ/rã thẻ: bản zh hiện chữ Hán nguồn `usageZh`.
+  if (lookup.usageVi) pushLocalized(profile, "usage", lookup.usageVi, L("Đánh giá", "评价"), lookup.usageVi, lookup.usageZh);
   for (const key of ["luc", "tri", "thong", "toc", "chinh", "mi"]) pushField(profile, key, row.stats?.[key]);
   profile.aptitudes = [
     ...["ky", "thuan", "cung", "thuong", "khiGioi"].map((key) => field(key, row.troopApt?.[key])),
@@ -230,6 +241,7 @@ function heroProfile(corpus, entry) {
   ].filter(Boolean);
   const growth = Object.entries(lookup.growth ?? {}).map(([key, value]) => field(key, value)).filter(Boolean);
   profile.sections.push({ key: "growth", titleVi: L("Tăng trưởng", "成长"), fields: growth });
+  if (lookup.cardPacks?.length) profile.sections.push({ key: "cardPacks", titleVi: L("Cách nhận", "获取途径"), fields: lookup.cardPacks.map(cardPackField) });
   const selfId = lookup.selfTacticId ?? uniqueChineseTactic(corpus, row.selfTacticCn);
   const inheritId = lookup.inheritTacticId ?? uniqueChineseTactic(corpus, row.inheritTacticCn);
   profile.relations.push(relation(corpus, "selfTactic", L("Chiến pháp bản thân", "自带战法"), selfId, "tactics"));
@@ -352,7 +364,8 @@ function buildingProfile(_corpus, entry) {
 }
 
 /**
- * Binh thư: dữ liệu chỉ có tên (Việt, Hán-Việt, chữ Hán), chưa có hiệu ứng — ô hiệu ứng hiện trạng thái
+ * Binh thư: tên (Việt, Hán-Việt, chữ Hán) và hiệu ứng nếu dữ liệu có — bản Việt hiện `effectViet` đã duyệt,
+ * bản zh hiện chữ Hán nguồn `effect`, kèm mốc số liệu `effectVersion`. Mục chưa có hiệu ứng để trạng thái
  * trống chung, không bịa. Tên Hán-Việt chỉ hiện ở bản Việt khi khác tên dịch nghĩa. Tên cũ trong nguồn
  * (`formerNames`, chữ Hán) chỉ hiện ở bản zh để trang Việt không lẫn chữ Hán.
  */
@@ -361,7 +374,9 @@ function bookProfile(_corpus, entry) {
   const profile = base(entry);
   if (!ZH() && row.hanViet && row.hanViet !== row.viet) pushField(profile, "hanViet", row.hanViet, L("Tên Hán-Việt", "汉越名"));
   if (ZH() && row.formerNames?.length) pushField(profile, "formerNames", row.formerNames.join(" · "), L("Tên cũ", "旧名"));
-  pushField(profile, "effect", null, L("Hiệu ứng", "效果"));
+  const hasEffect = Boolean(row.effect && row.effectViet);
+  pushField(profile, "effect", hasEffect ? (ZH() ? row.effect : row.effectViet) : null, L("Hiệu ứng", "效果"));
+  if (hasEffect && row.effectVersion) pushField(profile, "effectVersion", row.effectVersion, L("Số liệu theo bản", "数据版本"));
   return profile;
 }
 

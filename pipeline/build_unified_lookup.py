@@ -18,6 +18,7 @@ from pipeline.lookup_translations import (
     translation_fingerprint,
     validate_translation_entries,
 )
+from pipeline.query_sgsdeck_catalog import validate_guide_document
 from pipeline.sgsdeck_identity import canonical_id
 from pipeline.unified_lookup_identity import _child_row, _fingerprint, _slug, _source_row, validate_registry
 
@@ -37,7 +38,8 @@ BUILDING_KEYS = COMMON_KEYS | {"summaryVi", "mainCityOnly", "maxLevel", "levels"
 OPTION_KEYS = {"id", "tierVi", "nameVi", "descriptionVi", "convertsToVi"}
 LEVEL_KEYS = {"id", "level", "costs", "durationVi", "effectVi"}
 FIELD_LEDGER_KEYS = {"entityId", "fieldPath", "disposition", "chosenInput", "sourceRecordId", "sourceFieldPath", "sourceValueHash", "localValueHash", "reason", "translationInputFingerprint", "reviewEvidence"}
-HERO_LOOKUP_KEYS = {"conditions", "missingFields", "revisions", "variant", "selfTacticId", "inheritTacticId", "advisorId", "growth", "otherAptitudes", "categoryVi", "exclusiveTitleVi", "civil", "civilInnatePoints", "collectibleBonusVi", "redRulesVi", "flags"}
+HERO_LOOKUP_KEYS = {"conditions", "missingFields", "revisions", "variant", "selfTacticId", "inheritTacticId", "advisorId", "growth", "otherAptitudes", "categoryVi", "exclusiveTitleVi", "civil", "civilInnatePoints", "collectibleBonusVi", "redRulesVi", "flags", "usageVi", "usageZh", "cardPacks"}
+CARD_PACK_KEYS = {"packVi", "packZh", "categoryVi", "categoryZh", "isCore", "coreRate", "nonCoreRate"}
 TACTIC_LOOKUP_KEYS = {"conditions", "missingFields", "revisions", "activationRate", "cooldown", "maxUsers", "pointCost", "effectTypeVi", "exchangeConditionVi", "acquiredFromVi", "inheritedFromIds", "conflictsVi"}
 SLOTS = {"武器": "Vũ khí", "防具": "Phòng cụ", "坐騎": "Tọa kỵ", "寶物": "Bảo vật", "WEAPON": "Vũ khí", "ARMOR": "Phòng cụ", "MOUNT": "Tọa kỵ", "TREASURE": "Bảo vật"}
 GOLDEN_HERO_DELTAS = {
@@ -69,6 +71,19 @@ QUALITY = {"橙": "Cam", "紫": "Tím", "藍": "Lam", "綠": "Lục"}
 ELEMENTS = {"風": "Phong", "火": "Hỏa", "水": "Thủy", "土": "Thổ", "雷": "Lôi", "山": "Sơn", "林": "Lâm"}
 TIERS = {"SPECIAL": "Đặc biệt", "BASIC": "Cơ bản", "INTERMEDIATE": "Trung cấp", "ADVANCED": "Cao cấp", "T0": "T0", "T1": "T1", "T2": "T2", "T3": "T3"}
 TROOPS = {"CAVALRY": "Kỵ binh", "SHIELD": "Khiên binh", "BOW": "Cung binh", "SPEAR": "Thương binh", "SIEGE": "Khí giới"}
+# Tên gói chiêu mộ và loại gói đã duyệt. Gói mới của nguồn làm build dừng ở `_enum` cho tới khi được dịch ở đây.
+CARD_PACKS = {
+    "名將": "Danh tướng", "典藏卡包": "Sưu tầm",
+    "其疾如風": "Kỳ Tật Như Phong", "其徐如林": "Kỳ Từ Như Lâm", "侵略如火": "Xâm Lược Như Hỏa", "不動如山": "Bất Động Như Sơn",
+    "懸權而動": "Huyền Quyền Nhi Động", "難知如陰": "Nan Tri Như Âm", "動如雷霆": "Động Như Lôi Đình",
+    "PK 名將 I": "PK Danh tướng I", "PK 名將 II": "PK Danh tướng II", "PK 名將 III": "PK Danh tướng III", "PK 名將 IV": "PK Danh tướng IV",
+    "S1 名將卡包": "Danh tướng S1", "S2 名將卡包": "Danh tướng S2", "S3 名將卡包": "Danh tướng S3",
+}
+CARD_PACK_CATEGORIES = {
+    "名將卡包": "Gói Danh tướng", "典藏卡包": "Gói Sưu tầm",
+    "EX小卡包（風林火山）": "Gói EX (Phong Lâm Hỏa Sơn)", "EX小卡包（權陰雷）": "Gói EX (Quyền Âm Lôi)",
+    "PK名將卡包": "Gói Danh tướng PK", "雙十一限定": "Giới hạn 11/11",
+}
 _ROOT_TRANSLATION_FIELDS = {
     "generals": {
         "attributes.category": "lookup.categoryVi",
@@ -241,7 +256,7 @@ def _revisions(source_text, translated_text):
     return rows
 
 
-def _translation_specs(source_docs, source_owner, child_ids, glossary, baseline_heroes, baseline_tactics, identity_hash):
+def _translation_specs(source_docs, source_owner, child_ids, glossary, baseline_heroes, baseline_tactics, identity_hash, guide_by_source):
     specs = {}
     baseline_hero_by_owner = {canonical_id("hero", row.get("viet") or row["hanViet"]): row for row in baseline_heroes}
     baseline_tactic_by_owner = {canonical_id("tactic", row.get("viet") or row["hanViet"]): row for row in baseline_tactics}
@@ -333,6 +348,14 @@ def _translation_specs(source_docs, source_owner, child_ids, glossary, baseline_
                         attrs.get("exchangeCondition"),
                         acquisition_context,
                     )
+
+    for record in source_docs["generals"]["records"]:
+        add(
+            source_owner[f"generals:{record['sourceId']}"],
+            "lookup.usageVi",
+            guide_by_source[record["sourceId"]]["usage"],
+            record_context(record, "guide.usage"),
+        )
 
     tactic_record_by_owner = {
         source_owner[f"tactics:{record['sourceId']}"]: record
@@ -498,13 +521,29 @@ def _enum(table, value, field):
     return table[value]
 
 
+def _public_card_packs(guide_doc):
+    """Pack table keyed by source pack ID, with the reviewed Vietnamese pack and category names."""
+    return {
+        pack["id"]: {
+            "packVi": _enum(CARD_PACKS, pack["nameZh"], "card pack"),
+            "packZh": pack["nameZh"],
+            "categoryVi": _enum(CARD_PACK_CATEGORIES, pack["category"], "card pack category"),
+            "categoryZh": pack["category"],
+            "coreRate": _number_or_none(pack["coreRate"]),
+            "nonCoreRate": _number_or_none(pack["nonCoreRate"]),
+        }
+        for pack in guide_doc["cardPacks"]
+    }
+
+
 def _captured(inputs, source, identity, translations):
     baseline = _capture_dir(inputs, ("heroes-dict.json", "tactics.json", "manifest.json"))
     source_bytes = _capture_dir(source, tuple(f"{name}.json" for name in SOURCE_GROUPS) + ("manifest.json",))
     identity_bytes = _capture_file(identity)
     translation_bytes = _capture_file(translations)
-    mapping_path = Path(identity).with_name("sgsdeck-name-map.json")
+    mapping_path, guide_path = _sibling_inputs(identity)
     mapping_bytes = _capture_file(mapping_path)
+    guide_bytes = _capture_file(guide_path)
     baseline_manifest = _json(baseline["manifest.json"])
     for name in ("heroes-dict.json", "tactics.json"):
         if _sha(baseline[name]) != baseline_manifest["files"][name]:
@@ -520,12 +559,14 @@ def _captured(inputs, source, identity, translations):
         raise ValueError("identity does not bind captured source manifest")
     if identity_doc["existingMap"]["sha256"] != _sha(mapping_bytes):
         raise ValueError("identity does not bind captured legacy map")
+    validate_guide_document(_json(guide_bytes), source_bytes["manifest.json"], _json(source_bytes["generals.json"]))
     return {
         "baseline": baseline,
         "source": source_bytes,
         "identity": identity_bytes,
         "translations": translation_bytes,
         "mapping": mapping_bytes,
+        "guide": guide_bytes,
     }
 
 
@@ -678,6 +719,8 @@ def _build_model(capture):
     identity = _json(capture["identity"])
     mapping = _json(capture["mapping"])
     translations = _json(capture["translations"])
+    guide_doc = _json(capture["guide"])
+    guide_by_source = {row["sourceId"]: row for row in guide_doc["generals"]}
     source_owner, decision_by_owner, decisions, _unused = _lookup_maps(identity, mapping)
     child_ids = _child_id_map(identity, source_docs, source_owner)
     corrections = _resolved_source_value_corrections(source_docs, source_owner)
@@ -687,7 +730,7 @@ def _build_model(capture):
         "relations": [{key: row.get(key) for key in ("ownerId", "fieldPath", "targetId")} for row in identity["relationDecisions"]],
         "childIds": [{key: row.get(key) for key in ("id", "parentId", "kind", "inputKey")} for row in identity["childIds"]],
     }))
-    specs = _translation_specs(source_docs, source_owner, child_ids, translations["glossaryVersion"], baseline_heroes, baseline_tactics, identity_translation_context)
+    specs = _translation_specs(source_docs, source_owner, child_ids, translations["glossaryVersion"], baseline_heroes, baseline_tactics, identity_translation_context, guide_by_source)
     legacy_owners = {
         f"{row['category']}:{row['sourceId']}": canonical_id(
             "hero" if row["category"] == "generals" else "tactic",
@@ -714,13 +757,14 @@ def _build_model(capture):
     hero_sources = {source_owner[f"generals:{row['sourceId']}"]: row for row in source_docs["generals"]["records"]}
     tactic_sources = {source_owner[f"tactics:{row['sourceId']}"]: row for row in source_docs["tactics"]["records"]}
 
+    card_packs = _public_card_packs(guide_doc)
     heroes = []
     for owner in list(old_heroes) + sorted(set(hero_sources) - set(old_heroes)):
         source = hero_sources.get(owner)
         if source is None:
             row = dict(old_heroes[owner])
             row["id"] = owner
-            row["lookup"] = {"conditions": [], "missingFields": [], "revisions": [], "variant": "base", "selfTacticId": None, "inheritTacticId": None, "advisorId": None, "growth": {key: None for key in ("luc", "tri", "thong", "toc", "chinh", "mi")}, "otherAptitudes": {"infantry": None, "navy": None}, "categoryVi": None, "exclusiveTitleVi": None, "civil": {"roleVi": None, "bonusVi": None, "specialtyVi": None, "tacticBonusVi": None}, "civilInnatePoints": None, "collectibleBonusVi": None, "redRulesVi": None, "flags": {key: None for key in ("isCollectible", "isDynamicOpen", "isMusou", "isCO", "isSp")}}
+            row["lookup"] = {"conditions": [], "missingFields": [], "revisions": [], "variant": "base", "selfTacticId": None, "inheritTacticId": None, "advisorId": None, "growth": {key: None for key in ("luc", "tri", "thong", "toc", "chinh", "mi")}, "otherAptitudes": {"infantry": None, "navy": None}, "categoryVi": None, "exclusiveTitleVi": None, "civil": {"roleVi": None, "bonusVi": None, "specialtyVi": None, "tacticBonusVi": None}, "civilInnatePoints": None, "collectibleBonusVi": None, "redRulesVi": None, "flags": {key: None for key in ("isCollectible", "isDynamicOpen", "isMusou", "isCO", "isSp")}, "usageVi": None, "usageZh": None, "cardPacks": []}
             heroes.append(row)
             continue
         attrs = source["attributes"]
@@ -758,6 +802,8 @@ def _build_model(capture):
             "civil": {"roleVi": translated.get((owner, "lookup.civil.roleVi")), "bonusVi": translated.get((owner, "lookup.civil.bonusVi")), "specialtyVi": translated.get((owner, "lookup.civil.specialtyVi")), "tacticBonusVi": translated.get((owner, "lookup.civil.tacticBonusVi"))},
             "civilInnatePoints": _number_or_none(attrs.get("civilInnatePoints")), "collectibleBonusVi": translated.get((owner, "lookup.collectibleBonusVi")), "redRulesVi": translated.get((owner, "lookup.redRulesVi")),
             "flags": {"isCollectible": attrs.get("isCollectible"), "isDynamicOpen": attrs.get("isDynamicOpen"), "isMusou": attrs.get("isMusou"), "isCO": attrs.get("isCO"), "isSp": attrs.get("isSp")},
+            "usageVi": translated.get((owner, "lookup.usageVi")), "usageZh": guide_by_source[source["sourceId"]]["usage"],
+            "cardPacks": [{**card_packs[pack["packId"]], "isCore": pack["tier"] == "core"} for pack in guide_by_source[source["sourceId"]]["cardPacks"]],
         }
         heroes.append(row)
 
@@ -884,6 +930,18 @@ def _build_model(capture):
             for path, value in _flatten({key: value for key, value in record.items() if key != "attributes"}, "sourceRecord"):
                 translation_key = (owner, "conditions.scenarioVi") if path == "sourceRecord.sourceSeason.scenarioName" else None
                 ledger.append({"entityId": owner, "fieldPath": path, "disposition": "translated-public" if translation_key else "private-evidence", "chosenInput": "source", "sourceRecordId": record["sourceId"], "sourceFieldPath": path, "sourceValueHash": _sha(canonical_json_bytes(value)), "localValueHash": None, "reason": "Scenario condition translated for public display." if translation_key else "Provider/top-level source value retained only in private evidence.", "translationInputFingerprint": specs.get(translation_key) if translation_key else None, "reviewEvidence": ["captured source manifest", "private identity/translation ledgers"]})
+    for record in source_docs["generals"]["records"]:
+        owner = source_owner[f"generals:{record['sourceId']}"]
+        guide = guide_by_source[record["sourceId"]]
+        for path, value in _flatten({"usage": guide["usage"], "cardPacks": guide["cardPacks"]}, "guide"):
+            fingerprint = specs.get((owner, "lookup.usageVi")) if path == "guide.usage" else None
+            if value is None or value == []:
+                disposition, reason = "missing-source", "Source guide has no value for this general."
+            elif fingerprint:
+                disposition, reason = "translated-public", "Captured guide usage bound to reviewed Vietnamese output."
+            else:
+                disposition, reason = "typed-public", "Captured card pack appearance selected for the typed public card pack list."
+            ledger.append({"entityId": owner, "fieldPath": path, "disposition": disposition, "chosenInput": "source" if disposition != "missing-source" else "none", "sourceRecordId": record["sourceId"], "sourceFieldPath": path, "sourceValueHash": _sha(canonical_json_bytes(value)), "localValueHash": None, "reason": reason, "translationInputFingerprint": fingerprint, "reviewEvidence": ["captured SGSDeck guide", "private translation ledger"]})
     for kind, baseline_rows in (("hero", baseline_heroes), ("tactic", baseline_tactics)):
         for baseline in baseline_rows:
             owner = canonical_id(kind, baseline.get("viet") or baseline["hanViet"])
@@ -1015,7 +1073,16 @@ def _validate_payloads(heroes, tactics, catalog):
             or any(value is not None and not isinstance(value, str) for value in lookup["otherAptitudes"].values())
             or any(value is not None and type(value) is not bool for value in lookup["flags"].values())
             or any(not _optional_string(value) for value in lookup["civil"].values())
-            or any(not _optional_string(lookup[field]) for field in ("categoryVi", "exclusiveTitleVi", "collectibleBonusVi", "redRulesVi"))
+            or any(not _optional_string(lookup[field]) for field in ("categoryVi", "exclusiveTitleVi", "collectibleBonusVi", "redRulesVi", "usageVi", "usageZh"))
+            or (lookup["usageVi"] is None) != (lookup["usageZh"] is None)
+            or not isinstance(lookup["cardPacks"], list)
+            or any(
+                not isinstance(pack, dict) or set(pack) != CARD_PACK_KEYS
+                or not all(isinstance(pack[field], str) and pack[field] for field in ("packVi", "packZh", "categoryVi", "categoryZh"))
+                or type(pack["isCore"]) is not bool
+                or not all(_optional_number(pack[field]) and pack[field] is not None and 0 <= pack[field] <= 1 for field in ("coreRate", "nonCoreRate"))
+                for pack in lookup["cardPacks"]
+            )
             or not _optional_number(lookup["civilInnatePoints"])
             or lookup["variant"] not in {"base", "sp", "co", "40y"}
             or not _string_list(lookup["missingFields"])
@@ -1279,9 +1346,26 @@ def _publish_candidate(output, artifacts):
         os.close(parent_fd)
 
 
+def _sibling_inputs(identity):
+    """Reviewed legacy name map and SGSDeck general guide live beside the identity registry."""
+    identity = Path(identity)
+    return identity.with_name("sgsdeck-name-map.json"), identity.with_name("sgsdeck-guide.json")
+
+
+def _input_hashes(capture):
+    return {
+        "baselineManifest": _sha(capture["baseline"]["manifest.json"]),
+        "sourceManifest": _sha(capture["source"]["manifest.json"]),
+        "identity": _sha(capture["identity"]),
+        "translations": _sha(capture["translations"]),
+        "mapping": _sha(capture["mapping"]),
+        "guide": _sha(capture["guide"]),
+    }
+
+
 def build_candidate(*, inputs, source, identity, translations, output, after_capture=None):
-    mapping_path = Path(identity).with_name("sgsdeck-name-map.json")
-    output = _ensure_distinct_output(output, (inputs, source, identity, translations, mapping_path))
+    protected = (inputs, source, identity, translations, *_sibling_inputs(identity))
+    output = _ensure_distinct_output(output, protected)
     module_paths = {
         name: Path(__file__).with_name(name)
         for name in ("build_unified_lookup.py", "lookup_translations.py", "sgsdeck_identity.py", "unified_lookup_identity.py")
@@ -1311,13 +1395,7 @@ def build_candidate(*, inputs, source, identity, translations, output, after_cap
     generation = {
         "schemaVersion": 1,
         "generationId": generation_id,
-        "inputHashes": {
-            "baselineManifest": _sha(capture["baseline"]["manifest.json"]),
-            "sourceManifest": _sha(capture["source"]["manifest.json"]),
-            "identity": _sha(capture["identity"]),
-            "translations": _sha(capture["translations"]),
-            "mapping": _sha(capture["mapping"]),
-        },
+        "inputHashes": _input_hashes(capture),
         "builderHash": _sha(execution_bytes["build_unified_lookup.py"]),
         "executionHashes": {name: _sha(payload) for name, payload in execution_bytes.items()},
         "compatibility": compatibility,
@@ -1336,7 +1414,7 @@ def build_candidate(*, inputs, source, identity, translations, output, after_cap
         "ledgerHash": _sha(ledger_bytes),
     }
     output.parent.mkdir(parents=True, exist_ok=True)
-    output = _ensure_distinct_output(output, (inputs, source, identity, translations, mapping_path))
+    output = _ensure_distinct_output(output, protected)
     artifacts = {
         **payloads,
         "lookup-manifest.json": json.dumps(manifest, ensure_ascii=False, sort_keys=True, indent=2).encode() + b"\n",
@@ -1385,7 +1463,7 @@ def validate_candidate(candidate, *, inputs=None, source=None, identity=None, tr
         or generation["generationId"] != manifest["generationId"]
         or generation["outputHashes"] != manifest["files"]
         or generation["ledger"] != "ledger.json"
-        or set(generation["inputHashes"]) != {"baselineManifest", "sourceManifest", "identity", "translations", "mapping"}
+        or set(generation["inputHashes"]) != {"baselineManifest", "sourceManifest", "identity", "translations", "mapping", "guide"}
         or set(generation["executionHashes"]) != {"build_unified_lookup.py", "lookup_translations.py", "sgsdeck_identity.py", "unified_lookup_identity.py"}
         or generation["builderHash"] != generation["executionHashes"]["build_unified_lookup.py"]
         or any(not re.fullmatch(r"[0-9a-f]{64}", value) for value in (*generation["inputHashes"].values(), *generation["executionHashes"].values(), generation["ledgerHash"]))
@@ -1420,13 +1498,7 @@ def validate_candidate(candidate, *, inputs=None, source=None, identity=None, tr
     identity = Path(identity) if identity is not None else repo_root / "pipeline" / "lookup-identity.json"
     translations = Path(translations) if translations is not None else repo_root / "pipeline" / "lookup-translations.json"
     approved = _captured(inputs, source, identity, translations)
-    approved_input_hashes = {
-        "baselineManifest": _sha(approved["baseline"]["manifest.json"]),
-        "sourceManifest": _sha(approved["source"]["manifest.json"]),
-        "identity": _sha(approved["identity"]),
-        "translations": _sha(approved["translations"]),
-        "mapping": _sha(approved["mapping"]),
-    }
+    approved_input_hashes = _input_hashes(approved)
     module_paths = {
         name: Path(__file__).with_name(name)
         for name in ("build_unified_lookup.py", "lookup_translations.py", "sgsdeck_identity.py", "unified_lookup_identity.py")

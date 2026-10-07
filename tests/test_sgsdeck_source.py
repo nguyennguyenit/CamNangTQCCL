@@ -32,6 +32,57 @@ class SgsdeckSourceTest(unittest.TestCase):
         self.assertNotIn("lore", detail["attributes"])
         self.assertNotIn("imageUrl", detail["attributes"])
 
+    def test_parses_general_guide_usage_and_card_pack_appearances(self):
+        packs = (
+            '"cardPackAppearances":['
+            '{"cardPackId":"p2","generalId":"g1","tier":"non-core","cardPack":{"id":"p2",'
+            '"slug":"典藏卡包","nameZh":"典藏卡包","category":"典藏卡包","coreRate":0.36,'
+            '"nonCoreRate":0.64,"sortOrder":1,"createdAt":"2026-04-19T01:05:43.561Z"}},'
+            '{"cardPackId":"p1","generalId":"g1","tier":"core","cardPack":{"id":"p1",'
+            '"slug":"名將","nameZh":"名將","category":"名將卡包","coreRate":0.34,'
+            '"nonCoreRate":0.66,"sortOrder":0}}]'
+        )
+        html = flight_html(
+            '7:["$","div",null,{"general":{"id":"g1","nameZh":"SP 典韋",'
+            '"usage":"  可留一個，其次升星\\n","description":"可留一個",' + packs + '}}]'
+        )
+        detail = sgsdeck_source.parse_general_detail(html)
+        self.assertEqual(detail["guide"], {
+            "usage": "可留一個，其次升星",
+            "cardPacks": [{"packId": "p1", "tier": "core"}, {"packId": "p2", "tier": "non-core"}],
+        })
+        self.assertEqual(detail["cardPacks"], [
+            {"id": "p1", "nameZh": "名將", "category": "名將卡包", "coreRate": 0.34, "nonCoreRate": 0.66, "sortOrder": 0},
+            {"id": "p2", "nameZh": "典藏卡包", "category": "典藏卡包", "coreRate": 0.36, "nonCoreRate": 0.64, "sortOrder": 1},
+        ])
+        self.assertNotIn("usage", detail["attributes"])
+        self.assertNotIn("cardPackAppearances", detail["attributes"])
+
+    def test_general_without_guide_data_has_an_empty_guide(self):
+        html = flight_html('7:["$","div",null,{"general":{"id":"g1","nameZh":"趙雲","usage":"  "}}]')
+        detail = sgsdeck_source.parse_general_detail(html)
+        self.assertEqual(detail["guide"], {"usage": None, "cardPacks": []})
+        self.assertEqual(detail["cardPacks"], [])
+
+    def test_rejects_malformed_card_pack_appearances(self):
+        valid = {"cardPackId": "p1", "generalId": "g1", "tier": "core", "cardPack": {
+            "id": "p1", "nameZh": "名將", "category": "名將卡包",
+            "coreRate": 0.34, "nonCoreRate": 0.66, "sortOrder": 0,
+        }}
+        broken = {
+            "unknown tier": {**valid, "tier": "gold"},
+            "other general": {**valid, "generalId": "g2"},
+            "pack id drift": {**valid, "cardPackId": "p9"},
+            "rate out of range": {**valid, "cardPack": {**valid["cardPack"], "coreRate": 34}},
+            "empty pack name": {**valid, "cardPack": {**valid["cardPack"], "nameZh": " "}},
+            "duplicate pack": [valid, valid],
+        }
+        for label, appearances in broken.items():
+            rows = appearances if isinstance(appearances, list) else [appearances]
+            payload = json.dumps({"general": {"id": "g1", "nameZh": "趙雲", "cardPackAppearances": rows}}, ensure_ascii=False, separators=(",", ":"))
+            with self.subTest(label), self.assertRaisesRegex(ValueError, "card pack"):
+                sgsdeck_source.parse_general_detail(flight_html(f'7:["$","div",null,{payload}]'))
+
     def test_parses_building_level_table_as_structured_game_facts(self):
         html = (
             '<table><thead><tr><th>等級</th><th>木材</th><th>鐵礦</th>'

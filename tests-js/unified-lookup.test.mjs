@@ -131,7 +131,7 @@ const CATALOG = {
 
 // Dạng thật của `data/books-dict.json`: không có `id`, `hanViet` có thể vắng hoặc khác tên dịch nghĩa.
 const BOOKS = [
-  { chinese: "百战", viet: "Bách Chiến", hanViet: "Bách Chiến" },
+  { chinese: "百战", viet: "Bách Chiến", hanViet: "Bách Chiến", sourceNames: ["百戰"], effect: "自帶戰法的發動機率提高 3%", effectViet: "Tỷ lệ phát động của chiến pháp tự mang tăng 3%.", effectVersion: "2021-11" },
   { chinese: "守而有道", viet: "Biết Cách Phòng Thủ" },
   { chinese: "无名" },
 ];
@@ -311,6 +311,8 @@ test("chữ Hán chỉ là alias tìm kiếm cho mọi nhóm", () => {
     ["troop-mods", "丹陽兵", "troop-mod:dan-duong-binh"],
     ["buildings", "八陣圖", "building:bat-tran-do"],
     ["books", "守而有道", "book:biet-cach-phong-thu"],
+    // Tên nguồn phồn thể của binh thư (`sourceNames`) cũng là khóa tìm.
+    ["books", "百戰", "book:bach-chien"],
   ];
   for (const [group, query, id] of cases) {
     const found = searchLookupGroup(built, { group, query });
@@ -327,14 +329,34 @@ test("không có kết quả trả tổng 0 và không còn trang", () => {
   assert.equal(empty.hasMore, false);
 });
 
-test("deep link binh thư `?id=book:<slug>` mở đúng hồ sơ, hiệu ứng để trạng thái trống", () => {
+test("deep link binh thư `?id=book:<slug>` mở đúng hồ sơ kèm hiệu ứng và phiên bản số liệu", () => {
   const route = parseLookupQuery("?id=book%3Abach-chien", "books");
   assert.equal(route.error, null);
   assert.equal(route.id, "book:bach-chien");
   assert.equal(parseLookupQuery("?id=book%3Abach-chien", "tactics").otherGroup, "books");
   const profile = lookupProfile(corpus(), route.id);
   assert.equal(profile.titleVi, "Bách Chiến");
-  assert.deepEqual(profile.fields.map((field) => [field.key, field.value]), [["effect", null]]);
+  assert.deepEqual(profile.fields.map((field) => [field.key, field.textVi]), [
+    ["effect", "Tỷ lệ phát động của chiến pháp tự mang tăng 3%."],
+    ["effectVersion", "2021-11"],
+  ]);
+});
+
+test("hồ sơ binh thư bản zh hiện hiệu ứng chữ Hán nguồn; binh thư chưa có hiệu ứng để trạng thái trống", () => {
+  const previous = globalThis.document;
+  globalThis.document = { documentElement: { lang: "zh-CN" } };
+  try {
+    const zh = lookupProfile(corpus(), "book:bach-chien");
+    assert.deepEqual(zh.fields.map((field) => [field.key, field.textVi]), [
+      ["effect", "自帶戰法的發動機率提高 3%"],
+      ["effectVersion", "2021-11"],
+    ]);
+    assert.equal(zh.viOnly, false);
+  } finally {
+    globalThis.document = previous;
+  }
+  const bare = lookupProfile(corpus(), "book:biet-cach-phong-thu");
+  assert.deepEqual(bare.fields.map((field) => [field.key, field.value]), [["effect", null]]);
 });
 
 test("corpus chỉ có payload đã tải: nhóm thiếu dữ liệu rỗng, quan hệ sang nhóm đó chưa giải được", () => {
@@ -349,23 +371,23 @@ test("corpus chỉ có payload đã tải: nhóm thiếu dữ liệu rỗng, qua
 });
 
 test("tên cũ của binh thư (bảng danh tính) tìm được và chỉ hiện trên hồ sơ bản zh", () => {
-  const books = [{ chinese: "以直报怨", viet: "Dĩ Trực Báo Oán" }];
+  // Mục danh tính chỉ có chữ Hán = tên cũ đã xác nhận; mục có kèm tên Việt chỉ là alias tìm kiếm.
+  const books = [{ chinese: "新书", viet: "Sách Mới" }];
   const bookAliases = bookSourceAliases(books, [
-    { kind: "book", aliases: ["以退為進"], displayNameVi: "Dĩ Trực Báo Oán" },
-    { kind: "book", aliases: ["Dĩ Trực Báo Oán", "以直報怨", "以直报怨"], displayNameVi: "Dĩ Trực Báo Oán" },
+    { kind: "book", aliases: ["舊書"], displayNameVi: "Sách Mới" },
+    { kind: "book", aliases: ["Sách Mới", "新書", "新书"], displayNameVi: "Sách Mới" },
   ]);
-  // Tên phồn thể là alias tìm kiếm, nhưng chỉ tên nguồn đứng riêng (đổi tên) mới là "tên cũ".
-  assert.deepEqual(bookAliases, { "book:di-truc-bao-oan": { aliases: ["以退為進", "以直報怨"], formerNames: ["以退為進"] } });
+  assert.deepEqual(bookAliases, { "book:sach-moi": { aliases: ["舊書", "新書"], formerNames: ["舊書"] } });
   const built = buildLookupCorpus({ heroes: [], tactics: [], catalog: { equipment: [], specials: [], advisors: [], troopMods: [], buildings: [] }, books, bookAliases });
-  for (const query of ["以退為進", "以直報怨"]) {
-    assert.equal(searchLookupGroup(built, { group: "books", query }).items[0]?.id, "book:di-truc-bao-oan", query);
+  for (const query of ["舊書", "新書"]) {
+    assert.equal(searchLookupGroup(built, { group: "books", query }).items[0]?.id, "book:sach-moi", query);
   }
-  assert.equal(lookupProfile(built, "book:di-truc-bao-oan").fields.some((field) => field.key === "formerNames"), false);
+  assert.equal(lookupProfile(built, "book:sach-moi").fields.some((field) => field.key === "formerNames"), false);
   const previous = globalThis.document;
   globalThis.document = { documentElement: { lang: "zh-CN" } };
   try {
-    const former = lookupProfile(built, "book:di-truc-bao-oan").fields.find((field) => field.key === "formerNames");
-    assert.equal(former?.value, "以退為進");
+    const former = lookupProfile(built, "book:sach-moi").fields.find((field) => field.key === "formerNames");
+    assert.equal(former?.value, "舊書");
   } finally {
     globalThis.document = previous;
   }
@@ -471,6 +493,42 @@ test("hồ sơ tướng có đủ chỉ số, thích tính và metadata đã duy
     assert.ok(profile.aptitudes.some((apt) => apt.key === key), `thiếu thích tính ${key}`);
   }
   assert.ok(profile.sections.some((section) => section.key === "growth"), "thiếu khối tăng trưởng");
+});
+
+test("hồ sơ tướng có đánh giá giữ/rã thẻ và cách nhận theo gói, bản zh dùng chữ Hán nguồn", () => {
+  const packs = [
+    { packVi: "Danh tướng", packZh: "名將", categoryVi: "Gói Danh tướng", categoryZh: "名將卡包", isCore: true, coreRate: 0.34, nonCoreRate: 0.66 },
+    { packVi: "Sưu tầm", packZh: "典藏卡包", categoryVi: "Gói Sưu tầm", categoryZh: "典藏卡包", isCore: false, coreRate: 0.36, nonCoreRate: 0.64 },
+  ];
+  const built = buildLookupCorpus({
+    heroes: [
+      hero("hero:sp-dien-vi", "SP Điển Vi", { lookup: { usageVi: "Có thể giữ 1 thẻ.", usageZh: "可留一個", cardPacks: packs } }),
+      hero("hero:khong-goi", "Không Gói", { lookup: { usageVi: null, usageZh: null, cardPacks: [] } }),
+    ],
+    tactics: TACTIC_POOL,
+    catalog: CATALOG,
+  });
+  const rows = (profile) => profile.sections.find((section) => section.key === "cardPacks")?.fields.map((field) => [field.labelVi, field.textVi]);
+
+  const vi = lookupProfile(built, "hero:sp-dien-vi");
+  assert.equal(fieldByKey(vi, "usage").labelVi, "Đánh giá");
+  assert.equal(fieldByKey(vi, "usage").textVi, "Có thể giữ 1 thẻ.");
+  assert.equal(vi.sections.find((section) => section.key === "cardPacks").titleVi, "Cách nhận");
+  assert.deepEqual(rows(vi), [
+    ["Gói Danh tướng · Danh tướng", "Tướng lõi · lõi 34% / thường 66%"],
+    ["Gói Sưu tầm · Sưu tầm", "Thường · lõi 36% / thường 64%"],
+  ]);
+
+  const zh = asZhPage(() => lookupProfile(built, "hero:sp-dien-vi"));
+  assert.equal(fieldByKey(zh, "usage").textVi, "可留一個");
+  assert.deepEqual(rows(zh), [
+    ["名將卡包 · 名將", "核心 · 核心 34% / 非核心 66%"],
+    ["典藏卡包 · 典藏卡包", "非核心 · 核心 36% / 非核心 64%"],
+  ]);
+
+  const empty = lookupProfile(built, "hero:khong-goi");
+  assert.equal(fieldByKey(empty, "usage"), undefined);
+  assert.equal(rows(empty), undefined);
 });
 
 test("hồ sơ chiến pháp dùng bản Việt, không mượn effect gốc để lấp chỗ trống", () => {

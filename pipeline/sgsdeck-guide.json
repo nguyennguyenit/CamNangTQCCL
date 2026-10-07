@@ -1,0 +1,2723 @@
+{
+  "cardPacks": [
+    {
+      "category": "名將卡包",
+      "coreRate": 0.34,
+      "id": "cmo52eaie0000t4f8u0bd28dc",
+      "nameZh": "名將",
+      "nonCoreRate": 0.66,
+      "sortOrder": 0
+    },
+    {
+      "category": "典藏卡包",
+      "coreRate": 0.36,
+      "id": "cmo52eavd0001t4f86sn3268p",
+      "nameZh": "典藏卡包",
+      "nonCoreRate": 0.64,
+      "sortOrder": 1
+    },
+    {
+      "category": "EX小卡包（風林火山）",
+      "coreRate": 0.41,
+      "id": "cmo52eb7n0002t4f8vbg3is2s",
+      "nameZh": "其疾如風",
+      "nonCoreRate": 0.59,
+      "sortOrder": 2
+    },
+    {
+      "category": "EX小卡包（風林火山）",
+      "coreRate": 0.41,
+      "id": "cmo52ebjl0003t4f8eofx73vy",
+      "nameZh": "其徐如林",
+      "nonCoreRate": 0.59,
+      "sortOrder": 3
+    },
+    {
+      "category": "EX小卡包（風林火山）",
+      "coreRate": 0.41,
+      "id": "cmo52ebvj0004t4f8wg2sw56l",
+      "nameZh": "侵略如火",
+      "nonCoreRate": 0.59,
+      "sortOrder": 4
+    },
+    {
+      "category": "EX小卡包（風林火山）",
+      "coreRate": 0.41,
+      "id": "cmo52ec7i0005t4f88wuuhi91",
+      "nameZh": "不動如山",
+      "nonCoreRate": 0.59,
+      "sortOrder": 5
+    },
+    {
+      "category": "EX小卡包（權陰雷）",
+      "coreRate": 0.41,
+      "id": "cmo52ecjk0006t4f82xercewo",
+      "nameZh": "懸權而動",
+      "nonCoreRate": 0.59,
+      "sortOrder": 6
+    },
+    {
+      "category": "EX小卡包（權陰雷）",
+      "coreRate": 0.41,
+      "id": "cmo52ecvi0007t4f8xv3g46c4",
+      "nameZh": "難知如陰",
+      "nonCoreRate": 0.59,
+      "sortOrder": 7
+    },
+    {
+      "category": "EX小卡包（權陰雷）",
+      "coreRate": 0.41,
+      "id": "cmo52ed7e0008t4f84327witr",
+      "nameZh": "動如雷霆",
+      "nonCoreRate": 0.59,
+      "sortOrder": 8
+    },
+    {
+      "category": "PK名將卡包",
+      "coreRate": 0.54,
+      "id": "cmo52edjd0009t4f80yslox31",
+      "nameZh": "PK 名將 I",
+      "nonCoreRate": 0.46,
+      "sortOrder": 9
+    },
+    {
+      "category": "PK名將卡包",
+      "coreRate": 0.54,
+      "id": "cmo52edvb000at4f88740ia67",
+      "nameZh": "PK 名將 II",
+      "nonCoreRate": 0.46,
+      "sortOrder": 10
+    },
+    {
+      "category": "PK名將卡包",
+      "coreRate": 0.47,
+      "id": "cmo52ee78000bt4f85nfvwnkz",
+      "nameZh": "PK 名將 III",
+      "nonCoreRate": 0.53,
+      "sortOrder": 11
+    },
+    {
+      "category": "PK名將卡包",
+      "coreRate": 0.4,
+      "id": "cmo52eej6000ct4f8wmr0ewz5",
+      "nameZh": "PK 名將 IV",
+      "nonCoreRate": 0.6,
+      "sortOrder": 12
+    },
+    {
+      "category": "雙十一限定",
+      "coreRate": 0.31,
+      "id": "cmo52eev4000dt4f8yxkrfxc2",
+      "nameZh": "S1 名將卡包",
+      "nonCoreRate": 0.69,
+      "sortOrder": 13
+    },
+    {
+      "category": "雙十一限定",
+      "coreRate": 0.32,
+      "id": "cmo52ef75000et4f8din6bwdr",
+      "nameZh": "S2 名將卡包",
+      "nonCoreRate": 0.68,
+      "sortOrder": 14
+    },
+    {
+      "category": "雙十一限定",
+      "coreRate": 0.33,
+      "id": "cmo52efj2000ft4f8o6wlxxqa",
+      "nameZh": "S3 名將卡包",
+      "nonCoreRate": 0.67,
+      "sortOrder": 15
+    }
+  ],
+  "fetchedAt": "2026-09-12T02:18:58+07:00",
+  "generals": [
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eb7n0002t4f8vbg3is2s",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzuqecj000r3wf8srm86cdk",
+      "usage": "必留一個，多餘將優先拆一騎當千、換鬼神霆威，其次升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzuqf0x000s3wf8ypotrn2k",
+      "usage": "必留一個，多餘將優先換嬰城自守，其次升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ef75000et4f8din6bwdr",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzuqg8t000t3wf8cw4axtco",
+      "usage": "必留一個，多餘將優先升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzuqi9h000u3wf8rowbv3y4",
+      "usage": "必留一個，多餘將換草船借箭，其次升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzuqiy4000v3wf8k9wzqbv9",
+      "usage": "必留一個，多餘將優先拆橫掃千軍，其次升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ef75000et4f8din6bwdr",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzuqjmm000w3wf8659958sv",
+      "usage": "必留一個，多餘將優先升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ec7i0005t4f88wuuhi91",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52edjd0009t4f80yslox31",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzuqkaz000x3wf8bc0cefo4",
+      "usage": "有劉備張飛必留一個，多餘將優先拆橫掃千軍，其次升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ef75000et4f8din6bwdr",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzuqkzd000y3wf8gs3jluj6",
+      "usage": "必留一個，多餘將優先拆用武通神，其次升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eb7n0002t4f8vbg3is2s",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzuqlx4000z3wf8ebx37clh",
+      "usage": "必留一個，多餘將優先換草船借箭、酌情換虎踞鷹揚，其次升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzuqmlk00103wf8gr8qtl0s",
+      "usage": "必留一個，多餘將優先拆百騎劫營、酌情換錦帆軍，其次升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ed7e0008t4f84327witr",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ee78000bt4f85nfvwnkz",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwg57f000194f8v1ioc6w5",
+      "usage": "可留一個，優先拆折衝禦侮、酌情換虎衛軍，其次升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52efj2000ft4f8o6wlxxqa",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwg69j000394f8fm0i8umn",
+      "usage": "必留一個，多餘將酌情拆偽書相間，其次升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ecvi0007t4f8xv3g46c4",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52edjd0009t4f80yslox31",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwg9mt000894f8s2ef9zzx",
+      "usage": "必留一個"
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzwgabe000994f8zoepzvxs",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzwgaex000a94f8nx5rqldx",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ecvi0007t4f8xv3g46c4",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ee78000bt4f85nfvwnkz",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwgb8u000c94f8xrd4ltkp",
+      "usage": "可留一個，多餘將優先換裸衣血戰，其次酌情拆所向披靡"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ed7e0008t4f84327witr",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwgbj6000d94f8id65hwdb",
+      "usage": "可不留，優先換武鋒陣，其次換絕其汲道，玩關銀屏槍隊優先拆大戟士"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52efj2000ft4f8o6wlxxqa",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwgc3s000f94f8pdpoc3i3",
+      "usage": "必留一個，多餘將優先升星，玩三勢呂酌情拆橫戈躍馬"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ecjk0006t4f82xercewo",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwgcv9000h94f8ueaojpr9",
+      "usage": "可留一個，優先拆八門金鎖陣，其次酌情升星、覺醒、換典藏"
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzwgd5j000i94f8ghy7tbwv",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwgdq3000k94f80fn4d2fq",
+      "usage": "必留一個，有賈詡多餘將優先升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ebjl0003t4f8eofx73vy",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52edvb000at4f88740ia67",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwge0b000l94f8usar7du4",
+      "usage": "可不留，優先拆四面楚歌、酌情換決水潰城、青州兵，其次作內政、覺醒"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ecvi0007t4f8xv3g46c4",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwgeuz000n94f8tj1od80p",
+      "usage": "可留一個，多餘將酌情拆運籌決算，其次升星、覺醒"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ecjk0006t4f82xercewo",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwgfnw000p94f8aq0y49tq",
+      "usage": "可留一個，多餘將優先換武鋒陣，其次升星、覺醒"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwggzu000r94f8ey7tjkfc",
+      "usage": "可留一個，多餘將換剛勇無前、酌情拆絕地反擊，其次酌情升星、覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwghso000t94f8z991dn8o",
+      "usage": "可不留，優先拆暫避其鋒、酌情換鐵騎驅馳，其次覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ecvi0007t4f8xv3g46c4",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwgilh000v94f82huzrc0n",
+      "usage": "可留一個，多餘將酌情拆文武雙全，其次升星、覺醒"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ec7i0005t4f88wuuhi91",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52edvb000at4f88740ia67",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwgjpi000x94f87uq97tje",
+      "usage": "必留一個，多餘將優先升星。"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwgkrp000z94f8dtfy2uyv",
+      "usage": "可留一個，多餘將優先拆破軍威勝。S8新武將，待實戰。"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ecjk0006t4f82xercewo",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwglkg001194f8v21njvcw",
+      "usage": "必留一個，多餘將優先拆速乘其利，其次升星、覺醒"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eb7n0002t4f8vbg3is2s",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwglva001294f8gldu0xmd",
+      "usage": "可不留，優先拆虎豹騎，其次覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ecjk0006t4f82xercewo",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwgmgw001494f85xzj2oy0",
+      "usage": "可留一個，優先換草船借箭、酌情拆克敵制勝，其次升星、覺醒"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eb7n0002t4f8vbg3is2s",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwgn9p001694f8jamqocpw",
+      "usage": "可留一個，多餘將優先拆鋒矢陣、換據水斷橋，其次升星、覺醒"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ed7e0008t4f84327witr",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwgocc001894f8auz2trlj",
+      "usage": "可留一個，多餘將優先拆文武雙全，其次酌情覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ef75000et4f8din6bwdr",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwgp56001a94f89713a3b3",
+      "usage": "必留一個，多餘將優先剛勇無前、擊其惰歸，酌情拆萬箭齊發"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwgpy0001c94f8t2prs0ve",
+      "usage": "必留一個，多餘將酌情拆沉沙決水，其次升星、覺醒"
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzwgq8s001d94f8e286onwt",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwgquf001f94f8nj33erev",
+      "usage": "必留一個，多餘將酌情拆運籌帷幄，其次升星、覺醒"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwgrnb001h94f8y73q37sw",
+      "usage": "必留一個，多餘將優先換撫輯軍民，其次升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52ef75000et4f8din6bwdr",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwgsg2001j94f8tzhbrxyj",
+      "usage": "必留一個，多餘將優先升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ecjk0006t4f82xercewo",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52edvb000at4f88740ia67",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwgt8u001l94f8v36ax3uo",
+      "usage": "必留一個，多餘將優先換裸衣血戰，其次優先拆所向披靡，酌情換鐵騎驅馳"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ebjl0003t4f8eofx73vy",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52edvb000at4f88740ia67",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwgwiw001p94f89o7ha5lg",
+      "usage": "必留一個，多餘將酌情拆焰逐風飛，其次升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ecjk0006t4f82xercewo",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52edjd0009t4f80yslox31",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwgxmx001r94f8esu4tm2h",
+      "usage": "可不留，優先拆一力拒守，其次酌情覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ec7i0005t4f88wuuhi91",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52edvb000at4f88740ia67",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwgyzg001t94f8jimc4pt7",
+      "usage": "張苞關興打包上陣，可留一個，有多餘張苞或關興可酌情拆士爭先赴"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ebvj0004t4f8wg2sw56l",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52edvb000at4f88740ia67",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwh0bf001v94f8owlxmfho",
+      "usage": "張苞關興打包上陣，可留一個，有多餘張苞或關興可酌情拆士爭先赴"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ebjl0003t4f8eofx73vy",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52edjd0009t4f80yslox31",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwh1dm001x94f8nmq9mrf7",
+      "usage": "必留一個，多餘將酌情拆箕型陣，其次升星。有SP袁紹優先拆SP袁紹"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52ef75000et4f8din6bwdr",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwh2gd001z94f8xqtr9u93",
+      "usage": "可留一個，多餘將酌情拆乘勝不虞，其次升星、覺醒"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwh2r7002094f84asccsq0",
+      "usage": "可不留，優先拆白毦兵，其次酌情覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ed7e0008t4f84327witr",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52edjd0009t4f80yslox31",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwh3cx002294f8n0xmm2xi",
+      "usage": "必留一個，多餘將優先升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwh45o002494f8xjywvt77",
+      "usage": "必留一個，多餘將酌情拆威謀靡亢，其次升星。有沮授優先拆沮授"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ebvj0004t4f8wg2sw56l",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eej6000ct4f8wmr0ewz5",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwh56z002694f8llexs8hk",
+      "usage": "可留一個，多餘將優先拆萬箭齊發，其次換擊其惰歸"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwh6sl002994f89w7kkqau",
+      "usage": "必留一個，多餘將優先換據水斷橋，其次升星"
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzwh7eq002a94f88zz7vepb",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ebjl0003t4f8eofx73vy",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwh7if002b94f85siomvz3",
+      "usage": "可不留，優先拆無當飛軍、換絕其汲道，其次酌情覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52efj2000ft4f8o6wlxxqa",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwh83z002d94f85udepxcb",
+      "usage": "可留一個，優先拆暫避其鋒，其次酌情升星、覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52ef75000et4f8din6bwdr",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwh97l002f94f8akd0yd8t",
+      "usage": "可留一個，優先拆勇者得前，其次升星、覺醒"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ebjl0003t4f8eofx73vy",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eej6000ct4f8wmr0ewz5",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwha93002h94f8kd9xsq6t",
+      "usage": "必留一個，多餘將優先拆鋒矢陣，其次升星、覺醒"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ebjl0003t4f8eofx73vy",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ee78000bt4f85nfvwnkz",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwhb1x002j94f8u36vy1yl",
+      "usage": "必留一個，多餘將優先換擊其惰歸、酌情拆沉沙決水，其次升星、覺醒"
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzwhdy1002l94f8a8hds429",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzwhe6h002m94f871cmo5w2",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ebvj0004t4f8wg2sw56l",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwhfa9002o94f8bi1f9sa3",
+      "usage": "必留一個，多餘將優先升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ebvj0004t4f8wg2sw56l",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52edvb000at4f88740ia67",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwhgmb002q94f8c6lnyaoa",
+      "usage": "必留一個，多餘將酌情拆焰逐風飛，其次升星。有SP諸葛亮優先拆SP諸葛亮"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52efj2000ft4f8o6wlxxqa",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwhi7x002u94f8ajrjyibm",
+      "usage": "必留一個，多餘將酌情拆奇計良謀，其次升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwhjsh002w94f8q64sk874",
+      "usage": "必留一個，多餘將優先拆臥薪嚐膽，其次升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ec7i0005t4f88wuuhi91",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52edjd0009t4f80yslox31",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwhoii002z94f81xcw2tg2",
+      "usage": "必留一個，多餘將優先升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwhr9s003194f8x4c1mk4r",
+      "usage": "可留一個，優先拆士別三日，其次酌情升星、覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwi0v6003394f8vohcqpv6",
+      "usage": "必留一個，多餘將優先拆折衝禦侮，酌情換血刃爭鋒，其次升星。有典韋優先拆典韋"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ebvj0004t4f8wg2sw56l",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ee78000bt4f85nfvwnkz",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwi1xd003594f85vkg2qra",
+      "usage": "可留一個，優先換三勢陣、酌情拆挫銳，其次酌情升星、覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52edjd0009t4f80yslox31",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52edvb000at4f88740ia67",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwi2q5003794f8cq303ier",
+      "usage": "可留一個，多餘將酌情換乘勝長驅，其次酌情升星、覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ef75000et4f8din6bwdr",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwi5zx003a94f8j2v6755q",
+      "usage": "可留一個，優先拆風助火勢，其次酌情升星、覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ec7i0005t4f88wuuhi91",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ef75000et4f8din6bwdr",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwi7b5003c94f8ttet9yna",
+      "usage": "必留一個，多餘將酌情拆克敵制勝，其次升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ecjk0006t4f82xercewo",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwi943003e94f8hapbl7zj",
+      "usage": "可留一個，優先拆破陣摧堅、酌情換虎踞鷹揚、血刃爭鋒，其次酌情覺醒、換典藏"
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzwi9ev003f94f80r9ap2bx",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzwi9ik003g94f8ufxi34nc",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ebjl0003t4f8eofx73vy",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52edjd0009t4f80yslox31",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwiaf7003i94f8kipdwh3p",
+      "usage": "必留一個，多餘將優先升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ec7i0005t4f88wuuhi91",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52edjd0009t4f80yslox31",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwibhd003k94f8bt2tf2ei",
+      "usage": "必留一個，多餘將優先拆箕型陣，其次升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwica3003m94f8298y3rrw",
+      "usage": "可留一個，多餘將酌情拆形機軍略，其次升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwid2v003o94f8dyzp4z6w",
+      "usage": "可留一個，多餘將酌情拆兵峰，其次酌情升星、覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ecjk0006t4f82xercewo",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwiegy003q94f84ko25pj2",
+      "usage": "可留一個，多餘將優先拆杯蛇鬼車，其次升星、覺醒"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ecjk0006t4f82xercewo",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eej6000ct4f8wmr0ewz5",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwift1003s94f8kzfwqxnw",
+      "usage": "可留一個，優先拆暴戾無仁、換火熾原燎，其次酌情升星、覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwiiyz003v94f80end0pbk",
+      "usage": "必留一個"
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzwij9t003w94f8aa9ekbyr",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ebvj0004t4f8wg2sw56l",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52edjd0009t4f80yslox31",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwikdy003y94f8p7q9jxe3",
+      "usage": "可留一個，優先拆威謀靡亢，其次升星"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwilgf004094f8ysb37pm9",
+      "usage": "可留一個，優先拆兵無常勢，其次酌情覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwim95004294f8fw57kn2e",
+      "usage": "可留一個，優先拆絕地反擊，其次酌情升星、覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwin1v004494f8eubzjf9e",
+      "usage": "必留一個，多餘將酌情拆兵無常勢，其次酌情升星、覺醒"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ebjl0003t4f8eofx73vy",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwinmj004594f8wj56c4rf",
+      "usage": "可不留，優先拆藤甲兵，其次酌情覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ebvj0004t4f8wg2sw56l",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwinq8004694f8rfu1dukx",
+      "usage": "可留一個，優先拆白馬義從、換三勢陣，其次酌情升星、覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwiokc004894f869uerwly",
+      "usage": "可留一個，優先換三勢陣、武鋒陣，其次酌情覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ecvi0007t4f8xv3g46c4",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwipll004a94f8p2zzraen",
+      "usage": "可留一個，優先換太平道法，其次升星、覺醒"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52edvb000at4f88740ia67",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwiqzp004c94f810pfsfa9",
+      "usage": "可不留，優先換武鋒陣、酌情拆乘勝長驅，其次酌情覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52efj2000ft4f8o6wlxxqa",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwirai004d94f8069ozhlx",
+      "usage": "可不留，優先拆象兵，其次酌情覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52efj2000ft4f8o6wlxxqa",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwisg2004f94f8iwvsdc4g",
+      "usage": "可留一個，優先拆四面楚歌、換火熾原燎，其次酌情覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ec7i0005t4f88wuuhi91",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwisqw004g94f8ac4ejyvo",
+      "usage": "可不留，優先拆陷陣營，其次酌情覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwisun004h94f8ip8ydc2t",
+      "usage": "可不留，優先拆西涼鐵騎、換武鋒陣、酌情換鐵騎驅馳，其次酌情覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eb7n0002t4f8vbg3is2s",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52efj2000ft4f8o6wlxxqa",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwitr5004j94f8k8kfh4g4",
+      "usage": "可不留，優先拆破陣摧堅，其次酌情覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ef75000et4f8din6bwdr",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwiuk1004l94f8kmsw9cff",
+      "usage": "可不留，酌情換氣凌三軍、拆誘敵深入，其次酌情覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eb7n0002t4f8vbg3is2s",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ef75000et4f8din6bwdr",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwivmn004n94f8zkoh7u4b",
+      "usage": "可不留，優先換擋風摧決、拆盛氣凌敵，其次酌情覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwiwoq004p94f8e6w0cly5",
+      "usage": "可留一個，優先拆刮骨療毒，其次升星、覺醒"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ed7e0008t4f84327witr",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwixig004r94f8qmn64v26",
+      "usage": "必留一個，多餘將酌情拆杯蛇鬼車，其次升星。有于吉優先拆于吉"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ebvj0004t4f8wg2sw56l",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ee78000bt4f85nfvwnkz",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzwiybn004t94f8572lb26a",
+      "usage": "可留一個，多餘將酌情拆傾國傾城，其次酌情升星、覺醒、換典藏"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52ef75000et4f8din6bwdr",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwiz4h004v94f8tn1q8j5a",
+      "usage": "必留一個，多餘將酌情拆智計，其次升星"
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzwizf9004w94f8wcde8w8l",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52edjd0009t4f80yslox31",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwj0m5004y94f8xrnmnoh1",
+      "usage": "可留一個"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52efj2000ft4f8o6wlxxqa",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzwj1f1005094f84vht8amb",
+      "usage": "必留一個，多餘將酌情拆奪魂挾魄，其次升星。有小喬優先拆小喬"
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52edjd0009t4f80yslox31",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzy7u8x00017wf8yd2tpj6a",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy80aw00027wf8egpqfvp6",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy80oa00037wf8n8vh54c3",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ed7e0008t4f84327witr",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ee78000bt4f85nfvwnkz",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzy81l900047wf8jfmbzfqc",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy81yl00057wf8vibh1s1y",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy82lq00067wf8wm6cz5m1",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy82z300077wf8nkiwkhlo",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy83ch00087wf8ujo91s29",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy83yt00097wf8cosnrr7k",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ecvi0007t4f8xv3g46c4",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ee78000bt4f85nfvwnkz",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzy84c5000a7wf8znziyelt",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy84pj000b7wf8y2xedszy",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy852w000c7wf8feemcokw",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy85ys000d7wf8l3v3nbx4",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy86c6000e7wf8nby6luby",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ee78000bt4f85nfvwnkz",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzy8iyf000h7wf8fuwch7ox",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzy8n1y000i7wf8mklb0j50",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy8r13000j7wf84e6wrsez",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy8rnw000k7wf8zvwmrbny",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy8sb7000l7wf80xte180e",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy8sok000m7wf86g5vnf5p",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy8t1y000n7wf8oodn5fos",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy8u63000o7wf8bei9k3xi",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy8ujh000p7wf86n1458ep",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy8v5v000q7wf8wv1m1x2f",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy8vj8000r7wf82z2oyhss",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy8vwl000s7wf8n5lhlo0q",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy8w9y000t7wf834d6r8yi",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy8xr7000u7wf8dtwjzpkg",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy8ylr000v7wf8kemfpnzl",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52efj2000ft4f8o6wlxxqa",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzy93cl000w7wf82232f25w",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ed7e0008t4f84327witr",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52edvb000at4f88740ia67",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzy973s000x7wf843nodh9q",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy9e2q00107wf8krvjoa8h",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy9eg200117wf8mx0dzt25",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy9f2r00127wf8h1qdodtl",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ec7i0005t4f88wuuhi91",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eej6000ct4f8wmr0ewz5",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzy9fg400137wf81gefxhzr",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy9g1y00147wf8lxs6mkb8",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy9gy200157wf8f7ibcgpm",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy9hla00167wf8ue4nulvm",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy9i8a00177wf83c1a8n6n",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy9ill00187wf8h7m9xqo0",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy9iyw00197wf8c56rznh8",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy9jlv001a7wf89wdzotiq",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzy9jza001b7wf8yuqlthw7",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ebjl0003t4f8eofx73vy",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ee78000bt4f85nfvwnkz",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzy9tey001d7wf82daaaeuq",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ee78000bt4f85nfvwnkz",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzy9ufs001e7wf8oqufeqqi",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eb7n0002t4f8vbg3is2s",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52edvb000at4f88740ia67",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eej6000ct4f8wmr0ewz5",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzy9v6m001f7wf8w6yr8svs",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ec7i0005t4f88wuuhi91",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eej6000ct4f8wmr0ewz5",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzya3n9001h7wf8724kd55l",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzya40k001i7wf8e230pbip",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzya4dy001j7wf8u82wpubf",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzya4r9001k7wf8awovghmj",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzya5et001l7wf8dlpf3qaz",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzya5s4001m7wf8psf6xho1",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzya6ix001o7wf8re1hu18m",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzya6wa001p7wf8gwq3ttaz",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzya7sj001q7wf8yeg3e4zw",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzya8g1001r7wf8y8093qrs",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzya9d7001s7wf8ta7eusn4",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzya9qk001t7wf8tsemimxr",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzyaadf001u7wf889e9wgb7",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzyaaqs001v7wf84xwxpaft",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ebvj0004t4f8wg2sw56l",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52edvb000at4f88740ia67",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmnzyab44001w7wf8n78yvwzs",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eej6000ct4f8wmr0ewz5",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzyabhh001x7wf8pqn2x2bj",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzyabuu001y7wf85g9r9vol",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzyac85001z7wf8j982kydt",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzyaclj00207wf8xt6doixa",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzyacyv00217wf8kfem4n49",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzyadc500227wf8jvei8ij7",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmnzyaet600237wf8k1psuzh6",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ebjl0003t4f8eofx73vy",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eej6000ct4f8wmr0ewz5",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmnzyaf6k00247wf84dzyjtv6",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eb7n0002t4f8vbg3is2s",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmo4dvzle0000u4f8f3f0fole",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ebvj0004t4f8wg2sw56l",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmo4dvzyw0001u4f8uwgelgts",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eb7n0002t4f8vbg3is2s",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmo4dw21v0002u4f8z2ig608e",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmo4dw3kk0003u4f864zly434",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmo4dw3re0004u4f8hepj09qf",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmo4dw4bo0005u4f8lmtwgmy5",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmo4dw5gq0006u4f8hxql2g4s",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmo4dw5uj0007u4f89kj91p0u",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ecvi0007t4f8xv3g46c4",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmo4dw7xj0008u4f8jk3ix9d1",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmo4dw92e0009u4f8ijttaffh",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmo4dwblm000au4f8udljhjcp",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ed7e0008t4f84327witr",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmo4dwlcp000bu4f8v51ct8sg",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ecjk0006t4f82xercewo",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmo4dwljk000cu4f83x2niuuv",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ecvi0007t4f8xv3g46c4",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ee78000bt4f85nfvwnkz",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eej6000ct4f8wmr0ewz5",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmo4dwlqg000du4f89fzkj47l",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmo4dwm41000eu4f8zf9w5clv",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ecvi0007t4f8xv3g46c4",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eej6000ct4f8wmr0ewz5",
+          "tier": "non-core"
+        }
+      ],
+      "sourceId": "cmo4dwwaj000fu4f8gponyxi6",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52ec7i0005t4f88wuuhi91",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eej6000ct4f8wmr0ewz5",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmo4dwwoh000hu4f8n7myrst1",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52ed7e0008t4f84327witr",
+          "tier": "non-core"
+        },
+        {
+          "packId": "cmo52eej6000ct4f8wmr0ewz5",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmo4dwwvg000iu4f84vgkb4ui",
+      "usage": null
+    },
+    {
+      "cardPacks": [
+        {
+          "packId": "cmo52eaie0000t4f8u0bd28dc",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eavd0001t4f86sn3268p",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eb7n0002t4f8vbg3is2s",
+          "tier": "core"
+        },
+        {
+          "packId": "cmo52eev4000dt4f8yxkrfxc2",
+          "tier": "core"
+        }
+      ],
+      "sourceId": "cmo4dwxn5000mu4f8hdfxfw2g",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmr7ud3840001lof8b9b737o5",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmr7ud3gq0003lof8uv3wn03r",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmr7ud3p20005lof8p9z205io",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmr7ud3xe0007lof8i8lnn9ul",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmr7ud45n0009lof8c76txjm0",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmr7ud4dp000blof8gozxlmsd",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmr7ud4lp000dlof8rtdkx77v",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmr7ud4to000flof807p5bxl3",
+      "usage": null
+    },
+    {
+      "cardPacks": [],
+      "sourceId": "cmtb9e3ke000258f8aks58gur",
+      "usage": null
+    }
+  ],
+  "provider": "sgsdeck",
+  "region": "TW",
+  "schemaVersion": 1,
+  "snapshotManifestHash": "33c6d960ca6bf5b969ac45d20888055a533c566cea613f30e8f82c6f81cf009e"
+}

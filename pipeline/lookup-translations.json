@@ -21358,6 +21358,25 @@
     },
     {
       "entityId": "hero:bang-duc",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "169505b036075f2bb0704e5b42cd5303103a9cafdba4073fd76523a4ea871479",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Không cần giữ. Ưu tiên rã lấy Tạm Lánh Sóng Gió, tùy tình hình đổi Thiết Kỵ Khu Trì, sau đó thức tỉnh, đổi bản sưu tầm."
+    },
+    {
+      "entityId": "hero:bang-duc",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "720947364ac85ed14f0329078d9af86091cbbfd02fe16512c5283dd7e1f6240c",
       "review": {
@@ -21412,6 +21431,25 @@
       },
       "status": "reviewed",
       "textVi": "Phượng minh Cửu Châu"
+    },
+    {
+      "entityId": "hero:bang-thong",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "36f7cbacda03900698bbe2cd4ea94dd8d364be2e6c040d841a3178a44ca981df",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên thăng sao."
     },
     {
       "entityId": "hero:bang-thong",
@@ -21472,6 +21510,25 @@
     },
     {
       "entityId": "hero:cam-ninh",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "09538c51bcd779a45519ea9b9dd284016b6c87e210e2a43744199f0cb6ca132a",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Bách Kỵ Kiếp Doanh, tùy tình hình đổi Quân Cẩm Phàm, sau đó thăng sao."
+    },
+    {
+      "entityId": "hero:cam-ninh",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "4c5df0dd64f77cb3726e591d6b8d1976b65b1086106fa0ee74c095c5fdd282e4",
       "review": {
@@ -21510,6 +21567,25 @@
     },
     {
       "entityId": "hero:cao-lam",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "896a92e46a942832cf4c3e4e30adda3b42d71e10f7e178d276960c5b6f35cf69",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Không cần giữ. Ưu tiên đổi Võ Phong Trận, tùy tình hình rã lấy Thừa Thắng Trường Khu, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm."
+    },
+    {
+      "entityId": "hero:cao-lam",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "36e238a4ce39e2f6f1b691d16851a2fc6fa7329080117c4e7f0c170d0e32c14b",
       "review": {
@@ -21545,6 +21621,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:cao-thuan",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "a2973f07554892ffb77e1c596ce92f0f9001451f479647e02fa5b9197752034a",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Không cần giữ. Ưu tiên rã lấy Hãm Trận Doanh, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm."
     },
     {
       "entityId": "hero:cao-thuan",
@@ -21643,6 +21738,25 @@
     },
     {
       "entityId": "hero:chu-du",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "28b7402e20656bb25f7e46a3b063e4c0ff5de7f96061b02422b57ea71be036ad",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên đổi Thuyền Cỏ Mượn Tên, tùy tình hình đổi Hổ Cứ Ưng Dương, sau đó thăng sao."
+    },
+    {
+      "entityId": "hero:chu-du",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "a6c9e7cc5e6396751419269aba6bc89c937fab425effa2eef47966e6b3578769",
       "review": {
@@ -21716,6 +21830,25 @@
       },
       "status": "reviewed",
       "textVi": "Bất tích khu mệnh"
+    },
+    {
+      "entityId": "hero:chu-thai",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "a00d940dc47929ef4a38812eaf4616114c1c88603127f684d30ae5a106bf4c1d",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên thăng sao."
     },
     {
       "entityId": "hero:chu-thai",
@@ -21795,6 +21928,25 @@
     },
     {
       "entityId": "hero:chuc-dung-phu-nhan",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "0073faab879a48e4ed948f592c31b34ef078e4a3a9261cf2b6cda53eb32afdd9",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Binh Vô Thường Thế, sau đó tùy tình hình thăng sao, thức tỉnh."
+    },
+    {
+      "entityId": "hero:chuc-dung-phu-nhan",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "ae1925be70983c5cfc76043d5224a0e5d6b87d862c65f6f9e669ee784996f607",
       "review": {
@@ -21849,6 +22001,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:chung-hoi",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "dcfdcf824209f9c1c60b516199a8e78dd2dab9c80a3a089b0392affedaf55eaf",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Văn Võ Song Toàn, sau đó thăng sao, thức tỉnh."
     },
     {
       "entityId": "hero:chung-hoi",
@@ -22099,6 +22270,25 @@
     },
     {
       "entityId": "hero:cong-ton-toan",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "398d484c80311d9f90845e9945ad30a6b2b5acc37f0bf2e00a2de7a4d2313fe0",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Bạch Mã Nghĩa Tòng, đổi Tam Thế Trận, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm."
+    },
+    {
+      "entityId": "hero:cong-ton-toan",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "310704e2bcd544ecef9114be37182ea198d8481868e75e6278fbd460a7673307",
       "review": {
@@ -22175,6 +22365,25 @@
     },
     {
       "entityId": "hero:dang-ngai",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "cc452f5c546c03145b36517d850b4beb3c552d822d337a9d96bd2ac27666fc3a",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Văn Võ Song Toàn, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm."
+    },
+    {
+      "entityId": "hero:dang-ngai",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "87ffdd821ff5ac167ff6283e69b811e87eb885c98253b57649c638888a77d5c8",
       "review": {
@@ -22210,6 +22419,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:dien-phong",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "0ba1469fd37994c63e5ce514e38fa1c1cddd74563d486fd455f666767e78d2f1",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Binh Vô Thường Thế, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm."
     },
     {
       "entityId": "hero:dien-phong",
@@ -22593,6 +22821,25 @@
     },
     {
       "entityId": "hero:gia-cat-luong",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "579e939127def405b31a868591ae4d7308dc2c16e8425e44f2555ffadcbc1033",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa đổi Thuyền Cỏ Mượn Tên, sau đó thăng sao."
+    },
+    {
+      "entityId": "hero:gia-cat-luong",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "084796580262beb25c56209c5cddd58e012c587e72c905c2474c5f441b38738e",
       "review": {
@@ -22647,6 +22894,25 @@
       },
       "status": "reviewed",
       "textVi": "Thần cơ mạc trắc"
+    },
+    {
+      "entityId": "hero:gia-hu",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "a26158f65800bc016fd961b5373d7d8b97fa2e8ca6109c37128e4306e2d156fb",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Ngụy Thư Tương Gian, sau đó thăng sao."
     },
     {
       "entityId": "hero:gia-hu",
@@ -22726,6 +22992,25 @@
     },
     {
       "entityId": "hero:ha-hau-don",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "26452afe116639eb6c3a4e68aaaebec32c112a144a7e1a31683b5e6c895eb11b",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Thẻ thừa đổi Cương Dũng Vô Tiền, tùy tình hình rã lấy Tuyệt Địa Phản Kích, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm."
+    },
+    {
+      "entityId": "hero:ha-hau-don",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "4578e013a96eed7678ab6135c723667b5621c9807561db2a8420f0274deb5a1c",
       "review": {
@@ -22761,6 +23046,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:ha-hau-uyen",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "d02a2fcf083d68a40df9ea62c1a3bac72036eb0041530d0e8456fb11bd33e248",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên đổi Cương Dũng Vô Tiền, Kích Kỳ Nọa Quy, tùy tình hình rã lấy Vạn Tiễn Tề Phát."
     },
     {
       "entityId": "hero:ha-hau-uyen",
@@ -22837,6 +23141,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:hac-chieu",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "8c5ecad03254d529417bca33e54d5db62a65e85e7ba0873cee1822e48896a45d",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên thăng sao; nếu chơi đội Lữ Bố Tam Thế Trận thì tùy tình hình rã lấy Hoành Qua Dược Mã."
     },
     {
       "entityId": "hero:hac-chieu",
@@ -22935,6 +23258,25 @@
     },
     {
       "entityId": "hero:hoa-da",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "ef1d53d5df00c79c1f85141fe771e0d621e54a9ef2e21da7d9c0f884dc0b11e7",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Cắt Xương Trị Độc, sau đó thăng sao, thức tỉnh."
+    },
+    {
+      "entityId": "hero:hoa-da",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "d0ec765e1eb2bc9db90e41e264ccd59892223ddcc32f51aea54b2706d447a0b3",
       "review": {
@@ -22973,6 +23315,25 @@
     },
     {
       "entityId": "hero:hoa-hung",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "b1346436252eadab5027b7ea173fbfb5c2eeb927d3d6aef27b68ed287ffe7064",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Không cần giữ. Tùy tình hình đổi Khí Lăng Tam Quân, rã lấy Dụ Địch Thâm Nhập, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm."
+    },
+    {
+      "entityId": "hero:hoa-hung",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "737dafbb1123a7a509ec38dfb64d79a2c0656837cc7a14538a5bca58dc138ebe",
       "review": {
@@ -23008,6 +23369,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:hoang-cai",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "53dd09b5a8c8cd50817be9b68c998a3a945bdb9a1bb57055a11df5dc86b0c92d",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Phong Trợ Hỏa Thế, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm."
     },
     {
       "entityId": "hero:hoang-cai",
@@ -23182,6 +23562,25 @@
     },
     {
       "entityId": "hero:hua-du",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "01daf72e41a7161284d28253a3a57f3593d7de9f3218f927834423dd3fed817c",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ."
+    },
+    {
+      "entityId": "hero:hua-du",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "5168fe97e397d5b9d82c3e5b8c91bb5cc6e232130586509a76f38dd684361c76",
       "review": {
@@ -23293,6 +23692,25 @@
       },
       "status": "reviewed",
       "textVi": "Thiên Thủy Kỳ Lân"
+    },
+    {
+      "entityId": "hero:khuong-duy",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "6b308d9b113c2218823238a9fb53dde074cde59f0e54a4b3e90e628be90b015b",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên thăng sao."
     },
     {
       "entityId": "hero:khuong-duy",
@@ -23448,6 +23866,25 @@
     },
     {
       "entityId": "hero:lo-tuc",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "31d6aa5873642af011cd9fbeff79faa395365d6dd1213a69513864a636539a38",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Kế Hay Mưu Giỏi, sau đó thăng sao."
+    },
+    {
+      "entityId": "hero:lo-tuc",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "6d7ac23ffa03f9d8511f412b2d002006477645a33a6b2cc6960d3db8086a3ce8",
       "review": {
@@ -23505,6 +23942,25 @@
     },
     {
       "entityId": "hero:lu-bo",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "d326ac68f048116742b7bbdde1861e1ab26ad92a797c6c93bb4c3a5c3771e2c5",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Nhất Kỵ Đương Thiên, đổi Quỷ Thần Đình Uy, sau đó thăng sao."
+    },
+    {
+      "entityId": "hero:lu-bo",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "3a68333a5251d25e5c42dc617259e35a0532586c43c7e55d5ef45036706e6ffa",
       "review": {
@@ -23540,6 +23996,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:lu-linh-y",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "1325ec2af4c2d6ac43942d7747a647aba668325eb71121fcce84255df2591999",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Tuyệt Địa Phản Kích, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm."
     },
     {
       "entityId": "hero:lu-linh-y",
@@ -23597,6 +24072,25 @@
       },
       "status": "reviewed",
       "textVi": "Bạch y độ giang"
+    },
+    {
+      "entityId": "hero:lu-mong",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "d5813e83746dfb7f13866f853ce697279d70606605e53a17b1d1772bfe6fd43e",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Sĩ Biệt Tam Nhật, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm."
     },
     {
       "entityId": "hero:lu-mong",
@@ -23676,6 +24170,25 @@
     },
     {
       "entityId": "hero:luc-khang",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "fd1a699affb1581c4774f25342567d0154d95b53c7fb7aac2f8cd336bdcbd1f7",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Thẻ thừa tùy tình hình đổi Thừa Thắng Trường Khu, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm."
+    },
+    {
+      "entityId": "hero:luc-khang",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "fef1f01d9b1c87d0367bdcf1638b697fceddaae22155e999339fe9131532535a",
       "review": {
@@ -23730,6 +24243,25 @@
       },
       "status": "reviewed",
       "textVi": "Liệt hỏa trương thiên"
+    },
+    {
+      "entityId": "hero:luc-ton",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "4d28699ee935c12573c6d36108c0659644eb1510b48315ea093ef52614f2c300",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên thăng sao."
     },
     {
       "entityId": "hero:luc-ton",
@@ -23825,6 +24357,25 @@
       },
       "status": "reviewed",
       "textVi": "0"
+    },
+    {
+      "entityId": "hero:luu-bi",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "7b67e2c00680c77fb2c5561e12ae538925d41265f7b8a900c2bba73144abd28e",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên đổi An Ủi Quân Dân, sau đó thăng sao."
     },
     {
       "entityId": "hero:luu-bi",
@@ -23961,6 +24512,25 @@
     },
     {
       "entityId": "hero:ly-nho",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "a5f733aeba8b018042f001eca261daa121dcb7d95998398c3d5cbc7ddba7bf97",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Tứ Diện Sở Ca, đổi Hỏa Sí Nguyên Liệu, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm."
+    },
+    {
+      "entityId": "hero:ly-nho",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "6fc1bc4d1c50219ec3308c4e44c7010d7ffeed2e948452aa0bfadf289e41bc48",
       "review": {
@@ -24053,6 +24623,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:ma-dang",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "3be5f1ea8c3942830ce4c5ca4808bff43216a21dbfe7b9701ace29e1e7244ca9",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Không cần giữ. Ưu tiên rã lấy Tây Lương Thiết Kỵ, đổi Võ Phong Trận, tùy tình hình đổi Thiết Kỵ Khu Trì, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm."
     },
     {
       "entityId": "hero:ma-dang",
@@ -24265,6 +24854,25 @@
     },
     {
       "entityId": "hero:ma-van-loc",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "2f0534d21941dfb3e1bfa936cbba92d52cd0be1b49262000357dfffc9ed2c392",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Thừa Địch Bất Ngu, sau đó thăng sao, thức tỉnh."
+    },
+    {
+      "entityId": "hero:ma-van-loc",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "d4e9ef57f1ca0ea41b7c3464180a56c832d94f07a652c823060d782071471798",
       "review": {
@@ -24322,6 +24930,25 @@
     },
     {
       "entityId": "hero:man-sung",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "a784cd3ae4a0ae96724e15a9b8a47748cba0b72dba60a84b996abb887409aa6d",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên thăng sao."
+    },
+    {
+      "entityId": "hero:man-sung",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "35423d551f437bc8cd3e8580f885a80ccafa808fedf82f389c91c38486a58ba1",
       "review": {
@@ -24360,6 +24987,25 @@
     },
     {
       "entityId": "hero:manh-hoach",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "1f6c0e26e1da24554d931bf6d6f9c0c42fc3a5ab4ba9cc7a9b8fa239caab3f35",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Binh Phong, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm."
+    },
+    {
+      "entityId": "hero:manh-hoach",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "5591cba88eaf5d32c7313e3bf99544e066d91f533d6dd513460662525e3c9aed",
       "review": {
@@ -24395,6 +25041,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:moc-loc-dai-vuong",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "be6cecf5e8c75baf40a1dbd032feaea7b42c3716bf13facaf5acbfc966052122",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Không cần giữ. Ưu tiên rã lấy Tượng Binh, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm."
     },
     {
       "entityId": "hero:moc-loc-dai-vuong",
@@ -24455,6 +25120,25 @@
     },
     {
       "entityId": "hero:nghiem-nhan",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "257d8dc95953c9f134998d601a65c517878fb1a9560e0cf6635f7c3870f088ba",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Không cần giữ. Ưu tiên rã lấy Nhất Lực Cự Thủ, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm."
+    },
+    {
+      "entityId": "hero:nghiem-nhan",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "8db50c20ba52a68d58c368b9996be7a970ba9dcf1c598f9108052210f914100a",
       "review": {
@@ -24490,6 +25174,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:ngot-dot-cot",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "de1359b6f1f044eabb27f74337af20106941a291c8bffb99744ebcd3b0c89b17",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Không cần giữ. Ưu tiên rã lấy Lính Giáp Mây, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm."
     },
     {
       "entityId": "hero:ngot-dot-cot",
@@ -24531,6 +25234,25 @@
     },
     {
       "entityId": "hero:nguy-dien",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "b7ee654bf941232e7c8f547e98c96826188d4a6ae7306732bda41bdcddf50643",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Uy Mưu Vô Địch, sau đó thăng sao. Nếu có Thư Thụ thì ưu tiên rã Thư Thụ."
+    },
+    {
+      "entityId": "hero:nguy-dien",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "c3621f97d517e5bad0e7b0d940ccfec69fa6a511a68c1f310eb4b2a1dcd26499",
       "review": {
@@ -24569,6 +25291,25 @@
     },
     {
       "entityId": "hero:nhac-tien",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "7c201357a240c2ed455f40918e8174e00ae0e05250d52c3289f0592b548235b6",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Phong Thi Trận, đổi Cứ Thủy Đoạn Kiều, sau đó thăng sao, thức tỉnh."
+    },
+    {
+      "entityId": "hero:nhac-tien",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "56bc94b715ff855f6e01b05cc7bf5e8d3ca855aa1e4062c82a830f3522c9971d",
       "review": {
@@ -24604,6 +25345,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:nhan-luong",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "0adcaf4869bf152ce5d7bd7f08f05050af9a5c25440b90ee05849f797b56433d",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Không cần giữ. Ưu tiên đổi Đương Phong Thôi Quyết, rã lấy Thịnh Khí Linh Địch, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm."
     },
     {
       "entityId": "hero:nhan-luong",
@@ -24778,6 +25538,25 @@
     },
     {
       "entityId": "hero:quach-gia",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "0c861aad6a3ab1d8ebeafe85a3d989243768c2bb64cfa23228b86b33b19c79f6",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Trầm Sa Quyết Thủy, sau đó thăng sao, thức tỉnh."
+    },
+    {
+      "entityId": "hero:quach-gia",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "99376ca50156253d897481d450573ceebc4175618227a1694eb063c1b088f86a",
       "review": {
@@ -24892,6 +25671,25 @@
     },
     {
       "entityId": "hero:quan-hung",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "32d324b8564ba740be740d848195faf9eddf27b539233761508b19a86edc7798",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Trương Bào và Quan Hưng ra trận cùng nhau, có thể giữ 1 thẻ. Có Trương Bào hoặc Quan Hưng thừa thì tùy tình hình rã lấy Sĩ Tranh Tiên Phó."
+    },
+    {
+      "entityId": "hero:quan-hung",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "3fe309649f0c84f90cba2d2f15616295d101bac76a762a85dcf15bd2cbd74072",
       "review": {
@@ -24927,6 +25725,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:quan-ngan-binh",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "3eb6e8952f50a0ac2fc64b4eec2271b0b4edc48ead829d609076e99e48ca5843",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Cơ Hình Trận, sau đó thăng sao. Nếu có SP Viên Thiệu thì ưu tiên rã SP Viên Thiệu."
     },
     {
       "entityId": "hero:quan-ngan-binh",
@@ -25139,6 +25956,25 @@
     },
     {
       "entityId": "hero:sp-chu-du",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "3d5b2aa01aca15ae1a78b2eb196796720f8982c32a79c7155233e0d1a085b215",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Lửa Đuổi Gió Bay, sau đó thăng sao. Nếu có SP Gia Cát Lượng thì ưu tiên rã SP Gia Cát Lượng."
+    },
+    {
+      "entityId": "hero:sp-chu-du",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "874e5510946451102e1d82255f0f09ab6b7a80d219edf48dda55499b16d14eaf",
       "review": {
@@ -25174,6 +26010,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:sp-chu-tuan",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "efa8bd598920bfd0776cdc9c9363925d5d9a6f0147cc33fc8ee4ccfde7028cca",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên thăng sao."
     },
     {
       "entityId": "hero:sp-chu-tuan",
@@ -25215,6 +26070,25 @@
     },
     {
       "entityId": "hero:sp-dien-vi",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "db7ceb0e799c6e8aa8577f978e1da84e8f403aaa75935a128412a5eaacbb3a8b",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Đánh Bại Quân Địch, tùy tình hình đổi Hổ Vệ Quân, sau đó thăng sao."
+    },
+    {
+      "entityId": "hero:sp-dien-vi",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "1f134439b02c07bcebc76cb6a0c69f2e3eb97694be24b672a108dfd59eb1cf10",
       "review": {
@@ -25253,6 +26127,25 @@
     },
     {
       "entityId": "hero:sp-dieu-thuyen",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "32192e5df07262ed98e84278f37e1833abc26a431c15050ee7cd1be4089edeae",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Khuynh Quốc Khuynh Thành, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm."
+    },
+    {
+      "entityId": "hero:sp-dieu-thuyen",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "64734a2f112ac05f31a196da70cc59aa5645f867b13a0e5355cf71eb04f32e82",
       "review": {
@@ -25288,6 +26181,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:sp-dong-trac",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "7fed3adce37c56b816445e522fbef1fd8d9879fb9cb6634ac9bdc0e344844a60",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Bạo Lệ Vô Nhân, đổi Hỏa Sí Nguyên Liệu, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm."
     },
     {
       "entityId": "hero:sp-dong-trac",
@@ -25348,6 +26260,25 @@
     },
     {
       "entityId": "hero:sp-gia-cat-luong",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "32e32a121699b40b142a5a44a4e5f75f47847507edcb74842032a85b59de8639",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Lửa Đuổi Gió Bay, sau đó thăng sao."
+    },
+    {
+      "entityId": "hero:sp-gia-cat-luong",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "1ab928500299f7169bebbfeefa7f8a773aa3e21a7f290e697b049708c1048aa3",
       "review": {
@@ -25383,6 +26314,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:sp-hoang-nguyet-anh",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "a5fc274ba47d937f8f1c563c1a6cb997b1e82389b4876eba528081fbe7d4098e",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Phong Thi Trận, sau đó thăng sao, thức tỉnh."
     },
     {
       "entityId": "hero:sp-hoang-nguyet-anh",
@@ -25462,6 +26412,25 @@
     },
     {
       "entityId": "hero:sp-hoang-trung",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "6763dd900889eb571b8cb4397afd544bd9a5044f964c01de0b4d33bc126257b9",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Vạn Tiễn Tề Phát, sau đó đổi Kích Kỳ Nọa Quy."
+    },
+    {
+      "entityId": "hero:sp-hoang-trung",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "21bfe433c7f0670946398a730dcf51ead549e2cd0a84e082a22ed5054daf9acb",
       "review": {
@@ -25497,6 +26466,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:sp-hua-chu",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "554ba06ec8b1af443d692da2e574253349ba03197b52427557aff16eafabf137",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Thẻ thừa ưu tiên đổi Lõa Y Huyết Chiến, sau đó tùy tình hình rã lấy Đánh Đâu Thắng Đó."
     },
     {
       "entityId": "hero:sp-hua-chu",
@@ -25690,6 +26678,25 @@
     },
     {
       "entityId": "hero:sp-ma-sieu",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "379abfa3d3777f90babee145f5bbb93b070fa86517ca66d3b71380553a67c2bf",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên đổi Lõa Y Huyết Chiến, sau đó ưu tiên rã lấy Đánh Đâu Thắng Đó, tùy tình hình đổi Thiết Kỵ Khu Trì."
+    },
+    {
+      "entityId": "hero:sp-ma-sieu",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "ba742f9c59db0b126b5c2c3d7ce269fbf82c7e67da926e287e62bb387319f831",
       "review": {
@@ -25766,6 +26773,25 @@
     },
     {
       "entityId": "hero:sp-phap-chinh",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "9086590724fdd487b03c19fc739ad70cdadff3351255fffd7a63854deb10ee1e",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên đổi Kích Kỳ Nọa Quy, tùy tình hình rã lấy Trầm Sa Quyết Thủy, sau đó thăng sao, thức tỉnh."
+    },
+    {
+      "entityId": "hero:sp-phap-chinh",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "df51ac268246d24678e15f8a0cdfb97b37db3c4bfc1a80bf385837100e05f037",
       "review": {
@@ -25823,6 +26849,25 @@
     },
     {
       "entityId": "hero:sp-quach-gia",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "44a76c765c82eac9aa94507ba7b157b99b55924b215e5d3d1a093ef08d0765f0",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ."
+    },
+    {
+      "entityId": "hero:sp-quach-gia",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "31bd63140db9a8188411270be68ac8b1736630e544b395ad9646f97f848db013",
       "review": {
@@ -25877,6 +26922,25 @@
       },
       "status": "reviewed",
       "textVi": "Uy chấn Hoa Hạ"
+    },
+    {
+      "entityId": "hero:sp-quan-vu",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "530560ce1441f727d96cbff5f5794bcfafb8f877c47b810916094a75176dee24",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Nếu có Lưu Bị và Trương Phi thì bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Hoành Tảo Thiên Quân, sau đó thăng sao."
     },
     {
       "entityId": "hero:sp-quan-vu",
@@ -26013,6 +27077,25 @@
     },
     {
       "entityId": "hero:sp-ton-kien",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "7494d69a61a510ba05e5bbe32359fb70689cc6fc4e9ed9c05330e5c3cdecef43",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Ưu tiên đổi Tam Thế Trận, tùy tình hình rã lấy Tỏa Nhuệ, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm."
+    },
+    {
+      "entityId": "hero:sp-ton-kien",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "e4cd07cf342384486338e50cb26fa074b912607bfc4262f35aacd4742da5cbdb",
       "review": {
@@ -26127,6 +27210,25 @@
     },
     {
       "entityId": "hero:sp-tuan-uc",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "bc9be1fbc65cb5045345ea4e72615d121d299bc45445933267e5ffa873ca209d",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Không cần giữ. Ưu tiên rã lấy Tứ Diện Sở Ca, tùy tình hình đổi Quyết Thủy Hội Thành, Lính Thanh Châu, sau đó dùng làm nội chính, thức tỉnh."
+    },
+    {
+      "entityId": "hero:sp-tuan-uc",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "b0b9e9d0c780a971bfa25ab045937556266fb130f433f3a514085d118bb31466",
       "review": {
@@ -26162,6 +27264,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:sp-vien-thieu",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "4b1a12873a6200945de020075a17c49d222e3081dec4ea8fce7b7be08586c3f6",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Cơ Hình Trận, sau đó thăng sao."
     },
     {
       "entityId": "hero:sp-vien-thieu",
@@ -26219,6 +27340,25 @@
       },
       "status": "reviewed",
       "textVi": "Kim đan bí thuật"
+    },
+    {
+      "entityId": "hero:ta-tu",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "2090aebf9e2eb824b7b9da722b0e8704a5a8f68017de9927bbc3566ba9c7d5a6",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Sợ Bóng Sợ Gió, sau đó thăng sao. Nếu có Vũ Cát thì ưu tiên rã Vũ Cát."
     },
     {
       "entityId": "hero:ta-tu",
@@ -26317,6 +27457,25 @@
     },
     {
       "entityId": "hero:tao-nhan",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "75e8b274fac5477448b94b8893c17e8fb4db11cc8f4eefbcc6b64b8e3409d540",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Bát Môn Kim Tỏa Trận, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm."
+    },
+    {
+      "entityId": "hero:tao-nhan",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "7f81e958a440374183391ba478b93a9e36376e65aa1771a117c8221788956e54",
       "review": {
@@ -26412,6 +27571,25 @@
     },
     {
       "entityId": "hero:tao-thao",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "4ed1353fd18e49da04259a1ad50eef948585bacec9cdb8a31c0b8e7218216310",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên đổi Anh Thành Tự Thủ, sau đó thăng sao."
+    },
+    {
+      "entityId": "hero:tao-thao",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "ecba1cd9abda7e54ec50d2e6e3781d2de821eff428830ef7d23d9ba0d90b8a37",
       "review": {
@@ -26447,6 +27625,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:tao-thuan",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "76a271062a8670e88482bb877dd123996aba439c69c816115d3b5df4565af22b",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Không cần giữ. Ưu tiên rã lấy Hổ Báo Kỵ, sau đó thức tỉnh, đổi bản sưu tầm."
     },
     {
       "entityId": "hero:tao-thuan",
@@ -26545,6 +27742,25 @@
     },
     {
       "entityId": "hero:thai-su-tu",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "490673b67908451e2d767b42a355100187ac6265ad0cc49fa018997497766d21",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Đánh Bại Quân Địch, tùy tình hình đổi Huyết Đao Tranh Giành, sau đó thăng sao. Nếu có Điển Vi thì ưu tiên rã Điển Vi."
+    },
+    {
+      "entityId": "hero:thai-su-tu",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "b6b138a7edf3009048fb02cbec63b04afc330d5c6e04232d10dc4f03eb21b2b2",
       "review": {
@@ -26621,6 +27837,25 @@
     },
     {
       "entityId": "hero:thai-van-co",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "d2677b6c7b5ed7054ed15c01180271b469e250d554fba78728a664dbe1ad9114",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Đoạt Hồn Hiệp Phách, sau đó thăng sao. Nếu có Tiểu Kiều thì ưu tiên rã Tiểu Kiều."
+    },
+    {
+      "entityId": "hero:thai-van-co",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "8b0d77d5ff2cc6a2c5676bf139f4fa0f3cfa59e266918f2a6ac5261126b69089",
       "review": {
@@ -26675,6 +27910,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:thu-thu",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "1a0aa3128d7d096a1b1a4d429c2541a6a77f219213aac3c6dc337414ce74a091",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Uy Mưu Vô Địch, sau đó thăng sao."
     },
     {
       "entityId": "hero:thu-thu",
@@ -26830,6 +28084,25 @@
     },
     {
       "entityId": "hero:ton-quyen",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "b53b0657f0e84f1fa2b950bbfbc0eee93e6656c172ef14b4d85d33d81e505a88",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Nằm Gai Nếm Mật, sau đó thăng sao."
+    },
+    {
+      "entityId": "hero:ton-quyen",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "47050ad18184018f40ad23085f019c11fd2cec87ba836a1f7704fd8513ea4a8a",
       "review": {
@@ -26887,6 +28160,25 @@
     },
     {
       "entityId": "hero:ton-sach",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "e44450745ff37e030e3944331efd6f3b877d4b608545dc284ac27951385204c6",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Phá Trận Thôi Kiên, tùy tình hình đổi Hổ Cứ Ưng Dương, Huyết Đao Tranh Giành, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm."
+    },
+    {
+      "entityId": "hero:ton-sach",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "b26b8d48c1ef33e8f220a5c8fbea8664e88d84cde0ee88fe4c57386b5aa7997d",
       "review": {
@@ -26922,6 +28214,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:ton-thuong-huong",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "45d11f6884e5062fb3437ce3335ad5846b4bb571a78df4c38c76e56c51b5eddf",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên thăng sao."
     },
     {
       "entityId": "hero:ton-thuong-huong",
@@ -26963,6 +28274,25 @@
     },
     {
       "entityId": "hero:tran-cung",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "1e85c48bff8182e71d0c3708054f90cb9e576fd1aab4cc34c6b7eb9a5848c209",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Trí Kế, sau đó thăng sao."
+    },
+    {
+      "entityId": "hero:tran-cung",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "95a2135f20b55af39ebc846e426555b7a911535d19a313c050ab6de315a973a6",
       "review": {
@@ -26998,6 +28328,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:tran-dao",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "5e708d182b2306127ea1fe42b5f12632f99d1181379222ef8dee435913bf339e",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Không cần giữ. Ưu tiên rã lấy Bạch Nhị Binh, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm."
     },
     {
       "entityId": "hero:tran-dao",
@@ -27115,6 +28464,25 @@
     },
     {
       "entityId": "hero:trau-thi",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "59d2fa123108425fc377576973cd8930b13aaf58d94acbc1b32b121b2759f173",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ."
+    },
+    {
+      "entityId": "hero:trau-thi",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "e3fda872829404bbf5fef0d1dc73b2f304945cd680c1ae13db77c92c810bba34",
       "review": {
@@ -27172,6 +28540,25 @@
     },
     {
       "entityId": "hero:trieu-van",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "988cb5646206889d8c73c46060bef1641fe99984aaf1cb1a833a2f083dc15186",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Hoành Tảo Thiên Quân, sau đó thăng sao."
+    },
+    {
+      "entityId": "hero:trieu-van",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "998390497fa7a0e11eef83c2d8592bf4fbacc4f1fa18a4d307493b17b02392b9",
       "review": {
@@ -27207,6 +28594,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:trinh-duc",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "2efd42dba49feca6a1464494121bcfff2737cb4f8134df489fd85df7e7a25482",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Nếu có Giả Hủ thì thẻ thừa ưu tiên thăng sao."
     },
     {
       "entityId": "hero:trinh-duc",
@@ -27267,6 +28673,25 @@
     },
     {
       "entityId": "hero:trinh-pho",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "85783798cb31b952f3e6c9575342fdc68d33726a07a5fb964e6cb5a2ae231fd3",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Khắc Địch Chế Thắng, sau đó thăng sao."
+    },
+    {
+      "entityId": "hero:trinh-pho",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "d62ed8607fcd792b4e32b8eaa68c649c2fa588a39ac1af115626d441bacf7743",
       "review": {
@@ -27305,6 +28730,25 @@
     },
     {
       "entityId": "hero:truong-bao",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "58f6284b7946d0a003aa0cfc2016fb7417dc8fd2a6c11ac5a6da03877c5ef6aa",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Trương Bào và Quan Hưng ra trận cùng nhau, có thể giữ 1 thẻ. Có Trương Bào hoặc Quan Hưng thừa thì tùy tình hình rã lấy Sĩ Tranh Tiên Phó."
+    },
+    {
+      "entityId": "hero:truong-bao",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "10e69008cf63c00b3fd512c6ca939a43bd6fa85e81d6b679eb37249781f3eb21",
       "review": {
@@ -27340,6 +28784,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:truong-cap",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "b5207fef2cc6d6add0c09fe8cfbda04a21a1cfd686c20a79720dbd13f60943fc",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Không cần giữ. Ưu tiên đổi Võ Phong Trận, sau đó đổi Tuyệt Kỳ Cấp Đạo. Nếu chơi đội thương Quan Ngân Bình thì ưu tiên rã lấy Đại Kích Sĩ."
     },
     {
       "entityId": "hero:truong-cap",
@@ -27419,6 +28882,25 @@
     },
     {
       "entityId": "hero:truong-co",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "acf345e6363db33053a5a900fe81b854146524f2757da63e4246d1b358df8970",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Dũng Giả Đắc Tiền, sau đó thăng sao, thức tỉnh."
+    },
+    {
+      "entityId": "hero:truong-co",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "6bb6ced5cf88c699c13eecc7a902a2cafb2962fc22d4bceed10dfbdb4b98a22c",
       "review": {
@@ -27473,6 +28955,25 @@
       },
       "status": "reviewed",
       "textVi": "Đại Hiền Lương Sư"
+    },
+    {
+      "entityId": "hero:truong-giac",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "3614138222fa1bec67d122bb8c17389ed9257d2453bc9ae1fcbbf68756256ed7",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Ưu tiên đổi Thái Bình Đạo Pháp, sau đó thăng sao, thức tỉnh."
     },
     {
       "entityId": "hero:truong-giac",
@@ -27568,6 +29069,25 @@
       },
       "status": "reviewed",
       "textVi": "Cổ Chi Thiệu Hổ"
+    },
+    {
+      "entityId": "hero:truong-lieu",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "6251216e7350d8124e0d542193f945fd89c5b73169fdb50c663fec48de37598b",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên thăng sao."
     },
     {
       "entityId": "hero:truong-lieu",
@@ -27723,6 +29243,25 @@
     },
     {
       "entityId": "hero:truong-phi",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "bc231d94ea62b00b0c2ff3bf72bcffda7dc7874f71a3386cbbe81454bed650a5",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên đổi Cứ Thủy Đoạn Kiều, sau đó thăng sao."
+    },
+    {
+      "entityId": "hero:truong-phi",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "7e0c1c6ad67da082e0e4380b54c35498f7dd473fa3e7d71412974968bc48fc32",
       "review": {
@@ -27780,6 +29319,25 @@
     },
     {
       "entityId": "hero:truong-xuan-hoa",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "e285ed3d99f27f27ae8119a5850c06b48cdf3a78023d3995572e2b92b5eb5797",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Vận Trù Quyết Toán, sau đó thăng sao, thức tỉnh."
+    },
+    {
+      "entityId": "hero:truong-xuan-hoa",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "18e3364d53a8a78642e931f3c91ab97897b39a403c940ad6310e6baad170da88",
       "review": {
@@ -27834,6 +29392,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:tu-hoang",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "3945dba9b028f38a586c30e815a2f5bd3d8f4ab77289426d5f545161db32d3f2",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Thẻ thừa ưu tiên đổi Võ Phong Trận, sau đó thăng sao, thức tỉnh."
     },
     {
       "entityId": "hero:tu-hoang",
@@ -27932,6 +29509,25 @@
     },
     {
       "entityId": "hero:tu-ma-y",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "d640a8196d954e6bd5c160875246cb736391be52196f58da95f9c1e6b7ab2eed",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Dụng Võ Thần Thông, sau đó thăng sao."
+    },
+    {
+      "entityId": "hero:tu-ma-y",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "8d40146bc9e9fbb7aa8b54959ce86202ba2f2ab1349a4e05dbe050279422f2f5",
       "review": {
@@ -27989,6 +29585,25 @@
     },
     {
       "entityId": "hero:tu-thu",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "cdcbd990ffa8b683b999ed1369a70f4f2081c1473e07ffd24aa95045c96a7e8c",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Tạm Lánh Sóng Gió, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm."
+    },
+    {
+      "entityId": "hero:tu-thu",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "063a1b78245a549285ccb8496037b98a9d157193f0ff386648e4b4eb15de6204",
       "review": {
@@ -28024,6 +29639,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:tuan-du",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "64e9140ee2a1082410c78b9f75cc0fdd06a241e636ae538113e95556fd319d1b",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Vận Trù Quyết Toán, sau đó thăng sao, thức tỉnh."
     },
     {
       "entityId": "hero:tuan-du",
@@ -28179,6 +29813,25 @@
     },
     {
       "entityId": "hero:van-suu",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "0c12c953d1672fe61ef2b96ce399b17c4a9996c972a2f75812746f2937a6fcef",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Không cần giữ. Ưu tiên rã lấy Phá Trận Thôi Kiên, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm."
+    },
+    {
+      "entityId": "hero:van-suu",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "3b234d9ba11526291cb6cde5dd304fcd5faff361091ec80ec5da4039d0390655",
       "review": {
@@ -28214,6 +29867,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:vien-thieu",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "b5b027910caeea135a6540c8acb3b4266e863badb26229ad220199b9f4b09afc",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Ưu tiên đổi Tam Thế Trận, Võ Phong Trận, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm."
     },
     {
       "entityId": "hero:vien-thieu",
@@ -28255,6 +29927,25 @@
     },
     {
       "entityId": "hero:vien-thuat",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "b78990e2c2fd5e4a3f48d875b6bb2fed821d511f829e86956da4a0a810b40cf6",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Hình Cơ Quân Lược, sau đó thăng sao."
+    },
+    {
+      "entityId": "hero:vien-thuat",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "a93b178e96b8c10c201bd3670c55d2407658a7f7ae3c3548e7ca23228eee2191",
       "review": {
@@ -28290,6 +29981,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:vu-cam",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "833c3ee97a6d572f824cbd518041841ec4ecefbc1794ea1ced0f4dc23291db82",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Ưu tiên đổi Thuyền Cỏ Mượn Tên, tùy tình hình rã lấy Khắc Địch Chế Thắng, sau đó thăng sao, thức tỉnh."
     },
     {
       "entityId": "hero:vu-cam",
@@ -28331,6 +30041,25 @@
     },
     {
       "entityId": "hero:vu-cat",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "7f441877977864e46219677710eab2550d330c9c0977c65dfb39ec5e344d5cec",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Sợ Bóng Sợ Gió, sau đó thăng sao, thức tỉnh."
+    },
+    {
+      "entityId": "hero:vu-cat",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "2e2906a0822f4d41c26890d103fbb47a2a7a2d8067ce470d777d5e26c6a84d67",
       "review": {
@@ -28366,6 +30095,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:vuong-binh",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "c6dd6fb9a329ea88fe4ce7751b857bb47d63b837db7aa6c21aced12e496f5e85",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Không cần giữ. Ưu tiên rã lấy Vô Đương Phi Quân, đổi Tuyệt Kỳ Cấp Đạo, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm."
     },
     {
       "entityId": "hero:vuong-binh",
@@ -28464,6 +30212,25 @@
     },
     {
       "entityId": "hero:vuong-nguyen-co",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "7613f5b1c162e9f0442d38aaf1711ac89e94b6288bc054cc72368605ff8f0ee0",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Mau Giành Lợi Thế, sau đó thăng sao, thức tỉnh."
+    },
+    {
+      "entityId": "hero:vuong-nguyen-co",
       "fieldPath": "roleTagViet",
       "inputFingerprint": "19c1863e147ceefecd65aada11dc938829a3316968bfac747fbbb53d3839d8d7",
       "review": {
@@ -28499,6 +30266,25 @@
       },
       "status": "reviewed",
       "textVi": "Quân sự"
+    },
+    {
+      "entityId": "hero:vuong-song",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "c3cd5c8b7734e404fb2f553136a1a4de21da238285373ef3df616d28e576b574",
+      "review": {
+        "evidence": [
+          "captured SGSDeck guide.usage value",
+          "translation review plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md"
+        ],
+        "reviewedAt": "2026-10-07T12:00:00+07:00",
+        "reviewer": "Project owner review of agent draft",
+        "semanticChecks": [
+          "keep/dismantle/exchange verbs and priority order preserved",
+          "tactic and hero names use the published Vietnamese names"
+        ]
+      },
+      "status": "reviewed",
+      "textVi": "Có thể giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Phá Quân Uy Thắng. Tướng mới của S8, chờ kiểm chứng thực chiến."
     },
     {
       "entityId": "hero:vuong-song",

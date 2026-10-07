@@ -259,6 +259,18 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
     ]);
   }
 
+  /** "Cách nhận" của tướng: mỗi gói một hàng trải hết bề ngang (nhãn gói · giá trị lõi/tỉ lệ). */
+  function cardPackBlock(section) {
+    return el("section", { class: "lookup-profile-section" }, [
+      el("h3", { class: "lookup-section-title" }, section.titleVi),
+      el("dl", { class: "lookup-fact-grid" }, section.fields.map((field) => {
+        const row = factRow(field.labelVi, field.textVi);
+        row.classList.add("is-wide");
+        return row;
+      })),
+    ]);
+  }
+
   function camNangCards(view, rawName) {
     /** Danh sách tên cho bản đang xem; bản zh bỏ tên không tra được chữ Hán để không trộn ngôn ngữ. */
     const localNames = (items) => (zh
@@ -383,6 +395,10 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
       const right = el("div", { class: "lookup-profile-column" });
       for (const relation of tacticRelations) right.append(tacticCard(corpus, relation));
       for (const relation of profile.relations.filter((item) => !tacticRelations.includes(item))) right.append(relationRow(relation));
+      const usage = fieldByKey(profile, "usage");
+      if (usage) right.append(proseSection(usage));
+      const cardPacks = profile.sections.find((section) => section.key === "cardPacks");
+      if (cardPacks) right.append(cardPackBlock(cardPacks));
       body.append(el("div", { class: "lookup-profile-column" }, [heroStats(profile)]), right, ...tail);
     } else {
       // Binh thư (bốn nhóm catalog dùng panel chi tiết của `js/lookup-master.js`): đoạn văn hiệu ứng rồi bảng thông số.

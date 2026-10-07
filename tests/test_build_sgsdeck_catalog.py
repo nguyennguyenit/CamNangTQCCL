@@ -39,6 +39,30 @@ class BuildSgsdeckCatalogTest(unittest.TestCase):
                 "generals", source_records, list_body, resources
             )
 
+    def test_general_details_must_agree_on_shared_card_pack_definitions(self):
+        list_body = (
+            flight_html('7:["$",null,null,{"generals":[{"id":"g1","nameZh":"趙雲"},{"id":"g2","nameZh":"關羽"}]}]')
+            + '<a href="/generals/%E8%B6%99%E9%9B%B2">趙雲</a><a href="/generals/%E9%97%9C%E7%BE%BD">關羽</a>'
+        ).encode()
+        source_records = [
+            {"sourceId": "g1", "sourceSlug": "趙雲", "nameZh": "趙雲", "attributes": {}, "sourceSeason": None},
+            {"sourceId": "g2", "sourceSlug": "關羽", "nameZh": "關羽", "attributes": {}, "sourceSeason": None},
+        ]
+
+        def detail(general_id, name, core_rate):
+            payload = json.dumps({"general": {"id": general_id, "nameZh": name, "cardPackAppearances": [{
+                "cardPackId": "p1", "generalId": general_id, "tier": "core",
+                "cardPack": {"id": "p1", "nameZh": "名將", "category": "名將卡包", "coreRate": core_rate, "nonCoreRate": 0.66, "sortOrder": 0},
+            }]}}, ensure_ascii=False, separators=(",", ":"))
+            return flight_html(f'7:["$",null,null,{payload}]').encode()
+
+        resources = {
+            ("generals", "detail-0001"): {"metadata": {"url": "https://sgsdeck.com/generals/%E8%B6%99%E9%9B%B2"}, "body": detail("g1", "趙雲", 0.34)},
+            ("generals", "detail-0002"): {"metadata": {"url": "https://sgsdeck.com/generals/%E9%97%9C%E7%BE%BD"}, "body": detail("g2", "關羽", 0.5)},
+        }
+        with self.assertRaisesRegex(ValueError, "card pack definition"):
+            build_sgsdeck_catalog._compose_list_records("generals", source_records, list_body, resources)
+
     def test_inventory_shrink_is_rejected_against_validated_snapshot(self):
         with tempfile.TemporaryDirectory() as temp:
             output = Path(temp)
@@ -139,7 +163,10 @@ class BuildSgsdeckCatalogTest(unittest.TestCase):
                 ),
                 ("generals", "detail-0001", "https://sgsdeck.com/generals/%E8%B6%99%E9%9B%B2"): flight_html(
                     '7:["$",null,null,{"general":{"id":"g1","nameZh":"趙雲",'
-                    '"baseForce":95,"updatedAt":"2026-09-01T00:00:00Z"}}]'
+                    '"baseForce":95,"updatedAt":"2026-09-01T00:00:00Z","usage":"必留一個",'
+                    '"cardPackAppearances":[{"cardPackId":"p1","generalId":"g1","tier":"core",'
+                    '"cardPack":{"id":"p1","nameZh":"名將","category":"名將卡包",'
+                    '"coreRate":0.34,"nonCoreRate":0.66,"sortOrder":0}}]}}]'
                 ),
                 ("tactics", "list", "https://sgsdeck.com/tactics"): flight_html(
                     '7:["$",null,null,{"tactics":[{"id":"t1","nameZh":"一身是膽",'
@@ -204,6 +231,22 @@ class BuildSgsdeckCatalogTest(unittest.TestCase):
             self.assertEqual(buildings["records"][0]["attributes"]["levels"][0]["level"], 1)
             self.assertEqual(equipment["inventory"]["childCount"], 1)
             self.assertEqual(equipment["children"][0]["parentSourceId"], "丈八蛇矛")
+            self.assertNotIn("guide", generals["records"][0])
+            self.assertNotIn("cardPacks", generals)
+
+            snapshot_before = {path.name: path.read_bytes() for path in output.iterdir()}
+            guide_path = root / "pipeline" / "sgsdeck-guide.json"
+            build_sgsdeck_catalog.build_guide_from_cache(cache, output, guide_path)
+            self.assertEqual({path.name: path.read_bytes() for path in output.iterdir()}, snapshot_before)
+            guide = json.loads(guide_path.read_text())
+            self.assertEqual(guide["snapshotManifestHash"], hashlib.sha256(snapshot_before["manifest.json"]).hexdigest())
+            self.assertEqual(guide["cardPacks"], [{
+                "id": "p1", "nameZh": "名將", "category": "名將卡包",
+                "coreRate": 0.34, "nonCoreRate": 0.66, "sortOrder": 0,
+            }])
+            self.assertEqual(guide["generals"], [
+                {"sourceId": "g1", "usage": "必留一個", "cardPacks": [{"packId": "p1", "tier": "core"}]},
+            ])
 
     def test_atomic_promotion_restores_before_commit_and_ignores_cleanup_failure_after_commit(self):
         with tempfile.TemporaryDirectory() as temp:

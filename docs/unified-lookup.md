@@ -23,6 +23,14 @@ Baseline bất biến ở `pipeline/lookup-inputs/` giữ 112 tướng và 240 c
 
 Giá trị SGSDeck có nghĩa thắng theo trường. Placeholder hoặc trường thiếu dùng fallback đã review; `0` và `false` là giá trị hợp lệ, không phải thiếu. Mười một delta baseline đã được allowlist và kiểm bằng ID chính xác; xem phase execution thay vì sửa fixture lịch sử.
 
+Hồ sơ tướng có thêm **Đánh giá** (`lookup.usageVi`, chữ nguồn `usageZh`) và **Cách nhận** (`lookup.cardPacks`: gói, tướng lõi hay không, tỉ lệ lõi/thường của cả gói) từ `pipeline/sgsdeck-guide.json`. Guide nằm ngoài `data/sgsdeck/` vì snapshot bị registry pin và registry là nguồn glossary của gate bản dịch; guide tự gắn `snapshotManifestHash` của snapshot. Dựng lại guide từ đúng cache của snapshot, không đổi snapshot:
+
+```bash
+python3 -m pipeline.build_sgsdeck_catalog --cache pipeline/sgsdeck-cache --guide-only
+```
+
+Tên gói và loại gói dịch trong bảng `CARD_PACKS`/`CARD_PACK_CATEGORIES` của builder; gói nguồn chưa có trong bảng làm build dừng.
+
 ## Build và validate candidate
 
 Builder chỉ đọc một tập raw bytes đã capture, chạy offline, không recrawl và không đọc output của chính nó làm input:
@@ -88,7 +96,7 @@ MCP vẫn có tám tool và bốn search kinds `hero`, `tactic`, `team`, `book`.
 
 ## Regeneration triggers
 
-- Đổi source snapshot, identity decision, translation hoặc merge rule: build/validate candidate và review generation mới.
+- Đổi source snapshot, guide, identity decision, translation hoặc merge rule: build/validate candidate và review generation mới.
 - Đổi hero/tactic/catalog bytes: promote cả bundle bốn file; không thay từng file.
 - Đổi semantic runtime MCP: chạy `npm --prefix mcp-worker run generate:workflow-build`, commit generated identity rồi chạy `check`.
 - Đổi public manifest/build verifier/router: chạy root check, build, dist verifier, dev contract và Astro E2E.

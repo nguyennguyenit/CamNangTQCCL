@@ -17,6 +17,8 @@ export function heroesDoc(over = []) {
         otherAptitudes: { infantry: null, navy: null },
         civil: { roleVi: null, bonusVi: null, specialtyVi: null, tacticBonusVi: null },
         civilInnatePoints: null, collectibleBonusVi: null, redRulesVi: null,
+        usageVi: "Bắt buộc giữ 1 thẻ.", usageZh: "必留一個",
+        cardPacks: [{ packVi: "Danh tướng", packZh: "名將", categoryVi: "Gói Danh tướng", categoryZh: "名將卡包", isCore: true, coreRate: 0.34, nonCoreRate: 0.66 }],
         revisions: [], missingFields: [],
       },
     },

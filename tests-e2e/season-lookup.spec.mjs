@@ -83,6 +83,7 @@ async function controlledBundle(page, data = null) {
       categoryVi: null, exclusiveTitleVi: null,
       civil: { roleVi: null, bonusVi: null, specialtyVi: null, tacticBonusVi: null },
       civilInnatePoints: null, collectibleBonusVi: null, redRulesVi: null,
+      usageVi: null, usageZh: null, cardPacks: [],
       flags: { isCollectible: null, isDynamicOpen: null, isMusou: null, isCO: null, isSp: null },
     },
   }));

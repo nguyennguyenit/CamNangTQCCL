@@ -7,7 +7,8 @@ const loads = new WeakMap();
 const HERO_KEYS = ["id", "chinese", "hanViet", "viet", "aliases", "faction", "stars", "cost", "stats", "troopApt", "selfTacticCn", "inheritTacticCn", "roleTag", "roleTagViet", "iconUrl", "isSP", "linkScore", "pending", "lookup"];
 const TACTIC_KEYS = ["id", "chinese", "hanViet", "viet", "aliases", "type", "quality", "effect", "effectViet", "target", "targetViet", "troopFit", "source", "sourceHeroCn", "iconUrl", "linkScore", "pending", "lookup"];
 const COMMON_KEYS = ["id", "nameVi", "aliasesVi", "aliasesZh", "conditions", "missingFields"];
-const HERO_LOOKUP_KEYS = ["conditions", "missingFields", "revisions", "variant", "selfTacticId", "inheritTacticId", "advisorId", "growth", "otherAptitudes", "categoryVi", "exclusiveTitleVi", "civil", "civilInnatePoints", "collectibleBonusVi", "redRulesVi", "flags"];
+const HERO_LOOKUP_KEYS = ["conditions", "missingFields", "revisions", "variant", "selfTacticId", "inheritTacticId", "advisorId", "growth", "otherAptitudes", "categoryVi", "exclusiveTitleVi", "civil", "civilInnatePoints", "collectibleBonusVi", "redRulesVi", "flags", "usageVi", "usageZh", "cardPacks"];
+const CARD_PACK_KEYS = ["packVi", "packZh", "categoryVi", "categoryZh", "isCore", "coreRate", "nonCoreRate"];
 const TACTIC_LOOKUP_KEYS = ["conditions", "missingFields", "revisions", "activationRate", "cooldown", "maxUsers", "pointCost", "effectTypeVi", "exchangeConditionVi", "acquiredFromVi", "inheritedFromIds", "conflictsVi"];
 const CONDITION_KINDS = new Set(["season", "scenario", "requirement"]);
 const HERO_VARIANTS = new Set(["base", "sp", "co", "40y"]);
@@ -15,6 +16,7 @@ const HERO_VARIANTS = new Set(["base", "sp", "co", "40y"]);
 const isPlainObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
 const isOptionalString = (value) => value === null || typeof value === "string";
 const isOptionalNumber = (value) => value === null || (typeof value === "number" && Number.isFinite(value));
+const isFraction = (value) => typeof value === "number" && value >= 0 && value <= 1;
 const isStringList = (value) => Array.isArray(value) && value.every((item) => typeof item === "string");
 
 function requireShape(owner, value, keys) {
@@ -75,12 +77,20 @@ function validateHero(record) {
   requireShape(`${owner}.lookup.otherAptitudes`, lookup.otherAptitudes, ["infantry", "navy"]);
   requireShape(`${owner}.lookup.civil`, lookup.civil, ["roleVi", "bonusVi", "specialtyVi", "tacticBonusVi"]);
   requireShape(`${owner}.lookup.flags`, lookup.flags, ["isCollectible", "isDynamicOpen", "isMusou", "isCO", "isSp"]);
-  if (!HERO_VARIANTS.has(lookup.variant) || ![lookup.selfTacticId, lookup.inheritTacticId, lookup.advisorId, lookup.categoryVi, lookup.exclusiveTitleVi, lookup.collectibleBonusVi, lookup.redRulesVi].every(isOptionalString)
+  if (!HERO_VARIANTS.has(lookup.variant) || ![lookup.selfTacticId, lookup.inheritTacticId, lookup.advisorId, lookup.categoryVi, lookup.exclusiveTitleVi, lookup.collectibleBonusVi, lookup.redRulesVi, lookup.usageVi, lookup.usageZh].every(isOptionalString)
+    || (lookup.usageVi === null) !== (lookup.usageZh === null)
     || !isOptionalNumber(lookup.civilInnatePoints) || !Object.values(lookup.growth).every(isOptionalNumber)
     || !Object.values(lookup.otherAptitudes).every(isOptionalString) || !Object.values(lookup.civil).every(isOptionalString)
     || !Object.values(lookup.flags).every((value) => value === null || typeof value === "boolean")
-    || !isStringList(lookup.missingFields)) {
+    || !isStringList(lookup.missingFields) || !Array.isArray(lookup.cardPacks)) {
     throw new Error(`${owner}.lookup có scalar không hợp lệ`);
+  }
+  for (const pack of lookup.cardPacks) {
+    requireShape(`${owner}.lookup.cardPacks`, pack, CARD_PACK_KEYS);
+    if (![pack.packVi, pack.packZh, pack.categoryVi, pack.categoryZh].every((value) => typeof value === "string" && value)
+      || typeof pack.isCore !== "boolean" || !isFraction(pack.coreRate) || !isFraction(pack.nonCoreRate)) {
+      throw new Error(`${owner}.lookup.cardPacks không hợp lệ`);
+    }
   }
   requireConditions(`${owner}.lookup`, lookup.conditions);
   requireRevisions(`${owner}.lookup`, lookup.revisions);

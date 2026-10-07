@@ -15,6 +15,44 @@
     "linkScore": 0.857,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Động Như Lôi Đình",
+          "packZh": "動如雷霆"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.54,
+          "isCore": true,
+          "nonCoreRate": 0.46,
+          "packVi": "PK Danh tướng II",
+          "packZh": "PK 名將 II"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -50,6 +88,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:to-giang-dao-lo",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "sp"
     },
     "pending": false,
@@ -89,6 +129,44 @@
     "linkScore": 0.833,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Xâm Lược Như Hỏa",
+          "packZh": "侵略如火"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.54,
+          "isCore": true,
+          "nonCoreRate": 0.46,
+          "packVi": "PK Danh tướng II",
+          "packZh": "PK 名將 II"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -124,6 +202,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:giang-thien-truong-diem",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Lửa Đuổi Gió Bay, sau đó thăng sao. Nếu có SP Gia Cát Lượng thì ưu tiên rã SP Gia Cát Lượng.",
+      "usageZh": "必留一個，多餘將酌情拆焰逐風飛，其次升星。有SP諸葛亮優先拆SP諸葛亮",
       "variant": "sp"
     },
     "pending": false,
@@ -163,6 +243,44 @@
     "linkScore": 0.875,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Kỳ Từ Như Lâm",
+          "packZh": "其徐如林"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.54,
+          "isCore": true,
+          "nonCoreRate": 0.46,
+          "packVi": "PK Danh tướng I",
+          "packZh": "PK 名將 I"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -198,6 +316,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:vi-su-tat-khuyet",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên thăng sao.",
+      "usageZh": "必留一個，多餘將優先升星",
       "variant": "sp"
     },
     "pending": false,
@@ -237,6 +357,44 @@
     "linkScore": 0.857,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Kỳ Từ Như Lâm",
+          "packZh": "其徐如林"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.54,
+          "isCore": true,
+          "nonCoreRate": 0.46,
+          "packVi": "PK Danh tướng II",
+          "packZh": "PK 名將 II"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -272,6 +430,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:co-giam-tien-thuc",
+      "usageVi": "Không cần giữ. Ưu tiên rã lấy Tứ Diện Sở Ca, tùy tình hình đổi Quyết Thủy Hội Thành, Lính Thanh Châu, sau đó dùng làm nội chính, thức tỉnh.",
+      "usageZh": "可不留，優先拆四面楚歌、酌情換決水潰城、青州兵，其次作內政、覺醒",
       "variant": "sp"
     },
     "pending": false,
@@ -312,6 +472,44 @@
     "linkScore": 0.9,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Bất Động Như Sơn",
+          "packZh": "不動如山"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.54,
+          "isCore": true,
+          "nonCoreRate": 0.46,
+          "packVi": "PK Danh tướng I",
+          "packZh": "PK 名將 I"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -347,6 +545,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:cao-lo-lien-doanh",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Cơ Hình Trận, sau đó thăng sao.",
+      "usageZh": "必留一個，多餘將優先拆箕型陣，其次升星",
       "variant": "sp"
     },
     "pending": false,
@@ -387,6 +587,44 @@
     "linkScore": 0.917,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Kỳ Từ Như Lâm",
+          "packZh": "其徐如林"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.54,
+          "isCore": true,
+          "nonCoreRate": 0.46,
+          "packVi": "PK Danh tướng II",
+          "packZh": "PK 名將 II"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -422,6 +660,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:cam-nang-dieu-ke",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Lửa Đuổi Gió Bay, sau đó thăng sao.",
+      "usageZh": "必留一個，多餘將酌情拆焰逐風飛，其次升星",
       "variant": "sp"
     },
     "pending": false,
@@ -461,6 +701,44 @@
     "linkScore": 0.889,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Nan Tri Như Âm",
+          "packZh": "難知如陰"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.54,
+          "isCore": true,
+          "nonCoreRate": 0.46,
+          "packVi": "PK Danh tướng I",
+          "packZh": "PK 名將 I"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -496,6 +774,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:kinh-thien-vi-dia",
+      "usageVi": "Bắt buộc giữ 1 thẻ.",
+      "usageZh": "必留一個",
       "variant": "sp"
     },
     "pending": false,
@@ -536,6 +816,44 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Huyền Quyền Nhi Động",
+          "packZh": "懸權而動"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.54,
+          "isCore": false,
+          "nonCoreRate": 0.46,
+          "packVi": "PK Danh tướng I",
+          "packZh": "PK 名將 I"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -571,6 +889,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:the-thu-vo-hang",
+      "usageVi": "Không cần giữ. Ưu tiên rã lấy Nhất Lực Cự Thủ, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可不留，優先拆一力拒守，其次酌情覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -611,6 +931,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:qua-cam-nhac-chien",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Kỳ Tật Như Phong",
+          "packZh": "其疾如風"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -646,6 +986,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:lam-chien-tien-dang",
+      "usageVi": "Có thể giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Phong Thi Trận, đổi Cứ Thủy Đoạn Kiều, sau đó thăng sao, thức tỉnh.",
+      "usageZh": "可留一個，多餘將優先拆鋒矢陣、換據水斷橋，其次升星、覺醒",
       "variant": "base"
     },
     "pending": false,
@@ -685,6 +1027,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:ky-phong-dao-vu",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Huyền Quyền Nhi Động",
+          "packZh": "懸權而動"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -720,6 +1082,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:hung-van-bo-vu",
+      "usageVi": "Có thể giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Sợ Bóng Sợ Gió, sau đó thăng sao, thức tỉnh.",
+      "usageZh": "可留一個，多餘將優先拆杯蛇鬼車，其次升星、覺醒",
       "variant": "base"
     },
     "pending": false,
@@ -759,6 +1123,35 @@
     "linkScore": 0.8,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Huyền Quyền Nhi Động",
+          "packZh": "懸權而動"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -794,6 +1187,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:tri-quan-nghi-trong",
+      "usageVi": "Có thể giữ 1 thẻ. Ưu tiên đổi Thuyền Cỏ Mượn Tên, tùy tình hình rã lấy Khắc Địch Chế Thắng, sau đó thăng sao, thức tỉnh.",
+      "usageZh": "可留一個，優先換草船借箭、酌情拆克敵制勝，其次升星、覺醒",
       "variant": "base"
     },
     "pending": false,
@@ -833,6 +1228,26 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.47,
+          "isCore": false,
+          "nonCoreRate": 0.53,
+          "packVi": "PK Danh tướng III",
+          "packZh": "PK 名將 III"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -868,6 +1283,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:tai-bien-co-tiep",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -907,6 +1324,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:dang-giap-ngu-dich",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Kỳ Từ Như Lâm",
+          "packZh": "其徐如林"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -942,6 +1379,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:linh-giap-may",
+      "usageVi": "Không cần giữ. Ưu tiên rã lấy Lính Giáp Mây, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可不留，優先拆藤甲兵，其次酌情覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -982,6 +1421,26 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": "advisor:bach-ma-tuong-quan",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Xâm Lược Như Hỏa",
+          "packZh": "侵略如火"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -1017,6 +1476,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:bach-ma-nghia-tong",
+      "usageVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Bạch Mã Nghĩa Tòng, đổi Tam Thế Trận, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可留一個，優先拆白馬義從、換三勢陣，其次酌情升星、覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -1057,6 +1518,44 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Xâm Lược Như Hỏa",
+          "packZh": "侵略如火"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.54,
+          "isCore": false,
+          "nonCoreRate": 0.46,
+          "packVi": "PK Danh tướng II",
+          "packZh": "PK 名將 II"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -1092,6 +1591,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:dao-xuat-nhu-dinh",
+      "usageVi": "Trương Bào và Quan Hưng ra trận cùng nhau, có thể giữ 1 thẻ. Có Trương Bào hoặc Quan Hưng thừa thì tùy tình hình rã lấy Sĩ Tranh Tiên Phó.",
+      "usageZh": "張苞關興打包上陣，可留一個，有多餘張苞或關興可酌情拆士爭先赴",
       "variant": "base"
     },
     "pending": false,
@@ -1132,6 +1633,44 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Xâm Lược Như Hỏa",
+          "packZh": "侵略如火"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": true,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -1167,6 +1706,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:uy-chan-hoa-ha",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -1207,6 +1748,44 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Kỳ Từ Như Lâm",
+          "packZh": "其徐如林"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.54,
+          "isCore": true,
+          "nonCoreRate": 0.46,
+          "packVi": "PK Danh tướng I",
+          "packZh": "PK 名將 I"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -1242,6 +1821,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:tuong-mon-ho-nu",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Cơ Hình Trận, sau đó thăng sao. Nếu có SP Viên Thiệu thì ưu tiên rã SP Viên Thiệu.",
+      "usageZh": "必留一個，多餘將酌情拆箕型陣，其次升星。有SP袁紹優先拆SP袁紹",
       "variant": "base"
     },
     "pending": false,
@@ -1282,6 +1863,17 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -1317,6 +1909,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:co-chi-ac-lai",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -1357,6 +1951,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.33,
+          "isCore": false,
+          "nonCoreRate": 0.67,
+          "packVi": "Danh tướng S3",
+          "packZh": "S3 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -1392,6 +2006,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:quoc-si-tuong-phong",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -1432,6 +2048,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:nhan-tam-dac-chung",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": true,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -1467,6 +2103,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:nhan-duc-tai-the",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên đổi An Ủi Quân Dân, sau đó thăng sao.",
+      "usageZh": "必留一個，多餘將優先換撫輯軍民，其次升星",
       "variant": "base"
     },
     "pending": false,
@@ -1507,6 +2145,26 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -1542,6 +2200,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:thanh-nang",
+      "usageVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Cắt Xương Trị Độc, sau đó thăng sao, thức tỉnh.",
+      "usageZh": "可留一個，優先拆刮骨療毒，其次升星、覺醒",
       "variant": "base"
     },
     "pending": false,
@@ -1582,6 +2242,26 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.32,
+          "isCore": false,
+          "nonCoreRate": 0.68,
+          "packVi": "Danh tướng S2",
+          "packZh": "S2 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -1617,6 +2297,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:nach-chien-quan-hung",
+      "usageVi": "Không cần giữ. Tùy tình hình đổi Khí Lăng Tam Quân, rã lấy Dụ Địch Thâm Nhập, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可不留，酌情換氣凌三軍、拆誘敵深入，其次酌情覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -1657,6 +2339,7 @@
     "linkScore": 0.833,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -1692,6 +2375,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -1732,6 +2417,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:an-nhan-doat-quyen",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.32,
+          "isCore": true,
+          "nonCoreRate": 0.68,
+          "packVi": "Danh tướng S2",
+          "packZh": "S2 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -1767,6 +2472,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:ung-thi-lang-co",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Dụng Võ Thần Thông, sau đó thăng sao.",
+      "usageZh": "必留一個，多餘將優先拆用武通神，其次升星",
       "variant": "base"
     },
     "pending": false,
@@ -1807,6 +2514,44 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:thien-chien-vo-tien",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Kỳ Tật Như Phong",
+          "packZh": "其疾如風"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": true,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -1842,6 +2587,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:thien-ha-vo-song",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Nhất Kỵ Đương Thiên, đổi Quỷ Thần Đình Uy, sau đó thăng sao.",
+      "usageZh": "必留一個，多餘將優先拆一騎當千、換鬼神霆威，其次升星",
       "variant": "base"
     },
     "pending": false,
@@ -1882,6 +2629,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -1917,6 +2684,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:su-tu-phan-tan",
+      "usageVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Tuyệt Địa Phản Kích, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可留一個，優先拆絕地反擊，其次酌情升星、覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -1957,6 +2726,35 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:nguy-phuc-am-do",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -1992,6 +2790,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:bach-y-do-giang",
+      "usageVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Sĩ Biệt Tam Nhật, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可留一個，優先拆士別三日，其次酌情升星、覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -2031,6 +2831,44 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:chien-y-ngang-duong",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Bất Động Như Sơn",
+          "packZh": "不動如山"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.54,
+          "isCore": true,
+          "nonCoreRate": 0.46,
+          "packVi": "PK Danh tướng I",
+          "packZh": "PK 名將 I"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -2066,6 +2904,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:nhuc-than-thiet-bich",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên thăng sao.",
+      "usageZh": "必留一個，多餘將優先升星",
       "variant": "base"
     },
     "pending": false,
@@ -2105,6 +2945,44 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Kỳ Tật Như Phong",
+          "packZh": "其疾如風"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": true,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -2140,6 +3018,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:than-hoa-ke",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên đổi Thuyền Cỏ Mượn Tên, tùy tình hình đổi Hổ Cứ Ưng Dương, sau đó thăng sao.",
+      "usageZh": "必留一個，多餘將優先換草船借箭、酌情換虎踞鷹揚，其次升星",
       "variant": "base"
     },
     "pending": false,
@@ -2179,6 +3059,35 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -2214,6 +3123,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:cuong-liet-bat-khuat",
+      "usageVi": "Có thể giữ 1 thẻ. Thẻ thừa đổi Cương Dũng Vô Tiền, tùy tình hình rã lấy Tuyệt Địa Phản Kích, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可留一個，多餘將換剛勇無前、酌情拆絕地反擊，其次酌情升星、覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -2254,6 +3165,44 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:tat-chien-dot-tap",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.32,
+          "isCore": false,
+          "nonCoreRate": 0.68,
+          "packVi": "Danh tướng S2",
+          "packZh": "S2 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -2289,6 +3238,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:tuong-hanh-ky-tat",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên đổi Cương Dũng Vô Tiền, Kích Kỳ Nọa Quy, tùy tình hình rã lấy Vạn Tiễn Tề Phát.",
+      "usageZh": "必留一個，多餘將優先剛勇無前、擊其惰歸，酌情拆萬箭齊發",
       "variant": "base"
     },
     "pending": false,
@@ -2329,6 +3280,7 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -2364,6 +3316,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -2403,6 +3357,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -2438,6 +3412,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:than-xa",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Đánh Bại Quân Địch, tùy tình hình đổi Huyết Đao Tranh Giành, sau đó thăng sao. Nếu có Điển Vi thì ưu tiên rã Điển Vi.",
+      "usageZh": "必留一個，多餘將優先拆折衝禦侮，酌情換血刃爭鋒，其次升星。有典韋優先拆典韋",
       "variant": "base"
     },
     "pending": false,
@@ -2478,6 +3454,44 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Động Như Lôi Đình",
+          "packZh": "動如雷霆"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.54,
+          "isCore": true,
+          "nonCoreRate": 0.46,
+          "packVi": "PK Danh tướng I",
+          "packZh": "PK 名將 I"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -2513,6 +3527,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:nghia-dam-hung-tam",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên thăng sao.",
+      "usageZh": "必留一個，多餘將優先升星",
       "variant": "base"
     },
     "pending": false,
@@ -2553,6 +3569,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -2588,6 +3624,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:giang-dong-manh-ho",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -2628,6 +3666,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:nhan-than-chi-le",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.32,
+          "isCore": true,
+          "nonCoreRate": 0.68,
+          "packVi": "Danh tướng S2",
+          "packZh": "S2 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -2663,6 +3721,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:cung-yeu-co",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên thăng sao.",
+      "usageZh": "必留一個，多餘將優先升星",
       "variant": "base"
     },
     "pending": false,
@@ -2703,6 +3763,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": true,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -2738,6 +3818,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:toa-doan-dong-nam",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Nằm Gai Nếm Mật, sau đó thăng sao.",
+      "usageZh": "必留一個，多餘將優先拆臥薪嚐膽，其次升星",
       "variant": "base"
     },
     "pending": false,
@@ -2778,6 +3860,35 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Huyền Quyền Nhi Động",
+          "packZh": "懸權而動"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -2813,6 +3924,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:giang-dong-tieu-ba-vuong",
+      "usageVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Phá Trận Thôi Kiên, tùy tình hình đổi Hổ Cứ Ưng Dương, Huyết Đao Tranh Giành, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可留一個，優先拆破陣摧堅、酌情換虎踞鷹揚、血刃爭鋒，其次酌情覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -2853,6 +3966,26 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -2888,6 +4021,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:nam-man-cu-khoi",
+      "usageVi": "Có thể giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Binh Phong, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可留一個，多餘將酌情拆兵峰，其次酌情升星、覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -2928,6 +4063,7 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -2963,6 +4099,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -3002,6 +4140,35 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:chiem-tinh-boc-quai",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Động Như Lôi Đình",
+          "packZh": "動如雷霆"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -3037,6 +4204,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:kim-dan-bi-thuat",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Sợ Bóng Sợ Gió, sau đó thăng sao. Nếu có Vũ Cát thì ưu tiên rã Vũ Cát.",
+      "usageZh": "必留一個，多餘將酌情拆杯蛇鬼車，其次升星。有于吉優先拆于吉",
       "variant": "base"
     },
     "pending": false,
@@ -3077,6 +4246,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -3112,6 +4301,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:dai-quan-quyet-chien",
+      "usageVi": "Không cần giữ. Ưu tiên rã lấy Tạm Lánh Sóng Gió, tùy tình hình đổi Thiết Kỵ Khu Trì, sau đó thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可不留，優先拆暫避其鋒、酌情換鐵騎驅馳，其次覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -3152,6 +4343,17 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.32,
+          "isCore": true,
+          "nonCoreRate": 0.68,
+          "packVi": "Danh tướng S2",
+          "packZh": "S2 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -3187,6 +4389,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:lien-hoan-ke",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên thăng sao.",
+      "usageZh": "必留一個，多餘將優先升星",
       "variant": "base"
     },
     "pending": false,
@@ -3227,6 +4431,17 @@
     "linkScore": 0.824,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.32,
+          "isCore": false,
+          "nonCoreRate": 0.68,
+          "packVi": "Danh tướng S2",
+          "packZh": "S2 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -3262,6 +4477,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:phan-mau-anh-tu",
+      "usageVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Dũng Giả Đắc Tiền, sau đó thăng sao, thức tỉnh.",
+      "usageZh": "可留一個，優先拆勇者得前，其次升星、覺醒",
       "variant": "base"
     },
     "pending": false,
@@ -3302,6 +4519,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -3337,6 +4574,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:tram-doan-co-muu",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Vận Trù Quyết Toán, sau đó thăng sao, thức tỉnh.",
+      "usageZh": "必留一個，多餘將酌情拆運籌帷幄，其次升星、覺醒",
       "variant": "base"
     },
     "pending": false,
@@ -3377,6 +4616,7 @@
     "linkScore": 0.857,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -3412,6 +4652,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -3452,6 +4694,7 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -3487,6 +4730,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -3527,6 +4772,44 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Bất Động Như Sơn",
+          "packZh": "不動如山"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.54,
+          "isCore": true,
+          "nonCoreRate": 0.46,
+          "packVi": "PK Danh tướng II",
+          "packZh": "PK 名將 II"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -3562,6 +4845,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:thuong-vu-nhu-phong",
+      "usageVi": "Trương Bào và Quan Hưng ra trận cùng nhau, có thể giữ 1 thẻ. Có Trương Bào hoặc Quan Hưng thừa thì tùy tình hình rã lấy Sĩ Tranh Tiên Phó.",
+      "usageZh": "張苞關興打包上陣，可留一個，有多餘張苞或關興可酌情拆士爭先赴",
       "variant": "base"
     },
     "pending": false,
@@ -3602,6 +4887,44 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Nan Tri Như Âm",
+          "packZh": "難知如陰"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": true,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -3637,6 +4960,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:ngu-loi-oanh-dinh",
+      "usageVi": "Có thể giữ 1 thẻ. Ưu tiên đổi Thái Bình Đạo Pháp, sau đó thăng sao, thức tỉnh.",
+      "usageZh": "可留一個，優先換太平道法，其次升星、覺醒",
       "variant": "base"
     },
     "pending": false,
@@ -3677,6 +5002,44 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Kỳ Tật Như Phong",
+          "packZh": "其疾如風"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.54,
+          "isCore": false,
+          "nonCoreRate": 0.46,
+          "packVi": "PK Danh tướng II",
+          "packZh": "PK 名將 II"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.4,
+          "isCore": false,
+          "nonCoreRate": 0.6,
+          "packVi": "PK Danh tướng IV",
+          "packZh": "PK 名將 IV"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -3712,6 +5075,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:thiet-hanh-thua-sung",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -3752,6 +5117,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:binh-quy-than-toc",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.32,
+          "isCore": true,
+          "nonCoreRate": 0.68,
+          "packVi": "Danh tướng S2",
+          "packZh": "S2 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -3787,6 +5172,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:ham-tran-dot-tap",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên thăng sao.",
+      "usageZh": "必留一個，多餘將優先升星",
       "variant": "base"
     },
     "pending": false,
@@ -3827,6 +5214,26 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Động Như Lôi Đình",
+          "packZh": "動如雷霆"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -3862,6 +5269,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:dai-kich-si",
+      "usageVi": "Không cần giữ. Ưu tiên đổi Võ Phong Trận, sau đó đổi Tuyệt Kỳ Cấp Đạo. Nếu chơi đội thương Quan Ngân Bình thì ưu tiên rã lấy Đại Kích Sĩ.",
+      "usageZh": "可不留，優先換武鋒陣，其次換絕其汲道，玩關銀屏槍隊優先拆大戟士",
       "variant": "base"
     },
     "pending": false,
@@ -3902,6 +5311,35 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": true,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -3937,6 +5375,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:yen-nhan-bao-hao",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên đổi Cứ Thủy Đoạn Kiều, sau đó thăng sao.",
+      "usageZh": "必留一個，多餘將優先換據水斷橋，其次升星",
       "variant": "base"
     },
     "pending": false,
@@ -3976,6 +5416,26 @@
     "linkScore": 0.909,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.33,
+          "isCore": false,
+          "nonCoreRate": 0.67,
+          "packVi": "Danh tướng S3",
+          "packZh": "S3 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -4011,6 +5471,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:xu-tu-bat-hoac",
+      "usageVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Tạm Lánh Sóng Gió, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可留一個，優先拆暫避其鋒，其次酌情升星、覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -4050,6 +5512,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Huyền Quyền Nhi Động",
+          "packZh": "懸權而動"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -4085,6 +5567,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:truong-khu-truc-nhap",
+      "usageVi": "Có thể giữ 1 thẻ. Thẻ thừa ưu tiên đổi Võ Phong Trận, sau đó thăng sao, thức tỉnh.",
+      "usageZh": "可留一個，多餘將優先換武鋒陣，其次升星、覺醒",
       "variant": "base"
     },
     "pending": false,
@@ -4125,6 +5609,53 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": "advisor:trac-le-phan-phat",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Kỳ Tật Như Phong",
+          "packZh": "其疾如風"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.33,
+          "isCore": false,
+          "nonCoreRate": 0.67,
+          "packVi": "Danh tướng S3",
+          "packZh": "S3 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -4160,6 +5691,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:dang-phong-ham-tran",
+      "usageVi": "Không cần giữ. Ưu tiên rã lấy Phá Trận Thôi Kiên, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可不留，優先拆破陣摧堅，其次酌情覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -4199,6 +5732,7 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -4234,6 +5768,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -4273,6 +5809,35 @@
     "linkScore": 0.857,
     "lookup": {
       "advisorId": "advisor:minh-the-thu-ngu",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Huyền Quyền Nhi Động",
+          "packZh": "懸權而動"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -4308,6 +5873,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:co-nhuoc-kim-thang",
+      "usageVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Bát Môn Kim Tỏa Trận, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可留一個，優先拆八門金鎖陣，其次酌情升星、覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -4347,6 +5914,35 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": true,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -4382,6 +5978,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:loan-the-gian-hung",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên đổi Anh Thành Tự Thủ, sau đó thăng sao.",
+      "usageZh": "必留一個，多餘將優先換嬰城自守，其次升星",
       "variant": "base"
     },
     "pending": false,
@@ -4421,6 +6019,7 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -4456,6 +6055,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -4496,6 +6097,26 @@
     "linkScore": 0.8,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Kỳ Tật Như Phong",
+          "packZh": "其疾如風"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -4531,6 +6152,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:ho-bao-ky",
+      "usageVi": "Không cần giữ. Ưu tiên rã lấy Hổ Báo Kỵ, sau đó thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可不留，優先拆虎豹騎，其次覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -4570,6 +6193,26 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.33,
+          "isCore": false,
+          "nonCoreRate": 0.67,
+          "packVi": "Danh tướng S3",
+          "packZh": "S3 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -4605,6 +6248,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:tuong-binh",
+      "usageVi": "Không cần giữ. Ưu tiên rã lấy Tượng Binh, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可不留，優先拆象兵，其次酌情覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -4644,6 +6289,26 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.47,
+          "isCore": false,
+          "nonCoreRate": 0.53,
+          "packVi": "PK Danh tướng III",
+          "packZh": "PK 名將 III"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -4679,6 +6344,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:doc-tuyen-cu-thuc",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -4718,6 +6385,26 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": "advisor:ke-luoc-van-dan",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.33,
+          "isCore": false,
+          "nonCoreRate": 0.67,
+          "packVi": "Danh tướng S3",
+          "packZh": "S3 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -4753,6 +6440,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:cuu-doc",
+      "usageVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Tứ Diện Sở Ca, đổi Hỏa Sí Nguyên Liệu, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可留一個，優先拆四面楚歌、換火熾原燎，其次酌情覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -4792,6 +6481,35 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Xâm Lược Như Hỏa",
+          "packZh": "侵略如火"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.54,
+          "isCore": false,
+          "nonCoreRate": 0.46,
+          "packVi": "PK Danh tướng I",
+          "packZh": "PK 名將 I"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -4827,6 +6545,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:giam-thong-chan-quan",
+      "usageVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Uy Mưu Vô Địch, sau đó thăng sao.",
+      "usageZh": "可留一個，優先拆威謀靡亢，其次升星",
       "variant": "base"
     },
     "pending": false,
@@ -4866,6 +6586,44 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Huyền Quyền Nhi Động",
+          "packZh": "懸權而動"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -4901,6 +6659,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:duong-suc-chong-dich",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -4941,6 +6701,44 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Bất Động Như Sơn",
+          "packZh": "不動如山"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.54,
+          "isCore": false,
+          "nonCoreRate": 0.46,
+          "packVi": "PK Danh tướng II",
+          "packZh": "PK 名將 II"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -4976,6 +6774,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:tran-ach-phong-cu",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên thăng sao.",
+      "usageZh": "必留一個，多餘將優先升星。",
       "variant": "base"
     },
     "pending": false,
@@ -5015,6 +6815,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Huyền Quyền Nhi Động",
+          "packZh": "懸權而動"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -5050,6 +6870,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:thuy-tam-van-vat",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Mau Giành Lợi Thế, sau đó thăng sao, thức tỉnh.",
+      "usageZh": "必留一個，多餘將優先拆速乘其利，其次升星、覺醒",
       "variant": "base"
     },
     "pending": false,
@@ -5090,6 +6912,26 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -5125,6 +6967,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:chan-hai-tu-canh",
+      "usageVi": "Có thể giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Phá Quân Uy Thắng. Tướng mới của S8, chờ kiểm chứng thực chiến.",
+      "usageZh": "可留一個，多餘將優先拆破軍威勝。S8新武將，待實戰。",
       "variant": "base"
     },
     "pending": false,
@@ -5164,6 +7008,35 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Kỳ Từ Như Lâm",
+          "packZh": "其徐如林"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -5199,6 +7072,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:vo-duong-phi-quan",
+      "usageVi": "Không cần giữ. Ưu tiên rã lấy Vô Đương Phi Quân, đổi Tuyệt Kỳ Cấp Đạo, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可不留，優先拆無當飛軍、換絕其汲道，其次酌情覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -5238,6 +7113,7 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -5273,6 +7149,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -5313,6 +7191,35 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:cam-pham-du-hiep",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -5348,6 +7255,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:cam-pham-bach-linh",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Bách Kỵ Kiếp Doanh, tùy tình hình đổi Quân Cẩm Phàm, sau đó thăng sao.",
+      "usageZh": "必留一個，多餘將優先拆百騎劫營、酌情換錦帆軍，其次升星",
       "variant": "base"
     },
     "pending": false,
@@ -5388,6 +7297,26 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -5423,6 +7352,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:kiet-trung-tan-tri",
+      "usageVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Binh Vô Thường Thế, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可留一個，優先拆兵無常勢，其次酌情覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -5462,6 +7393,17 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": "advisor:xich-de-du-liet",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -5497,6 +7439,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:hoa-than-anh-phong",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Binh Vô Thường Thế, sau đó tùy tình hình thăng sao, thức tỉnh.",
+      "usageZh": "必留一個，多餘將酌情拆兵無常勢，其次酌情升星、覺醒",
       "variant": "base"
     },
     "pending": false,
@@ -5536,6 +7480,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -5571,6 +7535,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:thap-dien-mai-phuc",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Nếu có Giả Hủ thì thẻ thừa ưu tiên thăng sao.",
+      "usageZh": "必留一個，有賈詡多餘將優先升星",
       "variant": "base"
     },
     "pending": false,
@@ -5610,6 +7576,44 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Bất Động Như Sơn",
+          "packZh": "不動如山"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.32,
+          "isCore": false,
+          "nonCoreRate": 0.68,
+          "packVi": "Danh tướng S2",
+          "packZh": "S2 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -5645,6 +7649,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:dung-liet-tri-trong",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Khắc Địch Chế Thắng, sau đó thăng sao.",
+      "usageZh": "必留一個，多餘將酌情拆克敵制勝，其次升星",
       "variant": "base"
     },
     "pending": false,
@@ -5684,6 +7690,7 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -5719,6 +7726,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -5758,6 +7767,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Nan Tri Như Âm",
+          "packZh": "難知如陰"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -5793,6 +7822,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:thap-nhi-ky-sach",
+      "usageVi": "Có thể giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Vận Trù Quyết Toán, sau đó thăng sao, thức tỉnh.",
+      "usageZh": "可留一個，多餘將酌情拆運籌決算，其次升星、覺醒",
       "variant": "base"
     },
     "pending": false,
@@ -5832,6 +7863,44 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:hoanh-trung-bao-liem",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Kỳ Tật Như Phong",
+          "packZh": "其疾如風"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -5867,6 +7936,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:tuu-tri-nhuc-lam",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -5906,6 +7977,35 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Bất Động Như Sơn",
+          "packZh": "不動如山"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.4,
+          "isCore": false,
+          "nonCoreRate": 0.6,
+          "packVi": "PK Danh tướng IV",
+          "packZh": "PK 名將 IV"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -5941,6 +8041,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:van-tu-anh-tong",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -5981,6 +8083,7 @@
     "linkScore": 0.824,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -6016,6 +8119,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -6055,6 +8160,44 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.33,
+          "isCore": false,
+          "nonCoreRate": 0.67,
+          "packVi": "Danh tướng S3",
+          "packZh": "S3 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -6090,6 +8233,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:ho-gia-du-am",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Đoạt Hồn Hiệp Phách, sau đó thăng sao. Nếu có Tiểu Kiều thì ưu tiên rã Tiểu Kiều.",
+      "usageZh": "必留一個，多餘將酌情拆奪魂挾魄，其次升星。有小喬優先拆小喬",
       "variant": "base"
     },
     "pending": false,
@@ -6129,6 +8274,7 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -6164,6 +8310,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -6204,6 +8352,26 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -6239,6 +8407,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:phu-menh-tu-lap",
+      "usageVi": "Có thể giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Hình Cơ Quân Lược, sau đó thăng sao.",
+      "usageZh": "可留一個，多餘將酌情拆形機軍略，其次升星",
       "variant": "base"
     },
     "pending": false,
@@ -6279,6 +8449,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:uy-chan-ha-soc",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -6314,6 +8504,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:luy-the-lap-danh",
+      "usageVi": "Có thể giữ 1 thẻ. Ưu tiên đổi Tam Thế Trận, Võ Phong Trận, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可留一個，優先換三勢陣、武鋒陣，其次酌情覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -6354,6 +8546,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -6389,6 +8601,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:ngao-nghe-vuong-hau",
+      "usageVi": "Bắt buộc giữ 1 thẻ.",
+      "usageZh": "必留一個",
       "variant": "base"
     },
     "pending": false,
@@ -6429,6 +8643,17 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -6464,6 +8689,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:ho-si",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -6504,6 +8731,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:thach-binh-bat-tran",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": true,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -6539,6 +8786,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:than-co-dieu-toan",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa đổi Thuyền Cỏ Mượn Tên, sau đó thăng sao.",
+      "usageZh": "必留一個，多餘將換草船借箭，其次升星",
       "variant": "base"
     },
     "pending": false,
@@ -6579,6 +8828,35 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:hong-nhan-hoac-tam",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -6614,6 +8892,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:be-nguyet",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -6654,6 +8934,17 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.33,
+          "isCore": true,
+          "nonCoreRate": 0.67,
+          "packVi": "Danh tướng S3",
+          "packZh": "S3 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -6689,6 +8980,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:than-co-mac-trac",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Ngụy Thư Tương Gian, sau đó thăng sao.",
+      "usageZh": "必留一個，多餘將酌情拆偽書相間，其次升星",
       "variant": "base"
     },
     "pending": false,
@@ -6729,6 +9022,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:dan-ky-trung-tran",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": true,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -6764,6 +9077,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:nhat-than-thi-dam",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Hoành Tảo Thiên Quân, sau đó thăng sao.",
+      "usageZh": "必留一個，多餘將優先拆橫掃千軍，其次升星",
       "variant": "base"
     },
     "pending": false,
@@ -6804,6 +9119,44 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Động Như Lôi Đình",
+          "packZh": "動如雷霆"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -6839,6 +9192,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:lap-lo-danh-trao",
+      "usageVi": "Có thể giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Văn Võ Song Toàn, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可留一個，多餘將優先拆文武雙全，其次酌情覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -6879,6 +9234,26 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.54,
+          "isCore": false,
+          "nonCoreRate": 0.46,
+          "packVi": "PK Danh tướng I",
+          "packZh": "PK 名將 I"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -6914,6 +9289,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:co-phan-sinh-tu",
+      "usageVi": "Có thể giữ 1 thẻ.",
+      "usageZh": "可留一個",
       "variant": "base"
     },
     "pending": false,
@@ -6953,6 +9330,17 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:nghiem-tran-thu-ngu",
+      "cardPacks": [
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.33,
+          "isCore": true,
+          "nonCoreRate": 0.67,
+          "packVi": "Danh tướng S3",
+          "packZh": "S3 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -6988,6 +9376,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:kim-thanh-thang-tri",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên thăng sao; nếu chơi đội Lữ Bố Tam Thế Trận thì tùy tình hình rã lấy Hoành Qua Dược Mã.",
+      "usageZh": "必留一個，多餘將優先升星，玩三勢呂酌情拆橫戈躍馬",
       "variant": "base"
     },
     "pending": false,
@@ -7027,6 +9417,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:lam-dich-che-bien",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -7062,6 +9472,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:thap-thang-thap-bai",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Trầm Sa Quyết Thủy, sau đó thăng sao, thức tỉnh.",
+      "usageZh": "必留一個，多餘將酌情拆沉沙決水，其次升星、覺醒",
       "variant": "base"
     },
     "pending": false,
@@ -7102,6 +9514,35 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:uy-chan-tay-tho",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Nan Tri Như Âm",
+          "packZh": "難知如陰"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -7137,6 +9578,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:tinh-luyen-sach-so",
+      "usageVi": "Có thể giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Văn Võ Song Toàn, sau đó thăng sao, thức tỉnh.",
+      "usageZh": "可留一個，多餘將酌情拆文武雙全，其次升星、覺醒",
       "variant": "base"
     },
     "pending": false,
@@ -7177,6 +9620,35 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.54,
+          "isCore": false,
+          "nonCoreRate": 0.46,
+          "packVi": "PK Danh tướng I",
+          "packZh": "PK 名將 I"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.54,
+          "isCore": false,
+          "nonCoreRate": 0.46,
+          "packVi": "PK Danh tướng II",
+          "packZh": "PK 名將 II"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -7212,6 +9684,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:hieu-thang-duy-ac",
+      "usageVi": "Có thể giữ 1 thẻ. Thẻ thừa tùy tình hình đổi Thừa Thắng Trường Khu, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可留一個，多餘將酌情換乘勝長驅，其次酌情升星、覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -7252,6 +9726,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Xâm Lược Như Hỏa",
+          "packZh": "侵略如火"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -7287,6 +9781,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:hoa-thieu-lien-doanh",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên thăng sao.",
+      "usageZh": "必留一個，多餘將優先升星",
       "variant": "base"
     },
     "pending": false,
@@ -7327,6 +9823,35 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -7362,6 +9887,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:bach-nhi-binh",
+      "usageVi": "Không cần giữ. Ưu tiên rã lấy Bạch Nhị Binh, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可不留，優先拆白毦兵，其次酌情覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -7402,6 +9929,17 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.32,
+          "isCore": false,
+          "nonCoreRate": 0.68,
+          "packVi": "Danh tướng S2",
+          "packZh": "S2 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -7437,6 +9975,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:bach-ke-da-muu",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Trí Kế, sau đó thăng sao.",
+      "usageZh": "必留一個，多餘將酌情拆智計，其次升星",
       "variant": "base"
     },
     "pending": false,
@@ -7477,6 +10017,7 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -7512,6 +10053,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -7552,6 +10095,53 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": "advisor:tien-phong-tiet-kich",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Kỳ Tật Như Phong",
+          "packZh": "其疾如風"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.32,
+          "isCore": false,
+          "nonCoreRate": 0.68,
+          "packVi": "Danh tướng S2",
+          "packZh": "S2 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -7587,6 +10177,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:dung-quan-tam-quan",
+      "usageVi": "Không cần giữ. Ưu tiên đổi Đương Phong Thôi Quyết, rã lấy Thịnh Khí Linh Địch, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可不留，優先換擋風摧決、拆盛氣凌敵，其次酌情覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -7627,6 +10219,17 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.32,
+          "isCore": false,
+          "nonCoreRate": 0.68,
+          "packVi": "Danh tướng S2",
+          "packZh": "S2 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -7662,6 +10265,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:si-dieu-phuong-tu",
+      "usageVi": "Có thể giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Thừa Địch Bất Ngu, sau đó thăng sao, thức tỉnh.",
+      "usageZh": "可留一個，多餘將酌情拆乘勝不虞，其次升星、覺醒",
       "variant": "base"
     },
     "pending": false,
@@ -7702,6 +10307,26 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": "advisor:thiet-ky-truong-khu",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -7737,6 +10362,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:tay-luong-thiet-ky",
+      "usageVi": "Không cần giữ. Ưu tiên rã lấy Tây Lương Thiết Kỵ, đổi Võ Phong Trận, tùy tình hình đổi Thiết Kỵ Khu Trì, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可不留，優先拆西涼鐵騎、換武鋒陣、酌情換鐵騎驅馳，其次酌情覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -7777,6 +10404,35 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:tich-quyen-tay-luong",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Kỳ Tật Như Phong",
+          "packZh": "其疾如風"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -7812,6 +10468,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:soc-huyet-tung-hoanh",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -7852,6 +10510,26 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.54,
+          "isCore": false,
+          "nonCoreRate": 0.46,
+          "packVi": "PK Danh tướng II",
+          "packZh": "PK 名將 II"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -7887,6 +10565,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:chan-quan-kich-doanh",
+      "usageVi": "Không cần giữ. Ưu tiên đổi Võ Phong Trận, tùy tình hình rã lấy Thừa Thắng Trường Khu, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可不留，優先換武鋒陣、酌情拆乘勝長驅，其次酌情覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -7927,6 +10607,35 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Bất Động Như Sơn",
+          "packZh": "不動如山"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -7962,6 +10671,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:ham-tran-doanh",
+      "usageVi": "Không cần giữ. Ưu tiên rã lấy Hãm Trận Doanh, sau đó tùy tình hình thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可不留，優先拆陷陣營，其次酌情覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -8001,6 +10712,26 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:tu-ngo-ky-muu",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -8036,6 +10767,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:ky-binh-gian-dao",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Uy Mưu Vô Địch, sau đó thăng sao. Nếu có Thư Thụ thì ưu tiên rã Thư Thụ.",
+      "usageZh": "必留一個，多餘將酌情拆威謀靡亢，其次升星。有沮授優先拆沮授",
       "variant": "base"
     },
     "pending": false,
@@ -8076,6 +10809,17 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:an-phuc-binh-tam",
+      "cardPacks": [
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.33,
+          "isCore": true,
+          "nonCoreRate": 0.67,
+          "packVi": "Danh tướng S3",
+          "packZh": "S3 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -8111,6 +10855,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:te-ban-hao-thi",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Kế Hay Mưu Giỏi, sau đó thăng sao.",
+      "usageZh": "必留一個，多餘將酌情拆奇計良謀，其次升星",
       "variant": "base"
     },
     "pending": false,
@@ -8151,6 +10897,35 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:dinh-quan-ky-tap",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -8186,6 +10961,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:bach-bo-xuyen-duong",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -8226,6 +11003,35 @@
     "linkScore": 1.0,
     "lookup": {
       "advisorId": "advisor:ky-cong-xao-nghe",
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Động Như Lôi Đình",
+          "packZh": "動如雷霆"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -8261,6 +11067,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:cong-than",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -8301,6 +11109,35 @@
     "linkScore": 0.0,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.32,
+          "isCore": false,
+          "nonCoreRate": 0.68,
+          "packVi": "Danh tướng S2",
+          "packZh": "S2 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -8336,6 +11173,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:kho-nhuc-ke",
+      "usageVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Phong Trợ Hỏa Thế, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可留一個，優先拆風助火勢，其次酌情升星、覺醒、換典藏",
       "variant": "base"
     },
     "pending": false,
@@ -8376,6 +11215,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -8411,6 +11251,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:thien-uy-khieu-tran",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "40y"
     },
     "pending": false,
@@ -8451,6 +11293,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -8486,6 +11329,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:thien-ly-tri-vien",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -8526,6 +11371,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -8561,6 +11407,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:thi-chi-bat-di",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -8600,6 +11448,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -8635,6 +11484,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:thien-ly-tri-vien",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -8675,6 +11526,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -8710,6 +11562,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -8750,6 +11604,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -8785,6 +11640,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:ngoc-co-hoa-mao",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "co"
     },
     "pending": false,
@@ -8825,6 +11682,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -8860,6 +11718,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:toa-dieu-kinh-ngao",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "co"
     },
     "pending": false,
@@ -8900,6 +11760,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -8935,6 +11796,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:kien-cuong-chi-hoa",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "co"
     },
     "pending": false,
@@ -8975,6 +11838,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -9010,6 +11874,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:quy-than-chi-nu",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "co"
     },
     "pending": false,
@@ -9050,6 +11916,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -9085,6 +11952,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:vo-thanh-chi-tu",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "co"
     },
     "pending": false,
@@ -9125,6 +11994,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -9160,6 +12030,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:thau-thien-xung-de",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "co"
     },
     "pending": false,
@@ -9200,6 +12072,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -9235,6 +12108,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:thuan-khiet-chi-hoa",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "co"
     },
     "pending": false,
@@ -9275,6 +12150,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -9310,6 +12186,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:phuc-my-phan-cong",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "co"
     },
     "pending": false,
@@ -9350,6 +12228,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -9385,6 +12264,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -9424,6 +12305,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -9459,6 +12341,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:doan-binh-tuong-tiep",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -9498,6 +12382,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -9533,6 +12418,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -9573,6 +12460,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -9608,6 +12496,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:tu-du",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -9648,6 +12538,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -9683,6 +12574,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -9723,6 +12616,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -9758,6 +12652,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -9798,6 +12694,53 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Nan Tri Như Âm",
+          "packZh": "難知如陰"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.47,
+          "isCore": false,
+          "nonCoreRate": 0.53,
+          "packVi": "PK Danh tướng III",
+          "packZh": "PK 名將 III"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.4,
+          "isCore": false,
+          "nonCoreRate": 0.6,
+          "packVi": "PK Danh tướng IV",
+          "packZh": "PK 名將 IV"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -9833,6 +12776,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:huy-binh-muu-thang",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -9873,6 +12818,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -9908,6 +12854,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -9947,6 +12895,35 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Nan Tri Như Âm",
+          "packZh": "難知如陰"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.4,
+          "isCore": false,
+          "nonCoreRate": 0.6,
+          "packVi": "PK Danh tướng IV",
+          "packZh": "PK 名將 IV"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -9982,6 +12959,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:duy-noi-thien-quyen",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -10022,6 +13001,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": "advisor:dan-cung-phuc-xa",
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -10057,6 +13037,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:ta-huu-khai-cung",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -10097,6 +13079,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -10132,6 +13115,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:am-tang-huyen-co",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -10172,6 +13157,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": "advisor:hanh-tat-nhu-phi",
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -10207,6 +13193,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:kieu-kien-than-hanh",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -10247,6 +13235,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -10282,6 +13271,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:co-luoc-tung-hoanh",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -10321,6 +13312,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -10356,6 +13348,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:khiem-nhuong",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -10396,6 +13390,35 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Kỳ Từ Như Lâm",
+          "packZh": "其徐如林"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.47,
+          "isCore": false,
+          "nonCoreRate": 0.53,
+          "packVi": "PK Danh tướng III",
+          "packZh": "PK 名將 III"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -10431,6 +13454,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:tien-dang-tu-si",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -10471,6 +13496,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -10506,6 +13532,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:uy-phong-lam-lam",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -10545,6 +13573,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -10580,6 +13609,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:tra-hang",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -10620,6 +13651,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -10655,6 +13687,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -10695,6 +13729,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -10730,6 +13765,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -10770,6 +13807,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -10805,6 +13843,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -10845,6 +13885,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -10880,6 +13921,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:lieu-su-nhu-than",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -10920,6 +13963,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -10955,6 +13999,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:ky-ho-nan-ha",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -10994,6 +14040,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -11029,6 +14076,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:truong-gia-chi-phong",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -11069,6 +14118,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -11104,6 +14154,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -11143,6 +14195,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": "advisor:ky-binh-dot-tap",
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -11178,6 +14231,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:tung-binh-kiep-luoc",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -11218,6 +14273,44 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Nan Tri Như Âm",
+          "packZh": "難知如陰"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -11253,6 +14346,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:mat-ke-tru-nghich",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -11293,6 +14388,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -11328,6 +14424,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -11368,6 +14466,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -11403,6 +14502,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -11443,6 +14544,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -11478,6 +14580,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -11518,6 +14622,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -11553,6 +14658,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -11593,6 +14700,26 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -11628,6 +14755,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:am-tien-nan-phong",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -11667,6 +14796,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -11702,6 +14832,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -11741,6 +14873,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -11776,6 +14909,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:bat-nhuc-su-menh",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -11816,6 +14951,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -11851,6 +14987,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -11891,6 +15029,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -11926,6 +15065,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:phuc-boi-thau-dich",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -11966,6 +15107,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -12001,6 +15143,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:tien-ngon",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -12040,6 +15184,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -12075,6 +15220,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -12114,6 +15261,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -12149,6 +15297,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:bao-liem-tu-phuong",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -12189,6 +15339,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -12224,6 +15375,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:phan-dot",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -12263,6 +15416,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -12298,6 +15452,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:lo-mang",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -12337,6 +15493,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -12372,6 +15529,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:loan-cung-am-vu",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -12412,6 +15571,35 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.54,
+          "isCore": false,
+          "nonCoreRate": 0.46,
+          "packVi": "PK Danh tướng I",
+          "packZh": "PK 名將 I"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -12447,6 +15635,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:tu-chien-bat-thoai",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "sp"
     },
     "pending": false,
@@ -12487,6 +15677,44 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Bất Động Như Sơn",
+          "packZh": "不動如山"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.4,
+          "isCore": true,
+          "nonCoreRate": 0.6,
+          "packVi": "PK Danh tướng IV",
+          "packZh": "PK 名將 IV"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -12522,6 +15750,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:thuc-y-chi-duc",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "sp"
     },
     "pending": false,
@@ -12562,6 +15792,44 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Động Như Lôi Đình",
+          "packZh": "動如雷霆"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.47,
+          "isCore": true,
+          "nonCoreRate": 0.53,
+          "packVi": "PK Danh tướng III",
+          "packZh": "PK 名將 III"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -12597,6 +15865,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:xa-than-cuu-chu",
+      "usageVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Đánh Bại Quân Địch, tùy tình hình đổi Hổ Vệ Quân, sau đó thăng sao.",
+      "usageZh": "可留一個，優先拆折衝禦侮、酌情換虎衛軍，其次升星",
       "variant": "sp"
     },
     "pending": false,
@@ -12637,6 +15907,44 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Xâm Lược Như Hỏa",
+          "packZh": "侵略如火"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.47,
+          "isCore": true,
+          "nonCoreRate": 0.53,
+          "packVi": "PK Danh tướng III",
+          "packZh": "PK 名將 III"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -12672,6 +15980,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:ly-nguyet",
+      "usageVi": "Có thể giữ 1 thẻ. Thẻ thừa tùy tình hình rã lấy Khuynh Quốc Khuynh Thành, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可留一個，多餘將酌情拆傾國傾城，其次酌情升星、覺醒、換典藏",
       "variant": "sp"
     },
     "pending": false,
@@ -12712,6 +16022,44 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Huyền Quyền Nhi Động",
+          "packZh": "懸權而動"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.4,
+          "isCore": true,
+          "nonCoreRate": 0.6,
+          "packVi": "PK Danh tướng IV",
+          "packZh": "PK 名將 IV"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -12747,6 +16095,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:quyen-tiem-cuu-dinh",
+      "usageVi": "Có thể giữ 1 thẻ. Ưu tiên rã lấy Bạo Lệ Vô Nhân, đổi Hỏa Sí Nguyên Liệu, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可留一個，優先拆暴戾無仁、換火熾原燎，其次酌情升星、覺醒、換典藏",
       "variant": "sp"
     },
     "pending": false,
@@ -12787,6 +16137,44 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Kỳ Từ Như Lâm",
+          "packZh": "其徐如林"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.4,
+          "isCore": false,
+          "nonCoreRate": 0.6,
+          "packVi": "PK Danh tướng IV",
+          "packZh": "PK 名將 IV"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -12822,6 +16210,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:hue-chat-lan-tam",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Phong Thi Trận, sau đó thăng sao, thức tỉnh.",
+      "usageZh": "必留一個，多餘將優先拆鋒矢陣，其次升星、覺醒",
       "variant": "sp"
     },
     "pending": false,
@@ -12862,6 +16252,44 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Xâm Lược Như Hỏa",
+          "packZh": "侵略如火"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.54,
+          "isCore": true,
+          "nonCoreRate": 0.46,
+          "packVi": "PK Danh tướng II",
+          "packZh": "PK 名將 II"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -12897,6 +16325,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:phu-nguy-dinh-khuynh",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "sp"
     },
     "pending": false,
@@ -12937,6 +16367,44 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Xâm Lược Như Hỏa",
+          "packZh": "侵略如火"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.4,
+          "isCore": true,
+          "nonCoreRate": 0.6,
+          "packVi": "PK Danh tướng IV",
+          "packZh": "PK 名將 IV"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -12972,6 +16440,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:dinh-quan-tram-tuong",
+      "usageVi": "Có thể giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Vạn Tiễn Tề Phát, sau đó đổi Kích Kỳ Nọa Quy.",
+      "usageZh": "可留一個，多餘將優先拆萬箭齊發，其次換擊其惰歸",
       "variant": "sp"
     },
     "pending": false,
@@ -13012,6 +16482,44 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Nan Tri Như Âm",
+          "packZh": "難知如陰"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.47,
+          "isCore": false,
+          "nonCoreRate": 0.53,
+          "packVi": "PK Danh tướng III",
+          "packZh": "PK 名將 III"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -13047,6 +16555,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:ho-hau",
+      "usageVi": "Có thể giữ 1 thẻ. Thẻ thừa ưu tiên đổi Lõa Y Huyết Chiến, sau đó tùy tình hình rã lấy Đánh Đâu Thắng Đó.",
+      "usageZh": "可留一個，多餘將優先換裸衣血戰，其次酌情拆所向披靡",
       "variant": "sp"
     },
     "pending": false,
@@ -13087,6 +16597,44 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Kỳ Tật Như Phong",
+          "packZh": "其疾如風"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": true,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -13122,6 +16670,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:quoc-chi-trinh-can",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "sp"
     },
     "pending": false,
@@ -13162,6 +16712,35 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Động Như Lôi Đình",
+          "packZh": "動如雷霆"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.47,
+          "isCore": true,
+          "nonCoreRate": 0.53,
+          "packVi": "PK Danh tướng III",
+          "packZh": "PK 名將 III"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -13197,6 +16776,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:ke-dinh-muu-quyet",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "sp"
     },
     "pending": false,
@@ -13237,6 +16818,44 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Huyền Quyền Nhi Động",
+          "packZh": "懸權而動"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.54,
+          "isCore": true,
+          "nonCoreRate": 0.46,
+          "packVi": "PK Danh tướng II",
+          "packZh": "PK 名將 II"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -13272,6 +16891,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:uy-vo-tinh-chieu",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên đổi Lõa Y Huyết Chiến, sau đó ưu tiên rã lấy Đánh Đâu Thắng Đó, tùy tình hình đổi Thiết Kỵ Khu Trì.",
+      "usageZh": "必留一個，多餘將優先換裸衣血戰，其次優先拆所向披靡，酌情換鐵騎驅馳",
       "variant": "sp"
     },
     "pending": false,
@@ -13312,6 +16933,44 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Động Như Lôi Đình",
+          "packZh": "動如雷霆"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.4,
+          "isCore": true,
+          "nonCoreRate": 0.6,
+          "packVi": "PK Danh tướng IV",
+          "packZh": "PK 名將 IV"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -13347,6 +17006,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:dong-chien-than-tien",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "sp"
     },
     "pending": false,
@@ -13387,6 +17048,44 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Kỳ Từ Như Lâm",
+          "packZh": "其徐如林"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.47,
+          "isCore": true,
+          "nonCoreRate": 0.53,
+          "packVi": "PK Danh tướng III",
+          "packZh": "PK 名將 III"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -13422,6 +17121,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:hu-thuc-ky-muu",
+      "usageVi": "Bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên đổi Kích Kỳ Nọa Quy, tùy tình hình rã lấy Trầm Sa Quyết Thủy, sau đó thăng sao, thức tỉnh.",
+      "usageZh": "必留一個，多餘將優先換擊其惰歸、酌情拆沉沙決水，其次升星、覺醒",
       "variant": "sp"
     },
     "pending": false,
@@ -13462,6 +17163,44 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Bất Động Như Sơn",
+          "packZh": "不動如山"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.54,
+          "isCore": true,
+          "nonCoreRate": 0.46,
+          "packVi": "PK Danh tướng I",
+          "packZh": "PK 名將 I"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -13497,6 +17236,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:thuy-yem-that-quan",
+      "usageVi": "Nếu có Lưu Bị và Trương Phi thì bắt buộc giữ 1 thẻ. Thẻ thừa ưu tiên rã lấy Hoành Tảo Thiên Quân, sau đó thăng sao.",
+      "usageZh": "有劉備張飛必留一個，多餘將優先拆橫掃千軍，其次升星",
       "variant": "sp"
     },
     "pending": false,
@@ -13537,6 +17278,44 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Quyền Âm Lôi)",
+          "categoryZh": "EX小卡包（權陰雷）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Nan Tri Như Âm",
+          "packZh": "難知如陰"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.47,
+          "isCore": true,
+          "nonCoreRate": 0.53,
+          "packVi": "PK Danh tướng III",
+          "packZh": "PK 名將 III"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -13572,6 +17351,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:uyen-nhien-nan-trac",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "sp"
     },
     "pending": false,
@@ -13612,6 +17393,44 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": true,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": true,
+          "nonCoreRate": 0.59,
+          "packVi": "Bất Động Như Sơn",
+          "packZh": "不動如山"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.4,
+          "isCore": true,
+          "nonCoreRate": 0.6,
+          "packVi": "PK Danh tướng IV",
+          "packZh": "PK 名將 IV"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -13647,6 +17466,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:thua-thien-tinh-the",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "sp"
     },
     "pending": false,
@@ -13687,6 +17508,44 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": true,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Xâm Lược Như Hỏa",
+          "packZh": "侵略如火"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.47,
+          "isCore": true,
+          "nonCoreRate": 0.53,
+          "packVi": "PK Danh tướng III",
+          "packZh": "PK 名將 III"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -13722,6 +17581,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:phung-linh-binh-lo",
+      "usageVi": "Có thể giữ 1 thẻ. Ưu tiên đổi Tam Thế Trận, tùy tình hình rã lấy Tỏa Nhuệ, sau đó tùy tình hình thăng sao, thức tỉnh, đổi bản sưu tầm.",
+      "usageZh": "可留一個，優先換三勢陣、酌情拆挫銳，其次酌情升星、覺醒、換典藏",
       "variant": "sp"
     },
     "pending": false,
@@ -13762,6 +17623,44 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Sưu tầm",
+          "categoryZh": "典藏卡包",
+          "coreRate": 0.36,
+          "isCore": false,
+          "nonCoreRate": 0.64,
+          "packVi": "Sưu tầm",
+          "packZh": "典藏卡包"
+        },
+        {
+          "categoryVi": "Gói EX (Phong Lâm Hỏa Sơn)",
+          "categoryZh": "EX小卡包（風林火山）",
+          "coreRate": 0.41,
+          "isCore": false,
+          "nonCoreRate": 0.59,
+          "packVi": "Kỳ Từ Như Lâm",
+          "packZh": "其徐如林"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.4,
+          "isCore": false,
+          "nonCoreRate": 0.6,
+          "packVi": "PK Danh tướng IV",
+          "packZh": "PK 名將 IV"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -13797,6 +17696,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:phi-sa-tau-thach",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "sp"
     },
     "pending": false,
@@ -13837,6 +17738,26 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Gói Danh tướng PK",
+          "categoryZh": "PK名將卡包",
+          "coreRate": 0.4,
+          "isCore": false,
+          "nonCoreRate": 0.6,
+          "packVi": "PK Danh tướng IV",
+          "packZh": "PK 名將 IV"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -13872,6 +17793,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:tu-thach-thanh-kim",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "sp"
     },
     "pending": false,
@@ -13911,6 +17834,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -13946,6 +17870,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:ti-thuc-kich-hu",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -13985,6 +17911,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -14020,6 +17947,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:toa-chi-no-tap",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -14059,6 +17988,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -14094,6 +18024,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:kieu-dung-thien-chien",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -14134,6 +18066,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -14169,6 +18102,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:toa-thu-co-thanh",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -14209,6 +18144,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -14244,6 +18180,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -14284,6 +18222,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -14319,6 +18258,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:lu-giang-thuong-giap",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -14359,6 +18300,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Nội chính",
       "civil": {
         "bonusVi": null,
@@ -14394,6 +18336,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -14434,6 +18378,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -14469,6 +18414,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:than-thuong-su",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -14509,6 +18456,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -14544,6 +18492,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:lac-phuong",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -14584,6 +18534,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -14619,6 +18570,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:am-trieu-hung-dung",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -14659,6 +18612,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -14694,6 +18648,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:khinh-dung-phi-yen",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -14733,6 +18689,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -14768,6 +18725,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": null,
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -14808,6 +18767,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -14843,6 +18803,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:thien-hang-hoa-vu",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -14882,6 +18844,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -14917,6 +18880,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:thu-khoi-dao-lac",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -14957,6 +18922,26 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [
+        {
+          "categoryVi": "Gói Danh tướng",
+          "categoryZh": "名將卡包",
+          "coreRate": 0.34,
+          "isCore": false,
+          "nonCoreRate": 0.66,
+          "packVi": "Danh tướng",
+          "packZh": "名將"
+        },
+        {
+          "categoryVi": "Giới hạn 11/11",
+          "categoryZh": "雙十一限定",
+          "coreRate": 0.31,
+          "isCore": false,
+          "nonCoreRate": 0.69,
+          "packVi": "Danh tướng S1",
+          "packZh": "S1 名將卡包"
+        }
+      ],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -14992,6 +18977,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:chi-nhu-dong-cuong",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,
@@ -15031,6 +19018,7 @@
     "linkScore": null,
     "lookup": {
       "advisorId": null,
+      "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
         "bonusVi": null,
@@ -15066,6 +19054,8 @@
       "redRulesVi": null,
       "revisions": [],
       "selfTacticId": "tactic:than-thuong-thiet-chien",
+      "usageVi": null,
+      "usageZh": null,
       "variant": "base"
     },
     "pending": false,

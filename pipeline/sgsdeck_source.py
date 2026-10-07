@@ -121,8 +121,56 @@ def _prop_string(payload: str, key: str) -> Optional[str]:
     return json.loads('"' + matches[-1].group(1) + '"')
 
 
+_CARD_PACK_TIERS = {"core", "non-core"}
+_CARD_PACK_FIELDS = ("id", "nameZh", "category", "coreRate", "nonCoreRate", "sortOrder")
+
+
+def _card_pack_definition(raw):
+    pack = {field: raw.get(field) if isinstance(raw, Mapping) else None for field in _CARD_PACK_FIELDS}
+    if any(not isinstance(pack[field], str) or not pack[field].strip() for field in ("id", "nameZh", "category")):
+        raise ValueError("SGSDeck card pack needs a non-empty id, name and category")
+    for field in ("coreRate", "nonCoreRate"):
+        rate = pack[field]
+        if isinstance(rate, bool) or not isinstance(rate, (int, float)) or not 0 <= rate <= 1:
+            raise ValueError(f"SGSDeck card pack {field} must be a fraction between 0 and 1")
+    if isinstance(pack["sortOrder"], bool) or not isinstance(pack["sortOrder"], int):
+        raise ValueError("SGSDeck card pack sortOrder must be an integer")
+    return pack
+
+
+def _general_guide(raw, source_id):
+    """Source advice for duplicate cards (`usage`) and the card packs that can drop the general."""
+    usage = raw.get("usage")
+    if usage is not None and not isinstance(usage, str):
+        raise ValueError("SGSDeck general usage must be text")
+    usage = (usage or "").strip() or None
+    appearances = raw.get("cardPackAppearances") or []
+    if not isinstance(appearances, list):
+        raise ValueError("SGSDeck card pack appearances must be a list")
+    packs = {}
+    tiers = {}
+    for appearance in appearances:
+        if not isinstance(appearance, Mapping):
+            raise ValueError("SGSDeck card pack appearance must be an object")
+        pack = _card_pack_definition(appearance.get("cardPack"))
+        if appearance.get("cardPackId") != pack["id"] or appearance.get("generalId") != source_id:
+            raise ValueError("SGSDeck card pack appearance does not belong to this general and pack")
+        if appearance.get("tier") not in _CARD_PACK_TIERS:
+            raise ValueError(f"SGSDeck card pack tier is unknown: {appearance.get('tier')!r}")
+        if pack["id"] in packs:
+            raise ValueError(f"SGSDeck card pack appears twice for one general: {pack['id']}")
+        packs[pack["id"]] = pack
+        tiers[pack["id"]] = appearance["tier"]
+    ordered = sorted(packs.values(), key=lambda pack: (pack["sortOrder"], pack["id"]))
+    guide = {
+        "usage": usage,
+        "cardPacks": [{"packId": pack["id"], "tier": tiers[pack["id"]]} for pack in ordered],
+    }
+    return guide, ordered
+
+
 def parse_general_detail(html: str):
-    """Extract the source general's game fields, excluding prose and images."""
+    """Extract the source general's game fields and guide (usage + card packs), excluding lore and images."""
     payload = _next_flight_payload(html)
     marker = '"general":{'
     marker_at = payload.rfind(marker)
@@ -138,11 +186,14 @@ def parse_general_detail(html: str):
         source_updated_at = source_updated_at[2:]
     if source_updated_at is not None:
         _validate_timestamp(source_updated_at)
+    guide, card_packs = _general_guide(raw, source_id)
     return {
         "sourceId": source_id,
         "nameZh": name,
         "attributes": {key: raw.get(key) for key in sorted(_GENERAL_DETAIL_FIELDS)},
         "sourceUpdatedAt": source_updated_at,
+        "guide": guide,
+        "cardPacks": card_packs,
     }
 
 

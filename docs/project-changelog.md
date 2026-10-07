@@ -1,5 +1,38 @@
 # Project Changelog
 
+## 2026-10-07 (Tra cứu tướng: Đánh giá giữ/rã thẻ và Cách nhận theo gói)
+
+### Added
+
+- **Hồ sơ tướng có mục Đánh giá và Cách nhận.** 94 tướng hiện lời khuyên giữ/rã/đổi thẻ (`評價`, bản Việt đã duyệt; bản zh hiện chữ Hán nguồn), 126 tướng hiện gói chiêu mộ có thể ra tướng: loại gói · tên gói, có phải tướng lõi không, và tỉ lệ ra tướng lõi/thường **của cả gói** (vd SP Điển Vi: Danh tướng lõi 34%/66%, Sưu tầm thường 36%/64%, Động Như Lôi Đình lõi 41%/59%, PK Danh tướng III lõi 47%/53%). Tướng không có dữ liệu ẩn hai mục. Payload tướng thêm `lookup.usageVi`, `lookup.usageZh`, `lookup.cardPacks[]` (`packVi`, `packZh`, `categoryVi`, `categoryZh`, `isCore`, `coreRate`, `nonCoreRate`); `js/lookup-data.js` kiểm hình dạng và tỉ lệ 0–1.
+- `pipeline/sgsdeck_source.parse_general_detail` đọc thêm `usage` và `cardPackAppearances` (kiểm tier `core`/`non-core`, tỉ lệ 0–1, gói thuộc đúng tướng, không trùng); `lore`, ảnh vẫn bỏ.
+- **`pipeline/sgsdeck-guide.json`** (mới): bảng 16 gói + guide của cả 202 tướng, gắn `snapshotManifestHash` của `data/sgsdeck/manifest.json`. Dựng bằng `python3 -m pipeline.build_sgsdeck_catalog --cache pipeline/sgsdeck-cache --guide-only` từ đúng cache đã dựng snapshot; `query_sgsdeck_catalog.validate_guide_document` kiểm schema, binding và phủ đủ tướng. Guide nằm ngoài snapshot vì byte snapshot bị `pipeline/lookup-identity.json` pin, mà file đó là nguồn glossary của gate bản dịch (đổi là stale toàn bộ review receipt).
+- `build_unified_lookup` capture guide cạnh registry (`inputHashes.guide`), dịch tên gói/loại gói bằng bảng `CARD_PACKS`/`CARD_PACK_CATEGORIES` (gói lạ làm build dừng), ghi ledger `guide.usage`/`guide.cardPacks[…]`.
+- Bản dịch: 94 mục `lookup.usageVi` duyệt theo `plans/reports/translation-review-261007-tuong-danh-gia-cach-nhan.md`, receipt `lookup-tuong-danh-gia-20261007`; 5 nhãn UI `ui:lookup/hero-usage`, `hero-card-packs`, `hero-card-pack-core`, `hero-card-pack-regular`, `hero-card-pack-rates` (authored-vi). Policy `site-vi-261007-tuong-danh-gia-cach-nhan`, baseline 56727 → 56826 location; re-pin `js/lookup-data.js`, `js/lookup-detail.js`, `js/lookup-profile.js`.
+- Promote transaction `site-vi-261007-tuong-guide` (`lookup:8878e4fc…`, chỉ `heroes-dict.json` đổi); publish generation Đội chuẩn `8a5f4b2c…`, re-pin `pipeline/team-route-handles.json`; `WORKFLOW_BUILD_ID` sinh lại vì `js/lookup-data.js` đổi. Generation `5a4a1e2b…` chưa prune.
+
+### Tests
+
+- `tests/test_sgsdeck_source.py`, `tests/test_build_sgsdeck_catalog.py`, `tests/test_query_sgsdeck_catalog.py`: đọc guide, gói định nghĩa lệch giữa hai tướng bị từ chối, guide dựng không đổi byte snapshot, guide lệch snapshot/gói/tier bị từ chối.
+- `tests/test_build_unified_lookup.py`: SP Điển Vi có đủ 4 gói và bản dịch, 94/126 tướng có dữ liệu, ledger guide, gói lạ làm build dừng, validator từ chối usage/gói sai hình dạng.
+- `tests-js/lookup-data.test.mjs`, `tests-js/unified-lookup.test.mjs`: bundle từ chối usage một nửa và tỉ lệ ngoài 0–1; hồ sơ bản Việt/zh hiện hai mục, tướng không có dữ liệu ẩn hai mục. Fixture tướng (JS, E2E, MCP) thêm ba trường mới.
+
+## 2026-10-07 (Tra cứu: hiệu ứng binh thư, link binh thư theo tên nguồn)
+
+### Changed
+
+- **Hồ sơ Binh thư có hiệu ứng.** `pipeline/books-han-viet-map.json` thêm `effect` (chữ phồn thể nguồn), `effectViet` (bản dịch đã duyệt, thuật ngữ theo `effectViet` của `tactics.json`) và `effectVersion` (mốc số liệu: 2021-11 cho bốn nhánh gốc, 2024-07 cho 始計/用間 và 6 binh thư điều chỉnh) cho cả 68 binh thư; `build_books_dict` ném lỗi khi thiếu một phần trong ba trường. Hồ sơ bản Việt hiện `effectViet`, bản zh hiện chữ Hán nguồn, kèm dòng **Số liệu theo bản** (`ui:lookup/book-effect-version`). Nguồn và giới hạn: `plans/reports/research-260928-binh-thu-hieu-ung-va-ten-chua-link.md`.
+- Sửa tên Hán trong `books-dict`: `出其不意` (là chiến pháp) → `出奇制胜`, `顺应天时` → `顺天应时`, `以武止戈` → `以治击乱` (Lấy Võ Dẹp Loạn, hiệu ứng khớp client VN). Thêm **Chia Lời** (`分利`) và **Tinh Thần Sảng Khoái** (`神清气净`), hết mục `_unresolved` cũ.
+- `books-dict` có `sourceNames` (tên nguồn phồn thể/biến thể chữ của chính binh thư) và `excludedSourceNames` (tên của binh thư khác từng bị dịch nhầm sang tên Việt này: `以退為進` ở Dĩ Trực Báo Oán). Trang chi tiết Đội chuẩn tra binh thư theo tên Hán nguồn khi ô có tên nguồn, chỉ dùng tên Việt khi ô không có (nội dung đội gốc): 21 ô `順天應時` và 8 ô `分利` có link, 6 ô `以退為進` thôi trỏ nhầm sang Dĩ Trực Báo Oán. `sourceNames` cũng là khóa tìm của nhóm Binh thư; tên đã là tên nguồn hiện hành không còn hiện thành `旧名`.
+- Không sửa `pipeline/recommended-identity-map.json`: đây là nguồn glossary của gate bản dịch, đổi file làm stale toàn bộ review receipt. Vì vậy chữ trên ô Đội chuẩn vẫn giữ bản dịch cũ ("Thuận Thiên Ứng Thời", "Dĩ Trực Báo Oán" cho `以退為進`) và 3 ô `拓濟世救貧` (= `拓·濟貧好施`) chưa có link.
+- Bản dịch: policy `site-vi-261006-binh-thu-hieu-ung`, baseline 56726 → 56727 location, re-pin `js/lookup-detail.js` và `js/unified-lookup.js`; publish generation `5a4a1e2b…` (xoá `499c044a…`), re-pin `pipeline/team-route-handles.json`.
+
+### Tests
+
+- `tests/test_build_books_dict.py`: mang trường hiệu ứng/tên nguồn, từ chối hiệu ứng thiếu một phần và tên loại trừ trùng tên nguồn, mọi binh thư đã xuất bản có hiệu ứng, map khớp byte-đối-byte với `books-dict`.
+- `tests-js/lookup-ids.test.mjs`: ô có tên Hán nguồn quyết định hồ sơ (bản dịch lệch hay nhầm không dựng link sai), ô chỉ có tên Việt vẫn tra được; `bookSourceAliases` bỏ tên nguồn hiện hành và tên loại trừ. Fixture cũ ghép `以退為進` với Dĩ Trực Báo Oán được thay.
+- `tests-js/unified-lookup.test.mjs`: hồ sơ binh thư bản Việt/zh hiện hiệu ứng và phiên bản, mục chưa có hiệu ứng để trạng thái trống, tìm bằng `sourceNames`.
+
 ## 2026-10-05 (Tra cứu: Trang bị, Quân sư, Cải tạo binh chủng, Công trình theo thiết kế mới)
 
 ### Changed

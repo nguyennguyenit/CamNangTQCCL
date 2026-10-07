@@ -11,7 +11,7 @@ import tempfile
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
-from .query_sgsdeck_catalog import validate_snapshot
+from .query_sgsdeck_catalog import validate_guide_document, validate_snapshot
 from .sgsdeck_identity import apply_reviewed_mappings
 from .sgsdeck_source import (
     discover_detail_urls,
@@ -84,7 +84,13 @@ def _detail_resources(resources, category):
 
 
 def _compose_list_records(category, source_records, list_body, resources):
+    """Compose list records with their detail pages.
+
+    Returns `(records, children, guide)`. `guide` is only built for generals: the shared card pack table and
+    each detailed general's usage + card packs, kept out of the records so the reviewed snapshot bytes stay stable.
+    """
     children = []
+    guide = None
     if category in {"generals", "buildings"}:
         expected_urls = set(discover_detail_urls(category, list_body.decode("utf-8")))
         details = _detail_resources(resources, category)
@@ -96,10 +102,14 @@ def _compose_list_records(category, source_records, list_body, resources):
             )
         if category == "generals":
             parsed = {}
+            card_packs = {}
             for url, resource in details.items():
                 detail = parse_general_detail(resource["body"].decode("utf-8"))
                 if detail["sourceId"] in parsed:
                     raise ValueError(f"duplicate SGSDeck general detail: {detail['sourceId']}")
+                for pack in detail["cardPacks"]:
+                    if card_packs.setdefault(pack["id"], pack) != pack:
+                        raise ValueError(f"SGSDeck card pack definition differs between generals: {pack['id']}")
                 detail["sourceUrl"] = url
                 parsed[detail["sourceId"]] = detail
             source_ids = {record["sourceId"] for record in source_records}
@@ -121,6 +131,10 @@ def _compose_list_records(category, source_records, list_body, resources):
                     record["attributes"].update(detail["attributes"])
                     record["sourceUpdatedAt"] = detail["sourceUpdatedAt"]
                     record["sourceUrl"] = detail["sourceUrl"]
+            guide = {
+                "cardPacks": sorted(card_packs.values(), key=lambda pack: (pack["sortOrder"], pack["id"])),
+                "generals": {source_id: detail["guide"] for source_id, detail in parsed.items()},
+            }
         else:
             by_slug = {
                 url.rsplit("/", 1)[-1]: parse_building_levels(resource["body"].decode("utf-8"))
@@ -159,7 +173,7 @@ def _compose_list_records(category, source_records, list_body, resources):
                     "fetchedAt": resource["metadata"].get("fetchedAt"),
                 },
             })
-    return source_records, children
+    return source_records, children, guide
 
 
 def _promote(staging: Path, output_dir: Path) -> None:
@@ -265,7 +279,7 @@ def build_from_cache(
             children = []
         else:
             source_records = parse_category_page(category, body.decode("utf-8"))
-            source_records, children = _compose_list_records(
+            source_records, children, _guide = _compose_list_records(
                 category, source_records, body, resources
             )
         records = [
@@ -332,12 +346,74 @@ def build_from_cache(
     return result_manifest
 
 
+def _write_atomic(path: Path, payload: bytes) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    descriptor, temporary = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
+    try:
+        with os.fdopen(descriptor, "wb") as handle:
+            handle.write(payload)
+        os.chmod(temporary, 0o644)
+        os.replace(temporary, path)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
+
+
+def build_guide_from_cache(
+    cache_dir: Path,
+    snapshot_dir: Path = PROJECT_ROOT / "data" / "sgsdeck",
+    guide_path: Path = PROJECT_ROOT / "pipeline" / "sgsdeck-guide.json",
+):
+    """Write the general guide (usage + card packs) bound to the exact snapshot built from the same cache.
+
+    The snapshot is not rewritten: its bytes are bound by the reviewed lookup identity, whose bytes in turn feed
+    the site translation glossary digest.
+    """
+    cache_dir = Path(cache_dir)
+    snapshot_dir = Path(snapshot_dir)
+    validate_snapshot(snapshot_dir)
+    snapshot_manifest_bytes = (snapshot_dir / "manifest.json").read_bytes()
+    snapshot_manifest = json.loads(snapshot_manifest_bytes)
+    cache_manifest_hash = hashlib.sha256((cache_dir / "manifest.json").read_bytes()).hexdigest()
+    if snapshot_manifest["sourceManifestHash"] != cache_manifest_hash:
+        raise ValueError("SGSDeck guide cache is not the cache the snapshot was built from")
+    _manifest, resources = load_offline_cache(cache_dir, {("generals", "list")})
+    body = resources[("generals", "list")]["body"]
+    source_records = parse_category_page("generals", body.decode("utf-8"))
+    _records, _children, guide = _compose_list_records("generals", source_records, body, resources)
+    generals = json.loads((snapshot_dir / "generals.json").read_bytes())
+    empty = {"usage": None, "cardPacks": []}
+    document = {
+        "schemaVersion": 1,
+        "provider": "sgsdeck",
+        "region": "TW",
+        "fetchedAt": snapshot_manifest["fetchedAt"],
+        "snapshotManifestHash": hashlib.sha256(snapshot_manifest_bytes).hexdigest(),
+        "cardPacks": guide["cardPacks"],
+        "generals": [
+            {"sourceId": record["sourceId"], **guide["generals"].get(record["sourceId"], empty)}
+            for record in sorted(generals["records"], key=lambda record: record["sourceId"])
+        ],
+    }
+    validate_guide_document(document, snapshot_manifest_bytes, generals)
+    payload = _json_bytes(document)
+    _write_atomic(Path(guide_path), payload)
+    return document
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--cache", type=Path, required=True)
     parser.add_argument("--output", type=Path, default=Path("data/sgsdeck"))
+    parser.add_argument("--guide", type=Path, default=PROJECT_ROOT / "pipeline" / "sgsdeck-guide.json")
+    parser.add_argument(
+        "--guide-only", action="store_true",
+        help="only rebuild the guide for the existing snapshot (snapshot and lookup identity stay byte-identical)",
+    )
     args = parser.parse_args(argv)
-    build_from_cache(args.cache, args.output)
+    if not args.guide_only:
+        build_from_cache(args.cache, args.output)
+    build_guide_from_cache(args.cache, args.output, args.guide)
 
 
 if __name__ == "__main__":

@@ -7,17 +7,17 @@
   },
   "baseline": {
     "lookup": {
-      "entries": 3503
+      "entries": 3597
     },
     "notes": {
       "approvedDisplaySlots": 11,
       "blocks": 1967,
-      "concreteInventorySha256": "f7d3765224d5a34cabbb9be37e5f60d4208f6b0daa1556f1f193243113d16e5d",
-      "concreteLocationCount": 56726,
+      "concreteInventorySha256": "1f11fe7cb74b07c3c6885e0a7381aef7dd3c8ceb0ffd1c595d6b86ffa3dd60e5",
+      "concreteLocationCount": 56826,
       "hanBlocks": 1928,
-      "lookupReviewObligations": 3503,
+      "lookupReviewObligations": 3597,
       "siteLedgerObligations": 2073,
-      "translationObligations": 5576,
+      "translationObligations": 5670,
       "uiTranslateObligations": 62,
       "uniqueRawTexts": 1123
     },
@@ -75,7 +75,7 @@
       "hột": "red-copy count"
     }
   },
-  "policyVersion": "site-vi-261005-tra-cuu-danh-sach-chi-tiet",
+  "policyVersion": "site-vi-261007-tuong-danh-gia-cach-nhan",
   "routeFamilies": [
     {
       "entrypoints": [
@@ -767,11 +767,11 @@
     "js/hero-summaries.js": "6853ba62d68d4185d11044edca7a6c53b9c6a16aaf6228cd4f86f2b3d66bab9a",
     "js/khaihoang-detail.js": "6f77a391e80fde8e27c6a7ed7fc35d6f19d49059fbd7d256e3c9e78ca024e99f",
     "js/legacy-routes.js": "9dcc3e3282440a6f03f4672ecaa64f831557c07686b7fcb926e5d0bc5a65ca57",
-    "js/lookup-data.js": "6cbfbbf2df75c79b2dd8090d290fd13198152fb9ba58533f513721216e9b1d8c",
-    "js/lookup-detail.js": "03a8115e7806bff97b5d32d9f3581cef6d36228c496400abb01133b2e47fe96c",
+    "js/lookup-data.js": "f4bb88fc6bede51be56af47c2a9eed34f2146266dd639fec30890026f3470100",
+    "js/lookup-detail.js": "d4268b0311a5fa01411f4b11094f80da72dd24cfa2e49e22644e78597d577ee1",
     "js/lookup-master.js": "7f5f7960764bd4ffd2fe14756dd03ebdf679074f3e0c58d38df553a1f732c0c8",
     "js/lookup-page.js": "f1ae15d5b8d7f25d88a889f1f66aeb423f5d67b5a4d537f23119fb6392f82331",
-    "js/lookup-profile.js": "2c8f40d91295a5ad6ab71be7d068a3886d8ab164abf75a17647f43976379cdc6",
+    "js/lookup-profile.js": "b960822e102359ede61625bae6519e24916dd70e59968dc9374e24971740f657",
     "js/lookup-tactic-profile.js": "aa9b7397d3d75f5ed02606a9feea6e86457036f730c276d37c05a1a127920784",
     "js/lookup-tactic-view.js": "e79e519d95b216ada53ac884414d51e8ba6d0adb29944edba5ed542a3d8b20ab",
     "js/recommended-reference-render.js": "6ededae243059d8f47f81fab9f99da9f25b5f840f1c5864991c1d402fc3586a9",
@@ -789,7 +789,7 @@
     "js/team-detail.js": "9be97906941c5dafd73d7897a89edd96bd97be88c15446079ed68d0e943b8774",
     "js/team-filter-section.js": "ac5cfca783fadf9aa6b1593b51755ae07cb4ecb0a157665b9a6c8e6ff8890a00",
     "js/turnstile.js": "df16e104800e4b50ef22d306309d8287423fb2bae19947dd89ce508e8825e23f",
-    "js/unified-lookup.js": "98a7481bb0471cd465492075ff20e3fec18b14298bcc7e216502334696685dc0",
+    "js/unified-lookup.js": "9a64174f66551925b60affab990db0e93a08726145bbb5e2b662780e6d9b0a93",
     "js/website-display.js": "f21707872c3977401c68d0705adeaa868edb071a43dd7701f01854e8ff1a8533",
     "pipeline/lookup-identity.json": "cff3228ddcfd4be39fa7c0ad3746d18a6495fa11fc6d8e4480795181f82f38b1",
     "pipeline/recommended-display-map.json": "88ecb8b452ab3292e861ddd879c218a728c16f31734160f6959072bf0be19cd3",

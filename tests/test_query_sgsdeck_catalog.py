@@ -200,6 +200,40 @@ class QuerySgsdeckCatalogTest(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     query_sgsdeck_catalog.validate_snapshot(root)
 
+    def test_general_guide_document_is_bound_to_its_snapshot_and_pack_table(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            self.make_snapshot(root)
+            manifest_bytes = (root / "manifest.json").read_bytes()
+            generals = json.loads((root / "generals.json").read_text())
+        valid = {
+            "schemaVersion": 1, "provider": "sgsdeck", "region": "TW",
+            "fetchedAt": "2026-09-12T01:00:00+07:00",
+            "snapshotManifestHash": hashlib.sha256(manifest_bytes).hexdigest(),
+            "cardPacks": [{"id": "p1", "nameZh": "名將", "category": "名將卡包", "coreRate": 0.34, "nonCoreRate": 0.66, "sortOrder": 0}],
+            "generals": [{"sourceId": "g1", "usage": "必留一個", "cardPacks": [{"packId": "p1", "tier": "core"}]}],
+        }
+        query_sgsdeck_catalog.validate_guide_document(valid, manifest_bytes, generals)
+        row = lambda document: document["generals"][0]
+        mutations = [
+            ("other snapshot", lambda document: document.update({"snapshotManifestHash": "0" * 64})),
+            ("other fetch", lambda document: document.update({"fetchedAt": "2026-10-01T00:00:00+07:00"})),
+            ("general missing", lambda document: document.update({"generals": []})),
+            ("unknown general", lambda document: row(document).update({"sourceId": "g9"})),
+            ("blank usage", lambda document: row(document).update({"usage": " "})),
+            ("unknown pack reference", lambda document: row(document)["cardPacks"][0].update({"packId": "p9"})),
+            ("unknown tier", lambda document: row(document)["cardPacks"][0].update({"tier": "gold"})),
+            ("duplicate pack reference", lambda document: row(document)["cardPacks"].append({"packId": "p1", "tier": "non-core"})),
+            ("rate outside 0..1", lambda document: document["cardPacks"][0].update({"coreRate": 34})),
+            ("duplicate pack id", lambda document: document["cardPacks"].append(dict(document["cardPacks"][0]))),
+            ("extra pack field", lambda document: document["cardPacks"][0].update({"slug": "名將"})),
+        ]
+        for label, mutate in mutations:
+            document = json.loads(json.dumps(valid))
+            mutate(document)
+            with self.subTest(label=label), self.assertRaises(ValueError):
+                query_sgsdeck_catalog.validate_guide_document(document, manifest_bytes, generals)
+
 
 if __name__ == "__main__":
     unittest.main()

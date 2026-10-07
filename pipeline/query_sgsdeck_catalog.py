@@ -169,6 +169,62 @@ def _nonempty_string(value):
     return isinstance(value, str) and bool(value.strip())
 
 
+_GUIDE_KEYS = {"schemaVersion", "provider", "region", "fetchedAt", "snapshotManifestHash", "cardPacks", "generals"}
+_CARD_PACK_KEYS = {"id", "nameZh", "category", "coreRate", "nonCoreRate", "sortOrder"}
+
+
+def _rate(value):
+    return _number(value) and 0 <= value <= 1
+
+
+def validate_guide_document(document, snapshot_manifest_bytes, generals_catalog):
+    """Validate the general guide (usage + card packs) against the exact snapshot it was built for.
+
+    The guide lives beside the snapshot, not inside it: snapshot bytes are bound by the reviewed lookup identity.
+    It must cover every snapshot general exactly once and only reference packs from its own table.
+    """
+    snapshot_manifest = json.loads(snapshot_manifest_bytes)
+    if (not isinstance(document, dict) or set(document) != _GUIDE_KEYS
+            or document["schemaVersion"] != 1 or document["provider"] != "sgsdeck" or document["region"] != "TW"):
+        raise ValueError("SGSDeck guide must use the exact schema")
+    if document["snapshotManifestHash"] != hashlib.sha256(snapshot_manifest_bytes).hexdigest():
+        raise ValueError("SGSDeck guide is not bound to the captured snapshot manifest")
+    if document["fetchedAt"] != snapshot_manifest["fetchedAt"]:
+        raise ValueError("SGSDeck guide fetchedAt differs from the snapshot")
+    packs = document["cardPacks"]
+    if not isinstance(packs, list):
+        raise ValueError("SGSDeck guide card pack table must be a list")
+    pack_ids = set()
+    for pack in packs:
+        if (not isinstance(pack, dict) or set(pack) != _CARD_PACK_KEYS
+                or any(not _nonempty_string(pack[field]) for field in ("id", "nameZh", "category"))
+                or not _rate(pack["coreRate"]) or not _rate(pack["nonCoreRate"])
+                or not isinstance(pack["sortOrder"], int) or isinstance(pack["sortOrder"], bool)
+                or pack["id"] in pack_ids):
+            raise ValueError("invalid or duplicate SGSDeck card pack")
+        pack_ids.add(pack["id"])
+    generals = document["generals"]
+    expected = sorted(record["sourceId"] for record in generals_catalog["records"])
+    if not isinstance(generals, list) or [
+            row.get("sourceId") if isinstance(row, dict) else None for row in generals] != expected:
+        raise ValueError("SGSDeck guide must list every snapshot general once, sorted by sourceId")
+    for row in generals:
+        if set(row) != {"sourceId", "usage", "cardPacks"}:
+            raise ValueError("SGSDeck general guide must use the exact schema")
+        if row["usage"] is not None and not _nonempty_string(row["usage"]):
+            raise ValueError("SGSDeck general usage must be null or non-empty text")
+        if not isinstance(row["cardPacks"], list):
+            raise ValueError("SGSDeck general card packs must be a list")
+        seen = set()
+        for reference in row["cardPacks"]:
+            if (not isinstance(reference, dict) or set(reference) != {"packId", "tier"}
+                    or reference["packId"] not in pack_ids or reference["packId"] in seen
+                    or reference["tier"] not in {"core", "non-core"}):
+                raise ValueError("invalid SGSDeck general card pack reference")
+            seen.add(reference["packId"])
+    return document
+
+
 def _validate_category_attributes(category, record):
     attributes = record["attributes"]
     season = record["sourceSeason"]
