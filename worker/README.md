@@ -131,8 +131,8 @@ Cấu hình nằm trong KV `ai:config`, mã hoá AES-GCM (IV ngẫu nhiên 12 by
 nhà cung cấp dùng chung (endpoint + key + model tự thêm) và chuỗi failover riêng của từng nhóm tính năng
 (`{providerId, modelId, effort}`, timeout mỗi lượt, trần tổng). Code dùng chung một bản: `shared/ai-config.ts` và
 catalog model `shared/ai-models.ts` (cả `worker/` lẫn `community-worker/` import tương đối; wrangler bundle luôn).
-Worker đọc với `cacheTtl` 60 giây → đổi ở `/quan-tri/` có hiệu lực trong khoảng 1 phút. Chi tiết schema, validate
-và thứ tự chuyển từ khoá cũ `ai:providers`: [docs/community-worker.md](../docs/community-worker.md#cấu-hình-ai-tab-ai).
+Worker đọc với `cacheTtl` 60 giây → đổi ở `/quan-tri/` có hiệu lực trong khoảng 1 phút. Chi tiết schema và validate:
+[docs/community-worker.md](../docs/community-worker.md#cấu-hình-ai-tab-ai).
 
 Nhóm theo `mode`: `analyzeTeamImage` → `teamScan`; `scanHeroes`/`scanTactics`/`scanBuiltTeams` → `rosterRecommend`;
 `explainSubstitute` → `explainSubstitute`. Nhóm rỗng hoặc không mắt xích nào chạy được → `503`

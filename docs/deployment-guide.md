@@ -258,8 +258,6 @@ npm run deploy
 
 Endpoint/model/key/effort không nằm trong config: admin cấu hình ở tab **AI** của `/quan-tri/` — nhà cung cấp dùng chung (mẫu DeepSeek, OpenCode Zen hoặc tuỳ chỉnh, catalog model ở `shared/ai-models.ts` cộng model tự thêm) và chuỗi (nhà cung cấp, model, effort) + timeout/trần tổng riêng cho Soi đội, Gợi ý đội, Giải thích món bù, Chiến báo. Mỗi lượt thử mắt xích theo thứ tự, lỗi 401/402/403/429/5xx/mạng/timeout thì chuyển mắt xích kế; xem [worker/README.md](../worker/README.md#nhà-cung-cấp-ai).
 
-Thứ tự triển khai khi chuyển từ bản ghi cũ `ai:providers` sang `ai:config`: deploy cả hai Worker (chúng tự đọc `ai:providers` khi chưa có `ai:config`, hành vi không đổi) → mở tab **AI**, bấm **Lưu** → xác nhận `ai:config` có trong KV → gỡ code đọc bản ghi cũ, deploy lại, xoá khoá `ai:providers`. Lệnh cụ thể: [community-worker.md](community-worker.md#cấu-hình-ai-tab-ai).
-
 ## Publish lại bản dịch hiển thị
 
 Mọi thay đổi chữ UI hoặc file trong `sourceFiles` của `pipeline/site-localization-policy.json` đều phải đi qua chuỗi

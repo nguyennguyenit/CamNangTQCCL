@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { AI_CONFIG_KEY, AI_GROUPS, decryptConfig, encryptRecord, LEGACY_PROVIDERS_KEY, type AiConfig } from "../../shared/ai-config";
+import { AI_CONFIG_KEY, AI_GROUPS, decryptConfig, type AiConfig } from "../../shared/ai-config";
 import { AI_SECRET, createHarness, imageForm, PNG_BYTES, TEST_CONFIG, TEST_GROUP, TEST_PROVIDER, type ApiJson, type Harness } from "./fakes";
 
 const PATH = "/api/admin/ai/config";
@@ -88,27 +88,6 @@ describe("GET/PUT /api/admin/ai/config", () => {
     expect(moved.status).toBe(400);
     expect(await code(moved)).toBe("missing_api_key");
     expect((await stored(h)).providers[0].endpoint).toBe(custom.endpoint);
-  });
-
-  it("lần Lưu đầu khi KV chỉ có bản ghi cũ ai:providers: giữ key cũ, ghi ai:config, không đụng bản cũ", async () => {
-    const h = createHarness();
-    h.aiStore.clear();
-    const legacy = [
-      { id: "ds", label: "DeepSeek", endpoint: TEST_PROVIDER.endpoint, modelId: "deepseek-flash", apiKey: "sk-legacy-ds-1234", enabled: true },
-      { id: "zen", label: "Zen", endpoint: ZEN.endpoint, modelId: "deepseek-v4.1-flash", apiKey: "sk-legacy-zen-5678", enabled: false },
-    ];
-    const legacyBlob = await encryptRecord(legacy, 1, AI_SECRET);
-    h.aiStore.set(LEGACY_PROVIDERS_KEY, legacyBlob);
-    const view = await (await h.request(PATH, { as: "admin" })).json<{ providers: Record<string, unknown>[]; groups: unknown }>();
-    const res = await put(h, view.providers.map(({ keyLast4: _k, ...p }) => ({ ...p, apiKey: "" })), view.groups);
-    expect(res.status).toBe(200);
-    const saved = await stored(h);
-    expect(saved.providers.map((p) => [p.id, p.preset, p.apiKey, p.enabled])).toEqual([
-      ["ds", "deepseek", "sk-legacy-ds-1234", true],
-      ["zen", "opencode-zen", "sk-legacy-zen-5678", false],
-    ]);
-    expect(saved.groups.battleReport.chain).toEqual(legacy.map((p) => ({ providerId: p.id, modelId: p.modelId, effort: "off" })));
-    expect(h.aiStore.get(LEGACY_PROVIDERS_KEY)).toBe(legacyBlob);
   });
 
   it("nhóm được để trống chuỗi (nhóm đó trả chưa cấu hình)", async () => {

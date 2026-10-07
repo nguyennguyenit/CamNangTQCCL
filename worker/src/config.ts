@@ -9,7 +9,7 @@ export interface Env {
   IP_HASH_SECRET?: string;
   // Khoá giải mã cấu hình AI; PHẢI trùng giá trị ở community-worker. Thiếu -> 503.
   AI_CONFIG_SECRET?: string;
-  // KV (rate-limit + đếm cap); chỉ ĐỌC bản ghi `ai:config` (hoặc bản cũ `ai:providers`) do community-worker ghi.
+  // KV (rate-limit + đếm cap); chỉ ĐỌC bản ghi `ai:config` do community-worker ghi.
   RL: KVNamespace;
   // Vars (wrangler.toml) — có thể override.
   // Các origin exact của site, phân cách dấu phẩy (vd "https://tqccl.com,https://www.tqccl.com").

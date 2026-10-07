@@ -21,7 +21,7 @@ Trình duyệt ──/api/*──► Pages Function (proxy) ──service bindin
 | `MEDIA` | R2 binding | `pending/<uploadId>` là ảnh chiến báo chờ gửi, `reports/<id>.<ext>` là ảnh chiến báo đã gửi, `posts/<id>.<ext>` là ảnh bài viết |
 | `SITE_ORIGIN` | var | Danh sách origin của site, phân tách dấu phẩy (`https://tqccl.com,https://www.tqccl.com,https://tqccl.pages.dev,https://preview-community.tqccl.pages.dev`). Origin đầu là mặc định. Better Auth lấy `baseURL` theo domain của request nếu domain đó nằm trong danh sách; tất cả đều là origin tin cậy |
 | `ADMIN_EMAILS` | var | Danh sách email admin, phân tách bằng dấu phẩy, không phân biệt hoa thường |
-| `AI_KV` | KV binding | Cùng namespace `RL` của `worker/` (`6fff7d73c885457dbb71756de99e66fa`). Khoá `ai:config` chứa cấu hình AI đã mã hoá (nhà cung cấp + chuỗi của bốn nhóm tính năng); Worker này ghi (tab AI), `worker/` chỉ đọc. Khoá cũ `ai:providers` chỉ còn được đọc khi chưa có `ai:config` |
+| `AI_KV` | KV binding | Cùng namespace `RL` của `worker/` (`6fff7d73c885457dbb71756de99e66fa`). Khoá `ai:config` chứa cấu hình AI đã mã hoá (nhà cung cấp + chuỗi của bốn nhóm tính năng); Worker này ghi (tab AI), `worker/` chỉ đọc |
 | `AI_CONFIG_SECRET` | secret | Khoá dẫn xuất (HKDF) để mã hoá/giải mã `ai:config`; **phải trùng giá trị** với `worker/`. Thiếu thì analyze trả 503 `ai_not_configured` và API tab AI trả 503 `ai_secret_missing` |
 | `FEATURE_ENABLED` | var | Đặt `"false"` để tắt `POST /api/reports/analyze` (trả 503 `feature_disabled`) |
 | `BETTER_AUTH_SECRET` | secret | Chuỗi ngẫu nhiên từ 32 byte trở lên, ví dụ tạo bằng `openssl rand -base64 32` |
@@ -121,12 +121,7 @@ Endpoint/model/key và mức suy luận của mọi tính năng AI không nằm 
 - `worker/` đọc với `cacheTtl` 60 giây nên thay đổi có hiệu lực trong khoảng 1 phút; chiến báo đọc mới mỗi lượt.
 - Catalog model tĩnh: `node scripts/scan-ai-models.mjs` (tuỳ chọn `DEEPSEEK_API_KEY`, `OPENCODE_API_KEY`) in model mới/đã mất so với `shared/ai-models.ts`; cờ `vision`/`effortStyle`/`efforts` điền tay theo tài liệu nhà cung cấp rồi deploy cả hai Worker. Model lẻ thì thêm ở tab AI (`extraModels`), không cần deploy.
 
-**Chuyển từ `ai:providers` sang `ai:config`** (làm một lần, theo đúng thứ tự):
-
-1. Deploy `community-worker/` và `worker/` (giữa hai Worker thứ tự tuỳ ý), rồi deploy Pages — tab AI mới gọi `/api/admin/ai/config` nên Worker phải có trước. Khi chưa có `ai:config`, cả hai Worker đọc `ai:providers` và chuyển trong bộ nhớ: mỗi mục cũ thành một nhà cung cấp (mẫu nhận theo endpoint; model ngoài catalog thành `extraModels` kiểu `deepseek` chỉ mức `off`), cả bốn nhóm nhận chuỗi theo thứ tự cũ với effort `off`, timeout 45 s, trần tổng 45 s × số mục đang bật (không giới hạn, như vòng failover cũ) — hành vi gọi y như trước. Có trên 4 mục đang bật thì trần tổng vượt 180 s: tab AI chặn Lưu cho tới khi hạ xuống.
-2. Vào `/quan-tri/` → tab **AI** → kiểm tra rồi bấm **Lưu** để ghi `ai:config`.
-3. Xác nhận: `npx wrangler kv key get ai:config --namespace-id 6fff7d73c885457dbb71756de99e66fa --remote` có dữ liệu.
-4. Dọn dẹp: xoá `LEGACY_PROVIDERS_KEY`/`migrateLegacy` cùng test của nó trong `shared/ai-config.ts`, deploy lại cả hai Worker, rồi `npx wrangler kv key delete ai:providers --namespace-id 6fff7d73c885457dbb71756de99e66fa --remote`.
+Bản ghi cũ `ai:providers` (danh sách provider có `modelId`) đã được chuyển sang `ai:config` ngày 2026-10-05; code không còn đọc khoá cũ. Khoá HKDF vẫn dẫn xuất với nhãn `ai:providers v1` — đổi nhãn sẽ làm `ai:config` đã lưu không giải mã được.
 
 ## Dev cục bộ
 

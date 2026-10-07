@@ -55,11 +55,6 @@ export interface AiConfigKv {
 }
 
 export const AI_CONFIG_KEY = "ai:config";
-/**
- * Bản ghi v1 (danh sách provider, mỗi mục một `modelId`). Chỉ còn được đọc khi chưa có `ai:config` để chuyển
- * sang dạng mới trong bộ nhớ; xoá cùng `migrateLegacy` sau khi `ai:config` đã được lưu ở production.
- */
-export const LEGACY_PROVIDERS_KEY = "ai:providers";
 export const MAX_PROVIDERS = 10;
 export const MAX_EXTRA_MODELS = 20;
 export const MAX_CHAIN_LINKS = 10;
@@ -76,6 +71,7 @@ export const MAX_BUDGET_MS = 180_000;
 export const MIN_ATTEMPT_MS = 3_000;
 
 const encoder = new TextEncoder();
+// Nhãn dẫn xuất khoá cố định từ bản đầu tiên — đổi sẽ làm bản ghi `ai:config` đã lưu không giải mã được.
 const HKDF_SALT = encoder.encode("tqccl-ai-config");
 const HKDF_INFO = encoder.encode("ai:providers v1");
 const RECORD_VERSION = 2;
@@ -104,32 +100,24 @@ function fromBase64(text: string): Uint8Array {
   return out;
 }
 
-/** Mã hoá JSON bất kỳ -> chuỗi `{v, iv, data}` (IV ngẫu nhiên 12 byte mỗi lần ghi). */
-export async function encryptRecord(payload: unknown, version: number, secret: string): Promise<string> {
+/** Mã hoá cấu hình -> chuỗi `{v, iv, data}` (IV ngẫu nhiên 12 byte mỗi lần ghi). */
+export async function encryptConfig(config: AiConfig, secret: string): Promise<string> {
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const key = await deriveKey(secret);
-  const data = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, encoder.encode(JSON.stringify(payload)));
-  return JSON.stringify({ v: version, iv: toBase64(iv), data: toBase64(new Uint8Array(data)) });
+  const data = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, encoder.encode(JSON.stringify(config)));
+  return JSON.stringify({ v: RECORD_VERSION, iv: toBase64(iv), data: toBase64(new Uint8Array(data)) });
 }
 
-/** Giải mã bản ghi đúng phiên bản; sai secret/hỏng dữ liệu/sai phiên bản -> ném lỗi. */
-async function decryptRecord(blob: string, version: number, secret: string): Promise<unknown> {
+/** Giải mã bản ghi; sai secret/hỏng dữ liệu/sai phiên bản -> ném lỗi. */
+export async function decryptConfig(blob: string, secret: string): Promise<AiConfig> {
   const parsed: unknown = JSON.parse(blob);
   const rec = parsed && typeof parsed === "object" ? (parsed as Record<string, unknown>) : {};
   const iv = str(rec.iv);
   const data = str(rec.data);
-  if (rec.v !== version || !iv || !data) throw new Error("ai config: bản ghi không hợp lệ");
+  if (rec.v !== RECORD_VERSION || !iv || !data) throw new Error("ai config: bản ghi không hợp lệ");
   const key = await deriveKey(secret);
   const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: fromBase64(iv) }, key, fromBase64(data));
-  return JSON.parse(new TextDecoder().decode(plain));
-}
-
-export async function encryptConfig(config: AiConfig, secret: string): Promise<string> {
-  return encryptRecord(config, RECORD_VERSION, secret);
-}
-
-export async function decryptConfig(blob: string, secret: string): Promise<AiConfig> {
-  return toConfig(await decryptRecord(blob, RECORD_VERSION, secret));
+  return toConfig(JSON.parse(new TextDecoder().decode(plain)));
 }
 
 function str(value: unknown): string | null {
@@ -193,51 +181,14 @@ function toConfig(value: unknown): AiConfig {
 }
 
 /**
- * v1 -> v2 trong bộ nhớ, giữ nguyên hành vi: mỗi provider cũ thành một provider mới (mẫu nhận theo endpoint;
- * model cũ không có trong catalog mẫu -> `extraModels`), và cả bốn nhóm nhận cùng chuỗi theo thứ tự cũ với
- * effort tắt, timeout 45s, trần tổng = 45s × số mục đang bật — đúng như vòng failover cũ (không trần). Trần
- * này có thể vượt MAX_BUDGET_MS khi có trên 4 mục bật; bản ghi chỉ nằm trong bộ nhớ, admin phải hạ xuống khi Lưu.
- */
-function migrateLegacy(value: unknown): AiConfig {
-  if (!Array.isArray(value)) throw new Error("ai config v1: không phải danh sách");
-  const config = emptyConfig();
-  const chain: AiChainLink[] = [];
-  for (const item of value) {
-    const v = obj(item);
-    const [id, label, endpoint, modelId, apiKey] = [v?.id, v?.label, v?.endpoint, v?.modelId, v?.apiKey].map(str);
-    if (!v || !id || label === null || !endpoint || !modelId || !apiKey || typeof v.enabled !== "boolean") continue;
-    const preset = AI_PRESETS.find((p) => p.endpoint === endpoint);
-    const inCatalog = preset?.models.some((m) => m.modelId === modelId && m.efforts.includes("off")) ?? false;
-    config.providers.push({
-      id,
-      label,
-      preset: preset?.id ?? "",
-      endpoint,
-      apiKey,
-      enabled: v.enabled,
-      extraModels: inCatalog ? [] : [{ modelId, vision: true, effortStyle: "deepseek", efforts: ["off"] }],
-    });
-    chain.push({ providerId: id, modelId, effort: "off" });
-  }
-  const enabledCount = config.providers.filter((p) => p.enabled).length;
-  const budgetMs = DEFAULT_TIMEOUT_MS * Math.max(1, enabledCount);
-  for (const id of AI_GROUPS) config.groups[id] = { chain: chain.map((l) => ({ ...l })), timeoutMs: DEFAULT_TIMEOUT_MS, budgetMs };
-  return config;
-}
-
-/**
  * Đọc cấu hình. Thiếu secret, chưa có bản ghi, giải mã lỗi -> cấu hình rỗng (mọi nhóm chưa cấu hình).
- * Chưa có `ai:config` thì chuyển bản ghi v1 `ai:providers` sang dạng mới (chỉ trong bộ nhớ, không ghi).
  * `cacheTtl` cho phép KV cache ở edge (thay đổi có hiệu lực trong khoảng 1 phút).
  */
 export async function loadAiConfig(kv: AiConfigKv, secret: string | undefined, cacheTtl?: number): Promise<AiConfig> {
   if (!secret) return emptyConfig();
-  const options = cacheTtl ? { cacheTtl } : undefined;
   try {
-    const blob = await kv.get(AI_CONFIG_KEY, options);
-    if (blob) return await decryptConfig(blob, secret);
-    const legacy = await kv.get(LEGACY_PROVIDERS_KEY, options);
-    return legacy ? migrateLegacy(await decryptRecord(legacy, 1, secret)) : emptyConfig();
+    const blob = await kv.get(AI_CONFIG_KEY, cacheTtl ? { cacheTtl } : undefined);
+    return blob ? await decryptConfig(blob, secret) : emptyConfig();
   } catch {
     return emptyConfig();
   }

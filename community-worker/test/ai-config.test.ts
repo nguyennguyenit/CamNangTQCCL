@@ -9,8 +9,6 @@ import {
   effortToBody,
   emptyConfig,
   encryptConfig,
-  encryptRecord,
-  LEGACY_PROVIDERS_KEY,
   loadAiConfig,
   resolveRoute,
   type AiConfig,
@@ -96,51 +94,6 @@ describe("lưu/đọc cấu hình", () => {
     ]) {
       expect(loaded).toEqual(emptyConfig());
     }
-  });
-});
-
-describe("chuyển bản ghi v1 ai:providers", () => {
-  const legacy = [
-    { id: "ds", label: "DeepSeek", endpoint: "https://api.deepseek.com/chat/completions", modelId: "deepseek-flash", apiKey: "key-ds", enabled: true },
-    { id: "off", label: "Tắt", endpoint: "https://off.test/v1/chat/completions", modelId: "m-off", apiKey: "key-off", enabled: false },
-    { id: "cu", label: "Custom", endpoint: "https://cu.test/v1/chat/completions", modelId: "m-cu", apiKey: "key-cu", enabled: true },
-  ];
-
-  it("cả bốn nhóm nhận chuỗi theo thứ tự cũ, effort tắt, 45s/lượt, trần tổng 45s × số mục bật; model ngoài catalog thành extraModels", async () => {
-    const config = await loadAiConfig(memoryKv([[LEGACY_PROVIDERS_KEY, await encryptRecord(legacy, 1, SECRET)]]), SECRET);
-    expect(config.providers.map((p) => [p.id, p.preset, p.enabled, p.extraModels.map((m) => m.modelId)])).toEqual([
-      ["ds", "deepseek", true, []],
-      ["off", "", false, ["m-off"]],
-      ["cu", "", true, ["m-cu"]],
-    ]);
-    for (const group of AI_GROUPS) {
-      expect(config.groups[group]).toEqual({
-        chain: legacy.map((p) => ({ providerId: p.id, modelId: p.modelId, effort: "off" })),
-        timeoutMs: 45_000,
-        budgetMs: 90_000,
-      });
-    }
-  });
-
-  it("hành vi gọi giữ nguyên: bỏ mục tắt, cùng thứ tự, cùng key, body tắt thinking như trước", async () => {
-    const config = await loadAiConfig(memoryKv([[LEGACY_PROVIDERS_KEY, await encryptRecord(legacy, 1, SECRET)]]), SECRET);
-    for (const group of AI_GROUPS) {
-      const { calls, bodies, impl } = fakeFetch({ "api.deepseek.com": status(500), "cu.test": ok });
-      expect((await callWithFailover(resolveRoute(config, group), (model) => ({ model, temperature: 0 }), impl)).status).toBe(200);
-      expect(calls).toEqual(["api.deepseek.com", "cu.test"]);
-      expect(bodies).toEqual([
-        { model: "deepseek-flash", temperature: 0, thinking: { type: "disabled" } },
-        { model: "m-cu", temperature: 0, thinking: { type: "disabled" } },
-      ]);
-    }
-  });
-
-  it("đã có ai:config thì bỏ qua bản ghi v1", async () => {
-    const kv = memoryKv([
-      [AI_CONFIG_KEY, await encryptConfig(emptyConfig(), SECRET)],
-      [LEGACY_PROVIDERS_KEY, await encryptRecord(legacy, 1, SECRET)],
-    ]);
-    expect(await loadAiConfig(kv, SECRET)).toEqual(emptyConfig());
   });
 });
 
