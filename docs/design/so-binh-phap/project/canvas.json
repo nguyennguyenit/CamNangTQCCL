@@ -8,7 +8,7 @@
       "title": "Quản trị — nhà cung cấp AI",
       "w": 1440,
       "x": 3040,
-      "y": 73205
+      "y": 73144
     },
     "AdminAIMobile.dc.html": {
       "h": 3304,
@@ -16,7 +16,7 @@
       "title": "Quản trị — nhà cung cấp AI (mobile)",
       "w": 390,
       "x": 5590,
-      "y": 74741
+      "y": 74680
     },
     "AdminComments.dc.html": {
       "h": 1739,
@@ -24,7 +24,7 @@
       "title": "Quản trị — bình luận",
       "w": 1440,
       "x": 0,
-      "y": 73205
+      "y": 73144
     },
     "AdminCommentsMobile.dc.html": {
       "h": 2793,
@@ -32,7 +32,7 @@
       "title": "Quản trị — bình luận (mobile)",
       "w": 390,
       "x": 6530,
-      "y": 70714
+      "y": 70653
     },
     "AdminFeedback.dc.html": {
       "h": 1953,
@@ -40,7 +40,7 @@
       "title": "Quản trị — góp ý",
       "w": 1440,
       "x": 1520,
-      "y": 73205
+      "y": 73144
     },
     "AdminFeedbackMobile.dc.html": {
       "h": 2965,
@@ -48,7 +48,7 @@
       "title": "Quản trị — góp ý (mobile)",
       "w": 390,
       "x": 5120,
-      "y": 74741
+      "y": 74680
     },
     "AdminPostEditor.dc.html": {
       "h": 2371,
@@ -56,7 +56,7 @@
       "title": "Quản trị — soạn bài viết",
       "w": 1440,
       "x": 3040,
-      "y": 70714
+      "y": 70653
     },
     "AdminPostEditorMobile.dc.html": {
       "h": 3907,
@@ -64,7 +64,7 @@
       "title": "Quản trị — soạn bài viết (mobile)",
       "w": 390,
       "x": 6060,
-      "y": 70714
+      "y": 70653
     },
     "AdminPosts.dc.html": {
       "h": 1418,
@@ -72,7 +72,7 @@
       "title": "Quản trị — bài viết",
       "w": 1440,
       "x": 1520,
-      "y": 70714
+      "y": 70653
     },
     "AdminPostsMobile.dc.html": {
       "h": 2538,
@@ -80,7 +80,7 @@
       "title": "Quản trị — bài viết (mobile)",
       "w": 390,
       "x": 5590,
-      "y": 70714
+      "y": 70653
     },
     "AdminReports.dc.html": {
       "h": 2113,
@@ -88,7 +88,7 @@
       "title": "Quản trị — duyệt chiến báo",
       "w": 1440,
       "x": 0,
-      "y": 70714
+      "y": 70653
     },
     "AdminReportsMobile.dc.html": {
       "h": 3689,
@@ -96,7 +96,7 @@
       "title": "Quản trị — duyệt chiến báo (mobile)",
       "w": 390,
       "x": 5120,
-      "y": 70714
+      "y": 70653
     },
     "Analyze.dc.html": {
       "h": 1629,
@@ -120,7 +120,7 @@
       "title": "Bài viết — desktop",
       "w": 1440,
       "x": 1520,
-      "y": 53090
+      "y": 53029
     },
     "BaiVietMobile.dc.html": {
       "h": 1790,
@@ -128,7 +128,7 @@
       "title": "Bài viết — mobile",
       "w": 390,
       "x": 5590,
-      "y": 53090
+      "y": 53029
     },
     "ChienBao.dc.html": {
       "h": 1351,
@@ -136,7 +136,7 @@
       "title": "Chiến báo — desktop",
       "w": 1440,
       "x": 0,
-      "y": 53090
+      "y": 53029
     },
     "ChienBaoMobile.dc.html": {
       "h": 2184,
@@ -144,7 +144,7 @@
       "title": "Chiến báo — mobile",
       "w": 390,
       "x": 5120,
-      "y": 53090
+      "y": 53029
     },
     "Coexist.dc.html": {
       "h": 2243,
@@ -168,7 +168,7 @@
       "title": "Quy tắc cộng đồng — desktop",
       "w": 1440,
       "x": 3040,
-      "y": 63002
+      "y": 62941
     },
     "CommunityRulesMobile.dc.html": {
       "h": 3125,
@@ -176,28 +176,28 @@
       "title": "Quy tắc cộng đồng — mobile",
       "w": 390,
       "x": 6060,
-      "y": 63002
+      "y": 62941
     },
     "DirA-ChienBao.dc.html": {
       "h": 1080,
       "title": "Hướng A — Chiến báo (tối, game HUD)",
       "w": 760,
       "x": 0,
-      "y": 81945
+      "y": 81884
     },
     "DirB-BangTra.dc.html": {
       "h": 480,
       "title": "Hướng B — Bảng tra (dữ liệu dày)",
       "w": 1120,
       "x": 840,
-      "y": 81945
+      "y": 81884
     },
     "DirC-ThuyMac.dc.html": {
       "h": 1080,
       "title": "Hướng C — Thủy mặc (tối giản)",
       "w": 760,
       "x": 2040,
-      "y": 81945
+      "y": 81884
     },
     "Disclaimer.dc.html": {
       "h": 1866,
@@ -205,7 +205,7 @@
       "title": "Miễn trừ trách nhiệm — desktop",
       "w": 1440,
       "x": 0,
-      "y": 66459
+      "y": 66398
     },
     "DisclaimerMobile.dc.html": {
       "h": 3016,
@@ -213,7 +213,7 @@
       "title": "Miễn trừ trách nhiệm — mobile",
       "w": 390,
       "x": 6530,
-      "y": 63002
+      "y": 62941
     },
     "DoiKhac.dc.html": {
       "h": 2481,
@@ -285,7 +285,7 @@
       "title": "Landing — giới thiệu (desktop)",
       "w": 1440,
       "x": 0,
-      "y": 55794
+      "y": 55733
     },
     "LandingMenu.dc.html": {
       "h": 900,
@@ -293,7 +293,7 @@
       "title": "Landing — menu đang mở (desktop)",
       "w": 1440,
       "x": 1520,
-      "y": 55794
+      "y": 55733
     },
     "LandingMenuMobile.dc.html": {
       "h": 844,
@@ -301,7 +301,7 @@
       "title": "Landing — menu mobile đang mở",
       "w": 390,
       "x": 5590,
-      "y": 55794
+      "y": 55733
     },
     "LandingMobile.dc.html": {
       "h": 6688,
@@ -309,7 +309,7 @@
       "title": "Landing — giới thiệu (mobile)",
       "w": 390,
       "x": 5120,
-      "y": 55794
+      "y": 55733
     },
     "LandingZh.dc.html": {
       "h": 4460,
@@ -317,7 +317,7 @@
       "title": "Landing tiếng Trung — desktop",
       "w": 1440,
       "x": 3040,
-      "y": 55794
+      "y": 55733
     },
     "LandingZhMobile.dc.html": {
       "h": 6207,
@@ -325,14 +325,14 @@
       "title": "Landing tiếng Trung — mobile",
       "w": 390,
       "x": 6060,
-      "y": 55794
+      "y": 55733
     },
     "Logo.dc.html": {
       "h": 1400,
       "title": "Logo — 5 phương án",
       "w": 1440,
       "x": 1360,
-      "y": 78565
+      "y": 78504
     },
     "Lookup.dc.html": {
       "h": 2685,
@@ -564,7 +564,7 @@
       "title": "Trang 404 — desktop",
       "w": 1440,
       "x": 1520,
-      "y": 66459
+      "y": 66398
     },
     "NotFoundMobile.dc.html": {
       "h": 1690,
@@ -572,7 +572,7 @@
       "title": "Trang 404 — mobile",
       "w": 390,
       "x": 5120,
-      "y": 68504
+      "y": 68443
     },
     "Privacy.dc.html": {
       "h": 3337,
@@ -580,7 +580,7 @@
       "title": "Chính sách bảo mật — desktop",
       "w": 1440,
       "x": 1520,
-      "y": 63002
+      "y": 62941
     },
     "PrivacyMobile.dc.html": {
       "h": 5382,
@@ -588,7 +588,7 @@
       "title": "Chính sách bảo mật — mobile",
       "w": 390,
       "x": 5590,
-      "y": 63002
+      "y": 62941
     },
     "Recruit.dc.html": {
       "h": 2098,
@@ -612,7 +612,7 @@
       "title": "Gợi ý đội từ kho — đọc và kiểm tra kho (thiết kế mới)",
       "w": 1440,
       "x": 0,
-      "y": 47224
+      "y": 47163
     },
     "RosterMobile.dc.html": {
       "h": 4664,
@@ -620,14 +620,14 @@
       "title": "Gợi ý đội từ kho — đọc và kiểm tra kho (thiết kế mới) (mobile)",
       "w": 390,
       "x": 5120,
-      "y": 47224
+      "y": 47163
     },
     "StyleGuide.dc.html": {
       "h": 2860,
       "title": "Hệ thống thị giác",
       "w": 1280,
       "x": 0,
-      "y": 78565
+      "y": 78504
     },
     "TeamDetail.dc.html": {
       "h": 1924,
@@ -651,7 +651,7 @@
       "title": "Điều khoản sử dụng — desktop",
       "w": 1440,
       "x": 0,
-      "y": 63002
+      "y": 62941
     },
     "TermsMobile.dc.html": {
       "h": 4024,
@@ -659,7 +659,7 @@
       "title": "Điều khoản sử dụng — mobile",
       "w": 390,
       "x": 5120,
-      "y": 63002
+      "y": 62941
     },
     "RecruitFiveStar.dc.html": {
       "title": "Theo dõi chiêu mộ — ghi 5★ (thiết kế mới)",
@@ -690,7 +690,7 @@
       "w": 1440,
       "x": 0,
       "y": 44241,
-      "h": 2846,
+      "h": 2802,
       "is_interactive": true
     },
     "AnalyzeReviewMobile.dc.html": {
@@ -698,7 +698,7 @@
       "w": 390,
       "x": 6060,
       "y": 42038,
-      "h": 4368,
+      "h": 4059,
       "is_interactive": true
     },
     "AnalyzeResultMobile.dc.html": {
@@ -706,14 +706,14 @@
       "w": 390,
       "x": 6530,
       "y": 42038,
-      "h": 5066,
+      "h": 4978,
       "is_interactive": true
     },
     "RosterResult.dc.html": {
       "title": "Gợi ý đội từ kho — kết quả (thiết kế mới)",
       "w": 1440,
       "x": 1520,
-      "y": 47224,
+      "y": 47163,
       "h": 2542,
       "is_interactive": true
     },
@@ -721,7 +721,7 @@
       "title": "Gợi ý đội từ kho — kết quả (thiết kế mới) (mobile)",
       "w": 390,
       "x": 5590,
-      "y": 47224,
+      "y": 47163,
       "h": 5346,
       "is_interactive": true
     },
@@ -758,7 +758,7 @@
       "text": "Quản trị (/quan-tri/) · thiết kế mới",
       "w": 240,
       "x": 0,
-      "y": 70434
+      "y": 70373
     },
     "coexistrow": {
       "kind": "title1",
@@ -774,7 +774,7 @@
       "text": "Cộng đồng · Chiến báo · Bài viết",
       "w": 240,
       "x": 0,
-      "y": 52810
+      "y": 52749
     },
     "directions": {
       "kind": "title1",
@@ -782,7 +782,7 @@
       "text": "Ba hướng khác để so sánh (tham khảo)",
       "w": 240,
       "x": 0,
-      "y": 81665
+      "y": 81604
     },
     "doikhacrow": {
       "kind": "title1",
@@ -806,7 +806,7 @@
       "text": "Landing page giới thiệu · bản tiếng Trung",
       "w": 240,
       "x": 0,
-      "y": 55514
+      "y": 55453
     },
     "logorow": {
       "kind": "title1",
@@ -814,7 +814,7 @@
       "text": "Hệ thống thị giác · Logo",
       "w": 240,
       "x": 0,
-      "y": 78285
+      "y": 78224
     },
     "lookuprow": {
       "kind": "title1",
@@ -830,7 +830,7 @@
       "text": "Trang chính sách · 404",
       "w": 240,
       "x": 0,
-      "y": 62722
+      "y": 62661
     },
     "tableview": {
       "kind": "title1",

@@ -17,19 +17,21 @@ const OUT = join(WORK, 'captures');
 const DEBUG = process.argv.includes('--debug');
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.woff2': 'font/woff2' };
 
-// Lượt đọc mẫu (màn chiến báo, hai phe). Phe trái có ô cần xác nhận để thấy đủ trạng thái của editor.
+// Lượt đọc mẫu khớp ảnh chiến báo thật (.cache/design-canvas/chien-bao-mau.jpg, bản client Trung): mỗi tướng chép đủ 3 dòng
+// chiến pháp (kể cả dòng tự mang), màn chiến báo không in binh thư; phe phải đọc từ phải sang trái, chủ tướng trước.
+// Một dòng chép sai nhẹ (速乘其力) để editor có ô "Không chắc".
 const READ = {
   screen: 'battleReport',
   sides: [
     { side: 'left', heroes: [
-      { nameCn: '40Y 呂布', tacticsCn: ['引弦力戰', '血刃爭鋒'], booksCn: ['以直報怨'], statFocusCn: '' },
-      { nameCn: '王異', tacticsCn: ['奪魂挟魄', '當鋒摧決'], booksCn: ['奇正相生'], statFocusCn: '' },
-      { nameCn: '法正', tacticsCn: ['三勢陣', '臨危救主'], booksCn: ['未知'], statFocusCn: '' },
+      { nameCn: '诸葛恪', tacticsCn: ['挥兵谋胜', '武锋阵', '盛气凌敌'], booksCn: [], statFocusCn: '' },
+      { nameCn: '太史慈', tacticsCn: ['神射', '摧锋断刃', '速乘其力'], booksCn: [], statFocusCn: '' },
+      { nameCn: '左慈', tacticsCn: ['金丹秘术', '无当飞军', '临机制胜'], booksCn: [], statFocusCn: '' },
     ] },
     { side: 'right', heroes: [
-      { nameCn: 'SP 馬超', tacticsCn: ['當鋒摧決', '摧鋒斷刃'], booksCn: [], statFocusCn: '' },
-      { nameCn: '許攸', tacticsCn: ['臨危救主', '解煩衛'], booksCn: [], statFocusCn: '' },
-      { nameCn: '陳宮', tacticsCn: ['雁行陣', '剛柔並濟'], booksCn: [], statFocusCn: '' },
+      { nameCn: '丁奉', tacticsCn: ['短兵相见', '顿兵坚城', '轻勇飞燕'], booksCn: [], statFocusCn: '' },
+      { nameCn: '陈武', tacticsCn: ['庐江上甲', '避实击虚', '御敌屏障'], booksCn: [], statFocusCn: '' },
+      { nameCn: '董袭', tacticsCn: ['自愈', '骁军定北', '落凤'], booksCn: [], statFocusCn: '' },
     ] },
   ],
 };
@@ -43,7 +45,7 @@ const server = createServer(async (q, r) => {
 await new Promise((d) => server.listen(0, '127.0.0.1', d));
 const BASE = `http://127.0.0.1:${server.address().port}`;
 await mkdir(OUT, { recursive: true });
-const png = await readFile(join(REPO, 'public/og-image.png'));
+const sample = await readFile(join(WORK, 'chien-bao-mau.jpg'));
 
 async function snap(page, board) {
   await page.waitForTimeout(500);
@@ -70,7 +72,7 @@ for (const [suffix, width] of [['', 1440], ['Mobile', 390]]) {
   await page.waitForTimeout(1500);
   await snap(page, `Analyze${suffix}`);
 
-  await page.setInputFiles('.ana-file', { name: 'chien-bao.png', mimeType: 'image/png', buffer: png });
+  await page.setInputFiles('.ana-file', { name: 'chien-bao.jpg', mimeType: 'image/jpeg', buffer: sample });
   await page.waitForTimeout(800);
   await controls(page, 'after file');
   await page.click('.ana-run');
@@ -94,6 +96,13 @@ for (const [suffix, width] of [['', 1440], ['Mobile', 390]]) {
     await page.waitForTimeout(150);
   }
   await controls(page, 'before compare');
+  // Mùa có đội trùng đủ 3 tướng của ảnh mẫu (Chư Thái Tả, PK-S26) để màn đối chiếu có kết quả.
+  await page.evaluate(() => {
+    const select = [...document.querySelectorAll('select.ana-input')].find((s) => s.getClientRects().length);
+    const option = select && [...select.options].find((o) => o.textContent.includes('PK-S26'));
+    if (option) { select.value = option.value; select.dispatchEvent(new Event('change', { bubbles: true })); }
+  });
+  await page.waitForTimeout(800);
   const compare = page.locator('.ana-compare-run');
   if (await compare.isEnabled()) {
     await compare.click();

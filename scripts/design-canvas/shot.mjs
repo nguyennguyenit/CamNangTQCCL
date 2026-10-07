@@ -14,7 +14,7 @@ const sep = args.indexOf('--');
 const [boardsDir, ...blobDirs] = args.slice(0, sep);
 const targets = args.slice(sep + 1).map((a) => a.split(':'));
 const SUPPORT = join(REPO, 'docs/design/so-binh-phap/project/support.js');
-const sniff = (x) => x.subarray(0, 4).toString('latin1') === 'wOF2' ? 'font/woff2' : x[0] === 0x89 ? 'image/png'
+const sniff = (x) => x.subarray(0, 4).toString('latin1') === 'wOF2' ? 'font/woff2' : x[0] === 0x89 ? 'image/png' : x[0] === 0xff && x[1] === 0xd8 ? 'image/jpeg'
   : /^\s*<(svg|\?xml)/.test(x.subarray(0, 64).toString()) ? 'image/svg+xml' : 'text/css';
 
 const server = createServer(async (q, r) => {
@@ -39,7 +39,7 @@ for (const [board, w] of targets) {
   await page.waitForSelector('html[data-dc-ready], html[data-dc-error]', { state: 'attached' });
   const h = await page.evaluate(() => { const root = document.querySelector('.dc-body') || [...document.querySelectorAll('div')].find((d) => d.style.width.endsWith('px')); root.style.height = 'auto'; return root.scrollHeight; });
   await page.screenshot({ path: join(boardsDir, `${board}.png`), fullPage: true });
-  if (process.env.CLIP) { const [y, ch] = process.env.CLIP.split(',').map(Number); await page.screenshot({ path: join(boardsDir, `${board}.clip.png`), clip: { x: 0, y, width: +w, height: ch } }); }
+  if (process.env.CLIP) { const [y, ch] = process.env.CLIP.split(',').map(Number); await page.screenshot({ path: join(boardsDir, `${board}.clip.png`), fullPage: true, clip: { x: 0, y, width: +w, height: ch } }); }
   console.log(board, 'natural height', h);
 }
 await browser.close();

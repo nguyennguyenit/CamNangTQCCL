@@ -47,6 +47,7 @@ export async function pageArtboards() {
 function blobType(body) {
   if (body.subarray(0, 4).toString('latin1') === 'wOF2') return 'font/woff2';
   if (body[0] === 0x89 && body.subarray(1, 4).toString('latin1') === 'PNG') return 'image/png';
+  if (body[0] === 0xff && body[1] === 0xd8) return 'image/jpeg';
   if (/^\s*<(svg|\?xml)/.test(body.subarray(0, 64).toString('utf8'))) return 'image/svg+xml';
   return 'text/css; charset=utf-8';
 }
