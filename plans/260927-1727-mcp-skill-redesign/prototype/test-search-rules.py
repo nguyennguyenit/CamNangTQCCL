@@ -39,7 +39,7 @@ class RetrievalContract(unittest.TestCase):
 
     def test_chinese_query(self):
         result = search.retrieve('装备', 'lookup')
-        self.assertEqual(result['guidance'][0]['rule']['id'], 'lookup-six-groups')
+        self.assertEqual(result['guidance'][0]['rule']['id'], 'lookup-seven-groups')
 
     def test_changed_configuration_includes_score_rule(self):
         result = search.retrieve('', 'research', {'configChanged': True})

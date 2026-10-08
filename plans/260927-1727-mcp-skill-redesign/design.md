@@ -2,11 +2,11 @@
 
 Trạng thái: thiết kế để triển khai; tên tool mới và field mới bên dưới **chưa tồn tại** trong runtime.
 
-**Bổ sung 2026-09-27:** [thiết kế skill–MCP và learning](skill-mcp-learning-design.md) mở rộng từ 12 lên 14 tool, thêm searchable knowledge và skill bảo trì. Các mục 12 tool/3 skill dưới đây là lớp nghiệp vụ gốc; phạm vi đầy đủ nằm ở plan index và tài liệu bổ sung.
+**Bổ sung 2026-09-27, chỉnh 2026-10-07:** [thiết kế skill–MCP và learning](skill-mcp-learning-design.md) bổ sung knowledge/learning. **Bề mặt tool chốt là P\* — 7 tool** ([debate tool-surface](reports/debate-tool-surface.md)), thay mốc 12/14 tool trước đó; user bỏ ràng buộc giữ 8 tool cũ. `tqccl_search_rules` chỉ đăng ký khi chạm ngưỡng ở phase 2.
 
 ## 1. Quyết định chính
 
-Mở rộng MCP hiện tại thành giao diện đọc dữ liệu game công khai của repo. Giữ engine recommendation đã có. Bổ sung hai cặp search/detail cho lookup và đội tham khảo; giữ tám tool cũ để consumer không bị chuyển corpus bất ngờ.
+Thay bề mặt MCP hiện tại bằng 7 tool gộp theo việc agent cần làm, đọc được toàn bộ dữ liệu game công khai của website (7 nhóm Tra cứu, ba họ đội tham khảo) và ghép đội bằng đúng adapter của trang Gợi ý kho. Cutover một lần, không giữ alias 8 tool cũ.
 
 Skill chỉ điều phối ý định, scope, xác nhận và cách diễn giải bằng chứng. Validation, canonical identity, filtering, pagination và tính toán nằm trong code có test.
 
@@ -38,11 +38,11 @@ flowchart TD
 | Trục | Ý nghĩa | Quy tắc |
 |---|---|---|
 | `sourceSeasonId` | Mùa được nhà cung cấp nguồn gán cho bản ghi | Dùng lọc đội chuẩn; lấy từ seasons publication |
-| `seasonContext` | `scenarioId` + `rulesetId` đã review | Chỉ dùng các tool hiện có hỗ trợ scope tính toán; thiếu/sai thì lỗi |
+| `seasonContext` | `scenarioId` + `rulesetId` đã review | Chỉ cho chấm theo luật khi có ruleset; hiện hai scenario đều `rulesets: []`. `tqccl_recommend_teams` không nhận field này |
 | `locale` | `vi` hoặc `zh`, mặc định `vi` | Chỉ điều khiển hiển thị/link; không suy server |
 | server/region | Phạm vi áp dụng game mà user hỏi | Ghi rõ known/unknown trong skill; không chuyển CN sang Global bằng ngôn ngữ |
 
-Build team resolve mùa theo [policy latest và lựa chọn user](season-resolution-design.md), mặc định ban đầu Binh Diễn Xuân Thu. Không lấy `defaultSourceSeasonId` của nguồn làm mùa người dùng. Đọc tham khảo không cần bịa ruleset; recommendation không được vượt gate ruleset chỉ vì reference có sẵn.
+Build team chọn **mùa nguồn** theo [season design](season-resolution-design.md) như trang Gợi ý kho: user chỉ định → đã xác nhận → `defaultSourceSeasonId` của bản publish Recommended (quyết định user 2026-10-07). Ghép đội theo nguồn + kho (`basis:"source-reference-fit"`) không cần ruleset nhưng phải gắn `rulesetVerified:false`; chấm theo luật chỉ mở khi `rulesetScoringReady`.
 
 ## 3. Snapshot và nguồn dữ liệu
 
@@ -51,7 +51,7 @@ Build team resolve mùa theo [policy latest và lựa chọn user](season-resolu
 - V1/V2 vẫn đọc được. Sáu legacy artifacts và năm season sidecars giữ định danh, lọc public và validation hiện tại.
 - Giữ `releaseId` full SHA-256; digest workflow/binding vẫn dùng encoding hiện hành.
 - `publicSnapshotView` tiếp tục loại dữ liệu bị ẩn cùng liên kết/evidence chỉ phục vụ dữ liệu đó.
-- Không mở rộng `tqccl_search` enum hoặc đổi corpus `tqccl_get_team`: consumer strict cũ cần được bảo vệ.
+- Corpus legacy (166 đội engine) vẫn đọc được qua `collection:"engine"` trong `tqccl_find_teams`/`tqccl_get_team`; tên tool cũ bị xoá ở cutover.
 
 ### 3.2 Thêm manifest v3 cho publication
 
@@ -66,7 +66,7 @@ Tạo read model có allowlist field, không copy thư mục `data/` hoặc priv
 
 V3 gồm legacy/season artifacts cộng:
 
-- `catalog-entities`: sáu nhóm lookup, nested specials/options/levels có schema và pagination riêng ở detail.
+- `catalog-entities`: bảy nhóm Tra cứu theo route `/tra-cuu/{tuong,chien-phap,trang-bi,quan-su,cai-tao-binh-chung,cong-trinh,binh-thu}/` — nguồn `heroes-dict`, `tactics`, `lookup-catalog` (trang bị, quân sư, cải tạo, công trình; specials thuộc trang bị) và `books-dict`; nested specials/options/levels có schema và pagination riêng ở detail.
 - `reference-registry`: source season, category, available collection và label.
 - `reference-team-index`: summary của `recommended`, `other`, `khaihoang`.
 - `reference-team-details`: cấu hình/biến thể/guide đầy đủ theo ID, phân shard nếu vượt giới hạn artifact.
@@ -81,53 +81,63 @@ Validation hash và shape ở ingress; Worker chỉ đọc immutable Assets. Kh�
 - V3 `releaseId` bao phủ toàn bộ bytes projection + upstream pins. Thay nội dung/locale/route làm đổi release; `workflowVersion` vẫn kết hợp release + semantic build.
 - Cursor bind tool, query/filter chuẩn hóa, locale, ordering và workflowVersion; replay sang tool/filter/version khác bị từ chối.
 - Bổ sung capabilities cho catalog/reference/locale và available collections. Không công bố đầy đủ 1.366 records trong version response; registry dài lấy qua browse response có giới hạn.
-- `get_data_version` mở rộng output có kế hoạch refresh discovery. Consumer đóng băng schema v1/v2 phải nâng trước promotion; endpoint release cũ là rollback path.
-- New tools có mặt ổn định trong catalog code; snapshot v1/v2 trả `CAPABILITY_UNAVAILABLE` cho tool mới. Không trả mảng rỗng gây hiểu nhầm là không có dữ liệu.
+- `tqccl_get_playbook` thay `get_data_version`: trả version, capabilities và registry có giới hạn. Đổi bề mặt tool phải refresh discovery trên consumer (Dewee: reconnect, xem [dewee#887](https://github.com/nextlevelbuilder/dewee/issues/887)); endpoint release cũ là rollback path.
+- Snapshot v1/v2 trả `CAPABILITY_UNAVAILABLE` cho phần catalog/reference; không trả mảng rỗng gây hiểu nhầm là không có dữ liệu.
 
-## 4. Tool surface mục tiêu: 12 tools
+## 4. Tool surface mục tiêu: 7 tools (P\*)
 
-### Giữ tám tool hiện có
+| Tool | Thay cho | Input chính | Output chính |
+|---|---|---|---|
+| `tqccl_get_playbook` | `get_data_version` + playbook | `intent`, `stage?`, season selection, `locale?` | versions, capabilities, `seasonSelection`, readiness `referenceFitReady`/`rulesetScoringReady`, required rules + guidance, next-step tool names |
+| `tqccl_search` | `search` + `search_catalog` | `query`, `kinds?` ⊆ {hero, tactic, equipment, advisor, troopMod, building, book, team}, `limit?`, `cursor?` | `items[{entityId,kind,displayName,matchedTerm?,pagePath}]` (+`collection`/`configId` cho team), pagination |
+| `tqccl_get_entity` | `get_catalog_entity` | `entityId`, `section?`, `limit?`, `cursor?` | hồ sơ khớp `/tra-cuu/<nhóm>/` (vi/zh); nested specials/options/levels phân trang; `omittedCounts` |
+| `tqccl_find_teams` | `match_team` + `browse_reference_teams` | `collection` ∈ {recommended, other, khaihoang, engine}, `sourceSeasonId?`, `sourceCategoryId?`, `query?`, `heroes?[{canonicalId, tacticIds[]}]`, `minHeroes?`, `limit?`, `cursor?` | summary, source scope, tier/score nguyên bản, selector `reference`, `pagePath` |
+| `tqccl_get_team` | `get_team` + `get_reference_team` + nhánh đọc `suggest_replacements` | `reference:{collection, …}`, `section?`, `cursor?` | cấu hình/biến thể/guide, holder/slot/books, `alternatives`/`tacticRefs` theo ô (chiến pháp thay thế nguồn), `sourceScore` chỉ cho cấu hình gốc, `CONFIG_AMBIGUOUS` kèm choices |
+| `tqccl_normalize_entities` | giữ | observations | `canonicalState`, `confirmationBinding`, ambiguity/reviewRequired |
+| `tqccl_recommend_teams` | `recommend_team` + `recommend_coexist` + `recommend_from_reference` + nhánh món bù `suggest_replacements` | `canonicalState`, `confirmationBinding`, `sourceSeasonId`, `lockedTeams?`, `maxTeams?`, `mode?`, `tacticOverrides?`, `fullBox?` | `portfolioTeams`, `blockedStrongTeams` với `substitutes[]` theo kho, nhãn "đã thay", `legacyUsed`, `basis:"source-reference-fit"`, `rulesetVerified:false` |
 
-| Tool | Vai trò giữ nguyên |
-|---|---|
-| `tqccl_get_data_version` | Version/capabilities; mở rộng output có migration |
-| `tqccl_normalize_entities` | Raw observations → canonical state + review/binding |
-| `tqccl_search` | Tìm canonical hero/tactic/team/book trong engine corpus |
-| `tqccl_get_team` | Chi tiết engine team/config |
-| `tqccl_match_team` | Đối chiếu roster đúng tactic holder |
-| `tqccl_recommend_team` | Xếp đội từ state đã xác nhận |
-| `tqccl_recommend_coexist` | Portfolio không xung đột từ state đã xác nhận |
-| `tqccl_suggest_replacements` | Thay tactic đúng holder/slot; không kế thừa source score |
-
-### Bổ sung bốn tool đọc
-
-Mọi tool mới nhận `expectedWorkflowVersion` bắt buộc, `locale?: vi|zh`. Request strict; query tối đa 256 ký tự, limit mặc định 20/tối đa 50, cursor tối đa 2.048 ký tự. Các ID tối đa 256 ký tự và phải khớp record trong snapshot; không đoán slug.
-
-| Tool mới | Input đặc thù | Output chính |
-|---|---|---|
-| `tqccl_search_catalog` | `query`, `groups?` từ sáu nhóm, `limit?`, `cursor?` | `items[{entityId,group,displayName,matchedTerm?,pagePath}]`, pagination |
-| `tqccl_get_catalog_entity` | `entityId`, `section?`, `limit?`, `cursor?` | Profile có schema theo kind; nested specials/options/levels phân trang; relations có giới hạn |
-| `tqccl_browse_reference_teams` | `collection: recommended|other|khaihoang`, `query?`, `sourceSeasonId?`, `sourceCategoryId?`, `limit?`, `cursor?` | Summary, source scope, tier/score nguyên bản, selectors và pagePath; filter options bounded |
-| `tqccl_get_reference_team` | `reference` là tagged selector tương ứng collection | Cấu hình nguồn/guide, holder/slot/books/mốc chuyển đội, evidence metadata, link và limitations |
-
-Tagged selectors:
+Selector `reference` (lồng trong `properties`):
 
 - Recommended: `{collection:"recommended", sourceConfigId}`.
 - Other: `{collection:"other", legacyTeamId, legacyVariantId}`; đọc **admitted variant** trong publication, không toàn raw legacy.
 - Khai hoang: `{collection:"khaihoang", khaiHoangTeamId}`; guides/chamSuTeams nằm trong context của đúng record khi có liên kết rõ, không ghép tên suy đoán.
+- Engine: `{collection:"engine", teamId, configId?}`.
 
-`sourceSeasonId`/category chỉ được nhận khi collection có mapping tương ứng. Khai hoang không có source-season registry tương đương thì schema/handler từ chối filter đó, giải thích phạm vi bảo trì hiện tại. Hero/tactic search hỗ trợ tên Việt/Hán/Hán-Việt/alias từ dữ liệu hiện có. Không thêm fuzzy match âm thầm đổi identity.
+`sourceSeasonId`/category chỉ nhận khi collection có mapping tương ứng; Khai hoang không có registry tương đương thì trả `REFERENCE_SCOPE_INVALID`. Search hỗ trợ tên Việt/Hán/Hán-Việt/alias từ dữ liệu hiện có; không fuzzy match âm thầm đổi identity.
+
+### `tqccl_recommend_teams`
+
+- Gọi đúng `recommendRoster` của `js/roster-season-candidates.js` như trang Gợi ý kho (`js/roster-recommend-ui.js:544-556`); không viết engine thứ hai. Không nhận `seasonContext`: engine ném `Invalid seasonal candidate identity` với team từ `buildSeasonCandidates` (`team-recommend-engine.js:527-533`).
+- `sourceScore` chỉ cho cấu hình gốc chưa đổi ô; không chuyển điểm sang biến thể.
+- Món bù theo kho (`suggestTacticSubstitutes`) thuộc output này; chiến pháp thay thế ghi trong nguồn thuộc `tqccl_get_team`.
+- Chỉ đăng ký sau khi sửa lỗi audit adapter và đưa `roster-season-candidates.js` + deps vào `semanticFiles` ([phase 1](phase-01-mcp-publication.md)).
+
+### Quy tắc hợp đồng
+
+- **Mô tả tool:** câu "khi dùng / trả về / lỗi" nằm trong 200 byte đầu — phần Dewee hiện trong danh sách tóm tắt system prompt; định nghĩa tool gửi cho LLM vẫn mang mô tả đầy đủ. Tham số mô tả ở `describe` từng field.
+- **Discriminator** (`kinds`, `collection`, `reference`) nằm trong `inputSchema.properties`; không `oneOf`/`anyOf`/`allOf` ở gốc (mất ở `mcp-go` và bị OpenAI strict từ chối). Không dùng `$ref`/`$defs` trong input schema cho tới khi [dewee#888](https://github.com/nextlevelbuilder/dewee/issues/888) được sửa. Validate nhánh ở server, lỗi `INVALID_REQUEST` + `fields`.
+- **`expectedWorkflowVersion`:** optional ở tool đọc không trạng thái; nếu gửi thì honor (`WORKFLOW_VERSION_CHANGED` khi lệch); bắt buộc khi có `cursor` hoặc `confirmationBinding`. Mọi result trả `workflowVersion`.
+- Request strict; query tối đa 256 ký tự, limit mặc định 20/tối đa 50, cursor tối đa 2.048 ký tự; ID tối đa 256 ký tự, phải khớp record trong snapshot.
 
 ### Envelope, bounds và lỗi
 
-- Thành công: giữ `releaseId`, `dataVersion`, `workflowVersion`, `provenance`, `warnings`, `truncated`; thêm `items` hoặc `entity/reference` theo tool, `nextCursor` khi còn dữ liệu.
-- Reference có `purpose:"reference"`; applicability lấy bằng chứng thật hoặc `unknown`, không default VN/Global. Claim status do skill đánh giá, không tự gắn “Đã đối chiếu” vì JSON hợp lệ.
-- JSON schema hữu hạn theo kind, tránh `record<string,unknown>`/`unknown` cho hợp đồng mới. Validation success riêng và public error branch đều được client test.
-- Tối đa 64 KiB/result theo gate hiện tại; cắt theo records/sections, giữ JSON hợp lệ, ghi omitted counts. Detail quá lớn dùng `section`/cursor; không lược slot trọng yếu rồi trình bày là cấu hình đầy đủ.
-- Giữ lỗi hiện có; thêm lỗi cụ thể `CAPABILITY_UNAVAILABLE`, `ENTITY_NOT_FOUND`, `REFERENCE_NOT_FOUND`, `REFERENCE_SCOPE_INVALID` với `nextAction`, `retryable=false`. Không phản chiếu exception/input/credential.
-- Path là route đã validate; origin do deployment config có allowlist quyết định. Không nhận URL/host tùy ý từ caller để fetch.
+- Thành công: `releaseId`, `dataVersion`, `workflowVersion`, `provenance`, `warnings`, `truncated`; thêm `items` hoặc `entity`/`team` theo tool, `nextCursor` khi còn dữ liệu.
+- Reference có `purpose:"reference"`; applicability lấy bằng chứng thật hoặc `unknown`, không default VN/Global. Claim status do skill đánh giá.
+- JSON schema hữu hạn theo kind, tránh `record<string,unknown>`/`unknown`.
+- Structured output dưới 40.000 ký tự (giới hạn Dewee) và tối đa 64 KiB/result; cắt theo records/sections, giữ JSON hợp lệ, ghi `omittedCounts`. Detail dùng `section`/cursor thay `boundedJson`; không lược slot trọng yếu rồi trình bày là cấu hình đầy đủ.
+- Lỗi: giữ lỗi hiện có; thêm `CAPABILITY_UNAVAILABLE`, `ENTITY_NOT_FOUND`, `REFERENCE_NOT_FOUND`, `REFERENCE_SCOPE_INVALID` với `nextAction`, `retryable=false`. Không phản chiếu exception/input/credential.
+- Path là route đã validate; origin do deployment config có allowlist quyết định.
 
-Tools dùng structuredContent + text JSON tương đương; outputSchema phải validate cả lỗi sau `tools/list`. Đây là yêu cầu tương thích theo [MCP tools spec đang được repo pin](https://modelcontextprotocol.io/specification/2025-11-25/server/tools). Giữ SDK 1.30.0/protocol 2025-11-25; nâng SDK là dự án riêng có client compatibility evidence.
+Tools dùng structuredContent + text JSON tương đương; outputSchema validate cả nhánh lỗi sau `tools/list` ([MCP tools spec đang pin](https://modelcontextprotocol.io/specification/2025-11-25/server/tools)). Giữ SDK 1.30.0/protocol 2025-11-25.
+
+### Cutover
+
+1. Xem log Worker để tìm client khác ngoài Dewee; chạy bộ hội thoại mẫu trên `tra` với 8 tool cũ (mốc so sánh).
+2. Release 6 tool đọc + playbook; xoá 8 tên cũ; đổi service key trong cùng đợt; reconnect Dewee; chạy lại bộ hội thoại mẫu (chưa có skill).
+3. Release `tqccl_recommend_teams` khi đủ điều kiện; reconnect Dewee.
+4. Upload skill; chạy bộ hội thoại mẫu lần ba.
+
+Mỗi release đổi catalog tool phải reconnect Dewee và kiểm `tools/list` của `tra`. Rollback: exact Worker version.
 
 ## 5. Thiết kế skill: ba intent, ba owner
 
@@ -137,8 +147,8 @@ Tools dùng structuredContent + text JSON tương đương; outputSchema phải 
 
 Luồng:
 
-1. Discovery thực tế → version → chọn locale và loại truy vấn.
-2. Catalog: search_catalog → get_catalog_entity. Team tham khảo: browse_reference_teams → get_reference_team.
+1. Discovery thực tế → `tqccl_get_playbook` (version, locale) → chọn loại truy vấn.
+2. Tra cứu: `tqccl_search` → `tqccl_get_entity`. Đội tham khảo: `tqccl_find_teams` → `tqccl_get_team`.
 3. Nhiều kết quả khác identity thì cho chọn; không tự lấy kết quả đầu cho tên mơ hồ.
 4. Trả dữ liệu nguồn, scope, version và link. So sánh nguồn được, không đưa ra khả năng sở hữu hay khẳng định meta hiện tại.
 5. Không có MCP thì dùng cùng JSON CLI khi có repo; không có cả hai thì báo giới hạn và link site, không giả chạy tool.
@@ -152,11 +162,11 @@ Giữ tên skill và khóa tactic/tier đã chốt; thu hẹp description về x
 Luồng chuẩn:
 
 1. Đọc roster/locked teams do user cung cấp trong phiên; unknown khác confirmed-empty. Ảnh cần capability đọc ảnh và dữ liệu trích xuất để user review; MCP không nhận ảnh.
-2. Version/capabilities → normalize → hiển thị ambiguity/canonical state → user xác nhận state cụ thể.
-3. Recommend team/coexist theo nhu cầu. Binding chỉ chứng minh state/version, không chứng minh đã có consent.
-4. Get team/replacements khi cần; sửa roster/locks/context thì normalize và xác nhận lại.
-5. Đọc source reference để đối chiếu bằng tool mới, nhưng không đưa 1.366 cấu hình chưa có eligibility vào engine.
-6. Khi không có seasonal ruleset hợp lệ, giải thích chưa gợi ý theo scope đó được; không ngầm chạy legacy. User chủ động chọn legacy thì mới đi tiếp.
+2. `tqccl_get_playbook` (mùa, readiness) → `tqccl_normalize_entities` → hiển thị ambiguity/canonical state → user xác nhận state cụ thể.
+3. `tqccl_recommend_teams` theo mùa nguồn đã chọn. Binding chỉ chứng minh state/version, không chứng minh đã có consent.
+4. `tqccl_get_team` khi cần chi tiết hoặc chiến pháp thay thế nguồn; món bù theo kho đọc từ kết quả recommend. Sửa roster/locks/mùa thì normalize và xác nhận lại.
+5. Kết quả luôn ghi `basis:"source-reference-fit"`, `rulesetVerified:false`; không trình bày là chấm theo luật mùa.
+6. Đội engine cũ chỉ dùng khi user chọn (`collection:"engine"`); không ngầm trộn.
 
 Python helper cũ không còn là nguồn recommendation cuối. Chuyển thành wrapper cùng CLI hoặc retire sau khi tìm caller và có parity test. Không duy trì hai thuật toán. Bỏ đường `/Users/...`; dùng đường tương đối từ project/skill location.
 
@@ -186,16 +196,16 @@ Ba skill trên thuộc project hiện tại. GoClaw hoặc ứng dụng ngoài c
 
 ## 7. Đường triển khai và rủi ro
 
-Ưu tiên: publication snapshot → bốn tools → skills → consumer compatibility/release. Giữ implementation ở checkout có ownership rõ; baseline WIP hiện tại không đủ để tự tạo clean release.
+Ưu tiên: publication snapshot → 6 tool đọc + playbook → sửa adapter → `tqccl_recommend_teams` → skills → Dewee rollout. Giữ implementation ở checkout có ownership rõ.
 
 | Rủi ro | Cách kiểm soát |
 |---|---|
 | Trộn generation trong lúc build | đọc verified bytes một lần; kiểm pin trước/sau; fail closed |
 | Link đúng ID nhưng sai locale/handle | lấy route catalog cùng generation; test vi/zh và mutation tên |
 | Source score bị dùng để xếp Global | reference purpose + applicability + negative behavioral cases |
-| Search mới đụng engine identity cũ | namespace/selector riêng và explicit canonical mapping |
+| Search mới đụng engine identity cũ | `kind`/`collection` rõ; explicit canonical mapping |
 | Prompt và schema lệch nhau | discovery thật; references link owner schema; không copy schema |
-| Strict client không nhận output mới | replay client cũ/mới, refresh discovery trước promotion |
+| Consumer giữ tool list cũ sau cutover | reconnect Dewee mỗi release đổi catalog; kiểm `tools/list`; rollback exact Worker version |
 | Skill cũ chưa có behavioral pass | capture theo hash/case; ghi NOT_RUN/BLOCKED chính xác |
 
 Rollback code+data bằng exact Worker version như runbook hiện hành; rollback skill theo version riêng. Consumer phải refresh version/discovery và bỏ state/binding/cursor cũ sau rollback.

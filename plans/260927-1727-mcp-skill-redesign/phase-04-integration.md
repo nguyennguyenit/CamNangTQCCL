@@ -10,12 +10,20 @@ Context: [design](design.md), [MCP runbook](../../docs/mcp-research-server.md), 
 ## Thực hiện
 
 1. Review public contracts bằng review skill hoặc reviewer được giao quyền: privacy, identity, error scrub, applicability và compatibility.
-2. CLI/stdio/HTTP parity cả 14 tools: success/error, pagination, stale cursor/binding/knowledge version và capability-unavailable trên v1/v2.
+2. CLI/stdio/HTTP parity cả 7 tool P\*: success/error, pagination, stale cursor/binding/knowledge version và capability-unavailable trên v1/v2. `tools/list` không còn 8 tên cũ; input schema gốc không union, không `$ref`.
 3. So website từng nhóm lookup và ba họ đội ở vi/zh; kiểm identity/slot/score/link. Kiểm toàn inventory và cross-reference để sample không che mất records.
 4. Full checks trên Node đúng pin; release build từ exact clean source với evidence.
 5. Docs mô tả tool delta, discovery refresh, fallback, rollback và consumer ownership; link schema owner thay vì copy schema.
-6. Replay strict client cũ/mới. Thứ tự: consumer compatibility → server promotion → enable workflows mới. Consumer chưa tương thích giữ release cũ.
+6. Replay strict client với 7 tool mới (outputSchema validate cả nhánh lỗi). Không chạy song song release cũ; client chưa tương thích sau cutover thì rollback exact Worker version.
 7. Nếu release được yêu cầu riêng, chạy exact-version smoke, edge control và rollback rehearsal theo runbook. Build local không chứng minh production.
+8. Đo và cutover Dewee. Không deploy production cho tới khi code xong (user 2026-10-08); R0–R2 chạy trên MCP local:
+   1. Chuẩn bị: trên Dewee tạo agent thử `tra-eval` (sao cấu hình `tra`, cùng model) và server MCP stdio `tqccl-local`, chỉ cấp cho `tra-eval`; không cấp server production `tqccl` cho agent này. `tra` thật giữ nguyên. Command (đã chạy thử từ `/tmp`, đọc đúng `data/` của repo, release `sha256:a7cd638e…`): `node --import <repo>/mcp-worker/node_modules/tsx/dist/esm/index.mjs <repo>/mcp-worker/src/stdio.ts` — dùng đường tuyệt đối cho tsx vì `--import tsx` không resolve được ngoài thư mục `mcp-worker`.
+   2. **R0**: checkout `9efe0dad9cc3bfa0196a1a3dc7adc286f80b3a50` (8 tool cũ, dữ liệu hiện tại), reconnect `tqccl-local`, chạy [bộ hội thoại mẫu](evals/dewee-conversations.json).
+   3. **R1**: checkout branch code mới (Release 1 rồi Release 2), reconnect, kiểm `tools/list` đúng 6 rồi 7 tên; case `requiresRelease2` NOT_RUN cho tới Release 2.
+   4. **R2**: upload ba skill portable (`dewee skills upload <dir> --dry-run` rồi upload thật), cấp cho `tra-eval`, kiểm hash khớp repo, chạy lại.
+   5. Deploy production một lần bằng workflow exact SHA; xem log Worker `mcp.tqccl.com` trước đó để tìm client khác Dewee; đổi service key cùng đợt; reconnect server `tqccl` (tới khi [dewee#887](https://github.com/nextlevelbuilder/dewee/issues/887) được sửa); cấp skill cho `tra`; smoke vài case trên `tra` thật; xoá `tra-eval` và `tqccl-local`.
+   6. Client ẩn báo lỗi sau deploy: rollback exact Worker version, rồi xử lý.
+   Xem [Dewee runtime](reports/dewee-runtime-2026-10-07.md).
 
 ## Validation
 

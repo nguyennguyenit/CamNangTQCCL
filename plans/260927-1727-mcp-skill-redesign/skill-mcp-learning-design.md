@@ -2,9 +2,9 @@
 
 Ngày: 2026-09-27. **Thiết kế và prototype**, chưa cài skill hoặc đổi MCP production.
 
-Mở rộng [thiết kế trước](design.md) thành **14 tool đọc, 3 skill nghiệp vụ và 1 skill bảo trì**. Giữ hợp đồng game/consumer cũ; tài liệu này thay mốc 12 tool và bổ sung learning loop.
+Mở rộng [thiết kế trước](design.md) với knowledge dataset và 3 skill nghiệp vụ. Bề mặt tool chốt 2026-10-07 là **7 tool P\*** ([design §4](design.md)); không giữ hợp đồng 8 tool cũ. Vòng học dùng skill evolution `suggest_only` của Dewee ([phase 3](phase-03-learning.md)); `tqccl-improve` và store feedback riêng đã bỏ (user 2026-10-07).
 
-**Quyết định mùa chơi:** [season resolution](season-resolution-design.md) bổ sung bước chọn mùa trước build: user đã chọn được ưu tiên, nếu thiếu thì latest động; Binh Diễn Xuân Thu là default ban đầu theo user.
+**Quyết định mùa chơi:** [season design](season-resolution-design.md) — chọn mùa nguồn trước build như trang Gợi ý kho: user chỉ định/đã xác nhận, nếu thiếu thì `defaultSourceSeasonId` của bản publish (user 2026-10-07).
 
 ## 1. Outcome
 
@@ -29,27 +29,24 @@ Source: [core.py](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/8
 
 Các file đã đọc chứng minh retrieval/evaluation, chưa chứng minh vòng tự cập nhật từ feedback. Không copy ngưỡng BM25 hoặc dataset UI sang game. Tokenizer Việt/Hán cần bộ đo riêng.
 
-## 3. Hai vòng dùng chung
+## 3. Hai vòng
 
 ```mermaid
 flowchart TD
   U[User hỏi hoặc phản hồi] --> S[Skill chọn workflow]
-  S --> P[MCP playbook và rule retrieval]
-  S --> M[MCP catalog và engine]
+  S --> P[MCP playbook: rules + guidance]
+  S --> M[MCP catalog, đội, ghép đội]
   P --> A[Câu trả lời và evidence]
   M --> A
   A --> U
-  U --> F[Host ghi nhận feedback]
-  F --> T[Phân loại và tái hiện]
-  T --> C[Candidate trong vùng thử nghiệm]
-  C --> E[Test và so sánh baseline]
-  E --> V[Promote trong phạm vi được phép]
-  V --> K[Knowledge release và skill version]
+  S --> D[Dewee evolution suggest_only]
+  D --> R[Maintainer duyệt đề xuất]
+  R --> K[Sửa rule/skill ở repo + eval]
   K --> P
   K --> S
 ```
 
-Vòng phục vụ đọc knowledge ổn định và sửa output ngay khi user góp ý. Vòng cải thiện gom feedback, tái hiện, thử một thay đổi, đo, giữ/loại có giới hạn. Không chạy thí nghiệm dài trước khi trả lời user. Không bắt mọi feedback tạo thêm rule.
+Vòng phục vụ đọc knowledge ổn định và sửa output ngay khi user góp ý. Vòng cải thiện đi qua đề xuất của Dewee và maintainer duyệt; không bắt mọi đề xuất tạo thêm rule.
 
 ## 4. Các skill bổ trợ nhau
 
@@ -58,7 +55,6 @@ Vòng phục vụ đọc knowledge ổn định và sửa output ngay khi user g
 | `tqccl-lookup` | Resolve tên/ID, đọc catalog/reference, source scope/link | Xếp theo kho → coexist; kiểm chứng mechanic → research |
 | `tqccl-coexist-team-builder` | Roster, normalization, confirmation, engine, trade-off | Detail/identity → lookup; cơ chế chưa rõ → research |
 | `tqccl-research` | Claim, source inspection, correction history, budget | Trả evidence đã kiểm tra về workflow gọi nó |
-| `tqccl-improve` (maintainer) | Feedback, reproduction, candidate, eval, promotion | Lỗi code/data chuyển owner; không tự biến thành rule |
 
 Bàn giao là chuyển workflow trong cùng agent hoặc dispatcher đã được cấp quyền; không bắt buộc subagent. Một workflow sở hữu câu trả lời cuối. Mỗi handoff có reason/returnTo. Không lặp research → coexist → research khi chưa có evidence mới. Đề xuất thử nghiệm tối đa ba handoff/lượt, đo rồi điều chỉnh; chưa gọi đây là ngưỡng đã kiểm chứng.
 
@@ -78,13 +74,13 @@ Chỉ truyền phần cần thiết; không transcript/token/ảnh thô. State/s
 
 ## 5. MCP được thiết kế để skill dùng tốt hơn
 
-Giữ 12 tools từ thiết kế trước, thêm hai tool chỉ đọc cùng implementation với CLI.
+Bề mặt 7 tool P\* ([design §4](design.md)); playbook dưới đây là một trong bảy và thay `get_data_version`. `tqccl_search_rules` là core + CLI; chỉ đăng ký tool MCP khi chạm ngưỡng ở [phase 2](phase-02-skills.md).
 
 ### `tqccl_get_playbook`
 
 Input: `intent:lookup|coexist|research`, `stage?`, typed `context?`, `locale?:vi|zh`, `expectedKnowledgeVersion?`.
 
-Output: game/workflow/knowledge versions, workflow card, required rules, missing prerequisites, next-step tool names có thật trong discovery, output checklist và error recovery. Call đầu lấy luôn versions để tránh version call dư; các bước sau pin identity.
+Output: game/workflow/knowledge versions, workflow card, required rules, toàn bộ guidance của workflow/stage kèm `guidanceCount`/`guidanceBytes`/`guidanceTruncated`, missing prerequisites, next-step tool names có thật trong discovery, output checklist và error recovery. Call đầu lấy luôn versions để tránh version call dư; các bước sau pin identity.
 
 Recipe từ dataset đã review, không phải plan tùy ý do server model sinh. Thiếu capability trả unavailable rõ. Không trả toàn bộ SKILL.md/schema. Caller context không chứng minh consent hoặc tính đúng của game facts.
 
@@ -99,9 +95,9 @@ Output: required rules, top-k guidance, unresolvedConditions, matchedTerms, rule
 - Lỗi: KNOWLEDGE_VERSION_CHANGED, KNOWLEDGE_UNAVAILABLE, RULE_SCOPE_INVALID, PLAYBOOK_NOT_FOUND; schema validate cả nhánh error.
 - Annotations: readOnly=true, destructive=false, idempotent=true, openWorld=false với snapshot đóng gói.
 
-### Feedback writer thuộc consumer
+### Feedback ở phía consumer
 
-Bearer MCP hiện tại chưa có user/tenant identity cho kho học. Không thêm write-feedback vào token game đó. Local dùng host script/SQLite; GoClaw có adapter ghi feedback tại storage consumer rồi export sanitized cases. Remote learning service nếu cần phải có auth theo subject, quotas và access control riêng. Không nhầm Google/community session với MCP bearer.
+MCP game read-only; không thêm write-feedback vào token game. Feedback và đề xuất cải tiến nằm ở Dewee (skill evolution `suggest_only`, [phase 3](phase-03-learning.md)). Không nhầm Google/community session với MCP bearer.
 
 ## 6. Dataset thay cho rule dài trong Markdown
 
@@ -119,7 +115,6 @@ mcp-worker/src/knowledge/         # pure TS dùng chung CLI/Worker
   search-rules.ts
   resolve-playbook.ts
   rule-contracts.ts
-scripts/skill-learning.mjs        # maintainer CLI, ngoài game Worker
 .agents/skills/tqccl-*/SKILL.md    # intent, workflow nhỏ, tool use, boundary
 ```
 
@@ -150,89 +145,41 @@ Trong preference hợp lệ: current explicit choice → confirmed user/account 
 
 Lexical search trước vì corpus nhỏ và đo được. Embedding chỉ thêm nếu benchmark cho thấy thiếu recall đáng kể; chưa thêm service/dependency.
 
-## 8. Learning loop mỗi lần có feedback
+## 8. Vòng học
 
-### Trigger và capture
+Xem [phase 3](phase-03-learning.md): Dewee `suggest_only` ghi metric và đề xuất; maintainer duyệt, sửa ở repo, release. Repo là bản gốc; không apply trên Dewee.
 
-Host bắt user turn phản hồi kết quả trước; skill gọi capture trong chính lượt đó. Task nền chỉ chạy khi host có job runner đã cấu hình. MCP không thấy mọi user message; SKILL.md không tự chạy khi agent không active.
+Phân loại đề xuất trước khi sửa:
 
-Không rõ ý feedback thì triage unclassified, chưa promote. Event tối thiểu: eventId, host-derived subjectRef, taskId/responseId/userTurnId, createdAt, category, summaryRedacted, affectedRuleIds, toolTraceRefs, versions, scope, desiredOutcome, evidenceRefs, status.
+| Loại | Xử lý |
+|---|---|
+| Preference cá nhân ("trả bảng ngắn hơn") | Không vào rule chung |
+| Input người chơi ("tôi không có tướng đó") | Account input; không là rule |
+| Game fact correction | Research evidence + regression trước khi đổi |
+| Lỗi rule/workflow | Rule trong `agent-knowledge/` hoặc sửa `SKILL.md`, kèm case |
+| Retrieval gap | Alias/ranker/data + retrieval case |
+| Tool bug, outage | Chuyển owner code/data; không thành rule game |
 
-Subject lấy từ host, không từ tenant ID tùy ý trong prompt. Unique key subject+turn+response làm retry idempotent. Lưu correction cần thiết, không mặc định transcript/roster/ảnh/credential. Cho amend/retract và truy ngược derived records.
+Game `workflowVersion` bind engine code/data; `knowledgeVersion` bind guidance riêng. Inventory Worker có hai manifest con (game v3 và knowledge), outer inventory bao cả hai; deploy nguyên tử code+data+knowledge theo Worker version.
 
-### Feedback đi đâu
+## 9. Kiểm chứng học có ích
 
-| Loại | Xử lý ngay | Học lâu dài |
-|---|---|---|
-| “Trả bảng ngắn hơn” | Đổi format | Preference đúng user/project |
-| “Tôi không có tướng đó” | Sửa roster, normalize/review | Account input; không là global rule |
-| Game fact correction | Rút/đánh dấu claim cần kiểm | Research evidence + regression, không auto tin như nguồn độc lập |
-| Skill gap | Làm lại bước thiếu | Candidate workflow/rule có trace |
-| Retrieval gap | Tìm lại đúng guidance | Candidate alias/ranker/data + retrieval cases |
-| Tool bug | Báo lỗi/khôi phục | Test/code patch tại MCP owner |
-| Outage/quota | Nói giới hạn | Operational event; không rule game |
-| Khen hoặc ý chưa rõ | Ghi nhận | Weak signal, chưa thành invariant |
+- Retrieval: required coverage, precision/recall@k, false-match/abstention theo workflow/ngôn ngữ.
+- Task: tool/routing traces thật, scope/locks/score, đáp ứng correction.
+- Before/after cùng snapshot/tools/runtime/case; holdout riêng; invariants zero violations; metric mềm calibrate trước khi dùng gate.
 
-State machine: captured → triaged → reproduced → candidate → evaluated → promoted. Nhánh kết thúc: preference-applied, input-updated, no-change, needs-evidence, rejected, blocked, reverted.
-
-Dedup feedback cùng failure signature trước tạo candidate. Đề xuất tối đa 3 candidates/issue/một lượt cải thiện, không reset budget sau fail. Network research vẫn theo ledger topic hiện hành; eval budget riêng phải do host cấu hình, không tuyên bố miễn phí.
-
-### Mức tự động hóa
-
-- Sửa output ngay theo feedback rõ, không hỏi lại điều user đã nói.
-- Preference tự lưu khi host đã bật learning cho subject/scope; user có xem/sửa/quên, không auto share.
-- Rule/alias chung: tự capture, tạo case, test và candidate. Local auto-promote khi maintainer đã bật file/action allowlist và cả invariant + matched consumer gates đạt.
-- SKILL.md/script/contract/game facts: diff/evidence cụ thể, không mở quyền auto-promote chỉ vì có feedback. Thay explicit decision hoặc phạm vi chưa được phép cần owner quyết định.
-- Push/deploy/distribute theo authorization của task; local knowledge mới không đồng nghĩa remote MCP đã học.
-
-Yêu cầu này thiết kế loop, chưa bật collector, lịch nền, auto-promote hoặc global memory.
-
-## 9. Storage, transaction và version
-
-Private host store: SQLite tại application state directory, events append-only, preferences scoped, candidates và promotion journal; unique event key, atomic transaction. JSONL chỉ là sanitized export, tránh shared append file thiếu lock.
-
-Retention phải cấu hình khi bật. Forget theo subject/event gỡ personal derived preferences/cases. Không gửi raw feedback tới MCP game. Export vào repo qua kiểm PII/secret; không commit tự động.
-
-Stable knowledge immutable; experiments dưới plans, private traces ở host store. Runtime không import inbox/experiments/evals. Manifest có schemaVersion, contentDigest, compatible tool-contract version, skill digest và eval evidence refs.
-
-Promotion runner tự ghi kết quả kiểm tra gắn candidate/base/case/runtime digest; candidate author không được tự ghi verdict PASS vào record mà promoter tin. Hash chỉ chứng minh bytes khớp, không chứng minh chất lượng. Consumer eval phải có artifacts/traces thực và rubric owner riêng.
-
-Promote: validate → lưu previous digest → compare-and-swap expected base → atomic pointer swap → journal. Stale base phải re-evaluate, không last-writer-wins. Rollback pointer và invalidate cache. Public correction đã phát phải deprecate/release lại; không hứa xóa bản offline ngoài quyền kiểm soát.
-
-Game workflowVersion vẫn bind engine code/data; knowledgeVersion bind guidance riêng. Rule update không đổi team canonical ID. Guidance làm đổi user inputs/constraints thì review state lại. Remote deployment vẫn nguyên tử code+data+knowledge theo Worker version.
-
-Inventory Worker mở rộng có hai manifest con: game manifest v3 và knowledge manifest. Game releaseId chỉ hash phần game; knowledgeVersion hash rules/workflows cùng tokenizer/ranker/schema version. Outer asset inventory bao phủ cả hai, validator từ chối file thừa/thiếu ở từng nhánh. Builder/verifier/rollback phải cập nhật đồng bộ; không nhét knowledge bytes vào công thức game identity rồi tuyên bố chúng độc lập. Thay code enforcement của engine vẫn làm đổi workflowBuildId như hiện tại.
-
-Append-only là lịch sử transition, không phải giữ personal payload mãi mãi. Forget xóa payload và derived records theo retention, chỉ giữ tombstone/audit không định danh nếu cần; quá trình rollback không khôi phục dữ liệu đã được yêu cầu quên.
-
-## 10. Kiểm chứng học có ích
-
-- Retrieval: required coverage, precision/recall@k, MRR, false-match/abstention theo workflow/ngôn ngữ; bytes/latency khi đo được.
-- Task: actual tool/routing traces, scope/locks/score, đáp ứng correction và câu hỏi lại có cần thiết.
-- Learning: correction recurrence cùng scope, regression, accepted/reverted candidates, feedback chưa xử lý. Like không chứng minh mechanic đúng.
-
-Before/after cùng snapshot/tools/runtime/case. Holdout riêng với evaluator, không đưa vào author context. Case dùng tối ưu trở thành regression, không gọi unseen nữa. Pin evaluator/rubric digest; không sửa expected answer để pass. Invariants zero violations; metric mềm calibrate trước khi dùng gate. Unknown token/time giữ null.
-
-Thiếu harness/quota → candidate blocked, deterministic tests không thay consumer quality pass. Phase 2 research cũ không được nghiệm thu bằng prototype này.
-
-## 11. CLI thật dự kiến
+## 10. CLI thật dự kiến
 
 **Chưa triển khai:**
 
 ```text
 npm run cli -- playbook --input <json>
 npm run cli -- search-rules --input <json>
-node scripts/skill-learning.mjs capture-feedback --input-file <private-event.json>
-node scripts/skill-learning.mjs triage --event <id>
-node scripts/skill-learning.mjs evaluate --candidate <id> --baseline <digest>
-node scripts/skill-learning.mjs promote --candidate <id> --expected-base <digest>
-node scripts/skill-learning.mjs rollback --promotion <id>
-node scripts/skill-learning.mjs forget --subject <host-authorized-subject>
 ```
 
-Không interpolate feedback vào shell, không secrets/roster trong argv. CLI/MCP dùng chung TS core. Python probe bên dưới không trở thành engine production thứ hai.
+Không secrets/roster trong argv. CLI/MCP dùng chung TS core. Python probe bên dưới không trở thành engine production thứ hai.
 
-## 12. Prototype có thể chạy
+## 11. Prototype có thể chạy
 
 - [rules.json](prototype/rules.json): 14 rules có provenance, phân biệt existing contract và design proposal.
 - [search-rules.py](prototype/search-rules.py): required selection + BM25 guidance; xử lý Việt/Hán và unknown conditions.
@@ -248,16 +195,15 @@ Quan sát: coexist-priority đứng đầu, 5 required rules vẫn đủ dù lim
 
 Giới hạn: chưa production schema validator, chưa calibration, chưa feedback hooks/store/promotion hay consumer A/B. Không chứng minh tiết kiệm token. Không import prototype vào runtime.
 
-## 13. Acceptance bổ sung
+## 12. Acceptance bổ sung
 
-- 14 tools discovery/parity, schemas/errors/version/capability recovery.
+- 7 tools discovery/parity, schemas/errors/version/capability recovery.
 - Handoff giữ scope/budget/state; không lặp vô hạn.
 - Required rules không rơi khỏi top-k; unknown/conflict rõ.
-- Feedback replay idempotent, subject isolation, forget và retraction test đạt.
+- Đề xuất evolution chỉ đi vào repo sau khi duyệt và qua eval; hash skill trên Dewee khớp repo.
 - Injection/stale evidence/contradictory feedback không tự thành active rule.
-- Missing eval/stale base chặn promote; rollback khôi phục digest trước.
 - Matched consumer outcome evidence trước tuyên bố skill tự cải thiện hiệu quả.
 
 ## Câu hỏi khi triển khai
 
-Chọn host feedback đầu tiên (Codex local hay GoClaw), profile scope, retention và auto-promote allowlist. Chưa cần đoán tenant/token để hoàn tất thiết kế; chưa bật bất kỳ persistence nào.
+Bật evolution `suggest_only` sau khi upload skill; xác nhận `skill_usage_metrics` có dữ liệu thật trước khi coi vòng học đang chạy.

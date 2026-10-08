@@ -236,19 +236,20 @@
       "origin": "existing-project-contract"
     },
     {
-      "id": "lookup-six-groups",
+      "id": "lookup-seven-groups",
       "revision": 1,
       "status": "active",
       "workflows": [
         "lookup"
       ],
       "kind": "guidance",
-      "title": "Tra sáu nhóm catalog",
-      "terms": "trang bị quân sư cải tạo công trình tướng chiến pháp 装备 军师 武将 战法",
-      "guidance": "Dùng catalog search/detail cho sáu nhóm đã công bố.",
+      "title": "Tra bảy nhóm Tra cứu",
+      "terms": "trang bị quân sư cải tạo công trình tướng chiến pháp binh thư 装备 军师 武将 战法 兵书",
+      "guidance": "Dùng catalog search/detail cho bảy nhóm Tra cứu đã công bố: Tướng, Chiến pháp, Trang bị, Quân sư, Cải tạo binh chủng, Công trình, Binh thư.",
       "when": {},
       "sourceRefs": [
-        "js/unified-lookup.js"
+        "js/unified-lookup.js",
+        "js/lookup-ids.js"
       ],
       "origin": "existing-project-contract"
     }

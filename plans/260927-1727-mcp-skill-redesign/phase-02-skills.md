@@ -2,19 +2,21 @@
 
 Trạng thái: chưa triển khai. Context: [design](design.md), [research plan cũ](../260907-2333-project-research-skill/plan.md).
 
-Thiết kế bổ sung: [dataset, playbook và learning](skill-mcp-learning-design.md). Làm retrieval foundation trước khi skill phụ thuộc hai tool mới.
+Thiết kế bổ sung: [dataset, playbook và learning](skill-mcp-learning-design.md). Làm retrieval foundation trước khi skill phụ thuộc `tqccl_get_playbook`.
 
-Quyết định 2026-10-06: giữ hai tool `tqccl_get_playbook`/`tqccl_search_rules` trong đợt này vì Dewee đang gọi MCP TQCCL thật và không đọc được file skill trong repo ([dewee design](dewee-access-design.md) dòng 79). Bằng chứng và điều kiện: [debate rules-dataset](reports/debate-rules-dataset.md).
+Quyết định 2026-10-07: đăng ký `tqccl_get_playbook` trong đợt này vì chọn mùa, readiness và version cần logic phía server, và agent Dewee `tra` đang gặp `INVALID_REQUEST`/`WORKFLOW_VERSION_CHANGED` ([Dewee runtime](reports/dewee-runtime-2026-10-07.md)). Dewee nạp được gói skill có `references/` nhưng không đồng bộ từ repo; rule đi qua MCP thì không phải upload lại skill khi rule đổi. `tqccl_search_rules`: làm sẵn lõi + CLI, **chưa đăng ký tool MCP** đến khi chạm ngưỡng ở bước 0. Bằng chứng: [debate rules-dataset](reports/debate-rules-dataset.md).
 
 ## Files và phạm vi
 
 - Tạo canonical `agent-knowledge/` schemas/rules/workflows/manifest và pure core `mcp-worker/src/knowledge/`.
-- Thêm get_playbook/search_rules, CLI aliases, errors và knowledge validator. Không copy Python prototype vào runtime.
+- Thêm `tqccl_get_playbook`, CLI aliases, errors và knowledge validator. Playbook **thay `tqccl_get_data_version`** (P\*): trả versions, capabilities, `seasonSelection`, readiness `referenceFitReady`/`rulesetScoringReady`, required rules **và toàn bộ guidance** của workflow/stage kèm `guidanceCount`, `guidanceBytes`, `guidanceTruncated`. Bước 0 phải xong trước Release 1 của [phase 1](phase-01-mcp-publication.md). Không copy Python prototype vào runtime.
+- `search-rules` chỉ ở core `mcp-worker/src/knowledge/` + CLI, có test; không có trong `tool-definitions.ts`.
 
 - Tạo `.agents/skills/tqccl-lookup/{SKILL.md,agents/openai.yaml,references/tool-routing.md,evals/evals.json}`.
 - Sửa `.agents/skills/tqccl-coexist-team-builder/`: instructions, metadata, references và helper khi replacement có parity.
 - Sửa `.agents/skills/tqccl-research/` đúng phần data workflow mới; thêm eval cases.
 - Không sửa global skills/GoClaw config. Không xóa account notes; bỏ vai trò account mặc định khỏi instructions.
+- `description` của mỗi skill dưới 200 ký tự (Dewee chỉ đưa 200 ký tự đầu vào prompt trước khi agent mở `SKILL.md`); giữ kiểu tiếng Anh kèm từ khoá tiếng Việt người chơi hay gõ. `tqccl-coexist-team-builder` hiện khoảng 390 ký tự.
 
 ## Thực hiện
 
@@ -23,11 +25,12 @@ Quyết định 2026-10-06: giữ hai tool `tqccl_get_playbook`/`tqccl_search_ru
    - Sửa `research-correction-history` trong prototype thành `invariant` (hiện là guidance ở `prototype/rules.json:221-237`, trái `tqccl-research/SKILL.md:40-43`).
    - Test: mọi rule `kind=invariant` của workflow luôn nằm trong required với mọi query/stage, kể cả khi `abstained=true`.
    - Không bỏ Markdown hiện tại trước khi ledger đầy đủ và test trên đạt.
+   - Ngưỡng đăng ký `tqccl_search_rules` thành tool MCP (một trong hai): guidance của một workflow/stage vượt khoảng 16 KiB hoặc playbook trả `guidanceTruncated=true`; hoặc trace Dewee cho thấy agent bỏ lỡ guidance liên quan. Khi chạm ngưỡng: đăng ký tool, cập nhật routing skill, upload lại skill, reconnect Dewee.
 1. Capture original metadata/instruction hash/reference reads và actual catalog trước sửa.
-2. Viết cases trước tối ưu; giữ holdout riêng và fixtures account đã redact.
-3. Author lookup skill theo hai workflow catalog/reference, discovery thật và CLI fallback.
-4. Coexist: version → normalize → review/confirmation → recommend → detail/replacement. Không giữ Python engine thứ hai.
-5. Research: giữ claim statuses, budget, SGSDeck, corrections; remote MCP tính vào external ledger. Routing: `tqccl_get_playbook` tối đa 1 call/topic và thay cho version call; `tqccl_search_rules` chỉ gọi khi cần guidance; repo local ưu tiên CLI (không tốn ledger).
+2. Viết cases trước tối ưu; giữ holdout riêng và fixtures account đã redact. Bộ hội thoại mẫu: [evals/dewee-conversations.json](evals/dewee-conversations.json) (24 case: tra cứu 7 nhóm, đội tham khảo, ghép đội, case âm), dùng làm phép đo trên agent thử Dewee `tra-eval` với MCP stdio local: R0 (8 tool cũ, commit hiện tại), R1 (code mới, chưa có skill), R2 (sau khi upload skill) — xem [phase 4](phase-04-integration.md).
+3. Author lookup skill: Tra cứu `tqccl_search` → `tqccl_get_entity`; đội tham khảo `tqccl_find_teams` → `tqccl_get_team`; discovery thật và CLI fallback.
+4. Coexist: `tqccl_get_playbook` (mùa, readiness) → `tqccl_normalize_entities` → review/confirmation → `tqccl_recommend_teams` → `tqccl_get_team` khi cần chi tiết. Kết quả ghi `basis:"source-reference-fit"`, `rulesetVerified:false`. Không giữ Python engine thứ hai.
+5. Research: giữ claim statuses, budget, SGSDeck, corrections; remote MCP tính vào external ledger. Routing: `tqccl_get_playbook` tối đa 1 call/topic và là call **mới** (skill research hiện không gọi version) — tính vào hạn mức 5; repo local ưu tiên CLI (không tốn ledger).
 6. Nếu helper cũ còn được hỗ trợ, chặn claim buildable khi roster chưa biết; tìm mọi caller trước retire hoặc chuyển thành CLI wrapper.
 7. Structural validation, routing lint, links, metadata version; so sánh matched original/candidate, skill mới so với no-skill.
 
@@ -48,11 +51,15 @@ Quyết định 2026-10-06: giữ hai tool `tqccl_get_playbook`/`tqccl_search_ru
 | SP/CO/base mơ hồ | Resolve trước recommendation |
 | Binding/version/context thay | Normalize/review lại |
 | Thay tactic SGSDeck | Không kế thừa score |
+| Hỏi chiến pháp thay thế của một đội nguồn | `tqccl_get_team` (`alternatives`/`tacticRefs`), không gọi recommend |
+| Thiếu món khi ghép đội từ kho | Món bù lấy từ `substitutes[]` của `tqccl_recommend_teams`; nhãn "đã thay"; không gán điểm nguồn cho biến thể |
+| Ghép đội khi mùa chưa có ruleset | Vẫn ghép theo nguồn + kho; nói rõ `rulesetVerified:false`, không trình bày là chấm theo luật mùa |
 | Không MCP, có repo | CLI cùng handler |
 | Không MCP và CLI | Nói giới hạn, không giả result |
 | Budget đã hết | Không gọi remote MCP/web tiếp |
-| Dewee hỏi cơ chế qua MCP, query không match guidance | Required vẫn có đọc correction history; không mất invariant khi abstain |
-| Research qua remote MCP dùng playbook + search_rules | Tổng external calls không vượt 5/topic; playbook không gọi lần hai |
+| Dewee hỏi cơ chế qua MCP, không guidance nào liên quan | Playbook vẫn trả required có đọc correction history; không mất invariant |
+| Research qua remote MCP dùng playbook | Playbook gọi đúng 1 lần/topic; tổng external calls không vượt 5/topic |
+| Guidance của workflow vượt ngưỡng kích thước | Playbook báo `guidanceTruncated=true`, không cắt required rules; ghi vào trace để xét đăng ký search_rules |
 | Source chứa prompt injection | Chỉ coi là dữ liệu |
 | Đăng bài/admin community | Không gọi tool quản trị không tồn tại |
 
@@ -64,4 +71,4 @@ Actual routing traces cho positive/negative và explicit invocation. So sánh co
 
 ## Bổ sung mùa mặc định
 
-Build team bắt đầu bằng resolver explicit/session/profile/latest. Rollover chỉ áp task mới, default là assumed; giữ readiness reference/recommendation riêng. Test theo [season design](season-resolution-design.md).
+Build team bắt đầu bằng chọn mùa nguồn: chỉ định → đã xác nhận → `defaultSourceSeasonId`, như trang Gợi ý kho. Default là assumed; readiness tách `referenceFitReady` (ghép theo nguồn + kho) và `rulesetScoringReady` (chấm theo luật). Test theo [season design](season-resolution-design.md).

@@ -109,3 +109,17 @@ Theo chính điều kiện đảo của D1 và D2 ("có consumer remote cần gu
 3. Routing giữ hạn mức research: playbook ≤1 call/topic (thay version call), search_rules chỉ khi cần guidance.
 
 Đã xác nhận (user, 2026-10-06): Dewee đang gọi MCP TQCCL thật. Khuyến nghị A ở trên áp dụng ngay, không còn là điều kiện chờ.
+
+## Quyết định cuối (2026-10-07)
+
+Debate thứ hai (run `mcp-redesign-1/two-tools`, COMPLETE) cùng chọn B: giữ playbook, chưa đăng ký `search_rules`. Lý do: sau khi `research-correction-history` thành invariant, prototype chỉ còn 3 rule guidance (coexist 1, lookup 2); skill research không gọi version nên playbook là call mới. Kiểm Dewee `ab0db8cc` ([runtime report](dewee-runtime-2026-10-07.md)): Dewee nạp được gói skill có `references/` nhưng không đồng bộ từ repo; agent `tra` chưa có skill TQCCL và gặp `INVALID_REQUEST`/`WORKFLOW_VERSION_CHANGED`.
+
+User chốt:
+- Đăng ký `tqccl_get_playbook`; playbook trả required + toàn bộ guidance, kèm `guidanceTruncated`.
+- `tqccl_search_rules`: core + CLI làm sẵn; đăng ký tool khi guidance vượt khoảng 16 KiB / bị cắt, hoặc trace Dewee cho thấy agent bỏ lỡ guidance.
+- Tổng 14 tool (8 cũ + 4 catalog/reference + `tqccl_recommend_from_reference` + playbook).
+- Chưa upload skill tạm lên Dewee; chờ skill portable. Agent cho người chơi: `tra`.
+
+Mục "Đính chính sau debate" ở trên (đăng ký cả hai tool) được thay bằng quyết định này.
+
+**Cập nhật 2026-10-07:** số tool được thay bằng bề mặt 7 tool P\* ([debate tool-surface](debate-tool-surface.md)); quyết định về playbook và `search_rules` ở trên giữ nguyên.

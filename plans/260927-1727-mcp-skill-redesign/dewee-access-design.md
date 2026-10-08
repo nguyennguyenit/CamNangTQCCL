@@ -78,11 +78,11 @@ Owner đề xuất: access layer cạnh MCP, giữ game snapshot và handler đ�
 
 1. Ba skill nghiệp vụ là gói portable cho Dewee, không tham chiếu đường dẫn máy dev hoặc yêu cầu shell Python để tra rule. MCP thực thi search dataset phía server; CLI là đường kiểm thử/local tương đương.
 2. Repo TQCCL sở hữu schema/workflow cards/rules công khai. Repo consumer sở hữu packaging skill, grants, confirmation UX và host adapter. Giữ ranh giới của tài liệu handoff hiện hành.
-3. Host cung cấp profile theo `tenant + subject + gameAccount + gameServer`; credential không mang mùa. User chọn mùa trước, nếu chưa chọn thì latest policy; Binh Diễn Xuân Thu vẫn chỉ là default ban đầu đã quyết định.
+3. Host cung cấp profile theo `tenant + subject + gameAccount + gameServer`; credential không mang mùa. User chọn mùa nguồn trước, nếu chưa chọn thì `defaultSourceSeasonId` của bản publish ([season design](season-resolution-design.md)).
    Source `resolveActorUserID` có xử lý riêng Bitrix24 và group chat; provisioning TQCCL phải dùng đúng actor identity theo channel, không mặc định memory user ID luôn trùng credential user ID.
 4. Dewee nhận feedback và lưu state cá nhân theo subject đã xác thực. MCP game tiếp tục read-only; không thêm write tool học chỉ để thuận tiện routing.
-5. Feedback cá nhân cải thiện profile tương ứng. Candidate knowledge chung cần bỏ dữ liệu riêng, evidence và evaluation; `tqccl-improve` thuộc maintainer, không grant cho agent người chơi.
-6. Trước khi bật learning cần chứng minh host callback thực sự gọi collector, dedup, quyền đọc/xóa/retention và isolation. Có bảng credential không có nghĩa host đã có feedback hook.
+5. Feedback cá nhân cải thiện profile tương ứng. Đề xuất cải tiến chung đi qua skill evolution `suggest_only` của Dewee và maintainer duyệt ở repo ([phase 3](phase-03-learning.md)); không có skill bảo trì grant cho agent người chơi.
+6. Trước khi tin vòng học đang chạy, chứng minh `skill_usage_metrics` có dữ liệu thật và đề xuất được tạo; có bảng không có nghĩa đã ghi.
 
 ## Thông tin cần chốt
 

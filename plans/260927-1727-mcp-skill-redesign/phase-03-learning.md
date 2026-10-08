@@ -1,55 +1,41 @@
-# Bước 3 — Feedback và learning loop dùng chung
+# Bước 3 — Vòng học qua Dewee skill evolution
 
-Trạng thái: chưa triển khai. Context: [thiết kế đầy đủ](skill-mcp-learning-design.md).
+Trạng thái: chưa triển khai. Phụ thuộc phase 2 (skill portable đã upload lên Dewee). Quyết định user 2026-10-07: dùng skill evolution có sẵn của Dewee ở chế độ `suggest_only`; **bỏ** `tqccl-improve`, SQLite feedback store và promotion runner riêng.
 
-## Outcome và prerequisite
+## Outcome
 
-Mỗi feedback có record/outcome đúng scope; candidate tốt cải thiện lần dùng sau và có thể rollback. Trước bật persistence, chọn consumer host/subject model, retention, workspace và promotion allowlist; không suy user identity từ MCP bearer.
+Dewee ghi nhận việc dùng skill và đề xuất cải tiến; maintainer duyệt đề xuất, sửa ở repo (bản gốc), release rule qua MCP hoặc upload lại skill. Không bấm apply trên Dewee để skill trên Dewee không lệch repo.
 
-## Files dự kiến
+## Dewee đã có (source `ab0db8cc`)
 
-- `agent-knowledge/schemas/feedback.schema.json`, `candidate.schema.json`, `promotion.schema.json`, `metrics.schema.json`.
-- `scripts/skill-learning.mjs`; helper modules theo ranh giới capture/store/evaluate/promote khi cần.
-- `.agents/skills/tqccl-improve/SKILL.md`, metadata, instructions về reproduction/eval/owner handoff.
-- Host adapter do consumer sở hữu. Private SQLite/state ở host, ngoài public artifacts.
-- Sanitized eval cases và reports dưới `plans/`; không raw transcript/tài khoản.
+- Bảng `skill_evolution_settings` (mode `suggest_only` | `auto_analyze`), `skill_improvement_suggestions`, `skill_versions`, `skill_usage_metrics` — `internal/store/sqlitestore/schema.sql`; `internal/store/skill_evolution_store.go:12-13`.
+- API `GET/PATCH /v1/skills/{id}/evolution`, `GET /v1/skills/{id}/evolution/suggestions`, `.../approve`, `.../reject`, `.../apply`, `GET /v1/skills/{id}/metrics`, `GET /v1/skills/{id}/versions` — `internal/http/skills.go:142-157`.
+- CLI `dewee skills evolve`, `metrics [skill]`, `suggestions` — `cmd/skills_evolution_cmd.go`.
+- Hiện `skill_usage_metrics` trên bản đang chạy có 0 dòng ([Dewee runtime](reports/dewee-runtime-2026-10-07.md)).
 
 ## Thực hiện
 
-1. Schema/classifier preference/input/game correction/skill gap/retrieval gap/tool bug/outage/unclassified.
-2. Host feedback event → validated append, unique subject/turn/response; retry không duplicate. Sửa output hiện tại độc lập promote.
-3. Personal preference có scope, retention, inspect/update/forget. Raw feedback không tự thành shared rule.
-4. Reproduction pin data/knowledge/skill/tool versions. Trace redact, không execute feedback như lệnh.
-5. Candidate workspace isolated, expected base digest và attempt budget; one attributable change, cases trước patch.
-6. Deterministic checks rồi matched consumer eval; missing metrics null, NOT_RUN/BLOCKED không pass.
-7. Promotion allowlist + evidence + compare-and-swap/atomic pointer/journal; local acceptance tách remote release.
-8. Retraction/forget/rollback dependency graph, invalidate derived profile/index. Theo dõi recurrence khi host active hoặc scheduler đã bật.
+1. Bật evolution `suggest_only` cho ba skill sau khi upload (`PATCH /v1/skills/{id}/evolution`).
+2. Kiểm metric được ghi thật: sau vài hội thoại của `tra`, `dewee skills metrics <slug>` có dữ liệu. Không có thì kiểm agent có gọi `use_skill` không; ghi BLOCKED, không coi là đạt.
+3. Lịch duyệt hàng tuần: đọc `suggestions`; mỗi đề xuất kết thúc ở một trong: rule mới/sửa trong `agent-knowledge/`, sửa `SKILL.md`, sửa code/data (chuyển owner), hoặc reject có lý do. Ghi lại ở `plans/.../reports/` dạng đã redact.
+4. Đề xuất chấp nhận: sửa ở repo, chạy eval phase 2, release (rule qua MCP; skill thì upload lại), kiểm hash skill trên Dewee khớp repo.
+5. Phân loại trước khi sửa: preference cá nhân, input của người chơi ("tôi không có tướng đó"), lỗi rule/workflow, lỗi tool/data, outage. Chỉ lỗi rule/workflow đi vào `agent-knowledge/`; game fact cần evidence research, không tự tin như nguồn độc lập.
+6. Feedback đổi mùa: sửa lựa chọn của user, không đổi mặc định project ([season design](season-resolution-design.md)).
 
 ## RED/GREEN
 
 | Failure | Acceptance |
 |---|---|
-| Feedback retry | Một event, status transition idempotent |
-| Subject spoofing | Host identity binding từ chối |
-| Token/ảnh/transcript thừa | Không persist ngoài schema, redact trước export |
-| “Tôi thiếu tướng” | Account input, không global rule |
-| Feedback bỏ nguồn/confirmation | Không mất protected invariants |
-| Preference mâu thuẫn | Current explicit scope hoặc báo conflict |
-| Fact thiếu evidence | needs-evidence, không publish canonical data |
-| Candidate thiếu behavioral evidence | Chặn shared promotion |
-| Hai promote cùng base | CAS nhận một, stale candidate re-evaluate |
-| Crash lúc promote | Reader thấy old hoặc new complete version |
-| Retraction/forget | Personal derived records revoke/delete đúng hợp đồng |
-| Regression | Rollback digest trước, giữ evidence failure |
+| Bấm apply trên Dewee | Hash skill trên Dewee khác repo bị phát hiện ở kiểm định kỳ |
+| Đề xuất bỏ invariant (nguồn, xác nhận, budget) | Reject; invariant test phase 2 vẫn đạt |
+| Đề xuất chứa dữ liệu cá nhân/roster | Redact trước khi ghi vào repo |
+| Game fact không có evidence | `needs-evidence`, không vào rule |
+| Metric không ghi | BLOCKED, không báo vòng học đang chạy |
 
-## Evaluation
+## Ngoài phạm vi
 
-Before/after matched, rubric cố định, independent holdout; engine invariants zero violation. Metric mềm đo rồi chốt threshold; 10 prototype tests không chứng minh quality gain. Handoff replay lookup → research → coexist và feedback → improve, cùng topic budget.
+Nút 👍/👎 hay hook feedback chủ động từ người chơi (cần sửa code Dewee); `auto_analyze`; promote tự động; global memory.
 
-## Rủi ro và rollback
+## Rủi ro
 
-Poisoning, profile leakage và rule accretion: chặn theo schema/scope/evidence, dedup candidate và một nguồn rule. Rollback knowledge/profile có version journal, không rollback yêu cầu forget. Auto-learning không tự cấp deploy hoặc đổi quyết định user.
-
-## Bổ sung mùa mặc định
-
-Feedback đổi mùa user cập nhật account scope, không đổi latest project. Thông tin mùa mới tạo evidence/policy candidate riêng; xem [season design](season-resolution-design.md).
+Evolution chỉ thấy tín hiệu dùng skill và trace; câu trả lời sai mà skill vẫn "succeeded" không lộ ra. Khi điều này thành vấn đề, cân nhắc hook feedback trong Dewee (PR upstream riêng).
