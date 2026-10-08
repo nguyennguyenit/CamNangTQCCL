@@ -1,6 +1,6 @@
 # Bước 2 — Knowledge retrieval, skill routing và behavior
 
-Trạng thái: chưa triển khai. Context: [design](design.md), [research plan cũ](../260907-2333-project-research-skill/plan.md).
+Trạng thái: bước 0–8 có code/test 2026-10-08 (ledger chờ owner review; ngưỡng retrieval chưa calibrate). Chưa có routing traces thật, so sánh skill/no-skill hay upload Dewee. Context: [design](design.md), [research plan cũ](../260907-2333-project-research-skill/plan.md), [báo cáo triển khai](reports/implementation-2026-10-08.md).
 
 Thiết kế bổ sung: [dataset, playbook và learning](skill-mcp-learning-design.md). Làm retrieval foundation trước khi skill phụ thuộc `tqccl_get_playbook`.
 

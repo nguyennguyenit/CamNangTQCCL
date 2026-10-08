@@ -20,32 +20,33 @@ Transport và thứ tự guard hiện hành thuộc [`worker.ts`](../mcp-worker/
 
 ## Catalog công cụ
 
-MCP xuất đúng tám tên đã có prefix:
+MCP xuất đúng bảy tên đã có prefix (bề mặt P*; tám tên cũ đã bị xoá, không alias). Trạng thái: **chưa deploy**; Dewee R0–R2 **chưa chạy**.
 
 | Công cụ | Vai trò trong consumer flow |
 |---|---|
-| `tqccl_get_data_version` | Lấy `workflowVersion` và provenance hiện hành trước một luồng mới. |
+| `tqccl_get_playbook` | Lấy `workflowVersion`, `knowledgeVersion`, capability, mùa nguồn, luật bắt buộc và tool kế tiếp trước một luồng mới. |
+| `tqccl_search` | Tìm entity (tướng, chiến pháp, trang bị, quân sư, cải tạo, công trình, binh thư, đội), có phân trang và `pagePath` vi/zh. |
+| `tqccl_get_entity` | Hồ sơ entity như trang Tra cứu; phần dài phân trang bằng `section`/cursor. |
+| `tqccl_find_teams` | Duyệt/đối chiếu đội tham khảo theo `collection`. |
+| `tqccl_get_team` | Đọc một đội theo selector `reference`. |
 | `tqccl_normalize_entities` | Chuẩn hóa các quan sát có thứ tự thành canonical state để rà soát. |
-| `tqccl_search` | Tìm entity hỗ trợ làm rõ dữ liệu, có phân trang. |
-| `tqccl_get_team` | Đọc một đội hình canonical theo workflow hiện hành. |
-| `tqccl_match_team` | Đối chiếu tướng/chiến pháp đã chuẩn hóa với dữ liệu đội hình. |
-| `tqccl_recommend_team` | Đề xuất đội từ canonical state đã được người dùng xác nhận. |
-| `tqccl_recommend_coexist` | Đề xuất portfolio cùng tồn tại từ trạng thái đã xác nhận. |
-| `tqccl_suggest_replacements` | Gợi ý chiến pháp thay thế trong ngữ cảnh đã xác nhận. |
+| `tqccl_recommend_teams` | Ghép đội từ kho đã được người dùng xác nhận (`basis:"source-reference-fit"`, `rulesetVerified:false`). |
+
+`tqccl_search_rules` chỉ là lõi knowledge + lệnh CLI, không đăng ký thành MCP tool.
 
 Không tự thêm prefix lần hai. Đội GoClaw phải kiểm tra quy tắc đặt tên và collision của đúng phiên bản sẽ triển khai, rồi grant tối thiểu theo các tên MCP thực sự discovery được.
 
-Catalog, schema input/output và annotation có nguồn thực thi tại [`research-contracts.ts`](../mcp-worker/src/research/research-contracts.ts) và [`tool-definitions.ts`](../mcp-worker/src/mcp/tool-definitions.ts). Không sao chép schema từ tài liệu này vào skill.
+Catalog, schema input/output và annotation có nguồn thực thi tại [`research-contracts.ts`](../mcp-worker/src/research/research-contracts.ts) và [`tool-definitions.ts`](../mcp-worker/src/mcp/tool-definitions.ts). Không sao chép schema từ tài liệu này vào skill. Catalog/reference/recommend cần snapshot manifest v3; trên v1/v2 chúng trả `CAPABILITY_UNAVAILABLE` (không bao giờ là mảng rỗng). Giới hạn kết quả `TQCCL_MCP_MAX_RESULT_BYTES` là 131072 (128 KiB; trước đó 96 KiB) vì `tools/list` vượt trần cũ.
 
 ## Luồng consumer khuyến nghị
 
-1. Gọi `tqccl_get_data_version` và giữ nguyên `workflowVersion` trả về cho toàn bộ lượt làm việc.
+1. Gọi `tqccl_get_playbook` và giữ nguyên `workflowVersion` trả về cho toàn bộ lượt làm việc.
 2. Xử lý ảnh hoàn toàn bên ngoài MCP. `read_image` hoặc vision provider phải chuyển từng ảnh thành các structured observation có thứ tự và evidence phù hợp với schema nguồn.
 3. Gọi `tqccl_normalize_entities`.
 4. Hiển thị canonical state, cảnh báo, xung đột, mục chưa phân giải và cờ `reviewRequired` để người dùng rà soát. Không coi việc MCP trả dữ liệu là bằng chứng người dùng đã xác nhận.
 5. Consumer tự thu nhận và ghi nhận hành động xác nhận của người dùng. Giữ nguyên `canonicalState`, `confirmationBinding` và `workflowVersion` do kết quả normalize trả về; không tự tái tạo binding.
-6. Dùng `tqccl_search`, `tqccl_get_team` hoặc `tqccl_match_team` khi cần tra cứu và đối chiếu, luôn truyền workflow version theo schema.
-7. Chỉ gọi `tqccl_recommend_team`, `tqccl_recommend_coexist` hoặc `tqccl_suggest_replacements` sau xác nhận, với đúng canonical state và binding tương ứng.
+6. Dùng `tqccl_search`, `tqccl_get_entity`, `tqccl_find_teams` hoặc `tqccl_get_team` khi cần tra cứu và đối chiếu, luôn truyền workflow version theo schema.
+7. Chỉ gọi `tqccl_recommend_teams` sau xác nhận, với đúng canonical state và binding tương ứng.
 8. Khi nhận `WORKFLOW_VERSION_CHANGED`, bắt đầu lại từ bước 1. Khi nhận `CONFIRMATION_REQUIRED`, quay lại normalize/rà soát/xác nhận; không tự động xác nhận lại và không đưa ra đội hình suy đoán.
 
 `ConfirmationBinding` gắn đúng workflow với normalization digest và phiên bản canonical projection. Schema authoritative nằm tại `confirmationBindingSchema` trong [`research-contracts.ts`](../mcp-worker/src/research/research-contracts.ts); logic xác minh nằm tại [`canonical-state.ts`](../mcp-worker/src/domain/canonical-state.ts).
@@ -63,11 +64,19 @@ Consumer phải tự quyết định chính sách crop ảnh, quyền truy cập
 - Lỗi typed và thuộc tính `retryable` do [`ResearchHandlerError`](../mcp-worker/src/research/research-handlers.ts) sở hữu. Không retry chỉ dựa trên HTTP status hoặc message text.
 - `DATA_UNAVAILABLE` chỉ được retry có giới hạn khi kết quả protocol đánh dấu retryable. Recommendation phải fail closed trong thời gian MCP không khả dụng.
 - `WORKFLOW_VERSION_CHANGED` và `CONFIRMATION_REQUIRED` là tín hiệu khởi động lại workflow như mô tả trên, không phải lỗi để retry nguyên payload.
-- Chỉ `tqccl_search` phân trang khi `nextCursor` hiện diện: gọi trang kế tiếp bằng cùng truy vấn và workflow, không sửa, giải mã hoặc dùng lại cursor cho truy vấn khác. `CURSOR_INVALID` yêu cầu bắt đầu tìm kiếm lại. Với công cụ không hỗ trợ phân trang, `truncated: true` nghĩa là kết quả không đầy đủ; không giả định có trang tiếp theo.
+- Các tool đọc có cursor (`tqccl_search`, `tqccl_get_entity`, `tqccl_find_teams`, `tqccl_get_team`) phân trang khi `nextCursor` hiện diện: gọi trang kế tiếp bằng cùng truy vấn và workflow, không sửa, giải mã hoặc dùng lại cursor cho truy vấn khác. `CURSOR_INVALID` yêu cầu bắt đầu lại. Với kết quả không phân trang, `truncated: true` nghĩa là không đầy đủ; không giả định có trang tiếp theo.
 - Luôn giữ `releaseId`, `workflowVersion`, `provenance`, `warnings` và trạng thái truncation cùng kết quả hiển thị hoặc quyết định. `dataVersion` chỉ để hiển thị, không thay cho workflow identity.
 - Thiết lập timeout, backoff, reconnect và deduplication thuộc consumer. Không retry mù recommendation và không biến timeout thành kết quả tự suy diễn.
 
-Formatter non-echo và mapping lỗi MCP được kiểm chứng tại [registry contract tests](../mcp-worker/test/mcp/registry.contract.test.ts); parity của cả tám công cụ nằm tại [all-tools transport parity tests](../mcp-worker/test/transport/all-tools-parity.test.ts).
+Formatter non-echo và mapping lỗi MCP được kiểm chứng tại [registry contract tests](../mcp-worker/test/mcp/registry.contract.test.ts); parity của cả bảy công cụ nằm tại [all-tools transport parity tests](../mcp-worker/test/transport/all-tools-parity.test.ts).
+
+## Cutover, discovery và rollback
+
+- **Đổi catalog = đổi consumer.** Tám tên của bề mặt cũ (danh sách trong changelog) không còn; không có alias. Sau mỗi release đổi catalog, consumer phải reconnect và refresh `tools/list` (Dewee: reconnect server, xem [dewee#887](https://github.com/nextlevelbuilder/dewee/issues/887)), rồi cập nhật grant/service key theo tên mới.
+- **Release 1 / Release 2** là lịch deploy (6 tên đọc + playbook, rồi `tqccl_recommend_teams`), thuộc quy trình deploy trong [kế hoạch](../plans/260927-1727-mcp-skill-redesign/design.md), không phải hợp đồng runtime. Hiện **chưa deploy** và **Dewee R0–R2 chưa chạy**; không coi bảy tool là đã live.
+- **CLI fallback** (cùng handler, không qua MCP): `playbook`, `search`, `entity`, `find-teams`, `team`, `normalize`, `recommend`, và `search-rules` (chỉ CLI). Bảng alias nằm ở [`cli.ts`](../mcp-worker/src/cli.ts) (`CLI_ALIASES`).
+- **Rollback:** deploy exact Worker version trước đó (code và data quay lại cùng lúc); consumer reconnect/refresh discovery lại về tên cũ. Chi tiết trong [Research MCP server](mcp-research-server.md).
+- **Sở hữu:** repository này sở hữu MCP, knowledge dataset (`agent-knowledge/`) và skill repo trong `.agents/skills/`; skill/prompt/grant/rollout phía GoClaw/Dewee vẫn thuộc consumer.
 
 ## Checklist cho đội GoClaw tương lai
 
@@ -77,7 +86,7 @@ Tất cả mục dưới đây nằm ngoài repository TQCCL này:
 - [ ] Tạo skill portable và prompt orchestration; không dùng path máy phát triển.
 - [ ] Cấu hình `read_image` hoặc vision provider để tạo structured observation, không chuyển media sang MCP.
 - [ ] Xây UX review/xác nhận và lưu bằng chứng người dùng ở phía consumer.
-- [ ] Đăng ký endpoint/credential trong secret store được quản lý; grant đúng agent/tenant và đúng tám tool cần dùng.
+- [ ] Đăng ký endpoint/credential trong secret store được quản lý; grant đúng agent/tenant và đúng bảy tool cần dùng.
 - [ ] Kiểm tra prefix/collision trên phiên bản thực tế; tránh biến tên thành `tqccl_tqccl_*`.
 - [ ] Thiết kế timeout, retry, reconnect, idempotency, logging/redaction, channel và media retention.
 - [ ] Kiểm thử end-to-end với dữ liệu mơ hồ, workflow đổi, confirmation cũ, MCP outage, prompt injection trong ảnh/source field và credential rotation.

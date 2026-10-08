@@ -1,6 +1,6 @@
 # Bước 1 — Publication và MCP
 
-Trạng thái: chưa triển khai. Context: [design](design.md), [scan](reports/repo-scan.md).
+Trạng thái: code xong 2026-10-08 trên `feat/mcp-skill-redesign` (7 tool đều đăng ký; tách Release 1/2 là việc lịch deploy). Bước 0 đã kiểm 2026-10-08: Dewee gọi `sha256:a3db20b1…` (deploy 08-25), lệch repo ([Dewee runtime](reports/dewee-runtime-2026-10-07.md)); theo quyết định user, deploy production dời tới khi code xong, chạy một lần ([phase 4](phase-04-integration.md) bước 8). Bằng chứng code: [báo cáo triển khai](reports/implementation-2026-10-08.md). Context: [design](design.md), [scan](reports/repo-scan.md).
 
 ## Điều kiện đầu vào
 

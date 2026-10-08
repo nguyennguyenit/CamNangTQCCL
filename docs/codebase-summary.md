@@ -2,7 +2,7 @@
 
 ## Tổng quan
 
-Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy trong trình duyệt, pipeline Python offline, Cloudflare Worker cho Vision và Research MCP read-only. `mcp-worker/` có domain services, snapshot loader, tám shared handler, JSON CLI, stdio và authenticated Streamable HTTP. Không có renderer frontend, SSR, backend chung hoặc database ứng dụng.
+Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy trong trình duyệt, pipeline Python offline, Cloudflare Worker cho Vision và Research MCP read-only. `mcp-worker/` có domain services, snapshot loader, bảy shared handler, JSON CLI, stdio và authenticated Streamable HTTP. Không có renderer frontend, SSR, backend chung hoặc database ứng dụng.
 
 ## Cấu trúc
 
@@ -46,10 +46,12 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | `js/team-recommend-engine.js` | Chấm tier, kiểm tra conflict, greedy/DFS và tạo portfolio local. |
 | [`mcp-worker/src/data/artifact-contracts.ts`](../mcp-worker/src/data/artifact-contracts.ts) | Owner của canonical manifest/snapshot gồm đúng sáu artifact và full `releaseId`. |
 | [`mcp-worker/src/data/{filesystem-data-source,static-assets-data-source,data-source}.ts`](../mcp-worker/src/data/) | Nguồn filesystem/Static Assets read-only và cache snapshot immutable. |
-| `mcp-worker/src/domain/{contracts,canonical-state,normalization-service,recommendation-service}.ts` | Luồng pure normalize → xác nhận binding → recommend. |
-| [`mcp-worker/src/research/{research-contracts,research-handlers}.ts`](../mcp-worker/src/research/) | Schema authority và dispatch dùng chung cho tám research operation; kết quả có workflow identity/provenance/bounds. |
+| `mcp-worker/src/domain/{contracts,canonical-state,normalization-service,digest-encoding}.ts` | Luồng pure normalize → xác nhận binding; `legacy-domain-adapter.ts` và `season-domain-adapter.ts` là adapter vào `js/` (find-similar, cấu hình mùa engine). Recommend không còn service riêng: `tqccl_recommend_teams` gọi `recommendRoster` trực tiếp. |
+| [`mcp-worker/src/data/{publication-projection,publication-builder,publication-source-reader}.ts`](../mcp-worker/src/data/) | Snapshot manifest v3: projection xuất bản (Recommended + Tra cứu) thành artifact, builder thuần bytes→bytes, reader cho checkout raw; `public-snapshot-view.ts` loại phần ẩn, `snapshot-index.ts`/`lookup-bundle.ts` dựng index/sidecar. |
+| [`mcp-worker/src/knowledge/`](../mcp-worker/src/knowledge/), [`agent-knowledge/`](../agent-knowledge/), `mcp-worker/src/generated/knowledge-bundle.ts` | Dataset luật canonical cho skill/MCP: contract, validate, điều kiện ba trị, `resolve-playbook`, `search-rules`; bundle sinh bởi `scripts/generate-knowledge-bundle.ts` (`knowledgeVersion` riêng, không nằm trong `workflowVersion`). |
+| [`mcp-worker/src/research/{research-contracts,research-handlers}.ts`](../mcp-worker/src/research/) | Schema authority và dispatch dùng chung cho bảy research operation; kết quả có workflow identity/provenance/bounds. |
 | [`mcp-worker/src/cli.ts`](../mcp-worker/src/cli.ts), [`package.json`](../mcp-worker/package.json) | `npm run cli -- <lệnh>` gọi trực tiếp shared handler qua filesystem snapshot và xuất một JSON document. |
-| [`mcp-worker/src/mcp/`](../mcp-worker/src/mcp/) | Registry dùng đúng tám schema object Phase 3, annotation read-only, factory server mới và formatter non-echo. |
+| [`mcp-worker/src/mcp/`](../mcp-worker/src/mcp/) | Registry dùng đúng bảy schema object, annotation read-only, factory server mới và formatter non-echo. |
 | [`mcp-worker/src/stdio.ts`](../mcp-worker/src/stdio.ts) | Official stdio transport; stdout chỉ chứa MCP protocol, diagnostic vào stderr. |
 | [`mcp-worker/src/worker.ts`](../mcp-worker/src/worker.ts), [`wrangler.jsonc`](../mcp-worker/wrangler.jsonc) | Stateless Streamable HTTP `/mcp`, managed bearer, guards, private Static Assets và version metadata. |
 | [`mcp-worker/src/security/`](../mcp-worker/src/security/) | Bearer rotation tối đa 15 phút, digest/fingerprint, request guards và isolate-local limits. |
@@ -102,7 +104,7 @@ Tab Khai hoang hỗ trợ `variants[]` tùy chọn trên từng đội: cấu h�
 - `tests-js/`: Astro/dist/header contracts, filter, map, Tra cứu, mobile menu, tracker, roster state và recommend engine.
 - `tests-e2e/`: Chromium parity, storage, JSON failure, exposure local/routed HTTPS và mixed-content.
 - `worker/test/`: config, guard, model, rate-limit, scan modes, schema.
-- `mcp-worker/test/`: snapshot/filesystem/Static Assets/cache, tám handler, CLI/stdio/HTTP parity, bearer/limits/protocol, ownership-safe release/rollback, verifier, import guard và production-shaped Workerd budget.
+- `mcp-worker/test/`: snapshot/filesystem/Static Assets/cache, bảy tool, CLI/stdio/HTTP parity, bearer/limits/protocol, ownership-safe release/rollback, verifier, import guard và production-shaped Workerd budget.
 
 Gate thống nhất nằm ở `.github/workflows/mcp-worker.yml`: `mcp-worker/scripts/check-repository.ts` chạy MCP, root Astro build/dist/`npm run verify`/E2E/Node/Python, Vision Worker và Wrangler dry-run trong môi trường không có release credential. Kết quả có thời điểm của migration Worker Static Assets nằm trong [`implementation-verification.md`](../plans/260731-0237-thay-r2-bng-worker-static-assets/reports/implementation-verification.md); đây là bằng chứng local, không phải bằng chứng production.
 

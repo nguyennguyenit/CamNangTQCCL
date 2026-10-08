@@ -1,5 +1,56 @@
 # Project Changelog
 
+## 2026-10-08 (MCP + skill: snapshot v3, bề mặt 7 tool P*, knowledge dataset, skill làm lại — CHƯA deploy)
+
+### Changed
+
+- **Snapshot manifest v3** = artifact v2 + publication projection (catalog/reference/recommend read model). v1/v2 vẫn đọc được nhưng catalog/reference/recommend trả `CAPABILITY_UNAVAILABLE` (không bao giờ là mảng rỗng); identity v1/v2 giữ nguyên. Hợp đồng ở `mcp-worker/src/data/artifact-contracts.ts`.
+- **Bảy tool P\***: `tqccl_get_playbook`, `tqccl_search`, `tqccl_get_entity`, `tqccl_find_teams`, `tqccl_get_team`, `tqccl_normalize_entities`, `tqccl_recommend_teams`. **Tám tool cũ bị xoá, không alias** (`tqccl_get_data_version`, `tqccl_match_team`, `tqccl_recommend_team`, `tqccl_recommend_coexist`, `tqccl_suggest_replacements`, cùng `tqccl_search`/`tqccl_get_team`/`tqccl_normalize_entities` bản schema cũ); `recommendation-service` và `season-reference-projection` bị gỡ. Schema thuộc `mcp-worker/src/research/research-contracts.ts` (không sao chép vào tài liệu). `tqccl_recommend_teams` gọi đúng `recommendRoster` của trang Gợi ý kho (kết quả `basis:"source-reference-fit"`, `rulesetVerified:false`).
+- **CLI**: alias `playbook, search, entity, find-teams, team, normalize, recommend` (bảng `CLI_ALIASES` trong `mcp-worker/src/cli.ts`) cộng lệnh chỉ-CLI `search-rules`.
+- **`tools/list` gọn dưới 90 KiB** (output schema bỏ mô tả field lồng, error envelope phẳng dùng chung) nên `TQCCL_MCP_MAX_RESULT_BYTES` giữ 98304; `content[0].text` là JSON tương đương `structuredContent`, trần mỗi kết quả 42 KiB.
+
+### Added
+
+- **Knowledge dataset** canonical tại `agent-knowledge/` (rules, aliases, workflows, schemas); Worker nhận qua module sinh `mcp-worker/src/generated/knowledge-bundle.ts` từ `mcp-worker/scripts/generate-knowledge-bundle.ts` (`knowledgeVersion` tách khỏi `workflowVersion`). Playbook trả version/capability/luật bắt buộc; `tqccl_search_rules` chỉ là lõi knowledge + CLI, không phải MCP tool.
+- **Skill** (`.agents/skills/`): thêm `tqccl-lookup`; làm lại `tqccl-coexist-team-builder` và `tqccl-research` (thêm `evals/`); gỡ helper `scripts/list_candidate_teams.py`.
+
+### Deploy / consumer (chưa thực hiện)
+
+- **Chưa deploy production; Dewee R0–R2 chưa chạy.** Chia Release 1 / Release 2 là vấn đề lịch deploy (xem `plans/260927-1727-mcp-skill-redesign/phase-04-integration.md`), không phải hợp đồng runtime.
+- Đổi catalog nên consumer phải reconnect và refresh `tools/list` (Dewee: [dewee#887](https://github.com/nextlevelbuilder/dewee/issues/887)), đổi grant/service key sang tên mới. Rollback: exact Worker version trước đó (code + data cùng lúc). Consumer (GoClaw/Dewee) sở hữu skill/grant/rollout phía họ; hợp đồng ở [goclaw-mcp-skill-handoff.md](goclaw-mcp-skill-handoff.md).
+- Tài liệu cập nhật: `docs/goclaw-mcp-skill-handoff.md`, `docs/mcp-research-server.md`, `docs/unified-lookup.md`, `README.md`.
+
+## 2026-10-08 (Gợi ý đội từ kho: sửa adapter dùng chung `recommendRoster` trước khi nối MCP)
+
+### Fixed
+
+Sửa tám lỗi audit ở `js/roster-season-candidates.js`, `js/team-recommend-engine.js`, `js/roster-scan-state.js`, `js/roster-recommend-ui.js` (website và `tqccl_recommend_teams` dùng chung `recommendRoster`):
+
+1. **Cắt pool 60/80 trước khi kiểm kho.** Engine lọc theo kho trước, không cắt số lượng trước khi kiểm; thêm option `poolLimit` (mặc định 60) chỉ giới hạn DFS fullBox, còn bước tham lam dự phòng luôn xét TOÀN danh sách đã qua kiểm kho (không bịa `seasonContext` để né giới hạn). Probe pk-s26 Meta và probe >80 ứng viên: trước đây 0 đội mùa, nay đủ.
+2. **Loại đội cũ quá tay.** Đội cũ chỉ bị loại khi trùng bộ 3 tướng với đội mùa ĐÃ CHỌN (`season.addTeams`), không phải với mọi đội mùa.
+3. **Món bù không kiểm luật đội** (tối đa 1 trận pháp, 1 binh chủng, binh chủng phải hợp loại binh; suy từ `type`/`troopFit` của `data/tactics.json`). Kiểm cả ở gợi ý (`analyzeTacticSubstitutes`) lẫn ở engine với món bù đã chọn (trạng thái riêng `incompatible`, mảng `incompatibleTeams`, không gộp vào `blockedStrongTeams`). Luật chỉ áp cho món bù do người dùng chọn: 46/1317 đội nguồn tự lệch luật loại binh nên dữ liệu gốc không bị kiểm.
+4. **Thiếu `unitTypesRaw`** (48/1336 cấu hình): đội mùa mang `unitType` (và `unitTypesRaw`), rỗng thì không gợi ý và không nhận binh chủng nào (`troop-unit-unknown`).
+5. **Món bù đã chọn** tính vào tổ hợp cuối của đội (`finalTeamTactics`); UI truyền `team` + ô thay vì danh sách tên gốc.
+6. **Món bù thứ 21 không còn bị bỏ âm thầm:** `setTacticOverride` từ chối ô mới khi đầy `MAX_TACTIC_OVERRIDES` (20), `tacticOverrideBlocked` để UI báo và vô hiệu nút.
+7. **Ô chiến pháp chưa đối chiếu với từ điển** (vd. `御敵屏障` ở `s28-wutugu-huangma`): giữ tên Việt dự phòng của nguồn, `unresolved: true`; đội còn ô này có trạng thái `unreconciled` (kèm `unresolvedTactics`), không bao giờ `build-now`; ô này không bắt buộc sở hữu và không là nguồn món bù.
+8. **Nhãn bậc biến thể đã thay:** entry có `variantUnrated` + `originalTier`; UI hiện "Bậc cấu hình gốc: Tx · bản đã thay chưa được đánh giá" (zh: 原配置梯度）; bản đã thay xếp sau đội cùng bậc không bị thay (`rankingTuple[1]`).
+
+### Decided
+
+- Chính sách trộn hai nguồn (ghi ở `recommendRoster`): chốt đội mùa trước, đội cũ chỉ dùng tài nguyên còn lại và xếp sau; KHÔNG bảo đảm số đội tối đa khi trộn.
+- Giới hạn phe/truyền thừa và luật theo mùa chưa có dữ liệu: không kiểm, không đoán.
+
+### Tests
+
+- `tests-js/roster-adapter-audit.test.mjs` + `tests-js/fixtures/roster-adapter-fixtures.mjs` (fixture dựng từ bản ghi thật, dùng lại cho parity web = MCP): `s28-wutugu-huangma`, `team-831163`, `team-jyspt`, `team-1imndp3`, `team-epoddo` (thiếu `unitTypesRaw`), probe pk-s26 >60/>80, kiểm ba loại sai bằng 0 trên pk-s24/26/28.
+- Cập nhật test đang ghim hành vi cũ: ô lạ là điều kiện, đội cũ bị loại theo mọi đội mùa, cắt món bù thứ 21 (`roster-season-candidates`, `roster-scan-state`).
+
+### Publish
+
+- `workflow-build` sinh lại (adapter và `js/roster-scan-state.js` nằm trong semantic closure nên sửa adapter đổi `workflowVersion`).
+- Bản dịch hiển thị publish lại theo `docs/deployment-guide.md`: re-pin sha256 nguồn trong `pipeline/site-localization-policy.json`, generation Recommended mới `9945cf05…` (thay `a973b093…`, đã prune), `data/website-display.json` mới, `pipeline/team-route-handles.json` re-pin generation; `site_localization check --stage public` và `team_route_handles --check` đạt.
+- `suggestTacticSubstitutes` bị gỡ; dùng `analyzeTacticSubstitutes(...).substitutes` (khoá chiến pháp nhận cả tên lẫn ID `tactic:` nên chiến pháp của đội đã khoá không bị gợi ý làm món bù).
+
 ## 2026-10-07 (Tra cứu tướng: Đánh giá của bản thường bị gắn vào bản SP)
 
 ### Fixed

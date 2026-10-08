@@ -1,6 +1,6 @@
 # Thiết kế lại MCP và skill theo repo hiện tại
 
-Ngày: 2026-09-27 · Trạng thái: **thiết kế mở rộng và prototype hoàn tất; chưa triển khai runtime**.
+Ngày: 2026-09-27 · Trạng thái: **code phase 1, 1b, 2 đã triển khai trên branch `feat/mcp-skill-redesign` (2026-10-08, chưa commit/deploy); phase 3, 4 và các bước live chưa làm** — [báo cáo](reports/implementation-2026-10-08.md).
 Mốc khảo sát: working tree hiện tại trên `main`, gồm thay đổi chưa commit.
 
 ## Kết quả cần đạt
@@ -32,11 +32,11 @@ Agent đọc được cùng catalog (7 nhóm Tra cứu), đội chuẩn, đội 
 | Debate | [Rules dataset + tool knowledge](reports/debate-rules-dataset.md) | Đã chốt 2026-10-07 | — |
 | Debate | [Bề mặt tool P\*](reports/debate-tool-surface.md) | Đã chốt 2026-10-07 | — |
 | Dewee upstream | [dewee#887](https://github.com/nextlevelbuilder/dewee/issues/887) re-list tools, [dewee#888](https://github.com/nextlevelbuilder/dewee/issues/888) `$defs` | Issue mở | user sửa sau |
-| 1 | [Snapshot và MCP](phase-01-mcp-publication.md) — Release 1 (6 tool), Release 2 (`tqccl_recommend_teams`) | Chưa làm | chốt baseline; Release 1 cần 2 bước 0; Release 2 cần 1b |
-| 1b | [Sửa adapter Gợi ý kho](phase-01b-adapter-fix.md) | Chưa làm | chạy song song 1; website ship trước |
-| 2 | [Knowledge, skill và kiểm chứng hành vi](phase-02-skills.md) | Chưa làm | bước 0 song song 1; skill sau Release 1 |
+| 1 | [Snapshot và MCP](phase-01-mcp-publication.md) — Release 1 (6 tool), Release 2 (`tqccl_recommend_teams`) | Bước 0 đã kiểm (lệch, deploy dời tới sau code); code xong 2026-10-08; deploy chưa làm | chốt baseline; Release 1 cần 2 bước 0; Release 2 cần 1b |
+| 1b | [Sửa adapter Gợi ý kho](phase-01b-adapter-fix.md) | Code xong 2026-10-08; chưa ship website | chạy song song 1; website ship trước |
+| 2 | [Knowledge, skill và kiểm chứng hành vi](phase-02-skills.md) | Bước 0 + skill xong; routing traces/owner review chưa làm | bước 0 song song 1; skill sau Release 1 |
 | 3 | [Vòng học qua Dewee evolution](phase-03-learning.md) | Chưa làm | 2 + skill đã upload lên Dewee |
-| 4 | [Tích hợp và cutover Dewee](phase-04-integration.md) | Chưa làm | 1 + 1b + 2; phase 3 bật sau upload skill |
+| 4 | [Tích hợp và cutover Dewee](phase-04-integration.md) | Check local đạt; R0–R2/cutover chưa làm | 1 + 1b + 2; phase 3 bật sau upload skill |
 
 ## Nghiệm thu triển khai
 
