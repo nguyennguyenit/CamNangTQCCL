@@ -31,7 +31,7 @@ Agent đọc được cùng catalog (7 nhóm Tra cứu), đội chuẩn, đội 
 | Dewee runtime | [Runtime và source Dewee 2026-10-07](reports/dewee-runtime-2026-10-07.md) | Đã kiểm | Dewee `ab0db8cc` |
 | Debate | [Rules dataset + tool knowledge](reports/debate-rules-dataset.md) | Đã chốt 2026-10-07 | — |
 | Debate | [Bề mặt tool P\*](reports/debate-tool-surface.md) | Đã chốt 2026-10-07 | — |
-| Dewee upstream | [dewee#887](https://github.com/nextlevelbuilder/dewee/issues/887) re-list tools, [dewee#888](https://github.com/nextlevelbuilder/dewee/issues/888) `$defs` | Issue mở | user sửa sau |
+| Dewee upstream | [dewee#887](https://github.com/nextlevelbuilder/dewee/issues/887) re-list tools → PR [#895](https://github.com/nextlevelbuilder/dewee/pull/895); [dewee#888](https://github.com/nextlevelbuilder/dewee/issues/888) `$defs` → PR [#896](https://github.com/nextlevelbuilder/dewee/pull/896); [dewee#900](https://github.com/nextlevelbuilder/dewee/issues/900) kết quả MCP bị gửi hai lần | #895, #896 đã merge `dev` (Dewee local `ab0db8cc` chưa có); #900 mở 2026-10-09 | user sửa |
 | 1 | [Snapshot và MCP](phase-01-mcp-publication.md) — Release 1 (6 tool), Release 2 (`tqccl_recommend_teams`) | Bước 0 đã kiểm (lệch, deploy dời tới sau code); code xong 2026-10-08; deploy chưa làm | chốt baseline; Release 1 cần 2 bước 0; Release 2 cần 1b |
 | 1b | [Sửa adapter Gợi ý kho](phase-01b-adapter-fix.md) | Code xong 2026-10-08; chưa ship website | chạy song song 1; website ship trước |
 | 2 | [Knowledge, skill và kiểm chứng hành vi](phase-02-skills.md) | Bước 0 + skill xong; routing traces/owner review chưa làm | bước 0 song song 1; skill sau Release 1 |
