@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "dataset": {
+      "type": "string",
+      "const": "tqccl-agent-knowledge"
+    },
+    "locales": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "vi",
+          "zh"
+        ]
+      }
+    },
+    "tokenizer": {
+      "type": "string",
+      "const": "vi-fold-zh-ngram-v1"
+    },
+    "ranker": {
+      "type": "string",
+      "const": "bm25-weighted-v1"
+    },
+    "compatibility": {
+      "type": "object",
+      "properties": {
+        "core": {
+          "type": "number",
+          "const": 1
+        }
+      },
+      "required": [
+        "core"
+      ],
+      "additionalProperties": false
+    },
+    "files": {
+      "type": "object",
+      "properties": {
+        "workflows": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "aliases": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "rules": {
+          "minItems": 1,
+          "maxItems": 16,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          }
+        }
+      },
+      "required": [
+        "workflows",
+        "aliases",
+        "rules"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "dataset",
+    "locales",
+    "tokenizer",
+    "ranker",
+    "compatibility",
+    "files"
+  ],
+  "additionalProperties": false
+}

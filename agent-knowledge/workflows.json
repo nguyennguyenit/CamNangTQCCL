@@ -1,0 +1,315 @@
+{
+  "schemaVersion": 1,
+  "workflows": [
+    {
+      "id": "lookup",
+      "title": "Tra cứu thực thể và đội tham khảo",
+      "summary": "Resolve tên/ID, đọc catalog/reference của bảy nhóm Tra cứu và đội tham khảo theo mùa nguồn; không gợi ý ghép đội.",
+      "stages": [
+        {
+          "id": "resolve-entity",
+          "title": "Resolve danh tính",
+          "goal": "Chuyển tên người dùng gõ thành canonicalId, không gộp SP/CO/base."
+        },
+        {
+          "id": "read-detail",
+          "title": "Đọc chi tiết",
+          "goal": "Lấy chi tiết thực thể đã resolve."
+        },
+        {
+          "id": "reference-teams",
+          "title": "Đội tham khảo",
+          "goal": "Tìm và đọc đội chuẩn theo mùa nguồn, giữ scope nguồn."
+        },
+        {
+          "id": "handoff",
+          "title": "Bàn giao",
+          "goal": "Chuyển sang coexist hoặc research khi nhu cầu vượt phạm vi tra cứu."
+        }
+      ],
+      "nextTools": [
+        {
+          "stage": "resolve-entity",
+          "tool": "tqccl_search",
+          "purpose": "Tìm thực thể theo tên/alias, lọc theo nhóm."
+        },
+        {
+          "stage": "read-detail",
+          "tool": "tqccl_get_entity",
+          "purpose": "Đọc chi tiết theo canonicalId."
+        },
+        {
+          "stage": "reference-teams",
+          "tool": "tqccl_find_teams",
+          "purpose": "Liệt kê đội tham khảo theo mùa nguồn/tướng/chiến pháp."
+        },
+        {
+          "stage": "reference-teams",
+          "tool": "tqccl_get_team",
+          "purpose": "Đọc chi tiết đội, alternatives và tacticRefs."
+        },
+        {
+          "stage": "handoff",
+          "tool": "tqccl_get_playbook",
+          "purpose": "Lấy playbook của workflow nhận bàn giao."
+        }
+      ],
+      "handoffs": [
+        {
+          "to": "coexist",
+          "when": "User muốn xếp đội theo kho của mình.",
+          "returnTo": "lookup"
+        },
+        {
+          "to": "research",
+          "when": "Cần kiểm chứng mechanic hoặc nguồn.",
+          "returnTo": "lookup"
+        }
+      ],
+      "outputChecklist": [
+        "Mỗi thực thể nêu canonicalId/tên chính xác và nhóm Tra cứu.",
+        "Đội tham khảo ghi mùa nguồn và không gọi đó là luật game của user.",
+        "Thiếu dữ liệu thì nói không tìm thấy; không bịa thực thể.",
+        "Không đưa gợi ý ghép đội nếu user không hỏi."
+      ],
+      "errorRecovery": [
+        {
+          "code": "KNOWLEDGE_VERSION_CHANGED",
+          "action": "Gọi lại tqccl_get_playbook để lấy knowledgeVersion mới rồi áp dụng lại rules."
+        },
+        {
+          "code": "KNOWLEDGE_UNAVAILABLE",
+          "action": "Báo giới hạn; dùng CLI cùng lõi nếu có repo. Không bịa rule từ trí nhớ."
+        },
+        {
+          "code": "WORKFLOW_VERSION_CHANGED",
+          "action": "Gọi lại tool đọc dữ liệu không kèm expectedWorkflowVersion cũ, rồi pin version mới."
+        },
+        {
+          "code": "DATA_UNAVAILABLE",
+          "action": "Báo dữ liệu chưa sẵn sàng; không trả kết quả rỗng như thể đúng."
+        },
+        {
+          "code": "INVALID_REQUEST",
+          "action": "Sửa input theo field được báo, không lặp lại cùng request."
+        },
+        {
+          "code": "CAPABILITY_UNAVAILABLE",
+          "action": "Snapshot cũ không có catalog/reference: báo giới hạn, không trả mảng rỗng."
+        }
+      ]
+    },
+    {
+      "id": "coexist",
+      "title": "Ghép đội cùng tồn từ kho",
+      "summary": "Chọn mùa nguồn, normalize kho, cho user review rồi ghép đội theo nguồn + kho; không trình bày là chấm theo luật mùa khi chưa có ruleset.",
+      "stages": [
+        {
+          "id": "season-select",
+          "title": "Chọn mùa nguồn",
+          "goal": "Chỉ định → đã xác nhận → defaultSourceSeasonId (assumed)."
+        },
+        {
+          "id": "normalize-roster",
+          "title": "Normalize kho",
+          "goal": "Chuẩn hóa quan sát kho/đội hiện tại và chiến pháp khóa."
+        },
+        {
+          "id": "review-confirm",
+          "title": "Review & xác nhận",
+          "goal": "User xác nhận canonical state, nhận binding."
+        },
+        {
+          "id": "recommend",
+          "title": "Gợi ý",
+          "goal": "Chạy recommend với binding đã xác nhận, kiểm hard conflict và logic chiến pháp."
+        },
+        {
+          "id": "explain",
+          "title": "Giải thích",
+          "goal": "Chốt một khuyến nghị, nêu đánh đổi và cái giá thay thế."
+        }
+      ],
+      "nextTools": [
+        {
+          "stage": "season-select",
+          "tool": "tqccl_get_playbook",
+          "purpose": "Lấy mùa mặc định, readiness và rules hiện hành."
+        },
+        {
+          "stage": "normalize-roster",
+          "tool": "tqccl_normalize_entities",
+          "purpose": "Chuẩn hóa tên/ảnh quan sát thành canonical state."
+        },
+        {
+          "stage": "recommend",
+          "tool": "tqccl_recommend_teams",
+          "purpose": "Ghép đội theo nguồn + kho với binding đã xác nhận."
+        },
+        {
+          "stage": "explain",
+          "tool": "tqccl_get_team",
+          "purpose": "Đọc chi tiết đội khi giải thích thay thế/alternatives."
+        }
+      ],
+      "handoffs": [
+        {
+          "to": "lookup",
+          "when": "Cần chi tiết hoặc danh tính thực thể.",
+          "returnTo": "coexist"
+        },
+        {
+          "to": "research",
+          "when": "Cơ chế chiến pháp chưa rõ cần kiểm chứng.",
+          "returnTo": "coexist"
+        }
+      ],
+      "outputChecklist": [
+        "Chốt một đội khuyến nghị.",
+        "Liệt kê build: tướng, chiến pháp, binh thư, điểm cộng/tốc.",
+        "Bảng chiến pháp trùng/thiếu và chiến pháp khóa đang hiệu lực.",
+        "Nêu đội dựng sẵn hay thay thế và cái giá của thay thế.",
+        "Ghi basis `source-reference-fit` và `rulesetVerified:false` khi chưa có ruleset."
+      ],
+      "errorRecovery": [
+        {
+          "code": "KNOWLEDGE_VERSION_CHANGED",
+          "action": "Gọi lại tqccl_get_playbook để lấy knowledgeVersion mới rồi áp dụng lại rules."
+        },
+        {
+          "code": "KNOWLEDGE_UNAVAILABLE",
+          "action": "Báo giới hạn; dùng CLI cùng lõi nếu có repo. Không bịa rule từ trí nhớ."
+        },
+        {
+          "code": "WORKFLOW_VERSION_CHANGED",
+          "action": "Gọi lại tool đọc dữ liệu không kèm expectedWorkflowVersion cũ, rồi pin version mới."
+        },
+        {
+          "code": "DATA_UNAVAILABLE",
+          "action": "Báo dữ liệu chưa sẵn sàng; không trả kết quả rỗng như thể đúng."
+        },
+        {
+          "code": "INVALID_REQUEST",
+          "action": "Sửa input theo field được báo, không lặp lại cùng request."
+        },
+        {
+          "code": "CONFIRMATION_REQUIRED",
+          "action": "Cho user review canonical state rồi nhận binding mới trước khi recommend."
+        },
+        {
+          "code": "CAPABILITY_UNAVAILABLE",
+          "action": "Snapshot cũ không recommend được: báo giới hạn."
+        }
+      ]
+    },
+    {
+      "id": "research",
+      "title": "Nghiên cứu claim có bằng chứng",
+      "summary": "Nghiên cứu đội/cấu hình nguồn, kiểm chứng cơ chế chiến pháp hoặc kiểm chứng nguồn với claim status, ngân sách external call dùng chung và lịch sử đính chính.",
+      "stages": [
+        {
+          "id": "scope-lock",
+          "title": "Khóa topic và scope",
+          "goal": "Một topic ổn định, mùa/server có provenance, ngân sách."
+        },
+        {
+          "id": "project-context",
+          "title": "Đọc ngữ cảnh dự án",
+          "goal": "Đọc đính chính, dossier và trạng thái runtime trước nguồn ngoài."
+        },
+        {
+          "id": "source-plan",
+          "title": "Lập kế hoạch nguồn",
+          "goal": "Chọn nguồn theo registry, SGSDeck và checklist cơ chế."
+        },
+        {
+          "id": "collect-evidence",
+          "title": "Thu thập bằng chứng",
+          "goal": "Đọc nguồn thật trong ngân sách."
+        },
+        {
+          "id": "evaluate-claims",
+          "title": "Đánh giá claim",
+          "goal": "Gán trạng thái từng claim, giữ cấu hình nguyên vẹn."
+        },
+        {
+          "id": "synthesize",
+          "title": "Tổng hợp",
+          "goal": "Tách nguồn sự kiện, giữ cỡ mẫu, loại chiến pháp không hợp lệ."
+        },
+        {
+          "id": "report-handoff",
+          "title": "Báo cáo & bàn giao",
+          "goal": "Viết báo cáo khi cần, handoff có giới hạn, hoàn tất checklist."
+        }
+      ],
+      "nextTools": [
+        {
+          "stage": "scope-lock",
+          "tool": "tqccl_get_playbook",
+          "purpose": "Lấy rules (tối đa 1 lần/topic, tính vào hạn mức)."
+        },
+        {
+          "stage": "project-context",
+          "tool": "tqccl_search",
+          "purpose": "Kiểm dữ liệu dự án hiện hành."
+        },
+        {
+          "stage": "project-context",
+          "tool": "tqccl_get_team",
+          "purpose": "Đọc cấu hình đội của dự án khi tra trạng thái hiện hành."
+        },
+        {
+          "stage": "collect-evidence",
+          "tool": "tqccl_find_teams",
+          "purpose": "Đối chiếu đội tham khảo của dự án với claim."
+        }
+      ],
+      "handoffs": [
+        {
+          "to": "coexist",
+          "when": "User cần xếp đội sau khi đã có evidence.",
+          "returnTo": "research"
+        },
+        {
+          "to": "lookup",
+          "when": "Cần danh tính hoặc chi tiết thực thể.",
+          "returnTo": "research"
+        }
+      ],
+      "outputChecklist": [
+        "Scope mùa/server và provenance rõ hoặc unknown.",
+        "Mỗi claim quan trọng có đúng một trạng thái: Đã đối chiếu / Phương án từ nguồn / Chưa xác minh.",
+        "Trạng thái SGSDeck rõ; nếu chưa có ghi: chưa có mốc SGSDeck đã xác minh.",
+        "Ledger: topic, limit, used, remaining.",
+        "Giới hạn và câu hỏi mở hiển thị; mọi mutation nằm trong handoff được ủy quyền."
+      ],
+      "errorRecovery": [
+        {
+          "code": "KNOWLEDGE_VERSION_CHANGED",
+          "action": "Gọi lại tqccl_get_playbook để lấy knowledgeVersion mới rồi áp dụng lại rules."
+        },
+        {
+          "code": "KNOWLEDGE_UNAVAILABLE",
+          "action": "Báo giới hạn; dùng CLI cùng lõi nếu có repo. Không bịa rule từ trí nhớ."
+        },
+        {
+          "code": "WORKFLOW_VERSION_CHANGED",
+          "action": "Gọi lại tool đọc dữ liệu không kèm expectedWorkflowVersion cũ, rồi pin version mới."
+        },
+        {
+          "code": "DATA_UNAVAILABLE",
+          "action": "Báo dữ liệu chưa sẵn sàng; không trả kết quả rỗng như thể đúng."
+        },
+        {
+          "code": "INVALID_REQUEST",
+          "action": "Sửa input theo field được báo, không lặp lại cùng request."
+        },
+        {
+          "code": "BUDGET_EXHAUSTED",
+          "action": "Dừng gọi ngoài, nêu khoảng trống bằng chứng, giữ Chưa xác minh."
+        }
+      ]
+    }
+  ]
+}
