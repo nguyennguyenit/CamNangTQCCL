@@ -25,7 +25,7 @@ Review code (code-reviewer): H1 khoá chiến pháp lệch web/MCP, H2 ngân sá
 ## Chưa làm / NOT_RUN
 
 - Deploy production và reconnect Dewee: chưa làm. Bước 0 của phase 1 đã kiểm ngày 2026-10-08 (Dewee gọi `sha256:a3db20b1…`, lệch repo; xem `dewee-runtime-2026-10-07.md`). Deploy dời tới khi code xong theo quyết định user, chạy một lần ở phase 4 bước 8.
-- Phase 2: routing traces thật, so skill/no-skill, owner review ledger (mọi dòng còn `pending`) — cần host model (Dewee `tra-eval`).
+- Phase 2: routing traces thật, so skill/no-skill, owner review ledger (mọi dòng còn `pending`) — cần chạy R0–R2 trên Dewee `tra`.
 - Phase 3 (Dewee evolution `suggest_only`) và phase 4 bước 8 (R0–R2, cutover): cần Dewee và skill đã upload.
 - `check:repository` (cần clean source, chạy khi release).
 
