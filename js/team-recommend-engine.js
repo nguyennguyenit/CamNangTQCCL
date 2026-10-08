@@ -22,6 +22,46 @@ const DEFAULT_DIAGNOSTICS = () => ({
   prunedCandidates: [],
 });
 
+/** Số đội tối đa DFS toàn kho (fullBox) duyệt; phần còn lại vẫn được xét bởi bước tham lam dự phòng. */
+export const DEFAULT_POOL_LIMIT = 60;
+
+const unitKey = (value) => normalizeText(String(value ?? "")).replace(/\s*binh$/u, "");
+
+/**
+ * Luật đội cho món bù do người dùng chọn, suy từ từ điển chiến pháp: `type` FORMATION (trận pháp) /
+ * TROOP (binh chủng) và `troopFit` (loại binh hợp). Khóa theo canonicalTacticId; món không thuộc hai loại
+ * này không có luật. Dữ liệu gốc của đội không bị kiểm (nguồn có thể lệch luật, ngoài phạm vi chấm luật mùa).
+ */
+export function buildTacticRules(tacticsDict = []) {
+  const rules = new Map();
+  for (const item of tacticsDict || []) {
+    const kind = item?.type === "FORMATION" ? "formation" : item?.type === "TROOP" ? "troop" : null;
+    if (!kind || !item.viet) continue;
+    rules.set(canonicalTacticId(item.viet), { kind, troopFit: (item.troopFit || []).map(unitKey) });
+  }
+  return rules;
+}
+
+/** Loại binh của đội (`unitType`, dạng "Kỵ"/"Cung"…); rỗng khi nguồn không ghi. */
+export function teamUnitTypes(team) {
+  return (Array.isArray(team?.unitType) ? team.unitType : []).map(unitKey).filter(Boolean);
+}
+
+/**
+ * Vi phạm luật khi thêm món `candidateId` vào đội có `otherIds` (các món còn lại sau khi trừ ô đang thay):
+ * tối đa 1 trận pháp, tối đa 1 binh chủng, binh chủng phải hợp loại binh; thiếu loại binh thì không binh chủng nào hợp.
+ * Trả về mã lý do hoặc null.
+ */
+export function tacticRuleViolation(candidateId, otherIds, unitTypes, rules) {
+  const rule = rules?.get(candidateId);
+  if (!rule) return null;
+  const same = (otherIds || []).filter((id) => rules.get(id)?.kind === rule.kind).length;
+  if (rule.kind === "formation") return same > 0 ? "formation-limit" : null;
+  if (same > 0) return "troop-limit";
+  if (unitTypes.length === 0) return "troop-unit-unknown";
+  return rule.troopFit.length === 0 || unitTypes.some((unit) => rule.troopFit.includes(unit)) ? null : "troop-unit-mismatch";
+}
+
 export function canonicalTacticId(name) {
   const slug = normalizeText(name)
     .replace(/[^a-z0-9]+/gu, "-")
@@ -68,6 +108,10 @@ function tacticSlots(team, heroSlots) {
       primaryId: canonicalTacticId(slot.name),
       alternatives: slot.alternatives || [],
       alternativeIds: (slot.alternatives || []).map(canonicalTacticId),
+      // Ô chưa đối chiếu được với từ điển: giữ tên Việt dự phòng, không bắt buộc sở hữu (không thể kiểm).
+      unresolved: slot.unresolved === true,
+      // Món bù do người dùng chọn (khác biến thể có sẵn trong dữ liệu đội): chịu luật đội, nhãn "chưa được đánh giá".
+      userAlternativeIds: new Set((slot.userAlternatives || []).map(canonicalTacticId)),
     })),
   );
 }
@@ -111,26 +155,28 @@ export function normalizeTeamCandidate(
   };
 }
 
-/** "Nhiều hột" (`redStars`) xếp số hột đỏ trước bậc; "Meta" giữ bậc trước, hột chỉ để phân định. */
+/**
+ * "Nhiều hột" (`redStars`) xếp số hột đỏ trước bậc; "Meta" giữ bậc trước, hột chỉ để phân định.
+ * Bản đã thay (`substituted`, món bù do người dùng chọn) xếp sau đội cùng bậc không bị thay.
+ */
 function compareCandidates(a, b, mode) {
+  const tier = (TIER_RANK.get(a.tier) ?? Number.MAX_SAFE_INTEGER) - (TIER_RANK.get(b.tier) ?? Number.MAX_SAFE_INTEGER);
+  const substituted = Number(a.substituted === true) - Number(b.substituted === true);
+  const red = b.redCopyScore - a.redCopyScore;
   return (
-    (mode === "redStars" ? b.redCopyScore - a.redCopyScore : 0) ||
-    (TIER_RANK.get(a.tier) ?? Number.MAX_SAFE_INTEGER) -
-      (TIER_RANK.get(b.tier) ?? Number.MAX_SAFE_INTEGER) ||
-    b.redCopyScore - a.redCopyScore ||
+    (mode === "redStars" ? red || tier || substituted : tier || substituted || red) ||
     (a.seasonContext ? compareSeasonIds(a.candidateKey, b.candidateKey) : String(a.team.id || "").localeCompare(String(b.team.id || "")))
   );
 }
 
-function candidatePool(candidates, { mode, fullBox, experimentalUntiered, seasonContext }) {
+/** Lọc theo chế độ; KHÔNG cắt số lượng ở đây: phải kiểm kho trước rồi mới giới hạn (xem `poolLimit`). */
+function candidatePool(candidates, { mode, experimentalUntiered }) {
   const eligible = candidates.filter((candidate) => {
     if (mode !== "meta") return true;
     if (META_TIERS.has(candidate.tier)) return true;
     return experimentalUntiered === true && candidate.tier === "";
   });
-  const sorted = eligible.sort((a, b) => compareCandidates(a, b, mode));
-  // Seasonal configs are already bounded by the shared projector; check resources before search limits.
-  return seasonContext ? sorted : sorted.slice(0, fullBox ? 80 : 60);
+  return eligible.sort((a, b) => compareCandidates(a, b, mode));
 }
 
 function assignHeroes(candidate, ownedHeroes, usedHeroes) {
@@ -184,16 +230,22 @@ function assignHeroes(candidate, ownedHeroes, usedHeroes) {
 }
 
 function selectTactics(candidate, heroAssignments, ownedTactics, usedTactics) {
+  const rules = candidate.tacticRules;
+  const unitTypes = teamUnitTypes(candidate.team);
   const choicesBySlot = candidate.tacticSlots.map((slot) => {
     const holder = heroAssignments.find(
       (assignment) => assignment.slotId === slot.holderSlotId,
     );
+    if (slot.unresolved) {
+      return { slot, holder, owned: [{ name: slot.primary, id: slot.primaryId, primary: true, unresolved: true }] };
+    }
     const candidates = [
       { name: slot.primary, id: slot.primaryId, primary: true },
       ...slot.alternatives.map((name, index) => ({
         name,
         id: slot.alternativeIds[index],
         primary: false,
+        user: slot.userAlternativeIds.has(slot.alternativeIds[index]),
       })),
     ];
     return {
@@ -214,24 +266,46 @@ function selectTactics(candidate, heroAssignments, ownedTactics, usedTactics) {
       slotIndex: slot.slotIndex,
     };
   });
+  const unresolved = choicesBySlot.filter(({ slot }) => slot.unresolved).map(({ slot }) => {
+    const heroIndex = candidate.heroSlots.findIndex((heroSlot) => heroSlot.slotId === slot.holderSlotId);
+    return {
+      tactic: slot.primary,
+      heroIndex,
+      holderName: candidate.heroSlots[heroIndex]?.alternatives[0].displayName ?? "",
+      slotIndex: slot.slotIndex,
+    };
+  });
 
-  function visit(index, reserved, choices) {
-    if (index >= choicesBySlot.length) return choices;
+  // Luật đội chỉ áp cho món bù do người dùng chọn; dữ liệu gốc/biến thể có sẵn của đội không bị kiểm.
+  const violations = (choices) => {
+    const ids = choices.map(({ id }) => id);
+    return choices.flatMap((choice, index) => {
+      if (!choice.user) return [];
+      const reason = tacticRuleViolation(choice.id, ids.filter((_, other) => other !== index), unitTypes, rules);
+      return reason ? [{ tactic: choice.name, from: candidate.tacticSlots[index].primary, reason }] : [];
+    });
+  };
+
+  function visit(index, reserved, choices, enforce) {
+    if (index >= choicesBySlot.length) return enforce && violations(choices).length ? null : choices;
     for (const choice of choicesBySlot[index].owned) {
-      if (reserved.has(choice.id)) continue;
+      if (!choice.unresolved && reserved.has(choice.id)) continue;
       const next = visit(
         index + 1,
-        new Set([...reserved, choice.id]),
+        choice.unresolved ? reserved : new Set([...reserved, choice.id]),
         [...choices, choice],
+        enforce,
       );
       if (next) return next;
     }
     return null;
   }
-  const choices =
-    missing.length === 0 ? visit(0, new Set(usedTactics), []) : null;
+  let choices = missing.length === 0 ? visit(0, new Set(usedTactics), [], true) : null;
+  // Có tổ hợp xếp được nếu bỏ luật đội ⇒ lý do không xây được là luật, không phải thiếu món hay xung đột.
+  const unruled = missing.length === 0 && choices === null ? visit(0, new Set(usedTactics), [], false) : null;
+  const incompatible = unruled ? violations(unruled) : [];
   const conflicts =
-    missing.length === 0 && choices === null
+    missing.length === 0 && choices === null && !unruled
       ? choicesBySlot.map(({ slot }) => slot.primary)
       : [];
   const selected = (choices || []).map(({ name }) => name);
@@ -239,6 +313,9 @@ function selectTactics(candidate, heroAssignments, ownedTactics, usedTactics) {
     choice.primary
       ? []
       : [{ from: candidate.tacticSlots[index].primary, to: choice.name }],
+  );
+  const substitutions = (choices || []).flatMap((choice, index) =>
+    choice.user ? [{ from: candidate.tacticSlots[index].primary, to: choice.name }] : [],
   );
   const selections = (choices || []).map((choice, index) => {
     const { slot, holder } = choicesBySlot[index];
@@ -248,8 +325,9 @@ function selectTactics(candidate, heroAssignments, ownedTactics, usedTactics) {
       selectedTactic: choice.name,
       selectedTacticId: choice.id,
       alternatives: [...slot.alternatives],
-      reason: choice.primary ? "primary-available" : "primary-conflict",
+      reason: choice.unresolved ? "unresolved" : choice.primary ? "primary-available" : "primary-conflict",
       downgrade: !choice.primary,
+      ...(choice.unresolved ? { unresolved: true } : {}),
     };
   });
 
@@ -257,17 +335,25 @@ function selectTactics(candidate, heroAssignments, ownedTactics, usedTactics) {
     ok: choices !== null,
     status: missing.length
       ? "missing-tactic"
-      : conflicts.length
-        ? "move-tactic"
-        : usedAlternatives.length
-          ? "variant"
-          : "build-now",
+      : incompatible.length
+        ? "incompatible"
+        : conflicts.length
+          ? "move-tactic"
+          : unresolved.length
+            ? "unreconciled"
+            : usedAlternatives.length
+              ? "variant"
+              : "build-now",
     missing,
     missingSlots,
     conflicts,
+    incompatible,
+    unresolved: unresolved.map(({ tactic }) => tactic),
+    unresolvedSlots: unresolved,
     selected,
     selections,
     usedAlternatives,
+    substitutions,
   };
 }
 
@@ -276,6 +362,8 @@ function candidateMetadata(candidate) {
 }
 
 function makeEntry(candidate, heroUse, tacticUse, experimentalUntiered) {
+  const substitutions = tacticUse.substitutions;
+  const [tierRank, ...rest] = candidate.rankingTuple;
   return {
     team: candidate.team,
     ...candidateMetadata(candidate),
@@ -288,9 +376,15 @@ function makeEntry(candidate, heroUse, tacticUse, experimentalUntiered) {
     usedAlternatives: tacticUse.usedAlternatives,
     missingTactics: tacticUse.missing,
     tacticConflicts: tacticUse.conflicts,
+    // Ô chiến pháp chưa đối chiếu được với từ điển (tên Việt dự phòng); đội còn ô này không bao giờ là "build-now".
+    unresolvedTactics: tacticUse.unresolved,
+    // Bản đã thay bằng món bù của người dùng: bậc `tier` là bậc của cấu hình gốc, bản thay chưa được đánh giá.
+    variantUnrated: substitutions.length > 0,
+    originalTier: candidate.tier,
     experimentalUntiered: experimentalUntiered === true && candidate.tier === "",
     source: "team",
-    rankingTuple: candidate.rankingTuple,
+    // Bản đã thay xếp sau đội cùng bậc không bị thay (phần tử 1 của tuple).
+    rankingTuple: [tierRank, substitutions.length > 0 ? 1 : 0, ...rest],
   };
 }
 
@@ -348,7 +442,7 @@ function lockedEntry(team, index) {
 function addEntry(entry, usedHeroes, usedTactics) {
   for (const hero of entry.heroAssignments || []) usedHeroes.add(hero.canonicalId);
   for (const tactic of entry.tacticSelections || []) {
-    usedTactics.add(tactic.selectedTacticId);
+    if (!tactic.unresolved) usedTactics.add(tactic.selectedTacticId);
   }
   if (entry.locked) {
     for (const tactic of entry.selectedTactics || []) {
@@ -420,13 +514,12 @@ function searchPortfolio(
   experimentalUntiered,
   seasonContext,
   mode,
+  poolLimit = DEFAULT_POOL_LIMIT,
 ) {
-  // Keep a feasible whole-pool result even when DFS only explores its bounded prefix.
-  let best = seasonContext
-    ? greedy(candidates, seed, ownedHeroes, ownedTactics, maxTeams, experimentalUntiered)
-    : [...seed.portfolio];
+  // Dự phòng: kết quả khả thi trên TOÀN danh sách đã qua kiểm kho, kể cả khi DFS chỉ duyệt `poolLimit` đội đầu.
+  let best = greedy(candidates, seed, ownedHeroes, ownedTactics, maxTeams, experimentalUntiered);
   let searched = 0;
-  const limited = candidates.slice(0, 60);
+  const limited = candidates.slice(0, poolLimit);
 
   function compareTuple(left, right) {
     for (let index = 0; index < Math.max(left.length, right.length); index++) {
@@ -446,8 +539,8 @@ function searchPortfolio(
       return portfolio.length > currentBest.length;
     }
     if (mode === "redStars") {
-      // rankingTuple[1] = -redCopyScore của đội (xem normalizeTeamCandidate); đội khóa không tính.
-      const redTotal = (entries) => entries.reduce((sum, entry) => sum - (entry.locked ? 0 : entry.rankingTuple[1]), 0);
+      // rankingTuple[2] = -redCopyScore của đội (xem normalizeTeamCandidate/makeEntry); đội khóa không tính.
+      const redTotal = (entries) => entries.reduce((sum, entry) => sum - (entry.locked ? 0 : entry.rankingTuple[2]), 0);
       const difference = redTotal(portfolio) - redTotal(currentBest);
       if (difference !== 0) return difference > 0;
     }
@@ -509,6 +602,7 @@ function searchPortfolio(
   return { portfolio: best.slice(0, maxTeams), searched };
 }
 
+// Đường `seasonContext` (candidateKey/compareSeasonIds) chưa có nơi gọi production: giữ cho chấm điểm theo luật mùa (`rulesetScoringReady`) về sau.
 export function recommendTeams({
   teams = [],
   teamTier = [],
@@ -522,6 +616,8 @@ export function recommendTeams({
   experimentalUntiered = false,
   seasonContext = null,
   seedEntries = [],
+  poolLimit = DEFAULT_POOL_LIMIT,
+  tacticRules = null,
 } = {}) {
   const diagnostics = DEFAULT_DIAGNOSTICS();
   if (seasonContext) {
@@ -582,12 +678,13 @@ export function recommendTeams({
   }
 
   const candidates = candidatePool(
-    teams.map((team) => normalizeTeamCandidate(team, tierByTeam, redByHero, seasonContext)),
-    { mode, fullBox, experimentalUntiered, seasonContext },
+    teams.map((team) => ({ ...normalizeTeamCandidate(team, tierByTeam, redByHero, seasonContext), tacticRules })),
+    { mode, experimentalUntiered },
   );
 
   const eligible = [];
   const blockedStrongTeams = [];
+  const incompatibleTeams = [];
   for (const candidate of candidates) {
     const built = buildCandidate(
       candidate,
@@ -633,6 +730,14 @@ export function recommendTeams({
           missingTactics: built.tacticUse.missing,
           missingTacticSlots: built.tacticUse.missingSlots,
         });
+      } else if (built.tacticUse.incompatible.length) {
+        incompatibleTeams.push({
+          team: candidate.team,
+          ...candidateMetadata(candidate),
+          tier: candidate.tier,
+          status: "incompatible",
+          incompatibleTactics: built.tacticUse.incompatible,
+        });
       } else {
         diagnostics.tacticConflicts.push({
           teamId: candidate.team.id,
@@ -642,8 +747,12 @@ export function recommendTeams({
       }
       continue;
     }
+    candidate.substituted = built.tacticUse.substitutions.length > 0;
     eligible.push(candidate);
   }
+
+  // Xếp lại theo cờ "đã thay": bản thay xếp sau đội cùng bậc không bị thay (biết được sau khi kiểm kho).
+  eligible.sort((a, b) => compareCandidates(a, b, mode));
 
   let portfolio;
   if (fullBox) {
@@ -656,6 +765,7 @@ export function recommendTeams({
       experimentalUntiered,
       seasonContext,
       mode,
+      poolLimit,
     );
     portfolio = searched.portfolio;
     diagnostics.searchedCandidates = searched.searched;
@@ -687,6 +797,8 @@ export function recommendTeams({
     portfolioTeams: portfolio,
     addTeams: portfolio.filter((entry) => !entry.locked),
     blockedStrongTeams,
+    // Đội đủ tướng và món nhưng món bù đã chọn vi phạm luật đội: tách khỏi "thiếu món".
+    incompatibleTeams,
     diagnostics,
   };
 }

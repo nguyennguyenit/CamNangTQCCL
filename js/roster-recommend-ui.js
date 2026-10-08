@@ -4,6 +4,7 @@ import { renderTurnstileWidget } from "./turnstile.js";
 import { el, icon, svgNode } from "./render.js";
 import { mapBuiltTeamsScan, mapHeroesScan, mapTacticsScan } from "./roster-scan-map.js";
 import {
+  MAX_TACTIC_OVERRIDES,
   ROSTER_SCAN_STORAGE_KEY,
   addCanonicalItem,
   applyScanResult,
@@ -13,8 +14,10 @@ import {
   removeLockedTeam,
   serializeRosterScanState,
   setTacticOverride,
+  tacticOverrideBlocked,
 } from "./roster-scan-state.js";
-import { buildSeasonCandidates, recommendRoster, seasonTacticUsage, suggestTacticSubstitutes } from "./roster-season-candidates.js";
+import { analyzeTacticSubstitutes, buildSeasonCandidates, recommendRoster, seasonTacticUsage } from "./roster-season-candidates.js";
+import { buildTacticRules } from "./team-recommend-engine.js";
 import { readRecommendedQuery } from "./recommended-reference-state.js";
 import { seasonNameText, seasonOptionText, seasonOptionTitle } from "./team-filter-section.js";
 import { L, currentLocale } from "./i18n.js";
@@ -34,9 +37,18 @@ const ROSTER_STATUS_LABELS = {
   "move-tactic": L("Cần điều chuyển chiến pháp", "需调配战法"),
   variant: L("Dùng biến thể", "使用替代配置"),
   "build-now": L("Có thể xây dựng ngay", "可立即组建"),
+  unreconciled: L("Còn ô chưa đối chiếu", "有未核对的战法"),
+  incompatible: L("Không tương thích luật đội", "与队伍规则不兼容"),
   locked: L("Đã khóa", "已锁定"),
 };
 const MODE_LABELS = { meta: "Meta T0 → T1", redStars: L("Nhiều hột", "红度优先") };
+/** Lý do một món bù phạm luật đội (mã từ `tacticRuleViolation`). */
+const RULE_REASON_LABELS = {
+  "formation-limit": { vi: "đội đã có một trận pháp", zh: "队伍已有一个阵法" },
+  "troop-limit": { vi: "đội đã có một binh chủng", zh: "队伍已有一个兵种战法" },
+  "troop-unit-mismatch": { vi: "binh chủng không hợp loại binh của đội", zh: "兵种战法与队伍兵种不符" },
+  "troop-unit-unknown": { vi: "nguồn không ghi loại binh của đội", zh: "来源未标明队伍兵种" },
+};
 /** Số chip hiện trước khi bấm "Hiện tất cả" (Roster.dc.html: "48 tướng · hiện 16", "63 chiến pháp · hiện 12"). */
 const CHIP_LIMITS = { heroes: 16, tactics: 12 };
 const MAX_TEAMS = 5;
@@ -106,6 +118,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   // Bản zh hiển thị tên chữ Hán gốc; kho vẫn lưu tên Việt chuẩn nên chỉ đổi lúc vẽ.
   const zh = currentLocale() === "zh";
   const resolveRaw = createRawNameResolver(heroesDict, tacticsDict);
+  const tacticRules = buildTacticRules(tacticsDict);
   const shown = (name) => localName(name, resolveRaw);
   const joinNames = (names) => names.map(shown).join(" · ");
   // Tên đội trong dữ liệu chỉ có bản Việt: bản zh gọi đội bằng tên chữ Hán của các tướng trong đội.
@@ -552,6 +565,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       lockedTeams: state.lockedTeams,
       mode: preference,
       keepExistingTeams: true,
+      tacticsDict,
       fullBox: state.ownedHeroes.length > 40 && state.ownedTactics.length > 60,
     });
     resultsSlot.replaceChildren(renderRecommendation(result));
@@ -643,6 +657,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     const heroes = entry.heroAssignments || [];
     const holders = new Set(heroes.map((hero) => hero.canonicalId));
     const byHolder = new Map();
+    const unresolved = new Set((entry.unresolvedTactics || []));
     const assigned = new Set();
     for (const selection of [...(entry.tacticSelections || [])].sort((a, b) => (a.slotIndex ?? 0) - (b.slotIndex ?? 0))) {
       if (!selection.holderId || !holders.has(selection.holderId)) continue;
@@ -659,11 +674,18 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       ];
     return el("ul", { class: "roster-hero-rows" }, rows.map(([name, values, valueClass]) => el("li", {}, [
       el("span", { class: "roster-hero-name" }, name),
-      el("span", { class: valueClass || "roster-hero-tactics" }, values.length ? joinNames(values) : "—"),
+      el("span", { class: valueClass || "roster-hero-tactics" }, values.length ? values.map((value) => (unresolved.has(value) ? `${shown(value)} (${L("chưa đối chiếu", "未核对")})` : shown(value))).join(" · ") : "—"),
     ])));
   }
 
-  const tierPill = (tier) => pill(L(`Bậc: ${tier || "—"}`, `梯度：${tier || "—"}`), "outline", { class: "roster-pill roster-tier" });
+  /** Bản đã thay bằng món bù của người dùng chưa được đánh giá: bậc hiển thị là của cấu hình gốc. */
+  const tierPill = (entry) => pill(
+    entry.variantUnrated
+      ? L(`Bậc cấu hình gốc: ${entry.originalTier || "—"} · bản đã thay chưa được đánh giá`, `原配置梯度：${entry.originalTier || "—"} · 替换版本尚未评级`)
+      : L(`Bậc: ${entry.tier || "—"}`, `梯度：${entry.tier || "—"}`),
+    "outline",
+    { class: "roster-pill roster-tier" },
+  );
   const openButton = (team) => el("button", { type: "button", class: "roster-open", onClick: () => onOpenTeam?.(team) }, [L("Mở đội", "查看队伍"), arrowIcon()]);
 
   function renderRecommendation(result) {
@@ -682,12 +704,24 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
         el("div", { class: "roster-result-main" }, [
           el("div", { class: "roster-result-head" }, [
             el("strong", { class: "roster-result-name" }, teamLabel(entry.team) || L("Đội đã xây dựng", "已组建队伍")),
-            tierPill(entry.tier),
+            tierPill(entry),
             legacy
               ? el("span", { class: "roster-status", dataset: { status: "legacy" } }, L("Tham khảo – đội cũ", "参考 · 旧阵容"))
               : el("span", { class: "roster-status", dataset: { status: entry.status || "locked" } }, ROSTER_STATUS_LABELS[entry.status] || ROSTER_STATUS_LABELS.locked),
           ]),
           heroRows(entry),
+          (entry.unresolvedTactics || []).length
+            ? el("p", { class: "roster-empty roster-unresolved-note", dataset: { status: "unreconciled" } }, L(
+              `Chưa đối chiếu được chiến pháp: ${entry.unresolvedTactics.join(", ")}. Cần kiểm lại trước khi xây.`,
+              `尚未核对的战法：${entry.unresolvedTactics.map(shown).join("、")}。组建前请先核对。`,
+            ))
+            : null,
+          entry.variantUnrated
+            ? el("p", { class: "roster-empty roster-variant-note" }, L(
+              "Bản đã thay chưa được đánh giá; bậc hiển thị là của cấu hình gốc.",
+              "替换后的版本尚未评级；所示梯度为原配置的梯度。",
+            ))
+            : null,
           alternatives.length
             ? el("div", { class: "roster-swap" }, [
               swapIcon(),
@@ -721,23 +755,38 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     ]);
     const noSubstitute = () => el("p", { class: "roster-empty" }, L("Kho chưa có món bù từ đội cùng mùa.", "库存中暂无同赛季阵容用过的替代战法。"));
 
+    const incompatibleNote = (items) => el("p", { class: "roster-empty roster-incompatible-note", dataset: { status: "incompatible" } }, L(
+      `Không tương thích luật đội: ${items.map((item) => `${item.tactic} (${RULE_REASON_LABELS[item.reason]?.vi || item.reason})`).join("; ")}.`,
+      `与队伍规则不兼容：${items.map((item) => `${shown(item.tactic)}（${RULE_REASON_LABELS[item.reason]?.zh || item.reason}）`).join("；")}。`,
+    ));
+
     function missingTacticBlock(entry, slot) {
-      // Món bù đã chọn cho ô khác của cùng đội cũng là chiến pháp của đội: không gợi ý lại (một món chỉ lắp được một ô).
-      const chosen = (state.tacticOverrides || []).filter((override) => override.teamId === entry.team.id).map((override) => override.tactic);
-      const teamTactics = [...(entry.team.heroes || []).flatMap((hero) => (hero.tactics || []).map((tactic) => tactic.name)), ...chosen];
-      const substitutes = suggestTacticSubstitutes({
+      // Tổ hợp cuối của đội (gồm món bù đã chọn ở ô khác) quyết định món nào còn dùng được và có hợp luật đội không.
+      const analysis = analyzeTacticSubstitutes({
         heroName: slot.holderName,
         missingTactic: slot.tactic,
-        teamTactics,
+        team: entry.team,
+        tacticOverrides: state.tacticOverrides,
+        heroIndex: slot.heroIndex,
+        slotIndex: slot.slotIndex,
+        tacticRules,
         usage: season?.usage,
         ownedTactics: state.ownedTactics,
         reservedTactics: reserved,
       });
+      const substitutes = analysis.substitutes;
+      const limitReached = tacticOverrideBlocked(state, { teamId: entry.team.id, heroIndex: slot.heroIndex, slotIndex: slot.slotIndex });
       return el("div", { class: "roster-missing-slot" }, [
         missingLine(L(
           `Thiếu chiến pháp ${slot.tactic} (${slot.holderName})`,
           `缺少战法 ${shown(slot.tactic)}（${shown(slot.holderName)}）`,
         ), haveButton("tactics", slot.tactic)),
+        ...(limitReached
+          ? [el("p", { class: "roster-empty roster-override-full", role: "status" }, L(
+            `Đã dùng đủ ${MAX_TACTIC_OVERRIDES} món thay. Hãy bấm “Bỏ món thay” ở một đội để chọn món mới.`,
+            `替换战法已达 ${MAX_TACTIC_OVERRIDES} 个上限。请先在某支队伍上点“取消替换”再选择新的。`,
+          ))]
+          : []),
         ...(substitutes.length
           ? [
             el("h4", { class: "roster-subs-title" }, L("Món bù có trong kho", "库存中的替代战法")),
@@ -768,6 +817,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
                   el("button", {
                     type: "button",
                     class: "ana-btn",
+                    disabled: limitReached,
                     "aria-label": L(`Dùng ${tactic} thay ${slot.tactic}`, `用${shown(tactic)}替换${shown(slot.tactic)}`),
                     onClick: () => applyFromResults(setTacticOverride(state, { teamId: entry.team.id, heroIndex: slot.heroIndex, slotIndex: slot.slotIndex, tactic })),
                   }, L("Dùng món này", "使用此战法")),
@@ -776,7 +826,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
               ]);
             })),
           ]
-          : [noSubstitute()]),
+          : [analysis.incompatible.length ? incompatibleNote(analysis.incompatible) : noSubstitute()]),
       ]);
     }
 
@@ -787,7 +837,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       return el("article", { class: "roster-missing" }, [
         el("div", { class: "roster-result-head" }, [
           el("strong", { class: "roster-result-name" }, teamLabel(entry.team)),
-          tierPill(entry.tier),
+          tierPill(entry),
           pill(L(`Thiếu ${total} món`, `缺 ${total} 项`), "warn"),
         ]),
         ...heroSlots.map((names) => el("div", { class: "roster-missing-slot" }, [
@@ -800,8 +850,26 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     };
 
     const blocked = (result.blockedStrongTeams || []).slice(0, 5);
+    const incompatible = (result.incompatibleTeams || []).slice(0, 5);
+    // Đủ tướng và món nhưng món bù đã chọn phạm luật đội: trạng thái riêng, không phải "thiếu món".
+    const incompatibleCard = (entry) => el("article", { class: "roster-missing roster-incompatible", dataset: { status: "incompatible" } }, [
+      el("div", { class: "roster-result-head" }, [
+        el("strong", { class: "roster-result-name" }, teamLabel(entry.team)),
+        tierPill(entry),
+        pill(ROSTER_STATUS_LABELS.incompatible, "warn"),
+      ]),
+      ...(entry.incompatibleTactics || []).map((item) => el("p", { class: "roster-missing-text" }, [
+        warnIcon(),
+        el("span", {}, L(
+          `${item.tactic} thay ${item.from}: ${RULE_REASON_LABELS[item.reason]?.vi || item.reason}`,
+          `${shown(item.tactic)} 替换 ${shown(item.from)}：${RULE_REASON_LABELS[item.reason]?.zh || item.reason}`,
+        )),
+      ])),
+      el("button", { type: "button", class: "roster-ghost roster-undo", onClick: () => clearOverrides(entry.team.id) }, L("Bỏ món thay", "取消替换")),
+      openButton(entry.team),
+    ]);
     // Món bù đã chọn mà đội vẫn không vào danh sách (trùng tướng/chiến pháp với đội xếp trên): vẫn phải gỡ được.
-    const shownTeams = new Set([...portfolio, ...blocked].map((entry) => entry.team?.id));
+    const shownTeams = new Set([...portfolio, ...blocked, ...incompatible].map((entry) => entry.team?.id));
     const idleOverrides = [...overriddenTeams]
       .filter((teamId) => !shownTeams.has(teamId))
       .map((teamId) => season?.teams.find((team) => team.id === teamId))
@@ -836,6 +904,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
         ...(blocked.length
           ? blocked.map(missingCard)
           : [el("p", { class: "roster-empty" }, L("Không có đội mạnh nào của mùa đang thiếu món.", "本赛季没有只差几件的强势阵容。"))]),
+        ...incompatible.map(incompatibleCard),
         ...idleOverrides.map((team) => el("p", { class: "ana-note roster-idle-override" }, [
           L(
             `Món bù đã chọn cho ${team.name} chưa đưa đội vào danh sách.`,

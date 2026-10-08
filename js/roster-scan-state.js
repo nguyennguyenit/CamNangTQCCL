@@ -232,7 +232,7 @@ export function removeLockedTeam(state, index) {
   };
 }
 
-const MAX_TACTIC_OVERRIDES = 20;
+export const MAX_TACTIC_OVERRIDES = 20;
 const overrideKey = (override) => `${override.teamId}\u0000${override.heroIndex}\u0000${override.slotIndex}`;
 const boundedIndex = (value) => Number.isInteger(value) && value >= 0 && value < 10;
 const boundedText = (value, max) => typeof value === "string" && value.trim() !== "" && value.length <= max;
@@ -264,12 +264,26 @@ function cleanTacticOverrides(overrides) {
     bySlot.delete(overrideKey(override));
     bySlot.set(overrideKey(override), override);
   }
-  // Quá trần thì bỏ lựa chọn cũ nhất: lần chọn mới luôn được giữ.
-  return [...bySlot.values()].slice(-MAX_TACTIC_OVERRIDES);
+  // Không bao giờ bỏ âm thầm: `setTacticOverride` từ chối món mới khi đầy (xem `tacticOverrideBlocked`);
+  // quá trần ở đây chỉ gặp với dữ liệu lưu bị sửa tay, giữ các lựa chọn cũ nhất theo thứ tự.
+  return [...bySlot.values()].slice(0, MAX_TACTIC_OVERRIDES);
 }
 
-/** Đặt (hoặc bỏ, khi `tactic` rỗng) món bù cho một ô thiếu. */
+/**
+ * Đã đầy: thêm món bù cho một ô MỚI sẽ vượt `MAX_TACTIC_OVERRIDES`. Đổi món của ô đã có hoặc bỏ món vẫn được.
+ * UI phải báo cho người dùng thay vì để lần chọn biến mất.
+ */
+export function tacticOverrideBlocked(state, { teamId, heroIndex, slotIndex }) {
+  const list = state?.tacticOverrides || [];
+  return list.length >= MAX_TACTIC_OVERRIDES && !list.some((item) => overrideKey(item) === overrideKey({ teamId, heroIndex, slotIndex }));
+}
+
+/**
+ * Đặt (hoặc bỏ, khi `tactic` rỗng) món bù cho một ô thiếu. Khi đã đầy mà ô là ô mới: trả lại `state`
+ * nguyên vẹn (không bỏ lựa chọn nào); gọi `tacticOverrideBlocked` trước để báo người dùng.
+ */
 export function setTacticOverride(state, { teamId, heroIndex, slotIndex, tactic }) {
+  if (tactic && tacticOverrideBlocked(state, { teamId, heroIndex, slotIndex })) return state;
   const others = (state?.tacticOverrides || []).filter((item) => overrideKey(item) !== overrideKey({ teamId, heroIndex, slotIndex }));
   return {
     ...state,

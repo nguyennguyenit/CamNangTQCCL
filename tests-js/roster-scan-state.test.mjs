@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
+  MAX_TACTIC_OVERRIDES,
   ROSTER_SCAN_STORAGE_KEY,
   addCanonicalItem,
   applyScanResult,
@@ -10,6 +11,7 @@ import {
   removeItem,
   serializeRosterScanState,
   setTacticOverride,
+  tacticOverrideBlocked,
 } from "../js/roster-scan-state.js";
 
 test("storage key is stable", () => {
@@ -177,14 +179,37 @@ test("malformed stored substitutes are dropped, extra keys stripped", () => {
   assert.deepEqual(tacticOverrides, [{ teamId: "ok", heroIndex: 1, slotIndex: 0, tactic: "CP" }]);
 });
 
-test("at the cap the oldest substitute is dropped so the newest choice always sticks", () => {
+test("at the cap a new substitute is refused and reported, nothing is dropped silently", () => {
   let state = createInitialRosterScanState();
-  for (let i = 0; i < 20; i++) state = setTacticOverride(state, { teamId: `t${i}`, heroIndex: 0, slotIndex: 0, tactic: "CP" });
-  state = setTacticOverride(state, { teamId: "newest", heroIndex: 0, slotIndex: 0, tactic: "CP" });
-  const ids = serializeRosterScanState(state).tacticOverrides.map((o) => o.teamId);
+  for (let i = 0; i < MAX_TACTIC_OVERRIDES; i++) {
+    assert.equal(tacticOverrideBlocked(state, { teamId: `t${i}`, heroIndex: 0, slotIndex: 0 }), false);
+    state = setTacticOverride(state, { teamId: `t${i}`, heroIndex: 0, slotIndex: 0, tactic: "CP" });
+  }
+  assert.equal(MAX_TACTIC_OVERRIDES, 20);
+  // Món thứ 21 cho ô mới: bị chặn, báo được, và không có lựa chọn nào mất.
+  const next = { teamId: "newest", heroIndex: 0, slotIndex: 0 };
+  assert.equal(tacticOverrideBlocked(state, next), true);
+  const after = setTacticOverride(state, { ...next, tactic: "CP" });
+  assert.equal(after, state);
+  const ids = serializeRosterScanState(after).tacticOverrides.map((o) => o.teamId);
   assert.equal(ids.length, 20);
-  assert.equal(ids.at(-1), "newest");
-  assert.equal(ids.includes("t0"), false);
+  assert.equal(ids.includes("newest"), false);
+  assert.equal(ids.includes("t0"), true);
+  // Đổi món của ô đã có và bỏ món vẫn được khi đầy.
+  assert.equal(tacticOverrideBlocked(state, { teamId: "t3", heroIndex: 0, slotIndex: 0 }), false);
+  const changed = setTacticOverride(state, { teamId: "t3", heroIndex: 0, slotIndex: 0, tactic: "CP khác" });
+  assert.equal(changed.tacticOverrides.length, 20);
+  assert.equal(changed.tacticOverrides.find((o) => o.teamId === "t3").tactic, "CP khác");
+  const freed = setTacticOverride(state, { teamId: "t0", heroIndex: 0, slotIndex: 0, tactic: null });
+  assert.equal(tacticOverrideBlocked(freed, next), false);
+  assert.equal(setTacticOverride(freed, { ...next, tactic: "CP" }).tacticOverrides.at(-1).teamId, "newest");
+});
+
+test("21 stored substitutes (tampered storage) keep the oldest 20 deterministically", () => {
+  const tacticOverrides = Array.from({ length: 21 }, (_, i) => ({ teamId: `t${i}`, heroIndex: 0, slotIndex: 0, tactic: "CP" }));
+  const ids = deserializeRosterScanState(JSON.stringify({ tacticOverrides })).tacticOverrides.map((o) => o.teamId);
+  assert.equal(ids.length, 20);
+  assert.equal(ids.at(-1), "t19");
 });
 
 test("the chosen season is remembered with the roster, and junk values are dropped", () => {
