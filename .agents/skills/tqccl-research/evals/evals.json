@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "skill": "tqccl-research",
-  "purpose": "Routing and behavior cases authored before skill rewrite (phase-02 step 2). Account fixtures are redacted placeholders. Real routing traces require a model host (Dewee tra-eval): NOT_RUN here.",
+  "purpose": "Routing and behavior cases authored before skill rewrite (phase-02 step 2). Account fixtures are redacted placeholders. Real routing traces require a model host (Dewee agent tra, runs R0-R2): NOT_RUN here.",
   "splitPolicy": "holdout cases must not be used when tuning the skill text",
   "cases": [
     {
