@@ -3,6 +3,8 @@ import { access } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
+import { KnowledgeError } from "./knowledge/rule-contracts.js";
+import { searchRules } from "./knowledge/search-rules.js";
 import { FilesystemDataSource } from "./data/filesystem-data-source.js";
 import {
   createResearchHandlers,
@@ -15,19 +17,23 @@ import {
 } from "./research/research-contracts.js";
 
 export const CLI_ALIASES = {
-  version: "tqccl_get_data_version",
-  normalize: "tqccl_normalize_entities",
+  playbook: "tqccl_get_playbook",
   search: "tqccl_search",
+  entity: "tqccl_get_entity",
+  "find-teams": "tqccl_find_teams",
   team: "tqccl_get_team",
-  match: "tqccl_match_team",
-  "recommend-team": "tqccl_recommend_team",
-  "recommend-coexist": "tqccl_recommend_coexist",
-  replacements: "tqccl_suggest_replacements",
+  normalize: "tqccl_normalize_entities",
+  recommend: "tqccl_recommend_teams",
 } as const satisfies Record<string, ResearchToolName>;
+
+/** Lệnh chỉ có ở CLI, không phải MCP tool. */
+export const CLI_ONLY_COMMANDS = { "search-rules": true } as const;
 
 export interface ParsedCliArgs {
   help: boolean;
   handlerName?: ResearchToolName;
+  /** `search-rules`: gọi thẳng knowledge core, không phải MCP tool. */
+  searchRules?: true;
   input?: unknown;
   dataRoot?: string;
 }
@@ -60,10 +66,11 @@ export function parseCliArgs(args: readonly string[]): ParsedCliArgs {
 
   const command = args[0];
   if (command === undefined) usageError();
+  const searchRulesCommand = command in CLI_ONLY_COMMANDS;
   const handlerName = isToolName(command)
     ? command
     : CLI_ALIASES[command as keyof typeof CLI_ALIASES];
-  if (handlerName === undefined) usageError();
+  if (handlerName === undefined && !searchRulesCommand) usageError();
 
   let input: unknown = {};
   let dataRoot: string | undefined;
@@ -89,7 +96,7 @@ export function parseCliArgs(args: readonly string[]): ParsedCliArgs {
 
   return {
     help: false,
-    handlerName,
+    ...(handlerName === undefined ? { searchRules: true as const } : { handlerName }),
     input,
     ...(dataRoot === undefined ? {} : { dataRoot }),
   };
@@ -98,6 +105,7 @@ export function parseCliArgs(args: readonly string[]): ParsedCliArgs {
 function helpText(): string {
   const commands = Object.entries(CLI_ALIASES)
     .map(([alias, name]) => `  ${alias.padEnd(20)} ${name}`)
+    .concat(`  ${"search-rules".padEnd(20)} (chỉ CLI) tra cứu knowledge rules`)
     .join("\n");
   return [
     "TQCCL research CLI",
@@ -163,6 +171,20 @@ export async function runCli(
   if (parsed.help) {
     io.stdout.write(helpText());
     return 0;
+  }
+
+  if (parsed.searchRules) {
+    try {
+      writeJson(io, searchRules(parsed.input));
+      return 0;
+    } catch (error) {
+      if (error instanceof KnowledgeError) {
+        writeJson(io, errorDocument(error.code, error.message, error.code === "KNOWLEDGE_VERSION_CHANGED"));
+        return 1;
+      }
+      writeJson(io, errorDocument("INTERNAL_ERROR", "Không thể hoàn tất yêu cầu.", false));
+      return 1;
+    }
   }
 
   try {

@@ -8,10 +8,10 @@ import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import { toJSONSchema } from "zod";
 
+import { slimListedTool } from "../src/mcp/slim-tool-list.js";
 import { TOOL_DEFINITIONS } from "../src/mcp/tool-definitions.js";
 import { stableStringify } from "../src/domain/contracts.js";
 import { toScrubSafeDigest } from "../src/domain/digest-encoding.js";
-import { artifactNamesForVersion } from "../src/data/artifact-contracts.js";
 import {
   RESEARCH_CONTRACTS,
   type ResearchInput,
@@ -23,22 +23,8 @@ import {
 
 export interface ReleaseVerificationFixture {
   observations: ResearchInput<"tqccl_normalize_entities">["observations"];
+  /** ID đội engine (`collection:"engine"`) có trong mọi manifest, kể cả v1/v2. */
   teamId: string;
-  tacticName: string;
-}
-
-export function hasExpectedArtifactInventory(version: Record<string, unknown>): boolean {
-  if (version.manifestVersion !== 1 && version.manifestVersion !== 2) return false;
-  if (!Array.isArray(version.artifacts)) return false;
-  const expected = [...artifactNamesForVersion(version.manifestVersion)].sort();
-  const names: string[] = [];
-  for (const value of version.artifacts) {
-    if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
-    const descriptor = value as Record<string, unknown>;
-    if (typeof descriptor.name !== "string" || typeof descriptor.sha256 !== "string" || !/^sha256:[a-f0-9]{64}$/u.test(descriptor.sha256)) return false;
-    names.push(descriptor.name);
-  }
-  return names.sort().join("\0") === expected.join("\0");
 }
 
 export type ReleaseVerificationStep =
@@ -56,15 +42,14 @@ export type ReleaseVerificationStep =
   | "invalid-protocol"
   | "stateless-get"
   | "stateless-delete"
-  | "version"
+  | "playbook"
+  | "normalize"
   | "search-page"
   | "search-injection"
+  | "get-entity"
+  | "find-teams"
   | "get-team"
-  | "normalize"
-  | "match-team"
-  | "suggest-replacements"
-  | "recommend-coexist"
-  | "recommend-team"
+  | "recommend-teams"
   | "reject-tampered-binding"
   | "reject-tampered-binding-response"
   | "complete";
@@ -135,7 +120,7 @@ export function matchesExpectedToolCatalog(catalog: unknown): boolean {
         ) &&
       stableStringify(tool.outputSchema) ===
         stableStringify(
-          toJSONSchema(definition.outputSchema, { target: "draft-7" }),
+          slimListedTool({ outputSchema: toJSONSchema(definition.outputSchema, { target: "draft-7" }) as Record<string, unknown> }).outputSchema,
         ) &&
       stableStringify(tool.annotations) ===
         stableStringify(definition.annotations)
@@ -196,8 +181,8 @@ export async function readReleaseIdentity(options: {
     }
     step("data-version");
     const result = await client.callTool({
-      name: "tqccl_get_data_version",
-      arguments: {},
+      name: "tqccl_get_playbook",
+      arguments: { intent: "lookup" },
     });
     if (result.isError === true) throw new ReleaseVerificationError();
     const version = record(result.structuredContent);
@@ -209,7 +194,7 @@ export async function readReleaseIdentity(options: {
       !version.workflowVersion.startsWith(
         `workflow:${toScrubSafeDigest(version.releaseId)}:`,
       ) ||
-      !hasExpectedArtifactInventory(version)
+      version.manifestVersion !== 3
     ) {
       throw new ReleaseVerificationError();
     }
@@ -254,7 +239,7 @@ export async function verifyRelease(
   releaseId: string;
   workflowVersion: string;
   protocolVersion: string;
-  tools: 8;
+  tools: 7;
 }> {
   const fetcher = options.fetcher ?? fetch;
   if (
@@ -390,15 +375,15 @@ export async function verifyRelease(
       if (result.isError === true) throw new ReleaseVerificationError();
       return record(result.structuredContent);
     };
-    step("version");
-    const version = await call("tqccl_get_data_version", {});
+    step("playbook");
+    const version = await call("tqccl_get_playbook", { intent: "coexist" });
     if (
       version.releaseId !== options.expectedReleaseId ||
       typeof version.workflowVersion !== "string" ||
       version.workflowVersion !==
         `workflow:${toScrubSafeDigest(options.expectedReleaseId)}:${options.expectedWorkflowBuildId}` ||
       !Array.isArray(version.provenance) ||
-      !hasExpectedArtifactInventory(version)
+      version.manifestVersion !== 3
     ) {
       throw new ReleaseVerificationError();
     }
@@ -458,45 +443,49 @@ export async function verifyRelease(
         error.code === -32602;
     }
     if (!overLimitRejected) throw new ReleaseVerificationError();
-    step("get-team");
-    await call("tqccl_get_team", {
-      teamId: options.fixture.teamId,
-      expectedWorkflowVersion: version.workflowVersion,
-    });
+    const first = record((Array.isArray(page.items) ? page.items : [])[0]);
+    step("get-entity");
+    const entityId = first.kind === "team" ? undefined : first.entityId;
+    if (typeof entityId === "string") {
+      await call("tqccl_get_entity", { entityId, expectedWorkflowVersion: version.workflowVersion });
+    }
+    step("find-teams");
     const heroes = Array.isArray(canonicalState.heroes)
       ? canonicalState.heroes.map((value) => {
           const hero = record(value);
           return { canonicalId: hero.canonicalId, tacticIds: [] };
         })
       : [];
-    step("match-team");
-    await call("tqccl_match_team", {
-      expectedWorkflowVersion: version.workflowVersion,
+    await call("tqccl_find_teams", {
+      collection: "engine",
       heroes,
       minHeroes: 1,
       limit: 1,
+      expectedWorkflowVersion: version.workflowVersion,
     });
+    step("get-team");
+    await call("tqccl_get_team", {
+      reference: { collection: "engine", teamId: options.fixture.teamId },
+      expectedWorkflowVersion: version.workflowVersion,
+    });
+    const sourceSeasonId = record(version.seasonSelection).sourceSeasonId;
     const recommendationInput = {
       expectedWorkflowVersion: version.workflowVersion,
       canonicalState,
       confirmationBinding: binding,
+      sourceSeasonId,
       maxTeams: 1,
     };
-    step("recommend-team");
-    await call("tqccl_recommend_team", recommendationInput);
-    step("recommend-coexist");
-    await call("tqccl_recommend_coexist", recommendationInput);
-    step("suggest-replacements");
-    await call("tqccl_suggest_replacements", {
-      ...recommendationInput,
-      teamId: options.fixture.teamId,
-      tacticName: options.fixture.tacticName,
-    });
+    step("recommend-teams");
+    const recommended = await call("tqccl_recommend_teams", recommendationInput);
+    if (recommended.basis !== "source-reference-fit" || recommended.rulesetVerified !== false) {
+      throw new ReleaseVerificationError();
+    }
     step("reject-tampered-binding");
     let bindingRejected = false;
     try {
       const rejectedBinding = await client.callTool({
-        name: "tqccl_recommend_team",
+        name: "tqccl_recommend_teams",
         arguments: {
           ...recommendationInput,
           confirmationBinding: {
@@ -534,7 +523,7 @@ export async function verifyRelease(
       releaseId: options.expectedReleaseId,
       workflowVersion: version.workflowVersion,
       protocolVersion: transport.protocolVersion,
-      tools: 8,
+      tools: 7,
     };
   } catch {
     throw new ReleaseVerificationError();
@@ -593,18 +582,12 @@ export function parseReleaseVerificationFixture(
   const normalized = RESEARCH_CONTRACTS.tqccl_normalize_entities.input.parse({
     observations: fixture.observations,
   });
-  if (
-    typeof fixture.teamId !== "string" ||
-    fixture.teamId === "" ||
-    typeof fixture.tacticName !== "string" ||
-    fixture.tacticName === ""
-  ) {
+  if (typeof fixture.teamId !== "string" || fixture.teamId === "") {
     throw new ReleaseVerificationError();
   }
   return {
     observations: normalized.observations,
     teamId: fixture.teamId,
-    tacticName: fixture.tacticName,
   };
 }
 

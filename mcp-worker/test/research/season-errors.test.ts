@@ -44,12 +44,3 @@ it('exports required error payload branches to machine-readable JSON schema', as
     expect(limits.required).toContain('limits');
     expect(limits.properties.retryable).toMatchObject({ const: false });
 });
-it('keeps context comparison semantic when callers construct fields in a different order', async () => {
-    const { normalizeObservations } = await import('../../src/domain/normalization-service.js');
-    const { recommendTeam } = await import('../../src/domain/recommendation-service.js');
-    const { seasonConsumerFixture, context } = await import('../../../tests-js/fixtures/season-fixtures.mjs');
-    const { validateSeasonBundle } = await import('../../../js/season-context.js');
-    const model = await validateSeasonBundle(await seasonConsumerFixture());
-    const n = await normalizeObservations({ observations: [], workflowVersion: 'workflow:a', seasonContext: context });
-    await expect(recommendTeam({ snapshot: { releaseId: 'release', dataVersion: 'data', teams: [], teamTier: [], seasonModel: model }, canonicalState: n.canonicalState, confirmationBinding: n.confirmationBinding, workflowVersion: 'workflow:a', expectedWorkflowVersion: 'workflow:a', seasonContext: { rulesetId: context.rulesetId, scenarioId: context.scenarioId } })).resolves.toMatchObject({ teams: [] });
-});

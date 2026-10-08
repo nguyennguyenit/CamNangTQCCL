@@ -70,6 +70,4 @@ export const seasonDomain = {
             unknown: ReferenceEntry[];
         };
     }; },
-    selection: shared.selectionFromEntry,
-    score: shared.resolveSelectionScore,
 };

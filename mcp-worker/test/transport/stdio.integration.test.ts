@@ -70,8 +70,8 @@ describe("transport stdio", () => {
     );
 
     const result = await client.callTool({
-      name: "tqccl_get_data_version",
-      arguments: {},
+      name: "tqccl_get_playbook",
+      arguments: { intent: "lookup" },
     });
     expect(result.isError).not.toBe(true);
     expect(result.structuredContent).toMatchObject({
@@ -118,8 +118,8 @@ describe("transport stdio filesystem roots", () => {
     for (const dataRoot of [packagedRoot, activated.dataRoot]) {
       const { client } = await startClient(dataRoot);
       const result = await client.callTool({
-        name: "tqccl_get_data_version",
-        arguments: {},
+        name: "tqccl_get_playbook",
+        arguments: { intent: "lookup" },
       });
 
       expect(result.isError).not.toBe(true);
@@ -139,8 +139,8 @@ describe("transport stdio filesystem roots", () => {
     for (const dataRoot of [mixed, tampered.dataRoot]) {
       const { client, diagnostics } = await startClient(dataRoot);
       const result = await client.callTool({
-        name: "tqccl_get_data_version",
-        arguments: {},
+        name: "tqccl_get_playbook",
+        arguments: { intent: "lookup" },
       });
 
       const serialized = JSON.stringify(result);

@@ -1,4 +1,5 @@
 import {
+  copyFileSync,
   mkdtempSync,
   mkdirSync,
   readFileSync,
@@ -6,7 +7,8 @@ import {
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { afterEach, describe, expect, it } from "vitest";
 
@@ -135,5 +137,36 @@ describe("workflow build identity", () => {
     expect(semanticChange).not.toBe(initial);
     expect(buildInputChange).not.toBe(semanticChange);
     expect(readFileSync(join(root, "src/semantic.ts"), "utf8")).toContain("2");
+  });
+});
+
+describe("workflow build identity của repository", () => {
+  const repositoryRoot = join(dirname(fileURLToPath(import.meta.url)), "../../..");
+  const manifest = JSON.parse(
+    readFileSync(join(repositoryRoot, "mcp-worker/workflow-source-manifest.json"), "utf8"),
+  ) as WorkflowSourceManifest;
+
+  it("gồm adapter Gợi ý kho và lõi knowledge nhưng loại bundle sinh tự động", () => {
+    expect(manifest.semanticFiles).toContain("js/roster-season-candidates.js");
+    expect(manifest.semanticFiles).toContain("mcp-worker/src/knowledge/search-rules.ts");
+    expect(manifest.semanticFiles).toContain("mcp-worker/src/research/recommend-handlers.ts");
+    expect(manifest.semanticFiles).not.toContain("mcp-worker/src/generated/knowledge-bundle.ts");
+    expect(manifest.exclusions.map(({ path }) => path)).toContain("mcp-worker/src/generated/knowledge-bundle.ts");
+    expect(() => validateWorkflowSourceManifest(repositoryRoot, manifest)).not.toThrow();
+  });
+
+  it("đổi workflowVersion build khi js/roster-season-candidates.js đổi, không đổi khi bundle luật đổi", () => {
+    const root = mkdtempSync(join(tmpdir(), "tqccl-workflow-repo-"));
+    temporaryDirectories.push(root);
+    for (const file of [...manifest.semanticFiles, ...manifest.buildInputs, "mcp-worker/src/generated/knowledge-bundle.ts", "mcp-worker/src/generated/workflow-build.ts"]) {
+      mkdirSync(dirname(join(root, file)), { recursive: true });
+      copyFileSync(join(repositoryRoot, file), join(root, file));
+    }
+    const initial = createWorkflowBuildId(root, manifest);
+    writeFileSync(join(root, "mcp-worker/src/generated/knowledge-bundle.ts"), "export const KNOWLEDGE_VERSION = 'x';\n");
+    expect(createWorkflowBuildId(root, manifest)).toBe(initial);
+    const adapter = join(root, "js/roster-season-candidates.js");
+    writeFileSync(adapter, `${readFileSync(adapter, "utf8")}\n// adapter edit\n`);
+    expect(createWorkflowBuildId(root, manifest)).not.toBe(initial);
   });
 });

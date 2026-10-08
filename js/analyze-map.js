@@ -112,7 +112,7 @@ function mapName(cn, dict, { unknownLabel = null, kind = "tactic" } = {}) {
 }
 
 /**
- * Map 1 hero đọc được -> {hero, tactics[], books[], statFocus} đã canonical (MCP `tqccl_match_team`
+ * Map 1 hero đọc được -> {hero, tactics[], books[], statFocus} đã canonical (MCP `tqccl_find_teams` với `heroes`
  * dùng qua `findSimilarTeams`). Ô `未知` không phải tên nên bị bỏ khỏi tactics/books.
  * @param read {nameCn, tacticsCn[], booksCn[], statFocusCn}
  * @param dicts {heroesDict, tacticsDict, booksDict}
@@ -546,7 +546,7 @@ function teamHeroSlots(team) {
 }
 
 /**
- * Đối chiếu đội đọc được với kho đội (MCP `tqccl_match_team`). Đếm số tướng trùng (canonical, đã
+ * Đối chiếu đội đọc được với kho đội (MCP `tqccl_find_teams` với `heroes`). Đếm số tướng trùng (canonical, đã
  * normalize); tie-break theo số chiến pháp trùng. Trả top `limit` team đạt ngưỡng.
  * @param mapped kết quả mapTeamRead
  */
@@ -559,7 +559,7 @@ export function findSimilarTeams(mapped, teams, { minHeroes = 2, limit = 5 } = {
   );
   // Chỉ tướng chắc chắn mới được tính khớp: khớp mơ hồ (`sure: false`) cần người dùng kiểm lại, nên
   // vẫn nằm trong mẫu số nhưng không tạo điểm khớp. Bản ghi canonical đã xác nhận (MCP
-  // `tqccl_match_team`) không mang cờ `sure` và được coi là chắc chắn.
+  // `tqccl_find_teams` với `heroes`) không mang cờ `sure` và được coi là chắc chắn.
   const identified = mapped.filter(
     (item) =>
       item.hero.matched &&

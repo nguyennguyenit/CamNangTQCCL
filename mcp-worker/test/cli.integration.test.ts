@@ -3,6 +3,9 @@ import { fileURLToPath } from "node:url";
 
 import { afterEach, describe, expect, it } from "vitest";
 
+import { canonicalHeroId, heroFamilyId } from "../../js/hero-identity.js";
+import { canonicalTacticId } from "../../js/team-recommend-engine.js";
+
 import {
   CLI_ALIASES,
   parseCliArgs,
@@ -19,9 +22,7 @@ import {
 
 const cliPath = fileURLToPath(new URL("../src/cli.ts", import.meta.url));
 const tsxLoaderPath = fileURLToPath(import.meta.resolve("tsx"));
-const fixtureRoot = fileURLToPath(
-  new URL("fixtures/release-snapshot", import.meta.url),
-);
+const fixtureRoot = fileURLToPath(new URL("../../data", import.meta.url));
 
 function runCli(
   args: readonly string[],
@@ -87,28 +88,29 @@ describe("CLI argument contract", () => {
 });
 
 describe("JSON CLI integration", () => {
-  it("documents all eight handlers and aliases in help", async () => {
+  it("documents all seven handlers, aliases and the CLI-only search-rules command in help", async () => {
     const result = await runCli(["--help"]);
 
     expect(result.code).toBe(0);
     for (const name of RESEARCH_TOOL_NAMES) {
       expect(result.stdout).toContain(name);
     }
-    for (const alias of Object.keys(CLI_ALIASES)) {
+    for (const alias of [...Object.keys(CLI_ALIASES), "search-rules"]) {
       expect(result.stdout).toContain(alias);
     }
     expect(result.stderr).toBe("");
   });
 
   it("loads repository data from a non-repository CWD", async () => {
-    const result = await runCli(["version"]);
+    const result = await runCli(["playbook", "--input", JSON.stringify({ intent: "lookup" })]);
 
     expect(result.code).toBe(0);
     expect(result.stderr).toBe("");
     const output = JSON.parse(result.stdout);
     expect(output.releaseId).toMatch(/^sha256:[a-f0-9]{64}$/);
-    expect(output.manifestVersion).toBe(2);
-    expect(output.artifacts).toHaveLength(11);
+    // The repository checkout publishes snapshot v3: eleven v2 artifacts plus the publication projection.
+    expect(output.manifestVersion).toBe(3);
+    expect(output.capabilities).toMatchObject({ catalog: true, reference: true, recommend: true });
   });
 
   it("emits exactly one JSON success document with no diagnostics on stdout", async () => {
@@ -142,88 +144,63 @@ describe("JSON CLI integration", () => {
 
   it("maps handler errors to exit 1 without leaking input or local paths", async () => {
     const privateInput = "../private/manifest.json";
-    const version = await runCli(["version"]);
+    const version = await runCli(["playbook", "--input", JSON.stringify({ intent: "lookup" })]);
     const workflowVersion = JSON.parse(version.stdout).workflowVersion;
     const result = await runCli([
       "team",
       "--input",
       JSON.stringify({
-        teamId: privateInput,
+        reference: { collection: "recommended", sourceConfigId: privateInput },
         expectedWorkflowVersion: workflowVersion,
       }),
     ]);
 
     expect(result.code).toBe(1);
     const output = JSON.parse(result.stdout);
-    expect(output.error.code).toBe("TEAM_NOT_FOUND");
+    expect(output.error.code).toBe("REFERENCE_NOT_FOUND");
     expect(result.stdout).not.toContain(privateInput);
     expect(result.stdout).not.toContain("/Users/");
   });
 
-  it("matches shared handler semantics for all eight commands with an explicit data root", async () => {
+  it("matches shared handler semantics for all seven commands with an explicit data root", async () => {
     const handlers = createResearchHandlers({
       dataSource: new FilesystemDataSource({ dataRoot: fixtureRoot }),
     });
+    const evidence = { sourceScope: "currentTurnImage" as const, batchId: "cli-parity" };
+    const team = (await handlers.call("tqccl_find_teams", { collection: "recommended", limit: 1 })).items[0]!;
     const observations = [
-      {
-        observationId: "hero",
+      ...team.heroes.map((hero, index) => ({
+        observationId: `hero-${index}`,
         entityKind: "hero" as const,
-        canonicalId: "hero:tuong-a" as const,
-        familyId: "hero-family:tuong-a" as const,
-        displayName: "Tướng A",
-        evidence: {
-          sourceScope: "currentTurnImage" as const,
-          batchId: "cli-parity",
-        },
-      },
-      {
-        observationId: "tactic",
-        entityKind: "tactic" as const,
-        canonicalId: "tactic:chien-phap-a" as const,
-        displayName: "Chiến Pháp A",
-        evidence: {
-          sourceScope: "currentTurnImage" as const,
-          batchId: "cli-parity",
-        },
-      },
+        canonicalId: canonicalHeroId(hero.nameVi) as `hero:${string}`,
+        familyId: heroFamilyId(hero.nameVi) as `hero-family:${string}`,
+        displayName: hero.nameVi,
+        evidence,
+      })),
+      ...team.heroes.flatMap((hero, index) =>
+        hero.tactics.map((tactic, slot) => ({
+          observationId: `tactic-${index}-${slot}`,
+          entityKind: "tactic" as const,
+          canonicalId: canonicalTacticId(tactic.vi ?? "") as `tactic:${string}`,
+          displayName: tactic.vi ?? "",
+          evidence,
+        })),
+      ),
     ];
-    const normalized = await handlers.call("tqccl_normalize_entities", {
-      observations,
-    });
+    const normalized = await handlers.call("tqccl_normalize_entities", { observations });
+    const entity = (await handlers.call("tqccl_search", { query: "Thanh Long", kinds: ["equipment"], limit: 1 })).items[0]!;
     const requests = {
-      tqccl_get_data_version: {},
+      tqccl_get_playbook: { intent: "lookup" as const },
+      tqccl_search: { query: "Thanh Long", limit: 5 },
+      tqccl_get_entity: { entityId: entity.entityId },
+      tqccl_find_teams: { collection: "recommended" as const, limit: 3 },
+      tqccl_get_team: { reference: team.reference, expectedWorkflowVersion: normalized.workflowVersion },
       tqccl_normalize_entities: { observations },
-      tqccl_search: { query: "Tướng A", limit: 5 },
-      tqccl_get_team: {
-        teamId: "team-a",
-        expectedWorkflowVersion: normalized.workflowVersion,
-      },
-      tqccl_match_team: {
-        expectedWorkflowVersion: normalized.workflowVersion,
-        heroes: [
-          {
-            canonicalId: "hero:tuong-a" as const,
-            tacticIds: ["tactic:chien-phap-a" as const],
-          },
-        ],
-        minHeroes: 1,
-      },
-      tqccl_recommend_team: {
+      tqccl_recommend_teams: {
         expectedWorkflowVersion: normalized.workflowVersion,
         canonicalState: normalized.canonicalState,
         confirmationBinding: normalized.confirmationBinding,
-      },
-      tqccl_recommend_coexist: {
-        expectedWorkflowVersion: normalized.workflowVersion,
-        canonicalState: normalized.canonicalState,
-        confirmationBinding: normalized.confirmationBinding,
-      },
-      tqccl_suggest_replacements: {
-        expectedWorkflowVersion: normalized.workflowVersion,
-        canonicalState: normalized.canonicalState,
-        confirmationBinding: normalized.confirmationBinding,
-        teamId: "team-a",
-        tacticName: "Chiến Pháp A",
+        sourceSeasonId: team.sourceSeasonId!,
       },
     } as const;
 
@@ -243,6 +220,19 @@ describe("JSON CLI integration", () => {
   });
 });
 
+describe("CLI-only search-rules", () => {
+  it("calls the knowledge core directly and is not an MCP tool", async () => {
+    expect(RESEARCH_TOOL_NAMES as readonly string[]).not.toContain("tqccl_search_rules");
+    const result = await runCli(["search-rules", "--input", JSON.stringify({ workflow: "coexist", query: "mùa" })]);
+    expect(result.stderr).toBe("");
+    expect(result.code).toBe(0);
+    expect(JSON.parse(result.stdout)).toMatchObject({ requiredRules: expect.any(Array) });
+    const bad = await runCli(["search-rules", "--input", JSON.stringify({ workflow: "khong-co" })]);
+    expect(bad.code).toBe(1);
+    expect(JSON.parse(bad.stdout).error.code).toMatch(/^(INVALID_REQUEST|PLAYBOOK_NOT_FOUND)$/u);
+  });
+});
+
 describe("CLI filesystem root formats", () => {
   afterEach(removeCreatedRoots);
 
@@ -251,7 +241,7 @@ describe("CLI filesystem root formats", () => {
     const activated = await createActivatedRoot();
 
     for (const dataRoot of [packagedRoot, activated.dataRoot]) {
-      const result = await runCli(["version", "--data-root", dataRoot]);
+      const result = await runCli(["playbook", "--input", JSON.stringify({ intent: "lookup" }), "--data-root", dataRoot]);
 
       expect(result.stderr).toBe("");
       expect(result.code).toBe(0);
@@ -271,7 +261,7 @@ describe("CLI filesystem root formats", () => {
     });
 
     for (const dataRoot of [mixed, tampered.dataRoot, interrupted.dataRoot]) {
-      const result = await runCli(["version", "--data-root", dataRoot]);
+      const result = await runCli(["playbook", "--input", JSON.stringify({ intent: "lookup" }), "--data-root", dataRoot]);
 
       expect(result.code).toBe(1);
       expect(JSON.parse(result.stdout)).toMatchObject({

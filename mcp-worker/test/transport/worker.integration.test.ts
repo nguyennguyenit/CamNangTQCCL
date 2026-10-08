@@ -170,7 +170,7 @@ describe("transport Streamable HTTP Worker", () => {
     const listBody = (await listed.json()) as {
       result: { tools: Array<{ name: string }> };
     };
-    expect(listBody.result.tools).toHaveLength(8);
+    expect(listBody.result.tools).toHaveLength(7);
     expect(listBody.result.tools.every(({ name }) => name.startsWith("tqccl_"))).toBe(
       true,
     );
@@ -240,7 +240,7 @@ describe("transport Streamable HTTP Worker", () => {
       const results = await Promise.all(
         clients.map(({ client }) => client.listTools()),
       );
-      expect(results.map(({ tools }) => tools.length)).toEqual([8, 8]);
+      expect(results.map(({ tools }) => tools.length)).toEqual([7, 7]);
     } finally {
       await Promise.all(clients.map(({ client }) => client.close()));
     }
@@ -350,8 +350,8 @@ describe("transport Streamable HTTP Worker", () => {
         id: 10,
         method: "tools/call",
         params: {
-          name: "tqccl_get_data_version",
-          arguments: {},
+          name: "tqccl_get_playbook",
+          arguments: { intent: "lookup" },
         },
       }),
       ENV,

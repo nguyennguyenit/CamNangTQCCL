@@ -15,14 +15,13 @@ const READ_ONLY_ANNOTATIONS = {
 } as const satisfies ToolAnnotations;
 
 const DESCRIPTIONS: Record<ResearchToolName, string> = {
-  tqccl_get_data_version: "Khi dùng: bắt đầu workflow. Trả về: release, workflow, manifestVersion, capabilities và registry. Có thể lỗi: DATA_UNAVAILABLE.",
-  tqccl_normalize_entities: "Khi dùng: trước recommendation. Trả về: canonicalState và binding để người dùng rà soát. Có thể lỗi: input sai; ambiguity yêu cầu review.",
-  tqccl_search: "Khi dùng: tìm ID hoặc duyệt corpus. Trả về: record, configId và cursor. Có thể lỗi: context, workflow hoặc cursor sai.",
-  tqccl_get_team: "Khi dùng: đã có teamId. Trả về: cấu hình, tier và điểm nguồn. Có thể lỗi: CONFIG_AMBIGUOUS cần chọn configId, hoặc không tìm thấy.",
-  tqccl_match_team: "Khi dùng: đối chiếu roster. Trả về: đội khớp hero/tactic đúng holder. Có thể lỗi: context sai hoặc quá 500 cấu hình.",
-  tqccl_recommend_team: "Khi dùng: state đã xác nhận. Trả về: đội, configId và diagnostics. Có thể lỗi: binding stale, quá 500 cấu hình hoặc thiếu tài nguyên.",
-  tqccl_recommend_coexist: "Khi dùng: state đã xác nhận, cần nhiều đội. Trả về: portfolio và nguồn tham khảo chưa chấm điểm. Có thể lỗi: binding stale hoặc quá 500 cấu hình.",
-  tqccl_suggest_replacements: "Khi dùng: đã chọn đội/cấu hình/holder/slot. Trả về: chiến pháp thay thế; điểm chỉ giữ cho đúng lựa chọn đã chấm. Có thể lỗi: ambiguity, selector sai hoặc binding stale.",
+  tqccl_get_playbook: "Khi dùng: bắt đầu mọi workflow. Trả về: version, capabilities, mùa nguồn, luật bắt buộc và tool kế tiếp. Có thể lỗi: PLAYBOOK_NOT_FOUND, DATA_UNAVAILABLE.",
+  tqccl_search: "Khi dùng: tìm ID tướng, chiến pháp, trang bị, binh thư hoặc đội. Trả về: entityId, loại, tên, pagePath, cursor. Có thể lỗi: CURSOR_INVALID, CAPABILITY_UNAVAILABLE.",
+  tqccl_get_entity: "Khi dùng: có entityId cần hồ sơ như trang Tra cứu. Trả về: hồ sơ, pagePath vi/zh, section có cursor. Có thể lỗi: ENTITY_NOT_FOUND, CAPABILITY_UNAVAILABLE.",
+  tqccl_find_teams: "Khi dùng: duyệt/đối chiếu đội theo họ recommended, other, khaihoang, engine. Trả về: tóm tắt, bậc/điểm nguồn, reference. Có thể lỗi: REFERENCE_SCOPE_INVALID.",
+  tqccl_get_team: "Khi dùng: có reference cần chi tiết đội. Trả về: ô tướng/chiến pháp/binh thư, ghi chú, sourceScore. Có thể lỗi: REFERENCE_NOT_FOUND, CONFIG_AMBIGUOUS.",
+  tqccl_normalize_entities: "Khi dùng: trước khi gợi ý đội. Trả về: canonicalState và binding để người dùng rà soát. Có thể lỗi: input sai; ambiguity yêu cầu review.",
+  tqccl_recommend_teams: "Khi dùng: state đã xác nhận, ghép đội theo mùa nguồn. Trả về: portfolioTeams, blockedStrongTeams, substitutes. Có thể lỗi: CONFIRMATION_REQUIRED.",
 };
 
 export interface ToolDefinition {
@@ -41,7 +40,7 @@ export interface ToolDefinition {
 export const TOOL_DEFINITIONS: readonly ToolDefinition[] =
   RESEARCH_TOOL_NAMES.map((name) => ({
     name,
-    description: DESCRIPTIONS[name] + (name === "tqccl_get_data_version" ? "" : " seasonContext cần đủ cặp ID đã xác minh; bỏ field để dùng legacy."),
+    description: DESCRIPTIONS[name],
     inputSchema: RESEARCH_CONTRACTS[name].input,
     // Công bố cả nhánh lỗi: client validate structuredContent kể cả khi isError.
     outputSchema: publishedOutputSchema(RESEARCH_CONTRACTS[name].output),
