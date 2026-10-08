@@ -1,5 +1,4 @@
 import { exports } from "cloudflare:workers";
-import { canonicalHeroId, heroFamilyId } from "../../../js/hero-identity.js";
 import { canonicalTacticId } from "../../../js/team-recommend-engine.js";
 import { beforeAll, describe, expect, it } from "vitest";
 
@@ -62,8 +61,7 @@ describe("budget production-shaped trong workerd", () => {
         ...team.heroes.map((hero, index) => ({
           observationId: `hero-${index}`,
           entityKind: "hero",
-          canonicalId: canonicalHeroId(hero.nameVi),
-          familyId: heroFamilyId(hero.nameVi),
+          canonicalId: hero.heroId,
           displayName: hero.nameVi,
           evidence,
         })),

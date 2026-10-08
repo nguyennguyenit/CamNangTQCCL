@@ -8,6 +8,7 @@
 - **Bảy tool P\***: `tqccl_get_playbook`, `tqccl_search`, `tqccl_get_entity`, `tqccl_find_teams`, `tqccl_get_team`, `tqccl_normalize_entities`, `tqccl_recommend_teams`. **Tám tool cũ bị xoá, không alias** (`tqccl_get_data_version`, `tqccl_match_team`, `tqccl_recommend_team`, `tqccl_recommend_coexist`, `tqccl_suggest_replacements`, cùng `tqccl_search`/`tqccl_get_team`/`tqccl_normalize_entities` bản schema cũ); `recommendation-service` và `season-reference-projection` bị gỡ. Schema thuộc `mcp-worker/src/research/research-contracts.ts` (không sao chép vào tài liệu). `tqccl_recommend_teams` gọi đúng `recommendRoster` của trang Gợi ý kho (kết quả `basis:"source-reference-fit"`, `rulesetVerified:false`).
 - **CLI**: alias `playbook, search, entity, find-teams, team, normalize, recommend` (bảng `CLI_ALIASES` trong `mcp-worker/src/cli.ts`) cộng lệnh chỉ-CLI `search-rules`.
 - **`tools/list` gọn dưới 90 KiB** (output schema bỏ mô tả field lồng, error envelope phẳng dùng chung) nên `TQCCL_MCP_MAX_RESULT_BYTES` giữ 98304; `content[0].text` là JSON tương đương `structuredContent`, trần mỗi kết quả 42 KiB.
+- **`tqccl_normalize_entities` không còn `INTERNAL_ERROR` khi agent gửi tướng thiếu `familyId`** (lỗi có từ trước, lộ ra khi đo R0 trên Dewee `tra`): server suy `hero-family:` từ `canonicalId` trong heroes-dict. `canonicalId` tướng không có trong snapshot hoặc `familyId` lệch trả `INVALID_REQUEST` kèm field.
 
 ### Added
 

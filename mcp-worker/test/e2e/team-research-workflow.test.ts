@@ -2,7 +2,6 @@ import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
-import { canonicalHeroId, heroFamilyId } from "../../../js/hero-identity.js";
 import { canonicalTacticId } from "../../../js/team-recommend-engine.js";
 import { FilesystemDataSource } from "../../src/data/filesystem-data-source.js";
 import { createResearchHandlers } from "../../src/research/research-handlers.js";
@@ -26,8 +25,7 @@ describe("golden team research workflow", () => {
         ...team.heroes.map((hero, index) => ({
           observationId: `hero-${index}`,
           entityKind: "hero" as const,
-          canonicalId: canonicalHeroId(hero.nameVi) as `hero:${string}`,
-          familyId: heroFamilyId(hero.nameVi) as `hero-family:${string}`,
+          canonicalId: hero.heroId as `hero:${string}`,
           displayName: hero.nameVi,
           evidence,
         })),

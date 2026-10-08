@@ -1,5 +1,6 @@
 import { ZodError, type ZodType } from "zod";
 
+import { heroFamilyId } from "../../../js/hero-identity.js";
 import { resolveSeasonContext } from "../../../js/season-context.js";
 import { publicSnapshotView } from "../data/public-snapshot-view.js";
 import { buildSnapshotIndex, type SnapshotIndex } from "../data/snapshot-index.js";
@@ -34,6 +35,39 @@ export interface ResearchHandlers {
   ): Promise<ResearchOutput<Name>>;
 }
 
+interface HeroObservationInput {
+  entityKind?: unknown;
+  canonicalId?: unknown;
+  familyId?: unknown;
+}
+
+/**
+ * Agent biết `canonicalId` (từ tqccl_search) nhưng không biết `hero-family:`; family là dữ liệu của snapshot
+ * nên server suy từ tên tướng trong heroes-dict. familyId gửi lên phải khớp, không tự sửa.
+ */
+function withHeroFamilies(ctx: ToolContext, observations: readonly HeroObservationInput[]): HeroObservationInput[] {
+  const heroNames = new Map<string, string>();
+  for (const entry of ctx.index.searchEntries) {
+    if (entry.kind === "hero") heroNames.set(entry.canonicalId, entry.displayName);
+  }
+  return observations.map((observation, index) => {
+    if (observation.entityKind !== "hero" || typeof observation.canonicalId !== "string") return observation;
+    const name = heroNames.get(observation.canonicalId);
+    if (name === undefined) {
+      throw new ResearchHandlerError("INVALID_REQUEST", PUBLIC_ERRORS.INVALID_REQUEST.message, false, [
+        `observations[${index}].canonicalId`,
+      ]);
+    }
+    const familyId = heroFamilyId(name);
+    if (observation.familyId !== undefined && observation.familyId !== familyId) {
+      throw new ResearchHandlerError("INVALID_REQUEST", PUBLIC_ERRORS.INVALID_REQUEST.message, false, [
+        `observations[${index}].familyId`,
+      ]);
+    }
+    return { ...observation, familyId };
+  });
+}
+
 async function handleNormalize(ctx: ToolContext, rawInput: unknown): Promise<unknown> {
   const input = parseToolInput(RESEARCH_CONTRACTS.tqccl_normalize_entities.input as ZodType<Record<string, unknown>>, rawInput);
   const seasonContext = input.seasonContext as { scenarioId: string; rulesetId: string } | undefined;
@@ -45,7 +79,7 @@ async function handleNormalize(ctx: ToolContext, rawInput: unknown): Promise<unk
   }
   const normalized = await normalizeObservations({
     workflowVersion: ctx.workflowVersion,
-    observations: input.observations as never,
+    observations: withHeroFamilies(ctx, input.observations as HeroObservationInput[]) as never,
     ...(seasonContext ? { seasonContext } : {}),
   });
   return {

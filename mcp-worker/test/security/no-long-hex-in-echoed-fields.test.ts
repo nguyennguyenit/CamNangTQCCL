@@ -8,7 +8,6 @@ import {
   RESEARCH_TOOL_NAMES,
   type ResearchToolName,
 } from "../../src/research/research-contracts.js";
-import { canonicalHeroId, heroFamilyId } from "../../../js/hero-identity.js";
 import { canonicalTacticId } from "../../../js/team-recommend-engine.js";
 import { createResearchHandlers } from "../../src/research/research-handlers.js";
 
@@ -54,8 +53,7 @@ async function callEveryTool(): Promise<Record<ResearchToolName, unknown>> {
       ...team.heroes.map((hero, index) => ({
         observationId: `hero-${index}`,
         entityKind: "hero" as const,
-        canonicalId: canonicalHeroId(hero.nameVi) as `hero:${string}`,
-        familyId: heroFamilyId(hero.nameVi) as `hero-family:${string}`,
+        canonicalId: hero.heroId as `hero:${string}`,
         displayName: hero.nameVi,
         evidence,
       })),

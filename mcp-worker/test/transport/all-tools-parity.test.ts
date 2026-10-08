@@ -9,7 +9,6 @@ import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { canonicalHeroId, heroFamilyId } from "../../../js/hero-identity.js";
 import { canonicalTacticId } from "../../../js/team-recommend-engine.js";
 import { FilesystemDataSource } from "../../src/data/filesystem-data-source.js";
 import {
@@ -108,8 +107,7 @@ describe("parity của bảy công cụ qua stdio và HTTP", () => {
       ...team.heroes.map((hero, index) => ({
         observationId: `hero-${index}`,
         entityKind: "hero" as const,
-        canonicalId: canonicalHeroId(hero.nameVi) as `hero:${string}`,
-        familyId: heroFamilyId(hero.nameVi) as `hero-family:${string}`,
+        canonicalId: hero.heroId as `hero:${string}`,
         displayName: hero.nameVi,
         evidence,
       })),
