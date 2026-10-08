@@ -20,11 +20,18 @@ import {
   SEASON_ARTIFACT_NAMES,
   V2_ARTIFACT_NAMES,
   ArtifactContractError,
+  artifactNamesForManifest,
   createDataManifest,
   validateDataSnapshot,
   type ArtifactName,
 } from "../src/data/artifact-contracts.js";
 import { observeLookupRoot, validateLookupRoot } from "../src/data/filesystem-data-source.js";
+import { buildPublicationArtifacts } from "../src/data/publication-builder.js";
+import {
+  readPublicationSources,
+  repositoryPublicationRoots,
+  type PublicationRoots,
+} from "../src/data/publication-source-reader.js";
 import { stableStringify } from "../src/domain/contracts.js";
 import { WORKFLOW_BUILD_ID } from "../src/generated/workflow-build.js";
 import {
@@ -47,6 +54,8 @@ export const WORKER_SOURCE_ONLY_FILES = [
 ] as const;
 
 export interface BuildWorkerAssetsOptions {
+  /** When set the build emits manifest v3 (v2 + publication projection) from these verified inputs. */
+  publication?: PublicationRoots;
   dataRoot: string | URL;
   outputDirectory: string | URL;
   workflowBuildId: string;
@@ -255,6 +264,11 @@ export async function buildWorkerAssets(
         await readRegularFile(resolve(dataRoot, `${name}.json`)),
       ] as const),
     );
+    const publicationSources = options.publication === undefined
+      ? undefined
+      : await readPublicationSources(options.publication).catch(() => {
+        throw new WorkerAssetBuildError("INVALID_SOURCE_ASSET");
+      });
     await assertCleanSource(options.assertCleanSource);
     const finalSource = await readSourceState(options);
     if (
@@ -281,11 +295,20 @@ export async function buildWorkerAssets(
       throw new WorkerAssetBuildError("INVALID_SOURCE_ASSET");
     }
     let manifest;
+    let published = new Map<string, Uint8Array>();
     try {
-      manifest = await createDataManifest(objects);
-      await validateDataSnapshot(manifest, objects);
+      if (publicationSources !== undefined) {
+        const built = await buildPublicationArtifacts({ objects, sources: publicationSources });
+        published = built.artifacts;
+        const all = new Map<ArtifactName, Uint8Array>([...objects, ...built.artifacts] as Array<[ArtifactName, Uint8Array]>);
+        manifest = await createDataManifest(all, { publication: built.meta });
+        await validateDataSnapshot(manifest, all);
+      } else {
+        manifest = await createDataManifest(objects);
+        await validateDataSnapshot(manifest, objects);
+      }
     } catch (error) {
-      if (error instanceof ArtifactContractError) {
+      if (error instanceof ArtifactContractError || (error instanceof Error && error.name === "PublicationContractError")) {
         throw new WorkerAssetBuildError("INVALID_SOURCE_ASSET");
       }
       throw error;
@@ -295,6 +318,7 @@ export async function buildWorkerAssets(
     );
     const assets = new Map<string, Uint8Array>([
       ...entries.map(([name, bytes]) => [`${name}.json`, bytes] as const),
+      ...[...published].map(([name, bytes]) => [`${name}.json`, bytes] as const),
       ["manifest.json", manifestBytes],
     ]);
     for (const [name, bytes] of assets) {
@@ -312,7 +336,7 @@ export async function buildWorkerAssets(
       assetInventoryDigest: await calculateWorkerAssetInventoryDigest(assets),
     };
     await replaceWorkerAssetDirectory(temporaryDirectory, outputDirectory);
-    return { artifactNames, outputDirectory, evidence };
+    return { artifactNames: artifactNamesForManifest(manifest), outputDirectory, evidence };
   } catch (error) {
     await rm(temporaryDirectory, { recursive: true, force: true }).catch(
       () => undefined,
@@ -335,6 +359,7 @@ async function main(): Promise<void> {
     const outputDirectory = resolve(repositoryRoot, "mcp-worker/.worker-assets");
     const result = await buildWorkerAssets({
       dataRoot: resolve(repositoryRoot, "data"),
+      publication: repositoryPublicationRoots(resolve(repositoryRoot, "data")),
       outputDirectory,
       workflowBuildId: WORKFLOW_BUILD_ID,
       allowedSourceFiles: WORKER_SOURCE_ONLY_FILES,

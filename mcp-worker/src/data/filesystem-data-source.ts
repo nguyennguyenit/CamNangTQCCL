@@ -6,16 +6,24 @@ import {
   V2_ARTIFACT_NAMES,
   SEASON_ARTIFACT_NAMES,
   MAX_ARTIFACT_BYTES,
+  artifactNamesForManifest,
   createDataManifest,
   validateManifest,
   validateDataSnapshot,
   type ArtifactName,
+  type DataManifest,
 } from "./artifact-contracts.js";
 import {
   DataSourceError,
   createCachedDataSource,
   type DataSource,
 } from "./data-source.js";
+import { buildPublicationArtifacts } from "./publication-builder.js";
+import {
+  hasRecommendedPublication,
+  readPublicationSources,
+  repositoryPublicationRoots,
+} from "./publication-source-reader.js";
 import {
   LOOKUP_CATALOG_FILE,
   LOOKUP_MANIFEST_FILE,
@@ -107,6 +115,43 @@ export interface FilesystemDataSourceOptions {
   dataRoot: string;
 }
 
+const strictDecoder = new TextDecoder("utf-8", { fatal: true, ignoreBOM: false });
+
+async function readNames(dataRoot: string, names: readonly ArtifactName[]) {
+  const entries = await Promise.all(
+    names.map(async (name) => [name, await readRegularFile(resolve(dataRoot, `${name}.json`))] as const),
+  );
+  return new Map<ArtifactName, Uint8Array>(entries);
+}
+
+/**
+ * A raw checkout publishes v3 when its Recommended selector exists: the projection is built from the
+ * verified publication inputs next to `data/` (`src/data/recommended-reference`, `pipeline/`).
+ */
+async function loadRawRoot(dataRoot: string, files: readonly string[], sidecarCount: number) {
+  const seasonalCount = SEASON_ARTIFACT_NAMES.filter(name => files.includes(`${name}.json`)).length;
+  if (seasonalCount !== 0 && seasonalCount !== SEASON_ARTIFACT_NAMES.length) throw new Error("partial seasonal inventory");
+  const names = seasonalCount === 0 ? ARTIFACT_NAMES : V2_ARTIFACT_NAMES;
+  const objects = await readNames(dataRoot, names);
+  if (sidecarCount === 0 && containsLookupIdentities(objects)) throw new Error("lookup sidecars are required");
+  if (sidecarCount === LOOKUP_SIDECARS.length) await validateLookupRoot(dataRoot, objects);
+  const roots = repositoryPublicationRoots(dataRoot);
+  if (seasonalCount === SEASON_ARTIFACT_NAMES.length && sidecarCount === LOOKUP_SIDECARS.length && await hasRecommendedPublication(roots)) {
+    const publication = await buildPublicationArtifacts({ objects, sources: await readPublicationSources(roots) });
+    const all = new Map<ArtifactName, Uint8Array>([...objects, ...publication.artifacts] as Array<[ArtifactName, Uint8Array]>);
+    return { manifest: await createDataManifest(all, { publication: publication.meta }), objects: all };
+  }
+  return { manifest: await createDataManifest(objects), objects };
+}
+
+async function loadPackagedRoot(dataRoot: string) {
+  const manifestBytes = await readRegularFile(resolve(dataRoot, "manifest.json"));
+  const manifest: DataManifest = await validateManifest(JSON.parse(strictDecoder.decode(manifestBytes)));
+  const names = artifactNamesForManifest(manifest);
+  await assertExactPackageRoot(dataRoot, names);
+  return { manifest, objects: await readNames(dataRoot, names) };
+}
+
 export class FilesystemDataSource implements DataSource {
   readonly #source: DataSource;
 
@@ -131,30 +176,9 @@ export class FilesystemDataSource implements DataSource {
             const hasPackage = files.includes("manifest.json");
             const sidecarCount = LOOKUP_SIDECARS.filter((name) => files.includes(name)).length;
             if ((hasPackage && sidecarCount !== 0) || sidecarCount === 1) throw new Error("ambiguous data root");
-            const seasonalCount = SEASON_ARTIFACT_NAMES.filter(name => files.includes(`${name}.json`)).length;
-            if (seasonalCount !== 0 && seasonalCount !== SEASON_ARTIFACT_NAMES.length) throw new Error("partial seasonal inventory");
-            const names = seasonalCount === 0 ? ARTIFACT_NAMES : V2_ARTIFACT_NAMES;
-            const entries = await Promise.all(
-              names.map(async (name) => [
-                name,
-                await readRegularFile(resolve(dataRoot, `${name}.json`)),
-              ] as const),
-            );
-            const objects = new Map<ArtifactName, Uint8Array>(entries);
-            if (!hasPackage && sidecarCount === 0 && containsLookupIdentities(objects)) {
-              throw new Error("lookup sidecars are required");
-            }
-            if (sidecarCount === LOOKUP_SIDECARS.length) {
-              await validateLookupRoot(dataRoot, objects);
-            }
-            let manifest;
-            if (hasPackage) {
-              await assertExactPackageRoot(dataRoot, names);
-              const manifestBytes = await readRegularFile(resolve(dataRoot, "manifest.json"));
-              manifest = await validateManifest(JSON.parse(new TextDecoder("utf-8", { fatal: true, ignoreBOM: false }).decode(manifestBytes)));
-            } else {
-              manifest = await createDataManifest(objects);
-            }
+            const { manifest, objects } = hasPackage
+              ? await loadPackagedRoot(dataRoot)
+              : await loadRawRoot(dataRoot, files, sidecarCount);
             const final = await observeLookupRoot(dataRoot);
             if (final.token !== initial.token) throw new Error("data root changed during capture");
             return {

@@ -1,6 +1,16 @@
 import { validateSeasonBundle } from "../../../js/season-context.js";
 import { stableStringify } from "../domain/contracts.js";
 import { canonicalDictionaryId } from "./entity-identity.js";
+import {
+  PublicationContractError,
+  buildPublicationReadModel,
+  isPublicationArtifactName,
+  publicationArtifactNames,
+  validatePublicationMeta,
+  type PublicationArtifactName,
+  type PublicationMeta,
+  type PublicationReadModel,
+} from "./publication-projection.js";
 
 export const ARTIFACT_NAMES = [
   "teams",
@@ -13,11 +23,17 @@ export const ARTIFACT_NAMES = [
 
 export const SEASON_ARTIFACT_NAMES = ["season-registry", "season-evidence", "season-team-configs", "season-team-evaluations", "season-content-links"] as const;
 export const V2_ARTIFACT_NAMES = [...ARTIFACT_NAMES, ...SEASON_ARTIFACT_NAMES] as const;
-export type ManifestVersion = 1 | 2;
-export function artifactNamesForVersion(version: ManifestVersion) {
+export type ManifestVersion = 1 | 2 | 3;
+export type LegacyArtifactName = (typeof V2_ARTIFACT_NAMES)[number];
+/** Names of the fixed v1/v2 inventories. v3 inventory is derived from its validated manifest only. */
+export function artifactNamesForVersion(version: 1 | 2) {
   return version === 1 ? ARTIFACT_NAMES : V2_ARTIFACT_NAMES;
 }
-export type ArtifactName = (typeof V2_ARTIFACT_NAMES)[number];
+export type ArtifactName = LegacyArtifactName | PublicationArtifactName;
+/** The exact artifact inventory a validated manifest declares, in manifest order. */
+export function artifactNamesForManifest(manifest: { schemaVersion: ManifestVersion; artifacts: readonly { name: ArtifactName }[] }): readonly ArtifactName[] {
+  return manifest.schemaVersion === 3 ? manifest.artifacts.map(({ name }) => name) : artifactNamesForVersion(manifest.schemaVersion);
+}
 export type SeasonModel = Awaited<ReturnType<typeof validateSeasonBundle>>;
 export type ArtifactRecord = Record<string, unknown>;
 export type ParsedArtifact = readonly ArtifactRecord[];
@@ -40,7 +56,9 @@ interface DataManifestBase {
 
 export interface DataManifestV1 extends DataManifestBase { schemaVersion: 1 }
 export interface DataManifestV2 extends DataManifestBase { schemaVersion: 2 }
-export type DataManifest = DataManifestV1 | DataManifestV2;
+/** v2 plus the public publication projection; `publication` is part of the release identity. */
+export interface DataManifestV3 extends DataManifestBase { schemaVersion: 3; publication: PublicationMeta }
+export type DataManifest = DataManifestV1 | DataManifestV2 | DataManifestV3;
 
 export interface SnapshotArtifacts {
   teams: ParsedArtifact;
@@ -63,6 +81,8 @@ export interface DataSnapshot {
   artifacts: SnapshotArtifacts;
   warnings: readonly string[];
   seasonModel?: SeasonModel;
+  /** Present only for manifest v3. Absent v1/v2 means "capability unavailable", never "empty". */
+  publication?: PublicationReadModel;
 }
 
 export class ArtifactContractError extends Error {
@@ -261,6 +281,9 @@ export function parseArtifact(
       `artifact ${name} must contain an array`,
     );
   }
+  if (isPublicationArtifactName(name)) {
+    return value.map((item, index) => record(item, `${name}[${index}]`));
+  }
   const parsed = validateArtifactRecords(name, value);
   if (
     name === "heroes-dict" ||
@@ -295,6 +318,7 @@ async function sha256(bytes: Uint8Array): Promise<`sha256:${string}`> {
 function canonicalManifestPayload(
   artifacts: readonly ArtifactDescriptor[],
   schemaVersion: ManifestVersion,
+  publication?: PublicationMeta,
 ): unknown {
   return {
     schemaVersion,
@@ -307,19 +331,22 @@ function canonicalManifestPayload(
         count,
       }),
     ),
+    // v1/v2 identity is exactly the pre-v3 payload; only v3 binds the projection metadata.
+    ...(schemaVersion === 3 ? { publication } : {}),
   };
 }
 
 async function manifestIdentity(
   artifacts: readonly ArtifactDescriptor[],
   schemaVersion: ManifestVersion,
+  publication?: PublicationMeta,
 ): Promise<{
   releaseId: DataManifest["releaseId"];
   dataVersion: DataManifest["dataVersion"];
 }> {
   const releaseId = await sha256(
     new TextEncoder().encode(
-      stableStringify(canonicalManifestPayload(artifacts, schemaVersion)),
+      stableStringify(canonicalManifestPayload(artifacts, schemaVersion, publication)),
     ),
   );
   return {
@@ -328,8 +355,18 @@ async function manifestIdentity(
   };
 }
 
-function requireExactArtifactBytes(objects: ArtifactBytes, schemaVersion: ManifestVersion): void {
-  const expectedNames = artifactNamesForVersion(schemaVersion);
+function expectedArtifactNames(schemaVersion: ManifestVersion, publication?: PublicationMeta): readonly ArtifactName[] {
+  return schemaVersion === 3
+    ? [...V2_ARTIFACT_NAMES, ...publicationArtifactNames(publication!.shards)]
+    : artifactNamesForVersion(schemaVersion);
+}
+
+function requireExactArtifactBytes(
+  objects: ArtifactBytes,
+  schemaVersion: ManifestVersion,
+  publication?: PublicationMeta,
+): void {
+  const expectedNames = expectedArtifactNames(schemaVersion, publication);
   const keys = [...objects.keys()] as string[];
   const unknown = keys.find((name) => !(expectedNames as readonly string[]).includes(name));
   if (unknown) {
@@ -347,13 +384,33 @@ function requireExactArtifactBytes(objects: ArtifactBytes, schemaVersion: Manife
   }
 }
 
+function publicationMeta(value: unknown): PublicationMeta {
+  try {
+    return validatePublicationMeta(value);
+  } catch (error) {
+    throw new ArtifactContractError(
+      "INVALID_MANIFEST",
+      error instanceof PublicationContractError ? error.message : "invalid publication metadata",
+    );
+  }
+}
+
+export interface CreateDataManifestOptions {
+  /** Supplying publication metadata creates a v3 manifest; the objects must then hold the publication artifacts. */
+  publication?: PublicationMeta;
+}
+
 export async function createDataManifest(
   objects: ArtifactBytes,
+  options: CreateDataManifestOptions = {},
 ): Promise<DataManifest> {
-  const schemaVersion = SEASON_ARTIFACT_NAMES.some(name => objects.has(name)) ? 2 : 1;
-  requireExactArtifactBytes(objects, schemaVersion);
+  const publication = options.publication === undefined ? undefined : publicationMeta(options.publication);
+  const schemaVersion: ManifestVersion = publication !== undefined
+    ? 3
+    : SEASON_ARTIFACT_NAMES.some(name => objects.has(name)) ? 2 : 1;
+  requireExactArtifactBytes(objects, schemaVersion, publication);
   const artifacts = await Promise.all(
-    artifactNamesForVersion(schemaVersion).map(async (name): Promise<ArtifactDescriptor> => {
+    expectedArtifactNames(schemaVersion, publication).map(async (name): Promise<ArtifactDescriptor> => {
       const bytes = objects.get(name)!;
       const parsed = parseArtifact(name, bytes);
       return {
@@ -365,7 +422,10 @@ export async function createDataManifest(
       };
     }),
   );
-  const identity = await manifestIdentity(artifacts, schemaVersion);
+  const identity = await manifestIdentity(artifacts, schemaVersion, publication);
+  if (schemaVersion === 3) {
+    return { schemaVersion, ...identity, artifacts, publication: publication! };
+  }
   return {
     schemaVersion,
     ...identity,
@@ -395,14 +455,19 @@ function manifestString(value: unknown, label: string): string {
 
 export async function validateManifest(value: unknown): Promise<DataManifest> {
   const input = manifestRecord(value);
-  if (input.schemaVersion !== 1 && input.schemaVersion !== 2) {
+  if (input.schemaVersion !== 1 && input.schemaVersion !== 2 && input.schemaVersion !== 3) {
     throw new ArtifactContractError(
       "INVALID_MANIFEST",
-      "manifest schemaVersion must be 1 or 2",
+      "manifest schemaVersion must be 1, 2 or 3",
     );
   }
-  const schemaVersion = input.schemaVersion;
-  const expectedNames = artifactNamesForVersion(schemaVersion);
+  const schemaVersion: ManifestVersion = input.schemaVersion;
+  const keys = Object.keys(input).sort().join(",");
+  if (schemaVersion === 3 ? keys !== "artifacts,dataVersion,publication,releaseId,schemaVersion" : input.publication !== undefined) {
+    throw new ArtifactContractError("INVALID_MANIFEST", "manifest has an unexpected key set");
+  }
+  const publication = schemaVersion === 3 ? publicationMeta(input.publication) : undefined;
+  const expectedNames = expectedArtifactNames(schemaVersion, publication);
   if (!Array.isArray(input.artifacts)) {
     throw new ArtifactContractError(
       "INVALID_MANIFEST",
@@ -480,7 +545,7 @@ export async function validateManifest(value: unknown): Promise<DataManifest> {
   }
   const byName = new Map(descriptors.map((item) => [item.name, item]));
   const artifacts = expectedNames.map((name) => byName.get(name)!);
-  const expected = await manifestIdentity(artifacts, schemaVersion);
+  const expected = await manifestIdentity(artifacts, schemaVersion, publication);
   const releaseId = manifestString(input.releaseId, "manifest releaseId");
   const dataVersion = manifestString(input.dataVersion, "manifest dataVersion");
   if (
@@ -492,12 +557,12 @@ export async function validateManifest(value: unknown): Promise<DataManifest> {
       "manifest identity does not match its canonical content",
     );
   }
-  return {
-    schemaVersion,
+  const base = {
     releaseId: releaseId as DataManifest["releaseId"],
     dataVersion: dataVersion as DataManifest["dataVersion"],
     artifacts,
   };
+  return schemaVersion === 3 ? { schemaVersion, ...base, publication: publication! } : { schemaVersion, ...base };
 }
 
 export function validateCrossReferences(
@@ -512,12 +577,45 @@ export function validateCrossReferences(
   });
 }
 
+/** Cross-checks that make a v3 projection part of exactly this release's legacy artifacts and upstream pins. */
+function validatePublicationBinding(
+  manifest: DataManifest & { schemaVersion: 3 },
+  entries: ReadonlyMap<ArtifactName, ParsedArtifact>,
+): PublicationReadModel {
+  const { upstream, shards } = manifest.publication;
+  const digest = (name: ArtifactName) => manifest.artifacts.find((descriptor) => descriptor.name === name)?.sha256;
+  for (const key of ["books-dict", "heroes-dict", "tactics", "teams"] as const) {
+    if (upstream.sources[key] !== digest(key)) {
+      throw new ArtifactContractError("ARTIFACT_MISMATCH", `publication upstream ${key} differs from the release artifact`);
+    }
+  }
+  const family = (prefix: "catalog-entities" | "reference-team-details") =>
+    Array.from({ length: shards[prefix] }, (_, index) => entries.get(`${prefix}-${String(index).padStart(2, "0")}` as ArtifactName)!);
+  try {
+    return buildPublicationReadModel(
+      {
+        entityShards: family("catalog-entities"),
+        registry: entries.get("reference-registry")!,
+        teamIndex: entries.get("reference-team-index")!,
+        detailShards: family("reference-team-details"),
+        routes: entries.get("public-routes")!,
+      },
+      manifest.publication,
+    );
+  } catch (error) {
+    throw new ArtifactContractError(
+      "INVALID_ARTIFACT",
+      error instanceof PublicationContractError ? error.message : "publication projection is invalid",
+    );
+  }
+}
+
 export async function validateDataSnapshot(
   manifestValue: unknown,
   objects: ArtifactBytes,
 ): Promise<DataSnapshot> {
   const manifest = await validateManifest(manifestValue);
-  requireExactArtifactBytes(objects, manifest.schemaVersion);
+  requireExactArtifactBytes(objects, manifest.schemaVersion, manifest.schemaVersion === 3 ? manifest.publication : undefined);
   const parsedEntries = await Promise.all(
     manifest.artifacts.map(async (descriptor) => {
       const bytes = objects.get(descriptor.name)!;
@@ -540,9 +638,12 @@ export async function validateDataSnapshot(
       return [descriptor.name, parsed] as const;
     }),
   );
-  const artifacts = Object.fromEntries(parsedEntries) as unknown as SnapshotArtifacts;
+  const legacyNames: readonly string[] = V2_ARTIFACT_NAMES;
+  const artifacts = Object.fromEntries(
+    parsedEntries.filter(([name]) => legacyNames.includes(name)),
+  ) as unknown as SnapshotArtifacts;
   let seasonModel: SeasonModel | undefined;
-  if (manifest.schemaVersion === 2) {
+  if (manifest.schemaVersion >= 2) {
     try {
       const { "team-tier": _tiers, ...bundle } = artifacts;
       seasonModel = await validateSeasonBundle(bundle);
@@ -559,6 +660,9 @@ export async function validateDataSnapshot(
       throw new ArtifactContractError("INVALID_ARTIFACT", "seasonal artifact contracts are invalid");
     }
   }
+  const publication = manifest.schemaVersion === 3
+    ? validatePublicationBinding(manifest, new Map(parsedEntries))
+    : undefined;
   return {
     releaseId: manifest.releaseId,
     dataVersion: manifest.dataVersion,
@@ -566,5 +670,6 @@ export async function validateDataSnapshot(
     artifacts,
     warnings: validateCrossReferences(artifacts),
     ...(seasonModel === undefined ? {} : { seasonModel }),
+    ...(publication === undefined ? {} : { publication }),
   };
 }

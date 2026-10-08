@@ -1,5 +1,5 @@
 import {
-  artifactNamesForVersion,
+  artifactNamesForManifest,
   ArtifactContractError,
   createDataManifest,
   validateDataSnapshot,
@@ -63,14 +63,13 @@ async function sha256(bytes: Uint8Array): Promise<`sha256:${string}`> {
     .join("")}`;
 }
 
-function requireExactAssets(
+async function requireExactAssets(
   assets: ReadonlyMap<string, Uint8Array>,
-): void {
+): Promise<void> {
   let artifactNames;
   try {
-    const manifest = JSON.parse(textDecoder.decode(assets.get("manifest.json")));
-    if (manifest?.schemaVersion !== 1 && manifest?.schemaVersion !== 2) throw new Error();
-    artifactNames = artifactNamesForVersion(manifest.schemaVersion);
+    const manifest = await validateManifest(JSON.parse(textDecoder.decode(assets.get("manifest.json"))));
+    artifactNames = artifactNamesForManifest(manifest);
   } catch {
     throw new WorkerAssetBuildError("INVALID_RELEASE_EVIDENCE");
   }
@@ -94,7 +93,7 @@ function sameBytes(left: Uint8Array, right: Uint8Array): boolean {
 export async function calculateWorkerAssetInventoryDigest(
   assets: ReadonlyMap<string, Uint8Array>,
 ): Promise<`sha256:${string}`> {
-  requireExactAssets(assets);
+  await requireExactAssets(assets);
   const inventory = await Promise.all(
     [...assets]
       .sort(([left], [right]) => left.localeCompare(right))
@@ -186,19 +185,22 @@ export async function verifyWorkerReleaseEvidence(
     throw new WorkerAssetBuildError("INVALID_RELEASE_EVIDENCE");
   }
   try {
-    requireExactAssets(options.assets);
+    await requireExactAssets(options.assets);
     const manifestBytes = options.assets.get("manifest.json")!;
     const manifest = await validateManifest(
       JSON.parse(textDecoder.decode(manifestBytes)),
     );
     const artifacts: ArtifactBytes = new Map(
-      artifactNamesForVersion(manifest.schemaVersion).map((name) => [
+      artifactNamesForManifest(manifest).map((name) => [
         name,
         options.assets.get(`${name}.json`),
       ] as [ArtifactName, Uint8Array]),
     );
     await validateDataSnapshot(manifest, artifacts);
-    const canonicalManifest = await createDataManifest(artifacts);
+    const canonicalManifest = await createDataManifest(
+      artifacts,
+      manifest.schemaVersion === 3 ? { publication: manifest.publication } : {},
+    );
     const canonicalManifestBytes = new TextEncoder().encode(
       `${stableStringify(canonicalManifest)}\n`,
     );
