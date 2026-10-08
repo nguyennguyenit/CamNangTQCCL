@@ -1,5 +1,7 @@
 # Multi-Source Research And Logic Checks
 
+Web/meta research is owned by `tqccl-research` (shared budget and claim statuses apply); the coexist skill only uses the Logic Sanity Checklist below directly.
+
 Use this reference when a recommendation needs evidence beyond project data, especially battle reports, cross-server meta, or tactic mechanics.
 
 ## Source And Language Coverage

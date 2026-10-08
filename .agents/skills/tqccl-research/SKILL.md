@@ -20,6 +20,14 @@ This skill handles exactly three intents:
 Technology research, product research, and general web research are outside this
 skill. Route them elsewhere instead of stretching this workflow.
 
+Routing inside the TQCCL skills: a request only to view the catalog or a source team
+goes to `tqccl-lookup`; building a lineup from the user's roster goes to
+`tqccl-coexist-team-builder`; verifying a mechanic, meta or source stays here. Hand off
+through the shared work packet
+([schema](../../../agent-knowledge/schemas/work-packet.schema.json)) carrying scope,
+`versions`, `appliedRuleIds` and the same budget ledger; state when the host cannot
+dispatch instead of claiming a handoff.
+
 ## Workflow
 
 ### 1. Lock the topic and scope
@@ -46,6 +54,17 @@ skill. Route them elsewhere instead of stretching this workflow.
   displays. Runtime data can prove project state, but it is not independent
   evidence of a game mechanic.
 - Do not restore an older conclusion merely because it appears in a stale report.
+- To learn what the website currently shows (catalog entries, source reference
+  teams), use the lookup/reference tools (`tqccl_search`, `tqccl_get_entity`,
+  `tqccl_find_teams`, `tqccl_get_team`) or their CLI aliases. Label the result a
+  project-runtime observation; it is never independent evidence for a mechanic or
+  meta, which still needs the real sources of Step 5.
+- Version/rules via MCP: call `tqccl_get_playbook` at most once per topic, as the
+  first MCP call, to get versions, capabilities and the required rules. Over a
+  remote MCP it is an external operation and counts in the shared budget below. With a
+  local repo prefer the CLI (`cd mcp-worker && npm run cli -- playbook --input '<json>'`),
+  which is local and not counted. Required rules it returns still apply, including
+  correction history, even when no guidance matches the query.
 
 ### 3. Plan sources from project authority
 
@@ -71,7 +90,10 @@ Count every external operation in the same ledger, including:
 - search, page open, raw request, API or orchestrator call;
 - child-agent research and every external call made by that child;
 - image, video, browser, transcript, or media retrieval;
-- an authorized external handoff or dispatch action.
+- an authorized external handoff or dispatch action;
+- every call to a remote MCP endpoint (`tqccl_get_playbook`, lookup, reference,
+  recommend tools), even though the endpoint serves repo data. Local CLI and
+  file reads are free.
 
 Local file reads, local search, parsing, and reasoning are free. Before each
 external operation, verify that budget remains. Never reset the ledger for a

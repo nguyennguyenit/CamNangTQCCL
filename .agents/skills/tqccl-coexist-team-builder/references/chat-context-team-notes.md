@@ -1,5 +1,7 @@
 # Chat Context Team Notes
 
+> **Historical context of one past account, not a default.** Do not apply it to new users or sessions, and do not treat it as a known roster. Use it only when the user explicitly says it is their own prior context, then verify against their current roster.
+
 These notes summarize reusable account/team context from the conversation that created this skill. Treat them as prior context, not immutable truth. If the user posts newer screenshots, the newer screenshots win.
 
 ## Current Four-Team Baseline From Chat
