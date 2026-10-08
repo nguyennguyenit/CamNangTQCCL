@@ -321,7 +321,8 @@ describe("registry công cụ MCP", () => {
       structuredContent: {
         error: {
           code: "INVALID_REQUEST",
-          message: "Yêu cầu không hợp lệ. Trường sai: query.",
+          message:
+            "Yêu cầu không hợp lệ. Trường sai: query, input. Có trường không có trong schema; chỉ gửi các trường được khai báo.",
           nextAction: "Kiểm tra input theo schema công cụ rồi thử lại.",
           retryable: false,
         },

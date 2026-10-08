@@ -70,6 +70,7 @@ function withHeroFamilies(ctx: ToolContext, observations: readonly HeroObservati
 
 async function handleNormalize(ctx: ToolContext, rawInput: unknown): Promise<unknown> {
   const input = parseToolInput(RESEARCH_CONTRACTS.tqccl_normalize_entities.input as ZodType<Record<string, unknown>>, rawInput);
+  ctx.ensureExpectedWorkflow(input.expectedWorkflowVersion as string | undefined);
   const seasonContext = input.seasonContext as { scenarioId: string; rulesetId: string } | undefined;
   if (seasonContext) {
     const model = ctx.snapshot.seasonModel;

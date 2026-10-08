@@ -181,7 +181,7 @@ describe("parity của bảy công cụ qua stdio và HTTP", () => {
       const [block] = stdio.content as Array<{ type: string; text: string }>;
       expect(block?.type).toBe("text");
       expect(block?.text).toMatch(
-        /^TQCCL_ERROR:INVALID_REQUEST\. Yêu cầu không hợp lệ\.( Trường sai: [^.]+\.)? Kiểm tra input theo schema công cụ rồi thử lại\.$/u,
+        /^TQCCL_ERROR:INVALID_REQUEST\. Yêu cầu không hợp lệ\. Trường sai: [^.]*\binput\b[^.]*\. Có trường không có trong schema; chỉ gửi các trường được khai báo\. Kiểm tra input theo schema công cụ rồi thử lại\.$/u,
       );
       expect(stdio.structuredContent).toEqual(http.structuredContent);
       // Danh sách field khác nhau giữa các tool vì schema khác nhau; phần còn
@@ -197,8 +197,9 @@ describe("parity của bảy công cụ qua stdio và HTTP", () => {
         retryable: false,
       });
       expect(message).toMatch(
-        /^Yêu cầu không hợp lệ\.( Trường sai: [^.]+\.)?$/u,
+        /^Yêu cầu không hợp lệ\. Trường sai: [^.]*\binput\b[^.]*\. Có trường không có trong schema; chỉ gửi các trường được khai báo\.$/u,
       );
+      expect(fields).toContain("input");
       for (const field of (fields ?? []) as string[]) {
         // Tên field do schema định nghĩa, không bao giờ là khoá client gửi lên.
         expect(field).toMatch(/^[A-Za-z0-9_]+(\[\d+\]|\.[A-Za-z0-9_]+)*$/u);

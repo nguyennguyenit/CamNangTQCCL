@@ -1,6 +1,6 @@
 import { z } from "zod";
 import {
-  MAX_NORMALIZE_REQUEST_BYTES, boundedRequest, canonicalStateSchema, commonResultSchema, confirmationBindingSchema, seasonContextSchema, seasonId, structuredObservationSchema,
+  MAX_NORMALIZE_REQUEST_BYTES, boundedRequest, canonicalStateSchema, commonResultSchema, confirmationBindingSchema, seasonContextSchema, seasonId, structuredObservationSchema, workflowVersion,
 } from "./shared-schemas.js";
 import { findTeamsInputSchema, findTeamsOutputSchema, getTeamInputSchema, getTeamOutputSchema } from "./team-handlers.js";
 import { getEntityInputSchema, getEntityOutputSchema, searchInputSchema, searchOutputSchema } from "./catalog-handlers.js";
@@ -10,6 +10,7 @@ export { MAX_REQUEST_BYTES, canonicalStateSchema, confirmationBindingSchema, sea
 
 const normalizeInputSchema = z
   .object({
+    expectedWorkflowVersion: workflowVersion.optional(),
     seasonContext: seasonContextSchema.optional(),
     observations: z
       .array(structuredObservationSchema)

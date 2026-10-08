@@ -50,3 +50,32 @@ describe("tqccl_normalize_entities hero family", () => {
     ).rejects.toMatchObject({ code: "INVALID_REQUEST", fields: ["observations[0].familyId"] });
   });
 });
+
+describe("tqccl_normalize_entities request contract", () => {
+  const observation = { observationId: "o1", entityKind: "hero" as const, canonicalId: "hero:tao-thao" as const, evidence };
+
+  it("nhận expectedWorkflowVersion như sáu tool còn lại; lệch thì WORKFLOW_VERSION_CHANGED", async () => {
+    const first = await realHandlers().call("tqccl_normalize_entities", { observations: [observation] });
+    const pinned = await realHandlers().call("tqccl_normalize_entities", {
+      expectedWorkflowVersion: first.workflowVersion,
+      observations: [observation],
+    });
+    expect(pinned.confirmationBinding).toEqual(first.confirmationBinding);
+
+    await expect(
+      realHandlers().call("tqccl_normalize_entities", {
+        expectedWorkflowVersion: `${first.workflowVersion}x`,
+        observations: [observation],
+      }),
+    ).rejects.toMatchObject({ code: "WORKFLOW_VERSION_CHANGED" });
+  });
+
+  it("key lạ ở gốc báo field `input` và nói rõ là trường ngoài schema, không lặp tên key client tự đặt", async () => {
+    const error = await realHandlers()
+      .call("tqccl_normalize_entities", { observations: [observation], tacticAssignments: [] } as never)
+      .catch((caught: unknown) => caught);
+    expect(error).toMatchObject({ code: "INVALID_REQUEST", fields: ["input"] });
+    expect((error as Error).message).toContain("không có trong schema");
+    expect((error as Error).message).not.toContain("tacticAssignments");
+  });
+});
