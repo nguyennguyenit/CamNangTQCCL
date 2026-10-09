@@ -39,6 +39,62 @@ interface HeroObservationInput {
   entityKind?: unknown;
   canonicalId?: unknown;
   familyId?: unknown;
+  observedText?: unknown;
+  displayName?: unknown;
+  reviewRequired?: unknown;
+  candidates?: unknown;
+}
+
+const MAX_NAME_SUGGESTIONS = 5;
+
+/**
+ * Observation chỉ có tên (thiếu canonicalId) được tra bằng lõi search của trang Tra cứu, chỉ nhận khớp đúng tên:
+ * đúng một mục → gán canonicalId; tên bản thường của tộc còn bản 40Y/SP/CO, hoặc nhiều mục cùng tên → ambiguous
+ * kèm mọi bản; không khớp đúng → unknown kèm tối đa 5 gợi ý khớp một phần. Agent gửi canonicalId, candidates
+ * hay reviewRequired thì giữ nguyên. Chỉ tra trong ID mà snapshot nhận (searchEntries).
+ */
+function withResolvedNames(ctx: ToolContext, observations: readonly HeroObservationInput[]): HeroObservationInput[] {
+  const needsLookup = (observation: HeroObservationInput) =>
+    (observation.entityKind === "hero" || observation.entityKind === "tactic") &&
+    observation.canonicalId === undefined &&
+    observation.reviewRequired === undefined &&
+    observation.candidates === undefined &&
+    typeof (observation.observedText ?? observation.displayName) === "string";
+  if (!observations.some(needsLookup)) return [...observations];
+  const pub = ctx.publication();
+  const known = new Map<string, string>();
+  const variantsByFamily = new Map<string, string[]>();
+  for (const entry of ctx.index.searchEntries) {
+    if (entry.kind !== "hero" && entry.kind !== "tactic") continue;
+    known.set(entry.canonicalId, entry.displayName);
+    if (entry.kind !== "hero") continue;
+    const family = heroFamilyId(entry.displayName);
+    variantsByFamily.set(family, [...(variantsByFamily.get(family) ?? []), entry.canonicalId]);
+  }
+  return observations.map((observation) => {
+    if (!needsLookup(observation)) return observation;
+    const kind = observation.entityKind as "hero" | "tactic";
+    const name = String(observation.observedText ?? observation.displayName);
+    const matches = pub
+      .searchCatalog(name, { kinds: [kind], limit: 100 })
+      .items.filter(({ entity }) => known.has(entity.id));
+    const exact = [...new Set(matches.filter(({ score }) => score === 3).map(({ entity }) => entity.id))];
+    if (exact.length === 0) {
+      const candidates = [...new Set(matches.map(({ entity }) => entity.id))].slice(0, MAX_NAME_SUGGESTIONS);
+      return { ...observation, candidates };
+    }
+    if (exact.length > 1) return { ...observation, reviewRequired: true, candidates: exact.sort() };
+    const canonicalId = exact[0]!;
+    if (kind === "hero") {
+      // Bản thường có canonicalId trùng slug của family (hero-identity); 40Y/SP/CO thì không.
+      const family = heroFamilyId(known.get(canonicalId)!);
+      const variants = variantsByFamily.get(family) ?? [];
+      if (canonicalId.slice("hero:".length) === family.slice("hero-family:".length) && variants.length > 1) {
+        return { ...observation, reviewRequired: true, candidates: [...variants].sort() };
+      }
+    }
+    return { ...observation, canonicalId, displayName: observation.displayName ?? known.get(canonicalId) };
+  });
 }
 
 /**
@@ -80,7 +136,7 @@ async function handleNormalize(ctx: ToolContext, rawInput: unknown): Promise<unk
   }
   const normalized = await normalizeObservations({
     workflowVersion: ctx.workflowVersion,
-    observations: withHeroFamilies(ctx, input.observations as HeroObservationInput[]) as never,
+    observations: withHeroFamilies(ctx, withResolvedNames(ctx, input.observations as HeroObservationInput[])) as never,
     ...(seasonContext ? { seasonContext } : {}),
   });
   return {

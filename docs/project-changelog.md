@@ -6,10 +6,12 @@
 
 - **Hạn mức skill `tqccl-research`** (user chốt sau debate `research-budget-1`): một ledger/topic với hai hạn mức — nguồn ngoài ≤5 (web, browser, media, child agent, MCP/API khác) và MCP TQCCL ≤5 (playbook ≤1, tool TQCCL khác ≤4, kể cả retry). Trước đây lượt MCP TQCCL remote ăn vào 5 lượt chung. Rule `shared-research-budget`, `budget-counts-all-external-ops`, `budget-report-ledger`, `research-playbook-once-per-topic` lên revision 2.
 - **Skill `tqccl-coexist-team-builder`**: chưa có kho thì chỉ hỏi kho; normalize xong phải dừng chờ xác nhận ở lượt riêng rồi mới recommend; báo đủ portfolio, đội tranh tài nguyên, đội thiếu món; món bù chỉ từ `substitutes[]` trong kho. Rule `known-roster`, `review-canonical-state`, `coexist-show-duplicate-tactics`, `coexist-substitution-weaker-variant` lên revision 2.
+- **Skill `tqccl-lookup`**: tên đầy đủ không ra kết quả thì thử tối đa 2 lần nữa (tên Hán, sửa dấu/khoảng trắng) rồi kết luận không có trong cẩm nang (Dewee R2b case 11 gọi `tqccl_search` 16 lần). Skill coexist gửi cả kho một lần bằng `observedText`, không search từng món.
 
 ### Added
 
 - **`conflictedTeams`** trong kết quả `recommendRoster` (engine dùng chung `js/team-recommend-engine.js`) và `tqccl_recommend_teams`: đội đủ kho khi đứng riêng nhưng không vào danh sách vì dùng chung tướng/chiến pháp với đội đã chọn, kèm món tranh chấp và đội đang giữ. Trước đây các đội này chỉ nằm trong `diagnostics.prunedCandidates` nội bộ nên agent ghi "0 xung đột" (Dewee R2 case 18). Đội bị loại chỉ vì hết chỗ không vào danh sách này. Website chưa hiển thị trường mới.
+- **`tqccl_normalize_entities` tự tra tên.** Observation chỉ có `observedText`/`displayName` (không `canonicalId`, `candidates`, `reviewRequired`) được tra bằng lõi search của trang Tra cứu, chỉ nhận khớp đúng tên: một mục → gán `canonicalId`; tên bản thường mà tộc còn bản 40Y/SP/CO, hoặc nhiều mục cùng tên → `ambiguous` kèm mọi bản; không khớp → `unknown` kèm tối đa 5 gợi ý khớp một phần. Trước đây observation thiếu `canonicalId` luôn ra `unknown`, nên agent phải search từng tướng/chiến pháp (Dewee R2b case 18 lượt 1: 2 normalize hỏng + 16 search). Snapshot v1/v2 (không có publication) gửi tên thì trả `CAPABILITY_UNAVAILABLE`.
 
 ## 2026-10-08 (MCP + skill: snapshot v3, bề mặt 7 tool P*, knowledge dataset, skill làm lại — CHƯA deploy)
 

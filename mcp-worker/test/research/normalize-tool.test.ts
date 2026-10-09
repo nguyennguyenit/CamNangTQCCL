@@ -51,6 +51,82 @@ describe("tqccl_normalize_entities hero family", () => {
   });
 });
 
+describe("tqccl_normalize_entities name resolution", () => {
+  const text = (observationId: string, entityKind: "hero" | "tactic", observedText: string) => ({
+    observationId,
+    entityKind,
+    observedText,
+    evidence: { batchId: "turn-1", sourceScope: "currentTurnImage" as const },
+  });
+  const unresolvedOf = (result: { canonicalState: { unresolved?: unknown[] | undefined } }) =>
+    Object.fromEntries(
+      ((result.canonicalState.unresolved ?? []) as Array<{ observationId: string; reason: string; candidates: string[] }>).map(
+        ({ observationId, reason, candidates }) => [observationId, { reason, candidates: [...candidates].sort() }],
+      ),
+    );
+
+  it("tên gõ khớp đúng một tướng/chiến pháp (kể cả bản 40Y/SP/CO ghi rõ) được nhận luôn, không cần tqccl_search", async () => {
+    const result = await realHandlers().call("tqccl_normalize_entities", {
+      observations: [
+        text("h1", "hero", "40Y Lữ Bố"),
+        text("h2", "hero", "vương dị"),
+        text("h3", "hero", "CO Đại Kiều"),
+        text("t1", "tactic", "Mê Hoặc"),
+        text("t2", "tactic", "Hổ Báo Kỵ"),
+      ],
+    });
+
+    expect(result.canonicalState.heroes.map(({ canonicalId, familyId }) => [canonicalId, familyId])).toEqual([
+      ["hero:40y-lu-bo", heroFamilyId("Lữ Bố")],
+      ["hero:co-dai-kieu", heroFamilyId("Đại Kiều")],
+      ["hero:vuong-di", heroFamilyId("Vương Dị")],
+    ]);
+    expect(result.canonicalState.heroes.find(({ canonicalId }) => canonicalId === "hero:vuong-di")?.displayName).toBe("Vương Dị");
+    expect(result.canonicalState.tactics.map(({ canonicalId }) => canonicalId)).toEqual(["tactic:ho-bao-ky", "tactic:me-hoac"]);
+    expect(result.canonicalState.unresolved).toEqual([]);
+    expect(result.reviewRequired).toBe(false);
+  });
+
+  it("tên bản thường khi tộc còn bản 40Y/SP/CO → ambiguous kèm mọi bản, không tự chọn", async () => {
+    const result = await realHandlers().call("tqccl_normalize_entities", {
+      observations: [text("h1", "hero", "Lữ Bố"), text("h2", "hero", "Pháp Chính"), text("h3", "hero", "Tiểu Kiều")],
+    });
+
+    expect(result.canonicalState.heroes).toEqual([]);
+    expect(unresolvedOf(result)).toEqual({
+      h1: { reason: "ambiguous", candidates: ["hero:40y-lu-bo", "hero:lu-bo"] },
+      h2: { reason: "ambiguous", candidates: ["hero:phap-chinh", "hero:sp-phap-chinh"] },
+      h3: { reason: "ambiguous", candidates: ["hero:co-tieu-kieu", "hero:tieu-kieu"] },
+    });
+    expect(result.reviewRequired).toBe(true);
+  });
+
+  it("tên không khớp đúng → unknown, gợi ý từ lõi search nếu có khớp một phần; sai loại không lấy", async () => {
+    const result = await realHandlers().call("tqccl_normalize_entities", {
+      observations: [text("t1", "tactic", "Phong Hỏa Liên Thiên"), text("t2", "tactic", "Hỏa Thiêu"), text("h1", "hero", "Mê Hoặc")],
+    });
+
+    const unresolved = unresolvedOf(result);
+    expect(unresolved.t1).toEqual({ reason: "unknown", candidates: [] });
+    expect(unresolved.t2?.reason).toBe("unknown");
+    expect(unresolved.t2?.candidates).toContain("tactic:hoa-thieu-lien-doanh");
+    expect(unresolved.t2?.candidates.every((id) => id.startsWith("tactic:"))).toBe(true);
+    expect(unresolved.h1).toEqual({ reason: "unknown", candidates: [] });
+  });
+
+  it("canonicalId agent gửi vẫn thắng tên; candidates/reviewRequired agent gửi giữ nguyên", async () => {
+    const result = await realHandlers().call("tqccl_normalize_entities", {
+      observations: [
+        { ...text("h1", "hero", "Lữ Bố"), canonicalId: "hero:lu-bo" },
+        { ...text("h2", "hero", "Pháp Chính"), reviewRequired: true, candidates: ["hero:phap-chinh"] },
+      ],
+    });
+
+    expect(result.canonicalState.heroes.map(({ canonicalId }) => canonicalId)).toEqual(["hero:lu-bo"]);
+    expect(unresolvedOf(result)).toEqual({ h2: { reason: "ambiguous", candidates: ["hero:phap-chinh"] } });
+  });
+});
+
 describe("tqccl_normalize_entities request contract", () => {
   const observation = { observationId: "o1", entityKind: "hero" as const, canonicalId: "hero:tao-thao" as const, evidence };
 
