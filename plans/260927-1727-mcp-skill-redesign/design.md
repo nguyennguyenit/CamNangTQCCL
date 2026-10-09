@@ -174,9 +174,9 @@ Reference account cũ chỉ là bối cảnh lịch sử có xuất xứ, không
 
 ### `tqccl-research` — giữ purpose, bổ sung đường dữ liệu
 
-Giữ ba intent, ba claim statuses, SGSDeck anchor, region/preview discipline, correction history và **5 external calls/topic**. Dùng lookup/reference tools để xác định điều website đang hiển thị; đọc nguồn thực để kết luận mechanic/meta.
+Giữ ba intent, ba claim statuses, SGSDeck anchor, region/preview discipline và correction history. Hạn mức (user 2026-10-09): một ledger/topic với hai hạn mức — **nguồn ngoài ≤5** (web, browser, media, child agent, MCP/API khác) và **MCP TQCCL ≤5** (playbook ≤1, tool khác ≤4, kể cả retry). Dùng lookup/reference tools để xác định điều website đang hiển thị; đọc nguồn thực để kết luận mechanic/meta.
 
-- Local filesystem/CLI reads là local operations; MCP qua remote là external operation và được tính vào ledger hiện có. Không tự miễn budget vì endpoint chứa dữ liệu của repo.
+- Local filesystem/CLI reads là local operations, miễn phí; MCP TQCCL qua remote tính vào hạn mức MCP TQCCL, không ăn vào hạn mức nguồn ngoài. Lý do: lượt MCP nhanh (~18 ms qua stdio) nhưng output lớn (playbook ~34k ký tự), nên vẫn cần trần riêng ([R2](reports/r2-dewee-2026-10-09.md), debate `research-budget-1`).
 - Ghi rõ provenance của runtime observation so với independent source evidence.
 - Khi user chỉ muốn xem catalog, route lookup; muốn xếp đội từ kho, route coexist; muốn kiểm chứng cơ chế, stay research.
 - Không nâng Phase 2/3 cũ thành đạt. Candidate mới cần instruction hash mới, baseline có provenance và rerun phần ảnh hưởng; không tái dùng capture của hash cũ như validation mới.

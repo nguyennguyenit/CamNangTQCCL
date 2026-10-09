@@ -211,7 +211,25 @@ describe("tqccl_recommend_teams output", () => {
       expect(["available", "none-in-box", "incompatible"]).toContain(slot.substituteStatus);
       expect(slot.substituteStatus === "available").toBe(slot.substitutes.length > 0);
     }
-    expect(output.omittedCounts).toEqual({ blockedStrongTeams: expect.any(Number), incompatibleTeams: expect.any(Number) });
+    expect(output.omittedCounts).toEqual({
+      blockedStrongTeams: expect.any(Number),
+      incompatibleTeams: expect.any(Number),
+      conflictedTeams: expect.any(Number),
+    });
+  });
+
+  it("names a fully owned team left out for sharing tactics with a picked team, with the shared tactics and holder", async () => {
+    // Dewee R2 case 18: kho đủ cho cả hai đội nhưng chỉ có 1 bản Đương Phong Thôi Quyết và Lâm Nguy Cứu Chủ.
+    const roster = rosterOfTeams(seasonTeams("og-兵演春秋", ["og-bingyan-40y-lvbu-b", "og-bingyan-wunv-cavalry-hubaoqi"]));
+    const output = await handleRecommendTeams(ctx, { ...(await confirmed(ctx, roster)), sourceSeasonId: "og-兵演春秋" });
+
+    expect(output.portfolioTeams.map((team) => team.reference)).toContainEqual({ collection: "recommended", sourceConfigId: "og-bingyan-40y-lvbu-b" });
+    const conflicted = output.conflictedTeams.find((team) => team.teamId === "og-bingyan-wunv-cavalry-hubaoqi");
+    expect(conflicted?.reference).toEqual({ collection: "recommended", sourceConfigId: "og-bingyan-wunv-cavalry-hubaoqi" });
+    const holder = { name: "40Y Lữ Bố Cung (Vương Dị, Pháp Chính)", reference: { collection: "recommended", sourceConfigId: "og-bingyan-40y-lvbu-b" } };
+    expect([...conflicted!.sharedTactics].sort((a, b) => a.tactic.localeCompare(b.tactic))).toEqual(
+      [{ tactic: "Lâm Nguy Cứu Chủ", usedBy: holder }, { tactic: "Đương Phong Thôi Quyết", usedBy: holder }].sort((a, b) => a.tactic.localeCompare(b.tactic)),
+    );
   });
 
   it("applies a chosen substitute as a labelled variant that keeps the original tier and loses the score", async () => {

@@ -1,5 +1,16 @@
 # Project Changelog
 
+## 2026-10-09 (Sau đo Dewee R2: hạn mức research, skill coexist, đội tranh tài nguyên)
+
+### Changed
+
+- **Hạn mức skill `tqccl-research`** (user chốt sau debate `research-budget-1`): một ledger/topic với hai hạn mức — nguồn ngoài ≤5 (web, browser, media, child agent, MCP/API khác) và MCP TQCCL ≤5 (playbook ≤1, tool TQCCL khác ≤4, kể cả retry). Trước đây lượt MCP TQCCL remote ăn vào 5 lượt chung. Rule `shared-research-budget`, `budget-counts-all-external-ops`, `budget-report-ledger`, `research-playbook-once-per-topic` lên revision 2.
+- **Skill `tqccl-coexist-team-builder`**: chưa có kho thì chỉ hỏi kho; normalize xong phải dừng chờ xác nhận ở lượt riêng rồi mới recommend; báo đủ portfolio, đội tranh tài nguyên, đội thiếu món; món bù chỉ từ `substitutes[]` trong kho. Rule `known-roster`, `review-canonical-state`, `coexist-show-duplicate-tactics`, `coexist-substitution-weaker-variant` lên revision 2.
+
+### Added
+
+- **`conflictedTeams`** trong kết quả `recommendRoster` (engine dùng chung `js/team-recommend-engine.js`) và `tqccl_recommend_teams`: đội đủ kho khi đứng riêng nhưng không vào danh sách vì dùng chung tướng/chiến pháp với đội đã chọn, kèm món tranh chấp và đội đang giữ. Trước đây các đội này chỉ nằm trong `diagnostics.prunedCandidates` nội bộ nên agent ghi "0 xung đột" (Dewee R2 case 18). Đội bị loại chỉ vì hết chỗ không vào danh sách này. Website chưa hiển thị trường mới.
+
 ## 2026-10-08 (MCP + skill: snapshot v3, bề mặt 7 tool P*, knowledge dataset, skill làm lại — CHƯA deploy)
 
 ### Changed

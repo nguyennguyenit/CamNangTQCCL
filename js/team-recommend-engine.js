@@ -683,6 +683,7 @@ export function recommendTeams({
   );
 
   const eligible = [];
+  const builtByCandidate = new Map();
   const blockedStrongTeams = [];
   const incompatibleTeams = [];
   for (const candidate of candidates) {
@@ -748,6 +749,7 @@ export function recommendTeams({
       continue;
     }
     candidate.substituted = built.tacticUse.substitutions.length > 0;
+    builtByCandidate.set(candidate, built);
     eligible.push(candidate);
   }
 
@@ -781,11 +783,11 @@ export function recommendTeams({
     diagnostics.searchedCandidates = eligible.length;
   }
 
+  const inPortfolio = (candidate) =>
+    portfolio.some((entry) => candidate.seasonContext ? entry.candidateKey === candidate.candidateKey : entry.team?.id === candidate.team.id);
+
   diagnostics.prunedCandidates = candidates
-    .filter(
-      (candidate) =>
-        !portfolio.some((entry) => candidate.seasonContext ? entry.candidateKey === candidate.candidateKey : entry.team?.id === candidate.team.id),
-    )
+    .filter((candidate) => !inPortfolio(candidate))
     .slice(0, 20)
     .map((candidate) => ({
       teamId: candidate.team.id,
@@ -793,12 +795,47 @@ export function recommendTeams({
       reason: "conflict-or-lower-rank",
     }));
 
+  // Đội đủ kho (tự xây được khi đứng riêng) nhưng không vào danh sách vì dùng chung tướng/chiến pháp với đội đã
+  // chọn: nêu món tranh chấp và đội đang giữ để người dùng thấy cái giá của lựa chọn. Đội bị loại chỉ vì hết chỗ
+  // (không tranh gì) không thuộc nhóm này.
+  const heroOwner = new Map();
+  const tacticOwner = new Map();
+  for (const entry of portfolio) {
+    for (const hero of entry.heroAssignments || []) heroOwner.set(hero.canonicalId, entry.team.id);
+    for (const tactic of entry.tacticSelections || []) {
+      if (!tactic.unresolved) tacticOwner.set(tactic.selectedTacticId, entry.team.id);
+    }
+    if (entry.locked) for (const tactic of entry.selectedTactics || []) tacticOwner.set(canonicalOwnedTactic(tactic), entry.team.id);
+  }
+  const conflictedTeams = eligible
+    .filter((candidate) => !inPortfolio(candidate))
+    .map((candidate) => {
+      const built = builtByCandidate.get(candidate);
+      return {
+        team: candidate.team,
+        ...candidateMetadata(candidate),
+        tier: candidate.tier,
+        sharedHeroes: built.heroUse.assignments
+          .filter((hero) => heroOwner.has(hero.canonicalId))
+          .map((hero) => ({ hero: hero.displayName, heroId: hero.canonicalId, usedBy: heroOwner.get(hero.canonicalId) })),
+        sharedTactics: built.tacticUse.selections
+          .filter((tactic) => !tactic.unresolved && tacticOwner.has(tactic.selectedTacticId))
+          .map((tactic) => ({
+            tactic: tactic.selectedTactic,
+            tacticId: tactic.selectedTacticId,
+            usedBy: tacticOwner.get(tactic.selectedTacticId),
+          })),
+      };
+    })
+    .filter((entry) => entry.sharedHeroes.length > 0 || entry.sharedTactics.length > 0);
+
   return {
     portfolioTeams: portfolio,
     addTeams: portfolio.filter((entry) => !entry.locked),
     blockedStrongTeams,
     // Đội đủ tướng và món nhưng món bù đã chọn vi phạm luật đội: tách khỏi "thiếu món".
     incompatibleTeams,
+    conflictedTeams,
     diagnostics,
   };
 }

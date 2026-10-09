@@ -21,6 +21,7 @@ import { enforceResultSize, parseToolInput, type ToolContext } from "./tool-cont
 
 const MAX_BLOCKED = 10;
 const MAX_INCOMPATIBLE = 10;
+const MAX_CONFLICTED = 10;
 const MAX_OUTPUT_CHARS = 38_000;
 
 type Rec = Record<string, any>;
@@ -144,6 +145,28 @@ const incompatibleEntrySchema = z
     reference: referenceSchema.describe("Selector cho tqccl_get_team."),
   })
   .strict();
+const conflictHolderSchema = z
+  .object({
+    name: boundedText.describe("Tên đội đã chọn đang giữ món."),
+    reference: referenceSchema.describe("Selector cho tqccl_get_team (null nếu là đội khóa)."),
+  })
+  .strict();
+const conflictedEntrySchema = z
+  .object({
+    teamId: boundedText.describe("ID đội."),
+    name: boundedText.describe("Tên."),
+    tier: boundedText.describe("Bậc."),
+    sharedHeroes: z
+      .array(z.object({ hero: boundedText.describe("Tướng dùng chung."), usedBy: conflictHolderSchema }).strict())
+      .max(3)
+      .describe("Tướng đội này cần nhưng đội đã chọn đang dùng."),
+    sharedTactics: z
+      .array(z.object({ tactic: boundedText.describe("Chiến pháp dùng chung."), usedBy: conflictHolderSchema }).strict())
+      .max(6)
+      .describe("Chiến pháp đội này cần nhưng đội đã chọn đang dùng (kho chỉ có một bản)."),
+    reference: referenceSchema.describe("Selector cho tqccl_get_team."),
+  })
+  .strict();
 
 export const recommendTeamsOutputSchema = commonResultSchema
   .extend({
@@ -157,10 +180,15 @@ export const recommendTeamsOutputSchema = commonResultSchema
     portfolioTeams: z.array(portfolioEntrySchema).max(10).describe("Đội xếp được, theo thứ tự ưu tiên."),
     blockedStrongTeams: z.array(blockedEntrySchema).max(MAX_BLOCKED).describe("Đội mạnh còn thiếu tướng hoặc chiến pháp."),
     incompatibleTeams: z.array(incompatibleEntrySchema).max(MAX_INCOMPATIBLE).describe("Đội đủ tướng và món nhưng món bù phạm luật đội."),
+    conflictedTeams: z
+      .array(conflictedEntrySchema)
+      .max(MAX_CONFLICTED)
+      .describe("Đội đủ kho khi đứng riêng nhưng không vào danh sách vì dùng chung tướng/chiến pháp với đội đã chọn."),
     omittedCounts: z
       .object({
         blockedStrongTeams: z.number().int().nonnegative().describe("Đội mạnh còn thiếu tướng hoặc chiến pháp."),
         incompatibleTeams: z.number().int().nonnegative().describe("Đội đủ tướng và món nhưng món bù phạm luật đội."),
+        conflictedTeams: z.number().int().nonnegative().describe("Đội đủ kho bị loại vì tranh tướng/chiến pháp."),
       })
       .strict()
       .describe("Số mục bị bỏ để vừa giới hạn kích thước."),
@@ -416,6 +444,19 @@ export async function handleRecommendTeams(ctx: ToolContext, rawInput: unknown):
     reference: referenceOf({ ...entry, source: "team" }),
   }));
 
+  const holders = new Map<string, z.infer<typeof conflictHolderSchema>>(
+    portfolio.map((entry: Rec) => [text(entry.team?.id), { name: text(entry.team?.name), reference: referenceOf(entry) }]),
+  );
+  const holderOf = (teamId: unknown) => holders.get(text(teamId)) ?? { name: text(teamId), reference: null };
+  const conflictedAll: Rec[] = result.conflictedTeams ?? [];
+  const conflictedTeams = conflictedAll.slice(0, MAX_CONFLICTED).map((entry) => ({
+    teamId: text(entry.team?.id),
+    name: text(entry.team?.name),
+    tier: text(entry.tier),
+    sharedHeroes: (entry.sharedHeroes ?? []).map((item: Rec) => ({ hero: text(item.hero), usedBy: holderOf(item.usedBy) })),
+    sharedTactics: (entry.sharedTactics ?? []).map((item: Rec) => ({ tactic: text(item.tactic), usedBy: holderOf(item.usedBy) })),
+    reference: referenceOf({ ...entry, source: "team" }),
+  }));
   const warnings = [...ctx.snapshot.warnings];
   if (season.teams.length === 0) warnings.push("season-has-no-mapped-source-teams");
   if (result.legacyUsed === true) warnings.push("legacy-engine-teams-used");
@@ -438,9 +479,11 @@ export async function handleRecommendTeams(ctx: ToolContext, rawInput: unknown):
     portfolioTeams,
     blockedStrongTeams,
     incompatibleTeams,
+    conflictedTeams,
     omittedCounts: {
       blockedStrongTeams: Math.max(0, blockedAll.length - blockedStrongTeams.length),
       incompatibleTeams: Math.max(0, incompatibleAll.length - incompatibleTeams.length),
+      conflictedTeams: Math.max(0, conflictedAll.length - conflictedTeams.length),
     },
     tacticOverrides: {
       requested: overrides.length,
@@ -454,16 +497,24 @@ export async function handleRecommendTeams(ctx: ToolContext, rawInput: unknown):
       searchedCandidates: Number(result.diagnostics?.searchedCandidates ?? 0),
     },
   } as RecommendTeamsOutput;
-  output.truncated = output.omittedCounts.blockedStrongTeams + output.omittedCounts.incompatibleTeams > 0;
+  const omittedTotal = () =>
+    output.omittedCounts.blockedStrongTeams + output.omittedCounts.incompatibleTeams + output.omittedCounts.conflictedTeams;
+  output.truncated = omittedTotal() > 0;
 
-  // Giữ JSON hợp lệ dưới giới hạn: bớt đội "bị chặn"/"không tương thích" (ghi omittedCounts), không bao giờ bớt ô của đội đã trả.
-  while (JSON.stringify(output).length > MAX_OUTPUT_CHARS && (output.blockedStrongTeams.length > 0 || output.incompatibleTeams.length > 0)) {
-    if (output.blockedStrongTeams.length >= output.incompatibleTeams.length && output.blockedStrongTeams.length > 0) {
+  // Giữ JSON hợp lệ dưới giới hạn: bớt đội "bị chặn"/"không tương thích" trước, đội "tranh tài nguyên" sau cùng
+  // (ghi omittedCounts); không bao giờ bớt ô của đội đã trả.
+  while (JSON.stringify(output).length > MAX_OUTPUT_CHARS) {
+    if (output.blockedStrongTeams.length > 0 && output.blockedStrongTeams.length >= output.incompatibleTeams.length) {
       output.blockedStrongTeams.pop();
       output.omittedCounts.blockedStrongTeams += 1;
-    } else {
+    } else if (output.incompatibleTeams.length > 0) {
       output.incompatibleTeams.pop();
       output.omittedCounts.incompatibleTeams += 1;
+    } else if (output.conflictedTeams.length > 0) {
+      output.conflictedTeams.pop();
+      output.omittedCounts.conflictedTeams += 1;
+    } else {
+      break;
     }
     output.truncated = true;
   }

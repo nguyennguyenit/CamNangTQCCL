@@ -168,7 +168,7 @@ const heroSetKey = (team) => (team.heroes || [])
  * @param {object[]} [input.lockedTeams]
  * @returns {{
  *   portfolioTeams: object[], addTeams: object[], blockedStrongTeams: object[], incompatibleTeams: object[],
- *   diagnostics: object, legacyUsed: boolean,
+ *   conflictedTeams: object[], diagnostics: object, legacyUsed: boolean,
  * }}
  * Mỗi entry: `status` ∈ build-now | variant | unreconciled | missing-tactic | move-tactic | incompatible | locked.
  * - `unreconciled`: có ô chiến pháp chưa đối chiếu được với từ điển (`unresolvedTactics`, tên Việt dự phòng);
@@ -178,6 +178,9 @@ const heroSetKey = (team) => (team.heroes || [])
  * - `incompatibleTeams[]`: đội đủ tướng và món nhưng món bù đã chọn vi phạm luật đội (`incompatibleTactics[{tactic, from, reason}]`,
  *   reason ∈ formation-limit | troop-limit | troop-unit-mismatch | troop-unit-unknown); không nằm trong `blockedStrongTeams`.
  * - `blockedStrongTeams[]`: `status` missing-hero | missing-tactic (kèm `missingTacticSlots`).
+ * - `conflictedTeams[]`: đội mùa đủ kho khi đứng riêng nhưng không vào danh sách vì dùng chung tướng/chiến pháp
+ *   với đội đã chọn (`sharedHeroes[{hero, heroId, usedBy}]`, `sharedTactics[{tactic, tacticId, usedBy}]`);
+ *   đội bị loại chỉ vì hết chỗ không có ở đây. Chỉ tính đợt mùa, không tính đội cũ bù.
  * Giới hạn chưa có dữ liệu (phe/truyền thừa, luật mùa): không được kiểm, không đoán.
  */
 export function recommendRoster({
@@ -220,6 +223,7 @@ export function recommendRoster({
     addTeams: portfolioTeams.filter((entry) => !entry.locked),
     blockedStrongTeams: [...season.blockedStrongTeams].sort((a, b) => missingCount(a) - missingCount(b)),
     incompatibleTeams: season.incompatibleTeams,
+    conflictedTeams: season.conflictedTeams,
     diagnostics: season.diagnostics,
     legacyUsed: portfolioTeams.some((entry) => entry.source === "legacy"),
   };

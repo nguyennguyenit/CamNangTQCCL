@@ -13,7 +13,7 @@ Agent đọc được cùng catalog (7 nhóm Tra cứu), đội chuẩn, đội 
 - Build team chọn mùa trước: user chỉ định/đã xác nhận, nếu chưa có thì `defaultSourceSeasonId` của bản publish Recommended — cùng mùa nguồn như trang Gợi ý kho (user 2026-10-07; thay mặc định scenario Binh Diễn Xuân Thu).
 - Giữ phân biệt source season, scenario/ruleset, locale và server/region.
 - Chỉ dùng projection công khai đã xác minh; không mở private SGSDeck, tài khoản, cookie, ảnh hoặc credential.
-- Không đổi SDK/protocol, policy bằng chứng, hạn mức research hay quyền GoClaw trong đợt này. Không viết thuật toán xếp đội thứ hai: MCP gọi đúng adapter/engine của website.
+- Không đổi SDK/protocol, policy bằng chứng hay quyền GoClaw trong đợt này. Hạn mức research đổi theo quyết định user 2026-10-09 (sau debate `research-budget-1`): một ledger/topic, nguồn ngoài ≤5 và MCP TQCCL ≤5 (playbook ≤1). Không viết thuật toán xếp đội thứ hai: MCP gọi đúng adapter/engine của website.
 - Community/blog được khảo sát và có ranh giới tích hợp; chưa đưa dữ liệu động hoặc thao tác quản trị vào MCP game.
 - Rule lớn ở dataset và search core; Markdown giữ entrypoint. Prototype chỉ ở thư mục kế hoạch.
 - Learning phân biệt personal preference, input correction, rule gap và tool/data bug; chưa bật collector/auto-promote/global memory.

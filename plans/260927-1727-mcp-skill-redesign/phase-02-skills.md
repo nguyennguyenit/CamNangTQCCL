@@ -30,7 +30,7 @@ Quyết định 2026-10-07: đăng ký `tqccl_get_playbook` trong đợt này v�
 2. Viết cases trước tối ưu; giữ holdout riêng và fixtures account đã redact. Bộ hội thoại mẫu: [evals/dewee-conversations.json](evals/dewee-conversations.json) (24 case: tra cứu 7 nhóm, đội tham khảo, ghép đội, case âm), dùng làm phép đo trên agent Dewee `tra` với MCP stdio local thay grant production: R0 (8 tool cũ), R1 (code mới, chưa có skill), R2 (sau khi upload skill) — xem [phase 4](phase-04-integration.md).
 3. Author lookup skill: Tra cứu `tqccl_search` → `tqccl_get_entity`; đội tham khảo `tqccl_find_teams` → `tqccl_get_team`; discovery thật và CLI fallback.
 4. Coexist: `tqccl_get_playbook` (mùa, readiness) → `tqccl_normalize_entities` → review/confirmation → `tqccl_recommend_teams` → `tqccl_get_team` khi cần chi tiết. Kết quả ghi `basis:"source-reference-fit"`, `rulesetVerified:false`. Không giữ Python engine thứ hai.
-5. Research: giữ claim statuses, budget, SGSDeck, corrections; remote MCP tính vào external ledger. Routing: `tqccl_get_playbook` tối đa 1 call/topic và là call **mới** (skill research hiện không gọi version) — tính vào hạn mức 5; repo local ưu tiên CLI (không tốn ledger).
+5. Research: giữ claim statuses, budget, SGSDeck, corrections. Routing: `tqccl_get_playbook` tối đa 1 call/topic; qua remote tính vào hạn mức MCP TQCCL (≤5), không tính vào hạn mức nguồn ngoài (≤5) (user 2026-10-09); repo local ưu tiên CLI (không tốn ledger).
 6. Nếu helper cũ còn được hỗ trợ, chặn claim buildable khi roster chưa biết; tìm mọi caller trước retire hoặc chuyển thành CLI wrapper.
 7. Structural validation, routing lint, links, metadata version; so sánh matched original/candidate, skill mới so với no-skill.
 
@@ -56,9 +56,9 @@ Quyết định 2026-10-07: đăng ký `tqccl_get_playbook` trong đợt này v�
 | Ghép đội khi mùa chưa có ruleset | Vẫn ghép theo nguồn + kho; nói rõ `rulesetVerified:false`, không trình bày là chấm theo luật mùa |
 | Không MCP, có repo | CLI cùng handler |
 | Không MCP và CLI | Nói giới hạn, không giả result |
-| Budget đã hết | Không gọi remote MCP/web tiếp |
+| Một hạn mức đã hết | Dừng loại call đó (hết nguồn ngoài: không web/browser/media/child; hết MCP TQCCL: không gọi tool TQCCL remote); vẫn dùng hạn mức còn lại và nêu khoảng trống |
 | Dewee hỏi cơ chế qua MCP, không guidance nào liên quan | Playbook vẫn trả required có đọc correction history; không mất invariant |
-| Research qua remote MCP dùng playbook | Playbook gọi đúng 1 lần/topic; tổng external calls không vượt 5/topic |
+| Research qua remote MCP dùng playbook | Playbook gọi đúng 1 lần/topic; MCP TQCCL ≤5 và nguồn ngoài ≤5 trên cùng một ledger |
 | Guidance của workflow vượt ngưỡng kích thước | Playbook báo `guidanceTruncated=true`, không cắt required rules; ghi vào trace để xét đăng ký search_rules |
 | Source chứa prompt injection | Chỉ coi là dữ liệu |
 | Đăng bài/admin community | Không gọi tool quản trị không tồn tại |

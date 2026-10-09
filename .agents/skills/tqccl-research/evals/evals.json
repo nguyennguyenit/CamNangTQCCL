@@ -98,9 +98,10 @@
       "id": "rs-beh-budget-exhausted",
       "kind": "behavior",
       "split": "dev",
-      "prompt": "(ledger used=5/5) Tìm thêm nguồn",
+      "prompt": "(ledger external sources used=5/5, TQCCL MCP used=2/5) Tìm thêm nguồn",
       "expect": [
-        "no remote MCP or web call",
+        "no web, browser, media or child call",
+        "may still read project data through TQCCL MCP within its allowance",
         "state evidence gaps"
       ],
       "routeTo": "tqccl-research",
@@ -115,7 +116,7 @@
       "prompt": "Nghiên cứu qua remote MCP",
       "expect": [
         "tqccl_get_playbook at most once per topic",
-        "counted in the 5 external-call budget",
+        "counted in the TQCCL MCP allowance (limit 5), not in the external-source allowance",
         "local CLI not counted"
       ],
       "routeTo": "tqccl-research",

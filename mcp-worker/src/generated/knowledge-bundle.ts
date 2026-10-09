@@ -1,7 +1,7 @@
 // Tệp được sinh bởi scripts/generate-knowledge-bundle.ts từ agent-knowledge/. Không sửa thủ công.
 import type { KnowledgeBundle } from "../knowledge/rule-contracts.js";
 
-export const KNOWLEDGE_VERSION = "knowledge:sha256b64:IkVGuX6muiEJPM2tjg8k4IlfmTpMtY81MLyrqZZsTj4" as const;
+export const KNOWLEDGE_VERSION = "knowledge:sha256b64:LNcLSIw_SMoAByI_RGU-S7FL6h80HDX89UnmxOmO8Ik" as const;
 export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
   "schemaVersion": 1,
   "manifest": {
@@ -419,7 +419,7 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
     },
     {
       "id": "budget-counts-all-external-ops",
-      "revision": 1,
+      "revision": 2,
       "kind": "invariant",
       "status": "active",
       "workflows": [
@@ -432,16 +432,16 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
         "type": "disallow-claim",
         "claim": "external-operation-uncounted"
       },
-      "title": "Mọi thao tác bên ngoài tính chung một ledger",
+      "title": "Mọi lượt gọi đều được đếm đúng hạn mức",
       "terms": "external operation search open raw API child agent media browser handoff đếm",
-      "explanation": "Đếm chung mọi thao tác bên ngoài: search, mở trang, raw request, API/orchestrator, nghiên cứu của child agent và mọi lời gọi ngoài của child, lấy ảnh/video/browser/transcript, handoff/dispatch ngoài được ủy quyền, cùng remote MCP. Đọc file local, tìm local, parse và suy luận miễn phí.",
+      "explanation": "Nguồn ngoài: search, mở trang, raw/API, child agent và call của nó, ảnh/video/browser/transcript, handoff ngoài, MCP/API không phải TQCCL. MCP TQCCL: mọi lời gọi remote đã thực thi. CLI và file local, parse, suy luận miễn phí.",
       "sourceRefs": [
         ".agents/skills/tqccl-research/SKILL.md",
         ".agents/skills/tqccl-research/references/evidence-and-region-rules.md",
         ".agents/skills/tqccl-research/references/report-template.md"
       ],
       "origin": "skill-migration",
-      "validFrom": "2026-10-08",
+      "validFrom": "2026-10-09",
       "reviewAfter": "2027-04-08",
       "supersedes": [],
       "successor": null,
@@ -479,7 +479,7 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
     },
     {
       "id": "budget-report-ledger",
-      "revision": 1,
+      "revision": 2,
       "kind": "invariant",
       "status": "active",
       "workflows": [
@@ -494,15 +494,15 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
         "format": "topic-limit-used-remaining"
       },
       "title": "Báo cáo ledger khi kết thúc",
-      "terms": "báo cáo topic limit used remaining ledger",
-      "explanation": "Cuối câu trả lời báo `topic`, `limit`, `used`, `remaining` của ledger dùng chung.",
+      "terms": "báo cáo topic limit used remaining ledger nguồn ngoài MCP",
+      "explanation": "Cuối câu trả lời báo `topic` và `limit`/`used`/`remaining` cho từng hạn mức (nguồn ngoài, MCP TQCCL).",
       "sourceRefs": [
         ".agents/skills/tqccl-research/SKILL.md",
         ".agents/skills/tqccl-research/references/evidence-and-region-rules.md",
         ".agents/skills/tqccl-research/references/report-template.md"
       ],
       "origin": "skill-migration",
-      "validFrom": "2026-10-08",
+      "validFrom": "2026-10-09",
       "reviewAfter": "2027-04-08",
       "supersedes": [],
       "successor": null,
@@ -1055,7 +1055,7 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
     },
     {
       "id": "coexist-show-duplicate-tactics",
-      "revision": 1,
+      "revision": 2,
       "kind": "invariant",
       "status": "active",
       "workflows": [
@@ -1070,21 +1070,23 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
       },
       "title": "Không im lặng chấp nhận chiến pháp trùng",
       "terms": "duplicate tactic trùng chiến pháp conflict table",
-      "explanation": "Không bao giờ khuyến nghị chiến pháp trùng một cách im lặng: nêu chiến pháp trùng và đội đang dùng nó; kèm bảng conflict gồm trùng và thiếu.",
+      "explanation": "Không bao giờ khuyến nghị chiến pháp trùng một cách im lặng: nêu chiến pháp trùng và đội đang dùng nó; kèm bảng conflict gồm trùng và thiếu. Khi recommend trả conflictedTeams (đội đủ kho nhưng mất tướng/chiến pháp cho đội đã chọn), nêu từng món tranh chấp và đội đang giữ; không ghi 'không xung đột' khi conflictedTeams còn mục.",
       "sourceRefs": [
         ".agents/skills/tqccl-coexist-team-builder/SKILL.md",
         ".agents/skills/tqccl-coexist-team-builder/references/coexist-team-rules.md"
       ],
       "origin": "skill-migration",
-      "validFrom": "2026-10-08",
+      "validFrom": "2026-10-09",
       "reviewAfter": "2027-04-08",
       "supersedes": [],
       "successor": null,
-      "regressionCaseIds": []
+      "regressionCaseIds": [
+        "rc-two-teams-conflict"
+      ]
     },
     {
       "id": "coexist-substitution-weaker-variant",
-      "revision": 1,
+      "revision": 2,
       "kind": "invariant",
       "status": "active",
       "workflows": [
@@ -1099,13 +1101,13 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
       },
       "title": "Thay thế phải nói rõ và nêu cái giá",
       "terms": "substitution thay thế biến thể yếu exact prebuilt",
-      "explanation": "Nêu đội là dựng sẵn chính xác hay đã thay thế; thay thế nghĩa là biến thể yếu hơn, phải nói cái gì xấu đi (điểm, thiếu chiến pháp, chi phí chồng lấn). Không gán điểm nguồn cho biến thể.",
+      "explanation": "Nêu đội là dựng sẵn chính xác hay đã thay thế; thay thế nghĩa là biến thể yếu hơn, phải nói cái gì xấu đi (điểm, thiếu chiến pháp, chi phí chồng lấn). Không gán điểm nguồn cho biến thể. Món bù chỉ lấy từ substitutes[] (trong kho); rỗng thì nói không có món bù trong kho, không đề xuất chiến pháp ngoài kho làm món bù.",
       "sourceRefs": [
         ".agents/skills/tqccl-coexist-team-builder/SKILL.md",
         ".agents/skills/tqccl-coexist-team-builder/references/coexist-team-rules.md"
       ],
       "origin": "skill-migration",
-      "validFrom": "2026-10-08",
+      "validFrom": "2026-10-09",
       "reviewAfter": "2027-04-08",
       "supersedes": [],
       "successor": null,
@@ -1379,7 +1381,7 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
     },
     {
       "id": "known-roster",
-      "revision": 1,
+      "revision": 2,
       "kind": "invariant",
       "status": "active",
       "workflows": [
@@ -1394,13 +1396,13 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
       },
       "title": "Kho chưa biết khác kho rỗng",
       "terms": "missing roster chưa nhập kho unknown empty require available",
-      "explanation": "Không claim người dùng xây được đội nếu quyền sở hữu tướng/chiến pháp chưa biết; roster chưa biết là unknown, không phải kho rỗng.",
+      "explanation": "Không claim người dùng xây được đội nếu quyền sở hữu tướng/chiến pháp chưa biết; roster chưa biết là unknown, không phải kho rỗng. Chưa có kho thì chỉ hỏi kho (tướng, chiến pháp, khóa); không trình bày danh sách đội như kết quả ghép cùng tồn hay 'ghép được'.",
       "sourceRefs": [
         ".agents/skills/tqccl-coexist-team-builder/SKILL.md",
         "plans/260927-1727-mcp-skill-redesign/design.md"
       ],
       "origin": "design-proposal",
-      "validFrom": "2026-10-08",
+      "validFrom": "2026-10-09",
       "reviewAfter": "2027-04-08",
       "supersedes": [],
       "successor": null,
@@ -2213,7 +2215,7 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
     },
     {
       "id": "research-playbook-once-per-topic",
-      "revision": 1,
+      "revision": 2,
       "kind": "invariant",
       "status": "active",
       "workflows": [
@@ -2228,12 +2230,12 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
       },
       "title": "Playbook tối đa một lần mỗi topic",
       "terms": "playbook get_playbook một lần external calls CLI local",
-      "explanation": "Gọi tqccl_get_playbook tối đa 1 lần mỗi topic; lần gọi này tính vào hạn mức external call. Repo local ưu tiên CLI (không tốn ledger).",
+      "explanation": "Gọi tqccl_get_playbook tối đa 1 lần mỗi topic; qua MCP remote tính vào hạn mức MCP TQCCL. Repo local ưu tiên CLI (không tốn ledger).",
       "sourceRefs": [
         "plans/260927-1727-mcp-skill-redesign/phase-02-skills.md"
       ],
       "origin": "design-proposal",
-      "validFrom": "2026-10-08",
+      "validFrom": "2026-10-09",
       "reviewAfter": "2027-04-08",
       "supersedes": [],
       "successor": null,
@@ -2424,7 +2426,7 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
     },
     {
       "id": "review-canonical-state",
-      "revision": 1,
+      "revision": 2,
       "kind": "invariant",
       "status": "active",
       "workflows": [
@@ -2439,17 +2441,19 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
       },
       "title": "Rà soát kho trước gợi ý",
       "terms": "roster kho tướng normalize confirmation xác nhận canonical state",
-      "explanation": "Normalize observations, làm rõ ambiguity, cho user review rồi mới dùng binding để recommend. Binding/version/context đổi thì normalize và review lại.",
+      "explanation": "Normalize observations, làm rõ ambiguity, hiển thị canonical state và chờ user xác nhận ở một lượt riêng rồi mới gọi recommend, kể cả khi tin đầu đã nói 'ghép đi'. Binding/version/context đổi thì normalize và review lại.",
       "sourceRefs": [
-        "docs/mcp-research-server.md"
+        "docs/mcp-research-server.md",
+        ".agents/skills/tqccl-coexist-team-builder/SKILL.md"
       ],
       "origin": "existing-project-contract",
-      "validFrom": "2026-10-08",
+      "validFrom": "2026-10-09",
       "reviewAfter": "2027-04-08",
       "supersedes": [],
       "successor": null,
       "regressionCaseIds": [
-        "rc-ambiguous-roster"
+        "rc-ambiguous-roster",
+        "rc-two-teams-conflict"
       ]
     },
     {
@@ -2542,7 +2546,7 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
     },
     {
       "id": "shared-research-budget",
-      "revision": 1,
+      "revision": 2,
       "kind": "invariant",
       "status": "active",
       "workflows": [
@@ -2555,14 +2559,14 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
         "type": "disallow-claim",
         "claim": "external-call-over-limit"
       },
-      "title": "Một budget cho cùng chủ đề",
-      "terms": "budget hạn mức external calls research năm lần",
-      "explanation": "Mặc định tối đa 5 external call cho topic đã khóa; hạn thấp hơn của user thắng; chỉ chỉ dẫn rõ ràng của user mới nâng hạn.",
+      "title": "Một ledger, hai hạn mức mỗi chủ đề",
+      "terms": "budget hạn mức external calls nguồn ngoài MCP TQCCL năm lần playbook",
+      "explanation": "Mỗi topic một ledger, hai hạn mức mặc định: nguồn ngoài ≤5; MCP TQCCL remote ≤5 (playbook ≤1, tool khác ≤4, kể cả retry). Hạn thấp hơn của user thắng trong phạm vi user nêu; chỉ chỉ dẫn rõ ràng của user mới nâng hạn.",
       "sourceRefs": [
         ".agents/skills/tqccl-research/SKILL.md"
       ],
       "origin": "existing-project-contract",
-      "validFrom": "2026-10-08",
+      "validFrom": "2026-10-09",
       "reviewAfter": "2027-04-08",
       "supersedes": [],
       "successor": null,

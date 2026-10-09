@@ -394,3 +394,33 @@ test("canonicalTacticId của tên trong từ điển khớp khóa luật", () =
   assert.equal(tacticRules.get(canonicalTacticId("Phi Hùng Quân")).kind, "troop");
   assert.equal(tacticRules.has(canonicalTacticId("Mê Hoặc")), false);
 });
+
+// ---- Đội đủ kho nhưng bị loại vì tranh tướng/chiến pháp với đội đã chọn ---------------------
+
+test("đội đủ kho bị loại vì tranh chiến pháp được trả trong conflictedTeams, nêu món tranh chấp và đội đang giữ", () => {
+  const season = seasonFrom("og-兵演春秋", ["og-bingyan-40y-lvbu-b", "og-bingyan-wunv-cavalry-hubaoqi"]);
+  const roster = rosterOf(season.teams);
+  const result = run(season, roster, { fullBox: true });
+
+  assert.deepEqual(result.portfolioTeams.map((entry) => entry.team.id), ["og-bingyan-40y-lvbu-b"]);
+  assert.deepEqual(result.blockedStrongTeams, []);
+  const [conflicted, ...rest] = result.conflictedTeams;
+  assert.equal(rest.length, 0);
+  assert.equal(conflicted.team.id, "og-bingyan-wunv-cavalry-hubaoqi");
+  assert.deepEqual(
+    conflicted.sharedTactics.map((item) => [item.tactic, item.usedBy]).sort(),
+    [["Lâm Nguy Cứu Chủ", "og-bingyan-40y-lvbu-b"], ["Đương Phong Thôi Quyết", "og-bingyan-40y-lvbu-b"]].sort(),
+  );
+  assert.deepEqual(conflicted.sharedHeroes, []);
+});
+
+test("đội đủ kho bị loại chỉ vì hết chỗ (không tranh tướng hay chiến pháp) không vào conflictedTeams", () => {
+  const season = seasonFrom("og-兵演春秋", ["og-bingyan-40y-lvbu-b", "og-bingyan-taishi-bow-feixiong"]);
+  const roster = rosterOf(season.teams);
+  const full = run(season, roster, { fullBox: true });
+  assert.equal(full.portfolioTeams.length, 2, "hai đội không dùng chung tài nguyên");
+
+  const capped = run(season, roster, { fullBox: true, maxTeams: 1 });
+  assert.equal(capped.portfolioTeams.length, 1);
+  assert.deepEqual(capped.conflictedTeams, []);
+});

@@ -186,6 +186,13 @@ async function expectParity(seasonId: string, roster: Roster, mode: "meta" | "re
   });
   const incompatible = result.incompatibleTeams as Rec[];
   expect(output.incompatibleTeams.map((entry) => entry.teamId)).toEqual(incompatible.slice(0, output.incompatibleTeams.length).map((entry) => entry.team.id));
+  const conflicted = result.conflictedTeams as Rec[];
+  expect(output.conflictedTeams.map((entry) => [entry.teamId, entry.sharedTactics.map((item) => item.tactic), entry.sharedHeroes.map((item) => item.hero)])).toEqual(
+    conflicted
+      .slice(0, output.conflictedTeams.length)
+      .map((entry) => [entry.team.id, entry.sharedTactics.map((item: Rec) => item.tactic), entry.sharedHeroes.map((item: Rec) => item.hero)]),
+  );
+  expect(output.conflictedTeams.length + output.omittedCounts.conflictedTeams).toBe(conflicted.length);
   return { output, result };
 }
 

@@ -61,10 +61,11 @@ dispatch instead of claiming a handoff.
   meta, which still needs the real sources of Step 5.
 - Version/rules via MCP: call `tqccl_get_playbook` at most once per topic, as the
   first MCP call, to get versions, capabilities and the required rules. Over a
-  remote MCP it is an external operation and counts in the shared budget below. With a
-  local repo prefer the CLI (`cd mcp-worker && npm run cli -- playbook --input '<json>'`),
-  which is local and not counted. Required rules it returns still apply, including
-  correction history, even when no guidance matches the query.
+  remote MCP it counts in the TQCCL MCP allowance below, not in the external-source
+  allowance. With a local repo prefer the CLI
+  (`cd mcp-worker && npm run cli -- playbook --input '<json>'`), which is local and
+  not counted. Required rules it returns still apply, including correction history,
+  even when no guidance matches the query.
 
 ### 3. Plan sources from project authority
 
@@ -80,26 +81,25 @@ dispatch instead of claiming a handoff.
   [Logic Sanity Checklist](../tqccl-coexist-team-builder/references/multi-source-research-and-logic-checks.md#logic-sanity-checklist).
   Do not inherit the other file's evidence grading.
 
-### 4. Enforce one shared external-call budget
+### 4. Enforce one shared ledger with two allowances
 
-The default maximum is five external calls for the locked topic. A lower limit
-given by the user wins. Only an explicit user instruction may raise it.
+One ledger per locked topic, with two counters (`shared-research-budget`):
 
-Count every external operation in the same ledger, including:
+| Allowance | Default limit | What counts |
+| --- | --- | --- |
+| External sources | 5 | search, page open, raw request, API or orchestrator call; child-agent research and every external call made by that child; image, video, browser, transcript, or media retrieval; an authorized external handoff or dispatch; any MCP or API that is not TQCCL |
+| TQCCL MCP | 5 | every executed call to a remote TQCCL MCP endpoint, retries included: `tqccl_get_playbook` at most 1, all other TQCCL tools at most 4 |
 
-- search, page open, raw request, API or orchestrator call;
-- child-agent research and every external call made by that child;
-- image, video, browser, transcript, or media retrieval;
-- an authorized external handoff or dispatch action;
-- every call to a remote MCP endpoint (`tqccl_get_playbook`, lookup, reference,
-  recommend tools), even though the endpoint serves repo data. Local CLI and
-  file reads are free.
+A lower limit given by the user wins for the scope the user names. Only an explicit
+user instruction may raise a limit. Local CLI, local file reads, local search,
+parsing, and reasoning are free (`budget-counts-all-external-ops`).
 
-Local file reads, local search, parsing, and reasoning are free. Before each
-external operation, verify that budget remains. Never reset the ledger for a
-follow-up, case change, source change, retry, child, or handoff on the same topic.
-At the end report `topic`, `limit`, `used`, and `remaining`. When exhausted, stop
-external research and state the evidence gaps.
+Before each counted operation, verify that its allowance remains
+(`budget-check-before-call`). Never reset the ledger for a follow-up, case change,
+source change, retry, child, or handoff on the same topic (`budget-never-reset`).
+At the end report `topic` and, for each allowance, `limit`, `used`, and `remaining`
+(`budget-report-ledger`). When an allowance is exhausted, stop that kind of call and
+state the evidence gaps.
 
 ### 5. Read the evidence that supports each claim
 
@@ -201,6 +201,6 @@ Before finishing, confirm:
 - configurations and variants remain separate and complete;
 - media and numeric claims do not exceed what was actually read;
 - SGSDeck status is explicit and separate from the selected default;
-- the shared ledger reports topic, limit, used, and remaining;
+- the shared ledger reports topic and limit, used, and remaining for both allowances;
 - limitations and unresolved questions are visible;
 - any mutation is confined to an authorized, observable handoff.

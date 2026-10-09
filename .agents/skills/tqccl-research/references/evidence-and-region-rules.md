@@ -141,8 +141,9 @@ synthesis and must not silently revive the superseded claim.
 - A claim needing a URL remains unverified until that URL and location can be
   inspected.
 - An inherited season must be stated with conversation provenance.
-- External-call use is shared across child, raw, media, browser, and handoff
-  operations for the same locked topic.
+- External-source use is shared across child, raw, media, browser, and handoff
+  operations for the same locked topic; TQCCL MCP calls use their own allowance in
+  the same ledger.
 
 When evidence cannot resolve an invariant, choose **Chưa xác minh**, state the
 gap, and stop at the active budget boundary.
