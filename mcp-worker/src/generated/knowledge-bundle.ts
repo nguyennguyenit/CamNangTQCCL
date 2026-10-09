@@ -1,7 +1,7 @@
 // Tệp được sinh bởi scripts/generate-knowledge-bundle.ts từ agent-knowledge/. Không sửa thủ công.
 import type { KnowledgeBundle } from "../knowledge/rule-contracts.js";
 
-export const KNOWLEDGE_VERSION = "knowledge:sha256b64:LNcLSIw_SMoAByI_RGU-S7FL6h80HDX89UnmxOmO8Ik" as const;
+export const KNOWLEDGE_VERSION = "knowledge:sha256b64:V1C_-AmRXfNrCRN1x0DckI92jWtlwka_XkuiWo5iBEE" as const;
 export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
   "schemaVersion": 1,
   "manifest": {
@@ -1500,7 +1500,7 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
     },
     {
       "id": "lookup-missing-is-not-empty",
-      "revision": 1,
+      "revision": 2,
       "kind": "invariant",
       "status": "active",
       "workflows": [
@@ -1513,20 +1513,22 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
         "type": "disallow-claim",
         "claim": "invented-entity-or-empty-list-for-missing-capability"
       },
-      "title": "Không bịa thực thể; thiếu năng lực không phải không có dữ liệu",
-      "terms": "không tồn tại entity not found CAPABILITY_UNAVAILABLE danh sách rỗng thiếu năng lực lookup",
-      "explanation": "Thực thể không tồn tại thì nói thẳng, không bịa. CAPABILITY_UNAVAILABLE là release thiếu năng lực, không phải \"không có dữ liệu\" và không bao giờ được trả thành danh sách rỗng.",
+      "title": "Chỉ dữ liệu cẩm nang; không bịa; thiếu năng lực không phải không có dữ liệu",
+      "terms": "không tồn tại không tìm thấy entity not found similarNames tên gần web CAPABILITY_UNAVAILABLE danh sách rỗng thiếu năng lực lookup",
+      "explanation": "Tra cứu chỉ dùng dữ liệu cẩm nang (tool TQCCL hoặc CLI), không web search/fetch. Không có thì nói \"không tìm thấy trong dữ liệu cẩm nang\", không bịa; similarNames chỉ được nêu là tên gần, không bao giờ là món được hỏi. Cần nguồn ngoài thì đề nghị chuyển research (user đã yêu cầu thì chuyển luôn). CAPABILITY_UNAVAILABLE là release thiếu năng lực, không phải \"không có dữ liệu\" và không bao giờ được trả thành danh sách rỗng.",
       "sourceRefs": [
         ".agents/skills/tqccl-lookup/SKILL.md",
         ".agents/skills/tqccl-lookup/references/tool-routing.md",
         "plans/260927-1727-mcp-skill-redesign/design.md"
       ],
       "origin": "design-proposal",
-      "validFrom": "2026-10-08",
+      "validFrom": "2026-10-10",
       "reviewAfter": "2027-04-08",
       "supersedes": [],
       "successor": null,
-      "regressionCaseIds": []
+      "regressionCaseIds": [
+        "lk-not-exist"
+      ]
     },
     {
       "id": "lookup-no-invented-ruleset",

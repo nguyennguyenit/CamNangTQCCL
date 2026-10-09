@@ -1,6 +1,6 @@
 ---
 name: tqccl-lookup
-description: Look up TQCCL catalog and source teams: tra cứu tướng, chiến pháp, trang bị, quân sư, cải tạo, công trình, binh thư, đội chuẩn, Khai hoang. Not team building or meta proof.
+description: Look up TQCCL catalog and source teams: tra cứu tướng, chiến pháp, trang bị, quân sư, cải tạo, công trình, binh thư, đội chuẩn, Khai hoang. Handbook only, no web. Not team building or meta proof.
 ---
 
 # TQCCL Lookup
@@ -22,7 +22,7 @@ and error recovery: [tool routing](references/tool-routing.md).
 2. Catalog: `tqccl_search` → `tqccl_get_entity` with the returned entity id.
 3. Source reference teams: `tqccl_find_teams` → `tqccl_get_team` (`alternatives` / `tacticRefs` answer "chiến pháp thay thế"). Khai hoang: match the exact team and phase; never merge guides (`lookup-khai-hoang-exact`).
 4. When results differ in identity (e.g. Tào Tháo vs SP Tào Tháo, base vs SP/CO), show the candidates with their distinguishing fields and let the user choose. Never silently take the first result for an ambiguous name (`lookup-resolve-identity-first`).
-5. Answer with: the data, its source scope (season/category), the data/workflow version, and a site link for the entity. Say plainly when an entity does not exist; never invent one. When the full name returns nothing, try at most two more searches (the Chinese name, corrected diacritics or spacing), then say it is not in the handbook; name close entries only from results already returned.
+5. Answer with: the data, its source scope (season/category), the data/workflow version, and a site link for the entity. Use only handbook data from the TQCCL tools or CLI; never call web search or fetch for a lookup. When a search returns nothing, say "không tìm thấy trong dữ liệu cẩm nang" and never invent one; at most two more searches (the Chinese name, corrected diacritics or spacing). You may list `similarNames` as near names only, never as the entity asked about. If the user wants outside sources, offer the research handoff; if they already asked for them, hand off (`lookup-missing-is-not-empty`).
 6. Never call `tqccl_recommend_teams` or `tqccl_normalize_entities` from this skill (`lookup-no-recommend`). Never present a source team as scored by a season ruleset (`lookup-no-invented-ruleset`).
 
 ## Boundaries
