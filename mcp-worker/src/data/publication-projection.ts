@@ -568,6 +568,11 @@ export interface PublicationReadModel {
   /** id/ref → route. Entity ids and team refs share one namespace (`hero:…`, `recommended:…`). */
   readonly routes: ReadonlyMap<string, PublicRoute>;
   searchCatalog(query: string, options?: CatalogSearchOptions): Page<CatalogSearchMatch>;
+  /**
+   * Tên gần cho truy vấn không khớp chuỗi con nào: mục chung ít nhất 2 từ (chữ Hán tính từng chữ) với
+   * truy vấn, xếp theo số từ chung rồi độ trùng Jaccard. Không phải kết quả khớp; rỗng khi không đủ gần.
+   */
+  similarCatalog(query: string, options?: Pick<CatalogSearchOptions, "kinds" | "limit">): CatalogSearchMatch[];
   getEntity(id: string): CatalogEntityView | undefined;
   findTeams(filter?: TeamFilter): Page<TeamSummaryView>;
   getTeam(reference: string): TeamDetailView | undefined;
@@ -609,6 +614,56 @@ function scoreTerms(entries: ReadonlyArray<readonly [string, string]>, query: st
     }
   }
   return { score, matched };
+}
+
+const MIN_SHARED_TOKENS = 2;
+
+/** Từ của một chuỗi: tách khoảng trắng/dấu câu; chữ Hán tách từng chữ. */
+function tokens(text: string): ReadonlySet<string> {
+  return new Set(text.replace(/(\p{Script=Han})/gu, " $1 ").split(/[^\p{L}\p{N}]+/u).filter(Boolean));
+}
+
+interface TokenTerm {
+  /** Từ sau normalizeText (bỏ dấu): quyết định có gợi ý hay không, như search chuỗi con. */
+  folded: ReadonlySet<string>;
+  /**
+   * Từ giữ dấu, chỉ để xếp "Long" trước "Lòng" khi người dùng gõ có dấu. Term toàn ASCII (id slug, alias
+   * không dấu) không có dạng có dấu nên để rỗng, tránh "quan" của slug trùng "Quan" người dùng gõ.
+   */
+  accented: ReadonlySet<string>;
+  raw: string;
+}
+
+const NO_TOKENS: ReadonlySet<string> = new Set();
+
+function tokenTerm(normalized: string, raw: string): TokenTerm {
+  return {
+    folded: tokens(normalized),
+    accented: /[^\x00-\x7f]/u.test(raw) ? tokens(raw.normalize("NFC").toLowerCase()) : NO_TOKENS,
+    raw,
+  };
+}
+
+function countShared(left: ReadonlySet<string>, right: ReadonlySet<string>): number {
+  let shared = 0;
+  for (const token of left) if (right.has(token)) shared += 1;
+  return shared;
+}
+
+function similarity(entries: readonly TokenTerm[], query: TokenTerm) {
+  let best = { shared: 0, accented: 0, jaccard: 0, matched: "" };
+  for (const term of entries) {
+    const shared = countShared(query.folded, term.folded);
+    const accented = countShared(query.accented, term.accented);
+    const jaccard = shared / (query.folded.size + term.folded.size - shared);
+    if (
+      shared > best.shared
+      || (shared === best.shared && (accented > best.accented || (accented === best.accented && jaccard > best.jaccard)))
+    ) {
+      best = { shared, accented, jaccard, matched: term.raw };
+    }
+  }
+  return best;
 }
 
 const GROUP_ORDER = new Map<string, number>(CATALOG_GROUPS.map((group, index) => [group, index]));
@@ -719,6 +774,8 @@ export function buildPublicationReadModel(
     entity,
     terms: terms([entity.nameVi, entity.nameZh, entity.hanViet, entity.aliases, entity.id.slice(entity.id.indexOf(":") + 1)]),
   }));
+  // Chỉ dựng khi có truy vấn không khớp; đa số request không cần.
+  let tokenIndex: Array<{ entity: CatalogEntityView; tokenTerms: TokenTerm[] }> | null = null;
   const recommendRecords = new Map<string, ArtifactRecord[]>();
   const recommended = teams
     .filter((team) => team.collection === "recommended" && team.sourceSeasonId !== null)
@@ -769,6 +826,33 @@ export function buildPublicationReadModel(
           || left.entity.id.localeCompare(right.entity.id),
       );
       return { total: matches.length, offset, limit, items: matches.slice(offset, offset + limit) };
+    },
+    similarCatalog(query, options = {}) {
+      const limit = clampPage(options.limit, 0).limit;
+      const queryTerm = tokenTerm(normalizeText(query), query);
+      if (queryTerm.folded.size < MIN_SHARED_TOKENS) return [];
+      const kinds = options.kinds === undefined ? null : new Set<string>(options.kinds);
+      const scored: Array<CatalogSearchMatch & { accented: number; jaccard: number }> = [];
+      tokenIndex ??= searchIndex.map(({ entity, terms: entries }) => ({
+        entity,
+        tokenTerms: entries.map(([normalized, raw]) => tokenTerm(normalized, raw)),
+      }));
+      for (const item of tokenIndex) {
+        if (kinds !== null && !kinds.has(item.entity.kind)) continue;
+        const { shared, accented, jaccard, matched } = similarity(item.tokenTerms, queryTerm);
+        if (shared >= MIN_SHARED_TOKENS) scored.push({ entity: item.entity, score: shared, accented, jaccard, matchedTerm: matched });
+      }
+      scored.sort(
+        (left, right) =>
+          right.score - left.score
+          || right.accented - left.accented
+          || right.jaccard - left.jaccard
+          || (GROUP_ORDER.get(left.entity.group) ?? 0) - (GROUP_ORDER.get(right.entity.group) ?? 0)
+          || left.entity.kind.localeCompare(right.entity.kind)
+          || left.entity.nameVi.localeCompare(right.entity.nameVi, "vi")
+          || left.entity.id.localeCompare(right.entity.id),
+      );
+      return scored.slice(0, limit).map(({ entity, score, matchedTerm }) => ({ entity, score, matchedTerm }));
     },
     findTeams(filter = {}) {
       const { limit, offset } = clampPage(filter.limit, filter.offset);

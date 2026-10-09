@@ -67,6 +67,21 @@ export const searchOutputSchema = commonResultSchema.extend({
     )
     .max(50)
     .describe("Kết quả của trang hiện tại."),
+  similarNames: z
+    .array(
+      z
+        .object({
+          entityId: z.string().max(300).describe("ID thực thể."),
+          kind: z.enum(SEARCH_KINDS).describe("Loại."),
+          displayName: z.string().max(256).describe("Tên hiển thị theo locale."),
+          pagePath: z.string().max(512).describe("Đường dẫn trang website theo locale."),
+        })
+        .strict(),
+    )
+    .min(1)
+    .max(5)
+    .optional()
+    .describe("Chỉ khi total=0: tên gần có chung ít nhất 2 từ với truy vấn. Không phải kết quả khớp; không phải thực thể được hỏi."),
 });
 
 export async function handleSearch(ctx: ToolContext, rawInput: unknown) {
@@ -155,11 +170,16 @@ export async function handleSearch(ctx: ToolContext, rawInput: unknown) {
     ...(catalogKinds.length > 0 ? [{ artifact: "catalog-entities", trust: "untrusted" as const }] : []),
     ...(wantTeams ? [{ artifact: "reference-team-index", trust: "untrusted" as const }, { artifact: "teams", trust: "untrusted" as const }] : []),
   ];
+  const similarNames =
+    total === 0 && catalogKinds.length > 0
+      ? pub.similarCatalog(query, { kinds: catalogKinds, limit: 5 }).map(({ entity }) => catalogItem(entity, loc, ""))
+      : [];
   return {
     ...ctx.commonResult(provenance),
     locale: loc,
     total,
     items,
+    ...(similarNames.length > 0 ? { similarNames } : {}),
     truncated: hasMore,
     ...(hasMore ? { nextCursor: await encodeCursor(binding, next) } : {}),
   };

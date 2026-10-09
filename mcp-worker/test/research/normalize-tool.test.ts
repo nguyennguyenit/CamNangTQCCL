@@ -101,16 +101,24 @@ describe("tqccl_normalize_entities name resolution", () => {
     expect(result.reviewRequired).toBe(true);
   });
 
-  it("tên không khớp đúng → unknown, gợi ý từ lõi search nếu có khớp một phần; sai loại không lấy", async () => {
+  it("tên không khớp đúng → unknown; gợi ý từ khớp một phần, không có thì từ tên gần (chung ≥2 từ); sai loại không lấy", async () => {
     const result = await realHandlers().call("tqccl_normalize_entities", {
-      observations: [text("t1", "tactic", "Phong Hỏa Liên Thiên"), text("t2", "tactic", "Hỏa Thiêu"), text("h1", "hero", "Mê Hoặc")],
+      observations: [
+        text("t1", "tactic", "Phong Hỏa Liên Thiên"),
+        text("t2", "tactic", "Hỏa Thiêu"),
+        text("h1", "hero", "Mê Hoặc"),
+        text("h2", "hero", "CO Vô Song Đại Kiều"),
+      ],
     });
 
     const unresolved = unresolvedOf(result);
-    expect(unresolved.t1).toEqual({ reason: "unknown", candidates: [] });
+    expect(unresolved.t1?.reason).toBe("unknown");
+    expect(unresolved.t1?.candidates).toContain("tactic:hoa-thieu-lien-doanh");
+    expect(unresolved.t1?.candidates.every((id) => id.startsWith("tactic:"))).toBe(true);
     expect(unresolved.t2?.reason).toBe("unknown");
     expect(unresolved.t2?.candidates).toContain("tactic:hoa-thieu-lien-doanh");
     expect(unresolved.t2?.candidates.every((id) => id.startsWith("tactic:"))).toBe(true);
+    expect(unresolved.h2).toEqual({ reason: "unknown", candidates: expect.arrayContaining(["hero:co-dai-kieu"]) });
     expect(unresolved.h1).toEqual({ reason: "unknown", candidates: [] });
   });
 

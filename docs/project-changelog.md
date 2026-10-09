@@ -1,5 +1,15 @@
 # Project Changelog
 
+## 2026-10-10 (Tra cứu: tên gần khi không khớp, chỉ dữ liệu cẩm nang)
+
+### Added
+
+- **`similarNames` trong `tqccl_search`** (debate `lookup-miss-1/suggest`): khi `total` là 0, trả tối đa 5 mục catalog `{entityId, kind, displayName, pagePath}` có chung ít nhất 2 từ với truy vấn (sau bỏ dấu; chữ Hán tính từng chữ), xếp theo số từ chung, số từ đúng dấu, rồi độ trùng. `total` vẫn 0, `items` vẫn rỗng; không đủ gần thì không có trường này; không gợi ý đội; không kèm tướng sở hữu. Lõi ở `similarCatalog` (`mcp-worker/src/data/publication-projection.ts`). `tqccl_normalize_entities` dùng cùng lõi cho `candidates` của tên `unknown` khi không có khớp một phần. Website Tra cứu không đổi.
+
+### Changed
+
+- **Skill `tqccl-lookup`** (debate `lookup-miss-1/noweb`): chỉ dùng dữ liệu cẩm nang, không web search/fetch; không có thì nói "không tìm thấy trong dữ liệu cẩm nang"; `similarNames` chỉ được nêu là tên gần, không bao giờ là món được hỏi; cần nguồn ngoài thì đề nghị chuyển research. Rule `lookup-missing-is-not-empty` lên revision 2; mô tả skill thêm "Handbook only, no web."
+
 ## 2026-10-09 (Sau đo Dewee R2: hạn mức research, skill coexist, đội tranh tài nguyên)
 
 ### Changed

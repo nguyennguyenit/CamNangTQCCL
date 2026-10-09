@@ -50,7 +50,7 @@ const MAX_NAME_SUGGESTIONS = 5;
 /**
  * Observation chỉ có tên (thiếu canonicalId) được tra bằng lõi search của trang Tra cứu, chỉ nhận khớp đúng tên:
  * đúng một mục → gán canonicalId; tên bản thường của tộc còn bản 40Y/SP/CO, hoặc nhiều mục cùng tên → ambiguous
- * kèm mọi bản; không khớp đúng → unknown kèm tối đa 5 gợi ý khớp một phần. Agent gửi canonicalId, candidates
+ * kèm mọi bản; không khớp đúng → unknown kèm tối đa 5 gợi ý khớp một phần, không có thì tên gần (`similarCatalog`). Agent gửi canonicalId, candidates
  * hay reviewRequired thì giữ nguyên. Chỉ tra trong ID mà snapshot nhận (searchEntries).
  */
 function withResolvedNames(ctx: ToolContext, observations: readonly HeroObservationInput[]): HeroObservationInput[] {
@@ -80,7 +80,8 @@ function withResolvedNames(ctx: ToolContext, observations: readonly HeroObservat
       .items.filter(({ entity }) => known.has(entity.id));
     const exact = [...new Set(matches.filter(({ score }) => score === 3).map(({ entity }) => entity.id))];
     if (exact.length === 0) {
-      const candidates = [...new Set(matches.map(({ entity }) => entity.id))].slice(0, MAX_NAME_SUGGESTIONS);
+      const near = matches.length > 0 ? matches : pub.similarCatalog(name, { kinds: [kind], limit: 100 }).filter(({ entity }) => known.has(entity.id));
+      const candidates = [...new Set(near.map(({ entity }) => entity.id))].slice(0, MAX_NAME_SUGGESTIONS);
       return { ...observation, candidates };
     }
     if (exact.length > 1) return { ...observation, reviewRequired: true, candidates: exact.sort() };
