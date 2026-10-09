@@ -253,9 +253,9 @@
       "prompt": ["Bên Trung Quốc tuần này đội nào đang mạnh nhất?"],
       "tools": [],
       "tools8": [],
-      "mustInclude": ["nói rõ dữ liệu cẩm nang là đội tham khảo theo mùa nguồn, không phải xếp hạng meta tuần này", "applicability CN/VN chưa xác minh"],
-      "mustNot": ["khẳng định meta hiện tại chỉ từ tier trong data"],
-      "notes": "Không có skill research trên Dewee ở R0/R1; ở R2 kỳ vọng route research và gắn claim status."
+      "mustInclude": ["nói rõ dữ liệu cẩm nang là đội tham khảo theo mùa nguồn, không phải xếp hạng meta tuần này", "phạm vi server/mùa nêu rõ hoặc ghi chưa xác định", "mỗi claim chính có claim status"],
+      "mustNot": ["khẳng định meta hiện tại chỉ từ tier trong data", "câu kết luận/tổng hợp gộp quan sát dự án với nguồn chưa đối chiếu thành claim về meta tuần này"],
+      "notes": "Không có skill research trên Dewee ở R0/R1; ở R2 kỳ vọng route research và gắn claim status. 2026-10-09: bỏ 'applicability CN/VN chưa xác minh' — câu hỏi chỉ nêu Trung Quốc; chỉ đòi applicability vùng khác khi câu hỏi hoặc scope nêu vùng đó (rule region-applicability-needs-evidence)."
     },
     {
       "id": "neg-injection",
