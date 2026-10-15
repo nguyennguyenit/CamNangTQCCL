@@ -22,12 +22,12 @@ Project deploy is split into three surfaces:
 
 - Date: 2026-10-15
 - Production URL: `https://tqccl.com` (primary). `https://www.tqccl.com` returns `301` to the same path and query through a zone Redirect Rule; `https://tqccl.pages.dev` hands over through the head bridge script.
-- Deployment URL: `https://ff01ace5.tqccl.pages.dev`
-- Source commit: `a9f055e` (`origin/main`, fast-forward of `feat/mcp-skill-redesign`). MCP skill redesign plus Gợi ý kho adapter fixes; the "Dùng món này" substitute button is enabled again (it carried `disabled="false"`). Recommended generation `e079390c…`.
-- Method: local `wrangler pages deploy dist --branch main --commit-hash a9f055e…` from a clean worktree, same `dist/` first deployed as preview `https://74b7c3b6.tqccl.pages.dev` (branch `release-a9f055e`). Build used `COMMUNITY_API_ORIGIN` like `pages-deploy.yml`. Local gate: localization `check --stage public`, `team_route_handles --check`, `build`, `verify` (3343 files), `test:dist` 32/32, `test:node` 540/540, pytest 393 passed, MCP `check` 526/526, `check:repository` Playwright 414/414.
-- Preview verified: shell, three team families, `/goi-y-doi-tu-kho/`, `/tra-cuu/` 200; unknown team, `/teams/…`, `pipeline/…` and `/_headers` 404 `no-store`; `/robots.txt` byte-equal to source; `/sitemap.xml` `application/xml`, 3140 URLs as `dist/`, no `/teams/`; JS/CSS/JSON byte-equal to `dist/`.
-- Production verified: `tqccl.com` and `tqccl.pages.dev` serve `js/roster-recommend-ui.js`, `data/recommended/current.json`, `data/lookup-manifest.json` byte-equal to `dist/`; Vision `OPTIONS /analyze` from `https://tqccl.com` 204, foreign origin 403; `/api/me` 200.
-- Previous production / rollback target: `ba81c78d-2c12-401f-8490-7febbca4e6ab` (`9291400`).
+- Deployment URL: `https://6a478f82.tqccl.pages.dev`
+- Source commit: `fabd7d4` (`origin/main`). Tactic dialog "Cách nhận" lists innate holders through the shared rule in `js/lookup-innate-holders.js` (heroes matched only by the Chinese innate-tactic name now show, e.g. Tiểu Kiều → Thiên Hương). Recommended generation `989c9919…`. Builds on `a9f055e` (deployment `ff01ace5`, same day: MCP skill redesign, "Dùng món này" button enabled again).
+- Method: local `wrangler pages deploy dist --branch main --commit-hash fabd7d4…` from a clean worktree, same `dist/` first deployed as preview `https://f648ffe0.tqccl.pages.dev` (branch `release-fabd7d4`). Build used `COMMUNITY_API_ORIGIN` like `pages-deploy.yml`. Local gate: localization `check --stage public`, `team_route_handles --check`, `build`, `verify` (3344 files), `test:dist` 32/32, `test:node` 541/541, pytest 393 passed, MCP `check:repository` green; MCP `check` 530 with four load-timeout files green when rerun sequentially (36/36).
+- Preview verified: shell, `/tra-cuu/chien-phap/`, Đội chuẩn and Khai hoang detail 200; `/teams/…` and `/_headers` 404; `/robots.txt` byte-equal to source; `/sitemap.xml` `application/xml` with the `dist/` URL count; changed JS and JSON byte-equal to `dist/`; Playwright on the preview: Thừa Thiên Tĩnh Thế shows SP Tào Tháo, Thiên Hương shows Tiểu Kiều, no page errors.
+- Production verified: the same Playwright check on `https://tqccl.com`; `js/lookup-innate-holders.js`, `js/lookup-tactic-profile.js`, `data/recommended/current.json` byte-equal to `dist/` (one read right after promotion returned the previous `lookup-tactic-profile.js`; three later uncached reads matched); `www` 301 with path and query; `/api/me` 200.
+- Previous production / rollback targets: `ff01ace5-b799-4977-84ca-22580033c309` (`a9f055e`), `ba81c78d-2c12-401f-8490-7febbca4e6ab` (`9291400`).
 
 ## Latest Community Worker Deploy
 

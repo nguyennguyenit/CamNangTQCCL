@@ -147,7 +147,7 @@ Thứ tự bắt buộc:
 5. Bootstrap tạo Worker/version đầu bằng `wrangler deploy`; normal release upload immutable version bằng `wrangler versions upload`. Cả hai đọc candidate UUID từ Wrangler NDJSON evidence, bảo đảm Custom Domain bằng `wrangler triggers deploy` và chờ `/healthz` sẵn sàng tối đa 120 giây trước controller.
 6. Tạo temporary deployment prior `100%` + candidate `0%`.
 7. Gọi production `/mcp` bằng Cloudflare Version Override và bearer; header runtime `TQCCL-MCP-Worker-Version` phải đúng candidate, đồng thời `releaseId`, `workflowBuildId`, catalog và bảy tool đều phải đạt.
-8. Re-read đúng deployment do run sở hữu, promote candidate thành version duy nhất `100%`, rồi verify production không override.
+8. Re-read đúng deployment do run sở hữu, promote candidate thành version duy nhất `100%`, rồi verify production không override. Trước mỗi lần verify không override (sau promote, rollback, re-promote, bootstrap), driver chờ edge phục vụ ổn định version đó: GET `/mcp` có bearer qua cùng scheduler `1.100 ms`, cần 5 response liên tiếp mang header `TQCCL-MCP-Worker-Version` đúng version, tối đa 120 giây (`scripts/await-served-version.ts`). Ngay sau khi đổi deployment, edge còn trả xen kẽ version cũ; không chờ thì verifier fail giữa chừng và kéo theo rollback (run `38743557129`, 2026-10-15).
 9. Khi `rehearse_rollback: true`, capture prior code/data identity trước mutation, rollback exact prior, xác minh lại version/release/workflow/data digest, re-promote candidate và chạy lại full production verifier. Mọi bước đều dùng expected-current ownership guard.
 
 ### Bootstrap deployment đầu tiên

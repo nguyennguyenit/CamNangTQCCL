@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 
 import { CloudflareDeploymentClient } from "./cloudflare-deployment-client.js";
 import type { WorkerDeploymentSnapshot } from "./cloudflare-deployment-client.js";
+import { awaitServedVersion } from "./await-served-version.js";
 import { createPacedMcpFetcher } from "./paced-mcp-fetch.js";
 import {
   parseReleaseVerificationFixture,
@@ -21,8 +22,10 @@ const OVERRIDE_HEADER = "Cloudflare-Workers-Version-Overrides";
 
 type ReleaseFailureStage =
   | "initializing"
+  | "settle"
   | `release:${ReleaseVerificationStep}`
   | `rollback-prior:${ReleaseVerificationStep | "starting"}`
+  | "rollback-observed:settle"
   | `rollback-observed:${ReleaseVerificationStep | "starting"}`
   | "rollback-comparison";
 
@@ -100,7 +103,12 @@ async function main(): Promise<void> {
       candidateVersionId,
       runId,
       deployment,
-      verifyProduction: (versionId: string) => verify(versionId),
+      // Sau mỗi lần đổi deployment, edge còn trả xen kẽ version cũ: chờ ổn định rồi mới xác minh không override.
+      verifyProduction: async (versionId: string) => {
+        failureStage = "settle";
+        await awaitServedVersion({ endpoint, bearer, versionId, fetcher: pacedFetcher });
+        await verify(versionId);
+      },
       incident: async () => {
         status = "incident";
         process.stderr.write("::error::Worker deployment drift detected\n");
@@ -135,6 +143,8 @@ async function main(): Promise<void> {
                       },
                     });
                     return async () => {
+                      failureStage = "rollback-observed:settle";
+                      await awaitServedVersion({ endpoint, bearer, versionId: priorVersionId, fetcher: pacedFetcher });
                       failureStage = "rollback-observed:starting";
                       const observed = await readReleaseIdentity({
                         endpoint,
