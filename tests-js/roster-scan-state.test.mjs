@@ -224,10 +224,12 @@ test("the chosen season is remembered with the roster, and junk values are dropp
 test("each successful read counts one image per type and keeps the latest read time; junk is dropped", () => {
   let state = applyScanResult(createInitialRosterScanState(), "heroes", { heroes: [{ name: "Mã Siêu" }] });
   state = applyScanResult(state, "heroes", { heroes: [] });
+  const heroesReadAt = state.updatedAt;
   state = applyScanResult(state, "builtTeams", { teams: [] });
   const saved = deserializeRosterScanState(JSON.stringify(state));
   assert.equal(saved.scans.heroes.images, 2);
-  assert.equal(saved.scans.heroes.at, state.updatedAt);
+  assert.equal(saved.scans.heroes.at, heroesReadAt);
+  assert.equal(saved.scans.builtTeams.at, state.updatedAt);
   assert.equal(saved.scans.builtTeams.images, 1);
   assert.equal(saved.scans.tactics, undefined);
   // Xoá chip không phải lượt đọc ảnh: số ảnh giữ nguyên.
