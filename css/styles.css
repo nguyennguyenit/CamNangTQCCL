@@ -14149,6 +14149,7 @@ body[data-page-section="roster-recommend"] .layout {
   color: var(--ink);
   font: var(--type-table-name);
   text-align: left;
+  overflow-wrap: anywhere;
   cursor: pointer;
 }
 

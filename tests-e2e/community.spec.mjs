@@ -246,6 +246,29 @@ test("admin approves a pending report through the API", async ({ page }) => {
   await expect(reportsLink.locator(".adm-nav-count")).toBeHidden();
 });
 
+test("admin: Back về URL không hash khôi phục khu chiến báo, Forward mở lại AI", async ({ page }) => {
+  await mockCommunityApi(page, { user: ADMIN });
+  await page.goto("/quan-tri/");
+  const nav = page.getByRole("navigation", { name: "Khu quản trị" });
+  const reportsLink = nav.getByRole("link", { name: "Duyệt chiến báo" });
+  const aiLink = nav.getByRole("link", { name: "AI", exact: true });
+  await expect(reportsLink).toHaveAttribute("aria-current", "page");
+  await aiLink.click();
+  await expect(page).toHaveURL(/#ai$/);
+  await expect(page.getByRole("region", { name: "AI", exact: true })).toBeVisible();
+
+  await page.goBack();
+  await expect(page).toHaveURL(/\/quan-tri\/$/);
+  await expect(reportsLink).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("region", { name: "Duyệt chiến báo" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "AI", exact: true })).toBeHidden();
+
+  await page.goForward();
+  await expect(page).toHaveURL(/#ai$/);
+  await expect(aiLink).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("region", { name: "AI", exact: true })).toBeVisible();
+});
+
 test("admin: link bỏ qua tới nội dung không đổi khu đang mở", async ({ page }) => {
   await mockCommunityApi(page, { user: ADMIN });
   await page.goto("/quan-tri/#ai");
@@ -261,12 +284,47 @@ test("admin: link bỏ qua tới nội dung không đổi khu đang mở", async
   await expect(page.locator("#adm-title-reports")).not.toBeFocused();
 });
 
-test("admin mobile: hàng chip điều hướng tự cuộn, trang không tràn ngang", async ({ page }) => {
+test("admin mobile: tiêu đề bài dài không có dấu cách vẫn nằm trong thẻ và mở được trình soạn", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 900 });
   await mockCommunityApi(page, { user: ADMIN });
+  const title = "A".repeat(200);
+  await page.route("**/api/admin/posts", (route) => route.fulfill({
+    contentType: "application/json",
+    body: JSON.stringify({ items: [{
+      id: "post-long-title", title, slug: "bai-tieu-de-dai", lang: "vi", status: "draft",
+      updatedAt: "2026-10-15T10:00:00.000Z",
+    }] }),
+  }));
+  await page.goto("/quan-tri/#bai-viet");
+  const open = page.getByRole("button", { name: title, exact: true });
+  await expect(open).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  await open.click();
+  await expect(page.getByRole("region", { name: "Bài viết", exact: true }).getByLabel("Tiêu đề", { exact: true })).toHaveValue(title);
+});
+
+test("admin mobile: hàng chip điều hướng tự cuộn, chip đang chọn không bị badge đẩy khuất, trang không tràn ngang", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  // Có số chờ để badge hiện sau khi trang đã cuộn hàng chip: badge làm chip rộng ra.
+  await mockCommunityApi(page, {
+    user: ADMIN,
+    adminReports: [{ id: "r1", status: "pending" }, { id: "r2", status: "pending" }],
+    adminFeedback: [{ id: "f1", status: "new" }, { id: "f2", status: "new" }],
+  });
+  let releaseCounts;
+  const countsReady = new Promise((resolve) => { releaseCounts = resolve; });
+  await page.route("**/api/admin/counts", async (route) => {
+    await countsReady;
+    await route.fallback();
+  });
   await page.goto("/quan-tri/#ai");
-  const aiLink = page.getByRole("navigation", { name: "Khu quản trị" }).getByRole("link", { name: "AI", exact: true });
+  const nav = page.getByRole("navigation", { name: "Khu quản trị" });
+  const aiLink = nav.getByRole("link", { name: "AI", exact: true });
   await expect(aiLink).toHaveAttribute("aria-current", "page");
+  await expect(aiLink).toBeInViewport({ ratio: 1 });
+  await expect(nav.getByRole("link", { name: /^Góp ý/ }).locator(".adm-nav-count")).toBeHidden();
+  releaseCounts();
+  await expect(nav.getByRole("link", { name: /^Góp ý/ }).locator(".adm-nav-count")).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
   await expect(aiLink).toBeInViewport({ ratio: 1 });
 });

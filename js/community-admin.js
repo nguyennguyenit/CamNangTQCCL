@@ -214,26 +214,34 @@ function adminShell(definitions, counts) {
     if (badge) badges.push([definition.count, badge]);
     return el('a', { class: 'adm-nav-link', href: `#${definition.hash}` }, [glyph(definition.icon, 18), el('span', { class: 'adm-nav-label' }, definition.label), badge]);
   });
+  const list = el('ul', { class: 'adm-nav-list' }, links.map((link) => el('li', {}, link)));
+  const opened = new Set();
+  const findSection = (hash) => hash === '' ? 0 : definitions.findIndex((definition) => `#${definition.hash}` === hash);
+  let active = 0;
+  // Hàng chip mobile: kéo chip đang chọn vào giữa (chỉ cuộn ngang, không đẩy trang). Gọi lại khi bề rộng chip đổi
+  // (badge số chờ hiện sau khi /api/admin/counts về, font web nạp xong), nếu không chip đang chọn có thể bị đẩy khuất.
+  const centerActive = () => {
+    if (list.scrollWidth <= list.clientWidth) return;
+    const link = links[active];
+    list.scrollLeft = link.offsetLeft - (list.clientWidth - link.offsetWidth) / 2;
+  };
   counts.subscribe((values) => {
     for (const [{ key, unit }, badge] of badges) {
       const value = Number(values?.[key]) || 0;
       badge.hidden = value === 0;
       badge.replaceChildren(el('span', { 'aria-hidden': 'true' }, String(value)), el('span', { class: 'visually-hidden' }, `, ${value} ${unit}`));
     }
+    centerActive();
   });
-  const list = el('ul', { class: 'adm-nav-list' }, links.map((link) => el('li', {}, link)));
-  const opened = new Set();
-  const findSection = (hash) => definitions.findIndex((definition) => `#${definition.hash}` === hash);
+  document.fonts?.ready.then(centerActive);
   const select = (index, { focus = false } = {}) => {
+    active = index;
     sections.forEach(({ section }, current) => {
       section.hidden = current !== index;
       if (current === index) links[current].setAttribute('aria-current', 'page');
       else links[current].removeAttribute('aria-current');
     });
-    // Hàng chip mobile: kéo chip đang chọn vào giữa (chỉ cuộn ngang, không đẩy trang).
-    if (list.scrollWidth > list.clientWidth) {
-      list.scrollLeft = links[index].offsetLeft - (list.clientWidth - links[index].offsetWidth) / 2;
-    }
+    centerActive();
     if (!opened.has(index)) {
       opened.add(index);
       definitions[index].open(sections[index].section, sections[index]);
