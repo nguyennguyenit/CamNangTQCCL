@@ -744,6 +744,16 @@ export const getTeamOutputSchema = commonResultSchema.extend({
   notes: z.array(notesBlockSchema).max(50).optional().describe("Khối ghi chú của trang hiện tại (section=notes)."),
   variants: z.array(variantSchema).max(50).optional().describe("Biến thể của trang hiện tại (section=variants)."),
   guide: guideSchema.optional().describe("Hướng dẫn nguồn (section=guide)."),
+  build: z
+    .object({
+      ref: z.string().max(300).describe("Nhãn <collection>:<id> của đội."),
+      name: z.string().max(256).describe("Tên đội theo locale."),
+      // Cùng kiểu slotHeroSchema của team.heroes; khai báo record để tools/list không chép schema đó lần hai (ngân sách 90 KiB).
+      heroes: z.array(z.record(z.string(), z.unknown())).max(10).describe("Ô tướng/chiến pháp/binh thư của đội, cùng dạng team.heroes ở overview."),
+    })
+    .strict()
+    .optional()
+    .describe("Có khi section khác overview: build của chính đội này, để không lấy nhầm build đội khác."),
 });
 
 interface TeamParts {
@@ -1136,7 +1146,8 @@ export async function handleGetTeam(ctx: ToolContext, rawInput: unknown) {
     ...(parts.seasonContext ? { seasonContext: parts.seasonContext } : {}),
   };
   if (section === "overview") return { ...base, team: parts.team, sections };
-  if (section === "guide") return { ...base, guide: parts.guide };
+  const build = { ref: parts.team.ref, name: parts.team.name, heroes: parts.team.heroes };
+  if (section === "guide") return { ...base, build, guide: parts.guide };
 
   const binding: CursorBinding = {
     tool: "tqccl_get_team",
@@ -1146,9 +1157,10 @@ export async function handleGetTeam(ctx: ToolContext, rawInput: unknown) {
   };
   const offset = input.cursor === undefined ? 0 : await decodeCursor(input.cursor, binding);
   const items: readonly unknown[] = section === "notes" ? parts.notes : parts.variants;
-  const { page, nextOffset } = fitPage(items, offset, limit, (slice) => ({ ...base, total: items.length, [section]: slice }));
+  const { page, nextOffset } = fitPage(items, offset, limit, (slice) => ({ ...base, build, total: items.length, [section]: slice }));
   return {
     ...base,
+    build,
     total: items.length,
     [section]: page,
     truncated: nextOffset !== null,
