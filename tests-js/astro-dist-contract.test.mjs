@@ -15,8 +15,12 @@ import {
   readPublicArtifact,
   seasonArtifactHashes,
   validatePublicArtifactTree,
+  websiteDisplayPublicationSnapshot,
 } from "../src/lib/root-static-artifacts.ts";
 import { teamDetailCatalog } from "../src/lib/team-detail-routes.ts";
+import { lookupDetailRoutes } from "../src/lib/lookup-detail-routes.ts";
+import { lookupBuildCorpus } from "../src/lib/lookup-pages.ts";
+import { effectVersions, lookupDisplayName } from "../js/lookup-detail.js";
 import {
   GET as sitemapGet,
   SITEMAP_MIME,
@@ -106,7 +110,7 @@ async function writeBlogOutputs(distDir, posts = []) {
     );
     await writeFile(join(prefix, "rss.xml"), rssDocument(lang, own, FIXTURE_ORIGIN));
   }
-  await writeFile(join(distDir, "llms.txt"), llmsDocument(posts, FIXTURE_ORIGIN));
+  await writeFile(join(distDir, "llms.txt"), llmsDocument(posts, FIXTURE_ORIGIN, { files: [], full: "", fullPath: "/llms-full.txt", groups: [] }));
 }
 
 /** Tám trang mục tĩnh của mô hình đường dẫn mới; 5 trang đầu có phạm vi mùa. `/tra-cuu/` là mục lục tĩnh (không app). */
@@ -149,15 +153,28 @@ const SEASON_MARKER = {
   tactics: `sha256:${"0".repeat(64)}`,
 };
 
+/** Nội dung đội dựng sẵn tối thiểu mà verifier đòi ở bốn trang danh sách đội (vân tay publication ở `website`). */
+const PRERENDERED_SECTION_BODY = {
+  "team-chuan": '<h1 class="reference-title">Đội chuẩn</h1><div class="reference-view" data-ssr-signature="[]"><article class="reference-team-card"><a data-team-detail-link href="/doi-chuan/x/"></a></article></div>',
+  "team-khac": '<h1 class="reference-title">Đội khác</h1><div class="reference-view" data-ssr-signature="[]"><article class="reference-team-card"><a data-team-detail-link href="/doi-khac/x/"></a></article></div>',
+  coexist: '<h1 class="reference-title">Cùng Tồn</h1><div class="coexist-group-view" data-ssr-signature="[]"><article class="coexist-team-card"></article></div>',
+  khaihoang: '<div class="khaihoang"><h1 class="reference-title">Khai hoang</h1><article class="kh-card"><a class="kh-title-link" href="/khai-hoang/x/"></a></article></div>',
+};
+
+/** Thân chi tiết dựng sẵn tối thiểu mà verifier đòi ở mọi trang chi tiết đội. */
+const PRERENDERED_DETAIL_BODY = '<div id="team-detail-body" data-prerendered><section><h2>Đội hình</h2></section></div>';
+
 /** Trang mục trong fixture mang đúng payload mà verifier khóa theo bảng của phase. */
-function sectionPageHtml({ path, locale, section, season, group, sampleId, registry, pin, seasonHashes }) {
+function sectionPageHtml({ path, locale, section, season, group, sampleId, registry, pin, seasonHashes, website }) {
   return [
     `<!doctype html>${pairHead(locale, `/${path}/`)}<body data-page-section="${section}"${group ? ` data-lookup-group="${group}"` : ""}>`,
-    `<section id="section-${section}" class="section active">`,
+    `<section id="section-${section}" class="section active"${PRERENDERED_SECTION_BODY[section] && website ? ` data-ssr-source="${website.pin.sha256}"` : ""}>`,
+    PRERENDERED_SECTION_BODY[section] ?? "",
     group ? `<button type="button" class="lookup-card-button" data-lookup-id="${sampleId}"></button>` : "",
     "</section>",
     season ? '<div id="season-controls"></div>' : "",
     `<script id="team-route-handles" type="application/json">${JSON.stringify(registry)}</script>`,
+    `<script id="lookup-route-handles" type="application/json">{}</script>`,
     `<script id="recommended-publication" type="application/json">${JSON.stringify(pin)}</script>`,
     season ? `<script id="season-artifact-hashes" type="application/json">${JSON.stringify(seasonHashes)}</script>` : "",
     group === "books" ? `<script type="application/json" id="lookup-books-hash">"sha256:${"0".repeat(64)}"</script>` : "",
@@ -333,12 +350,12 @@ async function writeRecommendedFixture(projectDir, distDir, { legacyTeamsHash } 
     await mkdir(join(base, "doi-khac", LEGACY_ROUTE_SEGMENT), { recursive: true });
     await writeFile(
       join(base, "doi-khac", LEGACY_ROUTE_SEGMENT, "index.html"),
-      `<!doctype html>${pairHead(locale, `/doi-khac/${LEGACY_ROUTE_SEGMENT}/`)}<article id="team-detail-root" data-legacy-team-id="${LEGACY_TEAM_ID}" data-legacy-teams-sha256="sha256:${sha256(teamsBytes)}" data-generation-id="${generationId}" data-manifest-sha256="${sha256(manifest)}"></article><script type="module" src="/js/team-detail.js"></script>${COMMUNITY_MOUNT_HTML}\n`,
+      `<!doctype html>${pairHead(locale, `/doi-khac/${LEGACY_ROUTE_SEGMENT}/`)}<article id="team-detail-root" data-legacy-team-id="${LEGACY_TEAM_ID}" data-legacy-teams-sha256="sha256:${sha256(teamsBytes)}" data-generation-id="${generationId}" data-manifest-sha256="${sha256(manifest)}">${PRERENDERED_DETAIL_BODY}</article><script type="module" src="/js/team-detail.js"></script>${COMMUNITY_MOUNT_HTML}\n`,
     );
     await mkdir(join(base, "khai-hoang", KHAIHOANG_ROUTE_SEGMENT), { recursive: true });
     await writeFile(
       join(base, "khai-hoang", KHAIHOANG_ROUTE_SEGMENT, "index.html"),
-      `<!doctype html>${pairHead(locale, `/khai-hoang/${KHAIHOANG_ROUTE_SEGMENT}/`)}<article id="team-detail-root" data-family="khaihoang" data-khaihoang-team-id="${KHAIHOANG_TEAM_ID}" data-khaihoang-sha256="sha256:${sha256(khaiHoangBytes)}"></article><script type="module" src="/js/khaihoang-detail.js"></script>${COMMUNITY_MOUNT_HTML}\n`,
+      `<!doctype html>${pairHead(locale, `/khai-hoang/${KHAIHOANG_ROUTE_SEGMENT}/`)}<article id="team-detail-root" data-family="khaihoang" data-khaihoang-team-id="${KHAIHOANG_TEAM_ID}" data-khaihoang-sha256="sha256:${sha256(khaiHoangBytes)}">${PRERENDERED_DETAIL_BODY}</article><script type="module" src="/js/khaihoang-detail.js"></script>${COMMUNITY_MOUNT_HTML}\n`,
     );
   }
   return { ledger, generationId, manifest, sitemap };
@@ -727,6 +744,29 @@ test("dist verifier admits exactly the catalog team pages, the 404 and no stale 
   await assert.rejects(verify(), /does not load its own entry|boots the root application/i);
   await writeFile(khaiHoangPagePath, validKhaiHoangPage);
 
+  // Thân chi tiết phải dựng sẵn trong HTML: thiếu thân, ẩn thân, hoặc còn câu chờ/đòi JavaScript đều làm hỏng build.
+  await writeFile(khaiHoangPagePath, validKhaiHoangPage.replace(PRERENDERED_DETAIL_BODY, '<div id="team-detail-body" hidden></div>'));
+  await assert.rejects(verify(), /lacks its prerendered body/i);
+  await writeFile(khaiHoangPagePath, validKhaiHoangPage.replace(PRERENDERED_DETAIL_BODY, `<div id="team-detail-status">Đang tải chi tiết…</div>${PRERENDERED_DETAIL_BODY}`));
+  await assert.rejects(verify(), /waiting or JavaScript-required state/i);
+  await writeFile(khaiHoangPagePath, validKhaiHoangPage.replace(PRERENDERED_DETAIL_BODY, `${PRERENDERED_DETAIL_BODY}<noscript><p>Trang chi tiết cần JavaScript</p></noscript>`));
+  await assert.rejects(verify(), /waiting or JavaScript-required state/i);
+  await writeFile(khaiHoangPagePath, validKhaiHoangPage);
+
+  // Bốn trang danh sách đội phải mang đội mặc định dựng sẵn, đúng một h1 và không đòi JavaScript.
+  for (const [pagePath, mutate, expected] of [
+    ["doi-chuan", (html) => html.replace(PRERENDERED_SECTION_BODY["team-chuan"], ""), /lacks its prerendered default content/i],
+    ["zh/khai-hoang", (html) => html.replace(PRERENDERED_SECTION_BODY.khaihoang, ""), /lacks its prerendered default content/i],
+    ["cung-ton", (html) => html.replace(PRERENDERED_SECTION_BODY.coexist, `${PRERENDERED_SECTION_BODY.coexist}<h1>Hai</h1>`), /exactly one h1/i],
+    ["doi-khac", (html) => html.replace(PRERENDERED_SECTION_BODY["team-khac"], `${PRERENDERED_SECTION_BODY["team-khac"]}<noscript><p>Mục này cần JavaScript để hiển thị nội dung.</p></noscript>`), /waiting or JavaScript-required text/i],
+  ]) {
+    const sectionPath = join(distDir, ...pagePath.split("/"), "index.html");
+    const validSection = await readFile(sectionPath, "utf8");
+    await writeFile(sectionPath, mutate(validSection));
+    await assert.rejects(verify(), expected, pagePath);
+    await writeFile(sectionPath, validSection);
+  }
+
   // Hai trang chi tiết cùng <title> hoặc cùng meta description thì tab/kết quả tìm kiếm không phân biệt được.
   const legacyDetailPath = join(distDir, "doi-khac", LEGACY_ROUTE_SEGMENT, "index.html");
   const validLegacyDetail = await readFile(legacyDetailPath, "utf8");
@@ -927,9 +967,11 @@ test("built dist declares canonical, article metadata, robots and the catalog si
   const sitemap = await read("sitemap.xml");
   assert.match(sitemap, /^<\?xml version="1\.0" encoding="UTF-8"\?>/u);
   const locations = [...sitemap.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
-  // Release baseline: Landing, 8 trang mục, 7 trang nhóm Tra cứu, 4 trang chính sách, 1366 Recommended, 166 legacy, 17 Khai hoang
-  // — mỗi route hai ngôn ngữ — và 2 trang danh sách blog (build không khai COMMUNITY_API_ORIGIN nên chưa có bài).
-  assert.equal(locations.length, 3140);
+  // Release baseline: Landing, 8 trang mục, 7 trang nhóm Tra cứu, 4 trang chính sách, 1366 Recommended, 166 legacy, 17 Khai hoang,
+  // 886 trang riêng mục Tra cứu — mỗi route hai ngôn ngữ — và 2 trang danh sách blog (build không khai COMMUNITY_API_ORIGIN nên chưa có bài).
+  const lookupRoutes = await lookupDetailRoutes();
+  assert.equal(lookupRoutes.entries.length, 886);
+  assert.equal(locations.length, 4912);
   assert.deepEqual(
     locations,
     [rootHref, ...[
@@ -939,6 +981,7 @@ test("built dist declares canonical, article metadata, robots and the catalog si
         ...LOOKUP_GROUP_PATHS,
         ...STATIC_PAGE_PATHS,
         ...[...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath),
+        ...lookupRoutes.entries.map((entry) => entry.path),
       ].flatMap((path) => [path, zhPathOf(path)]),
       "/bai-viet/",
       "/zh/bai-viet/",
@@ -1026,6 +1069,7 @@ test("sitemap endpoint publishes exactly the root page plus the catalog routes",
   const site = await configuredSite();
   const origin = new URL(site).origin;
   const catalog = await teamDetailCatalog();
+  const lookupRoutes = await lookupDetailRoutes();
   const response = await sitemapGet({ site: new URL(site) });
 
   assert.equal(response.headers.get("content-type"), SITEMAP_MIME);
@@ -1035,19 +1079,21 @@ test("sitemap endpoint publishes exactly the root page plus the catalog routes",
   assert.doesNotMatch(xml, /<changefreq>|<priority>/u);
 
   const locations = [...xml.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
-  // Mỗi route bản Việt có bản Trung cùng đường dẫn dưới /zh (Landing, 8 trang mục, 7 trang nhóm Tra cứu, trang tĩnh, 3 họ chi tiết).
+  // Mỗi route bản Việt có bản Trung cùng đường dẫn dưới /zh (Landing, 8 trang mục, 7 trang nhóm Tra cứu, trang tĩnh, 3 họ chi tiết đội, 886 trang riêng mục Tra cứu).
   const mirrored = [
     "/",
     ...SECTION_PAGE_SPECS.map(({ path }) => `/${path}/`),
     ...LOOKUP_GROUP_PATHS,
     ...STATIC_PAGE_PATHS,
     ...[...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath),
+    ...lookupRoutes.entries.map((entry) => entry.path),
   ];
   const routePaths = [...mirrored.flatMap((path) => [path, zhPathOf(path)]), "/bai-viet/", "/zh/bai-viet/"].filter((path) => path !== "/");
   assert.equal(catalog.recommended.length, 1366);
   assert.equal(catalog.legacy.length, 166);
   assert.equal(catalog.khaiHoang.length, 17);
-  assert.equal(locations.length, 3140);
+  assert.equal(lookupRoutes.entries.length, 886);
+  assert.equal(locations.length, 4912);
   assert.deepEqual(
     locations,
     [new URL("/", origin).href, ...routePaths.sort().map((path) => new URL(path, origin).href)],
@@ -1448,4 +1494,442 @@ test("dist verifier still enforces the Recommended publication pin alongside loo
   const html = await readFile(pagePath, "utf8");
   await writeFile(pagePath, html.replace(/"generationId":"[0-9a-f]{64}"/, `"generationId":"${"3".repeat(64)}"`));
   await assert.rejects(fixture.verify(), /Recommended/i);
+});
+
+/** Ledger slug của fixture (cùng canonical JSON + digest mà `lookup_route_handles.py` và loader TS dùng). */
+const canonicalJson = (value) => (value && typeof value === "object"
+  ? `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${canonicalJson(value[key])}`).join(",")}}`
+  : JSON.stringify(value));
+
+/** Dist fixture có đủ bundle Tra cứu + books-dict + ledger: trang nhóm đủ mọi mục, trang riêng từng mục, sitemap có mục. */
+async function lookupItemsFixture(t) {
+  const fixture = await lookupDistFixture(t);
+  const booksBytes = jsonBytes([{ viet: "Dĩ Trực Báo Oán", hanViet: "Dĩ Trực Báo Oán", chinese: "以直报怨", effect: "效果", effectViet: "Hiệu ứng", effectVersion: "2021-11" }]);
+  for (const dir of [join(fixture.projectDir, "data"), join(fixture.distDir, "data")]) await writeFile(join(dir, "books-dict.json"), booksBytes);
+  await mkdir(join(fixture.projectDir, "pipeline"), { recursive: true });
+  await writeFile(join(fixture.projectDir, "pipeline", "recommended-identity-map.json"), jsonBytes({ entries: [] }));
+  const manifest = ["heroes-dict", "tactics", "lookup-catalog", "lookup-manifest", "books-dict"].map(dataEntry);
+  // Trang nhóm gốc của fixture (một thẻ mẫu): làm khung để dựng lại với đủ mọi thẻ.
+  const baseGroupPages = {};
+  for (const locale of ["vi", "zh"]) {
+    for (const spec of LOOKUP_GROUP_SPECS) {
+      baseGroupPages[`${locale}/${spec.group}`] = await readFile(join(fixture.distDir, ...(locale === "zh" ? ["zh"] : []), spec.path, "index.html"), "utf8");
+    }
+  }
+  const corpus = await lookupBuildCorpus({ rootDir: fixture.projectDir, manifest });
+  const handles = Object.fromEntries(Object.entries(corpus.groups).map(([group, rows]) => [group, Object.fromEntries(rows.map((row) => [row.id, row.id.split(":")[1]]))]));
+  const ledgerOf = (table) => {
+    const retired = Object.fromEntries(Object.keys(table).map((group) => [group, {}]));
+    return {
+      schemaVersion: 1,
+      generationId: fixture.manifest.generationId,
+      booksSha256: sha256(booksBytes),
+      handlesSha256: createHash("sha256").update(canonicalJson({ handles: table, retired })).digest("hex"),
+      note: "fixture",
+      handles: table,
+      retired,
+    };
+  };
+  const ledgerPath = join(fixture.projectDir, "pipeline", "lookup-route-handles.json");
+  await writeFile(ledgerPath, jsonBytes(ledgerOf(handles)));
+  const entries = Object.entries(handles).flatMap(([group, table]) => Object.entries(table).map(([id, slug]) => ({ group, id, slug, path: `/tra-cuu/${LOOKUP_GROUP_SPECS.find((spec) => spec.group === group).path.split("/")[1]}/${slug}/` })));
+  const itemFile = (locale, entry) => join(fixture.distDir, ...(locale === "zh" ? ["zh"] : []), ...entry.path.split("/").filter(Boolean), "index.html");
+  const itemHtml = (locale, entry, overrides = {}) => {
+    const groupHref = `${locale === "zh" ? "/zh" : ""}/${LOOKUP_GROUP_SPECS.find((spec) => spec.group === entry.group).path}/`;
+    const canonical = `${FIXTURE_ORIGIN}${locale === "zh" ? "/zh" : ""}${entry.path}`;
+    return [
+      `<!doctype html>${pairHead(locale, entry.path)}<title>${overrides.title ?? `${entry.id} ${locale}`}</title>`,
+      `<meta name="description" content="${overrides.description ?? `mô tả ${entry.id} ${locale}`}">`,
+      `<link rel="canonical" href="${overrides.canonical ?? canonical}">`,
+      `<a class="detail-link detail-back-link" href="${groupHref}">Quay lại</a>`,
+      `<section data-lookup-item-root><article data-lookup-item="${entry.id}"><h1>${entry.id}</h1></article></section>`,
+      '<script type="module" src="/js/lookup-item-page.js"></script>\n',
+    ].join("");
+  };
+  const groupHtml = (locale, spec, extraId = null) => {
+    const ids = [...Object.keys(handles[spec.group]), ...(extraId ? [extraId] : [])];
+    return baseGroupPages[`${locale}/${spec.group}`].replace(
+      /<button type="button" class="lookup-card-button" data-lookup-id="[^"]*"><\/button>/u,
+      ids.map((id) => `<a class="lookup-card-button" href="x" data-lookup-id="${id}"></a>`).join(""),
+    );
+  };
+  const writeAll = async () => {
+    for (const locale of ["vi", "zh"]) {
+      for (const spec of LOOKUP_GROUP_SPECS) {
+        await writeFile(join(fixture.distDir, ...(locale === "zh" ? ["zh"] : []), spec.path, "index.html"), groupHtml(locale, spec));
+      }
+      for (const entry of entries) {
+        await mkdir(dirname(itemFile(locale, entry)), { recursive: true });
+        await writeFile(itemFile(locale, entry), itemHtml(locale, entry));
+      }
+    }
+    await writeFile(join(fixture.distDir, "sitemap.xml"), orderedSitemap([...FIXTURE_SITEMAP_ENTRIES, ...mirroredEntries(entries.map((entry) => entry.path))]));
+  };
+  return {
+    ...fixture,
+    entries,
+    handles,
+    ledgerPath,
+    ledgerOf,
+    itemFile,
+    itemHtml,
+    groupHtml,
+    writeAll,
+    verify: () => verifyAstroDist({ projectRoot: new URL(`file://${fixture.projectDir}/`), distDir: new URL(`file://${fixture.distDir}/`), manifest }),
+  };
+}
+
+test("dist verifier admits the lookup item pages only with the ledger routes, own metadata and every card prerendered", async (t) => {
+  const fixture = await lookupItemsFixture(t);
+  assert.deepEqual([...new Set(fixture.entries.map((entry) => entry.group))].sort(), LOOKUP_GROUP_SPECS.map((spec) => spec.group).sort(), "fixture phải phủ đủ bảy nhóm");
+  // Chưa có trang mục nào: allowlist thiếu file và sitemap thiếu URL.
+  await assert.rejects(fixture.verify(), /allowlist mismatch/u);
+  await fixture.writeAll();
+  const result = await fixture.verify();
+  assert.equal(result.unexpectedFiles.length, 0);
+
+  const [first] = fixture.entries;
+  const file = fixture.itemFile("vi", first);
+  const restore = () => writeFile(file, fixture.itemHtml("vi", first));
+  const rejected = {
+    "canonical of another page": [fixture.itemHtml("vi", first, { canonical: `${FIXTURE_ORIGIN}/tra-cuu/tuong/khac/` }), /canonical/u],
+    "a title shared with another page": [fixture.itemHtml("vi", first, { title: `${fixture.entries[1].id} vi` }), /share a title/u],
+    "a description shared with another page": [fixture.itemHtml("vi", first, { description: `mô tả ${fixture.entries[1].id} vi` }), /share a description/u],
+    "no profile of its own": [fixture.itemHtml("vi", first).replace(`data-lookup-item="${first.id}"`, 'data-lookup-item="hero:other"'), /prerendered profile/u],
+    "two h1": [fixture.itemHtml("vi", first).replace("</article>", "<h1>x</h1></article>"), /exactly one h1/u],
+    "the root application booted": [fixture.itemHtml("vi", first).replace("lookup-item-page.js", "app.js"), /only its own script/u],
+    "no link back to the group page": [fixture.itemHtml("vi", first).replace(/href="\/tra-cuu\/[^"]+\/"/u, 'href="/"'), /link back to the group page/u],
+    "a description ending in a colon": [fixture.itemHtml("vi", first, { description: "Ám Triều Dũng Động — chiến pháp phẩm A · Chủ động: " }), /dangling colon/u],
+    "a description ending in a full-width colon": [fixture.itemHtml("vi", first, { description: "暗潮湧動（战法，品质A·主动）：" }), /dangling colon/u],
+    "waiting text": [fixture.itemHtml("vi", first).replace("<h1>", "<h1>Đang tải chi tiết "), /waiting or JavaScript-required/u],
+  };
+  for (const [label, [html, pattern]] of Object.entries(rejected)) {
+    await writeFile(file, html);
+    await assert.rejects(fixture.verify(), pattern, label);
+  }
+  await restore();
+  await fixture.verify();
+
+  // Trang mục thiếu hoặc thừa so với ledger.
+  const { rm } = await import("node:fs/promises");
+  await rm(file);
+  await assert.rejects(fixture.verify(), /missing: /u);
+  await restore();
+  await mkdir(join(fixture.distDir, "tra-cuu", "tuong", "khong-co-trong-ledger"), { recursive: true });
+  await writeFile(join(fixture.distDir, "tra-cuu", "tuong", "khong-co-trong-ledger", "index.html"), fixture.itemHtml("vi", first));
+  await assert.rejects(fixture.verify(), /unexpected: tra-cuu\/tuong\/khong-co-trong-ledger/u);
+  await rm(join(fixture.distDir, "tra-cuu", "tuong", "khong-co-trong-ledger"), { recursive: true });
+  await fixture.verify();
+
+  // Trang nhóm phải dựng sẵn đủ mọi mục và mang đúng bảng slug của ledger.
+  const spec = LOOKUP_GROUP_SPECS.find((candidate) => candidate.group === first.group);
+  const groupFile = join(fixture.distDir, spec.path, "index.html");
+  await writeFile(groupFile, fixture.groupHtml("vi", spec, "hero:thua"));
+  await assert.rejects(fixture.verify(), /prerender every item/u);
+  // Cùng số thẻ nhưng một mục thay bằng mã lạ (một thiếu, một thừa): đếm số lượng không đủ, phải so tập mã.
+  await writeFile(groupFile, fixture.groupHtml("vi", spec).replace(`data-lookup-id="${first.id}"`, 'data-lookup-id="hero:thua"'));
+  await assert.rejects(fixture.verify(), /prerender every item exactly once/u);
+  const otherPage = join(fixture.distDir, ...LOOKUP_GROUP_SPECS.filter((candidate) => candidate.group !== first.group)[0].path.split("/"), "index.html");
+  const original = await readFile(otherPage, "utf8");
+  await writeFile(groupFile, fixture.groupHtml("vi", spec));
+  await writeFile(otherPage, original.replace('id="lookup-route-handles" type="application/json">{}', 'id="lookup-route-handles" type="application/json">{"hero:x":"khac"}'));
+  await assert.rejects(fixture.verify(), /route exceptions differ from the ledger/u);
+  await writeFile(otherPage, original);
+  await writeFile(groupFile, fixture.groupHtml("vi", spec));
+  await fixture.verify();
+
+  // Ledger đổi (mục mới chưa cấp slug hoặc sửa tay) không lọt qua.
+  const handles = structuredClone(fixture.handles);
+  delete handles[first.group][first.id];
+  await writeFile(fixture.ledgerPath, jsonBytes(fixture.ledgerOf(handles)));
+  await assert.rejects(fixture.verify(), /ledger/iu);
+  await writeFile(fixture.ledgerPath, jsonBytes({ ...fixture.ledgerOf(fixture.handles), note: "sửa tay", handlesSha256: "0".repeat(64) }));
+  await assert.rejects(fixture.verify(), /handlesSha256/u);
+  await writeFile(fixture.ledgerPath, jsonBytes(fixture.ledgerOf(fixture.handles)));
+  await fixture.verify();
+
+  // Sitemap phải có đủ mọi trang mục.
+  await writeFile(join(fixture.distDir, "sitemap.xml"), orderedSitemap(FIXTURE_SITEMAP_ENTRIES));
+  await assert.rejects(fixture.verify(), /sitemap/iu);
+});
+
+/* ---------- Trang đội dựng sẵn: người đọc (và crawler) không cần JavaScript ---------- */
+
+const distText = (name) => readFile(new URL(`../dist/${name}`, import.meta.url), "utf8");
+const publicJson = async (routeParam) => JSON.parse(Buffer.from((await readPublicArtifact({ kind: "data", routeParam })).bytes).toString("utf8"));
+/** Chữ người đọc thấy trong HTML: bỏ script/style/thẻ, giải mã entity cơ bản, gộp khoảng trắng. */
+const visibleText = (html) => html
+  .replace(/<(script|style|noscript)\b[\s\S]*?<\/\1>/gu, " ")
+  .replace(/<[^>]+>/gu, " ")
+  .replace(/&quot;/gu, '"').replace(/&#39;/gu, "'").replace(/&lt;/gu, "<").replace(/&gt;/gu, ">").replace(/&amp;/gu, "&")
+  .replace(/\s+/gu, " ");
+const withoutVariantPrefix = (name) => String(name).replace(/^(SP|CO|40Y)\s*/u, "").trim();
+const CJK_RE = /[\u3400-\u9fff\uf900-\ufaff]/u;
+const WAITING_TEXT = /Đang tải chi tiết|正在加载详情|cần JavaScript|需要 JavaScript/u;
+const articleOf = (html) => html.match(/<article\b[^>]*id="team-detail-root"[\s\S]*?<\/article>/u)?.[0] ?? "";
+const mainOf = (html) => html.match(/<main\b[\s\S]*<\/main>/u)?.[0] ?? "";
+const zhPath = (htmlPath) => `zh/${htmlPath}`;
+
+async function resolverZh() {
+  const { createRawNameResolver } = await import("../js/website-display.js");
+  return createRawNameResolver(...await Promise.all(["heroes-dict", "tactics", "books-dict"].map(publicJson)));
+}
+
+/** Tên tướng/chiến pháp/binh thư của một bản ghi Đội chuẩn theo ngôn ngữ trang (nguồn: bản ghi chi tiết thật). */
+function recommendedNames(record, locale) {
+  const pick = (vi, raw) => (locale === "zh" ? raw : vi);
+  const heroes = record.heroes.map((hero) => withoutVariantPrefix(pick(hero.displayNameVi, hero.nameRaw)));
+  const tactics = record.heroes.flatMap((hero) => pick(hero.tacticSlotsVi, hero.tacticSlotsRaw) ?? []);
+  const books = record.heroes.flatMap((hero) => pick(hero.bookSlotsVi, hero.bookSlotsRaw) ?? []);
+  const plain = (value) => typeof value === "string" && value.trim() && !/[\/·()（）]/u.test(value);
+  return { heroes: heroes.filter(Boolean), tactics: tactics.filter(plain), books: books.filter(plain) };
+}
+
+test("Đội chuẩn: trang chi tiết dựng sẵn có tướng, chiến pháp, binh thư của chính đội, không câu chờ JS (vi + zh)", async () => {
+  const catalog = await teamDetailCatalog();
+  const website = await websiteDisplayPublicationSnapshot();
+  const recordOf = (candidate) => JSON.parse(Buffer.from(website.recommended.files[`details-${candidate.safeScopeKey}.json`]).toString("utf8"))
+    .records.find((row) => row.sourceConfigId === candidate.sourceConfigId);
+  const full = (record) => ["vi", "zh"].every((locale) => {
+    const names = recommendedNames(record, locale);
+    return names.heroes.length >= 3 && names.tactics.length && names.books.length;
+  });
+  const entry = catalog.recommended.find((candidate) => full(recordOf(candidate)));
+  assert.ok(entry, "dữ liệu thật phải có ít nhất một đội đủ tướng, chiến pháp, binh thư");
+  const record = recordOf(entry);
+  for (const locale of ["vi", "zh"]) {
+    const html = await distText(locale === "zh" ? zhPath(entry.htmlPath) : entry.htmlPath);
+    const body = articleOf(html);
+    const text = visibleText(body);
+    const names = recommendedNames(record, locale);
+    assert.ok(names.heroes.length >= 3 && names.tactics.length && names.books.length, "mẫu thật phải có đủ tướng, chiến pháp, binh thư");
+    for (const [kind, values] of Object.entries(names)) {
+      for (const value of values) assert.ok(text.includes(value), `${locale} ${entry.routePath}: thiếu ${kind} "${value}" trong HTML dựng sẵn`);
+    }
+    assert.doesNotMatch(body, WAITING_TEXT, `${locale}: không còn câu chờ/yêu cầu JavaScript`);
+    assert.doesNotMatch(body, /id="team-detail-status"/u);
+    assert.doesNotMatch(body, /id="team-detail-body"[^>]*\bhidden\b/u);
+  }
+});
+
+test("Đội khác: trang chi tiết dựng sẵn có tướng, chiến pháp, binh thư của đội gốc (vi + zh)", async () => {
+  const catalog = await teamDetailCatalog();
+  const teams = await publicJson("teams");
+  const resolve = await resolverZh();
+  const entry = catalog.legacy.find((candidate) => teams.some((team) => team.id === candidate.legacyTeamId && team.heroes?.length >= 3));
+  const team = teams.find((candidate) => candidate.id === entry.legacyTeamId);
+  for (const locale of ["vi", "zh"]) {
+    const html = await distText(locale === "zh" ? zhPath(entry.htmlPath) : entry.htmlPath);
+    const body = articleOf(html);
+    const text = visibleText(body);
+    const tr = (name) => (locale === "zh" ? resolve(name) : name);
+    const heroes = team.heroes.map((hero) => tr(hero.baseName ?? hero.name)).filter(Boolean);
+    const tactics = team.heroes.flatMap((hero) => hero.tactics ?? []).map((item) => tr(item.name)).filter(Boolean);
+    const books = team.heroes.flatMap((hero) => hero.books ?? []).map((item) => tr(item.name)).filter(Boolean);
+    assert.ok(heroes.length && tactics.length && books.length, `${locale}: mẫu phải có tướng, chiến pháp, binh thư tra được`);
+    for (const value of [heroes[0], tactics[0], books[0]]) assert.ok(text.includes(withoutVariantPrefix(value)), `${locale} ${entry.routePath}: thiếu "${value}"`);
+    assert.doesNotMatch(body, WAITING_TEXT);
+    assert.doesNotMatch(body, /id="team-detail-status"/u);
+    assert.doesNotMatch(body, /id="team-detail-body"[^>]*\bhidden\b/u);
+  }
+});
+
+test("Khai hoang: trang chi tiết dựng sẵn có tướng, chiến pháp, điểm và hướng dẫn của đội (vi + zh)", async () => {
+  const catalog = await teamDetailCatalog();
+  const data = await publicJson("khaihoang");
+  const resolve = await resolverZh();
+  const entry = catalog.khaiHoang.find((candidate) => data.teams.find((team) => team.id === candidate.khaiHoangTeamId)?.guide?.ratings);
+  const team = data.teams.find((candidate) => candidate.id === entry.khaiHoangTeamId);
+  for (const locale of ["vi", "zh"]) {
+    const html = await distText(locale === "zh" ? zhPath(entry.htmlPath) : entry.htmlPath);
+    const body = articleOf(html);
+    const text = visibleText(body);
+    const tr = (name) => (locale === "zh" ? resolve(name) : name);
+    const hero = tr(withoutVariantPrefix(team.heroes[0].name));
+    const tactic = team.heroes.flatMap((item) => item.tacticsAfter ?? []).map(tr).find((name) => name && !/[\/·]/u.test(name));
+    assert.ok(hero && tactic, `${locale}: mẫu phải có tướng và chiến pháp tra được`);
+    assert.ok(text.includes(hero), `${locale} ${entry.routePath}: thiếu tướng ${hero}`);
+    assert.ok(text.includes(tactic), `${locale} ${entry.routePath}: thiếu chiến pháp ${tactic}`);
+    assert.match(body, /class="kh-ratings\b/u, `${locale}: thanh điểm đánh giá phải dựng sẵn`);
+    assert.doesNotMatch(body, WAITING_TEXT);
+    assert.doesNotMatch(body, /id="team-detail-status"/u);
+    assert.doesNotMatch(body, /id="team-detail-body"[^>]*\bhidden\b/u);
+  }
+});
+
+test("bốn trang danh sách đội dựng sẵn đội mặc định: tướng + link chi tiết, một h1, không noscript 'cần JavaScript' (vi + zh)", async () => {
+  const catalog = await teamDetailCatalog();
+  const website = await websiteDisplayPublicationSnapshot();
+  const { projectRecommendedRows } = await import("../js/recommended-reference-state.js");
+  const seasons = JSON.parse(Buffer.from(website.recommended.files["seasons.json"]).toString("utf8"));
+  const indexRecords = JSON.parse(Buffer.from(website.recommended.files["index.json"]).toString("utf8")).records;
+  const otherRecords = JSON.parse(Buffer.from(website.recommended.files["other-teams.json"]).toString("utf8")).records;
+  const baseState = { query: "", filters: {}, view: "the" };
+  const recommendedRow = projectRecommendedRows(indexRecords, { ...baseState, season: seasons.defaultSourceSeasonId }, seasons.displayLabels)[0];
+  const otherRow = projectRecommendedRows(otherRecords, { ...baseState, season: "all" }, seasons.displayLabels)[0];
+  const khaihoang = await publicJson("khaihoang");
+  const khaiEntry = catalog.khaiHoang.find((entry) => entry.khaiHoangTeamId === khaihoang.teams[0].id);
+  const recommendedEntry = catalog.recommended.find((entry) => entry.sourceConfigId === recommendedRow.sourceConfigId);
+  const otherEntry = catalog.legacy.find((entry) => entry.legacyTeamId === (otherRow.legacyTeamId ?? otherRow.id));
+  assert.ok(recommendedEntry && otherEntry && khaiEntry, "mẫu mặc định phải có route chi tiết");
+
+  const resolve = await resolverZh();
+  // Cùng Tồn: nhóm đầu của mùa mới nhất (mặc định của URL trống) — tướng của đội đầu phải có trong HTML.
+  const seasonUi = await import("../js/season-ui-state.js");
+  const { projectSeasonBrowse } = await import("../js/season-context.js");
+  const model = await seasonUi.loadSeasonModel(await seasonArtifactHashes(), async (name) => new Uint8Array((await readPublicArtifact({ kind: "data", routeParam: name })).bytes));
+  const scenarioId = seasonUi.coexistScenarioIds(model)[0];
+  assert.equal(scenarioId, seasonUi.COEXIST_LATEST_SCENARIO_ID, "mùa mặc định của Cùng Tồn là mùa mới nhất");
+  const defaultGroup = seasonUi.coexistGroups(projectSeasonBrowse(model, seasonUi.readSeasonQuery(`https://tqccl.invalid/cung-ton/?scenario=${scenarioId}`, model).browse))[0];
+  const coexistHeroes = (locale) => defaultGroup.content.teams[0].heroes
+    .map((hero) => String(hero.name ?? hero.nameRaw).split(/[\n(（]/u)[0].trim())
+    .map((name) => (locale === "zh" && !CJK_RE.test(name) ? resolve(withoutVariantPrefix(name)) : name))
+    .filter((name) => name && (locale === "zh" || !CJK_RE.test(name)));
+  const cases = [
+    { path: "doi-chuan", entry: recommendedEntry, heroes: (locale) => recommendedRow.heroes.map((hero) => locale === "zh" ? hero.nameRaw : hero.displayNameVi) },
+    { path: "doi-khac", entry: otherEntry, heroes: (locale) => (otherRow.holders ?? otherRow.heroes).map((hero) => locale !== "zh" ? hero.displayNameVi : CJK_RE.test(hero.nameRaw) ? hero.nameRaw : resolve(withoutVariantPrefix(hero.nameRaw))) },
+    { path: "khai-hoang", entry: khaiEntry, heroes: (locale) => khaihoang.teams[0].heroes.map((hero) => locale === "zh" ? resolve(withoutVariantPrefix(hero.name)) : hero.name) },
+    { path: "cung-ton", entry: null, heroes: coexistHeroes },
+  ];
+  for (const locale of ["vi", "zh"]) {
+    for (const { path, entry, heroes } of cases) {
+      const html = await distText(`${locale === "zh" ? "zh/" : ""}${path}/index.html`);
+      const where = `${locale} /${path}/`;
+      assert.equal((html.match(/<h1\b/gu) ?? []).length, 1, `${where}: đúng một h1 (không tính noscript)`);
+      assert.doesNotMatch(html, /<noscript>[\s\S]*?JavaScript[\s\S]*?<\/noscript>/u, `${where}: không noscript yêu cầu JavaScript`);
+      const section = html.match(/<section\b[^>]*id="section-[a-z-]+"[\s\S]*?<script\b/u)?.[0] ?? "";
+      const text = visibleText(section);
+      if (entry) {
+        const href = `${locale === "zh" ? "/zh" : ""}${entry.routePath}`;
+        assert.ok(section.includes(`href="${href}`), `${where}: thiếu link chi tiết ${href}`);
+      }
+      const names = heroes(locale).filter(Boolean).map(withoutVariantPrefix);
+      assert.ok(names.length >= 1, `${where}: mẫu phải có tên tướng`);
+      for (const name of names) assert.ok(text.includes(name), `${where}: thiếu tướng ${name}`);
+      assert.ok((section.match(/class="hero\b/gu) ?? []).length >= 3 || (section.match(/class="kh-holder\b/gu) ?? []).length >= 3 || /class="[^"]*\bkh-card\b/u.test(section), `${where}: đội mặc định phải có ≥3 tướng`);
+    }
+  }
+});
+
+/* ---------- Tra cứu: trang nhóm đủ mục, trang riêng từng mục (không cần JavaScript) ---------- */
+
+const LOOKUP_ROOT = { vi: "", zh: "zh/" };
+
+test("Tra cứu: mỗi trang nhóm dựng sẵn đủ mọi mục (vi + zh), mỗi thẻ là link tới trang riêng của mục", async () => {
+  const corpus = await lookupBuildCorpus();
+  const routes = await lookupDetailRoutes();
+  let rendered = 0;
+  for (const { path, group } of LOOKUP_GROUP_SPECS) {
+    const expected = corpus.groups[group].map((row) => row.id);
+    assert.ok(expected.length > 0, group);
+    for (const locale of ["vi", "zh"]) {
+      const html = await distText(`${LOOKUP_ROOT[locale]}${path}/index.html`);
+      const ids = [...html.matchAll(/data-lookup-id="([^"]+)"/gu)].map(([, id]) => id);
+      // Cải tạo binh chủng xếp thành khối theo binh chủng nên thứ tự hiển thị khác thứ tự nguồn: so tập mã, mỗi mã đúng một lần.
+      assert.deepEqual([...ids].sort(), [...expected].sort(), `${locale} ${path}: data-lookup-id phải là đúng mọi mục của nhóm, mỗi mục một lần`);
+      for (const id of expected) {
+        const href = `${locale === "zh" ? "/zh" : ""}${routes.byId.get(id).path}`;
+        assert.ok(html.includes(`href="${href}" data-lookup-id="${id}"`), `${locale} ${path}: thẻ ${id} phải là link ${href}`);
+      }
+      // Khai báo cho trình duyệt: ngoại lệ slug (hiện rỗng: slug = hậu tố mã) khớp ledger; trang đầu hiện, còn lại chờ "Xem thêm".
+      const table = JSON.parse(html.match(/id="lookup-route-handles"[^>]*>([^<]+)<\/script>/u)[1]);
+      assert.deepEqual(table, routes.exceptions, `${locale} ${path}`);
+      assert.deepEqual(Object.fromEntries(routes.entries.filter((entry) => entry.slug !== entry.id.slice(entry.id.indexOf(":") + 1)).map((entry) => [entry.id, entry.slug])), routes.exceptions, "ngoại lệ = đúng những mục lệch quy tắc hậu tố mã");
+      assert.ok(html.includes("document.documentElement.dataset.lookupJs"), `${locale} ${path}: thiếu cờ JavaScript trong head`);
+      rendered += ids.length;
+    }
+  }
+  assert.equal(rendered, routes.entries.length * 2);
+});
+
+/** Chữ thật của bản ghi mà trang riêng của từng nhóm phải mang: tên + một trường hồ sơ chính (vi + zh). */
+function lookupSampleExpectations(group, corpus, locale) {
+  const zh = locale === "zh";
+  const rows = corpus.groups[group];
+  const name = (row) => lookupDisplayName(row.record, row.nameVi, locale);
+  if (group === "heroes") {
+    // Chiến pháp bản thân của tướng: tên tướng + tên chiến pháp mà hồ sơ nối tới.
+    const row = rows.find((candidate) => corpus.byId.get(candidate.record.lookup?.selfTacticId));
+    const tactic = corpus.byId.get(row.record.lookup.selfTacticId);
+    return { row, texts: [name(row), name(tactic)] };
+  }
+  if (group === "tactics") {
+    const row = rows.find((candidate) => effectVersions(zh ? candidate.record.effect : candidate.record.effectViet)[0]?.paragraphs[0]);
+    return { row, texts: [name(row), effectVersions(zh ? row.record.effect : row.record.effectViet)[0].paragraphs[0]] };
+  }
+  if (group === "books") {
+    const row = rows.find((candidate) => candidate.record.effect && candidate.record.effectViet);
+    return { row, texts: [name(row), zh ? row.record.effect : row.record.effectViet] };
+  }
+  if (group === "equipment") {
+    const row = rows.find((candidate) => candidate.exclusives?.length);
+    return { row, texts: [name(row), lookupDisplayName(row.exclusives[0], row.exclusives[0].nameVi, locale)] };
+  }
+  if (group === "advisors") {
+    const row = rows.find((candidate) => candidate.record.heroIds?.some((id) => corpus.byId.has(id)));
+    const hero = corpus.byId.get(row.record.heroIds.find((id) => corpus.byId.has(id)));
+    return { row, texts: [name(row), name(hero), ...(zh ? [] : [effectVersions(row.record.effectVi)[0].paragraphs[0]])] };
+  }
+  if (group === "troop-mods") {
+    const row = rows.find((candidate) => candidate.record.appliesToVi);
+    return { row, texts: [name(row), ...(zh ? [] : [row.record.appliesToVi.trim()])] };
+  }
+  const row = rows.find((candidate) => candidate.record.summaryVi && candidate.record.levels?.length);
+  return { row, texts: [name(row), ...(zh ? [`${row.record.maxLevel}`] : [row.record.summaryVi.trim()])] };
+}
+
+test("Tra cứu: trang riêng mẫu của mỗi nhóm có tên và trường hồ sơ chính lấy từ corpus, không cần JavaScript (vi + zh)", async () => {
+  const corpus = await lookupBuildCorpus();
+  const routes = await lookupDetailRoutes();
+  for (const { group } of LOOKUP_GROUP_SPECS) {
+    for (const locale of ["vi", "zh"]) {
+      const { row, texts } = lookupSampleExpectations(group, corpus, locale);
+      const route = routes.byId.get(row.id);
+      const html = await distText(`${LOOKUP_ROOT[locale]}${route.path.slice(1)}index.html`);
+      // Số cấp in đậm nằm trong thẻ riêng nên so sánh bỏ hết khoảng trắng ở cả hai phía.
+      const compact = (value) => String(value).replace(/\s+/gu, "");
+      const text = compact(visibleText(mainOf(html)));
+      const where = `${locale} ${route.path}`;
+      for (const expected of texts) {
+        assert.ok(text.includes(compact(expected)), `${where}: thiếu "${expected}" trong HTML dựng sẵn`);
+      }
+      assert.equal((html.match(/<h1\b/gu) ?? []).length, 1, `${where}: đúng một h1`);
+      assert.ok(html.includes(`<h1 class="lookup-dialog-title" id="lookup-dialog-title">${texts[0]}</h1>`) || html.includes(`id="lookup-detail-title">${texts[0]}</h1>`), `${where}: h1 là tên mục`);
+      assert.doesNotMatch(html, /Đang tải|正在加载/u, `${where}: không còn câu chờ`);
+    }
+  }
+});
+
+test("Tra cứu: mọi trang riêng (886 × 2) có canonical + hreflang của chính nó, title và description duy nhất, link về trang nhóm", async () => {
+  const origin = new URL(await configuredSite()).origin;
+  const routes = await lookupDetailRoutes();
+  const titles = new Set();
+  const descriptions = new Set();
+  for (const entry of routes.entries) {
+    for (const locale of ["vi", "zh"]) {
+      const viPath = entry.path;
+      const path = locale === "zh" ? zhPathOf(viPath) : viPath;
+      const html = await distText(`${path.slice(1)}index.html`);
+      assert.equal(linkHref(html, "canonical"), new URL(path, origin).href, path);
+      assert.equal(metaContent(html, "og:url"), new URL(path, origin).href, path);
+      const alternates = [...html.matchAll(/<link rel="alternate" hreflang="([^"]+)" href="([^"]+)"/gu)].map(([, lang, href]) => `${lang} ${href}`);
+      assert.deepEqual(alternates, [
+        `vi ${new URL(viPath, origin).href}`,
+        `zh-Hans ${new URL(zhPathOf(viPath), origin).href}`,
+        `x-default ${new URL(viPath, origin).href}`,
+      ], path);
+      const title = html.match(/<title>([^<]+)<\/title>/u)?.[1];
+      const description = metaContent(html, "description");
+      assert.ok(title && description, path);
+      assert.ok(!titles.has(title), `title trùng: ${title}`);
+      assert.ok(!descriptions.has(description), `description trùng: ${description}`);
+      assert.doesNotMatch(description.trim(), /[:：]$/u, `${path}: description kết thúc bằng dấu hai chấm treo: ${description}`);
+      assert.doesNotMatch(description, /Cập nhật[^:：]{0,60}[:：]/u, `${path}: description dùng nhãn phiên bản làm tóm tắt: ${description}`);
+      titles.add(title);
+      descriptions.add(description);
+      const groupHref = `${locale === "zh" ? "/zh" : ""}/tra-cuu/${entry.path.split("/")[2]}/`;
+      assert.ok(html.includes(`class="detail-link detail-back-link" href="${groupHref}"`), `${path}: thiếu link quay lại ${groupHref}`);
+    }
+  }
+  assert.equal(titles.size, routes.entries.length * 2);
 });

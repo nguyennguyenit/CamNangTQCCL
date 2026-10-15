@@ -137,6 +137,27 @@ export function teamDetailHref(target, {from, origin, locale = currentLocale()} 
 }
 
 /**
+ * Link chi tiết của một hàng Đội chuẩn (`sourceConfigId`) / Đội khác (`legacyTeamId` hoặc `id`, kèm biến thể);
+ * dùng chung giữa danh sách dựng sẵn lúc build và trình duyệt. `from`: URL trang danh sách.
+ */
+export function referenceDetailHref(row, options) {
+  return teamDetailHref(
+    row.sourceConfigId
+      ? {sourceConfigId: row.sourceConfigId}
+      : {legacyTeamId: row.legacyTeamId || row.id, legacyVariantId: row.legacyVariantId},
+    options,
+  );
+}
+
+/** Link chi tiết của thẻ Khai hoang: `from` là URL mục đã gắn đúng cặp đội/cấu hình đang chọn. */
+export function khaiHoangCardHref(teamId, variantId, {from, origin, locale} = {}) {
+  return teamDetailHref(
+    {khaiHoangTeamId: teamId, khaiHoangVariantId: variantId},
+    {from: khaiHoangUrlWithPair(from, {teamId, variantId}), origin, locale},
+  );
+}
+
+/**
  * Chuẩn hóa URL quay lại: chỉ chấp nhận cùng origin và pathname thuộc 8 trang mục, ở bản Việt
  * hoặc bản Trung (tiền tố `/zh/`, xét tương đương bản Việt và giữ nguyên tiền tố).
  * URL gốc cũ (`/` + hash tab, hoặc `/` + khóa root cũ) được chuyển qua bảng của Landing rồi

@@ -1,6 +1,7 @@
 ---
 import { lookupBookAliases, lookupBooksHash, seasonArtifactHashes, websiteDisplayPublicationSnapshot } from '../lib/root-static-artifacts';
 import { teamDetailCatalog } from '../lib/team-detail-routes';
+import { PRERENDERED_TEAM_SECTIONS } from '../lib/team-ssr';
 import { buildDateVi } from '../lib/build-date';
 import SealMark from '../components/SealMark.astro';
 import BrandName from '../components/BrandName.astro';
@@ -18,7 +19,7 @@ import {
 } from '../lib/official-links';
 import { POLICY_PAGES } from '../lib/policy-pages';
 import { SECTION_ICONS, type SectionIcon } from '../lib/section-icons';
-import { lookupGroupLinks, type LookupGroup } from '../lib/lookup-pages';
+import { lookupGroupLinks, lookupRouteHandles, type LookupGroup } from '../lib/lookup-pages';
 import { localeFromPath, localePath, pick, stripLocale } from '../../js/i18n.js';
 import { FEEDBACK_KINDS } from '../../js/feedback-kinds.js';
 import { HREFLANG, LOCALE_LABEL, alternatePaths, mirroredAlternates, otherLocale } from '../lib/locale-routes';
@@ -156,7 +157,7 @@ const THEME_TO_LIGHT_LABEL = t('Chuyển sang giao diện sáng', '切换到浅�
 /** Nút chuyển ngôn ngữ: nhãn viết bằng ngôn ngữ đích, tên truy cập nói rõ hành động bằng ngôn ngữ trang. */
 const SWITCH_LABEL = LOCALE_LABEL[switchLocale];
 const SWITCH_ARIA = t('Xem bản tiếng Trung (中文)', '切换到越南语版本 (Tiếng Việt)');
-/** Trang mục dựng nội dung bằng JavaScript: không có JS thì vẫn có tiêu đề mục và lời nhắn này. */
+/** Trang mục công cụ dựng nội dung bằng JavaScript: không có JS thì vẫn có tiêu đề mục và lời nhắn này (bốn mục đội và Tra cứu dựng sẵn nên không cần). */
 const SECTION_NOSCRIPT_MESSAGE = t(
   'Mục này cần JavaScript để hiển thị nội dung. Hãy bật JavaScript rồi tải lại trang.',
   '此栏目需要 JavaScript 才能显示内容。请启用 JavaScript 后重新加载页面。',
@@ -348,8 +349,10 @@ const footerColumns: MenuSection[] = [
   },
   {title: ABOUT_LABEL, entries: aboutEntries.map((entry) => ({...entry, description: undefined}))},
 ];
-// Bảng route handle: `{r,l,k}` cho mọi trang mục, chỉ `{l}` cho trang chi tiết (≈4.9 KB).
-const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
+// Bảng route handle: `{r,l,k}` cho mọi trang mục, chỉ `{l}` cho trang chi tiết đội (≈4.9 KB). Trang riêng của mục Tra cứu
+// (`detail` + `lookup`) không đọc bảng nào (link dựng sẵn lúc build) nên không nhúng.
+const embedsRouteTables = !(pageKind === 'detail' && activeSection === 'lookup');
+const routeHandles = pageKind === 'landing' || pageKind === 'not-found' || !embedsRouteTables
   ? null
   : await teamDetailCatalog().then((catalog) => {
       const legacy = Object.fromEntries(catalog.legacy.map((entry) => [entry.legacyTeamId, entry.routeSegment]));
@@ -360,6 +363,8 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
         k: Object.fromEntries(catalog.khaiHoang.map((entry) => [entry.khaiHoangTeamId, entry.handle])),
       };
     });
+// Ngoại lệ slug trang riêng Tra cứu (hiện `{}`): mọi trang dựng link Tra cứu ở trình duyệt đăng ký lại cùng bảng với build.
+const lookupRouteTable = routeHandles ? JSON.stringify(await lookupRouteHandles()) : null;
 ---
 <!doctype html>
 <html lang={HREFLANG[locale]}>
@@ -569,7 +574,7 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
 
     <main id="main-content" class:list={['layout', landing && 'layout-landing']}>
       <div class={contentClass}>
-        {sectionLabel && activeSection !== 'lookup' ? <noscript><h1 class="reference-title">{sectionLabel}</h1><p class="scope-note">{SECTION_NOSCRIPT_MESSAGE}</p></noscript> : null}
+        {sectionLabel && activeSection !== 'lookup' && !PRERENDERED_TEAM_SECTIONS.includes(activeSection ?? '') ? <noscript><h1 class="reference-title">{sectionLabel}</h1><p class="scope-note">{SECTION_NOSCRIPT_MESSAGE}</p></noscript> : null}
         {seasonScope ? <div id="season-controls" class="season-controls" role="group" aria-label={SCOPE_GROUP_LABEL}></div> : null}
         <slot />
       </div>
@@ -694,6 +699,7 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found'
     {booksHash && <script is:inline type="application/json" id="lookup-books-hash" set:html={JSON.stringify(booksHash)}></script>}
     {bookAliasesJson && <script is:inline type="application/json" id="lookup-book-aliases" set:html={bookAliasesJson}></script>}
     {routeHandles && <script is:inline type="application/json" id="team-route-handles" set:html={JSON.stringify(routeHandles)}></script>}
+    {lookupRouteTable && <script is:inline type="application/json" id="lookup-route-handles" set:html={lookupRouteTable}></script>}
     <script is:inline type="module">
       import { initSiteChrome } from '/js/site-chrome.js';
       initSiteChrome();

@@ -17,6 +17,15 @@ export async function loadSeasonModel(hashes, loadBytes) {
   }));
   return validateSeasonBundle(Object.fromEntries(entries));
 }
+/** Mùa Cùng Tồn mới nhất (đang diễn ra): mặc định khi URL chưa chọn mùa và đứng đầu ô chọn mùa. */
+export const COEXIST_LATEST_SCENARIO_ID = 'binh-dien-xuan-thu';
+/** Mùa đã review của Cùng Tồn theo thứ tự ô chọn mùa: mùa mới nhất lên đầu, còn lại giữ thứ tự registry. */
+export function coexistScenarioIds(model) {
+  const reviewed = model ? model.data['season-registry'].filter(item => item.reviewStatus === 'reviewed').map(item => item.id) : [];
+  return reviewed.includes(COEXIST_LATEST_SCENARIO_ID) ? [COEXIST_LATEST_SCENARIO_ID, ...reviewed.filter(id => id !== COEXIST_LATEST_SCENARIO_ID)] : reviewed;
+}
+/** Nhóm Cùng Tồn của một phép chiếu theo thứ tự hiển thị: áp dụng, tham khảo theo kịch bản, chưa rõ. */
+export const coexistGroups = projection => [...projection.coexist.applicable, ...projection.coexist.scenarioReference, ...projection.coexist.unknown];
 export function readSeasonQuery(url, model) {
   const params = new URL(url).searchParams;
   const selection = {};

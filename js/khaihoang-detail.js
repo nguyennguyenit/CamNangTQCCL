@@ -1,13 +1,16 @@
-// Entry trang chi tiết Khai hoang: chỉ đọc nguồn đã pin rồi hiển thị build, điểm và hướng dẫn.
-// Không khởi động app gốc và không ghi ngược trạng thái danh sách.
+// Entry trang chi tiết Khai hoang. Thân trang (build mặc định, điểm, hướng dẫn) do build dựng sẵn; client nhận lại
+// DOM đó và gắn chọn phiên bản. Dữ liệu đã pin chỉ được tải, băm và đối chiếu khi thật sự cần: URL xin cấu hình
+// khác mặc định (`?variant=`) hoặc người đọc bấm chọn một phiên bản. Không khởi động app gốc và không ghi ngược
+// trạng thái danh sách.
 
-import { el, khaihoangBuildContent, khaihoangConfigRow, khaihoangGuide, khaihoangRatings } from './render.js';
+import { el, bindKhaihoangConfigRow, khaihoangBuildContent, khaihoangDetailTrees } from './render.js';
 import { detailPanelActions, isNetworkError } from './detail-actions.js';
 import { detailBadges } from './recommended-reference-render.js';
 import { setZhNameResolver } from './recommended-reference-state.js';
 import { khaiHoangDetailVariantUrl, returnHrefFor } from './team-detail-navigation.js';
 import { createByteLoader, loadRawNameResolver, loadWebsiteDisplay, localizeData } from './website-display.js';
 import { L } from './i18n.js';
+import { treeToDom } from './view-tree.js';
 
 const KHAIHOANG_SOURCE = 'data/khaihoang.json';
 const SOURCE_HASH = /^[0-9a-f]{64}$/;
@@ -31,10 +34,18 @@ const sha256Hex = async (bytes) => [...new Uint8Array(await crypto.subtle.digest
 export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
   const root = documentTarget.querySelector('#team-detail-root');
   if (!root) return null;
-  const status = documentTarget.querySelector('#team-detail-status');
   const body = documentTarget.querySelector('#team-detail-body');
   const returnLink = documentTarget.querySelector('#team-return-link');
-  if (!status || !body) return null;
+  if (!body) return null;
+  // Trạng thái chờ/lỗi chỉ tồn tại khi client thật sự phải tải: build không phát phần tử này.
+  const statusNode = () => {
+    let node = documentTarget.querySelector('#team-detail-status');
+    if (!node) {
+      node = el('div', {id: 'team-detail-status', class: 'detail-state', role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true'});
+      body.before(node);
+    }
+    return node;
+  };
 
   const teamId = root.dataset.khaihoangTeamId || '';
   const pinnedSha = (root.dataset.khaihoangSha256 || '').replace(/^sha256:/, '');
@@ -53,7 +64,7 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
   const paintHeader = (build) => {
     if (badges) {
       const nodes = detailBadges({unitType: build?.unitType ? [build.unitType] : []}, null);
-      badges.replaceChildren(...nodes);
+      badges.replaceChildren(...nodes.map((node) => treeToDom(node)));
       badges.hidden = !nodes.length;
     }
     if (panelActions && !panelActions.childElementCount) panelActions.replaceChildren(detailPanelActions());
@@ -65,20 +76,29 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
     (variantId ? (team?.variants || []).find((variant) => variant.id === variantId) : null) || null;
 
   const showLoading = () => {
+    const status = statusNode();
     root.setAttribute('aria-busy', 'true');
     body.hidden = true;
     status.hidden = false;
     status.replaceChildren(LOADING_MESSAGE);
   };
   const showContent = () => {
+    const status = documentTarget.querySelector('#team-detail-status');
     body.hidden = false;
-    status.hidden = true;
-    status.replaceChildren();
+    body.removeAttribute('data-prerendered');
+    if (status) {
+      status.hidden = true;
+      status.replaceChildren();
+    }
     root.setAttribute('aria-busy', 'false');
   };
   const showError = (message, {actions = [], retryable = true} = {}) => {
+    const status = statusNode();
     root.setAttribute('aria-busy', 'false');
+    // Lỗi xác minh/tải: không để lại nội dung dựng sẵn trong DOM, chỉ còn thông báo.
     body.hidden = true;
+    body.replaceChildren();
+    if (badges) { badges.replaceChildren(); badges.hidden = true; }
     status.hidden = false;
     const retry = retryable ? el('button', {id: 'team-detail-retry', class: 'detail-action', type: 'button'}, L('Thử lại', '重试')) : null;
     retry?.addEventListener('click', () => { if (!pending) load(); });
@@ -99,64 +119,74 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
 
   const applyVariant = (variantId) => {
     const build = variantFor(variantId) || team;
-    mount.content.replaceChildren(...khaihoangBuildContent(build));
+    mount.content.replaceChildren(...khaihoangBuildContent(build).map((tree) => treeToDom(tree)));
     paintHeader(build);
     for (const chip of mount.chips) chip.setAttribute('aria-pressed', String((chip.dataset.variant || '') === variantId));
   };
 
   /** Đổi cấu hình chỉ thay query `variant` của chính trang, giữ nguyên `from` và phần còn lại. */
-  const selectVariant = (variantId) => {
+  const selectVariant = async (variantId) => {
     history.replaceState(history.state, '', khaiHoangDetailVariantUrl(location.href, variantId));
+    // Thân dựng sẵn chính là cấu hình mặc định: chọn lại "Mặc định" khi chưa tải gì không cần dữ liệu (và không được
+    // xoá thân đang hiển thị nếu tải lỗi). Lần chọn một cấu hình khác mới tải và xác minh nguồn đã pin.
+    if (!team && !variantId) return;
+    if (!team) {
+      try { await ensureTeam(); } catch (error) { reportLoadFailure(error); return; }
+    }
     applyVariant(variantId);
   };
-
   /**
    * Chọn phiên bản bằng cùng nhóm chip của thẻ danh sách; loại binh của build chỉ hiện một lần ở đầu trang
    * (`#team-detail-badges`), khối build không lặp lại huy hiệu đó.
    */
   const buildView = () => {
-    const {row, chips} = khaihoangConfigRow(team, selectVariant);
-    const content = el('div', {class: 'kh-build', 'aria-live': 'polite'});
-    const build = el('div', {class: 'kh-detail-build'}, [
-      el('div', {class: 'kh-versions'}, [
-        el('span', {class: 'kh-versions-label', 'aria-hidden': 'true'}, L('Phiên bản', '版本')),
-        row,
-      ]),
-      content,
-    ]);
+    // Cây dựng ở render.js (cùng cây dùng cho HTML dựng sẵn); ở đây chỉ đổi sang DOM rồi gắn chọn phiên bản.
     // Điểm và hướng dẫn thuộc team, nằm ngoài subtree build: đổi phiên bản không dựng lại.
-    body.replaceChildren(...[
-      build,
-      khaihoangRatings(team.guide),
-      khaihoangGuide(team.guide),
-    ].filter(Boolean));
-    return {chips, content};
+    const nodes = khaihoangDetailTrees(team).map((tree) => treeToDom(tree));
+    body.replaceChildren(...nodes);
+    const chips = bindKhaihoangConfigRow(body, selectVariant);
+    return {chips, content: body.querySelector('.kh-build')};
   };
   const ensureMount = () => (mount ??= buildView());
 
+  /** Tải, băm và bản địa hoá nguồn đã pin, rồi đặt `team`; lỗi ném lên cho nơi gọi báo. */
+  async function fetchTeam() {
+    // Mỗi lần thử là một lượt mới: bỏ cache byte cũ để "Thử lại" thật sự tải lại.
+    loadBytes = createByteLoader();
+    const websitePin = JSON.parse(documentTarget.querySelector('#website-display-publication')?.textContent || 'null');
+    const recommendedPin = JSON.parse(documentTarget.querySelector('#recommended-publication')?.textContent || 'null');
+    // Pin riêng của trang được kiểm trước: sai nguồn thì báo đúng lý do, không tải tiếp.
+    const bytes = await loadBytes(KHAIHOANG_SOURCE);
+    if (!SOURCE_HASH.test(pinnedSha)) throw new Error(MISSING_PIN_MESSAGE);
+    if (await sha256Hex(bytes) !== pinnedSha) throw new Error(CHANGED_SOURCE_MESSAGE);
+    const publication = await loadWebsiteDisplay(websitePin, loadBytes, recommendedPin, {paths: [KHAIHOANG_SOURCE]});
+    const source = JSON.parse(decoder.decode(bytes));
+    const data = localizeData(publication, KHAIHOANG_SOURCE, source);
+    // Bản Trung: tên Hán-Việt của build tra ngược về chữ Hán; từ điển lỗi chỉ làm tên lùi về Hán-Việt.
+    const rawNames = await loadRawNameResolver(loadBytes).catch(() => null);
+    if (rawNames) setZhNameResolver(rawNames);
+    const matches = (Array.isArray(data) ? [] : (data.teams || [])).filter((item) => item?.id === teamId);
+    if (matches.length !== 1) throw new Error(MISSING_TEAM_MESSAGE);
+    team = matches[0];
+  }
+
+  let teamLoad = null;
+  /** Một lượt tải dùng chung cho nhiều lần bấm liên tiếp. */
+  const ensureTeam = () => (teamLoad ??= fetchTeam().finally(() => { teamLoad = null; }));
+
+  const reportLoadFailure = (error) => {
+    if (isNetworkError(error)) showError(NETWORK_MESSAGE);
+    else showError(VERIFY_FAILURES.has(error?.message) ? error.message : VERIFY_MESSAGE);
+  };
+
+  /** Dựng toàn bộ thân từ nguồn đã pin (URL xin cấu hình khác mặc định, hoặc "Thử lại" sau lỗi). */
   async function load() {
     pending = true;
-    // Mỗi lần thử là một lượt mới: bỏ cache byte và view cũ để "Thử lại" thật sự tải lại.
-    loadBytes = createByteLoader();
     team = null;
     mount = null;
     showLoading();
     try {
-      const websitePin = JSON.parse(documentTarget.querySelector('#website-display-publication')?.textContent || 'null');
-      const recommendedPin = JSON.parse(documentTarget.querySelector('#recommended-publication')?.textContent || 'null');
-      // Pin riêng của trang được kiểm trước: sai nguồn thì báo đúng lý do, không tải tiếp.
-      const bytes = await loadBytes(KHAIHOANG_SOURCE);
-      if (!SOURCE_HASH.test(pinnedSha)) throw new Error(MISSING_PIN_MESSAGE);
-      if (await sha256Hex(bytes) !== pinnedSha) throw new Error(CHANGED_SOURCE_MESSAGE);
-      const publication = await loadWebsiteDisplay(websitePin, loadBytes, recommendedPin, {paths: [KHAIHOANG_SOURCE]});
-      const source = JSON.parse(decoder.decode(bytes));
-      const data = localizeData(publication, KHAIHOANG_SOURCE, source);
-      // Bản Trung: tên Hán-Việt của build tra ngược về chữ Hán; từ điển lỗi chỉ làm tên lùi về Hán-Việt.
-      const rawNames = await loadRawNameResolver(loadBytes).catch(() => null);
-      if (rawNames) setZhNameResolver(rawNames);
-      const matches = (Array.isArray(data) ? [] : (data.teams || [])).filter((item) => item?.id === teamId);
-      if (matches.length !== 1) throw new Error(MISSING_TEAM_MESSAGE);
-      team = matches[0];
+      await fetchTeam();
       const requested = requestedVariant();
       if (requested && !variantFor(requested)) {
         showUnknownVariant(requested);
@@ -166,24 +196,37 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
       applyVariant(requested);
       showContent();
     } catch (error) {
-      if (isNetworkError(error)) showError(NETWORK_MESSAGE);
-      else showError(VERIFY_FAILURES.has(error?.message) ? error.message : VERIFY_MESSAGE);
+      reportLoadFailure(error);
     } finally {
       pending = false;
     }
   }
 
+  /** Thân, điểm và hướng dẫn đã có trong HTML ở cấu hình mặc định: chỉ gắn chọn phiên bản và nút sao chép liên kết. */
+  function adoptPrerendered() {
+    mount = {chips: bindKhaihoangConfigRow(body, selectVariant), content: body.querySelector('.kh-build')};
+    if (panelActions) panelActions.replaceChildren(detailPanelActions());
+    if (panel) panel.hidden = false;
+    showContent();
+  }
+
   // Back/Forward sau khi đổi cấu hình phải khớp lại select và build đang hiển thị.
   window.addEventListener('popstate', () => {
-    if (pending || !team) return;
+    if (pending) return;
     const requested = requestedVariant();
+    // Chưa tải dữ liệu nghĩa là DOM dựng sẵn (mặc định) còn nguyên: chỉ cần tải khi URL xin cấu hình khác.
+    if (!team) {
+      if (requested) load();
+      return;
+    }
     if (requested && !variantFor(requested)) { showUnknownVariant(requested); return; }
     ensureMount();
     applyVariant(requested);
     showContent();
   });
 
-  await load();
+  if (requestedVariant()) await load();
+  else adoptPrerendered();
   return {reload: load};
 }
 

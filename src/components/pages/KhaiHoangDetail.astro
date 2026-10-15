@@ -3,23 +3,38 @@
 // Tiêu đề bản zh ghép tên tướng chữ Hán (src/lib/team-detail-pages.ts), không dùng tên đội tiếng Việt.
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { familyReturnHref } from '../../../js/team-detail-navigation.js';
-import { pick } from '../../../js/i18n.js';
+import { localePath, pick } from '../../../js/i18n.js';
 import type { KhaiHoangDetailProps } from '../../lib/team-detail-pages';
+import { khaiHoangDetailParts } from '../../lib/team-ssr';
+import { teamDetailJsonLd } from '../../lib/structured-data.ts';
+import { jsonLd } from '../../lib/blog-posts.ts';
 import type { SiteLocale } from '../../lib/locale-routes';
 
 type Props = KhaiHoangDetailProps & { locale: SiteLocale };
 
-const {entry, title, pageLabel, khaiHoangSha256, locale} = Astro.props;
+const {entry, title, pageLabel, khaiHoangSha256, heroes, locale} = Astro.props;
 const t = (vi: string, zh: string): string => pick(locale, vi, zh);
 // Canonical bỏ query/hash: `variant` và `from` là trạng thái deep-link, không phải URL riêng.
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 const fallbackReturn = familyReturnHref('khaihoang', { locale });
+// Thân trang + huy hiệu dựng sẵn bằng đúng builder mà trình duyệt dùng; client chỉ nhận lại và gắn tương tác.
+const {bodyHtml, badgesHtml} = await khaiHoangDetailParts(entry, locale);
+const description = locale === 'zh'
+  ? `「${pageLabel}」开荒攻略：当前配置与全部已验证的备注。`
+  : `Hướng dẫn khai hoang của đội ${pageLabel}: cấu hình đang chọn và toàn bộ ghi chú đã xác minh.`;
+const structured = teamDetailJsonLd({
+  locale,
+  site: Astro.site!,
+  path: Astro.url.pathname,
+  name: pageLabel,
+  description,
+  family: {name: t('Khai hoang', '开荒'), path: localePath('/khai-hoang/', locale)},
+  heroes,
+});
 ---
 <SiteLayout
   title={`${pageLabel}${t(' — Khai hoang — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', ' — 开荒 — 三国志战略版攻略手册')}`}
-  description={locale === 'zh'
-    ? `「${pageLabel}」开荒攻略：当前配置与全部已验证的备注。`
-    : `Hướng dẫn khai hoang của đội ${pageLabel}: cấu hình đang chọn và toàn bộ ghi chú đã xác minh.`}
+  description={description}
   pageKind="detail"
   activeSection="khaihoang"
   tagline={t('Chi tiết Khai hoang', '开荒详情')}
@@ -27,6 +42,9 @@ const fallbackReturn = familyReturnHref('khaihoang', { locale });
   ogType="article"
   locale={locale}
 >
+  <Fragment slot="head">
+    {structured.map((data) => <script is:inline type="application/ld+json" set:html={jsonLd(data)}></script>)}
+  </Fragment>
   <nav class="detail-back-row" aria-label={t('Quay lại danh sách Khai hoang', '返回开荒列表')}>
     <a id="team-return-link" class="detail-link detail-back-link" href={fallbackReturn} data-family-href={fallbackReturn}>
       <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="11 6 5 12 11 18"></polyline></svg>
@@ -38,7 +56,7 @@ const fallbackReturn = familyReturnHref('khaihoang', { locale });
     id="team-detail-root"
     class="reference-detail"
     aria-labelledby="team-detail-title"
-    aria-busy="true"
+    aria-busy="false"
     data-family="khaihoang"
     data-khaihoang-team-id={entry.khaiHoangTeamId}
     data-khaihoang-sha256={khaiHoangSha256}
@@ -48,8 +66,7 @@ const fallbackReturn = familyReturnHref('khaihoang', { locale });
         <div class="detail-title-row">
           <h1 id="team-detail-title" class="detail-title">{title}</h1>
         </div>
-        <!-- Huy hiệu loại binh của cấu hình đang chọn do js/khaihoang-detail.js gắn. -->
-        <div id="team-detail-badges" class="detail-badges" hidden></div>
+        <div id="team-detail-badges" class="detail-badges" hidden={!badgesHtml} set:html={badgesHtml}></div>
       </div>
       <!-- Panel của Khai hoang không có điểm; nút sao chép link do JS gắn. -->
       <div id="team-detail-panel" class="detail-score-panel" hidden>
@@ -57,14 +74,9 @@ const fallbackReturn = familyReturnHref('khaihoang', { locale });
       </div>
     </div>
 
-    <div id="team-detail-status" class="detail-state" role="status" aria-live="polite" aria-atomic="true">{t('Đang tải chi tiết…', '正在加载详情…')}</div>
-    <noscript>
-      <p class="scope-note">{t(
-        'Trang chi tiết cần JavaScript để đọc dữ liệu Khai hoang đã xác minh. Bạn vẫn có thể quay lại danh sách Khai hoang bằng liên kết phía trên.',
-        '详情页需要 JavaScript 才能读取已验证的开荒数据。你仍可通过上方链接返回开荒列表。',
-      )}</p>
-    </noscript>
-    <div id="team-detail-body" hidden></div>
+    <div id="team-detail-body" data-prerendered set:html={bodyHtml}></div>
+    <!-- URL xin biến thể: thân + huy hiệu dựng sẵn là bản mặc định nên ẩn ngay, js/khaihoang-detail.js tải rồi dựng đúng biến thể (không nháy sai nội dung). -->
+    <script is:inline>if (new URLSearchParams(location.search).get('variant')) document.getElementById('team-detail-body').hidden = document.getElementById('team-detail-badges').hidden = true;</script>
   </article>
 
   <!-- Chiến báo thực chiến + bình luận do js/community-page.js dựng; dịch vụ cộng đồng lỗi thì chỉ khối này báo. -->

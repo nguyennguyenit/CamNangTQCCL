@@ -26,6 +26,8 @@ const expectedRules = [
   "/bai-viet/*",
   "/rss.xml",
   "/llms.txt",
+  "/llms-full.txt",
+  "/llms/*",
   "/404.html",
   "/js/*",
   "/css/*",
@@ -131,6 +133,9 @@ test("_headers covers every published shell and mutable raw asset", async () => 
     "/rss.xml",
     "/zh/rss.xml",
     "/llms.txt",
+    "/llms-full.txt",
+    "/llms/doi-chuan/pk-s24.txt",
+    "/llms/tra-cuu/tuong.txt",
     // Bản tiếng Trung: Landing, trang mục, ba họ trang chi tiết và trang cộng đồng dưới cùng một quy tắc.
     "/zh/",
     "/zh/index.html",

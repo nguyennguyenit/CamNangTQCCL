@@ -106,9 +106,9 @@ test('recommended hero cards keep role, tactic ordinals and books, linked to Tra
     await expect(card.locator('.detail-hero-name .hn')).toHaveText((holder.displayNameVi || holder.nameRaw).replace(/^(?:SP|CO|40Y)\s+/,''));
     const tactics=(holder.tacticSlotsVi || []).map((vi,slot)=>holder.tacticSlotKinds?.[slot]==='bond' ? null : (vi || holder.tacticSlotsRaw?.[slot])).filter(Boolean);
     await expect(card.locator('.detail-hero-tactics-vi')).toHaveText(tactics);
-    // Ô chiến pháp / binh thư có hồ sơ Tra cứu là link tới trang nhóm `/tra-cuu/<nhóm>/?id=…`; bản vi không kèm chữ Hán.
-    await expect(card.locator('a.detail-hero-tactics-item').first()).toHaveAttribute('href',/^\/tra-cuu\/chien-phap\/\?id=tactic%3A[a-z0-9-]+$/);
-    await expect(card.locator('a.detail-hero-books-item').first()).toHaveAttribute('href',/^\/tra-cuu\/binh-thu\/\?id=book%3A[a-z0-9-]+$/);
+    // Ô chiến pháp / binh thư có hồ sơ Tra cứu là link tới trang riêng `/tra-cuu/<nhóm>/<slug>/`; bản vi không kèm chữ Hán.
+    await expect(card.locator('a.detail-hero-tactics-item').first()).toHaveAttribute('href',/^\/tra-cuu\/chien-phap\/[a-z0-9-]+\/$/);
+    await expect(card.locator('a.detail-hero-books-item').first()).toHaveAttribute('href',/^\/tra-cuu\/binh-thu\/[a-z0-9-]+\/$/);
     expect(await card.innerText()).not.toMatch(/[\u3400-\u9fff]/u);
     const books=(holder.bookSlotsVi || []).map((vi,slot)=>vi || holder.bookSlotsRaw?.[slot]).filter(Boolean);
     await expect(card.locator('.detail-hero-books-vi')).toHaveText(books);
@@ -194,7 +194,7 @@ test('Recommended detail renders note ownership once per source occurrence',asyn
   const ownership=await page.evaluate(async()=>{
     const {recommendedTeamDetailContent}=await import('/js/recommended-reference-render.js');
     const holder=name=>({displayNameVi:name,tacticSlotsRaw:[],tacticSlotsVi:[],bookSlotsRaw:[],bookSlotsVi:[],statFocusRaw:'',roleRaw:''});
-    const fragment=recommendedTeamDetailContent({
+    const trees=recommendedTeamDetailContent({
       sourceConfigId:'ownership-probe',
       heroes:[holder('A'),holder('B'),holder('C')],
       alternativeHoldersRaw:[holder('D')],
@@ -208,7 +208,8 @@ test('Recommended detail renders note ownership once per source occurrence',asyn
       legacyReferences:[],
     });
     const host=document.createElement('div');
-    host.append(fragment);
+    const {treeToDom}=await import('/js/view-tree.js');
+    host.append(...trees.map(tree=>treeToDom(tree)));
     const notesOf=root=>[...root.querySelectorAll('.detail-note')].map(node=>({
       owner:node.querySelector('.detail-note-owner')?.textContent ?? null,
       text:(node.querySelector('.detail-note-text') || node).textContent,
@@ -244,7 +245,7 @@ test('Recommended detail distinguishes absent slots from untranslated populated 
       statFocusVi:statVi,
       roleRaw:'',
     });
-    const fragment=recommendedTeamDetailContent({
+    const trees=recommendedTeamDetailContent({
       sourceConfigId:'slot-state-probe',
       heroes:[
         holder('A',[''],[null],['','',''],[null,null,null],'',null),
@@ -256,7 +257,8 @@ test('Recommended detail distinguishes absent slots from untranslated populated 
       legacyReferences:[],
     });
     const host=document.createElement('div');
-    host.append(fragment);
+    const {treeToDom}=await import('/js/view-tree.js');
+    host.append(...trees.map(tree=>treeToDom(tree)));
     const slotText=(card,block)=>{
       const container=card.querySelector(`.detail-hero-${block}-block`);
       const items=[...container.querySelectorAll(`.detail-hero-${block}-vi`)].map(node=>node.textContent);
@@ -318,13 +320,14 @@ test('hostile source text is rendered as text and never executed',async({page,re
   const hostile='<img src=x onerror="document.title=\'pwned\'">"><script>document.title="pwned"</script>';
   const rendered=await page.evaluate(async text=>{
     const module=await import('/js/recommended-reference-render.js');
-    const fragment=module.legacyOriginalDetailContent({
+    const trees=module.legacyOriginalDetailContent({
       id:'probe',name:text,nickname:null,source:'team-intro',notes:text,
       heroes:[{name:text,baseName:text,alternatives:[text],variant:null,isSP:false,isCO:false,tactics:[{name:text,alternatives:[text]}],books:[{name:text,alternatives:[]}],note:text}],
       counters:{good:[text],avoid:[text]},
     },{});
     const host=document.createElement('div');
-    host.append(fragment);
+    const {treeToDom}=await import('/js/view-tree.js');
+    host.append(...trees.map(tree=>treeToDom(tree)));
     document.body.append(host);
     return {text:host.textContent,injected:host.querySelectorAll('img,script').length,title:document.title};
   },hostile);
@@ -346,7 +349,7 @@ test('duplicate legacy content renders once while every reviewed locator remains
       heroes:[],counters:{good:[],avoid:[]},
     };
     const fingerprint='sha256:'+'a'.repeat(64);
-    const fragment=recommendedTeamDetailContent({
+    const trees=recommendedTeamDetailContent({
       sourceConfigId:'recommended-probe',
       heroes:[],alternativeHoldersRaw:[],displayNotes:{schemaVersion:1,blocks:[]},
       legacyReferences:[
@@ -356,7 +359,8 @@ test('duplicate legacy content renders once while every reviewed locator remains
       ],
     });
     const host=document.createElement('div');
-    host.append(fragment);
+    const {treeToDom}=await import('/js/view-tree.js');
+    host.append(...trees.map(tree=>treeToDom(tree)));
     return {
       unregistered,
       bodies:host.querySelectorAll('.legacy-reference').length,
@@ -426,19 +430,22 @@ test('original pages stay readable while Recommended artifacts are unavailable',
   await expect(page.locator(`#section-team-khac .reference-team-card[data-legacy-team-id="${pending.id}"]`)).toHaveCount(0);
 });
 
-test('Recommended detail fails closed when its payload cannot be verified',async({page,request})=>{
+test('Recommended detail is prerendered: broken runtime payloads cannot change it and nothing is fetched for it',async({page,request})=>{
   const {index}=await publication(request);
-  const row=index.records[0];
-  let currentRequests=0;
-  await page.route('**/data/recommended/current.json',route=>{currentRequests+=1;return route.abort();});
-  await page.route('**/data/recommended/*/details-*.json',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({schemaVersion:1,records:[]})}));
+  const row=index.records.find(item=>item.value!=null && item.heroes?.length===3);
+  const requests=[];
+  page.on('request',req=>{const {pathname}=new URL(req.url());if (pathname.startsWith('/data/')) requests.push(pathname);});
+  await page.route('**/data/recommended/**',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({schemaVersion:1,records:[]})}));
   await page.goto(recommendedPath(await routeHandles(request),row.sourceConfigId));
-  await expect(page.locator('#team-detail-status [role="alert"]')).toBeVisible();
-  await expect(page.locator('#team-detail-body')).toBeHidden();
-  await expect(page.locator('#team-detail-retry')).toBeVisible();
+  await expect(page.locator('#team-detail-root')).toHaveAttribute('aria-busy','false');
+  await expect(page.locator('#team-detail-body')).toBeVisible();
+  await expect(page.locator('#team-detail-body .detail-hero-card')).toHaveCount(3);
+  await expect(page.locator('#team-detail-status')).toHaveCount(0);
+  await expect(page.locator('#team-copy-link')).toBeVisible();
   await expect(page.locator('#team-return-link')).toBeVisible();
-  // A failed verification must not fall back to another generation or the current selector.
-  expect(currentRequests).toBe(0);
+  await page.evaluate(()=>new Promise(resolve=>setTimeout(resolve,300)));
+  // Thân đã dựng sẵn từ dữ liệu đã pin lúc build: trình duyệt không tải payload nào để dựng lại.
+  expect(requests).toEqual([]);
 });
 
 test('card title and CTA are the same native link and modified clicks stay native',async({page,context,request})=>{
@@ -636,6 +643,7 @@ test('tracking keys are stripped while faction and scroll survive detail history
   const row=index.records.find(item=>item.sourceConfigId && item.factionRaw && item.sourceSeasonId===seasons.defaultSourceSeasonId);
   const faction=row.factionRaw;
   await page.goto(`/doi-chuan/?fbclid=x&faction=${encodeURIComponent(faction)}`);
+  await expect(page.locator('body')).toHaveAttribute('data-boot','ready');
   const card=page.locator(`#section-team-chuan .reference-team-card[data-source-config-id="${row.sourceConfigId}"]`);
   await expect(card).toBeVisible();
   await expect.poll(()=>new URL(page.url()).searchParams.get('faction')).toBe(faction);
@@ -867,8 +875,10 @@ test('copy link on a Khai hoang detail keeps the chosen variant and drops from',
 });
 
 test('a changed teams.json reads as a verification failure and an unreachable one as a network failure',async({page,request})=>{
-  const teams=await rawTeams(request);
-  const path=legacyPath(await routeHandles(request),teams[0].id);
+  // Chỉ biến thể đã đối chiếu mới cần dữ liệu lúc chạy (thân mặc định đã dựng sẵn): đường tải phải đóng kín khi nguồn lệch.
+  const {other}=await publication(request);
+  const admitted=other.records[0];
+  const path=`${legacyPath(await routeHandles(request),admitted.legacyTeamId)}?variant=${encodeURIComponent(admitted.legacyVariantId)}`;
   await page.route('**/data/teams.json',async route=>{
     const response=await route.fetch();
     return route.fulfill({response,body:`${await response.text()}\n`});
@@ -877,6 +887,7 @@ test('a changed teams.json reads as a verification failure and an unreachable on
   const alert=page.locator('#team-detail-status [role="alert"]');
   await expect(alert).toContainText('Không thể xác minh dữ liệu đội hình');
   await expect(alert).not.toContainText('Hãy kiểm tra kết nối');
+  await expect(page.locator('#team-detail-body')).toBeHidden();
 
   await page.unroute('**/data/teams.json');
   await page.route('**/data/teams.json',route=>route.abort());
@@ -884,20 +895,32 @@ test('a changed teams.json reads as a verification failure and an unreachable on
   await expect(alert).toContainText('Hãy kiểm tra kết nối');
 });
 
-test('Đội chuẩn and Đội khác details fetch only the display publication and teams.json, each once',async({page,request})=>{
+test('prerendered Đội chuẩn and Đội khác details fetch nothing; an admitted variant fetches the display publication and teams.json once',async({page,request})=>{
   const handles=await routeHandles(request);
-  const {index}=await publication(request);
+  const {index,other}=await publication(request);
   const teams=await rawTeams(request);
-  for (const path of [recommendedPath(handles,index.records[0].sourceConfigId),legacyPath(handles,teams[0].id)]) {
+  const dataRequests=()=>{
     const requests=[];
     const record=req=>{const {pathname}=new URL(req.url());if (pathname.startsWith('/data/') && !pathname.startsWith('/data/recommended/')) requests.push(pathname);};
     page.on('request',record);
+    return {requests,stop:()=>page.off('request',record)};
+  };
+  for (const path of [recommendedPath(handles,index.records[0].sourceConfigId),legacyPath(handles,teams[0].id)]) {
+    const seen=dataRequests();
     await page.goto(path);
     await expect(page.locator('#team-detail-root')).toHaveAttribute('aria-busy','false');
     await expect(page.locator('#team-detail-body')).toBeVisible();
-    page.off('request',record);
-    expect(requests.sort(),path).toEqual(['/data/teams.json','/data/website-display.json']);
+    await page.evaluate(()=>new Promise(resolve=>setTimeout(resolve,300)));
+    seen.stop();
+    expect(seen.requests,path).toEqual([]);
   }
+  const admitted=other.records[0];
+  const seen=dataRequests();
+  await page.goto(`${legacyPath(handles,admitted.legacyTeamId)}?variant=${encodeURIComponent(admitted.legacyVariantId)}`);
+  await expect(page.locator('#team-detail-root')).toHaveAttribute('aria-busy','false');
+  await expect(page.locator('#team-detail-body')).toBeVisible();
+  seen.stop();
+  expect(seen.requests.sort()).toEqual(['/data/teams.json','/data/website-display.json']);
 });
 
 test('Khai hoang detail keeps the title right under the back link',async({page,request})=>{

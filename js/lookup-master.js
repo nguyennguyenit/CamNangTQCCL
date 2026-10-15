@@ -7,7 +7,7 @@
 import { h } from "./view-tree.js";
 import { formatNumber, localePath, normalizeLocale, pick } from "./i18n.js";
 import { effectVersions, lookupDisplayName, zhSafeValue } from "./lookup-detail.js";
-import { lookupGroupPath, lookupProfilePath, lookupSlug } from "./lookup-ids.js";
+import { lookupGroupPath, lookupHref, lookupSlug } from "./lookup-ids.js";
 import { portraitTree } from "./hero-portrait.js";
 
 /** Bốn nhóm dùng bố cục danh sách + chi tiết; nhóm khác (tướng, chiến pháp, binh thư) giữ hộp thoại hồ sơ. */
@@ -59,7 +59,16 @@ function glyph(record, nameVi, count = 1) {
   return han || ([...String(nameVi ?? "").trim()][0] ?? "?");
 }
 
-const itemHref = (id, locale) => localePath(lookupProfilePath(id), locale);
+const itemHref = (id, locale) => localePath(lookupHref(id), locale);
+
+/**
+ * Mục thứ `index` (từ 0) của danh sách dựng sẵn: từ `visibleCount` trở đi mang `data-lookup-later` (HTML có đủ mục,
+ * CSS ẩn phần sau trang đầu). `visibleCount` rỗng nghĩa là hiện hết.
+ */
+export function laterTree(tree, index, visibleCount) {
+  if (visibleCount === null || visibleCount === undefined || index < visibleCount) return tree;
+  return { ...tree, attrs: { ...tree.attrs, "data-lookup-later": true } };
+}
 const tierRank = (tier) => rank(TIER_ORDER, tier);
 const byTier = (a, b) => tierRank(a.tierVi) - tierRank(b.tierVi);
 
@@ -283,17 +292,18 @@ function buildingRowTree(item, locale, selectedId) {
 }
 
 /** Danh sách kết quả của bốn nhóm catalog (rỗng trả `[]`); `selectedId` là mục đang chọn. */
-export function masterResultTrees(group, items, locale, { selectedId = null, byId = null } = {}) {
+export function masterResultTrees(group, items, locale, { selectedId = null, byId = null, visibleCount = null } = {}) {
   if (!items.length) return [];
-  if (group === "equipment") return items.map((item) => equipmentCardTree(item, locale, selectedId));
-  if (group === "advisors") return items.map((item) => advisorCardTree(item, locale, selectedId, byId));
-  if (group === "buildings") return items.map((item) => buildingRowTree(item, locale, selectedId));
+  const later = (tree, item) => laterTree(tree, items.indexOf(item), visibleCount);
+  if (group === "equipment") return items.map((item) => later(equipmentCardTree(item, locale, selectedId), item));
+  if (group === "advisors") return items.map((item) => later(advisorCardTree(item, locale, selectedId, byId), item));
+  if (group === "buildings") return items.map((item) => later(buildingRowTree(item, locale, selectedId), item));
   return troopSections(items).map((section) => h("section", { class: "lookup-row-group" }, [
     h("h2", { class: "lookup-row-group-title" }, [
       facetLabel("limit", section.limit, locale),
       h("span", { class: "lookup-row-group-count" }, ` · ${section.items.length}`),
     ]),
-    ...section.items.map((item) => troopRowTree(item, locale, selectedId)),
+    ...section.items.map((item) => later(troopRowTree(item, locale, selectedId), item)),
   ]));
 }
 
@@ -706,21 +716,32 @@ function buildingDetail(item, corpus, locale) {
   ];
 }
 
+/** Cây `tree` với tiêu đề chi tiết (`#lookup-detail-title`) đổi từ `h2` thành `h1` (trang riêng chỉ có một `h1`). */
+function titleAsH1(tree) {
+  if (typeof tree === "string") return tree;
+  const children = tree.children.map(titleAsH1);
+  return tree.tag === "h2" && tree.attrs.id === "lookup-detail-title"
+    ? { ...tree, tag: "h1", children }
+    : { ...tree, children };
+}
+
 /**
  * Panel chi tiết của một mục (hoặc đặc kỹ, với `item` là mục `equipment-special:`): nội dung của `<aside>`.
- * `targetId` là mục đang mở (đặc kỹ được tô khung trong chi tiết trang bị cha).
+ * `targetId` là mục đang mở (đặc kỹ được tô khung trong chi tiết trang bị cha). `page` là trang riêng của mục: tiêu đề là
+ * `h1` và không có link quay lại danh sách (trang đã có hàng quay lại của nó).
  */
-export function masterDetailTree(group, item, corpus, locale, { targetId = item.id } = {}) {
+export function masterDetailTree(group, item, corpus, locale, { targetId = item.id, page = false } = {}) {
   const body = group === "equipment"
     ? (item.id.startsWith("equipment-special:") ? specialDetail(item, corpus, locale) : equipmentDetail(item, corpus, locale, targetId))
     : group === "advisors" ? advisorDetail(item, corpus, locale)
       : group === "troop-mods" ? troopDetail(item, corpus, locale)
         : buildingDetail(item, corpus, locale);
-  return h("article", {
+  const tree = h("article", {
     class: `lookup-detail lookup-detail-${group}`,
     "data-lookup-detail": item.id,
     "aria-labelledby": "lookup-detail-title",
-  }, [backLink(group, locale), ...body.filter(Boolean)]);
+  }, [page ? null : backLink(group, locale), ...body.filter(Boolean)]);
+  return page ? titleAsH1(tree) : tree;
 }
 
 /**

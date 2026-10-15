@@ -59,6 +59,12 @@
 /llms.txt
   Cache-Control: public, max-age=0, must-revalidate
 
+/llms-full.txt
+  Cache-Control: public, max-age=0, must-revalidate
+
+/llms/*
+  Cache-Control: public, max-age=0, must-revalidate
+
 /404.html
   Cache-Control: public, max-age=0, must-revalidate
 

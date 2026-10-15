@@ -6,7 +6,7 @@
 // (`--font-cjk`, `lang="zh-Hant"`, `aria-hidden`) — không để lại ảnh vỡ hay ô trống.
 
 import { h, treeToDom } from "./view-tree.js";
-import { validateHttpSourceUrl } from "./recommended-reference-state.js";
+import { validateHttpSourceUrl } from "./http-source-url.js";
 
 const CJK = /[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]/u;
 

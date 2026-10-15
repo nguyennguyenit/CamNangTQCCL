@@ -1,5 +1,6 @@
 import type { APIContext, APIRoute } from "astro";
 import { teamDetailCatalog } from "../lib/team-detail-routes.ts";
+import { lookupDetailRoutes } from "../lib/lookup-detail-routes.ts";
 import { blogIndexPath, loadBlogPosts, translationOf, type BlogLocale } from "../lib/blog-posts.ts";
 import { alternatePaths, type AlternateLink } from "../lib/locale-routes.ts";
 import { localePath } from "../../js/i18n.js";
@@ -58,7 +59,7 @@ export function mirroredSitemapRoutes(viPaths: readonly string[]): SitemapRoute[
   });
 }
 
-/** Tập route có bản gương của sitemap: Landing, 8 trang mục, 7 trang nhóm Tra cứu, trang tĩnh và mọi trang chi tiết. */
+/** Tập route có bản gương của sitemap: Landing, 8 trang mục, 7 trang nhóm Tra cứu, trang tĩnh và mọi trang chi tiết (đội + mục Tra cứu). */
 export function mirroredSitemapPaths(detailRoutePaths: readonly string[]): string[] {
   return ["/", ...SECTION_PATHS, ...LOOKUP_GROUP_PATHS, ...STATIC_PAGE_PATHS, ...detailRoutePaths];
 }
@@ -157,9 +158,13 @@ export function sitemapDocument(site: string | URL | undefined, routes: readonly
 
 export const GET: APIRoute = async ({ site }: APIContext) => {
   const catalog = await teamDetailCatalog();
+  const lookup = await lookupDetailRoutes();
   const posts = await loadBlogPosts();
   const routes = [
-    ...mirroredSitemapRoutes(mirroredSitemapPaths([...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath))),
+    ...mirroredSitemapRoutes(mirroredSitemapPaths([
+      ...[...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath),
+      ...lookup.entries.map((entry) => entry.path),
+    ])),
     ...blogSitemapRoutes(posts.map((post) => ({ ...post, translationPath: translationOf(post, posts)?.path ?? null }))),
   ];
   return new Response(sitemapDocument(site, routes), {

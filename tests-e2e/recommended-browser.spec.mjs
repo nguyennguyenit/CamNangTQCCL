@@ -56,6 +56,8 @@ test('cards expose holders tactics books and a native detail link',async({page})
 
 test('Team khác honors explicit factions and seasons',async({page})=>{
   await page.goto('/doi-khac/?faction=Thục');
+  // Thẻ dựng sẵn hiện trước khi app.js chạy: chờ khởi động xong mới thao tác bộ lọc.
+  await expect(page.locator('body')).toHaveAttribute('data-boot','ready');
   await expect(page.locator('#section-team-khac .reference-team-card').first()).toBeVisible();
   const season=page.locator('#section-team-khac').getByLabel('Mùa',{exact:true});
   const known=await season.locator('option').evaluateAll(options=>options.map(option=>option.value).find(value=>value!=='all'&&value!=='unknown'));
@@ -71,6 +73,7 @@ test('season scope changes stay on the browser; a retired category key is stripp
   const category=index.records.map(row=>row.sourceCategoryId).find(value=>value&&inDefault.some(row=>row.sourceCategoryId!==value));
   expect(category,{message:'cần một danh mục thu hẹp được mùa mặc định'}).toBeTruthy();
   await page.goto(`/doi-chuan/?category=${encodeURIComponent(category)}`);
+  await expect(page.locator('body')).toHaveAttribute('data-boot','ready');
   await expect(section.locator('.reference-team-card').first()).toBeVisible();
   await expect(page).not.toHaveURL(/category=/);
   await expect(section.locator('.reference-team-card')).toHaveCount(inDefault.length);
@@ -268,6 +271,7 @@ for (const [sourceConfigId,codes] of [
       }
     };
     await page.goto(`/doi-chuan/?season=${encodeURIComponent(row.sourceSeasonId)}`);
+    await expect(page.locator('body')).toHaveAttribute('data-boot','ready');
     const card=page.locator(`#section-team-chuan .reference-team-card[data-source-config-id="${sourceConfigId}"]`);
     await expect(card).toBeVisible();
     await assertHeadings(card.locator('.reference-holder .hero-name'));
@@ -857,6 +861,7 @@ for (const [path,section] of [['/doi-chuan/','#section-team-chuan'],['/doi-khac/
   test(`every chevron and filter icon on ${path} draws its own strokes`,async({page})=>{
     await page.setViewportSize({width:1280,height:900});
     await page.goto(path);
+    await expect(page.locator('body')).toHaveAttribute('data-boot','ready');
     const root=page.locator(section);
     await expect(root.locator('.reference-team-card').first()).toBeVisible();
     const strokes=await root.evaluate(node=>[
@@ -975,6 +980,7 @@ test('Back from a detail opened past the first 60 cards renders through it and r
 
 test('a source-empty third slot reads as an empty seat, not a missing translation',async({page})=>{
   await page.goto('/doi-chuan/?season=pk-s26');
+  await expect(page.locator('body')).toHaveAttribute('data-boot','ready');
   await revealAll(page.locator('#section-team-chuan'));
   const card=page.locator('#section-team-chuan .reference-team-card[data-source-config-id^="yxms-005"]');
   await expect(card).toHaveCount(1);
@@ -983,6 +989,7 @@ test('a source-empty third slot reads as an empty seat, not a missing translatio
   await expect(seat.locator('.reference-role')).toHaveText('PHÓ 2');
   await expect(seat.getByRole('img',{name:'Để trống'})).toHaveText('—');
   await page.goto('/doi-chuan/?season=pk-s26&view=bang');
+  await expect(page.locator('body')).toHaveAttribute('data-boot','ready');
   await revealAll(page.locator('#section-team-chuan'));
   const row=page.locator('#section-team-chuan tr[data-reference-key^="yxms-005"]');
   await expect(row).toHaveCount(1);

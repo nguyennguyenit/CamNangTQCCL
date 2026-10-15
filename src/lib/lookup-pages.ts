@@ -2,7 +2,8 @@
 // `/tra-cuu/`. Kho Tra cứu đọc từ đúng snapshot byte mà publication phát (`lookupPublicationSnapshot`) và được
 // kiểm trọn bộ — shape lẫn tham chiếu chéo — trước khi dựng trang; trình duyệt chỉ còn kiểm từng payload.
 import { validateLookupBundle } from '../../js/lookup-data.js';
-import { LOOKUP_GROUP_SLUGS, lookupGroupPath } from '../../js/lookup-ids.js';
+import { LOOKUP_GROUP_SLUGS, lookupGroupPath, lookupItemPath, setLookupRouteHandles } from '../../js/lookup-ids.js';
+import { lookupDetailRoutes } from './lookup-detail-routes.ts';
 import {
   LOOKUP_GROUPS,
   buildLookupCorpus,
@@ -24,8 +25,9 @@ import {
   masterTargetFor,
 } from '../../js/lookup-master.js';
 import { treeToHtml } from '../../js/view-tree.js';
-import { pick } from '../../js/i18n.js';
-import { lookupBookAliases, lookupPublicationSnapshot, readPublicArtifact } from './root-static-artifacts';
+import { localePath, pick } from '../../js/i18n.js';
+import { lookupDisplayName } from '../../js/lookup-detail.js';
+import { lookupBookAliases, lookupPublicationSnapshot, readPublicArtifact } from './root-static-artifacts.ts';
 import type { SiteLocale } from './locale-routes';
 
 export type LookupGroup = keyof typeof LOOKUP_GROUP_SLUGS;
@@ -56,23 +58,30 @@ interface LookupCorpus {
 
 let corpusPromise: Promise<LookupCorpus> | null = null;
 
-async function loadCorpus(): Promise<LookupCorpus> {
-  const snapshot = await lookupPublicationSnapshot();
+/** Gốc dự án và manifest artifact khác mặc định (verifier chạy trên một dist/gốc dự án khác). */
+export interface LookupCorpusOptions {
+  rootDir?: string;
+  manifest?: readonly unknown[];
+}
+
+async function loadCorpus(options: LookupCorpusOptions): Promise<LookupCorpus> {
+  const snapshot = await lookupPublicationSnapshot({ rootDir: options.rootDir });
   const rawFiles = Object.fromEntries(
     ['heroes-dict.json', 'tactics.json', 'lookup-catalog.json'].map((name) => [name, new Uint8Array(snapshot.files[name])]),
   );
   const bundle = await validateLookupBundle(structuredClone(snapshot.manifest), rawFiles);
   const [{ bytes: bookBytes }, bookAliases] = await Promise.all([
-    readPublicArtifact({ kind: 'data', routeParam: 'books-dict' }),
-    lookupBookAliases(),
+    readPublicArtifact({ kind: 'data', routeParam: 'books-dict', ...options } as Parameters<typeof readPublicArtifact>[0]),
+    lookupBookAliases(options as Parameters<typeof lookupBookAliases>[0]),
   ]);
   const books = JSON.parse(Buffer.from(bookBytes).toString('utf8'));
   return buildLookupCorpus({ heroes: bundle.heroes, tactics: bundle.tactics, catalog: bundle.catalog, books, bookAliases });
 }
 
-/** Corpus đầy đủ của publication, kiểm trọn bộ một lần mỗi build. */
-export function lookupBuildCorpus() {
-  corpusPromise ??= loadCorpus();
+/** Corpus đầy đủ của publication, kiểm trọn bộ một lần mỗi build (gốc dự án khác mặc định thì dựng riêng, không nhớ). */
+export function lookupBuildCorpus(options: LookupCorpusOptions = {}) {
+  if (options.rootDir !== undefined || options.manifest !== undefined) return loadCorpus(options);
+  corpusPromise ??= loadCorpus(options);
   return corpusPromise;
 }
 
@@ -119,17 +128,36 @@ async function lookupGroupOwners(group: LookupGroup): Promise<string | null> {
   return JSON.stringify(heroes).replace(/</g, '\\u003c');
 }
 
+let routeHandlesPromise: Promise<Record<string, string>> | null = null;
+
 /**
- * HTML dựng sẵn của trang nhóm: trang đầu của lưới, dòng trạng thái và hàng "Xem thêm", cùng cây markup mà
- * `js/lookup-page.js` dựng lại trong trình duyệt. Bốn nhóm catalog thêm hàng chip lọc và chi tiết của mục đầu.
+ * Bảng ngoại lệ `{id: slug}` của quy tắc "slug = hậu tố mã" (ledger đóng băng, đúng tập id của corpus; hiện rỗng):
+ * đăng ký một lần cho các builder dùng chung (thẻ, link quan hệ, link của trang đội trỏ tới trang riêng) và là bảng mà
+ * mọi trang có link Tra cứu nhúng cho trình duyệt.
  */
-export async function lookupGroupFirstPage(group: LookupGroup, locale: SiteLocale) {
-  const corpus = await lookupBuildCorpus();
+export function lookupRouteHandles() {
+  routeHandlesPromise ??= (async () => {
+    const { exceptions } = await lookupDetailRoutes();
+    if (!setLookupRouteHandles(exceptions)) throw new Error('Lookup route handle table rejected while preparing lookup pages');
+    return exceptions;
+  })();
+  return routeHandlesPromise;
+}
+
+/**
+ * HTML dựng sẵn của trang nhóm: MỌI mục của nhóm (số lượng không phụ thuộc client), dòng trạng thái và hàng "Xem thêm",
+ * cùng cây markup mà `js/lookup-page.js` dựng lại trong trình duyệt. Các mục sau trang đầu mang `data-lookup-later`
+ * (CSS ẩn khi có JavaScript; trình duyệt bỏ chúng khi nhận lại danh sách và "Xem thêm" dựng lại từ dữ liệu).
+ * Bốn nhóm catalog thêm hàng chip lọc và chi tiết của mục đầu.
+ */
+export async function lookupGroupPage(group: LookupGroup, locale: SiteLocale) {
+  const [corpus] = await Promise.all([lookupBuildCorpus(), lookupRouteHandles()]);
   const pageSize = lookupPageSize(group);
-  const { items, total } = searchLookupGroup(corpus, { group, page: 1, pageSize, locale });
+  const total = corpus.groups[group].length;
+  const { items } = searchLookupGroup(corpus, { group, page: 1, pageSize: total, locale });
   const master = isMasterGroup(group);
   // Bốn nhóm catalog chọn sẵn mục đầu (artboard): chi tiết của nó dựng sẵn cạnh danh sách.
-  const selectedId = master ? masterDefaultId(group, items as { id: string }[]) : null;
+  const selectedId = master ? masterDefaultId(group, items.slice(0, pageSize) as { id: string }[]) : null;
   const target = selectedId ? masterTargetFor(corpus, selectedId) : null;
   return {
     total,
@@ -140,13 +168,18 @@ export async function lookupGroupFirstPage(group: LookupGroup, locale: SiteLocal
       : master
         ? `lookup-grid lookup-master-grid lookup-master-grid-${group}`
         : `lookup-grid lookup-grid-cards${group === 'heroes' ? ' lookup-grid-heroes' : ''}`,
-    resultsHtml: lookupResultTrees(group, items, locale, { selectedId, byId: corpus.byId }).map(treeToHtml).join(''),
+    resultsHtml: lookupResultTrees(group, items, locale, { selectedId, byId: corpus.byId, visibleCount: pageSize }).map(treeToHtml).join(''),
     summaryHtml: lookupSummaryTrees(group, total, locale).map(treeToHtml).join(''),
     orderNote: total && !master ? lookupOrderNote('', locale) : null,
-    moreHtml: lookupMoreTrees(items.length, total, locale, pageSize).map(treeToHtml).join(''),
+    moreHtml: lookupMoreTrees(Math.min(pageSize, total), total, locale, pageSize).map(treeToHtml).join(''),
     filtersHtml: master ? treeToHtml(masterFilterTree(group, corpus.groups[group], {}, locale)) : '',
     panelLabel: master ? masterPanelLabel(group, locale) : '',
     detailHtml: target ? treeToHtml(masterDetailTree(group, target.item, corpus, locale, { targetId: target.targetId })) : '',
     owners: await lookupGroupOwners(group),
+    /** Mọi mục theo thứ tự hiển thị với tên và đường dẫn trang riêng (đã gắn tiền tố ngôn ngữ): `ItemList` của JSON-LD. */
+    structuredItems: (items as { id: string; nameVi: string; record?: unknown }[]).map((item) => ({
+      name: lookupDisplayName(item.record, item.nameVi, locale) as string,
+      path: localePath(lookupItemPath(item.id) as string, locale),
+    })),
   };
 }

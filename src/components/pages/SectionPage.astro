@@ -1,8 +1,10 @@
 ---
 // Trang mục dùng chung cho bản Việt và bản Trung: route `/…/` và `/zh/…/` chỉ là vỏ mỏng truyền `section` + `locale`.
-// Nội dung mục do js/app.js dựng theo `<html lang>`; ở đây chỉ có tiêu đề, mô tả, canonical và mount.
+// Nội dung mục do js/app.js dựng theo `<html lang>`; bốn mục đội còn được dựng sẵn ở trạng thái mặc định
+// (cùng builder với trình duyệt) để có nội dung khi chưa/không chạy JavaScript.
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { localePath, pick } from '../../../js/i18n.js';
+import { PRERENDERED_TEAM_SECTIONS, teamSectionParts, type TeamSection } from '../../lib/team-ssr';
 import type { SiteLocale } from '../../lib/locale-routes';
 
 type SectionId = 'team-chuan' | 'team-khac' | 'coexist' | 'khaihoang' | 'recruit-tracker' | 'analyze' | 'roster-recommend';
@@ -77,6 +79,7 @@ const PAGES: Record<SectionId, { path: string; title: string; description: strin
 
 const page = PAGES[section];
 const canonicalUrl = new URL(localePath(page.path, locale), Astro.site);
+const prerendered = PRERENDERED_TEAM_SECTIONS.includes(section) ? await teamSectionParts(section as TeamSection, locale) : null;
 ---
 <SiteLayout
   title={page.title}
@@ -86,7 +89,7 @@ const canonicalUrl = new URL(localePath(page.path, locale), Astro.site);
   canonicalUrl={canonicalUrl}
   locale={locale}
 >
-  <section id={`section-${section}`} class="section active"></section>
+  <section id={`section-${section}`} class="section active" data-ssr-source={prerendered?.source} set:html={prerendered?.html}></section>
 
   <script is:inline type="module" src="/js/app.js" slot="scripts"></script>
 </SiteLayout>

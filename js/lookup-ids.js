@@ -64,12 +64,12 @@ export function bookSourceAliases(books, identityEntries) {
 }
 
 /**
- * Bộ tra mã hồ sơ Tra cứu từ tên chiến pháp / binh thư của dữ liệu đội. Chiến pháp: ưu tiên tên chữ Hán nguồn
+ * Bộ tra mã hồ sơ Tra cứu từ tên chiến pháp / binh thư / tướng của dữ liệu đội. Chiến pháp: ưu tiên tên chữ Hán nguồn
  * (`chinese` + `aliases`), rồi tới slug tên Việt. Binh thư: ô có tên Hán nguồn chỉ khớp theo `chinese` +
  * `sourceNames` (bản dịch tên Việt của ô có thể lệch hoặc nhầm sang binh thư khác); ô chỉ có tên Việt mới tra
- * theo slug. Tên không có hồ sơ trả `null` để nơi gọi giữ dạng chữ.
+ * theo slug. Tướng: `chinese` rồi tên Việt chính xác. Tên không có hồ sơ trả `null` để nơi gọi giữ dạng chữ.
  */
-export function createLookupIdResolver({ tactics = [], books = [] } = {}) {
+export function createLookupIdResolver({ tactics = [], books = [], heroes = [] } = {}) {
   const tacticByName = new Map();
   const tacticIds = new Set();
   for (const row of Array.isArray(tactics) ? tactics : []) {
@@ -97,9 +97,19 @@ export function createLookupIdResolver({ tactics = [], books = [] } = {}) {
     const slug = lookupSlug(typeof vi === "string" ? vi.replace(VI_MODIFIED, "") : "");
     return slug && ids.has(`${prefix}:${slug}`) ? `${prefix}:${slug}` : null;
   };
+  const heroByRaw = new Map();
+  const heroByVi = new Map();
+  for (const row of Array.isArray(heroes) ? heroes : []) {
+    if (typeof row?.id !== "string" || !row.id.startsWith("hero:")) continue;
+    for (const [index, name] of [[heroByRaw, row.chinese], [heroByVi, row.viet]]) {
+      if (typeof name === "string" && name.trim() && !index.has(name.trim())) index.set(name.trim(), row.id);
+    }
+  }
   return {
     tactic: (raw, vi) => byRaw(tacticByName, raw) ?? byVi(tacticIds, "tactic", vi),
     book: (raw, vi) => (hasRaw(raw) ? byRaw(bookByName, raw) : byVi(bookIds, "book", vi)),
+    /** Tướng theo tên nguồn chữ Hán, thiếu thì theo đúng tên Việt của kho tướng; không đoán theo tên gần giống. */
+    hero: (raw, vi) => (typeof raw === "string" ? heroByRaw.get(raw.trim()) : null) ?? (typeof vi === "string" ? heroByVi.get(vi.trim()) : null) ?? null,
   };
 }
 
@@ -134,6 +144,60 @@ export function lookupGroupPath(group) {
 export function lookupProfilePath(id) {
   const path = lookupGroupPath(groupForId(id));
   return path ? `${path}?${new URLSearchParams({ id })}` : null;
+}
+
+const ITEM_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+/**
+ * Slug mặc định của trang riêng một mục: hậu tố sau `:` của mã (`hero:luu-bi` → `luu-bi`). Mã đặc kỹ trang bị
+ * (`equipment-special:*`) nằm trong trang trang bị, không có trang riêng; mã sai dạng cũng không có.
+ */
+export function lookupDerivedSlug(id) {
+  if (!groupForId(id) || id.startsWith("equipment-special:")) return null;
+  const slug = id.slice(id.indexOf(":") + 1);
+  return ITEM_SLUG.test(slug) ? slug : null;
+}
+
+/**
+ * Ngoại lệ của quy tắc trên (`id → slug`, slug ledger đã cấp khác hậu tố mã, vd `-2` khi trùng tên); build nhúng
+ * `#lookup-route-handles` và trình duyệt đăng ký lại. Hiện không có ngoại lệ nên bảng rỗng.
+ */
+let lookupRouteExceptions = new Map();
+
+/**
+ * Đăng ký bảng ngoại lệ `{id: slug}`; bảng sai dạng (mã không có trang riêng, slug sai dạng) bị từ chối nguyên khối và
+ * không thay bảng hiện hành.
+ */
+export function setLookupRouteHandles(handles) {
+  if (!handles || typeof handles !== "object" || Array.isArray(handles)) return false;
+  const next = new Map();
+  for (const [id, slug] of Object.entries(handles)) {
+    if (!lookupDerivedSlug(id) || typeof slug !== "string" || !ITEM_SLUG.test(slug)) return false;
+    next.set(id, slug);
+  }
+  lookupRouteExceptions = next;
+  return true;
+}
+
+/** Như `setLookupRouteHandles` cho payload JSON nhúng trong trang; lỗi parse không đổi bảng hiện hành. */
+export function setLookupRouteHandlesFromJSON(raw) {
+  if (typeof raw !== "string" || !raw) return false;
+  try {
+    return setLookupRouteHandles(JSON.parse(raw));
+  } catch {
+    return false;
+  }
+}
+
+/** Đường dẫn trang riêng của một mục (`/tra-cuu/<nhóm>/<slug>/`, chưa gắn tiền tố ngôn ngữ); mã không có trang riêng trả `null`. */
+export function lookupItemPath(id) {
+  const slug = lookupRouteExceptions.get(id) ?? lookupDerivedSlug(id);
+  return slug ? `${lookupGroupPath(groupForId(id))}${slug}/` : null;
+}
+
+/** Đường dẫn mở hồ sơ của một mục: trang riêng khi có, không thì hồ sơ `?id=` trên trang nhóm. */
+export function lookupHref(id) {
+  return lookupItemPath(id) ?? lookupProfilePath(id);
 }
 
 /**
