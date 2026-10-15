@@ -261,6 +261,16 @@ test("admin: link bỏ qua tới nội dung không đổi khu đang mở", async
   await expect(page.locator("#adm-title-reports")).not.toBeFocused();
 });
 
+test("admin mobile: hàng chip điều hướng tự cuộn, trang không tràn ngang", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  await mockCommunityApi(page, { user: ADMIN });
+  await page.goto("/quan-tri/#ai");
+  const aiLink = page.getByRole("navigation", { name: "Khu quản trị" }).getByRole("link", { name: "AI", exact: true });
+  await expect(aiLink).toHaveAttribute("aria-current", "page");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  await expect(aiLink).toBeInViewport({ ratio: 1 });
+});
+
 /* ---------- Góp ý, sửa lỗi (nút ở footer) ---------- */
 
 /** Stub Turnstile: widget cấp ngay token "fixture-token"; đếm số lần script được nạp. */

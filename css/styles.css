@@ -14097,7 +14097,8 @@ body[data-page-section="roster-recommend"] .layout {
 
 .adm-feedback { gap: var(--space-10); }
 
-.adm-feedback[data-status="done"] { opacity: .72; }
+/* Đã xử lý: lùi về nền giấy đậm (không dùng opacity — làm chữ meta tụt dưới 4.5:1). */
+.adm-feedback[data-status="done"] { background-color: var(--panel-3); }
 
 .adm-feedback-title { margin: 0; color: var(--ink); font: var(--type-card-title-sm); overflow-wrap: anywhere; }
 
@@ -14392,7 +14393,8 @@ body[data-page-section="roster-recommend"] .layout {
   .adm-shell { grid-template-columns: minmax(0, 1fr); gap: var(--space-20); }
   .adm-side { position: static; }
   .adm-side-note { display: none; }
-  .adm-nav { padding: 0; border: none; background-color: transparent; }
+  /* min-width 0: grid item mặc định co tối thiểu bằng nội dung, hàng chip sẽ đẩy cả trang tràn ngang thay vì tự cuộn. */
+  .adm-nav { min-width: 0; padding: 0; border: none; background-color: transparent; }
   .adm-nav-list {
     position: relative;
     display: flex;
@@ -14413,6 +14415,8 @@ body[data-page-section="roster-recommend"] .layout {
 }
 
 @media (max-width: 680px) {
+  .cm-block { padding: var(--space-16); }
+  .cm-form-row { justify-content: flex-start; }
   .cm-admin { gap: var(--space-20); }
   .adm-head { flex-direction: column; align-items: stretch; gap: var(--space-16); padding-bottom: 0; border-bottom: none; }
   .adm-title { font: var(--type-detail-title); }

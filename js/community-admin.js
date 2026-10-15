@@ -1470,7 +1470,7 @@ function openPostsPanel(panel, { head, actions, counts }) {
       if (!posts.length) {
         table.replaceChildren(el('p', { class: 'adm-empty' }, L('Chưa có bài viết nào.', '还没有文章。')));
       } else {
-        table.replaceChildren(el('div', { class: 'adm-table-wrap adm-posts-table' }, el('table', { class: 'adm-table' }, [
+        table.replaceChildren(el('div', { class: 'adm-table-wrap adm-table-scroll adm-posts-table' }, el('table', { class: 'adm-table' }, [
           el('thead', {}, el('tr', {}, [
             el('th', { scope: 'col' }, L('Tiêu đề', '标题')),
             el('th', { scope: 'col' }, L('Trạng thái', '状态')),
