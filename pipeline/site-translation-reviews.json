@@ -42992,14 +42992,6 @@
           "verdict": "accepted"
         },
         {
-          "entityId": "ui:route-recommended/noscript",
-          "fieldPath": "noscript",
-          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-          "inputFingerprint": "9e67a203ffed4288c6ef114053077647015af7e1b4b4efb9fc435845e0a83a27",
-          "textSha256": "9a41318acee8b68c6b79fffbd328cccf29987f9a4c674dbfcaa831654cebb955",
-          "verdict": "accepted"
-        },
-        {
           "entityId": "ui:route-legacy/title-team",
           "fieldPath": "title",
           "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
@@ -43021,14 +43013,6 @@
           "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
           "inputFingerprint": "f85b4189305512bd38a6c36a88c7fd8f5ff063bd7b46b78728fa6bbb2e5ce576",
           "textSha256": "884e7957292c1d4058bb814c4c9d0333b1d0a0df416e53e621e31692160a66ae",
-          "verdict": "accepted"
-        },
-        {
-          "entityId": "ui:route-legacy/noscript",
-          "fieldPath": "noscript",
-          "glossaryDigest": "sha256:ef3d55cde1440a5c7cc339db4c93b1b32c823d1fb3f7a398a5a5adad30b666c3",
-          "inputFingerprint": "788d55a06985bae69ecac4d03d2bf3042b2e8cede1e28d84fe95a9f160642d18",
-          "textSha256": "90269445c449808b93d26c046ddcb9f9c5d8922974409c069202e17bdda7c374",
           "verdict": "accepted"
         },
         {
