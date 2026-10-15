@@ -27,6 +27,102 @@
 - Python: `tests/test_lookup_route_handles.py` (cấp slug, va chạm, `--check`, retire/giữ chỗ/khôi phục, từ chối ledger sửa tay).
 - E2E: `team-ssr-nojs`, `team-ssr-adopt`, `team-ssr-parity` (DOM nhận lại = DOM client dựng), `team-ssr-detail-states`, `lookup-item-pages`; spec cũ đổi theo hành vi chủ động thay đổi (link trang riêng, chờ `data-boot` trước khi thao tác lọc, đường `?variant=` cho test tải/fail-closed).
 
+## 2026-10-15 (Nhãn chỉ số/binh chủng cho MCP, đoán tên gần có điều kiện)
+
+### Added
+
+- **`fieldLabels` trong `tqccl_get_entity`** (overview): nhãn theo locale cho khoá của `profile.stats` và `profile.troopApt` (vd `thuan` → "Khiên binh"/"盾兵"), chỉ cho khoá có trong hồ sơ. Trước đây agent chỉ thấy khoá thô và đã dịch `thuan` thành "Thuỷ binh" (Dewee R4). Nhãn lấy từ `js/lookup-field-labels.js`, nguồn chung với trang Tra cứu (`js/lookup-detail.js` dùng lại); bản dịch hiển thị đã publish lại (generation `374b8dc2…`).
+- **`similarNames[].likely`** trong `tqccl_search`: đánh dấu mục duy nhất cùng loại mà mọi từ có trong tên gõ (bỏ qua dấu; sai một chữ cái chỉ ở từ ≥4 chữ) và phủ đủ số từ của tên gõ trừ tối đa một — tức người dùng gõ thừa một từ, đảo thứ tự hay gõ sai. Ví dụ: "Hổ Báo Thiết Kỵ" → Hổ Báo Kỵ, "Mưu Kế Liên Hoàn"/"Liên Hoàng Kế" → Liên Hoàn Kế; "Thiên Chi Kiếm" (Ỷ Thiên Kiếm thừa chữ "Ỷ") và "Phong Hỏa Liên Thiên" không có mục `likely`. Mục `likely` đứng đầu danh sách.
+- **`refNames` trong `tqccl_get_entity`**: tên hiển thị theo locale của mọi ID thực thể có thật nhắc trong `profile` (overview) hoặc `items` (section), vd `selfTacticId: "tactic:thua-thien-tinh-the"` → "Thừa Thiên Tĩnh Thế". Trước đây tool chỉ trả ID nên agent tự dựng tên và viết sai ("Thừa Thiên Thừa Tộ", Dewee R5 câu 1).
+- **`build` trong `tqccl_get_team` ở mọi section khác overview** (guide, notes, variants): `{ref, name, heroes}` của chính đội đó, giống `team.heroes` ở overview. Dewee R5b câu 17: agent chỉ đọc section guide, lấy build từ danh sách `tqccl_find_teams` (17 đội Khai hoang trong một khối) và ghép nhầm "Phong Thi Trận" của đội Chu Thái sang Gia Cát Khác.
+- **`innateHeroIds` trong `tqccl_get_entity`** (chiến pháp): ID các tướng mang chiến pháp đó làm chiến pháp tự có, tên nằm trong `refNames`. Suy ngược từ hồ sơ tướng: `lookup.selfTacticId`, không có thì tên Hán khớp đúng một chiến pháp (`js/lookup-innate-holders.js`, dùng chung với trang Tra cứu). Dewee 2026-10-15: `tactic:thua-thien-tinh-the` không ghi `sourceHeroCn` nên agent trả lời "dữ liệu không ghi tướng sở hữu", dù SP Tào Tháo trỏ tới nó. 129/141 chiến pháp tự có nay có tướng (35/39 chiến pháp thiếu `sourceHeroCn`).
+
+### Changed
+
+- **Skill `tqccl-lookup`, tên không có trong cẩm nang** (user chốt 2026-10-15 sau debate `next-steps-1/guess`): vẫn mở đầu "không tìm thấy trong dữ liệu cẩm nang" và nêu `similarNames` là tên gần; chỉ mục `likely: true` đúng loại user hỏi mới được đoán và đưa chi tiết — nói là phỏng đoán, chi tiết mang tên của mục đó, không trả lời như thể hai tên là một, kết thúc bằng câu hỏi xác nhận; không áp cho bản SP/CO/base của tên có thật. Rule `lookup-missing-is-not-empty` lên revision 4.
+- **Skill `tqccl-coexist-team-builder`** (user chốt sau R5 câu 21): thuộc tính tướng/chiến pháp (thích tính binh chủng, phe, sao, hiệu ứng) chỉ nêu khi lấy từ kết quả tool trong phiên — gọi `tqccl_get_entity` hoặc bỏ qua; `tqccl_get_entity` vào tool surface của skill. Rule `coexist-project-data-first` lên revision 2.
+- **Skill `tqccl-lookup`**: build của một đội chỉ lấy từ `tqccl_get_team` của đúng đội đó, không từ danh sách `tqccl_find_teams`. Rule `lookup-khai-hoang-exact` lên revision 2.
+
+### Fixed
+
+- **Gợi ý đội từ kho: nút "Dùng món này" luôn bị vô hiệu**: `el()` gán `disabled="false"` khi chưa chạm giới hạn thay món, và thuộc tính có mặt là đủ để khoá nút. Nay chỉ gắn `disabled` khi `limitReached`. Bản dịch hiển thị publish lại (generation `e079390c…`).
+- **Tra cứu, hồ sơ chiến pháp, cột "Cách nhận"**: thẻ tướng "Tự mang" lấy từ cùng quy tắc với hồ sơ tướng, nên tướng chỉ khớp qua tên Hán chiến pháp tự có (vd Tiểu Kiều → Thiên Hương) cũng hiện. Trước đây cột này chỉ dò `selfTacticId`. Bản dịch hiển thị publish lại (generation `989c9919…`).
+
+## 2026-10-10 (Tra cứu: tên gần khi không khớp, chỉ dữ liệu cẩm nang)
+
+### Added
+
+- **`similarNames` trong `tqccl_search`** (debate `lookup-miss-1/suggest`): khi `total` là 0, trả tối đa 5 mục catalog `{entityId, kind, displayName, pagePath}` có chung ít nhất 2 từ với truy vấn (sau bỏ dấu; chữ Hán tính từng chữ), xếp theo số từ chung, số từ đúng dấu, rồi độ trùng. `total` vẫn 0, `items` vẫn rỗng; không đủ gần thì không có trường này; không gợi ý đội; không kèm tướng sở hữu. Lõi ở `similarCatalog` (`mcp-worker/src/data/publication-projection.ts`). `tqccl_normalize_entities` dùng cùng lõi cho `candidates` của tên `unknown` khi không có khớp một phần. Website Tra cứu không đổi.
+
+### Changed
+
+- **Skill `tqccl-lookup`** (debate `lookup-miss-1/noweb`): chỉ dùng dữ liệu cẩm nang, không web search/fetch; không có thì nói "không tìm thấy trong dữ liệu cẩm nang"; `similarNames` chỉ được nêu là tên gần, không bao giờ là món được hỏi; cần nguồn ngoài thì đề nghị chuyển research. Rule `lookup-missing-is-not-empty` lên revision 2; mô tả skill thêm "Handbook only, no web."
+
+## 2026-10-09 (Sau đo Dewee R2: hạn mức research, skill coexist, đội tranh tài nguyên)
+
+### Changed
+
+- **Hạn mức skill `tqccl-research`** (user chốt sau debate `research-budget-1`): một ledger/topic với hai hạn mức — nguồn ngoài ≤5 (web, browser, media, child agent, MCP/API khác) và MCP TQCCL ≤5 (playbook ≤1, tool TQCCL khác ≤4, kể cả retry). Trước đây lượt MCP TQCCL remote ăn vào 5 lượt chung. Rule `shared-research-budget`, `budget-counts-all-external-ops`, `budget-report-ledger`, `research-playbook-once-per-topic` lên revision 2.
+- **Skill `tqccl-coexist-team-builder`**: chưa có kho thì chỉ hỏi kho; normalize xong phải dừng chờ xác nhận ở lượt riêng rồi mới recommend; báo đủ portfolio, đội tranh tài nguyên, đội thiếu món; món bù chỉ từ `substitutes[]` trong kho. Rule `known-roster`, `review-canonical-state`, `coexist-show-duplicate-tactics`, `coexist-substitution-weaker-variant` lên revision 2.
+- **Skill `tqccl-lookup`**: tên đầy đủ không ra kết quả thì thử tối đa 2 lần nữa (tên Hán, sửa dấu/khoảng trắng) rồi kết luận không có trong cẩm nang (Dewee R2b case 11 gọi `tqccl_search` 16 lần). Skill coexist gửi cả kho một lần bằng `observedText`, không search từng món.
+
+### Added
+
+- **`conflictedTeams`** trong kết quả `recommendRoster` (engine dùng chung `js/team-recommend-engine.js`) và `tqccl_recommend_teams`: đội đủ kho khi đứng riêng nhưng không vào danh sách vì dùng chung tướng/chiến pháp với đội đã chọn, kèm món tranh chấp và đội đang giữ. Trước đây các đội này chỉ nằm trong `diagnostics.prunedCandidates` nội bộ nên agent ghi "0 xung đột" (Dewee R2 case 18). Đội bị loại chỉ vì hết chỗ không vào danh sách này. Website chưa hiển thị trường mới.
+- **`tqccl_normalize_entities` tự tra tên.** Observation chỉ có `observedText`/`displayName` (không `canonicalId`, `candidates`, `reviewRequired`) được tra bằng lõi search của trang Tra cứu, chỉ nhận khớp đúng tên: một mục → gán `canonicalId`; tên bản thường mà tộc còn bản 40Y/SP/CO, hoặc nhiều mục cùng tên → `ambiguous` kèm mọi bản; không khớp → `unknown` kèm tối đa 5 gợi ý khớp một phần. Trước đây observation thiếu `canonicalId` luôn ra `unknown`, nên agent phải search từng tướng/chiến pháp (Dewee R2b case 18 lượt 1: 2 normalize hỏng + 16 search). Snapshot v1/v2 (không có publication) gửi tên thì trả `CAPABILITY_UNAVAILABLE`.
+
+## 2026-10-08 (MCP + skill: snapshot v3, bề mặt 7 tool P*, knowledge dataset, skill làm lại — CHƯA deploy)
+
+### Changed
+
+- **Snapshot manifest v3** = artifact v2 + publication projection (catalog/reference/recommend read model). v1/v2 vẫn đọc được nhưng catalog/reference/recommend trả `CAPABILITY_UNAVAILABLE` (không bao giờ là mảng rỗng); identity v1/v2 giữ nguyên. Hợp đồng ở `mcp-worker/src/data/artifact-contracts.ts`.
+- **Bảy tool P\***: `tqccl_get_playbook`, `tqccl_search`, `tqccl_get_entity`, `tqccl_find_teams`, `tqccl_get_team`, `tqccl_normalize_entities`, `tqccl_recommend_teams`. **Tám tool cũ bị xoá, không alias** (`tqccl_get_data_version`, `tqccl_match_team`, `tqccl_recommend_team`, `tqccl_recommend_coexist`, `tqccl_suggest_replacements`, cùng `tqccl_search`/`tqccl_get_team`/`tqccl_normalize_entities` bản schema cũ); `recommendation-service` và `season-reference-projection` bị gỡ. Schema thuộc `mcp-worker/src/research/research-contracts.ts` (không sao chép vào tài liệu). `tqccl_recommend_teams` gọi đúng `recommendRoster` của trang Gợi ý kho (kết quả `basis:"source-reference-fit"`, `rulesetVerified:false`).
+- **CLI**: alias `playbook, search, entity, find-teams, team, normalize, recommend` (bảng `CLI_ALIASES` trong `mcp-worker/src/cli.ts`) cộng lệnh chỉ-CLI `search-rules`.
+- **`tools/list` gọn dưới 90 KiB** (output schema bỏ mô tả field lồng, error envelope phẳng dùng chung) nên `TQCCL_MCP_MAX_RESULT_BYTES` giữ 98304; `content[0].text` là JSON tương đương `structuredContent`, trần mỗi kết quả 42 KiB.
+- **`tqccl_normalize_entities` không còn `INTERNAL_ERROR` khi agent gửi tướng thiếu `familyId`** (lỗi có từ trước, lộ ra khi đo R0 trên Dewee `tra`): server suy `hero-family:` từ `canonicalId` trong heroes-dict. `canonicalId` tướng không có trong snapshot hoặc `familyId` lệch trả `INVALID_REQUEST` kèm field.
+
+### Added
+
+- **Knowledge dataset** canonical tại `agent-knowledge/` (rules, aliases, workflows, schemas); Worker nhận qua module sinh `mcp-worker/src/generated/knowledge-bundle.ts` từ `mcp-worker/scripts/generate-knowledge-bundle.ts` (`knowledgeVersion` tách khỏi `workflowVersion`). Playbook trả version/capability/luật bắt buộc; `tqccl_search_rules` chỉ là lõi knowledge + CLI, không phải MCP tool.
+- **Skill** (`.agents/skills/`): thêm `tqccl-lookup`; làm lại `tqccl-coexist-team-builder` và `tqccl-research` (thêm `evals/`); gỡ helper `scripts/list_candidate_teams.py`.
+
+### Deploy / consumer (chưa thực hiện)
+
+- **Chưa deploy production; Dewee R0–R2 chưa chạy.** Chia Release 1 / Release 2 là vấn đề lịch deploy (xem `plans/260927-1727-mcp-skill-redesign/phase-04-integration.md`), không phải hợp đồng runtime.
+- Đổi catalog nên consumer phải reconnect và refresh `tools/list` (Dewee: [dewee#887](https://github.com/nextlevelbuilder/dewee/issues/887)), đổi grant/service key sang tên mới. Rollback: exact Worker version trước đó (code + data cùng lúc). Consumer (GoClaw/Dewee) sở hữu skill/grant/rollout phía họ; hợp đồng ở [goclaw-mcp-skill-handoff.md](goclaw-mcp-skill-handoff.md).
+- Tài liệu cập nhật: `docs/goclaw-mcp-skill-handoff.md`, `docs/mcp-research-server.md`, `docs/unified-lookup.md`, `README.md`.
+
+## 2026-10-08 (Gợi ý đội từ kho: sửa adapter dùng chung `recommendRoster` trước khi nối MCP)
+
+### Fixed
+
+Sửa tám lỗi audit ở `js/roster-season-candidates.js`, `js/team-recommend-engine.js`, `js/roster-scan-state.js`, `js/roster-recommend-ui.js` (website và `tqccl_recommend_teams` dùng chung `recommendRoster`):
+
+1. **Cắt pool 60/80 trước khi kiểm kho.** Engine lọc theo kho trước, không cắt số lượng trước khi kiểm; thêm option `poolLimit` (mặc định 60) chỉ giới hạn DFS fullBox, còn bước tham lam dự phòng luôn xét TOÀN danh sách đã qua kiểm kho (không bịa `seasonContext` để né giới hạn). Probe pk-s26 Meta và probe >80 ứng viên: trước đây 0 đội mùa, nay đủ.
+2. **Loại đội cũ quá tay.** Đội cũ chỉ bị loại khi trùng bộ 3 tướng với đội mùa ĐÃ CHỌN (`season.addTeams`), không phải với mọi đội mùa.
+3. **Món bù không kiểm luật đội** (tối đa 1 trận pháp, 1 binh chủng, binh chủng phải hợp loại binh; suy từ `type`/`troopFit` của `data/tactics.json`). Kiểm cả ở gợi ý (`analyzeTacticSubstitutes`) lẫn ở engine với món bù đã chọn (trạng thái riêng `incompatible`, mảng `incompatibleTeams`, không gộp vào `blockedStrongTeams`). Luật chỉ áp cho món bù do người dùng chọn: 46/1317 đội nguồn tự lệch luật loại binh nên dữ liệu gốc không bị kiểm.
+4. **Thiếu `unitTypesRaw`** (48/1336 cấu hình): đội mùa mang `unitType` (và `unitTypesRaw`), rỗng thì không gợi ý và không nhận binh chủng nào (`troop-unit-unknown`).
+5. **Món bù đã chọn** tính vào tổ hợp cuối của đội (`finalTeamTactics`); UI truyền `team` + ô thay vì danh sách tên gốc.
+6. **Món bù thứ 21 không còn bị bỏ âm thầm:** `setTacticOverride` từ chối ô mới khi đầy `MAX_TACTIC_OVERRIDES` (20), `tacticOverrideBlocked` để UI báo và vô hiệu nút.
+7. **Ô chiến pháp chưa đối chiếu với từ điển** (vd. `御敵屏障` ở `s28-wutugu-huangma`): giữ tên Việt dự phòng của nguồn, `unresolved: true`; đội còn ô này có trạng thái `unreconciled` (kèm `unresolvedTactics`), không bao giờ `build-now`; ô này không bắt buộc sở hữu và không là nguồn món bù.
+8. **Nhãn bậc biến thể đã thay:** entry có `variantUnrated` + `originalTier`; UI hiện "Bậc cấu hình gốc: Tx · bản đã thay chưa được đánh giá" (zh: 原配置梯度）; bản đã thay xếp sau đội cùng bậc không bị thay (`rankingTuple[1]`).
+
+### Decided
+
+- Chính sách trộn hai nguồn (ghi ở `recommendRoster`): chốt đội mùa trước, đội cũ chỉ dùng tài nguyên còn lại và xếp sau; KHÔNG bảo đảm số đội tối đa khi trộn.
+- Giới hạn phe/truyền thừa và luật theo mùa chưa có dữ liệu: không kiểm, không đoán.
+
+### Tests
+
+- `tests-js/roster-adapter-audit.test.mjs` + `tests-js/fixtures/roster-adapter-fixtures.mjs` (fixture dựng từ bản ghi thật, dùng lại cho parity web = MCP): `s28-wutugu-huangma`, `team-831163`, `team-jyspt`, `team-1imndp3`, `team-epoddo` (thiếu `unitTypesRaw`), probe pk-s26 >60/>80, kiểm ba loại sai bằng 0 trên pk-s24/26/28.
+- Cập nhật test đang ghim hành vi cũ: ô lạ là điều kiện, đội cũ bị loại theo mọi đội mùa, cắt món bù thứ 21 (`roster-season-candidates`, `roster-scan-state`).
+
+### Publish
+
+- `workflow-build` sinh lại (adapter và `js/roster-scan-state.js` nằm trong semantic closure nên sửa adapter đổi `workflowVersion`).
+- Bản dịch hiển thị publish lại theo `docs/deployment-guide.md`: re-pin sha256 nguồn trong `pipeline/site-localization-policy.json`, generation Recommended mới `9945cf05…` (thay `a973b093…`, đã prune), `data/website-display.json` mới, `pipeline/team-route-handles.json` re-pin generation; `site_localization check --stage public` và `team_route_handles --check` đạt.
+- `suggestTacticSubstitutes` bị gỡ; dùng `analyzeTacticSubstitutes(...).substitutes` (khoá chiến pháp nhận cả tên lẫn ID `tactic:` nên chiến pháp của đội đã khoá không bị gợi ý làm món bù).
+
 ## 2026-10-07 (Tra cứu tướng: Đánh giá của bản thường bị gắn vào bản SP)
 
 ### Fixed

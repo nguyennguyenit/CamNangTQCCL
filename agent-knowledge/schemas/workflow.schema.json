@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "workflows": {
+      "minItems": 1,
+      "maxItems": 3,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "lookup",
+              "coexist",
+              "research"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 600
+          },
+          "stages": {
+            "minItems": 1,
+            "maxItems": 12,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "goal": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 400
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "goal"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "nextTools": {
+            "maxItems": 24,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "stage": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+                },
+                "tool": {
+                  "type": "string",
+                  "enum": [
+                    "tqccl_get_playbook",
+                    "tqccl_search",
+                    "tqccl_get_entity",
+                    "tqccl_find_teams",
+                    "tqccl_get_team",
+                    "tqccl_normalize_entities",
+                    "tqccl_recommend_teams"
+                  ]
+                },
+                "purpose": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 300
+                }
+              },
+              "required": [
+                "stage",
+                "tool",
+                "purpose"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "handoffs": {
+            "maxItems": 6,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string",
+                  "enum": [
+                    "lookup",
+                    "coexist",
+                    "research"
+                  ]
+                },
+                "when": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 300
+                },
+                "returnTo": {
+                  "type": "string",
+                  "enum": [
+                    "lookup",
+                    "coexist",
+                    "research"
+                  ]
+                }
+              },
+              "required": [
+                "to",
+                "when",
+                "returnTo"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "outputChecklist": {
+            "minItems": 1,
+            "maxItems": 24,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 300
+            }
+          },
+          "errorRecovery": {
+            "minItems": 1,
+            "maxItems": 24,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 64
+                },
+                "action": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 400
+                }
+              },
+              "required": [
+                "code",
+                "action"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "summary",
+          "stages",
+          "nextTools",
+          "handoffs",
+          "outputChecklist",
+          "errorRecovery"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "workflows"
+  ],
+  "additionalProperties": false
+}

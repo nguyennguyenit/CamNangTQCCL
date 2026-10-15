@@ -463,6 +463,27 @@ test("fallback tên Hán chỉ khi duy nhất, mơ hồ thì để trạng thái
   assert.ok(unresolved.statusVi.length > 0);
 });
 
+test("hồ sơ chiến pháp nêu tướng mang nó làm chiến pháp tự có, theo cùng quy tắc với hồ sơ tướng", () => {
+  const corpus = buildLookupCorpus({
+    heroes: [
+      hero("hero:luu-bi", "Lưu Bị", { lookup: { selfTacticId: "tactic:nhan-duc" } }),
+      hero("hero:duy-nhat", "Duy Nhất", { selfTacticCn: "仁德載世" }),
+      hero("hero:mo-ho", "Mơ Hồ", { selfTacticCn: "重名" }),
+    ],
+    tactics: TACTIC_POOL,
+    catalog: CATALOG,
+  });
+  const holders = lookupProfile(corpus, "tactic:nhan-duc").relations.filter((r) => r.key.startsWith("innateHolder:"));
+  assert.deepEqual(holders.map((r) => [r.targetId, r.titleVi, r.resolved, r.targetGroup]), [
+    ["hero:duy-nhat", "Duy Nhất", true, "heroes"],
+    ["hero:luu-bi", "Lưu Bị", true, "heroes"],
+  ]);
+  // Tên Hán trùng nhiều chiến pháp: hồ sơ tướng để chưa xác minh, nên chiều ngược cũng không gán.
+  for (const id of ["tactic:trung-lap-a", "tactic:trung-lap-b"]) {
+    for (const relation of lookupProfile(corpus, id).relations) assert.ok(!relation.key.startsWith("innateHolder:"));
+  }
+});
+
 test("giá trị 0 hợp lệ hiển thị là 0, không thành gạch ngang", () => {
   const zeros = buildLookupCorpus({
     heroes: [hero("hero:so-khong", "Số Không", {

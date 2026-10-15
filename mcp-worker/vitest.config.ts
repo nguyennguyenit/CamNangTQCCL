@@ -4,6 +4,8 @@ export default defineConfig({
   test: {
     include: ["test/**/*.test.ts"],
     exclude: ["test/**/*.workerd.test.ts"],
+    // Snapshot v3 thật (~9 MB projection) nạp mất vài trăm ms; coverage + song song kéo dài hơn mặc định 5s.
+    testTimeout: 30_000,
     coverage: {
       provider: "v8",
       include: [

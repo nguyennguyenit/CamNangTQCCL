@@ -7,7 +7,6 @@ import { ARTIFACT_NAMES, SEASON_ARTIFACT_NAMES, V2_ARTIFACT_NAMES, createDataMan
 import { stableStringify } from '../../src/domain/contracts.js';
 import { buildWorkerAssets } from '../../scripts/build-worker-assets.js';
 import { readWorkerAssetFiles } from '../../scripts/verify-worker-assets.js';
-import { hasExpectedArtifactInventory } from '../../scripts/verify-release.js';
 import { calculateWorkerAssetInventoryDigest, verifyWorkerReleaseEvidence } from '../../src/release/worker-release-evidence.js';
 
 const roots: string[] = [];
@@ -70,19 +69,6 @@ it.each(['unexpected', 'linked'])('verification reader refuses %s assets', async
     await rm(path); await symlink(join(options.dataRoot, 'season-evidence.json'), path);
   }
   await expect(readWorkerAssetFiles(options.outputDirectory)).rejects.toThrow();
-});
-const discovery = (manifestVersion: number, names: readonly string[]) => ({ manifestVersion, artifacts: names.map(name => ({ name, sha256: `sha256:${'a'.repeat(64)}`, count: 0 })) });
-it('release verifier accepts the exact declared v1 and v2 inventories', () => {
-  expect(hasExpectedArtifactInventory(discovery(1, ARTIFACT_NAMES))).toBe(true);
-  expect(hasExpectedArtifactInventory(discovery(2, V2_ARTIFACT_NAMES))).toBe(true);
-});
-it.each([
-  discovery(2, ARTIFACT_NAMES),
-  discovery(1, ['private-data', ...ARTIFACT_NAMES.slice(1)]),
-  discovery(1, [ARTIFACT_NAMES[1], ...ARTIFACT_NAMES.slice(1)]),
-  discovery(3, ARTIFACT_NAMES),
-])('release verifier rejects mismatched, duplicate or unsupported inventory %#', value => {
-  expect(hasExpectedArtifactInventory(value)).toBe(false);
 });
 it.each([1, 2])('private SGSDeck subtree does not change bundled v%i artifacts or get read', async version => {
   const options = await fixture();

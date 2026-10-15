@@ -15,8 +15,10 @@ import {
   verifyRelease,
   type ReleaseVerificationFixture,
 } from "../../scripts/verify-release.js";
+import { slimListedTool } from "../../src/mcp/slim-tool-list.js";
 import { TOOL_DEFINITIONS } from "../../src/mcp/tool-definitions.js";
 import { toScrubSafeDigest } from "../../src/domain/digest-encoding.js";
+import { repositoryDataRoot } from "../fixtures/publication-sources.js";
 import { ARTIFACT_NAMES, SEASON_ARTIFACT_NAMES, createDataManifest, validateDataSnapshot, type ArtifactName } from "../../src/data/artifact-contracts.js";
 
 const fixtureRoot = fileURLToPath(
@@ -62,10 +64,14 @@ const fixture: ReleaseVerificationFixture = {
     },
   ],
   teamId: "team-a",
-  tacticName: "Chiến Pháp A",
 };
 
+const productionFixture = JSON.parse(
+  await readFile(new URL("../fixtures/release-verification.json", import.meta.url), "utf8"),
+) as ReleaseVerificationFixture;
+
 async function releaseSource(version: number) {
+  if (version === 3) return new FilesystemDataSource({ dataRoot: repositoryDataRoot });
   const legacy = new FilesystemDataSource({ dataRoot: fixtureRoot });
   if (version === 1) return legacy;
   const objects = new Map<ArtifactName, Uint8Array>(await Promise.all(ARTIFACT_NAMES.map(async name => [name, new Uint8Array(await readFile(`${fixtureRoot}/${name}.json`))] as const)));
@@ -98,12 +104,12 @@ describe("verifyRelease", () => {
     }
   });
 
-  it("đối chiếu chính xác mô tả, schema và annotation của đủ tám tool", () => {
+  it("đối chiếu chính xác mô tả, schema và annotation của đủ bảy tool", () => {
     const catalog = TOOL_DEFINITIONS.map((definition) => ({
       name: definition.name,
       description: definition.description,
       inputSchema: toJSONSchema(definition.inputSchema, { target: "draft-7" }),
-      outputSchema: toJSONSchema(definition.outputSchema, { target: "draft-7" }),
+      outputSchema: slimListedTool({ outputSchema: toJSONSchema(definition.outputSchema, { target: "draft-7" }) as Record<string, unknown> }).outputSchema,
       annotations: definition.annotations,
     }));
 
@@ -132,7 +138,7 @@ describe("verifyRelease", () => {
     expect(matchesExpectedToolCatalog(changed)).toBe(false);
   });
 
-  it.each([1, 2])("xác minh health/auth/protocol/catalog và đủ tám tool trên manifest v%i", async version => {
+  it.each([3])("xác minh health/auth/protocol/catalog và đủ bảy tool trên manifest v%i", async version => {
     const steps: string[] = [];
     const source = await releaseSource(version);
     const snapshot = await source.load();
@@ -156,7 +162,7 @@ describe("verifyRelease", () => {
         expectedReleaseId: snapshot.releaseId,
         expectedWorkflowBuildId: WORKFLOW_BUILD_ID,
         expectedWorkerVersionId: workerVersionId,
-        fixture,
+        fixture: productionFixture,
         fetcher,
         onStep: (step) => steps.push(step),
       });
@@ -164,7 +170,7 @@ describe("verifyRelease", () => {
         verified: true,
         releaseId: snapshot.releaseId,
         workerVersionId,
-        tools: 8,
+        tools: 7,
         protocolVersion: "2025-11-25",
       });
       expect(loads).toBeGreaterThan(0);
@@ -175,7 +181,7 @@ describe("verifyRelease", () => {
     }
   });
 
-  it.each([1, 2])("đóng dấu exact Worker version và data identity v%i cho rollback rehearsal", async version => {
+  it.each([3])("đóng dấu exact Worker version và data identity v%i cho rollback rehearsal", async version => {
     const source = await releaseSource(version);
     const worker = createWorker({
       createDataSource: () => source,
@@ -207,6 +213,27 @@ describe("verifyRelease", () => {
     expect(steps).toContain("catalog");
     expect(steps).toContain("data-version");
     expect(steps.at(-1)).toBe("verified");
+  });
+
+  it.each([1, 2])("không xác minh release trên manifest v%i (chỉ v3 là release hợp lệ)", async version => {
+    const source = await releaseSource(version);
+    const snapshot = await source.load();
+    const worker = createWorker({ createDataSource: () => source, now: () => Date.parse("2026-07-29T00:00:00.000Z") });
+    const fetcher: typeof fetch = async (input, init) => worker.fetch(new Request(input, init), env);
+    await expect(
+      readReleaseIdentity({ endpoint: new URL("https://mcp.example/mcp"), bearer, expectedWorkerVersionId: workerVersionId, fetcher }),
+    ).rejects.toBeInstanceOf(ReleaseVerificationError);
+    await expect(
+      verifyRelease({
+        endpoint: new URL("https://mcp.example/mcp"),
+        bearer,
+        expectedReleaseId: snapshot.releaseId,
+        expectedWorkflowBuildId: WORKFLOW_BUILD_ID,
+        expectedWorkerVersionId: workerVersionId,
+        fixture,
+        fetcher,
+      }),
+    ).rejects.toBeInstanceOf(ReleaseVerificationError);
   });
 
   it("ghi stage an toàn khi runtime Worker version không khớp", async () => {

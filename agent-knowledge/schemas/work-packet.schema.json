@@ -1,0 +1,320 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "taskId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "topicId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "ownerWorkflow": {
+      "type": "string",
+      "enum": [
+        "lookup",
+        "coexist",
+        "research"
+      ]
+    },
+    "returnTo": {
+      "type": "string",
+      "enum": [
+        "lookup",
+        "coexist",
+        "research"
+      ]
+    },
+    "requestedOutcome": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "scope": {
+      "type": "object",
+      "properties": {
+        "sourceSeasonId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "scenario": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ruleset": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "region": {
+          "type": "string",
+          "enum": [
+            "cn",
+            "global",
+            "vn",
+            "unknown"
+          ]
+        },
+        "locale": {
+          "type": "string",
+          "enum": [
+            "vi",
+            "zh"
+          ]
+        },
+        "provenance": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        }
+      },
+      "required": [
+        "sourceSeasonId",
+        "scenario",
+        "ruleset",
+        "region",
+        "locale",
+        "provenance"
+      ],
+      "additionalProperties": false
+    },
+    "entityRefs": {
+      "maxItems": 64,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 120
+      }
+    },
+    "referenceRefs": {
+      "maxItems": 64,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 160
+      }
+    },
+    "canonicalStateRef": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "confirmationBinding": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "claims": {
+      "maxItems": 64,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "claimId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "da-doi-chieu",
+              "phuong-an-tu-nguon",
+              "chua-xac-minh"
+            ]
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "evidenceRefs": {
+            "maxItems": 16,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 300
+            }
+          }
+        },
+        "required": [
+          "claimId",
+          "status",
+          "scope",
+          "evidenceRefs"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "unresolved": {
+      "maxItems": 32,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 300
+      }
+    },
+    "budget": {
+      "type": "object",
+      "properties": {
+        "topicId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "used": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "remaining": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "topicId",
+        "limit",
+        "used",
+        "remaining"
+      ],
+      "additionalProperties": false
+    },
+    "versions": {
+      "type": "object",
+      "properties": {
+        "gameReleaseId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workflowVersion": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "knowledgeVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "skillVersion": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "gameReleaseId",
+        "workflowVersion",
+        "knowledgeVersion",
+        "skillVersion"
+      ],
+      "additionalProperties": false
+    },
+    "appliedRuleIds": {
+      "maxItems": 128,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9-]{1,63}$"
+      }
+    }
+  },
+  "required": [
+    "taskId",
+    "topicId",
+    "ownerWorkflow",
+    "returnTo",
+    "requestedOutcome",
+    "scope",
+    "entityRefs",
+    "referenceRefs",
+    "canonicalStateRef",
+    "confirmationBinding",
+    "claims",
+    "unresolved",
+    "budget",
+    "versions",
+    "appliedRuleIds"
+  ],
+  "additionalProperties": false
+}

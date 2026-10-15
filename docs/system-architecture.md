@@ -26,7 +26,7 @@ Browser canonical mapping + local matching/recommendation
 RESEARCH MCP PATH
 managed client ──Bearer + Streamable HTTP──► Cloudflare Worker + private Static Assets
 local MCP client ───────────stdio──────────► filesystem snapshot
-                                     cả hai ──► cùng 8 schema/handler read-only
+                                     cả hai ──► cùng 7 schema/handler read-only
 ```
 
 `mcp-worker/` là boundary nghiên cứu riêng, không nằm trong browser/Vision flow. Package có snapshot dữ liệu read-only, JSON CLI, stdio MCP và Cloudflare Streamable HTTP dùng chung registry/handler.
@@ -157,12 +157,12 @@ structured observations
   → normalize thành canonical state
   → caller rà soát/xác nhận
   → binding state + workflow
-  → tám research handler
+  → bảy research handler
   → JSON CLI hoặc MCP stdio/Streamable HTTP
 ```
 
 Inventory theo version thuộc [`artifact-contracts.ts`](../mcp-worker/src/data/artifact-contracts.ts):
-v1 giữ sáu artifact legacy; v2 có thêm toàn bộ năm sidecar mùa.
+v1 giữ sáu artifact legacy; v2 có thêm toàn bộ năm sidecar mùa; v3 có thêm các artifact publication projection và khối `publication` trong manifest (thuộc release identity).
 [`FilesystemDataSource`](../mcp-worker/src/data/filesystem-data-source.ts) phân
 biệt ba format: raw legacy, raw lookup có đúng cả hai website sidecar, và packaged
 MCP có manifest cùng exact inventory. Mixed/partial root bị từ chối. Lookup
@@ -171,21 +171,16 @@ artifact/tool kind. [`StaticAssetsDataSource`](../mcp-worker/src/data/static-ass
 dùng manifest package để chọn exact inventory. Cả hai validate trước khi
 [`data-source.ts`](../mcp-worker/src/data/data-source.ts) giữ snapshot immutable.
 
-`mcp-worker/src/domain/normalization-service.ts` sở hữu chuẩn hóa và source precedence; ambiguity, identity/family conflict hoặc locked-resource conflict đặt trạng thái cần review. `canonical-state.ts` sở hữu projection/digest và xác minh binding. `recommendation-service.ts` chỉ gọi engine sau khi workflow, canonical state và binding khớp; trạng thái chưa phân giải hoặc binding cũ bị từ chối. Bằng chứng người dùng thật sự đã xác nhận vẫn thuộc caller, không phải điều research handler tự chứng minh.
+`mcp-worker/src/domain/normalization-service.ts` sở hữu chuẩn hóa và source precedence; ambiguity, identity/family conflict hoặc locked-resource conflict đặt trạng thái cần review. `canonical-state.ts` sở hữu projection/digest và xác minh binding. `recommend-handlers.ts` chỉ gọi `recommendRoster` (`js/roster-season-candidates.js`, cùng trang Gợi ý kho) sau khi workflow, canonical state và binding khớp; trạng thái chưa phân giải, roster rỗng hoặc binding cũ bị từ chối (`CONFIRMATION_REQUIRED`). Bằng chứng người dùng thật sự đã xác nhận vẫn thuộc caller, không phải điều research handler tự chứng minh.
 
-Tám tên handler cùng schema request/result thuộc [`research-contracts.ts`](../mcp-worker/src/research/research-contracts.ts); dispatch và version/provenance/error behavior thuộc [`research-handlers.ts`](../mcp-worker/src/research/research-handlers.ts). CLI `npm run cli -- <lệnh>`, stdio `npm run stdio` và HTTP đều gọi cùng handler/schema. [`tool-definitions.ts`](../mcp-worker/src/mcp/tool-definitions.ts) chỉ thêm mô tả và annotation read-only; mỗi factory tạo `McpServer` mới.
+Bảy tên tool cùng schema request/result thuộc [`research-contracts.ts`](../mcp-worker/src/research/research-contracts.ts); dispatch và version/provenance/error behavior thuộc [`research-handlers.ts`](../mcp-worker/src/research/research-handlers.ts). CLI `npm run cli -- <lệnh>`, stdio `npm run stdio` và HTTP đều gọi cùng handler/schema. [`tool-definitions.ts`](../mcp-worker/src/mcp/tool-definitions.ts) chỉ thêm mô tả và annotation read-only; mỗi factory tạo `McpServer` mới.
 
 [`public-snapshot-view.ts`](../mcp-worker/src/data/public-snapshot-view.ts) loại
 Đô Úy và các cấu hình, evaluation, liên kết cùng bằng chứng chỉ thuộc phần bị
 ẩn trước khi dựng index/projector; bằng chứng dùng chung còn được giữ. Public
 view vẫn mang identity của raw release để không tạo một version dữ liệu khác.
 
-Nhánh seasonal bind đúng cặp luật vào canonical confirmation và cursor.
-[`season-domain-adapter.ts`](../mcp-worker/src/domain/season-domain-adapter.ts)
-gọi shared projector; [`season-reference-projection.ts`](../mcp-worker/src/domain/season-reference-projection.ts)
-sở hữu projection tham khảo có giới hạn. Client cần refresh output schema;
-input không có context tiếp tục dùng nhánh legacy. Chi tiết hợp đồng consumer
-nằm ở [Research MCP server](mcp-research-server.md).
+Handler theo nhóm: [`playbook-handlers.ts`](../mcp-worker/src/research/playbook-handlers.ts) (playbook từ [`src/knowledge/`](../mcp-worker/src/knowledge/) và mùa nguồn của snapshot), [`catalog-handlers.ts`](../mcp-worker/src/research/catalog-handlers.ts) (search/get_entity), [`team-handlers.ts`](../mcp-worker/src/research/team-handlers.ts) (find_teams/get_team, gồm `collection:"engine"` qua [`season-domain-adapter.ts`](../mcp-worker/src/domain/season-domain-adapter.ts) và [`legacy-domain-adapter.ts`](../mcp-worker/src/domain/legacy-domain-adapter.ts)) và [`recommend-handlers.ts`](../mcp-worker/src/research/recommend-handlers.ts). Snapshot manifest v3 thêm các artifact projection xuất bản do [`publication-projection.ts`](../mcp-worker/src/data/publication-projection.ts) định nghĩa và [`publication-builder.ts`](../mcp-worker/src/data/publication-builder.ts) dựng; catalog/team/recommend trên snapshot v1/v2 trả `CAPABILITY_UNAVAILABLE`. Dataset luật canonical ở [`agent-knowledge/`](../agent-knowledge/) được sinh thành `src/generated/knowledge-bundle.ts`; `knowledgeVersion` tách khỏi `workflowVersion`. Chi tiết hợp đồng consumer nằm ở [Research MCP server](mcp-research-server.md).
 
 Stdio dùng official SDK transport, giữ stdout chỉ cho protocol và ghi diagnostic cố định vào stderr. Remote Worker dùng raw Web-standard Streamable HTTP transport của SDK v1 ở chế độ JSON stateless; protocol `2025-11-25` được pin cho cả `initialize` đơn lẻ và trong batch. Trình tự `/mcp` là header guard rẻ → managed-client pre-shared bearer → rate/in-flight → đọc JSON theo byte thực tế và kiểm protocol → Static Assets/server; `/healthz` là liveness no-I/O. Origin hiện diện phải khớp chính xác và result cũng có trần. Bearer này không phải OAuth; không có OAuth server/discovery, client phải tự gắn `Authorization` header.
 

@@ -23,12 +23,12 @@ describe("production-shaped CPU proxy", () => {
   it("paginates the complete production search corpus without repeating a page", async () => {
     const source = new FilesystemDataSource({ dataRoot: productionDataRoot });
     const snapshot = await source.load();
-    const expectedEntries = buildSnapshotIndex(snapshot).searchEntries.length;
     const handlers = createResearchHandlers({ dataSource: source });
     const seen = new Set<string>();
     let cursor: string | undefined;
     let workflowVersion: string | undefined;
     let pageCount = 0;
+    let expectedEntries = 0;
 
     do {
       const page = await handlers.call("tqccl_search", {
@@ -40,17 +40,21 @@ describe("production-shaped CPU proxy", () => {
           : { expectedWorkflowVersion: workflowVersion }),
       });
       for (const item of page.items) {
-        const key = `${item.kind}:${item.canonicalId}`;
+        const key = `${item.kind}:${item.entityId}`;
         expect(seen.has(key)).toBe(false);
         seen.add(key);
       }
       cursor = page.nextCursor;
       workflowVersion = page.workflowVersion;
+      expectedEntries = page.total;
       pageCount += 1;
     } while (cursor !== undefined);
 
     expect(seen.size).toBe(expectedEntries);
-    expect(pageCount).toBeLessThan(20);
+    expect(expectedEntries).toBe(
+      snapshot.publication!.entities.length + snapshot.publication!.teams.length + snapshot.artifacts.teams.length,
+    );
+    expect(pageCount).toBeLessThan(120);
   });
 
   it("records bounded cold/index/warm recommendation work before transport", async () => {
@@ -67,6 +71,11 @@ describe("production-shaped CPU proxy", () => {
     const rankedTeamIds = new Set(
       snapshot.artifacts["team-tier"].map(({ teamId }) => teamId),
     );
+    const heroIds = new Set(
+      index.searchEntries
+        .filter(({ kind }) => kind === "hero")
+        .map(({ canonicalId }) => canonicalId),
+    );
     const tacticNames = new Set(
       index.searchEntries
         .filter(({ kind }) => kind === "tactic")
@@ -82,7 +91,7 @@ describe("production-shaped CPU proxy", () => {
         heroes.every(
           (hero) =>
             hero.name !== undefined &&
-            index.heroesById.has(canonicalHeroId(hero.name)) &&
+            heroIds.has(canonicalHeroId(hero.name)) &&
             (hero.tactics ?? []).every(
               ({ name }) => name !== undefined && tacticNames.has(name),
             ),
@@ -137,12 +146,12 @@ describe("production-shaped CPU proxy", () => {
     const normalized = await handlers.call("tqccl_normalize_entities", {
       observations,
     });
-    const recommended = await handlers.call("tqccl_recommend_team", {
+    const recommended = await handlers.call("tqccl_recommend_teams", {
       expectedWorkflowVersion: normalized.workflowVersion,
       canonicalState: normalized.canonicalState,
       confirmationBinding: normalized.confirmationBinding,
+      sourceSeasonId: snapshot.publication!.seasons.defaultSourceSeasonId,
       maxTeams: 10,
-      experimentalUntiered: true,
     });
     const warmNormalizeAndRecommendMs = elapsed(startedAt);
 
@@ -153,7 +162,7 @@ describe("production-shaped CPU proxy", () => {
         0,
       ),
       observations: observations.length,
-      teamsReturned: recommended.teams.length,
+      teamsReturned: recommended.portfolioTeams.length,
       coldLoadMs,
       indexMs,
       warmNormalizeAndRecommendMs,
@@ -162,7 +171,7 @@ describe("production-shaped CPU proxy", () => {
 
     expect(snapshot.artifacts.teams.length).toBeGreaterThan(100);
     expect(observations.length).toBe(60);
-    expect(recommended.teams.length).toBeGreaterThan(0);
+    expect(recommended.portfolioTeams.length + recommended.blockedStrongTeams.length).toBeGreaterThan(0);
     expect(coldLoadMs).toBeLessThan(2_000);
     expect(indexMs).toBeLessThan(1_000);
     expect(warmNormalizeAndRecommendMs).toBeLessThan(2_000);

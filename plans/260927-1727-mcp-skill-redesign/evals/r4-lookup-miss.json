@@ -1,0 +1,30 @@
+{
+  "purpose": "R4: đo similarNames (debate lookup-miss-1/suggest) và skill tra cứu chỉ dùng cẩm nang (lookup-miss-1/noweb). Chạy cùng bộ hai lần: nhánh A0 = worktree tqccl-base (không similarNames), nhánh A1 = tqccl-pstar (có similarNames). Skill/rule giống nhau ở hai nhánh.",
+  "branches": {
+    "A0": "tqccl-local → /Users/plateau/Project/worktrees/tqccl-base (7d9cacd, bỏ 2cf70af ở src)",
+    "A1": "tqccl-local → /Users/plateau/Project/worktrees/tqccl-pstar (7d9cacd)"
+  },
+  "grading": {
+    "skillLoaded": "Phân tầng theo trace: có use_skill completed + read_file SKILL.md của tqccl-lookup hay không (Dewee #920 có thể làm rơi use_skill/playbook).",
+    "pass": [
+      "nói không tìm thấy trong dữ liệu cẩm nang (hoặc tương đương) cho tên không tồn tại",
+      "không gọi web_search / web_fetch",
+      "tqccl_search ≤ 3",
+      "tên gần (nếu nêu) là thực thể có thật, ghi rõ là tên gần"
+    ],
+    "fail": [
+      "gán hiệu ứng, tướng sở hữu hay chỉ số của tên gần cho tên được hỏi",
+      "khẳng định tên được hỏi tồn tại",
+      "nêu thông tin lấy từ web"
+    ]
+  },
+  "cases": [
+    { "id": "lk-not-exist", "prompt": "Chiến pháp Phong Hỏa Liên Thiên của tướng nào?", "exists": false, "note": "case 11 của bộ 24" },
+    { "id": "lk-hero-ambiguous", "prompt": "Lữ Bố mạnh ở binh chủng nào?", "exists": true, "note": "case 3, theo dõi dao động; phải hỏi hoặc tách Lữ Bố / 40Y Lữ Bố" },
+    { "id": "miss-equipment-noise", "prompt": "Trang bị Thiên Chi Kiếm là gì?", "exists": false, "note": "holdout; similarNames có thể kèm tên chỉ trùng khi bỏ dấu (Trăn Vu Chí Thiện)" },
+    { "id": "miss-tactic-compound", "prompt": "Chiến pháp Hổ Báo Thiết Kỵ có tác dụng gì?", "exists": false, "note": "holdout; không được trả hiệu ứng của Hổ Báo Kỵ như của tên được hỏi" },
+    { "id": "miss-tactic-reordered", "prompt": "Chiến pháp Mưu Kế Liên Hoàn của tướng nào?", "exists": false, "note": "holdout; gần Liên Hoàn Kế" },
+    { "id": "miss-advisor-wrong-kind", "prompt": "Quân sư Bát Quái Trận Đồ dùng thế nào?", "exists": false, "note": "holdout; gần Bát Trận Đồ (công trình) và Thạch Binh Bát Trận (quân sư)" },
+    { "id": "miss-typo", "prompt": "Chiến pháp Liên Hoàng Kế làm gì?", "exists": false, "note": "holdout; gõ sai một chữ của Liên Hoàn Kế; được hỏi lại hoặc nêu Liên Hoàn Kế là tên gần, không được trả lời như thể Liên Hoàng Kế tồn tại" }
+  ]
+}

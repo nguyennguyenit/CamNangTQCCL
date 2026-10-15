@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
-  "purpose": "Bộ hội thoại mẫu đo agent thử Dewee `tra-eval` (cấu hình như `tra`, MCP stdio local) với 8 tool cũ, sau cutover P* và sau khi upload skill (phase 2 bước 2, phase 4 bước 8). Không cần deploy production để đo.",
+  "purpose": "Bộ hội thoại mẫu đo agent Dewee `tra` (MCP stdio local `tqccl-local` thay grant production trong lúc đo) với 8 tool cũ, sau cutover P* và sau khi upload skill (phase 2 bước 2, phase 4 bước 8). Không cần deploy production để đo.",
   "dataPin": {
     "repoCommit": "9291400600c868d0caea3d4078fc92dd68fb57cc",
     "mcpReleaseFromRepo": "sha256:a7cd638e45576faa2c512a7c260ebb7fcad4c804d094a599d5e3b3c2b6500417",
     "recommendedGeneration": "a973b0931d39ab33b69654ef6456dbcc307b78e40b152adbefda4d4a0e88b64c",
     "defaultSourceSeasonId": "og-兵演春秋",
-    "note": "Fact trong mustInclude lấy từ data/ và src/data/recommended-reference/ ở commit trên. Data đổi generation thì chạy lại scripts kiểm fact trước khi dùng."
+    "note": "Fact trong mustInclude lấy từ data/ và src/data/recommended-reference/ ở commit trên. Branch feat/mcp-skill-redesign publish lại bản dịch thành generation 9945cf05…: mọi file payload trùng byte với a973b093…, chỉ manifest.json khác, nên fact không đổi. Data đổi generation thì chạy lại scripts kiểm fact trước khi dùng."
   },
   "protocol": {
     "runs": [
-      { "id": "R0-baseline", "when": "Agent thử `tra-eval` + MCP stdio local `tqccl-local` ở commit 9efe0dad9cc3bfa0196a1a3dc7adc286f80b3a50 (8 tool cũ, dữ liệu hiện tại). Không dùng MCP production (release 08-25 thiếu dữ liệu).", "toolsField": "tools8" },
-      { "id": "R1-p-star", "when": "Như R0 nhưng checkout branch code mới (Release 1 rồi Release 2), reconnect `tqccl-local`, chưa upload skill.", "toolsField": "tools" },
-      { "id": "R2-skill", "when": "Như R1, sau khi upload ba skill cho `tra-eval`.", "toolsField": "tools" }
+      { "id": "R0-baseline", "when": "Agent `tra` + MCP stdio local `tqccl-local` từ checkout `main` (code MCP như 9efe0dad9cc3bfa0196a1a3dc7adc286f80b3a50, 8 tool cũ, dữ liệu hiện tại); grant `tqccl` production tạm gỡ. Không dùng MCP production (release 08-25 thiếu dữ liệu).", "toolsField": "tools8" },
+      { "id": "R1-p-star", "when": "Như R0 nhưng `tqccl-local` chạy từ worktree branch feat/mcp-skill-redesign (đủ 7 tool), reconnect, chưa upload skill.", "toolsField": "tools" },
+      { "id": "R2-skill", "when": "Như R1, sau khi upload ba skill và cấp cho `tra`.", "toolsField": "tools" }
     ],
     "rules": [
-      "Mỗi case chạy trong một session Dewee mới của agent `tra-eval`; gửi lần lượt các turn trong `prompt`.",
-      "Không sửa prompt giữa các run. Ghi model/provider của `tra-eval` cho mỗi run (giữ giống `tra`); đổi model thì không so sánh được.",
-      "Case có `requiresRelease2: true` bỏ qua ở R1 nếu mới có Release 1 (ghi NOT_RUN).",
+      "Mỗi case chạy trong một session Dewee mới của agent `tra`; gửi lần lượt các turn trong `prompt`. Ghi giờ bắt đầu/kết thúc mỗi run để tách khỏi hội thoại khác của `tra`.",
+      "Không sửa prompt giữa các run. Ghi model/provider của `tra` cho mỗi run; đổi model giữa các run thì không so sánh được.",
+      "R1 chạy đủ 7 tool nên mọi case, kể cả `requiresRelease2: true`, đều chạy.",
       "Case ghép đội: oracle là output `recommendRoster` của trang Gợi ý kho với cùng roster và mùa (chạy trên website hoặc script dùng chính adapter). Không hardcode kết quả.",
       "NOT_RUN / BLOCKED không tính PASS."
     ],
@@ -70,6 +70,16 @@
       "tools8": ["tqccl_search"],
       "mustInclude": ["chủ động", "phẩm S", "hồi binh lực cho 2 tướng quân ta", "tỷ lệ 36→72%", "chịu ảnh hưởng Thống suất"],
       "notes": "tactic:chung-vong-so-quy, thêm sau release 08-25."
+    },
+    {
+      "id": "lk-tactic-owner",
+      "category": "tra-cuu",
+      "prompt": ["Chiến pháp Thừa Thiên Tĩnh Thế là của tướng nào và có tác dụng gì?"],
+      "tools": ["tqccl_search", "tqccl_get_entity"],
+      "tools8": ["tqccl_search"],
+      "mustInclude": ["SP Tào Tháo", "chiến pháp tự có"],
+      "mustNot": ["nói dữ liệu không ghi tướng sở hữu", "gán cho Tào Tháo bản thường"],
+      "notes": "Dewee 2026-10-15 trace 01a13f81: sourceHeroCn rỗng, agent trả lời không rõ tướng. Chủ suy từ selfTacticId của hero:sp-tao-thao (profile.innateHeroIds)."
     },
     {
       "id": "lk-equipment",
@@ -253,9 +263,9 @@
       "prompt": ["Bên Trung Quốc tuần này đội nào đang mạnh nhất?"],
       "tools": [],
       "tools8": [],
-      "mustInclude": ["nói rõ dữ liệu cẩm nang là đội tham khảo theo mùa nguồn, không phải xếp hạng meta tuần này", "applicability CN/VN chưa xác minh"],
-      "mustNot": ["khẳng định meta hiện tại chỉ từ tier trong data"],
-      "notes": "Không có skill research trên Dewee ở R0/R1; ở R2 kỳ vọng route research và gắn claim status."
+      "mustInclude": ["nói rõ dữ liệu cẩm nang là đội tham khảo theo mùa nguồn, không phải xếp hạng meta tuần này", "phạm vi server/mùa nêu rõ hoặc ghi chưa xác định", "mỗi claim chính có claim status"],
+      "mustNot": ["khẳng định meta hiện tại chỉ từ tier trong data", "câu kết luận/tổng hợp gộp quan sát dự án với nguồn chưa đối chiếu thành claim về meta tuần này"],
+      "notes": "Không có skill research trên Dewee ở R0/R1; ở R2 kỳ vọng route research và gắn claim status. 2026-10-09: bỏ 'applicability CN/VN chưa xác minh' — câu hỏi chỉ nêu Trung Quốc; chỉ đòi applicability vùng khác khi câu hỏi hoặc scope nêu vùng đó (rule region-applicability-needs-evidence)."
     },
     {
       "id": "neg-injection",

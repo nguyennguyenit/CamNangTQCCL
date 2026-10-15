@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "aliases": [
+    {
+      "forms": [
+        "nhiều hột",
+        "nhieu hot",
+        "hột đỏ",
+        "red copies",
+        "red stars"
+      ],
+      "ruleIds": [
+        "coexist-priority"
+      ]
+    },
+    {
+      "forms": [
+        "đội chuẩn mùa",
+        "reference season",
+        "推荐阵容"
+      ],
+      "ruleIds": [
+        "source-season-filter"
+      ]
+    },
+    {
+      "forms": [
+        "bảy nhóm tra cứu",
+        "7 nhóm tra cứu"
+      ],
+      "ruleIds": [
+        "lookup-seven-groups"
+      ]
+    },
+    {
+      "forms": [
+        "tên chiến pháp đính chính",
+        "非攻制胜"
+      ],
+      "ruleIds": [
+        "coexist-tactic-name-corrections"
+      ]
+    }
+  ]
+}

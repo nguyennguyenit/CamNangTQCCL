@@ -8,6 +8,7 @@ import {
   RESEARCH_TOOL_NAMES,
   type ResearchToolName,
 } from "../../src/research/research-contracts.js";
+import { canonicalTacticId } from "../../../js/team-recommend-engine.js";
 import { createResearchHandlers } from "../../src/research/research-handlers.js";
 
 /**
@@ -15,7 +16,7 @@ import { createResearchHandlers } from "../../src/research/research-handlers.js"
  * client phải gửi lại cho server mà mang chuỗi như vậy sẽ về tay ta ở dạng đã bị
  * che, và mọi tool ràng theo nó hỏng vĩnh viễn.
  *
- * Test này khoá invariant đó cho toàn bộ 8 tool.
+ * Test này khoá invariant đó cho toàn bộ 7 tool.
  */
 const LONG_HEX_RUN = /[a-fA-F0-9]{64,}/u;
 
@@ -26,9 +27,7 @@ const LONG_HEX_RUN = /[a-fA-F0-9]{64,}/u;
  */
 const OUTPUT_ONLY_HEX_FIELDS = new Set(["releaseId", "sha256"]);
 
-const fixtureRoot = fileURLToPath(
-  new URL("../fixtures/release-snapshot", import.meta.url),
-);
+const fixtureRoot = fileURLToPath(new URL("../../../data", import.meta.url));
 
 function fixtureSource(): DataSource {
   return new FilesystemDataSource({ dataRoot: fixtureRoot });
@@ -47,50 +46,41 @@ function withoutOutputOnlyHexFields(value: unknown): unknown {
 
 async function callEveryTool(): Promise<Record<ResearchToolName, unknown>> {
   const handlers = createResearchHandlers({ dataSource: fixtureSource() });
+  const evidence = { sourceScope: "currentTurnImage" as const, batchId: "fixture" };
+  const team = (await handlers.call("tqccl_find_teams", { collection: "recommended", limit: 1 })).items[0]!;
   const normalized = await handlers.call("tqccl_normalize_entities", {
     observations: [
-      {
-        observationId: "hero",
-        entityKind: "hero",
-        canonicalId: "hero:tuong-a",
-        familyId: "hero-family:tuong-a",
-        displayName: "Tướng A",
-        evidence: { sourceScope: "currentTurnImage", batchId: "fixture" },
-      },
-      {
-        observationId: "tactic",
-        entityKind: "tactic",
-        canonicalId: "tactic:chien-phap-a",
-        displayName: "Chiến Pháp A",
-        evidence: { sourceScope: "currentTurnImage", batchId: "fixture" },
-      },
+      ...team.heroes.map((hero, index) => ({
+        observationId: `hero-${index}`,
+        entityKind: "hero" as const,
+        canonicalId: hero.heroId as `hero:${string}`,
+        displayName: hero.nameVi,
+        evidence,
+      })),
+      ...team.heroes.flatMap((hero, index) =>
+        hero.tactics.map((tactic, slot) => ({
+          observationId: `tactic-${index}-${slot}`,
+          entityKind: "tactic" as const,
+          canonicalId: canonicalTacticId(tactic.vi ?? "") as `tactic:${string}`,
+          displayName: tactic.vi ?? "",
+          evidence,
+        })),
+      ),
     ],
   });
-
-  const confirmed = {
-    expectedWorkflowVersion: normalized.workflowVersion,
-    canonicalState: normalized.canonicalState,
-    confirmationBinding: normalized.confirmationBinding,
-  };
+  const entity = (await handlers.call("tqccl_search", { query: "Thanh Long", kinds: ["equipment"], limit: 1 })).items[0]!;
   const requests: Record<ResearchToolName, unknown> = {
-    tqccl_get_data_version: {},
+    tqccl_get_playbook: { intent: "lookup" },
     tqccl_normalize_entities: { observations: [] },
-    tqccl_search: { query: "Tướng" },
-    tqccl_get_team: {
-      teamId: "team-a",
+    tqccl_search: { query: "", limit: 2 },
+    tqccl_get_entity: { entityId: entity.entityId },
+    tqccl_find_teams: { collection: "other", limit: 2 },
+    tqccl_get_team: { reference: team.reference, expectedWorkflowVersion: normalized.workflowVersion },
+    tqccl_recommend_teams: {
       expectedWorkflowVersion: normalized.workflowVersion,
-    },
-    tqccl_match_team: {
-      expectedWorkflowVersion: normalized.workflowVersion,
-      heroes: [{ canonicalId: "hero:tuong-a", tacticIds: [] }],
-      minHeroes: 1,
-    },
-    tqccl_recommend_team: confirmed,
-    tqccl_recommend_coexist: confirmed,
-    tqccl_suggest_replacements: {
-      ...confirmed,
-      teamId: "team-a",
-      tacticName: "Chiến Pháp A",
+      canonicalState: normalized.canonicalState,
+      confirmationBinding: normalized.confirmationBinding,
+      sourceSeasonId: team.sourceSeasonId!,
     },
   };
 
@@ -143,7 +133,7 @@ describe("no long hex run in client-echoed fields", () => {
 
   it("still emits releaseId as a full sha256 hex digest", async () => {
     const results = await callEveryTool();
-    const version = results.tqccl_get_data_version as { releaseId: string };
+    const version = results.tqccl_get_playbook as { releaseId: string };
 
     expect(version.releaseId).toMatch(/^sha256:[a-f0-9]{64}$/u);
   });

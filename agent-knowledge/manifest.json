@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "dataset": "tqccl-agent-knowledge",
+  "locales": [
+    "vi",
+    "zh"
+  ],
+  "tokenizer": "vi-fold-zh-ngram-v1",
+  "ranker": "bm25-weighted-v1",
+  "compatibility": {
+    "core": 1
+  },
+  "files": {
+    "workflows": "workflows.json",
+    "aliases": "aliases.json",
+    "rules": [
+      "rules/core.jsonl",
+      "rules/lookup.jsonl",
+      "rules/coexist.jsonl",
+      "rules/research.jsonl"
+    ]
+  }
+}

@@ -1,5 +1,5 @@
 import {
-  artifactNamesForVersion,
+  artifactNamesForManifest,
   MAX_ARTIFACT_BYTES,
   validateDataSnapshot,
   validateManifest,
@@ -119,10 +119,8 @@ export class StaticAssetsDataSource implements DataSource {
             ] as const),
           );
           const objects = new Map<ArtifactName, Uint8Array>(entries);
-          if (
-            objects.size !== artifactNamesForVersion(manifest.schemaVersion).length ||
-            artifactNamesForVersion(manifest.schemaVersion).some((name) => !objects.has(name))
-          ) {
+          const names = artifactNamesForManifest(manifest);
+          if (objects.size !== names.length || names.some((name) => !objects.has(name))) {
             throw unavailable();
           }
           return {

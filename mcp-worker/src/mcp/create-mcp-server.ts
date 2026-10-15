@@ -12,6 +12,7 @@ import {
 } from "../research/research-handlers.js";
 import { invalidRequestFields } from "../research/validation-fields.js";
 import { formatToolError, formatToolResult } from "./format-result.js";
+import { slimListedTool, type ListedTool } from "./slim-tool-list.js";
 import {
   TOOL_DEFINITIONS,
   type ToolDefinition,
@@ -85,6 +86,19 @@ function installSafeToolErrorBoundary(server: McpServer): void {
   };
 }
 
+type ListToolsHandler = (request: unknown, extra: unknown) => Promise<{ tools: ListedTool[] }>;
+
+/** Bọc handler `tools/list` của SDK (private) để công bố schema gọn; có integration test bảo vệ. */
+function installSlimToolList(server: McpServer): void {
+  const registry = (server.server as unknown as { _requestHandlers: Map<string, ListToolsHandler> })._requestHandlers;
+  const original = registry.get("tools/list");
+  if (original === undefined) throw new Error("MCP SDK did not register tools/list.");
+  registry.set("tools/list", async (request, extra) => {
+    const result = await original(request, extra);
+    return { ...result, tools: result.tools.map(slimListedTool) };
+  });
+}
+
 function registerTool(
   server: McpServer,
   handlers: ResearchHandlers,
@@ -105,7 +119,7 @@ function registerTool(
     async (input: unknown) => {
       try {
         const result = await handlers.call(name, input as never);
-        return formatToolResult(name, result);
+        return formatToolResult(result);
       } catch (error) {
         return formatToolError(error);
       }
@@ -131,5 +145,6 @@ export function createMcpServer({
   });
   installSafeToolErrorBoundary(server);
   registerTools(server, handlers);
+  installSlimToolList(server);
   return server;
 }

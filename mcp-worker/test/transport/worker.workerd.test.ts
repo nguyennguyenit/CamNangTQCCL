@@ -42,8 +42,8 @@ describe("Worker trong runtime workerd", () => {
         id: 2,
         method: "tools/call",
         params: {
-          name: "tqccl_get_data_version",
-          arguments: {},
+          name: "tqccl_get_playbook",
+          arguments: { intent: "lookup" },
         },
       }),
     );

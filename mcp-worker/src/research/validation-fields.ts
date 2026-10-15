@@ -35,23 +35,34 @@ export function formatIssuePath(path: readonly PropertyKey[]): string {
   return rendered;
 }
 
-/** Tên field duy nhất, giữ thứ tự zod báo cáo, chặn trần. */
+/** Field báo cho key lạ ở cấp gốc của request (zod trả path rỗng). */
+const ROOT_FIELD = "input";
+
+/**
+ * Tên field duy nhất, giữ thứ tự zod báo cáo, chặn trần.
+ *
+ * Key lạ (`unrecognized_keys`) được báo bằng đường dẫn object chứa nó (do schema định nghĩa),
+ * không phải tên key client tự đặt; ở gốc thì báo `input`.
+ */
 export function invalidRequestFields(error: ZodError): string[] {
   const fields = new Set<string>();
   for (const issue of error.issues) {
     const rendered = formatIssuePath(issue.path);
     if (rendered !== "") fields.add(rendered);
+    else if (issue.code === "unrecognized_keys" && issue.path.length === 0) fields.add(ROOT_FIELD);
     if (fields.size >= MAX_REPORTED_FIELDS) break;
   }
   return [...fields];
 }
 
-/** Nối danh sách field vào thông báo công khai. */
+/** Nối danh sách field vào thông báo công khai; field `input` nghĩa là có key ngoài schema ở gốc. */
 export function withFieldNames(
   message: string,
   fields: readonly string[],
 ): string {
-  return fields.length === 0
-    ? message
-    : `${message} Trường sai: ${fields.join(", ")}.`;
+  if (fields.length === 0) return message;
+  const named = `${message} Trường sai: ${fields.join(", ")}.`;
+  return fields.includes(ROOT_FIELD)
+    ? `${named} Có trường không có trong schema; chỉ gửi các trường được khai báo.`
+    : named;
 }

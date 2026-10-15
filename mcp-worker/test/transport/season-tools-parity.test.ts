@@ -11,10 +11,9 @@ import { seasonConsumerFixture, context } from '../../../tests-js/fixtures/seaso
 import { FilesystemDataSource } from '../../src/data/filesystem-data-source.js';
 import { createWorker, type WorkerEnvironment } from '../../src/worker.js';
 import { createResearchHandlers } from '../../src/research/research-handlers.js';
-import { RESEARCH_TOOL_NAMES } from '../../src/research/research-contracts.js';
 import { runCli } from '../../src/cli.js';
 const packageRoot = fileURLToPath(new URL('../../', import.meta.url));
-it('seasonal eight-tool results and actionable errors survive SDK discovery, stdio, HTTP and CLI', async () => {
+it('seasonal engine results and actionable errors survive SDK discovery, stdio, HTTP and CLI', async () => {
     const root = await mkdtemp(join(tmpdir(), 'tqccl-season-wire-'));
     const clients: Client[] = [];
     try {
@@ -34,30 +33,34 @@ it('seasonal eight-tool results and actionable errors survive SDK discovery, std
         await http.connect(new StreamableHTTPClientTransport(new URL('https://mcp.example/mcp'), { requestInit: { headers: { Authorization: `Bearer ${token}` } }, fetch: (input, init) => worker.fetch(new Request(input, init), environment) }) as unknown as Transport);
         for (const client of clients) {
             const list = await client.listTools();
-            expect(list.tools).toHaveLength(8);
+            expect(list.tools).toHaveLength(7);
             expect(list.tools.every(tool => tool.outputSchema?.type === 'object')).toBe(true);
         }
         const n = await h.call('tqccl_normalize_entities', { observations: [], seasonContext: context });
-        const confirmed = { seasonContext: context, expectedWorkflowVersion: n.workflowVersion, canonicalState: n.canonicalState, confirmationBinding: n.confirmationBinding };
-        const requests = { tqccl_get_data_version: {}, tqccl_normalize_entities: { observations: [], seasonContext: context }, tqccl_search: { query: '', seasonContext: context }, tqccl_get_team: { teamId: 'team-a', configId: 'config-a', seasonContext: context, expectedWorkflowVersion: n.workflowVersion }, tqccl_match_team: { heroes: [{ canonicalId: 'hero:anh', tacticIds: ['tactic:mot'] }], minHeroes: 1, seasonContext: context, expectedWorkflowVersion: n.workflowVersion }, tqccl_recommend_team: confirmed, tqccl_recommend_coexist: confirmed, tqccl_suggest_replacements: { ...confirmed, teamId: 'team-a', configId: 'config-a', holderId: 'hero:anh', slotIndex: 0, tacticName: 'Một' } };
-        for (const name of RESEARCH_TOOL_NAMES) {
-            const expected = await h.call(name, requests[name] as never);
+        const requests = {
+            tqccl_get_playbook: { intent: 'lookup' },
+            tqccl_normalize_entities: { observations: [], seasonContext: context },
+            tqccl_find_teams: { collection: 'engine', seasonContext: context, heroes: [{ canonicalId: 'hero:anh', tacticIds: ['tactic:mot'] }], minHeroes: 1 },
+            tqccl_get_team: { reference: { collection: 'engine', teamId: 'team-a', configId: 'config-a' }, seasonContext: context, expectedWorkflowVersion: n.workflowVersion },
+        } as const;
+        for (const [name, input] of Object.entries(requests)) {
+            const expected = await h.call(name as never, input as never);
             for (const client of clients) {
-                const result = await client.callTool({ name, arguments: requests[name] });
+                const result = await client.callTool({ name, arguments: input });
                 expect(result.isError).not.toBe(true);
                 expect(result.structuredContent).toEqual(expected);
             }
         }
-        const ambiguity = { teamId: 'team-a', seasonContext: context, expectedWorkflowVersion: n.workflowVersion };
+        const ambiguity = { reference: { collection: 'engine', teamId: 'team-a' }, seasonContext: context, expectedWorkflowVersion: n.workflowVersion };
         for (const client of clients) {
             const result = await client.callTool({ name: 'tqccl_get_team', arguments: ambiguity });
             expect(result.isError).toBe(true);
             expect((result.structuredContent as Record<string, unknown>)?.error).toMatchObject({ code: 'CONFIG_AMBIGUOUS', choices: { configIds: ['config-a', 'config-b'], totalCount: 2, omittedCount: 0 } });
-            const invalid = await client.callTool({ name: 'tqccl_search', arguments: { query: '', seasonContext: { scenarioId: 'scenario-a' } } });
+            const invalid = await client.callTool({ name: 'tqccl_find_teams', arguments: { collection: 'engine', seasonContext: { scenarioId: 'scenario-a' } } });
             expect((invalid.structuredContent as Record<string, unknown>)?.error).toMatchObject({ code: 'INVALID_REQUEST', fields: ['seasonContext.rulesetId'] });
         }
         let stdout = '';
-        const exit = await runCli(['tqccl_get_team', '--data-root', root, '--input', JSON.stringify(ambiguity)], { stdout: { write(value: string) { stdout += value; return true; } }, stderr: { write() { return true; } } });
+        const exit = await runCli(['team', '--data-root', root, '--input', JSON.stringify(ambiguity)], { stdout: { write(value: string) { stdout += value; return true; } }, stderr: { write() { return true; } } });
         expect(exit).toBe(1);
         expect(JSON.parse(stdout).error.choices.configIds).toEqual(['config-a', 'config-b']);
     }
@@ -80,9 +83,7 @@ it('candidate-limit metadata remains identical through stdio HTTP and CLI', asyn
         for (const [name, value] of Object.entries({ ...data, 'team-tier': [] }))
             await writeFile(join(root, `${name}.json`), JSON.stringify(value));
         const source = new FilesystemDataSource({ dataRoot: root });
-        const h = createResearchHandlers({ dataSource: source });
-        const n = await h.call('tqccl_normalize_entities', { observations: [], seasonContext: context });
-        const input = { seasonContext: context, expectedWorkflowVersion: n.workflowVersion, canonicalState: n.canonicalState, confirmationBinding: n.confirmationBinding };
+        const input = { collection: 'engine', seasonContext: context, heroes: [{ canonicalId: 'hero:anh', tacticIds: [] }], minHeroes: 1 };
         const stdio = new Client({ name: 'limit-stdio', version: '1' });
         clients.push(stdio);
         await stdio.connect(new StdioClientTransport({ command: process.execPath, args: ['--import', 'tsx', 'src/stdio.ts'], cwd: packageRoot, env: { ...getDefaultEnvironment(), TQCCL_DATA_ROOT: root }, stderr: 'pipe' }));
@@ -94,12 +95,12 @@ it('candidate-limit metadata remains identical through stdio HTTP and CLI', asyn
         await http.connect(new StreamableHTTPClientTransport(new URL('https://mcp.example/mcp'), { requestInit: { headers: { Authorization: `Bearer ${token}` } }, fetch: (request, init) => worker.fetch(new Request(request, init), environment) }) as unknown as Transport);
         for (const client of clients) {
             await client.listTools();
-            const result = await client.callTool({ name: 'tqccl_recommend_team', arguments: input });
+            const result = await client.callTool({ name: 'tqccl_find_teams', arguments: input });
             expect(result.isError).toBe(true);
             expect((result.structuredContent as Record<string, unknown>)?.error).toMatchObject({ code: 'CANDIDATE_LIMIT_EXCEEDED', limits: { maxCandidates: 500, candidateCount: 501 }, retryable: false });
         }
         let stdout = '';
-        const exit = await runCli(['tqccl_recommend_team', '--data-root', root, '--input', JSON.stringify(input)], { stdout: { write(value: string) { stdout += value; return true; } }, stderr: { write() { return true; } } });
+        const exit = await runCli(['find-teams', '--data-root', root, '--input', JSON.stringify(input)], { stdout: { write(value: string) { stdout += value; return true; } }, stderr: { write() { return true; } } });
         expect(exit).toBe(1);
         expect(JSON.parse(stdout).error).toMatchObject({ code: 'CANDIDATE_LIMIT_EXCEEDED', limits: { maxCandidates: 500, candidateCount: 501 }, retryable: false });
     }

@@ -39,14 +39,14 @@ and agent inference distinguishable.
 - New evidence: <what changed, with link>
 - Replacement conclusion: <scoped conclusion or unknown>
 
-## External-call Budget
+## Call Budget
 
-| Topic | Limit | Used | Remaining |
-| --- | ---: | ---: | ---: |
-| <locked topic> | <effective limit> | <all external calls> | <limit minus used> |
+| Topic | Allowance | Limit | Used | Remaining |
+| --- | --- | ---: | ---: | ---: |
+| <locked topic> | External sources | <effective limit, default 5> | <search, open, raw/API, child calls, media/browser, handoff> | <limit minus used> |
+| <locked topic> | TQCCL MCP | <effective limit, default 5; playbook ≤ 1> | <executed remote TQCCL calls, retries included> | <limit minus used> |
 
-Count search, open, raw/API, child calls, media/browser retrieval, and handoff in
-the same row. List local reads separately if useful; they cost zero.
+List local CLI and file reads separately if useful; they cost zero.
 
 ## SGSDeck Status
 

@@ -1,70 +1,28 @@
-import { fitSeasonResult } from "../domain/season-reference-projection.js";
-import { seasonDomain } from "../domain/season-domain-adapter.js";
-import { normalizeText, teamSearchBlob } from "../../../js/filters.js";
-import { resolveSeasonContext } from "../../../js/season-context.js";
-import { publicSnapshotView } from "../data/public-snapshot-view.js";
-import type { SeasonContext } from "../domain/canonical-state.js";
 import { ZodError, type ZodType } from "zod";
 
-import { createWorkflowVersion, type CanonicalState } from "../domain/canonical-state.js";
-import { legacyDomainAdapter } from "../domain/legacy-domain-adapter.js";
-import { normalizeObservations } from "../domain/normalization-service.js";
-import {
-  DomainServiceError,
-  recommendCoexist,
-  recommendTeam,
-  suggestReplacements,
-} from "../domain/recommendation-service.js";
-import type { WorkflowVersion } from "../domain/contracts.js";
-import { WORKFLOW_BUILD_ID } from "../generated/workflow-build.js";
+import { heroFamilyId } from "../../../js/hero-identity.js";
+import { resolveSeasonContext } from "../../../js/season-context.js";
+import { publicSnapshotView } from "../data/public-snapshot-view.js";
+import { buildSnapshotIndex, type SnapshotIndex } from "../data/snapshot-index.js";
 import type { DataSnapshot } from "../data/artifact-contracts.js";
 import type { DataSource } from "../data/data-source.js";
-import {
-  invalidRequestFields,
-  withFieldNames,
-} from "./validation-fields.js";
-import {
-  buildSnapshotIndex,
-  type SearchKind,
-  type SnapshotIndex,
-} from "../data/snapshot-index.js";
+import { createWorkflowVersion } from "../domain/canonical-state.js";
+import { normalizeObservations } from "../domain/normalization-service.js";
+import { WORKFLOW_BUILD_ID } from "../generated/workflow-build.js";
+import { handleGetEntity, handleSearch } from "./catalog-handlers.js";
+import { PUBLIC_ERRORS, ResearchHandlerError } from "./handler-error.js";
+import { handleGetPlaybook } from "./playbook-handlers.js";
+import { handleRecommendTeams } from "./recommend-handlers.js";
 import {
   RESEARCH_CONTRACTS,
   type ResearchInput,
   type ResearchOutput,
   type ResearchToolName,
 } from "./research-contracts.js";
+import { handleFindTeams, handleGetTeam } from "./team-handlers.js";
+import { createToolContext, enforceResultSize, parseToolInput, type ToolContext } from "./tool-context.js";
 
-const MAX_RESULT_BYTES = 64 * 1024;
-
-export class ResearchHandlerError extends Error {
-  constructor(
-    readonly code:
-      | "INVALID_REQUEST"
-      | "DATA_UNAVAILABLE"
-      | "WORKFLOW_VERSION_CHANGED"
-      | "CONFIRMATION_REQUIRED"
-      | "CURSOR_INVALID"
-      | "TEAM_NOT_FOUND"
-      | "TACTIC_NOT_FOUND"
-      | "RESULT_TOO_LARGE"
-      | "INTERNAL_ERROR"
-      | "SEASON_CONTEXT_INVALID" | "CONFIG_NOT_FOUND" | "CONFIG_AMBIGUOUS" | "CANDIDATE_LIMIT_EXCEEDED",
-    message: string,
-    readonly retryable = false,
-    /**
-     * Đường dẫn các field vi phạm, để agent tự sửa request thay vì bỏ cuộc.
-     * Chỉ tên field — không bao giờ chứa giá trị người dùng gửi lên, vì lỗi này
-     * đi thẳng vào context LLM và vào trace.
-     */
-    readonly fields: readonly string[] = [],
-    readonly choices?: {kind:"team-config";teamId:string;configIds:string[];totalCount:number;omittedCount:number},
-    readonly limits?: {maxCandidates:500;candidateCount:number},
-  ) {
-    super(message);
-    this.name = "ResearchHandlerError";
-  }
-}
+export { ResearchHandlerError } from "./handler-error.js";
 
 export interface ResearchHandlerDependencies {
   dataSource: DataSource;
@@ -77,228 +35,127 @@ export interface ResearchHandlers {
   ): Promise<ResearchOutput<Name>>;
 }
 
-interface RequestContext {
-  snapshot: DataSnapshot;
-  workflowVersion: WorkflowVersion;
-  index: SnapshotIndex;
+interface HeroObservationInput {
+  entityKind?: unknown;
+  canonicalId?: unknown;
+  familyId?: unknown;
+  observedText?: unknown;
+  displayName?: unknown;
+  reviewRequired?: unknown;
+  candidates?: unknown;
 }
 
-interface CursorPayload {
-  v: string;
-  q: string;
-  o: number;
+const MAX_NAME_SUGGESTIONS = 5;
+
+/**
+ * Observation chỉ có tên (thiếu canonicalId) được tra bằng lõi search của trang Tra cứu, chỉ nhận khớp đúng tên:
+ * đúng một mục → gán canonicalId; tên bản thường của tộc còn bản 40Y/SP/CO, hoặc nhiều mục cùng tên → ambiguous
+ * kèm mọi bản; không khớp đúng → unknown kèm tối đa 5 gợi ý khớp một phần, không có thì tên gần (`similarCatalog`). Agent gửi canonicalId, candidates
+ * hay reviewRequired thì giữ nguyên. Chỉ tra trong ID mà snapshot nhận (searchEntries).
+ */
+function withResolvedNames(ctx: ToolContext, observations: readonly HeroObservationInput[]): HeroObservationInput[] {
+  const needsLookup = (observation: HeroObservationInput) =>
+    (observation.entityKind === "hero" || observation.entityKind === "tactic") &&
+    observation.canonicalId === undefined &&
+    observation.reviewRequired === undefined &&
+    observation.candidates === undefined &&
+    typeof (observation.observedText ?? observation.displayName) === "string";
+  if (!observations.some(needsLookup)) return [...observations];
+  const pub = ctx.publication();
+  const known = new Map<string, string>();
+  const variantsByFamily = new Map<string, string[]>();
+  for (const entry of ctx.index.searchEntries) {
+    if (entry.kind !== "hero" && entry.kind !== "tactic") continue;
+    known.set(entry.canonicalId, entry.displayName);
+    if (entry.kind !== "hero") continue;
+    const family = heroFamilyId(entry.displayName);
+    variantsByFamily.set(family, [...(variantsByFamily.get(family) ?? []), entry.canonicalId]);
+  }
+  return observations.map((observation) => {
+    if (!needsLookup(observation)) return observation;
+    const kind = observation.entityKind as "hero" | "tactic";
+    const name = String(observation.observedText ?? observation.displayName);
+    const matches = pub
+      .searchCatalog(name, { kinds: [kind], limit: 100 })
+      .items.filter(({ entity }) => known.has(entity.id));
+    const exact = [...new Set(matches.filter(({ score }) => score === 3).map(({ entity }) => entity.id))];
+    if (exact.length === 0) {
+      const near = matches.length > 0 ? matches : pub.similarCatalog(name, { kinds: [kind], limit: 100 }).filter(({ entity }) => known.has(entity.id));
+      const candidates = [...new Set(near.map(({ entity }) => entity.id))].slice(0, MAX_NAME_SUGGESTIONS);
+      return { ...observation, candidates };
+    }
+    if (exact.length > 1) return { ...observation, reviewRequired: true, candidates: exact.sort() };
+    const canonicalId = exact[0]!;
+    if (kind === "hero") {
+      // Bản thường có canonicalId trùng slug của family (hero-identity); 40Y/SP/CO thì không.
+      const family = heroFamilyId(known.get(canonicalId)!);
+      const variants = variantsByFamily.get(family) ?? [];
+      if (canonicalId.slice("hero:".length) === family.slice("hero-family:".length) && variants.length > 1) {
+        return { ...observation, reviewRequired: true, candidates: [...variants].sort() };
+      }
+    }
+    return { ...observation, canonicalId, displayName: observation.displayName ?? known.get(canonicalId) };
+  });
 }
 
-function publicMessage(code: ResearchHandlerError["code"]): string {
-  const messages: Record<ResearchHandlerError["code"], string> = {
-    SEASON_CONTEXT_INVALID: "Cặp kịch bản và luật chưa được xác minh.",
-    CONFIG_NOT_FOUND: "Không tìm thấy cấu hình phù hợp.",
-    CONFIG_AMBIGUOUS: "Cần chọn cấu hình đội hình cụ thể.",
-    CANDIDATE_LIMIT_EXCEEDED: "Số cấu hình vượt giới hạn xử lý.",
-    INVALID_REQUEST: "Yêu cầu không hợp lệ.",
-    DATA_UNAVAILABLE: "Dữ liệu nghiên cứu hiện không khả dụng.",
-    WORKFLOW_VERSION_CHANGED: "Phiên bản dữ liệu hoặc quy trình đã thay đổi.",
-    CONFIRMATION_REQUIRED: "Trạng thái canonical cần được xác nhận lại.",
-    CURSOR_INVALID: "Cursor không hợp lệ cho truy vấn hiện tại.",
-    TEAM_NOT_FOUND: "Không tìm thấy đội hình.",
-    TACTIC_NOT_FOUND: "Không tìm thấy chiến pháp.",
-    RESULT_TOO_LARGE: "Kết quả vượt giới hạn cho phép.",
-    INTERNAL_ERROR: "Không thể hoàn tất yêu cầu.",
-  };
-  return messages[code];
+/**
+ * Agent biết `canonicalId` (từ tqccl_search) nhưng không biết `hero-family:`; family là dữ liệu của snapshot
+ * nên server suy từ tên tướng trong heroes-dict. familyId gửi lên phải khớp, không tự sửa.
+ */
+function withHeroFamilies(ctx: ToolContext, observations: readonly HeroObservationInput[]): HeroObservationInput[] {
+  const heroNames = new Map<string, string>();
+  for (const entry of ctx.index.searchEntries) {
+    if (entry.kind === "hero") heroNames.set(entry.canonicalId, entry.displayName);
+  }
+  return observations.map((observation, index) => {
+    if (observation.entityKind !== "hero" || typeof observation.canonicalId !== "string") return observation;
+    const name = heroNames.get(observation.canonicalId);
+    if (name === undefined) {
+      throw new ResearchHandlerError("INVALID_REQUEST", PUBLIC_ERRORS.INVALID_REQUEST.message, false, [
+        `observations[${index}].canonicalId`,
+      ]);
+    }
+    const familyId = heroFamilyId(name);
+    if (observation.familyId !== undefined && observation.familyId !== familyId) {
+      throw new ResearchHandlerError("INVALID_REQUEST", PUBLIC_ERRORS.INVALID_REQUEST.message, false, [
+        `observations[${index}].familyId`,
+      ]);
+    }
+    return { ...observation, familyId };
+  });
 }
 
-interface ProjectionState {
-  truncated: boolean;
-  remainingNodes?: number;
-}
-
-function boundedJson(
-  value: unknown,
-  state: ProjectionState,
-  depth = 0,
-): unknown {
-  state.remainingNodes ??= 180;
-  state.remainingNodes -= 1;
-  if (state.remainingNodes < 0) {
-    state.truncated = true;
-    return null;
-  }
-  if (value === null || typeof value === "boolean") return value;
-  if (typeof value === "number") return Number.isFinite(value) ? value : null;
-  if (typeof value === "string") {
-    const normalized = value
-      .normalize("NFC")
-      .replace(/[\u0000-\u001f\u007f-\u009f]/gu, " ")
-      .replace(/\s+/gu, " ")
-      .trim();
-    if (normalized.length > 256) state.truncated = true;
-    return normalized.slice(0, 256);
-  }
-  if (depth >= 8) {
-    state.truncated = true;
-    return null;
-  }
-  if (Array.isArray(value)) {
-    if (value.length > 100) state.truncated = true;
-    return value
-      .slice(0, 100)
-      .map((item) => boundedJson(item, state, depth + 1));
-  }
-  if (typeof value === "object") {
-    const entries = Object.entries(value as Record<string, unknown>);
-    if (entries.length > 100) state.truncated = true;
-    return Object.fromEntries(
-      entries
-        .slice(0, 100)
-        .map(([key, nested]) => [key, boundedJson(nested, state, depth + 1)]),
-    );
-  }
-  return null;
-}
-
-function enforceResultSize(value: unknown): void {
-  if (new TextEncoder().encode(JSON.stringify(value)).byteLength > MAX_RESULT_BYTES) {
-    throw new ResearchHandlerError(
-      "RESULT_TOO_LARGE",
-      publicMessage("RESULT_TOO_LARGE"),
-    );
-  }
-}
-
-function fitResultSize(
-  value: Record<string, unknown>,
-  truncatableFields: readonly string[],
-): Record<string, unknown> {
-  const fitted = { ...value };
-  for (const field of truncatableFields) {
-    if (Array.isArray(fitted[field])) {
-      fitted[field] = [...fitted[field]];
+async function handleNormalize(ctx: ToolContext, rawInput: unknown): Promise<unknown> {
+  const input = parseToolInput(RESEARCH_CONTRACTS.tqccl_normalize_entities.input as ZodType<Record<string, unknown>>, rawInput);
+  ctx.ensureExpectedWorkflow(input.expectedWorkflowVersion as string | undefined);
+  const seasonContext = input.seasonContext as { scenarioId: string; rulesetId: string } | undefined;
+  if (seasonContext) {
+    const model = ctx.snapshot.seasonModel;
+    if (!model || !resolveSeasonContext(model, seasonContext).ok) {
+      throw new ResearchHandlerError("SEASON_CONTEXT_INVALID", PUBLIC_ERRORS.SEASON_CONTEXT_INVALID.message);
     }
   }
-  while (
-    new TextEncoder().encode(JSON.stringify(fitted)).byteLength >
-    MAX_RESULT_BYTES
-  ) {
-    const field = truncatableFields.find(
-      (candidate) =>
-        Array.isArray(fitted[candidate]) &&
-        (fitted[candidate] as unknown[]).length > 0,
-    );
-    if (field === undefined) {
-      enforceResultSize(fitted);
-      return fitted;
-    }
-    (fitted[field] as unknown[]).pop();
-    fitted.truncated = true;
-  }
-  return fitted;
-}
-
-async function fingerprint(value: unknown): Promise<string> {
-  const bytes = new TextEncoder().encode(JSON.stringify(value));
-  const digest = await crypto.subtle.digest(
-    "SHA-256",
-    bytes as Uint8Array<ArrayBuffer>,
-  );
-  return [...new Uint8Array(digest)]
-    .map((byte) => byte.toString(16).padStart(2, "0"))
-    .join("");
-}
-
-function encodeCursor(payload: CursorPayload): string {
-  return btoa(JSON.stringify(payload));
-}
-
-function decodeCursor(value: string): CursorPayload {
-  try {
-    const parsed = JSON.parse(atob(value)) as Record<string, unknown>;
-    if (
-      typeof parsed.v !== "string" ||
-      typeof parsed.q !== "string" ||
-      !Number.isSafeInteger(parsed.o) ||
-      (parsed.o as number) < 0
-    ) {
-      throw new Error("invalid");
-    }
-    return { v: parsed.v, q: parsed.q, o: parsed.o as number };
-  } catch {
-    throw new ResearchHandlerError(
-      "CURSOR_INVALID",
-      publicMessage("CURSOR_INVALID"),
-    );
-  }
-}
-
-function commonResult(
-  context: RequestContext,
-  provenance: Array<Record<string, unknown>> = [],
-) {
+  const normalized = await normalizeObservations({
+    workflowVersion: ctx.workflowVersion,
+    observations: withHeroFamilies(ctx, withResolvedNames(ctx, input.observations as HeroObservationInput[])) as never,
+    ...(seasonContext ? { seasonContext } : {}),
+  });
   return {
-    releaseId: context.snapshot.releaseId,
-    dataVersion: context.snapshot.dataVersion,
-    workflowVersion: context.workflowVersion,
-    provenance,
-    warnings: [...context.snapshot.warnings],
-    truncated: false,
+    ...ctx.commonResult([{ artifact: "canonical-state", recordId: normalized.confirmationBinding.normalizationDigest }]),
+    ...normalized,
+    ...(seasonContext ? { seasonContext } : {}),
   };
 }
 
-function ensureExpectedWorkflow(
-  expected: string | undefined,
-  actual: string,
-): void {
-  if (expected !== undefined && expected !== actual) {
-    throw new ResearchHandlerError(
-      "WORKFLOW_VERSION_CHANGED",
-      publicMessage("WORKFLOW_VERSION_CHANGED"),
-      true,
-    );
-  }
-}
-
-function allDictionaryMatches(index: SnapshotIndex, query: string, kinds: SearchKind[]) {
-  const entries = [];
-  for (let offset = 0; ; offset += 100) {
-    const page = index.search(query, { kinds, limit: 100, offset });
-    entries.push(...page);
-    if (page.length < 100) return entries;
-  }
-}
-
-function seasonalCandidates(snapshot: DataSnapshot, context: SeasonContext) {
- const projected = seasonDomain.candidates(snapshot.seasonModel!,context,{});
- if (!projected.ok) throw new ResearchHandlerError(projected.code as ResearchHandlerError["code"],publicMessage(projected.code as ResearchHandlerError["code"]),false,[],undefined,projected.limits);
- return projected;
-}
-
-function domainSnapshot(snapshot: DataSnapshot) {
-  return {
-    releaseId: snapshot.releaseId,
-    dataVersion: snapshot.dataVersion,
-    teams: snapshot.artifacts.teams,
-    teamTier: snapshot.artifacts["team-tier"],
-    coexist: snapshot.artifacts.coexist,
-    ...(snapshot.seasonModel ? {seasonModel:snapshot.seasonModel} : {}),
-  };
-}
-
-function mapDomainError(error: unknown): never {
-  if (error instanceof ResearchHandlerError) throw error;
-  if (error instanceof DomainServiceError) {
-    const code =
-      error.code === "WORKFLOW_VERSION_MISMATCH"
-        ? "WORKFLOW_VERSION_CHANGED"
-        : error.code;
-    throw new ResearchHandlerError(
-      code,
-      publicMessage(code),
-      code === "WORKFLOW_VERSION_CHANGED",
-      [], error.choices, error.limits,
-    );
-  }
-  throw new ResearchHandlerError("INTERNAL_ERROR", publicMessage("INTERNAL_ERROR"));
-}
+const HANDLERS: Record<ResearchToolName, (ctx: ToolContext, input: unknown) => Promise<unknown>> = {
+  tqccl_get_playbook: handleGetPlaybook,
+  tqccl_search: handleSearch,
+  tqccl_get_entity: handleGetEntity,
+  tqccl_find_teams: handleFindTeams,
+  tqccl_get_team: handleGetTeam,
+  tqccl_normalize_entities: handleNormalize,
+  tqccl_recommend_teams: handleRecommendTeams,
+};
 
 export function createResearchHandlers(
   dependencies: ResearchHandlerDependencies,
@@ -306,387 +163,28 @@ export function createResearchHandlers(
   let indexedRelease: string | null = null;
   let index: SnapshotIndex | null = null;
 
-  async function context(): Promise<RequestContext> {
+  async function context(): Promise<ToolContext> {
     let snapshot: DataSnapshot;
     try {
       snapshot = await publicSnapshotView(await dependencies.dataSource.load());
     } catch {
-      throw new ResearchHandlerError(
-        "DATA_UNAVAILABLE",
-        publicMessage("DATA_UNAVAILABLE"),
-        true,
-      );
+      throw new ResearchHandlerError("DATA_UNAVAILABLE", PUBLIC_ERRORS.DATA_UNAVAILABLE.message, true);
     }
     if (index === null || indexedRelease !== snapshot.releaseId) {
       index = buildSnapshotIndex(snapshot);
       indexedRelease = snapshot.releaseId;
     }
-    return {
-      snapshot,
-      workflowVersion: createWorkflowVersion(
-        snapshot.releaseId,
-        WORKFLOW_BUILD_ID,
-      ),
-      index,
-    };
+    return createToolContext(snapshot, index, createWorkflowVersion(snapshot.releaseId, WORKFLOW_BUILD_ID));
   }
 
-  async function execute(
-    name: ResearchToolName,
-    rawInput: unknown,
-  ): Promise<unknown> {
-    let input: Record<string, unknown>;
-    try {
-      input = (
-        RESEARCH_CONTRACTS[name].input as ZodType<Record<string, unknown>>
-      ).parse(rawInput);
-    } catch (error) {
-      if (error instanceof ZodError) {
-        const fields = invalidRequestFields(error);
-        throw new ResearchHandlerError(
-          "INVALID_REQUEST",
-          withFieldNames(publicMessage("INVALID_REQUEST"), fields),
-          false,
-          fields,
-        );
-      }
-      throw error;
-    }
-    const request = await context();
-    const seasonContext = input.seasonContext as SeasonContext | undefined;
-    if (seasonContext && (!request.snapshot.seasonModel || !resolveSeasonContext(request.snapshot.seasonModel,seasonContext).ok)) throw new ResearchHandlerError("SEASON_CONTEXT_INVALID",publicMessage("SEASON_CONTEXT_INVALID"));
-    if (!seasonContext && (input.configId !== undefined || input.holderId !== undefined || input.slotIndex !== undefined)) throw new ResearchHandlerError("INVALID_REQUEST",publicMessage("INVALID_REQUEST"));
-    let result: unknown;
-
-    if (name === "tqccl_get_data_version") {
-      result = {
-        ...commonResult(request),
-        manifestVersion: request.snapshot.manifest.schemaVersion,
-        capabilities: {legacy:true,seasonContext:Boolean(request.snapshot.seasonModel)},
-        ...(request.snapshot.seasonModel ? {seasonRegistry:(request.snapshot.artifacts["season-registry"] ?? []).filter(row=>row.reviewStatus === "reviewed").map(row=>({scenarioId:row.id,label:String(row.labelVi).slice(0,256),rulesets:(row.rulesets as Array<Record<string,unknown>>).filter(rule=>rule.reviewStatus === "reviewed").map(rule=>({rulesetId:rule.id,label:String(rule.label).slice(0,256)}))}))} : {}),
-        artifacts: request.snapshot.manifest.artifacts.map((descriptor) => ({
-          ...descriptor,
-        })),
-      };
-    } else if (name === "tqccl_normalize_entities") {
-      const normalized = await normalizeObservations({
-        workflowVersion: request.workflowVersion,
-        observations: input.observations as never,
-        ...(seasonContext ? {seasonContext} : {}),
-      });
-      result = {
-        ...commonResult(request, [
-          {
-            artifact: "canonical-state",
-            recordId: normalized.confirmationBinding.normalizationDigest,
-          },
-        ]),
-        ...normalized,
-      };
-    } else if (name === "tqccl_search") {
-      const query = input.query as string;
-      const kinds = input.kinds as SearchKind[] | undefined;
-      const limit = (input.limit as number | undefined) ?? 20;
-      const queryIdentity = await fingerprint({ query, kinds: kinds ?? [], ...(seasonContext ? {seasonContext,releaseId:request.snapshot.releaseId} : {}) });
-      let offset = 0;
-      if (typeof input.cursor === "string") {
-        const cursor = decodeCursor(input.cursor);
-        if (
-          cursor.v !== request.workflowVersion ||
-          input.expectedWorkflowVersion !== request.workflowVersion
-        ) {
-          throw new ResearchHandlerError(
-            "WORKFLOW_VERSION_CHANGED",
-            publicMessage("WORKFLOW_VERSION_CHANGED"),
-            true,
-          );
-        }
-        if (cursor.q !== queryIdentity) {
-          throw new ResearchHandlerError(
-            "CURSOR_INVALID",
-            publicMessage("CURSOR_INVALID"),
-          );
-        }
-        offset = cursor.o;
-      } else {
-        ensureExpectedWorkflow(
-          input.expectedWorkflowVersion as string | undefined,
-          request.workflowVersion,
-        );
-      }
-      const seasonEntries = seasonContext
-        ? seasonDomain.browse(request.snapshot.seasonModel!, seasonContext).applicable
-          .filter(() => !kinds || kinds.includes("team"))
-          .filter(entry => `${teamSearchBlob(entry.team)} ${normalizeText(entry.teamId)} ${normalizeText(entry.configId)}`.includes(normalizeText(query)))
-          .map(entry => ({
-            kind: "team" as const,
-            canonicalId: `team:${entry.teamId}`,
-            recordId: entry.teamId,
-            displayName: entry.team.name,
-            configId: entry.configId,
-            artifact: "season-team-configs" as const,
-          }))
-        : null;
-      const dictionaryKinds = (kinds ?? ["hero", "tactic", "team", "book"] as SearchKind[])
-        .filter(kind => kind !== "team");
-      const entries = seasonEntries
-        ? [...allDictionaryMatches(request.index, query, dictionaryKinds), ...seasonEntries]
-          .slice(offset, offset + limit + 1)
-        : request.index.search(query, {
-          ...(kinds === undefined ? {} : { kinds }),
-          limit: limit + 1,
-          offset,
-        });
-      const truncated = entries.length > limit;
-      const items = entries.slice(0, limit).map((entry) => ({
-        ...("configId" in entry ? {configId:entry.configId} : {}),
-        kind: entry.kind,
-        canonicalId: entry.canonicalId,
-        recordId: entry.recordId,
-        displayName: entry.displayName,
-        ...(!("matchedTerm" in entry) || entry.matchedTerm === undefined
-          ? {}
-          : { matchedTerm: entry.matchedTerm }),
-        artifact: entry.artifact,
-        trust: "untrusted" as const,
-      }));
-      result = {
-        ...commonResult(
-          request,
-          [...new Set(items.map(({ artifact }) => artifact))].map(
-            (artifact) => ({ artifact, trust: "untrusted" }),
-          ),
-        ),
-        items,
-        truncated,
-        ...(truncated
-          ? {
-              nextCursor: encodeCursor({
-                v: request.workflowVersion,
-                q: queryIdentity,
-                o: offset + limit,
-              }),
-            }
-          : {}),
-      };
-    } else if (name === "tqccl_get_team") {
-      ensureExpectedWorkflow(
-        input.expectedWorkflowVersion as string | undefined,
-        request.workflowVersion,
-      );
-      const requestedId = input.teamId as string;
-      const teamId = requestedId.startsWith("team:")
-        ? requestedId.slice("team:".length)
-        : requestedId;
-      if (seasonContext) {
-        const resolved = seasonDomain.config(request.snapshot.seasonModel!,{teamId,configId:input.configId as string | undefined,context:seasonContext});
-        if (!resolved.ok) throw new ResearchHandlerError(resolved.code as ResearchHandlerError["code"],publicMessage(resolved.code as ResearchHandlerError["code"]),false,[],resolved.choices);
-        result = {...commonResult(request,[{artifact:"season-team-configs",recordId:resolved.config.id,trust:"untrusted"},{artifact:"season-team-evaluations",recordId:resolved.evaluation?.id,trust:"untrusted"}]),seasonContext,team:{...resolved.team,trust:"untrusted"},configId:resolved.config.id,config:resolved.config,tierRankings:resolved.evaluation?.rankings ?? [],sourceScore:resolved.evaluation?.sourceScore ?? null};
-      } else {
-      const team = request.index.teamsById.get(teamId);
-      if (!team) {
-        throw new ResearchHandlerError(
-          "TEAM_NOT_FOUND",
-          publicMessage("TEAM_NOT_FOUND"),
-        );
-      }
-      const projectionState = { truncated: false };
-      const projected = boundedJson(team, projectionState) as Record<
-        string,
-        unknown
-      >;
-      projected.trust = "untrusted";
-      const tierRankings = (request.index.tierByTeam.get(teamId) ?? [])
-        .slice(0, 20)
-        .map((ranking): Record<string, unknown> => {
-          const projectedRanking = boundedJson(
-            ranking,
-            projectionState,
-          ) as Record<string, unknown>;
-          return { ...projectedRanking, trust: "untrusted" };
-        });
-      result = {
-        ...commonResult(request, [
-          {
-            artifact: "teams",
-            recordId: teamId,
-            trust: "untrusted",
-          },
-          ...tierRankings.map((ranking) => ({
-            artifact: "team-tier",
-            recordId: teamId,
-            ...(typeof ranking.source === "string"
-              ? { source: ranking.source }
-              : {}),
-            ...(typeof ranking.updatedAt === "string"
-              ? { updatedAt: ranking.updatedAt }
-              : {}),
-            trust: "untrusted",
-          })),
-        ]),
-        team: projected,
-        tierRankings,
-        truncated: projectionState.truncated,
-      };
-      }
-    } else if (name === "tqccl_match_team") {
-      ensureExpectedWorkflow(
-        input.expectedWorkflowVersion as string | undefined,
-        request.workflowVersion,
-      );
-      const mapped = (
-        input.heroes as Array<{ canonicalId: string; tacticIds: string[] }>
-      ).map((hero) => ({
-        hero: {
-          matched: true,
-          canonicalId: hero.canonicalId,
-          reviewRequired: false,
-        },
-        tactics: hero.tacticIds.map((canonicalId) => ({
-          matched: true,
-          canonicalId,
-          reviewRequired: false,
-        })),
-      }));
-      const matches = legacyDomainAdapter.findSimilarTeams(
-        mapped,
-        seasonContext ? seasonalCandidates(request.snapshot,seasonContext).teams : request.snapshot.artifacts.teams,
-        {
-          minHeroes: (input.minHeroes as number | undefined) ?? 2,
-          limit: (input.limit as number | undefined) ?? 5,
-        },
-      );
-      result = {
-        ...commonResult(request, [
-          { artifact: "teams", trust: "untrusted" },
-        ]),
-        matches: matches.map((match) => {
-          const team = match.team as Record<string, unknown>;
-          return {
-            team: {
-              id: team.id,
-              ...(seasonContext ? {configId:team.configId,seasonContext} : {}),
-              name: team.name,
-              trust: "untrusted",
-            },
-            heroHit: match.heroHit,
-            tacticHit: match.tacticHit,
-            total: match.total,
-          };
-        }),
-      };
-    } else {
-      const expectedWorkflowVersion = input.expectedWorkflowVersion as string;
-      ensureExpectedWorkflow(
-        expectedWorkflowVersion,
-        request.workflowVersion,
-      );
-      const serviceRequest = {
-        snapshot: domainSnapshot(request.snapshot),
-        ...(seasonContext ? {seasonContext} : {}),
-        canonicalState: input.canonicalState as unknown as CanonicalState,
-        confirmationBinding: input.confirmationBinding as never,
-        expectedWorkflowVersion,
-        workflowVersion: request.workflowVersion,
-        ...(input.maxTeams === undefined
-          ? {}
-          : { maxTeams: input.maxTeams as number }),
-        ...(input.experimentalUntiered === undefined
-          ? {}
-          : { experimentalUntiered: input.experimentalUntiered as boolean }),
-      };
-      try {
-        if (name === "tqccl_recommend_team") {
-          const recommendation = await recommendTeam(serviceRequest);
-          const projectionState = { truncated: false };
-          result = (seasonContext ? (value:Record<string,unknown>)=>fitSeasonResult(value) : fitResultSize)({
-            ...commonResult(request, [
-              { artifact: "teams", trust: "untrusted" },
-              { artifact: "team-tier", trust: "untrusted" },
-              { artifact: "canonical-state" },
-            ]),
-            teams: seasonContext ? recommendation.teams : boundedJson(recommendation.teams, projectionState),
-            diagnostics: boundedJson(
-              recommendation.diagnostics,
-              projectionState,
-            ),
-            warnings: [
-              ...request.snapshot.warnings,
-              ...recommendation.warnings,
-            ],
-            truncated: projectionState.truncated,
-          }, ["teams"]);
-        } else if (name === "tqccl_recommend_coexist") {
-          const recommendation = await recommendCoexist(serviceRequest);
-          const projectionState = { truncated: false };
-          result = (seasonContext ? (value:Record<string,unknown>)=>fitSeasonResult(value) : fitResultSize)({
-            ...commonResult(request, [
-              { artifact: "teams", trust: "untrusted" },
-              { artifact: "team-tier", trust: "untrusted" },
-              { artifact: "coexist", trust: "untrusted" },
-              { artifact: "canonical-state" },
-            ]),
-            teams: seasonContext ? recommendation.teams : boundedJson(recommendation.teams, projectionState),
-            ...(seasonContext ? {omittedReferences:recommendation.omittedReferences ?? 0} : {}),
-            coexistReference: seasonContext ? recommendation.coexistReference : boundedJson(
-              recommendation.coexistReference,
-              projectionState,
-            ),
-            diagnostics: boundedJson(
-              recommendation.diagnostics,
-              projectionState,
-            ),
-            warnings: [
-              ...request.snapshot.warnings,
-              ...recommendation.warnings,
-            ],
-            truncated: projectionState.truncated || recommendation.referenceTruncated === true,
-          }, ["coexistReference", "teams"]);
-        } else {
-          const replacement = await suggestReplacements({
-            ...serviceRequest,
-            teamId: input.teamId as string,
-            tacticName: input.tacticName as string,
-            ...(input.configId === undefined ? {} : {configId:input.configId as string}),
-            ...(input.holderId === undefined ? {} : {holderId:input.holderId as string}),
-            ...(input.slotIndex === undefined ? {} : {slotIndex:input.slotIndex as number}),
-          });
-          result = {
-            ...commonResult(request, [
-              {
-                artifact: "teams",
-                recordId: input.teamId as string,
-                trust: "untrusted",
-              },
-              { artifact: "canonical-state" },
-            ]),
-            ...(seasonContext && "configId" in replacement ? {configId:replacement.configId,holderId:replacement.holderId,slotIndex:replacement.slotIndex,sourceScore:replacement.sourceScore} : {}),
-            teamId: replacement.teamId,
-            tacticName: replacement.tacticName,
-            replacements: replacement.replacements,
-            warnings: [
-              ...request.snapshot.warnings,
-              ...replacement.warnings,
-            ],
-          };
-        }
-      } catch (error) {
-        mapDomainError(error);
-      }
-    }
-
-    if (seasonContext) result = {...result as Record<string,unknown>,seasonContext};
+  async function execute(name: ResearchToolName, rawInput: unknown): Promise<unknown> {
+    const result = await HANDLERS[name](await context(), rawInput);
     enforceResultSize(result);
     try {
-      return (
-        RESEARCH_CONTRACTS[name].output as ZodType<unknown>
-      ).parse(result);
+      return (RESEARCH_CONTRACTS[name].output as ZodType<unknown>).parse(result);
     } catch (error) {
       if (error instanceof ZodError) {
-        throw new ResearchHandlerError(
-          "INTERNAL_ERROR",
-          publicMessage("INTERNAL_ERROR"),
-        );
+        throw new ResearchHandlerError("INTERNAL_ERROR", PUBLIC_ERRORS.INTERNAL_ERROR.message);
       }
       throw error;
     }
@@ -701,7 +199,7 @@ export function createResearchHandlers(
         return (await execute(name, input)) as ResearchOutput<Name>;
       } catch (error) {
         if (error instanceof ResearchHandlerError) throw error;
-        mapDomainError(error);
+        throw new ResearchHandlerError("INTERNAL_ERROR", PUBLIC_ERRORS.INTERNAL_ERROR.message);
       }
     },
   };

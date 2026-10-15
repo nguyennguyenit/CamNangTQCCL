@@ -6,9 +6,9 @@ import {
   buildSeasonCandidates,
   recommendRoster,
   seasonTacticUsage,
-  suggestTacticSubstitutes,
+  analyzeTacticSubstitutes,
 } from "../js/roster-season-candidates.js";
-import { recommendTeams } from "../js/team-recommend-engine.js";
+import { canonicalTacticId, recommendTeams } from "../js/team-recommend-engine.js";
 import { canonicalHeroId } from "../js/hero-identity.js";
 
 const heroesDict = [
@@ -78,27 +78,46 @@ test("a config whose hero cannot be identified is excluded and reported", () => 
   assert.deepEqual(diagnostics, { total: 2, mapped: 1, unmapped: [{ configId: "x", reason: "hero-unmapped", names: ["周劭"] }] });
 });
 
-test("empty, bond and unknown tactic slots are conditional, never required tactics", () => {
+test("empty and bond slots are conditional; an unknown tactic slot is kept with its Vietnamese fallback name", () => {
   const rec = record("a", {
     heroes: [
       hero("SP貂蟬", "SP Điêu Thuyền", ["勠力同心", "桃園結義"], ["tactic", "bond"]),
-      hero("陸遜", "Lục Tốn", ["焚輜營壘", "御敵屏障"]),
+      { ...hero("陸遜", "Lục Tốn", ["焚輜營壘", "御敵屏障"]), tacticSlotsVi: ["Thiêu Đốt Doanh Lũy", "Ngự Địch Bình Chướng"] },
       hero("曹操", "Tào Tháo", ["—", ""]),
     ],
   });
   const { teams } = buildSeasonCandidates([rec], "pk-s28", { heroesDict, tacticsDict });
-  assert.deepEqual(teams[0].heroes.map((h) => h.tactics.map((t) => t.name)), [["Đồng Lòng Hợp Sức"], ["Thiêu Đốt Doanh Lũy"], []]);
-  assert.deepEqual(teams[0].conditionalTactics, [
-    { heroIndex: 0, slotIndex: 1, raw: "桃園結義" },
-    { heroIndex: 1, slotIndex: 1, raw: "御敵屏障" },
-  ]);
-  const result = recommendTeams({
-    teams: teams,
+  assert.deepEqual(teams[0].heroes.map((h) => h.tactics.map((t) => t.name)), [["Đồng Lòng Hợp Sức"], ["Thiêu Đốt Doanh Lũy", "Ngự Địch Bình Chướng"], []]);
+  assert.deepEqual(teams[0].heroes[1].tactics[1], { name: "Ngự Địch Bình Chướng", alternatives: [], unresolved: true, raw: "御敵屏障" });
+  assert.deepEqual(teams[0].conditionalTactics, [{ heroIndex: 0, slotIndex: 1, raw: "桃園結義" }]);
+  const entry = recommendTeams({
+    teams,
     teamTier: [{ teamId: "a", rankings: [{ tier: "T0" }] }],
     ownedHeroes: ["SP Điêu Thuyền", "Lục Tốn", "Tào Tháo"],
     ownedTactics: ["Đồng Lòng Hợp Sức", "Thiêu Đốt Doanh Lũy"],
-  });
-  assert.deepEqual(result.portfolioTeams.map((entry) => entry.team.id), ["a"]);
+  }).portfolioTeams[0];
+  assert.equal(entry.team.id, "a");
+  // Còn ô chưa đối chiếu: không bao giờ là "xây ngay".
+  assert.equal(entry.status, "unreconciled");
+  assert.deepEqual(entry.unresolvedTactics, ["Ngự Địch Bình Chướng"]);
+});
+
+test("a slot unknown to the dictionary falls back to the raw text when the source has no Vietnamese name", () => {
+  const rec = record("a", { heroes: [hero("SP貂蟬", "SP Điêu Thuyền", ["勠力同心", "御敵屏障"]), ...record("a").heroes.slice(1)] });
+  const { teams } = buildSeasonCandidates([rec], "pk-s28", { heroesDict, tacticsDict });
+  assert.equal(teams[0].heroes[0].tactics[1].name, "御敵屏障");
+  assert.equal(teams[0].heroes[0].tactics[1].unresolved, true);
+});
+
+test("season teams carry their unit types from unitTypesRaw; missing means unknown, never guessed", () => {
+  const { teams } = buildSeasonCandidates([
+    record("ky", { unitTypesRaw: ["騎"] }),
+    record("two", { unitTypesRaw: ["弓", "盾"] }),
+    record("none", { unitTypesRaw: [] }),
+    record("absent"),
+  ], "pk-s28", { heroesDict, tacticsDict });
+  assert.deepEqual(teams.map((t) => t.unitType), [["Kỵ"], ["Cung", "Khiên"], [], []]);
+  assert.deepEqual(teams.map((t) => t.unitTypesRaw), [["騎"], ["弓", "盾"], [], []]);
 });
 
 test("season tactic usage counts what each hero carries across the season's configs", () => {
@@ -155,7 +174,7 @@ test("legacy teams only fill the slots the season leaves, after every season tea
   assert.equal(result.legacyUsed, true);
 });
 
-test("a legacy team with the same three heroes as a season team is never suggested", () => {
+test("a legacy team with the same three heroes as a season team that was not chosen may be suggested", () => {
   const season = { id: "s1", name: "S", heroes: [{ name: "Tướng A", tactics: [{ name: "CP 1", alternatives: [] }] }, { name: "Tướng B", tactics: [] }] };
   const legacy = { id: "l1", name: "L", heroes: [{ name: "Tướng B", tactics: [] }, { name: "Tướng A", tactics: [{ name: "CP 7", alternatives: [] }] }] };
   const result = recommendRoster({
@@ -163,8 +182,21 @@ test("a legacy team with the same three heroes as a season team is never suggest
     legacyTeams: [legacy], legacyTier: tiers(["l1"]),
     ownedHeroes: ["Tướng A", "Tướng B"], ownedTactics: ["CP 7"],
   });
-  assert.deepEqual(result.portfolioTeams, []);
+  // Đội mùa s1 thiếu CP 1 nên không được chọn: đội cũ cùng bộ tướng dùng CP 7 xây được.
+  assert.deepEqual(result.portfolioTeams.map((e) => [e.team.id, e.source]), [["l1", "legacy"]]);
   assert.deepEqual(result.blockedStrongTeams.map((b) => b.team.id), ["s1"]);
+  assert.equal(result.legacyUsed, true);
+});
+
+test("a legacy team with the same three heroes as a CHOSEN season team is never suggested", () => {
+  const season = { id: "s1", name: "S", heroes: [{ name: "Tướng A", tactics: [{ name: "CP 1", alternatives: [] }] }, { name: "Tướng B", tactics: [] }] };
+  const legacy = { id: "l1", name: "L", heroes: [{ name: "Tướng B", tactics: [] }, { name: "Tướng A", tactics: [{ name: "CP 7", alternatives: [] }] }] };
+  const result = recommendRoster({
+    seasonTeams: [season], seasonTier: tiers(["s1"]),
+    legacyTeams: [legacy], legacyTier: tiers(["l1"]),
+    ownedHeroes: ["Tướng A", "Tướng B"], ownedTactics: ["CP 1", "CP 7"],
+  });
+  assert.deepEqual(result.portfolioTeams.map((e) => e.team.id), ["s1"]);
   assert.equal(result.legacyUsed, false);
 });
 
@@ -208,7 +240,7 @@ test("substitutes come from the hero's other season configs, owned and still fre
   const usage = new Map([[canonicalHeroId("Tướng A"), new Map([
     ["CP miss", 9], ["CP in team", 8], ["CP reserved", 7], ["CP unowned", 6], ["CP low", 1], ["CP high", 4], ["CP mid", 2], ["CP mid 2", 2],
   ])]]);
-  const result = suggestTacticSubstitutes({
+  const result = analyzeTacticSubstitutes({
     heroName: "Tướng A",
     missingTactic: "CP miss",
     teamTactics: ["CP in team"],
@@ -216,12 +248,25 @@ test("substitutes come from the hero's other season configs, owned and still fre
     ownedTactics: ["CP miss", "CP in team", "CP reserved", "CP low", "CP high", { name: "CP mid", canonicalId: "tactic:cp-mid" }, "CP mid 2"],
     reservedTactics: ["CP reserved"],
   });
-  assert.deepEqual(result, [
+  assert.deepEqual(result.substitutes, [
     { tactic: "CP high", configCount: 4 },
     { tactic: "CP mid", configCount: 2 },
     { tactic: "CP mid 2", configCount: 2 },
   ]);
-  assert.deepEqual(suggestTacticSubstitutes({ heroName: "Tướng Lạ", missingTactic: "CP miss", usage, ownedTactics: ["CP high"] }), []);
+  assert.deepEqual(analyzeTacticSubstitutes({ heroName: "Tướng Lạ", missingTactic: "CP miss", usage, ownedTactics: ["CP high"] }).substitutes, []);
+});
+
+test("canonical tactic ids (locked teams from canonical state) are reserved like names", () => {
+  const usage = new Map([[canonicalHeroId("Tướng A"), new Map([["CP miss", 9], ["CP locked", 5], ["CP free", 1]])]]);
+  const { substitutes } = analyzeTacticSubstitutes({
+    heroName: "Tướng A",
+    missingTactic: "CP miss",
+    teamTactics: ["tactic:cp-in-team"],
+    usage,
+    ownedTactics: ["CP locked", "CP free"],
+    reservedTactics: [canonicalTacticId("CP locked")],
+  });
+  assert.deepEqual(substitutes, [{ tactic: "CP free", configCount: 1 }]);
 });
 
 test("Thiếu món lists the teams closest to buildable first, keeping tier order among equals", () => {

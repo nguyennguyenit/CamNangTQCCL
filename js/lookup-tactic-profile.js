@@ -59,8 +59,8 @@ export function tacticBadges(record, profile) {
   return badges;
 }
 
-/** Tướng gắn với chiến pháp: tướng truyền thừa (quan hệ hồ sơ) rồi tướng tự mang (chiến pháp bản thân). */
-function sourceHeroes(corpus, entryRow, profile) {
+/** Tướng gắn với chiến pháp: tướng truyền thừa rồi tướng tự mang, đều từ quan hệ hồ sơ (`lookup-detail.js`). */
+function sourceHeroes(corpus, profile) {
   const rows = [];
   for (const relation of profile.relations) {
     if (!relation.key.startsWith("inheritedFrom:")) continue;
@@ -69,8 +69,10 @@ function sourceHeroes(corpus, entryRow, profile) {
       ? { hero, note: L("Truyền thừa · tháo chiến pháp từ tướng này", "传承 · 拆解该武将获得") }
       : { pending: `${relation.labelVi}: ${relation.statusVi}` });
   }
-  for (const hero of corpus.groups.heroes) {
-    if (hero.record?.lookup?.selfTacticId === entryRow.id && !rows.some((row) => row.hero === hero)) {
+  for (const relation of profile.relations) {
+    if (!relation.key.startsWith("innateHolder:") || !relation.resolved) continue;
+    const hero = corpus.byId.get(relation.targetId);
+    if (hero && !rows.some((row) => row.hero === hero)) {
       rows.push({ hero, note: L("Tự mang · chiến pháp bản thân của tướng này", "自带 · 该武将的自带战法") });
     }
   }
@@ -177,7 +179,7 @@ function statTiles(profile) {
 /** Cột "Cách nhận": thẻ tướng nguồn, hoặc chữ cách nhận khi không có tướng; bảng nguồn/dạng/binh chủng. */
 function sourceColumn(corpus, entryRow, profile) {
   const record = entryRow.record ?? {};
-  const heroes = sourceHeroes(corpus, entryRow, profile);
+  const heroes = sourceHeroes(corpus, profile);
   // Cách nhận khác tên tướng đã có thẻ (sự kiện, đổi thưởng…) vẫn phải hiện; tên trùng thẻ tướng thì bỏ.
   const heroNames = new Set(heroes.filter((row) => row.hero).map((row) => row.hero.nameVi));
   const acquiredField = fieldByKey(profile, "acquiredFromVi");

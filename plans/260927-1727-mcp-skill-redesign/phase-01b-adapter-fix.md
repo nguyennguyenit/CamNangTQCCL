@@ -1,6 +1,6 @@
 # Bước 1b — Sửa adapter Gợi ý kho trước khi nối MCP
 
-Trạng thái: chưa triển khai. Chạy song song [phase 1](phase-01-mcp-publication.md). Là điều kiện của Release 2 (`tqccl_recommend_teams`).
+Trạng thái: code + fixture xong 2026-10-08 (bước 1–8; bản dịch hiển thị đã publish lại cục bộ); bước 9 ship website chưa làm. Chạy song song [phase 1](phase-01-mcp-publication.md). Là điều kiện của Release 2 (`tqccl_recommend_teams`).
 
 Context: [design §4](design.md), audit hai lượt trên plan [260929 gợi ý đội theo mùa](../260929-0415-goi-y-doi-theo-mua/plan.md) (debate `goi-y-doi-mua-1-fallback` và `goi-y-doi-mua-2-substitutes`, 2026-09-29).
 

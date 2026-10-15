@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { promisify } from "node:util";
 
-import { artifactNamesForVersion, validateManifest } from "../src/data/artifact-contracts.js";
+import { artifactNamesForManifest, validateManifest } from "../src/data/artifact-contracts.js";
 import { WORKFLOW_BUILD_ID } from "../src/generated/workflow-build.js";
 import { verifyWorkerReleaseEvidence } from "../src/release/worker-release-evidence.js";
 
@@ -17,7 +17,7 @@ export async function readWorkerAssetFiles(directory: string): Promise<Map<strin
   if (entries.some(entry => !entry.isFile() || entry.isSymbolicLink())) throw new Error("Invalid asset entry");
   const manifestBytes = new Uint8Array(await readFile(resolve(directory, "manifest.json")));
   const manifest = await validateManifest(JSON.parse(new TextDecoder("utf-8", { fatal: true, ignoreBOM: false }).decode(manifestBytes)));
-  const assetNames = [...artifactNamesForVersion(manifest.schemaVersion).map(name => `${name}.json`), "manifest.json"].sort();
+  const assetNames = [...artifactNamesForManifest(manifest).map(name => `${name}.json`), "manifest.json"].sort();
   if (entries.map(entry => entry.name).sort().join("\0") !== assetNames.join("\0")) throw new Error("Invalid asset inventory");
   return new Map(await Promise.all(assetNames.map(async name => [name, name === "manifest.json" ? manifestBytes :
     new Uint8Array(await readFile(resolve(directory, name))),

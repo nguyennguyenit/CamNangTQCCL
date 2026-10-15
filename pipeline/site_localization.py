@@ -871,7 +871,7 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:roster/summary-aria", "ariaLabel", "Kho đang dùng để gợi ý", "js/roster-recommend-ui.js", "initRosterRecommend", "static", "authored-vi"),
     ("ui:roster/summary-counts", "count", "${state.ownedHeroes.length} tướng · ${state.ownedTactics.length} chiến pháp", "js/roster-recommend-ui.js", "paintSummary", "data", "authored-vi"),
     ("ui:roster/summary-locked", "count", "${lockedTotal} đội khóa", "js/roster-recommend-ui.js", "paintSummary", "data", "authored-vi"),
-    ("ui:roster/tier-pill", "label", 'Bậc: ${tier || "—"}', "js/roster-recommend-ui.js", "renderRecommendation", "data", "authored-vi"),
+    ("ui:roster/tier-pill", "label", 'Bậc: ${entry.tier || "—"}', "js/roster-recommend-ui.js", "renderRecommendation", "data", "authored-vi"),
     ("ui:roster/hero-row-label", "label", 'L("Tướng", "武将")', "js/roster-recommend-ui.js", "heroRows", "data", "authored-vi"),
     ("ui:roster/portfolio-count", "count", "${portfolio.length}/${MAX_TEAMS} đội", "js/roster-recommend-ui.js", "renderRecommendation", "data", "authored-vi"),
     ("ui:roster/missing-count", "count", "Thiếu ${total} món", "js/roster-recommend-ui.js", "renderRecommendation", "conflict", "authored-vi"),

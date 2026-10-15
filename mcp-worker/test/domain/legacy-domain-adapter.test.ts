@@ -19,7 +19,6 @@ type TeamFixture = {
 };
 
 const teams = loadJson("data/teams.json") as TeamFixture[];
-const teamTier = loadJson("data/team-tier.json") as Array<Record<string, unknown>>;
 
 function team(id: string): TeamFixture {
   const record = teams.find((candidate) => candidate.id === id);
@@ -40,17 +39,6 @@ function confirmedReads(source: TeamFixture) {
       reviewRequired: false,
     })),
   }));
-}
-
-function inventoryOf(source: TeamFixture) {
-  return {
-    ownedHeroes: source.heroes.map(({ name }) => name),
-    ownedTactics: source.heroes.flatMap(({ tactics }) => tactics.map(({ name }) => name)),
-  };
-}
-
-function recommendedIds(result: { portfolioTeams: Array<{ team: Record<string, unknown> }> }) {
-  return result.portfolioTeams.map((entry) => entry.team.id);
 }
 
 describe("legacy domain adapter", () => {
@@ -103,53 +91,17 @@ describe("legacy domain adapter", () => {
     expect(similar[0]).toMatchObject({ heroHit: 2, total: 3 });
   });
 
-  it("recommends a team the inventory fully covers, using only owned tactics", () => {
-    const source = team("team-intro-1");
-    const inventory = inventoryOf(source);
-    const result = legacyDomainAdapter.recommendTeams({
-      teams,
-      teamTier,
-      ...inventory,
-      maxTeams: 5,
-      mode: "all",
-    });
-
-    expect(recommendedIds(result)).toContain("team-intro-1");
-    for (const entry of result.portfolioTeams) {
-      expect(inventory.ownedTactics).toEqual(expect.arrayContaining(entry.selectedTactics));
-    }
-    const recommended = result.portfolioTeams.find((entry) => entry.team.id === "team-intro-1");
-    expect(recommended?.selectedTactics).toEqual(inventory.ownedTactics);
-    expect(recommended?.tacticSelections).toHaveLength(inventory.ownedTactics.length);
-  });
-
-  it("does not recommend a team when the inventory lacks one of its heroes", () => {
-    const source = team("team-intro-1");
-    const inventory = inventoryOf(source);
-    const result = legacyDomainAdapter.recommendTeams({
-      teams,
-      teamTier,
-      ownedHeroes: inventory.ownedHeroes.slice(1),
-      ownedTactics: inventory.ownedTactics,
-      maxTeams: 5,
-      mode: "all",
-    });
-
-    expect(recommendedIds(result)).not.toContain("team-intro-1");
-  });
-
   it("redacts legacy failures instead of leaking internal errors", () => {
     const invoke = () =>
-      legacyDomainAdapter.recommendTeams({
-        teams: [{ heroes: [{ name: "/Users/private/artifact.json", tactics: 42 }] }],
-        ownedHeroes: [],
-        seasonContext: { scenarioId: "/Users/private" },
-      });
+      legacyDomainAdapter.findSimilarTeams(
+        [{ hero: { matched: true, canonicalId: "hero:x" }, tactics: 42 }],
+        [{ heroes: [{ name: "/Users/private/artifact.json", tactics: 42 }] }],
+      );
     expect(invoke).toThrow(LegacyDomainAdapterError);
     try {
       invoke();
     } catch (error) {
-      expect(error).toMatchObject({ operation: "recommendTeams" });
+      expect(error).toMatchObject({ operation: "findSimilarTeams" });
       expect(String(error)).not.toContain("/Users/private");
     }
   });

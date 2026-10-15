@@ -1,0 +1,4 @@
+interface:
+  display_name: "TQCCL Lookup"
+  short_description: "Look up TQCCL catalog entries and source teams"
+  default_prompt: "Use $tqccl-lookup to answer this TQCCL catalog or source-team question from handbook data, with scope, version and link, and without recommending teams or claiming meta."

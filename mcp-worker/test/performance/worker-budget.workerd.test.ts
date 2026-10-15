@@ -1,4 +1,5 @@
 import { exports } from "cloudflare:workers";
+import { canonicalTacticId } from "../../../js/team-recommend-engine.js";
 import { beforeAll, describe, expect, it } from "vitest";
 
 const TOKEN = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
@@ -50,12 +51,34 @@ beforeAll(async () => {
 
 describe("budget production-shaped trong workerd", () => {
   it("ghi nhận cold, warm và recommendation để chọn Workers Paid", async () => {
-    const cold = await callTool(2, "tqccl_get_data_version", {});
-    const warm = await callTool(3, "tqccl_get_data_version", {});
+    const cold = await callTool(2, "tqccl_get_playbook", { intent: "coexist" });
+    const warm = await callTool(3, "tqccl_get_playbook", { intent: "coexist" });
+    const found = await callTool(6, "tqccl_find_teams", { collection: "recommended", limit: 1 });
+    const team = (found.result.items as Array<{ heroes: Array<{ nameVi: string; tactics: Array<{ vi: string }> }> }>)[0]!;
+    const evidence = { sourceScope: "currentTurnImage", batchId: "worker-budget" };
     const normalized = await callTool(4, "tqccl_normalize_entities", {
-      observations: [],
+      observations: [
+        ...team.heroes.map((hero, index) => ({
+          observationId: `hero-${index}`,
+          entityKind: "hero",
+          canonicalId: hero.heroId,
+          displayName: hero.nameVi,
+          evidence,
+        })),
+        ...team.heroes.flatMap((hero, index) =>
+          hero.tactics.map((tactic, slot) => ({
+            observationId: `tactic-${index}-${slot}`,
+            entityKind: "tactic",
+            canonicalId: canonicalTacticId(tactic.vi),
+            displayName: tactic.vi,
+            evidence,
+          })),
+        ),
+      ],
     });
-    const recommendation = await callTool(5, "tqccl_recommend_team", {
+    const seasonSelection = warm.result.seasonSelection as { sourceSeasonId: string };
+    const recommendation = await callTool(5, "tqccl_recommend_teams", {
+      sourceSeasonId: seasonSelection.sourceSeasonId,
       expectedWorkflowVersion: normalized.result.workflowVersion,
       canonicalState: normalized.result.canonicalState,
       confirmationBinding: normalized.result.confirmationBinding,

@@ -9,6 +9,8 @@
   "scripts": {
     "generate:workflow-build": "node --import tsx scripts/generate-workflow-build.ts",
     "check:workflow-build": "node --import tsx scripts/generate-workflow-build.ts --check",
+    "generate:knowledge-bundle": "node --import tsx scripts/generate-knowledge-bundle.ts",
+    "check:knowledge-bundle": "node --import tsx scripts/generate-knowledge-bundle.ts --check",
     "cli": "node --import tsx src/cli.ts",
     "stdio": "node --import tsx src/stdio.ts",
     "provision:bearer": "node --import tsx scripts/provision-bearer-token.ts",
@@ -31,7 +33,7 @@
     "deploy:dry-run": "wrangler deploy --dry-run --outdir .wrangler-dist",
     "build": "tsc -p tsconfig.build.json",
     "test:node-min": "node test/node-min-smoke.mjs",
-    "check": "npm run check:workflow-build && npm run check:local-secrets && npm run test:coverage && npm run typecheck && npm run typecheck:worker && npm run build && npm run test:node-min && npm run verify:control-plane",
+    "check": "npm run check:workflow-build && npm run check:knowledge-bundle && npm run check:local-secrets && npm run test:coverage && npm run typecheck && npm run typecheck:worker && npm run build && npm run test:node-min && npm run verify:control-plane",
     "check:repository": "node --import tsx scripts/check-repository.ts"
   },
   "devDependencies": {

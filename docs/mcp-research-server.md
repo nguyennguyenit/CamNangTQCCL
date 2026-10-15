@@ -2,16 +2,19 @@
 
 ## Phạm vi
 
-`mcp-worker/` cung cấp dịch vụ nghiên cứu TQCCL chỉ đọc qua JSON CLI, MCP stdio và MCP Streamable HTTP. Cả ba dùng chung tám tool:
+`mcp-worker/` cung cấp dịch vụ nghiên cứu TQCCL chỉ đọc qua JSON CLI, MCP stdio và MCP Streamable HTTP. Cả ba dùng chung bảy tool (bề mặt P*; tám tên cũ đã bị xoá, không alias — consumer phải reconnect và refresh `tools/list`):
 
-- `tqccl_get_data_version`
+- `tqccl_get_playbook` — version, capabilities, mùa nguồn, luật bắt buộc và tool kế tiếp.
+- `tqccl_search` — tìm tướng, chiến pháp, trang bị, quân sư, cải tạo, công trình, binh thư, đội (có `pagePath` vi/zh).
+- `tqccl_get_entity` — hồ sơ như trang Tra cứu; specials/options/levels/revisions phân trang bằng `section`/cursor.
+- `tqccl_find_teams` — duyệt/đối chiếu đội tham khảo theo `collection` ∈ recommended, other, khaihoang, engine.
+- `tqccl_get_team` — chi tiết một đội theo selector `reference`; ghi chú/biến thể phân trang.
 - `tqccl_normalize_entities`
-- `tqccl_search`
-- `tqccl_get_team`
-- `tqccl_match_team`
-- `tqccl_recommend_team`
-- `tqccl_recommend_coexist`
-- `tqccl_suggest_replacements`
+- `tqccl_recommend_teams` — ghép đội từ kho bằng đúng `recommendRoster` của trang Gợi ý kho (`basis:"source-reference-fit"`, `rulesetVerified:false`).
+
+CLI thêm lệnh `search-rules` (chỉ CLI, không phải MCP tool) gọi lõi knowledge.
+
+Catalog/reference/recommend cần snapshot manifest v3; v1/v2 trả `CAPABILITY_UNAVAILABLE` (riêng `collection:"engine"` vẫn đọc được). `locale` (`vi`|`zh`) chỉ đổi tên hiển thị và `pagePath`. `expectedWorkflowVersion` tùy chọn ở tool đọc, bắt buộc khi có `cursor`/`confirmationBinding`; cursor gắn tool, bộ lọc chuẩn hoá, locale và `workflowVersion`. Mỗi kết quả dưới 40.000 ký tự và 42 KiB; `content[0].text` là JSON tương đương `structuredContent` nên phản hồi mang hai bản, vừa trần `TQCCL_MCP_MAX_RESULT_BYTES` 98304. `tools/list` công bố output schema gọn (bỏ mô tả field lồng, error envelope phẳng dùng chung), có test ghim dưới 90 KiB.
 
 Dịch vụ không nhận ảnh, không crawl, không ghi dữ liệu game và không sở hữu GoClaw/Dewee hay skill của consumer. Tool error dùng mã/message/next-action cố định, không phản chiếu exception, input, path, credential hoặc upstream body.
 
@@ -23,46 +26,16 @@ không đổi vì bước lọc public.
 
 `releaseId` là SHA-256 đầy đủ của canonical manifest theo version. `dataVersion` rút gọn chỉ dùng hiển thị. `workflowVersion` ghép `releaseId` với `workflowBuildId`; binding hoặc cursor cũ bị từ chối khi một identity đổi.
 
-## Consumer theo kịch bản
+## Consumer theo mùa
 
-Gọi `tqccl_get_data_version` để đọc `manifestVersion`, capability và registry
-đã review. Các tool còn lại nhận `seasonContext` tùy chọn, nhưng khi có phải là
-cặp `scenarioId`/`rulesetId` đã review. Scenario-only là chế độ đọc của website;
-MCP không bỏ scope thiếu/sai rồi chạy legacy. Snapshot v1 không hỗ trợ seasonal
-request. Dữ liệu hiện chưa có cặp luật VN đã review; xem
-[phạm vi dữ liệu](season-team-data.md).
+Gọi `tqccl_get_playbook` để đọc `manifestVersion`, capability, `readiness` và registry mùa nguồn (`defaultSourceSeasonId`, `seasonOptions` của Recommended `seasons.json`). `tqccl_recommend_teams` chọn mùa bằng `sourceSeasonId` và từ chối `canonicalState.seasonContext`. Cặp `scenarioId`/`rulesetId` (`seasonContext`, registry `data/season-registry.json`) là trục riêng: chỉ còn nhận ở `tqccl_normalize_entities`, `tqccl_find_teams` và `tqccl_get_team` với `collection:"engine"`; khi có phải là cặp đã review, sai thì `SEASON_CONTEXT_INVALID`. Dữ liệu hiện chưa có cặp luật VN đã review; xem [phạm vi dữ liệu](season-team-data.md).
 
-Tám tên tool và input bắt buộc cũ giữ nguyên. Đây vẫn là migration output:
-client dùng schema output v1 strict phải refresh tool discovery/schema trước
-khi nhận output mới. Input không có context giữ nhánh legacy; không tự thêm
-source-owned reference mới vào kết quả legacy.
+Bề mặt tool đã đổi (xem trên): client phải reconnect và refresh `tools/list`/output schema. Context tham gia confirmation và cursor cùng data/workflow identity; đổi scope hoặc canonical state cần normalize/review/xác nhận lại. Với `collection:"engine"`, detail thiếu selector chỉ resolve khi có đúng một cấu hình hợp lệ.
 
-Context tham gia confirmation và cursor cùng data/workflow identity. Đổi
-scope hoặc canonical state cần normalize/review/xác nhận lại; không dùng
-binding legacy cho request theo mùa. Search trả `configId` để mở đúng cấu hình.
-Detail/replacement thiếu selector chỉ resolve khi có đúng một cấu hình hợp lệ;
-khi chiến pháp trùng nhiều vị trí, caller phải chọn holder/slot hợp lệ.
+- `CONFIG_AMBIGUOUS` trả tối đa 20 ID đã validate cùng tổng số và số bị lược; gửi `configId` để chọn.
+- `CANDIDATE_LIMIT_EXCEEDED` báo vượt giới hạn cấu hình đầu vào; không retryable và không có kết quả một phần.
 
-- `CONFIG_AMBIGUOUS` trả tối đa 20 ID đã validate cùng tổng số và số bị lược;
-  dùng search đúng context và cursor để tìm phần còn lại, rồi gửi `configId`.
-- `CANDIDATE_LIMIT_EXCEEDED` trả giới hạn 500 và số cấu hình thực sau lọc
-  scope/review/điều kiện/tier. Lỗi không retryable và không có portfolio một phần;
-  giảm số đội output không giải quyết giới hạn đầu vào này.
-
-Điểm SGSDeck giữ điểm gốc của đúng config/context/lựa chọn; không thay điểm
-nội bộ của engine. Phương án thay thế không thừa hưởng điểm nguồn. Điều kiện
-bắt buộc chưa được kho hỗ trợ vẫn chặn cấu hình có thể gợi ý, kể cả khi bật đội
-chưa có tier. Schema và selector/error bounds thuộc
-[research contracts](../mcp-worker/src/research/research-contracts.ts).
-
-Cùng Tồn theo mùa phân biệt áp dụng đúng luật với tham khảo cùng kịch bản;
-không trả legacy unknown hay kịch bản khác. Đây là nội dung untrusted, chưa
-được engine chấm. [Projection](../mcp-worker/src/domain/season-reference-projection.ts)
-giữ thứ tự slot, ID, nguồn và summary; giới hạn 50 nhóm, 10 đội/nhóm và 64 KiB
-mỗi tool result. Bộ nguồn 5 nhóm/25 đội/75 vị trí đã có kiểm chứng projection
-trong [bounds tests](../mcp-worker/test/research/season-bounds.test.ts), nhưng không
-bảo đảm mọi response đều giữ đủ chi tiết: text/detail có thể rút với cờ
-truncation, summary-only và omitted counts. Website vẫn là nơi đọc nguồn đầy đủ.
+`tqccl_recommend_teams` gọi `recommendRoster` của `js/roster-season-candidates.js` như trang Gợi ý kho, xếp hạng theo độ khớp với đội tham khảo của mùa nguồn (`basis:"source-reference-fit"`, `rulesetVerified:false`), không chấm theo luật mùa. Kết quả có `source` ∈ `season`/`legacy`/`locked` (`legacy` là top-up từ kho engine cũ, kèm `legacyUsed:true`). Món bù chỉ áp dụng khi caller gửi lại `tacticOverrides`; bản đã thay có `variantUnrated:true`, mang bậc của cấu hình gốc và không thừa hưởng điểm nguồn. Schema và selector/error bounds thuộc [research contracts](../mcp-worker/src/research/research-contracts.ts).
 
 ## Chạy local
 
@@ -71,7 +44,7 @@ Yêu cầu Node đúng `.node-version`:
 ```bash
 cd mcp-worker
 npm ci
-npm run cli -- version
+npm run cli -- playbook --input '{"intent":"coexist"}'
 npm run cli -- search --input '{"query":"Lữ Mông","limit":2}'
 npm run stdio
 npm run test:coverage
@@ -136,7 +109,7 @@ nhưng loại cả hai khỏi output package. `StaticAssetsDataSource` chọn al
 từ manifest rồi validate bytes/hash/cross-reference trước khi cache snapshot
 immutable; filesystem dùng cùng artifact validator.
 
-Mỗi Worker version chứa cả code và data nên promotion/rollback là nguyên tử. Không cần storage release rời. Nhịp vận hành mặc định là một release theo mùa, khoảng ba tháng: curate data diff, review, build deterministic bundle, chạy full gate rồi phát hành exact Worker version. GoClaw URL, bearer và tám tool không đổi khi chỉ cập nhật dữ liệu mùa.
+Mỗi Worker version chứa cả code và data nên promotion/rollback là nguyên tử. Không cần storage release rời. Nhịp vận hành mặc định là một release theo mùa, khoảng ba tháng: curate data diff, review, build deterministic bundle, chạy full gate rồi phát hành exact Worker version. GoClaw URL, bearer và bảy tool không đổi khi chỉ cập nhật dữ liệu mùa.
 
 Build từ clean exact SHA:
 
@@ -173,7 +146,7 @@ Thứ tự bắt buộc:
 4. Preflight read-only yêu cầu bootstrap chưa có deployment hoặc normal có đúng một prior `100%`; controller vẫn read-back exact deployment trước khi xác minh hoặc mutation tiếp theo.
 5. Bootstrap tạo Worker/version đầu bằng `wrangler deploy`; normal release upload immutable version bằng `wrangler versions upload`. Cả hai đọc candidate UUID từ Wrangler NDJSON evidence, bảo đảm Custom Domain bằng `wrangler triggers deploy` và chờ `/healthz` sẵn sàng tối đa 120 giây trước controller.
 6. Tạo temporary deployment prior `100%` + candidate `0%`.
-7. Gọi production `/mcp` bằng Cloudflare Version Override và bearer; header runtime `TQCCL-MCP-Worker-Version` phải đúng candidate, đồng thời `releaseId`, `workflowBuildId`, catalog và tám tool đều phải đạt.
+7. Gọi production `/mcp` bằng Cloudflare Version Override và bearer; header runtime `TQCCL-MCP-Worker-Version` phải đúng candidate, đồng thời `releaseId`, `workflowBuildId`, catalog và bảy tool đều phải đạt.
 8. Re-read đúng deployment do run sở hữu, promote candidate thành version duy nhất `100%`, rồi verify production không override.
 9. Khi `rehearse_rollback: true`, capture prior code/data identity trước mutation, rollback exact prior, xác minh lại version/release/workflow/data digest, re-promote candidate và chạy lại full production verifier. Mọi bước đều dùng expected-current ownership guard.
 
@@ -211,7 +184,7 @@ npm run verify:release -- \
   --fixture test/fixtures/release-verification.json
 ```
 
-Verifier kiểm liveness, auth thiếu/sai, protocol, exact version header, catalog/schema/annotation, pagination, injection non-echo, provenance, binding và đủ tám tool. Control-plane artifact chỉ còn edge rate rule:
+Verifier kiểm liveness, auth thiếu/sai, protocol, exact version header, catalog/schema/annotation, pagination, injection non-echo, provenance, binding và đủ bảy tool. Control-plane artifact chỉ còn edge rate rule:
 
 ```bash
 npm run verify:control-plane
