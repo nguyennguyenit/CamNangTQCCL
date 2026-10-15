@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import type { WorkerDeploymentSnapshot } from "../../scripts/cloudflare-deployment-client.js";
 import {
   DeploymentOwnershipError,
+  MUTATION_READ_BACK_DELAYS_MS,
   preflightWorkerRelease,
   releaseWorkerVersion,
   verifyBootstrapWorkerVersion,
@@ -446,6 +447,7 @@ describe("Worker deployment controller", () => {
   it("read-back không xác định sau mutation thì retry hữu hạn và mở incident", async () => {
     const deployment = gateway([prior, smoke]);
     const incident = vi.fn(async () => undefined);
+    const sleep = vi.fn(async () => undefined);
 
     await expect(
       releaseWorkerVersion({
@@ -455,9 +457,68 @@ describe("Worker deployment controller", () => {
         verifyCandidate: async () => undefined,
         verifyProduction: async () => undefined,
         incident,
+        sleep,
       }),
     ).rejects.toBeInstanceOf(DeploymentOwnershipError);
-    expect(deployment.readCurrent).toHaveBeenCalledTimes(5);
+    // prior + read trước promote + mọi lần đọc lại sau promote đều lỗi.
+    expect(deployment.readCurrent).toHaveBeenCalledTimes(2 + MUTATION_READ_BACK_DELAYS_MS.length);
     expect(incident).toHaveBeenCalledOnce();
+  });
+
+  it("POST smoke lỗi mà đọc lại còn thấy prior: chờ API rồi nhận smoke đã commit, không bỏ dở deployment", async () => {
+    // Run 38762022539: smoke được tạo nhưng response POST lỗi và lần đọc ngay sau vẫn là prior.
+    const deployment = gateway([prior, prior, prior, smoke, smoke, promoted]);
+    deployment.deployTest.mockRejectedValueOnce(new Error("response lost"));
+    const sleep = vi.fn(async () => undefined);
+    const mutationErrors: string[] = [];
+
+    await expect(
+      releaseWorkerVersion({
+        runId,
+        candidateVersionId,
+        deployment,
+        verifyCandidate: async () => undefined,
+        verifyProduction: async () => undefined,
+        sleep,
+        onMutationError: (purpose) => mutationErrors.push(purpose),
+      }),
+    ).resolves.toEqual({ prior, smoke, final: promoted });
+    expect(sleep).toHaveBeenCalledTimes(2);
+    expect(mutationErrors).toEqual(["smoke"]);
+  });
+
+  it("POST smoke lỗi và prior vẫn y nguyên hết cửa sổ chờ thì kết luận chưa đổi", async () => {
+    const deployment = gateway([prior, ...MUTATION_READ_BACK_DELAYS_MS.map(() => prior)]);
+    deployment.deployTest.mockRejectedValueOnce(new Error("request failed"));
+
+    await expect(
+      releaseWorkerVersion({
+        runId,
+        candidateVersionId,
+        deployment,
+        verifyCandidate: async () => undefined,
+        verifyProduction: async () => undefined,
+        sleep: async () => undefined,
+      }),
+    ).rejects.toThrow("prior không đổi");
+    expect(deployment.readCurrent).toHaveBeenCalledTimes(1 + MUTATION_READ_BACK_DELAYS_MS.length);
+  });
+
+  it("promote trả OK nhưng đọc lại còn thấy smoke: chờ tới khi thấy promoted, không báo drift", async () => {
+    const deployment = gateway([prior, smoke, smoke, smoke, promoted]);
+    const incident = vi.fn(async () => undefined);
+
+    await expect(
+      releaseWorkerVersion({
+        runId,
+        candidateVersionId,
+        deployment,
+        verifyCandidate: async () => undefined,
+        verifyProduction: async () => undefined,
+        incident,
+        sleep: async () => undefined,
+      }),
+    ).resolves.toEqual({ prior, smoke, final: promoted });
+    expect(incident).not.toHaveBeenCalled();
   });
 });

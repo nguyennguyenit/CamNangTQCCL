@@ -1,7 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
-import { CloudflareDeploymentClient } from "./cloudflare-deployment-client.js";
+import { CloudflareDeploymentClient, CloudflareDeploymentError } from "./cloudflare-deployment-client.js";
 import type { WorkerDeploymentSnapshot } from "./cloudflare-deployment-client.js";
 import { awaitServedVersion } from "./await-served-version.js";
 import { createPacedMcpFetcher } from "./paced-mcp-fetch.js";
@@ -49,6 +49,8 @@ function overrideFetcher(
 
 async function main(): Promise<void> {
   const states: Record<string, unknown> = {};
+  // Mã lý do cố định của POST deployment lỗi (controller vẫn đọc lại để quyết định); không chứa upstream body.
+  const mutationErrors: Array<{ purpose: string; reason: string }> = [];
   let status = "failed";
   let failureStage: ReleaseFailureStage = "initializing";
   const deploymentEvidencePath = process.env["TQCCL_DEPLOYMENT_EVIDENCE_PATH"];
@@ -122,6 +124,12 @@ async function main(): Promise<void> {
         ? await verifyBootstrapWorkerVersion(shared)
         : await releaseWorkerVersion({
             ...shared,
+            onMutationError: (purpose, error) => {
+              mutationErrors.push({
+                purpose,
+                reason: error instanceof CloudflareDeploymentError ? error.reason : "unknown",
+              });
+            },
             // Version Override chỉ có hiệu lực khi edge đã nhận deployment prior + candidate 0%: chờ như production.
             verifyCandidate: async (versionId) => {
               const fetcher = overrideFetcher(workerName, versionId, pacedFetcher);
@@ -178,6 +186,7 @@ async function main(): Promise<void> {
       rollbackRehearsal: rehearseRollback === "true",
       status,
       deployments: result,
+      mutationErrors,
     };
     if (deploymentEvidencePath === undefined) throw new Error();
     await writeFile(deploymentEvidencePath, `${JSON.stringify(output)}\n`, {
@@ -188,7 +197,7 @@ async function main(): Promise<void> {
     if (deploymentEvidencePath !== undefined) {
       await writeFile(
         deploymentEvidencePath,
-        `${JSON.stringify({ schemaVersion: 1, status, failureStage, candidateVersionId: candidateArgument, states })}\n`,
+        `${JSON.stringify({ schemaVersion: 1, status, failureStage, candidateVersionId: candidateArgument, states, mutationErrors })}\n`,
         { flag: "wx" },
       ).catch(() => undefined);
     }

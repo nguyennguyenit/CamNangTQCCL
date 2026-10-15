@@ -136,6 +136,8 @@ Workflow `.github/workflows/mcp-worker.yml` chỉ vào job production khi manual
 
 Cloudflare Create Deployment không có conditional/ETag precondition. Vì vậy deploy token phải dành riêng cho workflow và không được mutation từ dashboard, Wrangler hay token khác trong cửa sổ release. Controller re-read ngay trước mỗi POST, gắn run ID trong deployment message, reconcile response bị mất rồi read-back; observed drift luôn mở incident. Đây là serialization + ownership protocol vận hành, không phải CAS nguyên tử do Cloudflare cung cấp.
 
+API deployment có thể commit mà trả response lỗi, và lần đọc ngay sau đó còn trả deployment trước mutation (run `38762022539`: smoke đã tạo nhưng controller kết luận "prior không đổi" rồi để lại candidate `0%`). Sau mỗi POST, controller đọc lại theo `MUTATION_READ_BACK_DELAYS_MS` (0, 1, 2, 4, 8, 15 giây) cho tới khi thấy deployment khác bản trước mutation; hết cửa sổ mà vẫn y nguyên mới coi là mutation chưa xảy ra. Mã lý do của POST lỗi (`network`, `http-<status>`, `envelope`, `shape`, `input`) nằm trong `mutationErrors` của deployment evidence; không chứa body upstream hay token.
+
 Zone `tqccl.com` dùng Cloudflare Free nên edge rule giới hạn `10` request mỗi `10` giây trên path `/mcp`, là chu kỳ được gói này hỗ trợ và đã được owner chấp thuận. Worker vẫn giữ limiter `60` request mỗi `60` giây; hai lớp có cùng tốc độ trung bình nhưng edge chặn burst sớm hơn. Release driver dùng một scheduler chung cho candidate, production và rollback verification, cách tối thiểu `1.100 ms` giữa mọi request `/mcp`; health probe ngoài path này không bị trì hoãn.
 
 Thứ tự bắt buộc:

@@ -1,3 +1,5 @@
+import { setTimeout as delay } from "node:timers/promises";
+
 import { WORKER_VERSION_HEADER } from "../src/transport/worker-version-header.js";
 
 /**
@@ -20,7 +22,7 @@ export async function awaitServedVersion(options: {
   const consecutive = options.consecutive ?? 5;
   const timeoutMs = options.timeoutMs ?? 120_000;
   const now = options.now ?? Date.now;
-  const sleep = options.sleep ?? ((delayMs: number) => new Promise<void>((resolve) => setTimeout(resolve, delayMs)));
+  const sleep = options.sleep ?? ((delayMs: number) => delay(delayMs));
   const deadline = now() + timeoutMs;
   let streak = 0;
   while (now() <= deadline) {
