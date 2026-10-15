@@ -122,11 +122,13 @@ async function main(): Promise<void> {
         ? await verifyBootstrapWorkerVersion(shared)
         : await releaseWorkerVersion({
             ...shared,
-            verifyCandidate: (versionId) =>
-              verify(
-                versionId,
-                overrideFetcher(workerName, versionId, pacedFetcher),
-              ),
+            // Version Override chỉ có hiệu lực khi edge đã nhận deployment prior + candidate 0%: chờ như production.
+            verifyCandidate: async (versionId) => {
+              const fetcher = overrideFetcher(workerName, versionId, pacedFetcher);
+              failureStage = "settle";
+              await awaitServedVersion({ endpoint, bearer, versionId, fetcher });
+              await verify(versionId, fetcher);
+            },
             ...(rehearseRollback === "true"
               ? {
                   prepareRollbackVerification: async (

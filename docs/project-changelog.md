@@ -20,7 +20,7 @@
 
 - **Gợi ý đội từ kho: nút "Dùng món này" luôn bị vô hiệu**: `el()` gán `disabled="false"` khi chưa chạm giới hạn thay món, và thuộc tính có mặt là đủ để khoá nút. Nay chỉ gắn `disabled` khi `limitReached`. Bản dịch hiển thị publish lại (generation `e079390c…`).
 - **Tra cứu, hồ sơ chiến pháp, cột "Cách nhận"**: thẻ tướng "Tự mang" lấy từ cùng quy tắc với hồ sơ tướng, nên tướng chỉ khớp qua tên Hán chiến pháp tự có (vd Tiểu Kiều → Thiên Hương) cũng hiện. Trước đây cột này chỉ dò `selfTacticId`. Bản dịch hiển thị publish lại (generation `989c9919…`).
-- **Release MCP Worker rollback oan sau promote**: driver xác minh production không override ngay sau khi đổi deployment, trong lúc edge còn trả xen kẽ version cũ; run `38743557129` (2026-10-15) qua đủ smoke Version Override nhưng fail ở `release:stateless-get` rồi rollback. Driver nay chờ 5 response liên tiếp mang đúng `TQCCL-MCP-Worker-Version` (tối đa 120 giây, cùng scheduler `1.100 ms`) trước mỗi lần verify không override, kể cả khi đọc lại prior trong rollback rehearsal (`scripts/await-served-version.ts`).
+- **Release MCP Worker fail oan ngay sau khi đổi deployment**: edge còn trả xen kẽ version cũ một lúc, kể cả cho request có Version Override. Run `38743557129` qua smoke rồi fail ở `release:stateless-get` sau promote và rollback; run `38754775623` fail ngay ở smoke (`release:invalid-protocol`) và restore prior. Driver nay chờ 5 response liên tiếp mang đúng `TQCCL-MCP-Worker-Version`, cùng kiểu request với lần verify sắp tới (tối đa 120 giây, cùng scheduler `1.100 ms`), trước smoke có override, trước mỗi lần verify production và trước khi đọc lại prior trong rollback rehearsal (`scripts/await-served-version.ts`).
 
 ## 2026-10-10 (Tra cứu: tên gần khi không khớp, chỉ dữ liệu cẩm nang)
 
