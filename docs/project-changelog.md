@@ -8,6 +8,7 @@
 - **`similarNames[].likely`** trong `tqccl_search`: đánh dấu mục duy nhất cùng loại mà mọi từ có trong tên gõ (bỏ qua dấu; sai một chữ cái chỉ ở từ ≥4 chữ) và phủ đủ số từ của tên gõ trừ tối đa một — tức người dùng gõ thừa một từ, đảo thứ tự hay gõ sai. Ví dụ: "Hổ Báo Thiết Kỵ" → Hổ Báo Kỵ, "Mưu Kế Liên Hoàn"/"Liên Hoàng Kế" → Liên Hoàn Kế; "Thiên Chi Kiếm" (Ỷ Thiên Kiếm thừa chữ "Ỷ") và "Phong Hỏa Liên Thiên" không có mục `likely`. Mục `likely` đứng đầu danh sách.
 - **`refNames` trong `tqccl_get_entity`**: tên hiển thị theo locale của mọi ID thực thể có thật nhắc trong `profile` (overview) hoặc `items` (section), vd `selfTacticId: "tactic:thua-thien-tinh-the"` → "Thừa Thiên Tĩnh Thế". Trước đây tool chỉ trả ID nên agent tự dựng tên và viết sai ("Thừa Thiên Thừa Tộ", Dewee R5 câu 1).
 - **`build` trong `tqccl_get_team` ở mọi section khác overview** (guide, notes, variants): `{ref, name, heroes}` của chính đội đó, giống `team.heroes` ở overview. Dewee R5b câu 17: agent chỉ đọc section guide, lấy build từ danh sách `tqccl_find_teams` (17 đội Khai hoang trong một khối) và ghép nhầm "Phong Thi Trận" của đội Chu Thái sang Gia Cát Khác.
+- **`innateHeroIds` trong `tqccl_get_entity`** (chiến pháp): ID các tướng mang chiến pháp đó làm chiến pháp tự có, tên nằm trong `refNames`. Suy ngược từ hồ sơ tướng: `lookup.selfTacticId`, không có thì tên Hán khớp đúng một chiến pháp (`js/lookup-innate-holders.js`, dùng chung với trang Tra cứu). Dewee 2026-10-15: `tactic:thua-thien-tinh-the` không ghi `sourceHeroCn` nên agent trả lời "dữ liệu không ghi tướng sở hữu", dù SP Tào Tháo trỏ tới nó. 129/141 chiến pháp tự có nay có tướng (35/39 chiến pháp thiếu `sourceHeroCn`).
 
 ### Changed
 
@@ -18,6 +19,7 @@
 ### Fixed
 
 - **Gợi ý đội từ kho: nút "Dùng món này" luôn bị vô hiệu**: `el()` gán `disabled="false"` khi chưa chạm giới hạn thay món, và thuộc tính có mặt là đủ để khoá nút. Nay chỉ gắn `disabled` khi `limitReached`. Bản dịch hiển thị publish lại (generation `e079390c…`).
+- **Tra cứu, hồ sơ chiến pháp, cột "Cách nhận"**: thẻ tướng "Tự mang" lấy từ cùng quy tắc với hồ sơ tướng, nên tướng chỉ khớp qua tên Hán chiến pháp tự có (vd Tiểu Kiều → Thiên Hương) cũng hiện. Trước đây cột này chỉ dò `selfTacticId`. Bản dịch hiển thị publish lại (generation `989c9919…`).
 
 ## 2026-10-10 (Tra cứu: tên gần khi không khớp, chỉ dữ liệu cẩm nang)
 

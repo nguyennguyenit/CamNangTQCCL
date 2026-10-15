@@ -1,5 +1,6 @@
 import { L, currentLocale, normalizeLocale, pick } from "./i18n.js";
 import { LOOKUP_FIELD_LABELS } from "./lookup-field-labels.js";
+import { heroSelfTacticId, innateHolderIndex, uniqueTacticIdByChinese } from "./lookup-innate-holders.js";
 
 // Bản zh (`<html lang="zh-Hans">`): nhãn dịch sang tiếng Trung; giá trị chỉ hiện khi có chữ Hán nguồn
 // (tên, hiệu ứng/mục tiêu chiến pháp), là số, hoặc thuộc bộ giá trị đóng đã dịch bên dưới. Nội dung chỉ
@@ -190,10 +191,12 @@ function relation(corpus, key, labelVi, targetId, targetGroup) {
     : unresolved(key, labelVi);
 }
 
-function uniqueChineseTactic(corpus, chinese) {
-  if (!chinese) return null;
-  const matches = corpus.tactics.filter((row) => row.chinese === chinese);
-  return matches.length === 1 ? matches[0].id : null;
+const innateHolderCache = new WeakMap();
+
+/** Chiều ngược của "Chiến pháp bản thân": chiến pháp → tướng, tính một lần cho mỗi corpus. */
+function innateHolders(corpus) {
+  if (!innateHolderCache.has(corpus)) innateHolderCache.set(corpus, innateHolderIndex(corpus.heroes, corpus.tactics));
+  return innateHolderCache.get(corpus);
 }
 
 function base(entry) {
@@ -238,8 +241,8 @@ function heroProfile(corpus, entry) {
   const growth = Object.entries(lookup.growth ?? {}).map(([key, value]) => field(key, value)).filter(Boolean);
   profile.sections.push({ key: "growth", titleVi: L("Tăng trưởng", "成长"), fields: growth });
   if (lookup.cardPacks?.length) profile.sections.push({ key: "cardPacks", titleVi: L("Cách nhận", "获取途径"), fields: lookup.cardPacks.map(cardPackField) });
-  const selfId = lookup.selfTacticId ?? uniqueChineseTactic(corpus, row.selfTacticCn);
-  const inheritId = lookup.inheritTacticId ?? uniqueChineseTactic(corpus, row.inheritTacticCn);
+  const selfId = heroSelfTacticId(row, corpus.tactics);
+  const inheritId = lookup.inheritTacticId ?? uniqueTacticIdByChinese(corpus.tactics, row.inheritTacticCn);
   profile.relations.push(relation(corpus, "selfTactic", L("Chiến pháp bản thân", "自带战法"), selfId, "tactics"));
   if (lookup.inheritTacticId || row.inheritTacticCn) profile.relations.push(relation(corpus, "inheritTactic", L("Chiến pháp truyền thừa", "传承战法"), inheritId, "tactics"));
   if (lookup.advisorId) profile.relations.push(relation(corpus, "advisor", L("Kỹ năng quân sư", "军师技"), lookup.advisorId, "advisors"));
@@ -274,6 +277,7 @@ function tacticProfile(corpus, entry) {
   if (lookup.acquiredFromVi?.length) pushLocalized(profile, "acquiredFromVi", lookup.acquiredFromVi, L("Cách nhận", "获取方式"), listText(lookup.acquiredFromVi));
   optionalLocalized(profile, "conflictsVi", lookup.conflictsVi, L("Xung đột", "冲突"));
   for (const id of lookup.inheritedFromIds ?? []) profile.relations.push(relation(corpus, `inheritedFrom:${id}`, L("Truyền thừa từ", "传承自"), id, "heroes"));
+  for (const id of innateHolders(corpus).get(row.id) ?? []) profile.relations.push(relation(corpus, `innateHolder:${id}`, L("Chiến pháp tự có của", "自带武将"), id, "heroes"));
   profile.conditions = viOnlyList(profile, conditions(lookup.conditions));
   profile.revisions = viOnlyList(profile, lookup.revisions.map((item) => ({ ...item })));
   return profile;

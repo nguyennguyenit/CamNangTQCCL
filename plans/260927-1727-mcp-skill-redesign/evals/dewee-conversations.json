@@ -72,6 +72,16 @@
       "notes": "tactic:chung-vong-so-quy, thêm sau release 08-25."
     },
     {
+      "id": "lk-tactic-owner",
+      "category": "tra-cuu",
+      "prompt": ["Chiến pháp Thừa Thiên Tĩnh Thế là của tướng nào và có tác dụng gì?"],
+      "tools": ["tqccl_search", "tqccl_get_entity"],
+      "tools8": ["tqccl_search"],
+      "mustInclude": ["SP Tào Tháo", "chiến pháp tự có"],
+      "mustNot": ["nói dữ liệu không ghi tướng sở hữu", "gán cho Tào Tháo bản thường"],
+      "notes": "Dewee 2026-10-15 trace 01a13f81: sourceHeroCn rỗng, agent trả lời không rõ tướng. Chủ suy từ selfTacticId của hero:sp-tao-thao (profile.innateHeroIds)."
+    },
+    {
       "id": "lk-equipment",
       "category": "tra-cuu",
       "prompt": ["Thanh Long Yển Nguyệt Đao là trang bị gì, phẩm gì?"],

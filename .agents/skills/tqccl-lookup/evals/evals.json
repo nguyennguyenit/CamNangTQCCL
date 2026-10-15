@@ -197,6 +197,20 @@
       ]
     },
     {
+      "id": "lk-beh-tactic-owner",
+      "kind": "behavior",
+      "split": "dev",
+      "prompt": "Chiến pháp Thừa Thiên Tĩnh Thế là của tướng nào?",
+      "expect": [
+        "names SP Tào Tháo from profile.innateHeroIds and refNames",
+        "does not claim the data has no owning hero"
+      ],
+      "routeTo": "tqccl-lookup",
+      "ruleIds": [
+        "lookup-missing-is-not-empty"
+      ]
+    },
+    {
       "id": "lk-beh-no-tools",
       "kind": "behavior",
       "split": "holdout",

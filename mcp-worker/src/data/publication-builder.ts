@@ -5,6 +5,7 @@
  */
 import { loadWebsiteDisplay, localizeData } from "../../../js/website-display.js";
 import { bookLookupId, createLookupIdResolver, lookupProfilePath } from "../../../js/lookup-ids.js";
+import { innateHolderIndex } from "../../../js/lookup-innate-holders.js";
 import { localePath } from "../../../js/i18n.js";
 import { stableStringify } from "../domain/contracts.js";
 
@@ -279,10 +280,14 @@ export function projectCatalogEntities(input: CatalogProjectionInput): ArtifactR
       ...(hero.lookup === undefined ? {} : { lookup: pick(obj(hero.lookup, `${id}.lookup`), HERO_LOOKUP_FIELDS) }),
     }));
   }
+  // Chiều ngược của selfTacticId, cùng quy tắc trang Tra cứu: bản ghi chiến pháp tự có thường không ghi tướng nguồn.
+  const innateHolders: Map<string, string[]> = innateHolderIndex(input.heroes, input.tactics);
   for (const tactic of input.tactics) {
     const id = text(tactic.id) ?? fail("tactic record has no id");
+    const innateHeroIds = innateHolders.get(id);
     output.push(entity("tactic", id, text(tactic.viet) ?? fail(`tactic ${id} has no name`), text(tactic.chinese), text(tactic.hanViet), strings(tactic.aliases), {
       ...pick(tactic, TACTIC_FIELDS),
+      ...(innateHeroIds === undefined ? {} : { innateHeroIds }),
       ...(tactic.lookup === undefined ? {} : { lookup: pick(obj(tactic.lookup, `${id}.lookup`), TACTIC_LOOKUP_FIELDS) }),
     }));
   }

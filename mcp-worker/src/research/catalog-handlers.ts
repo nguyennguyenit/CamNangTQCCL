@@ -249,7 +249,7 @@ export const getEntityOutputSchema = commonResultSchema.extend({
     })
     .strict()
     .describe("Thông tin nhận dạng thực thể."),
-  profile: z.record(z.string(), z.unknown()).optional().describe("Trường hồ sơ như trang Tra cứu; phần lồng nhau nằm trong sections."),
+  profile: z.record(z.string(), z.unknown()).optional().describe("Trường hồ sơ như trang Tra cứu; phần lồng nhau nằm trong sections. Chiến pháp: innateHeroIds là tướng mang nó làm chiến pháp tự có."),
   sections: z
     .array(z.object({ name: z.enum(ENTITY_SECTIONS).describe("Tên section."), total: z.number().int().positive().describe("Số mục của section.") }).strict())
     .max(4)

@@ -14,6 +14,7 @@
     "js/lookup-data.js",
     "js/lookup-field-labels.js",
     "js/lookup-ids.js",
+    "js/lookup-innate-holders.js",
     "js/match-dict.js",
     "js/roster-scan-state.js",
     "js/roster-season-candidates.js",
