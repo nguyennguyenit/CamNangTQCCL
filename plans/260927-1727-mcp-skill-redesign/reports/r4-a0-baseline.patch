@@ -1,0 +1,193 @@
+diff --git a/mcp-worker/src/data/publication-projection.ts b/mcp-worker/src/data/publication-projection.ts
+index 32c3191..cad1e7a 100644
+--- a/mcp-worker/src/data/publication-projection.ts
++++ b/mcp-worker/src/data/publication-projection.ts
+@@ -568,11 +568,6 @@ export interface PublicationReadModel {
+   /** id/ref → route. Entity ids and team refs share one namespace (`hero:…`, `recommended:…`). */
+   readonly routes: ReadonlyMap<string, PublicRoute>;
+   searchCatalog(query: string, options?: CatalogSearchOptions): Page<CatalogSearchMatch>;
+-  /**
+-   * Tên gần cho truy vấn không khớp chuỗi con nào: mục chung ít nhất 2 từ (chữ Hán tính từng chữ) với
+-   * truy vấn, xếp theo số từ chung rồi độ trùng Jaccard. Không phải kết quả khớp; rỗng khi không đủ gần.
+-   */
+-  similarCatalog(query: string, options?: Pick<CatalogSearchOptions, "kinds" | "limit">): CatalogSearchMatch[];
+   getEntity(id: string): CatalogEntityView | undefined;
+   findTeams(filter?: TeamFilter): Page<TeamSummaryView>;
+   getTeam(reference: string): TeamDetailView | undefined;
+@@ -616,56 +611,6 @@ function scoreTerms(entries: ReadonlyArray<readonly [string, string]>, query: st
+   return { score, matched };
+ }
+ 
+-const MIN_SHARED_TOKENS = 2;
+-
+-/** Từ của một chuỗi: tách khoảng trắng/dấu câu; chữ Hán tách từng chữ. */
+-function tokens(text: string): ReadonlySet<string> {
+-  return new Set(text.replace(/(\p{Script=Han})/gu, " $1 ").split(/[^\p{L}\p{N}]+/u).filter(Boolean));
+-}
+-
+-interface TokenTerm {
+-  /** Từ sau normalizeText (bỏ dấu): quyết định có gợi ý hay không, như search chuỗi con. */
+-  folded: ReadonlySet<string>;
+-  /**
+-   * Từ giữ dấu, chỉ để xếp "Long" trước "Lòng" khi người dùng gõ có dấu. Term toàn ASCII (id slug, alias
+-   * không dấu) không có dạng có dấu nên để rỗng, tránh "quan" của slug trùng "Quan" người dùng gõ.
+-   */
+-  accented: ReadonlySet<string>;
+-  raw: string;
+-}
+-
+-const NO_TOKENS: ReadonlySet<string> = new Set();
+-
+-function tokenTerm(normalized: string, raw: string): TokenTerm {
+-  return {
+-    folded: tokens(normalized),
+-    accented: /[^\x00-\x7f]/u.test(raw) ? tokens(raw.normalize("NFC").toLowerCase()) : NO_TOKENS,
+-    raw,
+-  };
+-}
+-
+-function countShared(left: ReadonlySet<string>, right: ReadonlySet<string>): number {
+-  let shared = 0;
+-  for (const token of left) if (right.has(token)) shared += 1;
+-  return shared;
+-}
+-
+-function similarity(entries: readonly TokenTerm[], query: TokenTerm) {
+-  let best = { shared: 0, accented: 0, jaccard: 0, matched: "" };
+-  for (const term of entries) {
+-    const shared = countShared(query.folded, term.folded);
+-    const accented = countShared(query.accented, term.accented);
+-    const jaccard = shared / (query.folded.size + term.folded.size - shared);
+-    if (
+-      shared > best.shared
+-      || (shared === best.shared && (accented > best.accented || (accented === best.accented && jaccard > best.jaccard)))
+-    ) {
+-      best = { shared, accented, jaccard, matched: term.raw };
+-    }
+-  }
+-  return best;
+-}
+-
+ const GROUP_ORDER = new Map<string, number>(CATALOG_GROUPS.map((group, index) => [group, index]));
+ const COLLECTION_ORDER = new Map<string, number>(TEAM_COLLECTIONS.map((collection, index) => [collection, index]));
+ 
+@@ -774,8 +719,6 @@ export function buildPublicationReadModel(
+     entity,
+     terms: terms([entity.nameVi, entity.nameZh, entity.hanViet, entity.aliases, entity.id.slice(entity.id.indexOf(":") + 1)]),
+   }));
+-  // Chỉ dựng khi có truy vấn không khớp; đa số request không cần.
+-  let tokenIndex: Array<{ entity: CatalogEntityView; tokenTerms: TokenTerm[] }> | null = null;
+   const recommendRecords = new Map<string, ArtifactRecord[]>();
+   const recommended = teams
+     .filter((team) => team.collection === "recommended" && team.sourceSeasonId !== null)
+@@ -827,33 +770,6 @@ export function buildPublicationReadModel(
+       );
+       return { total: matches.length, offset, limit, items: matches.slice(offset, offset + limit) };
+     },
+-    similarCatalog(query, options = {}) {
+-      const limit = clampPage(options.limit, 0).limit;
+-      const queryTerm = tokenTerm(normalizeText(query), query);
+-      if (queryTerm.folded.size < MIN_SHARED_TOKENS) return [];
+-      const kinds = options.kinds === undefined ? null : new Set<string>(options.kinds);
+-      const scored: Array<CatalogSearchMatch & { accented: number; jaccard: number }> = [];
+-      tokenIndex ??= searchIndex.map(({ entity, terms: entries }) => ({
+-        entity,
+-        tokenTerms: entries.map(([normalized, raw]) => tokenTerm(normalized, raw)),
+-      }));
+-      for (const item of tokenIndex) {
+-        if (kinds !== null && !kinds.has(item.entity.kind)) continue;
+-        const { shared, accented, jaccard, matched } = similarity(item.tokenTerms, queryTerm);
+-        if (shared >= MIN_SHARED_TOKENS) scored.push({ entity: item.entity, score: shared, accented, jaccard, matchedTerm: matched });
+-      }
+-      scored.sort(
+-        (left, right) =>
+-          right.score - left.score
+-          || right.accented - left.accented
+-          || right.jaccard - left.jaccard
+-          || (GROUP_ORDER.get(left.entity.group) ?? 0) - (GROUP_ORDER.get(right.entity.group) ?? 0)
+-          || left.entity.kind.localeCompare(right.entity.kind)
+-          || left.entity.nameVi.localeCompare(right.entity.nameVi, "vi")
+-          || left.entity.id.localeCompare(right.entity.id),
+-      );
+-      return scored.slice(0, limit).map(({ entity, score, matchedTerm }) => ({ entity, score, matchedTerm }));
+-    },
+     findTeams(filter = {}) {
+       const { limit, offset } = clampPage(filter.limit, filter.offset);
+       const needle = filter.query === undefined ? "" : normalizeText(filter.query);
+diff --git a/mcp-worker/src/generated/workflow-build.ts b/mcp-worker/src/generated/workflow-build.ts
+index 0f233e2..3039e6e 100644
+--- a/mcp-worker/src/generated/workflow-build.ts
++++ b/mcp-worker/src/generated/workflow-build.ts
+@@ -1,5 +1,5 @@
+ // Tệp được sinh bởi scripts/generate-workflow-build.ts. Không sửa thủ công.
+-export const WORKFLOW_BUILD_ID = "build:sha256b64:dZXsnuLFkqXIfI5KIrXO0mdTkHlBDWeOxoixL2JnBaA" as const;
++export const WORKFLOW_BUILD_ID = "build:sha256b64:mdNFewTGzD7gliv12_upES641vPz0QsXEeJC0GatAb8" as const;
+ export const WORKFLOW_SEMANTIC_FILES = [
+   "js/analyze-map.js",
+   "js/filters.js",
+diff --git a/mcp-worker/src/research/catalog-handlers.ts b/mcp-worker/src/research/catalog-handlers.ts
+index ab0b43b..54d91f9 100644
+--- a/mcp-worker/src/research/catalog-handlers.ts
++++ b/mcp-worker/src/research/catalog-handlers.ts
+@@ -67,21 +67,6 @@ export const searchOutputSchema = commonResultSchema.extend({
+     )
+     .max(50)
+     .describe("Kết quả của trang hiện tại."),
+-  similarNames: z
+-    .array(
+-      z
+-        .object({
+-          entityId: z.string().max(300).describe("ID thực thể."),
+-          kind: z.enum(SEARCH_KINDS).describe("Loại."),
+-          displayName: z.string().max(256).describe("Tên hiển thị theo locale."),
+-          pagePath: z.string().max(512).describe("Đường dẫn trang website theo locale."),
+-        })
+-        .strict(),
+-    )
+-    .min(1)
+-    .max(5)
+-    .optional()
+-    .describe("Chỉ khi total=0: tên gần có chung ít nhất 2 từ với truy vấn. Không phải kết quả khớp; không phải thực thể được hỏi."),
+ });
+ 
+ export async function handleSearch(ctx: ToolContext, rawInput: unknown) {
+@@ -170,16 +155,11 @@ export async function handleSearch(ctx: ToolContext, rawInput: unknown) {
+     ...(catalogKinds.length > 0 ? [{ artifact: "catalog-entities", trust: "untrusted" as const }] : []),
+     ...(wantTeams ? [{ artifact: "reference-team-index", trust: "untrusted" as const }, { artifact: "teams", trust: "untrusted" as const }] : []),
+   ];
+-  const similarNames =
+-    total === 0 && catalogKinds.length > 0
+-      ? pub.similarCatalog(query, { kinds: catalogKinds, limit: 5 }).map(({ entity }) => catalogItem(entity, loc, ""))
+-      : [];
+   return {
+     ...ctx.commonResult(provenance),
+     locale: loc,
+     total,
+     items,
+-    ...(similarNames.length > 0 ? { similarNames } : {}),
+     truncated: hasMore,
+     ...(hasMore ? { nextCursor: await encodeCursor(binding, next) } : {}),
+   };
+diff --git a/mcp-worker/src/research/research-handlers.ts b/mcp-worker/src/research/research-handlers.ts
+index 962e3fd..860424b 100644
+--- a/mcp-worker/src/research/research-handlers.ts
++++ b/mcp-worker/src/research/research-handlers.ts
+@@ -50,7 +50,7 @@ const MAX_NAME_SUGGESTIONS = 5;
+ /**
+  * Observation chỉ có tên (thiếu canonicalId) được tra bằng lõi search của trang Tra cứu, chỉ nhận khớp đúng tên:
+  * đúng một mục → gán canonicalId; tên bản thường của tộc còn bản 40Y/SP/CO, hoặc nhiều mục cùng tên → ambiguous
+- * kèm mọi bản; không khớp đúng → unknown kèm tối đa 5 gợi ý khớp một phần, không có thì tên gần (`similarCatalog`). Agent gửi canonicalId, candidates
++ * kèm mọi bản; không khớp đúng → unknown kèm tối đa 5 gợi ý khớp một phần. Agent gửi canonicalId, candidates
+  * hay reviewRequired thì giữ nguyên. Chỉ tra trong ID mà snapshot nhận (searchEntries).
+  */
+ function withResolvedNames(ctx: ToolContext, observations: readonly HeroObservationInput[]): HeroObservationInput[] {
+@@ -80,8 +80,7 @@ function withResolvedNames(ctx: ToolContext, observations: readonly HeroObservat
+       .items.filter(({ entity }) => known.has(entity.id));
+     const exact = [...new Set(matches.filter(({ score }) => score === 3).map(({ entity }) => entity.id))];
+     if (exact.length === 0) {
+-      const near = matches.length > 0 ? matches : pub.similarCatalog(name, { kinds: [kind], limit: 100 }).filter(({ entity }) => known.has(entity.id));
+-      const candidates = [...new Set(near.map(({ entity }) => entity.id))].slice(0, MAX_NAME_SUGGESTIONS);
++      const candidates = [...new Set(matches.map(({ entity }) => entity.id))].slice(0, MAX_NAME_SUGGESTIONS);
+       return { ...observation, candidates };
+     }
+     if (exact.length > 1) return { ...observation, reviewRequired: true, candidates: exact.sort() };
