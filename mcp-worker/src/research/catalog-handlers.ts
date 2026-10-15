@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { normalizeText } from "../../../js/filters.js";
 import { LOOKUP_FIELD_LABELS } from "../../../js/lookup-field-labels.js";
-import type { CatalogEntityView, CatalogKind, LocalePaths } from "../data/publication-projection.js";
+import type { CatalogEntityView, CatalogKind, LocalePaths, PublicationReadModel } from "../data/publication-projection.js";
 import { decodeCursor, encodeCursor, type CursorBinding } from "./cursor.js";
 import { PUBLIC_ERRORS, ResearchHandlerError } from "./handler-error.js";
 import { fitPage } from "./page.js";
@@ -262,6 +262,10 @@ export const getEntityOutputSchema = commonResultSchema.extend({
     .record(z.enum(["stats", "troopApt"]), z.record(z.string(), z.string().max(64)))
     .optional()
     .describe("Nhãn theo locale cho khoá của profile.stats và profile.troopApt, như trang Tra cứu (vd thuan → Khiên binh)."),
+  refNames: z
+    .record(z.string().max(300), z.string().max(256))
+    .optional()
+    .describe("Tên hiển thị theo locale của mọi ID thực thể nhắc trong profile/items (vd selfTacticId). Dùng tên này, không tự dựng tên từ ID."),
 });
 
 function pathsOf(paths: LocalePaths, loc: Locale): string {
@@ -282,6 +286,27 @@ function fieldLabelsOf(profile: Record<string, unknown>, loc: Locale) {
     if (entries.length > 0) labels[group] = Object.fromEntries(entries);
   }
   return Object.keys(labels).length > 0 ? labels : undefined;
+}
+
+const ENTITY_ID = /^(hero|tactic|equipment|equipment-special|advisor|troop-mod|building|book):[^\s]+$/u;
+const MAX_REF_NAMES = 100;
+
+/** Tên của mọi ID thực thể có thật nằm trong `value` (đệ quy), trừ chính thực thể đang xem. */
+function refNamesOf(value: unknown, pub: PublicationReadModel, loc: Locale, selfId: string) {
+  const names: Record<string, string> = {};
+  const visit = (node: unknown): void => {
+    if (Object.keys(names).length >= MAX_REF_NAMES) return;
+    if (typeof node === "string") {
+      if (node === selfId || names[node] !== undefined || !ENTITY_ID.test(node)) return;
+      const entity = pub.getEntity(node);
+      if (entity) names[node] = displayName(entity, loc);
+      return;
+    }
+    if (Array.isArray(node)) node.forEach(visit);
+    else if (node !== null && typeof node === "object") Object.values(node).forEach(visit);
+  };
+  visit(value);
+  return Object.keys(names).length > 0 ? names : undefined;
 }
 
 export async function handleGetEntity(ctx: ToolContext, rawInput: unknown) {
@@ -321,10 +346,12 @@ export async function handleGetEntity(ctx: ToolContext, rawInput: unknown) {
     const nestedKeys = new Set(totals.map((entry) => NESTED[entry.name]));
     const profile = Object.fromEntries(Object.entries(entity.profile).filter(([key]) => !nestedKeys.has(key)));
     const fieldLabels = fieldLabelsOf(profile, loc);
+    const refNames = refNamesOf(profile, pub, loc, entity.id);
     return {
       ...base,
       profile,
       ...(fieldLabels === undefined ? {} : { fieldLabels }),
+      ...(refNames === undefined ? {} : { refNames }),
       ...(totals.length === 0 ? {} : { sections: totals, omittedCounts: Object.fromEntries(totals.map((entry) => [entry.name, entry.total])) }),
     };
   }
@@ -350,10 +377,12 @@ export async function handleGetEntity(ctx: ToolContext, rawInput: unknown) {
   };
   const offset = input.cursor === undefined ? 0 : await decodeCursor(input.cursor, binding);
   const { page, nextOffset } = fitPage(rows, offset, limit, (slice) => ({ ...base, total: rows.length, items: slice }));
+  const refNames = refNamesOf(page, pub, loc, entity.id);
   return {
     ...base,
     total: rows.length,
     items: page,
+    ...(refNames === undefined ? {} : { refNames }),
     truncated: nextOffset !== null,
     ...(nextOffset === null ? {} : { nextCursor: await encodeCursor(binding, nextOffset) }),
   };
