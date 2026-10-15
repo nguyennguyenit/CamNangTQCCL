@@ -1,7 +1,7 @@
 // Tệp được sinh bởi scripts/generate-knowledge-bundle.ts từ agent-knowledge/. Không sửa thủ công.
 import type { KnowledgeBundle } from "../knowledge/rule-contracts.js";
 
-export const KNOWLEDGE_VERSION = "knowledge:sha256b64:6Z5_t4jaBx31ZkMabYYVWWj6xxXfuy47GqyAn5ZCcnA" as const;
+export const KNOWLEDGE_VERSION = "knowledge:sha256b64:69XlhEFNgSTBECfA7roEch5LhV4rjOLedNBabAicA9E" as const;
 export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
   "schemaVersion": 1,
   "manifest": {
@@ -1472,7 +1472,7 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
     },
     {
       "id": "lookup-khai-hoang-exact",
-      "revision": 1,
+      "revision": 2,
       "kind": "invariant",
       "status": "active",
       "workflows": [
@@ -1487,12 +1487,12 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
       },
       "title": "Khai hoang dùng đúng đội, đúng phase",
       "terms": "khai hoang phase guide đội thương ghép",
-      "explanation": "Câu hỏi khai hoang trả đúng đội và đúng phase của nguồn; không ghép các guide khác nhau thành một đội tổng hợp.",
+      "explanation": "Câu hỏi khai hoang trả đúng đội và đúng phase của nguồn; không ghép các guide khác nhau thành một đội tổng hợp. Build của một đội (tướng, chiến pháp, binh thư) chỉ lấy từ tqccl_get_team của chính đội đó (team ở overview, build ở section khác), không lấy từ danh sách tqccl_find_teams.",
       "sourceRefs": [
         "plans/260927-1727-mcp-skill-redesign/phase-02-skills.md"
       ],
       "origin": "design-proposal",
-      "validFrom": "2026-10-08",
+      "validFrom": "2026-10-15",
       "reviewAfter": "2027-04-08",
       "supersedes": [],
       "successor": null,

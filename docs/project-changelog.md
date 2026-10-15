@@ -7,11 +7,13 @@
 - **`fieldLabels` trong `tqccl_get_entity`** (overview): nhãn theo locale cho khoá của `profile.stats` và `profile.troopApt` (vd `thuan` → "Khiên binh"/"盾兵"), chỉ cho khoá có trong hồ sơ. Trước đây agent chỉ thấy khoá thô và đã dịch `thuan` thành "Thuỷ binh" (Dewee R4). Nhãn lấy từ `js/lookup-field-labels.js`, nguồn chung với trang Tra cứu (`js/lookup-detail.js` dùng lại); bản dịch hiển thị đã publish lại (generation `374b8dc2…`).
 - **`similarNames[].likely`** trong `tqccl_search`: đánh dấu mục duy nhất cùng loại mà mọi từ có trong tên gõ (bỏ qua dấu; sai một chữ cái chỉ ở từ ≥4 chữ) và phủ đủ số từ của tên gõ trừ tối đa một — tức người dùng gõ thừa một từ, đảo thứ tự hay gõ sai. Ví dụ: "Hổ Báo Thiết Kỵ" → Hổ Báo Kỵ, "Mưu Kế Liên Hoàn"/"Liên Hoàng Kế" → Liên Hoàn Kế; "Thiên Chi Kiếm" (Ỷ Thiên Kiếm thừa chữ "Ỷ") và "Phong Hỏa Liên Thiên" không có mục `likely`. Mục `likely` đứng đầu danh sách.
 - **`refNames` trong `tqccl_get_entity`**: tên hiển thị theo locale của mọi ID thực thể có thật nhắc trong `profile` (overview) hoặc `items` (section), vd `selfTacticId: "tactic:thua-thien-tinh-the"` → "Thừa Thiên Tĩnh Thế". Trước đây tool chỉ trả ID nên agent tự dựng tên và viết sai ("Thừa Thiên Thừa Tộ", Dewee R5 câu 1).
+- **`build` trong `tqccl_get_team` ở mọi section khác overview** (guide, notes, variants): `{ref, name, heroes}` của chính đội đó, giống `team.heroes` ở overview. Dewee R5b câu 17: agent chỉ đọc section guide, lấy build từ danh sách `tqccl_find_teams` (17 đội Khai hoang trong một khối) và ghép nhầm "Phong Thi Trận" của đội Chu Thái sang Gia Cát Khác.
 
 ### Changed
 
 - **Skill `tqccl-lookup`, tên không có trong cẩm nang** (user chốt 2026-10-15 sau debate `next-steps-1/guess`): vẫn mở đầu "không tìm thấy trong dữ liệu cẩm nang" và nêu `similarNames` là tên gần; chỉ mục `likely: true` đúng loại user hỏi mới được đoán và đưa chi tiết — nói là phỏng đoán, chi tiết mang tên của mục đó, không trả lời như thể hai tên là một, kết thúc bằng câu hỏi xác nhận; không áp cho bản SP/CO/base của tên có thật. Rule `lookup-missing-is-not-empty` lên revision 4.
 - **Skill `tqccl-coexist-team-builder`** (user chốt sau R5 câu 21): thuộc tính tướng/chiến pháp (thích tính binh chủng, phe, sao, hiệu ứng) chỉ nêu khi lấy từ kết quả tool trong phiên — gọi `tqccl_get_entity` hoặc bỏ qua; `tqccl_get_entity` vào tool surface của skill. Rule `coexist-project-data-first` lên revision 2.
+- **Skill `tqccl-lookup`**: build của một đội chỉ lấy từ `tqccl_get_team` của đúng đội đó, không từ danh sách `tqccl_find_teams`. Rule `lookup-khai-hoang-exact` lên revision 2.
 
 ## 2026-10-10 (Tra cứu: tên gần khi không khớp, chỉ dữ liệu cẩm nang)
 
