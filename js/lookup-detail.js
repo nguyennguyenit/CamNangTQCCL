@@ -1,4 +1,5 @@
 import { L, currentLocale, normalizeLocale, pick } from "./i18n.js";
+import { LOOKUP_FIELD_LABELS } from "./lookup-field-labels.js";
 
 // Bản zh (`<html lang="zh-Hans">`): nhãn dịch sang tiếng Trung; giá trị chỉ hiện khi có chữ Hán nguồn
 // (tên, hiệu ứng/mục tiêu chiến pháp), là số, hoặc thuộc bộ giá trị đóng đã dịch bên dưới. Nội dung chỉ
@@ -7,12 +8,7 @@ const ZH = () => currentLocale() === "zh";
 /** Chữ cho ô chưa có dữ liệu (theo ngôn ngữ trang). */
 export const LOOKUP_EMPTY = L("Đang cập nhật", "暂无数据");
 const EMPTY = LOOKUP_EMPTY;
-const LABELS = {
-  luc: L("Vũ lực", "武力"), tri: L("Trí lực", "智力"), thong: L("Thống soái", "统率"), toc: L("Tốc độ", "速度"),
-  chinh: L("Chính trị", "政治"), mi: L("Mị lực", "魅力"),
-  ky: L("Kỵ binh", "骑兵"), thuan: L("Khiên binh", "盾兵"), cung: L("Cung binh", "弓兵"), thuong: L("Thương binh", "枪兵"),
-  khiGioi: L("Khí giới", "器械"), infantry: L("Bộ binh", "步兵"), navy: L("Thủy quân", "水军"),
-};
+const LABELS = Object.fromEntries(Object.entries(LOOKUP_FIELD_LABELS).map(([key, [vi, zh]]) => [key, L(vi, zh)]));
 /** Khóa có giá trị là số/hạng chữ cái (chỉ số, tăng trưởng, thích tính) — hiện được ở bản zh. */
 const LANGUAGE_NEUTRAL_KEYS = new Set(["luc", "tri", "thong", "toc", "chinh", "mi", "ky", "thuan", "cung", "thuong", "khiGioi", "infantry", "navy"]);
 /** Bộ giá trị đóng của dữ liệu (tiếng Việt) → chữ Trung cho bản zh. */

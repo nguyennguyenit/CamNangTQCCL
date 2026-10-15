@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { normalizeText } from "../../../js/filters.js";
+import { LOOKUP_FIELD_LABELS } from "../../../js/lookup-field-labels.js";
 import type { CatalogEntityView, CatalogKind, LocalePaths } from "../data/publication-projection.js";
 import { decodeCursor, encodeCursor, type CursorBinding } from "./cursor.js";
 import { PUBLIC_ERRORS, ResearchHandlerError } from "./handler-error.js";
@@ -256,10 +257,30 @@ export const getEntityOutputSchema = commonResultSchema.extend({
   omittedCounts: z.record(z.string(), z.number().int().nonnegative()).optional().describe("Số mục lồng nhau không nằm trong overview."),
   total: z.number().int().nonnegative().optional().describe("Tổng mục của section phân trang."),
   items: z.array(z.record(z.string(), z.unknown())).max(50).optional().describe("Mục của trang hiện tại (section lồng nhau)."),
+  fieldLabels: z
+    .record(z.enum(["stats", "troopApt"]), z.record(z.string(), z.string().max(64)))
+    .optional()
+    .describe("Nhãn theo locale cho khoá của profile.stats và profile.troopApt, như trang Tra cứu (vd thuan → Khiên binh)."),
 });
 
 function pathsOf(paths: LocalePaths, loc: Locale): string {
   return paths[loc];
+}
+
+/** Nhãn của các khoá đã biết trong profile.stats / profile.troopApt; không có khoá nào thì bỏ. */
+function fieldLabelsOf(profile: Record<string, unknown>, loc: Locale) {
+  const labels: Partial<Record<"stats" | "troopApt", Record<string, string>>> = {};
+  for (const group of ["stats", "troopApt"] as const) {
+    const value = profile[group];
+    if (value === null || typeof value !== "object" || Array.isArray(value)) continue;
+    const entries = Object.keys(value).flatMap((key) => {
+      const pair = (LOOKUP_FIELD_LABELS as Record<string, readonly string[] | undefined>)[key];
+      const label = pair?.[loc === "zh" ? 1 : 0];
+      return label ? [[key, label] as const] : [];
+    });
+    if (entries.length > 0) labels[group] = Object.fromEntries(entries);
+  }
+  return Object.keys(labels).length > 0 ? labels : undefined;
 }
 
 export async function handleGetEntity(ctx: ToolContext, rawInput: unknown) {
@@ -298,9 +319,11 @@ export async function handleGetEntity(ctx: ToolContext, rawInput: unknown) {
   if (section === "overview") {
     const nestedKeys = new Set(totals.map((entry) => NESTED[entry.name]));
     const profile = Object.fromEntries(Object.entries(entity.profile).filter(([key]) => !nestedKeys.has(key)));
+    const fieldLabels = fieldLabelsOf(profile, loc);
     return {
       ...base,
       profile,
+      ...(fieldLabels === undefined ? {} : { fieldLabels }),
       ...(totals.length === 0 ? {} : { sections: totals, omittedCounts: Object.fromEntries(totals.map((entry) => [entry.name, entry.total])) }),
     };
   }

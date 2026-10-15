@@ -12,6 +12,7 @@
     "js/hero-identity.js",
     "js/i18n.js",
     "js/lookup-data.js",
+    "js/lookup-field-labels.js",
     "js/lookup-ids.js",
     "js/match-dict.js",
     "js/roster-scan-state.js",
