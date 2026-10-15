@@ -15,6 +15,10 @@
 - **Skill `tqccl-coexist-team-builder`** (user chốt sau R5 câu 21): thuộc tính tướng/chiến pháp (thích tính binh chủng, phe, sao, hiệu ứng) chỉ nêu khi lấy từ kết quả tool trong phiên — gọi `tqccl_get_entity` hoặc bỏ qua; `tqccl_get_entity` vào tool surface của skill. Rule `coexist-project-data-first` lên revision 2.
 - **Skill `tqccl-lookup`**: build của một đội chỉ lấy từ `tqccl_get_team` của đúng đội đó, không từ danh sách `tqccl_find_teams`. Rule `lookup-khai-hoang-exact` lên revision 2.
 
+### Fixed
+
+- **Gợi ý đội từ kho: nút "Dùng món này" luôn bị vô hiệu**: `el()` gán `disabled="false"` khi chưa chạm giới hạn thay món, và thuộc tính có mặt là đủ để khoá nút. Nay chỉ gắn `disabled` khi `limitReached`. Bản dịch hiển thị publish lại (generation `e079390c…`).
+
 ## 2026-10-10 (Tra cứu: tên gần khi không khớp, chỉ dữ liệu cẩm nang)
 
 ### Added

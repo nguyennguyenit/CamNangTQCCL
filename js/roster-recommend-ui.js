@@ -817,7 +817,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
                   el("button", {
                     type: "button",
                     class: "ana-btn",
-                    disabled: limitReached,
+                    disabled: limitReached ? "" : null,
                     "aria-label": L(`Dùng ${tactic} thay ${slot.tactic}`, `用${shown(tactic)}替换${shown(slot.tactic)}`),
                     onClick: () => applyFromResults(setTacticOverride(state, { teamId: entry.team.id, heroIndex: slot.heroIndex, slotIndex: slot.slotIndex, tactic })),
                   }, L("Dùng món này", "使用此战法")),
