@@ -38,17 +38,18 @@ Project deploy is split into three surfaces:
 
 ## Latest Research MCP Deploy
 
-- Date: 2026-10-15
+- Date: 2026-10-15 (19:35 UTC)
 - Production URL: `https://mcp.tqccl.com`
-- GitHub Actions run: `38720407246` (manual exact-SHA dispatch, `rehearse_rollback: false`); push gate on the same SHA: run `38717554122` green.
-- Source commit: `a9f055effb4163825bfa4da156749dfd9983ea5a` (MCP skill redesign: seven tools, `fieldLabels`/`refNames`/`similarNames`, `build` in `tqccl_get_team`)
-- Release ID: `sha256:30a102a1d9709bc89caf3c93d7ac60ed348aed8d85f274130a813f204ef7cfb2`
-- Workflow build ID: `build:sha256b64:eWwYqy-IbV2Mlna4vlaYUfTtIiUftWAgfQbelTbghWs`
-- Worker version ID: `1e1b1191-a7b4-4b37-a092-92b0ba069150` (tag = source commit)
-- Deployments: smoke (prior 100% + candidate 0%) `cdfa1ff4-b75f-4564-a188-691862287df9`; production `10a33452-ae33-4c6a-8dbe-dc7c7eb41d8f`.
-- Status: verified at 100% traffic by the workflow verifier (Version Override, then production without override). `wrangler deployments status` shows only `1e1b1191…` at 100%; `/healthz` 200, unauthenticated `/mcp` 401.
-- Note: in the dispatch run the parallel `credential-free-release-gate` job failed on a timing-racy unit test (`roster-scan-state` compared two `new Date()` reads); the push gate for the same SHA had passed. Test fixed in the next commit.
-- Rollback target: version `8264ea76-efc2-4cd5-b446-49a03a89184d` (deployment `44f7d0c4-1b4f-487d-acb1-00596400843b`, `2a754f5`, eight old tools). Dewee: no agent or user grant on server `tqccl`; `tra` still uses local `tqccl-local`.
+- GitHub Actions run: `38791836717` (manual exact-SHA dispatch, `rehearse_rollback: false`); push gate on the same SHA: run `38789084426` green.
+- Source commit: `eb08691ec3cf34689e7c5b529bcfc98c6a8e653f`. Adds `innateHeroIds` to `tqccl_get_entity` for tactics (`fabd7d4`) and the release-driver fixes below (`f76d3af`, `6f7235e`, `7fe6198`, `eb08691`).
+- Release ID: `sha256:6a54e59da2365913e58a759960c31bb21fed47a700f036c384fb4cac55b11256`
+- Workflow build ID: `build:sha256b64:x7ucanKrRW220KswL0isAPFuvAmrv8DnO3xz_WkmbHQ`
+- Worker version ID: `dbba08a2-b92b-42ea-89c2-2265eba08a9c` (tag = source commit)
+- Deployments: prior `84303896-18f5-49a7-9c47-cd60a2262d86` (`1e1b1191` 100%), smoke `bdccf68c-5ee4-456a-ba80-d2133802ab44` (prior 100% + candidate 0%), production `a5815306-7be7-4b7f-acc3-11d263d1b886`.
+- Status: verified at 100% traffic by the workflow verifier (Version Override, then production without override). `wrangler deployments status` shows only `dbba08a2…` at 100%; `/healthz` 200, unauthenticated `/mcp` 401.
+- Evidence: settle before the override smoke took 24 probes with 4 responses from the other version; before production verification 23 probes with 3 from the other version. Both deployment POSTs (smoke, promote) returned responses the client rejects (`mutationErrors` reason `shape`); the controller reconciled each from the read-back.
+- Failed attempts the same day, production left on `1e1b1191` each time: `38743557129` (rolled back after promote, edge still served the prior version), `38754775623` (smoke restored, same cause under Version Override), `38762022539` (smoke POST response rejected and the immediate read-back still showed the prior; a 0% candidate was left and removed by hand with `wrangler versions deploy 1e1b1191…@100%` at 17:58 UTC), `38784835089` (rolled back after promote with only a 5-probe settle).
+- Rollback target: version `1e1b1191-a7b4-4b37-a092-92b0ba069150` (`a9f055e`, deployed 10:44 UTC as `10a33452-ae33-4c6a-8dbe-dc7c7eb41d8f`); older `8264ea76-efc2-4cd5-b446-49a03a89184d` (`2a754f5`, eight old tools). Dewee: no agent or user grant on server `tqccl`; `tra` still uses local `tqccl-local`.
 
 ## Deploy Commands
 
