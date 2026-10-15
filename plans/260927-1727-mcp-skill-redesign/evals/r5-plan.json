@@ -3,7 +3,10 @@
   "lockedOn": "2026-10-15",
   "mergeCriteria": {
     "decidedBy": "user, 2026-10-15",
-    "blocking": ["bất kỳ câu nào trượt vì tráo tên (gán hiệu ứng/tướng sở hữu/chỉ số của tên gần cho tên được hỏi, hoặc khẳng định tên được hỏi tồn tại)", "bất kỳ câu nào bịa thực thể, hiệu ứng hay số liệu"],
+    "blocking": [
+      "bất kỳ câu nào trượt vì tráo tên (gán hiệu ứng/tướng sở hữu/chỉ số của tên gần cho tên được hỏi, hoặc khẳng định tên được hỏi tồn tại)",
+      "bất kỳ câu nào bịa thực thể, hiệu ứng hay số liệu"
+    ],
     "nearPassAllowed": 5,
     "searchCapExceeded": "chỉ ghi lại, không chặn merge"
   },
@@ -11,21 +14,57 @@
     "Tiêu chí của từng case: mustInclude/mustNot trong evals/dewee-conversations.json (24 case) và evals/r4-lookup-miss.json (5 câu tên không có). Không nới điểm sau khi chạy.",
     "Giữ mọi kết quả, kể cả lượt lặp; không thay FAIL bằng PASS ở lượt sau.",
     "Skill có nạp (use_skill completed + read_file SKILL.md) là chỉ số riêng; trace không nạp vẫn chấm theo nội dung và tính vào bảng tổng.",
-    "Tên không có: tách hai chỉ số — (a) tráo tên (chặn merge); (b) tuân thủ chính sách đoán của skill tra cứu: chỉ đoán kèm chi tiết khi đúng một similarNames cùng loại user hỏi; nếu đoán thì nói là phỏng đoán, chi tiết mang tên mục đó, kết thúc bằng câu hỏi xác nhận. Vi phạm (b) mà không phạm (a) = gần đạt.",
+    "Tên không có: tách hai chỉ số — (a) tráo tên (chặn merge); (b) tuân thủ chính sách đoán của skill tra cứu: chỉ đoán kèm chi tiết khi có mục similarNames likely=true đúng loại user hỏi; nếu đoán thì nói là phỏng đoán, chi tiết mang tên mục đó, kết thúc bằng câu hỏi xác nhận. Vi phạm (b) mà không phạm (a) = gần đạt.",
     "Lượt gọi tqccl_search > 3 ở câu tên không có: ghi lại, không trừ điểm."
   ],
   "runtime": "tqccl-local chạy /Users/plateau/Project/worktrees/tqccl-pstar; Dewee khởi động lại sau commit cuối; xác nhận code thực chạy qua output (fieldLabels, similarNames) trong trace.",
   "chats": [
-    { "set": "dewee-conversations.json", "cases": "1–24", "note": "case 18, 19 có lượt 2; nếu agent hỏi xác nhận thêm thì trả lời xác nhận" },
-    { "set": "r4-lookup-miss.json", "cases": ["miss-equipment-noise", "miss-tactic-compound", "miss-tactic-reordered", "miss-advisor-wrong-kind", "miss-typo"] },
+    {
+      "set": "dewee-conversations.json",
+      "cases": "1–24",
+      "note": "case 18, 19 có lượt 2; nếu agent hỏi xác nhận thêm thì trả lời xác nhận"
+    },
+    {
+      "set": "r4-lookup-miss.json",
+      "cases": [
+        "miss-equipment-noise",
+        "miss-tactic-compound",
+        "miss-tactic-reordered",
+        "miss-advisor-wrong-kind",
+        "miss-typo"
+      ]
+    },
     {
       "id": "rc-unknown-roster",
       "prompt": "Ghép đội giúp mình mùa hiện tại. Kho tướng: CO Vô Song Đại Kiều, Tôn Thượng Hương, CO Vô Song Tiểu Kiều. Chiến pháp: Mê Hoặc, Thuyền Cỏ Mượn Tên, Đương Phong Thôi Quyết, Mau Giành Lợi Thế, Lâm Nguy Cứu Chủ.",
-      "mustInclude": ["nêu CO Vô Song Đại Kiều / CO Vô Song Tiểu Kiều chưa nhận ra và hỏi có phải CO Đại Kiều / CO Tiểu Kiều", "dừng chờ xác nhận, chưa recommend"],
-      "mustNot": ["tự gán CO Đại Kiều / CO Tiểu Kiều rồi ghép"],
+      "mustInclude": [
+        "nêu CO Vô Song Đại Kiều / CO Vô Song Tiểu Kiều chưa nhận ra và hỏi có phải CO Đại Kiều / CO Tiểu Kiều",
+        "dừng chờ xác nhận, chưa recommend"
+      ],
+      "mustNot": [
+        "tự gán CO Đại Kiều / CO Tiểu Kiều rồi ghép"
+      ],
       "check": "trace: observation của hai tên này gửi chỉ observedText (không canonicalId/candidates) và output unknown có candidates hero:co-dai-kieu / hero:co-tieu-kieu; nếu agent tự điền canonicalId thì ghi là không phủ nhánh tự tra tên."
     },
-    { "repeat": ["lk-hero-ambiguous (case 3)", "lk-not-exist (case 11)", "rc-missing-substitute (case 19, 2 lượt)"], "note": "lặp một lần nữa, mỗi lượt một New Chat; giữ cả hai kết quả" }
+    {
+      "repeat": [
+        "lk-hero-ambiguous (case 3)",
+        "lk-not-exist (case 11)",
+        "rc-missing-substitute (case 19, 2 lượt)"
+      ],
+      "note": "lặp một lần nữa, mỗi lượt một New Chat; giữ cả hai kết quả"
+    }
   ],
-  "totals": { "newChats": 33, "sends": "≥36" }
+  "totals": {
+    "newChats": 33,
+    "sends": "≥36"
+  },
+  "expectedGuess": {
+    "Hổ Báo Thiết Kỵ": "Hổ Báo Kỵ (likely)",
+    "Mưu Kế Liên Hoàn": "Liên Hoàn Kế (likely)",
+    "Liên Hoàng Kế": "Liên Hoàn Kế (likely)",
+    "Thiên Chi Kiếm": "không đoán, chỉ liệt kê tên",
+    "Bát Quái Trận Đồ": "không đoán, chỉ liệt kê tên",
+    "Phong Hỏa Liên Thiên": "không đoán, chỉ liệt kê tên"
+  }
 }

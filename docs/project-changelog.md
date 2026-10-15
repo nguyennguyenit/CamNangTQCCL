@@ -5,10 +5,11 @@
 ### Added
 
 - **`fieldLabels` trong `tqccl_get_entity`** (overview): nhãn theo locale cho khoá của `profile.stats` và `profile.troopApt` (vd `thuan` → "Khiên binh"/"盾兵"), chỉ cho khoá có trong hồ sơ. Trước đây agent chỉ thấy khoá thô và đã dịch `thuan` thành "Thuỷ binh" (Dewee R4). Nhãn lấy từ `js/lookup-field-labels.js`, nguồn chung với trang Tra cứu (`js/lookup-detail.js` dùng lại); bản dịch hiển thị đã publish lại (generation `374b8dc2…`).
+- **`similarNames[].likely`** trong `tqccl_search`: đánh dấu mục duy nhất cùng loại mà mọi từ có trong tên gõ (bỏ qua dấu; sai một chữ cái chỉ ở từ ≥4 chữ) và phủ đủ số từ của tên gõ trừ tối đa một — tức người dùng gõ thừa một từ, đảo thứ tự hay gõ sai. Ví dụ: "Hổ Báo Thiết Kỵ" → Hổ Báo Kỵ, "Mưu Kế Liên Hoàn"/"Liên Hoàng Kế" → Liên Hoàn Kế; "Thiên Chi Kiếm" (Ỷ Thiên Kiếm thừa chữ "Ỷ") và "Phong Hỏa Liên Thiên" không có mục `likely`. Mục `likely` đứng đầu danh sách.
 
 ### Changed
 
-- **Skill `tqccl-lookup`, tên không có trong cẩm nang** (user chốt 2026-10-15 sau debate `next-steps-1/guess`): vẫn mở đầu "không tìm thấy trong dữ liệu cẩm nang" và nêu `similarNames` là tên gần; chỉ khi đúng một `similarNames` cùng loại user hỏi mới được đoán và đưa chi tiết — nói là phỏng đoán, chi tiết mang tên của mục đó, không trả lời như thể hai tên là một, kết thúc bằng câu hỏi xác nhận; không áp cho bản SP/CO/base của tên có thật. Rule `lookup-missing-is-not-empty` lên revision 3.
+- **Skill `tqccl-lookup`, tên không có trong cẩm nang** (user chốt 2026-10-15 sau debate `next-steps-1/guess`): vẫn mở đầu "không tìm thấy trong dữ liệu cẩm nang" và nêu `similarNames` là tên gần; chỉ mục `likely: true` đúng loại user hỏi mới được đoán và đưa chi tiết — nói là phỏng đoán, chi tiết mang tên của mục đó, không trả lời như thể hai tên là một, kết thúc bằng câu hỏi xác nhận; không áp cho bản SP/CO/base của tên có thật. Rule `lookup-missing-is-not-empty` lên revision 4.
 
 ## 2026-10-10 (Tra cứu: tên gần khi không khớp, chỉ dữ liệu cẩm nang)
 
