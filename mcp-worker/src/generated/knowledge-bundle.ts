@@ -1,7 +1,7 @@
 // Tệp được sinh bởi scripts/generate-knowledge-bundle.ts từ agent-knowledge/. Không sửa thủ công.
 import type { KnowledgeBundle } from "../knowledge/rule-contracts.js";
 
-export const KNOWLEDGE_VERSION = "knowledge:sha256b64:8eB-_e9l4438DfeALt4abo9hLZFD9Q6Tx3-zeZPSVis" as const;
+export const KNOWLEDGE_VERSION = "knowledge:sha256b64:6Z5_t4jaBx31ZkMabYYVWWj6xxXfuy47GqyAn5ZCcnA" as const;
 export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
   "schemaVersion": 1,
   "manifest": {
@@ -911,7 +911,7 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
     },
     {
       "id": "coexist-project-data-first",
-      "revision": 1,
+      "revision": 2,
       "kind": "invariant",
       "status": "active",
       "workflows": [
@@ -926,17 +926,19 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
       },
       "title": "Dùng dữ liệu dự án trước, không dùng trí nhớ",
       "terms": "project data teams.json team-tier coexist.json dữ liệu nguồn web research",
-      "explanation": "Dùng dữ liệu dự án (đội dựng sẵn, tier, nhóm coexist qua MCP/CLI), không dựa trí nhớ. Chỉ research web khi dự án không có đội khớp, user hỏi chiến báo Trung Quốc, cơ chế còn mơ hồ hoặc meta có thể đã đổi.",
+      "explanation": "Dùng dữ liệu dự án (đội dựng sẵn, tier, nhóm coexist qua MCP/CLI), không dựa trí nhớ. Thuộc tính tướng/chiến pháp (thích tính binh chủng, phe, sao, hiệu ứng) chỉ nêu khi lấy từ kết quả tool trong phiên; chưa lấy thì gọi tqccl_get_entity hoặc bỏ qua. Chỉ research web khi dự án không có đội khớp, user hỏi chiến báo Trung Quốc, cơ chế còn mơ hồ hoặc meta có thể đã đổi.",
       "sourceRefs": [
         ".agents/skills/tqccl-coexist-team-builder/SKILL.md",
         ".agents/skills/tqccl-coexist-team-builder/references/coexist-team-rules.md"
       ],
       "origin": "skill-migration",
-      "validFrom": "2026-10-08",
+      "validFrom": "2026-10-15",
       "reviewAfter": "2027-04-08",
       "supersedes": [],
       "successor": null,
-      "regressionCaseIds": []
+      "regressionCaseIds": [
+        "rc-ambiguous-roster"
+      ]
     },
     {
       "id": "coexist-proven-needs-two-regions",

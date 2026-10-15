@@ -8,7 +8,7 @@ description: Build TQCCL coexist teams from the handbook: ghép team cùng tồn
 Builds a non-overlapping lineup (team cùng tồn) from the handbook's source reference
 teams and the user's roster. Results are **source-reference fit**, not season-ruleset
 scoring. Tool surface: `tqccl_get_playbook`, `tqccl_normalize_entities`,
-`tqccl_recommend_teams`, `tqccl_get_team`.
+`tqccl_recommend_teams`, `tqccl_get_team`, and `tqccl_get_entity` when a hero or tactic attribute is needed.
 
 Routing: catalog / source-team viewing → `tqccl-lookup`; mechanic, battle-report, meta or
 source verification → `tqccl-research`. Web research is not done here.
@@ -25,7 +25,7 @@ source verification → `tqccl-research`. Web research is not done here.
 
 ## Hard constraints
 
-- Use handbook data first, never memory; do not invent a team when a matching one exists (`coexist-project-data-first`, `coexist-no-invent-team`).
+- Use handbook data first, never memory; do not invent a team when a matching one exists (`coexist-project-data-first`, `coexist-no-invent-team`). State a hero or tactic attribute (troop aptitude, faction, stars, effect) only from a tool result of this session: fetch it with `tqccl_get_entity` or leave it out.
 - Extract the user's locked tactics first. Reject any candidate that duplicates a locked tactic unless the user explicitly allows moving it; never recommend a duplicated tactic silently, show the duplicate and which team uses it (`coexist-extract-locks-first`, `respect-tactic-locks`, `coexist-show-duplicate-tactics`).
 - Order of preference is tier `T0` > `T0.5` > `T1`; use red copies / "hột" only after tier and tactic constraints, and never downgrade from T0/T0.5 to an unranked or experimental team without the user's consent (`coexist-red-after-constraints`, `coexist-experimental-needs-consent`). Details: [coexist team rules](references/coexist-team-rules.md).
 - Run the tactic-logic sanity check before recommending; do not attach tactics to teams that cannot support them (`coexist-logic-sanity-check`): [checklist](references/multi-source-research-and-logic-checks.md#logic-sanity-checklist).
