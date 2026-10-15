@@ -571,8 +571,9 @@ export interface PublicationReadModel {
   /**
    * Tên gần cho truy vấn không khớp chuỗi con nào: mục chung ít nhất 2 từ (chữ Hán tính từng chữ) với
    * truy vấn, xếp theo số từ chung rồi độ trùng Jaccard. Không phải kết quả khớp; rỗng khi không đủ gần.
+   * `likely`: mục duy nhất cùng loại mà mọi từ có trong truy vấn (xem `covers`); đứng đầu danh sách.
    */
-  similarCatalog(query: string, options?: Pick<CatalogSearchOptions, "kinds" | "limit">): CatalogSearchMatch[];
+  similarCatalog(query: string, options?: Pick<CatalogSearchOptions, "kinds" | "limit">): Array<CatalogSearchMatch & { likely: boolean }>;
   getEntity(id: string): CatalogEntityView | undefined;
   findTeams(filter?: TeamFilter): Page<TeamSummaryView>;
   getTeam(reference: string): TeamDetailView | undefined;
@@ -632,16 +633,83 @@ interface TokenTerm {
    */
   accented: ReadonlySet<string>;
   raw: string;
+  /** Từng từ của raw (giữ thứ tự, không gộp trùng) để xét `likely`. */
+  words: readonly Word[];
+}
+
+interface Word {
+  folded: string;
+  accented: string;
 }
 
 const NO_TOKENS: ReadonlySet<string> = new Set();
+/** Từ ngắn hơn thì không bỏ qua sai một chữ cái: "ke" (kế) và "ky" (kỵ) là hai từ khác nhau. */
+const MIN_TYPO_WORD_LENGTH = 4;
+
+function wordsOf(raw: string): Word[] {
+  return raw
+    .normalize("NFC")
+    .toLowerCase()
+    .replace(/(\p{Script=Han})/gu, " $1 ")
+    .split(/[^\p{L}\p{N}]+/u)
+    .filter(Boolean)
+    .map((accented) => ({ accented, folded: normalizeText(accented) }));
+}
 
 function tokenTerm(normalized: string, raw: string): TokenTerm {
   return {
     folded: tokens(normalized),
     accented: /[^\x00-\x7f]/u.test(raw) ? tokens(raw.normalize("NFC").toLowerCase()) : NO_TOKENS,
     raw,
+    words: wordsOf(raw),
   };
+}
+
+function withinOneEdit(left: string, right: string): boolean {
+  if (Math.abs(left.length - right.length) > 1) return false;
+  let i = 0;
+  let j = 0;
+  let edits = 0;
+  while (i < left.length && j < right.length) {
+    if (left[i] === right[j]) {
+      i += 1;
+      j += 1;
+      continue;
+    }
+    edits += 1;
+    if (edits > 1) return false;
+    if (left.length > right.length) i += 1;
+    else if (right.length > left.length) j += 1;
+    else {
+      i += 1;
+      j += 1;
+    }
+  }
+  return edits + (left.length - i) + (right.length - j) <= 1;
+}
+
+function sameWord(query: Word, candidate: Word): boolean {
+  if (query.folded === candidate.folded) return true;
+  return (
+    query.folded.length >= MIN_TYPO_WORD_LENGTH
+    && candidate.folded.length >= MIN_TYPO_WORD_LENGTH
+    && withinOneEdit(query.folded, candidate.folded)
+  );
+}
+
+/**
+ * Tên gần "phủ" tên gõ khi mọi từ của nó khớp một từ riêng của tên gõ (bỏ qua dấu, hoặc sai một chữ cái
+ * ở từ dài) và nó phủ ít nhất số từ của tên gõ trừ một: người dùng gõ thừa một từ, đảo thứ tự hay gõ sai.
+ */
+function covers(candidate: readonly Word[], query: readonly Word[]): boolean {
+  if (candidate.length < MIN_SHARED_TOKENS || candidate.length < query.length - 1) return false;
+  const used = new Set<number>();
+  return candidate.every((word) => {
+    const index = query.findIndex((queryWord, position) => !used.has(position) && sameWord(queryWord, word));
+    if (index === -1) return false;
+    used.add(index);
+    return true;
+  });
 }
 
 function countShared(left: ReadonlySet<string>, right: ReadonlySet<string>): number {
@@ -832,7 +900,7 @@ export function buildPublicationReadModel(
       const queryTerm = tokenTerm(normalizeText(query), query);
       if (queryTerm.folded.size < MIN_SHARED_TOKENS) return [];
       const kinds = options.kinds === undefined ? null : new Set<string>(options.kinds);
-      const scored: Array<CatalogSearchMatch & { accented: number; jaccard: number }> = [];
+      const scored: Array<CatalogSearchMatch & { accented: number; jaccard: number; covers: boolean; likely: boolean }> = [];
       tokenIndex ??= searchIndex.map(({ entity, terms: entries }) => ({
         entity,
         tokenTerms: entries.map(([normalized, raw]) => tokenTerm(normalized, raw)),
@@ -840,11 +908,18 @@ export function buildPublicationReadModel(
       for (const item of tokenIndex) {
         if (kinds !== null && !kinds.has(item.entity.kind)) continue;
         const { shared, accented, jaccard, matched } = similarity(item.tokenTerms, queryTerm);
-        if (shared >= MIN_SHARED_TOKENS) scored.push({ entity: item.entity, score: shared, accented, jaccard, matchedTerm: matched });
+        if (shared < MIN_SHARED_TOKENS) continue;
+        const covering = item.tokenTerms.some((term) => covers(term.words, queryTerm.words));
+        scored.push({ entity: item.entity, score: shared, accented, jaccard, matchedTerm: matched, covers: covering, likely: false });
       }
+      // likely = mục phủ tên gõ duy nhất trong cùng loại; hai mục cùng loại cùng phủ thì không đoán mục nào.
+      const coveringByKind = new Map<string, number>();
+      for (const entry of scored) if (entry.covers) coveringByKind.set(entry.entity.kind, (coveringByKind.get(entry.entity.kind) ?? 0) + 1);
+      for (const entry of scored) entry.likely = entry.covers && coveringByKind.get(entry.entity.kind) === 1;
       scored.sort(
         (left, right) =>
-          right.score - left.score
+          Number(right.likely) - Number(left.likely)
+          || right.score - left.score
           || right.accented - left.accented
           || right.jaccard - left.jaccard
           || (GROUP_ORDER.get(left.entity.group) ?? 0) - (GROUP_ORDER.get(right.entity.group) ?? 0)
@@ -852,7 +927,7 @@ export function buildPublicationReadModel(
           || left.entity.nameVi.localeCompare(right.entity.nameVi, "vi")
           || left.entity.id.localeCompare(right.entity.id),
       );
-      return scored.slice(0, limit).map(({ entity, score, matchedTerm }) => ({ entity, score, matchedTerm }));
+      return scored.slice(0, limit).map(({ entity, score, matchedTerm, likely }) => ({ entity, score, matchedTerm, likely }));
     },
     findTeams(filter = {}) {
       const { limit, offset } = clampPage(filter.limit, filter.offset);

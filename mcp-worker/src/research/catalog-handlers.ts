@@ -76,6 +76,7 @@ export const searchOutputSchema = commonResultSchema.extend({
           kind: z.enum(SEARCH_KINDS).describe("Loại."),
           displayName: z.string().max(256).describe("Tên hiển thị theo locale."),
           pagePath: z.string().max(512).describe("Đường dẫn trang website theo locale."),
+          likely: z.literal(true).optional().describe("Mục duy nhất cùng loại mà mọi từ có trong truy vấn (gõ thừa từ, đảo thứ tự, sai một chữ cái). Vẫn là phỏng đoán."),
         })
         .strict(),
     )
@@ -173,7 +174,7 @@ export async function handleSearch(ctx: ToolContext, rawInput: unknown) {
   ];
   const similarNames =
     total === 0 && catalogKinds.length > 0
-      ? pub.similarCatalog(query, { kinds: catalogKinds, limit: 5 }).map(({ entity }) => catalogItem(entity, loc, ""))
+      ? pub.similarCatalog(query, { kinds: catalogKinds, limit: 5 }).map(({ entity, likely }) => ({ ...catalogItem(entity, loc, ""), ...(likely ? { likely: true as const } : {}) }))
       : [];
   return {
     ...ctx.commonResult(provenance),

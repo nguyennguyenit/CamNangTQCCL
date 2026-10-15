@@ -68,3 +68,27 @@ describe("tqccl_search similarNames khi không có kết quả", () => {
     expect(teams.similarNames).toBeUndefined();
   });
 });
+
+describe("tqccl_search similarNames.likely", () => {
+  const likelyIds = async (query: string, kinds: SearchKind[]) =>
+    ((await search(query, kinds)).similarNames ?? []).filter(({ likely }) => likely === true).map(({ entityId }) => entityId);
+
+  it("đánh dấu likely khi mọi từ của tên gần có trong tên gõ (thừa một từ, đảo thứ tự, sai một chữ cái) và là mục duy nhất cùng loại như vậy", async () => {
+    expect(await likelyIds("Hổ Báo Thiết Kỵ", ["tactic"])).toEqual(["tactic:ho-bao-ky"]);
+    expect(await likelyIds("Mưu Kế Liên Hoàn", ["tactic"])).toEqual(["tactic:lien-hoan-ke"]);
+    expect(await likelyIds("Liên Hoàng Kế", ["tactic"])).toEqual(["tactic:lien-hoan-ke"]);
+    expect(await likelyIds("Tiềm Lung Trận", ["tactic"])).toEqual(["tactic:tiem-long-tran"]);
+    expect(await likelyIds("Thôi Phong Đoạn Nhẫn Kiếm", ["tactic"])).toEqual(["tactic:thoi-phong-doan-nhan"]);
+  });
+
+  it("không likely khi tên gần có từ không có trong tên gõ, hoặc chỉ phủ một nửa tên gõ", async () => {
+    expect(await likelyIds("Thiên Chi Kiếm", ["equipment"])).toEqual([]);
+    expect(await likelyIds("Bát Quái Trận Đồ", ["advisor"])).toEqual([]);
+    expect(await likelyIds("Phong Hỏa Liên Thiên", ["tactic"])).toEqual([]);
+    expect(await likelyIds("Phong Hoa Lien Thien", ["tactic"])).toEqual([]);
+  });
+
+  it("sai một chữ cái chỉ được bỏ qua ở từ dài, không ở từ ngắn (kế ≠ kỵ)", async () => {
+    expect(await likelyIds("Hổ Báo Kế Thiết", ["tactic"])).not.toContain("tactic:ho-bao-ky");
+  });
+});
