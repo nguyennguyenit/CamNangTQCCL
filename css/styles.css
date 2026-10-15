@@ -6053,6 +6053,12 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
   display: none;
 }
 
+/* Bốn trang danh sách đội: thân dựng sẵn là trạng thái mặc định. Trang mở ở trạng thái khác (script inline sau mount gắn
+   `data-ssr-stale`) thì ẩn danh sách — vẫn giữ chỗ — đến khi js/app.js dựng đúng trạng thái và gỡ dấu. */
+.section[data-ssr-stale] :is(.reference-view, .coexist-group-view) {
+  visibility: hidden;
+}
+
 /* Đội chuẩn / Đội khác dùng chung hàng "Xem thêm"; hết đội thì bỏ cả khoảng trống của hàng. */
 .reference-more[hidden] {
   display: none;

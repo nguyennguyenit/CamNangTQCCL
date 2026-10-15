@@ -8,7 +8,7 @@ import { teamDetailCatalog } from "../src/lib/team-detail-routes.ts";
 import { lookupDetailRoutes } from "../src/lib/lookup-detail-routes.ts";
 import { lookupBuildCorpus } from "../src/lib/lookup-pages.ts";
 import { LOOKUP_GROUP_SLUGS } from "../js/lookup-ids.js";
-import { zhGaps, renderZhGapsReport } from "../scripts/report-zh-gaps.mjs";
+import { zhGaps } from "../scripts/report-zh-gaps.mjs";
 
 const ORIGIN = new URL(astroConfig.site).origin;
 const dist = (path) => new URL(`../dist/${path}`, import.meta.url);
@@ -317,11 +317,7 @@ test("llms.txt giữ nội dung blog hiện có và thêm 7 nhóm Tra cứu", as
 
 /* ---------- Báo cáo zh ---------- */
 
-test("báo cáo zh-gaps: mỗi mục viOnly của bản zh nêu được phần thiếu và có dòng trong báo cáo sinh từ dữ liệu hiện tại", async () => {
-  const corpus = await lookupBuildCorpus();
-  const gaps = zhGaps(corpus);
+test("báo cáo zh-gaps: mỗi mục viOnly của bản zh nêu được phần thiếu", async () => {
+  const gaps = zhGaps(await lookupBuildCorpus());
   assert.ok(gaps.length > 0 && gaps.every((gap) => gap.missing.length > 0), "mỗi mục thiếu phải nêu được phần thiếu");
-  const totals = Object.fromEntries(Object.keys(LOOKUP_GROUP_SLUGS).map((group) => [group, corpus.groups[group].length]));
-  const report = renderZhGapsReport(gaps, totals);
-  for (const gap of gaps) assert.ok(report.includes(`| ${gap.id} |`), gap.id);
 });

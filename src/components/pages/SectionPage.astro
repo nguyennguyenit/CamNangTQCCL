@@ -5,6 +5,7 @@
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { localePath, pick } from '../../../js/i18n.js';
 import { PRERENDERED_TEAM_SECTIONS, teamSectionParts, type TeamSection } from '../../lib/team-ssr';
+import { ssrStaleGuardScript } from '../../lib/team-section-ssr.js';
 import type { SiteLocale } from '../../lib/locale-routes';
 
 type SectionId = 'team-chuan' | 'team-khac' | 'coexist' | 'khaihoang' | 'recruit-tracker' | 'analyze' | 'roster-recommend';
@@ -90,6 +91,8 @@ const prerendered = PRERENDERED_TEAM_SECTIONS.includes(section) ? await teamSect
   locale={locale}
 >
   <section id={`section-${section}`} class="section active" data-ssr-source={prerendered?.source} set:html={prerendered?.html}></section>
+  {/* Thân dựng sẵn là trạng thái mặc định: URL/kiểu hiển thị/snapshot khác mặc định thì ẩn đến khi js/app.js dựng đúng. */}
+  {prerendered && <script is:inline set:html={ssrStaleGuardScript(section)}></script>}
 
   <script is:inline type="module" src="/js/app.js" slot="scripts"></script>
 </SiteLayout>

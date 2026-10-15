@@ -533,6 +533,9 @@ async function main() {
       if (location.hash.length > 1) document.getElementById(location.hash.slice(1))?.scrollIntoView();
     }
     refresh();
+    // Trạng thái đầu (URL, kiểu hiển thị) đã dựng xong: hiện lại phần dựng sẵn bị ẩn TRƯỚC khi khôi phục, vì focus() không
+    // vào được phần tử đang `visibility: hidden`. Cùng một task với restore nên lựa chọn Khai hoang không kịp nháy.
+    delete mount.dataset.ssrStale;
     restoreReturnState();
     // Back/Forward đổi URL: đọc lại và render trạng thái do URL sở hữu (mùa, bộ lọc, chi tiết
     // cấu hình) TRƯỚC khi khôi phục disclosure/lựa chọn/scroll.
@@ -592,6 +595,8 @@ async function main() {
       : L("Không thể tải dữ liệu. Hãy tải lại trang hoặc liên hệ quản trị viên nếu lỗi tiếp diễn.", "无法加载数据。请刷新页面，如问题持续请联系管理员。");
     mount.prepend(el("p", { class: "error", role: "alert" }, template.replace("{message}", L("không xác định", "未知错误"))));
   } finally {
+    // Lỗi boot: thà hiện thân dựng sẵn (kèm thông báo lỗi ở trên) còn hơn để trống.
+    delete mount.dataset.ssrStale;
     // Tín hiệu cho e2e: mount xong, kể cả khi nhánh trên đã lỗi.
     document.body.dataset.boot = 'ready';
   }

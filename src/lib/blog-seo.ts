@@ -241,7 +241,7 @@ export function llmsDocument(posts: readonly RenderedBlogPost[], site: URL | str
     '',
     '## Toàn văn chữ thuần theo mục',
     '',
-    'Mỗi file là chữ thuần của các trang chi tiết cùng mục, mỗi mục mở bằng dòng link tới trang riêng của nó. Đội chuẩn tách theo mùa vì quá lớn cho một file.',
+    `Mỗi file là chữ thuần của các trang chi tiết cùng mục, mỗi mục mở bằng dòng link tới trang riêng của nó.${data.files.filter((file) => file.section === 'doi-chuan').length > 1 ? ' Đội chuẩn tách theo mùa vì quá lớn cho một file.' : ''}`,
     '',
     ...data.files.map((file) => link(file.label, file.path, file.note)),
     link('Toàn bộ nội dung', data.fullPath, 'mọi file trên nối theo đúng thứ tự, trong một file'),

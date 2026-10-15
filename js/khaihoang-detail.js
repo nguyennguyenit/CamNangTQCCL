@@ -131,9 +131,11 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
     // xoá thân đang hiển thị nếu tải lỗi). Lần chọn một cấu hình khác mới tải và xác minh nguồn đã pin.
     if (!team && !variantId) return;
     if (!team) {
-      try { await ensureTeam(); } catch (error) { reportLoadFailure(error); return; }
+      try { await ensureTeam(); } catch (error) { reportVariantFailure(error); return; }
     }
-    applyVariant(variantId);
+    // Trong lúc chờ tải, người đọc có thể đã bấm chip khác: dựng theo URL hiện tại, không theo lần bấm cũ.
+    applyVariant(requestedVariant());
+    showContent();
   };
   /**
    * Chọn phiên bản bằng cùng nhóm chip của thẻ danh sách; loại binh của build chỉ hiện một lần ở đầu trang
@@ -174,9 +176,20 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
   /** Một lượt tải dùng chung cho nhiều lần bấm liên tiếp. */
   const ensureTeam = () => (teamLoad ??= fetchTeam().finally(() => { teamLoad = null; }));
 
-  const reportLoadFailure = (error) => {
-    if (isNetworkError(error)) showError(NETWORK_MESSAGE);
-    else showError(VERIFY_FAILURES.has(error?.message) ? error.message : VERIFY_MESSAGE);
+  const failureMessage = (error) => (isNetworkError(error)
+    ? NETWORK_MESSAGE
+    : VERIFY_FAILURES.has(error?.message) ? error.message : VERIFY_MESSAGE);
+  const reportLoadFailure = (error) => showError(failureMessage(error));
+
+  /**
+   * Bấm chip mà tải lỗi: thân dựng sẵn (cấu hình mặc định, đã phát cùng bản build) vẫn đúng nên giữ nguyên; URL quay về
+   * mặc định cho khớp nội dung đang hiện, chỉ báo lỗi ở dòng trạng thái. Bấm lại chip là thử lại.
+   */
+  const reportVariantFailure = (error) => {
+    history.replaceState(history.state, '', khaiHoangDetailVariantUrl(location.href, ''));
+    const status = statusNode();
+    status.hidden = false;
+    status.replaceChildren(el('p', {class: 'error', role: 'alert'}, failureMessage(error)));
   };
 
   /** Dựng toàn bộ thân từ nguồn đã pin (URL xin cấu hình khác mặc định, hoặc "Thử lại" sau lỗi). */

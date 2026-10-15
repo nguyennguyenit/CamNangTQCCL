@@ -58,6 +58,27 @@ test("Đội chuẩn: URL lệch mặc định (kiểu hiển thị khác) thay 
   await expect(page.locator("h1")).toHaveCount(1);
 });
 
+// Thân dựng sẵn là trạng thái mặc định: trang mở ở trạng thái khác thì danh sách mặc định không được hiện (và bấm được)
+// suốt lúc app.js còn tải dữ liệu; trạng thái mặc định thì hiện ngay; app.js dựng xong thì danh sách hiện lại.
+const STALE_CASES = [
+  ["Đội chuẩn: mùa khác trong URL", "/doi-chuan/?season=pk-s24", "#section-team-chuan > .reference-view", null, true],
+  ["Đội chuẩn: kiểu Bảng đã lưu", "/doi-chuan/", "#section-team-chuan > .reference-view", "bang", true],
+  ["Đội chuẩn: giá trị lưu lạ vẫn là Thẻ", "/doi-chuan/", "#section-team-chuan > .reference-view", "cards", false],
+  ["Đội khác: bộ lọc trong URL", "/zh/doi-khac/?faction=thuc", "#section-team-khac > .reference-view", null, true],
+  ["Cùng Tồn: kịch bản trong URL", "/cung-ton/?scenario=x", "#section-coexist > .coexist-group-view", null, true],
+  ["Khai hoang: cặp đang chọn trong URL", "/khai-hoang/?khTeam=x&khVariant=y", "#section-khaihoang .kh-team-view", null, true],
+  ["Khai hoang: mặc định", "/khai-hoang/", "#section-khaihoang .kh-team-view", null, false],
+];
+for (const [name, url, selector, storedView, hidden] of STALE_CASES) {
+  test(`${name}: danh sách dựng sẵn ${hidden ? "ẩn" : "hiện"} trước khi app.js chạy`, async ({ page }) => {
+    if (storedView) await page.addInitScript((value) => localStorage.setItem("tqccl.teamView.v1", value), storedView);
+    await bootWithProbe(page, url, selector, async () => {
+      expect(await page.locator(selector).evaluate((node) => getComputedStyle(node).visibility)).toBe(hidden ? "hidden" : "visible");
+    });
+    await expect(page.locator("[data-ssr-stale]")).toHaveCount(0);
+  });
+}
+
 test("Đội chuẩn: nhận lại danh sách dựng sẵn thì link chi tiết mang nguồn quay lại của trang", async ({ page }) => {
   await bootWithProbe(page, "/doi-chuan/", ".reference-team-card");
   const href = await page.locator(".reference-team-card a[data-team-detail-link]").first().getAttribute("href");
