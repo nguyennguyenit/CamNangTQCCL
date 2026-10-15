@@ -246,6 +246,21 @@ test("admin approves a pending report through the API", async ({ page }) => {
   await expect(reportsLink.locator(".adm-nav-count")).toBeHidden();
 });
 
+test("admin: link bỏ qua tới nội dung không đổi khu đang mở", async ({ page }) => {
+  await mockCommunityApi(page, { user: ADMIN });
+  await page.goto("/quan-tri/#ai");
+  const nav = page.getByRole("navigation", { name: "Khu quản trị" });
+  const aiLink = nav.getByRole("link", { name: "AI", exact: true });
+  await expect(aiLink).toHaveAttribute("aria-current", "page");
+
+  await page.locator(".skip-link").focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/#main-content$/);
+  await expect(aiLink).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("region", { name: "AI", exact: true })).toBeVisible();
+  await expect(page.locator("#adm-title-reports")).not.toBeFocused();
+});
+
 /* ---------- Góp ý, sửa lỗi (nút ở footer) ---------- */
 
 /** Stub Turnstile: widget cấp ngay token "fixture-token"; đếm số lần script được nạp. */

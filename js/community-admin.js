@@ -165,18 +165,23 @@ function button(text, { variant = '', iconName = null, compact = false, type = '
 
 /* ---------- Số việc chờ (GET /api/admin/counts) ---------- */
 // Badge trên điều hướng + dòng tổng ở khu Góp ý. Tải khi mở trang và sau mỗi thao tác đổi trạng thái.
-// Lỗi tải chỉ giữ số cũ: số đếm là phụ, không chặn việc duyệt.
+// Lỗi tải chỉ giữ số cũ: số đếm là phụ, không chặn việc duyệt. Các lần tải chồng nhau: chỉ lần gọi sau cùng được vẽ.
 
 function countsStore() {
   let current = null;
+  let generation = 0;
   const listeners = new Set();
   return {
     async refresh() {
+      const mine = ++generation;
+      let next;
       try {
-        current = await api('/api/admin/counts');
+        next = await api('/api/admin/counts');
       } catch {
         return;
       }
+      if (mine !== generation) return;
+      current = next;
       for (const listener of listeners) listener(current);
     },
     subscribe(listener) {
@@ -218,7 +223,7 @@ function adminShell(definitions, counts) {
   });
   const list = el('ul', { class: 'adm-nav-list' }, links.map((link) => el('li', {}, link)));
   const opened = new Set();
-  const indexOf = (hash) => Math.max(0, definitions.findIndex((definition) => `#${definition.hash}` === hash));
+  const findSection = (hash) => definitions.findIndex((definition) => `#${definition.hash}` === hash);
   const select = (index, { focus = false } = {}) => {
     sections.forEach(({ section }, current) => {
       section.hidden = current !== index;
@@ -235,7 +240,11 @@ function adminShell(definitions, counts) {
     }
     if (focus) titles[index].focus();
   };
-  window.addEventListener('hashchange', () => select(indexOf(window.location.hash), { focus: true }));
+  // Hash khác (vd `#main-content` của link "bỏ qua tới nội dung") không phải khu quản trị: giữ khu đang mở.
+  window.addEventListener('hashchange', () => {
+    const index = findSection(window.location.hash);
+    if (index >= 0) select(index, { focus: true });
+  });
   const node = el('div', { class: 'adm-shell' }, [
     el('aside', { class: 'adm-side' }, [
       el('nav', { class: 'adm-nav', 'aria-label': L('Khu quản trị', '管理区域') }, list),
@@ -246,7 +255,7 @@ function adminShell(definitions, counts) {
     ]),
     el('div', { class: 'adm-main' }, sections.map(({ section }) => section)),
   ]);
-  return { node, start: () => select(indexOf(window.location.hash)) };
+  return { node, start: () => select(Math.max(0, findSection(window.location.hash))) };
 }
 
 /* ---------- Mảnh dùng chung của các khu ---------- */
