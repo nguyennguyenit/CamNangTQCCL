@@ -63,6 +63,13 @@ export interface VerifyReleaseOptions {
   fixture: ReleaseVerificationFixture;
   fetcher?: typeof fetch;
   onStep?: (step: ReleaseVerificationStep) => void;
+  /** Mỗi response: HTTP status và header version so với version mong đợi; không chứa body hay header khác. */
+  onResponse?: (observation: ReleaseResponseObservation) => void;
+}
+
+export interface ReleaseResponseObservation {
+  status: number;
+  version: "expected" | "missing" | "other";
 }
 
 export class ReleaseVerificationError extends Error {
@@ -241,7 +248,16 @@ export async function verifyRelease(
   protocolVersion: string;
   tools: 7;
 }> {
-  const fetcher = options.fetcher ?? fetch;
+  const baseFetcher = options.fetcher ?? fetch;
+  const fetcher: typeof fetch = async (input, init) => {
+    const response = await baseFetcher(input, init);
+    const observed = response.headers.get(WORKER_VERSION_HEADER);
+    options.onResponse?.({
+      status: response.status,
+      version: observed === null ? "missing" : observed === options.expectedWorkerVersionId ? "expected" : "other",
+    });
+    return response;
+  };
   if (
     !isSafeMcpEndpoint(options.endpoint) ||
     !/^sha256:[a-f0-9]{64}$/u.test(options.expectedReleaseId) ||

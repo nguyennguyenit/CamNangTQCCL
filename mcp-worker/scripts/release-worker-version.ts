@@ -3,12 +3,13 @@ import { resolve } from "node:path";
 
 import { CloudflareDeploymentClient, CloudflareDeploymentError } from "./cloudflare-deployment-client.js";
 import type { WorkerDeploymentSnapshot } from "./cloudflare-deployment-client.js";
-import { awaitServedVersion } from "./await-served-version.js";
+import { awaitServedVersion, type ServedVersionStats } from "./await-served-version.js";
 import { createPacedMcpFetcher } from "./paced-mcp-fetch.js";
 import {
   parseReleaseVerificationFixture,
   readReleaseIdentity,
   verifyRelease,
+  type ReleaseResponseObservation,
   type ReleaseVerificationStep,
 } from "./verify-release.js";
 import {
@@ -51,6 +52,9 @@ async function main(): Promise<void> {
   const states: Record<string, unknown> = {};
   // Mã lý do cố định của POST deployment lỗi (controller vẫn đọc lại để quyết định); không chứa upstream body.
   const mutationErrors: Array<{ purpose: string; reason: string }> = [];
+  // Thống kê mỗi lần chờ edge phục vụ đúng version, và response cuối verifier thấy (status + loại header).
+  const settles: Array<{ target: string; versionId: string } & ServedVersionStats> = [];
+  let lastObservation: ReleaseResponseObservation | null = null;
   let status = "failed";
   let failureStage: ReleaseFailureStage = "initializing";
   const deploymentEvidencePath = process.env["TQCCL_DEPLOYMENT_EVIDENCE_PATH"];
@@ -84,8 +88,14 @@ async function main(): Promise<void> {
         onStep: (step) => {
           failureStage = `release:${step}`;
         },
+        onResponse: (observation) => {
+          lastObservation = observation;
+        },
         ...(fetcher === undefined ? {} : { fetcher }),
       }).then(() => undefined);
+    const settle = async (target: string, versionId: string, fetcher: typeof fetch) => {
+      settles.push({ target, versionId, ...(await awaitServedVersion({ endpoint, bearer, versionId, fetcher })) });
+    };
     const deployment = new CloudflareDeploymentClient({
       accountId: required("CLOUDFLARE_ACCOUNT_ID"),
       workerName,
@@ -108,7 +118,7 @@ async function main(): Promise<void> {
       // Sau mỗi lần đổi deployment, edge còn trả xen kẽ version cũ: chờ ổn định rồi mới xác minh không override.
       verifyProduction: async (versionId: string) => {
         failureStage = "settle";
-        await awaitServedVersion({ endpoint, bearer, versionId, fetcher: pacedFetcher });
+        await settle("production", versionId, pacedFetcher);
         await verify(versionId);
       },
       incident: async () => {
@@ -134,7 +144,7 @@ async function main(): Promise<void> {
             verifyCandidate: async (versionId) => {
               const fetcher = overrideFetcher(workerName, versionId, pacedFetcher);
               failureStage = "settle";
-              await awaitServedVersion({ endpoint, bearer, versionId, fetcher });
+              await settle("candidate-override", versionId, fetcher);
               await verify(versionId, fetcher);
             },
             ...(rehearseRollback === "true"
@@ -154,7 +164,7 @@ async function main(): Promise<void> {
                     });
                     return async () => {
                       failureStage = "rollback-observed:settle";
-                      await awaitServedVersion({ endpoint, bearer, versionId: priorVersionId, fetcher: pacedFetcher });
+                      await settle("rollback-prior", priorVersionId, pacedFetcher);
                       failureStage = "rollback-observed:starting";
                       const observed = await readReleaseIdentity({
                         endpoint,
@@ -187,6 +197,7 @@ async function main(): Promise<void> {
       status,
       deployments: result,
       mutationErrors,
+      settles,
     };
     if (deploymentEvidencePath === undefined) throw new Error();
     await writeFile(deploymentEvidencePath, `${JSON.stringify(output)}\n`, {
@@ -197,7 +208,7 @@ async function main(): Promise<void> {
     if (deploymentEvidencePath !== undefined) {
       await writeFile(
         deploymentEvidencePath,
-        `${JSON.stringify({ schemaVersion: 1, status, failureStage, candidateVersionId: candidateArgument, states, mutationErrors })}\n`,
+        `${JSON.stringify({ schemaVersion: 1, status, failureStage, candidateVersionId: candidateArgument, states, mutationErrors, settles, lastObservation })}\n`,
         { flag: "wx" },
       ).catch(() => undefined);
     }
