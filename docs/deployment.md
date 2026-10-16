@@ -20,14 +20,14 @@ Project deploy is split into three surfaces:
 
 ## Latest Static Pages Deploy
 
-- Date: 2026-10-15
+- Date: 2026-10-16
 - Production URL: `https://tqccl.com` (primary). `https://www.tqccl.com` returns `301` to the same path and query through a zone Redirect Rule; `https://tqccl.pages.dev` hands over through the head bridge script.
-- Deployment URL: `https://6a478f82.tqccl.pages.dev`
-- Source commit: `fabd7d4` (`origin/main`). Tactic dialog "Cách nhận" lists innate holders through the shared rule in `js/lookup-innate-holders.js` (heroes matched only by the Chinese innate-tactic name now show, e.g. Tiểu Kiều → Thiên Hương). Recommended generation `989c9919…`. Builds on `a9f055e` (deployment `ff01ace5`, same day: MCP skill redesign, "Dùng món này" button enabled again).
-- Method: local `wrangler pages deploy dist --branch main --commit-hash fabd7d4…` from a clean worktree, same `dist/` first deployed as preview `https://f648ffe0.tqccl.pages.dev` (branch `release-fabd7d4`). Build used `COMMUNITY_API_ORIGIN` like `pages-deploy.yml`. Local gate: localization `check --stage public`, `team_route_handles --check`, `build`, `verify` (3344 files), `test:dist` 32/32, `test:node` 541/541, pytest 393 passed, MCP `check:repository` green; MCP `check` 530 with four load-timeout files green when rerun sequentially (36/36).
-- Preview verified: shell, `/tra-cuu/chien-phap/`, Đội chuẩn and Khai hoang detail 200; `/teams/…` and `/_headers` 404; `/robots.txt` byte-equal to source; `/sitemap.xml` `application/xml` with the `dist/` URL count; changed JS and JSON byte-equal to `dist/`; Playwright on the preview: Thừa Thiên Tĩnh Thế shows SP Tào Tháo, Thiên Hương shows Tiểu Kiều, no page errors.
-- Production verified: the same Playwright check on `https://tqccl.com`; `js/lookup-innate-holders.js`, `js/lookup-tactic-profile.js`, `data/recommended/current.json` byte-equal to `dist/` (one read right after promotion returned the previous `lookup-tactic-profile.js`; three later uncached reads matched); `www` 301 with path and query; `/api/me` 200.
-- Previous production / rollback targets: `ff01ace5-b799-4977-84ca-22580033c309` (`a9f055e`), `ba81c78d-2c12-401f-8490-7febbca4e6ab` (`9291400`).
+- Deployment: `ad12bf98-9990-4ff3-b3d0-baeb792643fb` (`https://ad12bf98.tqccl.pages.dev`)
+- Source commit: `1194207` (`origin/main`): PR #9 (team and lookup content prerendered for AI crawlers, 1772 lookup item pages, JSON-LD, `/llms/*.txt` + `/llms-full.txt`, sitemap 4912 URLs, stale-state guard for list pages) and PR #8 (`/quan-tri/` redesign). Recommended generation `ff7b77eb…`.
+- Method: `pages-deploy.yml` `workflow_dispatch` on `main` (run `38935939825`: `npm run build`, `npm run verify` 5156 files, `wrangler pages deploy dist --branch main --commit-hash 1194207…`). Before merge, the PR head passed the credential-free release gate; locally Playwright 491/491, `test:node` 593/593, `test:dist` 49/49, pytest OK, `npm run check` 0 errors.
+- Production verified (`-A ClaudeBot`, no JS): `/llms.txt` and `/llms-full.txt` 200 `text/plain` (2.67 MB); `/tra-cuu/chien-phap/`, `/tra-cuu/tuong/sp-lu-mong/`, `/zh/tra-cuu/binh-thu/di-truc-bao-oan/`, `/doi-chuan/`, `/khai-hoang/`, `/quan-tri/` 200; a Đội chuẩn detail page carries heroes and tactics in HTML; `/sitemap.xml` 4912 `<loc>`; `/teams/` and `/_headers` 404; `js/app.js`, `js/khaihoang-detail.js` byte-equal to source; `www` 301 with path and query. Playwright on `https://tqccl.com`: `/doi-chuan/?season=pk-s24` ends on the PK-S24 list with no `data-ssr-stale` left, Khai hoang, lookup and `/quan-tri/` boot with no page errors.
+- Not yet deployed: community Worker `GET /api/admin/counts` (PR #8) still returns 404 on `tqccl-community`; `/quan-tri/` keeps working and only hides the pending-work badges until the Worker is deployed.
+- Previous production / rollback targets: `6a478f82-a2c9-46a6-8666-8f322ce15ef8` (`fabd7d4`), `ff01ace5-b799-4977-84ca-22580033c309` (`a9f055e`).
 
 ## Latest Community Worker Deploy
 
