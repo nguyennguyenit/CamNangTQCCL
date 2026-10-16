@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { projectRecommendedRows, readRecommendedQuery, validateHttpSourceUrl } from '../js/recommended-reference-state.js';
+import { projectRecommendedRows, readRecommendedQuery } from '../js/recommended-reference-state.js';
+import { validateHttpSourceUrl } from '../js/http-source-url.js';
 
 const rows = [
   {sourceConfigId:'b',sourceSeasonId:'s28',sourceCategoryId:'交戰',tierRaw:'T2',tierOrder:2,value:72,listIndex:1,factionRaw:'群',unitTypesRaw:['弓'],subcategoryRaw:'交戰',heroes:[]},

@@ -14,6 +14,7 @@ import { createTacticSummaryLoader } from "./tactic-summaries.js";
 import { isNativeNavigationClick } from "./team-detail-navigation.js";
 import { createProfileRenderer } from "./lookup-profile.js";
 import { isMasterGroup, masterDefaultId, masterDetailTree, masterFilterMatches, masterTargetFor } from "./lookup-master.js";
+import { handleEffectTabClick } from "./lookup-effect-panels.js";
 import {
   buildLookupCorpus,
   lookupMoreTrees,
@@ -82,7 +83,7 @@ export function initLookupPage({ group, mount, docs, loadProfileDocs = async () 
     return profileDocs;
   }
 
-  const renderProfile = createProfileRenderer({
+  const { renderProfile } = createProfileRenderer({
     group,
     openInPage: (id) => setRoute(id),
     onClose: () => closeDialog(),
@@ -347,13 +348,7 @@ export function initLookupPage({ group, mount, docs, loadProfileDocs = async () 
     });
     // Panel chi tiết: đổi phiên bản hiệu quả (cải tạo binh chủng) và nút quay lại danh sách (màn chi tiết mobile).
     panel.addEventListener("click", (event) => {
-      const tab = event.target.closest?.("[data-effect-tab]");
-      if (tab) {
-        const section = tab.closest(".lookup-detail-section");
-        for (const other of section.querySelectorAll("[data-effect-tab]")) other.setAttribute("aria-pressed", String(other === tab));
-        for (const body of section.querySelectorAll("[data-effect-panel]")) body.hidden = body.dataset.effectPanel !== tab.dataset.effectTab;
-        return;
-      }
+      if (handleEffectTabClick(event)) return;
       const back = event.target.closest?.("[data-lookup-back]");
       if (back && isNativeNavigationClick(event)) {
         event.preventDefault();

@@ -4,6 +4,7 @@
  */
 import { pick } from '../../js/i18n.js';
 import { blogIndexPath, type BlogLocale, type RenderedBlogPost } from './blog-posts.ts';
+import type { LlmsDocuments } from './llms-documents.ts';
 
 export const SITE_NAME = { vi: 'Cẩm Nang Game Tam Quốc Chí - Chiến Lược', zh: '三国志战略版攻略手册' } as const;
 
@@ -207,7 +208,7 @@ export function rssDocument(locale: BlogLocale, posts: readonly RenderedBlogPost
 }
 
 /** Tổng quan site cho trình thu thập AI (llmstxt.org): mục đích, các mục chính, danh sách bài. */
-export function llmsDocument(posts: readonly RenderedBlogPost[], site: URL | string): string {
+export function llmsDocument(posts: readonly RenderedBlogPost[], site: URL | string, data: LlmsDocuments): string {
   // Tiêu đề bài do admin nhập: thoát `[`/`]` để không vỡ cú pháp link Markdown.
   const link = (label: string, path: string, note: string) =>
     `- [${label.replace(/[[\]\\]/gu, (character) => `\\${character}`)}](${absolute(path, site)}): ${note}`;
@@ -233,6 +234,17 @@ export function llmsDocument(posts: readonly RenderedBlogPost[], site: URL | str
     link('Tra cứu', '/tra-cuu/', 'tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng và công trình'),
     link('Bài viết', '/bai-viet/', 'bài hướng dẫn và phân tích bằng tiếng Việt'),
     link('文章', '/zh/bai-viet/', 'bài viết bằng tiếng Trung giản thể'),
+    '',
+    '## Tra cứu theo nhóm',
+    '',
+    ...data.groups.map((group) => `${link(group.label, group.pagePath, `${group.count} mục, mỗi mục một trang riêng`)}; toàn văn chữ thuần: [${group.filePath}](${absolute(group.filePath, site)})`),
+    '',
+    '## Toàn văn chữ thuần theo mục',
+    '',
+    `Mỗi file là chữ thuần của các trang chi tiết cùng mục, mỗi mục mở bằng dòng link tới trang riêng của nó.${data.files.filter((file) => file.section === 'doi-chuan').length > 1 ? ' Đội chuẩn tách theo mùa vì quá lớn cho một file.' : ''}`,
+    '',
+    ...data.files.map((file) => link(file.label, file.path, file.note)),
+    link('Toàn bộ nội dung', data.fullPath, 'mọi file trên nối theo đúng thứ tự, trong một file'),
     '',
     '## Bản tiếng Trung giản thể',
     '',

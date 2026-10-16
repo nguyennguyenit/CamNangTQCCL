@@ -86,7 +86,7 @@ review; không xóa lock hoặc chép preimage thủ công.
 
 ## Consumer và publication contract
 
-Route canonical của hồ sơ là `/tra-cuu/<slug>/?id=<id>` trên trang của đúng nhóm (`tuong`, `chien-phap`, `trang-bi`, `quan-su`, `cai-tao-binh-chung`, `cong-trinh`, `binh-thu`; bảng ở `js/lookup-ids.js`). Mục lục `/tra-cuu/` chuyển tiếp link cũ `?group=<nhóm>&id=<id>` (hoặc chỉ `?id=`) sang trang nhóm; hash cũ `#lookup`, `#heroes`, `#tactics` và `#lookup?group=<nhóm>&id=<id>` được Landing chuyển tới mục lục (dạng `#lookup/<nhóm>/<id>` không thuộc contract) mà không rewrite history ngoài navigation do người dùng thực hiện. Lúc vào trang nhóm chỉ tải manifest + payload của nhóm (Binh thư chỉ `books-dict`); payload hồ sơ cần thêm tải lười khi mở hồ sơ đầu tiên. Trang đầu 60 mục dựng lúc build, chip nhóm là link, tìm Việt bỏ dấu/Hán/Hán-Việt trong nhóm, phân trang, modal focus trap, Escape, Back/Forward, mobile và light/dark thuộc contract trình duyệt.
+Mỗi mục có trang riêng `/tra-cuu/<nhóm>/<slug>/` (`tuong`, `chien-phap`, `trang-bi`, `quan-su`, `cai-tao-binh-chung`, `cong-trinh`, `binh-thu`; bảng ở `js/lookup-ids.js`) dựng sẵn hồ sơ đầy đủ lúc build; slug đóng băng theo mã trong `pipeline/lookup-route-handles.json` nên đổi tên Việt không đổi URL. Hồ sơ `?id=<id>` trên trang của đúng nhóm là trạng thái hộp thoại/panel và link `?id=` cũ vẫn mở được. Mục lục `/tra-cuu/` chuyển tiếp link cũ `?group=<nhóm>&id=<id>` (hoặc chỉ `?id=`) sang trang nhóm; hash cũ `#lookup`, `#heroes`, `#tactics` và `#lookup?group=<nhóm>&id=<id>` được Landing chuyển tới mục lục (dạng `#lookup/<nhóm>/<id>` không thuộc contract) mà không rewrite history ngoài navigation do người dùng thực hiện. Lúc vào trang nhóm chỉ tải manifest + payload của nhóm (Binh thư chỉ `books-dict`); payload hồ sơ cần thêm tải lười khi mở hồ sơ đầu tiên; trang riêng không tải dữ liệu. HTML trang nhóm có đủ mọi mục (khi có JavaScript chỉ trang đầu hiện), chip nhóm là link, tìm Việt bỏ dấu/Hán/Hán-Việt trong nhóm, phân trang, modal focus trap, Escape, Back/Forward, mobile và light/dark thuộc contract trình duyệt.
 
 Khối "Trong cẩm nang" của hồ sơ Tướng và Chiến pháp đọc `hero-summaries.json`/`tactic-summaries.json` của generation Recommended đang pin (chỉ `manifest.json` + đúng file đó, không tải `index.json`/`other-teams.json`); số liệu chiến pháp trả ID tướng/chiến pháp nên tên hiển thị lấy từ corpus theo ngôn ngữ trang.
 
@@ -97,6 +97,7 @@ MCP có bảy tool (xem [Research MCP server](mcp-research-server.md)); `tqccl_s
 ## Regeneration triggers
 
 - Đổi source snapshot, guide, identity decision, translation hoặc merge rule: build/validate candidate và review generation mới.
+- Promote generation mới hoặc đổi `data/books-dict.json`: chạy `python3 -m pipeline.lookup_route_handles --write` rồi `--check` trước build (build từ chối ledger slug lệch pin hay tập mã), và `node scripts/report-zh-gaps.mjs` để báo cáo zh thiếu chữ khớp dữ liệu; slug đã cấp không đổi, mã rời corpus chuyển sang `retired`.
 - Đổi hero/tactic/catalog bytes: promote cả bundle bốn file; không thay từng file.
 - Đổi semantic runtime MCP: chạy `npm --prefix mcp-worker run generate:workflow-build`, commit generated identity rồi chạy `check`.
 - Đổi public manifest/build verifier/router: chạy root check, build, dist verifier, dev contract và Astro E2E.

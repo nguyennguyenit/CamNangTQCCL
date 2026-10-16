@@ -10,9 +10,24 @@ export function normalizeLocale(value) {
   return String(value || '').toLowerCase().startsWith('zh') ? 'zh' : DEFAULT_LOCALE;
 }
 
-/** Ngôn ngữ trang hiện tại; ngoài trình duyệt (Node test, build) luôn là `vi`. */
+/** Ngôn ngữ đang được ép tạm bởi `withLocale` (dựng cây view cho một locale tường minh); `null` khi không ép. */
+let scopedLocale = null;
+
+/** Ngôn ngữ trang hiện tại; ngoài trình duyệt (Node test, build) mặc định `vi` trừ khi đang trong `withLocale`. */
 export function currentLocale(doc = globalThis.document) {
+  if (scopedLocale !== null && doc === globalThis.document) return scopedLocale;
   return normalizeLocale(doc?.documentElement?.lang);
+}
+
+/**
+ * Chạy `run` đồng bộ với ngôn ngữ trang là `locale` (không cần `document`): builder cây view dùng `L()` /
+ * `currentLocale()` nên cần biết ngôn ngữ khi dựng HTML lúc build. `locale` rỗng thì chạy nguyên trạng.
+ */
+export function withLocale(locale, run) {
+  if (locale === undefined || locale === null) return run();
+  const previous = scopedLocale;
+  scopedLocale = normalizeLocale(locale);
+  try { return run(); } finally { scopedLocale = previous; }
 }
 
 /** Chọn chuỗi theo ngôn ngữ chỉ định. Dùng ở Astro (locale tường minh) và nơi cần locale cố định. */

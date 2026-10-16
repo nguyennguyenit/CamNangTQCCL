@@ -174,6 +174,8 @@ test('theme tối: thẻ, sidebar, header và footer tách lớp khỏi nền tr
   for (const theme of ['dark', 'light']) {
     await page.addInitScript((value) => { try { localStorage.setItem('theme', value); } catch { /* storage bị chặn */ } }, theme);
     await page.goto('/doi-chuan/');
+    // Sidebar lọc do app.js dựng: chờ khởi động xong (thẻ dựng sẵn đã hiện từ trước).
+    await expect(page.locator('body')).toHaveAttribute('data-boot', 'ready');
     await expect(page.locator('#section-team-chuan .team-card').first()).toBeVisible();
     const measured = await page.evaluate(() => {
       const style = (selector) => getComputedStyle(document.querySelector(selector));

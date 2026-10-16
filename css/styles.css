@@ -4757,6 +4757,11 @@ main.layout:has(> .detail-content) {
   gap: var(--space-36);
 }
 
+/* Thân dựng sẵn có nội dung: `hidden` (đang tải biến thể, lỗi xác minh) phải thật sự ẩn, không để `display:flex` đè lên. */
+#team-detail-body[hidden] {
+  display: none;
+}
+
 /* ---------- Hàng quay lại: link chữ có mũi tên, vùng bấm 44px ---------- */
 .detail-back-row {
   margin: 0;
@@ -6055,6 +6060,22 @@ body[data-page-section="lookup"] .layout {
 .lookup-more-note {
   color: var(--muted);
   font: var(--type-meta);
+}
+
+/* Trang nhóm dựng sẵn MỌI mục; có JavaScript (`html[data-lookup-js]`, đặt trong <head> của trang) thì chỉ trang đầu hiện,
+   phần sau do "Xem thêm" mở. Không JavaScript thì hiện đủ và bỏ hàng "Xem thêm" (nút không còn tác dụng). */
+html[data-lookup-js] [data-lookup-later] {
+  display: none;
+}
+
+html:not([data-lookup-js]) #section-lookup .lookup-more-row {
+  display: none;
+}
+
+/* Bốn trang danh sách đội: thân dựng sẵn là trạng thái mặc định. Trang mở ở trạng thái khác (script inline sau mount gắn
+   `data-ssr-stale`) thì ẩn danh sách — vẫn giữ chỗ — đến khi js/app.js dựng đúng trạng thái và gỡ dấu. */
+.section[data-ssr-stale] :is(.reference-view, .coexist-group-view) {
+  visibility: hidden;
 }
 
 /* Đội chuẩn / Đội khác dùng chung hàng "Xem thêm"; hết đội thì bỏ cả khoảng trống của hàng. */
@@ -7648,6 +7669,28 @@ body[data-page-section="lookup"] .layout {
   }
 }
 
+/* ---------- Trang riêng của một mục Tra cứu ---------- */
+.lookup-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  min-width: 0;
+}
+
+.lookup-item .lookup-dialog.is-page {
+  width: 100%;
+  box-shadow: none;
+  border: var(--border-hair) solid var(--line);
+}
+
+/* Chi tiết bốn nhóm catalog trên trang riêng: cùng khung thẻ với panel bên phải của trang nhóm, luôn hiện (cả mobile). */
+.lookup-item .lookup-detail-panel {
+  display: block;
+  position: static;
+  max-height: none;
+  overflow: visible;
+}
+
 /* ---------- Hộp thoại hồ sơ ---------- */
 .lookup-dialog-open {
   overflow: hidden;
@@ -8201,6 +8244,33 @@ body[data-page-section="lookup"] .layout {
   display: flex;
   flex-direction: column;
   gap: var(--space-10);
+}
+
+/* Trang riêng mang đủ phiên bản hiệu ứng; bản đang không chọn phải thật sự ẩn, không để `display:flex` đè lên `hidden`. */
+.lookup-tactic-effect-body[hidden] {
+  display: none;
+}
+
+/* Nhãn phiên bản đầu mỗi panel hiệu ứng (chiến pháp, cải tạo binh chủng). Có JavaScript (`html[data-lookup-js]`) thì nút
+   chọn phiên bản đã nói bản nào đang hiện nên nhãn ẩn và bản cũ giữ `hidden`; không JavaScript thì nút vô tác dụng nên ẩn,
+   mọi panel hiện kèm nhãn của mình (bản cũ vẫn đọc được). */
+.lookup-effect-version-label {
+  width: fit-content;
+  margin: 0;
+}
+
+html[data-lookup-js] .lookup-effect-version-label,
+html:not([data-lookup-js]) .lookup-version-buttons,
+html:not([data-lookup-js]) .lookup-effect-tabs {
+  display: none;
+}
+
+html:not([data-lookup-js]) .lookup-tactic-effect-body[hidden] {
+  display: flex;
+}
+
+html:not([data-lookup-js]) .lookup-effect-text[hidden] {
+  display: block;
 }
 
 .lookup-tactic-effect-text {
