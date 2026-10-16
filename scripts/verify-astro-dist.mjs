@@ -43,6 +43,8 @@ export const STATIC_PUBLIC_ARTIFACTS = Object.freeze([
 /** Thư mục public tĩnh phải được copy nguyên trạng vào dist: danh sách file khớp và từng byte khớp. */
 export const STATIC_PUBLIC_DIRECTORIES = Object.freeze([
   Object.freeze({ sourcePath: "public/fonts", outputPath: "fonts" }),
+  // Chân dung tướng tự lưu (client Global, không có URL từ xa): `/heroes/<slug>.webp` — xem docs/unified-lookup.md.
+  Object.freeze({ sourcePath: "public/heroes", outputPath: "heroes" }),
 ]);
 
 

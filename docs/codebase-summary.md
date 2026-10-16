@@ -70,8 +70,8 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 |---|---:|
 | `data/teams.json` | 166: 56 team-intro, 110 moi-phe |
 | `data/team-tier.json` | 31 team, 39 rankings |
-| `data/tactics.json` | 406 (Tra cứu thống nhất, [unified-lookup.md](unified-lookup.md)) |
-| `data/heroes-dict.json` | 202 (Tra cứu thống nhất) |
+| `data/tactics.json` | 406 (Tra cứu thống nhất, [unified-lookup.md](unified-lookup.md)); 371 chiến pháp lấy chữ/số liệu client Global (`pipeline/lookup-client-tactics.json`) |
+| `data/heroes-dict.json` | 252 = 202 baseline/SGSDeck + 50 từ client Global (`pipeline/lookup-client-heroes.json`) — Tra cứu thống nhất; chân dung tự lưu ở `public/heroes/` |
 | `data/books-dict.json` | 68 |
 | `data/coexist.json` | 5 nhóm, 25 team |
 | `data/khaihoang.json` | 17 team, 5 mỏ |

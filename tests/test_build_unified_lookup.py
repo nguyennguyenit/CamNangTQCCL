@@ -6,6 +6,9 @@ import shutil
 import unittest
 from pathlib import Path
 
+from unittest import mock
+
+from pipeline import build_unified_lookup as build_module
 from pipeline.build_unified_lookup import _validate_payloads, build_candidate, validate_candidate
 
 
@@ -72,16 +75,16 @@ class BuildUnifiedLookupTest(unittest.TestCase):
             by_name = {row["viet"]: row for row in heroes}
             expected = {
                 "Hạ Hầu Đôn": ("thuan", "S"),
-                "Vương Nguyên Cơ": ("mi", "80"),
-                "Nhạc Tiến": ("toc", "58"),
-                "Trương Xuân Hoa": ("mi", "75"),
-                "Quan Ngân Bình": ("mi", "79"),
-                "Mã Vân Lộc": ("mi", "75"),
+                "Vương Nguyên Cơ": ("mi", "50"),
+                "Nhạc Tiến": ("toc", "68"),
+                "Trương Xuân Hoa": ("mi", "68"),
+                "Quan Ngân Bình": ("mi", "50"),
+                "Mã Vân Lộc": ("mi", "47"),
                 "Lỗ Túc": ("cung", "S"),
                 "Lữ Mông": ("cung", "S"),
-                "Lữ Linh Ỷ": ("mi", "74"),
+                "Lữ Linh Ỷ": ("mi", "34"),
                 "SP Lữ Mông": ("cung", "S"),
-                "Đổng Bạch": ("mi", "77"),
+                "Đổng Bạch": ("mi", "57"),
             }
             for name, (field, value) in expected.items():
                 row = by_name[name]
@@ -106,7 +109,8 @@ class BuildUnifiedLookupTest(unittest.TestCase):
             baseline_tactics = json.loads((ROOT / "pipeline" / "lookup-inputs" / "tactics.json").read_bytes())
             output_tactics = {row["id"]: row for row in tactics}
             for baseline in baseline_tactics:
-                identifier = next(row["id"] for row in tactics if row["viet"] == baseline["viet"])
+                # Tên client thay `viet`; tên baseline còn ở `hanViet`.
+                identifier = next(row["id"] for row in tactics if baseline["viet"] in (row["viet"], row["hanViet"]))
                 self.assertEqual(type(output_tactics[identifier].get("target")), type(baseline.get("target")))
 
     def test_acquisition_union_revisions_rates_and_pending_are_semantic(self):
@@ -176,7 +180,8 @@ class BuildUnifiedLookupTest(unittest.TestCase):
             self._build(output)
             tactics = json.loads((output / "tactics.json").read_bytes())
             by_id = {row["id"]: row for row in tactics}
-            self.assertEqual(by_id["tactic:thien-uy-khieu-tran"]["lookup"]["activationRate"], 0.5)
+            # Hiệu chỉnh nguồn (0.5) vẫn được ledger ghi; giá trị phát hành là số của client Global (đầy cấp 55%).
+            self.assertEqual(by_id["tactic:thien-uy-khieu-tran"]["lookup"]["activationRate"], 0.55)
             for row in tactics:
                 rate = row["lookup"]["activationRate"]
                 self.assertTrue(rate is None or 0 <= rate <= 1, row["id"])
@@ -524,6 +529,225 @@ class BuildUnifiedLookupTest(unittest.TestCase):
                     generation_path.write_bytes(json.dumps(generation, ensure_ascii=False, sort_keys=True, indent=2).encode() + b"\n")
                     with self.assertRaisesRegex(ValueError, expected_error):
                         validate_candidate(output)
+
+
+class ClientHeroSupplementTest(unittest.TestCase):
+    def setUp(self):
+        self.directory = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, self.directory, ignore_errors=True)
+        self.heroes_dir = self.directory / "heroes"
+        self.heroes_dir.mkdir()
+        for name in ("tao-ngang", "chu-hang"):
+            (self.heroes_dir / f"{name}.webp").write_bytes(b"RIFF")
+        patcher = mock.patch.object(build_module, "PUBLIC_HEROES_DIR", self.heroes_dir)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def _hero(self, **overrides):
+        hero = {
+            "id": "hero:tao-ngang", "viet": "Tào Ngang", "chinese": "曹昂", "aliasesVi": [],
+            "faction": "Ngụy", "stars": 2, "cost": "3", "isSP": False, "variant": "base",
+            "stats": {"luc": "67", "tri": "69", "thong": "74", "toc": "34", "chinh": "68", "mi": "77"},
+            "growth": {"luc": 0.68, "tri": 0.17, "thong": 0.31, "toc": 0.15, "chinh": 0.1, "mi": 0.1},
+            "troopApt": {"ky": "B", "thuan": "C", "cung": "C", "thuong": "B", "khiGioi": "C"},
+            "roleTag": "武", "roleTagViet": "Vũ lực", "selfTacticVi": "An Ủi Quân Dân",
+            "portrait": "/heroes/tao-ngang.webp",
+        }
+        hero.update(overrides)
+        return hero
+
+    def _build(self, *, heroes=(), portraits=None, overrides=None, role_tags=None, aliases=None):
+        # Ghim GOLDEN_HERO_DELTAS theo client: fixture mang đúng các `stats` đã duyệt của 7 tướng đó.
+        real = json.loads((ROOT / "pipeline" / "lookup-client-heroes.json").read_bytes())["overrides"]
+        pinned = {key: {"stats": real[key]["stats"]} for key in ("hero:vuong-nguyen-co", "hero:nhac-tien", "hero:truong-xuan-hoa", "hero:quan-ngan-binh", "hero:ma-van-loc", "hero:lu-linh-y", "hero:dong-bach")}
+        overrides = {**pinned, **(overrides or {})}
+        document = {
+            "schemaVersion": 1,
+            "source": {"kind": "game-client", "edition": "Global", "client": "Tam Quốc Chí - Chiến Lược", "version": "24.526", "screen": "Võ Tướng > Minh Giám", "capturedAt": "2026-10-15"},
+            "heroes": list(heroes), "portraits": portraits or {}, "overrides": overrides or {}, "roleTags": role_tags or {}, "aliases": aliases or {},
+        }
+        path = self.directory / "client.json"
+        path.write_text(json.dumps(document, ensure_ascii=False), encoding="utf-8")
+        output = self.directory / "candidate"
+        shutil.rmtree(output, ignore_errors=True)
+        build_candidate(
+            inputs=ROOT / "pipeline" / "lookup-inputs", source=ROOT / "data" / "sgsdeck",
+            identity=ROOT / "pipeline" / "lookup-identity.json", translations=ROOT / "pipeline" / "lookup-translations.json",
+            client_heroes=path, output=output,
+        )
+        return output
+
+    def test_valid_client_hero_is_emitted_after_existing_heroes(self):
+        output = self._build(heroes=[self._hero()], portraits={"hero:chu-hang": "/heroes/chu-hang.webp"})
+        heroes = json.loads((output / "heroes-dict.json").read_bytes())
+        by_id = {row["id"]: row for row in heroes}
+        self.assertEqual(heroes[-1]["id"], "hero:tao-ngang")
+        row = heroes[-1]
+        self.assertEqual((row["iconUrl"], row["aliases"], row["hanViet"], row["selfTacticCn"], row["pending"]), ("/heroes/tao-ngang.webp", ["曹昂"], "Tào Ngang", None, False))
+        self.assertEqual(row["lookup"]["selfTacticId"], "tactic:an-ui-quan-dan")
+        self.assertEqual((row["lookup"]["cardPacks"], row["lookup"]["usageVi"], row["lookup"]["flags"]["isSp"]), ([], None, False))
+        self.assertIn("usage", row["lookup"]["missingFields"])
+        self.assertNotIn("innateTacticId", row["lookup"]["missingFields"])
+        self.assertEqual(by_id["hero:chu-hang"]["iconUrl"], "/heroes/chu-hang.webp")
+        validate_candidate(output, client_heroes=self.directory / "client.json")
+        ledger = json.loads((output / "ledger.json").read_bytes())
+        self.assertTrue(any(item["entityId"] == "hero:tao-ngang" and item["chosenInput"] == "client-capture" for item in ledger))
+
+    def test_unknown_self_tactic_name_is_not_linked(self):
+        output = self._build(heroes=[self._hero(selfTacticVi="Không Có Chiến Pháp Này")])
+        row = json.loads((output / "heroes-dict.json").read_bytes())[-1]
+        self.assertIsNone(row["lookup"]["selfTacticId"])
+        self.assertIn("innateTacticId", row["lookup"]["missingFields"])
+
+    def test_collision_with_existing_hero_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "collides"):
+            self._build(heroes=[self._hero(id="hero:ha-hau-don", viet="Hạ Hầu Đôn")])
+
+    def test_id_must_match_canonical_name(self):
+        with self.assertRaisesRegex(ValueError, "does not match"):
+            self._build(heroes=[self._hero(id="hero:khac")])
+
+    def test_name_with_trailing_annotation_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "parenthetical"):
+            self._build(heroes=[self._hero(id="hero:tao-ngang-khan-vang", viet="Tào Ngang (Khăn Vàng)")])
+
+    def test_portrait_for_hero_with_remote_icon_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "override an existing icon"):
+            self._build(portraits={"hero:ha-hau-don": "/heroes/tao-ngang.webp"})
+
+    def test_bad_or_missing_portrait_is_rejected(self):
+        for portrait in ("/heroes/Tao-Ngang.webp", "heroes/tao-ngang.webp", "//evil.example/x.webp", "https://x.example/a.webp", "/heroes/tao-ngang.png", "/heroes/missing.webp"):
+            with self.subTest(portrait=portrait), self.assertRaisesRegex(ValueError, "portrait"):
+                self._build(heroes=[self._hero(portrait=portrait)])
+
+    def test_override_replaces_built_value_and_is_ledgered(self):
+        output = self._build(overrides={"hero:ha-hau-don": {"cost": "99", "troopApt": {"ky": "C", "thuan": "S", "cung": "C", "thuong": "C", "khiGioi": "C"}}})
+        row = next(item for item in json.loads((output / "heroes-dict.json").read_bytes()) if item["id"] == "hero:ha-hau-don")
+        self.assertEqual((row["cost"], row["troopApt"]["ky"]), ("99", "C"))
+        ledger = json.loads((output / "ledger.json").read_bytes())
+        self.assertTrue(any(item["fieldPath"] == "clientCapture.overrides.cost" and item["localValueHash"] for item in ledger))
+
+    def test_noop_and_malformed_overrides_are_rejected(self):
+        built = {item["id"]: item for item in json.loads((ROOT / "data" / "heroes-dict.json").read_bytes())}
+        with self.assertRaisesRegex(ValueError, "no-op"):
+            self._build(overrides={"hero:ha-hau-don": {"faction": built["hero:ha-hau-don"]["faction"]}})
+        with self.assertRaisesRegex(ValueError, "key set"):
+            self._build(overrides={"hero:ha-hau-don": {"stats": {"luc": "1"}}})
+        with self.assertRaisesRegex(ValueError, "override is invalid"):
+            self._build(overrides={"hero:khong-co": {"cost": "3"}})
+
+    def test_role_tag_override_applies_and_requires_both_fields(self):
+        output = self._build(overrides={"hero:ha-hau-don": {"roleTag": "聯", "roleTagViet": "Liên"}})
+        row = next(item for item in json.loads((output / "heroes-dict.json").read_bytes()) if item["id"] == "hero:ha-hau-don")
+        self.assertEqual((row["roleTag"], row["roleTagViet"]), ("聯", "Liên"))
+        ledger = json.loads((output / "ledger.json").read_bytes())
+        self.assertTrue(any(item["fieldPath"] == "clientCapture.overrides.roleTag" and item["localValueHash"] for item in ledger))
+        with self.assertRaisesRegex(ValueError, "together"):
+            self._build(overrides={"hero:ha-hau-don": {"roleTag": "聯"}})
+        built = next(item for item in json.loads((ROOT / "data" / "heroes-dict.json").read_bytes()) if item["id"] == "hero:ha-hau-don")
+        with self.assertRaisesRegex(ValueError, "no-op"):
+            self._build(overrides={"hero:ha-hau-don": {"roleTag": built["roleTag"], "roleTagViet": built["roleTagViet"]}})
+
+    def test_role_tags_only_fill_empty_tags(self):
+        with self.assertRaisesRegex(ValueError, "existing tag"):
+            self._build(role_tags={"hero:ha-hau-don": {"roleTag": "戰", "roleTagViet": "Chiến"}})
+        with self.assertRaisesRegex(ValueError, "roleTags entry is invalid"):
+            self._build(role_tags={"hero:khong-co": {"roleTag": "戰", "roleTagViet": "Chiến"}})
+
+    def test_aliases_are_appended_and_duplicates_rejected(self):
+        output = self._build(aliases={"hero:ha-hau-don": ["Tên Mới Của Client"]})
+        row = next(item for item in json.loads((output / "heroes-dict.json").read_bytes()) if item["id"] == "hero:ha-hau-don")
+        self.assertEqual(row["aliases"][-1], "Tên Mới Của Client")
+        with self.assertRaisesRegex(ValueError, "duplicates"):
+            self._build(aliases={"hero:ha-hau-don": ["Hạ Hầu Đôn"]})
+        with self.assertRaisesRegex(ValueError, "duplicates"):
+            self._build(aliases={"hero:ha-hau-don": ["Một", "Một"]})
+
+    def test_supplement_must_have_exact_shape(self):
+        with self.assertRaisesRegex(ValueError, "entry shape"):
+            self._build(heroes=[{**self._hero(), "extra": 1}])
+
+
+class ClientTacticCaptureTest(unittest.TestCase):
+    ALL_TROOPS = ["Kỵ binh", "Khiên binh", "Cung binh", "Thương binh", "Khí giới"]
+
+    def setUp(self):
+        self.directory = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, self.directory, ignore_errors=True)
+
+    def _entry(self, **overrides):
+        entry = {
+            "nameVi": "Cứu trợ", "quality": "B", "type": "ACTIVE", "activationRate": 0.4,
+            "troopFit": list(self.ALL_TROOPS), "targetVi": "Một quân Đồng Minh", "effectTypeVi": "Trị liệu",
+            "effectVi": "Khiến một quân ta nhận trạng thái Cấp cứu, mỗi khi nhận phải sát thương có 50% xác suất hồi phục Binh Lực nhất định (tỷ lệ Trị Liệu 37.5%→75%, bị Trí Lực ảnh hưởng), duy trì 2 hiệp",
+            "maxUsers": None, "exchangeConditionVi": None,
+        }
+        entry.update(overrides)
+        return entry
+
+    def _build(self, tactics):
+        document = {
+            "schemaVersion": 1,
+            "source": {"kind": "game-client", "edition": "Global", "client": "Tam Quốc Chí - Chiến Lược", "version": "24.526", "screen": "Chiến Pháp > Toàn bộ", "capturedAt": "2026-10-16"},
+            "tactics": tactics,
+        }
+        path = self.directory / "client-tactics.json"
+        path.write_text(json.dumps(document, ensure_ascii=False), encoding="utf-8")
+        output = self.directory / "candidate"
+        shutil.rmtree(output, ignore_errors=True)
+        build_candidate(
+            inputs=ROOT / "pipeline" / "lookup-inputs", source=ROOT / "data" / "sgsdeck",
+            identity=ROOT / "pipeline" / "lookup-identity.json", translations=ROOT / "pipeline" / "lookup-translations.json",
+            client_tactics=path, output=output,
+        )
+        return output
+
+    @staticmethod
+    def _rows(output, name):
+        return {row["id"]: row for row in json.loads((output / name).read_bytes())}
+
+    def test_client_values_replace_built_values_with_ledger_evidence(self):
+        output = self._build({"tactic:vien-cuu": self._entry(maxUsers=1, exchangeConditionVi="Sự kiện Thử — Lưu Bị (Thục): cần 1 thẻ")})
+        row = self._rows(output, "tactics.json")["tactic:vien-cuu"]
+        self.assertEqual((row["id"], row["viet"], row["hanViet"]), ("tactic:vien-cuu", "Cứu trợ", "Viện Cứu"))
+        self.assertNotIn("Cứu trợ", row["aliases"])
+        self.assertEqual((row["targetViet"], row["troopFit"], row["effectViet"].startswith("Khiến một quân ta")), ("Một quân Đồng Minh", self.ALL_TROOPS, True))
+        self.assertEqual((row["lookup"]["activationRate"], row["lookup"]["effectTypeVi"], row["lookup"]["maxUsers"]), (0.4, "Trị liệu", 1))
+        self.assertEqual(row["lookup"]["exchangeConditionVi"], "Sự kiện Thử — Lưu Bị (Thục): cần 1 thẻ")
+        validate_candidate(output, client_tactics=self.directory / "client-tactics.json")
+        ledger = [item for item in json.loads((output / "ledger.json").read_bytes()) if item["sourceRecordId"] == "client-tactics:vien-cuu"]
+        self.assertIn("clientCapture.effectVi", {item["fieldPath"] for item in ledger})
+        self.assertTrue(all(item["chosenInput"] == "client-capture" for item in ledger))
+
+    def test_current_revision_keeps_its_date_only_when_numbers_match(self):
+        same = "Chiến đấu 3 hiệp đầu, khiến sát thương của Tập thể quân ta (2 người) gây ra giảm 12%→24%, sát thương phải chịu giảm 12%→24% (bị Thống Soái ảnh hưởng), khi chiến đấu hiệp thứ 4, hồi phục Binh Lực (tỷ lệ Trị Liệu 63%→126%, bị Trí Lực ảnh hưởng)"
+        entry = self._entry(nameVi="An Ủi Quân Dân", quality="S", type="ACTIVE", activationRate=1, targetVi="Tập thể quân ta (2 người)", effectTypeVi="Tăng ích", effectVi=same)
+        revisions = self._rows(self._build({"tactic:an-ui-quan-dan": entry}), "tactics.json")["tactic:an-ui-quan-dan"]["lookup"]["revisions"]
+        self.assertEqual([(item["effectiveDate"], item["isCurrent"]) for item in revisions], [("2021-06-09", True), (None, False)])
+        self.assertEqual(revisions[0]["textVi"], same)
+        changed = same.replace("12%→24%", "15%→30%")
+        revisions = self._rows(self._build({"tactic:an-ui-quan-dan": {**entry, "effectVi": changed}}), "tactics.json")["tactic:an-ui-quan-dan"]["lookup"]["revisions"]
+        self.assertEqual([(item["labelVi"], item["effectiveDate"], item["isCurrent"]) for item in revisions], [("Bản hiện hành", None, True), ("Bản 2021-06-09", "2021-06-09", False), ("Bản gốc", None, False)])
+        self.assertEqual(revisions[0]["textVi"], changed)
+
+    def test_client_tactic_name_links_client_hero_innate_tactic(self):
+        self.assertIsNone(self._rows(self._build({}), "heroes-dict.json")["hero:dao-khiem"]["lookup"]["selfTacticId"])
+        heroes = self._rows(self._build({"tactic:vien-cuu": self._entry()}), "heroes-dict.json")
+        self.assertEqual(heroes["hero:dao-khiem"]["lookup"]["selfTacticId"], "tactic:vien-cuu")
+
+    def test_invalid_entries_are_rejected(self):
+        for tactics, error in (
+            ({"tactic:khong-co": self._entry()}, "entry is invalid"),
+            ({"tactic:vien-cuu": {**self._entry(), "extra": 1}}, "entry is invalid"),
+            ({"tactic:vien-cuu": self._entry(troopFit=["Khiên binh", "Kỵ binh"])}, "value is invalid"),
+            ({"tactic:vien-cuu": self._entry(troopFit=["Bộ binh"])}, "value is invalid"),
+            ({"tactic:vien-cuu": self._entry(activationRate=40)}, "value is invalid"),
+            ({"tactic:vien-cuu": self._entry(type="Chủ động")}, "value is invalid"),
+            ({"tactic:vien-cuu": self._entry(effectVi=" ")}, "effectVi is invalid"),
+        ):
+            with self.subTest(error=error, tactics=tactics), self.assertRaisesRegex(ValueError, error):
+                self._build(tactics)
+
 
 
 if __name__ == "__main__":

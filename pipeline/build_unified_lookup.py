@@ -24,6 +24,18 @@ from pipeline.unified_lookup_identity import _child_row, _fingerprint, _slug, _s
 
 
 SOURCE_GROUPS = ("generals", "tactics", "equipment", "advisors", "troop-mods", "buildings")
+CLIENT_HEROES_FILE = Path(__file__).with_name("lookup-client-heroes.json")
+PUBLIC_HEROES_DIR = Path(__file__).resolve().parents[1] / "public" / "heroes"
+CLIENT_PORTRAIT_PATTERN = re.compile(r"/heroes/([a-z0-9-]+)\.webp")
+CLIENT_SOURCE_KEYS = {"kind", "edition", "client", "version", "screen", "capturedAt"}
+CLIENT_HERO_KEYS = {"id", "viet", "chinese", "aliasesVi", "faction", "stars", "cost", "isSP", "variant", "stats", "growth", "troopApt", "roleTag", "roleTagViet", "selfTacticVi", "portrait"}
+CLIENT_STAT_KEYS = ("luc", "tri", "thong", "toc", "chinh", "mi")
+CLIENT_APTITUDE_KEYS = ("ky", "thuan", "cung", "thuong", "khiGioi")
+# Trường SGSDeck mà bản capture từ client không có; tên theo thuộc tính nguồn như `missingFields` của SGSDeck.
+CLIENT_MISSING_FIELDS = ("adaptInfantry", "adaptNavy", "advisorSkillId", "cardPacks", "civil", "civilInnatePoints", "inheritedTacticName", "isCO", "isCollectible", "isDynamicOpen", "isMusou", "usage")
+CLIENT_TACTICS_FILE = Path(__file__).with_name("lookup-client-tactics.json")
+CLIENT_TACTIC_KEYS = {"nameVi", "quality", "type", "activationRate", "troopFit", "targetVi", "effectTypeVi", "effectVi", "maxUsers", "exchangeConditionVi"}
+CLIENT_TACTIC_TYPES = {"COMMAND", "ACTIVE", "BURST", "PASSIVE", "TROOP", "FORMATION", "INTERNAL"}
 PUBLIC_FILES = ("heroes-dict.json", "tactics.json", "lookup-catalog.json")
 MISSING_TEXT = {"待補充", "待补充"}
 FACTIONS = {"WEI": "Ngụy", "SHU": "Thục", "WU": "Ngô", "QUN": "Quần", "HAN": "Hán"}
@@ -44,16 +56,17 @@ TACTIC_LOOKUP_KEYS = {"conditions", "missingFields", "revisions", "activationRat
 SLOTS = {"武器": "Vũ khí", "防具": "Phòng cụ", "坐騎": "Tọa kỵ", "寶物": "Bảo vật", "WEAPON": "Vũ khí", "ARMOR": "Phòng cụ", "MOUNT": "Tọa kỵ", "TREASURE": "Bảo vật"}
 GOLDEN_HERO_DELTAS = {
     "hero:ha-hau-don": ("troopApt", "thuan", "S"),
-    "hero:vuong-nguyen-co": ("stats", "mi", "80"),
-    "hero:nhac-tien": ("stats", "toc", "58"),
-    "hero:truong-xuan-hoa": ("stats", "mi", "75"),
-    "hero:quan-ngan-binh": ("stats", "mi", "79"),
-    "hero:ma-van-loc": ("stats", "mi", "75"),
+    "hero:vuong-nguyen-co": ("stats", "mi", "50"),
+    "hero:nhac-tien": ("stats", "toc", "68"),
+    "hero:truong-xuan-hoa": ("stats", "mi", "68"),
+    "hero:quan-ngan-binh": ("stats", "mi", "50"),
+    "hero:ma-van-loc": ("stats", "mi", "47"),
     "hero:lo-tuc": ("troopApt", "cung", "S"),
     "hero:lu-mong": ("troopApt", "cung", "S"),
-    "hero:lu-linh-y": ("stats", "mi", "74"),
+    "hero:lu-linh-y": ("stats", "mi", "34"),
     "hero:sp-lu-mong": ("troopApt", "cung", "S"),
-    "hero:dong-bach": ("stats", "mi", "77"),
+    "hero:dong-bach": ("stats", "mi", "57"),
+    # Các ghim trên phản ánh client Global 24.526 (nguồn có thẩm quyền, qua `overrides` của lookup-client-heroes.json).
 }
 # Hiệu chỉnh giá trị nguồn đã review (Kongming ruling). Chỉ tra cứu thuần tại điểm adopt:
 # KHÔNG sửa source_docs/attrs, vì fingerprint dịch và sourceValueHash của ledger phải đọc giá trị thô.
@@ -568,11 +581,13 @@ def _public_card_packs(guide_doc):
     }
 
 
-def _captured(inputs, source, identity, translations):
+def _captured(inputs, source, identity, translations, client_heroes, client_tactics):
     baseline = _capture_dir(inputs, ("heroes-dict.json", "tactics.json", "manifest.json"))
     source_bytes = _capture_dir(source, tuple(f"{name}.json" for name in SOURCE_GROUPS) + ("manifest.json",))
     identity_bytes = _capture_file(identity)
     translation_bytes = _capture_file(translations)
+    client_bytes = _capture_file(client_heroes)
+    client_tactic_bytes = _capture_file(client_tactics)
     mapping_path, guide_path = _sibling_inputs(identity)
     mapping_bytes = _capture_file(mapping_path)
     guide_bytes = _capture_file(guide_path)
@@ -599,6 +614,8 @@ def _captured(inputs, source, identity, translations):
         "translations": translation_bytes,
         "mapping": mapping_bytes,
         "guide": guide_bytes,
+        "clientHeroes": client_bytes,
+        "clientTactics": client_tactic_bytes,
     }
 
 
@@ -744,6 +761,345 @@ def _is_meaningful_empty_source(group, path, value):
 
 
 
+def _client_portrait(value, owner):
+    match = CLIENT_PORTRAIT_PATTERN.fullmatch(value) if isinstance(value, str) else None
+    if match is None:
+        raise ValueError(f"client portrait path is invalid: {owner}")
+    file = PUBLIC_HEROES_DIR / f"{match.group(1)}.webp"
+    if file.is_symlink() or not file.is_file():
+        raise ValueError(f"client portrait file is missing: {owner}")
+    return value
+
+
+def _client_text(value, owner, field, *, nullable=False, empty=False):
+    if value is None and nullable:
+        return None
+    if not isinstance(value, str) or (not empty and not value.strip()):
+        raise ValueError(f"client hero {field} is invalid: {owner}")
+    return value
+
+
+CLIENT_OVERRIDE_KEYS = {"stats", "growth", "troopApt", "cost", "stars", "faction", "roleTag", "roleTagViet"}
+
+
+def _validate_client_document(document):
+    if (
+        not isinstance(document, dict)
+        or set(document) != {"schemaVersion", "source", "heroes", "portraits", "overrides", "roleTags", "aliases"}
+        or type(document["schemaVersion"]) is not int
+        or document["schemaVersion"] != 1
+        or not isinstance(document["source"], dict)
+        or set(document["source"]) != CLIENT_SOURCE_KEYS
+        or any(not isinstance(value, str) or not value.strip() for value in document["source"].values())
+        or not isinstance(document["heroes"], list)
+        or not isinstance(document["portraits"], dict)
+        or not isinstance(document["overrides"], dict)
+        or not isinstance(document["roleTags"], dict)
+        or not isinstance(document["aliases"], dict)
+    ):
+        raise ValueError("client hero supplement shape is invalid")
+
+
+def _client_hero(entry):
+    if not isinstance(entry, dict) or set(entry) != CLIENT_HERO_KEYS:
+        raise ValueError("client hero entry shape is invalid")
+    owner = entry["id"]
+    viet = _client_text(entry["viet"], owner, "viet")
+    if re.search(r"\s*[\(（][^()（）]*[\)）]\s*$", viet):
+        # `js/hero-identity.js` bỏ chú thích cuối ngoặc khi lấy canonical ID: tên này sẽ trùng ID với tướng khác ở MCP/Soi đội.
+        raise ValueError(f"client hero name must not end with a parenthetical annotation: {owner}")
+    if owner != canonical_id("hero", viet):
+        raise ValueError(f"client hero id does not match its Vietnamese name: {owner}")
+    chinese = _client_text(entry["chinese"], owner, "chinese")
+    if not _string_list(entry["aliasesVi"]):
+        raise ValueError(f"client hero aliasesVi is invalid: {owner}")
+    if entry["faction"] not in set(FACTIONS.values()):
+        raise ValueError(f"client hero faction is invalid: {owner}")
+    if type(entry["stars"]) is not int or entry["stars"] < 1:
+        raise ValueError(f"client hero stars is invalid: {owner}")
+    cost = _client_text(entry["cost"], owner, "cost")
+    if type(entry["isSP"]) is not bool or entry["variant"] not in {"base", "sp"}:
+        raise ValueError(f"client hero isSP or variant is invalid: {owner}")
+    stats, growth, aptitudes = entry["stats"], entry["growth"], entry["troopApt"]
+    if (
+        not isinstance(stats, dict) or set(stats) != set(CLIENT_STAT_KEYS)
+        or any(not isinstance(value, str) or not value.strip() for value in stats.values())
+        or not isinstance(growth, dict) or set(growth) != set(CLIENT_STAT_KEYS)
+        or any(isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) for value in growth.values())
+        or not isinstance(aptitudes, dict) or set(aptitudes) != set(CLIENT_APTITUDE_KEYS)
+        or any(not isinstance(value, str) or not value.strip() for value in aptitudes.values())
+    ):
+        raise ValueError(f"client hero stats, growth or troopApt is invalid: {owner}")
+    for field in ("roleTag", "roleTagViet", "selfTacticVi"):
+        _client_text(entry[field], owner, field, nullable=True)
+    if entry["portrait"] is not None:
+        _client_portrait(entry["portrait"], owner)
+    return owner, viet, chinese, cost
+
+
+def _apply_client_heroes(document, heroes, tactics, identity):
+    """Append the Global-client heroes and fill missing portraits; returns the field ledger rows."""
+    _validate_client_document(document)
+    taken = {row["id"] for row in heroes} | {row["canonicalId"] for row in identity["decisions"] if str(row.get("canonicalId", "")).startswith("hero:")}
+    existing = {row["id"]: row for row in heroes}
+    ledger = []
+
+    def record(entity, path, value, reason, *, missing=False, previous=None):
+        ledger.append({
+            "entityId": entity, "fieldPath": path, "disposition": "missing-source" if missing else "typed-public",
+            "chosenInput": "none" if missing else "client-capture", "sourceRecordId": f"client-heroes:{entity.removeprefix('hero:')}",
+            "sourceFieldPath": path, "sourceValueHash": _sha(canonical_json_bytes(value)),
+            "localValueHash": _sha(canonical_json_bytes(previous)) if previous not in (None, "") else None,
+            "reason": reason, "translationInputFingerprint": None,
+            "reviewEvidence": ["captured Global client hero supplement", "pipeline/lookup-client-heroes.json"],
+        })
+
+    for owner, portrait in sorted(document["portraits"].items()):
+        if owner not in existing:
+            raise ValueError(f"client portrait targets an unknown hero: {owner}")
+        if existing[owner]["iconUrl"] is not None:
+            raise ValueError(f"client portrait would override an existing icon: {owner}")
+        existing[owner]["iconUrl"] = _client_portrait(portrait, owner)
+        record(owner, "clientCapture.portrait", portrait, "Hero had no remote icon; self-hosted client portrait selected.")
+
+    keys = {"stats": CLIENT_STAT_KEYS, "growth": CLIENT_STAT_KEYS, "troopApt": CLIENT_APTITUDE_KEYS}
+    for owner, override in sorted(document["overrides"].items()):
+        if owner not in existing or not isinstance(override, dict) or not override or not set(override) <= CLIENT_OVERRIDE_KEYS:
+            raise ValueError(f"client override is invalid: {owner}")
+        row = existing[owner]
+        targets = {"stats": row["stats"], "growth": row["lookup"]["growth"], "troopApt": row["troopApt"]}
+        if ("roleTag" in override) != ("roleTagViet" in override):
+            raise ValueError(f"client override roleTag and roleTagViet must be given together: {owner}")
+        if "roleTag" in override:
+            pair = {field: override[field] for field in ("roleTag", "roleTagViet")}
+            for field, value in pair.items():
+                if not isinstance(value, str) or not value.strip():
+                    raise ValueError(f"client override value is invalid: {owner}.{field}")
+            if all(row[field] == value for field, value in pair.items()):
+                raise ValueError(f"client override is a no-op: {owner}.roleTag")
+            for field, value in pair.items():
+                if row[field] != value:
+                    record(owner, f"clientCapture.overrides.{field}", value, "Global client is authoritative; built value replaced.", previous=row[field])
+                    row[field] = value
+        for section, values in sorted(override.items()):
+            if section in ("roleTag", "roleTagViet"):
+                continue
+            if section in keys:
+                if not isinstance(values, dict) or set(values) != set(keys[section]):
+                    raise ValueError(f"client override {section} key set is invalid: {owner}")
+                for key in keys[section]:
+                    value = values[key]
+                    if section == "growth":
+                        valid = not isinstance(value, bool) and isinstance(value, (int, float)) and math.isfinite(value)
+                    elif section == "troopApt":
+                        valid = value in {"S", "A", "B", "C"}
+                    else:
+                        valid = isinstance(value, str) and bool(value.strip())
+                    if not valid:
+                        raise ValueError(f"client override value is invalid: {owner}.{section}.{key}")
+                changed = [key for key in keys[section] if targets[section][key] != values[key]]
+                if not changed:
+                    raise ValueError(f"client override is a no-op: {owner}.{section}")
+                for key in changed:
+                    record(owner, f"clientCapture.overrides.{section}.{key}", values[key], "Global client is authoritative; built value replaced.", previous=targets[section][key])
+                    targets[section][key] = values[key]
+                continue
+            if section == "cost":
+                valid = isinstance(values, str) and bool(values.strip())
+            elif section == "stars":
+                valid = type(values) is int and 1 <= values <= 5
+            else:
+                valid = values in set(FACTIONS.values())
+            if not valid:
+                raise ValueError(f"client override value is invalid: {owner}.{section}")
+            if row[section] == values:
+                raise ValueError(f"client override is a no-op: {owner}.{section}")
+            record(owner, f"clientCapture.overrides.{section}", values, "Global client is authoritative; built value replaced.", previous=row[section])
+            row[section] = values
+
+    for owner, tags in sorted(document["roleTags"].items()):
+        if owner not in existing or not isinstance(tags, dict) or set(tags) != {"roleTag", "roleTagViet"}:
+            raise ValueError(f"client roleTags entry is invalid: {owner}")
+        for field in ("roleTag", "roleTagViet"):
+            _client_text(tags[field], owner, field)
+            if existing[owner][field] is not None:
+                raise ValueError(f"client roleTags would overwrite an existing tag: {owner}.{field}")
+        for field in ("roleTag", "roleTagViet"):
+            existing[owner][field] = tags[field]
+            record(owner, f"clientCapture.roleTags.{field}", tags[field], "Hero had no role tag; Global client label selected.")
+
+    for owner, names in sorted(document["aliases"].items()):
+        if owner not in existing or not _string_list(names) or not names or any(not name.strip() for name in names):
+            raise ValueError(f"client aliases entry is invalid: {owner}")
+        row = existing[owner]
+        for name in names:
+            if name == row["viet"] or name in row["aliases"]:
+                raise ValueError(f"client alias duplicates an existing name: {owner}: {name}")
+            row["aliases"].append(name)
+        record(owner, "clientCapture.aliases", names, "Global client spellings appended to aliases.")
+
+    seen = set()
+    rows = []
+    for entry in document["heroes"]:
+        owner, viet, chinese, cost = _client_hero(entry)
+        if owner in taken or owner in seen:
+            raise ValueError(f"client hero id collides with an existing hero: {owner}")
+        seen.add(owner)
+        rows.append((owner, viet, chinese, cost, entry))
+    tactic_by_name, tactic_by_alias = {}, {}
+    for tactic in tactics:
+        tactic_by_name.setdefault(tactic["viet"], []).append(tactic["id"])
+        for alias in tactic["aliases"]:
+            tactic_by_alias.setdefault(alias, set()).add(tactic["id"])
+    for owner, viet, chinese, cost, entry in sorted(rows, key=lambda item: item[0]):
+        # Tên `viet` khớp trước; không có thì nhận alias trỏ về đúng một chiến pháp (tên client Global được nối làm alias).
+        matches = (tactic_by_name.get(entry["selfTacticVi"]) or sorted(tactic_by_alias.get(entry["selfTacticVi"], ()))) if entry["selfTacticVi"] else []
+        self_tactic = matches[0] if len(matches) == 1 else None
+        missing = list(CLIENT_MISSING_FIELDS)
+        if entry["roleTag"] is None:
+            missing.append("role")
+        if self_tactic is None:
+            missing.append("innateTacticId")
+        missing.sort()
+        heroes.append({
+            "id": owner, "chinese": chinese, "hanViet": viet, "viet": viet,
+            "aliases": list(dict.fromkeys(entry["aliasesVi"] + [chinese])),
+            "faction": entry["faction"], "stars": entry["stars"], "cost": cost,
+            "stats": dict(entry["stats"]), "troopApt": dict(entry["troopApt"]),
+            "selfTacticCn": None, "inheritTacticCn": None,
+            "roleTag": entry["roleTag"], "roleTagViet": entry["roleTagViet"],
+            "iconUrl": entry["portrait"], "isSP": entry["isSP"], "linkScore": None, "pending": False,
+            "lookup": {
+                "conditions": [], "missingFields": missing, "revisions": [], "variant": entry["variant"],
+                "selfTacticId": self_tactic, "inheritTacticId": None, "advisorId": None,
+                "growth": {key: _number_or_none(entry["growth"][key]) for key in CLIENT_STAT_KEYS},
+                "otherAptitudes": {"infantry": None, "navy": None}, "categoryVi": None, "exclusiveTitleVi": None,
+                "civil": {"roleVi": None, "bonusVi": None, "specialtyVi": None, "tacticBonusVi": None},
+                "civilInnatePoints": None, "collectibleBonusVi": None, "redRulesVi": None,
+                "flags": {"isCollectible": None, "isDynamicOpen": None, "isMusou": None, "isCO": None, "isSp": entry["isSP"]},
+                "usageVi": None, "usageZh": None, "cardPacks": [],
+            },
+        })
+        for path, value in _flatten(entry, "clientCapture"):
+            record(owner, path, value, "Captured Global client value selected for the typed public hero projection.")
+        for field in missing:
+            record(owner, f"clientCapture.{field}", None, "Global client capture does not provide this field.", missing=True)
+    return ledger
+
+
+def _validate_client_tactics_document(document):
+    if (
+        not isinstance(document, dict)
+        or set(document) != {"schemaVersion", "source", "tactics"}
+        or type(document["schemaVersion"]) is not int
+        or document["schemaVersion"] != 1
+        or not isinstance(document["source"], dict)
+        or set(document["source"]) != CLIENT_SOURCE_KEYS
+        or any(not isinstance(value, str) or not value.strip() for value in document["source"].values())
+        or not isinstance(document["tactics"], dict)
+    ):
+        raise ValueError("client tactic capture shape is invalid")
+
+
+def _client_tactic_text(value, owner, field, *, nullable=False):
+    if value is None and nullable:
+        return None
+    if not isinstance(value, str) or not value.strip() or value != value.strip():
+        raise ValueError(f"client tactic {field} is invalid: {owner}")
+    return value
+
+
+def _level_numbers(text):
+    return sorted(set(re.findall(r"\d+(?:[.,]\d+)?", text.replace(",", "."))))
+
+
+def _apply_client_effect(row, text):
+    """Chữ client là bản hiện hành tiếng Việt. Bản sửa cũ (từ chữ Hán nguồn) giữ làm lịch sử; mốc ngày của bản
+    hiện hành cũ chỉ giữ khi số liệu client trùng nó, lệch thì bản đó lùi về lịch sử và client không mang ngày."""
+    revisions = row["lookup"]["revisions"]
+    current = next((item for item in revisions if item["isCurrent"]), None)
+    row["effectViet"] = text
+    if current is None or current["textVi"] == text:
+        return
+    if _level_numbers(current["textVi"]) == _level_numbers(text):
+        current["textVi"] = text
+        return
+    date = current["effectiveDate"]
+    current.update({"isCurrent": False, "labelVi": f"Bản {date}" if date else "Bản trước"})
+    revisions.insert(0, {"labelVi": "Bản hiện hành", "effectiveDate": None, "textVi": text, "isCurrent": True})
+
+
+def _apply_client_tactics(document, tactics):
+    """Áp số liệu chụp từ mục Chiến Pháp của client Global (nguồn có thẩm quyền cho bản Việt); trả các dòng ledger."""
+    _validate_client_tactics_document(document)
+    by_id = {row["id"]: row for row in tactics}
+    troop_order = list(TROOPS.values())
+    ledger = []
+
+    def record(owner, path, value, previous):
+        ledger.append({
+            "entityId": owner, "fieldPath": path,
+            "disposition": "typed-public" if previous in (None, "", []) else "corrected-public",
+            "chosenInput": "client-capture", "sourceRecordId": f"client-tactics:{owner.removeprefix('tactic:')}",
+            "sourceFieldPath": path, "sourceValueHash": _sha(canonical_json_bytes(value)),
+            "localValueHash": None if previous in (None, "", []) else _sha(canonical_json_bytes(previous)),
+            "reason": "Global client is authoritative for the Vietnamese edition; built value replaced.",
+            "translationInputFingerprint": None,
+            "reviewEvidence": ["captured Global client tactic", "pipeline/lookup-client-tactics.json"],
+        })
+
+    def assign(owner, target, key, value, path):
+        if target[key] != value:
+            record(owner, path, value, target[key])
+            target[key] = value
+
+    for owner, entry in sorted(document["tactics"].items()):
+        if owner not in by_id or not isinstance(entry, dict) or set(entry) != CLIENT_TACTIC_KEYS:
+            raise ValueError(f"client tactic entry is invalid: {owner}")
+        row, lookup = by_id[owner], by_id[owner]["lookup"]
+        name = _client_tactic_text(entry["nameVi"], owner, "nameVi")
+        rate, max_users, troops = entry["activationRate"], entry["maxUsers"], entry["troopFit"]
+        if (
+            entry["quality"] not in {None, "S", "A", "B"}
+            or entry["type"] not in CLIENT_TACTIC_TYPES
+            or isinstance(rate, bool) or not isinstance(rate, (int, float)) or not 0 < rate <= 1
+            or (max_users is not None and (type(max_users) is not int or max_users < 1))
+            or not _string_list(troops) or not troops or len(set(troops)) != len(troops)
+            or any(value not in troop_order for value in troops)
+            or troops != sorted(troops, key=troop_order.index)
+        ):
+            raise ValueError(f"client tactic value is invalid: {owner}")
+        target = _client_tactic_text(entry["targetVi"], owner, "targetVi")
+        effect_type = _client_tactic_text(entry["effectTypeVi"], owner, "effectTypeVi")
+        effect = _client_tactic_text(entry["effectVi"], owner, "effectVi")
+        exchange = _client_tactic_text(entry["exchangeConditionVi"], owner, "exchangeConditionVi", nullable=True)
+        if name != row["viet"]:
+            # Tên hiển thị theo client; tên cũ giữ ở `hanViet` (Hán-Việt) hoặc thành alias để tra cứu/nối đội cũ vẫn khớp.
+            previous = row["viet"]
+            record(owner, "clientCapture.nameVi", name, previous)
+            row["viet"] = name
+            if previous != row["hanViet"] and previous not in row["aliases"]:
+                row["aliases"].append(previous)
+            if name in row["aliases"]:
+                row["aliases"].remove(name)
+        if entry["quality"] is not None:
+            assign(owner, row, "quality", entry["quality"], "clientCapture.quality")
+        assign(owner, row, "type", entry["type"], "clientCapture.type")
+        assign(owner, row, "troopFit", list(troops), "clientCapture.troopFit")
+        assign(owner, row, "targetViet", target, "clientCapture.targetVi")
+        assign(owner, lookup, "activationRate", rate, "clientCapture.activationRate")
+        assign(owner, lookup, "effectTypeVi", effect_type, "clientCapture.effectTypeVi")
+        if max_users is not None:
+            assign(owner, lookup, "maxUsers", max_users, "clientCapture.maxUsers")
+        if exchange is not None:
+            assign(owner, lookup, "exchangeConditionVi", exchange, "clientCapture.exchangeConditionVi")
+        if row["effectViet"] != effect or any(item["isCurrent"] and item["textVi"] != effect for item in lookup["revisions"]):
+            record(owner, "clientCapture.effectVi", effect, row["effectViet"])
+            _apply_client_effect(row, effect)
+        row["pending"] = not bool(row.get("effect") and row["effectViet"])
+    return ledger
+
+
 def _build_model(capture):
     baseline_heroes = _json(capture["baseline"]["heroes-dict.json"])
     baseline_tactics = _json(capture["baseline"]["tactics.json"])
@@ -875,6 +1231,8 @@ def _build_model(capture):
     orphaned_corrections = set(corrections) - consumed_corrections
     if orphaned_corrections:
         raise ValueError(f"orphaned source value corrections: {sorted(orphaned_corrections)}")
+    client_ledger = _apply_client_tactics(_json(capture["clientTactics"]), tactics)
+    client_ledger += _apply_client_heroes(_json(capture["clientHeroes"]), heroes, tactics, identity)
 
     equipment = []
     for record in source_docs["equipment"]["records"]:
@@ -999,6 +1357,7 @@ def _build_model(capture):
                 )
                 translation_fingerprint_value = specs.get((owner, target_field)) if target_field and selected_fallback else None
                 ledger.append({"entityId": owner, "fieldPath": path, "disposition": "translated-public" if translation_fingerprint_value else "compatibility-preimage", "chosenInput": "local-baseline", "sourceRecordId": None, "sourceFieldPath": None, "sourceValueHash": None, "localValueHash": _sha(canonical_json_bytes(value)), "reason": "Frozen local fallback selected and bound to reviewed Vietnamese output." if translation_fingerprint_value else "Frozen local field retained or explicitly compared before source projection.", "translationInputFingerprint": translation_fingerprint_value, "reviewEvidence": ["frozen baseline manifest", "exact compatibility merge"]})
+    ledger.extend(client_ledger)
     catalog = {"schemaVersion": 1, "equipment": equipment, "specials": specials, "advisors": advisors, "troopMods": troop_mods, "buildings": buildings}
     return heroes, tactics, catalog, ledger, specs
 
@@ -1403,18 +1762,22 @@ def _input_hashes(capture):
         "translations": _sha(capture["translations"]),
         "mapping": _sha(capture["mapping"]),
         "guide": _sha(capture["guide"]),
+        "clientHeroes": _sha(capture["clientHeroes"]),
+        "clientTactics": _sha(capture["clientTactics"]),
     }
 
 
-def build_candidate(*, inputs, source, identity, translations, output, after_capture=None):
-    protected = (inputs, source, identity, translations, *_sibling_inputs(identity))
+def build_candidate(*, inputs, source, identity, translations, output, client_heroes=None, client_tactics=None, after_capture=None):
+    client_heroes = Path(client_heroes) if client_heroes is not None else CLIENT_HEROES_FILE
+    client_tactics = Path(client_tactics) if client_tactics is not None else CLIENT_TACTICS_FILE
+    protected = (inputs, source, identity, translations, client_heroes, client_tactics, *_sibling_inputs(identity))
     output = _ensure_distinct_output(output, protected)
     module_paths = {
         name: Path(__file__).with_name(name)
         for name in ("build_unified_lookup.py", "lookup_translations.py", "sgsdeck_identity.py", "unified_lookup_identity.py")
     }
     execution_bytes = {name: _capture_file(path) for name, path in module_paths.items()}
-    capture = _captured(inputs, source, identity, translations)
+    capture = _captured(inputs, source, identity, translations, client_heroes, client_tactics)
     if after_capture is not None:
         after_capture()
     heroes, tactics, catalog, ledger, _specs, payloads, ledger_bytes = _render_model(capture)
@@ -1474,7 +1837,7 @@ def build_candidate(*, inputs, source, identity, translations, output, after_cap
     return manifest
 
 
-def validate_candidate(candidate, *, inputs=None, source=None, identity=None, translations=None):
+def validate_candidate(candidate, *, inputs=None, source=None, identity=None, translations=None, client_heroes=None, client_tactics=None):
     candidate = Path(candidate)
     if candidate.is_symlink() or not candidate.is_dir():
         raise ValueError("candidate must be a regular directory")
@@ -1506,7 +1869,7 @@ def validate_candidate(candidate, *, inputs=None, source=None, identity=None, tr
         or generation["generationId"] != manifest["generationId"]
         or generation["outputHashes"] != manifest["files"]
         or generation["ledger"] != "ledger.json"
-        or set(generation["inputHashes"]) != {"baselineManifest", "sourceManifest", "identity", "translations", "mapping", "guide"}
+        or set(generation["inputHashes"]) != {"baselineManifest", "sourceManifest", "identity", "translations", "mapping", "guide", "clientHeroes", "clientTactics"}
         or set(generation["executionHashes"]) != {"build_unified_lookup.py", "lookup_translations.py", "sgsdeck_identity.py", "unified_lookup_identity.py"}
         or generation["builderHash"] != generation["executionHashes"]["build_unified_lookup.py"]
         or any(not re.fullmatch(r"[0-9a-f]{64}", value) for value in (*generation["inputHashes"].values(), *generation["executionHashes"].values(), generation["ledgerHash"]))
@@ -1540,7 +1903,9 @@ def validate_candidate(candidate, *, inputs=None, source=None, identity=None, tr
     source = Path(source) if source is not None else repo_root / "data" / "sgsdeck"
     identity = Path(identity) if identity is not None else repo_root / "pipeline" / "lookup-identity.json"
     translations = Path(translations) if translations is not None else repo_root / "pipeline" / "lookup-translations.json"
-    approved = _captured(inputs, source, identity, translations)
+    client_heroes = Path(client_heroes) if client_heroes is not None else repo_root / "pipeline" / "lookup-client-heroes.json"
+    client_tactics = Path(client_tactics) if client_tactics is not None else repo_root / "pipeline" / "lookup-client-tactics.json"
+    approved = _captured(inputs, source, identity, translations, client_heroes, client_tactics)
     approved_input_hashes = _input_hashes(approved)
     module_paths = {
         name: Path(__file__).with_name(name)
@@ -1563,11 +1928,13 @@ def main(argv=None):
     build = subparsers.add_parser("build")
     for flag in ("inputs", "source", "identity", "translations", "output"):
         build.add_argument(f"--{flag}", required=True)
+    build.add_argument("--client-heroes", default=str(CLIENT_HEROES_FILE))
+    build.add_argument("--client-tactics", default=str(CLIENT_TACTICS_FILE))
     validate = subparsers.add_parser("validate")
     validate.add_argument("--candidate", required=True)
     args = parser.parse_args(argv)
     if args.command == "build":
-        result = build_candidate(inputs=args.inputs, source=args.source, identity=args.identity, translations=args.translations, output=args.output)
+        result = build_candidate(inputs=args.inputs, source=args.source, identity=args.identity, translations=args.translations, output=args.output, client_heroes=args.client_heroes, client_tactics=args.client_tactics)
     else:
         result = validate_candidate(args.candidate)
     print(json.dumps(result, ensure_ascii=False, sort_keys=True))

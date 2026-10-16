@@ -4,7 +4,7 @@
 
 Mục **Tra cứu** đọc một generation đã xác minh gồm bốn file công khai:
 
-- `data/heroes-dict.json`: 202 tướng;
+- `data/heroes-dict.json`: 252 tướng (202 từ baseline/SGSDeck + 50 từ client Global; 2 tướng còn `iconUrl` rỗng: Hà Thị và SP Tào Tháo — không có trong Minh Giám Global);
 - `data/tactics.json`: 406 chiến pháp;
 - `data/lookup-catalog.json`: 114 trang bị với 90 đặc kỹ, 39 kỹ năng quân sư, 16 cải tạo binh chủng với 192 lựa chọn, và 41 công trình với 426 cấp;
 - `data/lookup-manifest.json`: hash của ba payload và `generationId`.
@@ -22,6 +22,37 @@ Baseline bất biến ở `pipeline/lookup-inputs/` giữ 112 tướng và 240 c
 `pipeline/lookup-identity.json` ghi 260 quyết định `matched` và 556 quyết định `new`. Quan hệ không đủ chứng cứ giữ `null` kèm trạng thái thay vì đoán; hiện có 33 đặc kỹ không nối parent. Translation fingerprint gắn bản dịch với nội dung nguồn. Nội dung nguồn thay đổi mà fingerprint cũ sẽ chặn build/promotion; thiếu dữ liệu nguồn được phân biệt với nội dung chưa dịch.
 
 Giá trị SGSDeck có nghĩa thắng theo trường. Placeholder hoặc trường thiếu dùng fallback đã review; `0` và `false` là giá trị hợp lệ, không phải thiếu. Mười một delta baseline đã được allowlist và kiểm bằng ID chính xác; xem phase execution thay vì sửa fixture lịch sử.
+
+### Tướng từ client Global (`pipeline/lookup-client-heroes.json`)
+
+Một số tướng không có trong snapshot SGSDeck và không có URL ảnh từ xa. Chúng được chụp tay từ client Global (Tam Quốc Chí - Chiến Lược 24.526, màn **Võ Tướng > Minh Giám**) vào `pipeline/lookup-client-heroes.json`. Client Global là nguồn **có thẩm quyền** cho dữ liệu tướng của site bản Việt Nam. Đây là input capture có hash như identity/translations: byte của nó nằm trong `generation.json` (`inputHashes.clientHeroes`), `validate` và `_assert_lookup_publication` bắt buộc nó khớp candidate, và **file bắt buộc phải tồn tại** (không có thì build dừng; trạng thái rỗng là `heroes: []`, `portraits: {}`, `overrides: {}`, `roleTags: {}`, `aliases: {}` và cho output byte-identical với trước khi có file).
+
+Schema (`schemaVersion: 1`, key set chính xác, build dừng nếu thừa/thiếu):
+
+- `source`: nơi chụp (`kind`, `edition`, `client`, `version`, `screen`, `capturedAt`);
+- `heroes[]`: tướng **chưa có** ở baseline, SGSDeck hay registry. `id` phải bằng `canonical_id("hero", viet)`, không trùng, `faction ∈ {Ngụy, Thục, Ngô, Quần, Hán}`, `variant ∈ {base, sp}`, `stats` là chuỗi, `growth` là số hữu hạn, `troopApt` đủ 5 khóa. `roleTag`, `roleTagViet`, `selfTacticVi`, `portrait` có thể `null`. Builder phát chúng **sau** các tướng cũ, sắp theo `id`, đủ `HERO_KEYS`; `aliases = aliasesVi + [chinese]`, `selfTacticCn`/`inheritTacticCn`/`linkScore` `null`, `cardPacks` rỗng, `usageVi` `null`, `flags.isSp = isSP`, các flag khác `null`. `lookup.selfTacticId` chỉ nối khi `selfTacticVi` khớp **đúng một** `viet` của chiến pháp đã dựng (khớp tuyệt đối, không đoán gần đúng; tên client dịch khác tên dự án thì giữ `null`). `lookup.missingFields` liệt kê các trường nguồn mà capture client không có (`CLIENT_MISSING_FIELDS` cùng `role`/`innateTacticId` khi thiếu);
+- `portraits{}`: ảnh cho tướng **đã có** mà `iconUrl` build ra đang `null`. Có URL từ xa rồi thì build dừng, không ghi đè;
+- `overrides{}`: sửa tướng **đã có**, áp vô điều kiện lên giá trị build (baseline/SGSDeck) vì client Global là nguồn có thẩm quyền cho bản Việt Nam. Mỗi mục có thể gồm `stats` (đủ 6 khóa, chuỗi), `growth` (đủ 6 khóa, số), `troopApt` (đủ 5 khóa, S/A/B/C), `cost` (chuỗi), `stars` (1–5), `faction`. Mục không đổi giá trị nào (no-op) làm build dừng, nên file chỉ giữ các hiệu chỉnh thật. Ledger ghi hash giá trị cũ (`localValueHash`) và nguồn client cho từng trường. `GOLDEN_HERO_DELTAS` ghim giá trị theo client Global 24.526; hiệu chỉnh đổi giá trị bị ghim làm build dừng ở `golden hero delta mismatch` và bảng ghim chỉ sửa sau review;
+- `roleTags{}`: `roleTag`/`roleTagViet` cho tướng đã có **chỉ khi cả hai đang `null`**; nhãn client thô hơn nhãn Hán curated nên không bao giờ ghi đè;
+- `aliases{}`: tên client nối vào `aliases` (giữ thứ tự, không trùng); trùng `viet` hoặc alias sẵn có thì build dừng.
+
+Mọi ảnh là `/heroes/<slug>.webp` (slug = `id` bỏ `hero:`, regex `^/heroes/[a-z0-9-]+\.webp$`), 300×300 WebP, **file phải có trong `public/heroes/`** lúc build. Ledger ghi từng trường với `chosenInput: "client-capture"`, `sourceRecordId: "client-heroes:<slug>"`, và `missing-source` cho trường client không cung cấp.
+
+**Quyết định self-host chân dung (thay thế C3).** Ghi chú trước đây "không self-host chân dung" (quyết định C3 của kế hoạch `260621-2324`, brainstorm §3) bị thay bằng yêu cầu của người dùng: các tướng này không có URL ảnh từ xa nên ảnh được lưu trong repo tại `public/heroes/`. Phạm vi chỉ gồm các ảnh trong `lookup-client-heroes.json`; 112 tướng baseline vẫn dùng `iconUrl` từ xa. Phía hosting: `js/hero-portrait.js` `portraitUrl` nhận thêm đường dẫn cùng origin khớp đúng regex trên (vẫn từ chối `//host`, scheme lạ, không có `/` đầu, `..`, query); `scripts/verify-astro-dist.mjs` khóa `public/heroes` → `dist/heroes` từng byte; `public/_headers` có rule `/heroes/*` cùng chính sách revalidate như ảnh/font không băm tên.
+
+Cập nhật số liệu (tổng số tướng, ảnh, thống kê Landing, README, `codebase-summary.md`) là bước sau promotion; số trong tài liệu theo `generation.json` → `counts` của generation đang phát.
+
+### Chiến pháp từ client Global (`pipeline/lookup-client-tactics.json`)
+
+Dữ liệu chụp từ client Global 24.526: mục **Chiến Pháp** (danh sách Toàn bộ ở mức đầy cấp, màn Kế thừa, màn Sự kiện) và **Thượng Thư Đài** (thẻ chiến pháp tra theo tên, hoặc mở từ chiến pháp tự mang/kế thừa trên thẻ tướng; luôn bấm "Xem hiệu quả đầy cấp" trước khi chụp). 371/406 chiến pháp có mục trong file. Client là nguồn có thẩm quyền cho phần tiếng Việt: giá trị build ra (SGSDeck/baseline/bản dịch) bị thay. File là input capture có hash như `lookup-client-heroes.json` (`inputHashes.clientTactics`, cờ `--client-tactics`, bắt buộc tồn tại; `tactics: {}` cho output byte-identical với trước khi có file) và được áp **trước** tướng client.
+
+Schema (`schemaVersion: 1`, key set chính xác): `source` như tướng client; `tactics{}` khóa bằng ID chiến pháp **đã có**, mỗi mục đủ `nameVi`, `quality` (`S`/`A`/`B`, `null` = không đổi — thẻ Thượng Thư Đài và chiến pháp binh chủng không hiện phẩm), `type` (enum `COMMAND`/`ACTIVE`/`BURST`/`PASSIVE`/`TROOP`/`FORMATION`/`INTERNAL`; loại "Binh Thư" của client không có trong enum nên giữ loại của kho), `activationRate` (0–1; dòng có "Xác suất phát động a%→b%" hoặc Xác suất dạng "a%→b%" lấy b là mức đầy cấp, vì cột Phát động hiện mức cấp 1), `troopFit` (tập con theo thứ tự Kỵ, Khiên, Cung, Thương, Khí giới), `targetVi` (Mục tiêu), `effectTypeVi` (Buff), `effectVi` (hướng dẫn đầy cấp), `maxUsers` (Có thể mang, màn Kế thừa; `null` = không đổi), `exchangeConditionVi` (điều kiện quy đổi ở màn Sự kiện; `null` = không đổi).
+
+Builder: `nameVi` khác `viet` thì **thay `viet`** (tên hiển thị toàn site theo client); `id` giữ nguyên, tên cũ còn ở `hanViet` (nếu tên cũ khác `hanViet` thì thành alias). Mọi nơi nối chiến pháp theo tên phải đi qua `id` của danh mục (khớp `viet`/`hanViet`/alias), không suy id từ slug `viet`. Dữ liệu đội (`data/teams.json`, Khai hoang, Cùng Tồn, Đội chuẩn) giữ tên đã lưu vì bị ledger duyệt băm; lớp hiển thị bản Việt đổi sang `viet` qua `createTacticDisplayName`. `effectVi` thành `effectViet` và chữ của bản hiện hành trong `lookup.revisions`; mốc ngày của bản hiện hành cũ chỉ giữ khi tập số liệu trùng chữ client, lệch thì bản đó lùi thành lịch sử (`Bản <ngày>`/`Bản trước`) và chữ client là `Bản hiện hành` không ngày. Ledger ghi từng trường đổi với `chosenInput: "client-capture"`, `sourceRecordId: "client-tactics:<slug>"`, `localValueHash` của giá trị cũ. Tướng client nối `selfTacticId` theo `viet` (giờ là tên client), không có thì theo alias trỏ đúng một chiến pháp.
+
+Một số cặp ID trong kho là cùng một chiến pháp ở client (cùng tên client, ví dụ `di-hoa-tiep-moc`/`lap-lo-danh-trao`, `tat-phong-sau-vu`/`gio-tap-mua-sa`); mỗi ID nhận cùng dữ liệu client, chưa gộp ID. 35 chiến pháp chưa có mục (không tìm thấy ở Thượng Thư Đài, tướng mang không có ở Global, hoặc chưa xác minh được tên) và các chiến pháp client chưa có ID trong kho (biến thể `Tinh •`/`Chuyển •` của chiến pháp binh chủng, Thiên Vận, Nghệ Nhân, Sát Thương Thêm) **không** được tạo mới vì thiếu tên Hán để nối; danh sách ở `plans/reports/261016-client-chien-phap.md`.
+
+### Đánh giá và Cách nhận
 
 Hồ sơ tướng có thêm **Đánh giá** (`lookup.usageVi`, chữ nguồn `usageZh`) và **Cách nhận** (`lookup.cardPacks`: gói, tướng lõi hay không, tỉ lệ lõi/thường của cả gói) từ `pipeline/sgsdeck-guide.json`. Guide nằm ngoài `data/sgsdeck/` vì snapshot bị registry pin và registry là nguồn glossary của gate bản dịch; guide tự gắn `snapshotManifestHash` của snapshot. Dựng lại guide từ đúng cache của snapshot, không đổi snapshot:
 
@@ -41,12 +72,16 @@ python3 -m pipeline.build_unified_lookup build \
   --source data/sgsdeck \
   --identity pipeline/lookup-identity.json \
   --translations pipeline/lookup-translations.json \
+  --client-heroes pipeline/lookup-client-heroes.json \
+  --client-tactics pipeline/lookup-client-tactics.json \
   --output pipeline/lookup-output/candidate
 python3 -m pipeline.build_unified_lookup validate \
   --candidate pipeline/lookup-output/candidate
 ```
 
 Review `generation.json`, ledger, coverage và toàn bộ diff trước activation. Cùng inputs/registry/translations phải tạo byte-identical output. Không thay frozen baseline bằng output mới và không dùng candidate từ một generation khác.
+
+Thêm hoặc sửa tướng client: sửa `pipeline/lookup-client-heroes.json` (và thả ảnh vào `public/heroes/`), rồi build → validate → promote như trên. Sau promotion chạy lại các bước dẫn xuất: `python3 -m pipeline.build_recommended_reference --catalog data/heroes-dict.json` (tóm tắt tướng "Trong cẩm nang"), pin `sourceHashes` của `data/website-display.json` và `npm --prefix mcp-worker run generate:workflow-build` (digest artifact MCP).
 
 ## Promote và recover
 

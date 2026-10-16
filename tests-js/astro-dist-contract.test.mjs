@@ -198,6 +198,11 @@ async function writeStaticFonts(projectDir, distDir) {
     await writeFile(join(projectDir, "public", "fonts", name), bytes);
     await writeFile(join(distDir, "fonts", name), bytes);
   }
+  // Chân dung tướng tự lưu (`public/heroes`) là thư mục tĩnh thứ hai; fixture dùng file giả, không phụ thuộc ảnh thật.
+  await mkdir(join(projectDir, "public", "heroes"), { recursive: true });
+  await mkdir(join(distDir, "heroes"), { recursive: true });
+  await writeFile(join(projectDir, "public", "heroes", "sample.webp"), "RIFF-sample");
+  await writeFile(join(distDir, "heroes", "sample.webp"), "RIFF-sample");
 }
 
 /** Ảnh tĩnh của public (favicon, ảnh chia sẻ og:image, logo, logo chữ, QR ủng hộ) được copy nguyên byte như Astro làm. */
@@ -1368,6 +1373,15 @@ test("dist verifier byte-locks the self-hosted font directory", async (t) => {
   // Thiếu một file font đã publish cũng chặn.
   await rm(join(distDir, "fonts", "OFL.txt"));
   await assert.rejects(verify(), /missing: fonts\/OFL\.txt/i);
+
+  // Chân dung tướng tự lưu cũng nằm trong allowlist: file lạ hoặc lệch byte đều bị chặn.
+  await writeStaticFonts(projectDir, distDir);
+  await verify();
+  await writeFile(join(distDir, "heroes", "extra.webp"), "x");
+  await assert.rejects(verify(), /unexpected: heroes\/extra\.webp/i);
+  await rm(join(distDir, "heroes", "extra.webp"));
+  await writeFile(join(distDir, "heroes", "sample.webp"), "tampered");
+  await assert.rejects(verify(), /heroes\/sample\.webp/i);
 });
 
 async function lookupDistFixture(t) {

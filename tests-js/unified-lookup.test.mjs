@@ -842,6 +842,10 @@ test("ô chân dung nâng https, từ chối scheme lạ và lấy chữ Hán đ
   assert.equal(portraitUrl("javascript:alert(1)"), null);
   assert.equal(portraitUrl("image.aligames.com/a.png"), null);
   assert.equal(portraitUrl(null), null);
+  assert.equal(portraitUrl("/heroes/tao-ngang.webp"), "/heroes/tao-ngang.webp");
+  for (const rejected of ["//evil.example/heroes/a.webp", "/heroes/A.webp", "/heroes/a.png", "/heroes/a/b.webp", "/heroes/.webp", "/other/a.webp", "heroes/a.webp", "/heroes/a.webp?x=1", "/heroes/a.webp\n", "/heroes/../a.webp", "/\\evil.example/a.webp"]) {
+    assert.equal(portraitUrl(rejected), null, rejected);
+  }
   assert.equal(portraitChar("SP 呂蒙", "SP Lữ Mông"), "呂");
   assert.equal(portraitChar("", "Nghiêm Nhan"), "N");
   assert.equal(portraitChar("", ""), "?");
