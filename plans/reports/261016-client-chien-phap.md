@@ -19,8 +19,8 @@
 
 | Hạng mục | Số lượng | Trạng thái |
 |---|---|---|
-| Chiến pháp có mục trong `pipeline/lookup-client-tactics.json` | 371/406 | Đã đối chiếu (đọc từ client) |
-| `effectViet` và bản hiện hành của `lookup.revisions` | 371 | Đã đối chiếu |
+| Chiến pháp có mục trong `pipeline/lookup-client-tactics.json` | 381/406 (9 qua tướng xanh lam nối ID theo nghĩa tên; Quốc Chi Trinh Cán qua thẻ SP Lô Trực) | Đã đối chiếu (đọc từ client) |
+| `effectViet` và bản hiện hành của `lookup.revisions` | 381 | Đã đối chiếu |
 | `targetViet` (Mục tiêu) / `lookup.effectTypeVi` (Buff) | 369 / 199 | Đã đối chiếu |
 | `troopFit` (khớp mẫu biểu tượng, không chép tay) | 97 | Đã đối chiếu |
 | `lookup.activationRate` / `type` / `quality` | 29 / 15 / 9 | Đã đối chiếu |
@@ -86,26 +86,46 @@ Phát hành: promote `client-tactics-261016e` (`lookup:f7aee7f1…`), generation
 
   Các tên này giờ là tên hiển thị; tên Hán-Việt cũ vẫn tìm được.
 
+## Bổ sung 2026-10-17: tra tướng xanh lam ở Thượng Thư Đài
+
+- Tra 45 tướng 1–3 sao có trong kho (gợi ý của người dùng), mở chiến pháp tự mang và kế thừa trên thẻ tướng, chụp đầy cấp. Kết quả: 46 thẻ khác nhau; tướng xanh lam tự mang và kế thừa cùng một chiến pháp, trừ Phan Phụng. Hai lượt chép độc lập, 13 chỗ lệch (dấu, tên tướng) đã phân xử trên ảnh. Vệ Thành không có ở Thượng Thư Đài.
+- 9 chiến pháp B được thêm. Client không hiện chữ Hán nên ID nối theo nghĩa tên Hán-Việt + loại hình. Nội dung là chữ client: **Đã đối chiếu**. Phép nối ID: **Phương án từ nguồn**.
+
+  | ID kho | Tên client | Tướng | Căn cứ nối |
+  |---|---|---|---|
+  | `bac-van` 博聞 | Uyên Bác | Đặng Chi | uyên bác = 博聞; B nội chính |
+  | `chu-tuong` 鑄匠 | Thợ Rèn | Gia Cát Chiêm | thợ đúc; Quan Sắt; B nội chính |
+  | `xao-tuong` 巧匠 | Nghệ Nhân | Mao Giới | thợ khéo; Quan Rèn; B nội chính |
+  | `dam-tam` 談心 | Tâm Sự | Hướng Sủng | tâm sự = 談心; B chủ động |
+  | `thich-thuong` 刺傷 | Đâm Thương | Ngô Ý | đâm thương = 刺傷; B chủ động |
+  | `dien-hau` 殿後 | Chốt Đuôi | Ngu Phiên | đi chặn hậu = 殿後; B chủ động |
+  | `khien-lien` 牽連 | Liên Luỵ | Tôn Hạo | liên luỵ = 牽連; B đột kích |
+  | `tien-dap` 踐踏 | Giẫm Đạp | Tống Hiến | giẫm đạp = 踐踏; B chủ động, mục tiêu 2 người (kho: 群體 2人) |
+  | `truy-thuong` 追傷 | Sát Thương Thêm | Phan Phụng (kế thừa) | B đột kích; còn 牽連 đã ứng với Liên Luỵ |
+
+- Không ứng với chiến pháp còn thiếu nào: Thiên Vận (Lưu Thiện, +Mị Lực), Hộ Vệ (Phó Sĩ Nhân, Gánh Vác cho chủ tướng), chiến pháp tướng 1–2 sao (Áp Chế-Sơ, Hào Hùng-Sơ, Làm Loạn-Sơ, Cổ Vũ-Sơ, Cấp Cứu-Sơ, Cấp Tốc, Dũng Võ, Gan Dạ). Các thẻ còn lại trùng chiến pháp đã có dữ liệu.
+
+- **SP Lô Thực = SP Lô Trực** (盧植; "SP Lô Trực" là alias client của `hero:sp-lo-thuc`). Tra "SP Lô Trực" ở Thượng Thư Đài: tự mang **Nòng Cốt Quốc Gia** (Chỉ huy, 100%, Tập thể quân ta 3 người) → `quoc-chi-trinh-can` 國之楨榦, **Đã đối chiếu** theo tướng mang; kế thừa Nhạn Hành Trận (đã có). Lần trước tra "Lô Trực SP" không ra vì client đặt "SP" ở đầu tên.
+
 ## Chưa xác minh
 
-35 chiến pháp trong kho chưa có dữ liệu client. Có ba nhóm:
+25 chiến pháp trong kho chưa có dữ liệu client. Có ba nhóm:
 
-- **Không tìm thấy ở Thượng Thư Đài, kể cả qua gợi ý; phần lớn là chiến pháp B/nội chính chưa có mô tả**: Án Đồ Tác Ký, Bác Văn, Chú Tượng, Đàm Tâm, Điện Hậu, Đoan Trang Trì Trọng, Hiểu Tri Lương Mộc, Khắc Tuân Họa Nhất, Khiên Chế, Khiên Liên, Lục Lực Thượng Tâm, Nghi Thành Chi Chí, Tế Trí Nhập Vy, Thạc Quả Lũy Lũy, Thích Thương, Thùy Huệ Vạn Vật, Tiễn Đạp, Truy Thương, Xảo Tượng, Trậm Độc, Thương Lẫm Nhi Thực, Thiên Lý Quỹ Lương, Tranh Phân Đoạt Miểu, Ưng Thị, Phá Phong Đoạn Nhẫn.
+- **Không tìm thấy ở Thượng Thư Đài, kể cả qua gợi ý và qua 45 tướng xanh lam**: Án Đồ Tác Ký, Đoan Trang Trì Trọng, Hiểu Tri Lương Mộc, Khắc Tuân Họa Nhất, Khiên Chế, Lục Lực Thượng Tâm, Nghi Thành Chi Chí, Tế Trí Nhập Vy, Thạc Quả Lũy Lũy, Thùy Huệ Vạn Vật, Trậm Độc, Thương Lẫm Nhi Thực, Thiên Lý Quỹ Lương, Tranh Phân Đoạt Miểu, Ưng Thị, Phá Phong Đoạn Nhẫn.
 - **Chiến pháp sự kiện không có trong 51 sự kiện Global**: Cương Dũng Vô Tiền, Hỏa Sí Nguyên Liệu, Đào Viên Kết Nghĩa, Vạn Quân Thủ Tướng.
 - **Tướng mang không mở được ở Thượng Thư Đài**:
   - Hà Thị (không có ở Global): Duy Nội Thiện Quyền, Tuyệt Kế Chiết Mưu.
-  - SP Tào Tháo: Tàng Khí Đãi Thì, Thừa Thiên Tĩnh Thế.
-  - SP Lô Thực: Quốc Chi Trinh Cán.
+  - SP Tào Tháo (chưa phát hành ở client Việt Nam, người dùng xác nhận 2026-10-17): Tàng Khí Đãi Thì, Thừa Thiên Tĩnh Thế.
   - Hồ Già Thập Bát Phách: chưa xác minh.
 
 Chiến pháp client chưa nối được ID trong kho (không tạo mới vì client không hiện chữ Hán):
 
 | Tên client | Manh mối | Ghi chú |
 |---|---|---|
-| Thiên Vận (B, Nội chính) — Tăng 8→16 Mị Lực | Tự mang và kế thừa: Lưu Thiện | Có thể là 博聞; chưa xác minh |
-| Nghệ Nhân (B, Nội chính) — Quan Rèn, Rèn tiêu hao giảm 1%→2% | Tự mang và kế thừa: Mao Giới | 鑄匠 hoặc 巧匠; chưa xác minh |
-| Sát Thương Thêm (B, Đột Kích, 25%→40%) — Cấm Trị Liệu 2 hiệp | Kế thừa: Phan Phụng | 追傷 hoặc 牽連; chưa xác minh |
+| Thiên Vận (B, Nội chính) — Tăng 8→16 Mị Lực | Tự mang và kế thừa: Lưu Thiện | Không khớp chiến pháp còn thiếu nào |
+| Hộ Vệ (Chủ động, 35%) — Gánh Vác 10%→20% sát thương cho chủ tướng | Tự mang và kế thừa: Phó Sĩ Nhân | Không khớp chiến pháp còn thiếu nào |
 | Tinh • Nhanh Trí Động Não, Chuyển • Bạch Nhị Binh, Tinh • Đại Kích Sĩ, Tinh • Giải Phiền Vệ, Tinh • Lính Giáp Mây | Thượng Thư Đài chỉ gợi ý bản thường | Biến thể tinh luyện của chiến pháp đã có, số liệu khác bản thường |
+| Chiến pháp tướng 1–2 sao (bản "-Sơ", Cấp Tốc, Dũng Võ, Gan Dạ) | Thẻ tướng 1–2 sao | Kho không có các chiến pháp này |
 
 ## Giới hạn
 

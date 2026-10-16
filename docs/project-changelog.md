@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-10-17 (Chiến pháp B từ tướng xanh lam)
+
+### Added
+
+- `pipeline/lookup-client-tactics.json` thêm 9 chiến pháp B chụp ở Thượng Thư Đài qua thẻ tướng xanh lam (380/406): Bác Văn = Uyên Bác (Đặng Chi), Chú Tượng = Thợ Rèn (Gia Cát Chiêm), Xảo Tượng = Nghệ Nhân (Mao Giới), Đàm Tâm = Tâm Sự (Hướng Sủng), Thích Thương = Đâm Thương (Ngô Ý), Điện Hậu = Chốt Đuôi (Ngu Phiên), Khiên Liên = Liên Luỵ (Tôn Hạo), Tiễn Đạp = Giẫm Đạp (Tống Hiến), Truy Thương = Sát Thương Thêm (kế thừa Phan Phụng). Client không hiện chữ Hán nên ID nối theo nghĩa tên Hán-Việt + loại hình. Thêm Quốc Chi Trinh Cán = Nòng Cốt Quốc Gia, chiến pháp tự mang của SP Lô Trực (= SP Lô Thực 盧植, nối theo thẻ tướng) → 381/406. Promote `client-tactics-261017b` (`lookup:8d5c97be…`), generation Đội chuẩn `7b2b20e1…`, re-pin `pipeline/team-route-handles.json`.
+
 ## 2026-10-16 (Chiến pháp từ client Global)
 
 ### Added

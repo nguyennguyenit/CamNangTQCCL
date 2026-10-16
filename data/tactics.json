@@ -11907,7 +11907,7 @@
     ],
     "chinese": "博聞",
     "effect": null,
-    "effectViet": null,
+    "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan giao dịch, tỷ lệ giao dịch tăng 0.7%→1.4%",
     "hanViet": "Bác Văn",
     "iconUrl": null,
     "id": "tactic:bac-van",
@@ -11918,7 +11918,7 @@
       "conditions": [],
       "conflictsVi": null,
       "cooldown": null,
-      "effectTypeVi": null,
+      "effectTypeVi": "Nội chính",
       "exchangeConditionVi": null,
       "inheritedFromIds": [],
       "maxUsers": 1,
@@ -11931,10 +11931,16 @@
     "source": "INHERITANCE",
     "sourceHeroCn": null,
     "target": null,
-    "targetViet": null,
-    "troopFit": [],
+    "targetViet": "Tôi",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
     "type": "INTERNAL",
-    "viet": "Bác Văn"
+    "viet": "Uyên Bác"
   },
   {
     "aliases": [
@@ -12423,7 +12429,7 @@
     ],
     "chinese": "鑄匠",
     "effect": null,
-    "effectViet": null,
+    "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Sắt, sản lượng Mỏ Sắt tăng 0.7%→1.4%",
     "hanViet": "Chú Tượng",
     "iconUrl": null,
     "id": "tactic:chu-tuong",
@@ -12434,7 +12440,7 @@
       "conditions": [],
       "conflictsVi": null,
       "cooldown": null,
-      "effectTypeVi": null,
+      "effectTypeVi": "Nội chính",
       "exchangeConditionVi": null,
       "inheritedFromIds": [],
       "maxUsers": 1,
@@ -12447,10 +12453,16 @@
     "source": "INHERITANCE",
     "sourceHeroCn": null,
     "target": null,
-    "targetViet": null,
-    "troopFit": [],
+    "targetViet": "Tôi",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
     "type": "INTERNAL",
-    "viet": "Chú Tượng"
+    "viet": "Thợ Rèn"
   },
   {
     "aliases": [
@@ -12695,18 +12707,18 @@
     ],
     "chinese": "談心",
     "effect": null,
-    "effectViet": null,
+    "effectViet": "Khiến một quân ta miễn nhiễm Hỗn Loạn, duy trì 3 hiệp (Xác suất phát động 23%→45%)",
     "hanViet": "Đàm Tâm",
     "iconUrl": null,
     "id": "tactic:dam-tam",
     "linkScore": null,
     "lookup": {
       "acquiredFromVi": [],
-      "activationRate": 0.23,
+      "activationRate": 0.45,
       "conditions": [],
       "conflictsVi": null,
       "cooldown": null,
-      "effectTypeVi": null,
+      "effectTypeVi": "Tăng ích",
       "exchangeConditionVi": null,
       "inheritedFromIds": [],
       "maxUsers": 1,
@@ -12719,7 +12731,7 @@
     "source": "INHERITANCE",
     "sourceHeroCn": null,
     "target": null,
-    "targetViet": null,
+    "targetViet": "Một quân Đồng Minh",
     "troopFit": [
       "Kỵ binh",
       "Khiên binh",
@@ -12728,7 +12740,7 @@
       "Khí giới"
     ],
     "type": "ACTIVE",
-    "viet": "Đàm Tâm"
+    "viet": "Tâm Sự"
   },
   {
     "aliases": [
@@ -12963,7 +12975,7 @@
     ],
     "chinese": "殿後",
     "effect": null,
-    "effectViet": null,
+    "effectViet": "Tăng cho bản thân 15→30 điểm Võ Lực, nếu bản thân là Phó Tướng sẽ tăng thêm 20→40 điểmThống Soái, duy trì 2 hiệp",
     "hanViet": "Điện Hậu",
     "iconUrl": null,
     "id": "tactic:dien-hau",
@@ -12974,7 +12986,7 @@
       "conditions": [],
       "conflictsVi": null,
       "cooldown": null,
-      "effectTypeVi": null,
+      "effectTypeVi": "Tăng ích",
       "exchangeConditionVi": null,
       "inheritedFromIds": [],
       "maxUsers": 1,
@@ -12987,7 +12999,7 @@
     "source": "INHERITANCE",
     "sourceHeroCn": null,
     "target": null,
-    "targetViet": null,
+    "targetViet": "Tôi",
     "troopFit": [
       "Kỵ binh",
       "Khiên binh",
@@ -12996,7 +13008,7 @@
       "Khí giới"
     ],
     "type": "ACTIVE",
-    "viet": "Điện Hậu"
+    "viet": "Chốt Đuôi"
   },
   {
     "aliases": [
@@ -14189,7 +14201,7 @@
     ],
     "chinese": "牽連",
     "effect": null,
-    "effectViet": null,
+    "effectViet": "Sau khi tấn công thường, gây cho một tướng quân địch 1 lần Tấn Công Binh Đao (tỷ lệ sát thương 60%→120%)",
     "hanViet": "Khiên Liên",
     "iconUrl": null,
     "id": "tactic:khien-lien",
@@ -14200,7 +14212,7 @@
       "conditions": [],
       "conflictsVi": null,
       "cooldown": null,
-      "effectTypeVi": null,
+      "effectTypeVi": "Binh đao đơn",
       "exchangeConditionVi": null,
       "inheritedFromIds": [],
       "maxUsers": 1,
@@ -14213,7 +14225,7 @@
     "source": "INHERITANCE",
     "sourceHeroCn": null,
     "target": null,
-    "targetViet": null,
+    "targetViet": "Một quân địch",
     "troopFit": [
       "Kỵ binh",
       "Khiên binh",
@@ -14222,7 +14234,7 @@
       "Khí giới"
     ],
     "type": "BURST",
-    "viet": "Khiên Liên"
+    "viet": "Liên Luỵ"
   },
   {
     "aliases": [
@@ -15952,7 +15964,7 @@
     ],
     "chinese": "國之楨榦",
     "effect": null,
-    "effectViet": null,
+    "effectViet": "Khi chiến đấu, Thống Soái của toàn quân ta tăng (Trị số tăng tương đương 10%→20% Thống Soái của bản thân) và nhận được 5%→10% Làm Phản và Công Tâm (bị ảnh hưởng bởi Thống Soái); Và quân địch cứ mỗi có một Chiến Pháp Bị Động hoặc Chỉ Huy, nhóm quân ta (2-3 người) được giảm 1.5%→3% Sát thương binh đao phải chịu (bị ảnh hưởng bởi Thống Soái)",
     "hanViet": "Quốc Chi Trinh Cán",
     "iconUrl": null,
     "id": "tactic:quoc-chi-trinh-can",
@@ -15976,7 +15988,7 @@
     "source": "INNATE",
     "sourceHeroCn": null,
     "target": "我軍群體 3 人",
-    "targetViet": "Nhóm quân ta (3 người)",
+    "targetViet": "Tập thể quân ta (3 người)",
     "troopFit": [
       "Kỵ binh",
       "Khiên binh",
@@ -15985,7 +15997,7 @@
       "Khí giới"
     ],
     "type": "COMMAND",
-    "viet": "Quốc Chi Trinh Cán"
+    "viet": "Nòng Cốt Quốc Gia"
   },
   {
     "aliases": [
@@ -16774,7 +16786,7 @@
     ],
     "chinese": "刺傷",
     "effect": null,
-    "effectViet": null,
+    "effectViet": "Phóng cho một quân địch trạng thái Bỏ chạy, mỗi hiệp gây ra sát thương liên tục (tỷ lệ sát thương 35%→70%, bị Võ Lực ảnh hưởng), duy trì 3 hiệp",
     "hanViet": "Thích Thương",
     "iconUrl": null,
     "id": "tactic:thich-thuong",
@@ -16785,7 +16797,7 @@
       "conditions": [],
       "conflictsVi": null,
       "cooldown": null,
-      "effectTypeVi": null,
+      "effectTypeVi": "Binh đao đơn",
       "exchangeConditionVi": null,
       "inheritedFromIds": [],
       "maxUsers": 1,
@@ -16798,7 +16810,7 @@
     "source": "INHERITANCE",
     "sourceHeroCn": null,
     "target": null,
-    "targetViet": null,
+    "targetViet": "Một quân địch",
     "troopFit": [
       "Kỵ binh",
       "Khiên binh",
@@ -16807,7 +16819,7 @@
       "Khí giới"
     ],
     "type": "ACTIVE",
-    "viet": "Thích Thương"
+    "viet": "Đâm Thương"
   },
   {
     "aliases": [
@@ -17461,7 +17473,7 @@
     ],
     "chinese": "踐踏",
     "effect": "[B級] 對敵軍群體（2人）造成兵刃攻擊（傷害率 80%）。",
-    "effectViet": "[Cấp B] Gây một đòn tấn công binh khí lên một nhóm quân địch (2 người) (tỷ lệ sát thương 80%).",
+    "effectViet": "Chuẩn bị 1 hiệp, gây cho nhóm quân địch (2 người) sát thương Binh Đao (tỷ lệ sát thương 77.5%→155%)",
     "hanViet": "Tiễn Đạp",
     "iconUrl": null,
     "id": "tactic:tien-dap",
@@ -17470,11 +17482,11 @@
       "acquiredFromVi": [
         "Tống Hiến"
       ],
-      "activationRate": 0.35,
+      "activationRate": 0.3,
       "conditions": [],
       "conflictsVi": null,
       "cooldown": null,
-      "effectTypeVi": null,
+      "effectTypeVi": "Binh đao nhóm",
       "exchangeConditionVi": null,
       "inheritedFromIds": [],
       "maxUsers": 2,
@@ -17487,10 +17499,16 @@
     "source": "INHERITANCE",
     "sourceHeroCn": null,
     "target": null,
-    "targetViet": null,
-    "troopFit": [],
+    "targetViet": "Tập thể địch (2 người)",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
     "type": "ACTIVE",
-    "viet": "Tiễn Đạp"
+    "viet": "Giẫm Đạp"
   },
   {
     "aliases": [
@@ -17930,18 +17948,18 @@
     ],
     "chinese": "追傷",
     "effect": null,
-    "effectViet": null,
+    "effectViet": "Sau khi tấn công thường, gây cho mục tiêu tấn công trạng thái Cấm Trị Liệu, duy trì 2 hiệp (Xác suất phát động 25%→40%)",
     "hanViet": "Truy Thương",
     "iconUrl": null,
     "id": "tactic:truy-thuong",
     "linkScore": null,
     "lookup": {
       "acquiredFromVi": [],
-      "activationRate": 0.25,
+      "activationRate": 0.4,
       "conditions": [],
       "conflictsVi": null,
       "cooldown": null,
-      "effectTypeVi": null,
+      "effectTypeVi": "Khống chế",
       "exchangeConditionVi": null,
       "inheritedFromIds": [],
       "maxUsers": 1,
@@ -17954,7 +17972,7 @@
     "source": "INHERITANCE",
     "sourceHeroCn": null,
     "target": null,
-    "targetViet": null,
+    "targetViet": "Một quân địch",
     "troopFit": [
       "Kỵ binh",
       "Khiên binh",
@@ -17963,7 +17981,7 @@
       "Khí giới"
     ],
     "type": "BURST",
-    "viet": "Truy Thương"
+    "viet": "Sát Thương Thêm"
   },
   {
     "aliases": [
@@ -18577,7 +18595,7 @@
     ],
     "chinese": "巧匠",
     "effect": null,
-    "effectViet": null,
+    "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Rèn, Rèn tiêu hao giảm 1%→2%",
     "hanViet": "Xảo Tượng",
     "iconUrl": null,
     "id": "tactic:xao-tuong",
@@ -18588,7 +18606,7 @@
       "conditions": [],
       "conflictsVi": null,
       "cooldown": null,
-      "effectTypeVi": null,
+      "effectTypeVi": "Nội chính",
       "exchangeConditionVi": null,
       "inheritedFromIds": [],
       "maxUsers": 1,
@@ -18601,10 +18619,16 @@
     "source": "INHERITANCE",
     "sourceHeroCn": null,
     "target": null,
-    "targetViet": null,
-    "troopFit": [],
+    "targetViet": "Tôi",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
     "type": "INTERNAL",
-    "viet": "Xảo Tượng"
+    "viet": "Nghệ Nhân"
   },
   {
     "aliases": [

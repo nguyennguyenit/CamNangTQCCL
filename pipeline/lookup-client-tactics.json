@@ -135,6 +135,24 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
+    "tactic:bac-van": {
+      "nameVi": "Uyên Bác",
+      "quality": null,
+      "type": "INTERNAL",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tôi",
+      "effectTypeVi": "Nội chính",
+      "effectVi": "Khi ủy nhiệm Võ Tướng làm Quan giao dịch, tỷ lệ giao dịch tăng 0.7%→1.4%",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:bach-bo-xuyen-duong": {
       "nameVi": "Bách Phát Bách Trúng",
       "quality": null,
@@ -663,6 +681,24 @@
       "maxUsers": null,
       "exchangeConditionVi": "Sự kiện Bình Định Khăn Vàng — Hoàng Phổ Tung (Quần): cần 1 thẻ; Chu Tuấn (Quần): cần 1 thẻ; Lô Trực (Quần): cần 1 thẻ"
     },
+    "tactic:chu-tuong": {
+      "nameVi": "Thợ Rèn",
+      "quality": null,
+      "type": "INTERNAL",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tôi",
+      "effectTypeVi": "Nội chính",
+      "effectVi": "Khi ủy nhiệm Võ Tướng làm Quan Sắt, sản lượng Mỏ Sắt tăng 0.7%→1.4%",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:chung-dien-tinh-thong": {
       "nameVi": "Tinh Thông Làm Ruộng",
       "quality": "B",
@@ -1033,6 +1069,24 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
+    "tactic:dam-tam": {
+      "nameVi": "Tâm Sự",
+      "quality": null,
+      "type": "ACTIVE",
+      "activationRate": 0.45,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Một quân Đồng Minh",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Khiến một quân ta miễn nhiễm Hỗn Loạn, duy trì 3 hiệp (Xác suất phát động 23%→45%)",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:dan-duong-binh": {
       "nameVi": "Lính Đan Dương",
       "quality": "S",
@@ -1183,6 +1237,24 @@
       "targetVi": "Tôi",
       "effectTypeVi": "Tăng ích",
       "effectVi": "Chiến đấu hiệp thứ 2, 4, 6, hồi phục Binh Lực bản thân (tỉ lệ Trị Liệu 144%→288%, ảnh hưởng bởi Võ Lực) và nâng cao bản thân 5%→10% Võ Lực; Chiến đấu hiệp thứ 5, gây cho toàn thể quân địch sát thương Binh Đao (tỉ lệ sát thương 36%→72%)",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:dien-hau": {
+      "nameVi": "Chốt Đuôi",
+      "quality": null,
+      "type": "ACTIVE",
+      "activationRate": 0.25,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tôi",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Tăng cho bản thân 15→30 điểm Võ Lực, nếu bản thân là Phó Tướng sẽ tăng thêm 20→40 điểmThống Soái, duy trì 2 hiệp",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -2424,6 +2496,24 @@
       "targetVi": "Một quân ta",
       "effectTypeVi": "Tăng ích",
       "effectVi": "Khiến sát thương cá thể quân ta phải chịu giảm 11%→22% (bị Trí Lực ảnh hưởng), duy trì 3 hiệp",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:khien-lien": {
+      "nameVi": "Liên Luỵ",
+      "quality": null,
+      "type": "BURST",
+      "activationRate": 0.35,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Một quân địch",
+      "effectTypeVi": "Binh đao đơn",
+      "effectVi": "Sau khi tấn công thường, gây cho một tướng quân địch 1 lần Tấn Công Binh Đao (tỷ lệ sát thương 60%→120%)",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -4105,6 +4195,24 @@
       "maxUsers": null,
       "exchangeConditionVi": "Sự kiện Cẩm Phàm Tuần Tập — Cam Ninh (Ngô): cần 1 thẻ"
     },
+    "tactic:quoc-chi-trinh-can": {
+      "nameVi": "Nòng Cốt Quốc Gia",
+      "quality": null,
+      "type": "COMMAND",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tập thể quân ta (3 người)",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Khi chiến đấu, Thống Soái của toàn quân ta tăng (Trị số tăng tương đương 10%→20% Thống Soái của bản thân) và nhận được 5%→10% Làm Phản và Công Tâm (bị ảnh hưởng bởi Thống Soái); Và quân địch cứ mỗi có một Chiến Pháp Bị Động hoặc Chỉ Huy, nhóm quân ta (2-3 người) được giảm 1.5%→3% Sát thương binh đao phải chịu (bị ảnh hưởng bởi Thống Soái)",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:quoc-sac": {
       "nameVi": "Quốc Sắc",
       "quality": null,
@@ -4883,6 +4991,24 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
+    "tactic:thich-thuong": {
+      "nameVi": "Đâm Thương",
+      "quality": null,
+      "type": "ACTIVE",
+      "activationRate": 0.4,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Một quân địch",
+      "effectTypeVi": "Binh đao đơn",
+      "effectVi": "Phóng cho một quân địch trạng thái Bỏ chạy, mỗi hiệp gây ra sát thương liên tục (tỷ lệ sát thương 35%→70%, bị Võ Lực ảnh hưởng), duy trì 3 hiệp",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:thien-ha-danh-xao": {
       "nameVi": "Thiên Hạ Danh Xảo",
       "quality": null,
@@ -5431,6 +5557,24 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
+    "tactic:tien-dap": {
+      "nameVi": "Giẫm Đạp",
+      "quality": null,
+      "type": "ACTIVE",
+      "activationRate": 0.3,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tập thể địch (2 người)",
+      "effectTypeVi": "Binh đao nhóm",
+      "effectVi": "Chuẩn bị 1 hiệp, gây cho nhóm quân địch (2 người) sát thương Binh Đao (tỷ lệ sát thương 77.5%→155%)",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:tien-ngon": {
       "nameVi": "Tiến Ngôn",
       "quality": "A",
@@ -5841,6 +5985,24 @@
       "targetVi": "Tập thể quân ta (3 người)",
       "effectTypeVi": "Tăng ích",
       "effectVi": "Trong chiến đấu, toàn thể quân ta sau mỗi lần gây ra sát thương Binh Đao, sẽ khiến họ tăng 3.5%→7% sát thương Binh Đao gây ra, có thể cộng dồn 5 lần. Sau khi cộng dồn 5 lần, sẽ khiến họ giảm 5%→10% sát thương phải chịu (Võ Lực ảnh hưởng), duy trì 2 hiệp.",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:truy-thuong": {
+      "nameVi": "Sát Thương Thêm",
+      "quality": "B",
+      "type": "BURST",
+      "activationRate": 0.4,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Một quân địch",
+      "effectTypeVi": "Khống chế",
+      "effectVi": "Sau khi tấn công thường, gây cho mục tiêu tấn công trạng thái Cấm Trị Liệu, duy trì 2 hiệp (Xác suất phát động 25%→40%)",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -6432,6 +6594,24 @@
       "targetVi": "Tôi",
       "effectTypeVi": "Tăng ích",
       "effectVi": "Trong chiến đấu, sát thương bản thân phải chịu giảm 45%→90%, sau mỗi lần chịu sát thương, hiệu quả này giảm 1.5%→3%; Sau khi hiệu quả này giảm 5 lần, khi bản thân chịu sát thương có 17.5%→35% xác suất (ảnh hưởng bởi Thống Soái) coi là 2 lần (có thể kích hoạt thêm hiệu quả Phản Kích, Cấp Cứu)",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:xao-tuong": {
+      "nameVi": "Nghệ Nhân",
+      "quality": "B",
+      "type": "INTERNAL",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tôi",
+      "effectTypeVi": "Nội chính",
+      "effectVi": "Khi ủy nhiệm Võ Tướng làm Quan Rèn, Rèn tiêu hao giảm 1%→2%",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
