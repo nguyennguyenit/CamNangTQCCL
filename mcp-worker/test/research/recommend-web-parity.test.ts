@@ -6,6 +6,7 @@ import { canonicalHeroId, heroFamilyId } from "../../../js/hero-identity.js";
 import { MAX_TACTIC_OVERRIDES, deserializeRosterScanState, setTacticOverride } from "../../../js/roster-scan-state.js";
 import { analyzeTacticSubstitutes, recommendRoster, seasonTacticUsage } from "../../../js/roster-season-candidates.js";
 import { buildTacticRules, canonicalTacticId } from "../../../js/team-recommend-engine.js";
+import { createTacticNameResolver } from "../../src/data/entity-identity.js";
 // Fixtures shared with the website adapter audit (`tests-js/roster-adapter-audit.test.mjs`).
 import {
   FIXTURE_IDS,
@@ -45,6 +46,12 @@ interface Extra {
 }
 
 let ctx: ToolContext;
+/**
+ * Name → canonical tactic id as an MCP client receives it (catalog `id`, stable across display renames).
+ * Season teams carry display names (`viet`), which no longer slug to the id for renamed tactics; names
+ * outside the catalog (synthetic fixtures) keep the slug, like the website's `createTacticIdResolver`.
+ */
+let tacticIdOf: (name: string) => string;
 const data = realData();
 const seasonFrom = seasonFromUntyped as (seasonId: string, configIds?: string[] | null) => { teams: Rec[]; teamTier: Rec[]; usage: Map<string, Map<string, number>> };
 const rosterOf = rosterOfUntyped as (teams: unknown[], options?: { skipTactics?: string[] }) => Roster;
@@ -52,6 +59,8 @@ const rosterOf = rosterOfUntyped as (teams: unknown[], options?: { skipTactics?:
 beforeAll(async () => {
   const snapshot = await publicSnapshotView(await new FilesystemDataSource({ dataRoot: realDataRoot }).load());
   ctx = createToolContext(snapshot, buildSnapshotIndex(snapshot), createWorkflowVersion(snapshot.releaseId, WORKFLOW_BUILD_ID));
+  const resolveTactic = createTacticNameResolver(snapshot.artifacts.tactics);
+  tacticIdOf = (name) => resolveTactic(name) ?? canonicalTacticId(name);
 }, 120_000);
 
 async function stateFor(roster: Roster, lockedTeams: WebLockedTeam[] = []) {
@@ -70,7 +79,7 @@ async function stateFor(roster: Roster, lockedTeams: WebLockedTeam[] = []) {
       ...roster.ownedTactics.map((name, index) => ({
         observationId: `t${index}`,
         entityKind: "tactic" as const,
-        canonicalId: canonicalTacticId(name),
+        canonicalId: tacticIdOf(name),
         displayName: name,
         evidence,
       })),
@@ -79,7 +88,7 @@ async function stateFor(roster: Roster, lockedTeams: WebLockedTeam[] = []) {
         entityKind: "team" as const,
         canonicalId: team.teamId,
         heroIds: team.heroes.map(canonicalHeroId),
-        tacticIds: team.tactics.map(canonicalTacticId),
+        tacticIds: team.tactics.map(tacticIdOf),
         evidence: { sourceScope: "priorConfirmedNote", batchId: "locked", fieldPresence: ["canonicalId", "heroIds", "tacticIds"] },
       })),
     ] as never,
@@ -166,7 +175,7 @@ async function expectParity(seasonId: string, roster: Roster, mode: "meta" | "re
   expect(output.portfolioTeams.map((entry) => entry.source)).toEqual(portfolio.map(sourceOf));
   expect(output.portfolioTeams.map((entry) => entry.variantUnrated)).toEqual(portfolio.map((entry) => entry.variantUnrated === true));
   // Locked teams reach the tool as canonical ids and the website as names: same tactics, compared by identity.
-  const tacticKey = (value: string) => (value.startsWith("tactic:") ? value : canonicalTacticId(value));
+  const tacticKey = (value: string) => (value.startsWith("tactic:") ? value : tacticIdOf(value));
   expect(output.portfolioTeams.map((entry) => entry.selectedTactics.map(tacticKey))).toEqual(
     portfolio.map((entry) => (entry.selectedTactics as string[]).map(tacticKey)),
   );

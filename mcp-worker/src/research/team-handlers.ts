@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { normalizeText, teamSearchBlob } from "../../../js/filters.js";
+import { createTacticNameResolver } from "../data/entity-identity.js";
 import { resolveSeasonContext } from "../../../js/season-context.js";
 import type { ArtifactRecord } from "../data/artifact-contracts.js";
 import type {
@@ -336,17 +337,16 @@ const engineNameResolvers = new WeakMap<object, EngineNameResolver>();
 function engineHeroNames(ctx: ToolContext): EngineNameResolver {
   const cached = engineNameResolvers.get(ctx.index);
   if (cached) return cached;
-  const names = new Map<string, { hero?: string; tactic?: string }>();
+  const names = new Map<string, string>();
   for (const entry of ctx.index.searchEntries) {
-    if (entry.kind !== "hero" && entry.kind !== "tactic") continue;
+    if (entry.kind !== "hero") continue;
     const key = normalizeText(entry.displayName);
-    const slot = names.get(key) ?? {};
-    slot[entry.kind] ??= entry.canonicalId;
-    names.set(key, slot);
+    if (!names.has(key)) names.set(key, entry.canonicalId);
   }
+  const tacticId = createTacticNameResolver(ctx.snapshot.artifacts.tactics);
   const resolver: EngineNameResolver = {
-    hero: (name) => names.get(normalizeText(name))?.hero ?? null,
-    tactic: (name) => names.get(normalizeText(name))?.tactic ?? null,
+    hero: (name) => names.get(normalizeText(name)) ?? null,
+    tactic: (name) => tacticId(name),
   };
   engineNameResolvers.set(ctx.index, resolver);
   return resolver;

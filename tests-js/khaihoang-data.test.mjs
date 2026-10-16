@@ -1,9 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
+import { createTacticNameIndex } from "../js/lookup-ids.js";
 
 const data = JSON.parse(await readFile(new URL("../data/khaihoang.json", import.meta.url), "utf8"));
 const tactics = JSON.parse(await readFile(new URL("../data/tactics.json", import.meta.url), "utf8"));
+const tacticId = createTacticNameIndex(tactics);
 const guideExpectations = JSON.parse(await readFile(new URL("./fixtures/khaihoang-guide-expectations.json", import.meta.url), "utf8"));
 
 const rosterKey = (heroes) => [...heroes].sort().join("|");
@@ -79,7 +81,7 @@ test("curated options are complete for each declared phase and preserve the rost
           assert.equal(skills.length, phase === "Before" ? 1 : 2, key);
           assert.equal(hero[`unitType${phase}`], variant.unitType, key);
           for (const name of skills) {
-            const tactic = tactics.find((t) => t.viet === name);
+            const tactic = tactics.find((t) => t.id === tacticId(name));
             assert.ok(tactic, `${key}: unknown ${name}`);
             assert.notEqual(tactic.type, "Nội chính", key);
             if (tactic.troopFit.length) {
@@ -153,7 +155,7 @@ test("Yaojing opening guides stay on their three-hero roster, not on a tactic va
 });
 
 test("opening-guide fields stay finite, curated, and separate from build variants", () => {
-  const tacticNames = new Set(tactics.map((tactic) => tactic.viet));
+  // Tên lưu có thể là tên Việt cũ: bất biến là tên tra được ra một chiến pháp của danh mục.
   for (const team of data.teams) {
     const guide = team.guide;
     for (const variant of team.variants || []) assert.equal(Object.hasOwn(variant, "guide"), false, team.title);
@@ -174,7 +176,7 @@ test("opening-guide fields stay finite, curated, and separate from build variant
       assert.ok(split.target, `${team.title}: split target`);
       assert.ok(split.heroes?.length || split.note, `${team.title}: split needs reviewed structure or prose`);
       for (const hero of split.heroes || []) for (const tactic of hero.tactics || []) {
-        assert.ok(tacticNames.has(tactic), `${team.title}: unknown split tactic ${tactic}`);
+        assert.ok(tacticId(tactic), `${team.title}: unknown split tactic ${tactic}`);
       }
     }
   }

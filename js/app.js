@@ -8,13 +8,13 @@ import { LOOKUP_GROUP_PAYLOADS } from "./unified-lookup.js";
 import { initAnalyze } from "./analyze.js";
 import { initRecruitTracker } from "./recruit-tracker.js";
 import { initRosterRecommend } from "./roster-recommend-ui.js";
-import { createByteLoader, displayValue, loadRawNameResolver, loadWebsiteDisplay, localizeData } from "./website-display.js";
+import { createByteLoader, displayValue, loadRawNameResolver, loadTacticDisplayName, loadWebsiteDisplay, localizeData } from "./website-display.js";
 import { L, currentLocale, localePath } from "./i18n.js";
 
 import { loadSeasonModel, readSeasonQuery, updateSeasonURL, BUNDLE_NOTICE } from './season-ui-state.js';
 import { createSeasonCoexistSection, createRecommendedSection } from "./team-filter-section.js";
 import { resolveBrowseState, projectSeasonBrowse } from './season-context.js';
-import { loadRecommendedReference, readRecommendedQuery, setZhNameResolver } from './recommended-reference-state.js';
+import { loadRecommendedReference, readRecommendedQuery, setZhNameResolver, setTacticDisplayName } from './recommended-reference-state.js';
 import { resolveTeamView, writeStoredTeamView, canonicalTeamView, TEAM_VIEW_CARDS } from "./team-view.js";
 import {
   KHAIHOANG_TEAM_QUERY_KEY,
@@ -198,7 +198,7 @@ async function main() {
         .map(team => [team.id, new Set((team.variants || []).map(variant => variant.id))]),
     );
     // Kho Tra cứu, tier (chỉ Gợi ý đội) và mô hình mùa độc lập nhau: tải song song, lỗi của từng phần tự xử lý.
-    const [lookupBundle, teamTier, seasonModel, rawNames, lookupBooks, lookupDocs] = await Promise.all([
+    const [lookupBundle, teamTier, seasonModel, rawNames, lookupBooks, lookupDocs, tacticDisplay] = await Promise.all([
       needsLookup ? loadLookupBundle(loadBytes).catch(() => null) : null,
       pageSection === 'roster-recommend' ? loadOptionalJSON("/data/team-tier.json", []) : [],
       // Phạm vi mùa chỉ có payload ở 3 trang mục; thiếu hash là trang không dùng đến mô hình mùa.
@@ -212,8 +212,11 @@ async function main() {
       // Binh thư chỉ có ở trang nhóm Binh thư; lỗi chỉ làm lưới trống.
       lookupGroup === 'books' ? loadLookupBooks(loadBytes).catch(() => []) : [],
       lookupPayloads ? loadLookupDocs(lookupPayloads.entry).catch(() => null) : null,
+      // Bản Việt: tên chiến pháp lưu trong dữ liệu đội hiển thị theo `viet` hiện hành của danh mục.
+      loadTacticDisplayName(loadBytes).catch(() => null),
     ]);
     if (rawNames) setZhNameResolver(rawNames);
+    setTacticDisplayName(tacticDisplay);
     if ((needsLookup && !lookupBundle) || (lookupPayloads && !lookupDocs)) {
       mount.append(el("p", { class: "error", role: "alert" }, L("Dữ liệu Tra cứu hiện không khả dụng. Các mục đội hình vẫn hoạt động.", "图鉴查询数据暂不可用。阵容相关栏目仍可正常使用。")));
     }

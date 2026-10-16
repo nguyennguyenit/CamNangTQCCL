@@ -6,6 +6,7 @@ import {
   recommendRoster,
 } from "../js/roster-season-candidates.js";
 import { buildTacticRules, canonicalTacticId, recommendTeams } from "../js/team-recommend-engine.js";
+import { createTacticDisplayName } from "../js/lookup-ids.js";
 import {
   FIXTURE_IDS,
   buildableBy,
@@ -20,9 +21,12 @@ const { tacticsDict, legacyTeams, legacyTier } = realData();
 const tacticInfo = new Map(tacticsDict.map((t) => [t.viet, t]));
 const tacticRules = buildTacticRules(tacticsDict);
 
+// Tên chiến pháp của đội mùa là `viet` hiện hành của danh mục; tên cũ được quy về cùng mã trước khi so.
+const displayName = createTacticDisplayName(tacticsDict);
 const slotOf = (team, tactic) => {
+  const shown = displayName(tactic);
   for (const [heroIndex, hero] of team.heroes.entries()) {
-    const slotIndex = hero.tactics.findIndex((t) => t.name === tactic);
+    const slotIndex = hero.tactics.findIndex((t) => t.name === tactic || t.name === shown);
     if (slotIndex >= 0) return { heroIndex, slotIndex, holderName: hero.name };
   }
   throw new Error(`${tactic} not in ${team.id}`);
@@ -306,7 +310,7 @@ function overridePipeline(seasonId, teamId, tacticToReplace, replacement, { skip
   const season = seasonFrom(seasonId, [teamId]);
   const [team] = season.teams;
   const slot = slotOf(team, tacticToReplace);
-  const roster = rosterOf([team], { skipTactics: [tacticToReplace, ...skip] });
+  const roster = rosterOf([team], { skipTactics: [tacticToReplace, ...skip].map((name) => displayName(name)) });
   const result = recommendRoster({
     seasonTeams: season.teams, seasonTier: season.teamTier, tacticsDict,
     ownedHeroes: roster.ownedHeroes, ownedTactics: [...roster.ownedTactics, replacement, ...add],

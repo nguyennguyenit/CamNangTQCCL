@@ -11,6 +11,7 @@ import { LOOKUP_EMPTY, effectVersions, lookupDisplayName, lookupProfile, tacticT
 import { L, currentLocale, localePath } from "./i18n.js";
 import { heroPortrait } from "./hero-portrait.js";
 import { lookupProfilePath } from "./lookup-ids.js";
+import { tacticDisplayName } from "./recommended-reference-state.js";
 import { barPercent, camNangView, lookupCardView, lookupGroupLabels } from "./unified-lookup.js";
 import { representativeTeamHref, tacticBadges, tacticProfileBody, tacticSummaryBlock } from "./lookup-tactic-profile.js";
 
@@ -302,7 +303,7 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
     const statFocus = zh ? view.statFocus.items.map((item) => ({ ...item, name: statFocusZh(item.name) })).filter((item) => item.name) : view.statFocus.items;
     const tactics = el("article", { class: "cam-nang-card" }, [
       el("h4", { class: "cam-nang-title" }, L("Chiến pháp hay mang", "常带战法")),
-      el("ul", { class: "cam-nang-bars" }, localNames(view.tactics).map((item) => el("li", { class: "cam-nang-bar" }, [
+      el("ul", { class: "cam-nang-bars" }, localNames(view.tactics).map((item) => ({ ...item, name: tacticDisplayName(item.name) })).map((item) => el("li", { class: "cam-nang-bar" }, [
         el("span", { class: "cam-nang-bar-label" }, item.name),
         el("span", { class: "cam-nang-bar-value" }, String(item.teams)),
         el("span", { class: "cam-nang-bar-track", "aria-hidden": "true" }, [

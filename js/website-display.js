@@ -1,4 +1,5 @@
 import { L, currentLocale, normalizeLocale } from "./i18n.js";
+import { createTacticDisplayName } from "./lookup-ids.js";
 
 const HASH = /^[0-9a-f]{64}$/;
 const GENERATION = /^site-localization:[0-9a-f]{64}$/;
@@ -204,4 +205,14 @@ export async function loadRawNameResolver(loadBytes, locale = currentLocale()) {
   if (normalizeLocale(locale) !== "zh") return null;
   const dicts = await Promise.all(RAW_NAME_SOURCES.map(async path => JSON.parse(decoder.decode(asBytes(await loadBytes(path))))));
   return createRawNameResolver(...dicts);
+}
+
+/**
+ * Bộ đổi tên chiến pháp lưu → tên Việt hiện hành cho bản Việt: tải `data/tactics.json` qua bộ nạp dùng chung của trang;
+ * bản Trung trả `null`. Lỗi tải do nơi gọi `.catch` (tên lưu vẫn hiển thị nguyên).
+ */
+export async function loadTacticDisplayName(loadBytes, locale = currentLocale()) {
+  if (normalizeLocale(locale) === "zh") return null;
+  const tactics = JSON.parse(decoder.decode(asBytes(await loadBytes("data/tactics.json"))));
+  return createTacticDisplayName(tactics);
 }

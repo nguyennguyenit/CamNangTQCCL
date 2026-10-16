@@ -1,6 +1,6 @@
 // DOM builders thuần — nhận data, trả HTMLElement. Không state, không innerHTML data thô.
 
-import { legacyLabelZh, sourceName } from './recommended-reference-state.js';
+import { legacyLabelZh, sourceName, tacticDisplayName } from './recommended-reference-state.js';
 import { L, currentLocale } from './i18n.js';
 
 /** Helper tạo element gọn. */
@@ -56,6 +56,8 @@ const publicText = (value, fallback = L("Nội dung tiếng Việt chưa sẵn s
 export const formatModifiedTactic = value => typeof value === "string"
   ? value.replace(/^(Tinh|Chuyển|Thác|精|轉|拓)\s*[·・]\s*/u, "$1 · ")
   : value;
+/** Tên chiến pháp lưu trong dữ liệu → tên hiển thị của trang (bản vi: `viet` hiện hành của danh mục; bản zh: chữ Hán nguồn). */
+const tacticName = (value) => tacticDisplayName(sourceName(value));
 /** Văn xuôi tác giả viết bằng tiếng Việt (ghi chú, hướng dẫn): bản zh bỏ hẳn để trang không trộn hai ngôn ngữ. */
 const viProse = (value) => (isZh() ? "" : value);
 
@@ -144,7 +146,7 @@ function coexistModel(reference) {
             name: zh ? zhCoexistHeroName(name) : name,
             tag: zh ? "" : tag,
             tactics: (hero.tacticSlotsRaw || []).map((value) => slot(value, zhModifiedTactic) || null).filter(Boolean)
-              .map(formatModifiedTactic),
+              .map((value) => formatModifiedTactic(tacticDisplayName(value))),
             books: (hero.bookSlotsRaw || []).map((value) => slot(value, sourceName) || null).filter(Boolean),
             statFocus: zh ? "" : publicText(hero.statFocusRaw, empty()),
           };
@@ -170,7 +172,7 @@ function coexistModel(reference) {
       unitTacticEffects: viProse(team.unitTacticEffects || ""),
       heroes: (team.heroes || []).map((hero) => ({
         ...splitHeroName(seatName(hero.name || "")),
-        tactics: (hero.tactics || []).map((value) => sourceName(value)).filter(Boolean),
+        tactics: (hero.tactics || []).map((value) => tacticName(value)).filter(Boolean),
         books: (hero.books || []).map((value) => sourceName(value)).filter(Boolean),
         statFocus: viProse(hero.statFocus || ""),
         advisorSkill: sourceName(hero.advisorSkill || ""),
@@ -318,8 +320,8 @@ const stageUnit = (unitType, buildUnit) => unitType && unitType !== buildUnit
 
 /** Chiến pháp "Trước" và "Sau" của một tướng; tên không tra được chữ Hán (bản zh) bị bỏ. */
 const stageTactics = (hero) => ({
-  before: [sourceName(hero.tacticBefore)].filter(Boolean),
-  after: (hero.tacticsAfter || []).map((tactic) => sourceName(tactic)).filter(Boolean),
+  before: [tacticName(hero.tacticBefore)].filter(Boolean),
+  after: (hero.tacticsAfter || []).map((tactic) => tacticName(tactic)).filter(Boolean),
 });
 
 /**
@@ -532,7 +534,7 @@ export function khaihoangGuide(guide) {
       viProse(item.target) ? el("strong", {}, item.target) : null,
       item.heroes?.length ? el("ul", {}, item.heroes.map((hero) => el("li", {}, [
         seatName(hero.name),
-        hero.tactics?.map((tactic) => sourceName(tactic)).some(Boolean) ? ` (${hero.tactics.map((tactic) => sourceName(tactic)).filter(Boolean).join(" / ")})` : null,
+        hero.tactics?.map((tactic) => sourceName(tactic)).some(Boolean) ? ` (${hero.tactics.map((tactic) => tacticName(tactic)).filter(Boolean).join(" / ")})` : null,
       ].filter(Boolean).join("")))) : null,
       viProse(item.note) ? el("p", { class: "kh-guide-note" }, item.note) : null,
     ].filter(Boolean)))),
@@ -701,7 +703,7 @@ function chamSuTeamCard(team) {
       el("li", {}, [
         el("span", { class: "cham-su-hero" }, seatName(hero.name)),
         sourceName(hero.tactic) ? " — " : null,
-        sourceName(hero.tactic) ? el("span", { class: "cham-su-tactic" }, sourceName(hero.tactic)) : null,
+        sourceName(hero.tactic) ? el("span", { class: "cham-su-tactic" }, tacticName(hero.tactic)) : null,
       ].filter(Boolean)))),
     viProse(team.note) ? el("p", { class: "cham-su-note" }, team.note) : null,
   ].filter(Boolean));
@@ -912,6 +914,7 @@ import { compareSeasonInventory, defaultSeasonSelection } from './season-ui-stat
 import { ROSTER_SCAN_STORAGE_KEY, deserializeRosterScanState } from './roster-scan-state.js';
 import { canonicalHeroId } from './hero-identity.js';
 import { normalizeText } from './filters.js';
+import { createTacticIdResolver } from './lookup-ids.js';
 
 /** Ordered configuration details use explicit selections; inventory facts never become tiers. */
 export function seasonConfigDetail(row, model, {onClose,importHref}) {
@@ -920,7 +923,7 @@ export function seasonConfigDetail(row, model, {onClose,importHref}) {
   // Bản zh hiện tên chữ Hán gốc của từ điển; khóa ref vẫn dựng từ tên Việt như trước.
   const zh = isZh();
   for (const [dataset,kind] of [['heroes-dict','hero'],['tactics','tactic'],['books-dict','book']]) for (const item of model.data[dataset]) {
-    const ref = kind === 'hero' ? canonicalHeroId(item.viet) : kind + ':' + normalizeText(item.viet).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    const ref = kind === 'hero' ? canonicalHeroId(item.viet) : kind === 'tactic' && typeof item.id === 'string' && item.id.startsWith('tactic:') ? item.id : kind + ':' + normalizeText(item.viet).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
     names.set(ref,zh && item.chinese ? item.chinese : item.viet);
   }
   const selection = defaultSeasonSelection(config);
@@ -943,7 +946,7 @@ export function seasonConfigDetail(row, model, {onClose,importHref}) {
       comparison.replaceChildren(el('p',{},L('Chưa có kho để đối chiếu.','尚无可对照的武将库。')),el('a',{class:'ana-link-btn',href:importHref},L('Mở scan / nhập kho','打开扫描 / 导入武将库')));
       return;
     }
-    const result = compareSeasonInventory(selection,inventory);
+    const result = compareSeasonInventory(selection,inventory,createTacticIdResolver(model.data.tactics));
     const lines = [];
     for (const [key,label] of [['missingHeroes',L('Thiếu tướng','缺少武将')],['missingTactics',L('Thiếu chiến pháp','缺少战法')],['lockedHeroes',L('Tướng đang khóa','锁定中的武将')],['lockedTactics',L('Chiến pháp đang khóa','锁定中的战法')]]) if (result[key].length) lines.push(`${label}: ${result[key].map(ref=>names.get(ref) || ref).join(', ')}`);
     if (result.duplicateHeroes) lines.push(L('Trùng tướng giữa các vị trí.','不同位置之间有重复武将。'));

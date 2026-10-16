@@ -138,7 +138,7 @@ function dictionary(rows, kind) {
     const name = row.viet;
     // Unmapped dictionary rows are not canonical identities.
     if (typeof name !== 'string' || !name.trim()) continue;
-    const key = kind === 'hero' ? canonicalHeroId(name) : `${kind}:${normalizeText(name).replace(/[^a-z0-9]+/gu, '-').replace(/^-+|-+$/gu, '')}`;
+    const key = kind === 'hero' ? canonicalHeroId(name) : kind === 'tactic' && typeof row.id === 'string' && row.id.startsWith('tactic:') ? row.id : `${kind}:${normalizeText(name).replace(/[^a-z0-9]+/gu, '-').replace(/^-+|-+$/gu, '')}`;
     const previous = result.get(key);
     if (previous && (previous.viet !== row.viet || previous.chinese !== row.chinese)) result.set(key, null);
     else if (!result.has(key)) result.set(key, row);

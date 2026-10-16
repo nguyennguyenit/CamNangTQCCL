@@ -6,11 +6,12 @@ import {
   loadRecommendedDetailView,
   loadVerifiedLegacyTeams,
   loadVerifiedRecommendedManifest,
+  setTacticDisplayName,
   setZhNameResolver,
 } from './recommended-reference-state.js';
 import { detailBadges, legacyOriginalDetailContent, recommendedTeamDetailContent } from './recommended-reference-render.js';
 import { safeReturnUrl, setTeamRouteHandlesFromJSON, teamDetailPath } from './team-detail-navigation.js';
-import { createByteLoader, loadRawNameResolver, loadWebsiteDisplay, localizeData } from './website-display.js';
+import { createByteLoader, loadRawNameResolver, loadTacticDisplayName, loadWebsiteDisplay, localizeData } from './website-display.js';
 import { L } from './i18n.js';
 
 const TEAMS_SOURCE = 'data/teams.json';
@@ -147,6 +148,7 @@ export async function initTeamDetail({documentTarget = document} = {}) {
       // từ điển lỗi chỉ làm tên lùi về Hán-Việt, không chặn trang.
       const rawNames = await loadRawNameResolver(loadBytes).catch(() => null);
       if (rawNames) setZhNameResolver(rawNames);
+      setTacticDisplayName(await loadTacticDisplayName(loadBytes).catch(() => null));
       if (family === 'recommended') await loadRecommended();
       else await loadLegacy();
     } catch (error) {

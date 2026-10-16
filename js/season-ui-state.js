@@ -42,12 +42,17 @@ export function updateSeasonURL(url, changes) {
 }
 
 import { canonicalHeroId } from './hero-identity.js';
-export function compareSeasonInventory(selection, inventory) {
-  const identity = (name, kind) => {
-    try { return kind === 'hero' ? canonicalHeroId(name) : 'tactic:' + normalizeText(name).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); } catch { return ''; }
+export function compareSeasonInventory(selection, inventory, tacticIdOf = null) {
+  const identity = (item, kind) => {
+    const name = typeof item === 'string' ? item : item?.name;
+    try {
+      if (kind === 'hero') return canonicalHeroId(name);
+      if (typeof item === 'object' && typeof item?.canonicalId === 'string' && item.canonicalId.startsWith('tactic:')) return item.canonicalId;
+      return tacticIdOf ? tacticIdOf(name) : 'tactic:' + normalizeText(name).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    } catch { return ''; }
   };
-  const ownedHeroes = new Set(inventory.ownedHeroes.map(item=>identity(item.name,'hero')));
-  const ownedTactics = new Set(inventory.ownedTactics.map(item=>identity(item.name,'tactic')));
+  const ownedHeroes = new Set(inventory.ownedHeroes.map(item=>identity(item,'hero')));
+  const ownedTactics = new Set(inventory.ownedTactics.map(item=>identity(item,'tactic')));
   const lockedHeroes = new Set(inventory.lockedTeams.flatMap(team=>team.heroes).map(name=>identity(name,'hero')));
   const lockedTactics = new Set(inventory.lockedTeams.flatMap(team=>team.tactics).map(name=>identity(name,'tactic')));
   const heroes = selection.heroSlots.map(slot=>slot.heroRef);

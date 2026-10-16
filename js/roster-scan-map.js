@@ -3,6 +3,7 @@ import { normalizeText } from "./filters.js";
 import { canonicalHeroId, heroFamilyId } from "./hero-identity.js";
 import { toVietHanViet } from "./hanviet.js";
 import { L } from "./i18n.js";
+import { createTacticIdResolver } from "./lookup-ids.js";
 
 const MAX_UNTRUSTED_TEXT = 256;
 
@@ -14,8 +15,12 @@ function sanitizeText(value) {
     .slice(0, MAX_UNTRUSTED_TEXT);
 }
 
-function canonicalTacticId(name) {
-  return `tactic:${normalizeText(name).replace(/[^a-z0-9]+/gu, "-").replace(/^-+|-+$/gu, "")}`;
+const resolverCache = new WeakMap();
+/** Tên → mã chiến pháp theo danh mục (tên hiển thị có thể đã đổi, mã giữ nguyên); không có trong danh mục thì slug tên. */
+function tacticIdResolver(dict) {
+  if (!Array.isArray(dict)) return createTacticIdResolver([]);
+  if (!resolverCache.has(dict)) resolverCache.set(dict, createTacticIdResolver(dict));
+  return resolverCache.get(dict);
 }
 
 function mapName(cn, dict) {
@@ -45,8 +50,7 @@ function evidenceFor(item, context) {
 function richName(item, dict, kind, context) {
   const source = typeof item === "string" ? { nameCn: item } : item;
   const mapped = mapName(source?.nameCn || source?.name || "", dict);
-  const canonicalId =
-    kind === "hero" ? canonicalHeroId(mapped.name) : canonicalTacticId(mapped.name);
+  const canonicalId = kind === "hero" ? canonicalHeroId(mapped.name) : tacticIdResolver(dict)(mapped.name);
   return {
     name: mapped.name,
     canonicalId,

@@ -95,7 +95,8 @@ function entry(group, record) {
     ...(Array.isArray(record.aliasesZh) ? record.aliasesZh : []),
     record.chinese,
   ].filter((value) => typeof value === "string" && value.length > 0);
-  const searchKeys = [nameVi, ...aliases].map(normalizeText);
+  // Tên Hán-Việt (tên cũ của chiến pháp đã đổi tên hiển thị) vẫn là khóa tìm.
+  const searchKeys = [nameVi, ...aliases, ...(typeof record.hanViet === "string" && record.hanViet.trim() ? [record.hanViet] : [])].map(normalizeText);
   return { id: record.id, group, nameVi, aliases, searchKeys, record };
 }
 

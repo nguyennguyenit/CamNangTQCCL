@@ -3,6 +3,25 @@ import assert from 'node:assert/strict';
 import {
   LOOKUP_HUB_TABLES, bookLookupId, bookSourceAliases, createLookupIdResolver, groupForId, lookupHubTarget, lookupProfilePath, lookupSlug,
 } from '../js/lookup-ids.js';
+import {createTacticIdResolver, createTacticNameIndex} from '../js/lookup-ids.js';
+
+test('tactic name index: tên cũ (hanViet) và tên mới đều ra cùng mã; tên trùng ở hai mã chọn mã có slug khớp', () => {
+  const tactics = [
+    {id: 'tactic:chan-hai-tu-canh', viet: 'Bốn Bề Rung Động', hanViet: 'Chấn Hãi Tứ Cảnh', aliases: []},
+    {id: 'tactic:di-hoa-tiep-moc', viet: 'Lập Lờ Đánh Tráo', hanViet: 'Di Hoa Tiếp Mộc', aliases: []},
+    {id: 'tactic:lap-lo-danh-trao', viet: 'Lập Lờ Đánh Tráo', hanViet: 'Lập Lờ Đánh Tráo', aliases: []},
+  ];
+  const index = createTacticNameIndex(tactics);
+  assert.equal(index('Chấn Hãi Tứ Cảnh'), 'tactic:chan-hai-tu-canh');
+  assert.equal(index('Bốn Bề Rung Động'), 'tactic:chan-hai-tu-canh');
+  assert.equal(index('Di Hoa Tiếp Mộc'), 'tactic:di-hoa-tiep-moc');
+  assert.equal(index('Lập Lờ Đánh Tráo'), 'tactic:lap-lo-danh-trao');
+  assert.equal(index('Không Có'), null);
+  assert.equal(createTacticIdResolver(tactics)('Không Có'), 'tactic:khong-co');
+  const resolve = createLookupIdResolver({tactics});
+  assert.equal(resolve.tactic(null, 'Bốn Bề Rung Động'), 'tactic:chan-hai-tu-canh');
+  assert.equal(resolve.tactic(null, 'Chấn Hãi Tứ Cảnh'), 'tactic:chan-hai-tu-canh');
+});
 
 test('slug matches pipeline canonical ids (đ, dấu, ký tự lạ)', () => {
   assert.equal(lookupSlug('Đoạt Hồn Hiệp Phách'), 'doat-hon-hiep-phach');
