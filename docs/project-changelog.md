@@ -122,6 +122,11 @@ Sửa tám lỗi audit ở `js/roster-season-candidates.js`, `js/team-recommend-
 - `workflow-build` sinh lại (adapter và `js/roster-scan-state.js` nằm trong semantic closure nên sửa adapter đổi `workflowVersion`).
 - Bản dịch hiển thị publish lại theo `docs/deployment-guide.md`: re-pin sha256 nguồn trong `pipeline/site-localization-policy.json`, generation Recommended mới `9945cf05…` (thay `a973b093…`, đã prune), `data/website-display.json` mới, `pipeline/team-route-handles.json` re-pin generation; `site_localization check --stage public` và `team_route_handles --check` đạt.
 - `suggestTacticSubstitutes` bị gỡ; dùng `analyzeTacticSubstitutes(...).substitutes` (khoá chiến pháp nhận cả tên lẫn ID `tactic:` nên chiến pháp của đội đã khoá không bị gợi ý làm món bù).
+## 2026-10-07 (Dọn bộ logo)
+
+### Removed
+
+- Xoá `docs/design/brand/logo.svg`, `logo.png`, `logo-dark.png`: không còn chỗ nào dùng. Giữ hai file gốc: `logo-concept-v2.png` (nguồn của `public/logo.png`, `favicon.png`, `og-image.png`) và `logo-dark.svg` (nguồn của `public/logo-cam-nang.svg`).
 
 ## 2026-10-07 (Tra cứu tướng: Đánh giá của bản thường bị gắn vào bản SP)
 
