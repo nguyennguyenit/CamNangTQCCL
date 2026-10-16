@@ -136,6 +136,8 @@ Workflow `.github/workflows/mcp-worker.yml` chỉ vào job production khi manual
 
 Cloudflare Create Deployment không có conditional/ETag precondition. Vì vậy deploy token phải dành riêng cho workflow và không được mutation từ dashboard, Wrangler hay token khác trong cửa sổ release. Controller re-read ngay trước mỗi POST, gắn run ID trong deployment message, reconcile response bị mất rồi read-back; observed drift luôn mở incident. Đây là serialization + ownership protocol vận hành, không phải CAS nguyên tử do Cloudflare cung cấp.
 
+API deployment có thể commit mà trả response lỗi, và lần đọc ngay sau đó còn trả deployment trước mutation (run `38762022539`: smoke đã tạo nhưng controller kết luận "prior không đổi" rồi để lại candidate `0%`). Sau mỗi POST, controller đọc lại theo `MUTATION_READ_BACK_DELAYS_MS` (0, 1, 2, 4, 8, 15 giây) cho tới khi thấy deployment khác bản trước mutation; hết cửa sổ mà vẫn y nguyên mới coi là mutation chưa xảy ra. Mã lý do của POST lỗi (`network`, `http-<status>`, `envelope`, `shape`, `input`) nằm trong `mutationErrors` của deployment evidence; không chứa body upstream hay token.
+
 Zone `tqccl.com` dùng Cloudflare Free nên edge rule giới hạn `10` request mỗi `10` giây trên path `/mcp`, là chu kỳ được gói này hỗ trợ và đã được owner chấp thuận. Worker vẫn giữ limiter `60` request mỗi `60` giây; hai lớp có cùng tốc độ trung bình nhưng edge chặn burst sớm hơn. Release driver dùng một scheduler chung cho candidate, production và rollback verification, cách tối thiểu `1.100 ms` giữa mọi request `/mcp`; health probe ngoài path này không bị trì hoãn.
 
 Thứ tự bắt buộc:
@@ -149,6 +151,10 @@ Thứ tự bắt buộc:
 7. Gọi production `/mcp` bằng Cloudflare Version Override và bearer; header runtime `TQCCL-MCP-Worker-Version` phải đúng candidate, đồng thời `releaseId`, `workflowBuildId`, catalog và bảy tool đều phải đạt.
 8. Re-read đúng deployment do run sở hữu, promote candidate thành version duy nhất `100%`, rồi verify production không override.
 9. Khi `rehearse_rollback: true`, capture prior code/data identity trước mutation, rollback exact prior, xác minh lại version/release/workflow/data digest, re-promote candidate và chạy lại full production verifier. Mọi bước đều dùng expected-current ownership guard.
+
+Trước mỗi lần verify (smoke có override ở bước 7; production sau promote, rollback, re-promote, bootstrap), driver chờ edge phục vụ ổn định đúng version đó: GET `/mcp` có bearer, cùng kiểu request với lần verify sắp tới (có hoặc không override), qua cùng scheduler `1.100 ms`. Chỉ response `405` mang header `TQCCL-MCP-Worker-Version` đúng version mới tính (Worker gắn header cả vào `429 RATE_LIMITED`); cần ít nhất 5 response như vậy liên tiếp và chuỗi kéo dài ≥ 20 giây, tối đa 120 giây (`scripts/await-served-version.ts`). Ngay sau khi đổi deployment, edge còn trả xen kẽ version cũ, kể cả cho request có Version Override; không chờ thì verifier fail giữa chừng (2026-10-15: run `38743557129` rollback sau promote ở `release:stateless-get`, run `38754775623` restore prior ở smoke `release:invalid-protocol`; run `38784835089` qua smoke rồi vẫn fail `release:invalid-protocol` sau 5 response đúng liên tiếp, ~5,5 giây). Một lần verify gửi 17 request `/mcp` có bearer; scheduler `1.100 ms` giữ tối đa ~54 request/60 giây nên không chạm limiter `60/60 s` của Worker.
+
+Deployment evidence (`worker-deployment-evidence.json`) ghi `settles` (mỗi lần chờ: đích, version, số lần thăm dò, số response mang version khác, đếm theo status) và, khi fail, `lastObservation` (status cùng loại header `expected`/`missing`/`other` của response cuối verifier nhận). Không có body hay header khác.
 
 ### Bootstrap deployment đầu tiên
 

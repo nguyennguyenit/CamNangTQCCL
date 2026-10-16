@@ -27,6 +27,19 @@
 - Python: `tests/test_lookup_route_handles.py` (cấp slug, va chạm, `--check`, retire/giữ chỗ/khôi phục, từ chối ledger sửa tay).
 - E2E: `team-ssr-nojs`, `team-ssr-adopt`, `team-ssr-parity` (DOM nhận lại = DOM client dựng), `team-ssr-detail-states`, `lookup-item-pages`; spec cũ đổi theo hành vi chủ động thay đổi (link trang riêng, chờ `data-boot` trước khi thao tác lọc, đường `?variant=` cho test tải/fail-closed).
 
+## 2026-10-15 (Thiết kế lại khu Quản trị theo artboard Admin*)
+
+### Changed
+
+- **`/quan-tri/` và `/zh/quan-tri/` dựng theo 12 artboard `Admin*`** (`docs/design/so-binh-phap/project/`): đầu trang có nhãn caps, h1 serif và thẻ tài khoản quản trị; hàng tab thay bằng cột điều hướng trái dính đầu (≤960px thành hàng chip cuộn ngang); mỗi khu là một `<section>` có h2 + mô tả + nút, mở bằng link hash (`#chien-bao`, `#bai-viet`, `#binh-luan`, `#gop-y`, `#soi-doi`, `#ai`) nên link thẳng và nút Back dùng được. Chiến báo: ô ảnh 280×176, form từ chối nền đỏ nhạt có textarea. Bài viết: bảng (mobile thành thẻ), trình soạn có lưới ô nhập, thẻ ảnh bìa, Markdown + xem trước 2 cột (mobile công tắc Soạn / Xem trước), FAQ, thanh Lưu nháp/Xuất bản dính đáy. Góp ý: badge màu theo loại/trạng thái, mục đã xử lý mờ. AI: thẻ nhà cung cấp có số thứ tự failover, nút lên/xuống dạng icon, thẻ đang sửa viền son; Thêm/Lưu ở đầu khu; mỗi tính năng là một thẻ. Không đổi API hay hành vi lưu.
+- CSS mới dùng class `adm-*` và 13 token chữ, 4 token kích thước, `--shadow-dock` thêm vào `tokens.json`; bỏ CSS tab/hàng cũ (`cm-tab*`, `cm-admin-*`, `cm-post-*`, `cm-ai-*`, `cm-faq*`, `cm-markdown*`, `cm-cover*`, `cm-field-grid`, `cm-check`). `reportSummary` nhận `caption` (dòng chú thích cạnh nhãn kết quả, chỉ khu quản trị dùng).
+- **Số việc chờ** (`GET /api/admin/counts`, community-worker): badge trên điều hướng cho Duyệt chiến báo (chờ duyệt), Bài viết (bản nháp), Góp ý (chưa xử lý), Soi đội (ảnh chờ duyệt) — ẩn khi bằng 0, link đang chọn đổi sang viên hồng như artboard; khu Góp ý có dòng "x góp ý chưa xử lý · y đã xử lý". Đếm lại sau mỗi lần duyệt/từ chối, đổi trạng thái góp ý, lưu/xuất bản/xoá bài. Deploy worker trước site để badge hiện (worker cũ trả 404 thì badge chỉ không hiện).
+
+### Fixed
+
+- Điều hướng quản trị: Back về URL không hash khôi phục khu Duyệt chiến báo; anchor bỏ qua điều hướng vẫn giữ khu đang mở. Hàng chip mobile giữ mục đang chọn trong vùng nhìn thấy khi badge số chờ hoặc font tải xong.
+- Tiêu đề bài viết dài không có dấu cách tự xuống dòng trong thẻ mobile, không làm toàn trang tràn ngang.
+
 ## 2026-10-15 (Nhãn chỉ số/binh chủng cho MCP, đoán tên gần có điều kiện)
 
 ### Added
@@ -47,6 +60,8 @@
 
 - **Gợi ý đội từ kho: nút "Dùng món này" luôn bị vô hiệu**: `el()` gán `disabled="false"` khi chưa chạm giới hạn thay món, và thuộc tính có mặt là đủ để khoá nút. Nay chỉ gắn `disabled` khi `limitReached`. Bản dịch hiển thị publish lại (generation `e079390c…`).
 - **Tra cứu, hồ sơ chiến pháp, cột "Cách nhận"**: thẻ tướng "Tự mang" lấy từ cùng quy tắc với hồ sơ tướng, nên tướng chỉ khớp qua tên Hán chiến pháp tự có (vd Tiểu Kiều → Thiên Hương) cũng hiện. Trước đây cột này chỉ dò `selfTacticId`. Bản dịch hiển thị publish lại (generation `989c9919…`).
+- **Release MCP Worker fail oan ngay sau khi đổi deployment**: edge còn trả xen kẽ version cũ một lúc, kể cả cho request có Version Override. Run `38743557129` qua smoke rồi fail ở `release:stateless-get` sau promote và rollback; run `38754775623` fail ngay ở smoke (`release:invalid-protocol`) và restore prior; run `38784835089` qua smoke, promote rồi vẫn fail `release:invalid-protocol` sau 5 response đúng liên tiếp (~5,5 giây) và rollback. Driver nay chờ, trước smoke có override, trước mỗi lần verify production và trước khi đọc lại prior trong rollback rehearsal, tới khi có ít nhất 5 response `405` liên tiếp mang đúng `TQCCL-MCP-Worker-Version` kéo dài ≥ 20 giây (tối đa 120 giây, cùng scheduler `1.100 ms`; response `429` không tính dù có header). Evidence ghi thêm `settles` và `lastObservation` (status + loại header của response cuối verifier nhận) để lần fail sau chỉ ra nguyên nhân (`scripts/await-served-version.ts`, `onResponse` của `verifyRelease`).
+- **Release MCP Worker để lại candidate `0%` khi POST deployment lỗi** (run `38762022539`): Cloudflare đã tạo deployment smoke nhưng response bị coi là lỗi, lần đọc lại ngay sau vẫn thấy prior nên controller kết luận "prior không đổi" và thoát, không dọn. Controller nay đọc lại có chờ (0–15 giây, ~30 giây tổng) tới khi thấy deployment khác bản trước mutation, cho mọi POST (smoke, promote, restore, rollback); evidence ghi `mutationErrors` với mã lý do cố định từ `CloudflareDeploymentError.reason`. Deployment smoke treo được dọn tay bằng `wrangler versions deploy 1e1b1191…@100%` (2026-10-15 17:58 UTC).
 
 ## 2026-10-10 (Tra cứu: tên gần khi không khớp, chỉ dữ liệu cẩm nang)
 

@@ -26,11 +26,15 @@ function heroLine(names) {
   return list.length ? list.join(' · ') : '—';
 }
 
-/** Tóm tắt một chiến báo: kết quả, đội ta vs đối thủ, ghi chú. Dùng chung cho trang đội, hub và quản trị. */
-export function reportSummary(report) {
+/**
+ * Tóm tắt một chiến báo: kết quả, đội ta vs đối thủ, ghi chú. Dùng chung cho trang đội, hub và quản trị;
+ * `caption` (quản trị) là dòng chú thích đặt cạnh nhãn kết quả.
+ */
+export function reportSummary(report, { caption = null } = {}) {
   const result = RESULTS.includes(report?.result) ? report.result : null;
+  const pill = el('span', { class: 'cm-result', dataset: { result: result || 'unknown' } }, resultLabel(result));
   return el('div', { class: 'cm-report-summary' }, [
-    el('span', { class: 'cm-result', dataset: { result: result || 'unknown' } }, resultLabel(result)),
+    caption ? el('div', { class: 'cm-report-verdict' }, [pill, el('span', { class: 'cm-report-caption' }, caption)]) : pill,
     el('dl', { class: 'cm-report-sides' }, [
       el('div', {}, [el('dt', {}, L('Đội ta', '我方')), el('dd', {}, heroLine(report?.allyHeroes))]),
       el('div', {}, [el('dt', {}, L('Đối thủ', '对手')), el('dd', {}, heroLine(report?.enemyHeroes))]),
