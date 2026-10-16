@@ -8232,6 +8232,28 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
   display: none;
 }
 
+/* Nhãn phiên bản đầu mỗi panel hiệu ứng (chiến pháp, cải tạo binh chủng). Có JavaScript (`html[data-lookup-js]`) thì nút
+   chọn phiên bản đã nói bản nào đang hiện nên nhãn ẩn và bản cũ giữ `hidden`; không JavaScript thì nút vô tác dụng nên ẩn,
+   mọi panel hiện kèm nhãn của mình (bản cũ vẫn đọc được). */
+.lookup-effect-version-label {
+  width: fit-content;
+  margin: 0;
+}
+
+html[data-lookup-js] .lookup-effect-version-label,
+html:not([data-lookup-js]) .lookup-version-buttons,
+html:not([data-lookup-js]) .lookup-effect-tabs {
+  display: none;
+}
+
+html:not([data-lookup-js]) .lookup-tactic-effect-body[hidden] {
+  display: flex;
+}
+
+html:not([data-lookup-js]) .lookup-effect-text[hidden] {
+  display: block;
+}
+
 .lookup-tactic-effect-text {
   margin: 0;
   color: var(--ink);

@@ -3,14 +3,15 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { withLocale } from "../js/i18n.js";
-import { treeToHtml } from "../js/view-tree.js";
+import { treeToHtml, treeToText } from "../js/view-tree.js";
 import { effectVersions, lookupDisplayName } from "../js/lookup-detail.js";
 import { createProfileRenderer } from "../js/lookup-profile.js";
 import { setLookupRouteHandles } from "../js/lookup-ids.js";
 import { lookupResultTrees } from "../js/unified-lookup.js";
-import { masterDetailTree } from "../js/lookup-master.js";
+import { masterDetailTree, troopEffectVersions } from "../js/lookup-master.js";
 import { lookupBuildCorpus } from "../src/lib/lookup-pages.ts";
 import { lookupDetailRoutes } from "../src/lib/lookup-detail-routes.ts";
+import { tacticEffectVersions } from "../js/lookup-tactic-view.js";
 
 assert.equal(typeof document, "undefined", "test chạy ngoài trình duyệt");
 
@@ -91,4 +92,36 @@ test("chi tiết catalog trên trang riêng: tiêu đề là h1 và không có l
   assert.doesNotMatch(page, /data-lookup-back/u);
   assert.match(panel, /<h2 class="lookup-detail-title"/u);
   assert.match(panel, /data-lookup-back/u);
+});
+
+/**
+ * Bản chữ thuần (llms) và trang không JavaScript giữ cả bản hiệu ứng cũ: mỗi panel phải tự mang nhãn phiên bản ngay trước
+ * đoạn của nó, nếu không các đoạn của nhiều phiên bản nối liền nhau và không biết đoạn nào là bản hiện hành.
+ */
+function assertPanelsLabelled(tree, versions, where) {
+  const html = treeToHtml(tree);
+  const panels = [...html.matchAll(/<div[^>]*data-effect-panel="(\d+)"[^>]*>([\s\S]*?)<\/div>/gu)];
+  assert.equal(panels.length, versions.length, where);
+  const lines = treeToText(tree).split("\n");
+  versions.forEach((version, index) => {
+    assert.ok(visibleText(panels[index][2]).includes(version.label), `${where}: panel ${index} thiếu nhãn "${version.label}"`);
+    const head = version.paragraphs[0].slice(0, 20);
+    const at = lines.findIndex((line, row) => line.includes(head) && row > 0 && lines[row - 1] === version.label);
+    assert.ok(at > 0, `${where}: chữ thuần phải có nhãn "${version.label}" ngay trước đoạn của nó`);
+  });
+}
+
+test("chiến pháp nhiều phiên bản (vi): mỗi panel trang riêng mang nhãn phiên bản, chữ thuần gắn nhãn với đúng đoạn", () => {
+  const versionsOf = (row) => tacticEffectVersions(row.record, "vi").filter((version) => version.paragraphs.length);
+  const item = corpus.groups.tactics.find((row) => versionsOf(row).length > 1 && versionsOf(row).every((version) => version.label));
+  assert.ok(item, "corpus phải có chiến pháp nhiều phiên bản");
+  const tree = withLocale("vi", () => createProfileRenderer({ group: "tactics", openInPage() {}, onClose() {} }).profilePageTree(corpus, item.id, {}));
+  assertPanelsLabelled(tree, versionsOf(item), item.id);
+});
+
+test("cải tạo binh chủng nhiều phiên bản (vi): mỗi panel mang nhãn phiên bản, chữ thuần gắn nhãn với đúng đoạn", () => {
+  const item = corpus.groups["troop-mods"].find((row) => troopEffectVersions(row.record).length > 1);
+  assert.ok(item, "corpus phải có cải tạo nhiều phiên bản");
+  const tree = masterDetailTree("troop-mods", item, corpus, "vi", { page: true });
+  assertPanelsLabelled(tree, troopEffectVersions(item.record), item.id);
 });

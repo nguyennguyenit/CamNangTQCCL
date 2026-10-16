@@ -567,6 +567,7 @@ function troopDetail(item, corpus, locale) {
   const tiers = unique(options.map((option) => option.tierVi ?? ""));
   const columns = [...TROOP_TIER_ORDER.filter((tier) => tiers.includes(tier)), ...tiers.filter((tier) => !TROOP_TIER_ORDER.includes(tier))];
   const build = zh ? "" : String(record.suggestedBuildVi ?? "").trim();
+  const troopVersionLabel = (version, index) => version.label || text(locale, `Bản ${index + 1}`, `版本 ${index + 1}`);
   return [
     headTree({
       tile: glyph(record, item.nameVi),
@@ -590,12 +591,16 @@ function troopDetail(item, corpus, locale) {
         class: "fchip",
         "aria-pressed": String(index === 0),
         "data-effect-tab": String(index),
-      }, version.label || text(locale, `Bản ${index + 1}`, `版本 ${index + 1}`)))) : null,
+      }, troopVersionLabel(version, index)))) : null,
+      // Mỗi panel mở bằng nhãn của chính nó: không JavaScript (CSS hiện mọi panel) và llms vẫn biết đoạn thuộc bản nào.
       ...versions.map((version, index) => h("div", {
         class: "lookup-effect-text",
         "data-effect-panel": String(index),
         hidden: index === 0 ? null : true,
-      }, version.paragraphs.map((paragraph) => h("p", { class: "lookup-detail-prose" }, paragraph)))),
+      }, [
+        versions.length > 1 ? h("p", { class: "lookup-version-tag lookup-effect-version-label" }, troopVersionLabel(version, index)) : null,
+        ...version.paragraphs.map((paragraph) => h("p", { class: "lookup-detail-prose" }, paragraph)),
+      ])),
     ]) : null,
     options.length ? sectionTree("lookup-troop-tree", "", [
       h("div", { class: "lookup-tree-head" }, [

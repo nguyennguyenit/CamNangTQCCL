@@ -110,9 +110,12 @@ export function tacticEffectBodyTrees(record, index) {
 /**
  * Khung hiệu ứng: nút chọn phiên bản (bản hiện hành chọn sẵn), đoạn của bản đang chọn, chú thích số in đậm. Hộp thoại chỉ
  * mang đoạn của bản đang chọn (nút dựng lại đoạn từ bản ghi); trang riêng (`panels`) mang đủ mọi phiên bản, bản cũ ẩn,
- * vì trang không giữ bản ghi nào ở trình duyệt.
+ * vì trang không giữ bản ghi nào ở trình duyệt. Khi có nhiều bản, mỗi panel mở bằng nhãn của chính nó: không JavaScript
+ * (CSS hiện mọi panel) và bản chữ thuần (llms) vẫn biết đoạn nào thuộc bản nào.
  */
 function effectSection(record, { panels = false } = {}) {
+  // Nhãn của một phiên bản (nút chọn và nhãn đầu panel dùng chung).
+  const versionLabel = (version) => version.label || L("Bản hiện hành", "当前版本");
   const versions = effectVersionList(record);
   const head = [
     t("h3", { class: "lookup-section-title", id: "lookup-tactic-effect-title" }, L("Hiệu ứng", "效果")),
@@ -124,7 +127,7 @@ function effectSection(record, { panels = false } = {}) {
         class: "lookup-version-button",
         "aria-pressed": index === 0 ? "true" : "false",
         "data-effect-version": String(index),
-      }, version.label || L("Bản hiện hành", "当前版本")))));
+      }, versionLabel(version)))));
   }
   const bodies = !versions.length
     ? [t("div", { class: "lookup-tactic-effect-body" }, [t("p", { class: "lookup-prose-text is-empty" }, L("Đang cập nhật", "暂无数据"))])]
@@ -133,7 +136,10 @@ function effectSection(record, { panels = false } = {}) {
         class: "lookup-tactic-effect-body",
         "data-effect-panel": String(index),
         hidden: index === 0 ? null : true,
-      }, version.paragraphs.map(effectParagraph)))
+      }, [
+        versions.length > 1 ? t("p", { class: "lookup-version-tag lookup-effect-version-label" }, versionLabel(version)) : null,
+        ...version.paragraphs.map(effectParagraph),
+      ]))
       : [t("div", { class: "lookup-tactic-effect-body" }, versions[0].paragraphs.map(effectParagraph))];
   const leveled = versions.some((version) => version.paragraphs.some((text) => tacticEffectSegments(text).some((part) => part.strong)));
   const notes = [
