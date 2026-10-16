@@ -5,6 +5,7 @@ import { createAuth, getSessionUser } from "./auth";
 import { currentUser, type AppDeps, type AppEnv } from "./context";
 import { isAdminEmail, requestOrigin, trustedOrigins } from "./env";
 import { ApiError, errorResponse } from "./http";
+import { admin } from "./routes/admin";
 import { ai } from "./routes/ai";
 import { feedback } from "./routes/feedback";
 import { comments } from "./routes/comments";
@@ -75,5 +76,6 @@ export function createApp(overrides: Partial<AppDeps> = {}) {
   app.route("/", recruit);
   app.route("/", ai);
   app.route("/", scan);
+  app.route("/", admin);
   return app;
 }

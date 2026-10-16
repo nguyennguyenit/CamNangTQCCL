@@ -1,5 +1,18 @@
 # Project Changelog
 
+## 2026-10-15 (Thiết kế lại khu Quản trị theo artboard Admin*)
+
+### Changed
+
+- **`/quan-tri/` và `/zh/quan-tri/` dựng theo 12 artboard `Admin*`** (`docs/design/so-binh-phap/project/`): đầu trang có nhãn caps, h1 serif và thẻ tài khoản quản trị; hàng tab thay bằng cột điều hướng trái dính đầu (≤960px thành hàng chip cuộn ngang); mỗi khu là một `<section>` có h2 + mô tả + nút, mở bằng link hash (`#chien-bao`, `#bai-viet`, `#binh-luan`, `#gop-y`, `#soi-doi`, `#ai`) nên link thẳng và nút Back dùng được. Chiến báo: ô ảnh 280×176, form từ chối nền đỏ nhạt có textarea. Bài viết: bảng (mobile thành thẻ), trình soạn có lưới ô nhập, thẻ ảnh bìa, Markdown + xem trước 2 cột (mobile công tắc Soạn / Xem trước), FAQ, thanh Lưu nháp/Xuất bản dính đáy. Góp ý: badge màu theo loại/trạng thái, mục đã xử lý mờ. AI: thẻ nhà cung cấp có số thứ tự failover, nút lên/xuống dạng icon, thẻ đang sửa viền son; Thêm/Lưu ở đầu khu; mỗi tính năng là một thẻ. Không đổi API hay hành vi lưu.
+- CSS mới dùng class `adm-*` và 13 token chữ, 4 token kích thước, `--shadow-dock` thêm vào `tokens.json`; bỏ CSS tab/hàng cũ (`cm-tab*`, `cm-admin-*`, `cm-post-*`, `cm-ai-*`, `cm-faq*`, `cm-markdown*`, `cm-cover*`, `cm-field-grid`, `cm-check`). `reportSummary` nhận `caption` (dòng chú thích cạnh nhãn kết quả, chỉ khu quản trị dùng).
+- **Số việc chờ** (`GET /api/admin/counts`, community-worker): badge trên điều hướng cho Duyệt chiến báo (chờ duyệt), Bài viết (bản nháp), Góp ý (chưa xử lý), Soi đội (ảnh chờ duyệt) — ẩn khi bằng 0, link đang chọn đổi sang viên hồng như artboard; khu Góp ý có dòng "x góp ý chưa xử lý · y đã xử lý". Đếm lại sau mỗi lần duyệt/từ chối, đổi trạng thái góp ý, lưu/xuất bản/xoá bài. Deploy worker trước site để badge hiện (worker cũ trả 404 thì badge chỉ không hiện).
+
+### Fixed
+
+- Điều hướng quản trị: Back về URL không hash khôi phục khu Duyệt chiến báo; anchor bỏ qua điều hướng vẫn giữ khu đang mở. Hàng chip mobile giữ mục đang chọn trong vùng nhìn thấy khi badge số chờ hoặc font tải xong.
+- Tiêu đề bài viết dài không có dấu cách tự xuống dòng trong thẻ mobile, không làm toàn trang tràn ngang.
+
 ## 2026-10-15 (Nhãn chỉ số/binh chủng cho MCP, đoán tên gần có điều kiện)
 
 ### Added
