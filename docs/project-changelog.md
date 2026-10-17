@@ -1,5 +1,19 @@
 # Project Changelog
 
+## 2026-10-17 (Gộp mã chiến pháp trùng, chiến pháp mới từ client)
+
+### Added
+- 13 chiến pháp chỉ có ở client Global (Trấn Áp Khăn Vàng, Chi Diệp Phù Tô, Thiên Vận, Hộ Vệ, Gan Dạ, Cấp Tốc, Dũng Võ, 5 bản "-Sơ", Tinh • Nhanh Trí Động Não) qua `newTactics` trong `pipeline/lookup-client-tactics.json`, có tên Hán (三略庫/ảnh TW) và hiệu ứng Hán. Chu Tuấn, Lý Nghiêm, Lưu Thiện, Phó Sĩ Nhân và các tướng 1–2★ nối chiến pháp tự mang tương ứng.
+- `lookup.formerIds` trên chiến pháp; link, resolver, luật đội và MCP quy mã cũ về mã giữ.
+- Đủ 16 chiến pháp binh chủng của mùa Binh Diễn Xuân Thu theo màn Sân Luyện Binh › Binh chủng Xem của client, mỗi binh chủng một mục `Tinh • <binh chủng>`. Hiệu ứng là hướng dẫn gốc của mùa (chưa gồm cải tạo; thay cho bản cấu hình riêng của tài khoản đã chụp trước). 4 cấp cải tạo S/C/B/A (mỗi cấp chọn 1 trong 3) và ghi chú mùa nằm trong `lookup.conditions`. `Chuyển • <binh chủng>` (chọn cải tạo đặc biệt Chuyển, đổi loại binh) là tên khác của cùng mục, có trong alias cùng `轉·…`; câu đầu hiệu ứng khi chọn Chuyển của cả 7 binh chủng lấy từ màn "Hiệu quả Chiến Pháp Xem trước" (chọn thử, không lưu). Chữ Hán `精·` và hướng dẫn lấy từ ảnh màn 訓兵場 client TW (Bahamut). `Tinh • Nhanh Trí Động Não` có ghi chú mùa nêu rõ chỗ khác bản gốc: dùng được cho mọi binh chủng (bản gốc Kỵ binh, Khí giới) và mức tăng 5.5→10 (bản gốc 7.5→15).
+
+### Changed
+- Cải tạo binh chủng (16 binh chủng, 192 lựa chọn) chỉ giữ một bản client: tên, hướng dẫn mùa, lựa chọn và cấp theo màn Sân Luyện Binh › Binh chủng Xem; bỏ lịch sử bản SGSDeck. Cấp "Cơ bản" đổi thành "Sơ cấp" theo client. 123 lựa chọn giữ mã cũ, 69 lựa chọn mới theo client thay 69 lựa chọn của đợt cũ.
+- 5 chiến pháp có bản `Thác-` bán ở Thương nhân › Mùa giải (Đoạt Hồn Hiệp Phách, Dưỡng Sức Đợi Chiến, Thuyền Cỏ Mượn Tên, Cắt Xương Trị Độc, Sĩ Biệt Tam Nhật): cùng hiệu ứng nên thêm tên khác `Thác-…` và ghi chú mùa vào mục gốc. Ghi chú Tinh/Chuyển nêu quy tắc tên đã thử trong client: chọn Chuyển ở cải tạo đặc biệt thì Chiến Pháp hiện `Chuyển • …`, còn lại `Tinh • …`.
+- Gộp 18 cặp mã chiến pháp trùng thành một mã (`retired` trong client file). Bỏ `tactic:dao-vien-ket-nghia` vì là duyên phận, không phải chiến pháp; bỏ 7 chiến pháp chỉ có ở SGSDeck (Thiên Lý Quỹ Lương, Đoan Trang Trì Trọng, Duy Nội Thiện Quyền, Khiên Chế, Thùy Huệ Vạn Vật, Tuyệt Kế Chiết Mưu, Vạn Quân Thủ Tướng) và tướng Hà Thị (`retired` trong `pipeline/lookup-client-heroes.json`). Giữ SP Tào Tháo cùng Thừa Thiên Tĩnh Thế / Tàng Khí Đãi Thì vì bản Trung có (SGSDeck TW, bài 2026 về SP曹操 truyền thừa 藏器待時); hai mục ghi chú "chưa có ở client Global, nội dung theo bản Trung".
+- Phẩm chiến pháp lấy theo màu tên trên thẻ tướng client (cam S, tím A, xanh B, xanh nhạt C). 8 mục ghi sai được sửa về A.
+- Tách 6 chỗ chữ dính số trong mô tả client ("giảm10%", "2hiệp"…).
+
 ## 2026-10-17 (Chiến pháp tự mang/kế thừa theo thẻ tướng client)
 
 ### Added
