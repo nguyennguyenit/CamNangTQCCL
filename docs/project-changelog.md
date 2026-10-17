@@ -1,5 +1,28 @@
 # Project Changelog
 
+## 2026-10-17 (Quản trị người dùng: kiểm duyệt viên, khoá, xoá tài khoản, nhật ký quản trị)
+
+### Added
+
+- **Hai cấp quyền**: root (chỉ từ `ADMIN_EMAILS`) và kiểm duyệt viên (KDV, `user.role = 'moderator'`, root cấp/thu trên UI). KDV dùng Duyệt chiến báo, Bình luận, Góp ý, Soi đội, khoá/mở user thường; không dùng AI, Bài viết, xoá user, cấp quyền, nhật ký toàn cục. KDV duyệt được cả chiến báo/mẫu soi đội của chính mình, không khoá KDV khác/root, không đè khoá còn hạn của root. `GET /api/me` trả `user.role` thay cho `isAdmin`.
+- **Khu Người dùng** ở `/quan-tri/` (vi + zh, `js/community-admin-users.js`): `GET /api/admin/users` (tìm tên/email, lọc vai trò/trạng thái, 20/trang) và chi tiết user (bình luận, chiến báo, nhật ký theo user). KDV thấy email che (`ng***@gmail.com`, `emailMasked`), không dò email bằng tiền tố; email trong Góp ý cũng che, riêng nội dung `body` góp ý không bị che.
+- **Khoá có thời hạn** (1/7/30 ngày/vĩnh viễn, lý do bắt buộc): huỷ mọi phiên, chặn đăng nhập lại, ẩn bình luận/chiến báo/thống kê/ảnh khỏi API công khai, hết hạn hoặc mở khoá thì hiện lại. Chặn ở guard theo request (`deps.now()`) và 4 trigger D1 `before insert` (`session`, `uploads`, `battle_reports`, `scan_samples`, đồng hồ DB). Hook Better Auth `session.create.before` trả `ACCOUNT_BANNED`/`ACCOUNT_UNAVAILABLE` kèm token HMAC; `GET /api/ban-notice?token=` trả lý do cho thông báo ở trang (không đưa lý do qua URL). Khoá chen giữa hook và `insert session` làm lần đăng nhập đó trả 500 một lần (trigger chặn, 0 phiên), lần sau nhận thông báo khoá.
+- **Xoá tài khoản** (chỉ root, gõ lại email; 409 `user_banned` khi đang khoá): đánh dấu đang xoá + huỷ phiên, xoá ảnh R2 báo cáo/soi đội (giữ ảnh bài viết, chuyển cho root), `posts.author_id` và `feedback.user_id`/`email` về null (góp ý giữ lại ẩn danh), xoá user (cascade); thử lại được sau `delete_incomplete`.
+- **Nhật ký quản trị** `admin_audit` + khu Nhật ký (chỉ root) + `GET /api/admin/audit`: mỗi thao tác ghi có một dòng (ai, hành động, đối tượng, `subject_user_id`, lý do, `ok`/`partial`/`failed`), ghi chung batch D1 với thay đổi; xoá ghi trước câu `DELETE`. Không lưu secret, body thô hay email đầy đủ. Giới hạn: nếu D1 hỏng sau khi R2/KV đã đổi thì dòng `failed`/`partial` có thể mất.
+- `user.last_seen_at` (ghi ≤ 1 lần/10 phút). Migration `0006_user_admin.sql`; `community-worker/rollback/0007_drop_user_block_triggers.sql` (không nằm trong `migrations/`) gỡ 4 trigger khi rollback.
+- Docs: mục "Vai trò và người dùng" trong `docs/community-worker.md` (ma trận quyền, khoá, guard/trigger, thông báo, xoá, nhật ký, deploy/rollback).
+
+### Changed
+
+- `requireAdmin`/`isAdmin` bị thay bằng `requireStaff`/`requireRoot` và `role`; đổi client và Worker phải đi cùng nhau (client mới cần `role`, client cũ cần `isAdmin`), nên rollback phải khớp phiên bản Pages + Worker.
+- Ảnh chiến báo đã duyệt đổi `Cache-Control` từ `public, max-age=3600` sang `public, no-cache` + ETag (304), để ảnh của user bị khoá biến mất ngay.
+- Thông báo đăng nhập bị khoá do server xác nhận qua token; URL sạch `error`/`error_description` sau khi đọc.
+- `src/lib/public-artifact-manifest.mjs`: thêm `js/community-admin-users.js`.
+
+### Tests
+
+- community-worker vitest: `permissions`, `users`, `visibility`, `audit`, `moderation`, `auth-ban` (Better Auth thật trên D1 giả, Google giả lập; race, trigger, ban-notice). E2E: vai trò KDV/root, hộp thoại khoá/xoá, nhật ký, thông báo khoá, `/zh/quan-tri/`, 390 px. Smoke `wrangler dev` + `wrangler pages dev` với session seed; **chưa thử đăng nhập Google thật**. Trigger và `rollback/0007` đã thử trên D1 cục bộ.
+
 ## 2026-10-15 (SEO cho AI: nội dung đội và Tra cứu dựng sẵn, trang riêng từng mục, JSON-LD, llms)
 
 ### Added
