@@ -1,7 +1,8 @@
 // Bài viết blog: API công khai cho build tĩnh + CRUD/xuất bản của admin, upload và phục vụ media R2.
 
 import { Hono } from "hono";
-import { requireAdmin, type AppEnv, type Ctx } from "../context";
+import { auditIfStmt, settleDeploy, writeAuditQuietly } from "../audit";
+import { requireRoot, type AppEnv, type Ctx } from "../context";
 import type { Env } from "../env";
 import { ApiError, iso } from "../http";
 import { consumeRateLimit } from "../ratelimit";
@@ -166,10 +167,10 @@ async function findPost(env: Env, id: string): Promise<PostRow> {
   return row;
 }
 
-/** Chạy câu ghi; vi phạm unique (lang, slug)/(lang, translation_key) -> 409. */
-async function writePost(stmt: D1PreparedStatement): Promise<void> {
+/** Chạy batch ghi (câu ghi + dòng nhật ký); vi phạm unique (lang, slug)/(lang, translation_key) -> 409. */
+async function writePost(db: D1Database, stmts: D1PreparedStatement[]): Promise<void> {
   try {
-    await stmt.run();
+    await db.batch(stmts);
   } catch (e) {
     const message = String((e as Error)?.message ?? e);
     if (/UNIQUE/iu.test(message)) {
@@ -179,6 +180,20 @@ async function writePost(stmt: D1PreparedStatement): Promise<void> {
       throw new ApiError(409, "slug_taken", "Slug đã tồn tại trong ngôn ngữ này");
     }
     throw e;
+  }
+}
+
+/** Thao tác có kích hoạt deploy: dòng nhật ký vào D1 cùng batch với `meta.deploy = 'pending'`, rồi cập nhật đúng dòng đó. */
+function deployMeta(meta: Record<string, unknown>, dispatch: boolean): Record<string, unknown> {
+  return dispatch ? { ...meta, deploy: "pending" } : meta;
+}
+
+async function settle(c: Ctx, auditId: string, meta: Record<string, unknown>, deploy: DeployResult): Promise<void> {
+  try {
+    await settleDeploy(c, auditId, meta, deploy);
+  } catch (error) {
+    // Bài và deploy đã xong: không đổi phản hồi thành lỗi; dòng giữ `deploy: pending` (kết quả chưa rõ).
+    console.error("admin_audit deploy settle failed", auditId, error);
   }
 }
 
@@ -202,18 +217,19 @@ posts.get("/api/posts/:lang/:slug", async (c) => {
 });
 
 posts.get("/api/admin/posts", async (c) => {
-  await requireAdmin(c);
+  await requireRoot(c);
   const { results } = await c.env.DB.prepare("select * from posts order by updated_at desc, id desc").all<PostRow>();
   return c.json({ items: results.map(toPost) });
 });
 
 posts.post("/api/admin/posts", async (c) => {
-  const { user } = await requireAdmin(c);
+  const viewer = await requireRoot(c);
+  const { user } = viewer;
   const f = parsePostFields(await readJson(c.req.raw));
   const { now, newId } = c.get("deps");
   const id = newId();
   const at = now();
-  await writePost(
+  await writePost(c.env.DB, [
     c.env.DB.prepare(
       "insert into posts (id, slug, lang, translation_key, title, description, body_markdown, faq, tags, cover_image, status, author_id, author_name, published_at, updated_at, created_at) " +
         "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', ?, ?, null, ?, ?)",
@@ -221,50 +237,98 @@ posts.post("/api/admin/posts", async (c) => {
       id, f.slug, f.lang, f.translationKey, f.title, f.description, f.bodyMarkdown,
       JSON.stringify(f.faq), JSON.stringify(f.tags), f.coverImage, user.id, user.name, at, at,
     ),
-  );
+    auditIfStmt(
+      c,
+      viewer,
+      { action: "post.create", targetType: "post", targetId: id, targetLabel: f.title, meta: { slug: f.slug, lang: f.lang }, status: "ok" },
+      "select 1 from posts where id = ? and author_id = ? and created_at = ?",
+      [id, user.id, at],
+    ),
+  ]);
   return c.json(toPost(await findPost(c.env, id)), 201);
 });
 
 posts.put("/api/admin/posts/:id", async (c) => {
-  await requireAdmin(c);
+  const viewer = await requireRoot(c);
   const id = c.req.param("id");
-  const current = toPost(await findPost(c.env, id));
+  const currentRow = await findPost(c.env, id);
+  const current = toPost(currentRow);
   const input = await readJson(c.req.raw);
   // Cập nhật từng phần: trường không gửi giữ giá trị cũ.
   const f = parsePostFields({ ...current, ...input });
-  await writePost(
+  const { now, newId } = c.get("deps");
+  const at = now();
+  // Bài đang public đổi nội dung -> build lại để HTML tĩnh cập nhật.
+  const dispatch = currentRow.status === "published";
+  const auditId = newId();
+  const meta = { slug: f.slug, lang: f.lang };
+  await writePost(c.env.DB, [
     c.env.DB.prepare(
       "update posts set slug = ?, lang = ?, translation_key = ?, title = ?, description = ?, body_markdown = ?, faq = ?, tags = ?, cover_image = ?, updated_at = ? where id = ?",
     ).bind(
       f.slug, f.lang, f.translationKey, f.title, f.description, f.bodyMarkdown,
-      JSON.stringify(f.faq), JSON.stringify(f.tags), f.coverImage, c.get("deps").now(), id,
+      JSON.stringify(f.faq), JSON.stringify(f.tags), f.coverImage, at, id,
     ),
-  );
+    auditIfStmt(
+      c,
+      viewer,
+      { id: auditId, action: "post.update", targetType: "post", targetId: id, targetLabel: f.title, meta: deployMeta(meta, dispatch), status: "ok" },
+      "select 1 from posts where id = ? and updated_at = ? and slug = ? and lang = ?",
+      [id, at, f.slug, f.lang],
+    ),
+  ]);
   const post = toPost(await findPost(c.env, id));
-  // Bài đang public đổi nội dung -> build lại để HTML tĩnh cập nhật.
-  const deploy = post.status === "published" ? await triggerDeploy(c.env, c.get("deps").fetchImpl) : null;
+  const deploy = dispatch ? await triggerDeploy(c.env, c.get("deps").fetchImpl) : null;
+  if (deploy) await settle(c, auditId, meta, deploy);
   return c.json({ post, deploy });
 });
 
 posts.delete("/api/admin/posts/:id", async (c) => {
-  await requireAdmin(c);
+  const viewer = await requireRoot(c);
   const row = await findPost(c.env, c.req.param("id"));
-  await c.env.DB.prepare("delete from posts where id = ?").bind(row.id).run();
-  const deploy = row.status === "published" ? await triggerDeploy(c.env, c.get("deps").fetchImpl) : null;
+  const dispatch = row.status === "published";
+  const auditId = c.get("deps").newId();
+  const meta = { slug: row.slug, lang: row.lang, status: row.status };
+  // Nhật ký đặt TRƯỚC DELETE trong cùng batch (sau DELETE không còn gì chứng minh yêu cầu này đã xoá); điều kiện
+  // đủ quyền của DELETE chỉ là bài còn tồn tại. Lỗi ghi nhật ký -> rollback cả batch.
+  await c.env.DB.batch([
+    auditIfStmt(
+      c,
+      viewer,
+      { id: auditId, action: "post.delete", targetType: "post", targetId: row.id, targetLabel: row.title, meta: deployMeta(meta, dispatch), status: "ok" },
+      "select 1 from posts where id = ?",
+      [row.id],
+    ),
+    c.env.DB.prepare("delete from posts where id = ?").bind(row.id),
+  ]);
+  const deploy = dispatch ? await triggerDeploy(c.env, c.get("deps").fetchImpl) : null;
+  if (deploy) await settle(c, auditId, meta, deploy);
   return c.json({ ok: true, deploy });
 });
 
 async function setPublished(c: Ctx, published: boolean) {
-  await requireAdmin(c);
+  const viewer = await requireRoot(c);
   const row = await findPost(c.env, c.req.param("id") ?? "");
-  const at = c.get("deps").now();
+  const { now, newId } = c.get("deps");
+  const at = now();
+  const status = published ? "published" : "draft";
   // Giữ publishedAt gốc khi xuất bản lại; gỡ xuất bản thì xoá mốc.
   const publishedAt = published ? (row.published_at ?? at) : null;
-  await c.env.DB.prepare("update posts set status = ?, published_at = ?, updated_at = ? where id = ?")
-    .bind(published ? "published" : "draft", publishedAt, at, row.id)
-    .run();
+  const auditId = newId();
+  const meta = { slug: row.slug, lang: row.lang };
+  await c.env.DB.batch([
+    c.env.DB.prepare("update posts set status = ?, published_at = ?, updated_at = ? where id = ?").bind(status, publishedAt, at, row.id),
+    auditIfStmt(
+      c,
+      viewer,
+      { id: auditId, action: published ? "post.publish" : "post.unpublish", targetType: "post", targetId: row.id, targetLabel: row.title, meta: deployMeta(meta, true), status: "ok" },
+      "select 1 from posts where id = ? and status = ? and updated_at = ?",
+      [row.id, status, at],
+    ),
+  ]);
   const post = toPost(await findPost(c.env, row.id));
   const deploy = await triggerDeploy(c.env, c.get("deps").fetchImpl);
+  await settle(c, auditId, meta, deploy);
   return c.json({ post, deploy });
 }
 
@@ -272,19 +336,45 @@ posts.post("/api/admin/posts/:id/publish", (c) => setPublished(c, true));
 posts.post("/api/admin/posts/:id/unpublish", (c) => setPublished(c, false));
 
 posts.post("/api/admin/uploads", async (c) => {
-  const { user } = await requireAdmin(c);
+  const viewer = await requireRoot(c);
+  const { user } = viewer;
   const image = await parseImageUpload(c.req.raw, "image", POST_IMAGE_MAX_BYTES);
   const { now, newId } = c.get("deps");
   const at = now();
   await consumeRateLimit(c.env.DB, "upload", user.id, at);
   const id = newId();
   const key = `posts/${id}.${image.ext}`;
-  await c.env.MEDIA.put(key, image.bytes, { httpMetadata: { contentType: image.contentType } });
-  await c.env.DB.prepare(
-    "insert into uploads (id, user_id, kind, object_key, content_type, size, status, created_at) values (?, ?, 'post', ?, ?, ?, 'attached', ?)",
-  )
-    .bind(id, user.id, key, image.contentType, image.bytes.length, at)
-    .run();
+  const entry = { action: "post.upload", targetType: "upload", targetId: id, targetLabel: key };
+  try {
+    await c.env.MEDIA.put(key, image.bytes, { httpMetadata: { contentType: image.contentType } });
+  } catch (e) {
+    await writeAuditQuietly(c, viewer, { ...entry, status: "failed", meta: { step: "r2" } });
+    throw e;
+  }
+  try {
+    await c.env.DB.batch([
+      c.env.DB.prepare(
+        "insert into uploads (id, user_id, kind, object_key, content_type, size, status, created_at) values (?, ?, 'post', ?, ?, ?, 'attached', ?)",
+      ).bind(id, user.id, key, image.contentType, image.bytes.length, at),
+      auditIfStmt(
+        c,
+        viewer,
+        { ...entry, status: "ok" },
+        "select 1 from uploads where id = ? and user_id = ? and kind = 'post' and object_key = ?",
+        [id, user.id, key],
+      ),
+    ]);
+  } catch (e) {
+    // Không để ảnh mồ côi trong R2 khi D1 lỗi; xoá bù lỗi -> partial (ảnh mồ côi còn lại).
+    let cleaned = true;
+    try {
+      await c.env.MEDIA.delete(key);
+    } catch {
+      cleaned = false;
+    }
+    await writeAuditQuietly(c, viewer, { ...entry, status: cleaned ? "failed" : "partial", meta: { step: "d1", ...(cleaned ? {} : { orphan: key }) } });
+    throw e;
+  }
   return c.json({ url: `/api/media/${key}` }, 201);
 });
 

@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
 import type { DatabaseSync as DatabaseSyncType, SQLInputValue } from "node:sqlite";
 import { createApp } from "../src/app";
-import type { SessionUser } from "../src/auth";
+import { type SessionUserRow } from "../src/auth";
 import type { Env } from "../src/env";
 import { AI_CONFIG_KEY, AI_GROUPS, encryptConfig, type AiConfig, type AiGroupConfig, type AiGroupId, type AiProvider } from "../../shared/ai-config";
 
@@ -32,11 +32,18 @@ class FakeStatement {
   }
   async all<T>() {
     const rows = this.db.prepare(this.sql).all(...this.params) as Record<string, unknown>[];
-    return { results: rows.map((r) => ({ ...r })) as T[], success: true, meta: {} };
+    // Dialect D1 của Better Auth đọc meta.changes/last_row_id cả khi gọi qua all().
+    return { results: rows.map((r) => ({ ...r })) as T[], success: true, meta: { changes: 0, last_row_id: 0 } };
   }
   async run() {
-    const res = this.db.prepare(this.sql).run(...this.params);
-    return { results: [], success: true, meta: { changes: Number(res.changes) } };
+    const stmt = this.db.prepare(this.sql);
+    // Câu lệnh trả cột (PRAGMA, select) qua batch(): D1 thật trả results; Better Auth đọc schema bằng cách này.
+    if (stmt.columns().length > 0) {
+      const rows = stmt.all(...this.params) as Record<string, unknown>[];
+      return { results: rows.map((r) => ({ ...r })), success: true, meta: { changes: 0, last_row_id: 0 } };
+    }
+    const res = stmt.run(...this.params);
+    return { results: [], success: true, meta: { changes: Number(res.changes), last_row_id: Number(res.lastInsertRowid) } };
   }
 }
 
@@ -101,11 +108,23 @@ export function createFakeR2(clock: () => number) {
   return { bucket: bucket as unknown as R2Bucket, objects };
 }
 
-export const USERS: Record<string, SessionUser> = {
-  alice: { id: "u-alice", name: "Alice", email: "alice@example.com", image: null },
-  bob: { id: "u-bob", name: "Bob", email: "bob@example.com", image: "https://img.test/bob.png" },
-  admin: { id: "u-admin", name: "Admin", email: "Admin@Example.com", image: null },
+export interface TestUser {
+  id: string;
+  name: string;
+  email: string;
+  image: string | null;
+  role: "user" | "moderator";
+}
+
+/** Mỗi user được seed kèm một session có token = khoá của bản ghi này (header `x-test-user`). */
+export const USERS: Record<string, TestUser> = {
+  alice: { id: "u-alice", name: "Alice", email: "alice@example.com", image: null, role: "user" },
+  bob: { id: "u-bob", name: "Bob", email: "bob@example.com", image: "https://img.test/bob.png", role: "user" },
+  admin: { id: "u-admin", name: "Admin", email: "Admin@Example.com", image: null, role: "user" },
+  moderator: { id: "u-moderator", name: "Moderator", email: "mod@example.com", image: null, role: "moderator" },
 };
+
+const SEED_ISO = "2026-01-01T00:00:00.000Z";
 
 /**
  * Góc nhìn "túi trường" cho JSON phản hồi trong test: gộp mọi khoá các endpoint trả về
@@ -125,7 +144,7 @@ export interface ApiJson {
   post: ApiJson;
   deploy: ApiJson | null;
   user: ApiJson;
-  isAdmin: boolean;
+  role: string;
   email: string;
   kind: string;
   title: string;
@@ -177,8 +196,12 @@ export interface Harness {
   mails: EmailMessageBuilder[];
   /** Đặt lỗi để lần gửi thư sau ném ra; null = gửi bình thường. */
   mailError: Error | null;
+  /** Đặt lỗi để put/delete của R2 fake ném ra; null = bình thường. */
+  r2Error: Error | null;
+  /** Đặt lỗi để put của KV fake ném ra; null = bình thường. */
+  kvError: Error | null;
   setFetch(handler: (url: string, init?: RequestInit) => Response | Promise<Response>): void;
-  request(path: string, opts?: { method?: string; as?: keyof typeof USERS; json?: unknown; body?: BodyInit; headers?: Record<string, string> }): Promise<Response>;
+  request(path: string, opts?: { method?: string; as?: string; json?: unknown; body?: BodyInit; headers?: Record<string, string> }): Promise<Response>;
   /** Chờ mọi việc nền `waitUntil` của các request đã gửi. */
   settle(): Promise<void>;
 }
@@ -186,17 +209,41 @@ export interface Harness {
 export function createHarness(envOverrides: Partial<Env> = {}): Harness {
   const clock = { now: Date.UTC(2026, 8, 27, 10, 0, 0) };
   const { d1, sqlite } = createFakeD1();
-  const { bucket, objects } = createFakeR2(() => clock.now);
-  for (const u of Object.values(USERS)) {
+  const { bucket: rawBucket, objects } = createFakeR2(() => clock.now);
+  const errors = { r2: null as Error | null, kv: null as Error | null };
+  // Bọc put/delete để h.r2Error có hiệu lực; get/list giữ nguyên.
+  const bucket = new Proxy(rawBucket, {
+    get(target, prop) {
+      const value = Reflect.get(target, prop) as unknown;
+      if ((prop === "put" || prop === "delete") && typeof value === "function") {
+        return (...args: unknown[]) => {
+          if (errors.r2) return Promise.reject(errors.r2);
+          return (value as (...a: unknown[]) => Promise<unknown>).apply(target, args);
+        };
+      }
+      return value;
+    },
+  });
+  for (const [token, u] of Object.entries(USERS)) {
     sqlite
-      .prepare('insert into "user" (id, name, email, emailVerified, image, createdAt, updatedAt) values (?, ?, ?, 1, ?, ?, ?)')
-      .run(u.id, u.name, u.email, u.image, "2026-01-01", "2026-01-01");
+      .prepare('insert into "user" (id, name, email, emailVerified, image, createdAt, updatedAt, role) values (?, ?, ?, 1, ?, ?, ?, ?)')
+      .run(u.id, u.name, u.email, u.image, SEED_ISO, SEED_ISO, u.role);
+    sqlite
+      .prepare('insert into session (id, expiresAt, token, createdAt, updatedAt, userId) values (?, ?, ?, ?, ?, ?)')
+      .run(`s-${token}`, "2099-01-01T00:00:00.000Z", token, SEED_ISO, SEED_ISO, u.id);
   }
   const fetchCalls: Harness["fetchCalls"] = [];
   let fetchHandler: (url: string, init?: RequestInit) => Response | Promise<Response> = () => new Response("ok");
   let seq = 0;
   const app = createApp({
-    getUser: async (_env, headers) => USERS[headers.get("x-test-user") ?? ""] ?? null,
+    // Đọc session -> user từ DB như Better Auth: khoá/xoá session/đổi vai trò có hiệu lực ngay ở request kế tiếp.
+    getUser: async (env, headers) => {
+      const token = headers.get("x-test-user");
+      if (!token) return null;
+      return env.DB.prepare('select u.* from session s join "user" u on u.id = s."userId" where s.token = ?')
+        .bind(token)
+        .first<SessionUserRow>();
+    },
     authHandler: async () => new Response("auth"),
     fetchImpl: (async (input: RequestInfo | URL, init?: RequestInit) => {
       const url = String(input);
@@ -211,7 +258,10 @@ export function createHarness(envOverrides: Partial<Env> = {}): Harness {
   // Fake chỉ cài get/put mà mã nguồn dùng.
   const aiKv = {
     get: async (key: string) => aiStore.get(key) ?? null,
-    put: async (key: string, value: string) => void aiStore.set(key, value),
+    put: async (key: string, value: string) => {
+      if (errors.kv) throw errors.kv;
+      aiStore.set(key, value);
+    },
   } as unknown as KVNamespace;
   const waiting: Promise<unknown>[] = [];
   const executionCtx = {
@@ -228,6 +278,18 @@ export function createHarness(envOverrides: Partial<Env> = {}): Harness {
     aiStore,
     mails,
     mailError: null,
+    get r2Error() {
+      return errors.r2;
+    },
+    set r2Error(value) {
+      errors.r2 = value;
+    },
+    get kvError() {
+      return errors.kv;
+    },
+    set kvError(value) {
+      errors.kv = value;
+    },
     setFetch(handler) {
       fetchHandler = handler;
     },
@@ -264,6 +326,7 @@ export function createHarness(envOverrides: Partial<Env> = {}): Harness {
     AI_CONFIG_SECRET: AI_SECRET,
     GITHUB_DISPATCH_TOKEN: "gh-test-token",
     GITHUB_REPOSITORY: "owner/repo",
+    BETTER_AUTH_SECRET: "auth-secret-for-tests-0123456789abcdef",
     TURNSTILE_SECRET: "ts-secret",
     IP_HASH_SECRET: "ip-secret",
     ...envOverrides,

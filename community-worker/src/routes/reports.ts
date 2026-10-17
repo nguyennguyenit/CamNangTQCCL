@@ -2,11 +2,12 @@
 // của tôi, kiểm duyệt admin.
 
 import { Hono } from "hono";
+import { auditIfStmt } from "../audit";
 import { loadAiConfig, resolveRoute } from "../../../shared/ai-config";
 import { analyzeReportImage, EMPTY_ANALYSIS, ModelError, toDataUri, type ReportAnalysis } from "../analyze";
-import { currentUser, PAGE_SIZE, requireAdmin, requireUser, type AppEnv, type Ctx } from "../context";
-import { isAdminEmail } from "../env";
+import { currentUser, effectiveRole, PAGE_SIZE, requireStaff, requireUser, type AppEnv, type Ctx } from "../context";
 import { ApiError, decodeCursor, iso, paginate } from "../http";
+import { visibleUserSql } from "../moderation";
 import { consumeRateLimit } from "../ratelimit";
 import { aggregateStats } from "../stats";
 import {
@@ -104,11 +105,17 @@ reports.post("/api/reports/analyze", async (c) => {
     httpMetadata: { contentType: image.contentType },
     customMetadata: { userId: user.id },
   });
-  await c.env.DB.prepare(
-    "insert into uploads (id, user_id, kind, object_key, content_type, size, status, created_at) values (?, ?, 'report', ?, ?, ?, 'pending', ?)",
-  )
-    .bind(uploadId, user.id, key, image.contentType, image.bytes.length, createdAt)
-    .run();
+  try {
+    await c.env.DB.prepare(
+      "insert into uploads (id, user_id, kind, object_key, content_type, size, status, created_at) values (?, ?, 'report', ?, ?, ?, 'pending', ?)",
+    )
+      .bind(uploadId, user.id, key, image.contentType, image.bytes.length, createdAt)
+      .run();
+  } catch (e) {
+    // Không để ảnh mồ côi trong R2 khi D1 lỗi (vd trigger chặn user bị khoá).
+    await c.env.MEDIA.delete(key);
+    throw e;
+  }
 
   let analysis: ReportAnalysis;
   try {
@@ -158,13 +165,19 @@ reports.post("/api/reports", async (c) => {
     httpMetadata: { contentType: upload.content_type },
     customMetadata: { userId: user.id },
   });
-  await c.env.DB.batch([
-    c.env.DB.prepare(
-      "insert into battle_reports (id, page_key, lang, user_id, image_key, result, ally_heroes, enemy_heroes, note, season, status, created_at) " +
-        "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)",
-    ).bind(id, page, lang, user.id, imageKey, result, JSON.stringify(allyHeroes), JSON.stringify(enemyHeroes), note, season, createdAt),
-    c.env.DB.prepare("update uploads set status = 'attached', object_key = ? where id = ?").bind(imageKey, uploadId),
-  ]);
+  try {
+    await c.env.DB.batch([
+      c.env.DB.prepare(
+        "insert into battle_reports (id, page_key, lang, user_id, image_key, result, ally_heroes, enemy_heroes, note, season, status, created_at) " +
+          "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)",
+      ).bind(id, page, lang, user.id, imageKey, result, JSON.stringify(allyHeroes), JSON.stringify(enemyHeroes), note, season, createdAt),
+      c.env.DB.prepare("update uploads set status = 'attached', object_key = ? where id = ?").bind(imageKey, uploadId),
+    ]);
+  } catch (e) {
+    // Không để ảnh mồ côi trong R2 khi D1 lỗi (vd trigger chặn user bị khoá).
+    await c.env.MEDIA.delete(imageKey);
+    throw e;
+  }
   await c.env.MEDIA.delete(upload.object_key);
   return c.json({ id, status: "pending" }, 201);
 });
@@ -172,43 +185,62 @@ reports.post("/api/reports", async (c) => {
 reports.get("/api/reports", async (c) => {
   const page = parsePageKey(c.req.query("page"));
   const lang = parseLang(c.req.query("lang"));
-  const { rows, nextCursor } = await listReports(c, ["r.page_key = ?", "r.lang = ?", "r.status = 'approved'"], [page, lang]);
+  // Điều kiện ẩn đặt ở lời gọi công khai (listReports còn phục vụ /api/me/reports và /api/admin/reports).
+  const { rows, nextCursor } = await listReports(
+    c,
+    ["r.page_key = ?", "r.lang = ?", "r.status = 'approved'", visibleUserSql("u")],
+    [page, lang, c.get("deps").now()],
+  );
   return c.json({ items: rows.map(toPublicReport), nextCursor });
 });
 
 reports.get("/api/reports/stats", async (c) => {
   const page = parsePageKey(c.req.query("page"));
   const { results } = await c.env.DB.prepare(
-    "select result, enemy_heroes from battle_reports where page_key = ? and status = 'approved'",
+    `select r.result, r.enemy_heroes from battle_reports r join "user" u on u.id = r.user_id where r.page_key = ? and r.status = 'approved' and ${visibleUserSql("u")}`,
   )
-    .bind(page)
+    .bind(page, c.get("deps").now())
     .all<{ result: ReportResult; enemy_heroes: string }>();
   const stats = aggregateStats(results.map((r) => ({ result: r.result, enemyHeroes: JSON.parse(r.enemy_heroes) as string[] })));
   return c.json(stats);
 });
 
+/** If-None-Match có khớp ETag không (danh sách, bỏ tiền tố yếu W/, hoặc *). */
+function etagMatches(header: string | undefined, etag: string): boolean {
+  if (!header) return false;
+  return header.split(",").some((part) => {
+    const tag = part.trim().replace(/^W\//u, "");
+    return tag === "*" || tag === etag;
+  });
+}
+
 reports.get("/api/reports/:id/image", async (c) => {
-  const row = await c.env.DB.prepare("select user_id, image_key, status from battle_reports where id = ?")
-    .bind(c.req.param("id"))
-    .first<{ user_id: string; image_key: string | null; status: ReportStatus }>();
+  const row = await c.env.DB.prepare(
+    `select r.user_id, r.image_key, r.status, (${visibleUserSql("u")}) as author_visible from battle_reports r join "user" u on u.id = r.user_id where r.id = ?`,
+  )
+    .bind(c.get("deps").now(), c.req.param("id"))
+    .first<{ user_id: string; image_key: string | null; status: ReportStatus; author_visible: number }>();
   const notFound = new ApiError(404, "not_found", "Không tìm thấy ảnh");
   if (!row || !row.image_key) throw notFound;
-  const approved = row.status === "approved";
-  if (!approved) {
-    // Ảnh chưa duyệt chỉ chủ báo cáo hoặc admin xem được; người khác nhận 404.
+  // Công khai = đã duyệt và tác giả không bị khoá/đang xoá. Còn lại chỉ chủ báo cáo hoặc staff xem được.
+  // Phân quyền xong mới xét ETag: ETag cũ của khách không được dùng để dò ảnh đã bị ẩn.
+  const open = row.status === "approved" && row.author_visible === 1;
+  if (!open) {
     const user = await currentUser(c);
-    if (!user || (user.id !== row.user_id && !isAdminEmail(c.env, user.email))) throw notFound;
+    if (!user || (user.id !== row.user_id && effectiveRole(c.env, user) === "user")) throw notFound;
   }
   const object = await c.env.MEDIA.get(row.image_key);
   if (!object) throw notFound;
-  return new Response(object.body, {
-    headers: {
-      "Content-Type": object.httpMetadata?.contentType || "application/octet-stream",
-      "Cache-Control": approved ? "public, max-age=3600" : "private, no-store",
-      "X-Content-Type-Options": "nosniff",
-      ETag: object.httpEtag,
-    },
-  });
+  const headers = {
+    "Cache-Control": open ? "public, no-cache" : "private, no-store",
+    "X-Content-Type-Options": "nosniff",
+    ETag: object.httpEtag,
+  };
+  if (etagMatches(c.req.header("if-none-match"), object.httpEtag)) {
+    await object.body.cancel();
+    return new Response(null, { status: 304, headers });
+  }
+  return new Response(object.body, { headers: { ...headers, "Content-Type": object.httpMetadata?.contentType || "application/octet-stream" } });
 });
 
 reports.get("/api/me/reports", async (c) => {
@@ -218,7 +250,7 @@ reports.get("/api/me/reports", async (c) => {
 });
 
 reports.get("/api/admin/reports", async (c) => {
-  await requireAdmin(c);
+  await requireStaff(c);
   const status = c.req.query("status") ?? "pending";
   if (!REPORT_STATUSES.includes(status as ReportStatus)) {
     throw new ApiError(400, "invalid_status", "status phải là pending, approved hoặc rejected");
@@ -229,13 +261,39 @@ reports.get("/api/admin/reports", async (c) => {
 
 /** Đổi trạng thái kiểm duyệt; 404 nếu không có báo cáo. */
 async function review(c: Ctx, status: "approved" | "rejected", reason: string | null) {
-  const { user } = await requireAdmin(c);
-  const id = c.req.param("id");
-  const res = await c.env.DB.prepare(
-    "update battle_reports set status = ?, reject_reason = ?, reviewed_by = ?, reviewed_at = ? where id = ?",
-  )
-    .bind(status, reason, user.id, c.get("deps").now(), id)
-    .run();
+  const viewer = await requireStaff(c);
+  const { user } = viewer;
+  const id = c.req.param("id") ?? "";
+  const row = await c.env.DB.prepare("select user_id, page_key from battle_reports where id = ?")
+    .bind(id)
+    .first<{ user_id: string; page_key: string }>();
+  if (!row) throw new ApiError(404, "not_found", "Không tìm thấy chiến báo");
+  const at = c.get("deps").now();
+  // Nhật ký chỉ ghi khi chính UPDATE này đã đặt reviewed_by/reviewed_at của yêu cầu.
+  const [res] = await c.env.DB.batch([
+    c.env.DB.prepare("update battle_reports set status = ?, reject_reason = ?, reviewed_by = ?, reviewed_at = ? where id = ?").bind(
+      status,
+      reason,
+      user.id,
+      at,
+      id,
+    ),
+    auditIfStmt(
+      c,
+      viewer,
+      {
+        action: status === "approved" ? "report.approve" : "report.reject",
+        targetType: "report",
+        targetId: id,
+        targetLabel: row.page_key,
+        subjectUserId: row.user_id,
+        reason,
+        status: "ok",
+      },
+      "select 1 from battle_reports where id = ? and status = ? and reviewed_by = ? and reviewed_at = ?",
+      [id, status, user.id, at],
+    ),
+  ]);
   if (!res.meta.changes) throw new ApiError(404, "not_found", "Không tìm thấy chiến báo");
   return c.json({ id, status, rejectReason: reason });
 }
@@ -243,7 +301,7 @@ async function review(c: Ctx, status: "approved" | "rejected", reason: string | 
 reports.post("/api/admin/reports/:id/approve", (c) => review(c, "approved", null));
 
 reports.post("/api/admin/reports/:id/reject", async (c) => {
-  await requireAdmin(c);
+  await requireStaff(c);
   const input = await readJson(c.req.raw);
   return review(c, "rejected", parseText(input.reason, "reason", 1, 500));
 });

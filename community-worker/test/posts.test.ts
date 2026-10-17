@@ -97,6 +97,17 @@ describe("posts", () => {
     expect(clash.status).toBe(409);
   });
 
+  it("upload ảnh bài viết: insert uploads bị chặn (trigger giờ DB thật) -> lỗi, không còn object R2", async () => {
+    const h = createHarness();
+    const bannedUntil = Date.now() + 60_000;
+    h.sqlite.prepare('update "user" set banned_until = ? where id = ?').run(bannedUntil, "u-admin");
+    h.clock.now = bannedUntil + 1;
+    const res = await h.request("/api/admin/uploads", { as: "admin", method: "POST", body: imageForm(PNG_BYTES, "image/png") });
+    expect(res.status).toBe(500);
+    expect(h.objects.size).toBe(0);
+    expect({ ...(h.sqlite.prepare("select count(*) n from uploads").get() as object) }).toEqual({ n: 0 });
+  });
+
   it("upload ảnh bài viết -> url /api/media/<key> phục vụ đúng content-type + cache dài", async () => {
     const h = createHarness();
     expect((await h.request("/api/admin/uploads", { as: "alice", method: "POST", body: imageForm(PNG_BYTES, "image/png") })).status).toBe(403);
@@ -115,13 +126,14 @@ describe("posts", () => {
 });
 
 describe("/api/me", () => {
-  it("trả null khi chưa đăng nhập; isAdmin theo ADMIN_EMAILS không phân biệt hoa thường", async () => {
+  it("trả null khi chưa đăng nhập; role: root theo ADMIN_EMAILS không phân biệt hoa thường, moderator/user theo user.role", async () => {
     const h = createHarness();
     expect(await (await h.request("/api/me")).json<ApiJson>()).toEqual({ user: null });
     expect(await (await h.request("/api/me", { as: "admin" })).json<ApiJson>()).toEqual({
-      user: { id: "u-admin", name: "Admin", email: "Admin@Example.com", image: null, isAdmin: true },
+      user: { id: "u-admin", name: "Admin", email: "Admin@Example.com", image: null, role: "root" },
     });
-    expect((await (await h.request("/api/me", { as: "bob" })).json<ApiJson>()).user.isAdmin).toBe(false);
+    expect((await (await h.request("/api/me", { as: "bob" })).json<ApiJson>()).user.role).toBe("user");
+    expect((await (await h.request("/api/me", { as: "moderator" })).json<ApiJson>()).user.role).toBe("moderator");
     expect((await h.request("/api/me")).headers.get("Cache-Control")).toBe("no-store");
   });
 });

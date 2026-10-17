@@ -2,17 +2,20 @@
 
 import { Hono } from "hono";
 import { createAuth, getSessionUser } from "./auth";
-import { currentUser, type AppDeps, type AppEnv } from "./context";
-import { isAdminEmail, requestOrigin, trustedOrigins } from "./env";
+import { isBlocked, PERMANENT_BAN_UNTIL, verifyBanNotice } from "./moderation";
+import { currentUser, effectiveRole, type AppDeps, type AppEnv } from "./context";
+import { requestOrigin, trustedOrigins } from "./env";
 import { ApiError, errorResponse } from "./http";
 import { admin } from "./routes/admin";
 import { ai } from "./routes/ai";
+import { audit } from "./routes/audit";
 import { feedback } from "./routes/feedback";
 import { comments } from "./routes/comments";
 import { posts } from "./routes/posts";
 import { recruit } from "./routes/recruit";
 import { reports } from "./routes/reports";
 import { scan } from "./routes/scan";
+import { users } from "./routes/users";
 
 export const defaultDeps: AppDeps = {
   getUser: getSessionUser,
@@ -64,8 +67,25 @@ export function createApp(overrides: Partial<AppDeps> = {}) {
     const user = await currentUser(c);
     return c.json({
       user: user
-        ? { id: user.id, name: user.name, email: user.email, image: user.image, isAdmin: isAdminEmail(c.env, user.email) }
+        ? { id: user.id, name: user.name, email: user.email, image: user.image, role: effectiveRole(c.env, user) }
         : null,
+    });
+  });
+
+  // Thông báo khoá: chỉ token HMAC hợp lệ (cấp bởi hook đăng nhập, 10 phút) mới đọc được lý do.
+  app.get("/api/ban-notice", async (c) => {
+    const notFound = new ApiError(404, "not_found", "Không tìm thấy");
+    const userId = await verifyBanNotice(c.env.BETTER_AUTH_SECRET, c.req.query("token") ?? "", deps.now());
+    if (!userId) throw notFound;
+    const row = await c.env.DB.prepare('select banned_until, ban_reason, deleting_at from "user" where id = ?')
+      .bind(userId)
+      .first<{ banned_until: number | null; ban_reason: string | null; deleting_at: number | null }>();
+    if (!row || !isBlocked({ bannedUntil: row.banned_until, deletingAt: row.deleting_at }, deps.now())) throw notFound;
+    const permanent = row.banned_until === null || row.banned_until >= PERMANENT_BAN_UNTIL;
+    return c.json({
+      until: row.deleting_at !== null || permanent ? null : new Date(row.banned_until as number).toISOString(),
+      reason: row.ban_reason,
+      deleting: row.deleting_at !== null,
     });
   });
 
@@ -76,6 +96,8 @@ export function createApp(overrides: Partial<AppDeps> = {}) {
   app.route("/", recruit);
   app.route("/", ai);
   app.route("/", scan);
+  app.route("/", audit);
+  app.route("/", users);
   app.route("/", admin);
   return app;
 }

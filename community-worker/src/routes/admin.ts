@@ -2,7 +2,7 @@
 // trạng thái, mỗi bảng dùng index (status, …) sẵn có.
 
 import { Hono } from "hono";
-import { requireAdmin, type AppEnv } from "../context";
+import { requireStaff, type AppEnv } from "../context";
 
 interface CountsRow {
   reports_pending: number;
@@ -23,7 +23,7 @@ const COUNTS_SQL =
 export const admin = new Hono<AppEnv>();
 
 admin.get("/api/admin/counts", async (c) => {
-  await requireAdmin(c);
+  await requireStaff(c);
   const row = await c.env.DB.prepare(COUNTS_SQL).first<CountsRow>();
   return c.json({
     reportsPending: Number(row?.reports_pending ?? 0),
