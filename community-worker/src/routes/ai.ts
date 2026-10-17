@@ -3,7 +3,9 @@
 // `ai:config` (shared/ai-config.ts); worker/ đọc cùng bản ghi. API KHÔNG bao giờ trả key, chỉ 4 ký tự cuối.
 
 import { Hono } from "hono";
+import { writeAudit, writeAuditQuietly } from "../audit";
 import {
+  AI_CONFIG_KEY,
   AI_GROUPS,
   GROUP_NEEDS_VISION,
   loadAiConfig,
@@ -27,7 +29,7 @@ import {
   type AiProvider,
 } from "../../../shared/ai-config";
 import { AI_PRESETS, EFFORT_LEVELS, type AiModel, type EffortStyle } from "../../../shared/ai-models";
-import { requireAdmin, type AppEnv, type Ctx } from "../context";
+import { requireRoot, type AppEnv, type Ctx } from "../context";
 import { ApiError } from "../http";
 import { parseText, readJson } from "../validate";
 
@@ -164,17 +166,31 @@ function requireSecret(c: Ctx): string {
 export const ai = new Hono<AppEnv>();
 
 ai.get("/api/admin/ai/config", async (c) => {
-  await requireAdmin(c);
+  await requireRoot(c);
   const secret = requireSecret(c);
   return c.json(toView(await loadAiConfig(c.env.AI_KV, secret)));
 });
 
 ai.put("/api/admin/ai/config", async (c) => {
-  await requireAdmin(c);
+  const viewer = await requireRoot(c);
   const secret = requireSecret(c);
   const input = await readJson(c.req.raw);
   const providers = parseProviders(input.providers, (await loadAiConfig(c.env.AI_KV, secret)).providers);
   const config: AiConfig = { providers, groups: parseGroups(input.groups, providers) };
-  await saveAiConfig(c.env.AI_KV, secret, config);
+  // Meta chỉ gồm id nhà cung cấp/nhóm (danh sách cho phép): không endpoint, key, hay object cấu hình.
+  const entry = {
+    action: "ai.config.update",
+    targetType: "ai_config",
+    targetId: AI_CONFIG_KEY,
+    meta: { providers: providers.map((p) => p.id), groups: AI_GROUPS.filter((id) => id in config.groups) },
+  };
+  try {
+    await saveAiConfig(c.env.AI_KV, secret, config);
+  } catch (error) {
+    await writeAuditQuietly(c, viewer, { ...entry, meta: { ...entry.meta, step: "kv" }, status: "failed" });
+    throw error;
+  }
+  // Lỗi ghi nhật ký sau khi KV đã lưu nổi lên nguyên văn (không gán nhãn failed của KV).
+  await writeAudit(c, viewer, { ...entry, status: "ok" });
   return c.json(toView(config));
 });

@@ -244,6 +244,7 @@ describe("admin feedback", () => {
       author: { id: "u-bob", name: "Bob" },
     });
     expect(all.items[0]).toMatchObject({ email: null, author: null });
+    expect(all.items[1]).not.toHaveProperty("emailMasked");
     expect(all.nextCursor).toBeNull();
 
     const bugs = await (await h.request("/api/admin/feedback?kind=bug", { as: "admin" })).json<ApiJson>();

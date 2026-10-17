@@ -2,9 +2,11 @@
 // lưu D1 rồi gửi thư báo tới hộp thư quản trị (Reply-To = email người gửi). Admin xem và đánh dấu đã xử lý.
 
 import { Hono } from "hono";
-import { currentUser, PAGE_SIZE, requireAdmin, type AppEnv } from "../context";
+import { auditIfStmt } from "../audit";
+import { currentUser, PAGE_SIZE, requireStaff, type AppEnv } from "../context";
 import { siteOrigin, siteOrigins, type Env } from "../env";
 import { ApiError, decodeCursor, iso, paginate } from "../http";
+import { maskEmail } from "../moderation";
 import { consumeRateLimit } from "../ratelimit";
 import { hashIp, verifyTurnstile } from "../turnstile";
 import { parseLang, parseOptionalText, parseText, readJson, type Lang } from "../validate";
@@ -149,7 +151,7 @@ async function sendFeedbackMail(env: Env, row: FeedbackRow, accountEmail: string
 
 // Admin: góp ý mới nhất, lọc tuỳ chọn theo trạng thái và loại.
 feedback.get("/api/admin/feedback", async (c) => {
-  await requireAdmin(c);
+  const { role } = await requireStaff(c);
   const where: string[] = [];
   const binds: unknown[] = [];
   const status = c.req.query("status");
@@ -178,7 +180,7 @@ feedback.get("/api/admin/feedback", async (c) => {
       kind: r.kind,
       title: r.title,
       body: r.body,
-      email: r.email,
+      ...(role === "root" ? { email: r.email } : { email: r.email === null ? null : maskEmail(r.email), emailMasked: true }),
       page: r.page,
       lang: r.lang,
       status: r.status,
@@ -190,10 +192,23 @@ feedback.get("/api/admin/feedback", async (c) => {
 });
 
 feedback.post("/api/admin/feedback/:id/status", async (c) => {
-  await requireAdmin(c);
+  const viewer = await requireStaff(c);
   const status = parseStatus((await readJson(c.req.raw)).status);
   const id = c.req.param("id");
-  const { meta } = await c.env.DB.prepare("update feedback set status = ? where id = ?").bind(status, id).run();
-  if (!meta.changes) throw new ApiError(404, "not_found", "Không tìm thấy góp ý");
+  const row = await c.env.DB.prepare("select user_id, title from feedback where id = ?")
+    .bind(id)
+    .first<{ user_id: string | null; title: string }>();
+  if (!row) throw new ApiError(404, "not_found", "Không tìm thấy góp ý");
+  const [res] = await c.env.DB.batch([
+    c.env.DB.prepare("update feedback set status = ? where id = ?").bind(status, id),
+    auditIfStmt(
+      c,
+      viewer,
+      { action: "feedback.status", targetType: "feedback", targetId: id, targetLabel: row.title, subjectUserId: row.user_id, meta: { status }, status: "ok" },
+      "select 1 from feedback where id = ? and status = ?",
+      [id, status],
+    ),
+  ]);
+  if (!res.meta.changes) throw new ApiError(404, "not_found", "Không tìm thấy góp ý");
   return c.json({ id, status });
 });
