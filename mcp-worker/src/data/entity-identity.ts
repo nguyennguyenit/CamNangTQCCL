@@ -39,9 +39,9 @@ interface TacticNameRow {
 }
 
 /**
- * Vietnamese tactic name → id. Candidates match by `viet`, `hanViet` or an alias. Pick the row whose
- * `id === "tactic:" + slug(name)`; else the first candidate by viet, then hanViet, then alias, in catalog order.
- * No candidate → null (callers keep their own fallback).
+ * Vietnamese tactic name → id. Tiers `viet` → `hanViet` → alias; the first tier with candidates decides (the current
+ * display name beats a stale Hán-Việt spelling). Within it pick the row whose `id === "tactic:" + slug(name)`, else the
+ * first candidate in catalog order. No candidate → null (callers keep their own fallback).
  */
 export function createTacticNameResolver(
   rows: readonly TacticNameRow[],
@@ -65,8 +65,8 @@ export function createTacticNameResolver(
     const key = slug(name);
     if (key === "") return null;
     const wanted = `tactic:${key}`;
-    const lists = byField.map((map) => map.get(key) ?? []);
-    if (lists.some((ids) => ids.includes(wanted))) return wanted;
-    return lists.find((ids) => ids.length > 0)?.[0] ?? null;
+    const ids = byField.map((map) => map.get(key) ?? []).find((list) => list.length > 0);
+    if (ids === undefined) return null;
+    return ids.includes(wanted) ? wanted : ids[0]!;
   };
 }

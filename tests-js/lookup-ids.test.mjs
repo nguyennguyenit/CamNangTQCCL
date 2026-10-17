@@ -23,6 +23,16 @@ test('tactic name index: tên cũ (hanViet) và tên mới đều ra cùng mã; 
   assert.equal(resolve.tactic(null, 'Chấn Hãi Tứ Cảnh'), 'tactic:chan-hai-tu-canh');
 });
 
+test('tactic name index: tên hiển thị hiện hành thắng tên Hán-Việt cũ trùng chữ của mã khác', () => {
+  // Client: Lập Lờ Đánh Tráo = 移花接木; mã lap-lo-danh-trao (暗渡陳倉) nay hiện "Ám Độ Trần Thương", hanViet cũ vẫn là "Lập Lờ Đánh Tráo".
+  const index = createTacticNameIndex([
+    {id: 'tactic:di-hoa-tiep-moc', viet: 'Lập Lờ Đánh Tráo', hanViet: 'Di Hoa Tiếp Mộc', aliases: []},
+    {id: 'tactic:lap-lo-danh-trao', viet: 'Ám Độ Trần Thương', hanViet: 'Lập Lờ Đánh Tráo', aliases: []},
+  ]);
+  assert.equal(index('Lập Lờ Đánh Tráo'), 'tactic:di-hoa-tiep-moc');
+  assert.equal(index('Ám Độ Trần Thương'), 'tactic:lap-lo-danh-trao');
+});
+
 test('slug matches pipeline canonical ids (đ, dấu, ký tự lạ)', () => {
   assert.equal(lookupSlug('Đoạt Hồn Hiệp Phách'), 'doat-hon-hiep-phach');
   assert.equal(lookupSlug('  Tinh · Phong Thỉ Trận! '), 'tinh-phong-thi-tran');

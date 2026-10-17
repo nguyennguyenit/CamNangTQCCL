@@ -65,44 +65,33 @@ export function bookSourceAliases(books, identityEntries) {
 
 /**
  * Bộ tra tên chiến pháp → mã `tactic:` theo danh mục (`{id, viet, hanViet, aliases[]}`): tên Việt hiển thị có thể đã
- * đổi nên slug của `viet` không còn bằng mã. Ứng viên là hàng có `viet` / `hanViet` / alias trùng slug với tên;
- * chọn (1) hàng có `id === "tactic:" + slug(tên)`, nếu không thì (2) ứng viên đầu tiên khớp `viet`, rồi `hanViet`,
- * rồi alias, theo thứ tự danh mục. Không có ứng viên thì trả `null` để nơi gọi dùng đường dự phòng của mình.
+ * đổi nên slug của `viet` không còn bằng mã. Xét lần lượt các tầng `viet` → `hanViet` → alias; tầng đầu tiên có ứng
+ * viên quyết định (tên hiển thị hiện hành thắng tên Hán-Việt cũ trùng chữ). Trong tầng đó chọn hàng có
+ * `id === "tactic:" + slug(tên)` (cặp mã trùng tên client), nếu không thì hàng đầu tiên theo thứ tự danh mục.
+ * Không có ứng viên thì trả `null` để nơi gọi dùng đường dự phòng của mình.
  * @returns {(name: unknown) => string | null}
  */
 export function createTacticNameIndex(tactics) {
-  const ids = new Set();
-  const byField = { viet: new Map(), hanViet: new Map(), alias: new Map() };
+  const tiers = [new Map(), new Map(), new Map()];
   const add = (map, name, id) => {
     const slug = typeof name === "string" ? lookupSlug(name) : "";
-    if (slug && !map.has(slug)) map.set(slug, id);
-  };
-  const candidates = new Map();
-  const mark = (name, id) => {
-    const slug = typeof name === "string" ? lookupSlug(name) : "";
     if (!slug) return;
-    if (!candidates.has(slug)) candidates.set(slug, new Set());
-    candidates.get(slug).add(id);
+    if (!map.has(slug)) map.set(slug, []);
+    if (!map.get(slug).includes(id)) map.get(slug).push(id);
   };
   for (const row of Array.isArray(tactics) ? tactics : []) {
     if (typeof row?.id !== "string" || !row.id.startsWith("tactic:")) continue;
-    ids.add(row.id);
-    const aliases = Array.isArray(row.aliases) ? row.aliases : [];
-    add(byField.viet, row.viet, row.id);
-    add(byField.hanViet, row.hanViet, row.id);
-    mark(row.viet, row.id);
-    mark(row.hanViet, row.id);
-    for (const alias of aliases) {
-      add(byField.alias, alias, row.id);
-      mark(alias, row.id);
-    }
+    add(tiers[0], row.viet, row.id);
+    add(tiers[1], row.hanViet, row.id);
+    for (const alias of Array.isArray(row.aliases) ? row.aliases : []) add(tiers[2], alias, row.id);
   }
   return (name) => {
     const slug = typeof name === "string" ? lookupSlug(name) : "";
     if (!slug) return null;
     const own = `tactic:${slug}`;
-    if (candidates.get(slug)?.has(own)) return own;
-    return byField.viet.get(slug) ?? byField.hanViet.get(slug) ?? byField.alias.get(slug) ?? null;
+    const ids = tiers.map((map) => map.get(slug)).find((list) => list?.length);
+    if (!ids) return null;
+    return ids.includes(own) ? own : ids[0];
   };
 }
 

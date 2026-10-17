@@ -74,6 +74,15 @@ describe("snapshot index", () => {
     expect(resolve("Không Có")).toBeNull();
   });
 
+  it("prefers the current display name over another row's stale Hán-Việt spelling", () => {
+    const resolve = createTacticNameResolver([
+      { id: "tactic:di-hoa-tiep-moc", viet: "Lập Lờ Đánh Tráo", hanViet: "Di Hoa Tiếp Mộc", aliases: [] },
+      { id: "tactic:lap-lo-danh-trao", viet: "Ám Độ Trần Thương", hanViet: "Lập Lờ Đánh Tráo", aliases: [] },
+    ]);
+    expect(resolve("Lập Lờ Đánh Tráo")).toBe("tactic:di-hoa-tiep-moc");
+    expect(resolve("Ám Độ Trần Thương")).toBe("tactic:lap-lo-danh-trao");
+  });
+
   it("fails closed on duplicate canonical dictionary identity", async () => {
     const snapshot = await realSnapshot();
     const duplicate = {
