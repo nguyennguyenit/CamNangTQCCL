@@ -20,21 +20,21 @@ Project deploy is split into three surfaces:
 
 ## Latest Static Pages Deploy
 
-- Date: 2026-10-16
+- Date: 2026-10-18
 - Production URL: `https://tqccl.com` (primary). `https://www.tqccl.com` returns `301` to the same path and query through a zone Redirect Rule; `https://tqccl.pages.dev` hands over through the head bridge script.
-- Deployment: `ad12bf98-9990-4ff3-b3d0-baeb792643fb` (`https://ad12bf98.tqccl.pages.dev`)
-- Source commit: `1194207` (`origin/main`): PR #9 (team and lookup content prerendered for AI crawlers, 1772 lookup item pages, JSON-LD, `/llms/*.txt` + `/llms-full.txt`, sitemap 4912 URLs, stale-state guard for list pages) and PR #8 (`/quan-tri/` redesign). Recommended generation `5d9358db…`.
-- Method: `pages-deploy.yml` `workflow_dispatch` on `main` (run `38935939825`: `npm run build`, `npm run verify` 5156 files, `wrangler pages deploy dist --branch main --commit-hash 1194207…`). Before merge, the PR head passed the credential-free release gate; locally Playwright 491/491, `test:node` 593/593, `test:dist` 49/49, pytest OK, `npm run check` 0 errors.
-- Production verified (`-A ClaudeBot`, no JS): `/llms.txt` and `/llms-full.txt` 200 `text/plain` (2.67 MB); `/tra-cuu/chien-phap/`, `/tra-cuu/tuong/sp-lu-mong/`, `/zh/tra-cuu/binh-thu/di-truc-bao-oan/`, `/doi-chuan/`, `/khai-hoang/`, `/quan-tri/` 200; a Đội chuẩn detail page carries heroes and tactics in HTML; `/sitemap.xml` 4912 `<loc>`; `/teams/` and `/_headers` 404; `js/app.js`, `js/khaihoang-detail.js` byte-equal to source; `www` 301 with path and query. Playwright on `https://tqccl.com`: `/doi-chuan/?season=pk-s24` ends on the PK-S24 list with no `data-ssr-stale` left, Khai hoang, lookup and `/quan-tri/` boot with no page errors.
-- Not yet deployed: community Worker `GET /api/admin/counts` (PR #8) still returns 404 on `tqccl-community`; `/quan-tri/` keeps working and only hides the pending-work badges until the Worker is deployed.
-- Previous production / rollback targets: `6a478f82-a2c9-46a6-8666-8f322ce15ef8` (`fabd7d4`), `ff01ace5-b799-4977-84ca-22580033c309` (`a9f055e`).
+- Deployment: `ed919185-19f4-4243-a0f0-adfbcc62f5b8` (`https://ed919185.tqccl.pages.dev`)
+- Source commit: `51e430e` (`origin/main`): PR #18 (user administration: moderators, bans, account deletion, admin audit log; new Người dùng and Nhật ký sections in `/quan-tri/`).
+- Method: `pages-deploy.yml` `workflow_dispatch` on `main` (run `39068669133`), run only after D1 migration `0006` and the community Worker deploy below (Pages and Worker must match: `/api/me` now returns `role`). Locally before merge: community-worker vitest 386/386, `test:node` 595/595, `test:dist` 49/49, `npm run verify` 5157 files, Playwright 513/513; PR gate green.
+- Production verified: `/quan-tri/` and `/zh/quan-tri/` 200; `js/community-admin-users.js`, `js/community-admin.js`, `js/community-auth.js`, `js/community-api.js` byte-equal to source. Playwright on `https://tqccl.com`: `/quan-tri/` boots with no page errors; a forged `?error=ACCOUNT_BANNED&error_description=fake` shows only the fixed fallback sentence, cleans the URL and the notice closes; public comments still render.
+- Not verified by the deploy (needs a real Google sign-in): root/moderator flows, ban/unban, deletion and audit rows through production.
+- Previous production / rollback targets: `ad12bf98-9990-4ff3-b3d0-baeb792643fb` (`1194207`), `6a478f82-a2c9-46a6-8666-8f322ce15ef8` (`fabd7d4`). Roll back together with the Worker (see `docs/community-worker.md`).
 
 ## Latest Community Worker Deploy
 
-- Date: 2026-10-07
-- Worker: `tqccl-community` (`https://tqccl-community.nguyennlt-ncc.workers.dev`), version `b89d7f9f-dfe1-4e51-a0d7-5815d15a4933`, source `9efe0da` (legacy `ai:providers` path removed in `714622c`); `tsc` clean, vitest 129/129. Rollback target: `f0431e38-a85b-4069-91b5-13546472554e` (2026-09-29).
-- Live verification: `/api/me` returns 200 directly and through `https://tqccl.com/api/me`.
-- KV `RL`: unused legacy key `ai:providers` deleted 2026-10-07 after both deploys; only `ai:config` remains under `ai:`. `/analyze` still reaches the Turnstile check (403) afterwards.
+- Date: 2026-10-18
+- Worker: `tqccl-community` (`https://tqccl-community.nguyennlt-ncc.workers.dev`), version `a8092192-4fb3-4b46-9a3b-1496f5ca40cb`, source `3554bba` (PR #18 head, merged as `51e430e`); `tsc` clean, vitest 386/386. Also ships PR #8's `GET /api/admin/counts`. Rollback target: `b89d7f9f-dfe1-4e51-a0d7-5815d15a4933` (2026-10-07, `9efe0da`).
+- D1 `tqccl-community`: migration `0006_user_admin.sql` applied 2026-10-18 (32 users kept, all `role = 'user'`; 7 new `user` columns, `admin_audit`, 6 indexes, 4 triggers). Time-travel bookmark before the migration: `00000473-00000000-00005107-2cb1e9c2d69074179a7caa097e865ed9`. Rehearsed first on a throwaway remote D1 loaded from a production export (deleted afterwards): session/upload inserts for a banned or deleting user fail with `account_blocked` (`SQLITE_CONSTRAINT_TRIGGER`), expired bans and clean users insert normally.
+- Live verification through `https://tqccl.com`: `/api/me` 200 `{"user":null}`; `/api/admin/counts`, `/api/admin/users`, `/api/admin/audit` 401 `unauthorized`; `/api/ban-notice?token=x` 404; public `/api/comments` and `/api/reports/stats` return data.
 
 ## Latest Research MCP Deploy
 
