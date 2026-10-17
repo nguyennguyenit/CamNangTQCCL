@@ -12,7 +12,7 @@ import {
 } from './recommended-reference-state.js';
 import { detailBadges, legacyOriginalDetailContent } from './recommended-reference-render.js';
 import { safeReturnUrl, setTeamRouteHandlesFromJSON, teamDetailPath } from './team-detail-navigation.js';
-import { createByteLoader, loadRawNameResolver, loadTacticDisplayName, loadWebsiteDisplay, localizeData } from './website-display.js';
+import { createByteLoader, loadRawNameResolver, loadWebsiteDisplay, localizeData, readTacticDisplayTable } from './website-display.js';
 import { L } from './i18n.js';
 import { setLookupRouteHandlesFromJSON } from './lookup-ids.js';
 import { treeToDom } from './view-tree.js';
@@ -40,6 +40,7 @@ export async function initTeamDetail({documentTarget = document} = {}) {
   // Trang chi tiết chỉ nhúng bảng legacy route handle; phải đăng ký trước lần dựng link đội gốc.
   setTeamRouteHandlesFromJSON(documentTarget.querySelector('#team-route-handles')?.textContent);
   setLookupRouteHandlesFromJSON(documentTarget.querySelector('#lookup-route-handles')?.textContent);
+  setTacticDisplayName(readTacticDisplayTable(documentTarget));
   const body = documentTarget.querySelector('#team-detail-body');
   // Trạng thái chờ/lỗi chỉ tồn tại khi client thật sự phải tải: build không phát phần tử này.
   const statusNode = () => {
@@ -162,7 +163,6 @@ export async function initTeamDetail({documentTarget = document} = {}) {
       // từ điển lỗi chỉ làm tên lùi về Hán-Việt, không chặn trang.
       const rawNames = await loadRawNameResolver(loadBytes).catch(() => null);
       if (rawNames) setZhNameResolver(rawNames);
-      setTacticDisplayName(await loadTacticDisplayName(loadBytes).catch(() => null));
       await loadLegacy();
     } catch (error) {
       // Chỉ lỗi tải mạng/HTTP mới gợi ý kiểm tra kết nối; byte lệch pin hay dữ liệu sai là lỗi xác minh.

@@ -7,6 +7,9 @@
 - `lookup.formerIds` trên chiến pháp; link, resolver, luật đội và MCP quy mã cũ về mã giữ.
 - Đủ 16 chiến pháp binh chủng của mùa Binh Diễn Xuân Thu theo màn Sân Luyện Binh › Binh chủng Xem của client, mỗi binh chủng một mục `Tinh • <binh chủng>`. Hiệu ứng là hướng dẫn gốc của mùa (chưa gồm cải tạo; thay cho bản cấu hình riêng của tài khoản đã chụp trước). 4 cấp cải tạo S/C/B/A (mỗi cấp chọn 1 trong 3) và ghi chú mùa nằm trong `lookup.conditions`. `Chuyển • <binh chủng>` (chọn cải tạo đặc biệt Chuyển, đổi loại binh) là tên khác của cùng mục, có trong alias cùng `轉·…`; câu đầu hiệu ứng khi chọn Chuyển của cả 7 binh chủng lấy từ màn "Hiệu quả Chiến Pháp Xem trước" (chọn thử, không lưu). Chữ Hán `精·` và hướng dẫn lấy từ ảnh màn 訓兵場 client TW (Bahamut). `Tinh • Nhanh Trí Động Não` có ghi chú mùa nêu rõ chỗ khác bản gốc: dùng được cho mọi binh chủng (bản gốc Kỵ binh, Khí giới) và mức tăng 5.5→10 (bản gốc 7.5→15).
 
+### Fixed
+- Sau khi gộp `main` (trang dựng sẵn): tên chiến pháp hiển thị của bản Việt tính lúc build (`src/lib/tactic-display.ts`) và nhúng vào trang (`#tactic-display-names`), nên DOM dựng sẵn khớp DOM trình duyệt và trang đội/Khai hoang/Tra cứu không phải tải thêm `data/tactics.json` chỉ để đổi tên.
+
 ### Changed
 - Cải tạo binh chủng (16 binh chủng, 192 lựa chọn) chỉ giữ một bản client: tên, hướng dẫn mùa, lựa chọn và cấp theo màn Sân Luyện Binh › Binh chủng Xem; bỏ lịch sử bản SGSDeck. Cấp "Cơ bản" đổi thành "Sơ cấp" theo client. 123 lựa chọn giữ mã cũ, 69 lựa chọn mới theo client thay 69 lựa chọn của đợt cũ.
 - 5 chiến pháp có bản `Thác-` bán ở Thương nhân › Mùa giải (Đoạt Hồn Hiệp Phách, Dưỡng Sức Đợi Chiến, Thuyền Cỏ Mượn Tên, Cắt Xương Trị Độc, Sĩ Biệt Tam Nhật): cùng hiệu ứng nên thêm tên khác `Thác-…` và ghi chú mùa vào mục gốc. Ghi chú Tinh/Chuyển nêu quy tắc tên đã thử trong client: chọn Chuyển ở cải tạo đặc biệt thì Chiến Pháp hiện `Chuyển • …`, còn lại `Tinh • …`.

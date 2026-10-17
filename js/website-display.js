@@ -1,5 +1,5 @@
 import { L, currentLocale, normalizeLocale } from "./i18n.js";
-import { createTacticDisplayName } from "./lookup-ids.js";
+import { createTacticDisplayTable } from "./lookup-ids.js";
 
 const HASH = /^[0-9a-f]{64}$/;
 const GENERATION = /^site-localization:[0-9a-f]{64}$/;
@@ -208,11 +208,15 @@ export async function loadRawNameResolver(loadBytes, locale = currentLocale()) {
 }
 
 /**
- * Bộ đổi tên chiến pháp lưu → tên Việt hiện hành cho bản Việt: tải `data/tactics.json` qua bộ nạp dùng chung của trang;
- * bản Trung trả `null`. Lỗi tải do nơi gọi `.catch` (tên lưu vẫn hiển thị nguyên).
+ * Bộ đổi tên chiến pháp lưu → tên Việt hiện hành cho bản Việt, đọc bảng nhúng `#tactic-display-names` của trang (tính
+ * lúc build, cùng bảng với bản dựng sẵn). Trang không nhúng hoặc bảng hỏng thì `null` (tên lưu hiển thị nguyên).
  */
-export async function loadTacticDisplayName(loadBytes, locale = currentLocale()) {
-  if (normalizeLocale(locale) === "zh") return null;
-  const tactics = JSON.parse(decoder.decode(asBytes(await loadBytes("data/tactics.json"))));
-  return createTacticDisplayName(tactics);
+export function readTacticDisplayTable(documentTarget = globalThis.document) {
+  const text = documentTarget?.querySelector?.("#tactic-display-names")?.textContent;
+  if (!text) return null;
+  try {
+    return createTacticDisplayTable(JSON.parse(text));
+  } catch {
+    return null;
+  }
 }

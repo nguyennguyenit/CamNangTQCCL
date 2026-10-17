@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createTacticDisplayName } from "../js/lookup-ids.js";
+import { createTacticDisplayName, createTacticDisplayTable } from "../js/lookup-ids.js";
 import { projectRecommendedRows, setTacticDisplayName, tacticDisplayName } from "../js/recommended-reference-state.js";
 
 const tactics = [
@@ -45,4 +45,13 @@ test("bộ hiển thị của trang: bản vi đổi tên, chưa đặt bộ tra
   } finally {
     setTacticDisplayName(null);
   }
+});
+
+test("bảng tên hiển thị nhúng lúc build: đổi đúng tên lưu có trong bảng, tên khác và giá trị không phải chuỗi giữ nguyên, bảng hỏng coi như rỗng", () => {
+  const display = createTacticDisplayTable({ "Hổ Báo Kỳ": "Hổ Báo Kỵ", "Sĩ Tranh Tiên Phó": "Nhanh Chân Tranh Đất" });
+  assert.equal(display(" Hổ Báo Kỳ "), "Hổ Báo Kỵ");
+  assert.equal(display("Sĩ Tranh Tiên Phó"), "Nhanh Chân Tranh Đất");
+  assert.equal(display("Không Có"), "Không Có");
+  assert.equal(display(null), null);
+  for (const bad of [null, [], "x", { "A": 3 }]) assert.equal(createTacticDisplayTable(bad)("A"), "A");
 });

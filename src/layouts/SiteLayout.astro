@@ -20,6 +20,7 @@ import {
 import { POLICY_PAGES } from '../lib/policy-pages';
 import { SECTION_ICONS, type SectionIcon } from '../lib/section-icons';
 import { lookupGroupLinks, lookupRouteHandles, type LookupGroup } from '../lib/lookup-pages';
+import { tacticDisplayTable } from '../lib/tactic-display';
 import { localeFromPath, localePath, pick, stripLocale } from '../../js/i18n.js';
 import { FEEDBACK_KINDS } from '../../js/feedback-kinds.js';
 import { HREFLANG, LOCALE_LABEL, alternatePaths, mirroredAlternates, otherLocale } from '../lib/locale-routes';
@@ -365,6 +366,8 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found' || !embe
     });
 // Ngoại lệ slug trang riêng Tra cứu (hiện `{}`): mọi trang dựng link Tra cứu ở trình duyệt đăng ký lại cùng bảng với build.
 const lookupRouteTable = routeHandles ? JSON.stringify(await lookupRouteHandles()) : null;
+// Bảng tên chiến pháp hiển thị (bản Việt): trang có dữ liệu đội/Tra cứu dựng lại ở trình duyệt dùng cùng bảng với bản dựng sẵn.
+const tacticDisplayJson = pageKind === 'landing' || pageKind === 'not-found' ? null : JSON.stringify(await tacticDisplayTable()).replace(/</g, '\\u003c');
 ---
 <!doctype html>
 <html lang={HREFLANG[locale]}>
@@ -700,6 +703,7 @@ const lookupRouteTable = routeHandles ? JSON.stringify(await lookupRouteHandles(
     {bookAliasesJson && <script is:inline type="application/json" id="lookup-book-aliases" set:html={bookAliasesJson}></script>}
     {routeHandles && <script is:inline type="application/json" id="team-route-handles" set:html={JSON.stringify(routeHandles)}></script>}
     {lookupRouteTable && <script is:inline type="application/json" id="lookup-route-handles" set:html={lookupRouteTable}></script>}
+    {tacticDisplayJson && <script is:inline type="application/json" id="tactic-display-names" set:html={tacticDisplayJson}></script>}
     <script is:inline type="module">
       import { initSiteChrome } from '/js/site-chrome.js';
       initSiteChrome();

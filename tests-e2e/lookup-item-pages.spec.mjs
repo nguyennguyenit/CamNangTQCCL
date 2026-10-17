@@ -113,15 +113,11 @@ test("trang riêng chiến pháp: nút chọn phiên bản đổi đoạn hiệu
   await expect(buttons.nth(1)).toHaveAttribute("aria-pressed", "true");
 });
 
-test("trang riêng cải tạo binh chủng: nút phiên bản hiệu quả đổi khối nội dung", async ({ page }) => {
+test("trang riêng cải tạo binh chủng: chỉ một bản client, hướng dẫn mùa hiện ngay, không có nút phiên bản", async ({ page }) => {
   await page.goto("/tra-cuu/cai-tao-binh-chung/ho-bao-ky/");
   await expect(page.locator("body[data-boot=ready]")).toBeAttached();
-  const tabs = page.locator("[data-effect-tab]");
-  expect(await tabs.count()).toBeGreaterThan(1);
-  await tabs.nth(1).click();
-  await expect(tabs.nth(1)).toHaveAttribute("aria-pressed", "true");
-  await expect(page.locator('[data-effect-panel="1"]')).toBeVisible();
-  await expect(page.locator('[data-effect-panel="0"]')).toBeHidden();
+  await expect(page.locator("[data-effect-tab]")).toHaveCount(0);
+  await expect(page.locator('[data-effect-panel]:not([hidden])').first()).toContainText("Hổ Báo Kỵ");
 });
 
 test("trang riêng tướng: link tới chiến pháp là link trang riêng của chiến pháp", async ({ page }) => {

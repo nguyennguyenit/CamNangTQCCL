@@ -213,6 +213,20 @@ export function createTacticDisplayName(tactics) {
   };
 }
 
+/**
+ * Bộ đổi tên từ bảng `{tên lưu: tên hiển thị}` đã tính lúc build (`#tactic-display-names`, xem `src/lib/tactic-display.ts`):
+ * trình duyệt dùng bảng nhỏ này thay vì tải cả danh mục chiến pháp; tên không có trong bảng giữ nguyên.
+ * Bảng sai dạng coi như rỗng.
+ * @returns {(stored: unknown) => unknown}
+ */
+export function createTacticDisplayTable(table) {
+  const names = new Map();
+  if (table && typeof table === "object" && !Array.isArray(table)) {
+    for (const [stored, shown] of Object.entries(table)) if (typeof shown === "string" && shown.trim()) names.set(stored, shown);
+  }
+  return (stored) => (typeof stored === "string" ? names.get(stored.trim()) ?? stored : stored);
+}
+
 /** Đường dẫn (bản Việt) của từng nhóm Tra cứu: `/tra-cuu/<slug>/`. Thứ tự là thứ tự công bố. */
 export const LOOKUP_GROUP_SLUGS = Object.freeze({
   heroes: "tuong",

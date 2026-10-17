@@ -342,10 +342,13 @@ test('compact cards keep complete source content, native links and non-navigatin
   await expect(primaryHolders).toHaveCount(3);
   await expect(primaryHolders.locator('.reference-role')).toHaveText(['CHỦ','PHÓ 1','PHÓ 2']);
   await expect(card.locator('.main-holder')).toHaveCount(0);
+  // Bản Việt hiện tên chiến pháp hiện hành của danh mục: tên lưu đổi theo bảng nhúng `#tactic-display-names` của trang.
+  const displayNames=JSON.parse(await page.locator('#tactic-display-names').textContent() || '{}');
   for (const [position,holder] of row.heroes.entries()) {
     const view=primaryHolders.nth(position);
     for (const [slot,raw] of (holder.tacticSlotsRaw || []).entries()) {
-      if (raw && holder.tacticSlotKinds?.[slot]!=='bond') await expect(view.locator('.tactics')).toContainText(holder.tacticSlotsVi?.[slot] || raw);
+      const stored=holder.tacticSlotsVi?.[slot] || raw;
+      if (raw && holder.tacticSlotKinds?.[slot]!=='bond') await expect(view.locator('.tactics')).toContainText(displayNames[stored.trim()] ?? stored);
     }
     for (const [slot,raw] of (holder.bookSlotsRaw || []).entries()) {
       if (raw) await expect(view.locator('.books')).toContainText(holder.bookSlotsVi?.[slot] || raw);

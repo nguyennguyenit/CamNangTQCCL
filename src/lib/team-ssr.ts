@@ -19,6 +19,7 @@ import { TACTIC_SUMMARY_FILE, parseTacticSummaries } from '../../js/tactic-summa
 import { readPublicArtifact, seasonArtifactHashes, websiteDisplayPublicationSnapshot, type WebsiteDisplayPublicationSnapshot } from './root-static-artifacts.ts';
 import { teamDetailCatalog } from './team-detail-routes.ts';
 import { lookupRouteHandles } from './lookup-pages.ts';
+import { tacticDisplayTable } from './tactic-display.ts';
 import type { SiteLocale } from './locale-routes';
 import type { LegacyRouteEntry, KhaiHoangRouteEntry } from './team-detail-routes.ts';
 
@@ -56,6 +57,8 @@ export function prepare() {
     if (!registered) throw new Error('Team route handle table rejected while preparing prerendered team pages');
     // Link Tra cứu của trang đội trỏ tới trang riêng: ngoại lệ slug của ledger phải đăng ký trước khi builder dựng href.
     await lookupRouteHandles();
+    // Bản Việt: tên chiến pháp lưu → `viet` hiện hành, cùng bảng nhúng `#tactic-display-names` mà trình duyệt đọc lại.
+    await tacticDisplayTable();
     const bytesOf = (name: string) => {
       const basename = name === 'website-display.json' ? name : name.replace(/^data\//, '');
       const bytes = website.publicFiles[basename];
