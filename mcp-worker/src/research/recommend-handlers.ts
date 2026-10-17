@@ -7,6 +7,7 @@ import {
   seasonTacticUsage,
 } from "../../../js/roster-season-candidates.js";
 import { MAX_TACTIC_OVERRIDES } from "../../../js/roster-scan-state.js";
+import { createFormerTacticIdIndex } from "../../../js/lookup-ids.js";
 import { buildTacticRules } from "../../../js/team-recommend-engine.js";
 import { verifyConfirmationBinding, type CanonicalState } from "../domain/canonical-state.js";
 import { PUBLIC_ERRORS, ResearchHandlerError } from "./handler-error.js";
@@ -298,9 +299,12 @@ export async function handleRecommendTeams(ctx: ToolContext, rawInput: unknown):
     canonicalId: hero.canonicalId,
     ...(hero.redStars === undefined ? {} : { redStars: hero.redStars }),
   }));
+  // Mã chiến pháp đã gộp (lookup.formerIds) trong trạng thái đã xác nhận quy về mã giữ trước khi so với đội mùa.
+  const formerTactic: Map<string, string> = createFormerTacticIdIndex(tacticsDict);
+  const liveTacticId = (id: string): string => formerTactic.get(id) ?? id;
   const ownedTactics = state.tactics.slice(0, 1_000).map((tactic) => ({
     name: tactic.displayName,
-    canonicalId: tactic.canonicalId,
+    canonicalId: liveTacticId(tactic.canonicalId),
   }));
   const lockedTeams = state.lockedTeams
     .filter((team) => wantedLocks === null || wantedLocks.has(team.teamId as string))
@@ -309,10 +313,10 @@ export async function handleRecommendTeams(ctx: ToolContext, rawInput: unknown):
       teamId: team.teamId,
       teamName: team.teamId,
       heroes: [...team.heroIds],
-      tactics: [...team.tacticIds],
+      tactics: team.tacticIds.map(liveTacticId),
       tacticAssignments: team.tacticAssignments?.map((assignment) => ({
         holderId: assignment.holderId,
-        tacticId: assignment.tacticId,
+        tacticId: liveTacticId(assignment.tacticId),
         ...(assignment.slotIndex === undefined ? {} : { slotIndex: assignment.slotIndex }),
       })),
     }));

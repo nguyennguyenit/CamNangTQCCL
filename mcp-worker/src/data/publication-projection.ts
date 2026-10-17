@@ -838,9 +838,20 @@ export function buildPublicationReadModel(
     }
   }
 
+  // Mã chiến pháp đã gộp (`profile.lookup.formerIds` của mã còn sống) trả về hồ sơ của mã còn sống; mã còn sống không bao giờ bị che.
+  const formerIdToSurvivor = new Map<string, CatalogEntityView>();
+  const formerIdsOf = (entity: CatalogEntityView): string[] => {
+    const lookup = entity.profile.lookup;
+    const ids = typeof lookup === "object" && lookup !== null && !Array.isArray(lookup) ? (lookup as Record<string, unknown>).formerIds : undefined;
+    return Array.isArray(ids) ? ids.filter((id): id is string => typeof id === "string") : [];
+  };
+  for (const entity of entities) {
+    if (entity.kind !== "tactic") continue;
+    for (const id of formerIdsOf(entity)) if (!entityById.has(id) && !formerIdToSurvivor.has(id)) formerIdToSurvivor.set(id, entity);
+  }
   const searchIndex = entities.map((entity) => ({
     entity,
-    terms: terms([entity.nameVi, entity.nameZh, entity.hanViet, entity.aliases, entity.id.slice(entity.id.indexOf(":") + 1)]),
+    terms: terms([entity.nameVi, entity.nameZh, entity.hanViet, entity.aliases, entity.id.slice(entity.id.indexOf(":") + 1), formerIdsOf(entity).map((id) => id.slice(id.indexOf(":") + 1))]),
   }));
   // Chỉ dựng khi có truy vấn không khớp; đa số request không cần.
   let tokenIndex: Array<{ entity: CatalogEntityView; tokenTerms: TokenTerm[] }> | null = null;
@@ -869,7 +880,7 @@ export function buildPublicationReadModel(
     entities,
     teams,
     routes,
-    getEntity: (id) => entityById.get(id),
+    getEntity: (id) => entityById.get(id) ?? formerIdToSurvivor.get(id),
     searchCatalog(query, options = {}) {
       const { limit, offset } = clampPage(options.limit, options.offset);
       const needle = normalizeText(query);

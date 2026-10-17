@@ -95,7 +95,7 @@ async function controlledBundle(page, data = null) {
     lookup: {
       conditions: [], missingFields: [], revisions: [], activationRate: null,
       cooldown: null, maxUsers: null, pointCost: null, effectTypeVi: null,
-      exchangeConditionVi: null, acquiredFromVi: [], inheritedFromIds: [], conflictsVi: null,
+      exchangeConditionVi: null, acquiredFromVi: [], inheritedFromIds: [], formerIds: [], conflictsVi: null,
     },
   }));
   const lookupCatalog = { schemaVersion: 1, advisors: [], buildings: [], equipment: [], specials: [], troopMods: [] };

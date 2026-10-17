@@ -8,6 +8,7 @@ import {
   parseLookupQuery,
   buildLookupCorpus,
   searchLookupGroup,
+  retiredLookupRedirect,
 } from "../js/unified-lookup.js";
 import { effectVersions, lookupProfile } from "../js/lookup-detail.js";
 import { resolveLegacyRoute } from "../js/legacy-routes.js";
@@ -49,7 +50,7 @@ function tactic(id, viet, over = {}) {
     aliases: [], ...sourceNoise(),
     lookup: {
       activationRate: 0.35, cooldown: 0, maxUsers: 3, pointCost: 0,
-      conditions: [], revisions: [], inheritedFromIds: [],
+      conditions: [], revisions: [], inheritedFromIds: [], formerIds: [],
       effectTypeVi: "Tăng ích", exchangeConditionVi: null,
       acquiredFromVi: ["Truyền thừa"], conflictsVi: "Không cộng dồn", missingFields: [], ...lookup,
     },
@@ -884,4 +885,18 @@ test("payload Trong cẩm nang chỉ được nhận khi khớp kho Tra cứu v�
   const brokenItems = structuredClone(SUMMARY_FIXTURE);
   brokenItems.summaries["hero:sp-lu-mong"].books.items[0].teams = 99;
   assert.throws(() => parseHeroSummaries(brokenItems, { catalogSha256: "a".repeat(64) }), /binh thư/);
+});
+
+test("?id= của chiến pháp đã gộp chuyển sang hồ sơ của mã còn sống; mã sống hoặc lạ không chuyển", () => {
+  const corpus = buildLookupCorpus({
+    tactics: [
+      tactic("tactic:si-tranh-tien-pho", "Sĩ Tranh Tiên Phô", { lookup: { formerIds: ["tactic:nhanh-chan-tranh-dat"] } }),
+      tactic("tactic:khac", "Khác"),
+    ],
+  });
+  const route = parseLookupQuery("?id=tactic%3Anhanh-chan-tranh-dat", "tactics");
+  assert.equal(route.error, null);
+  assert.equal(retiredLookupRedirect(corpus, route.id), "/tra-cuu/chien-phap/?id=tactic%3Asi-tranh-tien-pho");
+  assert.equal(retiredLookupRedirect(corpus, "tactic:si-tranh-tien-pho"), null);
+  assert.equal(retiredLookupRedirect(corpus, "tactic:khong-ton-tai"), null);
 });

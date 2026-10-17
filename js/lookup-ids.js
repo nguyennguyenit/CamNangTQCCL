@@ -64,6 +64,23 @@ export function bookSourceAliases(books, identityEntries) {
 }
 
 /**
+ * Bảng mã chiến pháp đã gộp → mã còn sống: hàng nào có `lookup.formerIds` chứa mã đó. Mã còn là hàng sống thì không
+ * bao giờ bị coi là đã gộp.
+ * @returns {Map<string, string>}
+ */
+export function createFormerTacticIdIndex(tactics) {
+  const rows = Array.isArray(tactics) ? tactics : [];
+  const live = new Set(rows.map((row) => row?.id));
+  const former = new Map();
+  for (const row of rows) {
+    const ids = row?.lookup?.formerIds;
+    if (typeof row?.id !== "string" || !Array.isArray(ids)) continue;
+    for (const id of ids) if (typeof id === "string" && !live.has(id) && !former.has(id)) former.set(id, row.id);
+  }
+  return former;
+}
+
+/**
  * Bộ tra tên chiến pháp → mã `tactic:` theo danh mục (`{id, viet, hanViet, aliases[]}`): tên Việt hiển thị có thể đã
  * đổi nên slug của `viet` không còn bằng mã. Xét lần lượt các tầng `viet` → `hanViet` → alias; tầng đầu tiên có ứng
  * viên quyết định (tên hiển thị hiện hành thắng tên Hán-Việt cũ trùng chữ). Trong tầng đó chọn hàng có
@@ -72,6 +89,7 @@ export function bookSourceAliases(books, identityEntries) {
  * @returns {(name: unknown) => string | null}
  */
 export function createTacticNameIndex(tactics) {
+  const former = createFormerTacticIdIndex(tactics);
   const tiers = [new Map(), new Map(), new Map()];
   const add = (map, name, id) => {
     const slug = typeof name === "string" ? lookupSlug(name) : "";
@@ -90,7 +108,7 @@ export function createTacticNameIndex(tactics) {
     if (!slug) return null;
     const own = `tactic:${slug}`;
     const ids = tiers.map((map) => map.get(slug)).find((list) => list?.length);
-    if (!ids) return null;
+    if (!ids) return former.get(own) ?? null;
     return ids.includes(own) ? own : ids[0];
   };
 }
@@ -98,7 +116,11 @@ export function createTacticNameIndex(tactics) {
 /** Như `createTacticNameIndex`, nhưng tên không có trong danh mục dùng `tactic:<slug tên>` (kể cả khi danh mục rỗng). */
 export function createTacticIdResolver(tactics) {
   const index = createTacticNameIndex(tactics);
-  return (name) => index(name) ?? `tactic:${lookupSlug(name)}`;
+  const former = createFormerTacticIdIndex(tactics);
+  return (name) => {
+    const id = index(name) ?? `tactic:${lookupSlug(name)}`;
+    return former.get(id) ?? id;
+  };
 }
 
 /**
@@ -111,6 +133,7 @@ export function createLookupIdResolver({ tactics = [], books = [] } = {}) {
   const tacticByName = new Map();
   const tacticIds = new Set();
   const tacticByVi = createTacticNameIndex(tactics);
+  const formerTactic = createFormerTacticIdIndex(tactics);
   for (const row of Array.isArray(tactics) ? tactics : []) {
     if (typeof row?.id !== "string" || !row.id.startsWith("tactic:")) continue;
     tacticIds.add(row.id);
@@ -138,7 +161,8 @@ export function createLookupIdResolver({ tactics = [], books = [] } = {}) {
   };
   const byTacticVi = (vi) => {
     const name = typeof vi === "string" ? vi.replace(VI_MODIFIED, "") : "";
-    return tacticByVi(name) ?? byVi(tacticIds, "tactic", vi);
+    const id = tacticByVi(name) ?? byVi(tacticIds, "tactic", vi);
+    return id === null ? null : formerTactic.get(id) ?? id;
   };
   return {
     tactic: (raw, vi) => byRaw(tacticByName, raw) ?? byTacticVi(vi),

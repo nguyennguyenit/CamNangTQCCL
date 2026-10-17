@@ -10,10 +10,11 @@ const innateHeroIds = (result: { profile?: Record<string, unknown> | undefined }
 
 describe("tqccl_get_entity innateHeroIds", () => {
   it("chiến pháp tự có nêu tướng mang nó, kể cả khi bản ghi chiến pháp không ghi tướng nguồn", async () => {
-    // Dewee 2026-10-15: sourceHeroCn rỗng nên agent trả lời "không rõ tướng sở hữu", dù SP Tào Tháo trỏ selfTacticId tới đây.
-    const result = await realHandlers().call("tqccl_get_entity", { entityId: "tactic:thua-thien-tinh-the" });
-    expect(innateHeroIds(result)).toEqual(["hero:sp-tao-thao"]);
-    expect(result.refNames?.["hero:sp-tao-thao"]).toBe("SP Tào Tháo");
+    // Dewee 2026-10-15: sourceHeroCn rỗng nên agent trả lời "không rõ tướng sở hữu", dù tướng trỏ selfTacticId tới đây.
+    // Trấn Áp Khăn Vàng chỉ có ở client Global (không có tướng nguồn); Chu Tuấn tự mang.
+    const result = await realHandlers().call("tqccl_get_entity", { entityId: "tactic:tran-ap-khan-vang" });
+    expect(innateHeroIds(result)).toEqual(["hero:chu-tuan"]);
+    expect(result.refNames?.["hero:chu-tuan"]).toBe("Chu Tuấn");
   });
 
   it("tướng không có selfTacticId vẫn được tính khi tên Hán chiến pháp tự có khớp đúng một chiến pháp", async () => {

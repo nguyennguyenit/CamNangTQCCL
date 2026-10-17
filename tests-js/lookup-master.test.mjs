@@ -63,7 +63,7 @@ const CATALOG = {
       ],
       options: [
         option("a", "Chuyển·Cầm thương", "Đặc biệt", { convertsToVi: "Thương binh" }),
-        option("b", "Tập võ", "Cơ bản"),
+        option("b", "Tập võ", "Sơ cấp"),
         option("c", "Chỉnh quân", "Trung cấp"),
       ],
     },

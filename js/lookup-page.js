@@ -23,6 +23,7 @@ import {
   lookupSummaryTrees,
   lookupTableRowTree,
   parseLookupQuery,
+  retiredLookupRedirect,
   searchLookupGroup,
 } from "./unified-lookup.js";
 
@@ -288,6 +289,11 @@ export function initLookupPage({ group, mount, docs, loadProfileDocs = async () 
     route = parseLookupQuery(location.search, group);
     if (route.otherGroup) {
       location.replace(localePath(lookupProfilePath(route.id)));
+      return;
+    }
+    const retired = route.id ? retiredLookupRedirect(corpus, route.id) : null;
+    if (retired) {
+      location.replace(localePath(retired));
       return;
     }
     feedback.removeAttribute("role");

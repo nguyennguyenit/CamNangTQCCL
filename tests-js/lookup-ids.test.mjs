@@ -133,3 +133,17 @@ test('lookupHubTarget chuyển link cũ của mục lục sang trang nhóm, giá
   );
   assert.equal(target('?group=zz', '/zh/tra-cuu/', '#top'), '/zh/tra-cuu/#top');
 });
+
+test('mã chiến pháp đã gộp (lookup.formerIds) tra ra mã còn sống ở cả ba bộ tra', () => {
+  const tactics = [
+    {id: 'tactic:si-tranh-tien-pho', viet: 'Sĩ Tranh Tiên Phô', hanViet: 'Sĩ Tranh Tiên Phô', aliases: [], lookup: {formerIds: ['tactic:nhanh-chan-tranh-dat']}},
+    {id: 'tactic:di-hoa-tiep-moc', viet: 'Di Hoa Tiếp Mộc', hanViet: 'Di Hoa Tiếp Mộc', aliases: [], lookup: {formerIds: []}},
+  ];
+  assert.equal(createTacticNameIndex(tactics)('Nhánh Chân Tranh Đất'), 'tactic:si-tranh-tien-pho');
+  assert.equal(createTacticIdResolver(tactics)('Nhánh Chân Tranh Đất'), 'tactic:si-tranh-tien-pho');
+  assert.equal(createLookupIdResolver({tactics}).tactic(null, 'Nhánh Chân Tranh Đất'), 'tactic:si-tranh-tien-pho');
+  assert.equal(createTacticIdResolver(tactics)('Không Có'), 'tactic:khong-co');
+  // Mã còn là hàng sống không bị coi là đã gộp.
+  const stillLive = [...tactics, {id: 'tactic:nhanh-chan-tranh-dat', viet: 'Nhánh Chân Tranh Đất', hanViet: 'x', aliases: []}];
+  assert.equal(createTacticIdResolver(stillLive)('Nhánh Chân Tranh Đất'), 'tactic:nhanh-chan-tranh-dat');
+});

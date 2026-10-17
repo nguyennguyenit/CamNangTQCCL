@@ -38,7 +38,10 @@ export function buildTacticRules(tacticsDict = []) {
     const kind = item?.type === "FORMATION" ? "formation" : item?.type === "TROOP" ? "troop" : null;
     if (!kind || !item.viet) continue;
     const id = typeof item.id === "string" && item.id.startsWith("tactic:") ? item.id : canonicalTacticId(item.viet);
-    rules.set(id, { kind, troopFit: (item.troopFit || []).map(unitKey) });
+    const rule = { kind, troopFit: (item.troopFit || []).map(unitKey) };
+    rules.set(id, rule);
+    // Mã cũ đã gộp (lookup.formerIds): tên cũ suy ra mã cũ vẫn phải chịu luật của mã giữ.
+    for (const former of item.lookup?.formerIds ?? []) if (!rules.has(former)) rules.set(former, rule);
   }
   return rules;
 }
