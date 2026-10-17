@@ -19,8 +19,8 @@
 
 | Hạng mục | Số lượng | Trạng thái |
 |---|---|---|
-| Chiến pháp có mục trong `pipeline/lookup-client-tactics.json` | 381/406 (9 qua tướng xanh lam nối ID theo nghĩa tên; Quốc Chi Trinh Cán qua thẻ SP Lô Trực) | Đã đối chiếu (đọc từ client) |
-| `effectViet` và bản hiện hành của `lookup.revisions` | 381 | Đã đối chiếu |
+| Chiến pháp có mục trong `pipeline/lookup-client-tactics.json` | 396/406 (9 mã trùng chép dữ liệu, mục 2026-10-17 c); (9 qua tướng xanh lam nối ID theo nghĩa tên; 7 qua thẻ tướng: Quốc Chi Trinh Cán và 6 chiến pháp ở mục 2026-10-17 b) | Đã đối chiếu (đọc từ client) |
+| `effectViet` và bản hiện hành của `lookup.revisions` | 396 | Đã đối chiếu |
 | `targetViet` (Mục tiêu) / `lookup.effectTypeVi` (Buff) | 369 / 199 | Đã đối chiếu |
 | `troopFit` (khớp mẫu biểu tượng, không chép tay) | 97 | Đã đối chiếu |
 | `lookup.activationRate` / `type` / `quality` | 29 / 15 / 9 | Đã đối chiếu |
@@ -107,16 +107,37 @@ Phát hành: promote `client-tactics-261016e` (`lookup:f7aee7f1…`), generation
 
 - **SP Lô Thực = SP Lô Trực** (盧植; "SP Lô Trực" là alias client của `hero:sp-lo-thuc`). Tra "SP Lô Trực" ở Thượng Thư Đài: tự mang **Nòng Cốt Quốc Gia** (Chỉ huy, 100%, Tập thể quân ta 3 người) → `quoc-chi-trinh-can` 國之楨榦, **Đã đối chiếu** theo tướng mang; kế thừa Nhạn Hành Trận (đã có). Lần trước tra "Lô Trực SP" không ra vì client đặt "SP" ở đầu tên.
 
+## Bổ sung 2026-10-17 b: kiểm chiến pháp tự mang/kế thừa của tướng
+
+- 206 tướng (trừ 45 tướng xanh lam và SP Lô Trực); tra thẻ tướng ở Thượng Thư Đài, hai lượt chép độc lập, đối chiếu tên tướng trên thẻ với tên tra (thẻ cũ còn trên màn hình bị loại). Tướng SP ở client có hai dạng tên: "SP X" hoặc "X SP" (Hứa Chử SP, Mã Siêu SP, Quách Gia SP…).
+- Kết quả 204 thẻ: 382 dòng khớp kho sau khi sửa; 80 liên kết ghi bằng `overrides` (**Đã đối chiếu** theo thẻ tướng); 16 dòng trỏ mã còn lại của cặp mã trùng tên client (cùng chiến pháp ở client, giữ nguyên).
+- Sửa sai: Chu Tuấn kế thừa Dương Đông Kích Tây (kho: Thiên Lý Trì Viện, của Chu Hoàn); tự mang Trấn Áp Khăn Vàng chưa có trong kho → bỏ liên kết sai. `lap-lo-danh-trao` 暗渡陳倉 = Ám Độ Trần Thương (Đặng Ngải), không phải Lập Lờ Đánh Tráo.
+- Chiến pháp mới từ thẻ tướng (nối ID theo tướng mang + nghĩa tên; **Phương án từ nguồn** phần ID): Tranh Phân → 爭分奪秒 (Lưu Biểu), Cẩn Thận Tỉ Mỉ → 細緻入微 (Bộ Luyện Sư), Án Đồ Tác Kí → 按圖索驥 (Mã Thiết), Biết Được Gỗ Tốt → 曉知良木 (Thái Ung; số 1.5%→3% trùng bản Trung), Thành Quả To Lớn → 碩果累累 (Trần Lâm; hiệu ứng lương thảo, cũng gần 仓廪而实 — chọn theo nghĩa tên), Nghi Thành → 宜城之志 (Từ Thịnh).
+- Chưa có trong kho: Chi Diệp Phù Tô (Lý Nghiêm, Quan Gỗ 1%→2%), Trấn Áp Khăn Vàng (Chu Tuấn). 40Y Lữ Bố tra bằng "40周年吕布" (tên client hiện chữ Hán): tự mang Thiên Uy Khiếu Trận, không kế thừa — khớp kho. SP Chu Tuấn tra bằng "Chu Tuấn SP": Vi Sư Tất Khuyết / Mau Giành Lợi Thế — khớp kho. Không mở được: Hà Thị và SP Tào Tháo (không có ở client Việt Nam). Đã kiểm 204/206 tướng (2 tướng còn lại không có ở client Việt Nam).
+
+## Bổ sung 2026-10-17 c: mã trùng do người dùng nhận diện
+
+Người dùng đối chiếu mô tả nguồn Trung với tên client. Các cặp là mã trùng trong kho (tên Hán khác chữ/OCR hoặc tên cũ); mã thiếu nhận cùng dữ liệu client với mã đã chụp, chưa gộp ID:
+
+| Mã thiếu | Tên client | Mã đã có dữ liệu |
+|---|---|---|
+| `tram-doc` 鴆毒 | Rượu Độc | `cuu-doc` 鳩毒 |
+| `ung-thi` 鷹視 | Ưng Thị Lang Cố | `ung-thi-lang-co` 鷹視狼顧 |
+| `cuong-dung-vo-tien` 剛勇無前 | Vô Địch Can Trường | `vo-dich-can-truong` |
+| `hoa-si-nguyen-lieu` 火熾原燎 | Lửa Lan Khắp Chốn | `lua-lan-khap-chon` |
+| `ho-gia-thap-bat-phach` 胡笳十八拍 | Tiếng Sáo Dư Âm | `ho-gia-du-am` 胡笳餘音 |
+| `khac-tuan-hoa-nhat` 克遵画一 | Khắc Tôn Họa Nhất | `khac-tuan-hoach-nhat` 克遵畫一 |
+| `thuong-lam-nhi-thuc` 仓廪而实 | Thành Quả To Lớn | `thac-qua-luy-luy` |
+| `luc-luc-thuong-tam` 戮力上心 | Lục Lực Thượng Quốc | `luc-luc-thuong-quoc` 戮力上國 |
+| `pha-phong-doan-nhan` 破锋断刃 | Thôi Phong Đoạn Nhẫn | `thoi-phong-doan-nhan` 摧鋒斷刃 |
+
 ## Chưa xác minh
 
-25 chiến pháp trong kho chưa có dữ liệu client. Có ba nhóm:
+10 chiến pháp trong kho chưa có dữ liệu client (người dùng xác nhận không có trong client Việt Nam hoặc không phải chiến pháp):
 
-- **Không tìm thấy ở Thượng Thư Đài, kể cả qua gợi ý và qua 45 tướng xanh lam**: Án Đồ Tác Ký, Đoan Trang Trì Trọng, Hiểu Tri Lương Mộc, Khắc Tuân Họa Nhất, Khiên Chế, Lục Lực Thượng Tâm, Nghi Thành Chi Chí, Tế Trí Nhập Vy, Thạc Quả Lũy Lũy, Thùy Huệ Vạn Vật, Trậm Độc, Thương Lẫm Nhi Thực, Thiên Lý Quỹ Lương, Tranh Phân Đoạt Miểu, Ưng Thị, Phá Phong Đoạn Nhẫn.
-- **Chiến pháp sự kiện không có trong 51 sự kiện Global**: Cương Dũng Vô Tiền, Hỏa Sí Nguyên Liệu, Đào Viên Kết Nghĩa, Vạn Quân Thủ Tướng.
-- **Tướng mang không mở được ở Thượng Thư Đài**:
-  - Hà Thị (không có ở Global): Duy Nội Thiện Quyền, Tuyệt Kế Chiết Mưu.
-  - SP Tào Tháo (chưa phát hành ở client Việt Nam, người dùng xác nhận 2026-10-17): Tàng Khí Đãi Thì, Thừa Thiên Tĩnh Thế.
-  - Hồ Già Thập Bát Phách: chưa xác minh.
+- **Không có trong client Việt Nam** (Thượng Thư Đài, 45 tướng xanh lam và người dùng đều không thấy): Vạn Quân Thủ Tướng, Khiên Chế (manh mối Phan Phụng), Thiên Lý Quỹ Lương (Lý Nghiêm mang Tịnh Hóa), Đoan Trang Trì Trọng (không có Tuân Thái; không rõ hoạt động tầm phỏng), Thùy Huệ Vạn Vật (tăng tỷ lệ giao dịch ở client chỉ có Đại Kiều; Vương Nguyên Cơ là tướng S).
+- **Tướng mang không có ở client Việt Nam**: Hà Thị — Duy Nội Thiện Quyền, Tuyệt Kế Chiết Mưu; SP Tào Tháo — Tàng Khí Đãi Thì, Thừa Thiên Tĩnh Thế.
+- **Không phải chiến pháp**: Đào Viên Kết Nghĩa — ở client là Duyên phận tướng "Kết Nghĩa Vườn Đào" (theo người dùng); mục này trong kho cần rà lại.
 
 Chiến pháp client chưa nối được ID trong kho (không tạo mới vì client không hiện chữ Hán):
 

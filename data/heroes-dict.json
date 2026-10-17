@@ -2367,7 +2367,7 @@
         "toc": 0.37,
         "tri": 2.01
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:du-dich-tham-nhap",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -2375,7 +2375,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:thuy-kinh-tien-sinh",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -3308,7 +3308,7 @@
         "toc": 0.85,
         "tri": 1.0
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:me-hoac",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -3316,7 +3316,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:quoc-sac",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -4091,7 +4091,7 @@
         "toc": 0.9,
         "tri": 0.95
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:doat-hon-hiep-phach",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -4099,7 +4099,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:thien-huong",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -4644,7 +4644,7 @@
         "toc": 0.65,
         "tri": 1.25
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:binh-phong",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -4652,7 +4652,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:cong-huan-khac-cu",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -4722,7 +4722,7 @@
         "toc": 0.61,
         "tri": 1.33
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:tri-ke",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -4730,7 +4730,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:ky-thi-kinh-luoc",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -5761,7 +5761,7 @@
         "toc": 1.04,
         "tri": 1.85
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:thinh-khi-linh-dich",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -5769,7 +5769,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:luc-luc-thuong-quoc",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -6048,7 +6048,7 @@
         "toc": 0.99,
         "tri": 1.78
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:thu-nhi-tat-co",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -6056,7 +6056,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:that-bo-thanh-thi",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -7142,7 +7142,7 @@
         "toc": 0.46,
         "tri": 1.07
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:me-hoac",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -7150,7 +7150,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:hoa-dung-nguyet-mao",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -7720,7 +7720,7 @@
         "toc": 0.41,
         "tri": 2.38
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:tu-dien-so-ca",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -7728,7 +7728,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:vuong-ta-chi-tai",
       "usageVi": "Không cần giữ. Ưu tiên rã lấy Tứ Diện Sở Ca, tùy tình hình đổi Quyết Thủy Hội Thành, Lính Thanh Châu, sau đó dùng làm nội chính, thức tỉnh.",
       "usageZh": "可不留，優先拆四面楚歌、酌情換決水潰城、青州兵，其次作內政、覺醒",
       "variant": "base"
@@ -8113,7 +8113,7 @@
         "toc": 0.62,
         "tri": 1.46
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:ke-hay-muu-gioi",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -8121,7 +8121,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:khac-tuan-hoach-nhat",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -8304,7 +8304,7 @@
         "toc": 0.61,
         "tri": 1.86
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:kinh-thuat-chinh-yeu",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -8312,7 +8312,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:hieu-tri-luong-moc",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -10047,7 +10047,7 @@
         "toc": 0.75,
         "tri": 1.36
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:toa-nhue",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -10055,7 +10055,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:thanh-luu-nha-vong",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -11324,7 +11324,7 @@
         "toc": 0.36,
         "tri": 1.03
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:thien-ly-tri-vien",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": "C",
@@ -11479,7 +11479,7 @@
         "toc": 0.56,
         "tri": 1.76
       },
-      "inheritTacticId": "tactic:thien-ly-tri-vien",
+      "inheritTacticId": "tactic:thanh-dong-kich-tay",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": "C",
@@ -11487,7 +11487,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": "tactic:thien-ly-tri-vien",
+      "selfTacticId": null,
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -11557,7 +11557,7 @@
         "toc": 0.88,
         "tri": 1.19
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:phong-thanh-hac-le",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -11565,7 +11565,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:ngoan-thiet-sinh-huy",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -12259,7 +12259,7 @@
         "toc": 0.9,
         "tri": 1.05
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:kho-moc-phung-xuan",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -12267,7 +12267,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:kho-moc-phung-xuan",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -12414,7 +12414,7 @@
         "toc": 0.59,
         "tri": 0.84
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:thanh-dong-kich-tay",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -12422,7 +12422,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:thu-ma-thon-thiet",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -12570,7 +12570,7 @@
         "toc": 0.85,
         "tri": 0.97
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:xuat-khau-thanh-chuong",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -12578,7 +12578,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:xuat-khau-thanh-chuong",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -12649,7 +12649,7 @@
         "toc": 0.88,
         "tri": 1.19
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:duong-binh-thien-nhat",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": "C",
@@ -12657,7 +12657,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:duong-binh-thien-nhat",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -12851,7 +12851,7 @@
         "toc": 0.7,
         "tri": 1.03
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:cuong-cong",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -12859,7 +12859,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:dieu-thu-minh-thach",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -13112,7 +13112,7 @@
         "toc": 0.9,
         "tri": 0.73
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:am-tang-huyen-co",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": "C",
@@ -13345,7 +13345,7 @@
         "toc": 0.89,
         "tri": 1.77
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:khiem-nhuong",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": "C",
@@ -13686,7 +13686,7 @@
         "toc": 0.73,
         "tri": 1.17
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:ngu-coc-phong-dang",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -13694,7 +13694,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:ngu-coc-phong-dang",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -13764,7 +13764,7 @@
         "toc": 0.79,
         "tri": 0.89
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:bach-luyen-thanh-cuong",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -13772,7 +13772,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:minh-sat-thu-hao",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -13842,7 +13842,7 @@
         "toc": 0.77,
         "tri": 1.01
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:yen-ky-tuc-co",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -13850,7 +13850,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:tranh-phan-doat-mieu",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -14153,7 +14153,7 @@
         "toc": 0.76,
         "tri": 1.3
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:tinh-hoa",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -14231,7 +14231,7 @@
         "toc": 1.07,
         "tri": 0.7
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:tung-binh-kiep-luoc",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": "C",
@@ -14424,7 +14424,7 @@
         "toc": 0.54,
         "tri": 1.94
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:bach-my",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": "C",
@@ -14432,7 +14432,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:bach-my",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -14502,7 +14502,7 @@
         "toc": 0.99,
         "tri": 1.73
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:biet-cu-tuong-tam",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -14510,7 +14510,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:thien-ha-danh-xao",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -14580,7 +14580,7 @@
         "toc": 1.21,
         "tri": 1.74
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:tai-khi-qua-nhan",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": "C",
@@ -14588,7 +14588,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:tai-khi-qua-nhan",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -14658,7 +14658,7 @@
         "toc": 0.71,
         "tri": 1.4
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:khu-tan",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -14666,7 +14666,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:an-do-tac-ky",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -14832,7 +14832,7 @@
         "toc": 0.8,
         "tri": 1.17
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:kien-co-hanh-su",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": "C",
@@ -14840,7 +14840,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:kien-co-hanh-su",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -14987,7 +14987,7 @@
         "toc": 0.85,
         "tri": 1.11
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:yen-ky-tuc-co",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -14995,7 +14995,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:cao-chiem-vien-chuc",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -15143,7 +15143,7 @@
         "toc": 0.82,
         "tri": 1.61
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:tien-ngon",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": "C",
@@ -15220,7 +15220,7 @@
         "toc": 0.41,
         "tri": 1.27
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:ngu-dich-binh-chuong",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": "C",
@@ -15228,7 +15228,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:ngu-dich-binh-chuong",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -18183,7 +18183,7 @@
         "toc": 0.82,
         "tri": 1.03
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:lac-loi",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -18191,7 +18191,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:thac-qua-luy-luy",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -18262,7 +18262,7 @@
         "toc": 0.77,
         "tri": 1.32
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:lu-giang-thuong-giap",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": "C",
@@ -18340,7 +18340,7 @@
         "toc": 0.84,
         "tri": 1.74
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:duong-ma-huu-dao",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": null,
@@ -18348,7 +18348,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:duong-ma-huu-dao",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -18418,7 +18418,7 @@
         "toc": 1.52,
         "tri": 0.41
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:than-thuong-su",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": "C",
@@ -18497,7 +18497,7 @@
         "toc": 0.81,
         "tri": 0.73
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:lac-phuong",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": "C",
@@ -18730,7 +18730,7 @@
         "toc": 0.52,
         "tri": 0.87
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:bach-luyen-thanh-cuong",
       "missingFields": [],
       "otherAptitudes": {
         "infantry": "C",
@@ -18738,7 +18738,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:nghi-thanh-chi-chi",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -19316,7 +19316,7 @@
         "toc": 1.19,
         "tri": 1.05
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:xuat-ky-bat-y",
       "missingFields": [
         "adaptInfantry",
         "adaptNavy",
@@ -19325,7 +19325,6 @@
         "civil",
         "civilInnatePoints",
         "inheritedTacticName",
-        "innateTacticId",
         "isCO",
         "isCollectible",
         "isDynamicOpen",
@@ -19338,7 +19337,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:te-tri-nhap-vy",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -20672,7 +20671,7 @@
         "toc": 0.9,
         "tri": 0.77
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:hau-phat-che-nhan",
       "missingFields": [
         "adaptInfantry",
         "adaptNavy",
@@ -22207,7 +22206,7 @@
         "toc": 0.88,
         "tri": 1.57
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:do-ky-thuong-nhuc",
       "missingFields": [
         "adaptInfantry",
         "adaptNavy",
@@ -22216,7 +22215,6 @@
         "civil",
         "civilInnatePoints",
         "inheritedTacticName",
-        "innateTacticId",
         "isCO",
         "isCollectible",
         "isDynamicOpen",
@@ -22229,7 +22227,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:do-ky-thuong-nhuc",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -23114,7 +23112,7 @@
         "toc": 0.38,
         "tri": 1.69
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:yeu-thuat",
       "missingFields": [
         "adaptInfantry",
         "adaptNavy",
@@ -23204,7 +23202,7 @@
         "toc": 1.24,
         "tri": 1.01
       },
-      "inheritTacticId": null,
+      "inheritTacticId": "tactic:nhat-cu-tiem-diet",
       "missingFields": [
         "adaptInfantry",
         "adaptNavy",

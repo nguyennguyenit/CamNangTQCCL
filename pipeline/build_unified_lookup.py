@@ -779,7 +779,7 @@ def _client_text(value, owner, field, *, nullable=False, empty=False):
     return value
 
 
-CLIENT_OVERRIDE_KEYS = {"stats", "growth", "troopApt", "cost", "stars", "faction", "roleTag", "roleTagViet"}
+CLIENT_OVERRIDE_KEYS = {"stats", "growth", "troopApt", "cost", "stars", "faction", "roleTag", "roleTagViet", "selfTacticId", "inheritTacticId"}
 
 
 def _validate_client_document(document):
@@ -842,6 +842,7 @@ def _apply_client_heroes(document, heroes, tactics, identity):
     _validate_client_document(document)
     taken = {row["id"] for row in heroes} | {row["canonicalId"] for row in identity["decisions"] if str(row.get("canonicalId", "")).startswith("hero:")}
     existing = {row["id"]: row for row in heroes}
+    tactic_by_id = {row["id"]: row for row in tactics}
     ledger = []
 
     def record(entity, path, value, reason, *, missing=False, previous=None):
@@ -863,9 +864,16 @@ def _apply_client_heroes(document, heroes, tactics, identity):
         record(owner, "clientCapture.portrait", portrait, "Hero had no remote icon; self-hosted client portrait selected.")
 
     keys = {"stats": CLIENT_STAT_KEYS, "growth": CLIENT_STAT_KEYS, "troopApt": CLIENT_APTITUDE_KEYS}
+    link_keys = ("selfTacticId", "inheritTacticId")
+    client_ids = {entry.get("id") for entry in document["heroes"] if isinstance(entry, dict)}
     for owner, override in sorted(document["overrides"].items()):
-        if owner not in existing or not isinstance(override, dict) or not override or not set(override) <= CLIENT_OVERRIDE_KEYS:
+        if not isinstance(override, dict) or not override or not set(override) <= CLIENT_OVERRIDE_KEYS:
             raise ValueError(f"client override is invalid: {owner}")
+        # Tướng client (heroes[]) chỉ nhận ghi đè liên kết chiến pháp; liên kết áp sau khi tướng client được thêm.
+        if owner not in existing:
+            if owner not in client_ids or not set(override) <= set(link_keys):
+                raise ValueError(f"client override is invalid: {owner}")
+            continue
         row = existing[owner]
         targets = {"stats": row["stats"], "growth": row["lookup"]["growth"], "troopApt": row["troopApt"]}
         if ("roleTag" in override) != ("roleTagViet" in override):
@@ -883,6 +891,8 @@ def _apply_client_heroes(document, heroes, tactics, identity):
                     row[field] = value
         for section, values in sorted(override.items()):
             if section in ("roleTag", "roleTagViet"):
+                continue
+            if section in link_keys:
                 continue
             if section in keys:
                 if not isinstance(values, dict) or set(values) != set(keys[section]):
@@ -984,6 +994,30 @@ def _apply_client_heroes(document, heroes, tactics, identity):
             record(owner, path, value, "Captured Global client value selected for the typed public hero projection.")
         for field in missing:
             record(owner, f"clientCapture.{field}", None, "Global client capture does not provide this field.", missing=True)
+
+    # Chiến pháp tự mang/kế thừa đọc trên thẻ tướng của client (`null` = thẻ ghi chiến pháp không có trong kho);
+    # kế thừa giữ `inheritedFromIds` của chiến pháp khớp.
+    hero_by_id = {row["id"]: row for row in heroes}
+    for owner, override in sorted(document["overrides"].items()):
+        row = hero_by_id[owner]
+        for section in link_keys:
+            if section not in override:
+                continue
+            values = override[section]
+            if values is not None and values not in tactic_by_id:
+                raise ValueError(f"client override tactic is unknown: {owner}.{section}")
+            previous = row["lookup"][section]
+            if previous == values:
+                raise ValueError(f"client override is a no-op: {owner}.{section}")
+            record(owner, f"clientCapture.overrides.{section}", values, "Global client hero card is authoritative; built link replaced.", previous=previous)
+            row["lookup"][section] = values
+            if section == "selfTacticId" and values is not None and "innateTacticId" in row["lookup"]["missingFields"]:
+                row["lookup"]["missingFields"].remove("innateTacticId")
+            if section == "inheritTacticId":
+                if previous is not None and owner in tactic_by_id[previous]["lookup"]["inheritedFromIds"]:
+                    tactic_by_id[previous]["lookup"]["inheritedFromIds"].remove(owner)
+                if values is not None and owner not in tactic_by_id[values]["lookup"]["inheritedFromIds"]:
+                    tactic_by_id[values]["lookup"]["inheritedFromIds"].append(owner)
     return ledger
 
 

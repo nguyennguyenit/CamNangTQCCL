@@ -1,5 +1,20 @@
 # Project Changelog
 
+## 2026-10-17 (Chiến pháp tự mang/kế thừa theo thẻ tướng client)
+
+### Added
+
+- `pipeline/lookup-client-heroes.json` `overrides` nhận `selfTacticId`/`inheritTacticId` (mã chiến pháp có trong kho, `null` = thẻ ghi chiến pháp không có trong kho). Áp sau khi thêm tướng client (tướng client chỉ nhận hai khóa này); kế thừa cập nhật `lookup.inheritedFromIds` của chiến pháp; ledger `clientCapture.overrides.*`. Test `test_tactic_link_override_sets_links_and_inherited_holders`.
+- Kiểm 204 thẻ tướng ở Thượng Thư Đài (trừ 45 tướng xanh lam và SP Lô Trực đã kiểm; Hà Thị, SP Tào Tháo không có ở client Việt Nam; 40Y Lữ Bố tra bằng "40周年吕布", SP tra dạng "X SP"): 80 liên kết được ghi (45 tướng), gồm Chu Tuấn kế thừa Dương Đông Kích Tây (kho ghi nhầm Thiên Lý Trì Viện) và bỏ liên kết tự mang sai của Chu Tuấn (thẻ ghi Trấn Áp Khăn Vàng, chưa có trong kho).
+- 6 chiến pháp nội chính/chủ động lấy từ thẻ tướng (387/406): Tranh Phân Đoạt Miểu = Tranh Phân (Lưu Biểu), Tế Trí Nhập Vy = Cẩn Thận Tỉ Mỉ (Bộ Luyện Sư), Án Đồ Tác Ký = Án Đồ Tác Kí (Mã Thiết), Hiểu Tri Lương Mộc = Biết Được Gỗ Tốt (Thái Ung), Thạc Quả Lũy Lũy = Thành Quả To Lớn (Trần Lâm), Nghi Thành Chi Chí = Nghi Thành (Từ Thịnh).
+
+- 9 mã trùng trong kho nhận cùng dữ liệu client với mã đã chụp (tên client do người dùng xác nhận): Trậm Độc = Rượu Độc, Ưng Thị = Ưng Thị Lang Cố, Cương Dũng Vô Tiền = Vô Địch Can Trường, Hỏa Sí Nguyên Liệu = Lửa Lan Khắp Chốn, Hồ Già Thập Bát Phách = Tiếng Sáo Dư Âm, Khắc Tuân Họa Nhất = Khắc Tôn Họa Nhất, Thương Lẫm Nhi Thực = Thành Quả To Lớn, Lục Lực Thượng Tâm = Lục Lực Thượng Quốc, Phá Phong Đoạn Nhẫn = Thôi Phong Đoạn Nhẫn → 396/406. Test ghim tên cũ cập nhật: `tests-js/tactics-data.test.mjs` (Cương Dũng Vô Tiền hiện "Vô Địch Can Trường"), MCP `search-similar-names` (ví dụ tên gần duy nhất đổi sang Bốn Bề Rung Động vì Thôi Phong Đoạn Nhẫn có hai mã), test legacy id dò mã bằng `canonical_id` tên baseline. Promote `client-tactics-261017e` (`lookup:38da921b…`), generation Đội chuẩn `05936770…`.
+
+### Fixed
+
+- `tactic:lap-lo-danh-trao` (暗渡陳倉) là **Ám Độ Trần Thương** (tự mang Đặng Ngải); trước đó nhận nhầm dữ liệu client của Lập Lờ Đánh Tráo (= 移花接木 `di-hoa-tiep-moc`). Bộ tra tên chiến pháp (`js/lookup-ids.js` `createTacticNameIndex`, MCP `createTacticNameResolver`) xét tầng `viet` → `hanViet` → alias, tầng đầu có ứng viên quyết định: tên hiển thị hiện hành thắng tên Hán-Việt cũ trùng chữ.
+- Promote `client-tactics-261017c` (`lookup:0cf96fc9…`), generation Đội chuẩn `b4edc034…`; `mcp-worker/src/generated/workflow-build.ts` sinh lại.
+
 ## 2026-10-17 (Chiến pháp B từ tướng xanh lam)
 
 ### Added

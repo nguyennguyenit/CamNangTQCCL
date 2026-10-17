@@ -81,6 +81,24 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
+    "tactic:an-do-tac-ky": {
+      "nameVi": "Án Đồ Tác Kí",
+      "quality": null,
+      "type": "INTERNAL",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tôi",
+      "effectTypeVi": "Nội chính",
+      "effectVi": "Khi ủy nhiệm Võ Tướng làm Quan Luyện Ngựa, tăng 2%→4% xác suất sản sinh ra ngựa tốt",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:an-ui-quan-dan": {
       "nameVi": "An Ủi Quân Dân",
       "quality": "S",
@@ -985,6 +1003,24 @@
       "effectVi": "Khiến bản thân rơi vào trạng thái Liên Kích, duy trì 1 hiệp (Xác suất phát động 25%→45%)",
       "maxUsers": null,
       "exchangeConditionVi": null
+    },
+    "tactic:cuong-dung-vo-tien": {
+      "nameVi": "Vô Địch Can Trường",
+      "quality": "S",
+      "type": "PASSIVE",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tôi",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Trong quá trình chiến đấu, sau khi chịu sát thương Binh Đao, hiệp sau khi hành động sẽ tăng 10%→20% Hội Tâm và khiến sát thương lần tấn công tiếp theo tăng 32.5%→65%, duy trì 1 hiệp",
+      "maxUsers": null,
+      "exchangeConditionVi": "Sự kiện Rút Tên Nuốt Mắt — Hạ Hầu Đôn (Ngụy): cần 1 thẻ; Cao Thuận (Quần): cần 1 thẻ; Hạ Hầu Uyên (Ngụy): cần 1 thẻ"
     },
     "tactic:cuong-liet-bat-khuat": {
       "nameVi": "Kiên Cường Bất Khuất",
@@ -1895,6 +1931,24 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
+    "tactic:hieu-tri-luong-moc": {
+      "nameVi": "Biết Được Gỗ Tốt",
+      "quality": null,
+      "type": "INTERNAL",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tôi",
+      "effectTypeVi": "Nội chính",
+      "effectVi": "Khi ủy nhiệm Võ Tướng làm Quan Gỗ, sản lượng gỗ tăng 1.5%→3%",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:hinh-co-quan-luoc": {
       "nameVi": "Hình Cơ Quân Lược",
       "quality": "S",
@@ -1964,6 +2018,24 @@
       "exchangeConditionVi": "Sự kiện Bình Định Giang Đông — Tôn Sách (Ngô): cần 1 thẻ; Chu Du (Ngô): cần 1 thẻ; Trương Chiêu (Ngô): cần 1 thẻ"
     },
     "tactic:ho-gia-du-am": {
+      "nameVi": "Tiếng Sáo Dư Âm",
+      "quality": null,
+      "type": "ACTIVE",
+      "activationRate": 0.5,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tập thể quân ta (2 người)",
+      "effectTypeVi": "Trị liệu",
+      "effectVi": "Trị liệu một nhóm quân ta (2 người, tỷ lệ trị liệu 61%→122%, bị Trí lực ảnh hưởng) và có 50% xác suất khiến chính mình và một quân đồng minh gây ra sát thương binh đao và sát thương mưu lược tăng, phải chịu sát thương binh đao và sát thương mưu lược giảm 13%→26% (chịu ảnh hưởng của trí lực), giảm định riêng, duy trì 2 hiệp",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:ho-gia-thap-bat-phach": {
       "nameVi": "Tiếng Sáo Dư Âm",
       "quality": null,
       "type": "ACTIVE",
@@ -2066,6 +2138,24 @@
       "effectVi": "Khi ủy nhiệm Võ Tướng làm Sứ Luyện Binh, kinh nghiệm Luyện Binh tăng 3%→6%",
       "maxUsers": null,
       "exchangeConditionVi": null
+    },
+    "tactic:hoa-si-nguyen-lieu": {
+      "nameVi": "Lửa Lan Khắp Chốn",
+      "quality": "S",
+      "type": "ACTIVE",
+      "activationRate": 0.5,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tập thể địch (2-3 người)",
+      "effectTypeVi": "Mưu Lược nhóm",
+      "effectVi": "Phóng cho nhóm quân địch (2-3 người) trạng thái Đốt Cháy (tỷ lệ sát thương 28%→56%, bị Trí Lực ảnh hưởng), duy trì 2 hiệp; nếu mục tiêu đã có trạng thái Đốt Cháy sẽ gây ra sát thương Binh Đao (tỷ lệ sát thương 59%→118%)",
+      "maxUsers": null,
+      "exchangeConditionVi": "Sự kiện Lạc Dương Đại Hỏa — Đổng Trác (Quần): cần 1 thẻ; Lý Nho (Quần): cần 1 thẻ; Lý Thôi (Quần): cần 1 thẻ"
     },
     "tactic:hoa-than-anh-phong": {
       "nameVi": "Hỏa Thần Anh Phong",
@@ -2424,6 +2514,24 @@
       "targetVi": "Một quân địch",
       "effectTypeVi": "Mưu Lược đơn",
       "effectVi": "Sau khi tấn công thường, gây thêm cho mục tiêu tấn công 1 lần sát thương Mưu Lược (tỉ lệ sát thương 90%→180%, bị Trí Lực ảnh hưởng); Nếu mục tiêu đang mang ít nhất 1 trong 3 trạng thái: Bỏ Chạy, Trúng Độc hoặc Đốt Cháy, thì sẽ có 85% xác suất khiến mục tiêu rơi vào trạng thái Suy Nhược, duy trì 1 hiệp",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:khac-tuan-hoa-nhat": {
+      "nameVi": "Khắc Tôn Họa Nhất",
+      "quality": null,
+      "type": "INTERNAL",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tôi",
+      "effectTypeVi": "Nội chính",
+      "effectVi": "Khi ủy nhiệm Võ Tướng làm Quan Đá, sản lượng đá tăng 1.5%→3%",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -2964,7 +3072,7 @@
       "exchangeConditionVi": "Sự kiện Chung Hội Chi Loạn — Khương Duy (Thục): cần 1 thẻ; Đặng Ngải (Ngụy): cần 1 thẻ; Chung Hội (Ngụy): cần 1 thẻ"
     },
     "tactic:lap-lo-danh-trao": {
-      "nameVi": "Lập Lờ Đánh Tráo",
+      "nameVi": "Ám Độ Trần Thương",
       "quality": null,
       "type": "ACTIVE",
       "activationRate": 0.5,
@@ -2975,9 +3083,9 @@
         "Thương binh",
         "Khí giới"
       ],
-      "targetVi": "Tập thể quân ta (3 người)",
-      "effectTypeVi": "Tăng ích",
-      "effectVi": "Tăng 9%→18% trị liệu toàn quân ta và địch nhận được (bị ảnh hưởng bởi Thuộc tính cao nhất của bản thân), và chuyển 13%→26% trị liệu mà địch nhận được (bị ảnh hưởng bởi Thuộc tính cao nhất của bản thân) cho bản thân, duy trì 1 hiệp (Xác suất phát động 25%→50%)",
+      "targetVi": "Một quân địch",
+      "effectTypeVi": "Khống chế",
+      "effectVi": "Chuẩn bị 1 hiệp, gây cho một quân địch sát thương Mưu Lược (tỷ lệ sát thương 260%, bị Trí Lực ảnh hưởng) và khiến mục tiêu rơi vào trạng thái Chấn Động, duy trì 2 hiệp (Xác suất phát động 25%→50%)",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -3243,6 +3351,24 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
+    "tactic:luc-luc-thuong-tam": {
+      "nameVi": "Lục Lực Thượng Quốc",
+      "quality": null,
+      "type": "INTERNAL",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tôi",
+      "effectTypeVi": "Nội chính",
+      "effectVi": "Khi ủy nhiệm làm Quan Chủ Chính, thời gian tăng cấp hạ tầng xây dựng giảm 15%→30%",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:luy-the-lap-danh": {
       "nameVi": "Công Danh Nhiều Đời",
       "quality": null,
@@ -3456,6 +3582,24 @@
       "targetVi": "Tập thể địch (3 người)",
       "effectTypeVi": "Giảm ích",
       "effectVi": "Khi chiến đấu, phát hiện 15 sơ hở của quân địch, sơ hở sẽ phân bổ cho toàn quân địch, khi quân địch mục tiêu bị tấn công thường thì sẽ kích hoạt 1 sở hở, khiến mục tiêu này giảm 1.5%→3% Võ Lực, Trí Lực, Thống Soái, Tốc Độ (bị Trí Lực ảnh hưởng), có thể cộng dồn; Khi tất cả sơ hở của một mục tiêu đều bị kích hoạt, sẽ khiến hắn rơi vào trang thái Suy Nhược trong 1 hiệp, và sát thương phải chịu tăng 7.5%→15% (bị Trí Lực ảnh hưởng), duy trì 2 hiệp; Sau khi tất cả sơ hở trong trận được kích hoạt, Võ Lực, Trí Lực, Thống Soái, Tốc Độ của nhóm quân địch (2 người) sẽ giảm 10%→20% (bị Trí Lực ảnh hưởng)",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:nghi-thanh-chi-chi": {
+      "nameVi": "Nghi Thành",
+      "quality": null,
+      "type": "ACTIVE",
+      "activationRate": 0.75,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tôi",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Khiến bản thân Miễn Dịch trạng thái Hỗn loạn, và tăng 34→68 điểm Võ Lực, duy trì 2 hiệp",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -3845,6 +3989,24 @@
       "effectVi": "Sau khi tấn công thường, giảm của mục tiêu tấn công 9→18 điểm Thống Soái, duy trì 2 hiệp",
       "maxUsers": null,
       "exchangeConditionVi": null
+    },
+    "tactic:pha-phong-doan-nhan": {
+      "nameVi": "Thôi Phong Đoạn Nhẫn",
+      "quality": "S",
+      "type": "BURST",
+      "activationRate": 0.45,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Một quân địch",
+      "effectTypeVi": "Binh đao đơn",
+      "effectVi": "Sau khi Tấn Công Thường, gây ra 3 lần sát thương Binh Đao lên một đơn vị quân địch (tỷ lệ sát thương 33%→66%, chọn mục tiêu độc lập mỗi lần), nếu Võ Lực của mục tiêu thấp hơn bản thân thì khiến nó giảm 10%→20% sát thương gây ra (bị ảnh hưởng bởi Võ Lực), duy trì 1 hiệp",
+      "maxUsers": null,
+      "exchangeConditionVi": "Sự kiện Tôn Sách bị thích sát — Tôn Sách (Ngô): cần 1 thẻ; Trình Phổ (Ngô): cần 1 thẻ"
     },
     "tactic:pha-quan-uy-thang": {
       "nameVi": "Phá Quân Uy Thắng",
@@ -4598,6 +4760,42 @@
       "targetVi": "Một quân Đồng Minh",
       "effectTypeVi": "Tăng ích",
       "effectVi": "Khi chiến đấu hiệp thứ 2, chuyển 20%→40% thuộc tính của bản thân cho quân Đồng Minh có Binh Lực thấp nhất, khi đến hiệp thứ 3-5, mỗi hiệp Trị Liệumột người Binh Lực thấp nhất của quân ta (tỷ lệ Trị Liệu 142%→284%, bị Trí Lực ảnh hưởng) và khiến mục tiêu sát thương Binh Đao và sát thương Mưu Lược giảm 13%→26% (bị Trí Lực ảnh hưởng), duy trì 1 hiệp",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:te-tri-nhap-vy": {
+      "nameVi": "Cẩn Thận Tỉ Mỉ",
+      "quality": null,
+      "type": "INTERNAL",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tôi",
+      "effectTypeVi": "Nội chính",
+      "effectVi": "Khi ủy nhiệm Võ Tướng làm Quan Rèn, Rèn tiêu hao giảm 2%→4%",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:thac-qua-luy-luy": {
+      "nameVi": "Thành Quả To Lớn",
+      "quality": null,
+      "type": "INTERNAL",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tôi",
+      "effectTypeVi": "Nội chính",
+      "effectVi": "Khi Võ Tướng được ủy nhiệm làm Quan Lương Thảo, sản lượng lương thực tăng 1%→2%",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -5399,6 +5597,24 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
+    "tactic:thuong-lam-nhi-thuc": {
+      "nameVi": "Thành Quả To Lớn",
+      "quality": null,
+      "type": "INTERNAL",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tôi",
+      "effectTypeVi": "Nội chính",
+      "effectVi": "Khi Võ Tướng được ủy nhiệm làm Quan Lương Thảo, sản lượng lương thực tăng 1%→2%",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:thuong-lam-phong-thuc": {
       "nameVi": "Kho Lương Đầy Ắp",
       "quality": "A",
@@ -5809,6 +6025,24 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
+    "tactic:tram-doc": {
+      "nameVi": "Rượu Độc",
+      "quality": null,
+      "type": "ACTIVE",
+      "activationRate": 0.7,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Một quân địch",
+      "effectTypeVi": "Mưu Lược đơn",
+      "effectVi": "Gây ra Rượu Độc cho cá thể quân địch, giảm 30%→60% Võ Lực (bị Trí Lực ảnh hưởng), duy trì 1 hiệp, sau 1 hiệp độc phát tác gây sát thương Mưu Lược (tỷ lệ sát thương 113%→226%, bị Trí Lực ảnh hưởng) đồng thời giảm 30→60 điểm Thống Soái (bị Trí Lực ảnh hưởng), có thể cộng dồn vô hạn, duy trì tới khi kết thúc chiến đấu",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:tram-sa-quyet-thuy": {
       "nameVi": "Trầm Sa Quyết Thủy",
       "quality": "S",
@@ -5877,6 +6111,24 @@
       "targetVi": "Tôi",
       "effectTypeVi": "Tăng ích",
       "effectVi": "Trong chiến đấu, Võ Lực, Trí Lực, Thống Soái, Tốc Độ, Mị Lực bản thân tăng 18→36 điểm, và mỗi hiệp có 18%→36% xác suất (mỗi thuộc tính giám định độc lập, chịu ảnh hưởng của thuộc tính tương ứng) khiến hiệu quả thuộc tính tăng gấp đôi, duy trì 1 hiệp",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:tranh-phan-doat-mieu": {
+      "nameVi": "Tranh Phân",
+      "quality": null,
+      "type": "INTERNAL",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tôi",
+      "effectTypeVi": "Nội chính",
+      "effectVi": "Khi ủy nhiệm Võ Tướng làm Quan Luyện Ngựa, thời gian Luyện Ngựa giảm 5%→10%",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -6229,6 +6481,24 @@
       "effectVi": "Chuẩn bị 1 hiệp, gây cho nhóm quân địch (2-3 người) một lần công kích binh đao (tỉ lệ sát thương 81%→162%), khiến họ vào trạng thái cấm trị liệu, duy trì 1 hiệp",
       "maxUsers": null,
       "exchangeConditionVi": "Sự kiện Trận Nhai Đình — Trương Cáp (Ngụy): cần 1 thẻ; Vương Bình (Thục): cần 1 thẻ; Mã Tắc (Thục): cần 1 thẻ"
+    },
+    "tactic:ung-thi": {
+      "nameVi": "Ưng Thị Lang Cố",
+      "quality": null,
+      "type": "COMMAND",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tôi",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "4 hiệp đầu, mỗi hiệp sẽ có 80% xác suất khiến bản thân nhận 3.5%→7% Công Tâm hoặc 3.5%→7% Kỳ Mưu (mỗi loại hiệu quả nhiều nhất cộng dồn 2 lần); Từ hiệp thứ 5 trở đi, mỗi hiệp tạo sát thương Mưu Lược cho 1-2 cá thể quân địch (tỷ lệ sát thương 77%→154%, chịu ảnh hưởng Trí Lực); Khi bản thân là Tướng Chính, nhận 8%→16% Kỳ Mưu",
+      "maxUsers": null,
+      "exchangeConditionVi": null
     },
     "tactic:ung-thi-lang-co": {
       "nameVi": "Ưng Thị Lang Cố",

@@ -78,7 +78,8 @@ describe("tqccl_search similarNames.likely", () => {
     expect(await likelyIds("Mưu Kế Liên Hoàn", ["tactic"])).toEqual(["tactic:lien-hoan-ke"]);
     expect(await likelyIds("Liên Hoàng Kế", ["tactic"])).toEqual(["tactic:lien-hoan-ke"]);
     expect(await likelyIds("Tiềm Lung Trận", ["tactic"])).toEqual(["tactic:tiem-long-tran"]);
-    expect(await likelyIds("Thôi Phong Đoạn Nhẫn Kiếm", ["tactic"])).toEqual(["tactic:thoi-phong-doan-nhan"]);
+    // Thôi Phong Đoạn Nhẫn nay có hai mã cùng tên client (mã trùng trong kho) nên không còn "duy nhất".
+    expect(await likelyIds("Bốn Bề Rung Động Mạnh", ["tactic"])).toEqual(["tactic:chan-hai-tu-canh"]);
   });
 
   it("không likely khi tên gần có từ không có trong tên gõ, hoặc chỉ phủ một nửa tên gõ", async () => {

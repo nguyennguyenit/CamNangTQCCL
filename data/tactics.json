@@ -1133,7 +1133,7 @@
     ],
     "chinese": "剛勇無前",
     "effect": "戰鬥中，受到兵刃傷害後，下回合行動時，提高 10%→20% 會心並使下一個攻擊的傷害提高 32.5%→65%，持續 1 回合",
-    "effectViet": "Trong chiến đấu, sau khi chịu sát thương binh khí, khi hành động ở lượt kế tiếp, tăng 10%→20% hội tâm và khiến sát thương của đòn tấn công tiếp theo tăng 32.5%→65%, duy trì 1 lượt.",
+    "effectViet": "Trong quá trình chiến đấu, sau khi chịu sát thương Binh Đao, hiệp sau khi hành động sẽ tăng 10%→20% Hội Tâm và khiến sát thương lần tấn công tiếp theo tăng 32.5%→65%, duy trì 1 hiệp",
     "hanViet": "Cương Dũng Vô Tiền",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088190354607113.png",
     "id": "tactic:cuong-dung-vo-tien",
@@ -1147,7 +1147,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
-      "exchangeConditionVi": "Hạ Hầu Đôn (cần 1 thẻ), Cao Thuận (cần 1 thẻ), Hạ Hầu Uyên (cần 1 thẻ), Điển Vi (cần 1 thẻ), Lữ Mông (cần 1 thẻ)",
+      "exchangeConditionVi": "Sự kiện Rút Tên Nuốt Mắt — Hạ Hầu Đôn (Ngụy): cần 1 thẻ; Cao Thuận (Quần): cần 1 thẻ; Hạ Hầu Uyên (Ngụy): cần 1 thẻ",
       "inheritedFromIds": [],
       "maxUsers": 1,
       "missingFields": [],
@@ -1159,7 +1159,7 @@
     "source": "EVENT",
     "sourceHeroCn": "事件拔矢啖睛",
     "target": "自己",
-    "targetViet": "Bản thân",
+    "targetViet": "Tôi",
     "troopFit": [
       "Kỵ binh",
       "Khiên binh",
@@ -1168,7 +1168,7 @@
       "Khí giới"
     ],
     "type": "PASSIVE",
-    "viet": "Cương Dũng Vô Tiền"
+    "viet": "Vô Địch Can Trường"
   },
   {
     "aliases": [
@@ -2209,7 +2209,7 @@
     ],
     "chinese": "曉知良木",
     "effect": "武將委任為木材官時，木材產量提升1.5% → 3%",
-    "effectViet": "Khi võ tướng được bổ nhiệm làm Quan Gỗ, sản lượng gỗ tăng 1.5%→3%.",
+    "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Gỗ, sản lượng gỗ tăng 1.5%→3%",
     "hanViet": "Hiểu Tri Lương Mộc",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/8/27/483704090914743809.png",
     "id": "tactic:hieu-tri-luong-moc",
@@ -2235,7 +2235,7 @@
     "source": "INNATE",
     "sourceHeroCn": "蔡邕",
     "target": "自己",
-    "targetViet": "Bản thân",
+    "targetViet": "Tôi",
     "troopFit": [
       "Kỵ binh",
       "Khiên binh",
@@ -2244,7 +2244,7 @@
       "Khí giới"
     ],
     "type": "INTERNAL",
-    "viet": "Hiểu Tri Lương Mộc"
+    "viet": "Biết Được Gỗ Tốt"
   },
   {
     "aliases": [
@@ -2899,7 +2899,7 @@
     ],
     "chinese": "火熾原燎",
     "effect": "2022-05-11 更新（增強） / 對敵軍群體（2-3 人）施加灼燒狀態，每回合持續造成傷害（傷害率 28%→56%，受智力影響），持續 2 回合；若目標已有灼燒狀態則造成兵刃攻擊（傷害率 59%→118%） /  / 原始版本 / 對敵軍群體（2-3 人）施加灼燒狀態，每回合持續造成傷害（傷害率 28%→56%，受智力影響），持續 2 回合；若目標已有灼燒狀態則造成兵刃攻擊（傷害率 48%→96%）",
-    "effectViet": "Cập nhật 2022-05-11 (tăng cường) / Gây trạng thái Thiêu Đốt cho nhóm quân địch (2-3 người), liên tục gây sát thương mỗi hiệp (tỷ lệ sát thương 28%→56%, chịu ảnh hưởng của Trí lực), kéo dài 2 hiệp; nếu mục tiêu đã có trạng thái Thiêu Đốt thì gây một đòn tấn công binh khí (tỷ lệ sát thương 59%→118%) /  / Phiên bản gốc / Gây trạng thái Thiêu Đốt cho nhóm quân địch (2-3 người), liên tục gây sát thương mỗi hiệp (tỷ lệ sát thương 28%→56%, chịu ảnh hưởng của Trí lực), kéo dài 2 hiệp; nếu mục tiêu đã có trạng thái Thiêu Đốt thì gây một đòn tấn công binh khí (tỷ lệ sát thương 48%→96%)",
+    "effectViet": "Phóng cho nhóm quân địch (2-3 người) trạng thái Đốt Cháy (tỷ lệ sát thương 28%→56%, bị Trí Lực ảnh hưởng), duy trì 2 hiệp; nếu mục tiêu đã có trạng thái Đốt Cháy sẽ gây ra sát thương Binh Đao (tỷ lệ sát thương 59%→118%)",
     "hanViet": "Hỏa Sí Nguyên Liệu",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088176941222915.png",
     "id": "tactic:hoa-si-nguyen-lieu",
@@ -2912,8 +2912,8 @@
       "conditions": [],
       "conflictsVi": "Thiêu đốt",
       "cooldown": null,
-      "effectTypeVi": "Mưu lược quần thể",
-      "exchangeConditionVi": "Đổng Trác (cần 1 thẻ), Lý Nho (cần 1 thẻ), Lý Thôi (cần 1 thẻ), Quách Dĩ (cần 1 thẻ)",
+      "effectTypeVi": "Mưu Lược nhóm",
+      "exchangeConditionVi": "Sự kiện Lạc Dương Đại Hỏa — Đổng Trác (Quần): cần 1 thẻ; Lý Nho (Quần): cần 1 thẻ; Lý Thôi (Quần): cần 1 thẻ",
       "inheritedFromIds": [],
       "maxUsers": 1,
       "missingFields": [],
@@ -2923,7 +2923,7 @@
           "effectiveDate": "2022-05-11",
           "isCurrent": true,
           "labelVi": "Bản hiện hành",
-          "textVi": "Gây trạng thái Thiêu Đốt cho nhóm quân địch (2-3 người), liên tục gây sát thương mỗi hiệp (tỷ lệ sát thương 28%→56%, chịu ảnh hưởng của Trí lực), kéo dài 2 hiệp; nếu mục tiêu đã có trạng thái Thiêu Đốt thì gây một đòn tấn công binh khí (tỷ lệ sát thương 59%→118%)"
+          "textVi": "Phóng cho nhóm quân địch (2-3 người) trạng thái Đốt Cháy (tỷ lệ sát thương 28%→56%, bị Trí Lực ảnh hưởng), duy trì 2 hiệp; nếu mục tiêu đã có trạng thái Đốt Cháy sẽ gây ra sát thương Binh Đao (tỷ lệ sát thương 59%→118%)"
         },
         {
           "effectiveDate": null,
@@ -2938,7 +2938,7 @@
     "source": "EVENT",
     "sourceHeroCn": "事件战法洛阳大火",
     "target": "敵軍群體 2-3 人",
-    "targetViet": "Nhóm quân địch 2-3 người",
+    "targetViet": "Tập thể địch (2-3 người)",
     "troopFit": [
       "Kỵ binh",
       "Khiên binh",
@@ -2947,7 +2947,7 @@
       "Khí giới"
     ],
     "type": "ACTIVE",
-    "viet": "Hỏa Sí Nguyên Liệu"
+    "viet": "Lửa Lan Khắp Chốn"
   },
   {
     "aliases": [
@@ -3503,18 +3503,18 @@
     "aliases": [],
     "chinese": "克遵画一",
     "effect": "武将委任为采石官时，石料产量提升1.5%",
-    "effectViet": "Khi võ tướng được bổ nhiệm làm quan khai thác đá, sản lượng đá tăng 1,5%.",
+    "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Đá, sản lượng đá tăng 1.5%→3%",
     "hanViet": "Khắc Tuân Họa Nhất",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088190631431168.png",
     "id": "tactic:khac-tuan-hoa-nhat",
     "linkScore": 0.0,
     "lookup": {
       "acquiredFromVi": [],
-      "activationRate": null,
+      "activationRate": 1.0,
       "conditions": [],
       "conflictsVi": null,
       "cooldown": null,
-      "effectTypeVi": null,
+      "effectTypeVi": "Nội chính",
       "exchangeConditionVi": null,
       "inheritedFromIds": [],
       "maxUsers": null,
@@ -3527,16 +3527,16 @@
     "source": "Tự mang",
     "sourceHeroCn": "蒋琬",
     "target": "自己",
-    "targetViet": "Bản thân",
+    "targetViet": "Tôi",
     "troopFit": [
-      "Kỵ",
-      "Cung",
-      "Thương",
-      "Khiên",
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
       "Khí giới"
     ],
-    "type": "Nội chính",
-    "viet": "Khắc Tuân Họa Nhất"
+    "type": "INTERNAL",
+    "viet": "Khắc Tôn Họa Nhất"
   },
   {
     "aliases": [
@@ -4604,7 +4604,7 @@
     ],
     "chinese": "暗渡陳倉",
     "effect": "準備1回合。對敵單體造成極高謀略傷害並震懾2回合。",
-    "effectViet": "Tăng 9%→18% trị liệu toàn quân ta và địch nhận được (bị ảnh hưởng bởi Thuộc tính cao nhất của bản thân), và chuyển 13%→26% trị liệu mà địch nhận được (bị ảnh hưởng bởi Thuộc tính cao nhất của bản thân) cho bản thân, duy trì 1 hiệp (Xác suất phát động 25%→50%)",
+    "effectViet": "Chuẩn bị 1 hiệp, gây cho một quân địch sát thương Mưu Lược (tỷ lệ sát thương 260%, bị Trí Lực ảnh hưởng) và khiến mục tiêu rơi vào trạng thái Chấn Động, duy trì 2 hiệp (Xác suất phát động 25%→50%)",
     "hanViet": "Lập Lờ Đánh Tráo",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088184784571398.png",
     "id": "tactic:lap-lo-danh-trao",
@@ -4617,7 +4617,7 @@
       "conditions": [],
       "conflictsVi": "Chấn nhiếp",
       "cooldown": null,
-      "effectTypeVi": "Tăng ích",
+      "effectTypeVi": "Khống chế",
       "exchangeConditionVi": null,
       "inheritedFromIds": [],
       "maxUsers": 1,
@@ -4630,7 +4630,7 @@
     "source": "INNATE",
     "sourceHeroCn": "邓艾",
     "target": "敵軍單體",
-    "targetViet": "Tập thể quân ta (3 người)",
+    "targetViet": "Một quân địch",
     "troopFit": [
       "Kỵ binh",
       "Khiên binh",
@@ -4639,7 +4639,7 @@
       "Khí giới"
     ],
     "type": "ACTIVE",
-    "viet": "Lập Lờ Đánh Tráo"
+    "viet": "Ám Độ Trần Thương"
   },
   {
     "aliases": [
@@ -6943,18 +6943,18 @@
     "aliases": [],
     "chinese": "仓廪而实",
     "effect": "武将委任为粮草官时，粮食产量提升1%",
-    "effectViet": "Khi võ tướng được bổ nhiệm làm quan lương thảo, sản lượng lương thực tăng 1%.",
+    "effectViet": "Khi Võ Tướng được ủy nhiệm làm Quan Lương Thảo, sản lượng lương thực tăng 1%→2%",
     "hanViet": "Thương Lẫm Nhi Thực",
     "iconUrl": "https://cloud.lingxigames.com/2022/2/16/678557943861538822.png",
     "id": "tactic:thuong-lam-nhi-thuc",
     "linkScore": 0.0,
     "lookup": {
       "acquiredFromVi": [],
-      "activationRate": null,
+      "activationRate": 1.0,
       "conditions": [],
       "conflictsVi": null,
       "cooldown": null,
-      "effectTypeVi": null,
+      "effectTypeVi": "Nội chính",
       "exchangeConditionVi": null,
       "inheritedFromIds": [],
       "maxUsers": null,
@@ -6967,10 +6967,16 @@
     "source": "Sự kiện",
     "sourceHeroCn": "10个群四星武将",
     "target": "自己",
-    "targetViet": "Bản thân",
-    "troopFit": [],
-    "type": "Nội chính",
-    "viet": "Thương Lẫm Nhi Thực"
+    "targetViet": "Tôi",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
+    "type": "INTERNAL",
+    "viet": "Thành Quả To Lớn"
   },
   {
     "aliases": [
@@ -8404,7 +8410,7 @@
     ],
     "chinese": "鴆毒",
     "effect": "對敵軍單體施加鴆酒，降低其30% → 60%武力（受智力影響），持續1回合，1回合後毒發造成謀略攻擊（傷害率113% → 226%，受智力影響）同時降低其30 → 60點統率（受智力影響），可無限疊加，直到戰鬥結束",
-    "effectViet": "Đầu độc một đơn vị địch bằng rượu độc, giảm 30%→60% Vũ lực của mục tiêu (chịu ảnh hưởng của Trí lực), kéo dài 1 lượt. Sau 1 lượt, độc phát gây tấn công mưu lược (tỷ lệ sát thương 113%→226%, chịu ảnh hưởng của Trí lực), đồng thời giảm 30→60 điểm Thống suất của mục tiêu (chịu ảnh hưởng của Trí lực); có thể cộng dồn không giới hạn cho đến khi trận chiến kết thúc.",
+    "effectViet": "Gây ra Rượu Độc cho cá thể quân địch, giảm 30%→60% Võ Lực (bị Trí Lực ảnh hưởng), duy trì 1 hiệp, sau 1 hiệp độc phát tác gây sát thương Mưu Lược (tỷ lệ sát thương 113%→226%, bị Trí Lực ảnh hưởng) đồng thời giảm 30→60 điểm Thống Soái (bị Trí Lực ảnh hưởng), có thể cộng dồn vô hạn, duy trì tới khi kết thúc chiến đấu",
     "hanViet": "Trậm Độc",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088194636991492.png",
     "id": "tactic:tram-doc",
@@ -8417,7 +8423,7 @@
       "conditions": [],
       "conflictsVi": null,
       "cooldown": null,
-      "effectTypeVi": null,
+      "effectTypeVi": "Mưu Lược đơn",
       "exchangeConditionVi": null,
       "inheritedFromIds": [],
       "maxUsers": 1,
@@ -8430,10 +8436,16 @@
     "source": "INNATE",
     "sourceHeroCn": "李儒",
     "target": "敌军单体",
-    "targetViet": "Một đơn vị quân địch",
-    "troopFit": [],
+    "targetViet": "Một quân địch",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
     "type": "ACTIVE",
-    "viet": "Trậm Độc"
+    "viet": "Rượu Độc"
   },
   {
     "aliases": [
@@ -8893,7 +8905,9 @@
       "cooldown": null,
       "effectTypeVi": "Khống chế",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:tran-quan"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -8993,7 +9007,9 @@
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:tuan-uc"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -10970,7 +10986,9 @@
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:quach-hoai"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -11163,22 +11181,24 @@
     "viet": "Phi Hùng Quân"
   },
   {
-    "aliases": [],
+    "aliases": [
+      "Phá Phong Đoạn Nhẫn"
+    ],
     "chinese": "破锋断刃",
     "effect": "",
-    "effectViet": null,
+    "effectViet": "Sau khi Tấn Công Thường, gây ra 3 lần sát thương Binh Đao lên một đơn vị quân địch (tỷ lệ sát thương 33%→66%, chọn mục tiêu độc lập mỗi lần), nếu Võ Lực của mục tiêu thấp hơn bản thân thì khiến nó giảm 10%→20% sát thương gây ra (bị ảnh hưởng bởi Võ Lực), duy trì 1 hiệp",
     "hanViet": "Phá Phong Đoạn Nhận",
     "iconUrl": "",
     "id": "tactic:pha-phong-doan-nhan",
     "linkScore": 1.0,
     "lookup": {
       "acquiredFromVi": [],
-      "activationRate": null,
+      "activationRate": 0.45,
       "conditions": [],
       "conflictsVi": null,
       "cooldown": null,
-      "effectTypeVi": null,
-      "exchangeConditionVi": null,
+      "effectTypeVi": "Binh đao đơn",
+      "exchangeConditionVi": "Sự kiện Tôn Sách bị thích sát — Tôn Sách (Ngô): cần 1 thẻ; Trình Phổ (Ngô): cần 1 thẻ",
       "inheritedFromIds": [],
       "maxUsers": null,
       "missingFields": [],
@@ -11186,14 +11206,20 @@
       "revisions": []
     },
     "pending": true,
-    "quality": "",
+    "quality": "S",
     "source": "Bổ sung sau",
     "sourceHeroCn": "",
     "target": "",
-    "targetViet": null,
-    "troopFit": [],
-    "type": "",
-    "viet": "Phá Phong Đoạn Nhẫn"
+    "targetViet": "Một quân địch",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
+    "type": "BURST",
+    "viet": "Thôi Phong Đoạn Nhẫn"
   },
   {
     "aliases": [],
@@ -11672,7 +11698,9 @@
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:han-toai"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -11829,7 +11857,7 @@
     ],
     "chinese": "按圖索驥",
     "effect": "委任為馴馬官時，提升高品質良馬產出概率。",
-    "effectViet": "Khi được bổ nhiệm làm Thuần mã quan, tăng xác suất sản xuất ngựa phẩm chất cao.",
+    "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Luyện Ngựa, tăng 2%→4% xác suất sản sinh ra ngựa tốt",
     "hanViet": "Án Đồ Tác Ký",
     "iconUrl": null,
     "id": "tactic:an-do-tac-ky",
@@ -11840,7 +11868,7 @@
       "conditions": [],
       "conflictsVi": null,
       "cooldown": null,
-      "effectTypeVi": null,
+      "effectTypeVi": "Nội chính",
       "exchangeConditionVi": null,
       "inheritedFromIds": [],
       "maxUsers": 2,
@@ -11853,10 +11881,16 @@
     "source": "INHERITANCE",
     "sourceHeroCn": null,
     "target": null,
-    "targetViet": null,
-    "troopFit": [],
+    "targetViet": "Tôi",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
     "type": "INTERNAL",
-    "viet": "Án Đồ Tác Ký"
+    "viet": "Án Đồ Tác Kí"
   },
   {
     "aliases": [
@@ -11962,7 +11996,10 @@
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:lu-pham",
+        "hero:tu-thinh"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -12003,7 +12040,9 @@
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:ma-luong"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -12617,7 +12656,9 @@
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:gian-ung"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -13115,7 +13156,9 @@
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:tao-chan"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -13366,7 +13409,9 @@
       "cooldown": null,
       "effectTypeVi": "Nội chính",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:gia-cat-canh"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -13408,7 +13453,9 @@
       "cooldown": null,
       "effectTypeVi": "Nội chính",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:truong-lo"
+      ],
       "maxUsers": 2,
       "missingFields": [],
       "pointCost": null,
@@ -13536,7 +13583,9 @@
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:hoang-phu-tung"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -13564,7 +13613,7 @@
     ],
     "chinese": "胡笳十八拍",
     "effect": "恢復我軍兩人兵力，並使其受到的傷害降低，持續2回合。",
-    "effectViet": "Hồi phục binh lực cho 2 người thuộc quân ta, đồng thời giảm sát thương họ phải chịu, kéo dài 2 hiệp.",
+    "effectViet": "Trị liệu một nhóm quân ta (2 người, tỷ lệ trị liệu 61%→122%, bị Trí lực ảnh hưởng) và có 50% xác suất khiến chính mình và một quân đồng minh gây ra sát thương binh đao và sát thương mưu lược tăng, phải chịu sát thương binh đao và sát thương mưu lược giảm 13%→26% (chịu ảnh hưởng của trí lực), giảm định riêng, duy trì 2 hiệp",
     "hanViet": "Hồ Già Thập Bát Phách",
     "iconUrl": null,
     "id": "tactic:ho-gia-thap-bat-phach",
@@ -13577,7 +13626,7 @@
       "conditions": [],
       "conflictsVi": null,
       "cooldown": null,
-      "effectTypeVi": null,
+      "effectTypeVi": "Trị liệu",
       "exchangeConditionVi": null,
       "inheritedFromIds": [],
       "maxUsers": 1,
@@ -13590,10 +13639,16 @@
     "source": "INNATE",
     "sourceHeroCn": null,
     "target": null,
-    "targetViet": null,
-    "troopFit": [],
+    "targetViet": "Tập thể quân ta (2 người)",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
     "type": "ACTIVE",
-    "viet": "Hồ Già Thập Bát Phách"
+    "viet": "Tiếng Sáo Dư Âm"
   },
   {
     "aliases": [
@@ -14134,7 +14189,9 @@
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:khong-dung"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -14345,7 +14402,9 @@
       "cooldown": null,
       "effectTypeVi": "Nội chính",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:co-ung"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -14389,7 +14448,9 @@
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:ma-thiet"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -14431,7 +14492,9 @@
       "cooldown": null,
       "effectTypeVi": "Nội chính",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:my-truc"
+      ],
       "maxUsers": 2,
       "missingFields": [],
       "pointCost": null,
@@ -14650,7 +14713,9 @@
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:tran-lam"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -14694,7 +14759,9 @@
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:truong-nham"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -14871,7 +14938,9 @@
       "cooldown": null,
       "effectTypeVi": "Cứu Viện",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:tran-vo"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -14899,7 +14968,7 @@
     ],
     "chinese": "戮力上心",
     "effect": "武將委任為主政官時，全資源產量提升。",
-    "effectViet": "Khi võ tướng được bổ nhiệm làm Quan chủ chính, sản lượng của mọi loại tài nguyên tăng.",
+    "effectViet": "Khi ủy nhiệm làm Quan Chủ Chính, thời gian tăng cấp hạ tầng xây dựng giảm 15%→30%",
     "hanViet": "Lục Lực Thượng Tâm",
     "iconUrl": null,
     "id": "tactic:luc-luc-thuong-tam",
@@ -14912,7 +14981,7 @@
       "conditions": [],
       "conflictsVi": null,
       "cooldown": null,
-      "effectTypeVi": null,
+      "effectTypeVi": "Nội chính",
       "exchangeConditionVi": null,
       "inheritedFromIds": [],
       "maxUsers": 2,
@@ -14925,10 +14994,16 @@
     "source": "INNATE",
     "sourceHeroCn": null,
     "target": null,
-    "targetViet": null,
-    "troopFit": [],
+    "targetViet": "Tôi",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
     "type": "INTERNAL",
-    "viet": "Lục Lực Thượng Tâm"
+    "viet": "Lục Lực Thượng Quốc"
   },
   {
     "aliases": [
@@ -15109,7 +15184,7 @@
     ],
     "chinese": "宜城之志",
     "effect": "【OCR校正】對應馬良或相關機制。提升自身主動戰法發動率，增強控制與輸出平滑度。",
-    "effectViet": "[Hiệu chỉnh OCR] Tương ứng với Mã Lương hoặc một cơ chế liên quan. Tăng tỷ lệ phát động chiến pháp chủ động của bản thân, tăng cường khả năng khống chế và giúp sát thương đầu ra ổn định hơn.",
+    "effectViet": "Khiến bản thân Miễn Dịch trạng thái Hỗn loạn, và tăng 34→68 điểm Võ Lực, duy trì 2 hiệp",
     "hanViet": "Nghi Thành Chi Chí",
     "iconUrl": null,
     "id": "tactic:nghi-thanh-chi-chi",
@@ -15118,11 +15193,11 @@
       "acquiredFromVi": [
         "Từ Thứ"
       ],
-      "activationRate": 1,
+      "activationRate": 0.75,
       "conditions": [],
       "conflictsVi": null,
       "cooldown": null,
-      "effectTypeVi": null,
+      "effectTypeVi": "Tăng ích",
       "exchangeConditionVi": null,
       "inheritedFromIds": [],
       "maxUsers": 1,
@@ -15135,10 +15210,16 @@
     "source": "INHERITANCE",
     "sourceHeroCn": null,
     "target": null,
-    "targetViet": null,
-    "troopFit": [],
-    "type": "PASSIVE",
-    "viet": "Nghi Thành Chi Chí"
+    "targetViet": "Tôi",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
+    "type": "ACTIVE",
+    "viet": "Nghi Thành"
   },
   {
     "aliases": [
@@ -15245,7 +15326,9 @@
       "cooldown": null,
       "effectTypeVi": "Nội chính",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:lo-thuc"
+      ],
       "maxUsers": 2,
       "missingFields": [],
       "pointCost": null,
@@ -15289,7 +15372,9 @@
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:truong-luong"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -15760,7 +15845,9 @@
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:chung-do"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -16201,7 +16288,9 @@
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:ma-tac"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -16365,7 +16454,7 @@
     ],
     "chinese": "細緻入微",
     "effect": "委任為裝備鍛造職位時，提升高階裝備產出概率。",
-    "effectViet": "Khi được bổ nhiệm vào chức vụ rèn trang bị, tăng xác suất sản xuất trang bị cao cấp.",
+    "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Rèn, Rèn tiêu hao giảm 2%→4%",
     "hanViet": "Tế Trí Nhập Vy",
     "iconUrl": null,
     "id": "tactic:te-tri-nhap-vy",
@@ -16376,7 +16465,7 @@
       "conditions": [],
       "conflictsVi": null,
       "cooldown": null,
-      "effectTypeVi": null,
+      "effectTypeVi": "Nội chính",
       "exchangeConditionVi": null,
       "inheritedFromIds": [],
       "maxUsers": 2,
@@ -16389,10 +16478,16 @@
     "source": "INHERITANCE",
     "sourceHeroCn": null,
     "target": null,
-    "targetViet": null,
-    "troopFit": [],
+    "targetViet": "Tôi",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
     "type": "INTERNAL",
-    "viet": "Tế Trí Nhập Vy"
+    "viet": "Cẩn Thận Tỉ Mỉ"
   },
   {
     "aliases": [
@@ -16401,7 +16496,7 @@
     ],
     "chinese": "碩果累累",
     "effect": "委任為尋訪、屯田職位時，額外獲得特定加成。",
-    "effectViet": "Khi được bổ nhiệm vào chức vụ Tầm phỏng hoặc Đồn điền, nhận thêm hiệu quả tăng cường nhất định.",
+    "effectViet": "Khi Võ Tướng được ủy nhiệm làm Quan Lương Thảo, sản lượng lương thực tăng 1%→2%",
     "hanViet": "Thạc Quả Lũy Lũy",
     "iconUrl": null,
     "id": "tactic:thac-qua-luy-luy",
@@ -16412,7 +16507,7 @@
       "conditions": [],
       "conflictsVi": null,
       "cooldown": null,
-      "effectTypeVi": null,
+      "effectTypeVi": "Nội chính",
       "exchangeConditionVi": null,
       "inheritedFromIds": [],
       "maxUsers": 2,
@@ -16425,10 +16520,16 @@
     "source": "INHERITANCE",
     "sourceHeroCn": null,
     "target": null,
-    "targetViet": null,
-    "troopFit": [],
+    "targetViet": "Tôi",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
     "type": "INTERNAL",
-    "viet": "Thạc Quả Lũy Lũy"
+    "viet": "Thành Quả To Lớn"
   },
   {
     "aliases": [
@@ -16536,7 +16637,9 @@
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:truong-man-thanh"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -16624,7 +16727,10 @@
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:chu-tuan",
+        "hero:dong-duan"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -16967,7 +17073,9 @@
       "cooldown": null,
       "effectTypeVi": "Cứu Viện",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:chu-hang"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -17532,7 +17640,9 @@
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:quach-do"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -17826,18 +17936,18 @@
     ],
     "chinese": "爭分奪秒",
     "effect": "【待核實】可能為提升行動順位或縮短準備回合類的戰法機制。",
-    "effectViet": "Nguồn ghi chú: “Chờ xác minh”. Có thể đây là cơ chế chiến pháp giúp nâng thứ tự ưu tiên hành động hoặc rút ngắn số lượt chuẩn bị.",
+    "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Luyện Ngựa, thời gian Luyện Ngựa giảm 5%→10%",
     "hanViet": "Tranh Phân Đoạt Miểu",
     "iconUrl": null,
     "id": "tactic:tranh-phan-doat-mieu",
     "linkScore": null,
     "lookup": {
       "acquiredFromVi": [],
-      "activationRate": 0.4,
+      "activationRate": 1.0,
       "conditions": [],
       "conflictsVi": null,
       "cooldown": null,
-      "effectTypeVi": null,
+      "effectTypeVi": "Nội chính",
       "exchangeConditionVi": null,
       "inheritedFromIds": [],
       "maxUsers": 1,
@@ -17850,10 +17960,16 @@
     "source": "INHERITANCE",
     "sourceHeroCn": null,
     "target": null,
-    "targetViet": null,
-    "troopFit": [],
-    "type": "ACTIVE",
-    "viet": "Tranh Phân Đoạt Miểu"
+    "targetViet": "Tôi",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
+    "type": "INTERNAL",
+    "viet": "Tranh Phân"
   },
   {
     "aliases": [
@@ -18134,7 +18250,9 @@
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:ly-quyet"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -18209,7 +18327,7 @@
     ],
     "chinese": "鷹視",
     "effect": "戰鬥前4回合，自身發動主動戰法時，有50% → 100%概率使我軍全體獲得1次1回合80%攻心；第5回合起，每回合有80%概率對1→2個敵軍單體造成謀略傷害（傷害率77% → 154%，受智力影響）；自身為主將時，獲得8% → 16%奇謀幾率",
-    "effectViet": "Trong 4 lượt đầu của trận chiến, khi bản thân phát động chiến pháp chủ động, có 50% → 100% xác suất khiến toàn quân ta nhận 1 lần công tâm 80% trong 1 lượt; từ lượt 5 trở đi, mỗi lượt có 80% xác suất gây sát thương mưu lược cho 1→2 mục tiêu đơn lẻ của quân địch (tỷ lệ sát thương 77% → 154%, chịu ảnh hưởng của trí lực); khi bản thân là chủ tướng, nhận 8% → 16% xác suất kỳ mưu",
+    "effectViet": "4 hiệp đầu, mỗi hiệp sẽ có 80% xác suất khiến bản thân nhận 3.5%→7% Công Tâm hoặc 3.5%→7% Kỳ Mưu (mỗi loại hiệu quả nhiều nhất cộng dồn 2 lần); Từ hiệp thứ 5 trở đi, mỗi hiệp tạo sát thương Mưu Lược cho 1-2 cá thể quân địch (tỷ lệ sát thương 77%→154%, chịu ảnh hưởng Trí Lực); Khi bản thân là Tướng Chính, nhận 8%→16% Kỳ Mưu",
     "hanViet": "Ưng Thị",
     "iconUrl": null,
     "id": "tactic:ung-thi",
@@ -18222,7 +18340,7 @@
       "conditions": [],
       "conflictsVi": null,
       "cooldown": null,
-      "effectTypeVi": null,
+      "effectTypeVi": "Tăng ích",
       "exchangeConditionVi": null,
       "inheritedFromIds": [],
       "maxUsers": 1,
@@ -18235,10 +18353,16 @@
     "source": "INHERITANCE",
     "sourceHeroCn": null,
     "target": null,
-    "targetViet": null,
-    "troopFit": [],
+    "targetViet": "Tôi",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
     "type": "COMMAND",
-    "viet": "Ưng Thị"
+    "viet": "Ưng Thị Lang Cố"
   },
   {
     "aliases": [
@@ -18649,7 +18773,9 @@
       "cooldown": null,
       "effectTypeVi": "Nội chính",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:duong-tu"
+      ],
       "maxUsers": 2,
       "missingFields": [],
       "pointCost": null,
@@ -18692,7 +18818,9 @@
       "cooldown": null,
       "effectTypeVi": "Khống chế",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:bo-luyen-su"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -18736,7 +18864,10 @@
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:luu-bieu",
+        "hero:phi-y"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,
@@ -18780,7 +18911,9 @@
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
       "exchangeConditionVi": null,
-      "inheritedFromIds": [],
+      "inheritedFromIds": [
+        "hero:truong-bao-khan-vang"
+      ],
       "maxUsers": 1,
       "missingFields": [],
       "pointCost": null,

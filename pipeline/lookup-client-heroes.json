@@ -2035,6 +2035,9 @@
         "mi": 0.13
       }
     },
+    "hero:bo-luyen-su": {
+      "inheritTacticId": "tactic:xuat-ky-bat-y"
+    },
     "hero:chan-co": {
       "growth": {
         "luc": 0.31,
@@ -2043,7 +2046,9 @@
         "toc": 0.46,
         "chinh": 1.22,
         "mi": 2.66
-      }
+      },
+      "selfTacticId": "tactic:hoa-dung-nguyet-mao",
+      "inheritTacticId": "tactic:me-hoac"
     },
     "hero:chu-hang": {
       "troopApt": {
@@ -2068,7 +2073,8 @@
         "toc": 0.36,
         "chinh": 1.03,
         "mi": 1.05
-      }
+      },
+      "inheritTacticId": "tactic:thien-ly-tri-vien"
     },
     "hero:chu-thuong": {
       "troopApt": {
@@ -2118,7 +2124,9 @@
         "toc": 0.56,
         "chinh": 0.43,
         "mi": 0.44
-      }
+      },
+      "selfTacticId": null,
+      "inheritTacticId": "tactic:thanh-dong-kich-tay"
     },
     "hero:chung-do": {
       "cost": "5",
@@ -2144,7 +2152,9 @@
         "toc": 0.88,
         "chinh": 1.85,
         "mi": 0.77
-      }
+      },
+      "selfTacticId": "tactic:ngoan-thiet-sinh-huy",
+      "inheritTacticId": "tactic:phong-thanh-hac-le"
     },
     "hero:co-chan-co": {
       "stats": {
@@ -2217,7 +2227,9 @@
         "toc": 0.9,
         "chinh": 1.87,
         "mi": 0.77
-      }
+      },
+      "selfTacticId": "tactic:kho-moc-phung-xuan",
+      "inheritTacticId": "tactic:kho-moc-phung-xuan"
     },
     "hero:dai-kieu": {
       "growth": {
@@ -2227,7 +2239,9 @@
         "toc": 0.85,
         "chinh": 1.1,
         "mi": 2.4
-      }
+      },
+      "selfTacticId": "tactic:quoc-sac",
+      "inheritTacticId": "tactic:me-hoac"
     },
     "hero:dieu-thuyen": {
       "growth": {
@@ -2305,7 +2319,9 @@
         "toc": 0.59,
         "chinh": 1.77,
         "mi": 0.74
-      }
+      },
+      "selfTacticId": "tactic:thu-ma-thon-thiet",
+      "inheritTacticId": "tactic:thanh-dong-kich-tay"
     },
     "hero:dong-tap": {
       "troopApt": {
@@ -2356,7 +2372,9 @@
         "toc": 0.85,
         "chinh": 0.8,
         "mi": 1.91
-      }
+      },
+      "selfTacticId": "tactic:xuat-khau-thanh-chuong",
+      "inheritTacticId": "tactic:xuat-khau-thanh-chuong"
     },
     "hero:gia-cat-canh": {
       "troopApt": {
@@ -2381,7 +2399,9 @@
         "toc": 0.88,
         "chinh": 1.86,
         "mi": 0.83
-      }
+      },
+      "selfTacticId": "tactic:duong-binh-thien-nhat",
+      "inheritTacticId": "tactic:duong-binh-thien-nhat"
     },
     "hero:gian-ung": {
       "troopApt": {
@@ -2406,7 +2426,9 @@
         "toc": 0.7,
         "chinh": 1.85,
         "mi": 0.79
-      }
+      },
+      "selfTacticId": "tactic:dieu-thu-minh-thach",
+      "inheritTacticId": "tactic:cuong-cong"
     },
     "hero:hac-chieu": {
       "growth": {
@@ -2466,7 +2488,8 @@
         "toc": 0.9,
         "chinh": 0.42,
         "mi": 0.53
-      }
+      },
+      "inheritTacticId": "tactic:am-tang-huyen-co"
     },
     "hero:ho-xa-nhi": {
       "troopApt": {
@@ -2492,6 +2515,9 @@
         "chinh": 0.01,
         "mi": 0.43
       }
+    },
+    "hero:hoang-phu-tung": {
+      "inheritTacticId": "tactic:hau-phat-che-nhan"
     },
     "hero:hoang-quyen": {
       "troopApt": {
@@ -2551,7 +2577,8 @@
         "toc": 0.89,
         "chinh": 1.22,
         "mi": 0.95
-      }
+      },
+      "inheritTacticId": "tactic:khiem-nhuong"
     },
     "hero:ky-linh": {
       "troopApt": {
@@ -2626,7 +2653,9 @@
         "toc": 0.73,
         "chinh": 1.76,
         "mi": 1.03
-      }
+      },
+      "selfTacticId": "tactic:ngu-coc-phong-dang",
+      "inheritTacticId": "tactic:ngu-coc-phong-dang"
     },
     "hero:lu-linh-y": {
       "stats": {
@@ -2669,7 +2698,9 @@
         "toc": 0.79,
         "chinh": 1.71,
         "mi": 0.87
-      }
+      },
+      "selfTacticId": "tactic:minh-sat-thu-hao",
+      "inheritTacticId": "tactic:bach-luyen-thanh-cuong"
     },
     "hero:luu-bieu": {
       "troopApt": {
@@ -2694,7 +2725,9 @@
         "toc": 0.77,
         "chinh": 0.95,
         "mi": 1.97
-      }
+      },
+      "inheritTacticId": "tactic:yen-ky-tuc-co",
+      "selfTacticId": "tactic:tranh-phan-doat-mieu"
     },
     "hero:luu-diep": {
       "troopApt": {
@@ -2787,7 +2820,8 @@
         "toc": 0.76,
         "chinh": 1.76,
         "mi": 0.66
-      }
+      },
+      "inheritTacticId": "tactic:tinh-hoa"
     },
     "hero:ly-quyet": {
       "troopApt": {
@@ -2812,7 +2846,8 @@
         "toc": 1.07,
         "chinh": 0.0,
         "mi": 0.13
-      }
+      },
+      "inheritTacticId": "tactic:tung-binh-kiep-luoc"
     },
     "hero:ma-luong": {
       "troopApt": {
@@ -2837,7 +2872,9 @@
         "toc": 0.54,
         "chinh": 1.44,
         "mi": 1.09
-      }
+      },
+      "selfTacticId": "tactic:bach-my",
+      "inheritTacticId": "tactic:bach-my"
     },
     "hero:ma-quan": {
       "troopApt": {
@@ -2862,7 +2899,9 @@
         "toc": 0.99,
         "chinh": 1.34,
         "mi": 2.11
-      }
+      },
+      "selfTacticId": "tactic:thien-ha-danh-xao",
+      "inheritTacticId": "tactic:biet-cu-tuong-tam"
     },
     "hero:ma-tac": {
       "troopApt": {
@@ -2887,7 +2926,9 @@
         "toc": 1.21,
         "chinh": 0.7,
         "mi": 0.33
-      }
+      },
+      "selfTacticId": "tactic:tai-khi-qua-nhan",
+      "inheritTacticId": "tactic:tai-khi-qua-nhan"
     },
     "hero:ma-thiet": {
       "troopApt": {
@@ -2912,7 +2953,9 @@
         "toc": 0.71,
         "chinh": 0.96,
         "mi": 1.93
-      }
+      },
+      "inheritTacticId": "tactic:khu-tan",
+      "selfTacticId": "tactic:an-do-tac-ky"
     },
     "hero:ma-van-loc": {
       "stats": {
@@ -2955,7 +2998,9 @@
         "toc": 0.8,
         "chinh": 2.25,
         "mi": 1.47
-      }
+      },
+      "selfTacticId": "tactic:kien-co-hanh-su",
+      "inheritTacticId": "tactic:kien-co-hanh-su"
     },
     "hero:nhac-tien": {
       "stats": {
@@ -3015,7 +3060,9 @@
         "toc": 0.85,
         "chinh": 1.76,
         "mi": 0.72
-      }
+      },
+      "selfTacticId": "tactic:cao-chiem-vien-chuc",
+      "inheritTacticId": "tactic:yen-ky-tuc-co"
     },
     "hero:phung-ky": {
       "troopApt": {
@@ -3065,7 +3112,8 @@
         "toc": 0.82,
         "chinh": 1.03,
         "mi": 0.42
-      }
+      },
+      "inheritTacticId": "tactic:tien-ngon"
     },
     "hero:quach-hoai": {
       "troopApt": {
@@ -3090,7 +3138,9 @@
         "toc": 0.41,
         "chinh": 0.51,
         "mi": 0.46
-      }
+      },
+      "selfTacticId": "tactic:ngu-dich-binh-chuong",
+      "inheritTacticId": "tactic:ngu-dich-binh-chuong"
     },
     "hero:quach-ty": {
       "troopApt": {
@@ -3283,6 +3333,10 @@
         "mi": 0.44
       }
     },
+    "hero:tao-chan": {
+      "selfTacticId": "tactic:do-ky-thuong-nhuc",
+      "inheritTacticId": "tactic:do-ky-thuong-nhuc"
+    },
     "hero:tao-chuong": {
       "cost": "5",
       "troopApt": {
@@ -3343,7 +3397,9 @@
         "toc": 1.04,
         "chinh": 2.4,
         "mi": 1.05
-      }
+      },
+      "selfTacticId": "tactic:luc-luc-thuong-quoc",
+      "inheritTacticId": "tactic:thinh-khi-linh-dich"
     },
     "hero:tao-thuc": {
       "growth": {
@@ -3353,7 +3409,9 @@
         "toc": 0.99,
         "chinh": 1.67,
         "mi": 2.3
-      }
+      },
+      "selfTacticId": "tactic:that-bo-thanh-thi",
+      "inheritTacticId": "tactic:thu-nhi-tat-co"
     },
     "hero:thai-ung": {
       "growth": {
@@ -3363,7 +3421,9 @@
         "toc": 0.61,
         "chinh": 2.59,
         "mi": 1.24
-      }
+      },
+      "inheritTacticId": "tactic:kinh-thuat-chinh-yeu",
+      "selfTacticId": "tactic:hieu-tri-luong-moc"
     },
     "hero:tham-phoi": {
       "troopApt": {
@@ -3398,7 +3458,9 @@
         "toc": 0.9,
         "chinh": 1.05,
         "mi": 2.35
-      }
+      },
+      "selfTacticId": "tactic:thien-huong",
+      "inheritTacticId": "tactic:doat-hon-hiep-phach"
     },
     "hero:ton-kien": {
       "troopApt": {
@@ -3461,7 +3523,9 @@
         "toc": 0.82,
         "chinh": 1.88,
         "mi": 0.87
-      }
+      },
+      "inheritTacticId": "tactic:lac-loi",
+      "selfTacticId": "tactic:thac-qua-luy-luy"
     },
     "hero:tran-quan": {
       "growth": {
@@ -3471,7 +3535,9 @@
         "toc": 0.75,
         "chinh": 2.62,
         "mi": 0.99
-      }
+      },
+      "selfTacticId": "tactic:thanh-luu-nha-vong",
+      "inheritTacticId": "tactic:toa-nhue"
     },
     "hero:tran-vo": {
       "troopApt": {
@@ -3496,7 +3562,11 @@
         "toc": 0.77,
         "chinh": 0.39,
         "mi": 0.53
-      }
+      },
+      "inheritTacticId": "tactic:lu-giang-thuong-giap"
+    },
+    "hero:truong-bao-khan-vang": {
+      "inheritTacticId": "tactic:yeu-thuat"
     },
     "hero:truong-chieu": {
       "growth": {
@@ -3506,7 +3576,9 @@
         "toc": 0.65,
         "chinh": 2.68,
         "mi": 0.87
-      }
+      },
+      "selfTacticId": "tactic:cong-huan-khac-cu",
+      "inheritTacticId": "tactic:binh-phong"
     },
     "hero:truong-hoanh": {
       "growth": {
@@ -3516,7 +3588,9 @@
         "toc": 0.61,
         "chinh": 2.67,
         "mi": 0.84
-      }
+      },
+      "selfTacticId": "tactic:ky-thi-kinh-luoc",
+      "inheritTacticId": "tactic:tri-ke"
     },
     "hero:truong-lieu": {
       "growth": {
@@ -3551,7 +3625,12 @@
         "toc": 0.84,
         "chinh": 0.99,
         "mi": 1.96
-      }
+      },
+      "selfTacticId": "tactic:duong-ma-huu-dao",
+      "inheritTacticId": "tactic:duong-ma-huu-dao"
+    },
+    "hero:truong-luong": {
+      "inheritTacticId": "tactic:nhat-cu-tiem-diet"
     },
     "hero:truong-man-thanh": {
       "troopApt": {
@@ -3576,7 +3655,8 @@
         "toc": 1.52,
         "chinh": 0.38,
         "mi": 0.47
-      }
+      },
+      "inheritTacticId": "tactic:than-thuong-su"
     },
     "hero:truong-nham": {
       "troopApt": {
@@ -3601,7 +3681,8 @@
         "toc": 0.81,
         "chinh": 0.44,
         "mi": 0.51
-      }
+      },
+      "inheritTacticId": "tactic:lac-phuong"
     },
     "hero:truong-tu": {
       "troopApt": {
@@ -3679,7 +3760,9 @@
         "toc": 0.37,
         "chinh": 1.84,
         "mi": 2.3
-      }
+      },
+      "selfTacticId": "tactic:thuy-kinh-tien-sinh",
+      "inheritTacticId": "tactic:du-dich-tham-nhap"
     },
     "hero:tu-thinh": {
       "troopApt": {
@@ -3704,7 +3787,9 @@
         "toc": 0.52,
         "chinh": 0.39,
         "mi": 0.48
-      }
+      },
+      "inheritTacticId": "tactic:bach-luyen-thanh-cuong",
+      "selfTacticId": "tactic:nghi-thanh-chi-chi"
     },
     "hero:tuan-uc": {
       "stats": {
@@ -3722,7 +3807,9 @@
         "toc": 0.41,
         "chinh": 2.7,
         "mi": 1.29
-      }
+      },
+      "selfTacticId": "tactic:vuong-ta-chi-tai",
+      "inheritTacticId": "tactic:tu-dien-so-ca"
     },
     "hero:tuong-kham": {
       "troopApt": {
@@ -3757,7 +3844,9 @@
         "toc": 0.62,
         "chinh": 2.39,
         "mi": 1.19
-      }
+      },
+      "selfTacticId": "tactic:khac-tuan-hoach-nhat",
+      "inheritTacticId": "tactic:ke-hay-muu-gioi"
     },
     "hero:van-sinh": {
       "cost": "5",

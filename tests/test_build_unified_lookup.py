@@ -109,8 +109,8 @@ class BuildUnifiedLookupTest(unittest.TestCase):
             baseline_tactics = json.loads((ROOT / "pipeline" / "lookup-inputs" / "tactics.json").read_bytes())
             output_tactics = {row["id"]: row for row in tactics}
             for baseline in baseline_tactics:
-                # Tên client thay `viet`; tên baseline còn ở `hanViet`.
-                identifier = next(row["id"] for row in tactics if baseline["viet"] in (row["viet"], row["hanViet"]))
+                # Mã ổn định suy từ tên baseline; tên hiển thị có thể đã theo client.
+                identifier = build_module.canonical_id("tactic", baseline.get("viet") or baseline["hanViet"])
                 self.assertEqual(type(output_tactics[identifier].get("target")), type(baseline.get("target")))
 
     def test_acquisition_union_revisions_rates_and_pending_are_semantic(self):
@@ -647,6 +647,23 @@ class ClientHeroSupplementTest(unittest.TestCase):
         built = next(item for item in json.loads((ROOT / "data" / "heroes-dict.json").read_bytes()) if item["id"] == "hero:ha-hau-don")
         with self.assertRaisesRegex(ValueError, "no-op"):
             self._build(overrides={"hero:ha-hau-don": {"roleTag": built["roleTag"], "roleTagViet": built["roleTagViet"]}})
+
+    def test_tactic_link_override_sets_links_and_inherited_holders(self):
+        output = self._build(overrides={"hero:dai-kieu": {"selfTacticId": "tactic:quoc-sac", "inheritTacticId": "tactic:me-hoac"}})
+        hero = next(item for item in json.loads((output / "heroes-dict.json").read_bytes()) if item["id"] == "hero:dai-kieu")
+        self.assertEqual((hero["lookup"]["selfTacticId"], hero["lookup"]["inheritTacticId"]), ("tactic:quoc-sac", "tactic:me-hoac"))
+        tactic = next(item for item in json.loads((output / "tactics.json").read_bytes()) if item["id"] == "tactic:me-hoac")
+        self.assertIn("hero:dai-kieu", tactic["lookup"]["inheritedFromIds"])
+        ledger = json.loads((output / "ledger.json").read_bytes())
+        self.assertTrue(any(item["fieldPath"] == "clientCapture.overrides.inheritTacticId" for item in ledger))
+        with self.assertRaisesRegex(ValueError, "tactic is unknown"):
+            self._build(overrides={"hero:dai-kieu": {"selfTacticId": "tactic:khong-co"}})
+        built = next(item for item in json.loads((ROOT / "data" / "heroes-dict.json").read_bytes()) if item["id"] == "hero:ha-hau-don")
+        with self.assertRaisesRegex(ValueError, "no-op"):
+            self._build(overrides={"hero:ha-hau-don": {"selfTacticId": built["lookup"]["selfTacticId"]}})
+        cleared = self._build(overrides={"hero:ha-hau-don": {"selfTacticId": None}})
+        hero = next(item for item in json.loads((cleared / "heroes-dict.json").read_bytes()) if item["id"] == "hero:ha-hau-don")
+        self.assertIsNone(hero["lookup"]["selfTacticId"])
 
     def test_role_tags_only_fill_empty_tags(self):
         with self.assertRaisesRegex(ValueError, "existing tag"):
