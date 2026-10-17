@@ -14064,6 +14064,54 @@ body[data-page-section="roster-recommend"] .layout {
 
 .adm-filters .adm-field { width: var(--size-col-220); }
 
+.adm-filters-top { align-items: start; }
+
+/* Khu Người dùng + Nhật ký (js/community-admin-users.js). */
+.adm-user,
+.adm-audit,
+.adm-user-detail-body,
+.adm-user-section { display: grid; gap: var(--space-8); }
+
+.adm-user-detail-body,
+.adm-user-section { gap: var(--space-12); }
+
+.adm-user-detail { display: grid; gap: var(--space-12); justify-items: start; }
+
+.adm-user-detail-body { justify-items: stretch; width: 100%; }
+
+.adm-user-open {
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+  width: 100%;
+  min-height: var(--control-44);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.adm-user-who { display: grid; min-width: 0; }
+
+.adm-user-who > * { overflow-wrap: anywhere; }
+
+.adm-user-head { display: flex; align-items: center; gap: var(--space-12); }
+
+.adm-user-name,
+.adm-user-subtitle { margin: 0; color: var(--ink); font: var(--type-hero-name); }
+
+.adm-audit-action { margin: 0; color: var(--ink); font-weight: var(--weight-semibold); }
+
+.adm-dialog .adm-actions { justify-content: flex-end; }
+
+.cm-auth-notice { display: flex; align-items: flex-start; gap: var(--space-6); color: var(--ink); font: var(--type-small); }
+.cm-auth-notice p { margin: 0; overflow-wrap: anywhere; }
+.cm-auth-notice-close { flex: none; padding: 0 var(--space-6); border: 0; background: none; color: var(--muted); font: inherit; font-size: 1.25em; line-height: 1; cursor: pointer; }
+.cm-auth-notice-close:hover, .cm-auth-notice-close:focus-visible { color: var(--ink); }
+
 .adm-filter-summary { margin: 0; padding-bottom: var(--space-12); color: var(--muted); font: var(--type-small); }
 
 .adm-filter-summary strong { color: var(--ink); }
