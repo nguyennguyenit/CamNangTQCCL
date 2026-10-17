@@ -1,10 +1,12 @@
-// Trang /quan-tri/ (noindex, artboard Admin*): cột điều hướng trái (≤960px thành hàng chip) mở sáu khu theo hash —
+// Trang /quan-tri/ (noindex, artboard Admin*): cột điều hướng trái (≤960px thành hàng chip) mở các khu theo hash —
 // "Duyệt chiến báo" (#chien-bao: ảnh, dữ liệu AI đã xác nhận, duyệt / từ chối kèm lý do),
 // "Bài viết" (#bai-viet: bảng bài, soạn/sửa Markdown có xem trước an toàn, FAQ, lưu nháp, xuất bản/gỡ xuất bản),
 // "Bình luận" (#binh-luan: xoá bình luận vi phạm trên mọi trang), "Góp ý" (#gop-y: góp ý/báo lỗi từ footer,
 // đánh dấu đã xử lý), "Soi đội" (#soi-doi: tỷ lệ ô sửa/không rõ ẩn danh, duyệt ảnh gửi tự nguyện, xuất fixture
-// bộ ảnh chuẩn) và "AI" (#ai: nhà cung cấp AI + chuỗi failover của từng tính năng).
-// Server mới là nơi kiểm quyền; trang chỉ ẩn giao diện với người không phải admin.
+// bộ ảnh chuẩn), "AI" (#ai: nhà cung cấp AI + chuỗi failover của từng tính năng), "Người dùng" (#nguoi-dung) và
+// "Nhật ký" (#nhat-ky, root) — hai khu cuối nằm ở js/community-admin-users.js.
+// Vai trò `root` thấy mọi khu; `moderator` (kiểm duyệt viên) chỉ thấy khu có `roles` cho phép, khu khác không dựng
+// và không gọi API. Server mới là nơi kiểm quyền; trang chỉ ẩn giao diện.
 
 import { L, currentLocale, localePath } from './i18n.js';
 import { el, icon, svgNode } from './render.js';
@@ -23,6 +25,7 @@ import {
 } from './community-api.js';
 import { reportSummary } from './community-reports.js';
 import { FEEDBACK_KINDS } from './feedback-kinds.js';
+import { openAuditPanel, openUsersPanel } from './community-admin-users.js';
 
 const SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,100}$/;
 
@@ -150,15 +153,17 @@ const ICONS = {
   up: [path('M12 19V5'), path('M6 11l6-6 6 6')],
   down: [path('M12 5v14'), path('M6 13l6 6 6-6')],
   image: [['rect', { x: 3, y: 5, width: 18, height: 14, rx: 2 }], ['circle', { cx: 9, cy: 10, r: 1.8 }], path('M21 16l-5-5-8 8')],
+  users: [['circle', { cx: 9, cy: 8, r: 3.5 }], path('M2.5 20a6.5 6.5 0 0 1 13 0'), path('M16 4.5a3.5 3.5 0 0 1 0 7'), path('M18 14.2a6.5 6.5 0 0 1 3.5 5.8')],
+  audit: [path('M6 3h9l4 4v14H6z'), path('M9 11h7'), path('M9 15h7'), path('M9 7h3')],
   external: [path('M14 4h6v6'), path('M20 4l-9 9'), path('M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5')],
 };
 
-function glyph(name, size = 16) {
+export function glyph(name, size = 16) {
   return icon(ICONS[name].map(([tag, attrs]) => svgNode(tag, attrs)), { size });
 }
 
 /** Nút chữ + icon tuỳ chọn; `variant` thêm class biến thể (primary, adm-btn-accent, adm-btn-danger…). */
-function button(text, { variant = '', iconName = null, compact = false, type = 'button', ...attrs } = {}) {
+export function button(text, { variant = '', iconName = null, compact = false, type = 'button', ...attrs } = {}) {
   const className = ['ana-btn', variant, compact ? 'adm-btn-compact' : ''].filter(Boolean).join(' ');
   return el('button', { class: className, type, ...attrs }, [iconName ? glyph(iconName) : null, text]);
 }
@@ -195,7 +200,7 @@ function countsStore() {
 // Link thật (`#chien-bao`…) để mở thẳng một khu, quay lại bằng nút Back; khu chỉ dựng lần đầu được mở.
 // Hash không trùng id phần tử nào nên trình duyệt không tự cuộn.
 
-function adminShell(definitions, counts) {
+function adminShell(definitions, counts, { viewer, forbiddenHashes }) {
   const titles = [];
   const sections = [];
   const badges = [];
@@ -209,7 +214,7 @@ function adminShell(definitions, counts) {
     ]);
     const section = el('section', { id: `adm-panel-${definition.id}`, class: 'adm-section', 'aria-labelledby': titleId, hidden: '' }, head);
     titles.push(title);
-    sections.push({ section, head, actions, counts });
+    sections.push({ section, head, actions, counts, viewer });
     const badge = definition.count ? el('span', { class: 'adm-nav-count', hidden: '' }) : null;
     if (badge) badges.push([definition.count, badge]);
     return el('a', { class: 'adm-nav-link', href: `#${definition.hash}` }, [glyph(definition.icon, 18), el('span', { class: 'adm-nav-label' }, definition.label), badge]);
@@ -249,8 +254,14 @@ function adminShell(definitions, counts) {
     if (focus) titles[index].focus();
   };
   // Hash khác (vd `#main-content` của link "bỏ qua tới nội dung") không phải khu quản trị: giữ khu đang mở.
+  // Hash của khu không được phép (KDV mở `#ai`…) về khu đầu và sửa luôn URL.
+  const fallbackToFirst = () => {
+    history.replaceState(history.state, '', `#${definitions[0].hash}`);
+    return 0;
+  };
   window.addEventListener('hashchange', () => {
-    const index = findSection(window.location.hash);
+    const hash = window.location.hash;
+    const index = forbiddenHashes.has(hash) ? fallbackToFirst() : findSection(hash);
     if (index >= 0) select(index, { focus: true });
   });
   const node = el('div', { class: 'adm-shell' }, [
@@ -263,21 +274,27 @@ function adminShell(definitions, counts) {
     ]),
     el('div', { class: 'adm-main' }, sections.map(({ section }) => section)),
   ]);
-  return { node, start: () => select(Math.max(0, findSection(window.location.hash))) };
+  return {
+    node,
+    start: () => {
+      const hash = window.location.hash;
+      select(forbiddenHashes.has(hash) ? fallbackToFirst() : Math.max(0, findSection(hash)));
+    },
+  };
 }
 
 /* ---------- Mảnh dùng chung của các khu ---------- */
 
 /** Dòng trạng thái của khu (role=status): thành công xanh, `warn` hổ phách, `error` đỏ. */
-function adminStatus() {
+export function adminStatus() {
   return liveStatus('cm-status adm-status');
 }
 
-function emptyNote(text) {
+export function emptyNote(text) {
   return el('p', { class: 'adm-empty', hidden: '' }, text);
 }
 
-function pagePath(page, lang) {
+export function pagePath(page, lang) {
   return typeof page === 'string' && page.startsWith('/')
     ? el('a', { class: 'adm-path', href: lang ? localePath(page, lang) : page }, page)
     : null;
@@ -285,7 +302,7 @@ function pagePath(page, lang) {
 
 const langLabel = (lang) => (lang === 'zh' ? '中文' : 'Tiếng Việt');
 
-function formField(id, label, control, hint) {
+export function formField(id, label, control, hint) {
   if (hint) control.setAttribute('aria-describedby', `${id}-hint`);
   return el('div', { class: 'adm-field' }, [
     el('label', { class: 'adm-label', for: id }, label),
@@ -294,13 +311,13 @@ function formField(id, label, control, hint) {
   ]);
 }
 
-function textInput(id, value, { mono = false, ...attrs } = {}) {
+export function textInput(id, value, { mono = false, ...attrs } = {}) {
   const node = el('input', { id, class: mono ? 'cm-input adm-mono' : 'cm-input', type: 'text', ...attrs });
   node.value = value ?? '';
   return node;
 }
 
-function selectInput(id, options, value, attrs = {}) {
+export function selectInput(id, options, value, attrs = {}) {
   const node = el('select', { id, class: 'cm-select', ...attrs }, options.map(([v, text]) => el('option', { value: v }, text)));
   node.value = value;
   return node;
@@ -319,7 +336,7 @@ function imageTile(href, alt) {
  * Danh sách phân trang theo cursor + nút "Tải thêm". `fetchPage(cursor)` trả `{ items, nextCursor }`,
  * `render(entry)` dựng một <li>. Tải lại (đổi bộ lọc) khi trang trước chưa về: chỉ lần tải mới nhất được vẽ.
  */
-function pagedList({ list, empty, status, fetchPage, render, fallbackFocus }) {
+export function pagedList({ list, empty, status, fetchPage, render, fallbackFocus }) {
   const more = button(L('Tải thêm', '加载更多'), { variant: 'adm-more', hidden: '' });
   let cursor = null;
   let generation = 0;
@@ -476,7 +493,7 @@ function openCommentsPanel(panel, { head }) {
   const list = el('ol', { class: 'adm-list', 'aria-label': L('Bình luận mới nhất', '最新评论') });
   const empty = emptyNote(L('Chưa có bình luận nào.', '还没有评论。'));
   const item = (comment) => {
-    const remove = button(L('Xoá', '删除'), { variant: 'adm-btn-danger', compact: true });
+    const remove = comment.canDelete ? button(L('Xoá', '删除'), { variant: 'adm-btn-danger', compact: true }) : null;
     const row = el('li', { class: 'adm-card adm-comment' }, [
       avatar(comment.author),
       el('div', { class: 'adm-comment-main' }, [
@@ -490,7 +507,7 @@ function openCommentsPanel(panel, { head }) {
         remove,
       ]),
     ]);
-    remove.addEventListener('click', async () => {
+    remove?.addEventListener('click', async () => {
       if (!window.confirm(L('Xoá bình luận này?', '确定删除这条评论吗？'))) return;
       remove.disabled = true;
       try {
@@ -530,7 +547,8 @@ function feedbackItem(entry, { status, onToggle }) {
   const toggle = el('button', { type: 'button' });
   let current = entry.status === 'done' ? 'done' : 'new';
   const email = typeof entry.email === 'string' && entry.email ? entry.email : null;
-  const mailto = email ? `mailto:${email}?subject=${encodeURIComponent(`Re: ${entry.title}`)}` : null;
+  // Email đã che (kiểm duyệt viên) chỉ là chữ: không có địa chỉ thật để gửi thư.
+  const mailto = email && entry.emailMasked !== true ? `mailto:${email}?subject=${encodeURIComponent(`Re: ${entry.title}`)}` : null;
   const row = el('li', { class: 'adm-card adm-feedback cm-feedback-item' }, [
     el('p', { class: 'adm-meta' }, [
       el('span', { class: 'cm-badge', dataset: { tone: FEEDBACK_KIND_TONE[entry.kind] ?? '' } }, kind ? L(kind.vi, kind.zh) : String(entry.kind || '')),
@@ -540,6 +558,7 @@ function feedbackItem(entry, { status, onToggle }) {
       el('span', { class: 'cm-badge' }, langLabel(entry.lang)),
       pagePath(entry.page),
       mailto ? el('a', { class: 'adm-mail', href: mailto }, email) : null,
+      email && !mailto ? el('span', { class: 'adm-mail' }, email) : null,
     ]),
     el('p', { class: 'adm-feedback-title' }, String(entry.title || '')),
     el('p', { class: 'adm-body', lang: entry.lang === 'zh' ? 'zh-Hans' : 'vi' }, String(entry.body || '')),
@@ -631,7 +650,7 @@ const SCAN_SCREEN_LABEL = {
   other: L('Khác', '其他'),
 };
 const SCAN_SIDE_LABEL = { left: L('Trái (ta)', '左（我方）'), right: L('Phải (đối thủ)', '右（对手）') };
-const SCAN_STATUS_LABEL = {
+export const SCAN_STATUS_LABEL = {
   pending: L('Chờ duyệt', '待审核'),
   approved: L('Đã duyệt', '已通过'),
   rejected: L('Đã từ chối', '已拒绝'),
@@ -1797,7 +1816,9 @@ function paintIdentity(user) {
     avatar(user),
     el('span', { class: 'adm-identity-text' }, [
       el('span', { class: 'adm-identity-name' }, displayName(user)),
-      el('span', { class: 'adm-identity-role' }, L('Quản trị viên · đăng nhập Google', '管理员 · Google 登录')),
+      el('span', { class: 'adm-identity-role' }, user.role === 'root'
+        ? L('Quản trị viên · đăng nhập Google', '管理员 · Google 登录')
+        : L('Kiểm duyệt viên · đăng nhập Google', '版主 · Google 登录')),
     ]),
   );
   slot.hidden = false;
@@ -1819,15 +1840,18 @@ export async function initCommunityAdmin(mount = document.getElementById('commun
     mount.replaceChildren(signInPrompt(L('Đăng nhập bằng tài khoản quản trị để tiếp tục.', '请使用管理员账号登录。')));
     return;
   }
-  if (!user.isAdmin) {
+  if (user.role !== 'root' && user.role !== 'moderator') {
     mount.replaceChildren(el('p', { class: 'cm-notice' }, L('Tài khoản này không có quyền quản trị.', '该账号没有管理权限。')));
     return;
   }
   paintIdentity(user);
   const counts = countsStore();
-  const view = adminShell([
+  const ROOT = ['root'];
+  const STAFF = ['root', 'moderator'];
+  const definitions = [
     {
       id: 'reports',
+      roles: STAFF,
       hash: 'chien-bao',
       icon: 'reports',
       label: L('Duyệt chiến báo', '审核战报'),
@@ -1840,6 +1864,7 @@ export async function initCommunityAdmin(mount = document.getElementById('commun
     },
     {
       id: 'posts',
+      roles: ROOT,
       hash: 'bai-viet',
       icon: 'posts',
       label: L('Bài viết', '文章'),
@@ -1849,6 +1874,7 @@ export async function initCommunityAdmin(mount = document.getElementById('commun
     },
     {
       id: 'comments',
+      roles: STAFF,
       hash: 'binh-luan',
       icon: 'comments',
       label: L('Bình luận', '评论'),
@@ -1857,6 +1883,7 @@ export async function initCommunityAdmin(mount = document.getElementById('commun
     },
     {
       id: 'feedback',
+      roles: STAFF,
       hash: 'gop-y',
       icon: 'feedback',
       label: L('Góp ý', '意见反馈'),
@@ -1866,6 +1893,7 @@ export async function initCommunityAdmin(mount = document.getElementById('commun
     },
     {
       id: 'scan',
+      roles: STAFF,
       hash: 'soi-doi',
       icon: 'scan',
       label: L('Soi đội', '截图识阵'),
@@ -1878,6 +1906,7 @@ export async function initCommunityAdmin(mount = document.getElementById('commun
     },
     {
       id: 'ai',
+      roles: ROOT,
       hash: 'ai',
       icon: 'ai',
       label: 'AI',
@@ -1887,7 +1916,31 @@ export async function initCommunityAdmin(mount = document.getElementById('commun
       ),
       open: openAiPanel,
     },
-  ], counts);
+    {
+      id: 'users',
+      hash: 'nguoi-dung',
+      icon: 'users',
+      label: L('Người dùng', '用户'),
+      lead: user.role === 'root'
+        ? L('Tìm tài khoản, khoá có thời hạn kèm lý do, cấp hoặc thu quyền kiểm duyệt viên, xoá tài khoản cùng dữ liệu.', '查找账号、按期限封禁并注明理由、授予或收回版主权限、删除账号及其数据。')
+        : L('Tìm tài khoản và khoá hoặc mở khoá người dùng thường kèm lý do. Email hiển thị đã được che.', '查找账号，并对普通用户封禁或解封（需注明理由）。邮箱已做遮挡显示。'),
+      roles: STAFF,
+      open: openUsersPanel,
+    },
+    {
+      id: 'audit',
+      hash: 'nhat-ky',
+      icon: 'audit',
+      label: L('Nhật ký', '日志'),
+      lead: L('Mọi thao tác quản trị đã ghi: ai làm, hành động, đối tượng, lý do, kết quả.', '已记录的所有管理操作：操作人、动作、对象、理由与结果。'),
+      roles: ROOT,
+      open: openAuditPanel,
+    },
+  ];
+  // Chỉ dựng (và chỉ gọi API cho) khu hợp vai trò; hash của khu bị loại được shell đưa về khu đầu.
+  const allowed = definitions.filter((definition) => definition.roles.includes(user.role));
+  const forbiddenHashes = new Set(definitions.filter((definition) => !allowed.includes(definition)).map((definition) => `#${definition.hash}`));
+  const view = adminShell(allowed, counts, { viewer: user, forbiddenHashes });
   mount.replaceChildren(view.node);
   view.start();
   counts.refresh();

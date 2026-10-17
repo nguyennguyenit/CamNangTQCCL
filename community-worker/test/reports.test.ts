@@ -205,6 +205,35 @@ describe("gửi + kiểm duyệt chiến báo", () => {
     expect((await analyze(h)).status).toBe(429);
     expect(h.fetchCalls).toHaveLength(20);
   });
+
+  it("analyze: trigger chặn insert uploads (giờ DB thật) -> lỗi, không có dòng uploads, không còn object R2", async () => {
+    const h = createHarness();
+    h.setFetch(() => modelReply("{}"));
+    const bannedUntil = Date.now() + 60_000;
+    h.sqlite.prepare('update "user" set banned_until = ? where id = ?').run(bannedUntil, "u-alice");
+    h.clock.now = bannedUntil + 1; // guard coi như hết khoá, trigger (giờ DB) vẫn chặn
+    const res = await analyze(h);
+    expect(res.status).toBe(500);
+    expect(h.objects.size).toBe(0);
+    expect({ ...(h.sqlite.prepare("select count(*) n from uploads").get() as object) }).toEqual({ n: 0 });
+  });
+
+  it("batch lỗi (trigger chặn user bị khoá theo giờ DB thật) -> 500 và không còn ảnh reports/*", async () => {
+    const h = createHarness();
+    h.setFetch(() => modelReply("{}"));
+    const { uploadId } = await (await analyze(h)).json<ApiJson>();
+    // Guard chạy theo h.clock (đã quá hạn khoá) nhưng trigger chạy theo giờ DB thật (còn hạn): khe giữa hai đồng hồ.
+    const bannedUntil = Date.now() + 60_000;
+    h.sqlite.prepare('update "user" set banned_until = ? where id = ?').run(bannedUntil, "u-alice");
+    h.clock.now = bannedUntil + 1;
+    const res = await h.request("/api/reports", {
+      as: "alice",
+      json: { page: PAGE, lang: "vi", uploadId, result: "win", allyHeroes: ["曹操"], enemyHeroes: [] },
+    });
+    expect(res.status).toBe(500);
+    expect([...h.objects.keys()].filter((k) => k.startsWith("reports/"))).toEqual([]);
+    expect({ ...(h.sqlite.prepare("select count(*) n from battle_reports").get() as object) }).toEqual({ n: 0 });
+  });
 });
 
 describe("thống kê", () => {

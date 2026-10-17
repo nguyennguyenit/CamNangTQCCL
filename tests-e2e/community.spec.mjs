@@ -3,8 +3,30 @@ import { test, expect } from "@playwright/test";
 // Khối cộng đồng chạy trên HTML tĩnh đã build; `/api/**` được giả lập bằng page.route nên spec không cần Worker.
 const DETAIL_PATH = "/khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/";
 const PAGE_KEY = DETAIL_PATH;
-const PLAYER = { id: "u1", name: "Lưu Bị", image: null, isAdmin: false };
-const ADMIN = { id: "u9", name: "Quản trị", image: null, isAdmin: true };
+const PLAYER = { id: "u1", name: "Lưu Bị", image: null, role: "user" };
+const ADMIN = { id: "u9", name: "Quản trị", email: "root@example.com", image: null, role: "root" };
+const MODERATOR = { id: "u5", name: "Kiểm duyệt A", email: "mod@example.com", image: null, role: "moderator" };
+
+/** Hàng người dùng đúng hình dạng GET /api/admin/users (root thấy email thật). */
+const userRow = (overrides) => ({
+  id: "u1", name: "Lưu Bị", email: "luubi@example.com", image: null,
+  createdAt: "2026-08-01T08:00:00.000Z", lastSeenAt: "2026-10-16T08:00:00.000Z",
+  role: "user", ban: null, deleting: false, counts: { comments: 3, reports: 2, feedback: 1, scanSamples: 0 },
+  ...overrides,
+});
+const USER_ROWS = () => [
+  userRow(),
+  userRow({ id: "u2", name: "Tào Tháo", email: "caocao@example.com", lastSeenAt: null, ban: { until: "2099-01-01T00:00:00.000Z", reason: "Spam quảng cáo", byRole: "root" }, counts: { comments: 0, reports: 0, feedback: 0, scanSamples: 0 } }),
+  userRow({ id: "u3", name: "Quan Vũ", email: "quanvu@example.com", role: "moderator" }),
+  userRow({ id: "u4", name: "Tôn Quyền", email: "tonquyen@example.com", ban: { until: null, reason: "Quấy rối", byRole: "moderator" } }),
+  userRow({ id: "u6", name: "Gia Cát", email: "giacat@example.com", deleting: true }),
+  userRow({ id: "u9", name: "Quản trị", email: "root@example.com", role: "root" }),
+];
+const AUDIT_ROWS = () => [
+  { id: "a3", actor: { id: "u9", role: "root", label: "Quản trị" }, action: "user.ban", target: { type: "user", id: "u2", label: "Tào Tháo" }, subjectUserId: "u2", reason: "Spam quảng cáo", meta: { until: null }, status: "ok", createdAt: "2026-10-16T09:00:00.000Z" },
+  { id: "a2", actor: { id: "u9", role: "root", label: "Quản trị" }, action: "user.delete", target: { type: "user", id: "u7", label: "ba***@x.com" }, subjectUserId: "u7", reason: null, meta: { step: "r2" }, status: "partial", createdAt: "2026-10-16T08:00:00.000Z" },
+  { id: "a1", actor: { id: "u9", role: "root", label: "Quản trị" }, action: "post.update", target: { type: "post", id: "p1", label: "Bài mới" }, subjectUserId: null, reason: null, meta: { deploy: "pending" }, status: "ok", createdAt: "2026-10-15T08:00:00.000Z" },
+];
 // PNG 1×1 hợp lệ: trình duyệt giải mã được nên bước thu nhỏ ảnh chạy thật.
 const PNG_1X1 = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
@@ -34,7 +56,7 @@ const AI_EFFORT_LEVELS = { deepseek: ["off", "low", "high", "max"], openai: ["no
 const AI_GROUP_NEEDS_VISION = { teamScan: true, rosterRecommend: true, explainSubstitute: false, battleReport: true };
 
 /** Giả lập API cộng đồng; trả về nhật ký lời gọi để kiểm request body. */
-async function mockCommunityApi(page, { user = null, stats = EMPTY_STATS, comments = [], reports = [], adminReports = [], adminFeedback = [], feedbackStatus = 201, aiConfig = { providers: [], groups: {} } } = {}) {
+async function mockCommunityApi(page, { user = null, stats = EMPTY_STATS, comments = [], reports = [], adminReports = [], adminComments = [], adminFeedback = [], feedbackStatus = 201, aiConfig = { providers: [], groups: {} }, users = [], auditItems = [], banNotice = null, failures = {}, gates = {} } = {}) {
   const calls = [];
   // Bản lưu phía "server" của tab AI: có key thật, API chỉ trả keyLast4.
   let storedAi = aiConfig;
@@ -86,6 +108,7 @@ async function mockCommunityApi(page, { user = null, stats = EMPTY_STATS, commen
       return json({ id: feedbackStatusMatch[1], status: body.status });
     }
     if (method === "GET" && url.pathname === "/api/admin/reports") return json({ items: adminReports.filter((r) => r.status === "pending"), nextCursor: null });
+    if (method === "GET" && url.pathname === "/api/admin/comments") return json({ items: adminComments, nextCursor: null });
     if (method === "GET" && url.pathname === "/api/admin/counts") {
       return json({
         reportsPending: adminReports.filter((r) => r.status === "pending").length,
@@ -94,6 +117,56 @@ async function mockCommunityApi(page, { user = null, stats = EMPTY_STATS, commen
         feedbackDone: adminFeedback.filter((f) => f.status === "done").length,
         scanPending: 0,
       });
+    }
+    if (method === "GET" && url.pathname === "/api/ban-notice") {
+      return banNotice ? json(banNotice.body, banNotice.status) : json({ error: { code: "not_found", message: "x" } }, 404);
+    }
+    if (method === "GET" && url.pathname === "/api/admin/audit") {
+      const action = url.searchParams.get("action");
+      return json({ items: auditItems.filter((item) => !action || item.action === action), nextCursor: null });
+    }
+    if (method === "GET" && url.pathname === "/api/admin/users") {
+      const q = (url.searchParams.get("q") || "").toLowerCase();
+      const role = url.searchParams.get("role");
+      const state = url.searchParams.get("status");
+      const items = users.filter((u) => (!q || u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q))
+        && (!role || u.role === role)
+        && (!state || (state === "deleting" ? u.deleting : state === "banned" ? u.ban && !u.deleting : !u.ban && !u.deleting)));
+      return json({ items, nextCursor: null });
+    }
+    const userMatch = url.pathname.match(/^\/api\/admin\/users\/([^/]+)(?:\/(ban|unban|role))?$/);
+    if (userMatch) {
+      const target = users.find((u) => u.id === userMatch[1]);
+      const action = userMatch[2] || (method === "DELETE" ? "delete" : "detail");
+      if (gates[action]) await gates[action];
+      const failure = failures[action]?.shift();
+      if (failure) {
+        failure.apply?.(target);
+        return json({ error: { code: failure.code, message: "x" } }, failure.status);
+      }
+      if (!target) return json({ error: { code: "not_found", message: "x" } }, 404);
+      if (action === "detail") {
+        return json({
+          user: target,
+          comments: [{ id: "c1", page: "/doi-chuan/", lang: "vi", body: "Bình luận gần đây", createdAt: "2026-10-10T08:00:00.000Z" }],
+          reports: [{ id: "r1", page: "/doi-khac/", lang: "vi", result: "win", status: "approved", rejectReason: null, imageUrl: null, createdAt: "2026-10-11T08:00:00.000Z" }],
+          audit: auditItems.filter((a) => a.subjectUserId === target.id),
+        });
+      }
+      if (action === "ban") {
+        target.ban = { until: body.duration === "permanent" ? null : "2099-01-01T00:00:00.000Z", reason: body.reason, byRole: user?.role };
+        return json({ id: target.id, ban: target.ban });
+      }
+      if (action === "unban") {
+        target.ban = null;
+        return json({ id: target.id, ban: null });
+      }
+      if (action === "role") {
+        target.role = body.role;
+        return json({ id: target.id, role: target.role });
+      }
+      users.splice(users.indexOf(target), 1);
+      return json({ ok: true, removedObjects: 0 });
     }
     if (method === "GET" && url.pathname === "/api/admin/ai/config") return json(aiView());
     if (method === "PUT" && url.pathname === "/api/admin/ai/config") {
@@ -128,8 +201,21 @@ test("logged-out visitors see a sign-in prompt instead of the comment box", asyn
   await expect.poll(() => calls.find((call) => call.path === "/api/auth/sign-in/social")?.body).toEqual({
     provider: "google",
     callbackURL: expect.stringContaining(DETAIL_PATH),
+    errorCallbackURL: expect.stringContaining(DETAIL_PATH),
   });
   await expect(page).toHaveURL(/#oauth-mock$/);
+});
+
+test("đăng nhập lại sau lỗi cũ: errorCallbackURL bỏ error/error_description, giữ tham số khác", async ({ page }) => {
+  const calls = await mockCommunityApi(page);
+  await page.goto(`${DETAIL_PATH}?error=other_error&error_description=cu&keep=1`);
+  await page.locator("#community-root .cm-comments").getByRole("button", { name: "Đăng nhập bằng Google" }).click();
+  await expect.poll(() => calls.find((call) => call.path === "/api/auth/sign-in/social")).toBeTruthy();
+  const body = calls.find((call) => call.path === "/api/auth/sign-in/social").body;
+  for (const value of [body.callbackURL, body.errorCallbackURL]) {
+    expect(value).toContain("keep=1");
+    expect(value).not.toContain("error");
+  }
 });
 
 test("signed-in players post a comment and only same-language comments are listed", async ({ page }) => {
@@ -550,4 +636,362 @@ test("admin cấu hình AI: thêm nhà cung cấp + model tự thêm, chuỗi ri
   await expect(rows.nth(1)).toContainText("••••5678");
   await expect(rows.first()).toContainText("••••abcd");
   await expect(panel).not.toContainText("sk-zen-new-5678");
+});
+
+/* ---------- Quản trị người dùng ---------- */
+
+const adminNav = (page) => page.getByRole("navigation", { name: "Khu quản trị" });
+
+test("kiểm duyệt viên: chỉ thấy khu được phép, #ai về khu đầu, không gọi API của root, email che không có mailto", async ({ page }) => {
+  const calls = await mockCommunityApi(page, {
+    user: MODERATOR,
+    users: USER_ROWS().map((u) => ({ ...u, email: "lu***@example.com", emailMasked: true })),
+    adminFeedback: [
+      { id: "f1", kind: "bug", title: "Lỗi lọc", body: "Danh sách trống.", email: "pl***@example.com", emailMasked: true, page: "/doi-chuan/", lang: "vi", status: "new", createdAt: "2026-09-25T08:00:00.000Z", author: null },
+    ],
+  });
+  await page.goto("/quan-tri/#ai");
+  const nav = adminNav(page);
+  await expect(page.locator("#community-admin-identity")).toContainText("Kiểm duyệt viên");
+  for (const name of ["Duyệt chiến báo", "Bình luận", "Góp ý", "Soi đội", "Người dùng"]) {
+    await expect(nav.getByRole("link", { name: new RegExp(`^${name}`) })).toBeVisible();
+  }
+  for (const name of ["Bài viết", "Nhật ký"]) await expect(nav.getByRole("link", { name })).toHaveCount(0);
+  await expect(nav.getByRole("link", { name: "AI", exact: true })).toHaveCount(0);
+  await expect(nav.getByRole("link", { name: "Duyệt chiến báo" })).toHaveAttribute("aria-current", "page");
+
+  // Hash khu bị cấm khi đổi trong trang cũng về khu đầu.
+  await nav.getByRole("link", { name: "Góp ý" }).click();
+  await expect(nav.getByRole("link", { name: /^Góp ý/ })).toHaveAttribute("aria-current", "page");
+  await page.evaluate(() => { location.hash = "#bai-viet"; });
+  await expect(nav.getByRole("link", { name: "Duyệt chiến báo" })).toHaveAttribute("aria-current", "page");
+
+  await page.goto("/quan-tri/#gop-y");
+  const feedback = page.getByRole("region", { name: "Góp ý", exact: true });
+  await expect(feedback.locator(".cm-feedback-item")).toContainText("pl***@example.com");
+  await expect(feedback.locator("a[href^='mailto:']")).toHaveCount(0);
+
+  await nav.getByRole("link", { name: "Người dùng" }).click();
+  const panel = page.getByRole("region", { name: "Người dùng", exact: true });
+  await expect(panel.getByText("Tìm theo tên hoặc email đầy đủ")).toBeVisible();
+  await expect(panel.locator(".adm-user").first()).toContainText("lu***@example.com");
+  expect(calls.filter((call) => /^\/api\/admin\/(ai|posts|audit)/.test(call.path))).toEqual([]);
+});
+
+test("kiểm duyệt viên: chỉ bình luận canDelete có nút Xoá", async ({ page }) => {
+  await mockCommunityApi(page, {
+    user: MODERATOR,
+    adminComments: [
+      { id: "c1", body: "Bình luận của user thường", lang: "vi", page: "/doi-chuan/", createdAt: "2026-10-10T08:00:00.000Z", author: { id: "u1", name: "Lưu Bị", image: null }, canDelete: true },
+      { id: "c2", body: "Bình luận của root", lang: "vi", page: "/doi-chuan/", createdAt: "2026-10-11T08:00:00.000Z", author: { id: "u9", name: "Quản trị", image: null }, canDelete: false },
+    ],
+  });
+  await page.goto("/quan-tri/#binh-luan");
+  const panel = page.getByRole("region", { name: "Bình luận", exact: true });
+  await expect(panel.locator(".adm-comment", { hasText: "user thường" }).getByRole("button", { name: "Xoá" })).toBeVisible();
+  await expect(panel.locator(".adm-comment", { hasText: "của root" })).toBeVisible();
+  await expect(panel.locator(".adm-comment", { hasText: "của root" }).getByRole("button", { name: "Xoá" })).toHaveCount(0);
+});
+
+test("root: khu Người dùng liệt kê, lọc có debounce, dòng đủ thông tin", async ({ page }) => {
+  const calls = await mockCommunityApi(page, { user: ADMIN, users: USER_ROWS() });
+  await page.goto("/quan-tri/#nguoi-dung");
+  const panel = page.getByRole("region", { name: "Người dùng", exact: true });
+  const rows = panel.locator(".adm-user");
+  await expect(rows).toHaveCount(6);
+  const tao = rows.filter({ hasText: "Tào Tháo" });
+  await expect(tao).toContainText("caocao@example.com");
+  await expect(tao).toContainText("Khoá đến");
+  await expect(tao).toContainText("Chưa ghi nhận");
+  await expect(rows.filter({ hasText: "Tôn Quyền" })).toContainText("Khoá vĩnh viễn");
+  await expect(rows.filter({ hasText: "Gia Cát" })).toContainText("Đang xoá");
+  await expect(rows.filter({ hasText: "Quan Vũ" })).toContainText("Kiểm duyệt viên");
+  await expect(rows.first()).toContainText("3 bình luận");
+
+  const before = calls.filter((call) => call.path === "/api/admin/users").length;
+  await panel.getByLabel("Tìm kiếm").pressSequentially("tào", { delay: 20 });
+  await expect(rows).toHaveCount(1);
+  expect(calls.filter((call) => call.path === "/api/admin/users").length - before).toBe(1);
+  expect(calls.filter((call) => call.path === "/api/admin/users").at(-1).search.get("q")).toBe("tào");
+  await panel.getByLabel("Tìm kiếm").fill("");
+  await expect(rows).toHaveCount(6);
+  await panel.getByLabel("Vai trò").selectOption("moderator");
+  await expect(rows).toHaveCount(1);
+  await panel.getByLabel("Vai trò").selectOption("");
+  await panel.getByLabel("Trạng thái", { exact: true }).selectOption("banned");
+  await expect(rows).toHaveCount(2);
+});
+
+test("root: khoá người dùng bắt buộc lý do, gửi {duration, reason}, rồi mở khoá", async ({ page }) => {
+  const calls = await mockCommunityApi(page, { user: ADMIN, users: USER_ROWS() });
+  await page.goto("/quan-tri/#nguoi-dung");
+  const panel = page.getByRole("region", { name: "Người dùng", exact: true });
+  await panel.locator(".adm-user-open", { hasText: "Lưu Bị" }).click();
+  await expect(panel.getByRole("heading", { name: "Lưu Bị" })).toBeVisible();
+  await expect(panel).toContainText("Bình luận gần đây");
+  await expect(panel.locator(".adm-user-detail")).not.toHaveText(/null/);
+  await expect(panel.locator(".adm-user-detail")).toContainText("Đã duyệt");
+  await expect(panel.locator(".adm-user-detail")).not.toContainText("approved");
+
+  await panel.getByRole("button", { name: "Khoá…", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "Khoá tài khoản" });
+  await expect(dialog.getByLabel("Thời hạn").locator("option")).toHaveText(["1 ngày", "7 ngày", "30 ngày", "Vĩnh viễn"]);
+  await dialog.getByRole("button", { name: "Khoá", exact: true }).click();
+  await expect(dialog.getByRole("alert")).toContainText("lý do");
+  expect(calls.some((call) => call.path === "/api/admin/users/u1/ban")).toBe(false);
+
+  await dialog.getByLabel("Thời hạn").selectOption("7d");
+  await dialog.getByLabel("Lý do").fill("Spam liên tục");
+  await dialog.getByRole("button", { name: "Khoá", exact: true }).click();
+  await expect.poll(() => calls.find((call) => call.path === "/api/admin/users/u1/ban")?.body).toEqual({ duration: "7d", reason: "Spam liên tục" });
+  await expect(dialog).toBeHidden();
+  await expect(panel.getByText("Đã khoá tài khoản.")).toBeVisible();
+  // Đang khoá: không có nút Xoá, có gợi ý mở khoá trước.
+  await expect(panel.getByRole("button", { name: /^Xoá tài khoản/ })).toHaveCount(0);
+  await expect(panel).toContainText("Mở khoá trước");
+  await expect(panel.locator(".adm-user-detail")).not.toHaveText(/null/);
+  await panel.getByRole("button", { name: "Mở khoá", exact: true }).click();
+  await expect.poll(() => calls.some((call) => call.path === "/api/admin/users/u1/unban")).toBe(true);
+  await expect(panel.getByRole("button", { name: "Khoá…", exact: true })).toBeVisible();
+});
+
+test("root: cấp/thu quyền kiểm duyệt viên; không có nút trên root và chính mình", async ({ page }) => {
+  const calls = await mockCommunityApi(page, { user: ADMIN, users: USER_ROWS() });
+  await page.goto("/quan-tri/#nguoi-dung");
+  const panel = page.getByRole("region", { name: "Người dùng", exact: true });
+  await panel.locator(".adm-user-open", { hasText: "Lưu Bị" }).click();
+  await panel.getByRole("button", { name: "Cấp quyền kiểm duyệt viên" }).click();
+  await expect.poll(() => calls.find((call) => call.path === "/api/admin/users/u1/role")?.body).toEqual({ role: "moderator" });
+  await expect(panel.getByRole("button", { name: "Thu quyền kiểm duyệt viên" })).toBeVisible();
+  await panel.getByRole("button", { name: "Quay lại danh sách" }).click();
+  await panel.locator(".adm-user-open", { hasText: "Quản trị" }).click();
+  await expect(panel.getByRole("heading", { name: "Quản trị" })).toBeVisible();
+  await expect(panel.locator(".adm-user-actions button")).toHaveCount(0);
+});
+
+test("root: xoá tài khoản cần gõ đúng email; lỗi delete_incomplete cho thử xoá tiếp", async ({ page }) => {
+  const calls = await mockCommunityApi(page, {
+    user: ADMIN,
+    users: USER_ROWS(),
+    failures: { delete: [{ status: 502, code: "delete_incomplete", apply: (target) => { target.deleting = true; } }] },
+  });
+  await page.goto("/quan-tri/#nguoi-dung");
+  const panel = page.getByRole("region", { name: "Người dùng", exact: true });
+  await panel.locator(".adm-user-open", { hasText: "Lưu Bị" }).click();
+  await panel.getByRole("button", { name: "Xoá tài khoản…" }).click();
+  const dialog = page.getByRole("dialog", { name: "Xoá tài khoản" });
+  const confirm = dialog.getByRole("button", { name: "Xoá vĩnh viễn" });
+  await expect(confirm).toBeDisabled();
+  await dialog.getByLabel("Nhập lại email để xác nhận").fill("sai@example.com");
+  await expect(confirm).toBeDisabled();
+  await dialog.getByLabel("Nhập lại email để xác nhận").fill("LUUBI@example.com");
+  await expect(confirm).toBeEnabled();
+  await confirm.click();
+  await expect.poll(() => calls.find((call) => call.method === "DELETE")?.body).toEqual({ confirmEmail: "LUUBI@example.com" });
+  await expect(panel.getByRole("alert").or(panel.getByRole("status")).filter({ hasText: "Xoá chưa hoàn tất" })).toBeVisible();
+
+  // Chi tiết được tải lại: đang xoá -> chỉ còn "Thử xoá tiếp", các thao tác khác bị tắt.
+  const resume = panel.getByRole("button", { name: "Thử xoá tiếp" });
+  await expect(resume).toBeVisible();
+  await expect(panel.getByRole("button", { name: "Khoá…", exact: true })).toHaveCount(0);
+  await resume.click();
+  await page.getByRole("dialog", { name: "Thử xoá tiếp" }).getByLabel("Nhập lại email để xác nhận").fill("luubi@example.com");
+  await page.getByRole("dialog", { name: "Thử xoá tiếp" }).getByRole("button", { name: "Xoá vĩnh viễn" }).click();
+  await expect.poll(() => calls.filter((call) => call.method === "DELETE").length).toBe(2);
+  await expect(panel.getByText("Đã xoá tài khoản.")).toBeVisible();
+  await expect(panel.locator(".adm-user")).toHaveCount(5);
+});
+
+test("kiểm duyệt viên: không thao tác trên KDV khác, root; không đè khoá của root; lỗi 403/409 dịch theo code", async ({ page }) => {
+  const users = USER_ROWS().map((u) => ({ ...u, email: "x***@example.com", emailMasked: true }));
+  await mockCommunityApi(page, {
+    user: MODERATOR,
+    users,
+    failures: { ban: [{ status: 403, code: "forbidden" }, { status: 409, code: "user_deleting" }] },
+  });
+  await page.goto("/quan-tri/#nguoi-dung");
+  const panel = page.getByRole("region", { name: "Người dùng", exact: true });
+  const actions = panel.locator(".adm-user-actions button");
+
+  await panel.locator(".adm-user-open", { hasText: "Quan Vũ" }).click();
+  await expect(actions).toHaveCount(0);
+  await panel.getByRole("button", { name: "Quay lại danh sách" }).click();
+  await panel.locator(".adm-user-open", { hasText: "Quản trị" }).click();
+  await expect(actions).toHaveCount(0);
+  await panel.getByRole("button", { name: "Quay lại danh sách" }).click();
+  // Tào Tháo bị root khoá: KDV không mở khoá được. Tôn Quyền bị KDV khoá: mở khoá được.
+  await panel.locator(".adm-user-open", { hasText: "Tào Tháo" }).click();
+  await expect(panel.getByRole("button", { name: "Mở khoá", exact: true })).toHaveCount(0);
+  await panel.getByRole("button", { name: "Quay lại danh sách" }).click();
+  await panel.locator(".adm-user-open", { hasText: "Tôn Quyền" }).click();
+  await expect(panel.getByRole("button", { name: "Mở khoá", exact: true })).toBeVisible();
+  await expect(panel.locator(".adm-user-detail")).not.toHaveText(/null/);
+  await expect(panel.getByRole("button", { name: /^Xoá tài khoản/ })).toHaveCount(0);
+  await expect(panel.getByRole("button", { name: /kiểm duyệt viên$/ })).toHaveCount(0);
+  await panel.getByRole("button", { name: "Quay lại danh sách" }).click();
+
+  await panel.locator(".adm-user-open", { hasText: "Lưu Bị" }).click();
+  for (const [reason, message] of [["a", "Bạn không có quyền thao tác trên tài khoản này."], ["b", "Tài khoản đang được xoá; chưa thể thao tác."]]) {
+    await panel.getByRole("button", { name: "Khoá…", exact: true }).click();
+    const dialog = page.getByRole("dialog", { name: "Khoá tài khoản" });
+    await dialog.getByLabel("Lý do").fill(reason);
+    await dialog.getByRole("button", { name: "Khoá", exact: true }).click();
+    await expect(dialog.getByRole("alert")).toHaveText(message);
+    await dialog.getByRole("button", { name: "Huỷ" }).click();
+  }
+});
+
+test("root: Nhật ký hiển thị nhãn hành động, badge trạng thái, deploy chưa rõ; lọc theo hành động", async ({ page }) => {
+  const calls = await mockCommunityApi(page, { user: ADMIN, auditItems: AUDIT_ROWS() });
+  await page.goto("/quan-tri/");
+  await adminNav(page).getByRole("link", { name: "Nhật ký" }).click();
+  await expect(page).toHaveURL(/#nhat-ky$/);
+  const panel = page.getByRole("region", { name: "Nhật ký", exact: true });
+  const rows = panel.locator(".adm-audit");
+  await expect(rows).toHaveCount(3);
+  await expect(rows.nth(0)).toContainText("Khoá tài khoản");
+  await expect(rows.nth(0)).toContainText("Spam quảng cáo");
+  await expect(rows.nth(0)).toContainText("Đối tượng: người dùng · Tào Tháo");
+  await expect(rows.nth(0)).not.toContainText("user ·");
+  await expect(rows.nth(0).locator(".cm-badge[data-status]")).toHaveText("Thành công");
+  await expect(rows.nth(1).locator(".cm-badge[data-status]")).toHaveText("Một phần");
+  await expect(rows.nth(2)).toContainText("chưa rõ kết quả deploy");
+  await panel.getByLabel("Hành động").selectOption("user.ban");
+  await expect(rows).toHaveCount(1);
+  expect(calls.filter((call) => call.path === "/api/admin/audit").at(-1).search.get("action")).toBe("user.ban");
+});
+
+test("/zh/quan-tri/: nhãn tiếng Trung cho khu Người dùng và danh tính", async ({ page }) => {
+  await mockCommunityApi(page, { user: MODERATOR, users: USER_ROWS().map((u) => ({ ...u, email: "x***@example.com", emailMasked: true })) });
+  await page.goto("/zh/quan-tri/#nguoi-dung");
+  await expect(page.locator("#community-admin-identity")).toContainText("版主");
+  const nav = page.getByRole("navigation", { name: "管理区域" });
+  await expect(nav.getByRole("link", { name: "用户" })).toHaveAttribute("aria-current", "page");
+  const panel = page.getByRole("region", { name: "用户", exact: true });
+  await expect(panel.getByLabel("搜索")).toBeVisible();
+  const tops = await Promise.all(["搜索", "角色", "状态"].map(async (name) => (await panel.getByLabel(name, { exact: true }).boundingBox()).y));
+  expect(Math.max(...tops) - Math.min(...tops)).toBeLessThan(2);
+  await expect(panel.getByLabel("角色")).toBeVisible();
+  await expect(panel.locator(".adm-user").first()).toContainText("x***@example.com");
+});
+
+test("admin mobile: khu Người dùng và hộp thoại khoá không tràn ngang ở 390px", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  await mockCommunityApi(page, { user: ADMIN, users: USER_ROWS(), auditItems: AUDIT_ROWS() });
+  await page.goto("/quan-tri/#nguoi-dung");
+  const panel = page.getByRole("region", { name: "Người dùng", exact: true });
+  await expect(panel.locator(".adm-user")).toHaveCount(6);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  await panel.locator(".adm-user-open", { hasText: "Lưu Bị" }).click();
+  await panel.getByRole("button", { name: "Khoá…", exact: true }).click();
+  await expect(page.getByRole("dialog", { name: "Khoá tài khoản" })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  await page.keyboard.press("Escape");
+  await adminNav(page).getByRole("link", { name: "Nhật ký" }).click();
+  await expect(page.getByRole("region", { name: "Nhật ký", exact: true }).locator(".adm-audit")).toHaveCount(3);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+});
+
+/* ---------- Thông báo bị khoá ---------- */
+
+test("đăng nhập bị chặn: thông báo lấy lý do từ /api/ban-notice, URL được dọn, tham số khác giữ nguyên", async ({ page }) => {
+  const calls = await mockCommunityApi(page, { banNotice: { status: 200, body: { until: "2099-01-01T00:00:00.000Z", reason: "Spam quảng cáo", deleting: false } } });
+  await page.goto(`${DETAIL_PATH}?error=ACCOUNT_BANNED&error_description=tok%2Fen%3D&keep=1#oauth-x`);
+  const notice = page.locator("#community-auth").getByRole("alert");
+  await expect(notice).toContainText("Tài khoản đã bị khoá đến");
+  await expect(notice).toContainText("Lý do: Spam quảng cáo");
+  expect(calls.find((call) => call.path === "/api/ban-notice").search.get("token")).toBe("tok/en=");
+  const url = new URL(page.url());
+  expect(url.searchParams.has("error")).toBe(false);
+  expect(url.searchParams.has("error_description")).toBe(false);
+  expect(url.searchParams.get("keep")).toBe("1");
+  expect(url.hash).toBe("#oauth-x");
+  await page.getByRole("button", { name: "Đóng thông báo" }).click();
+  await expect(notice).toHaveCount(0);
+});
+
+test("thông báo khoá vĩnh viễn và đang xoá", async ({ page }) => {
+  await mockCommunityApi(page, { banNotice: { status: 200, body: { until: null, reason: "Quấy rối", deleting: false } } });
+  await page.goto(`${DETAIL_PATH}?error=ACCOUNT_BANNED&error_description=tok`);
+  await expect(page.locator("#community-auth").getByRole("alert")).toContainText("Tài khoản đã bị khoá vĩnh viễn");
+  await expect(page.locator("#community-auth").getByRole("alert")).toContainText("Lý do: Quấy rối");
+
+  await mockCommunityApi(page, { banNotice: { status: 200, body: { until: null, reason: null, deleting: true } } });
+  await page.goto(`${DETAIL_PATH}?error=ACCOUNT_UNAVAILABLE&error_description=tok2`);
+  await expect(page.locator("#community-auth").getByRole("alert")).toHaveText("Tài khoản đang được xoá.");
+});
+
+test("thông báo khoá giả mạo qua URL: 404 thì chỉ hiện câu cố định, không hiện chữ từ URL", async ({ page }) => {
+  await mockCommunityApi(page);
+  await page.goto(`${DETAIL_PATH}?error=ACCOUNT_BANNED&error_description=${encodeURIComponent("Bạn bị khoá bởi http://evil.example")}`);
+  const notice = page.locator("#community-auth").getByRole("alert");
+  await expect(notice).toHaveText("Không đăng nhập được. Thử lại sau.");
+  await expect(page.locator("body")).not.toContainText("evil.example");
+  expect(new URL(page.url()).searchParams.has("error_description")).toBe(false);
+});
+
+test("thông báo khoá còn nguyên khi header vẽ lại sau khi hỏi phiên", async ({ page }) => {
+  await mockCommunityApi(page, { banNotice: { status: 200, body: { until: null, reason: "Spam", deleting: false } } });
+  await page.addInitScript(() => localStorage.setItem("tqccl:community-session", "1"));
+  await page.goto(`${DETAIL_PATH}?error=ACCOUNT_BANNED&error_description=tok`);
+  await expect(page.locator("#community-auth").getByRole("alert")).toContainText("Lý do: Spam");
+  await expect(page.locator("#community-auth .cm-auth-login")).toBeVisible();
+});
+
+test("mã lỗi OAuth khác không chạm vào URL và không gọi /api/ban-notice", async ({ page }) => {
+  const calls = await mockCommunityApi(page);
+  await page.goto(`${DETAIL_PATH}?error=access_denied&error_description=x`);
+  await expect(page.locator("#community-auth .cm-auth-login")).toBeVisible();
+  expect(calls.some((call) => call.path === "/api/ban-notice")).toBe(false);
+  expect(new URL(page.url()).searchParams.get("error")).toBe("access_denied");
+});
+
+/* ---------- Race: phản hồi đến muộn ---------- */
+
+test("phản hồi muộn của thao tác trên A không ghi đè chi tiết của B đang chọn", async ({ page }) => {
+  let release;
+  const gate = new Promise((resolve) => { release = resolve; });
+  const calls = await mockCommunityApi(page, { user: ADMIN, users: USER_ROWS(), gates: { role: gate } });
+  await page.goto("/quan-tri/#nguoi-dung");
+  const panel = page.getByRole("region", { name: "Người dùng", exact: true });
+  await panel.locator(".adm-user-open", { hasText: "Lưu Bị" }).click();
+  await panel.getByRole("button", { name: "Cấp quyền kiểm duyệt viên" }).click();
+  await expect.poll(() => calls.some((call) => call.path === "/api/admin/users/u1/role")).toBe(true);
+  await panel.getByRole("button", { name: "Quay lại danh sách" }).click();
+  await panel.locator(".adm-user-open", { hasText: "Tào Tháo" }).click();
+  await expect(panel.getByRole("heading", { name: "Tào Tháo" })).toBeVisible();
+  const detailGets = () => calls.filter((call) => call.method === "GET" && call.path === "/api/admin/users/u1").length;
+  const before = detailGets();
+  release();
+  await expect.poll(() => calls.some((call) => call.path === "/api/admin/users/u1/role")).toBe(true);
+  await page.waitForTimeout(300);
+  await expect(panel.getByRole("heading", { name: "Tào Tháo" })).toBeVisible();
+  await expect(panel.getByRole("heading", { name: "Lưu Bị" })).toHaveCount(0);
+  expect(detailGets()).toBe(before);
+  await expect(panel.getByText("Đã cấp quyền kiểm duyệt viên.")).toHaveCount(0);
+});
+
+test("hộp thoại xoá: sửa email khi DELETE đang chạy không gửi lần hai", async ({ page }) => {
+  let release;
+  const gate = new Promise((resolve) => { release = resolve; });
+  const calls = await mockCommunityApi(page, { user: ADMIN, users: USER_ROWS(), gates: { delete: gate } });
+  await page.goto("/quan-tri/#nguoi-dung");
+  const panel = page.getByRole("region", { name: "Người dùng", exact: true });
+  await panel.locator(".adm-user-open", { hasText: "Lưu Bị" }).click();
+  await panel.getByRole("button", { name: "Xoá tài khoản…" }).click();
+  const dialog = page.getByRole("dialog", { name: "Xoá tài khoản" });
+  const email = dialog.getByLabel("Nhập lại email để xác nhận");
+  const confirm = dialog.getByRole("button", { name: "Xoá vĩnh viễn" });
+  await email.fill("luubi@example.com");
+  await confirm.click();
+  await expect.poll(() => calls.filter((call) => call.method === "DELETE").length).toBe(1);
+  await expect(confirm).toBeDisabled();
+  await email.fill("luubi@example.co");
+  await email.fill("luubi@example.com");
+  await expect(confirm).toBeDisabled();
+  await confirm.click({ force: true });
+  await email.press("Enter");
+  release();
+  await expect(panel.getByText("Đã xoá tài khoản.")).toBeVisible();
+  expect(calls.filter((call) => call.method === "DELETE").length).toBe(1);
 });

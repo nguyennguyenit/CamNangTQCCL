@@ -94,6 +94,28 @@ function codeMessage(code) {
     case 'invalid_timeout':
     case 'invalid_budget':
       return L('Timeout mỗi lượt phải từ 5 đến 120 giây; trần tổng không nhỏ hơn timeout và không quá 180 giây.', '单次超时须为 5–120 秒；总时限不小于单次超时且不超过 180 秒。');
+    case 'invalid_target':
+      return L('Không thể thao tác trên chính mình.', '不能对自己执行此操作。');
+    case 'invalid_duration':
+      return L('Thời hạn khoá không hợp lệ.', '封禁时长无效。');
+    case 'invalid_reason':
+      return L('Cần nhập lý do (tối đa 500 ký tự).', '请填写理由（最多 500 个字符）。');
+    case 'invalid_role':
+      return L('Vai trò không hợp lệ.', '角色无效。');
+    case 'role_unchanged':
+      return L('Tài khoản đã có vai trò này.', '该账号已是此角色。');
+    case 'not_banned':
+      return L('Tài khoản này không đang bị khoá.', '该账号当前未被封禁。');
+    case 'user_banned':
+      return L('Tài khoản đang bị khoá. Hãy mở khoá trước khi xoá.', '账号正被封禁，请先解封再删除。');
+    case 'user_deleting':
+      return L('Tài khoản đang được xoá; chưa thể thao tác.', '账号正在删除中，暂时无法操作。');
+    case 'conflict':
+      return L('Trạng thái tài khoản vừa thay đổi. Dữ liệu đã được tải lại.', '账号状态刚刚发生变化，数据已重新加载。');
+    case 'confirm_mismatch':
+      return L('Email xác nhận không khớp.', '确认邮箱不匹配。');
+    case 'delete_incomplete':
+      return L('Xoá chưa hoàn tất (lỗi lưu trữ ảnh). Có thể bấm “Thử xoá tiếp”.', '删除尚未完成（图片存储出错），可点击“继续删除”重试。');
     default:
       return null;
   }
@@ -165,7 +187,7 @@ function writeHint(value) {
 let sessionPromise = null;
 
 /**
- * Người dùng hiện tại (`{id,name,image,isAdmin}` | null).
+ * Người dùng hiện tại (`{id,name,email,image,role}` | null); `role` là `root`, `moderator` hoặc `user`.
  * `probe: false` (header trên trang thường): chỉ hỏi server khi trình duyệt từng đăng nhập,
  * để khách vãng lai không tốn một lượt gọi API mỗi trang. Trang cộng đồng luôn `probe: true`.
  */
@@ -187,13 +209,22 @@ export function loadSession({ probe = true } = {}) {
   return sessionPromise;
 }
 
+/** URL trang hiện tại không còn `error`, `error_description` (lỗi đăng nhập cũ không được mang sang lượt sau). */
+export function urlWithoutAuthError() {
+  const url = new URL(location.href);
+  url.searchParams.delete('error');
+  url.searchParams.delete('error_description');
+  return url;
+}
+
 /** Đăng nhập Google: server trả URL OAuth, trình duyệt rời trang; quay về đúng trang đang xem. */
 export async function signIn() {
   writeHint('pending');
   try {
+    const target = urlWithoutAuthError().href;
     const body = await api('/api/auth/sign-in/social', {
       method: 'POST',
-      json: { provider: 'google', callbackURL: location.href },
+      json: { provider: 'google', callbackURL: target, errorCallbackURL: target },
     });
     const url = new URL(String(body?.url || ''), location.href);
     if (url.protocol !== 'https:' && url.protocol !== 'http:') throw new CommunityError(statusMessage(0));

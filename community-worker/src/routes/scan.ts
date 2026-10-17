@@ -3,7 +3,8 @@
 // (2) ảnh gửi tự nguyện (đăng nhập) -> admin duyệt -> xuất fixture bộ ảnh chuẩn.
 
 import { Hono } from "hono";
-import { currentUser, PAGE_SIZE, requireAdmin, requireUser, type AppEnv, type Ctx } from "../context";
+import { auditIfStmt, writeAuditQuietly, type AuditEntry } from "../audit";
+import { currentUser, PAGE_SIZE, requireStaff, requireUser, type AppEnv, type Ctx } from "../context";
 import { ApiError, decodeCursor, iso, paginate } from "../http";
 import { consumeRateLimit } from "../ratelimit";
 import { hashIp } from "../turnstile";
@@ -146,7 +147,7 @@ scan.post("/api/scan-stats", async (c) => {
 });
 
 scan.get("/api/admin/scan-stats", async (c) => {
-  await requireAdmin(c);
+  await requireStaff(c);
   const raw = c.req.query("days");
   const days = raw === undefined || raw === "" ? 30 : Number(raw);
   if (!STATS_WINDOWS.includes(days as (typeof STATS_WINDOWS)[number])) {
@@ -232,7 +233,7 @@ scan.post("/api/scan-samples", async (c) => {
 });
 
 scan.get("/api/admin/scan-samples", async (c) => {
-  await requireAdmin(c);
+  await requireStaff(c);
   const status = parseEnum(c.req.query("status") ?? "pending", SAMPLE_STATUSES, "status");
   const conds = ["s.status = ?"];
   const args: unknown[] = [status];
@@ -269,7 +270,7 @@ async function findSample(c: Ctx): Promise<SampleRow> {
 }
 
 scan.get("/api/admin/scan-samples/:id/image", async (c) => {
-  await requireAdmin(c);
+  await requireStaff(c);
   const row = await findSample(c);
   const notFound = new ApiError(404, "not_found", "Không tìm thấy ảnh");
   if (!row.image_key) throw notFound;
@@ -284,39 +285,86 @@ scan.get("/api/admin/scan-samples/:id/image", async (c) => {
   });
 });
 
+/** UPDATE duyệt không đổi dòng nào: mẫu đã bị xoá -> 404, còn lại do `fallback`. */
+async function explainNoChange(c: Ctx, id: string, fallback: ApiError): Promise<ApiError> {
+  const current = await c.env.DB.prepare("select 1 from scan_samples where id = ?").bind(id).first();
+  if (!current) return new ApiError(404, "not_found", "Không tìm thấy mẫu");
+  return fallback;
+}
+
 scan.post("/api/admin/scan-samples/:id/approve", async (c) => {
-  const { user } = await requireAdmin(c);
+  const viewer = await requireStaff(c);
+  const { user } = viewer;
   const row = await findSample(c);
   // Mẫu đã bị từ chối mất ảnh: không thể duyệt lại. Điều kiện nằm cả trong UPDATE để một lượt từ chối chạy
   // song song (xoá ảnh giữa lúc đọc và ghi) không để lại mẫu "đã duyệt" mà không có ảnh.
   const missing = new ApiError(409, "image_missing", "Mẫu không còn ảnh, không thể duyệt");
   if (!row.image_key) throw missing;
-  const { meta } = await c.env.DB.prepare(
-    "update scan_samples set status = 'approved', reviewed_by = ?, reviewed_at = ? where id = ? and image_key is not null",
-  )
-    .bind(user.id, c.get("deps").now(), row.id)
-    .run();
-  if (!meta.changes) throw missing;
+  const at = c.get("deps").now();
+  const [res] = await c.env.DB.batch([
+    c.env.DB.prepare(
+      "update scan_samples set status = 'approved', reviewed_by = ?, reviewed_at = ? where id = ? and image_key is not null",
+    ).bind(user.id, at, row.id),
+    auditIfStmt(
+      c,
+      viewer,
+      sampleAudit("scan_sample.approve", row),
+      "select 1 from scan_samples where id = ? and status = 'approved' and image_key is not null and reviewed_by = ? and reviewed_at = ?",
+      [row.id, user.id, at],
+    ),
+  ]);
+  if (!res.meta.changes) throw await explainNoChange(c, row.id, missing);
   return c.json({ id: row.id, status: "approved" });
 });
 
+function sampleAudit(action: string, row: SampleRow): AuditEntry {
+  return { action, targetType: "scan_sample", targetId: row.id, targetLabel: `${row.screen}/${row.side}`, subjectUserId: row.user_id, status: "ok" };
+}
+
 scan.post("/api/admin/scan-samples/:id/reject", async (c) => {
-  const { user } = await requireAdmin(c);
+  const viewer = await requireStaff(c);
+  const { user } = viewer;
   const row = await findSample(c);
-  // Xoá ảnh trước: nếu xoá lỗi thì giữ nguyên trạng thái để thử lại.
-  if (row.image_key) await c.env.MEDIA.delete(row.image_key);
-  await c.env.DB.prepare(
-    "update scan_samples set status = 'rejected', image_key = null, reviewed_by = ?, reviewed_at = ? where id = ?",
-  )
-    .bind(user.id, c.get("deps").now(), row.id)
-    .run();
+  // Xoá ảnh trước: nếu xoá lỗi thì giữ nguyên trạng thái để thử lại (nhật ký `failed`, D1 không đổi).
+  if (row.image_key) {
+    try {
+      await c.env.MEDIA.delete(row.image_key);
+    } catch (error) {
+      await writeAuditQuietly(c, viewer, { ...sampleAudit("scan_sample.reject", row), status: "failed", meta: { step: "r2" } });
+      throw error;
+    }
+  }
+  const at = c.get("deps").now();
+  let res: D1Result;
+  try {
+    [res] = await c.env.DB.batch([
+      c.env.DB.prepare(
+        "update scan_samples set status = 'rejected', image_key = null, reviewed_by = ?, reviewed_at = ? where id = ?",
+      ).bind(user.id, at, row.id),
+      auditIfStmt(
+        c,
+        viewer,
+        sampleAudit("scan_sample.reject", row),
+        "select 1 from scan_samples where id = ? and status = 'rejected' and image_key is null and reviewed_by = ? and reviewed_at = ?",
+        [row.id, user.id, at],
+      ),
+    ]);
+  } catch (error) {
+    // Ảnh R2 đã xoá nhưng D1 lỗi: kết quả dở dang (mẫu còn trỏ tới ảnh không tồn tại).
+    if (row.image_key) await writeAuditQuietly(c, viewer, { ...sampleAudit("scan_sample.reject", row), status: "partial", meta: { step: "d1" } });
+    throw error;
+  }
+  if (!res.meta.changes) {
+    if (row.image_key) await writeAuditQuietly(c, viewer, { ...sampleAudit("scan_sample.reject", row), status: "partial", meta: { step: "d1", changed: false } });
+    throw await explainNoChange(c, row.id, new ApiError(409, "review_conflict", "Mẫu đã thay đổi, thử lại"));
+  }
   return c.json({ id: row.id, status: "rejected" });
 });
 
 // Fixture bộ ảnh chuẩn (worker/eval/fixtures/<id>.json); ảnh admin tải riêng từ endpoint ảnh. Không xuất
 // `screen`: đó là nhãn AI tự đoán cho chính ảnh này (người dùng không xác nhận), chấm lại bằng nó là tự so với mình.
 scan.get("/api/admin/scan-samples/:id/fixture", async (c) => {
-  await requireAdmin(c);
+  await requireStaff(c);
   const row = await findSample(c);
   if (row.status !== "approved") throw new ApiError(409, "not_approved", "Chỉ xuất fixture từ mẫu đã duyệt");
   if (!row.image_key) throw new ApiError(409, "image_missing", "Mẫu không còn ảnh");
